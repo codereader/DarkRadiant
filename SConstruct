@@ -318,5 +318,6 @@ Default('.')
 Export('GLOBALS ' + GLOBALS)
 BuildDir(g_build, '.', duplicate = 0)
 SConscript(g_build + '/SConscript')
+os.system('python ./install.py')
 
 # end targets ------------------------------------
