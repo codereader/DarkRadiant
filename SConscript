@@ -148,13 +148,16 @@ for i in q3map_common_src + q3map_src:
 
 q3map_libs = ['mathlib', 'l_net', 'jpeg6', 'picomodel', 'ddslib']
 
-q3map_prog = q3map_env.Program(target='q3map2.' + g_cpu, source=q3map_full_src, LIBS=q3map_libs, LIBPATH='libs')
-q3map_env.Depends(q3map_prog, mathlib_lib)
-q3map_env.Depends(q3map_prog, l_net_lib)
-q3map_env.Depends(q3map_prog, jpeg_lib)
-q3map_env.Depends(q3map_prog, picomodel_lib)
-q3map_env.Depends(q3map_prog, ddslib_lib)
-q3map_env.Install(INSTALL, q3map_prog)
+# We don't want q3map2 in DarkRadiant, disable for now.
+# - OrbWeaver 2006-03-05
+
+#q3map_prog = q3map_env.Program(target='q3map2.' + g_cpu, source=q3map_full_src, LIBS=q3map_libs, LIBPATH='libs')
+#q3map_env.Depends(q3map_prog, mathlib_lib)
+#q3map_env.Depends(q3map_prog, l_net_lib)
+#q3map_env.Depends(q3map_prog, jpeg_lib)
+#q3map_env.Depends(q3map_prog, picomodel_lib)
+#q3map_env.Depends(q3map_prog, ddslib_lib)
+#q3map_env.Install(INSTALL, q3map_prog)
 
 # end q3map2 ----------------------------------------------------------------------
 
@@ -191,10 +194,13 @@ q3data_full_src = [ ]
 for i in q3data_common_src + q3data_src:
   q3data_full_src.append('tools/quake3/' + i)
 
-q3data_prog = q3data_env.Program( target = 'q3data.' + g_cpu, source = q3data_full_src, LIBS=['mathlib', 'l_net'], LIBPATH='libs' )
-q3data_env.Depends(q3data_prog, mathlib_lib)
-q3data_env.Depends(q3data_prog, l_net_lib)
-q3data_env.Install( INSTALL, q3data_prog )
+# Neither do we want this.
+# - OrbWeaver 2006-03-05
+
+#q3data_prog = q3data_env.Program( target = 'q3data.' + g_cpu, source = q3data_full_src, LIBS=['mathlib', 'l_net'], LIBPATH='libs' )
+#q3data_env.Depends(q3data_prog, mathlib_lib)
+#q3data_env.Depends(q3data_prog, l_net_lib)
+#q3data_env.Install( INSTALL, q3data_prog )
 
 # end q3data ----------------------------------------------------------------------
 
@@ -276,14 +282,16 @@ q2_tools_qdata3_full_src = [ ]
 for i in q2_tools_common_src + q2_tools_qdata3_src:
   q2_tools_qdata3_full_src.append('tools/quake2/' + i)
 
-if ( OS != 'Darwin' ):
-  q2_tools_q2map_prog = q2_tools_env.Program(target='quake2_tools/q2map', source=q2_tools_q2map_full_src, LIBS='l_net', LIBPATH='libs')
-  q2_tools_env.Depends(q2_tools_q2map_prog, l_net_lib)
-  q2_tools_env.Install(INSTALL, q2_tools_q2map_prog )
+# - OrbWeaver 2006-03-05
 
-  q2_tools_qdata3_prog = q2_tools_env.Program(target='quake2_tools/qdata3', source=q2_tools_qdata3_full_src, LIBS='l_net', LIBPATH='libs')
-  q2_tools_env.Depends(q2_tools_qdata3_prog, l_net_lib)
-  q2_tools_env.Install(INSTALL, q2_tools_qdata3_prog )
+#if ( OS != 'Darwin' ):
+#  q2_tools_q2map_prog = q2_tools_env.Program(target='quake2_tools/q2map', source=q2_tools_q2map_full_src, LIBS='l_net', LIBPATH='libs')
+#  q2_tools_env.Depends(q2_tools_q2map_prog, l_net_lib)
+#  q2_tools_env.Install(INSTALL, q2_tools_q2map_prog )
+#
+#  q2_tools_qdata3_prog = q2_tools_env.Program(target='quake2_tools/qdata3', source=q2_tools_qdata3_full_src, LIBS='l_net', LIBPATH='libs')
+#  q2_tools_env.Depends(q2_tools_qdata3_prog, l_net_lib)
+#  q2_tools_env.Install(INSTALL, q2_tools_qdata3_prog )
 
 
 # end q2_tools ----------------------------------------------------------------------
@@ -344,10 +352,12 @@ for i in heretic2_tools_qdata3_common_src + heretic2_tools_qdata3_qcommon_src + 
 
 heretic2_tools_env['CCFLAGS'] += '-D_LINUX '
 
-if ( OS != 'Darwin' ):
-  heretic2_tools_prog = heretic2_tools_env.Program(target='h2data', source=heretic2_tools_qdata3_full_src, LIBS='l_net', LIBPATH='libs')
-  heretic2_tools_env.Depends(heretic2_tools_prog, l_net_lib)
-  heretic2_tools_env.Install(INSTALL + '/heretic2', heretic2_tools_prog )
+# OrbWeaver 2006-03-05
+
+#if ( OS != 'Darwin' ):
+#  heretic2_tools_prog = heretic2_tools_env.Program(target='h2data', source=heretic2_tools_qdata3_full_src, LIBS='l_net', LIBPATH='libs')
+#  heretic2_tools_env.Depends(heretic2_tools_prog, l_net_lib)
+#  heretic2_tools_env.Install(INSTALL + '/heretic2', heretic2_tools_prog )
 
 # end heretic2_tools ----------------------------------------------------------------------
 
