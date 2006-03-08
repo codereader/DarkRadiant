@@ -474,7 +474,7 @@ void DoAbout()
   ModalDialog dialog;
   ModalDialogButton ok_button(dialog, eIDOK);
 
-  GtkWindow* window = create_modal_dialog_window(MainFrame_getWindow(), "About GtkRadiant", dialog);
+  GtkWindow* window = create_modal_dialog_window(MainFrame_getWindow(), "About DarkRadiant", dialog);
 
   {
     GtkVBox* vbox = create_dialog_vbox(4, 4);
@@ -499,16 +499,16 @@ void DoAbout()
       }
 
       {
-        GtkLabel* label = GTK_LABEL(gtk_label_new("GtkRadiant " RADIANT_VERSION "\n"
+		// RADIANT_VERSION set from makeversion.py during build
+        GtkLabel* label = GTK_LABEL(gtk_label_new("DarkRadiant " RADIANT_VERSION "\n"
           __DATE__ "\n\n"
           RADIANT_ABOUTMSG "\n\n"
-          "By qeradiant.com\n\n"
+          "The Dark Mod (www.thedarkmod.com)\n\n"
           "This product contains software technology\n"
           "from id Software, Inc. ('id Technology').\n"
           "id Technology 2000 id Software,Inc.\n\n"
-          "GtkRadiant is unsupported, however\n"
-          "you may report your problems at\n"
-          "http://zerowing.idsoftware.com/bugzilla"
+          "DarkRadiant is based on the GPL version\n"
+          "of GtkRadiant (www.qeradiant.com)\n"
         ));
                        
         gtk_widget_show(GTK_WIDGET(label));
@@ -522,14 +522,6 @@ void DoAbout()
         gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(vbox2), FALSE, TRUE, 0);
         {
           GtkButton* button = create_modal_dialog_button("OK", ok_button);
-          gtk_box_pack_start (GTK_BOX (vbox2), GTK_WIDGET(button), FALSE, FALSE, 0);
-        }
-        {
-          GtkButton* button = create_dialog_button("Credits", G_CALLBACK(about_button_credits), 0);
-          gtk_box_pack_start (GTK_BOX (vbox2), GTK_WIDGET(button), FALSE, FALSE, 0);
-        }
-        {
-          GtkButton* button = create_dialog_button("Changelog", G_CALLBACK(about_button_changelog), 0);
           gtk_box_pack_start (GTK_BOX (vbox2), GTK_WIDGET(button), FALSE, FALSE, 0);
         }
       }
