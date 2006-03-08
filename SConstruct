@@ -56,10 +56,19 @@ print 'SCons ' + SCons.__version__
 
 # system detection -------------------------------
 
-# TODO: detect Darwin / OSX
+# Get the output of a shell command. We cannot use commands.getoutput
+# on Windows.
+
+def runCmd(cmd):
+	stream = os.popen(cmd)
+	return (stream.read(), stream.close()) # return the output and the exit status
+
+# OS
+def getOS():
+	return Environment()['PLATFORM']
 
 # CPU type
-g_cpu = commands.getoutput('uname -m')
+g_cpu = runCmd('uname -m')[0]
 exp = re.compile('.*i?86.*')
 if (g_cpu == 'Power Macintosh' or g_cpu == 'ppc'):
   g_cpu = 'ppc'
@@ -68,13 +77,9 @@ elif exp.match(g_cpu):
 else:
   g_cpu = 'cpu'
 
-# OS
-OS = commands.getoutput('uname')
-print "OS=\"" + OS + "\""
-
-if (OS == 'Linux'):
+if (getOS() == 'posix'):
   # libc .. do the little magic!
-  libc = commands.getoutput('/lib/libc.so.6 |grep "GNU C "|grep version|awk -F "version " \'{ print $2 }\'|cut -b -3')
+  libc = commands.getoutput('/lib/libc.so.6 |grep "GNU C "|grep version|awk -F "version " \'{ print $2 }\'|cut -b -3') # OK to use this on posix
 
 # end system detection ---------------------------
 
@@ -122,10 +127,10 @@ if (SETUP == '1' and BUILD != 'release' and BUILD != 'info'):
   BUILD = 'release'
 
 def GetGCCVersion(name):
-  ret = commands.getstatusoutput('%s -dumpversion' % name)
-  if ( ret[0] != 0 ):
+  ret = runCmd('%s -dumpversion' % name)
+  if ( ret[1] != None ):
     return None
-  vers = string.split(ret[1], '.')
+  vers = string.split(ret[0].strip(), '.')
   if ( len(vers) == 2 ):
     return [ vers[0], vers[1], 0 ]
   elif ( len(vers) == 3 ):
@@ -181,7 +186,7 @@ else:
 	sys.exit( 0 )
 
 LINKFLAGS = ''
-if ( OS == 'Linux' ):
+if ( getOS() == 'posix' ):
 
   # static
   # 2112833 /opt/gtkradiant/radiant.x86
@@ -202,7 +207,7 @@ if ( OS == 'Linux' ):
   
   CXXFLAGS += '-fno-exceptions -fno-rtti '
   LINKFLAGS += '-Wl,-fini,fini_stub -L. -static-libgcc '
-if ( OS == 'Darwin' ):
+if ( getOS() == 'Darwin' ): # won't happen!!
   CCFLAGS += '-force_cpusubtype_ALL -fPIC '
   CXXFLAGS += '-force_cpusubtype_ALL -fPIC -fno-exceptions -fno-rtti '
   CPPPATH.append('/sw/include')
@@ -257,7 +262,7 @@ class idEnvironment(Environment):
     self['LINKFLAGS'] += '-lz '
     
   def usePThread(self):
-    if ( OS == 'Darwin' ):
+    if ( getOS() == 'Darwin' ):
       self['LINKFLAGS'] += '-lpthread -Wl,-stack_size,0x400000 '
     else:
       self['LINKFLAGS'] += '-lpthread '
@@ -298,7 +303,7 @@ class idEnvironment(Environment):
   
   def SharedLibrarySafe(self, target, source, LIBS=[], LIBPATH='.'):
     result = self.SharedLibrary(target, source, LIBS=LIBS, LIBPATH=LIBPATH)
-    if (OS != 'Darwin'):
+    if (getOS() != 'Darwin'):
       AddPostAction(target + '.so', self.CheckLDD)
     return result
 
@@ -307,7 +312,7 @@ g_env = idEnvironment()
 # export the globals
 GLOBALS = 'g_env INSTALL SETUP g_cpu'
 
-radiant_makeversion('\\ngcc version: %s.%s.%s' % ( ver_cc[0], ver_cc[1], ver_cc[2] ) )
+#radiant_makeversion('\\ngcc version: %s.%s.%s' % ( ver_cc[0], ver_cc[1], ver_cc[2] ) )
 
 # end general configuration ----------------------
 
