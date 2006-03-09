@@ -367,10 +367,8 @@ heretic2_tools_env['CCFLAGS'] += '-D_LINUX '
 
 module_env = g_env.Copy()
 module_env['CPPPATH'].append('include')
-if ( OS == 'Darwin' ):
-  module_env['LINKFLAGS'] += '-dynamiclib -ldl '
-else:
-  module_env['LINKFLAGS'] += '-ldl '
+if (module_env['PLATFORM'] == 'posix'):
+    module_env['LINKFLAGS'] += '-ldl ' # do we need this library?
 module_env['LIBPREFIX'] = ''
 
 
@@ -395,7 +393,9 @@ archivewad_env.Install(INSTALL + '/modules', archivewad_lib)
 archivezip_env = module_env.Copy()
 archivezip_lst = build_list('plugins/archivezip', 'plugin.cpp archive.cpp pkzip.cpp zlibstream.cpp')
 archivezip_env.useZLib()
-archivezip_lib = archivezip_env.SharedLibrarySafe(target='archivezip', source=archivezip_lst, LIBS='cmdlib', LIBPATH='libs')
+archivezip_env.Append(LIBPATH = ['libs'])
+archivezip_env.Append(LIBS = ['cmdlib'])
+archivezip_lib = archivezip_env.SharedLibrary(target='archivezip', source=archivezip_lst)
 archivezip_env.Depends(archivezip_lib, cmdlib_lib)
 archivezip_env.Install(INSTALL + '/modules', archivezip_lib)
 

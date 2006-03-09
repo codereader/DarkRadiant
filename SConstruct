@@ -259,7 +259,15 @@ class idEnvironment(Environment):
     self['LINKFLAGS'] += '-lmhash '
   
   def useZLib(self):
-    self['LINKFLAGS'] += '-lz '
+    if (self['PLATFORM'] == 'win32'):
+    	# On Win32 we need to add the local paths, since there is no
+    	# global include/lib path.
+        self.Append(CPPPATH = '#/zlib/include')
+        self.Append(LIBPATH = '#/zlib/lib')
+        if not self.Configure().CheckHeader('zlib.h'):
+        	print "Missing header or library: zlib"
+        	sys.exit(1)
+    self.Append(LIBS = ['z'])
     
   def usePThread(self):
     if ( getOS() == 'Darwin' ):
@@ -320,6 +328,7 @@ GLOBALS = 'g_env INSTALL SETUP g_cpu'
 
 Default('.')
 
+SourceSignatures('timestamp')
 Export('GLOBALS ' + GLOBALS)
 BuildDir(g_build, '.', duplicate = 0)
 SConscript(g_build + '/SConscript')
