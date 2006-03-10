@@ -28,7 +28,7 @@ jpeg_env.Prepend(CPPPATH = 'libs/jpeg6')
 jpeg_src = 'jcomapi.cpp jdcoefct.cpp jdinput.cpp jdpostct.cpp jfdctflt.cpp jpgload.cpp jdapimin.cpp jdcolor.cpp jdmainct.cpp jdsample.cpp jidctflt.cpp jutils.cpp jdapistd.cpp jddctmgr.cpp jdmarker.cpp jdtrans.cpp jmemmgr.cpp jdatasrc.cpp jdhuff.cpp jdmaster.cpp jerror.cpp jmemnobs.cpp'
 jpeg_lib = jpeg_env.StaticLibrary(target='libs/jpeg6', source=build_list('libs/jpeg6', jpeg_src))
 
-l_net_lib = g_env.StaticLibrary(target='libs/l_net', source=['libs/l_net/l_net.c', 'libs/l_net/l_net_berkley.c'])
+#l_net_lib = g_env.StaticLibrary(target='libs/l_net', source=['libs/l_net/l_net.c', 'libs/l_net/l_net_berkley.c'])
 
 picomodel_src = 'picointernal.c picomodel.c picomodules.c pm_3ds.c pm_ase.c pm_md3.c pm_obj.c\
   pm_ms3d.c pm_mdc.c pm_fm.c pm_md2.c pm_lwo.c pm_terrain.c lwo/clip.c lwo/envelope.c lwo/list.c lwo/lwio.c\
@@ -413,13 +413,15 @@ image_env.Depends(image_lib, jpeg_lib)
 image_env.Depends(image_lib, ddslib_lib)
 image_env.Install(INSTALL + '/modules', image_lib)
 
-imagehl_lst=build_list('plugins/imagehl', 'imagehl.cpp hlw.cpp mip.cpp sprite.cpp')
-imagehl_lib = module_env.SharedLibrarySafe(target='imagehl', source=imagehl_lst)
-module_env.Install(INSTALL + '/modules', imagehl_lib)
+# Half-life image lib
+#imagehl_lst=build_list('plugins/imagehl', 'imagehl.cpp hlw.cpp mip.cpp sprite.cpp')
+#imagehl_lib = module_env.SharedLibrary(target='imagehl', source=imagehl_lst)
+#module_env.Install(INSTALL + '/modules', imagehl_lib)
 
-imageq2_lst = build_list('plugins/imageq2', 'imageq2.cpp wal.cpp wal32.cpp')
-imageq2_lib = module_env.SharedLibrarySafe(target='imageq2', source=imageq2_lst)
-module_env.Install(INSTALL + '/modules', imageq2_lib)
+# Pretty sure we don't need this
+#imageq2_lst = build_list('plugins/imageq2', 'imageq2.cpp wal.cpp wal32.cpp')
+#imageq2_lib = module_env.SharedLibrarySafe(target='imageq2', source=imageq2_lst)
+#module_env.Install(INSTALL + '/modules', imageq2_lib)
 
 mapq3_env = module_env.Copy()
 mapq3_lst=build_list('plugins/mapq3', 'plugin.cpp parse.cpp write.cpp')
@@ -430,15 +432,16 @@ mapq3_env.Install(INSTALL + '/modules', mapq3_lib)
 imagepng_env = module_env.Copy()
 imagepng_lst = build_list('plugins/imagepng', 'plugin.cpp')
 imagepng_env.usePNG()
-imagepng_lib = imagepng_env.SharedLibrarySafe(target='imagepng', source=imagepng_lst)
+imagepng_lib = imagepng_env.SharedLibrary(target='imagepng', source=imagepng_lst)
 imagepng_env.Install(INSTALL + '/modules', imagepng_lib)
 
-mapxml_env = module_env.Copy()
-mapxml_lst = build_list('plugins/mapxml', 'plugin.cpp xmlparse.cpp xmlwrite.cpp')
-mapxml_lib = mapxml_env.SharedLibrarySafe(target='mapxml', source=mapxml_lst)
-mapxml_env.useXML2()
-mapxml_env.useGlib2()
-mapxml_env.Install(INSTALL + '/modules', mapxml_lib)
+#Does not yet build on Win32, probably only needed for Q3
+#mapxml_env = module_env.Copy()
+#mapxml_lst = build_list('plugins/mapxml', 'plugin.cpp xmlparse.cpp xmlwrite.cpp')
+#mapxml_env.useXML2()
+#mapxml_env.useGlib2()
+#mapxml_lib = mapxml_env.SharedLibrary(target='mapxml', source=mapxml_lst)
+#mapxml_env.Install(INSTALL + '/modules', mapxml_lib)
 
 model_env = module_env.Copy()
 model_lst = build_list('plugins/model', 'plugin.cpp model.cpp')
@@ -448,11 +451,11 @@ model_env.Depends(model_lib, picomodel_lib)
 model_env.Install(INSTALL + '/modules', model_lib)
 
 md3model_lst=build_list('plugins/md3model', 'plugin.cpp mdl.cpp md3.cpp md2.cpp mdc.cpp mdlimage.cpp md5.cpp')
-md3model_lib = module_env.SharedLibrarySafe(target='md3model', source=md3model_lst)
+md3model_lib = module_env.SharedLibrary(target='md3model', source=md3model_lst)
 module_env.Install(INSTALL + '/modules', md3model_lib)
 
 entity_lst = build_list('plugins/entity', 'plugin.cpp entity.cpp eclassmodel.cpp generic.cpp group.cpp light.cpp miscmodel.cpp doom3group.cpp skincache.cpp angle.cpp angles.cpp colour.cpp filters.cpp model.cpp namedentity.cpp origin.cpp scale.cpp targetable.cpp rotation.cpp modelskinkey.cpp')
-entity_lib = module_env.SharedLibrarySafe(target='entity', source=entity_lst)
+entity_lib = module_env.SharedLibrary(target='entity', source=entity_lst)
 module_env.Install(INSTALL + '/modules', entity_lib)
 
 #bob_env = module_env.Copy()
@@ -594,7 +597,7 @@ radiant_libs = ['mathlib', 'cmdlib', 'l_net', 'profile', 'gtkutil']
 radiant_prog = radiant_env.Program(target='radiant.' + g_cpu, source=radiant_src, LIBS=radiant_libs, LIBPATH='libs')
 radiant_env.Depends(radiant_prog, mathlib_lib)
 radiant_env.Depends(radiant_prog, cmdlib_lib)
-radiant_env.Depends(radiant_prog, l_net_lib)
+#radiant_env.Depends(radiant_prog, l_net_lib)
 radiant_env.Depends(radiant_prog, profile_lib)
 radiant_env.Depends(radiant_prog, gtkutil_lib)
 radiant_env.Install(INSTALL, radiant_prog)

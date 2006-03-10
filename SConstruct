@@ -230,43 +230,67 @@ class idEnvironment(Environment):
       CPPPATH = CPPPATH,
       LINKFLAGS = LINKFLAGS)
 
+    self._configure = self.Configure()
+
   def useGlib2(self):
-    self['CXXFLAGS'] += '`pkg-config glib-2.0 --cflags` '
-    self['CCFLAGS'] += '`pkg-config glib-2.0 --cflags` '
-    self['LINKFLAGS'] += '-lglib-2.0 '
+	# On Win32 we need to add the local paths, since there is no
+	# global include/lib path.
+    if (self['PLATFORM'] == 'win32'):
+        self.Append(CPPPATH = ['#/gtk2.w32/include/glib-2.0', '#/gtk2.w32/lib/glib-2.0/include'])
+        self.Append(LIBPATH = ['#/gtk2.w32/lib'])
+    	self.Append(LIBS = ['glib-2.0'])
+    else: # Assume Linux
+		self.Append(CXXFLAGS = '`pkg-config glib-2.0 --cflags` ')
+		self.Append(CFLAGS = '`pkg-config glib-2.0 --cflags` ')
+		self.Append(LINKFLAGS = '`pkg-config glib-2.0 --libs` ')
     
   def useXML2(self):
-    self['CXXFLAGS'] += '`xml2-config --cflags` '      
-    self['CCFLAGS'] += '`xml2-config --cflags` '      
-    self['LINKFLAGS'] += '-lxml2 '
+    if (self['PLATFORM'] == 'win32'):
+		self.Append(CPPPATH = ['#/libxml2.w32/include'])
+		self.Append(LIBPATH = ['#/libxml2.w32/lib'])
+		self.Append(LIBS = ['libxml2'])
+    else: # Linux
+		self.Append(CXXFLAGS = '`xml2-config --cflags` ')
+		self.Append(CFLAGS = '`xml2-config --cflags` ')
+		self.Append(LINKFLAGS = '`xml2-config --libs` ')
 
   def useGtk2(self):
-    self['CXXFLAGS'] += '`pkg-config gtk+-2.0 --cflags` '
-    self['CCFLAGS'] += '`pkg-config gtk+-2.0 --cflags` '
-    self['LINKFLAGS'] += '-lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lpango-1.0 -lgdk_pixbuf-2.0 '
+    if (self['PLATFORM'] == 'win32'):
+        self.Append(CPPPATH = ['#/gtk2.w32/include/gtk-2.0', '#/gtk2.w32/lib/gtk-2.0/include', '#/gtk2.w32/include/pango-1.0', '#/gtk2.w32/include/atk-1.0'])
+        self.Append(LIBPATH = ['#/gtk2.w32/lib'])
+        self.Append(LIBS = ['gtk-win32-2.0', 'gdk-win32-2.0', 'atk-1.0', 'pango-1.0', 'gdk_pixbuf-2.0'])
+    else: # Assume X11
+    	self.Append(CXXFLAGS = '`pkg-config gtk+-2.0 --cflags` ')
+    	self.Append(CFLAGS = '`pkg-config gtk+-2.0 --cflags` ')
+    	self.Append(LINKFLAGS = '`pkg-config gtk+-2.0 --libs` ')
    
   def useGtkGLExt(self):
-    self['CXXFLAGS'] += '`pkg-config gtkglext-1.0 --cflags` '
-    self['CCFLAGS'] += '`pkg-config gtkglext-1.0 --cflags` '
-    self['LINKFLAGS'] += '-lgtkglext-x11-1.0 -lgdkglext-x11-1.0 '      
+    if (self['PLATFORM'] == 'win32'):
+        self.Append(CPPPATH = ['#/gtk2.w32/include/gtkglext-1.0', '#/gtk2.w32/lib/gtkglext-1.0/include'])
+        self.Append(LIBPATH = ['#/gtk2.w32/lib'])
+        self.Append(LIBS = ['gtkglext-win32-1.0', 'gdkglext-win32-1.0'])
+    else: # Assume X11
+		self.Append(CXXFLAGS = '`pkg-config gtkglext-1.0 --cflags` ')
+		self.Append(CFLAGS = '`pkg-config gtkglext-1.0 --cflags` ')
+		self.Append(LINKFLAGS = '`pkg-config gtkglext-1.0 --libs` ')
     
   def usePNG(self):
-    self['CXXFLAGS'] += '`libpng-config --cflags` '
-    self['CCFLAGS'] += '`libpng-config --cflags` '
-    self['LINKFLAGS'] += '`libpng-config --ldflags` '
+    self.useZLib() # libPNG requires ZLib
+    if (self['PLATFORM'] == 'win32'):
+        self.Append(CPPPATH = '#/libpng.w32/include')
+        self.Append(LIBPATH = '#/libpng.w32/lib')
+    else: # Linux
+    	self.Append(CXXFLAGS = '`libpng-config --cflags` ')
+    	self.Append(CFLAGS = '`libpng-config --cflags` ')
+    self.Append(LIBS = ['png'])
     
   def useMHash(self):
     self['LINKFLAGS'] += '-lmhash '
   
   def useZLib(self):
     if (self['PLATFORM'] == 'win32'):
-    	# On Win32 we need to add the local paths, since there is no
-    	# global include/lib path.
-        self.Append(CPPPATH = '#/zlib/include')
-        self.Append(LIBPATH = '#/zlib/lib')
-        if not self.Configure().CheckHeader('zlib.h'):
-        	print "Missing header or library: zlib"
-        	sys.exit(1)
+        self.Append(CPPPATH = '#/zlib.w32/include')
+        self.Append(LIBPATH = '#/zlib.w32/lib')
     self.Append(LIBS = ['z'])
     
   def usePThread(self):
@@ -332,6 +356,6 @@ SourceSignatures('timestamp')
 Export('GLOBALS ' + GLOBALS)
 BuildDir(g_build, '.', duplicate = 0)
 SConscript(g_build + '/SConscript')
-os.system('python ./install.py')
+#os.system('python ./install.py')
 
 # end targets ------------------------------------
