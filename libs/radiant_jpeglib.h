@@ -19,12 +19,6 @@ extern "C"
 {
 #endif
 
-// LZ: linux stuff
-#if defined (__linux__) || defined (__APPLE__)
-
-#include <stdio.h>
-#include <stdlib.h>
-
 #ifndef boolean
 #ifdef __cplusplus
 #define	boolean	bool
@@ -32,6 +26,12 @@ extern "C"
 typedef int boolean;
 #endif
 #endif
+
+// LZ: linux stuff
+#if defined (__linux__) || defined (__APPLE__)
+
+#include <stdio.h>
+#include <stdlib.h>
 
 #endif
 
