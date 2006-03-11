@@ -277,8 +277,8 @@ class idEnvironment(Environment):
   def usePNG(self):
     self.useZLib() # libPNG requires ZLib
     if (self['PLATFORM'] == 'win32'):
-        self.Append(CPPPATH = '#/libpng.w32/include')
-        self.Append(LIBPATH = '#/libpng.w32/lib')
+        self.Append(CPPPATH = ['#/libpng.w32/include'])
+        self.Append(LIBPATH = ['#/libpng.w32/lib'])
     else: # Linux
     	self.Append(CXXFLAGS = '`libpng-config --cflags` ')
     	self.Append(CFLAGS = '`libpng-config --cflags` ')
@@ -289,8 +289,8 @@ class idEnvironment(Environment):
   
   def useZLib(self):
     if (self['PLATFORM'] == 'win32'):
-        self.Append(CPPPATH = '#/zlib.w32/include')
-        self.Append(LIBPATH = '#/zlib.w32/lib')
+        self.Append(CPPPATH = ['#/zlib.w32/include'])
+        self.Append(LIBPATH = ['#/zlib.w32/lib'])
     self.Append(LIBS = ['z'])
     
   def usePThread(self):
