@@ -28,7 +28,7 @@ jpeg_env.Prepend(CPPPATH = 'libs/jpeg6')
 jpeg_src = 'jcomapi.cpp jdcoefct.cpp jdinput.cpp jdpostct.cpp jfdctflt.cpp jpgload.cpp jdapimin.cpp jdcolor.cpp jdmainct.cpp jdsample.cpp jidctflt.cpp jutils.cpp jdapistd.cpp jddctmgr.cpp jdmarker.cpp jdtrans.cpp jmemmgr.cpp jdatasrc.cpp jdhuff.cpp jdmaster.cpp jerror.cpp jmemnobs.cpp'
 jpeg_lib = jpeg_env.StaticLibrary(target='libs/jpeg6', source=build_list('libs/jpeg6', jpeg_src))
 
-#l_net_lib = g_env.StaticLibrary(target='libs/l_net', source=['libs/l_net/l_net.c', 'libs/l_net/l_net_berkley.c'])
+l_net_lib = g_env.StaticLibrary(target='libs/l_net', source=['libs/l_net/l_net.c', 'libs/l_net/l_net_berkley.c'])
 
 picomodel_src = 'picointernal.c picomodel.c picomodules.c pm_3ds.c pm_ase.c pm_md3.c pm_obj.c\
   pm_ms3d.c pm_mdc.c pm_fm.c pm_md2.c pm_lwo.c pm_terrain.c lwo/clip.c lwo/envelope.c lwo/list.c lwo/lwio.c\
@@ -498,7 +498,8 @@ module_env.Install(INSTALL + '/modules', entity_lib)
 
 radiant_env = g_env.Copy()
 radiant_env['CPPPATH'].append('include')
-radiant_env['LINKFLAGS'] += '-ldl -lGL '
+if radiant_env['PLATFORM'] == 'posix':
+    radiant_env['LINKFLAGS'] += '-ldl'
 if ( OS == 'Darwin' ):
   radiant_env['CXXFLAGS'] += '-fno-common '
   radiant_env['CCFLAGS'] += '-fno-common '
@@ -508,6 +509,7 @@ radiant_env.useGlib2()
 radiant_env.useXML2()
 radiant_env.useGtk2()
 radiant_env.useGtkGLExt()
+radiant_env.useOpenGL()
 
 radiant_src = [
 'autosave.cpp',
@@ -550,6 +552,7 @@ radiant_src = [
 'mainframe.cpp',
 'map.cpp',
 'mru.cpp',
+'multimon.cpp',
 'nullmodel.cpp',
 'parse.cpp',
 'patch.cpp',
@@ -593,11 +596,12 @@ radiant_src = [
 for i in range(len(radiant_src)):
   radiant_src[i] = 'radiant/' + radiant_src[i]
 
-radiant_libs = ['mathlib', 'cmdlib', 'l_net', 'profile', 'gtkutil']
-radiant_prog = radiant_env.Program(target='radiant.' + g_cpu, source=radiant_src, LIBS=radiant_libs, LIBPATH='libs')
+radiant_env.Append(LIBS = ['mathlib', 'cmdlib', 'profile', 'gtkutil'])
+radiant_env.Append(LIBPATH = ['libs'])
+radiant_prog = radiant_env.Program(target='darkradiant.' + g_cpu, source=radiant_src)
 radiant_env.Depends(radiant_prog, mathlib_lib)
 radiant_env.Depends(radiant_prog, cmdlib_lib)
-#radiant_env.Depends(radiant_prog, l_net_lib)
+radiant_env.Depends(radiant_prog, l_net_lib)
 radiant_env.Depends(radiant_prog, profile_lib)
 radiant_env.Depends(radiant_prog, gtkutil_lib)
 radiant_env.Install(INSTALL, radiant_prog)
