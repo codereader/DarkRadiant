@@ -152,7 +152,7 @@ void environment_init(int argc, char* argv[])
 #ifdef WIN32
 
 #include <windows.h>
-#include <shfolder.h>
+//#include <shfolder.h>
 
 void environment_init(int argc, char* argv[])
 {
@@ -160,7 +160,10 @@ void environment_init(int argc, char* argv[])
 
   {
     char appdata[MAX_PATH+1];
-    SHGetFolderPath(0, CSIDL_APPDATA, 0, 0, appdata);
+//	Removed to avoid dependence on MS SDK.
+// TODO: Implement proper solution to this
+// - OrbWeaver 20060312
+//    SHGetFolderPath(0, CSIDL_APPDATA, 0, 0, appdata);
 
     StringOutputStream home(256);
     if(string_empty(appdata))
