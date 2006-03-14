@@ -36,20 +36,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "l_net.h"
 #include "l_net_wins.h"
 
-#include <sys/types.h>
+#include <errno.h>
+
+#ifdef WIN32
+
+#include <winsock.h>
+#include <winsock2.h>
+
+#else 
+
 #include <sys/socket.h>
 #include <sys/ioctl.h>
+#include <sys/types.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
-#include <errno.h>
 #include <netdb.h>
-#define SOCKET_ERROR -1
-#define INVALID_SOCKET -1
-
-#define WinError WinPrint
-
-#define qtrue	1
-#define qfalse	0
 
 #define ioctlsocket ioctl
 #define closesocket close
@@ -58,6 +59,15 @@ int WSAGetLastError()
 {
 	return errno;
 }
+
+#define SOCKET_ERROR -1
+#define INVALID_SOCKET -1
+
+#endif // End of Non-Win32 section
+
+#define WinError WinPrint
+#define qtrue	1
+#define qfalse	0
 
 /*
 typedef struct tag_error_struct
@@ -91,6 +101,25 @@ static struct sockaddr_s broadcastaddr;
 
 static unsigned long myAddr;
 
+#ifdef WIN32
+
+ERROR_STRUCT errlist[] = {
+  {WSAEACCES,"EACCES - The address is protected, user is not root"},
+  {WSAEWOULDBLOCK,"EAGAIN - Operation on non-blocking socket that cannot return immediatly"},
+  {WSAEBADF, "EBADF - sockfd is not a valid descriptor"},
+  {WSAEFAULT, "EFAULT - The parameter is not in a writable part of the user address space"},
+  {WSAEINVAL,"EINVAL - The socket is already bound to an address"},
+  {WSAENOBUFS,"ENOBUFS - not enough memory"},
+  {ENOMEM, "ENOMEM - not enough memory"},
+  {WSAENOTCONN, "ENOTCONN - not connected"},
+  {WSAENOTSOCK,"ENOTSOCK - Argument is file descriptor not a socket"},
+  {WSAEOPNOTSUPP,"ENOTSUPP - The referenced socket is not of type SOCK_STREAM"},
+  {EPERM, "EPERM - Firewall rules forbid connection"},
+  {-1, NULL}
+};
+
+#else
+
 ERROR_STRUCT errlist[] = {
   {EACCES,"EACCES - The address is protected, user is not root"},
   {EAGAIN,"EAGAIN - Operation on non-blocking socket that cannot return immediatly"},
@@ -105,6 +134,8 @@ ERROR_STRUCT errlist[] = {
   {EPERM, "EPERM - Firewall rules forbid connection"},
   {-1, NULL}
 };
+
+#endif
 
 //===========================================================================
 //
@@ -504,10 +535,15 @@ int WINS_Read(int socket, byte *buf, int len, struct sockaddr_s *addr)
 		ret = recvfrom(socket, buf, len, 0, (struct sockaddr *)addr, &addrlen);
 		if (ret == -1)
 		{
-//			errno = WSAGetLastError();
+#ifdef WIN32
+			errno = WSAGetLastError();
+			if (errno == WSAEWOULDBLOCK || errno == WSAENOTCONN)
+				return 0;
 
+#else
 			if (errno == EAGAIN || errno == ENOTCONN)
 				return 0;
+#endif
 		} //end if
 	} //end if
 	else
@@ -520,10 +556,14 @@ int WINS_Read(int socket, byte *buf, int len, struct sockaddr_s *addr)
       return -1;
 		if (ret == SOCKET_ERROR)
 		{
-//			errno = WSAGetLastError();
-
+#ifdef WIN32			
+			errno = WSAGetLastError();
+			if (errno == WSAEWOULDBLOCK || errno == WSAENOTCONN)
+				return 0;
+#else
 			if (errno == EAGAIN || errno == ENOTCONN)
 				return 0;
+#endif
 		} //end if
 	} //end else
 	if (ret == SOCKET_ERROR)
