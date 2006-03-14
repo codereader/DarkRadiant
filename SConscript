@@ -499,7 +499,7 @@ module_env.Install(INSTALL + '/modules', entity_lib)
 radiant_env = g_env.Copy()
 radiant_env['CPPPATH'].append('include')
 if radiant_env['PLATFORM'] == 'posix':
-    radiant_env['LINKFLAGS'] += '-ldl'
+    radiant_env['LINKFLAGS'] += '-ldl '
 if ( OS == 'Darwin' ):
   radiant_env['CXXFLAGS'] += '-fno-common '
   radiant_env['CCFLAGS'] += '-fno-common '
@@ -552,7 +552,6 @@ radiant_src = [
 'mainframe.cpp',
 'map.cpp',
 'mru.cpp',
-'multimon.cpp',
 'nullmodel.cpp',
 'parse.cpp',
 'patch.cpp',
