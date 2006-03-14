@@ -375,18 +375,18 @@ module_env['LIBPREFIX'] = ''
 vfspk3_env = module_env.Copy()
 vfspk3_lst = build_list('plugins/vfspk3', 'vfspk3.cpp vfs.cpp archive.cpp')
 vfspk3_env.useGlib2()
-vfspk3_lib = vfspk3_env.SharedLibrarySafe(target='vfspk3', source=vfspk3_lst)
+vfspk3_lib = vfspk3_env.SharedLibrary(target='vfspk3', source=vfspk3_lst)
 vfspk3_env.Install(INSTALL + '/modules', vfspk3_lib)
 
 archivepak_env = module_env.Copy()
 archivepak_lst = build_list('plugins/archivepak', 'plugin.cpp archive.cpp pak.cpp')
-archivepak_lib = archivepak_env.SharedLibrarySafe(target='archivepak', source=archivepak_lst, LIBS='cmdlib', LIBPATH='libs')
+archivepak_lib = archivepak_env.SharedLibrary(target='archivepak', source=archivepak_lst, LIBS='cmdlib', LIBPATH='libs')
 archivepak_env.Depends(archivepak_lib, cmdlib_lib)
 archivepak_env.Install(INSTALL + '/modules', archivepak_lib)
 
 archivewad_env = module_env.Copy()
 archivewad_lst = build_list('plugins/archivewad', 'plugin.cpp archive.cpp wad.cpp')
-archivewad_lib = archivewad_env.SharedLibrarySafe(target='archivewad', source=archivewad_lst, LIBS='cmdlib', LIBPATH='libs')
+archivewad_lib = archivewad_env.SharedLibrary(target='archivewad', source=archivewad_lst, LIBS='cmdlib', LIBPATH='libs')
 archivewad_env.Depends(archivewad_lib, cmdlib_lib)
 archivewad_env.Install(INSTALL + '/modules', archivewad_lib)
 
@@ -402,13 +402,13 @@ archivezip_env.Install(INSTALL + '/modules', archivezip_lib)
 shaders_env = module_env.Copy()
 shaders_lst = build_list('plugins/shaders', 'shaders.cpp plugin.cpp')
 shaders_env.useGlib2()
-shaders_lib = shaders_env.SharedLibrarySafe(target='shaders', source=shaders_lst, LIBS='cmdlib', LIBPATH='libs')
+shaders_lib = shaders_env.SharedLibrary(target='shaders', source=shaders_lst, LIBS='cmdlib', LIBPATH='libs')
 shaders_env.Depends(shaders_lib, cmdlib_lib)
 shaders_env.Install(INSTALL + '/modules', shaders_lib)
 
 image_env = module_env.Copy()
 image_lst = build_list('plugins/image', 'bmp.cpp jpeg.cpp image.cpp pcx.cpp tga.cpp dds.cpp')
-image_lib = image_env.SharedLibrarySafe(target='image', source=image_lst, LIBS=['jpeg6', 'ddslib'], LIBPATH='libs')
+image_lib = image_env.SharedLibrary(target='image', source=image_lst, LIBS=['jpeg6', 'ddslib'], LIBPATH='libs')
 image_env.Depends(image_lib, jpeg_lib)
 image_env.Depends(image_lib, ddslib_lib)
 image_env.Install(INSTALL + '/modules', image_lib)
@@ -425,7 +425,7 @@ image_env.Install(INSTALL + '/modules', image_lib)
 
 mapq3_env = module_env.Copy()
 mapq3_lst=build_list('plugins/mapq3', 'plugin.cpp parse.cpp write.cpp')
-mapq3_lib = mapq3_env.SharedLibrarySafe(target='mapq3', source=mapq3_lst, LIBS='cmdlib', LIBPATH='libs')
+mapq3_lib = mapq3_env.SharedLibrary(target='mapq3', source=mapq3_lst, LIBS='cmdlib', LIBPATH='libs')
 mapq3_env.Depends(mapq3_lib, cmdlib_lib)
 mapq3_env.Install(INSTALL + '/modules', mapq3_lib)
 
@@ -445,7 +445,7 @@ imagepng_env.Install(INSTALL + '/modules', imagepng_lib)
 
 model_env = module_env.Copy()
 model_lst = build_list('plugins/model', 'plugin.cpp model.cpp')
-model_lib = model_env.SharedLibrarySafe(target='model', source=model_lst, LIBS=['mathlib', 'picomodel'], LIBPATH='libs')
+model_lib = model_env.SharedLibrary(target='model', source=model_lst, LIBS=['mathlib', 'picomodel'], LIBPATH='libs')
 model_env.Depends(model_lib, mathlib_lib)
 model_env.Depends(model_lib, picomodel_lib)
 model_env.Install(INSTALL + '/modules', model_lib)
@@ -596,8 +596,14 @@ radiant_src = [
 for i in range(len(radiant_src)):
   radiant_src[i] = 'radiant/' + radiant_src[i]
 
-radiant_env.Append(LIBS = ['mathlib', 'cmdlib', 'profile', 'gtkutil'])
-radiant_env.Append(LIBPATH = ['libs'])
+radiant_env.Prepend(LIBS = ['mathlib', 'cmdlib', 'profile', 'gtkutil', 'l_net'])
+radiant_env.Prepend(LIBPATH = ['libs'])
+
+# Win32 libs
+
+if radiant_env['PLATFORM'] == 'win32':
+    radiant_env.Append(LIBS = ['ws2_32', 'comdlg32'])
+
 radiant_prog = radiant_env.Program(target='darkradiant.' + g_cpu, source=radiant_src)
 radiant_env.Depends(radiant_prog, mathlib_lib)
 radiant_env.Depends(radiant_prog, cmdlib_lib)

@@ -219,133 +219,106 @@ CPPPATH.append('libs')
 # extend the standard Environment a bit
 class idEnvironment(Environment):
 
-  def __init__(self):
-    Environment.__init__(self,
-      ENV = os.environ, 
-      CC = CC,
-      CXX = CXX,
-      LINK = LINK,
-      CCFLAGS = CCFLAGS,
-      CXXFLAGS = CXXFLAGS,
-      CPPPATH = CPPPATH,
-      LINKFLAGS = LINKFLAGS)
+	def __init__(self):
+		Environment.__init__(self,
+			ENV = os.environ, 
+			CC = CC,
+			CXX = CXX,
+			LINK = LINK,
+			CCFLAGS = CCFLAGS,
+			CXXFLAGS = CXXFLAGS,
+			CPPPATH = CPPPATH,
+			LINKFLAGS = LINKFLAGS)
 
 #    if (self['PLATFORM'] == 'win32'):
 #    	# Extra init stuff for Windows build
 #    	self.Append(CPPPATH = ['C:\Program Files\Microsoft Platform SDK\Include'])
     
-  def useGlib2(self):
+	def useGlib2(self):
 	# On Win32 we need to add the local paths, since there is no
 	# global include/lib path.
-    if (self['PLATFORM'] == 'win32'):
-        self.Append(CPPPATH = ['#/gtk2.w32/include/glib-2.0', '#/gtk2.w32/lib/glib-2.0/include'])
-        self.Append(LIBPATH = ['#/gtk2.w32/lib'])
-    	self.Append(LIBS = ['glib-2.0', 'gobject-2.0'])
-    else: # Assume Linux
-		self.Append(CXXFLAGS = '`pkg-config glib-2.0 --cflags` ')
-		self.Append(CFLAGS = '`pkg-config glib-2.0 --cflags` ')
-		self.Append(LINKFLAGS = '`pkg-config glib-2.0 --libs` ')
-    
-  def useXML2(self):
-    if (self['PLATFORM'] == 'win32'):
-		self.Append(CPPPATH = ['#/libxml2.w32/include'])
-		self.Append(LIBPATH = ['#/libxml2.w32/lib'])
-		self.Append(LIBS = ['libxml2'])
-    else: # Linux
-		self.Append(CXXFLAGS = '`xml2-config --cflags` ')
-		self.Append(CFLAGS = '`xml2-config --cflags` ')
-		self.Append(LINKFLAGS = '`xml2-config --libs` ')
+		if (self['PLATFORM'] == 'win32'):
+			self.Append(CPPPATH = ['#/gtk2.w32/include/glib-2.0', '#/gtk2.w32/lib/glib-2.0/include'])
+			self.Append(LIBPATH = ['#/gtk2.w32/lib'])
+			self.Append(LIBS = ['glib-2.0', 'gobject-2.0'])
+		else: # Assume Linux
+			self.Append(CXXFLAGS = '`pkg-config glib-2.0 --cflags` ')
+			self.Append(CFLAGS = '`pkg-config glib-2.0 --cflags` ')
+			self.Append(LINKFLAGS = '`pkg-config glib-2.0 --libs` ')
 
-  def useGtk2(self):
-    if (self['PLATFORM'] == 'win32'):
-        self.Append(CPPPATH = ['#/gtk2.w32/include/gtk-2.0', '#/gtk2.w32/lib/gtk-2.0/include', '#/gtk2.w32/include/pango-1.0', '#/gtk2.w32/include/atk-1.0'])
-        self.Append(LIBPATH = ['#/gtk2.w32/lib'])
-        self.Append(LIBS = ['gtk-win32-2.0', 'gdk-win32-2.0', 'atk-1.0', 'pango-1.0', 'pangowin32-1.0', 'gmodule-2.0', 'gthread-2.0', 'gdk_pixbuf-2.0'])
-    else: # Assume X11
-    	self.Append(CXXFLAGS = '`pkg-config gtk+-2.0 --cflags` ')
-    	self.Append(CFLAGS = '`pkg-config gtk+-2.0 --cflags` ')
-    	self.Append(LINKFLAGS = '`pkg-config gtk+-2.0 --libs` ')
+	def useW32Iconv(self):
+		self.Append(LIBPATH = ['#/libiconv.w32/lib'])
+		self.Append(LIBS = ['iconv'])
+
+	def useMSVC(self):
+		self.Append(LIBPATH = ['#/msvc_redist'])
+		self.Append(LIBS = ['msvcr71'])
+    
+	def useXML2(self):
+		if (self['PLATFORM'] == 'win32'):
+			self.Append(CCFLAGS = '-DLIBXML_STATIC ')
+			self.Append(CXXFLAGS = '-DLIBXML_STATIC ')
+			self.Append(CPPPATH = ['#/libxml2.w32/include'])
+			self.Append(LIBPATH = ['#/libxml2.w32/lib'])
+			self.Append(LIBS = ['libxml2_a'])
+			self.useZLib()
+			self.useW32Iconv()
+			self.useMSVC()
+		else: # Linux
+			self.Append(CXXFLAGS = '`xml2-config --cflags` ')
+			self.Append(CFLAGS = '`xml2-config --cflags` ')
+			self.Append(LINKFLAGS = '`xml2-config --libs` ')
+
+	def useGtk2(self):
+		if (self['PLATFORM'] == 'win32'):
+			self.Append(CPPPATH = ['#/gtk2.w32/include/gtk-2.0', '#/gtk2.w32/lib/gtk-2.0/include', '#/gtk2.w32/include/pango-1.0', '#/gtk2.w32/include/atk-1.0'])
+			self.Append(LIBPATH = ['#/gtk2.w32/lib'])
+			self.Append(LIBS = ['gtk-win32-2.0', 'gdk-win32-2.0', 'atk-1.0', 'pango-1.0', 'pangowin32-1.0', 'pangoft2-1.0', 'gmodule-2.0', 'gthread-2.0', 'gdk_pixbuf-2.0'])
+		else: # Assume X11
+			self.Append(CXXFLAGS = '`pkg-config gtk+-2.0 --cflags` ')
+			self.Append(CFLAGS = '`pkg-config gtk+-2.0 --cflags` ')
+			self.Append(LINKFLAGS = '`pkg-config gtk+-2.0 --libs` ')
    
-  def useGtkGLExt(self):
-    if (self['PLATFORM'] == 'win32'):
-        self.Append(CPPPATH = ['#/gtk2.w32/include/gtkglext-1.0', '#/gtk2.w32/lib/gtkglext-1.0/include'])
-        self.Append(LIBPATH = ['#/gtk2.w32/lib'])
-        self.Append(LIBS = ['gtkglext-win32-1.0', 'gdkglext-win32-1.0'])
-    else: # Assume X11
-		self.Append(CXXFLAGS = '`pkg-config gtkglext-1.0 --cflags` ')
-		self.Append(CFLAGS = '`pkg-config gtkglext-1.0 --cflags` ')
-		self.Append(LINKFLAGS = '`pkg-config gtkglext-1.0 --libs` ')
+	def useGtkGLExt(self):
+		if (self['PLATFORM'] == 'win32'):
+			self.Append(CPPPATH = ['#/gtk2.w32/include/gtkglext-1.0', '#/gtk2.w32/lib/gtkglext-1.0/include'])
+			self.Append(LIBPATH = ['#/gtk2.w32/lib'])
+			self.Append(LIBS = ['gtkglext-win32-1.0', 'gdkglext-win32-1.0'])
+		else: # Assume X11
+			self.Append(CXXFLAGS = '`pkg-config gtkglext-1.0 --cflags` ')
+			self.Append(CFLAGS = '`pkg-config gtkglext-1.0 --cflags` ')
+			self.Append(LINKFLAGS = '`pkg-config gtkglext-1.0 --libs` ')
     
-  def useOpenGL(self):
-  	if (self['PLATFORM'] == 'win32'):
-  		self.Append(LIBS = ['opengl32', 'glu32', 'glaux', 'glut32', 'gdi32']) # MinGW libs
-	else:
-		self.Append(LIBS = ['GL'])
+	def useOpenGL(self):
+		if (self['PLATFORM'] == 'win32'):
+			self.Append(LIBS = ['opengl32', 'glu32', 'glaux', 'glut32', 'gdi32']) # MinGW libs
+		else:
+			self.Append(LIBS = ['GL'])
 
-  def usePNG(self):
-    self.useZLib() # libPNG requires ZLib
-    if (self['PLATFORM'] == 'win32'):
-        self.Append(CPPPATH = ['#/libpng.w32/include'])
-        self.Append(LIBPATH = ['#/libpng.w32/lib'])
-    else: # Linux
-    	self.Append(CXXFLAGS = '`libpng-config --cflags` ')
-    	self.Append(CFLAGS = '`libpng-config --cflags` ')
-    self.Append(LIBS = ['png'])
+	def usePNG(self):
+		self.useZLib() # libPNG requires ZLib
+		if (self['PLATFORM'] == 'win32'):
+			self.Append(CPPPATH = ['#/libpng.w32/include'])
+			self.Append(LIBPATH = ['#/libpng.w32/lib'])
+		else: # Linux
+			self.Append(CXXFLAGS = '`libpng-config --cflags` ')
+			self.Append(CFLAGS = '`libpng-config --cflags` ')
+		self.Append(LIBS = ['png'])
     
-  def useMHash(self):
-    self['LINKFLAGS'] += '-lmhash '
+	def useMHash(self):
+		self['LINKFLAGS'] += '-lmhash '
   
-  def useZLib(self):
-    if (self['PLATFORM'] == 'win32'):
-        self.Append(CPPPATH = ['#/zlib.w32/include'])
-        self.Append(LIBPATH = ['#/zlib.w32/lib'])
-    self.Append(LIBS = ['z'])
+	def useZLib(self):
+		if (self['PLATFORM'] == 'win32'):
+			self.Append(CPPPATH = ['#/zlib.w32/include'])
+			self.Append(LIBPATH = ['#/zlib.w32/lib'])
+		self.Append(LIBS = ['z'])
     
-  def usePThread(self):
-    if ( getOS() == 'Darwin' ):
-      self['LINKFLAGS'] += '-lpthread -Wl,-stack_size,0x400000 '
-    else:
-      self['LINKFLAGS'] += '-lpthread '
-
-  def CheckLDD(self, target, source, env):
-    file = target[0]
-    if (not os.path.isfile(file.abspath)):
-        print('ERROR: CheckLDD: target %s not found\n' % target[0])
-        Exit(1)
-    # not using os.popen3 as I want to check the return code
-    ldd = popen2.Popen3('`which ldd` -r %s' % target[0], 1)
-    stdout_lines = ldd.fromchild.readlines()
-    stderr_lines = ldd.childerr.readlines()
-    ldd_ret = ldd.wait()
-    del ldd
-    have_undef = 0
-    if ( ldd_ret != 0 ):
-        print "ERROR: ldd command returned with exit code %d" % ldd_ret
-        os.system('rm %s' % target[0])
-        Exit()
-    for i_line in stderr_lines:
-        print repr(i_line)
-        regex = re.compile('undefined symbol: (.*)\t\\((.*)\\)\n')
-        if ( regex.match(i_line) ):
-            symbol = regex.sub('\\1', i_line)
-            try:
-                env['ALLOWED_SYMBOLS'].index(symbol)
-            except:
-                have_undef = 1
-        else:
-            print "ERROR: failed to parse ldd stderr line: %s" % i_line
-            os.system('rm %s' % target[0])
-            Exit(1)
-    if ( have_undef ):
-        print "ERROR: undefined symbols"
-        os.system('rm %s' % target[0])
-        Exit(1)
-  
-  def SharedLibrarySafe(self, target, source, LIBS=[], LIBPATH='.'):
-    result = self.SharedLibrary(target, source, LIBS=LIBS, LIBPATH=LIBPATH)
-    if (getOS() != 'Darwin'):
-      AddPostAction(target + '.so', self.CheckLDD)
-    return result
+	def usePThread(self):
+		if ( getOS() == 'Darwin' ):
+			self['LINKFLAGS'] += '-lpthread -Wl,-stack_size,0x400000 '
+		else:
+			self['LINKFLAGS'] += '-lpthread '
 
 g_env = idEnvironment()
 
