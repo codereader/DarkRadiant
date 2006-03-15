@@ -228,12 +228,9 @@ class idEnvironment(Environment):
 			CCFLAGS = CCFLAGS,
 			CXXFLAGS = CXXFLAGS,
 			CPPPATH = CPPPATH,
-			LINKFLAGS = LINKFLAGS)
+			LINKFLAGS = LINKFLAGS,
+			TOOLS = ['mingw', 'g++']) # don't want Scons to choose MSVC on Win32
 
-#    if (self['PLATFORM'] == 'win32'):
-#    	# Extra init stuff for Windows build
-#    	self.Append(CPPPATH = ['C:\Program Files\Microsoft Platform SDK\Include'])
-    
 	def useGlib2(self):
 	# On Win32 we need to add the local paths, since there is no
 	# global include/lib path.
@@ -260,10 +257,10 @@ class idEnvironment(Environment):
 			self.Append(CXXFLAGS = '-DLIBXML_STATIC ')
 			self.Append(CPPPATH = ['#/libxml2.w32/include'])
 			self.Append(LIBPATH = ['#/libxml2.w32/lib'])
-			self.Append(LIBS = ['libxml2_a'])
+			self.Append(LIBS = ['libxml2'])
 			self.useZLib()
 			self.useW32Iconv()
-			self.useMSVC()
+			#self.useMSVC()
 		else: # Linux
 			self.Append(CXXFLAGS = '`xml2-config --cflags` ')
 			self.Append(CFLAGS = '`xml2-config --cflags` ')
