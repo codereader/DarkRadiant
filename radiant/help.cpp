@@ -93,12 +93,20 @@ void process_xlink(const char* filename, const char *menu_name, const char *base
 
             mHelpURLs.push_back(url);
 
+#ifdef WIN32
+			free(prop);
+#else
             xmlFree(prop);
+#endif     
             
             prop = xmlGetProp(pNode, reinterpret_cast<const xmlChar*>("name"));
             ASSERT_NOTNULL(prop);
             create_menu_item_with_mnemonic(menu_in_menu, reinterpret_cast<const char*>(prop), ReferenceCaller<CopiedString, HandleHelpCommand>(mHelpURLs.back()));
+#ifdef WIN32
+			free(prop);
+#else
             xmlFree(prop);
+#endif     
           }
           pNode=pNode->next;
         }

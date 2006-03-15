@@ -248,7 +248,7 @@ public:
   bool handleMessage()
   {
     getOutputStream() << "----------------\n";
-    write_stack_trace(getOutputStream());
+    //write_stack_trace(getOutputStream());
     getOutputStream() << "----------------\n";
     if(!m_lock.locked())
     {
