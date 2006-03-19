@@ -67,8 +67,11 @@ void AddCameraMovedCallback(const Callback& callback)
   g_cameraMoved_callbacks.push_back(callback);
 }
 
+#include <iostream>
+
 void CameraMovedNotify()
 {
+	std::cout << "The camera has moved" << std::endl;
   std::for_each(g_cameraMoved_callbacks.begin(), g_cameraMoved_callbacks.end(), CallbackInvoke());
 }
 
@@ -165,7 +168,7 @@ struct camera_t
     color(0, 0, 0),
     movementflags(0),
     m_keymove_handler(0),
-    fieldOfView(90.0f),
+    fieldOfView(75.0f),
     m_mouseMove(motionDelta, this),
     m_view(view),
     m_update(update)
@@ -1669,7 +1672,7 @@ void CamWnd::BenchMark()
     Camera_setAngles(*this, angles);
   }
   double dEnd = Sys_DoubleTime();
-  globalOutputStream() << FloatFormat(dEnd - dStart, 5, 2), " seconds\n";
+  globalOutputStream() << FloatFormat(dEnd - dStart, 5, 2) << " seconds\n";
 }
 
 
