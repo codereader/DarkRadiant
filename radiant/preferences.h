@@ -274,7 +274,7 @@ public:
 
   CGameDialog() :
     m_sGameFile(""),
-    m_bGamePrompt(true),
+    m_bGamePrompt(false),
     m_bForceLogConsole(false)
   {
   }
