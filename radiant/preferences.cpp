@@ -44,6 +44,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtkcellrenderertext.h>
 #include <gtk/gtknotebook.h>
 
+#include <iostream>
+
 #include "generic/callback.h"
 #include "math/vector.h"
 #include "string/string.h"
@@ -240,7 +242,7 @@ typedef FreeCaller1<const char*, LogConsole_importString> LogConsoleImportString
 void RegisterGlobalPreferences(PreferenceSystem& preferences)
 {
   preferences.registerPreference("gamefile", CopiedStringImportStringCaller(g_GamesDialog.m_sGameFile), CopiedStringExportStringCaller(g_GamesDialog.m_sGameFile));
-  preferences.registerPreference("gamePrompt", BoolImportStringCaller(g_GamesDialog.m_bGamePrompt), BoolExportStringCaller(g_GamesDialog.m_bGamePrompt));
+//  preferences.registerPreference("gamePrompt", BoolImportStringCaller(g_GamesDialog.m_bGamePrompt), BoolExportStringCaller(g_GamesDialog.m_bGamePrompt));
   preferences.registerPreference("log console", LogConsoleImportStringCaller(), BoolExportStringCaller(g_Console_enableLogging));
 }
 
@@ -392,6 +394,11 @@ public:
   }
 };
 
+// Search for game definitions
+// TODO: Since this is now DarkRadiant, perhaps we can skip this step as we
+// are only using the one game
+// - OrbWeaver 2006-03-04
+
 void CGameDialog::ScanForGames()
 {
   StringOutputStream strGamesPath(256);
@@ -467,6 +474,7 @@ void CGameDialog::Init()
   }
   if (m_bGamePrompt || !currentGameDescription)
   {
+	std::cout << "m_bGamePrompt is " << m_bGamePrompt << std::endl;
     Create();
     DoGameDialog();
     // use m_nComboSelect to identify the game to run as and set the globals
