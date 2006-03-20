@@ -604,6 +604,7 @@ radiant_env.Prepend(LIBPATH = ['libs'])
 
 if radiant_env['PLATFORM'] == 'win32':
     radiant_env.Append(LIBS = ['ws2_32', 'comdlg32'])
+    radiant_src.append('radiant/multimon.cpp')
 
 radiant_prog = radiant_env.Program(target='darkradiant', source=radiant_src)
 radiant_env.Depends(radiant_prog, mathlib_lib)
