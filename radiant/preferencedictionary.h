@@ -78,7 +78,7 @@ public:
     PreferenceCache::iterator i = m_cache.find(name);
     if(i != m_cache.end())
     {
-      importer((*i).second.c_str());
+      importer(i->second.c_str());
       m_cache.erase(i);
     }
   }
