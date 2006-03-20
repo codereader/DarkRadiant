@@ -41,6 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "moduleobserver.h"
 
 #include <ctime>
+#include <iostream>
 
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtkhbox.h>
@@ -527,6 +528,7 @@ void Radiant_loadModulesFromRoot(const char* directory)
   {
     StringOutputStream path(256);
     path << directory << g_pluginsDir;
+	std::cout << "Loading modules from " << path.c_str() << std::endl;
     Radiant_loadModules(path.c_str());
   }
 
@@ -534,6 +536,7 @@ void Radiant_loadModulesFromRoot(const char* directory)
   {
     StringOutputStream path(256);
     path << directory << g_modulesDir;
+	std::cout << "Loading modules from plugin dir " << path.c_str() << std::endl;
     Radiant_loadModules(path.c_str());
   } 
 }
@@ -585,10 +588,12 @@ void Radiant_detachGameToolsPathObserver(ModuleObserver& observer)
   g_gameToolsPathObservers.detach(observer);
 }
 
+// This is called from main() to start up the Radiant stuff.
 void Radiant_Initialise()
 {
   GlobalModuleServer_Initialise();
   
+ 	// Load the Radiant modules from the modules/ dir.
   Radiant_loadModulesFromRoot(AppPath_get());
 
   Preferences_Load();
