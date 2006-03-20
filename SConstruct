@@ -280,6 +280,8 @@ class idEnvironment(Environment):
 			self.Append(CPPPATH = ['#/gtk2.w32/include/gtk-2.0', '#/gtk2.w32/lib/gtk-2.0/include', '#/gtk2.w32/include/pango-1.0', '#/gtk2.w32/include/atk-1.0'])
 			self.Append(LIBPATH = ['#/gtk2.w32/lib'])
 			self.Append(LIBS = ['gtk-win32-2.0', 'gdk-win32-2.0', 'atk-1.0', 'pango-1.0', 'pangowin32-1.0', 'pangoft2-1.0', 'gmodule-2.0', 'gthread-2.0', 'gdk_pixbuf-2.0'])
+			self.Append(CXXFLAGS = '-mms-bitfields ')
+			self.Append(CFLAGS = '-mms-bitfields ')
 		else: # Assume X11
 			self.Append(CXXFLAGS = '`pkg-config gtk+-2.0 --cflags` ')
 			self.Append(CFLAGS = '`pkg-config gtk+-2.0 --cflags` ')
@@ -297,7 +299,7 @@ class idEnvironment(Environment):
     
 	def useOpenGL(self):
 		if (self['PLATFORM'] == 'win32'):
-			self.Append(LIBS = ['opengl32', 'glu32', 'glaux', 'glut32', 'gdi32']) # MinGW libs
+			self.Append(LIBS = ['opengl32', 'glu32', 'glut32', 'gdi32']) # MinGW libs
 		else:
 			self.Append(LIBS = ['GL'])
 
@@ -339,7 +341,7 @@ GLOBALS = 'g_env INSTALL SETUP g_cpu'
 
 Default('.')
 
-SourceSignatures('MD5')
+SourceSignatures('timestamp')
 Export('GLOBALS ' + GLOBALS)
 BuildDir(g_build, '.', duplicate = 0)
 SConscript(g_build + '/SConscript')
