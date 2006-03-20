@@ -217,6 +217,15 @@ if ( getOS() == 'Darwin' ): # won't happen!!
 CPPPATH.append('libs')
 
 # extend the standard Environment a bit
+
+# Configure the toolchain. On Win32 we want to force MinGW as the default
+# is to prefer MSVC which breaks the build.
+
+if (getOS() == 'win32'):
+	toolList = ['mingw', 'g++']
+else:
+	toolList = ['default']
+
 class idEnvironment(Environment):
 
 	def __init__(self):
@@ -229,7 +238,7 @@ class idEnvironment(Environment):
 			CXXFLAGS = CXXFLAGS,
 			CPPPATH = CPPPATH,
 			LINKFLAGS = LINKFLAGS,
-			TOOLS = ['mingw', 'g++']) # don't want Scons to choose MSVC on Win32
+			TOOLS = toolList) # don't want Scons to choose MSVC on Win32
 
 	def useGlib2(self):
 	# On Win32 we need to add the local paths, since there is no
@@ -330,7 +339,7 @@ GLOBALS = 'g_env INSTALL SETUP g_cpu'
 
 Default('.')
 
-SourceSignatures('timestamp')
+SourceSignatures('MD5')
 Export('GLOBALS ' + GLOBALS)
 BuildDir(g_build, '.', duplicate = 0)
 SConscript(g_build + '/SConscript')
