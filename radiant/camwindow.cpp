@@ -71,7 +71,7 @@ void AddCameraMovedCallback(const Callback& callback)
 
 void CameraMovedNotify()
 {
-	std::cout << "The camera has moved" << std::endl;
+//	std::cout << "The camera has moved" << std::endl;
   std::for_each(g_cameraMoved_callbacks.begin(), g_cameraMoved_callbacks.end(), CallbackInvoke());
 }
 

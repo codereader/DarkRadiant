@@ -118,6 +118,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "feedback.h"
 #include "referencecache.h"
 
+#include "exception/RadiantException.h"
 
 
 struct layout_globals_t
@@ -519,6 +520,7 @@ const char* const c_library_extension =
 #endif
 ;
 
+//
 void Radiant_loadModules(const char* path)
 {
   Directory_forEach(path, MatchFileExtension<LoadModule>(c_library_extension, LoadModule(path)));
@@ -599,9 +601,13 @@ void Radiant_Initialise()
 
   Preferences_Load();
 
-	ModuleServer *server = &GlobalModuleServer_get();
-  bool success = Radiant_Construct(*server);
-  ASSERT_MESSAGE(success, "module system failed to initialise - see radiant.log for error messages");
+	try {
+		Radiant_Construct(GlobalModuleServer_get());
+	} 
+	catch (RadiantException e) {
+	  	e.printError();
+	  	abort();
+	}
 
   g_gameToolsPathObservers.realise();
   g_gameModeObservers.realise();

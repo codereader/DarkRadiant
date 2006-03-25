@@ -31,6 +31,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "modulesystem.h"
 
+#include "exception/RadiantException.h"
+#include "exception/ModuleSystemException.h"
+
 class RadiantModuleServer : public ModuleServer
 {
   typedef std::pair<CopiedString, int> ModuleType;
@@ -68,15 +71,17 @@ public:
 
   void registerModule(const char* type, int version, const char* name, Module& module)
   {
-  	std::cout << "RadiantModuleServer::registerModule() called for " << name << std::endl;
+//  	std::cout << "RadiantModuleServer::registerModule() called for " << name << std::endl;
     ASSERT_NOTNULL(&module);
     if(!m_modules.insert(Modules_::value_type(ModuleKey(ModuleType(type, version), name), &module)).second)
     {
-      globalErrorStream() << "module already registered: type=" << makeQuoted(type) << " name=" << makeQuoted(name) << "\n";
+//      std::cerr << "module already registered: type=" << makeQuoted(type) << " name=" << makeQuoted(name) << std::endl;
+//		std::cerr << "Module already registered" << std::endl;
     }
     else
     {
-      globalOutputStream() << "Module Registered: type=" << makeQuoted(type) << " version=" << makeQuoted(version) << " name=" << makeQuoted(name) << "\n";
+//      std::cout << "Module Registered: type=" << makeQuoted(type) << " version=" << makeQuoted(version) << " name=" << makeQuoted(name) << std::endl;
+//		std::cout << "Module registered" << std::endl;
     }
   }
 
@@ -168,55 +173,62 @@ public:
 
 class DynamicLibrary
 {
-  void* m_library;
+  void * dlHandle;
 public:
   typedef int (* FunctionPointer)();
 
   DynamicLibrary(const char* filename)
   {
-    m_library = dlopen(filename, RTLD_NOW);
+    dlHandle = dlopen(filename, RTLD_NOW);
   }
   ~DynamicLibrary()
   {
     if(!failed())
-      dlclose(m_library);
+      dlclose(dlHandle);
   }
   bool failed()
   {
-    return m_library == 0;
+    return dlHandle == 0;
   }
-  FunctionPointer findSymbol(const char* symbol)
-  {
-    FunctionPointer p = (FunctionPointer)dlsym(m_library, symbol);
-    if(p == 0)
-    {
-      const char* error = reinterpret_cast<const char*>(dlerror());
-      if(error != 0)
-      {
-        globalErrorStream() << error;
-      }
-    }
-    return p;
-  }
+
+	// Find a symbol in the library
+	void * findSymbol(const char* symbol) {
+
+		void * address = dlsym(dlHandle, symbol);
+	    if(address == 0)
+		{
+			std::string theError = std::string(dlerror());
+			throw ModuleSystemException(theError);
+		}
+	    return address;
+	}
 };
 
 #endif
 
 class DynamicLibraryModule
 {
-  typedef void (RADIANT_DLLEXPORT* RegisterModulesFunc)(ModuleServer& server);
+  typedef void (RADIANT_DLLEXPORT * RegisterModulesFunc)(ModuleServer& server);
   DynamicLibrary m_library;
   RegisterModulesFunc m_registerModule;
+
 public:
-  DynamicLibraryModule(const char* filename)
-    : m_library(filename), m_registerModule(0)
-  {
-  	std::cout << "DynamicLibraryModule created for " << filename << std::endl;
-    if(!m_library.failed())
-    {
-      m_registerModule = reinterpret_cast<RegisterModulesFunc>(m_library.findSymbol("Radiant_RegisterModules"));
-    }
-  }
+
+	// Construct a DynamicLibraryModule from the filename of a DLL/so
+	DynamicLibraryModule(const char* filename)
+		: m_library(filename), m_registerModule(0) {
+
+//		std::cout << "DynamicLibraryModule created for " << filename << std::endl;
+		if(!m_library.failed()) {
+			void * symbolAddr = m_library.findSymbol("Radiant_RegisterModules");
+//			std::cout << "found library at " << symbolAddr << std::endl;
+			m_registerModule = reinterpret_cast<RegisterModulesFunc>(symbolAddr);
+		} 
+		else {
+			throw RadiantException(std::string("Failed to create DynamicLibraryModule for ") + filename);
+		}
+	}
+
   bool failed()
   {
     return m_registerModule == 0;
@@ -240,7 +252,7 @@ public:
   }
   void registerLibrary(const char* filename, ModuleServer& server)
   {
-  	std::cout << "Libraries::registerLibrary() called with " << filename << std::endl;
+//  	std::cout << "Libraries::registerLibrary() called with " << filename << std::endl;
     DynamicLibraryModule* library = new DynamicLibraryModule(filename);
 
     if(library->failed()) {
@@ -249,7 +261,7 @@ public:
     }
     else
     {
-    	std::cout << "Library created" << std::endl;
+//    	std::cout << "Library created" << std::endl;
       m_libraries.push_back(library);
       library->registerModules(server);
     }
@@ -278,7 +290,7 @@ ModuleServer& GlobalModuleServer_get()
 
 void GlobalModuleServer_loadModule(const char* filename)
 {
-	std::cout << "GlobalModuleServer_loadModule(" << filename << ")" << std::endl;
+	//std::cout << "GlobalModuleServer_loadModule(" << filename << ")" << std::endl;
 	g_libraries.registerLibrary(filename, g_server);
 }
 
