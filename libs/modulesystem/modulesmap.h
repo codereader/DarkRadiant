@@ -26,6 +26,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "string/string.h"
 #include <map>
 #include <set>
+#include <iostream>
+
+#include "exception/ModuleSystemException.h"
 
 template<typename Type>
 class ModulesMap : public Modules<Type>
@@ -104,6 +107,9 @@ public:
   }
 };
 
+// The ModulesRef class appears to be a container for a certain subset of Modules specified in
+// its constructor
+
 template<typename Type>
 class ModulesRef
 {
@@ -128,11 +134,13 @@ public:
           {
             break;
           }
+//			std::cout << "ModulesRef searching for module: " << name << std::endl;
           Module* module = globalModuleServer().findModule(typename Type::Name(), typename Type::Version(), name);
-          if(module == 0)
+          if(module == 0) // Module not found in the global module server
           {
             globalModuleServer().setError(true);
-            globalErrorStream() << "ModulesRef::initialise: type=" << makeQuoted(typename Type::Name()) << " version=" << makeQuoted(typename Type::Version()) << " name=" << makeQuoted(name) << " - not found\n";
+            //globalErrorStream() << "ModulesRef::initialise: type=" << makeQuoted(typename Type::Name()) << " version=" << makeQuoted(typename Type::Version()) << " name=" << makeQuoted(name) << " - not found\n";
+			throw ModuleSystemException(std::string("ModulesRef: unable to add requested module ") + name); 			
             break;
           }
           else
