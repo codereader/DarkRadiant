@@ -133,21 +133,13 @@ image_env.Depends(image_lib, jpeg_lib)
 image_env.Depends(image_lib, ddslib_lib)
 image_env.Install(INSTALL + '/modules', image_lib)
 
-# Half-life image lib
-#imagehl_lst=build_list('plugins/imagehl', 'imagehl.cpp hlw.cpp mip.cpp sprite.cpp')
-#imagehl_lib = module_env.SharedLibrary(target='imagehl', source=imagehl_lst)
-#module_env.Install(INSTALL + '/modules', imagehl_lib)
-
-# Pretty sure we don't need this
-#imageq2_lst = build_list('plugins/imageq2', 'imageq2.cpp wal.cpp wal32.cpp')
-#imageq2_lib = module_env.SharedLibrarySafe(target='imageq2', source=imageq2_lst)
-#module_env.Install(INSTALL + '/modules', imageq2_lib)
-
-#mapq3_env = module_env.Copy()
-#mapq3_lst=build_list('plugins/mapq3', 'plugin.cpp parse.cpp write.cpp')
-#mapq3_lib = mapq3_env.SharedLibrary(target='mapq3', source=mapq3_lst, LIBS='cmdlib', LIBPATH='libs')
-#mapq3_env.Depends(mapq3_lib, cmdlib_lib)
-#mapq3_env.Install(INSTALL + '/modules', mapq3_lib)
+# We DO need this, it is used as mapdoom3 in the editor
+# - OrbWeaver
+mapq3_env = module_env.Copy()
+mapq3_lst=build_list('plugins/mapq3', 'plugin.cpp parse.cpp write.cpp')
+mapq3_lib = mapq3_env.SharedLibrary(target='mapq3', source=mapq3_lst, LIBS='cmdlib', LIBPATH='libs')
+mapq3_env.Depends(mapq3_lib, cmdlib_lib)
+mapq3_env.Install(INSTALL + '/modules', mapq3_lib)
 
 imagepng_env = module_env.Copy()
 imagepng_lst = build_list('plugins/imagepng', 'plugin.cpp')
@@ -310,6 +302,13 @@ radiant_src = [
 'windowobservers.cpp',
 'xmlstuff.cpp',
 'xywindow.cpp',
+]
+
+# Place new DarkRadiant stuff here
+
+radiant_src += [
+'exception/RadiantException.cpp',
+'exception/ModuleSystemException.cpp'
 ]
 
 for i in range(len(radiant_src)):
