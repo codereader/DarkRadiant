@@ -173,7 +173,7 @@ LINK = CXX
 warningFlags = '-W -Wall -Wcast-align -Wcast-qual -Wno-unused-parameter '
 warningFlagsCXX = '-Wno-non-virtual-dtor -Wreorder ' # -Wold-style-cast
 CCFLAGS = '' + warningFlags
-CXXFLAGS = '-pipe -DQ_NO_STLPORT ' + warningFlags + warningFlagsCXX
+CXXFLAGS = '-pipe -DQ_NO_STLPORT -fexceptions ' + warningFlags + warningFlagsCXX
 CPPPATH = []
 if (BUILD == 'debug'):
 	CXXFLAGS += '-g -D_DEBUG '
@@ -205,14 +205,8 @@ if ( getOS() == 'posix' ):
   #  os.mkdir("./install")
   #os.system("cp `g++ -print-file-name=libstdc++.so` ./install")
   
-  CXXFLAGS += '-fno-exceptions -fno-rtti '
+  CXXFLAGS += '-fno-rtti '
   LINKFLAGS += '-Wl,-fini,fini_stub -L. -static-libgcc '
-if ( getOS() == 'Darwin' ): # won't happen!!
-  CCFLAGS += '-force_cpusubtype_ALL -fPIC '
-  CXXFLAGS += '-force_cpusubtype_ALL -fPIC -fno-exceptions -fno-rtti '
-  CPPPATH.append('/sw/include')
-  CPPPATH.append('/usr/X11R6/include')
-  LINKFLAGS += '-L/sw/lib -L/usr/lib -L/usr/X11R6/lib '
 
 CPPPATH.append('libs')
 
