@@ -28,7 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "os/path.h"
 #include "cmdlib.h"
 
-
 int g_argc;
 char** g_argv;
 
@@ -159,25 +158,8 @@ void environment_init(int argc, char* argv[])
   args_init(argc, argv);
 
   {
-    char appdata[MAX_PATH+1];
-//	Removed to avoid dependence on MS SDK.
-// TODO: Implement proper solution to this
-// - OrbWeaver 20060312
-//    SHGetFolderPath(0, CSIDL_APPDATA, 0, 0, appdata);
-
     StringOutputStream home(256);
-    if(string_empty(appdata))
-    {
-      ERROR_MESSAGE("Application Data folder not available.\n"
-        "Please install shfolder redistributable package.\n"
-        "Radiant will use C:\\ for user preferences.\n");
-      home << "C:";
-    }
-    else
-    {
-      home << PathCleaned(appdata);
-    }
-    home << "/RadiantSettings/";
+    home << "C:/RadiantSettings/";
     Q_mkdir(home.c_str());
     home_path = home.c_str();
   }
