@@ -50,7 +50,7 @@ BUILD
 #EnsurePythonVersion(2,1)
 # above 0.90
 EnsureSConsVersion( 0, 96 )
-print 'SCons ' + SCons.__version__
+#print 'SCons ' + SCons.__version__
 
 # end sanity -------------------------------------
 
@@ -102,10 +102,10 @@ if (os.path.exists(conf_filename)):
 	site_file = open(conf_filename, 'r')
 	p = pickle.Unpickler(site_file)
 	site_dict = p.load()
-	print 'Loading build configuration from ' + conf_filename
+#	print 'Loading build configuration from ' + conf_filename
 	for k, v in site_dict.items():
 		exec_cmd = k + '=\"' + v + '\"'
-		print exec_cmd
+#		print exec_cmd
 		exec(exec_cmd)
 
 # end site settings ------------------------------
@@ -279,7 +279,7 @@ class idEnvironment(Environment):
 		if (self['PLATFORM'] == 'win32'):
 			self.Append(CPPPATH = ['#/gtk2.w32/include/gtk-2.0', '#/gtk2.w32/lib/gtk-2.0/include', '#/gtk2.w32/include/pango-1.0', '#/gtk2.w32/include/atk-1.0'])
 			self.Append(LIBPATH = ['#/gtk2.w32/lib'])
-			self.Append(LIBS = ['gtk-win32-2.0', 'gdk-win32-2.0', 'atk-1.0', 'pango-1.0', 'pangowin32-1.0', 'pangoft2-1.0', 'gmodule-2.0', 'gthread-2.0', 'gdk_pixbuf-2.0'])
+			self.Append(LIBS = ['gtk-win32-2.0', 'gdk-win32-2.0', 'atk-1.0', 'pango-1.0', 'pangowin32-1.0', 'gmodule-2.0', 'gthread-2.0', 'gdk_pixbuf-2.0'])
 			self.Append(CXXFLAGS = '-mms-bitfields ')
 			self.Append(CFLAGS = '-mms-bitfields ')
 		else: # Assume X11
