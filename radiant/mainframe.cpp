@@ -39,6 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ishaders.h"
 #include "igl.h"
 #include "moduleobserver.h"
+#include "server.h"
 
 #include <ctime>
 #include <iostream>
@@ -598,7 +599,8 @@ void Radiant_Initialise()
 
   Preferences_Load();
 
-  bool success = Radiant_Construct(GlobalModuleServer_get());
+	ModuleServer *server = &GlobalModuleServer_get();
+  bool success = Radiant_Construct(*server);
   ASSERT_MESSAGE(success, "module system failed to initialise - see radiant.log for error messages");
 
   g_gameToolsPathObservers.realise();

@@ -19,6 +19,7 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include <iostream>
 #include "server.h"
 
 #include "debugging/debugging.h"
@@ -67,6 +68,7 @@ public:
 
   void registerModule(const char* type, int version, const char* name, Module& module)
   {
+  	std::cout << "RadiantModuleServer::registerModule() called for " << name << std::endl;
     ASSERT_NOTNULL(&module);
     if(!m_modules.insert(Modules_::value_type(ModuleKey(ModuleType(type, version), name), &module)).second)
     {
@@ -209,6 +211,7 @@ public:
   DynamicLibraryModule(const char* filename)
     : m_library(filename), m_registerModule(0)
   {
+  	std::cout << "DynamicLibraryModule created for " << filename << std::endl;
     if(!m_library.failed())
     {
       m_registerModule = reinterpret_cast<RegisterModulesFunc>(m_library.findSymbol("Radiant_RegisterModules"));
@@ -237,14 +240,16 @@ public:
   }
   void registerLibrary(const char* filename, ModuleServer& server)
   {
+  	std::cout << "Libraries::registerLibrary() called with " << filename << std::endl;
     DynamicLibraryModule* library = new DynamicLibraryModule(filename);
 
-    if(library->failed())
-    {
-      delete library;
+    if(library->failed()) {
+		std::cout << "failed to create library, deleting" << std::endl;
+		delete library;
     }
     else
     {
+    	std::cout << "Library created" << std::endl;
       m_libraries.push_back(library);
       library->registerModules(server);
     }
@@ -273,7 +278,8 @@ ModuleServer& GlobalModuleServer_get()
 
 void GlobalModuleServer_loadModule(const char* filename)
 {
-  g_libraries.registerLibrary(filename, g_server);
+	std::cout << "GlobalModuleServer_loadModule(" << filename << ")" << std::endl;
+	g_libraries.registerLibrary(filename, g_server);
 }
 
 void GlobalModuleServer_Initialise()

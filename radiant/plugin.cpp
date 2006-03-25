@@ -19,6 +19,7 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include <iostream>
 #include "plugin.h"
 
 #include "debugging/debugging.h"
@@ -273,17 +274,21 @@ namespace
 
 bool Radiant_Construct(ModuleServer& server)
 {
-  GlobalModuleServer::instance().set(server);
-  StaticModuleRegistryList().instance().registerModules();
+	GlobalModuleServer::instance().set(server);
+	StaticModuleRegistryList().instance().registerModules();
 
-  g_RadiantDependencies = new RadiantDependencies();
+	g_RadiantDependencies = new RadiantDependencies();
 
-  g_RadiantInitialised = !server.getError();
+	g_RadiantInitialised = !server.getError();
 
-  if(g_RadiantInitialised)
-  {
-    g_Radiant = new Radiant;
-  }
+	if(g_RadiantInitialised) {
+		g_Radiant = new Radiant;
+	}
+	else {
+		std::cout << "Unable to construct Radiant, module server failed to initialise." << std::endl;	
+		abort();
+	}
+
 
   return g_RadiantInitialised;
 }
