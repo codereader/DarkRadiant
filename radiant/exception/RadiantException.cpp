@@ -1,4 +1,4 @@
-#include "RadiantException.h"
+#include "exception/RadiantException.h"
 
 RadiantException::RadiantException()
 {
