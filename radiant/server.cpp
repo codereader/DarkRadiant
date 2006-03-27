@@ -129,6 +129,8 @@ const char* FormatGetLastError()
   return buf;
 }
 
+// WIN32 DynamicLibrary. Loads a DLL given in the constructor.
+
 class DynamicLibrary
 {
   HMODULE m_library;
@@ -138,10 +140,8 @@ public:
   DynamicLibrary(const char* filename)
   {
     m_library = LoadLibrary(filename);
-    if(m_library == 0)
-    {
-      globalErrorStream() << "LoadLibrary failed: '" << filename << "'\n";
-      globalErrorStream() << "GetLastError: " << FormatGetLastError();
+    if(m_library == 0) {
+		throw ModuleSystemException(std::string("Unable to load library from file ") + filename);
     }
   }
   ~DynamicLibrary()
@@ -158,10 +158,11 @@ public:
   FunctionPointer findSymbol(const char* symbol)
   {
     FunctionPointer address = GetProcAddress(m_library, symbol);
+	std::cout << "DynamicLibrary::findSymbol found " << symbol << " at " << address << std::endl;
     if(address == 0)
     {
-      globalErrorStream() << "GetProcAddress failed: '" << symbol << "'\n";
-      globalErrorStream() << "GetLastError: " << FormatGetLastError();
+      std::cerr << "GetProcAddress failed: '" << symbol << "'\n";
+      std::cerr << "GetLastError: " << FormatGetLastError();
     }
     return address;
   }
@@ -192,7 +193,7 @@ public:
   }
 
 	// Find a symbol in the library
-	void * findSymbol(const char* symbol) {
+	FunctionPointer findSymbol(const char* symbol) {
 
 		void * address = dlsym(dlHandle, symbol);
 	    if(address == 0)
@@ -200,7 +201,7 @@ public:
 			std::string theError = std::string(dlerror());
 			throw ModuleSystemException(theError);
 		}
-	    return address;
+	    return reinterpret_cast<FunctionPointer> address;
 	}
 };
 
@@ -220,12 +221,10 @@ public:
 
 //		std::cout << "DynamicLibraryModule created for " << filename << std::endl;
 		if(!m_library.failed()) {
-			void * symbolAddr = m_library.findSymbol("Radiant_RegisterModules");
-//			std::cout << "found library at " << symbolAddr << std::endl;
-			m_registerModule = reinterpret_cast<RegisterModulesFunc>(symbolAddr);
+			m_registerModule = reinterpret_cast<RegisterModulesFunc>(m_library.findSymbol("Radiant_RegisterModules")); // Win32
 		} 
 		else {
-			throw RadiantException(std::string("Failed to create DynamicLibraryModule for ") + filename);
+			throw ModuleSystemException(std::string("Failed to create DynamicLibraryModule for ") + filename);
 		}
 	}
 
