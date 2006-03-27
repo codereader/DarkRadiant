@@ -1,0 +1,5 @@
+This library contains all the Exception objects for use
+in DarkRadiant, which are derived from RadiantException.
+
+It is a library so it can be used from other libraries as
+well as just the Radiant code itself.
