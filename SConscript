@@ -14,6 +14,9 @@ def build_list(s_prefix, s_string):
 
 # common code ------------------------------------------------------
 
+exceptionLibSource = 'RadiantException.cpp ModuleSystemException.cpp'
+exceptionLib = g_env.StaticLibrary(target='libs/exception', source=build_list('libs/exception', exceptionLibSource))
+
 cmdlib_lib = g_env.StaticLibrary(target='libs/cmdlib', source='libs/cmdlib/cmdlib.cpp')
 
 mathlib_src = 'mathlib.c bbox.c line.c m4x4.c ray.c'
@@ -87,13 +90,18 @@ module_env = g_env.Copy()
 module_env['CPPPATH'].append('include')
 if (module_env['PLATFORM'] == 'posix'):
     module_env['LINKFLAGS'] += '-ldl ' # do we need this library?
+if (module_env['PLATFORM'] == 'win32'):
+    module_env['LINKFLAGS'] += '-Wl,--kill-at ' # must not append @n to exported DLL symbols otherwise Radiant will not find them
 module_env['LIBPREFIX'] = ''
-
+module_env.Append(LIBPATH = ['libs'])
+module_env['no_import_lib'] = 1
 
 vfspk3_env = module_env.Copy()
 vfspk3_lst = build_list('plugins/vfspk3', 'vfspk3.cpp vfs.cpp archive.cpp')
 vfspk3_env.useGlib2()
+vfspk3_env.Append(LIBS = ['exception'])
 vfspk3_lib = vfspk3_env.SharedLibrary(target='vfspk3', source=vfspk3_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
+vfspk3_env.Depends(vfspk3_lib, exceptionLib)
 vfspk3_env.Install(INSTALL + '/modules', vfspk3_lib)
 
 archivepak_env = module_env.Copy()
@@ -169,44 +177,6 @@ module_env.Install(INSTALL + '/modules', md3model_lib)
 entity_lst = build_list('plugins/entity', 'plugin.cpp entity.cpp eclassmodel.cpp generic.cpp group.cpp light.cpp miscmodel.cpp doom3group.cpp skincache.cpp angle.cpp angles.cpp colour.cpp filters.cpp model.cpp namedentity.cpp origin.cpp scale.cpp targetable.cpp rotation.cpp modelskinkey.cpp')
 entity_lib = module_env.SharedLibrary(target='entity', source=entity_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
 module_env.Install(INSTALL + '/modules', entity_lib)
-
-#bob_env = module_env.Copy()
-#bob_env.useGtk2()
-#bob_lst = build_list('contrib/bobtoolz/',
-#'dialogs/dialogs-gtk.cpp bobToolz-GTK.cpp bsploader.cpp cportals.cpp DBobView.cpp \
-#DBrush.cpp DEntity.cpp DEPair.cpp DListener.cpp DMap.cpp DPatch.cpp DPlane.cpp DPoint.cpp \
-#DShape.cpp DTrainDrawer.cpp DTreePlanter.cpp DVisDrawer.cpp DWinding.cpp funchandlers-GTK.cpp \
-#lists.cpp misc.cpp ScriptParser.cpp shapes.cpp visfind.cpp')
-#bob_lst.append('libs/libmathlib.a')
-#bob_lst.append('libs/libcmdlib.a')
-#bob_env['CPPPATH'].append('contrib/bobtoolz/dialogs')
-#bob_env.SharedLibrarySafe(target='bobtoolz', source=bob_lst)
-#bob_env.Install(INSTALL + '/plugins', 'bobtoolz.so')
-
-#camera_lst = build_list('contrib/camera', 
-#'camera.cpp dialogs.cpp dialogs_common.cpp funchandlers.cpp listener.cpp misc.cpp renderer.cpp')
-#camera_lst.append('libs/libsplines.a')
-#bob_env.SharedLibrarySafe(target='camera', source=camera_lst)
-#bob_env.Install(INSTALL + '/plugins', 'camera.so')
-
-#prtview_lst = build_list('contrib/prtview', 
-#'AboutDialog.cpp ConfigDialog.cpp LoadPortalFileDialog.cpp portals.cpp prtview.cpp')
-#prtview_env = bob_env.Copy()
-#prtview_env['CXXFLAGS'] += '-DGTK_PLUGIN '
-#prtview_env.SharedLibrarySafe(target='prtview', source=prtview_lst)
-#prtview_env.Install(INSTALL + '/plugins', 'prtview.so')
-
-#gensurf_lst = build_list('contrib/gtkgensurf',
-#'bitmap.cpp dec.cpp face.cpp font.cpp gendlgs.cpp genmap.cpp gensurf.cpp heretic.cpp plugin.cpp view.cpp triangle.c')
-#bob_env.SharedLibrarySafe(target='gensurf', source=gensurf_lst)
-#bob_env.Install(INSTALL + '/plugins', 'gensurf.so')
-
-#bkgrnd2d_list = build_list( 'contrib/bkgrnd2d', 'bkgrnd2d.cpp plugin.cpp dialog.cpp' )
-#bkgrnd2d_list.append( 'libs/libsynapse.a' )
-#bkgrnd2d_env = module_env.Copy()
-#bkgrnd2d_env.useGtk2()
-#bkgrnd2d_env.SharedLibrarySafe( target='bkgrnd2d', source=bkgrnd2d_list )
-#bkgrnd2d_env.Install( INSTALL + '/plugins', 'bkgrnd2d.so' )
 
 radiant_env = g_env.Copy()
 radiant_env['CPPPATH'].append('include')
@@ -304,17 +274,10 @@ radiant_src = [
 'xywindow.cpp',
 ]
 
-# Place new DarkRadiant stuff here
-
-radiant_src += [
-'exception/RadiantException.cpp',
-'exception/ModuleSystemException.cpp'
-]
-
 for i in range(len(radiant_src)):
   radiant_src[i] = 'radiant/' + radiant_src[i]
 
-radiant_env.Prepend(LIBS = ['mathlib', 'cmdlib', 'profile', 'gtkutil', 'l_net'])
+radiant_env.Prepend(LIBS = ['mathlib', 'cmdlib', 'profile', 'gtkutil', 'l_net', 'exception'])
 radiant_env.Prepend(LIBPATH = ['libs'])
 
 # Win32 libs
@@ -329,6 +292,7 @@ radiant_env.Depends(radiant_prog, cmdlib_lib)
 radiant_env.Depends(radiant_prog, l_net_lib)
 radiant_env.Depends(radiant_prog, profile_lib)
 radiant_env.Depends(radiant_prog, gtkutil_lib)
+radiant_env.Depends(radiant_prog, exceptionLib)
 radiant_env.Install(INSTALL, radiant_prog)
 
 # Radiant post-install
