@@ -201,7 +201,7 @@ public:
 			std::string theError = std::string(dlerror());
 			throw ModuleSystemException(theError);
 		}
-	    return reinterpret_cast<FunctionPointer> address;
+	    return reinterpret_cast<FunctionPointer> (address);
 	}
 };
 
