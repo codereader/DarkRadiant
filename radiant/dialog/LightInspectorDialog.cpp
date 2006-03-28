@@ -11,4 +11,8 @@ LightInspectorDialog::~LightInspectorDialog()
 {
 }
 
+void LightInspectorDialog::doDisplay() {}
+
+void LightInspectorDialog::doDestroy() {}
+
 }
