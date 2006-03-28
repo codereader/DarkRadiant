@@ -2802,6 +2802,9 @@ void MainFrame::OnSleep()
 #endif
 }
 
+// Create and show the splash screen.
+
+static const char *SPLASH_FILENAME = "darksplash.bmp";
 
 GtkWindow* create_splash()
 {
@@ -2813,7 +2816,7 @@ GtkWindow* create_splash()
   gtk_window_set_position(window, GTK_WIN_POS_CENTER);
   gtk_container_set_border_width(GTK_CONTAINER(window), 0);
 
-  GtkImage* image = new_local_image("splash.bmp");
+  GtkImage* image = new_local_image(SPLASH_FILENAME);
   gtk_widget_show(GTK_WIDGET(image));
   gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(image));
 
