@@ -272,6 +272,8 @@ radiant_src = [
 'windowobservers.cpp',
 'xmlstuff.cpp',
 'xywindow.cpp',
+'dialog/DarkRadiantDialog.cpp',
+'dialog/LightInspectorDialog.cpp'
 ]
 
 for i in range(len(radiant_src)):
