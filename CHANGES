@@ -1,6 +1,18 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+20/03/2006
+SPoG
+- Fixed crash when resetting preferences after startup failure.
+- Fixed crash on next-leak-spot with build-monitoring enabled.
+- Fixed doom3/quake4 blended-decal rendering when toggling lighting mode.
+- Fixed fit-texture with rotated texture transforms.
+
+20/03/2006
+SPoG
+- Changed Copy/Paste to work on face textures if any faces are selected.
+- Fixed GTK_WIDGET_REALIZED assert when selecting entities (linux).
+
 28/02/2006
 namespace, SPoG
 - Added drag-resizing for doom3/quake4 light_radius boxes.

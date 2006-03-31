@@ -681,7 +681,7 @@ void Selection_Paste()
 
 void Copy()
 {
-  if(GlobalSelectionSystem().Mode() == SelectionSystem::ePrimitive)
+  if(SelectedFaces_empty())
   {
     Selection_Copy();
   }
@@ -693,7 +693,7 @@ void Copy()
 
 void Paste()
 {
-  if(GlobalSelectionSystem().Mode() == SelectionSystem::ePrimitive)
+  if(SelectedFaces_empty())
   {
     UndoableCommand undo("paste");
     
