@@ -178,30 +178,23 @@ void Entity_connectSelected()
   }
 }
 
-const float Doom3Light_defaultRadius = 300;
+// Function to return an AABB based on the current workzone AABB (retrieved
+// from the currently selected brushes), or to use the default light radius
+// if the workzone AABB is not valid or none is available.
 
-AABB Doom3Light_getBounds(const AABB& workzone)
+AABB Doom3Light_getBounds(AABB aabb)
 {
-  AABB aabb(workzone);
+    for (int i = 0; i < 3; i++) {
+		if (aabb.extents[i] == 0)
+	    	aabb.extents[i] = DEFAULT_LIGHT_RADIUS;
+    }
 
-  if(aabb.extents[0] == 0)
-  {
-    aabb.extents[0] = Doom3Light_defaultRadius;
-  }
-  if(aabb.extents[1] == 0)
-  {
-    aabb.extents[1] = Doom3Light_defaultRadius;
-  }
-  if(aabb.extents[2] == 0)
-  {
-    aabb.extents[2] = Doom3Light_defaultRadius;
-  }
-
-  if(aabb_valid(aabb))
-  {
-    return aabb;
-  }
-  return AABB(Vector3(0, 0, 0), Vector3(64, 64, 64));
+    if (aabb_valid(aabb)) {
+		return aabb;
+    }
+    else {
+		return AABB(Vector3(0, 0, 0), Vector3(64, 64, 64));
+    }
 }
 
 int g_iLastLightIntensity;
@@ -223,6 +216,7 @@ void Entity_createFromSelection(const char* name, const Vector3& origin)
     || string_equal_nocase(name, "model_static")
     || (GlobalSelectionSystem().countSelected() == 0 && string_equal_nocase(name, "func_static"));
 
+  // Some entities are based on the size of the currently-selected brush(es)
   bool brushesSelected = Scene_countSelectedBrushes(GlobalSceneGraph()) != 0;
 
   if(!(entityClass->fixedsize || isModel) && !brushesSelected)
@@ -232,8 +226,7 @@ void Entity_createFromSelection(const char* name, const Vector3& origin)
   }
 
   AABB workzone(aabb_for_minmax(Select_getWorkZone().d_work_min, Select_getWorkZone().d_work_max));
-
-
+  
   NodeSmartReference node(GlobalEntityCreator().createEntity(entityClass));
 
   Node_getTraversable(GlobalSceneGraph().root())->insert(node);
@@ -299,9 +292,9 @@ void Entity_createFromSelection(const char* name, const Vector3& origin)
         Node_getEntity(node)->setKeyValue("light", buf);
       }
     }
-    else if(brushesSelected) // use workzone to set light position/size for doom3 lights, if there are brushes selected
+    else if (brushesSelected) // use workzone to set light position/size for doom3 lights. 
     {
-      AABB bounds(Doom3Light_getBounds(workzone));
+      AABB bounds(Doom3Light_getBounds(workzone)); // If workzone is not valid the Doom3Light_getBounds function will return a default
       StringOutputStream key(64);
       key << bounds.origin[0] << " " << bounds.origin[1] << " " << bounds.origin[2];
       Node_getEntity(node)->setKeyValue("origin", key.c_str());

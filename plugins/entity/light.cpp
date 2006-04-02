@@ -464,7 +464,7 @@ private:
 
   void calculateRadii()
   {
-    float intensity = 300.0f;
+    float intensity = DEFAULT_LIGHT_RADIUS;
 
     if(m_primaryIntensity != 0.0f)
     {
@@ -537,7 +537,7 @@ public:
   typedef MemberCaller1<LightRadii, const char*, &LightRadii::flagsChanged> FlagsChangedCaller;
 };
 
-const Vector3 c_defaultDoom3LightRadius = Vector3(300, 300, 300);
+const Vector3 c_defaultDoom3LightRadius = Vector3(DEFAULT_LIGHT_RADIUS, DEFAULT_LIGHT_RADIUS, DEFAULT_LIGHT_RADIUS);
 class Doom3LightRadius
 {
 public:

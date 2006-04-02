@@ -22,14 +22,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_ENTITY_H)
 #define INCLUDED_ENTITY_H
 
-class EntityCreator;
-EntityCreator& GetEntityCreator();
+// CONSTANTS
 
-enum EGameType
-{
-  eGameTypeQuake3,
-  eGameTypeRTCW,
-  eGameTypeDoom3,
+const float DEFAULT_LIGHT_RADIUS = 320;
+
+//
+
+class EntityCreator;
+EntityCreator & GetEntityCreator();
+
+enum EGameType {
+    eGameTypeQuake3,
+    eGameTypeRTCW,
+    eGameTypeDoom3,
 };
 
 extern EGameType g_gameType;

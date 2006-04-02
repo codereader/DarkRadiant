@@ -22,6 +22,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_ENTITY_H)
 #define INCLUDED_ENTITY_H
 
+// CONSTANTS
+
+// Default radius of lights is 320 (Q4) rather than 300 (D3)
+// since the grid is usually a multiple of 8.
+
+const float DEFAULT_LIGHT_RADIUS = 320;
+
+//
+
 template<typename Element> class BasicVector3;
 typedef BasicVector3<float> Vector3;
 void Entity_createFromSelection(const char* name, const Vector3& origin);

@@ -511,7 +511,7 @@ void EntityClassDoom3_parseEntityDef(Tokeniser& tokeniser)
     {
       EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "light_radius").second;
       attribute.m_type = "vector3";
-      attribute.m_value = "300 300 300";
+      attribute.m_value = "320 320 320";
     }
     {
       EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "light_center").second;
