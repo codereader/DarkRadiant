@@ -250,10 +250,6 @@ class idEnvironment(Environment):
 		self.Append(LIBPATH = ['#/libiconv.w32/lib'])
 		self.Append(LIBS = ['iconv'])
 
-	def useMSVC(self):
-		self.Append(LIBPATH = ['#/msvc_redist'])
-		self.Append(LIBS = ['msvcr71'])
-    
 	def useXML2(self):
 		if (self['PLATFORM'] == 'win32'):
 			self.Append(CCFLAGS = '-DLIBXML_STATIC ')
@@ -273,7 +269,7 @@ class idEnvironment(Environment):
 		if (self['PLATFORM'] == 'win32'):
 			self.Append(CPPPATH = ['#/gtk2.w32/include/gtk-2.0', '#/gtk2.w32/lib/gtk-2.0/include', '#/gtk2.w32/include/pango-1.0', '#/gtk2.w32/include/atk-1.0'])
 			self.Append(LIBPATH = ['#/gtk2.w32/lib'])
-			self.Append(LIBS = ['gtk-win32-2.0', 'gdk-win32-2.0', 'atk-1.0', 'pango-1.0', 'pangowin32-1.0', 'gmodule-2.0', 'gthread-2.0', 'gdk_pixbuf-2.0'])
+			self.Append(LIBS = ['gtk-win32-2.0', 'gdk-win32-2.0', 'atk-1.0', 'pango-1.0', 'pangowin32-1.0', 'gdk_pixbuf-2.0'])
 			self.Append(CXXFLAGS = '-mms-bitfields ')
 			self.Append(CFLAGS = '-mms-bitfields ')
 		else: # Assume X11
@@ -293,7 +289,7 @@ class idEnvironment(Environment):
     
 	def useOpenGL(self):
 		if (self['PLATFORM'] == 'win32'):
-			self.Append(LIBS = ['opengl32', 'glu32', 'glut32', 'gdi32']) # MinGW libs
+			self.Append(LIBS = ['opengl32', 'gdi32']) # MinGW libs
 		else:
 			self.Append(LIBS = ['GL'])
 
