@@ -1,0 +1,15 @@
+GAME FILES (*.game)
+--------------------------------------------------------------------------------
+
+Game files are XML and contain important information to customise Radiant for
+the specified game.
+
+As of 20060402 the settings used by GtkRadiant are all attributes of the <game>
+declaration. There are no apparent ill effects caused by inserting additional
+nodes within the <game> declaration, suggesting this file may be extended to 
+hold additional information.
+
+The scanning for game files is run in preferences.cpp with CGameDialog::Init().
+The CGameDialog class holds a list of game files and throws and error at 
+startup if it is not able to populate it (either due to a lack of files or due
+to a failure to parse the XML).

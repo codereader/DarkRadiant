@@ -119,115 +119,160 @@ void Scene_EntitySetKeyValue_Selected_Undoable(const char* key, const char* valu
   Scene_EntitySetKeyValue_Selected(key, value);
 }
 
-class EntityAttribute
-{
-public:
-  virtual GtkWidget* getWidget() const = 0;
-  virtual void update() = 0;
-  virtual void release() = 0;
+/* Entity Attributes
+ * 
+ * The EntityAttribute interface is used as a base class for all of the
+ * individual GTK "renderers" for each key type. This allows, for example, a
+ * boolean keyval to be controlled through a checkbox while a text keyval is
+ * given a text entry field.
+ * 
+ * Note that the EntityAttribute selection is based on the key TYPE not the key
+ * itself, so it is not (currently) possible to use a different EntityAttribute
+ * for each of two text keyvals.
+ */
+
+class EntityAttribute {
+  public:
+
+    // An EntityAttribute must return a GtkWidget that is used to interact with
+    // its values.
+    virtual GtkWidget * getWidget() const = 0;
+
+    // Update the GTK widgets based on the current value of the key.
+    virtual void update() = 0;
+    
+    // Destroy self
+    virtual void release() = 0;
 };
 
-class BooleanAttribute : public EntityAttribute
-{
-  CopiedString m_key;
-  GtkCheckButton* m_check;
+// BooleanAttribute. A simple on/off keyval is represented by a checkbox.
 
-  static gboolean toggled(GtkWidget *widget, BooleanAttribute* self)
-  {
-    self->apply();
-    return FALSE;
-  }
-public:
-  BooleanAttribute(const char* key) :
-    m_key(key),
-    m_check(0)
-  {
-    GtkCheckButton* check = GTK_CHECK_BUTTON(gtk_check_button_new());
-    gtk_widget_show(GTK_WIDGET(check));
+class BooleanAttribute:public EntityAttribute {
 
-    m_check = check;
+    // The key that this BooleanAttribute is operating on.
+    CopiedString m_key;
+    
+    // The visible checkbox
+    GtkCheckButton *m_check;
 
-    guint handler = g_signal_connect(G_OBJECT(check), "toggled", G_CALLBACK(toggled), this);
-    g_object_set_data(G_OBJECT(check), "handler", gint_to_pointer(handler));
+    // Callback function to propagate the change to the keyval whenever the
+    // checkbox is toggled. This is passed an explicit "this" pointer because
+    // the GTK API is based on C not C++.
+    static gboolean toggled(GtkWidget * widget, BooleanAttribute * self) {
+        self->apply();
+        return FALSE;
+    } 
+  
+  public:
 
-    update();
-  }
-  GtkWidget* getWidget() const
-  {
-    return GTK_WIDGET(m_check);
-  }
-  void release()
-  {
-    delete this;
-  }
-  void apply()
-  {
-    Scene_EntitySetKeyValue_Selected_Undoable(m_key.c_str(), gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_check)) ? "1" : "0");
-  }
-  typedef MemberCaller<BooleanAttribute, &BooleanAttribute::apply> ApplyCaller;
+    // Constructor
+    BooleanAttribute(const char *key):
+        m_key(key), 
+        m_check(GTK_CHECK_BUTTON(gtk_check_button_new())) {
 
-  void update()
-  {
-    const char* value = SelectedEntity_getValueForKey(m_key.c_str());
-    if(!string_empty(value))
-    {
-      toggle_button_set_active_no_signal(GTK_TOGGLE_BUTTON(m_check), atoi(value) != 0);
+        // Show the checkbutton    
+        gtk_widget_show(GTK_WIDGET(m_check));
+
+        // Connect up the callback function    
+        guint handler = g_signal_connect(G_OBJECT(m_check), "toggled",
+                                         G_CALLBACK(toggled), this);
+        g_object_set_data(G_OBJECT(m_check), "handler", gint_to_pointer(handler));
+
+        // Get the keyval after construction    
+        update();
     }
-    else
-    {
-      toggle_button_set_active_no_signal(GTK_TOGGLE_BUTTON(m_check), false);
+
+    // Return the checkbox as a GtkWidget    
+    GtkWidget *getWidget() const {
+        return GTK_WIDGET(m_check);
+    } 
+
+    // Delete self    
+    void release() {
+        delete this;
     }
-  }
-  typedef MemberCaller<BooleanAttribute, &BooleanAttribute::update> UpdateCaller;
+
+    // Propagate GUI changes to the underlying keyval    
+    void apply() {
+        // Set 1 for checkbox ticked, 0 otherwise
+        Scene_EntitySetKeyValue_Selected_Undoable(
+            m_key.c_str(), 
+            gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_check)) ? "1" : "0");
+    }
+    
+//    typedef MemberCaller<BooleanAttribute, &BooleanAttribute::apply> 
+//        ApplyCaller;
+
+    // Retrieve keyval and update GtkWidget accordingly
+    void update() {
+        const char *value = SelectedEntity_getValueForKey(m_key.c_str());
+
+        // Set checkbox to enabled for a keyval other than 0
+        if (!string_empty(value)) {
+            toggle_button_set_active_no_signal(GTK_TOGGLE_BUTTON(m_check),
+                                               atoi(value) != 0);
+        }
+        else {
+            // No keyval found, set self to inactive
+            toggle_button_set_active_no_signal(GTK_TOGGLE_BUTTON(m_check),
+                                               false);
+        }
+    }
+    
+//    typedef MemberCaller<BooleanAttribute, &BooleanAttribute::update> 
+//        UpdateCaller;
 };
 
+// The StringAttribute is used for editing simple strink keyvals
 
-class StringAttribute : public EntityAttribute
-{
-  CopiedString m_key;
-  GtkEntry* m_entry;
-  NonModalEntry m_nonModal;
-public:
-  StringAttribute(const char* key) :
-    m_key(key),
-    m_entry(0),
-    m_nonModal(ApplyCaller(*this), UpdateCaller(*this))
-  {
-    GtkEntry* entry = GTK_ENTRY(gtk_entry_new());
-    gtk_widget_show(GTK_WIDGET(entry));
-    gtk_widget_set_size_request(GTK_WIDGET(entry), 50, -1);
+class StringAttribute:public EntityAttribute {
+   
+    // Name of the keyval we are wrapping
+    CopiedString m_key;
 
-    m_entry = entry;
-    m_nonModal.connect(m_entry);    
-  }
-  GtkWidget* getWidget() const
-  {
-    return GTK_WIDGET(m_entry);
-  }
-  GtkEntry* getEntry() const
-  {
-    return m_entry;
-  }
+    GtkEntry *m_entry;
+    NonModalEntry m_nonModal;
 
-  void release()
-  {
-    delete this;
-  }
-  void apply()
-  {
-    StringOutputStream value(64);
-    value << ConvertUTF8ToLocale(gtk_entry_get_text(m_entry));
-    Scene_EntitySetKeyValue_Selected_Undoable(m_key.c_str(), value.c_str());
-  }
-  typedef MemberCaller<StringAttribute, &StringAttribute::apply> ApplyCaller;
+  public:
 
-  void update()
-  {
-    StringOutputStream value(64);
-    value << ConvertLocaleToUTF8(SelectedEntity_getValueForKey(m_key.c_str()));
-    gtk_entry_set_text(m_entry, value.c_str());
-  }
-  typedef MemberCaller<StringAttribute, &StringAttribute::update> UpdateCaller;
+    // Constructor
+    StringAttribute(const char *key):
+        m_key(key),
+        m_entry(0), 
+        m_nonModal(ApplyCaller(*this), UpdateCaller(*this)) {
+        GtkEntry *entry = GTK_ENTRY(gtk_entry_new());
+         gtk_widget_show(GTK_WIDGET(entry));
+         gtk_widget_set_size_request(GTK_WIDGET(entry), 50, -1);
+
+         m_entry = entry;
+         m_nonModal.connect(m_entry);
+    } GtkWidget *getWidget() const {
+        return GTK_WIDGET(m_entry);
+    } GtkEntry *getEntry() const {
+        return m_entry;
+    } void release() {
+        delete this;
+    }
+    void apply() {
+        StringOutputStream value(64);
+
+        value << ConvertUTF8ToLocale(gtk_entry_get_text(m_entry));
+        Scene_EntitySetKeyValue_Selected_Undoable(m_key.c_str(),
+                                                  value.c_str());
+    }
+    typedef MemberCaller < StringAttribute,
+        &StringAttribute::apply > ApplyCaller;
+
+    void update() {
+        StringOutputStream value(64);
+
+        value <<
+            ConvertLocaleToUTF8(SelectedEntity_getValueForKey
+                                (m_key.c_str()));
+        gtk_entry_set_text(m_entry, value.c_str());
+    }
+    typedef MemberCaller < StringAttribute,
+        &StringAttribute::update > UpdateCaller;
 };
 
 class ShaderAttribute : public StringAttribute
@@ -793,6 +838,9 @@ public:
   typedef MemberCaller<ListAttribute, &ListAttribute::update> UpdateCaller;
 };
 
+/* Entity Inspector Dialog
+ * 
+ */
 
 namespace
 {

@@ -657,79 +657,111 @@ void EntityClass_resolveInheritance(EntityClass* derivedClass)
   }
 }
 
-class EntityClassDoom3 : public ModuleObserver
-{
-  std::size_t m_unrealised;
-  ModuleObservers m_observers;
-public:
-  EntityClassDoom3() : m_unrealised(2)
-  {
-  }
-  void realise()
-  {
-    if(--m_unrealised == 0)
-    {
-      globalOutputStream() << "searching vfs directory " << makeQuoted("def") << " for *.def\n";
-      GlobalFileSystem().forEachFile("def/", "def", FreeCaller1<const char*, EntityClassDoom3_loadFile>());
+/* EntityClassDoom3 - master entity loader
+ * 
+ * This class is the master loader for the entity classes. It ensures that the
+ * EntityClassDoom3_loadFile() function is called for every .def file in the
+ * def/ directory, which in turn kicks off the parse process (including the
+ * resolution of inheritance.
+ * 
+ * It also accomodates ModuleObservers, presumably to allow plugins to be
+ * notified when entity classes are added or modified.
+ */
 
-      {
-        for(Models::iterator i = g_models.begin(); i != g_models.end(); ++i)
-        {
-          Model_resolveInheritance((*i).first.c_str(), (*i).second);
-        }
-      }
-      {
-        for(EntityClasses::iterator i = g_EntityClassDoom3_classes.begin(); i != g_EntityClassDoom3_classes.end(); ++i)
-        {
-          EntityClass_resolveInheritance((*i).second);
-          if(!string_empty((*i).second->m_modelpath.c_str()))
-          {
-            Models::iterator j = g_models.find((*i).second->m_modelpath);
-            if(j != g_models.end())
-            {
-              (*i).second->m_modelpath = (*j).second.m_mesh;
-              (*i).second->m_skin = (*j).second.m_skin;
+class EntityClassDoom3:
+    public ModuleObserver {
+
+    // Whether the entity classes have been realised
+    std::size_t m_unrealised;
+
+    // Set of ModuleObservers to notify on realise/unrealise
+    ModuleObservers m_observers;
+
+  public:
+    
+    // Constructor
+    EntityClassDoom3():
+        m_unrealised(2) {} 
+    
+    void realise() {
+        
+        // Count the number of times this function is called, it is activated
+        // for real on the second call (why?)
+        if (--m_unrealised == 0) {
+            
+            globalOutputStream() << "searching vfs directory " <<
+                makeQuoted("def") << " for *.def\n";
+            GlobalFileSystem().forEachFile("def/", "def",
+                                           FreeCaller1 < const char *,
+                                           EntityClassDoom3_loadFile > ());
+    
+            // Resolve inheritance on the model classes
+            for (Models::iterator i = g_models.begin(); i != g_models.end(); ++i) {
+                Model_resolveInheritance((*i).first.c_str(), (*i).second);
             }
-          }
-          eclass_capture_state((*i).second);
-
-          StringOutputStream usage(256);
-
-          usage << "-------- KEYS --------\n";
-
-          for(EntityClassAttributes::iterator j = (*i).second->m_attributes.begin(); j != (*i).second->m_attributes.end(); ++j)
-          {
-            const char* name = EntityClassAttributePair_getName(*j);
-            const char* description = EntityClassAttributePair_getDescription(*j);
-            if(!string_equal(name, description))
-            {
-              usage << EntityClassAttributePair_getName(*j) << " : " << EntityClassAttributePair_getDescription(*j) << "\n";
+            
+            // Resolve inheritance for the entities        
+            for (EntityClasses::iterator i = g_EntityClassDoom3_classes.begin();
+                 i != g_EntityClassDoom3_classes.end(); ++i) {
+    
+                EntityClass_resolveInheritance(i->second);
+    
+                // If the entity has a model path ("model" key), lookup the actual
+                // model and apply its mesh and skin to this entity.
+                if (!string_empty(i->second->m_modelpath.c_str())) {
+                    Models::iterator j = g_models.find(i->second->m_modelpath);
+                    if (j != g_models.end()) {
+                        i->second->m_modelpath = j->second.m_mesh;
+                        i->second->m_skin = j->second.m_skin;
+                    }
+                }
+                eclass_capture_state((*i).second);
+            
+                StringOutputStream usage(256);
+            
+                usage << "-------- KEYS --------\n";
+            
+                // For each attribute in the entity, add its name and description
+                // to the usage string, which is stored in the EntityClass' comments
+                // field.
+                for (EntityClassAttributes::iterator j = i->second->m_attributes.begin();
+                     j != i->second->m_attributes.end(); ++j) {
+                        
+                    const char *name = EntityClassAttributePair_getName(*j);
+                    const char *description = EntityClassAttributePair_getDescription(*j);
+                
+                    if (!string_equal(name, description)) {
+                        usage << EntityClassAttributePair_getName(*j)
+                            << " : " << EntityClassAttributePair_getDescription(*j)
+                            << "\n";
+                    }
+                }
+            
+                i->second->m_comments = usage.c_str();
             }
-          }
+    
+        // Prod the observers (also on the first call)
+        m_observers.realise();
+        } // endif
+    } // end func
 
-          (*i).second->m_comments = usage.c_str();
-        }
-      }
-
-      m_observers.realise();
-    }
-  }
-  void unrealise()
-  {
-    if(++m_unrealised == 1)
+    void unrealise()
     {
-      m_observers.unrealise();
-      EntityClassDoom3_clear();
+        if (++m_unrealised == 1) {
+            m_observers.unrealise();
+            EntityClassDoom3_clear();
+        }
     }
-  }
-  void attach(ModuleObserver& observer)
-  {
-    m_observers.attach(observer);
-  }
-  void detach(ModuleObserver& observer)
-  {
-    m_observers.detach(observer);
-  }
+
+    void attach(ModuleObserver & observer)
+    {
+        m_observers.attach(observer);
+    }
+    
+    void detach(ModuleObserver & observer)
+    {
+        m_observers.detach(observer);
+    }
 };
 
 EntityClassDoom3 g_EntityClassDoom3;

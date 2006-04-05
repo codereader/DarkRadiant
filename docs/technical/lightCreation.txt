@@ -1,0 +1,17 @@
+PROCESSING OF LIGHT ENTITIES
+--------------------------------------------------------------------------------
+
+The light creation code is split between entity.* in the radiant dir and the
+entity.h and light.cpp code in the entity plugin. This is due to limitations
+on the plugin API.
+
+The setting of keyvals happens in the eclass_doom3 code. This is not linked to
+the actual drawn radius until the keyvals are changed through the entity 
+inspector, so it is possible for a light to be spawned with a drawn radius that 
+differs from the keyval setting.
+
+As of 20060402 the light entity is identified by a simple string comparison of
+the entity name and "light". Future plans are to remove this hardcoding and
+replace it with external configuration in an XML file (perhaps the game file).
+The comparison takes place in eclass_doom3.cpp, which is also responsible for
+resolving inheritance.

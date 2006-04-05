@@ -122,48 +122,58 @@ inline const char* xmlAttr_getValue(xmlAttrPtr attr)
   return reinterpret_cast<const char*>(attr->children->content);
 }
 
-CGameDescription::CGameDescription(xmlDocPtr pDoc, const CopiedString& gameFile)
-{
-  // read the user-friendly game name 
-  xmlNodePtr pNode = pDoc->children;
+// CGameDescription constructor. Create a CGameDescription object from a
+// libxml doc pointer and a game file location.
 
-  while (strcmp((const char*)pNode->name, "game") && pNode != 0)
-  {
-    pNode=pNode->next;
-  }
-  if (!pNode)
-  {
-    Error("Didn't find 'game' node in the game description file '%s'\n", pDoc->URL);
-  }
+CGameDescription::CGameDescription(xmlDocPtr pDoc,
+				   const CopiedString & gameFile) {
 
-  for(xmlAttrPtr attr = pNode->properties; attr != 0; attr = attr->next)
-  {
-    m_gameDescription.insert(GameDescription::value_type(xmlAttr_getName(attr), xmlAttr_getValue(attr)));
-  }
+    xmlNodePtr pNode = pDoc->children;
 
-  {
-    StringOutputStream path(256);
-    path << AppPath_get() << gameFile.c_str() << "/";
-    mGameToolsPath = path.c_str();
-  }
-
-  ASSERT_MESSAGE(file_exists(mGameToolsPath.c_str()), "game directory not found: " << makeQuoted(mGameToolsPath.c_str()));
-
-  mGameFile = gameFile;
- 
-  {
-    GameDescription::iterator i = m_gameDescription.find("type");
-    if(i == m_gameDescription.end())
-    {
-      globalErrorStream() << "Warning, 'type' attribute not found in '" << reinterpret_cast<const char*>(pDoc->URL) << "'\n";
-      // default
-      mGameType = "q3";
+	// Search for the "game" node. This is the toplevel node so it should be
+	// the only node found.
+    while (strcmp((const char *) pNode->name, "game") && pNode != 0) {
+		pNode = pNode->next;
     }
-    else
-    {
-      mGameType = (*i).second.c_str();
+    
+    if (!pNode) {
+	Error
+	    ("Didn't find 'game' node in the game description file '%s'\n",
+	     pDoc->URL);
     }
-  }
+
+	// Read all of the attributes for the <game> node. In vanilla GtkRadiant
+	// these are the only values stored in the .game file.
+    for (xmlAttrPtr attr = pNode->properties; attr != 0; attr = attr->next) {
+		m_gameDescription.
+		    insert(GameDescription:: // map CopiedString -> CopiedString
+			   value_type(xmlAttr_getName(attr), xmlAttr_getValue(attr)));
+    }
+
+	// Check if the game file exists and add the internal reference to it if it
+	// does.
+	StringOutputStream path(256);
+	path << AppPath_get() << gameFile.c_str() << "/";
+	mGameToolsPath = path.c_str();
+
+    ASSERT_MESSAGE(file_exists(mGameToolsPath.c_str()),
+		   "game directory not found: " <<
+		   makeQuoted(mGameToolsPath.c_str()));
+
+    mGameFile = gameFile;
+
+	// Look up the game type attribute and set the appropriate member variable.
+	GameDescription::iterator i = m_gameDescription.find("type");
+	if (i == m_gameDescription.end()) {
+	    globalErrorStream() <<
+		"Warning, 'type' attribute not found in '" <<
+		reinterpret_cast < const char *>(pDoc->URL) << "'\n";
+	    // default
+	    mGameType = "doom3";
+	}
+	else {
+	    mGameType = i->second.c_str();
+	}
 }
 
 void CGameDescription::Dump()
@@ -174,6 +184,8 @@ void CGameDescription::Dump()
     globalOutputStream() << (*i).first.c_str() << " = " << makeQuoted((*i).second.c_str()) << "\n";
   }
 }
+
+// Global current game settings (loaded from the chosen .game file at startup)
 
 CGameDescription *g_pGameDescription; ///< shortcut to g_GamesDialog.m_pCurrentDescription
 
@@ -363,60 +375,66 @@ GtkWindow* CGameDialog::BuildDialog()
   return create_simple_modal_dialog_window("Global Preferences", m_modal, GTK_WIDGET(frame));
 }
 
-class LoadGameFile
-{
-  std::list<CGameDescription*>& mGames;
-  const char* mPath;
-public:
-  LoadGameFile(std::list<CGameDescription*>& games, const char* path) : mGames(games), mPath(path)
-  {
-  }
-  void operator()(const char* name) const
-  {
-    if(!extension_equal(path_get_extension(name), "game"))
-    {
-      return;
-    }
-    StringOutputStream strPath(256);
-    strPath << mPath << name;
-    globalOutputStream() << strPath.c_str() << '\n';
+// Functor object responsible for parsing and loading an individual .game
+// file.
 
-    xmlDocPtr pDoc = xmlParseFile(strPath.c_str());
-    if(pDoc)
-    {
-      mGames.push_front(new CGameDescription(pDoc, name));
-      xmlFreeDoc(pDoc);
+class GameFileLoader {
+
+	// Reference to external list of valid game descriptions. See the
+	// CGameDescription decl for more info.
+    std::list < CGameDescription * >&mGames;
+
+	// Path to the game file to be added
+    const char *mPath;
+
+  public:
+
+	// Constructor
+    GameFileLoader(std::list < CGameDescription * >&games, const char *path):
+    	mGames(games), 
+    	mPath(path) {}
+	
+    // Main functor () function
+    void operator() (const char *name) const {
+
+		// Only operate on .game files
+		if (!extension_equal(path_get_extension(name), "game")) {
+		    return;
+		} 
+
+		// Debug output
+		StringOutputStream strPath(256);
+		strPath << mPath << name;
+		globalOutputStream() << strPath.c_str() << '\n';
+
+		// Handle the XML file via libxml2
+		xmlDocPtr pDoc = xmlParseFile(strPath.c_str());
+	
+		if (pDoc) {
+			// Parse success, add to list
+		    mGames.push_front(new CGameDescription(pDoc, name));
+		    xmlFreeDoc(pDoc);
+		}
+		else {
+			// Error
+		    globalErrorStream() << "XML parser failed on '" << strPath.
+			c_str() << "'\n";
+		}
     }
-    else
-    {
-      globalErrorStream() << "XML parser failed on '" << strPath.c_str() << "'\n";
-    }
-  }
 };
 
 // Search for game definitions
-// TODO: Since this is now DarkRadiant, perhaps we can skip this step as we
-// are only using the one game
-// - OrbWeaver 2006-03-04
 
 void CGameDialog::ScanForGames()
 {
-  StringOutputStream strGamesPath(256);
-  strGamesPath << AppPath_get() << "games/";
-  const char *path = strGamesPath.c_str();
+	StringOutputStream strGamesPath(256);
+	strGamesPath << AppPath_get() << "games/";
+	const char *path = strGamesPath.c_str();
 
-  globalOutputStream() << "Scanning for game description files: " << path << '\n';
+	globalOutputStream() << "Scanning for game description files: " << path << '\n';
 
-  /*!
-  \todo FIXME LINUX:
-  do we put game description files below AppPath, or in ~/.radiant
-  i.e. read only or read/write?
-  my guess .. readonly cause it's an install
-  we will probably want to add ~/.radiant/<version>/games/ scanning on top of that for developers
-  (if that's really needed)
-  */
-
-  Directory_forEach(path, LoadGameFile(mGames, path));
+	// Invoke a GameFileLoader functor on every file in the games/ dir.
+	Directory_forEach(path, GameFileLoader(mGames, path));
 }
 
 CGameDescription* CGameDialog::GameDescriptionForComboItem()
@@ -447,58 +465,58 @@ void CGameDialog::Reset()
   file_remove(strGlobalPref.c_str());
 }
 
-void CGameDialog::Init()
-{
-  InitGlobalPrefPath();
-  LoadPrefs();
-  ScanForGames();
-  if (mGames.empty())
-  {
-    Error("Didn't find any valid game file descriptions, aborting\n");
-  }
- 
-  CGameDescription* currentGameDescription = 0;
+// Main initialisation routine for the game selection dialog. Scanning for
+// .game files is called from here.
 
-  if (!m_bGamePrompt)
-  {
-    // search by .game name
-    std::list<CGameDescription *>::iterator iGame;
-    for(iGame=mGames.begin(); iGame!=mGames.end(); ++iGame)
-    {
-      if ((*iGame)->mGameFile == m_sGameFile)
-      {
-        currentGameDescription = (*iGame);
-        break;
-      }
+void CGameDialog::Init() {
+
+    InitGlobalPrefPath();
+    LoadPrefs();
+
+    // Look for .game files and exit if no valid ones found
+    ScanForGames();
+    if (mGames.empty()) {
+        Error("Didn't find any valid game file descriptions, aborting\n");
     }
-  }
-  if (m_bGamePrompt || !currentGameDescription)
-  {
-	std::cout << "m_bGamePrompt is " << m_bGamePrompt << std::endl;
-    Create();
-    DoGameDialog();
-    // use m_nComboSelect to identify the game to run as and set the globals
-    currentGameDescription = GameDescriptionForComboItem();
-    ASSERT_NOTNULL(currentGameDescription);
-  }
-  g_pGameDescription = currentGameDescription;
 
-  g_pGameDescription->Dump();
+    CGameDescription *currentGameDescription = 0;
+
+    if (!m_bGamePrompt) {
+        // search by .game name
+        std::list < CGameDescription * >::iterator iGame;
+        for (iGame = mGames.begin(); iGame != mGames.end(); ++iGame) {
+            if ((*iGame)->mGameFile == m_sGameFile) {
+                currentGameDescription = (*iGame);
+                break;
+            }
+        }
+    }
+
+    if (m_bGamePrompt || !currentGameDescription) {
+        std::cout << "m_bGamePrompt is " << m_bGamePrompt << std::endl;
+        Create();
+        DoGameDialog();
+        // use m_nComboSelect to identify the game to run as and set the globals
+        currentGameDescription = GameDescriptionForComboItem();
+        ASSERT_NOTNULL(currentGameDescription);
+    }
+
+    // Set the global game description
+    g_pGameDescription = currentGameDescription;
+    g_pGameDescription->Dump();
 }
 
-CGameDialog::~CGameDialog()
-{
-  // free all the game descriptions
-  std::list<CGameDescription *>::iterator iGame;
-  for(iGame=mGames.begin(); iGame!=mGames.end(); ++iGame)
-  {
-    delete (*iGame);
-    *iGame = 0;
-  }
-  if(GetWidget() != 0)
-  {
-    Destroy();
-  }
+
+CGameDialog::~CGameDialog() {
+    // free all the game descriptions
+    std::list < CGameDescription * >::iterator iGame;
+    for (iGame = mGames.begin(); iGame != mGames.end(); ++iGame) {
+        delete(*iGame);
+        *iGame = 0;
+    }
+    if (GetWidget() != 0) {
+        Destroy();
+    }
 }
 
 inline const char* GameDescription_getIdentifier(const CGameDescription& gameDescription)
@@ -523,8 +541,6 @@ void CGameDialog::AddPacksURL(StringOutputStream &URL)
 }
 
 CGameDialog g_GamesDialog;
-
-
 // =============================================================================
 // Widget callbacks for PrefsDlg
 
