@@ -15,9 +15,9 @@ class EntityInspector:
     
     def __init__(self):
         
-        splitPane = gtk.VPaned()
-        splitPane.add1(self.createSelectionTreeView())
-        splitPane.add2(self.createDialogPane())
+        splitPane = gtk.VBox()
+        splitPane.pack_start(self.createSelectionTreeView())
+        splitPane.pack_end(self.createDialogPane())
         splitPane.show()
 
         self.window.add(splitPane)
@@ -98,7 +98,7 @@ class EntityInspector:
         self.editorFrame.set_border_width(6)
         #editorFrame.set_shadow_type(gtk.SHADOW_IN)
         vbx.pack_start(self.editorFrame, True, True)
-        vbx.set_size_request(0, 200)
+        vbx.set_size_request(0, 250)
         
         return vbx
         
