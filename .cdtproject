@@ -3,7 +3,13 @@
 
 <cdtproject id="org.eclipse.cdt.make.core.make">
 <extension point="org.eclipse.cdt.core.BinaryParser" id="org.eclipse.cdt.core.ELF"/>
-<extension point="org.eclipse.cdt.core.CIndexer" id="org.eclipse.cdt.core.domsourceindexer"/>
+<extension point="org.eclipse.cdt.core.CIndexer" id="org.eclipse.cdt.core.ctagsindexer">
+<attribute key="ctagslocation" value=""/>
+<attribute key="ctagfiletype" value="ctags_internal"/>
+<attribute key="ctagsindexincludes" value="false"/>
+<attribute key="ctagfilelocation" value=""/>
+<attribute key="ctagslocationtype" value="ctags_path_default"/>
+</extension>
 <data>
 <item id="scannerConfiguration">
 <autodiscovery enabled="true" selectedProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile" problemReportingEnabled="true"/>
