@@ -771,12 +771,17 @@ public:
   }
 };
 
+// Construct the GTK elements for the Preferences Dialog.
+
 GtkWindow* PrefsDlg::BuildDialog()
 {
-  PreferencesDialog_addInterfacePreferences(FreeCaller1<PreferencesPage&, Interface_constructPreferences>());
-  Mouse_registerPreferencesPage();
+    PreferencesDialog_addInterfacePreferences(FreeCaller1<PreferencesPage&, Interface_constructPreferences>());
+    Mouse_registerPreferencesPage();
 
-  GtkWindow* dialog = create_floating_window("GtkRadiant Preferences", m_parent);
+    // Construct the main dialog window. Set a vertical default size as the
+    // size_request is too small.
+    GtkWindow* dialog = create_floating_window("GtkRadiant Preferences", m_parent);
+    gtk_window_set_default_size(dialog, -1, 450);
 
   {
     GtkWidget* mainvbox = gtk_vbox_new(FALSE, 5);
