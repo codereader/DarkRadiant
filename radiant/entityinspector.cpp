@@ -19,6 +19,7 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include "dialog/EntityInspector.h"
 #include "entityinspector.h"
 
 #include "debugging/debugging.h"
@@ -30,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iselection.h"
 #include "iundo.h"
 
+#include <iostream>
 #include <map>
 #include <set>
 #include <gdk/gdkkeysyms.h>
@@ -1076,51 +1078,78 @@ void EntityInspector_appendAttribute(const char* name, EntityAttribute& attribut
 }
 
 
-template<typename Attribute>
-class StatelessAttributeCreator
-{
-public:
-  static EntityAttribute* create(const char* name)
-  {
-    return new Attribute(name);
-  }
+/* StatelessAttributeCreator
+ * 
+ * Set of utility classes which are used to create an EntityAttribute of the
+ * type specified in the template parameter. For use in the 
+ * EntityAttributeFactory class.
+ * 
+ * TODO: Perhaps cleaner to use a namespaced, templated function here rather 
+ * than a class with single static method?
+ */
+
+template <typename Attribute> 
+class StatelessAttributeCreator {
+
+  public:
+    // Create an Entity Attribute of the given type.
+    static EntityAttribute *create(const char *name) {
+        return new Attribute(name);
+    }
 };
 
-class EntityAttributeFactory
-{
-  typedef EntityAttribute* (*CreateFunc)(const char* name);
-  typedef std::map<const char*, CreateFunc, RawStringLess> Creators;
-  Creators m_creators;
-public:
-  EntityAttributeFactory()
-  {
-    m_creators.insert(Creators::value_type("string", &StatelessAttributeCreator<StringAttribute>::create));
-    m_creators.insert(Creators::value_type("color", &StatelessAttributeCreator<StringAttribute>::create));
-    m_creators.insert(Creators::value_type("integer", &StatelessAttributeCreator<StringAttribute>::create));
-    m_creators.insert(Creators::value_type("real", &StatelessAttributeCreator<StringAttribute>::create));
-    m_creators.insert(Creators::value_type("shader", &StatelessAttributeCreator<ShaderAttribute>::create));
-    m_creators.insert(Creators::value_type("boolean", &StatelessAttributeCreator<BooleanAttribute>::create));
-    m_creators.insert(Creators::value_type("angle", &StatelessAttributeCreator<AngleAttribute>::create));
-    m_creators.insert(Creators::value_type("direction", &StatelessAttributeCreator<DirectionAttribute>::create));
-    m_creators.insert(Creators::value_type("angles", &StatelessAttributeCreator<AnglesAttribute>::create));
-    m_creators.insert(Creators::value_type("model", &StatelessAttributeCreator<ModelAttribute>::create));
-    m_creators.insert(Creators::value_type("sound", &StatelessAttributeCreator<SoundAttribute>::create));
-    m_creators.insert(Creators::value_type("vector3", &StatelessAttributeCreator<Vector3Attribute>::create));
-  }
-  EntityAttribute* create(const char* type, const char* name)
-  {
-    Creators::iterator i = m_creators.find(type);
-    if(i != m_creators.end())
-    {
-      return (*i).second(name);
+/* EntityAttributeFactory
+ * 
+ * This class allows the creation of various types of EntityAttribute objects
+ * identified at runtime by their string name.
+ */
+
+class EntityAttributeFactory {
+
+    typedef EntityAttribute *(*CreateFunc) (const char *name);
+    typedef std::map < const char *, CreateFunc, RawStringLess > Creators;
+    Creators m_creators;
+
+  public:
+
+    // Constructor. Populate the Creators map with the string types of all 
+    // available EntityAttribute classes, along with a pointer to the create()
+    // function from the respective StatelessAttributeCreator object.
+    EntityAttributeFactory() {
+        m_creators.insert(Creators::value_type("string", &StatelessAttributeCreator < StringAttribute >::create));
+        m_creators.insert(Creators::value_type("color", &StatelessAttributeCreator < StringAttribute >::create));
+        m_creators.insert(Creators::value_type("integer", &StatelessAttributeCreator < StringAttribute >::create));
+        m_creators.insert(Creators::value_type("real", &StatelessAttributeCreator < StringAttribute >::create));
+        m_creators.insert(Creators::value_type("shader", &StatelessAttributeCreator < ShaderAttribute >::create));
+        m_creators.insert(Creators::value_type("boolean", &StatelessAttributeCreator < BooleanAttribute >::create));
+        m_creators.insert(Creators::value_type("angle", &StatelessAttributeCreator < AngleAttribute >::create));
+        m_creators.insert(Creators::value_type("direction", &StatelessAttributeCreator < DirectionAttribute >::create));
+        m_creators.insert(Creators::value_type("angles", &StatelessAttributeCreator < AnglesAttribute >::create));
+        m_creators.insert(Creators::value_type("model", &StatelessAttributeCreator < ModelAttribute >::create));
+        m_creators.insert(Creators::value_type("sound", &StatelessAttributeCreator < SoundAttribute >::create));
+        m_creators.insert(Creators::value_type("vector3", &StatelessAttributeCreator < Vector3Attribute >::create));
+    } 
+    
+    // Create an EntityAttribute from the given string classtype, with the given
+    // name
+    
+    EntityAttribute *create(const char *type, const char *name) {
+
+        Creators::iterator i = m_creators.find(type);
+
+        // If the StatelessAttributeCreator::create function is found for the 
+        // type, invoke it to create a new EntityAttribute with the given name
+        if (i != m_creators.end()) {
+            return i->second(name);
+        }
+        
+        const ListAttributeType *listType = GlobalEntityClassManager().findListType(type);
+
+        if (listType != 0) {
+            return new ListAttribute(name, *listType);
+        }
+        return 0;
     }
-    const ListAttributeType* listType = GlobalEntityClassManager().findListType(type);
-    if(listType != 0)
-    {
-      return new ListAttribute(name, *listType);
-    }
-    return 0;
-  }
 };
 
 typedef Static<EntityAttributeFactory> GlobalEntityAttributeFactory;
@@ -1233,17 +1262,21 @@ void EntityInspector_updateKeyValues()
   }
 }
 
-class EntityInspectorDraw
-{
-  IdleDraw m_idleDraw;
-public:
-  EntityInspectorDraw() : m_idleDraw(FreeCaller<EntityInspector_updateKeyValues>())
-  {
-  }
-  void queueDraw()
-  {
-    m_idleDraw.queueDraw();
-  }
+// Entity Inspector redraw functor
+
+class EntityInspectorDraw {
+
+    IdleDraw m_idleDraw;
+
+  public:
+
+    // Constructor
+    EntityInspectorDraw():
+        m_idleDraw(FreeCaller<EntityInspector_updateKeyValues>()) {} 
+    
+    void queueDraw() {
+        m_idleDraw.queueDraw();
+    }
 };
 
 EntityInspectorDraw g_EntityInspectorDraw;
@@ -1262,6 +1295,7 @@ void EntityInspector_selectionChanged(const Selectable&)
 //
 void EntityClassList_createEntity()
 {
+    std::cout << "EntityClassList_createEntity()" << std::endl;
   GtkTreeView* view = g_entityClassList;
 
   // find out what type of entity we are trying to create
@@ -1490,15 +1524,21 @@ void EntityInspector_destroyWindow(GtkWidget* widget, gpointer data)
   GlobalEntityAttributes_clear();
 }
 
-GtkWidget* EntityInspector_constructWindow(GtkWindow* toplevel)
-{
-  GtkWidget* vbox = gtk_vbox_new(FALSE, 2);
-  gtk_widget_show (vbox);
-  gtk_container_set_border_width(GTK_CONTAINER (vbox), 2);
+/* Function to construct the GTK components of the entity inspector. This 
+ * function returns a vbox which is added to the Group Dialog window (which
+ * contains tabs for entities, textures etc.
+ */
 
-  g_signal_connect(G_OBJECT(vbox), "destroy", G_CALLBACK(EntityInspector_destroyWindow), 0);
+GtkWidget* EntityInspector_constructWindow(GtkWindow* toplevel) {
 
-  {
+    GtkWidget *vbox = gtk_vbox_new(FALSE, 2);
+    
+    gtk_widget_show(vbox);
+    gtk_container_set_border_width(GTK_CONTAINER(vbox), 2);
+    
+    g_signal_connect(G_OBJECT(vbox), "destroy", G_CALLBACK(EntityInspector_destroyWindow), 0);
+
+    {
     GtkWidget* split1 = gtk_vpaned_new();
     gtk_box_pack_start(GTK_BOX(vbox), split1, TRUE, TRUE, 0);
     gtk_widget_show (split1);

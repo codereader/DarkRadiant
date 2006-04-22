@@ -64,6 +64,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "rotation.h"
 
 #include "entity.h"
+
+#include <iostream>
+
+
 extern bool g_newLightDraw;
 
 
@@ -1151,6 +1155,7 @@ public:
 
   void attach(scene::Traversable::Observer* observer)
   {
+    std::cout << "[entity] Light::attach()" << std::endl;
     m_traverseObservers.attach(*observer);
   }
   void detach(scene::Traversable::Observer* observer)
@@ -1776,6 +1781,7 @@ class LightNode :
 
   void construct()
   {
+    std::cout << "[entity] LightNode::construct()" << std::endl;
     if(g_lightType == LIGHTTYPE_DOOM3)
     {
       m_contained.attach(this);
@@ -1847,6 +1853,7 @@ public:
   }
   scene::Node& node()
   {
+    std::cout << "[entity] LightNode::node(), returning " << std::endl;
     return m_node;
   }
 
@@ -1903,5 +1910,6 @@ void Light_Destroy()
 
 scene::Node& New_Light(EntityClass* eclass)
 {
+    std::cout << "[entity] New_Light()" << std::endl;
   return (new LightNode(eclass))->node();
 }

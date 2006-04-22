@@ -39,6 +39,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "moduleobservers.h"
 #include "stringio.h"
 
+#include <iostream>
+
 class RawString
 {
   const char* m_value;
@@ -593,27 +595,32 @@ void EntityClassDoom3_loadFile(const char* filename)
   }
 }
 
-EntityClass* EntityClassDoom3_findOrInsert(const char *name, bool has_brushes)
+// Find or insert an EntityClass with the given name.
+
+EntityClass *EntityClassDoom3_findOrInsert(const char *name, bool has_brushes)
 {
-	ASSERT_NOTNULL(name);
+    ASSERT_NOTNULL(name);
+    std::cout << "EntityClassDoom3_findOrInsert(" << name << ")" << std::endl;
 
-  if(string_empty(name))
-  {
-    return g_EntityClassDoom3_bad;
-  }
+    // Return an error if no name is given
+    if (string_empty(name)) {
+        return g_EntityClassDoom3_bad;
+    }
 
-  EntityClasses::iterator i = g_EntityClassDoom3_classes.find(name);
-  if(i != g_EntityClassDoom3_classes.end() 
-    //&& string_equal((*i).first, name)
-    )
-  {
-    return (*i).second;
-  }
+    // Find the EntityClass in the map.
+    EntityClasses::iterator i = g_EntityClassDoom3_classes.find(name);
+    if (i != g_EntityClassDoom3_classes.end()) {
+        std::cout << "  Found " << name << ", returning" << std::endl;
+        return i->second; // found it, return
+    }
 
-	EntityClass* e = EntityClass_Create_Default(name, has_brushes);
-	EntityClass* inserted = EntityClassDoom3_insertUnique(e);
-  ASSERT_MESSAGE(inserted == e, "");
-  return inserted;
+    // Otherwise insert the new EntityClass
+    std::cout << "  Not found, inserting" << std::endl;
+    EntityClass *e = EntityClass_Create_Default(name, has_brushes);
+    EntityClass *inserted = EntityClassDoom3_insertUnique(e);
+
+    ASSERT_MESSAGE(inserted == e, "");
+    return inserted;
 }
 
 const ListAttributeType* EntityClassDoom3_findListType(const char* name)
@@ -784,14 +791,17 @@ void EntityClassDoom3_unrealise()
   g_EntityClassDoom3.unrealise();
 }
 
+// Construct the EntityClassDoom3 manager.
+
 void EntityClassDoom3_construct()
 {
-  GlobalFileSystem().attach(g_EntityClassDoom3);
+    std::cout << "EntityClassDoom3_construct()" << std::endl;
+    GlobalFileSystem().attach(g_EntityClassDoom3);
 
-  // start by creating the default unknown eclass
-  g_EntityClassDoom3_bad = EClass_Create("UNKNOWN_CLASS", Vector3(0.0f, 0.5f, 0.0f), "");
+    // start by creating the default unknown eclass
+    g_EntityClassDoom3_bad = EClass_Create("UNKNOWN_CLASS", Vector3(0.0f, 0.5f, 0.0f), "");
 
-  EntityClassDoom3_realise();
+    EntityClassDoom3_realise();
 }
 
 void EntityClassDoom3_destroy()
@@ -807,33 +817,48 @@ class EntityClassDoom3Dependencies : public GlobalFileSystemModuleRef, public Gl
 {
 };
 
+/* EntityClassDoom3API
+ * 
+ * This class contains the EntityClassManager object for Doom 3, which is
+ * returned through calls to GlobalEntityClassManager()::getTable() as per
+ * the plugin API. The EntityClassManager member object contains methods which
+ * point to C functions in this file.
+ */
+
 class EntityClassDoom3API
 {
-  EntityClassManager m_eclassmanager;
+    // EntityClassManager member object
+    EntityClassManager m_eclassmanager;
+
 public:
-  typedef EntityClassManager Type;
-  STRING_CONSTANT(Name, "doom3");
+    typedef EntityClassManager Type;
+    STRING_CONSTANT(Name, "doom3");
 
-  EntityClassDoom3API()
-  {
-    EntityClassDoom3_construct();
-
-    m_eclassmanager.findOrInsert = &EntityClassDoom3_findOrInsert;
-    m_eclassmanager.findListType = &EntityClassDoom3_findListType;
-    m_eclassmanager.forEach = &EntityClassDoom3_forEach;
-    m_eclassmanager.attach = &EntityClassDoom3_attach;
-    m_eclassmanager.detach = &EntityClassDoom3_detach;
-    m_eclassmanager.realise = &EntityClassDoom3_realise;
-    m_eclassmanager.unrealise = &EntityClassDoom3_unrealise;
-  }
-  ~EntityClassDoom3API()
-  {
-    EntityClassDoom3_destroy();
-  }
-  EntityClassManager* getTable()
-  {
-    return &m_eclassmanager;
-  }
+    // Constructor. Create the entity class manager, then set the API function
+    // pointers to the appropriate functions.
+    EntityClassDoom3API() {
+        std::cout << "EntityClassDoom3API()" << std::endl;
+        EntityClassDoom3_construct();
+    
+        m_eclassmanager.findOrInsert = &EntityClassDoom3_findOrInsert;
+        m_eclassmanager.findListType = &EntityClassDoom3_findListType;
+        m_eclassmanager.forEach = &EntityClassDoom3_forEach;
+        m_eclassmanager.attach = &EntityClassDoom3_attach;
+        m_eclassmanager.detach = &EntityClassDoom3_detach;
+        m_eclassmanager.realise = &EntityClassDoom3_realise;
+        m_eclassmanager.unrealise = &EntityClassDoom3_unrealise;
+    }
+    
+    // Destructor. Destroy the entity class manager.
+    ~EntityClassDoom3API() {
+        EntityClassDoom3_destroy();
+    }
+    
+    // Return the EntityClassManager object.
+    EntityClassManager *getTable()
+    {
+        return &m_eclassmanager;
+    }
 };
 
 #include "modulesystem/singletonmodule.h"

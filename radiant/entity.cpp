@@ -45,6 +45,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "qe3.h"
 #include "commands.h"
 
+#include <iostream>
+
 struct entity_globals_t
 {
   Vector3 color_entity;
@@ -199,110 +201,72 @@ AABB Doom3Light_getBounds(AABB aabb)
 
 int g_iLastLightIntensity;
 
-void Entity_createFromSelection(const char* name, const Vector3& origin)
-{
-#if 0
-  if(string_equal_nocase(name, "worldspawn"))
-  {
-    gtk_MessageBox(GTK_WIDGET(MainFrame_getWindow()), "Can't create an entity with worldspawn.", "info");
-    return;
-  }
-#endif
+void Entity_createFromSelection(const char* name, const Vector3& origin) {
+    // DEBUG
+    std::cout << "Entity_createFromSelection(" << name << ", <origin>)" << std::endl;
 
-  EntityClass* entityClass = GlobalEntityClassManager().findOrInsert(name, true);
+    EntityClass *entityClass = GlobalEntityClassManager().findOrInsert(name, true);
 
-  bool isModel = string_equal_nocase(name, "misc_model")
-    || string_equal_nocase(name, "misc_gamemodel")
-    || string_equal_nocase(name, "model_static")
-    || (GlobalSelectionSystem().countSelected() == 0 && string_equal_nocase(name, "func_static"));
-
-  // Some entities are based on the size of the currently-selected brush(es)
-  bool brushesSelected = Scene_countSelectedBrushes(GlobalSceneGraph()) != 0;
-
-  if(!(entityClass->fixedsize || isModel) && !brushesSelected)
-  {
-    globalErrorStream() << "failed to create a group entity - no brushes are selected\n";
-    return;
-  }
-
-  AABB workzone(aabb_for_minmax(Select_getWorkZone().d_work_min, Select_getWorkZone().d_work_max));
-  
-  NodeSmartReference node(GlobalEntityCreator().createEntity(entityClass));
-
-  Node_getTraversable(GlobalSceneGraph().root())->insert(node);
-
-  scene::Path entitypath(makeReference(GlobalSceneGraph().root()));
-  entitypath.push(makeReference(node.get()));
-  scene::Instance& instance = findInstance(entitypath);
-
-  if(entityClass->fixedsize)
-  {
-    Select_Delete();
+    // TODO: to be replaced by inheritance-based class detection
+    bool isModel = string_equal_nocase(name, "misc_model")
+        || string_equal_nocase(name, "misc_gamemodel")
+        || string_equal_nocase(name, "model_static")
+        || (GlobalSelectionSystem().countSelected() == 0 && string_equal_nocase(name, "func_static"));
     
-    Transformable* transform = Instance_getTransformable(instance);
-    if(transform != 0)
-    {
-      transform->setType(TRANSFORM_PRIMITIVE);
-      transform->setTranslation(origin);
-      transform->freezeTransform();
+    // Some entities are based on the size of the currently-selected brush(es)
+    bool brushesSelected = Scene_countSelectedBrushes(GlobalSceneGraph()) != 0;
+
+    if (!(entityClass->fixedsize || isModel) && !brushesSelected) {
+        globalErrorStream() << "failed to create a group entity - no brushes are selected\n";
+        return;
     }
 
-    GlobalSelectionSystem().setSelectedAll(false);
+    AABB workzone(aabb_for_minmax(Select_getWorkZone().d_work_min, Select_getWorkZone().d_work_max));
+    
+    NodeSmartReference node(GlobalEntityCreator().createEntity(entityClass));
+    
+    Node_getTraversable(GlobalSceneGraph().root())->insert(node);
+    
+    scene::Path entitypath(makeReference(GlobalSceneGraph().root()));
+    entitypath.push(makeReference(node.get()));
+    scene::Instance & instance = findInstance(entitypath);
 
-    Instance_setSelected(instance, true);
-  }
-  else
-  {
-    Scene_parentSelectedBrushesToEntity(GlobalSceneGraph(), node);
-    Scene_forEachChildSelectable(SelectableSetSelected(true), instance.path());
-  }
-
-  // tweaking: when right clic dropping a light entity, ask for light value in a custom dialog box
-  // see SF bug 105383
-
-  if (g_pGameDescription->mGameType == "hl")
-  {
-    // FIXME - Hydra: really we need a combined light AND color dialog for halflife.
-    if (string_equal_nocase(name, "light")
-      || string_equal_nocase(name, "light_environment")
-      || string_equal_nocase(name, "light_spot"))
-    {
-      int intensity = g_iLastLightIntensity;
-
-      if (DoLightIntensityDlg (&intensity) == eIDOK)
-      {
-        g_iLastLightIntensity = intensity;
-        char buf[30];
-        sprintf( buf, "255 255 255 %d", intensity );
-        Node_getEntity(node)->setKeyValue("_light", buf);
-      }
+    if (entityClass->fixedsize) {
+        Select_Delete();
+    
+        Transformable *transform = Instance_getTransformable(instance);
+    
+        if (transform != 0) {
+            transform->setType(TRANSFORM_PRIMITIVE);
+            transform->setTranslation(origin);
+            transform->freezeTransform();
+        }
+    
+        GlobalSelectionSystem().setSelectedAll(false);
+    
+        Instance_setSelected(instance, true);
     }
-  }
-  else if(string_equal_nocase(name, "light"))
-  {
-    if(g_pGameDescription->mGameType != "doom3")
-    {
-      int intensity = g_iLastLightIntensity;
+    else {
+        Scene_parentSelectedBrushesToEntity(GlobalSceneGraph(), node);
+        Scene_forEachChildSelectable(SelectableSetSelected(true), instance.path());
+    }
 
-      if (DoLightIntensityDlg (&intensity) == eIDOK)
-      {
-        g_iLastLightIntensity = intensity;
-        char buf[10];
-        sprintf( buf, "%d", intensity );
-        Node_getEntity(node)->setKeyValue("light", buf);
-      }
+    // TODO: This text string name test is mega-lame, to be upgraded to proper
+    // entity class detection via inheritance.
+
+    if (string_equal_nocase(name, "light")) {
+        if (brushesSelected)        // use workzone to set light position/size for doom3 lights. 
+        {
+            AABB bounds(Doom3Light_getBounds(workzone));    // If workzone is not valid the Doom3Light_getBounds function will return a default
+            StringOutputStream key(64);
+    
+            key << bounds.origin[0] << " " << bounds.origin[1] << " " << bounds.origin[2];
+            Node_getEntity(node)->setKeyValue("origin", key.c_str());
+            key.clear();
+            key << bounds.extents[0] << " " << bounds.extents[1] << " " << bounds.extents[2];
+            Node_getEntity(node)->setKeyValue("light_radius", key.c_str());
+        }
     }
-    else if (brushesSelected) // use workzone to set light position/size for doom3 lights. 
-    {
-      AABB bounds(Doom3Light_getBounds(workzone)); // If workzone is not valid the Doom3Light_getBounds function will return a default
-      StringOutputStream key(64);
-      key << bounds.origin[0] << " " << bounds.origin[1] << " " << bounds.origin[2];
-      Node_getEntity(node)->setKeyValue("origin", key.c_str());
-      key.clear();
-      key << bounds.extents[0] << " " << bounds.extents[1] << " " << bounds.extents[2];
-      Node_getEntity(node)->setKeyValue("light_radius", key.c_str());
-    }
-  }
 
   if(isModel)
   {

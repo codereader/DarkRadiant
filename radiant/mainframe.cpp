@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 #include "version.h"
 
+#include "dialog/EntityInspector.h"
 #include "ifilesystem.h"
 #include "iundo.h"
 #include "ifilter.h"
@@ -2855,6 +2856,9 @@ static gint mainframe_delete (GtkWidget *widget, GdkEvent *event, gpointer data)
   return TRUE;
 }
 
+/* Construct the main Radiant window
+ */
+
 void MainFrame::Create()
 {
   GtkWindow* window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
@@ -2884,43 +2888,54 @@ void MainFrame::Create()
   g_mainframeFocusPrinter.connect(window);
 #endif
 
-  g_MainWindowActive.connect(window);
+    g_MainWindowActive.connect(window);
+    
+    GetPlugInMgr().Init(GTK_WIDGET(window));
+    
+    GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+    
+    gtk_container_add(GTK_CONTAINER(window), vbox);
+    gtk_widget_show(vbox);
+    
+    global_accel_connect_window(window);
+    
+    m_nCurrentStyle = (EViewStyle) g_Layout_viewStyle.m_value;
+    
+    register_shortcuts();
 
-  GetPlugInMgr().Init(GTK_WIDGET(window));
+    // Create and add main menu    
+    GtkMenuBar *main_menu = create_main_menu(CurrentStyle());
+    gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(main_menu), FALSE, FALSE, 0);
+    
+    // Create and add main toolbar
+    GtkToolbar *main_toolbar = create_main_toolbar(CurrentStyle());
+    gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(main_toolbar), FALSE, FALSE, 0);
 
-  GtkWidget* vbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_add(GTK_CONTAINER(window), vbox);
-  gtk_widget_show(vbox);
+    // Create and add plugin toolbar, if visible    
+    GtkToolbar *plugin_toolbar = create_plugin_toolbar();
+    if (!g_Layout_enablePluginToolbar.m_value) {
+        gtk_widget_hide(GTK_WIDGET(plugin_toolbar));
+    }
+    gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(plugin_toolbar), FALSE, FALSE, 0);
+    
+    // Create and pack main statusbar
+    GtkWidget *main_statusbar = create_main_statusbar(m_pStatusLabel);
+    gtk_box_pack_end(GTK_BOX(vbox), main_statusbar, FALSE, TRUE, 2);
 
-  global_accel_connect_window(window);
+    /* Construct the Group Dialog. This is the tabbed window that contains
+     * a number of pages - usually Entities, Textures and possibly Console.
+     */
 
-  m_nCurrentStyle = (EViewStyle)g_Layout_viewStyle.m_value;
+    GroupDialog_constructWindow(window);
 
-  register_shortcuts();
+    // Add entity inspector widget
+    g_page_entity = GroupDialog_addPage("Entities", ui::EntityInspector::getInstance()->getWidget(), RawStringExportCaller("Entities"));
 
-  GtkMenuBar* main_menu = create_main_menu(CurrentStyle());
-  gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(main_menu), FALSE, FALSE, 0);
-
-  GtkToolbar* main_toolbar = create_main_toolbar(CurrentStyle());
-  gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(main_toolbar), FALSE, FALSE, 0);
-
-  GtkToolbar* plugin_toolbar = create_plugin_toolbar();
-  if (!g_Layout_enablePluginToolbar.m_value)
-  {
-    gtk_widget_hide(GTK_WIDGET(plugin_toolbar));
-  }
-  gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(plugin_toolbar), FALSE, FALSE, 0);
-
-  GtkWidget* main_statusbar = create_main_statusbar(m_pStatusLabel);
-  gtk_box_pack_end(GTK_BOX(vbox), main_statusbar, FALSE, TRUE, 2);
-
-  GroupDialog_constructWindow(window);
-  g_page_entity = GroupDialog_addPage("Entities", EntityInspector_constructWindow(GroupDialog_getWindow()), RawStringExportCaller("Entities"));
-
-  if(FloatingGroupDialog())
-  {
-    g_page_console = GroupDialog_addPage("Console", Console_constructWindow(GroupDialog_getWindow()), RawStringExportCaller("Console"));
-  }
+    // Add the console widget if using floating window mode, otherwise the
+    // console is placed in the bottom-most split pane.
+    if (FloatingGroupDialog()) {
+        g_page_console = GroupDialog_addPage("Console", Console_constructWindow(GroupDialog_getWindow()), RawStringExportCaller("Console"));
+    }
 
 #ifdef WIN32
   if( g_multimon_globals.m_bStartOnPrimMon )

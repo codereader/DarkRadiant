@@ -44,12 +44,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic.h"
 #include "doom3group.h"
 
+#include <iostream>
 
 
 EGameType g_gameType;
 
-inline scene::Node& entity_for_eclass(EntityClass* eclass)
+scene::Node& entity_for_eclass(EntityClass* eclass)
 {
+    std::cout << "[entity] entity_for_eclass()" << std::endl;
   if(classname_equal(eclass->name(), "misc_model")
   || classname_equal(eclass->name(), "misc_gamemodel")
   || classname_equal(eclass->name(), "model_static"))
@@ -93,10 +95,14 @@ inline Namespaced* Node_getNamespaced(scene::Node& node)
   return NodeTypeCast<Namespaced>::cast(node);
 }
 
-inline scene::Node& node_for_eclass(EntityClass* eclass)
+scene::Node& node_for_eclass(EntityClass* eclass)
 {
+    std::cout << "[entity] node_for_eclass()" << std::endl;
+    
   scene::Node& node = entity_for_eclass(eclass);
+    std::cout << "entity_for_eclass done, got Node" << std::endl;
   Node_getEntity(node)->setKeyValue("classname", eclass->name());
+  std::cout << "[entity] set key val, classname=" << eclass->name() << std::endl;
 
   if(g_gameType == eGameTypeDoom3
     && string_not_empty(eclass->name())
@@ -115,6 +121,7 @@ inline scene::Node& node_for_eclass(EntityClass* eclass)
     namespaced->setNamespace(GlobalNamespace());
   }
 
+    std::cout << "[entity] node_for_eclass DONE" << std::endl;
   return node;
 }
 
@@ -158,6 +165,7 @@ class Quake3EntityCreator : public EntityCreator
 public:
   scene::Node& createEntity(EntityClass* eclass)
   {
+    std::cout << "[entity] Quake3EntityCreator::createEntity()" << std::endl;
     return node_for_eclass(eclass);
   }
   void setKeyValueChangedFunc(KeyValueChangedFunc func)
@@ -269,6 +277,7 @@ Quake3EntityCreator g_Quake3EntityCreator;
 
 EntityCreator& GetEntityCreator()
 {
+    std::cout << "[entity] GetEntityCreator()" << std::endl;
   return g_Quake3EntityCreator;
 }
 
