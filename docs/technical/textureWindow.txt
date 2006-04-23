@@ -1,0 +1,8 @@
+TEXTURE WINDOW
+--------------------------------------------------------------------------------
+
+The QER-style texture window is in texwindow.cpp.
+
+The display of individual textures is handled by Texture_Draw() in this file.
+Updates to affect the display of textures (such as normalisation of size) would
+be done in this function.
