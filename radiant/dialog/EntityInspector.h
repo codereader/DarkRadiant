@@ -32,8 +32,10 @@ public:
     // Get the Gtk Widget for display in the main application
     GtkWidget* getWidget();
 
-	EntityInspector();
-	virtual ~EntityInspector();
+    // Redraw the GUI elements. This must be static as it is passed as a pointer
+    // to the GlobalEntityCreator's setKeyValueChangedFunc function.
+    static void redraw();
+
 };
 
 } // namespace ui

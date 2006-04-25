@@ -1,16 +1,9 @@
 #include "EntityInspector.h"
+#include "ientity.h"
 
 #include <iostream>
 
 namespace ui {
-
-EntityInspector::EntityInspector()
-{
-}
-
-EntityInspector::~EntityInspector()
-{
-}
 
 // Return the singleton EntityInspector instance, creating it if it is not yet
 // created. Single-threaded design.
@@ -37,6 +30,10 @@ void EntityInspector::constructUI() {
     gtk_box_pack_end(GTK_BOX(_widget), createDialogPane(), FALSE, FALSE, 6);
     
     gtk_widget_show_all(_widget);
+    
+    // Set the function to call when a keyval is changed. This is a requirement
+    // of the EntityCreator interface.
+    GlobalEntityCreator().setKeyValueChangedFunc(EntityInspector::redraw);
 }
 
 // Create the dialog pane
@@ -48,5 +45,11 @@ GtkWidget* EntityInspector::createDialogPane() {
     gtk_widget_set_size_request(vbx, 0, 250);
     return vbx;
 }
+
+// Redraw the GUI elements, such as in response to a key/val change on the
+// selected entity. Note that this function is static as it is accessed via
+// a function pointer in the GlobalEntityCreator.
+
+void EntityInspector::redraw() {}
 
 } // namespace ui
