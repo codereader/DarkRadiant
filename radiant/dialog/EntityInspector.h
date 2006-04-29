@@ -17,20 +17,30 @@ class EntityInspector
 private:
 
     // The Gtk dialog widgets
-    GtkWidget* _widget;
+
+    GtkWidget* _widget; 
     
     GtkWidget* _editorFrame;
     GtkWidget* _selectionTreeView;
+    
+    GtkTreeStore* _treeStore;
+    GtkWidget* _treeView;
 
     // Utility functions to construct the Gtk components
+
     void constructUI();
 
     GtkWidget* createDialogPane(); // bottom widget pane 
-    void createSelectionTreeView(); // tree view for selecting attributes
+    GtkWidget* createTreeViewPane(); // tree view for selecting attributes
 
     // GtkUtil IdleDraw class. This allows redraw calls to be scheduled for
     // when GTK is idle.
     IdleDraw _idleDraw;
+
+    // GTK CALLBACKS
+    // Must be static as they are called from a C-based API
+    
+    static void callbackTreeSelectionChanged(GtkWidget* widget, EntityInspector* self);
 
 public:
 
