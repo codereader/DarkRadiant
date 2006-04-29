@@ -47,9 +47,24 @@ GtkWidget* EntityInspector::createDialogPane() {
 }
 
 // Redraw the GUI elements, such as in response to a key/val change on the
-// selected entity. Note that this function is static as it is accessed via
-// a function pointer in the GlobalEntityCreator.
+// selected entity. 
 
-void EntityInspector::redraw() {}
+void EntityInspector::doRedraw() {
+    std::cout << "EntityInspector::doRedraw()" << std::endl;
+}
+
+// Static function to get the singleton instance and invoke its redraw function.
+// This is necessary since the EntityCreator interface requires a pointer to 
+// a non-member function to call when a keyval is changed.
+
+void EntityInspector::redraw() {
+    getInstance()->queueDraw();
+}
+
+// Pass on a queueDraw request to the contained IdleDraw object.
+
+void EntityInspector::queueDraw() {
+    _idleDraw.queueDraw();
+}
 
 } // namespace ui
