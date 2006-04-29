@@ -1,0 +1,6 @@
+SCENE LIBRARY
+--------------------------------------------------------------------------------
+
+Scenegraph comprised of scene::Node objects.
+
+Class is defined in libs/scenelib.h
