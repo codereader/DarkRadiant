@@ -1,5 +1,6 @@
 #include "EntityInspector.h"
 #include "ientity.h"
+#include "iselection.h"
 
 #include <iostream>
 
@@ -28,13 +29,17 @@ void EntityInspector::constructUI() {
     _widget = gtk_vbox_new(FALSE, 6);
     
     gtk_box_pack_end(GTK_BOX(_widget), createDialogPane(), FALSE, FALSE, 6);
-    gtk_box_pack_start(GTK_BOX(_widget), createTreeViewPane(), FALSE, FALSE, 6);
+    gtk_box_pack_start(GTK_BOX(_widget), createTreeViewPane(), TRUE, TRUE, 6);
     
     gtk_widget_show_all(_widget);
     
     // Set the function to call when a keyval is changed. This is a requirement
     // of the EntityCreator interface.
     GlobalEntityCreator().setKeyValueChangedFunc(EntityInspector::redraw);
+
+    // Create callback object to redraw the dialog when the selected entity is
+    // changed
+    GlobalSelectionSystem().addSelectionChangeCallback(FreeCaller1<const Selectable&, EntityInspector::selectionChanged>());
 }
 
 // Create the dialog pane
@@ -99,20 +104,37 @@ void EntityInspector::doRedraw() {
 // This is necessary since the EntityCreator interface requires a pointer to 
 // a non-member function to call when a keyval is changed.
 
-void EntityInspector::redraw() {
+inline void EntityInspector::redraw() {
     getInstance()->queueDraw();
 }
 
 // Pass on a queueDraw request to the contained IdleDraw object.
 
-void EntityInspector::queueDraw() {
+inline void EntityInspector::queueDraw() {
     _idleDraw.queueDraw();
+}
+
+// Selection changed callback
+
+inline void EntityInspector::selectionChanged(const Selectable& sel) {
+    EntityInspector::redraw();   
 }
 
 /* GTK CALLBACKS */
 
 void EntityInspector::callbackTreeSelectionChanged(GtkWidget* widget, EntityInspector* self) {
-    std::cout << "Selection changed" << std::endl;   
+    std::cout << "Selection changed to ";   
+
+    GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->_treeView));
+
+    GtkTreeIter tmpIter;
+    gtk_tree_selection_get_selected(selection, NULL, &tmpIter);
+
+    GValue selString = { 0, 0 };
+    gtk_tree_model_get_value(GTK_TREE_MODEL(self->_treeStore), &tmpIter, 0, &selString);
+    
+    std::cout << g_value_get_string(&selString) << std::endl;
+    g_value_unset(&selString);
 }
 
 } // namespace ui

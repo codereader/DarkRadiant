@@ -3,6 +3,8 @@
 
 #include "gtkutil/idledraw.h"
 
+#include "iselection.h"
+
 #include <gtk/gtk.h>
 
 namespace ui {
@@ -66,6 +68,11 @@ public:
     // Static class function to instigate a redraw. This is passed as a pointer
     // to the GlobalEntityCreator's setKeyValueChangedFunc function.
     static void redraw();
+
+    // Function to call when the current Selection is changed by the selection
+    // system. Internally this function will just stimulate a redraw, but it
+    // must take a reference to the Selectable object.
+    static void selectionChanged(const Selectable&);
 
 };
 
