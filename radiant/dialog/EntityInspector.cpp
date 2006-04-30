@@ -26,10 +26,10 @@ GtkWidget* EntityInspector::getWidget() {
 // Create the actual UI components for the EntityInspector dialog
 
 void EntityInspector::constructUI() {
-    _widget = gtk_vbox_new(FALSE, 6);
+    _widget = gtk_vbox_new(FALSE, 0);
     
     gtk_box_pack_end(GTK_BOX(_widget), createDialogPane(), FALSE, FALSE, 6);
-    gtk_box_pack_start(GTK_BOX(_widget), createTreeViewPane(), TRUE, TRUE, 6);
+    gtk_box_pack_start(GTK_BOX(_widget), createTreeViewPane(), TRUE, TRUE, 0);
     
     gtk_widget_show_all(_widget);
     
@@ -45,11 +45,11 @@ void EntityInspector::constructUI() {
 // Create the dialog pane
 
 GtkWidget* EntityInspector::createDialogPane() {
-    GtkWidget* vbx = gtk_vbox_new(FALSE, 0);
+    GtkWidget* hbx = gtk_hbox_new(FALSE, 0);
     _editorFrame = gtk_frame_new("Edit property");
-    gtk_box_pack_start(GTK_BOX(vbx), _editorFrame, FALSE, FALSE, 6);
-    gtk_widget_set_size_request(vbx, 0, 250);
-    return vbx;
+    gtk_box_pack_start(GTK_BOX(hbx), _editorFrame, TRUE, TRUE, 6);
+    gtk_widget_set_size_request(hbx, 0, 200);
+    return hbx;
 }
 
 // Create the TreeView pane
@@ -89,7 +89,7 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     gtk_widget_set_size_request(scrollWin, 260, 180);
     gtk_container_add(GTK_CONTAINER(scrollWin), _treeView);    
 
-    gtk_box_pack_start(GTK_BOX(vbx), scrollWin, FALSE, FALSE, 6);
+    gtk_box_pack_start(GTK_BOX(vbx), scrollWin, TRUE, TRUE, 0);
     return vbx;    
 }
 
