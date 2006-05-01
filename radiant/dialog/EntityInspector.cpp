@@ -63,20 +63,33 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     GtkWidget* vbx = gtk_vbox_new(FALSE, 0);
 
     // Initialise the instance TreeStore
-    _treeStore = gtk_tree_store_new(1, G_TYPE_STRING);
+    _treeStore = gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING);
     
     // Create the TreeView widget and link it to the model
     _treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
 
     // Add columns to the TreeView
-    GtkCellRenderer* textRenderer = gtk_cell_renderer_text_new();
+    GtkCellRenderer* textRenderer;
+
+    textRenderer = gtk_cell_renderer_text_new();
     GtkTreeViewColumn* nameCol = 
-        gtk_tree_view_column_new_with_attributes("Properties",
+        gtk_tree_view_column_new_with_attributes("Property",
                                                  textRenderer,
                                                  "text",
-                                                 0,
+                                                 PROPERTY_NAME_COLUMN,
                                                  NULL);
+    gtk_tree_view_column_set_resizable(nameCol, TRUE);
+    gtk_tree_view_column_set_sizing(nameCol, GTK_TREE_VIEW_COLUMN_GROW_ONLY);
     gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), nameCol);                                                                        
+
+    textRenderer = gtk_cell_renderer_text_new();
+    GtkTreeViewColumn* valCol =
+        gtk_tree_view_column_new_with_attributes("Value",
+                                                 textRenderer,
+                                                 "text",
+                                                 PROPERTY_VALUE_COLUMN,
+                                                 NULL);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), valCol);
 
     // Set up the signals
     g_signal_connect(G_OBJECT(_treeView), "cursor-changed", G_CALLBACK(callbackTreeSelectionChanged), this);
@@ -158,12 +171,13 @@ void EntityInspector::populateTreeModel() {
     gtk_tree_store_clear(_treeStore);
     GtkTreeIter basicIter;
     gtk_tree_store_append(_treeStore, &basicIter, NULL);
-    gtk_tree_store_set(_treeStore, &basicIter, 0, "Basic", -1);
+    gtk_tree_store_set(_treeStore, &basicIter, PROPERTY_NAME_COLUMN, "Basic", -1);
 
     for (KeyValueMap::iterator i = kvMap.begin(); i != kvMap.end(); i++) {
         GtkTreeIter tempIter;
         gtk_tree_store_append(_treeStore, &tempIter, &basicIter);
-        gtk_tree_store_set(_treeStore, &tempIter, 0, i->first, -1);
+        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_NAME_COLUMN, i->first, -1);
+        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_VALUE_COLUMN, i->second, -1);
     }
 }
 

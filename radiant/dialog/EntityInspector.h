@@ -18,6 +18,14 @@ class EntityInspector
 {
 private:
 
+    // TreeView column numbers
+    
+    enum {
+        PROPERTY_NAME_COLUMN,
+        PROPERTY_VALUE_COLUMN,
+        N_COLUMNS
+    };
+
     // The Gtk dialog widgets
 
     GtkWidget* _widget; 
