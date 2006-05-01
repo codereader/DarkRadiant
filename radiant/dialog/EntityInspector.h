@@ -4,6 +4,7 @@
 #include "gtkutil/idledraw.h"
 
 #include "iselection.h"
+#include "ientity.h"
 
 #include <gtk/gtk.h>
 
@@ -55,7 +56,7 @@ private:
     // currently-selected object. This function is responsible for querying
     // the GlobalSelectionSystem for the currently-selected object, adding its
     // keyvals to the TreeStore and updating the dialog if necessary.
-    void populateTreeModel();
+    void populateTreeModel(Entity*);
 
 public:
 

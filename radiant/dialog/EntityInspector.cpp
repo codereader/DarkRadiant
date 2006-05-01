@@ -109,15 +109,20 @@ GtkWidget* EntityInspector::createTreeViewPane() {
 // idle.
 
 void EntityInspector::callbackRedraw() {
+	Entity* selection;
+	
     // Entity Inspector can only be used on a single entity. Multiple selections
-    // or nothing selected result in a grayed-out dialog.
-    if (GlobalSelectionSystem().countSelected() != 1) {
+    // or nothing selected result in a grayed-out dialog, as does the selection
+    // of something that is not an Entity (worldspawn).
+    if (GlobalSelectionSystem().countSelected() != 1 ||
+        (selection = Node_getEntity(GlobalSelectionSystem().ultimateSelected().path().top())) == 0) {
+		// Disable the dialog and clear the TreeView
         gtk_widget_set_sensitive(_widget, FALSE);
         gtk_tree_store_clear(_treeStore);
     }
     else {
         gtk_widget_set_sensitive(_widget, TRUE);
-        populateTreeModel(); // get the keyvals off currently-selected object
+        populateTreeModel(selection); // get the keyvals off currently-selected object
     }
 }
 
@@ -159,8 +164,7 @@ void EntityInspector::callbackTreeSelectionChanged(GtkWidget* widget, EntityInsp
 
 // Populate TreeStore with current selections' keyvals
 
-void EntityInspector::populateTreeModel() {
-    Entity* selection = Node_getEntity(GlobalSelectionSystem().ultimateSelected().path().top());
+void EntityInspector::populateTreeModel(Entity* selection) {
     
     // Create a visitor and use it to obtain the key/value map
     EntityKeyValueVisitor visitor;
