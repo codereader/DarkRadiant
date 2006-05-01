@@ -41,8 +41,13 @@ private:
 
     // GTK CALLBACKS
     // Must be static as they are called from a C-based API
-    
     static void callbackTreeSelectionChanged(GtkWidget* widget, EntityInspector* self);
+
+    // Routine to populate the TreeStore with the keyvals attached to the
+    // currently-selected object. This function is responsible for querying
+    // the GlobalSelectionSystem for the currently-selected object, adding its
+    // keyvals to the TreeStore and updating the dialog if necessary.
+    void populateTreeModel();
 
 public:
 
@@ -50,7 +55,7 @@ public:
     EntityInspector():
         // Set the IdleDraw instance to call the doRedraw function when
         // required
-        _idleDraw(MemberCaller<EntityInspector, &EntityInspector::doRedraw>(*this)) {}
+        _idleDraw(MemberCaller<EntityInspector, &EntityInspector::callbackRedraw>(*this)) {}
 
     // Return or create the singleton instance
     static EntityInspector* getInstance();
@@ -63,11 +68,11 @@ public:
     
     // Redraw the GUI elements. Called by the IdleDraw object when GTK is idle
     // and a queueDraw request has been passed.
-    void doRedraw();
+    void callbackRedraw();
     
     // Static class function to instigate a redraw. This is passed as a pointer
     // to the GlobalEntityCreator's setKeyValueChangedFunc function.
-    static void redraw();
+    static void redrawInstance();
 
     // Function to call when the current Selection is changed by the selection
     // system. Internally this function will just stimulate a redraw, but it

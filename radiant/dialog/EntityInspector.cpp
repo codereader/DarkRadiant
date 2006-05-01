@@ -1,4 +1,6 @@
 #include "EntityInspector.h"
+#include "EntityKeyValueVisitor.h"
+
 #include "ientity.h"
 #include "iselection.h"
 
@@ -33,9 +35,12 @@ void EntityInspector::constructUI() {
     
     gtk_widget_show_all(_widget);
     
+    // Stimulate initial redraw to get the correct status
+    queueDraw();
+    
     // Set the function to call when a keyval is changed. This is a requirement
     // of the EntityCreator interface.
-    GlobalEntityCreator().setKeyValueChangedFunc(EntityInspector::redraw);
+    GlobalEntityCreator().setKeyValueChangedFunc(EntityInspector::redrawInstance);
 
     // Create callback object to redraw the dialog when the selected entity is
     // changed
@@ -60,13 +65,6 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     // Initialise the instance TreeStore
     _treeStore = gtk_tree_store_new(1, G_TYPE_STRING);
     
-    // Add some test values. TODO: test code
-    GtkTreeIter tempIter;
-    gtk_tree_store_append(_treeStore, &tempIter, NULL);
-    gtk_tree_store_set(_treeStore, &tempIter, 0, "Basic", -1);
-    gtk_tree_store_append(_treeStore, &tempIter, NULL);
-    gtk_tree_store_set(_treeStore, &tempIter, 0, "Light", -1);
-
     // Create the TreeView widget and link it to the model
     _treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
 
@@ -94,17 +92,27 @@ GtkWidget* EntityInspector::createTreeViewPane() {
 }
 
 // Redraw the GUI elements, such as in response to a key/val change on the
-// selected entity. 
+// selected entity. This is called from the IdleDraw member object when
+// idle.
 
-void EntityInspector::doRedraw() {
-    std::cout << "EntityInspector::doRedraw()" << std::endl;
+void EntityInspector::callbackRedraw() {
+    // Entity Inspector can only be used on a single entity. Multiple selections
+    // or nothing selected result in a grayed-out dialog.
+    if (GlobalSelectionSystem().countSelected() != 1) {
+        gtk_widget_set_sensitive(_widget, FALSE);
+        gtk_tree_store_clear(_treeStore);
+    }
+    else {
+        gtk_widget_set_sensitive(_widget, TRUE);
+        populateTreeModel(); // get the keyvals off currently-selected object
+    }
 }
 
 // Static function to get the singleton instance and invoke its redraw function.
 // This is necessary since the EntityCreator interface requires a pointer to 
 // a non-member function to call when a keyval is changed.
 
-inline void EntityInspector::redraw() {
+inline void EntityInspector::redrawInstance() {
     getInstance()->queueDraw();
 }
 
@@ -117,14 +125,13 @@ inline void EntityInspector::queueDraw() {
 // Selection changed callback
 
 inline void EntityInspector::selectionChanged(const Selectable& sel) {
-    EntityInspector::redraw();   
+    EntityInspector::redrawInstance();   
 }
 
 /* GTK CALLBACKS */
 
+// Called when the TreeView selects a different property
 void EntityInspector::callbackTreeSelectionChanged(GtkWidget* widget, EntityInspector* self) {
-    std::cout << "Selection changed to ";   
-
     GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->_treeView));
 
     GtkTreeIter tmpIter;
@@ -135,6 +142,29 @@ void EntityInspector::callbackTreeSelectionChanged(GtkWidget* widget, EntityInsp
     
     std::cout << g_value_get_string(&selString) << std::endl;
     g_value_unset(&selString);
+}
+
+// Populate TreeStore with current selections' keyvals
+
+void EntityInspector::populateTreeModel() {
+    Entity* selection = Node_getEntity(GlobalSelectionSystem().ultimateSelected().path().top());
+    
+    // Create a visitor and use it to obtain the key/value map
+    EntityKeyValueVisitor visitor;
+    selection->forEachKeyValue(visitor);
+    KeyValueMap kvMap = visitor.getMap();
+    
+    // Clear the current TreeStore, and add the keys to it
+    gtk_tree_store_clear(_treeStore);
+    GtkTreeIter basicIter;
+    gtk_tree_store_append(_treeStore, &basicIter, NULL);
+    gtk_tree_store_set(_treeStore, &basicIter, 0, "Basic", -1);
+
+    for (KeyValueMap::iterator i = kvMap.begin(); i != kvMap.end(); i++) {
+        GtkTreeIter tempIter;
+        gtk_tree_store_append(_treeStore, &tempIter, &basicIter);
+        gtk_tree_store_set(_treeStore, &tempIter, 0, i->first, -1);
+    }
 }
 
 } // namespace ui

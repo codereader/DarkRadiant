@@ -272,7 +272,8 @@ radiant_src = [
 'windowobservers.cpp',
 'xmlstuff.cpp',
 'xywindow.cpp',
-'dialog/EntityInspector.cpp'
+'dialog/EntityInspector.cpp',
+'dialog/EntityKeyValueVisitor.cpp'
 ]
 
 for i in range(len(radiant_src)):
