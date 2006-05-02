@@ -26,25 +26,35 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "pointer.h"
 #include "accelerator.h"
 
+#include <iostream>
+
 // Re-show a child window when the main window is restored. It is necessary to
 // call gtk_window_move() after showing the window, since with some Linux 
 // window managers, the window position is lost after gtk_window_show().
 
 inline void CHECK_RESTORE(GtkWidget* w)
 {
-  if(gpointer_to_int(g_object_get_data(G_OBJECT(w), "was_mapped")) != 0)
-  {
-    int x, y;
-    gtk_window_get_position(GTK_WINDOW(w), &x, &y);
-    gtk_widget_show(w);
-    gtk_window_move(GTK_WINDOW(w), x, y);
-  }
+    if(gpointer_to_int(g_object_get_data(G_OBJECT(w), "was_mapped")) != 0) {
+        gint x = gpointer_to_int(g_object_get_data(G_OBJECT(w), "old_x_position"));
+        gint y = gpointer_to_int(g_object_get_data(G_OBJECT(w), "old_y_position"));
+        gtk_widget_show(w);
+        gtk_window_move(GTK_WINDOW(w), x, y);
+    }
 }
+
+// Minimise a child window, storing its position as GObject associated data in
+// order to allow it to be restored correctly.
 
 inline void CHECK_MINIMIZE(GtkWidget* w)
 {
-  g_object_set_data(G_OBJECT(w), "was_mapped", gint_to_pointer(GTK_WIDGET_VISIBLE(w)));
-  gtk_widget_hide(w);
+    if (GTK_WIDGET_VISIBLE(w)) {
+        g_object_set_data(G_OBJECT(w), "was_mapped", gint_to_pointer(1));
+        gint x, y;
+        gtk_window_get_position(GTK_WINDOW(w), &x, &y);
+        g_object_set_data(G_OBJECT(w), "old_x_position", gint_to_pointer(x));
+        g_object_set_data(G_OBJECT(w), "old_y_position", gint_to_pointer(y));
+        gtk_widget_hide(w);
+    }
 }
 
 static gboolean main_window_iconified(GtkWidget* widget, GdkEventWindowState* event, gpointer data)
