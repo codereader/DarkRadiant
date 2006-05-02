@@ -26,11 +26,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "pointer.h"
 #include "accelerator.h"
 
+// Re-show a child window when the main window is restored. It is necessary to
+// call gtk_window_move() after showing the window, since with some Linux 
+// window managers, the window position is lost after gtk_window_show().
+
 inline void CHECK_RESTORE(GtkWidget* w)
 {
   if(gpointer_to_int(g_object_get_data(G_OBJECT(w), "was_mapped")) != 0)
   {
+    int x, y;
+    gtk_window_get_position(GTK_WINDOW(w), &x, &y);
     gtk_widget_show(w);
+    gtk_window_move(GTK_WINDOW(w), x, y);
   }
 }
 
