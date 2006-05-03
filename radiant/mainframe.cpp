@@ -1909,8 +1909,8 @@ void ClipperChangeNotify()
 }
 
 
-LatchedInt g_Layout_viewStyle(0, "Window Layout");
-LatchedBool g_Layout_enableDetachableMenus(true, "Detachable Menus");
+LatchedInt g_Layout_viewStyle(MainFrame::eFloating, "Window Layout");
+LatchedBool g_Layout_enableDetachableMenus(false, "Detachable Menus");
 LatchedBool g_Layout_enablePatchToolbar(true, "Patch Toolbar");
 LatchedBool g_Layout_enablePluginToolbar(true, "Plugin Toolbar");
 

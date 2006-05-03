@@ -80,6 +80,7 @@ GtkWidget* EntityInspector::createTreeViewPane() {
                                                  NULL);
     gtk_tree_view_column_set_resizable(nameCol, TRUE);
     gtk_tree_view_column_set_sizing(nameCol, GTK_TREE_VIEW_COLUMN_GROW_ONLY);
+    gtk_tree_view_column_set_fixed_width(nameCol, 200);
     gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), nameCol);                                                                        
 
     textRenderer = gtk_cell_renderer_text_new();
@@ -109,13 +110,16 @@ GtkWidget* EntityInspector::createTreeViewPane() {
 // idle.
 
 void EntityInspector::callbackRedraw() {
+
 	Entity* selection;
 	
     // Entity Inspector can only be used on a single entity. Multiple selections
     // or nothing selected result in a grayed-out dialog, as does the selection
     // of something that is not an Entity (worldspawn).
+
     if (GlobalSelectionSystem().countSelected() != 1 ||
         (selection = Node_getEntity(GlobalSelectionSystem().ultimateSelected().path().top())) == 0) {
+
 		// Disable the dialog and clear the TreeView
         gtk_widget_set_sensitive(_widget, FALSE);
         gtk_tree_store_clear(_treeStore);

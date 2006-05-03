@@ -24,6 +24,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "math/vector.h"
 
+// Constants
+
+const int CAMWND_MINSIZE_X = 240;
+const int CAMWND_MINSIZE_Y = 200;
+
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkWindow GtkWindow;
 
