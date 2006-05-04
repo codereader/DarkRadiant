@@ -273,7 +273,10 @@ radiant_src = [
 'xmlstuff.cpp',
 'xywindow.cpp',
 'dialog/einspector/EntityInspector.cpp',
-'dialog/einspector/EntityKeyValueVisitor.cpp'
+'dialog/einspector/EntityKeyValueVisitor.cpp',
+'dialog/einspector/PropertyEditor.cpp',
+'dialog/einspector/PropertyEditorRegistrationHelper.cpp',
+'dialog/einspector/TextPropertyEditor.cpp'
 ]
 
 for i in range(len(radiant_src)):
