@@ -18,12 +18,7 @@ namespace ui
 
 class PropertyEditor
 {
-    typedef std::map<const std::string, const PropertyEditor*> PropertyEditorMap;
 
-    // Mapping of class names to actual PropertyEditor objects (for virtual
-    // construction
-    static PropertyEditorMap _propertyEditorMap;
-    
 public:
 
     // Retrieve the GtkWidget for this PropertyEditor for inclusion into the
@@ -39,13 +34,6 @@ public:
     
     // Apply the PropertyEditor's changes to the owned Entity.
     virtual void commit() = 0;
-    
-    // Static function to instantiate a derived PropertyEditor subclass based
-    // on the text name supplied at runtime.
-    static PropertyEditor* create(Entity* entity, const char* name);
-    
-    // Static function to add a PropertyEditor subclass to the internal map
-    static void registerClass(const char* name, const PropertyEditor* pe);
     
 };
 
