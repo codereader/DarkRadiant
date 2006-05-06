@@ -6,6 +6,8 @@
 #include "ientity.h"
 #include "iselection.h"
 
+#include "gtkutil/image.h"
+
 #include <iostream>
 
 namespace ui {
@@ -65,7 +67,11 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     GtkWidget* vbx = gtk_vbox_new(FALSE, 0);
 
     // Initialise the instance TreeStore
-    _treeStore = gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING);
+    _treeStore = gtk_tree_store_new(N_COLUMNS, 
+    							    G_TYPE_STRING, // property
+    							    G_TYPE_STRING, // value
+    							    G_TYPE_STRING, // value type
+    							    GDK_TYPE_PIXBUF); // value icon
     
     // Create the TreeView widget and link it to the model
     _treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
@@ -85,13 +91,19 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     gtk_tree_view_column_set_fixed_width(nameCol, 200);
     gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), nameCol);                                                                        
 
+	// Create the value column
+
+    GtkTreeViewColumn* valCol = gtk_tree_view_column_new();
+    gtk_tree_view_column_set_title(valCol, "Value");
+
+	GtkCellRenderer* pixRenderer = gtk_cell_renderer_pixbuf_new();
+	gtk_tree_view_column_pack_start(valCol, pixRenderer, FALSE);
+    gtk_tree_view_column_set_attributes(valCol, pixRenderer, "pixbuf", PROPERTY_ICON_COLUMN, NULL);
+
     textRenderer = gtk_cell_renderer_text_new();
-    GtkTreeViewColumn* valCol =
-        gtk_tree_view_column_new_with_attributes("Value",
-                                                 textRenderer,
-                                                 "text",
-                                                 PROPERTY_VALUE_COLUMN,
-                                                 NULL);
+    gtk_tree_view_column_pack_start(valCol, textRenderer, TRUE);
+    gtk_tree_view_column_set_attributes(valCol, textRenderer, "text", PROPERTY_VALUE_COLUMN, NULL);
+
     gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), valCol);
 
     // Set up the signals
@@ -186,13 +198,17 @@ void EntityInspector::populateTreeModel() {
     gtk_tree_store_clear(_treeStore);
     GtkTreeIter basicIter;
     gtk_tree_store_append(_treeStore, &basicIter, NULL);
-    gtk_tree_store_set(_treeStore, &basicIter, PROPERTY_NAME_COLUMN, "Basic", -1);
+    gtk_tree_store_set(_treeStore, &basicIter, PROPERTY_NAME_COLUMN, "Basic", PROPERTY_TYPE_COLUMN, "Category", -1);
 
     for (KeyValueMap::iterator i = kvMap.begin(); i != kvMap.end(); i++) {
         GtkTreeIter tempIter;
         gtk_tree_store_append(_treeStore, &tempIter, &basicIter);
         gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_NAME_COLUMN, i->first, -1);
         gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_VALUE_COLUMN, i->second, -1);
+        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_TYPE_COLUMN, "Text", -1);
+        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_ICON_COLUMN, 
+        				   gtk_image_get_pixbuf(new_local_image("icon_vector3.png")),
+        				   -1);
     }
 }
 

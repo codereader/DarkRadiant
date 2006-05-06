@@ -26,6 +26,8 @@ private:
     enum {
         PROPERTY_NAME_COLUMN,
         PROPERTY_VALUE_COLUMN,
+        PROPERTY_TYPE_COLUMN,
+        PROPERTY_ICON_COLUMN,
         N_COLUMNS
     };
 
