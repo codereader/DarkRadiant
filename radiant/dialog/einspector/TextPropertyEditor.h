@@ -19,10 +19,29 @@ class TextPropertyEditor:
     // Registration helper
     static PropertyEditorRegistrationHelper _helper;
 
+	// Main GtkWidget
+	GtkWidget* _widget;
+
 public:
 
-    virtual GtkWidget* getWidget() {}
-    virtual PropertyEditor* createNew(Entity* entity, const char* name) {}
+	// Construct a TextPropertyEditor with an entity and key to edit
+	TextPropertyEditor(Entity* entity, const char *name);
+	
+	// Construct a blank TextPropertyEditor for use in the PropertyEditorFactory
+	TextPropertyEditor();
+
+	virtual ~TextPropertyEditor();
+
+	// Return the GtkWidget
+    virtual GtkWidget* getWidget() {
+    	return _widget;
+    }
+
+	// Create a new TextPropertyEditor
+    virtual PropertyEditor* createNew(Entity* entity, const char* name) {
+    	return new TextPropertyEditor(entity, name);
+    }
+    
     virtual void refresh() {}
     virtual void commit() {}
     

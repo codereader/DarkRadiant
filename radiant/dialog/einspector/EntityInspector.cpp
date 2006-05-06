@@ -1,5 +1,7 @@
 #include "EntityInspector.h"
 #include "EntityKeyValueVisitor.h"
+#include "PropertyEditor.h"
+#include "PropertyEditorFactory.h"
 
 #include "ientity.h"
 #include "iselection.h"
@@ -111,22 +113,18 @@ GtkWidget* EntityInspector::createTreeViewPane() {
 
 void EntityInspector::callbackRedraw() {
 
-	Entity* selection;
-	
     // Entity Inspector can only be used on a single entity. Multiple selections
     // or nothing selected result in a grayed-out dialog, as does the selection
     // of something that is not an Entity (worldspawn).
 
-    if (GlobalSelectionSystem().countSelected() != 1 ||
-        (selection = Node_getEntity(GlobalSelectionSystem().ultimateSelected().path().top())) == 0) {
-
+    if (updateSelectedEntity()) {
+        gtk_widget_set_sensitive(_widget, TRUE);
+        populateTreeModel(); 
+    }
+    else {
 		// Disable the dialog and clear the TreeView
         gtk_widget_set_sensitive(_widget, FALSE);
         gtk_tree_store_clear(_treeStore);
-    }
-    else {
-        gtk_widget_set_sensitive(_widget, TRUE);
-        populateTreeModel(selection); // get the keyvals off currently-selected object
     }
 }
 
@@ -159,20 +157,29 @@ void EntityInspector::callbackTreeSelectionChanged(GtkWidget* widget, EntityInsp
     GtkTreeIter tmpIter;
     gtk_tree_selection_get_selected(selection, NULL, &tmpIter);
 
+	// Get the selected key in the tree view
     GValue selString = { 0, 0 };
     gtk_tree_model_get_value(GTK_TREE_MODEL(self->_treeStore), &tmpIter, 0, &selString);
-    
-    std::cout << g_value_get_string(&selString) << std::endl;
+    const char *key = g_value_get_string(&selString);
     g_value_unset(&selString);
+    
+    // Construct the PropertyEditor, destroying the current one if it exists
+    if (self->_currentPropertyEditor) {
+    	delete self->_currentPropertyEditor; // destructor takes care of GTK widgets
+    }
+    self->_currentPropertyEditor = PropertyEditorFactory::create("TextPropertyEditor",
+    						 							   self->_selectedEntity,
+    													   key);
+    gtk_container_add(GTK_CONTAINER(self->_editorFrame), self->_currentPropertyEditor->getWidget());
 }
 
 // Populate TreeStore with current selections' keyvals
 
-void EntityInspector::populateTreeModel(Entity* selection) {
+void EntityInspector::populateTreeModel() {
     
     // Create a visitor and use it to obtain the key/value map
     EntityKeyValueVisitor visitor;
-    selection->forEachKeyValue(visitor);
+    _selectedEntity->forEachKeyValue(visitor);
     KeyValueMap kvMap = visitor.getMap();
     
     // Clear the current TreeStore, and add the keys to it
@@ -186,6 +193,17 @@ void EntityInspector::populateTreeModel(Entity* selection) {
         gtk_tree_store_append(_treeStore, &tempIter, &basicIter);
         gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_NAME_COLUMN, i->first, -1);
         gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_VALUE_COLUMN, i->second, -1);
+    }
+}
+
+// Update the selected Entity pointer
+
+bool EntityInspector::updateSelectedEntity() {
+	if (GlobalSelectionSystem().countSelected() != 1 ||
+        (_selectedEntity = Node_getEntity(GlobalSelectionSystem().ultimateSelected().path().top())) == 0) {
+        return false;
+    } else {
+		return true;
     }
 }
 

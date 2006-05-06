@@ -4,6 +4,8 @@
 #include "PropertyEditor.h"
 #include "PropertyEditorFactory.h"
 
+#include <string>
+
 namespace ui
 {
 
@@ -22,7 +24,7 @@ public:
     // Constructor takes the string name and a const instance of the derived
     // PropertyEditor class, for future calls to createNew(), and instructs the
     // PropertyEditor base class to register the subclass in its table.
-	PropertyEditorRegistrationHelper(const char* name, const PropertyEditor* editor) {
+	PropertyEditorRegistrationHelper(const std::string name, PropertyEditor* editor) {
             PropertyEditorFactory::registerClass(name, editor);
     }
 };

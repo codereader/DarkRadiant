@@ -3,7 +3,10 @@
 
 #include "PropertyEditor.h"
 #include "ientity.h"
+
 #include <map>
+#include <string>
+#include <iostream>
 
 namespace ui
 {
@@ -20,16 +23,26 @@ class PropertyEditorFactory
    // Mapping from classnames to PropertyEditor child instances. The child
    // instance's createNew() function will be used to create a new object of
    // the correct type.
-   static std::map<const char*, const PropertyEditor*> _peMap; 
+   static std::map<const std::string, PropertyEditor*> _peMap; 
     
 public:
 
     // Create a new PropertyEditor with the provided classname to manage the
     // given Entity object and key name.
-    static PropertyEditor* create(const char* className, Entity* entity, const char* key);
+    static PropertyEditor* create(const std::string className, Entity* entity, const char* key) {
+    	PropertyEditor *pe = _peMap[className];
+    	if (pe) {
+    		return pe->createNew(entity, key);
+    	}
+    	else {
+    		std::cout << "Failed to find \"" << className << "\"" << std::endl;
+    		return NULL;
+    	}
+    	
+    }
 
     // Register a new PropertyEditor derivative into the internal mapping.
-    static void registerClass(const char* name, const PropertyEditor* editor) {
+    static void registerClass(const std::string name, PropertyEditor* editor) {
         _peMap[name] = editor;
     } 
 

@@ -21,6 +21,9 @@ class PropertyEditor
 
 public:
 
+	// Virtual destructor
+	virtual ~PropertyEditor() {}
+
     // Retrieve the GtkWidget for this PropertyEditor for inclusion into the
     // EntityInspector dialog.
 	virtual GtkWidget* getWidget() = 0;

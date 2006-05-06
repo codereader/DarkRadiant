@@ -6,6 +6,8 @@
 #include "iselection.h"
 #include "ientity.h"
 
+#include "PropertyEditor.h"
+
 #include <gtk/gtk.h>
 
 namespace ui {
@@ -27,6 +29,9 @@ private:
         N_COLUMNS
     };
 
+	// Currently selected entity
+	Entity* _selectedEntity;
+
     // The Gtk dialog widgets
 
     GtkWidget* _widget; 
@@ -36,6 +41,9 @@ private:
     
     GtkTreeStore* _treeStore;
     GtkWidget* _treeView;
+
+	// Currently displayed PropertyEditor
+	PropertyEditor* _currentPropertyEditor;
 
     // Utility functions to construct the Gtk components
 
@@ -53,10 +61,13 @@ private:
     static void callbackTreeSelectionChanged(GtkWidget* widget, EntityInspector* self);
 
     // Routine to populate the TreeStore with the keyvals attached to the
-    // currently-selected object. This function is responsible for querying
-    // the GlobalSelectionSystem for the currently-selected object, adding its
-    // keyvals to the TreeStore and updating the dialog if necessary.
-    void populateTreeModel(Entity*);
+    // currently-selected object. 
+    void populateTreeModel();
+
+	// Update the currently selected entity pointer. This function returns true
+	// if a single Entity is selected, and false if either a non-Entity or more
+	// than one object is selected.
+	bool updateSelectedEntity();
 
 public:
 
