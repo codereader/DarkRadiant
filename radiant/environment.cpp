@@ -28,6 +28,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "os/path.h"
 #include "cmdlib.h"
 
+#include <iostream>
+#include <string>
+
 int g_argc;
 char** g_argv;
 
@@ -158,8 +161,8 @@ void environment_init(int argc, char* argv[])
   args_init(argc, argv);
 
   {
-    StringOutputStream home(256);
-    home << "C:/RadiantSettings/";
+  	std::string home = getenv("APPDATA");
+  	home += "\\DarkRadiant\\";
     Q_mkdir(home.c_str());
     home_path = home.c_str();
   }
