@@ -245,7 +245,7 @@ void MD2Surface_read(Surface& surface, const byte* buffer)
   surface.updateAABB();
 }
 
-void MD2Model_read(Model& model, const byte* buffer)
+void MD2Model_read(MD5Model& model, const byte* buffer)
 {
   MD2Surface_read(model.newSurface(), buffer);
   model.updateAABB();

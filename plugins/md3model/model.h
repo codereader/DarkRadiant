@@ -252,7 +252,7 @@ public:
 };
 
 // generic model node
-class Model :
+class MD5Model :
 public Cullable,
 public Bounded
 {
@@ -263,7 +263,7 @@ public Bounded
 public:
   Callback m_lightsChanged;
 
-  ~Model()
+  ~MD5Model()
   {
     for(surfaces_t::iterator i = m_surfaces.begin(); i != m_surfaces.end(); ++i)
     {
@@ -355,7 +355,7 @@ class ModelInstance :
     }
   };
 
-  Model& m_model;
+  MD5Model& m_model;
 
   const LightList* m_lightList;
   typedef Array<VectorLightList> SurfaceLightLists;
@@ -397,7 +397,7 @@ public:
     if(skin != 0 && skin->realised())
     {
       SurfaceRemaps::iterator j = m_skins.begin();
-      for(Model::const_iterator i = m_model.begin(); i != m_model.end(); ++i, ++j)
+      for(MD5Model::const_iterator i = m_model.begin(); i != m_model.end(); ++i, ++j)
       {
         const char* remap = skin->getRemap((*i)->getShader());
         if(!string_empty(remap))
@@ -431,7 +431,7 @@ public:
     constructRemaps();
   }
 
-  ModelInstance(const scene::Path& path, scene::Instance* parent, Model& model) :
+  ModelInstance(const scene::Path& path, scene::Instance* parent, MD5Model& model) :
     Instance(path, parent, this, StaticTypeCasts::instance().get()), 
     m_model(model),
     m_surfaceLightLists(m_model.size()),
@@ -458,7 +458,7 @@ public:
   {
     SurfaceLightLists::const_iterator j = m_surfaceLightLists.begin();
     SurfaceRemaps::const_iterator k = m_skins.begin();
-    for(Model::const_iterator i = m_model.begin(); i != m_model.end(); ++i, ++j, ++k)
+    for(MD5Model::const_iterator i = m_model.begin(); i != m_model.end(); ++i, ++j, ++k)
     {
       if((*i)->intersectVolume(volume, localToWorld) != c_volumeOutside)
       {
@@ -492,7 +492,7 @@ public:
   {
     const Matrix4& localToWorld = Instance::localToWorld();
     SurfaceLightLists::iterator j = m_surfaceLightLists.begin();
-    for(Model::const_iterator i = m_model.begin(); i != m_model.end(); ++i)
+    for(MD5Model::const_iterator i = m_model.begin(); i != m_model.end(); ++i)
     {
       Surface_addLight(*(*i), *j++, localToWorld, light);
     }
@@ -525,7 +525,7 @@ class ModelNode : public scene::Node::Symbiot, public scene::Instantiable
 
   scene::Node m_node;
   InstanceSet m_instances;
-  Model m_model;
+  MD5Model m_model;
 public:
 
   typedef LazyStatic<TypeCasts> StaticTypeCasts;
@@ -534,7 +534,7 @@ public:
   {
   }
 
-  Model& model()
+  MD5Model& model()
   {
     return m_model;
   }
@@ -599,7 +599,7 @@ inline void Surface_constructQuad(Surface& surface, const Vector3& a, const Vect
   );
 }
 
-inline void Model_constructNull(Model& model)
+inline void Model_constructNull(MD5Model& model)
 {
   Surface& surface = model.newSurface();
 

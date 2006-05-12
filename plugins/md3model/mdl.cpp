@@ -200,7 +200,7 @@ void MDLSurface_read(Surface& surface, const byte* buffer, const char* name)
   surface.updateAABB();
 }
 
-void MDLModel_read(Model& model, const byte* buffer, const char* name)
+void MDLModel_read(MD5Model& model, const byte* buffer, const char* name)
 {
   MDLSurface_read(model.newSurface(), buffer, name);
   model.updateAABB();

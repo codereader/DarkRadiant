@@ -287,7 +287,7 @@ int MD3Surface_read(Surface& surface, unsigned char* buffer)
   return md3Surface.ofsEnd;
 }
 
-void MD3Model_read(Model& model, unsigned char* buffer)
+void MD3Model_read(MD5Model& model, unsigned char* buffer)
 {
   md3Header_t md3Header;
   {

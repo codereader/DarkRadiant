@@ -266,7 +266,7 @@ bool MD5Anim_parse(Tokeniser& tokeniser)
   return true;
 }
 
-bool MD5Model_parse(Model& model, Tokeniser& tokeniser)
+bool MD5Model_parse(MD5Model& model, Tokeniser& tokeniser)
 {
   MD5_RETURN_FALSE_IF_FAIL(MD5_parseVersion(tokeniser));
   tokeniser.nextLine();
@@ -433,7 +433,7 @@ bool MD5Model_parse(Model& model, Tokeniser& tokeniser)
   return true;
 }
 
-void MD5Model_construct(Model& model, TextInputStream& inputStream)
+void MD5Model_construct(MD5Model& model, TextInputStream& inputStream)
 {
   Tokeniser& tokeniser = GlobalScriptLibrary().m_pfnNewSimpleTokeniser(inputStream);
   MD5Model_parse(model, tokeniser);

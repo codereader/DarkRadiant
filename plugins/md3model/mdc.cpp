@@ -239,7 +239,7 @@ unsigned int MDCSurface_read(Surface& surface, const byte* buffer)
   return mdcSurface.ofsEnd;
 }
 
-void MDCModel_read(Model& model, const byte* buffer)
+void MDCModel_read(MD5Model& model, const byte* buffer)
 {
   mdcHeader_t header;
   {
