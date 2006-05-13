@@ -285,7 +285,7 @@ class idEnvironment(Environment):
 		else: # Assume X11
 			self.Append(CXXFLAGS = '`pkg-config gtkglext-1.0 --cflags` ')
 			self.Append(CFLAGS = '`pkg-config gtkglext-1.0 --cflags` ')
-			self.Append(LINKFLAGS = '`pkg-config gtkglext-1.0 --libs` ')
+			self.Append(LIBS = ['gtkglext-x11-1.0', 'gdkglext-x11-1.0', 'GLU'])
     
 	def useOpenGL(self):
 		if (self['PLATFORM'] == 'win32'):
