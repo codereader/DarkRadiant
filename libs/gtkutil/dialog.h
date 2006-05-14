@@ -141,5 +141,13 @@ GtkTable* DialogRow_new(const char* name, GtkWidget* widget);
 typedef struct _GtkVBox GtkVBox;
 void DialogVBox_packRow(GtkVBox* vbox, GtkWidget* row);
 
+/* Error Dialog
+ * Display an error dialog then quit Radiant
+ */
+ 
+namespace gtkutil {
+	void errorDialog(const char*);
+}
+
 
 #endif

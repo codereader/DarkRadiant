@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "dialog.h"
+#include "mainframe.h"
 
 #include <gtk/gtkmain.h>
 #include <gtk/gtkalignment.h>
@@ -31,9 +32,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtkentry.h>
 #include <gtk/gtkbutton.h>
 #include <gtk/gtklabel.h>
+#include <gtk/gtk.h>
 
 #include "button.h"
 #include "window.h"
+
+#include <string>
 
 GtkVBox* create_dialog_vbox(int spacing, int border)
 {
@@ -301,3 +305,23 @@ void DialogVBox_packRow(GtkVBox* vbox, GtkWidget* row)
   gtk_box_pack_start(GTK_BOX(vbox), row, FALSE, FALSE, 0);
 }
 
+/* gtkutil namespace */
+
+namespace gtkutil {
+	
+// Display a Gtk Error dialog, then quite Radiant. The dialog title and a
+// descriptive error message are supplied
+
+void errorDialog(const char* errorText) {
+	GtkWindow* mainFrame = MainFrame_getWindow();
+	GtkWidget* dialog = gtk_message_dialog_new (mainFrame,
+                        				        GTK_DIALOG_DESTROY_WITH_PARENT,
+					                            GTK_MESSAGE_ERROR,
+                    			                GTK_BUTTONS_CLOSE,
+                                  				errorText);
+	gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_widget_destroy (dialog);
+	abort();
+}
+	
+} // namespace gtkutil

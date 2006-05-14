@@ -174,7 +174,7 @@ warningFlags = '-W -Wall -Wcast-align -Wcast-qual -Wno-unused-parameter '
 warningFlagsCXX = '-Wno-non-virtual-dtor -Wreorder ' # -Wold-style-cast
 CCFLAGS = '' + warningFlags
 CXXFLAGS = '-pipe -DQ_NO_STLPORT -fexceptions ' + warningFlags + warningFlagsCXX
-CPPPATH = []
+CPPPATH = ['radiant']
 if (BUILD == 'debug'):
 	CXXFLAGS += '-g -D_DEBUG '
 	CCFLAGS += '-g -D_DEBUG '
