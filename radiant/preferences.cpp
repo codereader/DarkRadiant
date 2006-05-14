@@ -64,7 +64,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "qe3.h"
 #include "gtkdlgs.h"
 
-
+#include "dialog/einspector/EntityInspector.h"
 
 void Global_constructPreferences(PreferencesPage& page)
 {
@@ -149,6 +149,18 @@ CGameDescription::CGameDescription(xmlDocPtr pDoc,
 		    insert(GameDescription:: // map CopiedString -> CopiedString
 			   value_type(xmlAttr_getName(attr), xmlAttr_getValue(attr)));
     }
+
+	// EntityInspector.
+	// Find the entityInspector node and pass it to the EntityInspector code
+	// for parsing.
+	pNode = pNode->children;
+	while (pNode != 0) {
+		if (xmlStrcmp(pNode->name, (const xmlChar*) "entityInspector") == 0) {
+			ui::EntityInspector::parseXmlNode(pNode);
+		}
+		// ** Any further subsystem nodes would be detected here **
+		pNode = pNode->next;
+	}
 
 	// Check if the game file exists and add the internal reference to it if it
 	// does.

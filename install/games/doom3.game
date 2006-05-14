@@ -23,4 +23,14 @@
   entities="doom3"
   brushtypes="doom3"
   patchtypes="doom3 def2doom3"
-/>
+>
+	<entityInspector>
+		<propertyCategory name="Basic">
+			<property name="origin" type="vector3" />
+			<property name="classname" type="text" />
+		</propertyCategory>
+		<propertyCategory name="Light">
+			<property name="light_radius" type="vector3" />
+		</propertyCategory>
+	</entityInspector>
+</game>

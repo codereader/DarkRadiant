@@ -2,15 +2,25 @@
 #include "EntityKeyValueVisitor.h"
 #include "PropertyEditor.h"
 #include "PropertyEditorFactory.h"
+#include "PropertyCategory.h"
 
 #include "ientity.h"
 #include "iselection.h"
 
 #include "gtkutil/image.h"
+#include "gtkutil/dialog.h"
+
+#include "error.h"
+
+#include <libxml/parser.h>
 
 #include <iostream>
 
 namespace ui {
+
+// INITIALISATION
+
+std::map<const std::string, PropertyCategory*> EntityInspector::_categoryMap;
 
 // Return the singleton EntityInspector instance, creating it if it is not yet
 // created. Single-threaded design.
@@ -27,6 +37,40 @@ GtkWidget* EntityInspector::getWidget() {
     if (_widget == NULL) 
         constructUI();
     return _widget;
+}
+
+// Static function to parse the <entityInspector> node in the .game file.
+
+void EntityInspector::parseXmlNode(xmlNodePtr node) {
+//	gtkutil::errorDialog("Unable to parse the <entityInspector> node in the .game file");
+	node = node->children;
+
+	// Search for <propertyCategory> nodes and create a PropertyCategory for each
+	// one.
+	for ( ; node != NULL; node = node->next) {
+		if (node->type == XML_ELEMENT_NODE && 
+			    xmlStrcmp(node->name, (const xmlChar*) "propertyCategory") == 0 ) {
+			makePropertyCategory(node);
+		}
+	}
+}
+
+void EntityInspector::makePropertyCategory(xmlNodePtr node) {
+	if (node->properties != NULL && node->properties->children != NULL) {
+
+		// Find the "name" attribute and construct a PropertyCategory with its value
+		if (xmlStrcmp(node->properties->name, (const xmlChar*) "name") == 0) { // name=
+			PropertyCategory cat(std::string((const char*) node->properties->children->content)); // "Basic" etc.
+
+			// Now search for <property> elements underneath <propertyCategory>
+			for (xmlNodePtr child = node->children; child != NULL; child = child->next) {
+				if (xmlStrcmp(child->name, (const xmlChar*) "property") == 0) {
+					// Got a property node
+					xmlAttrPtr props = child->properties;
+				}			
+			}
+		}
+	}
 }
 
 // Create the actual UI components for the EntityInspector dialog

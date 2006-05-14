@@ -7,8 +7,11 @@
 #include "ientity.h"
 
 #include "PropertyEditor.h"
+#include "PropertyCategory.h"
 
 #include <gtk/gtk.h>
+#include <libxml/parser.h>
+#include <iostream>
 
 namespace ui {
 
@@ -47,16 +50,23 @@ private:
 	// Currently displayed PropertyEditor
 	PropertyEditor* _currentPropertyEditor;
 
+    // GtkUtil IdleDraw class. This allows redraw calls to be scheduled for
+    // when GTK is idle.
+    IdleDraw _idleDraw;
+
+	// A list of available PropertyCategories, stored as a map from string name
+	// to PropertyCategory object (which in turn contains the actual key names
+	// within that category).
+	static std::map<const std::string, PropertyCategory*> _categoryMap;
+
+private:
+
     // Utility functions to construct the Gtk components
 
     void constructUI();
 
     GtkWidget* createDialogPane(); // bottom widget pane 
     GtkWidget* createTreeViewPane(); // tree view for selecting attributes
-
-    // GtkUtil IdleDraw class. This allows redraw calls to be scheduled for
-    // when GTK is idle.
-    IdleDraw _idleDraw;
 
     // GTK CALLBACKS
     // Must be static as they are called from a C-based API
@@ -71,6 +81,10 @@ private:
 	// than one object is selected.
 	bool updateSelectedEntity();
 
+	// Utility function to create a PropertyCategory object and add it to the
+	// map.
+	static void makePropertyCategory(xmlNodePtr node);
+
 public:
 
     // Constructor
@@ -84,6 +98,10 @@ public:
 
     // Get the Gtk Widget for display in the main application
     GtkWidget* getWidget();
+
+	// Use libxml2 to parse the <entityInspector> subtree of the .game file. 
+	// Invoked from CGameDescription constructor in preferences.cpp
+	static void parseXmlNode(xmlNodePtr node);
 
     // Inform the IdleDraw to invoke a redraw when idle
     void queueDraw();
