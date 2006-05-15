@@ -146,7 +146,7 @@ void DialogVBox_packRow(GtkVBox* vbox, GtkWidget* row);
  */
  
 namespace gtkutil {
-	void errorDialog(const char*);
+	void errorDialog(std::string);
 }
 
 

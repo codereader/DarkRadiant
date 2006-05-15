@@ -312,13 +312,13 @@ namespace gtkutil {
 // Display a Gtk Error dialog, then quite Radiant. The dialog title and a
 // descriptive error message are supplied
 
-void errorDialog(const char* errorText) {
+void errorDialog(std::string errorText) {
 	GtkWindow* mainFrame = MainFrame_getWindow();
 	GtkWidget* dialog = gtk_message_dialog_new (mainFrame,
                         				        GTK_DIALOG_DESTROY_WITH_PARENT,
 					                            GTK_MESSAGE_ERROR,
                     			                GTK_BUTTONS_CLOSE,
-                                  				errorText);
+                                  				errorText.c_str());
 	gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_destroy (dialog);
 	abort();
