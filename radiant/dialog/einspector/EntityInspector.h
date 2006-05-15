@@ -7,7 +7,6 @@
 #include "ientity.h"
 
 #include "PropertyEditor.h"
-#include "PropertyCategory.h"
 
 #include <gtk/gtk.h>
 #include <libxml/parser.h>
@@ -55,9 +54,11 @@ private:
     IdleDraw _idleDraw;
 
 	// A list of available PropertyCategories, stored as a map from string name
-	// to PropertyCategory object (which in turn contains the actual key names
-	// within that category).
-	static std::map<const std::string, PropertyCategory*> _categoryMap;
+	// to PropertyCategory map (which in turn contains the actual key names
+	// within that category along with their PropertyEditor type).
+	typedef std::map<const std::string, const std::string> PropertyCategory;
+	typedef std::map<const std::string, PropertyCategory*> PropertyCategoryMap;
+	static  PropertyCategoryMap _categoryMap;
 
 private:
 

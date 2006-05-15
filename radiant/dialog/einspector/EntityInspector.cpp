@@ -20,7 +20,7 @@ namespace ui {
 
 // INITIALISATION
 
-std::map<const std::string, PropertyCategory*> EntityInspector::_categoryMap;
+EntityInspector::PropertyCategoryMap EntityInspector::_categoryMap;
 
 // Return the singleton EntityInspector instance, creating it if it is not yet
 // created. Single-threaded design.
@@ -60,14 +60,51 @@ void EntityInspector::makePropertyCategory(xmlNodePtr node) {
 
 		// Find the "name" attribute and construct a PropertyCategory with its value
 		if (xmlStrcmp(node->properties->name, (const xmlChar*) "name") == 0) { // name=
-			PropertyCategory cat(std::string((const char*) node->properties->children->content)); // "Basic" etc.
+
+			// Get the category name
+			std::string categoryName((const char*) node->properties->children->content);
+			PropertyCategory* cat = new PropertyCategory(); 
 
 			// Now search for <property> elements underneath <propertyCategory>
 			for (xmlNodePtr child = node->children; child != NULL; child = child->next) {
+
 				if (xmlStrcmp(child->name, (const xmlChar*) "property") == 0) {
-					// Got a property node
-					xmlAttrPtr props = child->properties;
+
+					// Got a property node. Iterate over its attributes and search
+					// for the name= and type= attributes.
+					std::string keyName("");
+					std::string keyType("");
+
+					for (xmlAttrPtr props = child->properties; props != NULL; props = props->next) {
+
+						xmlChar *content = props->children->content;
+
+						const xmlChar *name = props->name;
+						if (xmlStrcmp(name, (const xmlChar*) "name") == 0)
+							keyName = std::string((char*) content);
+						else if (xmlStrcmp(name, (const xmlChar*) "type") == 0)
+							keyType = std::string((char*) content);
+					}
+
+					// Add the name and type to the PropertyCategory object, but
+					// only if we found both attributes
+					if (keyName != "" && keyType != "") {
+						cat->insert(PropertyCategory::value_type(keyName, keyType));
+					} else {
+						gtkutil::errorDialog(std::string("EntityInspector: failed to parse XML configuration file")
+											+ "\n\nEither the \"name\" or the \"type\" field was not found in a property"
+											+ " of category \"" + categoryName + "\".");
+					}
 				}			
+			}
+			
+			// Add the PropertyCategory to the category map, as long as it is not
+			// empty.
+			if (cat->size() > 0) {
+				_categoryMap[categoryName] = cat;
+			} else {
+				gtkutil::errorDialog(std::string("EntityInspector: failed to create PropertyCategory ")
+									+ "\"" + categoryName + "\".\n\nCategory contains no properties.");
 			}
 		}
 	}
@@ -240,20 +277,44 @@ void EntityInspector::populateTreeModel() {
     
     // Clear the current TreeStore, and add the keys to it
     gtk_tree_store_clear(_treeStore);
-    GtkTreeIter basicIter;
-    gtk_tree_store_append(_treeStore, &basicIter, NULL);
-    gtk_tree_store_set(_treeStore, &basicIter, PROPERTY_NAME_COLUMN, "Basic", PROPERTY_TYPE_COLUMN, "Category", -1);
 
-    for (KeyValueMap::iterator i = kvMap.begin(); i != kvMap.end(); i++) {
-        GtkTreeIter tempIter;
-        gtk_tree_store_append(_treeStore, &tempIter, &basicIter);
-        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_NAME_COLUMN, i->first, -1);
-        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_VALUE_COLUMN, i->second, -1);
-        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_TYPE_COLUMN, "Text", -1);
-        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_ICON_COLUMN, 
-        				   gtk_image_get_pixbuf(new_local_image("icon_vector3.png")),
-        				   -1);
-    }
+//    GtkTreeIter basicIter;
+//    gtk_tree_store_append(_treeStore, &basicIter, NULL);
+//    gtk_tree_store_set(_treeStore, &basicIter, PROPERTY_NAME_COLUMN, "Basic", PROPERTY_TYPE_COLUMN, "Category", -1);
+//
+//    for (KeyValueMap::iterator i = kvMap.begin(); i != kvMap.end(); i++) {
+//        GtkTreeIter tempIter;
+//        gtk_tree_store_append(_treeStore, &tempIter, &basicIter);
+//        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_NAME_COLUMN, i->first, -1);
+//        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_VALUE_COLUMN, i->second, -1);
+//        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_TYPE_COLUMN, "Text", -1);
+//        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_ICON_COLUMN, 
+//        				   gtk_image_get_pixbuf(new_local_image("icon_vector3.png")),
+//        				   -1);
+//    }
+
+	for (PropertyCategoryMap::iterator i = _categoryMap.begin();
+			i != _categoryMap.end();
+				i++) {
+
+		// Create the top-level category node		
+		GtkTreeIter categoryIter;
+		gtk_tree_store_append(_treeStore, &categoryIter, NULL);
+		gtk_tree_store_set(_treeStore, &categoryIter, PROPERTY_NAME_COLUMN, i->first.c_str(), PROPERTY_TYPE_COLUMN, "Category", -1);
+		
+		// Create the individual property sub-nodes.
+		for (PropertyCategory::iterator j = i->second->begin(); j != i->second->end(); j++) {
+	        GtkTreeIter tempIter;
+	        gtk_tree_store_append(_treeStore, &tempIter, &categoryIter);
+	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_NAME_COLUMN, j->first.c_str(), -1);
+	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_VALUE_COLUMN, j->second.c_str(), -1); // TODO: lookup value here from entity
+	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_TYPE_COLUMN, "Text", -1);
+	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_ICON_COLUMN, 
+	        				   gtk_image_get_pixbuf(new_local_image("icon_vector3.png")),
+	        				   -1);
+				
+		}
+	}
 }
 
 // Update the selected Entity pointer
