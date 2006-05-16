@@ -28,6 +28,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stream/stringstream.h"
 #include "stream/textstream.h"
 
+#include <string>
+
 
 namespace
 {
@@ -94,3 +96,12 @@ GtkImage* new_local_image(const char* filename)
   return new_image(fullPath.c_str());
 }
 
+namespace gtkutil {
+	
+	// Return a GdkPixbuf from a local image
+	GdkPixbuf* getLocalPixbuf(const std::string& fileName) {
+		std::string fullFileName(std::string(g_bitmapsPath.c_str()) + fileName);
+		return gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL);
+	}
+	
+} // namespace gtkutil

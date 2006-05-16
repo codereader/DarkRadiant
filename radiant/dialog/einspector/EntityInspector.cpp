@@ -320,8 +320,10 @@ void EntityInspector::populateTreeModel() {
 	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_NAME_COLUMN, keyName.c_str(), -1);
 	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_VALUE_COLUMN, keyValue.c_str(), -1); // TODO: lookup value here from entity
 	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_TYPE_COLUMN, keyType.c_str(), -1);
+
+			std::string typeIcon = std::string("icon_") + keyType + ".png";
 	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_ICON_COLUMN, 
-	        				   gtk_image_get_pixbuf(new_local_image("icon_vector3.png")),
+	        				   gtkutil::getLocalPixbuf(typeIcon),
 	        				   -1);
 				
 		}

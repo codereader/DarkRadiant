@@ -32,16 +32,7 @@ public:
 
     // Create a new PropertyEditor with the provided classname to manage the
     // given Entity object and key name.
-    static PropertyEditor* create(const std::string& className, Entity* entity, const std::string& key) {
-		PropertyEditorMap::iterator iter(_peMap.find(className));
-		if (iter == _peMap.end()) {
-			gtkutil::errorDialog(std::string("PropertyEditorFactory: unable to find PropertyEditor instance") 
-								+ " for type \"" + className + "\".");
-			return NULL;
-		} else {
-			return iter->second->createNew(entity, key);
-    	}
-    }
+    static PropertyEditor* create(const std::string& className, Entity* entity, const std::string& key);
 
     // Register a new PropertyEditor derivative into the internal mapping.
     static void registerClass(const std::string name, PropertyEditor* editor) {
