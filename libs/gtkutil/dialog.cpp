@@ -309,10 +309,9 @@ void DialogVBox_packRow(GtkVBox* vbox, GtkWidget* row)
 
 namespace gtkutil {
 	
-// Display a Gtk Error dialog, then quite Radiant. The dialog title and a
-// descriptive error message are supplied
+// Display a Gtk Error dialog
 
-void errorDialog(std::string errorText) {
+void errorDialog(const std::string& errorText) {
 	GtkWindow* mainFrame = MainFrame_getWindow();
 	GtkWidget* dialog = gtk_message_dialog_new (mainFrame,
                         				        GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -321,7 +320,13 @@ void errorDialog(std::string errorText) {
                                   				errorText.c_str());
 	gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_destroy (dialog);
-	abort();
+}
+
+// Display a fatal Gtk Error dialog
+
+void fatalErrorDialog(const std::string& errorText) {
+	errorDialog(errorText);
+	abort();	
 }
 	
 } // namespace gtkutil
