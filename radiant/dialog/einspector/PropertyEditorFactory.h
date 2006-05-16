@@ -4,6 +4,8 @@
 #include "PropertyEditor.h"
 #include "ientity.h"
 
+#include "gtkutil/dialog.h"
+
 #include <map>
 #include <string>
 #include <iostream>
@@ -23,22 +25,22 @@ class PropertyEditorFactory
    // Mapping from classnames to PropertyEditor child instances. The child
    // instance's createNew() function will be used to create a new object of
    // the correct type.
-   static std::map<const std::string, PropertyEditor*> _peMap; 
+   typedef std::map<const std::string, PropertyEditor*> PropertyEditorMap;
+   static PropertyEditorMap _peMap; 
     
 public:
 
     // Create a new PropertyEditor with the provided classname to manage the
     // given Entity object and key name.
-    static PropertyEditor* create(const std::string className, Entity* entity, const char* key) {
-    	PropertyEditor *pe = _peMap[className];
-    	if (pe) {
-    		return pe->createNew(entity, key);
+    static PropertyEditor* create(const std::string& className, Entity* entity, const std::string& key) {
+		PropertyEditorMap::iterator iter(_peMap.find(className));
+		if (iter == _peMap.end()) {
+			gtkutil::errorDialog(std::string("PropertyEditorFactory: unable to find PropertyEditor instance") 
+								+ " for type \"" + className + "\".");
+			return NULL;
+		} else {
+			return iter->second->createNew(entity, key);
     	}
-    	else {
-    		std::cout << "Failed to find \"" << className << "\"" << std::endl;
-    		return NULL;
-    	}
-    	
     }
 
     // Register a new PropertyEditor derivative into the internal mapping.

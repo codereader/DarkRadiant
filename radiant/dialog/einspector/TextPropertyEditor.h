@@ -25,7 +25,7 @@ class TextPropertyEditor:
 public:
 
 	// Construct a TextPropertyEditor with an entity and key to edit
-	TextPropertyEditor(Entity* entity, const char *name);
+	TextPropertyEditor(Entity* entity, const std::string& name);
 	
 	// Construct a blank TextPropertyEditor for use in the PropertyEditorFactory
 	TextPropertyEditor();
@@ -38,7 +38,7 @@ public:
     }
 
 	// Create a new TextPropertyEditor
-    virtual PropertyEditor* createNew(Entity* entity, const char* name) {
+    virtual PropertyEditor* createNew(Entity* entity, const std::string& name) {
     	return new TextPropertyEditor(entity, name);
     }
     
@@ -48,7 +48,7 @@ public:
 };
 
 // Initialise the Registration Helper
-PropertyEditorRegistrationHelper TextPropertyEditor::_helper("TextPropertyEditor", new TextPropertyEditor());
+PropertyEditorRegistrationHelper TextPropertyEditor::_helper("text", new TextPropertyEditor());
 
 }
 

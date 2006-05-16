@@ -30,7 +30,7 @@ public:
     
     // Create a new PropertyEditor of the same type as the derived class (for
     // virtual construction).
-    virtual PropertyEditor* createNew(Entity*, const char*) = 0;
+    virtual PropertyEditor* createNew(Entity*, const std::string&) = 0;
     
     // Refresh the PropertyEditor with updated keyvals on the owned Entity.
     virtual void refresh() = 0;

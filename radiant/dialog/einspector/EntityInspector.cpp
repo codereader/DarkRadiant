@@ -2,7 +2,6 @@
 #include "EntityKeyValueVisitor.h"
 #include "PropertyEditor.h"
 #include "PropertyEditorFactory.h"
-#include "PropertyCategory.h"
 
 #include "ientity.h"
 #include "iselection.h"
@@ -251,19 +250,30 @@ void EntityInspector::callbackTreeSelectionChanged(GtkWidget* widget, EntityInsp
     gtk_tree_selection_get_selected(selection, NULL, &tmpIter);
 
 	// Get the selected key in the tree view
-    GValue selString = { 0, 0 };
-    gtk_tree_model_get_value(GTK_TREE_MODEL(self->_treeStore), &tmpIter, 0, &selString);
-    const char *key = g_value_get_string(&selString);
+    GValue selString = {0, 0};
+    gtk_tree_model_get_value(GTK_TREE_MODEL(self->_treeStore), &tmpIter, PROPERTY_NAME_COLUMN, &selString);
+    const std::string key(g_value_get_string(&selString));
     g_value_unset(&selString);
     
-    // Construct the PropertyEditor, destroying the current one if it exists
+    // Construct the PropertyEditor, destroying the current one if it exists. We
+    // need the PROPERTY_TYPE_COLUMN string to find out what type of PropertyEditor
+    // is needed.
+
     if (self->_currentPropertyEditor) {
     	delete self->_currentPropertyEditor; // destructor takes care of GTK widgets
     }
-    self->_currentPropertyEditor = PropertyEditorFactory::create("TextPropertyEditor",
+    
+    GValue selType = {0, 0};
+    gtk_tree_model_get_value(GTK_TREE_MODEL(self->_treeStore), &tmpIter, PROPERTY_TYPE_COLUMN, &selType);
+    const std::string keyType(g_value_get_string(&selType));
+    g_value_unset(&selType);
+	
+    self->_currentPropertyEditor = PropertyEditorFactory::create(keyType,
     						 							   self->_selectedEntity,
     													   key);
-    gtk_container_add(GTK_CONTAINER(self->_editorFrame), self->_currentPropertyEditor->getWidget());
+	if (self->_currentPropertyEditor != NULL) {
+	    gtk_container_add(GTK_CONTAINER(self->_editorFrame), self->_currentPropertyEditor->getWidget());
+	}
 }
 
 // Populate TreeStore with current selections' keyvals
@@ -278,21 +288,6 @@ void EntityInspector::populateTreeModel() {
     // Clear the current TreeStore, and add the keys to it
     gtk_tree_store_clear(_treeStore);
 
-//    GtkTreeIter basicIter;
-//    gtk_tree_store_append(_treeStore, &basicIter, NULL);
-//    gtk_tree_store_set(_treeStore, &basicIter, PROPERTY_NAME_COLUMN, "Basic", PROPERTY_TYPE_COLUMN, "Category", -1);
-//
-//    for (KeyValueMap::iterator i = kvMap.begin(); i != kvMap.end(); i++) {
-//        GtkTreeIter tempIter;
-//        gtk_tree_store_append(_treeStore, &tempIter, &basicIter);
-//        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_NAME_COLUMN, i->first, -1);
-//        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_VALUE_COLUMN, i->second, -1);
-//        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_TYPE_COLUMN, "Text", -1);
-//        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_ICON_COLUMN, 
-//        				   gtk_image_get_pixbuf(new_local_image("icon_vector3.png")),
-//        				   -1);
-//    }
-
 	for (PropertyCategoryMap::iterator i = _categoryMap.begin();
 			i != _categoryMap.end();
 				i++) {
@@ -304,11 +299,27 @@ void EntityInspector::populateTreeModel() {
 		
 		// Create the individual property sub-nodes.
 		for (PropertyCategory::iterator j = i->second->begin(); j != i->second->end(); j++) {
+
+			std::string keyName(j->first);
+			std::string keyType(j->second);
+
+			// Find out whether this key is set on the entity (from the kvMap
+			// produced earlier. If it is, store it otherwise we use a "not set"
+			// signal.
+			
+			KeyValueMap::iterator tmp(kvMap.find(keyName.c_str()));
+			std::string keyValue;
+			
+			if (tmp == kvMap.end())
+				keyValue = "--";
+			else
+				keyValue = tmp->second;
+			
 	        GtkTreeIter tempIter;
 	        gtk_tree_store_append(_treeStore, &tempIter, &categoryIter);
-	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_NAME_COLUMN, j->first.c_str(), -1);
-	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_VALUE_COLUMN, j->second.c_str(), -1); // TODO: lookup value here from entity
-	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_TYPE_COLUMN, "Text", -1);
+	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_NAME_COLUMN, keyName.c_str(), -1);
+	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_VALUE_COLUMN, keyValue.c_str(), -1); // TODO: lookup value here from entity
+	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_TYPE_COLUMN, keyType.c_str(), -1);
 	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_ICON_COLUMN, 
 	        				   gtk_image_get_pixbuf(new_local_image("icon_vector3.png")),
 	        				   -1);

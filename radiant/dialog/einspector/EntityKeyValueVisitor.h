@@ -3,10 +3,11 @@
 
 #include "ientity.h"
 #include <map>
+#include <string>
 
 // Typedefs
 
-typedef std::map<const char*, const char*> KeyValueMap;
+typedef std::map<const std::string, const std::string> KeyValueMap;
 
 /* EntityKeyValueVisitor
  * 

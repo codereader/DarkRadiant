@@ -5,6 +5,6 @@ namespace ui
 
 // Initialisation
 
-std::map<const std::string, PropertyEditor*> PropertyEditorFactory::_peMap;
+PropertyEditorFactory::PropertyEditorMap PropertyEditorFactory::_peMap;
 
 }

@@ -7,7 +7,7 @@ namespace ui
 
 // Constructor. Create the GTK widgets here
 
-TextPropertyEditor::TextPropertyEditor(Entity* entity, const char* name) {
+TextPropertyEditor::TextPropertyEditor(Entity* entity, const std::string& name) {
 	std::cout << "Creating a new TextPropertyEditor" << std::endl;
 	_widget = gtk_label_new("TextPropertyEditor");
 	gtk_widget_show(_widget);
