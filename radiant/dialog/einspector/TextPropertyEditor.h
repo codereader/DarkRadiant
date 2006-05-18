@@ -47,9 +47,6 @@ public:
     
 };
 
-// Initialise the Registration Helper
-PropertyEditorRegistrationHelper TextPropertyEditor::_helper("text", new TextPropertyEditor());
-
 }
 
 #endif /*TEXTPROPERTYEDITOR_H_*/

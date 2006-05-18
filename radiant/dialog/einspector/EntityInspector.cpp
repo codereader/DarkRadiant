@@ -112,10 +112,10 @@ void EntityInspector::makePropertyCategory(xmlNodePtr node) {
 // Create the actual UI components for the EntityInspector dialog
 
 void EntityInspector::constructUI() {
-    _widget = gtk_vbox_new(FALSE, 0);
+    _widget = gtk_vpaned_new();
     
-    gtk_box_pack_end(GTK_BOX(_widget), createDialogPane(), FALSE, FALSE, 6);
-    gtk_box_pack_start(GTK_BOX(_widget), createTreeViewPane(), TRUE, TRUE, 0);
+    gtk_paned_add1(GTK_PANED(_widget), createTreeViewPane());
+    gtk_paned_add2(GTK_PANED(_widget), createDialogPane());
     
     gtk_widget_show_all(_widget);
     
@@ -134,9 +134,9 @@ void EntityInspector::constructUI() {
 // Create the dialog pane
 
 GtkWidget* EntityInspector::createDialogPane() {
-    GtkWidget* hbx = gtk_hbox_new(FALSE, 0);
-    _editorFrame = gtk_frame_new("Edit property");
-    gtk_box_pack_start(GTK_BOX(hbx), _editorFrame, TRUE, TRUE, 6);
+	GtkWidget* hbx = gtk_hbox_new(FALSE, 0);
+    _editorFrame = gtk_frame_new(NULL);
+    gtk_box_pack_start(GTK_BOX(hbx), _editorFrame, TRUE, TRUE, 0);
     gtk_widget_set_size_request(hbx, 0, 200);
     return hbx;
 }
@@ -175,6 +175,7 @@ GtkWidget* EntityInspector::createTreeViewPane() {
 
     GtkTreeViewColumn* valCol = gtk_tree_view_column_new();
     gtk_tree_view_column_set_title(valCol, "Value");
+    gtk_tree_view_column_set_spacing(valCol, 6);
 
 	GtkCellRenderer* pixRenderer = gtk_cell_renderer_pixbuf_new();
 	gtk_tree_view_column_pack_start(valCol, pixRenderer, FALSE);

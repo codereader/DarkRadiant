@@ -18,8 +18,10 @@ namespace ui
 
 class PropertyEditor
 {
-
 public:
+
+	// Constructor
+	PropertyEditor(Entity* ent, const std::string& key);
 
 	// Virtual destructor
 	virtual ~PropertyEditor() {}
@@ -37,6 +39,30 @@ public:
     
     // Apply the PropertyEditor's changes to the owned Entity.
     virtual void commit() = 0;
+
+private:
+
+	// The Entity to edit
+	Entity* _entity;
+	
+	// The key we are editing on this Entity
+	const std::string& _key;
+
+	// The Gtk box containing the apply/reset buttons which are common for all
+	// subclasses.
+	GtkWidget* _applyButtonHbox;
+
+	// The Gtk box containing the PropertyEditor title text and icon
+	GtkWidget* _titleBox;
+
+protected:
+
+	// Return the apply/reset button box. The subclass can choose whether or 
+	// not to display this, but it should not modify it.
+	GtkWidget* getApplyButtonHbox();
+	
+	// Return the title bar box
+	GtkWidget* getTitleBox();
     
 };
 
