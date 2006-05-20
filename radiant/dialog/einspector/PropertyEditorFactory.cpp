@@ -1,5 +1,7 @@
 #include "PropertyEditorFactory.h"
 
+#include "gtkutil/image.h"
+
 namespace ui
 {
 
@@ -20,5 +22,11 @@ PropertyEditor* PropertyEditorFactory::create(const std::string& className, Enti
 	}
 }
 
+// Return a GdkPixbuf containing the icon for the given property type
+
+GdkPixbuf* PropertyEditorFactory::getPixbufFor(std::string type) {
+	std::string iconName(std::string("icon_") + type + ".png");
+	return gtkutil::getLocalPixbuf(iconName);	
+}
 
 }

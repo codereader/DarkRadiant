@@ -21,7 +21,7 @@ class PropertyEditor
 public:
 
 	// Constructor
-	PropertyEditor(Entity* ent, const std::string& key);
+	PropertyEditor(Entity* ent, const std::string& key, const std::string& type);
 
 	// Virtual destructor
 	virtual ~PropertyEditor() {}
@@ -47,6 +47,10 @@ private:
 	
 	// The key we are editing on this Entity
 	const std::string& _key;
+
+	// The type of the key we are editing. This is passed up from the derived
+	// class constructor based on the type of the derived class.	
+	const std::string& _type;
 
 	// The Gtk box containing the apply/reset buttons which are common for all
 	// subclasses.

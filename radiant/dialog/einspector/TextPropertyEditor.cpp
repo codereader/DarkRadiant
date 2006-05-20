@@ -11,12 +11,12 @@ PropertyEditorRegistrationHelper TextPropertyEditor::_helper("text", new TextPro
 // Blank ctor
 
 TextPropertyEditor::TextPropertyEditor():
-	PropertyEditor(NULL, "") {}
+	PropertyEditor(NULL, "", "") {}
 
 // Constructor. Create the GTK widgets here
 
 TextPropertyEditor::TextPropertyEditor(Entity* entity, const std::string& name):
-	PropertyEditor(entity, name) 
+	PropertyEditor(entity, name, "text") 
 {
 	std::cout << "Creating a new TextPropertyEditor" << std::endl;
 	_widget = gtk_vbox_new(FALSE, 0);

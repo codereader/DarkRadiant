@@ -38,6 +38,10 @@ public:
     static void registerClass(const std::string name, PropertyEditor* editor) {
         _peMap[name] = editor;
     } 
+    
+    // Return the GdkPixbuf that corresponds to the provided PropertyEditor
+    // type.
+    static GdkPixbuf* getPixbufFor(std::string type);
 
 };
 
