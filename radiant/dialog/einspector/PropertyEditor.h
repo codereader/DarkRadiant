@@ -4,6 +4,7 @@
 #include "ientity.h"
 
 #include <map>
+#include <string>
 #include "gtk/gtk.h"
 
 namespace ui
@@ -40,17 +41,22 @@ public:
     // Apply the PropertyEditor's changes to the owned Entity.
     virtual void commit() = 0;
 
+	// Static callbacks for the Apply and Reset buttons. These will just invoke
+	// the corresponding virtual functions on the derived class.
+	static void callbackApply(GtkWidget*, gpointer);
+	static void callbackReset(GtkWidget*, gpointer);
+
 private:
 
 	// The Entity to edit
 	Entity* _entity;
 	
 	// The key we are editing on this Entity
-	const std::string& _key;
+	const std::string _key;
 
 	// The type of the key we are editing. This is passed up from the derived
 	// class constructor based on the type of the derived class.	
-	const std::string& _type;
+	const std::string _type;
 
 	// The Gtk box containing the apply/reset buttons which are common for all
 	// subclasses.
@@ -58,15 +64,26 @@ private:
 
 	// The Gtk box containing the PropertyEditor title text and icon
 	GtkWidget* _titleBox;
+	
+	// The central GtkScrolledWindow where the actual editing takes place
+	GtkWidget* _editWindow;
 
 protected:
 
-	// Return the apply/reset button box. The subclass can choose whether or 
-	// not to display this, but it should not modify it.
+	// Accessor functions for subclasses. 
+
+	// Return the apply/reset button box. 
 	GtkWidget* getApplyButtonHbox();
 	
 	// Return the title bar box
 	GtkWidget* getTitleBox();
+    
+    // Return the central edit window
+    GtkWidget* getEditWindow();
+
+	// Get the key and the Entity
+	std::string getKey();
+	Entity* getEntity();
     
 };
 

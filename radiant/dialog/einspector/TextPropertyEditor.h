@@ -16,11 +16,16 @@ namespace ui
 class TextPropertyEditor:
     public PropertyEditor
 {
+private:
+
     // Registration helper
     static PropertyEditorRegistrationHelper _helper;
 
 	// Main GtkWidget
 	GtkWidget* _widget;
+	
+	// The text entry field
+	GtkWidget* _textEntry;
 
 public:
 
@@ -42,8 +47,8 @@ public:
     	return new TextPropertyEditor(entity, name);
     }
     
-    virtual void refresh() {}
-    virtual void commit() {}
+    virtual void refresh();
+    virtual void commit();
     
 };
 
