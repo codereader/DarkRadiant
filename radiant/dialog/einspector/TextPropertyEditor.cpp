@@ -1,4 +1,7 @@
 #include "TextPropertyEditor.h"
+#include "EntityKeyValueVisitor.h"
+
+#include "exception/InvalidKeyException.h"
 
 #include <gtk/gtk.h>
 
@@ -52,6 +55,13 @@ TextPropertyEditor::~TextPropertyEditor() {
 
 void TextPropertyEditor::refresh() {
 	std::cout << "TextPropertyEditor::refresh()" << std::endl;
+	std::cout << "key is " << getKey() << std::endl;
+	try {
+	    const std::string val = EntityKeyValueVisitor::getKeyValue(getEntity(), getKey());
+		gtk_entry_set_text(GTK_ENTRY(_textEntry), val.c_str());
+	} catch (InvalidKeyException e) {
+		gtk_entry_set_text(GTK_ENTRY(_textEntry), "");
+	}
 }
 
 void TextPropertyEditor::commit() {

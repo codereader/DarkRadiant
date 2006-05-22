@@ -274,6 +274,7 @@ void EntityInspector::callbackTreeSelectionChanged(GtkWidget* widget, EntityInsp
     													   key);
 	if (self->_currentPropertyEditor != NULL) {
 	    gtk_container_add(GTK_CONTAINER(self->_editorFrame), self->_currentPropertyEditor->getWidget());
+	    self->_currentPropertyEditor->refresh(); // force to update with the key's value
 	}
 }
 

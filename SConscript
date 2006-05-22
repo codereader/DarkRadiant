@@ -14,7 +14,7 @@ def build_list(s_prefix, s_string):
 
 # common code ------------------------------------------------------
 
-exceptionLibSource = 'RadiantException.cpp ModuleSystemException.cpp'
+exceptionLibSource = 'RadiantException.cpp ModuleSystemException.cpp InvalidKeyException.cpp'
 exceptionLib = g_env.StaticLibrary(target='libs/exception', source=build_list('libs/exception', exceptionLibSource))
 
 cmdlib_lib = g_env.StaticLibrary(target='libs/cmdlib', source='libs/cmdlib/cmdlib.cpp')

@@ -77,7 +77,7 @@ GtkWidget* PropertyEditor::getEditWindow() {
 
 // Return the key and the Entity we are editing
 
-std::string PropertyEditor::getKey() {
+const std::string& PropertyEditor::getKey() {
 	return _key;
 }
 

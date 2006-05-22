@@ -82,7 +82,7 @@ protected:
     GtkWidget* getEditWindow();
 
 	// Get the key and the Entity
-	std::string getKey();
+	const std::string& getKey();
 	Entity* getEntity();
     
 };

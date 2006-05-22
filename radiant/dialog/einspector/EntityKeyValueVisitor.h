@@ -22,13 +22,19 @@ class EntityKeyValueVisitor:
     KeyValueMap _keyValueMap;
     
 public:
+
+	// Static convenience function to create and execute a KeyValueVisitor
+	// and return the value of the provided key.
+	static const std::string& getKeyValue(Entity* entity, const std::string& key);
+
+	// Constructor
 	EntityKeyValueVisitor();
     
     // Main visit function
     virtual void visit(const char* key, const char* value);
     
     // Return the map object
-    KeyValueMap getMap() {
+    KeyValueMap& getMap() {
         return _keyValueMap;
     }
 };
