@@ -28,9 +28,17 @@
 		<propertyCategory name="Basic">
 			<property name="origin" type="vector3" />
 			<property name="classname" type="text" />
+			<property name="name" type="text" />
 		</propertyCategory>
 		<propertyCategory name="Light">
 			<property name="light_radius" type="vector3" />
+			<property name="texture" type="shader" />
+			<property name="noshadow" type="boolean" />
+		</propertyCategory>
+		<propertyCategory name="Model">
+			<property name="model" type="model" />
+			<property name="skin" type="skin" />
+			<property name="noshadow" type="boolean" />
 		</propertyCategory>
 	</entityInspector>
 </game>
