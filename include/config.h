@@ -15,6 +15,6 @@
  * for all key types
  */
 
-#define ALL_PROPERTY_EDITORS_ARE_TEXT
+//#define ALL_PROPERTY_EDITORS_ARE_TEXT
 
 #endif /*CONFIG_H_*/

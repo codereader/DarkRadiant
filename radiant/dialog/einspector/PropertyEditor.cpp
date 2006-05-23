@@ -96,15 +96,20 @@ Entity* PropertyEditor::getEntity() {
 	return _entity;
 }
 
-// Retrieve the current keyvalue from the Entity and call the virtual 
-// setValue() function accordingly.
+// Retrieve the current keyvalue from the Entity and call the virtual setValue() 
+// function accordingly. Also update the status of the Active checkbox based on
+// whether the key is actually set on the Entity.
 
 void PropertyEditor::refresh() {
     try {
         const std::string val = EntityKeyValueVisitor::getKeyValue(getEntity(), getKey());
         setValue(val);
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_activeCheckbox), TRUE);
+        gtk_toggle_button_toggled(GTK_TOGGLE_BUTTON(_activeCheckbox)); // force a toggle to correctly set sensitivity of the edit pane
     } catch (InvalidKeyException e) {
         setValue("");        
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_activeCheckbox), FALSE);
+        gtk_toggle_button_toggled(GTK_TOGGLE_BUTTON(_activeCheckbox));
     }
 }
 
@@ -114,6 +119,7 @@ void PropertyEditor::refresh() {
 
 inline void PropertyEditor::callbackApply(GtkWidget* caller, PropertyEditor* self) {
 	const std::string newValue(self->getValue()); // retrieve the new keyval from the child
+    std::cout << "getValue() returned " << newValue << std::endl;
 }
 
 inline void PropertyEditor::callbackReset(GtkWidget* caller, PropertyEditor* self) {
