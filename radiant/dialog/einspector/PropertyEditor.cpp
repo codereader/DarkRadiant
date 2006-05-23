@@ -1,5 +1,8 @@
 #include "PropertyEditor.h"
 #include "PropertyEditorFactory.h"
+#include "EntityKeyValueVisitor.h"
+
+#include "exception/InvalidKeyException.h"
 
 #include <gtk/gtk.h>
 
@@ -16,7 +19,8 @@ PropertyEditor::PropertyEditor(Entity* ent, const std::string& key, const std::s
 	_type(type),
 	_applyButtonHbox(NULL),
 	_titleBox(NULL),
-	_editWindow(NULL) {
+	_editWindow(NULL),
+	_activeCheckbox(NULL) {
 }
 
 // Return the apply buttons hbox
@@ -44,12 +48,19 @@ GtkWidget* PropertyEditor::getTitleBox() {
 	if (_titleBox == NULL) {
 		_titleBox = gtk_hbox_new(FALSE, 3);
 
-		// Icon
-		std::cout << "PE: type is " << _type << std::endl;
-		gtk_box_pack_start(GTK_BOX(_titleBox), 
+		// Icon (top-right)
+		gtk_box_pack_end(GTK_BOX(_titleBox), 
 							gtk_image_new_from_pixbuf(PropertyEditorFactory::getPixbufFor(_type)),
 							FALSE, FALSE, 0);
+		gtk_box_pack_end(GTK_BOX(_titleBox), gtk_vseparator_new(), FALSE, FALSE, 0);
+
+		// Enabled checkbox (top-left)
+		_activeCheckbox = gtk_check_button_new();
+		gtk_box_pack_start(GTK_BOX(_titleBox), _activeCheckbox, FALSE, FALSE, 0);
 		gtk_box_pack_start(GTK_BOX(_titleBox), gtk_vseparator_new(), FALSE, FALSE, 0);
+
+		g_signal_connect(G_OBJECT(_activeCheckbox), "toggled", 
+		                 G_CALLBACK(callbackActiveToggled), this);
 
 		// Bold label
 		std::string boldKey = std::string("<big>") + _key + std::string("</big>");
@@ -85,15 +96,38 @@ Entity* PropertyEditor::getEntity() {
 	return _entity;
 }
 
-// Gtk callbacks. These just invoke the respective functions on the derived
-// class, which is passed as the second argument to the callback.
+// Retrieve the current keyvalue from the Entity and call the virtual 
+// setValue() function accordingly.
 
-inline void PropertyEditor::callbackApply(GtkWidget* caller, gpointer self) {
-	reinterpret_cast<PropertyEditor*>(self)->commit();
+void PropertyEditor::refresh() {
+    try {
+        const std::string val = EntityKeyValueVisitor::getKeyValue(getEntity(), getKey());
+        setValue(val);
+    } catch (InvalidKeyException e) {
+        setValue("");        
+    }
 }
 
-inline void PropertyEditor::callbackReset(GtkWidget* caller, gpointer self) {
-	reinterpret_cast<PropertyEditor*>(self)->refresh();
+/* 
+ * GTK CALLBACKS
+ */
+
+inline void PropertyEditor::callbackApply(GtkWidget* caller, PropertyEditor* self) {
+	const std::string newValue(self->getValue()); // retrieve the new keyval from the child
+}
+
+inline void PropertyEditor::callbackReset(GtkWidget* caller, PropertyEditor* self) {
+	self->refresh();
+}
+
+// Callback for when the active checkbox is toggled. This enables or disables
+// the central edit pane.
+
+inline void PropertyEditor::callbackActiveToggled(GtkWidget* caller, PropertyEditor* self) {
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(caller)))
+		gtk_widget_set_sensitive(self->_editWindow, TRUE);
+	else 
+		gtk_widget_set_sensitive(self->_editWindow, FALSE);
 }
 
 } // namespace ui

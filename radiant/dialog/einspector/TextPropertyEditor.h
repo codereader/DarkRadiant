@@ -47,8 +47,8 @@ public:
     	return new TextPropertyEditor(entity, name);
     }
     
-    virtual void refresh();
-    virtual void commit();
+    virtual void setValue(const std::string&);
+    virtual const std::string& getValue();
     
 };
 

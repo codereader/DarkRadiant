@@ -2,6 +2,8 @@
 
 #include "gtkutil/image.h"
 
+#include "config.h"
+
 namespace ui
 {
 
@@ -12,7 +14,13 @@ PropertyEditorFactory::PropertyEditorMap PropertyEditorFactory::_peMap;
 // Create a PropertyEditor from the given name.
 
 PropertyEditor* PropertyEditorFactory::create(const std::string& className, Entity* entity, const std::string& key) {
+
+#ifdef ALL_PROPERTY_EDITORS_ARE_TEXT
+	PropertyEditorMap::iterator iter(_peMap.find("text"));
+#else
 	PropertyEditorMap::iterator iter(_peMap.find(className));
+#endif
+
 	if (iter == _peMap.end()) {
 		std::cout << "PropertyEditorFactory: unable to find PropertyEditor instance"
 							<< " for type \"" << className << "\"." << std::endl;

@@ -35,18 +35,34 @@ public:
     // virtual construction).
     virtual PropertyEditor* createNew(Entity*, const std::string&) = 0;
     
-    // Refresh the PropertyEditor with updated keyvals on the owned Entity.
-    virtual void refresh() = 0;
+    // Update the contained widgets with the given key value. This function is
+    // always called from the parent PropertyEditor class.
+    virtual void setValue(const std::string&) = 0;
     
-    // Apply the PropertyEditor's changes to the owned Entity.
-    virtual void commit() = 0;
+    // Return the keyvalue as currently specified by the contained Gtk widgets.
+    // This function will be called from the parent PropertyEditor class.
+    virtual const std::string& getValue() = 0;
 
-	// Static callbacks for the Apply and Reset buttons. These will just invoke
-	// the corresponding virtual functions on the derived class.
-	static void callbackApply(GtkWidget*, gpointer);
-	static void callbackReset(GtkWidget*, gpointer);
+    // Non-virtual parent class function to obtain the current value of the key
+    // from the Entity itself, and invoke the child's setValue() function with
+    // the new value. This function exists so that the Gtk widgets can be updated
+    // immediately after construction, which would otherwise require a manual
+    // call to the callbackReset() GTK callback.
+    void refresh();
 
-private:
+private: // methods
+
+    // Static callbacks for the Apply and Reset buttons. These will eventually 
+    // invoke the corresponding virtual functions on the derived class.
+    static void callbackApply(GtkWidget*, PropertyEditor*);
+    static void callbackReset(GtkWidget*, PropertyEditor*);
+    
+    // Static callback for the Key Active checkbox, which enables or disables
+    // the central edit pane.
+    static void callbackActiveToggled(GtkWidget*, PropertyEditor*);
+
+
+private: // fields
 
 	// The Entity to edit
 	Entity* _entity;
@@ -67,6 +83,10 @@ private:
 	
 	// The central GtkScrolledWindow where the actual editing takes place
 	GtkWidget* _editWindow;
+	
+	// The checkbox controlling whether the key should be set on the Entity
+	// or not
+	GtkWidget* _activeCheckbox;
 
 protected:
 

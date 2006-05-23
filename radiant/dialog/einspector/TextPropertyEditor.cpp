@@ -41,6 +41,7 @@ TextPropertyEditor::TextPropertyEditor(Entity* entity, const std::string& name):
 	gtk_box_pack_start(GTK_BOX(_widget), getEditWindow(), TRUE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(_widget), getApplyButtonHbox(), FALSE, FALSE, 0);
 	gtk_widget_show_all(_widget);
+    refresh();
 }
 
 // Destructor. Hide and destroy the GTK widgets
@@ -53,19 +54,12 @@ TextPropertyEditor::~TextPropertyEditor() {
 
 // Refresh and commit
 
-void TextPropertyEditor::refresh() {
-	std::cout << "TextPropertyEditor::refresh()" << std::endl;
-	std::cout << "key is " << getKey() << std::endl;
-	try {
-	    const std::string val = EntityKeyValueVisitor::getKeyValue(getEntity(), getKey());
-		gtk_entry_set_text(GTK_ENTRY(_textEntry), val.c_str());
-	} catch (InvalidKeyException e) {
-		gtk_entry_set_text(GTK_ENTRY(_textEntry), "");
-	}
+void TextPropertyEditor::setValue(const std::string& val) {
+	gtk_entry_set_text(GTK_ENTRY(_textEntry), val.c_str());
 }
 
-void TextPropertyEditor::commit() {
-	std::cout << "TextPropertyEditor::commit()" << std::endl;
+const std::string& TextPropertyEditor::getValue() {
+	std::cout << "TextPropertyEditor::getValue()" << std::endl;
 }
 
 }

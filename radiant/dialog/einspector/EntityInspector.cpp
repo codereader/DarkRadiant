@@ -168,14 +168,13 @@ GtkWidget* EntityInspector::createTreeViewPane() {
                                                  NULL);
     gtk_tree_view_column_set_resizable(nameCol, TRUE);
     gtk_tree_view_column_set_sizing(nameCol, GTK_TREE_VIEW_COLUMN_GROW_ONLY);
-    gtk_tree_view_column_set_fixed_width(nameCol, 200);
     gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), nameCol);                                                                        
 
 	// Create the value column
 
     GtkTreeViewColumn* valCol = gtk_tree_view_column_new();
     gtk_tree_view_column_set_title(valCol, "Value");
-    gtk_tree_view_column_set_spacing(valCol, 6);
+    gtk_tree_view_column_set_spacing(valCol, 3);
 
 	GtkCellRenderer* pixRenderer = gtk_cell_renderer_pixbuf_new();
 	gtk_tree_view_column_pack_start(valCol, pixRenderer, FALSE);
@@ -274,7 +273,6 @@ void EntityInspector::callbackTreeSelectionChanged(GtkWidget* widget, EntityInsp
     													   key);
 	if (self->_currentPropertyEditor != NULL) {
 	    gtk_container_add(GTK_CONTAINER(self->_editorFrame), self->_currentPropertyEditor->getWidget());
-	    self->_currentPropertyEditor->refresh(); // force to update with the key's value
 	}
 }
 
