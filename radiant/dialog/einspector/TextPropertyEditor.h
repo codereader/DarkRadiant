@@ -48,7 +48,7 @@ public:
     }
     
     virtual void setValue(const std::string&);
-    virtual const std::string& getValue();
+    virtual const std::string getValue();
     
 };
 

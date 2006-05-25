@@ -41,7 +41,7 @@ public:
     
     // Return the keyvalue as currently specified by the contained Gtk widgets.
     // This function will be called from the parent PropertyEditor class.
-    virtual const std::string& getValue() = 0;
+    virtual const std::string getValue() = 0;
 
     // Non-virtual parent class function to obtain the current value of the key
     // from the Entity itself, and invoke the child's setValue() function with

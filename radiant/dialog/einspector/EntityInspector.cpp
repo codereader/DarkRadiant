@@ -205,6 +205,12 @@ GtkWidget* EntityInspector::createTreeViewPane() {
 
 void EntityInspector::callbackRedraw() {
 
+    // Remove PropertyEditor if it is displayed
+    if (_currentPropertyEditor) {
+        delete _currentPropertyEditor;
+        _currentPropertyEditor = NULL;
+    }
+
     // Entity Inspector can only be used on a single entity. Multiple selections
     // or nothing selected result in a grayed-out dialog, as does the selection
     // of something that is not an Entity (worldspawn).
@@ -244,6 +250,7 @@ inline void EntityInspector::selectionChanged(const Selectable& sel) {
 
 // Called when the TreeView selects a different property
 void EntityInspector::callbackTreeSelectionChanged(GtkWidget* widget, EntityInspector* self) {
+
     GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->_treeView));
 
     GtkTreeIter tmpIter;
@@ -261,6 +268,7 @@ void EntityInspector::callbackTreeSelectionChanged(GtkWidget* widget, EntityInsp
 
     if (self->_currentPropertyEditor) {
     	delete self->_currentPropertyEditor; // destructor takes care of GTK widgets
+        self->_currentPropertyEditor = NULL;
     }
     
     GValue selType = {0, 0};

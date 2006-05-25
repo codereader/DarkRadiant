@@ -58,7 +58,7 @@ void TextPropertyEditor::setValue(const std::string& val) {
 	gtk_entry_set_text(GTK_ENTRY(_textEntry), val.c_str());
 }
 
-const std::string& TextPropertyEditor::getValue() {
+const std::string TextPropertyEditor::getValue() {
 	return std::string(gtk_entry_get_text(GTK_ENTRY(_textEntry)));
 }
 

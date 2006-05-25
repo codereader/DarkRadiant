@@ -4,6 +4,8 @@
 
 #include "exception/InvalidKeyException.h"
 
+#include "entity.h"
+
 #include <gtk/gtk.h>
 
 #include <iostream>
@@ -118,8 +120,13 @@ void PropertyEditor::refresh() {
  */
 
 inline void PropertyEditor::callbackApply(GtkWidget* caller, PropertyEditor* self) {
-	const std::string newValue(self->getValue()); // retrieve the new keyval from the child
+	const std::string& newValue = self->getValue(); // retrieve the new keyval from the child
     std::cout << "getValue() returned " << newValue << std::endl;
+
+    // Set the keyvalue on the currently-selected entity.
+    // TODO: this takes no account of the Entity* we have got already. Need to be
+    // absolutely sure that the currently selected entity is the same one.
+    Scene_EntitySetKeyValue_Selected(self->_key.c_str(), newValue.c_str());
 }
 
 inline void PropertyEditor::callbackReset(GtkWidget* caller, PropertyEditor* self) {
