@@ -8,9 +8,6 @@
 namespace ui
 {
 
-// Initialise the Registration Helper
-PropertyEditorRegistrationHelper TextPropertyEditor::_helper("text", new TextPropertyEditor());
-
 // Blank ctor
 
 TextPropertyEditor::TextPropertyEditor():

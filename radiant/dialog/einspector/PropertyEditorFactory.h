@@ -34,10 +34,8 @@ public:
     // given Entity object and key name.
     static PropertyEditor* create(const std::string& className, Entity* entity, const std::string& key);
 
-    // Register a new PropertyEditor derivative into the internal mapping.
-    static void registerClass(const std::string name, PropertyEditor* editor) {
-        _peMap[name] = editor;
-    } 
+    // Register the classes
+    static void registerClasses();
     
     // Return the GdkPixbuf that corresponds to the provided PropertyEditor
     // type.

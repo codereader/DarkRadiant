@@ -2,7 +2,6 @@
 #define TEXTPROPERTYEDITOR_H_
 
 #include "PropertyEditor.h"
-#include "PropertyEditorRegistrationHelper.h"
 
 namespace ui
 {
@@ -17,9 +16,6 @@ class TextPropertyEditor:
     public PropertyEditor
 {
 private:
-
-    // Registration helper
-    static PropertyEditorRegistrationHelper _helper;
 
 	// Main GtkWidget
 	GtkWidget* _widget;

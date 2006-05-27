@@ -1,4 +1,5 @@
 #include "PropertyEditorFactory.h"
+#include "TextPropertyEditor.h"
 
 #include "gtkutil/image.h"
 
@@ -11,9 +12,19 @@ namespace ui
 
 PropertyEditorFactory::PropertyEditorMap PropertyEditorFactory::_peMap;
 
+// Register the classes
+void PropertyEditorFactory::registerClasses() {
+        _peMap["text"] = new TextPropertyEditor();
+} 
+
 // Create a PropertyEditor from the given name.
 
 PropertyEditor* PropertyEditorFactory::create(const std::string& className, Entity* entity, const std::string& key) {
+
+    // Register the PropertyEditors if the map is empty
+    if (_peMap.empty()) {
+        registerClasses();
+    }
 
 #ifdef ALL_PROPERTY_EDITORS_ARE_TEXT
 	PropertyEditorMap::iterator iter(_peMap.find("text"));
