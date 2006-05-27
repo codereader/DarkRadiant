@@ -332,7 +332,7 @@ void EntityInspector::populateTreeModel() {
 			std::string keyValue;
 			
 			if (tmp == kvMap.end())
-				keyValue = "--";
+				keyValue = NO_VALUE_STRING;
 			else
 				keyValue = tmp->second;
 			
@@ -370,7 +370,9 @@ gboolean EntityInspector::treeWalkFunc(GtkTreeModel* model, GtkTreePath* path, G
         if (kvIter != map->end()) { // property found on Entity
             std::string newValue = kvIter->second;
             gtk_tree_store_set(GTK_TREE_STORE(model), iter, PROPERTY_VALUE_COLUMN, newValue.c_str(), -1);
-        }
+        } else {
+            gtk_tree_store_set(GTK_TREE_STORE(model), iter, PROPERTY_VALUE_COLUMN, NO_VALUE_STRING.c_str(), -1);
+        }            
     }
     return FALSE;  
 }

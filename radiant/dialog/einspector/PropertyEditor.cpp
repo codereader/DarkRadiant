@@ -123,10 +123,12 @@ inline void PropertyEditor::callbackApply(GtkWidget* caller, PropertyEditor* sel
 	const std::string& newValue = self->getValue(); // retrieve the new keyval from the child
     std::cout << "getValue() returned " << newValue << std::endl;
 
-    // Set the keyvalue on the currently-selected entity.
-    // TODO: this takes no account of the Entity* we have got already. Need to be
-    // absolutely sure that the currently selected entity is the same one.
-    Scene_EntitySetKeyValue_Selected(self->_key.c_str(), newValue.c_str());
+    // Set the keyvalue on the owned entity if the enabled toggle is active,
+    // otherwise set the value to "" which removes the key.
+    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(self->_activeCheckbox)))
+        self->_entity->setKeyValue(self->_key.c_str(), newValue.c_str());
+    else
+        self->_entity->setKeyValue(self->_key.c_str(), "");
 }
 
 inline void PropertyEditor::callbackReset(GtkWidget* caller, PropertyEditor* self) {

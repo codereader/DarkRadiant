@@ -14,6 +14,17 @@
 
 namespace ui {
 
+// CONSTANTS
+
+namespace {
+
+    const int TREEVIEW_MIN_WIDTH = 260;
+    const int TREEVIEW_MIN_HEIGHT = 180;
+
+    const std::string NO_VALUE_STRING = "--";
+
+}
+
 /* The EntityInspector class represents the GTK dialog for editing properties
  * on the selected game entity. The class is implemented as a singleton and
  * contains a method to return the current instance.
@@ -22,11 +33,6 @@ namespace ui {
 class EntityInspector 
 {
 private:
-
-    // Sizing constants
-    
-    static const int TREEVIEW_MIN_WIDTH = 260;
-    static const int TREEVIEW_MIN_HEIGHT = 180;
 
     // TreeView column numbers
     
