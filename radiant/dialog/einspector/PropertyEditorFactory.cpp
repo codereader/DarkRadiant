@@ -1,5 +1,6 @@
 #include "PropertyEditorFactory.h"
 #include "TextPropertyEditor.h"
+#include "Vector3PropertyEditor.h"
 
 #include "gtkutil/image.h"
 
@@ -15,6 +16,7 @@ PropertyEditorFactory::PropertyEditorMap PropertyEditorFactory::_peMap;
 // Register the classes
 void PropertyEditorFactory::registerClasses() {
         _peMap["text"] = new TextPropertyEditor();
+        _peMap["vector3"] = new Vector3PropertyEditor();
 } 
 
 // Create a PropertyEditor from the given name.
