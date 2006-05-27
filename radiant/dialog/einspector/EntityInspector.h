@@ -23,6 +23,11 @@ class EntityInspector
 {
 private:
 
+    // Sizing constants
+    
+    static const int TREEVIEW_MIN_WIDTH = 260;
+    static const int TREEVIEW_MIN_HEIGHT = 180;
+
     // TreeView column numbers
     
     enum {
@@ -72,11 +77,16 @@ private:
     // GTK CALLBACKS
     // Must be static as they are called from a C-based API
     static void callbackTreeSelectionChanged(GtkWidget* widget, EntityInspector* self);
+    static gboolean treeWalkFunc(GtkTreeModel*, GtkTreePath*, GtkTreeIter*, gpointer);
 
-    // Routine to populate the TreeStore with the keyvals attached to the
+    // Routines to populate the TreeStore with the keyvals attached to the
     // currently-selected object. 
-    void populateTreeModel();
+    void populateTreeModel(); // add to empty TreeModel
+    void refreshTreeModel(); // refresh values in existing TreeModel
 
+    // Update the PropertyEditor pane with the correct PropertyEditor.
+    void updatePropertyEditor();
+    
 	// Update the currently selected entity pointer. This function returns true
 	// if a single Entity is selected, and false if either a non-Entity or more
 	// than one object is selected.
