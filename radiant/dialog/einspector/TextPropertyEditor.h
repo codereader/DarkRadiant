@@ -17,9 +17,6 @@ class TextPropertyEditor:
 {
 private:
 
-	// Main GtkWidget
-	GtkWidget* _widget;
-	
 	// The text entry field
 	GtkWidget* _textEntry;
 
@@ -32,11 +29,6 @@ public:
 	TextPropertyEditor();
 
 	virtual ~TextPropertyEditor();
-
-	// Return the GtkWidget
-    virtual GtkWidget* getWidget() {
-    	return _widget;
-    }
 
 	// Create a new TextPropertyEditor
     virtual PropertyEditor* createNew(Entity* entity, const std::string& name) {

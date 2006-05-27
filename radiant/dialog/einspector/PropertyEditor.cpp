@@ -13,16 +13,32 @@
 namespace ui
 {
 	
+// Blank constructor for registration in map
+
+PropertyEditor::PropertyEditor() {}
+
 // Constructor
 
 PropertyEditor::PropertyEditor(Entity* ent, const std::string& key, const std::string& type):
+    _widget(gtk_vbox_new(FALSE, 0)),
 	_entity(ent),
 	_key(key),
 	_type(type),
 	_applyButtonHbox(NULL),
 	_titleBox(NULL),
 	_editWindow(NULL),
-	_activeCheckbox(NULL) {
+	_activeCheckbox(NULL) 
+{
+    gtk_box_pack_start(GTK_BOX(_widget), getTitleBox(), FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(_widget), getEditWindow(), TRUE, TRUE, 0);
+    gtk_box_pack_end(GTK_BOX(_widget), getApplyButtonHbox(), FALSE, FALSE, 0);
+}
+
+// Destructor. Hide and destroy the Gtk widgets
+
+PropertyEditor::~PropertyEditor() {
+    gtk_widget_hide(_widget);
+    gtk_widget_destroy(_widget);
 }
 
 // Return the apply buttons hbox
@@ -103,6 +119,7 @@ Entity* PropertyEditor::getEntity() {
 // whether the key is actually set on the Entity.
 
 void PropertyEditor::refresh() {
+    gtk_widget_show_all(_widget);
     try {
         const std::string val = EntityKeyValueVisitor::getKeyValue(getEntity(), getKey());
         setValue(val);

@@ -21,15 +21,20 @@ class PropertyEditor
 {
 public:
 
+    // Blank ctor for map registration
+    PropertyEditor();
+
 	// Constructor
 	PropertyEditor(Entity* ent, const std::string& key, const std::string& type);
 
 	// Virtual destructor
-	virtual ~PropertyEditor() {}
+	virtual ~PropertyEditor();
 
     // Retrieve the GtkWidget for this PropertyEditor for inclusion into the
     // EntityInspector dialog.
-	virtual GtkWidget* getWidget() = 0;
+	GtkWidget* getWidget() {
+        return _widget;   
+    }
     
     // Create a new PropertyEditor of the same type as the derived class (for
     // virtual construction).
@@ -63,6 +68,9 @@ private: // methods
 
 
 private: // fields
+
+    // Main widget
+    GtkWidget* _widget;
 
 	// The Entity to edit
 	Entity* _entity;
