@@ -277,6 +277,8 @@ radiant_src = [
 'dialog/einspector/PropertyEditor.cpp',
 'dialog/einspector/TextPropertyEditor.cpp',
 'dialog/einspector/PropertyEditorFactory.cpp',
+'dialog/einspector/Vector3PropertyEditor.cpp',
+'dialog/einspector/BooleanPropertyEditor.cpp'
 ]
 
 for i in range(len(radiant_src)):

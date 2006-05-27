@@ -1,6 +1,8 @@
 #include "PropertyEditorFactory.h"
+
 #include "TextPropertyEditor.h"
 #include "Vector3PropertyEditor.h"
+#include "BooleanPropertyEditor.h"
 
 #include "gtkutil/image.h"
 
@@ -17,7 +19,8 @@ PropertyEditorFactory::PropertyEditorMap PropertyEditorFactory::_peMap;
 void PropertyEditorFactory::registerClasses() {
         _peMap["text"] = new TextPropertyEditor();
         _peMap["vector3"] = new Vector3PropertyEditor();
-} 
+        _peMap["boolean"] = new BooleanPropertyEditor();
+}
 
 // Create a PropertyEditor from the given name.
 
