@@ -155,14 +155,6 @@ imagepng_env.usePNG()
 imagepng_lib = imagepng_env.SharedLibrary(target='imagepng', source=imagepng_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
 imagepng_env.Install(INSTALL + '/modules', imagepng_lib)
 
-#Does not yet build on Win32, probably only needed for Q3
-#mapxml_env = module_env.Copy()
-#mapxml_lst = build_list('plugins/mapxml', 'plugin.cpp xmlparse.cpp xmlwrite.cpp')
-#mapxml_env.useXML2()
-#mapxml_env.useGlib2()
-#mapxml_lib = mapxml_env.SharedLibrary(target='mapxml', source=mapxml_lst)
-#mapxml_env.Install(INSTALL + '/modules', mapxml_lib)
-
 model_env = module_env.Copy()
 model_lst = build_list('plugins/model', 'plugin.cpp model.cpp')
 model_lib = model_env.SharedLibrary(target='model', source=model_lst, LIBS=['mathlib', 'picomodel'], LIBPATH='libs', no_import_lib=1, WIN32_INSERT_DEF=0)
@@ -177,6 +169,12 @@ module_env.Install(INSTALL + '/modules', md3model_lib)
 entity_lst = build_list('plugins/entity', 'plugin.cpp entity.cpp eclassmodel.cpp generic.cpp group.cpp light.cpp miscmodel.cpp doom3group.cpp skincache.cpp angle.cpp angles.cpp colour.cpp filters.cpp model.cpp namedentity.cpp origin.cpp scale.cpp targetable.cpp rotation.cpp modelskinkey.cpp')
 entity_lib = module_env.SharedLibrary(target='entity', source=entity_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
 module_env.Install(INSTALL + '/modules', entity_lib)
+
+gameDescriptorEnv = module_env.Copy()
+gameDescriptorEnv.useXML2()
+gamedesc_lst = build_list('plugins/gamedescriptor', 'plugin.cpp XMLGameDescriptor.cpp GameDescriptorModuleAPI.cpp')
+gamedesc_lib = gameDescriptorEnv.SharedLibrary(target='gamedesc', source=gamedesc_lst, no_import_lib=1)
+gameDescriptorEnv.Install(INSTALL + '/modules', gamedesc_lib)
 
 radiant_env = g_env.Copy()
 radiant_env['CPPPATH'].append('include')
