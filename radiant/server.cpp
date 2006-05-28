@@ -219,12 +219,12 @@ public:
 	DynamicLibraryModule(const char* filename)
 		: m_library(filename), m_registerModule(0) {
 
-//		std::cout << "DynamicLibraryModule created for " << filename << std::endl;
 		if(!m_library.failed()) {
 			m_registerModule = reinterpret_cast<RegisterModulesFunc>(m_library.findSymbol("Radiant_RegisterModules")); // Win32
 		} 
 		else {
-			throw ModuleSystemException(std::string("Failed to create DynamicLibraryModule for ") + filename);
+			std::cerr << "WARNING: Failed to load module " << filename << ":" << std::endl;
+            std::cerr << dlerror() << std::endl;
 		}
 	}
 
@@ -255,12 +255,10 @@ public:
     DynamicLibraryModule* library = new DynamicLibraryModule(filename);
 
     if(library->failed()) {
-		std::cout << "failed to create library, deleting" << std::endl;
 		delete library;
     }
     else
     {
-//    	std::cout << "Library created" << std::endl;
       m_libraries.push_back(library);
       library->registerModules(server);
     }
