@@ -57,6 +57,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/messagebox.h"
 #include "cmdlib.h"
 
+#include "xmlutil/Document.h"
+
 #include "error.h"
 #include "console.h"
 #include "xywindow.h"
@@ -129,6 +131,7 @@ CGameDescription::CGameDescription(xmlDocPtr pDoc,
 				   const CopiedString & gameFile) {
 
     xmlNodePtr pNode = pDoc->children;
+    xml::Document document(pDoc);
 
 	// Search for the "game" node. This is the toplevel node so it should be
 	// the only node found.
@@ -151,7 +154,7 @@ CGameDescription::CGameDescription(xmlDocPtr pDoc,
     }
 
 	// EntityInspector.
-	ui::EntityInspector::parseXml(pDoc);
+	ui::EntityInspector::parseXml(document);
 
 	// Check if the game file exists and add the internal reference to it if it
 	// does.

@@ -3,6 +3,7 @@
 
 #include "gtkutil/idledraw.h"
 #include "xmlutil/Node.h"
+#include "xmlutil/Document.h"
 
 #include "iselection.h"
 #include "ientity.h"
@@ -11,7 +12,6 @@
 #include "PropertyEditor.h"
 
 #include <gtk/gtk.h>
-#include <libxml/parser.h>
 #include <iostream>
 
 namespace ui {
@@ -121,7 +121,7 @@ public:
 
 	// Use libxml2 to parse the <entityInspector> subtree of the .game file. 
 	// Invoked from CGameDescription constructor in preferences.cpp
-	static void parseXml(xmlDocPtr doc);
+	static void parseXml(xml::Document doc);
 
     // Inform the IdleDraw to invoke a redraw when idle
     void queueDraw();

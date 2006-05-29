@@ -14,8 +14,6 @@
 
 #include "error.h"
 
-#include <libxml/parser.h>
-
 #include <iostream>
 
 namespace ui {
@@ -43,10 +41,9 @@ GtkWidget* EntityInspector::getWidget() {
 
 // Static function to obtain the PropertyCategories from the XML file.
 
-void EntityInspector::parseXml(xmlDocPtr doc) {
+void EntityInspector::parseXml(xml::Document doc) {
 
-    xml::Document xDoc(doc);
-    xml::NodeList categories = xDoc.findXPath("/game/entityInspector//propertyCategory");
+    xml::NodeList categories = doc.findXPath("/game/entityInspector//propertyCategory");
 
     for (unsigned int i = 0; i < categories.size(); i++)
     	makePropertyCategory(categories[i]);
