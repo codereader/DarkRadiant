@@ -2,6 +2,7 @@
 #define ENTITYINSPECTOR_H_
 
 #include "gtkutil/idledraw.h"
+#include "xmlutil/Node.h"
 
 #include "iselection.h"
 #include "ientity.h"
@@ -102,7 +103,7 @@ private:
 
 	// Utility function to create a PropertyCategory object and add it to the
 	// map.
-	static void makePropertyCategory(xmlNodePtr node);
+	static void makePropertyCategory(xml::Node& node);
 
 public:
 

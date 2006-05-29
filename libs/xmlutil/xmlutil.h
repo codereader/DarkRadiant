@@ -1,6 +1,8 @@
 #ifndef XMLUTIL_H_
 #define XMLUTIL_H_
 
+#include "Node.h"
+
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
 
@@ -16,8 +18,7 @@ namespace xml {
  */
 
 // Typedefs and data structures
- 
-typedef xmlNodePtr Node;
+
 typedef std::vector<Node> NodeList;
 
 typedef xmlDocPtr Document;
@@ -31,25 +32,6 @@ typedef std::map<std::string, std::string> AttributeTable;
     
 NodeList findPath(Document, const std::string& path);
 
-
-/* Find all immediate children of a given node matching the given name
- */
- 
-NodeList getNamedChildren(Node node, const std::string& name);
-
-
-/* Obtain the set of attributes belonging to the given Node
- */
- 
-AttributeTable getAttributes(Node node);
-        
-
-/* Lookup the value of a single specified attribute belonging to the given
- * node.
- */
- 
-std::string lookupAttribute(Node node, const std::string& name);
-        
 } // namespace xml
 
 #endif /*XMLUTIL_H_*/

@@ -16,7 +16,7 @@ def build_list(s_prefix, s_string):
 
 xmlutilEnv = g_env.Copy()
 xmlutilEnv.useXML2()
-xmlutilSource = 'xmlutil.cpp'
+xmlutilSource = 'xmlutil.cpp Node.cpp'
 xmlutil = xmlutilEnv.StaticLibrary(target='libs/xmlutil', source=build_list('libs/xmlutil', xmlutilSource))
 
 exceptionLibSource = 'RadiantException.cpp ModuleSystemException.cpp'

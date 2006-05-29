@@ -51,20 +51,20 @@ void EntityInspector::parseXml(xmlDocPtr doc) {
     	makePropertyCategory(categories[i]);
 }
 
-void EntityInspector::makePropertyCategory(xmlNodePtr node) {
+void EntityInspector::makePropertyCategory(xml::Node& node) {
 
 	// Get the category name
-	std::string categoryName = xml::lookupAttribute(node, "name");
+	std::string categoryName = node.getAttributeValue("name");
 	PropertyCategory* cat = new PropertyCategory(); 
 
 	// Find all <property> elements underneath <propertyCategory>
-    xml::NodeList propertyList = xml::getNamedChildren(node, "property");
+    xml::NodeList propertyList = node.getNamedChildren("property");
 
 	for (unsigned int i = 0; i < propertyList.size(); i++) {
 
 		// Look up the name and type attributes of this property node
-		std::string keyName = xml::lookupAttribute(propertyList[i], "name");
-		std::string keyType = xml::lookupAttribute(propertyList[i], "type");
+		std::string keyName = propertyList[i].getAttributeValue("name");
+		std::string keyType = propertyList[i].getAttributeValue("type");
 
 		// Add the name and type to the PropertyCategory object
 		cat->insert(PropertyCategory::value_type(keyName, keyType));
