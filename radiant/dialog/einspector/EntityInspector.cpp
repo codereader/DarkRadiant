@@ -5,9 +5,12 @@
 
 #include "ientity.h"
 #include "iselection.h"
+#include "igamedescriptor.h"
 
 #include "gtkutil/image.h"
 #include "gtkutil/dialog.h"
+
+#include "xmlutil/xmlutil.h"
 
 #include "error.h"
 
@@ -40,9 +43,17 @@ GtkWidget* EntityInspector::getWidget() {
 
 // Static function to parse the <entityInspector> node in the .game file.
 
-void EntityInspector::parseXmlNode(xmlNodePtr node) {
-//	gtkutil::errorDialog("Unable to parse the <entityInspector> node in the .game file");
-	node = node->children;
+void EntityInspector::parseXml(xmlDocPtr doc) {
+
+    xml::NodeList list = xml::findPath(doc, "/game/entityInspector");    
+	xmlNodePtr node;
+    if (list.size() == 1) {
+        node = list[0]->children;
+    }
+    else {
+        std::cerr << "FATAL: EntityInspector failed to locate <entityInspector> XML node" << std::endl;
+        return;
+    }
 
 	// Search for <propertyCategory> nodes and create a PropertyCategory for each
 	// one.

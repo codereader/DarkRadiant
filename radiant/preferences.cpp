@@ -151,16 +151,7 @@ CGameDescription::CGameDescription(xmlDocPtr pDoc,
     }
 
 	// EntityInspector.
-	// Find the entityInspector node and pass it to the EntityInspector code
-	// for parsing.
-	pNode = pNode->children;
-	while (pNode != 0) {
-		if (xmlStrcmp(pNode->name, (const xmlChar*) "entityInspector") == 0) {
-			ui::EntityInspector::parseXmlNode(pNode);
-		}
-		// ** Any further subsystem nodes would be detected here **
-		pNode = pNode->next;
-	}
+	ui::EntityInspector::parseXml(pDoc);
 
 	// Check if the game file exists and add the internal reference to it if it
 	// does.

@@ -5,6 +5,7 @@
 
 #include "iselection.h"
 #include "ientity.h"
+#include "igamedescriptor.h"
 
 #include "PropertyEditor.h"
 
@@ -31,7 +32,7 @@ namespace {
  * contains a method to return the current instance.
  */
 
-class EntityInspector 
+class EntityInspector
 {
 private:
 
@@ -119,7 +120,7 @@ public:
 
 	// Use libxml2 to parse the <entityInspector> subtree of the .game file. 
 	// Invoked from CGameDescription constructor in preferences.cpp
-	static void parseXmlNode(xmlNodePtr node);
+	static void parseXml(xmlDocPtr doc);
 
     // Inform the IdleDraw to invoke a redraw when idle
     void queueDraw();

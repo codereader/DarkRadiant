@@ -14,7 +14,12 @@ def build_list(s_prefix, s_string):
 
 # common code ------------------------------------------------------
 
-exceptionLibSource = 'RadiantException.cpp ModuleSystemException.cpp InvalidKeyException.cpp'
+xmlutilEnv = g_env.Copy()
+xmlutilEnv.useXML2()
+xmlutilSource = 'xmlutil.cpp'
+xmlutil = xmlutilEnv.StaticLibrary(target='libs/xmlutil', source=build_list('libs/xmlutil', xmlutilSource))
+
+exceptionLibSource = 'RadiantException.cpp ModuleSystemException.cpp'
 exceptionLib = g_env.StaticLibrary(target='libs/exception', source=build_list('libs/exception', exceptionLibSource))
 
 cmdlib_lib = g_env.StaticLibrary(target='libs/cmdlib', source='libs/cmdlib/cmdlib.cpp')
@@ -282,7 +287,7 @@ radiant_src = [
 for i in range(len(radiant_src)):
   radiant_src[i] = 'radiant/' + radiant_src[i]
 
-radiant_env.Prepend(LIBS = ['mathlib', 'cmdlib', 'profile', 'gtkutil', 'l_net', 'exception'])
+radiant_env.Prepend(LIBS = ['mathlib', 'cmdlib', 'profile', 'gtkutil', 'l_net', 'exception', 'xmlutil'])
 radiant_env.Prepend(LIBPATH = ['libs'])
 
 # Win32 libs
@@ -298,6 +303,7 @@ radiant_env.Depends(radiant_prog, l_net_lib)
 radiant_env.Depends(radiant_prog, profile_lib)
 radiant_env.Depends(radiant_prog, gtkutil_lib)
 radiant_env.Depends(radiant_prog, exceptionLib)
+radiant_env.Depends(radiant_prog, xmlutil)
 radiant_env.Install(INSTALL, radiant_prog)
 
 # Radiant post-install

@@ -5,10 +5,6 @@
 
 class InvalidKeyException:
 	public RadiantException
-{
-public:
-	InvalidKeyException();
-	virtual ~InvalidKeyException();
-};
+{ };
 
 #endif /*INVALIDKEYEXCEPTION_H_*/
