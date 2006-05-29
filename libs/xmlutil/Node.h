@@ -9,6 +9,11 @@
 namespace xml
 {
 
+// Typedefs
+
+class Node;
+typedef std::vector<Node> NodeList;
+
 /* Node
  * 
  * A representation of an XML node. This class wraps an xmlNodePtr as used
@@ -30,13 +35,14 @@ public:
 
     // Get a list of nodes which are children of this node and match the
     // given name.
-    std::vector<Node> getNamedChildren(const std::string& name) const;
+    NodeList getNamedChildren(const std::string& name) const;
     
     // Return the value of the given attribute, or throw AttributeNotFoundException
     // if the attribute is not present on this Node.
     std::string getAttributeValue(const std::string& key) const;
 
 };
+
 
 } // namespace xml
 

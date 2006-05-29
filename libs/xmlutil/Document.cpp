@@ -1,22 +1,29 @@
-#include "xmlutil.h"
-
+#include "Document.h"
 #include "XPathException.h"
-#include "InvalidNodeException.h"
-#include "AttributeNotFoundException.h"
+
+#include <libxml/xpath.h>
 
 #include <iostream>
 
-namespace xml {
+namespace xml
+{
 
-// Return the NodeList resulting from an XPath expression.
+// Construct a wrapper around the provided xmlDocPtr.
 
-NodeList findPath(Document doc, const std::string& path) {
+Document::Document(xmlDocPtr doc):
+    _xmlDoc(doc)
+{
+}
+
+// Evaluate an XPath expression and return matching Nodes.
+
+NodeList Document::findXPath(const std::string& path) const {
 
     // Set up the XPath context
     xmlXPathContextPtr context;
     xmlXPathObjectPtr result;
     
-    context = xmlXPathNewContext(doc);
+    context = xmlXPathNewContext(_xmlDoc);
     if (context == NULL) {
         std::cerr << "ERROR: xml::findPath() failed to create XPath context "
                   << "when searching for " << path << std::endl;
@@ -46,6 +53,7 @@ NodeList findPath(Document doc, const std::string& path) {
 
     xmlXPathFreeObject(result);
     return retval;   
+    
 }
 
-} // namespace xml
+}

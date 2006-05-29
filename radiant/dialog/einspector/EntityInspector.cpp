@@ -10,7 +10,7 @@
 #include "gtkutil/image.h"
 #include "gtkutil/dialog.h"
 
-#include "xmlutil/xmlutil.h"
+#include "xmlutil/Document.h"
 
 #include "error.h"
 
@@ -45,7 +45,8 @@ GtkWidget* EntityInspector::getWidget() {
 
 void EntityInspector::parseXml(xmlDocPtr doc) {
 
-    xml::NodeList categories = xml::findPath(doc, "/game/entityInspector//propertyCategory");
+    xml::Document xDoc(doc);
+    xml::NodeList categories = xDoc.findXPath("/game/entityInspector//propertyCategory");
 
     for (unsigned int i = 0; i < categories.size(); i++)
     	makePropertyCategory(categories[i]);
