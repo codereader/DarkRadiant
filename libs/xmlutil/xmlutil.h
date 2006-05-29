@@ -29,7 +29,13 @@ typedef std::map<std::string, std::string> AttributeTable;
  * NULL on error.
  */
     
-NodeList findPath(Document, std::string path);
+NodeList findPath(Document, const std::string& path);
+
+
+/* Find all immediate children of a given node matching the given name
+ */
+ 
+NodeList getNamedChildren(Node node, const std::string& name);
 
 
 /* Obtain the set of attributes belonging to the given Node
@@ -42,7 +48,7 @@ AttributeTable getAttributes(Node node);
  * node.
  */
  
-std::string lookupAttribute(Node node, std::string name);
+std::string lookupAttribute(Node node, const std::string& name);
         
 } // namespace xml
 

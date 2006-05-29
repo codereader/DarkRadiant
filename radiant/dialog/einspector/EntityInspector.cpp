@@ -57,19 +57,18 @@ void EntityInspector::makePropertyCategory(xmlNodePtr node) {
 	std::string categoryName = xml::lookupAttribute(node, "name");
 	PropertyCategory* cat = new PropertyCategory(); 
 
-	// Now search for <property> elements underneath <propertyCategory>
-	for (xmlNodePtr child = node->children; child != NULL; child = child->next) {
+	// Find all <property> elements underneath <propertyCategory>
+    xml::NodeList propertyList = xml::getNamedChildren(node, "property");
 
-		if (xmlStrcmp(child->name, (const xmlChar*) "property") == 0) {
+	for (unsigned int i = 0; i < propertyList.size(); i++) {
 
-			// Got a property node. Iterate over its attributes and search
-			// for the name= and type= attributes.
-			std::string keyName = xml::lookupAttribute(child, "name");
-			std::string keyType = xml::lookupAttribute(child, "type");
+		// Look up the name and type attributes of this property node
+		std::string keyName = xml::lookupAttribute(propertyList[i], "name");
+		std::string keyType = xml::lookupAttribute(propertyList[i], "type");
 
-			// Add the name and type to the PropertyCategory object
-    		cat->insert(PropertyCategory::value_type(keyName, keyType));
-		}			
+		// Add the name and type to the PropertyCategory object
+		cat->insert(PropertyCategory::value_type(keyName, keyType));
+
 	}
 	
 	// Add the PropertyCategory to the category map, as long as it is not
@@ -77,8 +76,8 @@ void EntityInspector::makePropertyCategory(xmlNodePtr node) {
 	if (cat->size() > 0) {
 		_categoryMap[categoryName] = cat;
 	} else {
-		gtkutil::errorDialog(std::string("EntityInspector: failed to create PropertyCategory ")
-							+ "\"" + categoryName + "\".\n\nCategory contains no properties.");
+		std::cerr << "ERROR: EntityInspector: failed to create PropertyCategory "
+				  << "\"" << categoryName << "\". Category contains no properties." << std::endl;
 	}
 }
 

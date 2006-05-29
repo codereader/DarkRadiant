@@ -10,7 +10,7 @@ namespace xml {
 
 // Return the NodeList resulting from an XPath expression.
 
-NodeList findPath(Document doc, std::string path) {
+NodeList findPath(Document doc, const std::string& path) {
 
     // Set up the XPath context
     xmlXPathContextPtr context;
@@ -48,6 +48,26 @@ NodeList findPath(Document doc, std::string path) {
     return retval;   
 }
 
+// Return a list of children which match the given name
+
+NodeList getNamedChildren(Node node, const std::string& name) {
+    
+    if (node == NULL)
+        throw InvalidNodeException("getNamedChildren: invalid node parameter");   
+
+    NodeList retval;
+    
+    // Iterate throught the list of children, adding each child node
+    // to the return list if it matches the requested name
+    for (Node child = node->children; child != NULL; child = child->next) {
+        if (xmlStrcmp(child->name, reinterpret_cast<const xmlChar*>(name.c_str())) == 0) {
+            retval.push_back(child);
+        }
+    }
+    
+    return retval;
+}
+
 // Return the list of attributes belonging to the given node
 
 AttributeTable getAttributes(Node node) {
@@ -70,7 +90,7 @@ AttributeTable getAttributes(Node node) {
 
 // Find and return the value of a single attribute
 
-std::string lookupAttribute(Node node, std::string name) {
+std::string lookupAttribute(Node node, const std::string& name) {
 
     // Check input
     if (node == NULL || node->properties == NULL)
