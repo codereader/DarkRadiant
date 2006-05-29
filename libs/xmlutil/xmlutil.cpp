@@ -27,6 +27,8 @@ NodeList findPath(Document doc, std::string path) {
     
     const xmlChar* xpath = reinterpret_cast<const xmlChar*>(path.c_str());
     result = xmlXPathEvalExpression(xpath, context);
+    xmlXPathFreeContext(context);
+
     if (result == NULL) {
         std::cerr << "ERROR: xml::findPath() failed to evaluate expression "
                   << path << std::endl;
@@ -41,6 +43,8 @@ NodeList findPath(Document doc, std::string path) {
     for (int i = 0; i < nodeset->nodeNr; i++) {
         retval.push_back(nodeset->nodeTab[i]);
     }
+
+    xmlXPathFreeObject(result);
     return retval;   
 }
 
