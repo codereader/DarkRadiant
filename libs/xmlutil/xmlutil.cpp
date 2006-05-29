@@ -1,12 +1,16 @@
 #include "xmlutil.h"
 
+#include "XPathException.h"
+#include "InvalidNodeException.h"
+#include "AttributeNotFoundException.h"
+
 #include <iostream>
 
 namespace xml {
 
 // Return the NodeList resulting from an XPath expression.
 
-NodeList findPath(Document doc, std::string path) throw (XPathException) {
+NodeList findPath(Document doc, std::string path) {
 
     // Set up the XPath context
     xmlXPathContextPtr context;
@@ -38,6 +42,46 @@ NodeList findPath(Document doc, std::string path) throw (XPathException) {
         retval.push_back(nodeset->nodeTab[i]);
     }
     return retval;   
+}
+
+// Return the list of attributes belonging to the given node
+
+AttributeTable getAttributes(Node node) {
+
+    // Check input
+    if (node == NULL || node->properties == NULL)
+        throw InvalidNodeException("getAttributes(): invalid node parameter");
+    
+    // The first attribute is at node->properties, and its values are at
+    // node->properties->children.
+
+    AttributeTable retval;
+    for (xmlAttrPtr attr = node->properties; attr != NULL; attr = attr->next) {
+        std::string key = reinterpret_cast<const char*>(attr->name);
+        std::string value = reinterpret_cast<const char*>(attr->children->content);
+        retval[key] = value;
+    }
+    return retval;    
+}
+
+// Find and return the value of a single attribute
+
+std::string lookupAttribute(Node node, std::string name) {
+
+    // Check input
+    if (node == NULL || node->properties == NULL)
+        throw InvalidNodeException("getAttributes(): invalid node parameter");
+    
+    // Iterate through the chain of attributes to find the requested one.
+    for (xmlAttrPtr attr = node->properties; attr != NULL; attr = attr->next) {
+        if (xmlStrcmp(attr->name, reinterpret_cast<const xmlChar*>(name.c_str())) == 0) {
+            return reinterpret_cast<const char*>(attr->children->content);   
+        }
+    }
+
+    // Not found, throw the exception
+    throw AttributeNotFoundException("lookupAttribute() failed to find attribute");
+        
 }
 
 } // namespace xml

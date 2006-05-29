@@ -41,82 +41,44 @@ GtkWidget* EntityInspector::getWidget() {
     return _widget;
 }
 
-// Static function to parse the <entityInspector> node in the .game file.
+// Static function to obtain the PropertyCategories from the XML file.
 
 void EntityInspector::parseXml(xmlDocPtr doc) {
 
-    xml::NodeList list = xml::findPath(doc, "/game/entityInspector");    
-	xmlNodePtr node;
-    if (list.size() == 1) {
-        node = list[0]->children;
-    }
-    else {
-        std::cerr << "FATAL: EntityInspector failed to locate <entityInspector> XML node" << std::endl;
-        return;
-    }
+    xml::NodeList categories = xml::findPath(doc, "/game/entityInspector//propertyCategory");
 
-	// Search for <propertyCategory> nodes and create a PropertyCategory for each
-	// one.
-	for ( ; node != NULL; node = node->next) {
-		if (node->type == XML_ELEMENT_NODE && 
-			    xmlStrcmp(node->name, (const xmlChar*) "propertyCategory") == 0 ) {
-			makePropertyCategory(node);
-		}
-	}
+    for (unsigned int i = 0; i < categories.size(); i++)
+    	makePropertyCategory(categories[i]);
 }
 
 void EntityInspector::makePropertyCategory(xmlNodePtr node) {
-	if (node->properties != NULL && node->properties->children != NULL) {
 
-		// Find the "name" attribute and construct a PropertyCategory with its value
-		if (xmlStrcmp(node->properties->name, (const xmlChar*) "name") == 0) { // name=
+	// Get the category name
+	std::string categoryName = xml::lookupAttribute(node, "name");
+	PropertyCategory* cat = new PropertyCategory(); 
 
-			// Get the category name
-			std::string categoryName((const char*) node->properties->children->content);
-			PropertyCategory* cat = new PropertyCategory(); 
+	// Now search for <property> elements underneath <propertyCategory>
+	for (xmlNodePtr child = node->children; child != NULL; child = child->next) {
 
-			// Now search for <property> elements underneath <propertyCategory>
-			for (xmlNodePtr child = node->children; child != NULL; child = child->next) {
+		if (xmlStrcmp(child->name, (const xmlChar*) "property") == 0) {
 
-				if (xmlStrcmp(child->name, (const xmlChar*) "property") == 0) {
+			// Got a property node. Iterate over its attributes and search
+			// for the name= and type= attributes.
+			std::string keyName = xml::lookupAttribute(child, "name");
+			std::string keyType = xml::lookupAttribute(child, "type");
 
-					// Got a property node. Iterate over its attributes and search
-					// for the name= and type= attributes.
-					std::string keyName("");
-					std::string keyType("");
-
-					for (xmlAttrPtr props = child->properties; props != NULL; props = props->next) {
-
-						xmlChar *content = props->children->content;
-
-						const xmlChar *name = props->name;
-						if (xmlStrcmp(name, (const xmlChar*) "name") == 0)
-							keyName = std::string((char*) content);
-						else if (xmlStrcmp(name, (const xmlChar*) "type") == 0)
-							keyType = std::string((char*) content);
-					}
-
-					// Add the name and type to the PropertyCategory object, but
-					// only if we found both attributes
-					if (keyName != "" && keyType != "") {
-						cat->insert(PropertyCategory::value_type(keyName, keyType));
-					} else {
-						gtkutil::errorDialog(std::string("EntityInspector: failed to parse XML configuration file")
-											+ "\n\nEither the \"name\" or the \"type\" field was not found in a property"
-											+ " of category \"" + categoryName + "\".");
-					}
-				}			
-			}
-			
-			// Add the PropertyCategory to the category map, as long as it is not
-			// empty.
-			if (cat->size() > 0) {
-				_categoryMap[categoryName] = cat;
-			} else {
-				gtkutil::errorDialog(std::string("EntityInspector: failed to create PropertyCategory ")
-									+ "\"" + categoryName + "\".\n\nCategory contains no properties.");
-			}
-		}
+			// Add the name and type to the PropertyCategory object
+    		cat->insert(PropertyCategory::value_type(keyName, keyType));
+		}			
+	}
+	
+	// Add the PropertyCategory to the category map, as long as it is not
+	// empty.
+	if (cat->size() > 0) {
+		_categoryMap[categoryName] = cat;
+	} else {
+		gtkutil::errorDialog(std::string("EntityInspector: failed to create PropertyCategory ")
+							+ "\"" + categoryName + "\".\n\nCategory contains no properties.");
 	}
 }
 
