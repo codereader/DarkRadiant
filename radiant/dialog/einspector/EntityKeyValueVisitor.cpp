@@ -16,7 +16,7 @@ void EntityKeyValueVisitor::visit(const char* key, const char* value) {
 
 // Static function to find the given key on the given Entity
 
-const std::string& EntityKeyValueVisitor::getKeyValue(Entity* entity, const std::string& key) {
+const std::string EntityKeyValueVisitor::getKeyValue(Entity* entity, const std::string& key) {
 	EntityKeyValueVisitor vis;
 	entity->forEachKeyValue(vis);
 	KeyValueMap::iterator iter = vis.getMap().find(key);
