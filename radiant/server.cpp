@@ -223,8 +223,10 @@ public:
 			m_registerModule = reinterpret_cast<RegisterModulesFunc>(m_library.findSymbol("Radiant_RegisterModules")); // Win32
 		} 
 		else {
+#ifdef __linux__
 			std::cerr << "WARNING: Failed to load module " << filename << ":" << std::endl;
             std::cerr << dlerror() << std::endl;
+#endif
 		}
 	}
 

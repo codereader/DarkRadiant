@@ -260,7 +260,7 @@ typedef FreeCaller1<const char*, LogConsole_importString> LogConsoleImportString
 void RegisterGlobalPreferences(PreferenceSystem& preferences)
 {
   preferences.registerPreference("gamefile", CopiedStringImportStringCaller(g_GamesDialog.m_sGameFile), CopiedStringExportStringCaller(g_GamesDialog.m_sGameFile));
-//  preferences.registerPreference("gamePrompt", BoolImportStringCaller(g_GamesDialog.m_bGamePrompt), BoolExportStringCaller(g_GamesDialog.m_bGamePrompt));
+  preferences.registerPreference("gamePrompt", BoolImportStringCaller(g_GamesDialog.m_bGamePrompt), BoolExportStringCaller(g_GamesDialog.m_bGamePrompt));
   preferences.registerPreference("log console", LogConsoleImportStringCaller(), BoolExportStringCaller(g_Console_enableLogging));
 }
 
@@ -499,7 +499,6 @@ void CGameDialog::Init() {
     }
 
     if (m_bGamePrompt || !currentGameDescription) {
-        std::cout << "m_bGamePrompt is " << m_bGamePrompt << std::endl;
         Create();
         DoGameDialog();
         // use m_nComboSelect to identify the game to run as and set the globals
