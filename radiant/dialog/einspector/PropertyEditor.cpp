@@ -121,7 +121,7 @@ Entity* PropertyEditor::getEntity() {
 void PropertyEditor::refresh() {
     gtk_widget_show_all(_widget);
     try {
-        const std::string val = EntityKeyValueVisitor::getKeyValue(getEntity(), getKey());
+        const std::string val = getEntity()->getKeyValue(getKey().c_str());
         setValue(val);
         gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_activeCheckbox), TRUE);
         gtk_toggle_button_toggled(GTK_TOGGLE_BUTTON(_activeCheckbox)); // force a toggle to correctly set sensitivity of the edit pane
