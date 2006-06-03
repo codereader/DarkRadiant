@@ -83,6 +83,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "commands.h"
 #include "autosave.h"
 
+#include <string>
+#include <iostream>
+
 class NameObserver
 {
   UniqueNames& m_names;
@@ -1870,25 +1873,40 @@ void NewMap()
   }
 }
 
-void maps_directory(StringOutputStream& buffer)
+/* Get the maps directory path, and create a local directory if it does not
+ * exist
+ */
+
+std::string maps_directory()
 {
   ASSERT_MESSAGE(!string_empty(g_qeglobals.m_userGamePath.c_str()), "maps_directory: user-game-path is empty");
-  buffer << g_qeglobals.m_userGamePath.c_str() << "maps/";
-  Q_mkdir(buffer.c_str());
+  const std::string dir = std::string(g_qeglobals.m_userGamePath.c_str()) + "maps/";
+  Q_mkdir(dir.c_str());
+  return dir;
 }
+
+/* Display the Open Map dialog and return the name of the chosen file to the
+ * calling function
+ */
 
 const char* map_open(const char* title)
 {
-	StringOutputStream buf(256);
-  maps_directory(buf);
-  return file_dialog(GTK_WIDGET(MainFrame_getWindow()), TRUE, title, buf.c_str(), MapFormat::Name());
+	// Save the most recently-used path so that successive maps can be opened
+	// from the same directory.
+	static std::string lastPath = maps_directory();
+	const char* filePath = file_dialog(GTK_WIDGET(MainFrame_getWindow()), TRUE, title, lastPath.c_str(), MapFormat::Name());
+
+	// Update the lastPath static variable with the path to the last directory
+	// opened.
+	if (filePath != NULL)
+		lastPath = std::string(filePath).substr(0, std::string(filePath).find_last_of("/"));
+
+	return filePath;
 }
 
 const char* map_save(const char* title)
 {
-	StringOutputStream buf(256);
-  maps_directory(buf);
-  return file_dialog(GTK_WIDGET(MainFrame_getWindow()), FALSE, title, buf.c_str(), MapFormat::Name());
+  return file_dialog(GTK_WIDGET(MainFrame_getWindow()), FALSE, title, maps_directory().c_str(), MapFormat::Name());
 }
 
 void OpenMap()
