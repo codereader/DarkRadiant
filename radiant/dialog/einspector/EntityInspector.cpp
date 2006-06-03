@@ -186,10 +186,12 @@ void EntityInspector::callbackRedraw() {
         // values from the current entity.
         GtkTreeIter throwAwayIter;
         if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(_treeStore), 
-                                           &throwAwayIter)) // returns FALSE if tree is empty
-            populateTreeModel(); 
-        else
-            refreshTreeModel();
+                                           &throwAwayIter)) { // returns FALSE if tree is empty
+            populateTreeModel(); // add category tree
+            refreshTreeModel(); // get values
+        } else {
+            refreshTreeModel(); // get values, already have category tree
+        }
     }
     else {
         // Remove the displayed PropertyEditor
@@ -269,16 +271,11 @@ void EntityInspector::updatePropertyEditor() {
     }
 }
 
-// Populate TreeStore with current selections' keyvals. The TreeStore should be
-// empty before this function is called.
+// Populate TreeStore with the recognised properties, setting all values to
+// empty for now.
 
 void EntityInspector::populateTreeModel() {
     
-    // Create a visitor and use it to obtain the key/value map
-    EntityKeyValueVisitor visitor;
-    _selectedEntity->forEachKeyValue(visitor);
-    KeyValueMap kvMap = visitor.getMap();
-
     for (PropertyCategoryMap::iterator i = _categoryMap.begin();
 			i != _categoryMap.end();
 				i++) {
@@ -294,22 +291,10 @@ void EntityInspector::populateTreeModel() {
 			std::string keyName(j->first);
 			std::string keyType(j->second);
 
-			// Find out whether this key is set on the entity (from the kvMap
-			// produced earlier. If it is, store it otherwise we use a "not set"
-			// signal.
-			
-			KeyValueMap::iterator tmp(kvMap.find(keyName));
-			std::string keyValue;
-			
-			if (tmp == kvMap.end())
-				keyValue = NO_VALUE_STRING;
-			else
-				keyValue = tmp->second;
-			
 	        GtkTreeIter tempIter;
 	        gtk_tree_store_append(_treeStore, &tempIter, &categoryIter);
 	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_NAME_COLUMN, keyName.c_str(), -1);
-	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_VALUE_COLUMN, keyValue.c_str(), -1);
+	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_VALUE_COLUMN, NO_VALUE_STRING.c_str(), -1); // no value yet
 	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_TYPE_COLUMN, keyType.c_str(), -1);
 
 			std::string typeIcon = std::string("icon_") + keyType + ".png";
@@ -326,19 +311,18 @@ void EntityInspector::populateTreeModel() {
 
 // Callback helper function to walk the GtkTreeModel
 gboolean EntityInspector::treeWalkFunc(GtkTreeModel* model, GtkTreePath* path, GtkTreeIter* iter, gpointer data) {
-    KeyValueMap* map = reinterpret_cast<KeyValueMap*>(data);
+    Entity* selectedEntity = reinterpret_cast<Entity*>(data);
     GValue gPropertyName = {0, 0};
 
     gtk_tree_model_get_value(model, iter, PROPERTY_NAME_COLUMN, &gPropertyName);
-    const std::string property(g_value_get_string(&gPropertyName));
+    const std::string property = g_value_get_string(&gPropertyName);
     g_value_unset(&gPropertyName);
 
     // If the property is not a top-level category, look it up in the map and
     // update its value
     if (gtk_tree_path_get_depth(path) == 2) {
-        KeyValueMap::iterator kvIter = map->find(property);
-        if (kvIter != map->end()) { // property found on Entity
-            std::string newValue = kvIter->second;
+        std::string newValue = selectedEntity->getKeyValue(property.c_str());
+        if (newValue.size() > 0) { // property found on Entity
             gtk_tree_store_set(GTK_TREE_STORE(model), iter, PROPERTY_VALUE_COLUMN, newValue.c_str(), -1);
         } else {
             gtk_tree_store_set(GTK_TREE_STORE(model), iter, PROPERTY_VALUE_COLUMN, NO_VALUE_STRING.c_str(), -1);
@@ -350,14 +334,9 @@ gboolean EntityInspector::treeWalkFunc(GtkTreeModel* model, GtkTreePath* path, G
 // Main refresh function
 void EntityInspector::refreshTreeModel() {
 
-    // Obtain all keyvals from the current Entity
-    EntityKeyValueVisitor visitor;
-    _selectedEntity->forEachKeyValue(visitor);
-    KeyValueMap kvMap = visitor.getMap();
-    
     // Iterate over the rows in the TreeModel, setting the appropriate column
-    // to the value now in the kvMap.
-    gtk_tree_model_foreach(GTK_TREE_MODEL(_treeStore), treeWalkFunc, &kvMap);
+    // to the value now on the _selectedEntity.
+    gtk_tree_model_foreach(GTK_TREE_MODEL(_treeStore), treeWalkFunc, _selectedEntity);
 
     // Update the PropertyEditor pane, if a PropertyEditor is currently visible
     if (_currentPropertyEditor)
