@@ -13,6 +13,7 @@
 
 #include <gtk/gtk.h>
 #include <iostream>
+#include <set>
 
 namespace ui {
 
@@ -21,7 +22,7 @@ namespace ui {
 namespace {
 
     const int TREEVIEW_MIN_WIDTH = 260;
-    const int TREEVIEW_MIN_HEIGHT = 260;
+    const int TREEVIEW_MIN_HEIGHT = 220;
     const int PROPERTYEDITORPANE_MIN_HEIGHT = 100;
     
     const std::string NO_VALUE_STRING = "--";
@@ -60,6 +61,8 @@ private:
     GtkTreeStore* _treeStore;
     GtkWidget* _treeView;
 
+    GtkWidget* _unrecognisedPropertiesMessage;
+
 	// Currently displayed PropertyEditor
 	PropertyEditor* _currentPropertyEditor;
 
@@ -72,7 +75,11 @@ private:
 	// within that category along with their PropertyEditor type).
 	typedef std::map<const std::string, const std::string> PropertyCategory;
 	typedef std::map<const std::string, PropertyCategory*> PropertyCategoryMap;
-	static  PropertyCategoryMap _categoryMap;
+	static PropertyCategoryMap _categoryMap;
+    
+    // The set of known Property types.
+    typedef std::set<std::string> KnownPropertySet;
+    KnownPropertySet _knownProperties;
 
 private:
 

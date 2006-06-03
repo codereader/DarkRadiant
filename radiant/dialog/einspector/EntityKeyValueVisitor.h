@@ -23,10 +23,6 @@ class EntityKeyValueVisitor:
     
 public:
 
-	// Static convenience function to create and execute a KeyValueVisitor
-	// and return the value of the provided key.
-	static const std::string getKeyValue(Entity* entity, const std::string& key);
-
 	// Constructor
 	EntityKeyValueVisitor();
     

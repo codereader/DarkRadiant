@@ -15,6 +15,7 @@
 #include "error.h"
 
 #include <iostream>
+#include <sstream>
 
 namespace ui {
 
@@ -166,6 +167,18 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     gtk_container_add(GTK_CONTAINER(scrollWin), _treeView);    
 
     gtk_box_pack_start(GTK_BOX(vbx), scrollWin, TRUE, TRUE, 0);
+    
+    // Add the Unrecognised Properties text bar and advanced button.
+    
+    GtkWidget* advancedBar = gtk_hbox_new(FALSE, 0);
+    gtk_container_set_border_width(GTK_CONTAINER(advancedBar), 3);
+
+    _unrecognisedPropertiesMessage = gtk_label_new("2 unrecognised properties");
+    gtk_box_pack_start(GTK_BOX(advancedBar), _unrecognisedPropertiesMessage, FALSE, FALSE, 0);
+    gtk_box_pack_end(GTK_BOX(advancedBar), gtk_button_new_with_label("Advanced..."), FALSE, FALSE, 0);
+
+    gtk_box_pack_start(GTK_BOX(vbx), advancedBar, FALSE, FALSE, 0);
+    
     return vbx;    
 }
 
@@ -202,6 +215,8 @@ void EntityInspector::callbackRedraw() {
 		// Disable the dialog and clear the TreeView
         gtk_widget_set_sensitive(_widget, FALSE);
         gtk_tree_store_clear(_treeStore);
+        gtk_label_set_text(GTK_LABEL(_unrecognisedPropertiesMessage), "");
+        
     }
 }
 
@@ -288,8 +303,8 @@ void EntityInspector::populateTreeModel() {
 		// Create the individual property sub-nodes.
 		for (PropertyCategory::iterator j = i->second->begin(); j != i->second->end(); j++) {
 
-			std::string keyName(j->first);
-			std::string keyType(j->second);
+			std::string keyName = j->first;
+			std::string keyType = j->second;
 
 	        GtkTreeIter tempIter;
 	        gtk_tree_store_append(_treeStore, &tempIter, &categoryIter);
@@ -301,6 +316,9 @@ void EntityInspector::populateTreeModel() {
 	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_ICON_COLUMN, 
 							   PropertyEditorFactory::getPixbufFor(keyType),
 	        				   -1);
+                               
+            // Add the property to the set of known properties
+            _knownProperties.insert(keyName);
 				
 		}
 	}
@@ -341,6 +359,46 @@ void EntityInspector::refreshTreeModel() {
     // Update the PropertyEditor pane, if a PropertyEditor is currently visible
     if (_currentPropertyEditor)
         updatePropertyEditor();
+        
+    // Update the unrecognised properties status message. Use a local visitor
+    // class to count the number of properties on the entity, and subtract 
+    // the number of recognised properties.
+    
+    struct PropertyCounter: public Entity::Visitor {
+        // Number of unrecognised properties counted
+        int count;
+        
+        // Set of recognised properties
+        KnownPropertySet& knownSet;
+        
+        // Ctor
+        PropertyCounter(KnownPropertySet& set): 
+            count(0),
+            knownSet(set) {
+        }   
+        
+        // Required visit function
+        virtual void visit(const char* key, const char* value) {
+            if (knownSet.find(std::string(key)) == knownSet.end()) {
+                std::cout << "counting " << key << std::endl;
+                ++count;
+            }
+        }
+        
+        // Format the output
+        const char* getLabel() {
+            std::stringstream str;
+            if (count > 0)
+                str << count << " unrecognised properties";
+            else
+                str << "";
+            return str.str().c_str(); 
+        }
+    };
+    
+    PropertyCounter ctr(_knownProperties);
+    _selectedEntity->forEachKeyValue(ctr);
+    gtk_label_set_text(GTK_LABEL(_unrecognisedPropertiesMessage), ctr.getLabel());
 
 }
 
