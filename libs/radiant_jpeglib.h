@@ -28,7 +28,7 @@ typedef int boolean;
 #endif
 
 // LZ: linux stuff
-#if defined (__linux__) || defined (__APPLE__)
+#if !defined (WIN32)
 
 #include <stdio.h>
 #include <stdlib.h>

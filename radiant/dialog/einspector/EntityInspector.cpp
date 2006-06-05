@@ -12,6 +12,8 @@
 
 #include "xmlutil/Document.h"
 
+#include "signal/signal.h"
+
 #include "error.h"
 
 #include <iostream>
@@ -78,6 +80,10 @@ void EntityInspector::makePropertyCategory(xml::Node& node) {
 		std::cerr << "ERROR: EntityInspector: failed to create PropertyCategory "
 				  << "\"" << categoryName << "\". Category contains no properties." << std::endl;
 	}
+}
+
+void callbackSelectionChanged(const Selectable& sel) {
+
 }
 
 // Create the actual UI components for the EntityInspector dialog
@@ -236,7 +242,7 @@ inline void EntityInspector::queueDraw() {
 
 // Selection changed callback
 
-inline void EntityInspector::selectionChanged(const Selectable& sel) {
+void EntityInspector::selectionChanged(const Selectable& sel) {
     EntityInspector::redrawInstance();   
 }
 

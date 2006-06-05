@@ -42,6 +42,7 @@
 				AdditionalDependencies="msvcrtd.lib oldnames.lib winmm.lib kernel32.lib user32.lib gdi32.lib shfolder.lib wsock32.lib dbghelp.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib gtkglext-win32-1.0.lib gdkglext-win32-1.0.lib opengl32.lib libxml2.lib profile.lib"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="&quot;../../gtk2-2.4/lib&quot;;&quot;../../libxml2-2.6/win32/lib&quot;;&quot;../libs/profile/debug/&quot;"
 				IgnoreAllDefaultLibraries="TRUE"
 				IgnoreDefaultLibraryNames="msvcprtd.lib"
@@ -51,7 +52,8 @@
 				GenerateMapFile="FALSE"
 				SubSystem="2"
 				EntryPointSymbol="mainCRTStartup"
-				TargetMachine="1"/>
+				TargetMachine="1"
+				FixedBaseAddress="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -111,6 +113,7 @@ copy &quot;$(TargetDir)$(TargetName).pdb&quot;  &quot;$(SolutionDir)install&quot
 				AdditionalDependencies="msvcrt.lib oldnames.lib winmm.lib kernel32.lib user32.lib gdi32.lib shfolder.lib wsock32.lib dbghelp.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib gtkglext-win32-1.0.lib gdkglext-win32-1.0.lib opengl32.lib libxml2.lib profile.lib"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="&quot;../../gtk2-2.4/lib&quot;;&quot;../../libxml2-2.6/win32/lib&quot;;&quot;../libs/profile/release/&quot;"
 				IgnoreAllDefaultLibraries="TRUE"
 				IgnoreDefaultLibraryNames="msvcprt.lib"
@@ -547,6 +550,12 @@ copy &quot;$(TargetDir)$(TargetName).pdb&quot;  &quot;$(SolutionDir)install&quot
 				RelativePath=".\shaders.h">
 			</File>
 			<File
+				RelativePath=".\sockets.cpp">
+			</File>
+			<File
+				RelativePath=".\sockets.h">
+			</File>
+			<File
 				RelativePath=".\stacktrace.cpp">
 			</File>
 			<File
@@ -666,6 +675,9 @@ copy &quot;$(TargetDir)$(TargetName).pdb&quot;  &quot;$(SolutionDir)install&quot
 					AdditionalDependencies="&quot;$(SolutionDir)install\$(TargetName).pdb&quot;"
 					Outputs="&quot;$(TargetDir)$(TargetName).pdb&quot;"/>
 			</FileConfiguration>
+		</File>
+		<File
+			RelativePath="..\install.py">
 		</File>
 		<File
 			RelativePath=".\radiant.ico">

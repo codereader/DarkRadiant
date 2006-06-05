@@ -1,6 +1,51 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+04/06/2006
+SPoG
+- Fixed crash when deleting items from Build menu.
+
+03/06/2006
+SPoG
+- Changed doom3 entity creation to add model key for brush-entities.
+- Fixed crash in Save Region.
+- Fixed detail brushes being turned structural when texture is set.
+
+29/05/2006
+SPoG
+- Changed default doom3 light_radius to be taken from the entity-definition.
+- Fixed error when entering and exiting camera freemove with LMB pressed.
+  http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=1090
+
+13/05/2006
+LordHavoc
+- Added -fPIC for Linux builds to support x86_64.
+- Removed static-linked libstdc++ hack for non-final builds.
+- Removed gcc explicit linking hack for non-final builds.
+- Added workaround for gcc static-member-pointer-as-template-argument bug.
+- Fixed bobtoolz linux compile errors.
+- Added Nexuiz and Darkplaces support.
+SPoG
+- Changed 'inconsistent vertex count' assert to be non-fatal.
+- Changed 'failed to remove accelerator' assert to be non-fatal.
+- Fixed crash due to broken module dependencies.
+- Fixed default settings for Build Monitoring.
+- Fixed nudge-selection when using the drag tool mode.
+- Added support for patches in texture-painting tool.
+
+30/04/2006
+SPoG
+- Fixed memory leak in signals library.
+- Ported bobtoolz to use new module APIs.
+
+01/04/2006
+SPoG
+- Added key-observer interface to entity module API.
+- Rewrote callback library to add support for return-values.
+- Added minimal API to support bobtoolz plugin.
+- Refactored brush for-each functions to take Functor instead of Visitor.
+- Added signals library.
+
 31/03/2006
 SPoG
 - Changed doom3 light creation to use size of selected brushes.

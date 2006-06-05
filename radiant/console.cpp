@@ -107,6 +107,7 @@ gboolean destroy_set_null(GtkWindow* widget, GtkWidget** p)
   return FALSE;
 }
 
+WidgetFocusPrinter g_consoleWidgetFocusPrinter("console");
 
 GtkWidget* Console_constructWindow(GtkWindow* toplevel)
 {
@@ -127,6 +128,8 @@ GtkWidget* Console_constructWindow(GtkWindow* toplevel)
     //globalExtendedASCIICharacterSet().print();
 
     widget_connect_escape_clear_focus_widget(g_console);
+
+    //g_consoleWidgetFocusPrinter.connect(g_console);
 
     g_signal_connect(G_OBJECT(g_console), "populate-popup", G_CALLBACK(console_populate_popup), 0);
     g_signal_connect(G_OBJECT(g_console), "destroy", G_CALLBACK(destroy_set_null), &g_console);
@@ -155,7 +158,7 @@ public:
 
 std::size_t Sys_Print(int level, const char* buf, std::size_t length)
 {
-  bool contains_newline = strchr(buf, '\n') != 0;
+  bool contains_newline = std::find(buf, buf+length, '\n') != buf+length;
 
   if(level == SYS_ERR)
   {

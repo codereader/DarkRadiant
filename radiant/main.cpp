@@ -234,6 +234,41 @@ public:
   }
 };
 
+class LineLimitedTextOutputStream : public TextOutputStream
+{
+  TextOutputStream& outputStream;
+  std::size_t count;
+public:
+  LineLimitedTextOutputStream(TextOutputStream& outputStream, std::size_t count)
+    : outputStream(outputStream), count(count)
+  {
+  }
+  std::size_t write(const char* buffer, std::size_t length)
+  {
+    if(count != 0)
+    {
+      const char* p = buffer;
+      const char* end = buffer+length;
+      for(;;)
+      {
+        p = std::find(p, end, '\n');
+        if(p == end)
+        {
+          break;
+        }
+        ++p;
+        if(--count == 0)
+        {
+          length = p - buffer;
+          break;
+        }
+      }
+      outputStream.write(buffer, length);
+    }
+    return length;
+  }
+};
+
 class PopupDebugMessageHandler : public DebugMessageHandler
 {
   StringOutputStream m_buffer;
@@ -250,26 +285,25 @@ public:
   bool handleMessage()
   {
     getOutputStream() << "----------------\n";
-    //write_stack_trace(getOutputStream());
+    LineLimitedTextOutputStream outputStream(getOutputStream(), 24);
+    write_stack_trace(outputStream);
     getOutputStream() << "----------------\n";
+    globalErrorStream() << m_buffer.c_str();
     if(!m_lock.locked())
     {
       ScopedLock lock(m_lock);
 #if defined _DEBUG
       m_buffer << "Break into the debugger?\n";
-      globalErrorStream() << m_buffer.c_str();
       bool handled = gtk_MessageBox(0, m_buffer.c_str(), "Radiant - Runtime Error", eMB_YESNO, eMB_ICONERROR) == eIDNO;
       m_buffer.clear();
       return handled;
 #else
       m_buffer << "Please report this error to the developers\n";
-      globalErrorStream() << m_buffer.c_str();
       gtk_MessageBox(0, m_buffer.c_str(), "Radiant - Runtime Error", eMB_OK, eMB_ICONERROR);
       m_buffer.clear();
-      return true;
 #endif
     }
-    return false;
+    return true;
   }
 };
 

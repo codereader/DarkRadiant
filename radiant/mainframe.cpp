@@ -61,6 +61,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "cmdlib.h"
 #include "scenelib.h"
 #include "stream/stringstream.h"
+#include "signal/isignal.h"
 #include "os/path.h"
 #include "os/file.h"
 #include "eclasslib.h"
@@ -185,12 +186,11 @@ void VFS_Destroy()
     Radiant_detachHomePathsObserver(g_VFSModuleObserver);
 }
 
-
 // Home Paths
 
 void HomePaths_Realise()
 {
-#if defined (__linux__) || defined (__APPLE__)
+#if defined(POSIX)
   const char* prefix = g_pGameDescription->getKeyValue("prefix");
   if(!string_empty(prefix)) 
   {
@@ -514,10 +514,10 @@ public:
 const char* const c_library_extension =
 #if defined(WIN32)
 "dll"
-#elif defined(__linux__)
-"so"
 #elif defined (__APPLE__)
 "dylib"
+#elif defined(__linux__) || defined (__FreeBSD__)
+"so"
 #endif
 ;
 
@@ -1061,15 +1061,18 @@ public:
   }
 };
 
-FreeCaller1<const BoolImportCallback&, BoolFunctionExport<EdgeMode>::apply> g_edgeMode_button_caller;
+typedef FreeCaller1<const BoolImportCallback&, &BoolFunctionExport<EdgeMode>::apply> EdgeModeApplyCaller;
+EdgeModeApplyCaller g_edgeMode_button_caller;
 BoolExportCallback g_edgeMode_button_callback(g_edgeMode_button_caller);
 ToggleItem g_edgeMode_button(g_edgeMode_button_callback);
 
-FreeCaller1<const BoolImportCallback&, BoolFunctionExport<VertexMode>::apply> g_vertexMode_button_caller;
+typedef FreeCaller1<const BoolImportCallback&, &BoolFunctionExport<VertexMode>::apply> VertexModeApplyCaller;
+VertexModeApplyCaller g_vertexMode_button_caller;
 BoolExportCallback g_vertexMode_button_callback(g_vertexMode_button_caller);
 ToggleItem g_vertexMode_button(g_vertexMode_button_callback);
 
-FreeCaller1<const BoolImportCallback&, BoolFunctionExport<FaceMode>::apply> g_faceMode_button_caller;
+typedef FreeCaller1<const BoolImportCallback&, &BoolFunctionExport<FaceMode>::apply> FaceModeApplyCaller;
+FaceModeApplyCaller g_faceMode_button_caller;
 BoolExportCallback g_faceMode_button_callback(g_faceMode_button_caller);
 ToggleItem g_faceMode_button(g_faceMode_button_callback);
 
@@ -2555,30 +2558,6 @@ GtkWidget* create_main_statusbar(GtkWidget *pStatusLabel[c_count_status])
 
 #if 0
 
-class WidgetFocusPrinter
-{
-  const char* m_name;
-
-  static gboolean focus_in(GtkWidget *widget, GdkEventFocus *event, WidgetFocusPrinter* self)
-  {
-    globalOutputStream() << self->m_name << " takes focus\n";
-    return FALSE;
-  }
-  static gboolean focus_out(GtkWidget *widget, GdkEventFocus *event, WidgetFocusPrinter* self)
-  {
-    globalOutputStream() << self->m_name << " loses focus\n";
-    return FALSE;
-  }
-public:
-  WidgetFocusPrinter(const char* name) : m_name(name)
-  {
-  }
-  void connect(GtkWindow* window)
-  {
-    g_signal_connect(G_OBJECT(window), "focus_in_event", G_CALLBACK(focus_in), this);
-    g_signal_connect(G_OBJECT(window), "focus_out_event", G_CALLBACK(focus_out), this);
-  }
-};
 
 WidgetFocusPrinter g_mainframeWidgetFocusPrinter("mainframe");
 
@@ -2644,6 +2623,26 @@ public:
 };
 
 MainWindowActive g_MainWindowActive;
+
+SignalHandlerId XYWindowDestroyed_connect(const SignalHandler& handler)
+{
+  return g_pParentWnd->GetXYWnd()->onDestroyed.connectFirst(handler);
+}
+
+void XYWindowDestroyed_disconnect(SignalHandlerId id)
+{
+  g_pParentWnd->GetXYWnd()->onDestroyed.disconnect(id);
+}
+
+MouseEventHandlerId XYWindowMouseDown_connect(const MouseEventHandler& handler)
+{
+  return g_pParentWnd->GetXYWnd()->onMouseDown.connectFirst(handler);
+}
+
+void XYWindowMouseDown_disconnect(MouseEventHandlerId id)
+{
+  g_pParentWnd->GetXYWnd()->onMouseDown.disconnect(id);
+}
 
 // =============================================================================
 // MainFrame class
@@ -3510,7 +3509,7 @@ void MainFrame_Construct()
     const char* ENGINEPATH_ATTRIBUTE =
 #if defined(WIN32)
       "enginepath_win32"
-#elif defined(__linux__)
+#elif defined(__linux__) || defined (__FreeBSD__)
       "enginepath_linux"
 #elif defined(__APPLE__)
       "enginepath_macos"

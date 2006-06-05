@@ -96,6 +96,33 @@ const char* GameDescription_getRequiredKeyValue(const char* key)
   return g_pGameDescription->getRequiredKeyValue(key);
 }
 
+const char* getMapName()
+{
+  return Map_Name(g_map);
+}
+
+scene::Node& getMapWorldEntity()
+{
+  return Map_FindOrInsertWorldspawn(g_map);
+}
+
+VIEWTYPE XYWindow_getViewType()
+{
+  return g_pParentWnd->GetXYWnd()->GetViewType();
+}
+
+Vector3 XYWindow_windowToWorld(const WindowVector& position)
+{
+  Vector3 result(0, 0, 0);
+  g_pParentWnd->GetXYWnd()->XY_ToPoint(static_cast<int>(position.x()), static_cast<int>(position.y()), result);
+  return result;
+}
+
+const char* TextureBrowser_getSelectedShader()
+{
+  return TextureBrowser_GetSelectedShader(GlobalTextureBrowser());
+}
+
 class RadiantCoreAPI
 {
   _QERFuncTable_1 m_radiantcore;
@@ -109,9 +136,14 @@ public:
     m_radiantcore.getAppPath = &AppPath_get;
     m_radiantcore.getGameToolsPath = &GameToolsPath_get;
     m_radiantcore.getSettingsPath = &SettingsPath_get;
+    m_radiantcore.getMapsPath = &getMapsPath;
 
     m_radiantcore.getGameName = &gamename_get;
     m_radiantcore.getGameMode = &gamemode_get;
+
+    m_radiantcore.getMapName = &getMapName;
+    m_radiantcore.getMapWorldEntity = getMapWorldEntity;
+    m_radiantcore.getGridSize = GetGridSize;
 
     m_radiantcore.getGameDescriptionKeyValue = &GameDescription_getKeyValue;
     m_radiantcore.getRequiredGameDescriptionKeyValue = &GameDescription_getRequiredKeyValue;
@@ -124,6 +156,14 @@ public:
     m_radiantcore.detachGameNameObserver = Radiant_detachGameNameObserver;
     m_radiantcore.attachGameModeObserver = Radiant_attachGameModeObserver;
     m_radiantcore.detachGameModeObserver = Radiant_detachGameModeObserver;
+
+    m_radiantcore.XYWindowDestroyed_connect = XYWindowDestroyed_connect;
+    m_radiantcore.XYWindowDestroyed_disconnect = XYWindowDestroyed_disconnect;
+    m_radiantcore.XYWindowMouseDown_connect = XYWindowMouseDown_connect;
+    m_radiantcore.XYWindowMouseDown_disconnect = XYWindowMouseDown_disconnect;
+    m_radiantcore.XYWindow_getViewType = XYWindow_getViewType;
+    m_radiantcore.XYWindow_windowToWorld = XYWindow_windowToWorld;
+    m_radiantcore.TextureBrowser_getSelectedShader = TextureBrowser_getSelectedShader;
 
     m_radiantcore.m_pfnMessageBox = &gtk_MessageBox;
     m_radiantcore.m_pfnFileDialog = &file_dialog;

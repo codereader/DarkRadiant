@@ -24,18 +24,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <glib/gslist.h>
 #include "preferences.h"
 #include "brush_primit.h"
+#include "signal/signal.h"
 
 
-std::set<Callback> g_patchTextureChangedCallbacks;
+Signal0 g_patchTextureChangedCallbacks;
 
-void Patch_addTextureChangedCallback(const Callback& callback)
+void Patch_addTextureChangedCallback(const SignalHandler& handler)
 {
-  g_patchTextureChangedCallbacks.insert(callback);
+  g_patchTextureChangedCallbacks.connectLast(handler);
 }
 
 void Patch_textureChanged()
 {
-  std::for_each(g_patchTextureChangedCallbacks.begin(), g_patchTextureChangedCallbacks.end(), CallbackInvoke());
+  g_patchTextureChangedCallbacks();
 }
 
 
@@ -117,7 +118,9 @@ void BezierInterpolate(BezierCurve *pCurve)
   pCurve->crd = vector3_mid(pCurve->left, pCurve->right);
 }
 
-void BezierCurveTree_FromCurveList(BezierCurveTree *pTree, GSList *pCurveList)
+const std::size_t PATCH_MAX_SUBDIVISION_DEPTH = 16;
+
+void BezierCurveTree_FromCurveList(BezierCurveTree *pTree, GSList *pCurveList, std::size_t depth = 0)
 {
   GSList *pLeftList = 0;
   GSList *pRightList = 0;
@@ -145,19 +148,20 @@ void BezierCurveTree_FromCurveList(BezierCurveTree *pTree, GSList *pCurveList)
     }
   }
 
-  if(pLeftList != 0 && pRightList != 0)
+  if(pLeftList != 0 && pRightList != 0 && depth != PATCH_MAX_SUBDIVISION_DEPTH)
   {
     pTree->left = new BezierCurveTree;
     pTree->right = new BezierCurveTree;
-    BezierCurveTree_FromCurveList(pTree->left, pLeftList);
-    BezierCurveTree_FromCurveList(pTree->right, pRightList);
+    BezierCurveTree_FromCurveList(pTree->left, pLeftList, depth + 1);
+    BezierCurveTree_FromCurveList(pTree->right, pRightList, depth + 1);
 
+    for(GSList* l = pLeftList; l != 0; l = g_slist_next(l))
     {
-    GSList *l;
-    for (l = pLeftList; l != 0; l = g_slist_next(l))
       delete (BezierCurve*)l->data;
+    }
 
-    for (l = pRightList; l != 0; l = g_slist_next(l))
+    for(GSList* l = pRightList; l != 0; l = g_slist_next(l))
+    {
       delete (BezierCurve*)l->data;
     }
     
@@ -207,19 +211,60 @@ inline const Colour4b& colour_for_index(std::size_t i, std::size_t width)
   return (i%2 || (i/width)%2) ? colour_inside : colour_corner;
 }
 
-void Patch::UpdateCachedData()
+inline bool float_valid(float f)
+{
+  return f == f;
+}
+
+bool Patch::isValid() const
 {
   if(!m_width || !m_height)
+  {
+    return false;
+  }
+
+  for(const_iterator i = m_ctrl.begin(); i != m_ctrl.end(); ++i)
+  {
+    if(!float_valid((*i).m_vertex.x())
+      || !float_valid((*i).m_vertex.y())
+      || !float_valid((*i).m_vertex.z())
+      || !float_valid((*i).m_texcoord.x())
+      || !float_valid((*i).m_texcoord.y()))
+    {
+      globalErrorStream() << "patch has invalid control points\n";
+      return false;
+    }
+  }
+  return true;
+}
+
+void Patch::UpdateCachedData()
+{
+  m_ctrl_vertices.clear();
+  m_lattice_indices.clear();
+
+  if(!isValid())
+  {
+    m_tess.m_numStrips = 0;
+    m_tess.m_lenStrips = 0;
+    m_tess.m_nArrayHeight = 0;
+    m_tess.m_nArrayWidth = 0;
+    m_tess.m_curveTreeU.resize(0);
+    m_tess.m_curveTreeV.resize(0);
+    m_tess.m_indices.resize(0);
+    m_tess.m_vertices.resize(0);
+    m_tess.m_arrayHeight.resize(0);
+    m_tess.m_arrayWidth.resize(0);
+    m_aabb_local = AABB();
     return;
+  }
+
   BuildTesselationCurves(ROW);
   BuildTesselationCurves(COL);
   BuildVertexArray();
   AccumulateBBox();
 
   IndexBuffer ctrl_indices;
-
-  m_ctrl_vertices.clear();
-  m_lattice_indices.clear();
 
   m_lattice_indices.reserve(((m_width * (m_height - 1)) + (m_height * (m_width - 1))) << 1);
   ctrl_indices.reserve(m_ctrlTransformed.size());
@@ -2167,24 +2212,15 @@ void Patch::BuildTesselationCurves(EMatrixMajor major)
 
 inline void vertex_assign_ctrl(ArbitraryMeshVertex& vertex, const PatchControl& ctrl)
 {
-  vertex.vertex.x = ctrl.m_vertex[0];
-  vertex.vertex.y = ctrl.m_vertex[1];
-  vertex.vertex.z = ctrl.m_vertex[2];
-  vertex.texcoord.s = ctrl.m_texcoord[0];
-  vertex.texcoord.t = ctrl.m_texcoord[1];
+  vertex.vertex = vertex3f_for_vector3(ctrl.m_vertex);
+  vertex.texcoord = texcoord2f_for_vector2(ctrl.m_texcoord);
 }
 
 inline void vertex_clear_normal(ArbitraryMeshVertex& vertex)
 {
-  vertex.normal.x = 0;
-  vertex.normal.y = 0;
-  vertex.normal.z = 0;
-  vertex.tangent.x = 0;
-  vertex.tangent.y = 0;
-  vertex.tangent.z = 0;
-  vertex.bitangent.x = 0;
-  vertex.bitangent.y = 0;
-  vertex.bitangent.z = 0;
+  vertex.normal = Normal3f(0, 0, 0);
+  vertex.tangent = Normal3f(0, 0, 0);
+  vertex.bitangent = Normal3f(0, 0, 0);
 }
       
 inline void tangents_remove_degenerate(Vector3 tangents[6], Vector2 textureTangents[6], unsigned int flags)
@@ -2422,6 +2458,8 @@ void Patch::accumulateVertexTangentSpace(std::size_t index, Vector3 tangentX[6],
     }
   }
 }
+
+const std::size_t PATCH_MAX_VERTEX_ARRAY = 1048576;
 
 void Patch::BuildVertexArray()
 {

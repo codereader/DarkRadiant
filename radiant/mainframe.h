@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/widget.h"
 #include "string/string.h"
 
+#include "qerplugin.h"
+
 class IPlugIn;
 class IToolbarButton;
 
@@ -274,6 +276,9 @@ extern int (*GridStatus_getFarClipDistance)();
 extern bool (*GridStatus_getTextureLockEnabled)();
 void GridStatus_onTextureLockEnabledChanged();
 
-
+SignalHandlerId XYWindowDestroyed_connect(const SignalHandler& handler);
+void XYWindowDestroyed_disconnect(SignalHandlerId id);
+MouseEventHandlerId XYWindowMouseDown_connect(const MouseEventHandler& handler);
+void XYWindowMouseDown_disconnect(MouseEventHandlerId id);
 
 #endif

@@ -249,6 +249,11 @@ void Entity_createFromSelection(const char* name, const Vector3& origin) {
     else {
         Scene_parentSelectedBrushesToEntity(GlobalSceneGraph(), node);
         Scene_forEachChildSelectable(SelectableSetSelected(true), instance.path());
+
+    if (g_pGameDescription->mGameType == "doom3")
+    {
+      Node_getEntity(node)->setKeyValue("model", Node_getEntity(node)->getKeyValue("name"));
+    }
     }
 
     // TODO: This text string name test is mega-lame, to be upgraded to proper

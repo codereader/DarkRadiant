@@ -90,7 +90,26 @@ typedef GtkImage* (* PFN_QERAPP_NEWIMAGE) (const char* filename);
 
 // ========================================
 
+namespace scene
+{
+  class Node;
+}
+
 class ModuleObserver;
+
+#include "signal/signalfwd.h"
+#include "windowobserver.h"
+#include "generic/vector.h"
+
+typedef SignalHandler3<const WindowVector&, ButtonIdentifier, ModifierFlags> MouseEventHandler;
+typedef SignalFwd<MouseEventHandler>::handler_id_type MouseEventHandlerId;
+
+enum VIEWTYPE
+{
+  YZ = 0,
+  XZ = 1,
+  XY = 2
+};
 
 // the radiant core API
 struct _QERFuncTable_1
@@ -102,9 +121,14 @@ struct _QERFuncTable_1
   const char* (*getGameToolsPath)();
   const char* (*getAppPath)();
   const char* (*getSettingsPath)();
+  const char* (*getMapsPath)();
 
   const char* (*getGameName)();
   const char* (*getGameMode)();
+
+  const char* (*getMapName)();
+  scene::Node& (*getMapWorldEntity)();
+  float (*getGridSize)();
 
   const char* (*getGameDescriptionKeyValue)(const char* key);
   const char* (*getRequiredGameDescriptionKeyValue)(const char* key);
@@ -117,6 +141,14 @@ struct _QERFuncTable_1
   void (*detachGameNameObserver)(ModuleObserver& observer);
   void (*attachGameModeObserver)(ModuleObserver& observer);
   void (*detachGameModeObserver)(ModuleObserver& observer);
+
+  SignalHandlerId (*XYWindowDestroyed_connect)(const SignalHandler& handler);
+  void (*XYWindowDestroyed_disconnect)(SignalHandlerId id);
+  MouseEventHandlerId (*XYWindowMouseDown_connect)(const MouseEventHandler& handler);
+  void (*XYWindowMouseDown_disconnect)(MouseEventHandlerId id);
+  VIEWTYPE (*XYWindow_getViewType)();
+  Vector3 (*XYWindow_windowToWorld)(const WindowVector& position);
+  const char* (*TextureBrowser_getSelectedShader)();
 
   // GTK+ functions
   PFN_QERAPP_MESSAGEBOX  m_pfnMessageBox;

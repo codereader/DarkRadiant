@@ -131,8 +131,6 @@ void Brush_Construct(EBrushType type)
     }
   }
 
-  FaceTextureClipboard_setDefault();
-
   GlobalPreferenceSystem().registerPreference("TextureLock", BoolImportStringCaller(g_brush_texturelock_enabled), BoolExportStringCaller(g_brush_texturelock_enabled));
   GlobalPreferenceSystem().registerPreference("BrushSnapPlanes", makeBoolStringImportCallback(FaceImportSnapPlanesCaller()), makeBoolStringExportCallback(FaceExportSnapPlanesCaller()));
   GlobalPreferenceSystem().registerPreference("TexdefDefaultScale", FloatImportStringCaller(g_texdef_default_scale), FloatExportStringCaller(g_texdef_default_scale));
@@ -157,6 +155,21 @@ void Brush_clipperColourChanged()
   BrushClipPlane::constructStatic();
 }
 
+void BrushFaceData_fromFace(const BrushFaceDataCallback& callback, Face& face)
+{
+  _QERFaceData faceData;
+  faceData.m_p0 = face.getPlane().planePoints()[0];
+  faceData.m_p1 = face.getPlane().planePoints()[1];
+  faceData.m_p2 = face.getPlane().planePoints()[2];
+  faceData.m_shader = face.GetShader();
+  faceData.m_texdef = face.getTexdef().m_projection.m_texdef;
+  faceData.contents = face.getShader().m_flags.m_contentFlags;
+  faceData.flags = face.getShader().m_flags.m_surfaceFlags;
+  faceData.value = face.getShader().m_flags.m_value;
+  callback(faceData);
+}
+typedef ConstReferenceCaller1<BrushFaceDataCallback, Face&, BrushFaceData_fromFace> BrushFaceDataFromFaceCaller;
+typedef Callback1<Face&> FaceCallback;
 
 class Quake3BrushCreator : public BrushCreator
 {
@@ -168,6 +181,15 @@ public:
   bool useAlternativeTextureProjection() const
   {
     return g_useAlternativeTextureProjection.m_value;
+  }
+  void Brush_forEachFace(scene::Node& brush, const BrushFaceDataCallback& callback)
+  {
+    ::Brush_forEachFace(*Node_getBrush(brush), FaceCallback(BrushFaceDataFromFaceCaller(callback)));
+  }
+  bool Brush_addFace(scene::Node& brush, const _QERFaceData& faceData)
+  {
+    Node_getBrush(brush)->undoSave();
+    return Node_getBrush(brush)->addPlane(faceData.m_p0, faceData.m_p1, faceData.m_p2, faceData.m_shader, TextureProjection(faceData.m_texdef, brushprimit_texdef_t(), Vector3(0, 0, 0), Vector3(0, 0, 0))) != 0;
   }
 };
 

@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "renderable.h"
 #include "preferencesystem.h"
 
-#include "generic/callback.h"
+#include "signal/signal.h"
 #include "container/array.h"
 #include "scenelib.h"
 #include "render.h"
@@ -60,19 +60,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "timer.h"
 
-std::vector<Callback> g_cameraMoved_callbacks;
+Signal0 g_cameraMoved_callbacks;
 
-void AddCameraMovedCallback(const Callback& callback)
+void AddCameraMovedCallback(const SignalHandler& handler)
 {
-  g_cameraMoved_callbacks.push_back(callback);
+  g_cameraMoved_callbacks.connectLast(handler);
 }
-
-#include <iostream>
 
 void CameraMovedNotify()
 {
-//	std::cout << "The camera has moved" << std::endl;
-  std::for_each(g_cameraMoved_callbacks.begin(), g_cameraMoved_callbacks.end(), CallbackInvoke());
+  g_cameraMoved_callbacks();
 }
 
 
@@ -1123,6 +1120,7 @@ void CamWnd_Move_Discrete_Import(bool value)
 }
 
 
+
 void CamWnd_Add_Handlers_Move(CamWnd& camwnd)
 {
   camwnd.m_selection_button_press_handler = g_signal_connect(G_OBJECT(camwnd.m_gl_widget), "button_press_event", G_CALLBACK(selection_button_press), camwnd.m_window_observer);
@@ -1354,9 +1352,8 @@ static gboolean camwindow_freemove_focusout(GtkWidget* widget, GdkEventFocus* ev
 
 void CamWnd::EnableFreeMove()
 {
-#if 0
-  globalOutputStream() << "EnableFreeMove\n";
-#endif
+  //globalOutputStream() << "EnableFreeMove\n";
+
   ASSERT_MESSAGE(!m_bFreeMove, "EnableFreeMove: free-move was already enabled");
   m_bFreeMove = true;
   Camera_clearMovementFlags(getCamera(), MOVE_ALL);
@@ -1373,9 +1370,8 @@ void CamWnd::EnableFreeMove()
 
 void CamWnd::DisableFreeMove()
 {
-#if 0
-  globalOutputStream() << "DisableFreeMove\n";
-#endif
+  //globalOutputStream() << "DisableFreeMove\n";
+
   ASSERT_MESSAGE(m_bFreeMove, "DisableFreeMove: free-move was not enabled");
   m_bFreeMove = false;
   Camera_clearMovementFlags(getCamera(), MOVE_ALL);
@@ -1536,7 +1532,7 @@ void CamWnd::Cam_Draw()
   }
 
 
-  unsigned int globalstate = RENDER_DEPTHTEST|RENDER_COLOURWRITE|RENDER_DEPTHWRITE|RENDER_ALPHATEST|RENDER_BLEND|RENDER_CULLFACE|RENDER_COLOUR|RENDER_OFFSETLINE;
+  unsigned int globalstate = RENDER_DEPTHTEST|RENDER_COLOURWRITE|RENDER_DEPTHWRITE|RENDER_ALPHATEST|RENDER_BLEND|RENDER_CULLFACE|RENDER_COLOURARRAY|RENDER_OFFSETLINE|RENDER_POLYGONSMOOTH|RENDER_LINESMOOTH|RENDER_FOG|RENDER_COLOURCHANGE;
   switch (m_Camera.draw_mode)
   {
   case cd_wire:

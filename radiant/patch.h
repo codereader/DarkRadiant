@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "nameable.h"
 #include "ifilter.h"
 #include "imap.h"
+#include "ipatch.h"
 #include "cullable.h"
 #include "renderable.h"
 #include "editable.h"
@@ -57,6 +58,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stringio.h"
 #include "shaderlib.h"
 #include "generic/callback.h"
+#include "signal/signalfwd.h"
 #include "texturelib.h"
 #include "xml/ixml.h"
 #include "dragplanes.h"
@@ -135,13 +137,6 @@ inline VertexPointer vertexpointer_arbitrarymeshvertex(const ArbitraryMeshVertex
   return VertexPointer(VertexPointer::pointer(&array->vertex), sizeof(ArbitraryMeshVertex));
 }
 
-class PatchControl
-{
-public:
-  Vector3 m_vertex;
-  Vector2 m_texcoord;
-};
-
 typedef PatchControl* PatchControlIter;
 typedef const PatchControl* PatchControlConstIter;
 
@@ -164,7 +159,7 @@ public:
 bool patch_filtered(Patch& patch);
 void add_patch_filter(PatchFilter& filter, int mask, bool invert = false);
 
-void Patch_addTextureChangedCallback(const Callback& callback);
+void Patch_addTextureChangedCallback(const SignalHandler& handler);
 void Patch_textureChanged();
 
 inline void BezierCurveTreeArray_deleteAll(Array<BezierCurveTree*>& curveTrees)
@@ -192,6 +187,10 @@ inline void PatchControlArray_invert(Array<PatchControl>& ctrl, std::size_t widt
 class PatchTesselation
 {
 public:
+  PatchTesselation()
+    : m_numStrips(0), m_lenStrips(0), m_nArrayWidth(0), m_nArrayHeight(0)
+  {
+  }
   Array<ArbitraryMeshVertex> m_vertices;
   Array<RenderIndex> m_indices;
   std::size_t m_numStrips;
@@ -746,6 +745,7 @@ public:
     evaluateTransform();
     UpdateCachedData();
   }
+  bool isValid() const;
 
   void snapto(float snap)
   {
@@ -939,6 +939,10 @@ public:
     return m_ctrl.data() + m_ctrl.size();
   }
 
+  PatchControlArray& getControlPoints()
+  {
+    return m_ctrl;
+  }
   PatchControlArray& getControlPointsTransformed()
   {
     return m_ctrlTransformed;
@@ -1716,7 +1720,7 @@ public:
 
     if(m_dragPlanes.isSelected()) // this should only be true when the transform is a pure translation.
     {
-      m_patch.transform(m_dragPlanes.evaluateTransform(matrix.t()));
+      m_patch.transform(m_dragPlanes.evaluateTransform(vector4_to_vector3(matrix.t())));
     }
   }
 

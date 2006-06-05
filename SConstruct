@@ -10,7 +10,7 @@ import SCons
 conf_filename='site.conf'
 # there is a default hardcoded value, you can override on command line, those are saved between runs
 # we only handle strings
-serialized=['CC', 'CXX', 'JOBS', 'BUILD', 'SETUP']
+serialized=['CC', 'CXX', 'JOBS', 'BUILD']
 
 # help -------------------------------------------
 
@@ -90,7 +90,6 @@ CXX='g++'
 JOBS='1'
 BUILD='debug'
 INSTALL='#install'
-SETUP='0'
 g_build_root = 'build'
 
 # end default settings ---------------------------
@@ -122,9 +121,6 @@ for k in serialized:
 
 # sanity check -----------------------------------
 
-if (SETUP == '1' and BUILD != 'release' and BUILD != 'info'):
-  print 'Forcing release build for setup'
-  BUILD = 'release'
 
 def GetGCCVersion(name):
   ret = runCmd('%s -dumpversion' % name)
@@ -172,13 +168,15 @@ LINK = CXX
 # common flags
 warningFlags = '-W -Wall -Wcast-align -Wcast-qual -Wno-unused-parameter '
 warningFlagsCXX = '-Wno-non-virtual-dtor -Wreorder ' # -Wold-style-cast
-CCFLAGS = '' + warningFlags
-CXXFLAGS = '-pipe -DQ_NO_STLPORT -fexceptions ' + warningFlags + warningFlagsCXX
+# POSIX macro: platform supports posix IEEE Std 1003.1:2001
+# XWINDOWS macro: platform supports X-Windows API
+CCFLAGS = '-DPOSIX -DXWINDOWS ' + warningFlags
+CXXFLAGS = '-pipe -DPOSIX -DXWINDOWS ' + warningFlags + warningFlagsCXX
 CPPPATH = ['radiant']
 if (BUILD == 'debug'):
 	CXXFLAGS += '-g -D_DEBUG '
 	CCFLAGS += '-g -D_DEBUG '
-elif (BUILD == 'release'):
+elif (BUILD == 'release' or BUILD == 'final'):
 	CXXFLAGS += '-O2 '
 	CCFLAGS += '-O2 '
 else:
@@ -321,7 +319,7 @@ class idEnvironment(Environment):
 g_env = idEnvironment()
 
 # export the globals
-GLOBALS = 'g_env INSTALL SETUP g_cpu'
+GLOBALS = 'g_env INSTALL g_cpu'
 
 #radiant_makeversion('\\ngcc version: %s.%s.%s' % ( ver_cc[0], ver_cc[1], ver_cc[2] ) )
 
