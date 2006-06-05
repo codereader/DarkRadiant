@@ -27,6 +27,9 @@ namespace {
     
     const std::string NO_VALUE_STRING = "--";
 
+    const std::string UNRECOGNISED_PROPERTIES_PREFIX = "<span foreground=\"red\">";
+    const std::string UNRECOGNISED_PROPERTIES_SUFFIX = " unrecognised properties</span>";
+
 }
 
 /* The EntityInspector class represents the GTK dialog for editing properties

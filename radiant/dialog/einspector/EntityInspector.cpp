@@ -179,7 +179,7 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     GtkWidget* advancedBar = gtk_hbox_new(FALSE, 0);
     gtk_container_set_border_width(GTK_CONTAINER(advancedBar), 3);
 
-    _unrecognisedPropertiesMessage = gtk_label_new("2 unrecognised properties");
+    _unrecognisedPropertiesMessage = gtk_label_new(NULL);
     gtk_box_pack_start(GTK_BOX(advancedBar), _unrecognisedPropertiesMessage, FALSE, FALSE, 0);
     gtk_box_pack_end(GTK_BOX(advancedBar), gtk_button_new_with_label("Advanced..."), FALSE, FALSE, 0);
 
@@ -386,7 +386,6 @@ void EntityInspector::refreshTreeModel() {
         // Required visit function
         virtual void visit(const char* key, const char* value) {
             if (knownSet.find(std::string(key)) == knownSet.end()) {
-                std::cout << "counting " << key << std::endl;
                 ++count;
             }
         }
@@ -395,7 +394,7 @@ void EntityInspector::refreshTreeModel() {
         const char* getLabel() {
             std::stringstream str;
             if (count > 0)
-                str << count << " unrecognised properties";
+                str << UNRECOGNISED_PROPERTIES_PREFIX << count << UNRECOGNISED_PROPERTIES_SUFFIX;
             else
                 str << "";
             return str.str().c_str(); 
@@ -404,7 +403,7 @@ void EntityInspector::refreshTreeModel() {
     
     PropertyCounter ctr(_knownProperties);
     _selectedEntity->forEachKeyValue(ctr);
-    gtk_label_set_text(GTK_LABEL(_unrecognisedPropertiesMessage), ctr.getLabel());
+    gtk_label_set_markup(GTK_LABEL(_unrecognisedPropertiesMessage), ctr.getLabel());
 
 }
 
