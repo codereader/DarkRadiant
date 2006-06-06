@@ -168,10 +168,14 @@ LINK = CXX
 # common flags
 warningFlags = '-W -Wall -Wcast-align -Wcast-qual -Wno-unused-parameter '
 warningFlagsCXX = '-Wno-non-virtual-dtor -Wreorder ' # -Wold-style-cast
+if getOS() == 'posix':
+	POSIXFLAGS = '-DPOSIX -DXWINDOWS '
+else:
+	POSIXFLAGS = ''
 # POSIX macro: platform supports posix IEEE Std 1003.1:2001
 # XWINDOWS macro: platform supports X-Windows API
-CCFLAGS = '-DPOSIX -DXWINDOWS ' + warningFlags
-CXXFLAGS = '-pipe -DPOSIX -DXWINDOWS ' + warningFlags + warningFlagsCXX
+CCFLAGS = POSIXFLAGS + warningFlags
+CXXFLAGS = '-pipe ' + POSIXFLAGS + warningFlags + warningFlagsCXX
 CPPPATH = ['radiant']
 if (BUILD == 'debug'):
 	CXXFLAGS += '-g -D_DEBUG '

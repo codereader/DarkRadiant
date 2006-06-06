@@ -22,13 +22,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_STACKTRACE_H)
 #define INCLUDED_STACKTRACE_H
 
-class TextOutputStream;
-void write_stack_trace(TextOutputStream& outputStream)
-#if defined(WIN32)
-;
-#else
-{
-}
-#endif
+/* Linux has no support for stacktrace, Windows only supports it with 
+ * Visual C++ not MinGW. Hence we define this to null to avoid mainline updates
+ * breaking the build (rather than just removing calls).
+ */
+
+#define write_stack_trace(x)
 
 #endif
