@@ -120,6 +120,7 @@ GtkWindow* create_floating_window(const char* title, GtkWindow* parent)
   if(parent != 0)
   {
     gtk_window_set_transient_for(window, parent);
+    gtk_window_set_type_hint(window, GDK_WINDOW_TYPE_HINT_DIALOG);
     connect_floating_window_destroy_present(window, parent);
     g_object_set_data(G_OBJECT(window), "floating_handler", gint_to_pointer(connect_floating(parent, window)));
     g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(destroy_disconnect_floating), parent);
