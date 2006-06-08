@@ -10,6 +10,7 @@
 #include "igamedescriptor.h"
 
 #include "PropertyEditor.h"
+#include "AllPropertiesDialog.h"
 
 #include <gtk/gtk.h>
 #include <iostream>
@@ -69,6 +70,10 @@ private:
 	// Currently displayed PropertyEditor
 	PropertyEditor* _currentPropertyEditor;
 
+    // The advanced dialog, which is constructed and shown when the Advanced
+    // button is pressed.
+    AllPropertiesDialog* _allPropsDialog;
+
     // GtkUtil IdleDraw class. This allows redraw calls to be scheduled for
     // when GTK is idle.
     IdleDraw _idleDraw;
@@ -97,6 +102,7 @@ private:
     // Must be static as they are called from a C-based API
     static void callbackTreeSelectionChanged(GtkWidget* widget, EntityInspector* self);
     static gboolean treeWalkFunc(GtkTreeModel*, GtkTreePath*, GtkTreeIter*, gpointer);
+    static void callbackAdvancedButtonClicked(GtkWidget* widget, EntityInspector* self);
 
     // Routines to populate the TreeStore with the keyvals attached to the
     // currently-selected object. 

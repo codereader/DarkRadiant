@@ -2,6 +2,7 @@
 #include "EntityKeyValueVisitor.h"
 #include "PropertyEditor.h"
 #include "PropertyEditorFactory.h"
+#include "AllPropertiesDialog.h"
 
 #include "ientity.h"
 #include "iselection.h"
@@ -80,10 +81,6 @@ void EntityInspector::makePropertyCategory(xml::Node& node) {
 		std::cerr << "ERROR: EntityInspector: failed to create PropertyCategory "
 				  << "\"" << categoryName << "\". Category contains no properties." << std::endl;
 	}
-}
-
-void callbackSelectionChanged(const Selectable& sel) {
-
 }
 
 // Create the actual UI components for the EntityInspector dialog
@@ -181,8 +178,11 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     gtk_container_set_border_width(GTK_CONTAINER(advancedBar), 3);
 
     _unrecognisedPropertiesMessage = gtk_label_new(NULL);
+    GtkWidget* advancedButton = gtk_button_new_with_label("Advanced...");
     gtk_box_pack_start(GTK_BOX(advancedBar), _unrecognisedPropertiesMessage, FALSE, FALSE, 0);
-    gtk_box_pack_end(GTK_BOX(advancedBar), gtk_button_new_with_label("Advanced..."), FALSE, FALSE, 0);
+    gtk_box_pack_end(GTK_BOX(advancedBar), advancedButton, FALSE, FALSE, 0);
+
+    g_signal_connect(G_OBJECT(advancedButton), "clicked", G_CALLBACK(callbackAdvancedButtonClicked), this);
 
     gtk_box_pack_start(GTK_BOX(vbx), advancedBar, FALSE, FALSE, 0);
     
@@ -252,6 +252,13 @@ void EntityInspector::selectionChanged(const Selectable& sel) {
 // Called when the TreeView selects a different property
 void EntityInspector::callbackTreeSelectionChanged(GtkWidget* widget, EntityInspector* self) {
     self->updatePropertyEditor();
+}
+
+// Called when the Advanced button is clicked
+void EntityInspector::callbackAdvancedButtonClicked(GtkWidget* widget, EntityInspector* self) {
+    if (self->_allPropsDialog == NULL)
+        self->_allPropsDialog = new AllPropertiesDialog();
+    self->_allPropsDialog->show();
 }
 
 /* END GTK CALLBACKS */
