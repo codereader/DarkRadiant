@@ -258,7 +258,7 @@ void EntityInspector::callbackTreeSelectionChanged(GtkWidget* widget, EntityInsp
 void EntityInspector::callbackAdvancedButtonClicked(GtkWidget* widget, EntityInspector* self) {
     if (self->_allPropsDialog == NULL)
         self->_allPropsDialog = new AllPropertiesDialog();
-    self->_allPropsDialog->show();
+    self->_allPropsDialog->show(self->_selectedEntity);
 }
 
 /* END GTK CALLBACKS */
@@ -379,6 +379,7 @@ void EntityInspector::refreshTreeModel() {
     // the number of recognised properties.
     
     struct PropertyCounter: public Entity::Visitor {
+
         // Number of unrecognised properties counted
         int count;
         

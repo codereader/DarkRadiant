@@ -1,6 +1,8 @@
 #ifndef ALLPROPERTIESDIALOG_H_
 #define ALLPROPERTIESDIALOG_H_
 
+#include "ientity.h"
+
 #include <gtk/gtk.h>
 
 #include <string>
@@ -32,10 +34,26 @@ class AllPropertiesDialog
 {
 private:
 
+    // Enumeration for TreeView columns
+    enum {
+        KEY_COLUMN,
+        VALUE_COLUMN,
+        N_COLUMNS
+    };
+
     // Main GTK widget (window)
     GtkWindow* _window;
+ 
+    // The GtkListStore with keys and values
+    GtkListStore* _listStore;
+ 
+    // The Entity to edit
+    Entity* _entity;
     
 private:
+
+    // Construct the GtkTreeView
+    GtkWidget* createTreeView();
 
     // Callback to cancel the dialog and hide the window
     static void callbackCancel(GtkWidget* widget, AllPropertiesDialog* self);
@@ -48,8 +66,9 @@ public:
     // Constructor. Create the GTK widgets.
 	AllPropertiesDialog();
     
-    // Show the GTK widgets and start receiving user input.
-    void show();
+    // Show the GTK widgets and start receiving user input, for the given
+    // entity.
+    void show(Entity* ent);
     
     // Destructor. Hide and destroy the GTK widgets.
     ~AllPropertiesDialog();
