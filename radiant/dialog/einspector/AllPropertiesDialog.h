@@ -1,6 +1,8 @@
 #ifndef ALLPROPERTIESDIALOG_H_
 #define ALLPROPERTIESDIALOG_H_
 
+#include "EntityInspector.h"
+
 #include "ientity.h"
 
 #include <gtk/gtk.h>
@@ -15,7 +17,7 @@ namespace ui
  
 namespace {
 
-    const int DIALOG_WIDTH = 400;
+    const int DIALOG_WIDTH = 512;
     const int DIALOG_HEIGHT = 450;
 
     const std::string ALL_PROPERTIES_TITLE = "All properties";   
@@ -38,6 +40,8 @@ private:
     enum {
         KEY_COLUMN,
         VALUE_COLUMN,
+        TEXT_COLOUR_COLUMN,
+        ICON_COLUMN,
         N_COLUMNS
     };
 
@@ -49,6 +53,9 @@ private:
  
     // The Entity to edit
     Entity* _entity;
+ 
+    // Reference to set of known properties
+    KnownPropertySet& _knownProps;
     
 private:
 
@@ -61,18 +68,22 @@ private:
     // Callback when close box is clicked
     static void callbackDestroy(GtkWidget* widget, GdkEvent* event, AllPropertiesDialog* self);
 
+    // Callback on completion of cell editing
+    static void callbackEditDone(GtkWidget* widget, const char* path, const char* newText, AllPropertiesDialog* self);
+
     // Destroy self and all owned widgets
     void destroy();
     
 
 public:
 
-    // Constructor. Create the GTK widgets.
-	AllPropertiesDialog();
+    // Constructor. Create the GTK widgets, and accept a reference to the set
+    // of known properties so they can be displayed differently in the list.
+	AllPropertiesDialog(KnownPropertySet& set);
     
     // Show the GTK widgets and start receiving user input, for the given
     // entity.
-    void show(Entity* ent);
+    void showForEntity(Entity* ent);
     
     // Destructor. Hide and destroy the GTK widgets.
     ~AllPropertiesDialog();

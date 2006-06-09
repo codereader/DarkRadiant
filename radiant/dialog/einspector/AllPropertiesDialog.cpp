@@ -9,9 +9,10 @@ namespace ui
     
 // Ctor
 
-AllPropertiesDialog::AllPropertiesDialog():
+AllPropertiesDialog::AllPropertiesDialog(KnownPropertySet& set):
     _window(GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL))),
-    _entity(NULL)
+    _entity(NULL),
+    _knownProps(set)
 {
     std::cout << "AllPropertiesDialog constructing" << std::endl;
     gtk_window_set_transient_for(_window, MainFrame_getWindow());
@@ -62,8 +63,13 @@ AllPropertiesDialog::~AllPropertiesDialog() {
 
 GtkWidget* AllPropertiesDialog::createTreeView() {
 
-    _listStore = gtk_list_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING);
+    _listStore = gtk_list_store_new(N_COLUMNS, 
+                                    G_TYPE_STRING, 
+                                    G_TYPE_STRING, 
+                                    G_TYPE_STRING, 
+                                    GDK_TYPE_PIXBUF);
     GtkWidget* _treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore));
+    g_object_unref(G_OBJECT(_listStore)); // Treeview owns reference to model
 
     // Key column
     GtkCellRenderer* keyRenderer = gtk_cell_renderer_text_new();
@@ -71,16 +77,29 @@ GtkWidget* AllPropertiesDialog::createTreeView() {
         gtk_tree_view_column_new_with_attributes ("Property",
                                                   keyRenderer,
                                                   "text", KEY_COLUMN,
+                                                  "foreground", TEXT_COLOUR_COLUMN,
                                                   NULL);
     gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), keyCol);
     
     // Value column
-    GtkCellRenderer* valRenderer = gtk_cell_renderer_text_new();
-    GtkTreeViewColumn* valCol = 
-        gtk_tree_view_column_new_with_attributes ("Value",
-                                                  valRenderer,
-                                                  "text", VALUE_COLUMN,
-                                                  NULL);
+    GtkTreeViewColumn* valCol = gtk_tree_view_column_new();
+    
+    gtk_tree_view_column_set_title(valCol, "Value");
+    gtk_tree_view_column_set_spacing(valCol, 3);
+
+    GtkCellRenderer* pixRenderer = gtk_cell_renderer_pixbuf_new();
+    gtk_tree_view_column_pack_start(valCol, pixRenderer, FALSE);
+    gtk_tree_view_column_set_attributes(valCol, pixRenderer, "pixbuf", ICON_COLUMN, NULL);
+
+    GtkCellRenderer* textRenderer = gtk_cell_renderer_text_new();
+    gtk_tree_view_column_pack_start(valCol, textRenderer, TRUE);
+    gtk_tree_view_column_set_attributes(valCol, textRenderer, 
+                                        "text", VALUE_COLUMN, 
+                                        "foreground", TEXT_COLOUR_COLUMN,
+                                        NULL);
+    g_object_set(G_OBJECT(textRenderer), "editable", TRUE, NULL);
+    g_signal_connect(textRenderer, "edited", G_CALLBACK(callbackEditDone), this);
+
     gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), valCol);
     
 
@@ -95,7 +114,7 @@ GtkWidget* AllPropertiesDialog::createTreeView() {
 
 // Show GTK widgets
 
-void AllPropertiesDialog::show(Entity* ent) {
+void AllPropertiesDialog::showForEntity(Entity* ent) {
     
     _entity = ent;
     
@@ -108,20 +127,32 @@ void AllPropertiesDialog::show(Entity* ent) {
         // The list store to populate
         GtkListStore* _store;
         
+        // Set of known properties
+        KnownPropertySet& _set;
+        
         // Constructor
-        ListStorePopulator(GtkListStore* store): _store(store) {}
+        ListStorePopulator(GtkListStore* store, KnownPropertySet& set): 
+            _store(store),
+            _set(set) {}
 
         // Required visit function
         virtual void visit(const char* key, const char* value) {
+            
+            // Determine if this property is in the known set
+            std::string colour = "black";
+            if (_set.find(std::string(key)) == _set.end())
+                colour = "red";
+
             GtkTreeIter iter;
             gtk_list_store_append(_store, &iter);
             gtk_list_store_set(_store, &iter,
                                 KEY_COLUMN, key,
                                 VALUE_COLUMN, value,
+                                TEXT_COLOUR_COLUMN, colour.c_str(),
                                 -1);
         }
                 
-    } populator(_listStore);
+    } populator(_listStore, _knownProps);
     
     _entity->forEachKeyValue(populator);
     
@@ -144,6 +175,13 @@ void AllPropertiesDialog::callbackDestroy(GtkWidget* widget, GdkEvent* event, Al
 
 void AllPropertiesDialog::destroy() {
     delete this;
+}
+
+// Cell editing completion callback
+
+void AllPropertiesDialog::callbackEditDone(GtkWidget* widget, const char* path, const char* newText, AllPropertiesDialog* self) {
+    std::cout << "Editing finished, text is " << newText << std::endl;   
+    
 }
 
 

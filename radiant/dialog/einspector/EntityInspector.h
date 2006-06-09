@@ -10,7 +10,6 @@
 #include "igamedescriptor.h"
 
 #include "PropertyEditor.h"
-#include "AllPropertiesDialog.h"
 
 #include <gtk/gtk.h>
 #include <iostream>
@@ -18,7 +17,7 @@
 
 namespace ui {
 
-// CONSTANTS
+// CONSTANTS AND TYPES
 
 namespace {
 
@@ -27,9 +26,12 @@ namespace {
     const int PROPERTYEDITORPANE_MIN_HEIGHT = 100;
     
     const std::string NO_VALUE_STRING = "--";
+    const char* ADVANCED_BUTTON_STRING = "All properties...";
 
     const std::string UNRECOGNISED_PROPERTIES_PREFIX = "<span foreground=\"red\">";
     const std::string UNRECOGNISED_PROPERTIES_SUFFIX = " unrecognised properties</span>";
+
+    typedef std::set<std::string> KnownPropertySet;
 
 }
 
@@ -82,7 +84,6 @@ private:
 	static PropertyCategoryMap _categoryMap;
     
     // The set of known Property types.
-    typedef std::set<std::string> KnownPropertySet;
     KnownPropertySet _knownProperties;
 
 private:

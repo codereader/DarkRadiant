@@ -178,7 +178,7 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     gtk_container_set_border_width(GTK_CONTAINER(advancedBar), 3);
 
     _unrecognisedPropertiesMessage = gtk_label_new(NULL);
-    GtkWidget* advancedButton = gtk_button_new_with_label("Advanced...");
+    GtkWidget* advancedButton = gtk_button_new_with_label(ADVANCED_BUTTON_STRING);
     gtk_box_pack_start(GTK_BOX(advancedBar), _unrecognisedPropertiesMessage, FALSE, FALSE, 0);
     gtk_box_pack_end(GTK_BOX(advancedBar), advancedButton, FALSE, FALSE, 0);
 
@@ -256,8 +256,8 @@ void EntityInspector::callbackTreeSelectionChanged(GtkWidget* widget, EntityInsp
 
 // Called when the Advanced button is clicked
 void EntityInspector::callbackAdvancedButtonClicked(GtkWidget* widget, EntityInspector* self) {
-    AllPropertiesDialog* dialog = new AllPropertiesDialog(); // dialog deletes itself when closed
-    dialog->show(self->_selectedEntity);
+    AllPropertiesDialog* dialog = new AllPropertiesDialog(self->_knownProperties); // dialog deletes itself when closed
+    dialog->showForEntity(self->_selectedEntity);
 }
 
 /* END GTK CALLBACKS */
