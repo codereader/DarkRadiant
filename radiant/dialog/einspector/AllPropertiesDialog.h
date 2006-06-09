@@ -61,6 +61,10 @@ private:
     // Callback when close box is clicked
     static void callbackDestroy(GtkWidget* widget, GdkEvent* event, AllPropertiesDialog* self);
 
+    // Destroy self and all owned widgets
+    void destroy();
+    
+
 public:
 
     // Constructor. Create the GTK widgets.

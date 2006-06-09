@@ -70,10 +70,6 @@ private:
 	// Currently displayed PropertyEditor
 	PropertyEditor* _currentPropertyEditor;
 
-    // The advanced dialog, which is constructed and shown when the Advanced
-    // button is pressed.
-    AllPropertiesDialog* _allPropsDialog;
-
     // GtkUtil IdleDraw class. This allows redraw calls to be scheduled for
     // when GTK is idle.
     IdleDraw _idleDraw;

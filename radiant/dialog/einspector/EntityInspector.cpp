@@ -256,9 +256,8 @@ void EntityInspector::callbackTreeSelectionChanged(GtkWidget* widget, EntityInsp
 
 // Called when the Advanced button is clicked
 void EntityInspector::callbackAdvancedButtonClicked(GtkWidget* widget, EntityInspector* self) {
-    if (self->_allPropsDialog == NULL)
-        self->_allPropsDialog = new AllPropertiesDialog();
-    self->_allPropsDialog->show(self->_selectedEntity);
+    AllPropertiesDialog* dialog = new AllPropertiesDialog(); // dialog deletes itself when closed
+    dialog->show(self->_selectedEntity);
 }
 
 /* END GTK CALLBACKS */

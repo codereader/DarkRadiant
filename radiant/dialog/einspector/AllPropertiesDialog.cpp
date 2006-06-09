@@ -54,6 +54,7 @@ AllPropertiesDialog::AllPropertiesDialog():
 
 AllPropertiesDialog::~AllPropertiesDialog() {
     std::cout << "AllPropertiesDialog destroying" << std::endl;
+    gtk_widget_hide(GTK_WIDGET(_window));
     gtk_widget_destroy(GTK_WIDGET(_window));
 }
 
@@ -130,14 +131,19 @@ void AllPropertiesDialog::show(Entity* ent) {
 // Cancel callback function
 
 void AllPropertiesDialog::callbackCancel(GtkWidget* widget, AllPropertiesDialog* self) {
-    gtk_widget_hide(GTK_WIDGET(self->_window));
+    self->destroy();
 }
 
 // Destroy callback
 
 void AllPropertiesDialog::callbackDestroy(GtkWidget* widget, GdkEvent* event, AllPropertiesDialog* self) {
-    std::cout << "callbackDestroy()" << std::endl;
-    self->callbackCancel(widget, self);
+    self->destroy();
+}
+
+// Destroy self and all Gtk widgets
+
+void AllPropertiesDialog::destroy() {
+    delete this;
 }
 
 
