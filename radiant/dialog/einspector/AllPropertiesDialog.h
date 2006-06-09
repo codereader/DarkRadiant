@@ -20,7 +20,9 @@ namespace {
     const int DIALOG_WIDTH = 512;
     const int DIALOG_HEIGHT = 450;
 
-    const std::string ALL_PROPERTIES_TITLE = "All properties";   
+    const std::string ALL_PROPERTIES_TITLE = "All properties";
+    const std::string RECOGNISED_PROPERTY_IMG = "recprop.png";
+    const std::string UNRECOGNISED_PROPERTY_IMG = "unrecprop.png";
         
 }
 

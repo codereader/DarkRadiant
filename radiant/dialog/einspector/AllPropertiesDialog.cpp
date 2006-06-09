@@ -2,6 +2,8 @@
 
 #include "mainframe.h"
 
+#include "gtkutil/image.h"
+
 #include <iostream>
 
 namespace ui
@@ -14,7 +16,6 @@ AllPropertiesDialog::AllPropertiesDialog(KnownPropertySet& set):
     _entity(NULL),
     _knownProps(set)
 {
-    std::cout << "AllPropertiesDialog constructing" << std::endl;
     gtk_window_set_transient_for(_window, MainFrame_getWindow());
     gtk_window_set_modal(_window, TRUE);
     gtk_window_set_position(_window, GTK_WIN_POS_CENTER_ON_PARENT);
@@ -54,7 +55,6 @@ AllPropertiesDialog::AllPropertiesDialog(KnownPropertySet& set):
 // Dtor
 
 AllPropertiesDialog::~AllPropertiesDialog() {
-    std::cout << "AllPropertiesDialog destroying" << std::endl;
     gtk_widget_hide(GTK_WIDGET(_window));
     gtk_widget_destroy(GTK_WIDGET(_window));
 }
@@ -72,13 +72,21 @@ GtkWidget* AllPropertiesDialog::createTreeView() {
     g_object_unref(G_OBJECT(_listStore)); // Treeview owns reference to model
 
     // Key column
+    GtkTreeViewColumn* keyCol = gtk_tree_view_column_new();
+    gtk_tree_view_column_set_title(keyCol, "Property");
+    gtk_tree_view_column_set_spacing(keyCol, 3);
+
+    GtkCellRenderer* pixRenderer = gtk_cell_renderer_pixbuf_new();
+    gtk_tree_view_column_pack_start(keyCol, pixRenderer, FALSE);
+    gtk_tree_view_column_set_attributes(keyCol, pixRenderer, "pixbuf", ICON_COLUMN, NULL);
+
     GtkCellRenderer* keyRenderer = gtk_cell_renderer_text_new();
-    GtkTreeViewColumn* keyCol = 
-        gtk_tree_view_column_new_with_attributes ("Property",
-                                                  keyRenderer,
-                                                  "text", KEY_COLUMN,
-                                                  "foreground", TEXT_COLOUR_COLUMN,
-                                                  NULL);
+    gtk_tree_view_column_pack_start(keyCol, keyRenderer, TRUE);
+    gtk_tree_view_column_set_attributes (keyCol, keyRenderer,
+                                         "text", KEY_COLUMN,
+                                         "foreground", TEXT_COLOUR_COLUMN,
+                                         NULL);
+
     gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), keyCol);
     
     // Value column
@@ -86,10 +94,6 @@ GtkWidget* AllPropertiesDialog::createTreeView() {
     
     gtk_tree_view_column_set_title(valCol, "Value");
     gtk_tree_view_column_set_spacing(valCol, 3);
-
-    GtkCellRenderer* pixRenderer = gtk_cell_renderer_pixbuf_new();
-    gtk_tree_view_column_pack_start(valCol, pixRenderer, FALSE);
-    gtk_tree_view_column_set_attributes(valCol, pixRenderer, "pixbuf", ICON_COLUMN, NULL);
 
     GtkCellRenderer* textRenderer = gtk_cell_renderer_text_new();
     gtk_tree_view_column_pack_start(valCol, textRenderer, TRUE);
@@ -140,8 +144,14 @@ void AllPropertiesDialog::showForEntity(Entity* ent) {
             
             // Determine if this property is in the known set
             std::string colour = "black";
-            if (_set.find(std::string(key)) == _set.end())
+            GdkPixbuf* buf;
+            if (_set.find(std::string(key)) == _set.end()) {
                 colour = "red";
+                buf = gtkutil::getLocalPixbuf(UNRECOGNISED_PROPERTY_IMG);
+            } else {
+                buf = gtkutil::getLocalPixbuf(RECOGNISED_PROPERTY_IMG);
+            }
+            
 
             GtkTreeIter iter;
             gtk_list_store_append(_store, &iter);
@@ -149,6 +159,7 @@ void AllPropertiesDialog::showForEntity(Entity* ent) {
                                 KEY_COLUMN, key,
                                 VALUE_COLUMN, value,
                                 TEXT_COLOUR_COLUMN, colour.c_str(),
+                                ICON_COLUMN, buf,
                                 -1);
         }
                 
