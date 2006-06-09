@@ -161,7 +161,8 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), valCol);
 
     // Set up the signals
-    g_signal_connect(G_OBJECT(_treeView), "cursor-changed", G_CALLBACK(callbackTreeSelectionChanged), this);
+    GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
+    g_signal_connect(G_OBJECT(selection), "changed", G_CALLBACK(callbackTreeSelectionChanged), this);
                                                                          
     // Embed the TreeView in a scrolled viewport
     GtkWidget* scrollWin = gtk_scrolled_window_new(NULL, NULL);
@@ -266,36 +267,42 @@ void EntityInspector::callbackAdvancedButtonClicked(GtkWidget* widget, EntityIns
 // making sure it refers to the currently-selected Entity.
 
 void EntityInspector::updatePropertyEditor() {
-    GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
 
-    GtkTreeIter tmpIter;
-    gtk_tree_selection_get_selected(selection, NULL, &tmpIter);
-
-    // Get the selected key in the tree view
-    GValue selString = {0, 0};
-    gtk_tree_model_get_value(GTK_TREE_MODEL(_treeStore), &tmpIter, PROPERTY_NAME_COLUMN, &selString);
-    const std::string key(g_value_get_string(&selString));
-    g_value_unset(&selString);
-    
-    // Construct the PropertyEditor, destroying the current one if it exists. We
-    // need the PROPERTY_TYPE_COLUMN string to find out what type of PropertyEditor
-    // is needed.
-
+    std::cout << "updatePropertyEditor()" << std::endl;
+    // Delete current property editor
     if (_currentPropertyEditor) {
         delete _currentPropertyEditor; // destructor takes care of GTK widgets
         _currentPropertyEditor = NULL;
     }
+
+    GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
+
+    // Get the TreeView selection if it exists, and add the correct PropertyEditor. If
+    // nothing is selected, the PropertyEditor pane will be left blank.
+    GtkTreeIter tmpIter;
+    if (gtk_tree_selection_get_selected(selection, NULL, &tmpIter)) {
+
+        // Get the selected key in the tree view
+        GValue selString = {0, 0};
+        gtk_tree_model_get_value(GTK_TREE_MODEL(_treeStore), &tmpIter, PROPERTY_NAME_COLUMN, &selString);
+        const std::string key(g_value_get_string(&selString));
+        g_value_unset(&selString);
+        
+        // Construct the PropertyEditor, destroying the current one if it exists. We
+        // need the PROPERTY_TYPE_COLUMN string to find out what type of PropertyEditor
+        // is needed.
     
-    GValue selType = {0, 0};
-    gtk_tree_model_get_value(GTK_TREE_MODEL(_treeStore), &tmpIter, PROPERTY_TYPE_COLUMN, &selType);
-    const std::string keyType(g_value_get_string(&selType));
-    g_value_unset(&selType);
-    
-    _currentPropertyEditor = PropertyEditorFactory::create(keyType,
-                                                           _selectedEntity,
-                                                           key);
-    if (_currentPropertyEditor != NULL) {
-        gtk_container_add(GTK_CONTAINER(_editorFrame), _currentPropertyEditor->getWidget());
+        GValue selType = {0, 0};
+        gtk_tree_model_get_value(GTK_TREE_MODEL(_treeStore), &tmpIter, PROPERTY_TYPE_COLUMN, &selType);
+        const std::string keyType(g_value_get_string(&selType));
+        g_value_unset(&selType);
+        
+        _currentPropertyEditor = PropertyEditorFactory::create(keyType,
+                                                               _selectedEntity,
+                                                               key);
+        if (_currentPropertyEditor != NULL) {
+            gtk_container_add(GTK_CONTAINER(_editorFrame), _currentPropertyEditor->getWidget());
+        }
     }
 }
 
