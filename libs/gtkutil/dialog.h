@@ -152,7 +152,7 @@ namespace gtkutil {
     // Display a text entry dialog with the given title and prompt text. Returns a
     // std::string with the entered value, or throws EntryAbortedException if the
     // dialog was cancelled.
-    const std::string& textEntryDialog(const std::string& title, const std::string& prompt);
+    const std::string textEntryDialog(const std::string& title, const std::string& prompt);
 
 }
 

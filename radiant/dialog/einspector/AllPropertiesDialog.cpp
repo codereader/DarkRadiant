@@ -184,26 +184,31 @@ void AllPropertiesDialog::callbackCancel(GtkWidget* widget, AllPropertiesDialog*
 
 void AllPropertiesDialog::callbackOK(GtkWidget* widget, AllPropertiesDialog* self) {
 
-    // Remove all keyvals from the Entity so that they can be replaced with the ones
-    // in the ListStore.
+    // Construct a Set of properties on the Entity so we can compare this with
+    // the set of properties in the ListStore.
 
-    struct KeyValRemover: public Entity::Visitor {
+    struct KeyValSetMaker: public Entity::Visitor {
+        
+        // Set of discovered properties
+        std::set<std::string> _propSet;
         
         // Entity to operate on
         Entity* _ent;        
         
         // Constructor
-        KeyValRemover(Entity* ent): _ent(ent) {}
+        KeyValSetMaker(Entity* ent): _ent(ent) {}
         
         virtual void visit(const char* key, const char* value) {
-            _ent->setKeyValue(key, ""); // clear the keyvalue
+            _propSet.insert(key);
         }
         
-    } kvRemove(self->_entity);
+    } kvSet(self->_entity);
     
-    self->_entity->forEachKeyValue(kvRemove);
+    self->_entity->forEachKeyValue(kvSet);
     
-    // Now add keyvals based on the ListStore contents
+    // Now set keyvals based on the ListStore contents, removing them from the
+    // Entity's set as we go to yield a final set of properties to be deleted
+    // from the Entity.
     
     GtkTreeIter iter;
     if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(self->_listStore), &iter)) {
@@ -219,9 +224,18 @@ void AllPropertiesDialog::callbackOK(GtkWidget* widget, AllPropertiesDialog* sel
             const char* strVal = g_value_get_string(&value);
 
             self->_entity->setKeyValue(strKey, strVal);
+            kvSet._propSet.erase(std::string(strKey));
             
         } while (gtk_tree_model_iter_next(GTK_TREE_MODEL(self->_listStore), &iter));
     }
+
+	// Delete all Entity keys that are left (i.e. not in the ListStore).
+	
+	for (std::set<std::string>::iterator i = kvSet._propSet.begin();
+		 	i != kvSet._propSet.end();
+		 		i++) {
+		self->_entity->setKeyValue(i->c_str(), "");
+	}
 
     // Close and destroy the dialog
     self->destroy();

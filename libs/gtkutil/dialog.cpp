@@ -333,7 +333,7 @@ void fatalErrorDialog(const std::string& errorText) {
     
 // Display a text entry dialog
 
-const std::string& textEntryDialog(const std::string& title, const std::string& prompt) {
+const std::string textEntryDialog(const std::string& title, const std::string& prompt) {
     GtkWindow* mainframe = MainFrame_getWindow();
     GtkWidget* dialog = gtk_dialog_new_with_buttons(title.c_str(),
                                                     mainframe,
