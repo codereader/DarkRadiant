@@ -70,6 +70,9 @@ private:
     // Callback when close box is clicked
     static void callbackDestroy(GtkWidget* widget, GdkEvent* event, AllPropertiesDialog* self);
 
+    // Callback when OK button is clicked
+    static void callbackOK(GtkWidget* widget, AllPropertiesDialog* self);
+
     // Callback on completion of cell editing
     static void callbackEditDone(GtkWidget* widget, const char* path, const char* newText, AllPropertiesDialog* self);
 

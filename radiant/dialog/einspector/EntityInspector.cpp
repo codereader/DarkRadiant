@@ -268,7 +268,6 @@ void EntityInspector::callbackAdvancedButtonClicked(GtkWidget* widget, EntityIns
 
 void EntityInspector::updatePropertyEditor() {
 
-    std::cout << "updatePropertyEditor()" << std::endl;
     // Delete current property editor
     if (_currentPropertyEditor) {
         delete _currentPropertyEditor; // destructor takes care of GTK widgets

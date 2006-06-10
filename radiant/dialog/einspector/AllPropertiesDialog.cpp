@@ -45,6 +45,7 @@ AllPropertiesDialog::AllPropertiesDialog(KnownPropertySet& set):
     gtk_box_pack_start(GTK_BOX(butbox), removeButton, FALSE, FALSE, 3);
 
     g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(callbackCancel), this);
+    g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(callbackOK), this);
     
     gtk_box_pack_end(GTK_BOX(vbox), butbox, FALSE, FALSE, 0);
     
@@ -176,6 +177,54 @@ void AllPropertiesDialog::callbackCancel(GtkWidget* widget, AllPropertiesDialog*
     self->destroy();
 }
 
+// OK callback function
+
+void AllPropertiesDialog::callbackOK(GtkWidget* widget, AllPropertiesDialog* self) {
+
+    // Remove all keyvals from the Entity so that they can be replaced with the ones
+    // in the ListStore.
+
+    struct KeyValRemover: public Entity::Visitor {
+        
+        // Entity to operate on
+        Entity* _ent;        
+        
+        // Constructor
+        KeyValRemover(Entity* ent): _ent(ent) {}
+        
+        virtual void visit(const char* key, const char* value) {
+            _ent->setKeyValue(key, ""); // clear the keyvalue
+        }
+        
+    } kvRemove(self->_entity);
+    
+    self->_entity->forEachKeyValue(kvRemove);
+    
+    // Now add keyvals based on the ListStore contents
+    
+    GtkTreeIter iter;
+    if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(self->_listStore), &iter)) {
+        do {
+
+            GValue key = { 0, 0 };
+            GValue value = { 0, 0 };
+
+            gtk_tree_model_get_value(GTK_TREE_MODEL(self->_listStore), &iter, KEY_COLUMN, &key);
+            gtk_tree_model_get_value(GTK_TREE_MODEL(self->_listStore), &iter, VALUE_COLUMN, &value);
+
+            const char* strKey = g_value_get_string(&key);
+            const char* strVal = g_value_get_string(&value);
+
+            self->_entity->setKeyValue(strKey, strVal);
+            
+        } while (gtk_tree_model_iter_next(GTK_TREE_MODEL(self->_listStore), &iter));
+    }
+
+    // Close and destroy the dialog
+    self->destroy();
+    
+}
+
 // Destroy callback
 
 void AllPropertiesDialog::callbackDestroy(GtkWidget* widget, GdkEvent* event, AllPropertiesDialog* self) {
@@ -191,9 +240,11 @@ void AllPropertiesDialog::destroy() {
 // Cell editing completion callback
 
 void AllPropertiesDialog::callbackEditDone(GtkWidget* widget, const char* path, const char* newText, AllPropertiesDialog* self) {
-    std::cout << "Editing finished, text is " << newText << std::endl;   
+    GtkTreeIter iter;
+    gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(self->_listStore), &iter, path);
+    gtk_list_store_set(GTK_LIST_STORE(self->_listStore), &iter, VALUE_COLUMN, newText, -1);
     
 }
 
 
-}
+} // namespace ui
