@@ -3,6 +3,8 @@
 #include "mainframe.h"
 
 #include "gtkutil/image.h"
+#include "gtkutil/dialog.h"
+#include "gtkutil/EntryAbortedException.h"
 
 #include <iostream>
 
@@ -46,6 +48,7 @@ AllPropertiesDialog::AllPropertiesDialog(KnownPropertySet& set):
 
     g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(callbackCancel), this);
     g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(callbackOK), this);
+    g_signal_connect(G_OBJECT(addButton), "clicked", G_CALLBACK(callbackAdd), this);
     g_signal_connect(G_OBJECT(removeButton), "clicked", G_CALLBACK(callbackDelete), this);
     
     gtk_box_pack_end(GTK_BOX(vbox), butbox, FALSE, FALSE, 0);
@@ -223,6 +226,25 @@ void AllPropertiesDialog::callbackOK(GtkWidget* widget, AllPropertiesDialog* sel
     // Close and destroy the dialog
     self->destroy();
     
+}
+
+// Callback for Add button
+
+void AllPropertiesDialog::callbackAdd(GtkWidget* widget, AllPropertiesDialog* self) {
+    try {
+        const std::string newKey = gtkutil::textEntryDialog("Add property", "New key name: ");   
+
+        GtkTreeIter iter;
+        gtk_list_store_append(GTK_LIST_STORE(self->_listStore), &iter);
+        gtk_list_store_set(GTK_LIST_STORE(self->_listStore), &iter,
+                           KEY_COLUMN, newKey.c_str(),
+                           VALUE_COLUMN, "", // setting to "" causes the key to be removed if not filled in before OK is pressed
+                           TEXT_COLOUR_COLUMN, "blue",
+                           -1);
+        
+    } catch (gtkutil::EntryAbortedException e) {
+        // Do nothing
+    }
 }
 
 // Callback for Delete button

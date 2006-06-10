@@ -138,7 +138,6 @@ void PropertyEditor::refresh() {
 
 inline void PropertyEditor::callbackApply(GtkWidget* caller, PropertyEditor* self) {
 	const std::string& newValue = self->getValue(); // retrieve the new keyval from the child
-    std::cout << "getValue() returned " << newValue << std::endl;
 
     // Set the keyvalue on the owned entity if the enabled toggle is active,
     // otherwise set the value to "" which removes the key.
