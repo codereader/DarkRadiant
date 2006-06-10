@@ -343,14 +343,18 @@ const std::string& textEntryDialog(const std::string& title, const std::string& 
                                                     GTK_STOCK_OK,
                                                     GTK_RESPONSE_ACCEPT,
                                                     NULL);
+    gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
 
     // Pack the label and entry widgets into the dialog
     
     GtkWidget* hbox = gtk_hbox_new(FALSE, 0);
     gtk_container_set_border_width(GTK_CONTAINER(hbox), 6);
     gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(prompt.c_str()), FALSE, FALSE, 0);
+
     GtkWidget* entry = gtk_entry_new();
+    gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
     gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 3);
+
     gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
 
     // Display dialog and get user response

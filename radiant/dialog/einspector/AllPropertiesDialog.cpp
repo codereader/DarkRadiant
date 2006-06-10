@@ -233,15 +233,20 @@ void AllPropertiesDialog::callbackOK(GtkWidget* widget, AllPropertiesDialog* sel
 void AllPropertiesDialog::callbackAdd(GtkWidget* widget, AllPropertiesDialog* self) {
     try {
         const std::string newKey = gtkutil::textEntryDialog("Add property", "New key name: ");   
-
-        GtkTreeIter iter;
-        gtk_list_store_append(GTK_LIST_STORE(self->_listStore), &iter);
-        gtk_list_store_set(GTK_LIST_STORE(self->_listStore), &iter,
-                           KEY_COLUMN, newKey.c_str(),
-                           VALUE_COLUMN, "", // setting to "" causes the key to be removed if not filled in before OK is pressed
-                           TEXT_COLOUR_COLUMN, "blue",
-                           -1);
-        
+        if (newKey.size() > 0) {
+            GtkTreeIter iter;
+            gtk_list_store_append(GTK_LIST_STORE(self->_listStore), &iter);
+            gtk_list_store_set(GTK_LIST_STORE(self->_listStore), &iter,
+                               KEY_COLUMN, newKey.c_str(),
+                               VALUE_COLUMN, "", // setting to "" causes the key to be removed if not filled in before OK is pressed
+                               TEXT_COLOUR_COLUMN, "blue",
+                               -1);
+            // Start editing the value cell immediately
+            gtk_tree_view_set_cursor(GTK_TREE_VIEW(self->_treeView), 
+                                     gtk_tree_model_get_path(GTK_TREE_MODEL(self->_listStore), &iter), 
+                                     gtk_tree_view_get_column(GTK_TREE_VIEW(self->_treeView), VALUE_COLUMN),
+                                     TRUE); // start editing
+        }        
     } catch (gtkutil::EntryAbortedException e) {
         // Do nothing
     }
