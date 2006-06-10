@@ -29,6 +29,7 @@
 			<property name="origin" type="vector3" />
 			<property name="classname" type="text" />
 			<property name="name" type="text" />
+			<property name="rotation" type="text" />
 		</propertyCategory>
 		<propertyCategory name="Light">
 			<property name="light_radius" type="vector3" />
@@ -36,9 +37,15 @@
 			<property name="noshadow" type="boolean" />
 		</propertyCategory>
 		<propertyCategory name="Model">
-			<property name="model" type="model" />
+			<property name="model" type="text" />
 			<property name="skin" type="skin" />
 			<property name="noshadow" type="boolean" />
+			<property name="angle" type="text" />
+		</propertyCategory>
+		<propertyCategory name="Links">
+			<property name="target" type="text" />
+			<property name="bind" type="text" />
+			<property name="bindToJoint" type="text" />
 		</propertyCategory>
 	</entityInspector>
 </game>
