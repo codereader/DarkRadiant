@@ -20,8 +20,6 @@ Vector3PropertyEditor::Vector3PropertyEditor() {}
 Vector3PropertyEditor::Vector3PropertyEditor(Entity* entity, const std::string& name):
 	PropertyEditor(entity, name, "vector3") 
 {
-	std::cout << "Creating a new Vector3PropertyEditor" << std::endl;
-
 	GtkWidget* editBox = gtk_hbox_new(FALSE, 3);
 	gtk_container_set_border_width(GTK_CONTAINER(editBox), 3);
 
@@ -50,12 +48,6 @@ Vector3PropertyEditor::Vector3PropertyEditor(Entity* entity, const std::string& 
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(getEditWindow()),
 										  editBox);
     refresh();
-}
-
-// Destructor.
-
-Vector3PropertyEditor::~Vector3PropertyEditor() {
-	std::cout << "Destroying a Vector3PropertyEditor" << std::endl;
 }
 
 // Refresh and commit

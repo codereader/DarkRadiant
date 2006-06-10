@@ -30,8 +30,6 @@ public:
 	// Construct a blank TextPropertyEditor for use in the PropertyEditorFactory
 	Vector3PropertyEditor();
 
-	virtual ~Vector3PropertyEditor();
-
 	// Create a new TextPropertyEditor
     virtual PropertyEditor* createNew(Entity* entity, const std::string& name) {
     	return new Vector3PropertyEditor(entity, name);

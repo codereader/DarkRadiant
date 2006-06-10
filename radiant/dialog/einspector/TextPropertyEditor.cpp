@@ -17,9 +17,6 @@ TextPropertyEditor::TextPropertyEditor() {}
 TextPropertyEditor::TextPropertyEditor(Entity* entity, const std::string& name):
 	PropertyEditor(entity, name, "text") 
 {
-	std::cout << "Creating a new TextPropertyEditor" << std::endl;
-
-	// Add some stuff into the edit window
 	GtkWidget* editBox = gtk_hbox_new(FALSE, 3);
 	gtk_container_set_border_width(GTK_CONTAINER(editBox), 3);
 	_textEntry = gtk_entry_new();
@@ -32,12 +29,6 @@ TextPropertyEditor::TextPropertyEditor(Entity* entity, const std::string& name):
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(getEditWindow()),
 										  editBox);
     refresh();
-}
-
-// Destructor.
-
-TextPropertyEditor::~TextPropertyEditor() {
-	std::cout << "Destroying a TextPropertyEditor" << std::endl;
 }
 
 // Refresh and commit

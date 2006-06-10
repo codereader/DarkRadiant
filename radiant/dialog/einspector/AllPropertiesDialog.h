@@ -52,6 +52,9 @@ private:
  
     // The GtkListStore with keys and values
     GtkListStore* _listStore;
+    
+    // Gtk tree view
+    GtkWidget* _treeView;
  
     // The Entity to edit
     Entity* _entity;
@@ -76,6 +79,12 @@ private:
     // Callback on completion of cell editing
     static void callbackEditDone(GtkWidget* widget, const char* path, const char* newText, AllPropertiesDialog* self);
 
+    // Callback when Add button clicked
+    static void callbackAdd(GtkWidget* widget, AllPropertiesDialog* self);
+    
+    // callback when Delete button clicked
+    static void callbackDelete(GtkWidget* widget, AllPropertiesDialog* self);
+    
     // Destroy self and all owned widgets
     void destroy();
     

@@ -46,6 +46,7 @@ AllPropertiesDialog::AllPropertiesDialog(KnownPropertySet& set):
 
     g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(callbackCancel), this);
     g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(callbackOK), this);
+    g_signal_connect(G_OBJECT(removeButton), "clicked", G_CALLBACK(callbackDelete), this);
     
     gtk_box_pack_end(GTK_BOX(vbox), butbox, FALSE, FALSE, 0);
     
@@ -69,7 +70,7 @@ GtkWidget* AllPropertiesDialog::createTreeView() {
                                     G_TYPE_STRING, 
                                     G_TYPE_STRING, 
                                     GDK_TYPE_PIXBUF);
-    GtkWidget* _treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore));
+    _treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore));
     g_object_unref(G_OBJECT(_listStore)); // Treeview owns reference to model
 
     // Key column
@@ -107,7 +108,6 @@ GtkWidget* AllPropertiesDialog::createTreeView() {
 
     gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), valCol);
     
-
     // Create the scrolled window
     GtkWidget* scrollWin = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrollWin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -225,16 +225,20 @@ void AllPropertiesDialog::callbackOK(GtkWidget* widget, AllPropertiesDialog* sel
     
 }
 
+// Callback for Delete button
+
+void AllPropertiesDialog::callbackDelete(GtkWidget* widget, AllPropertiesDialog* self) {
+    GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->_treeView));
+    GtkTreeIter iter;
+    if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
+        gtk_list_store_remove(GTK_LIST_STORE(self->_listStore), &iter);
+    }
+}
+
 // Destroy callback
 
 void AllPropertiesDialog::callbackDestroy(GtkWidget* widget, GdkEvent* event, AllPropertiesDialog* self) {
     self->destroy();
-}
-
-// Destroy self and all Gtk widgets
-
-void AllPropertiesDialog::destroy() {
-    delete this;
 }
 
 // Cell editing completion callback
@@ -243,7 +247,12 @@ void AllPropertiesDialog::callbackEditDone(GtkWidget* widget, const char* path, 
     GtkTreeIter iter;
     gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(self->_listStore), &iter, path);
     gtk_list_store_set(GTK_LIST_STORE(self->_listStore), &iter, VALUE_COLUMN, newText, -1);
-    
+}
+
+// Destroy self and all Gtk widgets
+
+void AllPropertiesDialog::destroy() {
+    delete this;
 }
 
 
