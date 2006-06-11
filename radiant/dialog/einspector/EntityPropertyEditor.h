@@ -19,6 +19,11 @@ private:
     // The combo box
     GtkWidget* _comboBox;
     
+private:
+
+    // Populate the combo box by traversing the scenegraph for Entities
+    void populateComboBox();
+    
 public:
 
     // Construct a EntityPropertyEditor with an entity and key to edit
