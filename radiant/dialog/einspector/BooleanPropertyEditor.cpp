@@ -27,7 +27,6 @@ BooleanPropertyEditor::BooleanPropertyEditor(Entity* entity, const std::string& 
 	
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(getEditWindow()),
 										  editBox);
-    refresh();
 }
 
 // Destructor.

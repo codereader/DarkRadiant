@@ -3,6 +3,7 @@
 #include "TextPropertyEditor.h"
 #include "Vector3PropertyEditor.h"
 #include "BooleanPropertyEditor.h"
+#include "EntityPropertyEditor.h"
 
 #include "gtkutil/image.h"
 
@@ -20,6 +21,7 @@ void PropertyEditorFactory::registerClasses() {
         _peMap["text"] = new TextPropertyEditor();
         _peMap["vector3"] = new Vector3PropertyEditor();
         _peMap["boolean"] = new BooleanPropertyEditor();
+        _peMap["entity"] = new EntityPropertyEditor();
 }
 
 // Create a PropertyEditor from the given name.
@@ -42,7 +44,9 @@ PropertyEditor* PropertyEditorFactory::create(const std::string& className, Enti
 							<< " for type \"" << className << "\"." << std::endl;
 		return NULL;
 	} else {
-		return iter->second->createNew(entity, key);
+        PropertyEditor* pe = iter->second->createNew(entity, key);
+        pe->refresh();
+		return pe;
 	}
 }
 

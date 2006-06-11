@@ -28,7 +28,6 @@ TextPropertyEditor::TextPropertyEditor(Entity* entity, const std::string& name):
 	
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(getEditWindow()),
 										  editBox);
-    refresh();
 }
 
 // Refresh and commit

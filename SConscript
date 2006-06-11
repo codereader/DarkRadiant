@@ -283,6 +283,7 @@ radiant_src = [
 'dialog/einspector/PropertyEditorFactory.cpp',
 'dialog/einspector/Vector3PropertyEditor.cpp',
 'dialog/einspector/BooleanPropertyEditor.cpp',
+'dialog/einspector/EntityPropertyEditor.cpp',
 'dialog/einspector/AllPropertiesDialog.cpp'
 ]
 

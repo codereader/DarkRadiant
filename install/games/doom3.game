@@ -43,8 +43,8 @@
 			<property name="angle" type="text" />
 		</propertyCategory>
 		<propertyCategory name="Links">
-			<property name="target" type="text" />
-			<property name="bind" type="text" />
+			<property name="target" type="entity" />
+			<property name="bind" type="entity" />
 			<property name="bindToJoint" type="text" />
 		</propertyCategory>
 	</entityInspector>
