@@ -21,7 +21,14 @@ EntityPropertyEditor::EntityPropertyEditor(Entity* entity, const std::string& na
     GtkWidget* editBox = gtk_hbox_new(FALSE, 3);
     gtk_container_set_border_width(GTK_CONTAINER(editBox), 3);
 
-    _comboBox = gtk_combo_box_entry_new_text();
+    // Set up the sorted TreeModel
+    
+    GtkTreeModel* sortedModel = gtk_tree_model_sort_new_with_model(
+                                    GTK_TREE_MODEL(
+                                        gtk_list_store_new(1, G_TYPE_STRING)));
+    gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(sortedModel), 0, GTK_SORT_ASCENDING);
+    
+    _comboBox = gtk_combo_box_entry_new_with_model(sortedModel, 0); // number of the "text" column
     populateComboBox();
 
     std::string caption = getKey();
@@ -44,21 +51,31 @@ void EntityPropertyEditor::populateComboBox() {
     
     struct EntityFinder: public scene::Graph::Walker {
         
-        // Combo box to add to
-        GtkWidget* _box;
+        // List store to add to
+        GtkTreeModel* _store;
         
         // Constructor
-        EntityFinder(GtkWidget* box): _box(box) {}
+        EntityFinder(GtkWidget* box) {
+            _store = gtk_tree_model_sort_get_model(
+                        GTK_TREE_MODEL_SORT(gtk_combo_box_get_model(GTK_COMBO_BOX(box))));
+        }
             
         // Visit function
         virtual bool pre(const scene::Path& path, scene::Instance& instance) const {
             Entity* entity = Node_getEntity(path.top());
             if (entity != NULL) {
+
                 const char* entName = entity->getKeyValue("name");
-                gtk_combo_box_append_text(GTK_COMBO_BOX(_box), entName);
-                return false; // don't traverse children
+
+                GtkTreeIter iter;
+                gtk_list_store_append(GTK_LIST_STORE(_store), &iter);
+                gtk_list_store_set(GTK_LIST_STORE(_store), &iter, 0, entName, -1);
+
+                return false; // don't traverse children if entity found
+                
             }
-            return true;
+            
+            return true; // traverse children otherwise
         }
             
     } finder(_comboBox);
