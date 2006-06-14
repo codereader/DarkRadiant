@@ -116,6 +116,7 @@ extern "C" {
  *@ATK_ROLE_APPLICATION: The object is an application object, which may contain @ATK_ROLE_FRAME objects or other types of accessibles.
  *@ATK_ROLE_AUTOCOMPLETE: The object is a dialog or list containing items for insertion into an entry widget, for instance a list of words for completion of a text entry.
  *@ATK_ROLE_EDITBAR: The object is an editable text object in a toolbar
+ *@ATK_ROLE_EMBEDDED: The object is an embedded container within a document or panel.  This role is a grouping "hint" indicating that the contained objects share a context.
  *@ATK_ROLE_LAST_DEFINED: not a valid role, used for finding end of enumeration
  * 
  * Describes the role of an object
@@ -202,6 +203,7 @@ typedef enum
   ATK_ROLE_APPLICATION,
   ATK_ROLE_AUTOCOMPLETE,
   ATK_ROLE_EDITBAR,
+  ATK_ROLE_EMBEDDED,
   ATK_ROLE_LAST_DEFINED
 } AtkRole;
 

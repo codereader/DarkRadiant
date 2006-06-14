@@ -32,10 +32,7 @@
 #include <gtk/gtkcontainer.h>
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
+G_BEGIN_DECLS
 
 #define	GTK_TYPE_MENU_SHELL		(gtk_menu_shell_get_type ())
 #define GTK_MENU_SHELL(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_MENU_SHELL, GtkMenuShell))
@@ -118,9 +115,13 @@ void  _gtk_menu_shell_activate         (GtkMenuShell *menu_shell);
 gint  _gtk_menu_shell_get_popup_delay  (GtkMenuShell *menu_shell);
 void  gtk_menu_shell_cancel            (GtkMenuShell *menu_shell);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+void _gtk_menu_shell_add_mnemonic    (GtkMenuShell *menu_shell,
+				      guint         keyval,
+				      GtkWidget    *target);
+void _gtk_menu_shell_remove_mnemonic (GtkMenuShell *menu_shell,
+				      guint         keyval,
+				      GtkWidget    *target);
 
+G_END_DECLS
 
 #endif /* __GTK_MENU_SHELL_H__ */

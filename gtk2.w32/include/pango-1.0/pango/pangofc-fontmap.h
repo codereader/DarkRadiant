@@ -24,6 +24,7 @@
 
 #include <fontconfig/fontconfig.h>
 #include <pango/pango-fontmap.h>
+#include <pango/pangofc-decoder.h>
 #include <pango/pangofc-font.h>
 
 G_BEGIN_DECLS
@@ -97,6 +98,24 @@ void           pango_fc_font_map_shutdown       (PangoFcFontMap *fcfontmap);
 #endif
 
 GType pango_fc_font_map_get_type (void);
+
+/**
+ * PangoFcDecoderFindFunc:
+ * @pattern: a fully resolved #FcPattern specifying the font on the system
+ * @user_data: user data passed to pango_fc_font_map_add_decoder_find_func()
+ * 
+ * Callback function passed to pango_fc_font_map_add_decoder_find_func().
+ * 
+ * Return value: a new reference to a custom decoder for this pattern,
+ *  or %NULL if the default decoder handling should be used.
+ **/
+typedef PangoFcDecoder * (*PangoFcDecoderFindFunc) (FcPattern *pattern,
+						    gpointer   user_data);
+
+void pango_fc_font_map_add_decoder_find_func (PangoFcFontMap        *fcfontmap,
+					      PangoFcDecoderFindFunc findfunc,
+					      gpointer               user_data,
+					      GDestroyNotify         dnotify);
 
 PangoFontDescription *pango_fc_font_description_from_pattern (FcPattern *pattern,
 							      gboolean   include_size);

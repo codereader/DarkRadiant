@@ -100,7 +100,7 @@ struct _GdkDisplayPointerHooks
 				    gint            *win_y);
 };
 
-GType       gdk_display_get_type (void);
+GType       gdk_display_get_type (void) G_GNUC_CONST;
 GdkDisplay *gdk_display_open                (const gchar *display_name);
 
 G_CONST_RETURN gchar * gdk_display_get_name (GdkDisplay *display);
@@ -164,6 +164,17 @@ void     gdk_display_get_maximal_cursor_size   (GdkDisplay    *display,
 
 GdkWindow *gdk_display_get_default_group       (GdkDisplay *display); 
 
+gboolean gdk_display_supports_selection_notification (GdkDisplay *display);
+gboolean gdk_display_request_selection_notification  (GdkDisplay *display,
+						      GdkAtom     selection);
+
+gboolean gdk_display_supports_clipboard_persistence (GdkDisplay *display);
+void     gdk_display_store_clipboard                (GdkDisplay *display,
+						     GdkWindow  *clipboard_window,
+						     guint32     time_,
+						     GdkAtom    *targets,
+						     gint        n_targets);
+
 G_END_DECLS
 
-#endif				/* __GDK_DISPLAY_H__ */
+#endif	/* __GDK_DISPLAY_H__ */

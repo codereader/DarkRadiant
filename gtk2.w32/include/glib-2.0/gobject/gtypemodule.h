@@ -24,6 +24,7 @@
 #define __G_TYPE_MODULE_H__
 
 #include <gobject/gobject.h>
+#include <gobject/genums.h>
 
 G_BEGIN_DECLS
 
@@ -65,20 +66,26 @@ struct _GTypeModuleClass
   void (*reserved4) (void);
 };
 
-GType    g_type_module_get_type      (void);
-gboolean g_type_module_use           (GTypeModule     *module);
-void     g_type_module_unuse         (GTypeModule     *module);
-void     g_type_module_set_name      (GTypeModule     *module,
-				      const gchar     *name);
-GType    g_type_module_register_type (GTypeModule     *module,
-				      GType            parent_type,
-				      const gchar     *type_name,
-				      const GTypeInfo *type_info,
-				      GTypeFlags       flags);
-void     g_type_module_add_interface (GTypeModule           *module,
-				      GType                  instance_type,
-				      GType                  interface_type,
-				      const GInterfaceInfo  *interface_info);
+GType    g_type_module_get_type       (void) G_GNUC_CONST;
+gboolean g_type_module_use            (GTypeModule          *module);
+void     g_type_module_unuse          (GTypeModule          *module);
+void     g_type_module_set_name       (GTypeModule          *module,
+                                       const gchar          *name);
+GType    g_type_module_register_type  (GTypeModule          *module,
+                                       GType                 parent_type,
+                                       const gchar          *type_name,
+                                       const GTypeInfo      *type_info,
+                                       GTypeFlags            flags);
+void     g_type_module_add_interface  (GTypeModule          *module,
+                                       GType                 instance_type,
+                                       GType                 interface_type,
+                                       const GInterfaceInfo *interface_info);
+GType    g_type_module_register_enum  (GTypeModule          *module,
+                                       const gchar          *name,
+                                       const GEnumValue     *const_static_values);
+GType    g_type_module_register_flags (GTypeModule          *module,
+                                       const gchar          *name,
+                                       const GFlagsValue    *const_static_values);
 
 G_END_DECLS
 

@@ -219,7 +219,7 @@ typedef void   (*GInterfaceFinalizeFunc)     (gpointer         g_iface,
 					      gpointer         iface_data);
 typedef gboolean (*GTypeClassCacheFunc)	     (gpointer	       cache_data,
 					      GTypeClass      *g_class);
-typedef void     (*GTypeInterfaceCheckFunc)  (gpointer	       func_data,
+typedef void     (*GTypeInterfaceCheckFunc)  (gpointer	       check_data,
 					      gpointer         g_iface);
 typedef enum    /*< skip >*/
 {
@@ -399,7 +399,7 @@ void             g_type_class_unref_uncached    (gpointer            g_class);
 void             g_type_add_interface_check     (gpointer	         check_data,
 						 GTypeInterfaceCheckFunc check_func);
 void             g_type_remove_interface_check  (gpointer	         check_data,
-						 GTypeInterfaceCheckFunc chec_func);
+						 GTypeInterfaceCheckFunc check_func);
 
 GTypeValueTable* g_type_value_table_peek        (GType		     type);
 
@@ -425,6 +425,18 @@ gboolean         g_type_test_flags              (GType               type,
 /* --- debugging functions --- */
 G_CONST_RETURN gchar* g_type_name_from_instance	(GTypeInstance	*instance);
 G_CONST_RETURN gchar* g_type_name_from_class	(GTypeClass	*g_class);
+
+
+/* --- internal functions --- */
+void    g_value_c_init          (void) G_GNUC_INTERNAL; /* sync with gvalue.c */
+void    g_value_types_init      (void) G_GNUC_INTERNAL; /* sync with gvaluetypes.c */
+void    g_enum_types_init       (void) G_GNUC_INTERNAL; /* sync with genums.c */
+void    g_param_type_init       (void) G_GNUC_INTERNAL; /* sync with gparam.c */
+void    g_boxed_type_init       (void) G_GNUC_INTERNAL; /* sync with gboxed.c */
+void    g_object_type_init      (void) G_GNUC_INTERNAL; /* sync with gobject.c */
+void    g_param_spec_types_init (void) G_GNUC_INTERNAL; /* sync with gparamspecs.c */
+void    g_value_transforms_init (void) G_GNUC_INTERNAL; /* sync with gvaluetransform.c */
+void    g_signal_init           (void) G_GNUC_INTERNAL; /* sync with gsignal.c */
 
 
 /* --- implementation bits --- */

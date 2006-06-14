@@ -1,3 +1,4 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 2 -*- */
 /* GTK - The GIMP Toolkit
  * Copyright (C) 2000 Red Hat, Inc.
  *
@@ -29,9 +30,7 @@
 
 #include <gtk/gtkdialog.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 typedef enum
 {
@@ -58,7 +57,6 @@ typedef enum
 #define GTK_IS_MESSAGE_DIALOG_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_MESSAGE_DIALOG))
 #define GTK_MESSAGE_DIALOG_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_MESSAGE_DIALOG, GtkMessageDialogClass))
 
-
 typedef struct _GtkMessageDialog        GtkMessageDialog;
 typedef struct _GtkMessageDialogClass   GtkMessageDialogClass;
 
@@ -83,7 +81,7 @@ struct _GtkMessageDialogClass
   void (*_gtk_reserved4) (void);
 };
 
-GType      gtk_message_dialog_get_type (void);
+GType      gtk_message_dialog_get_type (void) G_GNUC_CONST;
 
 GtkWidget* gtk_message_dialog_new      (GtkWindow      *parent,
                                         GtkDialogFlags  flags,
@@ -99,12 +97,17 @@ GtkWidget* gtk_message_dialog_new_with_markup   (GtkWindow      *parent,
                                                  const gchar    *message_format,
                                                  ...) G_GNUC_PRINTF (5, 6);
 
-
 void       gtk_message_dialog_set_markup  (GtkMessageDialog *message_dialog,
-					   const gchar      *str);
+                                           const gchar      *str);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+void       gtk_message_dialog_format_secondary_text (GtkMessageDialog *message_dialog,
+                                                     const gchar      *message_format,
+                                                     ...) G_GNUC_PRINTF (2, 3);
+
+void       gtk_message_dialog_format_secondary_markup (GtkMessageDialog *message_dialog,
+                                                       const gchar      *message_format,
+                                                       ...) G_GNUC_PRINTF (2, 3);
+
+G_END_DECLS
 
 #endif /* __GTK_MESSAGE_DIALOG_H__ */

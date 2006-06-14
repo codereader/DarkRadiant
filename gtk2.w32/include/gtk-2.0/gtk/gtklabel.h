@@ -32,10 +32,7 @@
 #include <gtk/gtkwindow.h>
 #include <gtk/gtkmenu.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
+G_BEGIN_DECLS
 
 #define GTK_TYPE_LABEL		  (gtk_label_get_type ())
 #define GTK_LABEL(obj)		  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_LABEL, GtkLabel))
@@ -60,6 +57,7 @@ struct _GtkLabel
   guint   wrap : 1;
   guint   use_underline : 1;
   guint   use_markup : 1;
+  guint   ellipsize : 3;
 
   guint   mnemonic_keyval;
   
@@ -128,6 +126,15 @@ void     gtk_label_set_text_with_mnemonic         (GtkLabel         *label,
 void     gtk_label_set_justify                    (GtkLabel         *label,
 						   GtkJustification  jtype);
 GtkJustification gtk_label_get_justify            (GtkLabel         *label);
+void     gtk_label_set_ellipsize		  (GtkLabel         *label,
+						   PangoEllipsizeMode mode);
+PangoEllipsizeMode gtk_label_get_ellipsize        (GtkLabel         *label);
+void     gtk_label_set_width_chars		  (GtkLabel         *label,
+						   gint              n_chars);
+gint     gtk_label_get_width_chars                (GtkLabel         *label);
+void     gtk_label_set_max_width_chars    	  (GtkLabel         *label,
+					  	   gint              n_chars);
+gint     gtk_label_get_max_width_chars  	  (GtkLabel         *label);
 void     gtk_label_set_pattern                    (GtkLabel         *label,
 						   const gchar      *pattern);
 void     gtk_label_set_line_wrap                  (GtkLabel         *label,
@@ -136,6 +143,9 @@ gboolean gtk_label_get_line_wrap                  (GtkLabel         *label);
 void     gtk_label_set_selectable                 (GtkLabel         *label,
 						   gboolean          setting);
 gboolean gtk_label_get_selectable                 (GtkLabel         *label);
+void     gtk_label_set_angle                      (GtkLabel         *label,
+						   gdouble           angle);
+gdouble  gtk_label_get_angle                      (GtkLabel         *label);
 void     gtk_label_select_region                  (GtkLabel         *label,
 						   gint              start_offset,
 						   gint              end_offset);
@@ -148,6 +158,9 @@ void         gtk_label_get_layout_offsets (GtkLabel *label,
                                            gint     *x,
                                            gint     *y);
 
+void         gtk_label_set_single_line_mode  (GtkLabel *label,
+                                              gboolean single_line_mode);
+gboolean     gtk_label_get_single_line_mode  (GtkLabel *label);
 
 #ifndef GTK_DISABLE_DEPRECATED
 
@@ -164,9 +177,6 @@ guint gtk_label_parse_uline            (GtkLabel    *label,
 
 #endif /* GTK_DISABLE_DEPRECATED */
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
+G_END_DECLS
 
 #endif /* __GTK_LABEL_H__ */

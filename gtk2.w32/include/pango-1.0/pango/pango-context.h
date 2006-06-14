@@ -54,6 +54,7 @@ PangoContext *pango_context_new           (void);
 void          pango_context_set_font_map  (PangoContext                 *context,
 					   PangoFontMap                 *font_map);
 #endif /* PANGO_ENABLE_BACKEND */
+PangoFontMap *pango_context_get_font_map  (PangoContext                 *context);
 
 void          pango_context_list_families (PangoContext                 *context,
 					   PangoFontFamily            ***families,
@@ -77,6 +78,10 @@ void                      pango_context_set_language         (PangoContext      
 void                      pango_context_set_base_dir         (PangoContext               *context,
 							      PangoDirection              direction);
 PangoDirection            pango_context_get_base_dir         (PangoContext               *context);
+
+void                        pango_context_set_matrix (PangoContext      *context,
+						      const PangoMatrix *matrix);
+G_CONST_RETURN PangoMatrix *pango_context_get_matrix (PangoContext      *context);
 
 /* Break a string of Unicode characters into segments with
  * consistent shaping/language engine and bidrectional level.

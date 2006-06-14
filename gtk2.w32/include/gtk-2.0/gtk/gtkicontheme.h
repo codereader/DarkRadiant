@@ -64,8 +64,8 @@ struct _GtkIconThemeClass
  *   Cannot be used together with %GTK_ICON_LOOKUP_NO_SVG.
  * @GTK_ICON_LOOKUP_USE_BUILTIN: When passed to
  *   gtk_icon_theme_lookup_icon() includes builtin icons
- *   as well as files. For a builtin icon, gdk_icon_info_get_filename()
- *   returns %NULL and you need to call gdk_icon_info_get_builtin_pixbuf().
+ *   as well as files. For a builtin icon, gtk_icon_info_get_filename()
+ *   returns %NULL and you need to call gtk_icon_info_get_builtin_pixbuf().
  * 
  * Used to specify options for gtk_icon_theme_lookup_icon()
  **/
@@ -90,7 +90,16 @@ typedef enum {
   GTK_ICON_THEME_FAILED
 } GtkIconThemeError;
 
-GQuark gtk_icon_theme_error_quark (void) G_GNUC_CONST;
+GQuark gtk_icon_theme_error_quark (void);
+
+#ifdef G_OS_WIN32
+/* Reserve old name for DLL ABI backward compatibility */
+#define gtk_icon_theme_set_search_path gtk_icon_theme_set_search_path_utf8
+#define gtk_icon_theme_get_search_path gtk_icon_theme_get_search_path_utf8
+#define gtk_icon_theme_append_search_path gtk_icon_theme_append_search_path_utf8
+#define gtk_icon_theme_prepend_search_path gtk_icon_theme_prepend_search_path_utf8
+#define gtk_icon_info_get_filename gtk_icon_info_get_filename_utf8
+#endif
 
 GType         gtk_icon_theme_get_type              (void) G_GNUC_CONST;
 
@@ -116,6 +125,8 @@ void          gtk_icon_theme_set_custom_theme      (GtkIconTheme                
 
 gboolean      gtk_icon_theme_has_icon              (GtkIconTheme                *icon_theme,
 						    const gchar                 *icon_name);
+gint         *gtk_icon_theme_get_icon_sizes        (GtkIconTheme                *icon_theme,
+						    const gchar                 *icon_name);
 GtkIconInfo * gtk_icon_theme_lookup_icon           (GtkIconTheme                *icon_theme,
 						    const gchar                 *icon_name,
 						    gint                         size,
@@ -136,7 +147,7 @@ void       gtk_icon_theme_add_builtin_icon  (const gchar *icon_name,
 					     gint         size,
 					     GdkPixbuf   *pixbuf);
 
-GType         gtk_icon_info_get_type (void);
+GType         gtk_icon_info_get_type (void) G_GNUC_CONST;
 GtkIconInfo  *gtk_icon_info_copy     (GtkIconInfo *icon_info);
 void          gtk_icon_info_free     (GtkIconInfo *icon_info);
 

@@ -32,10 +32,7 @@
 #include <gtk/gtkprogress.h>
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
+G_BEGIN_DECLS
 
 #define GTK_TYPE_PROGRESS_BAR            (gtk_progress_bar_get_type ())
 #define GTK_PROGRESS_BAR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_PROGRESS_BAR, GtkProgressBar))
@@ -79,6 +76,7 @@ struct _GtkProgressBar
   gdouble pulse_fraction;
   
   guint activity_dir : 1;
+  guint ellipsize : 3;
 };
 
 struct _GtkProgressBarClass
@@ -139,6 +137,9 @@ gdouble               gtk_progress_bar_get_fraction   (GtkProgressBar *pbar);
 gdouble               gtk_progress_bar_get_pulse_step (GtkProgressBar *pbar);
 
 GtkProgressBarOrientation gtk_progress_bar_get_orientation (GtkProgressBar *pbar);
+void               gtk_progress_bar_set_ellipsize (GtkProgressBar     *pbar,
+						   PangoEllipsizeMode  mode);
+PangoEllipsizeMode gtk_progress_bar_get_ellipsize (GtkProgressBar     *pbar);
 
 
 #ifndef GTK_DISABLE_DEPRECATED
@@ -162,9 +163,6 @@ void       gtk_progress_bar_update               (GtkProgressBar *pbar,
 
 #endif /* GTK_DISABLE_DEPRECATED */
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
+G_END_DECLS
 
 #endif /* __GTK_PROGRESS_BAR_H__ */

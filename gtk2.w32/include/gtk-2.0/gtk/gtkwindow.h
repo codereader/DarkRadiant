@@ -34,10 +34,7 @@
 #include <gtk/gtkenums.h>
 #include <gtk/gtkwidget.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
+G_BEGIN_DECLS
 
 #define GTK_TYPE_WINDOW			(gtk_window_get_type ())
 #define GTK_WINDOW(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_WINDOW, GtkWindow))
@@ -164,6 +161,12 @@ struct _GtkWindowGroupClass
   void (*_gtk_reserved4) (void);
 };
 
+#ifdef G_OS_WIN32
+/* Reserve old names for DLL ABI backward compatibility */
+#define gtk_window_set_icon_from_file gtk_window_set_icon_from_file_utf8
+#define gtk_window_set_default_icon_from_file gtk_window_set_default_icon_from_file_utf8
+#endif
+
 GType      gtk_window_get_type                 (void) G_GNUC_CONST;
 GtkWidget* gtk_window_new                      (GtkWindowType        type);
 void       gtk_window_set_title                (GtkWindow           *window,
@@ -204,6 +207,9 @@ gboolean   gtk_window_get_skip_pager_hint      (GtkWindow           *window);
 void       gtk_window_set_accept_focus         (GtkWindow           *window,
                                                 gboolean             setting);
 gboolean   gtk_window_get_accept_focus         (GtkWindow           *window);
+void       gtk_window_set_focus_on_map         (GtkWindow           *window,
+                                                gboolean             setting);
+gboolean   gtk_window_get_focus_on_map         (GtkWindow           *window);
 void       gtk_window_set_destroy_with_parent  (GtkWindow           *window,
                                                 gboolean             setting);
 gboolean   gtk_window_get_destroy_with_parent  (GtkWindow           *window);
@@ -254,13 +260,18 @@ void       gtk_window_set_icon_list                (GtkWindow  *window,
 GList*     gtk_window_get_icon_list                (GtkWindow  *window);
 void       gtk_window_set_icon                     (GtkWindow  *window,
                                                     GdkPixbuf  *icon);
+void       gtk_window_set_icon_name                (GtkWindow   *window,
+						    const gchar *name);
 gboolean   gtk_window_set_icon_from_file           (GtkWindow   *window,
 						    const gchar *filename,
 						    GError     **err);
 GdkPixbuf* gtk_window_get_icon                     (GtkWindow  *window);
+G_CONST_RETURN 
+gchar     *gtk_window_get_icon_name                (GtkWindow  *window);
 void       gtk_window_set_default_icon_list        (GList      *list);
 GList*     gtk_window_get_default_icon_list        (void);
 void       gtk_window_set_default_icon             (GdkPixbuf  *icon);
+void       gtk_window_set_default_icon_name        (const gchar *name);
 gboolean   gtk_window_set_default_icon_from_file   (const gchar *filename,
 						    GError     **err);
 
@@ -399,9 +410,6 @@ gboolean	_gtk_window_query_nonaccels	(GtkWindow	*window,
 						 guint		 accel_key,
 						 GdkModifierType accel_mods);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
+G_END_DECLS
 
 #endif /* __GTK_WINDOW_H__ */

@@ -32,9 +32,7 @@
 #include <gtk/gtkwindow.h>
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 /* Parameters for dialog construction */
 typedef enum
@@ -152,6 +150,14 @@ void     gtk_dialog_set_has_separator (GtkDialog *dialog,
                                        gboolean   setting);
 gboolean gtk_dialog_get_has_separator (GtkDialog *dialog);
 
+gboolean gtk_alternative_dialog_button_order (GdkScreen *screen);
+void     gtk_dialog_set_alternative_button_order (GtkDialog *dialog,
+						  gint       first_response_id,
+						  ...);
+void     gtk_dialog_set_alternative_button_order_from_array (GtkDialog *dialog,
+                                                             gint       n_params,
+                                                             gint      *new_order);
+
 /* Emit response signal */
 void gtk_dialog_response           (GtkDialog *dialog,
                                     gint       response_id);
@@ -166,9 +172,6 @@ void _gtk_dialog_set_ignore_separator (GtkDialog *dialog,
 gint _gtk_dialog_get_response_for_widget (GtkDialog *dialog,
 					  GtkWidget *widget);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
+G_END_DECLS
 
 #endif /* __GTK_DIALOG_H__ */

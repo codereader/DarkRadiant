@@ -78,11 +78,15 @@ struct _GtkUIManagerClass {
   void (* post_activate)    (GtkUIManager *merge,
 			     GtkAction    *action);
 
+  /* Virtual functions */
+  GtkWidget * (* get_widget) (GtkUIManager *manager,
+                              const gchar  *path);
+  GtkAction * (* get_action) (GtkUIManager *manager,
+                              const gchar  *path);
+
   /* Padding for future expansion */
   void (*_gtk_reserved1) (void);
   void (*_gtk_reserved2) (void);
-  void (*_gtk_reserved3) (void);
-  void (*_gtk_reserved4) (void);
 };
 
 typedef enum {
@@ -98,7 +102,12 @@ typedef enum {
   GTK_UI_MANAGER_ACCELERATOR  = 1 << 8
 } GtkUIManagerItemType;
 
-GType          gtk_ui_manager_get_type            (void);
+#ifdef G_OS_WIN32
+/* Reserve old name for DLL ABI backward compatibility */
+#define gtk_ui_manager_add_ui_from_file gtk_ui_manager_add_ui_from_file_utf8
+#endif
+
+GType          gtk_ui_manager_get_type            (void) G_GNUC_CONST;
 GtkUIManager  *gtk_ui_manager_new                 (void);
 void           gtk_ui_manager_set_add_tearoffs    (GtkUIManager          *self,
 						   gboolean               add_tearoffs);

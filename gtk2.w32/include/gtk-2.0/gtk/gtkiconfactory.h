@@ -30,9 +30,7 @@
 #include <gdk/gdk.h>
 #include <gtk/gtkrc.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 typedef struct _GtkIconFactoryClass GtkIconFactoryClass;
 
@@ -63,7 +61,13 @@ struct _GtkIconFactoryClass
   void (*_gtk_reserved4) (void);
 };
 
-GType           gtk_icon_factory_get_type (void);
+#ifdef G_OS_WIN32
+/* Reserve old names for DLL ABI backward compatibility */
+#define gtk_icon_source_set_filename gtk_icon_source_set_filename_utf8
+#define gtk_icon_source_get_filename gtk_icon_source_get_filename_utf8
+#endif
+
+GType           gtk_icon_factory_get_type (void) G_GNUC_CONST;
 GtkIconFactory* gtk_icon_factory_new      (void);
 void            gtk_icon_factory_add      (GtkIconFactory *factory,
                                            const gchar    *stock_id,
@@ -108,7 +112,7 @@ G_CONST_RETURN gchar* gtk_icon_size_get_name       (GtkIconSize  size);
 
 /* Icon sets */
 
-GType       gtk_icon_set_get_type        (void);
+GType       gtk_icon_set_get_type        (void) G_GNUC_CONST;
 GtkIconSet* gtk_icon_set_new             (void);
 GtkIconSet* gtk_icon_set_new_from_pixbuf (GdkPixbuf       *pixbuf);
 
@@ -135,7 +139,7 @@ void           gtk_icon_set_get_sizes    (GtkIconSet          *icon_set,
                                           GtkIconSize        **sizes,
                                           gint                *n_sizes);
 
-GType          gtk_icon_source_get_type                 (void);
+GType          gtk_icon_source_get_type                 (void) G_GNUC_CONST;
 GtkIconSource* gtk_icon_source_new                      (void);
 GtkIconSource* gtk_icon_source_copy                     (const GtkIconSource *source);
 void           gtk_icon_source_free                     (GtkIconSource       *source);
@@ -174,9 +178,8 @@ GtkIconSize      gtk_icon_source_get_size                 (const GtkIconSource *
 /* ignore this */
 void _gtk_icon_set_invalidate_caches (void);
 GSList* _gtk_icon_factory_list_ids (void);
+void _gtk_icon_factory_ensure_default_icons (void);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+G_END_DECLS
 
 #endif /* __GTK_ICON_FACTORY_H__ */

@@ -29,6 +29,7 @@
 
 
 #include <gdk/gdk.h>
+#include <gtk/gtkaboutdialog.h>
 #include <gtk/gtkaccelgroup.h>
 #include <gtk/gtkaccellabel.h>
 #include <gtk/gtkaccelmap.h>
@@ -47,9 +48,12 @@
 #include <gtk/gtkcalendar.h>
 #include <gtk/gtkcelllayout.h>
 #include <gtk/gtkcellrenderer.h>
+#include <gtk/gtkcellrenderercombo.h>
 #include <gtk/gtkcellrendererpixbuf.h>
+#include <gtk/gtkcellrendererprogress.h>
 #include <gtk/gtkcellrenderertext.h>
 #include <gtk/gtkcellrenderertoggle.h>
+#include <gtk/gtkcellview.h>
 #include <gtk/gtkcheckbutton.h>
 #include <gtk/gtkcheckmenuitem.h>
 #include <gtk/gtkclipboard.h>
@@ -74,6 +78,7 @@
 #include <gtk/gtkexpander.h>
 #include <gtk/gtkfilesel.h>
 #include <gtk/gtkfixed.h>
+#include <gtk/gtkfilechooserbutton.h>
 #include <gtk/gtkfilechooserdialog.h>
 #include <gtk/gtkfilechooserwidget.h>
 #include <gtk/gtkfontbutton.h>
@@ -91,6 +96,7 @@
 #include <gtk/gtkhseparator.h>
 #include <gtk/gtkiconfactory.h>
 #include <gtk/gtkicontheme.h>
+#include <gtk/gtkiconview.h>
 #include <gtk/gtkimage.h>
 #include <gtk/gtkimagemenuitem.h>
 #include <gtk/gtkimcontext.h>
@@ -110,8 +116,10 @@
 #include <gtk/gtkmenubar.h>
 #include <gtk/gtkmenuitem.h>
 #include <gtk/gtkmenushell.h>
+#include <gtk/gtkmenutoolbutton.h>
 #include <gtk/gtkmessagedialog.h>
 #include <gtk/gtkmisc.h>
+#include <gtk/gtkmodules.h>
 #include <gtk/gtknotebook.h>
 #include <gtk/gtkobject.h>
 #include <gtk/gtkoldeditable.h>

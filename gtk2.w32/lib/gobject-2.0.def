@@ -29,7 +29,7 @@ EXPORTS
 	g_closure_add_finalize_notifier
 	g_closure_add_invalidate_notifier
 	g_closure_add_marshal_guards
-	g_closure_get_type
+	g_closure_get_type 
 	g_closure_invalidate
 	g_closure_invoke
 	g_closure_new_object
@@ -51,7 +51,7 @@ EXPORTS
 	g_flags_get_value_by_name
 	g_flags_get_value_by_nick
 	g_flags_register_static
-	g_gstring_get_type
+	g_gstring_get_type 
 	g_io_channel_get_type
 	g_io_condition_get_type
 	g_object_add_weak_pointer
@@ -176,7 +176,7 @@ EXPORTS
 	g_slist_remove_all PRIVATE
 	g_source_set_closure
 	g_strdup_value_contents
-	g_strv_get_type
+	g_strv_get_type 
 	g_type_add_class_cache_func
 	g_type_add_interface_check
 	g_type_add_interface_dynamic
@@ -219,7 +219,9 @@ EXPORTS
 	g_type_interfaces
 	g_type_is_a
 	g_type_module_add_interface
-	g_type_module_get_type
+	g_type_module_get_type 
+	g_type_module_register_enum
+	g_type_module_register_flags
 	g_type_module_register_type
 	g_type_module_set_name
 	g_type_module_unuse
@@ -231,7 +233,7 @@ EXPORTS
 	g_type_parent
 	g_type_plugin_complete_interface_info
 	g_type_plugin_complete_type_info
-	g_type_plugin_get_type
+	g_type_plugin_get_type 
 	g_type_plugin_unuse
 	g_type_plugin_use
 	g_type_qname
@@ -249,7 +251,7 @@ EXPORTS
 	g_value_array_copy
 	g_value_array_free
 	g_value_array_get_nth
-	g_value_array_get_type
+	g_value_array_get_type 
 	g_value_array_insert
 	g_value_array_new
 	g_value_array_prepend
@@ -276,7 +278,7 @@ EXPORTS
 	g_value_get_param
 	g_value_get_pointer
 	g_value_get_string
-	g_value_get_type
+	g_value_get_type 
 	g_value_get_uchar
 	g_value_get_uint
 	g_value_get_uint64
@@ -317,6 +319,4 @@ EXPORTS
 	g_value_transform
 	g_value_type_compatible
 	g_value_type_transformable
-	g_value_types_init
 	g_value_unset
-

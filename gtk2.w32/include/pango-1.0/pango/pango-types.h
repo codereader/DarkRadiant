@@ -33,6 +33,8 @@ typedef struct _PangoEngineLang PangoEngineLang;
 typedef struct _PangoEngineShape PangoEngineShape;
 
 typedef struct _PangoFont PangoFont;
+
+typedef struct _PangoMatrix    PangoMatrix;
 typedef struct _PangoRectangle PangoRectangle;
 
 /* Dummy typedef - internally it's a 'const char *' */
@@ -53,10 +55,82 @@ struct _PangoRectangle
   int height;
 };
 
+/**
+ * PangoMatrix:
+ * @xx: 1st component of the transformation matrix
+ * @xy: 2nd component of the transformation matrix
+ * @yx: 3rd component of the transformation matrix
+ * @yy: 4th component of the transformation matrix
+ * @x0: x translation
+ * @y0: y translation
+ *
+ * A structure specifying a transformation between user-space
+ * coordinates and device coordinates. The transformation
+ * is given by
+ *
+ * <programlisting>
+ * x_device = x_user * matrix->xx + y_user * matrix->xy + matrix->x0;
+ * y_device = x_user * matrix->yx + y_user * matrix->yy + matrix->y0;
+ * </programlisting>
+ *
+ * Since: 1.6
+ **/
+struct _PangoMatrix
+{
+  double xx;
+  double xy;
+  double yx;
+  double yy;
+  double x0;
+  double y0;
+};
+
+/**
+ * PANGO_TYPE_MATRIX
+ *
+ * The GObject type for #PangoMatrix
+ **/
+#define PANGO_TYPE_MATRIX (pango_matrix_get_type ())
+
+/**
+ * PANGO_MATRIX_INIT
+ *
+ * Constant that can be used to initialize a PangoMatrix to
+ * the identity transform.
+ *
+ * <informalexample><programlisting>
+ * PangoMatrix matrix = PANGO_MATRIX_INIT;
+ * pango_matrix_rotate (&amp;matrix, 45.);
+ * </programlisting></informalexample>
+ *
+ * Since: 1.6
+ **/
+#define PANGO_MATRIX_INIT { 1., 0., 0., 1., 0., 0. }
+
+GType pango_matrix_get_type (void);
+
+PangoMatrix *pango_matrix_copy   (const PangoMatrix *matrix);
+void         pango_matrix_free   (PangoMatrix *matrix);
+
+void pango_matrix_translate (PangoMatrix *matrix,
+			     double       tx,
+			     double       ty);
+void pango_matrix_scale     (PangoMatrix *matrix,
+			     double       scale_x,
+			     double       scale_y);
+void pango_matrix_rotate    (PangoMatrix *matrix,
+			     double       degrees);
+void pango_matrix_concat    (PangoMatrix       *matrix,
+			     const PangoMatrix *new_matrix);
+
 #define PANGO_SCALE 1024
-#define PANGO_PIXELS(d) (((d) >= 0) ?                             \
-                         ((d) + PANGO_SCALE / 2) / PANGO_SCALE :  \
-                         ((d) - PANGO_SCALE / 2) / PANGO_SCALE)
+#define PANGO_PIXELS(d) (((int)(d) + 512) >> 10)
+/* The above expression is just slightly wrong for floating point d;
+ * We'd expect -512.5 => -1 but instead we get 0. That's unlikely
+ * to matter for practical use and the expression is much more
+ * compact and faster than alternatives that work exactly for both
+ * integers and floating point.
+ */
 
 /* Macros to translate from extents rectangles to ascent/descent/lbearing/rbearing
  */
@@ -81,7 +155,7 @@ struct _PangoRectangle
  * Unicode bidirectional algorithm; not every value in this
  * enumeration makes sense for every usage of #PangoDirection;
  * for example, the return value of pango_unichar_direction()
- * and pango_find_base_direction() cannot be %PANGO_DIRECTION_WEAK_LTR
+ * and pango_find_base_dir() cannot be %PANGO_DIRECTION_WEAK_LTR
  * or %PANGO_DIRECTION_WEAK_RTL, since every character is either
  * neutral or has a strong direction; on the other hand
  * %PANGO_DIRECTION_NEUTRAL doesn't make sense to pass
@@ -115,8 +189,12 @@ PangoLanguage *pango_language_from_string (const char *language);
 gboolean      pango_language_matches  (PangoLanguage *language,
 				       const char *range_list);
 
+#ifndef PANGO_DISABLE_DEPRECATED
 gboolean       pango_get_mirror_char        (gunichar     ch,
 					     gunichar    *mirrored_ch);
+#endif
+
+
 PangoDirection pango_unichar_direction      (gunichar     ch);
 PangoDirection pango_find_base_dir          (const gchar *text,
 					     gint         length);

@@ -67,6 +67,9 @@ AtkRelation*    atk_relation_set_get_relation         (AtkRelationSet  *set,
                                                        gint            i);
 AtkRelation*    atk_relation_set_get_relation_by_type (AtkRelationSet  *set,
                                                        AtkRelationType relationship);
+void            atk_relation_set_add_relation_by_type (AtkRelationSet  *set,
+                                                       AtkRelationType relationship,
+                                                       AtkObject       *target);
 
 #ifdef __cplusplus
 }

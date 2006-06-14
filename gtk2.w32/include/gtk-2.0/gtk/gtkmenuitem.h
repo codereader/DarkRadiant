@@ -32,10 +32,7 @@
 #include <gtk/gtkitem.h>
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
+G_BEGIN_DECLS
 
 #define	GTK_TYPE_MENU_ITEM		(gtk_menu_item_get_type ())
 #define GTK_MENU_ITEM(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_MENU_ITEM, GtkMenuItem))
@@ -121,14 +118,12 @@ void	  _gtk_menu_item_refresh_accel_path   (GtkMenuItem	   *menu_item,
 					       GtkAccelGroup	   *accel_group,
 					       gboolean		    group_changed);
 gboolean  _gtk_menu_item_is_selectable        (GtkWidget           *menu_item);
+void      _gtk_menu_item_popup_submenu        (GtkWidget           *menu_item);
 
 #ifndef GTK_DISABLE_DEPRECATED
 #define gtk_menu_item_right_justify(menu_item) gtk_menu_item_set_right_justified ((menu_item), TRUE)
 #endif /* GTK_DISABLE_DEPRECATED */
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
+G_END_DECLS
 
 #endif /* __GTK_MENU_ITEM_H__ */

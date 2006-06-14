@@ -45,20 +45,34 @@ typedef void (*PangoFT2SubstituteFunc) (FcPattern *pattern,
 
 /* Calls for applications */
 
+void pango_ft2_render             (FT_Bitmap         *bitmap,
+				   PangoFont         *font,
+				   PangoGlyphString  *glyphs,
+				   gint               x,
+				   gint               y);
+void pango_ft2_render_transformed (FT_Bitmap         *bitmap,
+				   const PangoMatrix *matrix,
+				   PangoFont         *font,
+				   PangoGlyphString  *glyphs,
+				   int                x,
+				   int                y);
 
-void           pango_ft2_render             (FT_Bitmap        *bitmap,
-					     PangoFont        *font,
-					     PangoGlyphString *glyphs,
-					     gint              x,
-					     gint              y);
-void           pango_ft2_render_layout_line (FT_Bitmap        *bitmap,
-					     PangoLayoutLine  *line,
-					     int               x,
-					     int               y);
-void           pango_ft2_render_layout      (FT_Bitmap        *bitmap,
-					     PangoLayout      *layout,
-					     int               x, 
-					     int               y);
+void pango_ft2_render_layout_line          (FT_Bitmap        *bitmap,
+					    PangoLayoutLine  *line,
+					    int               x,
+					    int               y);
+void pango_ft2_render_layout_line_subpixel (FT_Bitmap        *bitmap,
+					    PangoLayoutLine  *line,
+					    int               x,
+					    int               y);
+void pango_ft2_render_layout               (FT_Bitmap        *bitmap,
+					    PangoLayout      *layout,
+					    int               x,
+					    int               y);
+void pango_ft2_render_layout_subpixel      (FT_Bitmap        *bitmap,
+					    PangoLayout      *layout,
+					    int               x,
+					    int               y);
 
 GType pango_ft2_font_map_get_type (void);
 
@@ -86,14 +100,10 @@ PangoGlyph     pango_ft2_get_unknown_glyph (PangoFont       *font);
 int            pango_ft2_font_get_kerning  (PangoFont       *font,
 					    PangoGlyph       left,
 					    PangoGlyph       right);
+FT_Face        pango_ft2_font_get_face     (PangoFont       *font);
 PangoCoverage *pango_ft2_font_get_coverage (PangoFont       *font,
 					    PangoLanguage   *language);
 #endif /* PANGO_DISABLE_DEPRECATED */
-
-/* Temporarily undeprecated, will be deprecated in favour
- * of pango_fc_font_lock_face() in 1.6
- */
-FT_Face        pango_ft2_font_get_face     (PangoFont       *font);
 
 G_END_DECLS
 

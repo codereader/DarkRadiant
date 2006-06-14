@@ -32,9 +32,7 @@
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkselection.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 typedef enum {
   GTK_DEST_DEFAULT_MOTION     = 1 << 0, /* respond to "drag_motion" */
@@ -85,6 +83,9 @@ GdkAtom        gtk_drag_dest_find_target     (GtkWidget      *widget,
 GtkTargetList* gtk_drag_dest_get_target_list (GtkWidget      *widget);
 void           gtk_drag_dest_set_target_list (GtkWidget      *widget,
                                               GtkTargetList  *target_list);
+void           gtk_drag_dest_add_text_targets  (GtkWidget    *widget);
+void           gtk_drag_dest_add_image_targets (GtkWidget    *widget);
+void           gtk_drag_dest_add_uri_targets   (GtkWidget    *widget);
 
 /* Source side */
 
@@ -99,6 +100,9 @@ void gtk_drag_source_unset (GtkWidget        *widget);
 GtkTargetList* gtk_drag_source_get_target_list (GtkWidget     *widget);
 void           gtk_drag_source_set_target_list (GtkWidget     *widget,
                                                 GtkTargetList *target_list);
+void           gtk_drag_source_add_text_targets  (GtkWidget     *widget);
+void           gtk_drag_source_add_image_targets (GtkWidget    *widget);
+void           gtk_drag_source_add_uri_targets   (GtkWidget    *widget);
 
 void gtk_drag_source_set_icon        (GtkWidget   *widget,
 				      GdkColormap *colormap,
@@ -162,9 +166,7 @@ void gtk_drag_set_default_icon (GdkColormap   *colormap,
 			        gint           hot_y);
 #endif /* !GTK_DISABLE_DEPRECATED */
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+G_END_DECLS
 
 #endif /* __GTK_DND_H__ */
 

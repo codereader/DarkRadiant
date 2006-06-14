@@ -35,9 +35,7 @@
 #include <gtk/gtkwindow.h>
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 /* Priorities for redrawing and resizing
  */
@@ -57,9 +55,6 @@ extern "C" {
 
 #endif /* GTK_DISABLE_DEPRECATED */
 
-typedef void	(*GtkModuleInitFunc)        (gint	  *argc,
-				             gchar      ***argv);
-typedef void	(*GtkModuleDisplayInitFunc) (GdkDisplay   *display);
 typedef gint	(*GtkKeySnoopFunc)	    (GtkWidget	  *grab_widget,
 					     GdkEventKey  *event,
 					     gpointer	   func_data);
@@ -97,6 +92,16 @@ void     gtk_init                 (int    *argc,
 
 gboolean gtk_init_check           (int    *argc,
                                    char ***argv);
+  
+gboolean gtk_init_with_args       (int            *argc,
+				   char         ***argv,
+				   char           *parameter_string,
+				   GOptionEntry   *entries,
+				   char           *translation_domain,
+				   GError        **error);
+
+GOptionGroup *gtk_get_option_group (gboolean open_default_display);
+  
 #ifdef G_PLATFORM_WIN32
 
 /* Variants that are used to check for correct struct packing
@@ -214,15 +219,8 @@ gboolean _gtk_boolean_handled_accumulator (GSignalInvocationHint *ihint,
                                    const GValue          *handler_return,
                                    gpointer               dummy);
 
-gchar * _gtk_find_module     (const gchar *name,
-			      const gchar *type);
-gchar **_gtk_get_module_path (const gchar *type);
-
 gchar *_gtk_get_lc_ctype (void);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
+G_END_DECLS
 
 #endif /* __GTK_MAIN_H__ */

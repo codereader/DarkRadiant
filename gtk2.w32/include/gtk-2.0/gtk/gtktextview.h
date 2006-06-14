@@ -24,17 +24,15 @@
  * GTK+ at ftp://ftp.gtk.org/pub/gtk/.
  */
 
-#ifndef GTK_TEXT_VIEW_H
-#define GTK_TEXT_VIEW_H
+#ifndef __GTK_TEXT_VIEW_H__
+#define __GTK_TEXT_VIEW_H__
 
 #include <gtk/gtkcontainer.h>
 #include <gtk/gtkimcontext.h>
 #include <gtk/gtktextbuffer.h>
 #include <gtk/gtkmenu.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 #define GTK_TYPE_TEXT_VIEW             (gtk_text_view_get_type ())
 #define GTK_TEXT_VIEW(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_TEXT_VIEW, GtkTextView))
@@ -189,6 +187,7 @@ struct _GtkTextViewClass
   void (* delete_from_cursor)    (GtkTextView  *text_view,
                                   GtkDeleteType type,
                                   gint          count);
+  void (* backspace)             (GtkTextView *text_view);
 
   /* cut copy paste */
   void (* cut_clipboard)   (GtkTextView *text_view);
@@ -210,7 +209,6 @@ struct _GtkTextViewClass
   void (*_gtk_reserved5) (void);
   void (*_gtk_reserved6) (void);
   void (*_gtk_reserved7) (void);
-  void (*_gtk_reserved8) (void);
 };
 
 GType          gtk_text_view_get_type              (void) G_GNUC_CONST;
@@ -248,6 +246,11 @@ void           gtk_text_view_get_iter_location     (GtkTextView   *text_view,
                                                     GdkRectangle  *location);
 void           gtk_text_view_get_iter_at_location  (GtkTextView   *text_view,
                                                     GtkTextIter   *iter,
+                                                    gint           x,
+                                                    gint           y);
+void           gtk_text_view_get_iter_at_position  (GtkTextView   *text_view,
+                                                    GtkTextIter   *iter,
+						    gint          *trailing,
                                                     gint           x,
                                                     gint           y);
 void           gtk_text_view_get_line_yrange       (GtkTextView       *text_view,
@@ -358,8 +361,6 @@ PangoTabArray*   gtk_text_view_get_tabs               (GtkTextView      *text_vi
 /* note that the return value of this changes with the theme */
 GtkTextAttributes* gtk_text_view_get_default_attributes (GtkTextView    *text_view);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+G_END_DECLS
 
-#endif /* GTK_TEXT_VIEW_H */
+#endif /* __GTK_TEXT_VIEW_H__ */

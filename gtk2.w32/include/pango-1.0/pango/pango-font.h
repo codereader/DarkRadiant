@@ -55,6 +55,7 @@ typedef enum {
   PANGO_WEIGHT_ULTRALIGHT = 200,
   PANGO_WEIGHT_LIGHT = 300,
   PANGO_WEIGHT_NORMAL = 400,
+  PANGO_WEIGHT_SEMIBOLD = 600,
   PANGO_WEIGHT_BOLD = 700,
   PANGO_WEIGHT_ULTRABOLD = 800,
   PANGO_WEIGHT_HEAVY = 900
@@ -127,6 +128,9 @@ PangoStretch         pango_font_description_get_stretch       (const PangoFontDe
 void                 pango_font_description_set_size          (PangoFontDescription *desc,
 							       gint                  size);
 gint                 pango_font_description_get_size          (const PangoFontDescription *desc);
+void                 pango_font_description_set_absolute_size (PangoFontDescription *desc,
+							       double                size);
+gboolean             pango_font_description_get_size_is_absolute (const PangoFontDescription *desc);
 
 PangoFontMask pango_font_description_get_set_fields (const PangoFontDescription *desc);
 void          pango_font_description_unset_fields   (PangoFontDescription       *desc,
@@ -159,6 +163,10 @@ int               pango_font_metrics_get_ascent                  (PangoFontMetri
 int               pango_font_metrics_get_descent                 (PangoFontMetrics *metrics);
 int               pango_font_metrics_get_approximate_char_width  (PangoFontMetrics *metrics);
 int               pango_font_metrics_get_approximate_digit_width (PangoFontMetrics *metrics);
+int               pango_font_metrics_get_underline_position      (PangoFontMetrics *metrics);
+int               pango_font_metrics_get_underline_thickness     (PangoFontMetrics *metrics);
+int               pango_font_metrics_get_strikethrough_position  (PangoFontMetrics *metrics);
+int               pango_font_metrics_get_strikethrough_thickness (PangoFontMetrics *metrics);
 
 #ifdef PANGO_ENABLE_BACKEND
 
@@ -172,6 +180,10 @@ struct _PangoFontMetrics
   int descent;
   int approximate_char_width;
   int approximate_digit_width;
+  int underline_position;
+  int underline_thickness;
+  int strikethrough_position;
+  int strikethrough_thickness;
 };
 
 #endif /* PANGO_ENABLE_BACKEND */

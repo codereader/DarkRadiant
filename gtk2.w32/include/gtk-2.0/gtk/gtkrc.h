@@ -30,9 +30,7 @@
 
 #include <gtk/gtkstyle.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 /* Forward declarations */
 typedef struct _GtkIconFactory  GtkIconFactory;
@@ -120,6 +118,13 @@ struct _GtkRcStyleClass
   void (*_gtk_reserved3) (void);
   void (*_gtk_reserved4) (void);
 };
+
+#ifdef G_OS_WIN32
+/* Reserve old names for DLL ABI backward compatibility */
+#define gtk_rc_add_default_file gtk_rc_add_default_file_utf8
+#define gtk_rc_set_default_files gtk_rc_set_default_files_utf8
+#define gtk_rc_parse gtk_rc_parse_utf8
+#endif
 
 void	  _gtk_rc_init			(void);
 void      gtk_rc_add_default_file	(const gchar *filename);
@@ -234,9 +239,6 @@ const GtkRcProperty* _gtk_rc_style_lookup_rc_property (GtkRcStyle *rc_style,
 
 const gchar* _gtk_rc_context_get_default_font_name (GtkSettings *settings);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
+G_END_DECLS
 
 #endif /* __GTK_RC_H__ */

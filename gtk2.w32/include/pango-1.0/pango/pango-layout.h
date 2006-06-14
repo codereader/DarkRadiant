@@ -48,6 +48,26 @@ typedef enum {
   PANGO_WRAP_WORD_CHAR
 } PangoWrapMode;
 
+/**
+ * PangoEllipsizeMode
+ * @PANGO_ELLIPSIZE_NONE: No ellipsization
+ * @PANGO_ELLIPSIZE_START: Omit characters at the start of the text
+ * @PANGO_ELLIPSIZE_MIDDLE: Omit characters in the middle of the text
+ * @PANGO_ELLIPSIZE_END: Omit characters at the end of the text
+ * 
+ * The #PangoEllipsizeMode type describes what sort of (if any)
+ * ellipsization should be applied to a line of text. In
+ * the ellipsization process characters are removed from the
+ * text in order to make it fit to a given width and replaced
+ * with an ellipsis.
+ */
+typedef enum {
+  PANGO_ELLIPSIZE_NONE,
+  PANGO_ELLIPSIZE_START,
+  PANGO_ELLIPSIZE_MIDDLE,
+  PANGO_ELLIPSIZE_END
+} PangoEllipsizeMode;
+
 struct _PangoLayoutLine
 {
   PangoLayout *layout;
@@ -64,7 +84,6 @@ struct _PangoLayoutLine
 #define PANGO_IS_LAYOUT(object)        (G_TYPE_CHECK_INSTANCE_TYPE ((object), PANGO_TYPE_LAYOUT))
 #define PANGO_IS_LAYOUT_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE ((klass), PANGO_TYPE_LAYOUT))
 #define PANGO_LAYOUT_GET_CLASS(obj)    (G_TYPE_INSTANCE_GET_CLASS ((obj), PANGO_TYPE_LAYOUT, PangoLayoutClass))
-
 
 /* The PangoLayout and PangoLayoutClass structs are private; if you
  * need to create a subclass of these, mail otaylor@redhat.com
@@ -97,6 +116,9 @@ void           pango_layout_set_markup_with_accel (PangoLayout    *layout,
 
 void           pango_layout_set_font_description (PangoLayout                *layout,
 						  const PangoFontDescription *desc);
+
+G_CONST_RETURN PangoFontDescription *pango_layout_get_font_description (PangoLayout *layout);
+
 void           pango_layout_set_width            (PangoLayout                *layout,
 						  int                         width);
 int            pango_layout_get_width            (PangoLayout                *layout);
@@ -127,6 +149,10 @@ PangoTabArray* pango_layout_get_tabs             (PangoLayout                *la
 void           pango_layout_set_single_paragraph_mode (PangoLayout                *layout,
                                                        gboolean                    setting);
 gboolean       pango_layout_get_single_paragraph_mode (PangoLayout                *layout);
+
+void               pango_layout_set_ellipsize (PangoLayout        *layout,
+					       PangoEllipsizeMode  ellipsize);
+PangoEllipsizeMode pango_layout_get_ellipsize (PangoLayout        *layout);
 
 void           pango_layout_context_changed (PangoLayout    *layout);
 
@@ -194,6 +220,10 @@ void     pango_layout_line_get_pixel_extents (PangoLayoutLine *layout_line,
 					      PangoRectangle  *logical_rect);
 
 typedef struct _PangoLayoutIter PangoLayoutIter;
+
+#define PANGO_TYPE_LAYOUT_ITER         (pango_layout_iter_get_type ())
+
+GType            pango_layout_iter_get_type (void);
 
 PangoLayoutIter *pango_layout_get_iter  (PangoLayout     *layout);
 void             pango_layout_iter_free (PangoLayoutIter *iter);

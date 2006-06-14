@@ -35,10 +35,7 @@
 #include <gtk/gtkentrycompletion.h>
 #include <pango/pango.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
+G_BEGIN_DECLS
 
 #define GTK_TYPE_ENTRY                  (gtk_entry_get_type ())
 #define GTK_ENTRY(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_ENTRY, GtkEntry))
@@ -137,6 +134,7 @@ struct _GtkEntryClass
   void (* delete_from_cursor) (GtkEntry       *entry,
 			       GtkDeleteType   type,
 			       gint            count);
+  void (* backspace)          (GtkEntry       *entry);
   void (* cut_clipboard)      (GtkEntry       *entry);
   void (* copy_clipboard)     (GtkEntry       *entry);
   void (* paste_clipboard)    (GtkEntry       *entry);
@@ -146,7 +144,6 @@ struct _GtkEntryClass
   void (*_gtk_reserved1) (void);
   void (*_gtk_reserved2) (void);
   void (*_gtk_reserved3) (void);
-  void (*_gtk_reserved4) (void);
 };
 
 GType      gtk_entry_get_type       		(void) G_GNUC_CONST;
@@ -174,7 +171,7 @@ gint       gtk_entry_get_width_chars            (GtkEntry      *entry);
 
 /* Somewhat more convenient than the GtkEditable generic functions
  */
-void                  gtk_entry_set_text        (GtkEntry      *entry,
+void       gtk_entry_set_text                   (GtkEntry      *entry,
                                                  const gchar   *text);
 /* returns a reference to the text */
 G_CONST_RETURN gchar* gtk_entry_get_text        (GtkEntry      *entry);
@@ -190,6 +187,12 @@ gfloat     gtk_entry_get_alignment              (GtkEntry      *entry);
 void                gtk_entry_set_completion (GtkEntry           *entry,
                                               GtkEntryCompletion *completion);
 GtkEntryCompletion *gtk_entry_get_completion (GtkEntry           *entry);
+
+gint       gtk_entry_layout_index_to_text_index (GtkEntry      *entry,
+                                                 gint           layout_index);
+gint       gtk_entry_text_index_to_layout_index (GtkEntry      *entry,
+                                                 gint           text_index);
+
 
 /* Deprecated compatibility functions
  */
@@ -209,9 +212,12 @@ void       gtk_entry_set_editable   		(GtkEntry      *entry,
 						 gboolean       editable);
 #endif /* GTK_DISABLE_DEPRECATED */
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+/* private */
+void      _gtk_entry_get_borders                (GtkEntry *entry,
+						 gint     *xborder,
+						 gint     *yborder);
 
+
+G_END_DECLS
 
 #endif /* __GTK_ENTRY_H__ */

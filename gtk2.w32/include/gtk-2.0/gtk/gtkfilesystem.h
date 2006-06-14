@@ -79,7 +79,7 @@ GQuark     gtk_file_system_error_quark      (void);
  */
 #define GTK_TYPE_FILE_INFO (gtk_file_info_get_type ())
 
-GType       gtk_file_info_get_type (void);
+GType       gtk_file_info_get_type (void) G_GNUC_CONST; 
 
 GtkFileInfo *gtk_file_info_new  (void);
 GtkFileInfo *gtk_file_info_copy (GtkFileInfo *info);
@@ -201,7 +201,7 @@ struct _GtkFileSystemIface
   void (*bookmarks_changed) (GtkFileSystem *file_system);
 };
 
-GType             gtk_file_system_get_type       (void);
+GType             gtk_file_system_get_type       (void) G_GNUC_CONST;
 
 GSList *          gtk_file_system_list_volumes   (GtkFileSystem     *file_system);
 
@@ -313,7 +313,7 @@ struct _GtkFileFolderIface
   void     (*finished_loading)    (GtkFileFolder *folder);
 };
 
-GType        gtk_file_folder_get_type      (void);
+GType        gtk_file_folder_get_type      (void) G_GNUC_CONST;
 gboolean     gtk_file_folder_list_children (GtkFileFolder      *folder,
 					    GSList            **children,
 					    GError            **error);
@@ -327,7 +327,7 @@ gboolean     gtk_file_folder_is_finished_loading (GtkFileFolder *folder);
 /* GtkFilePath */
 #define GTK_TYPE_FILE_PATH             (gtk_file_path_get_type ())
 
-GType   gtk_file_path_get_type (void);
+GType   gtk_file_path_get_type (void) G_GNUC_CONST;
 #ifdef __GNUC__
 #define gtk_file_path_new_dup(str) \
  ({ const gchar *__s = (str); (GtkFilePath *)g_strdup(__s); })
@@ -345,8 +345,16 @@ GType   gtk_file_path_get_type (void);
 #endif/* __GNUC__ */
 
 #define gtk_file_path_copy(path)       gtk_file_path_new_dup (gtk_file_path_get_string(path))
+#ifdef G_OS_WIN32
+int _gtk_file_system_win32_path_compare (const gchar *path1,
+					 const gchar *path2);
+#define gtk_file_path_compare(path1,path2) \
+  _gtk_file_system_win32_path_compare (gtk_file_path_get_string (path1), \
+	                               gtk_file_path_get_string (path2))
+#else
 #define gtk_file_path_compare(path1,path2) strcmp (gtk_file_path_get_string (path1), \
 						   gtk_file_path_get_string (path2))
+#endif
 
 GSList *gtk_file_paths_sort (GSList *paths);
 GSList *gtk_file_paths_copy (GSList *paths);

@@ -71,6 +71,8 @@ struct _GtkCellRenderer
   guint is_expander : 1;
   guint is_expanded : 1;
   guint cell_background_set : 1;
+  guint sensitive : 1;
+  guint editing : 1;
 };
 
 struct _GtkCellRendererClass
@@ -109,11 +111,13 @@ struct _GtkCellRendererClass
 
   /* Signals */
   void (* editing_canceled) (GtkCellRenderer *cell);
+  void (* editing_started)  (GtkCellRenderer *cell,
+			     GtkCellEditable *editable,
+			     const gchar     *path);
 
   /* Padding for future expansion */
   void (*_gtk_reserved1) (void);
   void (*_gtk_reserved2) (void);
-  void (*_gtk_reserved3) (void);
 };
 
 GType            gtk_cell_renderer_get_type       (void) G_GNUC_CONST;
@@ -154,7 +158,11 @@ void             gtk_cell_renderer_get_fixed_size (GtkCellRenderer      *cell,
 						   gint                 *height);
 
 /* For use by cell renderer implementations only */
+#ifndef GTK_DISABLE_DEPRECATED
 void gtk_cell_renderer_editing_canceled (GtkCellRenderer *cell);
+#endif
+void gtk_cell_renderer_stop_editing     (GtkCellRenderer *cell,
+				         gboolean         canceled);
 
 
 G_END_DECLS

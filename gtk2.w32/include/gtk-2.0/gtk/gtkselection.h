@@ -32,9 +32,7 @@
 #include <gtk/gtkenums.h>
 #include <gtk/gtkwidget.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 typedef struct _GtkTargetList    GtkTargetList;
 typedef struct _GtkTargetEntry   GtkTargetEntry;
@@ -95,6 +93,13 @@ void           gtk_target_list_add       (GtkTargetList  *list,
 				  	  GdkAtom         target,
 					  guint           flags,
 					  guint           info);
+void           gtk_target_list_add_text_targets  (GtkTargetList  *list,
+						  guint           info);
+void           gtk_target_list_add_image_targets (GtkTargetList  *list,
+						  guint           info,
+						  gboolean        writable);
+void           gtk_target_list_add_uri_targets   (GtkTargetList  *list,
+						  guint           info);
 void           gtk_target_list_add_table (GtkTargetList        *list,
 					  const GtkTargetEntry *targets,
 					  guint                 ntargets);
@@ -137,11 +142,19 @@ gboolean gtk_selection_data_set_text (GtkSelectionData     *selection_data,
 				      const gchar          *str,
 				      gint                  len);
 guchar * gtk_selection_data_get_text (GtkSelectionData     *selection_data);
+gboolean gtk_selection_data_set_pixbuf   (GtkSelectionData  *selection_data,
+				          GdkPixbuf         *pixbuf);
+GdkPixbuf *gtk_selection_data_get_pixbuf (GtkSelectionData  *selection_data);
+gboolean gtk_selection_data_set_uris (GtkSelectionData     *selection_data,
+				      gchar               **uris);
+gchar  **gtk_selection_data_get_uris (GtkSelectionData     *selection_data);
 
 gboolean gtk_selection_data_get_targets          (GtkSelectionData  *selection_data,
 						  GdkAtom          **targets,
 						  gint              *n_atoms);
 gboolean gtk_selection_data_targets_include_text (GtkSelectionData  *selection_data);
+gboolean gtk_selection_data_targets_include_image (GtkSelectionData  *selection_data,
+						   gboolean           writable);
 
 /* Called when a widget is destroyed */
 
@@ -161,15 +174,11 @@ gboolean _gtk_selection_notify		  (GtkWidget         *widget,
 gboolean _gtk_selection_property_notify	  (GtkWidget         *widget,
 					   GdkEventProperty  *event);
 
-GType             gtk_selection_data_get_type (void);
+GType             gtk_selection_data_get_type (void) G_GNUC_CONST;
 GtkSelectionData *gtk_selection_data_copy     (GtkSelectionData *data);
 void		  gtk_selection_data_free     (GtkSelectionData *data);
 
 
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
+G_END_DECLS
 
 #endif /* __GTK_SELECTION_H__ */

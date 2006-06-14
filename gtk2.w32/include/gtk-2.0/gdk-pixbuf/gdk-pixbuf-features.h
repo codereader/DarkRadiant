@@ -2,9 +2,9 @@
 #define GDK_PIXBUF_FEATURES_H 1
 
 #define GDK_PIXBUF_MAJOR (2)
-#define GDK_PIXBUF_MINOR (4)
-#define GDK_PIXBUF_MICRO (14)
-#define GDK_PIXBUF_VERSION "2.4.14"
+#define GDK_PIXBUF_MINOR (6)
+#define GDK_PIXBUF_MICRO (9)
+#define GDK_PIXBUF_VERSION "2.6.9"
 
 /* We prefix variable declarations so they can
  * properly get exported/imported from Windows DLLs.
@@ -33,7 +33,9 @@
 #  endif /* !G_PLATFORM_WIN32 */
 #endif /* GDK_PIXBUF_VAR */
 
-GDK_PIXBUF_VAR const guint gdk_pixbuf_major_version, gdk_pixbuf_minor_version, gdk_pixbuf_micro_version;
+GDK_PIXBUF_VAR const guint gdk_pixbuf_major_version;
+GDK_PIXBUF_VAR const guint gdk_pixbuf_minor_version;
+GDK_PIXBUF_VAR const guint gdk_pixbuf_micro_version;
 GDK_PIXBUF_VAR const char *gdk_pixbuf_version;
 
 #endif

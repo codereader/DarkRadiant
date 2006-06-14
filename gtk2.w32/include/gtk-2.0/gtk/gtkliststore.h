@@ -43,9 +43,9 @@ struct _GtkListStore
 
   /*< private >*/
   gint stamp;
-  gpointer root;
-  gpointer tail;
-  GList *sort_list;
+  gpointer seq;		/* head of the list */
+  gpointer _gtk_reserved1;
+  GList *sort_list;	
   gint n_columns;
   gint sort_column_id;
   GtkSortType order;
@@ -69,7 +69,7 @@ struct _GtkListStoreClass
 };
 
 
-GType         gtk_list_store_get_type         (void);
+GType         gtk_list_store_get_type         (void) G_GNUC_CONST;
 GtkListStore *gtk_list_store_new              (gint          n_columns,
 					       ...);
 GtkListStore *gtk_list_store_newv             (gint          n_columns,
@@ -101,6 +101,16 @@ void          gtk_list_store_insert_before    (GtkListStore *list_store,
 void          gtk_list_store_insert_after     (GtkListStore *list_store,
 					       GtkTreeIter  *iter,
 					       GtkTreeIter  *sibling);
+void          gtk_list_store_insert_with_values  (GtkListStore *list_store,
+						  GtkTreeIter  *iter,
+						  gint          position,
+						  ...);
+void          gtk_list_store_insert_with_valuesv (GtkListStore *list_store,
+						  GtkTreeIter  *iter,
+						  gint          position,
+						  gint         *columns, 
+						  GValue       *values,
+						  gint          n_values);
 void          gtk_list_store_prepend          (GtkListStore *list_store,
 					       GtkTreeIter  *iter);
 void          gtk_list_store_append           (GtkListStore *list_store,

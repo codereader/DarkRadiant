@@ -8,7 +8,6 @@
 #define __G_LIBCONFIG_H__
 
 #include <glib/gmacros.h>
-
 #include <limits.h>
 #include <float.h>
 
@@ -86,8 +85,8 @@ typedef unsigned int gsize;
 #define g_memmove(d,s,n) G_STMT_START { memmove ((d), (s), (n)); } G_STMT_END
 
 #define GLIB_MAJOR_VERSION 2
-#define GLIB_MINOR_VERSION 4
-#define GLIB_MICRO_VERSION 5
+#define GLIB_MINOR_VERSION 6
+#define GLIB_MICRO_VERSION 6
 
 #define G_OS_WIN32
 #define G_PLATFORM_WIN32
@@ -130,6 +129,8 @@ typedef unsigned int gsize;
 #endif /* not _MSC_VER */
 #define G_HAVE_GROWING_STACK 0
 
+
+#define G_GNUC_INTERNAL
 
 #define G_THREADS_ENABLED
 #define G_THREADS_IMPL_WIN32

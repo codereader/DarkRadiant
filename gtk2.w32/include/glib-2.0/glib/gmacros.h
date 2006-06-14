@@ -50,8 +50,11 @@
 #if    __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 96)
 #define G_GNUC_PURE                            \
   __attribute__((__pure__))
+#define G_GNUC_MALLOC    			\
+  __attribute__((__malloc__))
 #else
 #define G_GNUC_PURE
+#define G_GNUC_MALLOC
 #endif
 
 #if     __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)

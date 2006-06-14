@@ -262,6 +262,7 @@ struct _GdkWindowObject
   guint destroyed : 2;
 
   guint accept_focus : 1;
+  guint focus_on_map : 1;
   
   GdkEventMask event_mask;
 };
@@ -321,6 +322,8 @@ void          gdk_window_set_override_redirect (GdkWindow     *window,
                                                 gboolean       override_redirect);
 void          gdk_window_set_accept_focus      (GdkWindow     *window,
 					        gboolean       accept_focus);
+void          gdk_window_set_focus_on_map      (GdkWindow     *window,
+					        gboolean       focus_on_map);
 void          gdk_window_add_filter            (GdkWindow     *window,
                                                 GdkFilterFunc  function,
                                                 gpointer       data);
@@ -560,6 +563,9 @@ void gdk_window_get_internal_paint_info (GdkWindow    *window,
 					 GdkDrawable **real_drawable,
 					 gint         *x_offset,
 					 gint         *y_offset);
+
+void gdk_window_enable_synchronized_configure (GdkWindow *window);
+void gdk_window_configure_finished            (GdkWindow *window);
 
 #ifndef GDK_MULTIHEAD_SAFE
 GdkPointerHooks *gdk_set_pointer_hooks (const GdkPointerHooks *new_hooks);   

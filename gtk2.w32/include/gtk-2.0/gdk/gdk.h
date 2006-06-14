@@ -67,6 +67,8 @@ void 	  gdk_init		   	(gint	   	*argc,
 					 gchar        ***argv);
 gboolean  gdk_init_check   	        (gint	   	*argc,
 					 gchar        ***argv);
+void gdk_add_option_entries_libgtk_only (GOptionGroup *group);
+void gdk_pre_parse_libgtk_only          (void);
 
 #ifndef GDK_DISABLE_DEPRECATED
 void  	  gdk_exit		   	(gint	    	 error_code);
@@ -115,6 +117,13 @@ GdkGrabStatus gdk_keyboard_grab      (GdkWindow    *window,
 				      gboolean      owner_events,
 				      guint32       time_);
 
+gboolean gdk_pointer_grab_info_libgtk_only (GdkDisplay *display,
+					    GdkWindow **grab_window,
+					    gboolean   *owner_events);
+gboolean gdk_keyboard_grab_info_libgtk_only (GdkDisplay *display,
+					     GdkWindow **grab_window,
+					     gboolean   *owner_events);
+
 #ifndef GDK_MULTIHEAD_SAFE
 void          gdk_pointer_ungrab     (guint32       time_);
 void          gdk_keyboard_ungrab    (guint32       time_);
@@ -144,7 +153,7 @@ void     gdk_rectangle_union     (GdkRectangle *src1,
 				  GdkRectangle *src2,
 				  GdkRectangle *dest);
 
-GType gdk_rectangle_get_type (void);
+GType gdk_rectangle_get_type (void) G_GNUC_CONST;
 
 #define GDK_TYPE_RECTANGLE (gdk_rectangle_get_type ())
 

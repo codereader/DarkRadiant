@@ -77,6 +77,9 @@ AtkRelationType       atk_relation_get_relation_type  (AtkRelation     *relation
  * Returns the target list of a relation.
  */
 GPtrArray*            atk_relation_get_target         (AtkRelation     *relation);
+void                  atk_relation_add_target         (AtkRelation     *relation,
+                                                       AtkObject       *target);
+                
 
 #ifdef __cplusplus
 }

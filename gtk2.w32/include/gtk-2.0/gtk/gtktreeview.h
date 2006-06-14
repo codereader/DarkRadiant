@@ -124,10 +124,13 @@ typedef gboolean (*GtkTreeViewSearchEqualFunc) (GtkTreeModel            *model,
 						const gchar             *key,
 						GtkTreeIter             *iter,
 						gpointer                 search_data);
+typedef gboolean (*GtkTreeViewRowSeparatorFunc) (GtkTreeModel      *model,
+						 GtkTreeIter       *iter,
+						 gpointer           data);
 
 
 /* Creators */
-GType                  gtk_tree_view_get_type                      (void);
+GType                  gtk_tree_view_get_type                      (void) G_GNUC_CONST;
 GtkWidget             *gtk_tree_view_new                           (void);
 GtkWidget             *gtk_tree_view_new_with_model                (GtkTreeModel              *model);
 
@@ -313,6 +316,21 @@ void gtk_tree_view_set_destroy_count_func (GtkTreeView             *tree_view,
 					   gpointer                 data,
 					   GtkDestroyNotify         destroy);
 
+void     gtk_tree_view_set_fixed_height_mode (GtkTreeView          *tree_view,
+					      gboolean              enable);
+gboolean gtk_tree_view_get_fixed_height_mode (GtkTreeView          *tree_view);
+void     gtk_tree_view_set_hover_selection   (GtkTreeView          *tree_view,
+					      gboolean              hover);
+gboolean gtk_tree_view_get_hover_selection   (GtkTreeView          *tree_view);
+void     gtk_tree_view_set_hover_expand      (GtkTreeView          *tree_view,
+					      gboolean              expand);
+gboolean gtk_tree_view_get_hover_expand      (GtkTreeView          *tree_view);
+
+GtkTreeViewRowSeparatorFunc gtk_tree_view_get_row_separator_func (GtkTreeView               *tree_view);
+void                        gtk_tree_view_set_row_separator_func (GtkTreeView                *tree_view,
+								  GtkTreeViewRowSeparatorFunc func,
+								  gpointer                    data,
+								  GtkDestroyNotify            destroy);
 
 #ifdef __cplusplus
 }

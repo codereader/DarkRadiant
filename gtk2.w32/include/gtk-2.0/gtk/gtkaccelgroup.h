@@ -101,7 +101,7 @@ struct _GtkAccelKey
 
 
 /* -- Accelerator Groups --- */
-GType          gtk_accel_group_get_type           (void);
+GType          gtk_accel_group_get_type           (void) G_GNUC_CONST;
 GtkAccelGroup* gtk_accel_group_new	      	  (void);
 void	       gtk_accel_group_lock		  (GtkAccelGroup  *accel_group);
 void	       gtk_accel_group_unlock		  (GtkAccelGroup  *accel_group);
@@ -148,6 +148,8 @@ void	 gtk_accelerator_parse		      (const gchar     *accelerator,
 					       GdkModifierType *accelerator_mods);
 gchar*	 gtk_accelerator_name		      (guint	        accelerator_key,
 					       GdkModifierType  accelerator_mods);
+gchar*   gtk_accelerator_get_label            (guint           accelerator_key,
+                                               GdkModifierType accelerator_mods);
 void	 gtk_accelerator_set_default_mod_mask (GdkModifierType  default_mod_mask);
 guint	 gtk_accelerator_get_default_mod_mask (void);
 
