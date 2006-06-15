@@ -1883,16 +1883,23 @@ const char* getMapsPath()
   return g_mapsPath.c_str();
 }
 
-/* Display the Open Map dialog and return the name of the chosen file to the
- * calling function
+namespace ui {
+
+/* Display a GTK file chooser and select a map file to open or close. The last
+ * path used is set as the default the next time the dialog is displayed.
+ * 
+ * Parameters:
+ * title -- the title to display in the dialog
+ * open -- true to open, false to save
+ * 
  */
 
-const char* map_open(const char* title)
+const char* selectMapFile(const char* title, bool open)
 {
 	// Save the most recently-used path so that successive maps can be opened
 	// from the same directory.
 	static std::string lastPath = getMapsPath();
-	const char* filePath = file_dialog(GTK_WIDGET(MainFrame_getWindow()), TRUE, title, lastPath.c_str(), MapFormat::Name());
+	const char* filePath = file_dialog(GTK_WIDGET(MainFrame_getWindow()), open, title, lastPath.c_str(), MapFormat::Name());
 
 	// Update the lastPath static variable with the path to the last directory
 	// opened.
@@ -1902,17 +1909,14 @@ const char* map_open(const char* title)
 	return filePath;
 }
 
-const char* map_save(const char* title)
-{
-    return file_dialog(GTK_WIDGET(MainFrame_getWindow()), FALSE, title, getMapsPath(), MapFormat::Name());
-}
+} // namespace ui
 
 void OpenMap()
 {
   if (!ConfirmModified("Open Map"))
     return;
 
-  const char* filename = map_open("Open Map");
+  const char* filename = ui::selectMapFile("Open Map", true);
 
   if (filename != 0)
   {
@@ -1925,7 +1929,7 @@ void OpenMap()
 
 void ImportMap()
 {
-  const char* filename = map_open("Import Map");
+  const char* filename = ui::selectMapFile("Import Map", true);
 
   if(filename != 0)
   {
@@ -1936,7 +1940,7 @@ void ImportMap()
 
 bool Map_SaveAs()
 {
-  const char* filename = map_save("Save Map");
+  const char* filename = ui::selectMapFile("Save Map", false);
   
   if(filename != 0)
   {
@@ -1966,7 +1970,7 @@ void SaveMap()
 
 void ExportMap()
 {
-  const char* filename = map_save("Export Selection");
+  const char* filename = ui::selectMapFile("Export Selection", false);
 
   if(filename != 0)
   {
@@ -1976,7 +1980,7 @@ void ExportMap()
 
 void SaveRegion()
 {
-  const char* filename = map_save("Export Region");
+  const char* filename = ui::selectMapFile("Export Region", false);
   
   if(filename != 0)
   {
