@@ -218,7 +218,6 @@ radiant_src = [
 'eclass_fgd.cpp',
 'eclass_xml.cpp',
 'entity.cpp',
-'entityinspector.cpp',
 'entitylist.cpp',
 'environment.cpp',
 'error.cpp',
@@ -277,13 +276,13 @@ radiant_src = [
 'xmlstuff.cpp',
 'xywindow.cpp',
 'dialog/einspector/EntityInspector.cpp',
-'dialog/einspector/EntityKeyValueVisitor.cpp',
 'dialog/einspector/PropertyEditor.cpp',
 'dialog/einspector/TextPropertyEditor.cpp',
 'dialog/einspector/PropertyEditorFactory.cpp',
 'dialog/einspector/Vector3PropertyEditor.cpp',
 'dialog/einspector/BooleanPropertyEditor.cpp',
 'dialog/einspector/EntityPropertyEditor.cpp',
+'dialog/einspector/ClassnamePropertyEditor.cpp',
 'dialog/einspector/AllPropertiesDialog.cpp'
 ]
 

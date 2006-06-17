@@ -265,7 +265,6 @@ public:
     TextureBrowser_Construct();
     Entity_Construct();
     Autosave_Construct();
-    EntityInspector_construct();
     FindTextureDialog_Construct();
     NullModel_construct();
     MapRoot_construct();
@@ -280,7 +279,6 @@ public:
     MapRoot_destroy();
     NullModel_destroy();
     FindTextureDialog_Destroy();
-    EntityInspector_destroy();
     Autosave_Destroy();
     Entity_Destroy();
     TextureBrowser_Destroy();
