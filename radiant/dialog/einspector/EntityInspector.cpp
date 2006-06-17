@@ -125,6 +125,7 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     							    G_TYPE_STRING, // property
     							    G_TYPE_STRING, // value
     							    G_TYPE_STRING, // value type
+                                    G_TYPE_STRING, // text colour
     							    GDK_TYPE_PIXBUF); // value icon
     
     // Create the TreeView widget and link it to the model
@@ -139,9 +140,10 @@ GtkWidget* EntityInspector::createTreeViewPane() {
                                                  textRenderer,
                                                  "text",
                                                  PROPERTY_NAME_COLUMN,
+                                                 "foreground",
+                                                 TEXT_COLOUR_COLUMN,
                                                  NULL);
     gtk_tree_view_column_set_resizable(nameCol, TRUE);
-    gtk_tree_view_column_set_sizing(nameCol, GTK_TREE_VIEW_COLUMN_GROW_ONLY);
     gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), nameCol);                                                                        
 
 	// Create the value column
@@ -330,6 +332,7 @@ void EntityInspector::populateTreeModel() {
 	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_NAME_COLUMN, keyName.c_str(), -1);
 	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_VALUE_COLUMN, NO_VALUE_STRING.c_str(), -1); // no value yet
 	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_TYPE_COLUMN, keyType.c_str(), -1);
+            gtk_tree_store_set(_treeStore, &tempIter, TEXT_COLOUR_COLUMN, "grey", -1);
 
 			std::string typeIcon = std::string("icon_") + keyType + ".png";
 	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_ICON_COLUMN, 
@@ -361,14 +364,18 @@ gboolean EntityInspector::treeWalkFunc(GtkTreeModel* model, GtkTreePath* path, G
         std::string newValue = selectedEntity->getKeyValue(property.c_str());
         if (newValue.size() > 0) { // property found on Entity
             gtk_tree_store_set(GTK_TREE_STORE(model), iter, PROPERTY_VALUE_COLUMN, newValue.c_str(), -1);
+            gtk_tree_store_set(GTK_TREE_STORE(model), iter, TEXT_COLOUR_COLUMN, "black", -1);
         } else {
             gtk_tree_store_set(GTK_TREE_STORE(model), iter, PROPERTY_VALUE_COLUMN, NO_VALUE_STRING.c_str(), -1);
+            gtk_tree_store_set(GTK_TREE_STORE(model), iter, TEXT_COLOUR_COLUMN, "grey", -1);
         }            
     }
     return FALSE;  
 }
 
-// Main refresh function
+// Main refresh function. The TreeStore is populated with categories,
+// but the values are not yet set.
+
 void EntityInspector::refreshTreeModel() {
 
     // Iterate over the rows in the TreeModel, setting the appropriate column

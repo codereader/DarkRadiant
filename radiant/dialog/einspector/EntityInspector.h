@@ -25,7 +25,7 @@ namespace {
     const int TREEVIEW_MIN_HEIGHT = 220;
     const int PROPERTYEDITORPANE_MIN_HEIGHT = 100;
     
-    const std::string NO_VALUE_STRING = "--";
+    const std::string NO_VALUE_STRING = "";
     const char* ADVANCED_BUTTON_STRING = "All properties...";
 
     const std::string UNRECOGNISED_PROPERTIES_PREFIX = "<span foreground=\"red\">";
@@ -50,6 +50,7 @@ private:
         PROPERTY_NAME_COLUMN,
         PROPERTY_VALUE_COLUMN,
         PROPERTY_TYPE_COLUMN,
+        TEXT_COLOUR_COLUMN,
         PROPERTY_ICON_COLUMN,
         N_COLUMNS
     };
