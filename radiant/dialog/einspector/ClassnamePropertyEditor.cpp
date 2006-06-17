@@ -27,8 +27,12 @@ ClassnamePropertyEditor::ClassnamePropertyEditor(Entity* entity, const std::stri
                                         gtk_list_store_new(1, G_TYPE_STRING)));
     gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(sortedModel), 0, GTK_SORT_ASCENDING);
     
-    _comboBox = gtk_combo_box_entry_new_with_model(sortedModel, 0); 
-    gtk_editable_set_editable(GTK_EDITABLE(GTK_BIN(_comboBox)->child), false);
+    _comboBox = gtk_combo_box_new_with_model(sortedModel); 
+
+    // Add a text cell renderer
+    GtkCellRenderer* textCell = gtk_cell_renderer_text_new();
+    gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_comboBox), textCell, TRUE);
+    gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_comboBox), textCell, "text", 0);
 
     populateComboBox();
 
@@ -79,7 +83,7 @@ void ClassnamePropertyEditor::populateComboBox() {
 // Get and set value
 
 void ClassnamePropertyEditor::setValue(const std::string& val) {
-    gtk_entry_set_text(GTK_ENTRY(GTK_BIN(_comboBox)->child), val.c_str());
+//    gtk_entry_set_text(GTK_ENTRY(GTK_BIN(_comboBox)->child), val.c_str());
 }
 
 const std::string ClassnamePropertyEditor::getValue() {
