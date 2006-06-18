@@ -6,7 +6,7 @@ namespace xml
 
 // Construct a Node from the given xmlNodePtr.
 
-inline Node::Node(xmlNodePtr node):
+Node::Node(xmlNodePtr node):
     _xmlNode(node)
 {
 }
