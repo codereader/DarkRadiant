@@ -24,7 +24,9 @@ void PropertyEditorFactory::registerClasses() {
         _peMap["vector3"] = new Vector3PropertyEditor();
         _peMap["boolean"] = new BooleanPropertyEditor();
         _peMap["entity"] = new EntityPropertyEditor();
+#ifdef USE_CLASSNAME_PROPERTY_EDITOR
         _peMap["classname"] = new ClassnamePropertyEditor();
+#endif
 }
 
 // Create a PropertyEditor from the given name.

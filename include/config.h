@@ -17,4 +17,12 @@
 
 //#define ALL_PROPERTY_EDITORS_ARE_TEXT
 
+
+/* Enable this option to allow the use of ClassnamePropertyEditor for the "classname"
+ * property. A corresponding change must be made in the .game file to select this
+ * editor for the property.
+ */
+
+//#define USE_CLASSNAME_PROPERTY_EDITOR
+
 #endif /*CONFIG_H_*/

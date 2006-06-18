@@ -27,7 +27,7 @@
 	<entityInspector>
 		<propertyCategory name="Basic">
 			<property name="origin" type="vector3" />
-			<property name="classname" type="classname" />
+			<property name="classname" type="text" />
 			<property name="name" type="text" />
 			<property name="rotation" type="text" />
 		</propertyCategory>
