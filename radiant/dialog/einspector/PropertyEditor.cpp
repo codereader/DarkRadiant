@@ -48,13 +48,15 @@ GtkWidget* PropertyEditor::getApplyButtonHbox() {
 		_applyButtonHbox = gtk_hbox_new(FALSE, 6);
 
 		GtkWidget* applyButton = gtk_button_new_from_stock(GTK_STOCK_APPLY);
+        g_signal_connect(G_OBJECT(applyButton), "clicked", G_CALLBACK(callbackApply), this); // "this" will refer to the Derived class here
+        gtk_box_pack_end(GTK_BOX(_applyButtonHbox), applyButton, FALSE, FALSE, 0);
+
+#ifdef PROPERTY_EDITOR_HAS_UNDO_BUTTON
 		GtkWidget* resetButton = gtk_button_new_from_stock(GTK_STOCK_UNDO);
+        g_signal_connect(G_OBJECT(resetButton), "clicked", G_CALLBACK(callbackReset), this);
+        gtk_box_pack_end(GTK_BOX(_applyButtonHbox), resetButton, FALSE, FALSE, 0);
+#endif
 
-		g_signal_connect(G_OBJECT(applyButton), "clicked", G_CALLBACK(callbackApply), this); // "this" will refer to the Derived class here
-		g_signal_connect(G_OBJECT(resetButton), "clicked", G_CALLBACK(callbackReset), this);
-
-		gtk_box_pack_end(GTK_BOX(_applyButtonHbox), applyButton, FALSE, FALSE, 0);
-		gtk_box_pack_end(GTK_BOX(_applyButtonHbox), resetButton, FALSE, FALSE, 0);
 		gtk_container_set_border_width(GTK_CONTAINER(_applyButtonHbox), 3);
 	}
 	return _applyButtonHbox;	
@@ -136,7 +138,7 @@ void PropertyEditor::refresh() {
  * GTK CALLBACKS
  */
 
-inline void PropertyEditor::callbackApply(GtkWidget* caller, PropertyEditor* self) {
+void PropertyEditor::callbackApply(GtkWidget* caller, PropertyEditor* self) {
 	const std::string& newValue = self->getValue(); // retrieve the new keyval from the child
 
     // Set the keyvalue on the owned entity if the enabled toggle is active,
@@ -147,14 +149,18 @@ inline void PropertyEditor::callbackApply(GtkWidget* caller, PropertyEditor* sel
         self->_entity->setKeyValue(self->_key.c_str(), "");
 }
 
-inline void PropertyEditor::callbackReset(GtkWidget* caller, PropertyEditor* self) {
+#ifdef PROPERTY_EDITOR_HAS_UNDO_BUTTON
+
+void PropertyEditor::callbackReset(GtkWidget* caller, PropertyEditor* self) {
 	self->refresh();
 }
+
+#endif
 
 // Callback for when the active checkbox is toggled. This enables or disables
 // the central edit pane.
 
-inline void PropertyEditor::callbackActiveToggled(GtkWidget* caller, PropertyEditor* self) {
+void PropertyEditor::callbackActiveToggled(GtkWidget* caller, PropertyEditor* self) {
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(caller)))
 		gtk_widget_set_sensitive(self->_editWindow, TRUE);
 	else 

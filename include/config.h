@@ -1,8 +1,10 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-/* This file defines compile-time configuration options for building DarkRadiant
+/*
+ * ENTITY INSPECTOR
  */
+
 
 /* This option specifies that the new Entity Inspector should be used instead of
  * the legacy GtkRadiant dialog
@@ -24,5 +26,12 @@
  */
 
 //#define USE_CLASSNAME_PROPERTY_EDITOR
+
+
+/* Specify whether an "Undo" button should be displayed on the PropertyEditor.
+ */
+ 
+//#define PROPERTY_EDITOR_HAS_UNDO_BUTTON
+
 
 #endif /*CONFIG_H_*/

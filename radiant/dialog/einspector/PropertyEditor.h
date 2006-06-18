@@ -59,8 +59,12 @@ private: // methods
 
     // Static callbacks for the Apply and Reset buttons. These will eventually 
     // invoke the corresponding virtual functions on the derived class.
+
     static void callbackApply(GtkWidget*, PropertyEditor*);
+
+#ifdef PROPERTY_EDITOR_HAS_UNDO_BUTTON
     static void callbackReset(GtkWidget*, PropertyEditor*);
+#endif
     
     // Static callback for the Key Active checkbox, which enables or disables
     // the central edit pane.

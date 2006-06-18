@@ -91,21 +91,7 @@ void EntityPropertyEditor::setValue(const std::string& val) {
 }
 
 const std::string EntityPropertyEditor::getValue() {
-	GtkTreeModel* sortedModel = gtk_combo_box_get_model(GTK_COMBO_BOX(_comboBox));
-
-	// Get an iter on the sortedModel
-	GtkTreeIter sortedIter;
-	if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(_comboBox), &sortedIter)) {
-		// Get the value out of the ListStore
-		GValue value = {0, 0};
-		gtk_tree_model_get_value(sortedModel, &sortedIter, 0, &value);
-		const std::string retVal = g_value_get_string(&value);
-		g_value_unset(&value);
-		return retVal;
-	} else {
-		// No valid selection, return blank
-		return "";
-	}
+    return gtk_entry_get_text(GTK_ENTRY(GTK_BIN(_comboBox)->child));
 }
 
 
