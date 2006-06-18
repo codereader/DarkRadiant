@@ -178,8 +178,8 @@ CCFLAGS = POSIXFLAGS + warningFlags
 CXXFLAGS = '-pipe ' + POSIXFLAGS + warningFlags + warningFlagsCXX
 CPPPATH = ['radiant']
 if (BUILD == 'debug'):
-	CXXFLAGS += '-g -D_DEBUG '
-	CCFLAGS += '-g -D_DEBUG '
+	CXXFLAGS += '-O1 -g -D_DEBUG '
+	CCFLAGS += '-O1 -g -D_DEBUG '
 elif (BUILD == 'release' or BUILD == 'final'):
 	CXXFLAGS += '-O2 '
 	CCFLAGS += '-O2 '
