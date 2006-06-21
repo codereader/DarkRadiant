@@ -444,6 +444,10 @@ struct Normal3f : public Vector3
     : Vector3(_x, _y, _z)
   {
   }
+  
+	// Static conversion from Vector3
+	Normal3f(const Vector3& vec): Vector3(vec) {}
+  
 };
 
 inline bool operator<(const Normal3f& self, const Normal3f& other)

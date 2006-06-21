@@ -600,7 +600,6 @@ void EntityClassDoom3_loadFile(const char* filename)
 EntityClass *EntityClassDoom3_findOrInsert(const char *name, bool has_brushes)
 {
     ASSERT_NOTNULL(name);
-    std::cout << "EntityClassDoom3_findOrInsert(" << name << ")" << std::endl;
 
     // Return an error if no name is given
     if (string_empty(name)) {
@@ -610,12 +609,10 @@ EntityClass *EntityClassDoom3_findOrInsert(const char *name, bool has_brushes)
     // Find the EntityClass in the map.
     EntityClasses::iterator i = g_EntityClassDoom3_classes.find(name);
     if (i != g_EntityClassDoom3_classes.end()) {
-        std::cout << "  Found " << name << ", returning" << std::endl;
         return i->second; // found it, return
     }
 
     // Otherwise insert the new EntityClass
-    std::cout << "  Not found, inserting" << std::endl;
     EntityClass *e = EntityClass_Create_Default(name, has_brushes);
     EntityClass *inserted = EntityClassDoom3_insertUnique(e);
 
@@ -837,7 +834,6 @@ public:
     // Constructor. Create the entity class manager, then set the API function
     // pointers to the appropriate functions.
     EntityClassDoom3API() {
-        std::cout << "EntityClassDoom3API()" << std::endl;
         EntityClassDoom3_construct();
     
         m_eclassmanager.findOrInsert = &EntityClassDoom3_findOrInsert;

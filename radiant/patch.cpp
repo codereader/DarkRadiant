@@ -1689,15 +1689,15 @@ void Patch::TesselateSubMatrixFixed(ArbitraryMeshVertex* vertices, std::size_t s
        
         if(((nFlagsX & AVERAGE) != 0 && i == 0) || ((nFlagsY & AVERAGE) != 0  && j == 0))
         {
-          normal3f_to_vector3(p->normal) = vector3_normalised(vector3_added(normal3f_to_vector3(p->normal), normal));
-          normal3f_to_vector3(p->tangent) = vector3_normalised(vector3_added(normal3f_to_vector3(p->tangent), tangent));
-          normal3f_to_vector3(p->bitangent) = vector3_normalised(vector3_added(normal3f_to_vector3(p->bitangent), bitangent));
+          p->normal = Normal3f(vector3_added(normal3f_to_vector3(p->normal), normal).getNormalised());
+          p->tangent = Normal3f(vector3_added(normal3f_to_vector3(p->tangent), tangent).getNormalised());
+          p->bitangent = Normal3f(vector3_added(normal3f_to_vector3(p->bitangent), bitangent).getNormalised());
         }
         else
         {
-          normal3f_to_vector3(p->normal) = normal;
-          normal3f_to_vector3(p->tangent) = tangent;
-          normal3f_to_vector3(p->bitangent) = bitangent;
+          p->normal = Normal3f(normal);
+          p->tangent = Normal3f(tangent);
+          p->bitangent = Normal3f(bitangent);
         }
       }
 

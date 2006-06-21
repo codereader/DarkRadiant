@@ -158,7 +158,6 @@ public:
   FunctionPointer findSymbol(const char* symbol)
   {
     FunctionPointer address = GetProcAddress(m_library, symbol);
-	std::cout << "DynamicLibrary::findSymbol found " << symbol << " at " << address << std::endl;
     if(address == 0)
     {
       std::cerr << "GetProcAddress failed: '" << symbol << "'\n";

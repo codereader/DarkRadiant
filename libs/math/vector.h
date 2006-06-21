@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/vector.h"
 
+#include <iostream>
+
 #if defined (_MSC_VER)
 
 inline int lrint (double flt)
@@ -506,7 +508,8 @@ inline void operator/=(BasicVector3<Element>& self, const OtherElement& divisor)
 template<typename Element, typename OtherElement>
 inline double vector3_dot(const BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
 {
-  return self.x() * other.x() + self.y() * other.y() + self.z() * other.z();
+  	double dotval = self.x() * other.x() + self.y() * other.y() + self.z() * other.z();
+  	return dotval;
 }
 
 template<typename Element>
@@ -545,13 +548,15 @@ inline void vector3_negate(BasicVector3<Element>& self)
 template<typename Element>
 inline double vector3_length_squared(const BasicVector3<Element>& self)
 {
-  return vector3_dot(self, self);
+  	double dotval = vector3_dot(self, self);
+	return dotval;
 }
 
+// DEPRECATED.
 template<typename Element>
-inline double vector3_length(const BasicVector3<Element>& self)
+inline double vector3_length(const BasicVector3<Element>& vec)
 {
-  return sqrt(vector3_length_squared(self));
+	return vec.getLength();
 }
 
 template<typename Element>
@@ -562,9 +567,9 @@ inline Element float_divided(Element f, Element other)
 }
 
 template<typename Element>
-inline BasicVector3<Element> vector3_normalised(const BasicVector3<Element>& self)
+inline BasicVector3<Element> vector3_normalised(const BasicVector3<Element>& vec)
 {
-  return vector3_scaled(self, float_divided(1.0, vector3_length(self)));
+	return vec.getScaledBy(1.0 / vec.getLength());
 }
 
 template<typename Element>

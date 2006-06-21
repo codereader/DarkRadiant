@@ -36,7 +36,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 #if defined(WIN32)
+#ifndef PATH_MAX
 #define PATH_MAX 260
+#endif
 #endif
 
 

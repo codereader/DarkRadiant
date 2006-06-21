@@ -3,6 +3,7 @@
 #define INCLUDED_VECTOR_H
 
 #include <cstddef>
+#include <cmath>
 
 template <typename Element>
 class BasicVector2
@@ -64,13 +65,16 @@ public:
   BasicVector3()
   {
   }
-  template<typename OtherElement>
-  BasicVector3(const BasicVector3<OtherElement>& other)
-  {
-    x() = static_cast<Element>(other.x());
-    y() = static_cast<Element>(other.y());
-    z() = static_cast<Element>(other.z());
-  }
+
+	// Templated copy constructor
+	template<typename OtherElement>
+	BasicVector3(const BasicVector3<OtherElement>& other)
+	{
+		x() = static_cast<Element>(other.x());
+		y() = static_cast<Element>(other.y());
+		z() = static_cast<Element>(other.z());
+	}
+
   BasicVector3(const Element& x_, const Element& y_, const Element& z_)
   {
     x() = x_;
@@ -102,6 +106,36 @@ public:
   {
     return m_elements[2];
   }
+
+	/* 
+	 * Mathematical operations on the BasicVector3 
+	 */
+	 
+	// Return the length of this vector
+	double getLength() const {
+		// Use Pythagoras to calculate the length squared.
+		double lenSquared = x()*x() + y()*y() + z()*z();
+		return sqrt(lenSquared);
+	}
+
+	// Return a new BasicVector3 equivalent to this BasicVector3
+	// scaled by a constant amount
+	BasicVector3<Element> getScaledBy(double scale) const {
+		return BasicVector3<Element>(
+					x() * scale,
+					y() * scale,
+					z() * scale);
+	}
+
+	// Return a new BasicVector3 equivalent to the normalised
+	// version of this BasicVector3 (scaled by the inverse of its size)
+	BasicVector3<Element> getNormalised() const {
+		return getScaledBy(1.0 / getLength());
+	}
+
+	/*
+	 * Data accessor functions
+	 */
 
   const Element& operator[](std::size_t i) const
   {
