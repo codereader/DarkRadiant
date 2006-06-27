@@ -22,8 +22,8 @@ namespace ui {
 namespace {
 
     const int TREEVIEW_MIN_WIDTH = 260;
-    const int TREEVIEW_MIN_HEIGHT = 220;
-    const int PROPERTYEDITORPANE_MIN_HEIGHT = 100;
+    const int TREEVIEW_MIN_HEIGHT = 200;
+    const int PROPERTYEDITORPANE_MIN_HEIGHT = 120;
     
     const std::string NO_VALUE_STRING = "";
     const char* ADVANCED_BUTTON_STRING = "All properties...";
