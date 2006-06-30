@@ -181,8 +181,8 @@ if (BUILD == 'debug'):
 	CXXFLAGS += '-O1 -g -D_DEBUG '
 	CCFLAGS += '-O1 -g -D_DEBUG '
 elif (BUILD == 'release' or BUILD == 'final'):
-	CXXFLAGS += '-O2 '
-	CCFLAGS += '-O2 '
+	CXXFLAGS += '-O2 -fno-inline -fno-default-inline '
+	CCFLAGS += '-O2 -fno-inline -fno-default-inline '
 else:
 	print 'Unknown build configuration ' + BUILD
 	sys.exit( 0 )
@@ -236,6 +236,12 @@ class idEnvironment(Environment):
 			LINKFLAGS = LINKFLAGS,
 			TOOLS = toolList) # don't want Scons to choose MSVC on Win32
 
+	def useBoost(self):
+		if (self['PLATFORM'] == 'win32'):
+			self.Append(CPPPATH = ['#/boost.w32/include'])
+			self.Append(LIBPATH = ['#/boost.w32/lib'])
+			self.Append(LIBS = ['libboost_regex-gcc'])
+	
 	def useGlib2(self):
 	# On Win32 we need to add the local paths, since there is no
 	# global include/lib path.
