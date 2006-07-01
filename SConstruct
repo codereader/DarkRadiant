@@ -178,8 +178,8 @@ CCFLAGS = POSIXFLAGS + warningFlags
 CXXFLAGS = '-pipe ' + POSIXFLAGS + warningFlags + warningFlagsCXX
 CPPPATH = ['radiant']
 if (BUILD == 'debug'):
-	CXXFLAGS += '-O1 -g -D_DEBUG '
-	CCFLAGS += '-O1 -g -D_DEBUG '
+	CXXFLAGS += '-g -D_DEBUG '
+	CCFLAGS += '-g -D_DEBUG '
 elif (BUILD == 'release' or BUILD == 'final'):
 	CXXFLAGS += '-O2 -fno-inline -fno-default-inline '
 	CCFLAGS += '-O2 -fno-inline -fno-default-inline '
@@ -207,7 +207,7 @@ if ( getOS() == 'posix' ):
   #  os.mkdir("./install")
   #os.system("cp `g++ -print-file-name=libstdc++.so` ./install")
   
-  CXXFLAGS += '-fno-rtti '
+  #CXXFLAGS += '-fno-rtti '
   LINKFLAGS += '-Wl,-fini,fini_stub -L. -static-libgcc '
 
 CPPPATH.append('libs')
@@ -241,6 +241,8 @@ class idEnvironment(Environment):
 			self.Append(CPPPATH = ['#/boost.w32/include'])
 			self.Append(LIBPATH = ['#/boost.w32/lib'])
 			self.Append(LIBS = ['libboost_regex-gcc'])
+		else:
+			self.Append(LIBS = ['boost_regex'])
 	
 	def useGlib2(self):
 	# On Win32 we need to add the local paths, since there is no
