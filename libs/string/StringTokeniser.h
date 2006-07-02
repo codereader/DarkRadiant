@@ -2,6 +2,7 @@
 #define STRINGTOKENISER_H_
 
 #include <string>
+#include <iostream>
 
 #include <boost/tokenizer.hpp>
 
@@ -19,9 +20,11 @@ class QuotedTokeniserFunc {
     // Test if a character is a delimiter
     bool isDelim(char c) {
         const char* curDelim = _delims;
-        while (*(curDelim++) != 0)
-            if (*curDelim == c) 
+        while (*curDelim != 0) {
+            if (*(curDelim++) == c) {
                 return true;
+            }
+        }
         return false;
     }
     
@@ -39,6 +42,8 @@ public:
      */
     template<typename InputIterator, typename Token>
     bool operator() (InputIterator& next, InputIterator end, Token& tok) {
+        // Clear out the token, no guarantee that it is empty
+        tok = "";
         // Skip any preceding delimiters
         while (next != end && isDelim(*next))
             next++;
@@ -56,8 +61,9 @@ public:
             return true;
         }
         else { // no quote
-            while (next != end && !isDelim(*next))
+            while (next != end && !isDelim(*next)) {
                 tok += *(next++);
+            }
             return true;
         }
     }
