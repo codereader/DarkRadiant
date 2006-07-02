@@ -7,6 +7,67 @@
 
 namespace util {
 
+/* Model of boost::TokenizerFunction which splits tokens on whitespace with additional
+ * protection of quoted content.
+ */
+
+class QuotedTokeniserFunc {
+    
+    // List of delimiters to skip
+    const char* _delims;
+    
+    // Test if a character is a delimiter
+    bool isDelim(char c) {
+        const char* curDelim = _delims;
+        while (*(curDelim++) != 0)
+            if (*curDelim == c) 
+                return true;
+        return false;
+    }
+    
+public:
+
+    // Constructor
+    QuotedTokeniserFunc(const char* delims = " \t\n")
+    : _delims(delims)
+    {}
+
+    /* REQUIRED. Operator() is called by the boost::tokenizer. This function
+     * must search for a token between the two iterators next and end, and if
+     * a token is found, set tok to the token, set next to position to start
+     * parsing on the next call, and return true.
+     */
+    template<typename InputIterator, typename Token>
+    bool operator() (InputIterator& next, InputIterator end, Token& tok) {
+        // Skip any preceding delimiters
+        while (next != end && isDelim(*next))
+            next++;
+        // Return false if we didn't find anything
+        if (next == end)
+            return false;
+        // Now next is pointing at a non-delimiter. Switch based on whether this
+        // is a quote or not.
+        if (*next == '\"') {
+            while (next != end && *next != '\"')
+                tok += *(next++);
+            // Get the final quote if it exists
+            if (next != end)
+                tok += *(next++);
+            return true;
+        }
+        else { // no quote
+            while (next != end && !isDelim(*next))
+                tok += *(next++);
+            return true;
+        }
+    }
+    
+    // REQUIRED. Reset function to clear internal state
+    void reset() {}
+    
+};
+
+
 /** Split a string into tokens.
  * 
  * This class provides a similar interface to Java's StringTokenizer class. It accepts
@@ -17,11 +78,10 @@ namespace util {
 class StringTokeniser
 {
 
-    // The string to tokenise
-    const std::string& _tokStr;
-    
-    // List of delimiters
-    const char* _delims;
+    // Internal Boost tokenizer and its iterator
+    typedef boost::tokenizer<QuotedTokeniserFunc> CharTokeniser;
+    CharTokeniser _tok;
+    CharTokeniser::iterator _tokIter;
 
 public:
 
@@ -36,9 +96,35 @@ public:
      */
 
     StringTokeniser(const std::string& str, const char* seps = " \t\n")
-    : _tokStr(str), _delims(seps) {
+    : _tok(str, QuotedTokeniserFunc()),
+      _tokIter(_tok.begin()) 
+    {
     }
         
+        
+    /** Test if this StringTokeniser has more tokens to return.
+     * 
+     * @returns
+     * true if there are further tokens, false otherwise
+     */
+     
+    bool hasMoreTokens() {
+        return _tokIter != _tok.end();
+    }
+
+
+    /** Return the next token in the sequence.
+     * 
+     * @returns
+     * std::string containing the next token in the sequence.
+     * 
+     * @pre
+     * hasMoreTokens() must be true, otherwise the result is undefined
+     */
+     
+    const std::string nextToken() {
+        return *(_tokIter++);
+    }   
 };
 
 } // namespace util
