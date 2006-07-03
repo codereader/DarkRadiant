@@ -53,11 +53,12 @@ public:
         // Now next is pointing at a non-delimiter. Switch based on whether this
         // is a quote or not.
         if (*next == '\"') {
-            while (next != end && *next != '\"')
-                tok += *(next++);
-            // Get the final quote if it exists
+            while (next++ != end && *next != '\"')
+                tok += *next;
+            // Advance past the final quote, unless we hit the end rather than
+            // a close quote.
             if (next != end)
-                tok += *(next++);
+                next++;
             return true;
         }
         else { // no quote
