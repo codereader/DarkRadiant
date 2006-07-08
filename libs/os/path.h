@@ -279,5 +279,24 @@ TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const Directo
   return ostream;
 }
 
+/** General utility functions for OS-related tasks
+ */
+ 
+#include <boost/algorithm/string/replace.hpp>
+ 
+namespace os {
+ 
+    /** Convert the slashes in a Doom 3 path to forward-slashes. Doom 3 accepts either
+     * forward or backslashes in its definitions
+     */
+       
+    inline const std::string standardPath(const std::string& inPath) {
+        std::string newStr = inPath;
+        boost::algorithm::replace_all(newStr, "\\", "/");
+        return newStr;
+    } 
+    
+}
+
 
 #endif

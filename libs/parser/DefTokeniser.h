@@ -136,14 +136,8 @@ public:
                     // In the quoted state, just advance until the closing quote. No
                     // delimiter splitting is required.
                     if (*next == '\"') {
-                        if (tok != "") { // have a token now, close quote indicates the end
-                            next++;
-                            return true;
-                        } 
-                        else {
-                            _state = SEARCHING;
-                            continue; // do not add final quote
-                        }
+                        next++;
+                        return true;
                     }
                     else {
                         tok += *next;

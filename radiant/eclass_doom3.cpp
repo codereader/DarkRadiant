@@ -32,12 +32,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/callback.h"
 #include "string/string.h"
+#include "parser/DefTokeniser.h"
 #include "eclasslib.h"
 #include "os/path.h"
 #include "os/dir.h"
 #include "stream/stringstream.h"
 #include "moduleobservers.h"
 #include "stringio.h"
+
+#include "gtkutil/dialog.h"
 
 #include <iostream>
 
@@ -294,251 +297,183 @@ inline const char* string_findFirstNonSpaceOrTab(const char* string)
 }
 
 
-void EntityClassDoom3_parseEntityDef(Tokeniser& tokeniser)
+void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
 {
-  EntityClass* entityClass = Eclass_Alloc();
-  entityClass->free = &Eclass_Free;
+    EntityClass* entityClass = Eclass_Alloc();
+    entityClass->free = &Eclass_Free;
 
-  entityClass->m_name = tokeniser.getToken();
+    // Entity name
+    const std::string sName = tokeniser.nextToken();
+//    std::cout << "  name = " << sName << std::endl;
+    entityClass->m_name = sName.c_str();
 
-  const char* token = tokeniser.getToken();
-  ASSERT_MESSAGE(string_equal(token, "{"), "error parsing entity definition");
-  tokeniser.nextLine();
+    // Required open brace
+    tokeniser.assertNextToken("{");
 
-  StringOutputStream usage(256);
-  StringOutputStream description(256);
-  CopiedString* currentDescription = 0;
-  StringOutputStream* currentString = 0;
+    // Loop over all of the keys in this entitydef
+    while (true) {
 
-  for(;;)
-  {
-    const char* key = tokeniser.getToken();
+        const std::string key = tokeniser.nextToken();
+
+        // DEBUG
+//        std::cout << "key is " << key << std::endl;
+
+        if (key == "}") // end of def
+            break;
     
-    const char* last = string_findFirstSpaceOrTab(key);
-    CopiedString first(StringRange(key, last));
-
-    if(!string_empty(last))
-    {
-      last = string_findFirstNonSpaceOrTab(last);
-    }
-
-    if(currentString != 0 && string_equal(key, "\\"))
-    {
-      tokeniser.nextLine();
-      *currentString << " " << tokeniser.getToken();
-      continue;
-    }
-
-    if(currentDescription != 0)
-    {
-      *currentDescription = description.c_str();
-      description.clear();
-      currentDescription = 0;
-    }
-    currentString = 0;
-
-    if(string_equal(key, "}"))
-    {
-      tokeniser.nextLine();
-      break;
-    }
-    else if(string_equal(key, "model"))
-    {
-      entityClass->fixedsize = true;
-      StringOutputStream buffer(256);
-      buffer << PathCleaned(tokeniser.getToken());
-      entityClass->m_modelpath = buffer.c_str();
-    }
-    else if(string_equal(key, "editor_color"))
-    {
-      const char* value = tokeniser.getToken();
-      if(!string_empty(value))
-      {
-        entityClass->colorSpecified = true;
-        bool success = string_parse_vector3(value, entityClass->color);
-        ASSERT_MESSAGE(success, "editor_color: parse error");
-      }
-    }
-    else if(string_equal(key, "editor_ragdoll"))
-    {
-      //bool ragdoll = atoi(tokeniser.getToken()) != 0;
-      tokeniser.getToken();
-    }
-    else if(string_equal(key, "editor_mins"))
-    {
-      entityClass->sizeSpecified = true;
-      const char* value = tokeniser.getToken();
-      if(!string_empty(value) && !string_equal(value, "?"))
-      {
-        entityClass->fixedsize = true;
-        bool success = string_parse_vector3(value, entityClass->mins);
-        ASSERT_MESSAGE(success, "editor_mins: parse error");
-      }
-    }
-    else if(string_equal(key, "editor_maxs"))
-    {
-      entityClass->sizeSpecified = true;
-      const char* value = tokeniser.getToken();
-      if(!string_empty(value) && !string_equal(value, "?"))
-      {
-        entityClass->fixedsize = true;
-        bool success = string_parse_vector3(value, entityClass->maxs);
-        ASSERT_MESSAGE(success, "editor_maxs: parse error");
-      }
-    }
-    else if(string_equal(key, "editor_usage"))
-    {
-      const char* value = tokeniser.getToken();
-      usage << value;
-      currentString = &usage;
-    }
-    else if(string_equal_n(key, "editor_usage", 12))
-    {
-      const char* value = tokeniser.getToken();
-      usage << "\n" << value;
-      currentString = &usage;
-    }
-    else if(string_equal(key, "editor_rotatable")
-      || string_equal(key, "editor_showangle")
-      || string_equal(key, "editor_mover")
-      || string_equal(key, "editor_model")
-      || string_equal(key, "editor_material")
-      || string_equal(key, "editor_combatnode")
-      || (!string_empty(last) && string_equal(first.c_str(), "editor_gui"))
-      || string_equal_n(key, "editor_copy", 11))
-    {
-      tokeniser.getToken();
-    }
-    else if(!string_empty(last) && (string_equal(first.c_str(), "editor_var") || string_equal(first.c_str(), "editor_string")))
-    {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
-      attribute.m_type = "string";
-      currentDescription = &attribute.m_description;
-      currentString = &description;
-      description << tokeniser.getToken();
-    }
-    else if(!string_empty(last) && string_equal(first.c_str(), "editor_float"))
-    {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
-      attribute.m_type = "string";
-      currentDescription = &attribute.m_description;
-      currentString = &description;
-      description << tokeniser.getToken();
-    }
-    else if(!string_empty(last) && string_equal(first.c_str(), "editor_snd"))
-    {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
-      attribute.m_type = "sound";
-      currentDescription = &attribute.m_description;
-      currentString = &description;
-      description << tokeniser.getToken();
-    }
-    else if(!string_empty(last) && string_equal(first.c_str(), "editor_bool"))
-    {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
-      attribute.m_type = "boolean";
-      currentDescription = &attribute.m_description;
-      currentString = &description;
-      description << tokeniser.getToken();
-    }
-    else if(!string_empty(last) && string_equal(first.c_str(), "editor_int"))
-    {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
-      attribute.m_type = "integer";
-      currentDescription = &attribute.m_description;
-      currentString = &description;
-      description << tokeniser.getToken();
-    }
-    else if(!string_empty(last) && string_equal(first.c_str(), "editor_model"))
-    {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
-      attribute.m_type = "model";
-      currentDescription = &attribute.m_description;
-      currentString = &description;
-      description << tokeniser.getToken();
-    }
-    else if(!string_empty(last) && string_equal(first.c_str(), "editor_color"))
-    {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
-      attribute.m_type = "color";
-      currentDescription = &attribute.m_description;
-      currentString = &description;
-      description << tokeniser.getToken();
-    }
-    else if(!string_empty(last) && (string_equal(first.c_str(), "editor_material") || string_equal(first.c_str(), "editor_mat")))
-    {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
-      attribute.m_type = "shader";
-      currentDescription = &attribute.m_description;
-      currentString = &description;
-      description << tokeniser.getToken();
-    }
-    else if(string_equal(key, "inherit"))
-    {
-      entityClass->inheritanceResolved = false;
-      ASSERT_MESSAGE(entityClass->m_parent.empty(), "only one 'inherit' supported per entityDef");
-      entityClass->m_parent.push_back(tokeniser.getToken());
-    }
-    // begin quake4-specific keys
-    else if(string_equal(key, "editor_targetonsel"))
-    {
-      //const char* value =
-      tokeniser.getToken();
-    }
-    else if(string_equal(key, "editor_menu"))
-    {
-      //const char* value =
-      tokeniser.getToken();
-    }
-    else if(string_equal(key, "editor_ignore"))
-    {
-      //const char* value =
-      tokeniser.getToken();
-    }
-    // end quake4-specific keys
-    else
-    {
-      ASSERT_MESSAGE(!string_equal_n(key, "editor_", 7), "unsupported editor key: " << makeQuoted(key));
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, key).second;
-      attribute.m_type = "string";
-      attribute.m_value = tokeniser.getToken();
-    }
-    tokeniser.nextLine();
-  }
-
-  entityClass->m_comments = usage.c_str();
-
-  if(string_equal(entityClass->m_name.c_str(), "light"))
-  {
-    {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "light_radius").second;
-      attribute.m_type = "vector3";
-      attribute.m_value = "320 320 320";
-    }
-    {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "light_center").second;
-      attribute.m_type = "vector3";
-    }
-    {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "noshadows").second;
-      attribute.m_type = "boolean";
-      attribute.m_value = "0";
-    }
-    {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "nospecular").second;
-      attribute.m_type = "boolean";
-      attribute.m_value = "0";
-    }
-    {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "nodiffuse").second;
-      attribute.m_type = "boolean";
-      attribute.m_value = "0";
-    }
-    {
-      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "falloff").second;
-      attribute.m_type = "real";
-    }
-  }
+        // Otherwise, switch on the key name
+        
+        if (key == "model") {
+            entityClass->fixedsize = true;
+            entityClass->m_modelpath = os::standardPath(tokeniser.nextToken()).c_str();
+        }
+        else if (key == "editor_color") {
+            entityClass->colorSpecified = true;
+            entityClass->color = Vector3(tokeniser.nextToken());
+        }
+        else if (key == "editor_mins") {
+            entityClass->sizeSpecified = true;
+            const std::string value = tokeniser.nextToken();
+            if (value != "?") { // what does this mean?
+                entityClass->fixedsize = true;
+                entityClass->mins = Vector3(value);
+            }
+        }
+        else if (key == "editor_maxs") {
+            entityClass->sizeSpecified = true;
+            const std::string value = tokeniser.nextToken();
+            if (value != "?") { // what does this mean?
+                entityClass->fixedsize = true;
+                entityClass->maxs = Vector3(value);
+            }
+        }
+        else if (key == "editor_usage") {
+            entityClass->m_comments = tokeniser.nextToken().c_str();
+        }
+        else if (key.find("editor_") == 0) { // ignore any other "editor_xxx" key
+            tokeniser.nextToken();
+        }
+        else { // any other key is added as an EntityClassAttribute
+            EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, key.c_str()).second;
+            attribute.m_type = "string";
+            attribute.m_value = tokeniser.nextToken().c_str();
+        }
+            
+    } // while true
+    
+//    else if(!string_empty(last) && (string_equal(first.c_str(), "editor_var") || string_equal(first.c_str(), "editor_string")))
+//    {
+//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
+//      attribute.m_type = "string";
+//      currentDescription = &attribute.m_description;
+//      currentString = &description;
+//      description << tokeniser.getToken();
+//    }
+//    else if(!string_empty(last) && string_equal(first.c_str(), "editor_float"))
+//    {
+//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
+//      attribute.m_type = "string";
+//      currentDescription = &attribute.m_description;
+//      currentString = &description;
+//      description << tokeniser.getToken();
+//    }
+//    else if(!string_empty(last) && string_equal(first.c_str(), "editor_snd"))
+//    {
+//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
+//      attribute.m_type = "sound";
+//      currentDescription = &attribute.m_description;
+//      currentString = &description;
+//      description << tokeniser.getToken();
+//    }
+//    else if(!string_empty(last) && string_equal(first.c_str(), "editor_bool"))
+//    {
+//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
+//      attribute.m_type = "boolean";
+//      currentDescription = &attribute.m_description;
+//      currentString = &description;
+//      description << tokeniser.getToken();
+//    }
+//    else if(!string_empty(last) && string_equal(first.c_str(), "editor_int"))
+//    {
+//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
+//      attribute.m_type = "integer";
+//      currentDescription = &attribute.m_description;
+//      currentString = &description;
+//      description << tokeniser.getToken();
+//    }
+//    else if(!string_empty(last) && string_equal(first.c_str(), "editor_model"))
+//    {
+//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
+//      attribute.m_type = "model";
+//      currentDescription = &attribute.m_description;
+//      currentString = &description;
+//      description << tokeniser.getToken();
+//    }
+//    else if(!string_empty(last) && string_equal(first.c_str(), "editor_color"))
+//    {
+//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
+//      attribute.m_type = "color";
+//      currentDescription = &attribute.m_description;
+//      currentString = &description;
+//      description << tokeniser.getToken();
+//    }
+//    else if(!string_empty(last) && (string_equal(first.c_str(), "editor_material") || string_equal(first.c_str(), "editor_mat")))
+//    {
+//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
+//      attribute.m_type = "shader";
+//      currentDescription = &attribute.m_description;
+//      currentString = &description;
+//      description << tokeniser.getToken();
+//    }
+//    else if(string_equal(key, "inherit"))
+//    {
+//      entityClass->inheritanceResolved = false;
+//      ASSERT_MESSAGE(entityClass->m_parent.empty(), "only one 'inherit' supported per entityDef");
+//      entityClass->m_parent.push_back(tokeniser.getToken());
+//    }
+//    else
+//    {
+//      ASSERT_MESSAGE(!string_equal_n(key, "editor_", 7), "unsupported editor key: " << makeQuoted(key));
+//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, key).second;
+//      attribute.m_type = "string";
+//      attribute.m_value = tokeniser.getToken();
+//    }
+//    tokeniser.nextLine();
+//  }
+//
+//  entityClass->m_comments = usage.c_str();
+//
+//  if(string_equal(entityClass->m_name.c_str(), "light"))
+//  {
+//    {
+//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "light_radius").second;
+//      attribute.m_type = "vector3";
+//      attribute.m_value = "320 320 320";
+//    }
+//    {
+//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "light_center").second;
+//      attribute.m_type = "vector3";
+//    }
+//    {
+//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "noshadows").second;
+//      attribute.m_type = "boolean";
+//      attribute.m_value = "0";
+//    }
+//    {
+//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "nospecular").second;
+//      attribute.m_type = "boolean";
+//      attribute.m_value = "0";
+//    }
+//    {
+//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "nodiffuse").second;
+//      attribute.m_type = "boolean";
+//      attribute.m_value = "0";
+//    }
+//    {
+//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "falloff").second;
+//      attribute.m_type = "real";
+//    }
+//  }
 
   EntityClass* inserted = EntityClassDoom3_insertUnique(entityClass);
   if(inserted != entityClass)
@@ -549,34 +484,29 @@ void EntityClassDoom3_parseEntityDef(Tokeniser& tokeniser)
   }
 }
 
-void EntityClassDoom3_parse(TextInputStream& inputStream)
+// Parse the provided string containing the contents of a single .def file.
+// Extract all entitydefs and create objects accordingly.
+
+void EntityClassDoom3_parse(const std::string& inStr)
 {
-  Tokeniser& tokeniser = GlobalScriptLibrary().m_pfnNewScriptTokeniser(inputStream);
+    parser::DefTokeniser tokeniser(inStr);
 
-  tokeniser.nextLine();
+    while (tokeniser.hasMoreTokens()) {
 
-  for(;;)
-  {
-    const char* blockType = tokeniser.getToken();
-    if(blockType == 0)
-    {
-      break;
-    }
-    if(string_equal(blockType, "entityDef"))
-    {
-      EntityClassDoom3_parseEntityDef(tokeniser);
-    }
-    else if(string_equal(blockType, "model"))
-    {
-      EntityClassDoom3_parseModel(tokeniser);
-    }
-    else
-    {
-      EntityClassDoom3_parseUnknown(tokeniser);
-    }
-  }
+        const std::string blockType = tokeniser.nextToken();
 
-  tokeniser.release();
+        if(blockType == "entityDef") {
+//            std::cout << "ENTITYDEF" << std::endl;
+            EntityClassDoom3_parseEntityDef(tokeniser);
+        }
+//        else if(blockType == "model") {
+//            EntityClassDoom3_parseModel(tokeniser);
+//        }
+//        else {
+//            EntityClassDoom3_parseUnknown(tokeniser);
+//        }
+    }
+
 }
 
 
@@ -584,14 +514,20 @@ void EntityClassDoom3_loadFile(const char* filename)
 {
   globalOutputStream() << "parsing entity classes from " << makeQuoted(filename) << "\n";
 
-  StringOutputStream fullname(256);
-  fullname << "def/" << filename;
+    const std::string fullname = "def/" + std::string(filename);
+
+//    std::cout << "** FILE: " << fullname << " **" << std::endl;
 
 	ArchiveTextFile* file = GlobalFileSystem().openTextFile(fullname.c_str());
   if(file != 0)
   {
-    EntityClassDoom3_parse(file->getInputStream());
-    file->release();
+        try {
+            EntityClassDoom3_parse(file->getString());
+        }
+        catch (parser::ParseException e) {
+            gtkutil::errorDialog("Unable to parse DEF file: " + std::string(filename) + "\n\n" + e.what());
+        }
+        file->release();
   }
 }
 

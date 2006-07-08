@@ -4,6 +4,10 @@
 
 #include <cstddef>
 #include <cmath>
+#include <sstream>
+#include <string>
+
+#include <boost/regex.hpp>
 
 template <typename Element>
 class BasicVector2
@@ -75,12 +79,30 @@ public:
 		z() = static_cast<Element>(other.z());
 	}
 
-  BasicVector3(const Element& x_, const Element& y_, const Element& z_)
-  {
-    x() = x_;
-    y() = y_;
-    z() = z_;
-  }
+    /** Construct a BasicVector3 with the 3 provided components.
+     */
+    BasicVector3(const Element& x_, const Element& y_, const Element& z_)
+    {
+        x() = x_;
+        y() = y_;
+        z() = z_;
+    }
+
+    
+    /** Construct a BasicVector3 by parsing the supplied string. The string
+     * must contain 3 numeric values separated by whitespace.
+     *
+     * @param str
+     * The string from which component values are extracted.
+     */
+     
+    BasicVector3(const std::string& str) {
+        std::stringstream strm(str);
+        strm << std::skipws;
+        strm >> x();
+        strm >> y();
+        strm >> z();
+    }
 
   Element& x()
   {
@@ -111,9 +133,12 @@ public:
 	 * Mathematical operations on the BasicVector3 
 	 */
 	 
-	// Return the length of this vector
+	/** Return the length of this vector.
+     * 
+     * @returns
+     * The Pythagorean length of this vector.
+     */
 	double getLength() const {
-		// Use Pythagoras to calculate the length squared.
 		double lenSquared = x()*x() + y()*y() + z()*z();
 		return sqrt(lenSquared);
 	}

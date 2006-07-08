@@ -387,8 +387,7 @@ void EntityInspector::refreshTreeModel() {
         updatePropertyEditor();
         
     // Update the unrecognised properties status message. Use a local visitor
-    // class to count the number of properties on the entity, and subtract 
-    // the number of recognised properties.
+    // class to count the number of unrecognised properties on the entity.
     
     struct PropertyCounter: public Entity::Visitor {
 
