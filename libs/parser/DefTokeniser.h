@@ -1,6 +1,8 @@
 #ifndef DEFTOKENISER_H_
 #define DEFTOKENISER_H_
 
+#include "ParseException.h"
+
 #include <string>
 #include <iostream>
 
@@ -188,7 +190,7 @@ public:
                 
                     // This comment lasts until the end of the line.
                     
-                    if (*next == '\r') {
+                    if (*next == '\r' || *next == '\n') {
                         _state = SEARCHING;
                         continue;
                     }
@@ -283,7 +285,21 @@ public:
      */
      
     const std::string nextToken() {
-        return *(_tokIter++);
+        if (hasMoreTokens())
+            return *(_tokIter++);
+        else
+            throw ParseException("DefTokeniser: no more tokens");
+    }
+    
+    
+    /** Assert that the next token in the sequence must be equal to the provided
+     * value. A ParseException is thrown if the assert fails.
+     */
+     
+    void assertNextToken(const std::string& val) {
+        const std::string tok = nextToken();
+        if (tok != val)
+            throw ParseException("DefTokeniser: Assertion failed\nRequired \"" + val + "\", found \"" + tok + "\"");
     }   
 };
 
