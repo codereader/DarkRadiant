@@ -295,6 +295,26 @@ public:
         if (tok != val)
             throw ParseException("DefTokeniser: Assertion failed\nRequired \"" + val + "\", found \"" + tok + "\"");
     }   
+    
+    
+    /** Skip the next n tokens. This method provides a convenient way to dispose
+     * of a number of tokens without returning them.
+     * 
+     * @param n
+     * The number of tokens to consume.
+     */
+     
+    void skipTokens(unsigned int n) {
+        for (unsigned int i = 0; i < n; i++) {
+            if (hasMoreTokens()) {
+                _tokIter++;
+            }
+            else {
+                throw ParseException("DefTokeniser: no more tokens");
+            }
+        }
+    }
+            
 };
 
 } // namespace parser
