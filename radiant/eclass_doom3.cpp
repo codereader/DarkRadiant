@@ -44,6 +44,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <iostream>
 
+#include <boost/algorithm/string/case_conv.hpp>
+
 class RawString
 {
   const char* m_value;
@@ -164,138 +166,80 @@ void Model_resolveInheritance(const char* name, Model& model)
   }
 }
 
-void EntityClassDoom3_parseModel(Tokeniser& tokeniser)
+void EntityClassDoom3_parseModel(parser::DefTokeniser& tokeniser)
 {
-  const char* name = tokeniser.getToken();
+    // Add the named model to the global list
+    const std::string name = tokeniser.nextToken(); 
+    std::cout << "  model name = " << name << std::endl;
+    Model& model = g_models[name.c_str()];
 
-  Model& model = g_models[name];
+    tokeniser.assertNextToken("{");
 
-  const char* token = tokeniser.getToken();
-  ASSERT_MESSAGE(string_equal(token, "{"), "error parsing model definition");
-  tokeniser.nextLine();
+    while (true) {
 
-  for(;;)
-  {
-    const char* parameter = tokeniser.getToken();
-    if(string_equal(parameter, "}"))
-    {
-      tokeniser.nextLine();
-      break;
-    }
-    else if(string_equal(parameter, "inherit"))
-    {
-      model.m_parent = tokeniser.getToken();
-    }
-    else if(string_equal(parameter, "remove"))
-    {
-      //const char* remove =
-      tokeniser.getToken();
-    }
-    else if(string_equal(parameter, "mesh"))
-    {
-      model.m_mesh = tokeniser.getToken();
-    }
-    else if(string_equal(parameter, "skin"))
-    {
-      model.m_skin = tokeniser.getToken();
-    }
-    else if(string_equal(parameter, "offset"))
-    {
-      tokeniser.getToken(); // (
-      tokeniser.getToken();
-      tokeniser.getToken();
-      tokeniser.getToken();
-      tokeniser.getToken(); // )
-      tokeniser.nextLine();
-    }
-    else if(string_equal(parameter, "channel"))
-    {
-      //const char* channelName =
-      tokeniser.getToken();
-      tokeniser.getToken(); // (
-      for(;;)
-      {
-        const char* end = tokeniser.getToken();
-        if(string_equal(end, ")"))
-        {
-          tokeniser.nextLine();
-          break;
-        }
-      }
-    }
-    else if(string_equal(parameter, "anim"))
-    {
-      CopiedString animName(tokeniser.getToken());
-      const char* animFile = tokeniser.getToken();
-      model.m_anims.insert(Model::Anims::value_type(animName, animFile));
+        const std::string parameter = tokeniser.nextToken();
 
-      const char* token = tokeniser.getToken();
-
-      while(string_equal(token, ","))
-      {
-        animFile = tokeniser.getToken();
-        token = tokeniser.getToken();
-      }
-
-      if(string_equal(token, "{"))
-      {
-        for(;;)
-        {
-          const char* end = tokeniser.getToken();
-          if(string_equal(end, "}"))
-          {
-            tokeniser.nextLine();
+        if (parameter == "}")
             break;
-          }
-          tokeniser.nextLine();
+            
+        if (parameter == "inherit") {
+            model.m_parent = tokeniser.nextToken().c_str();
         }
-      } 
-      else
-      {
-        tokeniser.ungetToken();
-      }
+        else if (parameter == "mesh") {
+            model.m_mesh = tokeniser.nextToken().c_str();
+        }
+        else if (parameter == "skin") {
+            model.m_skin = tokeniser.nextToken().c_str();
+        }
+        else if (parameter == "offset") {
+            tokeniser.skipTokens(5);
+        }
+        else if (parameter == "channel") {
+            // SYNTAX: "channel" <name> "(" <blah> [ <blah> ... ] ")"
+            tokeniser.skipTokens(2);
+            while (tokeniser.nextToken() != ")");
+        }
     }
-    else
-    {
-      ERROR_MESSAGE("unknown model parameter: " << makeQuoted(parameter));
-    }
-    tokeniser.nextLine();
-  }
-}
 
-inline bool char_isSpaceOrTab(char c)
-{
-  return c == ' ' || c == '\t';
+//    else if(string_equal(parameter, "anim"))
+//    {
+//      CopiedString animName(tokeniser.getToken());
+//      const char* animFile = tokeniser.getToken();
+//      model.m_anims.insert(Model::Anims::value_type(animName, animFile));
+//
+//      const char* token = tokeniser.getToken();
+//
+//      while(string_equal(token, ","))
+//      {
+//        animFile = tokeniser.getToken();
+//        token = tokeniser.getToken();
+//      }
+//
+//      if(string_equal(token, "{"))
+//      {
+//        for(;;)
+//        {
+//          const char* end = tokeniser.getToken();
+//          if(string_equal(end, "}"))
+//          {
+//            tokeniser.nextLine();
+//            break;
+//          }
+//          tokeniser.nextLine();
+//        }
+//      } 
+//      else
+//      {
+//        tokeniser.ungetToken();
+//      }
+//    }
+//    else
+//    {
+//      ERROR_MESSAGE("unknown model parameter: " << makeQuoted(parameter));
+//    }
+//    tokeniser.nextLine();
+//  }
 }
-
-inline bool char_isNotSpaceOrTab(char c)
-{
-  return !char_isSpaceOrTab(c);
-}
-
-template<typename Predicate>
-inline const char* string_find_if(const char* string, Predicate predicate)
-{
-  for(; *string != 0; ++string)
-  {
-    if(predicate(*string))
-    {
-      return string;
-    }
-  }
-  return string;
-}
-
-inline const char* string_findFirstSpaceOrTab(const char* string)
-{
-  return string_find_if(string, char_isSpaceOrTab);
-}
-
-inline const char* string_findFirstNonSpaceOrTab(const char* string)
-{
-  return string_find_if(string, char_isNotSpaceOrTab);
-}
-
 
 void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
 {
@@ -304,7 +248,7 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
 
     // Entity name
     const std::string sName = tokeniser.nextToken();
-//    std::cout << "  name = " << sName << std::endl;
+    std::cout << "  entitydef name = " << sName << std::endl;
     entityClass->m_name = sName.c_str();
 
     // Required open brace
@@ -349,6 +293,15 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
         }
         else if (key == "editor_usage") {
             entityClass->m_comments = tokeniser.nextToken().c_str();
+        }
+        else if (key == "editor_light") {
+            const std::string val = tokeniser.nextToken();
+            if (val == "1") {
+                entityClass->isLight(true);
+            }
+            else {
+                entityClass->isLight(false);
+            }
         }
         else if (key.find("editor_") == 0) { // ignore any other "editor_xxx" key
             tokeniser.nextToken();
@@ -493,15 +446,17 @@ void EntityClassDoom3_parse(const std::string& inStr)
 
     while (tokeniser.hasMoreTokens()) {
 
-        const std::string blockType = tokeniser.nextToken();
+        std::string blockType = tokeniser.nextToken();
+        boost::algorithm::to_lower(blockType);
 
-        if(blockType == "entityDef") {
-//            std::cout << "ENTITYDEF" << std::endl;
+        if(blockType == "entitydef") {
+            std::cout << "ENTITYDEF" << std::endl;
             EntityClassDoom3_parseEntityDef(tokeniser);
         }
-//        else if(blockType == "model") {
-//            EntityClassDoom3_parseModel(tokeniser);
-//        }
+        else if(blockType == "model") {
+            std::cout << "MODEL" << std::endl;
+            EntityClassDoom3_parseModel(tokeniser);
+        }
 //        else {
 //            EntityClassDoom3_parseUnknown(tokeniser);
 //        }
