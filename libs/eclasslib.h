@@ -112,8 +112,38 @@ inline const char* EntityClassAttributePair_getDescription(const EntityClassAttr
   return EntityClassAttributePair_getName(attributePair);
 }
 
+/** Represents a particular Entity type. The entity creation code creates a
+ * specific instance of an EntityClass.
+ */
+
 class EntityClass
 {
+    
+    // Should this entity type be treated as a light?
+    bool _isLight;
+    
+public:
+
+    /** Get whether this entity type is a light entity
+     * 
+     * @returns
+     * true if this is a light, false otherwise
+     */
+    bool isLight() {
+        return _isLight;
+    }
+    
+    
+    /** Set whether this entity type is a light entity
+     * 
+     * @param val
+     * true to set this as a light entity, false to disable
+     */
+    void isLight(bool val) {
+        _isLight = val;
+    }
+     
+    
 public:
 	CopiedString m_name;
   StringList m_parent;
