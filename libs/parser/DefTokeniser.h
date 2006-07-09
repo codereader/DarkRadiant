@@ -60,7 +60,7 @@ public:
 
     // Constructor
     DefTokeniserFunc()
-    : _state(SEARCHING), _delims(" \t\n\v\r"), _keptDelims("{}")
+    : _state(SEARCHING), _delims(" \t\n\v\r"), _keptDelims("{}()")
     {}
 
     /* REQUIRED. Operator() is called by the boost::tokenizer. This function
@@ -269,16 +269,18 @@ public:
     }
 
 
-    /** Return the next token in the sequence.
+    /** Return the next token in the sequence. This function consumes
+     * the returned token and advances the internal state to the following
+     * token.
      * 
      * @returns
      * std::string containing the next token in the sequence.
      * 
      * @pre
-     * hasMoreTokens() must be true, otherwise the result is undefined
+     * hasMoreTokens() must be true, otherwise an exception will be thrown.
      */
      
-    const std::string nextToken() {
+    std::string nextToken() {
         if (hasMoreTokens())
             return *(_tokIter++);
         else
@@ -286,8 +288,30 @@ public:
     }
     
     
+    /** Examine the next token in the sequence but do not advance the
+     * internal state. The next call to nextToken() will return the value
+     * initially returned by peekNextToken().
+     * 
+     * @returns
+     * The next token in the sequence.
+     */
+     
+    std::string peekNextToken() {
+        if (hasMoreTokens()) {
+            CharTokeniser::iterator copy = _tokIter;
+            return *(++copy);
+        }
+        else {
+            throw ParseException("DefTokeniser: no more tokens");
+        }
+    }
+
+
     /** Assert that the next token in the sequence must be equal to the provided
      * value. A ParseException is thrown if the assert fails.
+     * 
+     * @param val
+     * The expected value of the token.
      */
      
     void assertNextToken(const std::string& val) {
