@@ -208,10 +208,8 @@ void Entity_createFromSelection(const char* name, const Vector3& origin) {
     EntityClass *entityClass = GlobalEntityClassManager().findOrInsert(name, true);
 
     // TODO: to be replaced by inheritance-based class detection
-    bool isModel = string_equal_nocase(name, "misc_model")
-        || string_equal_nocase(name, "misc_gamemodel")
-        || string_equal_nocase(name, "model_static")
-        || (GlobalSelectionSystem().countSelected() == 0 && string_equal_nocase(name, "func_static"));
+    bool isModel = (GlobalSelectionSystem().countSelected() == 0 
+                    && string_equal_nocase(name, "func_static"));
     
     // Some entities are based on the size of the currently-selected brush(es)
     bool brushesSelected = Scene_countSelectedBrushes(GlobalSceneGraph()) != 0;
@@ -256,21 +254,17 @@ void Entity_createFromSelection(const char* name, const Vector3& origin) {
     }
     }
 
-    // TODO: This text string name test is mega-lame, to be upgraded to proper
-    // entity class detection via inheritance.
+    // Set the light radius and origin
 
-    if (string_equal_nocase(name, "light")) {
-        if (brushesSelected)        // use workzone to set light position/size for doom3 lights. 
-        {
-            AABB bounds(Doom3Light_getBounds(workzone));    // If workzone is not valid the Doom3Light_getBounds function will return a default
-            StringOutputStream key(64);
-    
-            key << bounds.origin[0] << " " << bounds.origin[1] << " " << bounds.origin[2];
-            Node_getEntity(node)->setKeyValue("origin", key.c_str());
-            key.clear();
-            key << bounds.extents[0] << " " << bounds.extents[1] << " " << bounds.extents[2];
-            Node_getEntity(node)->setKeyValue("light_radius", key.c_str());
-        }
+    if (entityClass->isLight() && brushesSelected) {
+        AABB bounds(Doom3Light_getBounds(workzone));    // If workzone is not valid the Doom3Light_getBounds function will return a default
+        StringOutputStream key(64);
+
+        key << bounds.origin[0] << " " << bounds.origin[1] << " " << bounds.origin[2];
+        Node_getEntity(node)->setKeyValue("origin", key.c_str());
+        key.clear();
+        key << bounds.extents[0] << " " << bounds.extents[1] << " " << bounds.extents[2];
+        Node_getEntity(node)->setKeyValue("light_radius", key.c_str());
     }
 
   if(isModel)

@@ -51,14 +51,14 @@ EGameType g_gameType;
 
 scene::Node& entity_for_eclass(EntityClass* eclass)
 {
+    std::cout << "[entity] entity_for_eclass(" << eclass->name() << ")" << std::endl;
   if(classname_equal(eclass->name(), "misc_model")
   || classname_equal(eclass->name(), "misc_gamemodel")
   || classname_equal(eclass->name(), "model_static"))
   {
     return New_MiscModel(eclass);
   }
-  else if(classname_equal(eclass->name(), "light")
-    || classname_equal(eclass->name(), "lightJunior"))
+  else if(eclass->isLight())
   {
     return New_Light(eclass);
   }
