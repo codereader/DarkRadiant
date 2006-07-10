@@ -288,25 +288,6 @@ public:
     }
     
     
-    /** Examine the next token in the sequence but do not advance the
-     * internal state. The next call to nextToken() will return the value
-     * initially returned by peekNextToken().
-     * 
-     * @returns
-     * The next token in the sequence.
-     */
-     
-    std::string peekNextToken() {
-        if (hasMoreTokens()) {
-            CharTokeniser::iterator copy = _tokIter;
-            return *(++copy);
-        }
-        else {
-            throw ParseException("DefTokeniser: no more tokens");
-        }
-    }
-
-
     /** Assert that the next token in the sequence must be equal to the provided
      * value. A ParseException is thrown if the assert fails.
      * 

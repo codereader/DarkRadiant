@@ -170,10 +170,16 @@ void EntityClassDoom3_parseModel(parser::DefTokeniser& tokeniser)
 {
     // Add the named model to the global list
     const std::string name = tokeniser.nextToken(); 
-    std::cout << "  model name = " << name << std::endl;
+//    std::cout << "  model name = " << name << std::endl;
     Model& model = g_models[name.c_str()];
 
     tokeniser.assertNextToken("{");
+
+    // State enum
+    enum { 
+        NONE,   // usual state
+        ANIM    // parsed anim, may get a { ... } block with further info
+    } state = NONE;
 
     while (true) {
 
@@ -199,46 +205,18 @@ void EntityClassDoom3_parseModel(parser::DefTokeniser& tokeniser)
             tokeniser.skipTokens(2);
             while (tokeniser.nextToken() != ")");
         }
+        else if (parameter == "anim") {
+            // SYNTAX: "anim" <name> <md5file> [ "{" <blah> [ <blah> ... ] "}" ]
+            std::string name = tokeniser.nextToken();
+            std::string file = tokeniser.nextToken();
+            model.m_anims.insert(Model::Anims::value_type(name.c_str(), file.c_str()));
+            state = ANIM; // check for the braces on the next iteration
+        }
+        else if (state == ANIM && parameter == "{") { // anim braces
+            while (tokeniser.nextToken() != "}");
+            state = NONE;
+        }
     }
-
-//    else if(string_equal(parameter, "anim"))
-//    {
-//      CopiedString animName(tokeniser.getToken());
-//      const char* animFile = tokeniser.getToken();
-//      model.m_anims.insert(Model::Anims::value_type(animName, animFile));
-//
-//      const char* token = tokeniser.getToken();
-//
-//      while(string_equal(token, ","))
-//      {
-//        animFile = tokeniser.getToken();
-//        token = tokeniser.getToken();
-//      }
-//
-//      if(string_equal(token, "{"))
-//      {
-//        for(;;)
-//        {
-//          const char* end = tokeniser.getToken();
-//          if(string_equal(end, "}"))
-//          {
-//            tokeniser.nextLine();
-//            break;
-//          }
-//          tokeniser.nextLine();
-//        }
-//      } 
-//      else
-//      {
-//        tokeniser.ungetToken();
-//      }
-//    }
-//    else
-//    {
-//      ERROR_MESSAGE("unknown model parameter: " << makeQuoted(parameter));
-//    }
-//    tokeniser.nextLine();
-//  }
 }
 
 void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
@@ -248,7 +226,7 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
 
     // Entity name
     const std::string sName = tokeniser.nextToken();
-    std::cout << "  entitydef name = " << sName << std::endl;
+//    std::cout << "  entitydef name = " << sName << std::endl;
     entityClass->m_name = sName.c_str();
 
     // Required open brace
@@ -298,6 +276,7 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
             const std::string val = tokeniser.nextToken();
             if (val == "1") {
                 entityClass->isLight(true);
+                entityClass->fixedsize = true; // don't create with zero size
             }
             else {
                 entityClass->isLight(false);
@@ -450,11 +429,11 @@ void EntityClassDoom3_parse(const std::string& inStr)
         boost::algorithm::to_lower(blockType);
 
         if(blockType == "entitydef") {
-            std::cout << "ENTITYDEF" << std::endl;
+//            std::cout << "ENTITYDEF" << std::endl;
             EntityClassDoom3_parseEntityDef(tokeniser);
         }
         else if(blockType == "model") {
-            std::cout << "MODEL" << std::endl;
+//            std::cout << "MODEL" << std::endl;
             EntityClassDoom3_parseModel(tokeniser);
         }
 //        else {
@@ -683,7 +662,6 @@ void EntityClassDoom3_unrealise()
 
 void EntityClassDoom3_construct()
 {
-    std::cout << "EntityClassDoom3_construct()" << std::endl;
     GlobalFileSystem().attach(g_EntityClassDoom3);
 
     // start by creating the default unknown eclass
