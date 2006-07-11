@@ -143,6 +143,12 @@ public:
         _isLight = val;
     }
      
+     
+    /** Default constructor.
+     */
+     
+    EntityClass()
+    : _isLight(false) {}
     
 public:
 	CopiedString m_name;
