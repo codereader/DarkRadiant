@@ -278,12 +278,15 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
                 entityClass->isLight(true);
                 entityClass->fixedsize = true; // don't create with zero size
             }
-            else {
-                entityClass->isLight(false);
-            }
         }
         else if (key.find("editor_") == 0) { // ignore any other "editor_xxx" key
             tokeniser.nextToken();
+        }
+        else if (key == "spawnclass") {
+            std::string value = tokeniser.nextToken();
+            if (value == "idLight") {
+                entityClass->isLight(true);
+            }
         }
         else { // any other key is added as an EntityClassAttribute
             EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, key.c_str()).second;
