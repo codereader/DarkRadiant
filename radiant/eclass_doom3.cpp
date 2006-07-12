@@ -378,37 +378,7 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
 //
 //  entityClass->m_comments = usage.c_str();
 //
-//  if(string_equal(entityClass->m_name.c_str(), "light"))
-//  {
-//    {
-//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "light_radius").second;
-//      attribute.m_type = "vector3";
-//      attribute.m_value = "320 320 320";
-//    }
-//    {
-//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "light_center").second;
-//      attribute.m_type = "vector3";
-//    }
-//    {
-//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "noshadows").second;
-//      attribute.m_type = "boolean";
-//      attribute.m_value = "0";
-//    }
-//    {
-//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "nospecular").second;
-//      attribute.m_type = "boolean";
-//      attribute.m_value = "0";
-//    }
-//    {
-//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "nodiffuse").second;
-//      attribute.m_type = "boolean";
-//      attribute.m_value = "0";
-//    }
-//    {
-//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, "falloff").second;
-//      attribute.m_type = "real";
-//    }
-//  }
+
 
   EntityClass* inserted = EntityClassDoom3_insertUnique(entityClass);
   if(inserted != entityClass)
