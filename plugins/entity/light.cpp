@@ -873,8 +873,6 @@ class Light :
     m_keyObservers.insert("scale", LightRadii::ScaleChangedCaller(m_radii));
     m_keyObservers.insert("spawnflags", LightRadii::FlagsChangedCaller(m_radii));
 
-    if(g_lightType == LIGHTTYPE_DOOM3)
-    {
       m_keyObservers.insert("angle", RotationKey::AngleChangedCaller(m_rotationKey));
       m_keyObservers.insert("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
       m_keyObservers.insert("light_radius", Doom3LightRadius::LightRadiusChangedCaller(m_doom3Radius));
@@ -889,15 +887,11 @@ class Light :
       m_keyObservers.insert("texture", LightShader::ValueChangedCaller(m_shader));
       m_useLightTarget = m_useLightUp = m_useLightRight = m_useLightStart = m_useLightEnd = false;
       m_doom3ProjectionChanged = true;
-    }
 
-    if(g_lightType == LIGHTTYPE_DOOM3)
-    {
       m_traverse.attach(&m_traverseObservers);
       m_traverseObservers.attach(m_funcStaticOrigin);
 
       m_entity.m_isContainer = true;
-    }
   }
   void destroy()
   {
@@ -1334,14 +1328,7 @@ public:
       write_rotation(m_rotationKey.m_rotation, &m_entity);
 
       m_doom3Radius.m_radius = m_doom3Radius.m_radiusTransformed;
-      if(m_doom3Radius.m_radius == c_defaultDoom3LightRadius)
-      {
-        m_entity.setKeyValue("light_radius", "");
-      }
-      else
-      {
-        write_origin(m_doom3Radius.m_radius, &m_entity, "light_radius");
-      }
+      write_origin(m_doom3Radius.m_radius, &m_entity, "light_radius");
     }
   }
   void transformChanged()
