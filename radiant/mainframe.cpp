@@ -2804,7 +2804,7 @@ void MainFrame::OnSleep()
 
 // Create and show the splash screen.
 
-static const char *SPLASH_FILENAME = "darksplash.bmp";
+static const char *SPLASH_FILENAME = "darksplash.png";
 
 GtkWindow* create_splash()
 {
