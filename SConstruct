@@ -240,9 +240,10 @@ class idEnvironment(Environment):
 		if (self['PLATFORM'] == 'win32'):
 			self.Append(CPPPATH = ['#/boost.w32/include'])
 			self.Append(LIBPATH = ['#/boost.w32/lib'])
-			self.Append(LIBS = ['libboost_regex-gcc'])
+#			self.Append(LIBS = ['libboost_regex-gcc'])
 		else:
-			self.Append(LIBS = ['boost_regex'])
+#			self.Append(LIBS = ['boost_regex'])
+			pass
 	
 	def useGlib2(self):
 	# On Win32 we need to add the local paths, since there is no
@@ -329,6 +330,7 @@ class idEnvironment(Environment):
 			self['LINKFLAGS'] += '-lpthread '
 
 g_env = idEnvironment()
+g_env.useBoost()
 
 # export the globals
 GLOBALS = 'g_env INSTALL g_cpu'
