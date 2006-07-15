@@ -16,6 +16,11 @@ namespace ui
 class ColourPropertyEditor
 : public PropertyEditor
 {
+private:
+
+	// The GtkColorButton
+	GtkWidget* _colorButton;
+	
 public:
 
 	/// Construct a ColourPropertyEditor with a given Entity and keyname

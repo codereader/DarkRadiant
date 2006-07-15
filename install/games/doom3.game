@@ -32,7 +32,7 @@
 			<property name="rotation" type="text" />
 		</propertyCategory>
 		<propertyCategory name="Light">
-			<property name="_color" type="text" />
+			<property name="_color" type="colour" />
 			<property name="falloff" type="text" />
 			<property name="light_origin" type="vector3" />
 			<property name="light_radius" type="vector3" />
