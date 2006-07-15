@@ -203,7 +203,7 @@ int g_iLastLightIntensity;
 
 void Entity_createFromSelection(const char* name, const Vector3& origin) {
     // DEBUG
-    std::cout << "Entity_createFromSelection(" << name << ", <origin>)" << std::endl;
+    //std::cout << "Entity_createFromSelection(" << name << ", <origin>)" << std::endl;
 
     EntityClass *entityClass = GlobalEntityClassManager().findOrInsert(name, true);
 
@@ -215,7 +215,7 @@ void Entity_createFromSelection(const char* name, const Vector3& origin) {
     bool brushesSelected = Scene_countSelectedBrushes(GlobalSceneGraph()) != 0;
 
     if (!(entityClass->fixedsize || isModel) && !brushesSelected) {
-        globalErrorStream() << "failed to create a group entity - no brushes are selected\n";
+        gtkutil::errorDialog("Unable to create entity - no brushes selected");
         return;
     }
 
