@@ -214,10 +214,10 @@ radiant_src = [
 'csg.cpp',
 'dialog.cpp',
 'eclass.cpp',
-'eclass_def.cpp',
+#'eclass_def.cpp',
 'eclass_doom3.cpp',
-'eclass_fgd.cpp',
-'eclass_xml.cpp',
+#'eclass_fgd.cpp',
+#'eclass_xml.cpp',
 'entity.cpp',
 'entitylist.cpp',
 'environment.cpp',
@@ -283,7 +283,8 @@ radiant_src = [
 'dialog/einspector/Vector3PropertyEditor.cpp',
 'dialog/einspector/BooleanPropertyEditor.cpp',
 'dialog/einspector/EntityPropertyEditor.cpp',
-'dialog/einspector/ClassnamePropertyEditor.cpp',
+#'dialog/einspector/ClassnamePropertyEditor.cpp',
+'dialog/einspector/ColourPropertyEditor.cpp',
 'dialog/einspector/AllPropertiesDialog.cpp'
 ]
 
