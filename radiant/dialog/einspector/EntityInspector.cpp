@@ -86,10 +86,10 @@ void EntityInspector::makePropertyCategory(xml::Node& node) {
 // Create the actual UI components for the EntityInspector dialog
 
 void EntityInspector::constructUI() {
-    _widget = gtk_vpaned_new();
+    _widget = gtk_vbox_new(FALSE, 0);
     
-    gtk_paned_add1(GTK_PANED(_widget), createTreeViewPane());
-    gtk_paned_add2(GTK_PANED(_widget), createDialogPane());
+    gtk_box_pack_start(GTK_BOX(_widget), createTreeViewPane(), TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(_widget), createDialogPane(), FALSE, FALSE, 0);
     
     gtk_widget_show_all(_widget);
     
