@@ -1,6 +1,17 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+16/07/2006
+- Changed EntityInspector from a GtkPaned to a GtkVBox, adjusted size requests to allow
+  for shrinkage on low-res displays.
+
+** RELEASE 0.5pre3
+
+15/07/2006
+- Added ColourPropertyEditor for selection of entity colours using a GtkColorButton
+
+** RELEASE 0.5pre2
+
 14/07/2006
 OrbWeaver
 - Removed EntityAttributes for light, all attributes now explicit keyvals
