@@ -94,7 +94,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "groupdialog.h"
 #include "gtkdlgs.h"
 #include "gtkmisc.h"
-#include "help.h"
 #include "map.h"
 #include "mru.h"
 #include "multimon.h"
@@ -2306,10 +2305,6 @@ GtkMenuItem* create_help_menu()
     menu_tearoff (menu);
 
   create_menu_item_with_mnemonic(menu, "Manual", "OpenManual");
-
-  // this creates all the per-game drop downs for the game pack helps
-  // it will take care of hooking the Sys_OpenURL calls etc.
-  create_game_help_menu(menu);
 
   create_menu_item_with_mnemonic(menu, "Bug report", FreeCaller<OpenBugReportURL>());
   create_menu_item_with_mnemonic(menu, "Shortcuts list", FreeCaller<DoCommandListDlg>());

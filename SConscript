@@ -231,7 +231,6 @@ radiant_src = [
 'groupdialog.cpp',
 'gtkdlgs.cpp',
 'gtkmisc.cpp',
-'help.cpp',
 'image.cpp',
 'main.cpp',
 'mainframe.cpp',
