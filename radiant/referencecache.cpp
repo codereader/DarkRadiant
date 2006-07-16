@@ -135,24 +135,35 @@ bool file_saveBackup(const char* path)
   return false;
 }
 
+/** Save a map file (outer function). This function tries to backup the map
+ * file before calling MapResource_saveFile() to do the actual saving of
+ * data.
+ */
+
 bool MapResource_save(const MapFormat& format, scene::Node& root, const char* path, const char* name)
 {
   StringOutputStream fullpath(256);
   fullpath << path << name;
 
-  if(path_is_absolute(fullpath.c_str()))
-  {
-    if(!file_exists(fullpath.c_str()) || file_saveBackup(fullpath.c_str()))
-    {
-      return MapResource_saveFile(format, root, Map_Traverse, fullpath.c_str());
-    }
+	if(path_is_absolute(fullpath.c_str())) {
 
-    globalErrorStream() << "failed to save a backup map file: " << makeQuoted(fullpath.c_str()) << "\n";
-    return false;
-  }
-
-  globalErrorStream() << "map path is not fully qualified: " << makeQuoted(fullpath.c_str()) << "\n";
-  return false;
+		// Save a backup if possible. This is done by renaming the original,
+		// which won't work if the existing map is currently open by Doom 3
+		// in the background.
+		if (file_exists(fullpath.c_str()) 
+		    	&& !file_saveBackup(fullpath.c_str())) {
+			globalErrorStream() << "WARNING: could not rename " 
+								   << makeQuoted(fullpath.c_str())
+								   << " to backup.\n";
+		}
+	
+		// Save the actual file
+		return MapResource_saveFile(format, root, Map_Traverse, fullpath.c_str());
+	}
+	else {
+		globalErrorStream() << "map path is not fully qualified: " << makeQuoted(fullpath.c_str()) << "\n";
+		return false;
+	}
 }
 
 namespace
@@ -446,6 +457,7 @@ struct ModelResource : public Resource
   }
   bool save()
   {
+//  	std::cout << "[referencecache.cpp] ModelResource::save() - " << m_name.c_str() << std::endl;
     if(!mapSaved())
     {
       const char* moduleName = findModuleName(GetFileTypeRegistry(), MapFormat::Name(), m_type.c_str());
