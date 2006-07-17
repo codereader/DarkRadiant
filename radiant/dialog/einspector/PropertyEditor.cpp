@@ -6,6 +6,8 @@
 
 #include "entity.h"
 
+#include "iundo.h"
+
 #include <gtk/gtk.h>
 
 #include <iostream>
@@ -139,7 +141,13 @@ void PropertyEditor::refresh() {
  */
 
 void PropertyEditor::callbackApply(GtkWidget* caller, PropertyEditor* self) {
-	const std::string& newValue = self->getValue(); // retrieve the new keyval from the child
+	const std::string newValue = self->getValue(); // retrieve the new keyval from the child
+
+	// Save the undo information (also triggers "map changed" state).
+	std::string cmd = "entitySetKeyValue -key \"" + self->_key 
+					  + "\" -value \"" + newValue + "\"";
+
+	GlobalUndoSystem().start();
 
     // Set the keyvalue on the owned entity if the enabled toggle is active,
     // otherwise set the value to "" which removes the key.
@@ -147,6 +155,8 @@ void PropertyEditor::callbackApply(GtkWidget* caller, PropertyEditor* self) {
         self->_entity->setKeyValue(self->_key.c_str(), newValue.c_str());
     else
         self->_entity->setKeyValue(self->_key.c_str(), "");
+        
+	GlobalUndoSystem().finish(cmd.c_str());
 }
 
 #ifdef PROPERTY_EDITOR_HAS_UNDO_BUTTON

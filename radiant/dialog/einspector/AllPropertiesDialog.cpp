@@ -6,6 +6,8 @@
 #include "gtkutil/dialog.h"
 #include "gtkutil/EntryAbortedException.h"
 
+#include "iundo.h"
+
 #include <iostream>
 
 namespace ui
@@ -209,6 +211,8 @@ void AllPropertiesDialog::callbackOK(GtkWidget* widget, AllPropertiesDialog* sel
     // Now set keyvals based on the ListStore contents, removing them from the
     // Entity's set as we go to yield a final set of properties to be deleted
     // from the Entity.
+
+	GlobalUndoSystem().start();
     
     GtkTreeIter iter;
     if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(self->_listStore), &iter)) {
@@ -236,6 +240,8 @@ void AllPropertiesDialog::callbackOK(GtkWidget* widget, AllPropertiesDialog* sel
 		 		i++) {
 		self->_entity->setKeyValue(i->c_str(), "");
 	}
+
+	GlobalUndoSystem().finish("entitySetKeyValues -allpropertiesdialog");
 
     // Close and destroy the dialog
     self->destroy();
