@@ -42,6 +42,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "traverselib.h"
 #include "render.h"
 
+#include "os/path.h"
+
+#include <boost/algorithm/string/case_conv.hpp>
+#include <boost/algorithm/string/replace.hpp>
+
 #include <string>
 
 class VectorLightList : public LightList
@@ -230,31 +235,31 @@ private:
 
 	/** Copy a picomodel surface struct into the C++ PicoSurface object.
 	 */
-  void CopyPicoSurface(picoSurface_t* surface, const std::string& fileExt)
-  {
+	void CopyPicoSurface(picoSurface_t* surface, const std::string& fileExt) {
 
-	// Get the shader from the picomodel struct. If this is a LWO model, use
-	// the material name to select the shader, while for an ASE model the
-	// bitmap path should be used.
-    picoShader_t* shader = PicoGetSurfaceShader( surface );
-    if( shader == 0 ) {
-		m_shader = "";
-    }
-    else {
-		if (fileExt == "lwo") {
-	    	m_shader = PicoGetShaderName( shader );
-		}
-		else if (fileExt == "ase") {
-			std::string rawMapName = PicoGetShaderMapName(shader);
-			// Take off the everything before "base/", and everything after
-			// the first period if it exists (i.e. strip off ".tga")
-			int basePos = rawMapName.find("base");
-			int dotPos = rawMapName.find(".");
-			m_shader = rawMapName.substr(basePos + 5, rawMapName.length() - dotPos).c_str();
-		}
-    }
-    globalOutputStream() << "  PicoSurface: using shader " << m_shader.c_str() << "\n";
-	  	    
+		// Get the shader from the picomodel struct. If this is a LWO model, use
+		// the material name to select the shader, while for an ASE model the
+		// bitmap path should be used.
+	    picoShader_t* shader = PicoGetSurfaceShader( surface );
+	    if( shader == 0 ) {
+			m_shader = "";
+	    }
+	    else {
+			if (fileExt == "lwo") {
+		    	m_shader = PicoGetShaderName( shader );
+			}
+			else if (fileExt == "ase") {
+				std::string rawMapName = PicoGetShaderMapName(shader);
+				boost::algorithm::replace_all(rawMapName, "\\", "/");
+				// Take off the everything before "base/", and everything after
+				// the first period if it exists (i.e. strip off ".tga")
+				int basePos = rawMapName.find("base");
+				int dotPos = rawMapName.find(".");
+				m_shader = rawMapName.substr(basePos + 5, dotPos - basePos - 5).c_str();
+			}
+	    }
+	    globalOutputStream() << "  PicoSurface: using shader " << m_shader.c_str() << "\n";
+		  	    
     m_vertices.resize( PicoGetSurfaceNumVertexes( surface ) );  
     m_indices.resize( PicoGetSurfaceNumIndexes( surface ) );
     
@@ -1075,6 +1080,7 @@ scene::Node& loadPicoModel(const picoModule_t* module, ArchiveFile& file)
 
 	// Determine the file extension (ASE or LWO) to pass down to the PicoModel
 	std::string fName = file.getName();
+	boost::algorithm::to_lower(fName);
 	std::string fExt = fName.substr(fName.size() - 3, 3);
 //	std::cout << "  extension is " << fExt << std::endl;
 
