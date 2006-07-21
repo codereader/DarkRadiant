@@ -64,16 +64,10 @@ public:
     }
   }
   
-  void modelChanged(const char* value)
-  {
-    StringOutputStream cleaned(string_length(value));
-    cleaned << PathCleaned(value);
-    m_resource.detach(*this);
-    m_resource.setName(cleaned.c_str());
-    m_resource.attach(*this);
-    m_modelChanged();
-  }
-  typedef MemberCaller1<Model, const char*, &Model::modelChanged> ModelChangedCaller;
+	// Update the model to the provided keyvalue
+	void modelChanged(std::string val);
+  
+  typedef MemberCaller1<Model, std::string, &Model::modelChanged> ModelChangedCaller;
 
   const char* getName() const
   {

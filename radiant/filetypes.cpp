@@ -27,8 +27,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "string/string.h"
 #include "os/path.h"
+
 #include <vector>
 #include <map>
+#include <iostream>
+
+#include <boost/algorithm/string/predicate.hpp>
 
 class RadiantFileTypeRegistry : public IFileTypeRegistry
 {
@@ -81,34 +85,36 @@ IFileTypeRegistry* GetFileTypeRegistry()
 
 const char* findModuleName(IFileTypeRegistry* registry, const char* moduleType, const char* extension)
 {
-  class SearchFileTypeList : public IFileTypeList
-  {
-    char m_pattern[128];
-    const char* m_moduleName;
-  public:
-    SearchFileTypeList(const char* ext)
-      : m_moduleName("")
-    {
-      m_pattern[0] = '*';
-      m_pattern[1] = '.';
-      strncpy(m_pattern + 2, ext, 125);
-      m_pattern[127] = '\0';
-    }
-    void addType(const char* moduleName, filetype_t type)
-    {
-      if(extension_equal(m_pattern, type.pattern))
-      {
-        m_moduleName = moduleName;
-      }
-    }
 
-    const char* getModuleName()
-    {
-      return m_moduleName;
-    }
-  } search(extension);
-  registry->getTypeList(moduleType, &search);
-  return search.getModuleName();
+	// Local searcher class
+	class SearchFileTypeList : public IFileTypeList {
+    
+		// The glob pattern to search for
+    	std::string _pattern;
+		const char* m_moduleName;
+	
+	public:
+
+		SearchFileTypeList(const char* ext)
+        : _pattern("*." + std::string(ext)),
+          m_moduleName("")
+		{}
+			
+	    void addType(const char* moduleName, filetype_t type) {
+			if (boost::algorithm::iequals(_pattern, std::string(type.pattern))) {
+		        m_moduleName = moduleName;
+		    }
+    	}
+
+	    const char* getModuleName() {
+		    return m_moduleName;
+		}
+		
+	} search(extension);
+
+	// Perform the search
+	registry->getTypeList(moduleType, &search);
+	return search.getModuleName();
 }
 
 

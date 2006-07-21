@@ -21,3 +21,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "model.h"
 
+#include <boost/algorithm/string/replace.hpp>
+
+// Update the contained model from the provided keyvalues
+
+void Model::modelChanged(std::string value) {
+	// Sanitise the keyvalue - must use forward slashes
+	boost::algorithm::replace_all(value, "\\", "/");
+	
+    m_resource.detach(*this);
+    m_resource.setName(value.c_str());
+    m_resource.attach(*this);
+    m_modelChanged();
+}
