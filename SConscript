@@ -274,16 +274,16 @@ radiant_src = [
 'windowobservers.cpp',
 'xmlstuff.cpp',
 'xywindow.cpp',
-'dialog/einspector/EntityInspector.cpp',
-'dialog/einspector/PropertyEditor.cpp',
-'dialog/einspector/TextPropertyEditor.cpp',
-'dialog/einspector/PropertyEditorFactory.cpp',
-'dialog/einspector/Vector3PropertyEditor.cpp',
-'dialog/einspector/BooleanPropertyEditor.cpp',
-'dialog/einspector/EntityPropertyEditor.cpp',
-#'dialog/einspector/ClassnamePropertyEditor.cpp',
-'dialog/einspector/ColourPropertyEditor.cpp',
-'dialog/einspector/AllPropertiesDialog.cpp'
+'ui/einspector/EntityInspector.cpp',
+'ui/einspector/PropertyEditor.cpp',
+'ui/einspector/TextPropertyEditor.cpp',
+'ui/einspector/PropertyEditorFactory.cpp',
+'ui/einspector/Vector3PropertyEditor.cpp',
+'ui/einspector/BooleanPropertyEditor.cpp',
+'ui/einspector/EntityPropertyEditor.cpp',
+#'ui/einspector/ClassnamePropertyEditor.cpp',
+'ui/einspector/ColourPropertyEditor.cpp',
+'ui/einspector/AllPropertiesDialog.cpp'
 ]
 
 for i in range(len(radiant_src)):
