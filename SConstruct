@@ -2,7 +2,6 @@
 # http://scons.sourceforge.net
 
 import commands, re, sys, os, pickle, string, popen2
-from makeversion import radiant_makeversion, get_version
 
 # to access some internal stuff
 import SCons

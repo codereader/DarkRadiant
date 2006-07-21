@@ -1,5 +1,4 @@
 import os, sys, commands, string
-from makeversion import get_version
 # OS Detection:
 OS = commands.getoutput('uname')
 
