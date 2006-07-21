@@ -359,7 +359,7 @@ const char* misc_model_dialog(GtkWidget* parent)
     buffer << g_qeglobals.m_userGamePath.c_str() << "/";
   }
 
-  const char *filename = file_dialog (parent, TRUE, "Choose Model", buffer.c_str(), ModelLoader::Name());
+  const char *filename = file_dialog (parent, TRUE, "Choose Model", buffer.c_str(), "*");
   if (filename != 0)
   {
     // use VFS to get the correct relative path
