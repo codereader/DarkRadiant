@@ -283,7 +283,8 @@ radiant_src = [
 'ui/einspector/EntityPropertyEditor.cpp',
 #'ui/einspector/ClassnamePropertyEditor.cpp',
 'ui/einspector/ColourPropertyEditor.cpp',
-'ui/einspector/AllPropertiesDialog.cpp'
+'ui/einspector/AllPropertiesDialog.cpp',
+'ui/ortho/OrthoContextMenu.cpp'
 ]
 
 for i in range(len(radiant_src)):

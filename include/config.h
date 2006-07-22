@@ -1,10 +1,9 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-/*
+/****************************************************************************
  * ENTITY INSPECTOR
- */
-
+ ****************************************************************************/
 
 /* This option specifies that the new Entity Inspector should be used instead of
  * the legacy GtkRadiant dialog
@@ -33,5 +32,15 @@
  
 //#define PROPERTY_EDITOR_HAS_UNDO_BUTTON
 
+
+/*************************************************************************
+ * ORTHO WINDOW
+ *************************************************************************/
+ 
+/* Use the new context menu, with links to Eclass browser and model selector,
+ * rather than the old-style entity menu.
+ */
+ 
+#define USE_NEW_ORTHO_CONTEXT_MENU
 
 #endif /*CONFIG_H_*/
