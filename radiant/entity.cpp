@@ -229,7 +229,7 @@ void Entity_createFromSelection(const char* name, const Vector3& origin) {
     entitypath.push(makeReference(node.get()));
     scene::Instance & instance = findInstance(entitypath);
 
-    if (entityClass->fixedsize) {
+    if (entityClass->fixedsize || (isModel && !brushesSelected)) {
         Select_Delete();
     
         Transformable *transform = Instance_getTransformable(instance);
@@ -245,15 +245,9 @@ void Entity_createFromSelection(const char* name, const Vector3& origin) {
         Instance_setSelected(instance, true);
     }
     else {
-        Scene_parentSelectedBrushesToEntity(GlobalSceneGraph(), node);
-        Scene_forEachChildSelectable(SelectableSetSelected(true), instance.path());
-
-    if (g_pGameDescription->mGameType == "doom3")
-    {
-      Node_getEntity(node)->setKeyValue("model", Node_getEntity(node)->getKeyValue("name"));
+		Node_getEntity(node)->setKeyValue("model", Node_getEntity(node)->getKeyValue("name"));
     }
-    }
-
+	
     // Set the light radius and origin
 
     if (entityClass->isLight() && brushesSelected) {
@@ -274,6 +268,9 @@ void Entity_createFromSelection(const char* name, const Vector3& origin) {
     {
       Node_getEntity(node)->setKeyValue("model", model);
     }
+
+    Scene_parentSelectedBrushesToEntity(GlobalSceneGraph(), node);
+    Scene_forEachChildSelectable(SelectableSetSelected(true), instance.path());
   }
 }
 
