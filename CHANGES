@@ -1,6 +1,12 @@
 This is the changelog for developers, != changelog for the end user 
 that we distribute with the binaries. (see changelog)
 
+22/07/2006
+- Merged GtkRadiant fix for func_static dragging issue
+
+21/07/2006
+- Fixed missing shaders on ASE models
+
 17/07/2006
 - Entity keyval changes now undoable and correctly set "map changed" flag to allow
   saving.
