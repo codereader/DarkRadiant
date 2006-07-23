@@ -3,6 +3,8 @@
 
 #include <gtk/gtk.h>
 
+#include "generic/vector.h"
+
 namespace ui
 {
 
@@ -18,6 +20,15 @@ private:
 	// The GtkWidget representing the menu
 	GtkWidget* _widget;
 	
+	// Last provided 3D point for action
+	Vector3 _lastPoint;
+	
+private:
+
+	/* Gtk Callbacks */
+	
+	static void callbackAddEntity(GtkMenuItem* item, OrthoContextMenu* self);
+	
 public:
 
 	/** Constructor. Create the GTK content here.
@@ -27,15 +38,23 @@ public:
 
 	/** Display the menu at the current mouse position, and act on the
 	 * choice.
+	 * 
+	 * @param point
+	 * The point in 3D space at which the chosen operation should take
+	 * place.
 	 */
 	 
-	void show();
+	void show(const Vector3& point);
 	
-	/* Static instance display function. Obtain the singleton instance and
+	/** Static instance display function. Obtain the singleton instance and
 	 * call its show() function.
+	 * 
+	 * @param point
+	 * The point in 3D space at which the chosen operation should take
+	 * place.
 	 */
 	 
-	static void displayInstance();
+	static void displayInstance(const Vector3& point);
 
 };
 

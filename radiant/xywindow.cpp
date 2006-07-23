@@ -1216,8 +1216,15 @@ public:
 
 #include "ui/ortho/OrthoContextMenu.h"
 
+// Forward decl
+void XYWnd_MouseToPoint(XYWnd* xywnd, int x, int y, Vector3& point);
+
 void XYWnd::OnContextMenu() {
-	ui::OrthoContextMenu::displayInstance();	
+	// Get the click point in 3D space
+	Vector3 point;
+	XYWnd_MouseToPoint(this, m_entityCreate_x, m_entityCreate_y, point);
+	// Display the menu, passing the coordinates for creation
+	ui::OrthoContextMenu::displayInstance(point);	
 }
 
 #else
@@ -1244,6 +1251,9 @@ void XYWnd::OnContextMenu()
 }
 
 #endif
+
+/*
+ */
 
 FreezePointer g_xywnd_freezePointer;
 
