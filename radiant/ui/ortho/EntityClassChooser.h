@@ -8,6 +8,14 @@
 namespace ui
 {
 
+	namespace {
+		
+		/* CONSTANTS */
+		
+		const char* ECLASS_CHOOSER_TITLE = "Create entity";
+		
+	}
+
 /** Dialog window displaying a tree of Entity Classes, allowing the selection
  * of a class to create at the current location. This widget is displayed
  * by the OrthoContextMenu.
@@ -21,6 +29,11 @@ private:
 	GtkWidget* _widget;
 
 private:
+
+	/* Widget construction helpers */
+	
+	GtkWidget* createTreeView();
+	GtkWidget* createButtonPanel();
 
 	/* GTK callbacks */
 	
