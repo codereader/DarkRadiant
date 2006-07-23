@@ -2,6 +2,8 @@
 #include "IconMenuLabel.h"
 #include "EntityClassChooser.h"
 
+#include "entity.h" // Entity_createFromSelection()
+
 namespace ui
 {
 
@@ -17,12 +19,16 @@ void OrthoContextMenu::displayInstance(const Vector3& point) {
 OrthoContextMenu::OrthoContextMenu()
 : _widget(gtk_menu_new())
 {
-	GtkWidget* addModel = IconMenuLabel("cmenu_add_model.png", "Add model...");
-	GtkWidget* addLight = IconMenuLabel("cmenu_add_light.png", "Add light...");
-	GtkWidget* addEntity = IconMenuLabel("cmenu_add_entity.png", "Add entity...");
-	GtkWidget* addPrefab = IconMenuLabel("cmenu_add_prefab.png", "Add prefab...");
+	GtkWidget* addModel = IconMenuLabel(ADD_MODEL_ICON, ADD_MODEL_TEXT);
+	GtkWidget* addLight = IconMenuLabel(ADD_LIGHT_ICON, ADD_LIGHT_TEXT);
+	GtkWidget* addEntity = IconMenuLabel(ADD_ENTITY_ICON, ADD_ENTITY_TEXT);
+	GtkWidget* addPrefab = IconMenuLabel(ADD_PREFAB_ICON, ADD_PREFAB_TEXT);
+	
+	gtk_widget_set_sensitive(addPrefab, FALSE);
 	
 	g_signal_connect(G_OBJECT(addEntity), "activate", G_CALLBACK(callbackAddEntity), this);
+	g_signal_connect(G_OBJECT(addLight), "activate", G_CALLBACK(callbackAddLight), this);
+	g_signal_connect(G_OBJECT(addModel), "activate", G_CALLBACK(callbackAddModel), this);
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), addModel);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), addLight);
@@ -43,6 +49,14 @@ void OrthoContextMenu::show(const Vector3& point) {
 
 void OrthoContextMenu::callbackAddEntity(GtkMenuItem* item, OrthoContextMenu* self) {
 	EntityClassChooser::displayInstance(self->_lastPoint);
+}
+
+void OrthoContextMenu::callbackAddLight(GtkMenuItem* item, OrthoContextMenu* self) {
+	Entity_createFromSelection(LIGHT_CLASSNAME, self->_lastPoint);
+}
+
+void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* self) {
+	Entity_createFromSelection(MODEL_CLASSNAME, self->_lastPoint);
 }
 
 } // namespace ui
