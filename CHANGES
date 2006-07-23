@@ -1,5 +1,8 @@
-This is the changelog for developers, != changelog for the end user 
-that we distribute with the binaries. (see changelog)
+** RELEASE 0.5.1
+
+23/07/2006
+- Added new context menu with options to add light, model or entity, along
+  with new dialog for selecting an entity class to create.
 
 22/07/2006
 - Merged GtkRadiant fix for func_static dragging issue
