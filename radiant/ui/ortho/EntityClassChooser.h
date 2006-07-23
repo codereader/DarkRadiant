@@ -27,6 +27,19 @@ private:
 
 	// Main dialog window
 	GtkWidget* _widget;
+	
+	// Tree model holding the classnames
+	GtkTreeStore* _treeStore;
+	
+	// GtkTreeSelection holding the currently-selected classname
+	GtkTreeSelection* _selection;
+
+	// Add button. Needs to be a member since we enable/disable it in the
+	// selectionchanged callback.
+	GtkWidget* _addButton;
+
+	// The 3D coordinates of the point where the entity must be created.
+	Vector3 _lastPoint;
 
 private:
 
@@ -40,6 +53,14 @@ private:
 	// Called when close button is clicked, ensure that window is hidden
 	// not destroyed.
 	static void callbackHide(GtkWidget*, GdkEvent*, EntityClassChooser*);
+
+	// Button callbacks
+	static void callbackCancel(GtkWidget*, EntityClassChooser*);
+	static void callbackAdd(GtkWidget*, EntityClassChooser*);
+
+	// Check when the selection changes, disable the add button if there
+	// is nothing selected.
+	static void callbackSelectionChanged(GtkWidget*, EntityClassChooser*);
 
 public:
 
