@@ -40,7 +40,7 @@
 			<property name="nodiffuse" type="boolean" />
 			<property name="noshadows" type="boolean" />
 			<property name="nospecular" type="boolean" />
-			<property name="texture" type="text" />
+			<property name="texture" type="texture" />
 		</propertyCategory>
 		<propertyCategory name="Model">
 			<property name="model" type="text" />

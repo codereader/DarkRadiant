@@ -213,10 +213,7 @@ radiant_src = [
 'csg.cpp',
 'dialog.cpp',
 'eclass.cpp',
-#'eclass_def.cpp',
 'eclass_doom3.cpp',
-#'eclass_fgd.cpp',
-#'eclass_xml.cpp',
 'entity.cpp',
 'entitylist.cpp',
 'environment.cpp',
@@ -283,6 +280,7 @@ radiant_src = [
 'ui/einspector/EntityPropertyEditor.cpp',
 #'ui/einspector/ClassnamePropertyEditor.cpp',
 'ui/einspector/ColourPropertyEditor.cpp',
+'ui/einspector/TexturePropertyEditor.cpp',
 'ui/einspector/AllPropertiesDialog.cpp',
 'ui/ortho/OrthoContextMenu.cpp',
 'ui/ortho/EntityClassChooser.cpp'

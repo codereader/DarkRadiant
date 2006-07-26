@@ -6,6 +6,7 @@
 #include "EntityPropertyEditor.h"
 #include "ClassnamePropertyEditor.h"
 #include "ColourPropertyEditor.h"
+#include "TexturePropertyEditor.h"
 
 #include "gtkutil/image.h"
 
@@ -26,6 +27,7 @@ void PropertyEditorFactory::registerClasses() {
         _peMap["boolean"] = new BooleanPropertyEditor();
         _peMap["entity"] = new EntityPropertyEditor();
 		_peMap["colour"] = new ColourPropertyEditor();
+		_peMap["texture"] = new TexturePropertyEditor();
 #ifdef USE_CLASSNAME_PROPERTY_EDITOR
         _peMap["classname"] = new ClassnamePropertyEditor();
 #endif
