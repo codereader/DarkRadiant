@@ -18,6 +18,13 @@ private:
 
 	// The text entry field
 	GtkWidget* _textEntry;
+	
+	// Texture prefixes we are interested in
+	const std::string _prefixes;
+	
+	/* GTK CALLBACKS */
+	
+	static void callbackBrowse(GtkWidget*, TexturePropertyEditor*);
 
 public:
 
