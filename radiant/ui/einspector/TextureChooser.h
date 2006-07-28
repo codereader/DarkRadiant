@@ -21,16 +21,28 @@ private:
 	// Main dialog widget
 	GtkWidget* _widget;	
 	
+	// Current selection object
+	GtkTreeSelection* _selection;
+	
 private:
 
 	// Widget construction helpers
 	GtkWidget* createTreeView();
 	GtkWidget* createButtons();
 	
+	/* GTK CALLBACKS */
+	static void callbackCancel(GtkWidget*, TextureChooser*);
+	static void callbackOK(GtkWidget*, TextureChooser*);
+	
 public:
 
 	// Construct the dialog window and its contents.
 	TextureChooser(GtkWidget* combo);
+	
+	// Constructor, delete widgets
+	~TextureChooser() {
+		gtk_widget_destroy(_widget);
+	}
 	
 };
 

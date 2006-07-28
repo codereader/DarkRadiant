@@ -41,39 +41,6 @@ TexturePropertyEditor::TexturePropertyEditor(Entity* entity, const std::string& 
 
 // Browse button callback, with local functor object
 
-namespace {
-
-	struct ShaderNameFunctor {
-
-		typedef const char* first_argument_type;
-
-		// Interesting texture prefixes
-		std::vector<std::string> _prefixes;
-
-		// Constructor
-		ShaderNameFunctor(const std::string& pref) {
-			boost::algorithm::split(_prefixes,
-									pref,
-									boost::algorithm::is_any_of(","));
-		
-		}
-	
-		// Functor operator
-		void operator() (const char* shaderName) {
-			std::string name(shaderName);
-			for (std::vector<std::string>::iterator i = _prefixes.begin();
-				 i != _prefixes.end();
-				 i++)
-			{
-				if (boost::algorithm::istarts_with(name, *i)) {
-					std::cout << name << std::endl;
-				}
-			}
-		}
-	};
-
-}
-
 void TexturePropertyEditor::callbackBrowse(GtkWidget* widget, TexturePropertyEditor* self) {
 	new TextureChooser(self->_textEntry); // self-destructs on close
 }
