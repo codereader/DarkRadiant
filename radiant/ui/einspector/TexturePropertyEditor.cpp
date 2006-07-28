@@ -1,4 +1,5 @@
 #include "TexturePropertyEditor.h"
+#include "TextureChooser.h"
 
 #include "ishaders.h"
 #include "generic/callback.h"
@@ -74,8 +75,7 @@ namespace {
 }
 
 void TexturePropertyEditor::callbackBrowse(GtkWidget* widget, TexturePropertyEditor* self) {
-	ShaderNameFunctor functor(self->_prefixes);
-	GlobalShaderSystem().foreachShaderName(makeCallback1(functor));
+	new TextureChooser(self->_textEntry); // self-destructs on close
 }
 
 // Get and set functions
