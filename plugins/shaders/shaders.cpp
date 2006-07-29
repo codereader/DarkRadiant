@@ -1109,8 +1109,6 @@ public:
 
   void realiseLighting()
   {
-    if(m_lightingEnabled)
-    {
       LoadImageCallback loader = GlobalTexturesCache().defaultLoader();
       if(!string_empty(m_template.m_heightmapScale.c_str()))
       {
@@ -1159,13 +1157,10 @@ public:
           }
         }
       }
-    }
   }
 
   void unrealiseLighting()
   {
-    if(m_lightingEnabled)
-    {
       GlobalTexturesCache().release(m_pDiffuse);
       GlobalTexturesCache().release(m_pBump);
       GlobalTexturesCache().release(m_pSpecular);
@@ -1179,7 +1174,6 @@ public:
       m_layers.clear();
 
       m_blendFunc = BlendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA);
-    }
   }
 
   // set shader name
@@ -1981,6 +1975,11 @@ public:
   {
     Shaders_Refresh();
   }
+
+	// Is the shader system realised
+	bool isRealised() {
+		return g_shaders_unrealised == 0;
+	}
 
   IShader* getShaderForName(const char* name)
   {
