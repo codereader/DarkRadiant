@@ -35,10 +35,12 @@ private:
 	// Widget construction helpers
 	GtkWidget* createTreeView();
 	GtkWidget* createButtons();
+	GtkWidget* createPreview();
 	
 	/* GTK CALLBACKS */
 	static void callbackCancel(GtkWidget*, TextureChooser*);
 	static void callbackOK(GtkWidget*, TextureChooser*);
+	static void callbackGLDraw(GtkWidget*, GdkEventExpose*, TextureChooser*);
 	
 public:
 

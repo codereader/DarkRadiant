@@ -2,9 +2,13 @@
 
 #include "groupdialog.h"
 #include "ishaders.h"
+#include "igl.h"
+
+#include "gtkutil/glwidget.h"
 
 #include <vector>
 #include <string>
+#include <iostream>
 
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -38,6 +42,7 @@ TextureChooser::TextureChooser(GtkWidget* entry, const std::string& prefixes)
 	
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 3);
 	gtk_box_pack_start(GTK_BOX(vbx), createTreeView(), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), createPreview(), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
 	
@@ -121,6 +126,7 @@ GtkWidget* TextureChooser::createTreeView() {
 
 GtkWidget* TextureChooser::createButtons() {
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
+	gtk_container_set_border_width(GTK_CONTAINER(hbx), 3);
 
 	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
 	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
@@ -130,6 +136,28 @@ GtkWidget* TextureChooser::createButtons() {
 
 	gtk_box_pack_end(GTK_BOX(hbx), okButton, FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, FALSE, FALSE, 0);
+	return hbx;
+}
+
+// Construct the GL preview
+
+GtkWidget* TextureChooser::createPreview() {
+	// HBox contains the preview GL widget along with a texture attributes
+	// pane.
+	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
+
+	// GtkGLExt widget
+	GtkWidget* glw = glwidget_new(false);
+	gtk_widget_set_size_request(glw, 128, 128);
+	g_signal_connect(G_OBJECT(glw), "expose-event", G_CALLBACK(callbackGLDraw), this);
+	gtk_box_pack_start(GTK_BOX(hbx), glw, FALSE, FALSE, 0);
+	
+	// Attributes text box
+	GtkWidget* textbox = gtk_text_view_new();
+	GtkWidget* frame = gtk_frame_new(NULL);
+	gtk_container_add(GTK_CONTAINER(frame), textbox);
+	gtk_box_pack_start(GTK_BOX(hbx), frame, TRUE, TRUE, 0);
+
 	return hbx;
 }
 
@@ -152,6 +180,36 @@ void TextureChooser::callbackOK(GtkWidget* w, TextureChooser* self) {
 
 	gtk_entry_set_text(GTK_ENTRY(self->_entry), g_value_get_string(&val));
 	delete self;
+}
+
+void TextureChooser::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, TextureChooser* self) {
+	if (glwidget_make_current(widget) != FALSE) {
+		// Get the viewport size from the GL widget
+		GtkRequisition req;
+		gtk_widget_size_request(widget, &req);
+		glViewport(0, 0, req.width, req.height);
+
+		// Initialise
+		glClearColor(0.3, 0.3, 0.3, 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glDisable(GL_DEPTH_TEST);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0, req.width, 0, req.height, -100, 100);
+		
+		// Draw a quad to put the texture on
+		glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+		glColor3f(1, 1, 1);
+		glBegin(GL_QUADS);
+		glVertex2i(10, 10);
+		glVertex2i(req.height - 10, 10);
+		glVertex2i(req.height - 10, req.height - 10);
+		glVertex2i(10, req.height - 10);
+		glEnd();
+
+		// Update GtkGlExt buffer
+		glwidget_swap_buffers(widget);
+	}
 }
 	
 } // namespace ui
