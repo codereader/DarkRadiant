@@ -211,10 +211,11 @@ void TextureChooser::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, Textu
 		// Get the selected texture, and set up OpenGL to render it on
 		// the quad.
 		IShader* shader = GlobalShaderSystem().getShaderForName(self->getSelectedName());
-		std::cout << "Got IShader: " << shader->getName() << std::endl;
-		qtexture_t* tex = shader->firstLayer()->texture();
-		std::cout << "got texture: " << tex->name << std::endl;
-		glBindTexture (GL_TEXTURE_2D, tex->texture_number);				
+		const ShaderLayer* first = shader->firstLayer();
+		if (first != NULL) {
+			qtexture_t* tex = shader->firstLayer()->texture();
+			glBindTexture (GL_TEXTURE_2D, tex->texture_number);
+		}
 		
 		// Draw a quad to put the texture on
 		glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
