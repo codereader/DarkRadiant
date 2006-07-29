@@ -29,7 +29,7 @@ public:
 	TextPropertyEditor();
 
 	// Create a new TextPropertyEditor
-    virtual PropertyEditor* createNew(Entity* entity, const std::string& name) {
+    virtual PropertyEditor* createNew(Entity* entity, const std::string& name, const std::string& options) {
     	return new TextPropertyEditor(entity, name);
     }
     

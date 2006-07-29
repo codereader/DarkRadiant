@@ -3,6 +3,8 @@
 
 #include <gtk/gtk.h>
 
+#include <string>
+
 namespace ui
 {
 
@@ -24,6 +26,10 @@ private:
 	// Current selection object
 	GtkTreeSelection* _selection;
 	
+	// The prefixes we are interested in (from the PropertyEditor's option
+	// string
+	std::string _prefixes;
+	
 private:
 
 	// Widget construction helpers
@@ -37,7 +43,7 @@ private:
 public:
 
 	// Construct the dialog window and its contents.
-	TextureChooser(GtkWidget* combo);
+	TextureChooser(GtkWidget* combo, const std::string& prefixes);
 	
 	// Constructor, delete widgets
 	~TextureChooser() {

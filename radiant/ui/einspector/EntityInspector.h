@@ -50,6 +50,7 @@ private:
         PROPERTY_NAME_COLUMN,
         PROPERTY_VALUE_COLUMN,
         PROPERTY_TYPE_COLUMN,
+        PROPERTY_OPTIONS_COLUMN,
         TEXT_COLOUR_COLUMN,
         PROPERTY_ICON_COLUMN,
         N_COLUMNS
@@ -77,11 +78,28 @@ private:
     // when GTK is idle.
     IdleDraw _idleDraw;
 
-	// A list of available PropertyCategories, stored as a map from string name
-	// to PropertyCategory map (which in turn contains the actual key names
-	// within that category along with their PropertyEditor type).
-	typedef std::map<const std::string, const std::string> PropertyCategory;
+	/* Property storage. The base Property is a simple
+	 * data structure containing a given property's name, its type and its
+	 * option string. These Property structures are then assembled
+	 * into a vector which is stored in the PropertyCategoryMap keyed on the
+	 * category name ("Light", "Model") etc.
+	 * 
+	 * A Property therefore represents a single row in the tree view
+	 * widget, while the PropertyCategoryMap maps expandable category names
+	 * onto the vector of rows which should appear in that category.
+	 */
+
+	struct Property {
+		std::string name; 		// e.g. "light_radius"
+		std::string type; 		// e.g. "vector3"
+		std::string options;	// property-specific option string
+	};
+
+	typedef std::vector<Property*> PropertyCategory;
+
 	typedef std::map<const std::string, PropertyCategory*> PropertyCategoryMap;
+
+	// The static category map
 	static PropertyCategoryMap _categoryMap;
     
     // The set of known Property types.

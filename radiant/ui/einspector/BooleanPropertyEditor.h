@@ -30,7 +30,7 @@ public:
 	virtual ~BooleanPropertyEditor();
 
 	// Create a new BooleanPropertyEditor
-    virtual PropertyEditor* createNew(Entity* entity, const std::string& name) {
+    virtual PropertyEditor* createNew(Entity* entity, const std::string& name, const std::string& options) {
     	return new BooleanPropertyEditor(entity, name);
     }
     

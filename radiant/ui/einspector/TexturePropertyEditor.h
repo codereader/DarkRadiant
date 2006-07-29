@@ -29,14 +29,14 @@ private:
 public:
 
 	// Construct a TexturePropertyEditor with an entity and key to edit
-	TexturePropertyEditor(Entity* entity, const std::string& name);
+	TexturePropertyEditor(Entity* entity, const std::string& name, const std::string& options);
 	
 	// Construct a blank TexturePropertyEditor for use in the PropertyEditorFactory
 	TexturePropertyEditor() {}
 
 	// Create a new TexturePropertyEditor
-    virtual PropertyEditor* createNew(Entity* entity, const std::string& name) {
-    	return new TexturePropertyEditor(entity, name);
+    virtual PropertyEditor* createNew(Entity* entity, const std::string& name, const std::string& options) {
+    	return new TexturePropertyEditor(entity, name, options);
     }
     
     virtual void setValue(const std::string&);

@@ -12,6 +12,7 @@
 #include "gtkutil/dialog.h"
 
 #include "xmlutil/Document.h"
+#include "xmlutil/AttributeNotFoundException.h"
 
 #include "signal/signal.h"
 
@@ -64,12 +65,21 @@ void EntityInspector::makePropertyCategory(xml::Node& node) {
 
 	for (unsigned int i = 0; i < propertyList.size(); i++) {
 
+		// Create a Property structure
+		Property* prop = new Property();
+
 		// Look up the name and type attributes of this property node
-		std::string keyName = propertyList[i].getAttributeValue("name");
-		std::string keyType = propertyList[i].getAttributeValue("type");
+		prop->name = propertyList[i].getAttributeValue("name");
+		prop->type = propertyList[i].getAttributeValue("type");
+		try {
+			prop->options = propertyList[i].getAttributeValue("options");
+		}
+		catch (xml::AttributeNotFoundException e) {
+			prop->options = "";
+		}
 
 		// Add the name and type to the PropertyCategory object
-		cat->insert(PropertyCategory::value_type(keyName, keyType));
+		cat->push_back(prop);
 
 	}
 	
@@ -125,6 +135,7 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     							    G_TYPE_STRING, // property
     							    G_TYPE_STRING, // value
     							    G_TYPE_STRING, // value type
+    							    G_TYPE_STRING, // options
                                     G_TYPE_STRING, // text colour
     							    GDK_TYPE_PIXBUF); // value icon
     
@@ -298,9 +309,20 @@ void EntityInspector::updatePropertyEditor() {
         const std::string keyType(g_value_get_string(&selType));
         g_value_unset(&selType);
         
+        // Get the property option string to pass to the PropertyEditor
+        GValue selOpts = {0, 0};
+        gtk_tree_model_get_value(GTK_TREE_MODEL(_treeStore), &tmpIter, PROPERTY_OPTIONS_COLUMN, &selOpts);
+        std::string options = "test";
+        const gchar* optPtr = g_value_get_string(&selOpts);
+        if (optPtr) {
+        	options = optPtr;
+        }
+        g_value_unset(&selOpts);
+                
         _currentPropertyEditor = PropertyEditorFactory::create(keyType,
                                                                _selectedEntity,
-                                                               key);
+                                                               key,
+                                                               options);
         if (_currentPropertyEditor != NULL) {
             gtk_container_add(GTK_CONTAINER(_editorFrame), _currentPropertyEditor->getWidget());
         }
@@ -324,14 +346,16 @@ void EntityInspector::populateTreeModel() {
 		// Create the individual property sub-nodes.
 		for (PropertyCategory::iterator j = i->second->begin(); j != i->second->end(); j++) {
 
-			std::string keyName = j->first;
-			std::string keyType = j->second;
+			const char* keyName = (*j)->name.c_str();
+			const char* keyType = (*j)->type.c_str();
+			const char* options = (*j)->options.c_str();
 
 	        GtkTreeIter tempIter;
 	        gtk_tree_store_append(_treeStore, &tempIter, &categoryIter);
-	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_NAME_COLUMN, keyName.c_str(), -1);
+	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_NAME_COLUMN, keyName, -1);
 	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_VALUE_COLUMN, NO_VALUE_STRING.c_str(), -1); // no value yet
-	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_TYPE_COLUMN, keyType.c_str(), -1);
+	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_TYPE_COLUMN, keyType, -1);
+	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_OPTIONS_COLUMN, options, -1);
             gtk_tree_store_set(_treeStore, &tempIter, TEXT_COLOUR_COLUMN, "grey", -1);
 
 			std::string typeIcon = std::string("icon_") + keyType + ".png";

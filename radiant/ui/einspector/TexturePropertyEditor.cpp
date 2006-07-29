@@ -13,10 +13,9 @@ namespace ui
 
 // Main constructor
 
-TexturePropertyEditor::TexturePropertyEditor(Entity* entity, const std::string& name)
+TexturePropertyEditor::TexturePropertyEditor(Entity* entity, const std::string& name, const std::string& options)
 : PropertyEditor(entity, name, "texture"),
-//  _prefixes("lights/,fogs/")
-  _prefixes("lights/,fogs/")
+  _prefixes(options)
 {
 	GtkWidget* outer = gtk_vbox_new(FALSE, 0);
 
@@ -42,7 +41,7 @@ TexturePropertyEditor::TexturePropertyEditor(Entity* entity, const std::string& 
 // Browse button callback, with local functor object
 
 void TexturePropertyEditor::callbackBrowse(GtkWidget* widget, TexturePropertyEditor* self) {
-	new TextureChooser(self->_textEntry); // self-destructs on close
+	new TextureChooser(self->_textEntry, self->_prefixes); // self-destructs on close
 }
 
 // Get and set functions

@@ -4,7 +4,9 @@
 #include "Vector3PropertyEditor.h"
 #include "BooleanPropertyEditor.h"
 #include "EntityPropertyEditor.h"
+#ifdef USE_CLASSNAME_PROPERTY_EDITOR
 #include "ClassnamePropertyEditor.h"
+#endif
 #include "ColourPropertyEditor.h"
 #include "TexturePropertyEditor.h"
 
@@ -35,8 +37,11 @@ void PropertyEditorFactory::registerClasses() {
 
 // Create a PropertyEditor from the given name.
 
-PropertyEditor* PropertyEditorFactory::create(const std::string& className, Entity* entity, const std::string& key) {
-
+PropertyEditor* PropertyEditorFactory::create(const std::string& className,
+											  Entity* entity,
+											  const std::string& key,
+											  const std::string& options) 
+{
     // Register the PropertyEditors if the map is empty
     if (_peMap.empty()) {
         registerClasses();
@@ -53,7 +58,7 @@ PropertyEditor* PropertyEditorFactory::create(const std::string& className, Enti
 							<< " for type \"" << className << "\"." << std::endl;
 		return NULL;
 	} else {
-        PropertyEditor* pe = iter->second->createNew(entity, key);
+        PropertyEditor* pe = iter->second->createNew(entity, key, options);
         pe->refresh();
 		return pe;
 	}

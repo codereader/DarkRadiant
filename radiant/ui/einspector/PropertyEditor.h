@@ -38,7 +38,9 @@ public:
     
     // Create a new PropertyEditor of the same type as the derived class (for
     // virtual construction).
-    virtual PropertyEditor* createNew(Entity*, const std::string&) = 0;
+    virtual PropertyEditor* createNew(Entity* entity, 
+    								   const std::string& key,
+    								   const std::string& options) = 0;
     
     // Update the contained widgets with the given key value. This function is
     // always called from the parent PropertyEditor class.

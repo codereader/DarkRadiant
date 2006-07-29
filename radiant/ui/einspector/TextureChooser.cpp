@@ -15,9 +15,10 @@ namespace ui
 
 // Construct the dialog
 
-TextureChooser::TextureChooser(GtkWidget* entry)
+TextureChooser::TextureChooser(GtkWidget* entry, const std::string& prefixes)
 : _entry(entry),
-  _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL))
+  _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
+  _prefixes(prefixes)
 {
 	GtkWindow* gd = GroupDialog_getWindow();
 
@@ -92,7 +93,7 @@ GtkWidget* TextureChooser::createTreeView() {
 	// Tree model
 	GtkTreeStore* store = gtk_tree_store_new(1, G_TYPE_STRING);	
 	
-	ShaderNameFunctor func("lights/,fogs/", store);
+	ShaderNameFunctor func(_prefixes, store);
 	GlobalShaderSystem().foreachShaderName(makeCallback1(func));
 	
 	// Tree view

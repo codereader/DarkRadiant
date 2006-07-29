@@ -30,7 +30,7 @@ public:
 	ColourPropertyEditor();
 	
 	/// Create a new ColourPropertyEditor
-	virtual PropertyEditor* createNew(Entity* entity, const std::string& name) {
+    virtual PropertyEditor* createNew(Entity* entity, const std::string& name, const std::string& options) {
     	return new ColourPropertyEditor(entity, name);
     }
 
