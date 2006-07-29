@@ -42,7 +42,7 @@ std::string Node::getAttributeValue(const std::string& key) const {
     }
 
     // Not found, throw the exception
-    throw AttributeNotFoundException("Node::getAttributeValue() : attribute not found");
+    throw AttributeNotFoundException("Node::getAttributeValue() : attribute \"" + key + "\" not found");
     
 }
 
