@@ -3,6 +3,7 @@
 #include "groupdialog.h"
 #include "ishaders.h"
 #include "igl.h"
+#include "texturelib.h"
 
 #include "gtkutil/glwidget.h"
 
@@ -114,6 +115,7 @@ GtkWidget* TextureChooser::createTreeView() {
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree), col);				
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tree), FALSE);
 	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree));
+	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(callbackSelChanged), this);
 
 	// Pack into scrolled window
 	GtkWidget* scroll = gtk_scrolled_window_new(NULL, NULL);
@@ -147,10 +149,12 @@ GtkWidget* TextureChooser::createPreview() {
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
 
 	// GtkGLExt widget
-	GtkWidget* glw = glwidget_new(false);
-	gtk_widget_set_size_request(glw, 128, 128);
-	g_signal_connect(G_OBJECT(glw), "expose-event", G_CALLBACK(callbackGLDraw), this);
-	gtk_box_pack_start(GTK_BOX(hbx), glw, FALSE, FALSE, 0);
+	_glWidget = glwidget_new(false);
+	gtk_widget_set_size_request(_glWidget, 128, 128);
+	g_signal_connect(G_OBJECT(_glWidget), "expose-event", G_CALLBACK(callbackGLDraw), this);
+	GtkWidget* glFrame = gtk_frame_new(NULL);
+	gtk_container_add(GTK_CONTAINER(glFrame), _glWidget);
+	gtk_box_pack_start(GTK_BOX(hbx), glFrame, FALSE, FALSE, 0);
 	
 	// Attributes text box
 	GtkWidget* textbox = gtk_text_view_new();
@@ -161,6 +165,22 @@ GtkWidget* TextureChooser::createPreview() {
 	return hbx;
 }
 
+// Return the selection as a string
+
+const char* TextureChooser::getSelectedName() {
+	// Get the selection
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+	gtk_tree_selection_get_selected(_selection, &model, &iter);
+
+	// Get the value
+	GValue val = {0, 0};
+	gtk_tree_model_get_value(model, &iter, 0, &val);
+
+	// Get the string
+	return g_value_get_string(&val);	
+}
+
 /* GTK CALLBACKS */
 
 void TextureChooser::callbackCancel(GtkWidget* w, TextureChooser* self) {
@@ -168,17 +188,7 @@ void TextureChooser::callbackCancel(GtkWidget* w, TextureChooser* self) {
 }
 
 void TextureChooser::callbackOK(GtkWidget* w, TextureChooser* self) {
-
-	// Get the selection
-	GtkTreeIter iter;
-	GtkTreeModel* model;
-	gtk_tree_selection_get_selected(self->_selection, &model, &iter);
-
-	// Get the value
-	GValue val = {0, 0};
-	gtk_tree_model_get_value(model, &iter, 0, &val);
-
-	gtk_entry_set_text(GTK_ENTRY(self->_entry), g_value_get_string(&val));
+	gtk_entry_set_text(GTK_ENTRY(self->_entry), self->getSelectedName());
 	delete self;
 }
 
@@ -196,20 +206,40 @@ void TextureChooser::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, Textu
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		glOrtho(0, req.width, 0, req.height, -100, 100);
+		glEnable (GL_TEXTURE_2D);
+
+		// Get the selected texture, and set up OpenGL to render it on
+		// the quad.
+		IShader* shader = GlobalShaderSystem().getShaderForName(self->getSelectedName());
+		std::cout << "Got IShader: " << shader->getName() << std::endl;
+		qtexture_t* tex = shader->firstLayer()->texture();
+		std::cout << "got texture: " << tex->name << std::endl;
+		glBindTexture (GL_TEXTURE_2D, tex->texture_number);				
 		
 		// Draw a quad to put the texture on
 		glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 		glColor3f(1, 1, 1);
 		glBegin(GL_QUADS);
-		glVertex2i(10, 10);
-		glVertex2i(req.height - 10, 10);
-		glVertex2i(req.height - 10, req.height - 10);
-		glVertex2i(10, req.height - 10);
+		glTexCoord2i(0, 1);
+		glVertex2i(0, 0);
+		glTexCoord2i(1, 1);
+		glVertex2i(req.height, 0);
+		glTexCoord2i(1, 0);
+		glVertex2i(req.height, req.height);
+		glTexCoord2i(0, 0);
+		glVertex2i(0, req.height);
 		glEnd();
 
 		// Update GtkGlExt buffer
 		glwidget_swap_buffers(widget);
+		
+		// Release the IShader
+		shader->DecRef();
 	}
+}
+	
+void TextureChooser::callbackSelChanged(GtkWidget* widget, TextureChooser* self) {
+	gtk_widget_queue_draw(self->_glWidget);
 }
 	
 } // namespace ui

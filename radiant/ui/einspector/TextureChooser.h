@@ -26,6 +26,9 @@ private:
 	// Current selection object
 	GtkTreeSelection* _selection;
 	
+	// The preview GtkGLExt widget
+	GtkWidget* _glWidget;
+	
 	// The prefixes we are interested in (from the PropertyEditor's option
 	// string
 	std::string _prefixes;
@@ -37,10 +40,14 @@ private:
 	GtkWidget* createButtons();
 	GtkWidget* createPreview();
 	
+	// Helper function to get selected texture name as a string
+	const char* getSelectedName();
+	
 	/* GTK CALLBACKS */
 	static void callbackCancel(GtkWidget*, TextureChooser*);
 	static void callbackOK(GtkWidget*, TextureChooser*);
 	static void callbackGLDraw(GtkWidget*, GdkEventExpose*, TextureChooser*);
+	static void callbackSelChanged(GtkWidget*, TextureChooser*);
 	
 public:
 
