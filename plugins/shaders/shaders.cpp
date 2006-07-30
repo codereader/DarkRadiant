@@ -305,6 +305,12 @@ public:
   TextureExpression m_specular;
   TextureExpression m_lightFalloffImage;
 
+	/* Light type booleans */
+	
+	bool fogLight;
+	bool ambientLight;
+	bool blendLight;
+
   int m_nFlags;
   float m_fTrans;
 
@@ -315,7 +321,10 @@ public:
   IShader::ECull m_Cull;
 
   ShaderTemplate() :
-    m_refcount(0)
+    m_refcount(0),
+    fogLight(false),
+    ambientLight(false),
+    blendLight(false)
   {
     m_nFlags = 0;
     m_fTrans = 1.0f;
@@ -725,9 +734,16 @@ bool ShaderTemplate::parseDoom3(Tokeniser& tokeniser)
       {
         m_nFlags |= QER_CLIP;
       }
+		else if (string_equal_nocase(token, "ambientLight")) {
+			ambientLight = true;
+		}
+		else if (string_equal_nocase(token, "blendLight")) {
+			blendLight = true;
+		}			
       if (string_equal_nocase(token, "fogLight"))
       {
         isFog = true;
+        fogLight = true;
       }
       else if (!isFog && string_equal_nocase(token, "lightFalloffImage"))
       {
@@ -1246,15 +1262,15 @@ public:
 	/* Required IShader light type predicates */
 	
 	bool isAmbientLight() const {
-		return false; // TODO: implement this
+		return m_template.ambientLight;
 	}
 
 	bool isBlendLight() const {
-		return false; // TODO: implement this
+		return m_template.blendLight;
 	}
 
 	bool isFogLight() const {
-		return false; // TODO: implement this
+		return m_template.fogLight;
 	}
 
   qtexture_t* lightFalloffImage() const
