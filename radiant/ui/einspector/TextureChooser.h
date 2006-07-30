@@ -5,8 +5,13 @@
 
 #include <string>
 
+// Forward decls
+
+class IShader;
+
 namespace ui
 {
+
 
 /* Class encapsulating a Gtk dialog containing a Tree view, which allows
  * a texture to be selected and returned to the TexturePropertyEditor.
@@ -45,7 +50,9 @@ private:
 	
 	// Helper function to get selected texture name as a string
 	const char* getSelectedName();
-	std::string getSelectedImageMap();
+	
+	// Get the IShader object associated with the current selection
+	IShader* getSelectedShader();
 	
 	/* GTK CALLBACKS */
 	static void callbackCancel(GtkWidget*, TextureChooser*);

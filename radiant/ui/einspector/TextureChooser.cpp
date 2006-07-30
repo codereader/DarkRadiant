@@ -211,23 +211,10 @@ const char* TextureChooser::getSelectedName() {
 	return g_value_get_string(&val);	
 }
 
-// Return the selected image map, if it exists
+// Return the selected IShader*
 
-std::string TextureChooser::getSelectedImageMap() {
-		// Get the shader
-		IShader* shader = GlobalShaderSystem().getShaderForName(getSelectedName());
-
-		// Get the first layer, which contains the image map
-		const ShaderLayer* first = shader->firstLayer();
-		std::string tname = "None";
-		if (first != NULL) {
-			qtexture_t* tex = shader->firstLayer()->texture();
-			tname = tex->name;
-		}
-
-		// Release the shader and return the string name
-		shader->DecRef();
-		return tname;
+IShader* TextureChooser::getSelectedShader() {
+		return GlobalShaderSystem().getShaderForName(getSelectedName());
 }
 
 /* GTK CALLBACKS */
@@ -259,7 +246,7 @@ void TextureChooser::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, Textu
 
 		// Get the selected texture, and set up OpenGL to render it on
 		// the quad.
-		IShader* shader = GlobalShaderSystem().getShaderForName(self->getSelectedName());
+		IShader* shader = self->getSelectedShader();
 		const ShaderLayer* first = shader->firstLayer();
 		if (first != NULL) {
 			qtexture_t* tex = shader->firstLayer()->texture();
@@ -304,26 +291,43 @@ void TextureChooser::updateInfoTable() {
 					   0, "Shader",
 					   1, getSelectedName(),
 					   -1);
+
+	// Get the shader, and its image map if possible
+	IShader* shader = getSelectedShader();
+
+	const ShaderLayer* first = shader->firstLayer();
+	std::string texName = "None";
+	if (first != NULL) {
+		qtexture_t* tex = shader->firstLayer()->texture();
+		texName = tex->name;
+	}
+
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter, 
 					   0, "Image map",
-					   1, getSelectedImageMap().c_str(),
+					   1, texName.c_str(),
 					   -1);
 	gtk_list_store_append(_infoStore, &iter);
+
+	// Light types, from the IShader
+	
 	gtk_list_store_set(_infoStore, &iter, 
 					   0, "Ambient light",
-					   1, "Unknown",
+					   1, (shader->isAmbientLight() ? "Yes" : "No"),
 					   -1);
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter, 
 					   0, "Blend light",
-					   1, "Unknown",
+					   1, (shader->isBlendLight() ? "Yes" : "No"),
 					   -1);
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter, 
 					   0, "Fog light",
-					   1, "Unknown",
+					   1, (shader->isFogLight() ? "Yes" : "No"),
 					   -1);
+					   
+	// Release the IShader reference
+	shader->DecRef();
 	
 }
 	

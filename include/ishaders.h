@@ -126,6 +126,21 @@ public:
   // get shader file name (ie the file where this one is defined)
   virtual const char* getShaderFileName() const = 0;
 
+	/** Determine whether this is an ambient light shader, i.e. the
+	 * material def contains the global "ambientLight" keyword.
+	 */
+	virtual bool isAmbientLight() const = 0;
+
+	/** Determine whether this is an blend light shader, i.e. the
+	 * material def contains the global "blendLight" keyword.
+	 */
+	virtual bool isBlendLight() const = 0;
+
+	/** Determine whether this is an fog light shader, i.e. the
+	 * material def contains the global "fogLight" keyword.
+	 */
+	virtual bool isFogLight() const = 0;
+
   virtual const ShaderLayer* firstLayer() const = 0;
   virtual void forEachLayer(const ShaderLayerCallback& layer) const = 0;
 
@@ -148,6 +163,17 @@ public:
   virtual void realise() = 0;
   virtual void unrealise() = 0;
   virtual void refresh() = 0;
+  
+	/** Determine whether the shader system is realised. This may be used
+	 * by components which need to ensure the shaders are realised before
+	 * they start trying to display them.
+	 * 
+	 * @returns
+	 * true if the shader system is realised, false otherwise
+	 */
+	virtual bool isRealised() = 0;  
+
+  
   // activate the shader for a given name and return it
   // will return the default shader if name is not found
   virtual IShader* getShaderForName(const char* name) = 0;

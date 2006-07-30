@@ -1129,6 +1129,12 @@ public:
 
     destroy();
   }
+
+	// Return the IShader*
+	IShader* getIShader() const {
+		return m_shader;
+	}
+
   qtexture_t& getTexture() const
   {
     ASSERT_NOTNULL(m_shader);

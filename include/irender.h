@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/constant.h"
 #include "generic/callbackfwd.h"
 
-
 // Rendering states to sort by.
 // Higher bits have the most effect - slowest state changes should be highest.
 
@@ -118,6 +117,8 @@ class ModuleObserver;
 
 #include "generic/vector.h"
 
+class IShader;
+
 class Shader
 {
 public:
@@ -127,6 +128,15 @@ public:
   virtual void attach(ModuleObserver& observer) = 0;
   virtual void detach(ModuleObserver& observer) = 0;
   virtual qtexture_t& getTexture() const = 0;
+  
+	/** Retrieve the contained IShader from this object.
+	 * 
+	 * @returns
+	 * An IShader subclass with information about the shader definition
+	 */
+	 
+	virtual IShader* getIShader() const = 0;
+  
   virtual unsigned int getFlags() const = 0;
 };
 

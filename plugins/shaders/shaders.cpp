@@ -1242,6 +1242,20 @@ public:
       callback(*i);
     }
   }
+  
+	/* Required IShader light type predicates */
+	
+	bool isAmbientLight() const {
+		return false; // TODO: implement this
+	}
+
+	bool isBlendLight() const {
+		return false; // TODO: implement this
+	}
+
+	bool isFogLight() const {
+		return false; // TODO: implement this
+	}
 
   qtexture_t* lightFalloffImage() const
   {
