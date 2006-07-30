@@ -3,6 +3,7 @@
 #include "groupdialog.h"
 #include "ishaders.h"
 #include "igl.h"
+#include "irender.h"
 #include "texturelib.h"
 
 #include "gtkutil/glwidget.h"
@@ -23,6 +24,7 @@ namespace ui
 TextureChooser::TextureChooser(GtkWidget* entry, const std::string& prefixes)
 : _entry(entry),
   _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
+  _infoStore(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING)),
   _prefixes(prefixes)
 {
 	GtkWindow* gd = GroupDialog_getWindow();
@@ -32,12 +34,11 @@ TextureChooser::TextureChooser(GtkWidget* entry, const std::string& prefixes)
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
 	gtk_window_set_title(GTK_WINDOW(_widget), "Choose texture");
 
-	// Set the default size of the window to slightly smaller than
-	// the parent GroupDialog.
+	// Set the default size of the window
 	
 	gint w, h;
 	gtk_window_get_size(gd, &w, &h);
-	gtk_window_set_default_size(GTK_WINDOW(_widget), gint(w / 1.1), gint(h / 1.1));
+	gtk_window_set_default_size(GTK_WINDOW(_widget), w, h);
 	
 	// Construct main VBox, and pack in TreeView and buttons panel
 	
@@ -46,7 +47,7 @@ TextureChooser::TextureChooser(GtkWidget* entry, const std::string& prefixes)
 	gtk_box_pack_start(GTK_BOX(vbx), createPreview(), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
-	
+
 	// Show all widgets
 	gtk_widget_show_all(_widget);
 }
@@ -144,6 +145,7 @@ GtkWidget* TextureChooser::createButtons() {
 // Construct the GL preview
 
 GtkWidget* TextureChooser::createPreview() {
+
 	// HBox contains the preview GL widget along with a texture attributes
 	// pane.
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
@@ -156,11 +158,39 @@ GtkWidget* TextureChooser::createPreview() {
 	gtk_container_add(GTK_CONTAINER(glFrame), _glWidget);
 	gtk_box_pack_start(GTK_BOX(hbx), glFrame, FALSE, FALSE, 0);
 	
-	// Attributes text box
-	GtkWidget* textbox = gtk_text_view_new();
-	GtkWidget* frame = gtk_frame_new(NULL);
-	gtk_container_add(GTK_CONTAINER(frame), textbox);
-	gtk_box_pack_start(GTK_BOX(hbx), frame, TRUE, TRUE, 0);
+	// Attributes table
+
+	GtkWidget* tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_infoStore));
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tree), FALSE);
+	
+	GtkCellRenderer* rend;
+	GtkTreeViewColumn* col;
+	
+	rend = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes("Attribute",
+												   rend,
+												   "text", 0,
+												   NULL);
+	g_object_set(G_OBJECT(rend), "weight", 700, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tree), col);
+	
+	rend = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes("Value",
+												   rend,
+												   "text", 1,
+												   NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tree), col);
+
+	GtkWidget* scroll = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
+								   GTK_POLICY_AUTOMATIC,
+								   GTK_POLICY_AUTOMATIC);
+	gtk_container_add(GTK_CONTAINER(scroll), tree);
+
+	GtkWidget* attFrame = gtk_frame_new(NULL);
+	gtk_container_add(GTK_CONTAINER(attFrame), scroll);
+
+	gtk_box_pack_start(GTK_BOX(hbx), attFrame, TRUE, TRUE, 0);
 
 	return hbx;
 }
@@ -179,6 +209,25 @@ const char* TextureChooser::getSelectedName() {
 
 	// Get the string
 	return g_value_get_string(&val);	
+}
+
+// Return the selected image map, if it exists
+
+std::string TextureChooser::getSelectedImageMap() {
+		// Get the shader
+		IShader* shader = GlobalShaderSystem().getShaderForName(getSelectedName());
+
+		// Get the first layer, which contains the image map
+		const ShaderLayer* first = shader->firstLayer();
+		std::string tname = "None";
+		if (first != NULL) {
+			qtexture_t* tex = shader->firstLayer()->texture();
+			tname = tex->name;
+		}
+
+		// Release the shader and return the string name
+		shader->DecRef();
+		return tname;
 }
 
 /* GTK CALLBACKS */
@@ -240,7 +289,42 @@ void TextureChooser::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, Textu
 }
 	
 void TextureChooser::callbackSelChanged(GtkWidget* widget, TextureChooser* self) {
+	self->updateInfoTable();
 	gtk_widget_queue_draw(self->_glWidget);
+}
+
+// Update the attributes table
+
+void TextureChooser::updateInfoTable() {
+	GtkTreeIter iter;
+	gtk_list_store_clear(_infoStore);
+
+	gtk_list_store_append(_infoStore, &iter);
+	gtk_list_store_set(_infoStore, &iter, 
+					   0, "Shader",
+					   1, getSelectedName(),
+					   -1);
+	gtk_list_store_append(_infoStore, &iter);
+	gtk_list_store_set(_infoStore, &iter, 
+					   0, "Image map",
+					   1, getSelectedImageMap().c_str(),
+					   -1);
+	gtk_list_store_append(_infoStore, &iter);
+	gtk_list_store_set(_infoStore, &iter, 
+					   0, "Ambient light",
+					   1, "Unknown",
+					   -1);
+	gtk_list_store_append(_infoStore, &iter);
+	gtk_list_store_set(_infoStore, &iter, 
+					   0, "Blend light",
+					   1, "Unknown",
+					   -1);
+	gtk_list_store_append(_infoStore, &iter);
+	gtk_list_store_set(_infoStore, &iter, 
+					   0, "Fog light",
+					   1, "Unknown",
+					   -1);
+	
 }
 	
 } // namespace ui

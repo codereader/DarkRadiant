@@ -29,6 +29,9 @@ private:
 	// The preview GtkGLExt widget
 	GtkWidget* _glWidget;
 	
+	// List store containing the shader info for display in the table
+	GtkListStore* _infoStore;
+	
 	// The prefixes we are interested in (from the PropertyEditor's option
 	// string
 	std::string _prefixes;
@@ -42,12 +45,16 @@ private:
 	
 	// Helper function to get selected texture name as a string
 	const char* getSelectedName();
+	std::string getSelectedImageMap();
 	
 	/* GTK CALLBACKS */
 	static void callbackCancel(GtkWidget*, TextureChooser*);
 	static void callbackOK(GtkWidget*, TextureChooser*);
 	static void callbackGLDraw(GtkWidget*, GdkEventExpose*, TextureChooser*);
 	static void callbackSelChanged(GtkWidget*, TextureChooser*);
+	
+	// Update the shader attributes table
+	void updateInfoTable();
 	
 public:
 
