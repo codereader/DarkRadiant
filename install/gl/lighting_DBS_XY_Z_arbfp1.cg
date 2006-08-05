@@ -41,11 +41,11 @@ struct cg_fragment2final
 
 
 cg_fragment2final main(cg_vertex2fragment IN,
-			uniform sampler2D diffusemap,
-			uniform sampler2D bumpmap,
-			uniform sampler2D specularmap,
-			uniform sampler2D attenuationmap_xy,
-			uniform sampler2D attenuationmap_z,
+			uniform sampler2D diffusemap : TEXUNIT0,
+			uniform sampler2D bumpmap : TEXUNIT1,
+			uniform sampler2D specularmap : TEXUNIT2,
+			uniform sampler2D attenuationmap_xy : TEXUNIT3,
+			uniform sampler2D attenuationmap_z : TEXUNIT4,
 			uniform float3 view_origin,
 			uniform float3 light_origin,
 			uniform float3 light_color,
