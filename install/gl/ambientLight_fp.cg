@@ -1,0 +1,71 @@
+/// ============================================================================
+/*
+Copyright (C) 2004 Robert Beckebans <trebor_7@users.sourceforge.net>
+Please see the file "AUTHORS" for a list of contributors
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+/// ============================================================================
+
+#include "utils.cg"
+
+struct cg_vertex2fragment
+{	
+	float4 position		: TEXCOORD0;
+	float4 tex_diffuse_bump	: TEXCOORD1;
+	float4 tex_specular	: TEXCOORD2;
+	float4 tex_atten_xy_z	: TEXCOORD3;
+	
+	float3 tangent		: TEXCOORD4;
+	float3 binormal		: TEXCOORD5;
+	float3 normal		: TEXCOORD6;
+};
+
+struct cg_fragment2final
+{
+	float4 color		: COLOR;
+};
+
+
+cg_fragment2final main(cg_vertex2fragment IN,
+			uniform sampler2D diffusemap : TEXUNIT0,
+			uniform sampler2D bumpmap : TEXUNIT1,
+			uniform sampler2D specularmap : TEXUNIT2,
+			uniform sampler2D attenuationmap_xy : TEXUNIT3,
+			uniform sampler2D attenuationmap_z : TEXUNIT4,
+			uniform float3 view_origin : C4,
+			uniform float3 light_origin : C2,
+			uniform float3 light_color : C3,
+			uniform float bump_scale : C1,
+			uniform float specular_exponent : C5)
+{
+	cg_fragment2final OUT;
+	
+	// compute the diffuse term
+	float4 diffuse = tex2D(diffusemap, IN.tex_diffuse_bump.xy);
+	diffuse.rgb *= light_color;
+	
+	// compute attenuation
+	float3 attenuation_xy	= tex2Dproj(attenuationmap_xy, float3(IN.tex_atten_xy_z.x, IN.tex_atten_xy_z.y, IN.tex_atten_xy_z.w)).rgb;
+	float3 attenuation_z	= tex2D(attenuationmap_z, float2(IN.tex_atten_xy_z.z, 0)).rgb;
+					
+	// compute final color
+	OUT.color.rgba = diffuse;
+	OUT.color.rgb *= attenuation_xy;
+	OUT.color.rgb *= attenuation_z;
+
+	return OUT;
+}
