@@ -88,7 +88,7 @@ namespace {
 				 i != _prefixes.end();
 				 i++)
 			{
-				if (boost::algorithm::istarts_with(name, *i)) {
+				if (boost::algorithm::istarts_with(name, (*i) + "/")) {
 
 					// Prepare to find the path to the top-level parent of this texture entry
 					GtkTreePath* pathToParent = NULL;
@@ -114,7 +114,7 @@ namespace {
 					GtkTreeIter iter;
 					gtk_tree_store_append(_store, &iter, &parIter);
 					gtk_tree_store_set(_store, &iter, 
-										0, name.substr(i->length()).c_str(), // display name
+										0, name.substr(i->length() + 1).c_str(), // display name
 										1, name.c_str(), // full shader name
 										-1);
 					break; // don't consider any further prefixes
@@ -286,6 +286,8 @@ void TextureChooser::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, Textu
 		if (first != NULL) {
 			qtexture_t* tex = shader->firstLayer()->texture();
 			glBindTexture (GL_TEXTURE_2D, tex->texture_number);
+		} else {
+			goto swapAndRelease; // don't draw, leave window cleared
 		}
 		
 		// Draw a quad to put the texture on
@@ -301,6 +303,8 @@ void TextureChooser::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, Textu
 		glTexCoord2i(0, 0);
 		glVertex2i(0, req.height);
 		glEnd();
+
+swapAndRelease:
 
 		// Update GtkGlExt buffer
 		glwidget_swap_buffers(widget);
@@ -348,23 +352,31 @@ void TextureChooser::updateInfoTable() {
 					   0, "Image map",
 					   1, texName.c_str(),
 					   -1);
+
+	// Name of file containing the shader
+
 	gtk_list_store_append(_infoStore, &iter);
+	gtk_list_store_set(_infoStore, &iter, 
+					   0, "Defined in",
+					   1, shader->getShaderFileName(),
+					   -1);
 
 	// Light types, from the IShader
+
+	std::string lightType;
+	if (shader->isAmbientLight())
+		lightType.append("ambient ");
+	if (shader->isBlendLight())
+		lightType.append("blend ");
+	if (shader->isFogLight())
+		lightType.append("fog");
+	if (lightType.size() == 0)
+		lightType.append("-");
 	
-	gtk_list_store_set(_infoStore, &iter, 
-					   0, "Ambient light",
-					   1, (shader->isAmbientLight() ? "Yes" : "No"),
-					   -1);
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter, 
-					   0, "Blend light",
-					   1, (shader->isBlendLight() ? "Yes" : "No"),
-					   -1);
-	gtk_list_store_append(_infoStore, &iter);
-	gtk_list_store_set(_infoStore, &iter, 
-					   0, "Fog light",
-					   1, (shader->isFogLight() ? "Yes" : "No"),
+					   0, "Light flags",
+					   1, lightType.c_str(),
 					   -1);
 					   
 	// Release the IShader reference
