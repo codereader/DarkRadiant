@@ -67,6 +67,10 @@ namespace {
 		// Tree Store to add to
 		GtkTreeStore* _store;
 
+		// Map of prefix to an path pointing to the top-level row that contains
+		// instances of this prefix
+		std::map<std::string, GtkTreePath*> _iterMap;
+
 		// Constructor
 		ShaderNameFunctor(const std::string& pref, GtkTreeStore* store)
 		: _store(store) 
@@ -85,9 +89,34 @@ namespace {
 				 i++)
 			{
 				if (boost::algorithm::istarts_with(name, *i)) {
+
+					// Prepare to find the path to the top-level parent of this texture entry
+					GtkTreePath* pathToParent = NULL;
+
+					// If this prefix hasn't been seen yet, add a top-level parent for it
+					if (_iterMap.find(*i) == _iterMap.end()) {
+						GtkTreeIter iter;
+						gtk_tree_store_append(_store, &iter, NULL);
+						gtk_tree_store_set(_store, &iter, 0, i->c_str(), 1, "", -1);
+						_iterMap[*i] = pathToParent = gtk_tree_model_get_path(GTK_TREE_MODEL(_store), &iter);
+					}
+
+					// Look up pathToParent in the map, if we didn't just add it
+					if (pathToParent == NULL) {
+						pathToParent = _iterMap.find(*i)->second;
+					}
+
+					// Get the parent iter from the pathToParent TreePath
+					GtkTreeIter parIter;
+					gtk_tree_model_get_iter(GTK_TREE_MODEL(_store), &parIter, pathToParent);
+				
+					// Add the texture entry
 					GtkTreeIter iter;
-					gtk_tree_store_append(_store, &iter, NULL);
-					gtk_tree_store_set(_store, &iter, 0, shaderName, -1);
+					gtk_tree_store_append(_store, &iter, &parIter);
+					gtk_tree_store_set(_store, &iter, 
+										0, name.substr(i->length()).c_str(), // display name
+										1, name.c_str(), // full shader name
+										-1);
 					break; // don't consider any further prefixes
 				}
 			}
@@ -98,7 +127,9 @@ namespace {
 GtkWidget* TextureChooser::createTreeView() {
 
 	// Tree model
-	GtkTreeStore* store = gtk_tree_store_new(1, G_TYPE_STRING);	
+	GtkTreeStore* store = gtk_tree_store_new(2, 
+											 G_TYPE_STRING, // display name in tree
+											 G_TYPE_STRING); // full shader name
 	
 	ShaderNameFunctor func(_prefixes, store);
 	GlobalShaderSystem().foreachShaderName(makeCallback1(func));
@@ -198,17 +229,21 @@ GtkWidget* TextureChooser::createPreview() {
 // Return the selection as a string
 
 const char* TextureChooser::getSelectedName() {
+
 	// Get the selection
 	GtkTreeIter iter;
 	GtkTreeModel* model;
-	gtk_tree_selection_get_selected(_selection, &model, &iter);
-
-	// Get the value
-	GValue val = {0, 0};
-	gtk_tree_model_get_value(model, &iter, 0, &val);
-
-	// Get the string
-	return g_value_get_string(&val);	
+	if (gtk_tree_selection_get_selected(_selection, &model, &iter)) {
+		// Get the value
+		GValue val = {0, 0};
+		gtk_tree_model_get_value(model, &iter, 1, &val);
+		// Get the string
+		return g_value_get_string(&val);	
+	}
+	else {
+		// Nothing selected, return empty string
+		return "";
+	}
 }
 
 // Return the selected IShader*
@@ -286,10 +321,16 @@ void TextureChooser::updateInfoTable() {
 	GtkTreeIter iter;
 	gtk_list_store_clear(_infoStore);
 
+	// Get the selected texture name. If nothing is selected, we just leave the
+	// infotable empty.
+	const char* selName = getSelectedName();
+	if (strcmp(selName, "") == 0)
+		return;
+
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter, 
 					   0, "Shader",
-					   1, getSelectedName(),
+					   1, selName,
 					   -1);
 
 	// Get the shader, and its image map if possible
