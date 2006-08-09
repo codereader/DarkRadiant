@@ -29,6 +29,8 @@ please contact Id Software immediately at info@idsoftware.com.
 #if !defined(INCLUDED_PREFERENCES_H)
 #define INCLUDED_PREFERENCES_H
 
+#include "xmlutil/Document.h"
+
 #include "libxml/parser.h"
 #include "dialog.h"
 #include <list>
@@ -190,7 +192,12 @@ else (i.e. not generated, copied over during setup .. for instance in the game t
 */
 class CGameDescription
 {
-typedef std::map<CopiedString, CopiedString> GameDescription;
+private:
+
+	typedef std::map<CopiedString, CopiedString> GameDescription;
+
+	// xml::Document object constructed from the provided xmlDocPtr
+	xml::Document _doc;
 
 public:
   CopiedString mGameFile; ///< the .game file that describes this game
@@ -218,6 +225,20 @@ public:
     ERROR_MESSAGE("game attribute " << makeQuoted(key) << " not found in " << makeQuoted(mGameFile.c_str()));
     return "";
   }
+
+	/** Return the xml::NodeList corresponding to the provided XPath expression, which
+	 * is evaluated against the game XML file.
+	 * 
+	 * @param path
+	 * String containing the XPath expression to evaluate
+	 * 
+	 * @returns
+	 * xml::NodeList with the matching nodes (if any).
+	 */
+	 
+	xml::NodeList getXPath(const std::string& path) {
+		return _doc.findXPath(path);
+	}
 
   CGameDescription(xmlDocPtr pDoc, const CopiedString &GameFile);
 

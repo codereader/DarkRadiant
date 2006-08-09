@@ -96,6 +96,12 @@ const char* GameDescription_getRequiredKeyValue(const char* key)
   return g_pGameDescription->getRequiredKeyValue(key);
 }
 
+// Get an XPath from the global GameDescription
+
+xml::NodeList GameDescription_getXPath(const std::string& path) {
+	return g_pGameDescription->getXPath(path);
+}
+
 const char* getMapName()
 {
   return Map_Name(g_map);
@@ -147,6 +153,7 @@ public:
 
     m_radiantcore.getGameDescriptionKeyValue = &GameDescription_getKeyValue;
     m_radiantcore.getRequiredGameDescriptionKeyValue = &GameDescription_getRequiredKeyValue;
+    m_radiantcore.getXPath = &GameDescription_getXPath;
 
     m_radiantcore.attachGameToolsPathObserver = Radiant_attachGameToolsPathObserver;
     m_radiantcore.detachGameToolsPathObserver = Radiant_detachGameToolsPathObserver;

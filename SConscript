@@ -57,6 +57,7 @@ gtkutil_env['CPPPATH'].append('include')
 gtkutil_env.useGlib2()
 gtkutil_env.useGtk2()
 gtkutil_env.useGtkGLExt()
+gtkutil_env.useXML2()
 
 gtkutil_src = '\
   accelerator.cpp\
@@ -99,6 +100,7 @@ if (module_env['PLATFORM'] == 'win32'):
 module_env['LIBPREFIX'] = ''
 module_env.Append(LIBPATH = ['libs'])
 module_env['no_import_lib'] = 1
+module_env.useXML2()
 
 vfspk3_env = module_env.Copy()
 vfspk3_lst = build_list('plugins/vfspk3', 'vfspk3.cpp vfs.cpp archive.cpp')

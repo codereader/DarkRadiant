@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <vector>
 #include <list>
 #include <map>
+#include <sstream>
 
 #include "math/matrix.h"
 #include "math/aabb.h"
@@ -424,12 +425,28 @@ void createProgram(const char* filename, GLenum type)
 
 class ARBBumpProgram : public GLProgram
 {
+private:
+
+	// The value all lights should be scaled by, obtained from the game description
+	double _lightScale;
+	
 public:
   GLuint m_vertex_program;
   GLuint m_fragment_program;
 
   void create()
   {
+
+	// Initialise the lightScale value
+	xml::NodeList scaleList = GlobalRadiant().getXPath("/game/defaults/lightScale");
+	if (scaleList.size() == 1) {
+		std::stringstream stream(scaleList[0].getContent());
+		stream >> _lightScale;
+	}
+	else {
+		_lightScale = 1.0;
+	}
+
     glEnable(GL_VERTEX_PROGRAM_ARB);
     glEnable(GL_FRAGMENT_PROGRAM_ARB);
 
@@ -443,7 +460,7 @@ public:
       glGenProgramsARB(1, &m_fragment_program);
       glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, m_fragment_program);
       filename.clear();
-      filename << GlobalRadiant().getAppPath() << "gl/lighting_DBS_omni_fp.glp";
+      filename << GlobalRadiant().getAppPath() << "gl/interaction_fp.arb";
       createProgram(filename.c_str(), GL_FRAGMENT_PROGRAM_ARB);
     }
 
@@ -517,6 +534,8 @@ public:
     // specular exponent
     glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 5, 32, 0, 0, 0);
 
+	// light scale
+	glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 6, _lightScale, _lightScale, _lightScale, 0);
 
     glActiveTexture(GL_TEXTURE3);
     glClientActiveTexture(GL_TEXTURE3);

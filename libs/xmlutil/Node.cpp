@@ -46,4 +46,16 @@ std::string Node::getAttributeValue(const std::string& key) const {
     
 }
 
+// Return the textual content of a given node. This may be an empty string if there is no
+// content available.
+
+std::string Node::getContent() const {
+	if (_xmlNode->children && _xmlNode->children->content) {
+		return std::string(reinterpret_cast<const char*>(_xmlNode->children->content));
+	}
+	else {
+		return "";
+	}
+}
+
 }

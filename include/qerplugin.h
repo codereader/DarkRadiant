@@ -28,6 +28,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/constant.h"
 
+#include "xmlutil/Document.h"
+
 
 // ========================================
 // GTK+ helper functions
@@ -132,6 +134,7 @@ struct _QERFuncTable_1
 
   const char* (*getGameDescriptionKeyValue)(const char* key);
   const char* (*getRequiredGameDescriptionKeyValue)(const char* key);
+  xml::NodeList (*getXPath) (const std::string& path);
 
   void (*attachGameToolsPathObserver)(ModuleObserver& observer);
   void (*detachGameToolsPathObserver)(ModuleObserver& observer);

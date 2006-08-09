@@ -40,6 +40,14 @@ public:
     // Return the value of the given attribute, or throw AttributeNotFoundException
     // if the attribute is not present on this Node.
     std::string getAttributeValue(const std::string& key) const;
+    
+    /** Return the text content of this node.
+     * 
+     * @returns
+     * The text content of this node.
+     */
+     
+	std::string getContent() const;
 
 };
 
