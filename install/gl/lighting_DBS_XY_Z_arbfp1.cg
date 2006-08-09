@@ -46,11 +46,12 @@ cg_fragment2final main(cg_vertex2fragment IN,
 			uniform sampler2D specularmap : TEXUNIT2,
 			uniform sampler2D attenuationmap_xy : TEXUNIT3,
 			uniform sampler2D attenuationmap_z : TEXUNIT4,
-			uniform float3 view_origin,
-			uniform float3 light_origin,
-			uniform float3 light_color,
-			uniform float bump_scale,
-			uniform float specular_exponent)
+			uniform float3 view_origin : C4,
+			uniform float3 light_origin : C2,
+			uniform float3 light_color : C3,
+			uniform float bump_scale : C1,
+			uniform float specular_exponent : C5,
+			uniform float3 light_scale: C6)
 {
 	cg_fragment2final OUT;
 	
@@ -73,7 +74,7 @@ cg_fragment2final main(cg_vertex2fragment IN,
 	
 	// compute the diffuse term
 	float4 diffuse = tex2D(diffusemap, IN.tex_diffuse_bump.xy);
-	diffuse.rgb *= light_color * saturate(dot(N, L));
+	diffuse.rgb *= light_color * light_scale * saturate(dot(N, L));
 	
 	// compute the specular term
 	float3 specular = tex2D(specularmap, IN.tex_specular.xy).rgb * light_color * pow(saturate(dot(N, H)), specular_exponent);
