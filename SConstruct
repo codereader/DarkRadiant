@@ -180,8 +180,13 @@ if (BUILD == 'debug'):
 	CXXFLAGS += '-g -D_DEBUG '
 	CCFLAGS += '-g -D_DEBUG '
 elif (BUILD == 'release' or BUILD == 'final'):
-	CXXFLAGS += '-O2 -fno-inline -fno-default-inline '
-	CCFLAGS += '-O2 -fno-inline -fno-default-inline '
+	CXXFLAGS += '-O2 '
+	CCFLAGS += '-O2 '
+	# TEMPORARY HACK: Disable inlining on Windows due to problems with NaNs and certain
+	# maths functions causing infinite loops
+	if getOS() == 'win32':
+		CXXFLAGS += '-fno-inline -fno-default-inline '
+		CCFLAGS += '-fno-inline -fno-default-inline '
 else:
 	print 'Unknown build configuration ' + BUILD
 	sys.exit( 0 )
