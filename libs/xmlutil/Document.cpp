@@ -47,9 +47,11 @@ NodeList Document::findXPath(const std::string& path) const {
     
     NodeList retval;
     xmlNodeSetPtr nodeset = result->nodesetval;
-    for (int i = 0; i < nodeset->nodeNr; i++) {
-        retval.push_back(Node(nodeset->nodeTab[i]));
-    }
+	if (nodeset != NULL) {
+	    for (int i = 0; i < nodeset->nodeNr; i++) {
+	        retval.push_back(Node(nodeset->nodeTab[i]));
+	    }
+	}
 
     xmlXPathFreeObject(result);
     return retval;   
