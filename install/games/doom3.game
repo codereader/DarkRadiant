@@ -24,6 +24,10 @@
   brushtypes="doom3"
   patchtypes="doom3 def2doom3"
 >
+	<defaults>
+		<lightScale>2</lightScale>
+		<lightRadius>320 320 320</lightRadius>
+	</defaults>
 	<entityInspector>
 		<propertyCategory name="Basic">
 			<property name="origin" type="vector3" />
