@@ -51,7 +51,8 @@ cg_fragment2final main(cg_vertex2fragment IN,
 			uniform float3 light_color : C3,
 			uniform float bump_scale : C1,
 			uniform float specular_exponent : C5,
-			uniform float3 light_scale: C6)
+			uniform float3 light_scale: C6,
+			uniform float ambientFactor: C7)
 {
 	cg_fragment2final OUT;
 	
@@ -74,7 +75,7 @@ cg_fragment2final main(cg_vertex2fragment IN,
 	
 	// compute the diffuse term
 	float4 diffuse = tex2D(diffusemap, IN.tex_diffuse_bump.xy);
-	diffuse.rgb *= light_color * light_scale * saturate(dot(N, L));
+	diffuse.rgb *= light_color * light_scale * saturate((1 - ambientFactor) * dot(N, L) + ambientFactor);
 	
 	// compute the specular term
 	float3 specular = tex2D(specularmap, IN.tex_specular.xy).rgb * light_color * pow(saturate(dot(N, H)), specular_exponent);

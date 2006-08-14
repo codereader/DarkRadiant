@@ -312,7 +312,7 @@ public:
     g_bumpGLSLPass_enabled = false;
   }
 
-  void setParameters(const Vector3& viewer, const Matrix4& localToWorld, const Vector3& origin, const Vector3& colour, const Matrix4& world2light)
+  void setParameters(const Vector3& viewer, const Matrix4& localToWorld, const Vector3& origin, const Vector3& colour, const Matrix4& world2light, float ambient)
   {
     Matrix4 world2local(localToWorld);
     matrix4_affine_invert(world2local);
@@ -391,7 +391,7 @@ public:
     debug_string("disable depthfill");
     g_depthfillPass_enabled = false;
   }
-  void setParameters(const Vector3& viewer, const Matrix4& localToWorld, const Vector3& origin, const Vector3& colour, const Matrix4& world2light)
+  void setParameters(const Vector3& viewer, const Matrix4& localToWorld, const Vector3& origin, const Vector3& colour, const Matrix4& world2light, float ambient)
   {
   }
 };
@@ -505,7 +505,12 @@ public:
     GlobalOpenGL_debugAssertNoErrors();
   }
 
-  void setParameters(const Vector3& viewer, const Matrix4& localToWorld, const Vector3& origin, const Vector3& colour, const Matrix4& world2light)
+  void setParameters(const Vector3& viewer, 
+					  const Matrix4& localToWorld, 
+					  const Vector3& origin, 
+					  const Vector3& colour, 
+					  const Matrix4& world2light,
+					  float ambientFactor)
   {
     Matrix4 world2local(localToWorld);
     matrix4_affine_invert(world2local);
@@ -536,6 +541,9 @@ public:
 
 	// light scale
 	glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 6, _lightScale, _lightScale, _lightScale, 0);
+
+	// ambient factor
+	glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 7, ambientFactor, 0, 0, 0);
 
     glActiveTexture(GL_TEXTURE3);
     glClientActiveTexture(GL_TEXTURE3);
@@ -604,7 +612,7 @@ public:
     GlobalOpenGL_debugAssertNoErrors();
   }
 
-  void setParameters(const Vector3& viewer, const Matrix4& localToWorld, const Vector3& origin, const Vector3& colour, const Matrix4& world2light)
+  void setParameters(const Vector3& viewer, const Matrix4& localToWorld, const Vector3& origin, const Vector3& colour, const Matrix4& world2light, float ambient)
   {
   }
 };
@@ -2160,12 +2168,12 @@ void Renderables_flush(OpenGLStateBucket::Renderables& renderables, OpenGLState&
 
     if(current.m_program != 0 && (*i).m_light != 0)
     {
-      const IShader& lightShader = static_cast<OpenGLShader*>((*i).m_light->getShader())->getShader();
-      if(lightShader.firstLayer() != 0)
+      const IShader* lightShader = i->m_light->getShader()->getIShader();
+      if(lightShader->firstLayer() != 0)
       {
-        GLuint attenuation_xy = lightShader.firstLayer()->texture()->texture_number;
-        GLuint attenuation_z = lightShader.lightFalloffImage() != 0
-          ? lightShader.lightFalloffImage()->texture_number
+        GLuint attenuation_xy = lightShader->firstLayer()->texture()->texture_number;
+        GLuint attenuation_z = lightShader->lightFalloffImage() != 0
+          ? lightShader->lightFalloffImage()->texture_number
           : static_cast<OpenGLShader*>(g_defaultPointLight)->getShader().lightFalloffImage()->texture_number;
 
         setTextureState(current.m_texture3, attenuation_xy, GL_TEXTURE3);
@@ -2200,7 +2208,12 @@ void Renderables_flush(OpenGLStateBucket::Renderables& renderables, OpenGLState&
           matrix4_translate_by_vec3(world2light, vector3_negated(lightBounds.origin)); // world->lightBounds
         }
 
-        current.m_program->setParameters(viewer, *(*i).m_transform, lightBounds.origin + (*i).m_light->offset(), (*i).m_light->colour(), world2light);
+		// Set the ambient factor - 1.0 for an ambient light, 0.0 for normal light
+		float ambient = 0.0;
+		if (lightShader->isAmbientLight())
+			ambient = 1.0;
+
+        current.m_program->setParameters(viewer, *(*i).m_transform, lightBounds.origin + (*i).m_light->offset(), (*i).m_light->colour(), world2light, ambient);
         debug_string("set lightBounds parameters");
       }
     }
