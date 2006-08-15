@@ -47,6 +47,7 @@ public:
   ImageTGAAPI()
   {
     m_imagetga.loadImage = LoadTGA;
+    m_imagetga.prefix = "";
   }
   _QERPlugImageTable* getTable()
   {
@@ -135,6 +136,7 @@ public:
   ImageDDSAPI()
   {
     m_imagedds.loadImage = LoadDDS;
+    m_imagedds.prefix = "dds/";
   }
   _QERPlugImageTable* getTable()
   {

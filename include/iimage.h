@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/constant.h"
 
+#include <string>
+
 typedef unsigned char byte;
 
 class Image
@@ -58,6 +60,9 @@ struct _QERPlugImageTable
   /// Read an image from the file.
   /// Returns 0 if the image could not be read.
   Image* (*loadImage)(ArchiveFile& file);
+  
+  /// The prefix to use for locating images of this type (e.g. "dds/" for DDS images)
+	std::string prefix;
 };
 
 template<typename Type>

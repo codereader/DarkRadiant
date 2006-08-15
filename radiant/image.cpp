@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "os/path.h"
 #include "stream/stringstream.h"
 
+#include <iostream>
 
 typedef Modules<_QERPlugImageTable> ImageModules;
 ImageModules& Textures_getImageModules();
@@ -47,13 +48,18 @@ Image* QERApp_LoadImage(void* environment, const char* name)
       : m_name(name), m_image(image)
     {
     }
-    void visit(const char* name, const _QERPlugImageTable& table)
+    
+    // Visit function called for each image module. Provides the file extension and
+    // a table with the loadImage function.
+    
+    void visit(const char* extension, const _QERPlugImageTable& table)
     {
       if(m_image == 0)
       {
-        StringOutputStream fullname(256);
-        fullname << m_name << '.' << name;
-        ArchiveFile* file = GlobalFileSystem().openFile(fullname.c_str());
+		// Construct the full name of the image to load, including the prefix (e.g. "dds/")
+		// and the file extension.
+		std::string fullName = table.prefix + std::string(m_name) + "." + extension;
+        ArchiveFile* file = GlobalFileSystem().openFile(fullName.c_str());
         if(file != 0)
         {
           m_image = table.loadImage(*file);
