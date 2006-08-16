@@ -1038,9 +1038,11 @@ public:
   {
     return m_pDiffuse;
   }
+
+	// Return bumpmap if it exists, otherwise _flat
   qtexture_t* getBump() const
   {
-    return m_pBump;
+    	return m_pBump;
   }
   qtexture_t* getSpecular() const
   {
@@ -1123,6 +1125,8 @@ public:
     unrealiseLighting();
   }
 
+	// Parse and load image maps for this shader
+
   void realiseLighting()
   {
       LoadImageCallback loader = GlobalTexturesCache().defaultLoader();
@@ -1131,10 +1135,29 @@ public:
         m_heightmapScale = evaluateFloat(m_template.m_heightmapScale, m_template.m_params, m_args);
         loader = LoadImageCallback(&m_heightmapScale, loadHeightmap);
       }
-      m_pDiffuse = evaluateTexture(m_template.m_diffuse, m_template.m_params, m_args);
-      m_pBump = evaluateTexture(m_template.m_bump, m_template.m_params, m_args, loader);
-      m_pSpecular = evaluateTexture(m_template.m_specular, m_template.m_params, m_args);
-      m_pLightFalloffImage = evaluateTexture(m_template.m_lightFalloffImage, m_template.m_params, m_args);
+
+		// Set up the diffuse, bump and specular stages. Bump and specular will be set to defaults
+		// _flat and _black respectively, if an image map is not specified in the material.
+
+		m_pDiffuse = evaluateTexture(m_template.m_diffuse, m_template.m_params, m_args);
+
+    	std::string flatName = std::string(GlobalRadiant().getAppPath()) + "bitmaps/_flat.bmp";
+		m_pBump = evaluateTexture(m_template.m_bump, m_template.m_params, m_args, loader);
+		if (m_pBump == 0 || m_pBump->texture_number == 0) {
+			GlobalTexturesCache().release(m_pBump); // release old object first
+			m_pBump = GlobalTexturesCache().capture(LoadImageCallback(0, loadBitmap), flatName.c_str());
+		}
+		
+		std::string blackName = std::string(GlobalRadiant().getAppPath()) + "bitmaps/_black.bmp";
+		m_pSpecular = evaluateTexture(m_template.m_specular, m_template.m_params, m_args);
+		if (m_pSpecular == 0 || m_pSpecular->texture_number == 0) {
+			GlobalTexturesCache().release(m_pSpecular);
+			m_pSpecular = GlobalTexturesCache().capture(LoadImageCallback(0, loadBitmap), blackName.c_str());
+		}
+		
+		// Get light falloff image
+		
+		m_pLightFalloffImage = evaluateTexture(m_template.m_lightFalloffImage, m_template.m_params, m_args);
 
       for(ShaderTemplate::MapLayers::const_iterator i = m_template.m_layers.begin(); i != m_template.m_layers.end(); ++i)
       {
