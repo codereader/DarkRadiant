@@ -25,7 +25,7 @@
   patchtypes="doom3 def2doom3"
 >
 	<defaults>
-		<lightScale>2</lightScale>
+		<lightScale>1</lightScale>
 		<lightRadius>320 320 320</lightRadius>
 	</defaults>
 	<entityInspector>
@@ -41,6 +41,7 @@
 			<property name="light_origin" type="vector3" />
 			<property name="light_radius" type="vector3" />
 			<property name="light_rotation" type="text" />
+			<property name="light_center" type="vector3" />
 			<property name="nodiffuse" type="boolean" />
 			<property name="noshadows" type="boolean" />
 			<property name="nospecular" type="boolean" />
