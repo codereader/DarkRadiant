@@ -39,8 +39,8 @@
 #var float3 light_scale : C6 : c[6] : 11 : 1
 #var float ambientFactor : C7 : c[7] : 12 : 1
 #var float4 main.color : $vout.COLOR : COL : -1 : 1
-#const c[0] = 1 0.5 2 0
-PARAM c[8] = { { 1, 0.5, 2, 0 },
+#const c[0] = 1 0.5 2
+PARAM c[8] = { { 1, 0.5, 2 },
 		program.local[1..7] };
 TEMP R0;
 TEMP R1;
@@ -85,7 +85,7 @@ MUL R1.xyz, R0, R0.w;
 TEX R0, fragment.texcoord[1], texture[0], 2D;
 MAD R2.xyz, R0, R1, R2;
 TXP R0.xyz, fragment.texcoord[3], texture[3], 2D;
-MOV R1.y, c[0].w;
+MOV R1.y, c[0];
 MOV R1.x, fragment.texcoord[3].z;
 TEX R1.xyz, R1, texture[4], 2D;
 MUL R0.xyz, R2, R0;

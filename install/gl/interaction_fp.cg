@@ -82,7 +82,7 @@ cg_fragment2final main(cg_vertex2fragment IN,
 	
 	// compute attenuation
 	float3 attenuation_xy	= tex2Dproj(attenuationmap_xy, float3(IN.tex_atten_xy_z.x, IN.tex_atten_xy_z.y, IN.tex_atten_xy_z.w)).rgb;
-	float3 attenuation_z	= tex2D(attenuationmap_z, float2(IN.tex_atten_xy_z.z, 0)).rgb;
+	float3 attenuation_z	= tex2D(attenuationmap_z, float2(IN.tex_atten_xy_z.z, 0.5)).rgb;
 					
 	// compute final color
 	OUT.color.rgba = diffuse;
