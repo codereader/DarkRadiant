@@ -36,7 +36,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "convert.h"
 
 #include "version.h"
-#include "aboutmsg.h"
 #include "gtkmisc.h"
 #include "mainframe.h"
 
@@ -66,7 +65,7 @@ void Sys_LogFile(bool enable)
       time_t localtime;
       time(&localtime);
       globalOutputStream() << "Today is: " << ctime(&localtime)
-        << "This is GtkRadiant '" RADIANT_VERSION "' compiled " __DATE__ "\n" RADIANT_ABOUTMSG "\n";
+        << "This is DarkRadiant " RADIANT_VERSION "\n";
     }
     else
       gtk_MessageBox (0, "Failed to create log file, check write permissions in Radiant directory.\n",

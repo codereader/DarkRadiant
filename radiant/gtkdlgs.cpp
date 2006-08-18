@@ -38,7 +38,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "debugging/debugging.h"
 #include "version.h"
-#include "aboutmsg.h"
 
 #include "igl.h"
 #include "iscenegraph.h"
@@ -502,7 +501,6 @@ void DoAbout()
 		// RADIANT_VERSION set from makeversion.py during build
         GtkLabel* label = GTK_LABEL(gtk_label_new("DarkRadiant " RADIANT_VERSION "\n"
           __DATE__ "\n\n"
-          RADIANT_ABOUTMSG "\n\n"
           "The Dark Mod (www.thedarkmod.com)\n\n"
           "This product contains software technology\n"
           "from id Software, Inc. ('id Technology').\n"
