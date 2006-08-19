@@ -272,7 +272,7 @@ public:
   }
   void insert(scene::Node& node)
   {
-    ASSERT_MESSAGE(m_node == 0, "TraversableNode::insert - element already exists");
+    assert(m_node == 0);
 
     m_node = &node;
     node.IncRef();
@@ -284,7 +284,7 @@ public:
   }
   void erase(scene::Node& node)
   {
-    ASSERT_MESSAGE(m_node == &node, "TraversableNode::erase - failed to find element");
+    assert(m_node == &node);
 
     if(m_observer != 0)
     {

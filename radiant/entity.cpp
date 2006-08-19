@@ -245,7 +245,10 @@ void Entity_createFromSelection(const char* name, const Vector3& origin) {
         Instance_setSelected(instance, true);
     }
     else {
+    	// Add selected brushes as children of non-fixed entity
 		Node_getEntity(node)->setKeyValue("model", Node_getEntity(node)->getKeyValue("name"));
+	    Scene_parentSelectedBrushesToEntity(GlobalSceneGraph(), node);
+	    Scene_forEachChildSelectable(SelectableSetSelected(true), instance.path());
     }
 	
     // Set the light radius and origin
@@ -269,8 +272,6 @@ void Entity_createFromSelection(const char* name, const Vector3& origin) {
       Node_getEntity(node)->setKeyValue("model", model);
     }
 
-    Scene_parentSelectedBrushesToEntity(GlobalSceneGraph(), node);
-    Scene_forEachChildSelectable(SelectableSetSelected(true), instance.path());
   }
 }
 
