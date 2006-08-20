@@ -70,10 +70,19 @@ namespace {
 		// Map of prefix to an path pointing to the top-level row that contains
 		// instances of this prefix
 		std::map<std::string, GtkTreePath*> _iterMap;
+		
+		// Current selection to search for in tree, and the row reference that
+		// corresponds to it
+		std::string _curSel;
+		GtkTreeRowReference* _curRowRef;
 
 		// Constructor
-		ShaderNameFunctor(const std::string& pref, GtkTreeStore* store)
-		: _store(store) 
+		ShaderNameFunctor(const std::string& pref, 
+							GtkTreeStore* store,
+								const std::string& sel)
+		: _store(store),
+		  _curSel(sel),
+		  _curRowRef(NULL)
 		{
 			boost::algorithm::split(_prefixes,
 									pref,
@@ -83,6 +92,7 @@ namespace {
 		
 		// Destructor. Each GtkTreePath needs to be explicitly freed
 		~ShaderNameFunctor() {
+			gtk_tree_row_reference_free(_curRowRef);
 			for (std::map<std::string, GtkTreePath*>::iterator i = _iterMap.begin();
 					i != _iterMap.end();
 				 		++i) 
@@ -127,6 +137,16 @@ namespace {
 										0, name.substr(i->length() + 1).c_str(), // display name
 										1, name.c_str(), // full shader name
 										-1);
+										
+					// Test if this is the current selection
+					if (_curRowRef == NULL && name == _curSel) {
+						GtkTreePath* curPath = gtk_tree_model_get_path(GTK_TREE_MODEL(_store), &iter);
+						_curRowRef = gtk_tree_row_reference_new(GTK_TREE_MODEL(_store), curPath);
+						gtk_tree_path_free(curPath);
+						std::cout << gtk_tree_path_to_string(
+										gtk_tree_row_reference_get_path(_curRowRef)) << std::endl;
+					}
+										
 					break; // don't consider any further prefixes
 				}
 			}
@@ -141,7 +161,7 @@ GtkWidget* TextureChooser::createTreeView() {
 											 G_TYPE_STRING, // display name in tree
 											 G_TYPE_STRING); // full shader name
 	
-	ShaderNameFunctor func(_prefixes, store);
+	ShaderNameFunctor func(_prefixes, store, gtk_entry_get_text(GTK_ENTRY(_entry)));
 	GlobalShaderSystem().foreachShaderName(makeCallback1(func));
 	
 	// Tree view
@@ -157,11 +177,28 @@ GtkWidget* TextureChooser::createTreeView() {
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree), col);				
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tree), FALSE);
 	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree));
+	
+	// Expand to currently-selected row and set the cursor there
+	if (func._curRowRef != NULL) {
+		GtkTreePath* path = gtk_tree_row_reference_get_path(func._curRowRef);
+		gtk_tree_view_expand_to_path(GTK_TREE_VIEW(tree), path);
+		gtk_tree_selection_select_path(_selection, path);
+		gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(tree),
+									 path, // path to cell
+									 NULL, // column
+									 TRUE, // use alignment
+									 0.5, // align centre vertical
+									 0); // align horizontal (unused)
+													
+	}
+
 	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(callbackSelChanged), this);
 
 	// Pack into scrolled window
 	GtkWidget* scroll = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll), 
+									GTK_POLICY_AUTOMATIC, 
+										GTK_POLICY_AUTOMATIC);
 	gtk_container_add(GTK_CONTAINER(scroll), tree);
 	return scroll;
 }
