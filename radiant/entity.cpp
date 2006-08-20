@@ -45,6 +45,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "qe3.h"
 #include "commands.h"
 
+#include "config.h"
+
+#include "ui/modelselector/ModelSelector.h"
+
 #include <iostream>
 
 struct entity_globals_t
@@ -266,7 +270,12 @@ void Entity_createFromSelection(const char* name, const Vector3& origin) {
 
   if(isModel)
   {
+#ifdef USE_NEW_MODEL_SELECTOR
+	const char* model = ui::ModelSelector::chooseModel().c_str();
+#else
     const char* model = misc_model_dialog(GTK_WIDGET(MainFrame_getWindow()));
+#endif
+
     if(model != 0)
     {
       Node_getEntity(node)->setKeyValue("model", model);

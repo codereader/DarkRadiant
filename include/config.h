@@ -43,4 +43,15 @@
  
 #define USE_NEW_ORTHO_CONTEXT_MENU
 
+/**************************************************************************
+ * MODEL SELECTOR
+ **************************************************************************/
+ 
+/* Use the new model browse with preview and skin selection, instead of the
+ * old GtkFileChooser dialog 
+ */
+ 
+#define USE_NEW_MODEL_SELECTOR
+
+
 #endif /*CONFIG_H_*/
