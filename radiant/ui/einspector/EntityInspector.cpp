@@ -455,8 +455,10 @@ void EntityInspector::refreshTreeModel() {
 
 bool EntityInspector::updateSelectedEntity() {
 	if (GlobalSelectionSystem().countSelected() != 1 ||
-        (_selectedEntity = Node_getEntity(GlobalSelectionSystem().ultimateSelected().path().top())) == 0) {
-        return false;
+           (_selectedEntity = Node_getEntity(GlobalSelectionSystem().ultimateSelected().path().top())) == 0
+        && (_selectedEntity = Node_getEntity(GlobalSelectionSystem().ultimateSelected().path().parent())) == 0)
+    {
+		return false;
     } else {
 		return true;
     }
