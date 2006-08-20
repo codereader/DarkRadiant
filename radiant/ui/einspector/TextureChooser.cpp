@@ -80,6 +80,16 @@ namespace {
 									boost::algorithm::is_any_of(","));
 		
 		}
+		
+		// Destructor. Each GtkTreePath needs to be explicitly freed
+		~ShaderNameFunctor() {
+			for (std::map<std::string, GtkTreePath*>::iterator i = _iterMap.begin();
+					i != _iterMap.end();
+				 		++i) 
+			{
+				gtk_tree_path_free(i->second);
+			}
+		}
 	
 		// Functor operator
 		void operator() (const char* shaderName) {
