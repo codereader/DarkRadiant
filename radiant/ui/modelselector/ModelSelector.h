@@ -19,6 +19,9 @@ private:
 	// Main dialog widget
 	GtkWidget* _widget;
 	
+	// Tree store containing model names
+	GtkTreeStore* _treeStore;
+	
 private:
 	
 	// Private constructor, creates GTK widgets
