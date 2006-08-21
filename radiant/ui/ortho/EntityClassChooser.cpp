@@ -103,9 +103,19 @@ GtkWidget* EntityClassChooser::createTreeView() {
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeView), col);				
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeView), FALSE);
 
+	// Pack treeview into a scrolled window, then into a frame
+	
 	GtkWidget* scrollWin = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrollWin),
+								   GTK_POLICY_AUTOMATIC,
+								   GTK_POLICY_AUTOMATIC);
+
 	gtk_container_add(GTK_CONTAINER(scrollWin), treeView);
-	return scrollWin;
+
+	GtkWidget* frame = gtk_frame_new(NULL);
+	gtk_container_add(GTK_CONTAINER(frame), scrollWin);
+
+	return frame;
 }
 
 // Create the button panel
