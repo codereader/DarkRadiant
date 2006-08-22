@@ -95,52 +95,68 @@ namespace {
 		ModelFileFunctor(GtkTreeStore* store)
 		: _store(store) {}
 		
-		// Utility function to obtain the GtkTreeIter* pointing to the given model
-		// directory. If there is no iter in the DirIterMap, call recursively on the
-		// directory's own parent, and add THIS directory as a child.
+		// Destructor. The GtkTreeIters are dynamically allocated so we must free them
 		
-		GtkTreeIter* findParentIter(const std::string& dirPath) {
-			std::cout << "findParentIter: finding iter for " << dirPath << std::endl;
-			
-			// Bottom-out condition: if we have an empty string, no further parent
-			// lookups are necessary. Return NULL, which is used by tree_store_append
-			// to signify an addition at the top-level.
-
-			if (dirPath == "") {
-				std::cout << "  empty string, returning NULL" << std::endl;
-				return NULL;
+		~ModelFileFunctor() {
+			for (DirIterMap::iterator i = _dirIterMap.begin();
+					i != _dirIterMap.end();
+						++i) 
+			{
+				gtk_tree_iter_free(i->second);
 			}
+		}
+		
+		// Recursive function to add a given model path ("models/darkmod/something/model.lwo")
+		// to its correct place in the tree. This is done by maintaining a cache of 
+		// directory nodes ("models/darkmod/something", "models/darkmod") against 
+		// GtkIters that point to the corresponding row in the tree model. On each call,
+		// the parent node is recursively calculated, and the node provided as an argument
+		// added as a child.
+		
+		GtkTreeIter* addRecursive(const std::string& dirPath) {
 			
-			// Otherwise, we first try to lookup the directory name in the map. Return it
+			// We first try to lookup the directory name in the map. Return it
 			// if it exists, otherwise recursively obtain the parent of this directory name,
 			// and add this directory as a child in the tree model. We also add this
 			// directory to the map for future lookups.
 			
 			DirIterMap::iterator iTemp = _dirIterMap.find(dirPath);
 			if (iTemp != _dirIterMap.end()) { // found in map
-				std::cout << "  FOUND in map" << std::endl;
 				return iTemp->second;
 			}
 			else { 
-				std::cout << "  Not found, recursively searching for parents" << std::endl;
-				
-				// Perform the search for final "/" which identifies the parent
-				// of this directory, and call recursively.
-				int slashPos = dirPath.rfind("/");
-				GtkTreeIter* parIter = findParentIter(slashPos != std::string::npos
-													  ? dirPath.substr(0, slashPos)
-													  : "");
 
-				// Add this directory to the treemodel
-				std::cout << "  Adding " << dirPath << " to treemodel" << std::endl;
+				// Perform the search for final "/" which identifies the parent
+				// of this directory, and call recursively. If there is no slash, we
+				// are looking at a toplevel directory in which case the parent is
+				// NULL.
+				unsigned int slashPos = dirPath.rfind("/");
+				GtkTreeIter* parIter = NULL;
+				
+				if (slashPos != std::string::npos) {
+					parIter = addRecursive(dirPath.substr(0, slashPos));
+				}
+
+				// Add this directory to the treemodel. For the displayed tree, we
+				// want the last component of the directory name, not the entire path
+				// at each node.
+
+				// If no slash found, want the whole string. Set slashPos to -1 to 
+				// offset the +1 we give it later to skip the slash itself.
+				if (slashPos == std::string::npos)
+					slashPos = (unsigned int) -1; 
+
+				GtkTreeIter iter;
+				gtk_tree_store_append(_store, &iter, parIter);
+				gtk_tree_store_set(_store, &iter, 0, dirPath.substr(slashPos + 1).c_str(), -1);
+				GtkTreeIter* dynIter = gtk_tree_iter_copy(&iter); // get a heap-allocated iter
 				
 				// Now add a map entry that maps our directory name to the row we just
 				// added
-				std::cout << "  Adding " << dirPath << " to iter map" << std::endl;
-				_dirIterMap[dirPath] = NULL;
+				_dirIterMap[dirPath] = dynIter;
 				
-				// Return our new iter
-				return NULL;
+				// Return our new dynamic iter. 
+				return dynIter;
 
 			}				
 
@@ -155,25 +171,14 @@ namespace {
 			// Test the extension. If it is not LWO or ASE (case-insensitive),
 			// not interested
 			if (!boost::algorithm::iends_with(rawPath, "lwo") 
-				&& !boost::algorithm::iends_with(rawPath, "ase")) 
+					&& !boost::algorithm::iends_with(rawPath, "ase")) 
 			{
 				return;
 			}
-
-			// Get the position of the final "/", everything before this is the
-			// containing directory.
-			int slashPos = rawPath.rfind("/");
-			
-			// Now call the recursive findParentIter function, to obtain the GtkTreeIter
-			// that corresponds to this models directory.
-			GtkTreeIter* parent = findParentIter(rawPath.substr(0, slashPos));
-
-			// Append the model pathname
-			GtkTreeIter iter;
-			gtk_tree_store_append(_store, &iter, NULL);
-			gtk_tree_store_set(_store, &iter, 
-							   0, file,
-							   -1);
+			else 
+			{
+				addRecursive(rawPath);
+			}
 							   
 		}
 
