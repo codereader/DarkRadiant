@@ -1,6 +1,7 @@
 #include "ModelSelector.h"
 
 #include "mainframe.h"
+#include "gtkutil/image.h"
 
 #include "ifilesystem.h"
 
@@ -20,6 +21,14 @@ namespace ui
 namespace {
 	
 	const char* MODELSELECTOR_TITLE = "Choose model";
+
+	// Treestore enum
+	enum {
+		NAME_COLUMN,		// e.g. "chair1.lwo"
+		FULLNAME_COLUMN,	// e.g. "models/darkmod/props/chair1.lwo"
+		IMAGE_COLUMN,		// icon to display
+		N_COLUMNS
+	};
 	
 }
 
@@ -27,7 +36,10 @@ namespace {
 
 ModelSelector::ModelSelector()
 : _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
-  _treeStore(gtk_tree_store_new(1, G_TYPE_STRING))
+  _treeStore(gtk_tree_store_new(N_COLUMNS, 
+  								G_TYPE_STRING,
+  								G_TYPE_STRING,
+  								GDK_TYPE_PIXBUF))
 {
 	// Window properties
 	
@@ -141,6 +153,14 @@ namespace {
 				// want the last component of the directory name, not the entire path
 				// at each node.
 
+				// Decide which image to use, based on the file extension (or the folder
+				// image if there is no extension).
+				std::string imgPath = "folder16.png";
+				if (boost::algorithm::iends_with(dirPath, ".lwo"))
+					imgPath = "model16red.png";
+				else if (boost::algorithm::iends_with(dirPath, ".ase"))
+					imgPath = "model16green.png";
+
 				// If no slash found, want the whole string. Set slashPos to -1 to 
 				// offset the +1 we give it later to skip the slash itself.
 				if (slashPos == std::string::npos)
@@ -148,7 +168,10 @@ namespace {
 
 				GtkTreeIter iter;
 				gtk_tree_store_append(_store, &iter, parIter);
-				gtk_tree_store_set(_store, &iter, 0, dirPath.substr(slashPos + 1).c_str(), -1);
+				gtk_tree_store_set(_store, &iter, 
+						NAME_COLUMN, dirPath.substr(slashPos + 1).c_str(), 
+						IMAGE_COLUMN, gtkutil::getLocalPixbuf(imgPath),
+						-1);
 				GtkTreeIter* dynIter = gtk_tree_iter_copy(&iter); // get a heap-allocated iter
 				
 				// Now add a map entry that maps our directory name to the row we just
@@ -198,14 +221,20 @@ GtkWidget* ModelSelector::createTreeView() {
 
 	GtkWidget* treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
 
-	// Single column, containing model pathname
+	// Single visible column, containing the directory/model name and the icon
 	
+    GtkTreeViewColumn* col = gtk_tree_view_column_new();
+    gtk_tree_view_column_set_title(col, "Value");
+    gtk_tree_view_column_set_spacing(col, 3);
+
+	GtkCellRenderer* pixRenderer = gtk_cell_renderer_pixbuf_new();
+	gtk_tree_view_column_pack_start(col, pixRenderer, FALSE);
+    gtk_tree_view_column_set_attributes(col, pixRenderer, "pixbuf", IMAGE_COLUMN, NULL);
+
 	GtkCellRenderer* rend = gtk_cell_renderer_text_new();
-	GtkTreeViewColumn* col = 
-		gtk_tree_view_column_new_with_attributes("Model path", 
-									      		 rend,
-									      		 "text", 0,
-									      		 NULL);
+	gtk_tree_view_column_pack_start(col, rend, FALSE);
+	gtk_tree_view_column_set_attributes(col, rend, "text", NAME_COLUMN, NULL);
+
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeView), col);				
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeView), FALSE);
 
