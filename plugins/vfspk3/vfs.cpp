@@ -601,7 +601,8 @@ public:
     for(GSList* i = list; i != 0; i = g_slist_next(i))
     {
       const char* name = reinterpret_cast<const char*>((*i).data);
-      if(extension_equal(path_get_extension(name), extension))
+      if(extension_equal(path_get_extension(name), extension) 
+         || extension_equal(extension, "*"))
       {
         callback(name);
       }
