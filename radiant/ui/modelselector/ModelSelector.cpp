@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 #include <ext/hash_map>
+#include <sstream>
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -150,9 +151,21 @@ namespace {
 					parIter = addRecursive(dirPath.substr(0, slashPos));
 				}
 
-				// Add this directory to the treemodel. For the displayed tree, we
-				// want the last component of the directory name, not the entire path
-				// at each node.
+				/* Add this directory to the treemodel. For the displayed tree, we
+				** want the last component of the directory name, not the entire path
+				** at each node.
+				*/
+
+				std::stringstream nodeName;
+				nodeName << dirPath.substr(slashPos + 1);
+
+				// Get the list of skins for this model. The number of skins is appended
+				// to the model node name in brackets.
+				ModelSkinList skins = GlobalModelSkinCache().getSkinsForModel("models/" + dirPath);
+				int numSk = skins.size();
+				if (numSk > 0) {
+					nodeName << " [" << numSk << (numSk == 1 ? " skin]" : " skins]");
+				}
 
 				// Decide which image to use, based on the file extension (or the folder
 				// image if there is no extension).
@@ -162,22 +175,16 @@ namespace {
 				else if (boost::algorithm::iends_with(dirPath, ".ase"))
 					imgPath = "model16green.png";
 
-				// If no slash found, want the whole string. Set slashPos to -1 to 
-				// offset the +1 we give it later to skip the slash itself.
-				if (slashPos == std::string::npos)
-					slashPos = (unsigned int) -1; 
-
 				GtkTreeIter iter;
 				gtk_tree_store_append(_store, &iter, parIter);
 				gtk_tree_store_set(_store, &iter, 
-						NAME_COLUMN, dirPath.substr(slashPos + 1).c_str(), 
+						NAME_COLUMN, nodeName.str().c_str(), 
 						IMAGE_COLUMN, gtkutil::getLocalPixbuf(imgPath),
 						-1);
 				GtkTreeIter* dynIter = gtk_tree_iter_copy(&iter); // get a heap-allocated iter
 
 				// Determine if this model has any associated skins, and add them as
 				// children
-				ModelSkinList skins = GlobalModelSkinCache().getSkinsForModel("models/" + dirPath);
 				for (ModelSkinList::iterator i = skins.begin(); i != skins.end(); ++i) {
 					GtkTreeIter skIter;
 					gtk_tree_store_append(_store, &skIter, &iter);
