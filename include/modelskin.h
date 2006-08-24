@@ -25,6 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/constant.h"
 #include "generic/callbackfwd.h"
 
+#include <vector>
+#include <string>
+
 class SkinRemap
 {
 public:
@@ -62,6 +65,9 @@ public:
   virtual void skinChanged() = 0;
 };
 
+// Model skinlist typedef
+typedef std::vector<std::string> ModelSkinList;
+
 class ModelSkinCache
 {
 public:
@@ -71,6 +77,18 @@ public:
   virtual ModelSkin& capture(const char* name) = 0;
   /// \brief Decrements the reference-count of the skin uniquely identified by 'name'.
   virtual void release(const char* name) = 0;
+  
+	/** Return the skins associated with the given model.
+	 * 
+	 * @param
+	 * The full pathname of the model, as given by the "model" key in the skin definition.
+	 * 
+	 * @returns
+	 * A vector of strings, each identifying the name of a skin which is associated with the
+	 * given model. The vector may be empty as a model does not require any associated skins.
+	 */
+	 
+	virtual const ModelSkinList& getSkinsForModel(const std::string& modelName) = 0;
 };
 
 

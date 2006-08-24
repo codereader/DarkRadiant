@@ -4,6 +4,7 @@
 #include "gtkutil/image.h"
 
 #include "ifilesystem.h"
+#include "modelskin.h"
 
 #include <iostream>
 #include <vector>
@@ -173,6 +174,18 @@ namespace {
 						IMAGE_COLUMN, gtkutil::getLocalPixbuf(imgPath),
 						-1);
 				GtkTreeIter* dynIter = gtk_tree_iter_copy(&iter); // get a heap-allocated iter
+
+				// Determine if this model has any associated skins, and add them as
+				// children
+				ModelSkinList skins = GlobalModelSkinCache().getSkinsForModel("models/" + dirPath);
+				for (ModelSkinList::iterator i = skins.begin(); i != skins.end(); ++i) {
+					GtkTreeIter skIter;
+					gtk_tree_store_append(_store, &skIter, &iter);
+					gtk_tree_store_set(_store, &skIter, 
+							NAME_COLUMN, i->c_str(), 
+							IMAGE_COLUMN, gtkutil::getLocalPixbuf("skin16.png"),
+							-1);
+				}
 				
 				// Now add a map entry that maps our directory name to the row we just
 				// added

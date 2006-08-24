@@ -3,6 +3,8 @@
 
 #include <gtk/gtk.h>
 
+#include "modelskin.h"
+
 #include <string>
 
 namespace ui
@@ -13,6 +15,7 @@ namespace ui
  */
 
 class ModelSelector
+: private GlobalModelSkinCacheModuleRef // instantiate the model skin cache first
 {
 private:
 

@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "modelskin.h"
 
 #include <map>
+#include <iostream>
+#include <vector>
 
 #include "stream/stringstream.h"
 #include "generic/callback.h"
@@ -44,11 +46,29 @@ void parseShaderName(CopiedString& name, const char* token)
   name = cleaned.c_str();
 }
 
+/** A single instance of a Doom 3 model skin. This structure stores a set of maps
+ * between an existing texture and a new texture, and possibly the name of the model
+ * that this skin is associated with.
+ */
+
 class Doom3ModelSkin
 {
-  typedef std::map<CopiedString, CopiedString> Remaps;
-  Remaps m_remaps;
+	// Map of texture switches
+	typedef std::map<CopiedString, CopiedString> Remaps;
+	Remaps m_remaps;
+	
+	// Associated model
+	std::string _model;
+	
 public:
+
+	// Constructor
+	Doom3ModelSkin()
+	: _model("")
+	{}
+
+	// Parse the tokens
+	
   bool parseTokens(Tokeniser& tokeniser)
   {
     RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "{"));
@@ -68,7 +88,7 @@ public:
       else if(string_equal(token, "model"))
       {
         //const char* model =
-        tokeniser.getToken();
+        _model = tokeniser.getToken();
       }
       else
       {
@@ -103,14 +123,33 @@ public:
       callback(SkinRemap((*i).first.c_str(), (*i).second.c_str()));
     }
   }
+  
+	// Return the model associated with this skin.
+	
+	std::string getModel() {
+		return _model;
+	}
+  
 };
+
+/** Singleton class to retain a mapping between skin names and skin objects.
+ */
 
 class GlobalSkins
 {
 public:
-  typedef std::map<CopiedString, Doom3ModelSkin> SkinMap;
-  SkinMap m_skins;
-  Doom3ModelSkin g_nullSkin;
+
+	// Map of skin names to skin objects
+	typedef std::map<CopiedString, Doom3ModelSkin> SkinMap;
+	SkinMap m_skins;
+
+	// Map between model paths and a vector of names of the associated skins,
+	// which are contained in the main SkinMap.
+	typedef std::map<std::string, std::vector<std::string> > ModelSkinMap;
+	ModelSkinMap _mSkinMap;
+
+	// Null skin object
+	Doom3ModelSkin g_nullSkin;
 
   Doom3ModelSkin& getSkin(const char* name)
   {
@@ -122,6 +161,13 @@ public:
     
     return g_nullSkin;
   }
+
+	// Return the vector of skin names corresponding to the given model
+	
+	const std::vector<std::string>& getSkinsForModel(const std::string& model) {
+//		std::cout << "GlobalSkins::getSkinsForModel(" << model << ")" << std::endl;
+		return _mSkinMap[model];
+	}
 
   bool parseTokens(Tokeniser& tokeniser)
   {
@@ -149,6 +195,13 @@ public:
       parseShaderName(name, other);
       Doom3ModelSkin& skin = m_skins[name];
       RETURN_FALSE_IF_FAIL(skin.parseTokens(tokeniser));
+      
+		// If the skin has a model, add the association to the ModelSkinMap.
+		std::string modelName = skin.getModel();
+		if (modelName != "") {
+			_mSkinMap[modelName].push_back(name.c_str());
+		}      	
+      
     }
   }
 
@@ -331,6 +384,17 @@ public:
     }
     g_skins.unrealise();
   }
+  
+	// Get the vector of skin names corresponding to the given model.
+
+	const ModelSkinList& getSkinsForModel(const std::string& model) {
+
+		// Pass on call to the GlobalSkins class
+		return g_skins.getSkinsForModel(model);
+	}
+	
+	
+  
 };
 
 class Doom3ModelSkinCacheDependencies : public GlobalFileSystemModuleRef, public GlobalScripLibModuleRef
