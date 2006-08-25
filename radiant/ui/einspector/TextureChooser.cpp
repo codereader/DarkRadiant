@@ -143,8 +143,6 @@ namespace {
 						GtkTreePath* curPath = gtk_tree_model_get_path(GTK_TREE_MODEL(_store), &iter);
 						_curRowRef = gtk_tree_row_reference_new(GTK_TREE_MODEL(_store), curPath);
 						gtk_tree_path_free(curPath);
-						std::cout << gtk_tree_path_to_string(
-										gtk_tree_row_reference_get_path(_curRowRef)) << std::endl;
 					}
 										
 					break; // don't consider any further prefixes
