@@ -29,6 +29,7 @@ namespace {
 	enum {
 		NAME_COLUMN,		// e.g. "chair1.lwo"
 		FULLNAME_COLUMN,	// e.g. "models/darkmod/props/chair1.lwo"
+		SKIN_COLUMN,		// e.e. "chair1_brown_wood", or "" for no skin
 		IMAGE_COLUMN,		// icon to display
 		N_COLUMNS
 	};
@@ -42,7 +43,9 @@ ModelSelector::ModelSelector()
   _treeStore(gtk_tree_store_new(N_COLUMNS, 
   								G_TYPE_STRING,
   								G_TYPE_STRING,
-  								GDK_TYPE_PIXBUF))
+  								G_TYPE_STRING,
+  								GDK_TYPE_PIXBUF)),
+  _infoStore(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING))
 {
 	// Window properties
 	
@@ -171,28 +174,44 @@ namespace {
 				}
 
 				// Decide which image to use, based on the file extension (or the folder
-				// image if there is no extension).
+				// image if there is no extension). Also, set a flag indicating that we
+				// have an actual model rather than a directory, so that the fullname
+				// tree column can be populated
+				
 				std::string imgPath = "folder16.png";
-				if (boost::algorithm::iends_with(dirPath, ".lwo"))
-					imgPath = "model16red.png";
-				else if (boost::algorithm::iends_with(dirPath, ".ase"))
-					imgPath = "model16green.png";
+				bool isModel = false;
 
+				if (boost::algorithm::iends_with(dirPath, ".lwo")) {
+					imgPath = "model16red.png";
+					isModel = true;
+				}
+				else if (boost::algorithm::iends_with(dirPath, ".ase")) {
+					imgPath = "model16green.png";
+					isModel = true;
+				}
+
+				// Add the fields to the treeview
+				
 				GtkTreeIter iter;
 				gtk_tree_store_append(_store, &iter, parIter);
 				gtk_tree_store_set(_store, &iter, 
-						NAME_COLUMN, nodeName.str().c_str(), 
+						NAME_COLUMN, nodeName.str().c_str(),
+						FULLNAME_COLUMN, (isModel ? dirPath.c_str() : ""),
+						SKIN_COLUMN, "",
 						IMAGE_COLUMN, gtkutil::getLocalPixbuf(imgPath),
 						-1);
 				GtkTreeIter* dynIter = gtk_tree_iter_copy(&iter); // get a heap-allocated iter
 
 				// Determine if this model has any associated skins, and add them as
-				// children
+				// children. We also set the fullpath column to the model name for each skin.
+				
 				for (ModelSkinList::iterator i = skins.begin(); i != skins.end(); ++i) {
 					GtkTreeIter skIter;
 					gtk_tree_store_append(_store, &skIter, &iter);
 					gtk_tree_store_set(_store, &skIter, 
-							NAME_COLUMN, i->c_str(), 
+							NAME_COLUMN, i->c_str(),
+							FULLNAME_COLUMN, dirPath.c_str(),
+							SKIN_COLUMN, i->c_str(),
 							IMAGE_COLUMN, gtkutil::getLocalPixbuf("skin16.png"),
 							-1);
 				}
@@ -261,6 +280,11 @@ GtkWidget* ModelSelector::createTreeView() {
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeView), col);				
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeView), FALSE);
 
+	// Get the selection object and connect to its changed signal
+
+	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeView));
+	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(callbackSelChanged), this);
+
 	// Pack treeview into a scrolled window and frame, and return
 	
 	GtkWidget* scrollWin = gtk_scrolled_window_new(NULL, NULL);
@@ -303,9 +327,30 @@ GtkWidget* ModelSelector::createPreviewAndInfoPanel() {
 	gtk_container_add(GTK_CONTAINER(glFrame), glWidget);
 	gtk_box_pack_start(GTK_BOX(hbx), glFrame, FALSE, FALSE, 0);
 	
-	// Info table
+	// Info table. Has key and value columns.
 	
-	GtkWidget* infTreeView = gtk_tree_view_new();
+	GtkWidget* infTreeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_infoStore));
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(infTreeView), FALSE);
+	
+	GtkCellRenderer* rend;
+	GtkTreeViewColumn* col;
+	
+	rend = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes("Attribute",
+												   rend,
+												   "text", 0,
+												   NULL);
+	g_object_set(G_OBJECT(rend), "weight", 700, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(infTreeView), col);
+	
+	rend = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes("Value",
+												   rend,
+												   "text", 1,
+												   NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(infTreeView), col);
+	
+	// Pack into scroll window and frame
 	
 	GtkWidget* scroll = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
@@ -323,6 +368,51 @@ GtkWidget* ModelSelector::createPreviewAndInfoPanel() {
 	
 }
 
+// Get the value from the selected column
+
+std::string ModelSelector::getSelectedValue(gint colNum) {
+
+	// Get the selection
+
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+
+	if (gtk_tree_selection_get_selected(_selection, &model, &iter)) {
+		// Get the value
+		GValue val = {0, 0};
+		gtk_tree_model_get_value(model, &iter, colNum, &val);
+		// Get the string
+		return g_value_get_string(&val);	
+	}
+	else {
+		// Nothing selected, return empty string
+		return "";
+	}
+	
+}
+
+// Update the info table with information from the current model
+
+void ModelSelector::updateInfoTable() {
+
+	// Prepare to populate the info table
+	gtk_list_store_clear(_infoStore);
+	GtkTreeIter iter;
+	
+	// Get the model name, if this is blank we are looking at a directory,
+	// so leave the table empty
+	std::string mName = getSelectedValue(FULLNAME_COLUMN);
+	if (mName.empty())
+		return;
+	
+	gtk_list_store_append(_infoStore, &iter);
+	gtk_list_store_set(_infoStore, &iter, 
+					   0, "Model name",
+					   1, mName.c_str(),
+					   -1);
+
+}
+
 /* GTK CALLBACKS */
 
 void ModelSelector::callbackHide(GtkWidget* widget, GdkEvent* ev, ModelSelector* self) {
@@ -330,4 +420,8 @@ void ModelSelector::callbackHide(GtkWidget* widget, GdkEvent* ev, ModelSelector*
 	gtk_widget_hide(self->_widget);
 }
 
+void ModelSelector::callbackSelChanged(GtkWidget* widget, ModelSelector* self) {
+	self->updateInfoTable();
 }
+
+} // namespace ui

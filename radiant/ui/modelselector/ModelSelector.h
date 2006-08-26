@@ -25,6 +25,12 @@ private:
 	// Tree store containing model names
 	GtkTreeStore* _treeStore;
 	
+	// Currently-selected row in the tree store
+	GtkTreeSelection* _selection;
+	
+	// List store to contain attributes and values for the selected model
+	GtkListStore* _infoStore;
+	
 private:
 	
 	// Private constructor, creates GTK widgets
@@ -38,9 +44,16 @@ private:
 	GtkWidget* createButtons();
 	GtkWidget* createPreviewAndInfoPanel();
 	
+	// Update the info table with information from the currently-selected model
+	void updateInfoTable();
+	
+	// Return the value from the selected column, or an empty string if nothing selected
+	std::string getSelectedValue(gint col);
+	
 	/* GTK CALLBACKS */
 	
 	static void callbackHide(GtkWidget*, GdkEvent*, ModelSelector*);
+	static void callbackSelChanged(GtkWidget*, ModelSelector*);
 	
 public:
 
