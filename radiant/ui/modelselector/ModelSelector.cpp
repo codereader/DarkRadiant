@@ -2,6 +2,7 @@
 
 #include "mainframe.h"
 #include "gtkutil/image.h"
+#include "gtkutil/glwidget.h"
 
 #include "ifilesystem.h"
 #include "modelskin.h"
@@ -66,6 +67,8 @@ ModelSelector::ModelSelector()
 	
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 3);
 	gtk_box_pack_start(GTK_BOX(vbx), createTreeView(), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), createPreviewAndInfoPanel(), FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
 }
 
@@ -258,14 +261,65 @@ GtkWidget* ModelSelector::createTreeView() {
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeView), col);				
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeView), FALSE);
 
-	// Pack treeview into a scrolled window and return
+	// Pack treeview into a scrolled window and frame, and return
 	
 	GtkWidget* scrollWin = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrollWin),
 								   GTK_POLICY_AUTOMATIC,
 								   GTK_POLICY_AUTOMATIC);
 	gtk_container_add(GTK_CONTAINER(scrollWin), treeView);
-	return scrollWin;
+	
+	GtkWidget* fr = gtk_frame_new(NULL);
+	gtk_container_add(GTK_CONTAINER(fr), scrollWin);
+	
+	return fr;
+	
+}
+
+// Create the buttons panel at bottom of dialog
+
+GtkWidget* ModelSelector::createButtons() {
+	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
+	gtk_box_pack_end(GTK_BOX(hbx), gtk_button_new_from_stock(GTK_STOCK_OK), FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(hbx), gtk_button_new_from_stock(GTK_STOCK_CANCEL), FALSE, FALSE, 0);
+	return hbx;
+}
+
+// Create the preview widget and info panel
+
+GtkWidget* ModelSelector::createPreviewAndInfoPanel() {
+
+	// This is an HBox with the preview GL widget on the left, and an info TreeView on the
+	// right
+	
+	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
+	
+	// GL Widget
+	
+	GtkWidget* glWidget = glwidget_new(false);
+	gtk_widget_set_size_request(glWidget, 256, 256);
+	
+	GtkWidget* glFrame = gtk_frame_new(NULL);
+	gtk_container_add(GTK_CONTAINER(glFrame), glWidget);
+	gtk_box_pack_start(GTK_BOX(hbx), glFrame, FALSE, FALSE, 0);
+	
+	// Info table
+	
+	GtkWidget* infTreeView = gtk_tree_view_new();
+	
+	GtkWidget* scroll = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
+								   GTK_POLICY_AUTOMATIC,
+								   GTK_POLICY_AUTOMATIC);
+	gtk_container_add(GTK_CONTAINER(scroll), infTreeView);
+
+	GtkWidget* frame = gtk_frame_new(NULL);
+	gtk_container_add(GTK_CONTAINER(frame), scroll);
+
+	gtk_box_pack_start(GTK_BOX(hbx), frame, TRUE, TRUE, 0);
+	
+	// Return the HBox
+	return hbx;	
 	
 }
 

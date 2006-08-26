@@ -33,8 +33,10 @@ private:
 	// Show the dialog, called internally by chooseModel(). Return the selected model path
 	std::string showAndBlock();
 	
-	// Helper function to construct the TreeView
+	// Helper functions to create GUI components
 	GtkWidget* createTreeView();
+	GtkWidget* createButtons();
+	GtkWidget* createPreviewAndInfoPanel();
 	
 	/* GTK CALLBACKS */
 	
