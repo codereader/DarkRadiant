@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_ENTITY_H)
 #define INCLUDED_ENTITY_H
 
+#include "scenelib.h"
+
 // CONSTANTS
 
 // Default radius of lights is 320 (Q4) rather than 300 (D3)
@@ -33,7 +35,30 @@ const float DEFAULT_LIGHT_RADIUS = 320;
 
 template<typename Element> class BasicVector3;
 typedef BasicVector3<float> Vector3;
-void Entity_createFromSelection(const char* name, const Vector3& origin);
+
+/** Exception thrown when the incorrect number of brushes is selected when
+ * creating an entity.
+ */
+ 
+class EntityCreationException
+: public std::runtime_error
+{
+public:
+	EntityCreationException(const std::string& what)
+	: std::runtime_error(what) {}
+};
+
+
+/** Create an instance of the given entity at the given position, and return
+ * the Node containing the new entity. If the incorrect number of brushes
+ * is selected, an EntityCreationException will be thrown.
+ * 
+ * @returns
+ * A NodeSmartReference containing the new entity.
+ */
+
+NodeSmartReference Entity_createFromSelection(const char* name, const Vector3& origin);
+
 
 void Scene_EntitySetKeyValue_Selected(const char* key, const char* value);
 void Scene_EntitySetClassname_Selected(const char* classname);

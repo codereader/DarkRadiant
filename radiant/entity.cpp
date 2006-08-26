@@ -205,7 +205,14 @@ AABB Doom3Light_getBounds(AABB aabb)
 
 int g_iLastLightIntensity;
 
-void Entity_createFromSelection(const char* name, const Vector3& origin) {
+/** Create an instance of the given entity at the given position, and return
+ * the Node containing the new entity.
+ * 
+ * @returns
+ * A NodeSmartReference containing the new entity.
+ */
+
+NodeSmartReference Entity_createFromSelection(const char* name, const Vector3& origin) {
     // DEBUG
     //std::cout << "Entity_createFromSelection(" << name << ", <origin>)" << std::endl;
 
@@ -219,8 +226,7 @@ void Entity_createFromSelection(const char* name, const Vector3& origin) {
     bool brushesSelected = Scene_countSelectedBrushes(GlobalSceneGraph()) != 0;
 
     if (!(entityClass->fixedsize || isModel) && !brushesSelected) {
-        gtkutil::errorDialog("Unable to create entity - no brushes selected");
-        return;
+		throw EntityCreationException(std::string("Unable to create entity \"") + name + "\", no brushes selected");
     }
 
     AABB workzone(aabb_for_minmax(Select_getWorkZone().d_work_min, Select_getWorkZone().d_work_max));
@@ -267,21 +273,9 @@ void Entity_createFromSelection(const char* name, const Vector3& origin) {
         key << bounds.extents[0] << " " << bounds.extents[1] << " " << bounds.extents[2];
         Node_getEntity(node)->setKeyValue("light_radius", key.c_str());
     }
-
-  if(isModel)
-  {
-#ifdef USE_NEW_MODEL_SELECTOR
-	const char* model = ui::ModelSelector::chooseModel().c_str();
-#else
-    const char* model = misc_model_dialog(GTK_WIDGET(MainFrame_getWindow()));
-#endif
-
-    if(model != 0)
-    {
-      Node_getEntity(node)->setKeyValue("model", model);
-    }
-
-  }
+    
+	// Return the new node
+	return node;
 }
 
 

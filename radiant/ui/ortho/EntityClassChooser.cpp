@@ -3,6 +3,7 @@
 #include "mainframe.h"
 #include "ieclass.h"
 #include "eclasslib.h"
+#include "gtkutil/dialog.h"
 
 #include "entity.h" // Entity_createFromSelection()
 
@@ -157,9 +158,15 @@ void EntityClassChooser::callbackAdd(GtkWidget* widget, EntityClassChooser* self
 							 0,
 							 &val);
 
-	// Create the entity and hide the dialog
-	Entity_createFromSelection(g_value_get_string(&val), self->_lastPoint);
-	gtk_widget_hide(self->_widget);							 
+	// Create the entity and hide the dialog. We might get an EntityCreationException
+	// if the wrong number of brushes is selected.
+	try {
+		Entity_createFromSelection(g_value_get_string(&val), self->_lastPoint);
+		gtk_widget_hide(self->_widget);
+	}
+	catch (EntityCreationException e) {
+		gtkutil::errorDialog(e.what());
+	}
 }
 
 void EntityClassChooser::callbackSelectionChanged(GtkWidget* widget, EntityClassChooser* self) {
