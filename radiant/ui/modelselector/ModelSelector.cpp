@@ -45,7 +45,8 @@ ModelSelector::ModelSelector()
   								G_TYPE_STRING,
   								G_TYPE_STRING,
   								GDK_TYPE_PIXBUF)),
-  _infoStore(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING))
+  _infoStore(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING)),
+  _lastModel("")
 {
 	// Window properties
 	
@@ -79,8 +80,9 @@ ModelSelector::ModelSelector()
 
 std::string ModelSelector::showAndBlock() {
 	gtk_widget_show_all(_widget);
-	gtk_main(); // recursive main loop
-	return "models/test";
+	gtk_main(); // recursive main loop. This will block until the dialog is closed in some way.
+	std::cout << "returning " << _lastModel << std::endl;
+	return _lastModel;
 }
 
 // Static function to display the instance, and return the selected
@@ -196,7 +198,7 @@ namespace {
 				gtk_tree_store_append(_store, &iter, parIter);
 				gtk_tree_store_set(_store, &iter, 
 						NAME_COLUMN, nodeName.str().c_str(),
-						FULLNAME_COLUMN, (isModel ? dirPath.c_str() : ""),
+						FULLNAME_COLUMN, (isModel ? ("models/" + dirPath).c_str() : ""),
 						SKIN_COLUMN, "",
 						IMAGE_COLUMN, gtkutil::getLocalPixbuf(imgPath),
 						-1);
@@ -210,7 +212,7 @@ namespace {
 					gtk_tree_store_append(_store, &skIter, &iter);
 					gtk_tree_store_set(_store, &skIter, 
 							NAME_COLUMN, i->c_str(),
-							FULLNAME_COLUMN, dirPath.c_str(),
+							FULLNAME_COLUMN, ("models/" + dirPath).c_str(),
 							SKIN_COLUMN, i->c_str(),
 							IMAGE_COLUMN, gtkutil::getLocalPixbuf("skin16.png"),
 							-1);
@@ -304,8 +306,14 @@ GtkWidget* ModelSelector::createTreeView() {
 
 GtkWidget* ModelSelector::createButtons() {
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_end(GTK_BOX(hbx), gtk_button_new_from_stock(GTK_STOCK_OK), FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(hbx), gtk_button_new_from_stock(GTK_STOCK_CANCEL), FALSE, FALSE, 0);
+	
+	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
+	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+	
+	g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(callbackOK), this);
+	
+	gtk_box_pack_end(GTK_BOX(hbx), okButton, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, FALSE, FALSE, 0);
 	return hbx;
 }
 
@@ -422,6 +430,13 @@ void ModelSelector::callbackHide(GtkWidget* widget, GdkEvent* ev, ModelSelector*
 
 void ModelSelector::callbackSelChanged(GtkWidget* widget, ModelSelector* self) {
 	self->updateInfoTable();
+}
+
+void ModelSelector::callbackOK(GtkWidget* widget, ModelSelector* self) {
+	// Remember the selected model then exit from the recursive main loop
+	self->_lastModel = self->getSelectedValue(FULLNAME_COLUMN);
+	gtk_main_quit();
+	gtk_widget_hide(self->_widget);
 }
 
 } // namespace ui

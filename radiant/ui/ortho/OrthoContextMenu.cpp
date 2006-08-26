@@ -3,6 +3,12 @@
 #include "EntityClassChooser.h"
 
 #include "entity.h" // Entity_createFromSelection()
+#include "ientity.h" // Node_getEntity()
+#include "map.h" // Scene_countSelectedBrushes()
+
+#include "gtkutil/dialog.h"
+
+#include "ui/modelselector/ModelSelector.h"
 
 namespace ui
 {
@@ -56,7 +62,25 @@ void OrthoContextMenu::callbackAddLight(GtkMenuItem* item, OrthoContextMenu* sel
 }
 
 void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* self) {
-	Entity_createFromSelection(MODEL_CLASSNAME, self->_lastPoint);
+	
+	// To create a model we need EITHER nothing selected OR exactly one brush selected.
+	if (GlobalSelectionSystem().countSelected() == 0
+		|| Scene_countSelectedBrushes(GlobalSceneGraph()) == 1) {
+	
+		// Display the model selector and block waiting for a selection (may be empty)
+		std::string model = ui::ModelSelector::chooseModel();
+		
+		// If a model was selected, create the entity and set its model key
+		if (!model.empty()) {
+			NodeSmartReference node = Entity_createFromSelection(MODEL_CLASSNAME, self->_lastPoint);
+			Node_getEntity(node)->setKeyValue("model", model.c_str());
+		}
+		
+	}
+	else {
+		gtkutil::errorDialog("Either nothing or exactly one brush must be selected for model creation");
+	}
+
 }
 
 } // namespace ui

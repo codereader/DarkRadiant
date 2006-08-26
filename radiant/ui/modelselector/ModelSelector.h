@@ -31,6 +31,10 @@ private:
 	// List store to contain attributes and values for the selected model
 	GtkListStore* _infoStore;
 	
+	// Last selected model, which will be returned by showAndBlock() once the
+	// recursive main loop exits.
+	std::string _lastModel;
+	
 private:
 	
 	// Private constructor, creates GTK widgets
@@ -54,6 +58,7 @@ private:
 	
 	static void callbackHide(GtkWidget*, GdkEvent*, ModelSelector*);
 	static void callbackSelChanged(GtkWidget*, ModelSelector*);
+	static void callbackOK(GtkWidget*, ModelSelector*);
 	
 public:
 
