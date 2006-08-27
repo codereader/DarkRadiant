@@ -1394,13 +1394,13 @@ public:
     g_vertexArray_enabled = true;
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
-    if(GlobalOpenGL().GL_1_3())
+    if(GLEW_VERSION_1_3)
     {
       glActiveTexture(GL_TEXTURE0);
       glClientActiveTexture(GL_TEXTURE0);
     }
 
-    if(GlobalOpenGL().ARB_shader_objects())
+    if(GLEW_ARB_shader_objects)
     {
       glUseProgramObjectARB(0);
       glDisableVertexAttribArrayARB(c_attr_TexCoord0);
@@ -1552,44 +1552,44 @@ public:
   }
   void extensionsInitialised()
   {
-    setLighting(GlobalOpenGL().GL_1_3()
-      && GlobalOpenGL().ARB_vertex_program()
-      && GlobalOpenGL().ARB_fragment_program()
-      && GlobalOpenGL().ARB_shader_objects()
-      && GlobalOpenGL().ARB_vertex_shader()
-      && GlobalOpenGL().ARB_fragment_shader()
-      && GlobalOpenGL().ARB_shading_language_100(),
+    setLighting(GLEW_VERSION_1_3
+      && GLEW_ARB_vertex_program
+      && GLEW_ARB_fragment_program
+      && GLEW_ARB_shader_objects
+      && GLEW_ARB_vertex_shader
+      && GLEW_ARB_fragment_shader
+      && GLEW_ARB_shading_language_100,
       m_lightingEnabled
     );
 
     if(!lightingSupported())
     {
       globalOutputStream() << "Lighting mode requires OpenGL features not supported by your graphics drivers:\n";
-      if(!GlobalOpenGL().GL_1_3())
+      if(!GLEW_VERSION_1_3)
       {
         globalOutputStream() << "  GL version 1.3 or better\n";
       }
-      if(!GlobalOpenGL().ARB_vertex_program())
+      if(!GLEW_ARB_vertex_program)
       {
         globalOutputStream() << "  GL_ARB_vertex_program\n";
       }
-      if(!GlobalOpenGL().ARB_fragment_program())
+      if(!GLEW_ARB_fragment_program)
       {
         globalOutputStream() << "  GL_ARB_fragment_program\n";
       }
-      if(!GlobalOpenGL().ARB_shader_objects())
+      if(!GLEW_ARB_shader_objects)
       {
         globalOutputStream() << "  GL_ARB_shader_objects\n";
       }
-      if(!GlobalOpenGL().ARB_vertex_shader())
+      if(!GLEW_ARB_vertex_shader)
       {
         globalOutputStream() << "  GL_ARB_vertex_shader\n";
       }
-      if(!GlobalOpenGL().ARB_fragment_shader())
+      if(!GLEW_ARB_fragment_shader)
       {
         globalOutputStream() << "  GL_ARB_fragment_shader\n";
       }
-      if(!GlobalOpenGL().ARB_shading_language_100())
+      if(!GLEW_ARB_shading_language_100)
       {
         globalOutputStream() << "  GL_ARB_shading_language_100\n";
       }
@@ -1879,7 +1879,7 @@ void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned i
   {
     GlobalOpenGL_debugAssertNoErrors();
 
-    if(GlobalOpenGL().GL_1_3())
+    if(GLEW_VERSION_1_3)
     {
       glActiveTexture(GL_TEXTURE0);
       glClientActiveTexture(GL_TEXTURE0);
@@ -1896,7 +1896,7 @@ void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned i
   }
   else if(delta & ~state & RENDER_TEXTURE)
   {
-    if(GlobalOpenGL().GL_1_3())
+    if(GLEW_VERSION_1_3)
     {
       glActiveTexture(GL_TEXTURE0);
       glClientActiveTexture(GL_TEXTURE0);
@@ -1919,7 +1919,7 @@ void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned i
 // this could get better if you can get glTexEnviv (GL_TEXTURE_ENV, to work .. patches are welcome
 
     glEnable(GL_BLEND);
-    if(GlobalOpenGL().GL_1_3())
+    if(GLEW_VERSION_1_3)
     {
       glActiveTexture(GL_TEXTURE0);
     }
@@ -1929,7 +1929,7 @@ void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned i
   else if(delta & ~state & RENDER_BLEND)
   {
     glDisable(GL_BLEND);
-    if(GlobalOpenGL().GL_1_3())
+    if(GLEW_VERSION_1_3)
     {
       glActiveTexture(GL_TEXTURE0);
     }
@@ -2080,7 +2080,7 @@ void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned i
       texture7 = self.m_texture7;
     }
 
-    if(GlobalOpenGL().GL_1_3())
+    if(GLEW_VERSION_1_3)
     {
       setTextureState(current.m_texture, texture0, GL_TEXTURE0);
       setTextureState(current.m_texture1, texture1, GL_TEXTURE1);

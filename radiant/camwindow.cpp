@@ -1589,7 +1589,7 @@ void CamWnd::Cam_Draw()
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  if(GlobalOpenGL().GL_1_3())
+  if(GLEW_VERSION_1_3)
   {
     glClientActiveTexture(GL_TEXTURE0);
     glActiveTexture(GL_TEXTURE0);

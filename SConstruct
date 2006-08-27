@@ -304,9 +304,10 @@ class idEnvironment(Environment):
     
 	def useOpenGL(self):
 		if (self['PLATFORM'] == 'win32'):
-			self.Append(LIBS = ['opengl32', 'gdi32']) # MinGW libs
+			self.Append(LIBS = ['opengl32', 'gdi32', 'glew32']) # MinGW libs
+			self.Append(LIBPATH = ['#/glew'])
 		else:
-			self.Append(LIBS = ['GL'])
+			self.Append(LIBS = ['GL', 'GLEW'])
 
 	def usePNG(self):
 		self.useZLib() # libPNG requires ZLib

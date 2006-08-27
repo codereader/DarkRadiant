@@ -464,13 +464,13 @@ public:
     {
       g_texture_globals.bTextureCompressionSupported = false;
 
-      if(GlobalOpenGL().ARB_texture_compression())
+      if(GLEW_ARB_texture_compression)
       {
         g_texture_globals.bTextureCompressionSupported = true;
         g_texture_globals.m_bOpenGLCompressionSupported = true;
       }
 
-      if(GlobalOpenGL().EXT_texture_compression_s3tc())
+      if(GLEW_EXT_texture_compression_s3tc)
       {
         g_texture_globals.bTextureCompressionSupported = true;
         g_texture_globals.m_bS3CompressionSupported = true;

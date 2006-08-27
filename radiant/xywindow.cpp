@@ -2316,7 +2316,7 @@ void XYWnd::XY_Draw()
   GlobalOpenGL_debugAssertNoErrors();
   glLineWidth(1);
   GlobalOpenGL_debugAssertNoErrors();
-  if(GlobalOpenGL().GL_1_3())
+  if(GLEW_VERSION_1_3)
   {
     glActiveTexture(GL_TEXTURE0);
     glClientActiveTexture(GL_TEXTURE0);

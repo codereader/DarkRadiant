@@ -1,3 +1,12 @@
+27/08/2006
+- Removal of OpenGLBinding in favour of standard GLEW library for extension processing
+  [Crispy].
+
+** RELEASE 0.5.3
+
+- Bugfix: selected brushes now parented to func_static and other entities
+- Light texture selector highlights current shader
+
 ** RELEASE 0.5.2
 
 16/08/2006
