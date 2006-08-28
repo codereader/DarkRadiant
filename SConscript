@@ -54,6 +54,7 @@ profile_lib = profile_env.StaticLibrary(target='libs/profile', source=build_list
 
 gtkutil_env = g_env.Copy();
 gtkutil_env['CPPPATH'].append('include')
+gtkutil_env.useOpenGL()
 gtkutil_env.useGlib2()
 gtkutil_env.useGtk2()
 gtkutil_env.useGtkGLExt()

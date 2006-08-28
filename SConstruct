@@ -301,11 +301,12 @@ class idEnvironment(Environment):
 			self.Append(CXXFLAGS = '`pkg-config gtkglext-1.0 --cflags` ')
 			self.Append(CFLAGS = '`pkg-config gtkglext-1.0 --cflags` ')
 			self.Append(LIBS = ['gtkglext-x11-1.0', 'gdkglext-x11-1.0', 'GLU'])
-    
+ 
 	def useOpenGL(self):
 		if (self['PLATFORM'] == 'win32'):
-			self.Append(LIBS = ['opengl32', 'gdi32', 'glew32']) # MinGW libs
-			self.Append(LIBPATH = ['#/glew'])
+			self.Append(CPPPATH = ['#/w32/glew/include'])
+			self.Append(LIBPATH = ['#/w32/glew/lib'])
+			self.Append(LIBS = ['glew32', 'glu32', 'opengl32', 'gdi32' ]) # MinGW libs
 		else:
 			self.Append(LIBS = ['GL', 'GLEW'])
 
