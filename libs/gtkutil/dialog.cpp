@@ -314,11 +314,12 @@ namespace gtkutil {
 
 void errorDialog(const std::string& errorText) {
 	GtkWindow* mainFrame = MainFrame_getWindow();
-	GtkWidget* dialog = gtk_message_dialog_new (mainFrame,
-                        				        GTK_DIALOG_DESTROY_WITH_PARENT,
-					                            GTK_MESSAGE_ERROR,
-                    			                GTK_BUTTONS_CLOSE,
-                                  				errorText.c_str());
+	GtkWidget* dialog = 
+		gtk_message_dialog_new_with_markup (mainFrame,
+                       				        GTK_DIALOG_DESTROY_WITH_PARENT,
+				                            GTK_MESSAGE_ERROR,
+                   			                GTK_BUTTONS_CLOSE,
+                               				errorText.c_str());
 	gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_destroy (dialog);
 }
