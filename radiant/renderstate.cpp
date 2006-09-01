@@ -54,6 +54,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "xywindow.h"
 
+#include <boost/algorithm/string/case_conv.hpp>
+
+/* GLOBALS */
+
+namespace {
+	
+	// Name of default pointlight shader, retrieved from game descriptor.
+	std::string _defaultLightShaderName;
+	
+}
+
 
 
 #define DEBUG_RENDER 0
@@ -1701,65 +1712,28 @@ void ShaderCache_Construct()
   GlobalTexturesCache().attach(*g_ShaderCache);
   GlobalShaderSystem().attach(*g_ShaderCache);
 
-  if(g_pGameDescription->mGameType == "doom3")
-  {
-    g_defaultPointLight = g_ShaderCache->capture("lights/defaultPointLight");
-    //Shader* overbright =
-    g_ShaderCache->capture("$OVERBRIGHT");
+	// Get the global default lightshader from the XML gamedescriptor.
+	
+	xml::NodeList nlDefaultLight = GlobalRadiant().getXPath("/game/defaults/lightShader");
+	if (nlDefaultLight.size() != 1)
+		gtkutil::fatalErrorDialog("Failed to find default lightshader in XML game descriptor.\n\nNode <b>/game/defaults/lightShader</b> not found.");
 
-#if LIGHT_SHADER_DEBUG
-    for(std::size_t i = 0; i < 256; ++i)
-    {
-      g_DebugShaderColours[i] = Vector3(i / 256.0, i / 256.0, i / 256.0);
-    }
+	_defaultLightShaderName = nlDefaultLight[0].getContent();
+	boost::algorithm::to_lower(_defaultLightShaderName);
 
-    g_DebugShaderColours[0] = Vector3(1, 0, 0);
-    g_DebugShaderColours[1] = Vector3(1, 0.5, 0);
-    g_DebugShaderColours[2] = Vector3(1, 1, 0);
-    g_DebugShaderColours[3] = Vector3(0.5, 1, 0);
-    g_DebugShaderColours[4] = Vector3(0, 1, 0);
-    g_DebugShaderColours[5] = Vector3(0, 1, 0.5);
-    g_DebugShaderColours[6] = Vector3(0, 1, 1);
-    g_DebugShaderColours[7] = Vector3(0, 0.5, 1);
-    g_DebugShaderColours[8] = Vector3(0, 0, 1);
-    g_DebugShaderColours[9] = Vector3(0.5, 0, 1);
-    g_DebugShaderColours[10] = Vector3(1, 0, 1);
-    g_DebugShaderColours[11] = Vector3(1, 0, 0.5);
-
-    g_lightDebugShaders.reserve(256);
-    StringOutputStream buffer(256);
-    for(std::size_t i = 0; i < 256; ++i)
-    {
-      buffer << "(" << g_DebugShaderColours[i].x() << " " << g_DebugShaderColours[i].y() << " " << g_DebugShaderColours[i].z() << ")";
-      g_lightDebugShaders.push_back(g_ShaderCache->capture(buffer.c_str()));
-      buffer.clear();
-    }
-#endif
-  }
+	g_defaultPointLight = g_ShaderCache->capture(_defaultLightShaderName.c_str());
+	g_ShaderCache->capture("$OVERBRIGHT");
 }
 
 void ShaderCache_Destroy()
 {
-  if(g_pGameDescription->mGameType == "doom3")
-  {
-    g_ShaderCache->release("lights/defaultPointLight");
+    g_ShaderCache->release(_defaultLightShaderName.c_str());
     g_ShaderCache->release("$OVERBRIGHT");
     g_defaultPointLight = 0;
 
-#if LIGHT_SHADER_DEBUG
-    g_lightDebugShaders.clear();
-    StringOutputStream buffer(256);
-    for(std::size_t i = 0; i < 256; ++i)
-    {
-      buffer << "(" << g_DebugShaderColours[i].x() << " " << g_DebugShaderColours[i].y() << " " << g_DebugShaderColours[i].z() << ")";
-      g_ShaderCache->release(buffer.c_str());
-    }
-#endif
-  }
-
-  GlobalShaderSystem().detach(*g_ShaderCache);
-  GlobalTexturesCache().detach(*g_ShaderCache);
-  delete g_ShaderCache;
+	GlobalShaderSystem().detach(*g_ShaderCache);
+	GlobalTexturesCache().detach(*g_ShaderCache);
+	delete g_ShaderCache;
 }
 
 ShaderCache* GetShaderCache()

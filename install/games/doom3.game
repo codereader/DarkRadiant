@@ -30,6 +30,7 @@
 		</shaders>
 	</filesystem>
 	<defaults>
+		<lightShader>lights/defaultpointlight</lightShader>
 		<lightScale>1</lightScale>
 		<lightRadius>320 320 320</lightRadius>
 	</defaults>
