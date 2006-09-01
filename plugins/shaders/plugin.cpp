@@ -50,36 +50,6 @@ public:
   }
 };
 
-class ShadersQ3API
-{
-  ShaderSystem* m_shadersq3;
-public:
-  typedef ShaderSystem Type;
-  STRING_CONSTANT(Name, "quake3");
-
-  ShadersQ3API(ShadersDependencies& dependencies)
-  {
-    g_shadersExtension = "shader";
-    g_shadersDirectory = "scripts/";
-    g_bitmapModule = dependencies.getBitmapModule().getTable();
-    Shaders_Construct();
-    m_shadersq3 = &GetShaderSystem();
-  }
-  ~ShadersQ3API()
-  {
-    Shaders_Destroy();
-  }
-  ShaderSystem* getTable()
-  {
-    return m_shadersq3;
-  }
-};
-
-typedef SingletonModule<ShadersQ3API, ShadersDependencies, DependenciesAPIConstructor<ShadersQ3API, ShadersDependencies> > ShadersQ3Module;
-
-ShadersQ3Module g_ShadersQ3Module;
-
-
 class ShadersDoom3API
 {
   ShaderSystem* m_shadersdoom3;
@@ -89,11 +59,8 @@ public:
 
   ShadersDoom3API(ShadersDependencies& dependencies)
   {
-    g_shadersExtension = "mtr";
-    g_shadersDirectory = "materials/";
     g_enableDefaultShaders = false;
     g_shaderLanguage = SHADERLANGUAGE_DOOM3;
-    g_useShaderList = false;
     g_bitmapModule = dependencies.getBitmapModule().getTable();
     Shaders_Construct();
     m_shadersdoom3 = &GetShaderSystem();
@@ -122,11 +89,8 @@ public:
 
   ShadersQuake4API(ShadersDependencies& dependencies)
   {
-    g_shadersExtension = "mtr";
-    g_shadersDirectory = "materials/";
     g_enableDefaultShaders = false;
     g_shaderLanguage = SHADERLANGUAGE_QUAKE4;
-    g_useShaderList = false;
     g_bitmapModule = dependencies.getBitmapModule().getTable();
     Shaders_Construct();
     m_shadersquake4 = &GetShaderSystem();
@@ -151,7 +115,6 @@ extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
 {
   initialiseModule(server);
 
-  g_ShadersQ3Module.selfRegister();
   g_ShadersDoom3Module.selfRegister();
   g_ShadersQuake4Module.selfRegister();
 }

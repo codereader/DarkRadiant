@@ -35,6 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
 #include "shaders.h"
+#include "MissingXMLNodeException.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -69,13 +70,27 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "archivelib.h"
 #include "imagelib.h"
 
-const char* g_shadersExtension = "";
-const char* g_shadersDirectory = "";
+#include "xmlutil/Node.h"
+
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
+
+/* GLOBALS */
+
+namespace {
+
+	// The shader extension (e.g. MTR) loaded from the gamedescriptor
+	std::string g_shadersExtension;
+	
+}
+
 bool g_enableDefaultShaders = true;
 ShaderLanguage g_shaderLanguage = SHADERLANGUAGE_QUAKE3;
 bool g_useShaderList = true;
 _QERPlugImageTable* g_bitmapModule = 0;
 const char* g_texturePrefix = "textures/";
+
+
 
 void ActiveShaders_IteratorBegin();
 bool ActiveShaders_IteratorAtEnd();
@@ -1608,15 +1623,27 @@ void ParseShaderFile(Tokeniser& tokeniser, const char* filename)
         {
           tokeniser.ungetToken();
         }
-        // first token should be the path + name.. (from base)
-        CopiedString name;
-        if(!Tokeniser_parseShaderName(tokeniser, name))
-        {
-        }
+
+        // First token is the material name (e.g. textures/blah/blah2). Normalise the
+        // name into the correct format, and add the ShaderTemplate to the global shader
+        // list
+
+		std::string rawName = std::string(tokeniser.getToken());
+		
+		boost::algorithm::replace_all(rawName, "\\", "/"); // use forward slashes
+		boost::algorithm::to_lower(rawName); // use lowercase
+
+		// Remove the extension if present
+		size_t dotPos = rawName.rfind(".");
+		if (dotPos != std::string::npos)
+			rawName = rawName.substr(0, dotPos);			
+
         ShaderTemplatePointer shaderTemplate(new ShaderTemplate());
-        shaderTemplate->setName(name.c_str());
+        shaderTemplate->setName(rawName.c_str());
 
         g_shaders.insert(ShaderTemplateMap::value_type(shaderTemplate->getName(), shaderTemplate));
+
+		// Parse the shader contents
 
         bool result = (g_shaderLanguage == SHADERLANGUAGE_QUAKE3)
           ? shaderTemplate->parseQuake3(tokeniser)
@@ -1786,61 +1813,9 @@ GSList* Shaders_getShaderFileList()
   return l_shaderfiles;
 }
 
-/*
-==================
-DumpUnreferencedShaders
-usefull function: dumps the list of .shader files that are not referenced to the console
-==================
-*/
-void IfFound_dumpUnreferencedShader(bool& bFound, const char* filename)
-{
-  bool listed = false;
-
-  for(GSList* sh = l_shaderfiles; sh != 0; sh = g_slist_next(sh))
-  {
-    if(!strcmp((char*)sh->data, filename))
-    {
-      listed = true;
-      break;
-    }
-  }
-
-  if(!listed)
-  {
-    if(!bFound)
-    {
-      bFound = true;
-      globalOutputStream() << "Following shader files are not referenced in shaderlist.txt:\n";
-    }
-    globalOutputStream() << filename << "\n";
-  }
-}
-typedef ReferenceCaller1<bool, const char*, IfFound_dumpUnreferencedShader> IfFoundDumpUnreferencedShaderCaller;
-
-void DumpUnreferencedShaders()
-{
-  bool bFound = false;
-  GlobalFileSystem().forEachFile(g_shadersDirectory, g_shadersExtension, IfFoundDumpUnreferencedShaderCaller(bFound));
-}
-
 void ShaderList_addShaderFile(const char* dirstring)
 {
-  bool found = false;
-
-  for(GSList* tmp = l_shaderfiles; tmp != 0; tmp = tmp->next)
-  {
-    if(string_equal_nocase(dirstring, (char*)tmp->data))
-    {
-      found = true;
-      globalOutputStream() << "duplicate entry \"" << (char*)tmp->data << "\" in shaderlist.txt\n";
-      break;
-    }
-  }
-  
-  if(!found)
-  {
-    l_shaderfiles = g_slist_append(l_shaderfiles, strdup(dirstring));
-  }
+	l_shaderfiles = g_slist_append(l_shaderfiles, strdup(dirstring));
 }
 
 typedef FreeCaller1<const char*, ShaderList_addShaderFile> AddShaderFileCaller;
@@ -1911,69 +1886,45 @@ bool shaderlist_findOrInstall(const char* enginePath, const char* toolsPath, con
   return false;
 }
 
+/** Load the shaders from the MTR files.
+ */
+
 void Shaders_Load()
 {
-  if(g_shaderLanguage == SHADERLANGUAGE_QUAKE4)
-  {
-    GlobalFileSystem().forEachFile("guides/", "guide", LoadGuideFileCaller(), 0);
-  }
+	if(g_shaderLanguage == SHADERLANGUAGE_QUAKE4) {
+		GlobalFileSystem().forEachFile("guides/", "guide", LoadGuideFileCaller(), 0);
+	}
 
-  const char* shaderPath = GlobalRadiant().getGameDescriptionKeyValue("shaderpath");
-  if(!string_empty(shaderPath))
-  {
-    StringOutputStream path(256);
-    path << DirectoryCleaned(shaderPath);
+	// Get the shaders path and extension from the XML game file
 
-    if(g_useShaderList)
-    {
-      // preload shader files that have been listed in shaderlist.txt
-      const char* basegame = GlobalRadiant().getRequiredGameDescriptionKeyValue("basegame");
-      const char* gamename = GlobalRadiant().getGameName();
-      const char* enginePath = GlobalRadiant().getEnginePath();
-      const char* toolsPath = GlobalRadiant().getGameToolsPath();
+	xml::NodeList nlShaderPath = GlobalRadiant().getXPath("/game/filesystem/shaders/basepath");
+	if (nlShaderPath.size() != 1)
+		throw shaders::MissingXMLNodeException("Failed to find \"/game/filesystem/shaders/basepath\" node in game descriptor");
 
-      bool isMod = !string_equal(basegame, gamename);
+	xml::NodeList nlShaderExt = GlobalRadiant().getXPath("/game/filesystem/shaders/extension");
+	if (nlShaderExt.size() != 1)
+		throw shaders::MissingXMLNodeException("Failed to find \"/game/filesystem/shaders/extension\" node in game descriptor");
 
-      if(!isMod || !shaderlist_findOrInstall(enginePath, toolsPath, path.c_str(), gamename))
-      {
-        gamename = basegame;
-        shaderlist_findOrInstall(enginePath, toolsPath, path.c_str(), gamename);
-      }
+	// Load the shader files from the VFS
 
-      StringOutputStream absShaderList(256);
-      absShaderList << enginePath << gamename << '/' << path.c_str() << "shaderlist.txt";
-
-      {
-        globalOutputStream() << "Parsing shader files from " << absShaderList.c_str() << "\n";
-        TextFileInputStream shaderlistFile(absShaderList.c_str());
-        if(shaderlistFile.failed())
-        {
-          globalErrorStream() << "Couldn't find '" << absShaderList.c_str() << "'\n";
-        }
-        else
-        {
-          BuildShaderList(shaderlistFile);
-          DumpUnreferencedShaders();
-        }
-      }
-    }
-    else
-    {
-      GlobalFileSystem().forEachFile(path.c_str(), g_shadersExtension, AddShaderFileCaller(), 0);
-    }
+	std::string sPath = nlShaderPath[0].getContent();
+	if (!boost::algorithm::ends_with(sPath, "/"))
+		sPath += "/";
+		
+	g_shadersExtension = nlShaderExt[0].getContent();
+	
+	GlobalFileSystem().forEachFile(sPath.c_str(), g_shadersExtension.c_str(), AddShaderFileCaller(), 0);
 
     GSList *lst = l_shaderfiles;
     StringOutputStream shadername(256);
     while(lst)
     {
-      shadername << path.c_str() << reinterpret_cast<const char*>(lst->data);
+      shadername << sPath.c_str() << reinterpret_cast<const char*>(lst->data);
       LoadShaderFile(shadername.c_str());
       shadername.clear();
       lst = lst->next;
     }
-  }
 
-  //StringPool_analyse(ShaderPool::instance());
 }
 
 void Shaders_Free()

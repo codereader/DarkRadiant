@@ -43,8 +43,6 @@ enum ShaderLanguage
   SHADERLANGUAGE_QUAKE4
 };
 
-extern const char* g_shadersExtension;
-extern const char* g_shadersDirectory;
 extern ShaderLanguage g_shaderLanguage;
 extern bool g_enableDefaultShaders;
 extern bool g_useShaderList;

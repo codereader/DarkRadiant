@@ -1076,16 +1076,14 @@ size_t picoInputStreamReam(void* inputStream, unsigned char* buffer, size_t leng
 
 scene::Node& loadPicoModel(const picoModule_t* module, ArchiveFile& file)
 {
-//	std::cout << "loadPicoModel(), file is " << file.getName() << std::endl;
 
 	// Determine the file extension (ASE or LWO) to pass down to the PicoModel
 	std::string fName = file.getName();
 	boost::algorithm::to_lower(fName);
 	std::string fExt = fName.substr(fName.size() - 3, 3);
-//	std::cout << "  extension is " << fExt << std::endl;
 
-  picoModel_t* model = PicoModuleLoadModelStream(module, &file.getInputStream(), picoInputStreamReam, file.size(), 0);
-  PicoModelNode* modelNode = new PicoModelNode(model, fExt);
-  PicoFreeModel(model);
-  return modelNode->node();
+	picoModel_t* model = PicoModuleLoadModelStream(module, &file.getInputStream(), picoInputStreamReam, file.size(), 0);
+	PicoModelNode* modelNode = new PicoModelNode(model, fExt);
+	PicoFreeModel(model);
+	return modelNode->node();
 }

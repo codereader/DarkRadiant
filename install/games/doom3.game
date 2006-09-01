@@ -13,7 +13,6 @@
   basegame="base"
   basegamename="Doom 3"
   unknowngamename="Custom Doom 3 modification"
-  shaderpath="materials"
   archivetypes="pk4"
   texturetypes="tga jpg dds"
   modeltypes="lwo ase md5mesh"
@@ -24,6 +23,12 @@
   brushtypes="doom3"
   patchtypes="doom3 def2doom3"
 >
+	<filesystem>
+		<shaders>
+			<basepath>materials</basepath>
+			<extension>mtr</extension>
+		</shaders>
+	</filesystem>
 	<defaults>
 		<lightScale>1</lightScale>
 		<lightRadius>320 320 320</lightRadius>
