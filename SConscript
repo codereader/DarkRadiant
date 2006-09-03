@@ -185,12 +185,6 @@ entity_env.useOpenGL()
 entity_lib = entity_env.SharedLibrary(target='entity', source=entity_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
 entity_env.Install(INSTALL + '/modules', entity_lib)
 
-gameDescriptorEnv = module_env.Copy()
-gameDescriptorEnv.useXML2()
-gamedesc_lst = build_list('plugins/gamedescriptor', 'plugin.cpp XMLGameDescriptor.cpp GameDescriptorModuleAPI.cpp')
-gamedesc_lib = gameDescriptorEnv.SharedLibrary(target='gamedesc', source=gamedesc_lst, no_import_lib=1)
-gameDescriptorEnv.Install(INSTALL + '/modules', gamedesc_lib)
-
 radiant_env = g_env.Copy()
 radiant_env['CPPPATH'].append('include')
 if radiant_env['PLATFORM'] == 'posix':
