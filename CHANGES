@@ -1,6 +1,13 @@
+03/09/2006
+Crispy
+- Added texture window toolbar and button to clamp textures to constant size
+OrbWeaver
+- Fixed problems with material names using mixed case not being displayed on brushes
+- textures/common/collision now filtered out by Filter->Clips
+
 27/08/2006
+Crispy
 - Removal of OpenGLBinding in favour of standard GLEW library for extension processing
-  [Crispy].
 
 ** RELEASE 0.5.3
 

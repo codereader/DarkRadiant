@@ -45,13 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <set>
 
-#include <gtk/gtkmenuitem.h>
-#include <gtk/gtkrange.h>
-#include <gtk/gtkframe.h>
-#include <gtk/gtkhbox.h>
-#include <gtk/gtkvbox.h>
-#include <gtk/gtkvscrollbar.h>
-#include <gtk/gtkmenu.h>
+#include <gtk/gtk.h>
 
 #include "signal/signal.h"
 #include "math/vector.h"
@@ -67,6 +61,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "textures.h"
 #include "convert.h"
 
+#include "gtkutil/image.h"
 #include "gtkutil/menu.h"
 #include "gtkutil/nonmodal.h"
 #include "gtkutil/cursor.h"
@@ -450,13 +445,68 @@ public:
   // if true, the texture window will only display in-use shaders
   // if false, all the shaders in memory are displayed
   bool m_hideUnused;
-
-
+  
+  // If true, textures are resized to a uniform size when displayed in the texture browser.
+  // If false, textures are displayed in proportion to their pixel size.
+  bool m_resizeTextures;
+  // The uniform size (in pixels) that textures are resized to when m_resizeTextures is true.
+  int m_uniformTextureSize;
+  
   void clearFilter()
   {
     gtk_entry_set_text(m_filter, "");
     TextureBrowser_queueDraw(*this);
   }
+  
+  
+  // Return the display width of a texture in the texture browser
+  int getTextureWidth(qtexture_t* tex)
+  {
+    int width;
+    if (!m_resizeTextures)
+    {
+      // Don't use uniform size
+      width = (int)(tex->width * ((float)m_textureScale / 100));
+    }
+    else if (tex->width >= tex->height)
+    {
+      // Texture is square, or wider than it is tall
+      width = m_uniformTextureSize;
+    }
+    else
+    {
+      // Otherwise, preserve the texture's aspect ratio
+      width = (int)(m_uniformTextureSize * ((float)tex->width / tex->height));
+    }
+    
+    return width;
+  }
+  
+  
+  // Return the display height of a texture in the texture browser
+  int getTextureHeight(qtexture_t* tex)
+  {
+    int height;
+    if (!m_resizeTextures)
+    {
+      // Don't use uniform size
+      height = (int)(tex->height * ((float)m_textureScale / 100));
+    }
+    else if (tex->height >= tex->width)
+    {
+      // Texture is square, or taller than it is wide
+      height = m_uniformTextureSize;
+    }
+    else
+    {
+      // Otherwise, preserve the texture's aspect ratio
+      height = (int)(m_uniformTextureSize * ((float)tex->height / tex->width));
+    }
+    
+    return height;
+  }
+  
+  
   typedef MemberCaller<TextureBrowser, &TextureBrowser::clearFilter> ClearFilterCaller;
 
   TextureBrowser() :
@@ -473,7 +523,9 @@ public:
     m_showShaders(true),
     m_showTextureScrollbar(true),
     m_startupShaders(STARTUPSHADERS_NONE),
-    m_hideUnused(false)
+    m_hideUnused(false),
+    m_resizeTextures(true),
+    m_uniformTextureSize(128)
   {
   }
 };
@@ -586,8 +638,8 @@ void Texture_NextPos(TextureBrowser& textureBrowser, TextureLayout& layout, qtex
 {
   qtexture_t* q = current_texture;
 
-  int nWidth = (int)(q->width * ((float)textureBrowser.m_textureScale / 100));
-  int nHeight = (int)(q->height * ((float)textureBrowser.m_textureScale / 100));
+  int nWidth = textureBrowser.getTextureWidth(q);
+  int nHeight = textureBrowser.getTextureHeight(q);
   if (layout.current_x + nWidth > textureBrowser.width-8 && layout.current_row)
   { // go to the next row unless the texture is the first on the row
     layout.current_x = 8;
@@ -604,8 +656,8 @@ void Texture_NextPos(TextureBrowser& textureBrowser, TextureLayout& layout, qtex
   if (layout.current_row < nHeight)
     layout.current_row = nHeight;
 
-  // never go less than 64, or the names get all crunched up
-  layout.current_x += nWidth < 64 ? 64 : nWidth;
+  // never go less than 96, or the names get all crunched up
+  layout.current_x += nWidth < 96 ? 96 : nWidth;
   layout.current_x += 8;
 }
 
@@ -666,7 +718,7 @@ void TextureBrowser_evaluateHeight(TextureBrowser& textureBrowser)
 
       int   x, y;
       Texture_NextPos(textureBrowser, layout, shader->getTexture(), &x, &y);
-      textureBrowser.m_nTotalHeight = std::max(textureBrowser.m_nTotalHeight, abs(layout.current_y) + TextureBrowser_fontHeight(textureBrowser) + (int)(shader->getTexture()->height * ((float)textureBrowser.m_textureScale / 100)) + 4);
+      textureBrowser.m_nTotalHeight = std::max(textureBrowser.m_nTotalHeight, abs(layout.current_y) + TextureBrowser_fontHeight(textureBrowser) + textureBrowser.getTextureHeight(shader->getTexture()) + 4);
     }
   }
 }
@@ -1030,7 +1082,7 @@ void TextureBrowser_Focus(TextureBrowser& textureBrowser, const char* name)
     // NOTE: as everywhere else for our comparisons, we are not case sensitive
     if (shader_equal(name, shader->getName()))
     {
-      int textureHeight = (int)(q->height * ((float)textureBrowser.m_textureScale / 100))
+      int textureHeight = textureBrowser.getTextureHeight(q)
         + 2 * TextureBrowser_fontHeight(textureBrowser);
 
       int originy = TextureBrowser_getOriginY(textureBrowser);
@@ -1069,8 +1121,8 @@ IShader* Texture_At(TextureBrowser& textureBrowser, int mx, int my)
     if (!q)
       break;
 
-    int nWidth = (int)(q->width * ((float)textureBrowser.m_textureScale / 100));
-    int nHeight = (int)(q->height * ((float)textureBrowser.m_textureScale / 100));
+    int nWidth = textureBrowser.getTextureWidth(q);
+    int nHeight = textureBrowser.getTextureHeight(q);
     if (mx > x && mx - x < nWidth
       && my < y && y - my < nHeight + TextureBrowser_fontHeight(textureBrowser))
     {
@@ -1206,8 +1258,8 @@ void Texture_Draw(TextureBrowser& textureBrowser)
     if (!q)
       break;
 
-    int nWidth = (int)(q->width * ((float)textureBrowser.m_textureScale / 100));
-    int nHeight = (int)(q->height * ((float)textureBrowser.m_textureScale / 100));
+    int nWidth = textureBrowser.getTextureWidth(q);
+    int nHeight = textureBrowser.getTextureHeight(q);
 
     if (y != last_y)
     {
@@ -1293,7 +1345,7 @@ void Texture_Draw(TextureBrowser& textureBrowser)
       glDisable (GL_TEXTURE_2D);
       glColor3f (1,1,1);
 
-      glRasterPos2i (x, y-TextureBrowser_fontHeight(textureBrowser)+2);
+      glRasterPos2i (x, y-TextureBrowser_fontHeight(textureBrowser)+5);
 
       // don't draw the directory name
       const char* name = shader->getName();
@@ -1331,6 +1383,13 @@ void TextureBrowser_setScale(TextureBrowser& textureBrowser, std::size_t scale)
 }
 
 
+void TextureBrowser_setUniformSize(TextureBrowser& textureBrowser, int value)
+{
+  textureBrowser.m_uniformTextureSize = value;
+  TextureBrowser_heightChanged(textureBrowser);
+}
+
+
 void TextureBrowser_MouseWheel(TextureBrowser& textureBrowser, bool bUp)
 {
   int originy = TextureBrowser_getOriginY(textureBrowser);
@@ -1347,6 +1406,21 @@ void TextureBrowser_MouseWheel(TextureBrowser& textureBrowser, bool bUp)
   TextureBrowser_setOriginY(textureBrowser, originy);
 }
 
+
+// GTK callback for toggling uniform texture sizing
+void TextureBrowser_toggleResizeTextures(GtkToggleToolButton* button, TextureBrowser* textureBrowser) {
+  if (gtk_toggle_tool_button_get_active(button) == TRUE)
+  {
+    textureBrowser->m_resizeTextures = true;
+  }
+  else
+  {
+    textureBrowser->m_resizeTextures = false;
+  }
+  
+  // Update texture browser
+  TextureBrowser_heightChanged(*textureBrowser);
+}
 
 
 gboolean TextureBrowser_button_press(GtkWidget* widget, GdkEventButton* event, TextureBrowser* textureBrowser)
@@ -1498,7 +1572,33 @@ GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel)
 	  GtkWidget* texbox = gtk_vbox_new (FALSE, 0);
 	  gtk_widget_show(texbox);
 	  gtk_box_pack_start(GTK_BOX(hbox), texbox, TRUE, TRUE, 0);
+    
+    GtkWidget* toolbar = gtk_toolbar_new();
+    gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
+    gtk_box_pack_start(GTK_BOX(texbox), toolbar, FALSE, FALSE, 0);
+    GtkTooltips* barTips = gtk_tooltips_new();
+    
+    // Button for toggling the resizing of textures
 
+    GtkToolItem* sizeToggle = gtk_toggle_tool_button_new();
+    GdkPixbuf* pixBuf = gtkutil::getLocalPixbuf("texwindow_uniformsize.png");
+    GtkWidget* toggle_image = GTK_WIDGET(gtk_image_new_from_pixbuf(pixBuf));
+    gtk_tool_item_set_tooltip(sizeToggle, barTips, "Clamp texture thumbnails to constant size", "");
+    
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(sizeToggle), "Constant size");
+    gtk_tool_button_set_icon_widget(GTK_TOOL_BUTTON(sizeToggle), toggle_image);
+    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(sizeToggle), TRUE);
+    
+    // Insert button and connect callback
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), sizeToggle, 0);
+    g_signal_connect(G_OBJECT(sizeToggle), 
+    				 "toggled",
+    				 G_CALLBACK(TextureBrowser_toggleResizeTextures), 
+    				 &g_TextureBrowser);
+    
+    gdk_pixbuf_unref(pixBuf);
+    gtk_widget_show_all(toolbar);
+    
 	  {
 		  GtkEntry* entry = GTK_ENTRY(gtk_entry_new());
 		  gtk_box_pack_start(GTK_BOX(texbox), GTK_WIDGET(entry), FALSE, FALSE, 0);
@@ -1644,6 +1744,20 @@ void TextureScaleExport(TextureBrowser& textureBrowser, const IntImportCallback&
 }
 typedef ReferenceCaller1<TextureBrowser, const IntImportCallback&, TextureScaleExport> TextureScaleExportCaller;
 
+// Get the texture size preference from the prefs dialog
+void TextureUniformSizeImport(TextureBrowser& textureBrowser, int value) {
+  TextureBrowser_setUniformSize(textureBrowser, value);
+}
+typedef ReferenceCaller1<TextureBrowser, int, TextureUniformSizeImport> TextureUniformSizeImportCaller;
+
+// Set the value of the texture size preference widget in the prefs dialog
+void TextureUniformSizeExport(TextureBrowser& textureBrowser, const IntImportCallback& importer)
+{
+  importer(textureBrowser.m_uniformTextureSize);
+}
+typedef ReferenceCaller1<TextureBrowser, const IntImportCallback&, TextureUniformSizeExport> TextureUniformSizeExportCaller;
+
+
 void TextureBrowser_constructPreferences(PreferencesPage& page)
 {
   page.appendCheckBox(
@@ -1659,13 +1773,20 @@ void TextureBrowser_constructPreferences(PreferencesPage& page)
   {
     const char* texture_scale[] = { "10%", "25%", "50%", "100%", "200%" };
     page.appendCombo(
-      "Texture Thumbnail Scale",
+      "Texture thumbnail scale",
       STRING_ARRAY_RANGE(texture_scale),
       IntImportCallback(TextureScaleImportCaller(GlobalTextureBrowser())),
       IntExportCallback(TextureScaleExportCaller(GlobalTextureBrowser()))
     );
   }
+  
+  page.appendEntry("Uniform texture thumbnail size (pixels)",
+    IntImportCallback(TextureUniformSizeImportCaller(GlobalTextureBrowser())),
+    IntExportCallback(TextureUniformSizeExportCaller(GlobalTextureBrowser()))
+  );
+  
   page.appendEntry("Mousewheel Increment", GlobalTextureBrowser().m_mouseWheelScrollIncrement);
+
   {
     const char* startup_shaders[] = { "None", TextureBrowser_getComonShadersName(), "All" };
     page.appendCombo("Load Shaders at Startup", reinterpret_cast<int&>(GlobalTextureBrowser().m_startupShaders), STRING_ARRAY_RANGE(startup_shaders));
@@ -1686,6 +1807,7 @@ void TextureBrowser_registerPreferencesPage()
 #include "stringio.h"
 
 typedef ReferenceCaller1<TextureBrowser, std::size_t, TextureBrowser_setScale> TextureBrowserSetScaleCaller;
+typedef ReferenceCaller1<TextureBrowser, int, TextureBrowser_setUniformSize> TextureBrowserSetUniformSizeCaller;
 
 
 
@@ -1703,6 +1825,12 @@ void TextureBrowser_Construct()
     makeSizeStringImportCallback(TextureBrowserSetScaleCaller(g_TextureBrowser)),
     SizeExportStringCaller(g_TextureBrowser.m_textureScale)
   );
+  
+  GlobalPreferenceSystem().registerPreference("TextureUniformSize",
+    IntImportStringCaller(g_TextureBrowser.m_uniformTextureSize),
+    IntExportStringCaller(g_TextureBrowser.m_uniformTextureSize)
+  );
+  
   GlobalPreferenceSystem().registerPreference("NewTextureWindowStuff",
     makeBoolStringImportCallback(TextureBrowserImportShowFilterCaller(g_TextureBrowser)),
     BoolExportStringCaller(GlobalTextureBrowser().m_showTextureFilter)
