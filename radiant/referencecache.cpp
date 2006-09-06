@@ -179,6 +179,9 @@ public:
   {
     return g_nullModel;
   }
+  
+	model::PreviewableModel& loadPreviewModel(const std::string& name) {}
+  
 };
 
 namespace

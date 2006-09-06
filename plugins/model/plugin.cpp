@@ -106,6 +106,10 @@ public:
   {
     return loadPicoModel(m_module, file);
   }
+  
+  	// TODO: implement this
+	model::PreviewableModel& loadPreviewModel(const std::string& name) {}
+  
 };
 
 class ModelPicoDependencies :
