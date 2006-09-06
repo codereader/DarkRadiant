@@ -7,7 +7,6 @@
 
 #include "iselection.h"
 #include "ientity.h"
-#include "igamedescriptor.h"
 
 #include "PropertyEditor.h"
 
