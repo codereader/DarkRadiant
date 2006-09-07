@@ -6,7 +6,6 @@
 
 #include "ientity.h"
 #include "iselection.h"
-#include "igamedescriptor.h"
 
 #include "gtkutil/image.h"
 #include "gtkutil/dialog.h"
