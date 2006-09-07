@@ -254,11 +254,20 @@ NodeSmartReference Entity_createFromSelection(const char* name, const Vector3& o
     
         Instance_setSelected(instance, true);
     }
-    else {
+    else { // brush-based entity
+    	
+    	Entity* entity = Node_getEntity(node);
+    	
     	// Add selected brushes as children of non-fixed entity
-		Node_getEntity(node)->setKeyValue("model", Node_getEntity(node)->getKeyValue("name"));
+		entity->setKeyValue("model", Node_getEntity(node)->getKeyValue("name"));
 	    Scene_parentSelectedBrushesToEntity(GlobalSceneGraph(), node);
 	    Scene_forEachChildSelectable(SelectableSetSelected(true), instance.path());
+	    
+	    // Add the "origin" key. Doom 3 treats the coordinates of an entity's brushes as
+	    // relative to its origin key. We just set the origin to world origin so no
+	    // translation is necessary.
+	    entity->setKeyValue("origin", "0 0 0");
+	    
     }
 	
     // Set the light radius and origin
