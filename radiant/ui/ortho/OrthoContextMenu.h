@@ -15,13 +15,13 @@ namespace ui
 		const char* LIGHT_CLASSNAME = "light";
 		const char* MODEL_CLASSNAME = "func_static";
 	
-		const char* ADD_MODEL_TEXT = "Add model...";
+		const char* ADD_MODEL_TEXT = "Create model...";
 		const char* ADD_MODEL_ICON = "cmenu_add_model.png";
-		const char* ADD_LIGHT_TEXT = "Add light...";
+		const char* ADD_LIGHT_TEXT = "Create light...";
 		const char* ADD_LIGHT_ICON = "cmenu_add_light.png";
-		const char* ADD_ENTITY_TEXT = "Add entity...";
+		const char* ADD_ENTITY_TEXT = "Create entity...";
 		const char* ADD_ENTITY_ICON = "cmenu_add_entity.png";
-		const char* ADD_PREFAB_TEXT = "Add prefab...";
+		const char* ADD_PREFAB_TEXT = "Insert prefab...";
 		const char* ADD_PREFAB_ICON = "cmenu_add_prefab.png";
 		
 	}
