@@ -181,12 +181,12 @@ public:
   }
 };
 
-/** Stream insertion operator for BasicVector3. Formats vector as "<x, y, z>".
+/** Stream insertion operator for BasicVector3. Formats vector as "x y z".
  */
  
 template<typename T>
 std::ostream& operator<<(std::ostream& st, BasicVector3<T> vec) {
-	st << "<" << vec.x() << ", " << vec.y() << ", " << vec.z() << ">";
+	st << vec.x() << " " << vec.y() << " " << vec.z();
 	return st;
 }
 

@@ -33,13 +33,28 @@ class AABB
 public:
   Vector3 origin, extents;
 
-  AABB() : origin(0, 0, 0), extents(-1,-1,-1)
-  {
-  }
-  AABB(const Vector3& origin_, const Vector3& extents_) :
-    origin(origin_), extents(extents_)
-  {
-  }
+	/** Construct an AABB with default origin and invalid extents.
+	 */
+	 
+	AABB() 
+	: origin(0, 0, 0), extents(-1,-1,-1) {}
+
+	/** Construct an AABB with the provided origin and extents
+	 * vectors.
+	 */
+
+	AABB(const Vector3& origin_, const Vector3& extents_) 
+	: origin(origin_), extents(extents_) {}
+  
+	/** Get the origin of this AABB.
+	 * 
+	 * @returns
+	 * A const reference to a Vector3 containing the AABB's origin.
+	 */
+	 
+	const Vector3& getOrigin() {
+		return origin;
+	}
 };
 
 const float c_aabb_max = FLT_MAX;
