@@ -59,6 +59,7 @@ private:
 	static void callbackHide(GtkWidget*, GdkEvent*, ModelSelector*);
 	static void callbackSelChanged(GtkWidget*, ModelSelector*);
 	static void callbackOK(GtkWidget*, ModelSelector*);
+	static void callbackCancel(GtkWidget*, ModelSelector*);
 	
 public:
 

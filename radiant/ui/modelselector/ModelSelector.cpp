@@ -24,6 +24,14 @@ namespace ui
 namespace {
 	
 	const char* MODELSELECTOR_TITLE = "Choose model";
+	const char* MODELS_FOLDER = "models/";
+
+	const char* ASE_EXTENSION = ".ase";
+	const char* LWO_EXTENSION = ".lwo";
+	const char* LWO_ICON = "model16red.png";
+	const char* ASE_ICON = "model16green.png";
+	const char* SKIN_ICON = "skin16.png";
+	const char* FOLDER_ICON = "folder16.png";
 
 	// Treestore enum
 	enum {
@@ -81,7 +89,6 @@ ModelSelector::ModelSelector()
 std::string ModelSelector::showAndBlock() {
 	gtk_widget_show_all(_widget);
 	gtk_main(); // recursive main loop. This will block until the dialog is closed in some way.
-	std::cout << "returning " << _lastModel << std::endl;
 	return _lastModel;
 }
 
@@ -169,7 +176,7 @@ namespace {
 
 				// Get the list of skins for this model. The number of skins is appended
 				// to the model node name in brackets.
-				ModelSkinList skins = GlobalModelSkinCache().getSkinsForModel("models/" + dirPath);
+				ModelSkinList skins = GlobalModelSkinCache().getSkinsForModel(MODELS_FOLDER + dirPath);
 				int numSk = skins.size();
 				if (numSk > 0) {
 					nodeName << " [" << numSk << (numSk == 1 ? " skin]" : " skins]");
@@ -180,15 +187,15 @@ namespace {
 				// have an actual model rather than a directory, so that the fullname
 				// tree column can be populated
 				
-				std::string imgPath = "folder16.png";
+				std::string imgPath = FOLDER_ICON;
 				bool isModel = false;
 
-				if (boost::algorithm::iends_with(dirPath, ".lwo")) {
-					imgPath = "model16red.png";
+				if (boost::algorithm::iends_with(dirPath, LWO_EXTENSION)) {
+					imgPath = LWO_ICON;
 					isModel = true;
 				}
-				else if (boost::algorithm::iends_with(dirPath, ".ase")) {
-					imgPath = "model16green.png";
+				else if (boost::algorithm::iends_with(dirPath, ASE_EXTENSION)) {
+					imgPath = ASE_ICON;
 					isModel = true;
 				}
 
@@ -198,7 +205,7 @@ namespace {
 				gtk_tree_store_append(_store, &iter, parIter);
 				gtk_tree_store_set(_store, &iter, 
 						NAME_COLUMN, nodeName.str().c_str(),
-						FULLNAME_COLUMN, (isModel ? ("models/" + dirPath).c_str() : ""),
+						FULLNAME_COLUMN, (isModel ? (MODELS_FOLDER + dirPath).c_str() : ""),
 						SKIN_COLUMN, "",
 						IMAGE_COLUMN, gtkutil::getLocalPixbuf(imgPath),
 						-1);
@@ -212,9 +219,9 @@ namespace {
 					gtk_tree_store_append(_store, &skIter, &iter);
 					gtk_tree_store_set(_store, &skIter, 
 							NAME_COLUMN, i->c_str(),
-							FULLNAME_COLUMN, ("models/" + dirPath).c_str(),
+							FULLNAME_COLUMN, (MODELS_FOLDER + dirPath).c_str(),
 							SKIN_COLUMN, i->c_str(),
-							IMAGE_COLUMN, gtkutil::getLocalPixbuf("skin16.png"),
+							IMAGE_COLUMN, gtkutil::getLocalPixbuf(SKIN_ICON),
 							-1);
 				}
 				
@@ -237,8 +244,8 @@ namespace {
 
 			// Test the extension. If it is not LWO or ASE (case-insensitive),
 			// not interested
-			if (!boost::algorithm::iends_with(rawPath, "lwo") 
-					&& !boost::algorithm::iends_with(rawPath, "ase")) 
+			if (!boost::algorithm::iends_with(rawPath, LWO_EXTENSION) 
+					&& !boost::algorithm::iends_with(rawPath, ASE_EXTENSION)) 
 			{
 				return;
 			}
@@ -261,7 +268,7 @@ GtkWidget* ModelSelector::createTreeView() {
 	// Populate the treestore using the VFS callback functor
 	
 	ModelFileFunctor functor(_treeStore);
-	GlobalFileSystem().forEachFile("models/", "*", makeCallback1(functor), 0);
+	GlobalFileSystem().forEachFile(MODELS_FOLDER, "*", makeCallback1(functor), 0);
 
 	GtkWidget* treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
 
@@ -311,6 +318,7 @@ GtkWidget* ModelSelector::createButtons() {
 	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	
 	g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(callbackOK), this);
+	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(callbackCancel), this);
 	
 	gtk_box_pack_end(GTK_BOX(hbx), okButton, FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, FALSE, FALSE, 0);
@@ -435,6 +443,12 @@ void ModelSelector::callbackSelChanged(GtkWidget* widget, ModelSelector* self) {
 void ModelSelector::callbackOK(GtkWidget* widget, ModelSelector* self) {
 	// Remember the selected model then exit from the recursive main loop
 	self->_lastModel = self->getSelectedValue(FULLNAME_COLUMN);
+	gtk_main_quit();
+	gtk_widget_hide(self->_widget);
+}
+
+void ModelSelector::callbackCancel(GtkWidget* widget, ModelSelector* self) {
+	self->_lastModel = "";
 	gtk_main_quit();
 	gtk_widget_hide(self->_widget);
 }
