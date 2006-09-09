@@ -1771,6 +1771,41 @@ namespace map {
 
 		}; // BrushOriginSubtractor
 		 
+
+		/** Walker class to count the number of selected brushes in the current
+		 * scene.
+		 */
+	
+		class CountSelectedBrushes : public scene::Graph::Walker
+		{
+		  int& m_count;
+		  mutable std::size_t m_depth;
+		public:
+		  CountSelectedBrushes(int& count) : m_count(count), m_depth(0)
+		  {
+		    m_count = 0;
+		  }
+		  bool pre(const scene::Path& path, scene::Instance& instance) const
+		  {
+		    if(++m_depth != 1 && path.top().get().isRoot())
+		    {
+		      return false;
+		    }
+		    Selectable* selectable = Instance_getSelectable(instance);
+		    if(selectable != 0
+		      && selectable->isSelected()
+		      && Node_isPrimitive(path.top()))
+		    {
+		      ++m_count;
+		    }
+		    return true;
+		  }
+		  void post(const scene::Path& path, scene::Instance& instance) const
+		  {
+		    --m_depth;
+		  }
+		};
+
 	} // namespace
 
 	/* Subtract the given origin from all selected brushes in the map. Uses
@@ -1782,44 +1817,17 @@ namespace map {
 		GlobalSceneGraph().traverse(BrushOriginSubtractor(origin));
 	}	
 	
-}
+	/* Return the number of selected brushes in the map, using the
+	 * CountSelectedBrushes walker.
+	 */
 
-class CountSelectedBrushes : public scene::Graph::Walker
-{
-  std::size_t& m_count;
-  mutable std::size_t m_depth;
-public:
-  CountSelectedBrushes(std::size_t& count) : m_count(count), m_depth(0)
-  {
-    m_count = 0;
-  }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
-  {
-    if(++m_depth != 1 && path.top().get().isRoot())
-    {
-      return false;
-    }
-    Selectable* selectable = Instance_getSelectable(instance);
-    if(selectable != 0
-      && selectable->isSelected()
-      && Node_isPrimitive(path.top()))
-    {
-      ++m_count;
-    }
-    return true;
-  }
-  void post(const scene::Path& path, scene::Instance& instance) const
-  {
-    --m_depth;
-  }
-};
+	int countSelectedBrushes() {
+		int count;
+		GlobalSceneGraph().traverse(CountSelectedBrushes(count));
+		return count;
+	}
 
-std::size_t Scene_countSelectedBrushes(scene::Graph& graph)
-{
-  std::size_t count;
-  graph.traverse(CountSelectedBrushes(count));
-  return count;
-}
+} // namespace map
 
 enum ENodeType
 {

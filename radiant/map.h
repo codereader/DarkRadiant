@@ -137,7 +137,6 @@ scene::Node& Node_Clone(scene::Node& node);
 void DoMapInfo();
 
 void Scene_parentSelectedBrushesToEntity(scene::Graph& graph, scene::Node& parent);
-std::size_t Scene_countSelectedBrushes(scene::Graph& graph);
 
 void Scene_parentSelected();
 
@@ -181,6 +180,14 @@ namespace map {
 	 */
 	 
 	void selectedBrushesSubtractOrigin(const Vector3& origin);
+	
+	/** Count the number of selected brushes in the current map.
+	 * 
+	 * @returns
+	 * The number of selected brushes.
+	 */
+	 
+	int countSelectedBrushes();
 	
 }
 

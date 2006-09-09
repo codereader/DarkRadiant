@@ -223,7 +223,7 @@ NodeSmartReference Entity_createFromSelection(const char* name, const Vector3& o
                     && string_equal_nocase(name, "func_static"));
     
     // Some entities are based on the size of the currently-selected brush(es)
-    bool brushesSelected = Scene_countSelectedBrushes(GlobalSceneGraph()) != 0;
+    bool brushesSelected = map::countSelectedBrushes() != 0;
 
     if (!(entityClass->fixedsize || isModel) && !brushesSelected) {
 		throw EntityCreationException(std::string("Unable to create entity \"") + name + "\", no brushes selected");

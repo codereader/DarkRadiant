@@ -24,6 +24,9 @@ namespace ui
 		const char* ADD_PREFAB_TEXT = "Insert prefab...";
 		const char* ADD_PREFAB_ICON = "cmenu_add_prefab.png";
 		
+		const char* CONVERT_TO_STATIC_TEXT = "Convert brushes to static";
+		const char* CONVERT_TO_STATIC_ICON = "cmenu_convert_static.png";
+		
 	}
 
 /** Displays a menu when the mouse is right-clicked in the ortho window.
@@ -41,13 +44,22 @@ private:
 	// Last provided 3D point for action
 	Vector3 _lastPoint;
 	
+	// GTK MENU ITEMS
+	GtkWidget* _convertStatic;
+	
 private:
+
+	// Enable or disable the "convert to static" option based on the number
+	// of selected brushes.
+	void checkConvertStatic();
 
 	/* Gtk Callbacks */
 	
 	static void callbackAddEntity(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddLight(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddModel(GtkMenuItem* item, OrthoContextMenu* self);
+	
+	static void callbackConvertToStatic(GtkMenuItem* item, OrthoContextMenu* self);
 	
 public:
 
