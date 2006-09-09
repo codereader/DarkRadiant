@@ -1764,6 +1764,7 @@ namespace map {
 						if (brush != 0) {
 							// We have a brush, apply the transformation
 							brush->transform(_transMat);
+							brush->freezeTransform();
 						}	
 					}
 				}	
