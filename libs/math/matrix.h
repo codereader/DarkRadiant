@@ -33,9 +33,35 @@ class Matrix4
   float m_elements[16];
 public:
 
-  Matrix4()
-  {
-  }
+	// Default constructor
+	Matrix4() {}
+	
+	/* NAMED CONSTRUCTORS FOR SPECIFIC MATRICES */
+	
+	/* Get a new identity matrix */
+
+	static Matrix4 getIdentity() {
+		return Matrix4(1, 0, 0, 0,
+						0, 1, 0, 0,
+						0, 0, 1, 0,
+						0, 0, 0, 1);
+	}
+	
+	/** Get a matrix representing the given 3D translation.
+	 * 
+	 * @param translation
+	 * Vector3 representing the translation in 3D space.
+	 */
+	 
+	static Matrix4 getTranslation(const Vector3& translation) {
+		return Matrix4(1, 0, 0, 0,
+						0, 1, 0, 0,
+						0, 0, 1, 0,
+						translation.x(), translation.y(), translation.z(), 1);
+	}
+
+	// Custom constructor
+
   Matrix4(float xx_, float xy_, float xz_, float xw_,
     float yx_, float yy_, float yz_, float yw_,
     float zx_, float zy_, float zz_, float zw_,
@@ -701,17 +727,6 @@ inline void matrix4_full_invert(Matrix4& self)
 }
 
 
-/// \brief Constructs a pure-translation matrix from \p translation.
-inline Matrix4 matrix4_translation_for_vec3(const Vector3& translation)
-{
-  return Matrix4(
-    1, 0, 0, 0,
-    0, 1, 0, 0,
-    0, 0, 1, 0,
-    translation[0], translation[1], translation[2], 1
-  );
-}
-
 /// \brief Returns the translation part of \p self.
 inline Vector3 matrix4_get_translation_vec3(const Matrix4& self)
 {
@@ -722,14 +737,14 @@ inline Vector3 matrix4_get_translation_vec3(const Matrix4& self)
 /// The concatenated \p translation occurs before \p self.
 inline void matrix4_translate_by_vec3(Matrix4& self, const Vector3& translation)
 {
-  matrix4_multiply_by_matrix4(self, matrix4_translation_for_vec3(translation));
+  matrix4_multiply_by_matrix4(self, Matrix4::getTranslation(translation));
 }
 
 /// \brief Returns \p self Concatenated with \p translation.
 /// The concatenated translation occurs before \p self.
 inline Matrix4 matrix4_translated_by_vec3(const Matrix4& self, const Vector3& translation)
 {
-  return matrix4_multiplied_by_matrix4(self, matrix4_translation_for_vec3(translation));
+  return matrix4_multiplied_by_matrix4(self, Matrix4::getTranslation(translation));
 }
 
 

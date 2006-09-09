@@ -7,7 +7,7 @@
 #include <sstream>
 #include <string>
 
-#include <boost/regex.hpp>
+#include <boost/format.hpp>
 
 template <typename Element>
 class BasicVector2
@@ -128,6 +128,17 @@ public:
   {
     return m_elements[2];
   }
+  
+	/** Cast to std::string, formats vector correctly for use as a
+	 * keyval -- "x y z".
+	 */
+	 
+	operator std::string() const {
+		return (boost::format("%s %s %s")
+				 % m_elements[0]
+				 % m_elements[1]
+				 % m_elements[2]).str();
+	}
 
 	/* 
 	 * Mathematical operations on the BasicVector3 
@@ -181,12 +192,12 @@ public:
   }
 };
 
-/** Stream insertion operator for BasicVector3. Formats vector as "x y z".
+/** Stream insertion operator for BasicVector3. Formats vector as "<x, y, z>".
  */
  
 template<typename T>
 std::ostream& operator<<(std::ostream& st, BasicVector3<T> vec) {
-	st << vec.x() << " " << vec.y() << " " << vec.z();
+	st << "<" << vec.x() << ", " << vec.y() << ", " << vec.z() << ">";
 	return st;
 }
 

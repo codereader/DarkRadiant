@@ -61,8 +61,20 @@ public:
 
   virtual const EntityClass& getEntityClass() const = 0;
   virtual void forEachKeyValue(Visitor& visitor) const = 0;
-  virtual void setKeyValue(const char* key, const char* value) = 0;
-  virtual const char* getKeyValue(const char* key) const = 0;
+
+	/** Set a key value on this entity. Setting the value to "" will
+	 * remove the key.
+	 */
+	 
+	virtual void setKeyValue(const std::string& key, const std::string& value) = 0;
+
+	/* Old const char* key value functions
+	 * TODO: deprecate these
+	 */
+
+	virtual void setKeyValue(const char* key, const char* value) = 0;
+	virtual const char* getKeyValue(const char* key) const = 0;
+	
   virtual bool isContainer() const = 0;
   virtual void attach(Observer& observer) = 0;
   virtual void detach(Observer& observer) = 0;

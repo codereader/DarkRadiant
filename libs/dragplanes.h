@@ -249,7 +249,7 @@ public:
       m_bounds.extents[2] != 0 ? aabb.extents[2] / m_bounds.extents[2] : 1
     );
 
-    Matrix4 matrix(matrix4_translation_for_vec3(aabb.origin - m_bounds.origin));
+    Matrix4 matrix = Matrix4::getTranslation(aabb.origin - m_bounds.origin);
     matrix4_pivoted_scale_by_vec3(matrix, scale, m_bounds.origin);
 
     return matrix;

@@ -264,9 +264,10 @@ NodeSmartReference Entity_createFromSelection(const char* name, const Vector3& o
 	    Scene_forEachChildSelectable(SelectableSetSelected(true), instance.path());
 	    
 	    // Add the "origin" key. Doom 3 treats the coordinates of an entity's brushes as
-	    // relative to its origin key. We just set the origin to world origin so no
-	    // translation is necessary.
-	    entity->setKeyValue("origin", "0 0 0");
+	    // relative to its origin key. We just need to set the origin key and then
+	    // subtract this vector from each brush's coordinates.
+	    entity->setKeyValue("origin", std::string(workzone.getOrigin()));
+	    map::selectedBrushesSubtractOrigin(workzone.getOrigin());
 	    
     }
 	

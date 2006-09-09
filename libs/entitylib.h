@@ -647,6 +647,22 @@ public:
       visitor.visit((*i).first.c_str(), (*i).second->c_str());
     }
   }
+  
+	/** Set a keyvalue on the entity. For now this function just calls the
+	 * const char* version.
+	 */
+  
+	void setKeyValue(const std::string& key, const std::string& value) {
+		if (value.empty()) {
+			erase(key.c_str());
+			m_entityKeyValueChanged();
+		}
+		else {
+			setKeyValue(key.c_str(), value.c_str());
+		}
+	}
+  
+  
   void setKeyValue(const char* key, const char* value)
   {
     if(value[0] == '\0'

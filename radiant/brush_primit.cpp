@@ -1187,7 +1187,7 @@ void Texdef_FitTexture(TextureProjection& projection, std::size_t width, std::si
   AABB perfect(Vector3(s_repeat * 0.5, t_repeat * 0.5, 0), Vector3(s_repeat * 0.5, t_repeat * 0.5, 1));
 
   // the difference between the current texture transform and the perfectly fitted transform
-  Matrix4 matrix(matrix4_translation_for_vec3(bounds.origin - perfect.origin));
+  Matrix4 matrix = Matrix4::getTranslation(bounds.origin - perfect.origin);
   matrix4_pivoted_scale_by_vec3(matrix, bounds.extents / perfect.extents, perfect.origin);
   matrix4_affine_invert(matrix);
 

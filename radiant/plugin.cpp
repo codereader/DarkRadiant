@@ -55,7 +55,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "error.h"
 #include "map.h"
 #include "qe3.h"
-#include "entityinspector.h"
 #include "entitylist.h"
 #include "points.h"
 #include "gtkmisc.h"

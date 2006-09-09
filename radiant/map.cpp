@@ -72,7 +72,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "plugin.h"
 #include "filetypes.h"
 #include "gtkdlgs.h"
-#include "entityinspector.h"
 #include "points.h"
 #include "qe3.h"
 #include "camwindow.h"
@@ -83,6 +82,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "mru.h"
 #include "commands.h"
 #include "autosave.h"
+#include "brush.h"
+#include "brushnode.h"
 
 #include <string>
 #include <iostream>
@@ -1718,6 +1719,69 @@ public:
 void Scene_parentSelectedBrushesToEntity(scene::Graph& graph, scene::Node& parent)
 {
   graph.traverse(ParentSelectedBrushesToEntityWalker(parent));
+}
+
+
+
+namespace map {
+
+	namespace {
+
+		/* Walker class to subtract a Vector3 origin from each selected brush
+		 * that it visits.
+		 */
+	
+		class BrushOriginSubtractor
+		: public scene::Graph::Walker
+		{
+			// The translation matrix from the vector3
+			Matrix4 _transMat;
+			
+		public:
+		
+			// Constructor
+			BrushOriginSubtractor(const Vector3& origin)
+			: _transMat(Matrix4::getTranslation(origin.getScaledBy(-1))) {}
+			
+			// Pre visit function
+			bool pre(const scene::Path& path, scene::Instance& instance) const {
+				if (Node_isPrimitive(path.top())) {
+					Selectable* selectable = Instance_getSelectable(instance);
+      				if(selectable != 0 && selectable->isSelected() && path.size() > 1) {
+						return false;
+					}
+      			}
+    			return true;
+  			}
+				
+			// Post visit function
+			void post(const scene::Path& path, scene::Instance& instance) const {
+				if (Node_isPrimitive(path.top())) {
+					Selectable* selectable = Instance_getSelectable(instance);
+					if(selectable != 0 && selectable->isSelected() && path.size() > 1) {
+						// Node is selected, check if it is a brush.
+						Brush* brush = Node_getBrush(path.top());
+						if (brush != 0) {
+							// We have a brush, apply the transformation
+							brush->transform(_transMat);
+						}	
+					}
+				}	
+			} // post()
+
+		}; // BrushOriginSubtractor
+		 
+	} // namespace
+
+	/* Subtract the given origin from all selected brushes in the map. Uses
+	 * a BrushOriginSubtractor walker class to subtract the origin from
+	 * each selected brush in the scene.
+	 */
+	 
+	void selectedBrushesSubtractOrigin(const Vector3& origin) {
+		GlobalSceneGraph().traverse(BrushOriginSubtractor(origin));
+	}	
+	
 }
 
 class CountSelectedBrushes : public scene::Graph::Walker

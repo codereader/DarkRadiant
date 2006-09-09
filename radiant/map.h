@@ -170,4 +170,19 @@ void Map_mergeClonedNames();
 
 const char* getMapsPath();
 
+namespace map {
+
+	/** Subtract the provided origin vector from all selected brushes. This is 
+	 * necessary when reparenting worldspawn brushes to an entity, since the entity's
+	 * "origin" key will be added to all child brushes.
+	 * 
+	 * @param origin
+	 * Vector3 containing the new origin for the selected brushes.
+	 */
+	 
+	void selectedBrushesSubtractOrigin(const Vector3& origin);
+	
+}
+
+
 #endif

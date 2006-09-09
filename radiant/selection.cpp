@@ -3693,7 +3693,7 @@ void RadiantSelectionSystem::ConstructPivot() const
     }
 
     vector3_snap(m_object_pivot, GetGridSize());
-    m_pivot2world = matrix4_translation_for_vec3(m_object_pivot);
+    m_pivot2world = Matrix4::getTranslation(m_object_pivot);
 
     switch(m_manipulator_mode)
     {
