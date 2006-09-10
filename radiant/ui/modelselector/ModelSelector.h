@@ -50,6 +50,10 @@ private:
 	GtkWidget* createTreeView();
 	GtkWidget* createButtons();
 	GtkWidget* createPreviewAndInfoPanel();
+	GtkWidget* createGLWidget();
+	
+	// Initialise the GL widget, to avoid doing this every frame
+	void initialisePreview();
 	
 	// Update the info table with information from the currently-selected model
 	void updateInfoTable();
@@ -64,6 +68,7 @@ private:
 	static void callbackOK(GtkWidget*, ModelSelector*);
 	static void callbackCancel(GtkWidget*, ModelSelector*);
 	static void callbackGLDraw(GtkWidget*, GdkEventExpose*, ModelSelector*);
+	static void callbackGLMotion(GtkWidget*, GdkEventMotion*, ModelSelector*);
 	
 public:
 

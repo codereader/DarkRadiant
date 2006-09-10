@@ -169,6 +169,24 @@ public:
 		return getScaledBy(1.0 / getLength());
 	}
 
+	/* Cross-product this vector with another Vector3, returning the result
+	 * in a new Vector3.
+	 * 
+	 * @param other
+	 * The Vector3 to cross-product with this Vector3.
+	 * 
+	 * @returns
+	 * The cross-product of the two vectors.
+	 */
+	 
+	template<typename OtherT>
+	BasicVector3<Element> crossProduct(const BasicVector3<OtherT>& other) {
+		return BasicVector3<Element>(
+			y() * other.z() - z() * other.y(),
+			x() * other.z() - z() * other.x(),
+			x() * other.y() - y() * other.z());
+	}
+
 	/*
 	 * Data accessor functions
 	 */

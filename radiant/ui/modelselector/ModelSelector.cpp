@@ -3,6 +3,7 @@
 #include "mainframe.h"
 #include "gtkutil/image.h"
 #include "gtkutil/glwidget.h"
+#include "generic/vector.h"
 
 #include "ifilesystem.h"
 #include "modelskin.h"
@@ -89,6 +90,7 @@ ModelSelector::ModelSelector()
 
 std::string ModelSelector::showAndBlock() {
 	gtk_widget_show_all(_widget);
+	initialisePreview();
 	gtk_main(); // recursive main loop. This will block until the dialog is closed in some way.
 	return _lastModel;
 }
@@ -337,13 +339,7 @@ GtkWidget* ModelSelector::createPreviewAndInfoPanel() {
 	
 	// GL Widget
 	
-	_glWidget = glwidget_new(false);
-	gtk_widget_set_size_request(_glWidget, 256, 256);
-	g_signal_connect(G_OBJECT(_glWidget), "expose-event", G_CALLBACK(callbackGLDraw), this);
-	
-	GtkWidget* glFrame = gtk_frame_new(NULL);
-	gtk_container_add(GTK_CONTAINER(glFrame), _glWidget);
-	gtk_box_pack_start(GTK_BOX(hbx), glFrame, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), createGLWidget(), FALSE, FALSE, 0);
 	
 	// Info table. Has key and value columns.
 	
@@ -383,6 +379,42 @@ GtkWidget* ModelSelector::createPreviewAndInfoPanel() {
 	
 	// Return the HBox
 	return hbx;	
+	
+}
+
+// Create the preview GL widget
+
+GtkWidget* ModelSelector::createGLWidget() {
+
+	// Create the widget and connect up the signals
+	_glWidget = glwidget_new(false);
+	gtk_widget_set_size_request(_glWidget, 256, 256);
+	gtk_widget_set_events(_glWidget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
+	g_signal_connect(G_OBJECT(_glWidget), "expose-event", G_CALLBACK(callbackGLDraw), this);
+	g_signal_connect(G_OBJECT(_glWidget), "motion-notify-event", G_CALLBACK(callbackGLMotion), this);
+	
+	// Pack into a frame and return
+	GtkWidget* glFrame = gtk_frame_new(NULL);
+	gtk_container_add(GTK_CONTAINER(glFrame), _glWidget);
+	return glFrame;
+}
+
+// Initialise the preview GL stuff
+
+void ModelSelector::initialisePreview() {
+
+	// Clear the window and set up the initial transformations
+	if (glwidget_make_current(_glWidget) != FALSE) {
+		// Clear the window
+		glClearColor(0.0, 0.0, 0.0, 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
+		// Set up the camera
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluPerspective(90, 1, 0, 100);
+		glTranslatef(0, 0, -5);
+	}		
 	
 }
 
@@ -457,11 +489,67 @@ void ModelSelector::callbackCancel(GtkWidget* widget, ModelSelector* self) {
 
 void ModelSelector::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelSelector* self) {
 	if (glwidget_make_current(widget) != FALSE) {
-		glClearColor(0.0, 0.0, 0.0, 0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// Test model. A really ugly wireframe cube, to test transformations.
+		glColor3f(1.0, 1.0, 1.0);
+		glBegin(GL_LINE_STRIP);
+			glVertex3i(1, 1, 1);
+			glVertex3i(-1, 1, 1);
+			glVertex3i(-1, -1, 1);
+			glVertex3i(1, -1, 1);
+
+			glVertex3i(1, -1, -1);
+			glVertex3i(1, 1, -1);
+			glVertex3i(-1, 1, -1);
+			glVertex3i(-1, -1, -1);
+			glVertex3i(1, -1, -1);
+		glEnd();
+		glBegin(GL_LINES);
+			glVertex3i(1, 1, 1);
+			glVertex3i(1, 1, -1);
+
+			glVertex3i(-1, 1, 1);
+			glVertex3i(-1, 1, -1);
+			
+			glVertex3i(1, -1, 1);
+			glVertex3i(1, 1, 1);
+			
+			glVertex3i(-1, -1, 1);
+			glVertex3i(-1, -1, -1);
+		glEnd();
 		
+		// Swap buffers to display the result in GTK
 		glwidget_swap_buffers(widget);
 	}	
+}
+
+void ModelSelector::callbackGLMotion(GtkWidget* widget, GdkEventMotion* ev, ModelSelector* self) {
+	if (ev->state & GDK_BUTTON1_MASK) { // dragging with mouse button
+		static gdouble _lastX = ev->x;
+		static gdouble _lastY = ev->y;
+
+		// Calculate the mouse delta as a vector in the XY plane, and store the
+		// current position for the next event.
+		Vector3 deltaPos(ev->x - _lastX,
+						 ev->y - _lastY,
+						 0);
+		_lastX = ev->x;
+		_lastY = ev->y;
+		
+		// Calculate the axis of rotation. This is the mouse vector crossed with the Z axis,
+		// to give a rotation axis in the XY plane at right-angles to the mouse delta.
+		static Vector3 _zAxis(0, 0, 1);
+		Vector3 axisRot = deltaPos.crossProduct(_zAxis);
+		
+		// Grab the GL widget, and update the modelview matrix with the additional
+		// rotation (TODO: may not be the best way to do this).
+		if (glwidget_make_current(widget) != FALSE) {
+			glClear(GL_COLOR_BUFFER_BIT);
+			glRotatef(2, axisRot.x(), axisRot.y(), axisRot.z());
+			gtk_widget_queue_draw(widget); // trigger the GLDraw method to draw the actual model
+		}
+		
+	}
 }
 
 
