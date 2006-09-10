@@ -39,7 +39,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "gtkutil/widget.h"
 #include "gtkutil/accelerator.h"
-#include "entityinspector.h"
 #include "gtkmisc.h"
 #include "multimon.h"
 #include "console.h"
