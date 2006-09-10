@@ -22,6 +22,9 @@ private:
 	// Main dialog widget
 	GtkWidget* _widget;
 	
+	// GL preview widget
+	GtkWidget* _glWidget;
+	
 	// Tree store containing model names
 	GtkTreeStore* _treeStore;
 	
@@ -60,6 +63,7 @@ private:
 	static void callbackSelChanged(GtkWidget*, ModelSelector*);
 	static void callbackOK(GtkWidget*, ModelSelector*);
 	static void callbackCancel(GtkWidget*, ModelSelector*);
+	static void callbackGLDraw(GtkWidget*, GdkEventExpose*, ModelSelector*);
 	
 public:
 

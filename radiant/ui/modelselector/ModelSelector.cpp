@@ -11,6 +11,7 @@
 #include <vector>
 #include <ext/hash_map>
 #include <sstream>
+#include <GL/glew.h>
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -336,11 +337,12 @@ GtkWidget* ModelSelector::createPreviewAndInfoPanel() {
 	
 	// GL Widget
 	
-	GtkWidget* glWidget = glwidget_new(false);
-	gtk_widget_set_size_request(glWidget, 256, 256);
+	_glWidget = glwidget_new(false);
+	gtk_widget_set_size_request(_glWidget, 256, 256);
+	g_signal_connect(G_OBJECT(_glWidget), "expose-event", G_CALLBACK(callbackGLDraw), this);
 	
 	GtkWidget* glFrame = gtk_frame_new(NULL);
-	gtk_container_add(GTK_CONTAINER(glFrame), glWidget);
+	gtk_container_add(GTK_CONTAINER(glFrame), _glWidget);
 	gtk_box_pack_start(GTK_BOX(hbx), glFrame, FALSE, FALSE, 0);
 	
 	// Info table. Has key and value columns.
@@ -452,5 +454,15 @@ void ModelSelector::callbackCancel(GtkWidget* widget, ModelSelector* self) {
 	gtk_main_quit();
 	gtk_widget_hide(self->_widget);
 }
+
+void ModelSelector::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelSelector* self) {
+	if (glwidget_make_current(widget) != FALSE) {
+		glClearColor(0.0, 0.0, 0.0, 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
+		glwidget_swap_buffers(widget);
+	}	
+}
+
 
 } // namespace ui
