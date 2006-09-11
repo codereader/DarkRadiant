@@ -531,7 +531,7 @@ void ModelSelector::callbackGLMotion(GtkWidget* widget, GdkEventMotion* ev, Mode
 		// Calculate the mouse delta as a vector in the XY plane, and store the
 		// current position for the next event.
 		Vector3 deltaPos(ev->x - _lastX,
-						 ev->y - _lastY,
+						 _lastY - ev->y,
 						 0);
 		_lastX = ev->x;
 		_lastY = ev->y;
@@ -545,7 +545,7 @@ void ModelSelector::callbackGLMotion(GtkWidget* widget, GdkEventMotion* ev, Mode
 		// rotation (TODO: may not be the best way to do this).
 		if (glwidget_make_current(widget) != FALSE) {
 			glClear(GL_COLOR_BUFFER_BIT);
-			glRotatef(2, axisRot.x(), axisRot.y(), axisRot.z());
+			glRotatef(-2, axisRot.x(), axisRot.y(), axisRot.z());
 			gtk_widget_queue_draw(widget); // trigger the GLDraw method to draw the actual model
 		}
 		
