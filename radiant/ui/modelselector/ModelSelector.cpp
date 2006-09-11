@@ -387,7 +387,7 @@ GtkWidget* ModelSelector::createPreviewAndInfoPanel() {
 GtkWidget* ModelSelector::createGLWidget() {
 
 	// Create the widget and connect up the signals
-	_glWidget = glwidget_new(false);
+	_glWidget = glwidget_new(TRUE);
 	gtk_widget_set_size_request(_glWidget, 256, 256);
 	gtk_widget_set_events(_glWidget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
 	g_signal_connect(G_OBJECT(_glWidget), "expose-event", G_CALLBACK(callbackGLDraw), this);
@@ -405,15 +405,26 @@ void ModelSelector::initialisePreview() {
 
 	// Clear the window and set up the initial transformations
 	if (glwidget_make_current(_glWidget) != FALSE) {
+
+		// Depth buffer and polygon mode
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+
 		// Clear the window
 		glClearColor(0.0, 0.0, 0.0, 0);
+		glClearDepth(100.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		// Set up the camera
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluPerspective(90, 1, 0, 100);
+		gluPerspective(90, 1, 0.1, 10);
+		
+		glMatrixMode(GL_MODELVIEW);
 		glTranslatef(0, 0, -5);
+		
+		glFinish();
+		
 	}		
 	
 }
@@ -490,32 +501,44 @@ void ModelSelector::callbackCancel(GtkWidget* widget, ModelSelector* self) {
 void ModelSelector::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelSelector* self) {
 	if (glwidget_make_current(widget) != FALSE) {
 
-		// Test model. A really ugly wireframe cube, to test transformations.
-		glColor3f(1.0, 1.0, 1.0);
-		glBegin(GL_LINE_STRIP);
-			glVertex3i(1, 1, 1);
-			glVertex3i(-1, 1, 1);
-			glVertex3i(-1, -1, 1);
-			glVertex3i(1, -1, 1);
-
-			glVertex3i(1, -1, -1);
-			glVertex3i(1, 1, -1);
-			glVertex3i(-1, 1, -1);
-			glVertex3i(-1, -1, -1);
-			glVertex3i(1, -1, -1);
-		glEnd();
-		glBegin(GL_LINES);
-			glVertex3i(1, 1, 1);
-			glVertex3i(1, 1, -1);
-
-			glVertex3i(-1, 1, 1);
-			glVertex3i(-1, 1, -1);
-			
-			glVertex3i(1, -1, 1);
-			glVertex3i(1, 1, 1);
-			
-			glVertex3i(-1, -1, 1);
-			glVertex3i(-1, -1, -1);
+		// Test model. A simple cube, to test transformations.
+		glBegin(GL_QUADS);
+			// Top
+			glColor3f(1, 0, 0);
+			glVertex3f(1, 1, 1);
+			glVertex3f(1, 1, -1);
+			glVertex3f(-1, 1, -1);
+			glVertex3f(-1, 1, 1);
+			// Front
+			glColor3f(1, 1, 0);
+			glVertex3f(1, 1, 1);
+			glVertex3f(-1, 1, 1);
+			glVertex3f(-1, -1, 1);
+			glVertex3f(1, -1, 1);
+			// Right
+			glColor3f(0, 1, 0);
+			glVertex3f(1, 1, 1);
+			glVertex3f(1, -1, 1);
+			glVertex3f(1, -1, -1);
+			glVertex3f(1, 1, -1);
+			// Left
+			glColor3f(0, 1, 1);
+			glVertex3f(-1, 1, 1);
+			glVertex3f(-1, 1, -1);
+			glVertex3f(-1, -1, -1);
+			glVertex3f(-1, -1, 1);
+			// Bottom
+			glColor3f(0, 0, 1);
+			glVertex3f(1, -1, 1);
+			glVertex3f(-1, -1, 1);
+			glVertex3f(-1, -1, -1);
+			glVertex3f(1, -1, -1);
+			// Back
+			glColor3f(1, 0, 1);
+			glVertex3f(1, 1, -1);
+			glVertex3f(1, -1, -1);
+			glVertex3f(-1, -1, -1);
+			glVertex3f(-1, 1, -1);
 		glEnd();
 		
 		// Swap buffers to display the result in GTK
@@ -544,7 +567,7 @@ void ModelSelector::callbackGLMotion(GtkWidget* widget, GdkEventMotion* ev, Mode
 		// Grab the GL widget, and update the modelview matrix with the additional
 		// rotation (TODO: may not be the best way to do this).
 		if (glwidget_make_current(widget) != FALSE) {
-			glClear(GL_COLOR_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glRotatef(-2, axisRot.x(), axisRot.y(), axisRot.z());
 			gtk_widget_queue_draw(widget); // trigger the GLDraw method to draw the actual model
 		}
