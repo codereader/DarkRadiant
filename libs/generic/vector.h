@@ -183,8 +183,8 @@ public:
 	BasicVector3<Element> crossProduct(const BasicVector3<OtherT>& other) {
 		return BasicVector3<Element>(
 			y() * other.z() - z() * other.y(),
-			x() * other.z() - z() * other.x(),
-			x() * other.y() - y() * other.z());
+			z() * other.x() - x() * other.z(),
+			x() * other.y() - y() * other.x());
 	}
 
 	/*
