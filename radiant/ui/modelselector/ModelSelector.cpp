@@ -423,8 +423,17 @@ void ModelSelector::initialisePreview() {
 		glMatrixMode(GL_MODELVIEW);
 		glTranslatef(0, 0, -5);
 		
-		glFinish();
+		// Set up the lights
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
+		glEnable(GL_COLOR_MATERIAL);
+		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 		
+		GLfloat l0Dif[] = { 1.0, 1.0, 1.0, 1.0 };
+		GLfloat l0Pos[] = { 1.0, 1.0, 3.0, 1.0 };
+		
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, l0Dif);
+		glLightfv(GL_LIGHT0, GL_POSITION, l0Pos);
 	}		
 	
 }
@@ -501,40 +510,42 @@ void ModelSelector::callbackCancel(GtkWidget* widget, ModelSelector* self) {
 void ModelSelector::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelSelector* self) {
 	if (glwidget_make_current(widget) != FALSE) {
 
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		// Test model. A simple cube, to test transformations.
 		glBegin(GL_QUADS);
 			// Top
-			glColor3f(1, 0, 0);
+			glColor3f(1, 0, 0); glNormal3f(0, 1, 0);
 			glVertex3f(1, 1, 1);
 			glVertex3f(1, 1, -1);
 			glVertex3f(-1, 1, -1);
 			glVertex3f(-1, 1, 1);
 			// Front
-			glColor3f(1, 1, 0);
+			glColor3f(1, 1, 0); glNormal3f(0, 0, 1);
 			glVertex3f(1, 1, 1);
 			glVertex3f(-1, 1, 1);
 			glVertex3f(-1, -1, 1);
 			glVertex3f(1, -1, 1);
 			// Right
-			glColor3f(0, 1, 0);
+			glColor3f(0, 1, 0); glNormal3f(1, 0, 0);
 			glVertex3f(1, 1, 1);
 			glVertex3f(1, -1, 1);
 			glVertex3f(1, -1, -1);
 			glVertex3f(1, 1, -1);
 			// Left
-			glColor3f(0, 1, 1);
+			glColor3f(0, 1, 1); glNormal3f(-1, 0, 0);
 			glVertex3f(-1, 1, 1);
 			glVertex3f(-1, 1, -1);
 			glVertex3f(-1, -1, -1);
 			glVertex3f(-1, -1, 1);
 			// Bottom
-			glColor3f(0, 0, 1);
+			glColor3f(0, 0, 1); glNormal3f(0, -1, 0);
 			glVertex3f(1, -1, 1);
 			glVertex3f(-1, -1, 1);
 			glVertex3f(-1, -1, -1);
 			glVertex3f(1, -1, -1);
 			// Back
-			glColor3f(1, 0, 1);
+			glColor3f(1, 0, 1); glNormal3f(0, 0, -1);
 			glVertex3f(1, 1, -1);
 			glVertex3f(1, -1, -1);
 			glVertex3f(-1, -1, -1);
@@ -567,7 +578,6 @@ void ModelSelector::callbackGLMotion(GtkWidget* widget, GdkEventMotion* ev, Mode
 		// Grab the GL widget, and update the modelview matrix with the additional
 		// rotation (TODO: may not be the best way to do this).
 		if (glwidget_make_current(widget) != FALSE) {
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glRotatef(-2, axisRot.x(), axisRot.y(), axisRot.z());
 			gtk_widget_queue_draw(widget); // trigger the GLDraw method to draw the actual model
 		}
