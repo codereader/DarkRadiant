@@ -421,7 +421,6 @@ void ModelSelector::initialisePreview() {
 		gluPerspective(90, 1, 0.1, 10);
 		
 		glMatrixMode(GL_MODELVIEW);
-		glTranslatef(0, 0, -5);
 		
 		// Set up the lights
 		glEnable(GL_LIGHTING);
@@ -512,6 +511,19 @@ void ModelSelector::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelS
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		// Push the current rotation matrix, then premultiply with the
+		// view transformation. We must keep the translation separate so
+		// it does not get mixed up with the incremental rotations.
+
+		glPushMatrix();
+
+		GLfloat curMv[16];
+		glGetFloatv(GL_MODELVIEW_MATRIX, curMv); // store current modelview
+		
+		glLoadIdentity();
+		glTranslatef(0, 0, -5); // construct translation
+		glMultMatrixf(curMv); // post multiply with previous
+
 		// Test model. A simple cube, to test transformations.
 		glBegin(GL_QUADS);
 			// Top
@@ -552,6 +564,9 @@ void ModelSelector::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelS
 			glVertex3f(-1, 1, -1);
 		glEnd();
 		
+		// Pop back to rotation-only matrix
+		glPopMatrix(); 
+		
 		// Swap buffers to display the result in GTK
 		glwidget_swap_buffers(widget);
 	}	
@@ -578,7 +593,17 @@ void ModelSelector::callbackGLMotion(GtkWidget* widget, GdkEventMotion* ev, Mode
 		// Grab the GL widget, and update the modelview matrix with the additional
 		// rotation (TODO: may not be the best way to do this).
 		if (glwidget_make_current(widget) != FALSE) {
+
+			// Premultiply the current modelview matrix with the rotation,
+			// in order to achieve rotations in eye space rather than object
+			// space.
+			GLfloat curMv[16];
+			glGetFloatv(GL_MODELVIEW_MATRIX, curMv);
+
+			glLoadIdentity();
 			glRotatef(-2, axisRot.x(), axisRot.y(), axisRot.z());
+			glMultMatrixf(curMv);
+
 			gtk_widget_queue_draw(widget); // trigger the GLDraw method to draw the actual model
 		}
 		
