@@ -34,6 +34,8 @@ namespace {
 	const char* ASE_ICON = "model16green.png";
 	const char* SKIN_ICON = "skin16.png";
 	const char* FOLDER_ICON = "folder16.png";
+	
+	const GLfloat PREVIEW_FOV = 60;
 
 	// Treestore enum
 	enum {
@@ -56,7 +58,8 @@ ModelSelector::ModelSelector()
   								G_TYPE_STRING,
   								GDK_TYPE_PIXBUF)),
   _infoStore(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING)),
-  _lastModel("")
+  _lastModel(""),
+  _camDist(-5.0f)
 {
 	// Window properties
 	
@@ -392,6 +395,7 @@ GtkWidget* ModelSelector::createGLWidget() {
 	gtk_widget_set_events(_glWidget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
 	g_signal_connect(G_OBJECT(_glWidget), "expose-event", G_CALLBACK(callbackGLDraw), this);
 	g_signal_connect(G_OBJECT(_glWidget), "motion-notify-event", G_CALLBACK(callbackGLMotion), this);
+	g_signal_connect(G_OBJECT(_glWidget), "scroll-event", G_CALLBACK(callbackGLScroll), this);
 	
 	// Pack into a frame and return
 	GtkWidget* glFrame = gtk_frame_new(NULL);
@@ -418,7 +422,7 @@ void ModelSelector::initialisePreview() {
 		// Set up the camera
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluPerspective(90, 1, 0.1, 10);
+		gluPerspective(PREVIEW_FOV, 1, 1.0, 100);
 		
 		glMatrixMode(GL_MODELVIEW);
 		
@@ -521,7 +525,7 @@ void ModelSelector::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelS
 		glGetFloatv(GL_MODELVIEW_MATRIX, curMv); // store current modelview
 		
 		glLoadIdentity();
-		glTranslatef(0, 0, -5); // construct translation
+		glTranslatef(0, 0, self->_camDist); // construct translation
 		glMultMatrixf(curMv); // post multiply with previous
 
 		// Test model. A simple cube, to test transformations.
@@ -608,6 +612,14 @@ void ModelSelector::callbackGLMotion(GtkWidget* widget, GdkEventMotion* ev, Mode
 		}
 		
 	}
+}
+
+void ModelSelector::callbackGLScroll(GtkWidget* widget, GdkEventScroll* ev, ModelSelector* self) {
+	if (ev->direction == GDK_SCROLL_UP)
+		self->_camDist += 1.0f;
+	else if (ev->direction == GDK_SCROLL_DOWN)
+		self->_camDist -= 1.0f;
+	gtk_widget_queue_draw(widget);
 }
 
 

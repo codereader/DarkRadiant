@@ -2,6 +2,7 @@
 #define MODELSELECTOR_H_
 
 #include <gtk/gtk.h>
+#include <GL/glew.h>
 
 #include "modelskin.h"
 
@@ -38,6 +39,9 @@ private:
 	// recursive main loop exits.
 	std::string _lastModel;
 	
+	// Current distance between camera and preview
+	GLfloat _camDist;
+	
 private:
 	
 	// Private constructor, creates GTK widgets
@@ -69,6 +73,7 @@ private:
 	static void callbackCancel(GtkWidget*, ModelSelector*);
 	static void callbackGLDraw(GtkWidget*, GdkEventExpose*, ModelSelector*);
 	static void callbackGLMotion(GtkWidget*, GdkEventMotion*, ModelSelector*);
+	static void callbackGLScroll(GtkWidget*, GdkEventScroll*, ModelSelector*);
 	
 public:
 
