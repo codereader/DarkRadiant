@@ -271,6 +271,38 @@ public:
   {
     return m_elements[(r << 2) + c];
   }
+
+	/** Use this matrix to transform the provided vector and return a new
+	 * vector containing the result.
+	 * 
+	 * @param vector4
+	 * The 4-element vector to transform.
+	 */
+	 
+	Vector4 transform(const Vector4& vector4) const {
+		return Vector4(
+		    m_elements[0]  * vector4[0] + m_elements[4]  * vector4[1] + m_elements[8]  * vector4[2] + m_elements[12] * vector4[3],
+		    m_elements[1]  * vector4[0] + m_elements[5]  * vector4[1] + m_elements[9]  * vector4[2] + m_elements[13] * vector4[3],
+		    m_elements[2]  * vector4[0] + m_elements[6]  * vector4[1] + m_elements[10] * vector4[2] + m_elements[14] * vector4[3],
+		    m_elements[3]  * vector4[0] + m_elements[7]  * vector4[1] + m_elements[11] * vector4[2] + m_elements[15] * vector4[3]
+		);
+	}
+	
+	/** Use this matrix to transform the provided 3-element vector,
+	 * automatically converting the vector to a 4-element homogeneous
+	 * vector with w=1.
+	 * 
+	 * @param vector3
+	 * The Vector3 to transform.
+	 * 
+	 * @returns
+	 * A 4-element vector containing the result.
+	 */
+	 
+	Vector4 transform(const Vector3& vector3) const {
+		return transform(Vector4(vector3, 1));
+	}
+
 };
 
 /// \brief The 4x4 identity matrix.

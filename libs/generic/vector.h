@@ -187,27 +187,20 @@ public:
 			x() * other.y() - y() * other.x());
 	}
 
-	/*
-	 * Data accessor functions
+	/** Implicit cast to C-style array. This allows a Vector3 to be
+	 * passed directly to GL functions that expect an array (e.g.
+	 * glFloat3fv()). These functions implicitly provide operator[]
+	 * as well, since the C-style array provides this function.
 	 */
+	 
+	operator const Element* () const {
+		return m_elements;
+	}
 
-  const Element& operator[](std::size_t i) const
-  {
-    return m_elements[i];
-  }
-  Element& operator[](std::size_t i)
-  {
-    return m_elements[i];
-  }
+	operator Element* () {
+		return m_elements;
+	}
 
-  Element* data()
-  {
-    return m_elements;
-  }
-  const Element* data() const
-  {
-    return m_elements;
-  }
 };
 
 /** Stream insertion operator for BasicVector3. Formats vector as "<x, y, z>".
@@ -294,6 +287,21 @@ public:
     return m_elements[i];
   }
 
+	/** Project this homogeneous Vector4 into a Cartesian Vector3
+	 * by dividing by w.
+	 * 
+	 * @returns
+	 * A Vector3 representing the Cartesian equivalent of this 
+	 * homogeneous vector.
+	 */
+	 
+	BasicVector3<Element> getProjected() {
+		return BasicVector3<Element>(
+			m_elements[0] / m_elements[3],
+			m_elements[1] / m_elements[3],
+			m_elements[2] / m_elements[3]);
+	}
+
   Element* data()
   {
     return m_elements;
@@ -313,12 +321,12 @@ inline BasicVector3<Element> vector3_from_array(const Element* array)
 template<typename Element>
 inline Element* vector3_to_array(BasicVector3<Element>& self)
 {
-  return self.data();
+  return static_cast<Element*>(self);
 }
 template<typename Element>
 inline const Element* vector3_to_array(const BasicVector3<Element>& self)
 {
-  return self.data();
+  return static_cast<const Element*>(self);
 }
 
 template<typename Element>

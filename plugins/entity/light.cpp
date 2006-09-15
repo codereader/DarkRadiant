@@ -641,21 +641,48 @@ Shader* RenderLightRadiiFill::m_state = 0;
 
 class RenderLightCenter : public OpenGLRenderable
 {
-  const Vector3& m_center;
-  EntityClass& m_eclass;
+	// Light centre in light space
+	const Vector3& _localCentre;
+	
+	// Origin of lightvolume in world space
+	const Vector3& _worldOrigin;
+	
+	// Rotation of lightvolume in world space
+	const Matrix4& _rotation;
+	
+	// Class of light entity
+	EntityClass& _eclass;
+	
 public:
   static Shader* m_state;
 
-  RenderLightCenter(const Vector3& center, EntityClass& eclass) : m_center(center), m_eclass(eclass)
-  {
-  }
-  void render(RenderStateFlags state) const
-  {
-    glBegin(GL_POINTS);
-    glColor3fv(vector3_to_array(m_eclass.color));
-    glVertex3fv(vector3_to_array(m_center));
-    glEnd();
-  }
+	// Constructor
+	RenderLightCenter(const Vector3& center, const Vector3& origin, const Matrix4& rotation, EntityClass& eclass) 
+	: _localCentre(center), 
+	  _worldOrigin(origin), 
+	  _rotation(rotation), 
+	  _eclass(eclass)
+	{}
+  
+	// GL render function
+  
+	void render(RenderStateFlags state) const {
+		
+	    // Apply rotation matrix to the center point coordinates
+//	    Vector3 rotCentre = _rotation.transform(_localCentre).getProjected();
+//		std::cout << "rotated centre = " << rotCentre << std::endl;
+
+		// Translate centrepoint by light origin to get coordinates
+		// in world space.
+//		Vector3 centreWorld = rotCentre + _worldOrigin;
+		Vector3 centreWorld = _localCentre + _worldOrigin;
+			
+	    // Draw the center point
+	    glBegin(GL_POINTS);
+	    glColor3fv(_eclass.color);
+	    glVertex3fv(centreWorld);
+	    glEnd();
+	}
 };
 
 Shader* RenderLightCenter::m_state = 0;
@@ -1044,7 +1071,7 @@ public:
     m_radii_wire(m_radii, m_aabb_light.origin),
     m_radii_fill(m_radii, m_aabb_light.origin),
     m_radii_box(m_aabb_light.origin),
-    m_render_center(m_doom3Radius.m_center, m_entity.getEntityClass()), 
+    m_render_center(m_doom3Radius.m_center, m_aabb_light.origin, m_doom3Rotation, m_entity.getEntityClass()), 
     m_renderName(m_named, m_aabb_light.origin),
     m_useLightOrigin(false),
     m_useLightRotation(false),
@@ -1067,7 +1094,7 @@ public:
     m_radii_wire(m_radii, m_aabb_light.origin),
     m_radii_fill(m_radii, m_aabb_light.origin),
     m_radii_box(m_aabb_light.origin),
-    m_render_center(m_doom3Radius.m_center, m_entity.getEntityClass()), 
+    m_render_center(m_doom3Radius.m_center, m_aabb_light.origin, m_doom3Rotation, m_entity.getEntityClass()), 
     m_renderName(m_named, m_aabb_light.origin),
     m_useLightOrigin(false),
     m_useLightRotation(false),
