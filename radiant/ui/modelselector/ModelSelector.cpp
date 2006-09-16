@@ -1,11 +1,13 @@
 #include "ModelSelector.h"
 
+#include "referencecache.h"
 #include "mainframe.h"
 #include "gtkutil/image.h"
 #include "gtkutil/glwidget.h"
 #include "generic/vector.h"
 
 #include "ifilesystem.h"
+#include "irender.h"
 #include "modelskin.h"
 
 #include <iostream>
@@ -464,9 +466,9 @@ std::string ModelSelector::getSelectedValue(gint colNum) {
 	
 }
 
-// Update the info table with information from the current model
+// Update the info table and model preview based on the current selection
 
-void ModelSelector::updateInfoTable() {
+void ModelSelector::updateSelected() {
 
 	// Prepare to populate the info table
 	gtk_list_store_clear(_infoStore);
@@ -477,6 +479,18 @@ void ModelSelector::updateInfoTable() {
 	std::string mName = getSelectedValue(FULLNAME_COLUMN);
 	if (mName.empty())
 		return;
+	
+	// Update the previewed model
+	
+	ModelLoader* loader = ModelLoader_forType("ase");
+	if (loader != NULL) {
+		std::cout << "Loading model " << mName << std::endl;
+		_model = loader->loadModelRenderable(mName.c_str());
+	}
+	
+	gtk_widget_queue_draw(_widget);
+	
+	// Update the text in the info table
 	
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter, 
@@ -494,7 +508,7 @@ void ModelSelector::callbackHide(GtkWidget* widget, GdkEvent* ev, ModelSelector*
 }
 
 void ModelSelector::callbackSelChanged(GtkWidget* widget, ModelSelector* self) {
-	self->updateInfoTable();
+	self->updateSelected();
 }
 
 void ModelSelector::callbackOK(GtkWidget* widget, ModelSelector* self) {
@@ -528,46 +542,10 @@ void ModelSelector::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelS
 		glTranslatef(0, 0, self->_camDist); // construct translation
 		glMultMatrixf(curMv); // post multiply with previous
 
-		// Test model. A simple cube, to test transformations.
-		glBegin(GL_QUADS);
-			// Top
-			glColor3f(1, 0, 0); glNormal3f(0, 1, 0);
-			glVertex3f(1, 1, 1);
-			glVertex3f(1, 1, -1);
-			glVertex3f(-1, 1, -1);
-			glVertex3f(-1, 1, 1);
-			// Front
-			glColor3f(1, 1, 0); glNormal3f(0, 0, 1);
-			glVertex3f(1, 1, 1);
-			glVertex3f(-1, 1, 1);
-			glVertex3f(-1, -1, 1);
-			glVertex3f(1, -1, 1);
-			// Right
-			glColor3f(0, 1, 0); glNormal3f(1, 0, 0);
-			glVertex3f(1, 1, 1);
-			glVertex3f(1, -1, 1);
-			glVertex3f(1, -1, -1);
-			glVertex3f(1, 1, -1);
-			// Left
-			glColor3f(0, 1, 1); glNormal3f(-1, 0, 0);
-			glVertex3f(-1, 1, 1);
-			glVertex3f(-1, 1, -1);
-			glVertex3f(-1, -1, -1);
-			glVertex3f(-1, -1, 1);
-			// Bottom
-			glColor3f(0, 0, 1); glNormal3f(0, -1, 0);
-			glVertex3f(1, -1, 1);
-			glVertex3f(-1, -1, 1);
-			glVertex3f(-1, -1, -1);
-			glVertex3f(1, -1, -1);
-			// Back
-			glColor3f(1, 0, 1); glNormal3f(0, 0, -1);
-			glVertex3f(1, 1, -1);
-			glVertex3f(1, -1, -1);
-			glVertex3f(-1, -1, -1);
-			glVertex3f(-1, 1, -1);
-		glEnd();
-		
+		// Render the actual model.
+		if (self->_model.get() != NULL)
+			self->_model->render(RENDER_DEFAULT);
+
 		// Pop back to rotation-only matrix
 		glPopMatrix(); 
 		

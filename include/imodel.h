@@ -24,37 +24,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/constant.h"
 
+#include <boost/shared_ptr.hpp>
+
+/* Forward decls */
+
 namespace scene
 {
   class Node;
 }
 
 class ArchiveFile;
-
-namespace model 
-{
-
-/** A model instance for preview purposes. This represents a single model that
- * can render itself for a preview window. It does not provide any scenegraph
- * functionality like casting to node types.
- */
- 
-class PreviewableModel 
-{
-public:
-
-	/* Render this model using OpenGL calls. The OpenGL state must be set
-	 * before this function is called, including any necessary matrices.
-	 */
-	 
-	virtual void render() = 0;
-	
-};
-
-} // namespace model
+class OpenGLRenderable;
 
 /** Model loader module API interface.
  */
+
+typedef boost::shared_ptr<OpenGLRenderable> RenderablePtr;
 
 class ModelLoader
 {
@@ -68,11 +53,11 @@ public:
 	
 	virtual scene::Node& loadModel(ArchiveFile& file) = 0;
 	
-	/** Load a model for preview from the VFS, and return the PreviewableModel
+	/** Load a model from the VFS, and return the OpenGLREnderable
 	 * subclass for it.
 	 */
 	 
-	virtual model::PreviewableModel& loadPreviewModel(const std::string& path) = 0;
+	virtual RenderablePtr loadModelRenderable(const std::string& path) = 0;
 };
 
 template<typename Type>

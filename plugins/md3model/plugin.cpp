@@ -63,7 +63,7 @@ public:
   }
   
 	// Not implemented
-	model::PreviewableModel& loadPreviewModel(const std::string& name) {}
+	RenderablePtr loadModelRenderable(const std::string& name) {}
 };
 
 class ModelMD5Dependencies : public ModelDependencies, public GlobalScripLibModuleRef

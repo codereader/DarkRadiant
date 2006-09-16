@@ -180,7 +180,8 @@ public:
     return g_nullModel;
   }
   
-	model::PreviewableModel& loadPreviewModel(const std::string& name) {}
+  	// Required function, not implemented.
+	RenderablePtr loadModelRenderable(const std::string& name) {}
   
 };
 

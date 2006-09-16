@@ -357,7 +357,8 @@ typedef std::pair<CopiedString, int> PicoModelKey;
 
 class PicoModel :
 public Cullable,
-public Bounded
+public Bounded,
+public OpenGLRenderable
 {
   typedef std::vector<PicoSurface*> surfaces_t;
   surfaces_t m_surfaces;
@@ -419,6 +420,52 @@ public:
       }
     }
   }
+
+	/* OpenGLRenderable render function */
+	
+	void render(RenderStateFlags flags) const {
+
+		// Test model.
+		glBegin(GL_QUADS);
+			// Top
+			glColor3f(1, 0, 0); glNormal3f(0, 1, 0);
+			glVertex3f(1, 1, 1);
+			glVertex3f(1, 1, -1);
+			glVertex3f(-1, 1, -1);
+			glVertex3f(-1, 1, 1);
+			// Front
+			glColor3f(1, 1, 0); glNormal3f(0, 0, 1);
+			glVertex3f(1, 1, 1);
+			glVertex3f(-1, 1, 1);
+			glVertex3f(-1, -1, 1);
+			glVertex3f(1, -1, 1);
+			// Right
+			glColor3f(0, 1, 0); glNormal3f(1, 0, 0);
+			glVertex3f(1, 1, 1);
+			glVertex3f(1, -1, 1);
+			glVertex3f(1, -1, -1);
+			glVertex3f(1, 1, -1);
+			// Left
+			glColor3f(0, 1, 1); glNormal3f(-1, 0, 0);
+			glVertex3f(-1, 1, 1);
+			glVertex3f(-1, 1, -1);
+			glVertex3f(-1, -1, -1);
+			glVertex3f(-1, -1, 1);
+			// Bottom
+			glColor3f(0, 0, 1); glNormal3f(0, -1, 0);
+			glVertex3f(1, -1, 1);
+			glVertex3f(-1, -1, 1);
+			glVertex3f(-1, -1, -1);
+			glVertex3f(1, -1, -1);
+			// Back
+			glColor3f(1, 0, 1); glNormal3f(0, 0, -1);
+			glVertex3f(1, 1, -1);
+			glVertex3f(1, -1, -1);
+			glVertex3f(-1, -1, -1);
+			glVertex3f(-1, 1, -1);
+		glEnd();
+		
+	}
 
   void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld)
   {
@@ -727,355 +774,16 @@ public:
 };
 
 
-#if 0
-
-template<typename Key, typename Type>
-class create_new
-{
-public:
-  static Type* construct(const Key& key)
-  {
-    return new Type(key);
-  }
-  static void destroy(Type* value)
-  {
-    delete value;
-  }
-};
-
-template<typename Key, typename Type, typename creation_policy = create_new<Key, Type> >
-class cache_element : public creation_policy
-{
-public:
-  inline cache_element() : m_count(0), m_value(0) {}
-  inline ~cache_element()
-  {
-    ASSERT_MESSAGE(m_count == 0 , "destroyed a reference before it was released\n");
-    if(m_count > 0)
-      destroy();
-  }
-  inline Type* capture(const Key& key)
-  {
-    if(++m_count == 1)
-      construct(key);
-    return m_value;
-  }
-  inline void release()
-  {
-    ASSERT_MESSAGE(!empty(), "failed to release reference - not found in cache\n");
-    if(--m_count == 0)
-      destroy();
-  }
-  inline bool empty()
-  {
-    return m_count == 0;
-  }
-  inline void refresh(const Key& key)
-  {
-    m_value->refresh(key);
-  }
-private:
-  inline void construct(const Key& key)
-  {
-    m_value = creation_policy::construct(key);
-  }
-  inline void destroy()
-  {
-    creation_policy::destroy(m_value);
-  }
-
-  std::size_t m_count;
-  Type* m_value;
-};
-
-class create_picomodel
-{
-  typedef PicoModelKey key_type;
-  typedef PicoModel value_type;
-public:
-  static value_type* construct(const key_type& key)
-  {
-    picoModel_t* picomodel = PicoLoadModel(const_cast<char*>(key.first.c_str()), key.second);
-    value_type* value = new value_type(picomodel);
-    PicoFreeModel(picomodel);
-    return value;
-  }
-  static void destroy(value_type* value)
-  {
-    delete value;
-  }
-};
-
-#include <map>
-
-class ModelCache
-{
-  typedef PicoModel value_type;
-  
-public:
-  typedef PicoModelKey key_type;
-  typedef cache_element<key_type, value_type, create_picomodel> elem_type;
-  typedef std::map<key_type, elem_type> cache_type;
-  
-  value_type* capture(const key_type& key)
-  {
-    return m_cache[key].capture(key);
-  }
-  void release(const key_type& key)
-  {
-    m_cache[key].release();
-  }
-
-private:
-  cache_type m_cache;
-};
-
-ModelCache g_model_cache;
-
-
-
-typedef struct remap_s {
-  char m_remapbuff[64+1024];
-  char *original;
-  char *remap;
-} remap_t;
-
-class RemapWrapper :
-public Cullable,
-public Bounded
-{
-public:
-  RemapWrapper(const char* name)
-  {
-    parse_namestr(name);
-
-    m_model = g_model_cache.capture(ModelCache::key_type(m_name, m_frame));
-
-    construct_shaders();
-  }
-  virtual ~RemapWrapper()
-  {
-    g_model_cache.release(ModelCache::key_type(m_name, m_frame));
-
-    for(shaders_t::iterator i = m_shaders.begin(); i != m_shaders.end(); ++i)
-    {
-      GlobalShaderCache().release((*i).c_str());
-    }
-
-    for(remaps_t::iterator j = m_remaps.begin(); j != m_remaps.end(); ++j)
-    {
-      delete (*j);
-    }
-  }
-
-  VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const
-  {
-    return m_model->intersectVolume(test, localToWorld);
-  }
-
-  virtual const AABB& localAABB() const
-  {
-    return m_model->localAABB();
-  }
-
-  void render(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const
-  {
-    m_model->render(renderer, volume, localToWorld, m_states);
-  }
-
-  void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld)
-  {
-    m_model->testSelect(selector, test, localToWorld);
-  }
-
-private:
-  void add_remap(const char *remap)
-  {
-    const char *ch;
-    remap_t *pRemap;
-
-    ch = remap;
-
-    while( *ch && *ch != ';' )
-      ch++;
-
-    if( *ch == '\0' ) {
-      // bad remap
-      globalErrorStream() << "WARNING: Shader _remap key found in a model entity without a ; character\n";
-    } else {
-      pRemap = new remap_t;
-
-      strncpy( pRemap->m_remapbuff, remap, sizeof(pRemap->m_remapbuff) );
-
-      pRemap->m_remapbuff[ch - remap] = '\0';
-
-      pRemap->original = pRemap->m_remapbuff;
-      pRemap->remap = pRemap->m_remapbuff + ( ch - remap ) + 1;
-
-      m_remaps.push_back( pRemap );
-    }
-  }
-
-  void parse_namestr(const char *name)
-  {
-    const char *ptr, *s;
-    bool hasName, hasFrame;
-
-    hasName = hasFrame = false;
-
-    m_frame = 0;
-
-    for( s = ptr = name; ; ++ptr )
-    {
-      if( !hasName && (*ptr == ':' || *ptr == '\0'))
-      {
-        // model name
-        hasName = true;
-        m_name = CopiedString(s, ptr);
-        s = ptr + 1;
-      }
-      else if(*ptr == '?' || *ptr == '\0')
-      {
-        // model frame
-        hasFrame = true;
-        m_frame = atoi(CopiedString(s, ptr).c_str());
-        s = ptr + 1;
-      }
-      else if(*ptr == '&' || *ptr == '\0') 
-      {
-        // a remap
-        add_remap(CopiedString(s, ptr).c_str());
-        s = ptr + 1;
-      }
-
-      if(*ptr == '\0')
-        break; 
-    }
-  }
-
-  void construct_shaders()
-  {
-    const char* global_shader = shader_for_remap("*");
-
-    m_shaders.reserve(m_model->size());
-    m_states.reserve(m_model->size());
-    for(PicoModel::iterator i = m_model->begin(); i != m_model->end(); ++i)
-    {
-      const char* shader = shader_for_remap((*i)->getShader());
-      m_shaders.push_back(
-        (shader[0] != '\0')
-        ? shader
-        : (global_shader[0] != '\0')
-          ? global_shader
-          : (*i)->getShader());
-      m_states.push_back(GlobalShaderCache().capture(m_shaders.back().c_str()));
-    }
-  }
-  
-  inline const char* shader_for_remap(const char* remap)
-  {
-    for(remaps_t::iterator i = m_remaps.begin(); i != m_remaps.end(); ++i)
-    {
-      if(shader_equal(remap, (*i)->original))
-      {
-        return (*i)->remap;
-      }
-    }
-    return "";
-  }
-
-  CopiedString m_name;
-  int m_frame;
-  PicoModel* m_model;
-
-  typedef std::vector<remap_t*> remaps_t;
-  remaps_t m_remaps;
-  typedef std::vector<CopiedString> shaders_t;
-  shaders_t m_shaders;
-  typedef std::vector<Shader*> states_t;
-  states_t m_states;
-};
-
-class RemapWrapperInstance : public scene::Instance, public Renderable, public SelectionTestable
-{
-  RemapWrapper& m_remapwrapper;
-public:
-  RemapWrapperInstance(const scene::Path& path, scene::Instance* parent, RemapWrapper& remapwrapper) : Instance(path, parent), m_remapwrapper(remapwrapper)
-  {
-    scene::Instance::m_cullable = &m_remapwrapper;
-    scene::Instance::m_render = this;
-    scene::Instance::m_select = this;
-  }
-
-  void renderSolid(Renderer& renderer, const VolumeTest& volume) const
-  {
-    m_remapwrapper.render(renderer, volume, Instance::localToWorld());
-  }
-  void renderWireframe(Renderer& renderer, const VolumeTest& volume) const
-  {
-    renderSolid(renderer, volume);
-  }
-
-  void testSelect(Selector& selector, SelectionTest& test)
-  {
-    m_remapwrapper.testSelect(selector, test, Instance::localToWorld());
-  }
-};
-
-class RemapWrapperNode : public scene::Node::Symbiot, public scene::Instantiable
-{
-  scene::Node m_node;
-  typedef RemapWrapperInstance instance_type;
-  InstanceSet m_instances;
-  RemapWrapper m_remapwrapper;
-public:
-  RemapWrapperNode(const char* name) : m_node(this), m_remapwrapper(name)
-  {
-    m_node.m_instance = this;
-  }
-
-  void release()
-  {
-    delete this;
-  }
-  scene::Node& node()
-  {
-    return m_node;
-  }
-
-  scene::Instance* create(const scene::Path& path, scene::Instance* parent)
-  {
-    return new instance_type(path, parent, m_remapwrapper);
-  }
-  void forEachInstance(const scene::Instantiable::Visitor& visitor)
-  {
-    m_instances.forEachInstance(visitor);
-  }
-  void insert(scene::Instantiable::Observer* observer, const scene::Path& path, scene::Instance* instance)
-  {
-    m_instances.insert(observer, path, instance);
-  }
-  scene::Instance* erase(scene::Instantiable::Observer* observer, const scene::Path& path)
-  {
-    return m_instances.erase(observer, path);
-  }
-};
-
-scene::Node& LoadRemapModel(const char* name)
-{
-  return (new RemapWrapperNode(name))->node();
-}
-
-#endif
-
-
 size_t picoInputStreamReam(void* inputStream, unsigned char* buffer, size_t length)
 {
   return reinterpret_cast<InputStream*>(inputStream)->read(buffer, length);
 }
 
-scene::Node& loadPicoModel(const picoModule_t* module, ArchiveFile& file)
-{
+/* Use the picomodel library to load the contents of the given file 
+ * and return a Node containing the model.
+ */
+
+scene::Node& loadPicoModel(const picoModule_t* module, ArchiveFile& file) {
 
 	// Determine the file extension (ASE or LWO) to pass down to the PicoModel
 	std::string fName = file.getName();
@@ -1087,3 +795,22 @@ scene::Node& loadPicoModel(const picoModule_t* module, ArchiveFile& file)
 	PicoFreeModel(model);
 	return modelNode->node();
 }
+
+/* Load the provided file as a PicoModel object and return as an OpenGLRenderable
+ * shared pointer.
+ */
+ 
+RenderablePtr loadRenderableModel(const picoModule_t* module, ArchiveFile& file) {
+
+	// Determine the file extension (ASE or LWO) to pass down to the PicoModel
+	std::string fName = file.getName();
+	boost::algorithm::to_lower(fName);
+	std::string fExt = fName.substr(fName.size() - 3, 3);
+
+	picoModel_t* model = PicoModuleLoadModelStream(module, &file.getInputStream(), picoInputStreamReam, file.size(), 0);
+	
+	RenderablePtr modelObj(new PicoModel(model, fExt));
+	PicoFreeModel(model);
+	return modelObj;
+	
+} 

@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 
 #include "modelskin.h"
+#include "imodel.h"
 
 #include <string>
 
@@ -42,6 +43,9 @@ private:
 	// Current distance between camera and preview
 	GLfloat _camDist;
 	
+	// Current model to display
+	RenderablePtr _model;
+	
 private:
 	
 	// Private constructor, creates GTK widgets
@@ -59,8 +63,9 @@ private:
 	// Initialise the GL widget, to avoid doing this every frame
 	void initialisePreview();
 	
-	// Update the info table with information from the currently-selected model
-	void updateInfoTable();
+	// Update the info table with information from the currently-selected model, and
+	// update the displayed model.
+	void updateSelected();
 	
 	// Return the value from the selected column, or an empty string if nothing selected
 	std::string getSelectedValue(gint col);

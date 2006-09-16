@@ -174,7 +174,7 @@ model_env.Depends(model_lib, picomodel_lib)
 model_env.Install(INSTALL + '/modules', model_lib)
 
 md3model_env = module_env.Copy()
-md3model_lst=build_list('plugins/md3model', 'plugin.cpp mdl.cpp md3.cpp md2.cpp mdc.cpp mdlimage.cpp md5.cpp')
+md3model_lst=build_list('plugins/md3model', 'plugin.cpp md5.cpp')
 md3model_env.useOpenGL()
 md3model_lib = md3model_env.SharedLibrary(target='md3model', source=md3model_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
 md3model_env.Install(INSTALL + '/modules', md3model_lib)
