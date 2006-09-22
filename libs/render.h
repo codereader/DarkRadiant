@@ -362,14 +362,21 @@ inline bool operator!=(const Colour4b& self, const Colour4b& other)
 /// \brief A 3-float vertex.
 struct Vertex3f : public Vector3
 {
-  Vertex3f()
-  {
-  }
 
-  Vertex3f(float _x, float _y, float _z)
-    : Vector3(_x, _y, _z)
-  {
-  }
+	/** Default constructor.
+	 */
+	Vertex3f() {}
+
+	/** Construct a Vertex3f from 3 individual values
+	 */
+	Vertex3f(float _x, float _y, float _z)
+    : Vector3(_x, _y, _z) {}
+    
+    /** Construct a Vertex3f from a 3-element array
+     */
+	Vertex3f(const float* array)
+	: Vector3(array) {}     
+
 };
 
 inline bool operator<(const Vertex3f& self, const Vertex3f& other)

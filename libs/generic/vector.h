@@ -88,7 +88,14 @@ public:
         z() = z_;
     }
 
-    
+	/** Construct a BasicVector3 from a 3-element array. The array must be
+	 * valid as no bounds checking is done.
+	 */
+	BasicVector3(const Element* array) {
+		for (int i = 0; i < 3; ++i)
+			m_elements[i] = array[i];
+	}
+	 
     /** Construct a BasicVector3 by parsing the supplied string. The string
      * must contain 3 numeric values separated by whitespace.
      *
