@@ -164,7 +164,7 @@ imagepng_lib = imagepng_env.SharedLibrary(target='imagepng', source=imagepng_lst
 imagepng_env.Install(INSTALL + '/modules', imagepng_lib)
 
 model_env = module_env.Copy()
-model_lst = build_list('plugins/model', 'plugin.cpp model.cpp')
+model_lst = build_list('plugins/model', 'plugin.cpp model.cpp RenderablePicoModel.cpp')
 model_env.Append(LIBPATH = ['libs'])
 model_env.Append(LIBS = ['mathlib', 'picomodel'])
 model_env.useOpenGL()

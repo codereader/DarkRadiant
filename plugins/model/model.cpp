@@ -357,8 +357,7 @@ typedef std::pair<CopiedString, int> PicoModelKey;
 
 class PicoModel :
 public Cullable,
-public Bounded,
-public OpenGLRenderable
+public Bounded
 {
   typedef std::vector<PicoSurface*> surfaces_t;
   surfaces_t m_surfaces;
@@ -420,52 +419,6 @@ public:
       }
     }
   }
-
-	/* OpenGLRenderable render function */
-	
-	void render(RenderStateFlags flags) const {
-
-		// Test model.
-		glBegin(GL_QUADS);
-			// Top
-			glColor3f(1, 0, 0); glNormal3f(0, 1, 0);
-			glVertex3f(1, 1, 1);
-			glVertex3f(1, 1, -1);
-			glVertex3f(-1, 1, -1);
-			glVertex3f(-1, 1, 1);
-			// Front
-			glColor3f(1, 1, 0); glNormal3f(0, 0, 1);
-			glVertex3f(1, 1, 1);
-			glVertex3f(-1, 1, 1);
-			glVertex3f(-1, -1, 1);
-			glVertex3f(1, -1, 1);
-			// Right
-			glColor3f(0, 1, 0); glNormal3f(1, 0, 0);
-			glVertex3f(1, 1, 1);
-			glVertex3f(1, -1, 1);
-			glVertex3f(1, -1, -1);
-			glVertex3f(1, 1, -1);
-			// Left
-			glColor3f(0, 1, 1); glNormal3f(-1, 0, 0);
-			glVertex3f(-1, 1, 1);
-			glVertex3f(-1, 1, -1);
-			glVertex3f(-1, -1, -1);
-			glVertex3f(-1, -1, 1);
-			// Bottom
-			glColor3f(0, 0, 1); glNormal3f(0, -1, 0);
-			glVertex3f(1, -1, 1);
-			glVertex3f(-1, -1, 1);
-			glVertex3f(-1, -1, -1);
-			glVertex3f(1, -1, -1);
-			// Back
-			glColor3f(1, 0, 1); glNormal3f(0, 0, -1);
-			glVertex3f(1, 1, -1);
-			glVertex3f(1, -1, -1);
-			glVertex3f(-1, -1, -1);
-			glVertex3f(-1, 1, -1);
-		glEnd();
-		
-	}
 
   void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld)
   {
@@ -800,6 +753,8 @@ scene::Node& loadPicoModel(const picoModule_t* module, ArchiveFile& file) {
  * shared pointer.
  */
  
+#include "RenderablePicoModel.h"
+ 
 RenderablePtr loadRenderableModel(const picoModule_t* module, ArchiveFile& file) {
 
 	// Determine the file extension (ASE or LWO) to pass down to the PicoModel
@@ -809,7 +764,7 @@ RenderablePtr loadRenderableModel(const picoModule_t* module, ArchiveFile& file)
 
 	picoModel_t* model = PicoModuleLoadModelStream(module, &file.getInputStream(), picoInputStreamReam, file.size(), 0);
 	
-	RenderablePtr modelObj(new PicoModel(model, fExt));
+	RenderablePtr modelObj(new model::RenderablePicoModel(model, fExt));
 	PicoFreeModel(model);
 	return modelObj;
 	
