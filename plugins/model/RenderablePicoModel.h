@@ -23,7 +23,8 @@ class RenderablePicoModel
 : public IModel
 {
 	// Vector of renderable surfaces for this model
-	std::vector<boost::shared_ptr<RenderablePicoSurface> > _surfVec;
+	typedef std::vector<boost::shared_ptr<RenderablePicoSurface> > SurfaceList;
+	SurfaceList _surfVec;
 	
 public:
 
@@ -44,6 +45,21 @@ public:
 	 
 	int getSurfaceCount() const {
 		return _surfVec.size();
+	}
+	
+	/** Return the number of vertices in this model, by summing the vertex
+	 * counts for each surface
+	 */
+	 
+	int getVertexCount() const {
+		int sum = 0;
+		for (SurfaceList::const_iterator i = _surfVec.begin();
+			 i != _surfVec.end();
+			 ++i)
+		{
+			sum += (*i)->getVertexCount();
+		}
+		return sum;
 	}
 };
 

@@ -54,6 +54,12 @@ namespace model {
 		 */
 		 
 		virtual int getSurfaceCount() const = 0;
+		
+		/** Return the number of vertices in this model, equal to the sum of the
+		 * vertex count from each surface.
+		 */
+		 
+		virtual int getVertexCount() const = 0;
 
 	};
 	

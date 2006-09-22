@@ -445,7 +445,6 @@ private:
 
     /* each surface on the model will become a new map drawsurface */
     int numSurfaces = PicoGetModelNumSurfaces( model );
-    printf("CopyPicoModel(): numsurfaces = %d\n", numSurfaces);
     //%  SYs_FPrintf( SYS_VRB, "Model %s has %d surfaces\n", name, numSurfaces );
     for(int s = 0; s < numSurfaces; ++s)
     {
