@@ -181,7 +181,7 @@ public:
   }
   
   	// Required function, not implemented.
-	RenderablePtr loadModelRenderable(const std::string& name) {}
+	model::IModelPtr loadModelFromPath(const std::string& name) {}
   
 };
 

@@ -44,7 +44,7 @@ private:
 	GLfloat _camDist;
 	
 	// Current model to display
-	RenderablePtr _model;
+	model::IModelPtr _model;
 	
 private:
 	

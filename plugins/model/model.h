@@ -37,6 +37,6 @@ scene::Node& loadPicoModel(const picoModule_t* module, ArchiveFile& file);
  * rendering.
  */
  
-RenderablePtr loadRenderableModel(const picoModule_t* module, ArchiveFile& file);
+model::IModelPtr loadIModel(const picoModule_t* module, ArchiveFile& file);
 
 #endif

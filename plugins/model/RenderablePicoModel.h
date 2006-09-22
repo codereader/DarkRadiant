@@ -1,10 +1,13 @@
 #ifndef RENDERABLEPICOMODEL_H_
 #define RENDERABLEPICOMODEL_H_
 
-#include "irender.h"
+#include "RenderablePicoSurface.h"
+
+#include "imodel.h"
 #include "picomodel.h"
 
 #include <GL/glew.h>
+#include <boost/shared_ptr.hpp>
 
 namespace model
 {
@@ -17,8 +20,11 @@ namespace model
  */
 
 class RenderablePicoModel
-: public OpenGLRenderable
+: public IModel
 {
+	// Vector of renderable surfaces for this model
+	std::vector<boost::shared_ptr<RenderablePicoSurface> > _surfVec;
+	
 public:
 
 	/** Constructor. Accepts a picoModel_t struct containing the raw model data
@@ -26,14 +32,19 @@ public:
 	 * correct handling of material paths (which differs between ASE and LWO)
 	 */
 	
-	RenderablePicoModel(const picoModel_t* mod, const std::string& fExt) {
-
-	}
-	
+	RenderablePicoModel(picoModel_t* mod, const std::string& fExt);
+		
 	/** Virtual render function from OpenGLRenderable.
 	 */
 	 
 	void render(RenderStateFlags flags) const;
+	
+	/** Return the number of surfaces in this model.
+	 */
+	 
+	int getSurfaceCount() const {
+		return _surfVec.size();
+	}
 };
 
 }

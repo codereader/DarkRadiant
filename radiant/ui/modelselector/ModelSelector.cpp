@@ -5,11 +5,12 @@
 #include "gtkutil/image.h"
 #include "gtkutil/glwidget.h"
 #include "generic/vector.h"
-
 #include "ifilesystem.h"
 #include "irender.h"
 #include "modelskin.h"
+#include "os/path.h"
 
+#include <cstdlib>
 #include <iostream>
 #include <vector>
 #include <ext/hash_map>
@@ -19,6 +20,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/functional/hash/hash.hpp>
+#include <boost/lexical_cast.hpp>
 
 namespace ui
 {
@@ -482,10 +484,9 @@ void ModelSelector::updateSelected() {
 	
 	// Update the previewed model
 	
-	ModelLoader* loader = ModelLoader_forType("ase");
+	ModelLoader* loader = ModelLoader_forType(os::getExtension(mName).c_str());
 	if (loader != NULL) {
-		std::cout << "Loading model " << mName << std::endl;
-		_model = loader->loadModelRenderable(mName.c_str());
+		_model = loader->loadModelFromPath(mName);
 	}
 	
 	gtk_widget_queue_draw(_widget);
@@ -496,6 +497,12 @@ void ModelSelector::updateSelected() {
 	gtk_list_store_set(_infoStore, &iter, 
 					   0, "Model name",
 					   1, mName.c_str(),
+					   -1);
+					   
+	gtk_list_store_append(_infoStore, &iter);
+	gtk_list_store_set(_infoStore, &iter,
+					   0, "Material surfaces",
+					   1, boost::lexical_cast<std::string>(_model->getSurfaceCount()).c_str(),
 					   -1);
 
 }

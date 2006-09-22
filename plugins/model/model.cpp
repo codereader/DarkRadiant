@@ -445,6 +445,7 @@ private:
 
     /* each surface on the model will become a new map drawsurface */
     int numSurfaces = PicoGetModelNumSurfaces( model );
+    printf("CopyPicoModel(): numsurfaces = %d\n", numSurfaces);
     //%  SYs_FPrintf( SYS_VRB, "Model %s has %d surfaces\n", name, numSurfaces );
     for(int s = 0; s < numSurfaces; ++s)
     {
@@ -749,13 +750,13 @@ scene::Node& loadPicoModel(const picoModule_t* module, ArchiveFile& file) {
 	return modelNode->node();
 }
 
-/* Load the provided file as a PicoModel object and return as an OpenGLRenderable
+/* Load the provided file as a model object and return as an IModel
  * shared pointer.
  */
  
 #include "RenderablePicoModel.h"
  
-RenderablePtr loadRenderableModel(const picoModule_t* module, ArchiveFile& file) {
+model::IModelPtr loadIModel(const picoModule_t* module, ArchiveFile& file) {
 
 	// Determine the file extension (ASE or LWO) to pass down to the PicoModel
 	std::string fName = file.getName();
@@ -764,7 +765,7 @@ RenderablePtr loadRenderableModel(const picoModule_t* module, ArchiveFile& file)
 
 	picoModel_t* model = PicoModuleLoadModelStream(module, &file.getInputStream(), picoInputStreamReam, file.size(), 0);
 	
-	RenderablePtr modelObj(new model::RenderablePicoModel(model, fExt));
+	model::IModelPtr modelObj(new model::RenderablePicoModel(model, fExt));
 	PicoFreeModel(model);
 	return modelObj;
 	

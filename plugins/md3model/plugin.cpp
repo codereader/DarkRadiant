@@ -63,7 +63,7 @@ public:
   }
   
 	// Not implemented
-	RenderablePtr loadModelRenderable(const std::string& name) {}
+	model::IModelPtr loadModelFromPath(const std::string& name) {}
 };
 
 class ModelMD5Dependencies : public ModelDependencies, public GlobalScripLibModuleRef

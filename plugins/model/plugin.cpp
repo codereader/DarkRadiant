@@ -107,17 +107,16 @@ public:
     return loadPicoModel(m_module, file);
   }
   
-  	// Load the given model from the path, and return an OpenGLRenderable
-  	// base class for immediate rendering.
+  	// Load the given model from the VFS path
   	
-	RenderablePtr loadModelRenderable(const std::string& name) {
+	model::IModelPtr loadModelFromPath(const std::string& name) {
 		
 		// Open an ArchiveFile to load
 		ArchiveFile* file = GlobalFileSystem().openFile(name.c_str());
 
 		if (file != NULL) {
 			// Load the model and return the RenderablePtr
-			return loadRenderableModel(m_module, *file);
+			return loadIModel(m_module, *file);
 		}
 	}
   

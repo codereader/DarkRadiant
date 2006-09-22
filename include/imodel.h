@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_IMODEL_H
 
 #include "generic/constant.h"
+#include "irender.h"
 
 #include <boost/shared_ptr.hpp>
 
@@ -34,12 +35,37 @@ namespace scene
 }
 
 class ArchiveFile;
-class OpenGLRenderable;
+
+namespace model {
+
+	/** Interface for static models. This interface provides functions for obtaining
+	 * information about a LWO or ASE model, such as its bounding box or poly count.
+	 * The interface also inherits from OpenGLRenderable to allow model instances
+	 * to be used for rendering.
+	 */
+	 
+	class IModel
+	: public OpenGLRenderable
+	{
+	public:
+		
+		/** Return the number of material surfaces on this model. Each material
+		 * surface consists of a set of polygons sharing the same material.
+		 */
+		 
+		virtual int getSurfaceCount() const = 0;
+
+	};
+	
+	// Smart pointer typedef
+	typedef boost::shared_ptr<model::IModel> IModelPtr;
+
+
+} // namespace model
+
 
 /** Model loader module API interface.
  */
-
-typedef boost::shared_ptr<OpenGLRenderable> RenderablePtr;
 
 class ModelLoader
 {
@@ -53,11 +79,11 @@ public:
 	
 	virtual scene::Node& loadModel(ArchiveFile& file) = 0;
 	
-	/** Load a model from the VFS, and return the OpenGLREnderable
+	/** Load a model from the VFS, and return the IModel
 	 * subclass for it.
 	 */
 	 
-	virtual RenderablePtr loadModelRenderable(const std::string& path) = 0;
+	virtual model::IModelPtr loadModelFromPath(const std::string& path) = 0;
 };
 
 template<typename Type>
