@@ -290,11 +290,20 @@ namespace os {
      * forward or backslashes in its definitions
      */
        
-    inline const std::string standardPath(const std::string& inPath) {
+    inline std::string standardPath(const std::string& inPath) {
         std::string newStr = inPath;
         boost::algorithm::replace_all(newStr, "\\", "/");
         return newStr;
-    } 
+    }
+    
+    
+	/** Return the extension for the given path, which is equal to the characters
+	 * following the final period.
+	 */
+	 
+	inline std::string getExtension(const std::string& path) {
+		return path.substr(path.rfind(".") + 1);
+	}
     
 }
 
