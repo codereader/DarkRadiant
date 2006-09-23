@@ -61,6 +61,12 @@ namespace model {
 		 
 		virtual int getVertexCount() const = 0;
 
+		/** Return the number of triangles in this model, equal to the sum of the
+		 * triangle count from each surface.
+		 */
+		 
+		virtual int getPolyCount() const = 0;
+		
 	};
 	
 	// Smart pointer typedef

@@ -510,6 +510,13 @@ void ModelSelector::updateSelected() {
 					   0, "Total vertices",
 					   1, boost::lexical_cast<std::string>(_model->getVertexCount()).c_str(),
 					   -1);
+
+	gtk_list_store_append(_infoStore, &iter);
+	gtk_list_store_set(_infoStore, &iter,
+					   0, "Total polys",
+					   1, boost::lexical_cast<std::string>(_model->getPolyCount()).c_str(),
+					   -1);
+
 }
 
 /* GTK CALLBACKS */

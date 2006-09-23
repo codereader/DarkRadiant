@@ -29,15 +29,25 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf, const std::str
     }
     globalOutputStream() << "  RenderablePicoSurface: using shader " << _shaderName.c_str() << "\n";
     
-    // Get the number of vertices, and reserve capacity in our vector in advance
-    // by populating it with empty structs.
+    // Get the number of vertices and indices, and reserve capacity in our vectors in advance
+    // by populating them with empty structs.
     int nVerts = PicoGetSurfaceNumVertexes(surf);
+    int nInds = PicoGetSurfaceNumIndexes(surf);
     _vertices.resize(nVerts);
+    _indices.resize(nInds);
     
     // Stream in the vertex data from the raw struct
     for (int vNum = 0; vNum < nVerts; ++vNum) {
     	_vertices[vNum].vertex = Vertex3f(PicoGetSurfaceXYZ(surf, vNum));
+    	_vertices[vNum].normal = Normal3f(PicoGetSurfaceNormal(surf, vNum));
+    	_vertices[vNum].texcoord = TexCoord2f(PicoGetSurfaceST(surf, 0, vNum));
     }
-}	
+    
+    // Stream in the index data
+    picoIndex_t* ind = PicoGetSurfaceIndexes(surf, 0);
+    for (int i = 0; i < nInds; i++)
+    	_indices[i] = ind[i];
 	
+}
+
 } // namespace model

@@ -48,7 +48,7 @@ public:
 	}
 	
 	/** Return the number of vertices in this model, by summing the vertex
-	 * counts for each surface
+	 * counts for each surface.
 	 */
 	 
 	int getVertexCount() const {
@@ -58,6 +58,21 @@ public:
 			 ++i)
 		{
 			sum += (*i)->getVertexCount();
+		}
+		return sum;
+	}
+	
+	/** Return the polycount (tricount) of this model by summing the surface
+	 * polycounts.
+	 */
+	 
+	int getPolyCount() const {
+		int sum = 0;
+		for (SurfaceList::const_iterator i = _surfVec.begin();
+			 i != _surfVec.end();
+			 ++i)
+		{
+			sum += (*i)->getPolyCount();
 		}
 		return sum;
 	}

@@ -23,6 +23,10 @@ class RenderablePicoSurface
 	// normals, tangents and texture coordinates of the component vertices
 	std::vector<ArbitraryMeshVertex> _vertices;
 	
+	// Vector of render indices, representing the groups of vertices to be
+	// used to create triangles
+	std::vector<unsigned int> _indices;
+	
 public:
 
 	/** Constructor. Accepts a picoSurface_t struct and the file extension to determine
@@ -43,6 +47,13 @@ public:
 	 
 	int getVertexCount() const {
 		return _vertices.size();
+	}
+	
+	/** Return the poly count for this surface
+	 */
+	 
+	int getPolyCount() const {
+		return _indices.size() / 3; // 3 indices per triangle
 	}
 	
 };

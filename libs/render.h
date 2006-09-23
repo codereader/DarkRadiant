@@ -447,13 +447,20 @@ struct Normal3f : public Vector3
   {
   }
 
-  Normal3f(float _x, float _y, float _z)
-    : Vector3(_x, _y, _z)
-  {
-  }
+	/** Construct a Normal3f from 3 float 
+	 * values
+	 */
+
+	Normal3f(float _x, float _y, float _z)
+	: Vector3(_x, _y, _z) {}
   
 	// Static conversion from Vector3
 	Normal3f(const Vector3& vec): Vector3(vec) {}
+
+    /** Construct a Normal3f from a 3-element array
+     */
+	Normal3f(const float* array)
+	: Vector3(array) {}     
   
 };
 
@@ -523,10 +530,17 @@ struct TexCoord2f : public Vector2
   {
   }
 
-  TexCoord2f(float _s, float _t)
-    : Vector2(_s, _t)
-  {
-  }
+	/** Construct a TexCoord2f from 2 float values.
+	 */
+
+	TexCoord2f(float _s, float _t)
+	: Vector2(_s, _t) {}
+
+	/** Construct a TexCoord2f from a 2-element array.
+	 */
+	 
+	TexCoord2f(const float* array)
+	: Vector2(array[0], array[1]) {}
 
   float& s()
   {
