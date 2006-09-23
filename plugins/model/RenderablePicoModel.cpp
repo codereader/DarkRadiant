@@ -31,45 +31,19 @@ RenderablePicoModel::RenderablePicoModel(picoModel_t* mod, const std::string& fE
 // Virtual render function
 
 void RenderablePicoModel::render(RenderStateFlags flags) const {
-		// Test model.
-		glBegin(GL_QUADS);
-			// Top
-			glColor3f(1, 0, 0); glNormal3f(0, 1, 0);
-			glVertex3f(1, 1, 1);
-			glVertex3f(1, 1, -1);
-			glVertex3f(-1, 1, -1);
-			glVertex3f(-1, 1, 1);
-			// Front
-			glColor3f(1, 1, 0); glNormal3f(0, 0, 1);
-			glVertex3f(1, 1, 1);
-			glVertex3f(-1, 1, 1);
-			glVertex3f(-1, -1, 1);
-			glVertex3f(1, -1, 1);
-			// Right
-			glColor3f(0, 1, 0); glNormal3f(1, 0, 0);
-			glVertex3f(1, 1, 1);
-			glVertex3f(1, -1, 1);
-			glVertex3f(1, -1, -1);
-			glVertex3f(1, 1, -1);
-			// Left
-			glColor3f(0, 1, 1); glNormal3f(-1, 0, 0);
-			glVertex3f(-1, 1, 1);
-			glVertex3f(-1, 1, -1);
-			glVertex3f(-1, -1, -1);
-			glVertex3f(-1, -1, 1);
-			// Bottom
-			glColor3f(0, 0, 1); glNormal3f(0, -1, 0);
-			glVertex3f(1, -1, 1);
-			glVertex3f(-1, -1, 1);
-			glVertex3f(-1, -1, -1);
-			glVertex3f(1, -1, -1);
-			// Back
-			glColor3f(1, 0, 1); glNormal3f(0, 0, -1);
-			glVertex3f(1, 1, -1);
-			glVertex3f(1, -1, -1);
-			glVertex3f(-1, -1, -1);
-			glVertex3f(-1, 1, -1);
-		glEnd();
+	
+	glEnable(GL_VERTEX_ARRAY);
+	glEnable(GL_NORMAL_ARRAY);
+	glShadeModel(GL_SMOOTH);
+	glColor3f(1.0, 1.0, 1.0);
+	
+	// Iterate over the surfaces, calling the render function on each one
+	for (SurfaceList::const_iterator i = _surfVec.begin();
+			 i != _surfVec.end();
+			 ++i)
+	{
+		(*i)->render(flags);
+	}
 }
 	
 }

@@ -27,6 +27,10 @@ class RenderablePicoSurface
 	// used to create triangles
 	std::vector<unsigned int> _indices;
 	
+	// Keep track of the number of indices to iterate over, since vector::size()
+	// may not be fast
+	unsigned int _nIndices;
+	
 public:
 
 	/** Constructor. Accepts a picoSurface_t struct and the file extension to determine
@@ -39,7 +43,7 @@ public:
 	/** Render function from OpenGLRenderable
 	 */
 	 
-	void render(RenderStateFlags flags) const {}
+	void render(RenderStateFlags flags) const;
 	
 	
 	/** Return the vertex count for this surface

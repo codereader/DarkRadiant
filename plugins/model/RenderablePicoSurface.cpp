@@ -32,9 +32,9 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf, const std::str
     // Get the number of vertices and indices, and reserve capacity in our vectors in advance
     // by populating them with empty structs.
     int nVerts = PicoGetSurfaceNumVertexes(surf);
-    int nInds = PicoGetSurfaceNumIndexes(surf);
+    _nIndices = PicoGetSurfaceNumIndexes(surf);
     _vertices.resize(nVerts);
-    _indices.resize(nInds);
+    _indices.resize(_nIndices);
     
     // Stream in the vertex data from the raw struct
     for (int vNum = 0; vNum < nVerts; ++vNum) {
@@ -45,9 +45,23 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf, const std::str
     
     // Stream in the index data
     picoIndex_t* ind = PicoGetSurfaceIndexes(surf, 0);
-    for (int i = 0; i < nInds; i++)
+    for (unsigned int i = 0; i < _nIndices; i++)
     	_indices[i] = ind[i];
 	
+}
+
+// Render function
+
+void RenderablePicoSurface::render(RenderStateFlags flags) const {
+
+	// Use Vertex Arrays to submit data to the GL. We will assume that it is
+	// acceptable to perform pointer arithmetic over the elements of a std::vector,
+	// starting from the address of element 0.
+	
+	glNormalPointer(GL_FLOAT, sizeof(ArbitraryMeshVertex), &_vertices[0].normal);
+	glVertexPointer(3, GL_FLOAT, sizeof(ArbitraryMeshVertex), &_vertices[0].vertex);
+	glDrawElements(GL_TRIANGLES, _nIndices, GL_UNSIGNED_INT, &_indices[0]);
+
 }
 
 } // namespace model
