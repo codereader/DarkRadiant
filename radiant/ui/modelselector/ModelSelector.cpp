@@ -433,8 +433,6 @@ void ModelSelector::initialisePreview() {
 		// Set up the lights
 		glEnable(GL_LIGHTING);
 		glEnable(GL_LIGHT0);
-		glEnable(GL_COLOR_MATERIAL);
-		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 		
 		GLfloat l0Dif[] = { 1.0, 1.0, 1.0, 1.0 };
 		GLfloat l0Pos[] = { 1.0, 1.0, 3.0, 1.0 };

@@ -143,11 +143,36 @@ public:
 class ShaderCache
 {
 public:
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "renderstate");
+	INTEGER_CONSTANT(Version, 1);
+	STRING_CONSTANT(Name, "renderstate");
 
-  virtual Shader* capture(const char* name) = 0;
-  virtual void release(const char* name) = 0;
+	/** Capture the given shader, increasing its reference count and
+	 * returning a pointer to the Shader object. The object must be freed
+	 * after use by calling release().
+	 * 
+	 * @param name
+	 * The name of the shader to capture.
+	 * 
+	 * @returns
+	 * Shader* object corresponding to the given material shader name.
+	 */
+	 
+	virtual Shader* capture(const std::string& name) = 0;
+
+	/** Release a named shader previously captured with capture(). The
+	 * reference count is decremented.
+	 * 
+	 * @param name
+	 * The name of the shader to release.
+	 */
+	 
+	virtual void release(const std::string& name) = 0;
+
+	// Old capture and release
+
+	virtual Shader* capture(const char* name) = 0;
+	virtual void release(const char* name) = 0;
+
   /*! Render all Shader objects. */
   virtual void render(RenderStateFlags globalstate, const Matrix4& modelview, const Matrix4& projection, const Vector3& viewer = Vector3(0, 0, 0)) = 0;
 

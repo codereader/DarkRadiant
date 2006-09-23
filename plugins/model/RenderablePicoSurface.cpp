@@ -29,6 +29,9 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf, const std::str
     }
     globalOutputStream() << "  RenderablePicoSurface: using shader " << _shaderName.c_str() << "\n";
     
+    // Capture the shader
+    _shader = GlobalShaderCache().capture(_shaderName);
+    
     // Get the number of vertices and indices, and reserve capacity in our vectors in advance
     // by populating them with empty structs.
     int nVerts = PicoGetSurfaceNumVertexes(surf);
@@ -60,6 +63,7 @@ void RenderablePicoSurface::render(RenderStateFlags flags) const {
 	
 	glNormalPointer(GL_FLOAT, sizeof(ArbitraryMeshVertex), &_vertices[0].normal);
 	glVertexPointer(3, GL_FLOAT, sizeof(ArbitraryMeshVertex), &_vertices[0].vertex);
+	glTexCoordPointer(2, GL_FLOAT, sizeof(ArbitraryMeshVertex), &_vertices[0].texcoord);
 	glDrawElements(GL_TRIANGLES, _nIndices, GL_UNSIGNED_INT, &_indices[0]);
 
 }

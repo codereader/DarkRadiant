@@ -1341,6 +1341,14 @@ public:
       globalOutputStream() << "leaked shader: " << makeQuoted((*i).key.c_str()) << "\n";
     }
   }
+
+	/* Capture the given shader.
+	 */
+	 
+	Shader* capture(const std::string& name) {
+		return m_shaders.capture(name.c_str()).get();	
+	}
+
   Shader* capture(const char* name)
   {
     ASSERT_MESSAGE(name[0] == '$'
@@ -1353,6 +1361,14 @@ public:
 #endif
     return m_shaders.capture(name).get();
   }
+  
+	/* Release the given shader.
+	 */
+	 
+	void release(const std::string& name) {
+		m_shaders.release(name.c_str());
+	}
+  
   void release(const char *name)
   {
 #if DEBUG_SHADERS

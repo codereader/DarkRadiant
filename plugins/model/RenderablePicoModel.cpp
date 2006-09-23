@@ -1,5 +1,6 @@
 #include "RenderablePicoModel.h"
 
+#include "texturelib.h"
 
 namespace model {
 
@@ -34,14 +35,17 @@ void RenderablePicoModel::render(RenderStateFlags flags) const {
 	
 	glEnable(GL_VERTEX_ARRAY);
 	glEnable(GL_NORMAL_ARRAY);
+	glEnable(GL_TEXTURE_COORD_ARRAY);
+	glEnable(GL_TEXTURE_2D);
 	glShadeModel(GL_SMOOTH);
-	glColor3f(1.0, 1.0, 1.0);
 	
 	// Iterate over the surfaces, calling the render function on each one
 	for (SurfaceList::const_iterator i = _surfVec.begin();
 			 i != _surfVec.end();
 			 ++i)
 	{
+		qtexture_t& tex = (*i)->getShader()->getTexture();
+		glBindTexture(GL_TEXTURE_2D, tex.texture_number);
 		(*i)->render(flags);
 	}
 }
