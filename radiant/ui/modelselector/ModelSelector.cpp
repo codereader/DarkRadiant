@@ -9,6 +9,7 @@
 #include "irender.h"
 #include "modelskin.h"
 #include "os/path.h"
+#include "math/aabb.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -426,19 +427,27 @@ void ModelSelector::initialisePreview() {
 		// Set up the camera
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluPerspective(PREVIEW_FOV, 1, 1.0, 100);
+		gluPerspective(PREVIEW_FOV, 1, 1.0, 1000);
 		
 		glMatrixMode(GL_MODELVIEW);
 		
 		// Set up the lights
 		glEnable(GL_LIGHTING);
+
+		GLfloat ambient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient);
+
 		glEnable(GL_LIGHT0);
-		
 		GLfloat l0Dif[] = { 1.0, 1.0, 1.0, 1.0 };
-		GLfloat l0Pos[] = { 1.0, 1.0, 3.0, 1.0 };
-		
+		GLfloat l0Pos[] = { 1.0, 1.0, 1.0, 0.0 };
 		glLightfv(GL_LIGHT0, GL_DIFFUSE, l0Dif);
 		glLightfv(GL_LIGHT0, GL_POSITION, l0Pos);
+		
+		glEnable(GL_LIGHT1);
+		GLfloat l1Dif[] = { 1.0, 1.0, 1.0, 1.0 };
+		GLfloat l1Pos[] = { 0.0, 0.0, 1.0, 0.0 };
+		glLightfv(GL_LIGHT1, GL_DIFFUSE, l1Dif);
+		glLightfv(GL_LIGHT1, GL_POSITION, l1Pos);
 	}		
 	
 }
@@ -546,6 +555,15 @@ void ModelSelector::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelS
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		// Get the current model if it exists, and if so get its AABB and proceed
+		// with rendering, otherwise exit.
+		model::IModel* model = self->_model.get();
+		AABB aabb;
+		if (model == NULL)
+			goto swapAndReturn;
+			
+		aabb = model->getAABB();
+
 		// Push the current rotation matrix, then premultiply with the
 		// view transformation. We must keep the translation separate so
 		// it does not get mixed up with the incremental rotations.
@@ -556,15 +574,17 @@ void ModelSelector::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelS
 		glGetFloatv(GL_MODELVIEW_MATRIX, curMv); // store current modelview
 		
 		glLoadIdentity();
-		glTranslatef(0, 0, self->_camDist); // construct translation
+		glTranslatef(0, 0, self->_camDist); // camera translation
+		glTranslatef(-aabb.origin.x(), -aabb.origin.y(), -aabb.origin.z()); // model translation
 		glMultMatrixf(curMv); // post multiply with previous
 
 		// Render the actual model.
-		if (self->_model.get() != NULL)
-			self->_model->render(RENDER_DEFAULT);
+		model->render(RENDER_DEFAULT);
 
 		// Pop back to rotation-only matrix
 		glPopMatrix(); 
+		
+swapAndReturn:
 		
 		// Swap buffers to display the result in GTK
 		glwidget_swap_buffers(widget);
