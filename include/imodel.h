@@ -35,6 +35,7 @@ namespace scene
 }
 
 class ArchiveFile;
+class AABB;
 
 namespace model {
 
@@ -52,20 +53,21 @@ namespace model {
 		/** Return the number of material surfaces on this model. Each material
 		 * surface consists of a set of polygons sharing the same material.
 		 */
-		 
 		virtual int getSurfaceCount() const = 0;
 		
 		/** Return the number of vertices in this model, equal to the sum of the
 		 * vertex count from each surface.
 		 */
-		 
 		virtual int getVertexCount() const = 0;
 
 		/** Return the number of triangles in this model, equal to the sum of the
 		 * triangle count from each surface.
 		 */
-		 
 		virtual int getPolyCount() const = 0;
+		
+		/** Return the local AABB that encloses this model.
+		 */
+		virtual const AABB& getAABB() const = 0;
 		
 	};
 	

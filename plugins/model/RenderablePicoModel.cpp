@@ -25,6 +25,9 @@ RenderablePicoModel::RenderablePicoModel(picoModel_t* mod, const std::string& fE
 		// Create the RenderablePicoSurface object and add it to the vector
 		boost::shared_ptr<RenderablePicoSurface> rSurf(new RenderablePicoSurface(surf, fExt));
 		_surfVec.push_back(rSurf);
+		
+		// Extend the model AABB to include the surface's AABB
+		aabb_extend_by_aabb(_localAABB, rSurf->getAABB());
 	}
 	
 }

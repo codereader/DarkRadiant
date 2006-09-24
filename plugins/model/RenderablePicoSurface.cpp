@@ -39,9 +39,13 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf, const std::str
     _vertices.resize(nVerts);
     _indices.resize(_nIndices);
     
-    // Stream in the vertex data from the raw struct
+    // Stream in the vertex data from the raw struct, expanding the local AABB to include
+    // each vertex.
     for (int vNum = 0; vNum < nVerts; ++vNum) {
-    	_vertices[vNum].vertex = Vertex3f(PicoGetSurfaceXYZ(surf, vNum));
+		Vertex3f vertex(PicoGetSurfaceXYZ(surf, vNum));
+    	_localAABB.includePoint(vertex);
+    	
+    	_vertices[vNum].vertex = vertex;
     	_vertices[vNum].normal = Normal3f(PicoGetSurfaceNormal(surf, vNum));
     	_vertices[vNum].texcoord = TexCoord2f(PicoGetSurfaceST(surf, 0, vNum));
     }

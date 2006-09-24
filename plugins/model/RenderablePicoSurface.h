@@ -4,6 +4,7 @@
 #include "picomodel.h"
 #include "irender.h"
 #include "render.h"
+#include "math/aabb.h"
 
 namespace model
 {
@@ -33,6 +34,9 @@ class RenderablePicoSurface
 	// Keep track of the number of indices to iterate over, since vector::size()
 	// may not be fast
 	unsigned int _nIndices;
+
+	// The AABB containing this surface, in local object space.
+	AABB _localAABB;
 	
 public:
 
@@ -70,7 +74,11 @@ public:
 		return _shader;
 	}	 
 
-	
+	/** Get the containing AABB for this surface.
+	 */
+	const AABB& getAABB() const {
+		return _localAABB;	
+	}
 };
 
 }

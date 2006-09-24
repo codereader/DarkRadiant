@@ -26,6 +26,9 @@ class RenderablePicoModel
 	typedef std::vector<boost::shared_ptr<RenderablePicoSurface> > SurfaceList;
 	SurfaceList _surfVec;
 	
+	// Local AABB for this model
+	AABB _localAABB;
+	
 public:
 
 	/** Constructor. Accepts a picoModel_t struct containing the raw model data
@@ -75,6 +78,13 @@ public:
 			sum += (*i)->getPolyCount();
 		}
 		return sum;
+	}
+	
+	/** Return the enclosing AABB for this model.
+	 */
+	 
+	const AABB& getAABB() const {
+		return _localAABB;
 	}
 };
 
