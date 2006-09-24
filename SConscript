@@ -26,6 +26,9 @@ cmdlib_lib = g_env.StaticLibrary(target='libs/cmdlib', source='libs/cmdlib/cmdli
 mathlib_src = 'mathlib.c bbox.c line.c m4x4.c ray.c'
 mathlib_lib = g_env.StaticLibrary(target='libs/mathlib', source=build_list('libs/mathlib', mathlib_src))
 
+mathSrc = 'aabb.cpp'
+math = g_env.StaticLibrary(target='libs/math', source=build_list('libs/math', mathSrc))
+
 md5lib_lib = g_env.StaticLibrary(target='libs/md5lib', source='libs/md5lib/md5lib.c')
 
 ddslib_lib = g_env.StaticLibrary(target='libs/ddslib', source='libs/ddslib/ddslib.c')
@@ -166,23 +169,28 @@ imagepng_env.Install(INSTALL + '/modules', imagepng_lib)
 model_env = module_env.Copy()
 model_lst = build_list('plugins/model', 'plugin.cpp model.cpp RenderablePicoModel.cpp RenderablePicoSurface.cpp')
 model_env.Append(LIBPATH = ['libs'])
-model_env.Append(LIBS = ['mathlib', 'picomodel'])
+model_env.Append(LIBS = ['mathlib', 'picomodel', 'math'])
 model_env.useOpenGL()
 model_lib = model_env.SharedLibrary(target='model', source=model_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
 model_env.Depends(model_lib, mathlib_lib)
 model_env.Depends(model_lib, picomodel_lib)
+model_env.Depends(model_lib, math)
 model_env.Install(INSTALL + '/modules', model_lib)
 
 md3model_env = module_env.Copy()
 md3model_lst=build_list('plugins/md3model', 'plugin.cpp md5.cpp')
 md3model_env.useOpenGL()
+md3model_env.Append(LIBS = ['math'])
 md3model_lib = md3model_env.SharedLibrary(target='md3model', source=md3model_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
+md3model_env.Depends(md3model_lib, math)
 md3model_env.Install(INSTALL + '/modules', md3model_lib)
 
 entity_env = module_env.Copy()
 entity_lst = build_list('plugins/entity', 'plugin.cpp entity.cpp eclassmodel.cpp generic.cpp group.cpp light.cpp miscmodel.cpp doom3group.cpp skincache.cpp angle.cpp angles.cpp colour.cpp filters.cpp model.cpp namedentity.cpp origin.cpp scale.cpp targetable.cpp rotation.cpp modelskinkey.cpp')
 entity_env.useOpenGL()
+entity_env.Append(LIBS = ['math'])
 entity_lib = entity_env.SharedLibrary(target='entity', source=entity_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
+entity_env.Depends(entity_lib, math)
 entity_env.Install(INSTALL + '/modules', entity_lib)
 
 radiant_env = g_env.Copy()
@@ -296,7 +304,7 @@ radiant_src = [
 for i in range(len(radiant_src)):
   radiant_src[i] = 'radiant/' + radiant_src[i]
 
-radiant_env.Prepend(LIBS = ['mathlib', 'cmdlib', 'profile', 'gtkutil', 'l_net', 'exception', 'xmlutil'])
+radiant_env.Prepend(LIBS = ['mathlib', 'math', 'cmdlib', 'profile', 'gtkutil', 'l_net', 'exception', 'xmlutil'])
 radiant_env.Prepend(LIBPATH = ['libs'])
 
 # Win32 libs
@@ -313,6 +321,7 @@ radiant_env.Depends(radiant_prog, profile_lib)
 radiant_env.Depends(radiant_prog, gtkutil_lib)
 radiant_env.Depends(radiant_prog, exceptionLib)
 radiant_env.Depends(radiant_prog, xmlutil)
+radiant_env.Depends(radiant_prog, math)
 radiant_env.Install(INSTALL, radiant_prog)
 
 # Radiant post-install

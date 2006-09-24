@@ -21,3 +21,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "aabb.h"
 
+#include <algorithm>
+
+// Expand this AABB to include the given point
+
+void AABB::includePoint(const Vector3& point) {
+	// Process each axis separately
+	for (int i = 0; i < 3; ++i) {
+		float axisDisp = point[i] - origin[i]; // axis displacement from origin to point
+		float halfDif = 0.5 * (std::abs(axisDisp) - extents[i]); // half of extent increase needed (maybe negative if point inside)
+		if (halfDif > 0) {
+			origin[i] += (axisDisp > 0) ? halfDif : -halfDif;
+			extents[i] += halfDif;
+		}
+	}
+}

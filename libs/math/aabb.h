@@ -31,7 +31,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class AABB
 {
 public:
-  Vector3 origin, extents;
+  	/// The origin of the AABB, which is always located at the centre.
+  	Vector3 origin;
+  	
+  	/// The symmetrical extents in 3 dimensions.
+  	Vector3 extents;
 
 	/** Construct an AABB with default origin and invalid extents.
 	 */
@@ -55,6 +59,15 @@ public:
 	const Vector3& getOrigin() {
 		return origin;
 	}
+	
+	/** Expand this AABB in-place to include the given point in
+	 * world space.
+	 * 
+	 * @param point
+	 * Vector3 representing the point to include.
+	 */
+	void includePoint(const Vector3& point);	 
+
 };
 
 const float c_aabb_max = FLT_MAX;
@@ -91,16 +104,6 @@ template<typename Index>
 class AABBExtend
 {
 public:
-  static void apply(AABB& aabb, const Vector3& point)
-  {
-    float displacement = point[Index::VALUE] - aabb.origin[Index::VALUE];
-    float half_difference = static_cast<float>(0.5 * (fabs(displacement) - aabb.extents[Index::VALUE]));
-    if(half_difference > 0.0f)
-    {
-      aabb.origin[Index::VALUE] += (displacement >= 0.0f) ? half_difference : -half_difference;
-      aabb.extents[Index::VALUE] += half_difference;
-    }
-  }
   static void apply(AABB& aabb, const AABB& other)
   {
     float displacement = other.origin[Index::VALUE] - aabb.origin[Index::VALUE];
@@ -124,9 +127,7 @@ public:
 
 inline void aabb_extend_by_point(AABB& aabb, const Vector3& point)
 {
-  AABBExtend< IntegralConstant<0> >::apply(aabb, point);
-  AABBExtend< IntegralConstant<1> >::apply(aabb, point);
-  AABBExtend< IntegralConstant<2> >::apply(aabb, point);
+	aabb.includePoint(point);
 }
 
 inline void aabb_extend_by_point_safe(AABB& aabb, const Vector3& point)
