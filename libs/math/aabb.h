@@ -39,14 +39,12 @@ public:
 
 	/** Construct an AABB with default origin and invalid extents.
 	 */
-	 
 	AABB() 
 	: origin(0, 0, 0), extents(-1,-1,-1) {}
 
 	/** Construct an AABB with the provided origin and extents
 	 * vectors.
 	 */
-
 	AABB(const Vector3& origin_, const Vector3& extents_) 
 	: origin(origin_), extents(extents_) {}
   
@@ -55,11 +53,17 @@ public:
 	 * @returns
 	 * A const reference to a Vector3 containing the AABB's origin.
 	 */
-	 
-	const Vector3& getOrigin() {
+	const Vector3& getOrigin() const {
 		return origin;
 	}
 	
+	/** Get the radius of the smallest sphere which encloses this
+	 * bounding box.
+	 */
+	float getRadius() const {
+		return extents.getLength(); // Pythagorean length of extents vector	
+	}
+
 	/** Expand this AABB in-place to include the given point in
 	 * world space.
 	 * 
