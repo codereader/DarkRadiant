@@ -427,7 +427,7 @@ void ModelSelector::initialisePreview() {
 		// Set up the camera
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluPerspective(PREVIEW_FOV, 1, 1.0, 1000);
+		gluPerspective(PREVIEW_FOV, 1, 1.0, 10000);
 		
 		glMatrixMode(GL_MODELVIEW);
 		
@@ -496,6 +496,7 @@ void ModelSelector::updateSelected() {
 		_model = loader->loadModelFromPath(mName);
 	}
 	
+	_camDist = -(_model->getAABB().getRadius() * 1.5); // set appropriate zoom for model size
 	gtk_widget_queue_draw(_widget);
 	
 	// Update the text in the info table
@@ -630,10 +631,11 @@ void ModelSelector::callbackGLMotion(GtkWidget* widget, GdkEventMotion* ev, Mode
 }
 
 void ModelSelector::callbackGLScroll(GtkWidget* widget, GdkEventScroll* ev, ModelSelector* self) {
+	float inc = self->_model->getAABB().getRadius() * 0.1; // Scroll increment is a fraction of the AABB radius
 	if (ev->direction == GDK_SCROLL_UP)
-		self->_camDist += 1.0f;
+		self->_camDist += inc;
 	else if (ev->direction == GDK_SCROLL_DOWN)
-		self->_camDist -= 1.0f;
+		self->_camDist -= inc;
 	gtk_widget_queue_draw(widget);
 }
 
