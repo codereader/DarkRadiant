@@ -575,8 +575,8 @@ void ModelSelector::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelS
 		
 		glLoadIdentity();
 		glTranslatef(0, 0, self->_camDist); // camera translation
+		glMultMatrixf(curMv); // post multiply with previous (rotations)
 		glTranslatef(-aabb.origin.x(), -aabb.origin.y(), -aabb.origin.z()); // model translation
-		glMultMatrixf(curMv); // post multiply with previous
 
 		// Render the actual model.
 		model->render(RENDER_DEFAULT);
