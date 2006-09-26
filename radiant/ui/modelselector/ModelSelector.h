@@ -6,6 +6,7 @@
 
 #include "modelskin.h"
 #include "imodel.h"
+#include "math/matrix.h"
 
 #include <string>
 
@@ -42,6 +43,9 @@ private:
 	
 	// Current distance between camera and preview
 	GLfloat _camDist;
+	
+	// Current rotation matrix
+	Matrix4 _rotation;
 	
 	// Current model to display
 	model::IModelPtr _model;

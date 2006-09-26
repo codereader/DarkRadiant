@@ -12,6 +12,7 @@
 #include "math/aabb.h"
 
 #include <cstdlib>
+#include <cmath>
 #include <iostream>
 #include <vector>
 #include <ext/hash_map>
@@ -64,7 +65,8 @@ ModelSelector::ModelSelector()
   								GDK_TYPE_PIXBUF)),
   _infoStore(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING)),
   _lastModel(""),
-  _camDist(-5.0f)
+  _camDist(-5.0f),
+  _rotation(Matrix4::getIdentity())
 {
 	// Window properties
 	
@@ -427,7 +429,7 @@ void ModelSelector::initialisePreview() {
 		// Set up the camera
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluPerspective(PREVIEW_FOV, 1, 1.0, 10000);
+		gluPerspective(PREVIEW_FOV, 1, 0.1, 10000);
 		
 		glMatrixMode(GL_MODELVIEW);
 		
@@ -496,7 +498,13 @@ void ModelSelector::updateSelected() {
 		_model = loader->loadModelFromPath(mName);
 	}
 	
-	_camDist = -(_model->getAABB().getRadius() * 1.5); // set appropriate zoom for model size
+	// Calculate camera distance so model is appropriately zoomed
+	_camDist = -(_model->getAABB().getRadius() * 2.0); 
+
+	// Reset the rotation
+	_rotation = Matrix4::getIdentity();
+
+	// Draw the model
 	gtk_widget_queue_draw(_widget);
 	
 	// Update the text in the info table
@@ -565,26 +573,15 @@ void ModelSelector::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelS
 			
 		aabb = model->getAABB();
 
-		// Push the current rotation matrix, then premultiply with the
-		// view transformation. We must keep the translation separate so
-		// it does not get mixed up with the incremental rotations.
-
-		glPushMatrix();
-
-		GLfloat curMv[16];
-		glGetFloatv(GL_MODELVIEW_MATRIX, curMv); // store current modelview
-		
+		// Premultiply with the translations
 		glLoadIdentity();
 		glTranslatef(0, 0, self->_camDist); // camera translation
-		glMultMatrixf(curMv); // post multiply with previous (rotations)
+		glMultMatrixf(self->_rotation); // post multiply with rotations
 		glTranslatef(-aabb.origin.x(), -aabb.origin.y(), -aabb.origin.z()); // model translation
 
 		// Render the actual model.
 		model->render(RENDER_DEFAULT);
 
-		// Pop back to rotation-only matrix
-		glPopMatrix(); 
-		
 swapAndReturn:
 		
 		// Swap buffers to display the result in GTK
@@ -616,13 +613,14 @@ void ModelSelector::callbackGLMotion(GtkWidget* widget, GdkEventMotion* ev, Mode
 
 			// Premultiply the current modelview matrix with the rotation,
 			// in order to achieve rotations in eye space rather than object
-			// space.
-			GLfloat curMv[16];
-			glGetFloatv(GL_MODELVIEW_MATRIX, curMv);
-
+			// space. At this stage we are only calculating and storing the
+			// matrix for the GLDraw callback to use.
 			glLoadIdentity();
 			glRotatef(-2, axisRot.x(), axisRot.y(), axisRot.z());
-			glMultMatrixf(curMv);
+			glMultMatrixf(self->_rotation);
+
+			// Save the new GL matrix for GL draw
+			glGetFloatv(GL_MODELVIEW_MATRIX, self->_rotation);
 
 			gtk_widget_queue_draw(widget); // trigger the GLDraw method to draw the actual model
 		}

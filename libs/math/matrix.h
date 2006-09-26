@@ -255,14 +255,6 @@ public:
   {
     return m_elements[i];
   }
-  const float& operator[](std::size_t i) const
-  {
-    return m_elements[i];
-  }
-  float& operator[](std::size_t i)
-  {
-    return m_elements[i];
-  }
   const float& index(std::size_t r, std::size_t c) const
   {
     return m_elements[(r << 2) + c];
@@ -272,13 +264,25 @@ public:
     return m_elements[(r << 2) + c];
   }
 
+	/** Cast to float* for use with GL functions that accept a float
+	 * array, also provides operator[].
+	 */
+	operator float* () {
+		return m_elements;	
+	}
+
+	/** Cast to const float* to provide operator[] for const objects.
+	 */
+	operator const float* () const {
+		return m_elements;
+	}
+
 	/** Use this matrix to transform the provided vector and return a new
 	 * vector containing the result.
 	 * 
 	 * @param vector4
 	 * The 4-element vector to transform.
 	 */
-	 
 	Vector4 transform(const Vector4& vector4) const {
 		return Vector4(
 		    m_elements[0]  * vector4[0] + m_elements[4]  * vector4[1] + m_elements[8]  * vector4[2] + m_elements[12] * vector4[3],
@@ -298,7 +302,6 @@ public:
 	 * @returns
 	 * A 4-element vector containing the result.
 	 */
-	 
 	Vector4 transform(const Vector3& vector3) const {
 		return transform(Vector4(vector3, 1));
 	}
