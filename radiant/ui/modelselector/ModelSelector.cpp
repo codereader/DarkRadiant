@@ -432,7 +432,8 @@ void ModelSelector::initialisePreview() {
 		gluPerspective(PREVIEW_FOV, 1, 0.1, 10000);
 		
 		glMatrixMode(GL_MODELVIEW);
-		
+		glLoadIdentity();
+				
 		// Set up the lights
 		glEnable(GL_LIGHTING);
 
@@ -440,8 +441,10 @@ void ModelSelector::initialisePreview() {
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient);
 
 		glEnable(GL_LIGHT0);
+		GLfloat l0Amb[] = { 0.5, 0.5, 0.5, 1.0 };
 		GLfloat l0Dif[] = { 1.0, 1.0, 1.0, 1.0 };
 		GLfloat l0Pos[] = { 1.0, 1.0, 1.0, 0.0 };
+		glLightfv(GL_LIGHT0, GL_AMBIENT, l0Amb);
 		glLightfv(GL_LIGHT0, GL_DIFFUSE, l0Dif);
 		glLightfv(GL_LIGHT0, GL_POSITION, l0Pos);
 		
@@ -538,6 +541,7 @@ void ModelSelector::updateSelected() {
 /* GTK CALLBACKS */
 
 void ModelSelector::callbackHide(GtkWidget* widget, GdkEvent* ev, ModelSelector* self) {
+	self->_lastModel = "";
 	gtk_main_quit(); // exit recursive main loop
 	gtk_widget_hide(self->_widget);
 }
