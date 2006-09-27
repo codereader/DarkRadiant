@@ -87,6 +87,7 @@ gtkutil_src = '\
   widget.cpp\
   window.cpp\
   xorrectangle.cpp\
+  GLWidget.cpp\
 '
 
 gtkutil_lib = gtkutil_env.StaticLibrary(target='libs/gtkutil', source=build_list('libs/gtkutil', gtkutil_src))
