@@ -353,13 +353,13 @@ public:
     GlobalFileSystem().detach(*this);
   }
 
-  ModelSkin& capture(const char* name)
+  ModelSkin& capture(const std::string& name)
   {
-    return *m_cache.capture(name);
+    return *m_cache.capture(name.c_str());
   }
-  void release(const char* name)
+  void release(const std::string& name)
   {
-    m_cache.release(name);
+    m_cache.release(name.c_str());
   }
 
   bool realised() const

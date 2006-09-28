@@ -494,11 +494,16 @@ void ModelSelector::updateSelected() {
 	if (mName.empty())
 		return;
 	
+	// Get the skin if set
+	std::string skinName = getSelectedValue(SKIN_COLUMN);
+	ModelSkin& mSkin = GlobalModelSkinCache().capture(skinName);
+
 	// Update the previewed model
 	
 	ModelLoader* loader = ModelLoader_forType(os::getExtension(mName).c_str());
 	if (loader != NULL) {
 		_model = loader->loadModelFromPath(mName);
+		_model->applySkin(mSkin);
 	}
 	
 	// Calculate camera distance so model is appropriately zoomed
@@ -518,6 +523,12 @@ void ModelSelector::updateSelected() {
 					   1, mName.c_str(),
 					   -1);
 					   
+	gtk_list_store_append(_infoStore, &iter);
+	gtk_list_store_set(_infoStore, &iter, 
+					   0, "Skin name",
+					   1, skinName.c_str(),
+					   -1);
+
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter,
 					   0, "Material surfaces",

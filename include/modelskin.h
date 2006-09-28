@@ -73,10 +73,12 @@ class ModelSkinCache
 public:
   INTEGER_CONSTANT(Version, 1);
   STRING_CONSTANT(Name, "modelskin");
-  /// \brief Increments the reference count of and returns a reference to the skin uniquely identified by 'name'.
-  virtual ModelSkin& capture(const char* name) = 0;
-  /// \brief Decrements the reference-count of the skin uniquely identified by 'name'.
-  virtual void release(const char* name) = 0;
+
+	/// \brief Increments the reference count of and returns a reference to the skin uniquely identified by 'name'.
+	virtual ModelSkin& capture(const std::string& name) = 0;
+	
+	/// \brief Decrements the reference-count of the skin uniquely identified by 'name'.
+	virtual void release(const std::string& name) = 0;
   
 	/** Return the skins associated with the given model.
 	 * 

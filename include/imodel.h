@@ -36,6 +36,7 @@ namespace scene
 
 class ArchiveFile;
 class AABB;
+class ModelSkin;
 
 namespace model {
 
@@ -50,6 +51,13 @@ namespace model {
 	{
 	public:
 		
+		/** Apply the given skin to this model.
+		 * 
+		 * @param skin
+		 * The ModelSkin instance to apply to this model.
+		 */
+		virtual void applySkin(const ModelSkin& skin) = 0;
+
 		/** Return the number of material surfaces on this model. Each material
 		 * surface consists of a set of polygons sharing the same material.
 		 */

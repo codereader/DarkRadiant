@@ -53,4 +53,10 @@ void RenderablePicoModel::render(RenderStateFlags flags) const {
 	}
 }
 	
+// Apply the given skin to this model
+
+void RenderablePicoModel::applySkin(const ModelSkin& skin) {
+	
+}
+	
 }
