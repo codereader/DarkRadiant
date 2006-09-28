@@ -441,15 +441,12 @@ bool Doom3Shader_parseHeightmap(Tokeniser& tokeniser, TextureExpression& bump, S
 
 bool Doom3Shader_parseAddnormals(Tokeniser& tokeniser, TextureExpression& bump)
 {
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, bump));
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ","));
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "heightmap"));
-  TextureExpression heightmapName;
-  ShaderValue heightmapScale;
-  RETURN_FALSE_IF_FAIL(Doom3Shader_parseHeightmap(tokeniser, heightmapName, heightmapScale));
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
-  return true;
+	RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
+	RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, bump));
+	RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ","));
+	RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, bump));
+	RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
+ 	return true;
 }
 
 bool Doom3Shader_parseBumpmap(Tokeniser& tokeniser, TextureExpression& bump, ShaderValue& heightmapScale)
