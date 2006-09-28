@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_CONTAINER_CACHE_H
 
 #include <cstddef>
+#include <iostream>
+
 #include "container/hashtable.h"
 #include "memory/allocator.h"
 
@@ -57,7 +59,10 @@ public:
   }
   ~SharedValue()
   {
-    ASSERT_MESSAGE(m_count == 0 , "destroying a referenced object\n");
+#ifdef _DEBUG
+    if (m_count != 0)
+	    std::cout << "Warning: SharedValue destroying a referenced object" << std::endl;
+#endif
   }
   void set(pointer value)
   {
@@ -119,7 +124,10 @@ public:
   }
   ~HashedCache()
   {
-    ASSERT_MESSAGE(empty(), "HashedCache::~HashedCache: not empty");
+#ifdef _DEBUG
+	if (!empty())
+	    std::cout << "Warning: HashedCache not empty" << std::endl;
+#endif
   }
 
   typedef typename map_type::iterator iterator;
