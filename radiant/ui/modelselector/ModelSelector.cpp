@@ -81,7 +81,13 @@ ModelSelector::ModelSelector()
 	gint w = gdk_screen_get_width(scr);
 	gint h = gdk_screen_get_height(scr);
 	
-	gtk_window_set_default_size(GTK_WINDOW(_widget), gint(w / 1.5), gint(h / 1.5));
+	gtk_window_set_default_size(GTK_WINDOW(_widget), gint(w * 0.8), gint(h * 0.8));
+
+	// Create the actual GLWidget here, so we can use the screen size as a guide
+	
+	gint glSize = gint(h * 0.4);
+	_glWidget = glwidget_new(TRUE);
+	gtk_widget_set_size_request(_glWidget, glSize, glSize);
 
 	// Signals
 	
@@ -397,9 +403,7 @@ GtkWidget* ModelSelector::createPreviewAndInfoPanel() {
 
 GtkWidget* ModelSelector::createGLWidget() {
 
-	// Create the widget and connect up the signals
-	_glWidget = glwidget_new(TRUE);
-	gtk_widget_set_size_request(_glWidget, 256, 256);
+	// Connect up the signals
 	gtk_widget_set_events(_glWidget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
 	g_signal_connect(G_OBJECT(_glWidget), "expose-event", G_CALLBACK(callbackGLDraw), this);
 	g_signal_connect(G_OBJECT(_glWidget), "motion-notify-event", G_CALLBACK(callbackGLMotion), this);
