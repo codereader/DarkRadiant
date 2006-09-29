@@ -100,8 +100,9 @@ ModelSelector::ModelSelector()
 
 std::string ModelSelector::showAndBlock() {
 	gtk_widget_show_all(_widget);
-	initialisePreview();
+	initialisePreview(); // set up the preview
 	gtk_main(); // recursive main loop. This will block until the dialog is closed in some way.
+	_model = model::IModelPtr(); // reset _model to null to explicitly release resources
 	return _lastModel;
 }
 
@@ -414,7 +415,6 @@ GtkWidget* ModelSelector::createGLWidget() {
 
 void ModelSelector::initialisePreview() {
 
-	// Clear the window and set up the initial transformations
 	if (glwidget_make_current(_glWidget) != FALSE) {
 
 		// Depth buffer and polygon mode
@@ -451,6 +451,10 @@ void ModelSelector::initialisePreview() {
 		glLightfv(GL_LIGHT1, GL_DIFFUSE, l1Dif);
 		glLightfv(GL_LIGHT1, GL_POSITION, l1Pos);
 	}		
+
+	// Force a model reload, since the model is destroyed every time the dialog
+	// is hidden but the other dialog elements are not.
+	updateSelected();
 	
 }
 
