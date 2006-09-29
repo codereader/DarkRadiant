@@ -56,7 +56,13 @@ void RenderablePicoModel::render(RenderStateFlags flags) const {
 // Apply the given skin to this model
 
 void RenderablePicoModel::applySkin(const ModelSkin& skin) {
-	
+	// Apply the skin to each surface
+	for (SurfaceList::iterator i = _surfVec.begin();
+		 i != _surfVec.end();
+		 ++i)
+	{
+		(*i)->applySkin(skin);
+	}
 }
 	
 }

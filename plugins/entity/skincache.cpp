@@ -107,14 +107,17 @@ public:
       tokeniser.nextLine();
     }
   }
-  const char* getRemap(const char* name) const
-  {
-    Remaps::const_iterator i = m_remaps.find(name);
-    if(i != m_remaps.end())
-    {
-      return (*i).second.c_str();
-    }
-    return "";
+  
+	// Get this skin's remap for the provided material name (if any).
+  
+	const char* getRemap(const std::string& name) const {
+		Remaps::const_iterator i = m_remaps.find(name.c_str());
+		if(i != m_remaps.end()) {
+			return (*i).second.c_str();
+		}
+		else { // none found
+			return "";
+		}
   }
   void forEachRemap(const SkinRemapCallback& callback) const
   {
@@ -291,7 +294,7 @@ public:
     m_observers.unrealise();
     m_skin = 0;
   }
-  const char* getRemap(const char* name) const
+  const char* getRemap(const std::string& name) const
   {
     ASSERT_MESSAGE(realised(), "Doom3ModelSkinCacheElement::getRemap: not realised");
     return m_skin->getRemap(name);

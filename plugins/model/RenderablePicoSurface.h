@@ -6,6 +6,10 @@
 #include "render.h"
 #include "math/aabb.h"
 
+/* FORWARD DECLS */
+
+class ModelSkin; // modelskin.h
+
 namespace model
 {
 
@@ -17,8 +21,10 @@ namespace model
 class RenderablePicoSurface
 : public OpenGLRenderable
 {
-	// Name of the material this surface is using
-	std::string _shaderName;
+	// Name of the material this surface is using, both originally and after a skin
+	// remap.
+	std::string _originalShaderName;
+	std::string _mappedShaderName;
 	
 	// Shader object containing the material shader for this surface
 	Shader* _shader;
@@ -49,7 +55,7 @@ public:
 	 * shader.
 	 */
 	~RenderablePicoSurface() {
-		GlobalShaderCache().release(_shaderName);
+		GlobalShaderCache().release(_mappedShaderName);
 	}
 	
 	/** Render function from OpenGLRenderable
@@ -79,6 +85,16 @@ public:
 	const AABB& getAABB() const {
 		return _localAABB;	
 	}
+	
+	/** Apply the provided skin to this surface. If the skin has a remap for
+	 * this surface's material, it will be applied, otherwise no action will
+	 * occur.
+	 * 
+	 * @param skin
+	 * ModelSkin object to apply to this surface.
+	 */
+	void applySkin(const ModelSkin& skin);
+	 
 };
 
 }
