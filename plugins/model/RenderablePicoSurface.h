@@ -79,6 +79,12 @@ public:
 	Shader* getShader() const {
 		return _shader;
 	}	 
+	
+	/** Get the active shader name for this surface, after any skin remaps.
+	 */
+	const std::string& getActiveMaterial() const {
+		return _mappedShaderName;
+	}
 
 	/** Get the containing AABB for this surface.
 	 */

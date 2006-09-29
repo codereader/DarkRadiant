@@ -64,5 +64,28 @@ void RenderablePicoModel::applySkin(const ModelSkin& skin) {
 		(*i)->applySkin(skin);
 	}
 }
+
+// Update the list of active materials
+
+void RenderablePicoModel::updateMaterialList() const {
+	_materialList.clear();
+	for (SurfaceList::const_iterator i = _surfVec.begin();
+		 i != _surfVec.end();
+		 ++i)
+	{
+		_materialList.push_back((*i)->getActiveMaterial());
+	}
+}
+
+// Return the list of active skins for this model
+
+const std::vector<std::string>& RenderablePicoModel::getActiveMaterials() const {
+	// If the material list is empty, populate it
+	if (_materialList.empty()) {
+		updateMaterialList();
+	}	
+	// Return the list
+	return _materialList;
+}
 	
 }

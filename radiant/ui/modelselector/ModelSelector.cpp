@@ -81,7 +81,7 @@ ModelSelector::ModelSelector()
 	gint w = gdk_screen_get_width(scr);
 	gint h = gdk_screen_get_height(scr);
 	
-	gtk_window_set_default_size(GTK_WINDOW(_widget), w / 2, gint(h / 1.5));
+	gtk_window_set_default_size(GTK_WINDOW(_widget), gint(w / 1.5), gint(h / 1.5));
 
 	// Signals
 	
@@ -534,12 +534,6 @@ void ModelSelector::updateSelected() {
 
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter,
-					   0, "Material surfaces",
-					   1, boost::lexical_cast<std::string>(_model->getSurfaceCount()).c_str(),
-					   -1);
-
-	gtk_list_store_append(_infoStore, &iter);
-	gtk_list_store_set(_infoStore, &iter,
 					   0, "Total vertices",
 					   1, boost::lexical_cast<std::string>(_model->getVertexCount()).c_str(),
 					   -1);
@@ -549,6 +543,33 @@ void ModelSelector::updateSelected() {
 					   0, "Total polys",
 					   1, boost::lexical_cast<std::string>(_model->getPolyCount()).c_str(),
 					   -1);
+
+	gtk_list_store_append(_infoStore, &iter);
+	gtk_list_store_set(_infoStore, &iter,
+					   0, "Material surfaces",
+					   1, boost::lexical_cast<std::string>(_model->getSurfaceCount()).c_str(),
+					   -1);
+
+	// Add the list of active materials
+	const std::vector<std::string>& matList(_model->getActiveMaterials());
+	
+	if (!matList.empty()) {
+		std::vector<std::string>::const_iterator i = matList.begin();
+		// First line		
+		gtk_list_store_append(_infoStore, &iter);
+		gtk_list_store_set(_infoStore, &iter,
+						   0, "Active materials",
+						   1, i->c_str(),
+						   -1);
+		// Subsequent lines (if any)
+		while (++i != matList.end()) {
+			gtk_list_store_append(_infoStore, &iter);
+			gtk_list_store_set(_infoStore, &iter,
+							   0, "",
+							   1, i->c_str(),
+							   -1);
+		}
+	}
 
 }
 

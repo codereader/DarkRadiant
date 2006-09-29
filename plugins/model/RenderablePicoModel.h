@@ -28,6 +28,15 @@ class RenderablePicoModel
 	
 	// Local AABB for this model
 	AABB _localAABB;
+
+	// Vector of materials used by this model (one for each surface)
+	mutable std::vector<std::string> _materialList;
+	
+private:
+
+	// Update the list of materials by querying each surface for its current
+	// material.
+	void updateMaterialList() const;
 	
 public:
 
@@ -87,10 +96,16 @@ public:
 		return _localAABB;
 	}
 	
+	/** Return the list of active materials for this model.
+	 */
+
+	const std::vector<std::string>& getActiveMaterials() const;
+	
 	/** Apply the given skin to this model.
 	 */
 	 
 	void applySkin(const ModelSkin& skin);
+	
 };
 
 }

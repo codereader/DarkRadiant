@@ -77,6 +77,11 @@ namespace model {
 		 */
 		virtual const AABB& getAABB() const = 0;
 		
+		/** Return a vector of strings listing the active materials used in this
+		 * model, after any skin remaps. The list is owned by the model instance.
+		 */
+		virtual const std::vector<std::string>& getActiveMaterials() const = 0;
+		
 	};
 	
 	// Smart pointer typedef
