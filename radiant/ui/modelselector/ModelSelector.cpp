@@ -437,11 +437,8 @@ void ModelSelector::initialisePreview() {
 		// Set up the lights
 		glEnable(GL_LIGHTING);
 
-		GLfloat ambient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient);
-
 		glEnable(GL_LIGHT0);
-		GLfloat l0Amb[] = { 0.5, 0.5, 0.5, 1.0 };
+		GLfloat l0Amb[] = { 0.3, 0.3, 0.3, 1.0 };
 		GLfloat l0Dif[] = { 1.0, 1.0, 1.0, 1.0 };
 		GLfloat l0Pos[] = { 1.0, 1.0, 1.0, 0.0 };
 		glLightfv(GL_LIGHT0, GL_AMBIENT, l0Amb);
@@ -506,11 +503,17 @@ void ModelSelector::updateSelected() {
 		_model->applySkin(mSkin);
 	}
 	
-	// Calculate camera distance so model is appropriately zoomed
-	_camDist = -(_model->getAABB().getRadius() * 2.0); 
+	// Reset the rotation and distance if the model has changed, 
+	// but not for a skin change
+	static std::string _lastModelName;
+	if (mName != _lastModelName) {
+		// No rotation
+		_rotation = Matrix4::getIdentity();
+		// Calculate camera distance so model is appropriately zoomed
+		_camDist = -(_model->getAABB().getRadius() * 2.0); 
 
-	// Reset the rotation
-	_rotation = Matrix4::getIdentity();
+		_lastModelName = mName;
+	}
 
 	// Draw the model
 	gtk_widget_queue_draw(_widget);
