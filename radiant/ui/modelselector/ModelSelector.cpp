@@ -1,15 +1,10 @@
 #include "ModelSelector.h"
 
-#include "referencecache.h"
 #include "mainframe.h"
 #include "gtkutil/image.h"
 #include "gtkutil/glwidget.h"
 #include "generic/vector.h"
 #include "ifilesystem.h"
-#include "irender.h"
-#include "modelskin.h"
-#include "os/path.h"
-#include "math/aabb.h"
 
 #include <cstdlib>
 #include <cmath>
@@ -41,8 +36,6 @@ namespace {
 	const char* SKIN_ICON = "skin16.png";
 	const char* FOLDER_ICON = "folder16.png";
 	
-	const GLfloat PREVIEW_FOV = 60;
-
 	// Treestore enum
 	enum {
 		NAME_COLUMN,		// e.g. "chair1.lwo"
@@ -65,9 +58,7 @@ ModelSelector::ModelSelector()
   								GDK_TYPE_PIXBUF)),
   _infoStore(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING)),
   _lastModel(""),
-  _lastSkin(""),
-  _camDist(-5.0f),
-  _rotation(Matrix4::getIdentity())
+  _lastSkin("")
 {
 	// Window properties
 	
@@ -84,11 +75,10 @@ ModelSelector::ModelSelector()
 	
 	gtk_window_set_default_size(GTK_WINDOW(_widget), gint(w * 0.75), gint(h * 0.8));
 
-	// Create the actual GLWidget here, so we can use the screen size as a guide
+	// Create the model preview widget
 	
 	gint glSize = gint(h * 0.4);
-	_glWidget = glwidget_new(TRUE);
-	gtk_widget_set_size_request(_glWidget, glSize, glSize);
+	_modelPreview.setSize(glSize);
 
 	// Signals
 	
@@ -106,11 +96,14 @@ ModelSelector::ModelSelector()
 // Show the dialog and enter recursive main loop
 
 ModelAndSkin ModelSelector::showAndBlock() {
+
+	// Show the dialog
 	gtk_widget_show_all(_widget);
-	initialisePreview(); // set up the preview
+	_modelPreview.initialisePreview(); // set up the preview
 	gtk_main(); // recursive main loop. This will block until the dialog is closed in some way.
 
-	_model = model::IModelPtr(); // reset _model to null to explicitly release resources
+	// Reset the preview model to release resources
+	_modelPreview.setModel("");
 
 	// Construct the model/skin combo and return it
 	return ModelAndSkin(_lastModel, _lastSkin);
@@ -358,9 +351,9 @@ GtkWidget* ModelSelector::createPreviewAndInfoPanel() {
 	
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
 	
-	// GL Widget
+	// Pack in the GL widget, which is already created
 	
-	gtk_box_pack_start(GTK_BOX(hbx), createGLWidget(), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), _modelPreview, FALSE, FALSE, 0);
 	
 	// Info table. Has key and value columns.
 	
@@ -403,69 +396,6 @@ GtkWidget* ModelSelector::createPreviewAndInfoPanel() {
 	
 }
 
-// Create the preview GL widget
-
-GtkWidget* ModelSelector::createGLWidget() {
-
-	// Connect up the signals
-	gtk_widget_set_events(_glWidget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
-	g_signal_connect(G_OBJECT(_glWidget), "expose-event", G_CALLBACK(callbackGLDraw), this);
-	g_signal_connect(G_OBJECT(_glWidget), "motion-notify-event", G_CALLBACK(callbackGLMotion), this);
-	g_signal_connect(G_OBJECT(_glWidget), "scroll-event", G_CALLBACK(callbackGLScroll), this);
-	
-	// Pack into a frame and return
-	GtkWidget* glFrame = gtk_frame_new(NULL);
-	gtk_container_add(GTK_CONTAINER(glFrame), _glWidget);
-	return glFrame;
-}
-
-// Initialise the preview GL stuff
-
-void ModelSelector::initialisePreview() {
-
-	if (glwidget_make_current(_glWidget) != FALSE) {
-
-		// Depth buffer and polygon mode
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LEQUAL);
-
-		// Clear the window
-		glClearColor(0.0, 0.0, 0.0, 0);
-		glClearDepth(100.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
-		// Set up the camera
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluPerspective(PREVIEW_FOV, 1, 0.1, 10000);
-		
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-				
-		// Set up the lights
-		glEnable(GL_LIGHTING);
-
-		glEnable(GL_LIGHT0);
-		GLfloat l0Amb[] = { 0.3, 0.3, 0.3, 1.0 };
-		GLfloat l0Dif[] = { 1.0, 1.0, 1.0, 1.0 };
-		GLfloat l0Pos[] = { 1.0, 1.0, 1.0, 0.0 };
-		glLightfv(GL_LIGHT0, GL_AMBIENT, l0Amb);
-		glLightfv(GL_LIGHT0, GL_DIFFUSE, l0Dif);
-		glLightfv(GL_LIGHT0, GL_POSITION, l0Pos);
-		
-		glEnable(GL_LIGHT1);
-		GLfloat l1Dif[] = { 1.0, 1.0, 1.0, 1.0 };
-		GLfloat l1Pos[] = { 0.0, 0.0, 1.0, 0.0 };
-		glLightfv(GL_LIGHT1, GL_DIFFUSE, l1Dif);
-		glLightfv(GL_LIGHT1, GL_POSITION, l1Pos);
-	}		
-
-	// Force a model reload, since the model is destroyed every time the dialog
-	// is hidden but the other dialog elements are not.
-	updateSelected();
-	
-}
-
 // Get the value from the selected column
 
 std::string ModelSelector::getSelectedValue(gint colNum) {
@@ -505,31 +435,11 @@ void ModelSelector::updateSelected() {
 	
 	// Get the skin if set
 	std::string skinName = getSelectedValue(SKIN_COLUMN);
-	ModelSkin& mSkin = GlobalModelSkinCache().capture(skinName);
 
-	// Update the previewed model
-	
-	ModelLoader* loader = ModelLoader_forType(os::getExtension(mName).c_str());
-	if (loader != NULL) {
-		_model = loader->loadModelFromPath(mName);
-		_model->applySkin(mSkin);
-	}
-	
-	// Reset the rotation and distance if the model has changed, 
-	// but not for a skin change
-	static std::string _lastModelName;
-	if (mName != _lastModelName) {
-		// No rotation
-		_rotation = Matrix4::getIdentity();
-		// Calculate camera distance so model is appropriately zoomed
-		_camDist = -(_model->getAABB().getRadius() * 2.0); 
+	// Pass the model and skin to the preview widget
+	_modelPreview.setModel(mName);
+	_modelPreview.setSkin(skinName);
 
-		_lastModelName = mName;
-	}
-
-	// Draw the model
-	gtk_widget_queue_draw(_widget);
-	
 	// Update the text in the info table
 	
 	gtk_list_store_append(_infoStore, &iter);
@@ -547,23 +457,23 @@ void ModelSelector::updateSelected() {
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter,
 					   0, "Total vertices",
-					   1, boost::lexical_cast<std::string>(_model->getVertexCount()).c_str(),
+					   1, boost::lexical_cast<std::string>(_modelPreview.getModel()->getVertexCount()).c_str(),
 					   -1);
 
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter,
 					   0, "Total polys",
-					   1, boost::lexical_cast<std::string>(_model->getPolyCount()).c_str(),
+					   1, boost::lexical_cast<std::string>(_modelPreview.getModel()->getPolyCount()).c_str(),
 					   -1);
 
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter,
 					   0, "Material surfaces",
-					   1, boost::lexical_cast<std::string>(_model->getSurfaceCount()).c_str(),
+					   1, boost::lexical_cast<std::string>(_modelPreview.getModel()->getSurfaceCount()).c_str(),
 					   -1);
 
 	// Add the list of active materials
-	const std::vector<std::string>& matList(_model->getActiveMaterials());
+	const std::vector<std::string>& matList(_modelPreview.getModel()->getActiveMaterials());
 	
 	if (!matList.empty()) {
 		std::vector<std::string>::const_iterator i = matList.begin();
@@ -611,84 +521,6 @@ void ModelSelector::callbackCancel(GtkWidget* widget, ModelSelector* self) {
 	self->_lastSkin = "";
 	gtk_main_quit();
 	gtk_widget_hide(self->_widget);
-}
-
-void ModelSelector::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelSelector* self) {
-	if (glwidget_make_current(widget) != FALSE) {
-
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// Get the current model if it exists, and if so get its AABB and proceed
-		// with rendering, otherwise exit.
-		model::IModel* model = self->_model.get();
-		AABB aabb;
-		if (model == NULL)
-			goto swapAndReturn;
-			
-		aabb = model->getAABB();
-
-		// Premultiply with the translations
-		glLoadIdentity();
-		glTranslatef(0, 0, self->_camDist); // camera translation
-		glMultMatrixf(self->_rotation); // post multiply with rotations
-		glTranslatef(-aabb.origin.x(), -aabb.origin.y(), -aabb.origin.z()); // model translation
-
-		// Render the actual model.
-		model->render(RENDER_DEFAULT);
-
-swapAndReturn:
-		
-		// Swap buffers to display the result in GTK
-		glwidget_swap_buffers(widget);
-	}	
-}
-
-void ModelSelector::callbackGLMotion(GtkWidget* widget, GdkEventMotion* ev, ModelSelector* self) {
-	if (ev->state & GDK_BUTTON1_MASK) { // dragging with mouse button
-		static gdouble _lastX = ev->x;
-		static gdouble _lastY = ev->y;
-
-		// Calculate the mouse delta as a vector in the XY plane, and store the
-		// current position for the next event.
-		Vector3 deltaPos(ev->x - _lastX,
-						 _lastY - ev->y,
-						 0);
-		_lastX = ev->x;
-		_lastY = ev->y;
-		
-		// Calculate the axis of rotation. This is the mouse vector crossed with the Z axis,
-		// to give a rotation axis in the XY plane at right-angles to the mouse delta.
-		static Vector3 _zAxis(0, 0, 1);
-		Vector3 axisRot = deltaPos.crossProduct(_zAxis);
-		
-		// Grab the GL widget, and update the modelview matrix with the additional
-		// rotation (TODO: may not be the best way to do this).
-		if (glwidget_make_current(widget) != FALSE) {
-
-			// Premultiply the current modelview matrix with the rotation,
-			// in order to achieve rotations in eye space rather than object
-			// space. At this stage we are only calculating and storing the
-			// matrix for the GLDraw callback to use.
-			glLoadIdentity();
-			glRotatef(-2, axisRot.x(), axisRot.y(), axisRot.z());
-			glMultMatrixf(self->_rotation);
-
-			// Save the new GL matrix for GL draw
-			glGetFloatv(GL_MODELVIEW_MATRIX, self->_rotation);
-
-			gtk_widget_queue_draw(widget); // trigger the GLDraw method to draw the actual model
-		}
-		
-	}
-}
-
-void ModelSelector::callbackGLScroll(GtkWidget* widget, GdkEventScroll* ev, ModelSelector* self) {
-	float inc = self->_model->getAABB().getRadius() * 0.1; // Scroll increment is a fraction of the AABB radius
-	if (ev->direction == GDK_SCROLL_UP)
-		self->_camDist += inc;
-	else if (ev->direction == GDK_SCROLL_DOWN)
-		self->_camDist -= inc;
-	gtk_widget_queue_draw(widget);
 }
 
 

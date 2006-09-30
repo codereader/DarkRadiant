@@ -1,6 +1,8 @@
 #ifndef MODELSELECTOR_H_
 #define MODELSELECTOR_H_
 
+#include "ui/common/ModelPreview.h"
+
 #include <gtk/gtk.h>
 #include <GL/glew.h>
 
@@ -38,9 +40,9 @@ private:
 
 	// Main dialog widget
 	GtkWidget* _widget;
-	
-	// GL preview widget
-	GtkWidget* _glWidget;
+
+	// Model preview widget
+	ModelPreview _modelPreview;
 	
 	// Tree store containing model names
 	GtkTreeStore* _treeStore;
@@ -56,15 +58,6 @@ private:
 	std::string _lastModel;
 	std::string _lastSkin;
 	
-	// Current distance between camera and preview
-	GLfloat _camDist;
-	
-	// Current rotation matrix
-	Matrix4 _rotation;
-	
-	// Current model to display
-	model::IModelPtr _model;
-	
 private:
 	
 	// Private constructor, creates GTK widgets
@@ -77,7 +70,6 @@ private:
 	GtkWidget* createTreeView();
 	GtkWidget* createButtons();
 	GtkWidget* createPreviewAndInfoPanel();
-	GtkWidget* createGLWidget();
 	
 	// Initialise the GL widget, to avoid doing this every frame
 	void initialisePreview();
@@ -95,9 +87,6 @@ private:
 	static void callbackSelChanged(GtkWidget*, ModelSelector*);
 	static void callbackOK(GtkWidget*, ModelSelector*);
 	static void callbackCancel(GtkWidget*, ModelSelector*);
-	static void callbackGLDraw(GtkWidget*, GdkEventExpose*, ModelSelector*);
-	static void callbackGLMotion(GtkWidget*, GdkEventMotion*, ModelSelector*);
-	static void callbackGLScroll(GtkWidget*, GdkEventScroll*, ModelSelector*);
 	
 public:
 

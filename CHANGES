@@ -1,6 +1,11 @@
+** RELEASE 0.6.0
+
 29/09/2006
 OrbWeaver
 - Added Model Selector dialog with preview
+- func_static entities created from brushes have "origin" key set correctly
+- Fixed segfault in picomodel ASE loading code when a subset of submeshes had
+  vertex colours.
 
 03/09/2006
 Crispy

@@ -298,7 +298,8 @@ radiant_src = [
 'ui/einspector/AllPropertiesDialog.cpp',
 'ui/ortho/OrthoContextMenu.cpp',
 'ui/ortho/EntityClassChooser.cpp',
-'ui/modelselector/ModelSelector.cpp'
+'ui/modelselector/ModelSelector.cpp',
+'ui/common/ModelPreview.cpp'
 ]
 
 for i in range(len(radiant_src)):
