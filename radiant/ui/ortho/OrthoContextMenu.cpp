@@ -90,12 +90,13 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
 		|| map::countSelectedBrushes() == 1) {
 	
 		// Display the model selector and block waiting for a selection (may be empty)
-		std::string model = ui::ModelSelector::chooseModel();
+		ModelAndSkin ms = ui::ModelSelector::chooseModel();
 		
 		// If a model was selected, create the entity and set its model key
-		if (!model.empty()) {
+		if (!ms.model.empty()) {
 			NodeSmartReference node = Entity_createFromSelection(MODEL_CLASSNAME, self->_lastPoint);
-			Node_getEntity(node)->setKeyValue("model", model);
+			Node_getEntity(node)->setKeyValue("model", ms.model);
+			Node_getEntity(node)->setKeyValue("skin", ms.skin);
 		}
 		
 	}

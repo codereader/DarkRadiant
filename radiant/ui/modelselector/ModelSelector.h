@@ -13,6 +13,20 @@
 namespace ui
 {
 
+/** Data structure containing both a model and a skin name, to be returned from
+ * the Model Selector.
+ */
+ 
+struct ModelAndSkin {
+	// Model and skin strings
+	std::string model;
+	std::string skin;
+
+	// Constructor
+	ModelAndSkin(const std::string& m, const std::string& s)
+	: model(m), skin(s) {}
+};
+
 /** Singleton class encapsulating the Model Selector dialog and methods required to display the
  * dialog and retrieve the selected model.
  */
@@ -40,6 +54,7 @@ private:
 	// Last selected model, which will be returned by showAndBlock() once the
 	// recursive main loop exits.
 	std::string _lastModel;
+	std::string _lastSkin;
 	
 	// Current distance between camera and preview
 	GLfloat _camDist;
@@ -56,7 +71,7 @@ private:
 	ModelSelector();
 
 	// Show the dialog, called internally by chooseModel(). Return the selected model path
-	std::string showAndBlock();
+	ModelAndSkin showAndBlock();
 	
 	// Helper functions to create GUI components
 	GtkWidget* createTreeView();
@@ -92,7 +107,7 @@ public:
 	 * function until destroyed.
 	 */
 	 
-	static std::string chooseModel();
+	static ModelAndSkin chooseModel();
 	
 };
 

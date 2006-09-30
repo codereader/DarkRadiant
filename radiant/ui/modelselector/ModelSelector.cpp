@@ -65,6 +65,7 @@ ModelSelector::ModelSelector()
   								GDK_TYPE_PIXBUF)),
   _infoStore(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING)),
   _lastModel(""),
+  _lastSkin(""),
   _camDist(-5.0f),
   _rotation(Matrix4::getIdentity())
 {
@@ -81,7 +82,7 @@ ModelSelector::ModelSelector()
 	gint w = gdk_screen_get_width(scr);
 	gint h = gdk_screen_get_height(scr);
 	
-	gtk_window_set_default_size(GTK_WINDOW(_widget), gint(w * 0.8), gint(h * 0.8));
+	gtk_window_set_default_size(GTK_WINDOW(_widget), gint(w * 0.75), gint(h * 0.8));
 
 	// Create the actual GLWidget here, so we can use the screen size as a guide
 	
@@ -104,18 +105,21 @@ ModelSelector::ModelSelector()
 
 // Show the dialog and enter recursive main loop
 
-std::string ModelSelector::showAndBlock() {
+ModelAndSkin ModelSelector::showAndBlock() {
 	gtk_widget_show_all(_widget);
 	initialisePreview(); // set up the preview
 	gtk_main(); // recursive main loop. This will block until the dialog is closed in some way.
+
 	_model = model::IModelPtr(); // reset _model to null to explicitly release resources
-	return _lastModel;
+
+	// Construct the model/skin combo and return it
+	return ModelAndSkin(_lastModel, _lastSkin);
 }
 
 // Static function to display the instance, and return the selected
 // model to the calling function
 
-std::string ModelSelector::chooseModel() {
+ModelAndSkin ModelSelector::chooseModel() {
 	static ModelSelector _selector;
 	return _selector.showAndBlock();
 }
@@ -585,6 +589,7 @@ void ModelSelector::updateSelected() {
 
 void ModelSelector::callbackHide(GtkWidget* widget, GdkEvent* ev, ModelSelector* self) {
 	self->_lastModel = "";
+	self->_lastSkin = "";
 	gtk_main_quit(); // exit recursive main loop
 	gtk_widget_hide(self->_widget);
 }
@@ -596,12 +601,14 @@ void ModelSelector::callbackSelChanged(GtkWidget* widget, ModelSelector* self) {
 void ModelSelector::callbackOK(GtkWidget* widget, ModelSelector* self) {
 	// Remember the selected model then exit from the recursive main loop
 	self->_lastModel = self->getSelectedValue(FULLNAME_COLUMN);
+	self->_lastSkin = self->getSelectedValue(SKIN_COLUMN);
 	gtk_main_quit();
 	gtk_widget_hide(self->_widget);
 }
 
 void ModelSelector::callbackCancel(GtkWidget* widget, ModelSelector* self) {
 	self->_lastModel = "";
+	self->_lastSkin = "";
 	gtk_main_quit();
 	gtk_widget_hide(self->_widget);
 }
