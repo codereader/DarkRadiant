@@ -100,7 +100,6 @@ public:
 
                 case TOKEN_STARTED:
 
-
                     // Here a delimiter indicates a successful token match
                     if (isDelim(*next) || isKeptDelim(*next)) {
                         return true;
@@ -202,7 +201,8 @@ public:
                         continue;
                     }
                     else {
-                        continue; // do SEARCHING
+                    	_state = COMMENT_DELIM; // no end of comment, revert back to previous state
+                        continue; 
                     }
 
             } // end of state switch
