@@ -4,11 +4,9 @@
 #include "imodel.h"
 #include "math/matrix.h"
 
+#include <gtk/gtk.h>
 #include <GL/glew.h>
-#include <gtk/gtkwidget.h>
 #include <string>
-
-/* FORWARD DECLS */
 
 namespace ui
 {
@@ -27,6 +25,9 @@ class ModelPreview
 	// GL widget
 	GtkWidget* _glWidget;
 	
+	// Toolbar buttons
+	GtkToolItem* _drawBBox;
+	
 	// Current model to display
 	model::IModelPtr _model;
 
@@ -43,6 +44,8 @@ private:
 	static void callbackGLDraw(GtkWidget*, GdkEventExpose*, ModelPreview*);
 	static void callbackGLMotion(GtkWidget*, GdkEventMotion*, ModelPreview*);
 	static void callbackGLScroll(GtkWidget*, GdkEventScroll*, ModelPreview*);
+	
+	static void callbackToggleBBox(GtkToggleToolButton*, ModelPreview*);
 	
 public:
 	

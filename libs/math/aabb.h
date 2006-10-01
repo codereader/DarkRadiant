@@ -22,13 +22,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_MATH_AABB_H)
 #define INCLUDED_MATH_AABB_H
 
-/// \file
-/// \brief Axis-aligned bounding-box data types and related operations.
-
 #include "math/matrix.h"
 #include "math/plane.h"
+#include "irender.h"
+
+/** An Axis Aligned Bounding Box is a simple cuboid which encloses a given set of points,
+ * such as the vertices of a model. It is defined by an origin, located at the centre of
+ * the AABB, and symmetrical extents in 3 dimension which determine its size. An AABB is
+ * also capable of rendering itself as a wireframe cube.
+ */
 
 class AABB
+: public OpenGLRenderable
 {
 public:
   	/// The origin of the AABB, which is always located at the centre.
@@ -71,6 +76,11 @@ public:
 	 * Vector3 representing the point to include.
 	 */
 	void includePoint(const Vector3& point);	 
+
+	/** Render the AABB using OpenGL. The box is rendered as a simpel wireframe
+	 * cuboid.
+	 */
+	void render(RenderStateFlags flags) const;
 
 };
 
@@ -129,16 +139,11 @@ public:
   }
 };
 
-inline void aabb_extend_by_point(AABB& aabb, const Vector3& point)
-{
-	aabb.includePoint(point);
-}
-
 inline void aabb_extend_by_point_safe(AABB& aabb, const Vector3& point)
 {
   if(aabb_valid(aabb))
   {
-    aabb_extend_by_point(aabb, point);
+    aabb.includePoint(point);
   }
   else
   {

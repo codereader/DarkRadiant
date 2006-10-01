@@ -99,7 +99,12 @@ ModelAndSkin ModelSelector::showAndBlock() {
 
 	// Show the dialog
 	gtk_widget_show_all(_widget);
-	_modelPreview.initialisePreview(); // set up the preview
+
+	// Update the model preview widget, forcing an update of the selected model
+	// since the preview model is deleted on dialog hide
+	_modelPreview.initialisePreview();
+	updateSelected();
+
 	gtk_main(); // recursive main loop. This will block until the dialog is closed in some way.
 
 	// Reset the preview model to release resources
@@ -401,7 +406,6 @@ GtkWidget* ModelSelector::createPreviewAndInfoPanel() {
 std::string ModelSelector::getSelectedValue(gint colNum) {
 
 	// Get the selection
-
 	GtkTreeIter iter;
 	GtkTreeModel* model;
 

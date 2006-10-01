@@ -1,6 +1,7 @@
 #include "ModelPreview.h"
 
 #include "gtkutil/glwidget.h"
+#include "gtkutil/image.h"
 #include "os/path.h"
 #include "referencecache.h"
 #include "math/aabb.h"
@@ -24,8 +25,12 @@ namespace {
 ModelPreview::ModelPreview()
 : _widget(gtk_frame_new(NULL))
 {
+	// Main vbox - above is the GL widget, below is the toolbar
+	GtkWidget* vbx = gtk_vbox_new(FALSE, 0);
+	
 	// Create the GL widget
 	_glWidget = glwidget_new(TRUE);
+	gtk_box_pack_start(GTK_BOX(vbx), _glWidget, TRUE, TRUE, 0);
 	
 	// Connect up the signals
 	gtk_widget_set_events(_glWidget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
@@ -33,8 +38,22 @@ ModelPreview::ModelPreview()
 	g_signal_connect(G_OBJECT(_glWidget), "motion-notify-event", G_CALLBACK(callbackGLMotion), this);
 	g_signal_connect(G_OBJECT(_glWidget), "scroll-event", G_CALLBACK(callbackGLScroll), this);
 	
+	// Create the toolbar
+	GtkWidget* toolbar = gtk_toolbar_new();
+	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
+	gtk_box_pack_end(GTK_BOX(vbx), toolbar, FALSE, FALSE, 0);
+		
+	// Draw bounding box toolbar button
+	_drawBBox = gtk_toggle_tool_button_new();
+	g_signal_connect(G_OBJECT(_drawBBox), "toggled", G_CALLBACK(callbackToggleBBox), this);
+    gtk_tool_button_set_icon_widget(
+    	GTK_TOOL_BUTTON(_drawBBox), 
+		gtk_image_new_from_pixbuf(
+			gtkutil::getLocalPixbuf("iconDrawBBox.png")));
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), _drawBBox, 0);
+		
 	// Pack into a frame and return
-	gtk_container_add(GTK_CONTAINER(_widget), _glWidget);
+	gtk_container_add(GTK_CONTAINER(_widget), vbx);
 }
 
 // Set the size request for the widget
@@ -48,10 +67,6 @@ void ModelPreview::setSize(int size) {
 void ModelPreview::initialisePreview() {
 
 	if (glwidget_make_current(_glWidget) != FALSE) {
-
-		// Depth buffer and polygon mode
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LEQUAL);
 
 		// Clear the window
 		glClearColor(0.0, 0.0, 0.0, 0);
@@ -138,7 +153,10 @@ void ModelPreview::setSkin(const std::string& skin) {
 void ModelPreview::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelPreview* self) {
 	if (glwidget_make_current(widget) != FALSE) {
 
+		// Set up the render
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
 
 		// Get the current model if it exists, and if so get its AABB and proceed
 		// with rendering, otherwise exit.
@@ -153,10 +171,21 @@ void ModelPreview::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelPr
 		glLoadIdentity();
 		glTranslatef(0, 0, self->_camDist); // camera translation
 		glMultMatrixf(self->_rotation); // post multiply with rotations
-		glTranslatef(-aabb.origin.x(), -aabb.origin.y(), -aabb.origin.z()); // model translation
+
+		// Render the bounding box if the toggle is active
+		if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(self->_drawBBox)) == TRUE) {
+			// Render as fullbright wireframe
+			glDisable(GL_LIGHTING);
+			glDisable(GL_TEXTURE_2D);
+			glColor3f(0, 1, 1);
+			// Submit the AABB geometry
+			aabb.render(RENDER_DEFAULT);
+		}
 
 		// Render the actual model.
-		model->render(RENDER_DEFAULT);
+		glEnable(GL_LIGHTING);
+		glTranslatef(-aabb.origin.x(), -aabb.origin.y(), -aabb.origin.z()); // model translation
+		model->render(RENDER_TEXTURE);
 
 swapAndReturn:
 		
@@ -213,6 +242,9 @@ void ModelPreview::callbackGLScroll(GtkWidget* widget, GdkEventScroll* ev, Model
 	gtk_widget_queue_draw(widget);
 }
 
+void ModelPreview::callbackToggleBBox(GtkToggleToolButton* b, ModelPreview* self) {
+	gtk_widget_queue_draw(self->_glWidget);
+}
 
 
 }

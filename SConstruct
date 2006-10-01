@@ -175,7 +175,7 @@ else:
 # XWINDOWS macro: platform supports X-Windows API
 CCFLAGS = POSIXFLAGS + warningFlags
 CXXFLAGS = '-pipe ' + POSIXFLAGS + warningFlags + warningFlagsCXX
-CPPPATH = ['radiant']
+CPPPATH = ['radiant', 'include', 'libs']
 if (BUILD == 'debug'):
 	CXXFLAGS += '-g -D_DEBUG '
 	CCFLAGS += '-g -D_DEBUG '
@@ -213,8 +213,6 @@ if ( getOS() == 'posix' ):
   
   #CXXFLAGS += '-fno-rtti '
   LINKFLAGS += '-Wl,-fini,fini_stub -L. -static-libgcc '
-
-CPPPATH.append('libs')
 
 # extend the standard Environment a bit
 
