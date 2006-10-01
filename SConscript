@@ -26,8 +26,10 @@ cmdlib_lib = g_env.StaticLibrary(target='libs/cmdlib', source='libs/cmdlib/cmdli
 mathlib_src = 'mathlib.c bbox.c line.c m4x4.c ray.c'
 mathlib_lib = g_env.StaticLibrary(target='libs/mathlib', source=build_list('libs/mathlib', mathlib_src))
 
+mathEnv = g_env.Copy()
 mathSrc = 'aabb.cpp'
-math = g_env.StaticLibrary(target='libs/math', source=build_list('libs/math', mathSrc))
+mathEnv.useOpenGL()
+math = mathEnv.StaticLibrary(target='libs/math', source=build_list('libs/math', mathSrc))
 
 md5lib_lib = g_env.StaticLibrary(target='libs/md5lib', source='libs/md5lib/md5lib.c')
 
