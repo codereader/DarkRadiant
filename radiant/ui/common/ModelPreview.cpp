@@ -1,4 +1,5 @@
 #include "ModelPreview.h"
+#include "RenderableAABB.h"
 
 #include "gtkutil/glwidget.h"
 #include "gtkutil/image.h"
@@ -179,7 +180,7 @@ void ModelPreview::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelPr
 			glDisable(GL_TEXTURE_2D);
 			glColor3f(0, 1, 1);
 			// Submit the AABB geometry
-			aabb.render(RENDER_DEFAULT);
+			RenderableAABB(aabb).render(RENDER_DEFAULT);
 		}
 
 		// Render the actual model.

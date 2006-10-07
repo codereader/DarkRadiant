@@ -21,8 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "aabb.h"
 
-#include <GL/glew.h>
-
 #include <algorithm>
 #include <iostream>
 
@@ -38,48 +36,4 @@ void AABB::includePoint(const Vector3& point) {
 			extents[i] += halfDif;
 		}
 	}
-}
-
-// OpenGL render function
-
-void AABB::render(RenderStateFlags flags) const {
-
-	// Wireframe cuboid
-	glBegin(GL_LINES);
-		glVertex3f(extents.x(), extents.y(), extents.z());
-		glVertex3f(extents.x(), extents.y(), -extents.z());
-
-		glVertex3f(extents.x(), extents.y(), extents.z());
-		glVertex3f(-extents.x(), extents.y(), extents.z());
-
-		glVertex3f(extents.x(), extents.y(), -extents.z());
-		glVertex3f(-extents.x(), extents.y(), -extents.z());
-
-		glVertex3f(extents.x(), extents.y(), extents.z());
-		glVertex3f(extents.x(), -extents.y(), extents.z());
-
-		glVertex3f(-extents.x(), extents.y(), extents.z());
-		glVertex3f(-extents.x(), -extents.y(), extents.z());
-
-		glVertex3f(-extents.x(), extents.y(), -extents.z());
-		glVertex3f(-extents.x(), -extents.y(), -extents.z());
-
-		glVertex3f(extents.x(), extents.y(), -extents.z());
-		glVertex3f(extents.x(), -extents.y(), -extents.z());
-
-		glVertex3f(extents.x(), -extents.y(), extents.z());
-		glVertex3f(-extents.x(), -extents.y(), extents.z());
-
-		glVertex3f(extents.x(), -extents.y(), extents.z());
-		glVertex3f(extents.x(), -extents.y(), -extents.z());
-
-		glVertex3f(-extents.x(), extents.y(), extents.z());
-		glVertex3f(-extents.x(), extents.y(), -extents.z());
-
-		glVertex3f(-extents.x(), -extents.y(), extents.z());
-		glVertex3f(-extents.x(), -extents.y(), -extents.z());
-
-		glVertex3f(extents.x(), -extents.y(), -extents.z());
-		glVertex3f(-extents.x(), -extents.y(), -extents.z());
-	glEnd();
 }

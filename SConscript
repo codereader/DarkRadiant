@@ -28,7 +28,6 @@ mathlib_lib = g_env.StaticLibrary(target='libs/mathlib', source=build_list('libs
 
 mathEnv = g_env.Copy()
 mathSrc = 'aabb.cpp'
-mathEnv.useOpenGL()
 math = mathEnv.StaticLibrary(target='libs/math', source=build_list('libs/math', mathSrc))
 
 md5lib_lib = g_env.StaticLibrary(target='libs/md5lib', source='libs/md5lib/md5lib.c')
@@ -170,9 +169,7 @@ imagepng_env.Install(INSTALL + '/modules', imagepng_lib)
 
 model_env = module_env.Copy()
 model_lst = build_list('plugins/model', 'plugin.cpp model.cpp RenderablePicoModel.cpp RenderablePicoSurface.cpp')
-model_env.Append(LIBPATH = ['libs'])
 model_env.Append(LIBS = ['mathlib', 'picomodel', 'math'])
-model_env.useOpenGL()
 model_lib = model_env.SharedLibrary(target='model', source=model_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
 model_env.Depends(model_lib, mathlib_lib)
 model_env.Depends(model_lib, picomodel_lib)
@@ -181,7 +178,6 @@ model_env.Install(INSTALL + '/modules', model_lib)
 
 md3model_env = module_env.Copy()
 md3model_lst=build_list('plugins/md3model', 'plugin.cpp md5.cpp')
-md3model_env.useOpenGL()
 md3model_env.Append(LIBS = ['math'])
 md3model_lib = md3model_env.SharedLibrary(target='md3model', source=md3model_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
 md3model_env.Depends(md3model_lib, math)
@@ -189,7 +185,6 @@ md3model_env.Install(INSTALL + '/modules', md3model_lib)
 
 entity_env = module_env.Copy()
 entity_lst = build_list('plugins/entity', 'plugin.cpp entity.cpp eclassmodel.cpp generic.cpp group.cpp light.cpp miscmodel.cpp doom3group.cpp skincache.cpp angle.cpp angles.cpp colour.cpp filters.cpp model.cpp namedentity.cpp origin.cpp scale.cpp targetable.cpp rotation.cpp modelskinkey.cpp')
-entity_env.useOpenGL()
 entity_env.Append(LIBS = ['math'])
 entity_lib = entity_env.SharedLibrary(target='entity', source=entity_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
 entity_env.Depends(entity_lib, math)
@@ -301,7 +296,8 @@ radiant_src = [
 'ui/ortho/OrthoContextMenu.cpp',
 'ui/ortho/EntityClassChooser.cpp',
 'ui/modelselector/ModelSelector.cpp',
-'ui/common/ModelPreview.cpp'
+'ui/common/ModelPreview.cpp',
+'ui/common/RenderableAABB.cpp'
 ]
 
 for i in range(len(radiant_src)):
