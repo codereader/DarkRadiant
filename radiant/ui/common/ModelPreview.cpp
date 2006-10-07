@@ -1,7 +1,7 @@
 #include "ModelPreview.h"
 #include "RenderableAABB.h"
 
-#include "gtkutil/glwidget.h"
+#include "gtkutil/GLWidgetSentry.h"
 #include "gtkutil/image.h"
 #include "os/path.h"
 #include "referencecache.h"
@@ -67,38 +67,38 @@ void ModelPreview::setSize(int size) {
 
 void ModelPreview::initialisePreview() {
 
-	if (glwidget_make_current(_glWidget) != FALSE) {
+	// Grab the GL widget with sentry object
+	gtkutil::GLWidgetSentry sentry(_glWidget);
 
-		// Clear the window
-		glClearColor(0.0, 0.0, 0.0, 0);
-		glClearDepth(100.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
-		// Set up the camera
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluPerspective(PREVIEW_FOV, 1, 0.1, 10000);
-		
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-				
-		// Set up the lights
-		glEnable(GL_LIGHTING);
+	// Clear the window
+	glClearColor(0.0, 0.0, 0.0, 0);
+	glClearDepth(100.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	// Set up the camera
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(PREVIEW_FOV, 1, 0.1, 10000);
+	
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+			
+	// Set up the lights
+	glEnable(GL_LIGHTING);
 
-		glEnable(GL_LIGHT0);
-		GLfloat l0Amb[] = { 0.3, 0.3, 0.3, 1.0 };
-		GLfloat l0Dif[] = { 1.0, 1.0, 1.0, 1.0 };
-		GLfloat l0Pos[] = { 1.0, 1.0, 1.0, 0.0 };
-		glLightfv(GL_LIGHT0, GL_AMBIENT, l0Amb);
-		glLightfv(GL_LIGHT0, GL_DIFFUSE, l0Dif);
-		glLightfv(GL_LIGHT0, GL_POSITION, l0Pos);
-		
-		glEnable(GL_LIGHT1);
-		GLfloat l1Dif[] = { 1.0, 1.0, 1.0, 1.0 };
-		GLfloat l1Pos[] = { 0.0, 0.0, 1.0, 0.0 };
-		glLightfv(GL_LIGHT1, GL_DIFFUSE, l1Dif);
-		glLightfv(GL_LIGHT1, GL_POSITION, l1Pos);
-	}		
+	glEnable(GL_LIGHT0);
+	GLfloat l0Amb[] = { 0.3, 0.3, 0.3, 1.0 };
+	GLfloat l0Dif[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat l0Pos[] = { 1.0, 1.0, 1.0, 0.0 };
+	glLightfv(GL_LIGHT0, GL_AMBIENT, l0Amb);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, l0Dif);
+	glLightfv(GL_LIGHT0, GL_POSITION, l0Pos);
+	
+	glEnable(GL_LIGHT1);
+	GLfloat l1Dif[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat l1Pos[] = { 0.0, 0.0, 1.0, 0.0 };
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, l1Dif);
+	glLightfv(GL_LIGHT1, GL_POSITION, l1Pos);
 
 }
 
@@ -152,47 +152,43 @@ void ModelPreview::setSkin(const std::string& skin) {
 /* GTK CALLBACKS */
 
 void ModelPreview::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelPreview* self) {
-	if (glwidget_make_current(widget) != FALSE) {
 
-		// Set up the render
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LEQUAL);
+	// Create scoped sentry object to swap the GLWidget's buffers
+	gtkutil::GLWidgetSentry sentry(self->_glWidget);
 
-		// Get the current model if it exists, and if so get its AABB and proceed
-		// with rendering, otherwise exit.
-		model::IModel* model = self->_model.get();
-		AABB aabb;
-		if (model == NULL)
-			goto swapAndReturn;
-			
-		aabb = model->getAABB();
+	// Set up the render
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
 
-		// Premultiply with the translations
-		glLoadIdentity();
-		glTranslatef(0, 0, self->_camDist); // camera translation
-		glMultMatrixf(self->_rotation); // post multiply with rotations
-
-		// Render the bounding box if the toggle is active
-		if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(self->_drawBBox)) == TRUE) {
-			// Render as fullbright wireframe
-			glDisable(GL_LIGHTING);
-			glDisable(GL_TEXTURE_2D);
-			glColor3f(0, 1, 1);
-			// Submit the AABB geometry
-			RenderableAABB(aabb).render(RENDER_DEFAULT);
-		}
-
-		// Render the actual model.
-		glEnable(GL_LIGHTING);
-		glTranslatef(-aabb.origin.x(), -aabb.origin.y(), -aabb.origin.z()); // model translation
-		model->render(RENDER_TEXTURE);
-
-swapAndReturn:
+	// Get the current model if it exists, and if so get its AABB and proceed
+	// with rendering, otherwise exit.
+	model::IModel* model = self->_model.get();
+	if (model == NULL)
+		return;
 		
-		// Swap buffers to display the result in GTK
-		glwidget_swap_buffers(widget);
-	}	
+	AABB aabb(model->getAABB());
+
+	// Premultiply with the translations
+	glLoadIdentity();
+	glTranslatef(0, 0, self->_camDist); // camera translation
+	glMultMatrixf(self->_rotation); // post multiply with rotations
+
+	// Render the bounding box if the toggle is active
+	if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(self->_drawBBox)) == TRUE) {
+		// Render as fullbright wireframe
+		glDisable(GL_LIGHTING);
+		glDisable(GL_TEXTURE_2D);
+		glColor3f(0, 1, 1);
+		// Submit the AABB geometry
+		RenderableAABB(aabb).render(RENDER_DEFAULT);
+	}
+
+	// Render the actual model.
+	glEnable(GL_LIGHTING);
+	glTranslatef(-aabb.origin.x(), -aabb.origin.y(), -aabb.origin.z()); // model translation
+	model->render(RENDER_TEXTURE);
+
 }
 
 void ModelPreview::callbackGLMotion(GtkWidget* widget, GdkEventMotion* ev, ModelPreview* self) {
