@@ -2,6 +2,7 @@
 OrbWeaver
 - Merged upstream revisions 99 and 101
 - Merged upstream brushexport plugin (exports to OBJ)
+- Merged upstream revision 113 (select inside and select touching)
 
 ** RELEASE 0.6.0
 
