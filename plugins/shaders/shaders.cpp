@@ -36,6 +36,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "shaders.h"
 #include "MissingXMLNodeException.h"
+#include "parser/ParseException.h"
+#include "parser/DefTokeniser.h"
+
+#include "ShaderTemplate.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -99,7 +103,7 @@ void ActiveShaders_IteratorIncrement();
 Callback g_ActiveShadersChangedNotify;
 
 void FreeShaders();
-void LoadShaderFile (const char *filename);
+void loadShaderFile (const char *filename);
 qtexture_t *Texture_ForName (const char *filename);
 
 
@@ -240,555 +244,6 @@ Image* loadSpecial(void* environment, const char* name)
   return GlobalTexturesCache().loadImage(name);
 }
 
-class ShaderPoolContext
-{
-};
-typedef Static<StringPool, ShaderPoolContext> ShaderPool;
-typedef PooledString<ShaderPool> ShaderString;
-typedef ShaderString ShaderVariable;
-typedef ShaderString ShaderValue;
-typedef CopiedString TextureExpression;
-
-// clean a texture name to the qtexture_t name format we use internally
-// NOTE: case sensitivity: the engine is case sensitive. we store the shader name with case information and save with case
-// information as well. but we assume there won't be any case conflict and so when doing lookups based on shader name,
-// we compare as case insensitive. That is Radiant is case insensitive, but knows that the engine is case sensitive.
-//++timo FIXME: we need to put code somewhere to detect when two shaders that are case insensitive equal are present
-template<typename StringType>
-void parseTextureName(StringType& name, const char* token)
-{
-  StringOutputStream cleaned(256);
-  cleaned << PathCleaned(token);
-  name = CopiedString(StringRange(cleaned.c_str(), path_get_filename_base_end(cleaned.c_str()))).c_str(); // remove extension
-}
-
-bool Tokeniser_parseTextureName(Tokeniser& tokeniser, TextureExpression& name)
-{
-  const char* token = tokeniser.getToken();
-  if(token == 0)
-  {
-    Tokeniser_unexpectedError(tokeniser, token, "#texture-name");
-    return false;
-  }
-  parseTextureName(name, token);
-  return true;
-}
-
-bool Tokeniser_parseShaderName(Tokeniser& tokeniser, CopiedString& name)
-{
-  const char* token = tokeniser.getToken();
-  if(token == 0)
-  {
-    Tokeniser_unexpectedError(tokeniser, token, "#shader-name");
-    return false;
-  }
-  parseTextureName(name, token);
-  return true;
-}
-
-bool Tokeniser_parseString(Tokeniser& tokeniser, ShaderString& string)
-{
-  const char* token = tokeniser.getToken();
-  if(token == 0)
-  {
-    Tokeniser_unexpectedError(tokeniser, token, "#string");
-    return false;
-  }
-  string = token;
-  return true;
-}
-
-
-
-typedef std::list<ShaderVariable> ShaderParameters;
-typedef std::list<ShaderVariable> ShaderArguments;
-
-typedef std::pair<ShaderVariable, ShaderVariable> BlendFuncExpression;
-
-class ShaderTemplate
-{
-  std::size_t m_refcount;
-  CopiedString m_Name;
-public:
-
-  ShaderParameters m_params;
-
-  TextureExpression m_textureName;
-  TextureExpression m_diffuse;
-  TextureExpression m_bump;
-  ShaderValue m_heightmapScale;
-  TextureExpression m_specular;
-  TextureExpression m_lightFalloffImage;
-
-	/* Light type booleans */
-	
-	bool fogLight;
-	bool ambientLight;
-	bool blendLight;
-
-  int m_nFlags;
-  float m_fTrans;
-
-  // alphafunc stuff
-  IShader::EAlphaFunc m_AlphaFunc;
-  float m_AlphaRef;
-  // cull stuff
-  IShader::ECull m_Cull;
-
-  ShaderTemplate() :
-    m_refcount(0),
-    fogLight(false),
-    ambientLight(false),
-    blendLight(false)
-  {
-    m_nFlags = 0;
-    m_fTrans = 1.0f;
-  }
-
-  void IncRef()
-  {
-    ++m_refcount;
-  }
-  void DecRef() 
-  {
-    ASSERT_MESSAGE(m_refcount != 0, "shader reference-count going below zero");
-    if(--m_refcount == 0)
-    {
-      delete this;
-    }
-  }
-
-  std::size_t refcount()
-  {
-    return m_refcount;
-  }
-
-  const char* getName() const
-  {
-    return m_Name.c_str();
-  }
-  void setName(const char* name)
-  {
-    m_Name = name;
-  }
-
-  // -----------------------------------------
-
-  bool parseDoom3(Tokeniser& tokeniser);
-  bool parseQuake3(Tokeniser& tokeniser);
-  bool parseTemplate(Tokeniser& tokeniser);
-
-
-  void CreateDefault(const char *name)
-  {
-    if(g_enableDefaultShaders)
-    {
-      m_textureName = name;
-    }
-    else
-    {
-      m_textureName = "";
-    }
-    setName(name);
-  }
-
-
-  class MapLayerTemplate
-  {
-    TextureExpression m_texture;
-    BlendFuncExpression m_blendFunc;
-    bool m_clampToBorder;
-    ShaderValue m_alphaTest;
-  public:
-    MapLayerTemplate(const TextureExpression& texture, const BlendFuncExpression& blendFunc, bool clampToBorder, const ShaderValue& alphaTest) :
-      m_texture(texture),
-      m_blendFunc(blendFunc),
-      m_clampToBorder(false),
-      m_alphaTest(alphaTest)
-    {
-    }
-    const TextureExpression& texture() const
-    {
-      return m_texture;
-    }
-    const BlendFuncExpression& blendFunc() const
-    {
-      return m_blendFunc;
-    }
-    bool clampToBorder() const
-    {
-      return m_clampToBorder;
-    }
-    const ShaderValue& alphaTest() const
-    {
-      return m_alphaTest;
-    }
-  };
-  typedef std::vector<MapLayerTemplate> MapLayers;
-  MapLayers m_layers;
-};
-
-
-bool Doom3Shader_parseHeightmap(Tokeniser& tokeniser, TextureExpression& bump, ShaderValue& heightmapScale)
-{
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, bump));
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ","));
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseString(tokeniser, heightmapScale));
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
-  return true;
-}
-
-bool Doom3Shader_parseAddnormals(Tokeniser& tokeniser, TextureExpression& bump)
-{
-	RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
-	RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, bump));
-	RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ","));
-	RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, bump));
-	RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
- 	return true;
-}
-
-bool Doom3Shader_parseBumpmap(Tokeniser& tokeniser, TextureExpression& bump, ShaderValue& heightmapScale)
-{
-  const char* token = tokeniser.getToken();
-  if(token == 0)
-  {
-    Tokeniser_unexpectedError(tokeniser, token, "#bumpmap");
-    return false;
-  }
-  if(string_equal(token, "heightmap"))
-  {
-    RETURN_FALSE_IF_FAIL(Doom3Shader_parseHeightmap(tokeniser, bump, heightmapScale));
-  }
-  else if(string_equal(token, "addnormals"))
-  {
-    RETURN_FALSE_IF_FAIL(Doom3Shader_parseAddnormals(tokeniser, bump));
-  }
-  else
-  {
-    parseTextureName(bump, token);
-  }
-  return true;
-}
-
-enum LayerTypeId
-{
-  LAYER_NONE,
-  LAYER_BLEND,
-  LAYER_DIFFUSEMAP,
-  LAYER_BUMPMAP,
-  LAYER_SPECULARMAP
-};
-
-class LayerTemplate
-{
-public:
-  LayerTypeId m_type;
-  TextureExpression m_texture;
-  BlendFuncExpression m_blendFunc;
-  bool m_clampToBorder;
-  ShaderValue m_alphaTest;
-  ShaderValue m_heightmapScale;
-
-  LayerTemplate() : m_type(LAYER_NONE), m_blendFunc("GL_ONE", "GL_ZERO"), m_clampToBorder(false), m_alphaTest("-1"), m_heightmapScale("0")
-  {
-  }
-};
-
-bool parseShaderParameters(Tokeniser& tokeniser, ShaderParameters& params)
-{
-  Tokeniser_parseToken(tokeniser, "(");
-  for(;;)
-  {
-    const char* param = tokeniser.getToken();
-    if(string_equal(param, ")"))
-    {
-      break;
-    }
-    params.push_back(param);
-    const char* comma = tokeniser.getToken();
-    if(string_equal(comma, ")"))
-    {
-      break;
-    }
-    if(!string_equal(comma, ","))
-    {
-      Tokeniser_unexpectedError(tokeniser, comma, ",");
-      return false;
-    }
-  }
-  return true;
-}
-
-bool ShaderTemplate::parseTemplate(Tokeniser& tokeniser)
-{
-  m_Name = tokeniser.getToken();
-  if(!parseShaderParameters(tokeniser, m_params))
-  {
-    globalErrorStream() << "shader template: " << makeQuoted(m_Name.c_str()) << ": parameter parse failed\n";
-    return false;
-  }
-
-  return parseDoom3(tokeniser);
-}
-
-bool ShaderTemplate::parseDoom3(Tokeniser& tokeniser)
-{
-  LayerTemplate currentLayer;
-  bool isFog = false;
-
-  // we need to read until we hit a balanced }
-  int depth = 0;
-  for(;;)
-  {
-    tokeniser.nextLine();
-    const char* token = tokeniser.getToken();
-
-    if(token == 0)
-      return false;
-
-    if(string_equal(token, "{"))
-    {
-      ++depth;
-      continue;
-    }
-    else if(string_equal(token, "}"))
-    {
-      --depth;
-      if(depth < 0) // error
-      {
-        return false;
-      }
-      if(depth == 0) // end of shader
-      {
-        break;
-      }
-      if(depth == 1) // end of layer
-      {
-        if(currentLayer.m_type == LAYER_DIFFUSEMAP)
-        {
-          m_diffuse = currentLayer.m_texture;
-        }
-        else if(currentLayer.m_type == LAYER_BUMPMAP)
-        {
-          m_bump = currentLayer.m_texture;
-        }
-        else if(currentLayer.m_type == LAYER_SPECULARMAP)
-        {
-          m_specular = currentLayer.m_texture;
-        }
-        else if(!string_empty(currentLayer.m_texture.c_str()))
-        {
-          m_layers.push_back(MapLayerTemplate(
-            currentLayer.m_texture.c_str(),
-            currentLayer.m_blendFunc,
-            currentLayer.m_clampToBorder,
-            currentLayer.m_alphaTest
-          ));
-        }
-        currentLayer.m_type = LAYER_NONE;
-        currentLayer.m_texture = "";
-      }
-      continue;
-    }
-
-    if(depth == 2) // in layer
-    {
-      if(string_equal_nocase(token, "blend"))
-      {
-        const char* blend = tokeniser.getToken();
-
-        if(blend == 0)
-        {
-          Tokeniser_unexpectedError(tokeniser, blend, "#blend");
-          return false;
-        }
-
-        if(string_equal_nocase(blend, "diffusemap"))
-        {
-          currentLayer.m_type = LAYER_DIFFUSEMAP;
-        }
-        else if(string_equal_nocase(blend, "bumpmap"))
-        {
-          currentLayer.m_type = LAYER_BUMPMAP;
-        }
-        else if(string_equal_nocase(blend, "specularmap"))
-        {
-          currentLayer.m_type = LAYER_SPECULARMAP;
-        }
-        else
-        {
-          currentLayer.m_blendFunc.first = blend;
-
-          const char* comma = tokeniser.getToken();
-
-          if(comma == 0)
-          {
-            Tokeniser_unexpectedError(tokeniser, comma, "#comma");
-            return false;
-          }
-
-          if(string_equal(comma, ","))
-          {
-            RETURN_FALSE_IF_FAIL(Tokeniser_parseString(tokeniser, currentLayer.m_blendFunc.second));
-          }
-          else
-          {
-            currentLayer.m_blendFunc.second = "";
-            tokeniser.ungetToken();
-          }
-        }
-      }
-      else if(string_equal_nocase(token, "map"))
-      {
-        if(currentLayer.m_type == LAYER_BUMPMAP)
-        {
-          RETURN_FALSE_IF_FAIL(Doom3Shader_parseBumpmap(tokeniser, currentLayer.m_texture, currentLayer.m_heightmapScale));
-        }
-        else
-        {
-          const char* map = tokeniser.getToken();
-
-          if(map == 0)
-          {
-            Tokeniser_unexpectedError(tokeniser, map, "#map");
-            return false;
-          }
-
-          if(string_equal(map, "makealpha"))
-          {
-            RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
-            const char* texture = tokeniser.getToken();
-            if(texture == 0)
-            {
-              Tokeniser_unexpectedError(tokeniser, texture, "#texture");
-              return false;
-            }
-            currentLayer.m_texture = texture;
-            RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")")); 
-          }
-          else
-          {
-            parseTextureName(currentLayer.m_texture, map);
-          }
-        }
-      }
-      else if(string_equal_nocase(token, "zeroclamp"))
-      {
-        currentLayer.m_clampToBorder = true;
-      }
-#if 0
-      else if(string_equal_nocase(token, "alphaTest"))
-      {
-        Tokeniser_getFloat(tokeniser, currentLayer.m_alphaTest);
-      }
-#endif
-    }
-    else if(depth == 1)
-    {
-      if(string_equal_nocase(token, "qer_editorimage"))
-      {
-        RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, m_textureName));
-      }
-      else if (string_equal_nocase(token, "qer_trans"))
-      {
-        m_fTrans = string_read_float(tokeniser.getToken());
-        m_nFlags |= QER_TRANS;
-      }
-      else if (string_equal_nocase(token, "translucent"))
-      {
-        m_fTrans = 1;
-        m_nFlags |= QER_TRANS;
-      }
-      else if (string_equal(token, "DECAL_MACRO"))
-      {
-        m_fTrans = 1;
-        m_nFlags |= QER_TRANS;
-      }
-      else if (string_equal_nocase(token, "bumpmap"))
-      {
-        RETURN_FALSE_IF_FAIL(Doom3Shader_parseBumpmap(tokeniser, m_bump, m_heightmapScale));
-      }
-      else if (string_equal_nocase(token, "diffusemap"))
-      {
-        RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, m_diffuse));
-      }
-      else if (string_equal_nocase(token, "specularmap"))
-      {
-        RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, m_specular));
-      }
-      else if (string_equal_nocase(token, "twosided"))
-      {
-        m_Cull = IShader::eCullNone;
-        m_nFlags |= QER_CULL;
-      }
-      else if (string_equal_nocase(token, "nodraw"))
-      {
-        m_nFlags |= QER_NODRAW;
-      }
-      else if (string_equal_nocase(token, "nonsolid"))
-      {
-        m_nFlags |= QER_NONSOLID;
-      }
-      else if (string_equal_nocase(token, "liquid"))
-      {
-        m_nFlags |= QER_WATER;
-      }
-      else if (string_equal_nocase(token, "areaportal"))
-      {
-        m_nFlags |= QER_AREAPORTAL;
-      }
-      else if (string_equal_nocase(token, "playerclip")
-        || string_equal_nocase(token, "monsterclip")
-        || string_equal_nocase(token, "ikclip")
-        || string_equal_nocase(token, "moveableclip"))
-      {
-        m_nFlags |= QER_CLIP;
-      }
-		else if (string_equal_nocase(token, "ambientLight")) {
-			ambientLight = true;
-		}
-		else if (string_equal_nocase(token, "blendLight")) {
-			blendLight = true;
-		}			
-      if (string_equal_nocase(token, "fogLight"))
-      {
-        isFog = true;
-        fogLight = true;
-      }
-      else if (!isFog && string_equal_nocase(token, "lightFalloffImage"))
-      {
-        const char* lightFalloffImage = tokeniser.getToken();
-        if(lightFalloffImage == 0)
-        {
-          Tokeniser_unexpectedError(tokeniser, lightFalloffImage, "#lightFalloffImage");
-          return false;
-        }
-        if(string_equal_nocase(lightFalloffImage, "makeintensity"))
-        {
-          RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
-          TextureExpression name;
-          RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, name));
-          m_lightFalloffImage = name;
-          RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
-        }
-        else
-        {
-          m_lightFalloffImage = lightFalloffImage;
-        }
-      }
-    }
-  }
-
-  if(string_empty(m_textureName.c_str()))
-  {
-    m_textureName = m_diffuse;
-  }
-
-  return true;
-}
-
 typedef SmartPointer<ShaderTemplate> ShaderTemplatePointer;
 typedef std::map<CopiedString, ShaderTemplatePointer> ShaderTemplateMap;
 
@@ -820,35 +275,6 @@ public:
 typedef std::map<CopiedString, ShaderDefinition> ShaderDefinitionMap;
 
 ShaderDefinitionMap g_shaderDefinitions;
-
-bool parseTemplateInstance(Tokeniser& tokeniser, const char* filename)
-{
-  CopiedString name;
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseShaderName(tokeniser, name));
-  const char* templateName = tokeniser.getToken();
-  ShaderTemplate* shaderTemplate = findTemplate(templateName);
-  if(shaderTemplate == 0)
-  {
-    globalErrorStream() << "shader instance: " << makeQuoted(name.c_str()) << ": shader template not found: " << makeQuoted(templateName) << "\n";
-  }
-
-  ShaderArguments args;
-  if(!parseShaderParameters(tokeniser, args))
-  {
-    globalErrorStream() << "shader instance: " << makeQuoted(name.c_str()) << ": argument parse failed\n";
-    return false;
-  }
-
-  if(shaderTemplate != 0)
-  {
-    if(!g_shaderDefinitions.insert(ShaderDefinitionMap::value_type(name, ShaderDefinition(shaderTemplate, args, filename))).second)
-    {
-      globalErrorStream() << "shader instance: " << makeQuoted(name.c_str()) << ": already exists, second definition ignored\n";
-    }
-  }
-  return true;
-}
-
 
 const char* evaluateShaderValue(const char* value, const ShaderParameters& params, const ShaderArguments& args)
 {
@@ -1369,397 +795,9 @@ void FreeShaders()
   g_ActiveShadersChangedNotify();
 }
 
-bool ShaderTemplate::parseQuake3(Tokeniser& tokeniser)
-{
-  // name of the qtexture_t we'll use to represent this shader (this one has the "textures\" before)
-  m_textureName = m_Name.c_str();
-
-  tokeniser.nextLine();
-
-  // we need to read until we hit a balanced }
-  int depth = 0;
-  for(;;)
-  {
-    tokeniser.nextLine();
-    const char* token = tokeniser.getToken();
-
-    if(token == 0)
-      return false;
-
-    if(string_equal(token, "{"))
-    {
-      ++depth;
-      continue;
-    }
-    else if(string_equal(token, "}"))
-    {
-      --depth;
-      if(depth < 0) // underflow
-      {
-        return false;
-      }
-      if(depth == 0) // end of shader
-      {
-        break;
-      }
-
-      continue;
-    }
-
-    if(depth == 1)
-    {
-      if (string_equal_nocase(token, "qer_nocarve"))
-      {
-        m_nFlags |= QER_NOCARVE;
-      }
-      else if (string_equal_nocase(token, "qer_trans"))
-      {
-        RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, m_fTrans));
-        m_nFlags |= QER_TRANS;
-      }
-      else if (string_equal_nocase(token, "qer_editorimage"))
-      {
-        RETURN_FALSE_IF_FAIL(Tokeniser_parseTextureName(tokeniser, m_textureName));
-      }
-      else if (string_equal_nocase(token, "qer_alphafunc"))
-      {
-        const char* alphafunc = tokeniser.getToken();
-      
-        if(alphafunc == 0)
-        {
-          Tokeniser_unexpectedError(tokeniser, alphafunc, "#alphafunc");
-          return false;
-        }
-
-        if(string_equal_nocase(alphafunc, "equal"))
-        {
-          m_AlphaFunc = IShader::eEqual;
-        }
-        else if(string_equal_nocase(alphafunc, "greater"))
-        {
-          m_AlphaFunc = IShader::eGreater;
-        }
-        else if(string_equal_nocase(alphafunc, "less"))
-        {
-          m_AlphaFunc = IShader::eLess;
-        }
-        else if(string_equal_nocase(alphafunc, "gequal"))
-        {
-          m_AlphaFunc = IShader::eGEqual;
-        }
-        else if(string_equal_nocase(alphafunc, "lequal"))
-        {
-          m_AlphaFunc = IShader::eLEqual;
-        }
-        else
-        {
-          m_AlphaFunc = IShader::eAlways;
-        }
-
-        m_nFlags |= QER_ALPHATEST;
-
-        RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, m_AlphaRef));
-      }
-      else if (string_equal_nocase(token, "cull"))
-      {
-        const char* cull = tokeniser.getToken();
-
-        if(cull == 0)
-        {
-          Tokeniser_unexpectedError(tokeniser, cull, "#cull");
-          return false;
-        }
-
-        if(string_equal_nocase(cull, "none")
-          || string_equal_nocase(cull, "twosided")
-          || string_equal_nocase(cull, "disable"))
-        {
-          m_Cull = IShader::eCullNone;
-        }
-        else if(string_equal_nocase(cull, "back")
-          || string_equal_nocase(cull, "backside")
-          || string_equal_nocase(cull, "backsided"))
-        {
-          m_Cull = IShader::eCullBack;
-        }
-        else
-        {
-          m_Cull = IShader::eCullBack;
-        }
-
-        m_nFlags |= QER_CULL;
-      }
-      else if (string_equal_nocase(token, "surfaceparm"))
-      {
-        const char* surfaceparm = tokeniser.getToken();
-
-        if(surfaceparm == 0)
-        {
-          Tokeniser_unexpectedError(tokeniser, surfaceparm, "#surfaceparm");
-          return false;
-        }
-
-        if (string_equal_nocase(surfaceparm, "fog"))
-        {
-          m_nFlags |= QER_FOG;
-          if (m_fTrans == 1.0f)  // has not been explicitly set by qer_trans
-          {
-            m_fTrans = 0.35f;
-          }
-        }
-        else if (string_equal_nocase(surfaceparm, "nodraw"))
-        {
-          m_nFlags |= QER_NODRAW;
-        }
-        else if (string_equal_nocase(surfaceparm, "nonsolid"))
-        {
-          m_nFlags |= QER_NONSOLID;
-        }
-        else if (string_equal_nocase(surfaceparm, "water"))
-        {
-          m_nFlags |= QER_WATER;
-        }
-        else if (string_equal_nocase(surfaceparm, "lava"))
-        {
-          m_nFlags |= QER_LAVA;
-        }
-        else if (string_equal_nocase(surfaceparm, "areaportal"))
-        {
-          m_nFlags |= QER_AREAPORTAL;
-        }
-        else if (string_equal_nocase(surfaceparm, "playerclip"))
-        {
-          m_nFlags |= QER_CLIP;
-        }
-        else if (string_equal_nocase(surfaceparm, "botclip"))
-        {
-          m_nFlags |= QER_BOTCLIP;
-        }
-      }
-    }
-  }
-
-  return true;
-}
-
-class Layer
-{
-public:
-  LayerTypeId m_type;
-  TextureExpression m_texture;
-  BlendFunc m_blendFunc;
-  bool m_clampToBorder;
-  float m_alphaTest;
-  float m_heightmapScale;
-
-  Layer() : m_type(LAYER_NONE), m_blendFunc(BLEND_ONE, BLEND_ZERO), m_clampToBorder(false), m_alphaTest(-1), m_heightmapScale(0)
-  {
-  }
-};
-
 std::list<CopiedString> g_shaderFilenames;
 
-void ParseShaderFile(Tokeniser& tokeniser, const char* filename)
-{
-  g_shaderFilenames.push_back(filename);
-  filename = g_shaderFilenames.back().c_str();
-  tokeniser.nextLine();
-  for(;;)
-  {
-    const char* token = tokeniser.getToken();
-
-    if(token == 0)
-    {
-      break;
-    }
-
-    if(string_equal(token, "table"))
-    {
-      if(tokeniser.getToken() == 0)
-      {
-        Tokeniser_unexpectedError(tokeniser, 0, "#table-name");
-        return;
-      }
-      if(!Tokeniser_parseToken(tokeniser, "{"))
-      {
-        return;
-      }
-      for(;;)
-      {
-        const char* option = tokeniser.getToken();
-        if(string_equal(option, "{"))
-        {
-          for(;;)
-          {
-            const char* value = tokeniser.getToken();
-            if(string_equal(value, "}"))
-            {
-              break;
-            }
-          }
-
-          if(!Tokeniser_parseToken(tokeniser, "}"))
-          {
-            return;
-          }
-          break;
-        }
-      }
-    }
-    else
-    {
-      if(string_equal(token, "guide"))
-      {
-        parseTemplateInstance(tokeniser, filename);
-      }
-      else
-      {
-        if(!string_equal(token, "material")
-          && !string_equal(token, "particle")
-          && !string_equal(token, "skin"))
-        {
-          tokeniser.ungetToken();
-        }
-
-        // First token is the material name (e.g. textures/blah/blah2). Normalise the
-        // name into the correct format, and add the ShaderTemplate to the global shader
-        // list
-
-		std::string rawName = std::string(tokeniser.getToken());
-		
-		boost::algorithm::replace_all(rawName, "\\", "/"); // use forward slashes
-		boost::algorithm::to_lower(rawName); // use lowercase
-
-		// Remove the extension if present
-		size_t dotPos = rawName.rfind(".");
-		if (dotPos != std::string::npos)
-			rawName = rawName.substr(0, dotPos);			
-
-        ShaderTemplatePointer shaderTemplate(new ShaderTemplate());
-        shaderTemplate->setName(rawName.c_str());
-
-        g_shaders.insert(ShaderTemplateMap::value_type(shaderTemplate->getName(), shaderTemplate));
-
-		// Parse the shader contents
-
-        bool result = (g_shaderLanguage == SHADERLANGUAGE_QUAKE3)
-          ? shaderTemplate->parseQuake3(tokeniser)
-          : shaderTemplate->parseDoom3(tokeniser);
-        if (result)
-        {
-          // do we already have this shader?
-          if(!g_shaderDefinitions.insert(ShaderDefinitionMap::value_type(shaderTemplate->getName(), ShaderDefinition(shaderTemplate.get(), ShaderArguments(), filename))).second)
-          {
-  #ifdef _DEBUG
-            globalOutputStream() << "WARNING: shader " << shaderTemplate->getName() << " is already in memory, definition in " << filename << " ignored.\n";
-  #endif
-          }
-        }
-        else
-        {
-          globalErrorStream() << "Error parsing shader " << shaderTemplate->getName() << "\n";
-          return;
-        }
-      }
-    }
-  }
-}
-
-void parseGuideFile(Tokeniser& tokeniser, const char* filename)
-{
-  tokeniser.nextLine();
-  for(;;)
-  {
-    const char* token = tokeniser.getToken();
-
-    if(token == 0)
-    {
-      break;
-    }
-
-    if(string_equal(token, "guide"))
-    {
-      // first token should be the path + name.. (from base)
-      ShaderTemplatePointer shaderTemplate(new ShaderTemplate);
-      shaderTemplate->parseTemplate(tokeniser);
-      if(!g_shaderTemplates.insert(ShaderTemplateMap::value_type(shaderTemplate->getName(), shaderTemplate)).second)
-      {
-        globalErrorStream() << "guide " << makeQuoted(shaderTemplate->getName()) << ": already defined, second definition ignored\n";
-      }
-    }
-    else if(string_equal(token, "inlineGuide"))
-    {
-      // skip entire inlineGuide definition
-      std::size_t depth = 0;
-      for(;;)
-      {
-        tokeniser.nextLine();
-        token = tokeniser.getToken();
-        if(string_equal(token, "{"))
-        {
-          ++depth;
-        }
-        else if(string_equal(token, "}"))
-        {
-          if(--depth == 0)
-          {
-            break;
-          }
-        }
-      }
-    }
-  }
-}
-
-void LoadShaderFile(const char* filename)
-{
-  ArchiveTextFile* file = GlobalFileSystem().openTextFile(filename);
-
-  if(file != 0)
-  {
-    globalOutputStream() << "Parsing shaderfile " << filename << "\n";
-
-    Tokeniser& tokeniser = GlobalScriptLibrary().m_pfnNewScriptTokeniser(file->getInputStream());
-
-    ParseShaderFile(tokeniser, filename);
-
-    tokeniser.release();
-    file->release();
-  }
-  else
-  {
-    globalOutputStream() << "Unable to read shaderfile " << filename << "\n";
-  }
-}
-
-typedef FreeCaller1<const char*, LoadShaderFile> LoadShaderFileCaller;
-
-
-void loadGuideFile(const char* filename)
-{
-  StringOutputStream fullname(256);
-  fullname << "guides/" << filename;
-  ArchiveTextFile* file = GlobalFileSystem().openTextFile(fullname.c_str());
-
-  if(file != 0)
-  {
-    globalOutputStream() << "Parsing guide file " << fullname.c_str() << "\n";
-
-    Tokeniser& tokeniser = GlobalScriptLibrary().m_pfnNewScriptTokeniser(file->getInputStream());
-
-    parseGuideFile(tokeniser, fullname.c_str());
-
-    tokeniser.release();
-    file->release();
-  }
-  else
-  {
-    globalOutputStream() << "Unable to read guide file " << fullname.c_str() << "\n";
-  }
-}
-
-typedef FreeCaller1<const char*, loadGuideFile> LoadGuideFileCaller;
-
+typedef FreeCaller1<const char*, loadShaderFile> LoadShaderFileCaller;
 
 CShader* Try_Shader_ForName(const char* name)
 {
@@ -1798,9 +836,6 @@ IShader *Shader_ForName(const char *name)
   return pShader;
 }
 
-
-
-
 // the list of scripts/*.shader files we need to work with
 // those are listed in shaderlist file
 GSList *l_shaderfiles = 0;
@@ -1817,34 +852,6 @@ void ShaderList_addShaderFile(const char* dirstring)
 
 typedef FreeCaller1<const char*, ShaderList_addShaderFile> AddShaderFileCaller;
 
-
-/*
-==================
-BuildShaderList
-build a CStringList of shader names
-==================
-*/
-void BuildShaderList(TextInputStream& shaderlist)
-{
-  Tokeniser& tokeniser = GlobalScriptLibrary().m_pfnNewSimpleTokeniser(shaderlist);
-  tokeniser.nextLine();
-  const char* token = tokeniser.getToken();
-  StringOutputStream shaderFile(64);
-  while(token != 0)
-  {
-    // each token should be a shader filename
-    shaderFile << token << "." << g_shadersExtension;
-    
-    ShaderList_addShaderFile(shaderFile.c_str());
-
-    tokeniser.nextLine();
-    token = tokeniser.getToken();
-
-    shaderFile.clear();
-  }
-  tokeniser.release();
-}
-
 void FreeShaderList()
 {
   while(l_shaderfiles != 0)
@@ -1854,44 +861,123 @@ void FreeShaderList()
   }
 }
 
-#include "stream/filestream.h"
-
-bool shaderlist_findOrInstall(const char* enginePath, const char* toolsPath, const char* shaderPath, const char* gamename)
+/* Normalises a given (raw) shadername (slash conversion, extension removal, ...) 
+ * and inserts a new shader 
+ */
+ShaderTemplatePointer parseShaderName(std::string& rawName) 
 {
-  StringOutputStream absShaderList(256);
-  absShaderList << enginePath << gamename << '/' << shaderPath << "shaderlist.txt";
-  if(file_exists(absShaderList.c_str()))
-  {
-    return true;
-  }
-  {
-    StringOutputStream directory(256);
-    directory << enginePath << gamename << '/' << shaderPath;
-    if(!file_exists(directory.c_str()) && !Q_mkdir(directory.c_str()))
-    {
-      return false;
+	boost::algorithm::replace_all(rawName, "\\", "/"); // use forward slashes
+	boost::algorithm::to_lower(rawName); // use lowercase
+
+	// Remove the extension if present
+	size_t dotPos = rawName.rfind(".");
+	if (dotPos != std::string::npos) {
+		rawName = rawName.substr(0, dotPos);
+	}
+	
+	ShaderTemplatePointer shaderTemplate(new ShaderTemplate());
+    shaderTemplate->setName(rawName.c_str());
+	g_shaders.insert(ShaderTemplateMap::value_type(shaderTemplate->getName(), shaderTemplate));
+	
+	return shaderTemplate;
+} 
+
+
+/* Parses through a table definition within a material file.
+ * It just skips over the whole content 
+ */
+void parseShaderTable(parser::DefTokeniser& tokeniser) 
+{
+	// This is the name of the table
+	tokeniser.nextToken();
+	
+	tokeniser.assertNextToken("{");
+	unsigned short int openBraces = 1; 
+	
+	// Continue parsing till the table is over, i.e. the according closing brace is found
+	while (openBraces>0 && tokeniser.hasMoreTokens()) {
+		const std::string token = tokeniser.nextToken();
+		
+		if (token == "{") {
+			openBraces++;
+		}
+		
+		if (token == "}") {
+			openBraces--;
+		}
+	}	
+}
+
+/* Parses the contents of a material definition's stage, maybe called recursively
+ */
+void parseShaderStage(parser::DefTokeniser& tokeniser, 
+					  ShaderTemplatePointer& shaderTemplate, 
+					  const char* filename) 
+{
+	// Call the shader parser	
+	bool result = shaderTemplate->parseDoom3(tokeniser);
+	
+	if (result) {
+		// do we already have this shader?
+        if (!g_shaderDefinitions.insert(ShaderDefinitionMap::value_type(shaderTemplate->getName(),
+            	ShaderDefinition(shaderTemplate.get(), ShaderArguments(), filename))).second) {
+        	throw parser::ParseException(std::string("shader ") + shaderTemplate->getName() + " is already in memory");
+        }
     }
-  }
-  {
-    StringOutputStream defaultShaderList(256);
-    defaultShaderList << toolsPath << gamename << '/' << "default_shaderlist.txt";
-    if(file_exists(defaultShaderList.c_str()))
-    {
-      return file_copy(defaultShaderList.c_str(), absShaderList.c_str());
+    else {
+    	throw parser::ParseException(std::string("Error while parsing") + shaderTemplate->getName());
     }
+}
+
+/* Parses through the shader file and processes the tokens delivered by DefTokeniser. 
+ */ 
+void parseShaderFile(const std::string& inStr, const char* filename)
+{
+	g_shaderFilenames.push_back(filename);
+	filename = g_shaderFilenames.back().c_str();
+	
+	parser::DefTokeniser tokeniser(inStr, " \t\n\v\r", "{}(),");	
+	
+	while (tokeniser.hasMoreTokens()) {
+		// Load the first token, it should be a name
+		std::string token = tokeniser.nextToken();		
+		
+		if (token == "table") {
+			parseShaderTable(tokeniser);		 		
+		} 
+		else if (token[0] == '{' || token[0] == '}') {
+			// This is not supposed to happen, as the shaderName is still undefined
+			throw parser::ParseException("Missing shadername."); 
+		} 
+		else {			
+			// We are still outside of any braces, so this must be a shader name			
+			ShaderTemplatePointer shaderTemplate = parseShaderName(token);
+			tokeniser.assertNextToken("{");
+			parseShaderStage(tokeniser, shaderTemplate, filename);
+		}
+	}
+}
+
+/* Loads a given material file and parses its contents 
+ */
+void loadShaderFile(const char* filename)
+{
+  ArchiveTextFile* file = GlobalFileSystem().openTextFile(filename);
+
+  if(file != 0) {
+    globalOutputStream() << "Parsing shaderfile " << filename << "\n";        
+    parseShaderFile(file->getString(), filename);           
+    file->release();
+  } 
+  else {
+  	throw parser::ParseException(std::string("Unable to read shaderfile: ") + filename);  	
   }
-  return false;
 }
 
 /** Load the shaders from the MTR files.
  */
-
 void Shaders_Load()
 {
-	if(g_shaderLanguage == SHADERLANGUAGE_QUAKE4) {
-		GlobalFileSystem().forEachFile("guides/", "guide", LoadGuideFileCaller(), 0);
-	}
-
 	// Get the shaders path and extension from the XML game file
 
 	xml::NodeList nlShaderPath = GlobalRadiant().getXPath("/game/filesystem/shaders/basepath");
@@ -1914,14 +1000,19 @@ void Shaders_Load()
 
     GSList *lst = l_shaderfiles;
     StringOutputStream shadername(256);
-    while(lst)
-    {
-      shadername << sPath.c_str() << reinterpret_cast<const char*>(lst->data);
-      LoadShaderFile(shadername.c_str());
+    globalOutputStream() << "Begin: parsing shader files... \n";
+    while(lst) {
+		shadername << sPath.c_str() << reinterpret_cast<const char*>(lst->data);
+		try {
+			loadShaderFile(shadername.c_str());
+		}
+        catch (parser::ParseException e) {
+        	globalOutputStream() << "Warning: in shaderfile: " << shadername.c_str() << ": " << e.what() << "\n";
+        }        
       shadername.clear();
       lst = lst->next;
     }
-
+	globalOutputStream() << "End: parsing shader files. \n";
 }
 
 void Shaders_Free()

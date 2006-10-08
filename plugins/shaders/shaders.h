@@ -36,18 +36,7 @@ void Shaders_Destroy();
 class ShaderSystem;
 ShaderSystem& GetShaderSystem();
 
-enum ShaderLanguage
-{
-  SHADERLANGUAGE_QUAKE3, 
-  SHADERLANGUAGE_DOOM3, 
-  SHADERLANGUAGE_QUAKE4
-};
-
-extern ShaderLanguage g_shaderLanguage;
-extern bool g_enableDefaultShaders;
-extern bool g_useShaderList;
 struct _QERPlugImageTable;
 extern _QERPlugImageTable* g_bitmapModule;
-
 
 #endif

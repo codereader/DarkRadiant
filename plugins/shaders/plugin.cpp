@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "string/string.h"
 #include "modulesystem/singletonmodule.h"
 
+#include "ShaderTemplate.h"
 #include "shaders.h"
 
 class ShadersDependencies :

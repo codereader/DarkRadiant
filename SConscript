@@ -106,6 +106,7 @@ module_env['LIBPREFIX'] = ''
 module_env.Append(LIBPATH = ['libs'])
 module_env['no_import_lib'] = 1
 module_env.useXML2()
+module_env.useOpenGL()
 
 vfspk3_env = module_env.Copy()
 vfspk3_lst = build_list('plugins/vfspk3', 'vfspk3.cpp vfs.cpp archive.cpp')
@@ -137,7 +138,7 @@ archivezip_env.Depends(archivezip_lib, cmdlib_lib)
 archivezip_env.Install(INSTALL + '/modules', archivezip_lib)
 
 shaders_env = module_env.Copy()
-shaders_lst = build_list('plugins/shaders', 'shaders.cpp plugin.cpp')
+shaders_lst = build_list('plugins/shaders', 'shaders.cpp plugin.cpp ShaderTemplate.cpp')
 shaders_env.useGlib2()
 shaders_env.Append(LIBS = ['cmdlib', "xmlutil"])
 shaders_env.Append(LIBPATH = ['libs'])

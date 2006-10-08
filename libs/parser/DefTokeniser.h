@@ -59,8 +59,8 @@ class DefTokeniserFunc {
 public:
 
     // Constructor
-    DefTokeniserFunc()
-    : _state(SEARCHING), _delims(" \t\n\v\r"), _keptDelims("{}()")
+    DefTokeniserFunc(const char* delims, const char* keptDelims)
+    : _state(SEARCHING), _delims(delims), _keptDelims(keptDelims)
     {}
 
     /* REQUIRED. Operator() is called by the boost::tokenizer. This function
@@ -251,8 +251,8 @@ public:
      * The list of characters to use as delimiters.
      */
 
-    DefTokeniser(const std::string& str, const char* seps = " \t\n")
-    : _tok(str, DefTokeniserFunc()),
+    DefTokeniser(const std::string& str, const char* delims = " \t\n\v\r", const char* keptDelims = "{}()")
+    : _tok(str, DefTokeniserFunc(delims, keptDelims)),
       _tokIter(_tok.begin()) 
     {
     }

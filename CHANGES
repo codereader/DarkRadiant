@@ -3,6 +3,9 @@ OrbWeaver
 - Merged upstream revisions 99 and 101
 - Merged upstream brushexport plugin (exports to OBJ)
 - Merged upstream revision 113 (select inside and select touching)
+greebo
+- Refactored parsing code in shaders plugin, DefTokeniser accepts list
+  of delimiters in constructor.
 
 ** RELEASE 0.6.0
 
