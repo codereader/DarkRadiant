@@ -190,6 +190,13 @@ entity_lib = entity_env.SharedLibrary(target='entity', source=entity_lst, no_imp
 entity_env.Depends(entity_lib, math)
 entity_env.Install(INSTALL + '/modules', entity_lib)
 
+brushexport_env = module_env.Copy()
+brushexport_lst = build_list('contrib/brushexport', 'plugin.cpp')
+brushexport_env.useGlib2()
+brushexport_env.useGtk2()
+brushexport_lib = brushexport_env.SharedLibrary(target='brushexport', source=brushexport_lst, LIBPATH='libs')
+brushexport_env.Install(INSTALL + '/plugins', brushexport_lib)
+
 radiant_env = g_env.Copy()
 radiant_env['CPPPATH'].append('include')
 if radiant_env['PLATFORM'] == 'posix':
