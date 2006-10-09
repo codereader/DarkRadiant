@@ -18,7 +18,7 @@ void parseTextureName(StringType& name, const char* token)
  * 
  * 	Note: input "token" has to be lowercase for the keywords to be recognized
  */
-bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser, std::string& token) 
+bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser, const std::string& token) 
 {	
 	if (token == "qer_trans") {
 		m_fTrans = string_read_float(tokeniser.nextToken().c_str());
@@ -129,7 +129,7 @@ bool ShaderTemplate::parseMap(parser::DefTokeniser& tokeniser)
 
 /* Searches for light-specific keywords and takes the appropriate actions
  */
-bool ShaderTemplate::parseLightFlags(parser::DefTokeniser& tokeniser, std::string& token) 
+bool ShaderTemplate::parseLightFlags(parser::DefTokeniser& tokeniser, const std::string& token) 
 {	
 	if (token == "ambientlight") {
 		ambientLight = true;
@@ -151,7 +151,7 @@ bool ShaderTemplate::parseLightFlags(parser::DefTokeniser& tokeniser, std::strin
 	return true;
 }
 
-bool ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser, std::string& token) 
+bool ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser, const std::string& token) 
 {
 	if (token == "qer_editorimage") {
 		parseMap(tokeniser);
@@ -181,7 +181,7 @@ bool ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser, std::s
  * Note: input "token" has to be lowercase
  * Output: true, if the blend keyword was found, false otherwise.
  */
-bool ShaderTemplate::parseBlendType(parser::DefTokeniser& tokeniser, std::string& token) 
+bool ShaderTemplate::parseBlendType(parser::DefTokeniser& tokeniser, const std::string& token) 
 {
 	if (token == "blend") {
 		std::string blendType = boost::algorithm::to_lower_copy(tokeniser.nextToken());
@@ -217,7 +217,7 @@ bool ShaderTemplate::parseBlendType(parser::DefTokeniser& tokeniser, std::string
 
 /* Searches for clamp keywords in stage 2, expects token to be lowercase 
  */
-bool ShaderTemplate::parseClamp(parser::DefTokeniser& tokeniser, std::string& token) 
+bool ShaderTemplate::parseClamp(parser::DefTokeniser& tokeniser, const std::string& token) 
 {	
 	if (token == "zeroclamp") {
 		m_currentLayer.m_clampToBorder = true;
@@ -231,7 +231,7 @@ bool ShaderTemplate::parseClamp(parser::DefTokeniser& tokeniser, std::string& to
 
 /* Searches for the map keyword in stage 2, expects token to be lowercase 
  */
-bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, std::string& token) 
+bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::string& token) 
 {	
 	if (token == "map") {
 		parseMap(tokeniser);		
