@@ -142,12 +142,12 @@ public:
 
   // -----------------------------------------  
   bool parseDoom3(parser::DefTokeniser&);
-  bool parseShaderFlags(parser::DefTokeniser&, std::string&);
-  bool parseLightFlags(parser::DefTokeniser&, std::string&);
-  bool parseBlendShortcuts(parser::DefTokeniser&, std::string&);
-  bool parseBlendType(parser::DefTokeniser&, std::string&);
-  bool parseBlendMaps(parser::DefTokeniser&, std::string&);
-  bool parseClamp(parser::DefTokeniser&, std::string&);
+  bool parseShaderFlags(parser::DefTokeniser&, const std::string&);
+  bool parseLightFlags(parser::DefTokeniser&, const std::string&);
+  bool parseBlendShortcuts(parser::DefTokeniser&, const std::string&);
+  bool parseBlendType(parser::DefTokeniser&, const std::string&);
+  bool parseBlendMaps(parser::DefTokeniser&, const std::string&);
+  bool parseClamp(parser::DefTokeniser&, const std::string&);
   bool parseMap(parser::DefTokeniser&);
   bool saveLayer();
   
