@@ -57,7 +57,6 @@ please contact Id Software immediately at info@idsoftware.com.
 #include "camwindow.h"
 #include "mainframe.h"
 #include "preferences.h"
-#include "watchbsp.h"
 #include "autosave.h"
 #include "convert.h"
 
@@ -188,7 +187,6 @@ void bsp_init()
   build_set_variable("RadiantPath", AppPath_get());
   build_set_variable("ExecutableType", EXECUTABLE_TYPE);
   build_set_variable("EnginePath", EnginePath_get());
-  build_set_variable("MonitorAddress", (g_WatchBSP_Enabled) ? "127.0.0.1:39000" : "");
   build_set_variable("GameName", gamename_get());
 
   build_set_variable("MapFile", Map_Name(g_map));
@@ -300,17 +298,6 @@ void RunBSP(const char* name)
 
   bsp_init();
 
-  if (g_WatchBSP_Enabled)
-  {
-    ArrayCommandListener listener;
-    build_run(name, listener);
-    // grab the file name for engine running
-    const char* fullname = Map_Name(g_map);
-    StringOutputStream bspname(64);
-    bspname << StringRange(path_get_filename_start(fullname), path_get_filename_base_end(fullname));
-    BuildMonitor_Run( listener.array(), bspname.c_str() );
-  }
-  else
   {
     char junkpath[PATH_MAX];
     strcpy(junkpath, SettingsPath_get());
