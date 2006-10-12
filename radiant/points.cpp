@@ -45,7 +45,6 @@ please contact Id Software immediately at info@idsoftware.com.
 #include "xywindow.h"
 #include "xmlstuff.h"
 #include "mainframe.h"
-#include "watchbsp.h"
 #include "commands.h"
 
 
@@ -378,9 +377,6 @@ void CPointfile::saxStartElement (message_info_t *ctx, const xmlChar *name, cons
   if(string_equal(reinterpret_cast<const char*>(name), "polyline"))
   {
     Init();
-    // there's a prefs setting to avoid stopping on leak
-    if (!g_WatchBSP_LeakStop)
-      ctx->stop_depth = 0;
   }
 }
 

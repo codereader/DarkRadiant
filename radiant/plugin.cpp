@@ -67,7 +67,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "groupdialog.h"
 #include "patchdialog.h"
 #include "camwindow.h"
-#include "watchbsp.h"
 #include "xywindow.h"
 #include "entity.h"
 #include "select.h"
@@ -267,7 +266,6 @@ public:
     PatchInspector_Construct();
     CamWnd_Construct();
     XYWindow_Construct();
-    BuildMonitor_Construct();
     TextureBrowser_Construct();
     Entity_Construct();
     Autosave_Construct();
@@ -288,7 +286,6 @@ public:
     Autosave_Destroy();
     Entity_Destroy();
     TextureBrowser_Destroy();
-    BuildMonitor_Destroy();
     XYWindow_Destroy();
     CamWnd_Destroy();
     PatchInspector_Destroy();
