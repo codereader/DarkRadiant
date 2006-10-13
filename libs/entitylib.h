@@ -648,34 +648,19 @@ public:
     }
   }
   
-	/** Set a keyvalue on the entity. For now this function just calls the
-	 * const char* version.
+	/** Set a keyvalue on the entity. 
 	 */
   
 	void setKeyValue(const std::string& key, const std::string& value) {
 		if (value.empty()) {
 			erase(key.c_str());
-			m_entityKeyValueChanged();
 		}
 		else {
-			setKeyValue(key.c_str(), value.c_str());
+			insert(key.c_str(), value.c_str());
 		}
+		m_entityKeyValueChanged();
 	}
   
-  
-  void setKeyValue(const char* key, const char* value)
-  {
-    if(value[0] == '\0'
-      /*|| string_equal(EntityClass_valueForKey(*m_eclass, key), value)*/) // don't delete values equal to default
-    {
-      erase(key);
-    }
-    else
-    {
-      insert(key, value);
-    }
-    m_entityKeyValueChanged();
-  }
   const char* getKeyValue(const char* key) const
   {
     KeyValues::const_iterator i = m_keyValues.find(key);
