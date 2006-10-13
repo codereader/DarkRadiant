@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "version.h"
 
 #include "ui/einspector/EntityInspector.h"
+#include "ui/mediabrowser/MediaBrowser.h"
 #include "ifilesystem.h"
 #include "iundo.h"
 #include "ifilter.h"
@@ -2934,12 +2935,24 @@ void MainFrame::Create()
     GroupDialog_constructWindow(window);
 
     // Add entity inspector widget
-    g_page_entity = GroupDialog_addPage("Entities", ui::EntityInspector::getInstance().getWidget(), RawStringExportCaller("Entities"));
+    g_page_entity = GroupDialog_addPage("Entities", 
+    									"cmenu_add_entity.png", 
+    									ui::EntityInspector::getInstance().getWidget(), 
+    									RawStringExportCaller("Entities"));
+
+	// Add the Media Browser page
+	GroupDialog_addPage("Media", 
+						"folder16.png", 
+						ui::MediaBrowser::getInstance().getWidget(), 
+						RawStringExportCaller("Media"));
 
     // Add the console widget if using floating window mode, otherwise the
     // console is placed in the bottom-most split pane.
     if (FloatingGroupDialog()) {
-        g_page_console = GroupDialog_addPage("Console", Console_constructWindow(GroupDialog_getWindow()), RawStringExportCaller("Console"));
+        g_page_console = GroupDialog_addPage("Console", 
+        									 "iconConsole16.png",
+        									 Console_constructWindow(GroupDialog_getWindow()), 
+        									 RawStringExportCaller("Console"));
     }
 
 #ifdef WIN32
@@ -3115,7 +3128,10 @@ void MainFrame::Create()
 
     {
       GtkFrame* frame = create_framed_widget(TextureBrowser_constructWindow(GroupDialog_getWindow()));
-      g_page_textures = GroupDialog_addPage("Textures", GTK_WIDGET(frame), TextureBrowserExportTitleCaller());
+      g_page_textures = GroupDialog_addPage("Textures", 
+      										"icon_texture.png",
+      										GTK_WIDGET(frame), 
+      										TextureBrowserExportTitleCaller());
     }
 
     GroupDialog_show();
@@ -3148,7 +3164,10 @@ void MainFrame::Create()
 
     {      
       GtkFrame* frame = create_framed_widget(TextureBrowser_constructWindow(window));
-      g_page_textures = GroupDialog_addPage("Textures", GTK_WIDGET(frame), TextureBrowserExportTitleCaller());
+      g_page_textures = GroupDialog_addPage("Textures", 
+      										"icon_texture.png",
+      										GTK_WIDGET(frame), 
+      										TextureBrowserExportTitleCaller());
     }
   }
 
