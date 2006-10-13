@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!--
+	<<  Welcome to DarkRadiant's Toolbar Definition File >>
+
+	There are three types of children that can be placed in the toolbar container:
+
+	<toolbutton />	A basic tool button
+		Required attributes: name, action, tooltip and icon
+		The "action" attribute refers to the action labels listed under "Help>Shortcuts List..." 
+		in DarkRadiant, so it is possible to add button commands that are not necessarily listed here.
+
+	<toggletoolbutton />	A toggle tool button, basically the same as <toolbutton />
+		Required attributes: name, action, tooltip and icon
+		This is rather unflexible as there is a limited amount of "toggle commands" available in Radiant.		
+
+	<separator />	A toolbar separator, to keep your icons organised
+
+-->
+<ui>  
+  <toolbar name="standard">
+    <separator/>
+		<toolbutton name="open" action="OpenMap" tooltip="Open a map file" icon="file_open.bmp" />
+		<toolbutton name="save" action="SaveMap" tooltip="Save the current map" icon="file_save.bmp" />
+	<separator/>
+		<toolbutton name="xflip" action="MirrorSelectionX" tooltip="x-axis Flip" icon="brush_flipx.bmp"  />
+		<toolbutton name="xrotate" action="RotateSelectionX" tooltip="x-axis Rotate" icon="brush_rotatex.bmp" />
+		<toolbutton name="yflip" action="MirrorSelectionY" tooltip="y-axis Flip" icon="brush_flipy.bmp" />
+		<toolbutton name="yrotate" action="RotateSelectionY" tooltip="y-axis Rotate" icon="brush_rotatey.bmp" />
+		<toolbutton name="zflip" action="MirrorSelectionZ" tooltip="z-axis Flip" icon="brush_flipz.bmp" />
+		<toolbutton name="zrotate" action="RotateSelectionZ" tooltip="z-axis Rotate" icon="brush_rotatez.bmp" />
+	<separator/>
+		<toolbutton name="selecttouching" action="SelectTouching" tooltip="Select touching" icon="selection_selecttouching.bmp" />
+		<toolbutton name="selectinside" action="SelectInside" tooltip="Select inside" icon="selection_selectinside.bmp" />
+	<separator/>
+		<toolbutton name="csgsubstract" action="CSGSubtract" tooltip="CSG Subtract" icon="selection_csgsubtract.bmp" />
+		<toolbutton name="csgmerge" action="CSGMerge" tooltip="CSG Merge" icon="selection_csgmerge.bmp" />
+		<toolbutton name="csghollow" action="CSGHollow" tooltip="Hollow" icon="selection_makehollow.bmp" />
+	<separator/>
+		<toggletoolbutton name="dragvertices" action="DragVertices" tooltip="Select Vertices" icon="modify_vertices.bmp" />
+		<toggletoolbutton name="dragedges" action="DragEdges" tooltip="Select Edges" icon="modify_edges.bmp" />
+		<toggletoolbutton name="dragfaces" action="DragFaces" tooltip="Select Faces" icon="modify_faces.bmp" />
+	<separator/>
+		<toolbutton name="changeviews" action="NextView" tooltip="Change views" icon="view_change.bmp" />
+	<separator/>
+		<toggletoolbutton name="cubicclip" action="ToggleCubicClip" tooltip="Cubic clip the camera view" icon="view_cubicclipping.bmp" />
+	<separator/>
+		<toggletoolbutton name="translate" action="MouseTranslate" tooltip="Translate" icon="select_mousetranslate.bmp" />
+		<toggletoolbutton name="rotate" action="MouseRotate" tooltip="Rotate" icon="select_mouserotate.bmp" />
+		<toggletoolbutton name="scale" action="MouseScale" tooltip="Scale" icon="select_mousescale.bmp" />
+		<toggletoolbutton name="resize" action="MouseDrag" tooltip="Resize" icon="select_mouseresize.bmp" />
+		<toggletoolbutton name="clipper" action="ToggleClipper" tooltip="Clipper" icon="view_clipper.bmp" />
+	<separator/>
+		<toolbutton name="capcurrentcurve" action="CapCurrentCurve" tooltip="Put caps on the current patch" icon="curve_cap.bmp" />
+	<separator/>
+		<toggletoolbutton name="texturelock" action="TogTexLock" tooltip="Texture Lock" icon="texture_lock.bmp" />
+	<separator/>
+  </toolbar>
+</ui>

@@ -193,7 +193,7 @@ brushexport_env = module_env.Copy()
 brushexport_lst = build_list('contrib/brushexport', 'plugin.cpp')
 brushexport_env.useGlib2()
 brushexport_env.useGtk2()
-brushexport_lib = brushexport_env.SharedLibrary(target='brushexport', source=brushexport_lst, LIBPATH='libs')
+brushexport_lib = brushexport_env.SharedLibrary(target='brushexport', source=brushexport_lst)
 brushexport_env.Install(INSTALL + '/plugins', brushexport_lib)
 
 radiant_env = g_env.Copy()
@@ -302,6 +302,7 @@ radiant_src = [
 'ui/modelselector/ModelSelector.cpp',
 'ui/common/ModelPreview.cpp',
 'ui/common/RenderableAABB.cpp',
+'ui/common/ToolbarCreator.cpp',
 'ui/mediabrowser/MediaBrowser.cpp'
 ]
 

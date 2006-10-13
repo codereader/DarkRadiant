@@ -32,6 +32,12 @@ public:
 
     // Construct a Node from the provided xmlNodePtr.
 	Node(xmlNodePtr node);
+	
+	// Get a list of nodes which are children of this node
+    const char* getName() const;
+	
+	// Get a list of nodes which are children of this node
+    NodeList getChildren() const;
 
     // Get a list of nodes which are children of this node and match the
     // given name.
