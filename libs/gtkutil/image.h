@@ -37,9 +37,11 @@ GtkImage* new_local_image(const char* filename); // filename is relative to loca
 
 namespace gtkutil {
 	
-	// Convenience function to load a local image (from the bitmaps directory)
+	// Convenience functions to load a local image (from the bitmaps directory)
 	// and return a GdkPixBuf for use by certain GTK widgets (e.g. TreeView).
 	GdkPixbuf* getLocalPixbuf(const std::string& filename);
+	
+	GdkPixbuf* getLocalPixbufWithMask(const std::string& filename);
 	
 } // namespace gtkutil
 

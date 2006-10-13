@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ui/einspector/EntityInspector.h"
 #include "ui/mediabrowser/MediaBrowser.h"
+#include "ui/common/ToolbarCreator.h"
 #include "ifilesystem.h"
 #include "iundo.h"
 #include "ifilter.h"
@@ -2913,9 +2914,17 @@ void MainFrame::Create()
     GtkMenuBar *main_menu = create_main_menu(CurrentStyle());
     gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(main_menu), FALSE, FALSE, 0);
     
-    // Create and add main toolbar
-    GtkToolbar *main_toolbar = create_main_toolbar(CurrentStyle());
-    gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(main_toolbar), FALSE, FALSE, 0);
+    // Create and add main toolbar (OLD CODE)
+	//GtkToolbar *main_toolbar = create_main_toolbar(CurrentStyle());
+    //gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(main_toolbar), FALSE, FALSE, 0);
+    
+    // Instantiate the ToolbarCreator and retrieve the standard toolbar widget 
+	toolbar::ToolbarCreator* toolbarCreator = new toolbar::ToolbarCreator(GameToolsPath_get());
+	GtkToolbar* generalToolbar = toolbarCreator->GetToolbar("standard");
+	gtk_widget_show(GTK_WIDGET(generalToolbar));
+	
+	// Pack it into the main window
+	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(generalToolbar), FALSE, FALSE, 0);
 
     // Create and add plugin toolbar, if visible    
     GtkToolbar *plugin_toolbar = create_plugin_toolbar();
@@ -2924,11 +2933,11 @@ void MainFrame::Create()
     }
     gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(plugin_toolbar), FALSE, FALSE, 0);
     
-    // Create and pack main statusbar
+    // Create and pack main statusbar 
     GtkWidget *main_statusbar = create_main_statusbar(m_pStatusLabel);
     gtk_box_pack_end(GTK_BOX(vbox), main_statusbar, FALSE, TRUE, 2);
 
-    /* Construct the Group Dialog. This is the tabbed window that contains
+	/* Construct the Group Dialog. This is the tabbed window that contains
      * a number of pages - usually Entities, Textures and possibly Console.
      */
 

@@ -104,4 +104,9 @@ namespace gtkutil {
 		return gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL);
 	}
 	
+	GdkPixbuf* getLocalPixbufWithMask(const std::string& fileName) {
+		std::string fullFileName(std::string(g_bitmapsPath.c_str()) + fileName);
+		return pixbuf_new_from_file_with_mask(fullFileName.c_str());
+	}
+	
 } // namespace gtkutil
