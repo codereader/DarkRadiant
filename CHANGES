@@ -1,3 +1,8 @@
+13/10/2006
+OrbWeaver
+- Fixed assertion failure when loading a map with a "name" key set on the
+  worldspawn (due to incorrect identification as a model entity).
+
 08/10/2006
 OrbWeaver
 - Merged upstream revisions 99 and 101
