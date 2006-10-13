@@ -24,6 +24,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/callback.h"
 
+#include <string>
+
+// FORWARD DECLS
+
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkWindow GtkWindow;
 
@@ -40,7 +44,23 @@ inline void RawStringExport(const char* string, const StringImportCallback& impo
   importer(string);
 }
 typedef ConstPointerCaller1<char, const StringImportCallback&, RawStringExport> RawStringExportCaller;
-GtkWidget* GroupDialog_addPage(const char* tabLabel, GtkWidget* widget, const StringExportCallback& title);
+
+
+/** Add the given page to the GroupDialog.
+ * 
+ * @param tabLabel
+ * Text label to display on the tab.
+ * 
+ * @param tabIcon
+ * Name of the local bitmap to use as a tab icon.
+ * 
+ * @param widget
+ * The GtkWidget to add into the page itself.
+ * 
+ * @param title
+ * ???
+ */
+GtkWidget* GroupDialog_addPage(const char* tabLabel, const std::string& tabIcon, GtkWidget* widget, const StringExportCallback& title);
 
 void GroupDialog_showPage(GtkWidget* page);
 void GroupDialog_updatePageTitle(GtkWidget* page);

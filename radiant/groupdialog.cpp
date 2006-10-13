@@ -36,9 +36,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtktextview.h>
 #include <gtk/gtklabel.h>
 #include <gtk/gtkscrolledwindow.h>
+#include <gtk/gtkimage.h>
+#include <gtk/gtkhbox.h>
 
 #include "gtkutil/widget.h"
 #include "gtkutil/accelerator.h"
+#include "gtkutil/image.h"
 #include "gtkmisc.h"
 #include "multimon.h"
 #include "console.h"
@@ -134,14 +137,24 @@ void GroupDlg::Create(GtkWindow* parent)
 }
 
 
-GtkWidget* GroupDialog_addPage(const char* tabLabel, GtkWidget* widget, const StringExportCallback& title)
+GtkWidget* GroupDialog_addPage(const char* tabLabel, const std::string& tabIcon, GtkWidget* widget, const StringExportCallback& title)
 {
-  GtkWidget* w = gtk_label_new(tabLabel);
-  gtk_widget_show(w);
-  GtkWidget* page = gtk_notebook_get_nth_page(GTK_NOTEBOOK(g_GroupDlg.m_pNotebook), gtk_notebook_insert_page(GTK_NOTEBOOK(g_GroupDlg.m_pNotebook), widget, w, -1));
-  g_pages.push_back(title);
+	// Create the icon GtkImage and tab label
+	GtkWidget* icon = gtk_image_new_from_pixbuf(gtkutil::getLocalPixbuf(tabIcon));
+	GtkWidget* label = gtk_label_new(tabLabel);
 
-  return page;
+	// Pack into an hbox to create the title widget	
+	GtkWidget* titleWidget = gtk_hbox_new(FALSE, 3);
+	gtk_box_pack_start(GTK_BOX(titleWidget), icon, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(titleWidget), label, FALSE, FALSE, 0);
+	gtk_widget_show_all(titleWidget);
+	
+	// Create the notebook page
+	GtkWidget* page = gtk_notebook_get_nth_page(GTK_NOTEBOOK(g_GroupDlg.m_pNotebook), 
+						gtk_notebook_insert_page(GTK_NOTEBOOK(g_GroupDlg.m_pNotebook), widget, titleWidget, -1));
+	g_pages.push_back(title);
+
+	return page;
 }
 
 
