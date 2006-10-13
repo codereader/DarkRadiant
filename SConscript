@@ -301,7 +301,8 @@ radiant_src = [
 'ui/ortho/EntityClassChooser.cpp',
 'ui/modelselector/ModelSelector.cpp',
 'ui/common/ModelPreview.cpp',
-'ui/common/RenderableAABB.cpp'
+'ui/common/RenderableAABB.cpp',
+'ui/mediabrowser/MediaBrowser.cpp'
 ]
 
 for i in range(len(radiant_src)):
