@@ -26,20 +26,40 @@ namespace ui {
 
 EntityInspector::PropertyCategoryMap EntityInspector::_categoryMap;
 
+// Constructor creates UI components for the EntityInspector dialog
+
+EntityInspector::EntityInspector()
+:_idleDraw(MemberCaller<EntityInspector, &EntityInspector::callbackRedraw>(*this)) // Set the IdleDraw
+{
+    _widget = gtk_vbox_new(FALSE, 0);
+    
+    gtk_box_pack_start(GTK_BOX(_widget), createTreeViewPane(), TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(_widget), createDialogPane(), FALSE, FALSE, 0);
+    
+    // Stimulate initial redraw to get the correct status
+    queueDraw();
+    
+    // Set the function to call when a keyval is changed. This is a requirement
+    // of the EntityCreator interface.
+    GlobalEntityCreator().setKeyValueChangedFunc(EntityInspector::redrawInstance);
+
+    // Create callback object to redraw the dialog when the selected entity is
+    // changed
+    GlobalSelectionSystem().addSelectionChangeCallback(FreeCaller1<const Selectable&, EntityInspector::selectionChanged>());
+}
+
 // Return the singleton EntityInspector instance, creating it if it is not yet
 // created. Single-threaded design.
 
-EntityInspector* EntityInspector::getInstance() {
+EntityInspector& EntityInspector::getInstance() {
     static EntityInspector _instance;
-    return &_instance;
+    return _instance;
 }
 
-// Return the Gtk widget for the EntityInspector dialog. The GtkWidget is
-// constructed on demand, since the actual dialog may never be shown.
+// Return the Gtk widget for the EntityInspector dialog. 
 
 GtkWidget* EntityInspector::getWidget() {
-    if (_widget == NULL) 
-        constructUI();
+	gtk_widget_show_all(_widget);
     return _widget;
 }
 
@@ -92,27 +112,6 @@ void EntityInspector::makePropertyCategory(xml::Node& node) {
 	}
 }
 
-// Create the actual UI components for the EntityInspector dialog
-
-void EntityInspector::constructUI() {
-    _widget = gtk_vbox_new(FALSE, 0);
-    
-    gtk_box_pack_start(GTK_BOX(_widget), createTreeViewPane(), TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(_widget), createDialogPane(), FALSE, FALSE, 0);
-    
-    gtk_widget_show_all(_widget);
-    
-    // Stimulate initial redraw to get the correct status
-    queueDraw();
-    
-    // Set the function to call when a keyval is changed. This is a requirement
-    // of the EntityCreator interface.
-    GlobalEntityCreator().setKeyValueChangedFunc(EntityInspector::redrawInstance);
-
-    // Create callback object to redraw the dialog when the selected entity is
-    // changed
-    GlobalSelectionSystem().addSelectionChangeCallback(FreeCaller1<const Selectable&, EntityInspector::selectionChanged>());
-}
 
 // Create the dialog pane
 
@@ -244,8 +243,8 @@ void EntityInspector::callbackRedraw() {
 // This is necessary since the EntityCreator interface requires a pointer to 
 // a non-member function to call when a keyval is changed.
 
-inline void EntityInspector::redrawInstance() {
-    getInstance()->queueDraw();
+void EntityInspector::redrawInstance() {
+    getInstance().queueDraw();
 }
 
 // Pass on a queueDraw request to the contained IdleDraw object.

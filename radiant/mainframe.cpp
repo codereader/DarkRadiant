@@ -2934,7 +2934,7 @@ void MainFrame::Create()
     GroupDialog_constructWindow(window);
 
     // Add entity inspector widget
-    g_page_entity = GroupDialog_addPage("Entities", ui::EntityInspector::getInstance()->getWidget(), RawStringExportCaller("Entities"));
+    g_page_entity = GroupDialog_addPage("Entities", ui::EntityInspector::getInstance().getWidget(), RawStringExportCaller("Entities"));
 
     // Add the console widget if using floating window mode, otherwise the
     // console is placed in the bottom-most split pane.

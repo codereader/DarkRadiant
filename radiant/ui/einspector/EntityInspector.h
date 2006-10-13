@@ -108,8 +108,6 @@ private:
 
     // Utility functions to construct the Gtk components
 
-    void constructUI();
-
     GtkWidget* createDialogPane(); // bottom widget pane 
     GtkWidget* createTreeViewPane(); // tree view for selecting attributes
 
@@ -139,13 +137,10 @@ private:
 public:
 
     // Constructor
-    EntityInspector():
-        // Set the IdleDraw instance to call the doRedraw function when
-        // required
-        _idleDraw(MemberCaller<EntityInspector, &EntityInspector::callbackRedraw>(*this)) {}
+    EntityInspector();
 
     // Return or create the singleton instance
-    static EntityInspector* getInstance();
+    static EntityInspector& getInstance();
 
     // Get the Gtk Widget for display in the main application
     GtkWidget* getWidget();
