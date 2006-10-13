@@ -105,9 +105,15 @@ private:
   Callback m_transformChanged;
   Callback m_evaluateTransform;
 
-  CopiedString m_name;
-  CopiedString m_modelKey;
-  bool m_isModel;
+	// The value of the "name" key for this Doom3Group.
+	std::string m_name;
+
+	// The value of the "model" key for this Doom3Group.
+	std::string m_modelKey;
+	
+	// Flag to indicate this Doom3Group is a model (i.e. does not contain
+	// brushes).
+	bool m_isModel;
 
   scene::Traversable* m_traversable;
 
@@ -196,10 +202,23 @@ private:
     updateTransform();
   }
 
-  void updateIsModel()
-  {
-    setIsModel(!string_equal(m_modelKey.c_str(), m_name.c_str()));
-  }
+	/** Determine if this Doom3Group is a model (func_static) or a
+	 * brush-containing entity. If the "model" key is equal to the
+	 * "name" key, then this is a brush-based entity, otherwise it is
+	 * a model entity. The exception to this is for the "worldspawn"
+	 * entity class, which is always a brush-based entity.
+	 */
+	void updateIsModel() {
+		if (m_modelKey != m_name && 
+			std::string(m_entity.getKeyValue("classname")) != "worldspawn")
+		{
+			setIsModel(true);
+		}
+		else
+		{
+			setIsModel(false);
+		}
+	}
 
   void nameChanged(const char* value)
   {
