@@ -2802,8 +2802,8 @@ void MainFrame::Create()
     gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(main_menu), FALSE, FALSE, 0);
     
     // Instantiate the ToolbarCreator and retrieve the standard toolbar widget 
-	toolbar::ToolbarCreator* toolbarCreator = new toolbar::ToolbarCreator(GameToolsPath_get());
-	GtkToolbar* generalToolbar = toolbarCreator->GetToolbar("standard");
+	ui::ToolbarCreator toolbarCreator(AppPath_get());
+	GtkToolbar* generalToolbar = toolbarCreator.getToolbar("standard");
 	gtk_widget_show(GTK_WIDGET(generalToolbar));
 	
 	// Pack it into the main window
