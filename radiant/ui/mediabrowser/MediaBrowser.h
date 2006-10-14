@@ -2,6 +2,7 @@
 #define MEDIABROWSER_H_
 
 #include <gtk/gtkwidget.h>
+#include <gtk/gtktreestore.h>
 
 namespace ui
 {
@@ -15,6 +16,15 @@ class MediaBrowser
 {
 	// Main widget
 	GtkWidget* _widget;
+	
+	// Main tree store
+	GtkTreeStore* _treeStore;
+	
+private:
+
+	/* GTK CALLBACKS */
+	
+	static void _onExpose(GtkWidget*, GdkEventExpose*, MediaBrowser*);
 	
 public:
 	
