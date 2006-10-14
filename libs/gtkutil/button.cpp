@@ -35,15 +35,6 @@ void clicked_closure_callback(GtkWidget* widget, gpointer data)
   (*reinterpret_cast<Callback*>(data))();
 }
 
-void button_connect_callback(GtkButton* button, const Callback& callback)
-{
-#if 1
-  g_signal_connect_swapped(G_OBJECT(button), "clicked", G_CALLBACK(callback.getThunk()), callback.getEnvironment());
-#else
-  g_signal_connect_closure(G_OBJECT(button), "clicked", create_cclosure(G_CALLBACK(clicked_closure_callback), callback), FALSE);
-#endif
-}
- 
 guint toggle_button_connect_callback(GtkToggleButton* button, const Callback& callback)
 {
 #if 1

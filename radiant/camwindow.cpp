@@ -46,7 +46,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "gtkutil/widget.h"
 #include "gtkutil/button.h"
-#include "gtkutil/toolbar.h"
 #include "gtkutil/glwidget.h"
 #include "gtkutil/xorrectangle.h"
 #include "gtkmisc.h"
@@ -1770,10 +1769,10 @@ void Camera_ToggleFarClip()
 }
 
 
-void CamWnd_constructToolbar(GtkToolbar* toolbar)
+/*void CamWnd_constructToolbar(GtkToolbar* toolbar)
 {
   toolbar_append_toggle_button(toolbar, "Cubic clip the camera view", "view_cubicclipping.bmp", "ToggleCubicClip");
-}
+}*/
 
 void CamWnd_registerShortcuts()
 {

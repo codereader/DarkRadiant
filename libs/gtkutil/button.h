@@ -31,7 +31,6 @@ typedef int gint;
 typedef gint gboolean;
 typedef unsigned int guint;
 
-void button_connect_callback(GtkButton* button, const Callback& callback);
 guint toggle_button_connect_callback(GtkToggleButton* button, const Callback& callback);
 
 void button_set_icon(GtkButton* button, const char* icon);
