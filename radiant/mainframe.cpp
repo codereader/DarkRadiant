@@ -2404,7 +2404,6 @@ void SurfaceInspector_registerShortcuts()
   command_connect_accelerator("FitTexture");
 }
 
-
 void register_shortcuts()
 {
   PatchInspector_registerShortcuts();
@@ -2418,118 +2417,6 @@ void register_shortcuts()
   SelectNudge_registerShortcuts();
   SnapToGrid_registerShortcuts();
   SelectByType_registerShortcuts();
-}
-
-void File_constructToolbar(GtkToolbar* toolbar)
-{
-  toolbar_append_button(toolbar, "Open an existing map", "file_open.bmp", "OpenMap");
-  toolbar_append_button(toolbar, "Save the active map", "file_save.bmp", "SaveMap");
-}
-
-void RotateFlip_constructToolbar(GtkToolbar* toolbar)
-{
-  toolbar_append_button(toolbar, "x-axis Flip", "brush_flipx.bmp", "MirrorSelectionX");
-  toolbar_append_button(toolbar, "x-axis Rotate", "brush_rotatex.bmp", "RotateSelectionX");
-  toolbar_append_button(toolbar, "y-axis Flip", "brush_flipy.bmp", "MirrorSelectionY");
-  toolbar_append_button(toolbar, "y-axis Rotate", "brush_rotatey.bmp", "RotateSelectionY");
-  toolbar_append_button(toolbar, "z-axis Flip", "brush_flipz.bmp", "MirrorSelectionZ");
-  toolbar_append_button(toolbar, "z-axis Rotate", "brush_rotatez.bmp", "RotateSelectionZ");
-}
-
-void Select_constructToolbar(GtkToolbar* toolbar)
-{
-  toolbar_append_button(toolbar, "Select touching", "selection_selecttouching.bmp", "SelectTouching");
-  toolbar_append_button(toolbar, "Select inside", "selection_selectinside.bmp", "SelectInside");
-}
-
-void CSG_constructToolbar(GtkToolbar* toolbar)
-{
-  toolbar_append_button(toolbar, "CSG Subtract", "selection_csgsubtract.bmp", "CSGSubtract");
-  toolbar_append_button(toolbar, "CSG Merge", "selection_csgmerge.bmp", "CSGMerge");
-  toolbar_append_button(toolbar, "Hollow", "selection_makehollow.bmp", "CSGHollow");
-}
-
-void ComponentModes_constructToolbar(GtkToolbar* toolbar)
-{
-  toolbar_append_toggle_button(toolbar, "Select Vertices", "modify_vertices.bmp", "DragVertices");
-  toolbar_append_toggle_button(toolbar, "Select Edges", "modify_edges.bmp", "DragEdges");
-  toolbar_append_toggle_button(toolbar, "Select Faces", "modify_faces.bmp", "DragFaces");
-}
-
-void Clipper_constructToolbar(GtkToolbar* toolbar)
-{
-
-  toolbar_append_toggle_button(toolbar, "Clipper", "view_clipper.bmp", "ToggleClipper");
-}
-
-void XYWnd_constructToolbar(GtkToolbar* toolbar)
-{
-  toolbar_append_button(toolbar, "Change views", "view_change.bmp", "NextView");
-}
-
-void Manipulators_constructToolbar(GtkToolbar* toolbar)
-{
-  toolbar_append_toggle_button(toolbar, "Translate", "select_mousetranslate.bmp", "MouseTranslate");
-  toolbar_append_toggle_button(toolbar, "Rotate", "select_mouserotate.bmp", "MouseRotate");
-  toolbar_append_toggle_button(toolbar, "Scale", "select_mousescale.bmp", "MouseScale");
-  toolbar_append_toggle_button(toolbar, "Resize", "select_mouseresize.bmp", "MouseDrag");
-
-  Clipper_constructToolbar(toolbar);
-}
-
-GtkToolbar* create_main_toolbar(MainFrame::EViewStyle style)
-{
-  GtkToolbar* toolbar = GTK_TOOLBAR(gtk_toolbar_new());
-  gtk_toolbar_set_orientation(toolbar, GTK_ORIENTATION_HORIZONTAL);
-  gtk_toolbar_set_style(toolbar, GTK_TOOLBAR_ICONS);
-
-  gtk_widget_show(GTK_WIDGET(toolbar));
-
-  File_constructToolbar(toolbar);
-
-  gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
-
-  RotateFlip_constructToolbar(toolbar);
-
-  gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
-
-  Select_constructToolbar(toolbar);
-
-  gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
-
-  CSG_constructToolbar(toolbar);
-
-  gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
-
-  ComponentModes_constructToolbar(toolbar);
-
-  if(style == MainFrame::eRegular || style == MainFrame::eRegularLeft || style == MainFrame::eFloating)
-  {
-    gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
-
-    XYWnd_constructToolbar(toolbar);
-  }
-
-  gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
-
-  CamWnd_constructToolbar(toolbar);
-
-  gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
-
-  Manipulators_constructToolbar(toolbar);
-
-  if (g_Layout_enablePatchToolbar.m_value)
-  {
-    gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
-
-    Patch_constructToolbar(toolbar);
-  }
-
-  gtk_toolbar_append_space (GTK_TOOLBAR (toolbar));
-
-  toolbar_append_toggle_button(toolbar, "Texture Lock", "texture_lock.bmp", "TogTexLock");
-
-  return toolbar;
 }
 
 GtkWidget* create_main_statusbar(GtkWidget *pStatusLabel[c_count_status])
@@ -2913,10 +2800,6 @@ void MainFrame::Create()
     // Create and add main menu    
     GtkMenuBar *main_menu = create_main_menu(CurrentStyle());
     gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(main_menu), FALSE, FALSE, 0);
-    
-    // Create and add main toolbar (OLD CODE)
-	//GtkToolbar *main_toolbar = create_main_toolbar(CurrentStyle());
-    //gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(main_toolbar), FALSE, FALSE, 0);
     
     // Instantiate the ToolbarCreator and retrieve the standard toolbar widget 
 	toolbar::ToolbarCreator* toolbarCreator = new toolbar::ToolbarCreator(GameToolsPath_get());

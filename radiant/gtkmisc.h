@@ -54,16 +54,6 @@ GtkMenuItem* create_menu_item_with_mnemonic(GtkMenu *menu, const char *mnemonic,
 // this also sets up the shortcut using command_connect_accelerator
 GtkCheckMenuItem* create_check_menu_item_with_mnemonic(GtkMenu* menu, const char* mnemonic, const char* commandName);
 
-typedef struct _GtkButton GtkButton;
-typedef struct _GtkToggleButton GtkToggleButton;
-typedef struct _GtkToolbar GtkToolbar;
-
-// this DOES NOT set up the shortcut using command_connect_accelerator
-GtkButton* toolbar_append_button(GtkToolbar* toolbar, const char* description, const char* icon, const char* commandName);
-// this DOES NOT set up the shortcut using command_connect_accelerator
-GtkToggleButton* toolbar_append_toggle_button(GtkToolbar* toolbar, const char* description, const char* icon, const char* commandName);
-
-
 template<typename Element> class BasicVector3;
 typedef BasicVector3<float> Vector3;
 bool color_dialog (GtkWidget *parent, Vector3& color, const char* title = "Choose Color");

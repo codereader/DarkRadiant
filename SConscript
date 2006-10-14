@@ -82,7 +82,6 @@ gtkutil_src = '\
   nonmodal.cpp\
   paned.cpp\
   pointer.cpp\
-  toolbar.cpp\
   widget.cpp\
   window.cpp\
   xorrectangle.cpp\

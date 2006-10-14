@@ -25,9 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "string/stringfwd.h"
 
 void Patch_registerCommands();
-typedef struct _GtkToolbar GtkToolbar;
 typedef struct _GtkMenu GtkMenu;
-void Patch_constructToolbar(GtkToolbar* toolbar);
 void Patch_constructMenu(GtkMenu* menu);
 
 namespace scene
