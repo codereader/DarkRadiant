@@ -83,6 +83,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/callback.h"
 
 #include "exception/RadiantException.h"
+#include "xmlutil/XMLRegistry.h"
 
 const char* GameDescription_getKeyValue(const char* key)
 {
@@ -94,8 +95,14 @@ const char* GameDescription_getRequiredKeyValue(const char* key)
   return g_pGameDescription->getRequiredKeyValue(key);
 }
 
-const bool get_ShowAllLightRadii() {
-  return g_showAllLightRadii;
+// Get a value from the XML registry
+std::string getXmlRegistry(const std::string& key) {
+	return xmlRegistry.getXmlRegistry(key);
+}
+
+// Set a value in the XML registry
+void setXmlRegistry(const std::string& key, const std::string& value) {
+	xmlRegistry.setXmlRegistry(key, value);
 }
 
 // Get an XPath from the global GameDescription
@@ -156,7 +163,9 @@ public:
     m_radiantcore.getGameDescriptionKeyValue = &GameDescription_getKeyValue;
     m_radiantcore.getRequiredGameDescriptionKeyValue = &GameDescription_getRequiredKeyValue;
     m_radiantcore.getXPath = &GameDescription_getXPath;
-    m_radiantcore.getShowAllLightRadii = &get_ShowAllLightRadii;
+    
+    m_radiantcore.getXmlRegistry = &getXmlRegistry;
+    m_radiantcore.setXmlRegistry = &setXmlRegistry;
 
     m_radiantcore.attachGameToolsPathObserver = Radiant_attachGameToolsPathObserver;
     m_radiantcore.detachGameToolsPathObserver = Radiant_detachGameToolsPathObserver;

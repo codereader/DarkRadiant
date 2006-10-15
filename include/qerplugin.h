@@ -135,7 +135,8 @@ struct _QERFuncTable_1
   const char* (*getGameDescriptionKeyValue)(const char* key);
   const char* (*getRequiredGameDescriptionKeyValue)(const char* key);
   xml::NodeList (*getXPath) (const std::string& path);
-  const bool (*getShowAllLightRadii)();
+  std::string 	(*getXmlRegistry) (const std::string& key);
+  void 			(*setXmlRegistry) (const std::string& key, const std::string& value);
 
   void (*attachGameToolsPathObserver)(ModuleObserver& observer);
   void (*detachGameToolsPathObserver)(ModuleObserver& observer);
