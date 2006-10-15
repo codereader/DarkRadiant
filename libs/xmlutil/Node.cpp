@@ -11,9 +11,19 @@ Node::Node(xmlNodePtr node):
 {
 }
 
+// Return the actual node ptr
+xmlNodePtr Node::getNodePtr() const {
+	return _xmlNode;
+}
+
 // Return the name of a node 
-const char* Node::getName() const {
-	return reinterpret_cast<const char*>(_xmlNode->name);	
+const std::string Node::getName() const {
+	if (_xmlNode) {
+		return std::string( reinterpret_cast<const char*>(_xmlNode->name) );
+	}
+	else {
+		return "";
+	}
 }
 
 // Return a NodeList of all children of this node
@@ -46,6 +56,11 @@ NodeList Node::getNamedChildren(const std::string& name) const {
     
     return retval;
     
+}
+
+// Set the value of the given attribute
+void Node::setAttributeValue(const std::string& key, const std::string& value) {
+	xmlSetProp(_xmlNode, xmlCharStrdup(key.c_str()), xmlCharStrdup(value.c_str()));
 }
 
 // Return the value of a given attribute, or throw AttributeNotFoundException

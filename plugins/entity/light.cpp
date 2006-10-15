@@ -1258,8 +1258,8 @@ public:
       }
     }
     
-    // Always draw Doom 3 light bounding boxes
-    if (g_lightType == LIGHTTYPE_DOOM3 && GlobalRadiant().getShowAllLightRadii()) {
+    // Always draw Doom 3 light bounding boxes, if the global is set
+    if (g_lightType == LIGHTTYPE_DOOM3 && GlobalRadiant().getXmlRegistry("globals/ui/showlightradii") == "1") {
       updateLightRadiiBox();
       renderer.addRenderable(m_radii_box, localToWorld);
     }

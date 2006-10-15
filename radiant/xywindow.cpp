@@ -106,7 +106,6 @@ public:
 VIEWTYPE g_clip_viewtype;
 bool g_bSwitch = true;
 bool g_clip_useCaulk = false;
-bool g_showAllLightRadii = false;
 ClipPoint g_Clip1;
 ClipPoint g_Clip2;
 ClipPoint g_Clip3;

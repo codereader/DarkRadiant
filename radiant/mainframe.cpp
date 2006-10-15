@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 #include "version.h"
 
+#include "xmlutil/XMLRegistry.h"
 #include "ui/einspector/EntityInspector.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "ui/common/ToolbarCreator.h"
@@ -613,6 +614,8 @@ void Radiant_Initialise()
   g_gameToolsPathObservers.realise();
   g_gameModeObservers.realise();
   g_gameNameObservers.realise();
+  
+  xmlRegistry.setXmlRegistry("globals/ui/showlightradii","1");
 }
 
 void Radiant_Shutdown()
@@ -1382,7 +1385,7 @@ void ClipperToolExport(const BoolImportCallback& importCallback)
 
 void ShowAllLightRadiiExport(const BoolImportCallback& importCallback)
 {
-  importCallback(g_showAllLightRadii);
+  importCallback(xmlRegistry.getXmlRegistry("globals/ui/showlightradii") != "");
 }
 
 FreeCaller1<const BoolImportCallback&, TranslateToolExport> g_translatemode_button_caller;
@@ -1535,16 +1538,13 @@ void ClipperMode()
 
 void ToggleShowAllLightRadii()
 {
-  //globalOutputStream() << "Toggle Function called - new state is: ";
-  if(g_showAllLightRadii)
+  if (xmlRegistry.getXmlRegistry("globals/ui/showlightradii") == "1")
   {
-  	//globalOutputStream() << "false\n";
-    g_showAllLightRadii = false;
+  	xmlRegistry.setXmlRegistry("globals/ui/showlightradii","");
   }
   else
   { 
-  	//globalOutputStream() << "true\n";
-  	g_showAllLightRadii = true;    
+  	xmlRegistry.setXmlRegistry("globals/ui/showlightradii","1");    
   }
   SceneChangeNotify();
 }

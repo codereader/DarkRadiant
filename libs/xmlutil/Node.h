@@ -33,8 +33,11 @@ public:
     // Construct a Node from the provided xmlNodePtr.
 	Node(xmlNodePtr node);
 	
-	// Get a list of nodes which are children of this node
-    const char* getName() const;
+	// Get the actual node pointer to a given node
+    xmlNodePtr getNodePtr() const;
+	
+	// Get the name of the given node
+    const std::string getName() const;
 	
 	// Get a list of nodes which are children of this node
     NodeList getChildren() const;
@@ -46,6 +49,9 @@ public:
     // Return the value of the given attribute, or throw AttributeNotFoundException
     // if the attribute is not present on this Node.
     std::string getAttributeValue(const std::string& key) const;
+    
+    // Set the value of the given attribute    
+    void setAttributeValue(const std::string& key, const std::string& value);
     
     /** Return the text content of this node.
      * 
