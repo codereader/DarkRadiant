@@ -1,3 +1,8 @@
+15/10/2006
+greebo
+- Added toolbar button to display all light volumes.
+- Toolbars use XML config file rather than hard-coding.
+
 13/10/2006
 OrbWeaver
 - Fixed assertion failure when loading a map with a "name" key set on the
@@ -25,12 +30,14 @@ OrbWeaver
 Crispy
 - Added texture window toolbar and button to clamp textures to constant size
 OrbWeaver
-- Fixed problems with material names using mixed case not being displayed on brushes
+- Fixed problems with material names using mixed case not being displayed on
+  brushes
 - textures/common/collision now filtered out by Filter->Clips
 
 27/08/2006
 Crispy
-- Removal of OpenGLBinding in favour of standard GLEW library for extension processing
+- Removal of OpenGLBinding in favour of standard GLEW library for extension
+  processing
 
 ** RELEASE 0.5.3
 
@@ -67,8 +74,8 @@ Crispy
 - Fixed missing shaders on ASE models
 
 17/07/2006
-- Entity keyval changes now undoable and correctly set "map changed" flag to allow
-  saving.
+- Entity keyval changes now undoable and correctly set "map changed" flag to
+  allow saving.
 
 16/07/2006
 - Removed .xlink processing code which causes crashes on Windows 2000
@@ -76,14 +83,16 @@ Crispy
 ** RELEASE 0.5.0
 
 16/07/2006
-- Fixed save function silently failing when .map cannot be renamed to .bak before save
-- Changed EntityInspector from a GtkPaned to a GtkVBox, adjusted size requests to allow
-  for shrinkage on low-res displays.
+- Fixed save function silently failing when .map cannot be renamed to .bak
+  before save
+- Changed EntityInspector from a GtkPaned to a GtkVBox, adjusted size requests
+  to allow for shrinkage on low-res displays.
 
 ** RELEASE 0.5pre3
 
 15/07/2006
-- Added ColourPropertyEditor for selection of entity colours using a GtkColorButton
+- Added ColourPropertyEditor for selection of entity colours using a
+  GtkColorButton
 
 ** RELEASE 0.5pre2
 
