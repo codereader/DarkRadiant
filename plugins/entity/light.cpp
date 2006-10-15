@@ -53,6 +53,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stringio.h"
 #include "traverselib.h"
 #include "dragplanes.h"
+#include "qerplugin.h"
 
 #include "targetable.h"
 #include "origin.h"
@@ -1255,6 +1256,12 @@ public:
         renderer.SetState(m_render_center.m_state, Renderer::eWireframeOnly);
         renderer.addRenderable(m_render_center, localToWorld);
       }
+    }
+    
+    // Always draw Doom 3 light bounding boxes
+    if (g_lightType == LIGHTTYPE_DOOM3 && GlobalRadiant().getShowAllLightRadii()) {
+      updateLightRadiiBox();
+      renderer.addRenderable(m_radii_box, localToWorld);
     }
   }
   void renderWireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const

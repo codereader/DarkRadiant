@@ -29,7 +29,8 @@ class ToolbarCreator {
 		GtkToolbar*	createToolbar(xml::Node&);
 		GtkWidget* 	createToolItem(xml::Node&, GtkToolbar*);
 		
-		ToolbarMap _toolbars;
+		ToolbarMap 		_toolbars;
+		GtkTooltips* 	_tooltips;
 	
 	public:
 		// Constructor

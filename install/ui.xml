@@ -54,5 +54,7 @@
 	<separator/>
 		<toggletoolbutton name="texturelock" action="TogTexLock" tooltip="Texture Lock" icon="texture_lock.bmp" />
 	<separator/>
+		<toggletoolbutton name="showlightradii" action="ToggleShowAllLightRadii" tooltip="Show/hide all light volumes" icon="view_show_lightradii.bmp" />
+	<separator/>
   </toolbar>
 </ui>

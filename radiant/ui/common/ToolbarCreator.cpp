@@ -58,13 +58,13 @@ GtkWidget* ToolbarCreator::createToolItem(xml::Node& node, GtkToolbar* toolbar) 
 		if (nodeName == "toolbutton") {
 			// Create a new GtkToolButton and assign the right callback
 			toolItem = GTK_WIDGET(gtk_tool_button_new(NULL, name.c_str()));
-			
+						
 			const Callback cb = GlobalCommands_find(action.c_str()).m_callback;
 			g_signal_connect_swapped(G_OBJECT(toolItem), "clicked", G_CALLBACK(cb.getThunk()), cb.getEnvironment());
 		}
 		else {
 			// Create a new GtkToggleToolButton and assign the right callback
-			toolItem = GTK_WIDGET(gtk_toggle_tool_button_new());			
+			toolItem = GTK_WIDGET(gtk_toggle_tool_button_new());
 			
 			const Toggle toggle = GlobalToggles_find(action.c_str());
 			const Callback cb = toggle.m_command.m_callback;
@@ -75,6 +75,11 @@ GtkWidget* ToolbarCreator::createToolItem(xml::Node& node, GtkToolbar* toolbar) 
 			GtkToggleToolButton* toggleToolButton = GTK_TOGGLE_TOOL_BUTTON(toolItem);
 							
 			toggle.m_exportCallback(ToggleButtonSetActiveCaller(*toggleToolButton));				
+		}
+		
+		// Set the tooltip, if not empty
+		if (tooltip != "") {
+			gtk_tool_item_set_tooltip(GTK_TOOL_ITEM(toolItem), _tooltips, tooltip.c_str(), "");
 		}
 		
 		// Load and assign the icon, if specified
@@ -99,7 +104,7 @@ GtkToolbar* ToolbarCreator::createToolbar(xml::Node& node) {
 	// Get all action children elements 
 	xml::NodeList toolItemList = node.getChildren();
 	GtkWidget* toolbar;
-	
+		
 	if (toolItemList.size() > 0) {
 		// Create a new toolbar
 		toolbar = gtk_toolbar_new();
@@ -129,6 +134,10 @@ void ToolbarCreator::parseXml(xml::Document& xmlDoc) {
 	xml::NodeList toolbarList = xmlDoc.findXPath("/ui//toolbar");
 	
 	if (toolbarList.size() > 0) {
+		// Create a new tooltips element
+		_tooltips = gtk_tooltips_new();
+		gtk_tooltips_enable(_tooltips);
+		
 		for (unsigned int i = 0; i < toolbarList.size(); i++) {
 			std::string toolbarName = toolbarList[i].getAttributeValue("name");
 			

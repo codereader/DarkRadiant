@@ -38,6 +38,8 @@ const int XYWND_MINSIZE_Y = 200;
 
 #include "qerplugin.h"
 
+extern bool g_showAllLightRadii;
+
 class Shader;
 class SelectionSystemWindowObserver;
 namespace scene
