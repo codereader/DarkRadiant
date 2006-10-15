@@ -1380,6 +1380,11 @@ void ClipperToolExport(const BoolImportCallback& importCallback)
   importCallback(GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eClip);
 }
 
+void ShowAllLightRadiiExport(const BoolImportCallback& importCallback)
+{
+  importCallback(g_showAllLightRadii);
+}
+
 FreeCaller1<const BoolImportCallback&, TranslateToolExport> g_translatemode_button_caller;
 BoolExportCallback g_translatemode_button_callback(g_translatemode_button_caller);
 ToggleItem g_translatemode_button(g_translatemode_button_callback);
@@ -1399,6 +1404,10 @@ ToggleItem g_dragmode_button(g_dragmode_button_callback);
 FreeCaller1<const BoolImportCallback&, ClipperToolExport> g_clipper_button_caller;
 BoolExportCallback g_clipper_button_callback(g_clipper_button_caller);
 ToggleItem g_clipper_button(g_clipper_button_callback);
+
+FreeCaller1<const BoolImportCallback&, ShowAllLightRadiiExport> g_showAllLightRadiiCaller;
+BoolExportCallback g_showAllLightRadiiCallback(g_showAllLightRadiiCaller);
+ToggleItem g_showAllLightRadiiButton(g_showAllLightRadiiCallback);
 
 void ToolChanged()
 {
@@ -1524,6 +1533,21 @@ void ClipperMode()
   }
 }
 
+void ToggleShowAllLightRadii()
+{
+  //globalOutputStream() << "Toggle Function called - new state is: ";
+  if(g_showAllLightRadii)
+  {
+  	//globalOutputStream() << "false\n";
+    g_showAllLightRadii = false;
+  }
+  else
+  { 
+  	//globalOutputStream() << "true\n";
+  	g_showAllLightRadii = true;    
+  }
+  SceneChangeNotify();
+}
 
 void Texdef_Rotate(float angle)
 {
@@ -3338,7 +3362,7 @@ void MainFrame_Construct()
 
   GlobalCommands_insert("MapInfo", FreeCaller<DoMapInfo>(), Accelerator('M'));
 
-
+  GlobalToggles_insert("ToggleShowAllLightRadii", FreeCaller<ToggleShowAllLightRadii>(), ToggleItem::AddCallbackCaller(g_showAllLightRadiiButton));
   GlobalToggles_insert("ToggleClipper", FreeCaller<ClipperMode>(), ToggleItem::AddCallbackCaller(g_clipper_button), Accelerator('X'));
 
   GlobalToggles_insert("MouseTranslate", FreeCaller<TranslateMode>(), ToggleItem::AddCallbackCaller(g_translatemode_button), Accelerator('W'));
