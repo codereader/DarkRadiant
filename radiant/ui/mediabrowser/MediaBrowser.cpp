@@ -2,11 +2,13 @@
 
 #include "ishaders.h"
 #include "generic/callback.h"
+#include "gtkutil/image.h"
 
 #include <gtk/gtkvbox.h>
 #include <gtk/gtktreeview.h>
 #include <gtk/gtkframe.h>
 #include <gtk/gtkcellrenderertext.h>
+#include <gtk/gtkcellrendererpixbuf.h>
 #include <gtk/gtkscrolledwindow.h>
 
 #include <iostream>
@@ -17,23 +19,48 @@
 
 namespace ui
 {
+	
+/* CONSTANTS */
+
+namespace {
+
+	const char* FOLDER_ICON = "folder16.png";
+	const char* TEXTURE_ICON = "icon_texture.png";
+
+	// TreeStore columns
+	enum {
+		DISPLAYNAME_COLUMN,
+		FULLNAME_COLUMN,
+		ICON_COLUMN,
+		N_COLUMNS
+	};
+	
+}
 
 // Constructor
 MediaBrowser::MediaBrowser()
 : _widget(gtk_vbox_new(FALSE, 0)),
-  _treeStore(gtk_tree_store_new(1, G_TYPE_STRING))
+  _treeStore(gtk_tree_store_new(N_COLUMNS, 
+  								G_TYPE_STRING, 
+  								G_TYPE_STRING,
+  								GDK_TYPE_PIXBUF))
 {
 	// Create the treeview
 	GtkWidget* view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), FALSE);
 	g_signal_connect(G_OBJECT(view), "expose-event", G_CALLBACK(_onExpose), this);
 	
-	// Single text column
-	GtkCellRenderer* rend = gtk_cell_renderer_text_new();
+	// Single text column with packed icon
 	GtkTreeViewColumn* col = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_spacing(col, 3);
 	
-	gtk_tree_view_column_pack_start(col, rend, FALSE);
-	gtk_tree_view_column_set_attributes(col, rend, "text", 0, NULL);
+	GtkCellRenderer* pixRenderer = gtk_cell_renderer_pixbuf_new();
+	gtk_tree_view_column_pack_start(col, pixRenderer, FALSE);
+    gtk_tree_view_column_set_attributes(col, pixRenderer, "pixbuf", ICON_COLUMN, NULL);
+
+	GtkCellRenderer* textRenderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(col, textRenderer, FALSE);
+	gtk_tree_view_column_set_attributes(col, textRenderer, "text", DISPLAYNAME_COLUMN, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 	
 	// Pack the treeview into a scrollwindow, frame and then into the vbox
@@ -62,6 +89,17 @@ namespace {
 		// Constructor
 		ShaderNameFunctor(GtkTreeStore* store)
 		: _store(store) {}
+		
+		// Destructor. Free all the heap-allocated GtkTreeIters in the
+		// map
+		~ShaderNameFunctor() {
+			for (DirIterMap::iterator i = _dirIterMap.begin();
+					i != _dirIterMap.end();
+						++i) 
+			{
+				gtk_tree_iter_free(i->second);
+			}
+		}
 		
 		// Map between string directory names and their corresponding Iters
 		typedef __gnu_cxx::hash_map<std::string, GtkTreeIter*, boost::hash<std::string> > DirIterMap;
@@ -94,7 +132,11 @@ namespace {
 			// and returning it.
 			GtkTreeIter iter;
 			gtk_tree_store_append(_store, &iter, parIter);
-			gtk_tree_store_set(_store, &iter, 0, thisDir.c_str(), -1);
+			gtk_tree_store_set(_store, &iter, 
+							   DISPLAYNAME_COLUMN, thisDir.c_str(), 
+							   FULLNAME_COLUMN, "",
+							   ICON_COLUMN, gtkutil::getLocalPixbuf(FOLDER_ICON),
+							   -1);
 			GtkTreeIter* dynIter = gtk_tree_iter_copy(&iter); // get a heap-allocated iter
 			
 			// Cache the dynamic iter and return it
@@ -119,7 +161,11 @@ namespace {
 				
 				GtkTreeIter iter;
 				gtk_tree_store_append(_store, &iter, parentIter);
-				gtk_tree_store_set(_store, &iter, 0, texName.c_str(), -1);
+				gtk_tree_store_set(_store, &iter, 
+								   DISPLAYNAME_COLUMN, texName.c_str(), 
+								   FULLNAME_COLUMN, name,
+								   ICON_COLUMN, gtkutil::getLocalPixbuf(TEXTURE_ICON),
+								   -1);
 			}
 		}
 		
