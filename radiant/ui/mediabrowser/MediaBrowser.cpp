@@ -1,6 +1,7 @@
 #include "MediaBrowser.h"
 
 #include "ishaders.h"
+#include "texwindow.h"
 #include "generic/callback.h"
 #include "gtkutil/image.h"
 #include "gtkutil/TextMenuItem.h"
@@ -13,6 +14,7 @@
 #include <gtk/gtkscrolledwindow.h>
 #include <gtk/gtklabel.h>
 #include <gtk/gtkmenu.h>
+#include <gtk/gtktreeselection.h>
 
 #include <iostream>
 #include <ext/hash_map>
@@ -29,6 +31,8 @@ namespace {
 
 	const char* FOLDER_ICON = "folder16.png";
 	const char* TEXTURE_ICON = "icon_texture.png";
+	
+	const char* LOAD_TEXTURE_TEXT = "Load in Textures view";
 
 	// TreeStore columns
 	enum {
@@ -47,13 +51,13 @@ MediaBrowser::MediaBrowser()
   								G_TYPE_STRING, 
   								G_TYPE_STRING,
   								GDK_TYPE_PIXBUF)),
+  _treeView(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore))),
   _popupMenu(gtk_menu_new())
 {
 	// Create the treeview
-	GtkWidget* view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), FALSE);
-	g_signal_connect(G_OBJECT(view), "expose-event", G_CALLBACK(_onExpose), this);
-	g_signal_connect(G_OBJECT(view), "button-release-event", G_CALLBACK(_onRightClick), this);
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_treeView), FALSE);
+	g_signal_connect(G_OBJECT(_treeView), "expose-event", G_CALLBACK(_onExpose), this);
+	g_signal_connect(G_OBJECT(_treeView), "button-release-event", G_CALLBACK(_onRightClick), this);
 	
 	// Single text column with packed icon
 	GtkTreeViewColumn* col = gtk_tree_view_column_new();
@@ -66,21 +70,24 @@ MediaBrowser::MediaBrowser()
 	GtkCellRenderer* textRenderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(col, textRenderer, FALSE);
 	gtk_tree_view_column_set_attributes(col, textRenderer, "text", DISPLAYNAME_COLUMN, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), col);
 	
 	// Pack the treeview into a scrollwindow, frame and then into the vbox
 	GtkWidget* scroll = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll), 
 								   GTK_POLICY_AUTOMATIC,
 								   GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(scroll), view);
+	gtk_container_add(GTK_CONTAINER(scroll), _treeView);
 
 	GtkWidget* frame = gtk_frame_new(NULL);
 	gtk_container_add(GTK_CONTAINER(frame), scroll);
 	gtk_box_pack_start(GTK_BOX(_widget), frame, TRUE, TRUE, 0);
 	
 	// Construct the popup context menu
-	GtkWidget* loadDirectory = gtkutil::TextMenuItem("Load contained textures");
+	GtkWidget* loadDirectory = gtkutil::TextMenuItem(LOAD_TEXTURE_TEXT);
+	
+	g_signal_connect(G_OBJECT(loadDirectory), "activate", G_CALLBACK(_onActivateLoadContained), this);
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(_popupMenu), loadDirectory);
 	
@@ -147,7 +154,7 @@ namespace {
 			gtk_tree_store_append(_store, &iter, parIter);
 			gtk_tree_store_set(_store, &iter, 
 							   DISPLAYNAME_COLUMN, thisDir.c_str(), 
-							   FULLNAME_COLUMN, "",
+							   FULLNAME_COLUMN, pathName.c_str(),
 							   ICON_COLUMN, gtkutil::getLocalPixbuf(FOLDER_ICON),
 							   -1);
 			GtkTreeIter* dynIter = gtk_tree_iter_copy(&iter); // get a heap-allocated iter
@@ -205,6 +212,22 @@ bool MediaBrowser::_onRightClick(GtkWidget* widget, GdkEventButton* ev, MediaBro
 		gtk_menu_popup(GTK_MENU(self->_popupMenu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
 	}
 	return FALSE;
+}
+
+void MediaBrowser::_onActivateLoadContained(GtkMenuItem* item, MediaBrowser* self) {
+	// Get the current selection to load
+	GtkTreeSelection* sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->_treeView));
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+
+	if (gtk_tree_selection_get_selected(sel, &model, &iter)) {
+		// Get the value
+		GValue val = {0, 0};
+		gtk_tree_model_get_value(model, &iter, FULLNAME_COLUMN, &val);
+		// Load the shader by name and release it, to force a load
+		IShader* ref = GlobalShaderSystem().getShaderForName(g_value_get_string(&val));
+		ref->DecRef();
+	}
 }
 
 }
