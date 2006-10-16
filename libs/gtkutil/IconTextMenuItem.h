@@ -3,9 +3,12 @@
 
 #include "gtkutil/image.h"
 
-#include <gtk/gtk.h>
+#include <gtk/gtklabel.h>
+#include <gtk/gtkmenuitem.h>
+#include <gtk/gtkhbox.h>
+#include <string>
 
-namespace ui
+namespace gtkutil
 {
 
 /** Utility class representing a menu item with an icon and text. The local
@@ -17,7 +20,7 @@ namespace ui
  * required.
  */
 
-class IconMenuLabel
+class IconTextMenuItem
 {
 private:
 
@@ -27,7 +30,7 @@ private:
 public:
 	
 	// Constructor takes the icon name and the label text.
-	IconMenuLabel(const std::string& icon, const std::string& text)
+	IconTextMenuItem(const std::string& icon, const std::string& text)
 	: _icon(gtkutil::getLocalPixbuf(icon)),
 	  _label(gtk_label_new(text.c_str())) {}
 	  
@@ -49,6 +52,6 @@ public:
 	
 };
 
-} // namespace ui
+} // namespace gtkutil
 
 #endif /*ICONMENULABEL_H_*/

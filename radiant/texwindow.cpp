@@ -948,35 +948,14 @@ public:
 
 void TextureBrowser_ShowDirectory(TextureBrowser& textureBrowser, const char* directory)
 {
-  if(TextureGroupsMenu_showWads())
-  {
-    Archive* archive = GlobalFileSystem().getArchive(directory);
-    ASSERT_NOTNULL(archive);
-    LoadShaderVisitor visitor;
-    archive->forEachFile(Archive::VisitorFunc(visitor, Archive::eFiles, 0), "textures/");
-  }
-  else
-  {
+	std::cout << "TextureBrowser_ShowDirectory: " << directory << std::endl;
+
     g_TextureBrowser_currentDirectory = directory;
     TextureBrowser_heightChanged(textureBrowser);
 
     std::size_t shaders_count;
     GlobalShaderSystem().foreachShaderName(makeCallback1(TextureCategoryLoadShader(directory, shaders_count)));
     globalOutputStream() << "Showing " << Unsigned(shaders_count) << " shaders.\n";
-
-    if(g_pGameDescription->mGameType != "doom3")
-    {
-      // load remaining texture files
-
-      StringOutputStream dirstring(64);
-      dirstring << "textures/" << directory;
-
-      {
-        LoadTexturesByTypeVisitor visitor(dirstring.c_str());
-        Radiant_getImageModules().foreachModule(visitor);
-      }
-    }
-  }
 
   // we'll display the newly loaded textures + all the ones already in use
   TextureBrowser_SetHideUnused(textureBrowser, false);

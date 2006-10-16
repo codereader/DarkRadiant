@@ -3,6 +3,7 @@
 #include "ishaders.h"
 #include "generic/callback.h"
 #include "gtkutil/image.h"
+#include "gtkutil/TextMenuItem.h"
 
 #include <gtk/gtkvbox.h>
 #include <gtk/gtktreeview.h>
@@ -10,6 +11,8 @@
 #include <gtk/gtkcellrenderertext.h>
 #include <gtk/gtkcellrendererpixbuf.h>
 #include <gtk/gtkscrolledwindow.h>
+#include <gtk/gtklabel.h>
+#include <gtk/gtkmenu.h>
 
 #include <iostream>
 #include <ext/hash_map>
@@ -43,12 +46,14 @@ MediaBrowser::MediaBrowser()
   _treeStore(gtk_tree_store_new(N_COLUMNS, 
   								G_TYPE_STRING, 
   								G_TYPE_STRING,
-  								GDK_TYPE_PIXBUF))
+  								GDK_TYPE_PIXBUF)),
+  _popupMenu(gtk_menu_new())
 {
 	// Create the treeview
 	GtkWidget* view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), FALSE);
 	g_signal_connect(G_OBJECT(view), "expose-event", G_CALLBACK(_onExpose), this);
+	g_signal_connect(G_OBJECT(view), "button-release-event", G_CALLBACK(_onRightClick), this);
 	
 	// Single text column with packed icon
 	GtkTreeViewColumn* col = gtk_tree_view_column_new();
@@ -73,6 +78,14 @@ MediaBrowser::MediaBrowser()
 	GtkWidget* frame = gtk_frame_new(NULL);
 	gtk_container_add(GTK_CONTAINER(frame), scroll);
 	gtk_box_pack_start(GTK_BOX(_widget), frame, TRUE, TRUE, 0);
+	
+	// Construct the popup context menu
+	GtkWidget* loadDirectory = gtkutil::TextMenuItem("Load contained textures");
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(_popupMenu), loadDirectory);
+	
+	gtk_widget_show_all(_popupMenu);
+	
 }
 
 /* Callback functor for processing shader names */
@@ -184,6 +197,14 @@ void MediaBrowser::_onExpose(GtkWidget* widget, GdkEventExpose* ev, MediaBrowser
 
 		_isPopulated = true;	
 	}
+}
+
+bool MediaBrowser::_onRightClick(GtkWidget* widget, GdkEventButton* ev, MediaBrowser* self) {
+	// Popup on right-click events only
+	if (ev->button == 3) {
+		gtk_menu_popup(GTK_MENU(self->_popupMenu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
+	}
+	return FALSE;
 }
 
 }
