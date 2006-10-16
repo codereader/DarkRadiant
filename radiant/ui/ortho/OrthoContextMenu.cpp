@@ -1,6 +1,6 @@
 #include "OrthoContextMenu.h"
-#include "IconMenuLabel.h"
 #include "EntityClassChooser.h"
+#include "gtkutil/IconTextMenuItem.h"
 
 #include "entity.h" // Entity_createFromSelection()
 #include "ientity.h" // Node_getEntity()
@@ -25,11 +25,11 @@ void OrthoContextMenu::displayInstance(const Vector3& point) {
 OrthoContextMenu::OrthoContextMenu()
 : _widget(gtk_menu_new())
 {
-	GtkWidget* addModel = IconMenuLabel(ADD_MODEL_ICON, ADD_MODEL_TEXT);
-	GtkWidget* addLight = IconMenuLabel(ADD_LIGHT_ICON, ADD_LIGHT_TEXT);
-	GtkWidget* addEntity = IconMenuLabel(ADD_ENTITY_ICON, ADD_ENTITY_TEXT);
-	GtkWidget* addPrefab = IconMenuLabel(ADD_PREFAB_ICON, ADD_PREFAB_TEXT);
-	_convertStatic = IconMenuLabel(CONVERT_TO_STATIC_ICON, CONVERT_TO_STATIC_TEXT);
+	GtkWidget* addModel = gtkutil::IconTextMenuItem(ADD_MODEL_ICON, ADD_MODEL_TEXT);
+	GtkWidget* addLight = gtkutil::IconTextMenuItem(ADD_LIGHT_ICON, ADD_LIGHT_TEXT);
+	GtkWidget* addEntity = gtkutil::IconTextMenuItem(ADD_ENTITY_ICON, ADD_ENTITY_TEXT);
+	GtkWidget* addPrefab = gtkutil::IconTextMenuItem(ADD_PREFAB_ICON, ADD_PREFAB_TEXT);
+	_convertStatic = gtkutil::IconTextMenuItem(CONVERT_TO_STATIC_ICON, CONVERT_TO_STATIC_TEXT);
 	
 	gtk_widget_set_sensitive(addPrefab, FALSE);
 	

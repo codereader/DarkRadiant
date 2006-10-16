@@ -20,11 +20,15 @@ class MediaBrowser
 	// Main tree store
 	GtkTreeStore* _treeStore;
 	
+	// Context menu widget
+	GtkWidget* _popupMenu;
+	
 private:
 
 	/* GTK CALLBACKS */
 	
 	static void _onExpose(GtkWidget*, GdkEventExpose*, MediaBrowser*);
+	static bool _onRightClick(GtkWidget*, GdkEventButton*, MediaBrowser*);
 	
 public:
 	
