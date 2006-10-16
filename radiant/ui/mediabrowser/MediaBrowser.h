@@ -3,6 +3,7 @@
 
 #include <gtk/gtkwidget.h>
 #include <gtk/gtktreestore.h>
+#include <gtk/gtkmenuitem.h>
 
 namespace ui
 {
@@ -17,8 +18,9 @@ class MediaBrowser
 	// Main widget
 	GtkWidget* _widget;
 	
-	// Main tree store
+	// Main tree store and view
 	GtkTreeStore* _treeStore;
+	GtkWidget* _treeView;
 	
 	// Context menu widget
 	GtkWidget* _popupMenu;
@@ -29,6 +31,7 @@ private:
 	
 	static void _onExpose(GtkWidget*, GdkEventExpose*, MediaBrowser*);
 	static bool _onRightClick(GtkWidget*, GdkEventButton*, MediaBrowser*);
+	static void _onActivateLoadContained(GtkMenuItem*, MediaBrowser*);
 	
 public:
 	
