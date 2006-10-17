@@ -2244,19 +2244,11 @@ GtkMenuItem* create_textures_menu()
   create_menu_item_with_mnemonic(menu, "Show All", "ShowAllTextures");
 
   menu_separator(menu);
-  create_check_menu_item_with_mnemonic(menu, "Show shaders", "ToggleShowShaders");
   create_menu_item_with_mnemonic(menu, "Flush & Reload Shaders", "RefreshShaders");
   create_menu_item_with_mnemonic(menu, "Directory list...", "TextureDirectoryList");
   menu_separator(menu);
 
   create_menu_item_with_mnemonic(menu, "Find / Replace...", "FindReplaceTextures");
-
-
-  menu_separator(menu);
-  create_check_menu_item_with_mnemonic (menu, "Shaders Only", "ToggleShowShaderlistOnly");
-  g_textures_menu_separator = menu_separator(menu);
-
-  TextureGroupsMenu_Construct();
 
   return textures_menu_item;
 }

@@ -642,7 +642,6 @@ void DoTextureListDlg()
       {
         // Initialize dialog
         GSList *textures = 0;
-        TextureGroupsMenu_ListItems(textures);
         while (textures != 0)
         {
           {
@@ -682,8 +681,6 @@ void DoTextureListDlg()
     if(gtk_tree_selection_get_selected(selection, &model, &iter))
     {
       GtkTreePath* path = gtk_tree_model_get_path(model, &iter);
-      if(gtk_tree_path_get_depth(path) == 1)
-        TextureBrowser_ShowDirectory(GlobalTextureBrowser(), TextureGroupsMenu_GetName(gtk_tree_path_get_indices(path)[0]));
       gtk_tree_path_free(path);
     }
   }

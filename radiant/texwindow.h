@@ -35,11 +35,6 @@ typedef struct _GtkMenuItem GtkMenuItem;
 
 extern GtkMenu* g_textures_menu;
 extern GtkMenuItem* g_textures_menu_separator;
-void TextureGroupsMenu_Construct();
-void TextureGroupsMenu_Destroy();
-void TextureGroupsMenu_ListItems(GSList*& items);
-const char* TextureGroupsMenu_GetName(std::size_t menunum);
-
 
 // texture browser
 
@@ -51,7 +46,6 @@ GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel);
 void TextureBrowser_destroyWindow();
 
 
-void TextureBrowser_ShowDirectory(TextureBrowser& textureBrowser, const char* name);
 void TextureBrowser_ShowStartupShaders(TextureBrowser& textureBrowser);
 
 const char* TextureBrowser_GetSelectedShader(TextureBrowser& textureBrower);
