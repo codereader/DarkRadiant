@@ -90,11 +90,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 
-bool TextureGroupsMenu_showWads()
-{
-  return !string_empty(g_pGameDescription->getKeyValue("show_wads"));
-}
-
 // globals for textures
 class TextureMenuName
 {
@@ -112,47 +107,7 @@ public:
   }
 };
 
-typedef std::vector<TextureMenuName> TextureMenuNames;
-TextureMenuNames texture_menunames;
-
-const char* TextureGroupsMenu_GetName(std::size_t menunum)
-{
-  return texture_menunames[menunum].c_str();
-}
-
-void TextureGroupsMenu_ListItems(GSList*& items)
-{
-  for(TextureMenuNames::const_iterator i = texture_menunames.begin(); i != texture_menunames.end(); ++i)
-  {
-    items = g_slist_append(items, const_cast<char*>((*i).c_str()));
-  }
-}
-
 void TextureBrowser_queueDraw(TextureBrowser& textureBrower);
-
-class TextureGroupLoader
-{
-  std::size_t m_id;
-public:
-  TextureGroupLoader(std::size_t id)
-    : m_id(id)
-  {
-  }
-  void loadGroup()
-  {
-    ScopeDisableScreenUpdates disableScreenUpdates(TextureGroupsMenu_GetName(m_id), "Loading Textures");
-
-    TextureBrowser_ShowDirectory(GlobalTextureBrowser(), TextureGroupsMenu_GetName(m_id));
-    TextureBrowser_queueDraw(GlobalTextureBrowser());
-  }
-};
-
-std::list<TextureGroupLoader> g_texture_group_loaders;
-
-void texturegroup_activated(GtkWidget* widget, gpointer data)
-{
-  reinterpret_cast<TextureGroupLoader*>(data)->loadGroup();
-}
 
 bool string_equal_start(const char* string, StringRange start)
 {
@@ -174,179 +129,12 @@ GtkMenuItem* Menu_addItem(GtkMenu* menu, const char* name)
   return item;
 }
 
-void TextureGroupsMenu_addItem(GtkMenu* menu, const char* dirName)
-{
-  GtkMenuItem* item = Menu_addItem(menu, dirName);
-
-  g_texture_group_loaders.push_back(TextureGroupLoader(texture_menunames.size()));
-	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(texturegroup_activated), &g_texture_group_loaders.back());
-
-  if(TextureGroupsMenu_showWads())
-  {
-    texture_menunames.push_back(dirName);
-  }
-  else
-  {
-    char buffer[1024];
-    strcpy(buffer, dirName);
-    strcat(buffer, "/");
-    texture_menunames.push_back(buffer);
-  }
-}
-
-typedef std::set<CopiedString> TextureGroups;
-
-void TextureGroupsMenu_Construct(GtkMenu* menu, const TextureGroups& groups)
-{
-  texture_menunames.clear();
-
-  TextureGroups::const_iterator i = groups.begin();
-  while(i != groups.end())
-  {
-    const char* dirName = (*i).c_str();
-    const char* firstUnderscore = strchr(dirName, '_');
-    StringRange dirRoot(dirName, (firstUnderscore == 0) ? dirName : firstUnderscore + 1);
-
-    // do we shrink the menus?
-    // we shrink only if we have at least two things to shrink :-)
-    TextureGroups::const_iterator next = i;
-    ++next;
-    if(firstUnderscore != 0
-      && next != groups.end()
-      && string_equal_start((*next).c_str(), dirRoot))
-    {
-	    GtkMenuItem* item = Menu_addItem(menu, CopiedString(StringRange(dirName, firstUnderscore)).c_str());
-
-	    GtkMenu *pSubMenu = GTK_MENU(gtk_menu_new());
-      gtk_menu_item_set_submenu(item, GTK_WIDGET(pSubMenu));
-
-	    // keep going...
-	    while(i != groups.end() && string_equal_start((*i).c_str(), dirRoot))
-	    {
-	      TextureGroupsMenu_addItem(pSubMenu, (*i).c_str());
-
-	      ++i;
-	    }
-    }
-    else
-    {
-      TextureGroupsMenu_addItem(menu, dirName);
-
-      ++i;
-    }
-  }
-}
-
-
-void TextureGroups_addWad(TextureGroups& groups, const char* archive)
-{
-  if(extension_equal(path_get_extension(archive), "wad"))
-  {
-#if 1
-    groups.insert(archive);
-#else
-    CopiedString archiveBaseName(path_get_filename_start(archive), path_get_filename_base_end(archive));
-    groups.insert(archiveBaseName);
-#endif
-  }
-}
-typedef ReferenceCaller1<TextureGroups, const char*, TextureGroups_addWad> TextureGroupsAddWadCaller;
-
-void TextureGroups_addShader(TextureGroups& groups, const char* shaderName)
-{
-  const char* texture = path_make_relative(shaderName, "textures/");
-  if(texture != shaderName)
-  {
-    const char* last = path_remove_directory(texture);
-    if(!string_empty(last))
-    {
-      groups.insert(CopiedString(StringRange(texture, --last)));
-    }
-  }
-}
-typedef ReferenceCaller1<TextureGroups, const char*, TextureGroups_addShader> TextureGroupsAddShaderCaller;
-
-void TextureGroups_addDirectory(TextureGroups& groups, const char* directory)
-{
-  groups.insert(directory);
-}
-typedef ReferenceCaller1<TextureGroups, const char*, TextureGroups_addDirectory> TextureGroupsAddDirectoryCaller;
-
 GtkMenu* g_textures_menu = 0;
 GtkMenuItem* g_textures_menu_separator = 0;
 namespace
 {
   bool g_TexturesMenu_shaderlistOnly = false;
 }
-void TextureGroupsMenu_Construct()
-{
-  TextureGroups groups;
-
-  if(TextureGroupsMenu_showWads())
-  {
-    GlobalFileSystem().forEachArchive(TextureGroupsAddWadCaller(groups));
-  }
-  else
-  {
-    // scan texture dirs and pak files only if not restricting to shaderlist
-    if(g_pGameDescription->mGameType != "doom3" && !g_TexturesMenu_shaderlistOnly)
-    {
-      GlobalFileSystem().forEachDirectory("textures/", TextureGroupsAddDirectoryCaller(groups));
-    }
-
-    GlobalShaderSystem().foreachShaderName(TextureGroupsAddShaderCaller(groups));
-  }
-
-  TextureGroupsMenu_Construct(g_textures_menu, groups);
-}
-
-void TextureGroupsMenu_Destroy()
-{
-  // delete everything
-  GtkMenu* menu = g_textures_menu;
-  GtkMenuItem* sep = g_textures_menu_separator;
-  GList* lst = g_list_find(gtk_container_children(GTK_CONTAINER(menu)), GTK_WIDGET(sep));
-  while(lst->next)
-  {
-    // these delete functions are recursive, it's gonna free all submenus
-    gtk_widget_destroy(GTK_WIDGET (lst->next->data));
-    // lst is no longer relevant, need to get it again
-    lst = g_list_find(gtk_container_children(GTK_CONTAINER(menu)), GTK_WIDGET(sep));
-  }
-}
-
-
-class TextureGroupsMenu : public ModuleObserver
-{
-  std::size_t m_unrealised;
-public:
-  TextureGroupsMenu() : m_unrealised(2)
-  {
-  }
-  void realise()
-  {
-    if(--m_unrealised == 0)
-    {
-      if(g_textures_menu != 0)
-      {
-        TextureGroupsMenu_Construct();
-      }
-    }
-  }
-  void unrealise()
-  {
-    if(++m_unrealised == 1)
-    {
-      if(g_textures_menu != 0)
-      {
-        TextureGroupsMenu_Destroy();
-      }
-    }
-  }
-};
-
-TextureGroupsMenu g_TextureGroupsMenu;
-
 class DeferredAdjustment
 {
   gdouble m_value;
@@ -946,24 +734,6 @@ public:
   }
 };
 
-void TextureBrowser_ShowDirectory(TextureBrowser& textureBrowser, const char* directory)
-{
-	std::cout << "TextureBrowser_ShowDirectory: " << directory << std::endl;
-
-    g_TextureBrowser_currentDirectory = directory;
-    TextureBrowser_heightChanged(textureBrowser);
-
-    std::size_t shaders_count;
-    GlobalShaderSystem().foreachShaderName(makeCallback1(TextureCategoryLoadShader(directory, shaders_count)));
-    globalOutputStream() << "Showing " << Unsigned(shaders_count) << " shaders.\n";
-
-  // we'll display the newly loaded textures + all the ones already in use
-  TextureBrowser_SetHideUnused(textureBrowser, false);
-
-  TextureBrowser_updateTitle();
-}
-
-
 bool TextureBrowser_hideUnused();
 
 void TextureBrowser_hideUnusedExport(const BoolImportCallback& importer)
@@ -1017,22 +787,6 @@ void TextureBrowser_SetHideUnused(TextureBrowser& textureBrowser, bool hideUnuse
   TextureBrowser_heightChanged(textureBrowser);
   textureBrowser.m_originInvalid = true;
 }
-
-void TextureBrowser_ShowStartupShaders(TextureBrowser& textureBrowser)
-{
-  if(textureBrowser.m_startupShaders == STARTUPSHADERS_COMMON)
-  {
-    TextureBrowser_ShowDirectory(textureBrowser, TextureBrowser_getComonShadersDir());
-  }
-  else if(textureBrowser.m_startupShaders == STARTUPSHADERS_ALL)
-  {
-    for(TextureMenuNames::const_iterator i = texture_menunames.begin(); i != texture_menunames.end(); ++i)
-    {
-      TextureBrowser_ShowDirectory(textureBrowser, (*i).c_str());
-    }
-  }
-}
-
 
 //++timo NOTE: this is a mix of Shader module stuff and texture explorer
 // it might need to be split in parts or moved out .. dunno
@@ -1650,8 +1404,6 @@ void TextureBrowser_ToggleShowShaderListOnly()
 {
   g_TexturesMenu_shaderlistOnly ^= 1;
   g_TexturesMenu.m_showshaderlistonly_item.update();
-  TextureGroupsMenu_Destroy();
-  TextureGroupsMenu_Construct();
 }
 
 void TextureBrowser_showAll()
@@ -1831,15 +1583,11 @@ void TextureBrowser_Construct()
   TextureBrowser_registerPreferencesPage();
 
   GlobalShaderSystem().attach(g_ShadersObserver);
-  GlobalShaderSystem().attach(g_TextureGroupsMenu);
-  GlobalFileSystem().attach(g_TextureGroupsMenu);
 
   TextureBrowser_textureSelected = TextureClipboard_textureSelected;
 }
 void TextureBrowser_Destroy()
 {
-  GlobalFileSystem().detach(g_TextureGroupsMenu);
-  GlobalShaderSystem().detach(g_TextureGroupsMenu);
   GlobalShaderSystem().detach(g_ShadersObserver);
 
   Textures_setModeChangedNotify(Callback());

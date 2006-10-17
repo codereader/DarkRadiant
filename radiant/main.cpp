@@ -621,11 +621,6 @@ int main (int argc, char* argv[])
     Map_New();
   }
 
-  // load up shaders now that we have the map loaded
-  // eviltypeguy
-  TextureBrowser_ShowStartupShaders(GlobalTextureBrowser());
-
-
   remove_local_pid();
 
   gtk_main();
