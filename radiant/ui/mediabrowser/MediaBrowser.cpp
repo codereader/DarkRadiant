@@ -1,4 +1,5 @@
 #include "MediaBrowser.h"
+#include "TextureDirectoryLoader.h"
 
 #include "ishaders.h"
 #include "texwindow.h"
@@ -39,6 +40,7 @@ namespace {
 		DISPLAYNAME_COLUMN,
 		FULLNAME_COLUMN,
 		ICON_COLUMN,
+		DIR_FLAG_COLUMN,
 		N_COLUMNS
 	};
 	
@@ -50,7 +52,8 @@ MediaBrowser::MediaBrowser()
   _treeStore(gtk_tree_store_new(N_COLUMNS, 
   								G_TYPE_STRING, 
   								G_TYPE_STRING,
-  								GDK_TYPE_PIXBUF)),
+  								GDK_TYPE_PIXBUF,
+  								G_TYPE_BOOLEAN)),
   _treeView(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore))),
   _popupMenu(gtk_menu_new())
 {
@@ -156,6 +159,7 @@ namespace {
 							   DISPLAYNAME_COLUMN, thisDir.c_str(), 
 							   FULLNAME_COLUMN, pathName.c_str(),
 							   ICON_COLUMN, gtkutil::getLocalPixbuf(FOLDER_ICON),
+							   DIR_FLAG_COLUMN, TRUE,
 							   -1);
 			GtkTreeIter* dynIter = gtk_tree_iter_copy(&iter); // get a heap-allocated iter
 			
@@ -185,6 +189,7 @@ namespace {
 								   DISPLAYNAME_COLUMN, texName.c_str(), 
 								   FULLNAME_COLUMN, name,
 								   ICON_COLUMN, gtkutil::getLocalPixbuf(TEXTURE_ICON),
+								   DIR_FLAG_COLUMN, FALSE,
 								   -1);
 			}
 		}
@@ -221,12 +226,27 @@ void MediaBrowser::_onActivateLoadContained(GtkMenuItem* item, MediaBrowser* sel
 	GtkTreeModel* model;
 
 	if (gtk_tree_selection_get_selected(sel, &model, &iter)) {
-		// Get the value
-		GValue val = {0, 0};
-		gtk_tree_model_get_value(model, &iter, FULLNAME_COLUMN, &val);
-		// Load the shader by name and release it, to force a load
-		IShader* ref = GlobalShaderSystem().getShaderForName(g_value_get_string(&val));
-		ref->DecRef();
+		// Determine whether this is a directory or an individual texture
+		GValue dirFlagVal = {0, 0};
+		gtk_tree_model_get_value(model, &iter, DIR_FLAG_COLUMN, &dirFlagVal);
+		
+		if (g_value_get_boolean(&dirFlagVal)) {
+			// Directory
+			GValue val = {0, 0};
+			gtk_tree_model_get_value(model, &iter, FULLNAME_COLUMN, &val);
+			std::string dir = g_value_get_string(&val);
+			// Use a TextureDirectoryLoader functor to search the directory
+			TextureDirectoryLoader loader(dir);
+			GlobalShaderSystem().foreachShaderName(makeCallback1(loader));
+		}
+		else {
+			// Individual texture
+			GValue val = {0, 0};
+			gtk_tree_model_get_value(model, &iter, FULLNAME_COLUMN, &val);
+			// Load the shader by name and release it, to force a load
+			IShader* ref = GlobalShaderSystem().getShaderForName(g_value_get_string(&val));
+			ref->DecRef();
+		}
 	}
 }
 
