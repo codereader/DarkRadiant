@@ -1,0 +1,44 @@
+#ifndef TEXTUREDIRECTORYLOADER_H_
+#define TEXTUREDIRECTORYLOADER_H_
+
+#include "ishaders.h"
+
+#include <string>
+#include <boost/algorithm/string/predicate.hpp>
+
+namespace ui
+{
+	
+/** Functor object to load all of the textures under the given directory
+ * path. Loaded textures will then display in the Textures view.
+ */
+
+class TextureDirectoryLoader
+{
+	// Directory to search
+	const std::string _searchDir;
+	
+public:
+	typedef const char* first_argument_type;
+	
+	// Constructor sets the directory to search
+	TextureDirectoryLoader(const std::string& directory)
+	: _searchDir(directory + "/")
+	{}
+	
+	// Functor operator
+	void operator() (const char* shaderName) {
+		// Visited texture must start with the directory name
+		// separated by a slash.
+		if (boost::algorithm::istarts_with(std::string(shaderName), _searchDir)) {
+			// Load the shader
+			IShader* ref = GlobalShaderSystem().getShaderForName(shaderName);
+			ref->DecRef();
+		}
+	}
+	
+};
+
+}
+
+#endif /*TEXTUREDIRECTORYLOADER_H_*/
