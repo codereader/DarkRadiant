@@ -29,7 +29,7 @@ private:
 
 	/* GTK CALLBACKS */
 	
-	static void _onExpose(GtkWidget*, GdkEventExpose*, MediaBrowser*);
+	static gboolean _onExpose(GtkWidget*, GdkEventExpose*, MediaBrowser*);
 	static bool _onRightClick(GtkWidget*, GdkEventButton*, MediaBrowser*);
 	static void _onActivateLoadContained(GtkMenuItem*, MediaBrowser*);
 	

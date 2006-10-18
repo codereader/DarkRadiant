@@ -200,7 +200,7 @@ namespace {
 
 /* GTK CALLBACKS */
 
-void MediaBrowser::_onExpose(GtkWidget* widget, GdkEventExpose* ev, MediaBrowser* self) {
+gboolean MediaBrowser::_onExpose(GtkWidget* widget, GdkEventExpose* ev, MediaBrowser* self) {
 	// Populate the tree view if it is not already populated
 	static bool _isPopulated = false;
 	if (!_isPopulated) {
@@ -209,6 +209,7 @@ void MediaBrowser::_onExpose(GtkWidget* widget, GdkEventExpose* ev, MediaBrowser
 
 		_isPopulated = true;	
 	}
+	return FALSE; // progapagate event
 }
 
 bool MediaBrowser::_onRightClick(GtkWidget* widget, GdkEventButton* ev, MediaBrowser* self) {
