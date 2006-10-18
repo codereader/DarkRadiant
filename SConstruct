@@ -193,28 +193,7 @@ else:
 
 LINKFLAGS = ''
 if ( getOS() == 'posix' ):
-
-  # static
-  # 2112833 /opt/gtkradiant/radiant.x86
-  # 35282 /opt/gtkradiant/modules/archivezip.so
-  # 600099 /opt/gtkradiant/modules/entity.so
-  
-  # dynamic
-  # 2237060 /opt/gtkradiant/radiant.x86
-  # 110605 /opt/gtkradiant/modules/archivezip.so
-  # 730222 /opt/gtkradiant/modules/entity.so
-  
-  # EVIL HACK - force static-linking for libstdc++ - create a symbolic link to the static libstdc++ in the root
-  os.system("ln -s `g++ -print-file-name=libstdc++.a`")
-  
-  #if not os.path.exists("./install"):
-  #  os.mkdir("./install")
-  #os.system("cp `g++ -print-file-name=libstdc++.so` ./install")
-  
-  #CXXFLAGS += '-fno-rtti '
   LINKFLAGS += '-Wl,-fini,fini_stub -L. -static-libgcc '
-
-# extend the standard Environment a bit
 
 # Configure the toolchain. On Win32 we want to force MinGW as the default
 # is to prefer MSVC which breaks the build.
