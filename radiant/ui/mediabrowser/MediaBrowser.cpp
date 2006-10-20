@@ -89,12 +89,13 @@ MediaBrowser::MediaBrowser()
 	
 	// Construct the popup context menu
 	GtkWidget* loadDirectory = gtkutil::TextMenuItem(LOAD_TEXTURE_TEXT);
-	
 	g_signal_connect(G_OBJECT(loadDirectory), "activate", G_CALLBACK(_onActivateLoadContained), this);
-
 	gtk_menu_shell_append(GTK_MENU_SHELL(_popupMenu), loadDirectory);
 	
 	gtk_widget_show_all(_popupMenu);
+	
+	// Pack in the TexturePreviewCombo widgets
+	gtk_box_pack_end(GTK_BOX(_widget), _preview, FALSE, FALSE, 0);
 	
 }
 

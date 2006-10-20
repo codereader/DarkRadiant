@@ -1,6 +1,8 @@
 #ifndef MEDIABROWSER_H_
 #define MEDIABROWSER_H_
 
+#include "ui/common/TexturePreviewCombo.h"
+
 #include <gtk/gtkwidget.h>
 #include <gtk/gtktreestore.h>
 #include <gtk/gtkmenuitem.h>
@@ -24,6 +26,9 @@ class MediaBrowser
 	
 	// Context menu widget
 	GtkWidget* _popupMenu;
+	
+	// Texture preview combo (GL widget and info table)
+	TexturePreviewCombo _preview;
 	
 private:
 
