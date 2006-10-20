@@ -3,7 +3,7 @@
 #include "gtkutil/glwidget.h"
 #include "gtkutil/GLWidgetSentry.h"
 
-#include "ishaders.h"
+#include "IShaderPtr.h"
 #include "texturelib.h"
 
 #include <gtk/gtkhbox.h>
@@ -73,8 +73,38 @@ TexturePreviewCombo::TexturePreviewCombo()
 
 void TexturePreviewCombo::setTexture(const std::string& tex) {
 	_texName = tex;
+	refreshInfoTable();
 	gtk_widget_queue_draw(_glWidget);
 }
+
+// Refresh the info table
+
+void TexturePreviewCombo::refreshInfoTable() {
+	// Prepare the list
+	gtk_list_store_clear(_infoStore);
+	GtkTreeIter iter;
+
+	// Texture name
+	gtk_list_store_append(_infoStore, &iter);
+	gtk_list_store_set(_infoStore, &iter, 
+					   0, "Shader",
+					   1, _texName.c_str(),
+					   -1);
+
+	// Other properties require a valid shader name	
+	if (_texName.empty())
+		return;
+	shaders::IShaderPtr shader(GlobalShaderSystem().getShaderForName(_texName));
+
+	// Containing MTR	
+	gtk_list_store_append(_infoStore, &iter);
+	gtk_list_store_set(_infoStore, &iter, 
+					   0, "Defined in",
+					   1, shader->getShaderFileName(),
+					   -1);
+
+}
+
 
 // GTK CALLBACKS
 
