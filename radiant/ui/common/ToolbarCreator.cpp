@@ -11,7 +11,7 @@
 #include "gtkutil/pointer.h"
 #include "gtkutil/image.h"
 #include "gtkutil/button.h"
-#include "xmlutil/Document.h"
+#include "xmlutil/XMLRegistry.h"
 #include "xmlutil/AttributeNotFoundException.h"
 
 // This is needed to correctly connect the ToggleButton to Radiant's callbacks
@@ -35,7 +35,12 @@ namespace ui {
 /*	Returns the toolbar that is named toolbarName
  */
 GtkToolbar* ToolbarCreator::getToolbar(const std::string& toolbarName) {
-	return _toolbars[toolbarName];
+	if (toolbarExists(toolbarName)) {
+		return _toolbars[toolbarName];
+	} 
+	else {
+		return NULL;
+	}
 }
 
 /* Checks the passed xmlNode for a recognized item (ToolButton, ToggleToolButton, Separator)
@@ -127,11 +132,16 @@ GtkToolbar* ToolbarCreator::createToolbar(xml::Node& node) {
 	return GTK_TOOLBAR(toolbar);
 }
 
+bool ToolbarCreator::toolbarExists(const std::string& toolbarName) {
+	ToolbarMap::iterator it = _toolbars.find(toolbarName);
+   	return (it != _toolbars.end());
+}
+
 /* Parses the XML Document for toolbars and instantiates them
  * Returns nothing, toolbars can be obtained via GetToolbar()
  */
-void ToolbarCreator::parseXml(xml::Document& xmlDoc) {
-	xml::NodeList toolbarList = xmlDoc.findXPath("/ui//toolbar");
+void ToolbarCreator::loadToolbars() {
+	xml::NodeList toolbarList = xmlRegistry.findXPath("//ui//toolbar");
 	
 	if (toolbarList.size() > 0) {
 		// Create a new tooltips element
@@ -140,6 +150,11 @@ void ToolbarCreator::parseXml(xml::Document& xmlDoc) {
 		
 		for (unsigned int i = 0; i < toolbarList.size(); i++) {
 			std::string toolbarName = toolbarList[i].getAttributeValue("name");
+			
+			if (toolbarExists(toolbarName)) {
+				//globalOutputStream() << "This toolbar already exists: ";
+				continue;
+			}
 			
 			globalOutputStream() << "Found toolbar: " << toolbarName.c_str();
 			globalOutputStream() << "\n";
@@ -153,33 +168,20 @@ void ToolbarCreator::parseXml(xml::Document& xmlDoc) {
 }
 
 
-/* Constructor: Load the definitions from the specified XML file
+/* Constructor: Load the definitions from the XMLRegistry
  */
-ToolbarCreator::ToolbarCreator(const std::string& uiXmlPath, const std::string& uiXmlFile):
-	_uiXmlPath(uiXmlPath),
-	_uiXmlFile(uiXmlFile)
- {
-	const std::string xmlFile = _uiXmlPath + _uiXmlFile;
-	
-	xmlDocPtr pXmlDoc = xmlParseFile(xmlFile.c_str());
-	
-	if (pXmlDoc) {
-		globalOutputStream() << "Loading toolbar information from " << xmlFile.c_str() << "\n";
+ToolbarCreator::ToolbarCreator() {
+	globalOutputStream() << "ToolbarCreator: Loading toolbar information from registry.\n";
 		
-		try {
-			// Create an xml::Document class and pass it to the parser 
-			xml::Document xmlDoc(pXmlDoc);
-			parseXml(xmlDoc);
-		}
-		catch (xml::AttributeNotFoundException e) {
-			globalOutputStream() << "Warning in " << xmlFile.c_str() << ": " << e.what() << "\n";
-		}
+	try {
+		// Query the registry
+		loadToolbars();
+	}
+	catch (xml::AttributeNotFoundException e) {
+		globalOutputStream() << "ToolbarCreator: Warning: " << e.what() << "\n";
+	}
 	
-		globalOutputStream() << "Finished loading toolbar information.\n";
-	}
-	else {
-		globalOutputStream() << "Could not open file: " << xmlFile.c_str() << "\n";
-	}
+	globalOutputStream() << "ToolbarCreator: Finished loading toolbar information.\n";
 }
 
 } // namespace toolbar

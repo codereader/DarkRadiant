@@ -418,6 +418,9 @@ class GameFileLoader {
 		if (pDoc) {
 			// Parse success, add to list
 		    mGames.push_front(new CGameDescription(pDoc, name));
+		    
+		    // Import this information into the registry
+		    xmlRegistry.importFromFile(strPath.c_str());
 		}
 		else {
 			// Error

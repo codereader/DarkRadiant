@@ -35,15 +35,18 @@ XMLRegistry::XMLRegistry():
   	// Store the newly created document into the member variable _registry
 	_registry = xml::Document(_origXmlDocPtr);
 	_importNode = _origXmlDocPtr->children;
-	
-	// Add the node for storing the globals
-	xmlNewChild(_origXmlDocPtr->children, NULL, xmlCharStrdup(GLOBALS_NODE.c_str()), xmlCharStrdup(""));
+}
+
+xml::NodeList XMLRegistry::findXPath(const std::string& path) {
+	return _registry.findXPath(path);
 }
 
 /*	Checks whether a key exists in the XMLRegistry by querying the XPath
  */
-bool XMLRegistry::keyExists(const std::string& key) {	
-	xml::NodeList result = _registry.findXPath(key);
+bool XMLRegistry::keyExists(const std::string& key) {
+	std::string fullKey = prepareKey(key);
+	
+	xml::NodeList result = _registry.findXPath(fullKey);
 	return (result.size() > 0);
 }
 
@@ -51,7 +54,7 @@ bool XMLRegistry::keyExists(const std::string& key) {
  * 	Absolute paths are returned unchanged, 
  *  a prefix with the toplevel node (e.g. "/darkradiant") is appended to the relative ones 
  */
-std::string XMLRegistry::preparePath(const std::string& key) {
+std::string XMLRegistry::prepareKey(const std::string& key) {
 	std::string returnValue = key;
 	
 	if (returnValue.length() == 0) {
@@ -73,7 +76,7 @@ std::string XMLRegistry::preparePath(const std::string& key) {
  *  The key has to be an absolute path like "/darkradiant/globals/ui/something
  *  All required parent nodes are created automatically, if they don't exist     
  */
-void XMLRegistry::insertKey(const std::string& key) {
+void XMLRegistry::createKey(const std::string& key) {
 	stringParts parts;
 	boost::algorithm::split(parts, key, boost::algorithm::is_any_of("/"));
 	
@@ -111,15 +114,15 @@ void XMLRegistry::insertKey(const std::string& key) {
 	}
 }
 
-/* Gets a key from the registry, /darkradiant is automatically added by preparePath()
+/* Gets a key from the registry, /darkradiant is automatically added by prepareKey()
  * if relative paths are used 
  */
-std::string XMLRegistry::getXmlRegistry(const std::string& rawKey) {
+std::string XMLRegistry::get(const std::string& key) {
 	// Add the toplevel node to the path if required
-	std::string key = preparePath(rawKey);
+	std::string fullKey = prepareKey(key);
 	
-	// Try to load the node 
-	xml::NodeList nodeList = _registry.findXPath(key);
+	// Try to load the node, return an empty string if nothing is found
+	xml::NodeList nodeList = _registry.findXPath(fullKey);
 	
 	// Does it even exist?
 	// There is the theoretical case that this returns two nodes that match the key criteria
@@ -130,24 +133,24 @@ std::string XMLRegistry::getXmlRegistry(const std::string& rawKey) {
 		return node.getAttributeValue("value");
 	}
 	else {
-		globalOutputStream() << "XMLRegistry: GET: Key " << key.c_str() << " not found, returning empty string!\n";
+		//globalOutputStream() << "XMLRegistry: GET: Key " << fullKey.c_str() << " not found, returning empty string!\n";
 		return std::string("");
 	}
 }
 
 // Sets the value of a key from the registry, 
 // "/darkradiant" is automatically added if relative paths are used
-void XMLRegistry::setXmlRegistry(const std::string& rawKey, const std::string& value) {
+void XMLRegistry::set(const std::string& key, const std::string& value) {
 	// Add the toplevel node to the path if required
-	std::string key = preparePath(rawKey);
+	std::string fullKey = prepareKey(key);
 	
 	// If the key doesn't exist, we have to create an empty one
-	if (!keyExists(key)) {
-		insertKey(key);
+	if (!keyExists(fullKey)) {
+		createKey(fullKey);
 	}
 	
 	// Try to find the node	
-	xml::NodeList nodeList = _registry.findXPath(key);
+	xml::NodeList nodeList = _registry.findXPath(fullKey);
 	
 	if (nodeList.size() > 0) {
 		// Load the node and set the value
@@ -156,38 +159,95 @@ void XMLRegistry::setXmlRegistry(const std::string& rawKey, const std::string& v
 	}
 	else {
 		// If the key is still not found, something nasty has happened
-		globalOutputStream() << "XMLRegistry: Critical: Key " << key.c_str() << " not found (it really should be there)!\n";
+		globalOutputStream() << "XMLRegistry: Critical: Key " << fullKey.c_str() << " not found (it really should be there)!\n";
 	}
 }
 
 /* Appends a whole (external) XML file to the XMLRegistry. The toplevel nodes of this file
- * are appended to TOPLEVEL_NODE (e.g. <darkradiant>), duplicate import nodes should not be a problem
+ * are appended to TOPLEVEL_NODE (e.g. <darkradiant>) by default, 
+ * otherwise they are imported as a child of parentKey
  */
-void XMLRegistry::addXmlFile(const std::string& importFilePath) {
-	// Load the file
-	xmlDocPtr pImportDoc = xmlParseFile(importFilePath.c_str());
+void XMLRegistry::importFromFile(const std::string& importFilePath, const std::string& parentKey) {
+	// Check if the parentKey exists - if not: create it 
+  	std::string fullParentKey = prepareKey(parentKey);
+  	
+  	//globalOutputStream() << "XMLRegistry: Looking for key " << fullParentKey.c_str() << "\n";
+  	
+  	if (!keyExists(fullParentKey)) {
+  		createKey(fullParentKey);	
+  	}
+  	
+  	// Set the "mountpoint" to its default value, the toplevel node
+  	xmlNodePtr importNode = _importNode;
+  	
+  	xml::NodeList importNodeList = _registry.findXPath(fullParentKey);
+  	if (importNodeList.size() > 0) {
+  		importNode = importNodeList[0].getNodePtr();
+  	}
+  	else {
+  		globalOutputStream() << "XMLRegistry: Critical: ImportNode could not be found.\n";
+  	}
   	
   	globalOutputStream() << "XMLRegistry: Importing XML file: " << importFilePath.c_str() << "\n";
   	
+  	// Load the file
+	xmlDocPtr pImportDoc = xmlParseFile(importFilePath.c_str());
+  	
   	if (pImportDoc) {
-  		// Convert it into xml::Document and load the top-level nodes
+  		// Convert it into xml::Document and load the top-level node(s) (there should only be one)
   		xml::Document importDoc(pImportDoc);
   		xml::NodeList topLevelNodes = importDoc.findXPath("/*");
   		
-  		// Cycle through all toplevel nodes and append them to the internal TOPLEVEL_NODE
-  		for (unsigned int i = 0; i < topLevelNodes.size(); i++) {
-  			// Add the node to the registry
-  			xmlAddChild(_importNode, topLevelNodes[i].getNodePtr());
+  		if (importNode->children != NULL) {
+  			
+  			if (importNode->name != NULL) {
+  				for (unsigned int i = 0; i < topLevelNodes.size(); i++) {
+  					xmlNodePtr newNode = topLevelNodes[0].getNodePtr();
+  					
+  					// Add each of the imported nodes at the top to the registry
+  					xmlAddPrevSibling(importNode->children, newNode);
+  				}
+  			}
+  		}
+  		else {
+  			globalOutputStream() << "XMLRegistry: Critical: Could not import XML file. importNode is NULL!\n";
   		}
   	}
   	else {
-  		globalOutputStream() << "XMLRegistry: Failed to open " << importFilePath.c_str() << "\n";	
+  		globalOutputStream() << "XMLRegistry: Failed to open " << importFilePath.c_str() << "\n";
   	}
 }
 
 // Dumps the current registry to std::out, for debugging purposes
-void XMLRegistry::dumpXmlRegistry() const {
+void XMLRegistry::dump() const {
 	xmlSaveFile("-", _origXmlDocPtr);
+}
+
+/*	Saves a specified path to the file <filename>. Use "-" if you want to write to std::out
+ */
+void XMLRegistry::exportToFile(const std::string& key, const std::string& filename) {
+	// Add the toplevel node to the key if required
+	std::string fullKey = prepareKey(key);
+	
+	// Try to find the specified node
+	xml::NodeList result = _registry.findXPath(fullKey);
+	
+	if (result.size() > 0) {
+		// Create a new XML document
+		xmlDocPtr targetDoc = xmlNewDoc(xmlCharStrdup("1.0"));
+		
+		// Copy the node from the XMLRegistry and set it as root node of the newly created document
+		xmlNodePtr exportNode = xmlCopyNode(result[0].getNodePtr(), 1);
+		xmlDocSetRootElement(targetDoc, exportNode);
+		
+		// Save the whole document to the specified filename
+		xmlSaveFile(filename.c_str(), targetDoc);
+		
+		globalOutputStream() << "XMLRegistry: Saved " << key.c_str() << " to " << filename.c_str() << "\n";
+	}
+	else {
+		globalOutputStream() << "XMLRegistry: Failed to save path " << fullKey.c_str() << "\n";
+	}
 }
 
 // Destructor

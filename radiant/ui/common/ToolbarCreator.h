@@ -21,23 +21,20 @@ typedef std::map<const std::string, GtkToolbar*> ToolbarMap;
 
 class ToolbarCreator {
 	private:
-		// The path and the name of the XML file
-		const std::string _uiXmlPath;
-		const std::string _uiXmlFile;
-		
-		void 		parseXml(xml::Document&);
+		void 		loadToolbars();
 		GtkToolbar*	createToolbar(xml::Node&);
 		GtkWidget* 	createToolItem(xml::Node&, GtkToolbar*);
+		bool 		toolbarExists(const std::string& toolbarName);
 		
 		ToolbarMap 		_toolbars;
 		GtkTooltips* 	_tooltips;
 	
 	public:
 		// Constructor
-		ToolbarCreator(const std::string& uiXmlPath, const std::string& uiXmlFile = "ui.xml");
+		ToolbarCreator();
 		
 		// Public methods
-		GtkToolbar* getToolbar(const std::string&);
+		GtkToolbar* getToolbar(const std::string& toolbarName);
 		
 		// Destructor						
 		~ToolbarCreator() {}			
