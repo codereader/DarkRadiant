@@ -104,15 +104,27 @@ void TexturePreviewCombo::_onExpose(GtkWidget* widget, GdkEventExpose* ev, Textu
 	// Bind the texture from the shader
 	qtexture_t* tex = (*shader)->getTexture();
 	glBindTexture(GL_TEXTURE_2D, tex->texture_number);
+
+	// Calculate the correct aspect ratio for preview
+	float aspect = float(tex->width) / float(tex->height);
+	float hfWidth, hfHeight;
+	if (aspect > 1.0) {
+		hfWidth = 0.5;
+		hfHeight = 0.5 / aspect;
+	}
+	else {
+		hfHeight = 0.5;
+		hfWidth = 0.5 * aspect;
+	}
 	
 	// Draw a polygon
 	glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 	glColor3f(1, 1, 1);
 	glBegin(GL_QUADS);
-		glTexCoord2i(0, 1); glVertex2i(0, 0);
-		glTexCoord2i(1, 1); glVertex2i(1, 0);
-		glTexCoord2i(1, 0); glVertex2i(1, 1);
-		glTexCoord2i(0, 0);	glVertex2i(0, 1);
+		glTexCoord2i(0, 1); glVertex2f(0.5 - hfWidth, 0.5 - hfHeight);
+		glTexCoord2i(1, 1); glVertex2f(0.5 + hfWidth, 0.5 - hfHeight);
+		glTexCoord2i(1, 0); glVertex2f(0.5 + hfWidth, 0.5 + hfHeight);
+		glTexCoord2i(0, 0);	glVertex2f(0.5 - hfWidth, 0.5 + hfHeight);
 	glEnd();
 	
 }
