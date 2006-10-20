@@ -6,6 +6,7 @@
 #include <gtk/gtkwidget.h>
 #include <gtk/gtktreestore.h>
 #include <gtk/gtkmenuitem.h>
+#include <gtk/gtktreeselection.h>
 
 namespace ui
 {
@@ -20,9 +21,10 @@ class MediaBrowser
 	// Main widget
 	GtkWidget* _widget;
 	
-	// Main tree store and view
+	// Main tree store, view and selection
 	GtkTreeStore* _treeStore;
 	GtkWidget* _treeView;
+	GtkTreeSelection* _selection;
 	
 	// Context menu widget
 	GtkWidget* _popupMenu;
@@ -37,6 +39,11 @@ private:
 	static gboolean _onExpose(GtkWidget*, GdkEventExpose*, MediaBrowser*);
 	static bool _onRightClick(GtkWidget*, GdkEventButton*, MediaBrowser*);
 	static void _onActivateLoadContained(GtkMenuItem*, MediaBrowser*);
+	
+	/* Tree selection query functions */
+	
+	bool isDirectorySelected(); // is a directory selected
+	std::string getSelectedName(); // return name of selection
 	
 public:
 	
