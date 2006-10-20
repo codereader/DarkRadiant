@@ -55,6 +55,7 @@ MediaBrowser::MediaBrowser()
   								GDK_TYPE_PIXBUF,
   								G_TYPE_BOOLEAN)),
   _treeView(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore))),
+  _selection(gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView))),
   _popupMenu(gtk_menu_new())
 {
 	// Create the treeview
@@ -199,6 +200,38 @@ namespace {
 	
 } // namespace
 
+/* Tree query functions */
+
+bool MediaBrowser::isDirectorySelected() {
+	// Get the selected value
+	GtkTreeIter iter;
+	if (gtk_tree_selection_get_selected(_selection, NULL, &iter)) {
+		GValue dirFlagVal = {0, 0};
+		gtk_tree_model_get_value(GTK_TREE_MODEL(_treeStore), &iter, DIR_FLAG_COLUMN, &dirFlagVal);
+		// Return boolean value
+		return g_value_get_boolean(&dirFlagVal);
+	}
+	else {
+		// Error condition if there is no selection
+		return false;
+	}
+}
+
+std::string MediaBrowser::getSelectedName() {
+	// Get the selected value
+	GtkTreeIter iter;
+	if (gtk_tree_selection_get_selected(_selection, NULL, &iter)) {
+		GValue nameVal = {0, 0};
+		gtk_tree_model_get_value(GTK_TREE_MODEL(_treeStore), &iter, FULLNAME_COLUMN, &nameVal);
+		// Return boolean value
+		return g_value_get_string(&nameVal);
+	}
+	else {
+		// Error condition if there is no selection
+		return "";
+	}
+}
+
 /* GTK CALLBACKS */
 
 gboolean MediaBrowser::_onExpose(GtkWidget* widget, GdkEventExpose* ev, MediaBrowser* self) {
@@ -222,33 +255,16 @@ bool MediaBrowser::_onRightClick(GtkWidget* widget, GdkEventButton* ev, MediaBro
 }
 
 void MediaBrowser::_onActivateLoadContained(GtkMenuItem* item, MediaBrowser* self) {
-	// Get the current selection to load
-	GtkTreeSelection* sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->_treeView));
-	GtkTreeIter iter;
-	GtkTreeModel* model;
-
-	if (gtk_tree_selection_get_selected(sel, &model, &iter)) {
-		// Determine whether this is a directory or an individual texture
-		GValue dirFlagVal = {0, 0};
-		gtk_tree_model_get_value(model, &iter, DIR_FLAG_COLUMN, &dirFlagVal);
-		
-		if (g_value_get_boolean(&dirFlagVal)) {
-			// Directory
-			GValue val = {0, 0};
-			gtk_tree_model_get_value(model, &iter, FULLNAME_COLUMN, &val);
-			std::string dir = g_value_get_string(&val);
-			// Use a TextureDirectoryLoader functor to search the directory
-			TextureDirectoryLoader loader(dir);
-			GlobalShaderSystem().foreachShaderName(makeCallback1(loader));
-		}
-		else {
-			// Individual texture
-			GValue val = {0, 0};
-			gtk_tree_model_get_value(model, &iter, FULLNAME_COLUMN, &val);
-			// Load the shader by name and release it, to force a load
-			IShader* ref = GlobalShaderSystem().getShaderForName(g_value_get_string(&val));
-			ref->DecRef();
-		}
+	// Determine whether this is a directory or an individual texture
+	if (self->isDirectorySelected()) {
+		// Use a TextureDirectoryLoader functor to search the directory
+		TextureDirectoryLoader loader(self->getSelectedName());
+		GlobalShaderSystem().foreachShaderName(makeCallback1(loader));
+	}
+	else {
+		// Load the shader by name and release it, to force a load
+		IShader* ref = GlobalShaderSystem().getShaderForName(self->getSelectedName());
+		ref->DecRef();
 	}
 }
 
