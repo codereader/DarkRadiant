@@ -33,6 +33,9 @@ private:
 	
 	static void  _onExpose(GtkWidget*, GdkEventExpose*, TexturePreviewCombo*);
 	
+	// Refresh info table utility function
+	void refreshInfoTable();
+	
 public:
 
 	/** Constructor creates GTK widgets.

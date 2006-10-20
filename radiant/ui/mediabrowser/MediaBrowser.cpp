@@ -110,7 +110,7 @@ MediaBrowser::MediaBrowser()
 	
 	// Pack in the TexturePreviewCombo widgets
 	gtk_box_pack_end(GTK_BOX(_widget), _preview, FALSE, FALSE, 0);
-	
+
 }
 
 /* Callback functor for processing shader names */
@@ -287,20 +287,13 @@ bool MediaBrowser::_onRightClick(GtkWidget* widget, GdkEventButton* ev, MediaBro
 }
 
 void MediaBrowser::_onActivateLoadContained(GtkMenuItem* item, MediaBrowser* self) {
-	// Determine whether this is a directory or an individual texture
-	if (self->isDirectorySelected()) {
-		// Use a TextureDirectoryLoader functor to search the directory
-		TextureDirectoryLoader loader(self->getSelectedName());
-		GlobalShaderSystem().foreachShaderName(makeCallback1(loader));
-	}
-	else {
-		// Load the shader by name and release it, to force a load
-		IShader* ref = GlobalShaderSystem().getShaderForName(self->getSelectedName());
-		ref->DecRef();
-	}
+	// Use a TextureDirectoryLoader functor to search the directory
+	TextureDirectoryLoader loader(self->getSelectedName());
+	GlobalShaderSystem().foreachShaderName(makeCallback1(loader));
 }
 
 void MediaBrowser::_onActivateApplyTexture(GtkMenuItem* item, MediaBrowser* self) {
+	// Pass shader name to the selection system
 	Select_SetShader(self->getSelectedName().c_str());
 }
 
