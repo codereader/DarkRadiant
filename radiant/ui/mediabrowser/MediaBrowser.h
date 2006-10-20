@@ -26,8 +26,10 @@ class MediaBrowser
 	GtkWidget* _treeView;
 	GtkTreeSelection* _selection;
 	
-	// Context menu widget
+	// Context menu widget and items
 	GtkWidget* _popupMenu;
+	GtkWidget* _loadInTexturesView;
+	GtkWidget* _applyToSelection;
 	
 	// Texture preview combo (GL widget and info table)
 	TexturePreviewCombo _preview;
@@ -39,12 +41,17 @@ private:
 	static gboolean _onExpose(GtkWidget*, GdkEventExpose*, MediaBrowser*);
 	static bool _onRightClick(GtkWidget*, GdkEventButton*, MediaBrowser*);
 	static void _onActivateLoadContained(GtkMenuItem*, MediaBrowser*);
+	static void _onActivateApplyTexture(GtkMenuItem*, MediaBrowser*);
 	static void _onSelectionChanged(GtkWidget*, MediaBrowser*);
 	
 	/* Tree selection query functions */
 	
 	bool isDirectorySelected(); // is a directory selected
 	std::string getSelectedName(); // return name of selection
+	
+	/* Function to update status of menu items based on selection
+	 */
+	void updateAvailableMenuItems();
 	
 public:
 	
