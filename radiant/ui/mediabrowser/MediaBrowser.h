@@ -39,6 +39,7 @@ private:
 	static gboolean _onExpose(GtkWidget*, GdkEventExpose*, MediaBrowser*);
 	static bool _onRightClick(GtkWidget*, GdkEventButton*, MediaBrowser*);
 	static void _onActivateLoadContained(GtkMenuItem*, MediaBrowser*);
+	static void _onSelectionChanged(GtkWidget*, MediaBrowser*);
 	
 	/* Tree selection query functions */
 	
