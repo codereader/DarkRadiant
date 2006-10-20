@@ -56,6 +56,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/filechooser.h"
 #include "gtkutil/messagebox.h"
 #include "cmdlib.h"
+#include "plugin.h"
 
 #include "error.h"
 #include "console.h"
@@ -420,12 +421,11 @@ class GameFileLoader {
 		    mGames.push_front(new CGameDescription(pDoc, name));
 		    
 		    // Import this information into the registry
-		    xmlRegistry.importFromFile(strPath.c_str());
+		    registry().importFromFile(strPath.c_str());
 		}
 		else {
 			// Error
-		    globalErrorStream() << "XML parser failed on '" << strPath.
-			c_str() << "'\n";
+		    globalErrorStream() << "XML parser failed on '" << strPath.c_str() << "'\n";
 		}
     }
 };

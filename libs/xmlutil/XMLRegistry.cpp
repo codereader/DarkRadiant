@@ -24,7 +24,7 @@ namespace xml {
 XMLRegistry::XMLRegistry():
 	_registry(NULL),
 	_origXmlDocPtr(NULL),
-	_importNode(NULL)	
+	_importNode(NULL)
 {
 	// Create the base XML structure with the <darkradiant> top-level tag
 	_origXmlDocPtr	 = xmlNewDoc(xmlCharStrdup("1.0"));
@@ -214,7 +214,8 @@ void XMLRegistry::importFromFile(const std::string& importFilePath, const std::s
   		}
   	}
   	else {
-  		globalOutputStream() << "XMLRegistry: Failed to open " << importFilePath.c_str() << "\n";
+  		globalOutputStream() << "XMLRegistry: Critical: Could not parse " << importFilePath.c_str() << "\n";
+  		globalOutputStream() << "XMLRegistry: Critical: File does not exist or is not valid XML!\n";
   	}
 }
 
@@ -254,6 +255,3 @@ void XMLRegistry::exportToFile(const std::string& key, const std::string& filena
 XMLRegistry::~XMLRegistry() {} 
 
 } // namespace xml
-
-// Create an XMLRegistry instance
-xml::XMLRegistry xmlRegistry;

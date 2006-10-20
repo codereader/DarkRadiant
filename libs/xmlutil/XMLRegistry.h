@@ -75,6 +75,4 @@ class XMLRegistry {
 
 } // namespace xml
 
-extern xml::XMLRegistry xmlRegistry;
-
 #endif /*XMLREGISTRY_H_*/

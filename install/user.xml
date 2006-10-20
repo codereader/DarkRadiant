@@ -4,7 +4,7 @@
     <ModelSelector>
     	<previewSizeFactor value="0.4" />
     </ModelSelector>
-    <showlightradii value="0"/>
+	<showAllLightRadii value="0"/>
     <toolbar name="standard">
         <separator/>
 		<toolbutton name="open" action="OpenMap" tooltip="Open a map file" icon="file_open.bmp"/>
@@ -44,6 +44,12 @@
 	<separator/>
 		<toggletoolbutton name="showlightradii" action="ToggleShowAllLightRadii" tooltip="Show/hide all light volumes" icon="view_show_lightradii.bmp"/>
 	<separator/>
+  </toolbar>
+  <toolbar name="texture">
+		<toolbutton name="flush" action="RefreshShaders" tooltip="Flush &amp; Reload Shaders" icon="texwindow_flushandreload.png"/>
+		<toggletoolbutton name="showinuse" action="ShowInUse" tooltip="Hide Unused" icon="texwindow_hideunused.png"/>
+    <separator/>		
+		<toolbutton name="findandreplace" action="FindReplaceTextures" tooltip="Find &amp; Replace" icon="texwindow_findandreplace.png"/>
   </toolbar>
  </ui>
 </user>
