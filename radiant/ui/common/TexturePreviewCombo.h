@@ -2,6 +2,7 @@
 #define TEXTUREPREVIEWCOMBO_H_
 
 #include <string>
+#include <iostream>
 
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkliststore.h>
@@ -31,7 +32,7 @@ private:
 
 	/* GTK CALLBACKS */
 	
-	static gboolean _onExpose(GtkWidget*, TexturePreviewCombo*);
+	static void  _onExpose(GtkWidget*, GdkEventExpose*, TexturePreviewCombo*);
 	
 public:
 

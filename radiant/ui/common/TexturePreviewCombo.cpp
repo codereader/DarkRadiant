@@ -3,6 +3,9 @@
 #include "gtkutil/glwidget.h"
 #include "gtkutil/GLWidgetSentry.h"
 
+#include "ishaders.h"
+#include "texturelib.h"
+
 #include <gtk/gtkhbox.h>
 #include <gtk/gtkframe.h>
 #include <gtk/gtkcontainer.h>
@@ -13,6 +16,8 @@
 
 #include <GL/glew.h>
 
+#include <iostream>
+
 namespace ui
 {
 
@@ -21,6 +26,7 @@ namespace ui
 TexturePreviewCombo::TexturePreviewCombo()
 : _widget(gtk_hbox_new(FALSE, 0)),
   _glWidget(glwidget_new(false)),
+  _texName(""),
   _infoStore(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING))
 {
 	// Set up the GL preview widget
@@ -62,19 +68,53 @@ TexturePreviewCombo::TexturePreviewCombo()
 	gtk_container_add(GTK_CONTAINER(attFrame), scroll);
 
 	gtk_box_pack_start(GTK_BOX(_widget), attFrame, TRUE, TRUE, 0);
+	
+}
+
+// Update the selected texture
+
+void TexturePreviewCombo::setTexture(const std::string& tex) {
+	_texName = tex;
+	gtk_widget_queue_draw(_glWidget);
 }
 
 // GTK CALLBACKS
 
-gboolean TexturePreviewCombo::_onExpose(GtkWidget* widget, TexturePreviewCombo* self) {
+void TexturePreviewCombo::_onExpose(GtkWidget* widget, GdkEventExpose* ev, TexturePreviewCombo* self) {
 	// Grab the GLWidget with sentry
 	gtkutil::GLWidgetSentry sentry(widget);
 	
 	// Initialise viewport
 	glClearColor(0.3, 0.3, 0.3, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
+
+	// If no texture is loaded, leave window blank
+	if (self->_texName == "")
+		return;
 	
-	return FALSE;	
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, 1, 0, 1, -1, 1);
+	
+	// Get a reference to the selected shader
+	shaders::IShaderPtr shader(GlobalShaderSystem().getShaderForName(self->_texName));
+	
+	// Bind the texture from the shader
+	qtexture_t* tex = (*shader)->getTexture();
+	glBindTexture(GL_TEXTURE_2D, tex->texture_number);
+	
+	// Draw a polygon
+	glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+	glColor3f(1, 1, 1);
+	glBegin(GL_QUADS);
+		glTexCoord2i(0, 1); glVertex2i(0, 0);
+		glTexCoord2i(1, 1); glVertex2i(1, 0);
+		glTexCoord2i(1, 0); glVertex2i(1, 1);
+		glTexCoord2i(0, 0);	glVertex2i(0, 1);
+	glEnd();
+	
 }
 
 }

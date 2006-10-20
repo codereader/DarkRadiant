@@ -88,6 +88,9 @@ MediaBrowser::MediaBrowser()
 	gtk_container_add(GTK_CONTAINER(frame), scroll);
 	gtk_box_pack_start(GTK_BOX(_widget), frame, TRUE, TRUE, 0);
 	
+	// Connect up the selection changed callback
+	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(_onSelectionChanged), this);
+	
 	// Construct the popup context menu
 	GtkWidget* loadDirectory = gtkutil::TextMenuItem(LOAD_TEXTURE_TEXT);
 	g_signal_connect(G_OBJECT(loadDirectory), "activate", G_CALLBACK(_onActivateLoadContained), this);
@@ -265,6 +268,13 @@ void MediaBrowser::_onActivateLoadContained(GtkMenuItem* item, MediaBrowser* sel
 		// Load the shader by name and release it, to force a load
 		IShader* ref = GlobalShaderSystem().getShaderForName(self->getSelectedName());
 		ref->DecRef();
+	}
+}
+
+void MediaBrowser::_onSelectionChanged(GtkWidget* widget, MediaBrowser* self) {
+	// Update the preview if a texture is selected
+	if (!self->isDirectorySelected()) {
+		self->_preview.setTexture(self->getSelectedName());
 	}
 }
 
