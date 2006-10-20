@@ -6,6 +6,7 @@
 #include <gtk/gtklabel.h>
 #include <gtk/gtkmenuitem.h>
 #include <gtk/gtkhbox.h>
+#include <gtk/gtkimage.h>
 #include <string>
 
 namespace gtkutil

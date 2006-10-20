@@ -3,9 +3,10 @@
 
 #include "ishaders.h"
 #include "texwindow.h"
+#include "select.h"
 #include "generic/callback.h"
 #include "gtkutil/image.h"
-#include "gtkutil/TextMenuItem.h"
+#include "gtkutil/IconTextMenuItem.h"
 
 #include <gtk/gtkvbox.h>
 #include <gtk/gtktreeview.h>
@@ -34,6 +35,10 @@ namespace {
 	const char* TEXTURE_ICON = "icon_texture.png";
 	
 	const char* LOAD_TEXTURE_TEXT = "Load in Textures view";
+	const char* LOAD_TEXTURE_ICON = "textureLoadInTexWindow16.png";
+
+	const char* APPLY_TEXTURE_TEXT = "Apply to selection";
+	const char* APPLY_TEXTURE_ICON = "textureApplyToSelection16.png";
 
 	// TreeStore columns
 	enum {
@@ -92,9 +97,14 @@ MediaBrowser::MediaBrowser()
 	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(_onSelectionChanged), this);
 	
 	// Construct the popup context menu
-	GtkWidget* loadDirectory = gtkutil::TextMenuItem(LOAD_TEXTURE_TEXT);
-	g_signal_connect(G_OBJECT(loadDirectory), "activate", G_CALLBACK(_onActivateLoadContained), this);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_popupMenu), loadDirectory);
+	_loadInTexturesView = gtkutil::IconTextMenuItem(LOAD_TEXTURE_ICON, LOAD_TEXTURE_TEXT);
+	_applyToSelection = gtkutil::IconTextMenuItem(APPLY_TEXTURE_ICON, APPLY_TEXTURE_TEXT);
+
+	g_signal_connect(G_OBJECT(_loadInTexturesView), "activate", G_CALLBACK(_onActivateLoadContained), this);
+	g_signal_connect(G_OBJECT(_applyToSelection), "activate", G_CALLBACK(_onActivateApplyTexture), this);
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(_popupMenu), _loadInTexturesView);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_popupMenu), _applyToSelection);
 	
 	gtk_widget_show_all(_popupMenu);
 	
@@ -235,6 +245,24 @@ std::string MediaBrowser::getSelectedName() {
 	}
 }
 
+// Update available menu items based on selection
+
+void MediaBrowser::updateAvailableMenuItems() {
+	// Apply to selection available only for individual textures
+	if (!isDirectorySelected() && getSelectedName() != "")
+		gtk_widget_set_sensitive(_applyToSelection, TRUE);
+	else
+		gtk_widget_set_sensitive(_applyToSelection, FALSE);
+	
+	// Load in texture view available for directories only (individual
+	// textures are loaded anyway due to the preview).
+	if (isDirectorySelected())
+		gtk_widget_set_sensitive(_loadInTexturesView, TRUE);
+	else
+		gtk_widget_set_sensitive(_loadInTexturesView, FALSE);
+	
+}
+
 /* GTK CALLBACKS */
 
 gboolean MediaBrowser::_onExpose(GtkWidget* widget, GdkEventExpose* ev, MediaBrowser* self) {
@@ -252,6 +280,7 @@ gboolean MediaBrowser::_onExpose(GtkWidget* widget, GdkEventExpose* ev, MediaBro
 bool MediaBrowser::_onRightClick(GtkWidget* widget, GdkEventButton* ev, MediaBrowser* self) {
 	// Popup on right-click events only
 	if (ev->button == 3) {
+		self->updateAvailableMenuItems();
 		gtk_menu_popup(GTK_MENU(self->_popupMenu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
 	}
 	return FALSE;
@@ -269,6 +298,10 @@ void MediaBrowser::_onActivateLoadContained(GtkMenuItem* item, MediaBrowser* sel
 		IShader* ref = GlobalShaderSystem().getShaderForName(self->getSelectedName());
 		ref->DecRef();
 	}
+}
+
+void MediaBrowser::_onActivateApplyTexture(GtkMenuItem* item, MediaBrowser* self) {
+	Select_SetShader(self->getSelectedName().c_str());
 }
 
 void MediaBrowser::_onSelectionChanged(GtkWidget* widget, MediaBrowser* self) {

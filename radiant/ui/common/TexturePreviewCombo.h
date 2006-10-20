@@ -2,7 +2,6 @@
 #define TEXTUREPREVIEWCOMBO_H_
 
 #include <string>
-#include <iostream>
 
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkliststore.h>
