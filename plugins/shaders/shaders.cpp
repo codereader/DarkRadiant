@@ -827,15 +827,6 @@ CShader* Try_Shader_ForName(const char* name)
   return pShader;
 }
 
-IShader *Shader_ForName(const char *name)
-{
-  ASSERT_NOTNULL(name);
-
-  IShader *pShader = Try_Shader_ForName(name);
-  pShader->IncRef();
-  return pShader;
-}
-
 // the list of scripts/*.shader files we need to work with
 // those are listed in shaderlist file
 GSList *l_shaderfiles = 0;
@@ -1073,10 +1064,12 @@ public:
 		return g_shaders_unrealised == 0;
 	}
 
-  IShader* getShaderForName(const char* name)
-  {
-    return Shader_ForName(name);
-  }
+	// Return a shader by name
+	IShader* getShaderForName(const std::string& name) {
+		IShader *pShader = Try_Shader_ForName(name.c_str());
+		pShader->IncRef();
+		return pShader;
+	}
 
   void foreachShaderName(const ShaderNameCallback& callback)
   {
