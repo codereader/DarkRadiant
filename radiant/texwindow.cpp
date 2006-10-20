@@ -87,6 +87,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "preferences.h"
 #include "shaders.h"
 #include "commands.h"
+#include "ui/common/ToolbarCreator.h"
 
 
 
@@ -1306,32 +1307,40 @@ GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel)
 	  gtk_widget_show(texbox);
 	  gtk_box_pack_start(GTK_BOX(hbox), texbox, TRUE, TRUE, 0);
     
-    GtkWidget* toolbar = gtk_toolbar_new();
-    gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
-    gtk_box_pack_start(GTK_BOX(texbox), toolbar, FALSE, FALSE, 0);
-    GtkTooltips* barTips = gtk_tooltips_new();
+    // Load the texture toolbar from the registry
+    ui::ToolbarCreator toolbarCreator;
+    GtkToolbar* textureToolbar = toolbarCreator.getToolbar("texture");
+    if (textureToolbar != NULL) {
+		gtk_widget_show(GTK_WIDGET(textureToolbar));
+		gtk_box_pack_start(GTK_BOX(texbox), GTK_WIDGET(textureToolbar), FALSE, FALSE, 0);
+		
+		// Button for toggling the resizing of textures
+		
+		GtkToolItem* sizeToggle = gtk_toggle_tool_button_new();
+		
+    	GdkPixbuf* pixBuf = gtkutil::getLocalPixbuf("texwindow_uniformsize.png");    	
+    	GtkWidget* toggle_image = GTK_WIDGET(gtk_image_new_from_pixbuf(pixBuf));
+    	
+    	GtkTooltips* barTips = gtk_tooltips_new();
+    	gtk_tool_item_set_tooltip(sizeToggle, barTips, "Clamp texture thumbnails to constant size", "");
     
-    // Button for toggling the resizing of textures
+    	gtk_tool_button_set_label(GTK_TOOL_BUTTON(sizeToggle), "Constant size");
+    	gtk_tool_button_set_icon_widget(GTK_TOOL_BUTTON(sizeToggle), toggle_image);
+    	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(sizeToggle), TRUE);
+    	
+    	// Insert button and connect callback
+    	gtk_toolbar_insert(GTK_TOOLBAR(textureToolbar), sizeToggle, 0);
+    	g_signal_connect(G_OBJECT(sizeToggle), 
+    						 "toggled",
+    						 G_CALLBACK(TextureBrowser_toggleResizeTextures), 
+    				 		&g_TextureBrowser);
+    
+    	gdk_pixbuf_unref(pixBuf);
+    	
+    	gtk_widget_show_all(GTK_WIDGET(textureToolbar));
+    }
 
-    GtkToolItem* sizeToggle = gtk_toggle_tool_button_new();
-    GdkPixbuf* pixBuf = gtkutil::getLocalPixbuf("texwindow_uniformsize.png");
-    GtkWidget* toggle_image = GTK_WIDGET(gtk_image_new_from_pixbuf(pixBuf));
-    gtk_tool_item_set_tooltip(sizeToggle, barTips, "Clamp texture thumbnails to constant size", "");
-    
-    gtk_tool_button_set_label(GTK_TOOL_BUTTON(sizeToggle), "Constant size");
-    gtk_tool_button_set_icon_widget(GTK_TOOL_BUTTON(sizeToggle), toggle_image);
-    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(sizeToggle), TRUE);
-    
-    // Insert button and connect callback
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), sizeToggle, 0);
-    g_signal_connect(G_OBJECT(sizeToggle), 
-    				 "toggled",
-    				 G_CALLBACK(TextureBrowser_toggleResizeTextures), 
-    				 &g_TextureBrowser);
-    
-    gdk_pixbuf_unref(pixBuf);
-    gtk_widget_show_all(toolbar);
-    
+        	
 	  {
 		  GtkEntry* entry = GTK_ENTRY(gtk_entry_new());
 		  gtk_box_pack_start(GTK_BOX(texbox), GTK_WIDGET(entry), FALSE, FALSE, 0);

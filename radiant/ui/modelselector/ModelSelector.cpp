@@ -78,7 +78,7 @@ ModelSelector::ModelSelector()
 	// Create the model preview widget
 	
 	float previewHeightFactor = boost::lexical_cast<float>(
-		GlobalRadiant().registry()->get("user/ui/ModelSelector/previewSizeFactor"));
+		GlobalRadiant().registry().get("user/ui/ModelSelector/previewSizeFactor"));
 	gint glSize = gint(h * previewHeightFactor);
 	_modelPreview.setSize(glSize);
 

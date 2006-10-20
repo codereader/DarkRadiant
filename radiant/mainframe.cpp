@@ -30,7 +30,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 #include "version.h"
 
-#include "xmlutil/XMLRegistry.h"
 #include "ui/einspector/EntityInspector.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "ui/common/ToolbarCreator.h"
@@ -616,20 +615,20 @@ void Radiant_Initialise()
   g_gameNameObservers.realise();
   
   // Load default values for darkradiant, located in the game directory
-  xmlRegistry.importFromFile(std::string(AppPath_get()) + "user.xml");
+  registry().importFromFile(std::string(AppPath_get()) + "user.xml");
   
   // Load user preferences, these overwrite any values that have defined before
   // This is stored in the user's folder
   const std::string userSettingsFile = std::string(SettingsPath_get()) + "user.xml";
   if (file_exists(userSettingsFile.c_str())) {
-  	xmlRegistry.importFromFile(userSettingsFile);
+  	registry().importFromFile(userSettingsFile);
   }
 }
 
 void Radiant_Shutdown()
 {
   // Save the whole /darkradiant/user tree to user.xml so that the current settings are preserved
-  xmlRegistry.exportToFile("user", std::string(SettingsPath_get()) + "user.xml");	
+  registry().exportToFile("user", std::string(SettingsPath_get()) + "user.xml");	
 
   g_gameNameObservers.unrealise();
   g_gameModeObservers.unrealise();
@@ -1396,7 +1395,7 @@ void ClipperToolExport(const BoolImportCallback& importCallback)
 
 void ShowAllLightRadiiExport(const BoolImportCallback& importCallback)
 {
-  importCallback(xmlRegistry.get("user/ui/showlightradii") == "1");
+  importCallback(registry().get("user/ui/showlightradii") == "1");
 }
 
 FreeCaller1<const BoolImportCallback&, TranslateToolExport> g_translatemode_button_caller;
@@ -1549,13 +1548,13 @@ void ClipperMode()
 
 void ToggleShowAllLightRadii()
 {
-  if (xmlRegistry.get("user/ui/showlightradii") == "1")
+  if (registry().get("user/ui/showlightradii") == "1")
   {
-  	xmlRegistry.set("user/ui/showlightradii","0");
+  	registry().set("user/ui/showlightradii","0");
   }
   else
   { 
-  	xmlRegistry.set("user/ui/showlightradii","1");
+  	registry().set("user/ui/showlightradii","1");
   }
   SceneChangeNotify();
 }
@@ -2242,28 +2241,6 @@ void RefreshShaders()
 }
 
 
-GtkMenuItem* create_textures_menu()
-{
-  // Textures menu
-  GtkMenuItem* textures_menu_item = new_sub_menu_item_with_mnemonic("_Textures");
-  GtkMenu* menu = GTK_MENU(gtk_menu_item_get_submenu(textures_menu_item));
-  g_textures_menu = menu;
-  if (g_Layout_enableDetachableMenus.m_value)
-    menu_tearoff (menu);
-
-  create_check_menu_item_with_mnemonic(menu, "Hide _Unused", "ShowInUse");
-  create_menu_item_with_mnemonic(menu, "Show All", "ShowAllTextures");
-
-  menu_separator(menu);
-  create_menu_item_with_mnemonic(menu, "Flush & Reload Shaders", "RefreshShaders");
-  create_menu_item_with_mnemonic(menu, "Directory list...", "TextureDirectoryList");
-  menu_separator(menu);
-
-  create_menu_item_with_mnemonic(menu, "Find / Replace...", "FindReplaceTextures");
-
-  return textures_menu_item;
-}
-
 GtkMenuItem* create_misc_menu()
 {
   // Misc menu
@@ -2354,7 +2331,6 @@ GtkMenuBar* create_main_menu(MainFrame::EViewStyle style)
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_selection_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_bsp_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_grid_menu()));
-  gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_textures_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_misc_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_entity_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_brush_menu()));
@@ -2831,10 +2807,11 @@ void MainFrame::Create()
     // Instantiate the ToolbarCreator and retrieve the standard toolbar widget 
 	ui::ToolbarCreator toolbarCreator;
 	GtkToolbar* generalToolbar = toolbarCreator.getToolbar("standard");
-	gtk_widget_show(GTK_WIDGET(generalToolbar));
-	
-	// Pack it into the main window
-	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(generalToolbar), FALSE, FALSE, 0);
+	if (generalToolbar != NULL) {
+		// Pack it into the main window
+		gtk_widget_show(GTK_WIDGET(generalToolbar));
+		gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(generalToolbar), FALSE, FALSE, 0);
+	}
 
     // Create and add plugin toolbar, if visible    
     GtkToolbar *plugin_toolbar = create_plugin_toolbar();

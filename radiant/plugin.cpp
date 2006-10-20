@@ -96,8 +96,9 @@ const char* GameDescription_getRequiredKeyValue(const char* key)
 }
 
 // return the pointer to the xmlRegistry instance
-xml::XMLRegistryPtr registry() {
-	return &xmlRegistry;
+xml::XMLRegistry& registry() {
+	static xml::XMLRegistry _xmlRegistry;
+	return _xmlRegistry;
 }
 
 // Get an XPath from the global GameDescription

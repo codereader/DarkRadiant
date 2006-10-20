@@ -8,6 +8,7 @@
 #include "stream/textfilestream.h"
 
 #include "commands.h"
+#include "plugin.h"
 #include "gtkutil/pointer.h"
 #include "gtkutil/image.h"
 #include "gtkutil/button.h"
@@ -35,7 +36,26 @@ namespace ui {
 /*	Returns the toolbar that is named toolbarName
  */
 GtkToolbar* ToolbarCreator::getToolbar(const std::string& toolbarName) {
+	// Check if the toolbarName exists
 	if (toolbarExists(toolbarName)) {
+		
+		// Instantiate the toolbar with buttons, if not done yet 
+		if (_toolbars[toolbarName]==NULL) {
+			
+			globalOutputStream() << "ToolbarCreator: Instantiating toolbar: " << toolbarName.c_str() << "\n";
+						
+			// Build the path into the registry, where the toolbar should be found
+			std::string toolbarPath = std::string("//ui//toolbar") + "[@name='"+ toolbarName +"']";
+			xml::NodeList toolbarList = registry().findXPath(toolbarPath);
+			
+			if (toolbarList.size() > 0) {
+				_toolbars[toolbarName] = createToolbar(toolbarList[0]);
+			}
+			else {
+				globalOutputStream() << "ToolbarCreator: Critical: Could not instantiate " << toolbarName.c_str() << "!\n";
+			}
+		}		
+		
 		return _toolbars[toolbarName];
 	} 
 	else {
@@ -141,7 +161,7 @@ bool ToolbarCreator::toolbarExists(const std::string& toolbarName) {
  * Returns nothing, toolbars can be obtained via GetToolbar()
  */
 void ToolbarCreator::loadToolbars() {
-	xml::NodeList toolbarList = xmlRegistry.findXPath("//ui//toolbar");
+	xml::NodeList toolbarList = registry().findXPath("//ui//toolbar");
 	
 	if (toolbarList.size() > 0) {
 		// Create a new tooltips element
@@ -159,7 +179,7 @@ void ToolbarCreator::loadToolbars() {
 			globalOutputStream() << "Found toolbar: " << toolbarName.c_str();
 			globalOutputStream() << "\n";
 			
-			_toolbars[toolbarName] = createToolbar(toolbarList[i]);
+			_toolbars[toolbarName] = NULL;
 		}
 	}
 	else {
