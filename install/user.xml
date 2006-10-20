@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 <user>
-  <ui>  
+  <ui>
+    <ModelSelector>
+    	<previewSizeFactor value="0.4" />
+    </ModelSelector>
     <showlightradii value="0"/>
     <toolbar name="standard">
         <separator/>
