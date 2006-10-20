@@ -13,17 +13,17 @@
  *  is also created automatically on inclusion of the source file (.cpp)
  *   
  *  Example: store a global variable:
- *  	xmlRegistry.set("globals/ui/showalllightradii", "1");
+ *  	GlobalRadiant().registry().set("globals/ui/showAllLightRadii", "1");
  * 
  *  Example: retrieve a global variable 
  *  (this returns "" if the key is not found and an error is written to globalOutputStream):
- *  	std::string value = xmlRegistry.get("globals/ui/showalllightradii");
+ *  	std::string value = GlobalRadiant().registry().get("globals/ui/showalllightradii");
  * 
  *  Example: import an XML file into the registry (note: imported keys overwrite previous ones!) 
- * 		xmlRegistry.importFromFile(absolute_path_to_file[, where_to_import]);
+ * 		GlobalRadiant().registry().importFromFile(absolute_path_to_file[, where_to_import]);
  * 
  *  Example: export a path/key to a file:
- *  	xmlRegistry.exportToFile(node_to_export, absolute_path_to_file);
+ *  	GlobalRadiant().registry().exportToFile(node_to_export, absolute_path_to_file);
  */
 
 namespace xml {

@@ -1395,7 +1395,7 @@ void ClipperToolExport(const BoolImportCallback& importCallback)
 
 void ShowAllLightRadiiExport(const BoolImportCallback& importCallback)
 {
-  importCallback(registry().get("user/ui/showlightradii") == "1");
+  importCallback(registry().get("user/ui/showAllLightRadii") == "1");
 }
 
 FreeCaller1<const BoolImportCallback&, TranslateToolExport> g_translatemode_button_caller;
@@ -1548,13 +1548,13 @@ void ClipperMode()
 
 void ToggleShowAllLightRadii()
 {
-  if (registry().get("user/ui/showlightradii") == "1")
+  if (registry().get("user/ui/showAllLightRadii") == "1")
   {
-  	registry().set("user/ui/showlightradii","0");
+  	registry().set("user/ui/showAllLightRadii","0");
   }
   else
   { 
-  	registry().set("user/ui/showlightradii","1");
+  	registry().set("user/ui/showAllLightRadii","1");
   }
   SceneChangeNotify();
 }
