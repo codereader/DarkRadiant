@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/constant.h"
 
 #include "xmlutil/Document.h"
-
+#include "xmlutil/XMLRegistry.h"
 
 // ========================================
 // GTK+ helper functions
@@ -135,8 +135,7 @@ struct _QERFuncTable_1
   const char* (*getGameDescriptionKeyValue)(const char* key);
   const char* (*getRequiredGameDescriptionKeyValue)(const char* key);
   xml::NodeList (*getXPath) (const std::string& path);
-  std::string 	(*getXmlRegistry) (const std::string& key);
-  void 			(*setXmlRegistry) (const std::string& key, const std::string& value);
+  xml::XMLRegistryPtr (*registry)();
 
   void (*attachGameToolsPathObserver)(ModuleObserver& observer);
   void (*detachGameToolsPathObserver)(ModuleObserver& observer);

@@ -95,14 +95,9 @@ const char* GameDescription_getRequiredKeyValue(const char* key)
   return g_pGameDescription->getRequiredKeyValue(key);
 }
 
-// Get a value from the XML registry
-std::string getXmlRegistry(const std::string& key) {
-	return xmlRegistry.getXmlRegistry(key);
-}
-
-// Set a value in the XML registry
-void setXmlRegistry(const std::string& key, const std::string& value) {
-	xmlRegistry.setXmlRegistry(key, value);
+// return the pointer to the xmlRegistry instance
+xml::XMLRegistryPtr registry() {
+	return &xmlRegistry;
 }
 
 // Get an XPath from the global GameDescription
@@ -164,9 +159,8 @@ public:
     m_radiantcore.getRequiredGameDescriptionKeyValue = &GameDescription_getRequiredKeyValue;
     m_radiantcore.getXPath = &GameDescription_getXPath;
     
-    m_radiantcore.getXmlRegistry = &getXmlRegistry;
-    m_radiantcore.setXmlRegistry = &setXmlRegistry;
-
+    m_radiantcore.registry = &registry;
+    
     m_radiantcore.attachGameToolsPathObserver = Radiant_attachGameToolsPathObserver;
     m_radiantcore.detachGameToolsPathObserver = Radiant_detachGameToolsPathObserver;
     m_radiantcore.attachEnginePathObserver = Radiant_attachEnginePathObserver;

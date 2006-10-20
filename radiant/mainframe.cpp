@@ -615,11 +615,22 @@ void Radiant_Initialise()
   g_gameModeObservers.realise();
   g_gameNameObservers.realise();
   
-  xmlRegistry.setXmlRegistry("globals/ui/showlightradii","1");
+  // Load default values for darkradiant, located in the game directory
+  xmlRegistry.importFromFile(std::string(AppPath_get()) + "user.xml");
+  
+  // Load user preferences, these overwrite any values that have defined before
+  // This is stored in the user's folder
+  const std::string userSettingsFile = std::string(SettingsPath_get()) + "user.xml";
+  if (file_exists(userSettingsFile.c_str())) {
+  	xmlRegistry.importFromFile(userSettingsFile);
+  }
 }
 
 void Radiant_Shutdown()
 {
+  // Save the whole /darkradiant/user tree to user.xml so that the current settings are preserved
+  xmlRegistry.exportToFile("user", std::string(SettingsPath_get()) + "user.xml");	
+
   g_gameNameObservers.unrealise();
   g_gameModeObservers.unrealise();
   g_gameToolsPathObservers.unrealise();
@@ -1385,7 +1396,7 @@ void ClipperToolExport(const BoolImportCallback& importCallback)
 
 void ShowAllLightRadiiExport(const BoolImportCallback& importCallback)
 {
-  importCallback(xmlRegistry.getXmlRegistry("globals/ui/showlightradii") != "");
+  importCallback(xmlRegistry.get("user/ui/showlightradii") == "1");
 }
 
 FreeCaller1<const BoolImportCallback&, TranslateToolExport> g_translatemode_button_caller;
@@ -1538,13 +1549,13 @@ void ClipperMode()
 
 void ToggleShowAllLightRadii()
 {
-  if (xmlRegistry.getXmlRegistry("globals/ui/showlightradii") == "1")
+  if (xmlRegistry.get("user/ui/showlightradii") == "1")
   {
-  	xmlRegistry.setXmlRegistry("globals/ui/showlightradii","");
+  	xmlRegistry.set("user/ui/showlightradii","0");
   }
   else
   { 
-  	xmlRegistry.setXmlRegistry("globals/ui/showlightradii","1");    
+  	xmlRegistry.set("user/ui/showlightradii","1");
   }
   SceneChangeNotify();
 }
@@ -2818,7 +2829,7 @@ void MainFrame::Create()
     gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(main_menu), FALSE, FALSE, 0);
     
     // Instantiate the ToolbarCreator and retrieve the standard toolbar widget 
-	ui::ToolbarCreator toolbarCreator(AppPath_get());
+	ui::ToolbarCreator toolbarCreator;
 	GtkToolbar* generalToolbar = toolbarCreator.getToolbar("standard");
 	gtk_widget_show(GTK_WIDGET(generalToolbar));
 	
