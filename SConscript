@@ -302,6 +302,7 @@ radiant_src = [
 'ui/common/ModelPreview.cpp',
 'ui/common/RenderableAABB.cpp',
 'ui/common/ToolbarCreator.cpp',
+'ui/common/TexturePreviewCombo.cpp',
 'ui/mediabrowser/MediaBrowser.cpp'
 ]
 
