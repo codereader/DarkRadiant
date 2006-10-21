@@ -38,7 +38,7 @@ XMLRegistry::XMLRegistry():
 }
 
 xml::NodeList XMLRegistry::findXPath(const std::string& path) {
-	return _registry.findXPath(path);
+	return _registry.findXPath(prepareKey(path));
 }
 
 /*	Checks whether a key exists in the XMLRegistry by querying the XPath
@@ -120,6 +120,8 @@ void XMLRegistry::createKey(const std::string& key) {
 std::string XMLRegistry::get(const std::string& key) {
 	// Add the toplevel node to the path if required
 	std::string fullKey = prepareKey(key);
+	
+	//globalOutputStream() << "XMLRegistry: Querying key: " << fullKey.c_str() << "\n";
 	
 	// Try to load the node, return an empty string if nothing is found
 	xml::NodeList nodeList = _registry.findXPath(fullKey);
