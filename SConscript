@@ -302,7 +302,8 @@ radiant_src = [
 'ui/common/RenderableAABB.cpp',
 'ui/common/ToolbarCreator.cpp',
 'ui/common/TexturePreviewCombo.cpp',
-'ui/mediabrowser/MediaBrowser.cpp'
+'ui/mediabrowser/MediaBrowser.cpp',
+'ui/menu/FiltersMenu.cpp'
 ]
 
 for i in range(len(radiant_src)):
