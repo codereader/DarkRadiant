@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/einspector/EntityInspector.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "ui/common/ToolbarCreator.h"
+#include "ui/menu/FiltersMenu.h"
 #include "ifilesystem.h"
 #include "iundo.h"
 #include "ifilter.h"
@@ -2211,50 +2212,6 @@ GtkMenuItem* create_grid_menu()
   return grid_menu_item;
 }
 
-/* Create the Filters top-level menu. Use a FilterSystem visitor class
- * to populate menu with the available filters, and a callback function to
- * pass on "activate" messages from the menu to the FilterSystem.
- */
- 
-void _onFilterToggle(GtkCheckMenuItem* item, const std::string* name) {
-	GlobalFilterSystem().setFilterState(*name, gtk_check_menu_item_get_active(item));
-}
- 
-struct MenuPopulatingVisitor
-: public IFilterVisitor
-{
-	// Menu to populate
-	GtkMenu* _menu;
-	
-	// Constructor
-	MenuPopulatingVisitor(GtkMenu* menu)
-	: _menu(menu)
-	{}
-	
-	// Visitor function
-	void visit(const std::string& filterName) {
-		// Create and append the menu item for this filter
-		GtkWidget* filterItem = gtkutil::IconTextMenuToggle("iconFilter16.png", filterName.c_str());
-		gtk_widget_show_all(filterItem);
-		gtk_menu_shell_append(GTK_MENU_SHELL(_menu), filterItem);
-		// Connect up the signal
-		g_signal_connect(G_OBJECT(filterItem), 
-						 "toggled", 
-						 G_CALLBACK(_onFilterToggle),
-						 const_cast<std::string*>(&filterName)); // string owned by filtersystem, GTK requires void* not const void*
-	}	
-};
- 
-GtkMenuItem* create_filter_menu() {
-	GtkMenuItem* filterMenu = new_sub_menu_item_with_mnemonic("Fi_lter");
-	GtkMenu* menu = GTK_MENU(gtk_menu_item_get_submenu(filterMenu));
-	// Visit the filters in the FilterSystem to populate the menu
-	MenuPopulatingVisitor visitor(menu);
-	GlobalFilterSystem().forEachFilter(visitor);
-
-	return filterMenu;
-}
-
 void RefreshShaders()
 {
   ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Loading Shaders");
@@ -2352,7 +2309,11 @@ GtkMenuBar* create_main_menu(MainFrame::EViewStyle style)
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_view_menu(style)));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_selection_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_grid_menu()));
-  gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_filter_menu()));
+  
+  // Filters menu
+  ui::FiltersMenu filtersMenu;
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu_bar), filtersMenu);
+
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_misc_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_entity_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_brush_menu()));
