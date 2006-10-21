@@ -121,7 +121,7 @@ private:
 	void initialise() {
 
 		// Ask the XML Registry for the filter nodes
-		xml::NodeList filters = GlobalRadiant().getXPath("/game/filtersystem//filter");
+		xml::NodeList filters = GlobalRadiant().registry().findXPath("game/filtersystem//filter");
 
 		// Iterate over the list of nodes, adding filter objects onto the list
 		for (xml::NodeList::iterator iter = filters.begin();
