@@ -91,12 +91,35 @@ void UpdateFilters()
   }
 }
 
-/** Data class representing a single filter.
+/** Class encapsulating a single filter rule. Several of these rules may make
+ * up a single Filter.
+ */
+ 
+struct XMLFilterRule {
+
+	std::string type; 	// "texture", "entityclass" or "object"
+	std::string match; 	// the match expression regex
+	bool show;			// true for action="show", false for action="hide"
+	
+	// Constructor
+	XMLFilterRule(const std::string t, const std::string m, bool s)
+	: type(t), match(m), show(s) 
+	{
+	}
+};
+
+/** Class encapsulting a single filter. This consists of a name, and a list of
+ * filter rules.
  */
  
 struct XMLFilter {
-	std::string name;
-	bool isActive;
+
+	std::string name;	// text name of filter
+	std::vector<XMLFilterRule> rules; // ordered list of rule objects
+
+	// Constructor
+	XMLFilter(const std::string n)
+	: name(n) {}
 };
 
 /** FilterSystem implementation class.
@@ -110,9 +133,12 @@ private:
 	// Flag to indicate initialisation status
 	bool _initialised;
 
-	// List of available filters
-	typedef std::vector<XMLFilter> FilterList;
-	FilterList _filterList;
+	// Hashtable of available filters, indexed by name
+	typedef std::map<std::string, XMLFilter> FilterTable;
+	FilterTable _availableFilters;
+	
+	// Second table containing just the active filters
+	FilterTable _activeFilters;
 
 private:
 
@@ -128,9 +154,26 @@ private:
 			 iter != filters.end();
 			 ++iter)
 		{
-			XMLFilter curFilter;
-			curFilter.name = iter->getAttributeValue("name");
-			_filterList.push_back(curFilter);
+			// Initialise the XMLFilter object
+			std::string filterName = iter->getAttributeValue("name");
+			XMLFilter filter(filterName);
+
+			// Get all of the filterCriterion children of this node
+			xml::NodeList critNodes = iter->getNamedChildren("filterCriterion");
+
+			// Create XMLFilterRule objects for each criterion
+			for (xml::NodeList::iterator critIter = critNodes.begin();
+				 critIter != critNodes.end();
+				 ++critIter)
+			{
+				XMLFilterRule rule(critIter->getAttributeValue("type"),
+								   critIter->getAttributeValue("match"),
+								   critIter->getAttributeValue("action") == "show");
+				filter.rules.push_back(rule);
+			}
+			
+			// Add this XMLFilter to the list of available filters
+			_availableFilters.insert(FilterTable::value_type(filterName, filter));
 		}
 	}
 	
@@ -148,17 +191,28 @@ public:
 			initialise();
 			
 		// Visit each filter on the list, passing the name to the visitor
-		for (FilterList::iterator iter = _filterList.begin();
-			 iter != _filterList.end();
+		for (FilterTable::iterator iter = _availableFilters.begin();
+			 iter != _availableFilters.end();
 			 ++iter)
 		{
-			visitor.visit(iter->name);
+			visitor.visit(iter->first);
 		}
 	}
 	
 	// Set the state of a filter
 	void setFilterState(const std::string& filter, bool state) {
-		std::cout << "Setting filter " << filter << " to " << state << std::endl;
+		assert(!_availableFilters.empty());
+		if (state) {
+			// Copy the filter to the active filters list
+			_activeFilters.insert(
+				FilterTable::value_type(
+					filter, _availableFilters.find(filter)->second));
+		}
+		else {
+			assert(!_activeFilters.empty());
+			// Remove filter from active filters list
+			_activeFilters.erase(filter);
+		}
 	}
 
   /* Legacy stuff */
