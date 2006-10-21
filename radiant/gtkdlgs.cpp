@@ -72,7 +72,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "gtkmisc.h"
 #include "brushmanip.h"
-#include "build.h"
 #include "qe3.h"
 #include "texwindow.h"
 #include "xywindow.h"

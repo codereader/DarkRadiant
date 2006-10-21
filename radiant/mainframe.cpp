@@ -80,7 +80,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/widget.h"
 
 #include "autosave.h"
-#include "build.h"
 #include "brushmanip.h"
 #include "brushmodule.h"
 #include "camwindow.h"
@@ -2198,28 +2197,6 @@ GtkMenuItem* create_selection_menu()
   return selection_menu_item;
 }
 
-GtkMenuItem* create_bsp_menu()
-{
-  // BSP menu
-  GtkMenuItem* bsp_menu_item = new_sub_menu_item_with_mnemonic("_Build");
-  GtkMenu* menu = GTK_MENU(gtk_menu_item_get_submenu(bsp_menu_item));
-
-  if (g_Layout_enableDetachableMenus.m_value)
-  {
-    menu_tearoff(menu);
-  }
-
-  create_menu_item_with_mnemonic(menu, "Customize...", "BuildMenuCustomize");
-
-  menu_separator(menu);
-
-  Build_constructMenu(menu);
-
-  g_bsp_menu = menu;
-
-  return bsp_menu_item;
-}
-
 GtkMenuItem* create_grid_menu()
 {
   // Grid menu
@@ -2329,7 +2306,6 @@ GtkMenuBar* create_main_menu(MainFrame::EViewStyle style)
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_edit_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_view_menu(style)));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_selection_menu()));
-  gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_bsp_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_grid_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_misc_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_entity_menu()));
@@ -3335,8 +3311,6 @@ void MainFrame_Construct()
 
   GlobalCommands_insert("ArbitraryRotation", FreeCaller<DoRotateDlg>());
   GlobalCommands_insert("ArbitraryScale", FreeCaller<DoScaleDlg>());
-
-  GlobalCommands_insert("BuildMenuCustomize", FreeCaller<DoBuildMenu>());
 
   GlobalCommands_insert("FindBrush", FreeCaller<DoFind>());
 
