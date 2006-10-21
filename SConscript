@@ -220,7 +220,6 @@ radiant_src = [
 'brushtokens.cpp',
 'brushxml.cpp',
 'brush_primit.cpp',
-'build.cpp',
 'camwindow.cpp',
 'clippertool.cpp',
 'commands.cpp',

@@ -37,7 +37,6 @@ please contact Id Software immediately at info@idsoftware.com.
 #include "debugging/debugging.h"
 
 #include "ifilesystem.h"
-//#include "imap.h"
 
 #include <map>
 
@@ -52,7 +51,6 @@ please contact Id Software immediately at info@idsoftware.com.
 #include "gtkutil/messagebox.h"
 #include "error.h"
 #include "map.h"
-#include "build.h"
 #include "points.h"
 #include "camwindow.h"
 #include "mainframe.h"
@@ -182,72 +180,6 @@ const char* const EXECUTABLE_TYPE =
 #endif
 ;
 
-void bsp_init()
-{
-  build_set_variable("RadiantPath", AppPath_get());
-  build_set_variable("ExecutableType", EXECUTABLE_TYPE);
-  build_set_variable("EnginePath", EnginePath_get());
-  build_set_variable("GameName", gamename_get());
-
-  build_set_variable("MapFile", Map_Name(g_map));
-}
-
-void bsp_shutdown()
-{
-  build_clear_variables();
-}
-
-class ArrayCommandListener : public CommandListener
-{
-  GPtrArray* m_array;
-public:
-  ArrayCommandListener()
-  {
-    m_array = g_ptr_array_new();
-  }
-  ~ArrayCommandListener()
-  {
-    g_ptr_array_free(m_array, TRUE);
-  }
-
-  void execute(const char* command)
-  {
-    g_ptr_array_add(m_array, g_strdup(command));
-  }
-
-  GPtrArray* array() const
-  {
-    return m_array;
-  }
-};
-
-class BatchCommandListener : public CommandListener
-{
-  TextOutputStream& m_file;
-  std::size_t m_commandCount;
-  const char* m_outputRedirect;
-public:
-  BatchCommandListener(TextOutputStream& file, const char* outputRedirect) : m_file(file), m_commandCount(0), m_outputRedirect(outputRedirect)
-  {
-  }
-
-  void execute(const char* command)
-  {
-    m_file << command;
-    if (m_commandCount == 0)
-    {
-      m_file << " > ";
-    }
-    else
-    {
-      m_file << " >> ";
-    }
-    m_file << "\"" << m_outputRedirect << "\"";
-    m_file << "\n";
-    ++m_commandCount;
-  }
-};
-
 bool Region_cameraValid()
 {
   Vector3 vOrig(vector3_snapped(Camera_getOrigin(*g_pParentWnd->GetCamWnd())));
@@ -260,84 +192,6 @@ bool Region_cameraValid()
     }
   }
   return true;
-}
-
-
-void RunBSP(const char* name)
-{
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=503
-  // make sure we don't attempt to region compile a map with the camera outside the region
-  if (region_active && !Region_cameraValid())
-  {
-    globalErrorStream() << "The camera must be in the region to start a region compile.\n";
-    return;
-  }
-
-  SaveMap();
-
-  if(Map_Unnamed(g_map))
-  {
-    globalOutputStream() << "build cancelled\n";
-    return;
-  }
-
-  if (g_SnapShots_Enabled && !Map_Unnamed(g_map) && Map_Modified(g_map))
-  {
-    Map_Snapshot();
-  }
-
-  if (region_active)
-  {
-    const char* mapname = Map_Name(g_map);
-    StringOutputStream name(256);
-    name << StringRange(mapname, path_get_filename_base_end(mapname)) << ".reg";
-    Map_SaveRegion(name.c_str());
-  }
-
-  Pointfile_Delete();
-
-  bsp_init();
-
-  {
-    char junkpath[PATH_MAX];
-    strcpy(junkpath, SettingsPath_get());
-    strcat(junkpath, "junk.txt");
-
-    char batpath[PATH_MAX];
-#if defined(POSIX)
-    strcpy(batpath, SettingsPath_get());
-    strcat(batpath, "qe3bsp.sh");
-#elif defined(WIN32)
-    strcpy(batpath, SettingsPath_get());
-    strcat(batpath, "qe3bsp.bat");
-#else
-#error "unsupported platform"
-#endif
-    bool written = false;
-    {
-      TextFileOutputStream batchFile(batpath);
-      if(!batchFile.failed())
-      {
-#if defined (POSIX)
-        batchFile << "#!/bin/sh \n\n";
-#endif
-        BatchCommandListener listener(batchFile, junkpath);
-        build_run(name, listener);
-        written = true;
-      }
-    }
-    if(written)
-    {
-#if defined (POSIX)
-      chmod (batpath, 0744);
-#endif
-      globalOutputStream() << "Writing the compile script to '" << batpath << "'\n";
-      globalOutputStream() << "The build output will be saved in '" << junkpath << "'\n";
-      Q_Exec(batpath, NULL, NULL, true);
-    }
-  }
-
-  bsp_shutdown();
 }
 
 // =============================================================================

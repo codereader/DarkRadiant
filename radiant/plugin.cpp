@@ -60,7 +60,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkmisc.h"
 #include "texwindow.h"
 #include "mainframe.h"
-#include "build.h"
 #include "mru.h"
 #include "multimon.h"
 #include "surfacedialog.h"
@@ -266,7 +265,6 @@ public:
     MRU_Construct();
     Pointfile_Construct();
     GLWindow_Construct();
-    BuildMenu_Construct();
     Map_Construct();
     EntityList_Construct();
     MainFrame_Construct();
@@ -303,7 +301,6 @@ public:
     MainFrame_Destroy();
     EntityList_Destroy();
     Map_Destroy();
-    BuildMenu_Destroy();
     GLWindow_Destroy();
     Pointfile_Destroy();
     MRU_Destroy();
