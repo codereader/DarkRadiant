@@ -21,8 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "filters.h"
 
-#include "debugging/debugging.h"
-
 #include "ifilter.h"
 
 #include "scenelib.h"
@@ -36,6 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "mainframe.h"
 #include "commands.h"
 #include "preferences.h"
+#include "qerplugin.h"
 
 struct filters_globals_t
 {
@@ -92,10 +91,78 @@ void UpdateFilters()
   }
 }
 
+/** Data class representing a single filter.
+ */
+ 
+struct XMLFilter {
+	std::string name;
+	bool isActive;
+};
 
-class BasicFilterSystem : public FilterSystem
+/** FilterSystem implementation class.
+ */
+
+class BasicFilterSystem 
+: public FilterSystem
 {
+private:
+
+	// Flag to indicate initialisation status
+	bool _initialised;
+
+	// List of available filters
+	typedef std::vector<XMLFilter> FilterList;
+	FilterList _filterList;
+
+private:
+
+	// Initialise the filter system. This must be done after the main
+	// Radiant module, hence cannot be done in the constructor.
+	void initialise() {
+
+		// Ask the XML Registry for the filter nodes
+		xml::NodeList filters = GlobalRadiant().getXPath("/game/filtersystem//filter");
+
+		// Iterate over the list of nodes, adding filter objects onto the list
+		for (xml::NodeList::iterator iter = filters.begin();
+			 iter != filters.end();
+			 ++iter)
+		{
+			XMLFilter curFilter;
+			curFilter.name = iter->getAttributeValue("name");
+			_filterList.push_back(curFilter);
+		}
+	}
+	
 public:
+
+	// Constructor
+	BasicFilterSystem()
+	: _initialised(false)
+	{}
+
+	// Filter system visit function
+	void forEachFilter(IFilterVisitor& visitor) {
+		// Initialise the filter system if not already
+		if (!_initialised)
+			initialise();
+			
+		// Visit each filter on the list, passing the name to the visitor
+		for (FilterList::iterator iter = _filterList.begin();
+			 iter != _filterList.end();
+			 ++iter)
+		{
+			visitor.visit(iter->name);
+		}
+	}
+	
+	// Set the state of a filter
+	void setFilterState(const std::string& filter, bool state) {
+		
+	}
+
+  /* Legacy stuff */
+
   void addFilter(Filter& filter, int mask)
   {
     g_filters.push_back(FilterWrapper(filter, mask));
