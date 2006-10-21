@@ -66,7 +66,7 @@ GtkToolbar* ToolbarCreator::getToolbar(const std::string& toolbarName) {
 /* Checks the passed xmlNode for a recognized item (ToolButton, ToggleToolButton, Separator)
  * Returns the widget or NULL if nothing useful is found   
  */
-GtkWidget* ToolbarCreator::createToolItem(xml::Node& node, GtkToolbar* toolbar) {
+GtkWidget* ToolbarCreator::createToolItem(xml::Node& node) {
 	const std::string nodeName = node.getName();
 	GtkWidget* toolItem;
 	
@@ -135,9 +135,19 @@ GtkToolbar* ToolbarCreator::createToolbar(xml::Node& node) {
 		toolbar = gtk_toolbar_new();
 		gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
 		
+		// Try to set the alignment, if the attribute is properly set
+		try {
+			std::string align = node.getAttributeValue("align");
+			GtkOrientation orientation = (align == "vertical") ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL;
+			gtk_toolbar_set_orientation(GTK_TOOLBAR(toolbar), orientation);
+		}
+		catch (xml::AttributeNotFoundException a) {
+			globalOutputStream() << "ToolbarCreator: Warning: Toolbar " << node.getName().c_str() << " has no attribute 'align'\n";
+		}
+		
 		for (unsigned int i = 0; i < toolItemList.size(); i++) {
 			// Create and get the toolItem with the parsing 
-			GtkWidget* toolItem = createToolItem(toolItemList[i], GTK_TOOLBAR(toolbar));
+			GtkWidget* toolItem = createToolItem(toolItemList[i]);
 			
 			// It is possible that no toolItem is returned, only add it if it's safe to do so
 			if (toolItem != NULL) {    				

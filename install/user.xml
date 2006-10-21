@@ -2,50 +2,52 @@
 <user>
   <ui>
     <ModelSelector>
-    	<previewSizeFactor value="0.4" />
+    	<previewSizeFactor value="0.4"/>
     </ModelSelector>
 	<showAllLightRadii value="0"/>
-    <toolbar name="standard">
-        <separator/>
-		<toolbutton name="open" action="OpenMap" tooltip="Open a map file" icon="file_open.bmp"/>
-		<toolbutton name="save" action="SaveMap" tooltip="Save the current map" icon="file_save.bmp"/>
-	<separator/>
-		<toolbutton name="xflip" action="MirrorSelectionX" tooltip="x-axis Flip" icon="brush_flipx.bmp"/>
-		<toolbutton name="xrotate" action="RotateSelectionX" tooltip="x-axis Rotate" icon="brush_rotatex.bmp"/>
-		<toolbutton name="yflip" action="MirrorSelectionY" tooltip="y-axis Flip" icon="brush_flipy.bmp"/>
-		<toolbutton name="yrotate" action="RotateSelectionY" tooltip="y-axis Rotate" icon="brush_rotatey.bmp"/>
-		<toolbutton name="zflip" action="MirrorSelectionZ" tooltip="z-axis Flip" icon="brush_flipz.bmp"/>
-		<toolbutton name="zrotate" action="RotateSelectionZ" tooltip="z-axis Rotate" icon="brush_rotatez.bmp"/>
-	<separator/>
-		<toolbutton name="selecttouching" action="SelectTouching" tooltip="Select touching" icon="selection_selecttouching.bmp"/>
-		<toolbutton name="selectinside" action="SelectInside" tooltip="Select inside" icon="selection_selectinside.bmp"/>
-	<separator/>
-		<toolbutton name="csgsubstract" action="CSGSubtract" tooltip="CSG Subtract" icon="selection_csgsubtract.bmp"/>
-		<toolbutton name="csgmerge" action="CSGMerge" tooltip="CSG Merge" icon="selection_csgmerge.bmp"/>
-		<toolbutton name="csghollow" action="CSGHollow" tooltip="Hollow" icon="selection_makehollow.bmp"/>
-	<separator/>
-		<toggletoolbutton name="dragvertices" action="DragVertices" tooltip="Select Vertices" icon="modify_vertices.bmp"/>
-		<toggletoolbutton name="dragedges" action="DragEdges" tooltip="Select Edges" icon="modify_edges.bmp"/>
-		<toggletoolbutton name="dragfaces" action="DragFaces" tooltip="Select Faces" icon="modify_faces.bmp"/>
-	<separator/>
-		<toolbutton name="changeviews" action="NextView" tooltip="Change views" icon="view_change.bmp"/>
-	<separator/>
-		<toggletoolbutton name="cubicclip" action="ToggleCubicClip" tooltip="Cubic clip the camera view" icon="view_cubicclipping.bmp"/>
-	<separator/>
-		<toggletoolbutton name="translate" action="MouseTranslate" tooltip="Translate" icon="select_mousetranslate.bmp"/>
-		<toggletoolbutton name="rotate" action="MouseRotate" tooltip="Rotate" icon="select_mouserotate.bmp"/>
-		<toggletoolbutton name="scale" action="MouseScale" tooltip="Scale" icon="select_mousescale.bmp"/>
-		<toggletoolbutton name="resize" action="MouseDrag" tooltip="Resize" icon="select_mouseresize.bmp"/>
-		<toggletoolbutton name="clipper" action="ToggleClipper" tooltip="Clipper" icon="view_clipper.bmp"/>
-	<separator/>
-		<toolbutton name="capcurrentcurve" action="CapCurrentCurve" tooltip="Put caps on the current patch" icon="curve_cap.bmp"/>
-	<separator/>
-		<toggletoolbutton name="texturelock" action="TogTexLock" tooltip="Texture Lock" icon="texture_lock.bmp"/>
-	<separator/>
-		<toggletoolbutton name="showlightradii" action="ToggleShowAllLightRadii" tooltip="Show/hide all light volumes" icon="view_show_lightradii.bmp"/>
-	<separator/>
-  </toolbar>
-  <toolbar name="texture">
+    <toolbar name="view" align="horizontal">
+		<separator/>
+			<toolbutton name="open" action="OpenMap" tooltip="Open a map file" icon="file_open.png"/>
+			<toolbutton name="save" action="SaveMap" tooltip="Save the current map" icon="file_save.png"/>
+		<separator/>
+			<toolbutton name="changeviews" action="NextView" tooltip="Change views" icon="view_change.png"/>
+			<toggletoolbutton name="cubicclip" action="ToggleCubicClip" tooltip="Cubic clip the camera view" icon="view_cubicclipping.png"/>
+		<separator/>
+			<toolbutton name="selecttouching" action="SelectTouching" tooltip="Select touching" icon="selection_selecttouching.bmp"/>
+			<toolbutton name="selectinside" action="SelectInside" tooltip="Select inside" icon="selection_selectinside.bmp"/>
+		<separator/>
+			<toggletoolbutton name="dragvertices" action="DragVertices" tooltip="Select Vertices" icon="modify_vertices.bmp"/>
+			<toggletoolbutton name="dragedges" action="DragEdges" tooltip="Select Edges" icon="modify_edges.bmp"/>
+			<toggletoolbutton name="dragfaces" action="DragFaces" tooltip="Select Faces" icon="modify_faces.bmp"/>
+		<separator/>
+			<toggletoolbutton name="showlightradii" action="ToggleShowAllLightRadii" tooltip="Show/hide all light volumes" icon="view_show_lightradii.bmp"/>
+		<separator/>
+	</toolbar>
+	<toolbar name="edit" align="vertical">
+	    <separator/>
+			<toolbutton name="xflip" action="MirrorSelectionX" tooltip="x-axis Flip" icon="brush_flipx.bmp"/>
+			<toolbutton name="xrotate" action="RotateSelectionX" tooltip="x-axis Rotate" icon="brush_rotatex.bmp"/>
+			<toolbutton name="yflip" action="MirrorSelectionY" tooltip="y-axis Flip" icon="brush_flipy.bmp"/>
+			<toolbutton name="yrotate" action="RotateSelectionY" tooltip="y-axis Rotate" icon="brush_rotatey.bmp"/>
+			<toolbutton name="zflip" action="MirrorSelectionZ" tooltip="z-axis Flip" icon="brush_flipz.bmp"/>
+			<toolbutton name="zrotate" action="RotateSelectionZ" tooltip="z-axis Rotate" icon="brush_rotatez.bmp"/>
+		<separator/>			
+			<toolbutton name="csgsubstract" action="CSGSubtract" tooltip="CSG Subtract" icon="selection_csgsubtract.bmp"/>
+			<toolbutton name="csgmerge" action="CSGMerge" tooltip="CSG Merge" icon="selection_csgmerge.bmp"/>
+			<toolbutton name="csghollow" action="CSGHollow" tooltip="Hollow" icon="selection_makehollow.bmp"/>
+		<separator/>
+			<toggletoolbutton name="translate" action="MouseTranslate" tooltip="Translate" icon="select_mousetranslate.bmp"/>
+			<toggletoolbutton name="rotate" action="MouseRotate" tooltip="Rotate" icon="select_mouserotate.bmp"/>
+			<toggletoolbutton name="scale" action="MouseScale" tooltip="Scale" icon="select_mousescale.bmp"/>
+			<toggletoolbutton name="resize" action="MouseDrag" tooltip="Resize" icon="select_mouseresize.bmp"/>
+			<toggletoolbutton name="clipper" action="ToggleClipper" tooltip="Clipper" icon="view_clipper.png"/>
+		<separator/>
+			<toolbutton name="capcurrentcurve" action="CapCurrentCurve" tooltip="Put caps on the current patch" icon="curve_cap.bmp"/>
+		<separator/>
+			<toggletoolbutton name="texturelock" action="TogTexLock" tooltip="Texture Lock" icon="texture_lock.bmp"/>
+		<separator/>
+	</toolbar>
+  <toolbar name="texture" align="horizontal">
 		<toolbutton name="flush" action="RefreshShaders" tooltip="Flush &amp; Reload Shaders" icon="texwindow_flushandreload.png"/>
 		<toggletoolbutton name="showinuse" action="ShowInUse" tooltip="Hide Unused" icon="texwindow_hideunused.png"/>
     <separator/>		
