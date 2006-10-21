@@ -158,7 +158,7 @@ public:
 	
 	// Set the state of a filter
 	void setFilterState(const std::string& filter, bool state) {
-		
+		std::cout << "Setting filter " << filter << " to " << state << std::endl;
 	}
 
   /* Legacy stuff */

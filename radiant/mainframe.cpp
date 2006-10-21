@@ -2212,8 +2212,13 @@ GtkMenuItem* create_grid_menu()
 }
 
 /* Create the Filters top-level menu. Use a FilterSystem visitor class
- * to populate menu with the available filters.
+ * to populate menu with the available filters, and a callback function to
+ * pass on "activate" messages from the menu to the FilterSystem.
  */
+ 
+void _onFilterToggle(GtkCheckMenuItem* item, const std::string* name) {
+	GlobalFilterSystem().setFilterState(*name, gtk_check_menu_item_get_active(item));
+}
  
 struct MenuPopulatingVisitor
 : public IFilterVisitor
@@ -2228,9 +2233,15 @@ struct MenuPopulatingVisitor
 	
 	// Visitor function
 	void visit(const std::string& filterName) {
+		// Create and append the menu item for this filter
 		GtkWidget* filterItem = gtkutil::IconTextMenuToggle("iconFilter16.png", filterName.c_str());
 		gtk_widget_show_all(filterItem);
 		gtk_menu_shell_append(GTK_MENU_SHELL(_menu), filterItem);
+		// Connect up the signal
+		g_signal_connect(G_OBJECT(filterItem), 
+						 "toggled", 
+						 G_CALLBACK(_onFilterToggle),
+						 const_cast<std::string*>(&filterName)); // string owned by filtersystem, GTK requires void* not const void*
 	}	
 };
  
