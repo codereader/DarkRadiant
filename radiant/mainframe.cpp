@@ -78,6 +78,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/menu.h"
 #include "gtkutil/paned.h"
 #include "gtkutil/widget.h"
+#include "gtkutil/IconTextMenuToggle.h"
 
 #include "autosave.h"
 #include "brushmanip.h"
@@ -2210,6 +2211,39 @@ GtkMenuItem* create_grid_menu()
   return grid_menu_item;
 }
 
+/* Create the Filters top-level menu. Use a FilterSystem visitor class
+ * to populate menu with the available filters.
+ */
+ 
+struct MenuPopulatingVisitor
+: public IFilterVisitor
+{
+	// Menu to populate
+	GtkMenu* _menu;
+	
+	// Constructor
+	MenuPopulatingVisitor(GtkMenu* menu)
+	: _menu(menu)
+	{}
+	
+	// Visitor function
+	void visit(const std::string& filterName) {
+		GtkWidget* filterItem = gtkutil::IconTextMenuToggle("iconFilter16.png", filterName.c_str());
+		gtk_widget_show_all(filterItem);
+		gtk_menu_shell_append(GTK_MENU_SHELL(_menu), filterItem);
+	}	
+};
+ 
+GtkMenuItem* create_filter_menu() {
+	GtkMenuItem* filterMenu = new_sub_menu_item_with_mnemonic("Fi_lter");
+	GtkMenu* menu = GTK_MENU(gtk_menu_item_get_submenu(filterMenu));
+	// Visit the filters in the FilterSystem to populate the menu
+	MenuPopulatingVisitor visitor(menu);
+	GlobalFilterSystem().forEachFilter(visitor);
+
+	return filterMenu;
+}
+
 void RefreshShaders()
 {
   ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Loading Shaders");
@@ -2307,6 +2341,7 @@ GtkMenuBar* create_main_menu(MainFrame::EViewStyle style)
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_view_menu(style)));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_selection_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_grid_menu()));
+  gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_filter_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_misc_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_entity_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_brush_menu()));

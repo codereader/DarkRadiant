@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_IFILTER_H
 
 #include "generic/constant.h"
+#include <string>
 
 enum
 {
@@ -60,14 +61,49 @@ public:
   virtual void updateFiltered() = 0;
 };
 
+/** Visitor interface for evaluating the available filters in the 
+ * FilterSystem.
+ */
+ 
+struct IFilterVisitor {
+	// Visit function
+	virtual void visit(const std::string& filterName) = 0;
+};
+
+/** Interface for the FilterSystem.
+ */
+
 class FilterSystem
 {
 public:
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "filters");
-  virtual void addFilter(Filter& filter, int mask) = 0;
-  virtual void registerFilterable(Filterable& filterable) = 0;
-  virtual void unregisterFilterable(Filterable& filterable) = 0;
+	INTEGER_CONSTANT(Version, 1);
+	STRING_CONSTANT(Name, "filters");
+
+	/** Visit the available filters, passing each filter's text
+	 * name to the visitor.
+	 * 
+	 * @param visitor
+	 * Visitor class implementing the IFilterVisitor interface.
+	 */
+	virtual void forEachFilter(IFilterVisitor& visitor) = 0;
+	
+	/** Set the state of the named filter.
+	 * 
+	 * @param filter
+	 * The filter to toggle.
+	 * 
+	 * @param state
+	 * true if the filter should be active, false otherwise.
+	 */
+	virtual void setFilterState(const std::string& filter, bool state) = 0;
+
+	/* Legacy stuff.
+	 * TODO: Deprecate these and convert code to use new filtersystem
+	 * interface
+	 */
+	virtual void addFilter(Filter& filter, int mask) = 0;
+	virtual void registerFilterable(Filterable& filterable) = 0;
+	virtual void unregisterFilterable(Filterable& filterable) = 0;
 };
 
 #include "modulesystem.h"
