@@ -2787,21 +2787,34 @@ void MainFrame::Create()
     GtkMenuBar *main_menu = create_main_menu(CurrentStyle());
     gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(main_menu), FALSE, FALSE, 0);
     
-    // Instantiate the ToolbarCreator and retrieve the standard toolbar widget 
+    // Instantiate the ToolbarCreator and retrieve the view toolbar widget 
 	ui::ToolbarCreator toolbarCreator;
-	GtkToolbar* generalToolbar = toolbarCreator.getToolbar("standard");
-	if (generalToolbar != NULL) {
+	
+	GtkToolbar* viewToolbar = toolbarCreator.getToolbar("view");
+	if (viewToolbar != NULL) {
 		// Pack it into the main window
-		gtk_widget_show(GTK_WIDGET(generalToolbar));
-		gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(generalToolbar), FALSE, FALSE, 0);
+		gtk_widget_show(GTK_WIDGET(viewToolbar));
+		gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(viewToolbar), FALSE, FALSE, 0);
 	}
-
-    // Create and add plugin toolbar, if visible    
+	
+	// Create and add plugin toolbar, if visible    
     GtkToolbar *plugin_toolbar = create_plugin_toolbar();
     if (!g_Layout_enablePluginToolbar.m_value) {
         gtk_widget_hide(GTK_WIDGET(plugin_toolbar));
     }
     gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(plugin_toolbar), FALSE, FALSE, 0);
+    
+    GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
+    gtk_widget_show(hbox);
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
+    
+    // Get the edit toolbar widget 
+	GtkToolbar* editToolbar = toolbarCreator.getToolbar("edit");
+	if (editToolbar != NULL) {
+		// Pack it into the main window
+		gtk_widget_show(GTK_WIDGET(editToolbar));
+		gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(editToolbar), FALSE, FALSE, 0);
+	}
     
     // Create and pack main statusbar 
     GtkWidget *main_statusbar = create_main_statusbar(m_pStatusLabel);

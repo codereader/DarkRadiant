@@ -23,7 +23,7 @@ class ToolbarCreator {
 	private:
 		void 		loadToolbars();
 		GtkToolbar*	createToolbar(xml::Node&);
-		GtkWidget* 	createToolItem(xml::Node&, GtkToolbar*);
+		GtkWidget* 	createToolItem(xml::Node&);
 		bool 		toolbarExists(const std::string& toolbarName);
 		
 		ToolbarMap 		_toolbars;
