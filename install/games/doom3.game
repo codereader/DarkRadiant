@@ -25,13 +25,14 @@
 >
 	<filtersystem>
 		<filter name="Hide world geometry">
-			<filterCriterion type="texture" match="textures/common/collision" action="hide" />
+			<filterCriterion type="entityclass" match="worldspawn" action="hide" />
 		</filter>
 		<filter name="Hide collision surfaces">
 			<filterCriterion type="texture" match="textures/common/collision" action="hide" />
 		</filter>
 		<filter name="Hide non-world entities">
-			<filterCriterion type="texture" match="textures/common/collision" action="hide" />
+			<filterCriterion type="entityclass" match=".*" action="hide" />
+			<filterCriterion type="entityclass" match="worldspawn" action="show" />
 		</filter>
 	</filtersystem>
 	<filesystem>
