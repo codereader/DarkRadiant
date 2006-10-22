@@ -91,39 +91,10 @@ void UpdateFilters()
   }
 }
 
-/** Class encapsulating a single filter rule. Several of these rules may make
- * up a single Filter.
- */
- 
-struct XMLFilterRule {
-
-	std::string type; 	// "texture", "entityclass" or "object"
-	std::string match; 	// the match expression regex
-	bool show;			// true for action="show", false for action="hide"
-	
-	// Constructor
-	XMLFilterRule(const std::string t, const std::string m, bool s)
-	: type(t), match(m), show(s) 
-	{
-	}
-};
-
-/** Class encapsulting a single filter. This consists of a name, and a list of
- * filter rules.
- */
- 
-struct XMLFilter {
-
-	std::string name;	// text name of filter
-	std::vector<XMLFilterRule> rules; // ordered list of rule objects
-
-	// Constructor
-	XMLFilter(const std::string n)
-	: name(n) {}
-};
-
 /** FilterSystem implementation class.
  */
+
+#include "filters/XMLFilter.h"
 
 class BasicFilterSystem 
 : public FilterSystem
@@ -134,11 +105,16 @@ private:
 	bool _initialised;
 
 	// Hashtable of available filters, indexed by name
-	typedef std::map<std::string, XMLFilter> FilterTable;
+	typedef std::map<std::string, filters::XMLFilter> FilterTable;
 	FilterTable _availableFilters;
 	
 	// Second table containing just the active filters
 	FilterTable _activeFilters;
+
+	// Cache of visibility flags for texture names, to avoid having to
+	// traverse the active filter list for each texture lookup
+	typedef std::map<std::string, bool> StringFlagCache;
+	StringFlagCache _textureFlagCache;
 
 private:
 
@@ -156,7 +132,7 @@ private:
 		{
 			// Initialise the XMLFilter object
 			std::string filterName = iter->getAttributeValue("name");
-			XMLFilter filter(filterName);
+			filters::XMLFilter filter(filterName);
 
 			// Get all of the filterCriterion children of this node
 			xml::NodeList critNodes = iter->getNamedChildren("filterCriterion");
@@ -166,10 +142,9 @@ private:
 				 critIter != critNodes.end();
 				 ++critIter)
 			{
-				XMLFilterRule rule(critIter->getAttributeValue("type"),
-								   critIter->getAttributeValue("match"),
-								   critIter->getAttributeValue("action") == "show");
-				filter.rules.push_back(rule);
+				filter.addRule(critIter->getAttributeValue("type"),
+							   critIter->getAttributeValue("match"),
+							   critIter->getAttributeValue("action") == "show");
 			}
 			
 			// Add this XMLFilter to the list of available filters
@@ -213,6 +188,37 @@ public:
 			// Remove filter from active filters list
 			_activeFilters.erase(filter);
 		}
+	}
+
+	// Query whether a texture is visible or filtered out
+	bool isTextureVisible(const std::string& texture) {
+
+		// Check if this texture is in the texture flag cache, returning
+		// its cached value if found
+		StringFlagCache::iterator cacheIter = _textureFlagCache.find(texture);
+		if (cacheIter != _textureFlagCache.end())
+			return cacheIter->second;
+			
+		// Otherwise, walk the list of active filters to find a value for
+		// this texture.
+		bool visFlag = true; // default if no filters modify it
+		
+		for (FilterTable::iterator activeIter = _activeFilters.begin();
+			 activeIter != _activeFilters.end();
+			 ++activeIter)
+		{
+			// Delegate the check to the filter object. If a filter returns
+			// false for the visibility check, then the texture is filtered
+			// and we don't need any more checks.			
+			if (!activeIter->second.isTextureVisible(texture)) {
+				visFlag = false;
+				break;
+			}
+		}			
+
+		// Cache the result and return to caller
+		_textureFlagCache.insert(StringFlagCache::value_type(texture, visFlag));
+		return visFlag;
 	}
 
   /* Legacy stuff */
