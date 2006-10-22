@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "filters.h"
 
 #include "ifilter.h"
+#include "iscenegraph.h"
 
 #include "scenelib.h"
 
@@ -192,6 +193,9 @@ public:
 		// Invalidate the visibility cache to force new values to be
 		// loaded from the filters themselves
 		_visibilityCache.clear();
+		
+		// Trigger an immediate scene redraw
+		GlobalSceneGraph().sceneChanged();
 	}
 
 	// Query whether an item is visible or filtered out

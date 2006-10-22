@@ -66,7 +66,6 @@ class MiscModel :
 
   SingletonModel m_model;
 
-  ClassnameFilter m_filter;
   NamedEntity m_named;
   NameKeys m_nameKeys;
   RenderablePivot m_renderOrigin;
@@ -77,7 +76,6 @@ class MiscModel :
 
   void construct()
   {
-    m_keyObservers.insert("classname", ClassnameFilter::ClassnameChangedCaller(m_filter));
     m_keyObservers.insert(Static<KeyIsName>::instance().m_nameKey, NamedEntity::IdentifierChangedCaller(m_named));
     m_keyObservers.insert("model", SingletonModel::ModelChangedCaller(m_model));
     m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
@@ -121,7 +119,6 @@ public:
     m_angles(ANGLESKEY_IDENTITY),
     m_scaleKey(ScaleChangedCaller(*this)),
     m_scale(SCALEKEY_IDENTITY),
-    m_filter(m_entity, node),
     m_named(m_entity),
     m_nameKeys(m_entity),
     m_renderName(m_named, g_vector3_identity),
@@ -138,7 +135,6 @@ public:
     m_angles(ANGLESKEY_IDENTITY),
     m_scaleKey(ScaleChangedCaller(*this)),
     m_scale(SCALEKEY_IDENTITY),
-    m_filter(m_entity, node),
     m_named(m_entity),
     m_nameKeys(m_entity),
     m_renderName(m_named, g_vector3_identity),
@@ -153,7 +149,6 @@ public:
   {
     if(++m_instanceCounter.m_count == 1)
     {
-      m_filter.instanceAttach();
       m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
       m_entity.attach(m_keyObservers);
     }
@@ -164,7 +159,6 @@ public:
     {
       m_entity.detach(m_keyObservers);
       m_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
-      m_filter.instanceDetach();
     }
   }
 

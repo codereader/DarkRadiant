@@ -85,7 +85,6 @@ class Doom3Group :
   RotationKey m_rotationKey;
   Float9 m_rotation;
 
-  ClassnameFilter m_filter;
   NamedEntity m_named;
   NameKeys m_nameKeys;
   TraversableObserverPairRelay m_traverseObservers;
@@ -121,7 +120,6 @@ private:
   {
     default_rotation(m_rotation);
 
-    m_keyObservers.insert("classname", ClassnameFilter::ClassnameChangedCaller(m_filter));
     m_keyObservers.insert(Static<KeyIsName>::instance().m_nameKey, NamedEntity::IdentifierChangedCaller(m_named));
     m_keyObservers.insert("model", Doom3Group::ModelChangedCaller(*this));
     m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
@@ -291,7 +289,6 @@ public:
     m_originKey(OriginChangedCaller(*this)),
     m_origin(ORIGINKEY_IDENTITY),
     m_rotationKey(RotationChangedCaller(*this)),
-    m_filter(m_entity, node),
     m_named(m_entity),
     m_nameKeys(m_entity),
     m_funcStaticOrigin(m_traverse, m_origin),
@@ -310,7 +307,6 @@ public:
     m_originKey(OriginChangedCaller(*this)),
     m_origin(ORIGINKEY_IDENTITY),
     m_rotationKey(RotationChangedCaller(*this)),
-    m_filter(m_entity, node),
     m_named(m_entity),
     m_nameKeys(m_entity),
     m_funcStaticOrigin(m_traverse, m_origin),
@@ -334,7 +330,6 @@ public:
   {
     if(++m_instanceCounter.m_count == 1)
     {
-      m_filter.instanceAttach();
       m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
       m_traverse.instanceAttach(path_find_mapfile(path.begin(), path.end()));
 
@@ -349,7 +344,6 @@ public:
 
       m_traverse.instanceDetach(path_find_mapfile(path.begin(), path.end()));
       m_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
-      m_filter.instanceDetach();
     }
   }
 

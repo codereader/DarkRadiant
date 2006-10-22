@@ -23,10 +23,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_RENDERER_H
 
 #include "irender.h"
+#include "ientity.h"
+#include "ifilter.h"
 #include "renderable.h"
 #include "iselection.h"
 #include "cullable.h"
 #include "scenelib.h"
+#include "eclasslib.h"
 #include "math/frustum.h"
 #include <vector>
 
@@ -101,7 +104,7 @@ public:
 
     m_state.push_back(visible);
 
-    if(visible == c_volumeOutside)
+    if (visible == c_volumeOutside)
     {
       return false;
     }
@@ -152,9 +155,23 @@ public:
 
   bool pre(const scene::Path& path, scene::Instance& instance, VolumeIntersectionValue parentVisible) const
   {
+	// Get the parent entity to check its class is not filtered.
+	Entity* entity = Node_getEntity(path.top().get());
+
+	// Examine the entity class for its filter status. If it is filtered, set a flag to avoid
+	// calling its render function.
+	bool filtered = false;
+	if (entity) {
+		const EntityClass& eclass = entity->getEntityClass();
+		if (!GlobalFilterSystem().isVisible("entityclass", eclass.name())) {
+			filtered = true;
+		}
+	}
+	
     m_renderer.PushState();
 
-    if(Cullable_testVisible(instance, m_volume, parentVisible) != c_volumeOutside)
+    if (Cullable_testVisible(instance, m_volume, parentVisible) != c_volumeOutside
+    	&& !filtered)
     {
       Renderable* renderable = Instance_getRenderable(instance);
       if(renderable)
