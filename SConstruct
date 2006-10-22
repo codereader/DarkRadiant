@@ -221,9 +221,9 @@ class idEnvironment(Environment):
 		if (self['PLATFORM'] == 'win32'):
 			self.Append(CPPPATH = ['#/boost.w32/include'])
 			self.Append(LIBPATH = ['#/boost.w32/lib'])
-#			self.Append(LIBS = ['libboost_regex-gcc'])
+			self.Append(LIBS = ['libboost_regex-gcc'])
 		else:
-#			self.Append(LIBS = ['boost_regex'])
+			self.Append(LIBS = ['boost_regex'])
 			pass
 	
 	def useGlib2(self):

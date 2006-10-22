@@ -21,7 +21,8 @@ private:
 	std::string _name;
 	
 	// Ordered list of rule objects
-	std::vector<XMLFilterRule> _rules;
+	typedef std::vector<XMLFilterRule> RuleList;
+	RuleList _rules;
 
 public:
 
