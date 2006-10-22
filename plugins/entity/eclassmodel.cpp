@@ -69,7 +69,6 @@ class EclassModel :
   Float9 m_rotation;
   SingletonModel m_model;
 
-  ClassnameFilter m_filter;
   NamedEntity m_named;
   NameKeys m_nameKeys;
   RenderablePivot m_renderOrigin;
@@ -83,7 +82,6 @@ class EclassModel :
   {
     default_rotation(m_rotation);
 
-    m_keyObservers.insert("classname", ClassnameFilter::ClassnameChangedCaller(m_filter));
     m_keyObservers.insert(Static<KeyIsName>::instance().m_nameKey, NamedEntity::IdentifierChangedCaller(m_named));
     if(g_gameType == eGameTypeDoom3)
     {
@@ -153,7 +151,6 @@ public:
     m_angleKey(AngleChangedCaller(*this)),
     m_angle(ANGLEKEY_IDENTITY),
     m_rotationKey(RotationChangedCaller(*this)),
-    m_filter(m_entity, node),
     m_named(m_entity),
     m_nameKeys(m_entity),
     m_renderName(m_named, g_vector3_identity),
@@ -170,7 +167,6 @@ public:
     m_angleKey(AngleChangedCaller(*this)),
     m_angle(ANGLEKEY_IDENTITY),
     m_rotationKey(RotationChangedCaller(*this)),
-    m_filter(m_entity, node),
     m_named(m_entity),
     m_nameKeys(m_entity),
     m_renderName(m_named, g_vector3_identity),
@@ -186,7 +182,6 @@ public:
   {
     if(++m_instanceCounter.m_count == 1)
     {
-      m_filter.instanceAttach();
       m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
       m_entity.attach(m_keyObservers);
       m_model.modelChanged(m_entity.getEntityClass().modelpath());
@@ -201,7 +196,6 @@ public:
       m_model.modelChanged("");
       m_entity.detach(m_keyObservers);
       m_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
-      m_filter.instanceDetach();
     }
   }
 

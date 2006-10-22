@@ -54,7 +54,6 @@ class Group
   MatrixTransform m_transform;
   TraversableNodeSet m_traverse;
 
-  ClassnameFilter m_filter;
   NamedEntity m_named;
   NameKeys m_nameKeys;
 
@@ -64,14 +63,12 @@ class Group
 
   void construct()
   {
-    m_keyObservers.insert("classname", ClassnameFilter::ClassnameChangedCaller(m_filter));
     m_keyObservers.insert(Static<KeyIsName>::instance().m_nameKey, NamedEntity::IdentifierChangedCaller(m_named));
   }
  
 public:
   Group(EntityClass* eclass, scene::Node& node, const Callback& transformChanged) :
     m_entity(eclass),
-    m_filter(m_entity, node),
     m_named(m_entity),
     m_nameKeys(m_entity),
     m_renderName(m_named, g_vector3_identity),
@@ -81,7 +78,6 @@ public:
   }
   Group(const Group& other, scene::Node& node, const Callback& transformChanged) :
     m_entity(other.m_entity),
-    m_filter(m_entity, node),
     m_named(m_entity),
     m_nameKeys(m_entity),
     m_renderName(m_named, g_vector3_identity),
@@ -95,7 +91,6 @@ public:
   {
     if(++m_instanceCounter.m_count == 1)
     {
-      m_filter.instanceAttach();
       m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
       m_traverse.instanceAttach(path_find_mapfile(path.begin(), path.end()));
       m_entity.attach(m_keyObservers);
@@ -108,7 +103,6 @@ public:
       m_entity.detach(m_keyObservers);
       m_traverse.instanceDetach(path_find_mapfile(path.begin(), path.end()));
       m_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
-      m_filter.instanceDetach();
     }
   }
 

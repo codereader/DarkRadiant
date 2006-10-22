@@ -273,101 +273,22 @@ EntityCreator& GetEntityCreator()
   return g_Quake3EntityCreator;
 }
 
-
-
-class filter_entity_classname : public EntityFilter
-{
-  const char* m_classname;
-public:
-  filter_entity_classname(const char* classname) : m_classname(classname)
-  {
-  }
-  bool filter(const Entity& entity) const
-  {
-    return string_equal(entity.getKeyValue("classname"), m_classname);
-  }
-};
-
-class filter_entity_classgroup : public EntityFilter
-{
-  const char* m_classgroup;
-  std::size_t m_length;
-public:
-  filter_entity_classgroup(const char* classgroup) : m_classgroup(classgroup), m_length(string_length(m_classgroup))
-  {
-  }
-  bool filter(const Entity& entity) const
-  {
-    return string_equal_n(entity.getKeyValue("classname"), m_classgroup, m_length);
-  }
-};
-
-filter_entity_classname g_filter_entity_world("worldspawn");
-filter_entity_classname g_filter_entity_func_group("func_group");
-filter_entity_classname g_filter_entity_light("light");
-filter_entity_classname g_filter_entity_misc_model("misc_model");
-filter_entity_classgroup g_filter_entity_trigger("trigger_");
-filter_entity_classgroup g_filter_entity_path("path_");
-
-class filter_entity_doom3model : public EntityFilter
-{
-public:
-  bool filter(const Entity& entity) const
-  {
-    return string_equal(entity.getKeyValue("classname"), "func_static")
-      && !string_equal(entity.getKeyValue("model"), entity.getKeyValue("name"));
-  }
-};
-
-filter_entity_doom3model g_filter_entity_doom3model;
-
-
-void Entity_InitFilters()
-{
-	add_entity_filter(g_filter_entity_world, EXCLUDE_WORLD);
-	add_entity_filter(g_filter_entity_func_group, EXCLUDE_WORLD);
-	add_entity_filter(g_filter_entity_world, EXCLUDE_ENT, true);
-  add_entity_filter(g_filter_entity_trigger, EXCLUDE_TRIGGERS);
-	add_entity_filter(g_filter_entity_misc_model, EXCLUDE_MODELS);
-	add_entity_filter(g_filter_entity_doom3model, EXCLUDE_MODELS);
-	add_entity_filter(g_filter_entity_light, EXCLUDE_LIGHTS);
-	add_entity_filter(g_filter_entity_path, EXCLUDE_PATHS);
-}
-
-
 #include "preferencesystem.h"
 
 void Entity_Construct(EGameType gameType)
 {
   g_gameType = gameType;
-  if(g_gameType == eGameTypeDoom3)
-  {
-    g_targetable_nameKey = "name";
+  g_targetable_nameKey = "name";
 
-    Static<KeyIsName>::instance().m_keyIsName = keyIsNameDoom3;
-    Static<KeyIsName>::instance().m_nameKey = "name";
-  }
-  else
-  {
-    Static<KeyIsName>::instance().m_keyIsName = keyIsNameQuake3;
-    Static<KeyIsName>::instance().m_nameKey = "targetname";
-  }
+  Static<KeyIsName>::instance().m_keyIsName = keyIsNameDoom3;
+  Static<KeyIsName>::instance().m_nameKey = "name";
 
   GlobalPreferenceSystem().registerPreference("SI_ShowNames", BoolImportStringCaller(g_showNames), BoolExportStringCaller(g_showNames));
   GlobalPreferenceSystem().registerPreference("SI_ShowAngles", BoolImportStringCaller(g_showAngles), BoolExportStringCaller(g_showAngles));
   GlobalPreferenceSystem().registerPreference("NewLightStyle", BoolImportStringCaller(g_newLightDraw), BoolExportStringCaller(g_newLightDraw));
   GlobalPreferenceSystem().registerPreference("LightRadiuses", BoolImportStringCaller(g_lightRadii), BoolExportStringCaller(g_lightRadii));
 
-  Entity_InitFilters();
-  LightType lightType = LIGHTTYPE_DEFAULT;
-  if(g_gameType == eGameTypeRTCW)
-  {
-    lightType = LIGHTTYPE_RTCW;
-  }
-  else if(g_gameType == eGameTypeDoom3)
-  {
-    lightType = LIGHTTYPE_DOOM3;
-  }
+  LightType lightType = LIGHTTYPE_DOOM3;
   Light_Construct(lightType);
   MiscModel_construct();
   Doom3Group_construct();

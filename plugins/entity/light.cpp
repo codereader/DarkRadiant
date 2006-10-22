@@ -838,7 +838,6 @@ class Light :
   Float9 m_rotation;
   Colour m_colour;
 
-  ClassnameFilter m_filter;
   NamedEntity m_named;
   NameKeys m_nameKeys;
   TraversableObserverPairRelay m_traverseObservers;
@@ -891,7 +890,6 @@ class Light :
     m_aabb_light.origin = Vector3(0, 0, 0);
     default_extents(m_aabb_light.extents);
 
-    m_keyObservers.insert("classname", ClassnameFilter::ClassnameChangedCaller(m_filter));
     m_keyObservers.insert(Static<KeyIsName>::instance().m_nameKey, NamedEntity::IdentifierChangedCaller(m_named));
     m_keyObservers.insert("_color", Colour::ColourChangedCaller(m_colour));
     m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
@@ -1065,7 +1063,6 @@ public:
     m_originKey(OriginChangedCaller(*this)),
     m_rotationKey(RotationChangedCaller(*this)),
     m_colour(Callback()),
-    m_filter(m_entity, node),
     m_named(m_entity),
     m_nameKeys(m_entity),
     m_funcStaticOrigin(m_traverse, m_originKey.m_origin),
@@ -1088,7 +1085,6 @@ public:
     m_originKey(OriginChangedCaller(*this)),
     m_rotationKey(RotationChangedCaller(*this)),
     m_colour(Callback()),
-    m_filter(m_entity, node),
     m_named(m_entity),
     m_nameKeys(m_entity),
     m_funcStaticOrigin(m_traverse, m_originKey.m_origin),
@@ -1116,7 +1112,6 @@ public:
   {
     if(++m_instanceCounter.m_count == 1)
     {
-      m_filter.instanceAttach();
       m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
       if(g_lightType == LIGHTTYPE_DOOM3)
       {
@@ -1145,7 +1140,6 @@ public:
         m_traverse.instanceDetach(path_find_mapfile(path.begin(), path.end()));
       }
       m_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
-      m_filter.instanceDetach();
     }
   }
 
