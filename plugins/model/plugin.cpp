@@ -37,6 +37,7 @@ typedef unsigned char byte;
 #include "ifilesystem.h"
 #include "iundo.h"
 #include "ifiletypes.h"
+#include "ifilter.h"
 
 #include "modulesystem/singletonmodule.h"
 #include "stream/textstream.h"
@@ -129,7 +130,8 @@ class ModelPicoDependencies :
   public GlobalSceneGraphModuleRef,
   public GlobalShaderCacheModuleRef,
   public GlobalSelectionModuleRef,
-  public GlobalFiletypesModuleRef
+  public GlobalFiletypesModuleRef,
+  public GlobalFilterModuleRef
 {
 };
 
