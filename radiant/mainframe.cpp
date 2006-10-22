@@ -90,7 +90,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "console.h"
 #include "entity.h"
 #include "entitylist.h"
-#include "filters.h"
 #include "findtexturedialog.h"
 #include "grid.h"
 #include "groupdialog.h"
@@ -2125,10 +2124,6 @@ GtkMenuItem* create_view_menu(MainFrame::EViewStyle style)
     create_check_menu_item_with_mnemonic(menu_in_menu, "Show Workzone", "ShowWorkzone");
   }
 
-  {
-    GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Filter");
-    Filters_constructMenu(menu_in_menu);
-  }
   menu_separator(menu);
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Hide/Show");
