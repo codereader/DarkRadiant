@@ -97,16 +97,19 @@ public:
 	 */
 	virtual void setFilterState(const std::string& filter, bool state) = 0;
 
-	/** Test if a given texture should be visible or not, based on the currently-
+	/** Test if a given item should be visible or not, based on the currently-
 	 * active filters.
 	 * 
+	 * @param item
+	 * The item to query - "texture", "entityclass" or "object"
+	 * 
 	 * @param text
-	 * String name of the texture to query.
+	 * String name of the item to query.
 	 * 
 	 * @returns
 	 * true if the texure is visible, false otherwise.
 	 */
-	virtual bool isTextureVisible(const std::string& texture) = 0;
+	virtual bool isVisible(const std::string& item, const std::string& text) = 0;
 
 	/* Legacy stuff.
 	 * TODO: Deprecate these and convert code to use new filtersystem
