@@ -47,13 +47,16 @@ public:
 		_rules.push_back(XMLFilterRule(type, match, show));	
 	}
 	
-	/** Test a given texture for visibility against all of the rules
+	/** Test a given item for visibility against all of the rules
 	 * in this XMLFilter.
 	 * 
-	 * @param texture
-	 * String name of the texture to test.
+	 * @param itemClass
+	 * Class of the item to test - "texture", "entityclass" etc
+	 * 
+	 * @param name
+	 * String name of the item to test.
 	 */
-	bool isTextureVisible(const std::string& texture) const;
+	bool isVisible(const std::string& itemClass, const std::string& texture) const;
 };
 
 

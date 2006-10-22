@@ -111,10 +111,10 @@ private:
 	// Second table containing just the active filters
 	FilterTable _activeFilters;
 
-	// Cache of visibility flags for texture names, to avoid having to
-	// traverse the active filter list for each texture lookup
+	// Cache of visibility flags for item names, to avoid having to
+	// traverse the active filter list for each lookup
 	typedef std::map<std::string, bool> StringFlagCache;
-	StringFlagCache _textureFlagCache;
+	StringFlagCache _visibilityCache;
 
 private:
 
@@ -189,21 +189,22 @@ public:
 			_activeFilters.erase(filter);
 		}
 
-		// Invalidate the texture cache to force new values to be
+		// Invalidate the visibility cache to force new values to be
 		// loaded from the filters themselves
-		_textureFlagCache.clear();
+		_visibilityCache.clear();
 	}
 
-	// Query whether a texture is visible or filtered out
-	bool isTextureVisible(const std::string& texture) {
-		// Check if this texture is in the texture flag cache, returning
+	// Query whether an item is visible or filtered out
+	bool isVisible(const std::string& item, const std::string& name) {
+
+		// Check if this item is in the visibility cache, returning
 		// its cached value if found
-		StringFlagCache::iterator cacheIter = _textureFlagCache.find(texture);
-		if (cacheIter != _textureFlagCache.end())
+		StringFlagCache::iterator cacheIter = _visibilityCache.find(name);
+		if (cacheIter != _visibilityCache.end())
 			return cacheIter->second;
 			
 		// Otherwise, walk the list of active filters to find a value for
-		// this texture.
+		// this item.
 		bool visFlag = true; // default if no filters modify it
 		
 		for (FilterTable::iterator activeIter = _activeFilters.begin();
@@ -211,16 +212,16 @@ public:
 			 ++activeIter)
 		{
 			// Delegate the check to the filter object. If a filter returns
-			// false for the visibility check, then the texture is filtered
+			// false for the visibility check, then the item is filtered
 			// and we don't need any more checks.			
-			if (!activeIter->second.isTextureVisible(texture)) {
+			if (!activeIter->second.isVisible(item, name)) {
 				visFlag = false;
 				break;
 			}
 		}			
 
 		// Cache the result and return to caller
-		_textureFlagCache.insert(StringFlagCache::value_type(texture, visFlag));
+		_visibilityCache.insert(StringFlagCache::value_type(name, visFlag));
 		return visFlag;
 	}
 

@@ -4,13 +4,13 @@
 
 namespace filters {
 
-// Test visibility of a texture against all rules
+// Test visibility of an item against all rules
 
-bool XMLFilter::isTextureVisible(const std::string& texture) const {
+bool XMLFilter::isVisible(const std::string& item, const std::string& name) const {
 
-	// Iterate over the rules in this filter, checking if each one is a "texture"
-	// rule. If it is, test the query texture against the match expression using
-	// a regex.
+	// Iterate over the rules in this filter, checking if each one is a rule for
+	// the chosen item. If so, test the match expression and retrieve the visibility
+	// flag if there is a match.
 
 	bool visible = true; // default if unmodified by rules
 	
@@ -18,14 +18,14 @@ bool XMLFilter::isTextureVisible(const std::string& texture) const {
 		 ruleIter != _rules.end();
 		 ++ruleIter)
 	{
-		// We are only interested in texture rules
-		if (ruleIter->type != "texture")
+		// Check the item type.
+		if (ruleIter->type != item)
 			continue;
 			
-		// If we have a texture rule, use boost's regex to match the query texture
+		// If we have a rule for this item, use boost's regex to match the query name
 		// against the "match" parameter
 		boost::regex ex(ruleIter->match);
-		if (boost::regex_match(texture, ex)) {
+		if (boost::regex_match(name, ex)) {
 			// Overwrite the visible flag with the value from the rule.
 			visible = ruleIter->show;	
 		}
