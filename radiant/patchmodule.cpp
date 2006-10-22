@@ -39,8 +39,6 @@ void Patch_Construct(EPatchType type)
     return;
   }
 
-  PatchFilters_construct();
-
   PatchPreferences_construct();
 
   Patch_registerPreferencesPage();

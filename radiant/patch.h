@@ -339,7 +339,6 @@ class Patch :
   public Cullable,
   public Snappable,
   public Undoable,
-  public Filterable,
   public Nameable
 {
   class xml_state_t
@@ -535,7 +534,6 @@ public:
     Bounded(other),
     Cullable(other),
     Undoable(other),
-    Filterable(other),
     Nameable(other),
     m_state(0),
     m_undoable_observer(0),
@@ -578,7 +576,6 @@ public:
       m_state->incrementUsed();
       m_map = path_find_mapfile(path.begin(), path.end());
       m_undoable_observer = GlobalUndoSystem().observer(this);
-      GlobalFilterSystem().registerFilterable(*this);
     }
     else
     {
@@ -592,7 +589,6 @@ public:
       m_map = 0;
       m_undoable_observer = 0;
       GlobalUndoSystem().release(this);
-      GlobalFilterSystem().unregisterFilterable(*this);
       m_state->decrementUsed();
     }
   }
