@@ -1186,11 +1186,14 @@ public:
     return volume.TestPlane(Plane3(plane3().normal(), -plane3().dist()), localToWorld);
   }
 
-  void render(Renderer& renderer, const Matrix4& localToWorld) const
-  {
-    renderer.SetState(m_shader.state(), Renderer::eFullMaterials);
-    renderer.addRenderable(*this, localToWorld);
-  }
+	void render(Renderer& renderer, const Matrix4& localToWorld) const
+	{
+  		// Submit this face to the Renderer only if its shader is not filtered
+  		if (GlobalFilterSystem().isVisible("texture", m_shader.getShader())) {
+			renderer.SetState(m_shader.state(), Renderer::eFullMaterials);
+			renderer.addRenderable(*this, localToWorld);
+  		}
+	}
 
   void transform(const Matrix4& matrix, bool mirror)
   {
@@ -3668,7 +3671,11 @@ public:
         bool* j = faces_visible;
         for(FaceInstances::const_iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i, ++j)
         {
-          *j = (*i).intersectVolume(volume, localToWorld);
+        	// Check if face is filtered before adding to visibility matrix
+        	if (GlobalFilterSystem().isVisible("texture", i->getFace().GetShader()))
+				*j = i->intersectVolume(volume, localToWorld);
+			else
+				*j = false;
         }
       }
 
