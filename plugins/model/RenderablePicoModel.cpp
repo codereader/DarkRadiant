@@ -1,6 +1,8 @@
 #include "RenderablePicoModel.h"
 
 #include "texturelib.h"
+#include "ishaders.h"
+#include "ifilter.h"
 
 namespace model {
 
@@ -51,9 +53,14 @@ void RenderablePicoModel::render(RenderStateFlags flags) const {
 			 i != _surfVec.end();
 			 ++i)
 	{
-		qtexture_t& tex = (*i)->getShader()->getTexture();
-		glBindTexture(GL_TEXTURE_2D, tex.texture_number);
-		(*i)->render(flags);
+		// Get the IShader to test the shader name against the filter system
+		IShader* surfaceShader = (*i)->getShader()->getIShader();
+		if (GlobalFilterSystem().isTextureVisible(surfaceShader->getName())) {
+			// Bind the OpenGL texture and render the surface geometry
+			qtexture_t& tex = (*i)->getShader()->getTexture();
+			glBindTexture(GL_TEXTURE_2D, tex.texture_number);
+			(*i)->render(flags);
+		}
 	}
 }
 	
