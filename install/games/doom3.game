@@ -24,15 +24,8 @@
   patchtypes="doom3 def2doom3"
 >
 	<filtersystem>
-		<filter name="Hide world geometry">
-			<filterCriterion type="entityclass" match="worldspawn" action="hide" />
-		</filter>
 		<filter name="Hide collision surfaces">
 			<filterCriterion type="texture" match="textures/common/collision" action="hide" />
-		</filter>
-		<filter name="Hide non-world entities">
-			<filterCriterion type="entityclass" match=".*" action="hide" />
-			<filterCriterion type="entityclass" match="worldspawn" action="show" />
 		</filter>
 	</filtersystem>
 	<filesystem>

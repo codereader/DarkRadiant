@@ -188,11 +188,14 @@ public:
 			// Remove filter from active filters list
 			_activeFilters.erase(filter);
 		}
+
+		// Invalidate the texture cache to force new values to be
+		// loaded from the filters themselves
+		_textureFlagCache.clear();
 	}
 
 	// Query whether a texture is visible or filtered out
 	bool isTextureVisible(const std::string& texture) {
-
 		// Check if this texture is in the texture flag cache, returning
 		// its cached value if found
 		StringFlagCache::iterator cacheIter = _textureFlagCache.find(texture);

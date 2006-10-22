@@ -204,7 +204,6 @@ if ( OS == 'Darwin' ):
   radiant_env['CCFLAGS'] += '-fno-common '
   radiant_env['LINKFLAGS'] += '-lX11 -lGL -lGLU '
 radiant_env['LIBPREFIX'] = ''
-radiant_env.useBoost()
 radiant_env.useGlib2()
 radiant_env.useXML2()
 radiant_env.useGtk2()
