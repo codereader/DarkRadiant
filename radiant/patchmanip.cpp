@@ -610,62 +610,6 @@ void Patch_NaturalTexture()
   Scene_PatchNaturalTexture_Selected(GlobalSceneGraph());
 }
 
-
-
-
-#include "ifilter.h"
-
-
-class filter_patch_all : public PatchFilter
-{
-public:
-  bool filter(const Patch& patch) const
-  {
-    return true;
-  }
-};
-
-class filter_patch_shader : public PatchFilter
-{
-  const char* m_shader;
-public:
-  filter_patch_shader(const char* shader) : m_shader(shader)
-  {
-  }
-  bool filter(const Patch& patch) const
-  {
-    return shader_equal(patch.GetShader(), m_shader);
-  }
-};
-
-class filter_patch_flags : public PatchFilter
-{
-  int m_flags;
-public:
-  filter_patch_flags(int flags) : m_flags(flags)
-  {
-  }
-  bool filter(const Patch& patch) const
-  {
-    return (patch.getShaderFlags() & m_flags) != 0;
-  }
-};
-
-
-filter_patch_all g_filter_patch_all;
-filter_patch_shader g_filter_patch_clip("textures/common/clip");
-filter_patch_shader g_filter_patch_weapclip("textures/common/weapclip");
-filter_patch_flags g_filter_patch_translucent(QER_TRANS);
-
-void PatchFilters_construct()
-{
-  add_patch_filter(g_filter_patch_all, EXCLUDE_CURVES);
-  add_patch_filter(g_filter_patch_clip, EXCLUDE_CLIP);
-  add_patch_filter(g_filter_patch_weapclip, EXCLUDE_CLIP);
-  add_patch_filter(g_filter_patch_translucent, EXCLUDE_TRANSLUCENT);
-}
-
-
 #include "preferences.h"
 
 void Patch_constructPreferences(PreferencesPage& page)

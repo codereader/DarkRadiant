@@ -49,18 +49,6 @@ enum
    EXCLUDE_VISPORTALS       = 0x00080000,
 };
 
-class Filter
-{
-public:
-  virtual void setActive(bool active) = 0;
-};
-
-class Filterable
-{
-public:
-  virtual void updateFiltered() = 0;
-};
-
 /** Visitor interface for evaluating the available filters in the 
  * FilterSystem.
  */
@@ -111,13 +99,6 @@ public:
 	 */
 	virtual bool isVisible(const std::string& item, const std::string& text) = 0;
 
-	/* Legacy stuff.
-	 * TODO: Deprecate these and convert code to use new filtersystem
-	 * interface
-	 */
-	virtual void addFilter(Filter& filter, int mask) = 0;
-	virtual void registerFilterable(Filterable& filterable) = 0;
-	virtual void unregisterFilterable(Filterable& filterable) = 0;
 };
 
 #include "modulesystem.h"

@@ -107,8 +107,6 @@ void Brush_Construct(EBrushType type)
   Brush_registerCommands();
   Brush_registerPreferencesPage();
 
-  BrushFilters_construct();
-
   BrushClipPlane::constructStatic();
   BrushInstance::constructStatic();
   Brush::constructStatic(type);

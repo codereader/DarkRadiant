@@ -21,79 +21,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ifilter.h"
 #include "iscenegraph.h"
-
-#include "scenelib.h"
-
-#include <list>
-#include <set>
-
-#include "gtkutil/widget.h"
-#include "gtkutil/menu.h"
-#include "gtkmisc.h"
-#include "mainframe.h"
-#include "commands.h"
-#include "preferences.h"
 #include "qerplugin.h"
+#include "filters/XMLFilter.h"
 
-struct filters_globals_t
-{
-  std::size_t exclude;
-
-  filters_globals_t() :
-    exclude(0)
-  {
-  }
-};
-
-filters_globals_t g_filters_globals;
-
-inline bool filter_active(int mask)
-{
-  return (g_filters_globals.exclude & mask) > 0;
-}
-
-class FilterWrapper
-{
-public:
-  FilterWrapper(Filter& filter, int mask) : m_filter(filter), m_mask(mask)
-  {
-  }
-  void update()
-  {
-    m_filter.setActive(filter_active(m_mask));
-  }
-private:
-  Filter& m_filter;
-  int m_mask;
-};
-
-typedef std::list<FilterWrapper> Filters;
-Filters g_filters;
-
-typedef std::set<Filterable*> Filterables;
-Filterables g_filterables;
-
-void UpdateFilters()
-{
-  {
-    for(Filters::iterator i = g_filters.begin(); i != g_filters.end(); ++i)
-    {
-      (*i).update();
-    }
-  }
-
-  {
-    for(Filterables::iterator i = g_filterables.begin(); i != g_filterables.end(); ++i)
-    {
-      (*i)->updateFiltered();
-    }
-  }
-}
+#include <map>
+#include <vector>
+#include <string>
 
 /** FilterSystem implementation class.
  */
-
-#include "filters/XMLFilter.h"
 
 class BasicFilterSystem 
 : public FilterSystem
@@ -238,24 +174,6 @@ public:
 		return visFlag;
 	}
 
-  /* Legacy stuff */
-
-  void addFilter(Filter& filter, int mask)
-  {
-    g_filters.push_back(FilterWrapper(filter, mask));
-    g_filters.back().update();
-  }
-  void registerFilterable(Filterable& filterable)
-  {
-    ASSERT_MESSAGE(g_filterables.find(&filterable) == g_filterables.end(), "filterable already registered");
-    filterable.updateFiltered();
-    g_filterables.insert(&filterable);
-  }
-  void unregisterFilterable(Filterable& filterable)
-  {
-    ASSERT_MESSAGE(g_filterables.find(&filterable) != g_filterables.end(), "filterable not registered");
-    g_filterables.erase(&filterable);
-  }
 };
 
 #include "modulesystem/singletonmodule.h"

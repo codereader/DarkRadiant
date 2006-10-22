@@ -952,15 +952,6 @@ typedef double (*QuantiseFunc)(double f);
 
 class Face;
 
-class FaceFilter
-{
-public:
-  virtual bool filter(const Face& face) const = 0;
-};
-
-bool face_filtered(Face& face);
-void add_face_filter(FaceFilter& filter, int mask, bool invert = false);
-
 void Brush_addTextureChangedCallback(const SignalHandler& callback);
 void Brush_textureChanged();
 
@@ -978,7 +969,6 @@ public:
 
 class Face :
 public OpenGLRenderable,
-public Filterable,
 public Undoable,
 public FaceShaderObserver
 {
@@ -1023,7 +1013,6 @@ private:
 
   Winding m_winding;
   Vector3 m_centroid;
-  bool m_filtered;
 
   FaceObserver* m_observer;
   UndoObserver* m_undoable_observer;
@@ -1040,7 +1029,6 @@ public:
     m_refcount(0),
     m_shader(texdef_name_default()),
     m_texdef(m_shader, TextureProjection(), false),
-    m_filtered(false),
     m_observer(observer),
     m_undoable_observer(0),
     m_map(0)
@@ -1069,7 +1057,6 @@ public:
     m_plane.copy(p0, p1, p2);
     m_texdef.setBasis(m_plane.plane3().normal());
     planeChanged();
-    updateFiltered();
   }
   Face(const Face& other, FaceObserver* observer) :
     m_refcount(0),
@@ -1084,7 +1071,6 @@ public:
     planepts_assign(m_move_planepts, other.m_move_planepts);
     m_texdef.setBasis(m_plane.plane3().normal());
     planeChanged();
-    updateFiltered();
   }
   ~Face()
   {
@@ -1110,11 +1096,9 @@ public:
     m_shader.instanceAttach();
     m_map = map;
     m_undoable_observer = GlobalUndoSystem().observer(this);
-    GlobalFilterSystem().registerFilterable(*this);
   }
   void instanceDetach(MapFile* map)
   {
-    GlobalFilterSystem().unregisterFilterable(*this);
     m_undoable_observer = 0;
     GlobalUndoSystem().release(this);
     m_map = 0;
@@ -1124,15 +1108,6 @@ public:
   void render(RenderStateFlags state) const
   {
     Winding_Draw(m_winding, m_planeTransformed.plane3().normal(), state);
-  }
-
-  void updateFiltered()
-  {
-    m_filtered = face_filtered(*this);
-  }
-  bool isFiltered() const
-  {
-    return m_filtered;
   }
 
   void undoSave()
@@ -1162,7 +1137,6 @@ public:
     m_observer->connectivityChanged();
     texdefChanged();
     m_observer->shaderChanged();
-    updateFiltered();
   }
 
   void IncRef()
@@ -1285,7 +1259,6 @@ public:
     EmitTextureCoordinates();
     Brush_textureChanged();
     m_observer->shaderChanged();
-    updateFiltered();
     SceneChangeNotify();
   }
 
@@ -1331,7 +1304,6 @@ public:
     undoSave();
     m_shader.setFlags(flags);
     m_observer->shaderChanged();
-    updateFiltered();
   }
 
   void ShiftTexdef(float s, float t)
@@ -1676,7 +1648,6 @@ class Brush :
   public Snappable,
   public Undoable,
   public FaceObserver,
-  public Filterable,
   public Nameable,
   public BrushDoom3
 {
@@ -1765,7 +1736,6 @@ public:
     Snappable(other),
     Undoable(other),
     FaceObserver(other),
-    Filterable(other),
     Nameable(other),
     BrushDoom3(other),
     m_node(0),
@@ -1853,7 +1823,6 @@ public:
     {
       m_map = path_find_mapfile(path.begin(), path.end());
       m_undoable_observer = GlobalUndoSystem().observer(this);
-      GlobalFilterSystem().registerFilterable(*this);
       forEachFace_instanceAttach(m_map);
     }
     else
@@ -1866,7 +1835,6 @@ public:
     if(--m_instanceCounter.m_count == 0)
     {
       forEachFace_instanceDetach(m_map);
-      GlobalFilterSystem().unregisterFilterable(*this);
       m_map = 0;
       m_undoable_observer = 0;
       GlobalUndoSystem().release(this);
@@ -1885,22 +1853,6 @@ public:
   {
   }
 
-  // filterable
-  void updateFiltered()
-  {
-    if(m_node != 0)
-    {
-      if(brush_filtered(*this))
-      {
-        m_node->enable(scene::Node::eFiltered);
-      }
-      else
-      {
-        m_node->disable(scene::Node::eFiltered);
-      }
-    }
-  }
-
   // observer
   void planeChanged()
   {
@@ -1910,7 +1862,6 @@ public:
   }
   void shaderChanged()
   {
-    updateFiltered();
   }
 
   void evaluateBRep() const
@@ -2936,7 +2887,7 @@ public:
 
   void render(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const
   {
-    if(!m_face->isFiltered() && m_face->contributes() && intersectVolume(volume, localToWorld))
+    if(m_face->contributes() && intersectVolume(volume, localToWorld))
     {
       renderer.PushState();
       if(selectedComponents())
@@ -2950,11 +2901,9 @@ public:
 
   void testSelect(SelectionTest& test, SelectionIntersection& best)
   {
-    if(!m_face->isFiltered())
-    {
       m_face->testSelect(test, best);
-    }
   }
+
   void testSelect(Selector& selector, SelectionTest& test)
   {
     SelectionIntersection best;
@@ -2966,7 +2915,7 @@ public:
   }
   void testSelect_centroid(Selector& selector, SelectionTest& test)
   {
-    if(m_face->contributes() && !m_face->isFiltered())
+    if(m_face->contributes())
     {
       SelectionIntersection best;
       m_face->testSelect_centroid(test, best);
