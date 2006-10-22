@@ -97,6 +97,16 @@ public:
   {
     VolumeIntersectionValue visible = (path.top().get().visible()) ? m_state.back() : c_volumeOutside;
 
+	// Examine the entity class for its filter status. If it is filtered, use the c_volumeOutside
+	// state to ensure it is not rendered.
+	Entity* entity = Node_getEntity(path.top().get());
+	if (entity) {
+		const EntityClass& eclass = entity->getEntityClass();
+		if (!GlobalFilterSystem().isVisible("entityclass", eclass.name())) {
+			visible = c_volumeOutside;
+		}
+	}
+	
     if(visible == c_volumePartial)
     {
       visible = m_volume.TestAABB(instance.worldAABB());
@@ -155,23 +165,9 @@ public:
 
   bool pre(const scene::Path& path, scene::Instance& instance, VolumeIntersectionValue parentVisible) const
   {
-	// Get the parent entity to check its class is not filtered.
-	Entity* entity = Node_getEntity(path.top().get());
-
-	// Examine the entity class for its filter status. If it is filtered, set a flag to avoid
-	// calling its render function.
-	bool filtered = false;
-	if (entity) {
-		const EntityClass& eclass = entity->getEntityClass();
-		if (!GlobalFilterSystem().isVisible("entityclass", eclass.name())) {
-			filtered = true;
-		}
-	}
-	
     m_renderer.PushState();
 
-    if (Cullable_testVisible(instance, m_volume, parentVisible) != c_volumeOutside
-    	&& !filtered)
+    if (Cullable_testVisible(instance, m_volume, parentVisible) != c_volumeOutside)
     {
       Renderable* renderable = Instance_getRenderable(instance);
       if(renderable)
