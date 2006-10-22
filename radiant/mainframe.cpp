@@ -2875,7 +2875,7 @@ void MainFrame::Create()
     {
       GtkWidget* vsplit = gtk_vpaned_new();
       m_vSplit = vsplit;
-      gtk_box_pack_start(GTK_BOX(vbox), vsplit, TRUE, TRUE, 0);
+      gtk_box_pack_start(GTK_BOX(hbox), vsplit, TRUE, TRUE, 0);
       gtk_widget_show (vsplit);
 
       // console
@@ -3052,7 +3052,7 @@ void MainFrame::Create()
     GtkWidget* xz = m_pXZWnd->GetWidget();
 
     GtkHPaned* split = create_split_views(camera, yz, xy, xz);
-    gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(split), TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(split), TRUE, TRUE, 0);
 
     {      
       GtkFrame* frame = create_framed_widget(TextureBrowser_constructWindow(window));
