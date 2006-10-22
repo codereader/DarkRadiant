@@ -97,6 +97,17 @@ public:
 	 */
 	virtual void setFilterState(const std::string& filter, bool state) = 0;
 
+	/** Test if a given texture should be visible or not, based on the currently-
+	 * active filters.
+	 * 
+	 * @param text
+	 * String name of the texture to query.
+	 * 
+	 * @returns
+	 * true if the texure is visible, false otherwise.
+	 */
+	virtual bool isTextureVisible(const std::string& texture) = 0;
+
 	/* Legacy stuff.
 	 * TODO: Deprecate these and convert code to use new filtersystem
 	 * interface
