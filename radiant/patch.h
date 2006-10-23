@@ -1541,7 +1541,6 @@ public:
     return m_selectable.isSelected();
   }
 
-
   void update_selected() const
   {
     m_render_selected.clear();
@@ -1556,32 +1555,16 @@ public:
     }
   }
 
-#if 0
-  void render(Renderer& renderer, const VolumeTest& volume) const
-  {
-    if(GlobalSelectionSystem().Mode() == SelectionSystem::eComponent
-      && m_selectable.isSelected())
-    {
-      renderer.Highlight(Renderer::eFace, false);
-
-      m_patch.render(renderer, volume, localToWorld());
-
-      if(GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex)
-      {
-        renderer.Highlight(Renderer::ePrimitive, false);
-
-        m_patch.render_component(renderer, volume, localToWorld());
-
-        renderComponentsSelected(renderer, volume);
-      }
-    }
-    else
-      m_patch.render(renderer, volume, localToWorld());
-  }
-#endif
+	/* Check the GlobalFilterSystem to ensure patches should be rendered.
+	 */
+	bool isVisible() const {
+		return GlobalFilterSystem().isVisible("object", "patch");	
+	}
 
   void renderSolid(Renderer& renderer, const VolumeTest& volume) const
   {
+  	if (!isVisible())
+  		return;
     m_patch.evaluateTransform();
     renderer.setLights(*m_lightList);
     m_patch.render_solid(renderer, volume, localToWorld());
@@ -1591,6 +1574,8 @@ public:
 
   void renderWireframe(Renderer& renderer, const VolumeTest& volume) const
   {
+  	if (!isVisible())
+  		return;
     m_patch.evaluateTransform();
     m_patch.render_wireframe(renderer, volume, localToWorld());
 
@@ -1599,6 +1584,8 @@ public:
 
   void renderComponentsSelected(Renderer& renderer, const VolumeTest& volume) const
   {
+  	if (!isVisible())
+  		return;
     m_patch.evaluateTransform();
     update_selected();
     if(!m_render_selected.empty())
@@ -1611,6 +1598,8 @@ public:
   }
   void renderComponents(Renderer& renderer, const VolumeTest& volume) const
   {
+  	if (!isVisible())
+  		return;
     m_patch.evaluateTransform();
     if(GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex)
     {
@@ -1618,11 +1607,14 @@ public:
     }
   }
 
-  void testSelect(Selector& selector, SelectionTest& test)
-  {
-    test.BeginMesh(localToWorld(), true);
-    m_patch.testSelect(selector, test);
-  }
+	// Test the Patch instance for selection
+	void testSelect(Selector& selector, SelectionTest& test) {
+		// Do not select patch if it is filtered
+		if (!isVisible())
+			return;
+	    test.BeginMesh(localToWorld(), true);
+	    m_patch.testSelect(selector, test);
+	}
 
   void selectCtrl(bool select)
   {
