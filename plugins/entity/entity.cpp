@@ -43,7 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "doom3group.h"
 
 #include <iostream>
-
+#include <boost/algorithm/string/replace.hpp>
 
 EGameType g_gameType;
 
@@ -91,6 +91,16 @@ inline Namespaced* Node_getNamespaced(scene::Node& node)
   return NodeTypeCast<Namespaced>::cast(node);
 }
 
+/* Cleans up the name of the entity that is about the created
+ * so that nothing bad can happen (for example, the colon character 
+ * seems to be causing problems in Doom 3 Scripting)
+ */
+std::string cleanEntityName(const std::string& rawName) {
+	std::string returnValue = rawName;
+	boost::algorithm::replace_all(returnValue, ":", "_");
+	return returnValue;
+}
+
 scene::Node& node_for_eclass(EntityClass* eclass)
 {
     
@@ -102,8 +112,10 @@ scene::Node& node_for_eclass(EntityClass* eclass)
     && !string_equal(eclass->name(), "worldspawn")
     && !string_equal(eclass->name(), "UNKNOWN_CLASS"))
   {
+	std::string entityName = cleanEntityName(eclass->name());
+
     char buffer[1024];
-    strcpy(buffer, eclass->name());
+    strcpy(buffer, entityName.c_str());
     strcat(buffer, "_1");
     GlobalNamespace().makeUnique(buffer, EntitySetNameCaller(*Node_getEntity(node)));
   }
