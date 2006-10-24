@@ -269,6 +269,10 @@ static picoModel_t *_lwo_load( PM_PARAMS_LOAD )
 			return NULL;
 		}
 
+		/* Local polygon index for this surface. We don't want to use i in the loop
+		 * since that is the global poly index for the entire layer */
+		int surfacePolyCount = 0;
+
 		for( i = 0, pol = layer->polygon.pol; i < layer->polygon.count; i++, pol++ )
 		{
 			/* does this polygon belong to this surface? */
@@ -288,6 +292,9 @@ static picoModel_t *_lwo_load( PM_PARAMS_LOAD )
 				_pico_printf( PICO_WARNING, "LWO loader discarded a polygon because it has != 3 verts (%d)", pol->nverts );
 				continue;
 			}
+
+			/* We haven't discarded this polygon, so bump the surface polycount */
+			surfacePolyCount++;
 
 			for( j = 0, v = pol->v; j < 3; j++, v++ )
 			{
@@ -368,7 +375,7 @@ static picoModel_t *_lwo_load( PM_PARAMS_LOAD )
 				if (vertexCombinationHash)
 				{
 					/* found an existing one */
-					PicoSetSurfaceIndex( picoSurface, (i * 3 + j ), vertexCombinationHash->index );
+					PicoSetSurfaceIndex( picoSurface, (surfacePolyCount * 3 + j ), vertexCombinationHash->index );
 				}
 				else
 				{
@@ -397,7 +404,7 @@ static picoModel_t *_lwo_load( PM_PARAMS_LOAD )
 					PicoSetSurfaceST( picoSurface, 0, numverts, st );
 
 					/* set index */
-					PicoSetSurfaceIndex( picoSurface, (i * 3 + j ), (picoIndex_t) numverts );
+					PicoSetSurfaceIndex( picoSurface, (surfacePolyCount * 3 + j ), (picoIndex_t) numverts );
 
 					numverts++;
 				}
