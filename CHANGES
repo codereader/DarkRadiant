@@ -1,3 +1,11 @@
+24/10/2006
+OrbWeaver
+- Added new XML-based filter system.
+- Fixed incorrect polycounts for LWO models.
+- Added Media Browser.
+greebo
+- Added application-wide XML registry.
+
 15/10/2006
 greebo
 - Added toolbar button to display all light volumes.
