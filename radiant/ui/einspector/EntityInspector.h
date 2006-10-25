@@ -16,24 +16,6 @@
 
 namespace ui {
 
-// CONSTANTS AND TYPES
-
-namespace {
-
-    const int TREEVIEW_MIN_WIDTH = 220;
-    const int TREEVIEW_MIN_HEIGHT = 60;
-    const int PROPERTYEDITORPANE_MIN_HEIGHT = 120;
-    
-    const std::string NO_VALUE_STRING = "";
-    const char* ADVANCED_BUTTON_STRING = "All properties...";
-
-    const std::string UNRECOGNISED_PROPERTIES_PREFIX = "<span foreground=\"red\">";
-    const std::string UNRECOGNISED_PROPERTIES_SUFFIX = " unrecognised properties</span>";
-
-    typedef std::set<std::string> KnownPropertySet;
-
-}
-
 /* The EntityInspector class represents the GTK dialog for editing properties
  * on the selected game entity. The class is implemented as a singleton and
  * contains a method to return the current instance.
@@ -42,18 +24,6 @@ namespace {
 class EntityInspector
 {
 private:
-
-    // TreeView column numbers
-    
-    enum {
-        PROPERTY_NAME_COLUMN,
-        PROPERTY_VALUE_COLUMN,
-        PROPERTY_TYPE_COLUMN,
-        PROPERTY_OPTIONS_COLUMN,
-        TEXT_COLOUR_COLUMN,
-        PROPERTY_ICON_COLUMN,
-        N_COLUMNS
-    };
 
 	// Currently selected entity
 	Entity* _selectedEntity;
@@ -65,10 +35,12 @@ private:
     GtkWidget* _editorFrame;
     GtkWidget* _selectionTreeView;
     
-    GtkTreeStore* _treeStore;
+    GtkListStore* _listStore;
     GtkWidget* _treeView;
 
-    GtkWidget* _unrecognisedPropertiesMessage;
+	// Key and value edit boxes
+	GtkWidget* _keyEntry;
+	GtkWidget* _valEntry;
 
 	// Currently displayed PropertyEditor
 	PropertyEditor* _currentPropertyEditor;
@@ -101,9 +73,6 @@ private:
 	// The static category map
 	static PropertyCategoryMap _categoryMap;
     
-    // The set of known Property types.
-    KnownPropertySet _knownProperties;
-
 private:
 
     // Utility functions to construct the Gtk components
@@ -111,19 +80,16 @@ private:
     GtkWidget* createDialogPane(); // bottom widget pane 
     GtkWidget* createTreeViewPane(); // tree view for selecting attributes
 
-    // GTK CALLBACKS
-    // Must be static as they are called from a C-based API
+    /* GTK CALLBACKS */
     static void callbackTreeSelectionChanged(GtkWidget* widget, EntityInspector* self);
-    static gboolean treeWalkFunc(GtkTreeModel*, GtkTreePath*, GtkTreeIter*, gpointer);
-    static void callbackAdvancedButtonClicked(GtkWidget* widget, EntityInspector* self);
+	static void _onSetProperty(GtkWidget*, EntityInspector*);    
 
     // Routines to populate the TreeStore with the keyvals attached to the
     // currently-selected object. 
-    void populateTreeModel(); // add to empty TreeModel
-    void refreshTreeModel(); // refresh values in existing TreeModel
+    void refreshTreeModel(); 
 
-    // Update the PropertyEditor pane with the correct PropertyEditor.
-    void updatePropertyEditor();
+	// Update the GTK components when a new selection is made in the tree view
+    void treeSelectionChanged();
     
 	// Update the currently selected entity pointer. This function returns true
 	// if a single Entity is selected, and false if either a non-Entity or more

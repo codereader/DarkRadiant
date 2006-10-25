@@ -2,7 +2,6 @@
 #include "EntityKeyValueVisitor.h"
 #include "PropertyEditor.h"
 #include "PropertyEditorFactory.h"
-#include "AllPropertiesDialog.h"
 
 #include "ientity.h"
 #include "iselection.h"
@@ -21,6 +20,27 @@
 #include <sstream>
 
 namespace ui {
+
+/* CONSTANTS */
+
+namespace {
+	
+    const int TREEVIEW_MIN_WIDTH = 220;
+    const int TREEVIEW_MIN_HEIGHT = 60;
+    const int PROPERTYEDITORPANE_MIN_HEIGHT = 120;
+    
+	// TreeView column numbers
+    enum {
+        PROPERTY_NAME_COLUMN,
+        PROPERTY_VALUE_COLUMN,
+        PROPERTY_TYPE_COLUMN,
+        PROPERTY_OPTIONS_COLUMN,
+        TEXT_COLOUR_COLUMN,
+        PROPERTY_ICON_COLUMN,
+        N_COLUMNS
+    };
+
+}
 
 // INITIALISATION
 
@@ -129,7 +149,7 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     GtkWidget* vbx = gtk_vbox_new(FALSE, 0);
 
     // Initialise the instance TreeStore
-    _treeStore = gtk_tree_store_new(N_COLUMNS, 
+    _listStore = gtk_list_store_new(N_COLUMNS, 
     							    G_TYPE_STRING, // property
     							    G_TYPE_STRING, // value
     							    G_TYPE_STRING, // value type
@@ -138,7 +158,7 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     							    GDK_TYPE_PIXBUF); // value icon
     
     // Create the TreeView widget and link it to the model
-    _treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
+    _treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore));
 
     // Add columns to the TreeView
     GtkCellRenderer* textRenderer;
@@ -183,20 +203,20 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     gtk_container_add(GTK_CONTAINER(scrollWin), _treeView);    
 
     gtk_box_pack_start(GTK_BOX(vbx), scrollWin, TRUE, TRUE, 0);
+
+	// Pack in the key and value edit boxes
+	_keyEntry = gtk_entry_new();
+	_valEntry = gtk_entry_new();
+
+	GtkWidget* setButton = gtk_button_new_with_label("Set");
+	GtkWidget* setButtonBox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(setButtonBox), _valEntry, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(setButtonBox), setButton, FALSE, FALSE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(vbx), _keyEntry, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), setButtonBox, FALSE, FALSE, 0);
     
-    // Add the Unrecognised Properties text bar and advanced button.
-    
-    GtkWidget* advancedBar = gtk_hbox_new(FALSE, 0);
-    gtk_container_set_border_width(GTK_CONTAINER(advancedBar), 3);
-
-    _unrecognisedPropertiesMessage = gtk_label_new(NULL);
-    GtkWidget* advancedButton = gtk_button_new_with_label(ADVANCED_BUTTON_STRING);
-    gtk_box_pack_start(GTK_BOX(advancedBar), _unrecognisedPropertiesMessage, FALSE, FALSE, 0);
-    gtk_box_pack_end(GTK_BOX(advancedBar), advancedButton, FALSE, FALSE, 0);
-
-    g_signal_connect(G_OBJECT(advancedButton), "clicked", G_CALLBACK(callbackAdvancedButtonClicked), this);
-
-    gtk_box_pack_start(GTK_BOX(vbx), advancedBar, FALSE, FALSE, 0);
+    g_signal_connect(G_OBJECT(setButton), "clicked", G_CALLBACK(_onSetProperty), this);
     
     return vbx;    
 }
@@ -213,17 +233,7 @@ void EntityInspector::callbackRedraw() {
 
     if (updateSelectedEntity()) {
         gtk_widget_set_sensitive(_widget, TRUE);
-        
-        // If the TreeStore is empty, populate it, otherwise refresh it with
-        // values from the current entity.
-        GtkTreeIter throwAwayIter;
-        if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(_treeStore), 
-                                           &throwAwayIter)) { // returns FALSE if tree is empty
-            populateTreeModel(); // add category tree
-            refreshTreeModel(); // get values
-        } else {
-            refreshTreeModel(); // get values, already have category tree
-        }
+        refreshTreeModel(); // get values, already have category tree
     }
     else {
         // Remove the displayed PropertyEditor
@@ -233,8 +243,7 @@ void EntityInspector::callbackRedraw() {
         }
 		// Disable the dialog and clear the TreeView
         gtk_widget_set_sensitive(_widget, FALSE);
-        gtk_tree_store_clear(_treeStore);
-        gtk_label_set_text(GTK_LABEL(_unrecognisedPropertiesMessage), "");
+        gtk_list_store_clear(_listStore);
         
     }
 }
@@ -263,13 +272,15 @@ void EntityInspector::selectionChanged(const Selectable& sel) {
 
 // Called when the TreeView selects a different property
 void EntityInspector::callbackTreeSelectionChanged(GtkWidget* widget, EntityInspector* self) {
-    self->updatePropertyEditor();
+    self->treeSelectionChanged();
 }
 
-// Called when the Advanced button is clicked
-void EntityInspector::callbackAdvancedButtonClicked(GtkWidget* widget, EntityInspector* self) {
-    AllPropertiesDialog* dialog = new AllPropertiesDialog(self->_knownProperties); // dialog deletes itself when closed
-    dialog->showForEntity(self->_selectedEntity);
+void EntityInspector::_onSetProperty(GtkWidget* button, EntityInspector* self) {
+	// Get the key and value from the entry boxes, and set directly on
+	// the selected entity
+	std::string key = gtk_entry_get_text(GTK_ENTRY(self->_keyEntry));
+	std::string val = gtk_entry_get_text(GTK_ENTRY(self->_valEntry));
+	self->_selectedEntity->setKeyValue(key, val);
 }
 
 /* END GTK CALLBACKS */
@@ -277,13 +288,17 @@ void EntityInspector::callbackAdvancedButtonClicked(GtkWidget* widget, EntityIns
 // Update the PropertyEditor pane, displaying the PropertyEditor if necessary and
 // making sure it refers to the currently-selected Entity.
 
-void EntityInspector::updatePropertyEditor() {
+void EntityInspector::treeSelectionChanged() {
 
     // Delete current property editor
     if (_currentPropertyEditor) {
         delete _currentPropertyEditor; // destructor takes care of GTK widgets
         _currentPropertyEditor = NULL;
     }
+
+	// Key and value text for the entry boxes
+	std::string key = "";
+	std::string value = "";
 
     GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
 
@@ -292,10 +307,13 @@ void EntityInspector::updatePropertyEditor() {
     GtkTreeIter tmpIter;
     if (gtk_tree_selection_get_selected(selection, NULL, &tmpIter)) {
 
-        // Get the selected key in the tree view
+        // Get the selected key and value in the tree view
         GValue selString = {0, 0};
-        gtk_tree_model_get_value(GTK_TREE_MODEL(_treeStore), &tmpIter, PROPERTY_NAME_COLUMN, &selString);
-        const std::string key(g_value_get_string(&selString));
+        gtk_tree_model_get_value(GTK_TREE_MODEL(_listStore), &tmpIter, PROPERTY_NAME_COLUMN, &selString);
+        key = g_value_get_string(&selString);
+        g_value_unset(&selString);
+        gtk_tree_model_get_value(GTK_TREE_MODEL(_listStore), &tmpIter, PROPERTY_VALUE_COLUMN, &selString);
+        value = g_value_get_string(&selString);
         g_value_unset(&selString);
         
         // Construct the PropertyEditor, destroying the current one if it exists. We
@@ -303,96 +321,23 @@ void EntityInspector::updatePropertyEditor() {
         // is needed.
     
         GValue selType = {0, 0};
-        gtk_tree_model_get_value(GTK_TREE_MODEL(_treeStore), &tmpIter, PROPERTY_TYPE_COLUMN, &selType);
+        gtk_tree_model_get_value(GTK_TREE_MODEL(_listStore), &tmpIter, PROPERTY_TYPE_COLUMN, &selType);
         const std::string keyType(g_value_get_string(&selType));
         g_value_unset(&selType);
         
-        // Get the property option string to pass to the PropertyEditor
-        GValue selOpts = {0, 0};
-        gtk_tree_model_get_value(GTK_TREE_MODEL(_treeStore), &tmpIter, PROPERTY_OPTIONS_COLUMN, &selOpts);
-        std::string options = "test";
-        const gchar* optPtr = g_value_get_string(&selOpts);
-        if (optPtr) {
-        	options = optPtr;
-        }
-        g_value_unset(&selOpts);
-                
-        _currentPropertyEditor = PropertyEditorFactory::create(keyType,
-                                                               _selectedEntity,
-                                                               key,
-                                                               options);
-        if (_currentPropertyEditor != NULL) {
-            gtk_container_add(GTK_CONTAINER(_editorFrame), _currentPropertyEditor->getWidget());
-        }
+//        _currentPropertyEditor = PropertyEditorFactory::create(keyType,
+//                                                               _selectedEntity,
+//                                                               key,
+//                                                               options);
+//        if (_currentPropertyEditor != NULL) {
+//            gtk_container_add(GTK_CONTAINER(_editorFrame), _currentPropertyEditor->getWidget());
+//        }
     }
-}
-
-// Populate TreeStore with the recognised properties, setting all values to
-// empty for now.
-
-void EntityInspector::populateTreeModel() {
     
-    for (PropertyCategoryMap::iterator i = _categoryMap.begin();
-			i != _categoryMap.end();
-				i++) {
+    // Update key and value entry boxes
+	gtk_entry_set_text(GTK_ENTRY(_keyEntry), key.c_str());
+	gtk_entry_set_text(GTK_ENTRY(_valEntry), value.c_str());
 
-		// Create the top-level category node		
-		GtkTreeIter categoryIter;
-		gtk_tree_store_append(_treeStore, &categoryIter, NULL);
-		gtk_tree_store_set(_treeStore, &categoryIter, PROPERTY_NAME_COLUMN, i->first.c_str(), PROPERTY_TYPE_COLUMN, "Category", -1);
-		
-		// Create the individual property sub-nodes.
-		for (PropertyCategory::iterator j = i->second->begin(); j != i->second->end(); j++) {
-
-			const char* keyName = (*j)->name.c_str();
-			const char* keyType = (*j)->type.c_str();
-			const char* options = (*j)->options.c_str();
-
-	        GtkTreeIter tempIter;
-	        gtk_tree_store_append(_treeStore, &tempIter, &categoryIter);
-	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_NAME_COLUMN, keyName, -1);
-	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_VALUE_COLUMN, NO_VALUE_STRING.c_str(), -1); // no value yet
-	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_TYPE_COLUMN, keyType, -1);
-	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_OPTIONS_COLUMN, options, -1);
-            gtk_tree_store_set(_treeStore, &tempIter, TEXT_COLOUR_COLUMN, "grey", -1);
-
-			std::string typeIcon = std::string("icon_") + keyType + ".png";
-	        gtk_tree_store_set(_treeStore, &tempIter, PROPERTY_ICON_COLUMN, 
-							   PropertyEditorFactory::getPixbufFor(keyType),
-	        				   -1);
-                               
-            // Add the property to the set of known properties
-            _knownProperties.insert(keyName);
-				
-		}
-	}
-}
-
-// Refresh the values in the existing TreeModel. This avoids clearing the TreeStore
-// and upsetting the current displayed position.
-
-// Callback helper function to walk the GtkTreeModel
-gboolean EntityInspector::treeWalkFunc(GtkTreeModel* model, GtkTreePath* path, GtkTreeIter* iter, gpointer data) {
-    Entity* selectedEntity = reinterpret_cast<Entity*>(data);
-    GValue gPropertyName = {0, 0};
-
-    gtk_tree_model_get_value(model, iter, PROPERTY_NAME_COLUMN, &gPropertyName);
-    const std::string property = g_value_get_string(&gPropertyName);
-    g_value_unset(&gPropertyName);
-
-    // If the property is not a top-level category, look it up in the map and
-    // update its value
-    if (gtk_tree_path_get_depth(path) == 2) {
-        std::string newValue = selectedEntity->getKeyValue(property.c_str());
-        if (newValue.size() > 0) { // property found on Entity
-            gtk_tree_store_set(GTK_TREE_STORE(model), iter, PROPERTY_VALUE_COLUMN, newValue.c_str(), -1);
-            gtk_tree_store_set(GTK_TREE_STORE(model), iter, TEXT_COLOUR_COLUMN, "black", -1);
-        } else {
-            gtk_tree_store_set(GTK_TREE_STORE(model), iter, PROPERTY_VALUE_COLUMN, NO_VALUE_STRING.c_str(), -1);
-            gtk_tree_store_set(GTK_TREE_STORE(model), iter, TEXT_COLOUR_COLUMN, "grey", -1);
-        }            
-    }
-    return FALSE;  
 }
 
 // Main refresh function. The TreeStore is populated with categories,
@@ -400,52 +345,45 @@ gboolean EntityInspector::treeWalkFunc(GtkTreeModel* model, GtkTreePath* path, G
 
 void EntityInspector::refreshTreeModel() {
 
-    // Iterate over the rows in the TreeModel, setting the appropriate column
-    // to the value now on the _selectedEntity.
-    gtk_tree_model_foreach(GTK_TREE_MODEL(_treeStore), treeWalkFunc, _selectedEntity);
+	// Clear the existing list
+	gtk_list_store_clear(_listStore);
 
-    // Update the PropertyEditor pane, if a PropertyEditor is currently visible
-    if (_currentPropertyEditor)
-        updatePropertyEditor();
-        
-    // Update the unrecognised properties status message. Use a local visitor
-    // class to count the number of unrecognised properties on the entity.
-    
-    struct PropertyCounter: public Entity::Visitor {
+	// Local functor to enumerate keyvals on object and add them to the list
+	// view.
+	
+	struct ListPopulateVisitor
+	: public Entity::Visitor
+	{
+		// List store to populate
+		GtkListStore* _store;
+		
+		// Constructor
+		ListPopulateVisitor(GtkListStore* store)
+		: _store(store)
+		{}
+		
+		// Required visit function
+		virtual void visit(const char* key, const char* value) {
+			GtkTreeIter iter;
+			gtk_list_store_append(_store, &iter);
+			gtk_list_store_set(_store, &iter,
+             			       PROPERTY_NAME_COLUMN, key,
+						       PROPERTY_VALUE_COLUMN, value,
+						       PROPERTY_TYPE_COLUMN, "text", // TODO: lookup type in some table
+						       PROPERTY_OPTIONS_COLUMN, "", // TODO
+						       TEXT_COLOUR_COLUMN, "black",
+						       -1);
+							   	
+		}
+			
+	};
+	
+	// Populate the list view
+	ListPopulateVisitor visitor(_listStore);
+	_selectedEntity->forEachKeyValue(visitor);
 
-        // Number of unrecognised properties counted
-        int count;
-        
-        // Set of recognised properties
-        KnownPropertySet& knownSet;
-        
-        // Ctor
-        PropertyCounter(KnownPropertySet& set): 
-            count(0),
-            knownSet(set) {
-        }   
-        
-        // Required visit function
-        virtual void visit(const char* key, const char* value) {
-            if (knownSet.find(std::string(key)) == knownSet.end()) {
-                ++count;
-            }
-        }
-        
-        // Format the output
-        const char* getLabel() {
-            std::stringstream str;
-            if (count > 0)
-                str << UNRECOGNISED_PROPERTIES_PREFIX << count << UNRECOGNISED_PROPERTIES_SUFFIX;
-            else
-                str << "";
-            return str.str().c_str(); 
-        }
-    };
-    
-    PropertyCounter ctr(_knownProperties);
-    _selectedEntity->forEachKeyValue(ctr);
-    gtk_label_set_markup(GTK_LABEL(_unrecognisedPropertiesMessage), ctr.getLabel());
+	// Force an update of widgets
+	treeSelectionChanged();
 
 }
 
