@@ -153,9 +153,6 @@ CGameDescription::CGameDescription(xmlDocPtr pDoc,
 			   value_type(xmlAttr_getName(attr), xmlAttr_getValue(attr)));
     }
 
-	// EntityInspector.
-	ui::EntityInspector::parseXml(_doc);
-
 	// Check if the game file exists and add the internal reference to it if it
 	// does.
 	StringOutputStream path(256);
