@@ -42,10 +42,6 @@ namespace {
 
 }
 
-// INITIALISATION
-
-EntityInspector::PropertyCategoryMap EntityInspector::_categoryMap;
-
 // Constructor creates UI components for the EntityInspector dialog
 
 EntityInspector::EntityInspector()
@@ -82,56 +78,6 @@ GtkWidget* EntityInspector::getWidget() {
 	gtk_widget_show_all(_widget);
     return _widget;
 }
-
-// Static function to obtain the PropertyCategories from the XML file.
-
-void EntityInspector::parseXml(xml::Document doc) {
-
-    xml::NodeList categories = doc.findXPath("/game/entityInspector//propertyCategory");
-
-    for (unsigned int i = 0; i < categories.size(); i++)
-    	makePropertyCategory(categories[i]);
-}
-
-void EntityInspector::makePropertyCategory(xml::Node& node) {
-
-	// Get the category name
-	std::string categoryName = node.getAttributeValue("name");
-	PropertyCategory* cat = new PropertyCategory(); 
-
-	// Find all <property> elements underneath <propertyCategory>
-    xml::NodeList propertyList = node.getNamedChildren("property");
-
-	for (unsigned int i = 0; i < propertyList.size(); i++) {
-
-		// Create a Property structure
-		Property* prop = new Property();
-
-		// Look up the name and type attributes of this property node
-		prop->name = propertyList[i].getAttributeValue("name");
-		prop->type = propertyList[i].getAttributeValue("type");
-		try {
-			prop->options = propertyList[i].getAttributeValue("options");
-		}
-		catch (xml::AttributeNotFoundException e) {
-			prop->options = "";
-		}
-
-		// Add the name and type to the PropertyCategory object
-		cat->push_back(prop);
-
-	}
-	
-	// Add the PropertyCategory to the category map, as long as it is not
-	// empty.
-	if (cat->size() > 0) {
-		_categoryMap[categoryName] = cat;
-	} else {
-		std::cerr << "ERROR: EntityInspector: failed to create PropertyCategory "
-				  << "\"" << categoryName << "\". Category contains no properties." << std::endl;
-	}
-}
-
 
 // Create the dialog pane
 
@@ -216,7 +162,10 @@ GtkWidget* EntityInspector::createTreeViewPane() {
 	gtk_box_pack_start(GTK_BOX(vbx), _keyEntry, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), setButtonBox, FALSE, FALSE, 0);
     
+    // Signals for entry boxes
     g_signal_connect(G_OBJECT(setButton), "clicked", G_CALLBACK(_onSetProperty), this);
+    g_signal_connect(G_OBJECT(_keyEntry), "activate", G_CALLBACK(_onKeyEntryActivate), this);
+    g_signal_connect(G_OBJECT(_valEntry), "activate", G_CALLBACK(_onValEntryActivate), this);
     
     return vbx;    
 }
@@ -268,6 +217,14 @@ void EntityInspector::selectionChanged(const Selectable& sel) {
     EntityInspector::redrawInstance();   
 }
 
+// Set entity property from entry boxes
+
+void EntityInspector::setPropertyFromEntries() {
+	std::string key = gtk_entry_get_text(GTK_ENTRY(_keyEntry));
+	std::string val = gtk_entry_get_text(GTK_ENTRY(_valEntry));
+	_selectedEntity->setKeyValue(key, val);
+}
+
 /* GTK CALLBACKS */
 
 // Called when the TreeView selects a different property
@@ -276,13 +233,19 @@ void EntityInspector::callbackTreeSelectionChanged(GtkWidget* widget, EntityInsp
 }
 
 void EntityInspector::_onSetProperty(GtkWidget* button, EntityInspector* self) {
-	// Get the key and value from the entry boxes, and set directly on
-	// the selected entity
-	std::string key = gtk_entry_get_text(GTK_ENTRY(self->_keyEntry));
-	std::string val = gtk_entry_get_text(GTK_ENTRY(self->_valEntry));
-	self->_selectedEntity->setKeyValue(key, val);
+	self->setPropertyFromEntries();
 }
 
+void EntityInspector::_onKeyEntryActivate(GtkWidget* w, EntityInspector* self) {
+	// Move to value entry
+	gtk_widget_grab_focus(self->_valEntry);	
+}
+
+void EntityInspector::_onValEntryActivate(GtkWidget* w, EntityInspector* self) {
+	// Set property and move back to key entry
+	self->setPropertyFromEntries();
+	gtk_widget_grab_focus(self->_keyEntry);
+}
 /* END GTK CALLBACKS */
 
 // Update the PropertyEditor pane, displaying the PropertyEditor if necessary and
