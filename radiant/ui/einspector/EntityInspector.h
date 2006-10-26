@@ -49,30 +49,6 @@ private:
     // when GTK is idle.
     IdleDraw _idleDraw;
 
-	/* Property storage. The base Property is a simple
-	 * data structure containing a given property's name, its type and its
-	 * option string. These Property structures are then assembled
-	 * into a vector which is stored in the PropertyCategoryMap keyed on the
-	 * category name ("Light", "Model") etc.
-	 * 
-	 * A Property therefore represents a single row in the tree view
-	 * widget, while the PropertyCategoryMap maps expandable category names
-	 * onto the vector of rows which should appear in that category.
-	 */
-
-	struct Property {
-		std::string name; 		// e.g. "light_radius"
-		std::string type; 		// e.g. "vector3"
-		std::string options;	// property-specific option string
-	};
-
-	typedef std::vector<Property*> PropertyCategory;
-
-	typedef std::map<const std::string, PropertyCategory*> PropertyCategoryMap;
-
-	// The static category map
-	static PropertyCategoryMap _categoryMap;
-    
 private:
 
     // Utility functions to construct the Gtk components
@@ -83,6 +59,8 @@ private:
     /* GTK CALLBACKS */
     static void callbackTreeSelectionChanged(GtkWidget* widget, EntityInspector* self);
 	static void _onSetProperty(GtkWidget*, EntityInspector*);    
+	static void _onKeyEntryActivate(GtkWidget*, EntityInspector*);
+	static void _onValEntryActivate(GtkWidget*, EntityInspector*);
 
     // Routines to populate the TreeStore with the keyvals attached to the
     // currently-selected object. 
@@ -96,9 +74,8 @@ private:
 	// than one object is selected.
 	bool updateSelectedEntity();
 
-	// Utility function to create a PropertyCategory object and add it to the
-	// map.
-	static void makePropertyCategory(xml::Node& node);
+	// Set the keyval on the object from the entry and value textboxes
+	void setPropertyFromEntries();
 
 public:
 
@@ -110,10 +87,6 @@ public:
 
     // Get the Gtk Widget for display in the main application
     GtkWidget* getWidget();
-
-	// Use libxml2 to parse the <entityInspector> subtree of the .game file. 
-	// Invoked from CGameDescription constructor in preferences.cpp
-	static void parseXml(xml::Document doc);
 
     // Inform the IdleDraw to invoke a redraw when idle
     void queueDraw();
