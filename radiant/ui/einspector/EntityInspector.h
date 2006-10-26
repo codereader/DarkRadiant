@@ -15,6 +15,14 @@ class Selectable;
 
 namespace ui {
 
+namespace {
+	
+	// Types
+	typedef std::map<std::string, std::string> StringMap;
+	
+}
+	
+
 /* The EntityInspector class represents the GTK dialog for editing properties
  * on the selected game entity. The class is implemented as a singleton and
  * contains a method to return the current instance.
@@ -80,6 +88,9 @@ public:
 
     // Constructor
     EntityInspector();
+
+	// Static map of property names to types
+	const StringMap& getPropertyMap();
 
     // Return or create the singleton instance
     static EntityInspector& getInstance();

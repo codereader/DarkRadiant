@@ -15,7 +15,8 @@
 #include "error.h"
 
 #include <iostream>
-#include <sstream>
+#include <map>
+#include <string>
 
 namespace ui {
 
@@ -219,6 +220,38 @@ void EntityInspector::setPropertyFromEntries() {
 	_selectedEntity->setKeyValue(key, val);
 }
 
+// Construct and return static PropertyMap instance
+
+const StringMap& EntityInspector::getPropertyMap() {
+
+	// Static instance of local class, which queries the XML Registry
+	// upon construction and adds the property nodes to the map.
+	
+	struct PropertyMapConstructor
+	{
+		// String map to construct
+		StringMap _map;
+		
+		// Constructor queries the XML registry
+		PropertyMapConstructor() {
+			xml::NodeList pNodes = GlobalRadiant().registry().findXPath("game/entityInspector//propertyCategory//property");	
+			for (xml::NodeList::const_iterator iter = pNodes.begin();
+				 iter != pNodes.end();
+				 ++iter)
+			{
+				_map.insert(StringMap::value_type(iter->getAttributeValue("name"),
+												  iter->getAttributeValue("type")));
+			}
+		}
+		
+		
+	};
+	static PropertyMapConstructor _propMap;
+	
+	// Return the constructed map
+	return _propMap._map;
+}
+
 /* GTK CALLBACKS */
 
 // Called when the TreeView selects a different property
@@ -305,19 +338,26 @@ void EntityInspector::refreshTreeModel() {
 		// List store to populate
 		GtkListStore* _store;
 		
+		// Property map to look up types
+		const StringMap& _map;
+		
 		// Constructor
-		ListPopulateVisitor(GtkListStore* store)
-		: _store(store)
+		ListPopulateVisitor(GtkListStore* store, const StringMap& map)
+		: _store(store), _map(map)
 		{}
 		
 		// Required visit function
 		virtual void visit(const char* key, const char* value) {
+			// Look up type for this key
+			std::string type = _map.find(key)->second;
+
 			GtkTreeIter iter;
 			gtk_list_store_append(_store, &iter);
 			gtk_list_store_set(_store, &iter,
              			       PROPERTY_NAME_COLUMN, key,
 						       PROPERTY_VALUE_COLUMN, value,
 						       TEXT_COLOUR_COLUMN, "black",
+						       PROPERTY_ICON_COLUMN, PropertyEditorFactory::getPixbufFor(type),
 						       -1);
 							   	
 		}
@@ -325,7 +365,7 @@ void EntityInspector::refreshTreeModel() {
 	};
 	
 	// Populate the list view
-	ListPopulateVisitor visitor(_listStore);
+	ListPopulateVisitor visitor(_listStore, getPropertyMap());
 	_selectedEntity->forEachKeyValue(visitor);
 
 	// Force an update of widgets
