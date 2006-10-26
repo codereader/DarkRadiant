@@ -1,5 +1,4 @@
 #include "EntityInspector.h"
-#include "EntityKeyValueVisitor.h"
 #include "PropertyEditorFactory.h"
 
 #include "ientity.h"
