@@ -306,13 +306,16 @@ void EntityInspector::treeSelectionChanged() {
         value = g_value_get_string(&selString);
         g_value_unset(&selString);
         
-//        _currentPropertyEditor = PropertyEditorFactory::create(keyType,
-//                                                               _selectedEntity,
-//                                                               key,
-//                                                               options);
-//        if (_currentPropertyEditor != NULL) {
-//            gtk_container_add(GTK_CONTAINER(_editorFrame), _currentPropertyEditor->getWidget());
-//        }
+        // Get the type for this key
+        std::string type = getPropertyMap().find(key)->second;
+        
+        _currentPropertyEditor = PropertyEditorFactory::create(type,
+                                                               _selectedEntity,
+                                                               key,
+                                                               ""); // TODO: implement options
+        if (_currentPropertyEditor != NULL) {
+            gtk_container_add(GTK_CONTAINER(_editorFrame), _currentPropertyEditor->getWidget());
+        }
     }
     
     // Update key and value entry boxes
