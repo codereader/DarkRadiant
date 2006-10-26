@@ -65,8 +65,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "qe3.h"
 #include "gtkdlgs.h"
 
-#include "ui/einspector/EntityInspector.h"
-
 void Global_constructPreferences(PreferencesPage& page)
 {
   page.appendCheckBox("Console", "Enable Logging", g_Console_enableLogging);

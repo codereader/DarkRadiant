@@ -1,6 +1,5 @@
 #include "EntityInspector.h"
 #include "EntityKeyValueVisitor.h"
-#include "PropertyEditor.h"
 #include "PropertyEditorFactory.h"
 
 #include "ientity.h"
@@ -33,8 +32,6 @@ namespace {
     enum {
         PROPERTY_NAME_COLUMN,
         PROPERTY_VALUE_COLUMN,
-        PROPERTY_TYPE_COLUMN,
-        PROPERTY_OPTIONS_COLUMN,
         TEXT_COLOUR_COLUMN,
         PROPERTY_ICON_COLUMN,
         N_COLUMNS
@@ -98,8 +95,6 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     _listStore = gtk_list_store_new(N_COLUMNS, 
     							    G_TYPE_STRING, // property
     							    G_TYPE_STRING, // value
-    							    G_TYPE_STRING, // value type
-    							    G_TYPE_STRING, // options
                                     G_TYPE_STRING, // text colour
     							    GDK_TYPE_PIXBUF); // value icon
     
@@ -279,15 +274,6 @@ void EntityInspector::treeSelectionChanged() {
         value = g_value_get_string(&selString);
         g_value_unset(&selString);
         
-        // Construct the PropertyEditor, destroying the current one if it exists. We
-        // need the PROPERTY_TYPE_COLUMN string to find out what type of PropertyEditor
-        // is needed.
-    
-        GValue selType = {0, 0};
-        gtk_tree_model_get_value(GTK_TREE_MODEL(_listStore), &tmpIter, PROPERTY_TYPE_COLUMN, &selType);
-        const std::string keyType(g_value_get_string(&selType));
-        g_value_unset(&selType);
-        
 //        _currentPropertyEditor = PropertyEditorFactory::create(keyType,
 //                                                               _selectedEntity,
 //                                                               key,
@@ -332,8 +318,6 @@ void EntityInspector::refreshTreeModel() {
 			gtk_list_store_set(_store, &iter,
              			       PROPERTY_NAME_COLUMN, key,
 						       PROPERTY_VALUE_COLUMN, value,
-						       PROPERTY_TYPE_COLUMN, "text", // TODO: lookup type in some table
-						       PROPERTY_OPTIONS_COLUMN, "", // TODO
 						       TEXT_COLOUR_COLUMN, "black",
 						       -1);
 							   	

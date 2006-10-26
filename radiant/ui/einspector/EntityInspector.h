@@ -1,18 +1,17 @@
 #ifndef ENTITYINSPECTOR_H_
 #define ENTITYINSPECTOR_H_
 
-#include "gtkutil/idledraw.h"
-#include "xmlutil/Node.h"
-#include "xmlutil/Document.h"
-
-#include "iselection.h"
-#include "ientity.h"
-
 #include "PropertyEditor.h"
 
-#include <gtk/gtk.h>
-#include <iostream>
-#include <set>
+#include <gtk/gtkliststore.h>
+#include <gtk/gtkwidget.h>
+
+#include "gtkutil/idledraw.h"
+
+/* FORWARD DECLS */
+
+class Entity;
+class Selectable;
 
 namespace ui {
 
