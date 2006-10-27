@@ -4,6 +4,7 @@
 #include <gtk/gtkwidget.h>
 #include <gtk/gtktreeview.h>
 #include <gtk/gtktreestore.h>
+#include <gtk/gtktreeselection.h>
 
 #include <string>
 
@@ -21,9 +22,10 @@ class AddPropertyDialog
 	// Main dialog widget
 	GtkWidget* _widget;
 	
-	// Tree view and model
+	// Tree view, selection and model
 	GtkTreeStore* _treeStore;
 	GtkWidget* _treeView;
+	GtkTreeSelection* _selection;
 	
 	// The selected property
 	std::string _selectedProperty;
@@ -36,10 +38,13 @@ private:
 	
 	// Populate tree view with properties
 	void populateTreeView();
-
+	
 	/* GTK CALLBACKS */
 	
 	static void _onDelete(GtkWidget*, GdkEvent*, AddPropertyDialog*);
+	static void _onOK(GtkWidget*, AddPropertyDialog*);
+	static void _onCancel(GtkWidget*, AddPropertyDialog*);
+	static void _onSelectionChanged(GtkWidget*, AddPropertyDialog*);
 	
 public:
 

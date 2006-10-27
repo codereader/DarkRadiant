@@ -346,7 +346,10 @@ void EntityInspector::_onDeleteProperty(GtkMenuItem* item, EntityInspector* self
 }
 
 void EntityInspector::_onAddProperty(GtkMenuItem* item, EntityInspector* self) {
-	std::string property = AddPropertyDialog::chooseProperty();	
+	// Choose a property, and add to entity with a default value
+	std::string property = AddPropertyDialog::chooseProperty();
+	if (property.size() > 0)
+		self->_selectedEntity->setKeyValue(property.c_str(), "-");
 }
 
 
