@@ -6,7 +6,7 @@
 
 #include "gtkutil/image.h"
 #include "gtkutil/dialog.h"
-#include "gtkutil/TextMenuItem.h"
+#include "gtkutil/StockIconMenuItem.h"
 
 #include "xmlutil/Document.h"
 #include "xmlutil/AttributeNotFoundException.h"
@@ -72,8 +72,8 @@ void EntityInspector::createContextMenu() {
 	_contextMenu = gtk_menu_new();
 	
 	// Menu items
-	_addKeyMenuItem = gtkutil::TextMenuItem("Add property...");
-	_delKeyMenuItem = gtkutil::TextMenuItem("Delete property");
+	_addKeyMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Add property...");
+	_delKeyMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Delete property");
 	
 	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu), _addKeyMenuItem);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu), _delKeyMenuItem);
