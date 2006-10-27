@@ -1,7 +1,6 @@
 #include "AddPropertyDialog.h"
 #include "PropertyEditorFactory.h"
 
-#include "xmlutil/AttributeNotFoundException.h"
 #include "gtkutil/image.h"
 
 #include "groupdialog.h"
@@ -158,8 +157,8 @@ void AddPropertyDialog::populateTreeView() {
 
 		// If this property has a category, look up the top-level parent iter
 		// or add it if necessary.
-		try {
-			std::string category = iter->getAttributeValue("category");
+		std::string category = iter->getAttributeValue("category");
+		if (!category.empty()) {
 			CategoryMap::iterator mIter = categories.find(category);
 			
 			if (mIter == categories.end()) {
@@ -177,9 +176,8 @@ void AddPropertyDialog::populateTreeView() {
 			
 			// Category sorted, add this property below it
 			gtk_tree_store_append(_treeStore, &t, mIter->second);
-			
 		}
-		catch (xml::AttributeNotFoundException e) {
+		else {
 			// No category, add at toplevel
 			gtk_tree_store_append(_treeStore, &t, NULL);
 		}

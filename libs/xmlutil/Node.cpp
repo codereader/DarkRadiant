@@ -1,5 +1,4 @@
 #include "Node.h"
-#include "AttributeNotFoundException.h"
 
 namespace xml
 {
@@ -75,8 +74,8 @@ std::string Node::getAttributeValue(const std::string& key) const {
         }
     }
 
-    // Not found, throw the exception
-    throw AttributeNotFoundException("Node::getAttributeValue() : attribute \"" + key + "\" not found");
+    // Not found, return an empty string
+    return "";
     
 }
 

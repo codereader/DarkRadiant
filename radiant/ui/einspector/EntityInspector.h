@@ -17,8 +17,15 @@ namespace ui {
 
 namespace {
 	
-	// Types
-	typedef std::map<std::string, std::string> StringMap;
+	// Data structure to store the type (vector3, text etc) and the options
+	// string for a single property.
+	struct PropertyParms {
+		std::string type;
+		std::string options;
+	};
+
+	// Map of property names to PropertyParms
+	typedef std::map<std::string, PropertyParms> PropertyParmMap;
 	
 }
 	
@@ -100,13 +107,13 @@ private:
 	// Set the keyval on the object from the entry and value textboxes
 	void setPropertyFromEntries();
 
+	// Static map of property names to PropertyParms objects
+	const PropertyParmMap& getPropertyMap();
+
 public:
 
     // Constructor
     EntityInspector();
-
-	// Static map of property names to types
-	const StringMap& getPropertyMap();
 
     // Return or create the singleton instance
     static EntityInspector& getInstance();

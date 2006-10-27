@@ -13,7 +13,6 @@
 #include "gtkutil/image.h"
 #include "gtkutil/button.h"
 #include "xmlutil/XMLRegistry.h"
-#include "xmlutil/AttributeNotFoundException.h"
 
 // This is needed to correctly connect the ToggleButton to Radiant's callbacks
 // The "handler" object data was set in createToolItem
@@ -136,14 +135,9 @@ GtkToolbar* ToolbarCreator::createToolbar(xml::Node& node) {
 		gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
 		
 		// Try to set the alignment, if the attribute is properly set
-		try {
-			std::string align = node.getAttributeValue("align");
-			GtkOrientation orientation = (align == "vertical") ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL;
-			gtk_toolbar_set_orientation(GTK_TOOLBAR(toolbar), orientation);
-		}
-		catch (xml::AttributeNotFoundException a) {
-			globalOutputStream() << "ToolbarCreator: Warning: Toolbar " << node.getName().c_str() << " has no attribute 'align'\n";
-		}
+		std::string align = node.getAttributeValue("align");
+		GtkOrientation orientation = (align == "vertical") ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL;
+		gtk_toolbar_set_orientation(GTK_TOOLBAR(toolbar), orientation);
 		
 		for (unsigned int i = 0; i < toolItemList.size(); i++) {
 			// Create and get the toolItem with the parsing 
@@ -156,7 +150,7 @@ GtkToolbar* ToolbarCreator::createToolbar(xml::Node& node) {
 		}
 	}
 	else {
-		throw xml::AttributeNotFoundException("No elements in toolbar.");
+		throw std::runtime_error("No elements in toolbar.");
 	}
 	
 	return GTK_TOOLBAR(toolbar);
@@ -193,7 +187,7 @@ void ToolbarCreator::loadToolbars() {
 		}
 	}
 	else {
-		throw xml::AttributeNotFoundException("No toolbars found.");
+		throw std::runtime_error("No toolbars found.");
 	}
 }
 
@@ -207,7 +201,7 @@ ToolbarCreator::ToolbarCreator() {
 		// Query the registry
 		loadToolbars();
 	}
-	catch (xml::AttributeNotFoundException e) {
+	catch (std::runtime_error e) {
 		globalOutputStream() << "ToolbarCreator: Warning: " << e.what() << "\n";
 	}
 	
