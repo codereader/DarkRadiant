@@ -101,34 +101,37 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     // Create the TreeView widget and link it to the model
     _treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore));
 
-    // Add columns to the TreeView
-    GtkCellRenderer* textRenderer;
+    // Create the Property column
+    
+    GtkTreeViewColumn* nameCol = gtk_tree_view_column_new();
+    gtk_tree_view_column_set_title(nameCol, "Property");
+	gtk_tree_view_column_set_resizable(nameCol, TRUE);
+    gtk_tree_view_column_set_spacing(nameCol, 3);
 
-    textRenderer = gtk_cell_renderer_text_new();
-    GtkTreeViewColumn* nameCol = 
-        gtk_tree_view_column_new_with_attributes("Property",
-                                                 textRenderer,
-                                                 "text",
-                                                 PROPERTY_NAME_COLUMN,
-                                                 "foreground",
-                                                 TEXT_COLOUR_COLUMN,
-                                                 NULL);
-    gtk_tree_view_column_set_resizable(nameCol, TRUE);
+	GtkCellRenderer* pixRenderer = gtk_cell_renderer_pixbuf_new();
+	gtk_tree_view_column_pack_start(nameCol, pixRenderer, FALSE);
+    gtk_tree_view_column_set_attributes(nameCol, pixRenderer, "pixbuf", PROPERTY_ICON_COLUMN, NULL);
+
+    GtkCellRenderer* textRenderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(nameCol, textRenderer, FALSE);
+    gtk_tree_view_column_set_attributes(nameCol,
+                                        textRenderer,
+                                        "text",
+                                        PROPERTY_NAME_COLUMN,
+                                        "foreground",
+                                        TEXT_COLOUR_COLUMN,
+                                        NULL);
+
     gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), nameCol);                                                                        
 
 	// Create the value column
 
     GtkTreeViewColumn* valCol = gtk_tree_view_column_new();
     gtk_tree_view_column_set_title(valCol, "Value");
-    gtk_tree_view_column_set_spacing(valCol, 3);
 
-	GtkCellRenderer* pixRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_column_pack_start(valCol, pixRenderer, FALSE);
-    gtk_tree_view_column_set_attributes(valCol, pixRenderer, "pixbuf", PROPERTY_ICON_COLUMN, NULL);
-
-    textRenderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_column_pack_start(valCol, textRenderer, TRUE);
-    gtk_tree_view_column_set_attributes(valCol, textRenderer, "text", PROPERTY_VALUE_COLUMN, NULL);
+    GtkCellRenderer* valRenderer = gtk_cell_renderer_text_new();
+    gtk_tree_view_column_pack_start(valCol, valRenderer, TRUE);
+    gtk_tree_view_column_set_attributes(valCol, valRenderer, "text", PROPERTY_VALUE_COLUMN, NULL);
 
     gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), valCol);
 
