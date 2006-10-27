@@ -1,5 +1,6 @@
 #include "EntityInspector.h"
 #include "PropertyEditorFactory.h"
+#include "AddPropertyDialog.h"
 
 #include "ientity.h"
 #include "iselection.h"
@@ -81,6 +82,7 @@ void EntityInspector::createContextMenu() {
 	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu), _delKeyMenuItem);
 	
 	g_signal_connect(G_OBJECT(_delKeyMenuItem), "activate", G_CALLBACK(_onDeleteProperty), this);
+	g_signal_connect(G_OBJECT(_addKeyMenuItem), "activate", G_CALLBACK(_onAddProperty), this);
 	
 	gtk_widget_show_all(_contextMenu); // won't actually display until popped up
 }
@@ -342,6 +344,11 @@ void EntityInspector::_onDeleteProperty(GtkMenuItem* item, EntityInspector* self
 	if (property.size() > 0)
 		self->_selectedEntity->setKeyValue(property, "");
 }
+
+void EntityInspector::_onAddProperty(GtkMenuItem* item, EntityInspector* self) {
+	std::string property = AddPropertyDialog::chooseProperty();	
+}
+
 
 /* END GTK CALLBACKS */
 
