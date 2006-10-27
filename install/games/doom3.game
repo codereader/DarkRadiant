@@ -57,38 +57,38 @@
 		<lightRadius>320 320 320</lightRadius>
 	</defaults>
 	<entityInspector>
-		<property name="origin" type="vector3" />
-		<property name="classname" type="text" />
-		<property name="name" type="text" />
-		<property name="rotation" type="text" />
-		<property name="_color" type="colour" />
-		<property name="falloff" type="text" />
-		<property name="light_origin" type="vector3" />
-		<property name="light_radius" type="vector3" />
-		<property name="light_rotation" type="text" />
-		<property name="light_center" type="vector3" />
+		<property name="origin" category="Basic" type="vector3" />
+		<property name="classname" category="Basic" type="text" />
+		<property name="name" category="Basic" type="text" />
+		<property name="rotation" category="Basic" type="text" />
+		<property name="_color" category="Basic" type="colour" />
+		<property name="falloff" category="Light" type="text" />
+		<property name="light_origin" category="Light" type="vector3" />
+		<property name="light_radius" category="Light" type="vector3" />
+		<property name="light_rotation" category="Light" type="text" />
+		<property name="light_center" category="Light" type="vector3" />
 		<property name="nodiffuse" category="Light" type="boolean" />
 		<property name="noshadows" category="Light" type="boolean" />
 		<property name="nospecular" category="Light" type="boolean" />
-		<property name="texture" type="texture" options="lights,fogs" />
-		<property name="model" type="text" />
-		<property name="skin" type="text" />
+		<property name="texture" category="Light" type="texture" options="lights,fogs" />
+		<property name="model" category="Model" type="text" />
+		<property name="skin" category="Model" type="text" />
 		<property name="noshadow" category="Model" type="boolean" />
-		<property name="angle" type="text" />
-		<property name="anim" type="text" />
-		<property name="neverDormant" type="boolean" />
-		<property name="patrol" type="boolean" />
-		<property name="team" type="text" />
-		<property name="target" type="entity" />
-		<property name="bind" type="entity" />
-		<property name="bindToJoint" type="text" />
-		<property name="s_shader" type="text" />
-		<property name="s_mindistance" type="text" />
-		<property name="s_maxdistance" type="text" />
-		<property name="s_looping" type="boolean" />
-		<property name="s_waitfortrigger" type="boolean" />
-		<property name="s_occlusion" type="boolean" />
-		<property name="s_omni" type="boolean" />
-		<property name="s_volume" type="text" />
+		<property name="angle" category="AI" type="text" />
+		<property name="anim" category="AI" type="text" />
+		<property name="neverDormant" category="AI" type="boolean" />
+		<property name="patrol" category="AI" type="boolean" />
+		<property name="team" category="AI" type="text" />
+		<property name="target" category="Links" type="entity" />
+		<property name="bind" category="Links" type="entity" />
+		<property name="bindToJoint" category="Links" type="text" />
+		<property name="s_shader" category="Sound" type="text" />
+		<property name="s_mindistance" category="Sound" type="text" />
+		<property name="s_maxdistance" category="Sound" type="text" />
+		<property name="s_looping" category="Sound" type="boolean" />
+		<property name="s_waitfortrigger" category="Sound" type="boolean" />
+		<property name="s_occlusion" category="Sound" type="boolean" />
+		<property name="s_omni" category="Sound" type="boolean" />
+		<property name="s_volume" category="Sound" type="text" />
 	</entityInspector>
 </game>
