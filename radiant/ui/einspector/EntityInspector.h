@@ -74,12 +74,16 @@ private:
 	std::string getListSelection(int col);
 
     /* GTK CALLBACKS */
+
     static void callbackTreeSelectionChanged(GtkWidget* widget, EntityInspector* self);
-	static void _onSetProperty(GtkWidget*, EntityInspector*);    
+
 	static void _onKeyEntryActivate(GtkWidget*, EntityInspector*);
 	static void _onValEntryActivate(GtkWidget*, EntityInspector*);
+	static void _onSetProperty(GtkWidget*, EntityInspector*);    
+
 	static bool _onPopupMenu(GtkWidget*, GdkEventButton*, EntityInspector*);
 	static void _onDeleteProperty(GtkMenuItem*, EntityInspector*);
+	static void _onAddProperty(GtkMenuItem*, EntityInspector*);
 
     // Routines to populate the TreeStore with the keyvals attached to the
     // currently-selected object. 
