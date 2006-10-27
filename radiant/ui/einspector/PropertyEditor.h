@@ -92,16 +92,9 @@ private: // fields
 	// subclasses.
 	GtkWidget* _applyButtonHbox;
 
-	// The Gtk box containing the PropertyEditor title text and icon
-	GtkWidget* _titleBox;
-	
 	// The central GtkScrolledWindow where the actual editing takes place
 	GtkWidget* _editWindow;
 	
-	// The checkbox controlling whether the key should be set on the Entity
-	// or not
-	GtkWidget* _activeCheckbox;
-
 protected:
 
 	// Accessor functions for subclasses. 
@@ -109,9 +102,6 @@ protected:
 	// Return the apply/reset button box. 
 	GtkWidget* getApplyButtonHbox();
 	
-	// Return the title bar box
-	GtkWidget* getTitleBox();
-    
     // Return the central edit window
     GtkWidget* getEditWindow();
 

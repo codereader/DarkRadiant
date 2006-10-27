@@ -1,6 +1,5 @@
 #include "PropertyEditorFactory.h"
 
-#include "TextPropertyEditor.h"
 #include "Vector3PropertyEditor.h"
 #include "BooleanPropertyEditor.h"
 #include "EntityPropertyEditor.h"
@@ -24,7 +23,6 @@ PropertyEditorFactory::PropertyEditorMap PropertyEditorFactory::_peMap;
 // Register the classes
 
 void PropertyEditorFactory::registerClasses() {
-        _peMap["text"] = new TextPropertyEditor();
         _peMap["vector3"] = new Vector3PropertyEditor();
         _peMap["boolean"] = new BooleanPropertyEditor();
         _peMap["entity"] = new EntityPropertyEditor();
@@ -54,8 +52,6 @@ PropertyEditor* PropertyEditorFactory::create(const std::string& className,
 #endif
 
 	if (iter == _peMap.end()) {
-		std::cout << "PropertyEditorFactory: unable to find PropertyEditor instance"
-							<< " for type \"" << className << "\"." << std::endl;
 		return NULL;
 	} else {
         PropertyEditor* pe = iter->second->createNew(entity, key, options);

@@ -1,5 +1,4 @@
 #include "BooleanPropertyEditor.h"
-#include "EntityKeyValueVisitor.h"
 
 #include "exception/InvalidKeyException.h"
 

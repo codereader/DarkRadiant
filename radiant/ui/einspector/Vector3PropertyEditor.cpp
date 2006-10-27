@@ -1,5 +1,4 @@
 #include "Vector3PropertyEditor.h"
-#include "EntityKeyValueVisitor.h"
 
 #include "exception/InvalidKeyException.h"
 
