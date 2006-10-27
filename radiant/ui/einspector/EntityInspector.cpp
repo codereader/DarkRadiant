@@ -149,7 +149,9 @@ GtkWidget* EntityInspector::createTreeViewPane() {
 	_keyEntry = gtk_entry_new();
 	_valEntry = gtk_entry_new();
 
-	GtkWidget* setButton = gtk_button_new_with_label("Set");
+	GtkWidget* setButton = gtk_button_new();
+	gtk_container_add(GTK_CONTAINER(setButton), 
+					  gtk_image_new_from_stock(GTK_STOCK_APPLY, GTK_ICON_SIZE_MENU));
 	GtkWidget* setButtonBox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(setButtonBox), _valEntry, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(setButtonBox), setButton, FALSE, FALSE, 0);
@@ -216,8 +218,10 @@ void EntityInspector::selectionChanged(const Selectable& sel) {
 
 void EntityInspector::setPropertyFromEntries() {
 	std::string key = gtk_entry_get_text(GTK_ENTRY(_keyEntry));
-	std::string val = gtk_entry_get_text(GTK_ENTRY(_valEntry));
-	_selectedEntity->setKeyValue(key, val);
+	if (key.size() > 0) {
+		std::string val = gtk_entry_get_text(GTK_ENTRY(_valEntry));
+		_selectedEntity->setKeyValue(key, val);
+	}
 }
 
 // Construct and return static PropertyMap instance
@@ -352,7 +356,8 @@ void EntityInspector::refreshTreeModel() {
 		// Required visit function
 		virtual void visit(const char* key, const char* value) {
 			// Look up type for this key
-			std::string type = _map.find(key)->second;
+			StringMap::const_iterator typeIter = _map.find(key);
+			std::string type = (typeIter != _map.end() ? typeIter->second : "");
 
 			GtkTreeIter iter;
 			gtk_list_store_append(_store, &iter);
