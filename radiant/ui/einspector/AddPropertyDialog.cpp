@@ -1,6 +1,8 @@
 #include "AddPropertyDialog.h"
+#include "PropertyEditorFactory.h"
 
 #include "xmlutil/AttributeNotFoundException.h"
+#include "gtkutil/image.h"
 
 #include "groupdialog.h"
 #include "qerplugin.h"
@@ -14,6 +16,7 @@
 #include <gtk/gtkscrolledwindow.h>
 #include <gtk/gtkframe.h>
 #include <gtk/gtkcellrenderertext.h>
+#include <gtk/gtkcellrendererpixbuf.h>
 
 #include <map>
 
@@ -26,13 +29,14 @@ namespace {
 	enum {
 		DISPLAY_NAME_COLUMN,
 		PROPERTY_NAME_COLUMN,
+		ICON_COLUMN,
 		N_COLUMNS
 	};
 	
 	// CONSTANTS
 	const char* ADDPROPERTY_TITLE = "Add property";
 	const char* PROPERTIES_XPATH = "game/entityInspector//property";
-	
+	const char* FOLDER_ICON = "folder16.png";
 }
 
 // Constructor creates GTK widgets
@@ -72,13 +76,24 @@ GtkWidget* AddPropertyDialog::createTreeView() {
 	// Set up the tree store
 	_treeStore = gtk_tree_store_new(N_COLUMNS,
 									G_TYPE_STRING, // display name
-									G_TYPE_STRING); // property name
+									G_TYPE_STRING, // property name
+									GDK_TYPE_PIXBUF); // icon
 	// Create tree view
 	_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_treeView), FALSE);
+
+	// Connect up selection changed callback
+	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
+	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(_onSelectionChanged), this);
 	
-	// Display name column
+	// Display name column with icon
 	GtkTreeViewColumn* nameCol = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_spacing(nameCol, 3);
+
+	GtkCellRenderer* pixRenderer = gtk_cell_renderer_pixbuf_new();
+	gtk_tree_view_column_pack_start(nameCol, pixRenderer, FALSE);
+    gtk_tree_view_column_set_attributes(nameCol, pixRenderer, "pixbuf", ICON_COLUMN, NULL);
+
 	GtkCellRenderer* textRenderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(nameCol, textRenderer, FALSE);
     gtk_tree_view_column_set_attributes(nameCol,
@@ -86,7 +101,11 @@ GtkWidget* AddPropertyDialog::createTreeView() {
                                         "text",
                                         DISPLAY_NAME_COLUMN,
                                         NULL);
+
     gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), nameCol);                                                                        
+
+	// Model owned by view
+	g_object_unref(G_OBJECT(_treeStore));
 	
 	// Pack into scrolled window and frame, and return
 	
@@ -109,6 +128,9 @@ GtkWidget* AddPropertyDialog::createButtonsPanel() {
 	
 	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
 	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+	
+	g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(_onOK), this);
+	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(_onCancel), this);
 	
 	gtk_box_pack_end(GTK_BOX(hbx), okButton, FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, FALSE, FALSE, 0);
@@ -147,6 +169,7 @@ void AddPropertyDialog::populateTreeView() {
 				gtk_tree_store_set(_treeStore, &tIter,
 								   DISPLAY_NAME_COLUMN, category.c_str(),
 								   PROPERTY_NAME_COLUMN, "",
+								   ICON_COLUMN, gtkutil::getLocalPixbuf(FOLDER_ICON),
 								   -1);
 				// Add to map
 				mIter = categories.insert(CategoryMap::value_type(category, gtk_tree_iter_copy(&tIter))).first;
@@ -161,9 +184,13 @@ void AddPropertyDialog::populateTreeView() {
 			gtk_tree_store_append(_treeStore, &t, NULL);
 		}
 		
+		std::string name = iter->getAttributeValue("name");
+		std::string type = iter->getAttributeValue("type");
+		
 		gtk_tree_store_set(_treeStore, &t,
-						   DISPLAY_NAME_COLUMN, iter->getAttributeValue("name").c_str(),
-						   PROPERTY_NAME_COLUMN, iter->getAttributeValue("name").c_str(),
+						   DISPLAY_NAME_COLUMN, name.c_str(),
+						   PROPERTY_NAME_COLUMN, name.c_str(),
+						   ICON_COLUMN, PropertyEditorFactory::getPixbufFor(type),
 						   -1);
 	}
 }
@@ -187,8 +214,37 @@ std::string AddPropertyDialog::chooseProperty() {
 /* GTK CALLBACKS */
 
 void AddPropertyDialog::_onDelete(GtkWidget* w, GdkEvent* e, AddPropertyDialog* self) {
+	self->_selectedProperty = "";
 	gtk_widget_destroy(self->_widget);
 	gtk_main_quit(); // exit recursive main loop	
+}
+
+void AddPropertyDialog::_onOK(GtkWidget* w, AddPropertyDialog* self) {
+	gtk_widget_destroy(self->_widget);
+	gtk_main_quit(); // exit recursive main loop	
+}
+
+void AddPropertyDialog::_onCancel(GtkWidget* w, AddPropertyDialog* self) {
+	self->_selectedProperty = "";
+	gtk_widget_destroy(self->_widget);
+	gtk_main_quit(); // exit recursive main loop	
+}
+
+void AddPropertyDialog::_onSelectionChanged(GtkWidget* w, AddPropertyDialog* self) {
+
+	// Check for a selection, and retrieve it if it exists
+	GtkTreeIter tmpIter;
+	GtkTreeModel* model;
+	
+	if (gtk_tree_selection_get_selected(self->_selection, &model, &tmpIter)) {
+        GValue selString = {0, 0};
+        gtk_tree_model_get_value(GTK_TREE_MODEL(model), &tmpIter, PROPERTY_NAME_COLUMN, &selString);
+        self->_selectedProperty = g_value_get_string(&selString);
+        g_value_unset(&selString);
+            }
+    else {
+    	self->_selectedProperty = "";
+    }
 }
 
 }
