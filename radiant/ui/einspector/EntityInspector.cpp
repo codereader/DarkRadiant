@@ -29,6 +29,8 @@ namespace {
     const int TREEVIEW_MIN_HEIGHT = 60;
     const int PROPERTYEDITORPANE_MIN_HEIGHT = 120;
     
+    const char* PROPERTY_NODES_XPATH = "game/entityInspector//property";
+    
 	// TreeView column numbers
     enum {
         PROPERTY_NAME_COLUMN,
@@ -286,7 +288,7 @@ const StringMap& EntityInspector::getPropertyMap() {
 		
 		// Constructor queries the XML registry
 		PropertyMapConstructor() {
-			xml::NodeList pNodes = GlobalRadiant().registry().findXPath("game/entityInspector//propertyCategory//property");	
+			xml::NodeList pNodes = GlobalRadiant().registry().findXPath(PROPERTY_NODES_XPATH);	
 			for (xml::NodeList::const_iterator iter = pNodes.begin();
 				 iter != pNodes.end();
 				 ++iter)
