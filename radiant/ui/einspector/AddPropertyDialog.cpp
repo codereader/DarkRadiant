@@ -1,5 +1,7 @@
 #include "AddPropertyDialog.h"
 
+#include "xmlutil/AttributeNotFoundException.h"
+
 #include "groupdialog.h"
 #include "qerplugin.h"
 
@@ -12,6 +14,8 @@
 #include <gtk/gtkscrolledwindow.h>
 #include <gtk/gtkframe.h>
 #include <gtk/gtkcellrenderertext.h>
+
+#include <map>
 
 namespace ui
 {
@@ -118,13 +122,45 @@ void AddPropertyDialog::populateTreeView() {
 	// Ask the XML registry for the list of properties
 	xml::NodeList propNodes = GlobalRadiant().registry().findXPath(PROPERTIES_XPATH);
 	
+	// Cache of property categories to GtkTreeIters, to allow properties
+	// to be parented to top-level categories
+	typedef std::map<std::string, GtkTreeIter*> CategoryMap;
+	CategoryMap categories;
+	
 	// Add each property to the tree view
 	for (xml::NodeList::const_iterator iter = propNodes.begin();
 		 iter != propNodes.end();
 		 ++iter)
 	{
 		GtkTreeIter t;
-		gtk_tree_store_append(_treeStore, &t, NULL);
+
+		// If this property has a category, look up the top-level parent iter
+		// or add it if necessary.
+		try {
+			std::string category = iter->getAttributeValue("category");
+			CategoryMap::iterator mIter = categories.find(category);
+			
+			if (mIter == categories.end()) {
+				// Not found, add to treestore
+				GtkTreeIter tIter;
+				gtk_tree_store_append(_treeStore, &tIter, NULL);
+				gtk_tree_store_set(_treeStore, &tIter,
+								   DISPLAY_NAME_COLUMN, category.c_str(),
+								   PROPERTY_NAME_COLUMN, "",
+								   -1);
+				// Add to map
+				mIter = categories.insert(CategoryMap::value_type(category, gtk_tree_iter_copy(&tIter))).first;
+			}
+			
+			// Category sorted, add this property below it
+			gtk_tree_store_append(_treeStore, &t, mIter->second);
+			
+		}
+		catch (xml::AttributeNotFoundException e) {
+			// No category, add at toplevel
+			gtk_tree_store_append(_treeStore, &t, NULL);
+		}
+		
 		gtk_tree_store_set(_treeStore, &t,
 						   DISPLAY_NAME_COLUMN, iter->getAttributeValue("name").c_str(),
 						   PROPERTY_NAME_COLUMN, iter->getAttributeValue("name").c_str(),
