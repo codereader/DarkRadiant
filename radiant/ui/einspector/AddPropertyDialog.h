@@ -2,6 +2,8 @@
 #define ADDPROPERTYDIALOG_H_
 
 #include <gtk/gtkwidget.h>
+#include <gtk/gtktreeview.h>
+#include <gtk/gtktreestore.h>
 
 #include <string>
 
@@ -19,8 +21,25 @@ class AddPropertyDialog
 	// Main dialog widget
 	GtkWidget* _widget;
 	
+	// Tree view and model
+	GtkTreeStore* _treeStore;
+	GtkWidget* _treeView;
+	
 	// The selected property
 	std::string _selectedProperty;
+	
+private:
+
+	// Create GUI components
+	GtkWidget* createTreeView();
+	GtkWidget* createButtonsPanel();
+	
+	// Populate tree view with properties
+	void populateTreeView();
+
+	/* GTK CALLBACKS */
+	
+	static void _onDelete(GtkWidget*, GdkEvent*, AddPropertyDialog*);
 	
 public:
 
