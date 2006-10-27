@@ -10,7 +10,6 @@
 #include "gtkutil/StockIconMenuItem.h"
 
 #include "xmlutil/Document.h"
-#include "xmlutil/AttributeNotFoundException.h"
 
 #include "signal/signal.h"
 
@@ -278,15 +277,15 @@ void EntityInspector::setPropertyFromEntries() {
 
 // Construct and return static PropertyMap instance
 
-const StringMap& EntityInspector::getPropertyMap() {
+const PropertyParmMap& EntityInspector::getPropertyMap() {
 
 	// Static instance of local class, which queries the XML Registry
 	// upon construction and adds the property nodes to the map.
 	
 	struct PropertyMapConstructor
 	{
-		// String map to construct
-		StringMap _map;
+		// Map to construct
+		PropertyParmMap _map;
 		
 		// Constructor queries the XML registry
 		PropertyMapConstructor() {
@@ -295,8 +294,11 @@ const StringMap& EntityInspector::getPropertyMap() {
 				 iter != pNodes.end();
 				 ++iter)
 			{
-				_map.insert(StringMap::value_type(iter->getAttributeValue("name"),
-												  iter->getAttributeValue("type")));
+				PropertyParms parms;
+				parms.type = iter->getAttributeValue("type");
+				parms.options = iter->getAttributeValue("options");
+				_map.insert(PropertyParmMap::value_type(iter->getAttributeValue("name"),
+												  		parms));
 			}
 		}
 		
@@ -371,14 +373,15 @@ void EntityInspector::treeSelectionChanged() {
     std::string value = getListSelection(PROPERTY_VALUE_COLUMN);
     
     // Get the type for this key if it exists
-    StringMap::const_iterator tIter = getPropertyMap().find(key);
-    std::string type = (tIter != getPropertyMap().end() ? tIter->second : "");
+    PropertyParmMap::const_iterator tIter = getPropertyMap().find(key);
+    std::string type = (tIter != getPropertyMap().end() ? tIter->second.type : "");
+    std::string options = (tIter != getPropertyMap().end() ? tIter->second.options : "");
     
     // Construct and add a new PropertyEditor
     _currentPropertyEditor = PropertyEditorFactory::create(type,
                                                            _selectedEntity,
                                                            key,
-                                                           ""); // TODO: implement options
+                                                           options);
     if (_currentPropertyEditor != NULL) {
         gtk_container_add(GTK_CONTAINER(_editorFrame), _currentPropertyEditor->getWidget());
     }
@@ -407,18 +410,18 @@ void EntityInspector::refreshTreeModel() {
 		GtkListStore* _store;
 		
 		// Property map to look up types
-		const StringMap& _map;
+		const PropertyParmMap& _map;
 		
 		// Constructor
-		ListPopulateVisitor(GtkListStore* store, const StringMap& map)
+		ListPopulateVisitor(GtkListStore* store, const PropertyParmMap& map)
 		: _store(store), _map(map)
 		{}
 		
 		// Required visit function
 		virtual void visit(const char* key, const char* value) {
 			// Look up type for this key
-			StringMap::const_iterator typeIter = _map.find(key);
-			std::string type = (typeIter != _map.end() ? typeIter->second : "");
+			PropertyParmMap::const_iterator typeIter = _map.find(key);
+			std::string type = (typeIter != _map.end() ? typeIter->second.type : "");
 
 			GtkTreeIter iter;
 			gtk_list_store_append(_store, &iter);

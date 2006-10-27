@@ -46,7 +46,7 @@ public:
     // given name.
     NodeList getNamedChildren(const std::string& name) const;
     
-    // Return the value of the given attribute, or throw AttributeNotFoundException
+    // Return the value of the given attribute, or an empty string
     // if the attribute is not present on this Node.
     std::string getAttributeValue(const std::string& key) const;
     
