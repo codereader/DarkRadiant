@@ -1,6 +1,5 @@
 #include "PropertyEditor.h"
 #include "PropertyEditorFactory.h"
-#include "EntityKeyValueVisitor.h"
 
 #include "exception/InvalidKeyException.h"
 
@@ -27,11 +26,8 @@ PropertyEditor::PropertyEditor(Entity* ent, const std::string& key, const std::s
 	_key(key),
 	_type(type),
 	_applyButtonHbox(NULL),
-	_titleBox(NULL),
-	_editWindow(NULL),
-	_activeCheckbox(NULL) 
+	_editWindow(NULL)
 {
-    gtk_box_pack_start(GTK_BOX(_widget), getTitleBox(), FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(_widget), getEditWindow(), TRUE, TRUE, 0);
     gtk_box_pack_end(GTK_BOX(_widget), getApplyButtonHbox(), FALSE, FALSE, 0);
 }
@@ -64,38 +60,6 @@ GtkWidget* PropertyEditor::getApplyButtonHbox() {
 	return _applyButtonHbox;	
 }
 
-// Return the title bar box
-
-GtkWidget* PropertyEditor::getTitleBox() {
-	if (_titleBox == NULL) {
-		_titleBox = gtk_hbox_new(FALSE, 3);
-
-		// Icon (top-right)
-		gtk_box_pack_end(GTK_BOX(_titleBox), 
-							gtk_image_new_from_pixbuf(PropertyEditorFactory::getPixbufFor(_type)),
-							FALSE, FALSE, 0);
-		gtk_box_pack_end(GTK_BOX(_titleBox), gtk_vseparator_new(), FALSE, FALSE, 0);
-
-		// Enabled checkbox (top-left)
-		_activeCheckbox = gtk_check_button_new();
-		gtk_box_pack_start(GTK_BOX(_titleBox), _activeCheckbox, FALSE, FALSE, 0);
-		gtk_box_pack_start(GTK_BOX(_titleBox), gtk_vseparator_new(), FALSE, FALSE, 0);
-
-		g_signal_connect(G_OBJECT(_activeCheckbox), "toggled", 
-		                 G_CALLBACK(callbackActiveToggled), this);
-
-		// Bold label
-		std::string boldKey = std::string("<big>") + _key + std::string("</big>");
-		GtkWidget* titleLabel = gtk_label_new(NULL);
-		gtk_label_set_markup(GTK_LABEL(titleLabel), boldKey.c_str());
-
-		gtk_box_pack_start(GTK_BOX(_titleBox), titleLabel, FALSE, FALSE, 0);
-
-		gtk_container_set_border_width(GTK_CONTAINER(_titleBox), 3);
-	}
-	return _titleBox;
-}
-
 // Return the central edit window
 
 GtkWidget* PropertyEditor::getEditWindow() {
@@ -125,15 +89,10 @@ Entity* PropertyEditor::getEntity() {
 void PropertyEditor::refresh() {
     gtk_widget_show_all(_widget);
     const std::string val = getEntity()->getKeyValue(getKey().c_str());
-    if (val.size() > 0) {
+    if (val.size() > 0)
         setValue(val);
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_activeCheckbox), TRUE);
-        gtk_toggle_button_toggled(GTK_TOGGLE_BUTTON(_activeCheckbox)); // force a toggle to correctly set sensitivity of the edit pane
-    } else {
+    else
         setValue("");        
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_activeCheckbox), FALSE);
-        gtk_toggle_button_toggled(GTK_TOGGLE_BUTTON(_activeCheckbox));
-    }
 }
 
 /* 
@@ -149,12 +108,8 @@ void PropertyEditor::callbackApply(GtkWidget* caller, PropertyEditor* self) {
 
 	GlobalUndoSystem().start();
 
-    // Set the keyvalue on the owned entity if the enabled toggle is active,
-    // otherwise set the value to "" which removes the key.
-    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(self->_activeCheckbox)))
-        self->_entity->setKeyValue(self->_key.c_str(), newValue.c_str());
-    else
-        self->_entity->setKeyValue(self->_key.c_str(), "");
+	// Set key on entity
+    self->_entity->setKeyValue(self->_key.c_str(), newValue.c_str());
         
 	GlobalUndoSystem().finish(cmd.c_str());
 }

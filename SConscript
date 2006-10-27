@@ -284,7 +284,6 @@ radiant_src = [
 'xywindow.cpp',
 'ui/einspector/EntityInspector.cpp',
 'ui/einspector/PropertyEditor.cpp',
-'ui/einspector/TextPropertyEditor.cpp',
 'ui/einspector/PropertyEditorFactory.cpp',
 'ui/einspector/Vector3PropertyEditor.cpp',
 'ui/einspector/BooleanPropertyEditor.cpp',

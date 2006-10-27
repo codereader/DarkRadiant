@@ -81,6 +81,7 @@ GtkWidget* EntityInspector::getWidget() {
 GtkWidget* EntityInspector::createDialogPane() {
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 0);
     _editorFrame = gtk_frame_new(NULL);
+    gtk_frame_set_shadow_type(GTK_FRAME(_editorFrame), GTK_SHADOW_NONE);
     gtk_box_pack_start(GTK_BOX(hbx), _editorFrame, TRUE, TRUE, 0);
     gtk_widget_set_size_request(hbx, 0, PROPERTYEDITORPANE_MIN_HEIGHT);
     return hbx;
