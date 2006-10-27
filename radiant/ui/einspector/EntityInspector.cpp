@@ -6,6 +6,7 @@
 
 #include "gtkutil/image.h"
 #include "gtkutil/dialog.h"
+#include "gtkutil/TextMenuItem.h"
 
 #include "xmlutil/Document.h"
 #include "xmlutil/AttributeNotFoundException.h"
@@ -49,6 +50,9 @@ EntityInspector::EntityInspector()
     gtk_box_pack_start(GTK_BOX(_widget), createTreeViewPane(), TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(_widget), createDialogPane(), FALSE, FALSE, 0);
     
+    // Create the context menu
+    createContextMenu();
+    
     // Stimulate initial redraw to get the correct status
     queueDraw();
     
@@ -59,6 +63,24 @@ EntityInspector::EntityInspector()
     // Create callback object to redraw the dialog when the selected entity is
     // changed
     GlobalSelectionSystem().addSelectionChangeCallback(FreeCaller1<const Selectable&, EntityInspector::selectionChanged>());
+}
+
+// Create the context menu
+
+void EntityInspector::createContextMenu() {
+	// Menu widget
+	_contextMenu = gtk_menu_new();
+	
+	// Menu items
+	_addKeyMenuItem = gtkutil::TextMenuItem("Add property...");
+	_delKeyMenuItem = gtkutil::TextMenuItem("Delete property");
+	
+	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu), _addKeyMenuItem);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu), _delKeyMenuItem);
+	
+	g_signal_connect(G_OBJECT(_delKeyMenuItem), "activate", G_CALLBACK(_onDeleteProperty), this);
+	
+	gtk_widget_show_all(_contextMenu); // won't actually display until popped up
 }
 
 // Return the singleton EntityInspector instance, creating it if it is not yet
@@ -101,6 +123,7 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     
     // Create the TreeView widget and link it to the model
     _treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore));
+	g_signal_connect(G_OBJECT(_treeView), "button-release-event", G_CALLBACK(_onPopupMenu), this);
 
     // Create the Property column
     
@@ -169,6 +192,27 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     g_signal_connect(G_OBJECT(_valEntry), "activate", G_CALLBACK(_onValEntryActivate), this);
     
     return vbx;    
+}
+
+// Retrieve the selected string from the given property in the list store
+
+std::string EntityInspector::getListSelection(int col) {
+	// Prepare to get the selection
+    GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
+    GtkTreeIter tmpIter;
+
+	// Return the selected string if available, else a blank string
+    if (gtk_tree_selection_get_selected(selection, NULL, &tmpIter)) {
+        GValue selString = {0, 0};
+        gtk_tree_model_get_value(GTK_TREE_MODEL(_listStore), &tmpIter, col, &selString);
+        std::string value = g_value_get_string(&selString);
+        g_value_unset(&selString);
+        
+        return value;
+    }
+    else {
+    	return "";
+    }
 }
 
 // Redraw the GUI elements, such as in response to a key/val change on the
@@ -281,6 +325,22 @@ void EntityInspector::_onValEntryActivate(GtkWidget* w, EntityInspector* self) {
 	self->setPropertyFromEntries();
 	gtk_widget_grab_focus(self->_keyEntry);
 }
+
+bool EntityInspector::_onPopupMenu(GtkWidget* w, GdkEventButton* ev, EntityInspector* self) {
+	// Popup on right-click events only
+	if (ev->button == 3) {
+		gtk_menu_popup(GTK_MENU(self->_contextMenu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
+	}
+	return FALSE;
+		
+}
+
+void EntityInspector::_onDeleteProperty(GtkMenuItem* item, EntityInspector* self) {
+	std::string property = self->getListSelection(PROPERTY_NAME_COLUMN);
+	if (property.size() > 0)
+		self->_selectedEntity->setKeyValue(property, "");
+}
+
 /* END GTK CALLBACKS */
 
 // Update the PropertyEditor pane, displaying the PropertyEditor if necessary and
@@ -294,36 +354,21 @@ void EntityInspector::treeSelectionChanged() {
         _currentPropertyEditor = NULL;
     }
 
-	// Key and value text for the entry boxes
-	std::string key = "";
-	std::string value = "";
-
-    GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
-
-    // Get the TreeView selection if it exists, and add the correct PropertyEditor. If
-    // nothing is selected, the PropertyEditor pane will be left blank.
-    GtkTreeIter tmpIter;
-    if (gtk_tree_selection_get_selected(selection, NULL, &tmpIter)) {
-
-        // Get the selected key and value in the tree view
-        GValue selString = {0, 0};
-        gtk_tree_model_get_value(GTK_TREE_MODEL(_listStore), &tmpIter, PROPERTY_NAME_COLUMN, &selString);
-        key = g_value_get_string(&selString);
-        g_value_unset(&selString);
-        gtk_tree_model_get_value(GTK_TREE_MODEL(_listStore), &tmpIter, PROPERTY_VALUE_COLUMN, &selString);
-        value = g_value_get_string(&selString);
-        g_value_unset(&selString);
-        
-        // Get the type for this key
-        std::string type = getPropertyMap().find(key)->second;
-        
-        _currentPropertyEditor = PropertyEditorFactory::create(type,
-                                                               _selectedEntity,
-                                                               key,
-                                                               ""); // TODO: implement options
-        if (_currentPropertyEditor != NULL) {
-            gtk_container_add(GTK_CONTAINER(_editorFrame), _currentPropertyEditor->getWidget());
-        }
+    // Get the selected key and value in the tree view
+    std::string key = getListSelection(PROPERTY_NAME_COLUMN);
+    std::string value = getListSelection(PROPERTY_VALUE_COLUMN);
+    
+    // Get the type for this key if it exists
+    StringMap::const_iterator tIter = getPropertyMap().find(key);
+    std::string type = (tIter != getPropertyMap().end() ? tIter->second : "");
+    
+    // Construct and add a new PropertyEditor
+    _currentPropertyEditor = PropertyEditorFactory::create(type,
+                                                           _selectedEntity,
+                                                           key,
+                                                           ""); // TODO: implement options
+    if (_currentPropertyEditor != NULL) {
+        gtk_container_add(GTK_CONTAINER(_editorFrame), _currentPropertyEditor->getWidget());
     }
     
     // Update key and value entry boxes

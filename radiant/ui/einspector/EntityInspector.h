@@ -35,13 +35,13 @@ private:
 	// Currently selected entity
 	Entity* _selectedEntity;
 
-    // The Gtk dialog widgets
-
+	// Main EntityInspector widget
     GtkWidget* _widget; 
     
+	// Frame to contain the Property Editor    
     GtkWidget* _editorFrame;
-    GtkWidget* _selectionTreeView;
     
+    // Key list store and view
     GtkListStore* _listStore;
     GtkWidget* _treeView;
 
@@ -49,6 +49,11 @@ private:
 	GtkWidget* _keyEntry;
 	GtkWidget* _valEntry;
 
+	// Context menu main widget and items
+	GtkWidget* _contextMenu;
+	GtkWidget* _addKeyMenuItem;
+	GtkWidget* _delKeyMenuItem;
+	
 	// Currently displayed PropertyEditor
 	PropertyEditor* _currentPropertyEditor;
 
@@ -62,12 +67,19 @@ private:
 
     GtkWidget* createDialogPane(); // bottom widget pane 
     GtkWidget* createTreeViewPane(); // tree view for selecting attributes
+    void createContextMenu();
+
+	// Utility function to retrieve the string selection from the given column in the
+	// list store
+	std::string getListSelection(int col);
 
     /* GTK CALLBACKS */
     static void callbackTreeSelectionChanged(GtkWidget* widget, EntityInspector* self);
 	static void _onSetProperty(GtkWidget*, EntityInspector*);    
 	static void _onKeyEntryActivate(GtkWidget*, EntityInspector*);
 	static void _onValEntryActivate(GtkWidget*, EntityInspector*);
+	static bool _onPopupMenu(GtkWidget*, GdkEventButton*, EntityInspector*);
+	static void _onDeleteProperty(GtkMenuItem*, EntityInspector*);
 
     // Routines to populate the TreeStore with the keyvals attached to the
     // currently-selected object. 
