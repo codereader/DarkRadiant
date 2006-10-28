@@ -100,6 +100,11 @@ xml::XMLRegistry& registry() {
 	return _xmlRegistry;
 }
 
+ui::ColourSchemeManager& ColourSchemes() {
+	static ui::ColourSchemeManager _manager;
+	return _manager;
+}
+
 // Get an XPath from the global GameDescription
 
 xml::NodeList GameDescription_getXPath(const std::string& path) {

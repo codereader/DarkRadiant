@@ -33,6 +33,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/einspector/EntityInspector.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "ui/common/ToolbarCreator.h"
+#include "ui/common/ColourSchemeEditor.h"
+#include "colourscheme/ColourSchemeManager.h"
 #include "ui/menu/FiltersMenu.h"
 #include "ifilesystem.h"
 #include "iundo.h"
@@ -80,6 +82,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/paned.h"
 #include "gtkutil/widget.h"
 #include "gtkutil/IconTextMenuToggle.h"
+#include "gtkutil/TextMenuItem.h"
 
 #include "autosave.h"
 #include "brushmanip.h"
@@ -623,6 +626,8 @@ void Radiant_Initialise()
   if (file_exists(userSettingsFile.c_str())) {
   	registry().importFromFile(userSettingsFile);
   }
+  
+  ColourSchemes().loadColourSchemes();
 }
 
 void Radiant_Shutdown()
@@ -2222,7 +2227,8 @@ GtkMenuItem* create_misc_menu()
   GtkMenu* menu = GTK_MENU(gtk_menu_item_get_submenu(misc_menu_item));
   if (g_Layout_enableDetachableMenus.m_value)
     menu_tearoff (menu);
-
+  
+  
 #if 0
   create_menu_item_with_mnemonic(menu, "_Benchmark", FreeCaller<GlobalCamera_Benchmark>());
 #endif
@@ -2233,6 +2239,8 @@ GtkMenuItem* create_misc_menu()
   // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=394
 //  create_menu_item_with_mnemonic(menu, "_Print XY View", FreeCaller<WXY_Print>());
 
+  create_menu_item_with_mnemonic(menu, "Colour Scheme Editor", "EditColourScheme");
+  
   return misc_menu_item;
 }
 
@@ -3270,6 +3278,9 @@ void Layout_registerPreferencesPage()
   PreferencesDialog_addInterfacePage(FreeCaller1<PreferenceGroup&, Layout_constructPage>());
 }
 
+void EditColourScheme() {
+	ui::ColourSchemeEditor editor;
+}
 
 #include "preferencesystem.h"
 #include "stringio.h"
@@ -3391,6 +3402,8 @@ void MainFrame_Construct()
   GlobalCommands_insert("SelectNudgeRight", FreeCaller<Selection_NudgeRight>(), Accelerator(GDK_Right, (GdkModifierType)GDK_MOD1_MASK));
   GlobalCommands_insert("SelectNudgeUp", FreeCaller<Selection_NudgeUp>(), Accelerator(GDK_Up, (GdkModifierType)GDK_MOD1_MASK));
   GlobalCommands_insert("SelectNudgeDown", FreeCaller<Selection_NudgeDown>(), Accelerator(GDK_Down, (GdkModifierType)GDK_MOD1_MASK));
+
+  GlobalCommands_insert("EditColourScheme", FreeCaller<EditColourScheme>());
 
   Patch_registerCommands();
   XYShow_registerCommands();

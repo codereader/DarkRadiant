@@ -72,15 +72,79 @@ std::string XMLRegistry::prepareKey(const std::string& key) {
 	}
 }
 
+/* Deletes this key and all its children, 
+ * this includes multiple instances nodes matching this key 
+ */ 
+void XMLRegistry::deleteXPath(const std::string& path) {
+	// Add the toplevel node to the path if required
+	std::string fullPath = prepareKey(path);
+	xml::NodeList nodeList = _registry.findXPath(fullPath);
+
+	if (nodeList.size() > 0) {
+		for (unsigned int i = 0; i < nodeList.size(); i++) {
+			// unlink the node from the list first, otherwise: crashes ahead! 
+			xmlUnlinkNode(nodeList[i].getNodePtr());
+			
+			// All child nodes are freed recursively
+			xmlFreeNode(nodeList[i].getNodePtr());
+		}
+	}
+}
+
+/*	Adds a key <key> as child to <path> to the XMLRegistry (with the name attribute set to <name>)       
+ */
+xml::Node XMLRegistry::createKeyWithName(const std::string& path, const std::string& key, const std::string& name) {
+	// Add the toplevel node to the path if required
+	std::string fullPath = prepareKey(path);
+	
+	xmlNodePtr insertPoint;
+	
+	// Check if the insert point <path> exists, create it otherwise
+	if (!keyExists(fullPath)) {
+		insertPoint = createKey(fullPath);
+	}
+	else {
+		xml::NodeList nodeList = _registry.findXPath(fullPath);
+		insertPoint = nodeList[0].getNodePtr();
+	}
+	
+	// Add the <key> to the insert point <path>
+	xmlNodePtr createdNode = xmlNewChild(insertPoint, NULL, xmlCharStrdup(key.c_str()), xmlCharStrdup(""));
+		
+	if (createdNode != NULL) {
+		addWhiteSpace(createdNode);
+		
+		// Create an xml::Node out of the xmlNodePtr createdNode and set the name attribute
+		xml::Node node(createdNode);
+		node.setAttributeValue("name", name);
+		
+		// Return the newly created node
+		return node;
+	}
+	else {
+		globalOutputStream() << "XMLRegistry: Critical: Could not create insert point.\n";
+	}
+}
+
+void XMLRegistry::addWhiteSpace(xmlNodePtr& node) {
+	xmlNodePtr whitespace = xmlNewText(xmlCharStrdup("\n"));
+	xmlAddSibling(node, whitespace);
+}
+
 /*	Adds a key to the XMLRegistry (without value, just the node)
  *  The key has to be an absolute path like "/darkradiant/globals/ui/something
  *  All required parent nodes are created automatically, if they don't exist     
  */
-void XMLRegistry::createKey(const std::string& key) {
+xmlNodePtr XMLRegistry::createKey(const std::string& key) {
+	// Add the toplevel node to the path if required
+	std::string fullKey = prepareKey(key);
+	
 	stringParts parts;
-	boost::algorithm::split(parts, key, boost::algorithm::is_any_of("/"));
+	boost::algorithm::split(parts, fullKey, boost::algorithm::is_any_of("/"));
 	
 	//globalOutputStream() << "XMLRegistry: Inserting key: " << key.c_str() << "\n";
+	
+	xmlNodePtr createdNode;
 	
 	// Are there any slashes in the path at all? If not, exit, we've no use for this
 	if (parts.size()>0) {
@@ -104,10 +168,15 @@ void XMLRegistry::createKey(const std::string& key) {
 				insertPoint = nodeList[0].getNodePtr();
 			}
 			else {
-				// Node not found, insert it and store the newly created node as new insertPoint 
-				insertPoint = xmlNewChild(insertPoint, NULL, xmlCharStrdup(parts[i].c_str()), xmlCharStrdup(""));
+				// Node not found, insert it and store the newly created node as new insertPoint
+				createdNode = xmlNewChild(insertPoint, NULL, xmlCharStrdup(parts[i].c_str()), xmlCharStrdup(""));
+				addWhiteSpace(createdNode);
+				insertPoint = createdNode;
 			}
 		}
+		
+		// return the pointer to the deepest, newly created node
+		return createdNode;
 	}
 	else {
 		globalOutputStream() << "XMLRegistry: Cannot insert key/path without slashes.\n";
@@ -244,8 +313,8 @@ void XMLRegistry::exportToFile(const std::string& key, const std::string& filena
 		xmlDocSetRootElement(targetDoc, exportNode);
 		
 		// Save the whole document to the specified filename
-		xmlSaveFile(filename.c_str(), targetDoc);
-		
+		xmlSaveFormatFile(filename.c_str(), targetDoc, 1);
+				
 		globalOutputStream() << "XMLRegistry: Saved " << key.c_str() << " to " << filename.c_str() << "\n";
 	}
 	else {
