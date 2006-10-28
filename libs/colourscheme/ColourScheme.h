@@ -2,6 +2,7 @@
 #define COLOURSCHEME_H_
 
 #include <string>
+#include <map>
 #include "generic/vector.h"
 #include "xmlutil/Node.h"
 #include "gdk/gdkcolor.h"
@@ -28,8 +29,10 @@ class ColourItem {
 		ColourItem();
 		ColourItem(xml::Node& colourNode);
 		
+		operator Vector3 ();
 		operator GdkColor* ();
 		operator std::string ();
+		bool operator== (const ColourItem& other) const;
 		
 		std::string getName() const {
 			return _name;
@@ -40,6 +43,7 @@ class ColourItem {
 		}
 		
 		// Update the internal colour objects of this class
+		// expects colour values between 0...65535 (as GdkColor does)
 		void setColour(const unsigned int& red, 
 					   const unsigned int& green, 
 					   const unsigned int& blue);
@@ -48,7 +52,7 @@ class ColourItem {
 		~ColourItem() {}
 };
 
-typedef std::vector<ColourItem> ColourItemVec;
+typedef std::map<const std::string, ColourItem> ColourItemMap;
 
 /*	A colourscheme is basically a collection of ColourItems 
  */
@@ -58,8 +62,8 @@ class ColourScheme {
 		// The name of this scheme
 		std::string _name;
 		
-		// The ColourItems of this scheme
-		ColourItemVec _colourItems;
+		// The ColourItems Map
+		ColourItemMap _colours;
 		
 		// True if the scheme must not be edited
 		bool _readOnly;
@@ -71,9 +75,15 @@ class ColourScheme {
 		ColourScheme(xml::Node& schemeNode);
 		
 		// Returns the list of ColourItems
-		ColourItemVec& getColourList() {
-			return _colourItems;
+		ColourItemMap& getColourMap() {
+			return _colours;
 		}
+		
+		// Checks whether this colour exists in this scheme
+		bool colourExists(const std::string& colourName);
+		
+		// Returns the requested colour object
+		ColourItem& getColour(const std::string& colourName);
 		
 		// returns the name of this colour scheme
 		std::string getName() const {

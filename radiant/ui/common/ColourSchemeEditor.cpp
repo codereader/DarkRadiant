@@ -164,8 +164,7 @@ ColourSchemeEditor::ColourSchemeEditor()
 	// Show all the widgets and enter the loop
 	gtk_widget_show_all(_editorWidget);
 	
-	selectActiveScheme();	
-	gtk_main();
+	selectActiveScheme();
 }
 
 void ColourSchemeEditor::deleteSchemeFromList() {
@@ -228,6 +227,9 @@ GtkWidget* ColourSchemeEditor::constructColourSelector(ColourItem& colour) {
 }
 
 void ColourSchemeEditor::updateColourSelectors() {
+	unsigned int i = 1;
+	ColourItemMap::iterator it;
+	
 	gtk_widget_hide(_colourBox);
 	gtk_widget_destroy(_colourBox);
 	
@@ -241,15 +243,19 @@ void ColourSchemeEditor::updateColourSelectors() {
 	// Get the selected scheme
 	ColourScheme& scheme = ColourSchemes().getScheme( getSelectedScheme() );
 	
-	// Get a list of all the colours defined in this scheme
-	ColourItemVec& colours = scheme.getColourList();
-		
-	for (unsigned int i = 0; i < colours.size(); i++) {
-		GtkWidget* colourSelector = constructColourSelector(colours[i]);
+	// Retrieve the list with all the ColourItems of this scheme
+	ColourItemMap& colourMap = scheme.getColourMap();
+	
+	// Cycle through all the ColourItems and save them into the registry	
+	for (it = colourMap.begin(), i = 1; 
+		 it != colourMap.end();
+		 it++, i++) 
+	{
+		GtkWidget* colourSelector = constructColourSelector(it->second);
 		gtk_box_pack_start(GTK_BOX(curVbox), colourSelector, FALSE, FALSE, 5);
 		
 		// Have we reached the maximum number of colours per column?
-		if ((i+1) % COLOURS_PER_COLUMN == 0) {
+		if (i % COLOURS_PER_COLUMN == 0) {
 			// yes, pack the current column into the _colourBox and create a new vbox
 			gtk_box_pack_start(GTK_BOX(_colourBox), curVbox, FALSE, FALSE, 5);
 			curVbox = gtk_vbox_new(FALSE, 5);
@@ -359,22 +365,23 @@ void ColourSchemeEditor::callbackSelChanged(GtkWidget* widget, ColourSchemeEdito
 void ColourSchemeEditor::callbackOK(GtkWidget* widget, ColourSchemeEditor* self) {
 	ColourSchemes().setActive(self->getSelectedScheme());
 	ColourSchemes().saveColourSchemes();
-	self->destroy();
+	
+	if (GTK_IS_WIDGET(self->_editorWidget)) {
+		gtk_widget_hide(GTK_WIDGET(self->_editorWidget));
+		gtk_widget_destroy(GTK_WIDGET(self->_editorWidget));
+	}
+	delete self;
 }
 
 void ColourSchemeEditor::callbackCancel(GtkWidget* widget, ColourSchemeEditor* self) {
 	// Restore all the colour settings from the XMLRegistry, changes get lost
 	ColourSchemes().restoreColourSchemes();
-	self->destroy();
-}
-
-void ColourSchemeEditor::destroy() {
-	gtk_main_quit();
-	if (GTK_IS_WIDGET(_editorWidget)) {
-		gtk_widget_hide(GTK_WIDGET(_editorWidget));
-		gtk_widget_destroy(GTK_WIDGET(_editorWidget));
-	}	
-	delete this;
+	
+	if (GTK_IS_WIDGET(self->_editorWidget)) {
+		gtk_widget_hide(GTK_WIDGET(self->_editorWidget));
+		gtk_widget_destroy(GTK_WIDGET(self->_editorWidget));
+	}
+	delete self;
 }
 
 } // namespace ui

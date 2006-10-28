@@ -77,9 +77,6 @@ class ColourSchemeEditor
 		// Deletes a scheme from the list store (called from deleteScheme())
 		void 		deleteSchemeFromList();
 		
-		// Cleans up the widget and destroys it 
-		void 		destroy();
-		
 		// GTK Callbacks
 		static void callbackSelChanged(GtkWidget* widget, ColourSchemeEditor* self);
 		static void callbackOK(GtkWidget* widget, ColourSchemeEditor* self);
