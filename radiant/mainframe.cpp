@@ -3279,7 +3279,7 @@ void Layout_registerPreferencesPage()
 }
 
 void EditColourScheme() {
-	ui::ColourSchemeEditor editor;
+	new ui::ColourSchemeEditor(); // self-destructs in GTK callback
 }
 
 #include "preferencesystem.h"

@@ -41,6 +41,18 @@ ColourItem::ColourItem():
 	_gdkColor.blue 	= 0;
 }
 
+bool ColourItem::operator== (const ColourItem& other) const {
+	return (other._colour[0] == _colour[0] && 
+	        other._colour[1] == _colour[1] && 
+	        other._colour[2] == _colour[2]); 
+}
+
+/*	Casting operator for use as Vector3 
+ */
+ColourItem::operator Vector3 () {
+	return _colour;
+}
+
 /*	Casting operator for use in GtkColorButtons etc. 
  */
 ColourItem::operator GdkColor* () {
@@ -92,12 +104,31 @@ ColourScheme::ColourScheme(xml::Node& schemeNode) {
 		
 		// Cycle through all found colour tags and add them to this scheme
 		for (unsigned int i = 0; i < colourNodes.size(); i++) {
-			_colourItems.push_back( ColourItem(colourNodes[i]) );
+			std::string colourName = colourNodes[i].getAttributeValue("name");
+			_colours[colourName] = ColourItem(colourNodes[i]);
 		}
 		
 	}
 	else {
 		globalOutputStream() << "ColourScheme: No scheme items found.\n";
+	}
+}
+
+/*	Checks whether the specified colour exists in this scheme
+ */
+bool ColourScheme::colourExists(const std::string& colourName) {
+	ColourItemMap::iterator it = _colours.find(colourName);
+   	return (it != _colours.end());
+}
+
+/* Returns the specified colour object
+ */
+ColourItem& ColourScheme::getColour(const std::string& colourName) {
+	if (colourExists(colourName)) {
+		return _colours[colourName];
+	}
+	else {
+		globalOutputStream() << "ColourScheme: Colour " << colourName.c_str() << " doesn't exist!\n";
 	}
 }
 

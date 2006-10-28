@@ -85,15 +85,15 @@ void ColourSchemeManager::saveScheme(const std::string& name) {
 	std::string schemePath = basePath + "/scheme[@name='" + name + "']";
 		
 	// Retrieve the list with all the ColourItems of this scheme
-	ColourItemVec& colourVec = _colourSchemes[name].getColourList();
+	ColourItemMap& colourMap = _colourSchemes[name].getColourMap();
 	
 	// Cycle through all the ColourItems and save them into the registry	
-	for (unsigned int j=0; j < colourVec.size(); j++) {
+	for (ColourItemMap::iterator it = colourMap.begin(); it != colourMap.end(); it++) {
 		// Retrieve the name of the ColourItem
-		std::string name = colourVec[j].getName();
-			
+		std::string name = it->first;
+		
 		// Cast the ColourItem onto a std::string
-		std::string colour = colourVec[j];
+		std::string colour = it->second;
 			
 		xml::Node colourNode = registry().createKeyWithName(schemePath, "colour", name);
 		colourNode.setAttributeValue("value", colour);
@@ -162,6 +162,10 @@ void ColourSchemeManager::copyScheme(const std::string& fromName, const std::str
 	else {
 		globalOutputStream() << "ColourSchemeManager: Scheme " << fromName.c_str() << " does not exist!\n";
 	}
+}
+
+Vector3 ColourSchemeManager::getColour(const std::string& colourName) {
+	return _colourSchemes[_activeScheme].getColour(colourName);
 }
 
 } // namespace ui
