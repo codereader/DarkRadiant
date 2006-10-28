@@ -5,6 +5,40 @@
     	<previewSizeFactor value="0.4"/>
     </ModelSelector>
 	<showAllLightRadii value="0"/>
+    <colourschemes>
+       <scheme name="DarkRadiant Default" readonly="1">
+ 	   <colour name="texture_background" value="0.25 0.25 0.25" />
+	   <colour name="grid_background" value="1 1 1" />
+	   <colour name="grid_major" value="0.5 0.5 0.5" />
+	   <colour name="grid_minor" value="0.75 0.75 0.75" />
+	   <colour name="grid_major_small" value="0 0 0" />
+	   <colour name="grid_minor_small" value="0 0 0" />
+	   <colour name="grid_text" value="0 0 0" />
+	   <colour name="grid_block" value="0 0 1" />
+	   <colour name="default_brush" value="0 0 0" />
+	   <colour name="camera_background" value="0.25 0.25 0.25" />
+	   <colour name="selected_brush" value="1 0 0" />
+	   <colour name="selected_brush_camera" value="1 0 0" />
+	   <colour name="clipper" value="0 0 1" />
+	   <colour name="active_view_name" value="0.5 0 0.75" />
+       </scheme>
+    </colourschemes>
+	<colourschemedescription>
+		<texture_background value="Texture Background" />
+		<grid_background value="Grid Background" />
+		<grid_major value="Grid Major" />
+		<grid_minor value="Grid Minor" />
+		<grid_major_small value="Grid Major Small" />
+		<grid_minor_small value="Grid Minor Small" />
+		<grid_text value="Grid Text" />
+		<grid_block value="Grid Block" />
+		<default_brush value="Default Brush" />
+		<camera_background value="Camera Background" />
+		<selected_brush value="Selected Brush" />
+		<selected_brush_camera value="Selected Brush (Camera)" />
+		<clipper value="Clipper" />
+		<active_view_name value="Active View Name" />
+	</colourschemedescription>
     <toolbar name="view" align="horizontal">
 			<toolbutton name="open" action="OpenMap" tooltip="Open a map file" icon="file_open.png"/>
 			<toolbutton name="save" action="SaveMap" tooltip="Save the current map" icon="file_save.png"/>
@@ -43,7 +77,7 @@
 		<separator/>
 			<toggletoolbutton name="texturelock" action="TogTexLock" tooltip="Texture Lock" icon="texture_lock.png"/>
 	</toolbar>
-  <toolbar name="texture" align="horizontal">
+	<toolbar name="texture" align="horizontal">
 		<toolbutton name="flush" action="RefreshShaders" tooltip="Flush &amp; Reload Shaders" icon="texwindow_flushandreload.png"/>
 		<toggletoolbutton name="showinuse" action="ShowInUse" tooltip="Hide Unused" icon="texwindow_hideunused.png"/>
     <separator/>		

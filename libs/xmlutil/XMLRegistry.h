@@ -9,15 +9,14 @@
 /*	This is the central XMLRegistry structure providing easy methods to store all kinds of
  *  information like ui state, toolbar structures and anything that fits into an XML file. 
  * 
- * 	The base structure is automatically created on instantiation and the class in turn
- *  is also created automatically on inclusion of the source file (.cpp)
- *   
+ * 	The base XML structure is automatically created in memory on instantiation
+ *  
  *  Example: store a global variable:
- *  	GlobalRadiant().registry().set("globals/ui/showAllLightRadii", "1");
+ *  	GlobalRadiant().registry().set("user/ui/showAllLightRadii", "1");
  * 
  *  Example: retrieve a global variable 
  *  (this returns "" if the key is not found and an error is written to globalOutputStream):
- *  	std::string value = GlobalRadiant().registry().get("globals/ui/showalllightradii");
+ *  	std::string value = GlobalRadiant().registry().get("user/ui/showalllightradii");
  * 
  *  Example: import an XML file into the registry (note: imported keys overwrite previous ones!) 
  * 		GlobalRadiant().registry().importFromFile(absolute_path_to_file[, where_to_import]);
@@ -43,6 +42,7 @@ class XMLRegistry {
 		xml::Document 	_registry;
 		xmlDocPtr		_origXmlDocPtr;
 		xmlNodePtr		_importNode;
+		
 	public:
 		XMLRegistry();
 		
@@ -65,12 +65,20 @@ class XMLRegistry {
 		// Retrieves the nodelist corresponding for the specified XPath (wraps to xml::Document)
 		xml::NodeList findXPath(const std::string& path);
 		
+		// Creates a new node named <key> as children of <path> with the name attribute set to <name>
+		// The newly created node is returned after creation
+		xml::Node createKeyWithName(const std::string& path, const std::string& key, const std::string& name);
+		
+		// Deletes an entire subtree from the registry
+		void deleteXPath(const std::string& path);
+		
 		// Destructor
 		~XMLRegistry();
 		 
 	private:
-		std::string XMLRegistry::prepareKey(const std::string&);
-		void createKey(const std::string&);
+		std::string prepareKey(const std::string&);
+		xmlNodePtr createKey(const std::string&);
+		void addWhiteSpace(xmlNodePtr& node);
 };
 
 } // namespace xml

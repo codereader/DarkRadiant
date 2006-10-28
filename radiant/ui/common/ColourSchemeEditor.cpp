@@ -1,0 +1,381 @@
+#include "ColourSchemeEditor.h"
+#include "colourscheme/ColourSchemeManager.h"
+#include "plugin.h"
+#include "mainframe.h"
+
+namespace ui {
+
+/*	Loads all the scheme items into the list
+ */
+void ColourSchemeEditor::populateTree() {
+  GtkTreeIter iter;
+  
+  ColourSchemeMap allSchemes = ColourSchemes().getSchemeList();
+  
+  for (ColourSchemeMap::iterator scheme = allSchemes.begin(); scheme != allSchemes.end(); scheme++) {
+  	gtk_list_store_append(_listStore, &iter);
+  	gtk_list_store_set(_listStore, &iter, 0, scheme->first.c_str(), -1);
+  }
+}
+
+void ColourSchemeEditor::createTreeView() {
+	// Create the listStore
+	_listStore = gtk_list_store_new(1, G_TYPE_STRING);
+	
+	// Create the treeView
+    _treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore));
+    // Unreference the list store as this is now owned by GTK 
+    g_object_unref(G_OBJECT(_listStore));
+	
+	// Create a new column and set its parameters  
+ 	GtkTreeViewColumn* col = gtk_tree_view_column_new();
+  	gtk_tree_view_column_set_sizing(col, GTK_TREE_VIEW_COLUMN_FIXED);
+  	gtk_tree_view_column_set_fixed_width(col, TREE_VIEW_WIDTH);
+  
+  	// Pack the new column into the treeView
+  	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), col);
+  	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_treeView), FALSE);
+
+  	// Create a new text renderer and attach it to the column
+  	GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
+  	gtk_tree_view_column_pack_start(col, renderer, TRUE);
+  	gtk_tree_view_column_add_attribute(col, renderer, "text", 0);
+ 
+ 	// Load all the list items
+  	populateTree();
+}
+
+GtkWidget* ColourSchemeEditor::constructButtons() {
+	GtkWidget* buttonFrame = gtk_frame_new(NULL);
+	
+	  // Create the buttons and put them into a horizontal box
+	  GtkWidget* buttonBox = gtk_hbox_new(FALSE, 0);
+	  gtk_container_set_border_width(GTK_CONTAINER(buttonBox), 3);
+	
+	  GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
+	  GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+	
+	  gtk_box_pack_end(GTK_BOX(buttonBox), okButton, FALSE, FALSE, 4);
+	  gtk_box_pack_end(GTK_BOX(buttonBox), cancelButton, FALSE, FALSE, 4);
+	
+	  g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(callbackOK), this);
+	  g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(callbackCancel), this);
+	
+	gtk_container_add(GTK_CONTAINER(buttonFrame), buttonBox);
+	
+	return buttonFrame;
+}
+
+GtkWidget* ColourSchemeEditor::constructTreeviewButtons() {
+	GtkWidget* buttonBox = gtk_hbox_new(FALSE, 8);
+	
+	_deleteButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	GtkWidget* copyButton = gtk_button_new_from_stock(GTK_STOCK_COPY);
+	
+	gtk_box_pack_start(GTK_BOX(buttonBox), copyButton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonBox), _deleteButton, FALSE, FALSE, 0);
+	
+	g_signal_connect(G_OBJECT(copyButton), "clicked", G_CALLBACK(callbackCopy), this);
+	g_signal_connect(G_OBJECT(_deleteButton), "clicked", G_CALLBACK(callbackDelete), this);
+	
+	return buttonBox;
+}
+
+GtkWidget* ColourSchemeEditor::constructWindow() {
+	GtkWidget* windowframe = gtk_frame_new(NULL);
+	
+	  // The vbox that separates the buttons and the upper part of the window
+	  GtkWidget* vbox = gtk_vbox_new(FALSE, 3);
+	
+	  // Place the buttons at the bottom of the window
+	  gtk_box_pack_end(GTK_BOX(vbox), constructButtons(), FALSE, FALSE, 0);
+	
+		// This is the box for the treeview and the whole rest
+		GtkWidget* hbox = gtk_hbox_new(FALSE, 5);
+	
+		  GtkWidget* treeAndButtonFrame = gtk_frame_new(NULL);
+		  GtkWidget* treeAndButtons = gtk_vbox_new(FALSE, 0);
+		  		  
+		  // Create the treeview and pack it into the treeViewFrame
+		  createTreeView();
+		  GtkWidget* treeViewFrame = gtk_frame_new(NULL);
+		  gtk_container_add(GTK_CONTAINER(treeViewFrame), _treeView);
+		  gtk_box_pack_start(GTK_BOX(treeAndButtons), treeViewFrame, TRUE, TRUE, 0);
+		  
+		  gtk_box_pack_end(GTK_BOX(treeAndButtons), constructTreeviewButtons(), FALSE, FALSE, 3);
+		  
+		// Pack the treeViewFrame into the hbox
+		gtk_container_add(GTK_CONTAINER(treeAndButtonFrame), treeAndButtons);
+		gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(treeAndButtonFrame), FALSE, FALSE, 0);
+	
+		  // The Box containing the Colour, pack it into the right half of the hbox
+		  _colourFrame = gtk_frame_new(NULL);
+		  _colourBox = gtk_vbox_new(FALSE, 5);
+		  gtk_container_add(GTK_CONTAINER(_colourFrame), _colourBox);
+	
+		gtk_box_pack_start(GTK_BOX(hbox), _colourFrame, TRUE, TRUE, 0);
+	
+	  gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
+	
+	gtk_container_add(GTK_CONTAINER(windowframe), vbox);
+	
+	return windowframe;
+}
+
+void ColourSchemeEditor::selectActiveScheme() {
+	GtkTreeIter iter;
+		
+	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(_listStore), &iter)) {
+		
+		do {
+			// Get the value
+			GValue val = {0, 0};
+			gtk_tree_model_get_value(GTK_TREE_MODEL(_listStore), &iter, 0, &val);
+			// Get the string
+			std::string name = g_value_get_string(&val);
+			
+			if (ColourSchemes().isActive(name)) {
+				gtk_tree_selection_select_iter(_selection, &iter);
+				return;
+			}
+		} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(_listStore), &iter));
+	}
+}
+
+ColourSchemeEditor::ColourSchemeEditor()
+ :	_editorWidget(gtk_window_new(GTK_WINDOW_TOPLEVEL))
+{	
+	gtk_window_set_transient_for(GTK_WINDOW(_editorWidget), MainFrame_getWindow());
+    gtk_window_set_modal(GTK_WINDOW(_editorWidget), TRUE);
+    gtk_window_set_position(GTK_WINDOW(_editorWidget), GTK_WIN_POS_CENTER_ON_PARENT);
+    gtk_window_set_default_size(GTK_WINDOW(_editorWidget), EDITOR_DEFAULT_SIZE_X, EDITOR_DEFAULT_SIZE_Y);
+	gtk_window_set_title(GTK_WINDOW(_editorWidget), EDITOR_WINDOW_TITLE.c_str());
+	
+	// Get the constructed windowframe and pack it into the editor widget
+	gtk_container_add(GTK_CONTAINER(_editorWidget), constructWindow());
+	
+	// Connect the selection callback
+	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
+	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(callbackSelChanged), this);
+	
+	// Be sure that everything is properly destroyed upon window closure
+	g_signal_connect(G_OBJECT(_editorWidget), "delete_event", G_CALLBACK(callbackCancel), this);
+	
+	// Show all the widgets and enter the loop
+	gtk_widget_show_all(_editorWidget);
+	
+	selectActiveScheme();	
+	gtk_main();
+}
+
+void ColourSchemeEditor::deleteSchemeFromList() {
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+
+	GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
+	
+	if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
+		gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
+	}
+	
+	// Select the first element
+	gtk_tree_model_get_iter_first(model, &iter);
+	gtk_tree_selection_select_iter(_selection, &iter);
+}
+
+std::string ColourSchemeEditor::getSelectedScheme() {
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+
+	GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
+	
+	if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
+		// Get the value
+		GValue val = {0, 0};
+		gtk_tree_model_get_value(model, &iter, 0, &val);
+		// Get the string
+		return g_value_get_string(&val);	
+	}
+	else {
+		return "";
+	}
+}
+
+GtkWidget* ColourSchemeEditor::constructColourSelector(ColourItem& colour) {
+	// Get the description of this colour item from the registry
+	std::string descriptionPath = std::string("user/ui/colourschemedescription/") + colour.getName();
+	std::string description = registry().get(descriptionPath);
+	
+	// Create a new horizontal divider
+	GtkWidget* hbox = gtk_hbox_new(FALSE, 10);
+	
+	  // Create the colour button 
+	  GtkWidget* button = gtk_color_button_new_with_color(colour);
+	  gtk_color_button_set_title(GTK_COLOR_BUTTON(button), description.c_str());
+	  ColourItem* colourPtr = &colour;
+		
+	  // Connect the signal, so that the ColourItem class is updated along with the colour button
+	  g_signal_connect(G_OBJECT(button), "color-set", G_CALLBACK(callbackColorChanged), colourPtr);
+	  gtk_widget_show(button);
+	
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	
+	  GtkWidget* label = gtk_label_new(description.c_str());
+	
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	  
+	return hbox;
+}
+
+void ColourSchemeEditor::updateColourSelectors() {
+	gtk_widget_hide(_colourBox);
+	gtk_widget_destroy(_colourBox);
+	
+	GtkWidget* curVbox = gtk_vbox_new(FALSE, 5); 
+	
+	// Create the column container
+	_colourBox = gtk_hbox_new(FALSE, 12);
+		
+	gtk_container_add(GTK_CONTAINER(_colourFrame), _colourBox);
+		
+	// Get the selected scheme
+	ColourScheme& scheme = ColourSchemes().getScheme( getSelectedScheme() );
+	
+	// Get a list of all the colours defined in this scheme
+	ColourItemVec& colours = scheme.getColourList();
+		
+	for (unsigned int i = 0; i < colours.size(); i++) {
+		GtkWidget* colourSelector = constructColourSelector(colours[i]);
+		gtk_box_pack_start(GTK_BOX(curVbox), colourSelector, FALSE, FALSE, 5);
+		
+		// Have we reached the maximum number of colours per column?
+		if ((i+1) % COLOURS_PER_COLUMN == 0) {
+			// yes, pack the current column into the _colourBox and create a new vbox
+			gtk_box_pack_start(GTK_BOX(_colourBox), curVbox, FALSE, FALSE, 5);
+			curVbox = gtk_vbox_new(FALSE, 5);
+		}
+	}
+	
+	// Pack the remaining items into the last column
+	gtk_box_pack_start(GTK_BOX(_colourBox), curVbox, FALSE, FALSE, 0);
+	
+	gtk_widget_show_all(_colourBox);	
+}
+
+void ColourSchemeEditor::selectionChanged() {
+	// Update the colour selectors to reflect the newly selected scheme
+	updateColourSelectors();
+	
+	// Check, if the currently selected scheme is read-only
+	ColourScheme& scheme = ColourSchemes().getScheme( getSelectedScheme() );
+	gtk_widget_set_sensitive(_deleteButton, (!scheme.isReadOnly()));
+}
+
+void ColourSchemeEditor::deleteScheme() {
+	std::string name = getSelectedScheme();
+	// Get the selected scheme
+	ColourScheme& scheme = ColourSchemes().getScheme(name);
+	
+	if (!scheme.isReadOnly()) {
+		// Remove the actual scheme from the ColourSchemeManager 
+		ColourSchemes().deleteScheme(name);
+		
+		// Remove the selected item from the GtkListStore
+		deleteSchemeFromList();
+	}
+}
+
+std::string ColourSchemeEditor::inputDialog(const std::string& title, const std::string& label) {
+	GtkWidget* dialog;
+	GtkWidget* labelWidget;
+	GtkWidget* entryWidget;
+    std::string returnValue;
+    
+  	dialog = gtk_dialog_new_with_buttons(title.c_str(), GTK_WINDOW(_editorWidget),
+                                         GTK_DIALOG_DESTROY_WITH_PARENT, 
+                                         GTK_STOCK_OK, GTK_RESPONSE_OK,
+                                         GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
+                                         NULL);
+                                         
+	labelWidget = gtk_label_new(label.c_str());
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), labelWidget);
+	
+	entryWidget = gtk_entry_new();
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), entryWidget);
+	
+	gtk_widget_show_all(dialog);
+	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+	
+	if (response == GTK_RESPONSE_OK) {
+		returnValue = gtk_entry_get_text(GTK_ENTRY(entryWidget));
+	}
+	else {
+		returnValue = "";
+	}
+	
+	gtk_widget_destroy(dialog);
+	
+	return returnValue;
+}
+
+void ColourSchemeEditor::copyScheme() {
+	GtkTreeIter iter;
+	std::string name = getSelectedScheme();
+	std::string newName = inputDialog("Copy Colour Scheme", "Enter a name for the new scheme:");
+	
+	if (newName != "") {
+		// Copy the scheme
+		ColourSchemes().copyScheme(name, newName);
+		
+		// Add the new list item to the ListStore
+		gtk_list_store_append(_listStore, &iter);
+		gtk_list_store_set(_listStore, &iter, 0, newName.c_str(), -1);
+	}
+}
+
+// GTK Callback Routines
+
+void ColourSchemeEditor::callbackCopy(GtkWidget* widget, ColourSchemeEditor* self) {
+	self->copyScheme();
+}
+
+void ColourSchemeEditor::callbackDelete(GtkWidget* widget, ColourSchemeEditor* self) {
+	self->deleteScheme();
+}
+
+void ColourSchemeEditor::callbackColorChanged(GtkWidget* widget, ColourItem* colourItem) {
+	GdkColor color;
+	gtk_color_button_get_color(GTK_COLOR_BUTTON(widget), &color);
+	
+	// Update the colourItem class
+	colourItem->setColour(color.red, color.green, color.blue);
+}
+
+// This is called when the colourscheme selection is changed
+void ColourSchemeEditor::callbackSelChanged(GtkWidget* widget, ColourSchemeEditor* self) {
+	self->selectionChanged();
+}
+
+void ColourSchemeEditor::callbackOK(GtkWidget* widget, ColourSchemeEditor* self) {
+	ColourSchemes().setActive(self->getSelectedScheme());
+	ColourSchemes().saveColourSchemes();
+	self->destroy();
+}
+
+void ColourSchemeEditor::callbackCancel(GtkWidget* widget, ColourSchemeEditor* self) {
+	// Restore all the colour settings from the XMLRegistry, changes get lost
+	ColourSchemes().restoreColourSchemes();
+	self->destroy();
+}
+
+void ColourSchemeEditor::destroy() {
+	gtk_main_quit();
+	if (GTK_IS_WIDGET(_editorWidget)) {
+		gtk_widget_hide(GTK_WIDGET(_editorWidget));
+		gtk_widget_destroy(GTK_WIDGET(_editorWidget));
+	}	
+	delete this;
+}
+
+} // namespace ui
+
