@@ -3,7 +3,7 @@
 
 #include <gtk/gtk.h>
 #include <string>
-#include "colourscheme/ColourScheme.h"
+#include "ColourScheme.h"
 
 namespace ui
 {
@@ -54,7 +54,7 @@ class ColourSchemeEditor
 		GtkWidget* 	constructWindow();
 		GtkWidget* 	constructButtons();
 		GtkWidget* 	constructTreeviewButtons();
-		GtkWidget* 	constructColourSelector(ColourItem& colour);
+		GtkWidget* 	constructColourSelector(ColourItem& colour, const std::string& name);
 		void 		updateColourSelectors();
 		
 		// Queries the user for a string and returns it

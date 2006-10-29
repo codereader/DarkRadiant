@@ -164,7 +164,12 @@ void ColourSchemeManager::copyScheme(const std::string& fromName, const std::str
 	}
 }
 
-Vector3 ColourSchemeManager::getColour(const std::string& colourName) {
+Vector3 ColourSchemeManager::getColourVector3(const std::string& colourName) {
+	// Cast the ColourItem object onto a Vector3
+	return _colourSchemes[_activeScheme].getColour(colourName);
+}
+
+ColourItem& ColourSchemeManager::getColour(const std::string& colourName) {
 	return _colourSchemes[_activeScheme].getColour(colourName);
 }
 

@@ -33,8 +33,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/einspector/EntityInspector.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "ui/common/ToolbarCreator.h"
-#include "ui/common/ColourSchemeEditor.h"
-#include "colourscheme/ColourSchemeManager.h"
+#include "ui/colourscheme/ColourSchemeManager.h"
+#include "ui/colourscheme/ColourSchemeEditor.h"
 #include "ui/menu/FiltersMenu.h"
 #include "ifilesystem.h"
 #include "iundo.h"
@@ -752,18 +752,13 @@ void ColorScheme_Original()
   g_camwindow_globals.color_cameraback = Vector3(0.25f, 0.25f, 0.25f);
   CamWnd_Update(*g_pParentWnd->GetCamWnd());
 
-  g_xywindow_globals.color_gridback = Vector3(1.0f, 1.0f, 1.0f);
-  g_xywindow_globals.color_gridminor = Vector3(0.75f, 0.75f, 0.75f);
-  g_xywindow_globals.color_gridmajor = Vector3(0.5f, 0.5f, 0.5f);
   g_xywindow_globals.color_gridminor_alt = Vector3(0.5f, 0.0f, 0.0f);
   g_xywindow_globals.color_gridmajor_alt = Vector3(1.0f, 0.0f, 0.0f);
   g_xywindow_globals.color_gridblock = Vector3(0.0f, 0.0f, 1.0f);
-  g_xywindow_globals.color_gridtext = Vector3(0.0f, 0.0f, 0.0f);
   g_xywindow_globals.color_selbrushes = Vector3(1.0f, 0.0f, 0.0f);
   g_xywindow_globals.color_clipper = Vector3(0.0f, 0.0f, 1.0f);
   g_xywindow_globals.color_brushes = Vector3(0.0f, 0.0f, 0.0f);
   SetWorldspawnColour(g_xywindow_globals.color_brushes);
-  g_xywindow_globals.color_viewname = Vector3(0.5f, 0.0f, 0.75f);
   XY_UpdateAllWindows();
 }
 
@@ -775,16 +770,11 @@ void ColorScheme_QER()
   g_camwindow_globals.color_selbrushes3d = Vector3(1.0f, 0.0f, 0.0f);
   CamWnd_Update(*g_pParentWnd->GetCamWnd());
 
-  g_xywindow_globals.color_gridback = Vector3(1.0f, 1.0f, 1.0f);
-  g_xywindow_globals.color_gridminor = Vector3(1.0f, 1.0f, 1.0f);
-  g_xywindow_globals.color_gridmajor = Vector3(0.5f, 0.5f, 0.5f);
   g_xywindow_globals.color_gridblock = Vector3(0.0f, 0.0f, 1.0f);
-  g_xywindow_globals.color_gridtext = Vector3(0.0f, 0.0f, 0.0f);
   g_xywindow_globals.color_selbrushes = Vector3(1.0f, 0.0f, 0.0f);
   g_xywindow_globals.color_clipper = Vector3(0.0f, 0.0f, 1.0f);
   g_xywindow_globals.color_brushes = Vector3(0.0f, 0.0f, 0.0f);
   SetWorldspawnColour(g_xywindow_globals.color_brushes);
-  g_xywindow_globals.color_viewname = Vector3(0.5f, 0.0f, 0.75f);
   XY_UpdateAllWindows();
 }
 
@@ -796,16 +786,11 @@ void ColorScheme_Black()
   g_camwindow_globals.color_selbrushes3d = Vector3(1.0f, 0.0f, 0.0f);
   CamWnd_Update(*g_pParentWnd->GetCamWnd());
 
-  g_xywindow_globals.color_gridback = Vector3(0.0f, 0.0f, 0.0f);
-  g_xywindow_globals.color_gridminor = Vector3(0.2f, 0.2f, 0.2f);
-  g_xywindow_globals.color_gridmajor = Vector3(0.3f, 0.5f, 0.5f);
   g_xywindow_globals.color_gridblock = Vector3(0.0f, 0.0f, 1.0f);
-  g_xywindow_globals.color_gridtext = Vector3(1.0f, 1.0f, 1.0f);
   g_xywindow_globals.color_selbrushes = Vector3(1.0f, 0.0f, 0.0f);
   g_xywindow_globals.color_clipper = Vector3(0.0f, 0.0f, 1.0f);
   g_xywindow_globals.color_brushes = Vector3(1.0f, 1.0f, 1.0f);
   SetWorldspawnColour(g_xywindow_globals.color_brushes);
-  g_xywindow_globals.color_viewname = Vector3(0.7f, 0.7f, 0.0f);
   XY_UpdateAllWindows();
 }
 
@@ -818,16 +803,11 @@ void ColorScheme_Ydnar()
   g_camwindow_globals.color_selbrushes3d = Vector3(1.0f, 0.0f, 0.0f);
   CamWnd_Update(*g_pParentWnd->GetCamWnd());
 
-  g_xywindow_globals.color_gridback = Vector3(0.77f, 0.77f, 0.77f);
-  g_xywindow_globals.color_gridminor = Vector3(0.83f, 0.83f, 0.83f);
-  g_xywindow_globals.color_gridmajor = Vector3(0.89f, 0.89f, 0.89f);
   g_xywindow_globals.color_gridblock = Vector3(1.0f, 1.0f, 1.0f);
-  g_xywindow_globals.color_gridtext = Vector3(0.0f, 0.0f, 0.0f);
   g_xywindow_globals.color_selbrushes = Vector3(1.0f, 0.0f, 0.0f);
   g_xywindow_globals.color_clipper = Vector3(0.0f, 0.0f, 1.0f);
   g_xywindow_globals.color_brushes = Vector3(0.0f, 0.0f, 0.0f);
   SetWorldspawnColour(g_xywindow_globals.color_brushes);
-  g_xywindow_globals.color_viewname = Vector3(0.5f, 0.0f, 0.75f);
   XY_UpdateAllWindows();
 }
 
@@ -900,35 +880,25 @@ class ColoursMenu
 {
 public:
   ChooseColour m_textureback;
-  ChooseColour m_xyback;
-  ChooseColour m_gridmajor;
-  ChooseColour m_gridminor;
-  ChooseColour m_gridmajor_alt;
+ ChooseColour m_gridmajor_alt;
   ChooseColour m_gridminor_alt;
-  ChooseColour m_gridtext;
   ChooseColour m_gridblock;
   ChooseColour m_cameraback;
   ChooseColour m_brush;
   ChooseColour m_selectedbrush;
   ChooseColour m_selectedbrush3d;
   ChooseColour m_clipper;
-  ChooseColour m_viewname;
-
+  
   ColoursMenu() :
     m_textureback(TextureBrowserColourGetCaller(), TextureBrowserColourSetCaller()),
-    m_xyback(ColourGetCaller(g_xywindow_globals.color_gridback), ColourSetCaller(g_xywindow_globals.color_gridback)),
-    m_gridmajor(ColourGetCaller(g_xywindow_globals.color_gridmajor), ColourSetCaller(g_xywindow_globals.color_gridmajor)),
-    m_gridminor(ColourGetCaller(g_xywindow_globals.color_gridminor), ColourSetCaller(g_xywindow_globals.color_gridminor)),
     m_gridmajor_alt(ColourGetCaller(g_xywindow_globals.color_gridmajor_alt), ColourSetCaller(g_xywindow_globals.color_gridmajor_alt)),
     m_gridminor_alt(ColourGetCaller(g_xywindow_globals.color_gridminor_alt), ColourSetCaller(g_xywindow_globals.color_gridminor_alt)),
-    m_gridtext(ColourGetCaller(g_xywindow_globals.color_gridtext), ColourSetCaller(g_xywindow_globals.color_gridtext)),
     m_gridblock(ColourGetCaller(g_xywindow_globals.color_gridblock), ColourSetCaller(g_xywindow_globals.color_gridblock)),
     m_cameraback(ColourGetCaller(g_camwindow_globals.color_cameraback), ColourSetCaller(g_camwindow_globals.color_cameraback)),
     m_brush(ColourGetCaller(g_xywindow_globals.color_brushes), BrushColourSetCaller()),
     m_selectedbrush(ColourGetCaller(g_xywindow_globals.color_selbrushes), ColourSetCaller(g_xywindow_globals.color_selbrushes)),
     m_selectedbrush3d(ColourGetCaller(g_camwindow_globals.color_selbrushes3d), ColourSetCaller(g_camwindow_globals.color_selbrushes3d)),
-    m_clipper(ColourGetCaller(g_xywindow_globals.color_clipper), ClipperColourSetCaller()),
-    m_viewname(ColourGetCaller(g_xywindow_globals.color_viewname), ColourSetCaller(g_xywindow_globals.color_viewname))
+    m_clipper(ColourGetCaller(g_xywindow_globals.color_clipper), ClipperColourSetCaller())
   {
   }
 };
@@ -950,20 +920,15 @@ GtkMenuItem* create_colours_menu()
   menu_separator(menu_in_menu);
 
   create_menu_item_with_mnemonic(menu_in_menu, "_Texture Background...", "ChooseTextureBackgroundColor");
-  create_menu_item_with_mnemonic(menu_in_menu, "Grid Background...", "ChooseGridBackgroundColor");
-  create_menu_item_with_mnemonic(menu_in_menu, "Grid Major...", "ChooseGridMajorColor");
-  create_menu_item_with_mnemonic(menu_in_menu, "Grid Minor...", "ChooseGridMinorColor");
   create_menu_item_with_mnemonic(menu_in_menu, "Grid Major Small...", "ChooseSmallGridMajorColor");
   create_menu_item_with_mnemonic(menu_in_menu, "Grid Minor Small...", "ChooseSmallGridMinorColor");
-  create_menu_item_with_mnemonic(menu_in_menu, "Grid Text...", "ChooseGridTextColor");
   create_menu_item_with_mnemonic(menu_in_menu, "Grid Block...", "ChooseGridBlockColor");
   create_menu_item_with_mnemonic(menu_in_menu, "Default Brush...", "ChooseBrushColor");
   create_menu_item_with_mnemonic(menu_in_menu, "Camera Background...", "ChooseCameraBackgroundColor");  
   create_menu_item_with_mnemonic(menu_in_menu, "Selected Brush...", "ChooseSelectedBrushColor");
   create_menu_item_with_mnemonic(menu_in_menu, "Selected Brush (Camera)...", "ChooseCameraSelectedBrushColor");
   create_menu_item_with_mnemonic(menu_in_menu, "Clipper...", "ChooseClipperColor");
-  create_menu_item_with_mnemonic(menu_in_menu, "Active View name...", "ChooseOrthoViewNameColor");
-
+  
   return colours_menu_item;
 }
 
@@ -3355,20 +3320,15 @@ void MainFrame_Construct()
   GlobalCommands_insert("ColorSchemeBlackAndGreen", FreeCaller<ColorScheme_Black>());
   GlobalCommands_insert("ColorSchemeYdnar", FreeCaller<ColorScheme_Ydnar>());
   GlobalCommands_insert("ChooseTextureBackgroundColor", makeCallback(g_ColoursMenu.m_textureback));
-  GlobalCommands_insert("ChooseGridBackgroundColor", makeCallback(g_ColoursMenu.m_xyback));
-  GlobalCommands_insert("ChooseGridMajorColor", makeCallback(g_ColoursMenu.m_gridmajor));
-  GlobalCommands_insert("ChooseGridMinorColor", makeCallback(g_ColoursMenu.m_gridminor));
   GlobalCommands_insert("ChooseSmallGridMajorColor", makeCallback(g_ColoursMenu.m_gridmajor_alt));
   GlobalCommands_insert("ChooseSmallGridMinorColor", makeCallback(g_ColoursMenu.m_gridminor_alt));
-  GlobalCommands_insert("ChooseGridTextColor", makeCallback(g_ColoursMenu.m_gridtext));
   GlobalCommands_insert("ChooseGridBlockColor", makeCallback(g_ColoursMenu.m_gridblock));
   GlobalCommands_insert("ChooseBrushColor", makeCallback(g_ColoursMenu.m_brush));
   GlobalCommands_insert("ChooseCameraBackgroundColor", makeCallback(g_ColoursMenu.m_cameraback));
   GlobalCommands_insert("ChooseSelectedBrushColor", makeCallback(g_ColoursMenu.m_selectedbrush));
   GlobalCommands_insert("ChooseCameraSelectedBrushColor", makeCallback(g_ColoursMenu.m_selectedbrush3d));
   GlobalCommands_insert("ChooseClipperColor", makeCallback(g_ColoursMenu.m_clipper));
-  GlobalCommands_insert("ChooseOrthoViewNameColor", makeCallback(g_ColoursMenu.m_viewname));
-
+  
 
   GlobalCommands_insert("CSGSubtract", FreeCaller<CSG_Subtract>(), Accelerator('U', (GdkModifierType)GDK_SHIFT_MASK));
   GlobalCommands_insert("CSGMerge", FreeCaller<CSG_Merge>(), Accelerator('U', (GdkModifierType)GDK_CONTROL_MASK));

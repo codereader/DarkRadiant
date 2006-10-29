@@ -30,7 +30,8 @@ class ColourSchemeManager {
 		void setActive(const std::string& name);
 		
 		// Returns the requested colour from the currently active scheme
-		Vector3 getColour(const std::string& colourName);
+		Vector3 	getColourVector3(const std::string& colourName);
+		ColourItem&	getColour(const std::string& colourName);
 		
 		ColourScheme& getActiveScheme();
 		ColourScheme& getScheme(const std::string& name);
