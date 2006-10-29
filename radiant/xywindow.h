@@ -247,15 +247,10 @@ inline void XYWnd_Update(XYWnd& xywnd)
 
 struct xywindow_globals_t
 {
-  Vector3 color_gridback;
-  Vector3 color_gridminor;
-  Vector3 color_gridmajor;
   Vector3 color_gridblock;
-  Vector3 color_gridtext;
   Vector3 color_brushes;
   Vector3 color_selbrushes;
   Vector3 color_clipper;
-  Vector3 color_viewname;
   Vector3 color_gridminor_alt;
   Vector3 color_gridmajor_alt;
   Vector3 AxisColorX;
@@ -266,15 +261,10 @@ struct xywindow_globals_t
   bool m_bNoStipple;
 
   xywindow_globals_t() :
-    color_gridback(1.f, 1.f, 1.f),
-    color_gridminor(0.75f, 0.75f, 0.75f),
-    color_gridmajor(0.5f, 0.5f, 0.5f),
     color_gridblock(0.f, 0.f, 1.f),
-    color_gridtext(0.f, 0.f, 0.f),
     color_brushes(0.f, 0.f, 0.f),
     color_selbrushes(1.f, 0.f, 0.f),
     color_clipper(0.f, 0.f, 1.f),
-    color_viewname(0.5f, 0.f, 0.75f),
     color_gridminor_alt(0.f, 0.f, 0.f),
     color_gridmajor_alt(0.f, 0.f, 0.f),
 

@@ -1,5 +1,5 @@
 #include "ColourSchemeEditor.h"
-#include "colourscheme/ColourSchemeManager.h"
+#include "ColourSchemeManager.h"
 #include "plugin.h"
 #include "mainframe.h"
 
@@ -40,9 +40,6 @@ void ColourSchemeEditor::createTreeView() {
   	GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
   	gtk_tree_view_column_pack_start(col, renderer, TRUE);
   	gtk_tree_view_column_add_attribute(col, renderer, "text", 0);
- 
- 	// Load all the list items
-  	populateTree();
 }
 
 GtkWidget* ColourSchemeEditor::constructButtons() {
@@ -154,8 +151,17 @@ ColourSchemeEditor::ColourSchemeEditor()
 	// Get the constructed windowframe and pack it into the editor widget
 	gtk_container_add(GTK_CONTAINER(_editorWidget), constructWindow());
 	
-	// Connect the selection callback
+	// Load all the list items
+  	populateTree();
+  	
+  	// Connect the selection callback
 	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
+  	
+	// Highlight the currently selected scheme
+	selectActiveScheme();
+	updateColourSelectors();
+	
+	// Connect the signal AFTER selecting the active scheme	
 	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(callbackSelChanged), this);
 	
 	// Be sure that everything is properly destroyed upon window closure
@@ -163,8 +169,6 @@ ColourSchemeEditor::ColourSchemeEditor()
 	
 	// Show all the widgets and enter the loop
 	gtk_widget_show_all(_editorWidget);
-	
-	selectActiveScheme();
 }
 
 void ColourSchemeEditor::deleteSchemeFromList() {
@@ -200,9 +204,9 @@ std::string ColourSchemeEditor::getSelectedScheme() {
 	}
 }
 
-GtkWidget* ColourSchemeEditor::constructColourSelector(ColourItem& colour) {
+GtkWidget* ColourSchemeEditor::constructColourSelector(ColourItem& colour, const std::string& name) {
 	// Get the description of this colour item from the registry
-	std::string descriptionPath = std::string("user/ui/colourschemedescription/") + colour.getName();
+	std::string descriptionPath = std::string("user/ui/colourschemedescription/") + name;
 	std::string description = registry().get(descriptionPath);
 	
 	// Create a new horizontal divider
@@ -251,7 +255,7 @@ void ColourSchemeEditor::updateColourSelectors() {
 		 it != colourMap.end();
 		 it++, i++) 
 	{
-		GtkWidget* colourSelector = constructColourSelector(it->second);
+		GtkWidget* colourSelector = constructColourSelector(it->second, it->first);
 		gtk_box_pack_start(GTK_BOX(curVbox), colourSelector, FALSE, FALSE, 5);
 		
 		// Have we reached the maximum number of colours per column?
@@ -269,12 +273,20 @@ void ColourSchemeEditor::updateColourSelectors() {
 }
 
 void ColourSchemeEditor::selectionChanged() {
+	std::string activeScheme = getSelectedScheme();
+	
 	// Update the colour selectors to reflect the newly selected scheme
 	updateColourSelectors();
 	
 	// Check, if the currently selected scheme is read-only
-	ColourScheme& scheme = ColourSchemes().getScheme( getSelectedScheme() );
+	ColourScheme& scheme = ColourSchemes().getScheme(activeScheme);
 	gtk_widget_set_sensitive(_deleteButton, (!scheme.isReadOnly()));
+	
+	// Set the active Scheme, so that the views are updated accordingly
+	ColourSchemes().setActive(activeScheme);
+	
+	// Call the update, so all colours can be previewed
+	XY_UpdateAllWindows();
 }
 
 void ColourSchemeEditor::deleteScheme() {
@@ -355,6 +367,9 @@ void ColourSchemeEditor::callbackColorChanged(GtkWidget* widget, ColourItem* col
 	
 	// Update the colourItem class
 	colourItem->setColour(color.red, color.green, color.blue);
+	
+	// Call the update, so all colours can be previewed
+	XY_UpdateAllWindows();
 }
 
 // This is called when the colourscheme selection is changed

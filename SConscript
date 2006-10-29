@@ -18,14 +18,6 @@ xmlutilEnv.useXML2()
 xmlutilSource = 'Document.cpp Node.cpp XMLRegistry.cpp'
 xmlutil = xmlutilEnv.StaticLibrary(target='libs/xmlutil', source=build_list('libs/xmlutil', xmlutilSource))
 
-colourschemeEnv = g_env.Copy()
-colourschemeEnv.useXML2()
-colourschemeEnv.useGlib2()
-colourschemeEnv.useGtk2()
-colourschemeSrc = 'ColourScheme.cpp ColourSchemeManager.cpp'
-colourschemeEnv.Append(LIBS = ['xmlutil'])
-colourscheme = colourschemeEnv.StaticLibrary(target='libs/colourscheme', source=build_list('libs/colourscheme', colourschemeSrc))
-
 exceptionLibSource = 'RadiantException.cpp ModuleSystemException.cpp'
 exceptionLib = g_env.StaticLibrary(target='libs/exception', source=build_list('libs/exception', exceptionLibSource))
 
@@ -311,13 +303,15 @@ radiant_src = [
 'ui/mediabrowser/MediaBrowser.cpp',
 'ui/menu/FiltersMenu.cpp',
 'filters/XMLFilter.cpp',
-'ui/common/ColourSchemeEditor.cpp'
+'ui/colourscheme/ColourScheme.cpp',
+'ui/colourscheme/ColourSchemeManager.cpp',
+'ui/colourscheme/ColourSchemeEditor.cpp',
 ]
 
 for i in range(len(radiant_src)):
   radiant_src[i] = 'radiant/' + radiant_src[i]
 
-radiant_env.Prepend(LIBS = ['mathlib', 'math', 'cmdlib', 'profile', 'gtkutil', 'exception', 'xmlutil', 'colourscheme'])
+radiant_env.Prepend(LIBS = ['mathlib', 'math', 'cmdlib', 'profile', 'gtkutil', 'exception', 'xmlutil'])
 radiant_env.Prepend(LIBPATH = ['libs'])
 
 # Win32 libs
@@ -333,7 +327,6 @@ radiant_env.Depends(radiant_prog, profile_lib)
 radiant_env.Depends(radiant_prog, gtkutil_lib)
 radiant_env.Depends(radiant_prog, exceptionLib)
 radiant_env.Depends(radiant_prog, xmlutil)
-radiant_env.Depends(radiant_prog, colourscheme)
 radiant_env.Depends(radiant_prog, math)
 radiant_env.Install(INSTALL, radiant_prog)
 

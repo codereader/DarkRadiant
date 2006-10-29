@@ -170,7 +170,7 @@ xmlNodePtr XMLRegistry::createKey(const std::string& key) {
 			else {
 				// Node not found, insert it and store the newly created node as new insertPoint
 				createdNode = xmlNewChild(insertPoint, NULL, xmlCharStrdup(parts[i].c_str()), xmlCharStrdup(""));
-				addWhiteSpace(createdNode);
+				//addWhiteSpace(createdNode);
 				insertPoint = createdNode;
 			}
 		}

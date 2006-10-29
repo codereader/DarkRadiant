@@ -17,9 +17,6 @@ namespace ui {
 class ColourItem {
 	
 	private:
-		// The name of this colouritem
-		std::string	_name;
-		
 		// The internal representations of this colour
 		Vector3	_colour;
 		GdkColor _gdkColor;
@@ -33,10 +30,6 @@ class ColourItem {
 		operator GdkColor* ();
 		operator std::string ();
 		bool operator== (const ColourItem& other) const;
-		
-		std::string getName() const {
-			return _name;
-		}
 		
 		Vector3 getColour() const {
 			return _colour;

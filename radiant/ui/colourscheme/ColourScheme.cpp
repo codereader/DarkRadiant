@@ -15,8 +15,7 @@ namespace ui {
  *  Builds a new ColourItem object out of the information found in the colourNode XML node
  */
 ColourItem::ColourItem(xml::Node& colourNode) {
-	// Store the name attribute and parse the "value" attribute for the vector
-	_name = colourNode.getAttributeValue("name");
+	// Parse the "value" attribute for the vector
 	std::string value = colourNode.getAttributeValue("value");
 	if (string_parse_vector3( value.c_str(), _colour)) {
 		//globalOutputStream() << "ColourItem " << _name.c_str() << " with value " << _colour << " found.\n";
@@ -25,15 +24,13 @@ ColourItem::ColourItem(xml::Node& colourNode) {
 		_gdkColor.blue 	= (unsigned int) (FULL_INTENSITY*_colour[2]);
 	}
 	else {
-		globalOutputStream() << "ColourSchemeManager: Invalid colour data found in ColourItem ";
-		globalOutputStream() << _name.c_str() << ": " << value.c_str() << "\n";
+		globalOutputStream() << "ColourSchemeManager: Invalid colour data found in ColourItem: " << value.c_str() << "\n";
 		string_parse_vector3( "0 0 0", _colour);
 	}
 }
 
 // Constructor without arguments
 ColourItem::ColourItem():
-  _name(""), 
   _colour("0 0 0") 
 {
 	_gdkColor.red 	= 0;
@@ -62,16 +59,7 @@ ColourItem::operator GdkColor* () {
 /*	Casting operator, e.g. for saving the colour into the registry 
  */
 ColourItem::operator std::string () {
-	std::ostringstream os;
-	
-	// Convert to floats into a string via the stringstream
-	os << _colour[0];
-   	os << " ";
-   	os << _colour[1];
-   	os << " ";
-   	os << _colour[2];
-	
-	return os.str();
+	return std::string(_colour);
 }
 
 /*	Updates the colour information contained in this class including the GdkColor item
