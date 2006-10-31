@@ -56,7 +56,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "xywindow.h"
 #include "windowobservers.h"
 #include "renderstate.h"
-
+#include "plugin.h"
 #include "timer.h"
 
 Signal0 g_cameraMoved_callbacks;
@@ -1514,7 +1514,7 @@ void CamWnd::Cam_Draw()
   Vector3 clearColour(0, 0, 0);
   if(m_Camera.draw_mode != cd_lighting)
   {
-    clearColour = g_camwindow_globals.color_cameraback;
+    clearColour = ColourSchemes().getColourVector3("camera_background");
   }
 
   glClearColor(clearColour[0], clearColour[1], clearColour[2], 0);
@@ -1769,11 +1769,6 @@ void Camera_ToggleFarClip()
 }
 
 
-/*void CamWnd_constructToolbar(GtkToolbar* toolbar)
-{
-  toolbar_append_toggle_button(toolbar, "Cubic clip the camera view", "view_cubicclipping.bmp", "ToggleCubicClip");
-}*/
-
 void CamWnd_registerShortcuts()
 {
   toggle_add_accelerator("ToggleCubicClip");
@@ -2015,8 +2010,6 @@ void CamWnd_Construct()
   GlobalPreferenceSystem().registerPreference("CamDiscrete", makeBoolStringImportCallback(CamWndMoveDiscreteImportCaller()), BoolExportStringCaller(g_camwindow_globals_private.m_bCamDiscrete));
   GlobalPreferenceSystem().registerPreference("CubicClipping", BoolImportStringCaller(g_camwindow_globals_private.m_bCubicClipping), BoolExportStringCaller(g_camwindow_globals_private.m_bCubicClipping));
   GlobalPreferenceSystem().registerPreference("CubicScale", IntImportStringCaller(g_camwindow_globals.m_nCubicScale), IntExportStringCaller(g_camwindow_globals.m_nCubicScale));
-  GlobalPreferenceSystem().registerPreference("SI_Colors4", Vector3ImportStringCaller(g_camwindow_globals.color_cameraback), Vector3ExportStringCaller(g_camwindow_globals.color_cameraback));
-  GlobalPreferenceSystem().registerPreference("SI_Colors12", Vector3ImportStringCaller(g_camwindow_globals.color_selbrushes3d), Vector3ExportStringCaller(g_camwindow_globals.color_selbrushes3d));
   GlobalPreferenceSystem().registerPreference("CameraRenderMode", makeIntStringImportCallback(RenderModeImportCaller()), makeIntStringExportCallback(RenderModeExportCaller()));
 
   CamWnd_constructStatic();

@@ -61,10 +61,9 @@ extern GtkWidget* g_page_textures;
 void TextureBrowser_exportTitle(const StringImportCallback& importer);
 typedef FreeCaller1<const StringImportCallback&, TextureBrowser_exportTitle> TextureBrowserExportTitleCaller;
 
-const Vector3& TextureBrowser_getBackgroundColour(TextureBrowser& textureBrowser);
-void TextureBrowser_setBackgroundColour(TextureBrowser& textureBrowser, const Vector3& colour);
-
 void TextureBrowser_addActiveShadersChangedCallback(const SignalHandler& handler);
 void TextureBrowser_addShadersRealiseCallback(const SignalHandler& handler);
+
+void TextureBrowser_queueDraw(TextureBrowser& textureBrowser);
 
 #endif

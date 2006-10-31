@@ -108,7 +108,7 @@ public:
   }
 };
 
-void TextureBrowser_queueDraw(TextureBrowser& textureBrower);
+void TextureBrowser_queueDraw(TextureBrowser& textureBrowser);
 
 bool string_equal_start(const char* string, StringRange start)
 {
@@ -222,7 +222,6 @@ public:
   DeferredAdjustment m_scrollAdjustment;
   FreezePointer m_freezePointer;
 
-  Vector3 color_textureback;
   // the increment step we use against the wheel mouse
   std::size_t m_mouseWheelScrollIncrement;
   std::size_t m_textureScale;
@@ -305,7 +304,6 @@ public:
     m_heightChanged(true),
     m_originInvalid(true),
     m_scrollAdjustment(TextureBrowser_scrollChanged, this),
-    color_textureback(0.25f, 0.25f, 0.25f),
     m_mouseWheelScrollIncrement(64),
     m_textureScale(50),
     m_showTextureFilter(false),
@@ -959,10 +957,8 @@ void Texture_Draw(TextureBrowser& textureBrowser)
 {
   int originy = TextureBrowser_getOriginY(textureBrowser);
 
-  glClearColor(textureBrowser.color_textureback[0],
-    textureBrowser.color_textureback[1],
-    textureBrowser.color_textureback[2],
-    0);
+  Vector3 colorBackground = ColourSchemes().getColourVector3("texture_background");
+  glClearColor(colorBackground[0], colorBackground[1], colorBackground[2], 0);
   glViewport(0, 0, textureBrowser.width, textureBrowser.height);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -1390,18 +1386,6 @@ void TextureBrowser_destroyWindow()
   gtk_widget_unref(g_TextureBrowser.m_gl_widget);
 }
 
-const Vector3& TextureBrowser_getBackgroundColour(TextureBrowser& textureBrowser)
-{
-  return textureBrowser.color_textureback;
-}
-
-void TextureBrowser_setBackgroundColour(TextureBrowser& textureBrowser, const Vector3& colour)
-{
-  textureBrowser.color_textureback = colour;
-  TextureBrowser_queueDraw(textureBrowser);
-}
-
-
 void TextureBrowser_ToggleShowShaders() 
 {
   g_TextureBrowser.m_showShaders ^= 1;
@@ -1583,8 +1567,7 @@ void TextureBrowser_Construct()
   GlobalPreferenceSystem().registerPreference("ShowShaderlistOnly", BoolImportStringCaller(g_TexturesMenu_shaderlistOnly), BoolExportStringCaller(g_TexturesMenu_shaderlistOnly));
   GlobalPreferenceSystem().registerPreference("LoadShaders", IntImportStringCaller(reinterpret_cast<int&>(GlobalTextureBrowser().m_startupShaders)), IntExportStringCaller(reinterpret_cast<int&>(GlobalTextureBrowser().m_startupShaders)));
   GlobalPreferenceSystem().registerPreference("WheelMouseInc", SizeImportStringCaller(GlobalTextureBrowser().m_mouseWheelScrollIncrement), SizeExportStringCaller(GlobalTextureBrowser().m_mouseWheelScrollIncrement));
-  GlobalPreferenceSystem().registerPreference("SI_Colors0", Vector3ImportStringCaller(GlobalTextureBrowser().color_textureback), Vector3ExportStringCaller(GlobalTextureBrowser().color_textureback));
-
+  
   g_TextureBrowser.shader = texdef_name_default();
 
   Textures_setModeChangedNotify(ReferenceCaller<TextureBrowser, TextureBrowser_queueDraw>(g_TextureBrowser));

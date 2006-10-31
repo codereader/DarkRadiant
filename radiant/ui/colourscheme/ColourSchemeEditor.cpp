@@ -2,6 +2,8 @@
 #include "ColourSchemeManager.h"
 #include "plugin.h"
 #include "mainframe.h"
+#include "brushmodule.h"
+#include "iscenegraph.h"
 
 namespace ui {
 
@@ -272,6 +274,14 @@ void ColourSchemeEditor::updateColourSelectors() {
 	gtk_widget_show_all(_colourBox);	
 }
 
+void ColourSchemeEditor::updateWindows() {
+	// Call the update, so all colours can be previewed
+	XY_UpdateAllWindows();
+	GlobalCamera_UpdateWindow();
+	Brush_clipperColourChanged();
+	SceneChangeNotify();
+}
+
 void ColourSchemeEditor::selectionChanged() {
 	std::string activeScheme = getSelectedScheme();
 	
@@ -285,8 +295,7 @@ void ColourSchemeEditor::selectionChanged() {
 	// Set the active Scheme, so that the views are updated accordingly
 	ColourSchemes().setActive(activeScheme);
 	
-	// Call the update, so all colours can be previewed
-	XY_UpdateAllWindows();
+	updateWindows();
 }
 
 void ColourSchemeEditor::deleteScheme() {
@@ -369,7 +378,7 @@ void ColourSchemeEditor::callbackColorChanged(GtkWidget* widget, ColourItem* col
 	colourItem->setColour(color.red, color.green, color.blue);
 	
 	// Call the update, so all colours can be previewed
-	XY_UpdateAllWindows();
+	updateWindows();
 }
 
 // This is called when the colourscheme selection is changed

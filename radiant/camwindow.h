@@ -68,14 +68,9 @@ void Camera_setAngles(CamWnd& camwnd, const Vector3& angles);
 
 struct camwindow_globals_t
 {
-  Vector3 color_cameraback;
-  Vector3 color_selbrushes3d;
-
   int m_nCubicScale;
 
   camwindow_globals_t() :
-    color_cameraback(0.25f, 0.25f, 0.25f),
-    color_selbrushes3d(1.0f, 0.f, 0.f),
     m_nCubicScale(13)
   {
   }

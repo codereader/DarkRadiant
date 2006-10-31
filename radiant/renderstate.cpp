@@ -51,7 +51,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stream/stringstream.h"
 #include "os/file.h"
 #include "preferences.h"
-
+#include "plugin.h"
 #include "xywindow.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
@@ -2441,9 +2441,10 @@ void OpenGLShader::construct(const char* name)
     }
     else if(string_equal(name+1, "XY_OVERLAY"))
     {
-      state.m_colour[0] = g_xywindow_globals.color_selbrushes[0];
-      state.m_colour[1] = g_xywindow_globals.color_selbrushes[1];
-      state.m_colour[2] = g_xywindow_globals.color_selbrushes[2];
+      Vector3 colorSelBrushes = ColourSchemes().getColourVector3("selected_brush");
+      state.m_colour[0] = colorSelBrushes[0];
+      state.m_colour[1] = colorSelBrushes[1];
+      state.m_colour[2] = colorSelBrushes[2];
       state.m_colour[3] = 1;
       state.m_state = RENDER_COLOURWRITE | RENDER_LINESTIPPLE;
       state.m_sort = OpenGLState::eSortOverlayFirst;
@@ -2516,9 +2517,10 @@ void OpenGLShader::construct(const char* name)
     }
     else if(string_equal(name+1, "CLIPPER_OVERLAY"))
     {
-      state.m_colour[0] = g_xywindow_globals.color_clipper[0];
-      state.m_colour[1] = g_xywindow_globals.color_clipper[1];
-      state.m_colour[2] = g_xywindow_globals.color_clipper[2];
+      Vector3 colorClipper = ColourSchemes().getColourVector3("clipper");
+      state.m_colour[0] = colorClipper[0];
+      state.m_colour[1] = colorClipper[1];
+      state.m_colour[2] = colorClipper[2];
       state.m_colour[3] = 1;
       state.m_state = RENDER_CULLFACE | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_FILL | RENDER_POLYGONSTIPPLE;
       state.m_sort = OpenGLState::eSortOverlayFirst;
