@@ -48,6 +48,9 @@ class ColourSchemeManager {
 		
 		// Reverts all changes to the current objects and re-load them from the registry
 		void restoreColourSchemes();
+		
+		// Dumps the current content of the ColourSchemeMap
+		void dump();
 };
 
 } // namespace ui
