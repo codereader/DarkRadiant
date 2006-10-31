@@ -135,6 +135,10 @@ void ColourSchemeEditor::selectActiveScheme() {
 			
 			if (ColourSchemes().isActive(name)) {
 				gtk_tree_selection_select_iter(_selection, &iter);
+				
+				// Set the button sensitivity correctly for read-only schemes
+				gtk_widget_set_sensitive(_deleteButton, (!ColourSchemes().getScheme(name).isReadOnly()));
+				
 				return;
 			}
 		} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(_listStore), &iter));
@@ -353,10 +357,14 @@ void ColourSchemeEditor::copyScheme() {
 	if (newName != "") {
 		// Copy the scheme
 		ColourSchemes().copyScheme(name, newName);
+		ColourSchemes().setActive(newName);
 		
 		// Add the new list item to the ListStore
 		gtk_list_store_append(_listStore, &iter);
 		gtk_list_store_set(_listStore, &iter, 0, newName.c_str(), -1);
+		
+		// Highlight the copied scheme
+		selectActiveScheme();
 	}
 }
 
@@ -400,6 +408,9 @@ void ColourSchemeEditor::callbackOK(GtkWidget* widget, ColourSchemeEditor* self)
 void ColourSchemeEditor::callbackCancel(GtkWidget* widget, ColourSchemeEditor* self) {
 	// Restore all the colour settings from the XMLRegistry, changes get lost
 	ColourSchemes().restoreColourSchemes();
+	
+	// Call the update, so all restored colours are displayed
+	updateWindows();
 	
 	if (GTK_IS_WIDGET(self->_editorWidget)) {
 		gtk_widget_hide(GTK_WIDGET(self->_editorWidget));
