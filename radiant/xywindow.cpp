@@ -122,7 +122,7 @@ void ClipPoint::Draw(const char *label, float scale)
 {
   // draw point
   glPointSize (4);
-  glColor3fv(vector3_to_array(g_xywindow_globals.color_clipper));
+  glColor3fv(vector3_to_array(ColourSchemes().getColourVector3("clipper")));
   glBegin (GL_POINTS);
   glVertex3fv(vector3_to_array(m_ptClip));
   glEnd();
@@ -1708,8 +1708,7 @@ void XYWnd::XY_DrawGrid()
   // draw coordinate text if needed
   if ( g_xywindow_globals_private.show_coordinates)
   {
-  	ui::ColourItem colourGridText = ColourSchemes().getColour("grid_text");
-    glColor3fv(vector3_to_array(colourGridText.getColour()));
+  	glColor3fv(vector3_to_array(ColourSchemes().getColourVector3("grid_text")));
 		float offx = m_vOrigin[nDim2] + h - 6 / m_fScale, offy = m_vOrigin[nDim1] - w + 1 / m_fScale;
 		for (x = xb - fmod(xb, stepx); x <= xe ; x += stepx)
 		{
@@ -1849,7 +1848,7 @@ void XYWnd::XY_DrawBlockGrid()
 
   // draw major blocks
 
-  glColor3fv(vector3_to_array(g_xywindow_globals.color_gridblock));
+  glColor3fv(vector3_to_array(ColourSchemes().getColourVector3("grid_block")));
   glLineWidth (2);
 
   glBegin (GL_LINES);
@@ -1957,9 +1956,9 @@ void XYWnd::PaintSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vM
 
   Vector3 vSize(vector3_subtracted(vMaxBounds, vMinBounds));
 
-  glColor3f(g_xywindow_globals.color_selbrushes[0] * .65f, 
-	     g_xywindow_globals.color_selbrushes[1] * .65f,
-	     g_xywindow_globals.color_selbrushes[2] * .65f);
+  Vector3 colourSelectedBrush = ColourSchemes().getColourVector3("selected_brush");
+
+  glColor3f(colourSelectedBrush[0] * .65f, colourSelectedBrush[1] * .65f, colourSelectedBrush[2] * .65f);
 
   StringOutputStream dimensions(16);
 
@@ -2829,13 +2828,7 @@ void XYWindow_Construct()
   GlobalPreferenceSystem().registerPreference("SI_AxisColors0", Vector3ImportStringCaller(g_xywindow_globals.AxisColorX), Vector3ExportStringCaller(g_xywindow_globals.AxisColorX));
   GlobalPreferenceSystem().registerPreference("SI_AxisColors1", Vector3ImportStringCaller(g_xywindow_globals.AxisColorY), Vector3ExportStringCaller(g_xywindow_globals.AxisColorY));
   GlobalPreferenceSystem().registerPreference("SI_AxisColors2", Vector3ImportStringCaller(g_xywindow_globals.AxisColorZ), Vector3ExportStringCaller(g_xywindow_globals.AxisColorZ));
-  GlobalPreferenceSystem().registerPreference("SI_Colors6", Vector3ImportStringCaller(g_xywindow_globals.color_gridblock), Vector3ExportStringCaller(g_xywindow_globals.color_gridblock));
-  GlobalPreferenceSystem().registerPreference("SI_Colors8", Vector3ImportStringCaller(g_xywindow_globals.color_brushes), Vector3ExportStringCaller(g_xywindow_globals.color_brushes));
-  GlobalPreferenceSystem().registerPreference("SI_Colors9", Vector3ImportStringCaller(g_xywindow_globals.color_selbrushes), Vector3ExportStringCaller(g_xywindow_globals.color_selbrushes));
-  GlobalPreferenceSystem().registerPreference("SI_Colors10", Vector3ImportStringCaller(g_xywindow_globals.color_clipper), Vector3ExportStringCaller(g_xywindow_globals.color_clipper));
-  GlobalPreferenceSystem().registerPreference("SI_Colors13", Vector3ImportStringCaller(g_xywindow_globals.color_gridminor_alt), Vector3ExportStringCaller(g_xywindow_globals.color_gridminor_alt));
-  GlobalPreferenceSystem().registerPreference("SI_Colors14", Vector3ImportStringCaller(g_xywindow_globals.color_gridmajor_alt), Vector3ExportStringCaller(g_xywindow_globals.color_gridmajor_alt));
-
+    
 
   GlobalPreferenceSystem().registerPreference("XZVIS", makeBoolStringImportCallback(ToggleShownImportBoolCaller(g_xz_front_shown)), makeBoolStringExportCallback(ToggleShownExportBoolCaller(g_xz_front_shown)));
   GlobalPreferenceSystem().registerPreference("YZVIS", makeBoolStringImportCallback(ToggleShownImportBoolCaller(g_yz_side_shown)), makeBoolStringExportCallback(ToggleShownExportBoolCaller(g_yz_side_shown)));

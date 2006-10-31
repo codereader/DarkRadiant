@@ -64,7 +64,7 @@ class ColourSchemeEditor
 		// Puts the cursor on the currently active scheme
 		void 		selectActiveScheme();
 		
-		// Updates the window after a selection change
+		// Updates the colour selectors after a selection change
 		void 		selectionChanged();
 		
 		// Returns the name of the currently selected scheme
@@ -84,6 +84,9 @@ class ColourSchemeEditor
 		static void callbackColorChanged(GtkWidget* widget, ColourItem* colour);
 		static void callbackDelete(GtkWidget* widget, ColourSchemeEditor* self);
 		static void callbackCopy(GtkWidget* widget, ColourSchemeEditor* self);
+		
+		// Updates the windows after a colour change
+		static void updateWindows();
 		
 }; // class ColourSchemeEditor
 

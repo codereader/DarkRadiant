@@ -569,7 +569,7 @@ public:
   {
     if(--m_unrealised == 0)
     {
-      SetWorldspawnColour(g_xywindow_globals.color_brushes);
+      SetWorldspawnColour(ColourSchemes().getColourVector3("default_brush"));
     }
   }
   void unrealise()
@@ -600,6 +600,19 @@ void Radiant_Initialise()
 {
   GlobalModuleServer_Initialise();
   
+  // Load default values for darkradiant, located in the game directory
+  registry().importFromFile(std::string(AppPath_get()) + "user.xml");
+  
+  // Load user preferences, these overwrite any values that have defined before
+  // This is stored in the user's folder
+  const std::string userSettingsFile = std::string(SettingsPath_get()) + "user.xml";
+  if (file_exists(userSettingsFile.c_str())) {
+  	registry().importFromFile(userSettingsFile);
+  }
+  
+  // Load the ColourSchemes from the registry
+  ColourSchemes().loadColourSchemes();
+  
  	// Load the Radiant modules from the modules/ dir.
   Radiant_loadModulesFromRoot(AppPath_get());
 
@@ -616,18 +629,6 @@ void Radiant_Initialise()
   g_gameToolsPathObservers.realise();
   g_gameModeObservers.realise();
   g_gameNameObservers.realise();
-  
-  // Load default values for darkradiant, located in the game directory
-  registry().importFromFile(std::string(AppPath_get()) + "user.xml");
-  
-  // Load user preferences, these overwrite any values that have defined before
-  // This is stored in the user's folder
-  const std::string userSettingsFile = std::string(SettingsPath_get()) + "user.xml";
-  if (file_exists(userSettingsFile.c_str())) {
-  	registry().importFromFile(userSettingsFile);
-  }
-  
-  ColourSchemes().loadColourSchemes();
 }
 
 void Radiant_Shutdown()
@@ -743,195 +744,9 @@ void PasteToCamera()
   GlobalSelectionSystem().translateSelected(delta);
 }
 
-
-void ColorScheme_Original()
-{
-  TextureBrowser_setBackgroundColour(GlobalTextureBrowser(), Vector3(0.25f, 0.25f, 0.25f));
-
-  g_camwindow_globals.color_selbrushes3d = Vector3(1.0f, 0.0f, 0.0f);
-  g_camwindow_globals.color_cameraback = Vector3(0.25f, 0.25f, 0.25f);
-  CamWnd_Update(*g_pParentWnd->GetCamWnd());
-
-  g_xywindow_globals.color_gridminor_alt = Vector3(0.5f, 0.0f, 0.0f);
-  g_xywindow_globals.color_gridmajor_alt = Vector3(1.0f, 0.0f, 0.0f);
-  g_xywindow_globals.color_gridblock = Vector3(0.0f, 0.0f, 1.0f);
-  g_xywindow_globals.color_selbrushes = Vector3(1.0f, 0.0f, 0.0f);
-  g_xywindow_globals.color_clipper = Vector3(0.0f, 0.0f, 1.0f);
-  g_xywindow_globals.color_brushes = Vector3(0.0f, 0.0f, 0.0f);
-  SetWorldspawnColour(g_xywindow_globals.color_brushes);
-  XY_UpdateAllWindows();
+void updateTextureBrowser() {
+	TextureBrowser_queueDraw(GlobalTextureBrowser());
 }
-
-void ColorScheme_QER()
-{
-  TextureBrowser_setBackgroundColour(GlobalTextureBrowser(), Vector3(0.25f, 0.25f, 0.25f));
-
-  g_camwindow_globals.color_cameraback = Vector3(0.25f, 0.25f, 0.25f);
-  g_camwindow_globals.color_selbrushes3d = Vector3(1.0f, 0.0f, 0.0f);
-  CamWnd_Update(*g_pParentWnd->GetCamWnd());
-
-  g_xywindow_globals.color_gridblock = Vector3(0.0f, 0.0f, 1.0f);
-  g_xywindow_globals.color_selbrushes = Vector3(1.0f, 0.0f, 0.0f);
-  g_xywindow_globals.color_clipper = Vector3(0.0f, 0.0f, 1.0f);
-  g_xywindow_globals.color_brushes = Vector3(0.0f, 0.0f, 0.0f);
-  SetWorldspawnColour(g_xywindow_globals.color_brushes);
-  XY_UpdateAllWindows();
-}
-
-void ColorScheme_Black()
-{
-  TextureBrowser_setBackgroundColour(GlobalTextureBrowser(), Vector3(0.25f, 0.25f, 0.25f));
-
-  g_camwindow_globals.color_cameraback = Vector3(0.25f, 0.25f, 0.25f);
-  g_camwindow_globals.color_selbrushes3d = Vector3(1.0f, 0.0f, 0.0f);
-  CamWnd_Update(*g_pParentWnd->GetCamWnd());
-
-  g_xywindow_globals.color_gridblock = Vector3(0.0f, 0.0f, 1.0f);
-  g_xywindow_globals.color_selbrushes = Vector3(1.0f, 0.0f, 0.0f);
-  g_xywindow_globals.color_clipper = Vector3(0.0f, 0.0f, 1.0f);
-  g_xywindow_globals.color_brushes = Vector3(1.0f, 1.0f, 1.0f);
-  SetWorldspawnColour(g_xywindow_globals.color_brushes);
-  XY_UpdateAllWindows();
-}
-
-/* ydnar: to emulate maya/max/lightwave color schemes */
-void ColorScheme_Ydnar()
-{
-  TextureBrowser_setBackgroundColour(GlobalTextureBrowser(), Vector3(0.25f, 0.25f, 0.25f));
-
-  g_camwindow_globals.color_cameraback = Vector3(0.25f, 0.25f, 0.25f);
-  g_camwindow_globals.color_selbrushes3d = Vector3(1.0f, 0.0f, 0.0f);
-  CamWnd_Update(*g_pParentWnd->GetCamWnd());
-
-  g_xywindow_globals.color_gridblock = Vector3(1.0f, 1.0f, 1.0f);
-  g_xywindow_globals.color_selbrushes = Vector3(1.0f, 0.0f, 0.0f);
-  g_xywindow_globals.color_clipper = Vector3(0.0f, 0.0f, 1.0f);
-  g_xywindow_globals.color_brushes = Vector3(0.0f, 0.0f, 0.0f);
-  SetWorldspawnColour(g_xywindow_globals.color_brushes);
-  XY_UpdateAllWindows();
-}
-
-typedef Callback1<Vector3&> GetColourCallback;
-typedef Callback1<const Vector3&> SetColourCallback;
-
-class ChooseColour
-{
-  GetColourCallback m_get;
-  SetColourCallback m_set;
-public:
-  ChooseColour(const GetColourCallback& get, const SetColourCallback& set)
-    : m_get(get), m_set(set)
-  {
-  }
-  void operator()()
-  {
-    Vector3 colour;
-    m_get(colour);
-    color_dialog(GTK_WIDGET(MainFrame_getWindow()), colour);
-    m_set(colour);
-  }
-};
-
-
-
-void Colour_get(const Vector3& colour, Vector3& other)
-{
-  other = colour;
-}
-typedef ConstReferenceCaller1<Vector3, Vector3&, Colour_get> ColourGetCaller;
-
-void Colour_set(Vector3& colour, const Vector3& other)
-{
-  colour = other;
-  SceneChangeNotify();
-}
-typedef ReferenceCaller1<Vector3, const Vector3&, Colour_set> ColourSetCaller;
-
-void BrushColour_set(const Vector3& other)
-{
-  g_xywindow_globals.color_brushes = other;
-  SetWorldspawnColour(g_xywindow_globals.color_brushes);
-  SceneChangeNotify();
-}
-typedef FreeCaller1<const Vector3&, BrushColour_set> BrushColourSetCaller;
-
-void ClipperColour_set(const Vector3& other)
-{
-  g_xywindow_globals.color_clipper = other;
-  Brush_clipperColourChanged();
-  SceneChangeNotify();
-}
-typedef FreeCaller1<const Vector3&, ClipperColour_set> ClipperColourSetCaller;
-
-void TextureBrowserColour_get(Vector3& other)
-{
-  other = TextureBrowser_getBackgroundColour(GlobalTextureBrowser());
-}
-typedef FreeCaller1<Vector3&, TextureBrowserColour_get> TextureBrowserColourGetCaller;
-
-void TextureBrowserColour_set(const Vector3& other)
-{
-  TextureBrowser_setBackgroundColour(GlobalTextureBrowser(), other);
-}
-typedef FreeCaller1<const Vector3&, TextureBrowserColour_set> TextureBrowserColourSetCaller;
-
-
-class ColoursMenu
-{
-public:
-  ChooseColour m_textureback;
- ChooseColour m_gridmajor_alt;
-  ChooseColour m_gridminor_alt;
-  ChooseColour m_gridblock;
-  ChooseColour m_cameraback;
-  ChooseColour m_brush;
-  ChooseColour m_selectedbrush;
-  ChooseColour m_selectedbrush3d;
-  ChooseColour m_clipper;
-  
-  ColoursMenu() :
-    m_textureback(TextureBrowserColourGetCaller(), TextureBrowserColourSetCaller()),
-    m_gridmajor_alt(ColourGetCaller(g_xywindow_globals.color_gridmajor_alt), ColourSetCaller(g_xywindow_globals.color_gridmajor_alt)),
-    m_gridminor_alt(ColourGetCaller(g_xywindow_globals.color_gridminor_alt), ColourSetCaller(g_xywindow_globals.color_gridminor_alt)),
-    m_gridblock(ColourGetCaller(g_xywindow_globals.color_gridblock), ColourSetCaller(g_xywindow_globals.color_gridblock)),
-    m_cameraback(ColourGetCaller(g_camwindow_globals.color_cameraback), ColourSetCaller(g_camwindow_globals.color_cameraback)),
-    m_brush(ColourGetCaller(g_xywindow_globals.color_brushes), BrushColourSetCaller()),
-    m_selectedbrush(ColourGetCaller(g_xywindow_globals.color_selbrushes), ColourSetCaller(g_xywindow_globals.color_selbrushes)),
-    m_selectedbrush3d(ColourGetCaller(g_camwindow_globals.color_selbrushes3d), ColourSetCaller(g_camwindow_globals.color_selbrushes3d)),
-    m_clipper(ColourGetCaller(g_xywindow_globals.color_clipper), ClipperColourSetCaller())
-  {
-  }
-};
-
-ColoursMenu g_ColoursMenu;
-
-GtkMenuItem* create_colours_menu()
-{
-  GtkMenuItem* colours_menu_item = new_sub_menu_item_with_mnemonic("Colors");
-  GtkMenu* menu_in_menu = GTK_MENU(gtk_menu_item_get_submenu(colours_menu_item));
-
-  GtkMenu* menu_3 = create_sub_menu_with_mnemonic(menu_in_menu, "Themes");
-
-  create_menu_item_with_mnemonic(menu_3, "QE4 Original", "ColorSchemeOriginal");
-  create_menu_item_with_mnemonic(menu_3, "Q3Radiant Original", "ColorSchemeQER");
-  create_menu_item_with_mnemonic(menu_3, "Black and Green", "ColorSchemeBlackAndGreen");
-  create_menu_item_with_mnemonic(menu_3, "Maya/Max/Lightwave Emulation", "ColorSchemeYdnar");
-
-  menu_separator(menu_in_menu);
-
-  create_menu_item_with_mnemonic(menu_in_menu, "_Texture Background...", "ChooseTextureBackgroundColor");
-  create_menu_item_with_mnemonic(menu_in_menu, "Grid Major Small...", "ChooseSmallGridMajorColor");
-  create_menu_item_with_mnemonic(menu_in_menu, "Grid Minor Small...", "ChooseSmallGridMinorColor");
-  create_menu_item_with_mnemonic(menu_in_menu, "Grid Block...", "ChooseGridBlockColor");
-  create_menu_item_with_mnemonic(menu_in_menu, "Default Brush...", "ChooseBrushColor");
-  create_menu_item_with_mnemonic(menu_in_menu, "Camera Background...", "ChooseCameraBackgroundColor");  
-  create_menu_item_with_mnemonic(menu_in_menu, "Selected Brush...", "ChooseSelectedBrushColor");
-  create_menu_item_with_mnemonic(menu_in_menu, "Selected Brush (Camera)...", "ChooseCameraSelectedBrushColor");
-  create_menu_item_with_mnemonic(menu_in_menu, "Clipper...", "ChooseClipperColor");
-  
-  return colours_menu_item;
-}
-
 
 void Restart()
 {
@@ -1894,6 +1709,9 @@ void XY_UpdateAllWindows()
   if(g_pParentWnd != 0)
   {
     XY_UpdateAllWindows(*g_pParentWnd);
+    
+    // Set the World Spawn Colour
+	SetWorldspawnColour(ColourSchemes().getColourVector3("default_brush"));
   }
 }
 
@@ -2108,7 +1926,9 @@ GtkMenuItem* create_view_menu(MainFrame::EViewStyle style)
     create_menu_item_with_mnemonic(menu_in_menu, "Set _Brush", "RegionSetBrush");
     create_menu_item_with_mnemonic(menu_in_menu, "Set Se_lected Brushes", "RegionSetSelection");
   }
-
+  menu_separator(menu);
+  create_menu_item_with_mnemonic(menu, "Colour Scheme Editor", "EditColourScheme");
+  
   if(style == MainFrame::eSplit || style == MainFrame::eFloating)
   {
     command_connect_accelerator("CenterXYViews");
@@ -2197,15 +2017,12 @@ GtkMenuItem* create_misc_menu()
 #if 0
   create_menu_item_with_mnemonic(menu, "_Benchmark", FreeCaller<GlobalCamera_Benchmark>());
 #endif
-  gtk_container_add(GTK_CONTAINER(menu), GTK_WIDGET(create_colours_menu()));
-
+  
   create_menu_item_with_mnemonic(menu, "Find brush...", "FindBrush");
   create_menu_item_with_mnemonic(menu, "Map Info...", "MapInfo");
   // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=394
 //  create_menu_item_with_mnemonic(menu, "_Print XY View", FreeCaller<WXY_Print>());
 
-  create_menu_item_with_mnemonic(menu, "Colour Scheme Editor", "EditColourScheme");
-  
   return misc_menu_item;
 }
 
@@ -3314,21 +3131,6 @@ void MainFrame_Construct()
   GlobalToggles_insert("MouseRotate", FreeCaller<RotateMode>(), ToggleItem::AddCallbackCaller(g_rotatemode_button), Accelerator('R'));
   GlobalToggles_insert("MouseScale", FreeCaller<ScaleMode>(), ToggleItem::AddCallbackCaller(g_scalemode_button));
   GlobalToggles_insert("MouseDrag", FreeCaller<DragMode>(), ToggleItem::AddCallbackCaller(g_dragmode_button), Accelerator('Q'));
-
-  GlobalCommands_insert("ColorSchemeOriginal", FreeCaller<ColorScheme_Original>());
-  GlobalCommands_insert("ColorSchemeQER", FreeCaller<ColorScheme_QER>());
-  GlobalCommands_insert("ColorSchemeBlackAndGreen", FreeCaller<ColorScheme_Black>());
-  GlobalCommands_insert("ColorSchemeYdnar", FreeCaller<ColorScheme_Ydnar>());
-  GlobalCommands_insert("ChooseTextureBackgroundColor", makeCallback(g_ColoursMenu.m_textureback));
-  GlobalCommands_insert("ChooseSmallGridMajorColor", makeCallback(g_ColoursMenu.m_gridmajor_alt));
-  GlobalCommands_insert("ChooseSmallGridMinorColor", makeCallback(g_ColoursMenu.m_gridminor_alt));
-  GlobalCommands_insert("ChooseGridBlockColor", makeCallback(g_ColoursMenu.m_gridblock));
-  GlobalCommands_insert("ChooseBrushColor", makeCallback(g_ColoursMenu.m_brush));
-  GlobalCommands_insert("ChooseCameraBackgroundColor", makeCallback(g_ColoursMenu.m_cameraback));
-  GlobalCommands_insert("ChooseSelectedBrushColor", makeCallback(g_ColoursMenu.m_selectedbrush));
-  GlobalCommands_insert("ChooseCameraSelectedBrushColor", makeCallback(g_ColoursMenu.m_selectedbrush3d));
-  GlobalCommands_insert("ChooseClipperColor", makeCallback(g_ColoursMenu.m_clipper));
-  
 
   GlobalCommands_insert("CSGSubtract", FreeCaller<CSG_Subtract>(), Accelerator('U', (GdkModifierType)GDK_SHIFT_MASK));
   GlobalCommands_insert("CSGMerge", FreeCaller<CSG_Merge>(), Accelerator('U', (GdkModifierType)GDK_CONTROL_MASK));
