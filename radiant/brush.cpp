@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "brush.h"
 #include "signal/signal.h"
+#include "plugin.h"
 
 Signal0 g_brushTextureChangedCallbacks;
 
@@ -116,6 +117,10 @@ inline bool Brush_isBounded(const Brush& brush)
 void Brush::buildBRep()
 {
   bool degenerate = buildWindings();
+
+  Vector3 colourVertexVec = ColourSchemes().getColourVector3("brush_vertices");
+  const Colour4b colour_vertex(int(colourVertexVec[0]*255), int(colourVertexVec[1]*255), 
+  							   int(colourVertexVec[2]*255), 255);
 
   std::size_t faces_size = 0;
   std::size_t faceVerticesCount = 0;

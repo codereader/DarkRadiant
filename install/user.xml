@@ -26,6 +26,7 @@
 		<colour name="camera_icon" value="0 0 1" />
 		<colour name="brush_size_info" value="0.65 0 0" />
 		<colour name="light_volumes" value="0 1 0" />
+		<colour name="brush_vertices" value="0 1 0" />
       </scheme>
       <scheme name="QE3Radiant Original">
  	    <colour name="texture_background" value="0.25 0.25 0.25" />
@@ -47,6 +48,7 @@
 		<colour name="camera_icon" value="0 0 1" />
 		<colour name="brush_size_info" value="0.65 0 0" />
 		<colour name="light_volumes" value="0 1 0" />
+		<colour name="brush_vertices" value="0 1 0" />
       </scheme>
       <scheme name="Black &amp; Green">
  	   <colour name="texture_background" value="0.25 0.25 0.25" />
@@ -68,6 +70,7 @@
 	   <colour name="camera_icon" value="0 0 1" />
 	   <colour name="brush_size_info" value="0.65 0 0" />
 	   <colour name="light_volumes" value="0 1 0" />
+	   <colour name="brush_vertices" value="0 1 0" />
       </scheme>
       <scheme name="Maya/Max/Lightwave Emulation">
  	   <colour name="texture_background" value="0.25 0.25 0.25" />
@@ -89,6 +92,7 @@
 	   <colour name="camera_icon" value="0 0 1" />
 	   <colour name="brush_size_info" value="0.65 0 0" />
 	   <colour name="light_volumes" value="0 1 0" />
+	   <colour name="brush_vertices" value="0 1 0" />
        </scheme>
     </colourschemes>
 	<colourschemedescription>
@@ -111,6 +115,7 @@
 		<camera_icon value="Camera Icon" />
 		<brush_size_info value="Brush Size Info" />
 		<light_volumes value="Light Volumes" />
+		<brush_vertices value="Brush Vertices" />
 	</colourschemedescription>
     <toolbar name="view" align="horizontal">
 			<toolbutton name="open" action="OpenMap" tooltip="Open a map file" icon="file_open.png"/>
