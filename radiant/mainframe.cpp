@@ -557,6 +557,14 @@ void SetWorldspawnColour(const Vector3& colour)
   eclass_capture_state(worldspawn);
 }
 
+//! Make colourscheme definition override light volume eclass colour.
+void SetLightVolumeColour(const Vector3& colour)
+{
+  EntityClass* light = GlobalEntityClassManager().findOrInsert("light", true);
+  eclass_release_state(light);
+  light->color = colour;
+  eclass_capture_state(light);
+}
 
 class WorldspawnColourEntityClassObserver : public ModuleObserver
 {
@@ -570,6 +578,7 @@ public:
     if(--m_unrealised == 0)
     {
       SetWorldspawnColour(ColourSchemes().getColourVector3("default_brush"));
+      SetLightVolumeColour(ColourSchemes().getColourVector3("light_volumes"));
     }
   }
   void unrealise()
@@ -1712,6 +1721,7 @@ void XY_UpdateAllWindows()
     
     // Set the World Spawn Colour
 	SetWorldspawnColour(ColourSchemes().getColourVector3("default_brush"));
+	SetLightVolumeColour(ColourSchemes().getColourVector3("light_volumes"));
   }
 }
 

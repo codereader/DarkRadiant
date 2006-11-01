@@ -7,9 +7,6 @@
 
 namespace ui {
 	
-	namespace {
-		const unsigned int FULL_INTENSITY = 65535;
-	}
 
 /*	Constructor
  *  Builds a new ColourItem object out of the information found in the colourNode XML node
@@ -17,25 +14,10 @@ namespace ui {
 ColourItem::ColourItem(xml::Node& colourNode) {
 	// Parse the "value" attribute for the vector
 	std::string value = colourNode.getAttributeValue("value");
-	if (string_parse_vector3( value.c_str(), _colour)) {
-		//globalOutputStream() << "ColourItem " << _name.c_str() << " with value " << _colour << " found.\n";
-		_gdkColor.red 	= (unsigned int) (FULL_INTENSITY*_colour[0]);
-		_gdkColor.green	= (unsigned int) (FULL_INTENSITY*_colour[1]);
-		_gdkColor.blue 	= (unsigned int) (FULL_INTENSITY*_colour[2]);
-	}
-	else {
+	if (!string_parse_vector3(value.c_str(), _colour)) {
 		globalOutputStream() << "ColourSchemeManager: Invalid colour data found in ColourItem: " << value.c_str() << "\n";
 		string_parse_vector3( "0 0 0", _colour);
 	}
-}
-
-// Constructor without arguments
-ColourItem::ColourItem():
-  _colour("0 0 0") 
-{
-	_gdkColor.red 	= 0;
-	_gdkColor.green	= 0;
-	_gdkColor.blue 	= 0;
 }
 
 bool ColourItem::operator== (const ColourItem& other) const {
@@ -44,16 +26,16 @@ bool ColourItem::operator== (const ColourItem& other) const {
 	        other._colour[2] == _colour[2]); 
 }
 
+bool ColourItem::operator!= (const ColourItem& other) const {
+	return (other._colour[0] != _colour[0] || 
+	        other._colour[1] != _colour[1] || 
+	        other._colour[2] != _colour[2]); 
+}
+
 /*	Casting operator for use as Vector3 
  */
 ColourItem::operator Vector3 () {
 	return _colour;
-}
-
-/*	Casting operator for use in GtkColorButtons etc. 
- */
-ColourItem::operator GdkColor* () {
-	return &_gdkColor;
 }
 
 /*	Casting operator, e.g. for saving the colour into the registry 
@@ -62,18 +44,12 @@ ColourItem::operator std::string () {
 	return std::string(_colour);
 }
 
-/*	Updates the colour information contained in this class including the GdkColor item
+/*	Updates the colour information contained in this class
  */
-void ColourItem::setColour(const unsigned int& red, const unsigned int& green, const unsigned int& blue) {
-	// Update the GdkColor...
-	_gdkColor.red = red;
-	_gdkColor.green = green;
-	_gdkColor.blue = blue;
-	
-	// ...and the internal Vector3
-	_colour[0] = float(red) / FULL_INTENSITY;
-	_colour[1] = float(green) / FULL_INTENSITY;
-	_colour[2] = float(blue) / FULL_INTENSITY;
+void ColourItem::setColour(const float& red, const float& green, const float& blue) {
+	_colour[0] = red;
+	_colour[1] = green;
+	_colour[2] = blue;
 }
 
 /*	ColourScheme Constructor

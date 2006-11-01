@@ -247,17 +247,10 @@ inline void XYWnd_Update(XYWnd& xywnd)
 
 struct xywindow_globals_t
 {
-  Vector3 AxisColorX;
-  Vector3 AxisColorY;
-  Vector3 AxisColorZ;
-
   bool m_bRightClick;
   bool m_bNoStipple;
 
   xywindow_globals_t() :
-    AxisColorX(1.f, 0.f, 0.f),
-    AxisColorY(0.f, 1.f, 0.f),
-    AxisColorZ(0.f, 0.f, 1.f),
     m_bRightClick(true),
     m_bNoStipple(false)
   {

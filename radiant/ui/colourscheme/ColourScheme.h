@@ -5,7 +5,6 @@
 #include <map>
 #include "generic/vector.h"
 #include "xmlutil/Node.h"
-#include "gdk/gdkcolor.h"
 
 namespace ui {
 
@@ -19,27 +18,23 @@ class ColourItem {
 	private:
 		// The internal representations of this colour
 		Vector3	_colour;
-		GdkColor _gdkColor;
 		
 	public:
 		// Constructors
-		ColourItem();
+		ColourItem() : _colour("0 0 0") {}
 		ColourItem(xml::Node& colourNode);
 		
 		operator Vector3 ();
-		operator GdkColor* ();
 		operator std::string ();
 		bool operator== (const ColourItem& other) const;
+		bool operator!= (const ColourItem& other) const;
 		
 		Vector3 getColour() const {
 			return _colour;
 		}
 		
 		// Update the internal colour objects of this class
-		// expects colour values between 0...65535 (as GdkColor does)
-		void setColour(const unsigned int& red, 
-					   const unsigned int& green, 
-					   const unsigned int& blue);
+		void setColour(const float& red, const float& green, const float& blue);
 		
 		// Destructor
 		~ColourItem() {}
