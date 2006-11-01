@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "preferences.h"
 #include "brush_primit.h"
 #include "signal/signal.h"
-
+#include "plugin.h"
 
 Signal0 g_patchTextureChangedCallbacks;
 
@@ -206,8 +206,15 @@ void Patch::setDims (std::size_t w, std::size_t h)
   }
 }
 
-inline const Colour4b& colour_for_index(std::size_t i, std::size_t width)
+inline const Colour4b colour_for_index(std::size_t i, std::size_t width)
 {
+  const Vector3 cornerColourVec = ColourSchemes().getColourVector3("patch_vertex_corner");
+  const Vector3 insideColourVec = ColourSchemes().getColourVector3("patch_vertex_inside");
+  const Colour4b colour_corner(int(cornerColourVec[0]*255), int(cornerColourVec[1]*255), 
+  							   int(cornerColourVec[2]*255), 255);
+  const Colour4b colour_inside(int(insideColourVec[0]*255), int(insideColourVec[1]*255), 
+  							   int(insideColourVec[2]*255), 255);
+  
   return (i%2 || (i/width)%2) ? colour_inside : colour_corner;
 }
 
