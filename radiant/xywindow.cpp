@@ -65,7 +65,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "grid.h"
 #include "windowobservers.h"
 #include "plugin.h"
-
+#include "ui/colourscheme/ColourScheme.h"
 
 //!\todo Rewrite.
 class ClipPoint
@@ -1657,9 +1657,9 @@ void XYWnd::XY_DrawGrid()
   // draw minor blocks
   if (g_xywindow_globals_private.d_showgrid)
   {
-  	ui::ColourItem colourGridBack = ColourSchemes().getColour("grid_background");
-  	ui::ColourItem colourGridMinor = ColourSchemes().getColour("grid_minor");
-  	ui::ColourItem colourGridMajor = ColourSchemes().getColour("grid_major");
+  	ui::ColourItem& colourGridBack = ColourSchemes().getColour("grid_background");
+  	ui::ColourItem& colourGridMinor = ColourSchemes().getColour("grid_minor");
+  	ui::ColourItem& colourGridMajor = ColourSchemes().getColour("grid_major");
   	
   	if (colourGridMinor != colourGridBack) {
       glColor3fv(vector3_to_array(colourGridMinor.getColour()));
@@ -1724,8 +1724,7 @@ void XYWnd::XY_DrawGrid()
 		}
 
     if (Active()) {
-    	ui::ColourItem colourActiveViewName = ColourSchemes().getColour("active_view_name");
-      	glColor3fv(vector3_to_array(colourActiveViewName.getColour()));
+    	glColor3fv(vector3_to_array(ColourSchemes().getColourVector3("active_view_name")));
     }
 
     // we do this part (the old way) only if show_axis is disabled
@@ -1741,8 +1740,10 @@ void XYWnd::XY_DrawGrid()
   {
     const char g_AxisName[3] = { 'X', 'Y', 'Z' };
 
-    const Vector3& colourX = (m_viewType == YZ) ? g_xywindow_globals.AxisColorY : g_xywindow_globals.AxisColorX;
-    const Vector3& colourY = (m_viewType == XY) ? g_xywindow_globals.AxisColorY : g_xywindow_globals.AxisColorZ;
+	const std::string colourNameX = (m_viewType == YZ) ? "axis_y" : "axis_x";
+	const std::string colourNameY = (m_viewType == XY) ? "axis_y" : "axis_z";
+	const Vector3& colourX = ColourSchemes().getColourVector3(colourNameX);
+	const Vector3& colourY = ColourSchemes().getColourVector3(colourNameY);
 
     // draw two lines with corresponding axis colors to highlight current view
     // horizontal line: nDim1 color
@@ -1778,7 +1779,7 @@ void XYWnd::XY_DrawGrid()
   // the work zone is used to place dropped points and brushes
   if (g_xywindow_globals_private.d_show_work)
   {
-    glColor3f( 1.0f, 0.0f, 0.0f );
+    glColor3fv( vector3_to_array(ColourSchemes().getColourVector3("workzone")) );
     glBegin( GL_LINES );
     glVertex2f( xb, Select_getWorkZone().d_work_min[nDim2] );
     glVertex2f( xe, Select_getWorkZone().d_work_min[nDim2] );
@@ -1914,7 +1915,7 @@ void XYWnd::DrawCameraIcon(const Vector3& origin, const Vector3& angles)
     a = degrees_to_radians(angles[CAMERA_PITCH]);
   }
 
-  glColor3f (0.0, 0.0, 1.0);
+  glColor3fv (  vector3_to_array(ColourSchemes().getColourVector3("camera_icon")) );
   glBegin(GL_LINE_STRIP);
   glVertex3f (x-box,y,0);
   glVertex3f (x,y+(box/2),0);
@@ -1956,9 +1957,7 @@ void XYWnd::PaintSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vM
 
   Vector3 vSize(vector3_subtracted(vMaxBounds, vMinBounds));
 
-  Vector3 colourSelectedBrush = ColourSchemes().getColourVector3("selected_brush");
-
-  glColor3f(colourSelectedBrush[0] * .65f, colourSelectedBrush[1] * .65f, colourSelectedBrush[2] * .65f);
+  glColor3fv(vector3_to_array(ColourSchemes().getColourVector3("brush_size_info")));
 
   StringOutputStream dimensions(16);
 
@@ -2399,19 +2398,18 @@ void XYWnd::XY_Draw()
 
       // four view mode doesn't colorize
       if (g_pParentWnd->CurrentStyle() == MainFrame::eSplit) {
-        ui::ColourItem colourActiveViewName = ColourSchemes().getColour("active_view_name");
-      	glColor3fv(vector3_to_array(colourActiveViewName.getColour()));
+        glColor3fv(vector3_to_array(ColourSchemes().getColourVector3("active_view_name")));
       }
       else {
         switch(m_viewType) {
         	case YZ:
-          		glColor3fv(vector3_to_array(g_xywindow_globals.AxisColorX));
+          		glColor3fv(vector3_to_array(ColourSchemes().getColourVector3("axis_x")));
           		break;
         	case XZ:
-          		glColor3fv(vector3_to_array(g_xywindow_globals.AxisColorY));
+          		glColor3fv(vector3_to_array(ColourSchemes().getColourVector3("axis_y")));
           		break;
         	case XY:
-          		glColor3fv(vector3_to_array(g_xywindow_globals.AxisColorZ));
+          		glColor3fv(vector3_to_array(ColourSchemes().getColourVector3("axis_z")));
           		break;
         	}
       }
@@ -2824,11 +2822,6 @@ void XYWindow_Construct()
   GlobalPreferenceSystem().registerPreference("SI_ShowOutlines", BoolImportStringCaller(g_xywindow_globals_private.show_outline), BoolExportStringCaller(g_xywindow_globals_private.show_outline));
   GlobalPreferenceSystem().registerPreference("SI_ShowAxis", BoolImportStringCaller(g_xywindow_globals_private.show_axis), BoolExportStringCaller(g_xywindow_globals_private.show_axis));
   GlobalPreferenceSystem().registerPreference("CamXYUpdate", BoolImportStringCaller(g_xywindow_globals_private.m_bCamXYUpdate), BoolExportStringCaller(g_xywindow_globals_private.m_bCamXYUpdate));
-
-  GlobalPreferenceSystem().registerPreference("SI_AxisColors0", Vector3ImportStringCaller(g_xywindow_globals.AxisColorX), Vector3ExportStringCaller(g_xywindow_globals.AxisColorX));
-  GlobalPreferenceSystem().registerPreference("SI_AxisColors1", Vector3ImportStringCaller(g_xywindow_globals.AxisColorY), Vector3ExportStringCaller(g_xywindow_globals.AxisColorY));
-  GlobalPreferenceSystem().registerPreference("SI_AxisColors2", Vector3ImportStringCaller(g_xywindow_globals.AxisColorZ), Vector3ExportStringCaller(g_xywindow_globals.AxisColorZ));
-    
 
   GlobalPreferenceSystem().registerPreference("XZVIS", makeBoolStringImportCallback(ToggleShownImportBoolCaller(g_xz_front_shown)), makeBoolStringExportCallback(ToggleShownExportBoolCaller(g_xz_front_shown)));
   GlobalPreferenceSystem().registerPreference("YZVIS", makeBoolStringImportCallback(ToggleShownImportBoolCaller(g_yz_side_shown)), makeBoolStringExportCallback(ToggleShownExportBoolCaller(g_yz_side_shown)));

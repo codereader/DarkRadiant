@@ -165,6 +165,7 @@ public:
     m_radiantcore.getXPath = &GameDescription_getXPath;
     
     m_radiantcore.registry = &registry;
+    m_radiantcore.colourschemes = &ColourSchemes;
     
     m_radiantcore.attachGameToolsPathObserver = Radiant_attachGameToolsPathObserver;
     m_radiantcore.detachGameToolsPathObserver = Radiant_detachGameToolsPathObserver;

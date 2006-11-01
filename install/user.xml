@@ -6,7 +6,7 @@
     </ModelSelector>
 	<showAllLightRadii value="0"/>
     <colourschemes>
-      <scheme name="DarkRadiant Default" readonly="1">
+      <scheme name="DarkRadiant Default" readonly="1" active="1">
  	    <colour name="texture_background" value="0.25 0.25 0.25" />
 	    <colour name="grid_background" value="1 1 1" />
 	    <colour name="grid_major" value="0.5 0.5 0.5" />
@@ -19,6 +19,13 @@
 	    <colour name="selected_brush_camera" value="1 0 0" />
 	    <colour name="clipper" value="0 0 1" />
 	    <colour name="active_view_name" value="0.5 0 0.75" />
+		<colour name="axis_x" value="1 0 0" />
+		<colour name="axis_y" value="0 1 0" />
+		<colour name="axis_z" value="0 0 1" />
+		<colour name="workzone" value="1 0 0" />
+		<colour name="camera_icon" value="0 0 1" />
+		<colour name="brush_size_info" value="0.65 0 0" />
+		<colour name="light_volumes" value="0 1 0" />
       </scheme>
       <scheme name="QE3Radiant Original">
  	    <colour name="texture_background" value="0.25 0.25 0.25" />
@@ -33,6 +40,13 @@
 	    <colour name="selected_brush_camera" value="1 0 0" />
 	    <colour name="clipper" value="0 0 1" />
 	    <colour name="active_view_name" value="0.5 0 0.75" />
+		<colour name="axis_x" value="1 0 0" />
+		<colour name="axis_y" value="0 1 0" />
+		<colour name="axis_z" value="0 0 1" />
+		<colour name="workzone" value="1 0 0" />
+		<colour name="camera_icon" value="0 0 1" />
+		<colour name="brush_size_info" value="0.65 0 0" />
+		<colour name="light_volumes" value="0 1 0" />
       </scheme>
       <scheme name="Black &amp; Green">
  	   <colour name="texture_background" value="0.25 0.25 0.25" />
@@ -47,6 +61,13 @@
 	   <colour name="selected_brush_camera" value="1 0 0" />
 	   <colour name="clipper" value="0 0 1" />
 	   <colour name="active_view_name" value="0.7 0.7 0" />
+	   <colour name="axis_x" value="1 0 0" />
+	   <colour name="axis_y" value="0 1 0" />
+	   <colour name="axis_z" value="0 0 1" />
+	   <colour name="workzone" value="1 0 0" />
+	   <colour name="camera_icon" value="0 0 1" />
+	   <colour name="brush_size_info" value="0.65 0 0" />
+	   <colour name="light_volumes" value="0 1 0" />
       </scheme>
       <scheme name="Maya/Max/Lightwave Emulation">
  	   <colour name="texture_background" value="0.25 0.25 0.25" />
@@ -61,6 +82,13 @@
 	   <colour name="selected_brush_camera" value="1 0 0" />
 	   <colour name="clipper" value="0 0 1" />
 	   <colour name="active_view_name" value="0.5 0 0.75" />
+	   <colour name="axis_x" value="1 0 0" />
+	   <colour name="axis_y" value="0 1 0" />
+	   <colour name="axis_z" value="0 0 1" />
+	   <colour name="workzone" value="1 0 0" />
+	   <colour name="camera_icon" value="0 0 1" />
+	   <colour name="brush_size_info" value="0.65 0 0" />
+	   <colour name="light_volumes" value="0 1 0" />
        </scheme>
     </colourschemes>
 	<colourschemedescription>
@@ -76,6 +104,13 @@
 		<selected_brush_camera value="Selected Brush (Camera)" />
 		<clipper value="Clipper" />
 		<active_view_name value="Active View Name" />
+		<axis_x value="X-Axis" />
+		<axis_y value="Y-Axis" />
+		<axis_z value="Z-Axis" />
+		<workzone value="Workzone" />
+		<camera_icon value="Camera Icon" />
+		<brush_size_info value="Brush Size Info" />
+		<light_volumes value="Light Volumes" />
 	</colourschemedescription>
     <toolbar name="view" align="horizontal">
 			<toolbutton name="open" action="OpenMap" tooltip="Open a map file" icon="file_open.png"/>

@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "xmlutil/Document.h"
 #include "xmlutil/XMLRegistry.h"
+#include "ui/colourscheme/ColourSchemeManager.h"
 
 // ========================================
 // GTK+ helper functions
@@ -136,6 +137,7 @@ struct _QERFuncTable_1
   const char* (*getRequiredGameDescriptionKeyValue)(const char* key);
   xml::NodeList (*getXPath) (const std::string& path);
   xml::XMLRegistry& (*registry)();
+  ui::ColourSchemeManager& (*colourschemes)();
 
   void (*attachGameToolsPathObserver)(ModuleObserver& observer);
   void (*detachGameToolsPathObserver)(ModuleObserver& observer);

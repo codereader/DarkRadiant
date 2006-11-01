@@ -7,6 +7,10 @@
 
 namespace ui {
 
+	namespace {
+		const unsigned int GDK_FULL_INTENSITY = 65535;
+	}
+	
 /*	Loads all the scheme items into the list
  */
 void ColourSchemeEditor::populateTree() {
@@ -218,8 +222,14 @@ GtkWidget* ColourSchemeEditor::constructColourSelector(ColourItem& colour, const
 	// Create a new horizontal divider
 	GtkWidget* hbox = gtk_hbox_new(FALSE, 10);
 	
+	  GdkColor tempColour;
+	  Vector3 tempColourVector = colour;
+	  tempColour.red 	= (unsigned int) (GDK_FULL_INTENSITY * tempColourVector[0]);
+	  tempColour.green 	= (unsigned int) (GDK_FULL_INTENSITY * tempColourVector[1]);
+	  tempColour.blue 	= (unsigned int) (GDK_FULL_INTENSITY * tempColourVector[2]);
+	
 	  // Create the colour button 
-	  GtkWidget* button = gtk_color_button_new_with_color(colour);
+	  GtkWidget* button = gtk_color_button_new_with_color(&tempColour);
 	  gtk_color_button_set_title(GTK_COLOR_BUTTON(button), description.c_str());
 	  ColourItem* colourPtr = &colour;
 		
@@ -379,11 +389,13 @@ void ColourSchemeEditor::callbackDelete(GtkWidget* widget, ColourSchemeEditor* s
 }
 
 void ColourSchemeEditor::callbackColorChanged(GtkWidget* widget, ColourItem* colourItem) {
-	GdkColor color;
-	gtk_color_button_get_color(GTK_COLOR_BUTTON(widget), &color);
+	GdkColor colour;
+	gtk_color_button_get_color(GTK_COLOR_BUTTON(widget), &colour);
 	
 	// Update the colourItem class
-	colourItem->setColour(color.red, color.green, color.blue);
+	colourItem->setColour(float(colour.red) / GDK_FULL_INTENSITY, 
+						  float(colour.green) / GDK_FULL_INTENSITY, 
+						  float(colour.blue) / GDK_FULL_INTENSITY);
 	
 	// Call the update, so all colours can be previewed
 	updateWindows();
