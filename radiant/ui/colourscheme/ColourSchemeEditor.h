@@ -15,7 +15,7 @@ namespace {
     const int EDITOR_DEFAULT_SIZE_Y = 350;
     const int TREE_VIEW_WIDTH = 180;
     
-    const int COLOURS_PER_COLUMN = 7;
+    const int COLOURS_PER_COLUMN = 8;
     
     const std::string EDITOR_WINDOW_TITLE = "Edit Colour Schemes";
 }
