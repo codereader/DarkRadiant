@@ -145,9 +145,6 @@ inline void copy_ctrl(PatchControlIter ctrl, PatchControlConstIter begin, PatchC
   std::copy(begin, end, ctrl);
 }
 
-const Colour4b colour_corner(0, 255, 0, 255);
-const Colour4b colour_inside(255, 0, 255, 255);
-
 class Patch;
 
 class PatchFilter
