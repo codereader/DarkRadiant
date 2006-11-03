@@ -1,8 +1,6 @@
 #include "PropertyEditor.h"
 #include "PropertyEditorFactory.h"
 
-#include "exception/InvalidKeyException.h"
-
 #include "entity.h"
 
 #include "iundo.h"

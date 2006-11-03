@@ -1883,7 +1883,6 @@ GtkMenuItem* create_view_menu(MainFrame::EViewStyle style)
     create_menu_item_with_mnemonic(camera_menu, "Look Through Selected", "LookThroughSelected");
     create_menu_item_with_mnemonic(camera_menu, "Look Through Camera", "LookThroughCamera");
   }
-  menu_separator(menu);
   {
     GtkMenu* orthographic_menu = create_sub_menu_with_mnemonic(menu, "Orthographic");
     if(style == MainFrame::eRegular || style == MainFrame::eRegularLeft || style == MainFrame::eFloating)
@@ -1919,7 +1918,6 @@ GtkMenuItem* create_view_menu(MainFrame::EViewStyle style)
     create_menu_item_with_mnemonic(menu_in_menu, "Hide Selected", "HideSelected");
     create_menu_item_with_mnemonic(menu_in_menu, "Show Hidden", "ShowHidden");
   }
-  menu_separator(menu);
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Region");
     create_menu_item_with_mnemonic(menu_in_menu, "_Off", "RegionOff");
@@ -1928,7 +1926,7 @@ GtkMenuItem* create_view_menu(MainFrame::EViewStyle style)
     create_menu_item_with_mnemonic(menu_in_menu, "Set Se_lected Brushes", "RegionSetSelection");
   }
   menu_separator(menu);
-  create_menu_item_with_mnemonic(menu, "Colour Scheme Editor", "EditColourScheme");
+  create_menu_item_with_mnemonic(menu, "Colours...", "EditColourScheme");
   
   if(style == MainFrame::eSplit || style == MainFrame::eFloating)
   {
