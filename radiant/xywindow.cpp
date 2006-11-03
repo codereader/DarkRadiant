@@ -1662,7 +1662,7 @@ void XYWnd::XY_DrawGrid()
   	ui::ColourItem& colourGridMajor = ColourSchemes().getColour("grid_major");
   	
   	if (colourGridMinor != colourGridBack) {
-      glColor3fv(vector3_to_array(colourGridMinor.getColour()));
+      glColor3fv(colourGridMinor);
 
       glBegin (GL_LINES);
       int i = 0;
@@ -1688,7 +1688,7 @@ void XYWnd::XY_DrawGrid()
 
     // draw major blocks
     if (colourGridMajor != colourGridBack) {
-      glColor3fv(vector3_to_array(colourGridMajor.getColour()));
+      glColor3fv(colourGridMajor);
 
       glBegin (GL_LINES);
       for (x=xb ; x<=xe ; x+=step)

@@ -4,47 +4,6 @@
 
 namespace ui {
 	
-
-/*	Constructor
- *  Builds a new ColourItem object out of the information found in the colourNode XML node
- */
-ColourItem::ColourItem(xml::Node& colourNode)
-: _colour(colourNode.getAttributeValue("value")) // initialise Vector3 from string
-{
-}
-
-bool ColourItem::operator== (const ColourItem& other) const {
-	return (other._colour[0] == _colour[0] && 
-	        other._colour[1] == _colour[1] && 
-	        other._colour[2] == _colour[2]); 
-}
-
-bool ColourItem::operator!= (const ColourItem& other) const {
-	return (other._colour[0] != _colour[0] || 
-	        other._colour[1] != _colour[1] || 
-	        other._colour[2] != _colour[2]); 
-}
-
-/*	Casting operator for use as Vector3 
- */
-ColourItem::operator Vector3 () {
-	return _colour;
-}
-
-/*	Casting operator, e.g. for saving the colour into the registry 
- */
-ColourItem::operator std::string () {
-	return std::string(_colour);
-}
-
-/*	Updates the colour information contained in this class
- */
-void ColourItem::setColour(const float& red, const float& green, const float& blue) {
-	_colour[0] = red;
-	_colour[1] = green;
-	_colour[2] = blue;
-}
-
 /*	ColourScheme Constructor
  *  Builds the colourscheme structure and passes the found <colour> tags to the ColourItem constructor
  *  All the found <colour> items are stored in a vector of ColourItems

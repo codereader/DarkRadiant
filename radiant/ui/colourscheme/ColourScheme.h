@@ -8,36 +8,28 @@
 
 namespace ui {
 
-/*	The ColourItem represents a single colour
- *  This can be constructed out of a xml::node containing the colour information
- * 
- *  Can be cast into a GdkColor* and a std::string
+/* The ColourItem represents a single colour. This ia a simple derivative of 
+ * Vector3 which provides an additional constructor to extract the colour information
+ * from an XML node.
  */
-class ColourItem {
+
+class ColourItem 
+: public Vector3
+{
+public:
+
+	/** Default constructor. Creates a black colour.
+	 */
+	ColourItem() 
+	: Vector3(0, 0, 0) 
+	{}
 	
-	private:
-		// The internal representations of this colour
-		Vector3	_colour;
+	/** Construct a ColourItem from an XML Node.
+	 */
+	ColourItem(xml::Node& colourNode)
+	: Vector3(colourNode.getAttributeValue("value"))
+	{}	
 		
-	public:
-		// Constructors
-		ColourItem() : _colour("0 0 0") {}
-		ColourItem(xml::Node& colourNode);
-		
-		operator Vector3 ();
-		operator std::string ();
-		bool operator== (const ColourItem& other) const;
-		bool operator!= (const ColourItem& other) const;
-		
-		Vector3 getColour() const {
-			return _colour;
-		}
-		
-		// Update the internal colour objects of this class
-		void setColour(const float& red, const float& green, const float& blue);
-		
-		// Destructor
-		~ColourItem() {}
 };
 
 typedef std::map<const std::string, ColourItem> ColourItemMap;
