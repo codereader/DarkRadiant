@@ -971,11 +971,11 @@ void Shaders_Load()
 {
 	// Get the shaders path and extension from the XML game file
 
-	xml::NodeList nlShaderPath = GlobalRadiant().getXPath("/game/filesystem/shaders/basepath");
+	xml::NodeList nlShaderPath = GlobalRadiant().registry().findXPath("game/filesystem/shaders/basepath");
 	if (nlShaderPath.size() != 1)
 		throw shaders::MissingXMLNodeException("Failed to find \"/game/filesystem/shaders/basepath\" node in game descriptor");
 
-	xml::NodeList nlShaderExt = GlobalRadiant().getXPath("/game/filesystem/shaders/extension");
+	xml::NodeList nlShaderExt = GlobalRadiant().registry().findXPath("game/filesystem/shaders/extension");
 	if (nlShaderExt.size() != 1)
 		throw shaders::MissingXMLNodeException("Failed to find \"/game/filesystem/shaders/extension\" node in game descriptor");
 

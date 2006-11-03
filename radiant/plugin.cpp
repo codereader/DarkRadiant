@@ -104,12 +104,6 @@ ui::ColourSchemeManager& ColourSchemes() {
 	return _manager;
 }
 
-// Get an XPath from the global GameDescription
-
-xml::NodeList GameDescription_getXPath(const std::string& path) {
-	return g_pGameDescription->getXPath(path);
-}
-
 const char* getMapName()
 {
   return Map_Name(g_map);
@@ -161,7 +155,6 @@ public:
 
     m_radiantcore.getGameDescriptionKeyValue = &GameDescription_getKeyValue;
     m_radiantcore.getRequiredGameDescriptionKeyValue = &GameDescription_getRequiredKeyValue;
-    m_radiantcore.getXPath = &GameDescription_getXPath;
     
     m_radiantcore.registry = &registry;
     m_radiantcore.colourschemes = &ColourSchemes;
