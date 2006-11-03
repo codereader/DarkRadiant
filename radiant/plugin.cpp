@@ -81,7 +81,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/callback.h"
 
-#include "exception/RadiantException.h"
 #include "xmlutil/XMLRegistry.h"
 
 const char* GameDescription_getKeyValue(const char* key)
@@ -339,11 +338,8 @@ bool Radiant_Construct(ModuleServer& server)
 	if(g_RadiantInitialised) {
 		g_Radiant = new Radiant;
 	}
-	else {
-		throw RadiantException("Radiant_Construct: Failed to initialise Radiant");
-	}
 
-  return g_RadiantInitialised;
+	return g_RadiantInitialised;
 }
 void Radiant_Destroy()
 {
