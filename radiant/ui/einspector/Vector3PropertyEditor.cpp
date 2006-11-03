@@ -1,7 +1,5 @@
 #include "Vector3PropertyEditor.h"
 
-#include "exception/InvalidKeyException.h"
-
 #include <gtk/gtk.h>
 
 #include <sstream>

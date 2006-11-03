@@ -1,7 +1,5 @@
 #include "BooleanPropertyEditor.h"
 
-#include "exception/InvalidKeyException.h"
-
 #include <gtk/gtk.h>
 
 namespace ui

@@ -1,9 +1,6 @@
 #include "ColourScheme.h"
 
-#include "stringio.h"
-#include "stream/stringstream.h"
-#include "stream/textfilestream.h"
-#include <sstream>
+#include "stream/textstream.h"
 
 namespace ui {
 	
@@ -11,13 +8,9 @@ namespace ui {
 /*	Constructor
  *  Builds a new ColourItem object out of the information found in the colourNode XML node
  */
-ColourItem::ColourItem(xml::Node& colourNode) {
-	// Parse the "value" attribute for the vector
-	std::string value = colourNode.getAttributeValue("value");
-	if (!string_parse_vector3(value.c_str(), _colour)) {
-		globalOutputStream() << "ColourSchemeManager: Invalid colour data found in ColourItem: " << value.c_str() << "\n";
-		string_parse_vector3( "0 0 0", _colour);
-	}
+ColourItem::ColourItem(xml::Node& colourNode)
+: _colour(colourNode.getAttributeValue("value")) // initialise Vector3 from string
+{
 }
 
 bool ColourItem::operator== (const ColourItem& other) const {
