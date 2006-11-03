@@ -393,9 +393,9 @@ void ColourSchemeEditor::callbackColorChanged(GtkWidget* widget, ColourItem* col
 	gtk_color_button_get_color(GTK_COLOR_BUTTON(widget), &colour);
 	
 	// Update the colourItem class
-	colourItem->setColour(float(colour.red) / GDK_FULL_INTENSITY, 
-						  float(colour.green) / GDK_FULL_INTENSITY, 
-						  float(colour.blue) / GDK_FULL_INTENSITY);
+	colourItem->set(float(colour.red) / GDK_FULL_INTENSITY, 
+					float(colour.green) / GDK_FULL_INTENSITY, 
+					float(colour.blue) / GDK_FULL_INTENSITY);
 	
 	// Call the update, so all colours can be previewed
 	updateWindows();

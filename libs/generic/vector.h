@@ -113,6 +113,14 @@ public:
         strm >> y();
         strm >> z();
     }
+    
+	/** Set all 3 components to the provided values.
+	 */
+	void set(const Element& x, const Element& y, const Element& z) {
+		m_elements[0] = x;
+		m_elements[1] = y;
+		m_elements[2] = z;
+	}
 
   Element& x()
   {
@@ -138,6 +146,20 @@ public:
   {
     return m_elements[2];
   }
+  
+	/** Compare this BasicVector3 against another for equality.
+	 */
+	bool operator== (const BasicVector3& other) const {
+		return (other.x() == x() 
+				&& other.y() == y()
+				&& other.z() == z());
+	}
+	
+	/** Compare this BasicVector3 against another for inequality.
+	 */
+	bool operator!= (const BasicVector3& other) const {
+		return !(*this == other);
+	}
   
 	/** Cast to std::string, formats vector correctly for use as a
 	 * keyval -- "x y z".
