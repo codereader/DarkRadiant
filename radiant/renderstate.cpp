@@ -449,7 +449,7 @@ public:
   {
 
 	// Initialise the lightScale value
-	xml::NodeList scaleList = GlobalRadiant().getXPath("/game/defaults/lightScale");
+	xml::NodeList scaleList = GlobalRadiant().registry().findXPath("game/defaults/lightScale");
 	if (scaleList.size() == 1) {
 		std::stringstream stream(scaleList[0].getContent());
 		stream >> _lightScale;
@@ -1730,7 +1730,7 @@ void ShaderCache_Construct()
 
 	// Get the global default lightshader from the XML gamedescriptor.
 	
-	xml::NodeList nlDefaultLight = GlobalRadiant().getXPath("/game/defaults/lightShader");
+	xml::NodeList nlDefaultLight = GlobalRadiant().registry().findXPath("game/defaults/lightShader");
 	if (nlDefaultLight.size() != 1)
 		gtkutil::fatalErrorDialog("Failed to find default lightshader in XML game descriptor.\n\nNode <b>/game/defaults/lightShader</b> not found.");
 
