@@ -104,6 +104,9 @@ public:
      */
      
     BasicVector3(const std::string& str) {
+    	// Initialise the vector with 0, in case the string parse fails
+    	m_elements[0] = m_elements[1] = m_elements[2] = 0;
+    	// Use a stringstream to parse the string
         std::stringstream strm(str);
         strm << std::skipws;
         strm >> x();

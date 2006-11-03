@@ -67,9 +67,6 @@ class ColourScheme {
 			return _colours;
 		}
 		
-		// Checks whether this colour exists in this scheme
-		bool colourExists(const std::string& colourName);
-		
 		// Returns the requested colour object
 		ColourItem& getColour(const std::string& colourName);
 		

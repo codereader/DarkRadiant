@@ -71,18 +71,12 @@ ColourScheme::ColourScheme(xml::Node& schemeNode) {
 	}
 }
 
-/*	Checks whether the specified colour exists in this scheme
- */
-bool ColourScheme::colourExists(const std::string& colourName) {
-	ColourItemMap::iterator it = _colours.find(colourName);
-   	return (it != _colours.end());
-}
-
 /* Returns the specified colour object
  */
 ColourItem& ColourScheme::getColour(const std::string& colourName) {
-	if (colourExists(colourName)) {
-		return _colours[colourName];
+	ColourItemMap::iterator it = _colours.find(colourName);
+	if (it != _colours.end()) {
+		return it->second;
 	}
 	else {
 		globalOutputStream() << "ColourScheme: Colour " << colourName.c_str() << " doesn't exist!\n";
