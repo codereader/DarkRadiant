@@ -28,8 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <set>
 #include <iostream>
 
-#include "exception/ModuleSystemException.h"
-
 template<typename Type>
 class ModulesMap : public Modules<Type>
 {
@@ -140,7 +138,6 @@ public:
           {
             globalModuleServer().setError(true);
             //globalErrorStream() << "ModulesRef::initialise: type=" << makeQuoted(typename Type::Name()) << " version=" << makeQuoted(typename Type::Version()) << " name=" << makeQuoted(name) << " - not found\n";
-			throw ModuleSystemException(std::string("ModulesRef: unable to add requested module ") + name); 			
             break;
           }
           else

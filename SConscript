@@ -18,9 +18,6 @@ xmlutilEnv.useXML2()
 xmlutilSource = 'Document.cpp Node.cpp XMLRegistry.cpp'
 xmlutil = xmlutilEnv.StaticLibrary(target='libs/xmlutil', source=build_list('libs/xmlutil', xmlutilSource))
 
-exceptionLibSource = 'RadiantException.cpp ModuleSystemException.cpp'
-exceptionLib = g_env.StaticLibrary(target='libs/exception', source=build_list('libs/exception', exceptionLibSource))
-
 cmdlib_lib = g_env.StaticLibrary(target='libs/cmdlib', source='libs/cmdlib/cmdlib.cpp')
 
 mathlib_src = 'mathlib.c bbox.c line.c m4x4.c ray.c'
@@ -108,9 +105,7 @@ module_env.useOpenGL()
 vfspk3_env = module_env.Copy()
 vfspk3_lst = build_list('plugins/vfspk3', 'vfspk3.cpp vfs.cpp archive.cpp')
 vfspk3_env.useGlib2()
-vfspk3_env.Append(LIBS = ['exception'])
 vfspk3_lib = vfspk3_env.SharedLibrary(target='vfspk3', source=vfspk3_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
-vfspk3_env.Depends(vfspk3_lib, exceptionLib)
 vfspk3_env.Install(INSTALL + '/modules', vfspk3_lib)
 
 archivepak_env = module_env.Copy()
@@ -311,7 +306,7 @@ radiant_src = [
 for i in range(len(radiant_src)):
   radiant_src[i] = 'radiant/' + radiant_src[i]
 
-radiant_env.Prepend(LIBS = ['mathlib', 'math', 'cmdlib', 'profile', 'gtkutil', 'exception', 'xmlutil'])
+radiant_env.Prepend(LIBS = ['mathlib', 'math', 'cmdlib', 'profile', 'gtkutil', 'xmlutil'])
 radiant_env.Prepend(LIBPATH = ['libs'])
 
 # Win32 libs
@@ -325,7 +320,6 @@ radiant_env.Depends(radiant_prog, mathlib_lib)
 radiant_env.Depends(radiant_prog, cmdlib_lib)
 radiant_env.Depends(radiant_prog, profile_lib)
 radiant_env.Depends(radiant_prog, gtkutil_lib)
-radiant_env.Depends(radiant_prog, exceptionLib)
 radiant_env.Depends(radiant_prog, xmlutil)
 radiant_env.Depends(radiant_prog, math)
 radiant_env.Install(INSTALL, radiant_prog)

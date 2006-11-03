@@ -123,9 +123,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "feedback.h"
 #include "referencecache.h"
 
-#include "exception/RadiantException.h"
-
-
 struct layout_globals_t
 {
   WindowPosition m_position;
@@ -627,13 +624,7 @@ void Radiant_Initialise()
 
   Preferences_Load();
 
-	try {
-		Radiant_Construct(GlobalModuleServer_get());
-	} 
-	catch (RadiantException e) {
-	  	e.printError();
-	  	abort();
-	}
+	Radiant_Construct(GlobalModuleServer_get());
 
   g_gameToolsPathObservers.realise();
   g_gameModeObservers.realise();

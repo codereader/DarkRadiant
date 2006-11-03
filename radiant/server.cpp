@@ -31,9 +31,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "modulesystem.h"
 
-#include "exception/RadiantException.h"
-#include "exception/ModuleSystemException.h"
-
 class RadiantModuleServer : public ModuleServer
 {
   typedef std::pair<CopiedString, int> ModuleType;
@@ -141,7 +138,8 @@ public:
   {
     m_library = LoadLibrary(filename);
     if(m_library == 0) {
-		throw ModuleSystemException(std::string("Unable to load library from file ") + filename);
+		globalErrorStream() << "LoadLibrary failed: '" << filename << "'\n";
+		globalErrorStream() << "GetLastError: " << FormatGetLastError();
     }
   }
   ~DynamicLibrary()
@@ -193,14 +191,16 @@ public:
 
 	// Find a symbol in the library
 	FunctionPointer findSymbol(const char* symbol) {
-
-		void * address = dlsym(dlHandle, symbol);
-	    if(address == 0)
-		{
-			std::string theError = std::string(dlerror());
-			throw ModuleSystemException(theError);
-		}
-	    return reinterpret_cast<FunctionPointer> (address);
+	    FunctionPointer p = reinterpret_cast<FunctionPointer>(dlsym(dlHandle, symbol));
+	    if(p == 0)
+	    {
+	      const char* error = reinterpret_cast<const char*>(dlerror());
+	      if(error != 0)
+	      {
+	        globalErrorStream() << error;
+	      }
+	    }
+	    return p;
 	}
 };
 
