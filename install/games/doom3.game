@@ -27,8 +27,12 @@
 		<filter name="World geometry">
 			<filterCriterion type="entityclass" match="worldspawn" action="hide" />
 		</filter>
+		<filter name="Caulk">
+			<filterCriterion type="texture" match="textures/common/caulk" action="hide" />
+		</filter>
 		<filter name="Collision surfaces">
 			<filterCriterion type="texture" match="textures/common/collision" action="hide" />
+			<filterCriterion type="texture" match="textures/common/monster_clip" action="hide" />
 		</filter>
 		<filter name="Lights">
 			<filterCriterion type="entityclass" match="light" action="hide" />
