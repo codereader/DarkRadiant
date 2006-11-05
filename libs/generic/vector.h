@@ -1,65 +1,270 @@
-
 #if !defined(INCLUDED_VECTOR_H)
 #define INCLUDED_VECTOR_H
 
+/* greebo: This file contains the templated class definitions of several vector types:
+ * 
+ * BasicVector2: A vector with two components of type <Element>
+ * BasicVector3: A vector with three components of type <Element>
+ * BasicVector4: A vector with four components of type <Element>
+ * 
+ * The BasicVector3 is equipped with the most important operators like *, *= and so on.
+ * 
+ * Note: The most commonly used Vector3 is a BasicVector3<float>, same goes for the other two
+ *  
+ * Note: that the multiplication of a Vector3 with another one (Vector3*Vector3) does NOT
+ * result in an inner product but in a component-wise scaling. Use the .dot() method to
+ * execute an inner product of two vectors. 
+ */
+
 #include <cstddef>
 #include <cmath>
+#include <float.h>
 #include <sstream>
 #include <string>
 
 #include <boost/format.hpp>
 
+// ======================================================================================
+
 template <typename Element>
-class BasicVector2
-{
-  Element m_elements[2];
+class BasicVector2 {
+	
+	// This is where the components of the vector are stored.
+	Element m_elements[2];
+	
 public:
-  BasicVector2()
-  {
-  }
-  BasicVector2(const Element& x_, const Element& y_)
-  {
-    x() = x_;
-    y() = y_;
-  }
+	// Constructor with no arguments
+  	BasicVector2() {}
+  	
+  	/** Construct a BasicVector2 with the 2 provided components.
+     */
+  	BasicVector2(const Element& x_, const Element& y_) {
+    	x() = x_;
+    	y() = y_;
+    }
+    
+    // Return NON-CONSTANT references to the vector components
+    Element& x() {
+    	return m_elements[0];
+    }
+    Element& y() {
+    	return m_elements[1];
+  	}
+  	
+  	// Return CONSTANT references to the vector components
+  	const Element& x() const {
+    	return m_elements[0];
+  	}
+  	const Element& y() const {
+    	return m_elements[1];
+  	}
 
-  Element& x()
-  {
-    return m_elements[0];
-  }
-  const Element& x() const
-  {
-    return m_elements[0];
-  }
-  Element& y()
-  {
-    return m_elements[1];
-  }
-  const Element& y() const
-  {
-    return m_elements[1];
-  }
+  	Element& operator[] (std::size_t i) {
+    	return m_elements[i];
+  	}
+  	const Element& operator[] (std::size_t i) const {
+    	return m_elements[i];
+  	}
 
-  const Element& operator[](std::size_t i) const
-  {
-    return m_elements[i];
-  }
-  Element& operator[](std::size_t i)
-  {
-    return m_elements[i];
-  }
+  	Element* data() {
+    	return m_elements;
+  	}  	
+  	const Element* data() const {
+    	return m_elements;
+  	}
+  	
+  	/** Compare this BasicVector2 against another for equality.
+	 */
+	bool operator== (const BasicVector2& other) const {
+		return (other.x() == x() 
+				&& other.y() == y());
+	}
+	
+	/** Compare this BasicVector2 against another for inequality.
+	 */
+	bool operator!= (const BasicVector2& other) const {
+		return !(*this == other);
+	}
+	
+	/*	Define the negation operator - 
+	 *  All the vector's components are negated
+	 */
+	BasicVector2<Element> operator- () const {
+		return BasicVector2<Element>(
+			-m_elements[0],
+			-m_elements[1]
+		);
+	}
+	
+	/*	Define the addition operators + and += with any other BasicVector2 of type OtherElement
+	 *  The vectors are added to each other element-wise
+	 */
+	template<typename OtherElement>
+	BasicVector2<Element> operator+ (const BasicVector2<OtherElement>& other) const {
+		return BasicVector2<Element>(
+			m_elements[0] + static_cast<Element>(other.x()),
+			m_elements[1] + static_cast<Element>(other.y())
+		);
+	}
+	
+	template<typename OtherElement>
+	void operator+= (const BasicVector2<OtherElement>& other) {
+		m_elements[0] += static_cast<Element>(other.x());
+		m_elements[1] += static_cast<Element>(other.y());
+	}
+	
+	/*	Define the substraction operators - and -= with any other BasicVector3 of type OtherElement
+	 *  The vectors are substracted from each other element-wise
+	 */
+	template<typename OtherElement>
+	BasicVector2<Element> operator- (const BasicVector2<OtherElement>& other) const {
+		return BasicVector2<Element>(
+			m_elements[0] - static_cast<Element>(other.x()),
+			m_elements[1] - static_cast<Element>(other.y())
+		);
+	}
+	
+	template<typename OtherElement>
+	void operator-= (const BasicVector2<OtherElement>& other) {
+		m_elements[0] -= static_cast<Element>(other.x());
+		m_elements[1] -= static_cast<Element>(other.y());
+	}
+	
+	/*	Define the multiplication operators * and *= with another Vector2 of type OtherElement
+	 * 
+	 *  The vectors are multiplied element-wise
+	 * 
+	 *  greebo: This is mathematically kind of senseless, as this is a mixture of 
+	 *  a dot product and scalar multiplication. It can be used to scale each 
+	 *  vector component by a different factor, so maybe this comes in handy.  
+	 */
+	template<typename OtherElement>
+	BasicVector2<Element> operator* (const BasicVector2<OtherElement>& other) const {
+		return BasicVector2<Element>(
+			m_elements[0] * static_cast<Element>(other.x()),
+			m_elements[1] * static_cast<Element>(other.y())
+		);
+	}
+	
+	template<typename OtherElement>
+	void operator*= (const BasicVector2<OtherElement>& other) {
+		m_elements[0] *= static_cast<Element>(other.x());
+		m_elements[1] *= static_cast<Element>(other.y());
+	}
+	
+	
+	/*	Define the multiplications * and *= with a scalar
+	 */
+	template<typename OtherElement>
+	BasicVector2<Element> operator* (const OtherElement& other) const {
+		Element factor = static_cast<Element>(other);
+		return BasicVector2<Element>(
+			m_elements[0] * factor,
+			m_elements[1] * factor
+		);
+	}
+	
+	template<typename OtherElement>
+	void operator*= (const OtherElement& other) {
+		Element factor = static_cast<Element>(other);
+		m_elements[0] *= factor;
+		m_elements[1] *= factor;
+	}
+	
+	/*	Define the multiplication operators / and /= with another Vector2 of type OtherElement
+	 *  The vectors are divided element-wise   
+	 */
+	template<typename OtherElement>
+	BasicVector2<Element> operator/ (const BasicVector2<OtherElement>& other) const {
+		return BasicVector2<Element>(
+			m_elements[0] / static_cast<Element>(other.x()),
+			m_elements[1] / static_cast<Element>(other.y())
+		);
+	}
+	
+	template<typename OtherElement>
+	void operator/= (const BasicVector2<OtherElement>& other) {
+		m_elements[0] /= static_cast<Element>(other.x());
+		m_elements[1] /= static_cast<Element>(other.y());
+	}
+	
+	/*	Define the scalar divisions / and /= 
+	 */
+	template<typename OtherElement>
+	BasicVector2<Element> operator/ (const OtherElement& other) const {
+		Element divisor = static_cast<Element>(other);
+		return BasicVector2<Element>(
+			m_elements[0] / divisor,
+			m_elements[1] / divisor
+		);
+	}
+	
+	template<typename OtherElement>
+	void operator/= (const OtherElement& other) {
+		Element divisor = static_cast<Element>(other);
+		m_elements[0] /= divisor;
+		m_elements[1] /= divisor;
+	}
+	
+	/** Cast to std::string
+	 */
+	operator std::string() const {
+		return (boost::format("%s %s")
+				 % m_elements[0]
+				 % m_elements[1]).str();
+	}
+	
+	/** Return the length of this vector.
+     * 
+     * @returns
+     * The Pythagorean length of this vector.
+     */
+	double getLength() const {
+		double lenSquared = m_elements[0]*m_elements[0] + 
+							m_elements[1]*m_elements[1];
+		return sqrt(lenSquared);
+	}
+	
+	/** Return the squared length of this vector.          
+     */
+	double getLengthSquared() const {
+		double lenSquared = m_elements[0]*m_elements[0] + 
+							m_elements[1]*m_elements[1];
+		return lenSquared;
+	}
+	
+	/* Scalar product this vector with another Vector2, 
+	 * returning the projection of <self> onto <other>
+	 * 
+	 * @param other
+	 * The Vector2 to dot-product with this Vector2.
+	 * 
+	 * @returns
+	 * The inner product (a scalar): a[0]*b[0] + a[1]*b[1]
+	 */	 
+	template<typename OtherT>
+	Element dot(const BasicVector2<OtherT>& other) const {
+		return 	Element(m_elements[0] * other.x() +
+				 		m_elements[1] * other.y());
+	}
 
-  Element* data()
-  {
-    return m_elements;
-  }
-  const Element* data() const
-  {
-    return m_elements;
-  }
+	/* Cross-product this vector with another Vector2, returning the scalar result
+	 * 
+	 * @param other
+	 * The Vector2 to cross-product with this Vector2.
+	 * 
+	 * @returns
+	 * The cross-product of the two vectors, a scalar: a[0]*b[1] - b[0]*a[1]
+	 */
+	template<typename OtherT>
+	Element crossProduct(const BasicVector2<OtherT>& other) const {
+		return Element(m_elements[0] * other.y() - m_elements[1] * other.x());
+	}
 };
 
-/// A 3-element vector.
+// ======================================================================================
+
+// BasicVector3: A 3-element vector of type Element
 template<typename Element>
 class BasicVector3 {
 	
@@ -68,14 +273,12 @@ class BasicVector3 {
   
 public:
 
-  	BasicVector3()
-  	{
-  	}
+	// Constructor with no argument
+  	BasicVector3() {}
 
 	// Templated copy constructor
 	template<typename OtherElement>
-	BasicVector3(const BasicVector3<OtherElement>& other)
-	{
+	BasicVector3(const BasicVector3<OtherElement>& other) {
 		x() = static_cast<Element>(other.x());
 		y() = static_cast<Element>(other.y());
 		z() = static_cast<Element>(other.z());
@@ -83,8 +286,7 @@ public:
 
     /** Construct a BasicVector3 with the 3 provided components.
      */
-    BasicVector3(const Element& x_, const Element& y_, const Element& z_)
-    {
+    BasicVector3(const Element& x_, const Element& y_, const Element& z_) {
         x() = x_;
         y() = y_;
         z() = z_;
@@ -163,7 +365,7 @@ public:
 	/*	Define the negation operator - 
 	 *  All the vector's components are negated
 	 */
-	inline BasicVector3<Element> operator- () const {
+	BasicVector3<Element> operator- () const {
 		return BasicVector3<Element>(
 			-m_elements[0],
 			-m_elements[1],
@@ -175,7 +377,7 @@ public:
 	 *  The vectors are added to each other element-wise
 	 */
 	template<typename OtherElement>
-	inline BasicVector3<Element> operator+ (const BasicVector3<OtherElement>& other) const {
+	BasicVector3<Element> operator+ (const BasicVector3<OtherElement>& other) const {
 		return BasicVector3<Element>(
 			m_elements[0] + static_cast<Element>(other.x()),
 			m_elements[1] + static_cast<Element>(other.y()),
@@ -184,7 +386,7 @@ public:
 	}
 	
 	template<typename OtherElement>
-	inline void operator+= (const BasicVector3<OtherElement>& other) {
+	void operator+= (const BasicVector3<OtherElement>& other) {
 		m_elements[0] += static_cast<Element>(other.x());
 		m_elements[1] += static_cast<Element>(other.y());
 		m_elements[2] += static_cast<Element>(other.z());
@@ -194,7 +396,7 @@ public:
 	 *  The vectors are substracted from each other element-wise
 	 */
 	template<typename OtherElement>
-	inline BasicVector3<Element> operator- (const BasicVector3<OtherElement>& other) const {
+	BasicVector3<Element> operator- (const BasicVector3<OtherElement>& other) const {
 		return BasicVector3<Element>(
 			m_elements[0] - static_cast<Element>(other.x()),
 			m_elements[1] - static_cast<Element>(other.y()),
@@ -203,7 +405,7 @@ public:
 	}
 	
 	template<typename OtherElement>
-	inline void operator-= (const BasicVector3<OtherElement>& other) {
+	void operator-= (const BasicVector3<OtherElement>& other) {
 		m_elements[0] -= static_cast<Element>(other.x());
 		m_elements[1] -= static_cast<Element>(other.y());
 		m_elements[2] -= static_cast<Element>(other.z());
@@ -219,7 +421,7 @@ public:
 	 *  vector component by a different factor, so maybe this comes in handy.  
 	 */
 	template<typename OtherElement>
-	inline BasicVector3<Element> operator* (const BasicVector3<OtherElement>& other) const {
+	BasicVector3<Element> operator* (const BasicVector3<OtherElement>& other) const {
 		return BasicVector3<Element>(
 			m_elements[0] * static_cast<Element>(other.x()),
 			m_elements[1] * static_cast<Element>(other.y()),
@@ -228,7 +430,7 @@ public:
 	}
 	
 	template<typename OtherElement>
-	inline void operator*= (const BasicVector3<OtherElement>& other) {
+	void operator*= (const BasicVector3<OtherElement>& other) {
 		m_elements[0] *= static_cast<Element>(other.x());
 		m_elements[1] *= static_cast<Element>(other.y());
 		m_elements[2] *= static_cast<Element>(other.z());		
@@ -238,7 +440,7 @@ public:
 	/*	Define the multiplications * and *= with a scalar
 	 */
 	template<typename OtherElement>
-	inline BasicVector3<Element> operator* (const OtherElement& other) const {
+	BasicVector3<Element> operator* (const OtherElement& other) const {
 		Element factor = static_cast<Element>(other);
 		return BasicVector3<Element>(
 			m_elements[0] * factor,
@@ -248,7 +450,7 @@ public:
 	}
 	
 	template<typename OtherElement>
-	inline void operator*= (const OtherElement& other) {
+	void operator*= (const OtherElement& other) {
 		Element factor = static_cast<Element>(other);
 		m_elements[0] *= factor;
 		m_elements[1] *= factor;
@@ -259,7 +461,7 @@ public:
 	 *  The vectors are divided element-wise   
 	 */
 	template<typename OtherElement>
-	inline BasicVector3<Element> operator/ (const BasicVector3<OtherElement>& other) const {
+	BasicVector3<Element> operator/ (const BasicVector3<OtherElement>& other) const {
 		return BasicVector3<Element>(
 			m_elements[0] / static_cast<Element>(other.x()),
 			m_elements[1] / static_cast<Element>(other.y()),
@@ -268,7 +470,7 @@ public:
 	}
 	
 	template<typename OtherElement>
-	inline void operator/= (const BasicVector3<OtherElement>& other) {
+	void operator/= (const BasicVector3<OtherElement>& other) {
 		m_elements[0] /= static_cast<Element>(other.x());
 		m_elements[1] /= static_cast<Element>(other.y());
 		m_elements[2] /= static_cast<Element>(other.z());		
@@ -277,7 +479,7 @@ public:
 	/*	Define the scalar divisions / and /= 
 	 */
 	template<typename OtherElement>
-	inline BasicVector3<Element> operator/ (const OtherElement& other) const {
+	BasicVector3<Element> operator/ (const OtherElement& other) const {
 		Element divisor = static_cast<Element>(other);
 		return BasicVector3<Element>(
 			m_elements[0] / divisor,
@@ -287,7 +489,7 @@ public:
 	}
 	
 	template<typename OtherElement>
-	inline void operator/= (const OtherElement& other) {
+	void operator/= (const OtherElement& other) {
 		Element divisor = static_cast<Element>(other);
 		m_elements[0] /= divisor;
 		m_elements[1] /= divisor;
@@ -535,6 +737,8 @@ inline const BasicVector3<Element>& vector4_to_vector3(const BasicVector4<Elemen
   return *reinterpret_cast<const BasicVector3<Element>*>(vector4_to_array(self));
 }
 
+// ==========================================================================================
+
 /// \brief A 2-element vector stored in single-precision floating-point.
 typedef BasicVector2<float> Vector2;
 
@@ -543,5 +747,82 @@ typedef BasicVector3<float> Vector3;
 
 /// \brief A 4-element vector stored in single-precision floating-point.
 typedef BasicVector4<float> Vector4;
+
+
+// =============== Common Vector3 Methods ==================================================
+
+const Vector3 g_vector3_identity(0, 0, 0);
+const Vector3 g_vector3_max = Vector3(FLT_MAX, FLT_MAX, FLT_MAX);
+const Vector3 g_vector3_axis_x(1, 0, 0);
+const Vector3 g_vector3_axis_y(0, 1, 0);
+const Vector3 g_vector3_axis_z(0, 0, 1);
+
+const Vector3 g_vector3_axes[3] = { g_vector3_axis_x, g_vector3_axis_y, g_vector3_axis_z };
+
+template<typename Element, typename OtherElement>
+inline void vector3_swap(BasicVector3<Element>& self, BasicVector3<OtherElement>& other) {
+  std::swap(self.x(), other.x());
+  std::swap(self.y(), other.y());
+  std::swap(self.z(), other.z());
+}
+
+template<typename Element, typename OtherElement, typename Epsilon>
+inline bool vector3_equal_epsilon(const BasicVector3<Element>& self, const BasicVector3<OtherElement>& other, Epsilon epsilon) {
+  return float_equal_epsilon(self.x(), other.x(), epsilon)
+    && float_equal_epsilon(self.y(), other.y(), epsilon)
+    && float_equal_epsilon(self.z(), other.z(), epsilon);
+}
+
+template<typename Element>
+inline BasicVector3<Element> vector3_mid(const BasicVector3<Element>& begin, const BasicVector3<Element>& end) {
+  return (begin + end)*0.5;
+}
+
+template<typename Element>
+inline Element float_divided(Element f, Element other) {
+  return f / other;
+}
+
+template<typename Element>
+inline void vector3_normalise(BasicVector3<Element>& self) {
+  self = self.getNormalised();
+}
+
+template<typename Element>
+inline BasicVector3<Element> vector3_snapped(const BasicVector3<Element>& self) {
+  return BasicVector3<Element>(
+    Element(float_to_integer(self.x())),
+    Element(float_to_integer(self.y())),
+    Element(float_to_integer(self.z()))
+  );
+}
+
+template<typename Element>
+inline void vector3_snap(BasicVector3<Element>& self) {
+  self = vector3_snapped(self);
+}
+
+template<typename Element, typename OtherElement>
+inline BasicVector3<Element> vector3_snapped(const BasicVector3<Element>& self, const OtherElement& snap) {
+  return BasicVector3<Element>(
+    Element(float_snapped(self.x(), snap)),
+    Element(float_snapped(self.y(), snap)),
+    Element(float_snapped(self.z(), snap))
+  );
+}
+template<typename Element, typename OtherElement>
+inline void vector3_snap(BasicVector3<Element>& self, const OtherElement& snap) {
+  self = vector3_snapped(self, snap);
+}
+
+inline Vector3 vector3_for_spherical(double theta, double phi) {
+  return Vector3(
+    static_cast<float>(cos(theta) * cos(phi)),
+    static_cast<float>(sin(theta) * cos(phi)),
+    static_cast<float>(sin(phi))
+  );
+}
+
+// ==================================================================================
 
 #endif
