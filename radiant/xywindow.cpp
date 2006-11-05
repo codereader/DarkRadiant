@@ -147,7 +147,11 @@ inline double ClipPoint_Intersect(const ClipPoint& clip, const Vector3& point, V
 {
   int nDim1 = (viewtype == YZ) ? 1 : 0;
   int nDim2 = (viewtype == XY) ? 1 : 2;
-  double screenDistanceSquared(vector2_length_squared(Vector2(fDiff(clip.m_ptClip[nDim1], point[nDim1]) * scale, fDiff(clip.m_ptClip[nDim2], point[nDim2])  * scale)));
+  double screenDistanceSquared(
+  	Vector2(
+  		fDiff(clip.m_ptClip[nDim1], point[nDim1]) * scale, 
+  		fDiff(clip.m_ptClip[nDim2], point[nDim2]) * scale).getLengthSquared()
+  	);
   if(screenDistanceSquared < 8*8)
   {
     return screenDistanceSquared;

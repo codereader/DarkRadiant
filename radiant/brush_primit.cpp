@@ -157,8 +157,8 @@ inline double arctangent_yx(double y, double x)
 
 inline void Texdef_fromTransform(texdef_t& texdef, float width, float height, const Matrix4& transform)
 {
-  texdef.scale[0] = static_cast<float>((1.0 / vector2_length(Vector2(transform[0], transform[4]))) / width);
-  texdef.scale[1] = static_cast<float>((1.0 / vector2_length(Vector2(transform[1], transform[5]))) / height);
+  texdef.scale[0] = static_cast<float>((1.0 / Vector2(transform[0], transform[4]).getLength()) / width);
+  texdef.scale[1] = static_cast<float>((1.0 / Vector2(transform[1], transform[5]).getLength()) / height);
 
   texdef.rotate = static_cast<float>(-radians_to_degrees(arctangent_yx(-transform[4], transform[0])));
 
@@ -171,7 +171,7 @@ inline void Texdef_fromTransform(texdef_t& texdef, float width, float height, co
   texdef.shift[1] = transform[13] * height;
 
   // If the 2d cross-product of the x and y axes is positive, one of the axes has a negative scale.
-  if(vector2_cross(Vector2(transform[0], transform[4]), Vector2(transform[1], transform[5])) > 0)
+  if(Vector2(transform[0], transform[4]).crossProduct(Vector2(transform[1], transform[5])) > 0)
   {
     if(texdef.rotate >= 180.0f)
     {
@@ -678,8 +678,8 @@ void ConvertTexMatWithQTexture( const brushprimit_texdef_t *texMat1, const qtext
 
 void TexMatToFakeTexCoords(const brushprimit_texdef_t& bp_texdef, texdef_t& texdef)
 {
-  texdef.scale[0] = static_cast<float>(1.0 / vector2_length(Vector2(bp_texdef.coords[0][0], bp_texdef.coords[1][0])));
-  texdef.scale[1] = static_cast<float>(1.0 / vector2_length(Vector2(bp_texdef.coords[0][1], bp_texdef.coords[1][1])));
+  texdef.scale[0] = static_cast<float>(1.0 / Vector2(bp_texdef.coords[0][0], bp_texdef.coords[1][0]).getLength());
+  texdef.scale[1] = static_cast<float>(1.0 / Vector2(bp_texdef.coords[0][1], bp_texdef.coords[1][1]).getLength());
 
   texdef.rotate = -static_cast<float>(radians_to_degrees(arctangent_yx(bp_texdef.coords[1][0], bp_texdef.coords[0][0])));
 
@@ -687,7 +687,7 @@ void TexMatToFakeTexCoords(const brushprimit_texdef_t& bp_texdef, texdef_t& texd
   texdef.shift[1] = bp_texdef.coords[1][2];
 
   // determine whether or not an axis is flipped using a 2d cross-product
-  double cross = vector2_cross(Vector2(bp_texdef.coords[0][0], bp_texdef.coords[0][1]), Vector2(bp_texdef.coords[1][0], bp_texdef.coords[1][1]));
+  double cross = Vector2(bp_texdef.coords[0][0], bp_texdef.coords[0][1]).crossProduct(Vector2(bp_texdef.coords[1][0], bp_texdef.coords[1][1]));
   if(cross < 0)
   {
     // This is a bit of a compromise when using BPs--since we don't know *which* axis was flipped,

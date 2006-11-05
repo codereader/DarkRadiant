@@ -1563,24 +1563,24 @@ inline PatchControl QuadraticBezier_evaluate(const PatchControl* firstPoint, dou
   {
     double weight = BernsteinPolynomial<Zero, Two>::apply(t);
     result.m_vertex += firstPoint[0].m_vertex * weight;
-    vector2_add(result.m_texcoord, vector2_scaled(firstPoint[0].m_texcoord, weight));
+    result.m_texcoord += firstPoint[0].m_texcoord * weight;
     denominator += weight;
   }
   {
     double weight = BernsteinPolynomial<One, Two>::apply(t);
     result.m_vertex += firstPoint[1].m_vertex * weight;
-    vector2_add(result.m_texcoord, vector2_scaled(firstPoint[1].m_texcoord, weight));
+    result.m_texcoord += firstPoint[1].m_texcoord * weight;
     denominator += weight;
   }
   {
     double weight = BernsteinPolynomial<Two, Two>::apply(t);
     result.m_vertex  += firstPoint[2].m_vertex * weight;
-    vector2_add(result.m_texcoord, vector2_scaled(firstPoint[2].m_texcoord, weight));
+    result.m_texcoord += firstPoint[2].m_texcoord * weight;
     denominator += weight;
   }
 
   result.m_vertex /= denominator;
-  vector2_divide(result.m_texcoord, denominator);
+  result.m_texcoord /= denominator;
   return result;
 }
 
@@ -1591,7 +1591,7 @@ inline Vector3 vector3_linear_interpolated(const Vector3& a, const Vector3& b, d
 
 inline Vector2 vector2_linear_interpolated(const Vector2& a, const Vector2& b, double t)
 {
-  return vector2_added(vector2_scaled(a, 1.0 - t), vector2_scaled(b, t));
+  return a*(1.0 - t) + b*t;
 }
 
 void normalise_safe(Vector3& normal)
@@ -2585,63 +2585,63 @@ void Patch::BuildVertexArray()
         if(!(nFlagsX & DEGEN_0a))
         {
           tangentX[0] = subMatrix[0][1]->m_vertex - subMatrix[0][0]->m_vertex;
-          tangentS[0] = vector2_subtracted(subMatrix[0][1]->m_texcoord, subMatrix[0][0]->m_texcoord);
+          tangentS[0] = subMatrix[0][1]->m_texcoord - subMatrix[0][0]->m_texcoord;
         }
         if(!(nFlagsX & DEGEN_0b))
         {
           tangentX[1] = subMatrix[0][2]->m_vertex - subMatrix[0][1]->m_vertex;
-          tangentS[1] = vector2_subtracted(subMatrix[0][2]->m_texcoord, subMatrix[0][1]->m_texcoord);
+          tangentS[1] = subMatrix[0][2]->m_texcoord - subMatrix[0][1]->m_texcoord;
         }
         if(!(nFlagsX & DEGEN_1a))
         {
           tangentX[2] = subMatrix[1][1]->m_vertex - subMatrix[1][0]->m_vertex;
-          tangentS[2] = vector2_subtracted(subMatrix[1][1]->m_texcoord, subMatrix[1][0]->m_texcoord);
+          tangentS[2] = subMatrix[1][1]->m_texcoord - subMatrix[1][0]->m_texcoord;
         }
         if(!(nFlagsX & DEGEN_1b))
         {
           tangentX[3] = subMatrix[1][2]->m_vertex - subMatrix[1][1]->m_vertex;
-          tangentS[3] = vector2_subtracted(subMatrix[1][2]->m_texcoord, subMatrix[1][1]->m_texcoord);
+          tangentS[3] = subMatrix[1][2]->m_texcoord - subMatrix[1][1]->m_texcoord;
         }
         if(!(nFlagsX & DEGEN_2a))
         {
           tangentX[4] = subMatrix[2][1]->m_vertex - subMatrix[2][0]->m_vertex;
-          tangentS[4] = vector2_subtracted(subMatrix[2][1]->m_texcoord, subMatrix[2][0]->m_texcoord);
+          tangentS[4] = subMatrix[2][1]->m_texcoord - subMatrix[2][0]->m_texcoord;
         }
         if(!(nFlagsX & DEGEN_2b))
         {
           tangentX[5] = subMatrix[2][2]->m_vertex - subMatrix[2][1]->m_vertex;
-          tangentS[5] = vector2_subtracted(subMatrix[2][2]->m_texcoord, subMatrix[2][1]->m_texcoord);
+          tangentS[5] = subMatrix[2][2]->m_texcoord - subMatrix[2][1]->m_texcoord;
         }
 
         if(!(nFlagsY & DEGEN_0a))
         {
           tangentY[0] = subMatrix[1][0]->m_vertex - subMatrix[0][0]->m_vertex;
-          tangentT[0] = vector2_subtracted(subMatrix[1][0]->m_texcoord, subMatrix[0][0]->m_texcoord);
+          tangentT[0] = subMatrix[1][0]->m_texcoord - subMatrix[0][0]->m_texcoord;
         }
         if(!(nFlagsY & DEGEN_0b))
         {
           tangentY[1] = subMatrix[2][0]->m_vertex - subMatrix[1][0]->m_vertex;
-          tangentT[1] = vector2_subtracted(subMatrix[2][0]->m_texcoord, subMatrix[1][0]->m_texcoord);
+          tangentT[1] = subMatrix[2][0]->m_texcoord - subMatrix[1][0]->m_texcoord;
         }
         if(!(nFlagsY & DEGEN_1a))
         {
           tangentY[2] = subMatrix[1][1]->m_vertex - subMatrix[0][1]->m_vertex;
-          tangentT[2] = vector2_subtracted(subMatrix[1][1]->m_texcoord, subMatrix[0][1]->m_texcoord);
+          tangentT[2] = subMatrix[1][1]->m_texcoord - subMatrix[0][1]->m_texcoord;
         }
         if(!(nFlagsY & DEGEN_1b))
         {
           tangentY[3] = subMatrix[2][1]->m_vertex - subMatrix[1][1]->m_vertex;
-          tangentT[3] = vector2_subtracted(subMatrix[2][1]->m_texcoord, subMatrix[1][1]->m_texcoord);
+          tangentT[3] = subMatrix[2][1]->m_texcoord - subMatrix[1][1]->m_texcoord;
         }
         if(!(nFlagsY & DEGEN_2a))
         {
           tangentY[4] = subMatrix[1][2]->m_vertex - subMatrix[0][2]->m_vertex;
-          tangentT[4] = vector2_subtracted(subMatrix[1][2]->m_texcoord, subMatrix[0][2]->m_texcoord);
+          tangentT[4] = subMatrix[1][2]->m_texcoord - subMatrix[0][2]->m_texcoord;
         }
         if(!(nFlagsY & DEGEN_2b))
         {
           tangentY[5] = subMatrix[2][2]->m_vertex - subMatrix[1][2]->m_vertex;
-          tangentT[5] = vector2_subtracted(subMatrix[2][2]->m_texcoord, subMatrix[1][2]->m_texcoord);
+          tangentT[5] = subMatrix[2][2]->m_texcoord - subMatrix[1][2]->m_texcoord;
         }
 
         // set up remaining edge tangents by borrowing the tangent from the closest parallel non-degenerate edge
