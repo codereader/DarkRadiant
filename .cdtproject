@@ -2,24 +2,24 @@
 <?eclipse-cdt version="2.0"?>
 
 <cdtproject id="org.eclipse.cdt.make.core.make">
-<extension point="org.eclipse.cdt.core.BinaryParser" id="org.eclipse.cdt.core.ELF"/>
-<extension point="org.eclipse.cdt.core.CIndexer" id="org.eclipse.cdt.core.ctagsindexer">
+<extension id="org.eclipse.cdt.core.PE" point="org.eclipse.cdt.core.BinaryParser"/>
+<extension id="org.eclipse.cdt.core.ctagsindexer" point="org.eclipse.cdt.core.CIndexer">
 <attribute key="ctagslocation" value=""/>
 <attribute key="ctagfiletype" value="ctags_internal"/>
 <attribute key="ctagsindexincludes" value="false"/>
-<attribute key="ctagfilelocation" value=""/>
 <attribute key="ctagslocationtype" value="ctags_path_default"/>
+<attribute key="ctagfilelocation" value=""/>
 </extension>
 <data>
 <item id="scannerConfiguration">
-<autodiscovery enabled="true" selectedProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile" problemReportingEnabled="true"/>
+<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile"/>
 <profile id="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile">
 <buildOutputProvider>
 <openAction enabled="true" filePath=""/>
 <parser enabled="true"/>
 </buildOutputProvider>
 <scannerInfoProvider id="specsFile">
-<runAction useDefault="true" command="gcc" arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}"/>
+<runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
 <parser enabled="true"/>
 </scannerInfoProvider>
 </profile>
@@ -29,7 +29,7 @@
 <parser enabled="true"/>
 </buildOutputProvider>
 <scannerInfoProvider id="specsFile">
-<runAction useDefault="true" command="gcc" arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}"/>
+<runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
 <parser enabled="false"/>
 </scannerInfoProvider>
 </profile>
@@ -39,7 +39,7 @@
 <parser enabled="true"/>
 </buildOutputProvider>
 <scannerInfoProvider id="specsFile">
-<runAction useDefault="true" command="gcc" arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}"/>
+<runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
 <parser enabled="false"/>
 </scannerInfoProvider>
 </profile>
@@ -49,19 +49,19 @@
 <parser enabled="true"/>
 </buildOutputProvider>
 <scannerInfoProvider id="makefileGenerator">
-<runAction useDefault="true" command="make" arguments="-f ${project_name}_scd.mk"/>
+<runAction arguments="-f ${project_name}_scd.mk" command="make" useDefault="true"/>
 <parser enabled="false"/>
 </scannerInfoProvider>
 </profile>
 </item>
 <item id="org.eclipse.cdt.core.pathentry">
-<pathentry kind="inc" path="" include="/usr/include/gtk-2.0" system="true"/>
-<pathentry kind="inc" path="" include="/usr/include/libxml2" system="true"/>
-<pathentry kind="inc" path="" include="/usr/include/glib-2.0" system="true"/>
-<pathentry kind="inc" path="" include="contrib/prtview" system="true" base-path="GtkRadiant"/>
 <pathentry kind="src" path=""/>
 <pathentry kind="out" path=""/>
 <pathentry kind="con" path="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"/>
+<pathentry include="/usr/include/gtk-2.0" kind="inc" path="" system="true"/>
+<pathentry include="/usr/include/libxml2" kind="inc" path="" system="true"/>
+<pathentry include="/usr/include/glib-2.0" kind="inc" path="" system="true"/>
+<pathentry base-path="GtkRadiant" include="contrib/prtview" kind="inc" path="" system="true"/>
 </item>
 </data>
 </cdtproject>

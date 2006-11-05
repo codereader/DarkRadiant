@@ -437,8 +437,8 @@ void Select_GetBounds (Vector3& mins, Vector3& maxs)
 {
   AABB bounds;
   Scene_BoundsSelected(GlobalSceneGraph(), bounds);
-  maxs = vector3_added(bounds.origin, bounds.extents);
-  mins = vector3_subtracted(bounds.origin, bounds.extents);
+  maxs = bounds.origin + bounds.extents;
+  mins = bounds.origin - bounds.extents;
 }
 
 void Select_GetMid (Vector3& mid)
@@ -518,7 +518,7 @@ inline void matrix4_pivoted_rotate_by_axis90(Matrix4& matrix, axis_t axis, sign_
 {
   matrix4_translate_by_vec3(matrix, pivotpoint);
   matrix4_rotate_by_axis90(matrix, axis, sign);
-  matrix4_translate_by_vec3(matrix, vector3_negated(pivotpoint));
+  matrix4_translate_by_vec3(matrix, -pivotpoint);
 }
 
 inline Quaternion quaternion_for_axis90(axis_t axis, sign_t sign)

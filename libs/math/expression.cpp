@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 Vector3 testAdded1(const Vector3& a, const Vector3& b)
 {
-  return vector3_added(a, vector3_added(a, b));
+  return a + a + b;
 }
 
 Vector3 testAdded2(const Vector3& a, const Vector3& b)
@@ -33,7 +33,7 @@ Vector3 testAdded2(const Vector3& a, const Vector3& b)
 
 Vector3 testMultiplied1(const Vector3& a, const Vector3& b)
 {
-  return vector3_scaled(a, b);
+  return a*b;
 }
 
 Vector3 testMultiplied2(const Vector3& a, const Vector3& b)
@@ -43,7 +43,7 @@ Vector3 testMultiplied2(const Vector3& a, const Vector3& b)
 
 Vector3 testCross1(const Vector3& a, const Vector3& b)
 {
-  return vector3_cross(a, b);
+  return a.crossProduct(b);
 }
 
 Vector3 testCross2(const Vector3& a, const Vector3& b)
@@ -53,17 +53,17 @@ Vector3 testCross2(const Vector3& a, const Vector3& b)
 
 double testDot1(const Vector3& a, const Vector3& b)
 {
-  return vector3_dot(a, b);
+  return a.dot(b);
 }
 
 double testDot2(const Vector3& a, const Vector3& b)
 {
-  return float_for_expression( vector_dot( vector3_identity(a), vector3_identity(b) ) );
+  return float_for_expression( vector3_identity(a).dot(vector3_identity(b)) );
 }
 
 double testLength1(const Vector3& a)
 {
-  return vector3_length(a);
+  return a.getLength();
 }
 
 double testLength2(const Vector3& a)
@@ -73,7 +73,7 @@ double testLength2(const Vector3& a)
 
 Vector3 testNormalised1(const Vector3& a)
 {
-  return vector3_normalised(a);
+  return a.getNormalised();
 }
 
 Vector3 testNormalised2(const Vector3& a)
@@ -83,7 +83,7 @@ Vector3 testNormalised2(const Vector3& a)
 
 Vector3 testNegated1(const Vector3& a)
 {
-  return vector3_negated(a);
+  return -a;
 }
 
 Vector3 testNegated2(const Vector3& a)
@@ -93,7 +93,7 @@ Vector3 testNegated2(const Vector3& a)
 
 Vector3 testScaled1(const Vector3& a, const double& b)
 {
-  return vector3_scaled(a, b);
+  return a*b;
 }
 
 Vector3 testScaled2(const Vector3& a, const double& b)
@@ -103,7 +103,7 @@ Vector3 testScaled2(const Vector3& a, const double& b)
 
 Vector3 testMatrixMultiplied1(const Vector3& a, const Matrix4& b)
 {
-  return matrix4_transformed_point(b, vector3_added(a, Vector3(1, 0, 0)));
+  return matrix4_transformed_point(b, a + Vector3(1, 0, 0));
 }
 
 Vector3 testMatrixMultiplied2(const Vector3& a, const Matrix4& b)
@@ -175,7 +175,7 @@ Matrix4 testMatrix4Transposed2(const Matrix4& a)
 
 Vector3 testMulti1(const Matrix4& a, const Vector3& b, const Vector3& c)
 {
-  return vector3_added(matrix4_transformed_point(matrix4_transposed(a), b), c);
+  return matrix4_transformed_point(matrix4_transposed(a), b) + c;
 }
 
 Vector3 testMulti2(const Matrix4& a, const Vector3& b, const Vector3& c)

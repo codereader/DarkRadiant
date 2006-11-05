@@ -144,22 +144,22 @@ inline Vector3 CubicBezier_evaluate(const Vector3* firstPoint, double t)
 
   {
     double weight = BernsteinPolynomial<Zero, Three>::apply(t);
-    result += vector3_scaled(*firstPoint++, weight);
+    result += (*firstPoint++) * weight;
     denominator += weight;
   }
   {
     double weight = BernsteinPolynomial<One, Three>::apply(t);
-    result += vector3_scaled(*firstPoint++, weight);
+    result += (*firstPoint++) * weight;
     denominator += weight;
   }
   {
     double weight = BernsteinPolynomial<Two, Three>::apply(t);
-    result += vector3_scaled(*firstPoint++, weight);
+    result += (*firstPoint++) * weight;
     denominator += weight;
   }
   {
     double weight = BernsteinPolynomial<Three, Three>::apply(t);
-    result += vector3_scaled(*firstPoint++, weight);
+    result += (*firstPoint++) * weight;
     denominator += weight;
   }
 
@@ -168,10 +168,7 @@ inline Vector3 CubicBezier_evaluate(const Vector3* firstPoint, double t)
 
 inline Vector3 CubicBezier_evaluateMid(const Vector3* firstPoint)
 {
-  return vector3_scaled(firstPoint[0], 0.125)
-    + vector3_scaled(firstPoint[1], 0.375)
-    + vector3_scaled(firstPoint[2], 0.375)
-    + vector3_scaled(firstPoint[3], 0.125);
+  return firstPoint[0]*0.125 + firstPoint[1]*0.375 + firstPoint[2]*0.375 + firstPoint[3]*0.125;
 }
 
 inline Vector3 CatmullRom_evaluate(const ControlPoints& controlPoints, double t)
@@ -196,11 +193,11 @@ inline Vector3 CatmullRom_evaluate(const ControlPoints& controlPoints, double t)
   Vector3 bezierPoints[4];
   bezierPoints[0] = controlPoints[segment];
   bezierPoints[1] = (segment > 0)
-    ? controlPoints[segment] + vector3_scaled(controlPoints[segment + 1] - controlPoints[segment - 1], reciprocal_alpha * 0.5)
-    : controlPoints[segment] + vector3_scaled(controlPoints[segment + 1] - controlPoints[segment], reciprocal_alpha);
+    ? controlPoints[segment] + (controlPoints[segment + 1] - controlPoints[segment - 1]) * (reciprocal_alpha * 0.5)
+    : controlPoints[segment] + (controlPoints[segment + 1] - controlPoints[segment]) * reciprocal_alpha;
   bezierPoints[2] = (segment < controlPoints.size() - 2)
-    ? controlPoints[segment + 1] + vector3_scaled(controlPoints[segment] - controlPoints[segment + 2], reciprocal_alpha * 0.5)
-    : controlPoints[segment + 1] + vector3_scaled(controlPoints[segment] - controlPoints[segment + 1], reciprocal_alpha);
+    ? controlPoints[segment + 1] + (controlPoints[segment] - controlPoints[segment + 2]) * (reciprocal_alpha * 0.5)
+    : controlPoints[segment + 1] + (controlPoints[segment] - controlPoints[segment + 1]) * reciprocal_alpha;
   bezierPoints[3] = controlPoints[segment + 1];
   return CubicBezier_evaluate(bezierPoints, t);
 }
@@ -231,7 +228,7 @@ inline Vector3 BSpline_evaluate(const ControlPoints& controlPoints, const Knots&
   Vector3 result(0, 0, 0);
   for(std::size_t i = 0; i < controlPoints.size(); ++i)
   {
-    result += vector3_scaled(controlPoints[i], BSpline_basis(knots, i, degree, t));
+    result += controlPoints[i] * BSpline_basis(knots, i, degree, t);
   }
   return result;
 }
@@ -245,7 +242,7 @@ inline Vector3 NURBS_evaluate(const ControlPoints& controlPoints, const NURBSWei
   for(std::size_t i = 0; i < controlPoints.size(); ++i)
   {
     double weight = weights[i] * BSpline_basis(knots, i, degree, t);
-    result += vector3_scaled(controlPoints[i], weight);
+    result += controlPoints[i] * weight;
     denominator += weight;
   }
   return result / denominator;

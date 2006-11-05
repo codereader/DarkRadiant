@@ -301,6 +301,10 @@ radiant_src = [
 'ui/colourscheme/ColourScheme.cpp',
 'ui/colourscheme/ColourSchemeManager.cpp',
 'ui/colourscheme/ColourSchemeEditor.cpp',
+'selection/Manipulatables.cpp',
+'selection/Manipulators.cpp',
+'selection/BestPoint.cpp',
+'selection/Intersection.cpp'
 ]
 
 for i in range(len(radiant_src)):

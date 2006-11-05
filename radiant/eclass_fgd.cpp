@@ -165,7 +165,7 @@ void EntityClassFGD_parseClass(Tokeniser& tokeniser, bool fixedsize, bool isBase
       else
       {
         entityClass->maxs = entityClass->mins;
-        vector3_negate(entityClass->mins);
+        entityClass->mins = -entityClass->mins;
         ASSERT_MESSAGE(string_equal(token, ")"), "");
       }
     }

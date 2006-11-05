@@ -410,10 +410,8 @@ bool MD5Model_parse(MD5Model& model, Tokeniser& tokeniser)
 			ArbitraryMeshVertex& b = surface.vertices()[*(j + 1)];
 			ArbitraryMeshVertex& c = surface.vertices()[*(j + 2)];
 			Vector3 weightedNormal(
-        vector3_cross(
-          reinterpret_cast<const Vector3&>(c.vertex) - reinterpret_cast<const Vector3&>(a.vertex),
-          reinterpret_cast<const Vector3&>(b.vertex) - reinterpret_cast<const Vector3&>(a.vertex)
-        )
+        (reinterpret_cast<const Vector3&>(c.vertex) - reinterpret_cast<const Vector3&>(a.vertex)).crossProduct(
+             reinterpret_cast<const Vector3&>(b.vertex) - reinterpret_cast<const Vector3&>(a.vertex))
       );
       reinterpret_cast<Vector3&>(a.normal) += weightedNormal;
       reinterpret_cast<Vector3&>(b.normal) += weightedNormal;

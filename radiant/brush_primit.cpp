@@ -264,8 +264,8 @@ void Texdef_basisForNormal(const TextureProjection& projection, const Vector3& n
   {
     basis = g_matrix4_identity;
     vector4_to_vector3(basis.x()) = projection.m_basis_s;
-    vector4_to_vector3(basis.y()) = vector3_negated(projection.m_basis_t);
-    vector4_to_vector3(basis.z()) = vector3_normalised(vector3_cross(vector4_to_vector3(basis.x()), vector4_to_vector3(basis.y())));
+    vector4_to_vector3(basis.y()) = -projection.m_basis_t;
+    vector4_to_vector3(basis.z()) = vector4_to_vector3(basis.x()).crossProduct(vector4_to_vector3(basis.y())).getNormalised();
     matrix4_multiply_by_matrix4(basis, matrix4_rotation_for_z_degrees(-projection.m_texdef.rotate));
     //globalOutputStream() << "debug: " << projection.m_basis_s << projection.m_basis_t << normal << "\n";
     matrix4_transpose(basis);
@@ -306,8 +306,8 @@ void Texdef_EmitTextureCoordinates(const TextureProjection& projection, std::siz
     matrix4_multiply_by_matrix4(local2tex, xyz2st);
   }
 
-  Vector3 tangent(vector3_normalised(vector4_to_vector3(matrix4_transposed(local2tex).x())));
-  Vector3 bitangent(vector3_normalised(vector4_to_vector3(matrix4_transposed(local2tex).y())));
+  Vector3 tangent(vector4_to_vector3(matrix4_transposed(local2tex).x()).getNormalised());
+  Vector3 bitangent(vector4_to_vector3(matrix4_transposed(local2tex).y()).getNormalised());
   
   matrix4_multiply_by_matrix4(local2tex, localToWorld);
 
@@ -506,9 +506,9 @@ void ComputeAxisBase(const Vector3& normal, Vector3& texS, Vector3& texT)
   }
   else
   {
-    texS = vector3_normalised(vector3_cross(normal, up));
-    texT = vector3_normalised(vector3_cross(normal, texS));
-    vector3_negate(texS);
+    texS = normal.crossProduct(up).getNormalised();
+    texT = normal.crossProduct(texS).getNormalised();
+    texS = -texS;
   }
 
 #else
@@ -603,8 +603,8 @@ void EmitBrushPrimitTextureCoordinates(face_t * f, Winding * w)
 	int i;
     for (i=0 ; i<w.numpoints ; i++)
 	{
-		x=vector3_dot(w.point_at(i),texX);
-		y=vector3_dot(w.point_at(i),texY);
+		x=w.point_at(i).dot(texX);
+		y=w.point_at(i).dot(texY);
 #if 0
 #ifdef DBG_BP
 		if (g_bp_globals.bNeedConvert)
@@ -735,8 +735,8 @@ void ShiftTextureGeometric_BrushPrimit(face_t *f, Vector3& delta)
 	// compute plane axis base ( doesn't change with translation )
 	ComputeAxisBase( f->plane.normal, texS, texT );
 	// compute translation vector in plane axis base
-	tx = vector3_dot( delta, texS );
-	ty = vector3_dot( delta, texT );
+	tx = delta.dot( texS );
+	ty = delta.dot( texT );
 	// fill the data vectors
 	M[0][0]=tx; M[0][1]=1.0f+tx; M[0][2]=tx;
 	M[1][0]=ty; M[1][1]=ty; M[1][2]=1.0f+ty;
@@ -778,8 +778,8 @@ void ShiftTextureRelative_BrushPrimit( face_t *f, float x, float y)
 void ComputeBest2DVector( Vector3& v, Vector3& X, Vector3& Y, int &x, int &y )
 {
 	double sx,sy;
-	sx = vector3_dot( v, X );
-	sy = vector3_dot( v, Y );
+	sx = v.dot( X );
+	sy = v.dot( Y );
 	if ( fabs(sy) > fabs(sx) )
   {
 		x = 0;
@@ -871,25 +871,25 @@ void TextureLockTransformation_BrushPrimit(face_t *f)
   else
   {
     for (j=0 ; j<3 ; j++)
-      rOrig[j] = vector3_dot(vector3_subtracted(Orig, txl_origin), txl_matrix[j]) + txl_origin[j];
+      rOrig[j] = (Orig - txl_origin).dot(txl_matrix[j]) + txl_origin[j];
     for (j=0 ; j<3 ; j++)
-      rvecS[j] = vector3_dot(vector3_subtracted(texS, txl_origin), txl_matrix[j]) + txl_origin[j];
+      rvecS[j] = (texS - txl_origin).dot(txl_matrix[j]) + txl_origin[j];
     for (j=0 ; j<3 ; j++)
-      rvecT[j] = vector3_dot(vector3_subtracted(texT, txl_origin), txl_matrix[j]) + txl_origin[j];
+      rvecT[j] = (texT - txl_origin).dot(txl_matrix[j]) + txl_origin[j];
     // we also need the axis base of the target plane, apply the transformation matrix to the normal too..
     for (j=0 ; j<3 ; j++)
-      rNormal[j] = vector3_dot(f->plane.normal, txl_matrix[j]);
+      rNormal[j] = f->plane.normal.dot(txl_matrix[j]);
   }
 
 	// compute rotated plane axis base
 	ComputeAxisBase( rNormal, rtexS, rtexT );
 	// compute S/T coordinates of the three points in rotated axis base ( in M matrix )
-	lOrig[0] = vector3_dot( rOrig, rtexS );
-	lOrig[1] = vector3_dot( rOrig, rtexT );
-	lvecS[0] = vector3_dot( rvecS, rtexS );
-	lvecS[1] = vector3_dot( rvecS, rtexT );
-	lvecT[0] = vector3_dot( rvecT, rtexS );
-	lvecT[1] = vector3_dot( rvecT, rtexT );
+	lOrig[0] = rOrig.dot( rtexS );
+	lOrig[1] = rOrig.dot( rtexT );
+	lvecS[0] = rvecS.dot( rtexS );
+	lvecS[1] = rvecS.dot( rtexT );
+	lvecT[0] = rvecT.dot( rtexS );
+	lvecT[1] = rvecT.dot( rtexT );
 	M[0][0] = lOrig[0]; M[1][0] = lOrig[1]; M[2][0] = 1.0f;
 	M[0][1] = lvecS[0]; M[1][1] = lvecS[1]; M[2][1] = 1.0f;
 	M[0][2] = lvecT[0]; M[1][2] = lvecT[1]; M[2][2] = 1.0f;
@@ -1330,10 +1330,10 @@ inline Matrix4 matrix4_reflection_for_plane45(const Plane3& plane, const Vector3
   Vector3 first = from;
   Vector3 second = to;
 
-  if(vector3_dot(from, plane.normal()) > 0 == vector3_dot(to, plane.normal()) > 0)
+  if(from.dot(plane.normal()) > 0 == to.dot(plane.normal()) > 0)
   {
-    first = vector3_negated(first);
-    second = vector3_negated(second);
+    first = -first;
+    second = -second;
   }
 
 #if 0
@@ -1401,7 +1401,7 @@ void Texdef_transformLocked(TextureProjection& projection, std::size_t width, st
 
   //globalOutputStream() << "originalProj: " << originalProjectionAxis << "\n";
   //globalOutputStream() << "transformedProj: " << transformedProjectionAxis << "\n";
-  double dot = vector3_dot(originalProjectionAxis, transformedProjectionAxis);
+  double dot = originalProjectionAxis.dot(transformedProjectionAxis);
   //globalOutputStream() << "dot: " << dot << "\n";
   if(dot == 0)
   {

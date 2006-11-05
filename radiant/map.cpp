@@ -1591,8 +1591,8 @@ void Map_RegionBounds(const AABB& bounds)
 {
   Map_RegionOff();
 
-  region_mins = vector3_subtracted(bounds.origin, bounds.extents);
-  region_maxs = vector3_added(bounds.origin, bounds.extents);
+  region_mins = bounds.origin - bounds.extents;
+  region_maxs = bounds.origin + bounds.extents;
 
   deleteSelection();
 
@@ -1741,7 +1741,7 @@ namespace map {
 		
 			// Constructor
 			BrushOriginSubtractor(const Vector3& origin)
-			: _transMat(Matrix4::getTranslation(origin.getScaledBy(-1))) {}
+			: _transMat(Matrix4::getTranslation( origin*(-1) )) {}
 			
 			// Pre visit function
 			bool pre(const scene::Path& path, scene::Instance& instance) const {

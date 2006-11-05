@@ -88,32 +88,32 @@ void sphere_draw_fill(const Vector3& origin, float radius, int sides)
       const double p = (j * dp) - (c_pi / 2.0);
 
       {
-        Vector3 v(vector3_added(origin, vector3_scaled(vector3_for_spherical(t, p), radius)));
+        Vector3 v(origin + vector3_for_spherical(t, p)*radius);
         glVertex3fv(vector3_to_array(v));
       }
 
       {
-        Vector3 v(vector3_added(origin, vector3_scaled(vector3_for_spherical(t, p + dp), radius)));
+        Vector3 v(origin + vector3_for_spherical(t, p + dp)*radius);
         glVertex3fv(vector3_to_array(v));
       }
 
       {
-        Vector3 v(vector3_added(origin, vector3_scaled(vector3_for_spherical(t + dt, p + dp), radius)));
+        Vector3 v(origin + vector3_for_spherical(t + dt, p + dp)*radius);
         glVertex3fv(vector3_to_array(v));
       }
 
       {
-        Vector3 v(vector3_added(origin, vector3_scaled(vector3_for_spherical(t, p), radius)));
+        Vector3 v(origin + vector3_for_spherical(t, p)*radius);
         glVertex3fv(vector3_to_array(v));
       }
 
       {
-        Vector3 v(vector3_added(origin, vector3_scaled(vector3_for_spherical(t + dt, p + dp), radius)));
+        Vector3 v(origin + vector3_for_spherical(t + dt, p + dp)*radius);
         glVertex3fv(vector3_to_array(v));
       }
 
       {
-        Vector3 v(vector3_added(origin, vector3_scaled(vector3_for_spherical(t + dt, p), radius)));
+        Vector3 v(origin + vector3_for_spherical(t + dt, p)*radius);
         glVertex3fv(vector3_to_array(v));
       }
     }
@@ -126,17 +126,17 @@ void sphere_draw_fill(const Vector3& origin, float radius, int sides)
       const double t = i * dt;
 
       {
-        Vector3 v(vector3_added(origin, vector3_scaled(vector3_for_spherical(t, p), radius)));
+        Vector3 v(origin + vector3_for_spherical(t, p)*radius);
         glVertex3fv(vector3_to_array(v));
       }
 
       {
-        Vector3 v(vector3_added(origin, vector3_scaled(vector3_for_spherical(t + dt, p + dp), radius)));
+        Vector3 v(origin + vector3_for_spherical(t + dt, p + dp)*radius);
         glVertex3fv(vector3_to_array(v));
       }
 
       {
-        Vector3 v(vector3_added(origin, vector3_scaled(vector3_for_spherical(t + dt, p), radius)));
+        Vector3 v(origin + vector3_for_spherical(t + dt, p)*radius);
         glVertex3fv(vector3_to_array(v));
       }
     }
@@ -255,8 +255,8 @@ void light_draw_radius_fill(const Vector3& origin, const float envelope[3])
 
 void light_vertices(const AABB& aabb_light, Vector3 points[6])
 {
-  Vector3 max(vector3_added(aabb_light.origin, aabb_light.extents));
-  Vector3 min(vector3_subtracted(aabb_light.origin, aabb_light.extents));
+  Vector3 max(aabb_light.origin + aabb_light.extents);
+  Vector3 min(aabb_light.origin - aabb_light.extents);
   Vector3 mid(aabb_light.origin);
 
   // top, bottom, tleft, tright, bright, bleft
@@ -1020,21 +1020,21 @@ class Light :
     const Matrix4& rotation = rotation_toMatrix(m_rotation);
     aabb_corners(AABB(Vector3(0, 0, 0), m_doom3Radius.m_radiusTransformed), m_radii_box.m_points);
     matrix4_transform_point(rotation, m_radii_box.m_points[0]);
-    vector3_add(m_radii_box.m_points[0], m_aabb_light.origin);
+    m_radii_box.m_points[0] += m_aabb_light.origin;
     matrix4_transform_point(rotation, m_radii_box.m_points[1]);
-    vector3_add(m_radii_box.m_points[1], m_aabb_light.origin);
+    m_radii_box.m_points[1] += m_aabb_light.origin;
     matrix4_transform_point(rotation, m_radii_box.m_points[2]);
-    vector3_add(m_radii_box.m_points[2], m_aabb_light.origin);
+    m_radii_box.m_points[2] += m_aabb_light.origin;
     matrix4_transform_point(rotation, m_radii_box.m_points[3]);
-    vector3_add(m_radii_box.m_points[3], m_aabb_light.origin);
+    m_radii_box.m_points[3] += m_aabb_light.origin;
     matrix4_transform_point(rotation, m_radii_box.m_points[4]);
-    vector3_add(m_radii_box.m_points[4], m_aabb_light.origin);
+    m_radii_box.m_points[4] += m_aabb_light.origin;
     matrix4_transform_point(rotation, m_radii_box.m_points[5]);
-    vector3_add(m_radii_box.m_points[5], m_aabb_light.origin);
+    m_radii_box.m_points[5] += m_aabb_light.origin;
     matrix4_transform_point(rotation, m_radii_box.m_points[6]);
-    vector3_add(m_radii_box.m_points[6], m_aabb_light.origin);
+    m_radii_box.m_points[6] += m_aabb_light.origin;
     matrix4_transform_point(rotation, m_radii_box.m_points[7]);
-    vector3_add(m_radii_box.m_points[7], m_aabb_light.origin);
+    m_radii_box.m_points[7] += m_aabb_light.origin;
   }
 
   void rotationChanged()
@@ -1449,8 +1449,8 @@ public:
     matrix4_scale_by_vec3(m_doom3Projection, Vector3(0.5f, 0.5f, 1));
 
 #if 0
-    Vector3 right = vector3_cross(m_lightUp, vector3_normalised(m_lightTarget));
-    Vector3 up = vector3_cross(vector3_normalised(m_lightTarget), m_lightRight);
+    Vector3 right = m_lightUp.crossProduct(m_lightTarget.getNormalised());
+    Vector3 up = m_lightTarget.getNormalised().crossProduct(m_lightRight);
     Vector3 target = m_lightTarget;
     Matrix4 test(
       -right.x(), -right.y(), -right.z(), 0,
@@ -1464,10 +1464,10 @@ public:
     matrix4_multiply_by_matrix4(m_doom3Projection, test);
 #elif 0
     const float nearFar = 1 / 49.5f;
-    Vector3 right = vector3_cross(m_lightUp, vector3_normalised(m_lightTarget + m_lightRight));
-    Vector3 up = vector3_cross(vector3_normalised(m_lightTarget + m_lightUp), m_lightRight);
-    Vector3 target = vector3_negated(m_lightTarget * (1 + nearFar));
-    float scale = -1 / vector3_length(m_lightTarget);
+    Vector3 right = m_lightUp.crossProduct((m_lightTarget + m_lightRight).getNormalised());
+    Vector3 up = (m_lightTarget + m_lightUp).getNormalised().crossProduct(m_lightRight);
+    Vector3 target = -(m_lightTarget * (1 + nearFar));
+    float scale = -1 / m_lightTarget.getLength();
     Matrix4 test(
       -inverse(right.x()), -inverse(up.x()), -inverse(target.x()), 0,
       -inverse(right.y()), -inverse(up.y()), -inverse(target.y()), 0,
@@ -1478,37 +1478,37 @@ public:
 #elif 0
     Vector3 leftA(m_lightTarget - m_lightRight);
     Vector3 leftB(m_lightRight + m_lightUp);
-    Plane3 left(vector3_normalised(vector3_cross(leftA, leftB)) * (1.0 / 128), 0);
+    Plane3 left(leftA.crossProduct(leftB).getNormalised() * (1.0 / 128), 0);
     Vector3 rightA(m_lightTarget + m_lightRight);
-    Vector3 rightB(vector3_cross(rightA, m_lightTarget));
-    Plane3 right(vector3_normalised(vector3_cross(rightA, rightB)) * (1.0 / 128), 0);
+    Vector3 rightB(rightA.crossProduct(m_lightTarget));
+    Plane3 right(rightA.crossProduct(rightB).getNormalised() * (1.0 / 128), 0);
     Vector3 bottomA(m_lightTarget - m_lightUp);
-    Vector3 bottomB(vector3_cross(bottomA, m_lightTarget));
-    Plane3 bottom(vector3_normalised(vector3_cross(bottomA, bottomB)) * (1.0 / 128), 0);
+    Vector3 bottomB(bottomA.crossProduct(m_lightTarget));
+    Plane3 bottom(bottomA.crossProduct(bottomB).getNormalised() * (1.0 / 128), 0);
     Vector3 topA(m_lightTarget + m_lightUp);
-    Vector3 topB(vector3_cross(topA, m_lightTarget));
-    Plane3 top(vector3_normalised(vector3_cross(topA, topB)) * (1.0 / 128), 0);
-    Plane3 front(vector3_normalised(m_lightTarget) * (1.0 / 128), 1);
-    Plane3 back(vector3_normalised(vector3_negated(m_lightTarget)) * (1.0 / 128), 0);
+    Vector3 topB(topA.crossProduct(m_lightTarget));
+    Plane3 top(topA.crossProduct(topB).getNormalised() * (1.0 / 128), 0);
+    Plane3 front(m_lightTarget.getNormalised() * (1.0 / 128), 1);
+    Plane3 back((-m_lightTarget).getNormalised() * (1.0 / 128), 0);
     Matrix4 test(matrix4_from_planes(plane3_flipped(left), plane3_flipped(right), plane3_flipped(bottom), plane3_flipped(top), plane3_flipped(front), plane3_flipped(back)));
     matrix4_multiply_by_matrix4(m_doom3Projection, test);
 #else
 
     Plane3 lightProject[4];
 
-    Vector3 start = m_useLightStart && m_useLightEnd ? m_lightStart : vector3_normalised(m_lightTarget);
+    Vector3 start = m_useLightStart && m_useLightEnd ? m_lightStart : m_lightTarget.getNormalised();
     Vector3 stop = m_useLightStart && m_useLightEnd ? m_lightEnd : m_lightTarget;
 
-	  float rLen = vector3_length(m_lightRight);
-	  Vector3 right = vector3_divided(m_lightRight, rLen);
-	  float uLen = vector3_length(m_lightUp);
-	  Vector3 up = vector3_divided(m_lightUp, uLen);
-	  Vector3 normal = vector3_normalised(vector3_cross(up, right));
+	  float rLen = m_lightRight.getLength();
+	  Vector3 right = m_lightRight / rLen;
+	  float uLen = m_lightUp.getLength();
+	  Vector3 up = m_lightUp / uLen;
+	  Vector3 normal = up.crossProduct(right).getNormalised();
 
-	  float dist = vector3_dot(m_lightTarget, normal);
+	  float dist = m_lightTarget.dot(normal);
 	  if ( dist < 0 ) {
 		  dist = -dist;
-		  normal = vector3_negated(normal);
+		  normal = -normal;
 	  }
 
 	  right *= ( 0.5f * dist ) / rLen;
@@ -1535,13 +1535,13 @@ public:
 
 	  // set the falloff vector
 	  Vector3 falloff = stop - start;
-	  float length = vector3_length(falloff);
-    falloff = vector3_divided(falloff, length);
+	  float length = falloff.getLength();
+      falloff /= length;
 	  if ( length <= 0 ) {
 		  length = 1;
 	  }
-    falloff *= (1.0f / length);
-	  lightProject[3] = Plane3(falloff, -vector3_dot(start, falloff));
+      falloff *= (1.0f / length);
+	  lightProject[3] = Plane3(falloff, -start.dot(falloff));
 
 	  // we want the planes of s=0, s=q, t=0, and t=q
 	  m_doom3Frustum.left = lightProject[0];

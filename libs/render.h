@@ -617,7 +617,7 @@ inline Vector2& texcoord2f_to_vector2(TexCoord2f& vertex)
 /// \brief Returns \p normal rescaled to be unit-length. 
 inline Normal3f normal3f_normalised(const Normal3f& normal)
 {
-  return normal3f_for_vector3(vector3_normalised(normal3f_to_vector3(normal)));
+  return normal3f_for_vector3(normal3f_to_vector3(normal).getNormalised());
 }
 
 enum UnitSphereOctant
@@ -1299,19 +1299,12 @@ inline void ArbitraryMeshTriangle_calcTangents(const ArbitraryMeshVertex& a, con
 {
   s = Vector3(0, 0, 0);
   t = Vector3(0, 0, 0);
+  Vector3 aVec, bVec, cVec;
   {
-    Vector3 cross(
-      vector3_cross(
-        vector3_subtracted(
-          Vector3(b.vertex.x(), b.texcoord.s(), b.texcoord.t()),
-          Vector3(a.vertex.x(), a.texcoord.s(), a.texcoord.t())
-        ),
-        vector3_subtracted(
-          Vector3(c.vertex.x(), c.texcoord.s(), c.texcoord.t()),
-          Vector3(a.vertex.x(), a.texcoord.s(), a.texcoord.t())
-        )
-      )
-    );
+  	aVec = Vector3(a.vertex.x(), a.texcoord.s(), a.texcoord.t());
+  	bVec = Vector3(b.vertex.x(), b.texcoord.s(), b.texcoord.t());
+  	cVec = Vector3(c.vertex.x(), c.texcoord.s(), c.texcoord.t());
+    Vector3 cross( (bVec-aVec).crossProduct(cVec-aVec) );
 
     if(fabs(cross.x()) > 0.000001f)
     {
@@ -1325,18 +1318,10 @@ inline void ArbitraryMeshTriangle_calcTangents(const ArbitraryMeshVertex& a, con
   }
 
   {
-    Vector3 cross(
-      vector3_cross(
-        vector3_subtracted(
-          Vector3(b.vertex.y(), b.texcoord.s(), b.texcoord.t()),
-          Vector3(a.vertex.y(), a.texcoord.s(), a.texcoord.t())
-        ),
-        vector3_subtracted(
-          Vector3(c.vertex.y(), c.texcoord.s(), c.texcoord.t()),
-          Vector3(a.vertex.y(), a.texcoord.s(), a.texcoord.t())
-        )
-      )
-    );
+  	aVec = Vector3(a.vertex.y(), a.texcoord.s(), a.texcoord.t());
+  	bVec = Vector3(b.vertex.y(), b.texcoord.s(), b.texcoord.t());
+  	cVec = Vector3(c.vertex.y(), c.texcoord.s(), c.texcoord.t());
+    Vector3 cross( (bVec-aVec).crossProduct(cVec-aVec));
 
     if(fabs(cross.x()) > 0.000001f)
     {
@@ -1350,19 +1335,11 @@ inline void ArbitraryMeshTriangle_calcTangents(const ArbitraryMeshVertex& a, con
   }
 
   {
-    Vector3 cross(
-      vector3_cross(
-        vector3_subtracted(
-          Vector3(b.vertex.z(), b.texcoord.s(), b.texcoord.t()),
-          Vector3(a.vertex.z(), a.texcoord.s(), a.texcoord.t())
-        ),
-        vector3_subtracted(
-          Vector3(c.vertex.z(), c.texcoord.s(), c.texcoord.t()),
-          Vector3(a.vertex.z(), a.texcoord.s(), a.texcoord.t())
-        )
-      )
-    );
-
+  	aVec = Vector3(a.vertex.z(), a.texcoord.s(), a.texcoord.t());
+  	bVec = Vector3(b.vertex.z(), b.texcoord.s(), b.texcoord.t());
+  	cVec = Vector3(c.vertex.z(), c.texcoord.s(), c.texcoord.t());
+  	Vector3 cross( (bVec-aVec).crossProduct(cVec-aVec));
+    
     if(fabs(cross.x()) > 0.000001f)
     {
       s.z() = -cross.y() / cross.x();
