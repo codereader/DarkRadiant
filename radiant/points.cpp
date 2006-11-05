@@ -215,7 +215,7 @@ void Pointfile_Next (void)
 	Camera_setOrigin(camwnd, *i);
 	g_pParentWnd->GetXYWnd()->SetOrigin(*i);
   {
-	  Vector3 dir(vector3_normalised(vector3_subtracted(*(++i), Camera_getOrigin(camwnd))));
+	  Vector3 dir((*(++i) - Camera_getOrigin(camwnd)).getNormalised());
     Vector3 angles(Camera_getAngles(camwnd));
 	  angles[CAMERA_YAW] = static_cast<float>(radians_to_degrees(atan2(dir[1], dir[0])));
 	  angles[CAMERA_PITCH] = static_cast<float>(radians_to_degrees(asin(dir[2])));
@@ -241,7 +241,7 @@ void Pointfile_Prev (void)
 	Camera_setOrigin(camwnd, *i);
 	g_pParentWnd->GetXYWnd()->SetOrigin(*i);
   {
-	  Vector3 dir(vector3_normalised(vector3_subtracted(*(++i), Camera_getOrigin(camwnd))));
+	  Vector3 dir((*(++i) - Camera_getOrigin(camwnd)).getNormalised());
     Vector3 angles(Camera_getAngles(camwnd));
 	  angles[CAMERA_YAW] = static_cast<float>(radians_to_degrees(atan2(dir[1], dir[0])));
 	  angles[CAMERA_PITCH] = static_cast<float>(radians_to_degrees(asin(dir[2])));

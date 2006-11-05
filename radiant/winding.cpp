@@ -28,22 +28,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 inline double plane3_distance_to_point(const Plane3& plane, const DoubleVector3& point)
 {
-  return vector3_dot(point, plane.normal()) - plane.dist();
+  return point.dot(plane.normal()) - plane.dist();
 }
 
 inline double plane3_distance_to_point(const Plane3& plane, const Vector3& point)
 {
-  return vector3_dot(point, plane.normal()) - plane.dist();
+  return point.dot(plane.normal()) - plane.dist();
 }
 
 /// \brief Returns the point at which \p line intersects \p plane, or an undefined value if there is no intersection.
 inline DoubleVector3 line_intersect_plane(const DoubleLine& line, const Plane3& plane)
 {
-  return line.origin + vector3_scaled(
-    line.direction,
-    -plane3_distance_to_point(plane, line.origin)
-    / vector3_dot(line.direction, plane.normal())
-  );
+  return line.origin + 
+    line.direction * (-plane3_distance_to_point(plane, line.origin) / line.direction.dot(plane.normal()));
 }
 
 inline bool float_is_largest_absolute(double axis, double other)
@@ -67,7 +64,7 @@ inline int vector3_largest_absolute_component_index(const DoubleVector3& v)
 inline DoubleLine plane3_intersect_plane3(const Plane3& plane, const Plane3& other)
 {
   DoubleLine line;
-  line.direction = vector3_cross(plane.normal(), other.normal());
+  line.direction = plane.normal().crossProduct(other.normal());
   switch(vector3_largest_absolute_component_index(line.direction))
   {
   case 0:
@@ -126,30 +123,30 @@ void Winding_createInfinite(FixedWinding& winding, const Plane3& plane, double i
   }
 
 
-  vector3_add(vup, vector3_scaled(plane.normal(), -vector3_dot(vup, plane.normal())));
+  vup += plane.normal() * (-vup.dot(plane.normal()));
   vector3_normalise(vup);
     
-  DoubleVector3 org = vector3_scaled(plane.normal(), plane.dist());
+  DoubleVector3 org = plane.normal() * plane.dist();
   
-  DoubleVector3 vright = vector3_cross(vup, plane.normal());
+  DoubleVector3 vright = vup.crossProduct(plane.normal());
   
-  vector3_scale(vup, infinity);
-  vector3_scale(vright, infinity);
+  vup *= infinity;
+  vright *= infinity;
 
   // project a really big  axis aligned box onto the plane
   
   DoubleLine r1, r2, r3, r4;
-  r1.origin = vector3_added(vector3_subtracted(org, vright), vup);
-  r1.direction = vector3_normalised(vright);
+  r1.origin = (org - vright) + vup;
+  r1.direction = vright.getNormalised();
   winding.push_back(FixedWindingVertex(r1.origin, r1, c_brush_maxFaces));
-  r2.origin = vector3_added(vector3_added(org, vright), vup);
-  r2.direction = vector3_normalised(vector3_negated(vup));
+  r2.origin = org + vright + vup;
+  r2.direction = (-vup).getNormalised();
   winding.push_back(FixedWindingVertex(r2.origin, r2, c_brush_maxFaces));
-  r3.origin = vector3_subtracted(vector3_added(org, vright), vup);
-  r3.direction = vector3_normalised(vector3_negated(vright));
+  r3.origin = (org + vright) - vup;
+  r3.direction = (-vright).getNormalised();
   winding.push_back(FixedWindingVertex(r3.origin, r3, c_brush_maxFaces));
-  r4.origin = vector3_subtracted(vector3_subtracted(org, vright), vup);
-  r4.direction = vector3_normalised(vup);
+  r4.origin = (org - vright) - vup;
+  r4.direction = vup.getNormalised();
   winding.push_back(FixedWindingVertex(r4.origin, r4, c_brush_maxFaces));
 }
 

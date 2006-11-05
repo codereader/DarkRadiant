@@ -200,8 +200,8 @@ void PlanePointsFromClipPoints(Vector3 planepts[3], const AABB& bounds, int view
   planepts[0] = g_Clip1.m_ptClip;
 	planepts[1] = g_Clip2.m_ptClip;
 	planepts[2] = g_Clip3.m_ptClip;
-  Vector3 maxs(vector3_added(bounds.origin, bounds.extents));
-  Vector3 mins(vector3_subtracted(bounds.origin, bounds.extents));
+  Vector3 maxs(bounds.origin + bounds.extents);
+  Vector3 mins(bounds.origin - bounds.extents);
 	if(!g_Clip3.Set())
 	{
 		int n = (viewtype == XY) ? 2 : (viewtype == YZ) ? 0 : 1;
@@ -1027,7 +1027,7 @@ void XYWnd_OrientCamera(XYWnd* xywnd, int x, int y, CamWnd& camwnd)
   Vector3	point = g_vector3_identity;
   xywnd->XY_ToPoint(x, y, point);
   xywnd->XY_SnapToGrid(point);
-  vector3_subtract(point, Camera_getOrigin(camwnd));
+  point -= Camera_getOrigin(camwnd);
 
   int n1 = (xywnd->GetViewType() == XY) ? 1 : 2;
   int n2 = (xywnd->GetViewType() == YZ) ? 1 : 0;
@@ -1947,15 +1947,14 @@ float Betwixt(float f1, float f2)
 // which is not an excuse, just a fact
 void XYWnd::PaintSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vMaxBounds)
 {
-  if(vector3_equal(vMinBounds, vMaxBounds))
-  {
+  if (vMinBounds == vMaxBounds) {
     return;
   }
   const char* g_pDimStrings[] = {"x:", "y:", "z:"};
   typedef const char* OrgStrings[2];
   const OrgStrings g_pOrgStrings[] = { { "x:", "y:", }, { "x:", "z:", }, { "y:", "z:", } };
 
-  Vector3 vSize(vector3_subtracted(vMaxBounds, vMinBounds));
+  Vector3 vSize(vMaxBounds - vMinBounds);
 
   glColor3fv(vector3_to_array(ColourSchemes().getColourVector3("brush_size_info")));
 

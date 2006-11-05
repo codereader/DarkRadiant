@@ -381,11 +381,7 @@ enum Matrix4Handedness
 inline Matrix4Handedness matrix4_handedness(const Matrix4& self)
 {
   return (
-    vector3_dot(
-      vector3_cross(vector4_to_vector3(self.x()), vector4_to_vector3(self.y())),
-      vector4_to_vector3(self.z())
-    )
-    < 0.0
+    vector4_to_vector3(self.x()).crossProduct(vector4_to_vector3(self.y())).dot(vector4_to_vector3(self.z())) < 0.0
   ) ? MATRIX4_LEFTHANDED : MATRIX4_RIGHTHANDED;
 }
 
@@ -1309,7 +1305,7 @@ inline void matrix4_pivoted_rotate_by_euler_xyz_degrees(Matrix4& self, const Vec
 {
   matrix4_translate_by_vec3(self, pivotpoint);
   matrix4_rotate_by_euler_xyz_degrees(self, euler);
-  matrix4_translate_by_vec3(self, vector3_negated(pivotpoint));
+  matrix4_translate_by_vec3(self, -pivotpoint);
 }
 
 
@@ -1329,9 +1325,9 @@ inline Matrix4 matrix4_scale_for_vec3(const Vector3& scale)
 inline Vector3 matrix4_get_scale_vec3(const Matrix4& self)
 {
   return Vector3(
-    static_cast<float>(vector3_length(vector4_to_vector3(self.x()))),
-    static_cast<float>(vector3_length(vector4_to_vector3(self.y()))),
-    static_cast<float>(vector3_length(vector4_to_vector3(self.z())))
+    static_cast<float>(vector4_to_vector3(self.x()).getLength()),
+    static_cast<float>(vector4_to_vector3(self.y()).getLength()),
+    static_cast<float>(vector4_to_vector3(self.z()).getLength())
   );
 }
 
@@ -1346,7 +1342,7 @@ inline void matrix4_pivoted_scale_by_vec3(Matrix4& self, const Vector3& scale, c
 {
   matrix4_translate_by_vec3(self, pivotpoint);
   matrix4_scale_by_vec3(self, scale);
-  matrix4_translate_by_vec3(self, vector3_negated(pivotpoint));
+  matrix4_translate_by_vec3(self, -pivotpoint);
 }
 
 
@@ -1365,7 +1361,7 @@ inline void matrix4_pivoted_transform_by_euler_xyz_degrees(Matrix4& self, const 
   matrix4_translate_by_vec3(self, pivotpoint + translation);
   matrix4_rotate_by_euler_xyz_degrees(self, euler);
   matrix4_scale_by_vec3(self, scale);
-  matrix4_translate_by_vec3(self, vector3_negated(pivotpoint));
+  matrix4_translate_by_vec3(self, -pivotpoint);
 }
 
 

@@ -234,20 +234,20 @@ inline void edge_snap(Vector3& edge, double snap)
   float scale = static_cast<float>(ceil(fabs(snap / vector3_max_component(edge))));
   if(scale > 0.0f)
   {
-    vector3_scale(edge, scale);
+    edge *= scale;
   }
   vector3_snap(edge, snap);
 }
 
 inline void planepts_snap(PlanePoints planepts, double snap)
 {
-  Vector3 edge01(vector3_subtracted(planepts[1], planepts[0]));
-  Vector3 edge12(vector3_subtracted(planepts[2], planepts[1]));
-  Vector3 edge20(vector3_subtracted(planepts[0], planepts[2]));
+  Vector3 edge01(planepts[1] - planepts[0]);
+  Vector3 edge12(planepts[2] - planepts[1]);
+  Vector3 edge20(planepts[0] - planepts[2]);
 
-  double length_squared_01 = vector3_dot(edge01, edge01);
-  double length_squared_12 = vector3_dot(edge12, edge12);
-  double length_squared_20 = vector3_dot(edge20, edge20);
+  double length_squared_01 = edge01.dot(edge01);
+  double length_squared_12 = edge12.dot(edge12);
+  double length_squared_20 = edge20.dot(edge20);
 
   vector3_snap(planepts[0], snap);
 
@@ -257,15 +257,15 @@ inline void planepts_snap(PlanePoints planepts, double snap)
     {
       edge_snap(edge01, snap);
       edge_snap(edge12, snap);
-      planepts[1] = vector3_added(planepts[0], edge01);
-      planepts[2] = vector3_added(planepts[1], edge12);
+      planepts[1] = planepts[0] + edge01;
+      planepts[2] = planepts[1] + edge12;
     }
     else
     {
       edge_snap(edge20, snap);
       edge_snap(edge01, snap);
-      planepts[1] = vector3_added(planepts[0], edge20);
-      planepts[2] = vector3_added(planepts[1], edge01);
+      planepts[1] = planepts[0] + edge20;
+      planepts[2] = planepts[1] + edge01;
     }
   }
   else
@@ -274,15 +274,15 @@ inline void planepts_snap(PlanePoints planepts, double snap)
     {
       edge_snap(edge01, snap);
       edge_snap(edge12, snap);
-      planepts[1] = vector3_added(planepts[0], edge01);
-      planepts[2] = vector3_added(planepts[1], edge12);
+      planepts[1] = planepts[0] + edge01;
+      planepts[2] = planepts[1] + edge12;
     }
     else
     {
       edge_snap(edge12, snap);
       edge_snap(edge20, snap);
-      planepts[1] = vector3_added(planepts[0], edge12);
-      planepts[2] = vector3_added(planepts[1], edge20);
+      planepts[1] = planepts[0] + edge12;
+      planepts[2] = planepts[1] + edge20;
     }
   }
 }
@@ -851,11 +851,11 @@ public:
   {
     if(!isDoom3Plane())
     {
-      Vector3 move(vector3_scaled(m_planeCached.normal(), -offset));
+      Vector3 move(m_planeCached.normal()*(-offset));
 
-      vector3_subtract(m_planepts[0], move);
-      vector3_subtract(m_planepts[1], move);
-      vector3_subtract(m_planepts[2], move);
+      m_planepts[0] -= move;
+      m_planepts[1] -= move;
+      m_planepts[2] -= move;
 
       MakePlane();
     }
@@ -872,7 +872,7 @@ public:
   }
   void updateSource()
   {
-    m_plane = Plane3_applyTranslation(m_planeCached, vector3_negated(m_funcStaticOrigin));
+    m_plane = Plane3_applyTranslation(m_planeCached, -m_funcStaticOrigin);
   }
 
 
@@ -2247,14 +2247,14 @@ public:
 
         {
           // flip the plane, because we want to keep the back side
-          Plane3 clipPlane(vector3_negated(clip.plane3().normal()), -clip.plane3().dist());
+          Plane3 clipPlane(-clip.plane3().normal(), -clip.plane3().dist());
           Winding_Clip(buffer[swap], plane, clipPlane, i, buffer[!swap]);
         }
 
 #if BRUSH_CONNECTIVITY_DEBUG
         for(FixedWinding::Points::iterator k = buffer[!swap].points.begin(), j = buffer[!swap].points.end() - 1; k != buffer[!swap].points.end(); j = k, ++k)
         {
-          if(vector3_length_squared(vector3_subtracted((*k).vertex, (*j).vertex)) < 1)
+          if(((*k).vertex - (*j).vertex).getLengthSquared() < 1)
           {
             globalOutputStream() << "v: " << std::distance(buffer[!swap].points.begin(), j) << " tiny edge adjacent to face " << (*j).adjacent << "\n";
           }
@@ -2274,7 +2274,7 @@ public:
 
     for(Winding::iterator i = winding.begin(), j = winding.end() - 1; i != winding.end(); j = i, ++i)
     {
-      if(vector3_length_squared(vector3_subtracted((*i).vertex, (*j).vertex)) < 1)
+      if(((*i).vertex - (*j).vertex).getLengthSquared() < 1)
       {
         globalOutputStream() << "v: " << std::distance(winding.begin(), j) << " tiny edge adjacent to face " << (*j).adjacent << "\n";
       }
@@ -2656,12 +2656,12 @@ inline bool triangle_reversed(std::size_t x, std::size_t y, std::size_t z)
 template<typename Element>
 inline Vector3 triangle_cross(const BasicVector3<Element>& x, const BasicVector3<Element> y, const BasicVector3<Element>& z)
 {
-  return vector3_cross(y - x, z - x);
+  return (y - x).crossProduct(z - x);
 }
 template<typename Element>
 inline bool triangles_same_winding(const BasicVector3<Element>& x1, const BasicVector3<Element> y1, const BasicVector3<Element>& z1, const BasicVector3<Element>& x2, const BasicVector3<Element> y2, const BasicVector3<Element>& z2)
 {
-  return vector3_dot(triangle_cross(x1, y1, z1), triangle_cross(x2, y2, z2)) > 0;
+  return triangle_cross(x1, y1, z1).dot(triangle_cross(x2, y2, z2)) > 0;
 }
 
 
@@ -2927,8 +2927,8 @@ public:
   {
     for(Winding::const_iterator i = getFace().getWinding().begin(); i != getFace().getWinding().end(); ++i)
     {
-      Vector3 v(vector3_subtracted(line_closest_point(line, (*i).vertex), (*i).vertex));
-      double dot = vector3_dot(getFace().plane3().normal(), v);
+      Vector3 v(line_closest_point(line, (*i).vertex) - (*i).vertex);
+      double dot = getFace().plane3().normal().dot(v);
       if(dot <= 0)
       {
         return;
@@ -3230,7 +3230,7 @@ inline void Face_addLight(const FaceInstance& face, const Matrix4& localToWorld,
   const Vector3& origin = light.aabb().origin;
   Plane3 tmp(plane3_transformed(Plane3(facePlane.normal(), -facePlane.dist()), localToWorld));
   if(!plane3_test_point(tmp, origin)
-    || !plane3_test_point(tmp, vector3_added(origin, light.offset())))
+    || !plane3_test_point(tmp, origin + light.offset()))
   {
     face.m_lights.addLight(light);
   }

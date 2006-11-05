@@ -274,7 +274,7 @@ const double ON_EPSILON	= 1.0 / (1 << 8);
 /// \brief Returns true if edge (\p x, \p y) is smaller than the epsilon used to classify winding points against a plane.
 inline bool Edge_isDegenerate(const Vector3& x, const Vector3& y)
 {
-  return vector3_length_squared(y - x) < (ON_EPSILON * ON_EPSILON);
+  return (y - x).getLengthSquared() < (ON_EPSILON * ON_EPSILON);
 }
 
 void Winding_Clip(const FixedWinding& winding, const Plane3& plane, const Plane3& clipPlane, std::size_t adjacent, FixedWinding& clipped);

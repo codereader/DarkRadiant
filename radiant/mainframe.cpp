@@ -738,7 +738,7 @@ void PasteToCamera()
   // Work out the delta
   Vector3 mid;
   Select_GetMid(mid);
-  Vector3 delta = vector3_subtracted(vector3_snapped(Camera_getOrigin(camwnd), GetGridSize()), mid);
+  Vector3 delta = vector3_snapped(Camera_getOrigin(camwnd), GetGridSize()) - mid;
   
   // Move to camera
   GlobalSelectionSystem().translateSelected(delta);
@@ -1065,13 +1065,13 @@ Vector3 AxisBase_axisForDirection(const AxisBase& axes, ENudgeDirection directio
   switch (direction)
   {
   case eNudgeLeft:
-    return vector3_negated(axes.x);
+    return -axes.x;
   case eNudgeUp:
     return axes.y;
   case eNudgeRight:
     return axes.x;
   case eNudgeDown:
-    return vector3_negated(axes.y);
+    return -axes.y;
   }
 
   ERROR_MESSAGE("invalid direction");
@@ -1081,8 +1081,8 @@ Vector3 AxisBase_axisForDirection(const AxisBase& axes, ENudgeDirection directio
 void NudgeSelection(ENudgeDirection direction, float fAmount, VIEWTYPE viewtype)
 {
   AxisBase axes(AxisBase_forViewType(viewtype));
-  Vector3 view_direction(vector3_negated(axes.z));
-  Vector3 nudge(vector3_scaled(AxisBase_axisForDirection(axes, direction), fAmount));
+  Vector3 view_direction(-axes.z);
+  Vector3 nudge(AxisBase_axisForDirection(axes, direction) * fAmount);
   GlobalSelectionSystem().NudgeManipulator(nudge, view_direction);
 }
 

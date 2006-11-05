@@ -29,13 +29,13 @@ inline void billboard_viewplaneOriented(Matrix4& rotation, const Matrix4& world2
 {
 #if 1
   rotation = g_matrix4_identity;
-  Vector3 x(vector3_normalised(vector4_to_vector3(world2screen.x())));
-  Vector3 y(vector3_normalised(vector4_to_vector3(world2screen.y())));
-  Vector3 z(vector3_normalised(vector4_to_vector3(world2screen.z())));
+  Vector3 x(vector4_to_vector3(world2screen.x()).getNormalised());
+  Vector3 y(vector4_to_vector3(world2screen.y()).getNormalised());
+  Vector3 z(vector4_to_vector3(world2screen.z()).getNormalised());
   vector4_to_vector3(rotation.y()) = Vector3(x.y(), y.y(), z.y());
-  vector4_to_vector3(rotation.z()) = vector3_negated(Vector3(x.z(), y.z(), z.z()));
-  vector4_to_vector3(rotation.x()) = vector3_normalised(vector3_cross(vector4_to_vector3(rotation.y()), vector4_to_vector3(rotation.z())));
-  vector4_to_vector3(rotation.y()) = vector3_cross(vector4_to_vector3(rotation.z()), vector4_to_vector3(rotation.x()));
+  vector4_to_vector3(rotation.z()) = -Vector3(x.z(), y.z(), z.z());
+  vector4_to_vector3(rotation.x()) = vector4_to_vector3(rotation.y()).crossProduct(vector4_to_vector3(rotation.z())).getNormalised();
+  vector4_to_vector3(rotation.y()) = vector4_to_vector3(rotation.z()).crossProduct(vector4_to_vector3(rotation.x()));
 #else
   Matrix4 screen2world(matrix4_full_inverse(world2screen));
 
@@ -67,10 +67,10 @@ inline void billboard_viewplaneOriented(Matrix4& rotation, const Matrix4& world2
   );
 
   rotation = g_matrix4_identity;
-  vector4_to_vector3(rotation.y()) = vector3_normalised(vector3_subtracted(up, near_));
-  vector4_to_vector3(rotation.z()) = vector3_normalised(vector3_subtracted(near_, far_));
-  vector4_to_vector3(rotation.x()) = vector3_normalised(vector3_cross(vector4_to_vector3(rotation.y()), vector4_to_vector3(rotation.z())));
-  vector4_to_vector3(rotation.y()) = vector3_cross(vector4_to_vector3(rotation.z()), vector4_to_vector3(rotation.x()));
+  vector4_to_vector3(rotation.y()) = (up - near_).getNormalised();
+  vector4_to_vector3(rotation.z()) = (near_ - far_).getNormalised();
+  vector4_to_vector3(rotation.x()) = vector4_to_vector3(rotation.y()).crossProduct(vector4_to_vector3(rotation.z())).getNormalised();
+  vector4_to_vector3(rotation.y()) = vector4_to_vector3(rotation.z()).crossProduct(vector4_to_vector3(rotation.x()));
 #endif
 }
 
@@ -80,10 +80,10 @@ inline void billboard_viewpointOriented(Matrix4& rotation, const Matrix4& world2
 
 #if 1
   rotation = g_matrix4_identity;
-  vector4_to_vector3(rotation.y()) = vector3_normalised(vector4_to_vector3(screen2world.y()));
-  vector4_to_vector3(rotation.z()) = vector3_negated(vector3_normalised(vector4_to_vector3(screen2world.z())));
-  vector4_to_vector3(rotation.x()) = vector3_normalised(vector3_cross(vector4_to_vector3(rotation.y()), vector4_to_vector3(rotation.z())));
-  vector4_to_vector3(rotation.y()) = vector3_cross(vector4_to_vector3(rotation.z()), vector4_to_vector3(rotation.x()));
+  vector4_to_vector3(rotation.y()) = vector4_to_vector3(screen2world.y()).getNormalised();
+  vector4_to_vector3(rotation.z()) = -vector4_to_vector3(screen2world.z()).getNormalised();
+  vector4_to_vector3(rotation.x()) = vector4_to_vector3(rotation.y()).crossProduct(vector4_to_vector3(rotation.z())).getNormalised();
+  vector4_to_vector3(rotation.y()) = vector4_to_vector3(rotation.z()).crossProduct(vector4_to_vector3(rotation.x()));
 #else
   Vector3 near_(
     vector4_projected(
@@ -113,10 +113,10 @@ inline void billboard_viewpointOriented(Matrix4& rotation, const Matrix4& world2
   );
 
   rotation = g_matrix4_identity;
-  vector4_to_vector3(rotation.y()) = vector3_normalised(vector3_subtracted(up, near_));
-  vector4_to_vector3(rotation.z()) = vector3_normalised(vector3_subtracted(near_, far_));
-  vector4_to_vector3(rotation.x()) = vector3_normalised(vector3_cross(vector4_to_vector3(rotation.y()), vector4_to_vector3(rotation.z())));
-  vector4_to_vector3(rotation.y()) = vector3_cross(vector4_to_vector3(rotation.z()), vector4_to_vector3(rotation.x()));
+  vector4_to_vector3(rotation.y()) = (up - near_).getNormalised();
+  vector4_to_vector3(rotation.z()) = (near_ - far_).getNormalised();
+  vector4_to_vector3(rotation.x()) = vector4_to_vector3(rotation.y()).crossProduct(vector4_to_vector3(rotation.z())).getNormalised();
+  vector4_to_vector3(rotation.y()) = vector4_to_vector3(rotation.z()).crossProduct(vector4_to_vector3(rotation.x()));
 #endif
 }
 
@@ -146,9 +146,9 @@ inline void ConstructDevice2Object(Matrix4& device2object, const Matrix4& object
 inline void pivot_scale(Matrix4& scale, const Matrix4& pivot2screen)
 {
   Matrix4 pre_scale(g_matrix4_identity);
-  pre_scale[0] = static_cast<float>(vector3_length(vector4_to_vector3(pivot2screen.x())));
-  pre_scale[5] = static_cast<float>(vector3_length(vector4_to_vector3(pivot2screen.y())));
-  pre_scale[10] = static_cast<float>(vector3_length(vector4_to_vector3(pivot2screen.z())));
+  pre_scale[0] = static_cast<float>(vector4_to_vector3(pivot2screen.x()).getLength());
+  pre_scale[5] = static_cast<float>(vector4_to_vector3(pivot2screen.y()).getLength());
+  pre_scale[10] = static_cast<float>(vector4_to_vector3(pivot2screen.z()).getLength());
 
   scale = pivot2screen;
   matrix4_multiply_by_matrix4(scale, pre_scale);

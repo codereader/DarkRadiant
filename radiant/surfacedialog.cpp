@@ -2263,9 +2263,9 @@ gboolean motion(GtkWidget * win, GdkEventMotion * e, gpointer)
 
 			vector3_normalise(v1);
 			vector3_normalise(v2);
-			float c = vector3_dot(v1, v2);
-			Vector3 cross = vector3_cross(v1, v2);
-			float s = vector3_length(cross);
+			float c = v1.dot(v2);
+			Vector3 cross = v1.crossProduct(v2);
+			float s = cross.getLength();
 
 			if (cross[2] > 0)
 				s = -s;

@@ -300,6 +300,8 @@ inline double vector2_cross(const BasicVector2<Element>& self, const BasicVector
   return self.x() * other.y() - self.y() * other.x();
 }
 
+// =============== Vector3 Methods ======================================================
+
 const Vector3 g_vector3_identity(0, 0, 0);
 const Vector3 g_vector3_max = Vector3(FLT_MAX, FLT_MAX, FLT_MAX);
 const Vector3 g_vector3_axis_x(1, 0, 0);
@@ -316,23 +318,6 @@ inline void vector3_swap(BasicVector3<Element>& self, BasicVector3<OtherElement>
   std::swap(self.z(), other.z());
 }
 
-template<typename Element, typename OtherElement>
-inline bool vector3_equal(const BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
-{
-  return self.x() == other.x() && self.y() == other.y() && self.z() == other.z();
-}
-template<typename Element, typename OtherElement>
-inline bool operator==(const BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
-{
-  return vector3_equal(self, other);
-}
-template<typename Element, typename OtherElement>
-inline bool operator!=(const BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
-{
-  return !vector3_equal(self, other);
-}
-
-
 template<typename Element, typename OtherElement, typename Epsilon>
 inline bool vector3_equal_epsilon(const BasicVector3<Element>& self, const BasicVector3<OtherElement>& other, Epsilon epsilon)
 {
@@ -341,222 +326,10 @@ inline bool vector3_equal_epsilon(const BasicVector3<Element>& self, const Basic
     && float_equal_epsilon(self.z(), other.z(), epsilon);
 }
 
-
-
-template<typename Element, typename OtherElement>
-inline BasicVector3<Element> vector3_added(const BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
-{
-  return BasicVector3<Element>(
-    Element(self.x() + other.x()),
-    Element(self.y() + other.y()),
-    Element(self.z() + other.z())
-  );
-}
-template<typename Element, typename OtherElement>
-inline BasicVector3<Element> operator+(const BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
-{
-  return vector3_added(self, other);
-}
-template<typename Element, typename OtherElement>
-inline void vector3_add(BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
-{
-  self.x() += static_cast<Element>(other.x());
-  self.y() += static_cast<Element>(other.y());
-  self.z() += static_cast<Element>(other.z());
-}
-template<typename Element, typename OtherElement>
-inline void operator+=(BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
-{
-  vector3_add(self, other);
-}
-
-template<typename Element, typename OtherElement>
-inline BasicVector3<Element> vector3_subtracted(const BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
-{
-  return BasicVector3<Element>(
-    Element(self.x() - other.x()),
-    Element(self.y() - other.y()),
-    Element(self.z() - other.z())
-  );
-}
-template<typename Element, typename OtherElement>
-inline BasicVector3<Element> operator-(const BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
-{
-  return vector3_subtracted(self, other);
-}
-template<typename Element, typename OtherElement>
-inline void vector3_subtract(BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
-{
-  self.x() -= static_cast<Element>(other.x());
-  self.y() -= static_cast<Element>(other.y());
-  self.z() -= static_cast<Element>(other.z());
-}
-template<typename Element, typename OtherElement>
-inline void operator-=(BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
-{
-  vector3_subtract(self, other);
-}
-
-template<typename Element, typename OtherElement>
-inline BasicVector3<Element> vector3_scaled(const BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
-{
-  return BasicVector3<Element>(
-    Element(self.x() * other.x()),
-    Element(self.y() * other.y()),
-    Element(self.z() * other.z())
-  );
-}
-template<typename Element, typename OtherElement>
-inline BasicVector3<Element> operator*(const BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
-{
-  return vector3_scaled(self, other);
-}
-template<typename Element, typename OtherElement>
-inline void vector3_scale(BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
-{
-  self.x() *= static_cast<Element>(other.x());
-  self.y() *= static_cast<Element>(other.y());
-  self.z() *= static_cast<Element>(other.z());
-}
-template<typename Element, typename OtherElement>
-inline void operator*=(BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
-{
-  vector3_scale(self, other);
-}
-
-template<typename Element, typename OtherElement>
-inline BasicVector3<Element> vector3_scaled(const BasicVector3<Element>& self, const OtherElement& scale)
-{
-  return BasicVector3<Element>(
-    Element(self.x() * scale),
-    Element(self.y() * scale),
-    Element(self.z() * scale)
-  );
-}
-template<typename Element, typename OtherElement>
-inline BasicVector3<Element> operator*(const BasicVector3<Element>& self, const OtherElement& scale)
-{
-  return vector3_scaled(self, scale);
-}
-template<typename Element, typename OtherElement>
-inline void vector3_scale(BasicVector3<Element>& self, const OtherElement& scale)
-{
-  self.x() *= static_cast<Element>(scale);
-  self.y() *= static_cast<Element>(scale);
-  self.z() *= static_cast<Element>(scale);
-}
-template<typename Element, typename OtherElement>
-inline void operator*=(BasicVector3<Element>& self, const OtherElement& scale)
-{
-  vector3_scale(self, scale);
-}
-
-template<typename Element, typename OtherElement>
-inline BasicVector3<Element> vector3_divided(const BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
-{
-  return BasicVector3<Element>(
-    Element(self.x() / other.x()),
-    Element(self.y() / other.y()),
-    Element(self.z() / other.z())
-  );
-}
-template<typename Element, typename OtherElement>
-inline BasicVector3<Element> operator/(const BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
-{
-  return vector3_divided(self, other);
-}
-template<typename Element, typename OtherElement>
-inline void vector3_divide(BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
-{
-  self.x() /= static_cast<Element>(other.x());
-  self.y() /= static_cast<Element>(other.y());
-  self.z() /= static_cast<Element>(other.z());
-}
-template<typename Element, typename OtherElement>
-inline void operator/=(BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
-{
-  vector3_divide(self, other);
-}
-
-template<typename Element, typename OtherElement>
-inline BasicVector3<Element> vector3_divided(const BasicVector3<Element>& self, const OtherElement& divisor)
-{
-  return BasicVector3<Element>(
-    Element(self.x() / divisor),
-    Element(self.y() / divisor),
-    Element(self.z() / divisor)
-  );
-}
-template<typename Element, typename OtherElement>
-inline BasicVector3<Element> operator/(const BasicVector3<Element>& self, const OtherElement& divisor)
-{
-  return vector3_divided(self, divisor);
-}
-template<typename Element, typename OtherElement>
-inline void vector3_divide(BasicVector3<Element>& self, const OtherElement& divisor)
-{
-  self.x() /= static_cast<Element>(divisor);
-  self.y() /= static_cast<Element>(divisor);
-  self.z() /= static_cast<Element>(divisor);
-}
-template<typename Element, typename OtherElement>
-inline void operator/=(BasicVector3<Element>& self, const OtherElement& divisor)
-{
-  vector3_divide(self, divisor);
-}
-
-template<typename Element, typename OtherElement>
-inline double vector3_dot(const BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
-{
-  	double dotval = self.x() * other.x() + self.y() * other.y() + self.z() * other.z();
-  	return dotval;
-}
-
 template<typename Element>
 inline BasicVector3<Element> vector3_mid(const BasicVector3<Element>& begin, const BasicVector3<Element>& end)
 {
-  return vector3_scaled(vector3_added(begin, end), 0.5);
-}
-
-template<typename Element, typename OtherElement>
-inline BasicVector3<Element> vector3_cross(const BasicVector3<Element>& self, const BasicVector3<OtherElement>& other)
-{
-  return BasicVector3<Element>(
-    Element(self.y() * other.z() - self.z() * other.y()),
-    Element(self.z() * other.x() - self.x() * other.z()),
-    Element(self.x() * other.y() - self.y() * other.x())
-  );
-}
-
-template<typename Element>
-inline BasicVector3<Element> vector3_negated(const BasicVector3<Element>& self)
-{
-  return BasicVector3<Element>(-self.x(), -self.y(), -self.z()); 
-}
-template<typename Element>
-inline BasicVector3<Element> operator-(const BasicVector3<Element>& self)
-{
-  return vector3_negated(self); 
-}
-
-template<typename Element>
-inline void vector3_negate(BasicVector3<Element>& self)
-{
-  self = vector3_negated(self);
-}
-
-template<typename Element>
-inline double vector3_length_squared(const BasicVector3<Element>& self)
-{
-  	double dotval = vector3_dot(self, self);
-	return dotval;
-}
-
-// DEPRECATED.
-template<typename Element>
-inline double vector3_length(const BasicVector3<Element>& vec)
-{
-	return vec.getLength();
+  return (begin + end)*0.5;
 }
 
 template<typename Element>
@@ -567,17 +340,10 @@ inline Element float_divided(Element f, Element other)
 }
 
 template<typename Element>
-inline BasicVector3<Element> vector3_normalised(const BasicVector3<Element>& vec)
-{
-	return vec.getScaledBy(1.0 / vec.getLength());
-}
-
-template<typename Element>
 inline void vector3_normalise(BasicVector3<Element>& self)
 {
-  self = vector3_normalised(self);
+  self = self.getNormalised();
 }
-
 
 template<typename Element>
 inline BasicVector3<Element> vector3_snapped(const BasicVector3<Element>& self)
@@ -617,7 +383,7 @@ inline Vector3 vector3_for_spherical(double theta, double phi)
   );
 }
 
-
+// =============== Vector 4 Methods ======================================================
 
 
 template<typename Element, typename OtherElement>
@@ -799,7 +565,7 @@ inline double vector4_dot(const BasicVector4<Element>& self, const BasicVector4<
 template<typename Element>
 inline BasicVector3<Element> vector4_projected(const BasicVector4<Element>& self)
 {
-  return vector3_scaled(vector4_to_vector3(self), 1.0 / self[3]);
+  return vector4_to_vector3(self) * (1.0 / self[3]);
 }
 
 #endif

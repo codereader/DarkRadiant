@@ -50,7 +50,7 @@ inline void quaternion_multiply_by_quaternion(Quaternion& quaternion, const Quat
 /// \brief Constructs a quaternion which rotates between two points on the unit-sphere, \p from and \p to.
 inline Quaternion quaternion_for_unit_vectors(const Vector3& from, const Vector3& to)
 {
-  return Quaternion(vector3_cross(from, to), static_cast<float>(vector3_dot(from, to)));
+  return Quaternion(from.crossProduct(to), static_cast<float>(from.dot(to)));
 }
 
 inline Quaternion quaternion_for_axisangle(const Vector3& axis, double angle)
@@ -80,7 +80,7 @@ inline Quaternion quaternion_for_z(double angle)
 
 inline Quaternion quaternion_inverse(const Quaternion& quaternion)
 {
-  return Quaternion(vector3_negated(vector4_to_vector3(quaternion)), quaternion[3]);
+  return Quaternion(-vector4_to_vector3(quaternion), quaternion[3]);
 }
 
 inline void quaternion_conjugate(Quaternion& quaternion)
@@ -279,7 +279,7 @@ inline void matrix4_pivoted_rotate_by_quaternion(Matrix4& self, const Quaternion
 {
   matrix4_translate_by_vec3(self, pivotpoint);
   matrix4_rotate_by_quaternion(self, rotation);
-  matrix4_translate_by_vec3(self, vector3_negated(pivotpoint));
+  matrix4_translate_by_vec3(self, -pivotpoint);
 }
 
 inline Vector3 quaternion_transformed_point(const Quaternion& quaternion, const Vector3& point)
@@ -320,7 +320,7 @@ inline void matrix4_pivoted_rotate_by_axisangle(Matrix4& self, const Vector3& ax
 {
   matrix4_translate_by_vec3(self, pivotpoint);
   matrix4_rotate_by_axisangle(self, axis, angle);
-  matrix4_translate_by_vec3(self, vector3_negated(pivotpoint));
+  matrix4_translate_by_vec3(self, -pivotpoint);
 }
 
 
