@@ -448,14 +448,27 @@ void EntityInspector::refreshTreeModel() {
 // Update the selected Entity pointer
 
 bool EntityInspector::updateSelectedEntity() {
-	if (GlobalSelectionSystem().countSelected() != 1 ||
-           (_selectedEntity = Node_getEntity(GlobalSelectionSystem().ultimateSelected().path().top())) == 0
-        && (_selectedEntity = Node_getEntity(GlobalSelectionSystem().ultimateSelected().path().parent())) == 0)
-    {
+
+	// A single entity must be selected
+	if (GlobalSelectionSystem().countSelected() != 1)
 		return false;
-    } else {
+
+	// The root node must not be selected (this can happen if Invert Selection is activated
+	// with an empty scene, or by direct selection in the entity list).
+	if (GlobalSelectionSystem().ultimateSelected().path().top().get().isRoot())
+		return false;
+	
+	// Try both the selected node (if an entity is selected) or the parent node (if a brush is 
+	// selected. If neither of them convert to entities, return false.
+	if ((_selectedEntity = Node_getEntity(GlobalSelectionSystem().ultimateSelected().path().top())) == 0
+		 && (_selectedEntity = Node_getEntity(GlobalSelectionSystem().ultimateSelected().path().parent())) == 0)
+	{
+		return false;
+	}
+	else 
+	{
 		return true;
-    }
+	}
 }
 
 } // namespace ui
