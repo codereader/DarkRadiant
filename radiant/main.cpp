@@ -43,7 +43,6 @@ StringOutputStream - similar to std::stringstream \n
 Array - automatic array memory management \n
 HashTable - generic hashtable, similar to std::hash_map \n
 
-\link math/vector.h math/vector.h \endlink - Vectors \n
 \link math/matrix.h math/matrix.h \endlink - Matrices \n
 \link math/quaternion.h math/quaternion.h \endlink - Quaternions \n
 \link math/plane.h math/plane.h \endlink - Planes \n

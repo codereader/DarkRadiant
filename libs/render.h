@@ -29,7 +29,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "igl.h"
 
 #include "container/array.h"
-#include "math/vector.h" 
+#include "math/FloatTools.h"
+#include "math/Vector2.h" 
 #include "math/pi.h"
 
 #include <vector>

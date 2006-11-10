@@ -1,7 +1,7 @@
 #ifndef BESTPOINT_H_
 #define BESTPOINT_H_
 
-#include "generic/vector.h"
+#include "math/Vector3.h"
 #include "selectable.h"
 #include "Manipulatables.h"
 

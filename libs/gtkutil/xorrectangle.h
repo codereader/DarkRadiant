@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_XORRECTANGLE_H
 
 #include <gtk/gtkwidget.h>
-#include "math/vector.h"
+#include "math/FloatTools.h"
 
 class rectangle_t
 {

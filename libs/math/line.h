@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// \file
 /// \brief Line data types and related operations.
 
-#include "math/vector.h"
 #include "math/plane.h"
 
 /// \brief A line segment defined by a start point and and end point.

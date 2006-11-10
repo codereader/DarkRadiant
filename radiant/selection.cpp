@@ -111,7 +111,7 @@ public:
     m_primitives.back().m_count = count;
     for(std::size_t i=0; i<count; ++i)
     {
-      Vector3 world_point(vector4_projected(matrix4_transformed_vector4(m_inverse, clipped[i])));
+      Vector3 world_point(matrix4_transformed_vector4(m_inverse, clipped[i]).getProjected());
       m_primitives.back().m_points[i].vertex = vertex3f_for_vector3(world_point);
     }
   }
@@ -404,19 +404,10 @@ public:
     {
       Matrix4 screen2world(matrix4_full_inverse(m_local2view));
 
-      m_near = vector4_projected(
-        matrix4_transformed_vector4(
-          screen2world,
-          Vector4(0, 0, -1, 1)
-        )
-      );
+      m_near = matrix4_transformed_vector4( screen2world, Vector4(0, 0, -1, 1) ).getProjected();
+      
 
-      m_far = vector4_projected(
-        matrix4_transformed_vector4(
-          screen2world,
-          Vector4(0, 0, 1, 1)
-        )
-      );
+      m_far = matrix4_transformed_vector4( screen2world, Vector4(0, 0, 1, 1) ).getProjected();
     }
 
 #if defined(DEBUG_SELECTION)
@@ -1629,13 +1620,13 @@ public:
 
       if(Mode() == eComponent)
       {
-        Scene_Rotate_Component_Selected(GlobalSceneGraph(), m_rotation, vector4_to_vector3(m_pivot2world.t()));
+        Scene_Rotate_Component_Selected(GlobalSceneGraph(), m_rotation, m_pivot2world.t().getVector3());
 
         matrix4_assign_rotation_for_pivot(m_pivot2world, m_component_selection.back());
       }
       else
       {
-        Scene_Rotate_Selected(GlobalSceneGraph(), m_rotation, vector4_to_vector3(m_pivot2world.t()));
+        Scene_Rotate_Selected(GlobalSceneGraph(), m_rotation, m_pivot2world.t().getVector3());
 
         matrix4_assign_rotation_for_pivot(m_pivot2world, m_selection.back());
       }
@@ -1655,11 +1646,11 @@ public:
 
       if(Mode() == eComponent)
       {
-        Scene_Scale_Component_Selected(GlobalSceneGraph(), m_scale, vector4_to_vector3(m_pivot2world.t()));
+        Scene_Scale_Component_Selected(GlobalSceneGraph(), m_scale, m_pivot2world.t().getVector3());
       }
       else
       {
-        Scene_Scale_Selected(GlobalSceneGraph(), m_scale, vector4_to_vector3(m_pivot2world.t()));
+        Scene_Scale_Selected(GlobalSceneGraph(), m_scale, m_pivot2world.t().getVector3());
       }
 
       SceneChangeNotify();
@@ -2001,11 +1992,11 @@ inline AABB Instance_getPivotBounds(scene::Instance& instance)
     Editable* editable = Node_getEditable(instance.path().top());
     if(editable != 0)
     {
-      return AABB(vector4_to_vector3(matrix4_multiplied_by_matrix4(instance.localToWorld(), editable->getLocalPivot()).t()), Vector3(0, 0, 0));
+      return AABB(matrix4_multiplied_by_matrix4(instance.localToWorld(), editable->getLocalPivot()).t().getVector3(), Vector3(0, 0, 0));
     }
     else
     {
-      return AABB(vector4_to_vector3(instance.localToWorld().t()), Vector3(0, 0, 0));
+      return AABB(instance.localToWorld().t().getVector3(), Vector3(0, 0, 0));
     }
   }
 

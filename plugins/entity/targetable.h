@@ -67,8 +67,8 @@ public:
     
     glBegin(GL_LINES);
 
-    glVertex3fv(vector3_to_array(start));
-    glVertex3fv(vector3_to_array(end));
+    glVertex3fv(start);
+    glVertex3fv(end);
 
     len*=0.0625; // half / 8
 
@@ -76,9 +76,9 @@ public:
     for (unsigned int i = 0, count = (len<32)? 1 : static_cast<unsigned int>(len*0.0625); i < count; i++)
     {
       arrow += dir * ( (len<32) ? len : 32 );
-      glVertex3fv(vector3_to_array(arrow));
+      glVertex3fv(arrow);
       glVertex3f(arrow[0]+s1[0], arrow[1]+s1[1], arrow[2]+dir[2]);
-      glVertex3fv(vector3_to_array(arrow));
+      glVertex3fv(arrow);
       glVertex3f(arrow[0]+s2[0], arrow[1]+s2[1], arrow[2]+dir[2]);
     }
     
@@ -398,7 +398,7 @@ public:
       return childBounds.origin;
     }
 #endif
-    return vector4_to_vector3(localToWorld().t());
+    return localToWorld().t().getVector3();
   }
 
   void render(Renderer& renderer, const VolumeTest& volume) const

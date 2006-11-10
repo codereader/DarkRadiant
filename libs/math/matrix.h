@@ -25,7 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// \file
 /// \brief Matrix data types and related operations.
 
-#include "math/vector.h"
+#include "math/Vector3.h"
+#include "math/Vector4.h"
 
 /// \brief A 4x4 matrix stored in single-precision floating-point.
 class Matrix4
@@ -381,7 +382,7 @@ enum Matrix4Handedness
 inline Matrix4Handedness matrix4_handedness(const Matrix4& self)
 {
   return (
-    vector4_to_vector3(self.x()).crossProduct(vector4_to_vector3(self.y())).dot(vector4_to_vector3(self.z())) < 0.0
+    self.x().getVector3().crossProduct(self.y().getVector3()).dot(self.z().getVector3()) < 0.0
   ) ? MATRIX4_LEFTHANDED : MATRIX4_RIGHTHANDED;
 }
 
@@ -761,7 +762,7 @@ inline void matrix4_full_invert(Matrix4& self)
 /// \brief Returns the translation part of \p self.
 inline Vector3 matrix4_get_translation_vec3(const Matrix4& self)
 {
-  return vector4_to_vector3(self.t());
+  return self.t().getVector3();
 }
 
 /// \brief Concatenates \p self with \p translation.
@@ -1325,9 +1326,9 @@ inline Matrix4 matrix4_scale_for_vec3(const Vector3& scale)
 inline Vector3 matrix4_get_scale_vec3(const Matrix4& self)
 {
   return Vector3(
-    static_cast<float>(vector4_to_vector3(self.x()).getLength()),
-    static_cast<float>(vector4_to_vector3(self.y()).getLength()),
-    static_cast<float>(vector4_to_vector3(self.z()).getLength())
+    static_cast<float>(self.x().getVector3().getLength()),
+    static_cast<float>(self.y().getVector3().getLength()),
+    static_cast<float>(self.z().getVector3().getLength())
   );
 }
 

@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <gdk/gdktypes.h>
 
-#include "math/vector.h"
+#include "math/Vector3.h"
 
 class WindowObserver;
 void GlobalWindowObservers_add(WindowObserver* observer);

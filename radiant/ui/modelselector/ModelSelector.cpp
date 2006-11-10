@@ -3,7 +3,7 @@
 #include "mainframe.h"
 #include "gtkutil/image.h"
 #include "gtkutil/glwidget.h"
-#include "generic/vector.h"
+#include "math/Vector3.h"
 #include "ifilesystem.h"
 
 #include <cstdlib>

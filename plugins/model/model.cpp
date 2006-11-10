@@ -142,7 +142,7 @@ public:
     {
       Vector3 normal = vertex3f_to_vector3((*i).vertex) + normal3f_to_vector3((*i).normal)*8;
       glVertex3fv(vertex3f_to_array((*i).vertex));
-      glVertex3fv(vector3_to_array(normal));
+      glVertex3fv(normal);
     }
     glEnd();
 #endif

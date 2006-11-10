@@ -2,7 +2,7 @@
 
 void point_for_device_point(Vector3& point, const Matrix4& device2object, const float x, const float y, const float z) {
   // transform from normalised device coords to object coords
-  point = vector4_projected(matrix4_transformed_vector4(device2object, Vector4(x, y, z, 1)));
+  point = matrix4_transformed_vector4(device2object, Vector4(x, y, z, 1)).getProjected();
 }
 
 void ray_for_device_point(Ray& ray, const Matrix4& device2object, const float x, const float y) {
@@ -69,7 +69,7 @@ void point_on_axis(Vector3& point, const Vector3& axis, const Matrix4& device2ob
 
 void point_on_plane(Vector3& point, const Matrix4& device2object, const float x, const float y) {
   Matrix4 object2device(matrix4_full_inverse(device2object));
-  point = vector4_projected(matrix4_transformed_vector4(device2object, Vector4(x, y, object2device[14] / object2device[15], 1)));
+  point = matrix4_transformed_vector4(device2object, Vector4(x, y, object2device[14] / object2device[15], 1)).getProjected();
 }
 
 //! a and b are unit vectors .. a and b must be orthogonal to axis .. returns angle in radians

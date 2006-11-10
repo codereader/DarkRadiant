@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_SELECT_H)
 #define INCLUDED_SELECT_H
 
-#include "math/vector.h"
+#include "math/Vector3.h"
 
 void Select_GetBounds(Vector3& mins, Vector3& maxs);
 void Select_GetMid(Vector3& mid);

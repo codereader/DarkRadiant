@@ -122,9 +122,9 @@ void ClipPoint::Draw(const char *label, float scale)
 {
   // draw point
   glPointSize (4);
-  glColor3fv(vector3_to_array(ColourSchemes().getColourVector3("clipper")));
+  glColor3fv(ColourSchemes().getColourVector3("clipper"));
   glBegin (GL_POINTS);
-  glVertex3fv(vector3_to_array(m_ptClip));
+  glVertex3fv(m_ptClip);
   glEnd();
   glPointSize (1);
 
@@ -1712,7 +1712,7 @@ void XYWnd::XY_DrawGrid()
   // draw coordinate text if needed
   if ( g_xywindow_globals_private.show_coordinates)
   {
-  	glColor3fv(vector3_to_array(ColourSchemes().getColourVector3("grid_text")));
+  	glColor3fv(ColourSchemes().getColourVector3("grid_text"));
 		float offx = m_vOrigin[nDim2] + h - 6 / m_fScale, offy = m_vOrigin[nDim1] - w + 1 / m_fScale;
 		for (x = xb - fmod(xb, stepx); x <= xe ; x += stepx)
 		{
@@ -1728,7 +1728,7 @@ void XYWnd::XY_DrawGrid()
 		}
 
     if (Active()) {
-    	glColor3fv(vector3_to_array(ColourSchemes().getColourVector3("active_view_name")));
+    	glColor3fv(ColourSchemes().getColourVector3("active_view_name"));
     }
 
     // we do this part (the old way) only if show_axis is disabled
@@ -1753,12 +1753,12 @@ void XYWnd::XY_DrawGrid()
     // horizontal line: nDim1 color
     glLineWidth(2);
     glBegin( GL_LINES );
-    glColor3fv (vector3_to_array(colourX));
+    glColor3fv (colourX);
     glVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
     glVertex2f( m_vOrigin[nDim1] - w + 65 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
     glVertex2f( 0, 0 );
     glVertex2f( 32 / m_fScale, 0 );
-    glColor3fv (vector3_to_array(colourY));
+    glColor3fv (colourY);
     glVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
     glVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 20 / m_fScale );
     glVertex2f( 0, 0 );
@@ -1766,12 +1766,12 @@ void XYWnd::XY_DrawGrid()
     glEnd();
     glLineWidth(1);
     // now print axis symbols
-    glColor3fv (vector3_to_array(colourX));
+    glColor3fv (colourX);
     glRasterPos2f ( m_vOrigin[nDim1] - w + 55 / m_fScale, m_vOrigin[nDim2] + h - 55 / m_fScale );
     GlobalOpenGL().drawChar(g_AxisName[nDim1]);
     glRasterPos2f (28 / m_fScale, -10 / m_fScale );
     GlobalOpenGL().drawChar(g_AxisName[nDim1]);
-    glColor3fv (vector3_to_array(colourY));
+    glColor3fv (colourY);
     glRasterPos2f ( m_vOrigin[nDim1] - w + 25 / m_fScale, m_vOrigin[nDim2] + h - 30 / m_fScale );
     GlobalOpenGL().drawChar(g_AxisName[nDim2]);
     glRasterPos2f ( -10 / m_fScale, 28 / m_fScale );
@@ -1783,7 +1783,7 @@ void XYWnd::XY_DrawGrid()
   // the work zone is used to place dropped points and brushes
   if (g_xywindow_globals_private.d_show_work)
   {
-    glColor3fv( vector3_to_array(ColourSchemes().getColourVector3("workzone")) );
+    glColor3fv( ColourSchemes().getColourVector3("workzone") );
     glBegin( GL_LINES );
     glVertex2f( xb, Select_getWorkZone().d_work_min[nDim2] );
     glVertex2f( xe, Select_getWorkZone().d_work_min[nDim2] );
@@ -1853,7 +1853,7 @@ void XYWnd::XY_DrawBlockGrid()
 
   // draw major blocks
 
-  glColor3fv(vector3_to_array(ColourSchemes().getColourVector3("grid_block")));
+  glColor3fv(ColourSchemes().getColourVector3("grid_block"));
   glLineWidth (2);
 
   glBegin (GL_LINES);
@@ -1919,7 +1919,7 @@ void XYWnd::DrawCameraIcon(const Vector3& origin, const Vector3& angles)
     a = degrees_to_radians(angles[CAMERA_PITCH]);
   }
 
-  glColor3fv (  vector3_to_array(ColourSchemes().getColourVector3("camera_icon")) );
+  glColor3fv ( ColourSchemes().getColourVector3("camera_icon") );
   glBegin(GL_LINE_STRIP);
   glVertex3f (x-box,y,0);
   glVertex3f (x,y+(box/2),0);
@@ -1960,7 +1960,7 @@ void XYWnd::PaintSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vM
 
   Vector3 vSize(vMaxBounds - vMinBounds);
 
-  glColor3fv(vector3_to_array(ColourSchemes().getColourVector3("brush_size_info")));
+  glColor3fv(ColourSchemes().getColourVector3("brush_size_info"));
 
   StringOutputStream dimensions(16);
 
@@ -2401,18 +2401,18 @@ void XYWnd::XY_Draw()
 
       // four view mode doesn't colorize
       if (g_pParentWnd->CurrentStyle() == MainFrame::eSplit) {
-        glColor3fv(vector3_to_array(ColourSchemes().getColourVector3("active_view_name")));
+        glColor3fv(ColourSchemes().getColourVector3("active_view_name"));
       }
       else {
         switch(m_viewType) {
         	case YZ:
-          		glColor3fv(vector3_to_array(ColourSchemes().getColourVector3("axis_x")));
+          		glColor3fv(ColourSchemes().getColourVector3("axis_x"));
           		break;
         	case XZ:
-          		glColor3fv(vector3_to_array(ColourSchemes().getColourVector3("axis_y")));
+          		glColor3fv(ColourSchemes().getColourVector3("axis_y"));
           		break;
         	case XY:
-          		glColor3fv(vector3_to_array(ColourSchemes().getColourVector3("axis_z")));
+          		glColor3fv(ColourSchemes().getColourVector3("axis_z"));
           		break;
         	}
       }

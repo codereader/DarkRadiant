@@ -1281,7 +1281,7 @@ inline void setFogState(const OpenGLFogState& state)
 	glFogf(GL_FOG_START, state.start);
 	glFogf(GL_FOG_END, state.end);
 	glFogi(GL_FOG_INDEX, state.index);
-	glFogfv(GL_FOG_COLOR, vector4_to_array(state.colour));
+	glFogfv(GL_FOG_COLOR, state.colour);
 }
 
 #define DEBUG_SHADERS 0
@@ -1819,7 +1819,7 @@ void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned i
     if(current.m_program != 0)
     {
       current.m_program->disable();
-      glColor4fv(vector4_to_array(current.m_colour));
+      glColor4fv(current.m_colour);
       debug_colour("cleaning program");
     }
 
@@ -1994,7 +1994,7 @@ void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned i
   else if(delta & ~state & RENDER_COLOURARRAY)
   {
     glDisableClientState(GL_COLOR_ARRAY);
-    glColor4fv(vector4_to_array(self.m_colour));
+    glColor4fv(self.m_colour);
     debug_colour("cleaning color_array");
     GlobalOpenGL_debugAssertNoErrors();
     g_colorArray_enabled = false;
@@ -2002,7 +2002,7 @@ void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned i
 
   if(delta & ~state & RENDER_COLOURCHANGE)
   {
-    glColor4fv(vector4_to_array(self.m_colour));
+    glColor4fv(self.m_colour);
     GlobalOpenGL_debugAssertNoErrors();
   }
 
@@ -2101,7 +2101,7 @@ void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned i
     || self.m_colour[2] != current.m_colour[2]
     || self.m_colour[3] != current.m_colour[3]))
   {
-    glColor4fv(vector4_to_array(self.m_colour));
+    glColor4fv(self.m_colour);
     debug_colour("setting non-texture");
     GlobalOpenGL_debugAssertNoErrors();
   }

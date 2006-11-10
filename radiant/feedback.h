@@ -28,7 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef __Q3MAP_FEEDBACK__
 #define __Q3MAP_FEEDBACK__
 
-#include "math/vector.h"
 #include "stream/stringstream.h"
 #include <glib/gstring.h>
 #include "xmlstuff.h"

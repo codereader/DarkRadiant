@@ -179,7 +179,7 @@ void CPointfile::GenerateDisplayList()
 
   glBegin(GL_LINE_STRIP);
 	for(std::size_t i=0;i<s_num_points;i++)
-	  glVertex3fv (vector3_to_array(s_pointvecs[i]));
+	  glVertex3fv (s_pointvecs[i]);
   glEnd();
   glLineWidth (1);
 	

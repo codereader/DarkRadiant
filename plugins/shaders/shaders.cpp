@@ -57,7 +57,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "debugging/debugging.h"
 #include "string/pooledstring.h"
-#include "math/vector.h"
+#include "math/FloatTools.h"
 #include "generic/callback.h"
 #include "generic/referencecounted.h"
 #include "stream/memstream.h"

@@ -255,17 +255,17 @@ void Texdef_basisForNormal(const TextureProjection& projection, const Vector3& n
   if(g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES)
   {
     basis = g_matrix4_identity;
-    ComputeAxisBase(normal, vector4_to_vector3(basis.x()), vector4_to_vector3(basis.y()));
-    vector4_to_vector3(basis.z()) = normal;
+    ComputeAxisBase(normal, basis.x().getVector3(), basis.y().getVector3());
+    basis.z().getVector3() = normal;
     matrix4_transpose(basis);
     //DebugAxisBase(normal);
   }
   else if(g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_HALFLIFE)
   {
     basis = g_matrix4_identity;
-    vector4_to_vector3(basis.x()) = projection.m_basis_s;
-    vector4_to_vector3(basis.y()) = -projection.m_basis_t;
-    vector4_to_vector3(basis.z()) = vector4_to_vector3(basis.x()).crossProduct(vector4_to_vector3(basis.y())).getNormalised();
+    basis.x().getVector3() = projection.m_basis_s;
+    basis.y().getVector3() = -projection.m_basis_t;
+    basis.z().getVector3() = basis.x().getVector3().crossProduct(basis.y().getVector3()).getNormalised();
     matrix4_multiply_by_matrix4(basis, matrix4_rotation_for_z_degrees(-projection.m_texdef.rotate));
     //globalOutputStream() << "debug: " << projection.m_basis_s << projection.m_basis_t << normal << "\n";
     matrix4_transpose(basis);
@@ -306,8 +306,8 @@ void Texdef_EmitTextureCoordinates(const TextureProjection& projection, std::siz
     matrix4_multiply_by_matrix4(local2tex, xyz2st);
   }
 
-  Vector3 tangent(vector4_to_vector3(matrix4_transposed(local2tex).x()).getNormalised());
-  Vector3 bitangent(vector4_to_vector3(matrix4_transposed(local2tex).y()).getNormalised());
+  Vector3 tangent(matrix4_transposed(local2tex).x().getVector3().getNormalised());
+  Vector3 bitangent(matrix4_transposed(local2tex).y().getVector3().getNormalised());
   
   matrix4_multiply_by_matrix4(local2tex, localToWorld);
 
@@ -1391,9 +1391,9 @@ void Texdef_transformLocked(TextureProjection& projection, std::size_t width, st
 
   Matrix4 stTransformed2identity(matrix4_affine_inverse(matrix4_multiplied_by_matrix4(transformed2stTransformed, identity2transformed)));
 
-  Vector3 originalProjectionAxis(vector4_to_vector3(matrix4_affine_inverse(identity2stIdentity).z()));
+  Vector3 originalProjectionAxis(matrix4_affine_inverse(identity2stIdentity).z().getVector3());
 
-  Vector3 transformedProjectionAxis(vector4_to_vector3(stTransformed2identity.z()));
+  Vector3 transformedProjectionAxis(stTransformed2identity.z().getVector3());
 
   Matrix4 stIdentity2stOriginal;
   Texdef_toTransform(projection, (float)width, (float)height, stIdentity2stOriginal);
@@ -1447,8 +1447,8 @@ void BP_from_matrix(brushprimit_texdef_t& bp_texdef, const Vector3& normal, cons
 {
   Matrix4 basis;
   basis = g_matrix4_identity;
-  ComputeAxisBase(normal, vector4_to_vector3(basis.x()), vector4_to_vector3(basis.y()));
-  vector4_to_vector3(basis.z()) = normal;
+  ComputeAxisBase(normal, basis.x().getVector3(), basis.y().getVector3());
+  basis.z().getVector3() = normal;
   matrix4_transpose(basis);
   matrix4_affine_invert(basis);
 

@@ -110,7 +110,7 @@ public:
       bool b1 = ClipPlane::compare(*next);
       if(b0 ^ b1)
       {
-        *out = vector4_subtracted(*next, *i);
+        *out = *next - *i;
 
         double scale = ClipPlane::scale(*i, *out);
 
@@ -228,7 +228,7 @@ inline std::size_t homogenous_clip_line(Vector4 clipped[2])
     const bool index = CLIP_X_LT_W(p0);
     if(index ^ CLIP_X_LT_W(p1))
     {
-      Vector4 clip(vector4_subtracted(p1, p0));
+      Vector4 clip(p1 - p0);
 
       double scale = (p0[0] - p0[3]) / (clip[3] - clip[0]);
 
@@ -247,7 +247,7 @@ inline std::size_t homogenous_clip_line(Vector4 clipped[2])
     const bool index = CLIP_X_GT_W(p0);
     if(index ^ CLIP_X_GT_W(p1))
     {
-      Vector4 clip(vector4_subtracted(p1, p0));
+      Vector4 clip(p1 - p0);
 
       double scale = (p0[0] + p0[3]) / (-clip[3] - clip[0]);
 
@@ -266,7 +266,7 @@ inline std::size_t homogenous_clip_line(Vector4 clipped[2])
     const bool index = CLIP_Y_LT_W(p0);
     if(index ^ CLIP_Y_LT_W(p1))
     {
-      Vector4 clip(vector4_subtracted(p1, p0));
+      Vector4 clip(p1 - p0);
 
       double scale = (p0[1] - p0[3]) / (clip[3] - clip[1]);
 
@@ -285,7 +285,7 @@ inline std::size_t homogenous_clip_line(Vector4 clipped[2])
     const bool index = CLIP_Y_GT_W(p0);
     if(index ^ CLIP_Y_GT_W(p1))
     {
-      Vector4 clip(vector4_subtracted(p1, p0));
+      Vector4 clip(p1 - p0);
 
       double scale = (p0[1] + p0[3]) / (-clip[3] - clip[1]);
 
@@ -304,7 +304,7 @@ inline std::size_t homogenous_clip_line(Vector4 clipped[2])
     const bool index = CLIP_Z_LT_W(p0);
     if(index ^ CLIP_Z_LT_W(p1))
     {
-      Vector4 clip(vector4_subtracted(p1, p0));
+      Vector4 clip(p1 - p0);
 
       double scale = (p0[2] - p0[3]) / (clip[3] - clip[2]);
 
@@ -323,7 +323,7 @@ inline std::size_t homogenous_clip_line(Vector4 clipped[2])
     const bool index = CLIP_Z_GT_W(p0);
     if(index ^ CLIP_Z_GT_W(p1))
     {
-      Vector4 clip(vector4_subtracted(p1, p0));
+      Vector4 clip(p1 - p0);
 
       double scale = (p0[2] + p0[3]) / (-clip[3] - clip[2]);
 
@@ -512,9 +512,9 @@ inline double plane_distance_to_point(const Plane3& plane, const Vector3& point)
 
 inline double plane_distance_to_oriented_extents(const Plane3& plane, const Vector3& extents, const Matrix4& orientation)
 {
-  return fabs(extents[0] * plane.normal().dot(vector4_to_vector3(orientation.x())))
-    + fabs(extents[1] * plane.normal().dot(vector4_to_vector3(orientation.y())))
-    + fabs(extents[2] * plane.normal().dot(vector4_to_vector3(orientation.z())));
+  return fabs(extents[0] * plane.normal().dot(orientation.x().getVector3()))
+    + fabs(extents[1] * plane.normal().dot(orientation.y().getVector3()))
+    + fabs(extents[2] * plane.normal().dot(orientation.z().getVector3()));
 }
 
 /// \brief Return false if \p aabb with \p orientation is partially or completely outside \p plane.
@@ -595,11 +595,11 @@ inline Vector4 viewer_from_transformed_viewer(const Vector4& viewer, const Matri
 {
   if(viewer[3] == 0)
   {
-    return Vector4(matrix4_transformed_direction(transform, vector4_to_vector3(viewer)), 0);
+    return Vector4(matrix4_transformed_direction(transform, viewer.getVector3()), 0);
   }
   else
   {
-    return Vector4(matrix4_transformed_point(transform, vector4_to_vector3(viewer)), viewer[3]);
+    return Vector4(matrix4_transformed_point(transform, viewer.getVector3()), viewer[3]);
   }
 }
 
