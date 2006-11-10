@@ -3,7 +3,7 @@
 
 #include <string>
 #include <map>
-#include "generic/vector.h"
+#include "math/Vector3.h"
 #include "xmlutil/Node.h"
 
 namespace ui {

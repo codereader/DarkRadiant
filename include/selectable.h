@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <cstddef>
 
-#include "generic/vector.h"
+#include "math/Vector3.h"
 #include "scenelib.h"
 #include "generic/callbackfwd.h"
 

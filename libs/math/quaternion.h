@@ -80,7 +80,7 @@ inline Quaternion quaternion_for_z(double angle)
 
 inline Quaternion quaternion_inverse(const Quaternion& quaternion)
 {
-  return Quaternion(-vector4_to_vector3(quaternion), quaternion[3]);
+  return Quaternion(-quaternion.getVector3(), quaternion[3]);
 }
 
 inline void quaternion_conjugate(Quaternion& quaternion)

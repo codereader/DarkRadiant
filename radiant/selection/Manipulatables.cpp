@@ -1,3 +1,4 @@
+#include "math/FloatTools.h"
 #include "Manipulatables.h"
 #include "Intersection.h"
 

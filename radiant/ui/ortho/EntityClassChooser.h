@@ -3,7 +3,7 @@
 
 #include <gtk/gtk.h>
 
-#include "generic/vector.h"
+#include "math/Vector3.h"
 
 namespace ui
 {

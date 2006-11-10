@@ -89,32 +89,32 @@ void sphere_draw_fill(const Vector3& origin, float radius, int sides)
 
       {
         Vector3 v(origin + vector3_for_spherical(t, p)*radius);
-        glVertex3fv(vector3_to_array(v));
+        glVertex3fv(v);
       }
 
       {
         Vector3 v(origin + vector3_for_spherical(t, p + dp)*radius);
-        glVertex3fv(vector3_to_array(v));
+        glVertex3fv(v);
       }
 
       {
         Vector3 v(origin + vector3_for_spherical(t + dt, p + dp)*radius);
-        glVertex3fv(vector3_to_array(v));
+        glVertex3fv(v);
       }
 
       {
         Vector3 v(origin + vector3_for_spherical(t, p)*radius);
-        glVertex3fv(vector3_to_array(v));
+        glVertex3fv(v);
       }
 
       {
         Vector3 v(origin + vector3_for_spherical(t + dt, p + dp)*radius);
-        glVertex3fv(vector3_to_array(v));
+        glVertex3fv(v);
       }
 
       {
         Vector3 v(origin + vector3_for_spherical(t + dt, p)*radius);
-        glVertex3fv(vector3_to_array(v));
+        glVertex3fv(v);
       }
     }
   }
@@ -127,17 +127,17 @@ void sphere_draw_fill(const Vector3& origin, float radius, int sides)
 
       {
         Vector3 v(origin + vector3_for_spherical(t, p)*radius);
-        glVertex3fv(vector3_to_array(v));
+        glVertex3fv(v);
       }
 
       {
         Vector3 v(origin + vector3_for_spherical(t + dt, p + dp)*radius);
-        glVertex3fv(vector3_to_array(v));
+        glVertex3fv(v);
       }
 
       {
         Vector3 v(origin + vector3_for_spherical(t + dt, p)*radius);
-        glVertex3fv(vector3_to_array(v));
+        glVertex3fv(v);
       }
     }
   }
@@ -206,29 +206,29 @@ void light_draw_box_lines(const Vector3& origin, const Vector3 points[8])
   //draw lines from the center of the bbox to the corners
   glBegin(GL_LINES);
 
-  glVertex3fv(vector3_to_array(origin));
-  glVertex3fv(vector3_to_array(points[1]));
+  glVertex3fv(origin);
+  glVertex3fv(points[1]);
 
-  glVertex3fv(vector3_to_array(origin));
-  glVertex3fv(vector3_to_array(points[5]));
+  glVertex3fv(origin);
+  glVertex3fv(points[5]);
 
-  glVertex3fv(vector3_to_array(origin));
-  glVertex3fv(vector3_to_array(points[2]));
+  glVertex3fv(origin);
+  glVertex3fv(points[2]);
 
-  glVertex3fv(vector3_to_array(origin));
-  glVertex3fv(vector3_to_array(points[6]));
+  glVertex3fv(origin);
+  glVertex3fv(points[6]);
 
-  glVertex3fv(vector3_to_array(origin));
-  glVertex3fv(vector3_to_array(points[0]));
+  glVertex3fv(origin);
+  glVertex3fv(points[0]);
 
-  glVertex3fv(vector3_to_array(origin));
-  glVertex3fv(vector3_to_array(points[4]));
+  glVertex3fv(origin);
+  glVertex3fv(points[4]);
 
-  glVertex3fv(vector3_to_array(origin));
-  glVertex3fv(vector3_to_array(points[3]));
+  glVertex3fv(origin);
+  glVertex3fv(points[3]);
 
-  glVertex3fv(vector3_to_array(origin));
-  glVertex3fv(vector3_to_array(points[7]));
+  glVertex3fv(origin);
+  glVertex3fv(points[7]);
 
   glEnd();
 }
@@ -293,60 +293,60 @@ void light_draw(const AABB& aabb_light, RenderStateFlags state)
 #else
     glBegin(GL_TRIANGLE_FAN);
 #endif
-    glVertex3fv(vector3_to_array(points[0]));
-    glVertex3fv(vector3_to_array(points[2]));
-    glNormal3fv(vector3_to_array(normals[0]));
-    glVertex3fv(vector3_to_array(points[3]));
+    glVertex3fv(points[0]);
+    glVertex3fv(points[2]);
+    glNormal3fv(normals[0]);
+    glVertex3fv(points[3]);
 
 #if !defined(USE_TRIANGLE_FAN)
-    glVertex3fv(vector3_to_array(points[0]));
-    glVertex3fv(vector3_to_array(points[3]));
+    glVertex3fv(points[0]);
+    glVertex3fv(points[3]);
 #endif
-    glNormal3fv(vector3_to_array(normals[1]));
-    glVertex3fv(vector3_to_array(points[4]));
+    glNormal3fv(normals[1]);
+    glVertex3fv(points[4]);
 
 #if !defined(USE_TRIANGLE_FAN)
-    glVertex3fv(vector3_to_array(points[0]));
-    glVertex3fv(vector3_to_array(points[4]));
+    glVertex3fv(points[0]);
+    glVertex3fv(points[4]);
 #endif
-    glNormal3fv(vector3_to_array(normals[2]));
-    glVertex3fv(vector3_to_array(points[5]));
+    glNormal3fv(normals[2]);
+    glVertex3fv(points[5]);
 #if !defined(USE_TRIANGLE_FAN)
-    glVertex3fv(vector3_to_array(points[0]));
-    glVertex3fv(vector3_to_array(points[5]));
+    glVertex3fv(points[0]);
+    glVertex3fv(points[5]);
 #endif
-    glNormal3fv(vector3_to_array(normals[3]));
-    glVertex3fv(vector3_to_array(points[2]));
+    glNormal3fv(normals[3]);
+    glVertex3fv(points[2]);
 #if defined(USE_TRIANGLE_FAN)
     glEnd();
     glBegin(GL_TRIANGLE_FAN);
 #endif
 
-    glVertex3fv(vector3_to_array(points[1]));
-    glVertex3fv(vector3_to_array(points[2]));
-    glNormal3fv(vector3_to_array(normals[7]));
-    glVertex3fv(vector3_to_array(points[5]));
+    glVertex3fv(points[1]);
+    glVertex3fv(points[2]);
+    glNormal3fv(normals[7]);
+    glVertex3fv(points[5]);
 
 #if !defined(USE_TRIANGLE_FAN)
-    glVertex3fv(vector3_to_array(points[1]));
-    glVertex3fv(vector3_to_array(points[5]));
+    glVertex3fv(points[1]);
+    glVertex3fv(points[5]);
 #endif
-    glNormal3fv(vector3_to_array(normals[6]));
-    glVertex3fv(vector3_to_array(points[4]));
+    glNormal3fv(normals[6]);
+    glVertex3fv(points[4]);
 
 #if !defined(USE_TRIANGLE_FAN)
-    glVertex3fv(vector3_to_array(points[1]));
-    glVertex3fv(vector3_to_array(points[4]));
+    glVertex3fv(points[1]);
+    glVertex3fv(points[4]);
 #endif
-    glNormal3fv(vector3_to_array(normals[5]));
-    glVertex3fv(vector3_to_array(points[3]));
+    glNormal3fv(normals[5]);
+    glVertex3fv(points[3]);
 
 #if !defined(USE_TRIANGLE_FAN)
-    glVertex3fv(vector3_to_array(points[1]));
-    glVertex3fv(vector3_to_array(points[3]));
+    glVertex3fv(points[1]);
+    glVertex3fv(points[3]);
 #endif
-    glNormal3fv(vector3_to_array(normals[4]));
-    glVertex3fv(vector3_to_array(points[2]));
+    glNormal3fv(normals[4]);
+    glVertex3fv(points[2]);
 
     glEnd();
   }
@@ -700,16 +700,16 @@ public:
     Matrix4 unproject(matrix4_full_inverse(m_projection));
     Vector3 points[8];
     aabb_corners(AABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(0.5f, 0.5f, 0.5f)), points);
-    points[0] = vector4_projected(matrix4_transformed_vector4(unproject, Vector4(points[0], 1)));
-    points[1] = vector4_projected(matrix4_transformed_vector4(unproject, Vector4(points[1], 1)));
-    points[2] = vector4_projected(matrix4_transformed_vector4(unproject, Vector4(points[2], 1)));
-    points[3] = vector4_projected(matrix4_transformed_vector4(unproject, Vector4(points[3], 1)));
-    points[4] = vector4_projected(matrix4_transformed_vector4(unproject, Vector4(points[4], 1)));
-    points[5] = vector4_projected(matrix4_transformed_vector4(unproject, Vector4(points[5], 1)));
-    points[6] = vector4_projected(matrix4_transformed_vector4(unproject, Vector4(points[6], 1)));
-    points[7] = vector4_projected(matrix4_transformed_vector4(unproject, Vector4(points[7], 1)));
+    points[0] = matrix4_transformed_vector4(unproject, Vector4(points[0], 1)).getProjected();
+    points[1] = matrix4_transformed_vector4(unproject, Vector4(points[1], 1)).getProjected();
+    points[2] = matrix4_transformed_vector4(unproject, Vector4(points[2], 1)).getProjected();
+    points[3] = matrix4_transformed_vector4(unproject, Vector4(points[3], 1)).getProjected();
+    points[4] = matrix4_transformed_vector4(unproject, Vector4(points[4], 1)).getProjected();
+    points[5] = matrix4_transformed_vector4(unproject, Vector4(points[5], 1)).getProjected();
+    points[6] = matrix4_transformed_vector4(unproject, Vector4(points[6], 1)).getProjected();
+    points[7] = matrix4_transformed_vector4(unproject, Vector4(points[7], 1)).getProjected();
     Vector4 test1 = matrix4_transformed_vector4(unproject, Vector4(0.5f, 0.5f, 0.5f, 1));
-    Vector3 test2 = vector4_projected(test1);
+    Vector3 test2 = test1.getProjected();
     aabb_draw_wire(points);
   }
 };
@@ -1231,7 +1231,7 @@ public:
       {
         projection();
         m_projectionOrientation = rotation();
-        vector4_to_vector3(m_projectionOrientation.t()) = localAABB().origin;
+        m_projectionOrientation.t().getVector3() = localAABB().origin;
         renderer.addRenderable(m_renderProjection, m_projectionOrientation);
       }
       else
@@ -1370,7 +1370,7 @@ public:
   const Matrix4& getLocalPivot() const
   {
     m_localPivot = rotation_toMatrix(m_rotation);
-    vector4_to_vector3(m_localPivot.t()) = m_aabb_light.origin;
+    m_localPivot.t().getVector3() = m_aabb_light.origin;
     return m_localPivot;
   }
 
@@ -1389,7 +1389,7 @@ public:
     if(isProjected())
     {
       Matrix4 transform = rotation();
-      vector4_to_vector3(transform.t()) = localAABB().origin;
+      transform.t().getVector3() = localAABB().origin;
       projection();
       Frustum frustum(frustum_transformed(m_doom3Frustum, transform));
       return frustum_test_aabb(frustum, other) != c_volumeOutside;
@@ -1521,14 +1521,14 @@ public:
 	  // now offset to center
 	  Vector4 targetGlobal(m_lightTarget, 1);
     {
-      float a = vector4_dot(targetGlobal, plane3_to_vector4(lightProject[0]));
-      float b = vector4_dot(targetGlobal, plane3_to_vector4(lightProject[2]));
+      float a = targetGlobal.dot(plane3_to_vector4(lightProject[0]));
+      float b = targetGlobal.dot(plane3_to_vector4(lightProject[2]));
 	    float ofs = 0.5f - a / b;
 	    plane3_to_vector4(lightProject[0]) += plane3_to_vector4(lightProject[2]) * ofs;
     }
     {
-      float a = vector4_dot(targetGlobal, plane3_to_vector4(lightProject[1]));
-      float b = vector4_dot(targetGlobal, plane3_to_vector4(lightProject[2]));
+      float a = targetGlobal.dot(plane3_to_vector4(lightProject[1]));
+      float b = targetGlobal.dot(plane3_to_vector4(lightProject[2]));
 	    float ofs = 0.5f - a / b;
 	    plane3_to_vector4(lightProject[1]) += plane3_to_vector4(lightProject[2]) * ofs;
     }

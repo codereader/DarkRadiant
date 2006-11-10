@@ -1,7 +1,7 @@
 #ifndef MANIPULATABLES_H_
 #define MANIPULATABLES_H_
 
-#include "generic/vector.h"
+#include "math/Vector3.h"
 #include "render.h"
 #include "math/matrix.h"
 #include "math/quaternion.h"

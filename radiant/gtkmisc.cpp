@@ -37,7 +37,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <gtk/gtkcolorseldialog.h>
 #include <gtk/gtkentry.h>
 
-#include "math/vector.h"
 #include "os/path.h"
 
 #include "gtkutil/dialog.h"

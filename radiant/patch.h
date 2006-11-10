@@ -1705,7 +1705,7 @@ public:
 
     if(m_dragPlanes.isSelected()) // this should only be true when the transform is a pure translation.
     {
-      m_patch.transform(m_dragPlanes.evaluateTransform(vector4_to_vector3(matrix.t())));
+      m_patch.transform(m_dragPlanes.evaluateTransform(matrix.t().getVector3()));
     }
   }
 

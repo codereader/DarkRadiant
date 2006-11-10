@@ -29,48 +29,42 @@ inline void billboard_viewplaneOriented(Matrix4& rotation, const Matrix4& world2
 {
 #if 1
   rotation = g_matrix4_identity;
-  Vector3 x(vector4_to_vector3(world2screen.x()).getNormalised());
-  Vector3 y(vector4_to_vector3(world2screen.y()).getNormalised());
-  Vector3 z(vector4_to_vector3(world2screen.z()).getNormalised());
-  vector4_to_vector3(rotation.y()) = Vector3(x.y(), y.y(), z.y());
-  vector4_to_vector3(rotation.z()) = -Vector3(x.z(), y.z(), z.z());
-  vector4_to_vector3(rotation.x()) = vector4_to_vector3(rotation.y()).crossProduct(vector4_to_vector3(rotation.z())).getNormalised();
-  vector4_to_vector3(rotation.y()) = vector4_to_vector3(rotation.z()).crossProduct(vector4_to_vector3(rotation.x()));
+  Vector3 x(world2screen.x().getVector3().getNormalised());
+  Vector3 y(world2screen.y().getVector3().getNormalised());
+  Vector3 z(world2screen.z().getVector3().getNormalised());
+  rotation.y().getVector3() = Vector3(x.y(), y.y(), z.y());
+  rotation.z().getVector3() = -Vector3(x.z(), y.z(), z.z());
+  rotation.x().getVector3() = rotation.y().getVector3().crossProduct(rotation.z().getVector3()).getNormalised();
+  rotation.y().getVector3() = rotation.z().getVector3().crossProduct(rotation.x().getVector3());
 #else
   Matrix4 screen2world(matrix4_full_inverse(world2screen));
 
   Vector3 near_(
-    vector4_projected(
-      matrix4_transformed_vector4(
+    matrix4_transformed_vector4(
         screen2world,
         Vector4(0, 0, -1, 1)
-      )
-    )
+      ).getProjected()    
   );
 
   Vector3 far_(
-    vector4_projected(
       matrix4_transformed_vector4(
         screen2world,
         Vector4(0, 0, 1, 1)
-      )
-    )
+      ).getProjected()
   );
 
   Vector3 up(
-    vector4_projected(
       matrix4_transformed_vector4(
         screen2world,
         Vector4(0, 1, -1, 1)
-      )
-    )
+      ).getProjected()
   );
 
   rotation = g_matrix4_identity;
-  vector4_to_vector3(rotation.y()) = (up - near_).getNormalised();
-  vector4_to_vector3(rotation.z()) = (near_ - far_).getNormalised();
-  vector4_to_vector3(rotation.x()) = vector4_to_vector3(rotation.y()).crossProduct(vector4_to_vector3(rotation.z())).getNormalised();
-  vector4_to_vector3(rotation.y()) = vector4_to_vector3(rotation.z()).crossProduct(vector4_to_vector3(rotation.x()));
+  rotation.y().getVector3() = (up - near_).getNormalised();
+  rotation.z().getVector3() = (near_ - far_).getNormalised();
+  rotation.x().getVector3() = rotation.y().getVector3().crossProduct(rotation.z().getVector3()).getNormalised();
+  rotation.y().getVector3() = rotation.z().getVector3().crossProduct(rotation.x().getVector3());
 #endif
 }
 
@@ -80,43 +74,37 @@ inline void billboard_viewpointOriented(Matrix4& rotation, const Matrix4& world2
 
 #if 1
   rotation = g_matrix4_identity;
-  vector4_to_vector3(rotation.y()) = vector4_to_vector3(screen2world.y()).getNormalised();
-  vector4_to_vector3(rotation.z()) = -vector4_to_vector3(screen2world.z()).getNormalised();
-  vector4_to_vector3(rotation.x()) = vector4_to_vector3(rotation.y()).crossProduct(vector4_to_vector3(rotation.z())).getNormalised();
-  vector4_to_vector3(rotation.y()) = vector4_to_vector3(rotation.z()).crossProduct(vector4_to_vector3(rotation.x()));
+  rotation.y().getVector3() = screen2world.y().getVector3().getNormalised();
+  rotation.z().getVector3() = -screen2world.z().getVector3().getNormalised();
+  rotation.x().getVector3() = rotation.y().getVector3().crossProduct(rotation.z().getVector3()).getNormalised();
+  rotation.y().getVector3() = rotation.z().getVector3().crossProduct(rotation.x().getVector3());
 #else
   Vector3 near_(
-    vector4_projected(
       matrix4_transformed_vector4(
         screen2world,
         Vector4(world2screen[12] / world2screen[15], world2screen[13] / world2screen[15], -1, 1)
-      )
-    )
+      ).getProjected()
   );
 
   Vector3 far_(
-    vector4_projected(
       matrix4_transformed_vector4(
         screen2world,
         Vector4(world2screen[12] / world2screen[15], world2screen[13] / world2screen[15], 1, 1)
-      )
-    )
+      ).getProjected()
   );
 
   Vector3 up(
-    vector4_projected(
       matrix4_transformed_vector4(
         screen2world,
         Vector4(world2screen[12] / world2screen[15], world2screen[13] / world2screen[15] + 1, -1, 1)
-      )
-    )
+      ).getProjected()
   );
 
   rotation = g_matrix4_identity;
-  vector4_to_vector3(rotation.y()) = (up - near_).getNormalised();
-  vector4_to_vector3(rotation.z()) = (near_ - far_).getNormalised();
-  vector4_to_vector3(rotation.x()) = vector4_to_vector3(rotation.y()).crossProduct(vector4_to_vector3(rotation.z())).getNormalised();
-  vector4_to_vector3(rotation.y()) = vector4_to_vector3(rotation.z()).crossProduct(vector4_to_vector3(rotation.x()));
+  rotation.y().getVector3() = (up - near_).getNormalised();
+  rotation.z().getVector3() = (near_ - far_).getNormalised();
+  rotation.x().getVector3() = rotation.y().getVector3().crossProduct(rotation.z().getVector3()).getNormalised();
+  rotation.y().getVector3() = rotation.z().getVector3().crossProduct(rotation.x().getVector3());
 #endif
 }
 
@@ -146,9 +134,9 @@ inline void ConstructDevice2Object(Matrix4& device2object, const Matrix4& object
 inline void pivot_scale(Matrix4& scale, const Matrix4& pivot2screen)
 {
   Matrix4 pre_scale(g_matrix4_identity);
-  pre_scale[0] = static_cast<float>(vector4_to_vector3(pivot2screen.x()).getLength());
-  pre_scale[5] = static_cast<float>(vector4_to_vector3(pivot2screen.y()).getLength());
-  pre_scale[10] = static_cast<float>(vector4_to_vector3(pivot2screen.z()).getLength());
+  pre_scale[0] = static_cast<float>(pivot2screen.x().getVector3().getLength());
+  pre_scale[5] = static_cast<float>(pivot2screen.y().getVector3().getLength());
+  pre_scale[10] = static_cast<float>(pivot2screen.z().getVector3().getLength());
 
   scale = pivot2screen;
   matrix4_multiply_by_matrix4(scale, pre_scale);
@@ -205,7 +193,7 @@ inline void Pivot2World_viewpointSpace(Matrix4& manip2world, Vector3& axis, cons
   matrix4_multiply_by_matrix4(manip2world, scale);
 
   billboard_viewpointOriented(scale, pivot2screen);
-  axis = vector4_to_vector3(scale.z());
+  axis = scale.z().getVector3();
   matrix4_multiply_by_matrix4(manip2world, scale);
 
   pivot_perspective(scale, pivot2screen);

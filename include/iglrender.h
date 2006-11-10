@@ -23,7 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_IGLRENDER_H
 
 #include "igl.h"
-#include "generic/vector.h"
+#include "math/Vector3.h"
+#include "math/Vector4.h"
 class AABB;
 class Matrix4;
 

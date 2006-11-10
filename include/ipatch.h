@@ -23,7 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_IPATCH_H
 
 #include "generic/constant.h"
-#include "generic/vector.h"
+#include "math/Vector2.h"
+#include "math/Vector3.h"
 
 namespace scene
 {

@@ -77,9 +77,9 @@ typedef Vector3 Scale;
 inline Matrix4 matrix4_transform_for_components(const Translation& translation, const Rotation& rotation, const Scale& scale)
 {
   Matrix4 result(matrix4_rotation_for_quaternion_quantised(rotation));
-  vector4_to_vector3(result.x()) *= scale.x();
-  vector4_to_vector3(result.y()) *= scale.y();
-  vector4_to_vector3(result.z()) *= scale.z();
+  result.x().getVector3() *= scale.x();
+  result.y().getVector3() *= scale.y();
+  result.z().getVector3() *= scale.z();
   result.tx() = translation.x();
   result.ty() = translation.y();
   result.tz() = translation.z();

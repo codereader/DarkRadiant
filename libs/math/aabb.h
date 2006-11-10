@@ -231,9 +231,9 @@ inline unsigned int aabb_oriented_classify_plane(const AABB& aabb, const Matrix4
 {
   double distance_origin = plane.normal().dot(aabb.origin) + plane.dist();
 
-  if(fabs(distance_origin) < (fabs(aabb.extents[0] * plane.normal().dot(vector4_to_vector3(transform.x())) )
-    + fabs(aabb.extents[1] * plane.normal().dot(vector4_to_vector3(transform.y())))
-    + fabs(aabb.extents[2] * plane.normal().dot(vector4_to_vector3(transform.z())))))
+  if(fabs(distance_origin) < (fabs(aabb.extents[0] * plane.normal().dot(transform.x().getVector3()) )
+    + fabs(aabb.extents[1] * plane.normal().dot(transform.y().getVector3()))
+    + fabs(aabb.extents[2] * plane.normal().dot(transform.z().getVector3()))))
   {
     return 1; // partially inside
   }
@@ -260,9 +260,9 @@ inline void aabb_corners(const AABB& aabb, Vector3 corners[8])
 
 inline void aabb_corners_oriented(const AABB& aabb, const Matrix4& rotation, Vector3 corners[8])
 {
-  Vector3 x = vector4_to_vector3(rotation.x()) * aabb.extents.x();
-  Vector3 y = vector4_to_vector3(rotation.y()) * aabb.extents.y();
-  Vector3 z = vector4_to_vector3(rotation.z()) * aabb.extents.z();
+  Vector3 x = rotation.x().getVector3() * aabb.extents.x();
+  Vector3 y = rotation.y().getVector3() * aabb.extents.y();
+  Vector3 z = rotation.z().getVector3() * aabb.extents.z();
 
   corners[0] = aabb.origin + -x +  y +  z;
   corners[1] = aabb.origin +  x +  y +  z;
@@ -286,16 +286,16 @@ inline void aabb_planes(const AABB& aabb, Plane3 planes[6])
 
 inline void aabb_planes_oriented(const AABB& aabb, const Matrix4& rotation, Plane3 planes[6])
 {
-  double x = vector4_to_vector3(rotation.x()).dot(aabb.origin);
-  double y = vector4_to_vector3(rotation.y()).dot(aabb.origin);
-  double z = vector4_to_vector3(rotation.z()).dot(aabb.origin);
+  double x = rotation.x().getVector3().dot(aabb.origin);
+  double y = rotation.y().getVector3().dot(aabb.origin);
+  double z = rotation.z().getVector3().dot(aabb.origin);
 
-  planes[0] = Plane3(vector4_to_vector3(rotation.x()), x + aabb.extents[0]);
-  planes[1] = Plane3(-vector4_to_vector3(rotation.x()), -(x - aabb.extents[0]));
-  planes[2] = Plane3(vector4_to_vector3(rotation.y()), y + aabb.extents[1]);
-  planes[3] = Plane3(-vector4_to_vector3(rotation.y()), -(y - aabb.extents[1]));
-  planes[4] = Plane3(vector4_to_vector3(rotation.z()), z + aabb.extents[2]);
-  planes[5] = Plane3(-vector4_to_vector3(rotation.z()), -(z - aabb.extents[2]));
+  planes[0] = Plane3(rotation.x().getVector3(), x + aabb.extents[0]);
+  planes[1] = Plane3(-rotation.x().getVector3(), -(x - aabb.extents[0]));
+  planes[2] = Plane3(rotation.y().getVector3(), y + aabb.extents[1]);
+  planes[3] = Plane3(-rotation.y().getVector3(), -(y - aabb.extents[1]));
+  planes[4] = Plane3(rotation.z().getVector3(), z + aabb.extents[2]);
+  planes[5] = Plane3(-rotation.z().getVector3(), -(z - aabb.extents[2]));
 }
 
 const Vector3 aabb_normals[6] = {

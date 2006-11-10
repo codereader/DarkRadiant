@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_BRUSH_PRIMIT_H)
 #define INCLUDED_BRUSH_PRIMIT_H
 
-#include "math/vector.h"
+#include "math/Vector3.h"
 #include "itexdef.h"
 // Timo
 // new brush primitive texdef

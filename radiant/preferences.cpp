@@ -47,7 +47,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <iostream>
 
 #include "generic/callback.h"
-#include "math/vector.h"
 #include "string/string.h"
 #include "stream/stringstream.h"
 #include "os/file.h"
