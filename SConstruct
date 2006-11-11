@@ -217,15 +217,20 @@ class idEnvironment(Environment):
 			LINKFLAGS = LINKFLAGS,
 			TOOLS = toolList) # don't want Scons to choose MSVC on Win32
 
+	# Use Boost includes.
 	def useBoost(self):
 		if (self['PLATFORM'] == 'win32'):
 			self.Append(CPPPATH = ['#/boost.w32/include'])
 			self.Append(LIBPATH = ['#/boost.w32/lib'])
+			
+	# Link with the boost_regex library
+	def useBoostRegex(self):
+		self.useBoost()
+		if (self['PLATFORM'] == 'win32'):
 			self.Append(LIBS = ['libboost_regex-gcc'])
 		else:
 			self.Append(LIBS = ['boost_regex'])
-			pass
-	
+		
 	def useGlib2(self):
 	# On Win32 we need to add the local paths, since there is no
 	# global include/lib path.
