@@ -102,6 +102,13 @@ module_env['no_import_lib'] = 1
 module_env.useXML2()
 module_env.useOpenGL()
 
+# Filters module
+filterEnv = module_env.Copy()
+filterSrc = build_list('plugins/filters', 'filters.cpp XMLFilter.cpp')
+filterEnv.Append(LIBS = 'xmlutil')
+filterLib = filterEnv.SharedLibrary(target='filters', source=filterSrc, no_import_lib=1)
+filterEnv.Install(INSTALL + '/modules', filterLib)
+
 vfspk3_env = module_env.Copy()
 vfspk3_lst = build_list('plugins/vfspk3', 'vfspk3.cpp vfs.cpp archive.cpp')
 vfspk3_env.useGlib2()
@@ -228,7 +235,6 @@ radiant_src = [
 'error.cpp',
 'feedback.cpp',
 'filetypes.cpp',
-'filters.cpp',
 'findtexturedialog.cpp',
 'glwidget.cpp',
 'grid.cpp',
@@ -296,7 +302,6 @@ radiant_src = [
 'ui/common/TexturePreviewCombo.cpp',
 'ui/mediabrowser/MediaBrowser.cpp',
 'ui/menu/FiltersMenu.cpp',
-'filters/XMLFilter.cpp',
 'ui/colourscheme/ColourScheme.cpp',
 'ui/colourscheme/ColourSchemeManager.cpp',
 'ui/colourscheme/ColourSchemeEditor.cpp',

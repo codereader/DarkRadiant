@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ifilter.h"
 #include "iscenegraph.h"
 #include "qerplugin.h"
-#include "filters/XMLFilter.h"
+#include "XMLFilter.h"
 
 #include <map>
 #include <vector>
@@ -176,11 +176,27 @@ public:
 
 };
 
+/* FilterSystem dependencies class. 
+ */
+ 
+class FilterSystemDependencies
+: public GlobalRadiantModuleRef,
+  public GlobalSceneGraphModuleRef
+{
+};
+
+/* Required code to register the module with the ModuleServer.
+ */
+
 #include "modulesystem/singletonmodule.h"
-#include "modulesystem/moduleregistry.h"
 
-typedef SingletonModule<BasicFilterSystem> FilterModule;
-typedef Static<FilterModule> StaticFilterModule;
-StaticRegisterModule staticRegisterFilter(StaticFilterModule::instance());
+typedef SingletonModule<BasicFilterSystem, FilterSystemDependencies> FilterModule;
 
+// Static instance of the FilterModule
+FilterModule _theFilterModule;
 
+extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
+{
+  initialiseModule(server);
+  _theFilterModule.selfRegister();
+}
