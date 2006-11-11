@@ -71,7 +71,7 @@ public:
 	 * String name of the item to query.
 	 * 
 	 * @returns
-	 * true if the texure is visible, false otherwise.
+	 * true if the item is visible, false otherwise.
 	 */
 	virtual bool isVisible(const std::string& item, const std::string& text) = 0;
 

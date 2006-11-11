@@ -105,6 +105,7 @@ module_env.useOpenGL()
 # Filters module
 filterEnv = module_env.Copy()
 filterSrc = build_list('plugins/filters', 'filters.cpp XMLFilter.cpp')
+filterEnv.useBoostRegex()
 filterEnv.Append(LIBS = 'xmlutil')
 filterLib = filterEnv.SharedLibrary(target='filters', source=filterSrc, no_import_lib=1)
 filterEnv.Install(INSTALL + '/modules', filterLib)
