@@ -77,7 +77,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "xywindow.h"
 #include "mainframe.h"
 #include "preferences.h"
-#include "url.h"
 #include "cmdlib.h"
 
 
@@ -452,20 +451,6 @@ void DoSides (int type, int axis)
 
 // =============================================================================
 // About dialog (no program is complete without one)
-
-void about_button_changelog (GtkWidget *widget, gpointer data)
-{
-  StringOutputStream log(256);
-  log << AppPath_get() << "changelog.txt";
-  OpenURL(log.c_str());
-}
-
-void about_button_credits (GtkWidget *widget, gpointer data)
-{
-  StringOutputStream cred(256);
-  cred << AppPath_get() << "credits.html";
-  OpenURL(cred.c_str());
-}
 
 void DoAbout()
 {

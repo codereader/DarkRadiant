@@ -116,7 +116,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "surfacedialog.h"
 #include "textures.h"
 #include "texwindow.h"
-#include "url.h"
 #include "xywindow.h"
 #include "windowobservers.h"
 #include "renderstate.h"
@@ -766,36 +765,6 @@ void thunk_OnSleep()
 {
   g_pParentWnd->OnSleep();
 }
-
-void OpenUpdateURL()
-{
-  // build the URL
-  StringOutputStream URL(256);
-  URL << "http://www.qeradiant.com/index.php?data=dlupdate&query_dlup=1";
-#ifdef WIN32
-  URL << "&OS_dlup=1";
-#else
-  URL << "&OS_dlup=2";
-#endif
-  URL << "&Version_dlup=" RADIANT_VERSION;
-  g_GamesDialog.AddPacksURL(URL);
-  OpenURL(URL.c_str());
-}
-
-// open the Q3Rad manual
-void OpenHelpURL()
-{
-  // at least on win32, AppPath + "Q3Rad_Manual/index.htm"
-  StringOutputStream help(256);
-  help << AppPath_get() << "Q3Rad_Manual/index.htm";
-  OpenURL(help.c_str());
-}
-
-void OpenBugReportURL()
-{
-  OpenURL("http://www.qeradiant.com/?data=bugreport");
-}
-
 
 GtkWidget* g_page_console;
 
@@ -1777,7 +1746,6 @@ GtkMenuItem* create_file_menu()
   menu_separator(menu);
   MRU_constructMenu(menu);
   menu_separator(menu);
-  create_menu_item_with_mnemonic(menu, "Check for GtkRadiant update (web)", "CheckForUpdate");
   create_menu_item_with_mnemonic(menu, "E_xit", "Exit");
 
   return file_menu_item;
@@ -2074,9 +2042,6 @@ GtkMenuItem* create_help_menu()
   if (g_Layout_enableDetachableMenus.m_value)
     menu_tearoff (menu);
 
-  create_menu_item_with_mnemonic(menu, "Manual", "OpenManual");
-
-  create_menu_item_with_mnemonic(menu, "Bug report", FreeCaller<OpenBugReportURL>());
   create_menu_item_with_mnemonic(menu, "Shortcuts list", FreeCaller<DoCommandListDlg>());
   create_menu_item_with_mnemonic(menu, "_About", FreeCaller<DoAbout>());
 
@@ -3068,8 +3033,6 @@ void EditColourScheme() {
 
 void MainFrame_Construct()
 {
-  GlobalCommands_insert("OpenManual", FreeCaller<OpenHelpURL>(), Accelerator(GDK_F1));
-
   GlobalCommands_insert("Sleep", FreeCaller<thunk_OnSleep>(), Accelerator('P', (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
   GlobalCommands_insert("NewMap", FreeCaller<NewMap>());
   GlobalCommands_insert("OpenMap", FreeCaller<OpenMap>(), Accelerator('O', (GdkModifierType)GDK_CONTROL_MASK));
@@ -3080,7 +3043,6 @@ void MainFrame_Construct()
   GlobalCommands_insert("SaveRegion", FreeCaller<SaveRegion>());
   GlobalCommands_insert("RefreshReferences", FreeCaller<RefreshReferences>());
   GlobalCommands_insert("ProjectSettings", FreeCaller<DoProjectSettings>());
-  GlobalCommands_insert("CheckForUpdate", FreeCaller<OpenUpdateURL>());
   GlobalCommands_insert("Exit", FreeCaller<Exit>());
 
   GlobalCommands_insert("Undo", FreeCaller<Undo>(), Accelerator('Z', (GdkModifierType)GDK_CONTROL_MASK));
