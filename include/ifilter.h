@@ -25,30 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/constant.h"
 #include <string>
 
-enum
-{
-   EXCLUDE_WORLD            = 0x00000001,
-   EXCLUDE_ENT              = 0x00000002,
-   EXCLUDE_CURVES           = 0x00000004,
-   EXCLUDE_TRANSLUCENT      = 0x00000008,
-   EXCLUDE_LIQUIDS          = 0x00000010,
-   EXCLUDE_CAULK            = 0x00000020,
-   EXCLUDE_CLIP             = 0x00000040,
-   EXCLUDE_PATHS            = 0x00000080,
-   EXCLUDE_LIGHTS           = 0x00000100,
-   EXCLUDE_DETAILS          = 0x00000200,
-   EXCLUDE_HINTSSKIPS       = 0x00000400,
-   EXCLUDE_MODELS           = 0x00000800,
-   EXCLUDE_AREAPORTALS      = 0x00001000,
-   EXCLUDE_TRIGGERS         = 0x00002000,
-   EXCLUDE_CLUSTERPORTALS	  = 0x00004000,
-   EXCLUDE_TERRAIN          = 0x00008000,
-   EXCLUDE_LIGHTGRID        = 0x00010000,
-   EXCLUDE_STRUCTURAL       = 0x00020000,
-   EXCLUDE_BOTCLIP          = 0x00040000,
-   EXCLUDE_VISPORTALS       = 0x00080000,
-};
-
 /** Visitor interface for evaluating the available filters in the 
  * FilterSystem.
  */
