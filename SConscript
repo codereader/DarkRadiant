@@ -271,7 +271,6 @@ radiant_src = [
 'timer.cpp',
 'treemodel.cpp',
 'undo.cpp',
-'url.cpp',
 'view.cpp',
 'winding.cpp',
 'windowobservers.cpp',
