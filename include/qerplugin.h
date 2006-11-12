@@ -121,7 +121,6 @@ struct _QERFuncTable_1
   STRING_CONSTANT(Name, "radiant");
 
   const char* (*getEnginePath)();
-  const char* (*getGameToolsPath)();
   const char* (*getAppPath)();
   const char* (*getSettingsPath)();
   const char* (*getMapsPath)();
@@ -160,7 +159,6 @@ struct _QERFuncTable_1
   PFN_QERAPP_FILEDIALOG  m_pfnFileDialog;
   PFN_QERAPP_DIRDIALOG   m_pfnDirDialog;
   PFN_QERAPP_COLORDIALOG m_pfnColorDialog;
-  PFN_QERAPP_NEWIMAGE  m_pfnNewImage;
 
 };
 

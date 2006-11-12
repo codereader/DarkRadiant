@@ -339,8 +339,6 @@ void paths_init()
     BitmapsPath_set(path.c_str());
   }
 
-  // we will set this right after the game selection is done
-  g_strGameToolsPath = g_strAppPath;
 }
 
 void create_global_pid()
@@ -519,8 +517,6 @@ int main (int argc, char* argv[])
 
   g_GamesDialog.Init();
 
-  g_strGameToolsPath = g_pGameDescription->mGameToolsPath;
-  
   remove_global_pid();
 
   g_Preferences.Init(); // must occur before create_local_pid() to allow preferences to be reset

@@ -108,7 +108,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "plugin.h"
 #include "pluginmanager.h"
 #include "pluginmenu.h"
-#include "plugintoolbar.h"
 #include "points.h"
 #include "preferences.h"
 #include "qe3.h"
@@ -352,22 +351,6 @@ const char* SettingsPath_get()
   return g_strSettingsPath.c_str();
 }
 
-
-/*!
-points to the game tools directory, for instance
-C:/Program Files/Quake III Arena/GtkRadiant
-(or other games)
-this is one of the main variables that are configured by the game selection on startup
-[GameToolsPath]/plugins
-[GameToolsPath]/modules
-and also q3map, bspc
-*/
-CopiedString g_strGameToolsPath;           ///< this is set by g_GamesDialog
-
-const char* GameToolsPath_get()
-{
-  return g_strGameToolsPath.c_str();
-}
 
 void EnginePathImport(CopiedString& self, const char* value)
 {
@@ -757,14 +740,12 @@ void updateTextureBrowser() {
 void Restart()
 {
   PluginsMenu_clear();
-  PluginToolbar_clear();
 
   Radiant_Shutdown();
   Radiant_Initialise();
 
   PluginsMenu_populate();
 
-  PluginToolbar_populate();
 }
 
 
@@ -2553,13 +2534,6 @@ void MainFrame::Create()
 		gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(viewToolbar), FALSE, FALSE, 0);
 	}
 	
-	// Create and add plugin toolbar, if visible    
-    GtkToolbar *plugin_toolbar = create_plugin_toolbar();
-    if (!g_Layout_enablePluginToolbar.m_value) {
-        gtk_widget_hide(GTK_WIDGET(plugin_toolbar));
-    }
-    gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(plugin_toolbar), FALSE, FALSE, 0);
-    
     GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
     gtk_widget_show(hbox);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
