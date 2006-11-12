@@ -150,16 +150,6 @@ CGameDescription::CGameDescription(xmlDocPtr pDoc,
 			   value_type(xmlAttr_getName(attr), xmlAttr_getValue(attr)));
     }
 
-	// Check if the game file exists and add the internal reference to it if it
-	// does.
-	StringOutputStream path(256);
-	path << AppPath_get() << gameFile.c_str() << "/";
-	mGameToolsPath = path.c_str();
-
-    ASSERT_MESSAGE(file_exists(mGameToolsPath.c_str()),
-		   "game directory not found: " <<
-		   makeQuoted(mGameToolsPath.c_str()));
-
     mGameFile = gameFile;
 
 	// Look up the game type attribute and set the appropriate member variable.

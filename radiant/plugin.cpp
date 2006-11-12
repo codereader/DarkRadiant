@@ -71,7 +71,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "select.h"
 #include "preferences.h"
 #include "autosave.h"
-#include "plugintoolbar.h"
 #include "findtexturedialog.h"
 #include "nullmodel.h"
 #include "grid.h"
@@ -142,7 +141,6 @@ public:
   {
     m_radiantcore.getEnginePath = &EnginePath_get;
     m_radiantcore.getAppPath = &AppPath_get;
-    m_radiantcore.getGameToolsPath = &GameToolsPath_get;
     m_radiantcore.getSettingsPath = &SettingsPath_get;
     m_radiantcore.getMapsPath = &getMapsPath;
 
@@ -180,7 +178,6 @@ public:
     m_radiantcore.m_pfnFileDialog = &file_dialog;
     m_radiantcore.m_pfnColorDialog = &color_dialog;
     m_radiantcore.m_pfnDirDialog = &dir_dialog;
-    m_radiantcore.m_pfnNewImage = &new_plugin_image;
   }
   _QERFuncTable_1* getTable()
   {
