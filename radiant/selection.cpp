@@ -689,33 +689,48 @@ inline bool Instance_isSelectedComponents(scene::Instance& instance)
     && componentSelectionTestable->isSelectedComponents();
 }
 
+/* greebo: A visitor class that applies a translation to the instance passed to visit()
+ * 
+ * The constructor expects the translation vector (type Vector3) to be passed.
+ * 
+ * The visit function is called with the scene::instance to be modified. 
+ */
 class TranslateSelected : public SelectionSystem::Visitor
 {
-  const Vector3& m_translate;
+	// The translation vector3 (initialised in the constructor) 
+  	const Vector3& m_translate;
+  
 public:
-  TranslateSelected(const Vector3& translate)
-    : m_translate(translate)
-  {
-  }
-  void visit(scene::Instance& instance) const
-  {
-    Transformable* transform = Instance_getTransformable(instance);
-    if(transform != 0)
-    {
-      transform->setType(TRANSFORM_PRIMITIVE);
-      transform->setTranslation(m_translate);
-    }
-  }
-};
 
+	// The constructor. Instantiate this class with the translation vector3
+  	TranslateSelected(const Vector3& translate): m_translate(translate) {}
+
+	// The visitor function that applies the actual transformation to the instance  
+	void visit(scene::Instance& instance) const {
+		Transformable* transform = Instance_getTransformable(instance);
+	    if(transform != 0) {
+	    	transform->setType(TRANSFORM_PRIMITIVE);
+	    	transform->setTranslation(m_translate);
+	    }
+	}
+}; // class TranslateSelected
+
+/* greebo: This is called when a selected item is to be translated
+ * This basically cycles through all selected objects with a translation
+ * visitor class (which derives from SelectionSystem::Visitor)
+ */
 void Scene_Translate_Selected(scene::Graph& graph, const Vector3& translation)
 {
-  if(GlobalSelectionSystem().countSelected() != 0)
-  {
-    GlobalSelectionSystem().foreachSelected(TranslateSelected(translation));
+  // Check if there is anything to do
+  if(GlobalSelectionSystem().countSelected() != 0) {
+  	// Cycle through the selected items and apply the translation
+  	GlobalSelectionSystem().foreachSelected(TranslateSelected(translation));
   }
 }
 
+/* greebo: This is needed e.g. to calclate the translation vector of a rotation transformation
+ * It combines the local and the world pivot point, it seems
+ */
 Vector3 get_local_pivot(const Vector3& world_pivot, const Matrix4& localToWorld)
 {
   return Vector3(
@@ -726,6 +741,8 @@ Vector3 get_local_pivot(const Vector3& world_pivot, const Matrix4& localToWorld)
   );
 }
 
+/* greebo: This calculates the translation vector of a rotation with a pivot point, but I'm not sure about this :)
+ */
 void translation_for_pivoted_rotation(Vector3& parent_translation, const Quaternion& local_rotation, const Vector3& world_pivot, const Matrix4& localToWorld, const Matrix4& localToParent)
 {
   Vector3 local_pivot(get_local_pivot(world_pivot, localToWorld));
@@ -757,30 +774,45 @@ void translation_for_pivoted_scale(Vector3& parent_translation, const Vector3& l
   translation_local2object(parent_translation, translation, localToParent);
 }
 
+/* greebo: A visitor class that applies a rotation to the instance passed to visit()
+ * 
+ * The constructor expects the rotation quaternion and the world pivot to be passed.
+ * 
+ * The visit function is called with the scene::instance to be modified. 
+ */
 class rotate_selected : public SelectionSystem::Visitor
 {
-  const Quaternion& m_rotate;
-  const Vector3& m_world_pivot;
+	// The internal transformation vectors
+  	const Quaternion& m_rotate;
+  	const Vector3& m_world_pivot;
 public:
+  // Call this constructor with the rotation and pivot vectors
   rotate_selected(const Quaternion& rotation, const Vector3& world_pivot)
-    : m_rotate(rotation), m_world_pivot(world_pivot)
-  {
-  }
-  void visit(scene::Instance& instance) const
-  {
+  	: m_rotate(rotation), m_world_pivot(world_pivot)
+  {}
+  
+  // This actually applies the rotation the the instance 
+  void visit(scene::Instance& instance) const {
     TransformNode* transformNode = Node_getTransformNode(instance.path().top());
-    if(transformNode != 0)
-    {
+    if (transformNode != 0) {
+      // Upcast the instance onto a Transformable
       Transformable* transform = Instance_getTransformable(instance);
-      if(transform != 0)
-      {
-        transform->setType(TRANSFORM_PRIMITIVE);
+      
+      if(transform != 0) {
+      	// The object is not scaled or translated
+      	transform->setType(TRANSFORM_PRIMITIVE);
         transform->setScale(c_scale_identity);
         transform->setTranslation(c_translation_identity);
 
+		// Pass the rotation quaternion
         transform->setType(TRANSFORM_PRIMITIVE);
         transform->setRotation(m_rotate);
 
+		/* greebo: As far as I understand this next part, this should calculate the translation
+		 * vector of this rotation. I can imagine that this comes into play when more than
+		 * one brush is selected, otherwise each brush would rotate around its own center point and
+		 * not around the common center point.
+		 */
         {
           Editable* editable = Node_getEditable(instance.path().top());
           const Matrix4& localPivot = editable != 0 ? editable->getLocalPivot() : g_matrix4_identity;
@@ -794,23 +826,34 @@ public:
             matrix4_multiplied_by_matrix4(transformNode->localToParent(), localPivot)
           );
 
-          transform->setTranslation(parent_translation);
+		  transform->setTranslation(parent_translation);
         }
       } 
     }
   }
-};
+}; // class rotate_selected
 
-void Scene_Rotate_Selected(scene::Graph& graph, const Quaternion& rotation, const Vector3& world_pivot)
-{
-  if(GlobalSelectionSystem().countSelected() != 0)
-  {
+/* greebo: This is called when a selected item is to be rotated
+ * This basically cycles through all selected objects with a rotation
+ * visitor class (which derives from SelectionSystem::Visitor)
+ */
+void Scene_Rotate_Selected(scene::Graph& graph, const Quaternion& rotation, const Vector3& world_pivot) {
+  // Check if there is at least one object selected
+  if(GlobalSelectionSystem().countSelected() != 0) {
+  	// Cycle through the selections and rotate them
     GlobalSelectionSystem().foreachSelected(rotate_selected(rotation, world_pivot));
   }
 }
 
+/* greebo: A visitor class that applies a scale to the instance passed to visit()
+ * 
+ * The constructor expects the scale vector3 and the world pivot to be passed.
+ * 
+ * The visit function is called with the scene::instance to be modified. 
+ */
 class scale_selected : public SelectionSystem::Visitor
 {
+  // The internal vectors of the transformation to be applied
   const Vector3& m_scale;
   const Vector3& m_world_pivot;
 public:
