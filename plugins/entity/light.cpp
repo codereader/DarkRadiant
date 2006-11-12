@@ -454,93 +454,6 @@ bool spawnflags_linear(int flags)
   }
 }
 
-class LightRadii
-{
-public:
-  float m_radii[3];
-
-private:
-  float m_primaryIntensity;
-  float m_secondaryIntensity;
-  int m_flags;
-  float m_fade;
-  float m_scale;
-
-  void calculateRadii()
-  {
-    float intensity = DEFAULT_LIGHT_RADIUS;
-
-    if(m_primaryIntensity != 0.0f)
-    {
-      intensity = m_primaryIntensity;
-    }
-    else if(m_secondaryIntensity != 0.0f)
-    {
-      intensity = m_secondaryIntensity;
-    }
-
-    intensity *= m_scale;
-
-    if(spawnflags_linear(m_flags))
-    {
-      m_radii[0] = light_radius_linear(intensity, 1.0f) / m_fade;
-      m_radii[1] = light_radius_linear(intensity, 48.0f) / m_fade;
-      m_radii[2] = light_radius_linear(intensity, 255.0f) / m_fade;
-    }
-    else
-    {
-      m_radii[0] = light_radius(intensity, 1.0f);
-      m_radii[1] = light_radius(intensity, 48.0f);
-      m_radii[2] = light_radius(intensity, 255.0f);
-    }
-  }
-
-public:
-  LightRadii() : m_primaryIntensity(0), m_secondaryIntensity(0), m_flags(0), m_fade(1), m_scale(1)
-  {
-  }
-
- 
-  void primaryIntensityChanged(const char* value)
-  {
-    m_primaryIntensity = string_read_float(value);
-    calculateRadii();
-  }
-  typedef MemberCaller1<LightRadii, const char*, &LightRadii::primaryIntensityChanged> PrimaryIntensityChangedCaller;
-  void secondaryIntensityChanged(const char* value)
-  {
-    m_secondaryIntensity = string_read_float(value);
-    calculateRadii();
-  }
-  typedef MemberCaller1<LightRadii, const char*, &LightRadii::secondaryIntensityChanged> SecondaryIntensityChangedCaller;
-  void scaleChanged(const char* value)
-  {
-    m_scale = string_read_float(value);
-    if(m_scale <= 0.0f)
-    {
-      m_scale = 1.0f;
-    }
-    calculateRadii();
-  }
-  typedef MemberCaller1<LightRadii, const char*, &LightRadii::scaleChanged> ScaleChangedCaller;
-  void fadeChanged(const char* value)
-  {
-    m_fade = string_read_float(value);
-    if(m_fade <= 0.0f)
-    {
-      m_fade = 1.0f;
-    }
-    calculateRadii();
-  }
-  typedef MemberCaller1<LightRadii, const char*, &LightRadii::fadeChanged> FadeChangedCaller;
-  void flagsChanged(const char* value)
-  {
-    m_flags = string_read_int(value);
-    calculateRadii();
-  }
-  typedef MemberCaller1<LightRadii, const char*, &LightRadii::flagsChanged> FlagsChangedCaller;
-};
-
 const Vector3 c_defaultDoom3LightRadius = Vector3(DEFAULT_LIGHT_RADIUS, DEFAULT_LIGHT_RADIUS, DEFAULT_LIGHT_RADIUS);
 class Doom3LightRadius
 {
@@ -579,36 +492,6 @@ public:
   typedef MemberCaller1<Doom3LightRadius, const char*, &Doom3LightRadius::lightCenterChanged> LightCenterChangedCaller;
 };
 
-class RenderLightRadiiWire : public OpenGLRenderable
-{
-  LightRadii& m_radii;
-  const Vector3& m_origin;
-public:
-  RenderLightRadiiWire(LightRadii& radii, const Vector3& origin) : m_radii(radii), m_origin(origin)
-  {
-  }
-  void render(RenderStateFlags state) const
-  {
-    light_draw_radius_wire(m_origin, m_radii.m_radii);
-  }
-};
-
-class RenderLightRadiiFill : public OpenGLRenderable
-{
-  LightRadii& m_radii;
-  const Vector3& m_origin;
-public:
-  static Shader* m_state;
-
-  RenderLightRadiiFill(LightRadii& radii, const Vector3& origin) : m_radii(radii), m_origin(origin)
-  {
-  }
-  void render(RenderStateFlags state) const
-  {
-    light_draw_radius_fill(m_origin, m_radii.m_radii);
-  }
-};
-
 class RenderLightRadiiBox : public OpenGLRenderable
 {
   const Vector3& m_origin;
@@ -636,8 +519,6 @@ public:
   #endif
   }
 };
-
-Shader* RenderLightRadiiFill::m_state = 0;
 
 class RenderLightCenter : public OpenGLRenderable
 {
@@ -842,11 +723,8 @@ class Light :
   TraversableObserverPairRelay m_traverseObservers;
   Doom3GroupOrigin m_funcStaticOrigin;
 
-  LightRadii m_radii;
   Doom3LightRadius m_doom3Radius;
 
-  RenderLightRadiiWire m_radii_wire;
-  RenderLightRadiiFill m_radii_fill;
   RenderLightRadiiBox m_radii_box;
   RenderLightCenter m_render_center;
   RenderableNamedEntity m_renderName;
@@ -892,11 +770,6 @@ class Light :
     m_keyObservers.insert(Static<KeyIsName>::instance().m_nameKey, NamedEntity::IdentifierChangedCaller(m_named));
     m_keyObservers.insert("_color", Colour::ColourChangedCaller(m_colour));
     m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
-    m_keyObservers.insert("_light", LightRadii::PrimaryIntensityChangedCaller(m_radii));
-    m_keyObservers.insert("light", LightRadii::SecondaryIntensityChangedCaller(m_radii));
-    m_keyObservers.insert("fade", LightRadii::FadeChangedCaller(m_radii));
-    m_keyObservers.insert("scale", LightRadii::ScaleChangedCaller(m_radii));
-    m_keyObservers.insert("spawnflags", LightRadii::FlagsChangedCaller(m_radii));
 
       m_keyObservers.insert("angle", RotationKey::AngleChangedCaller(m_rotationKey));
       m_keyObservers.insert("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
@@ -1065,8 +938,6 @@ public:
     m_named(m_entity),
     m_nameKeys(m_entity),
     m_funcStaticOrigin(m_traverse, m_originKey.m_origin),
-    m_radii_wire(m_radii, m_aabb_light.origin),
-    m_radii_fill(m_radii, m_aabb_light.origin),
     m_radii_box(m_aabb_light.origin),
     m_render_center(m_doom3Radius.m_center, m_aabb_light.origin, m_doom3Rotation, m_entity.getEntityClass()), 
     m_renderName(m_named, m_aabb_light.origin),
@@ -1087,8 +958,6 @@ public:
     m_named(m_entity),
     m_nameKeys(m_entity),
     m_funcStaticOrigin(m_traverse, m_originKey.m_origin),
-    m_radii_wire(m_radii, m_aabb_light.origin),
-    m_radii_fill(m_radii, m_aabb_light.origin),
     m_radii_box(m_aabb_light.origin),
     m_render_center(m_doom3Radius.m_center, m_aabb_light.origin, m_doom3Rotation, m_entity.getEntityClass()), 
     m_renderName(m_named, m_aabb_light.origin),
@@ -1208,20 +1077,6 @@ public:
     renderer.SetState(m_entity.getEntityClass().m_state_wire, Renderer::eWireframeOnly);
     renderer.SetState(m_colour.state(), Renderer::eFullMaterials);
     renderer.addRenderable(*this, localToWorld);
-
-    if(selected && g_lightRadii && string_empty(m_entity.getKeyValue("target")))
-    {
-      if(renderer.getStyle() == Renderer::eFullMaterials)
-      {
-        renderer.SetState(RenderLightRadiiFill::m_state, Renderer::eFullMaterials);
-        renderer.Highlight(Renderer::ePrimitive, false);
-        renderer.addRenderable(m_radii_fill, localToWorld);
-      }
-      else
-      {
-        renderer.addRenderable(m_radii_wire, localToWorld);
-      }
-    }
 
     renderer.SetState(m_entity.getEntityClass().m_state_wire, Renderer::eFullMaterials);
 
@@ -1910,7 +1765,6 @@ void Light_Construct(LightType lightType)
     LightShader::m_defaultShader = "lights/defaultProjectedLight";
 #endif
   }
-  RenderLightRadiiFill::m_state = GlobalShaderCache().capture("$Q3MAP2_LIGHT_SPHERE");
   RenderLightCenter::m_state = GlobalShaderCache().capture("$BIGPOINT");
 }
 void Light_Destroy()

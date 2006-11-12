@@ -384,38 +384,6 @@ const char* misc_model_dialog(GtkWidget* parent)
   return 0;
 }
 
-void LightRadiiImport(EntityCreator& self, bool value)
-{
-  self.setLightRadii(value);
-}
-typedef ReferenceCaller1<EntityCreator, bool, LightRadiiImport> LightRadiiImportCaller;
-
-void LightRadiiExport(EntityCreator& self, const BoolImportCallback& importer)
-{
-  importer(self.getLightRadii());
-}
-typedef ReferenceCaller1<EntityCreator, const BoolImportCallback&, LightRadiiExport> LightRadiiExportCaller;
-
-void Entity_constructPreferences(PreferencesPage& page)
-{
-  page.appendCheckBox(
-    "Show", "Light Radii",
-    LightRadiiImportCaller(GlobalEntityCreator()),
-    LightRadiiExportCaller(GlobalEntityCreator())
-  );
-}
-void Entity_constructPage(PreferenceGroup& group)
-{
-  PreferencesPage page(group.createPage("Entities", "Entity Display Preferences"));
-  Entity_constructPreferences(page);
-}
-void Entity_registerPreferencesPage()
-{
-  PreferencesDialog_addDisplayPage(FreeCaller1<PreferenceGroup&, Entity_constructPage>());
-}
-
-
-
 void Entity_constructMenu(GtkMenu* menu)
 {
   create_menu_item_with_mnemonic(menu, "_Ungroup", "UngroupSelection");
@@ -437,7 +405,6 @@ void Entity_Construct()
   GlobalPreferenceSystem().registerPreference("SI_Colors5", Vector3ImportStringCaller(g_entity_globals.color_entity), Vector3ExportStringCaller(g_entity_globals.color_entity));
   GlobalPreferenceSystem().registerPreference("LastLightIntensity", IntImportStringCaller(g_iLastLightIntensity), IntExportStringCaller(g_iLastLightIntensity));
 
-  Entity_registerPreferencesPage();
 }
 
 void Entity_Destroy()

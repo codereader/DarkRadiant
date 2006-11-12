@@ -137,8 +137,6 @@ public:
 
   virtual void connectEntities(const scene::Path& e1, const scene::Path& e2) = 0;
 
-  virtual void setLightRadii(bool lightRadii) = 0;
-  virtual bool getLightRadii() = 0;
   virtual void setShowNames(bool showNames) = 0;
   virtual bool getShowNames() = 0;
   virtual void setShowAngles(bool showAngles) = 0;

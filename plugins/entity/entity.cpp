@@ -136,7 +136,6 @@ Counter* EntityKeyValues::m_counter = 0;
 bool g_showNames = true;
 bool g_showAngles = true;
 bool g_newLightDraw = true;
-bool g_lightRadii = false;
 
 class ConnectEntities
 {
@@ -245,14 +244,6 @@ public:
 
     SceneChangeNotify();
   }
-  void setLightRadii(bool lightRadii)
-  {
-    g_lightRadii = lightRadii;
-  }
-  bool getLightRadii()
-  {
-    return g_lightRadii;
-  }
   void setShowNames(bool showNames)
   {
     g_showNames = showNames;
@@ -296,7 +287,6 @@ void Entity_Construct(EGameType gameType)
   GlobalPreferenceSystem().registerPreference("SI_ShowNames", BoolImportStringCaller(g_showNames), BoolExportStringCaller(g_showNames));
   GlobalPreferenceSystem().registerPreference("SI_ShowAngles", BoolImportStringCaller(g_showAngles), BoolExportStringCaller(g_showAngles));
   GlobalPreferenceSystem().registerPreference("NewLightStyle", BoolImportStringCaller(g_newLightDraw), BoolExportStringCaller(g_newLightDraw));
-  GlobalPreferenceSystem().registerPreference("LightRadiuses", BoolImportStringCaller(g_lightRadii), BoolExportStringCaller(g_lightRadii));
 
   LightType lightType = LIGHTTYPE_DOOM3;
   Light_Construct(lightType);
