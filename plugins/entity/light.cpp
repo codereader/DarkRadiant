@@ -1767,9 +1767,9 @@ void Light_Construct(LightType lightType)
   }
   RenderLightCenter::m_state = GlobalShaderCache().capture("$BIGPOINT");
 }
+
 void Light_Destroy()
 {
-  GlobalShaderCache().release("$Q3MAP2_LIGHT_SPHERE");
   GlobalShaderCache().release("$BIGPOINT");
 }
 
