@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <glib/gdir.h>
 
+#include <string>
+
 typedef GDir Directory;
 
 inline bool directory_good(Directory* directory)
@@ -34,9 +36,9 @@ inline bool directory_good(Directory* directory)
   return directory != 0;
 }
 
-inline Directory* directory_open(const char* name)
+inline Directory* directory_open(const std::string& name)
 {
-  return g_dir_open(name, 0, 0);
+  return g_dir_open(name.c_str(), 0, 0);
 }
 
 inline void directory_close(Directory* directory)
@@ -50,7 +52,7 @@ inline const char* directory_read_and_increment(Directory* directory)
 }
 
 template<typename Functor>
-void Directory_forEach(const char* path, const Functor& functor)
+void Directory_forEach(const std::string& path, const Functor& functor)
 {
   Directory* dir = directory_open(path);
 
