@@ -46,6 +46,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "igl.h"
 #include "moduleobserver.h"
 #include "server.h"
+#include "os/dir.h"
 
 #include <ctime>
 #include <iostream>
@@ -62,6 +63,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtkimage.h>
 #include <gtk/gtktable.h>
 
+#include <boost/algorithm/string/predicate.hpp>
 
 #include "cmdlib.h"
 #include "scenelib.h"
@@ -490,58 +492,63 @@ void gamemode_set(const char* gamemode)
   }
 }
 
-#include "os/dir.h"
-
-class LoadModule
+/** Module loader functor class. This class is used to traverse a directory and
+ * load each module into the GlobalModuleServer.
+ */
+class ModuleLoader
 {
-  const char* m_path;
+	// The path of the directory we are in
+	const std::string _path;
+	
+	// The filename extension which indicates a module (platform-specific)
+	const std::string _ext;
+	
 public:
-  LoadModule(const char* path) : m_path(path)
-  {
-  }
-  void operator()(const char* name) const
-  {
-    char fullname[1024];
-    ASSERT_MESSAGE(strlen(m_path) + strlen(name) < 1024, "");
-    strcpy(fullname, m_path);
-    strcat(fullname, name);
-    globalOutputStream() << "Found '" << fullname << "'\n";      
-    GlobalModuleServer_loadModule(fullname);
-  }
+
+	// Constructor sets platform-specific extension to match
+	ModuleLoader(const std::string& path) 
+	: _path(path),
+
+#if defined(WIN32)
+	  _ext(".dll")
+#elif defined(POSIX)
+	  _ext(".so")
+#endif
+
+	{}
+
+	// Functor operator
+	void operator() (const std::string& fileName) const {
+		// Check for correct extension
+		if (boost::algorithm::iends_with(fileName, _ext)) {
+			std::string fullName = _path + fileName;
+			globalOutputStream() << "Loading module '" << fullName << "'\n";      
+			GlobalModuleServer_loadModule(fullName);
+		}
+	}
 };
 
-const char* const c_library_extension =
-#if defined(WIN32)
-"dll"
-#elif defined (__APPLE__)
-"dylib"
-#elif defined(__linux__) || defined (__FreeBSD__)
-"so"
-#endif
-;
-
-//
-void Radiant_loadModules(const char* path)
+/** Load modules from a specified directory.
+ * 
+ * @param path
+ * The directory path to load from.
+ */
+void Radiant_loadModules(const std::string& path)
 {
-  Directory_forEach(path, MatchFileExtension<LoadModule>(c_library_extension, LoadModule(path)));
+	ModuleLoader loader(path);
+	Directory_forEach(path, loader);
 }
 
-void Radiant_loadModulesFromRoot(const char* directory)
+/** Load all of the modules in the DarkRadiant install directory. Modules
+ * are loaded from modules/ and plugins/.
+ * 
+ * @param directory
+ * The root directory to search.
+ */
+void Radiant_loadModulesFromRoot(const std::string& directory)
 {
-  {
-    StringOutputStream path(256);
-    path << directory << g_pluginsDir;
-	std::cout << "Loading modules from " << path.c_str() << std::endl;
-    Radiant_loadModules(path.c_str());
-  }
-
-  if(!string_equal(g_pluginsDir, g_modulesDir))
-  {
-    StringOutputStream path(256);
-    path << directory << g_modulesDir;
-	std::cout << "Loading modules from plugin dir " << path.c_str() << std::endl;
-    Radiant_loadModules(path.c_str());
-  } 
+    Radiant_loadModules(directory + g_modulesDir);
+    Radiant_loadModules(directory + g_pluginsDir);
 }
 
 //! Make COLOR_BRUSHES override worldspawn eclass colour.

@@ -19,17 +19,16 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <iostream>
 #include "server.h"
-
 #include "debugging/debugging.h"
 #include "warnings.h"
+#include "os/path.h"
+#include "modulesystem.h"
 
 #include <vector>
 #include <map>
-#include "os/path.h"
-
-#include "modulesystem.h"
+#include <string>
+#include <iostream>
 
 class RadiantModuleServer : public ModuleServer
 {
@@ -134,9 +133,9 @@ class DynamicLibrary
 public:
   typedef int (__stdcall* FunctionPointer)();
 
-  DynamicLibrary(const char* filename)
+  DynamicLibrary(const std::string& filename)
   {
-    m_library = LoadLibrary(filename);
+    m_library = LoadLibrary(filename.c_str());
     if(m_library == 0) {
 		globalErrorStream() << "LoadLibrary failed: '" << filename << "'\n";
 		globalErrorStream() << "GetLastError: " << FormatGetLastError();
@@ -175,9 +174,9 @@ class DynamicLibrary
 public:
   typedef int (* FunctionPointer)();
 
-  DynamicLibrary(const char* filename)
+  DynamicLibrary(const std::string& filename)
   {
-    dlHandle = dlopen(filename, RTLD_NOW);
+    dlHandle = dlopen(filename.c_str(), RTLD_NOW);
   }
   ~DynamicLibrary()
   {
@@ -217,7 +216,7 @@ class DynamicLibraryModule
 public:
 
 	// Construct a DynamicLibraryModule from the filename of a DLL/so
-	DynamicLibraryModule(const char* filename)
+	DynamicLibraryModule(const std::string& filename)
 		: m_library(filename), m_registerModule(0) {
 
 		if(!m_library.failed()) {
@@ -252,9 +251,8 @@ public:
   {
     release();
   }
-  void registerLibrary(const char* filename, ModuleServer& server)
+  void registerLibrary(const std::string& filename, ModuleServer& server)
   {
-//  	std::cout << "Libraries::registerLibrary() called with " << filename << std::endl;
     DynamicLibraryModule* library = new DynamicLibraryModule(filename);
 
     if(library->failed()) {
@@ -288,9 +286,8 @@ ModuleServer& GlobalModuleServer_get()
   return g_server;
 }
 
-void GlobalModuleServer_loadModule(const char* filename)
+void GlobalModuleServer_loadModule(const std::string& filename)
 {
-	//std::cout << "GlobalModuleServer_loadModule(" << filename << ")" << std::endl;
 	g_libraries.registerLibrary(filename, g_server);
 }
 
