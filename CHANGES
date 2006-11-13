@@ -1,10 +1,19 @@
+13/11/2006
+OrbWeaver
+- Fixed segfault when InvertSelection called on an empty map (or any other situation
+  where the root node became selected).
+- Fixed segfault when a light with a rendered light_center is selected and the
+  showAllLightRadii option is active.
+
+** RELEASE 0.7.0
+
 01/11/2006
 greebo
-- Moved colour schemes to user.xml, added Colour Scheme Editor dialog
+- Moved colour schemes to user.xml, added Colour Scheme Editor dialog.
 
 27/10/2006
 OrbWeaver
-- Simplified/enhanced Entity Inspector
+- Simplified/enhanced Entity Inspector.
 
 24/10/2006
 OrbWeaver
