@@ -71,136 +71,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 extern bool g_newLightDraw;
 
 
-void sphere_draw_fill(const Vector3& origin, float radius, int sides)
-{
-  if (radius <= 0)
-    return;
-
-  const double dt = c_2pi / static_cast<double>(sides);
-  const double dp = c_pi / static_cast<double>(sides);
-
-  glBegin(GL_TRIANGLES);
-  for (int i = 0; i <= sides - 1; ++i)
-  {
-    for (int j = 0; j <= sides - 2; ++j)
-    {
-      const double t = i * dt;
-      const double p = (j * dp) - (c_pi / 2.0);
-
-      {
-        Vector3 v(origin + vector3_for_spherical(t, p)*radius);
-        glVertex3fv(v);
-      }
-
-      {
-        Vector3 v(origin + vector3_for_spherical(t, p + dp)*radius);
-        glVertex3fv(v);
-      }
-
-      {
-        Vector3 v(origin + vector3_for_spherical(t + dt, p + dp)*radius);
-        glVertex3fv(v);
-      }
-
-      {
-        Vector3 v(origin + vector3_for_spherical(t, p)*radius);
-        glVertex3fv(v);
-      }
-
-      {
-        Vector3 v(origin + vector3_for_spherical(t + dt, p + dp)*radius);
-        glVertex3fv(v);
-      }
-
-      {
-        Vector3 v(origin + vector3_for_spherical(t + dt, p)*radius);
-        glVertex3fv(v);
-      }
-    }
-  }
-
-  {
-    const double p = (sides - 1) * dp - (c_pi / 2.0);
-    for (int i = 0; i <= sides - 1; ++i)
-    {
-      const double t = i * dt;
-
-      {
-        Vector3 v(origin + vector3_for_spherical(t, p)*radius);
-        glVertex3fv(v);
-      }
-
-      {
-        Vector3 v(origin + vector3_for_spherical(t + dt, p + dp)*radius);
-        glVertex3fv(v);
-      }
-
-      {
-        Vector3 v(origin + vector3_for_spherical(t + dt, p)*radius);
-        glVertex3fv(v);
-      }
-    }
-  }
-  glEnd();
-}
-
-void sphere_draw_wire(const Vector3& origin, float radius, int sides)
-{
-  {
-    glBegin(GL_LINE_LOOP);
-
-    for (int i = 0; i <= sides; i++)
-    {
-      double ds = sin((i * 2 * c_pi) / sides);
-      double dc = cos((i * 2 * c_pi) / sides);
-
-      glVertex3f(
-        static_cast<float>(origin[0] + radius * dc),
-        static_cast<float>(origin[1] + radius * ds),
-        origin[2]
-      );
-    }
-
-    glEnd();
-  }
-
-  {
-    glBegin(GL_LINE_LOOP);
-
-    for (int i = 0; i <= sides; i++)
-    {
-      double ds = sin((i * 2 * c_pi) / sides);
-      double dc = cos((i * 2 * c_pi) / sides);
-
-      glVertex3f(
-        static_cast<float>(origin[0] + radius * dc),
-        origin[1],
-        static_cast<float>(origin[2] + radius * ds)
-      );
-    }
-
-    glEnd();
-  }
-
-  {
-    glBegin(GL_LINE_LOOP);
-
-    for (int i = 0; i <= sides; i++)
-    {
-      double ds = sin((i * 2 * c_pi) / sides);
-      double dc = cos((i * 2 * c_pi) / sides);
-
-      glVertex3f(
-        origin[0],
-        static_cast<float>(origin[1] + radius * dc),
-        static_cast<float>(origin[2] + radius * ds)
-      );
-    }
-
-    glEnd();
-  }
-}
-
 void light_draw_box_lines(const Vector3& origin, const Vector3 points[8])
 {
   //draw lines from the center of the bbox to the corners
@@ -231,26 +101,6 @@ void light_draw_box_lines(const Vector3& origin, const Vector3 points[8])
   glVertex3fv(points[7]);
 
   glEnd();
-}
-
-void light_draw_radius_wire(const Vector3& origin, const float envelope[3])
-{
-  if(envelope[0] > 0)
-    sphere_draw_wire(origin, envelope[0], 24);
-  if(envelope[1] > 0)
-    sphere_draw_wire(origin, envelope[1], 24);
-  if(envelope[2] > 0)
-    sphere_draw_wire(origin, envelope[2], 24);
-}
-
-void light_draw_radius_fill(const Vector3& origin, const float envelope[3])
-{
-  if(envelope[0] > 0)
-    sphere_draw_fill(origin, envelope[0], 16);
-  if(envelope[1] > 0)
-    sphere_draw_fill(origin, envelope[1], 16);
-  if(envelope[2] > 0)
-    sphere_draw_fill(origin, envelope[2], 16);
 }
 
 void light_vertices(const AABB& aabb_light, Vector3 points[6])
@@ -414,25 +264,7 @@ void light_draw(const AABB& aabb_light, RenderStateFlags state)
 #endif
 }
 
-// These variables are tweakable on the q3map2 console, setting to q3map2
-// default here as there is no way to find out what the user actually uses
-// right now. Maybe move them to worldspawn?
-float fPointScale = 7500.f;
-float fLinearScale = 1.f / 8000.f;
-
-float light_radius_linear(float fIntensity, float fFalloffTolerance)
-{
-  return ((fIntensity * fPointScale * fLinearScale) - fFalloffTolerance);
-}
-
-float light_radius(float fIntensity, float fFalloffTolerance)
-{
-  return sqrt(fIntensity * fPointScale / fFalloffTolerance);
-}
-
-
 LightType g_lightType = LIGHTTYPE_DEFAULT;
-
 
 bool spawnflags_linear(int flags)
 {
@@ -1080,7 +912,13 @@ public:
 
     renderer.SetState(m_entity.getEntityClass().m_state_wire, Renderer::eFullMaterials);
 
-    if(g_lightType == LIGHTTYPE_DOOM3 && selected)
+    // Always draw Doom 3 light bounding boxes, if the global is set
+    if (GlobalRadiant().registry().get("user/ui/showAllLightRadii") == "1") {
+      updateLightRadiiBox();
+      renderer.addRenderable(m_radii_box, localToWorld);
+    }
+
+    if(selected)
     {
       if(isProjected())
       {
@@ -1106,11 +944,6 @@ public:
       }
     }
     
-    // Always draw Doom 3 light bounding boxes, if the global is set
-    if (g_lightType == LIGHTTYPE_DOOM3 && GlobalRadiant().registry().get("user/ui/showAllLightRadii") == "1") {
-      updateLightRadiiBox();
-      renderer.addRenderable(m_radii_box, localToWorld);
-    }
   }
   void renderWireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const
   {
