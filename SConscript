@@ -154,13 +154,11 @@ image_env.Depends(image_lib, jpeg_lib)
 image_env.Depends(image_lib, ddslib_lib)
 image_env.Install(INSTALL + '/modules', image_lib)
 
-# We DO need this, it is used as mapdoom3 in the editor
-# - OrbWeaver
-mapq3_env = module_env.Copy()
-mapq3_lst=build_list('plugins/mapq3', 'plugin.cpp parse.cpp write.cpp')
-mapq3_lib = mapq3_env.SharedLibrary(target='mapq3', source=mapq3_lst, LIBS='cmdlib', LIBPATH='libs')
-mapq3_env.Depends(mapq3_lib, cmdlib_lib)
-mapq3_env.Install(INSTALL + '/modules', mapq3_lib)
+mapdoom3_env = module_env.Copy()
+mapdoom3_lst=build_list('plugins/mapdoom3', 'mapdoom3.cpp parse.cpp write.cpp')
+mapdoom3_lib = mapdoom3_env.SharedLibrary(target='mapdoom3', source=mapdoom3_lst, LIBS='cmdlib', LIBPATH='libs')
+mapdoom3_env.Depends(mapdoom3_lib, cmdlib_lib)
+mapdoom3_env.Install(INSTALL + '/modules', mapdoom3_lib)
 
 imagepng_env = module_env.Copy()
 imagepng_lst = build_list('plugins/imagepng', 'plugin.cpp')
