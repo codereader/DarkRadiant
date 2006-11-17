@@ -67,11 +67,11 @@ EntityClass	*g_EntityClassDoom3_bad = 0;
 
 void EntityClassDoom3_clear()
 {
-  for(EntityClasses::iterator i = g_EntityClassDoom3_classes.begin(); i != g_EntityClassDoom3_classes.end(); ++i)
-  {
-    (*i).second->free((*i).second);
-  }
-  g_EntityClassDoom3_classes.clear();
+	for(EntityClasses::iterator i = g_EntityClassDoom3_classes.begin(); i != g_EntityClassDoom3_classes.end(); ++i)
+	{
+		delete i->second;
+	}
+	g_EntityClassDoom3_classes.clear();
 }
 
 // entityClass will be inserted only if another of the same name does not already exist.
@@ -88,38 +88,6 @@ void EntityClassDoom3_forEach(EntityClassVisitor& visitor)
     visitor.visit((*i).second);
   }
 }
-
-void EntityClassDoom3_parseUnknown(Tokeniser& tokeniser)
-{
-  //const char* name = 
-  tokeniser.getToken();
-
-  //globalOutputStream() << "parsing unknown block " << makeQuoted(name) << "\n";
-
-  const char* token = tokeniser.getToken();
-  ASSERT_MESSAGE(string_equal(token, "{"), "error parsing entity definition");
-  tokeniser.nextLine();
-
-  std::size_t depth = 1;
-  for(;;)
-  {
-    const char* token = tokeniser.getToken();
-    if(string_equal(token, "}"))
-    {
-      if(--depth == 0)
-      {
-        tokeniser.nextLine();
-        break;
-      }
-    }
-    else if(string_equal(token, "{"))
-    {
-      ++depth;
-    }
-    tokeniser.nextLine();
-  }
-}
-
 
 class Model
 {
@@ -166,7 +134,6 @@ void EntityClassDoom3_parseModel(parser::DefTokeniser& tokeniser)
 {
     // Add the named model to the global list
     const std::string name = tokeniser.nextToken(); 
-//    std::cout << "  model name = " << name << std::endl;
     Model& model = g_models[name.c_str()];
 
     tokeniser.assertNextToken("{");
@@ -217,12 +184,10 @@ void EntityClassDoom3_parseModel(parser::DefTokeniser& tokeniser)
 
 void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
 {
-    EntityClass* entityClass = Eclass_Alloc();
-    entityClass->free = &Eclass_Free;
+    EntityClass* entityClass = new EntityClass(Vector3(0, 0.4, 0));
 
     // Entity name
     const std::string sName = tokeniser.nextToken();
-//    std::cout << "  entitydef name = " << sName << std::endl;
     entityClass->m_name = sName.c_str();
 
     // Required open brace
@@ -232,9 +197,6 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
     while (true) {
 
         const std::string key = tokeniser.nextToken();
-
-        // DEBUG
-//        std::cout << "key is " << key << std::endl;
 
         if (key == "}") // end of def
             break;
@@ -247,7 +209,7 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
         }
         else if (key == "editor_color") {
             entityClass->colorSpecified = true;
-            entityClass->color = Vector3(tokeniser.nextToken());
+            entityClass->setColour(tokeniser.nextToken());
         }
         else if (key == "editor_mins") {
             entityClass->sizeSpecified = true;
@@ -292,97 +254,12 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
             
     } // while true
     
-//    else if(!string_empty(last) && (string_equal(first.c_str(), "editor_var") || string_equal(first.c_str(), "editor_string")))
-//    {
-//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
-//      attribute.m_type = "string";
-//      currentDescription = &attribute.m_description;
-//      currentString = &description;
-//      description << tokeniser.getToken();
-//    }
-//    else if(!string_empty(last) && string_equal(first.c_str(), "editor_float"))
-//    {
-//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
-//      attribute.m_type = "string";
-//      currentDescription = &attribute.m_description;
-//      currentString = &description;
-//      description << tokeniser.getToken();
-//    }
-//    else if(!string_empty(last) && string_equal(first.c_str(), "editor_snd"))
-//    {
-//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
-//      attribute.m_type = "sound";
-//      currentDescription = &attribute.m_description;
-//      currentString = &description;
-//      description << tokeniser.getToken();
-//    }
-//    else if(!string_empty(last) && string_equal(first.c_str(), "editor_bool"))
-//    {
-//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
-//      attribute.m_type = "boolean";
-//      currentDescription = &attribute.m_description;
-//      currentString = &description;
-//      description << tokeniser.getToken();
-//    }
-//    else if(!string_empty(last) && string_equal(first.c_str(), "editor_int"))
-//    {
-//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
-//      attribute.m_type = "integer";
-//      currentDescription = &attribute.m_description;
-//      currentString = &description;
-//      description << tokeniser.getToken();
-//    }
-//    else if(!string_empty(last) && string_equal(first.c_str(), "editor_model"))
-//    {
-//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
-//      attribute.m_type = "model";
-//      currentDescription = &attribute.m_description;
-//      currentString = &description;
-//      description << tokeniser.getToken();
-//    }
-//    else if(!string_empty(last) && string_equal(first.c_str(), "editor_color"))
-//    {
-//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
-//      attribute.m_type = "color";
-//      currentDescription = &attribute.m_description;
-//      currentString = &description;
-//      description << tokeniser.getToken();
-//    }
-//    else if(!string_empty(last) && (string_equal(first.c_str(), "editor_material") || string_equal(first.c_str(), "editor_mat")))
-//    {
-//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, last).second;
-//      attribute.m_type = "shader";
-//      currentDescription = &attribute.m_description;
-//      currentString = &description;
-//      description << tokeniser.getToken();
-//    }
-//    else if(string_equal(key, "inherit"))
-//    {
-//      entityClass->inheritanceResolved = false;
-//      ASSERT_MESSAGE(entityClass->m_parent.empty(), "only one 'inherit' supported per entityDef");
-//      entityClass->m_parent.push_back(tokeniser.getToken());
-//    }
-//    else
-//    {
-//      ASSERT_MESSAGE(!string_equal_n(key, "editor_", 7), "unsupported editor key: " << makeQuoted(key));
-//      EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, key).second;
-//      attribute.m_type = "string";
-//      attribute.m_value = tokeniser.getToken();
-//    }
-//    tokeniser.nextLine();
-//  }
-//
-//  entityClass->m_comments = usage.c_str();
-//
-
-
-  EntityClass* inserted = EntityClassDoom3_insertUnique(entityClass);
-  if(inserted != entityClass)
-  {
-    globalErrorStream() << "entityDef " << entityClass->name() << " is already defined, second definition ignored\n";
-    eclass_capture_state(entityClass); // finish constructing the entity so that it can be destroyed cleanly.
-    entityClass->free(entityClass);
-  }
+    // Insert into the EntityClassManager
+	EntityClass* inserted = EntityClassDoom3_insertUnique(entityClass);
+	if(inserted != entityClass) {
+		globalErrorStream() << "entityDef " << entityClass->name() << " is already defined, second definition ignored\n";
+		delete entityClass;
+	}
 }
 
 // Parse the provided string containing the contents of a single .def file.
@@ -418,8 +295,6 @@ void EntityClassDoom3_loadFile(const char* filename)
   globalOutputStream() << "parsing entity classes from " << makeQuoted(filename) << "\n";
 
     const std::string fullname = "def/" + std::string(filename);
-
-//    std::cout << "** FILE: " << fullname << " **" << std::endl;
 
 	ArchiveTextFile* file = GlobalFileSystem().openTextFile(fullname.c_str());
   if(file != 0)
@@ -483,7 +358,7 @@ void EntityClass_resolveInheritance(EntityClass* derivedClass)
       if(!derivedClass->colorSpecified)
       {
         derivedClass->colorSpecified = parentClass->colorSpecified;
-        derivedClass->color = parentClass->color;
+        derivedClass->setColour(parentClass->getColour());
       }
       if(!derivedClass->sizeSpecified)
       {
@@ -559,7 +434,6 @@ class EntityClassDoom3:
                         i->second->m_skin = j->second.m_skin;
                     }
                 }
-                eclass_capture_state((*i).second);
             
                 StringOutputStream usage(256);
             
@@ -644,7 +518,7 @@ void EntityClassDoom3_destroy()
 {
   EntityClassDoom3_unrealise();
 
-  g_EntityClassDoom3_bad->free(g_EntityClassDoom3_bad);
+	delete g_EntityClassDoom3_bad;
 
   GlobalFileSystem().detach(g_EntityClassDoom3);
 }

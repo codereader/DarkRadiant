@@ -537,19 +537,15 @@ void Radiant_loadModulesFromRoot(const std::string& directory)
 //! Make COLOR_BRUSHES override worldspawn eclass colour.
 void SetWorldspawnColour(const Vector3& colour)
 {
-  EntityClass* worldspawn = GlobalEntityClassManager().findOrInsert("worldspawn", true);
-  eclass_release_state(worldspawn);
-  worldspawn->color = colour;
-  eclass_capture_state(worldspawn);
+	EntityClass* worldspawn = GlobalEntityClassManager().findOrInsert("worldspawn", true);
+	worldspawn->setColour(colour);
 }
 
 //! Make colourscheme definition override light volume eclass colour.
 void SetLightVolumeColour(const Vector3& colour)
 {
-  EntityClass* light = GlobalEntityClassManager().findOrInsert("light", true);
-  eclass_release_state(light);
-  light->color = colour;
-  eclass_capture_state(light);
+	EntityClass* light = GlobalEntityClassManager().findOrInsert("light", true);
+	light->setColour(colour);
 }
 
 class WorldspawnColourEntityClassObserver : public ModuleObserver
