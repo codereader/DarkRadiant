@@ -88,6 +88,11 @@ public:
 class ModuleObserver;
 
 
+/** EntityClassManager interface. The entity class manager 
+ * is responsible for maintaining a list of available entity
+ * classes which the EntityCreator can insert into a map.
+ */
+
 struct EntityClassManager
 {
   INTEGER_CONSTANT(Version, 1);

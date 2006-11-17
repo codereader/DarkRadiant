@@ -38,8 +38,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "moduleobservers.h"
 #include "stringio.h"
 
-#include "gtkutil/dialog.h"
-
 #include <iostream>
 
 #include <boost/algorithm/string/case_conv.hpp>
@@ -430,7 +428,8 @@ void EntityClassDoom3_loadFile(const char* filename)
             EntityClassDoom3_parse(file->getString());
         }
         catch (parser::ParseException e) {
-            gtkutil::errorDialog("Unable to parse DEF file: " + std::string(filename) + "\n\n" + e.what());
+            //gtkutil::errorDialog("Unable to parse DEF file: " + std::string(filename) + "\n\n" + e.what());
+            std::cerr << "Unable to parse DEF file: " << filename << "\n\n" << e.what();
         }
         file->release();
   }
@@ -697,9 +696,18 @@ public:
     }
 };
 
+/* Required code to register the module with the ModuleServer.
+ */
+
 #include "modulesystem/singletonmodule.h"
-#include "modulesystem/moduleregistry.h"
 
 typedef SingletonModule<EntityClassDoom3API, EntityClassDoom3Dependencies> EntityClassDoom3Module;
-typedef Static<EntityClassDoom3Module> StaticEntityClassDoom3Module;
-StaticRegisterModule staticRegisterEntityClassDoom3(StaticEntityClassDoom3Module::instance());
+
+// Static instance of the module
+EntityClassDoom3Module _theEclassModule;
+
+extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
+{
+  initialiseModule(server);
+  _theEclassModule.selfRegister();
+}

@@ -110,6 +110,14 @@ filterEnv.Append(LIBS = 'xmlutil')
 filterLib = filterEnv.SharedLibrary(target='filters', source=filterSrc, no_import_lib=1)
 filterEnv.Install(INSTALL + '/modules', filterLib)
 
+# Eclassmgr module
+eclassSrc = build_list('plugins/eclassmgr', 'eclass_doom3.cpp')
+eclassEnv = module_env.Copy()
+eclassEnv.useGlib2()
+eclassEnv.useGtk2()
+eclassLib = eclassEnv.SharedLibrary(target='eclassmgr', source=eclassSrc, no_import_lib=1)
+eclassEnv.Install(INSTALL + '/modules', eclassLib)
+
 vfspk3_env = module_env.Copy()
 vfspk3_lst = build_list('plugins/vfspk3', 'vfspk3.cpp vfs.cpp archive.cpp')
 vfspk3_env.useGlib2()
@@ -208,7 +216,6 @@ radiant_src = [
 'console.cpp',
 'csg.cpp',
 'dialog.cpp',
-'eclass_doom3.cpp',
 'entity.cpp',
 'entitylist.cpp',
 'environment.cpp',
