@@ -217,7 +217,6 @@ radiant_src = [
 'brushmanip.cpp',
 'brushmodule.cpp',
 'brushnode.cpp',
-'brushxml.cpp',
 'brush_primit.cpp',
 'camwindow.cpp',
 'clippertool.cpp',

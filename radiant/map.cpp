@@ -1236,9 +1236,9 @@ void Map_Traverse_Selected(scene::Node& root, const scene::Traversable::Walker& 
   }
 }
 
-void Map_ExportSelected(TextOutputStream& out, const MapFormat& format)
+void Map_ExportSelected(std::ostream& out, const MapFormat& format)
 {
-  format.writeGraph(GlobalSceneGraph().root(), Map_Traverse_Selected, out);
+	format.writeGraph(GlobalSceneGraph().root(), Map_Traverse_Selected, out);
 }
 
 void Map_Traverse(scene::Node& root, const scene::Traversable::Walker& walker)

@@ -22,10 +22,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_GTKUTIL_CLIPBOARD_H)
 #define INCLUDED_GTKUTIL_CLIPBOARD_H
 
-class TextOutputStream;
-typedef void(*ClipboardCopyFunc)(TextOutputStream&);
+#include <ostream>
+
+// Copy to clipboard
+typedef void(*ClipboardCopyFunc) (std::ostream&);
 void clipboard_copy(ClipboardCopyFunc copy);
 
+// Paste from clipboard
 class TextInputStream;
 typedef void(*ClipboardPasteFunc)(TextInputStream&);
 void clipboard_paste(ClipboardPasteFunc paste);

@@ -38,6 +38,7 @@ ModelModules& ReferenceAPI_getModelModules();
 #include "qerplugin.h"
 
 #include <list>
+#include <fstream>
 
 #include "container/cache.h"
 #include "container/hashfunc.h"
@@ -103,21 +104,30 @@ NodeSmartReference MapResource_load(const MapFormat& format, const char* path, c
   return root;
 }
 
+/** Save the map contents to the given filename using the given MapFormat export module
+ */
 bool MapResource_saveFile(const MapFormat& format, scene::Node& root, GraphTraversalFunc traverse, const char* filename)
 {
-  //ASSERT_MESSAGE(path_is_absolute(filename), "MapResource_saveFile: path is not absolute: " << makeQuoted(filename));
-  globalOutputStream() << "Open file " << filename << " for write...";
-  TextFileOutputStream file(filename);
-  if(!file.failed())
-  {
-    globalOutputStream() << "success\n";
-    ScopeDisableScreenUpdates disableScreenUpdates(path_get_filename_start(filename));
-    format.writeGraph(root, traverse, file);
-    return true;
-  }
+	globalOutputStream() << "Open file " << filename << " for write...";
+	
+	// Open the stream to the output file
+	std::ofstream outfile(filename);
 
-  globalErrorStream() << "failure\n";
-  return false;
+	if(outfile.is_open()) {
+	    globalOutputStream() << "success\n";
+	    ScopeDisableScreenUpdates disableScreenUpdates(path_get_filename_start(filename));
+
+		// Use the MapFormat module and traversal function to dump the scenegraph
+		// to the file stream.
+	    format.writeGraph(root, traverse, outfile);
+	    
+	    outfile.close();
+	    return true;
+	}
+	else {
+		globalErrorStream() << "failure\n";
+		return false;
+	}
 }
 
 bool file_saveBackup(const char* path)

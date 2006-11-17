@@ -131,15 +131,12 @@ public:
     Map_Read(root, tokeniser, entityTable, *this);
     tokeniser.release();
   }
-  void writeGraph(scene::Node& root, GraphTraversalFunc traverse, TextOutputStream& outputStream) const
-  {
-    TokenWriter& writer = GlobalScripLibModule::getTable().m_pfnNewSimpleTokenWriter(outputStream);
-    writer.writeToken("Version");
-    writer.writeInteger(MapVersion());
-    writer.nextLine();
-    Map_Write(root, traverse, writer, false);
-    writer.release();
-  }
+
+	// Write scene graph to an ostream
+	void writeGraph(scene::Node& root, GraphTraversalFunc traverse, std::ostream& os) const {
+	    os << "Version " << MapVersion() << std::endl;
+		Map_Write(root, traverse, os);
+	}
 };
 
 typedef SingletonModule<

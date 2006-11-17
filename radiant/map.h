@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "signal/signalfwd.h"
 #include "string/stringfwd.h"
 
+#include <ostream>
+
 class Map;
 extern Map g_map;
 
@@ -123,8 +125,9 @@ bool Map_SaveRegion(const char* filename);
 class TextInputStream;
 class TextOutputStream;
 
+// Map import and export functions
 void Map_ImportSelected(TextInputStream& in, const MapFormat& format);
-void Map_ExportSelected(TextOutputStream& out, const MapFormat& format);
+void Map_ExportSelected(std::ostream& out, const MapFormat& format);
 
 bool Map_Modified(const Map& map);
 void Map_SetModified(Map& map, bool modified);

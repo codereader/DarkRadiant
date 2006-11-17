@@ -1231,113 +1231,67 @@ public:
   }
 };
 
-inline void Patch_exportHeader(const Patch& patch, TokenWriter& writer)
+inline void Patch_exportHeader(const Patch& patch, std::ostream& os)
 {
-  writer.writeToken("{");
-  writer.nextLine();
-  writer.writeToken(patch.m_patchDef3 ? "patchDef3" : "patchDef2");
-  writer.nextLine();
-  writer.writeToken("{");
-  writer.nextLine();
+	os << "{\n";
+	os << (patch.m_patchDef3 ? "patchDef3\n" : "patchDef2\n");
+	
+	os << "{\n";
 }
 
-inline void Patch_exportShader(const Patch& patch, TokenWriter& writer)
+inline void PatchDoom3_exportShader(const Patch& patch, std::ostream& os)
 {
-  // write shader name
-  if(*(shader_get_textureName(patch.GetShader())) == '\0')
-  {
-    writer.writeToken("NULL");
-  }
-  else
-  {
-    writer.writeToken(shader_get_textureName(patch.GetShader()));
-  }
-  writer.nextLine();
+	if(*(shader_get_textureName(patch.GetShader())) == '\0') {
+    	os << "\"_emptyname\"";
+	}
+	else  {
+    	os << "\"" << patch.GetShader() << "\"";
+	}
+	os << "\n";
 }
 
-inline void PatchDoom3_exportShader(const Patch& patch, TokenWriter& writer)
+inline void Patch_exportParams(const Patch& patch, std::ostream& os)
 {
-  // write shader name
-  if(*(shader_get_textureName(patch.GetShader())) == '\0')
-  {
-    writer.writeString("_emptyname");
-  }
-  else
-  {
-    writer.writeString(patch.GetShader());
-  }
-  writer.nextLine();
+	os << "( ";
+	os << patch.getWidth() << " ";
+	os << patch.getHeight() << " ";
+
+	if(patch.m_patchDef3) {
+		os << patch.m_subdivisions_x << " ";
+		os << patch.m_subdivisions_y << " ";
+	}
+	
+	os << "0 0 0 )\n";
 }
 
-inline void Patch_exportParams(const Patch& patch, TokenWriter& writer)
+inline void Patch_exportMatrix(const Patch& patch, std::ostream& os)
 {
-  // write matrix dimensions
-  writer.writeToken("(");
-  writer.writeUnsigned(patch.getWidth());
-  writer.writeUnsigned(patch.getHeight());
-  if(patch.m_patchDef3)
-  {
-    writer.writeUnsigned(patch.m_subdivisions_x);
-    writer.writeUnsigned(patch.m_subdivisions_y);
-  }
-  writer.writeInteger(0);
-  writer.writeInteger(0);
-  writer.writeInteger(0);
-  writer.writeToken(")");
-  writer.nextLine();
-}
+	// Write matrix
+	os << "(\n";
 
-inline void Patch_exportMatrix(const Patch& patch, TokenWriter& writer)
-{
-  // write matrix
-  writer.writeToken("(");
-  writer.nextLine();
-  for(std::size_t c=0; c<patch.getWidth(); c++)
-  {
-    writer.writeToken("(");
-    for(std::size_t r=0; r<patch.getHeight(); r++)
-    {
-      writer.writeToken("(");
-
-      writer.writeFloat(patch.ctrlAt(r,c).m_vertex[0]);
-      writer.writeFloat(patch.ctrlAt(r,c).m_vertex[1]);
-      writer.writeFloat(patch.ctrlAt(r,c).m_vertex[2]);
-      writer.writeFloat(patch.ctrlAt(r,c).m_texcoord[0]);
-      writer.writeFloat(patch.ctrlAt(r,c).m_texcoord[1]);
-
-      writer.writeToken(")");
-    }
-    writer.writeToken(")");
-    writer.nextLine();
-  }
-  writer.writeToken(")");
-  writer.nextLine();
+	for(std::size_t c=0; c<patch.getWidth(); c++) {
+	    os << "( ";
+		for(std::size_t r=0; r<patch.getHeight(); r++) {
+		    os << "( ";
+      		os << patch.ctrlAt(r,c).m_vertex[0] << " ";
+      		os << patch.ctrlAt(r,c).m_vertex[1] << " ";
+      		os << patch.ctrlAt(r,c).m_vertex[2] << " ";
+			os << patch.ctrlAt(r,c).m_texcoord[0] << " ";
+			os << patch.ctrlAt(r,c).m_texcoord[1] << " ";
+		    os << ") ";
+		}
+	    os << ")\n";
+	}
+    os << ")\n";
 }
   
-inline void Patch_exportFooter(const Patch& patch, TokenWriter& writer)
+inline void Patch_exportFooter(const Patch& patch, std::ostream& os)
 {
-  writer.writeToken("}");
-  writer.nextLine();
-  writer.writeToken("}");
-  writer.nextLine();
+	os << "}\n}\n";
 }
 
-class PatchTokenExporter : public MapExporter
-{
-  const Patch& m_patch;
-public:
-  PatchTokenExporter(Patch& patch) : m_patch(patch)
-  {
-  }
-  void exportTokens(TokenWriter& writer) const
-  {
-    Patch_exportHeader(m_patch, writer);
-    Patch_exportShader(m_patch, writer);
-    Patch_exportParams(m_patch, writer);
-    Patch_exportMatrix(m_patch, writer);
-    Patch_exportFooter(m_patch, writer);
-  }
-};
+/** Map exporter for Doom 3 patches.
+ */
 
 class PatchDoom3TokenExporter : public MapExporter
 {
@@ -1346,14 +1300,15 @@ public:
   PatchDoom3TokenExporter(Patch& patch) : m_patch(patch)
   {
   }
-  void exportTokens(TokenWriter& writer) const
-  {
-    Patch_exportHeader(m_patch, writer);
-    PatchDoom3_exportShader(m_patch, writer);
-    Patch_exportParams(m_patch, writer);
-    Patch_exportMatrix(m_patch, writer);
-    Patch_exportFooter(m_patch, writer);
-  }
+
+	// Required export function
+	void exportTokens(std::ostream& os) const {
+	    Patch_exportHeader(m_patch, os);
+	    PatchDoom3_exportShader(m_patch, os);
+	    Patch_exportParams(m_patch, os);
+	    Patch_exportMatrix(m_patch, os);
+	    Patch_exportFooter(m_patch, os);
+	}
 };
 
 class PatchControlInstance
@@ -1902,7 +1857,6 @@ public:
 
 
 
-typedef PatchNode<PatchTokenImporter, PatchTokenExporter> PatchNodeQuake3;
 typedef PatchNode<PatchDoom3TokenImporter, PatchDoom3TokenExporter> PatchNodeDoom3;
 
 inline Patch* Node_getPatch(scene::Node& node)

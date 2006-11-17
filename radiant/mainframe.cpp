@@ -668,9 +668,9 @@ void deleteSelection()
   Select_Delete();
 }
 
-void Map_ExportSelected(TextOutputStream& ostream)
+void Map_ExportSelected(std::ostream& ostream)
 {
-  Map_ExportSelected(ostream, Map_getFormat(g_map));
+	Map_ExportSelected(ostream, Map_getFormat(g_map));
 }
 
 void Map_ImportSelected(TextInputStream& istream)

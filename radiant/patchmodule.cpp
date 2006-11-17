@@ -97,22 +97,6 @@ public:
   }
 };
 
-class Quake3PatchCreator : public CommonPatchCreator
-{
-public:
-  scene::Node& createPatch()
-  {
-    return (new PatchNodeQuake3())->node();
-  }
-};
-
-Quake3PatchCreator g_Quake3PatchCreator;
-
-PatchCreator& GetQuake3PatchCreator()
-{
-  return g_Quake3PatchCreator;
-}
-
 class Doom3PatchCreator : public CommonPatchCreator
 {
 public:
@@ -158,36 +142,6 @@ class PatchDependencies :
   public GlobalFilterModuleRef
 {
 };
-
-class PatchQuake3API : public TypeSystemRef
-{
-  PatchCreator* m_patchquake3;
-public:
-  typedef PatchCreator Type;
-  STRING_CONSTANT(Name, "quake3");
-
-  PatchQuake3API()
-  {
-    Patch_Construct(ePatchTypeQuake3);
- 
-    m_patchquake3 = &GetQuake3PatchCreator();
-    g_patchCreator = m_patchquake3;
-  }
-  ~PatchQuake3API()
-  {
-    Patch_Destroy();
-  }
-  PatchCreator* getTable()
-  {
-    return m_patchquake3;
-  }
-};
-
-typedef SingletonModule<PatchQuake3API, PatchDependencies> PatchQuake3Module;
-typedef Static<PatchQuake3Module> StaticPatchQuake3Module;
-StaticRegisterModule staticRegisterPatchQuake3(StaticPatchQuake3Module::instance());
-
-
 
 class PatchDoom3API : public TypeSystemRef
 {
