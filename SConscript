@@ -156,8 +156,10 @@ image_env.Install(INSTALL + '/modules', image_lib)
 
 mapdoom3_env = module_env.Copy()
 mapdoom3_lst=build_list('plugins/mapdoom3', 'mapdoom3.cpp parse.cpp write.cpp')
-mapdoom3_lib = mapdoom3_env.SharedLibrary(target='mapdoom3', source=mapdoom3_lst, LIBS='cmdlib', LIBPATH='libs')
+mapdoom3_env.Append(LIBS = ['cmdlib', 'xmlutil'])
+mapdoom3_lib = mapdoom3_env.SharedLibrary(target='mapdoom3', source=mapdoom3_lst)
 mapdoom3_env.Depends(mapdoom3_lib, cmdlib_lib)
+mapdoom3_env.Depends(mapdoom3_lib, xmlutil)
 mapdoom3_env.Install(INSTALL + '/modules', mapdoom3_lib)
 
 imagepng_env = module_env.Copy()

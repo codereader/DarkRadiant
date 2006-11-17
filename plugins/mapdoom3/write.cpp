@@ -22,8 +22,24 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "write.h"
 
 #include "ientity.h"
-#include "iscriplib.h"
 #include "scenelib.h"
+#include "qerplugin.h"
+
+/* CONSTANTS */
+
+const char* DUMMY_BRUSH =
+"// dummy brush 0\n\
+{\n\
+brushDef3\n\
+{\n\
+( 0 0 -1 0 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_emptyname\" 0 0 0\n\
+( 0 0 1 -8 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_emptyname\" 0 0 0\n\
+( 0 -1 0 -16 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_emptyname\" 0 0 0\n\
+( 1 0 0 -16 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_emptyname\" 0 0 0\n\
+( 0 1 0 -16 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_emptyname\" 0 0 0\n\
+( -1 0 0 -16 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_emptyname\" 0 0 0\n\
+}\n\
+}\n";
 
 inline MapExporter* Node_getMapExporter(scene::Node& node)
 {
@@ -66,7 +82,8 @@ void Entity_ExportTokens(const Entity& entity, std::ostream& os)
 
 class WriteTokensWalker : public scene::Traversable::Walker
 {
-	mutable Stack<bool> m_stack;
+	// Stack to record descent through entities to brushes
+	mutable std::vector<bool> _entityStack;
 
 	// Output stream to write to
 	std::ostream& _outStream;
@@ -77,6 +94,9 @@ class WriteTokensWalker : public scene::Traversable::Walker
 	// Number of brushes written for the current entity (entity local)
 	mutable int _brushCount;
 	
+	// Are we writing dummy brushes to brushless entities?
+	bool _writeDummyBrushes;
+	
 public:
   
 	// Constructor
@@ -84,18 +104,25 @@ public:
     : _outStream(os), 
       _entityCount(0),
       _brushCount(0)
-	{}
+	{
+		// Check the game file to see whether we need dummy brushes or not
+		if (GlobalRadiant().registry().get("game/mapFormat/compatibility/addDummyBrushes") == "true")
+			_writeDummyBrushes = true;
+		else
+			_writeDummyBrushes = false;
+	}
 	
 	// Pre-descent callback
   bool pre(scene::Node& node) const
   {
-    m_stack.push(false);
-
 	// Check whether we are have a brush or an entity. We might get 
 	// called at either level.
     Entity* entity = Node_getEntity(node);
 
 	if(entity != 0) { // ENTITY
+
+		// Push the entity flag to the stack
+		_entityStack.push_back(true);
 
     	// Write out the entity number comment
 		_outStream << "// entity " << _entityCount++ << "\n";
@@ -106,13 +133,14 @@ public:
 		// Entity key values
 		Entity_ExportTokens(*entity, _outStream);
 
-		// Reset the brush count and push to the stack to record
-		// descent to brush level
+		// Reset the brush count 
 		_brushCount = 0;
-		m_stack.top() = true;
 
     }
     else  { // BRUSH
+
+		// No entity flag to stack
+		_entityStack.push_back(false);
 
     	// Get the brush token exporter
 		MapExporter* exporter = Node_getMapExporter(node);
@@ -123,7 +151,7 @@ public:
 
 			// Pass the ostream to the primitive's contained tokenexporter
 			exporter->exportTokens(_outStream);
-      }
+		}
     }
 
     return true;
@@ -132,20 +160,22 @@ public:
 	// Post-descent callback
 	void post(scene::Node& node) const {
 
-		// If we are popping an entity, write the closing brace
-		if(m_stack.top()) {
-			_outStream << "}" << std::endl;
-		}
+		// Check if we are popping an entity
+		if(_entityStack.back()) {
+			
+			// If the brush count is 0 and we are adding dummy brushes to please
+			// the Doom 3 editor, do so here
+			if (_writeDummyBrushes && _brushCount == 0) {
+				_outStream << DUMMY_BRUSH;
+			}
 
-		// If the brush count is 0 and we are adding dummy brushes to please
-		// the Doom 3 editor, do so here
-		if (_brushCount == 0) {
-			std::cout << "No brushes" << std::endl;
-			_outStream << "// Need dummy brush here" << std::endl;
+			// Write the closing brace for the entity
+			_outStream << "}" << std::endl;
+
 		}
 
 		// Pop the stack
-		m_stack.pop();
+		_entityStack.pop_back();
 	}
 };
 
