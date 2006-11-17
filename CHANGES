@@ -1,7 +1,13 @@
+17/11/2006
+OrbWeaver
+- Fixed problem with objects from DarkRadiant maps disappearing in DoomEdit
+  (DoomEdit requires dummy brushes in brushless entities).
+- Entity class manager moved into separate module (eclassmgr).
+
 13/11/2006
 OrbWeaver
-- Fixed segfault when InvertSelection called on an empty map (or any other situation
-  where the root node became selected).
+- Fixed segfault when InvertSelection called on an empty map (or any other
+  situation where the root node became selected).
 - Fixed segfault when a light with a rendered light_center is selected and the
   showAllLightRadii option is active.
 
