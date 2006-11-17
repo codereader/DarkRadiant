@@ -150,12 +150,6 @@ mapdoom3_env.Depends(mapdoom3_lib, cmdlib_lib)
 mapdoom3_env.Depends(mapdoom3_lib, xmlutil)
 mapdoom3_env.Install(INSTALL + '/modules', mapdoom3_lib)
 
-imagepng_env = module_env.Copy()
-imagepng_lst = build_list('plugins/imagepng', 'plugin.cpp')
-imagepng_env.usePNG()
-imagepng_lib = imagepng_env.SharedLibrary(target='imagepng', source=imagepng_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
-imagepng_env.Install(INSTALL + '/modules', imagepng_lib)
-
 model_env = module_env.Copy()
 model_lst = build_list('plugins/model', 'plugin.cpp model.cpp RenderablePicoModel.cpp RenderablePicoSurface.cpp')
 model_env.Append(LIBS = ['mathlib', 'picomodel', 'math'])
