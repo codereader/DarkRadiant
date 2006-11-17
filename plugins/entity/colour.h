@@ -51,16 +51,17 @@ inline void write_colour(const Vector3& colour, Entity* entity)
 class Colour
 {
   Callback m_colourChanged;
-  Shader* m_state;
+	Shader* m_state;
 
-  void capture_state()
-  {
-    m_state = colour_capture_state_fill(m_colour);
-  }
-  void release_state()
-  {
-    colour_release_state_fill(m_colour);
-  }
+	void capture_state() {
+	  	std::string fillCol = (boost::format("(%g %g %g)") % m_colour[0] % m_colour[1] % m_colour[2]).str();
+	  	m_state = GlobalShaderCache().capture(fillCol);
+	}
+
+	void release_state() {
+	  	std::string fillCol = (boost::format("(%g %g %g)") % m_colour[0] % m_colour[1] % m_colour[2]).str();
+	  	GlobalShaderCache().release(fillCol);
+	}
 
 public:
   Vector3 m_colour;

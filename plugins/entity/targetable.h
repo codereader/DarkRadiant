@@ -403,8 +403,8 @@ public:
 
   void render(Renderer& renderer, const VolumeTest& volume) const
   {
-    renderer.SetState(m_entity.getEntityClass().m_state_wire, Renderer::eWireframeOnly);
-    renderer.SetState(m_entity.getEntityClass().m_state_wire, Renderer::eFullMaterials);
+    renderer.SetState(m_entity.getEntityClass().getWireShader(), Renderer::eWireframeOnly);
+    renderer.SetState(m_entity.getEntityClass().getWireShader(), Renderer::eFullMaterials);
     m_renderable.render(renderer, volume, world_position());
   }
 

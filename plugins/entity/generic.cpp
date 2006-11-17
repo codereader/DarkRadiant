@@ -229,13 +229,13 @@ public:
   }
   void renderSolid(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const
   {
-    renderer.SetState(m_entity.getEntityClass().m_state_fill, Renderer::eFullMaterials);
+    renderer.SetState(m_entity.getEntityClass().getFillShader(), Renderer::eFullMaterials);
     renderer.addRenderable(m_aabb_solid, localToWorld);
     renderArrow(renderer, volume, localToWorld);
   }
   void renderWireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const
   {
-    renderer.SetState(m_entity.getEntityClass().m_state_wire, Renderer::eWireframeOnly);
+    renderer.SetState(m_entity.getEntityClass().getWireShader(), Renderer::eWireframeOnly);
     renderer.addRenderable(m_aabb_wire, localToWorld);
     renderArrow(renderer, volume, localToWorld);
     if(g_showNames)

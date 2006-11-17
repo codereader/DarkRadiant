@@ -392,7 +392,7 @@ public:
 			
 	    // Draw the center point
 	    glBegin(GL_POINTS);
-	    glColor3fv(_eclass.color);
+	    glColor3fv(_eclass.getColour());
 	    glVertex3fv(centreWorld);
 	    glEnd();
 	}
@@ -906,11 +906,11 @@ public:
 
   void renderSolid(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const
   {
-    renderer.SetState(m_entity.getEntityClass().m_state_wire, Renderer::eWireframeOnly);
+    renderer.SetState(m_entity.getEntityClass().getWireShader(), Renderer::eWireframeOnly);
     renderer.SetState(m_colour.state(), Renderer::eFullMaterials);
     renderer.addRenderable(*this, localToWorld);
 
-    renderer.SetState(m_entity.getEntityClass().m_state_wire, Renderer::eFullMaterials);
+    renderer.SetState(m_entity.getEntityClass().getWireShader(), Renderer::eFullMaterials);
 
     // Always draw Doom 3 light bounding boxes, if the global is set
     if (GlobalRadiant().registry().get("user/ui/showAllLightRadii") == "1") {

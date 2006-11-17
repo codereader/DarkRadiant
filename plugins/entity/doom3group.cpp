@@ -399,8 +399,8 @@ public:
       m_renderOrigin.render(renderer, volume, localToWorld);
     }
 
-    renderer.SetState(m_entity.getEntityClass().m_state_wire, Renderer::eWireframeOnly);
-    renderer.SetState(m_entity.getEntityClass().m_state_wire, Renderer::eFullMaterials);
+    renderer.SetState(m_entity.getEntityClass().getWireShader(), Renderer::eWireframeOnly);
+    renderer.SetState(m_entity.getEntityClass().getWireShader(), Renderer::eFullMaterials);
 
     if(!m_curveNURBS.m_renderCurve.m_vertices.empty())
     {

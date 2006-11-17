@@ -121,17 +121,95 @@ class EntityClass
     // Should this entity type be treated as a light?
     bool _isLight;
     
+	// Colour of this entity
+	Colour3	_colour;
+	
 public:
 
+	CopiedString m_name;
+  StringList m_parent;
+	bool	fixedsize;
+	bool	unknown;		// wasn't found in source
+	Vector3	mins;
+	Vector3 maxs;
+
+	// Shader versions of the colour
+	Shader* _fillShader;
+	Shader* _wireShader;
+
+	CopiedString m_comments;
+	char	flagnames[MAX_FLAGS][32];
+
+  CopiedString m_modelpath;
+  CopiedString m_skin;
+
+  EntityClassAttributes m_attributes;
+
+  bool inheritanceResolved;
+  bool sizeSpecified;
+  bool colorSpecified;
+
+private:
+
+	// Capture the shaders corresponding to the current colour
+	void captureColour() {
+		// Capture fill and wire versions of the entity colour
+		std::string fillCol = (boost::format("(%g %g %g)") % _colour[0] % _colour[1] % _colour[2]).str();
+		std::string wireCol = (boost::format("<%g %g %g>") % _colour[0] % _colour[1] % _colour[2]).str();
+
+		_fillShader = GlobalShaderCache().capture(fillCol);
+		_wireShader = GlobalShaderCache().capture(wireCol);
+	}
+
+	// Release the shaders associated with the current colour
+	void releaseColour() {
+		// Release fill and wire versions of the entity colour
+		std::string fillCol = (boost::format("(%g %g %g)") % _colour[0] % _colour[1] % _colour[2]).str();
+		std::string wireCol = (boost::format("<%g %g %g>") % _colour[0] % _colour[1] % _colour[2]).str();
+
+		GlobalShaderCache().release(fillCol);
+		GlobalShaderCache().release(wireCol);
+	}
+
+public:
+
+    /** Default constructor.
+     * 
+     * @param colour
+     * Display colour for this entity
+     */
+    EntityClass(const Colour3& colour)
+    : _isLight(false),
+	  _colour(colour),
+ 	  fixedsize(false),
+	  unknown(false),
+	  mins(1, 1, 1),
+	  maxs(-1,-1,-1),
+	  inheritanceResolved(true),
+	  sizeSpecified(false),
+	  colorSpecified(false)
+    {
+		memset(flagnames, 0, MAX_FLAGS*32);
+
+		// Capture the shaders
+		captureColour();		
+    }
+
+    /** Destructor.
+     */
+	~EntityClass() {
+		// Release the shaders
+		releaseColour();
+	}		
+    
     /** Get whether this entity type is a light entity
      * 
      * @returns
      * true if this is a light, false otherwise
      */
-    bool isLight() {
+    bool isLight() const {
         return _isLight;
     }
-    
     
     /** Set whether this entity type is a light entity
      * 
@@ -141,40 +219,39 @@ public:
     void isLight(bool val) {
         _isLight = val;
     }
+
+	/** Set the display colour for this entity.
+	 * 
+	 * @param colour
+	 * The new colour to use.
+	 */
+	void setColour(const Vector3& colour) {
+		// Release the current shaders, then capture the new ones
+		releaseColour();
+		_colour = colour;
+		captureColour();
+	}
      
-     
-    /** Default constructor.
-     */
-     
-    EntityClass()
-    : _isLight(false) {}
-    
-public:
-	CopiedString m_name;
-  StringList m_parent;
-	bool	fixedsize;
-	bool	unknown;		// wasn't found in source
-	Vector3	mins;
-  Vector3 maxs;
+	/** Get this entity's colour.
+	 * 
+	 * @returns
+	 * A Vector3 containing the current colour.
+	 */
+	const Vector3& getColour() const {
+		return _colour;
+	}
 
-	Colour3	color;
-  Shader* m_state_fill;
-  Shader* m_state_wire;
-  Shader* m_state_blend;
+	/** Return this entity's wireframe shader.
+	 */
+	Shader* getWireShader() const {
+		return _wireShader;
+	}
 
-	CopiedString m_comments;
-	char	flagnames[MAX_FLAGS][32];
-
-  CopiedString m_modelpath;
-  CopiedString m_skin;
-
-  void (*free)(EntityClass*);
-
-  EntityClassAttributes m_attributes;
-
-  bool inheritanceResolved;
-  bool sizeSpecified;
-  bool colorSpecified;
+	/** Return this entity's fill shader.
+	 */
+	Shader* getFillShader() const {
+		return _fillShader;
+	}
 
   const char* name() const
   {
@@ -213,146 +290,40 @@ inline EntityClassAttributePair& EntityClass_insertAttribute(EntityClass& entity
 }
 
 
-inline void buffer_write_colour_fill(char buffer[128], const Colour3& colour)
-{
-  sprintf(buffer, "(%g %g %g)", colour[0], colour[1], colour[2]);
-}
-
-inline void buffer_write_colour_wire(char buffer[128], const Colour3& colour)
-{
-  sprintf(buffer, "<%g %g %g>", colour[0], colour[1], colour[2]);
-}
-
-inline void buffer_write_colour_blend(char buffer[128], const Colour3& colour)
-{
-  sprintf(buffer, "[%g %g %g]", colour[0], colour[1], colour[2]);
-}
-
-inline Shader* colour_capture_state_fill(const Colour3& colour)
-{
-  char buffer[128];
-  buffer_write_colour_fill(buffer, colour);
-  return GlobalShaderCache().capture(buffer);
-}
-
-inline void colour_release_state_fill(const Colour3& colour)
-{
-  char buffer[128];
-  buffer_write_colour_fill(buffer, colour);
-  GlobalShaderCache().release(buffer);
-}
-
-inline Shader* colour_capture_state_wire(const Colour3& colour)
-{
-  char buffer[128];
-  buffer_write_colour_wire(buffer, colour);
-  return GlobalShaderCache().capture(buffer);
-}
-
-inline void colour_release_state_wire(const Colour3& colour)
-{
-  char buffer[128];
-  buffer_write_colour_wire(buffer, colour);
-  GlobalShaderCache().release(buffer);
-}
-
-inline Shader* colour_capture_state_blend(const Colour3& colour)
-{
-  char buffer[128];
-  buffer_write_colour_blend(buffer, colour);
-  return GlobalShaderCache().capture(buffer);
-}
-
-inline void colour_release_state_blend(const Colour3& colour)
-{
-  char buffer[128];
-  buffer_write_colour_blend(buffer, colour);
-  GlobalShaderCache().release(buffer);
-}
-
-inline void eclass_capture_state(EntityClass* eclass)
-{
-  eclass->m_state_fill = colour_capture_state_fill(eclass->color);
-  eclass->m_state_wire = colour_capture_state_wire(eclass->color);
-  eclass->m_state_blend = colour_capture_state_blend(eclass->color);
-}
-
-inline void eclass_release_state(EntityClass* eclass)
-{
-  colour_release_state_fill(eclass->color);
-  colour_release_state_wire(eclass->color);
-  colour_release_state_blend(eclass->color);
-}
-
-// eclass constructor
-inline EntityClass* Eclass_Alloc()
-{
-  EntityClass* e = new EntityClass;
-
-  e->fixedsize = false;
-  e->unknown = false;
-  memset(e->flagnames, 0, MAX_FLAGS*32);
-
-  e->maxs = Vector3(-1,-1,-1);
-  e->mins = Vector3(1, 1, 1);
-
-  e->free = 0;
-
-  e->inheritanceResolved = true;
-  e->sizeSpecified = false;
-  e->colorSpecified = false;
-
-  return e;
-}
-
-// eclass destructor
-inline void Eclass_Free(EntityClass* e)
-{
-  eclass_release_state(e);
-
-  delete e;
-}
-
 inline bool classname_equal(const char* classname, const char* other)
 {
   return string_equal(classname, other);
 }
 
+/** Create a new EntityClass.
+ */
+
 inline EntityClass* EClass_Create(const char* name, const Vector3& colour, const char* comments)
 {
-  EntityClass *e = Eclass_Alloc();
-  e->free = &Eclass_Free;
+	EntityClass *e = new EntityClass(colour);
 
-  e->m_name = name;
+	e->m_name = name;
 
-	e->color = colour;
-  eclass_capture_state(e);
+	if (comments)
+		e->m_comments = comments;
 
-  if (comments)
-    e->m_comments = comments;
-
-  return e;
+	return e;
 }
 
 inline EntityClass* EClass_Create_FixedSize(const char* name, const Vector3& colour, const Vector3& mins, const Vector3& maxs, const char* comments)
 {
-  EntityClass *e = Eclass_Alloc();
-  e->free = &Eclass_Free;
+	EntityClass *e = new EntityClass(colour);
 
-  e->m_name = name;
+	e->m_name = name;
 
-	e->color = colour;
-  eclass_capture_state(e);
+	e->fixedsize = true;
+	e->mins = mins;
+	e->maxs = maxs;
 
-  e->fixedsize = true;
+	if (comments)
+		e->m_comments = comments;
 
-  e->mins = mins;
-  e->maxs = maxs;
-
-  if (comments)
-    e->m_comments = comments;
-
-  return e;
+	return e;
 }
 
 const Vector3 smallbox[2] = {
