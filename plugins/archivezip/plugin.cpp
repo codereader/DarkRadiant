@@ -29,28 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "archive.h"
 
 
-class ArchiveZipAPI
-{
-  _QERArchiveTable m_archivezip;
-public:
-  typedef _QERArchiveTable Type;
-  STRING_CONSTANT(Name, "pk3");
-
-  ArchiveZipAPI()
-  {
-    m_archivezip.m_pfnOpenArchive = &OpenArchive;
-  }
-  _QERArchiveTable* getTable()
-  {
-    return &m_archivezip;
-  }
-};
-
-typedef SingletonModule<ArchiveZipAPI> ArchiveZipModule;
-
-ArchiveZipModule g_ArchiveZipModule;
-
-
 class ArchivePK4API
 {
   _QERArchiveTable m_archivepk4;
@@ -69,7 +47,6 @@ public:
 };
 
 typedef SingletonModule<ArchivePK4API> ArchivePK4Module;
-
 ArchivePK4Module g_ArchivePK4Module;
 
 
@@ -77,6 +54,5 @@ extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
 {
   initialiseModule(server);
 
-  g_ArchiveZipModule.selfRegister();
   g_ArchivePK4Module.selfRegister();
 }
