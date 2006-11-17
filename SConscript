@@ -116,18 +116,6 @@ vfspk3_env.useGlib2()
 vfspk3_lib = vfspk3_env.SharedLibrary(target='vfspk3', source=vfspk3_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
 vfspk3_env.Install(INSTALL + '/modules', vfspk3_lib)
 
-archivepak_env = module_env.Copy()
-archivepak_lst = build_list('plugins/archivepak', 'plugin.cpp archive.cpp pak.cpp')
-archivepak_lib = archivepak_env.SharedLibrary(target='archivepak', source=archivepak_lst, LIBS='cmdlib', LIBPATH='libs', no_import_lib=1, WIN32_INSERT_DEF=0)
-archivepak_env.Depends(archivepak_lib, cmdlib_lib)
-archivepak_env.Install(INSTALL + '/modules', archivepak_lib)
-
-archivewad_env = module_env.Copy()
-archivewad_lst = build_list('plugins/archivewad', 'plugin.cpp archive.cpp wad.cpp')
-archivewad_lib = archivewad_env.SharedLibrary(target='archivewad', source=archivewad_lst, LIBS='cmdlib', LIBPATH='libs', no_import_lib=1, WIN32_INSERT_DEF=0)
-archivewad_env.Depends(archivewad_lib, cmdlib_lib)
-archivewad_env.Install(INSTALL + '/modules', archivewad_lib)
-
 archivezip_env = module_env.Copy()
 archivezip_lst = build_list('plugins/archivezip', 'plugin.cpp archive.cpp pkzip.cpp zlibstream.cpp')
 archivezip_env.useZLib()
