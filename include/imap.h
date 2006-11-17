@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/constant.h"
 
+#include <ostream>
+
 class Tokeniser;
 class TokenWriter;
 
@@ -36,13 +38,16 @@ public:
   virtual bool importTokens(Tokeniser& tokeniser) = 0;
 };
 
-/// \brief A node whose state can be exported to a token stream.
+/** A type of Node whose state can be written to an output stream.
+ */
 class MapExporter
 {
 public:
-  STRING_CONSTANT(Name, "MapExporter");
+	STRING_CONSTANT(Name, "MapExporter");
 
-  virtual void exportTokens(TokenWriter& writer) const = 0;
+	/** Export this Node's state to the provided output stream.
+	 */
+	virtual void exportTokens(std::ostream& os) const = 0;
 };
 
 #include "iscenegraph.h"
@@ -50,22 +55,37 @@ public:
 class EntityCreator;
 
 class TextInputStream;
-class TextOutputStream;
 
+/** Callback function to control how the Walker traverses the scene graph. This function
+ * will be provided to the map export module by the Radiant map code.
+ */
+typedef void (*GraphTraversalFunc) (scene::Node& root, const scene::Traversable::Walker& walker);
 
-typedef void(*GraphTraversalFunc)(scene::Node& root, const scene::Traversable::Walker& walker);
-
-/// \brief A module that reads and writes a map in a specific format.
+/** Map Format interface. Each map format is able to traverse the scene graph and write
+ * the contents into a mapfile, or to load a mapfile and populate a scene graph.
+ */
 class MapFormat
 {
 public:
-  INTEGER_CONSTANT(Version, 2);
-  STRING_CONSTANT(Name, "map");
+	INTEGER_CONSTANT(Version, 2);
+	STRING_CONSTANT(Name, "map");
 
-  /// \brief Read a map graph into \p root from \p outputStream, using \p entityTable to create entities.
-  virtual void readGraph(scene::Node& root, TextInputStream& inputStream, EntityCreator& entityTable) const = 0;
-  /// \brief Write the map graph obtained by applying \p traverse to \p root into \p outputStream.
-  virtual void writeGraph(scene::Node& root, GraphTraversalFunc traverse, TextOutputStream& outputStream) const = 0;
+	/// \brief Read a map graph into \p root from \p outputStream, using \p entityTable to create entities.
+	virtual void readGraph(scene::Node& root, TextInputStream& inputStream, EntityCreator& entityTable) const = 0;
+
+	/** Traverse the scene graph and write contents into the provided output stream.
+	 * 
+	 * @param root
+	 * The root of the scenegraph to traverse.
+	 * 
+	 * @param traverse
+	 * Pointer to a graph traversal function. This function takes as parameters the scenegraph
+	 * root and a scene::Traversable::Walker subclass to traverse the graph.
+	 * 
+	 * @param oStream
+	 * The output stream to write contents to.
+	 */
+	virtual void writeGraph(scene::Node& root, GraphTraversalFunc traverse, std::ostream& oStream) const = 0;
 };
 
 

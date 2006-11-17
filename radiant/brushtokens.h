@@ -70,31 +70,6 @@ inline bool FaceTexdef_BP_importTokens(FaceTexdef& texdef, Tokeniser& tokeniser)
   return true;
 }
 
-inline bool FaceTexdef_HalfLife_importTokens(FaceTexdef& texdef, Tokeniser& tokeniser)
-{
-  // parse texdef
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "["));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_basis_s.x()));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_basis_s.y()));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_basis_s.z()));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_texdef.shift[0]));
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "]"));
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "["));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_basis_t.x()));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_basis_t.y()));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_basis_t.z()));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_texdef.shift[1]));
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "]"));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_texdef.rotate));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_texdef.scale[0]));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_texdef.scale[1]));
-
-  texdef.m_projection.m_texdef.rotate = -texdef.m_projection.m_texdef.rotate;
-
-  ASSERT_MESSAGE(texdef_sane(texdef.m_projection.m_texdef), "FaceTexdef_importTokens: bad texdef");
-  return true;
-}
-
 inline bool FacePlane_importTokens(FacePlane& facePlane, Tokeniser& tokeniser)
 {
   // parse planepts
@@ -188,98 +163,66 @@ public:
   }
 };
 
-inline void FacePlane_Doom3_exportTokens(const FacePlane& facePlane, TokenWriter& writer)
+/* Export the plane specification for a Doom 3 brushface.
+ */
+inline void FacePlane_Doom3_exportTokens(const FacePlane& facePlane, std::ostream& os)
 {
-  // write plane equation
-  writer.writeToken("(");
-  writer.writeFloat(facePlane.getDoom3Plane().a);
-  writer.writeFloat(facePlane.getDoom3Plane().b);
-  writer.writeFloat(facePlane.getDoom3Plane().c);
-  writer.writeFloat(-facePlane.getDoom3Plane().d);
-  writer.writeToken(")");
+	os << "( ";
+	os << facePlane.getDoom3Plane().a << " ";
+	os << facePlane.getDoom3Plane().b << " ";
+	os << facePlane.getDoom3Plane().c << " ";
+	os << -facePlane.getDoom3Plane().d << " ";
+	os << ") ";
 }
 
-inline void FacePlane_exportTokens(const FacePlane& facePlane, TokenWriter& writer)
+/* Export the texture coordinate information from a Doom 3 brushface.
+ */
+inline void FaceTexdef_BP_exportTokens(const FaceTexdef& faceTexdef, std::ostream& os)
 {
-  // write planepts
-  for(std::size_t i=0; i<3; i++)
-  {
-    writer.writeToken("(");
-    for(std::size_t j=0; j<3; j++)
+	os << "( ";
+
+	os << "( ";
+    for(int i = 0; i < 3; i++)
     {
-      writer.writeFloat(Face::m_quantise(facePlane.planePoints()[i][j]));
+      os << faceTexdef.m_projection.m_brushprimit_texdef.coords[0][i] << " ";
     }
-    writer.writeToken(")");
-  }
-}
+	os << ") ";
 
-inline void FaceTexdef_BP_exportTokens(const FaceTexdef& faceTexdef, TokenWriter& writer)
-{
-  // write alternate texdef
-  writer.writeToken("(");
-  {
-    writer.writeToken("(");
-    for(std::size_t i=0;i<3;i++)
+	os << "( ";
+    for(int i = 0; i < 3; i++)
     {
-      writer.writeFloat(faceTexdef.m_projection.m_brushprimit_texdef.coords[0][i]);
+      os << faceTexdef.m_projection.m_brushprimit_texdef.coords[1][i] << " ";
     }
-    writer.writeToken(")");
-  }
-  {
-    writer.writeToken("(");
-    for(std::size_t i=0;i<3;i++)
-    {
-      writer.writeFloat(faceTexdef.m_projection.m_brushprimit_texdef.coords[1][i]);
-    }
-    writer.writeToken(")");
-  }
-  writer.writeToken(")");
+	os << ") ";
+
+	os << ") ";
 }
 
-inline void FaceTexdef_exportTokens(const FaceTexdef& faceTexdef, TokenWriter& writer)
+/* Export shader surface flags.
+ */
+
+inline void FaceShader_ContentsFlagsValue_exportTokens(const FaceShader& faceShader, std::ostream& os)
 {
-  ASSERT_MESSAGE(texdef_sane(faceTexdef.m_projection.m_texdef), "FaceTexdef_exportTokens: bad texdef");
-  // write texdef
-  writer.writeFloat(faceTexdef.m_projection.m_texdef.shift[0]);
-  writer.writeFloat(faceTexdef.m_projection.m_texdef.shift[1]);
-  writer.writeFloat(faceTexdef.m_projection.m_texdef.rotate);
-  writer.writeFloat(faceTexdef.m_projection.m_texdef.scale[0]);
-  writer.writeFloat(faceTexdef.m_projection.m_texdef.scale[1]);
+	os << faceShader.m_flags.m_contentFlags << " ";
+	os << faceShader.m_flags.m_surfaceFlags << " ";
+	os << faceShader.m_flags.m_value;
 }
 
-inline void FaceShader_ContentsFlagsValue_exportTokens(const FaceShader& faceShader, TokenWriter& writer)
+/* Export Doom 3 face shader information.
+ */
+
+inline void FaceShader_Doom3_exportTokens(const FaceShader& faceShader, std::ostream& os)
 {
-  // write surface flags
-  writer.writeInteger(faceShader.m_flags.m_contentFlags);
-  writer.writeInteger(faceShader.m_flags.m_surfaceFlags);
-  writer.writeInteger(faceShader.m_flags.m_value);
+	if(string_empty(shader_get_textureName(faceShader.getShader()))) {
+		os << "\"_emptyname\" ";
+	}
+	else {
+    	os << "\"" << faceShader.getShader() << "\" ";
+	}
 }
 
-inline void FaceShader_exportTokens(const FaceShader& faceShader, TokenWriter& writer)
-{
-  // write shader name  
-  if(string_empty(shader_get_textureName(faceShader.getShader())))
-  {
-    writer.writeToken("NULL");
-  }
-  else
-  {
-    writer.writeToken(shader_get_textureName(faceShader.getShader()));
-  }
-}
-
-inline void FaceShader_Doom3_exportTokens(const FaceShader& faceShader, TokenWriter& writer)
-{
-  // write shader name  
-  if(string_empty(shader_get_textureName(faceShader.getShader())))
-  {
-    writer.writeString("_emptyname");
-  }
-  else
-  {
-    writer.writeString(faceShader.getShader());
-  }
-}
+/** Token exporter for Doom 3 brush faces.
+ */
 
 class Doom3FaceTokenExporter
 {
@@ -288,14 +231,15 @@ public:
   Doom3FaceTokenExporter(const Face& face) : m_face(face)
   {
   }
-  void exportTokens(TokenWriter& writer) const
-  {
-    FacePlane_Doom3_exportTokens(m_face.getPlane(), writer);
-    FaceTexdef_BP_exportTokens(m_face.getTexdef(), writer);
-    FaceShader_Doom3_exportTokens(m_face.getShader(), writer);
-    FaceShader_ContentsFlagsValue_exportTokens(m_face.getShader(), writer);
-    writer.nextLine();
-  }
+
+	// Export tokens to the provided stream
+	void exportTokens(std::ostream& os) const {
+	    FacePlane_Doom3_exportTokens(m_face.getPlane(), os);
+	    FaceTexdef_BP_exportTokens(m_face.getTexdef(), os);
+	    FaceShader_Doom3_exportTokens(m_face.getShader(), os);
+	    FaceShader_ContentsFlagsValue_exportTokens(m_face.getShader(), os);
+	    os << "\n";
+	}
 };
 
 class BrushTokenImporter : public MapImporter
@@ -344,6 +288,8 @@ public:
   }
 };
 
+/* Token exporter for Doom 3 brushes.
+ */
 
 class BrushTokenExporter : public MapExporter
 {
@@ -353,40 +299,35 @@ public:
   BrushTokenExporter(const Brush& brush) : m_brush(brush)
   {
   }
-  void exportTokens(TokenWriter& writer) const
-  {
-    m_brush.evaluateBRep(); // ensure b-rep is up-to-date, so that non-contributing faces can be identified.
 
-    if(!m_brush.hasContributingFaces())
-    {
-      return;
-    }
+	// Required export function
+	void exportTokens(std::ostream& os) const {
+	    m_brush.evaluateBRep(); // ensure b-rep is up-to-date, so that non-contributing faces can be identified.
 
-    writer.writeToken("{");
-    writer.nextLine();
+	    if(!m_brush.hasContributingFaces())
+	    {
+	      return;
+	    }
 
-    writer.writeToken("brushDef3");
-    writer.nextLine();
-    writer.writeToken("{");
-    writer.nextLine();
+		// Brush decl header
+		os << "{\n";
+		os << "brushDef3\n";
+		os << "{\n";
 
-    for(Brush::const_iterator i = m_brush.begin(); i != m_brush.end(); ++i)
-    {
-      const Face& face = *(*i);
+		// Iterate over each brush face, exporting the tokens from all contributing
+		// faces
+	    for(Brush::const_iterator i = m_brush.begin(); i != m_brush.end(); ++i) {
+			const Face& face = *(*i);
 
-      if(face.contributes())
-      {
-        Doom3FaceTokenExporter exporter(face);
-        exporter.exportTokens(writer);
-      }
-    }
+	      	if(face.contributes()) {
+		      	Doom3FaceTokenExporter exporter(face);
+		        exporter.exportTokens(os);
+	    	}
+		}
 
-    writer.writeToken("}");
-    writer.nextLine();
-
-    writer.writeToken("}");
-    writer.nextLine();
-  }
+		// Close brush contents and header
+		os << "}\n}\n";
+	}
 };
 
     

@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stream/memstream.h"
 #include "stream/textstream.h"
 
+#include <sstream>
+
 
 /// \file
 /// \brief Platform-independent GTK clipboard support.
@@ -36,8 +38,10 @@ const char* c_clipboard_format = "RadiantClippings";
 
 void clipboard_copy(ClipboardCopyFunc copy)
 {
-  BufferOutputStream ostream;
-  copy(ostream);
+	// Create a stringstream and insert the selection contents by calling
+	// the clipboard copy function with the std::ostream as a parameter
+	std::ostringstream ostream;
+	copy(ostream);
 
   bool bClipped = false;
   UINT nClipboard = ::RegisterClipboardFormat(c_clipboard_format);
@@ -46,14 +50,14 @@ void clipboard_copy(ClipboardCopyFunc copy)
     if (::OpenClipboard(0))
     {
       EmptyClipboard();
-      std::size_t length = ostream.size();
+      std::size_t length = ostream.str().size();
       HANDLE h = ::GlobalAlloc(GMEM_ZEROINIT | GMEM_MOVEABLE | GMEM_DDESHARE, length + sizeof(std::size_t));
       if (h != 0)
       {
         char *buffer = reinterpret_cast<char*>(::GlobalLock(h));
         *reinterpret_cast<std::size_t*>(buffer) = length;
         buffer += sizeof(std::size_t);
-        memcpy(buffer, ostream.data(), length);
+        memcpy(buffer, ostream.str().c_str(), length);
         ::GlobalUnlock(h);
         ::SetClipboardData(nClipboard, h);
         ::CloseClipboard();
@@ -137,16 +141,27 @@ static void clipboard_received (GtkClipboard *clipboard, GtkSelectionData *data,
 
 void clipboard_copy(ClipboardCopyFunc copy)
 {
-  GtkClipboard* clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+	GtkClipboard* clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
 
-  BufferOutputStream ostream;
-  copy(ostream);
-  std::size_t length = ostream.size();
-  char* data = new char[length + sizeof(std::size_t)];
-  *reinterpret_cast<std::size_t*>(data) = length;
-  memcpy(data + sizeof(std::size_t), ostream.data(), length);
+	// Create a stringstream and insert the selection contents by calling
+	// the clipboard copy function with the std::ostream as a parameter
+	std::ostringstream ostream;
+	copy(ostream);
+	
+	// Create a char buffer with the stream contents to pass to GTK's 
+	// clipboard function
+	std::size_t length = ostream.str().size();
+	char* data = new char[length + sizeof(std::size_t)];
+	
+	// Set the first sizeof(std::size_t) elements to represent the
+	// buffer length.
+	*reinterpret_cast<std::size_t*>(data) = length;
 
-  gtk_clipboard_set_with_data (clipboard, clipboard_targets, 1, clipboard_get, clipboard_clear, data);
+	// Copy the stream data into the buffer
+	memcpy(data + sizeof(std::size_t), ostream.str().c_str(), length);
+
+	// Pass to GTK's clipboard
+	gtk_clipboard_set_with_data (clipboard, clipboard_targets, 1, clipboard_get, clipboard_clear, data);
 }
 
 ClipboardPasteFunc g_clipboardPasteFunc = 0;

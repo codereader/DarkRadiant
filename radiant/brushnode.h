@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "instancelib.h"
 #include "brush.h"
 #include "brushtokens.h"
-#include "brushxml.h"
 
 class BrushNode :
 public scene::Node::Symbiot,
@@ -43,8 +42,6 @@ public scene::Cloneable
       NodeContainedCast<BrushNode, Snappable>::install(m_casts);
       NodeContainedCast<BrushNode, TransformNode>::install(m_casts);
       NodeContainedCast<BrushNode, Brush>::install(m_casts);
-      NodeContainedCast<BrushNode, XMLImporter>::install(m_casts);
-      NodeContainedCast<BrushNode, XMLExporter>::install(m_casts);
       NodeContainedCast<BrushNode, MapImporter>::install(m_casts);
       NodeContainedCast<BrushNode, MapExporter>::install(m_casts);
       NodeContainedCast<BrushNode, Nameable>::install(m_casts);
@@ -62,8 +59,6 @@ public scene::Cloneable
   Brush m_brush;
   BrushTokenImporter m_mapImporter;
   BrushTokenExporter m_mapExporter;
-  BrushXMLImporter m_xmlImporter;
-  BrushXMLExporter m_xmlExporter;
 
 public:
 
@@ -80,14 +75,6 @@ public:
   Brush& get(NullType<Brush>)
   {
     return m_brush;
-  }
-  XMLImporter& get(NullType<XMLImporter>)
-  {
-    return m_xmlImporter;
-  }
-  XMLExporter& get(NullType<XMLExporter>)
-  {
-    return m_xmlExporter;
   }
   MapImporter& get(NullType<MapImporter>)
   {
@@ -110,9 +97,7 @@ public:
     m_node(this, this, StaticTypeCasts::instance().get()),
     m_brush(m_node, InstanceSetEvaluateTransform<BrushInstance>::Caller(m_instances), InstanceSet::BoundsChangedCaller(m_instances)),
     m_mapImporter(m_brush),
-    m_mapExporter(m_brush),
-    m_xmlImporter(m_brush),
-    m_xmlExporter(m_brush)
+    m_mapExporter(m_brush)
   {
   }
   BrushNode(const BrushNode& other) :
@@ -122,9 +107,7 @@ public:
     m_node(this, this, StaticTypeCasts::instance().get()),
     m_brush(other.m_brush, m_node, InstanceSetEvaluateTransform<BrushInstance>::Caller(m_instances), InstanceSet::BoundsChangedCaller(m_instances)),
     m_mapImporter(m_brush),
-    m_mapExporter(m_brush),
-    m_xmlImporter(m_brush),
-    m_xmlExporter(m_brush)
+    m_mapExporter(m_brush)
   {
   }
   void release()

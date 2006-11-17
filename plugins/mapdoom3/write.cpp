@@ -30,95 +30,127 @@ inline MapExporter* Node_getMapExporter(scene::Node& node)
   return NodeTypeCast<MapExporter>::cast(node);
 }
 
+/* Export all of the keyvalues from the given entity, and write them
+ * into the given stream.
+ */
 
-static std::size_t g_count_entities;
-static std::size_t g_count_brushes;
-
-
-void Entity_ExportTokens(const Entity& entity, TokenWriter& writer)
+void Entity_ExportTokens(const Entity& entity, std::ostream& os)
 {
-  g_count_brushes = 0;
+	// Create a local Entity visitor class to export the keyvalues
+	// to the output stream	
+	class WriteKeyValue : public Entity::Visitor
+	{
+		// Stream to write to
+		std::ostream& _os;
+	public:
+	
+		// Constructor
+		WriteKeyValue(std::ostream& os)
+	    : _os(os)
+	    {}
 
-  class WriteKeyValue : public Entity::Visitor
-  {
-    TokenWriter& m_writer;
-  public:
-    WriteKeyValue(TokenWriter& writer)
-      : m_writer(writer)
-    {
-    }
+		// Required visit function
+    	void visit(const char* key, const char* value) {
+			_os << "\"" << key << "\" \"" << value << "\"\n";
+		}
 
-    void visit(const char* key, const char* value)
-    {
-      m_writer.writeString(key);
-      m_writer.writeString(value);
-      m_writer.nextLine();
-    }
+	} visitor(os);
 
-  } visitor(writer);
-
-  entity.forEachKeyValue(visitor);
+	// Visit the entity
+	entity.forEachKeyValue(visitor);
 }
+
+/* Walker class to traverse the scene graph and write each entity
+ * out to the token stream, including its member brushes.
+ */
 
 class WriteTokensWalker : public scene::Traversable::Walker
 {
-  mutable Stack<bool> m_stack;
-  TokenWriter& m_writer;
-  bool m_ignorePatches;
+	mutable Stack<bool> m_stack;
+
+	// Output stream to write to
+	std::ostream& _outStream;
+  
+	// Number of entities written (map global)
+	mutable int _entityCount;
+	
+	// Number of brushes written for the current entity (entity local)
+	mutable int _brushCount;
+	
 public:
-  WriteTokensWalker(TokenWriter& writer, bool ignorePatches)
-    : m_writer(writer), m_ignorePatches(ignorePatches)
-  {
-  }
+  
+	// Constructor
+	WriteTokensWalker(std::ostream& os)
+    : _outStream(os), 
+      _entityCount(0),
+      _brushCount(0)
+	{}
+	
+	// Pre-descent callback
   bool pre(scene::Node& node) const
   {
     m_stack.push(false);
 
+	// Check whether we are have a brush or an entity. We might get 
+	// called at either level.
     Entity* entity = Node_getEntity(node);
-    if(entity != 0)
-    {
-      m_writer.writeToken("//");
-      m_writer.writeToken("entity");
-      m_writer.writeUnsigned(g_count_entities++);
-      m_writer.nextLine();
 
-      m_writer.writeToken("{");
-      m_writer.nextLine();
-      m_stack.top() = true;
+	if(entity != 0) { // ENTITY
 
-      Entity_ExportTokens(*entity, m_writer);
+    	// Write out the entity number comment
+		_outStream << "// entity " << _entityCount++ << "\n";
+
+		// Entity opening brace
+		_outStream << "{\n";
+
+		// Entity key values
+		Entity_ExportTokens(*entity, _outStream);
+
+		// Reset the brush count and push to the stack to record
+		// descent to brush level
+		_brushCount = 0;
+		m_stack.top() = true;
+
     }
-    else
-    {
-      MapExporter* exporter = Node_getMapExporter(node);
-      if(exporter != 0
-      && !(m_ignorePatches && Node_isPatch(node)))
-      {
-        m_writer.writeToken("//");
-        m_writer.writeToken("brush");
-        m_writer.writeUnsigned(g_count_brushes++);
-        m_writer.nextLine();
+    else  { // BRUSH
 
-        exporter->exportTokens(m_writer);
+    	// Get the brush token exporter
+		MapExporter* exporter = Node_getMapExporter(node);
+		if(exporter != 0) {
+
+			// Brush count comment
+	        _outStream << "// primitive " << _brushCount++ << "\n";
+
+			// Pass the ostream to the primitive's contained tokenexporter
+			exporter->exportTokens(_outStream);
       }
     }
 
     return true;
   }
-  void post(scene::Node& node) const
-  {
-    if(m_stack.top())
-    {
-      m_writer.writeToken("}");
-      m_writer.nextLine();
-    }
-    m_stack.pop();
-  }
+  
+	// Post-descent callback
+	void post(scene::Node& node) const {
+
+		// If we are popping an entity, write the closing brace
+		if(m_stack.top()) {
+			_outStream << "}" << std::endl;
+		}
+
+		// If the brush count is 0 and we are adding dummy brushes to please
+		// the Doom 3 editor, do so here
+		if (_brushCount == 0) {
+			std::cout << "No brushes" << std::endl;
+			_outStream << "// Need dummy brush here" << std::endl;
+		}
+
+		// Pop the stack
+		m_stack.pop();
+	}
 };
 
-void Map_Write(scene::Node& root, GraphTraversalFunc traverse, TokenWriter& writer, bool ignorePatches)
+void Map_Write(scene::Node& root, GraphTraversalFunc traverse, std::ostream& os)
 {
-  g_count_entities = 0;
-  traverse(root, WriteTokensWalker(writer, ignorePatches));
+	traverse(root, WriteTokensWalker(os));
 }
 
