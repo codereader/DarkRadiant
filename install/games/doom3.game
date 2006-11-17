@@ -95,4 +95,9 @@
 		<property name="s_omni" category="Sound" type="boolean" />
 		<property name="s_volume" category="Sound" type="text" />
 	</entityInspector>
+	<mapFormat>
+		<compatibility>
+			<addDummyBrushes value="true" />
+		</compatibility>
+	</mapFormat>
 </game>
