@@ -96,6 +96,10 @@ struct IEntityClass {
 	 */
 	virtual void setUsage(const std::string&) = 0;
 
+	/** Return the usage information string.
+	 */
+	virtual const std::string& getUsage() const = 0;
+
 	/** Query whether this entity class represents a light.
 	 */
 	virtual bool isLight() const = 0;

@@ -34,6 +34,9 @@ private:
 	// GtkTreeSelection holding the currently-selected classname
 	GtkTreeSelection* _selection;
 
+	// Usage information textview
+	GtkWidget* _usageTextView;
+
 	// Add button. Needs to be a member since we enable/disable it in the
 	// selectionchanged callback.
 	GtkWidget* _addButton;
@@ -41,12 +44,17 @@ private:
 	// The 3D coordinates of the point where the entity must be created.
 	Vector3 _lastPoint;
 
+
 private:
 
 	/* Widget construction helpers */
 	
 	GtkWidget* createTreeView();
+	GtkWidget* createUsagePanel();
 	GtkWidget* createButtonPanel();
+
+	// Update the usage panel with information from the provided entityclass
+	void updateUsageInfo(const std::string& eclass);
 
 	/* GTK callbacks */
 	

@@ -149,6 +149,12 @@ public:
 	void setUsage(const std::string& usage) {
 		_usage = usage;
 	}
+	
+	/** Get the usage information.
+	 */
+	const std::string& getUsage() const {
+		return _usage;
+	}
     
     /** Get whether this entity type is a light entity
      * 

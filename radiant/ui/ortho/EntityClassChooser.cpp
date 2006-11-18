@@ -45,12 +45,11 @@ EntityClassChooser::EntityClassChooser()
 	
 	gtk_window_set_default_size(GTK_WINDOW(_widget), w / 3, h / 2);
 
-	// Main window contains a VBox which divides the area into two. The bottom
-	// part contains the buttons, while the top part contains a single tree
-	// view containing the complete Entity Class tree.
+	// Create GUI elements and pack into main VBox
 	
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 3);
 	gtk_box_pack_start(GTK_BOX(vbx), createTreeView(), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), createUsagePanel(), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), createButtonPanel(), FALSE, FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
 
@@ -119,8 +118,27 @@ GtkWidget* EntityClassChooser::createTreeView() {
 	return frame;
 }
 
-// Create the button panel
+// Create the entity usage information panel
+GtkWidget* EntityClassChooser::createUsagePanel() {
 
+	// Create a GtkTextView
+	_usageTextView = gtk_text_view_new();
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(_usageTextView), GTK_WRAP_WORD);
+
+	// Pack into scrolled window and frame
+	GtkWidget* scroll = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
+								   GTK_POLICY_AUTOMATIC,
+								   GTK_POLICY_AUTOMATIC);
+	gtk_container_add(GTK_CONTAINER(scroll), _usageTextView);
+
+	GtkWidget* frame = gtk_frame_new(NULL);
+	gtk_container_add(GTK_CONTAINER(frame), scroll);
+
+	return frame;	
+}
+
+// Create the button panel
 GtkWidget* EntityClassChooser::createButtonPanel() {
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
 
@@ -133,6 +151,15 @@ GtkWidget* EntityClassChooser::createButtonPanel() {
 	gtk_box_pack_end(GTK_BOX(hbx), _addButton, FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, FALSE, FALSE, 0);
 	return hbx;
+}
+
+// Update the usage information
+void EntityClassChooser::updateUsageInfo(const std::string& eclass) {
+	// Lookup the IEntityClass instance
+	IEntityClass* e = GlobalEntityClassManager().findOrInsert(eclass.c_str(), true);	
+	// Set the usage panel to the IEntityClass' usage information string
+	GtkTextBuffer* buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(_usageTextView));
+	gtk_text_buffer_set_text(buf, e->getUsage().c_str(), -1);
 }
 
 /* GTK CALLBACKS */
@@ -170,10 +197,23 @@ void EntityClassChooser::callbackAdd(GtkWidget* widget, EntityClassChooser* self
 }
 
 void EntityClassChooser::callbackSelectionChanged(GtkWidget* widget, EntityClassChooser* self) {
+	// Check for a selection
 	GtkTreeIter iter;
 	if (gtk_tree_selection_get_selected(self->_selection, NULL, &iter)) {
-		// Is a selection
+
+		// There is a selection, so make the Add button active and update the
+		// usage information
 		gtk_widget_set_sensitive(self->_addButton, TRUE);
+
+		// Get the selected classname
+		GValue val = {0, 0};
+		gtk_tree_model_get_value(GTK_TREE_MODEL(self->_treeStore),
+								 &iter,
+								 0,
+								 &val);
+								 
+		// Set the panel text
+		self->updateUsageInfo(g_value_get_string(&val));
 	}
 	else {
 		gtk_widget_set_sensitive(self->_addButton, FALSE);
