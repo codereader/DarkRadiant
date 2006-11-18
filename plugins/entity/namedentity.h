@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_NAMEDENTITY_H
 
 #include "entitylib.h"
-#include "eclasslib.h"
 #include "generic/callback.h"
 #include "nameable.h"
 

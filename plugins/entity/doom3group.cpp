@@ -40,7 +40,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "traverselib.h"
 #include "entitylib.h"
 #include "render.h"
-#include "eclasslib.h"
 #include "stream/stringstream.h"
 #include "pivot.h"
 

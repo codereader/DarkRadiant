@@ -1,7 +1,6 @@
 #include "ClassnamePropertyEditor.h"
 
 #include "ieclass.h"
-#include "eclasslib.h"
 
 #include <iostream>
 

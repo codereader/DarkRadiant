@@ -73,7 +73,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "signal/isignal.h"
 #include "os/path.h"
 #include "os/file.h"
-#include "eclasslib.h"
 #include "moduleobservers.h"
 
 #include "gtkutil/clipboard.h"
