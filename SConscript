@@ -175,7 +175,7 @@ md3model_env.Depends(md3model_lib, math)
 md3model_env.Install(INSTALL + '/modules', md3model_lib)
 
 entity_env = module_env.Copy()
-entity_lst = build_list('plugins/entity', 'plugin.cpp entity.cpp eclassmodel.cpp generic.cpp group.cpp light.cpp doom3group.cpp skincache.cpp angle.cpp angles.cpp colour.cpp model.cpp namedentity.cpp origin.cpp scale.cpp targetable.cpp rotation.cpp modelskinkey.cpp')
+entity_lst = build_list('plugins/entity', 'plugin.cpp entity.cpp eclassmodel.cpp generic.cpp light.cpp doom3group.cpp skincache.cpp angle.cpp angles.cpp colour.cpp model.cpp namedentity.cpp origin.cpp scale.cpp targetable.cpp rotation.cpp modelskinkey.cpp')
 entity_env.Append(LIBS = ['math', 'xmlutil'])
 entity_lib = entity_env.SharedLibrary(target='entity', source=entity_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
 entity_env.Depends(entity_lib, math)

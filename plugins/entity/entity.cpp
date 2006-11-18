@@ -36,7 +36,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stream/stringstream.h"
 
 #include "light.h"
-#include "group.h"
 #include "eclassmodel.h"
 #include "generic.h"
 #include "doom3group.h"
