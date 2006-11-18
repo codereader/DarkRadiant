@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 
 #include "ientity.h"
+#include "ieclass.h"
 #include "igl.h"
 #include "ibrush.h"
 #include "iundo.h"
@@ -1134,7 +1135,7 @@ class EntityClassMenuInserter : public EntityClassVisitor
   typedef std::pair<GtkMenu*, CopiedString> MenuPair;
   typedef std::vector<MenuPair> MenuStack;
   MenuStack m_stack;
-  CopiedString m_previous;
+  std::string m_previous;
 public:
   EntityClassMenuInserter(GtkMenu* menu)
   {
@@ -1148,14 +1149,13 @@ public:
       addItem(m_previous.c_str(), "");
     }
   }
-  void visit(EntityClass* e)
+  void visit(IEntityClass* e)
   {
-    ASSERT_MESSAGE(!string_empty(e->name()), "entity-class has no name");
-    if(!string_empty(m_previous.c_str()))
+    if(m_previous.size() > 0)
     {
-      addItem(m_previous.c_str(), e->name());
+      addItem(m_previous.c_str(), e->getName().c_str());
     }
-    m_previous = e->name();
+    m_previous = e->getName();
   }
   void pushMenu(const CopiedString& name)
   {

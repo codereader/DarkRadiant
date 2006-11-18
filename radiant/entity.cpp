@@ -22,13 +22,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "entity.h"
 
 #include "ientity.h"
+#include "ieclass.h"
 #include "iselection.h"
 #include "imodel.h"
 #include "ifilesystem.h"
 #include "iundo.h"
 #include "editable.h"
 
-#include "eclasslib.h"
 #include "scenelib.h"
 #include "os/path.h"
 #include "os/file.h"
@@ -213,10 +213,8 @@ int g_iLastLightIntensity;
  */
 
 NodeSmartReference Entity_createFromSelection(const char* name, const Vector3& origin) {
-    // DEBUG
-    //std::cout << "Entity_createFromSelection(" << name << ", <origin>)" << std::endl;
 
-    EntityClass *entityClass = GlobalEntityClassManager().findOrInsert(name, true);
+    IEntityClass *entityClass = GlobalEntityClassManager().findOrInsert(name, true);
 
     // TODO: to be replaced by inheritance-based class detection
     bool isModel = (GlobalSelectionSystem().countSelected() == 0 
@@ -225,7 +223,7 @@ NodeSmartReference Entity_createFromSelection(const char* name, const Vector3& o
     // Some entities are based on the size of the currently-selected brush(es)
     bool brushesSelected = map::countSelectedBrushes() != 0;
 
-    if (!(entityClass->fixedsize || isModel) && !brushesSelected) {
+    if (!(entityClass->isFixedSize() || isModel) && !brushesSelected) {
 		throw EntityCreationException(std::string("Unable to create entity \"") + name + "\", no brushes selected");
     }
 
@@ -239,7 +237,7 @@ NodeSmartReference Entity_createFromSelection(const char* name, const Vector3& o
     entitypath.push(makeReference(node.get()));
     scene::Instance & instance = findInstance(entitypath);
 
-    if (entityClass->fixedsize || (isModel && !brushesSelected)) {
+    if (entityClass->isFixedSize() || (isModel && !brushesSelected)) {
         Select_Delete();
     
         Transformable *transform = Instance_getTransformable(instance);

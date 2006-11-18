@@ -26,9 +26,9 @@ namespace scene
 {
   class Node;
 };
-class EntityClass;
+class IEntityClass;
 
-scene::Node& New_EclassModel(EntityClass* eclass);
+scene::Node& New_EclassModel(IEntityClass* eclass);
 
 #include "entity.h"
 

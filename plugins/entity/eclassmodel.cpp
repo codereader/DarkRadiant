@@ -143,7 +143,7 @@ class EclassModel :
 
 public:
 
-  EclassModel(EntityClass* eclass, scene::Node& node, const Callback& transformChanged, const Callback& evaluateTransform) :
+  EclassModel(IEntityClass* eclass, scene::Node& node, const Callback& transformChanged, const Callback& evaluateTransform) :
     m_entity(eclass),
     m_originKey(OriginChangedCaller(*this)),
     m_origin(ORIGINKEY_IDENTITY),
@@ -183,8 +183,8 @@ public:
     {
       m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
       m_entity.attach(m_keyObservers);
-      m_model.modelChanged(m_entity.getEntityClass().modelpath());
-      m_skin.skinChanged(m_entity.getEntityClass().skin());
+      m_model.modelChanged(m_entity.getEntityClass().getModelPath().c_str());
+      m_skin.skinChanged(m_entity.getEntityClass().getSkin().c_str());
     }
   }
   void instanceDetach(const scene::Path& path)
@@ -451,7 +451,7 @@ public:
     return m_contained.getModelSkin();
   }
 
-  EclassModelNode(EntityClass* eclass) :
+  EclassModelNode(IEntityClass* eclass) :
     m_node(this, this, StaticTypeCasts::instance().get()),
     m_contained(eclass, m_node, InstanceSet::TransformChangedCaller(m_instances), InstanceSetEvaluateTransform<EclassModelInstance>::Caller(m_instances))
   {
@@ -512,7 +512,7 @@ public:
   }
 };
 
-scene::Node& New_EclassModel(EntityClass* eclass)
+scene::Node& New_EclassModel(IEntityClass* eclass)
 {
   return (new EclassModelNode(eclass))->node();
 }

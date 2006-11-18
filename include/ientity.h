@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "string/string.h"
 #include "scenelib.h"
 
-class EntityClass;
+class IEntityClass;
 
 typedef Callback1<const char*> KeyObserver;
 
@@ -59,7 +59,7 @@ public:
     virtual void visit(const char* key, const char* value) = 0;
   };
 
-  virtual const EntityClass& getEntityClass() const = 0;
+  virtual const IEntityClass& getEntityClass() const = 0;
   virtual void forEachKeyValue(Visitor& visitor) const = 0;
 
 	/** Set a key value on this entity. Setting the value to "" will
@@ -128,7 +128,7 @@ public:
   INTEGER_CONSTANT(Version, 2);
   STRING_CONSTANT(Name, "entity");
 
-  virtual scene::Node& createEntity(EntityClass* eclass) = 0;
+  virtual scene::Node& createEntity(IEntityClass* eclass) = 0;
 
   typedef void (*KeyValueChangedFunc)();
   virtual void setKeyValueChangedFunc(KeyValueChangedFunc func) = 0;

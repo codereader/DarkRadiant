@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 
 #include "ientity.h"
+#include "ieclass.h"
 #include "irender.h"
 #include "igl.h"
 #include "selectable.h"
@@ -37,7 +38,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/referencecounted.h"
 #include "scenelib.h"
 #include "container/container.h"
-#include "eclasslib.h"
 
 #include <list>
 #include <set>
@@ -419,7 +419,7 @@ private:
   static EntityCreator::KeyValueChangedFunc m_entityKeyValueChanged;
   static Counter* m_counter;
 
-  EntityClass* m_eclass;
+  IEntityClass* m_eclass;
 
   class KeyContext{};
   typedef Static<StringPool, KeyContext> KeyPool;
@@ -490,7 +490,7 @@ private:
     else
     {
       m_undo.save();
-      insert(key, KeyValuePtr(new KeyValue(value, EntityClass_valueForKey(*m_eclass, key))));
+      insert(key, KeyValuePtr(new KeyValue(value, m_eclass->getValueForKey(key).c_str())));
     }
   }
 
@@ -520,12 +520,12 @@ private:
 public:
   bool m_isContainer;
 
-  EntityKeyValues(EntityClass* eclass) :
+  EntityKeyValues(IEntityClass* eclass) :
     m_eclass(eclass),
     m_undo(m_keyValues, UndoImportCaller(*this)),
     m_instanced(false),
     m_observerMutex(false),
-    m_isContainer(!eclass->fixedsize)
+    m_isContainer(!eclass->isFixedSize())
   {
   }
   EntityKeyValues(const EntityKeyValues& other) :
@@ -635,7 +635,7 @@ public:
   }
 
   // entity
-  EntityClass& getEntityClass() const
+  IEntityClass& getEntityClass() const
   {
     return *m_eclass;
   }
@@ -668,7 +668,7 @@ public:
       return (*i).second->c_str();
     }
 
-    return EntityClass_valueForKey(*m_eclass, key);
+    return m_eclass->getValueForKey(key).c_str();
   }
 
   bool isContainer() const

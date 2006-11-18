@@ -26,10 +26,10 @@ namespace scene
 {
   class Node;
 }
-class EntityClass;
+class IEntityClass;
 
 void Doom3Group_construct();
 void Doom3Group_destroy();
-scene::Node& New_Doom3Group(EntityClass* eclass);
+scene::Node& New_Doom3Group(IEntityClass* eclass);
 
 #endif
