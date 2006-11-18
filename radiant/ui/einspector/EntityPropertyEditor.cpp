@@ -15,21 +15,25 @@ EntityPropertyEditor::EntityPropertyEditor() {}
 
 // Constructor. Create the GTK widgets here
 
-EntityPropertyEditor::EntityPropertyEditor(Entity* entity, const std::string& name):
-    PropertyEditor(entity, name, "entity")
+EntityPropertyEditor::EntityPropertyEditor(Entity* entity, const std::string& name)
+: PropertyEditor(entity, name, "entity")
 {
     GtkWidget* editBox = gtk_hbox_new(FALSE, 3);
     gtk_container_set_border_width(GTK_CONTAINER(editBox), 3);
 
-    // Set up the sorted TreeModel
-    
-    GtkTreeModel* sortedModel = gtk_tree_model_sort_new_with_model(
-                                    GTK_TREE_MODEL(
-                                        gtk_list_store_new(1, G_TYPE_STRING)));
-    gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(sortedModel), 0, GTK_SORT_ASCENDING);
-    
-    _comboBox = gtk_combo_box_entry_new_with_model(sortedModel, 0); // number of the "text" column
+    // Set up the combobox TreeModel
+    _comboBox = gtk_combo_box_entry_new_with_model(
+    				GTK_TREE_MODEL(gtk_list_store_new(1, G_TYPE_STRING)),
+    				0); // number of the "text" column
     populateComboBox();
+    
+    // Add completion functionality to the combobox entry
+    GtkEntryCompletion* completion = gtk_entry_completion_new();
+    gtk_entry_completion_set_model(completion, 
+    							  GTK_TREE_MODEL(gtk_combo_box_get_model(GTK_COMBO_BOX(_comboBox))));
+	gtk_entry_completion_set_text_column(completion, 0);
+    gtk_entry_set_completion(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(_comboBox))), 
+    						 completion);
 
     std::string caption = getKey();
     caption.append(": ");
@@ -56,8 +60,7 @@ void EntityPropertyEditor::populateComboBox() {
         
         // Constructor
         EntityFinder(GtkWidget* box) {
-            _store = gtk_tree_model_sort_get_model(
-                        GTK_TREE_MODEL_SORT(gtk_combo_box_get_model(GTK_COMBO_BOX(box))));
+            _store = gtk_combo_box_get_model(GTK_COMBO_BOX(box));
         }
             
         // Visit function
