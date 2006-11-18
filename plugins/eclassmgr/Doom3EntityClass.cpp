@@ -10,17 +10,18 @@ Doom3EntityClass::Doom3EntityClass(const std::string& name,
 								   const Vector3& mins,
 								   const Vector3& maxs)				 
 : _name(name),
+  _usage(""),
   _isLight(false),
   _colour(colour),
+  _colourSpecified(false),
   _fixedSize(fixedSize),
   _model(""),
   _skin(""),
   _mins(mins),
   _maxs(maxs),
-  _parentName(""),
-  _parentClass(NULL),
   _sizeSpecified(false),
-  _colourSpecified(false)
+  _parentName(""),
+  _parentClass(NULL)
 {
 	// Capture the shaders
 	captureColour();		
