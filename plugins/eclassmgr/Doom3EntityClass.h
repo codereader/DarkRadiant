@@ -63,11 +63,6 @@ class Doom3EntityClass
 	std::string _parentName;
 	IEntityClass* _parentClass;
 	
-	
-public:
-
-	char	flagnames[MAX_FLAGS][32];
-
 private:
 
 	// Capture the shaders corresponding to the current colour
