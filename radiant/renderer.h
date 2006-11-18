@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "irender.h"
 #include "ientity.h"
+#include "ieclass.h"
 #include "ifilter.h"
 #include "renderable.h"
 #include "iselection.h"
@@ -101,8 +102,8 @@ public:
 	// state to ensure it is not rendered.
 	Entity* entity = Node_getEntity(path.top().get());
 	if (entity) {
-		const EntityClass& eclass = entity->getEntityClass();
-		if (!GlobalFilterSystem().isVisible("entityclass", eclass.name())) {
+		const IEntityClass& eclass = entity->getEntityClass();
+		if (!GlobalFilterSystem().isVisible("entityclass", eclass.getName())) {
 			visible = c_volumeOutside;
 		}
 	}

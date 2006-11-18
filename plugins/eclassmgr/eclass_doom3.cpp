@@ -19,6 +19,8 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include "Doom3EntityClass.h"
+
 #include "debugging/debugging.h"
 
 #include <map>
@@ -42,28 +44,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <boost/algorithm/string/case_conv.hpp>
 
-class RawString
-{
-  const char* m_value;
-public:
-  RawString(const char* value) : m_value(value)
-  {
-  }
-  const char* c_str() const
-  {
-    return m_value;
-  }
-};
-
-inline bool operator<(const RawString& self, const RawString& other)
-{
-  return string_less_nocase(self.c_str(), other.c_str());
-}
-
-typedef std::map<RawString, EntityClass*> EntityClasses;
+/* Static map of named entity classes */
+typedef std::map<std::string, IEntityClass*> EntityClasses;
 EntityClasses g_EntityClassDoom3_classes;
-EntityClass	*g_EntityClassDoom3_bad = 0;
-
 
 void EntityClassDoom3_clear()
 {
@@ -76,9 +59,9 @@ void EntityClassDoom3_clear()
 
 // entityClass will be inserted only if another of the same name does not already exist.
 // if entityClass was inserted, the same object is returned, otherwise the already-existing object is returned.
-EntityClass* EntityClassDoom3_insertUnique(EntityClass* entityClass)
+IEntityClass* EntityClassDoom3_insertUnique(IEntityClass* entityClass)
 {
-  return (*g_EntityClassDoom3_classes.insert(EntityClasses::value_type(entityClass->name(), entityClass)).first).second;
+  return (*g_EntityClassDoom3_classes.insert(EntityClasses::value_type(entityClass->getName(), entityClass)).first).second;
 }
 
 void EntityClassDoom3_forEach(EntityClassVisitor& visitor)
@@ -93,9 +76,9 @@ class Model
 {
 public:
   bool m_resolved;
-  CopiedString m_mesh;
-  CopiedString m_skin;
-  CopiedString m_parent;
+  std::string m_mesh;
+  std::string m_skin;
+  std::string m_parent;
   typedef std::map<CopiedString, CopiedString> Anims;
   Anims m_anims;
   Model() : m_resolved(false)
@@ -103,7 +86,7 @@ public:
   }
 };
 
-typedef std::map<CopiedString, Model> Models;
+typedef std::map<std::string, Model> Models;
 
 Models g_models;
 
@@ -184,11 +167,9 @@ void EntityClassDoom3_parseModel(parser::DefTokeniser& tokeniser)
 
 void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
 {
-    EntityClass* entityClass = new EntityClass(Vector3(0, 0.4, 0));
-
-    // Entity name
+    // Get the entity name and create the entity class for it
     const std::string sName = tokeniser.nextToken();
-    entityClass->m_name = sName.c_str();
+	IEntityClass* entityClass = new eclass::Doom3EntityClass(sName);
 
     // Required open brace
     tokeniser.assertNextToken("{");
@@ -204,37 +185,33 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
         // Otherwise, switch on the key name
         
         if (key == "model") {
-            entityClass->fixedsize = true;
-            entityClass->m_modelpath = os::standardPath(tokeniser.nextToken()).c_str();
+        	entityClass->setModelPath(os::standardPath(tokeniser.nextToken()));
+        }
+        else if (key == "inherit") {
+        	entityClass->setParent(tokeniser.nextToken());
         }
         else if (key == "editor_color") {
-            entityClass->colorSpecified = true;
             entityClass->setColour(tokeniser.nextToken());
         }
         else if (key == "editor_mins") {
-            entityClass->sizeSpecified = true;
             const std::string value = tokeniser.nextToken();
             if (value != "?") { // what does this mean?
-                entityClass->fixedsize = true;
-                entityClass->mins = Vector3(value);
+				entityClass->setMins(value);
             }
         }
         else if (key == "editor_maxs") {
-            entityClass->sizeSpecified = true;
             const std::string value = tokeniser.nextToken();
             if (value != "?") { // what does this mean?
-                entityClass->fixedsize = true;
-                entityClass->maxs = Vector3(value);
+				entityClass->setMaxs(value);
             }
         }
         else if (key == "editor_usage") {
-            entityClass->m_comments = tokeniser.nextToken().c_str();
+            entityClass->setUsage(tokeniser.nextToken());
         }
         else if (key == "editor_light") {
             const std::string val = tokeniser.nextToken();
             if (val == "1") {
-                entityClass->isLight(true);
-                entityClass->fixedsize = true; // don't create with zero size
+                entityClass->setIsLight(true);
             }
         }
         else if (key.find("editor_") == 0) { // ignore any other "editor_xxx" key
@@ -243,21 +220,20 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
         else if (key == "spawnclass") {
             std::string value = tokeniser.nextToken();
             if (value == "idLight") {
-                entityClass->isLight(true);
+                entityClass->setIsLight(true);
             }
         }
         else { // any other key is added as an EntityClassAttribute
-            EntityClassAttribute& attribute = EntityClass_insertAttribute(*entityClass, key.c_str()).second;
-            attribute.m_type = "string";
-            attribute.m_value = tokeniser.nextToken().c_str();
+			EntityClassAttribute attribute("string", key, tokeniser.nextToken(), "");
+			entityClass->addAttribute(attribute);
         }
             
     } // while true
     
     // Insert into the EntityClassManager
-	EntityClass* inserted = EntityClassDoom3_insertUnique(entityClass);
+	IEntityClass* inserted = EntityClassDoom3_insertUnique(entityClass);
 	if(inserted != entityClass) {
-		globalErrorStream() << "entityDef " << entityClass->name() << " is already defined, second definition ignored\n";
+		globalErrorStream() << "entityDef " << entityClass->getName() << " is already defined, second definition ignored\n";
 		delete entityClass;
 	}
 }
@@ -275,16 +251,11 @@ void EntityClassDoom3_parse(const std::string& inStr)
         boost::algorithm::to_lower(blockType);
 
         if(blockType == "entitydef") {
-//            std::cout << "ENTITYDEF" << std::endl;
             EntityClassDoom3_parseEntityDef(tokeniser);
         }
         else if(blockType == "model") {
-//            std::cout << "MODEL" << std::endl;
             EntityClassDoom3_parseModel(tokeniser);
         }
-//        else {
-//            EntityClassDoom3_parseUnknown(tokeniser);
-//        }
     }
 
 }
@@ -312,13 +283,11 @@ void EntityClassDoom3_loadFile(const char* filename)
 
 // Find or insert an EntityClass with the given name.
 
-EntityClass *EntityClassDoom3_findOrInsert(const char *name, bool has_brushes)
+IEntityClass *EntityClassDoom3_findOrInsert(const char *name, bool has_brushes)
 {
-    ASSERT_NOTNULL(name);
-
     // Return an error if no name is given
     if (string_empty(name)) {
-        return g_EntityClassDoom3_bad;
+        return NULL;
     }
 
     // Find the EntityClass in the map.
@@ -328,10 +297,9 @@ EntityClass *EntityClassDoom3_findOrInsert(const char *name, bool has_brushes)
     }
 
     // Otherwise insert the new EntityClass
-    EntityClass *e = EntityClass_Create_Default(name, has_brushes);
-    EntityClass *inserted = EntityClassDoom3_insertUnique(e);
+    IEntityClass *e = eclass::Doom3EntityClass::create(name, has_brushes);
+    IEntityClass *inserted = EntityClassDoom3_insertUnique(e);
 
-    ASSERT_MESSAGE(inserted == e, "");
     return inserted;
 }
 
@@ -341,40 +309,40 @@ const ListAttributeType* EntityClassDoom3_findListType(const char* name)
 }
 
 
-void EntityClass_resolveInheritance(EntityClass* derivedClass)
-{
-  if(derivedClass->inheritanceResolved == false)
-  {
-    derivedClass->inheritanceResolved = true;
-    EntityClasses::iterator i = g_EntityClassDoom3_classes.find(derivedClass->m_parent.front().c_str());
-    if(i == g_EntityClassDoom3_classes.end())
-    {
-      globalErrorStream() << "failed to find entityDef " << makeQuoted(derivedClass->m_parent.front().c_str()) << " inherited by "  << makeQuoted(derivedClass->m_name.c_str()) << "\n";
-    }
-    else
-    {
-      EntityClass* parentClass = (*i).second;
-      EntityClass_resolveInheritance(parentClass);
-      if(!derivedClass->colorSpecified)
-      {
-        derivedClass->colorSpecified = parentClass->colorSpecified;
-        derivedClass->setColour(parentClass->getColour());
-      }
-      if(!derivedClass->sizeSpecified)
-      {
-        derivedClass->sizeSpecified = parentClass->sizeSpecified;
-        derivedClass->mins = parentClass->mins;
-        derivedClass->maxs = parentClass->maxs;
-        derivedClass->fixedsize = parentClass->fixedsize;
-      }
-
-      for(EntityClassAttributes::iterator j = parentClass->m_attributes.begin(); j != parentClass->m_attributes.end(); ++j)
-      {
-        EntityClass_insertAttribute(*derivedClass, (*j).first.c_str(), (*j).second);
-      }
-    }
-  }
-}
+//void EntityClass_resolveInheritance(EntityClass* derivedClass)
+//{
+//  if(derivedClass->inheritanceResolved == false)
+//  {
+//    derivedClass->inheritanceResolved = true;
+//    EntityClasses::iterator i = g_EntityClassDoom3_classes.find(derivedClass->m_parent.front().c_str());
+//    if(i == g_EntityClassDoom3_classes.end())
+//    {
+//      globalErrorStream() << "failed to find entityDef " << makeQuoted(derivedClass->m_parent.front().c_str()) << " inherited by "  << makeQuoted(derivedClass->m_name.c_str()) << "\n";
+//    }
+//    else
+//    {
+//      EntityClass* parentClass = (*i).second;
+//      EntityClass_resolveInheritance(parentClass);
+//      if(!derivedClass->colorSpecified)
+//      {
+//        derivedClass->colorSpecified = parentClass->colorSpecified;
+//        derivedClass->setColour(parentClass->getColour());
+//      }
+//      if(!derivedClass->sizeSpecified)
+//      {
+//        derivedClass->sizeSpecified = parentClass->sizeSpecified;
+//        derivedClass->mins = parentClass->mins;
+//        derivedClass->maxs = parentClass->maxs;
+//        derivedClass->fixedsize = parentClass->fixedsize;
+//      }
+//
+//      for(EntityClassAttributes::iterator j = parentClass->m_attributes.begin(); j != parentClass->m_attributes.end(); ++j)
+//      {
+//        EntityClass_insertAttribute(*derivedClass, (*j).first.c_str(), (*j).second);
+//      }
+//    }
+//  }
+//}
 
 /* EntityClassDoom3 - master entity loader
  * 
@@ -423,39 +391,19 @@ class EntityClassDoom3:
             for (EntityClasses::iterator i = g_EntityClassDoom3_classes.begin();
                  i != g_EntityClassDoom3_classes.end(); ++i) {
     
-                EntityClass_resolveInheritance(i->second);
+    			// Tell the entityclass to resolve its inheritance
+    			i->second->resolveInheritance();
     
                 // If the entity has a model path ("model" key), lookup the actual
                 // model and apply its mesh and skin to this entity.
-                if (!string_empty(i->second->m_modelpath.c_str())) {
-                    Models::iterator j = g_models.find(i->second->m_modelpath);
+                if (i->second->getModelPath().size() > 0) {
+                    Models::iterator j = g_models.find(i->second->getModelPath());
                     if (j != g_models.end()) {
-                        i->second->m_modelpath = j->second.m_mesh;
-                        i->second->m_skin = j->second.m_skin;
+                        i->second->setModelPath(j->second.m_mesh);
+                        i->second->setSkin(j->second.m_skin);
                     }
                 }
             
-                StringOutputStream usage(256);
-            
-                usage << "-------- KEYS --------\n";
-            
-                // For each attribute in the entity, add its name and description
-                // to the usage string, which is stored in the EntityClass' comments
-                // field.
-                for (EntityClassAttributes::iterator j = i->second->m_attributes.begin();
-                     j != i->second->m_attributes.end(); ++j) {
-                        
-                    const char *name = EntityClassAttributePair_getName(*j);
-                    const char *description = EntityClassAttributePair_getDescription(*j);
-                
-                    if (!string_equal(name, description)) {
-                        usage << EntityClassAttributePair_getName(*j)
-                            << " : " << EntityClassAttributePair_getDescription(*j)
-                            << "\n";
-                    }
-                }
-            
-                i->second->m_comments = usage.c_str();
             }
     
         // Prod the observers (also on the first call)
@@ -508,17 +456,12 @@ void EntityClassDoom3_construct()
 {
     GlobalFileSystem().attach(g_EntityClassDoom3);
 
-    // start by creating the default unknown eclass
-    g_EntityClassDoom3_bad = EClass_Create("UNKNOWN_CLASS", Vector3(0.0f, 0.5f, 0.0f), "");
-
     EntityClassDoom3_realise();
 }
 
 void EntityClassDoom3_destroy()
 {
   EntityClassDoom3_unrealise();
-
-	delete g_EntityClassDoom3_bad;
 
   GlobalFileSystem().detach(g_EntityClassDoom3);
 }

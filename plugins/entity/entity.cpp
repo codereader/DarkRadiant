@@ -21,13 +21,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "entity.h"
 
+#include "ieclass.h"
 #include "ifilter.h"
 #include "selectable.h"
 #include "namespace.h"
 
 #include "scenelib.h"
 #include "entitylib.h"
-#include "eclasslib.h"
 #include "pivot.h"
 
 #include "targetable.h"
@@ -35,7 +35,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "namekeys.h"
 #include "stream/stringstream.h"
 
-#include "miscmodel.h"
 #include "light.h"
 #include "group.h"
 #include "eclassmodel.h"
@@ -47,37 +46,23 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 EGameType g_gameType;
 
-scene::Node& entity_for_eclass(EntityClass* eclass)
+scene::Node& entity_for_eclass(IEntityClass* eclass)
 {
-  if(classname_equal(eclass->name(), "misc_model")
-  || classname_equal(eclass->name(), "misc_gamemodel")
-  || classname_equal(eclass->name(), "model_static"))
-  {
-    return New_MiscModel(eclass);
-  }
-  else if(eclass->isLight())
-  {
-    return New_Light(eclass);
-  }
-  if(!eclass->fixedsize)
-  {
-    if(g_gameType == eGameTypeDoom3)
-    {
-      return New_Doom3Group(eclass);
-    }
-    else
-    {
-      return New_Group(eclass);
-    }
-  }
-  else if(!string_empty(eclass->modelpath()))
-  {
-    return New_EclassModel(eclass);
-  }
-  else
-  {
-    return New_GenericEntity(eclass);
-  }
+	if(eclass->isLight()) {
+	    return New_Light(eclass);
+	}
+	else if(!eclass->isFixedSize()) {
+		// Variable size entity
+	    return New_Doom3Group(eclass);
+	}
+	else if(eclass->getModelPath().size() > 0) {
+		// Fixed size, has model path
+		return New_EclassModel(eclass);
+	}
+	else {
+		// Fixed size, no model path
+    	return New_GenericEntity(eclass);
+	}
 }
 
 void Entity_setName(Entity& entity, const char* name)
@@ -101,24 +86,21 @@ std::string cleanEntityName(const std::string& rawName) {
 	return returnValue;
 }
 
-scene::Node& node_for_eclass(EntityClass* eclass)
+scene::Node& node_for_eclass(IEntityClass* eclass)
 {
     
   scene::Node& node = entity_for_eclass(eclass);
-  Node_getEntity(node)->setKeyValue("classname", eclass->name());
+  Node_getEntity(node)->setKeyValue("classname", eclass->getName());
 
-  if(g_gameType == eGameTypeDoom3
-    && string_not_empty(eclass->name())
-    && !string_equal(eclass->name(), "worldspawn")
-    && !string_equal(eclass->name(), "UNKNOWN_CLASS"))
-  {
-	std::string entityName = cleanEntityName(eclass->name());
-
-    char buffer[1024];
-    strcpy(buffer, entityName.c_str());
-    strcat(buffer, "_1");
-    GlobalNamespace().makeUnique(buffer, EntitySetNameCaller(*Node_getEntity(node)));
-  }
+	// If this is not a worldspawn or unrecognised entity, generate a unique
+	// name for it
+	if(eclass->getName().size() > 0
+       && eclass->getName() != "worldspawn"
+       && eclass->getName() != "UNKNOWN_CLASS") 
+	{
+		std::string entityName = cleanEntityName(eclass->getName()) + "_1";
+    	GlobalNamespace().makeUnique(entityName.c_str(), EntitySetNameCaller(*Node_getEntity(node)));
+	}
 
   Namespaced* namespaced = Node_getNamespaced(node);
   if(namespaced != 0)
@@ -166,7 +148,7 @@ inline Entity* ScenePath_getEntity(const scene::Path& path)
 class Quake3EntityCreator : public EntityCreator
 {
 public:
-  scene::Node& createEntity(EntityClass* eclass)
+  scene::Node& createEntity(IEntityClass* eclass)
   {
     return node_for_eclass(eclass);
   }
@@ -198,9 +180,7 @@ public:
 
     UndoableCommand undo("entityConnectSelected");
 
-    if(g_gameType == eGameTypeDoom3)
-    {
-      StringOutputStream key(16);
+	  StringOutputStream key(16);
       for(unsigned int i = 0; ; ++i)
       {
         key << "target";
@@ -216,31 +196,6 @@ public:
         }
         key.clear();
       }
-    }
-    else
-    {
-      ConnectEntities connector(e1, e2);
-      const char* value = e2->getKeyValue("targetname");
-      if(string_empty(value))
-      {
-        value = e1->getKeyValue("target");
-      }
-      if(!string_empty(value))
-      {
-        connector.connect(value);
-      }
-      else
-      {
-        const char* type = e2->getKeyValue("classname");
-        if(string_empty(type))
-        {
-          type = "t";
-        }
-        StringOutputStream key(64);
-        key << type << "1";
-        GlobalNamespace().makeUnique(key.c_str(), ConnectEntities::ConnectCaller(connector));
-      }
-    }
 
     SceneChangeNotify();
   }
@@ -290,7 +245,6 @@ void Entity_Construct(EGameType gameType)
 
   LightType lightType = LIGHTTYPE_DOOM3;
   Light_Construct(lightType);
-  MiscModel_construct();
   Doom3Group_construct();
 
   RenderablePivot::StaticShader::instance() = GlobalShaderCache().capture("$PIVOT");
@@ -305,6 +259,5 @@ void Entity_Destroy()
   GlobalShaderCache().release("$PIVOT");
 
   Doom3Group_destroy();
-  MiscModel_destroy();
   Light_Destroy();
 }

@@ -66,9 +66,9 @@ public:
   }
 };
 
-inline void read_aabb(AABB& aabb, const EntityClass& eclass)
+inline void read_aabb(AABB& aabb, const IEntityClass& eclass)
 {
-  aabb = aabb_for_minmax(eclass.mins, eclass.maxs);
+	aabb = aabb_for_minmax(eclass.getMins(), eclass.getMaxs());
 }
 
 
@@ -135,7 +135,7 @@ class GenericEntity :
   typedef MemberCaller<GenericEntity, &GenericEntity::angleChanged> AngleChangedCaller;
 public:
 
-  GenericEntity(EntityClass* eclass, scene::Node& node, const Callback& transformChanged, const Callback& evaluateTransform) :
+  GenericEntity(IEntityClass* eclass, scene::Node& node, const Callback& transformChanged, const Callback& evaluateTransform) :
     m_entity(eclass),
     m_originKey(OriginChangedCaller(*this)),
     m_origin(ORIGINKEY_IDENTITY),
@@ -436,7 +436,7 @@ public:
     return m_contained.getNamespaced();
   }
 
-  GenericEntityNode(EntityClass* eclass) :
+  GenericEntityNode(IEntityClass* eclass) :
     m_node(this, this, StaticTypeCasts::instance().get()),
     m_contained(eclass, m_node, InstanceSet::TransformChangedCaller(m_instances), InstanceSetEvaluateTransform<GenericEntityInstance>::Caller(m_instances))
   {
@@ -481,7 +481,7 @@ public:
   }
 };
 
-scene::Node& New_GenericEntity(EntityClass* eclass)
+scene::Node& New_GenericEntity(IEntityClass* eclass)
 {
   return (new GenericEntityNode(eclass))->node();
 }

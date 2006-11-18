@@ -283,7 +283,7 @@ private:
   typedef MemberCaller<Doom3Group, &Doom3Group::skinChanged> SkinChangedCaller;
 
 public:
-  Doom3Group(EntityClass* eclass, scene::Node& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform) :
+  Doom3Group(IEntityClass* eclass, scene::Node& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform) :
     m_entity(eclass),
     m_originKey(OriginChangedCaller(*this)),
     m_origin(ORIGINKEY_IDENTITY),
@@ -743,7 +743,7 @@ public:
     return m_contained.getModelSkin();
   }
 
-  Doom3GroupNode(EntityClass* eclass) :
+  Doom3GroupNode(IEntityClass* eclass) :
     m_node(this, this, StaticTypeCasts::instance().get()),
       m_contained(eclass, m_node, InstanceSet::TransformChangedCaller(m_instances), InstanceSet::BoundsChangedCaller(m_instances), InstanceSetEvaluateTransform<Doom3GroupInstance>::Caller(m_instances))
   {
@@ -817,7 +817,7 @@ void Doom3Group_destroy()
   GlobalShaderCache().release("$POINT");
 }
 
-scene::Node& New_Doom3Group(EntityClass* eclass)
+scene::Node& New_Doom3Group(IEntityClass* eclass)
 {
   return (new Doom3GroupNode(eclass))->node();
 }

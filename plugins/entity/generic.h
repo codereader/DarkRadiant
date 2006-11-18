@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_GENERIC_H)
 #define INCLUDED_GENERIC_H
 
-scene::Node& New_GenericEntity(EntityClass* eclass);
+class IEntityClass;
+
+scene::Node& New_GenericEntity(IEntityClass* eclass);
 
 #endif

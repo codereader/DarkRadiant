@@ -42,6 +42,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "itoolbar.h"
 #include "editable.h"
 #include "ientity.h"
+#include "ieclass.h"
+#include "irender.h"
 #include "ishaders.h"
 #include "igl.h"
 #include "moduleobserver.h"
@@ -537,14 +539,14 @@ void Radiant_loadModulesFromRoot(const std::string& directory)
 //! Make COLOR_BRUSHES override worldspawn eclass colour.
 void SetWorldspawnColour(const Vector3& colour)
 {
-	EntityClass* worldspawn = GlobalEntityClassManager().findOrInsert("worldspawn", true);
+	IEntityClass* worldspawn = GlobalEntityClassManager().findOrInsert("worldspawn", true);
 	worldspawn->setColour(colour);
 }
 
 //! Make colourscheme definition override light volume eclass colour.
 void SetLightVolumeColour(const Vector3& colour)
 {
-	EntityClass* light = GlobalEntityClassManager().findOrInsert("light", true);
+	IEntityClass* light = GlobalEntityClassManager().findOrInsert("light", true);
 	light->setColour(colour);
 }
 

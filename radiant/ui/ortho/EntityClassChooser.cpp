@@ -2,7 +2,7 @@
 
 #include "mainframe.h"
 #include "ieclass.h"
-#include "eclasslib.h"
+#include "ieclass.h"
 #include "gtkutil/dialog.h"
 
 #include "entity.h" // Entity_createFromSelection()
@@ -78,10 +78,10 @@ GtkWidget* EntityClassChooser::createTreeView() {
 		: _store(store) {}
 		
 		// Required visit function
-		virtual void visit(EntityClass* e) {
+		virtual void visit(IEntityClass* e) {
 			GtkTreeIter iter;
 			gtk_tree_store_append(_store, &iter, NULL);
-			gtk_tree_store_set(_store, &iter, 0, e->name(), -1);
+			gtk_tree_store_set(_store, &iter, 0, e->getName().c_str(), -1);
 		}
 		
 	} visitor(_treeStore);

@@ -66,7 +66,7 @@ class Group
   }
  
 public:
-  Group(EntityClass* eclass, scene::Node& node, const Callback& transformChanged) :
+  Group(IEntityClass* eclass, scene::Node& node, const Callback& transformChanged) :
     m_entity(eclass),
     m_named(m_entity),
     m_nameKeys(m_entity),
@@ -369,7 +369,7 @@ public:
     return m_contained.getNamespaced();
   }
 
-  GroupNode(EntityClass* eclass) :
+  GroupNode(IEntityClass* eclass) :
     m_node(this, this, StaticTypeCasts::instance().get()),
     m_contained(eclass, m_node, InstanceSet::TransformChangedCaller(m_instances))
   {
@@ -431,7 +431,7 @@ public:
   }
 };
 
-scene::Node& New_Group(EntityClass* eclass)
+scene::Node& New_Group(IEntityClass* eclass)
 {
   return (new GroupNode(eclass))->node();
 }

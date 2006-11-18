@@ -364,13 +364,13 @@ class RenderLightCenter : public OpenGLRenderable
 	const Matrix4& _rotation;
 	
 	// Class of light entity
-	EntityClass& _eclass;
+	IEntityClass& _eclass;
 	
 public:
   static Shader* m_state;
 
 	// Constructor
-	RenderLightCenter(const Vector3& center, const Vector3& origin, const Matrix4& rotation, EntityClass& eclass) 
+	RenderLightCenter(const Vector3& center, const Vector3& origin, const Matrix4& rotation, IEntityClass& eclass) 
 	: _localCentre(center), 
 	  _worldOrigin(origin), 
 	  _rotation(rotation), 
@@ -762,7 +762,7 @@ class Light :
 
 public:
 
-  Light(EntityClass* eclass, scene::Node& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform) :
+  Light(IEntityClass* eclass, scene::Node& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform) :
     m_entity(eclass),
     m_originKey(OriginChangedCaller(*this)),
     m_rotationKey(RotationChangedCaller(*this)),
@@ -1526,7 +1526,7 @@ public:
     return m_contained.getNamespaced();
   }
 
-  LightNode(EntityClass* eclass) :
+  LightNode(IEntityClass* eclass) :
     m_node(this, this, StaticTypeCasts::instance().get()),
     m_contained(eclass, m_node, InstanceSet::TransformChangedCaller(m_instances), InstanceSet::BoundsChangedCaller(m_instances), InstanceSetEvaluateTransform<LightInstance>::Caller(m_instances))
   {
@@ -1606,7 +1606,7 @@ void Light_Destroy()
   GlobalShaderCache().release("$BIGPOINT");
 }
 
-scene::Node& New_Light(EntityClass* eclass)
+scene::Node& New_Light(IEntityClass* eclass)
 {
   return (new LightNode(eclass))->node();
 }

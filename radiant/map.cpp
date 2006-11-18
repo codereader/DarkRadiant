@@ -828,7 +828,7 @@ scene::Node& Node_Clone(scene::Node& node)
 }
 
 
-typedef std::map<CopiedString, std::size_t> EntityBreakdown;
+typedef std::map<std::string, std::size_t> EntityBreakdown;
 
 class EntityBreakdownWalker : public scene::Graph::Walker
 {
@@ -843,12 +843,12 @@ public:
     Entity* entity = Node_getEntity(path.top());
     if(entity != 0)
     {
-      const EntityClass& eclass = entity->getEntityClass();
-      if(m_entitymap.find(eclass.name()) == m_entitymap.end())
+      const IEntityClass& eclass = entity->getEntityClass();
+      if(m_entitymap.find(eclass.getName()) == m_entitymap.end())
       {
-        m_entitymap[eclass.name()] = 1;
+        m_entitymap[eclass.getName()] = 1;
       }
-      else ++m_entitymap[eclass.name()];
+      else ++m_entitymap[eclass.getName()];
     }
     return true;
   }
