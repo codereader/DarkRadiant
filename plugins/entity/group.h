@@ -22,6 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_GROUP_H)
 #define INCLUDED_GROUP_H
 
-scene::Node& New_Group(EntityClass* eclass);
+scene::Node& New_Group(IEntityClass* eclass);
 
 #endif
