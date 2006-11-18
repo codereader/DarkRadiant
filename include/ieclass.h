@@ -28,43 +28,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/constant.h"
 #include "math/Vector3.h"
-
-class Shader;
-class EntityClass;
-class ListAttributeType;
-
-class EntityClassCollector
-{
-public:
-  virtual void insert(EntityClass* eclass) = 0;
-  virtual void insert(const char* name, const ListAttributeType& list)
-  {
-  }
-};
-
-struct EntityClassScanner
-{
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "eclass");
-
-  void (*scanFile)(EntityClassCollector& collector, const char* filename);
-  const char* (*getExtension)();
-};
-
 #include "modulesystem.h"
 
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<EntityClassScanner> GlobalEClassModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<EntityClassScanner> GlobalEClassModuleRef;
-
-inline EntityClassScanner& GlobalEClassLoader()
-{
-  return GlobalEClassModule::getTable();
-}
+class Shader;
+class ListAttributeType;
 
 /** Data structure representing a single attribute on an entity class.
  */
