@@ -31,7 +31,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "scenelib.h"
 #include "string/string.h"
 #include "stringio.h"
-#include "eclasslib.h"
 
 inline MapImporter* Node_getMapImporter(scene::Node& node)
 {

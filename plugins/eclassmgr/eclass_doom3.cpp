@@ -33,7 +33,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/callback.h"
 #include "string/string.h"
 #include "parser/DefTokeniser.h"
-#include "eclasslib.h"
 #include "os/path.h"
 #include "os/dir.h"
 #include "stream/stringstream.h"

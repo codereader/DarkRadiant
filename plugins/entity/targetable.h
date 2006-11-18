@@ -33,7 +33,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/callback.h"
 #include "selectionlib.h"
 #include "entitylib.h"
-#include "eclasslib.h"
 #include "stringio.h"
 
 class Targetable
