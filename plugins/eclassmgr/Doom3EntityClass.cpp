@@ -22,8 +22,6 @@ Doom3EntityClass::Doom3EntityClass(const std::string& name,
   _sizeSpecified(false),
   _colourSpecified(false)
 {
-	memset(flagnames, 0, MAX_FLAGS*32);
-
 	// Capture the shaders
 	captureColour();		
 }
