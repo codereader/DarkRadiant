@@ -8,11 +8,10 @@
 #include "stream/textfilestream.h"
 
 #include "commands.h"
-#include "plugin.h"
+#include "iregistry.h"
 #include "gtkutil/pointer.h"
 #include "gtkutil/image.h"
 #include "gtkutil/button.h"
-#include "xmlutil/XMLRegistry.h"
 
 // This is needed to correctly connect the ToggleButton to Radiant's callbacks
 // The "handler" object data was set in createToolItem
@@ -45,7 +44,7 @@ GtkToolbar* ToolbarCreator::getToolbar(const std::string& toolbarName) {
 						
 			// Build the path into the registry, where the toolbar should be found
 			std::string toolbarPath = std::string("//ui//toolbar") + "[@name='"+ toolbarName +"']";
-			xml::NodeList toolbarList = registry().findXPath(toolbarPath);
+			xml::NodeList toolbarList = GlobalRegistry().findXPath(toolbarPath);
 			
 			if (toolbarList.size() > 0) {
 				_toolbars[toolbarName] = createToolbar(toolbarList[0]);
@@ -165,7 +164,7 @@ bool ToolbarCreator::toolbarExists(const std::string& toolbarName) {
  * Returns nothing, toolbars can be obtained via GetToolbar()
  */
 void ToolbarCreator::loadToolbars() {
-	xml::NodeList toolbarList = registry().findXPath("//ui//toolbar");
+	xml::NodeList toolbarList = GlobalRegistry().findXPath("//ui//toolbar");
 	
 	if (toolbarList.size() > 0) {
 		// Create a new tooltips element

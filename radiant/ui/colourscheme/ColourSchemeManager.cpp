@@ -1,6 +1,5 @@
 #include "ColourSchemeManager.h"
-#include "xmlutil/XMLRegistry.h"
-#include "plugin.h"
+#include "iregistry.h"
 
 #include "stringio.h"
 #include "stream/stringstream.h"
@@ -93,7 +92,7 @@ void ColourSchemeManager::saveScheme(const std::string& name) {
 	std::string basePath = "user/ui/colourschemes";
 	
 	// Re-create the schemeNode
-	xml::Node schemeNode = registry().createKeyWithName(basePath, "scheme", name);
+	xml::Node schemeNode = GlobalRegistry().createKeyWithName(basePath, "scheme", name);
 	
 	// Set the readonly attribute if necessary
 	if (_colourSchemes[name].isReadOnly()) {
@@ -119,14 +118,14 @@ void ColourSchemeManager::saveScheme(const std::string& name) {
 		// Cast the ColourItem onto a std::string
 		std::string colour = it->second;
 			
-		xml::Node colourNode = registry().createKeyWithName(schemePath, "colour", name);
+		xml::Node colourNode = GlobalRegistry().createKeyWithName(schemePath, "colour", name);
 		colourNode.setAttributeValue("value", colour);
 	}
 }
 
 void ColourSchemeManager::saveColourSchemes() {
 	// Delete all existing schemes from the registry
-	registry().deleteXPath("user/ui//colourschemes");
+	GlobalRegistry().deleteXPath("user/ui//colourschemes");
 	
 	// Save all schemes that are stored in memory 
 	for (ColourSchemeMap::iterator it = _colourSchemes.begin(); it != _colourSchemes.end(); it++) {
@@ -148,7 +147,7 @@ void ColourSchemeManager::loadColourSchemes() {
 	globalOutputStream() << "ColourSchemeManager: Loading colour schemes...\n";
 	
 	// Find all <scheme> nodes
-	xml::NodeList schemeNodes = registry().findXPath("user/ui/colourschemes/scheme");
+	xml::NodeList schemeNodes = GlobalRegistry().findXPath("user/ui/colourschemes/scheme");
 	
 	if (schemeNodes.size()>0) {
 		// Cycle through all found scheme nodes	

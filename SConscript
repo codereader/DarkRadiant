@@ -15,7 +15,7 @@ def build_list(s_prefix, s_string):
 
 xmlutilEnv = g_env.Copy()
 xmlutilEnv.useXML2()
-xmlutilSource = 'Document.cpp Node.cpp XMLRegistry.cpp'
+xmlutilSource = 'Document.cpp Node.cpp'
 xmlutil = xmlutilEnv.StaticLibrary(target='libs/xmlutil', source=build_list('libs/xmlutil', xmlutilSource))
 
 cmdlib_lib = g_env.StaticLibrary(target='libs/cmdlib', source='libs/cmdlib/cmdlib.cpp')
@@ -109,6 +109,13 @@ filterEnv.useBoostRegex()
 filterEnv.Append(LIBS = 'xmlutil')
 filterLib = filterEnv.SharedLibrary(target='filters', source=filterSrc, no_import_lib=1)
 filterEnv.Install(INSTALL + '/modules', filterLib)
+
+# XMLRegistry module
+xmlRegistryEnv = module_env.Copy()
+xmlRegistrySrc = build_list('plugins/xmlregistry', 'XMLRegistry.cpp')
+xmlRegistryEnv.Append(LIBS = 'xmlutil')
+xmlRegistryLib = xmlRegistryEnv.SharedLibrary(target='xmlregistry', source=xmlRegistrySrc)
+xmlRegistryEnv.Install(INSTALL + '/modules', xmlRegistryLib)
 
 # Eclassmgr module
 eclassSrc = build_list('plugins/eclassmgr', 'eclass_doom3.cpp Doom3EntityClass.cpp')

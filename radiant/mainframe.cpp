@@ -43,6 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "editable.h"
 #include "ientity.h"
 #include "ieclass.h"
+#include "iregistry.h"
 #include "irender.h"
 #include "ishaders.h"
 #include "igl.h"
@@ -588,39 +589,54 @@ void Radiant_detachGameToolsPathObserver(ModuleObserver& observer)
 }
 
 // This is called from main() to start up the Radiant stuff.
-void Radiant_Initialise()
-{
-  GlobalModuleServer_Initialise();
+void Radiant_Initialise() {
+	// Initialise the module server
+	GlobalModuleServer_Initialise();
   
-  // Load default values for darkradiant, located in the game directory
-  registry().importFromFile(std::string(AppPath_get()) + "user.xml");
-  
-  // Load user preferences, these overwrite any values that have defined before
-  // This is stored in the user's folder
-  const std::string userSettingsFile = std::string(SettingsPath_get()) + "user.xml";
-  if (file_exists(userSettingsFile.c_str())) {
-  	registry().importFromFile(userSettingsFile);
-  }
-  
-  // Load the ColourSchemes from the registry
-  ColourSchemes().loadColourSchemes();
-  
- 	// Load the Radiant modules from the modules/ dir.
-  Radiant_loadModulesFromRoot(AppPath_get());
+	// Load the Radiant modules from the modules/ dir.
+	Radiant_loadModulesFromRoot(AppPath_get());
 
-  Preferences_Load();
+	// Instantiate registry
+	GlobalModuleServer::instance().set(GlobalModuleServer_get());
+	GlobalRegistryModuleRef ref;
+	
+	// Load default values for darkradiant, located in the game directory
+	GlobalRegistry().importFromFile(std::string(AppPath_get()) + "user.xml", "");
+	
+	// Traverse the game files stored in the GamesDialog class and load them into the registry
+	// The information stored in the game files is need to successfully instantiate the other modules
+	for (std::list<CGameDescription*>::iterator game = g_GamesDialog.mGames.begin(); 
+		 game != g_GamesDialog.mGames.end(); game++) 
+	{
+		// Construct the filename and load it into the registry
+		const std::string filename = std::string(AppPath_get()) + "games/" + (*game)->mGameFile.c_str();  	
+		GlobalRegistry().importFromFile(filename, "");
+	}
+  
+	// Load user preferences, these overwrite any values that have defined before
+	// This is stored in the user's folder
+	const std::string userSettingsFile = std::string(SettingsPath_get()) + "user.xml";
+	if (file_exists(userSettingsFile.c_str())) {
+		GlobalRegistry().importFromFile(userSettingsFile, "");
+	}
+ 
+	// Load the ColourSchemes from the registry
+	ColourSchemes().loadColourSchemes();
 
+	Preferences_Load();
+
+	// Load the other modules
 	Radiant_Construct(GlobalModuleServer_get());
 
-  g_gameToolsPathObservers.realise();
-  g_gameModeObservers.realise();
-  g_gameNameObservers.realise();
+	g_gameToolsPathObservers.realise();
+	g_gameModeObservers.realise();
+	g_gameNameObservers.realise();
 }
 
 void Radiant_Shutdown()
 {
   // Save the whole /darkradiant/user tree to user.xml so that the current settings are preserved
-  registry().exportToFile("user", std::string(SettingsPath_get()) + "user.xml");	
+  GlobalRegistry().exportToFile("user", std::string(SettingsPath_get()) + "user.xml");	
 
   g_gameNameObservers.unrealise();
   g_gameModeObservers.unrealise();
@@ -1134,7 +1150,7 @@ void ClipperToolExport(const BoolImportCallback& importCallback)
 
 void ShowAllLightRadiiExport(const BoolImportCallback& importCallback)
 {
-  importCallback(registry().get("user/ui/showAllLightRadii") == "1");
+  importCallback(GlobalRegistry().get("user/ui/showAllLightRadii") == "1");
 }
 
 FreeCaller1<const BoolImportCallback&, TranslateToolExport> g_translatemode_button_caller;
@@ -1287,13 +1303,13 @@ void ClipperMode()
 
 void ToggleShowAllLightRadii()
 {
-  if (registry().get("user/ui/showAllLightRadii") == "1")
+  if (GlobalRegistry().get("user/ui/showAllLightRadii") == "1")
   {
-  	registry().set("user/ui/showAllLightRadii","0");
+  	GlobalRegistry().set("user/ui/showAllLightRadii","0");
   }
   else
   { 
-  	registry().set("user/ui/showAllLightRadii","1");
+  	GlobalRegistry().set("user/ui/showAllLightRadii","1");
   }
   SceneChangeNotify();
 }

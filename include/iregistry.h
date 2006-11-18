@@ -1,0 +1,62 @@
+#ifndef IREGISTRY_H_
+#define IREGISTRY_H_
+
+#include <string>
+#include "xmlutil/Document.h"
+#include "xmlutil/Node.h"
+#include "generic/constant.h"
+
+/** Abstract base class for a registry system
+ */
+
+class Registry {
+	
+public:
+	INTEGER_CONSTANT(Version, 1);
+	STRING_CONSTANT(Name, "registry");
+
+	// Sets a variable in the XMLRegistry or retrieves one
+	virtual void 		set(const std::string& key, const std::string& value) = 0;
+	virtual std::string	get(const std::string& key) = 0;
+	
+	// Checks whether a key exists in the registry
+	virtual bool keyExists(const std::string& key) = 0;
+	
+	// Adds a whole XML file to the registry
+	virtual void importFromFile(const std::string& importFilePath, const std::string& parentKey) = 0;
+	
+	// Dumps the whole XML content to std::out for debugging purposes
+	virtual void dump() const = 0;
+	
+	// Saves the specified node and all its children into the file <filename>
+	virtual void exportToFile(const std::string& key, const std::string& filename = "-") = 0;
+	
+	// Retrieves the nodelist corresponding for the specified XPath (wraps to xml::Document)
+	virtual xml::NodeList findXPath(const std::string& path) = 0;
+	
+	// Creates a new node named <key> as children of <path> with the name attribute set to <name>
+	// The newly created node is returned after creation
+	virtual xml::Node createKeyWithName(const std::string& path, const std::string& key, const std::string& name) = 0;
+	
+	// Deletes an entire subtree from the registry
+	virtual void deleteXPath(const std::string& path) = 0;
+};
+
+// Module definitions
+
+#include "modulesystem.h"
+
+template<typename Type>
+class GlobalModule;
+typedef GlobalModule<Registry> GlobalRegistryModule;
+
+template<typename Type>
+class GlobalModuleRef;
+typedef GlobalModuleRef<Registry> GlobalRegistryModuleRef;
+
+// This is the accessor for the registry
+inline Registry& GlobalRegistry() {
+	return GlobalRegistryModule::getTable();
+}
+
+#endif /*IREGISTRY_H_*/

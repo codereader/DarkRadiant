@@ -48,6 +48,10 @@ class ColourScheme {
 		// True if the scheme must not be edited
 		bool _readOnly;
 		
+		/* Empty Colour, this serves as return value for 
+		   non-existing, but requested colours */
+		ColourItem _emptyColour; 
+		
 	public:
 		// Constructors
 		ColourScheme() {};

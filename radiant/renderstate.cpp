@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iglrender.h"
 #include "renderable.h"
 #include "qerplugin.h"
+#include "iregistry.h"
 
 #include <set>
 #include <vector>
@@ -449,7 +450,7 @@ public:
   {
 
 	// Initialise the lightScale value
-	xml::NodeList scaleList = GlobalRadiant().registry().findXPath("game/defaults/lightScale");
+	xml::NodeList scaleList = GlobalRegistry().findXPath("game/defaults/lightScale");
 	if (scaleList.size() == 1) {
 		std::stringstream stream(scaleList[0].getContent());
 		stream >> _lightScale;
@@ -1730,7 +1731,7 @@ void ShaderCache_Construct()
 
 	// Get the global default lightshader from the XML gamedescriptor.
 	
-	xml::NodeList nlDefaultLight = GlobalRadiant().registry().findXPath("game/defaults/lightShader");
+	xml::NodeList nlDefaultLight = GlobalRegistry().findXPath("game/defaults/lightShader");
 	if (nlDefaultLight.size() != 1)
 		gtkutil::fatalErrorDialog("Failed to find default lightshader in XML game descriptor.\n\nNode <b>/game/defaults/lightShader</b> not found.");
 

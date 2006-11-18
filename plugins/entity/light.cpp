@@ -52,7 +52,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stringio.h"
 #include "traverselib.h"
 #include "dragplanes.h"
-#include "qerplugin.h"
+#include "iregistry.h"
 
 #include "targetable.h"
 #include "origin.h"
@@ -912,7 +912,7 @@ public:
     renderer.SetState(m_entity.getEntityClass().getWireShader(), Renderer::eFullMaterials);
 
     // Always draw Doom 3 light bounding boxes, if the global is set
-    if (GlobalRadiant().registry().get("user/ui/showAllLightRadii") == "1") {
+    if (GlobalRegistry().get("user/ui/showAllLightRadii") == "1") {
       updateLightRadiiBox();
       renderer.addRenderable(m_radii_box, localToWorld);
     }

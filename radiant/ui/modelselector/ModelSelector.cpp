@@ -5,6 +5,7 @@
 #include "gtkutil/glwidget.h"
 #include "math/Vector3.h"
 #include "ifilesystem.h"
+#include "iregistry.h"
 
 #include <cstdlib>
 #include <cmath>
@@ -78,7 +79,7 @@ ModelSelector::ModelSelector()
 	// Create the model preview widget
 	
 	float previewHeightFactor = boost::lexical_cast<float>(
-		GlobalRadiant().registry().get("user/ui/ModelSelector/previewSizeFactor"));
+		GlobalRegistry().get("user/ui/ModelSelector/previewSizeFactor"));
 	gint glSize = gint(h * previewHeightFactor);
 	_modelPreview.setSize(glSize);
 

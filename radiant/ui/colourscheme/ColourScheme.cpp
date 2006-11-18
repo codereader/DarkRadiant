@@ -39,6 +39,7 @@ ColourItem& ColourScheme::getColour(const std::string& colourName) {
 	}
 	else {
 		globalOutputStream() << "ColourScheme: Colour " << colourName.c_str() << " doesn't exist!\n";
+		return _emptyColour;
 	}
 }
 

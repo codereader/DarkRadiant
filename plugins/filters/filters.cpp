@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ifilter.h"
 #include "iscenegraph.h"
+#include "iregistry.h"
 #include "qerplugin.h"
 #include "XMLFilter.h"
 
@@ -69,7 +70,7 @@ private:
 	void initialise() {
 
 		// Ask the XML Registry for the filter nodes
-		xml::NodeList filters = GlobalRadiant().registry().findXPath("game/filtersystem//filter");
+		xml::NodeList filters = GlobalRegistry().findXPath("game/filtersystem//filter");
 
 		// Iterate over the list of nodes, adding filter objects onto the list
 		for (xml::NodeList::iterator iter = filters.begin();
@@ -181,7 +182,8 @@ public:
  
 class FilterSystemDependencies
 : public GlobalRadiantModuleRef,
-  public GlobalSceneGraphModuleRef
+  public GlobalSceneGraphModuleRef,
+  public GlobalRegistryModuleRef
 {
 };
 
