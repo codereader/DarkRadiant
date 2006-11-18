@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ieclass.h"
 #include "igl.h"
 #include "ireference.h"
+#include "iregistry.h"
 #include "ifilter.h"
 #include "preferencesystem.h"
 #include "qerplugin.h"
@@ -55,7 +56,8 @@ class EntityDependencies :
   public GlobalFilterModuleRef,
   public GlobalPreferenceSystemModuleRef,
   public GlobalNamespaceModuleRef,
-  public GlobalModelSkinCacheModuleRef
+  public GlobalModelSkinCacheModuleRef,
+  public GlobalRegistryModuleRef
 {
 };
 

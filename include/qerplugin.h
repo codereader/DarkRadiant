@@ -28,8 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/constant.h"
 
-#include "xmlutil/Document.h"
-#include "xmlutil/XMLRegistry.h"
 #include "ui/colourscheme/ColourSchemeManager.h"
 
 // ========================================
@@ -134,7 +132,6 @@ struct _QERFuncTable_1
 
   const char* (*getGameDescriptionKeyValue)(const char* key);
   const char* (*getRequiredGameDescriptionKeyValue)(const char* key);
-  xml::XMLRegistry& (*registry)();
   ui::ColourSchemeManager& (*colourschemes)();
 
   void (*attachGameToolsPathObserver)(ModuleObserver& observer);

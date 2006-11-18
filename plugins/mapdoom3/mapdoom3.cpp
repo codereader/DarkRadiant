@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ipatch.h"
 #include "ifiletypes.h"
 #include "ieclass.h"
+#include "iregistry.h"
 #include "qerplugin.h"
 
 #include "scenelib.h"
@@ -43,7 +44,8 @@ class MapDoom3Dependencies :
   public GlobalScripLibModuleRef,
   public GlobalEntityClassManagerModuleRef,
   public GlobalSceneGraphModuleRef,
-  public GlobalBrushModuleRef
+  public GlobalBrushModuleRef,
+  public GlobalRegistryModuleRef
 {
   PatchModuleRef m_patchDef2Doom3Module;
   PatchModuleRef m_patchDoom3Module;

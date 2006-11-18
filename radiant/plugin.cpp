@@ -80,8 +80,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/callback.h"
 
-#include "xmlutil/XMLRegistry.h"
-
 const char* GameDescription_getKeyValue(const char* key)
 {
   return g_pGameDescription->getKeyValue(key);
@@ -90,12 +88,6 @@ const char* GameDescription_getKeyValue(const char* key)
 const char* GameDescription_getRequiredKeyValue(const char* key)
 {
   return g_pGameDescription->getRequiredKeyValue(key);
-}
-
-// return the pointer to the xmlRegistry instance
-xml::XMLRegistry& registry() {
-	static xml::XMLRegistry _xmlRegistry;
-	return _xmlRegistry;
 }
 
 ui::ColourSchemeManager& ColourSchemes() {
@@ -154,7 +146,6 @@ public:
     m_radiantcore.getGameDescriptionKeyValue = &GameDescription_getKeyValue;
     m_radiantcore.getRequiredGameDescriptionKeyValue = &GameDescription_getRequiredKeyValue;
     
-    m_radiantcore.registry = &registry;
     m_radiantcore.colourschemes = &ColourSchemes;
     
     m_radiantcore.attachGameToolsPathObserver = Radiant_attachGameToolsPathObserver;

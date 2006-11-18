@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ifilesystem.h"
 #include "itextures.h"
 #include "iscriplib.h"
+#include "iregistry.h"
 #include "qerplugin.h"
 
 #include "string/string.h"
@@ -37,7 +38,8 @@ class ShadersDependencies :
   public GlobalFileSystemModuleRef,
   public GlobalTexturesModuleRef,
   public GlobalScripLibModuleRef,
-  public GlobalRadiantModuleRef
+  public GlobalRadiantModuleRef,
+  public GlobalRegistryModuleRef
 {
   ImageModuleRef m_bitmapModule;
 public:

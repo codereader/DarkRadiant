@@ -22,10 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_PLUGIN_H)
 #define INCLUDED_PLUGIN_H
 
-#include "xmlutil/XMLRegistry.h"
 #include "ui/colourscheme/ColourSchemeManager.h"
 
-xml::XMLRegistry& registry();
 ui::ColourSchemeManager& ColourSchemes();
 
 class ModuleServer;

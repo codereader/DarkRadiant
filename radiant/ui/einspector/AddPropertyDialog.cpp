@@ -5,6 +5,7 @@
 
 #include "groupdialog.h"
 #include "qerplugin.h"
+#include "iregistry.h"
 
 #include <gtk/gtkwindow.h>
 #include <gtk/gtkmain.h>
@@ -141,7 +142,7 @@ GtkWidget* AddPropertyDialog::createButtonsPanel() {
 
 void AddPropertyDialog::populateTreeView() {
 	// Ask the XML registry for the list of properties
-	xml::NodeList propNodes = GlobalRadiant().registry().findXPath(PROPERTIES_XPATH);
+	xml::NodeList propNodes = GlobalRegistry().findXPath(PROPERTIES_XPATH);
 	
 	// Cache of property categories to GtkTreeIters, to allow properties
 	// to be parented to top-level categories

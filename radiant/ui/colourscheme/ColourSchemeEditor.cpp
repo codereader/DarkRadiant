@@ -1,6 +1,7 @@
 #include "ColourSchemeEditor.h"
 #include "ColourSchemeManager.h"
 #include "plugin.h"
+#include "iregistry.h"
 #include "mainframe.h"
 #include "brushmodule.h"
 #include "iscenegraph.h"
@@ -217,7 +218,7 @@ std::string ColourSchemeEditor::getSelectedScheme() {
 GtkWidget* ColourSchemeEditor::constructColourSelector(ColourItem& colour, const std::string& name) {
 	// Get the description of this colour item from the registry
 	std::string descriptionPath = std::string("user/ui/colourschemedescription/") + name;
-	std::string description = registry().get(descriptionPath);
+	std::string description = GlobalRegistry().get(descriptionPath);
 	
 	// Create a new horizontal divider
 	GtkWidget* hbox = gtk_hbox_new(FALSE, 10);

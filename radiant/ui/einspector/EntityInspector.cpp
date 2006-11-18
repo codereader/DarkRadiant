@@ -4,6 +4,7 @@
 
 #include "ientity.h"
 #include "iselection.h"
+#include "iregistry.h"
 
 #include "gtkutil/image.h"
 #include "gtkutil/dialog.h"
@@ -289,7 +290,7 @@ const PropertyParmMap& EntityInspector::getPropertyMap() {
 		
 		// Constructor queries the XML registry
 		PropertyMapConstructor() {
-			xml::NodeList pNodes = GlobalRadiant().registry().findXPath(PROPERTY_NODES_XPATH);	
+			xml::NodeList pNodes = GlobalRegistry().findXPath(PROPERTY_NODES_XPATH);	
 			for (xml::NodeList::const_iterator iter = pNodes.begin();
 				 iter != pNodes.end();
 				 ++iter)

@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "write.h"
 
 #include "ientity.h"
+#include "iregistry.h"
 #include "scenelib.h"
 #include "qerplugin.h"
 
@@ -106,7 +107,7 @@ public:
       _brushCount(0)
 	{
 		// Check the game file to see whether we need dummy brushes or not
-		if (GlobalRadiant().registry().get("game/mapFormat/compatibility/addDummyBrushes") == "true")
+		if (GlobalRegistry().get("game/mapFormat/compatibility/addDummyBrushes") == "true")
 			_writeDummyBrushes = true;
 		else
 			_writeDummyBrushes = false;
