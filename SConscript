@@ -114,6 +114,7 @@ filterEnv.Install(INSTALL + '/modules', filterLib)
 xmlRegistryEnv = module_env.Copy()
 xmlRegistrySrc = build_list('plugins/xmlregistry', 'XMLRegistry.cpp')
 xmlRegistryEnv.Append(LIBS = 'xmlutil')
+xmlRegistryEnv.useBoostRegex()
 xmlRegistryLib = xmlRegistryEnv.SharedLibrary(target='xmlregistry', source=xmlRegistrySrc)
 xmlRegistryEnv.Install(INSTALL + '/modules', xmlRegistryLib)
 
