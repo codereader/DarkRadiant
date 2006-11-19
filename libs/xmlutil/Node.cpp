@@ -91,4 +91,12 @@ std::string Node::getContent() const {
 	}
 }
 
+void Node::erase() {
+	// unlink the node from the list first, otherwise: crashes ahead!
+	xmlUnlinkNode(_xmlNode);
+	
+	// All child nodes are freed recursively
+	xmlFreeNode(_xmlNode);
+}
+
 }

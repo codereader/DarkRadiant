@@ -22,8 +22,11 @@ public:
 	// Checks whether a key exists in the registry
 	virtual bool keyExists(const std::string& key) = 0;
 	
-	// Adds a whole XML file to the registry
+	// Adds a whole XML file to the registry, no versioning check
 	virtual void importFromFile(const std::string& importFilePath, const std::string& parentKey) = 0;
+	
+	// Adds an XML file to the registry and checks if any version upgrade has to be performed
+	virtual void importUserXML(const std::string& pathToUserXML) = 0;
 	
 	// Dumps the whole XML content to std::out for debugging purposes
 	virtual void dump() const = 0;

@@ -58,4 +58,9 @@ NodeList Document::findXPath(const std::string& path) const {
     
 }
 
+// Saves the file to the disk via xmlSaveFile
+void Document::saveToFile(const std::string& filename) {
+	xmlSaveFile(filename.c_str(), _xmlDoc);
+}
+
 }

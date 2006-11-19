@@ -588,14 +588,22 @@ void Radiant_detachGameToolsPathObserver(ModuleObserver& observer)
   g_gameToolsPathObservers.detach(observer);
 }
 
+// Instantiates and populates the XMLRegistry
+void initialiseRegistry() 
+{
+	
+}
+
 // This is called from main() to start up the Radiant stuff.
-void Radiant_Initialise() {
+void Radiant_Initialise() 
+{
 	// Initialise the module server
 	GlobalModuleServer_Initialise();
   
 	// Load the Radiant modules from the modules/ dir.
 	Radiant_loadModulesFromRoot(AppPath_get());
 
+	// Initialise the registry
 	// Instantiate registry
 	GlobalModuleServer::instance().set(GlobalModuleServer_get());
 	GlobalRegistryModuleRef ref;
@@ -614,10 +622,10 @@ void Radiant_Initialise() {
 	}
   
 	// Load user preferences, these overwrite any values that have defined before
-	// This is stored in the user's folder
+	// The called method also checks for any upgrades that have to be performed
 	const std::string userSettingsFile = std::string(SettingsPath_get()) + "user.xml";
 	if (file_exists(userSettingsFile.c_str())) {
-		GlobalRegistry().importFromFile(userSettingsFile, "");
+		GlobalRegistry().importUserXML(SettingsPath_get());
 	}
  
 	// Load the ColourSchemes from the registry

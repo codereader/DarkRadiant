@@ -32,6 +32,9 @@ public:
     // Evaluate the given XPath expression and return a NodeList of matching
     // nodes.
     NodeList findXPath(const std::string& path) const;
+    
+    // Saves the file to the disk via xmlSaveFile
+    void saveToFile(const std::string& filename);
 };
 
 }

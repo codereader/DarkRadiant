@@ -35,8 +35,8 @@ public:
 	
 	// Get the actual node pointer to a given node
     xmlNodePtr getNodePtr() const;
-	
-	// Get the name of the given node
+    
+    // Get the name of the given node
     const std::string getName() const;
 	
 	// Get a list of nodes which are children of this node
@@ -61,6 +61,8 @@ public:
      
 	std::string getContent() const;
 
+	// Unlink and delete the node and all its children
+	void erase();
 };
 
 
