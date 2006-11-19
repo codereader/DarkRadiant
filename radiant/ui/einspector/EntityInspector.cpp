@@ -150,12 +150,9 @@ GtkWidget* EntityInspector::createTreeViewPane() {
 
     GtkCellRenderer* textRenderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(nameCol, textRenderer, FALSE);
-    gtk_tree_view_column_set_attributes(nameCol,
-                                        textRenderer,
-                                        "text",
-                                        PROPERTY_NAME_COLUMN,
-                                        "foreground",
-                                        TEXT_COLOUR_COLUMN,
+    gtk_tree_view_column_set_attributes(nameCol, textRenderer,
+                                        "text", PROPERTY_NAME_COLUMN,
+                                        "foreground", TEXT_COLOUR_COLUMN,
                                         NULL);
 
     gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), nameCol);                                                                        
@@ -167,7 +164,10 @@ GtkWidget* EntityInspector::createTreeViewPane() {
 
     GtkCellRenderer* valRenderer = gtk_cell_renderer_text_new();
     gtk_tree_view_column_pack_start(valCol, valRenderer, TRUE);
-    gtk_tree_view_column_set_attributes(valCol, valRenderer, "text", PROPERTY_VALUE_COLUMN, NULL);
+    gtk_tree_view_column_set_attributes(valCol, valRenderer, 
+    									"text", PROPERTY_VALUE_COLUMN, 
+    									"foreground", TEXT_COLOUR_COLUMN,
+    									NULL);
 
     gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), valCol);
 
@@ -498,7 +498,7 @@ void EntityInspector::appendClassProperties() {
 			gtk_list_store_set(_store, &iter,
              			       PROPERTY_NAME_COLUMN, a.name.c_str(),
 						       PROPERTY_VALUE_COLUMN, a.value.c_str(),
-						       TEXT_COLOUR_COLUMN, "grey",
+						       TEXT_COLOUR_COLUMN, "#707070",
 						       PROPERTY_ICON_COLUMN, NULL,
 						       -1);
 		}
