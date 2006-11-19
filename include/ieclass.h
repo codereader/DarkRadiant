@@ -30,6 +30,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/Vector3.h"
 #include "modulesystem.h"
 
+#include <boost/function.hpp>
+
 class Shader;
 class ListAttributeType;
 
@@ -62,6 +64,17 @@ struct EntityClassAttribute
 	{}
 };
 
+/** Visitor class for EntityClassAttributes.
+ */
+struct EntityClassAttributeVisitor {
+	
+	/** Visit function.
+	 * 
+	 * @param attr
+	 * The current EntityClassAttribute to visit.
+	 */
+	virtual void visit(const EntityClassAttribute&) = 0;
+};
 
 /** Entity class interface. An entity class represents a single type
  * of entity that can be created by the EntityCreator.
@@ -108,6 +121,7 @@ struct IEntityClass {
 	 */
 	virtual void setIsLight(bool isLight) = 0;
 		
+
 	/** Set this entity class' display colour.
 	 * 
 	 * @param col
@@ -122,6 +136,7 @@ struct IEntityClass {
 	 */
 	virtual const Vector3& getColour() const = 0;
 	
+
 	/** Get the Shader used for rendering this entity class in
 	 * wireframe mode.
 	 */
@@ -131,7 +146,10 @@ struct IEntityClass {
 	 * filled mode.
 	 */
 	virtual Shader* getFillShader() const = 0;
-		
+
+
+	/* ENTITY CLASS ATTRIBUTES */		
+
 	/** Insert an EntityClassAttribute.
 	 */
 	virtual void addAttribute(const EntityClassAttribute& attribute) = 0;
@@ -146,6 +164,16 @@ struct IEntityClass {
 	 * found.
 	 */
 	virtual std::string getValueForKey(const std::string& key) const = 0;
+
+	/** Enumerate the EntityClassAttibutes in turn.
+	 * 
+	 * @param visitor
+	 * An EntityClassAttributeVisitor instance.
+	 */
+	virtual void forEachClassAttribute(EntityClassAttributeVisitor&) const = 0;
+
+
+	/* MODEL AND SKIN */
 
 	/** Set a model path on this entity.
 	 * 
@@ -168,6 +196,9 @@ struct IEntityClass {
 	/** Get the model skin, or the empty string if there is no skin.
 	 */
 	virtual const std::string& getSkin() const = 0;
+	
+
+	/* INHERITANCE */
 	
 	/** Set the parent class. This is specified via an "inherit" key in the
 	 * definition.

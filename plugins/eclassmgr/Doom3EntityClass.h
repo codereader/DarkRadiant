@@ -212,10 +212,9 @@ public:
 		return _fillShader;
 	}
 	
+	/* ATTRIBUTES */
+	
 	/** Insert an EntityClassAttribute.
-	 * 
-	 * @param attribute
-	 * The EntityClassAttribute structure to insert.
 	 */
 	void addAttribute(const EntityClassAttribute& attribute) {
 		_attributes.insert(EntityAttributeMap::value_type(attribute.name, attribute));
@@ -223,13 +222,6 @@ public:
 
 	/** Look up the given key in the list of attributes and return
 	 * the value.
-	 * 
-	 * @param key
-	 * The key to look up.
-	 * 
-	 * @returns
-	 * String value of the key, or the empty string if the key was not
-	 * found.
 	 */
 	std::string getValueForKey(const std::string& key) const {
 		EntityAttributeMap::const_iterator i = _attributes.find(key);
@@ -239,6 +231,17 @@ public:
 		else {
 			return "";
 		}	
+	}
+
+	/** Enumerate the EntityClassAttributes.
+	 */
+	void forEachClassAttribute(EntityClassAttributeVisitor& visitor) const {
+		for (EntityAttributeMap::const_iterator i = _attributes.begin();
+			 i != _attributes.end();
+			 ++i)
+		{
+			visitor.visit(i->second);
+		}
 	}
 	
 	/** Set a model on this entity class.
