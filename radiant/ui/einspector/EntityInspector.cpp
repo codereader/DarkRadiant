@@ -39,6 +39,7 @@ namespace {
         PROPERTY_VALUE_COLUMN,
         TEXT_COLOUR_COLUMN,
         PROPERTY_ICON_COLUMN,
+        INHERITED_FLAG_COLUMN,
         N_COLUMNS
     };
 
@@ -131,7 +132,8 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     							    G_TYPE_STRING, // property
     							    G_TYPE_STRING, // value
                                     G_TYPE_STRING, // text colour
-    							    GDK_TYPE_PIXBUF); // value icon
+    							    GDK_TYPE_PIXBUF, // value icon
+    							    G_TYPE_STRING); // inherited flag
     
     // Create the TreeView widget and link it to the model
     _treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore));
@@ -342,12 +344,22 @@ void EntityInspector::_onValEntryActivate(GtkWidget* w, EntityInspector* self) {
 }
 
 bool EntityInspector::_onPopupMenu(GtkWidget* w, GdkEventButton* ev, EntityInspector* self) {
+
 	// Popup on right-click events only
 	if (ev->button == 3) {
+
+		// Make sure the Delete item is only available for explicit (non-inherited)
+		// properties
+		if (self->getListSelection(INHERITED_FLAG_COLUMN) != "1")
+			gtk_widget_set_sensitive(self->_delKeyMenuItem, TRUE);
+		else
+			gtk_widget_set_sensitive(self->_delKeyMenuItem, FALSE);
+
+		// Display the menu
 		gtk_menu_popup(GTK_MENU(self->_contextMenu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
 	}
+
 	return FALSE;
-		
 }
 
 void EntityInspector::_onDeleteProperty(GtkMenuItem* item, EntityInspector* self) {
@@ -450,6 +462,7 @@ void EntityInspector::refreshTreeModel() {
 						       PROPERTY_VALUE_COLUMN, value,
 						       TEXT_COLOUR_COLUMN, "black",
 						       PROPERTY_ICON_COLUMN, PropertyEditorFactory::getPixbufFor(type),
+						       INHERITED_FLAG_COLUMN, "", // not inherited
 						       -1);
 							   	
 		}
@@ -500,6 +513,7 @@ void EntityInspector::appendClassProperties() {
 						       PROPERTY_VALUE_COLUMN, a.value.c_str(),
 						       TEXT_COLOUR_COLUMN, "#707070",
 						       PROPERTY_ICON_COLUMN, NULL,
+						       INHERITED_FLAG_COLUMN, "1", // inherited
 						       -1);
 		}
 	};
