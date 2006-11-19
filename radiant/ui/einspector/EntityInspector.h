@@ -67,6 +67,9 @@ private:
     // GtkUtil IdleDraw class. This allows redraw calls to be scheduled for
     // when GTK is idle.
     IdleDraw _idleDraw;
+    
+    // Whether to show inherited properties or not
+    bool _showInherited;
 
 private:
 
@@ -92,9 +95,12 @@ private:
 	static void _onDeleteProperty(GtkMenuItem*, EntityInspector*);
 	static void _onAddProperty(GtkMenuItem*, EntityInspector*);
 
+	static void _onToggleShowInherited(GtkToggleButton*, EntityInspector*);
+
     // Routines to populate the TreeStore with the keyvals attached to the
     // currently-selected object. 
     void refreshTreeModel(); 
+    void appendClassProperties();
 
 	// Update the GTK components when a new selection is made in the tree view
     void treeSelectionChanged();

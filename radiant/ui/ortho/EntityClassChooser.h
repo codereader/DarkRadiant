@@ -44,7 +44,6 @@ private:
 	// The 3D coordinates of the point where the entity must be created.
 	Vector3 _lastPoint;
 
-
 private:
 
 	/* Widget construction helpers */

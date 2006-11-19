@@ -3,6 +3,7 @@
 #include "AddPropertyDialog.h"
 
 #include "ientity.h"
+#include "ieclass.h"
 #include "iselection.h"
 #include "iregistry.h"
 
@@ -46,10 +47,17 @@ namespace {
 // Constructor creates UI components for the EntityInspector dialog
 
 EntityInspector::EntityInspector()
-:_idleDraw(MemberCaller<EntityInspector, &EntityInspector::callbackRedraw>(*this)) // Set the IdleDraw
+: _idleDraw(MemberCaller<EntityInspector, &EntityInspector::callbackRedraw>(*this)), // Set the IdleDraw
+  _showInherited(false)
 {
     _widget = gtk_vbox_new(FALSE, 0);
     
+	// Pack in GUI components
+	
+	GtkWidget* showInherited = gtk_check_button_new_with_label("Show inherited properties");
+	g_signal_connect(G_OBJECT(showInherited), "toggled", G_CALLBACK(_onToggleShowInherited), this);
+
+	gtk_box_pack_start(GTK_BOX(_widget), showInherited, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(_widget), createTreeViewPane(), TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(_widget), createDialogPane(), FALSE, FALSE, 0);
     
@@ -355,6 +363,17 @@ void EntityInspector::_onAddProperty(GtkMenuItem* item, EntityInspector* self) {
 		self->_selectedEntity->setKeyValue(property.c_str(), "-");
 }
 
+void EntityInspector::_onToggleShowInherited(GtkToggleButton* b, EntityInspector* self) {
+	if (gtk_toggle_button_get_active(b)) {
+		self->_showInherited = true;
+	}
+	else {
+		self->_showInherited = false;
+	}
+	// Refresh list display
+	self->refreshTreeModel();
+}
+
 
 /* END GTK CALLBACKS */
 
@@ -441,9 +460,53 @@ void EntityInspector::refreshTreeModel() {
 	ListPopulateVisitor visitor(_listStore, getPropertyMap());
 	_selectedEntity->forEachKeyValue(visitor);
 
+	// Add the inherited properties if the toggle is set
+	if (_showInherited) {
+		appendClassProperties();
+	}
+
 	// Force an update of widgets
 	treeSelectionChanged();
 
+}
+
+// Append inherited (entityclass) properties
+void EntityInspector::appendClassProperties() {
+
+	// Get the entityclass for the current entity
+	const char* className = _selectedEntity->getKeyValue("classname");
+	IEntityClass* eclass = GlobalEntityClassManager().findOrInsert(className, true);
+	
+	// Use a functor to walk the entityclass and add all of its attributes
+	// to the tree
+
+	struct ClassPropertyVisitor
+	: public EntityClassAttributeVisitor
+	{
+
+		// List store to populate
+		GtkListStore* _store;
+
+		// Constructor
+		ClassPropertyVisitor(GtkListStore* store)
+		: _store(store) {}
+
+		// Required visitor function
+		void visit(const EntityClassAttribute& a) {
+			GtkTreeIter iter;
+			gtk_list_store_append(_store, &iter);
+			gtk_list_store_set(_store, &iter,
+             			       PROPERTY_NAME_COLUMN, a.name.c_str(),
+						       PROPERTY_VALUE_COLUMN, a.value.c_str(),
+						       TEXT_COLOUR_COLUMN, "grey",
+						       PROPERTY_ICON_COLUMN, NULL,
+						       -1);
+		}
+	};
+	
+	// Visit the entity class
+	ClassPropertyVisitor visitor(_listStore);
+	eclass->forEachClassAttribute(visitor);
 }
 
 // Update the selected Entity pointer
