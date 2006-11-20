@@ -19,15 +19,17 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-// QERadiant PlugIns
-//
-//
+/* greebo: This is where the interface for other plugins is defined.
+ * Functions that should be accessible via GlobalRadiant() are defined here 
+ * as function pointers. The class RadiantCoreAPI in plugin.cpp makes sure
+ * that these variables are pointing to the correct functions. 
+ */
 
 #ifndef __QERPLUGIN_H__
 #define __QERPLUGIN_H__
 
 #include "generic/constant.h"
-
+#include "math/Vector3.h"
 #include "ui/colourscheme/ColourSchemeManager.h"
 
 // ========================================
@@ -79,8 +81,6 @@ typedef char* (* PFN_QERAPP_DIRDIALOG) (GtkWidget *parent, const char* title/* =
 
 // return true if the user closed the dialog with 'Ok'
 // 'color' is used to set the initial value and store the selected value
-template<typename Element> class BasicVector3;
-typedef BasicVector3<float> Vector3;
 typedef bool (* PFN_QERAPP_COLORDIALOG) (GtkWidget *parent, Vector3& color,
                                                const char* title/* = "Choose Color"*/);
 
@@ -91,8 +91,8 @@ typedef GtkImage* (* PFN_QERAPP_NEWIMAGE) (const char* filename);
 
 // ========================================
 
-namespace scene
-{
+// Forward declarations
+namespace scene {
   class Node;
 }
 
@@ -100,20 +100,20 @@ class ModuleObserver;
 
 #include "signal/signalfwd.h"
 #include "windowobserver.h"
-#include "math/Vector3.h"
 
 typedef SignalHandler3<const WindowVector&, ButtonIdentifier, ModifierFlags> MouseEventHandler;
 typedef SignalFwd<MouseEventHandler>::handler_id_type MouseEventHandlerId;
 
-enum VIEWTYPE
-{
+// Possible types of the orthogonal view window
+enum VIEWTYPE {
   YZ = 0,
   XZ = 1,
   XY = 2
 };
 
-// the radiant core API
-struct _QERFuncTable_1
+// The radiant core API, formerly known as _QERFuncTable_1
+// This contains pointers to all the core functions that should be available via GlobalRadiant()
+struct RadiantCoreFunctions
 {
   INTEGER_CONSTANT(Version, 1);
   STRING_CONSTANT(Name, "radiant");
@@ -149,6 +149,7 @@ struct _QERFuncTable_1
   void (*XYWindowMouseDown_disconnect)(MouseEventHandlerId id);
   VIEWTYPE (*XYWindow_getViewType)();
   Vector3 (*XYWindow_windowToWorld)(const WindowVector& position);
+  
   const char* (*TextureBrowser_getSelectedShader)();
 
   // GTK+ functions
@@ -156,21 +157,20 @@ struct _QERFuncTable_1
   PFN_QERAPP_FILEDIALOG  m_pfnFileDialog;
   PFN_QERAPP_DIRDIALOG   m_pfnDirDialog;
   PFN_QERAPP_COLORDIALOG m_pfnColorDialog;
-
 };
 
+// RadiantCoreAPI Module Definitions
 #include "modulesystem.h"
 
 template<typename Type>
 class GlobalModule;
-typedef GlobalModule<_QERFuncTable_1> GlobalRadiantModule;
+typedef GlobalModule<RadiantCoreFunctions> GlobalRadiantModule;
 
 template<typename Type>
 class GlobalModuleRef;
-typedef GlobalModuleRef<_QERFuncTable_1> GlobalRadiantModuleRef;
+typedef GlobalModuleRef<RadiantCoreFunctions> GlobalRadiantModuleRef;
 
-inline _QERFuncTable_1& GlobalRadiant()
-{
+inline RadiantCoreFunctions& GlobalRadiant() {
   return GlobalRadiantModule::getTable();
 }
 

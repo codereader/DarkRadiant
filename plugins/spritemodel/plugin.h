@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define USE_QERTABLE_DEFINE
 #include "qerplugin.h"
-extern _QERFuncTable_1 __QERTABLENAME;
+extern RadiantCoreFunctions __QERTABLENAME;
 
 #define USE_QGLTABLE_DEFINE
 #include "igl.h"
