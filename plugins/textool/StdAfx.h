@@ -126,7 +126,7 @@ typedef struct
 #include "ControlPointsManager.h"
 
 extern OpenGLBinding		        g_QglTable;
-extern _QERFuncTable_1			g_FuncTable;
+extern RadiantCoreFunctions			g_FuncTable;
 // prefs globals
 // NOTE: these are used by the CControlPointsManager classes, not very C++ish
 extern bool						g_bPrefsUpdateCameraView;
