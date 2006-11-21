@@ -113,7 +113,7 @@ enum VIEWTYPE {
 
 // The radiant core API, formerly known as _QERFuncTable_1
 // This contains pointers to all the core functions that should be available via GlobalRadiant()
-struct RadiantCoreFunctions
+struct IRadiant
 {
   INTEGER_CONSTANT(Version, 1);
   STRING_CONSTANT(Name, "radiant");
@@ -164,13 +164,13 @@ struct RadiantCoreFunctions
 
 template<typename Type>
 class GlobalModule;
-typedef GlobalModule<RadiantCoreFunctions> GlobalRadiantModule;
+typedef GlobalModule<IRadiant> GlobalRadiantModule;
 
 template<typename Type>
 class GlobalModuleRef;
-typedef GlobalModuleRef<RadiantCoreFunctions> GlobalRadiantModuleRef;
+typedef GlobalModuleRef<IRadiant> GlobalRadiantModuleRef;
 
-inline RadiantCoreFunctions& GlobalRadiant() {
+inline IRadiant& GlobalRadiant() {
   return GlobalRadiantModule::getTable();
 }
 

@@ -124,9 +124,9 @@ const char* TextureBrowser_getSelectedShader()
 
 class RadiantCoreAPI
 {
-  RadiantCoreFunctions m_radiantcore;
+  IRadiant m_radiantcore;
 public:
-  typedef RadiantCoreFunctions Type;
+  typedef IRadiant Type;
   STRING_CONSTANT(Name, "*");
 
   RadiantCoreAPI()
@@ -170,7 +170,7 @@ public:
     m_radiantcore.m_pfnColorDialog = &color_dialog;
     m_radiantcore.m_pfnDirDialog = &dir_dialog;
   }
-  RadiantCoreFunctions* getTable()
+  IRadiant* getTable()
   {
     return &m_radiantcore;
   }
