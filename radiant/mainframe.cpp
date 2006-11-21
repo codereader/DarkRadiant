@@ -47,7 +47,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iregistry.h"
 #include "irender.h"
 #include "ishaders.h"
-#include "ibrushexport.h"
 #include "igl.h"
 #include "moduleobserver.h"
 #include "server.h"
