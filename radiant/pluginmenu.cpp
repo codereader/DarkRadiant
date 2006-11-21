@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/pointer.h"
 #include "gtkutil/menu.h"
 
-#include "pluginmanager.h"
+#include "plugin/PluginManager.h"
 #include "mainframe.h"
 #include "preferences.h"
 
@@ -45,7 +45,7 @@ void plugin_activated(GtkWidget* widget, gpointer data)
 #include <stack>
 typedef std::stack<GtkWidget*> WidgetStack;
 
-void PlugInMenu_Add(GtkMenu* plugin_menu, IPlugIn* pPlugIn)
+void PlugInMenu_Add(GtkMenu* plugin_menu, IPlugin* pPlugIn)
 {
   GtkWidget *menu, *item, *parent, *subMenu;
   const char *menuText, *menuCommand;
@@ -145,7 +145,7 @@ void PluginsMenu_populate()
     PluginsMenuConstructor(GtkMenu* menu) : m_menu(menu)
     {
     }
-    void visit(IPlugIn& plugin)
+    void visit(IPlugin& plugin)
     {
       PlugInMenu_Add(m_menu, &plugin);
     }
