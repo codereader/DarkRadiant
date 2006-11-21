@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 #include "version.h"
 
+#include "brushexport/BrushExportOBJ.h"
 #include "ui/einspector/EntityInspector.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "ui/common/ToolbarCreator.h"
@@ -46,6 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iregistry.h"
 #include "irender.h"
 #include "ishaders.h"
+#include "ibrushexport.h"
 #include "igl.h"
 #include "moduleobserver.h"
 #include "server.h"
@@ -87,6 +89,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/widget.h"
 #include "gtkutil/IconTextMenuToggle.h"
 #include "gtkutil/TextMenuItem.h"
+#include "gtkutil/messagebox.h"
 
 #include "autosave.h"
 #include "brushmanip.h"
@@ -108,7 +111,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "patchdialog.h"
 #include "patchmanip.h"
 #include "plugin.h"
-#include "pluginmanager.h"
+#include "plugin/PluginManager.h"
 #include "pluginmenu.h"
 #include "points.h"
 #include "preferences.h"
@@ -588,12 +591,6 @@ void Radiant_detachGameToolsPathObserver(ModuleObserver& observer)
   g_gameToolsPathObservers.detach(observer);
 }
 
-// Instantiates and populates the XMLRegistry
-void initialiseRegistry() 
-{
-	
-}
-
 // This is called from main() to start up the Radiant stuff.
 void Radiant_Initialise() 
 {
@@ -606,13 +603,13 @@ void Radiant_Initialise()
 	// Initialise the registry
 	// Instantiate registry
 	GlobalModuleServer::instance().set(GlobalModuleServer_get());
-	GlobalRegistryModuleRef ref;
+	GlobalRegistryModuleRef registryRef;
 	
 	// Load default values for darkradiant, located in the game directory
 	GlobalRegistry().importFromFile(std::string(AppPath_get()) + "user.xml", "");
 	
 	// Traverse the game files stored in the GamesDialog class and load them into the registry
-	// The information stored in the game files is need to successfully instantiate the other modules
+	// The information stored in the game files is needed to successfully instantiate the other modules
 	for (std::list<CGameDescription*>::iterator game = g_GamesDialog.mGames.begin(); 
 		 game != g_GamesDialog.mGames.end(); game++) 
 	{
@@ -635,7 +632,7 @@ void Radiant_Initialise()
 
 	// Load the other modules
 	Radiant_Construct(GlobalModuleServer_get());
-
+	
 	g_gameToolsPathObservers.realise();
 	g_gameModeObservers.realise();
 	g_gameNameObservers.realise();
@@ -1788,6 +1785,9 @@ GtkMenuItem* create_edit_menu()
   create_menu_item_with_mnemonic(convert_menu, "To Whole _Entities", "ExpandSelectionToEntities");
 
   menu_separator(menu);
+  create_menu_item_with_mnemonic(menu, "Export Selected Brushes to _OBJ", "BrushExportOBJ");
+
+  menu_separator(menu);
   create_menu_item_with_mnemonic(menu, "Pre_ferences...", "Preferences");
 
   return edit_menu_item;
@@ -1980,6 +1980,14 @@ void RefreshShaders()
   UpdateAllWindows();
 }
 
+void CallBrushExportOBJ() {
+	if (GlobalSelectionSystem().countSelected() != 0) {
+		export_selected(MainFrame_getWindow());
+	}
+	else {
+		gtk_MessageBox(GTK_WIDGET(MainFrame_getWindow()), "No Brushes Selected!", "Error", eMB_OK, eMB_ICONERROR);
+	}
+}
 
 GtkMenuItem* create_misc_menu()
 {
@@ -3102,7 +3110,7 @@ void MainFrame_Construct()
   GlobalCommands_insert("TextureDirectoryList", FreeCaller<DoTextureListDlg>());
 
   GlobalCommands_insert("RefreshShaders", FreeCaller<RefreshShaders>());
-
+  
   Grid_registerCommands();
 
   GlobalCommands_insert("SnapToGrid", FreeCaller<Selection_SnapToGrid>(), Accelerator('G', (GdkModifierType)GDK_CONTROL_MASK));
@@ -3129,7 +3137,8 @@ void MainFrame_Construct()
   GlobalCommands_insert("SelectNudgeDown", FreeCaller<Selection_NudgeDown>(), Accelerator(GDK_Down, (GdkModifierType)GDK_MOD1_MASK));
 
   GlobalCommands_insert("EditColourScheme", FreeCaller<EditColourScheme>());
-
+  GlobalCommands_insert("BrushExportOBJ", FreeCaller<CallBrushExportOBJ>());
+  
   Patch_registerCommands();
   XYShow_registerCommands();
 

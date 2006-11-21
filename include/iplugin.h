@@ -50,4 +50,23 @@ template<typename Type>
 class ModulesRef;
 typedef ModulesRef<_QERPluginTable> PluginModulesRef;
 
+// ===============================================================================
+
+#include <cstddef>
+
+/* Pure virtual interface for a plugin
+   temporary solution for migration from old plugin tech to synapse plugins */
+class IPlugin {
+public:
+  IPlugin() { }
+  virtual ~IPlugin() { }  
+  
+  virtual const char* getMenuName() = 0;
+  virtual std::size_t getCommandCount() = 0;
+  virtual const char* getCommand(std::size_t) = 0;
+  virtual const char* getCommandTitle(std::size_t) = 0;
+  virtual void addMenuID(std::size_t) = 0;
+  virtual bool ownsCommandID(std::size_t n) = 0;
+};
+
 #endif
