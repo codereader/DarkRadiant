@@ -243,7 +243,8 @@ namespace std
   }
 }
 
-
+/** Single traversable node.
+ */
 class TraversableNode : public scene::Traversable
 {
 public:
@@ -270,18 +271,23 @@ public:
     }
     m_observer = 0;
   }
-  void insert(scene::Node& node)
-  {
-    assert(m_node == 0);
 
-    m_node = &node;
-    node.IncRef();
+	/** Insert a contained node.
+	 */
+	void insert(scene::Node& node) {
+	    // Throw an exception if there is already a contained node
+	    if (m_node != 0) {
+	    	throw std::runtime_error("TraversableNode::insert() : already a contained node.");
+	    }
+    
+    	m_node = &node;
+		node.IncRef();
 
-    if(m_observer != 0)
-    {
-      m_observer->insert(node);
-    }
-  }
+		if(m_observer != 0) {
+			m_observer->insert(node);
+		}
+	}
+	
   void erase(scene::Node& node)
   {
     assert(m_node == &node);

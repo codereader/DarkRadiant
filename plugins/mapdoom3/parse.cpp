@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ieclass.h"
 #include "iscriplib.h"
 #include "scenelib.h"
+#include "traverselib.h"
 #include "string/string.h"
 #include "stringio.h"
 
@@ -98,7 +99,14 @@ NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entit
       scene::Traversable* traversable = Node_getTraversable(entity);
       if(Node_getEntity(entity)->isContainer() && traversable != 0)
       {
-        traversable->insert(primitive);
+		// Try to insert the primitive into the entity. This may throw an exception if
+		// the entity should not contain brushes (e.g. a func_static with a model key)
+        try {
+        	traversable->insert(primitive);
+        }
+        catch (std::runtime_error e) {
+        	return g_nullNode;
+        }
       }
       else
       {
