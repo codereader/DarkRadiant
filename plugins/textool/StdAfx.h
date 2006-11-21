@@ -125,8 +125,8 @@ typedef struct
 } CtrlPts_t;
 #include "ControlPointsManager.h"
 
-extern OpenGLBinding		        g_QglTable;
-extern RadiantCoreFunctions			g_FuncTable;
+extern OpenGLBinding	g_QglTable;
+extern IRadiant			g_FuncTable;
 // prefs globals
 // NOTE: these are used by the CControlPointsManager classes, not very C++ish
 extern bool						g_bPrefsUpdateCameraView;

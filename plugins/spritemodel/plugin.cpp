@@ -106,7 +106,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // Globals
 
 // function tables
-RadiantCoreFunctions __QERTABLENAME;
+IRadiant __QERTABLENAME;
 OpenGLBinding g_QglTable;
 _QERShadersTable g_ShadersTable;
 

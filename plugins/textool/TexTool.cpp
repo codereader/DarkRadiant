@@ -167,7 +167,7 @@ int DoMessageBox (const char* lpText, const char* lpCaption, guint32 uType)
 }
 
 // Radiant function table
-RadiantCoreFunctions g_FuncTable;
+IRadiant g_FuncTable;
 
 // plugin name
 const char *PLUGIN_NAME = "Q3 Texture Tools";
