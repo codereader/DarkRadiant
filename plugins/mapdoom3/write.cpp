@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "write.h"
 
 #include "ientity.h"
+#include "ieclass.h"
 #include "iregistry.h"
 #include "scenelib.h"
 #include "qerplugin.h"
@@ -83,8 +84,9 @@ void Entity_ExportTokens(const Entity& entity, std::ostream& os)
 
 class WriteTokensWalker : public scene::Traversable::Walker
 {
-	// Stack to record descent through entities to brushes
-	mutable std::vector<bool> _entityStack;
+	// Stack to hold the parent entity when writing a brush. Either
+	// the parent Entity is pushed, or a NULL pointer.
+	mutable std::vector<Entity*> _entityStack;
 
 	// Output stream to write to
 	std::ostream& _outStream;
@@ -111,6 +113,7 @@ public:
 			_writeDummyBrushes = true;
 		else
 			_writeDummyBrushes = false;
+			
 	}
 	
 	// Pre-descent callback
@@ -122,8 +125,8 @@ public:
 
 	if(entity != 0) { // ENTITY
 
-		// Push the entity flag to the stack
-		_entityStack.push_back(true);
+		// Push the entity
+		_entityStack.push_back(entity);
 
     	// Write out the entity number comment
 		_outStream << "// entity " << _entityCount++ << "\n";
@@ -141,14 +144,14 @@ public:
     else  { // BRUSH
 
 		// No entity flag to stack
-		_entityStack.push_back(false);
+		_entityStack.push_back(NULL);
 
     	// Get the brush token exporter
 		MapExporter* exporter = Node_getMapExporter(node);
 		if(exporter != 0) {
 
 			// Brush count comment
-	        _outStream << "// primitive " << _brushCount++ << "\n";
+	        _outStream << "// brush " << _brushCount++ << "\n";
 
 			// Pass the ostream to the primitive's contained tokenexporter
 			exporter->exportTokens(_outStream);
@@ -162,11 +165,17 @@ public:
 	void post(scene::Node& node) const {
 
 		// Check if we are popping an entity
-		if(_entityStack.back()) {
+		Entity* ent = _entityStack.back();
+
+		if(ent != NULL) {
 			
 			// If the brush count is 0 and we are adding dummy brushes to please
-			// the Doom 3 editor, do so here
-			if (_writeDummyBrushes && _brushCount == 0) {
+			// the Doom 3 editor, do so here.
+			if (_writeDummyBrushes 
+				&& _brushCount == 0
+				&& ent->getEntityClass().isFixedSize()
+				&& !ent->getEntityClass().isLight()) 
+			{
 				_outStream << DUMMY_BRUSH;
 			}
 
