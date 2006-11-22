@@ -28,10 +28,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ipatch.h"
 #include "ieclass.h"
 #include "iscriplib.h"
+#include "qerplugin.h"
 #include "scenelib.h"
 #include "traverselib.h"
 #include "string/string.h"
 #include "stringio.h"
+
+#include "gtkutil/ModalInfoDialog.h"
+
+#include <gtk/gtkmain.h>
+
+#include <boost/lexical_cast.hpp>
 
 inline MapImporter* Node_getMapImporter(scene::Node& node)
 {
@@ -138,23 +145,31 @@ NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entit
 
 void Map_Read(scene::Node& root, Tokeniser& tokeniser, EntityCreator& entityTable, const PrimitiveParser& parser)
 {
-  int count_entities = 0;
-  for(;;)
-  {
-    tokeniser.nextLine();
-    if (!tokeniser.getToken()) // { or 0
-		  break;
+	// Create an info display panel to track load progress
+	gtkutil::ModalInfoDialog dialog(GlobalRadiant().getMainWindow(),
+									"Loading map");
+	int count_entities = 0;
+	for (int entCount = 0; ; entCount++) {
 
-    NodeSmartReference entity(Entity_parseTokens(tokeniser, entityTable, parser, count_entities));
+  		// Process GTK events to let the dialog update
+		while (gtk_events_pending())
+			gtk_main_iteration();
+  	
+		tokeniser.nextLine();
+		if (!tokeniser.getToken()) // { or 0
+			break;
 
-    if(entity == g_nullNode)
-    {
-      globalErrorStream() << "entity " << count_entities << ": parse error\n";
-      return;
-    }
+		NodeSmartReference entity(Entity_parseTokens(tokeniser, entityTable, parser, entCount));
 
-    Node_getTraversable(root)->insert(entity);
+		if(entity == g_nullNode) {
+			globalErrorStream() << "entity " << count_entities << ": parse error\n";
+			return;
+		}
 
-    ++count_entities;
-  }
+		Node_getTraversable(root)->insert(entity);
+
+		// Update the dialog text
+		dialog.setText("Loaded entity " + boost::lexical_cast<std::string>(entCount));
+
+	}
 }

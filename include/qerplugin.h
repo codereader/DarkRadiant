@@ -39,6 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // this API does not depend on gtk+ or glib
 typedef struct _GtkWidget GtkWidget;
+typedef struct _GtkWindow GtkWindow;
 
 enum EMessageBoxType
 {
@@ -117,6 +118,10 @@ struct IRadiant
 {
   INTEGER_CONSTANT(Version, 1);
   STRING_CONSTANT(Name, "radiant");
+
+	/** Return the main application GtkWindow.
+	 */
+	GtkWindow* (*getMainWindow) ();
 
   const char* (*getEnginePath)();
   const char* (*getAppPath)();

@@ -1030,7 +1030,6 @@ Map_LoadFile
 void Map_LoadFile (const char *filename)
 {
   globalOutputStream() << "Loading map from " << filename << "\n";
-  ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Loading Map");
 
   g_map.m_name = filename;
   Map_UpdateTitle(g_map);
@@ -1619,8 +1618,6 @@ void Map_RegionBrush (void)
 //
 bool Map_ImportFile(const char* filename)
 {
-  ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Loading Map");
-
   bool success = false;
   {
     Resource* resource = GlobalReferenceCache().capture(filename);
@@ -2343,7 +2340,6 @@ public:
     {
       if(g_map.m_resource != 0)
       {
-        ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Loading Map");
 	      g_map.m_resource->realise();
       }
     }
