@@ -282,21 +282,24 @@ void EntityClassDoom3_loadFile(const char* filename)
 
 // Find or insert an EntityClass with the given name.
 
-IEntityClass *EntityClassDoom3_findOrInsert(const char *name, bool has_brushes)
+IEntityClass *EntityClassDoom3_findOrInsert(const std::string& name, bool has_brushes)
 {
     // Return an error if no name is given
-    if (string_empty(name)) {
+    if (name.size() == 0) {
         return NULL;
     }
 
+	// Convert string to lowercase, for case-insensitive lookup
+	std::string lName = boost::algorithm::to_lower_copy(name);
+
     // Find the EntityClass in the map.
-    EntityClasses::iterator i = g_EntityClassDoom3_classes.find(name);
+    EntityClasses::iterator i = g_EntityClassDoom3_classes.find(lName);
     if (i != g_EntityClassDoom3_classes.end()) {
         return i->second; // found it, return
     }
 
     // Otherwise insert the new EntityClass
-    IEntityClass *e = eclass::Doom3EntityClass::create(name, has_brushes);
+    IEntityClass *e = eclass::Doom3EntityClass::create(lName, has_brushes);
     IEntityClass *inserted = EntityClassDoom3_insertUnique(e);
 
     return inserted;

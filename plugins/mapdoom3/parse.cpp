@@ -96,23 +96,25 @@ NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entit
         return g_nullNode;
       }
 
-      scene::Traversable* traversable = Node_getTraversable(entity);
-      if(Node_getEntity(entity)->isContainer() && traversable != 0)
-      {
-		// Try to insert the primitive into the entity. This may throw an exception if
-		// the entity should not contain brushes (e.g. a func_static with a model key)
-        try {
-        	traversable->insert(primitive);
-        }
-        catch (std::runtime_error e) {
-        	return g_nullNode;
-        }
-      }
-      else
-      {
-        globalErrorStream() << "entity " << index << ": type " << classname << ": discarding brush " << count_primitives << "\n";
-      }
-      ++count_primitives;
+		scene::Traversable* traversable = Node_getTraversable(entity);
+		if(Node_getEntity(entity)->isContainer() 
+		   && traversable != 0) 
+		{
+			// Try to insert the primitive into the entity. This may throw an exception if
+			// the entity should not contain brushes (e.g. a func_static with a model key)
+	        try {
+	        	traversable->insert(primitive);
+	        }
+	        catch (std::runtime_error e) {
+	        	// Warn, but just ignore the brush
+	        	globalErrorStream() << "[mapdoom3] Entity " << index << " failed to accept brush, discarding\n";
+	        }
+		}
+		else {
+			globalErrorStream() << "entity " << index << ": type " << classname << ": discarding brush " << count_primitives << "\n";
+		}
+		
+		++count_primitives;
     }
     else // epair
     {
