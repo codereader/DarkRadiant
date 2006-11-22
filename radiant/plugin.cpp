@@ -131,6 +131,8 @@ public:
 
   RadiantCoreAPI()
   {
+  	m_radiantcore.getMainWindow = MainFrame_getWindow;
+  	
     m_radiantcore.getEnginePath = &EnginePath_get;
     m_radiantcore.getAppPath = &AppPath_get;
     m_radiantcore.getSettingsPath = &SettingsPath_get;

@@ -73,7 +73,6 @@ bool MapResource_loadFile(const MapFormat& format, scene::Node& root, const char
   if(!file.failed())
   {
     globalOutputStream() << "success\n";
-    ScopeDisableScreenUpdates disableScreenUpdates(path_get_filename_start(filename));
     ASSERT_NOTNULL(g_entityCreator);
     format.readGraph(root, file, *g_entityCreator);
     return true;
@@ -223,8 +222,6 @@ ModelLoader* ModelLoader_forType(const char* type)
 
 NodeSmartReference ModelResource_load(ModelLoader* loader, const char* name)
 {
-  ScopeDisableScreenUpdates disableScreenUpdates(path_get_filename_start(name));
-
   NodeSmartReference model(g_nullModel);
 
   {
