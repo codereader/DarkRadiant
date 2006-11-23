@@ -34,9 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "string/string.h"
 #include "stringio.h"
 
-#include "gtkutil/ModalInfoDialog.h"
-
-#include <gtk/gtkmain.h>
+#include "gtkutil/ModalProgressDialog.h"
 
 #include <boost/lexical_cast.hpp>
 
@@ -146,15 +144,14 @@ NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entit
 void Map_Read(scene::Node& root, Tokeniser& tokeniser, EntityCreator& entityTable, const PrimitiveParser& parser)
 {
 	// Create an info display panel to track load progress
-	gtkutil::ModalInfoDialog dialog(GlobalRadiant().getMainWindow(),
-									"Loading map");
+	gtkutil::ModalProgressDialog dialog(GlobalRadiant().getMainWindow(),
+										"Loading map");
 	int count_entities = 0;
 	for (int entCount = 0; ; entCount++) {
 
-  		// Process GTK events to let the dialog update
-		while (gtk_events_pending())
-			gtk_main_iteration();
-  	
+		// Update the dialog text
+		dialog.setText("Loading entity " + boost::lexical_cast<std::string>(entCount));
+
 		tokeniser.nextLine();
 		if (!tokeniser.getToken()) // { or 0
 			break;
@@ -168,8 +165,6 @@ void Map_Read(scene::Node& root, Tokeniser& tokeniser, EntityCreator& entityTabl
 
 		Node_getTraversable(root)->insert(entity);
 
-		// Update the dialog text
-		dialog.setText("Loaded entity " + boost::lexical_cast<std::string>(entCount));
 
 	}
 }

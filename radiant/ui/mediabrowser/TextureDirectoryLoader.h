@@ -3,13 +3,11 @@
 
 #include "ishaders.h"
 
-#include "gtkutil/ModalInfoDialog.h"
+#include "gtkutil/ModalProgressDialog.h"
 #include "mainframe.h"
 
 #include <string>
 #include <boost/algorithm/string/predicate.hpp>
-
-#include <gtk/gtkmain.h>
 
 namespace ui
 {
@@ -24,7 +22,7 @@ class TextureDirectoryLoader
 	const std::string _searchDir;
 	
 	// Modal dialog window to display progress
-	gtkutil::ModalInfoDialog _dialog;
+	gtkutil::ModalProgressDialog _dialog;
 	
 public:
 	typedef const char* first_argument_type;
@@ -39,10 +37,6 @@ public:
 	void operator() (const char* shaderName) {
 
 		const std::string sName(shaderName);
-
-		// Process GTK events to let the dialog update
-		while (gtk_events_pending())
-			gtk_main_iteration();
 
 		// Visited texture must start with the directory name
 		// separated by a slash.

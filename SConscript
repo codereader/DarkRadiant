@@ -82,6 +82,7 @@ gtkutil_src = '\
   widget.cpp\
   window.cpp\
   xorrectangle.cpp\
+  ModalProgressDialog.cpp\
 '
 
 gtkutil_lib = gtkutil_env.StaticLibrary(target='libs/gtkutil', source=build_list('libs/gtkutil', gtkutil_src))
@@ -161,10 +162,11 @@ image_env.Install(INSTALL + '/modules', image_lib)
 mapdoom3_env = module_env.Copy()
 mapdoom3_env.useGtk2()
 mapdoom3_lst=build_list('plugins/mapdoom3', 'mapdoom3.cpp parse.cpp write.cpp')
-mapdoom3_env.Append(LIBS = ['cmdlib', 'xmlutil'])
+mapdoom3_env.Append(LIBS = ['cmdlib', 'xmlutil', 'gtkutil'])
 mapdoom3_lib = mapdoom3_env.SharedLibrary(target='mapdoom3', source=mapdoom3_lst)
 mapdoom3_env.Depends(mapdoom3_lib, cmdlib_lib)
 mapdoom3_env.Depends(mapdoom3_lib, xmlutil)
+mapdoom3_env.Depends(mapdoom3_lib, gtkutil_lib)
 mapdoom3_env.Install(INSTALL + '/modules', mapdoom3_lib)
 
 model_env = module_env.Copy()
