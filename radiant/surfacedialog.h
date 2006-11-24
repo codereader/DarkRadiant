@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_SURFACEDIALOG_H)
 #define INCLUDED_SURFACEDIALOG_H
 
+#include "selectable.h"
 
 void SurfaceInspector_Construct();
 void SurfaceInspector_Destroy();
@@ -36,6 +37,8 @@ void SelectedFaces_copyTexture();
 void SelectedFaces_pasteTexture();
 void FaceTextureClipboard_setDefault();
 
+void Scene_copyClosestTexture(SelectionTest& test);
+void Scene_applyClosestTexture(SelectionTest& test);
 
 // the increment we are using for the surface inspector (this is saved in the prefs)
 struct si_globals_t

@@ -299,6 +299,11 @@ radiant_src = [
 'selection/Manipulators.cpp',
 'selection/BestPoint.cpp',
 'selection/Intersection.cpp',
+'selection/TransformationVisitors.cpp',
+'selection/SelectionTest.cpp',
+'selection/Planes.cpp',
+'selection/RadiantWindowObserver.cpp',
+'selection/RadiantSelectionSystem.cpp',
 'plugin/PluginManager.cpp',
 'plugin/PluginSlots.cpp',
 'brushexport/BrushExportOBJ.cpp'

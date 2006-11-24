@@ -66,6 +66,13 @@ public:
   INTEGER_CONSTANT(Version, 1);
   STRING_CONSTANT(Name, "selection");
 
+  enum EModifier {
+	eManipulator,	// greebo: This is the standard case (drag, click without modifiers) 
+	eToggle,	// This is for Shift-Clicks to toggle the selection of an instance
+	eReplace,	// This is active if the mouse is moved to a NEW location and Alt-Shift is held
+	eCycle,		// This is active if the mouse STAYS at the same position and Alt-Shift is held
+  };
+
   enum EMode
   {
     eEntity,
@@ -73,22 +80,22 @@ public:
     eComponent,
   };
 
-  enum EComponentMode
-  {
-    eDefault,
-    eVertex,
-    eEdge,
-    eFace,
-  };
+	// The possible modes when in "component manipulation mode"
+	enum EComponentMode {
+		eDefault,	
+		eVertex,
+		eEdge,
+		eFace,
+	};
 
-  enum EManipulatorMode
-  {
-    eTranslate,
-    eRotate,
-    eScale,
-    eDrag,
-    eClip,
-  };
+	// The possible manipulator modes
+	enum EManipulatorMode {
+		eTranslate,
+		eRotate,
+		eScale,
+		eDrag,
+		eClip,
+	};
 
   virtual void SetMode(EMode mode) = 0;
   virtual EMode Mode() const = 0;
@@ -124,6 +131,13 @@ public:
   virtual void scaleSelected(const Vector3& scaling) = 0;
 
   virtual void pivotChanged() const = 0;
+  
+  virtual bool SelectManipulator(const View& view, const float device_point[2], const float device_epsilon[2]) = 0;
+  virtual void SelectPoint(const View& view, const float device_point[2], const float device_epsilon[2], EModifier modifier, bool face) = 0;
+  virtual void SelectArea(const View& view, const float device_point[2], const float device_delta[2], EModifier modifier, bool face) = 0;
+  
+  virtual void MoveSelected(const View& view, const float device_point[2]) = 0;
+  virtual void endMove() = 0;
 };
 
 #include "modulesystem.h"

@@ -1,7 +1,10 @@
 #include "Manipulators.h"
 #include "Remap.h"
-#include "Selector.h"
+#include "Selectors.h"
 #include "BestPoint.h"
+#include "TransformationVisitors.h"
+#include "SelectionTest.h"
+#include "Planes.h"
 
 // ------------ Helper functions ---------------------------
 
@@ -64,156 +67,156 @@ inline void draw_semicircle(const std::size_t segments, const float radius, Poin
 
 // Constructor
 RotateManipulator::RotateManipulator(Rotatable& rotatable, std::size_t segments, float radius) :
-    m_free(rotatable),
-    m_axis(rotatable),
-    m_circle_x((segments << 2) + 1),
-    m_circle_y((segments << 2) + 1),
-    m_circle_z((segments << 2) + 1),
-    m_circle_screen(segments<<3),
-    m_circle_sphere(segments<<3)
+    _rotateFree(rotatable),
+    _rotateAxis(rotatable),
+    _circleX((segments << 2) + 1),
+    _circleY((segments << 2) + 1),
+    _circleZ((segments << 2) + 1),
+    _circleScreen(segments<<3),
+    _circleSphere(segments<<3)
 {
-	draw_semicircle(segments, radius, m_circle_x.m_vertices.data(), RemapYZX());
-    draw_semicircle(segments, radius, m_circle_y.m_vertices.data(), RemapZXY());
-    draw_semicircle(segments, radius, m_circle_z.m_vertices.data(), RemapXYZ());
+	draw_semicircle(segments, radius, _circleX._vertices.data(), RemapYZX());
+    draw_semicircle(segments, radius, _circleY._vertices.data(), RemapZXY());
+    draw_semicircle(segments, radius, _circleZ._vertices.data(), RemapXYZ());
 
-    draw_circle(segments, radius * 1.15f, m_circle_screen.m_vertices.data(), RemapXYZ());
-    draw_circle(segments, radius, m_circle_sphere.m_vertices.data(), RemapXYZ());
+    draw_circle(segments, radius * 1.15f, _circleScreen._vertices.data(), RemapXYZ());
+    draw_circle(segments, radius, _circleSphere._vertices.data(), RemapXYZ());
 }
 
 void RotateManipulator::UpdateColours()  {
-    m_circle_x.setColour(colourSelected(g_colour_x, m_selectable_x.isSelected()));
-    m_circle_y.setColour(colourSelected(g_colour_y, m_selectable_y.isSelected()));
-    m_circle_z.setColour(colourSelected(g_colour_z, m_selectable_z.isSelected()));
-    m_circle_screen.setColour(colourSelected(g_colour_screen, m_selectable_screen.isSelected()));
-    m_circle_sphere.setColour(colourSelected(g_colour_sphere, false));
+    _circleX.setColour(colourSelected(g_colour_x, _selectableX.isSelected()));
+    _circleY.setColour(colourSelected(g_colour_y, _selectableY.isSelected()));
+    _circleZ.setColour(colourSelected(g_colour_z, _selectableZ.isSelected()));
+    _circleScreen.setColour(colourSelected(g_colour_screen, _selectableScreen.isSelected()));
+    _circleSphere.setColour(colourSelected(g_colour_sphere, false));
 }
   
 void RotateManipulator::updateCircleTransforms()  {
     Vector3 localViewpoint(
     	matrix4_transformed_direction(
-    		matrix4_transposed(m_pivot.m_worldSpace), 
-    		m_pivot.m_viewpointSpace.z().getVector3())
+    		matrix4_transposed(_pivot._worldSpace), 
+    		_pivot._viewpointSpace.z().getVector3())
     );
 
-    m_circle_x_visible = !vector3_equal_epsilon(g_vector3_axis_x, localViewpoint, 1e-6f);
-    if(m_circle_x_visible)
+    _circleX_visible = !vector3_equal_epsilon(g_vector3_axis_x, localViewpoint, 1e-6f);
+    if(_circleX_visible)
     {
-      m_local2world_x = g_matrix4_identity;
-      m_local2world_x.y().getVector3() = g_vector3_axis_x.crossProduct(localViewpoint).getNormalised();
-      m_local2world_x.z().getVector3() = m_local2world_x.x().getVector3().crossProduct( 
-        											m_local2world_x.y().getVector3()).getNormalised();
-      matrix4_premultiply_by_matrix4(m_local2world_x, m_pivot.m_worldSpace);
+      _local2worldX = g_matrix4_identity;
+      _local2worldX.y().getVector3() = g_vector3_axis_x.crossProduct(localViewpoint).getNormalised();
+      _local2worldX.z().getVector3() = _local2worldX.x().getVector3().crossProduct( 
+        											_local2worldX.y().getVector3()).getNormalised();
+      matrix4_premultiply_by_matrix4(_local2worldX, _pivot._worldSpace);
     }
 
-    m_circle_y_visible = !vector3_equal_epsilon(g_vector3_axis_y, localViewpoint, 1e-6f);
-    if(m_circle_y_visible)
+    _circleY_visible = !vector3_equal_epsilon(g_vector3_axis_y, localViewpoint, 1e-6f);
+    if(_circleY_visible)
     {
-      m_local2world_y = g_matrix4_identity;
-      m_local2world_y.z().getVector3() = g_vector3_axis_y.crossProduct(localViewpoint).getNormalised();
-      m_local2world_y.x().getVector3() = m_local2world_y.y().getVector3().crossProduct( 
-      											 		m_local2world_y.z().getVector3()).getNormalised();
-      matrix4_premultiply_by_matrix4(m_local2world_y, m_pivot.m_worldSpace);
+      _local2worldY = g_matrix4_identity;
+      _local2worldY.z().getVector3() = g_vector3_axis_y.crossProduct(localViewpoint).getNormalised();
+      _local2worldY.x().getVector3() = _local2worldY.y().getVector3().crossProduct( 
+      											 		_local2worldY.z().getVector3()).getNormalised();
+      matrix4_premultiply_by_matrix4(_local2worldY, _pivot._worldSpace);
     }
 
-    m_circle_z_visible = !vector3_equal_epsilon(g_vector3_axis_z, localViewpoint, 1e-6f);
-    if(m_circle_z_visible)
+    _circleZ_visible = !vector3_equal_epsilon(g_vector3_axis_z, localViewpoint, 1e-6f);
+    if(_circleZ_visible)
     {
-      m_local2world_z = g_matrix4_identity;
-      m_local2world_z.x().getVector3() = g_vector3_axis_z.crossProduct(localViewpoint).getNormalised();
-      m_local2world_z.y().getVector3() = m_local2world_z.z().getVector3().crossProduct( 
-      												m_local2world_z.x().getVector3()).getNormalised();
-      matrix4_premultiply_by_matrix4(m_local2world_z, m_pivot.m_worldSpace);
+      _local2worldZ = g_matrix4_identity;
+      _local2worldZ.x().getVector3() = g_vector3_axis_z.crossProduct(localViewpoint).getNormalised();
+      _local2worldZ.y().getVector3() = _local2worldZ.z().getVector3().crossProduct( 
+      												_local2worldZ.x().getVector3()).getNormalised();
+      matrix4_premultiply_by_matrix4(_local2worldZ, _pivot._worldSpace);
     }
 }
 
 void RotateManipulator::render(Renderer& renderer, const VolumeTest& volume, const Matrix4& pivot2world) {
-    m_pivot.update(pivot2world, volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
+    _pivot.update(pivot2world, volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
     updateCircleTransforms();
 
     // temp hack
     UpdateColours();
 
-    renderer.SetState(m_state_outer, Renderer::eWireframeOnly);
-    renderer.SetState(m_state_outer, Renderer::eFullMaterials);
+    renderer.SetState(_stateOuter, Renderer::eWireframeOnly);
+    renderer.SetState(_stateOuter, Renderer::eFullMaterials);
 
-    renderer.addRenderable(m_circle_screen, m_pivot.m_viewpointSpace);
-    renderer.addRenderable(m_circle_sphere, m_pivot.m_viewpointSpace);
+    renderer.addRenderable(_circleScreen, _pivot._viewpointSpace);
+    renderer.addRenderable(_circleSphere, _pivot._viewpointSpace);
 
-    if(m_circle_x_visible)
+    if(_circleX_visible)
     {
-      renderer.addRenderable(m_circle_x, m_local2world_x);
+      renderer.addRenderable(_circleX, _local2worldX);
     }
-    if(m_circle_y_visible)
+    if(_circleY_visible)
     {
-      renderer.addRenderable(m_circle_y, m_local2world_y);
+      renderer.addRenderable(_circleY, _local2worldY);
     }
-    if(m_circle_z_visible)
+    if(_circleZ_visible)
     {
-      renderer.addRenderable(m_circle_z, m_local2world_z);
+      renderer.addRenderable(_circleZ, _local2worldZ);
     }
 }
 
 void RotateManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
-    m_pivot.update(pivot2world, view.GetModelview(), view.GetProjection(), view.GetViewport());
+    _pivot.update(pivot2world, view.GetModelview(), view.GetProjection(), view.GetViewport());
     updateCircleTransforms();
 
     SelectionPool selector;
 
     {
       {
-        Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), m_local2world_x));
+        Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _local2worldX));
 
 #if defined(DEBUG_SELECTION)
         g_render_clipped.construct(view.GetViewMatrix());
 #endif
 
         SelectionIntersection best;
-        LineStrip_BestPoint(local2view, m_circle_x.m_vertices.data(), m_circle_x.m_vertices.size(), best);
-        selector.addSelectable(best, &m_selectable_x);
+        LineStrip_BestPoint(local2view, _circleX._vertices.data(), _circleX._vertices.size(), best);
+        selector.addSelectable(best, &_selectableX);
       }
 
       {
-        Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), m_local2world_y));
+        Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _local2worldY));
 
 #if defined(DEBUG_SELECTION)
         g_render_clipped.construct(view.GetViewMatrix());
 #endif
 
         SelectionIntersection best;
-        LineStrip_BestPoint(local2view, m_circle_y.m_vertices.data(), m_circle_y.m_vertices.size(), best);
-        selector.addSelectable(best, &m_selectable_y);
+        LineStrip_BestPoint(local2view, _circleY._vertices.data(), _circleY._vertices.size(), best);
+        selector.addSelectable(best, &_selectableY);
       }
 
       {
-        Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), m_local2world_z));
+        Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _local2worldZ));
 
 #if defined(DEBUG_SELECTION)
         g_render_clipped.construct(view.GetViewMatrix());
 #endif
 
         SelectionIntersection best;
-        LineStrip_BestPoint(local2view, m_circle_z.m_vertices.data(), m_circle_z.m_vertices.size(), best);
-        selector.addSelectable(best, &m_selectable_z);
+        LineStrip_BestPoint(local2view, _circleZ._vertices.data(), _circleZ._vertices.size(), best);
+        selector.addSelectable(best, &_selectableZ);
       }
     }
 
     {
-      Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), m_pivot.m_viewpointSpace));
+      Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _pivot._viewpointSpace));
 
       {
         SelectionIntersection best;
-        LineLoop_BestPoint(local2view, m_circle_screen.m_vertices.data(), m_circle_screen.m_vertices.size(), best);
-        selector.addSelectable(best, &m_selectable_screen); 
+        LineLoop_BestPoint(local2view, _circleScreen._vertices.data(), _circleScreen._vertices.size(), best);
+        selector.addSelectable(best, &_selectableScreen); 
       }
 
       {
         SelectionIntersection best;
-        Circle_BestPoint(local2view, eClipCullCW, m_circle_sphere.m_vertices.data(), m_circle_sphere.m_vertices.size(), best);
-        selector.addSelectable(best, &m_selectable_sphere); 
+        Circle_BestPoint(local2view, eClipCullCW, _circleSphere._vertices.data(), _circleSphere._vertices.size(), best);
+        selector.addSelectable(best, &_selectableSphere); 
       }
     }
 
-    m_axis_screen = m_pivot.m_axis_screen;
+    _axisScreen = _pivot._axisScreen;
 
     if(!selector.failed())
     {
@@ -222,159 +225,159 @@ void RotateManipulator::testSelect(const View& view, const Matrix4& pivot2world)
 }
 
 Manipulatable* RotateManipulator::GetManipulatable() {
-    if(m_selectable_x.isSelected()) {
-      m_axis.SetAxis(g_vector3_axis_x);
-      return &m_axis;
+    if(_selectableX.isSelected()) {
+      _rotateAxis.SetAxis(g_vector3_axis_x);
+      return &_rotateAxis;
     }
-    else if(m_selectable_y.isSelected()) {
-      m_axis.SetAxis(g_vector3_axis_y);
-      return &m_axis;
+    else if(_selectableY.isSelected()) {
+      _rotateAxis.SetAxis(g_vector3_axis_y);
+      return &_rotateAxis;
     }
-    else if(m_selectable_z.isSelected()) {
-      m_axis.SetAxis(g_vector3_axis_z);
-      return &m_axis;
+    else if(_selectableZ.isSelected()) {
+      _rotateAxis.SetAxis(g_vector3_axis_z);
+      return &_rotateAxis;
     }
-    else if(m_selectable_screen.isSelected()) {
-      m_axis.SetAxis(m_axis_screen);
-      return &m_axis;
+    else if(_selectableScreen.isSelected()) {
+      _rotateAxis.SetAxis(_axisScreen);
+      return &_rotateAxis;
     }
     else
-      return &m_free;
+      return &_rotateFree;
 }
 
 void RotateManipulator::setSelected(bool select)  {
-    m_selectable_x.setSelected(select);
-    m_selectable_y.setSelected(select);
-    m_selectable_z.setSelected(select);
-    m_selectable_screen.setSelected(select);
+    _selectableX.setSelected(select);
+    _selectableY.setSelected(select);
+    _selectableZ.setSelected(select);
+    _selectableScreen.setSelected(select);
 }
 
 bool RotateManipulator::isSelected() const {
-    return m_selectable_x.isSelected()
-      | m_selectable_y.isSelected()
-      | m_selectable_z.isSelected()
-      | m_selectable_screen.isSelected()
-      | m_selectable_sphere.isSelected();
+    return _selectableX.isSelected()
+      | _selectableY.isSelected()
+      | _selectableZ.isSelected()
+      | _selectableScreen.isSelected()
+      | _selectableSphere.isSelected();
 }
 
 // Initialise the shader of the RotateManipulator class
-Shader* RotateManipulator::m_state_outer;
+Shader* RotateManipulator::_stateOuter;
 
 
 // ------------ TranslateManipulator methods ------------------
 
 // Constructor
 TranslateManipulator::TranslateManipulator(Translatable& translatable, std::size_t segments, float length) :
-    m_free(translatable),
-    m_axis(translatable),
-    m_arrow_head_x(3 * 2 * (segments << 3)),
-    m_arrow_head_y(3 * 2 * (segments << 3)),
-    m_arrow_head_z(3 * 2 * (segments << 3))
+    _translateFree(translatable),
+    _translateAxis(translatable),
+    _arrowHeadX(3 * 2 * (segments << 3)),
+    _arrowHeadY(3 * 2 * (segments << 3)),
+    _arrowHeadZ(3 * 2 * (segments << 3))
 {
-    draw_arrowline(length, m_arrow_x.m_line, 0);
-    draw_arrowhead(segments, length, m_arrow_head_x.m_vertices.data(), TripleRemapXYZ<Vertex3f>(), TripleRemapXYZ<Normal3f>());
-    draw_arrowline(length, m_arrow_y.m_line, 1);
-    draw_arrowhead(segments, length, m_arrow_head_y.m_vertices.data(), TripleRemapYZX<Vertex3f>(), TripleRemapYZX<Normal3f>());
-    draw_arrowline(length, m_arrow_z.m_line, 2);
-    draw_arrowhead(segments, length, m_arrow_head_z.m_vertices.data(), TripleRemapZXY<Vertex3f>(), TripleRemapZXY<Normal3f>());
+    draw_arrowline(length, _arrowX._line, 0);
+    draw_arrowhead(segments, length, _arrowHeadX._vertices.data(), TripleRemapXYZ<Vertex3f>(), TripleRemapXYZ<Normal3f>());
+    draw_arrowline(length, _arrowY._line, 1);
+    draw_arrowhead(segments, length, _arrowHeadY._vertices.data(), TripleRemapYZX<Vertex3f>(), TripleRemapYZX<Normal3f>());
+    draw_arrowline(length, _arrowZ._line, 2);
+    draw_arrowhead(segments, length, _arrowHeadZ._vertices.data(), TripleRemapZXY<Vertex3f>(), TripleRemapZXY<Normal3f>());
 
-    draw_quad(16, m_quad_screen.m_quad);
+    draw_quad(16, _quadScreen._quad);
 }
 
 void TranslateManipulator::UpdateColours() {
-    m_arrow_x.setColour(colourSelected(g_colour_x, m_selectable_x.isSelected()));
-    m_arrow_head_x.setColour(colourSelected(g_colour_x, m_selectable_x.isSelected()));
-    m_arrow_y.setColour(colourSelected(g_colour_y, m_selectable_y.isSelected()));
-    m_arrow_head_y.setColour(colourSelected(g_colour_y, m_selectable_y.isSelected()));
-    m_arrow_z.setColour(colourSelected(g_colour_z, m_selectable_z.isSelected()));
-    m_arrow_head_z.setColour(colourSelected(g_colour_z, m_selectable_z.isSelected()));
-    m_quad_screen.setColour(colourSelected(g_colour_screen, m_selectable_screen.isSelected()));
+    _arrowX.setColour(colourSelected(g_colour_x, _selectableX.isSelected()));
+    _arrowHeadX.setColour(colourSelected(g_colour_x, _selectableX.isSelected()));
+    _arrowY.setColour(colourSelected(g_colour_y, _selectableY.isSelected()));
+    _arrowHeadY.setColour(colourSelected(g_colour_y, _selectableY.isSelected()));
+    _arrowZ.setColour(colourSelected(g_colour_z, _selectableZ.isSelected()));
+    _arrowHeadZ.setColour(colourSelected(g_colour_z, _selectableZ.isSelected()));
+    _quadScreen.setColour(colourSelected(g_colour_screen, _selectableScreen.isSelected()));
 }
 
 bool TranslateManipulator::manipulator_show_axis(const Pivot2World& pivot, const Vector3& axis) {
-    return fabs(pivot.m_axis_screen.dot(axis)) < 0.95;
+    return fabs(pivot._axisScreen.dot(axis)) < 0.95;
 }
 
 void TranslateManipulator::render(Renderer& renderer, const VolumeTest& volume, const Matrix4& pivot2world) {
-    m_pivot.update(pivot2world, volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
+    _pivot.update(pivot2world, volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
 
     // temp hack
     UpdateColours();
 
-    Vector3 x = m_pivot.m_worldSpace.x().getVector3().getNormalised();
-    bool show_x = manipulator_show_axis(m_pivot, x);
+    Vector3 x = _pivot._worldSpace.x().getVector3().getNormalised();
+    bool show_x = manipulator_show_axis(_pivot, x);
 
-    Vector3 y = m_pivot.m_worldSpace.y().getVector3().getNormalised();
-    bool show_y = manipulator_show_axis(m_pivot, y);
+    Vector3 y = _pivot._worldSpace.y().getVector3().getNormalised();
+    bool show_y = manipulator_show_axis(_pivot, y);
 
-    Vector3 z = m_pivot.m_worldSpace.z().getVector3().getNormalised();
-    bool show_z = manipulator_show_axis(m_pivot, z);
+    Vector3 z = _pivot._worldSpace.z().getVector3().getNormalised();
+    bool show_z = manipulator_show_axis(_pivot, z);
 
-    renderer.SetState(m_state_wire, Renderer::eWireframeOnly);
-    renderer.SetState(m_state_wire, Renderer::eFullMaterials);
-
-    if(show_x)
-    {
-      renderer.addRenderable(m_arrow_x, m_pivot.m_worldSpace);
-    }
-    if(show_y)
-    {
-      renderer.addRenderable(m_arrow_y, m_pivot.m_worldSpace);
-    }
-    if(show_z)
-    {
-      renderer.addRenderable(m_arrow_z, m_pivot.m_worldSpace);
-    }
-
-    renderer.addRenderable(m_quad_screen, m_pivot.m_viewplaneSpace);
-
-    renderer.SetState(m_state_fill, Renderer::eWireframeOnly);
-    renderer.SetState(m_state_fill, Renderer::eFullMaterials);
+    renderer.SetState(_stateWire, Renderer::eWireframeOnly);
+    renderer.SetState(_stateWire, Renderer::eFullMaterials);
 
     if(show_x)
     {
-      renderer.addRenderable(m_arrow_head_x, m_pivot.m_worldSpace);
+      renderer.addRenderable(_arrowX, _pivot._worldSpace);
     }
     if(show_y)
     {
-      renderer.addRenderable(m_arrow_head_y, m_pivot.m_worldSpace);
+      renderer.addRenderable(_arrowY, _pivot._worldSpace);
     }
     if(show_z)
     {
-      renderer.addRenderable(m_arrow_head_z, m_pivot.m_worldSpace);
+      renderer.addRenderable(_arrowZ, _pivot._worldSpace);
+    }
+
+    renderer.addRenderable(_quadScreen, _pivot._viewplaneSpace);
+
+    renderer.SetState(_stateFill, Renderer::eWireframeOnly);
+    renderer.SetState(_stateFill, Renderer::eFullMaterials);
+
+    if(show_x)
+    {
+      renderer.addRenderable(_arrowHeadX, _pivot._worldSpace);
+    }
+    if(show_y)
+    {
+      renderer.addRenderable(_arrowHeadY, _pivot._worldSpace);
+    }
+    if(show_z)
+    {
+      renderer.addRenderable(_arrowHeadZ, _pivot._worldSpace);
     }
 }
   
 void TranslateManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
-    m_pivot.update(pivot2world, view.GetModelview(), view.GetProjection(), view.GetViewport());
+    _pivot.update(pivot2world, view.GetModelview(), view.GetProjection(), view.GetViewport());
 
     SelectionPool selector;
 
-    Vector3 x = m_pivot.m_worldSpace.x().getVector3().getNormalised();
-    bool show_x = manipulator_show_axis(m_pivot, x);
+    Vector3 x = _pivot._worldSpace.x().getVector3().getNormalised();
+    bool show_x = manipulator_show_axis(_pivot, x);
 
-    Vector3 y = m_pivot.m_worldSpace.y().getVector3().getNormalised();
-    bool show_y = manipulator_show_axis(m_pivot, y);
+    Vector3 y = _pivot._worldSpace.y().getVector3().getNormalised();
+    bool show_y = manipulator_show_axis(_pivot, y);
 
-    Vector3 z = m_pivot.m_worldSpace.z().getVector3().getNormalised();
-    bool show_z = manipulator_show_axis(m_pivot, z);
+    Vector3 z = _pivot._worldSpace.z().getVector3().getNormalised();
+    bool show_z = manipulator_show_axis(_pivot, z);
 
     {
-      Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), m_pivot.m_viewpointSpace));
+      Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _pivot._viewpointSpace));
 
       {
         SelectionIntersection best;
-        Quad_BestPoint(local2view, eClipCullCW, m_quad_screen.m_quad, best);
+        Quad_BestPoint(local2view, eClipCullCW, _quadScreen._quad, best);
         if(best.valid())
         {
           best = SelectionIntersection(0, 0);
-          selector.addSelectable(best, &m_selectable_screen);
+          selector.addSelectable(best, &_selectableScreen);
         }
       }
     }
 
     {
-      Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), m_pivot.m_worldSpace));
+      Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _pivot._worldSpace));
 
 #if defined(DEBUG_SELECTION)
       g_render_clipped.construct(view.GetViewMatrix());
@@ -383,116 +386,116 @@ void TranslateManipulator::testSelect(const View& view, const Matrix4& pivot2wor
       if(show_x)
       {
         SelectionIntersection best;
-        Line_BestPoint(local2view, m_arrow_x.m_line, best);
-        Triangles_BestPoint(local2view, eClipCullCW, m_arrow_head_x.m_vertices.begin(), m_arrow_head_x.m_vertices.end(), best);
-        selector.addSelectable(best, &m_selectable_x);
+        Line_BestPoint(local2view, _arrowX._line, best);
+        Triangles_BestPoint(local2view, eClipCullCW, _arrowHeadX._vertices.begin(), _arrowHeadX._vertices.end(), best);
+        selector.addSelectable(best, &_selectableX);
       }
 
       if(show_y)
       {
         SelectionIntersection best;
-        Line_BestPoint(local2view, m_arrow_y.m_line, best);
-        Triangles_BestPoint(local2view, eClipCullCW, m_arrow_head_y.m_vertices.begin(), m_arrow_head_y.m_vertices.end(), best);
-        selector.addSelectable(best, &m_selectable_y);
+        Line_BestPoint(local2view, _arrowY._line, best);
+        Triangles_BestPoint(local2view, eClipCullCW, _arrowHeadY._vertices.begin(), _arrowHeadY._vertices.end(), best);
+        selector.addSelectable(best, &_selectableY);
       }
 
       if(show_z)
       {
         SelectionIntersection best;
-        Line_BestPoint(local2view, m_arrow_z.m_line, best);
-        Triangles_BestPoint(local2view, eClipCullCW, m_arrow_head_z.m_vertices.begin(), m_arrow_head_z.m_vertices.end(), best);
-        selector.addSelectable(best, &m_selectable_z);
+        Line_BestPoint(local2view, _arrowZ._line, best);
+        Triangles_BestPoint(local2view, eClipCullCW, _arrowHeadZ._vertices.begin(), _arrowHeadZ._vertices.end(), best);
+        selector.addSelectable(best, &_selectableZ);
       }
     }
 
-    if(!selector.failed())
-    {
+	// greebo: If any of the above arrows could be selected, select the first in the SelectionPool
+    if(!selector.failed()) {
       (*selector.begin()).second->setSelected(true);
     }
 }
 
 Manipulatable* TranslateManipulator::GetManipulatable() {
-    if(m_selectable_x.isSelected())
+    if(_selectableX.isSelected())
     {
-      m_axis.SetAxis(g_vector3_axis_x);
-      return &m_axis;
+      _translateAxis.SetAxis(g_vector3_axis_x);
+      return &_translateAxis;
     }
-    else if(m_selectable_y.isSelected())
+    else if(_selectableY.isSelected())
     {
-      m_axis.SetAxis(g_vector3_axis_y);
-      return &m_axis;
+      _translateAxis.SetAxis(g_vector3_axis_y);
+      return &_translateAxis;
     }
-    else if(m_selectable_z.isSelected())
+    else if(_selectableZ.isSelected())
     {
-      m_axis.SetAxis(g_vector3_axis_z);
-      return &m_axis;
+      _translateAxis.SetAxis(g_vector3_axis_z);
+      return &_translateAxis;
     }
     else
     {
-      return &m_free;
+      return &_translateFree;
     }
 }
 
 void TranslateManipulator::setSelected(bool select) {
-    m_selectable_x.setSelected(select);
-    m_selectable_y.setSelected(select);
-    m_selectable_z.setSelected(select);
-    m_selectable_screen.setSelected(select);
+    _selectableX.setSelected(select);
+    _selectableY.setSelected(select);
+    _selectableZ.setSelected(select);
+    _selectableScreen.setSelected(select);
 }
 
 bool TranslateManipulator::isSelected() const {
-    return m_selectable_x.isSelected()
-      | m_selectable_y.isSelected()
-      | m_selectable_z.isSelected()
-      | m_selectable_screen.isSelected();
+    return _selectableX.isSelected()
+      | _selectableY.isSelected()
+      | _selectableZ.isSelected()
+      | _selectableScreen.isSelected();
 }
 
 // Initialise the shaders of this class
-Shader* TranslateManipulator::m_state_wire;
-Shader* TranslateManipulator::m_state_fill;
+Shader* TranslateManipulator::_stateWire;
+Shader* TranslateManipulator::_stateFill;
 
 
 // ------------ ScaleManipulator methods ------------------
 
 // Constructor
 ScaleManipulator::ScaleManipulator(Scalable& scalable, std::size_t segments, float length) :
-    m_free(scalable),
-    m_axis(scalable)
+    _scaleFree(scalable),
+    _scaleAxis(scalable)
 {
-    draw_arrowline(length, m_arrow_x.m_line, 0);
-    draw_arrowline(length, m_arrow_y.m_line, 1);
-    draw_arrowline(length, m_arrow_z.m_line, 2);
+    draw_arrowline(length, _arrowX._line, 0);
+    draw_arrowline(length, _arrowY._line, 1);
+    draw_arrowline(length, _arrowZ._line, 2);
 
-    draw_quad(16, m_quad_screen.m_quad);
+    draw_quad(16, _quadScreen._quad);
 }
 
 void ScaleManipulator::UpdateColours() {
-    m_arrow_x.setColour(colourSelected(g_colour_x, m_selectable_x.isSelected()));
-    m_arrow_y.setColour(colourSelected(g_colour_y, m_selectable_y.isSelected()));
-    m_arrow_z.setColour(colourSelected(g_colour_z, m_selectable_z.isSelected()));
-    m_quad_screen.setColour(colourSelected(g_colour_screen, m_selectable_screen.isSelected()));
+    _arrowX.setColour(colourSelected(g_colour_x, _selectableX.isSelected()));
+    _arrowY.setColour(colourSelected(g_colour_y, _selectableY.isSelected()));
+    _arrowZ.setColour(colourSelected(g_colour_z, _selectableZ.isSelected()));
+    _quadScreen.setColour(colourSelected(g_colour_screen, _selectableScreen.isSelected()));
 }
 
 void ScaleManipulator::render(Renderer& renderer, const VolumeTest& volume, const Matrix4& pivot2world) {
-    m_pivot.update(pivot2world, volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
+    _pivot.update(pivot2world, volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
 
     // temp hack
     UpdateColours();
 
-    renderer.addRenderable(m_arrow_x, m_pivot.m_worldSpace);
-    renderer.addRenderable(m_arrow_y, m_pivot.m_worldSpace);
-    renderer.addRenderable(m_arrow_z, m_pivot.m_worldSpace);
+    renderer.addRenderable(_arrowX, _pivot._worldSpace);
+    renderer.addRenderable(_arrowY, _pivot._worldSpace);
+    renderer.addRenderable(_arrowZ, _pivot._worldSpace);
 
-    renderer.addRenderable(m_quad_screen, m_pivot.m_viewpointSpace);
+    renderer.addRenderable(_quadScreen, _pivot._viewpointSpace);
 }
 
 void ScaleManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
-    m_pivot.update(pivot2world, view.GetModelview(), view.GetProjection(), view.GetViewport());
+    _pivot.update(pivot2world, view.GetModelview(), view.GetProjection(), view.GetViewport());
 
     SelectionPool selector;
 
     {
-      Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), m_pivot.m_worldSpace));
+      Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _pivot._worldSpace));
 
 #if defined(DEBUG_SELECTION)
       g_render_clipped.construct(view.GetViewMatrix());
@@ -500,30 +503,30 @@ void ScaleManipulator::testSelect(const View& view, const Matrix4& pivot2world) 
 
     {
         SelectionIntersection best;
-        Line_BestPoint(local2view, m_arrow_x.m_line, best);
-        selector.addSelectable(best, &m_selectable_x);
+        Line_BestPoint(local2view, _arrowX._line, best);
+        selector.addSelectable(best, &_selectableX);
       }
 
       {
         SelectionIntersection best;
-        Line_BestPoint(local2view, m_arrow_y.m_line, best);
-        selector.addSelectable(best, &m_selectable_y);
+        Line_BestPoint(local2view, _arrowY._line, best);
+        selector.addSelectable(best, &_selectableY);
       }
 
       {
         SelectionIntersection best;
-        Line_BestPoint(local2view, m_arrow_z.m_line, best);
-        selector.addSelectable(best, &m_selectable_z);
+        Line_BestPoint(local2view, _arrowZ._line, best);
+        selector.addSelectable(best, &_selectableZ);
       }
     }
 
     {
-      Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), m_pivot.m_viewpointSpace));
+      Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _pivot._viewpointSpace));
 
       {
         SelectionIntersection best;
-        Quad_BestPoint(local2view, eClipCullCW, m_quad_screen.m_quad, best);
-        selector.addSelectable(best, &m_selectable_screen);
+        Quad_BestPoint(local2view, eClipCullCW, _quadScreen._quad, best);
+        selector.addSelectable(best, &_selectableScreen);
       }
     }
 
@@ -534,35 +537,93 @@ void ScaleManipulator::testSelect(const View& view, const Matrix4& pivot2world) 
 }
 
 Manipulatable* ScaleManipulator::GetManipulatable() {
-    if(m_selectable_x.isSelected())
+    if(_selectableX.isSelected())
     {
-      m_axis.SetAxis(g_vector3_axis_x);
-      return &m_axis;
+      _scaleAxis.SetAxis(g_vector3_axis_x);
+      return &_scaleAxis;
     }
-    else if(m_selectable_y.isSelected())
+    else if(_selectableY.isSelected())
     {
-      m_axis.SetAxis(g_vector3_axis_y);
-      return &m_axis;
+      _scaleAxis.SetAxis(g_vector3_axis_y);
+      return &_scaleAxis;
     }
-    else if(m_selectable_z.isSelected())
+    else if(_selectableZ.isSelected())
     {
-      m_axis.SetAxis(g_vector3_axis_z);
-      return &m_axis;
+      _scaleAxis.SetAxis(g_vector3_axis_z);
+      return &_scaleAxis;
     }
     else
-      return &m_free;
+      return &_scaleFree;
 }
 
 void ScaleManipulator::setSelected(bool select) {
-    m_selectable_x.setSelected(select);
-    m_selectable_y.setSelected(select);
-    m_selectable_z.setSelected(select);
-    m_selectable_screen.setSelected(select);
+    _selectableX.setSelected(select);
+    _selectableY.setSelected(select);
+    _selectableZ.setSelected(select);
+    _selectableScreen.setSelected(select);
 }
 
 bool ScaleManipulator::isSelected() const {
-    return m_selectable_x.isSelected()
-      | m_selectable_y.isSelected()
-      | m_selectable_z.isSelected()
-      | m_selectable_screen.isSelected();
+    return _selectableX.isSelected()
+      | _selectableY.isSelected()
+      | _selectableZ.isSelected()
+      | _selectableScreen.isSelected();
+}
+
+// ------------ DragManipulator methods ------------------
+
+Manipulatable* DragManipulator::GetManipulatable() {
+    return _dragSelectable.isSelected() ? &_freeDrag : &_freeResize;
+}
+
+void DragManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
+    SelectionPool selector;
+
+    SelectionVolume test(view);
+
+    if(GlobalSelectionSystem().Mode() == SelectionSystem::ePrimitive)
+    {
+      BooleanSelector booleanSelector;
+
+      Scene_TestSelect_Primitive(booleanSelector, test, view);
+
+      if(booleanSelector.isSelected())
+      {
+        selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
+        _selected = false;
+      }
+      else
+      {
+        _selected = Scene_forEachPlaneSelectable_selectPlanes(GlobalSceneGraph(), selector, test);
+      }
+    }
+    else
+    {
+      BestSelector bestSelector;
+      Scene_TestSelect_Component_Selected(bestSelector, test, view, GlobalSelectionSystem().ComponentMode());
+      for(std::list<Selectable*>::iterator i = bestSelector.best().begin(); i != bestSelector.best().end(); ++i)
+      {
+        if(!(*i)->isSelected())
+        {
+          GlobalSelectionSystem().setSelectedAllComponents(false);
+        }
+        _selected = false;
+        selector.addSelectable(SelectionIntersection(0, 0), (*i));
+        _dragSelectable.setSelected(true);
+      }
+    }
+
+    for(SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i)
+    {
+      (*i).second->setSelected(true);
+    }
+}
+
+void DragManipulator::setSelected(bool select) {
+    _selected = select;
+    _dragSelectable.setSelected(select);
+}
+
+bool DragManipulator::isSelected() const  {
+	return _selected || _dragSelectable.isSelected();
 }

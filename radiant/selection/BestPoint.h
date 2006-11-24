@@ -5,6 +5,9 @@
 #include "selectable.h"
 #include "Manipulatables.h"
 
+/* greebo: These are functions that are needed for selection test (which points are nearest to what and something) 
+ */
+
 enum clipcull_t
 {
   eClipCullNone,
@@ -12,23 +15,18 @@ enum clipcull_t
   eClipCullCCW,
 };
 
-class Segment3D
-{
-  typedef Vector3 point_type;
-  
+class Segment3D {
+  	typedef Vector3 point_type;  
 public:
-  Segment3D(const point_type& _p0, const point_type& _p1)
-    : p0(_p0), p1(_p1)
-  {
-  }
+	// Constructor
+  	Segment3D(const point_type& _p0, const point_type& _p1): p0(_p0), p1(_p1) {}
 
-  point_type p0, p1;
+	point_type p0, p1;
 };
 
 typedef Vector3 Point3D;
 
-inline double triangle_signed_area_XY(const Vector3& p0, const Vector3& p1, const Vector3& p2)
-{
+inline double triangle_signed_area_XY(const Vector3& p0, const Vector3& p1, const Vector3& p2) {
   return ((p1[0] - p0[0]) * (p2[1] - p0[1])) - ((p2[0] - p0[0]) * (p1[1] - p0[1]));
 }
 
