@@ -1,6 +1,7 @@
 #ifndef MODALINFODIALOG_H_
 #define MODALINFODIALOG_H_
 
+#include <gtk/gtkwidget.h>
 #include <gtk/gtkwindow.h>
 
 #include <string>
