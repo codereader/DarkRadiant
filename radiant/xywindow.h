@@ -31,6 +31,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "view.h"
 #include "map.h"
 
+#include "selection/RadiantWindowObserver.h"
+
 // Constants
 
 const int XYWND_MINSIZE_X = 200;
@@ -39,7 +41,6 @@ const int XYWND_MINSIZE_Y = 200;
 #include "qerplugin.h"
 
 class Shader;
-class SelectionSystemWindowObserver;
 namespace scene
 {
   class Node;

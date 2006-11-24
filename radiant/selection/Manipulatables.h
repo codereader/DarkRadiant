@@ -2,10 +2,13 @@
 #define MANIPULATABLES_H_
 
 #include "math/Vector3.h"
-#include "render.h"
 #include "math/matrix.h"
 #include "math/quaternion.h"
+
 #include "grid.h"
+#include "render.h"
+
+#include "TransformationVisitors.h"
 
 struct FlatShadedVertex {
   Vertex3f vertex;
@@ -15,13 +18,10 @@ struct FlatShadedVertex {
   FlatShadedVertex() {}
 };
 
-// ================== Abstract Base Classes =================================
+// greebo: These three are needed within a manipulatable. For example, a TranslateAxis manipulatable
+// has a member variable that is Translatable. Upon Transform() the member is translated.
 
-class Manipulatable {
-  public:
-  	virtual void Construct(const Matrix4& device2manip, const float x, const float y) = 0;
-  	virtual void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) = 0;
-};
+// ================== Abstract Base Classes =================================
 
 class Rotatable {
   public:
@@ -40,86 +40,120 @@ class Scalable {
 
 // ==========================================================================
 
-class RotateFree : public Manipulatable
-{
-  Vector3 m_start;
-  Rotatable& m_rotatable;
+// A manipulatable object, as the name states.
+class Manipulatable {
+  public:
+  	virtual void Construct(const Matrix4& device2manip, const float x, const float y) = 0;
+  	
+  	// greebo: An abstract Transform() method, the implementation has to decide which operations 
+  	// are actually called. This may be a translation, rotation, or anything else.
+  	virtual void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) = 0;
+};
+
+// ==========================================================================
+
+/* greebo: The following are specialised manipulatables that provide the methods as described in the ABC.
+ * They basically prepare and constraing the transformations of the three base movements above (Translatable, etc.)
+ * 
+ * So, for example, the TranslateAxis class takes care that the Translatable is only moved in the axis directions.
+ * The necessary device pointer >> translation vector calculations are performed within Transform()  
+ */
+
+class RotateFree : public Manipulatable {
+  Vector3 _start;
+  Rotatable& _rotatable;
 public:
-  RotateFree(Rotatable& rotatable): m_rotatable(rotatable) {}
+  RotateFree(Rotatable& rotatable): _rotatable(rotatable) {}
   void Construct(const Matrix4& device2manip, const float x, const float y);
   void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y);
 };
 
-class RotateAxis : public Manipulatable
-{
-  Vector3 m_axis;
-  Vector3 m_start;
-  Rotatable& m_rotatable;
+class RotateAxis : public Manipulatable {
+  Vector3 _axis;
+  Vector3 _start;
+  Rotatable& _rotatable;
 public:
-  RotateAxis(Rotatable& rotatable): m_rotatable(rotatable) {}
+  RotateAxis(Rotatable& rotatable): _rotatable(rotatable) {}
   void Construct(const Matrix4& device2manip, const float x, const float y);
   
   /// \brief Converts current position to a normalised vector orthogonal to axis.
   void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y);
   
   void SetAxis(const Vector3& axis) {
-    m_axis = axis;
+    _axis = axis;
   }
 };
 
-class TranslateAxis : public Manipulatable
-{
-  Vector3 m_start;
-  Vector3 m_axis;
-  Translatable& m_translatable;
+class TranslateAxis : public Manipulatable {
+  Vector3 _start;
+  Vector3 _axis;
+  Translatable& _translatable;
 public:
-  TranslateAxis(Translatable& translatable): m_translatable(translatable) {}
+  TranslateAxis(Translatable& translatable): _translatable(translatable) {}
   void Construct(const Matrix4& device2manip, const float x, const float y);  
   void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y);
   
   void SetAxis(const Vector3& axis) {
-    m_axis = axis;
+    _axis = axis;
   }
 };
 
-class TranslateFree : public Manipulatable
-{
+class TranslateFree : public Manipulatable {
 private:
-  Vector3 m_start;
-  Translatable& m_translatable;
+  Vector3 _start;
+  Translatable& _translatable;
 public:
-  TranslateFree(Translatable& translatable): m_translatable(translatable) {}
+  TranslateFree(Translatable& translatable): _translatable(translatable) {}
   void Construct(const Matrix4& device2manip, const float x, const float y);
   void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y);
 };
 
 
-class ScaleAxis : public Manipulatable
-{
+class ScaleAxis : public Manipulatable {
 private:
-  Vector3 m_start;
-  Vector3 m_axis;
-  Scalable& m_scalable;
+  Vector3 _start;
+  Vector3 _axis;
+  Scalable& _scalable;
 public:
-  ScaleAxis(Scalable& scalable): m_scalable(scalable) {}
+  ScaleAxis(Scalable& scalable): _scalable(scalable) {}
   void Construct(const Matrix4& device2manip, const float x, const float y);
   void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y);
   
   void SetAxis(const Vector3& axis) {
-    m_axis = axis;
+    _axis = axis;
   }
 };
 
-class ScaleFree : public Manipulatable
-{
+class ScaleFree : public Manipulatable {
 private:
-  Vector3 m_start;
-  Scalable& m_scalable;
+  Vector3 _start;
+  Scalable& _scalable;
 public:
-  ScaleFree(Scalable& scalable): m_scalable(scalable) {}
+  ScaleFree(Scalable& scalable): _scalable(scalable) {}
   void Construct(const Matrix4& device2manip, const float x, const float y);
   void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y);
 };
+
+// ========= Translatables ===============================================
+
+class ResizeTranslatable : public Translatable {
+  void translate(const Vector3& translation) {
+    Scene_Translate_Component_Selected(GlobalSceneGraph(), translation);
+  }
+};
+
+class DragTranslatable : public Translatable {
+  void translate(const Vector3& translation) {
+    if(GlobalSelectionSystem().Mode() == SelectionSystem::eComponent) {
+      Scene_Translate_Component_Selected(GlobalSceneGraph(), translation);
+    }
+    else {
+      Scene_Translate_Selected(GlobalSceneGraph(), translation);
+    }
+  }
+};
+
+// ===============================================================================
 
 void transform_local2object(Matrix4& object, const Matrix4& local, const Matrix4& local2object);
 void translation_local2object(Vector3& object, const Vector3& local, const Matrix4& local2object);

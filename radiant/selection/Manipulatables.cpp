@@ -22,8 +22,8 @@ void translation_local2object(Vector3& object, const Vector3& local, const Matri
 // ===============================================================================================
 
 void RotateFree::Construct(const Matrix4& device2manip, const float x, const float y) {
-    point_on_sphere(m_start, device2manip, x, y);
-    vector3_normalise(m_start);
+    point_on_sphere(_start, device2manip, x, y);
+    vector3_normalise(_start);
 }
 
 void RotateFree::Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) {
@@ -32,101 +32,102 @@ void RotateFree::Transform(const Matrix4& manip2object, const Matrix4& device2ma
     point_on_sphere(current, device2manip, x, y);
     vector3_normalise(current);
 
-    m_rotatable.rotate(quaternion_for_unit_vectors(m_start, current));
+	// call the Rotatable with its transform method
+    _rotatable.rotate(quaternion_for_unit_vectors(_start, current));
 }
 
 // ===============================================================================================
 
 void RotateAxis::Construct(const Matrix4& device2manip, const float x, const float y) {
-    point_on_sphere(m_start, device2manip, x, y);
-    constrain_to_axis(m_start, m_axis);
+    point_on_sphere(_start, device2manip, x, y);
+    constrain_to_axis(_start, _axis);
 }
 
 /// \brief Converts current position to a normalised vector orthogonal to axis.
 void RotateAxis::Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) {
     Vector3 current;
     point_on_sphere(current, device2manip, x, y);
-    constrain_to_axis(current, m_axis);
+    constrain_to_axis(current, _axis);
 
-    m_rotatable.rotate(quaternion_for_axisangle(m_axis, angle_for_axis(m_start, current, m_axis)));
+    _rotatable.rotate(quaternion_for_axisangle(_axis, angle_for_axis(_start, current, _axis)));
 }
 
 // ===============================================================================================
 
 void TranslateAxis::Construct(const Matrix4& device2manip, const float x, const float y) {
-    point_on_axis(m_start, m_axis, device2manip, x, y);
+    point_on_axis(_start, _axis, device2manip, x, y);
 }
 
 void TranslateAxis::Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) {
     Vector3 current;
-    point_on_axis(current, m_axis, device2manip, x, y);
-    current = m_axis * distance_for_axis(m_start, current, m_axis);
+    point_on_axis(current, _axis, device2manip, x, y);
+    current = _axis * distance_for_axis(_start, current, _axis);
 
     translation_local2object(current, current, manip2object);
     vector3_snap(current, GetGridSize());
 
-    m_translatable.translate(current);
+    _translatable.translate(current);
 }
 
 // ===============================================================================================
 
 void TranslateFree::Construct(const Matrix4& device2manip, const float x, const float y) {
-    point_on_plane(m_start, device2manip, x, y);
+    point_on_plane(_start, device2manip, x, y);
 }
 
 void TranslateFree::Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) {
     Vector3 current;
     point_on_plane(current, device2manip, x, y);
-    current = current - m_start;
+    current = current - _start;
 
     translation_local2object(current, current, manip2object);
     vector3_snap(current, GetGridSize());
     
-    m_translatable.translate(current);
+    _translatable.translate(current);
 }
 
 // ===============================================================================================
 
 void ScaleAxis::Construct(const Matrix4& device2manip, const float x, const float y) {
-    point_on_axis(m_start, m_axis, device2manip, x, y);
+    point_on_axis(_start, _axis, device2manip, x, y);
 }
 
 void ScaleAxis::Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) {
     Vector3 current;
-    point_on_axis(current, m_axis, device2manip, x, y);
-    Vector3 delta = current - m_start;
+    point_on_axis(current, _axis, device2manip, x, y);
+    Vector3 delta = current - _start;
 
     translation_local2object(delta, delta, manip2object);
     vector3_snap(delta, GetGridSize());
     
-    Vector3 start(vector3_snapped(m_start, GetGridSize()));
+    Vector3 start(vector3_snapped(_start, GetGridSize()));
     Vector3 scale(
       start[0] == 0 ? 1 : 1 + delta[0] / start[0],
       start[1] == 0 ? 1 : 1 + delta[1] / start[1],
       start[2] == 0 ? 1 : 1 + delta[2] / start[2]
     );
-    m_scalable.scale(scale);
+    _scalable.scale(scale);
 }
 
 // ===============================================================================================
 
 void ScaleFree::Construct(const Matrix4& device2manip, const float x, const float y) {
-    point_on_plane(m_start, device2manip, x, y);
+    point_on_plane(_start, device2manip, x, y);
 }
 
 void ScaleFree::Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) {
     Vector3 current;
     point_on_plane(current, device2manip, x, y);
-    Vector3 delta = current - m_start;
+    Vector3 delta = current - _start;
 
     translation_local2object(delta, delta, manip2object);
     vector3_snap(delta, GetGridSize());
     
-    Vector3 start(vector3_snapped(m_start, GetGridSize()));
+    Vector3 start(vector3_snapped(_start, GetGridSize()));
     Vector3 scale(
       start[0] == 0 ? 1 : 1 + delta[0] / start[0],
       start[1] == 0 ? 1 : 1 + delta[1] / start[1],
       start[2] == 0 ? 1 : 1 + delta[2] / start[2]
     );
-    m_scalable.scale(scale);
+    _scalable.scale(scale);
 }

@@ -41,13 +41,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brush.h"
 #include "patchmanip.h"
 #include "patchdialog.h"
-#include "selection.h"
 #include "texwindow.h"
 #include "gtkmisc.h"
 #include "mainframe.h"
 #include "grid.h"
 #include "map.h"
-
+#include "selection/SceneWalkers.h"
 
 
 select_workzone_t g_select_workzone;
@@ -436,7 +435,7 @@ void Select_SetFlags(const ContentsFlagsValue& flags)
 void Select_GetBounds (Vector3& mins, Vector3& maxs)
 {
   AABB bounds;
-  Scene_BoundsSelected(GlobalSceneGraph(), bounds);
+  GlobalSceneGraph().traverse(BoundsSelected(bounds));
   maxs = bounds.origin + bounds.extents;
   mins = bounds.origin - bounds.extents;
 }
@@ -444,7 +443,7 @@ void Select_GetBounds (Vector3& mins, Vector3& maxs)
 void Select_GetMid (Vector3& mid)
 {
   AABB bounds;
-  Scene_BoundsSelected(GlobalSceneGraph(), bounds);
+  GlobalSceneGraph().traverse(BoundsSelected(bounds));
   mid = vector3_snapped(bounds.origin);
 }
 

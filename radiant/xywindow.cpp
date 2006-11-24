@@ -54,7 +54,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "select.h"
 #include "csg.h"
 #include "brushmanip.h"
-#include "selection.h"
 #include "entity.h"
 #include "camwindow.h"
 #include "texwindow.h"
@@ -66,6 +65,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "windowobservers.h"
 #include "plugin.h"
 #include "ui/colourscheme/ColourScheme.h"
+
+#include "selection/SelectionBox.h"
 
 //!\todo Rewrite.
 class ClipPoint
@@ -738,7 +739,7 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy)
 // XYWnd class
 Shader* XYWnd::m_state_selected = 0;
 
-void xy_update_xor_rectangle(XYWnd& self, rect_t area)
+void xy_update_xor_rectangle(XYWnd& self, Rectangle area)
 {
   if(GTK_WIDGET_VISIBLE(self.GetWidget()))
   {
@@ -859,7 +860,7 @@ XYWnd::XYWnd() :
   GlobalWindowObservers_add(m_window_observer);
   GlobalWindowObservers_connectWidget(m_gl_widget);
 
-  m_window_observer->setRectangleDrawCallback(ReferenceCaller1<XYWnd, rect_t, xy_update_xor_rectangle>(*this));
+  m_window_observer->setRectangleDrawCallback(ReferenceCaller1<XYWnd, Rectangle, xy_update_xor_rectangle>(*this));
   m_window_observer->setView(m_view);
 
   gtk_widget_ref(m_gl_widget);

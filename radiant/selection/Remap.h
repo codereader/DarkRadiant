@@ -2,76 +2,67 @@
 #define REMAP_H_
 
 template<typename Triple>
-class TripleRemapXYZ
-{
+class TripleRemapXYZ {
 public:
-  static float& x(Triple& triple)
-  {
-    return triple.x();
-  }
-  static float& y(Triple& triple)
-  {
-    return triple.y();
-  }
-  static float& z(Triple& triple)
-  {
-    return triple.z();
-  }
+	static float& x(Triple& triple) {
+		return triple.x();
+	}
+	
+	static float& y(Triple& triple) {
+		return triple.y();
+	}
+	
+	static float& z(Triple& triple) {
+		return triple.z();
+	}
 };
 
 template<typename Triple>
-class TripleRemapYZX
-{
+class TripleRemapYZX {
 public:
-  static float& x(Triple& triple)
-  {
-    return triple.y();
-  }
-  static float& y(Triple& triple)
-  {
-    return triple.z();
-  }
-  static float& z(Triple& triple)
-  {
-    return triple.x();
-  }
+	static float& x(Triple& triple) {
+		return triple.y();
+	}
+	
+	static float& y(Triple& triple) {
+		return triple.z();
+	}
+	
+	static float& z(Triple& triple) {
+		return triple.x();
+	}
 };
 
 template<typename Triple>
-class TripleRemapZXY
-{
+class TripleRemapZXY {
 public:
-  static float& x(Triple& triple)
-  {
-    return triple.z();
-  }
-  static float& y(Triple& triple)
-  {
-    return triple.x();
-  }
-  static float& z(Triple& triple)
-  {
-    return triple.y();
-  }
+	static float& x(Triple& triple) {
+		return triple.z();
+	}
+
+	static float& y(Triple& triple) {
+		return triple.x();
+	}
+	
+	static float& z(Triple& triple) {
+		return triple.y();
+	}
 };
 
 const float arrowhead_length = 16;
 const float arrowhead_radius = 4;
 
-inline void draw_arrowline(const float length, PointVertex* line, const std::size_t axis)
-{
+inline void draw_arrowline(const float length, PointVertex* line, const std::size_t axis) {
   (*line++).vertex = vertex3f_identity;
   (*line).vertex = vertex3f_identity;
   vertex3f_to_array((*line).vertex)[axis] = length - arrowhead_length;
 }
 
 template<typename VertexRemap, typename NormalRemap>
-inline void draw_arrowhead(const std::size_t segments, const float length, FlatShadedVertex* vertices, VertexRemap, NormalRemap)
-{
+inline void draw_arrowhead(const std::size_t segments, const float length, FlatShadedVertex* vertices, VertexRemap, NormalRemap) {
   std::size_t head_tris = (segments << 3);
   const double head_segment = c_2pi / head_tris;
-  for(std::size_t i = 0; i < head_tris; ++i)
-  {
+  for(std::size_t i = 0; i < head_tris; ++i) {
     {
       FlatShadedVertex& point = vertices[i*6+0];
       VertexRemap::x(point.vertex) = length - arrowhead_length;
