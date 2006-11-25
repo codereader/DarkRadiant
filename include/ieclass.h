@@ -153,6 +153,7 @@ struct IEntityClass {
 	virtual void addAttribute(const EntityClassAttribute& attribute) = 0;
 
 	/** Return the value associated with a given entity class attribute.
+	 * Any key may be looked up, including "editor_" keys.
 	 * 
 	 * @param key
 	 * The key to lookup
@@ -163,7 +164,9 @@ struct IEntityClass {
 	 */
 	virtual std::string getValueForKey(const std::string& key) const = 0;
 
-	/** Enumerate the EntityClassAttibutes in turn.
+	/** Enumerate the EntityClassAttibutes in turn. Only the non-editor
+	 * keys will be enumerated; any key beginning with "editor_" will not
+	 * be passed to the visitor.
 	 * 
 	 * @param visitor
 	 * An EntityClassAttributeVisitor instance.

@@ -235,14 +235,7 @@ public:
 
 	/** Enumerate the EntityClassAttributes.
 	 */
-	void forEachClassAttribute(EntityClassAttributeVisitor& visitor) const {
-		for (EntityAttributeMap::const_iterator i = _attributes.begin();
-			 i != _attributes.end();
-			 ++i)
-		{
-			visitor.visit(i->second);
-		}
-	}
+	void forEachClassAttribute(EntityClassAttributeVisitor& visitor) const;
 	
 	/** Set a model on this entity class.
 	 * 

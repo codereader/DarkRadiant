@@ -177,55 +177,50 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
     while (true) {
 
         const std::string key = tokeniser.nextToken();
-
         if (key == "}") // end of def
             break;
+
+        const std::string value = tokeniser.nextToken();
     
         // Otherwise, switch on the key name
         
         if (key == "model") {
-        	entityClass->setModelPath(os::standardPath(tokeniser.nextToken()));
+        	entityClass->setModelPath(os::standardPath(value));
         }
         else if (key == "inherit") {
-        	entityClass->setParent(tokeniser.nextToken());
+        	entityClass->setParent(value);
         }
         else if (key == "editor_color") {
-            entityClass->setColour(tokeniser.nextToken());
+            entityClass->setColour(value);
         }
         else if (key == "editor_mins") {
-            const std::string value = tokeniser.nextToken();
             if (value != "?") { // what does this mean?
 				entityClass->setMins(value);
             }
         }
         else if (key == "editor_maxs") {
-            const std::string value = tokeniser.nextToken();
             if (value != "?") { // what does this mean?
 				entityClass->setMaxs(value);
             }
         }
         else if (key == "editor_usage") {
-            entityClass->setUsage(tokeniser.nextToken());
+            entityClass->setUsage(value);
         }
         else if (key == "editor_light") {
-            const std::string val = tokeniser.nextToken();
-            if (val == "1") {
+            if (value == "1") {
                 entityClass->setIsLight(true);
             }
         }
-        else if (key.find("editor_") == 0) { // ignore any other "editor_xxx" key
-            tokeniser.nextToken();
-        }
         else if (key == "spawnclass") {
-            std::string value = tokeniser.nextToken();
             if (value == "idLight") {
                 entityClass->setIsLight(true);
             }
         }
-        else { // any other key is added as an EntityClassAttribute
-			EntityClassAttribute attribute("string", key, tokeniser.nextToken(), "");
-			entityClass->addAttribute(attribute);
-        }
+
+		// Following key-specific processing, add the keyvalue to the entity
+		// class
+		EntityClassAttribute attribute("string", key, value, "");
+		entityClass->addAttribute(attribute);
             
     } // while true
     

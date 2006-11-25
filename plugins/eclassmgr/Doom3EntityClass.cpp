@@ -1,5 +1,7 @@
 #include "Doom3EntityClass.h"
 
+#include <boost/algorithm/string/predicate.hpp>
+
 namespace eclass
 {
 
@@ -69,5 +71,18 @@ void Doom3EntityClass::resolveInheritance() {
 		// Copy properties
 	}
 }
+
+// Enumerate entity class attributes
+void Doom3EntityClass::forEachClassAttribute(EntityClassAttributeVisitor& visitor) const {
+	for (EntityAttributeMap::const_iterator i = _attributes.begin();
+		 i != _attributes.end();
+		 ++i)
+	{
+		// Visit only if it is not an "editor_" key
+		if (!boost::algorithm::istarts_with(i->first, "editor_"))
+			visitor.visit(i->second);
+	}
+}
+
 
 } // namespace eclass

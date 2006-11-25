@@ -284,7 +284,7 @@ public:
         if (hasMoreTokens())
             return *(_tokIter++);
         else
-            throw ParseException("DefTokeniser: no more tokens");
+            throw ParseException("DefTokeniser: no more tokens\n");
     }
     
     
@@ -298,7 +298,7 @@ public:
     void assertNextToken(const std::string& val) {
         const std::string tok = nextToken();
         if (tok != val)
-            throw ParseException("DefTokeniser: Assertion failed\nRequired \"" + val + "\", found \"" + tok + "\"");
+            throw ParseException("DefTokeniser: Assertion failed\nRequired \"" + val + "\", found \"" + tok + "\"\n");
     }   
     
     
