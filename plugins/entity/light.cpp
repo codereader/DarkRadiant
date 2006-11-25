@@ -35,6 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// The "light_rotation" key duplicates the behaviour of the "rotation" key if it is specified. This appears to be an unfinished feature in Doom3.
 
 #include "light.h"
+#include "light/RenderableLightCentre.h"
 
 #include <stdlib.h>
 
@@ -351,54 +352,6 @@ public:
   }
 };
 
-class RenderLightCenter : public OpenGLRenderable
-{
-	// Light centre in light space
-	const Vector3& _localCentre;
-	
-	// Origin of lightvolume in world space
-	const Vector3& _worldOrigin;
-	
-	// Rotation of lightvolume in world space
-	const Matrix4& _rotation;
-	
-	// Class of light entity
-	IEntityClass& _eclass;
-	
-public:
-  static Shader* m_state;
-
-	// Constructor
-	RenderLightCenter(const Vector3& center, const Vector3& origin, const Matrix4& rotation, IEntityClass& eclass) 
-	: _localCentre(center), 
-	  _worldOrigin(origin), 
-	  _rotation(rotation), 
-	  _eclass(eclass)
-	{}
-  
-	// GL render function
-  
-	void render(RenderStateFlags state) const {
-		
-	    // Apply rotation matrix to the center point coordinates
-//	    Vector3 rotCentre = _rotation.transform(_localCentre).getProjected();
-//		std::cout << "rotated centre = " << rotCentre << std::endl;
-
-		// Translate centrepoint by light origin to get coordinates
-		// in world space.
-//		Vector3 centreWorld = rotCentre + _worldOrigin;
-		Vector3 centreWorld = _localCentre + _worldOrigin;
-			
-	    // Draw the center point
-	    glBegin(GL_POINTS);
-	    glColor3fv(_eclass.getColour());
-	    glVertex3fv(centreWorld);
-	    glEnd();
-	}
-};
-
-Shader* RenderLightCenter::m_state = 0;
-
 class RenderLightProjection : public OpenGLRenderable
 {
   const Matrix4& m_projection;
@@ -556,9 +509,10 @@ class Light :
 
   Doom3LightRadius m_doom3Radius;
 
-  RenderLightRadiiBox m_radii_box;
-  RenderLightCenter m_render_center;
-  RenderableNamedEntity m_renderName;
+	// Renderable components of this light
+	RenderLightRadiiBox m_radii_box;
+	entity::RenderableLightCentre m_render_center;
+	RenderableNamedEntity m_renderName;
 
   Vector3 m_lightOrigin;
   bool m_useLightOrigin;
@@ -937,8 +891,8 @@ public:
       {
         renderer.Highlight(Renderer::ePrimitive, false);
         renderer.Highlight(Renderer::eFace, false);
-        renderer.SetState(m_render_center.m_state, Renderer::eFullMaterials);
-        renderer.SetState(m_render_center.m_state, Renderer::eWireframeOnly);
+//        renderer.SetState(m_render_center.m_state, Renderer::eFullMaterials);
+  //      renderer.SetState(m_render_center.m_state, Renderer::eWireframeOnly);
         renderer.addRenderable(m_render_center, localToWorld);
       }
     }
@@ -1590,19 +1544,11 @@ public:
 void Light_Construct(LightType lightType)
 {
   g_lightType = lightType;
-  if(g_lightType == LIGHTTYPE_DOOM3)
-  {
-    LightShader::m_defaultShader = "lights/defaultPointLight";
-#if 0
-    LightShader::m_defaultShader = "lights/defaultProjectedLight";
-#endif
-  }
-  RenderLightCenter::m_state = GlobalShaderCache().capture("$BIGPOINT");
+  LightShader::m_defaultShader = "lights/defaultPointLight";
 }
 
 void Light_Destroy()
 {
-  GlobalShaderCache().release("$BIGPOINT");
 }
 
 scene::Node& New_Light(IEntityClass* eclass)
