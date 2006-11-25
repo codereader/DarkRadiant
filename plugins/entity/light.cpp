@@ -511,7 +511,7 @@ class Light :
 
 	// Renderable components of this light
 	RenderLightRadiiBox m_radii_box;
-	entity::RenderableLightCentre m_render_center;
+	entity::RenderableLightCentre _rCentre;
 	RenderableNamedEntity m_renderName;
 
   Vector3 m_lightOrigin;
@@ -724,7 +724,7 @@ public:
     m_nameKeys(m_entity),
     m_funcStaticOrigin(m_traverse, m_originKey.m_origin),
     m_radii_box(m_aabb_light.origin),
-    m_render_center(m_doom3Radius.m_center, m_aabb_light.origin, m_doom3Rotation, m_entity.getEntityClass()), 
+    _rCentre(m_doom3Radius.m_center, m_aabb_light.origin, m_doom3Rotation, m_entity.getEntityClass()), 
     m_renderName(m_named, m_aabb_light.origin),
     m_useLightOrigin(false),
     m_useLightRotation(false),
@@ -744,7 +744,7 @@ public:
     m_nameKeys(m_entity),
     m_funcStaticOrigin(m_traverse, m_originKey.m_origin),
     m_radii_box(m_aabb_light.origin),
-    m_render_center(m_doom3Radius.m_center, m_aabb_light.origin, m_doom3Rotation, m_entity.getEntityClass()), 
+    _rCentre(m_doom3Radius.m_center, m_aabb_light.origin, m_doom3Rotation, m_entity.getEntityClass()), 
     m_renderName(m_named, m_aabb_light.origin),
     m_useLightOrigin(false),
     m_useLightRotation(false),
@@ -891,9 +891,9 @@ public:
       {
         renderer.Highlight(Renderer::ePrimitive, false);
         renderer.Highlight(Renderer::eFace, false);
-//        renderer.SetState(m_render_center.m_state, Renderer::eFullMaterials);
-  //      renderer.SetState(m_render_center.m_state, Renderer::eWireframeOnly);
-        renderer.addRenderable(m_render_center, localToWorld);
+        renderer.SetState(_rCentre.getShader(), Renderer::eFullMaterials);
+        renderer.SetState(_rCentre.getShader(), Renderer::eWireframeOnly);
+        renderer.addRenderable(_rCentre, localToWorld);
       }
     }
     
