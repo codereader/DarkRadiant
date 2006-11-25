@@ -45,6 +45,8 @@ public:
   }
 };
 
+// greebo: A selectable with an attached callback function that is called upon selection (change)
+// in the case of the PatchInstance the callback points to PatchInstance::selectedChangedComponent()
 class ObservedSelectable : public Selectable
 {
   SelectionChangeCallback m_onchanged;
