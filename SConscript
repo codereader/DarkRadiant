@@ -83,6 +83,7 @@ gtkutil_src = '\
   window.cpp\
   xorrectangle.cpp\
   ModalProgressDialog.cpp\
+  TreeModel.cpp\
 '
 
 gtkutil_lib = gtkutil_env.StaticLibrary(target='libs/gtkutil', source=build_list('libs/gtkutil', gtkutil_src))

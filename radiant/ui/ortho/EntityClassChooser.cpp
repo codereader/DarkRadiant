@@ -5,6 +5,7 @@
 #include "ieclass.h"
 #include "gtkutil/dialog.h"
 #include "gtkutil/image.h"
+#include "gtkutil/TreeModel.h"
 
 #include "entity.h" // Entity_createFromSelection()
 
@@ -28,6 +29,7 @@ namespace {
 	enum {
 		NAME_COLUMN,
 		ICON_COLUMN,
+		DIR_FLAG_COLUMN,
 		N_COLUMNS
 	};
 	
@@ -89,8 +91,9 @@ GtkWidget* EntityClassChooser::createTreeView() {
 	// classes by using a local visitor class.
 	
 	_treeStore = gtk_tree_store_new(N_COLUMNS, 
-									G_TYPE_STRING,
-									GDK_TYPE_PIXBUF);
+									G_TYPE_STRING,		// name
+									GDK_TYPE_PIXBUF,	// icon
+									G_TYPE_BOOLEAN);	// directory flag
 
 	class TreePopulatingVisitor: public EntityClassVisitor {
 
@@ -134,6 +137,7 @@ GtkWidget* EntityClassChooser::createTreeView() {
 			gtk_tree_store_set(_store, &iter, 
 							   NAME_COLUMN, thisDir.c_str(),
 							   ICON_COLUMN, gtkutil::getLocalPixbuf(FOLDER_ICON),
+							   DIR_FLAG_COLUMN, TRUE,
 							   -1);
 			GtkTreeIter* dynIter = gtk_tree_iter_copy(&iter); // get a heap-allocated iter
 			
@@ -171,6 +175,7 @@ GtkWidget* EntityClassChooser::createTreeView() {
 			gtk_tree_store_set(_store, &iter, 
 							   NAME_COLUMN, e->getName().c_str(), 
 							   ICON_COLUMN, gtkutil::getLocalPixbuf(ENTITY_ICON),
+							   DIR_FLAG_COLUMN, FALSE,
 							   -1);
 		}
 		
@@ -190,6 +195,7 @@ GtkWidget* EntityClassChooser::createTreeView() {
 
 	// Single column with icon and name
 	GtkTreeViewColumn* col = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_spacing(col, 3);
 
 	GtkCellRenderer* pixRenderer = gtk_cell_renderer_pixbuf_new();
 	gtk_tree_view_column_pack_start(col, pixRenderer, FALSE);
@@ -274,21 +280,20 @@ void EntityClassChooser::callbackCancel(GtkWidget* widget, EntityClassChooser* s
 
 void EntityClassChooser::callbackAdd(GtkWidget* widget, EntityClassChooser* self) {
 
-	// Get the selection
+	// Get the selection. There must be a selection because the add button is
+	// insensitive if there is not.
 	GtkTreeIter iter;
-	gtk_tree_selection_get_selected(self->_selection, NULL, &iter);
+	GtkTreeModel* model;
+	gtk_tree_selection_get_selected(self->_selection, &model, &iter);
 
-	// Get the value
-	GValue val = {0, 0};
-	gtk_tree_model_get_value(GTK_TREE_MODEL(self->_treeStore),
-							 &iter,
-							 0,
-							 &val);
-
-	// Create the entity and hide the dialog. We might get an EntityCreationException
-	// if the wrong number of brushes is selected.
+	// Create the entity and hide the dialog. We might get an 
+	// EntityCreationException if the wrong number of brushes is selected.
 	try {
-		Entity_createFromSelection(g_value_get_string(&val), self->_lastPoint);
+		// Get the entity classname
+		std::string cName = 
+			gtkutil::TreeModel::getString(model, &iter, NAME_COLUMN);
+		// Create the entity and hide the dialog
+		Entity_createFromSelection(cName.c_str(), self->_lastPoint);
 		gtk_widget_hide(self->_widget);
 	}
 	catch (EntityCreationException e) {
@@ -297,23 +302,21 @@ void EntityClassChooser::callbackAdd(GtkWidget* widget, EntityClassChooser* self
 }
 
 void EntityClassChooser::callbackSelectionChanged(GtkWidget* widget, EntityClassChooser* self) {
-	// Check for a selection
-	GtkTreeIter iter;
-	if (gtk_tree_selection_get_selected(self->_selection, NULL, &iter)) {
 
-		// There is a selection, so make the Add button active and update the
-		// usage information
+	// Prepare to check for a selection
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+	
+	// Add button is enabled if there is a selection and it is not a folder.
+	if (gtk_tree_selection_get_selected(self->_selection, &model, &iter)
+		&& !gtkutil::TreeModel::getBoolean(model, &iter, DIR_FLAG_COLUMN)) 
+	{
+		// Make the Add button active 
 		gtk_widget_set_sensitive(self->_addButton, TRUE);
 
-		// Get the selected classname
-		GValue val = {0, 0};
-		gtk_tree_model_get_value(GTK_TREE_MODEL(self->_treeStore),
-								 &iter,
-								 0,
-								 &val);
-								 
-		// Set the panel text
-		self->updateUsageInfo(g_value_get_string(&val));
+		// Set the panel text with the usage information
+		self->updateUsageInfo(
+			gtkutil::TreeModel::getString(model, &iter, NAME_COLUMN));
 	}
 	else {
 		gtk_widget_set_sensitive(self->_addButton, FALSE);
