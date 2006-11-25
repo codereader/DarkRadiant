@@ -155,11 +155,13 @@ GtkWidget* EntityClassChooser::createButtonPanel() {
 
 // Update the usage information
 void EntityClassChooser::updateUsageInfo(const std::string& eclass) {
+
 	// Lookup the IEntityClass instance
 	IEntityClass* e = GlobalEntityClassManager().findOrInsert(eclass.c_str(), true);	
+
 	// Set the usage panel to the IEntityClass' usage information string
 	GtkTextBuffer* buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(_usageTextView));
-	gtk_text_buffer_set_text(buf, e->getUsage().c_str(), -1);
+	gtk_text_buffer_set_text(buf, e->getValueForKey("editor_usage").c_str(), -1);
 }
 
 /* GTK CALLBACKS */
