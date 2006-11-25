@@ -43,7 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <boost/algorithm/string/case_conv.hpp>
 
-/* Static map of named entity classes */
+/* Static map of named entity classes, using case-insensitive comparison */
 typedef std::map<std::string, IEntityClass*> EntityClasses;
 EntityClasses g_EntityClassDoom3_classes;
 
@@ -166,8 +166,8 @@ void EntityClassDoom3_parseModel(parser::DefTokeniser& tokeniser)
 
 void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
 {
-    // Get the entity name and create the entity class for it
-    const std::string sName = tokeniser.nextToken();
+    // Get the (lowercase) entity name and create the entity class for it
+    const std::string sName = boost::algorithm::to_lower_copy(tokeniser.nextToken());
 	IEntityClass* entityClass = new eclass::Doom3EntityClass(sName);
 
     // Required open brace
@@ -202,9 +202,6 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
             if (value != "?") { // what does this mean?
 				entityClass->setMaxs(value);
             }
-        }
-        else if (key == "editor_usage") {
-            entityClass->setUsage(value);
         }
         else if (key == "editor_light") {
             if (value == "1") {
