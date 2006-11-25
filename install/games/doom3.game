@@ -60,6 +60,9 @@
 		<lightScale>1</lightScale>
 		<lightRadius>320 320 320</lightRadius>
 	</defaults>
+	<entityChooser>
+		<displayFolderKey value="editor_displayFolder" />
+	</entityChooser>
 	<entityInspector>
 		<property name="origin" category="Basic" type="vector3" />
 		<property name="classname" category="Basic" type="text" />

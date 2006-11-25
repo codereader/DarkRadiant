@@ -3,6 +3,7 @@
 #include "mainframe.h"
 #include "ieclass.h"
 #include "ieclass.h"
+#include "iregistry.h"
 #include "gtkutil/dialog.h"
 #include "gtkutil/image.h"
 #include "gtkutil/TreeModel.h"
@@ -22,8 +23,8 @@ namespace {
 	const char* FOLDER_ICON = "folder16.png";
 	const char* ENTITY_ICON = "cmenu_add_entity.png";
 
-	// Key in DEF file which represents the entity display folder
-	const char* DISPLAY_FOLDER_KEY = "editor_displayFolder";
+	// Registry XPath to lookup key that specifies the display folder
+	const char* FOLDER_KEY_PATH = "game/entityChooser/displayFolderKey";
 	
 	// Tree column enum
 	enum {
@@ -104,11 +105,16 @@ GtkWidget* EntityClassChooser::createTreeView() {
 		// TreeStore to populate
 		GtkTreeStore* _store;
 		
+		// Key that specifies the display folder
+		std::string _folderKey;
+		
 	public:
 
 		// Constructor
 		TreePopulatingVisitor(GtkTreeStore* store)
-		: _store(store) {}
+		: _store(store),
+		  _folderKey(GlobalRegistry().get(FOLDER_KEY_PATH))
+		{}
 
 		// Recursive folder add function
 		GtkTreeIter* addRecursive(const std::string& pathName) {
@@ -152,7 +158,7 @@ GtkWidget* EntityClassChooser::createTreeView() {
 
 			// Get the parent folder from the entity class. If it is not
 			// present, return NULL
-			std::string parentFolder = e->getValueForKey(DISPLAY_FOLDER_KEY);
+			std::string parentFolder = e->getValueForKey(_folderKey);
 			if (parentFolder.size() == 0)
 				return NULL;
 				

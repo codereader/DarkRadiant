@@ -1,10 +1,15 @@
+25/11/2006
+OrbWeaver
+- Entity chooser now uses a key in the DEF to specify a container folder, for
+  full hierarchical organisation of entities.
+
 24/11/2006
 OrbWeaver
-- Entity inspector can show inherited properties from entity class
-- Map loading now shows progress indicator
-- Entity usage information now displayed in Entity Browser
+- Entity inspector can show inherited properties from entity class.
+- Map loading now shows progress indicator.
+- Entity usage information now displayed in Entity Browser.
 greebo
-- Moved "Export to OBJ" functionality into main Edit menu
+- Moved "Export to OBJ" functionality into main Edit menu.
 
 17/11/2006
 OrbWeaver
