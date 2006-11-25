@@ -146,25 +146,28 @@ void Map_Read(scene::Node& root, Tokeniser& tokeniser, EntityCreator& entityTabl
 	// Create an info display panel to track load progress
 	gtkutil::ModalProgressDialog dialog(GlobalRadiant().getMainWindow(),
 										"Loading map");
-	int count_entities = 0;
+
+	// Read each entity in the map, until EOF is reached
 	for (int entCount = 0; ; entCount++) {
 
 		// Update the dialog text
 		dialog.setText("Loading entity " + boost::lexical_cast<std::string>(entCount));
 
+		// Check for end of file
 		tokeniser.nextLine();
 		if (!tokeniser.getToken()) // { or 0
 			break;
 
+		// Create an entity node by parsing from the stream
 		NodeSmartReference entity(Entity_parseTokens(tokeniser, entityTable, parser, entCount));
 
 		if(entity == g_nullNode) {
-			globalErrorStream() << "entity " << count_entities << ": parse error\n";
+			globalErrorStream() << "entity " << entCount << ": parse error\n";
 			return;
 		}
 
+		// Insert the new entity into the scene graph
 		Node_getTraversable(root)->insert(entity);
-
 
 	}
 }
