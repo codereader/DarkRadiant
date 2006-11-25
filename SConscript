@@ -241,7 +241,6 @@ radiant_src = [
 'mru.cpp',
 'nullmodel.cpp',
 'parse.cpp',
-'patch.cpp',
 'patchdialog.cpp',
 'patchmanip.cpp',
 'patchmodule.cpp',
@@ -305,6 +304,9 @@ radiant_src = [
 'selection/Planes.cpp',
 'selection/RadiantWindowObserver.cpp',
 'selection/RadiantSelectionSystem.cpp',
+'patch/Patch.cpp',
+'patch/PatchBezier.cpp',
+'patch/PatchInstance.cpp',
 'plugin/PluginManager.cpp',
 'plugin/PluginSlots.cpp',
 'brushexport/BrushExportOBJ.cpp'

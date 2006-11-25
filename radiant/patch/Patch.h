@@ -1,0 +1,332 @@
+#ifndef PATCHCLASS_H_
+#define PATCHCLASS_H_
+
+#include "xml/ixml.h"
+#include "transformlib.h"
+#include "scenelib.h"
+#include "cullable.h"
+#include "editable.h"
+#include "nameable.h"
+#include "iundo.h"
+#include "container/container.h"
+#include "irender.h"
+#include "mapfile.h"
+
+#include "PatchConstants.h"
+#include "PatchControl.h"
+#include "PatchTesselation.h"
+#include "PatchXMLState.h"
+#include "PatchRenderables.h"
+
+void Patch_addTextureChangedCallback(const SignalHandler& handler);
+void Patch_textureChanged();
+
+/* greebo: The patch class itself, represented by control vertices. The basic rendering of the patch 
+ * is handled here (unselected control points, tesselation lines, shader). 
+ * 
+ * All the selection stuff is handled by the PatchInstance, as this class does NOT inherit from a Selectable class.
+ * 
+ * This class also provides functions to export/import itself to XML.
+ */
+// parametric surface defined by quadratic bezier control curves
+class Patch :
+	public XMLImporter,
+	public XMLExporter,
+	public TransformNode,
+	public Bounded,
+	public Cullable,
+	public Snappable,
+	public Undoable,
+	public Nameable
+{
+	XMLStateVector m_xml_state;
+
+public:
+	// A Patch observer
+	class Observer {
+		public:
+			virtual void allocate(std::size_t size) = 0;
+	};
+
+private:
+	typedef UniqueSet<Observer*> Observers;
+	Observers m_observers;
+
+	scene::Node* m_node;
+
+	AABB m_aabb_local; // local bbox
+
+	// greebo: The name of the shader, should be std::string
+	CopiedString m_shader;
+	
+	Shader* m_state;
+
+	// Patch dimensions
+	std::size_t m_width;
+	std::size_t m_height;
+	
+public:
+	bool m_patchDef3;
+	// The number of subdivisions of this patch
+	std::size_t m_subdivisions_x;
+	std::size_t m_subdivisions_y;
+	
+private:
+  
+	UndoObserver* m_undoable_observer;
+  
+  	// The pointer to the map file
+	MapFile* m_map;
+
+	// dynamically allocated array of control points, size is m_width*m_height
+	PatchControlArray m_ctrl;				// the true control array
+	PatchControlArray m_ctrlTransformed;	// a temporary control array used during transformations, so that the 
+											// changes can be reverted and overwritten by <m_ctrl>
+
+	// The tesselation for this patch
+	PatchTesselation m_tess;
+	
+	// The OpenGL renderables for three rendering modes
+	RenderablePatchSolid m_render_solid;
+	RenderablePatchWireframe m_render_wireframe;
+	RenderablePatchFixedWireframe m_render_wireframe_fixed;
+
+	// The shader states for the control points and the lattice
+	static Shader* m_state_ctrl;
+	static Shader* m_state_lattice;
+
+	// greebo: The vertex list of the control points, can be passed to the RenderableVertexBuffer
+	VertexBuffer<PointVertex> m_ctrl_vertices;	
+	// The renderable of the control points 
+	RenderableVertexBuffer m_render_ctrl;
+	
+	// The lattice indices and their renderable
+	IndexBuffer m_lattice_indices;
+	RenderableIndexBuffer m_render_lattice;
+
+	bool m_bOverlay;
+
+	bool m_transformChanged;
+	
+	// Callback functions when the patch gets changed
+	Callback m_evaluateTransform;
+	Callback m_boundsChanged;
+
+	// greebo: Initialises the patch member variables
+	void construct();
+
+public:
+	Callback m_lightsChanged;
+
+	static int m_CycleCapIndex;// = 0;
+	
+	// The patch type
+	static EPatchType m_type;
+
+	STRING_CONSTANT(Name, "Patch");
+
+	// Constructor
+	Patch(scene::Node& node, const Callback& evaluateTransform, const Callback& boundsChanged);
+	
+	// Copy constructors (create this patch from another patch)
+	Patch(const Patch& other);
+	Patch(const Patch& other, scene::Node& node, const Callback& evaluateTransform, const Callback& boundsChanged);
+	
+	const char* name() const {
+		return "patch";
+	}
+
+	InstanceCounter m_instanceCounter;
+	
+	void instanceAttach(const scene::Path& path);	
+	// Remove the attached instance and decrease the counters
+	void instanceDetach(const scene::Path& path);
+
+	// Unused attach/detach functions (needed for nameable implementation)
+	void attach(const NameCallback& callback) {}
+	void detach(const NameCallback& callback) {}
+
+	// Attaches an observer (doh!)
+	void attach(Observer* observer);
+	
+	// Detach the previously attached observer
+	void detach(Observer* observer);
+
+	// Allocate callback: pass the allocate call to all the observers
+	void onAllocate(std::size_t size);
+
+	// For the TransformNode implementation (localToParent() is abstract and needs to be here), returns identity
+	const Matrix4& localToParent() const;
+	
+	// Return the interally stored AABB
+	const AABB& localAABB() const;
+	
+	VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const;
+	
+	// Render functions: solid mode, wireframe mode and components 
+	void render_solid(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void render_wireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void render_component(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	
+	// Implementation of the abstract method of SelectionTestable
+	// Called to test if the patch can be selected by the mouse pointer
+	void testSelect(Selector& selector, SelectionTest& test);
+	
+	// Transform this patch as defined by the transformation matrix <matrix>
+	void transform(const Matrix4& matrix);
+	
+	// Called if the patch has changed, so that the scene graph can be updated
+	void transformChanged();
+	
+	// The callback type definition
+	typedef MemberCaller<Patch, &Patch::transformChanged> TransformChangedCaller;
+
+	// Called to evaluate the transform
+	void evaluateTransform();
+
+	// Revert the changes, fall back to the saved state in <m_ctrl>
+	void revertTransform();	
+	// Apply the transformed control array, save it into <m_ctrl> and overwrite the old values
+	void freezeTransform();
+
+	// callback for changed control points
+	void controlPointsChanged();
+	
+	// Check if the patch has invalid control points or width/height are zero
+	bool isValid() const;
+
+	// Snaps the control points to the grid
+	void snapto(float snap);
+
+	void RenderDebug(RenderStateFlags state) const;
+	// Renders the normals (indicated by lines) of this patch
+	void RenderNormals(RenderStateFlags state) const;
+
+	void pushElement(const XMLElement& element);
+	void popElement(const char* name);
+	
+	std::size_t write(const char* buffer, std::size_t length);
+	void exportXML(XMLImporter& importer);
+
+	void UpdateCachedData();
+
+	// Gets the shader name or sets the shader to <name>
+	const char *GetShader() const;
+	void SetShader(const char* name);
+	
+	// As the name states: get the shader flags of the m_state shader
+	int getShaderFlags() const;
+
+	// Const and non-const iterators
+	PatchControlIter begin() {
+		return m_ctrl.data();
+	}
+	
+	PatchControlConstIter begin() const {
+		return m_ctrl.data();
+	}
+	
+	PatchControlIter end() {
+		return m_ctrl.data() + m_ctrl.size();
+	}
+	
+	PatchControlConstIter end() const {
+		return m_ctrl.data() + m_ctrl.size();
+	}
+
+	// Get the current control point array
+	PatchControlArray& getControlPoints();	
+	// Get the (temporary) transformed control point array, not the saved ones
+	PatchControlArray& getControlPointsTransformed();
+
+	// Set the dimensions of this patch to width <w>, height <h>
+	void setDims(std::size_t w, std::size_t h);
+	
+	// Get the patch dimensions
+	std::size_t getWidth() const; 	
+	std::size_t getHeight() const;
+	
+	// Return a defined patch control vertex at <row>,<col>
+	PatchControl& ctrlAt(std::size_t row, std::size_t col);
+	// The same as above just for const 
+	const PatchControl& ctrlAt(std::size_t row, std::size_t col) const;
+ 
+	void ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std::size_t width = 3, std::size_t height = 3);
+	void constructPlane(const AABB& aabb, int axis, std::size_t width, std::size_t height);
+	void InvertMatrix();
+	void TransposeMatrix();
+	void Redisperse(EMatrixMajor mt);
+	void InsertRemove(bool bInsert, bool bColumn, bool bFirst);
+  	Patch* MakeCap(Patch* patch, EPatchCap eType, EMatrixMajor mt, bool bFirst);
+	void ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width);
+  
+	void FlipTexture(int nAxis);
+	void TranslateTexture(float s, float t);
+	void ScaleTexture(float s, float t);
+	void RotateTexture(float angle);
+	void SetTextureRepeat(float s, float t); // call with s=1 t=1 for FIT
+	void CapTexture();
+	void NaturalTexture();
+	void ProjectTexture(int nAxis);
+
+	// called just before an action to save the undo state
+	void undoSave();
+
+	// Save the current patch state into a new UndoMemento instance (allocated on heap) and return it to the undo observer
+	UndoMemento* exportState() const;
+
+	// Revert the state of this patch to the one that has been saved in the UndoMemento
+	void importState(const UndoMemento* state);
+
+	// Initialise the static member variables of this class, called from >> patchmodule.cpp
+	static void constructStatic(EPatchType type) {
+		Patch::m_type = type;
+		Patch::m_state_ctrl = GlobalShaderCache().capture("$POINT");
+		Patch::m_state_lattice = GlobalShaderCache().capture("$LATTICE");
+	}
+
+	// Release the static member variables of this class, called from >> patchmodule.cpp
+	static void destroyStatic() {
+		GlobalShaderCache().release("$LATTICE");
+		GlobalShaderCache().release("$POINT");
+	}
+
+private:
+	// greebo: this allocates the shader with the passed name 
+	void captureShader();
+
+	// Free the shader from the shadercache
+	void releaseShader();
+
+	// greebo: checks, if the shader name is valid
+	void check_shader();
+
+	// Insert or remove control points. bFirst tells the methods where to insert the points
+	void InsertPoints(EMatrixMajor mt, bool bFirst);
+	void RemovePoints(EMatrixMajor mt, bool bFirst);
+  
+	void AccumulateBBox();
+  
+	void TesselateSubMatrixFixed(ArbitraryMeshVertex* vertices, std::size_t strideX, std::size_t strideY, unsigned int nFlagsX, unsigned int nFlagsY, PatchControl* subMatrix[3][3]);
+
+	// uses binary trees representing bezier curves to recursively tesselate a bezier sub-patch
+	void TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree *BY,
+                           std::size_t offStartX, std::size_t offStartY,
+                           std::size_t offEndX, std::size_t offEndY,
+                           std::size_t nFlagsX, std::size_t nFlagsY,
+                           Vector3& left, Vector3& mid, Vector3& right,
+                           Vector2& texLeft, Vector2& texMid, Vector2& texRight,
+                           bool bTranspose );
+  
+	// tesselates the entire surface
+	void BuildTesselationCurves(EMatrixMajor major);
+	void accumulateVertexTangentSpace(std::size_t index, Vector3 tangentX[6], Vector3 tangentY[6], Vector2 tangentS[6], Vector2 tangentT[6], std::size_t index0, std::size_t index1);
+	void BuildVertexArray();
+  
+public:
+	// Destructor
+	~Patch();
+}; // end class Patch
+
+
+#endif /*PATCHCLASS_H_*/

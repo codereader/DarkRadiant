@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "qerplugin.h"
 #include "ipatch.h"
-
+#include "ifilter.h"
 #include "patch.h"
 #include "patchmanip.h"
 
@@ -45,15 +45,6 @@ void Patch_Construct(EPatchType type)
 
   Patch::constructStatic(type);
   PatchInstance::constructStatic();
-
-  if(type == ePatchTypeDoom3)
-  {
-    MAX_PATCH_WIDTH = MAX_PATCH_HEIGHT = 99;
-  }
-  else
-  {
-    MAX_PATCH_WIDTH = MAX_PATCH_HEIGHT = 15;
-  }
 }
 
 void Patch_Destroy()

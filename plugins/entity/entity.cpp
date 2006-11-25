@@ -230,6 +230,8 @@ EntityCreator& GetEntityCreator()
 
 #include "preferencesystem.h"
 
+/* greebo: Constructs the entity environment according to the given game type (is Doom3 anyway)
+ */
 void Entity_Construct(EGameType gameType)
 {
   g_gameType = gameType;
@@ -238,10 +240,12 @@ void Entity_Construct(EGameType gameType)
   Static<KeyIsName>::instance().m_keyIsName = keyIsNameDoom3;
   Static<KeyIsName>::instance().m_nameKey = "name";
 
+	// Register the entity preferences
   GlobalPreferenceSystem().registerPreference("SI_ShowNames", BoolImportStringCaller(g_showNames), BoolExportStringCaller(g_showNames));
   GlobalPreferenceSystem().registerPreference("SI_ShowAngles", BoolImportStringCaller(g_showAngles), BoolExportStringCaller(g_showAngles));
   GlobalPreferenceSystem().registerPreference("NewLightStyle", BoolImportStringCaller(g_newLightDraw), BoolExportStringCaller(g_newLightDraw));
 
+	// Setup the lights
   LightType lightType = LIGHTTYPE_DOOM3;
   Light_Construct(lightType);
   Doom3Group_construct();
