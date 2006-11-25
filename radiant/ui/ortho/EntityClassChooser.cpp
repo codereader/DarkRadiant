@@ -4,11 +4,34 @@
 #include "ieclass.h"
 #include "ieclass.h"
 #include "gtkutil/dialog.h"
+#include "gtkutil/image.h"
 
 #include "entity.h" // Entity_createFromSelection()
 
+#include <ext/hash_map>
+#include <boost/functional/hash/hash.hpp>
+
 namespace ui
 {
+
+// CONSTANTS
+
+namespace {
+	
+	const char* FOLDER_ICON = "folder16.png";
+	const char* ENTITY_ICON = "cmenu_add_entity.png";
+
+	// Key in DEF file which represents the entity display folder
+	const char* DISPLAY_FOLDER_KEY = "editor_displayFolder";
+	
+	// Tree column enum
+	enum {
+		NAME_COLUMN,
+		ICON_COLUMN,
+		N_COLUMNS
+	};
+	
+}
 
 // Obtain and display the singleton instance
 
@@ -65,23 +88,92 @@ GtkWidget* EntityClassChooser::createTreeView() {
 	// Set up the TreeModel, and populate it with the list of entity
 	// classes by using a local visitor class.
 	
-	_treeStore = gtk_tree_store_new(1, G_TYPE_STRING);
+	_treeStore = gtk_tree_store_new(N_COLUMNS, 
+									G_TYPE_STRING,
+									GDK_TYPE_PIXBUF);
 
-	struct TreePopulatingVisitor: public EntityClassVisitor {
+	class TreePopulatingVisitor: public EntityClassVisitor {
+
+		// Map between string directory names and their corresponding Iters
+		typedef __gnu_cxx::hash_map<std::string, GtkTreeIter*, boost::hash<std::string> > DirIterMap;
+		DirIterMap _dirIterMap;
 
 		// TreeStore to populate
 		GtkTreeStore* _store;
 		
+	public:
+
 		// Constructor
 		TreePopulatingVisitor(GtkTreeStore* store)
 		: _store(store) {}
-		
+
+		// Recursive folder add function
+		GtkTreeIter* addRecursive(const std::string& pathName) {
+
+			// Lookup pathname in map, and return the GtkTreeIter* if it is
+			// found
+			DirIterMap::iterator iTemp = _dirIterMap.find(pathName);
+			if (iTemp != _dirIterMap.end()) { // found in map
+				return iTemp->second;
+			}
+			
+			// Split the path into "this directory" and the parent path
+			unsigned int slashPos = pathName.rfind("/");
+			const std::string parentPath = pathName.substr(0, slashPos);
+			const std::string thisDir = pathName.substr(slashPos + 1);
+
+			// Recursively add parent path
+			GtkTreeIter* parIter = NULL;
+			if (slashPos != std::string::npos)
+				parIter = addRecursive(parentPath);
+
+			// Now add "this directory" as a child, saving the iter in the map
+			// and returning it.
+			GtkTreeIter iter;
+			gtk_tree_store_append(_store, &iter, parIter);
+			gtk_tree_store_set(_store, &iter, 
+							   NAME_COLUMN, thisDir.c_str(),
+							   ICON_COLUMN, gtkutil::getLocalPixbuf(FOLDER_ICON),
+							   -1);
+			GtkTreeIter* dynIter = gtk_tree_iter_copy(&iter); // get a heap-allocated iter
+			
+			// Cache the dynamic iter and return it
+			_dirIterMap[pathName] = dynIter;
+			return dynIter;
+			
+		}
+
+		// Add parent folder
+		GtkTreeIter* addDisplayFolder(IEntityClass* e) {
+
+			// Get the parent folder from the entity class. If it is not
+			// present, return NULL
+			std::string parentFolder = e->getValueForKey(DISPLAY_FOLDER_KEY);
+			if (parentFolder.size() == 0)
+				return NULL;
+				
+			// Call the recursive function to add the folder
+			return addRecursive(parentFolder);
+		}
+
 		// Required visit function
 		virtual void visit(IEntityClass* e) {
+
+			// Recursively create the folder to put this EntityClass in,
+			// depending on the value of the DISPLAY_FOLDER_KEY. This may return
+			// NULL if the key is unset, in which case we add the entity at
+			// the top level.
+			GtkTreeIter* parIter = addDisplayFolder(e);
+			
+			// Add the new class under the parent folder
 			GtkTreeIter iter;
-			gtk_tree_store_append(_store, &iter, NULL);
-			gtk_tree_store_set(_store, &iter, 0, e->getName().c_str(), -1);
+			gtk_tree_store_append(_store, &iter, parIter);
+			gtk_tree_store_set(_store, &iter, 
+							   NAME_COLUMN, e->getName().c_str(), 
+							   ICON_COLUMN, gtkutil::getLocalPixbuf(ENTITY_ICON),
+							   -1);
 		}
+		
 		
 	} visitor(_treeStore);
 	
@@ -90,18 +182,24 @@ GtkWidget* EntityClassChooser::createTreeView() {
 	// Construct the tree view widget with the now-populated model
 
 	GtkWidget* treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeView), FALSE);
+
 	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeView));
 	gtk_tree_selection_set_mode(_selection, GTK_SELECTION_BROWSE);
 	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(callbackSelectionChanged), this);
 
-	GtkCellRenderer* rend = gtk_cell_renderer_text_new();
-	GtkTreeViewColumn* col = 
-		gtk_tree_view_column_new_with_attributes("Entity name", 
-									      		 rend,
-									      		 "text", 0,
-									      		 NULL);
+	// Single column with icon and name
+	GtkTreeViewColumn* col = gtk_tree_view_column_new();
+
+	GtkCellRenderer* pixRenderer = gtk_cell_renderer_pixbuf_new();
+	gtk_tree_view_column_pack_start(col, pixRenderer, FALSE);
+    gtk_tree_view_column_set_attributes(col, pixRenderer, "pixbuf", ICON_COLUMN, NULL);
+
+	GtkCellRenderer* textRenderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(col, textRenderer, FALSE);
+	gtk_tree_view_column_set_attributes(col, textRenderer, "text", NAME_COLUMN, NULL);
+
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeView), col);				
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeView), FALSE);
 
 	// Pack treeview into a scrolled window, then into a frame
 	
