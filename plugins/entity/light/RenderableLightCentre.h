@@ -46,6 +46,11 @@ public:
   	~RenderableLightCentre() {
   		GlobalShaderCache().release("$BIGPOINT");
   	}
+  	
+  	// Return the Shader for rendering
+  	Shader* getShader() const {
+  		return _shader;
+  	}
   
 	// GL render function
   
