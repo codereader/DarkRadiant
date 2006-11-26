@@ -21,7 +21,6 @@ Doom3EntityClass::Doom3EntityClass(const std::string& name,
   _skin(""),
   _mins(mins),
   _maxs(maxs),
-  _sizeSpecified(false),
   _parentName(""),
   _parentClass(NULL)
 {

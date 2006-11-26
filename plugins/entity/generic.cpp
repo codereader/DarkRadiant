@@ -65,12 +65,6 @@ public:
   }
 };
 
-inline void read_aabb(AABB& aabb, const IEntityClass& eclass)
-{
-	aabb = aabb_for_minmax(eclass.getMins(), eclass.getMaxs());
-}
-
-
 class GenericEntity :
   public Cullable,
   public Bounded,
@@ -101,8 +95,8 @@ class GenericEntity :
 
   void construct()
   {
-    read_aabb(m_aabb_local, m_entity.getEntityClass());
-    m_ray.origin = m_aabb_local.origin;
+  	m_aabb_local = m_entity.getEntityClass().getBounds();
+    m_ray.origin = m_aabb_local.getOrigin();
     m_ray.direction[0] = 1;
     m_ray.direction[1] = 0;
     m_ray.direction[2] = 0;

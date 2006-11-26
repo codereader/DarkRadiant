@@ -24,8 +24,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <algorithm>
 #include <iostream>
 
-// Expand this AABB to include the given point
+// Named constructor to create an AABB from the given minimum and maximum
+// points.
+AABB AABB::createFromMinMax(const Vector3& min, const Vector3& max) {
 
+	// Origin is the midpoint of the two vectors
+	Vector3 origin = (min + max) * 0.5;
+	
+	// Extents is the vector from the origin to the max point
+	Vector3 extents = max - origin;
+	
+	// Construct and return the resulting AABB;
+	return AABB(origin, extents);
+}
+
+// Expand this AABB to include the given point
 void AABB::includePoint(const Vector3& point) {
 	// Process each axis separately
 	for (int i = 0; i < 3; ++i) {
@@ -37,3 +50,4 @@ void AABB::includePoint(const Vector3& point) {
 		}
 	}
 }
+

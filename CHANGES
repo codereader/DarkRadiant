@@ -3,6 +3,8 @@ OrbWeaver
 - Entity chooser now uses a key in the DEF to specify a container folder, for
   full hierarchical organisation of entities.
 
+** RELEASE 0.7.1
+
 24/11/2006
 OrbWeaver
 - Entity inspector can show inherited properties from entity class.

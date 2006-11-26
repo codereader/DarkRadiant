@@ -123,9 +123,11 @@ xmlRegistryEnv.Install(INSTALL + '/modules', xmlRegistryLib)
 # Eclassmgr module
 eclassSrc = build_list('plugins/eclassmgr', 'eclass_doom3.cpp Doom3EntityClass.cpp')
 eclassEnv = module_env.Copy()
+eclassEnv.Append(LIBS = 'math')
 eclassEnv.useGlib2()
 eclassEnv.useGtk2()
 eclassLib = eclassEnv.SharedLibrary(target='eclassmgr', source=eclassSrc, no_import_lib=1)
+eclassEnv.Depends(eclassLib, math)
 eclassEnv.Install(INSTALL + '/modules', eclassLib)
 
 vfspk3_env = module_env.Copy()

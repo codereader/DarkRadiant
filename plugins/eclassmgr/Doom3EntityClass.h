@@ -5,6 +5,7 @@
 #include "irender.h"
 
 #include "math/Vector3.h"
+#include "math/aabb.h"
 
 #include <string>
 #include <vector>
@@ -53,10 +54,9 @@ class Doom3EntityClass
 	std::string _model;
 	std::string _skin;
 	
-	// Minimum and maximum sizes, and the size specified flag
+	// Minimum and maximum sizes, used for calculating the display AABB
 	Vector3	_mins;
 	Vector3 _maxs;
-	bool _sizeSpecified;
 
 	// The parent entity classname, if there is one, and the IEntityClass
 	// of the parent itself.
@@ -120,7 +120,6 @@ public:
      */
 	void setMins(const Vector3& mins) {
 		_mins = mins;
-		_sizeSpecified = true;
 		_fixedSize = true;
 	}
 		
@@ -128,22 +127,15 @@ public:
      */
 	void setMaxs(const Vector3& maxs) {
 		_maxs = maxs;
-		_sizeSpecified = true;
 		_fixedSize = true;
 	}
     
-    /** Get minimum size.
-     */
-	Vector3 getMins() const {
-		return _mins;
-	}
-	
-	/** Get maximum size.
+	/* Return the bounding AABB.
 	 */
-	Vector3 getMaxs() const {
-		return _maxs;
+	AABB getBounds() const {
+		return AABB::createFromMinMax(_mins, _maxs);
 	}
-    
+
     /** Set the usage information for this entity class.
      */
 	void setUsage(const std::string& usage) {
