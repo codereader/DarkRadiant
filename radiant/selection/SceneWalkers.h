@@ -87,7 +87,7 @@ public:
 		Selectable* selectable = Instance_getSelectable(instance);
 		// Only update the aabb variable if the instance is selected 
 		if (selectable != 0 && selectable->isSelected()) {
-			aabb_extend_by_aabb_safe(_bounds, Instance_getPivotBounds(instance));
+			_bounds.includeAABB(Instance_getPivotBounds(instance));
 		}
 		return true;
 	}
@@ -108,7 +108,9 @@ public:
 		if (selectable != 0 && selectable->isSelected()) {
 			ComponentEditable* componentEditable = Instance_getComponentEditable(instance);
 			if (componentEditable) {
-				aabb_extend_by_aabb_safe(_bounds, aabb_for_oriented_aabb_safe(componentEditable->getSelectedComponentsBounds(), instance.localToWorld()));
+				_bounds.includeAABB(
+					aabb_for_oriented_aabb_safe(componentEditable->getSelectedComponentsBounds(), 
+												instance.localToWorld()));
 			}
 		}
 		return true;

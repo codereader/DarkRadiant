@@ -296,7 +296,7 @@ public:
     m_aabb_local = AABB();
     for(surfaces_t::iterator i = m_surfaces.begin(); i != m_surfaces.end(); ++i)
     {
-      aabb_extend_by_aabb_safe(m_aabb_local, (*i)->localAABB());
+      m_aabb_local.includeAABB((*i)->localAABB());
     }
   }
 

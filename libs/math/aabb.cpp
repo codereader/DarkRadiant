@@ -81,3 +81,36 @@ void AABB::includePoint(const Vector3& point) {
 	}
 }
 
+// Expand this AABB to include another AABB
+void AABB::includeAABB(const AABB& other) {
+	
+	// Validity check. If both this and other are valid, use the extension
+	// algorithm. If only the other AABB is valid, set this AABB equal to it.
+	// If neither are valid we do nothing.
+
+	if (isValid() && other.isValid()) {
+		// Extend each axis separately
+		for (int i = 0; i < 3; ++i) {
+		    float displacement = other.origin[i] - origin[i];
+		    float difference = other.extents[i] - extents[i];
+		    if(fabs(displacement) > fabs(difference))
+		    {
+		      float half_difference = static_cast<float>(0.5 * (fabs(displacement) + difference));
+		      if(half_difference > 0.0f)
+		      {
+		        origin[i] += (displacement >= 0.0f) ? half_difference : -half_difference;
+		        extents[i] += half_difference;
+		      }
+		    }
+		    else if(difference > 0.0f)
+		    {
+		      origin[i] = other.origin[i];
+		      extents[i] = other.extents[i];
+		    }
+		}
+	}
+	else if (other.isValid()) {
+		origin = other.origin;
+		extents = other.extents;	
+	}
+}

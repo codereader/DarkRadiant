@@ -461,7 +461,7 @@ private:
       PicoFixSurfaceNormals( surface );
       
       PicoSurface* picosurface = new PicoSurface(surface, fileExt);
-      aabb_extend_by_aabb_safe(m_aabb_local, picosurface->localAABB());
+      m_aabb_local.includeAABB(picosurface->localAABB());
       m_surfaces.push_back(picosurface);
     }
   }
