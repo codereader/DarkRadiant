@@ -25,11 +25,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/matrix.h"
 #include "math/plane.h"
 
-/** An Axis Aligned Bounding Box is a simple cuboid which encloses a given set of points,
- * such as the vertices of a model. It is defined by an origin, located at the centre of
- * the AABB, and symmetrical extents in 3 dimension which determine its size.
+/** An Axis Aligned Bounding Box is a simple cuboid which encloses a given set 
+ * of points, such as the vertices of a model. It is defined by an origin, 
+ * located at the centre of the AABB, and symmetrical extents in 3 dimension 
+ * which determine its size.
  */
-
 class AABB
 {
 public:
@@ -50,6 +50,11 @@ public:
 	AABB(const Vector3& origin_, const Vector3& extents_) 
 	: origin(origin_), extents(extents_) {}
   
+	/** Static named constructor to create an AABB that encloses the provided
+	 * minimum and maximum points.
+	 */
+	static AABB createFromMinMax(const Vector3& min, const Vector3& max);
+
 	/** Get the origin of this AABB.
 	 * 
 	 * @returns

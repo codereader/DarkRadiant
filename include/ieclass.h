@@ -30,8 +30,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/Vector3.h"
 #include "modulesystem.h"
 
+/* FORWARD DECLS */
+
 class Shader;
 class ListAttributeType;
+class AABB;
 
 /** Data structure representing a single attribute on an entity class.
  */
@@ -87,6 +90,17 @@ struct IEntityClass {
 	 */
 	virtual bool isFixedSize() const = 0;
 
+	/** Query whether this entity class represents a light.
+	 */
+	virtual bool isLight() const = 0;
+	
+	/** Set whether this entity class represents a light.
+	 */
+	virtual void setIsLight(bool isLight) = 0;
+
+
+	/* ENTITY CLASS SIZE */
+
 	/** Set the minimum display size.
 	 */
 	virtual void setMins(const Vector3& mins) = 0;
@@ -95,22 +109,17 @@ struct IEntityClass {
 	 */
 	virtual void setMaxs(const Vector3& maxs) = 0;
 	
-	/** Get the minimum display size.
+	/** Return an AABB representing the declared size of this entity. This is
+	 * only valid for fixed size entities.
+	 * 
+	 * @returns
+	 * AABB enclosing the "editor_mins" and "editor_maxs" points defined in the 
+	 * entityDef.
 	 */
-	virtual Vector3 getMins() const = 0;
+	virtual AABB getBounds() const = 0;
 	
-	/** Get the maximum display size.
-	 */
-	virtual Vector3 getMaxs() const = 0;
-	
-	/** Query whether this entity class represents a light.
-	 */
-	virtual bool isLight() const = 0;
-	
-	/** Set whether this entity class represents a light.
-	 */
-	virtual void setIsLight(bool isLight) = 0;
-		
+
+	/* ENTITY CLASS COLOURS */		
 
 	/** Set this entity class' display colour.
 	 * 
@@ -126,7 +135,6 @@ struct IEntityClass {
 	 */
 	virtual const Vector3& getColour() const = 0;
 	
-
 	/** Get the Shader used for rendering this entity class in
 	 * wireframe mode.
 	 */
