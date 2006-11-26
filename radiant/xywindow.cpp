@@ -432,9 +432,10 @@ inline unsigned int buttons_for_button_and_modifiers(ButtonIdentifier button, Mo
 
   switch (button.get())
   {
-  case ButtonEnumeration::LEFT: buttons |= RAD_LBUTTON; break;
-  case ButtonEnumeration::MIDDLE: buttons |= RAD_MBUTTON; break;
-  case ButtonEnumeration::RIGHT: buttons |= RAD_RBUTTON; break;
+	case ButtonEnumeration::LEFT: buttons |= RAD_LBUTTON; break;
+  	case ButtonEnumeration::MIDDLE: buttons |= RAD_MBUTTON; break;
+  	case ButtonEnumeration::RIGHT: buttons |= RAD_RBUTTON; break;
+  	case ButtonEnumeration::INVALID: break;
   }
 
   if(bitfield_enabled(flags, c_modifierControl))
@@ -953,7 +954,7 @@ void XYWnd::DropClipPoint(int pointx, int pointy)
   Vector3 mid;
   Select_GetMid(mid);
   g_clip_viewtype = static_cast<VIEWTYPE>(GetViewType());
-  int nDim = (g_clip_viewtype == YZ ) ? nDim = 0 : ( (g_clip_viewtype == XZ) ? nDim = 1 : nDim = 2 );
+  int nDim = (g_clip_viewtype == YZ ) ?  0 : ( (g_clip_viewtype == XZ) ? 1 : 2 );
   point[nDim] = mid[nDim];
   vector3_snap(point, GetGridSize());
   NewClipPoint(point);
