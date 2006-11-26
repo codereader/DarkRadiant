@@ -406,7 +406,7 @@ AABB PatchCreator_getBounds()
     aabb.extents[2] = gridSize;
   }
 
-  if(aabb_valid(aabb))
+  if(aabb.isValid())
   {
     return aabb;
   }

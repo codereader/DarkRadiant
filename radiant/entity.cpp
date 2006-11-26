@@ -190,17 +190,12 @@ void Entity_connectSelected()
 
 AABB Doom3Light_getBounds(AABB aabb)
 {
+	// If the extents are 0 or invalid (-1), replace with the default radius
     for (int i = 0; i < 3; i++) {
-		if (aabb.extents[i] == 0)
+		if (aabb.extents[i] <= 0)
 	    	aabb.extents[i] = DEFAULT_LIGHT_RADIUS;
     }
-
-    if (aabb_valid(aabb)) {
-		return aabb;
-    }
-    else {
-		return AABB(Vector3(0, 0, 0), Vector3(64, 64, 64));
-    }
+	return aabb;
 }
 
 int g_iLastLightIntensity;
