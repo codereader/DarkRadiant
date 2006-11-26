@@ -228,7 +228,6 @@ radiant_src = [
 'entitylist.cpp',
 'environment.cpp',
 'error.cpp',
-'feedback.cpp',
 'filetypes.cpp',
 'findtexturedialog.cpp',
 'glwidget.cpp',
