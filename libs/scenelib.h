@@ -566,7 +566,7 @@ namespace scene
       {
         if(m_depth == 1)
         {
-          aabb_extend_by_aabb_safe(m_aabb, instance.worldAABB());
+          m_aabb.includeAABB(instance.worldAABB());
         }
         return ++m_depth != 2;
       }
@@ -689,8 +689,7 @@ namespace scene
         const Bounded* bounded = Instance_getBounded(*this);
         if(bounded != 0)
         {
-          aabb_extend_by_aabb_safe(
-            m_bounds,
+          m_bounds.includeAABB(
             aabb_for_oriented_aabb_safe(bounded->localAABB(), localToWorld())
           );
         }

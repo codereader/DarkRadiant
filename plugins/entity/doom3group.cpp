@@ -387,7 +387,7 @@ public:
   const AABB& localAABB() const
   {
     m_curveBounds = m_curveNURBS.m_bounds;
-    aabb_extend_by_aabb_safe(m_curveBounds, m_curveCatmullRom.m_bounds);
+    m_curveBounds.includeAABB(m_curveCatmullRom.m_bounds);
     return m_curveBounds;
   }
 

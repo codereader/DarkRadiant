@@ -83,31 +83,13 @@ public:
 	 */
 	void includePoint(const Vector3& point);	 
 
-};
-
-template<typename Index>
-class AABBExtend
-{
-public:
-  static void apply(AABB& aabb, const AABB& other)
-  {
-    float displacement = other.origin[Index::VALUE] - aabb.origin[Index::VALUE];
-    float difference = other.extents[Index::VALUE] - aabb.extents[Index::VALUE];
-    if(fabs(displacement) > fabs(difference))
-    {
-      float half_difference = static_cast<float>(0.5 * (fabs(displacement) + difference));
-      if(half_difference > 0.0f)
-      {
-        aabb.origin[Index::VALUE] += (displacement >= 0.0f) ? half_difference : -half_difference;
-        aabb.extents[Index::VALUE] += half_difference;
-      }
-    }
-    else if(difference > 0.0f)
-    {
-      aabb.origin[Index::VALUE] = other.origin[Index::VALUE];
-      aabb.extents[Index::VALUE] = other.extents[Index::VALUE];
-    }
-  }
+	/** Expand this AABB in-place to include the given AABB in
+	 * world space.
+	 * 
+	 * @param other
+	 * The other AABB to include.
+	 */
+	void includeAABB(const AABB& other);	 
 };
 
 class AABBExtendByPoint
@@ -123,25 +105,6 @@ public:
   }
 };
   
-inline void aabb_extend_by_aabb(AABB& aabb, const AABB& other)
-{
-  AABBExtend< IntegralConstant<0> >::apply(aabb, other);
-  AABBExtend< IntegralConstant<1> >::apply(aabb, other);
-  AABBExtend< IntegralConstant<2> >::apply(aabb, other);
-}
-
-inline void aabb_extend_by_aabb_safe(AABB& aabb, const AABB& other)
-{
-  if(aabb.isValid() && other.isValid())
-  {
-    aabb_extend_by_aabb(aabb, other);
-  }
-  else if(other.isValid())
-  {
-    aabb = other;
-  }
-}
-
 inline void aabb_extend_by_vec3(AABB& aabb, const Vector3& extension)
 {
   aabb.extents += extension;
