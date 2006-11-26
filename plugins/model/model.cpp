@@ -205,7 +205,7 @@ private:
   {
     m_aabb_local = AABB();
     for(std::size_t i = 0; i < m_vertices.size(); ++i )
-      aabb_extend_by_point_safe(m_aabb_local, reinterpret_cast<const Vector3&>(m_vertices[i].vertex));
+      m_aabb_local.includePoint(reinterpret_cast<const Vector3&>(m_vertices[i].vertex));
 
 
     for(Array<RenderIndex>::iterator i = m_indices.begin(); i != m_indices.end(); i += 3)

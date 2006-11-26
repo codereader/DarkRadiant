@@ -2551,7 +2551,7 @@ private:
           const Winding& winding = f.getWinding();
           for(Winding::const_iterator i = winding.begin(); i != winding.end(); ++i)
           {
-            aabb_extend_by_point_safe(m_aabb_local, (*i).vertex);
+            m_aabb_local.includePoint(i->vertex);
           }
 
           // update texture coordinates

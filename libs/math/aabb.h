@@ -110,19 +110,6 @@ public:
   }
 };
 
-inline void aabb_extend_by_point_safe(AABB& aabb, const Vector3& point)
-{
-  if(aabb.isValid())
-  {
-    aabb.includePoint(point);
-  }
-  else
-  {
-    aabb.origin = point;
-    aabb.extents = Vector3(0, 0, 0);
-  }
-}
-
 class AABBExtendByPoint
 {
   AABB& m_aabb;
@@ -132,7 +119,7 @@ public:
   }
   void operator()(const Vector3& point) const
   {
-    aabb_extend_by_point_safe(m_aabb, point);
+    m_aabb.includePoint(point);
   }
 };
   

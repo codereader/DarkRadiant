@@ -1178,7 +1178,7 @@ void Texdef_FitTexture(TextureProjection& projection, std::size_t width, std::si
   for(Winding::const_iterator i = w.begin(); i != w.end(); ++i)
   {
     Vector3 texcoord = matrix4_transformed_point(local2tex, (*i).vertex);
-    aabb_extend_by_point_safe(bounds, texcoord);
+    bounds.includePoint(texcoord);
   }
   bounds.origin.z() = 0;
   bounds.extents.z() = 1;

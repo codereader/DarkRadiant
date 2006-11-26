@@ -58,15 +58,25 @@ bool AABB::isValid() const {
 	return valid;
 }
 
-// Expand this AABB to include the given point
+// Expand this AABB to include the given point.
 void AABB::includePoint(const Vector3& point) {
-	// Process each axis separately
-	for (int i = 0; i < 3; ++i) {
-		float axisDisp = point[i] - origin[i]; // axis displacement from origin to point
-		float halfDif = 0.5 * (std::abs(axisDisp) - extents[i]); // half of extent increase needed (maybe negative if point inside)
-		if (halfDif > 0) {
-			origin[i] += (axisDisp > 0) ? halfDif : -halfDif;
-			extents[i] += halfDif;
+
+	// If not yet initialised, simply set the AABB to equal the point
+	if (!isValid()) {
+		origin = point;
+		extents = Vector3(0, 0, 0);
+	}
+	else {
+		// Extend each axis separately
+		for (int i = 0; i < 3; ++i) {
+			// Axis displacement from origin to point
+			float axisDisp = point[i] - origin[i]; 
+			// Half of extent increase needed (maybe negative if point inside)
+			float halfDif = 0.5 * (std::abs(axisDisp) - extents[i]); 
+			if (halfDif > 0) {
+				origin[i] += (axisDisp > 0) ? halfDif : -halfDif;
+				extents[i] += halfDif;
+			}
 		}
 	}
 }

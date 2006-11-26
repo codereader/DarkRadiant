@@ -142,7 +142,7 @@ public:
   {
     m_aabb_local = AABB();
     for(vertices_t::iterator i = m_vertices.begin(); i != m_vertices.end(); ++i)
-      aabb_extend_by_point_safe(m_aabb_local, reinterpret_cast<const Vector3&>((*i).vertex));
+      m_aabb_local.includePoint(reinterpret_cast<const Vector3&>(i->vertex));
 
 
 
