@@ -3,15 +3,10 @@
 #include "Vector3PropertyEditor.h"
 #include "BooleanPropertyEditor.h"
 #include "EntityPropertyEditor.h"
-#ifdef USE_CLASSNAME_PROPERTY_EDITOR
-#include "ClassnamePropertyEditor.h"
-#endif
 #include "ColourPropertyEditor.h"
 #include "TexturePropertyEditor.h"
 
 #include "gtkutil/image.h"
-
-#include "config.h"
 
 namespace ui
 {
@@ -28,9 +23,6 @@ void PropertyEditorFactory::registerClasses() {
         _peMap["entity"] = new EntityPropertyEditor();
 		_peMap["colour"] = new ColourPropertyEditor();
 		_peMap["texture"] = new TexturePropertyEditor();
-#ifdef USE_CLASSNAME_PROPERTY_EDITOR
-        _peMap["classname"] = new ClassnamePropertyEditor();
-#endif
 }
 
 // Create a PropertyEditor from the given name.
@@ -45,11 +37,7 @@ PropertyEditor* PropertyEditorFactory::create(const std::string& className,
         registerClasses();
     }
 
-#ifdef ALL_PROPERTY_EDITORS_ARE_TEXT
-	PropertyEditorMap::iterator iter(_peMap.find("text"));
-#else
 	PropertyEditorMap::iterator iter(_peMap.find(className));
-#endif
 
 	if (iter == _peMap.end()) {
 		return NULL;

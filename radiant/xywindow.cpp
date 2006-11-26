@@ -1213,12 +1213,6 @@ public:
 /* Context menu
  */
 
-#include "config.h"
-
-#ifdef USE_NEW_ORTHO_CONTEXT_MENU
-
-// New context menu uses separate object
-
 #include "ui/ortho/OrthoContextMenu.h"
 
 // Forward decl
@@ -1231,31 +1225,6 @@ void XYWnd::OnContextMenu() {
 	// Display the menu, passing the coordinates for creation
 	ui::OrthoContextMenu::displayInstance(point);	
 }
-
-#else
-
-// Old GtkRadiant style
-
-void XYWnd::OnContextMenu()
-{
-  if (g_xywindow_globals.m_bRightClick == false)
-    return;
-
-  if (m_mnuDrop == 0) // first time, load it up
-  {
-    GtkMenu* menu = m_mnuDrop = GTK_MENU(gtk_menu_new());
-
-	// Fixed "Add model here..." option.
-	EntityClassMenu_addItem(menu, "Add model here...");
-
-    EntityClassMenuInserter inserter(menu);
-    GlobalEntityClassManager().forEach(inserter);
-  }
-
-  gtk_menu_popup(m_mnuDrop, 0, 0, 0, 0, 1, GDK_CURRENT_TIME);
-}
-
-#endif
 
 /*
  */
