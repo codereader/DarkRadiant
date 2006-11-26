@@ -19,13 +19,34 @@ namespace ui
 
 class PropertyEditor
 {
+    // Main widget
+    GtkWidget* _widget;
+
+	// The Entity to edit
+	Entity* _entity;
+	
+	// The key we are editing on this Entity
+	const std::string _key;
+
+	// The Gtk box containing the apply/reset buttons which are common for all
+	// subclasses.
+	GtkWidget* _applyButtonHbox;
+
+	// The central GtkScrolledWindow where the actual editing takes place
+	GtkWidget* _editWindow;
+	
+private:
+
+    // Static callback for the Apply button. 
+    static void callbackApply(GtkWidget*, PropertyEditor*);
+
 public:
 
     // Blank ctor for map registration
     PropertyEditor();
 
 	// Constructor
-	PropertyEditor(Entity* ent, const std::string& key, const std::string& type);
+	PropertyEditor(Entity* ent, const std::string& key);
 
 	// Virtual destructor
 	virtual ~PropertyEditor();
@@ -57,44 +78,6 @@ public:
     // call to the callbackReset() GTK callback.
     void refresh();
 
-private: // methods
-
-    // Static callbacks for the Apply and Reset buttons. These will eventually 
-    // invoke the corresponding virtual functions on the derived class.
-
-    static void callbackApply(GtkWidget*, PropertyEditor*);
-
-#ifdef PROPERTY_EDITOR_HAS_UNDO_BUTTON
-    static void callbackReset(GtkWidget*, PropertyEditor*);
-#endif
-    
-    // Static callback for the Key Active checkbox, which enables or disables
-    // the central edit pane.
-    static void callbackActiveToggled(GtkWidget*, PropertyEditor*);
-
-
-private: // fields
-
-    // Main widget
-    GtkWidget* _widget;
-
-	// The Entity to edit
-	Entity* _entity;
-	
-	// The key we are editing on this Entity
-	const std::string _key;
-
-	// The type of the key we are editing. This is passed up from the derived
-	// class constructor based on the type of the derived class.	
-	const std::string _type;
-
-	// The Gtk box containing the apply/reset buttons which are common for all
-	// subclasses.
-	GtkWidget* _applyButtonHbox;
-
-	// The central GtkScrolledWindow where the actual editing takes place
-	GtkWidget* _editWindow;
-	
 protected:
 
 	// Accessor functions for subclasses. 

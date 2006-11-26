@@ -15,7 +15,8 @@ ColourPropertyEditor::ColourPropertyEditor() {}
 
 // Main ctor
 ColourPropertyEditor::ColourPropertyEditor(Entity* entity, const std::string& name)
-: PropertyEditor(entity, name, "colour") {
+: PropertyEditor(entity, name) 
+{
 	_colorButton = gtk_color_button_new();
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(getEditWindow()),
 										  _colorButton);

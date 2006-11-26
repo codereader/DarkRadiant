@@ -27,12 +27,6 @@
 //#define USE_CLASSNAME_PROPERTY_EDITOR
 
 
-/* Specify whether an "Undo" button should be displayed on the PropertyEditor.
- */
- 
-//#define PROPERTY_EDITOR_HAS_UNDO_BUTTON
-
-
 /*************************************************************************
  * ORTHO WINDOW
  *************************************************************************/
