@@ -394,7 +394,7 @@ public:
     m_bounds = AABB();
     for(ControlPoints::iterator i = m_controlPointsTransformed.begin(); i != m_controlPointsTransformed.end(); ++i)
     {
-      aabb_extend_by_point_safe(m_bounds, (*i));
+      m_bounds.includePoint(*i);
     }
 
     m_boundsChanged();
@@ -494,7 +494,7 @@ public:
     m_bounds = AABB();
     for(ControlPoints::iterator i = m_controlPointsTransformed.begin(); i != m_controlPointsTransformed.end(); ++i)
     {
-      aabb_extend_by_point_safe(m_bounds, (*i));
+      m_bounds.includePoint(*i);
     }
 
     m_boundsChanged();

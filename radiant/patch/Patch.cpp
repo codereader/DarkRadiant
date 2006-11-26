@@ -1060,7 +1060,7 @@ void Patch::AccumulateBBox()
 
   for(PatchControlArray::iterator i = m_ctrlTransformed.begin(); i != m_ctrlTransformed.end(); ++i)
   {
-    aabb_extend_by_point_safe(m_aabb_local, (*i).m_vertex);
+    m_aabb_local.includePoint(i->m_vertex);
   }
 
   m_boundsChanged();

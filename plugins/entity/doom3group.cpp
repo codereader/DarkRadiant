@@ -476,7 +476,7 @@ public:
   }
   void operator()(const Vector3& point) const
   {
-    aabb_extend_by_point_safe(m_bounds, point);
+    m_bounds.includePoint(point);
   }
 };
 

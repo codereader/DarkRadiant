@@ -233,7 +233,7 @@ const AABB& PatchInstance::getSelectedComponentsBounds() const {
 	// Cycle through all the instances and extend the bounding box by using the selected control points
 	for (PatchControlInstances::const_iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i) {
 		if ((*i).m_selectable.isSelected()) {
-			aabb_extend_by_point_safe(m_aabb_component, (*i).m_ctrl->m_vertex);
+			m_aabb_component.includePoint(i->m_ctrl->m_vertex);
 		}
 	}
 
