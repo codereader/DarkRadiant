@@ -1,5 +1,4 @@
 #include "PropertyEditor.h"
-#include "PropertyEditorFactory.h"
 
 #include "entity.h"
 
@@ -18,11 +17,10 @@ PropertyEditor::PropertyEditor() {}
 
 // Constructor
 
-PropertyEditor::PropertyEditor(Entity* ent, const std::string& key, const std::string& type):
+PropertyEditor::PropertyEditor(Entity* ent, const std::string& key):
     _widget(gtk_vbox_new(FALSE, 0)),
 	_entity(ent),
 	_key(key),
-	_type(type),
 	_applyButtonHbox(NULL),
 	_editWindow(NULL)
 {
@@ -110,24 +108,6 @@ void PropertyEditor::callbackApply(GtkWidget* caller, PropertyEditor* self) {
     self->_entity->setKeyValue(self->_key.c_str(), newValue.c_str());
         
 	GlobalUndoSystem().finish(cmd.c_str());
-}
-
-#ifdef PROPERTY_EDITOR_HAS_UNDO_BUTTON
-
-void PropertyEditor::callbackReset(GtkWidget* caller, PropertyEditor* self) {
-	self->refresh();
-}
-
-#endif
-
-// Callback for when the active checkbox is toggled. This enables or disables
-// the central edit pane.
-
-void PropertyEditor::callbackActiveToggled(GtkWidget* caller, PropertyEditor* self) {
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(caller)))
-		gtk_widget_set_sensitive(self->_editWindow, TRUE);
-	else 
-		gtk_widget_set_sensitive(self->_editWindow, FALSE);
 }
 
 } // namespace ui

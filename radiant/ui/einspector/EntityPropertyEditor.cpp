@@ -16,7 +16,7 @@ EntityPropertyEditor::EntityPropertyEditor() {}
 // Constructor. Create the GTK widgets here
 
 EntityPropertyEditor::EntityPropertyEditor(Entity* entity, const std::string& name)
-: PropertyEditor(entity, name, "entity")
+: PropertyEditor(entity, name)
 {
     GtkWidget* editBox = gtk_hbox_new(FALSE, 3);
     gtk_container_set_border_width(GTK_CONTAINER(editBox), 3);

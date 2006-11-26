@@ -12,7 +12,7 @@ BooleanPropertyEditor::BooleanPropertyEditor() {}
 // Constructor. Create the GTK widgets here
 
 BooleanPropertyEditor::BooleanPropertyEditor(Entity* entity, const std::string& name):
-	PropertyEditor(entity, name, "boolean") 
+	PropertyEditor(entity, name) 
 {
 
 	GtkWidget* editBox = gtk_hbox_new(FALSE, 3);
