@@ -55,6 +55,10 @@ public:
 	 */
 	static AABB createFromMinMax(const Vector3& min, const Vector3& max);
 
+	/** Determine whether this AABB is valid.
+	 */
+	bool isValid() const;
+
 	/** Get the origin of this AABB.
 	 * 
 	 * @returns
@@ -80,28 +84,6 @@ public:
 	void includePoint(const Vector3& point);	 
 
 };
-
-const float c_aabb_max = FLT_MAX;
-
-inline bool extents_valid(float f)
-{
-  return f >= 0.0f && f <= c_aabb_max;
-}
-
-inline bool origin_valid(float f)
-{
-  return f >= -c_aabb_max && f <= c_aabb_max;
-}
-
-inline bool aabb_valid(const AABB& aabb)
-{
-  return origin_valid(aabb.origin[0])
-    && origin_valid(aabb.origin[1])
-    && origin_valid(aabb.origin[2])
-    && extents_valid(aabb.extents[0])
-    && extents_valid(aabb.extents[1])
-    && extents_valid(aabb.extents[2]);
-}
 
 template<typename Index>
 class AABBExtend
@@ -130,7 +112,7 @@ public:
 
 inline void aabb_extend_by_point_safe(AABB& aabb, const Vector3& point)
 {
-  if(aabb_valid(aabb))
+  if(aabb.isValid())
   {
     aabb.includePoint(point);
   }
@@ -163,11 +145,11 @@ inline void aabb_extend_by_aabb(AABB& aabb, const AABB& other)
 
 inline void aabb_extend_by_aabb_safe(AABB& aabb, const AABB& other)
 {
-  if(aabb_valid(aabb) && aabb_valid(other))
+  if(aabb.isValid() && other.isValid())
   {
     aabb_extend_by_aabb(aabb, other);
   }
-  else if(aabb_valid(other))
+  else if(other.isValid())
   {
     aabb = other;
   }
@@ -330,7 +312,7 @@ inline AABB aabb_for_oriented_aabb(const AABB& aabb, const Matrix4& transform)
 
 inline AABB aabb_for_oriented_aabb_safe(const AABB& aabb, const Matrix4& transform)
 {
-  if(aabb_valid(aabb))
+  if(aabb.isValid())
   {
     return aabb_for_oriented_aabb(aabb, transform);
   }
@@ -339,7 +321,7 @@ inline AABB aabb_for_oriented_aabb_safe(const AABB& aabb, const Matrix4& transfo
 
 inline AABB aabb_infinite()
 {
-  return AABB(Vector3(0, 0, 0), Vector3(c_aabb_max, c_aabb_max, c_aabb_max));
+  return AABB(Vector3(0, 0, 0), Vector3(FLT_MAX, FLT_MAX, FLT_MAX));
 }
 
 #endif

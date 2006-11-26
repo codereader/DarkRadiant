@@ -384,19 +384,11 @@ public:
 
   const Vector3& world_position() const
   {
-#if 1
     const AABB& bounds = Instance::worldAABB();
-    if(aabb_valid(bounds))
+    if(bounds.isValid())
     {
-      return bounds.origin;
+      return bounds.getOrigin();
     }
-#else
-    const AABB& childBounds = Instance::childBounds();
-    if(aabb_valid(childBounds))
-    {
-      return childBounds.origin;
-    }
-#endif
     return localToWorld().t().getVector3();
   }
 

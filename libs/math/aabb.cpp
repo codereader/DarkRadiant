@@ -38,6 +38,26 @@ AABB AABB::createFromMinMax(const Vector3& min, const Vector3& max) {
 	return AABB(origin, extents);
 }
 
+// Check whether the AABB is valid, or if the extents are still uninitialised
+bool AABB::isValid() const {
+
+	bool valid = true;
+
+	// Check each origin and extents value. The origins must be between
+	// +/- FLT_MAX, and the extents between 0 and FLT_MAX.
+	for (int i = 0; i < 3; ++i) {
+		if (origin[i] < -FLT_MAX
+			|| origin[i] > FLT_MAX
+			|| extents[i] < 0
+			|| extents[i] > FLT_MAX)
+		{
+			valid = false;
+		}
+	}
+
+	return valid;
+}
+
 // Expand this AABB to include the given point
 void AABB::includePoint(const Vector3& point) {
 	// Process each axis separately
