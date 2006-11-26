@@ -227,7 +227,8 @@ NodeSmartReference Entity_createFromSelection(const char* name, const Vector3& o
 		throw EntityCreationException(std::string("Unable to create entity \"") + name + "\", no brushes selected");
     }
 
-    AABB workzone(aabb_for_minmax(Select_getWorkZone().d_work_min, Select_getWorkZone().d_work_max));
+    AABB workzone(AABB::createFromMinMax(Select_getWorkZone().d_work_min, 
+    									 Select_getWorkZone().d_work_max));
     
     NodeSmartReference node(GlobalEntityCreator().createEntity(entityClass));
     

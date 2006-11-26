@@ -103,14 +103,6 @@ inline bool aabb_valid(const AABB& aabb)
     && extents_valid(aabb.extents[2]);
 }
 
-inline AABB aabb_for_minmax(const Vector3& min, const Vector3& max)
-{
-  AABB aabb;
-  aabb.origin = vector3_mid(min, max);
-  aabb.extents = max - aabb.origin;
-  return aabb;
-}
-
 template<typename Index>
 class AABBExtend
 {
