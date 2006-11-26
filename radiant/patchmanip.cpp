@@ -388,7 +388,8 @@ void Scene_PatchFindReplaceShader_Selected(scene::Graph& graph, const char* find
 
 AABB PatchCreator_getBounds()
 {
-  AABB aabb(aabb_for_minmax(Select_getWorkZone().d_work_min, Select_getWorkZone().d_work_max));
+  AABB aabb(AABB::createFromMinMax(Select_getWorkZone().d_work_min, 
+  								   Select_getWorkZone().d_work_max));
 
   float gridSize = GetGridSize();
 

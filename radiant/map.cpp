@@ -1500,7 +1500,7 @@ public:
         (
           aabb_intersects_aabb(
             instance.worldAABB(),
-            aabb_for_minmax(region_mins, region_maxs)
+            AABB::createFromMinMax(region_mins, region_maxs)
           ) != 0
         ) ^ m_exclude
       )

@@ -338,7 +338,10 @@ void ConstructRegionBrushes(scene::Node* brushes[6], const Vector3& region_mins,
     {
       Vector3 maxs(region_maxs[0]+32, region_maxs[1]+32, region_maxs[2]+32);
       maxs[i] = region_mins[i];
-      Brush_ConstructCuboid(*Node_getBrush(*brushes[i]), aabb_for_minmax(mins, maxs), texdef_name_default(), TextureProjection());
+      Brush_ConstructCuboid(*Node_getBrush(*brushes[i]), 
+      						AABB::createFromMinMax(mins, maxs),
+      						texdef_name_default(), 
+      						TextureProjection());
     }
   }
 
@@ -351,7 +354,10 @@ void ConstructRegionBrushes(scene::Node* brushes[6], const Vector3& region_mins,
     {
       Vector3 mins(region_mins[0]-32, region_mins[1]-32, region_mins[2]-32);
       mins[i] = region_maxs[i];
-      Brush_ConstructCuboid(*Node_getBrush(*brushes[i+3]), aabb_for_minmax(mins, maxs), texdef_name_default(), TextureProjection());
+      Brush_ConstructCuboid(*Node_getBrush(*brushes[i+3]), 
+      						AABB::createFromMinMax(mins, maxs),
+      						texdef_name_default(),
+      						TextureProjection());
     }
   }
 }

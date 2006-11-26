@@ -1114,7 +1114,9 @@ void XYWnd::NewBrushDrag(int x, int y)
     m_NewBrushDrag = node.get_pointer();
   }
 
-  Scene_BrushResize_Selected(GlobalSceneGraph(), aabb_for_minmax(mins, maxs), TextureBrowser_GetSelectedShader(GlobalTextureBrowser()));
+	Scene_BrushResize_Selected(GlobalSceneGraph(), 
+  							   AABB::createFromMinMax(mins, maxs), 
+  							   TextureBrowser_GetSelectedShader(GlobalTextureBrowser()));
 }
 
 void entitycreate_activated(GtkWidget* item)
