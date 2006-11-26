@@ -243,7 +243,6 @@ radiant_src = [
 'parse.cpp',
 'patchdialog.cpp',
 'patchmanip.cpp',
-'patchmodule.cpp',
 'plugin.cpp',
 'pluginapi.cpp',
 'pluginmenu.cpp',
@@ -307,6 +306,7 @@ radiant_src = [
 'patch/Patch.cpp',
 'patch/PatchBezier.cpp',
 'patch/PatchInstance.cpp',
+'patch/PatchModule.cpp',
 'plugin/PluginManager.cpp',
 'plugin/PluginSlots.cpp',
 'brushexport/BrushExportOBJ.cpp'
