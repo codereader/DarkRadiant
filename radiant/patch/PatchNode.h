@@ -4,7 +4,10 @@
 #include "instancelib.h"
 #include "scenelib.h"
 #include "iscenegraph.h"
+#include "imap.h"
 #include "Patch.h"
+#include "PatchInstance.h"
+#include "PatchImportExport.h"
 
 template<typename TokenImporter, typename TokenExporter>
 class PatchNode :

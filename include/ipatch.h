@@ -26,9 +26,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 
-namespace scene
-{
-  class Node;
+// Forward declaration of scene::Node to avoid including the whole scene lib
+namespace scene {
+	class Node;
 }
 
 template<typename Element>
@@ -247,29 +247,47 @@ public:
   }
 };
 
-class PatchControl
-{
+/* greebo: A PatchControl consists of a vertex and a set of texture coordinates.
+ * Multiple PatchControls form a PatchControlArray or (together with width and height) a PatchControlMatrix.
+ */
+class PatchControl {
 public:
-  Vector3 m_vertex;
-  Vector2 m_texcoord;
+	Vector3 m_vertex;	// The coordinates of the control point
+	Vector2 m_texcoord;	// The texture coordinates of this point
 };
 
+// greebo: This is a matrix of patch controls. Width and Height are needed to construct such a structure
 typedef Matrix<PatchControl> PatchControlMatrix;
 
-
-class PatchCreator
-{
+/* greebo: the abstract base class for a patch-creating class.
+ * At the moment, the CommonPatchCreator, Doom3PatchCreator and Doom3PatchDef2Creator derive from this base class.   
+ */
+class PatchCreator {
 public:
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "patch");
-  virtual scene::Node& createPatch() = 0;
-  virtual void Patch_undoSave(scene::Node& patch) const = 0;
-  virtual void Patch_resize(scene::Node& patch, std::size_t width, std::size_t height) const = 0;
-  virtual PatchControlMatrix Patch_getControlPoints(scene::Node& patch) const = 0;
-  virtual void Patch_controlPointsChanged(scene::Node& patch) const = 0;
-  virtual const char* Patch_getShader(scene::Node& patch) const = 0;
-  virtual void Patch_setShader(scene::Node& patch, const char* shader) const = 0;
+	INTEGER_CONSTANT(Version, 1);
+	STRING_CONSTANT(Name, "patch");
+	
+	// Create a patch and return the sceneNode 
+	virtual scene::Node& createPatch() = 0;
+	
+	// Save the state of the patch to an UndoMemento for eventual reverting.
+	virtual void Patch_undoSave(scene::Node& patch) const = 0;
+	
+	// Resize the patch to the specified number rows and columns
+	virtual void Patch_resize(scene::Node& patch, std::size_t width, std::size_t height) const = 0;
+	
+	// Returns the control points and the dimensions of the patch
+	virtual PatchControlMatrix Patch_getControlPoints(scene::Node& patch) const = 0;
+	
+	// Notify the patch that the control points have changed
+	virtual void Patch_controlPointsChanged(scene::Node& patch) const = 0;
+	
+	// Get/Set the shader name of the patch
+	virtual const char* Patch_getShader(scene::Node& patch) const = 0;
+	virtual void Patch_setShader(scene::Node& patch, const char* shader) const = 0;
 };
+
+// Module-related stuff
 
 #include "modulesystem.h"
 
@@ -285,8 +303,8 @@ template<typename Type>
 class GlobalModuleRef;
 typedef GlobalModuleRef<PatchCreator> GlobalPatchModuleRef;
 
-inline PatchCreator& GlobalPatchCreator()
-{
+// Returns the PatchCreator instance, providing a way for other modules to access patch functions
+inline PatchCreator& GlobalPatchCreator() {
   return GlobalPatchModule::getTable();
 }
 
