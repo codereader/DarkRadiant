@@ -35,13 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "modulesystem/singletonmodule.h"
 #include "typesystem.h"
 
-#include "md3.h"
-#include "mdl.h"
-#include "md2.h"
-#include "mdc.h"
-#include "mdlimage.h"
 #include "md5.h"
-
 
 class ModelDependencies :
   public GlobalFileSystemModuleRef,
