@@ -5,6 +5,7 @@
 #include "EntityPropertyEditor.h"
 #include "ColourPropertyEditor.h"
 #include "TexturePropertyEditor.h"
+#include "SkinPropertyEditor.h"
 
 #include "gtkutil/image.h"
 
@@ -18,11 +19,12 @@ PropertyEditorFactory::PropertyEditorMap PropertyEditorFactory::_peMap;
 // Register the classes
 
 void PropertyEditorFactory::registerClasses() {
-        _peMap["vector3"] = new Vector3PropertyEditor();
-        _peMap["boolean"] = new BooleanPropertyEditor();
-        _peMap["entity"] = new EntityPropertyEditor();
-		_peMap["colour"] = new ColourPropertyEditor();
-		_peMap["texture"] = new TexturePropertyEditor();
+    _peMap["vector3"] = new Vector3PropertyEditor();
+    _peMap["boolean"] = new BooleanPropertyEditor();
+    _peMap["entity"] = new EntityPropertyEditor();
+	_peMap["colour"] = new ColourPropertyEditor();
+	_peMap["texture"] = new TexturePropertyEditor();
+	_peMap["skin"] = new SkinPropertyEditor();
 }
 
 // Create a PropertyEditor from the given name.

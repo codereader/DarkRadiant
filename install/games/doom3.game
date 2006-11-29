@@ -79,7 +79,7 @@
 		<property name="nospecular" category="Light" type="boolean" />
 		<property name="texture" category="Light" type="texture" options="lights,fogs" />
 		<property name="model" category="Model" type="text" />
-		<property name="skin" category="Model" type="text" />
+		<property name="skin" category="Model" type="skin" />
 		<property name="noshadow" category="Model" type="boolean" />
 		<property name="angle" category="AI" type="text" />
 		<property name="anim" category="AI" type="text" />
