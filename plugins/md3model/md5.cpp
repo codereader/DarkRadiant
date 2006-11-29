@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "archivelib.h"
 #include "stringio.h"
 
-#include "model.h"
+#include "md5model.h"
 
 #define MD5_RETURN_FALSE_IF_FAIL(expression) if(!(expression)) { globalErrorStream() << "md5 parse failed: " #expression "\n"; return false; } else
 
