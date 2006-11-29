@@ -279,7 +279,7 @@ radiant_src = [
 'ui/einspector/Vector3PropertyEditor.cpp',
 'ui/einspector/BooleanPropertyEditor.cpp',
 'ui/einspector/EntityPropertyEditor.cpp',
-#'ui/einspector/ClassnamePropertyEditor.cpp',
+'ui/einspector/SkinPropertyEditor.cpp',
 'ui/einspector/ColourPropertyEditor.cpp',
 'ui/einspector/TexturePropertyEditor.cpp',
 'ui/einspector/TextureChooser.cpp',
