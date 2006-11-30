@@ -5,7 +5,8 @@
 
 #include <map>
 #include <string>
-#include "gtk/gtk.h"
+
+#include <gtk/gtkwidget.h>
 
 namespace ui
 {

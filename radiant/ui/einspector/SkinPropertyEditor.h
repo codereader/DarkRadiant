@@ -15,6 +15,9 @@ namespace ui
 class SkinPropertyEditor
 : public PropertyEditor
 {
+	// Main text entry
+	GtkWidget* _textEntry;
+	
 public:
 
 	// Default constructor for the map

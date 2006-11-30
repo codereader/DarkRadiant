@@ -5,6 +5,8 @@
 
 #include <gtk/gtkliststore.h>
 #include <gtk/gtkwidget.h>
+#include <gtk/gtkmenuitem.h>
+#include <gtk/gtktogglebutton.h>
 
 #include "gtkutil/idledraw.h"
 
