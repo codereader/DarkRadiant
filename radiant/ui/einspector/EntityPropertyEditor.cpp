@@ -4,7 +4,7 @@
 #include "ientity.h"
 #include "scenelib.h"
 
-#include <iostream>
+#include <gtk/gtk.h>
 
 namespace ui
 {

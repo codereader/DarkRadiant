@@ -10,16 +10,15 @@
 #include "gtkutil/image.h"
 #include "gtkutil/dialog.h"
 #include "gtkutil/StockIconMenuItem.h"
-
 #include "xmlutil/Document.h"
-
 #include "signal/signal.h"
-
 #include "error.h"
 
 #include <iostream>
 #include <map>
 #include <string>
+
+#include <gtk/gtk.h>
 
 namespace ui {
 
