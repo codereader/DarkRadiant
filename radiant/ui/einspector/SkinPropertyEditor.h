@@ -6,10 +6,10 @@
 namespace ui
 {
 
-/** Property Editor for the "skin" key of models. This contains a text entry
- * box with a browse button that displays a SkinChooser, which is a dialog that
- * allows the selection of both matching and generic skins to apply to the
- * given model.
+/** Property Editor for the "skin" key of models. This contains a text entry box
+ * with a browse button that displays a SkinChooser, which is a dialog that 
+ * allows the selection of both matching and generic skins to apply to the given
+ * model.
  */
 
 class SkinPropertyEditor
@@ -17,6 +17,11 @@ class SkinPropertyEditor
 {
 	// Main text entry
 	GtkWidget* _textEntry;
+	
+private:
+
+	/* GTK CALLBACKS */
+	static void _onBrowseButton(GtkWidget* w, SkinPropertyEditor* self);
 	
 public:
 
