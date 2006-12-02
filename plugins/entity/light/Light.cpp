@@ -404,11 +404,11 @@ void Light::revertTransform() {
 }
 
 void Light::freezeTransform() {
-	if(g_lightType == LIGHTTYPE_DOOM3 && !m_useLightOrigin && !m_traverse.empty()) {
+	if (g_lightType == LIGHTTYPE_DOOM3 && !m_useLightOrigin && !m_traverse.empty()) {
 		m_useLightOrigin = true;
 	}
 
-	if(m_useLightOrigin) {
+	if (m_useLightOrigin) {
 		m_lightOrigin = m_aabb_light.origin;
 		writeLightOrigin();
 	}
@@ -611,8 +611,12 @@ const Matrix4& Light::rotation() const {
 	return m_doom3Rotation;
 }
 
+/* greebo: This is needed by the renderer to determine the center of the light. It returns
+ * the centerTransformed variable as the lighting should be updated as soon as the light center
+ * is dragged.
+ */
 const Vector3& Light::offset() const {
-	return m_doom3Radius.m_center;
+	return m_doom3Radius.m_centerTransformed;
 }
 const Vector3& Light::colour() const {
 	return m_colour.m_colour;
