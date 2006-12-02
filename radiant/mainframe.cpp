@@ -1158,6 +1158,11 @@ void ShowAllLightRadiiExport(const BoolImportCallback& importCallback)
   importCallback(GlobalRegistry().get("user/ui/showAllLightRadii") == "1");
 }
 
+void ShowSizeInfoExport(const BoolImportCallback& importCallback)
+{
+  importCallback(GlobalRegistry().get("user/ui/showSizeInfo") == "1");
+}
+
 FreeCaller1<const BoolImportCallback&, TranslateToolExport> g_translatemode_button_caller;
 BoolExportCallback g_translatemode_button_callback(g_translatemode_button_caller);
 ToggleItem g_translatemode_button(g_translatemode_button_callback);
@@ -1181,6 +1186,10 @@ ToggleItem g_clipper_button(g_clipper_button_callback);
 FreeCaller1<const BoolImportCallback&, ShowAllLightRadiiExport> g_showAllLightRadiiCaller;
 BoolExportCallback g_showAllLightRadiiCallback(g_showAllLightRadiiCaller);
 ToggleItem g_showAllLightRadiiButton(g_showAllLightRadiiCallback);
+
+FreeCaller1<const BoolImportCallback&, ShowSizeInfoExport> g_showSizeInfoCaller;
+BoolExportCallback g_showSizeInfoCallback(g_showSizeInfoCaller);
+ToggleItem g_showSizeInfoButton(g_showSizeInfoCallback);
 
 void ToolChanged()
 {
@@ -1306,18 +1315,27 @@ void ClipperMode()
   }
 }
 
-void ToggleShowAllLightRadii()
-{
-  if (GlobalRegistry().get("user/ui/showAllLightRadii") == "1")
-  {
-  	GlobalRegistry().set("user/ui/showAllLightRadii","0");
-  }
-  else
-  { 
-  	GlobalRegistry().set("user/ui/showAllLightRadii","1");
-  }
-  SceneChangeNotify();
+void ToggleShowAllLightRadii() {
+	if (GlobalRegistry().get("user/ui/showAllLightRadii") == "1") {
+		GlobalRegistry().set("user/ui/showAllLightRadii","0");
+	}
+	else { 
+		GlobalRegistry().set("user/ui/showAllLightRadii","1");
+	}
+	SceneChangeNotify();
 }
+
+// greebo: This toggles the brush/patch size info display in the ortho views
+void ToggleShowSizeInfo() {
+	if (GlobalRegistry().get("user/ui/showSizeInfo") == "1") {
+		GlobalRegistry().set("user/ui/showSizeInfo","0");
+	}
+	else { 
+		GlobalRegistry().set("user/ui/showSizeInfo","1");
+	}
+	SceneChangeNotify();
+}
+
 
 void Texdef_Rotate(float angle)
 {
@@ -1887,6 +1905,7 @@ GtkMenuItem* create_view_menu(MainFrame::EViewStyle style)
     create_check_menu_item_with_mnemonic(menu_in_menu, "Show Window Outline", "ShowWindowOutline");
     create_check_menu_item_with_mnemonic(menu_in_menu, "Show Axes", "ShowAxes");
     create_check_menu_item_with_mnemonic(menu_in_menu, "Show Workzone", "ShowWorkzone");
+    create_check_menu_item_with_mnemonic(menu_in_menu, "Show Size Info", "ToggleShowSizeInfo");
   }
 
   menu_separator(menu);
@@ -3092,6 +3111,8 @@ void MainFrame_Construct()
   GlobalCommands_insert("FindBrush", FreeCaller<DoFind>());
 
   GlobalCommands_insert("MapInfo", FreeCaller<DoMapInfo>(), Accelerator('M'));
+  
+  GlobalToggles_insert("ToggleShowSizeInfo", FreeCaller<ToggleShowSizeInfo>(), ToggleItem::AddCallbackCaller(g_showSizeInfoButton));
 
   GlobalToggles_insert("ToggleShowAllLightRadii", FreeCaller<ToggleShowAllLightRadii>(), ToggleItem::AddCallbackCaller(g_showAllLightRadiiButton));
   GlobalToggles_insert("ToggleClipper", FreeCaller<ClipperMode>(), ToggleItem::AddCallbackCaller(g_clipper_button), Accelerator('X'));

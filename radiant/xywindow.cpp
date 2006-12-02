@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "igl.h"
 #include "ibrush.h"
 #include "iundo.h"
+#include "iregistry.h"
 
 #include <gtk/gtklabel.h>
 #include <gtk/gtkmenuitem.h>
@@ -368,7 +369,6 @@ struct xywindow_globals_private_t
 
   bool m_bCamXYUpdate;
   bool m_bChaseMouse;
-  bool m_bSizePaint;
 
   xywindow_globals_private_t() :
     d_showgrid(true),
@@ -384,8 +384,7 @@ struct xywindow_globals_private_t
     show_blocks(false),
 
     m_bCamXYUpdate(true),
-    m_bChaseMouse(true),
-    m_bSizePaint(false)
+    m_bChaseMouse(true)
   {
   }
 
@@ -2307,9 +2306,8 @@ void XYWnd::XY_Draw()
   GlobalOpenGL_debugAssertNoErrors();
 
 
-  // size info
-  if(g_xywindow_globals_private.m_bSizePaint && GlobalSelectionSystem().countSelected() != 0)
-  {
+  // greebo: Check, if the brush/patch size info should be displayed (if there are any items selected)
+  if (GlobalRegistry().get("user/ui/showSizeInfo")=="1" && GlobalSelectionSystem().countSelected() != 0) {
     Vector3 min, max;
     Select_GetBounds(min, max);
     PaintSizeInfo(nDim1, nDim2, min, max);
@@ -2519,12 +2517,6 @@ void ToggleShowCrosshair()
   XY_UpdateAllWindows();
 }
 
-void ToggleShowSizeInfo()
-{
-  g_xywindow_globals_private.m_bSizePaint = !g_xywindow_globals_private.m_bSizePaint;
-  XY_UpdateAllWindows();
-}
-
 void ToggleShowGrid()
 {
   g_xywindow_globals_private.d_showgrid = !g_xywindow_globals_private.d_showgrid;
@@ -2710,7 +2702,6 @@ void XYShow_registerCommands()
 void XYWnd_registerShortcuts()
 {
   command_connect_accelerator("ToggleCrosshairs");
-  command_connect_accelerator("ToggleSizePaint");
 }
 
 
@@ -2718,7 +2709,6 @@ void XYWnd_registerShortcuts()
 void Orthographic_constructPreferences(PreferencesPage& page)
 {
   page.appendCheckBox("", "Solid selection boxes", g_xywindow_globals.m_bNoStipple);
-  page.appendCheckBox("", "Display size info", g_xywindow_globals_private.m_bSizePaint);
   page.appendCheckBox("", "Chase mouse during drags", g_xywindow_globals_private.m_bChaseMouse);
   page.appendCheckBox("", "Update views on camera move", g_xywindow_globals_private.m_bCamXYUpdate);
 }
@@ -2768,7 +2758,6 @@ typedef ConstReferenceCaller1<ToggleShown, const BoolImportCallback&, ToggleShow
 void XYWindow_Construct()
 {
   GlobalCommands_insert("ToggleCrosshairs", FreeCaller<ToggleShowCrosshair>(), Accelerator('X', (GdkModifierType)GDK_SHIFT_MASK));
-  GlobalCommands_insert("ToggleSizePaint", FreeCaller<ToggleShowSizeInfo>(), Accelerator('J'));
   GlobalCommands_insert("ToggleGrid", FreeCaller<ToggleShowGrid>(), Accelerator('0'));
 
   GlobalToggles_insert("ToggleView", ToggleShown::ToggleCaller(g_xy_top_shown), ToggleItem::AddCallbackCaller(g_xy_top_shown.m_item), Accelerator('V', (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
@@ -2788,7 +2777,6 @@ void XYWindow_Construct()
 
   GlobalPreferenceSystem().registerPreference("NewRightClick", BoolImportStringCaller(g_xywindow_globals.m_bRightClick), BoolExportStringCaller(g_xywindow_globals.m_bRightClick));
   GlobalPreferenceSystem().registerPreference("ChaseMouse", BoolImportStringCaller(g_xywindow_globals_private.m_bChaseMouse), BoolExportStringCaller(g_xywindow_globals_private.m_bChaseMouse));
-  GlobalPreferenceSystem().registerPreference("SizePainting", BoolImportStringCaller(g_xywindow_globals_private.m_bSizePaint), BoolExportStringCaller(g_xywindow_globals_private.m_bSizePaint));
   GlobalPreferenceSystem().registerPreference("NoStipple", BoolImportStringCaller(g_xywindow_globals.m_bNoStipple), BoolExportStringCaller(g_xywindow_globals.m_bNoStipple));
   GlobalPreferenceSystem().registerPreference("SI_ShowCoords", BoolImportStringCaller(g_xywindow_globals_private.show_coordinates), BoolExportStringCaller(g_xywindow_globals_private.show_coordinates));
   GlobalPreferenceSystem().registerPreference("SI_ShowOutlines", BoolImportStringCaller(g_xywindow_globals_private.show_outline), BoolExportStringCaller(g_xywindow_globals_private.show_outline));
