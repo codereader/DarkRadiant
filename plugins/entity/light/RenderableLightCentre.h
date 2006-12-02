@@ -4,6 +4,7 @@
 #include "irender.h"
 #include "ieclass.h"
 #include "math/Vector3.h"
+#include <iostream>
 
 #include <GL/glew.h>
 
@@ -31,15 +32,20 @@ class RenderableLightCentre
 	// Shader to use for the point
 	Shader* _shader;
 	
+	// A reference to the colour of this point (owned by the Doom3Radius class)
+	const Vector3& _colour;	
+	
 public:
 
 	// Constructor
-	RenderableLightCentre(const Vector3& center, const Vector3& origin, const Matrix4& rotation, IEntityClass& eclass) 
+	RenderableLightCentre(const Vector3& center, const Vector3& origin, const Vector3& colour, 
+						  const Matrix4& rotation, IEntityClass& eclass) 
 	: _localCentre(center), 
-	  _worldOrigin(origin), 
-	  _rotation(rotation), 
-	  _eclass(eclass),
-	  _shader(GlobalShaderCache().capture("$BIGPOINT"))
+	  _worldOrigin(origin),
+	  _rotation(rotation),
+	  _eclass(eclass), 
+	  _shader(GlobalShaderCache().capture("$BIGPOINT")),
+	  _colour(colour)
 	{}
   
   	// Destructor
@@ -53,10 +59,8 @@ public:
   	}
   
 	// GL render function
-  
-	void render(RenderStateFlags state) const {
-		
-	    // Apply rotation matrix to the center point coordinates
+  	void render(RenderStateFlags state) const {
+		// Apply rotation matrix to the center point coordinates
 //	    Vector3 rotCentre = _rotation.transform(_localCentre).getProjected();
 //		std::cout << "rotated centre = " << rotCentre << std::endl;
 
@@ -67,7 +71,8 @@ public:
 			
 	    // Draw the center point
 	    glBegin(GL_POINTS);
-	    glColor3fv(_eclass.getColour());
+	    //glColor3fv(_eclass.getColour());
+	    glColor3fv(_colour);
 	    glVertex3fv(centreWorld);
 	    glEnd();
 	}

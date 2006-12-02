@@ -58,7 +58,7 @@
 	<defaults>
 		<lightShader>lights/defaultpointlight</lightShader>
 		<lightScale>1</lightScale>
-		<lightRadius>320 320 320</lightRadius>
+		<lightRadius value="320 320 320" />
 	</defaults>
 	<entityChooser>
 		<displayFolderKey value="editor_displayFolder" />

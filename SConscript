@@ -190,7 +190,30 @@ md5model_env.Depends(md5model_lib, math)
 md5model_env.Install(INSTALL + '/modules', md5model_lib)
 
 entity_env = module_env.Copy()
-entity_lst = build_list('plugins/entity', 'plugin.cpp entity.cpp eclassmodel.cpp generic.cpp light.cpp doom3group.cpp skincache.cpp angle.cpp angles.cpp colour.cpp model.cpp namedentity.cpp origin.cpp scale.cpp targetable.cpp rotation.cpp modelskinkey.cpp')
+entity_src = [
+	'plugin.cpp',
+	'entity.cpp',
+	'eclassmodel.cpp',
+	'generic.cpp',
+	'light.cpp',
+	'doom3group.cpp',
+	'skincache.cpp',
+	'angle.cpp',
+	'angles.cpp',
+	'colour.cpp',
+	'model.cpp',
+	'namedentity.cpp',
+	'origin.cpp',
+	'scale.cpp',
+	'targetable.cpp',
+	'rotation.cpp',
+	'modelskinkey.cpp',
+	'light/Light.cpp',
+	'light/Renderables.cpp',
+	'light/LightInstance.cpp',
+	'light/LightNode.cpp',
+]
+entity_lst = build_list('plugins/entity', entity_src)
 entity_env.Append(LIBS = ['math', 'xmlutil'])
 entity_lib = entity_env.SharedLibrary(target='entity', source=entity_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
 entity_env.Depends(entity_lib, math)

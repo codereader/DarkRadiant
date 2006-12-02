@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // CONSTANTS
 
-const float DEFAULT_LIGHT_RADIUS = 320;
+//const float DEFAULT_LIGHT_RADIUS = 320;
 
 //
 
@@ -45,6 +45,6 @@ void Entity_Destroy();
 
 extern bool g_showNames;
 extern bool g_showAngles;
-extern bool g_newLightDraw;
+//extern bool g_newLightDraw;
 
 #endif
