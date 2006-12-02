@@ -44,6 +44,7 @@
 		</filter>
 		<filter name="Visportals">
 			<filterCriterion type="texture" match="textures/editor/visportal" action="hide" />
+			<filterCriterion type="texture" match="textures/common/nodraw" action="hide" />
 		</filter>
 		<filter name="Patches">
 			<filterCriterion type="object" match="patch" action="hide" />
