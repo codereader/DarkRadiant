@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<upgradePaths>
+	<upgradePath fromVersion="0.5.0">
+		<!-- Upgrade the version tag -->
+		<!-- Find the currently active scheme and store its name to Memory 1 -->
+		<saveAttribute name="name" xPath="/user/ui/colourschemes//scheme[@active='1']" memoryIndex="1" />
+		<!-- Make sure the default schemes are removed before copying user schemes -->
+		<deleteNode xPath="/user/ui/colourschemes//scheme[@name='QE3Radiant Original']" />
+		<deleteNode xPath="/user/ui/colourschemes//scheme[@name='Maya/Max/Lightwave Emulation']" />
+		<deleteNode xPath="/user/ui/colourschemes//scheme[@name='DarkRadiant Default']" />
+		<deleteNode xPath="/user/ui/colourschemes//scheme[@name='Black &amp; Green']" />
+		<!-- Add the following (missing) colournodes to the remaining schemes -->
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="brush_vertices" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="patch_vertex_inside" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="patch_vertex_corner" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_center_deselected" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_center_selected" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_center_normal" />
+		<!-- Set the attribute values of the added nodes -->
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='brush_vertices']" name="value" value="0 1 0" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='patch_vertex_inside']" name="value" value="0 1 0" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='patch_vertex_corner']" name="value" value="0 1 0" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_center_deselected']" name="value" value="0 1 0" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_center_selected']" name="value" value="0 0 1" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_center_normal']" name="value" value="1 0 0" />
+		<!-- Clear all active attributes in the base registry -->
+		<setAttribute target="base" xPath="//user/ui/colourschemes//scheme" name="active" value="0" />
+		<!-- Copy all remaining colour schemes into the new registry -->
+		<copyNode fromXPath="/user/ui/colourschemes//scheme[@readonly!='1']" toXPath="user/ui/colourschemes" />
+		<!-- Set the active scheme to the one that was stored in Memory 1 -->
+		<setAttribute xPath="/user/ui/colourschemes//scheme[@name='{$1}']" name="active" value="1" />
+		<!-- Import the state of showAllLightRadii into the new registry -->
+		<copyValue fromXPath="/user/ui/showAllLightRadii" toXPath="user/ui/showAllLightRadii" />
+	</upgradePath>
+	<upgradePath fromVersion="0.6.0">
+		<!-- This is in fact the version that DR 0.7.0 is using, due to a incorrect version tag -->
+		<!-- Find the currently active scheme and store its name to Memory 1 -->
+		<saveAttribute name="name" xPath="/user/ui/colourschemes//scheme[@active='1']" memoryIndex="1" />
+		<!-- Make sure the default schemes are removed before copying user schemes -->
+		<deleteNode xPath="/user/ui/colourschemes//scheme[@name='QE3Radiant Original']" />
+		<deleteNode xPath="/user/ui/colourschemes//scheme[@name='Maya/Max/Lightwave Emulation']" />
+		<deleteNode xPath="/user/ui/colourschemes//scheme[@name='DarkRadiant Default']" />
+		<deleteNode xPath="/user/ui/colourschemes//scheme[@name='Black &amp; Green']" />
+		<!-- Add the missing colour names -->
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_center_deselected" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_center_selected" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_center_normal" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_center_deselected']" name="value" value="0 1 0" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_center_selected']" name="value" value="0 0 1" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_center_normal']" name="value" value="1 0 0" />
+		<!-- Clear all active attributes in the base registry -->
+		<setAttribute target="base" xPath="//user/ui/colourschemes//scheme" name="active" value="0" />
+		<!-- Copy all remaining colour schemes into the new registry -->
+		<copyNode fromXPath="/user/ui/colourschemes//scheme[@readonly!='1']" toXPath="user/ui/colourschemes" />
+		<!-- Set the active scheme to the one that was stored in Memory 1 -->
+		<setAttribute xPath="/user/ui/colourschemes//scheme[@name='{$1}']" name="active" value="1" />
+		<!-- Import the state of showAllLightRadii into the new registry -->
+		<copyValue fromXPath="/user/ui/showAllLightRadii" toXPath="user/ui/showAllLightRadii" />
+	</upgradePath>
+	<upgradePath fromVersion="0.7.0">
+		<!-- Find the currently active scheme and store its name to Memory 1 -->
+		<saveAttribute name="name" xPath="/user/ui/colourschemes//scheme[@active='1']" memoryIndex="1" />
+		<!-- Make sure the default schemes (tagged with readonly=1) are removed before updating user schemes -->
+		<deleteNode xPath="/user/ui/colourschemes//scheme[@readonly='1']" />
+		<!-- Add the missing colour names -->
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_center_deselected" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_center_selected" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_center_normal" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_center_deselected']" name="value" value="0 1 0" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_center_selected']" name="value" value="0 0 1" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_center_normal']" name="value" value="1 0 0" />
+		<!-- Clear all active attributes in the base registry -->
+		<setAttribute target="base" xPath="//user/ui/colourschemes//scheme" name="active" value="0" />
+		<!-- Copy all remaining colour schemes into the new registry -->
+		<copyNode fromXPath="/user/ui/colourschemes//scheme[@readonly!='1']" toXPath="user/ui/colourschemes" />
+		<!-- Set the active scheme to the one that was stored in Memory 1 -->
+		<setAttribute xPath="/user/ui/colourschemes//scheme[@name='{$1}']" name="active" value="1" />
+		<!-- Import the state of showAllLightRadii into the new registry -->
+		<copyValue fromXPath="/user/ui/showAllLightRadii" toXPath="user/ui/showAllLightRadii" />
+	</upgradePath>
+</upgradePaths>
