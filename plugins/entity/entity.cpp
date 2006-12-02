@@ -243,11 +243,12 @@ void Entity_Construct(EGameType gameType)
 	// Register the entity preferences
   GlobalPreferenceSystem().registerPreference("SI_ShowNames", BoolImportStringCaller(g_showNames), BoolExportStringCaller(g_showNames));
   GlobalPreferenceSystem().registerPreference("SI_ShowAngles", BoolImportStringCaller(g_showAngles), BoolExportStringCaller(g_showAngles));
-  GlobalPreferenceSystem().registerPreference("NewLightStyle", BoolImportStringCaller(g_newLightDraw), BoolExportStringCaller(g_newLightDraw));
+  // greebo: disabled this, it doesn't seem to be used anymore
+  //GlobalPreferenceSystem().registerPreference("NewLightStyle", BoolImportStringCaller(g_newLightDraw), BoolExportStringCaller(g_newLightDraw));
 
 	// Setup the lights
-  LightType lightType = LIGHTTYPE_DOOM3;
-  Light_Construct(lightType);
+  //LightType lightType = LIGHTTYPE_DOOM3;
+  Light_Construct(LIGHTTYPE_DOOM3);
   Doom3Group_construct();
 
   RenderablePivot::StaticShader::instance() = GlobalShaderCache().capture("$PIVOT");

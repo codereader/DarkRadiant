@@ -6,6 +6,7 @@
     	<previewSizeFactor value="0.4"/>
     </ModelSelector>
 	<showAllLightRadii value="0"/>
+	<alwaysShowLightCenter value="1"/>
     <colourschemes>
       <scheme name="DarkRadiant Default" readonly="1" active="1">
  	    <colour name="texture_background" value="0.25 0.25 0.25" />
@@ -201,6 +202,23 @@
 	</upgradePath>
 	<upgradePath fromVersion="0.6.0">
 		<!-- This is in fact the version that DR 0.7.0 is using, due to a incorrect version tag -->
+		<!-- Find the currently active scheme and store its name to Memory 1 -->
+		<saveAttribute name="name" xPath="/user/ui/colourschemes//scheme[@active='1']" memoryIndex="1" />
+		<!-- Make sure the default schemes are removed before copying user schemes -->
+		<deleteNode xPath="/user/ui/colourschemes//scheme[@name='QE3Radiant Original']" />
+		<deleteNode xPath="/user/ui/colourschemes//scheme[@name='Maya/Max/Lightwave Emulation']" />
+		<deleteNode xPath="/user/ui/colourschemes//scheme[@name='DarkRadiant Default']" />
+		<deleteNode xPath="/user/ui/colourschemes//scheme[@name='Black &amp; Green']" />
+		<!-- Clear all active attributes in the base registry -->
+		<setAttribute target="base" xPath="//user/ui/colourschemes//scheme" name="active" value="0" />
+		<!-- Copy all remaining colour schemes into the new registry -->
+		<copyNode fromXPath="/user/ui/colourschemes//scheme[@readonly!='1']" toXPath="user/ui/colourschemes" />
+		<!-- Set the active scheme to the one that was stored in Memory 1 -->
+		<setAttribute xPath="/user/ui/colourschemes//scheme[@name='{$1}']" name="active" value="1" />
+		<!-- Import the state of showAllLightRadii into the new registry -->
+		<copyValue fromXPath="/user/ui/showAllLightRadii" toXPath="user/ui/showAllLightRadii" />
+	</upgradePath>
+	<upgradePath fromVersion="0.7.0">
 		<!-- Find the currently active scheme and store its name to Memory 1 -->
 		<saveAttribute name="name" xPath="/user/ui/colourschemes//scheme[@active='1']" memoryIndex="1" />
 		<!-- Make sure the default schemes are removed before copying user schemes -->

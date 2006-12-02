@@ -22,19 +22,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_LIGHT_H)
 #define INCLUDED_LIGHT_H
 
-namespace scene
-{
+#include "light/LightTypes.h"
+
+namespace scene {
   class Node;
 };
 class IEntityClass;
 
 scene::Node& New_Light(IEntityClass* eclass);
-enum LightType
-{
-  LIGHTTYPE_DEFAULT,
-  LIGHTTYPE_RTCW,
-  LIGHTTYPE_DOOM3
-};
 void Light_Construct(LightType lightType);
 void Light_Destroy();
 

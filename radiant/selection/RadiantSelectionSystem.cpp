@@ -66,6 +66,7 @@ void RadiantSelectionSystem::pivotChanged() const  {
     SceneChangeNotify();
 }
 
+// This gets called by the SelectionCounter, as this is the onChanged callback that got passed to it.
 void RadiantSelectionSystem::pivotChangedSelection(const Selectable& selectable) {
 	pivotChanged();
 }

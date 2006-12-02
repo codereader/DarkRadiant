@@ -25,8 +25,8 @@ void SelectionVolume::BeginMesh(const Matrix4& localToWorld, bool twoSided) {
 #if defined(DEBUG_SELECTION)
     g_render_clipped.construct(_view.GetViewMatrix());
 #endif
-  }
-  
+}
+
 void SelectionVolume::TestPoint(const Vector3& point, SelectionIntersection& best) {
     Vector4 clipped;
     if(matrix4_clip_point(_local2view, point, clipped) == c_CLIP_PASS)
@@ -242,7 +242,7 @@ void testselect_primitive_visible::post(const scene::Path& path, scene::Instance
 
 bool testselect_component_visible::pre(const scene::Path& path, scene::Instance& instance) const {
     ComponentSelectionTestable* componentSelectionTestable = Instance_getComponentSelectionTestable(instance);
-	if(componentSelectionTestable) {
+	if (componentSelectionTestable) {
       componentSelectionTestable->testSelectComponents(_selector, _test, _mode);
     }
 
