@@ -217,7 +217,7 @@ std::string ColourSchemeEditor::getSelectedScheme() {
 
 GtkWidget* ColourSchemeEditor::constructColourSelector(ColourItem& colour, const std::string& name) {
 	// Get the description of this colour item from the registry
-	std::string descriptionPath = std::string("user/ui/colourschemedescription/") + name;
+	std::string descriptionPath = std::string("user/ui/colourschemes/description/") + name;
 	std::string description = GlobalRegistry().get(descriptionPath);
 	
 	// Create a new horizontal divider
