@@ -95,6 +95,10 @@ ui::ColourSchemeManager& ColourSchemes() {
 	return _manager;
 }
 
+Vector3 getColour(const std::string& colourName) {
+	return ColourSchemes().getColourVector3(colourName);
+}
+
 const char* getMapName()
 {
   return Map_Name(g_map);
@@ -148,7 +152,7 @@ public:
     m_radiantcore.getGameDescriptionKeyValue = &GameDescription_getKeyValue;
     m_radiantcore.getRequiredGameDescriptionKeyValue = &GameDescription_getRequiredKeyValue;
     
-    m_radiantcore.colourschemes = &ColourSchemes;
+    m_radiantcore.getColour = &getColour;
     
     m_radiantcore.attachGameToolsPathObserver = Radiant_attachGameToolsPathObserver;
     m_radiantcore.detachGameToolsPathObserver = Radiant_detachGameToolsPathObserver;

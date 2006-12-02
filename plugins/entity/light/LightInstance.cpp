@@ -1,4 +1,6 @@
 #include "LightInstance.h"
+#include "qerplugin.h"
+#include "../../../radiant/ui/colourscheme/ColourSchemeManager.h"
 
 // ------ LightInstance class implementation ----------------------------------
 
@@ -46,7 +48,7 @@ void LightInstance::renderSolid(Renderer& renderer, const VolumeTest& volume) co
 		GlobalSelectionSystem().ComponentMode() != SelectionSystem::eVertex &&
 	    GlobalRegistry().get("user/ui/alwaysShowLightCenter") == "1") 
 	{
-		_light.getDoom3Radius().setCenterColour(Vector3(0,0,255));
+		_light.getDoom3Radius().setCenterColour(GlobalRadiant().getColour("light_center_normal"));
 		_light.renderLightCentre(renderer, volume, Instance::localToWorld());
 	}
 }
@@ -61,7 +63,7 @@ void LightInstance::renderWireframe(Renderer& renderer, const VolumeTest& volume
 		GlobalSelectionSystem().ComponentMode() != SelectionSystem::eVertex &&
 	    GlobalRegistry().get("user/ui/alwaysShowLightCenter") == "1") 
 	{
-		_light.getDoom3Radius().setCenterColour(Vector3(255,0,0));
+		_light.getDoom3Radius().setCenterColour(GlobalRadiant().getColour("light_center_normal"));
 		_light.renderLightCentre(renderer, volume, Instance::localToWorld());
 	}
 }
@@ -73,11 +75,11 @@ void LightInstance::renderComponents(Renderer& renderer, const VolumeTest& volum
 	if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex) {
 		// Update the colour of the light center dot 
 		if (_lightCenterInstance.isSelected()) {
-			_light.getDoom3Radius().setCenterColour(Vector3(0,0,255));
+			_light.getDoom3Radius().setCenterColour(GlobalRadiant().getColour("light_center_selected"));
 			_light.renderLightCentre(renderer, volume, Instance::localToWorld());
 		}
 		else {
-			_light.getDoom3Radius().setCenterColour(Vector3(0,255,0));
+			_light.getDoom3Radius().setCenterColour(GlobalRadiant().getColour("light_center_deselected"));
 			_light.renderLightCentre(renderer, volume, Instance::localToWorld());
 		}
 	}
@@ -152,10 +154,13 @@ void LightInstance::evaluateTransform() {
 	}
 	else {
 		// Check if the light center is selected, if yes, transform it, if not, it's a drag plane operation 
-		if (_lightCenterInstance.isSelected()) {
+		if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex 
+			&& _lightCenterInstance.isSelected()) 
+		{
 			// Retrieve the translation and apply it to the temporary light center variable
 			// This adds the translation vector to the previous light origin 
 			_light.getDoom3Radius().m_centerTransformed = _light.getDoom3Radius().m_center + getTranslation();
+			
 		}
 		else {
 			// Ordinary Drag manipulator

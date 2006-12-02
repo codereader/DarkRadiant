@@ -137,7 +137,7 @@ struct IRadiant
 
   const char* (*getGameDescriptionKeyValue)(const char* key);
   const char* (*getRequiredGameDescriptionKeyValue)(const char* key);
-  ui::ColourSchemeManager& (*colourschemes)();
+  Vector3 (*getColour)(const std::string& colourName);
 
   void (*attachGameToolsPathObserver)(ModuleObserver& observer);
   void (*detachGameToolsPathObserver)(ModuleObserver& observer);
