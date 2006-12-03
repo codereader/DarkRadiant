@@ -35,7 +35,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// The "light_rotation" key duplicates the behaviour of the "rotation" key if it is specified. This appears to be an unfinished feature in Doom3.
 
 #include "light.h"
-#include "light/RenderableLightCentre.h"
 #include "light/Renderables.h"
 #include "light/Doom3LightRadius.h"
 #include "light/LightShader.h"

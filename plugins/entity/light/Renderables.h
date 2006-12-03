@@ -4,6 +4,7 @@
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 #include "math/matrix.h"
+#include "math/line.h"
 #include "entitylib.h"
 #include "igl.h"
 
@@ -38,26 +39,44 @@ public:
 
 class RenderLightProjection : public OpenGLRenderable {
 	const Matrix4& m_projection;
+	const Vector3& _origin;
+	const Vector3& _target;
+	const Vector3& _right;
+	const Vector3& _up;
 public:
-	RenderLightProjection(const Matrix4& projection) : m_projection(projection)
+	RenderLightProjection(const Matrix4& projection, const Vector3& origin, const Vector3& target,
+						  const Vector3& right, const Vector3& up) 
+	  :	m_projection(projection),
+		_origin(origin),
+		_target(target),
+		_right(right),
+		_up(up)
 	{
 	}
 	
 	void render(RenderStateFlags state) const {
-		Matrix4 unproject(matrix4_full_inverse(m_projection));
-		Vector3 points[8];
-		aabb_corners(AABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(0.5f, 0.5f, 0.5f)), points);
-		points[0] = matrix4_transformed_vector4(unproject, Vector4(points[0], 1)).getProjected();
-		points[1] = matrix4_transformed_vector4(unproject, Vector4(points[1], 1)).getProjected();
-		points[2] = matrix4_transformed_vector4(unproject, Vector4(points[2], 1)).getProjected();
-		points[3] = matrix4_transformed_vector4(unproject, Vector4(points[3], 1)).getProjected();
-		points[4] = matrix4_transformed_vector4(unproject, Vector4(points[4], 1)).getProjected();
-		points[5] = matrix4_transformed_vector4(unproject, Vector4(points[5], 1)).getProjected();
-		points[6] = matrix4_transformed_vector4(unproject, Vector4(points[6], 1)).getProjected();
-		points[7] = matrix4_transformed_vector4(unproject, Vector4(points[7], 1)).getProjected();
-		Vector4 test1 = matrix4_transformed_vector4(unproject, Vector4(0.5f, 0.5f, 0.5f, 1));
-		Vector3 test2 = test1.getProjected();
-		aabb_draw_wire(points);
+		Vector3 basePoint = _origin + _target;
+		Vector3 baseRight = basePoint + _right;
+		Vector3 baseUp = basePoint + _up;
+		
+		Vector3 edgeRightDirection = (_right*(-1)).crossProduct(_origin - baseRight).getNormalised();
+		
+		// The lines going through the edges of the base area
+		Ray edgeRight(baseRight, edgeRightDirection);
+		Ray edgeUp(baseUp, (_up*(-1)).crossProduct(_origin - baseUp).getNormalised());
+		
+		// Calculate the corners of the base area  
+		Vector3 cornerUpRight = edgeRight.getIntersection(edgeUp);
+		Vector3 cornerDownLeft = basePoint*2 - cornerUpRight;
+		
+		Ray edgeLeft(cornerDownLeft, edgeRightDirection);
+		Vector3 cornerUpLeft = edgeLeft.getIntersection(edgeUp);
+		Vector3 cornerDownRight = basePoint*2 - cornerUpLeft;
+		
+		Vector3 pyramid[5] = { Vector3(0,0,0), cornerUpRight - _origin, cornerUpLeft - _origin, 
+										       cornerDownLeft - _origin, cornerDownRight - _origin}; 
+		
+		draw_pyramid(pyramid);
 	}
 }; // class RenderLightProjection
 

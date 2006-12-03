@@ -109,6 +109,26 @@ public:
     origin(origin_), direction(direction_)
   {
   }
+  
+	/* greebo: this calculates the intersection point of two rays 
+	 * (copied from Radiant's Intersection code, there may be better ways) 
+	 */
+	Vector3 getIntersection(Ray& other) {
+		Vector3 intersection = origin - other.origin;
+		
+		double dot = direction.dot(other.direction);
+  		double d = direction.dot(intersection);
+		double e = other.direction.dot(intersection);
+		double D = 1 - dot*dot;       // always >= 0
+
+		if (D < 0.000001) {
+			// the lines are almost parallel
+			return other.origin + other.direction*e;
+		}
+		else {
+			return other.origin + other.direction*((e - dot*d) / D);
+		}
+	}
 };
 
 inline Ray ray_for_points(const Vector3& origin, const Vector3& p2)
