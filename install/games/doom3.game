@@ -75,6 +75,9 @@
 		<property name="light_radius" category="Light" type="vector3" />
 		<property name="light_rotation" category="Light" type="text" />
 		<property name="light_center" category="Light" type="vector3" />
+		<property name="light_target" category="Light" type="vector3" />
+		<property name="light_up" category="Light" type="vector3" />
+		<property name="light_right" category="Light" type="vector3" />
 		<property name="nodiffuse" category="Light" type="boolean" />
 		<property name="noshadows" category="Light" type="boolean" />
 		<property name="nospecular" category="Light" type="boolean" />
