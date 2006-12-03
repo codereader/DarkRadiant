@@ -103,12 +103,18 @@ GtkWidget* LightInspector::createTextureWidgets() {
 // Create the buttons
 GtkWidget* LightInspector::createButtons() {
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_end(GTK_BOX(hbx), 
-					 gtk_button_new_from_stock(GTK_STOCK_OK), 
-					 FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(hbx), 
-					 gtk_button_new_from_stock(GTK_STOCK_CANCEL), 
-					 FALSE, FALSE, 0);
+
+	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
+	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+	
+	g_signal_connect(G_OBJECT(okButton), "clicked", 
+					 G_CALLBACK(_onOK), this);
+	g_signal_connect(G_OBJECT(cancelButton), "clicked", 
+					 G_CALLBACK(_onCancel), this);
+
+	gtk_box_pack_end(GTK_BOX(hbx), okButton, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, FALSE, FALSE, 0);
+
 	return hbx;
 }
 
@@ -175,6 +181,33 @@ void LightInspector::_onPointToggle(GtkWidget* b, LightInspector* self) {
 	else
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->_projLightToggle),
 									 FALSE);	
+}
+
+void LightInspector::_onOK(GtkWidget* w, LightInspector* self) {
+	
+	// Set the point versus projected status on the entity
+	// TODO: Get these values from dialog widgets
+	if (self->_isProjected) {
+		self->_entity->setKeyValue("light_target", "0 0 -128");
+		self->_entity->setKeyValue("light_right", "64 0 0");
+		self->_entity->setKeyValue("light_up", "0 64 0");
+		self->_entity->setKeyValue("light_radius", "");
+		self->_entity->setKeyValue("light_center", "");
+	}
+	else {
+		self->_entity->setKeyValue("light_target", "");
+		self->_entity->setKeyValue("light_right", "");
+		self->_entity->setKeyValue("light_up", "");
+		self->_entity->setKeyValue("light_radius", "320 320 320");
+		self->_entity->setKeyValue("light_center", "0 0 0");
+	}
+	
+	// Hide the dialog
+	gtk_widget_hide(self->_widget);
+}
+
+void LightInspector::_onCancel(GtkWidget* w, LightInspector* self) {
+	gtk_widget_hide(self->_widget);
 }
 
 } // namespace ui
