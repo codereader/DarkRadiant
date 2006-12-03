@@ -6,6 +6,7 @@
 #include <gtk/gtklabel.h>
 #include <gtk/gtkvbox.h>
 #include <gtk/gtkbutton.h>
+#include <gtk/gtktogglebutton.h>
 
 namespace gtkutil
 {
@@ -21,14 +22,29 @@ class IconTextButton
 	// Label widget
 	GtkWidget* _label;
 	
+	// Toggle button flag
+	bool _isToggle;
+	
 public:
 
 	/** Construct an IconTextButton with the given label text and local icon
 	 * path.
+	 * 
+	 * @param name
+	 * The text to display under the icon.
+	 * 
+	 * @param iconPath
+	 * Name of local icon file.
+	 * 
+	 * @param isToggle
+	 * true if the button should be a toggle button, false for a normal button.
 	 */
-	IconTextButton(const std::string& name, const std::string& iconPath)
+	IconTextButton(const std::string& name, 
+				   const std::string& iconPath,
+				   bool isToggle)
 	: _icon(gtkutil::getLocalPixbuf(iconPath)),
-	  _label(gtk_label_new(name.c_str())) 
+	  _label(gtk_label_new(name.c_str())),
+	  _isToggle(isToggle)
 	{ }
 	
 	/** Operator cast to GtkWidget* packs the widgets and returns a button with
@@ -43,7 +59,11 @@ public:
 		gtk_box_pack_end(GTK_BOX(vbx), _label, TRUE, FALSE, 0);
 		
 		// Create a button and add the vbox
-		GtkWidget* button = gtk_button_new();
+		GtkWidget* button;
+		if (_isToggle)
+			button = gtk_toggle_button_new();
+		else
+			button = gtk_button_new();
 		gtk_container_add(GTK_CONTAINER(button), vbx);
 
 		// Set the button to standard size

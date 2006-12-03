@@ -18,7 +18,8 @@ namespace {
 
 // Private constructor creates GTK widgets
 LightInspector::LightInspector()
-: _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL))
+: _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
+  _isProjected(false)
 {
 	// Window properties
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), MainFrame_getWindow());
@@ -55,22 +56,37 @@ LightInspector::LightInspector()
 
 // Create the point light panel
 GtkWidget* LightInspector::createPointLightPanel() {
+	// Create the point light togglebutton
+	_pointLightToggle = gtkutil::IconTextButton("Omni", 
+					   						   "pointLight32.png",
+					   						   true);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_pointLightToggle), TRUE);
+	g_signal_connect(G_OBJECT(_pointLightToggle), 
+					 "toggled",
+					 G_CALLBACK(_onPointToggle),
+					 this);
+	
+	// HBox for panel
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(hbx), 
-					   gtkutil::IconTextButton("Omni", 
-					   						   "pointLight32.png"),
-					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), _pointLightToggle, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbx), gtk_label_new("Point light"), TRUE, FALSE, 0);
 	return hbx;
 }
 
 // Create the projected light panel
 GtkWidget* LightInspector::createProjectedPanel() {
+	// Create the projected light togglebutton
+	_projLightToggle = gtkutil::IconTextButton("Projected", 
+					   						   "projLight32.png",
+					   						   true);
+	g_signal_connect(G_OBJECT(_projLightToggle), 
+					 "toggled",
+					 G_CALLBACK(_onProjToggle),
+					 this);
+
+	// HBox for panel
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(hbx), 
-					   gtkutil::IconTextButton("Projected", 
-					   						   "projLight32.png"),
-					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), _projLightToggle, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbx), gtk_label_new("Projected light"), TRUE, FALSE, 0);
 	return hbx;
 }
@@ -103,6 +119,34 @@ void LightInspector::displayDialog() {
 
 	// Show the instance
 	_instance.show();	
+}
+
+/* GTK CALLBACKS */
+
+void LightInspector::_onProjToggle(GtkWidget* b, LightInspector* self) {
+	// Set the projected flag
+	self->_isProjected = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(b));
+	
+	// Set button state based on the value of the flag
+	if (self->_isProjected)
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->_pointLightToggle),
+									 FALSE);	
+	else
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->_pointLightToggle),
+									 TRUE);	
+}
+
+void LightInspector::_onPointToggle(GtkWidget* b, LightInspector* self) {
+	// Set the projected flag
+	self->_isProjected = !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(b));
+	
+	// Set button state based on the value of the flag
+	if (self->_isProjected)
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->_projLightToggle),
+									 TRUE);	
+	else
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->_projLightToggle),
+									 FALSE);	
 }
 
 } // namespace ui
