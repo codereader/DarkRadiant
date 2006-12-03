@@ -5,6 +5,7 @@
 #include "ieclass.h"
 #include "mainframe.h"
 #include "gtkutil/IconTextButton.h"
+#include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/dialog.h"
 
 #include <gtk/gtk.h>
@@ -45,12 +46,13 @@ LightInspector::LightInspector()
 	// texture selection widgets.
 
 	GtkWidget* panels = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(panels), createPointLightPanel(), TRUE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(panels), gtk_hseparator_new(), TRUE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(panels), createProjectedPanel(), TRUE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(panels), createPointLightPanel(), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(panels), gtk_hseparator_new(), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(panels), createProjectedPanel(), FALSE, FALSE, 0);
 
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(hbx), panels, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), panels, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), gtk_vseparator_new(), FALSE, FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(hbx), createTextureWidgets(), TRUE, TRUE, 0);
 
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 3);
@@ -155,7 +157,21 @@ GtkWidget* LightInspector::createProjectedPanel() {
 
 // Create the texture widgets
 GtkWidget* LightInspector::createTextureWidgets() {
-	return gtk_label_new("Texture widgets");
+	
+	// VBox contains colour and texture selection widgets
+	GtkWidget* vbx = gtk_vbox_new(FALSE, 3);
+	
+	GtkWidget* _colour = gtk_color_button_new();
+	GtkWidget* _texture = gtk_combo_box_entry_new();
+	
+	gtk_box_pack_start(GTK_BOX(vbx), gtkutil::LeftAlignedLabel("Colour"), 
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), _colour, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), gtkutil::LeftAlignedLabel("Texture"), 
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), _texture, FALSE, FALSE, 0);
+	
+	return vbx;
 }
 
 // Create the buttons
