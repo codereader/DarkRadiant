@@ -15,6 +15,13 @@ class LightInspector
 	// Main dialog widget
 	GtkWidget* _widget;
 	
+	// Projected light flag
+	bool _isProjected;
+	
+	// Light type toggle buttons
+	GtkWidget* _pointLightToggle;
+	GtkWidget* _projLightToggle;
+	
 private:
 
 	// Constructor creates GTK widgets
@@ -28,7 +35,10 @@ private:
 	GtkWidget* createProjectedPanel();
 	GtkWidget* createTextureWidgets();
 	GtkWidget* createButtons();
-	
+
+	// GTK CALLBACKS
+	static void _onProjToggle(GtkWidget*, LightInspector*);	
+	static void _onPointToggle(GtkWidget*, LightInspector*);	
 
 public:
 
