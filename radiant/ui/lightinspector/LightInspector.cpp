@@ -197,7 +197,10 @@ void LightInspector::show() {
 
 	// Everything OK, set the entity and show the dialog
 	_entity = e;
-	gtk_widget_show_all(_widget);	
+	gtk_widget_show_all(_widget);
+	
+	// Update the dialog with the correct values from the entity
+	getValuesFromEntity();
 }
 
 // Static method to display the dialog
@@ -281,6 +284,20 @@ void LightInspector::updatePanels() {
 		gtk_widget_set_sensitive(_projPanel, FALSE);	
 		gtk_widget_set_sensitive(_pointPanel, TRUE);
 	}
+}
+
+// Get keyvals from entity and insert into text entries
+void LightInspector::getValuesFromEntity() {
+
+	// Iterate over each entry in the EntryMap, retrieving the corresponding
+	// keyvalue
+	for (EntryMap::iterator i = _entryMap.begin();
+		 i != _entryMap.end();
+		 ++i)
+	{
+		const char* val = _entity->getKeyValue("light_" + i->first);
+		gtk_entry_set_text(GTK_ENTRY(i->second), val);
+	}		
 }
 
 } // namespace ui
