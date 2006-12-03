@@ -2,6 +2,8 @@
 #define LIGHTINSPECTOR_H_
 
 #include <gtk/gtkwidget.h>
+#include <map>
+#include <string>
 
 /* FORWARD DECLS */
 
@@ -25,6 +27,10 @@ class LightInspector
 	// Light type toggle buttons
 	GtkWidget* _pointLightToggle;
 	GtkWidget* _projLightToggle;
+	
+	// Hashmap of named GtkEntry widgets to set light properties
+	typedef std::map<std::string, GtkWidget*> EntryMap;
+	EntryMap _entryMap;
 	
 	// The light entity to edit
 	Entity* _entity;
