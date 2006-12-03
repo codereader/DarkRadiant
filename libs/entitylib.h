@@ -42,6 +42,26 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <list>
 #include <set>
 
+/* greebo: draws a pyramid defined by 5 vertices
+ * points[0] is the top of the pyramid
+ * points[1] to points[4] is the base rectangle
+ */
+inline void draw_pyramid(const Vector3 points[5]) {
+  typedef std::size_t index_t;
+  index_t indices[16] = {
+    0, 1, // top to first
+    0, 2, // top to second
+    0, 3, // top to third
+    0, 4, // top to fourth
+    1, 2, // first to second
+    2, 3, // second to third
+    3, 4, // third to second
+    4, 1, // fourth to first 
+  };
+  glVertexPointer(3, GL_FLOAT, 0, points);
+  glDrawElements(GL_LINES, sizeof(indices)/sizeof(index_t), GL_UNSIGNED_INT, indices);
+}
+
 inline void arrow_draw(const Vector3& origin, const Vector3& direction)
 {
   Vector3 up(0, 0, 1);

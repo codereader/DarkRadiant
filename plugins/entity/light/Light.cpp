@@ -190,6 +190,12 @@ void light_draw(const AABB& aabb_light, RenderStateFlags state) {
  * Note, that the entity key/values are still empty at the point where this method is called.
  */
 void Light::construct() {
+	_colourLightTarget = Vector3(255,255,0);
+	_colourLightUp = Vector3(255,0,255);
+	_colourLightRight = Vector3(255,0,255);
+	_colourLightStart = Vector3(0,0,0);
+	_colourLightEnd = Vector3(0,0,0);
+	
 	default_rotation(m_rotation);
 	m_aabb_light.origin = Vector3(0, 0, 0);
 	default_extents(m_aabb_light.extents);
@@ -256,7 +262,7 @@ void Light::lightOriginChanged(const char* value) {
 
 void Light::lightTargetChanged(const char* value) {
 	m_useLightTarget = (std::string(value) != "");
-	if(m_useLightTarget) {
+	if (m_useLightTarget) {
 		read_origin(m_lightTarget, value);
 	}
 	projectionChanged();
@@ -489,6 +495,32 @@ Doom3LightRadius& Light::getDoom3Radius() {
 	return m_doom3Radius;
 }
 
+void Light::renderProjectionPoints(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const {
+	// Add the renderable light target
+	renderer.Highlight(Renderer::ePrimitive, false);
+	renderer.Highlight(Renderer::eFace, false);
+	renderer.SetState(_rTarget.getShader(), Renderer::eFullMaterials);
+	renderer.SetState(_rTarget.getShader(), Renderer::eWireframeOnly);
+	renderer.addRenderable(_rTarget, localToWorld);
+	
+	renderer.SetState(_rRight.getShader(), Renderer::eFullMaterials);
+	renderer.SetState(_rRight.getShader(), Renderer::eWireframeOnly);
+	renderer.addRenderable(_rRight, localToWorld);
+	
+	renderer.SetState(_rUp.getShader(), Renderer::eFullMaterials);
+	renderer.SetState(_rUp.getShader(), Renderer::eWireframeOnly);
+	renderer.addRenderable(_rUp, localToWorld);
+	
+	/*
+	renderer.SetState(_rStart.getShader(), Renderer::eFullMaterials);
+	renderer.SetState(_rStart.getShader(), Renderer::eWireframeOnly);
+	renderer.addRenderable(_rStart, localToWorld);
+	
+	renderer.SetState(_rEnd.getShader(), Renderer::eFullMaterials);
+	renderer.SetState(_rEnd.getShader(), Renderer::eWireframeOnly);
+	renderer.addRenderable(_rEnd, localToWorld);*/
+}
+
 // greebo: Note that this function has to be const according to the abstract base class definition
 void Light::renderSolid(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const {
 	renderer.SetState(m_entity.getEntityClass().getWireShader(), Renderer::eWireframeOnly);
@@ -498,7 +530,7 @@ void Light::renderSolid(Renderer& renderer, const VolumeTest& volume, const Matr
 	renderer.SetState(m_entity.getEntityClass().getWireShader(), Renderer::eFullMaterials);
 
 	// Always draw Doom 3 light bounding boxes, if the global is set
-	if (GlobalRegistry().get("user/ui/showAllLightRadii") == "1") {
+	if (GlobalRegistry().get("user/ui/showAllLightRadii") == "1" && !isProjected()) {
 		updateLightRadiiBox();
 		renderer.addRenderable(m_radii_box, localToWorld);
 	}
@@ -509,6 +541,9 @@ void Light::renderSolid(Renderer& renderer, const VolumeTest& volume, const Matr
 			m_projectionOrientation = rotation();
 			m_projectionOrientation.t().getVector3() = localAABB().origin;
 			renderer.addRenderable(m_renderProjection, m_projectionOrientation);
+			
+			// Render the projection points
+			renderProjectionPoints(renderer, volume, localToWorld, selected);
 		}
 		else {
 			updateLightRadiiBox();
@@ -622,6 +657,8 @@ const Vector3& Light::colour() const {
 	return m_colour.m_colour;
 }
 
+/* greebo: A light is projected, if the entity keys light_target/light_up/light_right are not empty.
+ */
 bool Light::isProjected() const {
 	return m_useLightTarget && m_useLightUp && m_useLightRight;
 }

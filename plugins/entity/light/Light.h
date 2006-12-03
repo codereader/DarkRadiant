@@ -22,7 +22,7 @@
 #include "LightTypes.h"
 #include "Renderables.h"
 #include "LightShader.h"
-#include "RenderableLightCentre.h"
+#include "RenderableVertices.h"
 #include "Doom3LightRadius.h"
 
 /* greebo: This is the actual light class. It contains the information about the geometry
@@ -107,6 +107,13 @@ class Light :
 	// Renderable components of this light
 	entity::RenderLightRadiiBox m_radii_box;
 	entity::RenderableLightCentre _rCentre;
+	entity::RenderableLightTarget _rTarget;
+	
+	entity::RenderableLightRelative _rUp;
+	entity::RenderableLightRelative _rRight;
+	
+	entity::RenderableLightTarget _rStart;
+	entity::RenderableLightTarget _rEnd;
 	RenderableNamedEntity m_renderName;
 
   Vector3 m_lightOrigin;
@@ -114,16 +121,22 @@ class Light :
   Float9 m_lightRotation;
   bool m_useLightRotation;
 
-  Vector3 m_lightTarget;
-  bool m_useLightTarget;
-  Vector3 m_lightUp;
-  bool m_useLightUp;
-  Vector3 m_lightRight;
-  bool m_useLightRight;
-  Vector3 m_lightStart;
-  bool m_useLightStart;
-  Vector3 m_lightEnd;
-  bool m_useLightEnd;
+	// These are the vectors that define a projected light
+	Vector3 m_lightTarget;
+	bool m_useLightTarget;
+	Vector3 _colourLightTarget;
+	Vector3 m_lightUp;
+	bool m_useLightUp;
+	Vector3 _colourLightUp;
+	Vector3 m_lightRight;
+	bool m_useLightRight;
+	Vector3 _colourLightRight;
+	Vector3 m_lightStart;
+	bool m_useLightStart;
+	Vector3 _colourLightStart;
+	Vector3 m_lightEnd;
+	bool m_useLightEnd;
+	Vector3 _colourLightEnd;
 
   mutable AABB m_doom3AABB;
   mutable AABB _lightAABB;
@@ -184,15 +197,16 @@ public:
 		m_nameKeys(m_entity),
 		m_funcStaticOrigin(m_traverse, m_originKey.m_origin),
 		m_radii_box(m_aabb_light.origin),
-		_rCentre(m_doom3Radius.m_centerTransformed,
-				 m_aabb_light.origin,
-				 m_doom3Radius._centerColour,
-				 m_doom3Rotation, 
-				 m_entity.getEntityClass()), 
+		_rCentre(m_doom3Radius.m_centerTransformed, m_aabb_light.origin, m_doom3Radius._centerColour),
+		_rTarget(m_lightTarget, m_aabb_light.origin, _colourLightTarget), 
+		_rUp(m_lightUp, m_lightTarget, m_aabb_light.origin, _colourLightUp),
+		_rRight(m_lightRight, m_lightTarget, m_aabb_light.origin, _colourLightRight),
+		_rStart(m_lightStart, m_aabb_light.origin, _colourLightStart),
+		_rEnd(m_lightEnd, m_aabb_light.origin, _colourLightEnd),
 		m_renderName(m_named, m_aabb_light.origin),
 		m_useLightOrigin(false),
 		m_useLightRotation(false),
-		m_renderProjection(m_doom3Projection),
+		m_renderProjection(m_doom3Projection, m_aabb_light.origin, m_lightTarget, m_lightRight, m_lightUp),
 		m_transformChanged(transformChanged),
 		m_boundsChanged(boundsChanged),
 		m_evaluateTransform(evaluateTransform)
@@ -210,15 +224,16 @@ public:
 		m_nameKeys(m_entity),
 		m_funcStaticOrigin(m_traverse, m_originKey.m_origin),
 		m_radii_box(m_aabb_light.origin),
-		_rCentre(m_doom3Radius.m_centerTransformed,
-				 m_aabb_light.origin,
-				 m_doom3Radius._centerColour,
-				 m_doom3Rotation, 
-				 m_entity.getEntityClass()), 
+		_rCentre(m_doom3Radius.m_centerTransformed, m_aabb_light.origin, m_doom3Radius._centerColour),
+		_rTarget(m_lightTarget, m_aabb_light.origin, _colourLightTarget),
+		_rUp(m_lightUp, m_lightTarget, m_aabb_light.origin, _colourLightUp),
+		_rRight(m_lightRight, m_lightTarget, m_aabb_light.origin, _colourLightRight),
+		_rStart(m_lightStart, m_aabb_light.origin, _colourLightStart),
+		_rEnd(m_lightEnd, m_aabb_light.origin, _colourLightEnd),
 		m_renderName(m_named, m_aabb_light.origin),
 		m_useLightOrigin(false),
 		m_useLightRotation(false),
-		m_renderProjection(m_doom3Projection),
+		m_renderProjection(m_doom3Projection, m_aabb_light.origin, m_lightTarget, m_lightRight, m_lightUp),
 		m_transformChanged(transformChanged),
 		m_boundsChanged(boundsChanged),
 		m_evaluateTransform(evaluateTransform)
@@ -260,6 +275,7 @@ public:
 
 	// Adds the light centre renderable to the given renderer
 	void renderLightCentre(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderProjectionPoints(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
 
 	// Returns a reference to the member class Doom3LightRadius (used to set colours)
 	Doom3LightRadius& getDoom3Radius();
