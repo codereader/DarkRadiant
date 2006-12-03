@@ -660,9 +660,9 @@ public:
 		m_entityKeyValueChanged();
 	}
   
-  const char* getKeyValue(const char* key) const
+  const char* getKeyValue(const std::string& key) const
   {
-    KeyValues::const_iterator i = m_keyValues.find(key);
+    KeyValues::const_iterator i = m_keyValues.find(key.c_str());
     if(i != m_keyValues.end())
     {
       return (*i).second->c_str();

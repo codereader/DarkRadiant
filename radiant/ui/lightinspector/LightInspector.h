@@ -62,6 +62,9 @@ private:
 	// Set the projected or pointlight panels to enabled/disabled based on
 	// toggle button state
 	void updatePanels();
+	
+	// Update the text entries from keyvals on the entity
+	void getValuesFromEntity();
 
 public:
 
