@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "brushexport/BrushExportOBJ.h"
 #include "ui/einspector/EntityInspector.h"
+#include "ui/lightinspector/LightInspector.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "ui/common/ToolbarCreator.h"
 #include "ui/colourscheme/ColourSchemeManager.h"
@@ -1859,6 +1860,11 @@ GtkMenuItem* create_view_menu(MainFrame::EViewStyle style)
   {
     create_menu_item_with_mnemonic(menu, "Entity Inspector", "ViewEntityInfo");
   }
+	// Light inspector
+	create_menu_item_with_mnemonic(menu, 
+								   "_Light Inspector", 
+								   "ToggleLightInspector");
+								   
   create_menu_item_with_mnemonic(menu, "_Surface Inspector", "SurfaceInspector");
   create_menu_item_with_mnemonic(menu, "Entity List", "EntityList");
 
@@ -3088,8 +3094,17 @@ void MainFrame_Construct()
   GlobalCommands_insert("Preferences", FreeCaller<PreferencesDialog_showDialog>(), Accelerator('P'));
 
   GlobalCommands_insert("ToggleConsole", FreeCaller<Console_ToggleShow>(), Accelerator('O'));
-  GlobalCommands_insert("ToggleEntityInspector", FreeCaller<EntityInspector_ToggleShow>(), Accelerator('N'));
   GlobalCommands_insert("EntityList", FreeCaller<EntityList_toggleShown>(), Accelerator('L'));
+
+	// Entity inspector (part of Group Dialog)
+	GlobalCommands_insert("ToggleEntityInspector", 
+						  FreeCaller<EntityInspector_ToggleShow>(), 
+						  Accelerator('N'));
+
+	// Light inspector
+	GlobalCommands_insert("ToggleLightInspector", 
+						  FreeCaller<ui::LightInspector::displayDialog>(),
+						  Accelerator('J'));
 
   GlobalCommands_insert("ShowHidden", FreeCaller<Select_ShowAllHidden>(), Accelerator('H', (GdkModifierType)GDK_SHIFT_MASK));
   GlobalCommands_insert("HideSelected", FreeCaller<HideSelected>(), Accelerator('H'));
