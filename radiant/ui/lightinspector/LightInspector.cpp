@@ -41,8 +41,9 @@ LightInspector::LightInspector()
 	// editing either pointlights or projected lights. On the right are the
 	// texture selection widgets.
 
-	GtkWidget* panels = gtk_vbox_new(FALSE, 3);
+	GtkWidget* panels = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(panels), createPointLightPanel(), TRUE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(panels), gtk_hseparator_new(), TRUE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(panels), createProjectedPanel(), TRUE, FALSE, 0);
 
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
@@ -60,6 +61,7 @@ LightInspector::LightInspector()
 
 // Create the point light panel
 GtkWidget* LightInspector::createPointLightPanel() {
+
 	// Create the point light togglebutton
 	_pointLightToggle = gtkutil::IconTextButton("Omni", 
 					   						   "pointLight32.png",
@@ -69,11 +71,33 @@ GtkWidget* LightInspector::createPointLightPanel() {
 					 "toggled",
 					 G_CALLBACK(_onPointToggle),
 					 this);
+
+	// Pack button into box to stop it expanding vertically
+	GtkWidget* buttonBox = gtk_vbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonBox), _pointLightToggle, TRUE, FALSE, 0);
 	
-	// HBox for panel
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(hbx), _pointLightToggle, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbx), gtk_label_new("Point light"), TRUE, FALSE, 0);
+	// Table contains entries for radius and center
+	_entryMap["radius"] = gtk_entry_new();
+	_entryMap["center"] = gtk_entry_new();
+
+	GtkWidget* tbl = gtk_table_new(2, 2, FALSE);
+	gtk_table_attach(GTK_TABLE(tbl), gtk_label_new("Radius"),
+					 0, 1, 0, 1, // left, right, top, bottom
+					 GTK_EXPAND, GTK_EXPAND, 3, 3); // xopts, yopts, xpad, ypad
+	gtk_table_attach(GTK_TABLE(tbl), gtk_label_new("Center"),
+					 0, 1, 1, 2,
+					 GTK_EXPAND, GTK_EXPAND, 3, 3);
+	gtk_table_attach(GTK_TABLE(tbl), _entryMap["radius"],
+					 1, 2, 0, 1,
+					 GTK_EXPAND, GTK_EXPAND, 3, 3);
+	gtk_table_attach(GTK_TABLE(tbl), _entryMap["center"],
+					 1, 2, 1, 2,
+					 GTK_EXPAND, GTK_EXPAND, 3, 3);
+	
+	// Main hbox for panel
+	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(hbx), buttonBox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), tbl, TRUE, FALSE, 0);
 	return hbx;
 }
 
@@ -88,10 +112,39 @@ GtkWidget* LightInspector::createProjectedPanel() {
 					 G_CALLBACK(_onProjToggle),
 					 this);
 
+	// Pack button into box to stop it expanding vertically
+	GtkWidget* buttonBox = gtk_vbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonBox), _projLightToggle, TRUE, FALSE, 0);
+
+	// Table contains entries for up, right and target
+	_entryMap["up"] = gtk_entry_new();
+	_entryMap["right"] = gtk_entry_new();
+	_entryMap["target"] = gtk_entry_new();
+
+	GtkWidget* tbl = gtk_table_new(3, 2, FALSE);
+	gtk_table_attach(GTK_TABLE(tbl), gtk_label_new("Target"),
+					 0, 1, 0, 1, // left, right, top, bottom
+					 GTK_EXPAND, GTK_EXPAND, 3, 3); // xopts, yopts, xpad, ypad
+	gtk_table_attach(GTK_TABLE(tbl), gtk_label_new("Up"),
+					 0, 1, 1, 2,
+					 GTK_EXPAND, GTK_EXPAND, 3, 3);
+	gtk_table_attach(GTK_TABLE(tbl), gtk_label_new("Right"),
+					 0, 1, 2, 3,
+					 GTK_EXPAND, GTK_EXPAND, 3, 3);
+	gtk_table_attach(GTK_TABLE(tbl), _entryMap["target"],
+					 1, 2, 0, 1,
+					 GTK_EXPAND, GTK_EXPAND, 3, 3);
+	gtk_table_attach(GTK_TABLE(tbl), _entryMap["up"],
+					 1, 2, 1, 2,
+					 GTK_EXPAND, GTK_EXPAND, 3, 3);
+	gtk_table_attach(GTK_TABLE(tbl), _entryMap["right"],
+					 1, 2, 2, 3,
+					 GTK_EXPAND, GTK_EXPAND, 3, 3);
+
 	// HBox for panel
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(hbx), _projLightToggle, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbx), gtk_label_new("Projected light"), TRUE, FALSE, 0);
+	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(hbx), buttonBox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), tbl, TRUE, FALSE, 0);
 	return hbx;
 }
 
