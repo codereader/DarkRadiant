@@ -1,7 +1,11 @@
 #include "LightInspector.h"
 
+#include "iselection.h"
+#include "ientity.h"
+#include "ieclass.h"
 #include "mainframe.h"
 #include "gtkutil/IconTextButton.h"
+#include "gtkutil/dialog.h"
 
 #include <gtk/gtk.h>
 
@@ -107,13 +111,37 @@ GtkWidget* LightInspector::createButtons() {
 					 FALSE, FALSE, 0);
 	return hbx;
 }
+
 // Show this dialog
 void LightInspector::show() {
+
+	// Prepare to check for a valid selection. We need exactly one object 
+	// selected and it must be a light. Anything else results in an error.
+	SelectionSystem& s = GlobalSelectionSystem();
+
+	// Abort if selection count is not 1
+	if (s.countSelected() != 1) {
+		gtkutil::errorDialog("Exactly one light must be selected.");
+		return;
+	}
+	
+	// Check the EntityClass to ensure it is a light, otherwise abort
+	Entity* e = NodeTypeCast<Entity>::cast(s.ultimateSelected().path().top());
+	if (e == NULL 							// not an entity
+		|| !e->getEntityClass().isLight())	// not a light
+	{
+		gtkutil::errorDialog("The selected entity must be a light.");
+		return;	
+	}
+
+	// Everything OK, set the entity and show the dialog
+	_entity = e;
 	gtk_widget_show_all(_widget);	
 }
 
 // Static method to display the dialog
 void LightInspector::displayDialog() {
+
 	// Static instance
 	static LightInspector _instance;
 
