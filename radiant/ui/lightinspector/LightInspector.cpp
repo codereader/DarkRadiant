@@ -17,6 +17,9 @@ namespace ui
 namespace {
 	
 	const char* LIGHTINSPECTOR_TITLE = "Light properties";
+
+	GtkAttachOptions EXPFIL = static_cast<GtkAttachOptions>(GTK_EXPAND
+															| GTK_FILL);
 	
 }
 
@@ -76,7 +79,7 @@ GtkWidget* LightInspector::createPointLightPanel() {
 
 	// Pack button into box to stop it expanding vertically
 	GtkWidget* buttonBox = gtk_vbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(buttonBox), _pointLightToggle, TRUE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonBox), _pointLightToggle, FALSE, FALSE, 0);
 	
 	// Table contains entries for radius and center
 	_entryMap["radius"] = gtk_entry_new();
@@ -99,7 +102,7 @@ GtkWidget* LightInspector::createPointLightPanel() {
 	// Main hbox for panel
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(hbx), buttonBox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbx), _pointPanel, TRUE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), _pointPanel, TRUE, TRUE, 0);
 	return hbx;
 }
 
@@ -116,7 +119,7 @@ GtkWidget* LightInspector::createProjectedPanel() {
 
 	// Pack button into box to stop it expanding vertically
 	GtkWidget* buttonBox = gtk_vbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(buttonBox), _projLightToggle, TRUE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonBox), _projLightToggle, FALSE, FALSE, 0);
 
 	// Table contains entries for up, right and target
 	_entryMap["up"] = gtk_entry_new();
@@ -135,18 +138,18 @@ GtkWidget* LightInspector::createProjectedPanel() {
 					 GTK_EXPAND, GTK_EXPAND, 3, 3);
 	gtk_table_attach(GTK_TABLE(_projPanel), _entryMap["target"],
 					 1, 2, 0, 1,
-					 GTK_EXPAND, GTK_EXPAND, 3, 3);
+					 EXPFIL, GTK_EXPAND, 3, 3);
 	gtk_table_attach(GTK_TABLE(_projPanel), _entryMap["up"],
 					 1, 2, 1, 2,
-					 GTK_EXPAND, GTK_EXPAND, 3, 3);
+					 EXPFIL, GTK_EXPAND, 3, 3);
 	gtk_table_attach(GTK_TABLE(_projPanel), _entryMap["right"],
 					 1, 2, 2, 3,
-					 GTK_EXPAND, GTK_EXPAND, 3, 3);
+					 EXPFIL, GTK_EXPAND, 3, 3);
 
 	// HBox for panel
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(hbx), buttonBox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbx), _projPanel, TRUE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), _projPanel, TRUE, TRUE, 0);
 	return hbx;
 }
 
@@ -249,21 +252,27 @@ void LightInspector::_onPointToggle(GtkWidget* b, LightInspector* self) {
 
 void LightInspector::_onOK(GtkWidget* w, LightInspector* self) {
 	
-	// Set the point versus projected status on the entity
-	// TODO: Get these values from dialog widgets
+	// Set the key values on the entity
 	if (self->_isProjected) {
-		self->_entity->setKeyValue("light_target", "0 0 -128");
-		self->_entity->setKeyValue("light_right", "64 0 0");
-		self->_entity->setKeyValue("light_up", "0 64 0");
+		self->_entity->setKeyValue("light_target", 
+				   gtk_entry_get_text(GTK_ENTRY(self->_entryMap["target"])));
+		self->_entity->setKeyValue("light_right", 
+				   gtk_entry_get_text(GTK_ENTRY(self->_entryMap["right"])));
+		self->_entity->setKeyValue("light_up", 
+				   gtk_entry_get_text(GTK_ENTRY(self->_entryMap["up"])));
+
 		self->_entity->setKeyValue("light_radius", "");
 		self->_entity->setKeyValue("light_center", "");
 	}
 	else {
+		self->_entity->setKeyValue("light_radius", 
+				   gtk_entry_get_text(GTK_ENTRY(self->_entryMap["radius"])));
+		self->_entity->setKeyValue("light_center", 
+				   gtk_entry_get_text(GTK_ENTRY(self->_entryMap["center"])));
+
 		self->_entity->setKeyValue("light_target", "");
 		self->_entity->setKeyValue("light_right", "");
 		self->_entity->setKeyValue("light_up", "");
-		self->_entity->setKeyValue("light_radius", "320 320 320");
-		self->_entity->setKeyValue("light_center", "0 0 0");
 	}
 	
 	// Hide the dialog
@@ -289,14 +298,28 @@ void LightInspector::updatePanels() {
 // Get keyvals from entity and insert into text entries
 void LightInspector::getValuesFromEntity() {
 
+	// First set default values, in case entity does not contain all keys (which
+	// it probably won't).
+	gtk_entry_set_text(GTK_ENTRY(_entryMap["radius"]), "320 320 320");
+	gtk_entry_set_text(GTK_ENTRY(_entryMap["center"]), "0 0 0");
+	gtk_entry_set_text(GTK_ENTRY(_entryMap["target"]), "0 0 -256");
+	gtk_entry_set_text(GTK_ENTRY(_entryMap["right"]), "128 0 0");
+	gtk_entry_set_text(GTK_ENTRY(_entryMap["up"]), "0 128 0");
+
 	// Iterate over each entry in the EntryMap, retrieving the corresponding
 	// keyvalue
 	for (EntryMap::iterator i = _entryMap.begin();
 		 i != _entryMap.end();
 		 ++i)
 	{
-		const char* val = _entity->getKeyValue("light_" + i->first);
-		gtk_entry_set_text(GTK_ENTRY(i->second), val);
+		// Get the value from the entity
+		std::string val = _entity->getKeyValue("light_" + i->first);
+
+		// Only set the widget text if the entity has a value, otherwise leave
+		// at default
+		if (!val.empty()) {
+			gtk_entry_set_text(GTK_ENTRY(i->second), val.c_str());
+		}
 	}		
 }
 
