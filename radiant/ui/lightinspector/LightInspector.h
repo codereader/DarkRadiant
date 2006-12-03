@@ -28,6 +28,10 @@ class LightInspector
 	GtkWidget* _pointLightToggle;
 	GtkWidget* _projLightToggle;
 	
+	// Panels of widgets for Point and Projected lights
+	GtkWidget* _pointPanel;
+	GtkWidget* _projPanel;
+	
 	// Hashmap of named GtkEntry widgets to set light properties
 	typedef std::map<std::string, GtkWidget*> EntryMap;
 	EntryMap _entryMap;
@@ -54,6 +58,10 @@ private:
 	static void _onPointToggle(GtkWidget*, LightInspector*);	
 	static void _onOK(GtkWidget*, LightInspector*);
 	static void _onCancel(GtkWidget*, LightInspector*);
+
+	// Set the projected or pointlight panels to enabled/disabled based on
+	// toggle button state
+	void updatePanels();
 
 public:
 

@@ -57,6 +57,8 @@ LightInspector::LightInspector()
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 3);
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
 	
+	// Check widget sensitivity
+	updatePanels();
 }
 
 // Create the point light panel
@@ -80,24 +82,24 @@ GtkWidget* LightInspector::createPointLightPanel() {
 	_entryMap["radius"] = gtk_entry_new();
 	_entryMap["center"] = gtk_entry_new();
 
-	GtkWidget* tbl = gtk_table_new(2, 2, FALSE);
-	gtk_table_attach(GTK_TABLE(tbl), gtk_label_new("Radius"),
+	_pointPanel = gtk_table_new(2, 2, FALSE);
+	gtk_table_attach(GTK_TABLE(_pointPanel), gtk_label_new("Radius"),
 					 0, 1, 0, 1, // left, right, top, bottom
 					 GTK_EXPAND, GTK_EXPAND, 3, 3); // xopts, yopts, xpad, ypad
-	gtk_table_attach(GTK_TABLE(tbl), gtk_label_new("Center"),
+	gtk_table_attach(GTK_TABLE(_pointPanel), gtk_label_new("Center"),
 					 0, 1, 1, 2,
 					 GTK_EXPAND, GTK_EXPAND, 3, 3);
-	gtk_table_attach(GTK_TABLE(tbl), _entryMap["radius"],
+	gtk_table_attach(GTK_TABLE(_pointPanel), _entryMap["radius"],
 					 1, 2, 0, 1,
 					 GTK_EXPAND, GTK_EXPAND, 3, 3);
-	gtk_table_attach(GTK_TABLE(tbl), _entryMap["center"],
+	gtk_table_attach(GTK_TABLE(_pointPanel), _entryMap["center"],
 					 1, 2, 1, 2,
 					 GTK_EXPAND, GTK_EXPAND, 3, 3);
 	
 	// Main hbox for panel
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(hbx), buttonBox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbx), tbl, TRUE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), _pointPanel, TRUE, FALSE, 0);
 	return hbx;
 }
 
@@ -121,30 +123,30 @@ GtkWidget* LightInspector::createProjectedPanel() {
 	_entryMap["right"] = gtk_entry_new();
 	_entryMap["target"] = gtk_entry_new();
 
-	GtkWidget* tbl = gtk_table_new(3, 2, FALSE);
-	gtk_table_attach(GTK_TABLE(tbl), gtk_label_new("Target"),
+	_projPanel = gtk_table_new(3, 2, FALSE);
+	gtk_table_attach(GTK_TABLE(_projPanel), gtk_label_new("Target"),
 					 0, 1, 0, 1, // left, right, top, bottom
 					 GTK_EXPAND, GTK_EXPAND, 3, 3); // xopts, yopts, xpad, ypad
-	gtk_table_attach(GTK_TABLE(tbl), gtk_label_new("Up"),
+	gtk_table_attach(GTK_TABLE(_projPanel), gtk_label_new("Up"),
 					 0, 1, 1, 2,
 					 GTK_EXPAND, GTK_EXPAND, 3, 3);
-	gtk_table_attach(GTK_TABLE(tbl), gtk_label_new("Right"),
+	gtk_table_attach(GTK_TABLE(_projPanel), gtk_label_new("Right"),
 					 0, 1, 2, 3,
 					 GTK_EXPAND, GTK_EXPAND, 3, 3);
-	gtk_table_attach(GTK_TABLE(tbl), _entryMap["target"],
+	gtk_table_attach(GTK_TABLE(_projPanel), _entryMap["target"],
 					 1, 2, 0, 1,
 					 GTK_EXPAND, GTK_EXPAND, 3, 3);
-	gtk_table_attach(GTK_TABLE(tbl), _entryMap["up"],
+	gtk_table_attach(GTK_TABLE(_projPanel), _entryMap["up"],
 					 1, 2, 1, 2,
 					 GTK_EXPAND, GTK_EXPAND, 3, 3);
-	gtk_table_attach(GTK_TABLE(tbl), _entryMap["right"],
+	gtk_table_attach(GTK_TABLE(_projPanel), _entryMap["right"],
 					 1, 2, 2, 3,
 					 GTK_EXPAND, GTK_EXPAND, 3, 3);
 
 	// HBox for panel
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(hbx), buttonBox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbx), tbl, TRUE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), _projPanel, TRUE, FALSE, 0);
 	return hbx;
 }
 
@@ -221,6 +223,9 @@ void LightInspector::_onProjToggle(GtkWidget* b, LightInspector* self) {
 	else
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->_pointLightToggle),
 									 TRUE);	
+
+	// Update widget sensitivity
+	self->updatePanels();
 }
 
 void LightInspector::_onPointToggle(GtkWidget* b, LightInspector* self) {
@@ -234,6 +239,9 @@ void LightInspector::_onPointToggle(GtkWidget* b, LightInspector* self) {
 	else
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->_projLightToggle),
 									 FALSE);	
+
+	// Update widget sensitivity
+	self->updatePanels();
 }
 
 void LightInspector::_onOK(GtkWidget* w, LightInspector* self) {
@@ -261,6 +269,18 @@ void LightInspector::_onOK(GtkWidget* w, LightInspector* self) {
 
 void LightInspector::_onCancel(GtkWidget* w, LightInspector* self) {
 	gtk_widget_hide(self->_widget);
+}
+
+// Update panel state
+void LightInspector::updatePanels() {
+	if (_isProjected) {
+		gtk_widget_set_sensitive(_projPanel, TRUE);	
+		gtk_widget_set_sensitive(_pointPanel, FALSE);	
+	}
+	else {
+		gtk_widget_set_sensitive(_projPanel, FALSE);	
+		gtk_widget_set_sensitive(_pointPanel, TRUE);
+	}
 }
 
 } // namespace ui
