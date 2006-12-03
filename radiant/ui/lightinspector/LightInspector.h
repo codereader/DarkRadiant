@@ -17,11 +17,18 @@ class LightInspector
 	
 private:
 
-	/* Constructor creates GTK widgets */
+	// Constructor creates GTK widgets
 	LightInspector();
 
-	/* Show this LightInspector dialog */
+	// Show this LightInspector dialog
 	void show();
+
+	// Widget construction functions
+	GtkWidget* createPointLightPanel();
+	GtkWidget* createProjectedPanel();
+	GtkWidget* createTextureWidgets();
+	GtkWidget* createButtons();
+	
 
 public:
 

@@ -2,7 +2,7 @@
 
 #include "mainframe.h"
 
-#include <iostream> 
+#include <gtk/gtk.h>
 
 namespace ui
 {
@@ -30,9 +30,54 @@ LightInspector::LightInspector()
     				 "delete-event",
     				 G_CALLBACK(gtk_widget_hide_on_delete),
     				 NULL);
+
+	// Pack in widgets. On the left are two panels with toggle buttons, for
+	// editing either pointlights or projected lights. On the right are the
+	// texture selection widgets.
+
+	GtkWidget* panels = gtk_vbox_new(FALSE, 3);
+	gtk_box_pack_start(GTK_BOX(panels), createPointLightPanel(), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(panels), createProjectedPanel(), TRUE, TRUE, 0);
+
+	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
+	gtk_box_pack_start(GTK_BOX(hbx), panels, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), createTextureWidgets(), TRUE, TRUE, 0);
+
+	GtkWidget* vbx = gtk_vbox_new(FALSE, 3);
+	gtk_box_pack_start(GTK_BOX(vbx), hbx, TRUE, TRUE, 0);
+	gtk_box_pack_end(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
+
+	gtk_container_add(GTK_CONTAINER(_widget), vbx);
 	
 }
 
+// Create the point light panel
+GtkWidget* LightInspector::createPointLightPanel() {
+	return gtk_label_new("Point light");
+}
+
+// Create the projected light panel
+GtkWidget* LightInspector::createProjectedPanel() {
+	return gtk_label_new("Projected light");
+	
+}
+
+// Create the texture widgets
+GtkWidget* LightInspector::createTextureWidgets() {
+	return gtk_label_new("Texture widgets");
+}
+
+// Create the buttons
+GtkWidget* LightInspector::createButtons() {
+	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
+	gtk_box_pack_end(GTK_BOX(hbx), 
+					 gtk_button_new_from_stock(GTK_STOCK_OK), 
+					 FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(hbx), 
+					 gtk_button_new_from_stock(GTK_STOCK_CANCEL), 
+					 FALSE, FALSE, 0);
+	return hbx;
+}
 // Show this dialog
 void LightInspector::show() {
 	gtk_widget_show_all(_widget);	
@@ -40,7 +85,6 @@ void LightInspector::show() {
 
 // Static method to display the dialog
 void LightInspector::displayDialog() {
-	std::cout << "Displaying light insedfs" << std::endl;
 	// Static instance
 	static LightInspector _instance;
 
