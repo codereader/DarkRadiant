@@ -3,6 +3,10 @@
 
 #include <gtk/gtkwidget.h>
 
+/* FORWARD DECLS */
+
+class Entity;
+
 namespace ui
 {
 
@@ -21,6 +25,9 @@ class LightInspector
 	// Light type toggle buttons
 	GtkWidget* _pointLightToggle;
 	GtkWidget* _projLightToggle;
+	
+	// The light entity to edit
+	Entity* _entity;
 	
 private:
 
