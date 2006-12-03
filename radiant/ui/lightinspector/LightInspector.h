@@ -46,6 +46,8 @@ private:
 	// GTK CALLBACKS
 	static void _onProjToggle(GtkWidget*, LightInspector*);	
 	static void _onPointToggle(GtkWidget*, LightInspector*);	
+	static void _onOK(GtkWidget*, LightInspector*);
+	static void _onCancel(GtkWidget*, LightInspector*);
 
 public:
 
