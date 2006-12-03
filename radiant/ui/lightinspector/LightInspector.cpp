@@ -1,6 +1,7 @@
 #include "LightInspector.h"
 
 #include "mainframe.h"
+#include "gtkutil/IconTextButton.h"
 
 #include <gtk/gtk.h>
 
@@ -36,8 +37,8 @@ LightInspector::LightInspector()
 	// texture selection widgets.
 
 	GtkWidget* panels = gtk_vbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(panels), createPointLightPanel(), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(panels), createProjectedPanel(), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(panels), createPointLightPanel(), TRUE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(panels), createProjectedPanel(), TRUE, FALSE, 0);
 
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
 	gtk_box_pack_start(GTK_BOX(hbx), panels, TRUE, TRUE, 0);
@@ -47,19 +48,31 @@ LightInspector::LightInspector()
 	gtk_box_pack_start(GTK_BOX(vbx), hbx, TRUE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
 
+	gtk_container_set_border_width(GTK_CONTAINER(_widget), 3);
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
 	
 }
 
 // Create the point light panel
 GtkWidget* LightInspector::createPointLightPanel() {
-	return gtk_label_new("Point light");
+	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
+	gtk_box_pack_start(GTK_BOX(hbx), 
+					   gtkutil::IconTextButton("Omni", 
+					   						   "pointLight32.png"),
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), gtk_label_new("Point light"), TRUE, FALSE, 0);
+	return hbx;
 }
 
 // Create the projected light panel
 GtkWidget* LightInspector::createProjectedPanel() {
-	return gtk_label_new("Projected light");
-	
+	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
+	gtk_box_pack_start(GTK_BOX(hbx), 
+					   gtkutil::IconTextButton("Projected", 
+					   						   "projLight32.png"),
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), gtk_label_new("Projected light"), TRUE, FALSE, 0);
+	return hbx;
 }
 
 // Create the texture widgets
