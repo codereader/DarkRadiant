@@ -161,7 +161,7 @@ GtkWidget* LightInspector::createTextureWidgets() {
 	// VBox contains colour and texture selection widgets
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 3);
 	
-	GtkWidget* _colour = gtk_color_button_new();
+	_colour = gtk_color_button_new();
 	GtkWidget* _texture = gtk_combo_box_entry_new();
 	
 	gtk_box_pack_start(GTK_BOX(vbx), gtkutil::LeftAlignedLabel("Colour"), 
@@ -268,27 +268,38 @@ void LightInspector::_onPointToggle(GtkWidget* b, LightInspector* self) {
 
 void LightInspector::_onOK(GtkWidget* w, LightInspector* self) {
 	
-	// Set the key values on the entity
+	// Get a local pointer to the entity
+	Entity* e = self->_entity;
+	
+	// Set the "_color" keyvalue
+	GdkColor col;
+	gtk_color_button_get_color(GTK_COLOR_BUTTON(self->_colour), &col);
+	e->setKeyValue("_color", (boost::format("%.2f %.2f %.2f") 
+						  	  % (col.red/65535.0)
+						  	  % (col.green/65535.0)
+						  	  % (col.blue/65535.0)).str());
+	
+	// Set shape keyvalues based on the light type
 	if (self->_isProjected) {
-		self->_entity->setKeyValue("light_target", 
+		e->setKeyValue("light_target", 
 				   gtk_entry_get_text(GTK_ENTRY(self->_entryMap["target"])));
-		self->_entity->setKeyValue("light_right", 
+		e->setKeyValue("light_right", 
 				   gtk_entry_get_text(GTK_ENTRY(self->_entryMap["right"])));
-		self->_entity->setKeyValue("light_up", 
+		e->setKeyValue("light_up", 
 				   gtk_entry_get_text(GTK_ENTRY(self->_entryMap["up"])));
 
-		self->_entity->setKeyValue("light_radius", "");
-		self->_entity->setKeyValue("light_center", "");
+		e->setKeyValue("light_radius", "");
+		e->setKeyValue("light_center", "");
 	}
 	else {
-		self->_entity->setKeyValue("light_radius", 
+		e->setKeyValue("light_radius", 
 				   gtk_entry_get_text(GTK_ENTRY(self->_entryMap["radius"])));
-		self->_entity->setKeyValue("light_center", 
+		e->setKeyValue("light_center", 
 				   gtk_entry_get_text(GTK_ENTRY(self->_entryMap["center"])));
 
-		self->_entity->setKeyValue("light_target", "");
-		self->_entity->setKeyValue("light_right", "");
-		self->_entity->setKeyValue("light_up", "");
+		e->setKeyValue("light_target", "");
+		e->setKeyValue("light_right", "");
+		e->setKeyValue("light_up", "");
 	}
 	
 	// Hide the dialog
@@ -336,7 +347,15 @@ void LightInspector::getValuesFromEntity() {
 		if (!val.empty()) {
 			gtk_entry_set_text(GTK_ENTRY(i->second), val.c_str());
 		}
-	}		
+	}
+	
+	// Get the colour key from the entity to set the GtkColorButton
+	Vector3 colour(_entity->getKeyValue("_color"));
+	GdkColor col = { 0,
+					 static_cast<guint>(colour.x() * 65535),
+					 static_cast<guint>(colour.y() * 65535),
+					 static_cast<guint>(colour.z() * 65535) };
+	gtk_color_button_set_color(GTK_COLOR_BUTTON(_colour), &col);
 }
 
 } // namespace ui
