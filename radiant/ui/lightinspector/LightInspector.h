@@ -28,6 +28,9 @@ class LightInspector
 	GtkWidget* _pointLightToggle;
 	GtkWidget* _projLightToggle;
 	
+	// Colour selection widget
+	GtkWidget* _colour;
+
 	// Panels of widgets for Point and Projected lights
 	GtkWidget* _pointPanel;
 	GtkWidget* _projPanel;
