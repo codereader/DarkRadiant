@@ -102,9 +102,26 @@
 		<property name="s_omni" category="Sound" type="boolean" />
 		<property name="s_volume" category="Sound" type="text" />
 	</entityInspector>
+
+	<!-- Game-specific values for light entities -->
+	<light>
+
+		<!-- List of prefixes that may be used to represent light shaders -->		
+		<texture>
+			<prefix>lights</prefix>
+			<prefix>fogs</prefix>
+		</texture>
+
+	</light>
+
+	<!-- Information about the map format, for loading and saving -->		
 	<mapFormat>
+	
+		<!-- Compatibility options -->
 		<compatibility>
 			<addDummyBrushes value="true" />
 		</compatibility>
+
 	</mapFormat>
+
 </game>

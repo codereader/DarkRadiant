@@ -3,12 +3,16 @@
 #include "iselection.h"
 #include "ientity.h"
 #include "ieclass.h"
+#include "ishaders.h"
+#include "iregistry.h"
+
 #include "mainframe.h"
 #include "gtkutil/IconTextButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/dialog.h"
 
 #include <gtk/gtk.h>
+#include <boost/algorithm/string/predicate.hpp>
 
 namespace ui
 {
@@ -18,6 +22,7 @@ namespace ui
 namespace {
 	
 	const char* LIGHTINSPECTOR_TITLE = "Light properties";
+	const char* LIGHT_PREFIX_XPATH = "game/light/texture//prefix";
 
 	GtkAttachOptions EXPFIL = static_cast<GtkAttachOptions>(GTK_EXPAND
 															| GTK_FILL);
@@ -62,8 +67,11 @@ LightInspector::LightInspector()
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 3);
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
 	
-	// Check widget sensitivity
+	// Check widget sensitivity (point versus projected panels)
 	updatePanels();
+	
+	// Populate the textures listbox
+	populateTextures();
 }
 
 // Create the point light panel
@@ -162,7 +170,7 @@ GtkWidget* LightInspector::createTextureWidgets() {
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 3);
 	
 	_colour = gtk_color_button_new();
-	GtkWidget* _texture = gtk_combo_box_entry_new();
+	_texture = gtk_combo_box_entry_new_text();
 	
 	gtk_box_pack_start(GTK_BOX(vbx), gtkutil::LeftAlignedLabel("Colour"), 
 					   FALSE, FALSE, 0);
@@ -230,6 +238,70 @@ void LightInspector::displayDialog() {
 
 	// Show the instance
 	_instance.show();	
+}
+
+// Populate the texture dropdown, using a functor to walk the list of textures
+// and a list of light-texture prefixes from the game file
+
+namespace {
+	
+	class LightShaderFunctor {
+	
+		// Prefixes we are interested in
+		std::vector<std::string> _prefixes;
+		
+		// The ComboBoxEntry we are adding to
+		GtkComboBox* _entry;
+		
+	public:
+		
+		// Required typedef
+		typedef const char* first_argument_type;
+
+		// Constructor
+		LightShaderFunctor(GtkWidget* entry)
+		: _entry(GTK_COMBO_BOX(entry))
+		{
+			// Get the list of light texture prefixes from the game file
+			xml::NodeList prefList = 
+				GlobalRegistry().findXPath(LIGHT_PREFIX_XPATH);
+			
+			// Copy the Node contents into the prefix vector	
+			for (xml::NodeList::iterator i = prefList.begin();
+				 i != prefList.end();
+				 ++i)
+			{
+				_prefixes.push_back(i->getContent());
+			}
+		}
+		
+		// Functor operator
+		void operator() (const char* texture) {
+	
+			// Check if the texture starts with a light-texture prefix. If so,
+			// add it to the ComboBox
+			std::string textureName(texture);
+			for (std::vector<std::string>::iterator i = _prefixes.begin();
+				 i != _prefixes.end();
+				 ++i)
+			{
+				if (boost::algorithm::istarts_with(textureName, *i + "/")) {
+					gtk_combo_box_append_text(_entry, texture);
+				}
+			}
+					
+		}
+		
+	}; // class
+
+} // namespace
+
+void LightInspector::populateTextures() {
+
+	// Use the functor to populate the combo box
+	LightShaderFunctor functor(_texture);
+	GlobalShaderSystem().foreachShaderName(makeCallback1(functor));
+	
 }
 
 /* GTK CALLBACKS */
