@@ -1,6 +1,8 @@
 #ifndef TEXTURECHOOSER_H_
 #define TEXTURECHOOSER_H_
 
+#include "ui/common/LightTextureSelector.h"
+
 #include <gtk/gtk.h>
 
 #include <string>
@@ -28,40 +30,18 @@ private:
 	// Main dialog widget
 	GtkWidget* _widget;	
 	
-	// Current selection object
-	GtkTreeSelection* _selection;
-	
-	// The preview GtkGLExt widget
-	GtkWidget* _glWidget;
-	
-	// List store containing the shader info for display in the table
-	GtkListStore* _infoStore;
-	
-	// The prefixes we are interested in (from the PropertyEditor's option
-	// string
-	std::string _prefixes;
+	// The LightTextureSelector widget, that contains the actual selection
+	// tools (treeview etc.)
+	ui::LightTextureSelector _selector;
 	
 private:
 
 	// Widget construction helpers
-	GtkWidget* createTreeView();
 	GtkWidget* createButtons();
-	GtkWidget* createPreview();
-	
-	// Helper function to get selected texture name as a string
-	const char* getSelectedName();
-	
-	// Get the IShader object associated with the current selection
-	IShader* getSelectedShader();
 	
 	/* GTK CALLBACKS */
 	static void callbackCancel(GtkWidget*, TextureChooser*);
 	static void callbackOK(GtkWidget*, TextureChooser*);
-	static void callbackGLDraw(GtkWidget*, GdkEventExpose*, TextureChooser*);
-	static void callbackSelChanged(GtkWidget*, TextureChooser*);
-	
-	// Update the shader attributes table
-	void updateInfoTable();
 	
 public:
 
