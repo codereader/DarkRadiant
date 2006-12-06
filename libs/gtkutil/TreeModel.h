@@ -28,7 +28,9 @@ public:
 	 * @param colNo
 	 * The column number to look up.
 	 */
-	static std::string getString(GtkTreeModel* model, GtkTreeIter* iter, gint colNo);
+	static std::string getString(GtkTreeModel* model, 
+								 GtkTreeIter* iter, 
+								 gint colNo);
 
 	/** Extract a boolean from the given row of the provided TreeModel.
 	 * 
