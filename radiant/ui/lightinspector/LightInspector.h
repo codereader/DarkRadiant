@@ -1,6 +1,8 @@
 #ifndef LIGHTINSPECTOR_H_
 #define LIGHTINSPECTOR_H_
 
+#include "ui/common/LightTextureSelector.h"
+
 #include <gtk/gtkwidget.h>
 #include <map>
 #include <string>
@@ -31,8 +33,8 @@ class LightInspector
 	// Colour selection widget
 	GtkWidget* _colour;
 	
-	// Texture selection combobox
-	GtkWidget* _texture;
+	// Texture selection combo
+	ui::LightTextureSelector _texSelector;
 
 	// Panels of widgets for Point and Projected lights
 	GtkWidget* _pointPanel;
@@ -72,9 +74,6 @@ private:
 	// Update the text entries from keyvals on the entity
 	void getValuesFromEntity();
 	
-	// Populate the list of light textures from the ShaderSystem
-	void populateTextures();
-
 public:
 
 	/** Display the singleton dialog instance, constructing it if necessary.

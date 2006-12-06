@@ -15,8 +15,8 @@ namespace ui
 {
 
 
-/* Class encapsulating a Gtk dialog containing a Tree view, which allows
- * a texture to be selected and returned to the TexturePropertyEditor.
+/* A GTK dialog containing a LightTextureSelector widget combo and OK/Cancel
+ * buttons.
  */
 
 class TextureChooser

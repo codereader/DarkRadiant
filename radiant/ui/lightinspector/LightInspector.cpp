@@ -22,10 +22,6 @@ namespace ui
 namespace {
 	
 	const char* LIGHTINSPECTOR_TITLE = "Light properties";
-	const char* LIGHT_PREFIX_XPATH = "game/light/texture//prefix";
-
-	GtkAttachOptions EXPFIL = static_cast<GtkAttachOptions>(GTK_EXPAND
-															| GTK_FILL);
 	
 }
 
@@ -39,6 +35,12 @@ LightInspector::LightInspector()
 	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
 	gtk_window_set_title(GTK_WINDOW(_widget), LIGHTINSPECTOR_TITLE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
+    
+    // Window size
+	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
+	gtk_window_set_default_size(GTK_WINDOW(_widget), 
+								gint(gdk_screen_get_width(scr) * 0.6), 
+								gdk_screen_get_height(scr) / 2);
     
     // Widget must hide not destroy when closed
     g_signal_connect(G_OBJECT(_widget), 
@@ -70,8 +72,6 @@ LightInspector::LightInspector()
 	// Check widget sensitivity (point versus projected panels)
 	updatePanels();
 	
-	// Populate the textures listbox
-	populateTextures();
 }
 
 // Create the point light panel
@@ -148,13 +148,13 @@ GtkWidget* LightInspector::createProjectedPanel() {
 					 GTK_EXPAND, GTK_EXPAND, 3, 3);
 	gtk_table_attach(GTK_TABLE(_projPanel), _entryMap["target"],
 					 1, 2, 0, 1,
-					 EXPFIL, GTK_EXPAND, 3, 3);
+					 GTK_EXPAND, GTK_EXPAND, 3, 3);
 	gtk_table_attach(GTK_TABLE(_projPanel), _entryMap["up"],
 					 1, 2, 1, 2,
-					 EXPFIL, GTK_EXPAND, 3, 3);
+					 GTK_EXPAND, GTK_EXPAND, 3, 3);
 	gtk_table_attach(GTK_TABLE(_projPanel), _entryMap["right"],
 					 1, 2, 2, 3,
-					 EXPFIL, GTK_EXPAND, 3, 3);
+					 GTK_EXPAND, GTK_EXPAND, 3, 3);
 
 	// HBox for panel
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
@@ -170,14 +170,15 @@ GtkWidget* LightInspector::createTextureWidgets() {
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 3);
 	
 	_colour = gtk_color_button_new();
-	_texture = gtk_combo_box_entry_new_text();
-	
-	gtk_box_pack_start(GTK_BOX(vbx), gtkutil::LeftAlignedLabel("Colour"), 
+
+	gtk_box_pack_start(GTK_BOX(vbx), 
+					   gtkutil::LeftAlignedLabel("<b>Colour</b>"), 
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), _colour, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), gtkutil::LeftAlignedLabel("Texture"), 
+	gtk_box_pack_start(GTK_BOX(vbx), 
+					   gtkutil::LeftAlignedLabel("<b>Texture</b>"), 
 					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), _texture, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), _texSelector, TRUE, TRUE, 0);
 	
 	return vbx;
 }
@@ -238,70 +239,6 @@ void LightInspector::displayDialog() {
 
 	// Show the instance
 	_instance.show();	
-}
-
-// Populate the texture dropdown, using a functor to walk the list of textures
-// and a list of light-texture prefixes from the game file
-
-namespace {
-	
-	class LightShaderFunctor {
-	
-		// Prefixes we are interested in
-		std::vector<std::string> _prefixes;
-		
-		// The ComboBoxEntry we are adding to
-		GtkComboBox* _entry;
-		
-	public:
-		
-		// Required typedef
-		typedef const char* first_argument_type;
-
-		// Constructor
-		LightShaderFunctor(GtkWidget* entry)
-		: _entry(GTK_COMBO_BOX(entry))
-		{
-			// Get the list of light texture prefixes from the game file
-			xml::NodeList prefList = 
-				GlobalRegistry().findXPath(LIGHT_PREFIX_XPATH);
-			
-			// Copy the Node contents into the prefix vector	
-			for (xml::NodeList::iterator i = prefList.begin();
-				 i != prefList.end();
-				 ++i)
-			{
-				_prefixes.push_back(i->getContent());
-			}
-		}
-		
-		// Functor operator
-		void operator() (const char* texture) {
-	
-			// Check if the texture starts with a light-texture prefix. If so,
-			// add it to the ComboBox
-			std::string textureName(texture);
-			for (std::vector<std::string>::iterator i = _prefixes.begin();
-				 i != _prefixes.end();
-				 ++i)
-			{
-				if (boost::algorithm::istarts_with(textureName, *i + "/")) {
-					gtk_combo_box_append_text(_entry, texture);
-				}
-			}
-					
-		}
-		
-	}; // class
-
-} // namespace
-
-void LightInspector::populateTextures() {
-
-	// Use the functor to populate the combo box
-	LightShaderFunctor functor(_texture);
-	GlobalShaderSystem().foreachShaderName(makeCallback1(functor));
-	
 }
 
 /* GTK CALLBACKS */
