@@ -6,7 +6,7 @@
     	<previewSizeFactor value="0.4"/>
     </ModelSelector>
 	<showAllLightRadii value="0"/>
-	<alwaysShowLightCenter value="1"/>    
+	<alwaysShowLightVertices value="1"/>
     <toolbar name="view" align="horizontal">
 			<toolbutton name="open" action="OpenMap" tooltip="Open a map file" icon="file_open.png"/>
 			<toolbutton name="save" action="SaveMap" tooltip="Save the current map" icon="file_save.png"/>

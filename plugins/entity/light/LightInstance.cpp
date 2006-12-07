@@ -48,16 +48,27 @@ Bounded& LightInstance::get(NullType<Bounded>) {
 void LightInstance::renderInactiveComponents(Renderer& renderer, const VolumeTest& volume, const bool selected) const {
 	// greebo: We are not in component selection mode (and the light is still selected), 
 	// check if we should draw the center of the light anyway
-	if (selected && GlobalSelectionSystem().ComponentMode() != SelectionSystem::eVertex) {
+	if (selected 
+		&& GlobalSelectionSystem().ComponentMode() != SelectionSystem::eVertex
+		&& GlobalRegistry().get("user/ui/alwaysShowLightVertices") == "1") 
+	{
 		if (_light.isProjected()) {
+			// Cache registry values to reduce number of queries
+			Vector3 colourStartEndInactive = GlobalRadiant().getColour("light_startend_deselected");
+			Vector3 colourVertexInactive = GlobalRadiant().getColour("light_vertex_normal");
 			
+			_light.colourLightStart() = colourStartEndInactive;
+			_light.colourLightEnd() = colourStartEndInactive;
+			_light.colourLightTarget() = colourVertexInactive;
+			_light.colourLightRight() = colourVertexInactive;
+			_light.colourLightUp() = colourVertexInactive;
+			
+			// Render the projection points
+			_light.renderProjectionPoints(renderer, volume, Instance::localToWorld());
 		} 
 		else {
-			// This is a point light, check if we should always draw the light center when selected
-			if (GlobalRegistry().get("user/ui/alwaysShowLightCenter") == "1") {
-				_light.getDoom3Radius().setCenterColour(GlobalRadiant().getColour("light_vertex_normal"));
-				_light.renderLightCentre(renderer, volume, Instance::localToWorld());
-			}
+			_light.getDoom3Radius().setCenterColour(GlobalRadiant().getColour("light_vertex_normal"));
+			_light.renderLightCentre(renderer, volume, Instance::localToWorld());
 		}
 	}
 }
@@ -85,27 +96,19 @@ void LightInstance::renderComponents(Renderer& renderer, const VolumeTest& volum
 	if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex) {
 		if (_light.isProjected()) {
 			// A projected light
+			// Cache registry values to reduce number of queries
+			Vector3 colourStartEndSelected = GlobalRadiant().getColour("light_startend_selected");
+			Vector3 colourStartEndDeselected = GlobalRadiant().getColour("light_startend_deselected");
+			Vector3 colourVertexSelected = GlobalRadiant().getColour("light_vertex_selected");
+			Vector3 colourVertexDeselected = GlobalRadiant().getColour("light_vertex_deselected");
 			
 			// Update the colour of the light center dot
-			_light.colourLightTarget() = (_lightTargetInstance.isSelected()) 
-				? GlobalRadiant().getColour("light_vertex_selected") 
-				: GlobalRadiant().getColour("light_vertex_deselected");
-
-			_light.colourLightRight() = (_lightRightInstance.isSelected()) 
-				? GlobalRadiant().getColour("light_vertex_selected") 
-				: GlobalRadiant().getColour("light_vertex_deselected");
+			_light.colourLightTarget() = (_lightTargetInstance.isSelected()) ? colourVertexSelected : colourVertexDeselected;
+			_light.colourLightRight() = (_lightRightInstance.isSelected()) ? colourVertexSelected : colourVertexDeselected;
+			_light.colourLightUp() = (_lightUpInstance.isSelected()) ? colourVertexSelected : colourVertexDeselected;
 				
-			_light.colourLightUp() = (_lightUpInstance.isSelected()) 
-				? GlobalRadiant().getColour("light_vertex_selected") 
-				: GlobalRadiant().getColour("light_vertex_deselected");
-				
-			_light.colourLightStart() = (_lightStartInstance.isSelected()) 
-				? GlobalRadiant().getColour("light_startend_selected") 
-				: GlobalRadiant().getColour("light_startend_deselected");
-				
-			_light.colourLightEnd() = (_lightEndInstance.isSelected()) 
-				? GlobalRadiant().getColour("light_startend_selected") 
-				: GlobalRadiant().getColour("light_startend_deselected");
+			_light.colourLightStart() = (_lightStartInstance.isSelected()) ? colourStartEndSelected : colourStartEndDeselected;
+			_light.colourLightEnd() = (_lightEndInstance.isSelected()) ? colourStartEndSelected : colourStartEndDeselected;
 			
 			// Render the projection points
 			_light.renderProjectionPoints(renderer, volume, Instance::localToWorld());
@@ -225,9 +228,7 @@ void LightInstance::evaluateTransform() {
 	}
 	else {
 		// Check if the light center is selected, if yes, transform it, if not, it's a drag plane operation 
-		if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex)  
-		    //&& getTranslation() != Vector3(0,0,0)) 
-		{
+		if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex) {
 			if (_lightCenterInstance.isSelected()) {
 				// Retrieve the translation and apply it to the temporary light center variable
 				// This adds the translation vector to the previous light origin 
@@ -236,45 +237,8 @@ void LightInstance::evaluateTransform() {
 			}
 			
 			if (_lightTargetInstance.isSelected()) {
-				// greebo: Todo: move this into the Light class
-				Vector3 oldTarget = _light.target();
-				Vector3 newTarget = oldTarget + getTranslation();
-				
-				double angle = oldTarget.angle(newTarget);
-				
-				// If we are at rougly 0 or 180 degrees, don't rotate anything, this is probably a translation only
-				if (std::abs(angle) > 0.01 && std::abs(c_pi-angle) > 0.01) {
-					// Calculate the transformation matrix defined by the two vectors
-					Matrix4 rotationMatrix = Matrix4::getRotation(oldTarget, newTarget);
-					_light.rightTransformed() = rotationMatrix.transform(_light.right()).getProjected();
-					_light.upTransformed() = rotationMatrix.transform(_light.up()).getProjected();
-					
-					if (_light.useStartEnd()) {
-						_light.startTransformed() = rotationMatrix.transform(_light.start()).getProjected();
-						_light.endTransformed() = rotationMatrix.transform(_light.end()).getProjected();
-						
-						vector3_snap(_light.startTransformed(), GlobalRadiant().getGridSize());
-						vector3_snap(_light.endTransformed(), GlobalRadiant().getGridSize());
-					}
-					
-					// Snap the rotated vectors to the grid
-					vector3_snap(_light.rightTransformed(), GlobalRadiant().getGridSize());
-					vector3_snap(_light.upTransformed(), GlobalRadiant().getGridSize());
-				}
-				
-				// if we are at 180 degrees, invert the light_start and light_end vectors
-				if (std::abs(c_pi-angle) < 0.01) {
-					if (_light.useStartEnd()) {
-						_light.startTransformed() = -_light.start();
-						_light.endTransformed() = -_light.end();
-					}
-
-					_light.rightTransformed() = -_light.right();
-					_light.upTransformed() = -_light.up();
-				}
-				
-				// Save the new target
-				_light.targetTransformed() = newTarget;
+				// Delegate the work to the Light class
+				_light.translateLightTarget(getTranslation());
 			}
 			
 			if (_lightRightInstance.isSelected()) {

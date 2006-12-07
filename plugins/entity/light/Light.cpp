@@ -1,5 +1,6 @@
 #include "Light.h"
 
+#include "qerplugin.h"
 #include "Doom3LightRadius.h"
 #include "LightShader.h"
 
@@ -633,6 +634,47 @@ void Light::testSelect(Selector& selector, SelectionTest& test, const Matrix4& l
 
 void Light::translate(const Vector3& translation) {
 	m_aabb_light.origin = origin_translated(m_aabb_light.origin, translation);
+}
+
+void Light::translateLightTarget(const Vector3& translation) {
+	Vector3 oldTarget = _lightTarget;
+	Vector3 newTarget = oldTarget + translation;
+	
+	double angle = oldTarget.angle(newTarget);
+	
+	// If we are at rougly 0 or 180 degrees, don't rotate anything, this is probably a translation only
+	if (std::abs(angle) > 0.01 && std::abs(c_pi-angle) > 0.01) {
+		// Calculate the transformation matrix defined by the two vectors
+		Matrix4 rotationMatrix = Matrix4::getRotation(oldTarget, newTarget);
+		_lightRightTransformed = rotationMatrix.transform(_lightRight).getProjected();
+		_lightUpTransformed = rotationMatrix.transform(_lightUp).getProjected();
+		
+		if (m_useLightStart && m_useLightEnd) {
+			_lightStartTransformed = rotationMatrix.transform(_lightStart).getProjected();
+			_lightEndTransformed = rotationMatrix.transform(_lightEnd).getProjected();
+			
+			vector3_snap(_lightStartTransformed, GlobalRadiant().getGridSize());
+			vector3_snap(_lightEndTransformed, GlobalRadiant().getGridSize());
+		}
+		
+		// Snap the rotated vectors to the grid
+		vector3_snap(_lightRightTransformed, GlobalRadiant().getGridSize());
+		vector3_snap(_lightUpTransformed, GlobalRadiant().getGridSize());
+	}
+	
+	// if we are at 180 degrees, invert the light_start and light_end vectors
+	if (std::abs(c_pi-angle) < 0.01) {
+		if (m_useLightStart && m_useLightEnd) {
+			_lightStartTransformed = -_lightStart;
+			_lightEndTransformed = -_lightEnd;
+		}
+
+		_lightRightTransformed = -_lightRight;
+		_lightUpTransformed = -_lightUp;
+	}
+	
+	// Save the new target
+	_lightTargetTransformed = newTarget;
 }
 
 void Light::rotate(const Quaternion& rotation) {

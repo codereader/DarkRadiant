@@ -244,6 +244,8 @@ public:
 	void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld);
   
 	void translate(const Vector3& translation);
+	void translateLightTarget(const Vector3& translation);
+	
 	void rotate(const Quaternion& rotation);
 	void snapto(float snap);
 	void setLightRadius(const AABB& aabb);
