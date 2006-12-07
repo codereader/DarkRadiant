@@ -58,6 +58,7 @@ private:
 	// Widget construction functions
 	GtkWidget* createPointLightPanel();
 	GtkWidget* createProjectedPanel();
+	GtkWidget* createOptionsPanel();
 	GtkWidget* createTextureWidgets();
 	GtkWidget* createButtons();
 

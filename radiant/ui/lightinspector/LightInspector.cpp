@@ -25,6 +25,10 @@ namespace {
 	
 	const char* LIGHTINSPECTOR_TITLE = "Light properties";
 	
+	const char* NOSHADOW_TEXT = "Do not cast shadows (fast)";
+	const char* NOSPECULAR_TEXT = "Skip specular lighting";
+	const char* NODIFFUSE_TEXT = "Skip diffuse lighting";
+	
 }
 
 // Private constructor creates GTK widgets
@@ -53,7 +57,7 @@ LightInspector::LightInspector()
 	// Pack in widgets. 
 
 	// Left-hand panels (pointlight, projected light, options)
-	GtkWidget* panels = gtk_vbox_new(FALSE, 6);
+	GtkWidget* panels = gtk_vbox_new(FALSE, 12);
 	gtk_box_pack_start(GTK_BOX(panels), 
 					   gtkutil::LeftAlignedLabel("<b>Light volume</b>"),
 					   FALSE, FALSE, 0);
@@ -68,6 +72,9 @@ LightInspector::LightInspector()
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(panels),
 					   gtkutil::LeftAlignedLabel("<b>Options</b>"),
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(panels),
+					   gtkutil::IndentedAlignment(createOptionsPanel(), 12),
 					   FALSE, FALSE, 0);
 
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 18);
@@ -176,11 +183,26 @@ GtkWidget* LightInspector::createProjectedPanel() {
 	return hbx;
 }
 
+// Create the options checkboxes
+GtkWidget* LightInspector::createOptionsPanel() {
+	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(vbx), 
+					   gtk_check_button_new_with_label(NOSHADOW_TEXT),
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), 
+					   gtk_check_button_new_with_label(NOSPECULAR_TEXT),
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), 
+					   gtk_check_button_new_with_label(NODIFFUSE_TEXT),
+					   FALSE, FALSE, 0);
+	return vbx;
+}
+
 // Create the texture widgets
 GtkWidget* LightInspector::createTextureWidgets() {
 	
 	// VBox contains colour and texture selection widgets
-	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
+	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
 	
 	_colour = gtk_color_button_new();
 
