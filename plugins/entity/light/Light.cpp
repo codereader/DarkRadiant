@@ -27,8 +27,7 @@ void light_vertices(const AABB& aabb_light, Vector3 points[6]) {
 }
 
 /* greebo: light_draw() gets called by the render() function of the Light class.
- * It looks like there is some sort of support for the rendering of projected lights in here,
- * but it's disabled at the moment. 
+ * It basically draws the small diamond representing the light origin 
  */
 void light_draw(const AABB& aabb_light, RenderStateFlags state) {
   Vector3 points[6];
@@ -144,46 +143,68 @@ void light_draw(const AABB& aabb_light, RenderStateFlags state) {
     glEnd();
 #endif
   }
-
-
-  // NOTE: prolly not relevant until some time..
-  // check for DOOM lights
-#if 0
-  if (strlen(ValueForKey(e, "light_right")) > 0) {
-    vec3_t vRight, vUp, vTarget, vTemp;
-    GetVectorForKey (e, "light_right", vRight);
-    GetVectorForKey (e, "light_up", vUp);
-    GetVectorForKey (e, "light_target", vTarget);
-
-    glColor3f(0, 1, 0);
-    glBegin(GL_LINE_LOOP);
-    VectorAdd(vTarget, e->origin, vTemp);
-    VectorAdd(vTemp, vRight, vTemp);
-    VectorAdd(vTemp, vUp, vTemp);
-    glVertex3fv(e->origin);
-    glVertex3fv(vTemp);
-    VectorAdd(vTarget, e->origin, vTemp);
-    VectorAdd(vTemp, vUp, vTemp);
-    VectorSubtract(vTemp, vRight, vTemp);
-    glVertex3fv(e->origin);
-    glVertex3fv(vTemp);
-    VectorAdd(vTarget, e->origin, vTemp);
-    VectorAdd(vTemp, vRight, vTemp);
-    VectorSubtract(vTemp, vUp, vTemp);
-    glVertex3fv(e->origin);
-    glVertex3fv(vTemp);
-    VectorAdd(vTarget, e->origin, vTemp);
-    VectorSubtract(vTemp, vUp, vTemp);
-    VectorSubtract(vTemp, vRight, vTemp);
-    glVertex3fv(e->origin);
-    glVertex3fv(vTemp);
-    glEnd();
-
-  }
-#endif
 }
 
 // ----- Light Class Implementation -------------------------------------------------
+
+// Constructor
+Light::Light(IEntityClass* eclass, scene::Node& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform) :
+	m_entity(eclass),
+	m_originKey(OriginChangedCaller(*this)),
+	m_rotationKey(RotationChangedCaller(*this)),
+	m_colour(Callback()),
+	m_named(m_entity),
+	m_nameKeys(m_entity),
+	m_funcStaticOrigin(m_traverse, m_originKey.m_origin),
+	m_radii_box(m_aabb_light.origin),
+	_rCentre(m_doom3Radius.m_centerTransformed, m_aabb_light.origin, m_doom3Radius._centerColour),
+	_rTarget(_lightTargetTransformed, m_aabb_light.origin, _colourLightTarget),
+	_rUp(_lightUpTransformed, _lightTargetTransformed, m_aabb_light.origin, _colourLightUp),
+	_rRight(_lightRightTransformed, _lightTargetTransformed, m_aabb_light.origin, _colourLightRight),
+	_rStart(_lightStartTransformed, m_aabb_light.origin, _colourLightStart),
+	_rEnd(_lightEndTransformed, m_aabb_light.origin, _colourLightEnd),
+	m_renderName(m_named, m_aabb_light.origin),
+	m_useLightOrigin(false),
+	m_useLightRotation(false),
+	m_renderProjection(m_aabb_light.origin, _lightStartTransformed, m_doom3Frustum),
+	m_transformChanged(transformChanged),
+	m_boundsChanged(boundsChanged),
+	m_evaluateTransform(evaluateTransform)
+{
+	construct();
+}
+
+// Copy Constructor
+Light::Light(const Light& other, scene::Node& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform) :
+	m_entity(other.m_entity),
+	m_originKey(OriginChangedCaller(*this)),
+	m_rotationKey(RotationChangedCaller(*this)),
+	m_colour(Callback()),
+	m_named(m_entity),
+	m_nameKeys(m_entity),
+	m_funcStaticOrigin(m_traverse, m_originKey.m_origin),
+	m_radii_box(m_aabb_light.origin),
+	_rCentre(m_doom3Radius.m_centerTransformed, m_aabb_light.origin, m_doom3Radius._centerColour),
+	_rTarget(_lightTargetTransformed, m_aabb_light.origin, _colourLightTarget),
+	_rUp(_lightUpTransformed, _lightTargetTransformed, m_aabb_light.origin, _colourLightUp),
+	_rRight(_lightRightTransformed, _lightTargetTransformed, m_aabb_light.origin, _colourLightRight),
+	_rStart(_lightStartTransformed, m_aabb_light.origin, _colourLightStart),
+	_rEnd(_lightEndTransformed, m_aabb_light.origin, _colourLightEnd),
+	m_renderName(m_named, m_aabb_light.origin),
+	m_useLightOrigin(false),
+	m_useLightRotation(false),
+	m_renderProjection(m_aabb_light.origin, _lightStartTransformed, m_doom3Frustum),
+	m_transformChanged(transformChanged),
+	m_boundsChanged(boundsChanged),
+	m_evaluateTransform(evaluateTransform)
+{
+	construct();
+}
+
+// Destructor
+Light::~Light() {
+	destroy();
+}
 
 /* greebo: This sets up the keyObservers so that the according classes get notified when any
  * of the key/values are changed. 
@@ -254,7 +275,7 @@ void Light::originChanged() {
 
 void Light::lightOriginChanged(const char* value) {
 	m_useLightOrigin = (std::string(value) != "");
-	if(m_useLightOrigin) {
+	if (m_useLightOrigin) {
 		read_origin(m_lightOrigin, value);
 	}
 	originChanged();
@@ -263,40 +284,51 @@ void Light::lightOriginChanged(const char* value) {
 void Light::lightTargetChanged(const char* value) {
 	m_useLightTarget = (std::string(value) != "");
 	if (m_useLightTarget) {
-		read_origin(m_lightTarget, value);
+		read_origin(_lightTarget, value);
 	}
+	_lightTargetTransformed = _lightTarget;
 	projectionChanged();
 }
 
 void Light::lightUpChanged(const char* value) {
 	m_useLightUp = (std::string(value) != "");
-	if(m_useLightUp) {
-		read_origin(m_lightUp, value);
+	if (m_useLightUp) {
+		read_origin(_lightUp, value);
 	}
+	_lightUpTransformed = _lightUp;
 	projectionChanged();
 }
 
 void Light::lightRightChanged(const char* value) {
 	m_useLightRight = (std::string(value) != "");
-	if(m_useLightRight) {
-		read_origin(m_lightRight, value);
+	if (m_useLightRight) {
+		read_origin(_lightRight, value);
 	}
+	_lightRightTransformed = _lightRight;
 	projectionChanged();
 }
 
 void Light::lightStartChanged(const char* value) {
 	m_useLightStart = (std::string(value) != "");
-	if(m_useLightStart) {
-		read_origin(m_lightStart, value);
+	if (m_useLightStart) {
+		read_origin(_lightStart, value);
 	}
+	_lightStartTransformed = _lightStart;
 	projectionChanged();
 }
 
 void Light::lightEndChanged(const char* value) {
 	m_useLightEnd = (std::string(value) != "");
-	if(m_useLightEnd) {
-		read_origin(m_lightEnd, value);
+	if (m_useLightEnd) {
+		read_origin(_lightEnd, value);
 	}
+	
+	// greebo: Check for senseless values of light_end
+	if (_lightEnd == Vector3(0,0,0)) {
+		m_useLightEnd = false;
+	}
+	
+	_lightEndTransformed = _lightEnd;
 	projectionChanged();
 }
 
@@ -407,6 +439,13 @@ void Light::revertTransform() {
 	rotation_assign(m_rotation, m_useLightRotation ? m_lightRotation : m_rotationKey.m_rotation);
 	m_doom3Radius.m_radiusTransformed = m_doom3Radius.m_radius;
 	m_doom3Radius.m_centerTransformed = m_doom3Radius.m_center;
+	
+	// revert all the projection changes to the saved values
+	_lightTargetTransformed = _lightTarget;
+	_lightRightTransformed = _lightRight;
+	_lightUpTransformed = _lightUp;
+	_lightStartTransformed = _lightStart;
+	_lightEndTransformed = _lightEnd;
 }
 
 void Light::freezeTransform() {
@@ -423,10 +462,35 @@ void Light::freezeTransform() {
 		m_originKey.write(&m_entity);
 	}
     
-	// Save the light center to the entity key/values
+    // Save the light center to the entity key/values
 	m_doom3Radius.m_center = m_doom3Radius.m_centerTransformed;
 	m_entity.setKeyValue("light_center", m_doom3Radius.m_center);
-    
+	
+	if (m_useLightTarget) {
+		_lightTarget = _lightTargetTransformed;
+		m_entity.setKeyValue("light_target", _lightTarget);
+	}
+	
+	if (m_useLightUp) {
+		_lightUp = _lightUpTransformed;
+		m_entity.setKeyValue("light_up", _lightUp);
+	}
+	
+	if (m_useLightRight) {
+		_lightRight = _lightRightTransformed;
+		m_entity.setKeyValue("light_right", _lightRight);
+	}
+	
+	if (m_useLightStart) {
+		_lightStart = _lightStartTransformed;
+		m_entity.setKeyValue("light_start", _lightStart);
+	}
+	
+	if (m_useLightEnd) {
+		_lightEnd = _lightEndTransformed;
+		m_entity.setKeyValue("light_end", _lightEnd);
+	}		
+		
 	if (g_lightType == LIGHTTYPE_DOOM3) {
 		if(!m_useLightRotation && !m_traverse.empty()) {
 			m_useLightRotation = true;
@@ -480,22 +544,11 @@ VolumeIntersectionValue Light::intersectVolume(const VolumeTest& volume, const M
 	return volume.TestAABB(m_aabb_light, localToWorld);
 }
 
-const AABB& Light::localAABB() const {
-  	return aabb();
-}
-
-/* This is needed for the drag manipulator to check the aabb of the light volume only (excl. the light center)
- */
-const AABB& Light::lightAABB() const {
-	_lightAABB = AABB(m_aabb_light.origin, m_doom3Radius.m_radiusTransformed);
-  	return _lightAABB;
-}
-
 Doom3LightRadius& Light::getDoom3Radius() {
 	return m_doom3Radius;
 }
 
-void Light::renderProjectionPoints(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const {
+void Light::renderProjectionPoints(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const {
 	// Add the renderable light target
 	renderer.Highlight(Renderer::ePrimitive, false);
 	renderer.Highlight(Renderer::eFace, false);
@@ -511,14 +564,17 @@ void Light::renderProjectionPoints(Renderer& renderer, const VolumeTest& volume,
 	renderer.SetState(_rUp.getShader(), Renderer::eWireframeOnly);
 	renderer.addRenderable(_rUp, localToWorld);
 	
-	/*
-	renderer.SetState(_rStart.getShader(), Renderer::eFullMaterials);
-	renderer.SetState(_rStart.getShader(), Renderer::eWireframeOnly);
-	renderer.addRenderable(_rStart, localToWorld);
+	if (m_useLightStart) {
+		renderer.SetState(_rStart.getShader(), Renderer::eFullMaterials);
+		renderer.SetState(_rStart.getShader(), Renderer::eWireframeOnly);
+		renderer.addRenderable(_rStart, localToWorld);
+	}
 	
-	renderer.SetState(_rEnd.getShader(), Renderer::eFullMaterials);
-	renderer.SetState(_rEnd.getShader(), Renderer::eWireframeOnly);
-	renderer.addRenderable(_rEnd, localToWorld);*/
+	if (m_useLightEnd) {
+		renderer.SetState(_rEnd.getShader(), Renderer::eFullMaterials);
+		renderer.SetState(_rEnd.getShader(), Renderer::eWireframeOnly);
+		renderer.addRenderable(_rEnd, localToWorld);
+	}
 }
 
 // greebo: Note that this function has to be const according to the abstract base class definition
@@ -537,13 +593,9 @@ void Light::renderSolid(Renderer& renderer, const VolumeTest& volume, const Matr
 
 	if (selected) {
 		if (isProjected()) {
+			// greebo: This is not much of an performance impact as the projection gets only recalculated, when it has actually changed.
 			projection();
-			m_projectionOrientation = rotation();
-			m_projectionOrientation.t().getVector3() = localAABB().origin;
-			renderer.addRenderable(m_renderProjection, m_projectionOrientation);
-			
-			// Render the projection points
-			renderProjectionPoints(renderer, volume, localToWorld, selected);
+			renderer.addRenderable(m_renderProjection, localToWorld);
 		}
 		else {
 			updateLightRadiiBox();
@@ -584,7 +636,20 @@ void Light::translate(const Vector3& translation) {
 }
 
 void Light::rotate(const Quaternion& rotation) {
-	rotation_rotate(m_rotation, rotation);
+	if (isProjected()) {
+		// Retrieve the rotation matrix...
+		Matrix4 rotationMatrix = matrix4_rotation_for_quaternion(rotation);
+		
+		// ... and apply it to all the vertices defining the projection
+		_lightTargetTransformed = rotationMatrix.transform(_lightTarget).getProjected();
+		_lightRightTransformed = rotationMatrix.transform(_lightRight).getProjected();
+		_lightUpTransformed = rotationMatrix.transform(_lightUp).getProjected();
+		_lightStartTransformed = rotationMatrix.transform(_lightStart).getProjected();
+		_lightEndTransformed = rotationMatrix.transform(_lightEnd).getProjected();
+	}
+	else {
+		rotation_rotate(m_rotation, rotation);
+	}
 }
 
 void Light::transformChanged() {
@@ -603,15 +668,38 @@ void Light::setLightChangedCallback(const Callback& callback) {
 	m_doom3Radius.m_changed = callback;
 }
 
-// greebo: This returns the AABB of the WHOLE light (this includes the volume and the light center)
+// greebo: This returns the AABB of the WHOLE light (this includes the volume and all its selectable vertices)
 // Used to test the light for selection on mouse click.
 const AABB& Light::aabb() const {
-	//	Use the light radius to construct the base AABB.
-	m_doom3AABB = AABB(m_aabb_light.origin, m_doom3Radius.m_radiusTransformed);
-
-	// greebo: Make sure the light center (that maybe outside of the light volume) is selectable
-	m_doom3AABB.includePoint(m_aabb_light.origin + m_doom3Radius.m_centerTransformed);
+	if (isProjected()) {
+		// start with an empty AABB and include all the projection vertices
+		m_doom3AABB = AABB();
+		m_doom3AABB.includePoint(m_aabb_light.origin);
+		m_doom3AABB.includePoint(m_aabb_light.origin + _lightTargetTransformed);
+		m_doom3AABB.includePoint(m_aabb_light.origin + _lightTargetTransformed + _lightRightTransformed);
+		m_doom3AABB.includePoint(m_aabb_light.origin + _lightTargetTransformed + _lightUpTransformed);
+		if (useStartEnd()) {
+			m_doom3AABB.includePoint(m_aabb_light.origin + _lightStartTransformed);
+			m_doom3AABB.includePoint(m_aabb_light.origin + _lightEndTransformed);
+		}
+	}
+	else {
+		m_doom3AABB = AABB(m_aabb_light.origin, m_doom3Radius.m_radiusTransformed);
+		// greebo: Make sure the light center (that maybe outside of the light volume) is selectable
+		m_doom3AABB.includePoint(m_aabb_light.origin + m_doom3Radius.m_centerTransformed);		
+	}
 	return m_doom3AABB;
+}
+
+const AABB& Light::localAABB() const {
+  	return aabb();
+}
+
+/* This is needed for the drag manipulator to check the aabb of the light volume only (excl. the light center)
+ */
+const AABB& Light::lightAABB() const {
+	_lightAABB = AABB(m_aabb_light.origin, m_doom3Radius.m_radiusTransformed);
+  	return _lightAABB;
 }
   
 bool Light::testAABB(const AABB& other) const {
@@ -649,13 +737,38 @@ const Matrix4& Light::rotation() const {
 /* greebo: This is needed by the renderer to determine the center of the light. It returns
  * the centerTransformed variable as the lighting should be updated as soon as the light center
  * is dragged.
+ * 
+ * Note: In order to render projected lights correctly, I made the projection render code to use
+ * this method to determine the center of projection, hence the if (isProjected()) clause
  */
 const Vector3& Light::offset() const {
-	return m_doom3Radius.m_centerTransformed;
+	if (isProjected()) {
+		return _projectionCenter;
+	}
+	else {
+		return m_doom3Radius.m_centerTransformed;
+	}
 }
 const Vector3& Light::colour() const {
 	return m_colour.m_colour;
 }
+
+Vector3& Light::target() 			{ return _lightTarget; }
+Vector3& Light::targetTransformed() { return _lightTargetTransformed; }
+Vector3& Light::up() 				{ return _lightUp; }
+Vector3& Light::upTransformed() 	{ return _lightUpTransformed; }
+Vector3& Light::right() 			{ return _lightRight; }
+Vector3& Light::rightTransformed() 	{ return _lightRightTransformed; }
+Vector3& Light::start() 			{ return _lightStart; }
+Vector3& Light::startTransformed() 	{ return _lightStartTransformed; }
+Vector3& Light::end() 				{ return _lightEnd; }
+Vector3& Light::endTransformed() 	{ return _lightEndTransformed; }
+
+Vector3& Light::colourLightTarget()	{ return _colourLightTarget; }
+Vector3& Light::colourLightRight() 	{ return _colourLightRight; }
+Vector3& Light::colourLightUp() 	{ return _colourLightUp; }
+Vector3& Light::colourLightStart()	{ return _colourLightStart; }
+Vector3& Light::colourLightEnd()	{ return _colourLightEnd; }
 
 /* greebo: A light is projected, if the entity keys light_target/light_up/light_right are not empty.
  */
@@ -663,14 +776,20 @@ bool Light::isProjected() const {
 	return m_useLightTarget && m_useLightUp && m_useLightRight;
 }
 
+// greebo: Returns true if BOTH the light_start and light_end vectors are used
+bool Light::useStartEnd() const {
+	return m_useLightStart && m_useLightEnd;
+}
+
 void Light::projectionChanged() {
 	m_doom3ProjectionChanged = true;
 	m_doom3Radius.m_changed();
+	_projectionCenter = m_aabb_light.origin + _lightTargetTransformed;
 	SceneChangeNotify();
 }
 
 const Matrix4& Light::projection() const {
-	if(!m_doom3ProjectionChanged) {
+	if (!m_doom3ProjectionChanged) {
 		return m_doom3Projection;
 	}
 	
@@ -679,64 +798,18 @@ const Matrix4& Light::projection() const {
 	matrix4_translate_by_vec3(m_doom3Projection, Vector3(0.5f, 0.5f, 0));
 	matrix4_scale_by_vec3(m_doom3Projection, Vector3(0.5f, 0.5f, 1));
 
-#if 0
-	Vector3 right = m_lightUp.crossProduct(m_lightTarget.getNormalised());
-	Vector3 up = m_lightTarget.getNormalised().crossProduct(m_lightRight);
-	Vector3 target = m_lightTarget;
-	Matrix4 test(
-      -right.x(), -right.y(), -right.z(), 0,
-      -up.x(), -up.y(), -up.z(), 0,
-      -target.x(), -target.y(), -target.z(), 0,
-      0, 0, 0, 1
-    );
-	Matrix4 frustum = matrix4_frustum(-0.01, 0.01, -0.01, 0.01, 0.01, 1.0);
-	test = matrix4_full_inverse(test);
-	matrix4_premultiply_by_matrix4(test, frustum);
-	matrix4_multiply_by_matrix4(m_doom3Projection, test);
-#elif 0
-	const float nearFar = 1 / 49.5f;
-	Vector3 right = m_lightUp.crossProduct((m_lightTarget + m_lightRight).getNormalised());
-	Vector3 up = (m_lightTarget + m_lightUp).getNormalised().crossProduct(m_lightRight);
-	Vector3 target = -(m_lightTarget * (1 + nearFar));
-	float scale = -1 / m_lightTarget.getLength();
-	Matrix4 test(
-      -inverse(right.x()), -inverse(up.x()), -inverse(target.x()), 0,
-      -inverse(right.y()), -inverse(up.y()), -inverse(target.y()), 0,
-      -inverse(right.z()), -inverse(up.z()), -inverse(target.z()), scale,
-      0, 0, -nearFar, 0
-	);
-	matrix4_multiply_by_matrix4(m_doom3Projection, test);
-#elif 0
-	Vector3 leftA(m_lightTarget - m_lightRight);
-	Vector3 leftB(m_lightRight + m_lightUp);
-	Plane3 left(leftA.crossProduct(leftB).getNormalised() * (1.0 / 128), 0);
-	Vector3 rightA(m_lightTarget + m_lightRight);
-	Vector3 rightB(rightA.crossProduct(m_lightTarget));
-	Plane3 right(rightA.crossProduct(rightB).getNormalised() * (1.0 / 128), 0);
-	Vector3 bottomA(m_lightTarget - m_lightUp);
-	Vector3 bottomB(bottomA.crossProduct(m_lightTarget));
-	Plane3 bottom(bottomA.crossProduct(bottomB).getNormalised() * (1.0 / 128), 0);
-	Vector3 topA(m_lightTarget + m_lightUp);
-	Vector3 topB(topA.crossProduct(m_lightTarget));
-	Plane3 top(topA.crossProduct(topB).getNormalised() * (1.0 / 128), 0);
-	Plane3 front(m_lightTarget.getNormalised() * (1.0 / 128), 1);
-	Plane3 back((-m_lightTarget).getNormalised() * (1.0 / 128), 0);
-	Matrix4 test(matrix4_from_planes(plane3_flipped(left), plane3_flipped(right), plane3_flipped(bottom), plane3_flipped(top), plane3_flipped(front), plane3_flipped(back)));
-	matrix4_multiply_by_matrix4(m_doom3Projection, test);
-#else
-
 	Plane3 lightProject[4];
 
-	Vector3 start = m_useLightStart && m_useLightEnd ? m_lightStart : m_lightTarget.getNormalised();
-	Vector3 stop = m_useLightStart && m_useLightEnd ? m_lightEnd : m_lightTarget;
+	Vector3 start = m_useLightStart && m_useLightEnd ? _lightStartTransformed : _lightTargetTransformed.getNormalised();
+	Vector3 stop = m_useLightStart && m_useLightEnd ? _lightEndTransformed : _lightTargetTransformed;
 
-	float rLen = m_lightRight.getLength();
-	Vector3 right = m_lightRight / rLen;
-	float uLen = m_lightUp.getLength();
-	Vector3 up = m_lightUp / uLen;
+	float rLen = _lightRightTransformed.getLength();
+	Vector3 right = _lightRightTransformed / rLen;
+	float uLen = _lightUpTransformed.getLength();
+	Vector3 up = _lightUpTransformed / uLen;
 	Vector3 normal = up.crossProduct(right).getNormalised();
 
-	float dist = m_lightTarget.dot(normal);
+	float dist = _lightTargetTransformed.dot(normal);
 	if ( dist < 0 ) {
 		dist = -dist;
 		normal = -normal;
@@ -750,7 +823,7 @@ const Matrix4& Light::projection() const {
 	lightProject[1] = Plane3(up, 0);
 
 	// now offset to center
-	Vector4 targetGlobal(m_lightTarget, 1);
+	Vector4 targetGlobal(_lightTargetTransformed, 1);
     {
 		float a = targetGlobal.dot(plane3_to_vector4(lightProject[0]));
 		float b = targetGlobal.dot(plane3_to_vector4(lightProject[2]));
@@ -796,7 +869,7 @@ const Matrix4& Light::projection() const {
 	m_doom3Frustum.top = plane3_normalised(m_doom3Frustum.top);
 	m_doom3Frustum.back = plane3_normalised(m_doom3Frustum.back);
 	m_doom3Frustum.front = plane3_normalised(m_doom3Frustum.front);
-#endif
+	
 	//matrix4_scale_by_vec3(m_doom3Projection, Vector3(1.0 / 128, 1.0 / 128, 1.0 / 128));
 	return m_doom3Projection;
 }
