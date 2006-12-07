@@ -56,6 +56,12 @@ class LightInstance :
 	// The (draggable) light center instance
 	VertexInstance _lightCenterInstance;
 	
+	VertexInstance _lightTargetInstance;
+	VertexInstanceRelative _lightRightInstance;
+	VertexInstanceRelative _lightUpInstance;
+	VertexInstance _lightStartInstance;
+	VertexInstance _lightEndInstance;
+	
 	// dragplanes for lightresizing using mousedrag
 	DragPlanes m_dragPlanes;
 	// a temporary variable for calculating the AABB of all (selected) components
@@ -71,6 +77,7 @@ public:
 	LightInstance(const scene::Path& path, scene::Instance* parent, Light& contained);	
 	~LightInstance();
 	
+	void renderInactiveComponents(Renderer& renderer, const VolumeTest& volume, const bool selected) const;	
 	void renderSolid(Renderer& renderer, const VolumeTest& volume) const;  
 	void renderWireframe(Renderer& renderer, const VolumeTest& volume) const;
   

@@ -64,6 +64,30 @@ public:
   }
 };
 
+/* greebo: This calculates the intersection point of three planes. 
+ * Returns <0,0,0> if no intersection point could be found, otherwise returns the coordinates of the intersection point (this may also be 0,0,0)
+ */
+inline Vector3 intersectPlanes(const Plane3& plane1, const Plane3& plane2, const Plane3& plane3) {
+	const Vector3& n1 = plane1.normal();
+	const Vector3& n2 = plane2.normal();
+	const Vector3& n3 = plane3.normal();
+	
+	Vector3 n1n2 = n1.crossProduct(n2);
+	Vector3 n2n3 = n2.crossProduct(n3);
+	Vector3 n3n1 = n3.crossProduct(n1);
+	
+	double denom = n1.dot(n2n3);
+	
+	// Check if the denominator is zero (which would mean that no intersection is to be found
+	if (denom != 0) {
+		return (n2n3*plane1.dist() + n3n1*plane2.dist() + n1n2*plane3.dist()) / denom;
+	}
+	else {
+		// No intersection could be found, return <0,0,0>
+		return Vector3(0,0,0);
+	}
+}
+
 inline Plane3 plane3_normalised(const Plane3& plane)
 {
   double rmagnitude = 1.0 / sqrt(plane.a * plane.a + plane.b * plane.b + plane.c * plane.c);

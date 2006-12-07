@@ -106,7 +106,7 @@ class Light :
 
 	// Renderable components of this light
 	entity::RenderLightRadiiBox m_radii_box;
-	entity::RenderableLightCentre _rCentre;
+	entity::RenderableLightTarget _rCentre;
 	entity::RenderableLightTarget _rTarget;
 	
 	entity::RenderableLightRelative _rUp;
@@ -122,21 +122,32 @@ class Light :
   bool m_useLightRotation;
 
 	// These are the vectors that define a projected light
-	Vector3 m_lightTarget;
-	bool m_useLightTarget;
+	Vector3 _lightTarget;
+	Vector3 _lightUp;
+	Vector3 _lightRight;
+	Vector3 _lightStart;
+	Vector3 _lightEnd;
+	
+	// The "temporary" vectors, that get changed during a transform operation
+	Vector3 _lightTargetTransformed;
+	Vector3 _lightUpTransformed;
+	Vector3 _lightRightTransformed;
+	Vector3 _lightStartTransformed;
+	Vector3 _lightEndTransformed;
+	
+	Vector3 _projectionCenter;
+	
 	Vector3 _colourLightTarget;
-	Vector3 m_lightUp;
-	bool m_useLightUp;
 	Vector3 _colourLightUp;
-	Vector3 m_lightRight;
-	bool m_useLightRight;
 	Vector3 _colourLightRight;
-	Vector3 m_lightStart;
-	bool m_useLightStart;
 	Vector3 _colourLightStart;
-	Vector3 m_lightEnd;
-	bool m_useLightEnd;
 	Vector3 _colourLightEnd;
+	
+	bool m_useLightTarget;
+	bool m_useLightUp;
+	bool m_useLightRight;
+	bool m_useLightStart;
+	bool m_useLightEnd;
 
   mutable AABB m_doom3AABB;
   mutable AABB _lightAABB;
@@ -188,63 +199,13 @@ class Light :
 
 public:
 	// Constructor
-	Light(IEntityClass* eclass, scene::Node& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform) :
-		m_entity(eclass),
-		m_originKey(OriginChangedCaller(*this)),
-		m_rotationKey(RotationChangedCaller(*this)),
-		m_colour(Callback()),
-		m_named(m_entity),
-		m_nameKeys(m_entity),
-		m_funcStaticOrigin(m_traverse, m_originKey.m_origin),
-		m_radii_box(m_aabb_light.origin),
-		_rCentre(m_doom3Radius.m_centerTransformed, m_aabb_light.origin, m_doom3Radius._centerColour),
-		_rTarget(m_lightTarget, m_aabb_light.origin, _colourLightTarget), 
-		_rUp(m_lightUp, m_lightTarget, m_aabb_light.origin, _colourLightUp),
-		_rRight(m_lightRight, m_lightTarget, m_aabb_light.origin, _colourLightRight),
-		_rStart(m_lightStart, m_aabb_light.origin, _colourLightStart),
-		_rEnd(m_lightEnd, m_aabb_light.origin, _colourLightEnd),
-		m_renderName(m_named, m_aabb_light.origin),
-		m_useLightOrigin(false),
-		m_useLightRotation(false),
-		m_renderProjection(m_doom3Projection, m_aabb_light.origin, m_lightTarget, m_lightRight, m_lightUp),
-		m_transformChanged(transformChanged),
-		m_boundsChanged(boundsChanged),
-		m_evaluateTransform(evaluateTransform)
-	{
-		construct();
-	}
+	Light(IEntityClass* eclass, scene::Node& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform);
 	
 	// Copy Constructor
-	Light(const Light& other, scene::Node& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform) :
-		m_entity(other.m_entity),
-		m_originKey(OriginChangedCaller(*this)),
-		m_rotationKey(RotationChangedCaller(*this)),
-		m_colour(Callback()),
-		m_named(m_entity),
-		m_nameKeys(m_entity),
-		m_funcStaticOrigin(m_traverse, m_originKey.m_origin),
-		m_radii_box(m_aabb_light.origin),
-		_rCentre(m_doom3Radius.m_centerTransformed, m_aabb_light.origin, m_doom3Radius._centerColour),
-		_rTarget(m_lightTarget, m_aabb_light.origin, _colourLightTarget),
-		_rUp(m_lightUp, m_lightTarget, m_aabb_light.origin, _colourLightUp),
-		_rRight(m_lightRight, m_lightTarget, m_aabb_light.origin, _colourLightRight),
-		_rStart(m_lightStart, m_aabb_light.origin, _colourLightStart),
-		_rEnd(m_lightEnd, m_aabb_light.origin, _colourLightEnd),
-		m_renderName(m_named, m_aabb_light.origin),
-		m_useLightOrigin(false),
-		m_useLightRotation(false),
-		m_renderProjection(m_doom3Projection, m_aabb_light.origin, m_lightTarget, m_lightRight, m_lightUp),
-		m_transformChanged(transformChanged),
-		m_boundsChanged(boundsChanged),
-		m_evaluateTransform(evaluateTransform)
-	{
-		construct();
-	}
+	Light(const Light& other, scene::Node& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform);
 	
 	// Destructor
-	~Light() {
-		destroy();
-	}
+	~Light();
 
 	InstanceCounter m_instanceCounter;
 	void instanceAttach(const scene::Path& path);
@@ -275,7 +236,7 @@ public:
 
 	// Adds the light centre renderable to the given renderer
 	void renderLightCentre(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void renderProjectionPoints(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
+	void renderProjectionPoints(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	// Returns a reference to the member class Doom3LightRadius (used to set colours)
 	Doom3LightRadius& getDoom3Radius();
@@ -304,7 +265,26 @@ public:
 	const Matrix4& rotation() const;
 	const Vector3& offset() const;
 	const Vector3& colour() const;
-
+	
+	Vector3& target();
+	Vector3& targetTransformed();
+	Vector3& up();
+	Vector3& upTransformed();
+	Vector3& right();
+	Vector3& rightTransformed();
+	Vector3& start();
+	Vector3& startTransformed();
+	Vector3& end();
+	Vector3& endTransformed();
+	
+	Vector3& colourLightTarget();
+	Vector3& colourLightRight();
+	Vector3& colourLightUp();
+	Vector3& colourLightStart();
+	Vector3& colourLightEnd();
+	
+	bool useStartEnd() const;
+	
 	bool isProjected() const;
 	void projectionChanged();
 

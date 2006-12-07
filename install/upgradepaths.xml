@@ -13,16 +13,20 @@
 		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="brush_vertices" />
 		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="patch_vertex_inside" />
 		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="patch_vertex_corner" />
-		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_center_deselected" />
-		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_center_selected" />
-		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_center_normal" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_vertex_deselected" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_vertex_selected" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_vertex_normal" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_startend_selected" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_startend_deselected" />
 		<!-- Set the attribute values of the added nodes -->
 		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='brush_vertices']" name="value" value="0 1 0" />
 		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='patch_vertex_inside']" name="value" value="0 1 0" />
 		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='patch_vertex_corner']" name="value" value="0 1 0" />
-		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_center_deselected']" name="value" value="0 1 0" />
-		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_center_selected']" name="value" value="0 0 1" />
-		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_center_normal']" name="value" value="1 0 0" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_vertex_deselected']" name="value" value="0 1 0" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_vertex_selected']" name="value" value="0 0 1" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_vertex_normal']" name="value" value="1 0 0" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_startend_selected']" name="value" value="0 0 1" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_startend_deselected']" name="value" value="0 1 1" />
 		<!-- Clear all active attributes in the base registry -->
 		<setAttribute target="base" xPath="//user/ui/colourschemes//scheme" name="active" value="0" />
 		<!-- Copy all remaining colour schemes into the new registry -->
@@ -42,12 +46,16 @@
 		<deleteNode xPath="/user/ui/colourschemes//scheme[@name='DarkRadiant Default']" />
 		<deleteNode xPath="/user/ui/colourschemes//scheme[@name='Black &amp; Green']" />
 		<!-- Add the missing colour names -->
-		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_center_deselected" />
-		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_center_selected" />
-		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_center_normal" />
-		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_center_deselected']" name="value" value="0 1 0" />
-		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_center_selected']" name="value" value="0 0 1" />
-		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_center_normal']" name="value" value="1 0 0" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_vertex_deselected" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_vertex_selected" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_vertex_normal" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_startend_selected" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_startend_deselected" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_vertex_deselected']" name="value" value="0 1 0" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_vertex_selected']" name="value" value="0 0 1" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_vertex_normal']" name="value" value="1 0 0" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_startend_selected']" name="value" value="0 0 1" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_startend_deselected']" name="value" value="0 1 1" />
 		<!-- Clear all active attributes in the base registry -->
 		<setAttribute target="base" xPath="//user/ui/colourschemes//scheme" name="active" value="0" />
 		<!-- Copy all remaining colour schemes into the new registry -->
@@ -63,12 +71,16 @@
 		<!-- Make sure the default schemes (tagged with readonly=1) are removed before updating user schemes -->
 		<deleteNode xPath="/user/ui/colourschemes//scheme[@readonly='1']" />
 		<!-- Add the missing colour names -->
-		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_center_deselected" />
-		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_center_selected" />
-		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_center_normal" />
-		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_center_deselected']" name="value" value="0 1 0" />
-		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_center_selected']" name="value" value="0 0 1" />
-		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_center_normal']" name="value" value="1 0 0" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_vertex_deselected" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_vertex_selected" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_vertex_normal" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_startend_selected" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_startend_deselected" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_vertex_deselected']" name="value" value="0 1 0" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_vertex_selected']" name="value" value="0 0 1" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_vertex_normal']" name="value" value="1 0 0" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_startend_selected']" name="value" value="0 0 1" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_startend_deselected']" name="value" value="0 1 1" />
 		<!-- Clear all active attributes in the base registry -->
 		<setAttribute target="base" xPath="//user/ui/colourschemes//scheme" name="active" value="0" />
 		<!-- Copy all remaining colour schemes into the new registry -->

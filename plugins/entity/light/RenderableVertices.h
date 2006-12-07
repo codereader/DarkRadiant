@@ -66,22 +66,6 @@ public:
 
 /** Renderable class which draws the light_center dot on lights.
  */
-class RenderableLightCentre
-	: public RenderableVertex
-{
-public:
-
-	// Constructor
-	RenderableLightCentre(const Vector3& center, const Vector3& origin, const Vector3& colour) 
-		: RenderableVertex(center, origin, colour)
-	{}
-  
-  	// Destructor
-  	~RenderableLightCentre() {}
-};
-
-/** Renderable class which draws the light_center dot on lights.
- */
 class RenderableLightTarget
 	: public RenderableVertex
 {

@@ -46,7 +46,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * points[0] is the top of the pyramid
  * points[1] to points[4] is the base rectangle
  */
-inline void draw_pyramid(const Vector3 points[5]) {
+inline void drawPyramid(const Vector3 points[5]) {
   typedef std::size_t index_t;
   index_t indices[16] = {
     0, 1, // top to first
@@ -57,6 +57,32 @@ inline void draw_pyramid(const Vector3 points[5]) {
     2, 3, // second to third
     3, 4, // third to second
     4, 1, // fourth to first 
+  };
+  glVertexPointer(3, GL_FLOAT, 0, points);
+  glDrawElements(GL_LINES, sizeof(indices)/sizeof(index_t), GL_UNSIGNED_INT, indices);
+}
+
+/* greebo: draws a frustum defined by 8 vertices
+ * points[0] to points[3] define the top area vertices (clockwise starting from the "upper right" corner)
+ * points[4] to points[7] define the base rectangle (clockwise starting from the "upper right" corner)
+ */
+inline void drawFrustum(const Vector3 points[8]) {
+  typedef std::size_t index_t;
+  index_t indices[24] = {
+  	0, 4, // top up right to bottom up right
+  	1, 5, // top down right to bottom down right
+  	2, 6, // top down left to bottom down left
+  	3, 7, // top up left to bottom up left
+  	
+  	0, 1, // top up right to top down right
+  	1, 2, // top down right to top down left
+  	2, 3, // top down left to top up left
+  	3, 0, // top up left to top up right
+  	
+  	4, 5, // bottom up right to bottom down right
+  	5, 6, // bottom down right to bottom down left
+  	6, 7, // bottom down left to bottom up left
+  	7, 4, // bottom up left to bottom up right
   };
   glVertexPointer(3, GL_FLOAT, 0, points);
   glDrawElements(GL_LINES, sizeof(indices)/sizeof(index_t), GL_UNSIGNED_INT, indices);

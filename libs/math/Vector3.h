@@ -312,6 +312,18 @@ public:
 				 		m_elements[1] * other.y() +
 				 		m_elements[2] * other.z());
 	}
+	
+	/* Returns the angle between <self> and <other> 
+	 * 
+	 * @returns
+	 * The angle as defined by the arccos( (a*b) / (|a|*|b|) )
+	 */
+	template<typename OtherT>
+	Element angle(const BasicVector3<OtherT>& other) const {
+		BasicVector3<Element> aNormalised = getNormalised();
+		BasicVector3<OtherT> otherNormalised = other.getNormalised();
+		return acos( aNormalised.dot(otherNormalised) );
+	}
 
 	/* Cross-product this vector with another Vector3, returning the result
 	 * in a new Vector3.
