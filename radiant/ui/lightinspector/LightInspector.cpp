@@ -9,6 +9,8 @@
 #include "mainframe.h"
 #include "gtkutil/IconTextButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
+#include "gtkutil/RightAlignment.h"
+#include "gtkutil/IndentedAlignment.h"
 #include "gtkutil/dialog.h"
 
 #include <gtk/gtk.h>
@@ -39,7 +41,7 @@ LightInspector::LightInspector()
     // Window size
 	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
 	gtk_window_set_default_size(GTK_WINDOW(_widget), 
-								gint(gdk_screen_get_width(scr) * 0.6), 
+								gint(gdk_screen_get_width(scr) * 0.66), 
 								gdk_screen_get_height(scr) / 2);
     
     // Widget must hide not destroy when closed
@@ -48,25 +50,36 @@ LightInspector::LightInspector()
     				 G_CALLBACK(gtk_widget_hide_on_delete),
     				 NULL);
 
-	// Pack in widgets. On the left are two panels with toggle buttons, for
-	// editing either pointlights or projected lights. On the right are the
-	// texture selection widgets.
+	// Pack in widgets. 
 
+	// Left-hand panels (pointlight, projected light, options)
 	GtkWidget* panels = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(panels), createPointLightPanel(), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(panels), gtk_hseparator_new(), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(panels), createProjectedPanel(), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(panels), 
+					   gtkutil::LeftAlignedLabel("<b>Light volume</b>"),
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(panels), 
+					   gtkutil::IndentedAlignment(createPointLightPanel(), 12),
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(panels), 
+					   gtkutil::IndentedAlignment(gtk_hseparator_new(), 12), 
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(panels), 
+					   gtkutil::IndentedAlignment(createProjectedPanel(), 12),
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(panels),
+					   gtkutil::LeftAlignedLabel("<b>Options</b>"),
+					   FALSE, FALSE, 0);
 
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
+	GtkWidget* hbx = gtk_hbox_new(FALSE, 18);
 	gtk_box_pack_start(GTK_BOX(hbx), panels, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbx), gtk_vseparator_new(), FALSE, FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(hbx), createTextureWidgets(), TRUE, TRUE, 0);
 
-	GtkWidget* vbx = gtk_vbox_new(FALSE, 3);
+	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
 	gtk_box_pack_start(GTK_BOX(vbx), hbx, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), gtk_hseparator_new(), FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
 
-	gtk_container_set_border_width(GTK_CONTAINER(_widget), 3);
+	gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
 	
 	// Check widget sensitivity (point versus projected panels)
@@ -167,25 +180,29 @@ GtkWidget* LightInspector::createProjectedPanel() {
 GtkWidget* LightInspector::createTextureWidgets() {
 	
 	// VBox contains colour and texture selection widgets
-	GtkWidget* vbx = gtk_vbox_new(FALSE, 3);
+	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
 	
 	_colour = gtk_color_button_new();
 
 	gtk_box_pack_start(GTK_BOX(vbx), 
 					   gtkutil::LeftAlignedLabel("<b>Colour</b>"), 
 					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), _colour, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), 
+					   gtkutil::IndentedAlignment(_colour, 12),
+					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), 
 					   gtkutil::LeftAlignedLabel("<b>Texture</b>"), 
 					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), _texSelector, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), 
+					   gtkutil::IndentedAlignment(_texSelector, 12),
+					   TRUE, TRUE, 0);
 	
 	return vbx;
 }
 
 // Create the buttons
 GtkWidget* LightInspector::createButtons() {
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
+	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
 
 	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
 	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
@@ -195,10 +212,10 @@ GtkWidget* LightInspector::createButtons() {
 	g_signal_connect(G_OBJECT(cancelButton), "clicked", 
 					 G_CALLBACK(_onCancel), this);
 
-	gtk_box_pack_end(GTK_BOX(hbx), okButton, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(hbx), okButton, TRUE, TRUE, 0);
+	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
 
-	return hbx;
+	return gtkutil::RightAlignment(hbx);
 }
 
 // Show this dialog
