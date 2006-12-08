@@ -62,6 +62,9 @@ private:
 	GtkWidget* createTextureWidgets();
 	GtkWidget* createButtons();
 
+	// Add a named entry to the map and return the created GtkWidget
+	GtkWidget* addEntry(const std::string& name);
+
 	// GTK CALLBACKS
 	static void _onProjToggle(GtkWidget*, LightInspector*);	
 	static void _onPointToggle(GtkWidget*, LightInspector*);	

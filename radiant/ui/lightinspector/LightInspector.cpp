@@ -10,7 +10,7 @@
 #include "gtkutil/IconTextButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/RightAlignment.h"
-#include "gtkutil/IndentedAlignment.h"
+#include "gtkutil/LeftAlignment.h"
 #include "gtkutil/dialog.h"
 
 #include <gtk/gtk.h>
@@ -62,19 +62,19 @@ LightInspector::LightInspector()
 					   gtkutil::LeftAlignedLabel("<b>Light volume</b>"),
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(panels), 
-					   gtkutil::IndentedAlignment(createPointLightPanel(), 12),
+					   gtkutil::LeftAlignment(createPointLightPanel(), 12),
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(panels), 
-					   gtkutil::IndentedAlignment(gtk_hseparator_new(), 12), 
+					   gtkutil::LeftAlignment(gtk_hseparator_new(), 12), 
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(panels), 
-					   gtkutil::IndentedAlignment(createProjectedPanel(), 12),
+					   gtkutil::LeftAlignment(createProjectedPanel(), 12),
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(panels),
 					   gtkutil::LeftAlignedLabel("<b>Options</b>"),
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(panels),
-					   gtkutil::IndentedAlignment(createOptionsPanel(), 12),
+					   gtkutil::LeftAlignment(createOptionsPanel(), 12),
 					   FALSE, FALSE, 0);
 
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 18);
@@ -112,9 +112,6 @@ GtkWidget* LightInspector::createPointLightPanel() {
 	gtk_box_pack_start(GTK_BOX(buttonBox), _pointLightToggle, FALSE, FALSE, 0);
 	
 	// Table contains entries for radius and center
-	_entryMap["radius"] = gtk_entry_new();
-	_entryMap["center"] = gtk_entry_new();
-
 	_pointPanel = gtk_table_new(2, 2, FALSE);
 	gtk_table_attach(GTK_TABLE(_pointPanel), gtk_label_new("Radius"),
 					 0, 1, 0, 1, // left, right, top, bottom
@@ -122,10 +119,10 @@ GtkWidget* LightInspector::createPointLightPanel() {
 	gtk_table_attach(GTK_TABLE(_pointPanel), gtk_label_new("Center"),
 					 0, 1, 1, 2,
 					 GTK_EXPAND, GTK_EXPAND, 3, 3);
-	gtk_table_attach(GTK_TABLE(_pointPanel), _entryMap["radius"],
+	gtk_table_attach(GTK_TABLE(_pointPanel), addEntry("radius"),
 					 1, 2, 0, 1,
 					 GTK_EXPAND, GTK_EXPAND, 3, 3);
-	gtk_table_attach(GTK_TABLE(_pointPanel), _entryMap["center"],
+	gtk_table_attach(GTK_TABLE(_pointPanel), addEntry("center"),
 					 1, 2, 1, 2,
 					 GTK_EXPAND, GTK_EXPAND, 3, 3);
 	
@@ -152,10 +149,6 @@ GtkWidget* LightInspector::createProjectedPanel() {
 	gtk_box_pack_start(GTK_BOX(buttonBox), _projLightToggle, FALSE, FALSE, 0);
 
 	// Table contains entries for up, right and target
-	_entryMap["up"] = gtk_entry_new();
-	_entryMap["right"] = gtk_entry_new();
-	_entryMap["target"] = gtk_entry_new();
-
 	_projPanel = gtk_table_new(3, 2, FALSE);
 	gtk_table_attach(GTK_TABLE(_projPanel), gtk_label_new("Target"),
 					 0, 1, 0, 1, // left, right, top, bottom
@@ -166,13 +159,13 @@ GtkWidget* LightInspector::createProjectedPanel() {
 	gtk_table_attach(GTK_TABLE(_projPanel), gtk_label_new("Right"),
 					 0, 1, 2, 3,
 					 GTK_EXPAND, GTK_EXPAND, 3, 3);
-	gtk_table_attach(GTK_TABLE(_projPanel), _entryMap["target"],
+	gtk_table_attach(GTK_TABLE(_projPanel), addEntry("target"),
 					 1, 2, 0, 1,
 					 GTK_EXPAND, GTK_EXPAND, 3, 3);
-	gtk_table_attach(GTK_TABLE(_projPanel), _entryMap["up"],
+	gtk_table_attach(GTK_TABLE(_projPanel), addEntry("up"),
 					 1, 2, 1, 2,
 					 GTK_EXPAND, GTK_EXPAND, 3, 3);
-	gtk_table_attach(GTK_TABLE(_projPanel), _entryMap["right"],
+	gtk_table_attach(GTK_TABLE(_projPanel), addEntry("right"),
 					 1, 2, 2, 3,
 					 GTK_EXPAND, GTK_EXPAND, 3, 3);
 
@@ -210,13 +203,13 @@ GtkWidget* LightInspector::createTextureWidgets() {
 					   gtkutil::LeftAlignedLabel("<b>Colour</b>"), 
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), 
-					   gtkutil::IndentedAlignment(_colour, 12),
+					   gtkutil::LeftAlignment(_colour, 12, 0.0),
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), 
 					   gtkutil::LeftAlignedLabel("<b>Texture</b>"), 
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), 
-					   gtkutil::IndentedAlignment(_texSelector, 12),
+					   gtkutil::LeftAlignment(_texSelector, 12, 1.0),
 					   TRUE, TRUE, 0);
 	
 	return vbx;
@@ -238,6 +231,13 @@ GtkWidget* LightInspector::createButtons() {
 	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
 
 	return gtkutil::RightAlignment(hbx);
+}
+
+// Add a new entry to the map
+GtkWidget* LightInspector::addEntry(const std::string& name) {
+	GtkWidget* entry = gtk_entry_new();
+	_entryMap[name] = entry;
+	return entry;
 }
 
 // Show this dialog
