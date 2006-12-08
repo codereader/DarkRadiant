@@ -315,6 +315,26 @@ void Light::lightStartChanged(const char* value) {
 		read_origin(_lightStart, value);
 	}
 	_lightStartTransformed = _lightStart;
+	
+	// If the light_end key is still unused, set it to a reasonable value
+	if (!m_useLightEnd) {
+		// Set the light_end to the light_target, unless the light_start is already there
+		if (_lightStart != _lightTarget) {
+			_lightEnd = _lightTarget;
+		}
+		else {
+			_lightEnd = Vector3(0,0,0);
+		}
+		
+		// Save the values
+		m_entity.setKeyValue("light_end", _lightEnd);
+		m_useLightEnd = true;
+		_lightEndTransformed = _lightEnd;
+	}
+	else {
+		checkStartEnd();
+	}
+	
 	projectionChanged();
 }
 
@@ -324,13 +344,53 @@ void Light::lightEndChanged(const char* value) {
 		read_origin(_lightEnd, value);
 	}
 	
-	// greebo: Check for senseless values of light_end
-	if (_lightEnd == Vector3(0,0,0)) {
-		m_useLightEnd = false;
+	_lightEndTransformed = _lightEnd;
+	
+	// If the light_start key is still unused, set it to a reasonable value
+	if (!m_useLightStart) {
+		// Set the light_start to <0,0,0>, unless the light_end is already there 
+		if (_lightEnd != Vector3(0,0,0)) {
+			_lightStart = Vector3(0,0,0);
+		}
+		else {
+			_lightStart = _lightTarget;
+		}
+		
+		m_entity.setKeyValue("light_start", _lightStart);
+		m_useLightStart = true;
+		_lightStartTransformed = _lightStart;
+	}
+	else {
+		checkStartEnd();
 	}
 	
-	_lightEndTransformed = _lightEnd;
 	projectionChanged();
+}
+
+/* greebo: Checks the light_start and light_end keyvals for meaningful values.
+ *
+ * If the light_end is "above" the light_start (i.e. nearer to the origin),
+ * the two are swapped.
+ * 
+ * This also checks if the two vertices happen to be on the very same spot. 
+ */
+void Light::checkStartEnd() {
+	if (m_useLightStart && m_useLightEnd) {
+		if (_lightEnd.getLengthSquared() < _lightStart.getLengthSquared()) {
+			// Swap the two vectors
+			Vector3 temp;
+			temp = _lightEnd;
+			_lightEndTransformed = _lightEnd = _lightStart;
+			_lightStartTransformed = _lightStart = temp;
+		}
+		
+		// The light_end on the same point as the light_start is an unlucky situation, revert it
+		// otherwise the vertices won't be separable again for the user 
+		if (_lightEnd == _lightStart) {
+			_lightEndTransformed = _lightEnd = _lightTarget;  
+			_lightStartTransformed = _lightStart = Vector3(0,0,0);
+		}
+	}
 }
 
 void Light::writeLightOrigin() {
@@ -410,6 +470,10 @@ void Light::instanceDetach(const scene::Path& path) {
 	}
 }
 
+/* greebo: Snaps the current light origin to the grid. 
+ * 
+ * Note: This gets called when the light as a whole is selected, NOT in vertex editing mode
+ */
 void Light::snapto(float snap) {
 	if(g_lightType == LIGHTTYPE_DOOM3 && !m_useLightOrigin && !m_traverse.empty()) {
 		m_useLightOrigin = true;
@@ -463,35 +527,41 @@ void Light::freezeTransform() {
 		m_originKey.write(&m_entity);
 	}
     
-    // Save the light center to the entity key/values
-	m_doom3Radius.m_center = m_doom3Radius.m_centerTransformed;
-	m_entity.setKeyValue("light_center", m_doom3Radius.m_center);
-	
-	if (m_useLightTarget) {
-		_lightTarget = _lightTargetTransformed;
-		m_entity.setKeyValue("light_target", _lightTarget);
-	}
-	
-	if (m_useLightUp) {
-		_lightUp = _lightUpTransformed;
-		m_entity.setKeyValue("light_up", _lightUp);
-	}
-	
-	if (m_useLightRight) {
-		_lightRight = _lightRightTransformed;
-		m_entity.setKeyValue("light_right", _lightRight);
-	}
-	
-	if (m_useLightStart) {
-		_lightStart = _lightStartTransformed;
-		m_entity.setKeyValue("light_start", _lightStart);
-	}
-	
-	if (m_useLightEnd) {
-		_lightEnd = _lightEndTransformed;
-		m_entity.setKeyValue("light_end", _lightEnd);
-	}		
+    if (isProjected()) {
+	    if (m_useLightTarget) {
+			_lightTarget = _lightTargetTransformed;
+			m_entity.setKeyValue("light_target", _lightTarget);
+		}
 		
+		if (m_useLightUp) {
+			_lightUp = _lightUpTransformed;
+			m_entity.setKeyValue("light_up", _lightUp);
+		}
+		
+		if (m_useLightRight) {
+			_lightRight = _lightRightTransformed;
+			m_entity.setKeyValue("light_right", _lightRight);
+		}
+		
+		// Check the start and end (if the end is "above" the start, for example)
+		checkStartEnd();
+		
+		if (m_useLightStart) {
+			_lightStart = _lightStartTransformed;
+			m_entity.setKeyValue("light_start", _lightStart);
+		}
+		
+		if (m_useLightEnd) {
+			_lightEnd = _lightEndTransformed;
+			m_entity.setKeyValue("light_end", _lightEnd);
+		}		
+    }
+    else {
+    	// Save the light center to the entity key/values
+		m_doom3Radius.m_center = m_doom3Radius.m_centerTransformed;
+		m_entity.setKeyValue("light_center", m_doom3Radius.m_center);
+    }
+	
 	if (g_lightType == LIGHTTYPE_DOOM3) {
 		if(!m_useLightRotation && !m_traverse.empty()) {
 			m_useLightRotation = true;
@@ -505,8 +575,10 @@ void Light::freezeTransform() {
 		rotation_assign(m_rotationKey.m_rotation, m_rotation);
 		write_rotation(m_rotationKey.m_rotation, &m_entity);
 
-		m_doom3Radius.m_radius = m_doom3Radius.m_radiusTransformed;
-		write_origin(m_doom3Radius.m_radius, &m_entity, "light_radius");
+		if (!isProjected()) {
+			m_doom3Radius.m_radius = m_doom3Radius.m_radiusTransformed;
+			write_origin(m_doom3Radius.m_radius, &m_entity, "light_radius");
+		}
 	}
 }
 
@@ -643,7 +715,8 @@ void Light::translate(const Vector3& translation) {
  */
 void Light::translateLightStart(const Vector3& translation) {
 	Vector3 candidate = _lightStart + translation;
-	Vector3 normal = (candidate - _lightEnd).getNormalised();
+	
+	Vector3 normal = (candidate - _lightEndTransformed).getNormalised();
 	
 	// Calculate the distance to the plane going through the origin, hence the minus sign
 	double dist = normal.dot(candidate);
@@ -651,7 +724,7 @@ void Light::translateLightStart(const Vector3& translation) {
 	if (dist > 0) {
 		// Light_Start is too "high", project it back onto the origin plane 
 		_lightStartTransformed = candidate - normal*dist;
-		vector3_snapped(_lightStartTransformed, GlobalRadiant().getGridSize());
+		vector3_snap(_lightStartTransformed, GlobalRadiant().getGridSize());
 	}
 	else {
 		// The candidate seems to be ok, apply it to the selection
@@ -865,9 +938,12 @@ const Matrix4& Light::projection() const {
 
 	Plane3 lightProject[4];
 
+	// If there is a light_start key set, use this, otherwise use the unit vector of the target direction  
 	Vector3 start = m_useLightStart && m_useLightEnd ? _lightStartTransformed : _lightTargetTransformed.getNormalised();
-	Vector3 stop = m_useLightStart && m_useLightEnd ? _lightEndTransformed : _lightTargetTransformed;
 
+	// If there is no light_end, but a light_start, assume light_end = light_target
+	Vector3 stop = m_useLightStart && m_useLightEnd ? _lightEndTransformed : _lightTargetTransformed;
+	
 	float rLen = _lightRightTransformed.getLength();
 	Vector3 right = _lightRightTransformed / rLen;
 	float uLen = _lightUpTransformed.getLength();

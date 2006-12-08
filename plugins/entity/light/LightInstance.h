@@ -28,7 +28,8 @@ class LightInstance :
 	public RendererLight,
 	public PlaneSelectable,
 	public ComponentSelectionTestable,
-	public ComponentEditable
+	public ComponentEditable,
+	public ComponentSnappable
 {
 	class TypeCasts {
 		InstanceTypeCastTable m_casts;
@@ -42,6 +43,7 @@ class LightInstance :
 			InstanceStaticCast<LightInstance, Transformable>::install(m_casts);
 			InstanceStaticCast<LightInstance, PlaneSelectable>::install(m_casts);
 			InstanceStaticCast<LightInstance, ComponentSelectionTestable>::install(m_casts);
+			InstanceStaticCast<LightInstance, ComponentSnappable>::install(m_casts);
 			InstanceIdentityCast<LightInstance>::install(m_casts);
 		}
 		
@@ -98,6 +100,9 @@ public:
 	// greebo: Selects/deselects all components, depending on the chosen componentmode
 	void setSelectedComponents(bool select, SelectionSystem::EComponentMode mode);
 	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode);
+
+	// This gets called to snap the components to the grid
+	void snapComponents(float snap);
 
 	void selectedChangedComponent(const Selectable& selectable);
 	typedef MemberCaller1<LightInstance, const Selectable&, &LightInstance::selectedChangedComponent> SelectedChangedComponentCaller;

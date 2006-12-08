@@ -1442,28 +1442,28 @@ void Scene_SnapToGrid_Selected(scene::Graph& graph, float snap)
   graph.traverse(SnappableSnapToGridSelected(snap));
 }
 
-class ComponentSnappableSnapToGridSelected : public scene::Graph::Walker
-{
-  float m_snap;
+/* greebo: This is the visitor class to snap all components of a selected instance to the grid
+ * While visiting all the instances, it checks if the instance derives from ComponentSnappable 
+ */
+class ComponentSnappableSnapToGridSelected : public scene::Graph::Walker {
+	float m_snap;
 public:
-  ComponentSnappableSnapToGridSelected(float snap)
-    : m_snap(snap)
-  {
-  }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
-  {
-    if(path.top().get().visible())
-    {
-      ComponentSnappable* componentSnappable = Instance_getComponentSnappable(instance);
-      if(componentSnappable != 0
-        && Instance_getSelectable(instance)->isSelected())
-      {
-        componentSnappable->snapComponents(m_snap);
-      }
-    }
-    return true;
-  }
-};
+	// Constructor: expects the grid size that should be snapped to
+	ComponentSnappableSnapToGridSelected(float snap): m_snap(snap) {}
+  
+	bool pre(const scene::Path& path, scene::Instance& instance) const {
+	    if (path.top().get().visible()) {
+	    	// Check if the visited instance is ComponentSelectable
+			ComponentSnappable* componentSnappable = Instance_getComponentSnappable(instance);
+			
+			// Call the snapComponents() method if the instance is also a _selected_ Selectable 
+			if (componentSnappable != 0  && Instance_getSelectable(instance)->isSelected()) {
+				componentSnappable->snapComponents(m_snap);
+			}
+	    }
+		return true;
+	}
+}; // ComponentSnappableSnapToGridSelected
 
 void Scene_SnapToGrid_Component_Selected(scene::Graph& graph, float snap)
 {
