@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gdk/gdktypes.h>
 
 #include "math/Vector3.h"
+#include "stream/textstream.h"
+#include "stream/textfilestream.h"
 
 class WindowObserver;
 void GlobalWindowObservers_add(WindowObserver* observer);
@@ -35,35 +37,45 @@ typedef struct _GtkWindow GtkWindow;
 void GlobalWindowObservers_connectWidget(GtkWidget* widget);
 void GlobalWindowObservers_connectTopLevel(GtkWindow* window);
 
-inline ButtonIdentifier button_for_button(unsigned int button)
-{
-  switch(button)
-  {
-  case 1:
-    return c_buttonLeft;
-  case 2:
-    return c_buttonMiddle;
-  case 3:
-    return c_buttonRight;
-  }
-  return c_buttonInvalid;
+/* greebo: This translates the button information from an GDKEvent event->button
+ * into the constants defined in include/windowobserver.h */
+inline ButtonIdentifier button_for_button(unsigned int button) {
+	switch(button) {
+		case 1:
+			return c_buttonLeft;
+		case 2:
+			return c_buttonMiddle;
+		case 3:
+			return c_buttonRight;
+		default:
+			// no button ID has matched, this button is "unknown", inform the user about the ID
+			globalOutputStream() << "Unknown mouse button pressed: ID=" << button << "\n";
+			return c_buttonInvalid;
+	}
 }
 
-inline ModifierFlags modifiers_for_state(unsigned int state)
-{
-  ModifierFlags modifiers = c_modifierNone;
-  if(state & GDK_SHIFT_MASK)
-    modifiers |= c_modifierShift;
-  if(state & GDK_CONTROL_MASK)
-    modifiers |= c_modifierControl;
-  if(state & GDK_MOD1_MASK)
-    modifiers |= c_modifierAlt;
-  return modifiers;
+/* greebo: This translates the modifier information from an GDKEvent event->state
+ * into the constants defined in include/windowobserver.h */
+inline ModifierFlags modifiers_for_state(unsigned int state) {
+	ModifierFlags modifiers = c_modifierNone;
+	
+	if(state & GDK_SHIFT_MASK) {
+		modifiers |= c_modifierShift;
+	}
+	
+  	if(state & GDK_CONTROL_MASK) {
+  		modifiers |= c_modifierControl;
+  	}
+  	
+	if(state & GDK_MOD1_MASK) {
+		modifiers |= c_modifierAlt;
+	}
+	
+	return modifiers;
 }
 
-inline WindowVector WindowVector_forDouble(double x, double y)
-{
-  return WindowVector(static_cast<float>(x), static_cast<float>(y));
+inline WindowVector WindowVector_forDouble(double x, double y) {
+	return WindowVector(static_cast<float>(x), static_cast<float>(y));
 }
 
 #endif
