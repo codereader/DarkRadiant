@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <list>
 
+#include "math/Plane3.h"
 #include "map.h"
 #include "brushmanip.h"
 #include "brushnode.h"
@@ -463,10 +464,10 @@ public:
       if(brush != 0
         && Instance_getSelectable(instance)->isSelected())
       {
-        Plane3 plane(plane3_for_points(m_p0, m_p1, m_p2));
-        if(plane3_valid(plane))
+        Plane3 plane(m_p0, m_p1, m_p2);
+        if(plane.isValid())
         {
-          brushsplit_t split = Brush_classifyPlane(*brush, m_split == eFront ? plane3_flipped(plane) : plane);
+          brushsplit_t split = Brush_classifyPlane(*brush, m_split == eFront ? -plane : plane);
           if(split.counts[ePlaneBack] && split.counts[ePlaneFront])
           {
             // the plane intersects this brush
@@ -584,7 +585,7 @@ bool Brush_merge(Brush& brush, const brush_vector_t& in, bool onlyshape)
               const Face& face2 = *(*l);
 
               // face opposes another face
-              if(plane3_opposing(face1.plane3(), face2.plane3()))
+              if (face1.plane3() == -face2.plane3())
               {
                 // skip opposing planes
                 skip  = true;
@@ -600,7 +601,7 @@ bool Brush_merge(Brush& brush, const brush_vector_t& in, bool onlyshape)
           const Face& face2 = *(*m);
 
           // face equals another face
-          if (plane3_equal(face1.plane3(), face2.plane3()))
+          if (face1.plane3() == face2.plane3())
           {
             //if the texture/shader references should be the same but are not
             if (!onlyshape && !shader_equal(face1.getShader().getShader(), face2.getShader().getShader()))

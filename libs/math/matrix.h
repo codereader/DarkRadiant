@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "math/Vector3.h"
 #include "math/Vector4.h"
+#include "math/Plane3.h"
 
 /// \brief A 4x4 matrix stored in single-precision floating-point.
 class Matrix4
@@ -327,6 +328,32 @@ public:
 	 */
 	Vector4 transform(const Vector3& vector3) const {
 		return transform(Vector4(vector3, 1));
+	}
+	
+	/** Use this matrix to transform the provided plane
+	 * 
+	 * @param plane: The Plane to transform.
+	 * 
+	 * @returns: the transformed plane.
+	 */
+	Plane3 transform(const Plane3& plane) const {
+		Plane3 transformed;
+		transformed.a = m_elements[0] * plane.a + m_elements[4] * plane.b + m_elements[8] * plane.c;
+		transformed.b = m_elements[1] * plane.a + m_elements[5] * plane.b + m_elements[9] * plane.c;
+		transformed.c = m_elements[2] * plane.a + m_elements[6] * plane.b + m_elements[10] * plane.c;
+		transformed.d = -(	(-plane.d * transformed.a + m_elements[12]) * transformed.a + 
+							(-plane.d * transformed.b + m_elements[13]) * transformed.b + 
+							(-plane.d * transformed.c + m_elements[14]) * transformed.c);
+		return transformed;
+	}
+	
+	Plane3 inverseTransform(const Plane3& plane) const {
+		return Plane3(
+			m_elements[ 0] * plane.a + m_elements[ 1] * plane.b + m_elements[ 2] * plane.c + m_elements[ 3] * plane.d,
+			m_elements[ 4] * plane.a + m_elements[ 5] * plane.b + m_elements[ 6] * plane.c + m_elements[ 7] * plane.d,
+			m_elements[ 8] * plane.a + m_elements[ 9] * plane.b + m_elements[10] * plane.c + m_elements[11] * plane.d,
+			m_elements[12] * plane.a + m_elements[13] * plane.b + m_elements[14] * plane.c + m_elements[15] * plane.d
+		);
 	}
 
 };

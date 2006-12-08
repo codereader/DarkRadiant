@@ -163,27 +163,27 @@ public:
     Plane3 planes[6];
     aabb_planes_oriented(aabb, rotation, planes);
 
-    if(selectedPlanes.contains(plane3_flipped(planes[0])))
+    if(selectedPlanes.contains(-planes[0]))
     {
       Selector_add(selector, m_selectable_right);
     }
-    if(selectedPlanes.contains(plane3_flipped(planes[1])))
+    if(selectedPlanes.contains(-planes[1]))
     {
       Selector_add(selector, m_selectable_left);
     }
-    if(selectedPlanes.contains(plane3_flipped(planes[2])))
+    if(selectedPlanes.contains(-planes[2]))
     {
       Selector_add(selector, m_selectable_front);
     }
-    if(selectedPlanes.contains(plane3_flipped(planes[3])))
+    if(selectedPlanes.contains(-planes[3]))
     {
       Selector_add(selector, m_selectable_back);
     }
-    if(selectedPlanes.contains(plane3_flipped(planes[4])))
+    if(selectedPlanes.contains(-planes[4]))
     {
       Selector_add(selector, m_selectable_top);
     }
-    if(selectedPlanes.contains(plane3_flipped(planes[5])))
+    if(selectedPlanes.contains(-planes[5]))
     {
       Selector_add(selector, m_selectable_bottom);
     }

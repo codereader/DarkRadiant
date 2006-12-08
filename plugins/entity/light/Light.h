@@ -245,6 +245,7 @@ public:
   
 	void translate(const Vector3& translation);
 	void translateLightTarget(const Vector3& translation);
+	void translateLightStart(const Vector3& translation);
 	
 	void rotate(const Quaternion& rotation);
 	void snapto(float snap);

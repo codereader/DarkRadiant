@@ -246,11 +246,10 @@ void Clip_Update()
   {
     AABB bounds(Vector3(0, 0, 0), Vector3(64, 64, 64));
     PlanePointsFromClipPoints(planepts, bounds, g_clip_viewtype);
-    if(g_bSwitch)
-    {
+    if (g_bSwitch) {
       std::swap(planepts[0], planepts[1]);
     }
-    Scene_BrushSetClipPlane(GlobalSceneGraph(), plane3_for_points(planepts[0], planepts[1], planepts[2]));
+    Scene_BrushSetClipPlane(GlobalSceneGraph(), Plane3(planepts));
   }
   ClipperChangeNotify();
 }

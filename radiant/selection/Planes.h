@@ -1,7 +1,7 @@
 #ifndef PLANES_H_
 #define PLANES_H_
 
-#include "math/plane.h"
+#include "math/Plane3.h"
 #include <set>
 #include "selectable.h"
 #include "scenelib.h"

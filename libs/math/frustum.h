@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/enumeration.h"
 #include "math/matrix.h"
-#include "math/plane.h"
+#include "math/Plane3.h"
 #include "math/aabb.h"
 #include "math/line.h"
 
@@ -382,27 +382,27 @@ struct Frustum
   }
 };
 
-inline Frustum frustum_transformed(const Frustum& frustum, const Matrix4& transform)
+inline Frustum frustum_transformed(const Frustum& frustum, const Matrix4& matrix)
 {
   return Frustum(
-    plane3_transformed(frustum.right, transform),
-    plane3_transformed(frustum.left, transform),
-    plane3_transformed(frustum.bottom, transform),
-    plane3_transformed(frustum.top, transform),
-    plane3_transformed(frustum.back, transform),
-    plane3_transformed(frustum.front, transform)
+    matrix.transform(frustum.right),
+    matrix.transform(frustum.left),
+    matrix.transform(frustum.bottom),
+    matrix.transform(frustum.top),
+    matrix.transform(frustum.back),
+    matrix.transform(frustum.front)
   );
 }
 
-inline Frustum frustum_inverse_transformed(const Frustum& frustum, const Matrix4& transform)
+inline Frustum frustum_inverse_transformed(const Frustum& frustum, const Matrix4& matrix)
 {
   return Frustum(
-    plane3_inverse_transformed(frustum.right, transform),
-    plane3_inverse_transformed(frustum.left, transform),
-    plane3_inverse_transformed(frustum.bottom, transform),
-    plane3_inverse_transformed(frustum.top, transform),
-    plane3_inverse_transformed(frustum.back, transform),
-    plane3_inverse_transformed(frustum.front, transform)
+    matrix.inverseTransform(frustum.right),
+    matrix.inverseTransform(frustum.left),
+    matrix.inverseTransform(frustum.bottom),
+    matrix.inverseTransform(frustum.top),
+    matrix.inverseTransform(frustum.back),
+    matrix.inverseTransform(frustum.front)
   );
 }
 
@@ -425,12 +425,12 @@ inline Frustum frustum_from_viewproj(const Matrix4& viewproj)
 {
   return Frustum
   (
-    plane3_normalised(Plane3(viewproj[ 3] - viewproj[ 0], viewproj[ 7] - viewproj[ 4], viewproj[11] - viewproj[ 8], viewproj[15] - viewproj[12])),
-    plane3_normalised(Plane3(viewproj[ 3] + viewproj[ 0], viewproj[ 7] + viewproj[ 4], viewproj[11] + viewproj[ 8], viewproj[15] + viewproj[12])),
-    plane3_normalised(Plane3(viewproj[ 3] + viewproj[ 1], viewproj[ 7] + viewproj[ 5], viewproj[11] + viewproj[ 9], viewproj[15] + viewproj[13])),
-    plane3_normalised(Plane3(viewproj[ 3] - viewproj[ 1], viewproj[ 7] - viewproj[ 5], viewproj[11] - viewproj[ 9], viewproj[15] - viewproj[13])),
-    plane3_normalised(Plane3(viewproj[ 3] - viewproj[ 2], viewproj[ 7] - viewproj[ 6], viewproj[11] - viewproj[10], viewproj[15] - viewproj[14])),
-    plane3_normalised(Plane3(viewproj[ 3] + viewproj[ 2], viewproj[ 7] + viewproj[ 6], viewproj[11] + viewproj[10], viewproj[15] + viewproj[14]))
+    Plane3(viewproj[ 3] - viewproj[ 0], viewproj[ 7] - viewproj[ 4], viewproj[11] - viewproj[ 8], viewproj[15] - viewproj[12]).getNormalised(),
+    Plane3(viewproj[ 3] + viewproj[ 0], viewproj[ 7] + viewproj[ 4], viewproj[11] + viewproj[ 8], viewproj[15] + viewproj[12]).getNormalised(),
+    Plane3(viewproj[ 3] + viewproj[ 1], viewproj[ 7] + viewproj[ 5], viewproj[11] + viewproj[ 9], viewproj[15] + viewproj[13]).getNormalised(),
+    Plane3(viewproj[ 3] - viewproj[ 1], viewproj[ 7] - viewproj[ 5], viewproj[11] - viewproj[ 9], viewproj[15] - viewproj[13]).getNormalised(),
+    Plane3(viewproj[ 3] - viewproj[ 2], viewproj[ 7] - viewproj[ 6], viewproj[11] - viewproj[10], viewproj[15] - viewproj[14]).getNormalised(),
+    Plane3(viewproj[ 3] + viewproj[ 2], viewproj[ 7] + viewproj[ 6], viewproj[11] + viewproj[10], viewproj[15] + viewproj[14]).getNormalised()
   );
 }
 
@@ -608,7 +608,7 @@ inline bool viewer_test_transformed_plane(const Vector4& viewer, const Plane3& p
 #if 0
   return viewer_test_plane(viewer_from_transformed_viewer(viewer, matrix4_affine_inverse(localToWorld)), plane);
 #else
-  return viewer_test_plane(viewer, plane3_transformed(plane, localToWorld));
+  return viewer_test_plane(viewer, localToWorld.transform(plane));
 #endif
 }
 
