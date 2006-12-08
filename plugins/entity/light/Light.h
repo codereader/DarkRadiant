@@ -248,6 +248,8 @@ public:
 	void translateLightStart(const Vector3& translation);
 	
 	void rotate(const Quaternion& rotation);
+	
+	// This snaps the light as a whole to the grid (basically the light origin)
 	void snapto(float snap);
 	void setLightRadius(const AABB& aabb);
 	void transformLightRadius(const Matrix4& transform);
@@ -286,6 +288,7 @@ public:
 	Vector3& colourLightStart();
 	Vector3& colourLightEnd();
 	
+	void checkStartEnd();
 	bool useStartEnd() const;
 	
 	bool isProjected() const;

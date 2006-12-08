@@ -168,10 +168,12 @@ void LightInstance::selectReversedPlanes(Selector& selector, const SelectedPlane
 	m_dragPlanes.selectReversedPlanes(_light.lightAABB(), selector, selectedPlanes, rotation());
 }
  
-// greebo: Returns true if drag planes or the light center is selected (both are components)
+// greebo: Returns true if drag planes or one or more light vertices are selected
 bool LightInstance::isSelectedComponents() const {
-	return (m_dragPlanes.isSelected() || _lightCenterInstance.isSelected()
-			|| _lightTargetInstance.isSelected() || _lightRightInstance.isSelected());
+	return (m_dragPlanes.isSelected() || _lightCenterInstance.isSelected() ||
+			_lightTargetInstance.isSelected() || _lightRightInstance.isSelected() ||
+			_lightUpInstance.isSelected() || _lightStartInstance.isSelected() ||
+			_lightEndInstance.isSelected() );
 }
 
 // greebo: Selects/deselects all components, depending on the chosen componentmode
@@ -285,6 +287,58 @@ void LightInstance::evaluateTransform() {
 void LightInstance::applyTransform() {
 	_light.revertTransform();
 	evaluateTransform();
+	_light.freezeTransform();
+}
+
+/* greebo: This snaps the components to the grid.
+ * 
+ * Note: if none are selected, ALL the components are snapped to the grid (I hope this is intentional)
+ * This function can only be called in Selection::eVertex mode, so I assume that the user wants all components
+ * to be snapped.
+ * 
+ * If one or more components is/are selected, ONLY those are snapped to the grid.  
+ */
+void LightInstance::snapComponents(float snap) {
+	if (_light.isProjected()) {
+		// Check, if any components are selected and snap the selected ones to the grid
+		if (isSelectedComponents()) {
+			if (_lightTargetInstance.isSelected()) {
+				vector3_snap(_light.targetTransformed(), snap);
+			}
+			if (_lightRightInstance.isSelected()) {
+				vector3_snap(_light.rightTransformed(), snap);
+			}
+			if (_lightUpInstance.isSelected()) {
+				vector3_snap(_light.upTransformed(), snap);
+			}
+			
+			if (_light.useStartEnd()) {
+				if (_lightEndInstance.isSelected()) {
+					vector3_snap(_light.endTransformed(), snap);
+				}
+				
+				if (_lightStartInstance.isSelected()) {
+					vector3_snap(_light.startTransformed(), snap);
+				}
+			}
+		}
+		else {
+			// None are selected, snap them all
+			vector3_snap(_light.targetTransformed(), snap);
+			vector3_snap(_light.rightTransformed(), snap);
+			vector3_snap(_light.upTransformed(), snap);
+			
+			if (_light.useStartEnd()) {
+				vector3_snap(_light.endTransformed(), snap);
+				vector3_snap(_light.startTransformed(), snap);
+			}
+		}
+	}
+	else {
+		// There is only one vertex for point lights, namely the light_center, always snap it 
+		vector3_snap(_light.getDoom3Radius().m_centerTransformed, snap);
+	}
+
 	_light.freezeTransform();
 }
 
