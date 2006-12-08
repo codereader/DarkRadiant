@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_MATH_AABB_H
 
 #include "math/matrix.h"
-#include "math/plane.h"
+#include "math/Plane3.h"
 
 /** An Axis Aligned Bounding Box is a simple cuboid which encloses a given set 
  * of points, such as the vertices of a model. It is defined by an origin, 

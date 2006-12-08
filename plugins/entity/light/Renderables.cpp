@@ -58,11 +58,11 @@ RenderLightProjection::RenderLightProjection(const Vector3& origin, const Vector
 void RenderLightProjection::render(RenderStateFlags state) const {
 		
 	// greebo: These four define the base area and are always needed to draw the light
-	// Note the minus sign before intersectPlanes
-	Vector3 bottomUpRight = -intersectPlanes(_frustum.left, _frustum.top, _frustum.back);
-	Vector3 bottomDownRight = -intersectPlanes(_frustum.left, _frustum.bottom, _frustum.back);
-	Vector3 bottomUpLeft = -intersectPlanes(_frustum.right, _frustum.top, _frustum.back);
-	Vector3 bottomDownLeft = -intersectPlanes(_frustum.right, _frustum.bottom, _frustum.back);
+	// Note the minus sign before intersectPlanes (the points have to be mirrored against the origin)
+	Vector3 bottomUpRight = -Plane3::intersect(_frustum.left, _frustum.top, _frustum.back);
+	Vector3 bottomDownRight = -Plane3::intersect(_frustum.left, _frustum.bottom, _frustum.back);
+	Vector3 bottomUpLeft = -Plane3::intersect(_frustum.right, _frustum.top, _frustum.back);
+	Vector3 bottomDownLeft = -Plane3::intersect(_frustum.right, _frustum.bottom, _frustum.back);
 	
 	// The planes of the frustum are measured at world 0,0,0 so we have to position the intersection points relative to the light origin
 	bottomUpRight += _origin;
@@ -73,10 +73,10 @@ void RenderLightProjection::render(RenderStateFlags state) const {
 	if (_start != Vector3(0,0,0)) {
 		// Calculate the vertices defining the top area 
 		// Again, note the minus sign
-		Vector3 topUpRight = -intersectPlanes(_frustum.left, _frustum.top, _frustum.front);
-		Vector3 topDownRight = -intersectPlanes(_frustum.left, _frustum.bottom, _frustum.front);
-		Vector3 topUpLeft = -intersectPlanes(_frustum.right, _frustum.top, _frustum.front);
-		Vector3 topDownLeft = -intersectPlanes(_frustum.right, _frustum.bottom, _frustum.front);
+		Vector3 topUpRight = -Plane3::intersect(_frustum.left, _frustum.top, _frustum.front);
+		Vector3 topDownRight = -Plane3::intersect(_frustum.left, _frustum.bottom, _frustum.front);
+		Vector3 topUpLeft = -Plane3::intersect(_frustum.right, _frustum.top, _frustum.front);
+		Vector3 topDownLeft = -Plane3::intersect(_frustum.right, _frustum.bottom, _frustum.front);
 		
 		topUpRight += _origin;
 		topDownRight += _origin;
@@ -89,7 +89,7 @@ void RenderLightProjection::render(RenderStateFlags state) const {
 	}
 	else {
 		// no light_start, just use the top vertex (doesn't need to be mirrored)
-		Vector3 top = intersectPlanes(_frustum.left, _frustum.right, _frustum.top);
+		Vector3 top = Plane3::intersect(_frustum.left, _frustum.right, _frustum.top);
 		top += _origin;
 		
 		Vector3 pyramid[5] = { top, bottomUpRight, bottomDownRight, bottomDownLeft, bottomUpLeft };

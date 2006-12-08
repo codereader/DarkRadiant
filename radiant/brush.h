@@ -708,13 +708,13 @@ inline void planepts_print(const PlanePoints& planePoints, TextOutputStream& ost
 
 inline Plane3 Plane3_applyTranslation(const Plane3& plane, const Vector3& translation)
 {
-  Plane3 tmp(plane3_translated(Plane3(plane.normal(), -plane.dist()), translation));
+  Plane3 tmp = Plane3(plane.normal(), -plane.dist()).getTranslated(translation);
   return Plane3(tmp.normal(), -tmp.dist());
 }
 
 inline Plane3 Plane3_applyTransform(const Plane3& plane, const Matrix4& matrix)
 {
-  Plane3 tmp(plane3_transformed(Plane3(plane.normal(), -plane.dist()), matrix));
+  Plane3 tmp(matrix.transform(Plane3(plane.normal(), -plane.dist())));
   return Plane3(tmp.normal(), -tmp.dist());
 }
 
@@ -795,7 +795,7 @@ public:
         globalErrorStream() << "\n";
       }
 #endif
-      m_planeCached = plane3_for_points(m_planepts);
+      m_planeCached = Plane3(m_planepts);
     }
   }
 
@@ -808,7 +808,7 @@ public:
     }
     else
     {
-      m_planeCached = plane3_flipped(m_plane);
+      m_planeCached = -m_plane;
       updateSource();
     }
   }
@@ -922,7 +922,7 @@ public:
     }
     else
     {
-      m_planeCached = plane3_for_points(p2, p1, p0);
+      m_planeCached = Plane3(p2, p1, p0);
       updateSource();
     }
   }
@@ -1221,9 +1221,9 @@ public:
     if(contributes())
     {
 #if 0
-      ASSERT_MESSAGE(plane3_valid(m_plane.plane3()), "invalid plane before snap to grid");
+      ASSERT_MESSAGE(m_plane.plane3().isValid(), "invalid plane before snap to grid");
       planepts_snap(m_plane.planePoints(), snap);
-      ASSERT_MESSAGE(plane3_valid(m_plane.plane3()), "invalid plane after snap to grid");
+      ASSERT_MESSAGE(m_plane.plane3().isValid(), "invalid plane after snap to grid");
 #else
       PlanePoints planePoints;
       update_move_planepts_vertex(0, planePoints);
@@ -1234,7 +1234,7 @@ public:
       freezeTransform();
 #endif
       SceneChangeNotify();
-      if(!plane3_valid(m_plane.plane3()))
+      if(!m_plane.plane3().isValid())
       {
         globalErrorStream() << "WARNING: invalid plane after snap to grid\n";
       }
@@ -2232,9 +2232,9 @@ public:
       {
         const Face& clip = *m_faces[i];
 
-        if(plane3_equal(clip.plane3(), plane) 
-          || !plane3_valid(clip.plane3()) || !plane_unique(i)
-          || plane3_opposing(plane, clip.plane3()))
+        if (clip.plane3() == plane 
+          || !clip.plane3().isValid() || !plane_unique(i)
+          || plane == -clip.plane3())
         {
           continue;
         }
@@ -2536,7 +2536,7 @@ private:
       {
         Face& f = *m_faces[i];
 
-        if(!plane3_valid(f.plane3()) || !plane_unique(i))
+        if(!f.plane3().isValid() || !plane_unique(i))
         {
           f.getWinding().resize(0);
         }
@@ -2941,7 +2941,7 @@ public:
   }
   void selectReversedPlane(Selector& selector, const SelectedPlanes& selectedPlanes)
   {
-    if(selectedPlanes.contains(plane3_flipped(getFace().plane3())))
+    if(selectedPlanes.contains(-(getFace().plane3())))
     {
       Selector_add(selector, m_selectable);
     }
@@ -3194,7 +3194,7 @@ public:
   void setPlane(const Brush& brush, const Plane3& plane)
   {
     m_plane = plane;
-    if(plane3_valid(m_plane))
+    if(m_plane.isValid())
     {
       brush.windingForClipPlane(m_winding, m_plane);
     }
@@ -3228,7 +3228,7 @@ inline void Face_addLight(const FaceInstance& face, const Matrix4& localToWorld,
 {
   const Plane3& facePlane = face.getFace().plane3();
   const Vector3& origin = light.aabb().origin;
-  Plane3 tmp(plane3_transformed(Plane3(facePlane.normal(), -facePlane.dist()), localToWorld));
+  Plane3 tmp(localToWorld.transform(Plane3(facePlane.normal(), -facePlane.dist())));
   if(!plane3_test_point(tmp, origin)
     || !plane3_test_point(tmp, origin + light.offset()))
   {

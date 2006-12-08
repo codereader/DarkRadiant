@@ -252,8 +252,8 @@ void LightInstance::evaluateTransform() {
 			}
 			
 			if (_lightStartInstance.isSelected()) {
-				// Save the new light_up vector
-				_light.startTransformed() = _light.start() + getTranslation();
+				// Delegate the work to the Light class (including boundary checks)
+				_light.translateLightStart(getTranslation());
 			}
 			
 			if (_lightEndInstance.isSelected()) {

@@ -553,9 +553,6 @@ void Light::renderProjectionPoints(Renderer& renderer, const VolumeTest& volume,
 	// Add the renderable light target
 	renderer.Highlight(Renderer::ePrimitive, false);
 	renderer.Highlight(Renderer::eFace, false);
-	renderer.SetState(_rTarget.getShader(), Renderer::eFullMaterials);
-	renderer.SetState(_rTarget.getShader(), Renderer::eWireframeOnly);
-	renderer.addRenderable(_rTarget, localToWorld);
 	
 	renderer.SetState(_rRight.getShader(), Renderer::eFullMaterials);
 	renderer.SetState(_rRight.getShader(), Renderer::eWireframeOnly);
@@ -564,6 +561,10 @@ void Light::renderProjectionPoints(Renderer& renderer, const VolumeTest& volume,
 	renderer.SetState(_rUp.getShader(), Renderer::eFullMaterials);
 	renderer.SetState(_rUp.getShader(), Renderer::eWireframeOnly);
 	renderer.addRenderable(_rUp, localToWorld);
+	
+	renderer.SetState(_rTarget.getShader(), Renderer::eFullMaterials);
+	renderer.SetState(_rTarget.getShader(), Renderer::eWireframeOnly);
+	renderer.addRenderable(_rTarget, localToWorld);
 	
 	if (m_useLightStart) {
 		renderer.SetState(_rStart.getShader(), Renderer::eFullMaterials);
@@ -594,7 +595,7 @@ void Light::renderSolid(Renderer& renderer, const VolumeTest& volume, const Matr
 
 	if (selected) {
 		if (isProjected()) {
-			// greebo: This is not much of an performance impact as the projection gets only recalculated, when it has actually changed.
+			// greebo: This is not much of an performance impact as the projection gets only recalculated when it has actually changed.
 			projection();
 			renderer.addRenderable(m_renderProjection, localToWorld);
 		}
@@ -636,13 +637,35 @@ void Light::translate(const Vector3& translation) {
 	m_aabb_light.origin = origin_translated(m_aabb_light.origin, translation);
 }
 
+/* greebo: This translates the light start with the given <translation>
+ * Checks, if the light_start is positioned "above" the light origin and constrains
+ * the movement accordingly to prevent the light volume to become an "hourglass".
+ */
+void Light::translateLightStart(const Vector3& translation) {
+	Vector3 candidate = _lightStart + translation;
+	Vector3 normal = (candidate - _lightEnd).getNormalised();
+	
+	// Calculate the distance to the plane going through the origin, hence the minus sign
+	double dist = normal.dot(candidate);
+	
+	if (dist > 0) {
+		// Light_Start is too "high", project it back onto the origin plane 
+		_lightStartTransformed = candidate - normal*dist;
+		vector3_snapped(_lightStartTransformed, GlobalRadiant().getGridSize());
+	}
+	else {
+		// The candidate seems to be ok, apply it to the selection
+		_lightStartTransformed = candidate;
+	}
+}
+
 void Light::translateLightTarget(const Vector3& translation) {
 	Vector3 oldTarget = _lightTarget;
 	Vector3 newTarget = oldTarget + translation;
 	
 	double angle = oldTarget.angle(newTarget);
 	
-	// If we are at rougly 0 or 180 degrees, don't rotate anything, this is probably a translation only
+	// If we are at roughly 0 or 180 degrees, don't rotate anything, this is probably a pure translation
 	if (std::abs(angle) > 0.01 && std::abs(c_pi-angle) > 0.01) {
 		// Calculate the transformation matrix defined by the two vectors
 		Matrix4 rotationMatrix = Matrix4::getRotation(oldTarget, newTarget);
@@ -900,17 +923,17 @@ const Matrix4& Light::projection() const {
 
 	m_doom3Frustum.back = lightProject[3];
 	m_doom3Frustum.back.dist() -= 1.0f;
-	m_doom3Frustum.back = plane3_flipped(m_doom3Frustum.back);
+	m_doom3Frustum.back = -m_doom3Frustum.back;
 
 	Matrix4 test(matrix4_from_planes(m_doom3Frustum.left, m_doom3Frustum.right, m_doom3Frustum.bottom, m_doom3Frustum.top, m_doom3Frustum.front, m_doom3Frustum.back));
 	matrix4_multiply_by_matrix4(m_doom3Projection, test);
 
-	m_doom3Frustum.left = plane3_normalised(m_doom3Frustum.left);
-	m_doom3Frustum.right = plane3_normalised(m_doom3Frustum.right);
-	m_doom3Frustum.bottom = plane3_normalised(m_doom3Frustum.bottom);
-	m_doom3Frustum.top = plane3_normalised(m_doom3Frustum.top);
-	m_doom3Frustum.back = plane3_normalised(m_doom3Frustum.back);
-	m_doom3Frustum.front = plane3_normalised(m_doom3Frustum.front);
+	m_doom3Frustum.left = m_doom3Frustum.left.getNormalised();
+	m_doom3Frustum.right = m_doom3Frustum.right.getNormalised();
+	m_doom3Frustum.bottom = m_doom3Frustum.bottom.getNormalised();
+	m_doom3Frustum.top = m_doom3Frustum.top.getNormalised();
+	m_doom3Frustum.back = m_doom3Frustum.back.getNormalised();
+	m_doom3Frustum.front = m_doom3Frustum.front.getNormalised();
 	
 	//matrix4_scale_by_vec3(m_doom3Projection, Vector3(1.0 / 128, 1.0 / 128, 1.0 / 128));
 	return m_doom3Projection;
