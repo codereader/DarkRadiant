@@ -317,21 +317,7 @@ void Light::lightStartChanged(const char* value) {
 	_lightStartTransformed = _lightStart;
 	
 	// If the light_end key is still unused, set it to a reasonable value
-	if (!m_useLightEnd) {
-		// Set the light_end to the light_target, unless the light_start is already there
-		if (_lightStart != _lightTarget) {
-			_lightEnd = _lightTarget;
-		}
-		else {
-			_lightEnd = Vector3(0,0,0);
-		}
-		
-		// Save the values
-		m_entity.setKeyValue("light_end", _lightEnd);
-		m_useLightEnd = true;
-		_lightEndTransformed = _lightEnd;
-	}
-	else {
+	if (m_useLightEnd) {
 		checkStartEnd();
 	}
 	
@@ -347,20 +333,7 @@ void Light::lightEndChanged(const char* value) {
 	_lightEndTransformed = _lightEnd;
 	
 	// If the light_start key is still unused, set it to a reasonable value
-	if (!m_useLightStart) {
-		// Set the light_start to <0,0,0>, unless the light_end is already there 
-		if (_lightEnd != Vector3(0,0,0)) {
-			_lightStart = Vector3(0,0,0);
-		}
-		else {
-			_lightStart = _lightTarget;
-		}
-		
-		m_entity.setKeyValue("light_start", _lightStart);
-		m_useLightStart = true;
-		_lightStartTransformed = _lightStart;
-	}
-	else {
+	if (m_useLightStart) {
 		checkStartEnd();
 	}
 	
@@ -716,7 +689,9 @@ void Light::translate(const Vector3& translation) {
 void Light::translateLightStart(const Vector3& translation) {
 	Vector3 candidate = _lightStart + translation;
 	
-	Vector3 normal = (candidate - _lightEndTransformed).getNormalised();
+	Vector3 assumedEnd = (m_useLightEnd) ? _lightEndTransformed : _lightTargetTransformed;
+	
+	Vector3 normal = (candidate - assumedEnd).getNormalised();
 	
 	// Calculate the distance to the plane going through the origin, hence the minus sign
 	double dist = normal.dot(candidate);
