@@ -85,7 +85,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brushnode.h"
 
 #include <string>
-#include <iostream>
+#include <boost/lexical_cast.hpp>
 
 class NameObserver
 {
@@ -468,28 +468,39 @@ void Map_Free()
   g_currentMap = 0;
 }
 
-class EntityFindByClassname : public scene::Graph::Walker
+/** Walker to locate an Entity in the scenegraph with a specific classname.
+ */
+class EntityFindByClassname
+: public scene::Graph::Walker
 {
-  const char* m_name;
-  Entity*& m_entity;
+	// Name to search for
+	std::string _name;
+	
+	// Reference to a pointer to modify with the result (TODO: fix this)
+	Entity*& m_entity;
+	
 public:
-  EntityFindByClassname(const char* name, Entity*& entity) : m_name(name), m_entity(entity)
-  {
-    m_entity = 0;
-  }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
-  {
-    if(m_entity == 0)
-    {
-      Entity* entity = Node_getEntity(path.top());
-      if(entity != 0
-        && string_equal(m_name, entity->getKeyValue("classname")))
-      {
-        m_entity = entity;
-      }
-    }
-    return true;
-  }
+
+	// Constructor
+	EntityFindByClassname(const std::string& name, Entity*& entity) 
+	: _name(name), m_entity(entity)
+	{
+		m_entity = 0;
+	}
+	
+	// Pre-descent callback
+	bool pre(const scene::Path& path, scene::Instance& instance) const
+	{
+		if(m_entity == 0) {
+			Entity* entity = Node_getEntity(path.top());
+			if(entity != 0
+			   && _name == entity->getKeyValue("classname"))
+			{
+				m_entity = entity;
+			}
+		}
+		return true;
+	}
 };
 
 Entity* Scene_FindEntityByClass(const char* name)
@@ -542,27 +553,29 @@ void FocusViews(const Vector3& point, float angle)
 
 #include "stringio.h"
 
+/* Find the start position in the map and focus the viewport on it.
+ */
 void Map_StartPosition()
 {
-  Entity* entity = Scene_FindPlayerStart();
+	Entity* entity = Scene_FindPlayerStart();
 
-  if (entity)
-  {
-    Vector3 origin;
-    string_parse_vector3(entity->getKeyValue("origin"), origin);
-    FocusViews(origin, string_read_float(entity->getKeyValue("angle")));
-  }
-  else
-  {
-    FocusViews(g_vector3_identity, 0);
-  }
+	if (entity) {
+		Vector3 origin(entity->getKeyValue("origin"));
+		FocusViews(origin, 
+				   boost::lexical_cast<float>(entity->getKeyValue("angle")));
+	}
+	else {
+		FocusViews(g_vector3_identity, 0);
+	}
 }
 
-
+/* Check if a node is the worldspawn.
+ */
 inline bool node_is_worldspawn(scene::Node& node)
 {
-  Entity* entity = Node_getEntity(node);
-  return entity != 0 && string_equal(entity->getKeyValue("classname"), "worldspawn");
+	Entity* entity = Node_getEntity(node);
+	return entity != 0 
+		   && entity->getKeyValue("classname") == "worldspawn";
 }
 
 

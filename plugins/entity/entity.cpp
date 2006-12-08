@@ -159,45 +159,50 @@ public:
   {
     EntityKeyValues::setCounter(counter);
   }
-  void connectEntities(const scene::Path& path, const scene::Path& targetPath)
-  {
-    Entity* e1 = ScenePath_getEntity(path);
-    Entity* e2 = ScenePath_getEntity(targetPath);
+  
+	/* Connect two entities using a "target" key.
+	 */
+	void connectEntities(const scene::Path& path, 
+						 const scene::Path& targetPath)
+	{
+		// Obtain both entities
+		Entity* e1 = ScenePath_getEntity(path);
+		Entity* e2 = ScenePath_getEntity(targetPath);
 
-    if(e1 == 0 || e2 == 0)
-    {
-      globalErrorStream() << "entityConnectSelected: both of the selected instances must be an entity\n";
-      return;
-    }
+		// Check entities are valid
+		if(e1 == 0 || e2 == 0) {
+			globalErrorStream() << "entityConnectSelected: both of the selected instances must be an entity\n";
+			return;
+		}
 
-    if(e1 == e2)
-    {
-      globalErrorStream() << "entityConnectSelected: the selected instances must not both be from the same entity\n";
-      return;
-    }
+		// Check entities are distinct
+		if(e1 == e2) {
+			globalErrorStream() << "entityConnectSelected: the selected instances must not both be from the same entity\n";
+			return;
+		}
 
+		// Start the scoped undo session
+		UndoableCommand undo("entityConnectSelected");
 
-    UndoableCommand undo("entityConnectSelected");
+		// Find the first unused target key on the source entity
+		for (int i = 0; i < 1024; ++i) {
 
-	  StringOutputStream key(16);
-      for(unsigned int i = 0; ; ++i)
-      {
-        key << "target";
-        if(i != 0)
-        {
-           key << i;
-        }
-        const char* value = e1->getKeyValue(key.c_str());
-        if(string_empty(value))
-        {
-          e1->setKeyValue(key.c_str(), e2->getKeyValue("name"));
-          break;
-        }
-        key.clear();
-      }
+			// Construct candidate key by appending number to "target"
+			std::string targetKey = (boost::format("target%i") % i).str();
+			
+			// If the source entity does not have this key, add it and finish,
+			// otherwise continue looping
+			if (e1->getKeyValue(targetKey).empty()) {
+				e1->setKeyValue(targetKey,
+								e2->getKeyValue("name"));
+				break;
+			}
+		}
 
-    SceneChangeNotify();
-  }
+		// Redraw the scene
+		SceneChangeNotify();
+	}
+
   void setShowNames(bool showNames)
   {
     g_showNames = showNames;

@@ -64,15 +64,21 @@ void EntityPropertyEditor::populateComboBox() {
         }
             
         // Visit function
-        virtual bool pre(const scene::Path& path, scene::Instance& instance) const {
+        virtual bool pre(const scene::Path& path, 
+        				 scene::Instance& instance) const 
+		{
             Entity* entity = Node_getEntity(path.top());
             if (entity != NULL) {
 
-                const char* entName = entity->getKeyValue("name");
+				// Get the entity name
+                std::string entName = entity->getKeyValue("name");
 
+				// Append the name to the list store
                 GtkTreeIter iter;
                 gtk_list_store_append(GTK_LIST_STORE(_store), &iter);
-                gtk_list_store_set(GTK_LIST_STORE(_store), &iter, 0, entName, -1);
+                gtk_list_store_set(GTK_LIST_STORE(_store), &iter, 
+                				   0, entName.c_str(), 
+                				   -1);
 
                 return false; // don't traverse children if entity found
                 

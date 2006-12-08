@@ -64,15 +64,26 @@ public:
 
 	/** Set a key value on this entity. Setting the value to "" will
 	 * remove the key.
+	 * 
+	 * @param key
+	 * The key to set.
+	 * 
+	 * @param value
+	 * Value to give the key, or the empty string to remove the key.
 	 */
-	 
-	virtual void setKeyValue(const std::string& key, const std::string& value) = 0;
+	virtual void setKeyValue(const std::string& key, 
+							 const std::string& value) = 0;
 
-	/* Old const char* key value functions
-	 * TODO: deprecate these
+	/* Retrieve a key value from the entity.
+	 * 
+	 * @param key
+	 * The key to retrieve.
+	 * 
+	 * @returns
+	 * The current value for this key, or the empty string if it does not 
+	 * exist.
 	 */
-
-	virtual const char* getKeyValue(const std::string& key) const = 0;
+	virtual std::string getKeyValue(const std::string& key) const = 0;
 	
   virtual bool isContainer() const = 0;
   virtual void attach(Observer& observer) = 0;
