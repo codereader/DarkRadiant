@@ -11,24 +11,23 @@ namespace gtkutil
 
 class RightAlignment
 {
-	// The child widget
-	GtkWidget* _child;
+	// The alignment widget
+	GtkWidget* _widget;
 	
 public:
 
 	/** Constructor. Accepts the child widget to align.
 	 */
 	RightAlignment(GtkWidget* w)
-	: _child(w)
-	{}
+	: _widget(gtk_alignment_new(1.0, 0.5, 0, 0))
+	{
+		gtk_container_add(GTK_CONTAINER(_widget), w);
+	}
 	
-	/** Operator cast to GtkWidget*. Packs the child into a GtkAlignment
-	 * and returns the resulting widget.
+	/** Operator cast to GtkWidget*. 
 	 */
 	operator GtkWidget* () {
-		GtkWidget* align = gtk_alignment_new(1.0, 0.5, 0, 0);
-		gtk_container_add(GTK_CONTAINER(align), _child);
-		return align;
+		return _widget;
 	}
 };
 
