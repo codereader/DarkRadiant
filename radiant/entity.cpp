@@ -205,9 +205,12 @@ int g_iLastLightIntensity;
  * A NodeSmartReference containing the new entity.
  */
 
-NodeSmartReference Entity_createFromSelection(const char* name, const Vector3& origin) {
+NodeSmartReference Entity_createFromSelection(const char* name, 
+											  const Vector3& origin) 
+{
 
-    IEntityClass *entityClass = GlobalEntityClassManager().findOrInsert(name, true);
+    IEntityClass *entityClass = GlobalEntityClassManager().findOrInsert(name, 
+    																	true);
 
     // TODO: to be replaced by inheritance-based class detection
     bool isModel = (GlobalSelectionSystem().countSelected() == 0 
@@ -217,7 +220,9 @@ NodeSmartReference Entity_createFromSelection(const char* name, const Vector3& o
     bool brushesSelected = map::countSelectedBrushes() != 0;
 
     if (!(entityClass->isFixedSize() || isModel) && !brushesSelected) {
-		throw EntityCreationException(std::string("Unable to create entity \"") + name + "\", no brushes selected");
+		throw EntityCreationException(std::string("Unable to create entity \"") 
+									  + name 
+									  + "\", no brushes selected");
     }
 
     AABB workzone(AABB::createFromMinMax(Select_getWorkZone().d_work_min, 
@@ -281,106 +286,10 @@ NodeSmartReference Entity_createFromSelection(const char* name, const Vector3& o
 }
 
 
-bool DoNormalisedColor(Vector3& color)
-{
-  if(!color_dialog(GTK_WIDGET(MainFrame_getWindow()), color))
-    return false;
-  /* 
-  ** scale colors so that at least one component is at 1.0F 
-  */
-
-  float largest = 0.0F;
-
-  if ( color[0] > largest )
-    largest = color[0];
-  if ( color[1] > largest )
-    largest = color[1];
-  if ( color[2] > largest )
-    largest = color[2];
-
-  if ( largest == 0.0F )
-  {
-    color[0] = 1.0F;
-    color[1] = 1.0F;
-    color[2] = 1.0F;
-  }
-  else
-  {
-    float scaler = 1.0F / largest;
-
-    color[0] *= scaler;
-    color[1] *= scaler;
-    color[2] *= scaler;
-  }
-
-  return true;
-}
-
-void Entity_setColour()
-{
-  if(GlobalSelectionSystem().countSelected() != 0)
-  {
-    const scene::Path& path = GlobalSelectionSystem().ultimateSelected().path();
-    Entity* entity = Node_getEntity(path.top());
-    if(entity != 0)
-    {
-      const char* strColor = entity->getKeyValue("_color");
-      if(!string_empty(strColor))
-      {
-        Vector3 rgb;
-        if (string_parse_vector3(strColor, rgb))
-        {
-          g_entity_globals.color_entity = rgb;
-        }
-      }
-
-      if(g_pGameDescription->mGameType == "doom3"
-        ? color_dialog(GTK_WIDGET(MainFrame_getWindow()), g_entity_globals.color_entity)
-        : DoNormalisedColor(g_entity_globals.color_entity))
-      {
-        char buffer[128];
-        sprintf(buffer, "%g %g %g", g_entity_globals.color_entity[0],
-                g_entity_globals.color_entity[1],
-                g_entity_globals.color_entity[2]);
-
-        Scene_EntitySetKeyValue_Selected("_color", buffer);
-      }
-    }
-  }
-}
-
-const char* misc_model_dialog(GtkWidget* parent)
-{
-  StringOutputStream buffer(1024);
-
-  buffer << g_qeglobals.m_userGamePath.c_str() << "models/";
-
-  if(!file_readable(buffer.c_str()))
-  {
-    // just go to fsmain
-    buffer.clear();
-    buffer << g_qeglobals.m_userGamePath.c_str() << "/";
-  }
-
-  const char *filename = file_dialog (parent, TRUE, "Choose Model", buffer.c_str(), "*");
-  if (filename != 0)
-  {
-    // use VFS to get the correct relative path
-    const char* relative = path_make_relative(filename, GlobalFileSystem().findRoot(filename));
-    if(relative == filename)
-    {
-      globalOutputStream() << "WARNING: could not extract the relative path, using full path instead\n";
-    }
-    return relative;
-  }
-  return 0;
-}
-
 void Entity_constructMenu(GtkMenu* menu)
 {
   create_menu_item_with_mnemonic(menu, "_Ungroup", "UngroupSelection");
   create_menu_item_with_mnemonic(menu, "_Connect", "ConnectSelection");
-  create_menu_item_with_mnemonic(menu, "_Select Color...", "EntityColor");
 }
 
 
@@ -390,7 +299,6 @@ void Entity_constructMenu(GtkMenu* menu)
 
 void Entity_Construct()
 {
-  GlobalCommands_insert("EntityColor", FreeCaller<Entity_setColour>(), Accelerator('K'));
   GlobalCommands_insert("ConnectSelection", FreeCaller<Entity_connectSelected>(), Accelerator('K', (GdkModifierType)GDK_CONTROL_MASK));
   GlobalCommands_insert("UngroupSelection", FreeCaller<Entity_ungroupSelected>());
 

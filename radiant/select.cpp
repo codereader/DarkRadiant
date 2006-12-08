@@ -119,7 +119,7 @@ public:
     Entity* entity = Node_getEntity(path.top());
     if(entity)
     {
-      if(string_equal(entity->getKeyValue("classname"), "worldspawn"))
+      if(entity->getKeyValue("classname") == "worldspawn")
         return true;
     }
     
@@ -648,13 +648,13 @@ void FindReplaceTextures(const char* pFind, const char* pReplace, bool bSelected
   }
 }
 
-typedef std::vector<const char*> Classnames;
+typedef std::vector<std::string> Classnames;
 
 bool classnames_match_entity(const Classnames& classnames, Entity* entity)
 {
   for(Classnames::const_iterator i = classnames.begin(); i != classnames.end(); ++i)
   {
-    if(string_equal(entity->getKeyValue("classname"), *i))
+    if(entity->getKeyValue("classname") == *i)
     {
       return true;
     }

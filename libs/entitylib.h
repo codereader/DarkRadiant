@@ -680,11 +680,12 @@ public:
     m_instanced = false;
   }
 
-  // entity
-  IEntityClass& getEntityClass() const
-  {
-    return *m_eclass;
-  }
+	/** Return the EntityClass associated with this entity.
+	 */
+	IEntityClass& getEntityClass() const {
+		return *m_eclass;
+	}
+	
   void forEachKeyValue(Visitor& visitor) const
   {
     for(KeyValues::const_iterator i = m_keyValues.begin(); i != m_keyValues.end(); ++i)
@@ -695,7 +696,6 @@ public:
   
 	/** Set a keyvalue on the entity. 
 	 */
-  
 	void setKeyValue(const std::string& key, const std::string& value) {
 		if (value.empty()) {
 			erase(key.c_str());
@@ -706,21 +706,26 @@ public:
 		m_entityKeyValueChanged();
 	}
   
-  const char* getKeyValue(const std::string& key) const
-  {
-    KeyValues::const_iterator i = m_keyValues.find(key.c_str());
-    if(i != m_keyValues.end())
-    {
-      return (*i).second->c_str();
-    }
+	/** Retrieve a keyvalue from the entity.
+	 */
+	std::string getKeyValue(const std::string& key) const {
 
-    return m_eclass->getValueForKey(key).c_str();
-  }
+		// Lookup the key in the map
+		KeyValues::const_iterator i = m_keyValues.find(key.c_str());
 
-  bool isContainer() const
-  {
-    return m_isContainer;
-  }
+		// If key is found, return it, otherwise lookup the default value on
+		// the entity class
+		if(i != m_keyValues.end()) {
+			return i->second->c_str();
+		}
+		else {
+			return m_eclass->getValueForKey(key).c_str();
+		}
+	}
+
+	bool isContainer() const {
+		return m_isContainer;
+	}
 };
 
 /// \brief A Resource reference with a controlled lifetime.

@@ -404,6 +404,22 @@ void LightInspector::getValuesFromEntity() {
 					 static_cast<guint>(colour.y() * 65535),
 					 static_cast<guint>(colour.z() * 65535) };
 	gtk_color_button_set_color(GTK_COLOR_BUTTON(_colour), &col);
+	
+	// Determine whether this is a projected light, and set the toggles
+	// appropriately
+	if (!_entity->getKeyValue("light_target").empty()
+		&& !_entity->getKeyValue("light_right").empty()
+		&& !_entity->getKeyValue("light_up").empty())
+	{
+		// Is a projected light
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_projLightToggle),
+									 TRUE);
+	}
+	else {
+		// Is a point light
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_pointLightToggle),
+									 TRUE);
+	}
 }
 
 } // namespace ui

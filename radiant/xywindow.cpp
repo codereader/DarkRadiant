@@ -68,6 +68,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "selection/SelectionBox.h"
 
+#include <boost/lexical_cast.hpp>
+
 //!\todo Rewrite.
 class ClipPoint
 {
@@ -1777,13 +1779,19 @@ void XYWnd::XY_DrawBlockGrid()
   {
     return;
   }
-  const char *value = Node_getEntity(*Map_GetWorldspawn(g_map))->getKeyValue("_blocksize" );
-  if (strlen(value))
-	sscanf( value, "%i", &g_xywindow_globals_private.blockSize );
-
-  if (!g_xywindow_globals_private.blockSize || g_xywindow_globals_private.blockSize > 65536 || g_xywindow_globals_private.blockSize < 1024)
-	  // don't use custom blocksize if it is less than the default, or greater than the maximum world coordinate
+	// Set a default blocksize of 1024
 	g_xywindow_globals_private.blockSize = 1024;
+
+	// Check the worldspawn for a custom blocksize
+	Entity* worldSpawn = Node_getEntity(*Map_GetWorldspawn(g_map));
+	assert(worldSpawn);
+	std::string sizeVal = worldSpawn->getKeyValue("_blocksize");
+
+	// Parse and set the custom blocksize if found
+	if (!sizeVal.empty()) {
+		g_xywindow_globals_private.blockSize = 
+			boost::lexical_cast<int>(sizeVal);
+	}
 
   float	x, y, xb, xe, yb, ye;
   float		w, h;
