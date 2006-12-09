@@ -125,7 +125,7 @@ void ColourSchemeManager::saveScheme(const std::string& name) {
 
 void ColourSchemeManager::saveColourSchemes() {
 	// Delete all existing schemes from the registry
-	GlobalRegistry().deleteXPath("user/ui//colourschemes");
+	GlobalRegistry().deleteXPath("user/ui/colourschemes//scheme");
 	
 	// Save all schemes that are stored in memory 
 	for (ColourSchemeMap::iterator it = _colourSchemes.begin(); it != _colourSchemes.end(); it++) {
