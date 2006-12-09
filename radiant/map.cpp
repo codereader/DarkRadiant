@@ -557,12 +557,25 @@ void FocusViews(const Vector3& point, float angle)
  */
 void Map_StartPosition()
 {
+	// Get the player start entity
 	Entity* entity = Scene_FindPlayerStart();
 
 	if (entity) {
+
+		// Get the entity origin
 		Vector3 origin(entity->getKeyValue("origin"));
-		FocusViews(origin, 
-				   boost::lexical_cast<float>(entity->getKeyValue("angle")));
+		
+		// Check for an angle key, and use it if present
+		float angle;
+		try {
+			angle = boost::lexical_cast<float>(entity->getKeyValue("angle"));
+		}
+		catch (boost::bad_lexical_cast e) {
+			angle = 0;
+		}
+		
+		// Focus the view with the given parameters
+		FocusViews(origin, angle);
 	}
 	else {
 		FocusViews(g_vector3_identity, 0);
