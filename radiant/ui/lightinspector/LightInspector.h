@@ -10,6 +10,9 @@
 /* FORWARD DECLS */
 
 class Entity;
+namespace gtkutil {
+	class Vector3Entry;
+}
 
 namespace ui
 {
@@ -23,9 +26,10 @@ class LightInspector
 	// Main dialog widget
 	GtkWidget* _widget;
 	
-	// Projected light flag
+	// Projected light flags both before and after dialog changes
 	bool _isProjected;
-	
+	bool _wasProjected;
+
 	// Light type toggle buttons
 	GtkWidget* _pointLightToggle;
 	GtkWidget* _projLightToggle;
@@ -36,13 +40,8 @@ class LightInspector
 	// Texture selection combo
 	ui::LightTextureSelector _texSelector;
 
-	// Panels of widgets for Point and Projected lights
-	GtkWidget* _pointPanel;
-	GtkWidget* _projPanel;
-	
-	// Hashmap of named GtkEntry widgets to set light properties
-	typedef std::map<std::string, GtkWidget*> EntryMap;
-	EntryMap _entryMap;
+	// Checkbox to enable start/end for projected lights
+	GtkWidget* _useStartEnd;
 	
 	// The light entity to edit
 	Entity* _entity;
@@ -61,9 +60,6 @@ private:
 	GtkWidget* createOptionsPanel();
 	GtkWidget* createTextureWidgets();
 	GtkWidget* createButtons();
-
-	// Add a named entry to the map and return the created GtkWidget
-	GtkWidget* addEntry(const std::string& name);
 
 	// GTK CALLBACKS
 	static void _onProjToggle(GtkWidget*, LightInspector*);	

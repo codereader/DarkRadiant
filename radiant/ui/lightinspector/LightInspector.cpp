@@ -29,12 +29,16 @@ namespace {
 	const char* NOSPECULAR_TEXT = "Skip specular lighting";
 	const char* NODIFFUSE_TEXT = "Skip diffuse lighting";
 	
+	GtkAttachOptions EXPAND_FILL =
+		static_cast<GtkAttachOptions>(GTK_EXPAND | GTK_FILL);
+	
 }
 
 // Private constructor creates GTK widgets
 LightInspector::LightInspector()
 : _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
-  _isProjected(false)
+  _isProjected(false),
+  _wasProjected(false)
 {
 	// Window properties
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), MainFrame_getWindow());
@@ -45,8 +49,8 @@ LightInspector::LightInspector()
     // Window size
 	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
 	gtk_window_set_default_size(GTK_WINDOW(_widget), 
-								gint(gdk_screen_get_width(scr) * 0.66), 
-								gdk_screen_get_height(scr) / 2);
+								gint(gdk_screen_get_width(scr) * 0.6), 
+								-1);
     
     // Widget must hide not destroy when closed
     g_signal_connect(G_OBJECT(_widget), 
@@ -56,20 +60,33 @@ LightInspector::LightInspector()
 
 	// Pack in widgets. 
 
-	// Left-hand panels (pointlight, projected light, options)
+	// Left-hand panels (volume, colour, options)
 	GtkWidget* panels = gtk_vbox_new(FALSE, 12);
+
 	gtk_box_pack_start(GTK_BOX(panels), 
 					   gtkutil::LeftAlignedLabel("<b>Light volume</b>"),
 					   FALSE, FALSE, 0);
+
+	// Volume type hbox
+	GtkWidget* typeBox = gtk_hbox_new(FALSE, 12);
+	gtk_box_pack_start(GTK_BOX(typeBox), createPointLightPanel(),
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(typeBox), gtk_vseparator_new(),
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(typeBox), createProjectedPanel(),
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(panels), typeBox, FALSE, FALSE, 0);
+
+	// Light colour
+	_colour = gtk_color_button_new();
 	gtk_box_pack_start(GTK_BOX(panels), 
-					   gtkutil::LeftAlignment(createPointLightPanel(), 12),
+					   gtkutil::LeftAlignedLabel("<b>Colour</b>"), 
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(panels), 
-					   gtkutil::LeftAlignment(gtk_hseparator_new(), 12), 
+					   gtkutil::LeftAlignment(_colour, 12, 0.0),
 					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(panels), 
-					   gtkutil::LeftAlignment(createProjectedPanel(), 12),
-					   FALSE, FALSE, 0);
+
+	// Options panel
 	gtk_box_pack_start(GTK_BOX(panels),
 					   gtkutil::LeftAlignedLabel("<b>Options</b>"),
 					   FALSE, FALSE, 0);
@@ -111,26 +128,7 @@ GtkWidget* LightInspector::createPointLightPanel() {
 	GtkWidget* buttonBox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(buttonBox), _pointLightToggle, FALSE, FALSE, 0);
 	
-	// Table contains entries for radius and center
-	_pointPanel = gtk_table_new(2, 2, FALSE);
-	gtk_table_attach(GTK_TABLE(_pointPanel), gtk_label_new("Radius"),
-					 0, 1, 0, 1, // left, right, top, bottom
-					 GTK_EXPAND, GTK_EXPAND, 3, 3); // xopts, yopts, xpad, ypad
-	gtk_table_attach(GTK_TABLE(_pointPanel), gtk_label_new("Center"),
-					 0, 1, 1, 2,
-					 GTK_EXPAND, GTK_EXPAND, 3, 3);
-	gtk_table_attach(GTK_TABLE(_pointPanel), addEntry("radius"),
-					 1, 2, 0, 1,
-					 GTK_EXPAND, GTK_EXPAND, 3, 3);
-	gtk_table_attach(GTK_TABLE(_pointPanel), addEntry("center"),
-					 1, 2, 1, 2,
-					 GTK_EXPAND, GTK_EXPAND, 3, 3);
-	
-	// Main hbox for panel
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(hbx), buttonBox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbx), _pointPanel, TRUE, TRUE, 0);
-	return hbx;
+	return buttonBox;
 }
 
 // Create the projected light panel
@@ -144,36 +142,16 @@ GtkWidget* LightInspector::createProjectedPanel() {
 					 G_CALLBACK(_onProjToggle),
 					 this);
 
-	// Pack button into box to stop it expanding vertically
-	GtkWidget* buttonBox = gtk_vbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(buttonBox), _projLightToggle, FALSE, FALSE, 0);
-
-	// Table contains entries for up, right and target
-	_projPanel = gtk_table_new(3, 2, FALSE);
-	gtk_table_attach(GTK_TABLE(_projPanel), gtk_label_new("Target"),
-					 0, 1, 0, 1, // left, right, top, bottom
-					 GTK_EXPAND, GTK_EXPAND, 3, 3); // xopts, yopts, xpad, ypad
-	gtk_table_attach(GTK_TABLE(_projPanel), gtk_label_new("Up"),
-					 0, 1, 1, 2,
-					 GTK_EXPAND, GTK_EXPAND, 3, 3);
-	gtk_table_attach(GTK_TABLE(_projPanel), gtk_label_new("Right"),
-					 0, 1, 2, 3,
-					 GTK_EXPAND, GTK_EXPAND, 3, 3);
-	gtk_table_attach(GTK_TABLE(_projPanel), addEntry("target"),
-					 1, 2, 0, 1,
-					 GTK_EXPAND, GTK_EXPAND, 3, 3);
-	gtk_table_attach(GTK_TABLE(_projPanel), addEntry("up"),
-					 1, 2, 1, 2,
-					 GTK_EXPAND, GTK_EXPAND, 3, 3);
-	gtk_table_attach(GTK_TABLE(_projPanel), addEntry("right"),
-					 1, 2, 2, 3,
-					 GTK_EXPAND, GTK_EXPAND, 3, 3);
-
-	// HBox for panel
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(hbx), buttonBox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbx), _projPanel, TRUE, TRUE, 0);
-	return hbx;
+	// Start/end checkbox
+	_useStartEnd = gtk_check_button_new_with_label("Use start and end planes");
+					
+	// VBox for panel
+	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
+	gtk_box_pack_start(GTK_BOX(vbx), 
+					   gtkutil::LeftAlignment(_projLightToggle), 
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), _useStartEnd, FALSE, FALSE, 0);
+	return vbx;
 }
 
 // Create the options checkboxes
@@ -194,17 +172,9 @@ GtkWidget* LightInspector::createOptionsPanel() {
 // Create the texture widgets
 GtkWidget* LightInspector::createTextureWidgets() {
 	
-	// VBox contains colour and texture selection widgets
+	// VBox contains texture selection widgets
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
 	
-	_colour = gtk_color_button_new();
-
-	gtk_box_pack_start(GTK_BOX(vbx), 
-					   gtkutil::LeftAlignedLabel("<b>Colour</b>"), 
-					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), 
-					   gtkutil::LeftAlignment(_colour, 12, 0.0),
-					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), 
 					   gtkutil::LeftAlignedLabel("<b>Texture</b>"), 
 					   FALSE, FALSE, 0);
@@ -231,13 +201,6 @@ GtkWidget* LightInspector::createButtons() {
 	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
 
 	return gtkutil::RightAlignment(hbx);
-}
-
-// Add a new entry to the map
-GtkWidget* LightInspector::addEntry(const std::string& name) {
-	GtkWidget* entry = gtk_entry_new();
-	_entryMap[name] = entry;
-	return entry;
 }
 
 // Show this dialog
@@ -327,23 +290,21 @@ void LightInspector::_onOK(GtkWidget* w, LightInspector* self) {
 						  	  % (col.green/65535.0)
 						  	  % (col.blue/65535.0)).str());
 	
-	// Set shape keyvalues based on the light type
-	if (self->_isProjected) {
-		e->setKeyValue("light_target", 
-				   gtk_entry_get_text(GTK_ENTRY(self->_entryMap["target"])));
-		e->setKeyValue("light_right", 
-				   gtk_entry_get_text(GTK_ENTRY(self->_entryMap["right"])));
-		e->setKeyValue("light_up", 
-				   gtk_entry_get_text(GTK_ENTRY(self->_entryMap["up"])));
+	// Set shape keyvalues based on the light type, but only if it has changed
+	// in the dialog (to avoid replacing unchanged values with defaults).
+	if (self->_isProjected && !self->_wasProjected) {
+		// Pointlight changed to projected light
+		e->setKeyValue("light_target", "0 0 -256");
+		e->setKeyValue("light_right", "128 0 0");
+		e->setKeyValue("light_up", "0 128 0");
 
 		e->setKeyValue("light_radius", "");
 		e->setKeyValue("light_center", "");
 	}
-	else {
-		e->setKeyValue("light_radius", 
-				   gtk_entry_get_text(GTK_ENTRY(self->_entryMap["radius"])));
-		e->setKeyValue("light_center", 
-				   gtk_entry_get_text(GTK_ENTRY(self->_entryMap["center"])));
+	else if (self->_wasProjected && !self->_isProjected) {
+		// Projected light changed to pointlight
+		e->setKeyValue("light_radius", "320 320 320");
+		e->setKeyValue("light_center", "0 0 0");
 
 		e->setKeyValue("light_target", "");
 		e->setKeyValue("light_right", "");
@@ -360,43 +321,12 @@ void LightInspector::_onCancel(GtkWidget* w, LightInspector* self) {
 
 // Update panel state
 void LightInspector::updatePanels() {
-	if (_isProjected) {
-		gtk_widget_set_sensitive(_projPanel, TRUE);	
-		gtk_widget_set_sensitive(_pointPanel, FALSE);	
-	}
-	else {
-		gtk_widget_set_sensitive(_projPanel, FALSE);	
-		gtk_widget_set_sensitive(_pointPanel, TRUE);
-	}
+
 }
 
 // Get keyvals from entity and insert into text entries
 void LightInspector::getValuesFromEntity() {
 
-	// First set default values, in case entity does not contain all keys (which
-	// it probably won't).
-	gtk_entry_set_text(GTK_ENTRY(_entryMap["radius"]), "320 320 320");
-	gtk_entry_set_text(GTK_ENTRY(_entryMap["center"]), "0 0 0");
-	gtk_entry_set_text(GTK_ENTRY(_entryMap["target"]), "0 0 -256");
-	gtk_entry_set_text(GTK_ENTRY(_entryMap["right"]), "128 0 0");
-	gtk_entry_set_text(GTK_ENTRY(_entryMap["up"]), "0 128 0");
-
-	// Iterate over each entry in the EntryMap, retrieving the corresponding
-	// keyvalue
-	for (EntryMap::iterator i = _entryMap.begin();
-		 i != _entryMap.end();
-		 ++i)
-	{
-		// Get the value from the entity
-		std::string val = _entity->getKeyValue("light_" + i->first);
-
-		// Only set the widget text if the entity has a value, otherwise leave
-		// at default
-		if (!val.empty()) {
-			gtk_entry_set_text(GTK_ENTRY(i->second), val.c_str());
-		}
-	}
-	
 	// Get the colour key from the entity to set the GtkColorButton
 	Vector3 colour(_entity->getKeyValue("_color"));
 	GdkColor col = { 0,
@@ -414,11 +344,17 @@ void LightInspector::getValuesFromEntity() {
 		// Is a projected light
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_projLightToggle),
 									 TRUE);
+
+		// Record the original light type
+		_wasProjected = true;
 	}
 	else {
 		// Is a point light
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_pointLightToggle),
 									 TRUE);
+
+		// Record the original light type
+		_wasProjected = false;
 	}
 }
 
