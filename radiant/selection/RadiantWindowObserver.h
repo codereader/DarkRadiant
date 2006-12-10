@@ -3,8 +3,8 @@
 
 #include "view.h"
 #include "surfacedialog.h" // For apply/copy texture
-#include "ButtonsModifiers.h"
 
+#include "windowobserver.h"
 #include "Device.h"
 #include "SelectObserver.h"
 #include "ManipulateObserver.h"

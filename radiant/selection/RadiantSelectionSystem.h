@@ -5,7 +5,6 @@
 #include "math/matrix.h"
 #include "signal/signal.h"
 #include "SelectionCounter.h"
-#include "ButtonsModifiers.h"
 #include "Manipulators.h"
 
 /* greebo: This can be tricky to understand (and I don't know if I do :D), but I'll try: 

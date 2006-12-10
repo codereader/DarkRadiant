@@ -858,17 +858,6 @@ gboolean disable_freelook_button_press(GtkWidget* widget, GdkEventButton* event,
 	return FALSE;
 }
 
-#if 0
-gboolean mousecontrol_button_press(GtkWidget* widget, GdkEventButton* event, CamWnd* camwnd)
-{
-  if(event->type == GDK_BUTTON_PRESS && event->button == 3)
-  {
-    Cam_MouseControl(camwnd->getCamera(), event->x, widget->allocation.height - 1 - event->y);
-  }
-  return FALSE;
-}
-#endif
-
 void camwnd_update_xor_rectangle(CamWnd& self, Rectangle area)
 {
   if(GTK_WIDGET_VISIBLE(self.m_gl_widget))
@@ -894,7 +883,7 @@ gboolean selection_button_press(GtkWidget* widget, GdkEventButton* event, Window
  * to the according window observer. */
 gboolean selection_button_release(GtkWidget* widget, GdkEventButton* event, WindowObserver* observer) {
 	if (event->type == GDK_BUTTON_RELEASE) {
-		observer->onMouseUp(WindowVector_forDouble(event->x, event->y), event);
+		observer->onMouseUp(WindowVector(event->x, event->y), event);
 	}
 	return FALSE;
 }
@@ -902,7 +891,7 @@ gboolean selection_button_release(GtkWidget* widget, GdkEventButton* event, Wind
 void selection_motion(gdouble x, gdouble y, guint state, void* data)
 {
   //globalOutputStream() << "motion... ";
-  reinterpret_cast<WindowObserver*>(data)->onMouseMotion(WindowVector_forDouble(x, y), state);
+  reinterpret_cast<WindowObserver*>(data)->onMouseMotion(WindowVector(x, y), state);
 }
 
 inline WindowVector windowvector_for_widget_centre(GtkWidget* widget)
