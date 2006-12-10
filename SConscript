@@ -335,7 +335,8 @@ radiant_src = [
 'patch/PatchModule.cpp',
 'plugin/PluginManager.cpp',
 'plugin/PluginSlots.cpp',
-'brushexport/BrushExportOBJ.cpp'
+'brushexport/BrushExportOBJ.cpp',
+'ui/eventmapper/EventMapper.cpp'
 ]
 
 for i in range(len(radiant_src)):

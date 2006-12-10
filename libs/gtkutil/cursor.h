@@ -40,42 +40,43 @@ void Sys_GetCursorPos(GtkWindow* window, int *x, int *y);
 void Sys_SetCursorPos(GtkWindow* window, int x, int y);
 
 
+/* greebo: this class is used by the XYViews as some sort of "onMouseMotion" callback wrapper
+ * I don't know why this exactly has to be used in such a way instead of 
+ * calling the XYWindow methods directly, but as always: If it ain't broken, don't fix it.
+ */
+class DeferredMotion {
+	guint m_handler;
+	typedef void(*MotionFunction)(gdouble x, gdouble y, guint state, void* data);
+	MotionFunction m_function;
+	void* m_data;
+	gdouble m_x;
+	gdouble m_y;
+	guint m_state;
 
-class DeferredMotion
-{
-  guint m_handler;
-  typedef void(*MotionFunction)(gdouble x, gdouble y, guint state, void* data);
-  MotionFunction m_function;
-  void* m_data;
-  gdouble m_x;
-  gdouble m_y;
-  guint m_state;
-
-  static gboolean deferred(DeferredMotion* self)
-  {
-    self->m_handler = 0;
-    self->m_function(self->m_x, self->m_y, self->m_state, self->m_data);
-    return FALSE;
-  }
+	static gboolean deferred(DeferredMotion* self) {
+		self->m_handler = 0;
+		self->m_function(self->m_x, self->m_y, self->m_state, self->m_data);
+		return FALSE;
+	}
+	
 public:
-  DeferredMotion(MotionFunction function, void* data) : m_handler(0), m_function(function), m_data(data)
-  {
-  }
-  void motion(gdouble x, gdouble y, guint state)
-  {
-    m_x = x;
-    m_y = y;
-    m_state = state;
-    if(m_handler == 0)
-    {
-      m_handler = g_idle_add((GSourceFunc)deferred, this);
-    }
-  }
-  static gboolean gtk_motion(GtkWidget *widget, GdkEventMotion *event, DeferredMotion* self)
-  {
-    self->motion(event->x, event->y, event->state);
-    return FALSE;
-  }
+	DeferredMotion(MotionFunction function, void* data) : m_handler(0), m_function(function), m_data(data)
+	{}
+	
+	void motion(gdouble x, gdouble y, guint state) {
+		m_x = x;
+		m_y = y;
+		m_state = state;
+		if (m_handler == 0) {
+			m_handler = g_idle_add((GSourceFunc)deferred, this);
+		}
+	}
+	
+	// greebo: This is the actual callback method that gets connected via to the "motion_notify_event"
+	static gboolean gtk_motion(GtkWidget *widget, GdkEventMotion *event, DeferredMotion* self) {
+		self->motion(event->x, event->y, event->state);
+		return FALSE;
+	}
 };
 
 class DeferredMotionDelta

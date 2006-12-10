@@ -1,6 +1,7 @@
 #ifndef MANIPULATEOBSERVER_H_
 #define MANIPULATEOBSERVER_H_
 
+#include "gdk/gdkevents.h"
 #include "Device.h"
 #include "RadiantSelectionSystem.h"
 
@@ -9,9 +10,15 @@
  * RadiantWindowObserver, which is registered in the GlobalWindowObservers list
  */
 class ManipulateObserver {
+	GdkEventButton* _event;
 public:
-  DeviceVector _epsilon;
-  const View* _view;
+	DeviceVector _epsilon;
+	const View* _view;
+
+	// Updates the internal event pointer
+	void setEvent(GdkEventButton* event) {
+		_event = event;
+	}
 
 	// greebo: Handles the mouseDown event and checks whether a manipulator can be made active 
 	bool mouseDown(DeviceVector position) {

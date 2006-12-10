@@ -21,7 +21,11 @@ public:
 
 /* greebo: This is the hub class that observes a view, the implementation of the abstract base class above. 
  * It basically checks all "incoming" mouse clicks and passes them to the according 
- * subclasses like Selector_ and ManipulateObserver, these in turn pass them to the RadiantSelectionSystem */
+ * subclasses like Selector_ and ManipulateObserver, these in turn pass them to the RadiantSelectionSystem 
+ * 
+ * Note that some calls for button/modifiers could be catched in the XYView / Camview callback methods, so that
+ * they never reach the WindowObserver (examples may be a Clipper command). 
+ */
 class RadiantWindowObserver : public SelectionSystemWindowObserver {
 	// The tolerance when it comes to the construction of selection boxes
 	enum {
@@ -59,17 +63,17 @@ public:
 	void onSizeChanged(int width, int height);
   
 	// Handles the mouseDown event, basically determines which action should be performed (select or manipulate)
-	void onMouseDown(const WindowVector& position, ButtonIdentifier button, ModifierFlags modifiers);
+	void onMouseDown(const WindowVector& position, GdkEventButton* event);
 	
   	/* greebo: Handle the mouse movement. This notifies the registered mouseMove callback
   	 * and resets the cycle selection counter 
   	 */
-	void onMouseMotion(const WindowVector& position, ModifierFlags modifiers);
+	void onMouseMotion(const WindowVector& position, const unsigned int& state);
 	
 	/* greebo: Handle the mouseUp event. Usually, this means the end of an operation, so
 	 * this has to check, if there are any callbacks connected, and call them if this is the case
 	 */
-  	void onMouseUp(const WindowVector& position, ButtonIdentifier button, ModifierFlags modifiers);
+  	void onMouseUp(const WindowVector& position, GdkEventButton* event);
   	
   	// Called upon modifier key press/release, updates the interal bit mask accordingly
   	void onModifierDown(ModifierFlags type);

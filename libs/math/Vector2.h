@@ -35,6 +35,14 @@ public:
     	y() = y_;
     }
     
+    /** Construct a BasicVector2 out of 2 elements of type OtherType
+     */
+    template <typename OtherType>
+  	BasicVector2(const OtherType& x_, const OtherType& y_) {
+    	x() = static_cast<Element>(x_);
+    	y() = static_cast<Element>(y_);
+    }
+    
     // Return NON-CONSTANT references to the vector components
     Element& x() {
     	return m_elements[0];

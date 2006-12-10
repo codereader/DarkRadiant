@@ -6,6 +6,7 @@
 
 // A vector representing the mouse pointer coordinates
 typedef Vector2 DeviceVector;
+typedef struct _GdkEventButton GdkEventButton;
 
 inline float screen_normalised(float pos, std::size_t size) {
   return ((2.0f * pos) / size) - 1.0f;
@@ -33,7 +34,7 @@ inline DeviceVector device_constrained(DeviceVector device) {
 
 // greebo: The mouseOperations callbacks, should they really be a global?
 typedef Callback1<DeviceVector> MouseEventCallback;
-extern Single<MouseEventCallback> g_mouseMovedCallback;
 extern Single<MouseEventCallback> g_mouseUpCallback;
+extern Single<MouseEventCallback> g_mouseMovedCallback;
 
 #endif /*DEVICE_H_*/

@@ -5,6 +5,8 @@
 #include "Device.h"
 #include "windowobserver.h"
 #include "SelectionBox.h"
+#include "gdk/gdkevents.h"
+#include "ui/eventmapper/EventMapper.h"
 
 /* greebo: This is the class that handles the selection-related mouse operations, like Alt-Shift-Click,
  * Selection toggles and drag selections. All the other modifier combinations that might occur are ignored,
@@ -19,31 +21,32 @@ public:
 	DeviceVector _current;		// This is set during mouseMove
 	DeviceVector _epsilon;		// A small threshold value to "swallow" minimal mouse moves
 	
-	// The keyboard modifier states (Shift, Ctrl, Alt)
-	ModifierFlags _state;
-	  
-	std::size_t _unmovedReplaces;	
+	std::size_t _unmovedReplaces;
 	
 	const View* _view;
 	RectangleCallback _windowUpdate;
+	
+	GdkEventButton* _event;
+	unsigned int _state;
 	
 private:
 	/* Returns the current "selection mode" (eToggle, eReplace, etc.) according
 	* to the mouse buttons and modifiers
 	* Note: standard return value is eManipulator
 	*/
-	SelectionSystem::EModifier modifier_for_state(ModifierFlags state) {
-		// greebo: If (Shift) or (Shift-Control) ist held, switch to eToggle Mode  
-		if(state == c_modifier_toggle || state == c_modifier_toggle_face) {
+	SelectionSystem::EModifier getModifier() {
+		// Retrieve the according ObserverEvent for the GdkEventButton
+		ui::ObserverEvent observerEvent = GlobalEventMapper().getObserverEvent(_event);
+		
+		if (observerEvent == ui::obsToggle || observerEvent == ui::obsToggleFace) {
 			return SelectionSystem::eToggle;
 		}
-	    
-	    // greebo: If (Shift-Alt) or (Ctrl-Shift-Alt) is held, switch to eReplace Mode 
-	    if(state == c_modifier_replace || state == c_modifier_replace_face) {
-	      return SelectionSystem::eReplace;
-	    }
-	    
-	    // greebo: Return the standard case: eManipulator mode, if none of the above apply
+		
+		if (observerEvent == ui::obsReplace || observerEvent == ui::obsReplaceFace) {
+			return SelectionSystem::eReplace;
+		}
+		
+		 // greebo: Return the standard case: eManipulator mode, if none of the above apply
 	    return SelectionSystem::eManipulator;
 	}
 
@@ -69,9 +72,13 @@ public:
 	SelectObserver() : 
 		_start(0.0f, 0.0f), 
 		_current(0.0f, 0.0f), 
-		_state(c_modifierNone), 
 		_unmovedReplaces(0)
-	{}
+	{};
+
+	// Updates the internal event pointer
+	void setEvent(GdkEventButton* event) {
+		_event = event;
+	}
 
 	// greebo: This gets the rectangle coordinates and passes them to the RectangleCallback function
   	void draw_area() {
@@ -82,10 +89,15 @@ public:
 	 * The DeviceVector position is passed with constrained values that are between [-1,+1]
 	 */
   	void testSelect(DeviceVector position) {
-	  	// Obtain the current modifier status (eManipulator, etc.)
-	    SelectionSystem::EModifier modifier = modifier_for_state(_state);
-	    
-	    // If the user pressed some of the modifiers (Shift, Alt, Ctrl) the mode is NOT eManipulator
+  		// Obtain the current modifier status (eManipulator, etc.)
+	    SelectionSystem::EModifier modifier = getModifier();
+		
+		// Determine, if we have a face operation
+    	// Retrieve the according ObserverEvent for the GdkEventButton
+		ui::ObserverEvent observerEvent = GlobalEventMapper().getObserverEvent(_event);
+		bool isFaceOperation = (observerEvent == ui::obsToggleFace || observerEvent == ui::obsReplaceFace);
+		
+		// If the user pressed some of the modifiers (Shift, Alt, Ctrl) the mode is NOT eManipulator
 	    // so the if clause is true if there are some modifiers active
 	    if (modifier != SelectionSystem::eManipulator) {
 	    	// Get the distance of the mouse pointer from the starting point
@@ -95,8 +107,9 @@ public:
 	      	if (fabs(delta.x()) > _epsilon.x() && fabs(delta.y()) > _epsilon.y()) {
 	      		// This is a drag operation with a modifier held
 	        	DeviceVector delta(position - _start);	// << superfluous?
+	        	
 	        	// Call the selectArea command that does the actual selecting
-	        	GlobalSelectionSystem().SelectArea(*_view, &_start[0], &delta[0], modifier, (_state & c_modifier_face) != c_modifierNone);
+	        	GlobalSelectionSystem().SelectArea(*_view, &_start[0], &delta[0], modifier, isFaceOperation);
 	      	}
 	      	else {
 	      		// greebo: This is a click operation with a modifier held
@@ -106,7 +119,7 @@ public:
 	          		modifier = SelectionSystem::eCycle;
 	        	}
 	        	// Call the selectPoint command in RadiantSelectionSystem that does the actual selecting
-	        	GlobalSelectionSystem().SelectPoint(*_view, &position[0], &_epsilon[0], modifier, (_state & c_modifier_face) != c_modifierNone);
+	        	GlobalSelectionSystem().SelectPoint(*_view, &position[0], &_epsilon[0], modifier, isFaceOperation);
 	      	}
 	    }
 		
@@ -117,31 +130,13 @@ public:
 
 	// Returns true if the user is currently selecting something (i.e. if any modifieres are held) 
 	bool selecting() const {
-		return _state != c_modifier_manipulator;
+		ui::ObserverEvent observerEvent = GlobalEventMapper().getObserverEvent(_state);
+		return observerEvent != ui::obsManipulate;
 	}
 
-	// Sets the current state to <state>
-	void setState(ModifierFlags state) {
-		bool was_selecting = selecting();
-		_state = state;
-		if (was_selecting ^ selecting()) {
-			draw_area();
-		}
-	}
-	
-	// Returns the current modifier flags
-	ModifierFlags getState() const {
-		return _state;
-	}
-
-	// Sets the specified modifier active
-	void modifierEnable(ModifierFlags type) {
-		setState(bitfield_enable(getState(), type));
-	}
-	
-	// Sets the specified modifier inactive
-	void modifierDisable(ModifierFlags type) {
-		setState(bitfield_disable(getState(), type));
+	// Called right before onMouseMotion to store the current GDK state (needed for draw_area)
+	void setState(const unsigned int& state) {
+		_state = state; 
 	}
 
 	// onMouseDown: Save the current mouse position as start, the mouse operation is beginning now
