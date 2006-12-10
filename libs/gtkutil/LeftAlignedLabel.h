@@ -1,6 +1,8 @@
 #ifndef LEFTALIGNEDLABEL_H_
 #define LEFTALIGNEDLABEL_H_
 
+#include <gtk/gtklabel.h>
+
 namespace gtkutil
 {
 
