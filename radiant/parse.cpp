@@ -19,10 +19,12 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "parse.h"
-
 #include "script/scripttokeniser.h"
-#include "script/scripttokenwriter.h"
+
+/** Implementation of the ScriptLibrary module which provides Tokenisers to
+ * other code.
+ * @TODO: Remove this and use std/boost-derived tokenisers.
+ */
 
 class ScriptLibraryAPI
 {
@@ -35,7 +37,6 @@ public:
   {
     m_scriptlibrary.m_pfnNewScriptTokeniser = &NewScriptTokeniser;
     m_scriptlibrary.m_pfnNewSimpleTokeniser = &NewSimpleTokeniser;
-    m_scriptlibrary.m_pfnNewSimpleTokenWriter = &NewSimpleTokenWriter;
   }
   _QERScripLibTable* getTable()
   {

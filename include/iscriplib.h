@@ -43,20 +43,6 @@ public:
 
 class TextInputStream;
 
-class TokenWriter
-{
-public:
-  virtual void release() = 0;
-  virtual void nextLine() = 0;
-  virtual void writeToken(const char* token) = 0;
-  virtual void writeString(const char* string) = 0;
-  virtual void writeInteger(int i) = 0;
-  virtual void writeUnsigned(std::size_t i) = 0;
-  virtual void writeFloat(double f) = 0;
-};
-
-class TextOutputStream;
-
 struct _QERScripLibTable
 {
   INTEGER_CONSTANT(Version, 1);
@@ -64,7 +50,6 @@ struct _QERScripLibTable
 
   Tokeniser& (* m_pfnNewScriptTokeniser)(TextInputStream& istream);
   Tokeniser& (* m_pfnNewSimpleTokeniser)(TextInputStream& istream);
-  TokenWriter& (* m_pfnNewSimpleTokenWriter)(TextOutputStream& ostream);
 };
 
 #include "modulesystem.h"
