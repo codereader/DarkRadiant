@@ -59,6 +59,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "plugin.h"
 #include "timer.h"
 
+#include "ui/eventmapper/EventMapper.h"
+
 Signal0 g_cameraMoved_callbacks;
 
 void AddCameraMovedCallback(const SignalHandler& handler)
@@ -278,43 +280,44 @@ void Camera_setAngles(camera_t& camera, const Vector3& angles)
 }
 
 
-void Camera_FreeMove(camera_t& camera, int dx, int dy)
-{
-  // free strafe mode, toggled by the ctrl key with optional shift for forward movement
-  if(camera.m_strafe)
-  {
-	  const float strafespeed = 0.65f;
+void Camera_FreeMove(camera_t& camera, int dx, int dy) {
+	// free strafe mode, toggled by the keyboard modifiers
+	if (camera.m_strafe) {
+		const float strafespeed = GlobalEventMapper().getCameraStrafeSpeed();
+		const float forwardStrafeFactor = GlobalEventMapper().getCameraForwardStrafeFactor();
 
-	  camera.origin -= camera.vright * strafespeed * dx;
-	  if(camera.m_strafe_forward)
-	    camera.origin += camera.vpn * strafespeed * dy;
-	  else
-	    camera.origin += camera.vup * strafespeed * dy;
-  }
-  else// free rotation
-  {
-    const float dtime = 0.1f;
+		camera.origin -= camera.vright * strafespeed * dx;
+	  
+		if (camera.m_strafe_forward) {
+			camera.origin += camera.vpn * strafespeed * dy * forwardStrafeFactor;
+		}
+		else {
+			camera.origin += camera.vup * strafespeed * dy * forwardStrafeFactor;
+		}
+	}
+	else { // free rotation
+		const float dtime = 0.1f;
 
-    if (g_camwindow_globals_private.m_bCamInverseMouse)
-        camera.angles[CAMERA_PITCH] -= dy * dtime * g_camwindow_globals_private.m_nAngleSpeed;
-    else
-        camera.angles[CAMERA_PITCH] += dy * dtime * g_camwindow_globals_private.m_nAngleSpeed;
+		if (g_camwindow_globals_private.m_bCamInverseMouse)
+			camera.angles[CAMERA_PITCH] -= dy * dtime * g_camwindow_globals_private.m_nAngleSpeed;
+		else
+			camera.angles[CAMERA_PITCH] += dy * dtime * g_camwindow_globals_private.m_nAngleSpeed;
 
-    camera.angles[CAMERA_YAW] += dx * dtime * g_camwindow_globals_private.m_nAngleSpeed;
+		camera.angles[CAMERA_YAW] += dx * dtime * g_camwindow_globals_private.m_nAngleSpeed;
 
-    if (camera.angles[CAMERA_PITCH] > 90)
-        camera.angles[CAMERA_PITCH] = 90;
-    else if (camera.angles[CAMERA_PITCH] < -90)
-        camera.angles[CAMERA_PITCH] = -90;
+		if (camera.angles[CAMERA_PITCH] > 90)
+			camera.angles[CAMERA_PITCH] = 90;
+		else if (camera.angles[CAMERA_PITCH] < -90)
+			camera.angles[CAMERA_PITCH] = -90;
 
-    if (camera.angles[CAMERA_YAW] >= 360)
-        camera.angles[CAMERA_YAW] -=360;
-    else if (camera.angles[CAMERA_YAW] <= 0)
-        camera.angles[CAMERA_YAW] +=360;
-  }
+		if (camera.angles[CAMERA_YAW] >= 360)
+			camera.angles[CAMERA_YAW] -=360;
+		else if (camera.angles[CAMERA_YAW] <= 0)
+			camera.angles[CAMERA_YAW] +=360;
+	}
 
-  Camera_updateModelview(camera);
-  Camera_Freemove_updateAxes(camera);
+	Camera_updateModelview(camera);
+	Camera_Freemove_updateAxes(camera);
 }
 
 void Cam_MouseControl(camera_t& camera, int x, int y)
@@ -653,17 +656,18 @@ public:
 };
 
 
-void Camera_motionDelta(int x, int y, unsigned int state, void* data)
-{
-  camera_t* cam = reinterpret_cast<camera_t*>(data);
+void Camera_motionDelta(int x, int y, unsigned int state, void* data) {
+	camera_t* cam = reinterpret_cast<camera_t*>(data);
 
-  cam->m_mouseMove.motion_delta(x, y, state);
-  cam->m_strafe = (state & GDK_CONTROL_MASK) != 0;
-
-  if(cam->m_strafe)
-    cam->m_strafe_forward = (state & GDK_SHIFT_MASK) != 0;
-  else
-    cam->m_strafe_forward = false;
+	cam->m_mouseMove.motion_delta(x, y, state);
+	cam->m_strafe = GlobalEventMapper().strafeActive(state);
+	
+	if (cam->m_strafe) {
+		cam->m_strafe_forward = GlobalEventMapper().strafeForwardActive(state);
+	}
+	else {
+		cam->m_strafe_forward = false;
+	}
 }
 
 class CamWnd
@@ -833,24 +837,25 @@ void Camera_setAngles(CamWnd& camwnd, const Vector3& angles)
 // =============================================================================
 // CamWnd class
 
-gboolean enable_freelook_button_press(GtkWidget* widget, GdkEventButton* event, CamWnd* camwnd)
-{
-  if(event->type == GDK_BUTTON_PRESS && event->button == 3)
-  {
-    camwnd->EnableFreeMove();
-    return TRUE;
-  }
-  return FALSE;
+gboolean enable_freelook_button_press(GtkWidget* widget, GdkEventButton* event, CamWnd* camwnd) {
+	if (event->type == GDK_BUTTON_PRESS) {
+		
+		if (GlobalEventMapper().stateMatchesCameraViewEvent(ui::camEnableFreeLookMode, event)) {
+			camwnd->EnableFreeMove();
+			return TRUE;
+		}
+	}
+	return FALSE;
 }
 
-gboolean disable_freelook_button_press(GtkWidget* widget, GdkEventButton* event, CamWnd* camwnd)
-{
-  if(event->type == GDK_BUTTON_PRESS && event->button == 3)
-  {
-    camwnd->DisableFreeMove();
-    return TRUE;
-  }
-  return FALSE;
+gboolean disable_freelook_button_press(GtkWidget* widget, GdkEventButton* event, CamWnd* camwnd) {
+	if (event->type == GDK_BUTTON_PRESS) {
+		if (GlobalEventMapper().stateMatchesCameraViewEvent(ui::camDisableFreeLookMode, event)) {
+			camwnd->DisableFreeMove();
+			return TRUE;
+		}
+	}
+	return FALSE;
 }
 
 #if 0
@@ -873,28 +878,31 @@ void camwnd_update_xor_rectangle(CamWnd& self, Rectangle area)
 }
 
 
-gboolean selection_button_press(GtkWidget* widget, GdkEventButton* event, WindowObserver* observer)
-{
-  if(event->type == GDK_BUTTON_PRESS)
-  {
-    observer->onMouseDown(WindowVector_forDouble(event->x, event->y), button_for_button(event->button), modifiers_for_state(event->state));
-  }
-  return FALSE;
+/* greebo: GTK Callback: This gets called on "button_press_event" and basically just passes the call on 
+ * to the according window observer.
+ */
+gboolean selection_button_press(GtkWidget* widget, GdkEventButton* event, WindowObserver* observer) {
+	
+	// Check for the correct event type
+	if (event->type == GDK_BUTTON_PRESS) {
+		observer->onMouseDown(WindowVector(event->x, event->y), event);
+	}
+	return FALSE;
 }
 
-gboolean selection_button_release(GtkWidget* widget, GdkEventButton* event, WindowObserver* observer)
-{
-  if(event->type == GDK_BUTTON_RELEASE)
-  {
-    observer->onMouseUp(WindowVector_forDouble(event->x, event->y), button_for_button(event->button), modifiers_for_state(event->state));
-  }
-  return FALSE;
+/* greebo: GTK Callback: This gets called on "button_release_event" and basically just passes the call on 
+ * to the according window observer. */
+gboolean selection_button_release(GtkWidget* widget, GdkEventButton* event, WindowObserver* observer) {
+	if (event->type == GDK_BUTTON_RELEASE) {
+		observer->onMouseUp(WindowVector_forDouble(event->x, event->y), event);
+	}
+	return FALSE;
 }
 
 void selection_motion(gdouble x, gdouble y, guint state, void* data)
 {
   //globalOutputStream() << "motion... ";
-  reinterpret_cast<WindowObserver*>(data)->onMouseMotion(WindowVector_forDouble(x, y), modifiers_for_state(state));
+  reinterpret_cast<WindowObserver*>(data)->onMouseMotion(WindowVector_forDouble(x, y), state);
 }
 
 inline WindowVector windowvector_for_widget_centre(GtkWidget* widget)
@@ -902,44 +910,43 @@ inline WindowVector windowvector_for_widget_centre(GtkWidget* widget)
   return WindowVector(static_cast<float>(widget->allocation.width / 2), static_cast<float>(widget->allocation.height / 2));
 }
 
-gboolean selection_button_press_freemove(GtkWidget* widget, GdkEventButton* event, WindowObserver* observer)
-{
-  if(event->type == GDK_BUTTON_PRESS)
-  {
-    observer->onMouseDown(windowvector_for_widget_centre(widget), button_for_button(event->button), modifiers_for_state(event->state));
-  }
-  return FALSE;
+// greebo: The GTK Callback during freemove mode for mouseDown. Passes the call on to the Windowobserver
+gboolean selection_button_press_freemove(GtkWidget* widget, GdkEventButton* event, WindowObserver* observer) {
+	// Check for the correct event type
+	if (event->type == GDK_BUTTON_PRESS) {
+		observer->onMouseDown(windowvector_for_widget_centre(widget), event);
+	}
+	return FALSE;
 }
 
-gboolean selection_button_release_freemove(GtkWidget* widget, GdkEventButton* event, WindowObserver* observer)
-{
-  if(event->type == GDK_BUTTON_RELEASE)
-  {
-    observer->onMouseUp(windowvector_for_widget_centre(widget), button_for_button(event->button), modifiers_for_state(event->state));
-  }
-  return FALSE;
+// greebo: The GTK Callback during freemove mode for mouseUp. Passes the call on to the Windowobserver
+gboolean selection_button_release_freemove(GtkWidget* widget, GdkEventButton* event, WindowObserver* observer) {
+	if (event->type == GDK_BUTTON_RELEASE) {
+		observer->onMouseUp(windowvector_for_widget_centre(widget), event);
+	}
+	return FALSE;
 }
 
-gboolean selection_motion_freemove(GtkWidget *widget, GdkEventMotion *event, WindowObserver* observer)
-{
-  observer->onMouseMotion(windowvector_for_widget_centre(widget), modifiers_for_state(event->state));
-  return FALSE;
+// greebo: The GTK Callback during freemove mode for mouseMoved. Passes the call on to the Windowobserver
+gboolean selection_motion_freemove(GtkWidget *widget, GdkEventMotion *event, WindowObserver* observer) {
+	observer->onMouseMotion(windowvector_for_widget_centre(widget), event->state);
+	return FALSE;
 }
 
-gboolean wheelmove_scroll(GtkWidget* widget, GdkEventScroll* event, CamWnd* camwnd)
-{
-  if(event->direction == GDK_SCROLL_UP)
-  {
-    Camera_Freemove_updateAxes(camwnd->getCamera());
-    Camera_setOrigin(*camwnd, Camera_getOrigin(*camwnd) + camwnd->getCamera().forward * static_cast<float>(g_camwindow_globals_private.m_nMoveSpeed));
-  }
-  else if(event->direction == GDK_SCROLL_DOWN)
-  {
-    Camera_Freemove_updateAxes(camwnd->getCamera());
-    Camera_setOrigin(*camwnd, Camera_getOrigin(*camwnd) + camwnd->getCamera().forward * (-static_cast<float>(g_camwindow_globals_private.m_nMoveSpeed)));
-  }
+// greebo: The GTK Callback during freemove mode for scroll events.
+gboolean wheelmove_scroll(GtkWidget* widget, GdkEventScroll* event, CamWnd* camwnd) {
+	
+	// Determine the direction we are moving.
+	if (event->direction == GDK_SCROLL_UP) {
+		Camera_Freemove_updateAxes(camwnd->getCamera());
+		Camera_setOrigin(*camwnd, Camera_getOrigin(*camwnd) + camwnd->getCamera().forward * static_cast<float>(g_camwindow_globals_private.m_nMoveSpeed));
+	}
+	else if (event->direction == GDK_SCROLL_DOWN) {
+		Camera_Freemove_updateAxes(camwnd->getCamera());
+		Camera_setOrigin(*camwnd, Camera_getOrigin(*camwnd) + camwnd->getCamera().forward * (-static_cast<float>(g_camwindow_globals_private.m_nMoveSpeed)));
+	}
 
-  return FALSE;
+	return FALSE;
 }
 
 gboolean camera_size_allocate(GtkWidget* widget, GtkAllocation* allocation, CamWnd* camwnd)

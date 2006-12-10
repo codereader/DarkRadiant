@@ -137,7 +137,7 @@
 		<brush_size_info value="Brush Size Info" />
 		<light_volumes value="Light Volumes" />
 		<brush_vertices value="Brush Vertices" />
-		<patch_vertex_inside value="Patch Inside Vertex" />
+		<patch_vertex_inside value="Patch Inner Vertex" />
 		<patch_vertex_corner value="Patch Corner Vertex" />
 		<light_vertex_deselected value="Light Vertices (deselected)" />
 		<light_vertex_selected value="Light Vertices (selected)" />

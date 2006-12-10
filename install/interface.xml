@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<interface>
+	<buttons>
+		<!-- Define the button IDs -->
+		<button name="MOUSE_LEFT" id="1" />
+		<button name="MOUSE_RIGHT" id="3" />
+		<button name="MOUSE_MIDDLE" id="2" />
+		<button name="MOUSE_THUMB" id="4" />
+		<button name="MOUSE_FIVE" id="5" />
+	</buttons>
+	<modifiers>
+		<!-- Modifier definitions (referring to a bitfield, you better don't change these) -->
+		<modifier name="SHIFT" bitIndex="0" />
+		<modifier name="CONTROL" bitIndex="1" />
+		<modifier name="ALT" bitIndex="2" />
+	</modifiers>
+	<xyview>
+		<event name="MoveView" button="MOUSE_RIGHT" modifiers="" />
+		<event name="NewBrushDrag" button="MOUSE_LEFT" modifiers="" />
+		<!-- The event Select can be interpreted as "Select" or "Clip", depending on the situation
+			 This event is also passed to the WindowObserver by default.	-->
+		<event name="Select" button="MOUSE_LEFT" modifiers="" />
+		<event name="Zoom" button="MOUSE_RIGHT" modifiers="SHIFT" />
+		<event name="CameraMove" button="MOUSE_MIDDLE" modifiers="CONTROL" />
+		<event name="CameraAngle" button="MOUSE_MIDDLE" modifiers="" />
+	</xyview>
+	<observer>
+		<event name="Manipulate" button="MOUSE_LEFT" modifiers="" />
+		<event name="ToggleSelection" button="MOUSE_LEFT" modifiers="SHIFT" />
+		<event name="ToggleFaceSelection" button="MOUSE_LEFT" modifiers="SHIFT+CONTROL" />
+		<event name="CycleSelection" button="MOUSE_LEFT" modifiers="SHIFT+ALT" />
+		<event name="CycleFaceSelection" button="MOUSE_LEFT" modifiers="SHIFT+CONTROL+ALT" />
+		<event name="CopyTexture" button="MOUSE_MIDDLE" modifiers="CONTROL+ALT" />
+		<event name="PasteTexture" button="MOUSE_THUMB" modifiers="" />
+	</observer>
+	<cameraview>
+		<event name="EnableFreeLookMode" button="MOUSE_RIGHT" modifiers="" />
+		<event name="DisableFreeLookMode" button="MOUSE_RIGHT" modifiers="" />
+		<strafemode toggle="CONTROL" forward="SHIFT" speed="0.65" forwardFactor="-1" />
+	</cameraview>
+</interface>

@@ -65,6 +65,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "windowobservers.h"
 #include "plugin.h"
 #include "ui/colourscheme/ColourScheme.h"
+#include "ui/eventmapper/EventMapper.h"
 
 #include "selection/SelectionBox.h"
 
@@ -394,111 +395,6 @@ struct xywindow_globals_private_t
 xywindow_globals_t g_xywindow_globals;
 xywindow_globals_private_t g_xywindow_globals_private;
 
-const unsigned int RAD_NONE =    0x00;
-const unsigned int RAD_SHIFT =   0x01;
-const unsigned int RAD_ALT =     0x02;
-const unsigned int RAD_CONTROL = 0x04;
-const unsigned int RAD_PRESS   = 0x08;
-const unsigned int RAD_LBUTTON = 0x10;
-const unsigned int RAD_MBUTTON = 0x20;
-const unsigned int RAD_RBUTTON = 0x40;
-
-inline ButtonIdentifier button_for_flags(unsigned int flags)
-{
-  if(flags & RAD_LBUTTON)
-    return c_buttonLeft;
-  if(flags & RAD_RBUTTON)
-    return c_buttonRight;
-  if(flags & RAD_MBUTTON)
-    return c_buttonMiddle;
-  return c_buttonInvalid;
-}
-
-inline ModifierFlags modifiers_for_flags(unsigned int flags)
-{
-  ModifierFlags modifiers = c_modifierNone;
-  if(flags & RAD_SHIFT)
-    modifiers |= c_modifierShift;
-  if(flags & RAD_CONTROL)
-    modifiers |= c_modifierControl;
-  if(flags & RAD_ALT)
-    modifiers |= c_modifierAlt;
-  return modifiers;
-}
-
-inline unsigned int buttons_for_button_and_modifiers(ButtonIdentifier button, ModifierFlags flags)
-{
-  unsigned int buttons = 0;
-
-  switch (button.get())
-  {
-	case ButtonEnumeration::LEFT: buttons |= RAD_LBUTTON; break;
-  	case ButtonEnumeration::MIDDLE: buttons |= RAD_MBUTTON; break;
-  	case ButtonEnumeration::RIGHT: buttons |= RAD_RBUTTON; break;
-  	case ButtonEnumeration::INVALID: break;
-  }
-
-  if(bitfield_enabled(flags, c_modifierControl))
-    buttons |= RAD_CONTROL;
-
-  if(bitfield_enabled(flags, c_modifierShift))
-    buttons |= RAD_SHIFT;
-
-  if(bitfield_enabled(flags, c_modifierAlt))
-    buttons |= RAD_ALT;
-
-  return buttons;
-}
-
-inline unsigned int buttons_for_event_button(GdkEventButton* event)
-{
-  unsigned int flags = 0;
-
-  switch (event->button)
-  {
-  case 1: flags |= RAD_LBUTTON; break;
-  case 2: flags |= RAD_MBUTTON; break;
-  case 3: flags |= RAD_RBUTTON; break;
-  }
-
-  if ((event->state & GDK_CONTROL_MASK) != 0)
-    flags |= RAD_CONTROL;
-
-  if ((event->state & GDK_SHIFT_MASK) != 0)
-    flags |= RAD_SHIFT;
-
-  if((event->state & GDK_MOD1_MASK) != 0)
-    flags |= RAD_ALT;
-
-  return flags;
-}
-
-inline unsigned int buttons_for_state(guint state)
-{
-  unsigned int flags = 0;
-
-  if ((state & GDK_BUTTON1_MASK) != 0)
-    flags |= RAD_LBUTTON;
-
-  if ((state & GDK_BUTTON2_MASK) != 0)
-    flags |= RAD_MBUTTON;
-
-  if ((state & GDK_BUTTON3_MASK) != 0)
-    flags |= RAD_RBUTTON;
-
-  if ((state & GDK_CONTROL_MASK) != 0)
-    flags |= RAD_CONTROL;
-
-  if ((state & GDK_SHIFT_MASK) != 0)
-    flags |= RAD_SHIFT;
-
-  if ((state & GDK_MOD1_MASK) != 0)
-    flags |= RAD_ALT;
-
-  return flags;
-}
-
-
 void XYWnd::SetScale(float f)
 {
   m_fScale = f;
@@ -651,88 +547,102 @@ void WXY_Print()
 
 Timer g_chasemouse_timer;
 
-void XYWnd::ChaseMouse()
-{
-  float multiplier = g_chasemouse_timer.elapsed_msec() / 10.0f;
-  Scroll(float_to_integer(multiplier * m_chasemouse_delta_x), float_to_integer(multiplier * -m_chasemouse_delta_y));
+/* greebo: This gets repeatedly called during a mouse chase operation.
+ * The call is triggered by a timer, that gets start in XYWnd::chaseMouseMotion();
+ */
+void XYWnd::ChaseMouse() {
+	float multiplier = g_chasemouse_timer.elapsed_msec() / 10.0f;
+	Scroll(float_to_integer(multiplier * m_chasemouse_delta_x), float_to_integer(multiplier * -m_chasemouse_delta_y));
 
-  //globalOutputStream() << "chasemouse: multiplier=" << multiplier << " x=" << m_chasemouse_delta_x << " y=" << m_chasemouse_delta_y << '\n';
+	//globalOutputStream() << "chasemouse: multiplier=" << multiplier << " x=" << m_chasemouse_delta_x << " y=" << m_chasemouse_delta_y << '\n';
 
-  XY_MouseMoved(m_chasemouse_current_x, m_chasemouse_current_y , getButtonState());
-  g_chasemouse_timer.start();
+	mouseMoved(m_chasemouse_current_x, m_chasemouse_current_y , _event->state);
+  
+	// greebo: Restart the timer, so that it can trigger again
+	g_chasemouse_timer.start();
 }
 
-gboolean xywnd_chasemouse(gpointer data)
-{
-  reinterpret_cast<XYWnd*>(data)->ChaseMouse();
-  return TRUE;
+// This is the chase mouse handler that gets connected by XYWnd::chaseMouseMotion()
+// It passes te call on to the XYWnd::ChaseMouse() method. 
+gboolean xywnd_chasemouse(gpointer data) {
+	// Convert the pointer <data> in and XYWnd* pointer and call the method
+	reinterpret_cast<XYWnd*>(data)->ChaseMouse();
+	return TRUE;
 }
 
-inline const int& min_int(const int& left, const int& right)
-{
-  return std::min(left, right);
-}
+/* greebo: This handles the "chase mouse" behaviour, if the user drags something
+ * beyond the XY window boundaries. If the chaseMouse option (currently a global)
+ * is set true, the view origin gets relocated along with the mouse movements.
+ * 
+ * @returns: true, if the mousechase has been performed, false if no mouse chase was necessary
+ */
+bool XYWnd::chaseMouseMotion(int pointx, int pointy, const unsigned int& state) {
+	m_chasemouse_delta_x = 0;
+	m_chasemouse_delta_y = 0;
 
-bool XYWnd::chaseMouseMotion(int pointx, int pointy)
-{
-  m_chasemouse_delta_x = 0;
-  m_chasemouse_delta_y = 0;
+	// These are the events that are allowed
+	bool isAllowedEvent = GlobalEventMapper().stateMatchesXYViewEvent(ui::xySelect, state)
+						  || GlobalEventMapper().stateMatchesXYViewEvent(ui::xyNewBrushDrag, state);
 
-  if (g_xywindow_globals_private.m_bChaseMouse && getButtonState() == RAD_LBUTTON)
-  {
-    const int epsilon = 16;
+	// greebo: The mouse chase is only active when the according global is set to true and if we 
+	// are in the right state
+	if (g_xywindow_globals_private.m_bChaseMouse && isAllowedEvent) {
+		const int epsilon = 16;
 
-    if (pointx < epsilon)
-    {
-      m_chasemouse_delta_x = std::max(pointx, 0) - epsilon;
-    }
-    else if ((pointx - m_nWidth) > -epsilon)
-    {
-      m_chasemouse_delta_x = min_int((pointx - m_nWidth), 0) + epsilon;
-    }
+		// Calculate the X delta
+		if (pointx < epsilon) {
+			m_chasemouse_delta_x = std::max(pointx, 0) - epsilon;
+		}
+		else if ((pointx - m_nWidth) > -epsilon) {
+			m_chasemouse_delta_x = std::min((pointx - m_nWidth), 0) + epsilon;
+		}
 
-    if (pointy < epsilon)
-    {
-      m_chasemouse_delta_y = std::max(pointy, 0) - epsilon;
-    }
-    else if ((pointy - m_nHeight) > -epsilon)
-    {
-      m_chasemouse_delta_y = min_int((pointy - m_nHeight), 0) + epsilon;
-    }
+		// Calculate the Y delta
+		if (pointy < epsilon) {
+			m_chasemouse_delta_y = std::max(pointy, 0) - epsilon;
+		}
+		else if ((pointy - m_nHeight) > -epsilon) {
+			m_chasemouse_delta_y = std::min((pointy - m_nHeight), 0) + epsilon;
+		}
 
-    if(m_chasemouse_delta_y != 0 || m_chasemouse_delta_x != 0)
-    {
-      //globalOutputStream() << "chasemouse motion: x=" << pointx << " y=" << pointy << "... ";
-      m_chasemouse_current_x = pointx;
-      m_chasemouse_current_y = pointy;
-      if(m_chasemouse_handler == 0)
-      {
-        //globalOutputStream() << "chasemouse timer start... ";
-        g_chasemouse_timer.start();
-        m_chasemouse_handler = g_idle_add(xywnd_chasemouse, this);
-      }
-      return true;
-    }
-    else
-    {
-      if(m_chasemouse_handler != 0)
-      {
-        //globalOutputStream() << "chasemouse cancel\n";
-        g_source_remove(m_chasemouse_handler);
-        m_chasemouse_handler = 0;
-      }
-    }
-  }
-  else
-  {
-    if(m_chasemouse_handler != 0)
-    {
-      //globalOutputStream() << "chasemouse cancel\n";
-      g_source_remove(m_chasemouse_handler);
-      m_chasemouse_handler = 0;
-    }
-  }
-  return false;
+		// If any of the deltas is uneqal to zero the mouse chase is to be performed
+		if (m_chasemouse_delta_y != 0 || m_chasemouse_delta_x != 0) {
+			
+			//globalOutputStream() << "chasemouse motion: x=" << pointx << " y=" << pointy << "... ";
+			m_chasemouse_current_x = pointx;
+			m_chasemouse_current_y = pointy;
+			
+			// Start the timer, if there isn't one connected already
+			if (m_chasemouse_handler == 0) {
+				//globalOutputStream() << "chasemouse timer start... ";
+				g_chasemouse_timer.start();
+				
+				m_chasemouse_handler = g_idle_add(xywnd_chasemouse, this);
+			}
+			// Return true to signal that there are no other mouseMotion handlers to be performed
+			// see xywnd_motion() callback function
+			return true;
+		}
+		else {
+			// All deltas are zero, so there is no more mouse chasing necessary, remove the handlers
+			if (m_chasemouse_handler != 0) {
+				//globalOutputStream() << "chasemouse cancel\n";
+				g_source_remove(m_chasemouse_handler);
+				m_chasemouse_handler = 0;
+			}
+		}
+	}
+	else {
+		// Remove the handlers, the user has probably released the mouse button during chase
+		if(m_chasemouse_handler != 0) {
+			//globalOutputStream() << "chasemouse cancel\n";
+			g_source_remove(m_chasemouse_handler);
+			m_chasemouse_handler = 0;
+		}
+	}
+	
+	// No mouse chasing has been performed, return false
+	return false;
 }
 
 // =============================================================================
@@ -747,37 +657,53 @@ void xy_update_xor_rectangle(XYWnd& self, Rectangle area)
   }
 }
 
-gboolean xywnd_button_press(GtkWidget* widget, GdkEventButton* event, XYWnd* xywnd)
-{
-  if(event->type == GDK_BUTTON_PRESS)
-  {
-    g_pParentWnd->SetActiveXY(xywnd);
+/* greebo: This is the callback for the mouse_press event that is invoked by GTK
+ * it checks for the correct event type and passes the call to the according xy view window.
+ * 
+ * Note: I think these should be static members of the XYWnd class, shouldn't they? 
+ */
+gboolean xywnd_button_press(GtkWidget* widget, GdkEventButton* event, XYWnd* xywnd) {
+	if (event->type == GDK_BUTTON_PRESS) {
+		// Put the focus on the xy view that has been clicked on
+		g_pParentWnd->SetActiveXY(xywnd);
 
-    xywnd->ButtonState_onMouseDown(buttons_for_event_button(event));
-
-    xywnd->onMouseDown(WindowVector(event->x, event->y), button_for_button(event->button), modifiers_for_state(event->state));
-  }
-  return FALSE;
+		//xywnd->ButtonState_onMouseDown(buttons_for_event_button(event));
+		xywnd->setEvent(event);
+		
+		// Pass the GdkEventButton* to the XYWnd class, the boolean <true> is passed but never used
+		xywnd->onMouseDown(static_cast<int>(event->x), static_cast<int>(event->y), event);
+	}
+	return FALSE;
 }
 
-gboolean xywnd_button_release(GtkWidget* widget, GdkEventButton* event, XYWnd* xywnd)
-{
-  if(event->type == GDK_BUTTON_RELEASE)
-  {
-    xywnd->XY_MouseUp(static_cast<int>(event->x), static_cast<int>(event->y), buttons_for_event_button(event));
+// greebo: This is the GTK callback for mouseUp. 
+gboolean xywnd_button_release(GtkWidget* widget, GdkEventButton* event, XYWnd* xywnd) {
+	
+	// greebo: Check for the correct event type (redundant?)
+	if (event->type == GDK_BUTTON_RELEASE) {
+		// Call the according mouseUp method
+		xywnd->mouseUp(static_cast<int>(event->x), static_cast<int>(event->y), event);
 
-    xywnd->ButtonState_onMouseUp(buttons_for_event_button(event));
-  }
-  return FALSE;
+		// Clear the buttons that the button_release has been called with
+		//xywnd->ButtonState_onMouseUp(buttons_for_event_button(event));
+		xywnd->setEvent(event);
+	}
+	return FALSE;
 }
 
-void xywnd_motion(gdouble x, gdouble y, guint state, void* data)
-{
-  if(reinterpret_cast<XYWnd*>(data)->chaseMouseMotion(static_cast<int>(x), static_cast<int>(y)))
-  {
-    return;
-  }
-  reinterpret_cast<XYWnd*>(data)->XY_MouseMoved(static_cast<int>(x), static_cast<int>(y), buttons_for_state(state));
+/* greebo: This is the GTK callback for mouse movement. */
+void xywnd_motion(gdouble x, gdouble y, guint state, void* data) {
+	
+	// Convert the passed pointer into a XYWnd pointer
+	XYWnd* xywnd = reinterpret_cast<XYWnd*>(data);
+	
+	// Call the chaseMouse method
+	if (xywnd->chaseMouseMotion(static_cast<int>(x), static_cast<int>(y), state)) {
+		return;
+	}
+	
+	// This gets executed, if the above chaseMouse call returned false, i.e. no mouse chase has been performed
+	xywnd->mouseMoved(static_cast<int>(x), static_cast<int>(y), state);
 }
 
 gboolean xywnd_wheel_scroll(GtkWidget* widget, GdkEventScroll* event, XYWnd* xywnd)
@@ -909,6 +835,10 @@ XYWnd::~XYWnd()
   m_window_observer->release();
 }
 
+void XYWnd::setEvent(GdkEventButton* event) {
+	_event = event;
+}
+
 void XYWnd::captureStates()
 {
   m_state_selected = GlobalShaderCache().capture("$XY_OVERLAY");
@@ -938,11 +868,6 @@ void XYWnd::Scroll(int x, int y)
   m_vOrigin[nDim2] += y / m_fScale;
   updateModelview();
   queueDraw();
-}
-
-unsigned int Clipper_buttons()
-{
-  return RAD_LBUTTON;
 }
 
 void XYWnd::DropClipPoint(int pointx, int pointy)
@@ -1007,24 +932,12 @@ void XYWnd::Clipper_Crosshair_OnMouseMoved(int x, int y)
   }
 }
 
-unsigned int MoveCamera_buttons()
-{
-  return RAD_CONTROL | (g_glwindow_globals.m_nMouseType == ETwoButton ? RAD_RBUTTON : RAD_MBUTTON);
-}
-
 void XYWnd_PositionCamera(XYWnd* xywnd, int x, int y, CamWnd& camwnd)
 {
   Vector3 origin(Camera_getOrigin(camwnd));
   xywnd->XY_ToPoint(x, y, origin);
   xywnd->XY_SnapToGrid(origin);
   Camera_setOrigin(camwnd, origin);
-}
-
-unsigned int OrientCamera_buttons()
-{
-  if(g_glwindow_globals.m_nMouseType == ETwoButton)
-    return RAD_RBUTTON | RAD_SHIFT | RAD_CONTROL;
-  return RAD_MBUTTON;
 }
 
 void XYWnd_OrientCamera(XYWnd* xywnd, int x, int y, CamWnd& camwnd)
@@ -1050,11 +963,6 @@ void XYWnd_OrientCamera(XYWnd* xywnd, int x, int y, CamWnd& camwnd)
 NewBrushDrag
 ==============
 */
-unsigned int NewBrushDrag_buttons()
-{
-  return RAD_LBUTTON;
-}
-
 void XYWnd::NewBrushDrag_Begin(int x, int y)
 {
   m_NewBrushDrag = 0;
@@ -1231,11 +1139,6 @@ void XYWnd::OnContextMenu() {
 
 FreezePointer g_xywnd_freezePointer;
 
-unsigned int Move_buttons()
-{
-  return RAD_RBUTTON;
-}
-
 void XYWnd_moveDelta(int x, int y, unsigned int state, void* data)
 {
   reinterpret_cast<XYWnd*>(data)->EntityCreate_MouseMove(x, y);
@@ -1264,11 +1167,6 @@ void XYWnd::Move_End()
   m_move_started = false;
   g_xywnd_freezePointer.unfreeze_pointer(m_parent != 0 ? m_parent : MainFrame_getWindow());
   g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_move_focusOut);
-}
-
-unsigned int Zoom_buttons()
-{
-  return RAD_RBUTTON | RAD_SHIFT;
 }
 
 int g_dragZoom = 0;
@@ -1345,131 +1243,122 @@ void XYWnd::SetViewType(VIEWTYPE viewType)
   }
 }
 
+/* This gets called by the GTK callback function.
+ */
+void XYWnd::mouseDown(int x, int y, GdkEventButton* event) {
 
-inline WindowVector WindowVector_forInteger(int x, int y)
-{
-  return WindowVector(static_cast<float>(x), static_cast<float>(y));
+	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xyMoveView, event)) {
+		Move_Begin();
+    	EntityCreate_MouseDown(x, y);
+	}
+	
+	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xyZoom, event)) {
+		Zoom_Begin();
+	}
+	
+	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xyCameraMove, event)) {
+		XYWnd_PositionCamera(this, x, y, *g_pParentWnd->GetCamWnd());
+	}
+	
+	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xyCameraAngle, event)) {
+		XYWnd_OrientCamera(this, x, y, *g_pParentWnd->GetCamWnd());
+	}
+	
+	// Only start a NewBrushDrag operation, if not other elements are selected
+	if (GlobalSelectionSystem().countSelected() == 0 && 
+		GlobalEventMapper().stateMatchesXYViewEvent(ui::xyNewBrushDrag, event)) 
+	{
+		NewBrushDrag_Begin(x, y);
+		return; // Prevent the call from being passed to the windowobserver
+	}
+	
+	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xySelect, event)) {
+		// There are two possibilites for the "select" click: Clip or Select
+		if (ClipMode()) {
+			Clipper_OnLButtonDown(x, y);
+			return; // Prevent the call from being passed to the windowobserver
+		}
+	}
+	
+	// Pass the call to the window observer
+	m_window_observer->onMouseDown(WindowVector(x, y), event);
 }
 
-void XYWnd::mouseDown(const WindowVector& position, ButtonIdentifier button, ModifierFlags modifiers)
-{
-  XY_MouseDown(static_cast<int>(position.x()), static_cast<int>(position.y()), buttons_for_button_and_modifiers(button, modifiers));
-}
-void XYWnd::XY_MouseDown (int x, int y, unsigned int buttons)
-{
-  if(buttons == Move_buttons())
-  {
-    Move_Begin();
-    EntityCreate_MouseDown(x, y);
-  }
-  else if(buttons == Zoom_buttons())
-  {
-    Zoom_Begin();
-  }
-  else if(ClipMode() && buttons == Clipper_buttons())
-  {
-    Clipper_OnLButtonDown(x, y);
-  }
-  else if(buttons == NewBrushDrag_buttons() && GlobalSelectionSystem().countSelected() == 0)
-  {
-    NewBrushDrag_Begin(x, y);
-  }
-  // control mbutton = move camera
-  else if (buttons == MoveCamera_buttons())
-  {
-    XYWnd_PositionCamera(this, x, y, *g_pParentWnd->GetCamWnd());
-  }
-  // mbutton = angle camera
-  else if(buttons == OrientCamera_buttons())
-  {	
-    XYWnd_OrientCamera(this, x, y, *g_pParentWnd->GetCamWnd());
-  }
-  else
-  {
-    m_window_observer->onMouseDown(WindowVector_forInteger(x, y), button_for_flags(buttons), modifiers_for_flags(buttons));
-  }
-}
+// This gets called by either the GTK Callback or the method that is triggered by the mousechase timer 
+void XYWnd::mouseMoved(int x, int y, const unsigned int& state) {
+	
+	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xyCameraMove, state)) {
+		XYWnd_PositionCamera(this, x, y, *g_pParentWnd->GetCamWnd());
+	}
+	
+	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xyCameraAngle, state)) {
+		XYWnd_OrientCamera(this, x, y, *g_pParentWnd->GetCamWnd());
+	}
+	
+	// Check, if we are in a NewBrushDrag operation and continue it
+	if (m_bNewBrushDrag && GlobalEventMapper().stateMatchesXYViewEvent(ui::xyNewBrushDrag, state)) {
+		NewBrushDrag(x, y);
+		return; // Prevent the call from being passed to the windowobserver
+	}
+	
+	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xySelect, state)) {
+		// Check, if we have a clip point operation running
+		if (ClipMode() && g_pMovingClip != 0) {
+			Clipper_OnMouseMoved(x, y);
+			return; // Prevent the call from being passed to the windowobserver
+		}
+	}
+	
+	// default windowobserver::mouseMotion call, if no other clauses called "return" till now
+	m_window_observer->onMouseMotion(WindowVector(x, y), state);
 
-void XYWnd::XY_MouseUp(int x, int y, unsigned int buttons)
-{
-  if(m_move_started)
-  {
-    Move_End();
-    EntityCreate_MouseUp(x, y);
-  }
-  else if(m_zoom_started)
-  {
-    Zoom_End();
-  }
-  else if (ClipMode() && buttons == Clipper_buttons())
-  {
-    Clipper_OnLButtonUp(x, y);
-  }
-  else if (m_bNewBrushDrag)
-  {
-    m_bNewBrushDrag = false;
-    NewBrushDrag_End(x, y);
-  }
-  else
-  {
-    m_window_observer->onMouseUp(WindowVector_forInteger(x, y), button_for_flags(buttons), modifiers_for_flags(buttons));
-  }
+	m_mousePosition[0] = m_mousePosition[1] = m_mousePosition[2] = 0.0;
+	XY_ToPoint(x, y , m_mousePosition);
+	XY_SnapToGrid(m_mousePosition);
+
+	StringOutputStream status(64);
+	status << "x:: " << FloatFormat(m_mousePosition[0], 6, 1)
+			<< "  y:: " << FloatFormat(m_mousePosition[1], 6, 1)
+			<< "  z:: " << FloatFormat(m_mousePosition[2], 6, 1);
+	g_pParentWnd->SetStatusText(g_pParentWnd->m_position_status, status.c_str());
+
+	if (g_bCrossHairs) {
+		XYWnd_Update(*this);
+	}
+
+	Clipper_Crosshair_OnMouseMoved(x, y);
 }
 
-void XYWnd::XY_MouseMoved (int x, int y, unsigned int buttons)
-{
-  // rbutton = drag xy origin
-  if(m_move_started)
-  {
-  }
-  // zoom in/out
-  else if(m_zoom_started)
-  {
-  }
-
-  else if (ClipMode() && g_pMovingClip != 0)
-  {
-    Clipper_OnMouseMoved(x, y);
-  }
-  // lbutton without selection = drag new brush
-  else if (m_bNewBrushDrag)
-  {
-    NewBrushDrag(x, y);
-  }
-
-  // control mbutton = move camera
-  else if (getButtonState() == MoveCamera_buttons())
-  {
-    XYWnd_PositionCamera(this, x, y, *g_pParentWnd->GetCamWnd());
-  }
-
-  // mbutton = angle camera
-  else if (getButtonState() == OrientCamera_buttons())
-  {	
-    XYWnd_OrientCamera(this, x, y, *g_pParentWnd->GetCamWnd());
-  }
-
-  else
-  {
-    m_window_observer->onMouseMotion(WindowVector_forInteger(x, y), modifiers_for_flags(buttons));
-
-    m_mousePosition[0] = m_mousePosition[1] = m_mousePosition[2] = 0.0;
-    XY_ToPoint(x, y , m_mousePosition);
-    XY_SnapToGrid(m_mousePosition);
-
-    StringOutputStream status(64);
-    status << "x:: " << FloatFormat(m_mousePosition[0], 6, 1)
-      << "  y:: " << FloatFormat(m_mousePosition[1], 6, 1)
-      << "  z:: " << FloatFormat(m_mousePosition[2], 6, 1);
-    g_pParentWnd->SetStatusText(g_pParentWnd->m_position_status, status.c_str());
-
-    if (g_bCrossHairs)
-    {
-      XYWnd_Update(*this);
-    }
-
-    Clipper_Crosshair_OnMouseMoved(x, y);
-  }
+// greebo: The mouseUp method gets called by the GTK callback above
+void XYWnd::mouseUp(int x, int y, GdkEventButton* event) {
+	
+	// End move
+	if (m_move_started) {
+		Move_End();
+		EntityCreate_MouseUp(x, y);
+	}
+	
+	// End zoom
+	if (m_zoom_started) {
+		Zoom_End();
+	}
+	
+	// Finish any pending NewBrushDrag operations
+	if (m_bNewBrushDrag) {
+		// End the NewBrushDrag operation
+		m_bNewBrushDrag = false;
+		NewBrushDrag_End(x, y);
+		return; // Prevent the call from being passed to the windowobserver
+	}
+	
+	if (ClipMode() && GlobalEventMapper().stateMatchesXYViewEvent(ui::xySelect, event)) {
+		// End the clip operation
+		Clipper_OnLButtonUp(x, y);
+		return; // Prevent the call from being passed to the windowobserver
+	}
+	
+	// Pass the call to the window observer
+	m_window_observer->onMouseUp(WindowVector(x, y), event);
 }
 
 void XYWnd::EntityCreate_MouseDown(int x, int y)

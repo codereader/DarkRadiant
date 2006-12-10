@@ -2,7 +2,7 @@
 <user>
   <version value="0.7.0" />
   <ui>
-    <ModelSelector>
+	<ModelSelector>
     	<previewSizeFactor value="0.4"/>
     </ModelSelector>
 	<showAllLightRadii value="0"/>

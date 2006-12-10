@@ -75,15 +75,20 @@ template<typename Element>
 class BasicVector2;
 typedef BasicVector2<float> Vector2;
 typedef Vector2 WindowVector;
+typedef struct _GdkEventButton GdkEventButton;
 
+/* greebo: The abstract base class defining a window observer.
+ * It has to handle all the mouseDown/Up/Move and keyboard events 
+ * as well as window resizing.
+ */
 class WindowObserver
 {
 public:
   virtual void release() = 0;
   virtual void onSizeChanged(int width, int height) = 0;
-  virtual void onMouseDown(const WindowVector& position, ButtonIdentifier button, ModifierFlags modifiers) = 0;
-  virtual void onMouseUp(const WindowVector& position, ButtonIdentifier button, ModifierFlags modifiers) = 0;
-  virtual void onMouseMotion(const WindowVector& position, ModifierFlags modifiers) = 0;
+  virtual void onMouseDown(const WindowVector& position, GdkEventButton* event) = 0;
+  virtual void onMouseUp(const WindowVector& position, GdkEventButton* event) = 0;
+  virtual void onMouseMotion(const WindowVector& position, const unsigned int& state) = 0;
   virtual void onModifierDown(ModifierFlags modifier) = 0;
   virtual void onModifierUp(ModifierFlags modifier) = 0;
 };
