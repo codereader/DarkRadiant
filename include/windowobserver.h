@@ -26,10 +26,6 @@ template<typename Enumeration> class BitFieldValue;
 struct ModifierEnumeration;
 typedef BitFieldValue<ModifierEnumeration> ModifierFlags;
 
-template<typename Enumeration> class EnumeratedValue;
-struct ButtonEnumeration;
-typedef EnumeratedValue<ButtonEnumeration> ButtonIdentifier;
-
 #include "math/Vector2.h"
 #include "generic/bitfield.h"
 
@@ -49,27 +45,6 @@ const ModifierFlags c_modifierNone;
 const ModifierFlags c_modifierShift(ModifierEnumeration::SHIFT);
 const ModifierFlags c_modifierControl(ModifierEnumeration::CONTROL);
 const ModifierFlags c_modifierAlt(ModifierEnumeration::ALT);
-
-#include "generic/enumeration.h"
-
-struct ButtonEnumeration
-{
-  enum Value
-  {
-    INVALID = 0,
-    LEFT = 1,
-    MIDDLE = 3,
-    RIGHT = 2
-  };
-};
-
-typedef EnumeratedValue<ButtonEnumeration> ButtonIdentifier;
-
-const ButtonIdentifier c_buttonInvalid(ButtonEnumeration::INVALID);
-const ButtonIdentifier c_buttonLeft(ButtonEnumeration::LEFT);
-const ButtonIdentifier c_buttonMiddle(ButtonEnumeration::MIDDLE);
-const ButtonIdentifier c_buttonRight(ButtonEnumeration::RIGHT);
-
 
 template<typename Element>
 class BasicVector2;
