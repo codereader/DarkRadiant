@@ -551,8 +551,6 @@ void FocusViews(const Vector3& point, float angle)
   xywnd->SetOrigin(point);
 }
 
-#include "stringio.h"
-
 /* Find the start position in the map and focus the viewport on it.
  */
 void Map_StartPosition()
