@@ -37,7 +37,8 @@ private:
 		// Retrieve the according ObserverEvent for the GdkEventButton
 		ui::ObserverEvent observerEvent = GlobalEventMapper().getObserverEvent(_event);
 		
-		if (observerEvent == ui::obsToggle || observerEvent == ui::obsToggleFace) {
+		if (observerEvent == ui::obsSelect || observerEvent == ui::obsToggle 
+			|| observerEvent == ui::obsToggleFace) {
 			return SelectionSystem::eToggle;
 		}
 		

@@ -27,7 +27,8 @@ namespace ui {
 	// If the click is passed to the windowobservers, these are the possibilites
 	enum ObserverEvent {
 		obsNothing,		// any uninterpreted/unsupported combination
-		obsManipulate,	// manipulate an object by drag or click 
+		obsManipulate,	// manipulate an object by drag or click
+		obsSelect,		// selection toggle 
 		obsToggle,		// selection toggle
 		obsToggleFace,	// selection toggle (face)
 		obsReplace,		// replace/cycle selection through possible candidates

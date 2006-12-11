@@ -1,6 +1,7 @@
 #include "EventMapper.h"
 
 #include "iregistry.h"
+#include "iselection.h"
 #include <iostream>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/classification.hpp>
@@ -79,12 +80,20 @@ unsigned int EventMapper::getModifierFlags(const std::string& modifierStr) {
 ConditionStruc EventMapper::getCondition(xml::Node node) {
 	const std::string button = node.getAttributeValue("button");
 	const std::string modifiers = node.getAttributeValue("modifiers");
+	const std::string minSelectionCount = node.getAttributeValue("minSelectionCount");
 	
 	ConditionStruc returnValue;
 	
 	returnValue.buttonId = getButtonId(button);
 	returnValue.modifierFlags = getModifierFlags(modifiers);
 	
+	try {
+		returnValue.minSelectionCount = boost::lexical_cast<int>(minSelectionCount);
+	}
+	catch (boost::bad_lexical_cast e) {
+		returnValue.minSelectionCount = DEFAULT_MIN_SELECTION_COUNT;
+	}
+		
 	return returnValue;
 }
 
@@ -158,6 +167,9 @@ void EventMapper::loadObserverEventDefinitions() {
 			// Check if any recognised event names are found and construct the according condition.
 			if (eventName == "Manipulate") {
 				_observerConditions[obsManipulate] = getCondition(eventList[i]);
+			}
+			else if (eventName == "Select") {
+				_observerConditions[obsSelect] = getCondition(eventList[i]);
 			}
 			else if (eventName == "ToggleSelection") {
 				_observerConditions[obsToggle] = getCondition(eventList[i]);
@@ -329,7 +341,10 @@ CamViewEvent EventMapper::findCameraViewEvent(const unsigned int& button, const 
 		CamViewEvent event = it->first;
 		ConditionStruc conditions = it->second;
 		
-		if (button == conditions.buttonId && modifierFlags == conditions.modifierFlags) {
+		if (button == conditions.buttonId 
+			&& modifierFlags == conditions.modifierFlags 
+			&& static_cast<int>(GlobalSelectionSystem().countSelected()) >= conditions.minSelectionCount) 
+		{
 			return event;
 		}
 	}
@@ -341,7 +356,10 @@ XYViewEvent EventMapper::findXYViewEvent(const unsigned int& button, const unsig
 		XYViewEvent event = it->first;
 		ConditionStruc conditions = it->second;
 		
-		if (button == conditions.buttonId && modifierFlags == conditions.modifierFlags) {
+		if (button == conditions.buttonId 
+			&& modifierFlags == conditions.modifierFlags 
+			&& static_cast<int>(GlobalSelectionSystem().countSelected()) >= conditions.minSelectionCount) 
+		{
 			return event;
 		}
 	}
@@ -353,7 +371,10 @@ ObserverEvent EventMapper::findObserverEvent(const unsigned int& button, const u
 		ObserverEvent event = it->first;
 		ConditionStruc conditions = it->second;
 		
-		if (button == conditions.buttonId && modifierFlags == conditions.modifierFlags) {
+		if (button == conditions.buttonId 
+			&& modifierFlags == conditions.modifierFlags 
+			&& static_cast<int>(GlobalSelectionSystem().countSelected()) >= conditions.minSelectionCount) 
+		{
 			return event;
 		}
 	}
@@ -387,10 +408,13 @@ bool EventMapper::matchXYViewEvent(const XYViewEvent& xyViewEvent, const unsigne
    	if (it != _xyConditions.end()) {
    		// Load the condition
    		ConditionStruc conditions = it->second;
-		return (button == conditions.buttonId && modifierFlags == conditions.modifierFlags);
+   		
+		return (button == conditions.buttonId 
+				&& modifierFlags == conditions.modifierFlags 
+				&& static_cast<int>(GlobalSelectionSystem().countSelected()) >= conditions.minSelectionCount);
    	}
    	else {
-   		globalOutputStream() << "EventMapper: Warning: Query for event " << xyViewEvent << " not found.\n";
+   		globalOutputStream() << "EventMapper: Warning: Query for event " << xyViewEvent << ": not found.\n";
    		return false;
    	}
 }
@@ -400,10 +424,13 @@ bool EventMapper::matchObserverEvent(const ObserverEvent& observerEvent, const u
    	if (it != _observerConditions.end()) {
    		// Load the condition
    		ConditionStruc conditions = it->second;
-		return (button == conditions.buttonId && modifierFlags == conditions.modifierFlags);
+		
+		return (button == conditions.buttonId 
+				&& modifierFlags == conditions.modifierFlags 
+				&& static_cast<int>(GlobalSelectionSystem().countSelected()) >= conditions.minSelectionCount);
    	}
    	else {
-   		globalOutputStream() << "EventMapper: Warning: Query for event " << observerEvent << " not found.\n";
+   		globalOutputStream() << "EventMapper: Warning: Query for event " << observerEvent << ": not found.\n";
    		return false;
    	}
 }
@@ -413,10 +440,13 @@ bool EventMapper::matchCameraViewEvent(const CamViewEvent& camViewEvent, const u
    	if (it != _cameraConditions.end()) {
    		// Load the condition
    		ConditionStruc conditions = it->second;
-		return (button == conditions.buttonId && modifierFlags == conditions.modifierFlags);
+   		
+		return (button == conditions.buttonId 
+				&& modifierFlags == conditions.modifierFlags 
+				&& static_cast<int>(GlobalSelectionSystem().countSelected()) >= conditions.minSelectionCount);
    	}
    	else {
-   		globalOutputStream() << "EventMapper: Warning: Query for event " << camViewEvent << " not found.\n";
+   		globalOutputStream() << "EventMapper: Warning: Query for event " << camViewEvent << ": not found.\n";
    		return false;
    	}
 }
@@ -470,7 +500,8 @@ std::string EventMapper::printObserverEvent(const ObserverEvent& observerEvent) 
 	
 	switch (observerEvent) {
 		case obsNothing: return "Nothing";
-		case obsManipulate: return "Manipulate"; 
+		case obsManipulate: return "Manipulate";
+		case obsSelect: return "Select"; 
 		case obsToggle: return "Toggle";
 		case obsToggleFace: return "ToggleFace";
 		case obsReplace: return "Replace";

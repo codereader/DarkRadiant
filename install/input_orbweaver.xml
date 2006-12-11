@@ -16,7 +16,7 @@
 	</modifiers>
 	<xyview>
 		<event name="MoveView" button="MOUSE_RIGHT" modifiers="" />
-		<event name="NewBrushDrag" button="MOUSE_LEFT" modifiers="" />
+		<event name="NewBrushDrag" button="MOUSE_LEFT" modifiers="ALT" />
 		<!-- The event Select can be interpreted as "Select" or "Clip", depending on the situation
 			 This event is also passed to the WindowObserver by default.	-->
 		<event name="Select" button="MOUSE_LEFT" modifiers="" />
@@ -25,8 +25,8 @@
 		<event name="CameraAngle" button="MOUSE_MIDDLE" modifiers="" />
 	</xyview>
 	<observer>
-		<event name="Manipulate" button="MOUSE_LEFT" modifiers="" minSelectionCount="0" />
-		<!--<event name="Select" button="MOUSE_FIVE" modifiers="" />-->
+		<event name="Manipulate" button="MOUSE_LEFT" modifiers="" minSelectionCount="1" />
+		<event name="Select" button="MOUSE_LEFT" modifiers="" />
 		<event name="ToggleSelection" button="MOUSE_LEFT" modifiers="SHIFT" />
 		<event name="ToggleFaceSelection" button="MOUSE_LEFT" modifiers="SHIFT+CONTROL" />
 		<event name="CycleSelection" button="MOUSE_LEFT" modifiers="ALT+SHIFT" />
