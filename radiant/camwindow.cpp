@@ -292,7 +292,7 @@ void Camera_FreeMove(camera_t& camera, int dx, int dy) {
 			camera.origin += camera.vpn * strafespeed * dy * forwardStrafeFactor;
 		}
 		else {
-			camera.origin += camera.vup * strafespeed * dy * forwardStrafeFactor;
+			camera.origin += camera.vup * strafespeed * dy;
 		}
 	}
 	else { // free rotation
