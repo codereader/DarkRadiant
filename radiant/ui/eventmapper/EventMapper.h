@@ -13,6 +13,7 @@ namespace ui
 	
 	namespace {
 		float DEFAULT_STRAFE_SPEED = 0.65f;
+		int DEFAULT_MIN_SELECTION_COUNT = -1;
 		
 		// The mapping between mouse button IDs and "logical" mouse buttons (i.e. MOUSE_LEFT)
 		typedef std::map<const std::string, unsigned int> ButtonIdMap;
@@ -21,7 +22,8 @@ namespace ui
 		// This represents a condition that has to fulfilled in order to recognize an event
 		struct ConditionStruc {
 			unsigned int buttonId;
-			unsigned int modifierFlags; 
+			unsigned int modifierFlags;
+			int minSelectionCount; 
 		};
 		
 		typedef std::map<const XYViewEvent, ConditionStruc> XYConditionMap;
