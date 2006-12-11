@@ -608,7 +608,7 @@ void Radiant_Initialise()
 	GlobalRegistry().importFromFile(std::string(AppPath_get()) + "user.xml", "");
 	GlobalRegistry().importFromFile(std::string(AppPath_get()) + "upgradepaths.xml", "user");
 	GlobalRegistry().importFromFile(std::string(AppPath_get()) + "colours.xml", "user/ui");
-	GlobalRegistry().importFromFile(std::string(AppPath_get()) + "interface.xml", "user/ui");
+	GlobalRegistry().importFromFile(std::string(AppPath_get()) + "input.xml", "user/ui");
 	
 	// Traverse the game files stored in the GamesDialog class and load them into the registry
 	// The information stored in the game files is needed to successfully instantiate the other modules
