@@ -515,9 +515,9 @@ static void OnSpinChanged (GtkAdjustment *adj, gpointer data)
 {
   TexDef td;
 
-  td.rotate = 0;
-  td.scale[0] = td.scale[1] = 0;
-  td.shift[0] = td.shift[1] = 0;
+  td._rotate = 0;
+  td._scale[0] = td._scale[1] = 0;
+  td._shift[0] = td._shift[1] = 0;
 
   if (adj->value == 0)
     return;
@@ -527,18 +527,18 @@ static void OnSpinChanged (GtkAdjustment *adj, gpointer data)
     g_pi_globals.shift[0] = static_cast<float>(atof (gtk_entry_get_text (GTK_ENTRY (data))));
 
     if (adj->value > 0)
-      td.shift[0] = g_pi_globals.shift[0];
+      td._shift[0] = g_pi_globals.shift[0];
     else
-      td.shift[0] = -g_pi_globals.shift[0];
+      td._shift[0] = -g_pi_globals.shift[0];
   }
   else if (adj == g_object_get_data (G_OBJECT (g_PatchInspector.GetWidget()), "vshift_adj"))
   {
     g_pi_globals.shift[1] = static_cast<float>(atof (gtk_entry_get_text (GTK_ENTRY (data))));
 
     if (adj->value > 0)
-      td.shift[1] = g_pi_globals.shift[1];
+      td._shift[1] = g_pi_globals.shift[1];
     else
-      td.shift[1] = -g_pi_globals.shift[1];
+      td._shift[1] = -g_pi_globals.shift[1];
   }
   else if (adj == g_object_get_data (G_OBJECT (g_PatchInspector.GetWidget()), "hscale_adj"))
   {
@@ -546,9 +546,9 @@ static void OnSpinChanged (GtkAdjustment *adj, gpointer data)
 	  if (g_pi_globals.scale[0] == 0.0f)
 		  return;
     if (adj->value > 0)
-      td.scale[0] = g_pi_globals.scale[0];
+      td._scale[0] = g_pi_globals.scale[0];
     else
-      td.scale[0] = -g_pi_globals.scale[0];
+      td._scale[0] = -g_pi_globals.scale[0];
   }
   else if (adj == g_object_get_data (G_OBJECT (g_PatchInspector.GetWidget()), "vscale_adj"))
   {
@@ -556,18 +556,18 @@ static void OnSpinChanged (GtkAdjustment *adj, gpointer data)
 	  if (g_pi_globals.scale[1] == 0.0f)
 		  return;
     if (adj->value > 0)
-      td.scale[1] = g_pi_globals.scale[1];
+      td._scale[1] = g_pi_globals.scale[1];
     else
-      td.scale[1] = -g_pi_globals.scale[1];
+      td._scale[1] = -g_pi_globals.scale[1];
   }
   else if (adj == g_object_get_data (G_OBJECT (g_PatchInspector.GetWidget()), "rotate_adj"))
   {
     g_pi_globals.rotate = static_cast<float>(atof (gtk_entry_get_text (GTK_ENTRY (data))));
 
     if (adj->value > 0)
-      td.rotate = g_pi_globals.rotate;
+      td._rotate = g_pi_globals.rotate;
     else
-      td.rotate = -g_pi_globals.rotate;
+      td._rotate = -g_pi_globals.rotate;
   }
 
   adj->value = 0;
@@ -575,20 +575,20 @@ static void OnSpinChanged (GtkAdjustment *adj, gpointer data)
   // will scale shift rotate the patch accordingly
 
 
-  if (td.shift[0] || td.shift[1])
+  if (td._shift[0] || td._shift[1])
   {
     UndoableCommand command("patchTranslateTexture");
-    Scene_PatchTranslateTexture_Selected (GlobalSceneGraph(), td.shift[0], td.shift[1]);
+    Scene_PatchTranslateTexture_Selected (GlobalSceneGraph(), td._shift[0], td._shift[1]);
   }
-  else if (td.scale[0] || td.scale[1])
+  else if (td._scale[0] || td._scale[1])
   {
     UndoableCommand command("patchScaleTexture");
-    Scene_PatchScaleTexture_Selected (GlobalSceneGraph(), td.scale[0], td.scale[1]);
+    Scene_PatchScaleTexture_Selected (GlobalSceneGraph(), td._scale[0], td._scale[1]);
   }
-  else if (td.rotate)
+  else if (td._rotate)
   {
     UndoableCommand command("patchRotateTexture");
-    Scene_PatchRotateTexture_Selected (GlobalSceneGraph(), td.rotate);
+    Scene_PatchRotateTexture_Selected (GlobalSceneGraph(), td._rotate);
   }
 
   // update the point-by-point view

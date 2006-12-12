@@ -295,6 +295,15 @@ public:
 	BasicVector3<Element> getNormalised() const {
 		return (*this)/getLength();
 	}
+	
+	// Returns a vector with the reciprocal values of each component
+	BasicVector3<Element> getInversed() {
+  		return BasicVector3<Element>(
+			1.0 / m_elements[0],
+			1.0 / m_elements[1],
+			1.0 / m_elements[2]
+		);
+	}
 
 	/* Scalar product this vector with another Vector3, 
 	 * returning the projection of <self> onto <other>

@@ -24,44 +24,68 @@ class TexDef : public GenericTextureDefinition {
 public:
 	// Constructor
 	TexDef() {
-		shift[0] = 0;
-		shift[1] = 0;
-		rotate = 0;
-		scale[0] = 1;
-		scale[1] = 1;
+		_shift[0] = 0;
+		_shift[1] = 0;
+		_rotate = 0;
+		_scale[0] = 1;
+		_scale[1] = 1;
 	}
 	
 	// Constructs a TexDef out of the given transformation matrix plus width/height
 	TexDef(float width, float height, const Matrix4& transform) {
-		scale[0] = static_cast<float>((1.0 / Vector2(transform[0], transform[4]).getLength()) / width);
-		scale[1] = static_cast<float>((1.0 / Vector2(transform[1], transform[5]).getLength()) / height);
+		_scale[0] = static_cast<float>((1.0 / Vector2(transform[0], transform[4]).getLength()) / width);
+		_scale[1] = static_cast<float>((1.0 / Vector2(transform[1], transform[5]).getLength()) / height);
 
-		rotate = static_cast<float>(-radians_to_degrees(arctangent_yx(-transform[4], transform[0])));
+		_rotate = static_cast<float>(-radians_to_degrees(arctangent_yx(-transform[4], transform[0])));
 
-		if (rotate == -180.0f) {
-			rotate = 180.0f;
+		if (_rotate == -180.0f) {
+			_rotate = 180.0f;
 		}
 
-		shift[0] = transform[12] * width;
-		shift[1] = transform[13] * height;
+		_shift[0] = transform[12] * width;
+		_shift[1] = transform[13] * height;
 
 		// If the 2d cross-product of the x and y axes is positive, one of the axes has a negative scale.
 		if (Vector2(transform[0], transform[4]).crossProduct(Vector2(transform[1], transform[5])) > 0) {
-			if (rotate >= 180.0f) {
-				rotate -= 180.0f;
-				scale[0] = -scale[0];
+			if (_rotate >= 180.0f) {
+				_rotate -= 180.0f;
+				_scale[0] = -_scale[0];
 			}
 			else {
-				scale[1] = -scale[1];
+				_scale[1] = -_scale[1];
 			}
 		}
 	}
-
-	bool isSane() const {
-		return fabs(shift[0]) < (1 << 16)
-			&& fabs(shift[1]) < (1 << 16);
+	
+	void shift(float s, float t) {
+		_shift[0] += s;
+		_shift[1] += t;
 	}
 	
+	void scale(float s, float t) {
+		_scale[0] += s;
+		_scale[1] += t;
+	}
+	
+	void rotate(float angle) {
+		_rotate += angle;
+		_rotate = static_cast<float>(float_to_integer(_rotate) % 360);
+	}
+
+	// Checks the TexDef for insanely large values
+	bool isSane() const {
+		return fabs(_shift[0]) < (1 << 16)
+			&& fabs(_shift[1]) < (1 << 16);
+	}
+	
+	// All texture-projection translation (shift) values are congruent modulo the dimensions of the texture.
+	// This function normalises shift values to the smallest positive congruent values.
+	void normalise(float width, float height) {
+  		// it may be useful to also normalise the rotation here, if this function is used elsewhere.
+		_shift[0] = float_mod(_shift[0], width);
+		_shift[1] = float_mod(_shift[1], height);
+	}
+		
 	/* Construct a transform in ST space from the texdef.
 	 * Transforms constructed from quake's texdef format 
 	 * are (-shift)*(1/scale)*(-rotate) with x translation sign flipped.
@@ -71,13 +95,13 @@ public:
 		double inverse_scale[2];
   
 		// transform to texdef shift/scale/rotate
-		inverse_scale[0] = 1 / (scale[0] * width);
-		inverse_scale[1] = 1 / (scale[1] * -height);
-		transform[12] = shift[0] / width;
-		transform[13] = -shift[1] / -height;
+		inverse_scale[0] = 1 / (_scale[0] * width);
+		inverse_scale[1] = 1 / (_scale[1] * -height);
+		transform[12] = _shift[0] / width;
+		transform[13] = -_shift[1] / -height;
 		
-		double c = cos(degrees_to_radians(-rotate));
-		double s = sin(degrees_to_radians(-rotate));
+		double c = cos(degrees_to_radians(-_rotate));
+		double s = sin(degrees_to_radians(-_rotate));
 		
 		transform[0] = static_cast<float>(c * inverse_scale[0]);
 		transform[1] = static_cast<float>(s * inverse_scale[1]);

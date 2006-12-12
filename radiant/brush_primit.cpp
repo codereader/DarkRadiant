@@ -112,34 +112,17 @@ inline void Texdef_fromTransform(TextureProjection& projection, float width, flo
 	}
 }
 
-inline void Texdef_normalise(TexDef& texdef, float width, float height)
-{
-  // it may be useful to also normalise the rotation here, if this function is used elsewhere.
-  texdef.shift[0] = float_mod(texdef.shift[0], width);
-  texdef.shift[1] = float_mod(texdef.shift[1], height);
-  //globalOutputStream() << "normalise: " << texdef.shift[0] << " " << texdef.shift[1] << " " << texdef.scale[0] << " " << texdef.scale[1] << " " << texdef.rotate << "\n";
-}
-
-inline void BPTexdef_normalise(BrushPrimitTexDef& bp_texdef, float width, float height)
-{
-  bp_texdef.coords[0][2] = float_mod(bp_texdef.coords[0][2], width);
-  bp_texdef.coords[1][2] = float_mod(bp_texdef.coords[1][2], height);
-}
-
 /// \brief Normalise \p projection for a given texture \p width and \p height.
 ///
 /// All texture-projection translation (shift) values are congruent modulo the dimensions of the texture.
 /// This function normalises shift values to the smallest positive congruent values.
-void Texdef_normalise(TextureProjection& projection, float width, float height)
-{
-  if(g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES)
-  {
-    BPTexdef_normalise(projection.m_brushprimit_texdef, width, height);
-  }
-  else
-  {
-    Texdef_normalise(projection.m_texdef, width, height);
-  }
+void Texdef_normalise(TextureProjection& projection, float width, float height) {
+	if (g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES) {
+		projection.m_brushprimit_texdef.normalise(width, height);
+	}
+	else {
+		projection.m_texdef.normalise(width, height);
+	}
 }
 
 void ComputeAxisBase(const Vector3& normal, Vector3& texS, Vector3& texT);
@@ -167,7 +150,7 @@ void Texdef_basisForNormal(const TextureProjection& projection, const Vector3& n
     basis.x().getVector3() = projection.m_basis_s;
     basis.y().getVector3() = -projection.m_basis_t;
     basis.z().getVector3() = basis.x().getVector3().crossProduct(basis.y().getVector3()).getNormalised();
-    matrix4_multiply_by_matrix4(basis, matrix4_rotation_for_z_degrees(-projection.m_texdef.rotate));
+    matrix4_multiply_by_matrix4(basis, matrix4_rotation_for_z_degrees(-projection.m_texdef._rotate));
     //globalOutputStream() << "debug: " << projection.m_basis_s << projection.m_basis_t << normal << "\n";
     basis.transpose();
   }
@@ -263,29 +246,6 @@ void TextureAxisFromNormal(const Vector3& normal, Vector3& s, Vector3& t)
   }
 }
 
-void Texdef_Assign(TexDef& td, const TexDef& other)
-{
-  td = other;
-}
-
-void Texdef_Shift(TexDef& td, float s, float t)
-{
-	td.shift[0] += s;
-	td.shift[1] += t;
-}
-
-void Texdef_Scale(TexDef& td, float s, float t)
-{
-	td.scale[0] += s;
-	td.scale[1] += t;
-}
-
-void Texdef_Rotate(TexDef& td, float angle)
-{
-	td.rotate += angle;
-	td.rotate = static_cast<float>(float_to_integer(td.rotate) % 360);
-}
-
 // NOTE: added these from Ritual's Q3Radiant
 void ClearBounds(Vector3& mins, Vector3& maxs)
 {
@@ -306,16 +266,6 @@ void AddPointToBounds(const Vector3& v, Vector3& mins, Vector3& maxs)
 		if (val > maxs[i])
 			maxs[i] = val;
 	}
-}
-
-template<typename Element>
-inline BasicVector3<Element> vector3_inverse(const BasicVector3<Element>& self)
-{
-  return BasicVector3<Element>(
-    Element(1.0 / self.x()),
-    Element(1.0 / self.y()),
-    Element(1.0 / self.z())
-  );
 }
 
 // low level functions .. put in mathlib?
@@ -557,69 +507,20 @@ void ConvertTexMatWithDimensions(const texmat_t texmat1, std::size_t w1, std::si
   TexMat_Scale(texmat2, static_cast<float>(w1) / static_cast<float>(w2), static_cast<float>(h1) / static_cast<float>(h2));
 }
 
-#if 0
-// convert a texture matrix between two qtexture_t
-// if 0 for qtexture_t, basic 2x2 texture is assumed ( straight mapping between s/t coordinates and geometric coordinates )
-void ConvertTexMatWithQTexture( const float texMat1[2][3], const qtexture_t *qtex1, float texMat2[2][3], const qtexture_t *qtex2 )
-{
-  ConvertTexMatWithDimensions(texMat1, (qtex1) ? qtex1->width : 2, (qtex1) ? qtex1->height : 2,
-                              texMat2, (qtex2) ? qtex2->width : 2, (qtex2) ? qtex2->height : 2);
-}
-
-void ConvertTexMatWithQTexture( const BrushPrimitTexDef *texMat1, const qtexture_t *qtex1, BrushPrimitTexDef *texMat2, const qtexture_t *qtex2 )
-{
-  ConvertTexMatWithQTexture(texMat1->coords, qtex1, texMat2->coords, qtex2);
-}
-#endif
-
-// compute a fake shift scale rot representation from the texture matrix
-// these shift scale rot values are to be understood in the local axis base
-// Note: this code looks similar to Texdef_fromTransform, but the algorithm is slightly different.
-
-void TexMatToFakeTexCoords(const BrushPrimitTexDef& bp_texdef, TexDef& texdef)
-{
-  texdef.scale[0] = static_cast<float>(1.0 / Vector2(bp_texdef.coords[0][0], bp_texdef.coords[1][0]).getLength());
-  texdef.scale[1] = static_cast<float>(1.0 / Vector2(bp_texdef.coords[0][1], bp_texdef.coords[1][1]).getLength());
-
-  texdef.rotate = -static_cast<float>(radians_to_degrees(arctangent_yx(bp_texdef.coords[1][0], bp_texdef.coords[0][0])));
-
-  texdef.shift[0] = -bp_texdef.coords[0][2];
-  texdef.shift[1] = bp_texdef.coords[1][2];
-
-  // determine whether or not an axis is flipped using a 2d cross-product
-  double cross = Vector2(bp_texdef.coords[0][0], bp_texdef.coords[0][1]).crossProduct(Vector2(bp_texdef.coords[1][0], bp_texdef.coords[1][1]));
-  if(cross < 0)
-  {
-    // This is a bit of a compromise when using BPs--since we don't know *which* axis was flipped,
-    // we pick one (rather arbitrarily) using the following convention: If the X-axis is between
-    // 0 and 180, we assume it's the Y-axis that flipped, otherwise we assume it's the X-axis and
-    // subtract out 180 degrees to compensate.
-    if(texdef.rotate >= 180.0f)
-    {
-      texdef.rotate -= 180.0f;
-      texdef.scale[0] = -texdef.scale[0];
-    }
-    else
-    {
-      texdef.scale[1] = -texdef.scale[1];
-    }
-  }
-}
-
 // compute back the texture matrix from fake shift scale rot
 void FakeTexCoordsToTexMat(const TexDef& texdef, BrushPrimitTexDef& bp_texdef)
 {
-  double r = degrees_to_radians(-texdef.rotate);
+  double r = degrees_to_radians(-texdef._rotate);
   double c = cos(r);
   double s = sin(r);
-  double x = 1.0f / texdef.scale[0];
-  double y = 1.0f / texdef.scale[1];
+  double x = 1.0f / texdef._scale[0];
+  double y = 1.0f / texdef._scale[1];
   bp_texdef.coords[0][0] = static_cast<float>(x * c);
   bp_texdef.coords[1][0] = static_cast<float>(x * s);
   bp_texdef.coords[0][1] = static_cast<float>(y * -s);
   bp_texdef.coords[1][1] = static_cast<float>(y * c);
-  bp_texdef.coords[0][2] = -texdef.shift[0];
-  bp_texdef.coords[1][2] = texdef.shift[1];
+  bp_texdef.coords[0][2] = -texdef._shift[0];
+  bp_texdef.coords[1][2] = texdef._shift[1];
 }
 
 #if 0 // texture locking (brush primit)
@@ -697,22 +598,6 @@ void ComputeBest2DVector( Vector3& v, Vector3& X, Vector3& Y, int &x, int &y )
 			x = -1;
 	}
 }
-
-
-#if 0 // texdef conversion
-void BrushPrimitFaceToFace(face_t *face)
-{
-  // we have parsed brush primitives and need conversion back to standard format
-  // NOTE: converting back is a quick hack, there's some information lost and we can't do anything about it
-  // FIXME: if we normalize the texture matrix to a standard 2x2 size, we end up with wrong scaling
-  // I tried various tweaks, no luck .. seems shifting is lost
-  BrushPrimitTexDef aux;
-  ConvertTexMatWithQTexture( &face->brushprimit_texdef, face->pShader->getTexture(), &aux, 0 );
-  TexMatToFakeTexCoords( aux.coords, face->texdef.shift, &face->texdef.rotate, face->texdef.scale );
-  face->texdef.scale[0]/=2.0;
-  face->texdef.scale[1]/=2.0;
-}
-#endif
 
 
 #if 0 // texture locking (brush primit)
@@ -975,10 +860,10 @@ void BPTexdef_Scale(BrushPrimitTexDef& bp_td, float s, float t)
 	// apply same scale as the spinner button of the surface inspector
 	TexDef texdef;
 	// compute fake shift scale rot
-	TexMatToFakeTexCoords( bp_td, texdef );
+	texdef = bp_td.getFakeTexCoords();
 	// update
-	texdef.scale[0] += s;
-	texdef.scale[1] += t;
+	texdef._scale[0] += s;
+	texdef._scale[1] += t;
 	// compute new normalized texture matrix
 	FakeTexCoordsToTexMat( texdef, bp_td );
 }
@@ -988,9 +873,9 @@ void BPTexdef_Rotate(BrushPrimitTexDef& bp_td, float angle)
 	// apply same scale as the spinner button of the surface inspector
 	TexDef texdef;
 	// compute fake shift scale rot
-	TexMatToFakeTexCoords( bp_td, texdef );
+	texdef = bp_td.getFakeTexCoords();
 	// update
-	texdef.rotate += angle;
+	texdef._rotate += angle;
 	// compute new normalized texture matrix
 	FakeTexCoordsToTexMat( texdef, bp_td );
 }
@@ -1010,7 +895,7 @@ void Texdef_Assign(TextureProjection& projection, const TextureProjection& other
   }
   else
   {
-    Texdef_Assign(projection.m_texdef, other.m_texdef);
+    projection.m_texdef = other.m_texdef;
     if(g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_HALFLIFE)
     {
       projection.m_basis_s = other.m_basis_s;
@@ -1027,7 +912,7 @@ void Texdef_Shift(TextureProjection& projection, float s, float t)
   }
   else
   {
-		Texdef_Shift(projection.m_texdef, s, t);
+		projection.m_texdef.shift(s, t);
   }
 }
 
@@ -1039,7 +924,7 @@ void Texdef_Scale(TextureProjection& projection, float s, float t)
 	}
 	else
 	{
-		Texdef_Scale(projection.m_texdef, s, t);
+		projection.m_texdef.scale(s, t);
 	}
 }
 
@@ -1051,7 +936,7 @@ void Texdef_Rotate(TextureProjection& projection, float angle)
 	}
 	else
 	{
-		Texdef_Rotate(projection.m_texdef, angle);
+		projection.m_texdef.rotate(angle);
 	}
 }
 
@@ -1104,8 +989,8 @@ float Texdef_getDefaultTextureScale()
 
 void TexDef_Construct_Default(TextureProjection& projection)
 {
-  projection.m_texdef.scale[0] = Texdef_getDefaultTextureScale();
-  projection.m_texdef.scale[1] = Texdef_getDefaultTextureScale();
+  projection.m_texdef._scale[0] = Texdef_getDefaultTextureScale();
+  projection.m_texdef._scale[1] = Texdef_getDefaultTextureScale();
 
   if(g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES)
   {
@@ -1113,18 +998,13 @@ void TexDef_Construct_Default(TextureProjection& projection)
   }
 }
 
-
-
-void ShiftScaleRotate_fromFace(TexDef& shiftScaleRotate, const TextureProjection& projection)
-{
-  if(g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES)
-  {
-    TexMatToFakeTexCoords(projection.m_brushprimit_texdef, shiftScaleRotate);
-  }
-  else
-  {
-    shiftScaleRotate = projection.m_texdef;
-  }
+void ShiftScaleRotate_fromFace(TexDef& shiftScaleRotate, const TextureProjection& projection) {
+	if(g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES) {
+		shiftScaleRotate = projection.m_brushprimit_texdef.getFakeTexCoords();
+	}
+	else {
+		shiftScaleRotate = projection.m_texdef;
+	}
 }
 
 void ShiftScaleRotate_toFace(const TexDef& shiftScaleRotate, TextureProjection& projection)
