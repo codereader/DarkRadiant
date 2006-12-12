@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "debugging/debugging.h"
 
-#include "itexdef.h"
+#include "brush/TexDef.h"
 #include "iundo.h"
 #include "iselection.h"
 #include "irender.h"
@@ -90,26 +90,6 @@ inline TextOuputStreamType& ostream_write(TextOuputStreamType& ostream, const Ma
     << m[4] << " " << m[5] << " " << m[6] << " " << m[7] << ", "
     << m[8] << " " << m[9] << " " << m[10] << " " << m[11] << ", "
     << m[12] << " " << m[13] << " " << m[14] << " " << m[15] << ")";
-}
-
-inline void print_vector3(const Vector3& v)
-{
-  globalOutputStream() << "( " << v.x() << " " << v.y() << " " << v.z() << " )\n";
-}
-
-inline void print_3x3(const Matrix4& m)
-{
-  globalOutputStream() << "( " << m.xx() << " " << m.xy() << " " << m.xz() << " ) "
-    << "( " << m.yx() << " " << m.yy() << " " << m.yz() << " ) "
-    << "( " << m.zx() << " " << m.zy() << " " << m.zz() << " )\n";
-}
-
-
-
-inline bool texdef_sane(const texdef_t& texdef)
-{
-  return fabs(texdef.shift[0]) < (1 << 16)
-    && fabs(texdef.shift[1]) < (1 << 16);
 }
 
 inline void Winding_DrawWireframe(const Winding& winding)
@@ -224,14 +204,9 @@ inline void planepts_quantise(PlanePoints planepts, double snap)
   vector3_snap(planepts[2], snap);
 }
 
-inline float vector3_max_component(const Vector3& vec3)
-{
-  return std::max(fabsf(vec3[0]), std::max(fabsf(vec3[1]), fabsf(vec3[2])));
-}
-
 inline void edge_snap(Vector3& edge, double snap)
 {
-  float scale = static_cast<float>(ceil(fabs(snap / vector3_max_component(edge))));
+  float scale = static_cast<float>(ceil(fabs(snap / edge.max())));
   if(scale > 0.0f)
   {
     edge *= scale;
@@ -646,7 +621,7 @@ public:
 
   void shift(float s, float t)
   {
-    ASSERT_MESSAGE(texdef_sane(m_projection.m_texdef), "FaceTexdef::shift: bad texdef");
+    ASSERT_MESSAGE(m_projection.m_texdef.isSane(), "FaceTexdef::shift: bad texdef");
     removeScale();
     Texdef_Shift(m_projection, s, t);
     addScale();
@@ -679,13 +654,13 @@ public:
   void transform(const Plane3& plane, const Matrix4& matrix)
   {
     removeScale();
-    Texdef_transformLocked(m_projection, m_shader.width(), m_shader.height(), plane, matrix);
+    TexDefransformLocked(m_projection, m_shader.width(), m_shader.height(), plane, matrix);
     addScale();
   }
 
   TextureProjection normalised() const
   {
-    brushprimit_texdef_t tmp(m_projection.m_brushprimit_texdef);
+    BrushPrimitTexDef tmp(m_projection.m_brushprimit_texdef);
     tmp.removeScale(m_shader.width(), m_shader.height());
     return TextureProjection(m_projection.m_texdef, tmp, m_projection.m_basis_s, m_projection.m_basis_t);
   }
@@ -1170,7 +1145,7 @@ public:
   {
     if(g_brush_texturelock_enabled)
     {
-      Texdef_transformLocked(m_texdefTransformed, m_shader.width(), m_shader.height(), m_plane.plane3(), matrix);
+      TexDefransformLocked(m_texdefTransformed, m_shader.width(), m_shader.height(), m_plane.plane3(), matrix);
     }
 
     m_planeTransformed.transform(matrix, mirror);

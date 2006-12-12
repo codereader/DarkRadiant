@@ -32,7 +32,7 @@ inline Vector3 translation_to_local(const Vector3& translation, const Matrix4& l
 {
   return matrix4_get_translation_vec3(
     matrix4_multiplied_by_matrix4(
-      matrix4_translated_by_vec3(matrix4_transposed(local), translation),
+      matrix4_translated_by_vec3(local.getTransposed(), translation),
       local
     )
   );
@@ -44,7 +44,7 @@ inline Vector3 translation_from_local(const Vector3& translation, const Matrix4&
   return matrix4_get_translation_vec3(
     matrix4_multiplied_by_matrix4(
       matrix4_translated_by_vec3(local, translation),
-      matrix4_transposed(local)
+      local.getTransposed()
     )
   );
 }

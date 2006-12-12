@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "patchdialog.h"
 
-#include "itexdef.h"
+#include "brush/TexDef.h"
 
 #include "debugging/debugging.h"
 
@@ -513,7 +513,7 @@ void Scene_PatchTranslateTexture_Selected(scene::Graph& graph, float s, float t)
 
 static void OnSpinChanged (GtkAdjustment *adj, gpointer data)
 {
-  texdef_t td;
+  TexDef td;
 
   td.rotate = 0;
   td.scale[0] = td.scale[1] = 0;

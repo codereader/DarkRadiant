@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ientity.h"
 #include "ieclass.h"
 #include "igl.h"
+#include "brush/TexDef.h"
 #include "ibrush.h"
 #include "iundo.h"
 #include "iregistry.h"

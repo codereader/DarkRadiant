@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "debugging/debugging.h"
 
+#include "brush/TexDef.h"
 #include "qerplugin.h"
 #include "ifilesystem.h"
 #include "ishaders.h"

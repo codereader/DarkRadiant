@@ -22,21 +22,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined (INCLUDED_ITEXDEF_H)
 #define INCLUDED_ITEXDEF_H
 
-class texdef_t
-{
+class Matrix4;
+
+/* greebo: The texture definition structure, containing the scale, 
+ * rotation and shift values of an applied texture. 
+ * At some places this is referred to as "fake" texture coordinates.
+ */
+class GenericTextureDefinition {
 public:
 	float	shift[2];
 	float	rotate;
 	float	scale[2];
 
-  texdef_t()
-  {
-	  shift[0] = 0;
-	  shift[1] = 0;
-	  rotate = 0;
-	  scale[0] = 1;
-	  scale[1] = 1;
-  }
+	// Test the texture definition for insanely large values
+	virtual bool isSane() const = 0;
+	virtual Matrix4 getTransform(float width, float height) const = 0;
 };
 
 #endif

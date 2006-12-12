@@ -371,7 +371,7 @@ this holds global level preferences
 extern CGameDialog g_GamesDialog;
 
 
-class texdef_t;
+class TexDef;
 
 class PrefsDlg : public Dialog
 {

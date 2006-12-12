@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <list>
 
 #include "ientity.h"
+#include "brush/TexDef.h"
 #include "ibrush.h"
 #include "ipatch.h"
 #include "ieclass.h"

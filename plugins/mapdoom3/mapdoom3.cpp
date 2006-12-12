@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "iscriplib.h"
+#include "brush/TexDef.h"
 #include "ibrush.h"
 #include "ipatch.h"
 #include "ifiletypes.h"
