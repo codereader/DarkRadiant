@@ -28,6 +28,56 @@ struct BrushPrimitTexDef {
 		coords[1][2] = transform.ty();
 	}
 	
+	// Construct a BrushPrimitTexDef out of "fake" shift scale rot definitions
+	BrushPrimitTexDef(const TexDef& texdef) {
+		double r = degrees_to_radians(-texdef._rotate);
+		double c = cos(r);
+		double s = sin(r);
+		double x = 1.0f / texdef._scale[0];
+		double y = 1.0f / texdef._scale[1];
+		coords[0][0] = static_cast<float>(x * c);
+		coords[1][0] = static_cast<float>(x * s);
+		coords[0][1] = static_cast<float>(y * -s);
+		coords[1][1] = static_cast<float>(y * c);
+		coords[0][2] = -texdef._shift[0];
+		coords[1][2] = texdef._shift[1];
+	}
+	
+	// shift a texture (texture adjustments) along it's current texture axes
+	void shift(float s, float t) {
+		// x and y are geometric values, which we must compute as ST increments
+		// this depends on the texture size and the pixel/texel ratio
+		// as a ratio against texture size
+		// the scale of the texture is not relevant here (we work directly on a transformation from the base vectors)
+		coords[0][2] -= s;
+		coords[1][2] += t;
+	}
+	
+	// apply same scale as the spinner button of the surface inspector
+	void scale(float s, float t) {
+		// compute fake shift scale rot
+		TexDef texdef = getFakeTexCoords();
+		
+		// update
+		texdef._scale[0] += s;
+		texdef._scale[1] += t;
+		
+		// compute new normalized texture matrix
+		*this = BrushPrimitTexDef(texdef);
+	}
+	
+	// apply same rotation as the spinner button of the surface inspector
+	void rotate(float angle) {
+		// compute fake shift scale rot
+		TexDef texdef = getFakeTexCoords();
+		
+		// update
+		texdef._rotate += angle;
+		
+		// compute new normalized texture matrix
+		*this = BrushPrimitTexDef(texdef);
+	}
+	
 	/* greebo: This removes the texture scaling from the
 	 * coordinates. The resulting coordinates are absolute
 	 * values within the shader image.
