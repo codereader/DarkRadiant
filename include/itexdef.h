@@ -30,9 +30,9 @@ class Matrix4;
  */
 class GenericTextureDefinition {
 public:
-	float	shift[2];
-	float	rotate;
-	float	scale[2];
+	float	_shift[2];
+	float	_rotate;
+	float	_scale[2];
 
 	// Test the texture definition for insanely large values
 	virtual bool isSane() const = 0;

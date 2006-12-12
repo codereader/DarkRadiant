@@ -1191,31 +1191,31 @@ globalOutputStream() << "BP: (" << g_selectedBrushPrimitTexdef.coords[0][0] << "
   ShiftScaleRotate_fromFace(shiftScaleRotate, SurfaceInspector_GetSelectedTexdef());
 
   {
-    spin_button_set_value_no_signal(m_hshiftIncrement.m_spin, shiftScaleRotate.shift[0]);
+    spin_button_set_value_no_signal(m_hshiftIncrement.m_spin, shiftScaleRotate._shift[0]);
     spin_button_set_step_increment(m_hshiftIncrement.m_spin, g_si_globals.shift[0]);
     entry_set_float(m_hshiftIncrement.m_entry, g_si_globals.shift[0]);
   }
 
   {
-    spin_button_set_value_no_signal(m_vshiftIncrement.m_spin, shiftScaleRotate.shift[1]);
+    spin_button_set_value_no_signal(m_vshiftIncrement.m_spin, shiftScaleRotate._shift[1]);
     spin_button_set_step_increment(m_vshiftIncrement.m_spin, g_si_globals.shift[1]);
     entry_set_float(m_vshiftIncrement.m_entry, g_si_globals.shift[1]);
   }
 
   {
-    spin_button_set_value_no_signal(m_hscaleIncrement.m_spin, shiftScaleRotate.scale[0]);
+    spin_button_set_value_no_signal(m_hscaleIncrement.m_spin, shiftScaleRotate._scale[0]);
     spin_button_set_step_increment(m_hscaleIncrement.m_spin, g_si_globals.scale[0]);
     entry_set_float(m_hscaleIncrement.m_entry, g_si_globals.scale[0]);
   }
 
   {
-    spin_button_set_value_no_signal(m_vscaleIncrement.m_spin, shiftScaleRotate.scale[1]);
+    spin_button_set_value_no_signal(m_vscaleIncrement.m_spin, shiftScaleRotate._scale[1]);
     spin_button_set_step_increment(m_vscaleIncrement.m_spin, g_si_globals.scale[1]);
     entry_set_float(m_vscaleIncrement.m_entry, g_si_globals.scale[1]);
   }
 
   {
-    spin_button_set_value_no_signal(m_rotateIncrement.m_spin, shiftScaleRotate.rotate);
+    spin_button_set_value_no_signal(m_rotateIncrement.m_spin, shiftScaleRotate._rotate);
     spin_button_set_step_increment(m_rotateIncrement.m_spin, g_si_globals.rotate);
     entry_set_float(m_rotateIncrement.m_entry, g_si_globals.rotate);
   }
@@ -1267,11 +1267,11 @@ void SurfaceInspector::ApplyTexdef()
 {
   TexDef shiftScaleRotate;
 
-  shiftScaleRotate.shift[0] = static_cast<float>(gtk_spin_button_get_value_as_float(m_hshiftIncrement.m_spin));
-  shiftScaleRotate.shift[1] = static_cast<float>(gtk_spin_button_get_value_as_float(m_vshiftIncrement.m_spin));
-  shiftScaleRotate.scale[0] = static_cast<float>(gtk_spin_button_get_value_as_float(m_hscaleIncrement.m_spin));
-  shiftScaleRotate.scale[1] = static_cast<float>(gtk_spin_button_get_value_as_float(m_vscaleIncrement.m_spin));
-  shiftScaleRotate.rotate = static_cast<float>(gtk_spin_button_get_value_as_float(m_rotateIncrement.m_spin));
+  shiftScaleRotate._shift[0] = static_cast<float>(gtk_spin_button_get_value_as_float(m_hshiftIncrement.m_spin));
+  shiftScaleRotate._shift[1] = static_cast<float>(gtk_spin_button_get_value_as_float(m_vshiftIncrement.m_spin));
+  shiftScaleRotate._scale[0] = static_cast<float>(gtk_spin_button_get_value_as_float(m_hscaleIncrement.m_spin));
+  shiftScaleRotate._scale[1] = static_cast<float>(gtk_spin_button_get_value_as_float(m_vscaleIncrement.m_spin));
+  shiftScaleRotate._rotate = static_cast<float>(gtk_spin_button_get_value_as_float(m_rotateIncrement.m_spin));
 
   TextureProjection projection;
 //Shamus: This is the other place that screws up, it seems, since it doesn't seem to do the
