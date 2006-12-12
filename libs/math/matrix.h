@@ -301,6 +301,26 @@ public:
 		return m_elements;
 	}
 
+	// Transposes the matrix <self>
+	void transpose() {
+		std::swap(m_elements[1], m_elements[4]); // xy <=> yx
+		std::swap(m_elements[2], m_elements[8]); // xz <=> zx
+		std::swap(m_elements[3], m_elements[12]); // xw <=> tx
+		std::swap(m_elements[6], m_elements[9]); // yz <=> zy
+		std::swap(m_elements[7], m_elements[13]); // yw <=> ty
+		std::swap(m_elements[11], m_elements[14]); // zw <=> tz
+	}
+	
+	// Returns the transposed matrix of <self>
+	Matrix4 getTransposed() const {
+		return Matrix4(
+			xx(), yx(), zx(), tx(),
+			xy(), yy(), zy(), ty(),
+			xz(), yz(), zz(), tz(),
+			xw(), yw(), zw(), tw()
+		);
+	}
+
 	/** Use this matrix to transform the provided vector and return a new
 	 * vector containing the result.
 	 * 
@@ -626,41 +646,6 @@ inline Vector4 matrix4_transformed_vector4(const Matrix4& self, const Vector4& v
 inline void matrix4_transform_vector4(const Matrix4& self, Vector4& vector4)
 {
   vector4 = matrix4_transformed_vector4(self, vector4);
-}
-
-
-/// \brief Transposes \p self in-place.
-inline void matrix4_transpose(Matrix4& self)
-{
-  std::swap(self.xy(), self.yx());
-  std::swap(self.xz(), self.zx());
-  std::swap(self.xw(), self.tx());
-  std::swap(self.yz(), self.zy());
-  std::swap(self.yw(), self.ty());
-  std::swap(self.zw(), self.tz());
-}
-
-/// \brief Returns \p self transposed.
-inline Matrix4 matrix4_transposed(const Matrix4& self)
-{
-  return Matrix4(
-    self.xx(),
-    self.yx(),
-    self.zx(),
-    self.tx(),
-    self.xy(),
-    self.yy(),
-    self.zy(),
-    self.ty(),
-    self.xz(),
-    self.yz(),
-    self.zz(),
-    self.tz(),
-    self.xw(),
-    self.yw(),
-    self.zw(),
-    self.tw()
-  );
 }
 
 

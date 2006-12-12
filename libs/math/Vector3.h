@@ -356,6 +356,16 @@ public:
 	operator Element* () {
 		return m_elements;
 	}
+	
+	// Returns the maximum absolute value of the components 
+	Element max() const {
+		return std::max(fabs(m_elements[0]), std::max(fabs(m_elements[1]), fabs(m_elements[2])));
+	}
+	
+	// Returns the minimum absolute value of the components
+	Element min() const {
+		return std::min(fabs(m_elements[0]), std::min(fabs(m_elements[1]), fabs(m_elements[2])));
+	}
 
 };
 

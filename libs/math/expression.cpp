@@ -165,7 +165,7 @@ Matrix4 testMatrix4MultipliedConstant2(const Matrix4& a)
 }
 Matrix4 testMatrix4Transposed1(const Matrix4& a)
 {
-  return matrix4_transposed(a);
+  return a.getTransposed();
 }
 
 Matrix4 testMatrix4Transposed2(const Matrix4& a)
@@ -175,7 +175,7 @@ Matrix4 testMatrix4Transposed2(const Matrix4& a)
 
 Vector3 testMulti1(const Matrix4& a, const Vector3& b, const Vector3& c)
 {
-  return matrix4_transformed_point(matrix4_transposed(a), b) + c;
+  return matrix4_transformed_point(a.getTransposed(), b) + c;
 }
 
 Vector3 testMulti2(const Matrix4& a, const Vector3& b, const Vector3& c)

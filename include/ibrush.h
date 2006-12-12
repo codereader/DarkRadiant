@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/constant.h"
 #include "generic/callback.h"
 #include "math/Vector3.h"
-#include "itexdef.h"
+//#include "itexdef.h"
 
 namespace scene
 {
@@ -80,6 +80,8 @@ public:
 };
 #endif
 
+class TexDef;
+
 class _QERFaceData
 {
 public:
@@ -89,7 +91,7 @@ public:
   Vector3 m_p0;
   Vector3 m_p1;
   Vector3 m_p2;
-  texdef_t m_texdef;
+  TexDef m_texdef;
   const char* m_shader;
   int contents;
   int flags;

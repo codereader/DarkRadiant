@@ -213,14 +213,14 @@ void CControlPointsManagerBFace::UpdateCtrlPts()
 //++timo FIXME: we are using a global for the reference data, use a m_pCancelFaceData instead
 void CControlPointsManagerBFace::Commit( )
 {
-  brushprimit_texdef_t aux;
+  BrushPrimitTexDef aux;
   aux.coords[0][0] = m_TM[0][0]*g_CancelFaceData.brushprimit_texdef.coords[0][0] + m_TM[0][1]*g_CancelFaceData.brushprimit_texdef.coords[1][0];
   aux.coords[0][1] = m_TM[0][0]*g_CancelFaceData.brushprimit_texdef.coords[0][1] + m_TM[0][1]*g_CancelFaceData.brushprimit_texdef.coords[1][1];
   aux.coords[0][2] = m_TM[0][0]*g_CancelFaceData.brushprimit_texdef.coords[0][2] + m_TM[0][1]*g_CancelFaceData.brushprimit_texdef.coords[1][2] + m_TM[0][2];
   aux.coords[1][0] = m_TM[1][0]*g_CancelFaceData.brushprimit_texdef.coords[0][0] + m_TM[1][1]*g_CancelFaceData.brushprimit_texdef.coords[1][0];
   aux.coords[1][1] = m_TM[1][0]*g_CancelFaceData.brushprimit_texdef.coords[0][1] + m_TM[1][1]*g_CancelFaceData.brushprimit_texdef.coords[1][1];
   aux.coords[1][2] = m_TM[1][0]*g_CancelFaceData.brushprimit_texdef.coords[0][2] + m_TM[1][1]*g_CancelFaceData.brushprimit_texdef.coords[1][2] + m_TM[1][2];
-  memcpy( &m_pFaceData->brushprimit_texdef, &aux, sizeof(brushprimit_texdef_t) );
+  memcpy( &m_pFaceData->brushprimit_texdef, &aux, sizeof(BrushPrimitTexDef) );
 }
 
 void CControlPointsManagerBFace::ComputeTransOffset(int i)

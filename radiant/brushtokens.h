@@ -44,7 +44,7 @@ inline bool FaceTexdef_importTokens(FaceTexdef& texdef, Tokeniser& tokeniser)
   RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_texdef.scale[0]));
   RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_texdef.scale[1]));
 
-  ASSERT_MESSAGE(texdef_sane(texdef.m_projection.m_texdef), "FaceTexdef_importTokens: bad texdef");
+  ASSERT_MESSAGE(texdef.m_projection.m_texdef.isSane(), "FaceTexdef_importTokens: bad texdef");
   return true;
 }
 

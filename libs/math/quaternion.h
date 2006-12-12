@@ -214,7 +214,7 @@ inline Matrix4 matrix4_rotation_for_quaternion_quantised(const Quaternion& quate
 
 inline Quaternion quaternion_for_matrix4_rotation(const Matrix4& matrix4)
 {
-  Matrix4 transposed = matrix4_transposed(matrix4);
+  Matrix4 transposed = matrix4.getTransposed();
 
   double trace = transposed[0] + transposed[5] + transposed[10] + 1.0;
 

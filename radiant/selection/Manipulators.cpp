@@ -94,7 +94,7 @@ void RotateManipulator::UpdateColours()  {
 void RotateManipulator::updateCircleTransforms()  {
     Vector3 localViewpoint(
     	matrix4_transformed_direction(
-    		matrix4_transposed(_pivot._worldSpace), 
+    		_pivot._worldSpace.getTransposed(), 
     		_pivot._viewpointSpace.z().getVector3())
     );
 

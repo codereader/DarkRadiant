@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "warnings.h"
 
 #include "iscenegraph.h"
-#include "itexdef.h"
+#include "brush/TexDef.h"
 #include "iundo.h"
 #include "iselection.h"
 
@@ -1178,7 +1178,7 @@ void SurfaceInspector::Update()
     gtk_entry_set_text(m_texture, "");
   }
 
-  texdef_t shiftScaleRotate;
+  TexDef shiftScaleRotate;
 //Shamus: This is where we get into trouble--the BP code tries to convert to a "faked"
 //shift, rotate & scale values from the brush face, which seems to screw up for some reason.
 //!!! FIX !!!
@@ -1265,7 +1265,7 @@ void SurfaceInspector::ApplyShader()
 
 void SurfaceInspector::ApplyTexdef()
 {
-  texdef_t shiftScaleRotate;
+  TexDef shiftScaleRotate;
 
   shiftScaleRotate.shift[0] = static_cast<float>(gtk_spin_button_get_value_as_float(m_hshiftIncrement.m_spin));
   shiftScaleRotate.shift[1] = static_cast<float>(gtk_spin_button_get_value_as_float(m_vshiftIncrement.m_spin));
@@ -1330,7 +1330,7 @@ typedef Function4<Face&, const char*, const TextureProjection&, const ContentsFl
 void Patch_getTexture(Patch& patch, CopiedString& shader, TextureProjection& projection, ContentsFlagsValue& flags)
 {
   shader = patch.GetShader();
-  projection = TextureProjection(texdef_t(), brushprimit_texdef_t(), Vector3(0, 0, 0), Vector3(0, 0, 0));
+  projection = TextureProjection(TexDef(), BrushPrimitTexDef(), Vector3(0, 0, 0), Vector3(0, 0, 0));
   flags = ContentsFlagsValue(0, 0, 0, false);
 }
 typedef Function4<Patch&, CopiedString&, TextureProjection&, ContentsFlagsValue&, void, Patch_getTexture> PatchGetTexture;
@@ -1626,7 +1626,7 @@ struct Extent
 
 //This seems to control the texture scale... (Yep! ;-)
 Extent extents = { -2.0f, -2.0f, +2.0f, +2.0f };
-brushprimit_texdef_t tm;						// Texture transform matrix
+BrushPrimitTexDef tm;						// Texture transform matrix
 Vector2 pts[c_brush_maxFaces];
 Vector2 center;
 int numPts;
@@ -1640,8 +1640,8 @@ bool rButtonDown = false;
 //int dragPoint;
 //int anchorPoint;
 bool haveAnchor = false;
-brushprimit_texdef_t currentBP;
-brushprimit_texdef_t origBP;					// Original brush primitive (before we muck it up)
+BrushPrimitTexDef currentBP;
+BrushPrimitTexDef origBP;					// Original brush primitive (before we muck it up)
 float controlRadius = 5.0f;
 float rotationAngle = 0.0f;
 float rotationAngle2 = 0.0f;
@@ -1698,11 +1698,11 @@ void CopyPointsFromSelectedFace(void)
   //globalOutputStream() << " ..copied points\n";
 }
 
-	brushprimit_texdef_t bp;
+	BrushPrimitTexDef bp;
 //This approach is probably wrongheaded and just not right anyway. So, !!! FIX !!! [DONE]
 void CommitChanges(void)
 {
-	texdef_t t;									// Throwaway, since this is BP only
+	TexDef t;									// Throwaway, since this is BP only
 
 	bp.coords[0][0] = tm.coords[0][0] * origBP.coords[0][0] + tm.coords[0][1] * origBP.coords[1][0];
 	bp.coords[0][1] = tm.coords[0][0] * origBP.coords[0][1] + tm.coords[0][1] * origBP.coords[1][1];

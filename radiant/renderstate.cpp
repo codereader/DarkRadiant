@@ -2186,7 +2186,7 @@ void Renderables_flush(OpenGLStateBucket::Renderables& renderables, OpenGLState&
 
         if (i->m_light->isProjected()) {
           world2light = (*i).m_light->projection();
-          matrix4_multiply_by_matrix4(world2light, matrix4_transposed((*i).m_light->rotation()));
+          matrix4_multiply_by_matrix4(world2light, i->m_light->rotation().getTransposed());
           
           // greebo: old code: matrix4_translate_by_vec3(world2light, -lightBounds.origin); // world->lightBounds
           matrix4_translate_by_vec3(world2light, -(i->m_light->offset()));
@@ -2195,7 +2195,7 @@ void Renderables_flush(OpenGLStateBucket::Renderables& renderables, OpenGLState&
           matrix4_translate_by_vec3(world2light, Vector3(0.5f, 0.5f, 0.5f));
           matrix4_scale_by_vec3(world2light, Vector3(0.5f, 0.5f, 0.5f));
           matrix4_scale_by_vec3(world2light, Vector3(1.0f / lightBounds.extents.x(), 1.0f / lightBounds.extents.y(), 1.0f / lightBounds.extents.z()));
-          matrix4_multiply_by_matrix4(world2light, matrix4_transposed((*i).m_light->rotation()));
+          matrix4_multiply_by_matrix4(world2light, i->m_light->rotation().getTransposed());
           matrix4_translate_by_vec3(world2light, -lightBounds.origin); // world->lightBounds
         }
 

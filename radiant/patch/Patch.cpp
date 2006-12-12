@@ -932,7 +932,7 @@ void Patch::SetTextureRepeat(float s, float t)
 }
 
 /*
-void Patch::SetTextureInfo(texdef_t *pt)
+void Patch::SetTextureInfo(TexDef *pt)
 {
   if(pt->getShift()[0] || pt->getShift()[1])
     TranslateTexture (pt->getShift()[0], pt->getShift()[1]);
