@@ -558,7 +558,7 @@ public:
 
     void exportState(FaceTexdef& faceTexdef) const
     {
-      Texdef_Assign(faceTexdef.m_projection, m_projection);
+      faceTexdef.m_projection.assign(m_projection);
     }
   };
 
@@ -615,7 +615,7 @@ public:
   void setTexdef(const TextureProjection& projection)
   {
     removeScale();
-    Texdef_Assign(m_projection, projection);
+    m_projection.assign(projection);
     addScale();
   }
 
@@ -623,27 +623,27 @@ public:
   {
     ASSERT_MESSAGE(m_projection.m_texdef.isSane(), "FaceTexdef::shift: bad texdef");
     removeScale();
-    Texdef_Shift(m_projection, s, t);
+    m_projection.shift(s, t);
     addScale();
   }
 
   void scale(float s, float t)
   {
     removeScale();
-    Texdef_Scale(m_projection, s, t);
+    m_projection.scale(s, t);
     addScale();
   }
 
   void rotate(float angle)
   {
     removeScale();
-    Texdef_Rotate(m_projection, angle);
+    m_projection.rotate(angle);
     addScale();
   }
 
   void fit(const Vector3& normal, const Winding& winding, float s_repeat, float t_repeat)
   {
-    Texdef_FitTexture(m_projection, m_shader.width(), m_shader.height(), normal, winding, s_repeat, t_repeat);
+    m_projection.fitTexture(m_shader.width(), m_shader.height(), normal, winding, s_repeat, t_repeat);
   }
 
   void emitTextureCoordinates(Winding& winding, const Vector3& normal, const Matrix4& localToWorld)
@@ -654,7 +654,7 @@ public:
   void transform(const Plane3& plane, const Matrix4& matrix)
   {
     removeScale();
-    TexDefransformLocked(m_projection, m_shader.width(), m_shader.height(), plane, matrix);
+    m_projection.transformLocked(m_shader.width(), m_shader.height(), plane, matrix);
     addScale();
   }
 
@@ -1145,7 +1145,7 @@ public:
   {
     if(g_brush_texturelock_enabled)
     {
-      TexDefransformLocked(m_texdefTransformed, m_shader.width(), m_shader.height(), m_plane.plane3(), matrix);
+      m_texdefTransformed.transformLocked(m_shader.width(), m_shader.height(), m_plane.plane3(), matrix);
     }
 
     m_planeTransformed.transform(matrix, mirror);

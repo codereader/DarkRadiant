@@ -40,22 +40,17 @@ typedef Vector4 Quaternion;
 class Matrix4;
 class Plane3;
 
-void Normal_GetTransform(const Vector3& normal, Matrix4& transform);
+//void Normal_GetTransform(const Vector3& normal, Matrix4& transform);
 
 void TexDef_Construct_Default(TextureProjection& projection);
 
-void Texdef_Assign(TextureProjection& projection, const TextureProjection& other);
-void Texdef_Shift(TextureProjection& projection, float s, float t);
-void Texdef_Scale(TextureProjection& projection, float s, float t);
-void Texdef_Rotate(TextureProjection& projection, float angle);
-void Texdef_FitTexture(TextureProjection& projection, std::size_t width, std::size_t height, const Vector3& normal, const Winding& w, float s_repeat, float t_repeat);
+//void Texdef_FitTexture(TextureProjection& projection, std::size_t width, std::size_t height, const Vector3& normal, const Winding& w, float s_repeat, float t_repeat);
 void Texdef_EmitTextureCoordinates(const TextureProjection& projection, std::size_t width, std::size_t height, Winding& w, const Vector3& normal, const Matrix4& localToWorld);
 
 void ShiftScaleRotate_fromFace(TexDef& shiftScaleRotate, const TextureProjection& projection);
 void ShiftScaleRotate_toFace(const TexDef& shiftScaleRotate, TextureProjection& projection);
 
-void TexDefransformLocked(TextureProjection& projection, std::size_t width, std::size_t height, const Plane3& plane, const Matrix4& transform);
-void Texdef_normalise(TextureProjection& projection, float width, float height);
+//void TexDefransformLocked(TextureProjection& projection, std::size_t width, std::size_t height, const Plane3& plane, const Matrix4& transform);
 
 extern float g_texdef_default_scale;
 
