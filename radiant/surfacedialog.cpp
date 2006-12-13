@@ -303,11 +303,8 @@ void SurfaceInspector_updateSelection()
   SurfaceInspector_queueDraw();
 
 #if TEXTOOL_ENABLED
-  if (g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES)
-  {
     TexTool::queueDraw();
     //globalOutputStream() << "textool texture changed..\n";
-  }
 #endif
 }
 
@@ -509,8 +506,6 @@ static void OnBtnAxial(GtkWidget *widget, gpointer data)
 #if TEXTOOL_ENABLED
 
   //Shamus:
-  if (g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES)
-  {
     // Scale up texture width/height if in BP mode...
 //NOTE: This may not be correct any more! :-P
     if (!g_SelectedFaceInstances.empty())
@@ -523,7 +518,6 @@ static void OnBtnAxial(GtkWidget *widget, gpointer data)
       projection.m_brushprimit_texdef.coords[1][0] /= x;
       projection.m_brushprimit_texdef.coords[1][1] /= y;
     }
-  }
 #endif
 
   Select_SetTexdef(projection);
@@ -1087,9 +1081,7 @@ GtkWindow* SurfaceInspector::BuildDialog()
     }
 
 #if TEXTOOL_ENABLED
-    if(g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES)
 // Shamus: Textool goodies...
-    {
       GtkWidget * frame = gtk_frame_new("Textool");
       gtk_widget_show(frame);
       gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(frame), FALSE, FALSE, 0);
@@ -1134,7 +1126,6 @@ GtkWindow* SurfaceInspector::BuildDialog()
         g_signal_connect(G_OBJECT(flipX), "toggled", G_CALLBACK(TexTool::flipX), NULL);
         g_signal_connect(G_OBJECT(flipY), "toggled", G_CALLBACK(TexTool::flipY), NULL);
       }
-    }
 #endif
   }
 
