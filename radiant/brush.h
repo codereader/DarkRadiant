@@ -63,7 +63,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "signal/signalfwd.h"
 
 #include "winding.h"
-#include "brush_primit.h"
+#include "brush/TextureProjection.h"
 
 const unsigned int BRUSH_DETAIL_FLAG = 27;
 const unsigned int BRUSH_DETAIL_MASK = (1 << BRUSH_DETAIL_FLAG);
@@ -648,7 +648,7 @@ public:
 
   void emitTextureCoordinates(Winding& winding, const Vector3& normal, const Matrix4& localToWorld)
   {
-    Texdef_EmitTextureCoordinates(m_projection, m_shader.width(), m_shader.height(), winding, normal, localToWorld);
+    m_projection.emitTextureCoordinates(m_shader.width(), m_shader.height(), winding, normal, localToWorld);
   }
 
   void transform(const Plane3& plane, const Matrix4& matrix)
@@ -1308,7 +1308,7 @@ public:
 
   void EmitTextureCoordinates()
   {
-    Texdef_EmitTextureCoordinates(m_texdefTransformed, m_shader.width(), m_shader.height(), m_winding, plane3().normal(), g_matrix4_identity);
+    m_texdefTransformed.emitTextureCoordinates(m_shader.width(), m_shader.height(), m_winding, plane3().normal(), g_matrix4_identity);
   }
 
 

@@ -65,7 +65,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brushmanip.h"
 #include "patchdialog.h"
 #include "preferences.h"
-#include "brush_primit.h"
+#include "brush/TextureProjection.h"
 #include "xywindow.h"
 #include "mainframe.h"
 #include "gtkdlgs.h"
@@ -76,10 +76,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stream/stringstream.h"
 #include "grid.h"
 #include "textureentry.h"
-
-//NOTE: Proper functioning of Textool currently requires that the "#if 1" lines in
-//      brush_primit.h be changed to "#if 0". add/removeScale screws this up ATM. :-)
-//      Plus, Radiant seems to work just fine without that stuff. ;-)
 
 #define TEXTOOL_ENABLED 0
 
@@ -1182,7 +1178,8 @@ globalOutputStream() << "BP: (" << g_selectedBrushPrimitTexdef.coords[0][0] << "
 	<< g_selectedBrushPrimitTexdef.coords[1][0] << ", " << g_selectedBrushPrimitTexdef.coords[1][1] << ")("
 	<< g_selectedBrushPrimitTexdef.coords[0][2] << ", " << g_selectedBrushPrimitTexdef.coords[1][2] << ") SurfaceInspector::Update\n";//*/
 //Ok, it's screwed up *before* we get here...
-  ShiftScaleRotate_fromFace(shiftScaleRotate, SurfaceInspector_GetSelectedTexdef());
+	
+  shiftScaleRotate = SurfaceInspector_GetSelectedTexdef().m_brushprimit_texdef.getFakeTexCoords();
 
   {
     spin_button_set_value_no_signal(m_hshiftIncrement.m_spin, shiftScaleRotate._shift[0]);
@@ -1271,8 +1268,11 @@ void SurfaceInspector::ApplyTexdef()
 //Shamus: This is the other place that screws up, it seems, since it doesn't seem to do the
 //conversion from the face (I think) and so bogus values end up in the thing... !!! FIX !!!
 //This is actually OK. :-P
-  ShiftScaleRotate_toFace(shiftScaleRotate, projection);
 
+	// compute texture matrix
+	// the matrix returned must be understood as a qtexture_t with width=2 height=2
+	projection.m_brushprimit_texdef = BrushPrimitTexDef(shiftScaleRotate);
+  
   UndoableCommand undo("textureProjectionSetSelected");
   Select_SetTexdef(projection);
 }
