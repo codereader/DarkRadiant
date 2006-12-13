@@ -239,7 +239,6 @@ radiant_src = [
 'brush.cpp',
 'brushmanip.cpp',
 'brushmodule.cpp',
-'brushnode.cpp',
 'camwindow.cpp',
 'clippertool.cpp',
 'commands.cpp',
@@ -336,6 +335,7 @@ radiant_src = [
 'plugin/PluginSlots.cpp',
 'brushexport/BrushExportOBJ.cpp',
 'ui/eventmapper/EventMapper.cpp',
+'brush/BrushNode.cpp',
 'brush/BrushPrimitTexDef.cpp',
 'brush/TexDef.cpp',
 'brush/TextureProjection.cpp'
