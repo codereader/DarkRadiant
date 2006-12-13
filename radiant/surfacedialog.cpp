@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "warnings.h"
 
 #include "iscenegraph.h"
+#include "iregistry.h"
 #include "brush/TexDef.h"
 #include "iundo.h"
 #include "iselection.h"
@@ -411,8 +412,10 @@ void DoSnapTToGrid(float hscale, float vscale)
 
 void SurfaceInspector_GridChange()
 {
-  if (g_si_globals.m_bSnapTToGrid)
-    DoSnapTToGrid(Texdef_getDefaultTextureScale(), Texdef_getDefaultTextureScale());
+  if (g_si_globals.m_bSnapTToGrid) {
+  	float defaultScale = GlobalRegistry().getFloat("game/defaults/textureScale");
+    DoSnapTToGrid(defaultScale, defaultScale);
+  }
 }
 
 // make the shift increments match the grid settings
@@ -500,7 +503,7 @@ static void OnBtnAxial(GtkWidget *widget, gpointer data)
   UndoableCommand undo("textureDefault");
   TextureProjection projection;
 //globalOutputStream() << "    TexDef_Construct_Default()...\n";
-  TexDef_Construct_Default(projection);
+  projection.constructDefault();
 //globalOutputStream() << "    Select_SetTexdef()...\n";
 
 #if TEXTOOL_ENABLED
@@ -1473,7 +1476,7 @@ FaceTexture g_faceTextureClipboard;
 void FaceTextureClipboard_setDefault()
 {
   g_faceTextureClipboard.m_flags = ContentsFlagsValue(0, 0, 0, false);
-  TexDef_Construct_Default(g_faceTextureClipboard.m_projection);
+  g_faceTextureClipboard.m_projection.constructDefault();
 }
 
 void TextureClipboard_textureSelected(const char* shader)

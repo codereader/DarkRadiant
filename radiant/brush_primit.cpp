@@ -173,9 +173,6 @@ void BPMatDump(float A[2][3]);
 //#define DBG_BP
 #endif
 
-
-float g_texdef_default_scale;
-
 // compute a determinant using Sarrus rule
 //++timo "inline" this with a macro
 // NOTE : the three vectors are understood as columns of the matrix
@@ -390,26 +387,6 @@ void ShiftTextureRelative_Camera(face_t *f, int x, int y)
   ShiftTextureRelative_BrushPrimit(f, XY[0], XY[1]);
 }
 #endif
-
-void BPTexdef_Construct(BrushPrimitTexDef& bp_td, std::size_t width, std::size_t height)
-{
-	bp_td.coords[0][0] = 1.0f;
-	bp_td.coords[1][1] = 1.0f;
-	ConvertTexMatWithDimensions(bp_td.coords, 2, 2, bp_td.coords, width, height);
-}
-
-float Texdef_getDefaultTextureScale()
-{
-  return g_texdef_default_scale;
-}
-
-void TexDef_Construct_Default(TextureProjection& projection)
-{
-  projection.m_texdef._scale[0] = Texdef_getDefaultTextureScale();
-  projection.m_texdef._scale[1] = Texdef_getDefaultTextureScale();
-
-  projection.m_brushprimit_texdef = BrushPrimitTexDef(projection.m_texdef);
-}
 
 void ShiftScaleRotate_fromFace(TexDef& shiftScaleRotate, const TextureProjection& projection) {
 	shiftScaleRotate = projection.m_brushprimit_texdef.getFakeTexCoords();

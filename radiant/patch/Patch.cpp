@@ -1,5 +1,6 @@
 #include "Patch.h"
 
+#include "iregistry.h"
 #include "shaderlib.h"
 #include "renderable.h"
 #include "selectable.h"
@@ -985,8 +986,10 @@ void Patch::NaturalTexture()
 {
   undoSave();
 
+	float defaultScale = GlobalRegistry().getFloat("game/defaults/textureScale");
+
   {
-    float fSize = (float)m_state->getTexture().width * Texdef_getDefaultTextureScale();
+    float fSize = (float)m_state->getTexture().width * defaultScale;
   
     double texBest = 0;
     double tex = 0;
@@ -1017,7 +1020,7 @@ void Patch::NaturalTexture()
   }
 
   {
-    float fSize = -(float)m_state->getTexture().height * Texdef_getDefaultTextureScale();
+    float fSize = -(float)m_state->getTexture().height * defaultScale;
 
     double texBest = 0;
     double tex = 0;
@@ -1491,8 +1494,10 @@ void Patch::ProjectTexture(int nAxis)
     return;
   }
 
-  float fWidth = 1 / (m_state->getTexture().width * Texdef_getDefaultTextureScale());
-  float fHeight = 1 / (m_state->getTexture().height * -Texdef_getDefaultTextureScale());
+	float defaultScale = GlobalRegistry().getFloat("game/defaults/textureScale");
+
+  float fWidth = 1 / (m_state->getTexture().width * defaultScale);
+  float fHeight = 1 / (m_state->getTexture().height * -defaultScale);
 
   for(PatchControlIter i = m_ctrl.data(); i != m_ctrl.data() + m_ctrl.size(); ++i)
   {

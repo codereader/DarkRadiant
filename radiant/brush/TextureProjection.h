@@ -4,6 +4,7 @@
 #include "texturelib.h"
 #include "winding.h"
 #include "math/aabb.h"
+#include "iregistry.h"
 
 /* greebo: A texture projection contains the texture definition
  * as well as the brush primitive texture definition. 
@@ -14,6 +15,7 @@ public:
 	BrushPrimitTexDef m_brushprimit_texdef;
 	Vector3 m_basis_s;
 	Vector3 m_basis_t;
+	float _defaultTextureScale;
 
 	// Constructor
 	TextureProjection() {}
@@ -34,6 +36,15 @@ public:
 	// Assigns an <other> projection to this one
 	void assign(const TextureProjection& other) {
 		m_brushprimit_texdef = other.m_brushprimit_texdef;
+	}
+	
+	void constructDefault() {
+		float scale = GlobalRegistry().getFloat("game/defaults/textureScale");
+		
+		m_texdef._scale[0] = scale;
+		m_texdef._scale[1] = scale;
+
+		m_brushprimit_texdef = BrushPrimitTexDef(m_texdef);
 	}
 	
 	/* greebo: Uses the transformation matrix <transform> to set the internal texture
