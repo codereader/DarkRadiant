@@ -30,6 +30,7 @@
 #include "stream/stringstream.h"
 #include "stream/textfilestream.h"
 
+#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -265,6 +266,25 @@ public:
 			//globalOutputStream() << "XMLRegistry: GET: Key " << fullKey.c_str() << " not found, returning empty string!\n";
 			return std::string("");
 		}
+	}
+	
+	/* Gets a key containing a float from the registry, basically loads the string and
+	 * converts it into a float via boost libraries 
+	 */
+	float getFloat(const std::string& key) {
+		// Load the key
+		const std::string valueStr = get(key);
+		
+		// Try to convert it into a float variable
+		float tempFloat;
+		try {
+			tempFloat = boost::lexical_cast<float>(valueStr);
+		}
+		catch (boost::bad_lexical_cast e) {
+			tempFloat = 0.0f;
+		}
+		
+		return tempFloat;
 	}
 	
 	// Sets the value of a key from the registry, 
