@@ -91,40 +91,6 @@ void Normal_GetTransform(const Vector3& normal, Matrix4& transform)
   transform[15] = 1;
 }
 
-inline Matrix4 TexDefoTransform(const TextureProjection& projection, float width, float height) {
-	if (g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES) {
-    	return projection.m_brushprimit_texdef.getTransform();
-	}
-	else {
-		return projection.m_texdef.getTransform(width, height);
-	}
-}
-
-inline void Texdef_fromTransform(TextureProjection& projection, float width, float height, const Matrix4& transform) {
-	ASSERT_MESSAGE((transform[0] != 0 || transform[4] != 0)
-		&& (transform[1] != 0 || transform[5] != 0), "invalid texture matrix");
-
-	if (g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES) {
-		projection.m_brushprimit_texdef = BrushPrimitTexDef(transform);
-	}
-	else {
-		projection.m_texdef = TexDef(width, height, transform);
-	}
-}
-
-/// \brief Normalise \p projection for a given texture \p width and \p height.
-///
-/// All texture-projection translation (shift) values are congruent modulo the dimensions of the texture.
-/// This function normalises shift values to the smallest positive congruent values.
-void Texdef_normalise(TextureProjection& projection, float width, float height) {
-	if (g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES) {
-		projection.m_brushprimit_texdef.normalise(width, height);
-	}
-	else {
-		projection.m_texdef.normalise(width, height);
-	}
-}
-
 void ComputeAxisBase(const Vector3& normal, Vector3& texS, Vector3& texT);
 
 inline void DebugAxisBase(const Vector3& normal)
@@ -168,7 +134,7 @@ void Texdef_EmitTextureCoordinates(const TextureProjection& projection, std::siz
   }
   //globalOutputStream() << "normal: " << normal << "\n";
 
-  Matrix4 local2tex = TexDefoTransform(projection, (float)width, (float)height);
+  Matrix4 local2tex = projection.getTransform((float)width, (float)height);
   //globalOutputStream() << "texdef: " << static_cast<const Vector3&>(local2tex.x()) << static_cast<const Vector3&>(local2tex.y()) << "\n";
 
 #if 0
@@ -716,7 +682,7 @@ void Texdef_FitTexture(TextureProjection& projection, std::size_t width, std::si
     return;
   }
 
-  Matrix4 st2tex = TexDefoTransform(projection, (float)width, (float)height);
+  Matrix4 st2tex = projection.getTransform((float)width, (float)height);
 
   // the current texture transform
   Matrix4 local2tex = st2tex;
@@ -747,8 +713,8 @@ void Texdef_FitTexture(TextureProjection& projection, std::size_t width, std::si
   // apply the difference to the current texture transform
   matrix4_premultiply_by_matrix4(st2tex, matrix);
 
-  Texdef_fromTransform(projection, (float)width, (float)height, st2tex);
-  Texdef_normalise(projection, (float)width, (float)height);
+	projection.setTransform((float)width, (float)height, st2tex);
+	projection.normalise((float)width, (float)height);
 }
 
 float Texdef_getDefaultTextureScale()
@@ -930,7 +896,7 @@ void TexDefransformLocked(TextureProjection& projection, std::size_t width, std:
 
   Vector3 transformedProjectionAxis(stTransformed2identity.z().getVector3());
 
-  Matrix4 stIdentity2stOriginal = TexDefoTransform(projection, (float)width, (float)height);
+  Matrix4 stIdentity2stOriginal = projection.getTransform((float)width, (float)height);
   Matrix4 identity2stOriginal(matrix4_multiplied_by_matrix4(stIdentity2stOriginal, identity2stIdentity));
 
   //globalOutputStream() << "originalProj: " << originalProjectionAxis << "\n";
@@ -961,8 +927,8 @@ void TexDefransformLocked(TextureProjection& projection, std::size_t width, std:
 
   Matrix4 stTransformed2stOriginal = matrix4_multiplied_by_matrix4(identity2stOriginal, stTransformed2identity);
 
-  Texdef_fromTransform(projection, (float)width, (float)height, stTransformed2stOriginal);
-  Texdef_normalise(projection, (float)width, (float)height);
+  projection.setTransform((float)width, (float)height, stTransformed2stOriginal);
+  projection.normalise((float)width, (float)height);
 }
 
 #if 1
