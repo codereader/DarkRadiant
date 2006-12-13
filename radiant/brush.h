@@ -2032,17 +2032,7 @@ public:
     Face::m_type = type;
     FacePlane::m_type = type;
 
-    g_bp_globals.m_texdefTypeId = TEXDEFTYPEID_QUAKE;
-    if(m_type == eBrushTypeQuake3BP || m_type == eBrushTypeDoom3 || m_type == eBrushTypeQuake4)
-    {
-      g_bp_globals.m_texdefTypeId = TEXDEFTYPEID_BRUSHPRIMITIVES;
-      g_brush_texturelock_enabled = true;
-    }
-    else if(m_type == eBrushTypeHalfLife)
-    {
-      g_bp_globals.m_texdefTypeId = TEXDEFTYPEID_HALFLIFE;
-      g_brush_texturelock_enabled = true;
-    }
+    g_brush_texturelock_enabled = true;
 
     Face::m_quantise = (m_type == eBrushTypeQuake) ? quantiseInteger : quantiseFloating;
 

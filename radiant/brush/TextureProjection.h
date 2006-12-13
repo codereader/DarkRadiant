@@ -5,23 +5,6 @@
 #include "winding.h"
 #include "math/aabb.h"
 
-enum TexdefTypeId
-{
-  TEXDEFTYPEID_QUAKE,
-  TEXDEFTYPEID_BRUSHPRIMITIVES,
-  TEXDEFTYPEID_HALFLIFE,
-};
-
-struct bp_globals_t
-{
-  // tells if we are internally using brush primitive (texture coordinates and map format)
-  // this is a shortcut for IntForKey( g_qeglobals.d_project_entity, "brush_primit" )
-  // NOTE: must keep the two ones in sync
-  TexdefTypeId m_texdefTypeId;
-};
-
-extern bp_globals_t g_bp_globals;
-
 /* greebo: A texture projection contains the texture definition
  * as well as the brush primitive texture definition. 
  */
@@ -50,16 +33,7 @@ public:
 	
 	// Assigns an <other> projection to this one
 	void assign(const TextureProjection& other) {
-		if (g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES) {
-			m_brushprimit_texdef = other.m_brushprimit_texdef;
-		}
-		else {
-			m_texdef = other.m_texdef;
-			if (g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_HALFLIFE) {
-				m_basis_s = other.m_basis_s;
-				m_basis_t = other.m_basis_t;
-			}
-		}
+		m_brushprimit_texdef = other.m_brushprimit_texdef;
 	}
 	
 	/* greebo: Uses the transformation matrix <transform> to set the internal texture
@@ -69,13 +43,7 @@ public:
 	void setTransform(float width, float height, const Matrix4& transform) {
 		// Check the matrix for validity
 		if ((transform[0] != 0 || transform[4] != 0) && (transform[1] != 0 || transform[5] != 0)) {
-			// Decide which TexDef to use
-			if (g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES) {
-				m_brushprimit_texdef = BrushPrimitTexDef(transform);
-			}
-			else {
-				m_texdef = TexDef(width, height, transform);
-			}
+			m_brushprimit_texdef = BrushPrimitTexDef(transform);
 		} else {
 			std::cout << "invalid texture matrix\n";
 		}
@@ -85,75 +53,36 @@ public:
 	 * texture definitions members. 
 	 */
 	Matrix4 getTransform(float width, float height) const {
-		if (g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES) {
-    		return m_brushprimit_texdef.getTransform();
-		}
-		else {
-			return m_texdef.getTransform(width, height);
-		}
+   		return m_brushprimit_texdef.getTransform();
 	}
 	
 	void shift(float s, float t) {
-		if (g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES) {
-			m_brushprimit_texdef.shift(s, t);
-		}
-		else {
-			m_texdef.shift(s, t);
-		}
+		m_brushprimit_texdef.shift(s, t);
 	}
 
 	void scale(float s, float t) {
-		if (g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES) {
-			m_brushprimit_texdef.scale(s, t);
-		}
-		else {
-			m_texdef.scale(s, t);
-		}
+		m_brushprimit_texdef.scale(s, t);
 	}
 	
 	void rotate(float angle) {
-		if (g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES) {
-			m_brushprimit_texdef.rotate(angle);
-		}
-		else {
-			m_texdef.rotate(angle);
-		}
+		m_brushprimit_texdef.rotate(angle);
 	}
 	
 	// Normalise projection for a given texture width and height.
 	void normalise(float width, float height) {
-		if (g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES) {
-			m_brushprimit_texdef.normalise(width, height);
-		}
-		else {
-			m_texdef.normalise(width, height);
-		}
+		m_brushprimit_texdef.normalise(width, height);
 	}
 	
 	Matrix4 getBasisForNormal(const Vector3& normal) const {
 		
 		Matrix4 basis;
 		
-		if (g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES) {
-			basis = g_matrix4_identity;
-			ComputeAxisBase(normal, basis.x().getVector3(), basis.y().getVector3());
-			basis.z().getVector3() = normal;
-			basis.transpose();
-			//DebugAxisBase(normal);
-		}
-		else if (g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_HALFLIFE) {
-			basis = g_matrix4_identity;
-			basis.x().getVector3() = m_basis_s;
-			basis.y().getVector3() = -m_basis_t;
-			basis.z().getVector3() = basis.x().getVector3().crossProduct(basis.y().getVector3()).getNormalised();
-			matrix4_multiply_by_matrix4(basis, matrix4_rotation_for_z_degrees(-m_texdef._rotate));
-			//globalOutputStream() << "debug: " << projection.m_basis_s << projection.m_basis_t << normal << "\n";
-			basis.transpose();
-		}
-		else {
-			Normal_GetTransform(normal, basis);
-		}
-		
+		basis = g_matrix4_identity;
+		ComputeAxisBase(normal, basis.x().getVector3(), basis.y().getVector3());
+		basis.z().getVector3() = normal;
+		basis.transpose();
+		//DebugAxisBase(normal);
+				
 		return basis;
 	}
 	
@@ -177,11 +106,6 @@ public:
 		Matrix4 identity2stIdentity = getBasisForNormal(plane.normal());
 		//globalOutputStream() << "identity2stIdentity: " << identity2stIdentity << "\n";
 		
-		if (g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_HALFLIFE) {
-			matrix4_transform_direction(identity2transformed, m_basis_s);
-			matrix4_transform_direction(identity2transformed, m_basis_t);
-		}
-
 		Matrix4 transformed2stTransformed = getBasisForNormal(normalTransformed);
 		
 		Matrix4 stTransformed2identity(matrix4_affine_inverse(matrix4_multiplied_by_matrix4(transformed2stTransformed, identity2transformed)));

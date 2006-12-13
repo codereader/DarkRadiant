@@ -174,7 +174,6 @@ void BPMatDump(float A[2][3]);
 #endif
 
 
-bp_globals_t g_bp_globals;
 float g_texdef_default_scale;
 
 // compute a determinant using Sarrus rule
@@ -220,99 +219,6 @@ void MatrixForPoints( Vector3 M[3], Vector3 D[2], BrushPrimitTexDef *T )
 	T->coords[1][1] = SarrusDet( M[0], D[1], M[2] ) / det;
 	T->coords[1][2] = SarrusDet( M[0], M[1], D[1] ) / det;
 }
-
-#if 0 // texdef conversion
-void FaceToBrushPrimitFace(face_t *f)
-{
-	Vector3 texX,texY;
-	Vector3 proj;
-	// ST of (0,0) (1,0) (0,1)
-	float ST[3][5]; // [ point index ] [ xyz ST ]
-	//++timo not used as long as brushprimit_texdef and texdef are static
-/*	f->brushprimit_texdef.contents=f->texdef.contents;
-	f->brushprimit_texdef.flags=f->texdef.flags;
-	f->brushprimit_texdef.value=f->texdef.value;
-	strcpy(f->brushprimit_texdef.name,f->texdef.name); */
-#ifdef DBG_BP
-	if ( f->plane.normal[0]==0.0f && f->plane.normal[1]==0.0f && f->plane.normal[2]==0.0f )
-	{
-		globalOutputStream() << "Warning : f->plane.normal is (0,0,0) in FaceToBrushPrimitFace\n";
-	}
-	// check d_texture
-	if (!f->d_texture)
-	{
-		globalOutputStream() << "Warning : f.d_texture is 0 in FaceToBrushPrimitFace\n";
-		return;
-	}
-#endif
-	// compute axis base
-	ComputeAxisBase(f->plane.normal,texX,texY);
-	// compute projection vector
-	VectorCopy(f->plane.normal,proj);
-	VectorScale(proj,f->plane.dist,proj);
-	// (0,0) in plane axis base is (0,0,0) in world coordinates + projection on the affine plane
-	// (1,0) in plane axis base is texX in world coordinates + projection on the affine plane
-	// (0,1) in plane axis base is texY in world coordinates + projection on the affine plane
-	// use old texture code to compute the ST coords of these points
-	VectorCopy(proj,ST[0]);
-	EmitTextureCoordinates(ST[0], f->pShader->getTexture(), f);
-	VectorCopy(texX,ST[1]);
-	VectorAdd(ST[1],proj,ST[1]);
-	EmitTextureCoordinates(ST[1], f->pShader->getTexture(), f);
-	VectorCopy(texY,ST[2]);
-	VectorAdd(ST[2],proj,ST[2]);
-	EmitTextureCoordinates(ST[2], f->pShader->getTexture(), f);
-	// compute texture matrix
-	f->brushprimit_texdef.coords[0][2]=ST[0][3];
-	f->brushprimit_texdef.coords[1][2]=ST[0][4];
-	f->brushprimit_texdef.coords[0][0]=ST[1][3]-f->brushprimit_texdef.coords[0][2];
-	f->brushprimit_texdef.coords[1][0]=ST[1][4]-f->brushprimit_texdef.coords[1][2];
-	f->brushprimit_texdef.coords[0][1]=ST[2][3]-f->brushprimit_texdef.coords[0][2];
-	f->brushprimit_texdef.coords[1][1]=ST[2][4]-f->brushprimit_texdef.coords[1][2];
-}
-
-// compute texture coordinates for the winding points
-void EmitBrushPrimitTextureCoordinates(face_t * f, Winding * w)
-{
-	Vector3 texX,texY;
-	float x,y;
-	// compute axis base
-	ComputeAxisBase(f->plane.normal,texX,texY);
-	// in case the texcoords matrix is empty, build a default one
-	// same behaviour as if scale[0]==0 && scale[1]==0 in old code
-	if (f->brushprimit_texdef.coords[0][0]==0 && f->brushprimit_texdef.coords[1][0]==0 && f->brushprimit_texdef.coords[0][1]==0 && f->brushprimit_texdef.coords[1][1]==0)
-	{
-		f->brushprimit_texdef.coords[0][0] = 1.0f;
-		f->brushprimit_texdef.coords[1][1] = 1.0f;
-		ConvertTexMatWithQTexture( &f->brushprimit_texdef, 0, &f->brushprimit_texdef, f->pShader->getTexture() );
-	}
-	int i;
-    for (i=0 ; i<w.numpoints ; i++)
-	{
-		x=w.point_at(i).dot(texX);
-		y=w.point_at(i).dot(texY);
-#if 0
-#ifdef DBG_BP
-		if (g_bp_globals.bNeedConvert)
-		{
-			// check we compute the same ST as the traditional texture computation used before
-			float S=f->brushprimit_texdef.coords[0][0]*x+f->brushprimit_texdef.coords[0][1]*y+f->brushprimit_texdef.coords[0][2];
-			float T=f->brushprimit_texdef.coords[1][0]*x+f->brushprimit_texdef.coords[1][1]*y+f->brushprimit_texdef.coords[1][2];
-			if ( fabs(S-w.point_at(i)[3])>1e-2 || fabs(T-w.point_at(i)[4])>1e-2 )
-			{
-				if ( fabs(S-w.point_at(i)[3])>1e-4 || fabs(T-w.point_at(i)[4])>1e-4 )
-					globalOutputStream() << "Warning : precision loss in brush -> brush primitive texture computation\n";
-				else
-					globalOutputStream() << "Warning : brush -> brush primitive texture computation bug detected\n";
-			}
-		}
-#endif
-#endif
-		w.point_at(i)[3]=f->brushprimit_texdef.coords[0][0]*x+f->brushprimit_texdef.coords[0][1]*y+f->brushprimit_texdef.coords[0][2];
-		w.point_at(i)[4]=f->brushprimit_texdef.coords[1][0]*x+f->brushprimit_texdef.coords[1][1]*y+f->brushprimit_texdef.coords[1][2];
-	}
-}
-#endif
 
 typedef float texmat_t[2][3];
 
@@ -502,33 +408,17 @@ void TexDef_Construct_Default(TextureProjection& projection)
   projection.m_texdef._scale[0] = Texdef_getDefaultTextureScale();
   projection.m_texdef._scale[1] = Texdef_getDefaultTextureScale();
 
-  if(g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES)
-  {
-    projection.m_brushprimit_texdef = BrushPrimitTexDef(projection.m_texdef);
-  }
+  projection.m_brushprimit_texdef = BrushPrimitTexDef(projection.m_texdef);
 }
 
 void ShiftScaleRotate_fromFace(TexDef& shiftScaleRotate, const TextureProjection& projection) {
-	if(g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES) {
-		shiftScaleRotate = projection.m_brushprimit_texdef.getFakeTexCoords();
-	}
-	else {
-		shiftScaleRotate = projection.m_texdef;
-	}
+	shiftScaleRotate = projection.m_brushprimit_texdef.getFakeTexCoords();
 }
 
-void ShiftScaleRotate_toFace(const TexDef& shiftScaleRotate, TextureProjection& projection)
-{
-  if (g_bp_globals.m_texdefTypeId == TEXDEFTYPEID_BRUSHPRIMITIVES)
-  {
-    // compute texture matrix
-    // the matrix returned must be understood as a qtexture_t with width=2 height=2
-    projection.m_brushprimit_texdef = BrushPrimitTexDef(shiftScaleRotate);
-  }
-  else
-  {
-    projection.m_texdef = shiftScaleRotate;
-  }
+void ShiftScaleRotate_toFace(const TexDef& shiftScaleRotate, TextureProjection& projection) {
+	// compute texture matrix
+	// the matrix returned must be understood as a qtexture_t with width=2 height=2
+	projection.m_brushprimit_texdef = BrushPrimitTexDef(shiftScaleRotate);
 }
 
 #if 1
