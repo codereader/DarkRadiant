@@ -71,7 +71,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "map.h"
 #include "qgl.h"
 #include "select.h"
-#include "brush_primit.h"
+#include "brush/TextureProjection.h"
 #include "brushmanip.h"
 #include "patchmanip.h"
 #include "plugin.h"

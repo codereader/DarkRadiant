@@ -232,4 +232,17 @@ inline void ComputeAxisBase(const Vector3& normal, Vector3& texS, Vector3& texT)
 	}
 }
 
+// handles degenerate cases, just in case library atan2 doesn't
+inline double arctangent_yx(double y, double x) {
+	if (fabs(x) > 1.0E-6) {
+		return atan2(y, x);
+	}
+	else if (y > 0) {
+		return c_half_pi;
+	}
+	else {
+		return -c_half_pi;
+	}
+}
+
 #endif

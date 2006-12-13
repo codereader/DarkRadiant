@@ -10,7 +10,7 @@
 #include "signal/signal.h"
 #include "plugin.h"
 #include "texturelib.h"
-#include "brush_primit.h"
+#include "brush/TextureProjection.h"
 
 #include "PatchSavedState.h"
 
