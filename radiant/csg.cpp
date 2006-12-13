@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/Plane3.h"
 #include "map.h"
 #include "brushmanip.h"
-#include "brushnode.h"
+#include "brush/BrushNode.h"
 #include "grid.h"
 
 void Face_makeBrush(Face& face, const Brush& brush, brush_vector_t& out, float offset)

@@ -83,7 +83,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "commands.h"
 #include "autosave.h"
 #include "brush.h"
-#include "brushnode.h"
+#include "brush/BrushNode.h"
 
 #include <string>
 #include <boost/lexical_cast.hpp>

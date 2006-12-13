@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "qerplugin.h"
 
-#include "brushnode.h"
+#include "brush/BrushNode.h"
 #include "brushmanip.h"
 
 #include "preferencesystem.h"
