@@ -61,10 +61,10 @@ void Brush_constructPreferences(PreferencesPage& page)
     FaceImportSnapPlanesCaller(),
     FaceExportSnapPlanesCaller()
   );
-  page.appendEntry(
+  /*page.appendEntry(
     "Default texture scale",
     g_texdef_default_scale
-  );
+  );*/
   if(g_showAlternativeTextureProjectionOption)
   {
     page.appendCheckBox(
@@ -114,24 +114,9 @@ void Brush_Construct(EBrushType type)
   Brush::m_maxWorldCoord = g_MaxWorldCoord;
   BrushInstance::m_counter = &g_brushCount;
 
-  g_texdef_default_scale = 0.5f;
-  const char* value = g_pGameDescription->getKeyValue("default_scale");
-  if(!string_empty(value))
-  {
-    float scale = static_cast<float>(atof(value));
-    if(scale != 0)
-    {
-      g_texdef_default_scale = scale;
-    }
-    else
-    {
-      globalErrorStream() << "error parsing \"default_scale\" attribute\n";
-    }
-  }
-
   GlobalPreferenceSystem().registerPreference("TextureLock", BoolImportStringCaller(g_brush_texturelock_enabled), BoolExportStringCaller(g_brush_texturelock_enabled));
   GlobalPreferenceSystem().registerPreference("BrushSnapPlanes", makeBoolStringImportCallback(FaceImportSnapPlanesCaller()), makeBoolStringExportCallback(FaceExportSnapPlanesCaller()));
-  GlobalPreferenceSystem().registerPreference("TexdefDefaultScale", FloatImportStringCaller(g_texdef_default_scale), FloatExportStringCaller(g_texdef_default_scale));
+  //GlobalPreferenceSystem().registerPreference("TexdefDefaultScale", FloatImportStringCaller(g_texdef_default_scale), FloatExportStringCaller(g_texdef_default_scale));
 
   GridStatus_getTextureLockEnabled = getTextureLockEnabled;
   g_texture_lock_status_changed = FreeCaller<GridStatus_onTextureLockEnabledChanged>();

@@ -28,10 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brush/BrushPrimitTexDef.h"
 #include "brush/TextureProjection.h"
 
-
-// Retrieves the default texture scale (from a global variable!) 
-float Texdef_getDefaultTextureScale();
-
 class TexDef;
 struct Winding;
 template<typename Element> class BasicVector4;
@@ -40,13 +36,9 @@ typedef Vector4 Quaternion;
 class Matrix4;
 class Plane3;
 
-void TexDef_Construct_Default(TextureProjection& projection);
-
 void Texdef_EmitTextureCoordinates(const TextureProjection& projection, std::size_t width, std::size_t height, Winding& w, const Vector3& normal, const Matrix4& localToWorld);
 
 void ShiftScaleRotate_fromFace(TexDef& shiftScaleRotate, const TextureProjection& projection);
 void ShiftScaleRotate_toFace(const TexDef& shiftScaleRotate, TextureProjection& projection);
-
-extern float g_texdef_default_scale;
 
 #endif
