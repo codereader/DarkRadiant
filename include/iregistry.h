@@ -19,6 +19,9 @@ public:
 	virtual void 		set(const std::string& key, const std::string& value) = 0;
 	virtual std::string	get(const std::string& key) = 0;
 	
+	// Loads a floating point value from the specified <key>, returns 0.0f if conversion failed
+	virtual float getFloat(const std::string& key) = 0;
+	
 	// Checks whether a key exists in the registry
 	virtual bool keyExists(const std::string& key) = 0;
 	
