@@ -29,16 +29,12 @@ namespace {
 	const char* NOSPECULAR_TEXT = "Skip specular lighting";
 	const char* NODIFFUSE_TEXT = "Skip diffuse lighting";
 	
-	GtkAttachOptions EXPAND_FILL =
-		static_cast<GtkAttachOptions>(GTK_EXPAND | GTK_FILL);
-	
 }
 
 // Private constructor creates GTK widgets
 LightInspector::LightInspector()
 : _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
-  _isProjected(false),
-  _wasProjected(false)
+  _isProjected(false)
 {
 	// Window properties
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), MainFrame_getWindow());
@@ -75,7 +71,9 @@ LightInspector::LightInspector()
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(typeBox), createProjectedPanel(),
 					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(panels), typeBox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(panels), 
+					   gtkutil::LeftAlignment(typeBox, 12),
+					   FALSE, FALSE, 0);
 
 	// Light colour
 	_colour = gtk_color_button_new();
@@ -106,9 +104,6 @@ LightInspector::LightInspector()
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
 	
-	// Check widget sensitivity (point versus projected panels)
-	updatePanels();
-	
 }
 
 // Create the point light panel
@@ -118,7 +113,6 @@ GtkWidget* LightInspector::createPointLightPanel() {
 	_pointLightToggle = gtkutil::IconTextButton("Omni", 
 					   						   "pointLight32.png",
 					   						   true);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_pointLightToggle), TRUE);
 	g_signal_connect(G_OBJECT(_pointLightToggle), 
 					 "toggled",
 					 G_CALLBACK(_onPointToggle),
@@ -250,15 +244,16 @@ void LightInspector::_onProjToggle(GtkWidget* b, LightInspector* self) {
 	self->_isProjected = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(b));
 	
 	// Set button state based on the value of the flag
-	if (self->_isProjected)
+	if (self->_isProjected) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->_pointLightToggle),
 									 FALSE);	
-	else
+		gtk_widget_set_sensitive(self->_useStartEnd, TRUE);
+	}
+	else {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->_pointLightToggle),
 									 TRUE);	
-
-	// Update widget sensitivity
-	self->updatePanels();
+		gtk_widget_set_sensitive(self->_useStartEnd, FALSE);
+	}
 }
 
 void LightInspector::_onPointToggle(GtkWidget* b, LightInspector* self) {
@@ -266,15 +261,16 @@ void LightInspector::_onPointToggle(GtkWidget* b, LightInspector* self) {
 	self->_isProjected = !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(b));
 	
 	// Set button state based on the value of the flag
-	if (self->_isProjected)
+	if (self->_isProjected) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->_projLightToggle),
 									 TRUE);	
-	else
+		gtk_widget_set_sensitive(self->_useStartEnd, TRUE);
+	}
+	else {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->_projLightToggle),
-									 FALSE);	
-
-	// Update widget sensitivity
-	self->updatePanels();
+									 FALSE);
+		gtk_widget_set_sensitive(self->_useStartEnd, FALSE);
+	}
 }
 
 void LightInspector::_onOK(GtkWidget* w, LightInspector* self) {
@@ -290,25 +286,47 @@ void LightInspector::_onOK(GtkWidget* w, LightInspector* self) {
 						  	  % (col.green/65535.0)
 						  	  % (col.blue/65535.0)).str());
 	
-	// Set shape keyvalues based on the light type, but only if it has changed
-	// in the dialog (to avoid replacing unchanged values with defaults).
-	if (self->_isProjected && !self->_wasProjected) {
+	/* Set shape keyvalues based on the light type, but only if it has changed
+	 * in the dialog (to avoid replacing unchanged values with defaults). We
+	 * are only changing the status here (pointlight versus projected); the 
+	 * actual vectors involved will be set through mouse dragging or editing
+	 * in the entity inspector.
+	 */
+	StringMap& _valueMap = self->_valueMap; // local reference
+	if (self->_isProjected) {
+		std::cout << "projected" << std::endl;
 		// Pointlight changed to projected light
-		e->setKeyValue("light_target", "0 0 -256");
-		e->setKeyValue("light_right", "128 0 0");
-		e->setKeyValue("light_up", "0 128 0");
+		e->setKeyValue("light_target", _valueMap["light_target"]);
+		e->setKeyValue("light_right", _valueMap["light_right"]);
+		e->setKeyValue("light_up", _valueMap["light_up"]);
 
+		// Set start and end vectors if enabled, otherwise clear them
+		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(self->_useStartEnd)))
+		{
+			e->setKeyValue("light_start", _valueMap["light_start"]);
+			e->setKeyValue("light_end", _valueMap["light_end"]);	
+		}
+		else {
+			e->setKeyValue("light_start", "");
+			e->setKeyValue("light_end", "");	
+		}
+
+		// Blank out pointlight values
 		e->setKeyValue("light_radius", "");
 		e->setKeyValue("light_center", "");
 	}
-	else if (self->_wasProjected && !self->_isProjected) {
-		// Projected light changed to pointlight
-		e->setKeyValue("light_radius", "320 320 320");
-		e->setKeyValue("light_center", "0 0 0");
+	else {
 
+		// Projected light changed to pointlight
+		e->setKeyValue("light_radius", _valueMap["light_radius"]);
+		e->setKeyValue("light_center", _valueMap["light_center"]);
+
+		// Blank out projected light values
 		e->setKeyValue("light_target", "");
 		e->setKeyValue("light_right", "");
 		e->setKeyValue("light_up", "");
+		e->setKeyValue("light_start", "");
+		e->setKeyValue("light_end", "");
 	}
 	
 	// Hide the dialog
@@ -319,13 +337,29 @@ void LightInspector::_onCancel(GtkWidget* w, LightInspector* self) {
 	gtk_widget_hide(self->_widget);
 }
 
-// Update panel state
-void LightInspector::updatePanels() {
-
-}
-
 // Get keyvals from entity and insert into text entries
 void LightInspector::getValuesFromEntity() {
+
+	// Populate the value map with defaults
+	_valueMap["light_radius"] = "320 320 320";
+	_valueMap["light_center"] = "0 0 0";
+	_valueMap["light_target"] = "0 0 -256";
+	_valueMap["light_right"] = "128 0 0";
+	_valueMap["light_up"] = "0 128 0";
+	_valueMap["light_start"] = "0 0 -64";
+	_valueMap["light_end"] = "0 0 -256";
+
+	// Now load values from entity, overwriting the defaults if the value is
+	// set
+	for (StringMap::iterator i = _valueMap.begin();
+		 i != _valueMap.end();
+		 ++i)
+	{
+		// Overwrite the map value if the key exists on the entity
+		std::string val = _entity->getKeyValue(i->first);
+		if (!val.empty())
+			i->second = val;
+	}
 
 	// Get the colour key from the entity to set the GtkColorButton
 	Vector3 colour(_entity->getKeyValue("_color"));
@@ -344,17 +378,21 @@ void LightInspector::getValuesFromEntity() {
 		// Is a projected light
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_projLightToggle),
 									 TRUE);
-
-		// Record the original light type
-		_wasProjected = true;
 	}
 	else {
 		// Is a point light
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_pointLightToggle),
 									 TRUE);
-
-		// Record the original light type
-		_wasProjected = false;
+	}
+	
+	// If this entity has light_start and light_end keys, set the checkbox
+	if (!_entity->getKeyValue("light_start").empty()
+		&& !_entity->getKeyValue("light_end").empty())
+	{
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_useStartEnd), TRUE);
+	}
+	else {
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_useStartEnd), FALSE);
 	}
 }
 

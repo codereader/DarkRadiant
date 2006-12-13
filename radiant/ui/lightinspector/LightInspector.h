@@ -26,9 +26,8 @@ class LightInspector
 	// Main dialog widget
 	GtkWidget* _widget;
 	
-	// Projected light flags both before and after dialog changes
+	// Projected light flag
 	bool _isProjected;
-	bool _wasProjected;
 
 	// Light type toggle buttons
 	GtkWidget* _pointLightToggle;
@@ -45,6 +44,10 @@ class LightInspector
 	
 	// The light entity to edit
 	Entity* _entity;
+	
+	// Table of original value keys, to avoid replacing them with defaults
+	typedef std::map<std::string, std::string> StringMap;
+	StringMap _valueMap;
 	
 private:
 
@@ -67,11 +70,7 @@ private:
 	static void _onOK(GtkWidget*, LightInspector*);
 	static void _onCancel(GtkWidget*, LightInspector*);
 
-	// Set the projected or pointlight panels to enabled/disabled based on
-	// toggle button state
-	void updatePanels();
-	
-	// Update the text entries from keyvals on the entity
+	// Update the dialog widgets from keyvals on the entity
 	void getValuesFromEntity();
 	
 public:
