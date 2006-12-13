@@ -57,22 +57,6 @@ void ShiftScaleRotate_toFace(const TexDef& shiftScaleRotate, TextureProjection& 
 void TexDefransformLocked(TextureProjection& projection, std::size_t width, std::size_t height, const Plane3& plane, const Matrix4& transform);
 void Texdef_normalise(TextureProjection& projection, float width, float height);
 
-enum TexdefTypeId
-{
-  TEXDEFTYPEID_QUAKE,
-  TEXDEFTYPEID_BRUSHPRIMITIVES,
-  TEXDEFTYPEID_HALFLIFE,
-};
-
-struct bp_globals_t
-{
-  // tells if we are internally using brush primitive (texture coordinates and map format)
-  // this is a shortcut for IntForKey( g_qeglobals.d_project_entity, "brush_primit" )
-  // NOTE: must keep the two ones in sync
-  TexdefTypeId m_texdefTypeId;
-};
-
-extern bp_globals_t g_bp_globals;
 extern float g_texdef_default_scale;
 
 #endif
