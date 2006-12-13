@@ -29,32 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 #include "container/array.h"
-
-enum ProjectionAxis
-{
-  eProjectionAxisX = 0,
-  eProjectionAxisY = 1,
-  eProjectionAxisZ = 2,
-};
-
-const float ProjectionAxisEpsilon = static_cast<float>(0.0001);
-
-inline bool projectionaxis_better(float axis, float other)
-{
-  return fabs(axis) > fabs(other) + ProjectionAxisEpsilon;
-}
-
-/// \brief Texture axis precedence: Z > X > Y
-inline ProjectionAxis projectionaxis_for_normal(const Vector3& normal)
-{
-  return (projectionaxis_better(normal[eProjectionAxisY], normal[eProjectionAxisX]))
-    ? (projectionaxis_better(normal[eProjectionAxisY], normal[eProjectionAxisZ]))
-      ? eProjectionAxisY
-      : eProjectionAxisZ
-    : (projectionaxis_better(normal[eProjectionAxisX], normal[eProjectionAxisZ]))
-      ? eProjectionAxisX
-      : eProjectionAxisZ;
-}
+#include "texturelib.h"
 
 
 struct indexremap_t
