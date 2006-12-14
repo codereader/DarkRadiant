@@ -906,30 +906,44 @@ void Patch::RotateTexture(float angle)
   controlPointsChanged();
 }
 
+/* greebo: Tile the selected texture on the patch (s times t)
+ */
+void Patch::SetTextureRepeat(float s, float t) {
+	std::size_t w, h;
+	float sIncr, tIncr, sc, tc;
+	
+	// The pointer to cycle through the control points
+	PatchControl *pDest;
 
-void Patch::SetTextureRepeat(float s, float t)
-{
-  std::size_t w, h;
-  float si, ti, sc, tc;
-  PatchControl *pDest;
-  
-  undoSave();
+	// Save the current patch state to the undoMemento
+	undoSave();
 
-  si = s / (float)(m_width - 1);
-  ti = t / (float)(m_height - 1);
+	/* greebo: Calculate the texture width and height increment per control point.
+	 * If we have a 4x4 patch and want to tile it 3x3, the distance
+	 * from one control point to the next one has to cover 3/4 of a full texture,
+	 * hence texture_x_repeat/patch_width and texture_y_repeat/patch_height.*/ 
+	sIncr = s / (float)(m_width - 1);
+	tIncr = t / (float)(m_height - 1);
 
-  pDest = m_ctrl.data();
-  for (h=0, tc = 0.0f; h<m_height; h++, tc+=ti)
-  {
-    for (w=0, sc = 0.0f; w<m_width; w++, sc+=si) 
-    {
-      pDest->m_texcoord[0] = sc;
-      pDest->m_texcoord[1] = tc;
-      pDest++;
-    }
-  }
+	// Set the pointer to the first control point
+	pDest = m_ctrl.data();
+	
+	// Cycle through the patch matrix (row per row)
+	// Increment the <tc> counter by <tIncr> increment
+	for (h=0, tc = 0.0f; h<m_height; h++, tc+=tIncr) {
+		// Cycle through the row points: reset sc to zero 
+		// and increment it by sIncr at each step. 
+		for (w=0, sc = 0.0f; w<m_width; w++, sc+=sIncr) {
+			// Set the texture coordinates
+			pDest->m_texcoord[0] = sc;
+			pDest->m_texcoord[1] = tc;
+			// Set the pointer to the next control point
+			pDest++;
+		}
+	}
 
-  controlPointsChanged();
+	// Notify the patch
+	controlPointsChanged();
 }
 
 /*
@@ -954,13 +968,11 @@ inline int texture_axis(const Vector3& normal)
   return (normal.x() >= normal.y()) ? (normal.x() > normal.z()) ? 0 : 2 : (normal.y() > normal.z()) ? 1 : 2; 
 }
 
-void Patch::CapTexture()
-{
-  const PatchControl& p1 = m_ctrl[m_width];
-  const PatchControl& p2 = m_ctrl[m_width*(m_height-1)];
-  const PatchControl& p3 = m_ctrl[(m_width*m_height)-1];
+void Patch::CapTexture() {
+	const PatchControl& p1 = m_ctrl[m_width];
+	const PatchControl& p2 = m_ctrl[m_width*(m_height-1)];
+	const PatchControl& p3 = m_ctrl[(m_width*m_height)-1];
 
-  
   Vector3 normal(g_vector3_identity);
 
   {
@@ -1533,43 +1545,61 @@ void Patch::ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width)
   controlPointsChanged();
 }
 
-void Patch::ProjectTexture(int nAxis)
-{
-  undoSave();
+/* greebo: This gets called when clicking on the "CAP" button in the surface dialogs.
+ * 
+ * The texture is projected onto either the <x,y>, <y,z>, or <x,z> planes and the result
+ * is not stretched in any direction, as the pure components of the vector are translated
+ * into texture coordinates. Points on the x-axis that are near to each other get
+ * texture coordinates that are "near" to each other.
+ * 
+ * The argument nAxis can be 0,1,2 and determines, which components are taken to
+ * calculate the texture coordinates.
+ * 
+ * Note: the default texture scale is used to calculate the texture coordinates.
+ */
+void Patch::ProjectTexture(int nAxis) {
+	// Save the undo memento
+	undoSave();
 
-  int s, t;
+	// Hold the component index of the vector (e.g. 0,1 = x,y or 1,2 = y,z)
+	int s, t;
   
-  switch (nAxis)
-  {
-  case 2:
-    s = 0;
-    t = 1;
-    break;
-  case 0:
-    s = 1;
-    t = 2;
-    break;
-  case 1:
-    s = 0;
-    t = 2;
-    break;
-  default:
-    ERROR_MESSAGE("invalid axis");
-    return;
-  }
+	switch (nAxis) {
+		case 2:		// Projection onto <x,y> plane
+			s = 0;
+			t = 1;
+		break;
+		case 0:		// Projection onto <y,z> plane
+			s = 1;
+			t = 2;
+		break;
+		case 1:		// Projection onto <x,z> plane
+			s = 0;
+			t = 2;
+		break;
+		default:
+			ERROR_MESSAGE("invalid axis");
+		return;
+	}
 
+	// Retrieve the default scale from the registry
 	float defaultScale = GlobalRegistry().getFloat("game/defaults/textureScale");
 
-  float fWidth = 1 / (m_state->getTexture().width * defaultScale);
-  float fHeight = 1 / (m_state->getTexture().height * -defaultScale);
+	/* Calculate the conversion factor between world and texture coordinates
+	 * by using the image width/height.*/
+	float fWidth = 1 / (m_state->getTexture().width * defaultScale);
+	float fHeight = 1 / (m_state->getTexture().height * -defaultScale);
 
-  for(PatchControlIter i = m_ctrl.data(); i != m_ctrl.data() + m_ctrl.size(); ++i)
-  {
-    (*i).m_texcoord[0] = (*i).m_vertex[s] * fWidth;
-    (*i).m_texcoord[1] = (*i).m_vertex[t] * fHeight;
-  }
+	// Cycle through all the control points with an iterator
+	for (PatchControlIter i = m_ctrl.data(); i != m_ctrl.data() + m_ctrl.size(); ++i) {
+		// Take the according value (e.g. s = x, t = y, depending on the nAxis argument) 
+		// and apply the appropriate texture coordinate 
+		i->m_texcoord[0] = i->m_vertex[s] * fWidth;
+		i->m_texcoord[1] = i->m_vertex[t] * fHeight;
+	}
 
-  controlPointsChanged();
+	// Notify the patch about the change
+	controlPointsChanged();
 }
 
 void Patch::constructPlane(const AABB& aabb, int axis, std::size_t width, std::size_t height)
