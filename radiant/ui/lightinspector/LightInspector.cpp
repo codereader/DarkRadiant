@@ -328,6 +328,9 @@ void LightInspector::_onOK(GtkWidget* w, LightInspector* self) {
 		e->setKeyValue("light_start", "");
 		e->setKeyValue("light_end", "");
 	}
+
+	// Write the texture key
+	e->setKeyValue("texture", self->_texSelector.getSelection());
 	
 	// Hide the dialog
 	gtk_widget_hide(self->_widget);
