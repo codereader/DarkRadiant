@@ -981,76 +981,140 @@ void Patch::CapTexture()
   ProjectTexture(texture_axis(normal));
 }
 
-// uses longest parallel chord to calculate texture coords for each row/col
-void Patch::NaturalTexture()
-{
-  undoSave();
+/* uses longest parallel chord to calculate texture coords for each row/col
+ * greebo: The default texture scale is used when applying "Natural" texturing.
+ * Note: all the comments in this method are by myself, so be careful... ;)
+ * 
+ * The applied texture is never stretched more than the default
+ * texture scale. So if the default texture scale is 0.5, the texture coordinates
+ * are set such that the scaling never exceeds this value. (Don't know why 
+ * this is called "Natural" but so what...)
+ */
+void Patch::NaturalTexture() {
+	
+	// Save the undo memento
+	undoSave();
 
+	// Retrieve the default scale from the registry
 	float defaultScale = GlobalRegistry().getFloat("game/defaults/textureScale");
 
-  {
-    float fSize = (float)m_state->getTexture().width * defaultScale;
+	/* In this next block, the routine cycles through all the patch columns and
+	 * measures the distances to the next column. 
+	 * 
+	 * During each column cycle, the longest distance from this column to the 
+	 * next is determined. The distance is added to tex and if the sum
+	 * is longer than texBest, the sum will be the new texBest.
+	 * 
+	 * I'm not sure in which case the sum will ever by smaller than texBest,
+	 * as the distance to the next column is always >= 0 and hence the sum should 
+	 * always be greater than texBest, but maybe there are some cases where
+	 * the next column is equal to the current one. 
+	 * 
+	 * All the distances are converted into "texture lengths" (i.e. multiples of
+	 * the scaled texture size in pixels.
+	 */	
+	{
+		float fSize = (float)m_state->getTexture().width * defaultScale;
   
-    double texBest = 0;
-    double tex = 0;
-    PatchControl* pWidth = m_ctrl.data();
-    for (std::size_t w=0; w<m_width; w++, pWidth++) 
-    {
-      {
-        PatchControl* pHeight = pWidth;
-        for (std::size_t h=0; h<m_height; h++, pHeight+=m_width)
-          pHeight->m_texcoord[0] = static_cast<float>(tex);
-      }
+		double texBest = 0;
+		double tex = 0;
+		
+		// Set the pWidth PatchControl pointer onto the first element
+		PatchControl* pWidth = m_ctrl.data();
+		
+		// Cycle through the patch width, 
+		// w is the counter, pWidth is the pointer that is cycling through the elements 
+		for (std::size_t w=0; w<m_width; w++, pWidth++) {
+			
+			// Apply the currently active <tex> value to the control point texture coordinates.
+			{
+				// Create another pointer and set it to the current pWidth pointer
+				// then cycle through the height. This "scans" the patch column-wise.
+				PatchControl* pHeight = pWidth;
+				
+				// Note the increment of m_width, which relocates the pointer by a whole row each step 
+				for (std::size_t h=0; h<m_height; h++, pHeight+=m_width) {
+					// Set the x-coord (or better s-coord?) of the texture to tex.
+					// For the first pWidth cycle this is tex=0, so the texture is not shifted at the first vertex
+					pHeight->m_texcoord[0] = static_cast<float>(tex);
+				}
+			}
 
-      if(w+1 == m_width)
-        break;
+			// If we reached the last row (m_width - 1) we are finished (all coordinates are applied)
+			if (w+1 == m_width)
+				break;
 
-      {
-        PatchControl* pHeight = pWidth;
-        for (std::size_t h=0; h<m_height; h++, pHeight+=m_width)
-        {
-          Vector3 v(pHeight->m_vertex - (pHeight+1)->m_vertex);
-          double length = tex + (v.getLength() / fSize);
-          if(fabs(length) > texBest) texBest = length;
-        }
-      }
+			// Determine the longest distance to the next column. If it is even longer
+			{
+				// Set the pointer pHeight to the current control vertex column
+				PatchControl* pHeight = pWidth;
+				
+				// Again, cycle through the current column
+				for (std::size_t h=0; h<m_height; h++, pHeight+=m_width) {
+					// v is the vector pointing from one control point to the next neighbour
+					Vector3 v(pHeight->m_vertex - (pHeight+1)->m_vertex);
+					
+					// translate the distance in world coordinates into texture coords 
+					// (i.e. divide it by the scaled texture size) and add it to the
+					// current tex value
+					double length = tex + (v.getLength() / fSize);
+					
+					// Now compare this calculated "texture length"
+					// to the value stored in texBest. If the length is larger,
+					// replace texBest with it, so texBest contains the largest 
+					// width found so far (in texture coordinates)
+					if (fabs(length) > texBest) {
+						texBest = length;
+					}
+				}
+			}
+			
+			// texBest is stored in <tex>, it gets applied in the next column sweep
+			tex = texBest;
+		}
+	}
 
-      tex=texBest;
-    }
-  }
+	// Now the same goes for the texture height, cycle through all the rows
+	// and calculate the longest distances, convert them to texture coordinates
+	// and apply them to the according texture coordinates.
+	{
+		float fSize = -(float)m_state->getTexture().height * defaultScale;
+		
+		double texBest = 0;
+		double tex = 0;
+		
+		// Set the pointer to the first vertex
+		PatchControl* pHeight = m_ctrl.data();
+		
+		// Each row is visited once
+		for (std::size_t h=0; h<m_height; h++, pHeight+=m_width) {
+			
+			// During each row, we cycle through every height point
+		    {
+		    	PatchControl* pWidth = pHeight;
+				for (std::size_t w=0; w<m_width; w++, pWidth++) {
+					pWidth->m_texcoord[1] = static_cast<float>(tex);
+				}
+			}
+	
+			if (h+1 == m_height)
+				break;
+	
+			{
+				PatchControl* pWidth = pHeight;
+				for (std::size_t w=0; w<m_width; w++, pWidth++) {
+					Vector3 v(pWidth->m_vertex - (pWidth+m_width)->m_vertex);
+					double length = tex + (v.getLength() / fSize);
+					if(fabs(length) > texBest) texBest = length;
+				}
+      		}
 
-  {
-    float fSize = -(float)m_state->getTexture().height * defaultScale;
+			tex=texBest;
+		}
+	}
 
-    double texBest = 0;
-    double tex = 0;
-    PatchControl* pHeight = m_ctrl.data();
-    for (std::size_t h=0; h<m_height; h++, pHeight+=m_width) 
-    {
-      {
-        PatchControl* pWidth = pHeight;
-        for (std::size_t w=0; w<m_width; w++, pWidth++)
-          pWidth->m_texcoord[1] = static_cast<float>(tex);
-      }
-
-      if(h+1 == m_height)
-        break;
-
-      {
-        PatchControl* pWidth = pHeight;
-        for (std::size_t w=0; w<m_width; w++, pWidth++)
-        {
-          Vector3 v(pWidth->m_vertex - (pWidth+m_width)->m_vertex);
-          double length = tex + (v.getLength() / fSize);
-          if(fabs(length) > texBest) texBest = length;
-        }
-      }
-
-      tex=texBest;
-    }
-  }
-
-  controlPointsChanged();
+	// Notify the patch that it control points got changed
+	controlPointsChanged();
 }
 
 
