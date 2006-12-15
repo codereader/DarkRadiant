@@ -60,6 +60,88 @@ std::string LightTextureSelector::getSelection() {
 	}
 }
 
+namespace {
+
+/* Local object that walks the GtkTreeModel and obtains a GtkTreePath locating
+ * the given texture. The gtk_tree_model_foreach function requires a pointer to
+ * a function, which in this case is a static member of the walker object that
+ * accepts a void* pointer to the instance (like other GTK callbacks).
+ */
+class SelectionFinder {
+	
+	// String containing the texture to highlight
+	std::string _texture;
+	
+	// The GtkTreePath* pointing to the required texture
+	GtkTreePath* _path;
+	
+public:
+
+	// Constructor
+	SelectionFinder(const std::string& selection)
+	: _texture(selection),
+	  _path(NULL)
+	{ }
+	
+	// Retrieve the found TreePath, which may be NULL if the texture was not
+	// found
+	GtkTreePath* getPath() {
+		return _path;
+	}
+	
+	// Static callback for GTK
+	static gboolean forEach(GtkTreeModel* model,
+							GtkTreePath* path,
+							GtkTreeIter* iter,
+							gpointer vpSelf)
+	{
+		// Get the self instance from the void pointer
+		SelectionFinder* self = 
+			reinterpret_cast<SelectionFinder*>(vpSelf);
+			
+		// If the visited row matches the texture to find, set the _path
+		// variable and finish, otherwise continue to search
+		if (gtkutil::TreeModel::getString(model, iter, FULLNAME_COL) 
+			== self->_texture)
+		{
+			self->_path = gtk_tree_path_copy(path);
+			return TRUE; // finish the walk
+		}
+		else 
+		{
+			return FALSE;
+		}
+	} 
+
+};
+
+} // local namespace
+
+// Set the selection in the treeview
+void LightTextureSelector::setSelection(const std::string& sel) {
+
+	// If the selection string is empty, collapse the treeview and return with
+	// no selection
+	if (sel.empty()) {
+		gtk_tree_view_collapse_all(GTK_TREE_VIEW(_treeView));
+		return;
+	}
+
+	// Use the local SelectionFinder class to walk the TreeModel
+	SelectionFinder finder(sel);
+	GtkTreeModel* model = gtk_tree_view_get_model(GTK_TREE_VIEW(_treeView));
+	gtk_tree_model_foreach(model, SelectionFinder::forEach, &finder);
+	
+	// Get the found TreePath (may be NULL)
+	GtkTreePath* path = finder.getPath();
+	if (path) {
+		// Expand the treeview to display the target row
+		gtk_tree_view_expand_to_path(GTK_TREE_VIEW(_treeView), path);
+		// Highlight the target row
+		gtk_tree_view_set_cursor(GTK_TREE_VIEW(_treeView), path, NULL, false);
+	}
+}
+
 // Local functor to populate the tree view with shader names
 
 namespace {
@@ -160,7 +242,7 @@ GtkWidget* LightTextureSelector::createTreeView() {
 	GlobalShaderSystem().foreachShaderName(makeCallback1(func));
 	
 	// Tree view
-	GtkWidget* tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
+	_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
 	g_object_unref(store); // tree view owns the reference now
 	
 	GtkCellRenderer* rend = gtk_cell_renderer_text_new();
@@ -169,9 +251,9 @@ GtkWidget* LightTextureSelector::createTreeView() {
 												 rend,
 												 "text", DISPLAYNAME_COL,
 												 NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(tree), col);				
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tree), FALSE);
-	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree));
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), col);				
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_treeView), FALSE);
+	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
 	
 	g_signal_connect(G_OBJECT(_selection), 
 					 "changed", 
@@ -183,7 +265,7 @@ GtkWidget* LightTextureSelector::createTreeView() {
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll), 
 									GTK_POLICY_AUTOMATIC, 
 										GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(scroll), tree);
+	gtk_container_add(GTK_CONTAINER(scroll), _treeView);
 	
 	GtkWidget* fr = gtk_frame_new(NULL);
 	gtk_container_add(GTK_CONTAINER(fr), scroll);
