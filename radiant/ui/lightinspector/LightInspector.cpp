@@ -372,6 +372,9 @@ void LightInspector::getValuesFromEntity() {
 					 static_cast<guint>(colour.z() * 65535) };
 	gtk_color_button_set_color(GTK_COLOR_BUTTON(_colour), &col);
 	
+	// Set the texture selection from the "texture" key
+	_texSelector.setSelection(_entity->getKeyValue("texture"));
+	
 	// Determine whether this is a projected light, and set the toggles
 	// appropriately
 	if (!_entity->getKeyValue("light_target").empty()

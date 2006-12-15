@@ -29,7 +29,8 @@ class LightTextureSelector
 	// Main widget container
 	GtkWidget* _widget;
 	
-	// Selection for the tree view
+	// Tree view and selection object
+	GtkWidget* _treeView;
 	GtkTreeSelection* _selection;
 	
 	// GL preview widget
@@ -70,6 +71,15 @@ public:
 	 * was no selection.
 	 */
 	std::string getSelection();
+	
+	/** Set the given texture name as the current selection, highlighting it
+	 * in the tree view.
+	 * 
+	 * @param selection
+	 * The fullname of the texture to select, or the empty string if there 
+	 * should be no selection.
+	 */
+	void setSelection(const std::string& selection);
 };
 
 }
