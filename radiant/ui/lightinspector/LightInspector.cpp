@@ -150,16 +150,17 @@ GtkWidget* LightInspector::createProjectedPanel() {
 
 // Create the options checkboxes
 GtkWidget* LightInspector::createOptionsPanel() {
+
+	// Add options boxes to map
+	_options["noshadow"] = gtk_check_button_new_with_label(NOSHADOW_TEXT);
+	_options["nospecular"] = gtk_check_button_new_with_label(NOSPECULAR_TEXT);
+	_options["nodiffuse"] = gtk_check_button_new_with_label(NODIFFUSE_TEXT);
+
+	// Pack checkboxes into a VBox
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(vbx), 
-					   gtk_check_button_new_with_label(NOSHADOW_TEXT),
-					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), 
-					   gtk_check_button_new_with_label(NOSPECULAR_TEXT),
-					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), 
-					   gtk_check_button_new_with_label(NODIFFUSE_TEXT),
-					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), _options["noshadow"], FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), _options["nospecular"], FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), _options["nodiffuse"], FALSE, FALSE, 0);
 	return vbx;
 }
 
@@ -274,66 +275,7 @@ void LightInspector::_onPointToggle(GtkWidget* b, LightInspector* self) {
 }
 
 void LightInspector::_onOK(GtkWidget* w, LightInspector* self) {
-	
-	// Get a local pointer to the entity
-	Entity* e = self->_entity;
-	
-	// Set the "_color" keyvalue
-	GdkColor col;
-	gtk_color_button_get_color(GTK_COLOR_BUTTON(self->_colour), &col);
-	e->setKeyValue("_color", (boost::format("%.2f %.2f %.2f") 
-						  	  % (col.red/65535.0)
-						  	  % (col.green/65535.0)
-						  	  % (col.blue/65535.0)).str());
-	
-	/* Set shape keyvalues based on the light type, but only if it has changed
-	 * in the dialog (to avoid replacing unchanged values with defaults). We
-	 * are only changing the status here (pointlight versus projected); the 
-	 * actual vectors involved will be set through mouse dragging or editing
-	 * in the entity inspector.
-	 */
-	StringMap& _valueMap = self->_valueMap; // local reference
-	if (self->_isProjected) {
-		std::cout << "projected" << std::endl;
-		// Pointlight changed to projected light
-		e->setKeyValue("light_target", _valueMap["light_target"]);
-		e->setKeyValue("light_right", _valueMap["light_right"]);
-		e->setKeyValue("light_up", _valueMap["light_up"]);
-
-		// Set start and end vectors if enabled, otherwise clear them
-		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(self->_useStartEnd)))
-		{
-			e->setKeyValue("light_start", _valueMap["light_start"]);
-			e->setKeyValue("light_end", _valueMap["light_end"]);	
-		}
-		else {
-			e->setKeyValue("light_start", "");
-			e->setKeyValue("light_end", "");	
-		}
-
-		// Blank out pointlight values
-		e->setKeyValue("light_radius", "");
-		e->setKeyValue("light_center", "");
-	}
-	else {
-
-		// Projected light changed to pointlight
-		e->setKeyValue("light_radius", _valueMap["light_radius"]);
-		e->setKeyValue("light_center", _valueMap["light_center"]);
-
-		// Blank out projected light values
-		e->setKeyValue("light_target", "");
-		e->setKeyValue("light_right", "");
-		e->setKeyValue("light_up", "");
-		e->setKeyValue("light_start", "");
-		e->setKeyValue("light_end", "");
-	}
-
-	// Write the texture key
-	e->setKeyValue("texture", self->_texSelector.getSelection());
-	
-	// Hide the dialog
-	gtk_widget_hide(self->_widget);
+	self->setValuesOnEntity();
 }
 
 void LightInspector::_onCancel(GtkWidget* w, LightInspector* self) {
@@ -400,6 +342,73 @@ void LightInspector::getValuesFromEntity() {
 	else {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_useStartEnd), FALSE);
 	}
+	
+	// Set the options checkboxes
+	for (WidgetMap::iterator i = _options.begin(); i != _options.end(); ++i) {
+		if (_entity->getKeyValue(i->first) == "1")
+			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(i->second), TRUE);
+		else
+			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(i->second), FALSE);
+	}
 }
+
+// Set the keyvalues on the entity from the dialog widgets
+void LightInspector::setValuesOnEntity() {
+	
+	// Set the "_color" keyvalue
+	GdkColor col;
+	gtk_color_button_get_color(GTK_COLOR_BUTTON(_colour), &col);
+	_entity->setKeyValue("_color", (boost::format("%.2f %.2f %.2f") 
+						  	  		% (col.red/65535.0)
+						  	  		% (col.green/65535.0)
+						  	  		% (col.blue/65535.0)).str());
+	
+	// Write out all vectors to the entity
+	for (StringMap::iterator i = _valueMap.begin();
+		 i != _valueMap.end();
+		 ++i) 
+	{
+		_entity->setKeyValue(i->first, i->second);
+	}
+		 	
+	// Remove vector keys that should not exist, depending on the lightvolume
+	// options
+	if (_isProjected) {
+
+		// Clear start/end vectors if checkbox is disabled
+		if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_useStartEnd))) {
+			_entity->setKeyValue("light_start", "");
+			_entity->setKeyValue("light_end", "");	
+		}
+
+		// Blank out pointlight values
+		_entity->setKeyValue("light_radius", "");
+		_entity->setKeyValue("light_center", "");
+	}
+	else {
+
+		// Blank out projected light values
+		_entity->setKeyValue("light_target", "");
+		_entity->setKeyValue("light_right", "");
+		_entity->setKeyValue("light_up", "");
+		_entity->setKeyValue("light_start", "");
+		_entity->setKeyValue("light_end", "");
+	}
+
+	// Write the texture key
+	_entity->setKeyValue("texture", _texSelector.getSelection());
+
+	// Write the options
+	for (WidgetMap::iterator i = _options.begin(); i != _options.end(); ++i) {
+		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(i->second)))
+			_entity->setKeyValue(i->first, "1");
+		else
+			_entity->setKeyValue(i->first, "0");
+	}
+	
+	// Hide the dialog
+	gtk_widget_hide(_widget);
+}
+
 
 } // namespace ui
