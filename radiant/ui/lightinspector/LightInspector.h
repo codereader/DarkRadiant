@@ -41,6 +41,10 @@ class LightInspector
 
 	// Checkbox to enable start/end for projected lights
 	GtkWidget* _useStartEnd;
+
+	// Options checkboxes
+	typedef std::map<std::string, GtkWidget*> WidgetMap;
+	WidgetMap _options;
 	
 	// The light entity to edit
 	Entity* _entity;
@@ -72,6 +76,9 @@ private:
 
 	// Update the dialog widgets from keyvals on the entity
 	void getValuesFromEntity();
+	
+	// Write the widget contents to the entity
+	void setValuesOnEntity();
 	
 public:
 

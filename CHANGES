@@ -1,3 +1,11 @@
+15/12/2006
+OrbWeaver
+- Added Light Inspector
+
+07/12/2006
+greebo
+- Added draggable projected lights
+
 25/11/2006
 OrbWeaver
 - Entity chooser now uses a key in the DEF to specify a container folder, for
