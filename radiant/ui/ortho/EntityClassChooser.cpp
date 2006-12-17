@@ -7,6 +7,8 @@
 #include "gtkutil/dialog.h"
 #include "gtkutil/image.h"
 #include "gtkutil/TreeModel.h"
+#include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/RightAlignment.h"
 
 #include "entity.h" // Entity_createFromSelection()
 
@@ -68,15 +70,15 @@ EntityClassChooser::EntityClassChooser()
 	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
 	gint w = gdk_screen_get_width(scr);
 	gint h = gdk_screen_get_height(scr);
-	
 	gtk_window_set_default_size(GTK_WINDOW(_widget), w / 3, h / 2);
 
 	// Create GUI elements and pack into main VBox
 	
-	GtkWidget* vbx = gtk_vbox_new(FALSE, 3);
+	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbx), createTreeView(), TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), createUsagePanel(), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), createButtonPanel(), FALSE, FALSE, 0);
+	gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
 
 	// Signals
@@ -213,19 +215,8 @@ GtkWidget* EntityClassChooser::createTreeView() {
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeView), col);				
 
-	// Pack treeview into a scrolled window, then into a frame
-	
-	GtkWidget* scrollWin = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrollWin),
-								   GTK_POLICY_AUTOMATIC,
-								   GTK_POLICY_AUTOMATIC);
-
-	gtk_container_add(GTK_CONTAINER(scrollWin), treeView);
-
-	GtkWidget* frame = gtk_frame_new(NULL);
-	gtk_container_add(GTK_CONTAINER(frame), scrollWin);
-
-	return frame;
+	// Pack treeview into a scrolled frame and return
+	return gtkutil::ScrolledFrame(treeView);
 }
 
 // Create the entity usage information panel
@@ -235,22 +226,12 @@ GtkWidget* EntityClassChooser::createUsagePanel() {
 	_usageTextView = gtk_text_view_new();
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(_usageTextView), GTK_WRAP_WORD);
 
-	// Pack into scrolled window and frame
-	GtkWidget* scroll = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
-								   GTK_POLICY_AUTOMATIC,
-								   GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(scroll), _usageTextView);
-
-	GtkWidget* frame = gtk_frame_new(NULL);
-	gtk_container_add(GTK_CONTAINER(frame), scroll);
-
-	return frame;	
+	return gtkutil::ScrolledFrame(_usageTextView);	
 }
 
 // Create the button panel
 GtkWidget* EntityClassChooser::createButtonPanel() {
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
+	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
 
 	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	_addButton = gtk_button_new_from_stock(GTK_STOCK_ADD);
@@ -258,9 +239,9 @@ GtkWidget* EntityClassChooser::createButtonPanel() {
 	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(callbackCancel), this);
 	g_signal_connect(G_OBJECT(_addButton), "clicked", G_CALLBACK(callbackAdd), this);
 
-	gtk_box_pack_end(GTK_BOX(hbx), _addButton, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, FALSE, FALSE, 0);
-	return hbx;
+	gtk_box_pack_end(GTK_BOX(hbx), _addButton, TRUE, TRUE, 0);
+	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
+	return gtkutil::RightAlignment(hbx);
 }
 
 // Update the usage information
