@@ -301,6 +301,7 @@ radiant_src = [
 'ui/einspector/BooleanPropertyEditor.cpp',
 'ui/einspector/EntityPropertyEditor.cpp',
 'ui/einspector/SkinPropertyEditor.cpp',
+'ui/einspector/SkinChooser.cpp',
 'ui/einspector/ColourPropertyEditor.cpp',
 'ui/einspector/TexturePropertyEditor.cpp',
 'ui/einspector/TextureChooser.cpp',
