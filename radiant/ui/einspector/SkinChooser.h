@@ -21,6 +21,9 @@ class SkinChooser
 	// Tree store and view
 	GtkWidget* _treeView;
 	GtkTreeStore* _treeStore;
+	
+	// The model name to use for skin matching
+	std::string _model;
 
 private:
 
@@ -32,7 +35,10 @@ private:
 	GtkWidget* createButtons();
 	
 	// Show the dialog and block until selection is made
-	std::string showAndBlock();
+	std::string showAndBlock(const std::string& model);
+	
+	// Populate the tree with skins
+	void populateSkins();
 	
 public:
 
@@ -40,8 +46,11 @@ public:
 	 * string if no selection was made. This static method maintains a singleton
 	 * instance of the dialog, and enters are recursive GTK main loop during
 	 * skin selection.
+	 * 
+	 * @param model
+	 * The full VFS path of the model for which matching skins should be found.
 	 */
-	static std::string chooseSkin();
+	static std::string chooseSkin(const std::string& model);
 
 };
 

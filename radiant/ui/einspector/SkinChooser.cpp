@@ -1,5 +1,6 @@
 #include "SkinChooser.h"
 
+#include "modelskin.h"
 #include "groupdialog.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/ScrolledFrame.h"
@@ -83,19 +84,42 @@ GtkWidget* SkinChooser::createButtons() {
 }
 
 // Show the dialog and block for a selection
-std::string SkinChooser::showAndBlock() {
+std::string SkinChooser::showAndBlock(const std::string& model) {
+	
+	// Set the model and populate the skins
+	_model = model;
+	populateSkins();
+	
+	// Show the dialog
 	gtk_widget_show_all(_widget);
 	return "_none";
 }
 
+// Populate the list of skins
+void SkinChooser::populateSkins() {
+	
+	// Get the list of skins for the model
+	ModelSkinList skins = GlobalModelSkinCache().getSkinsForModel(_model);
+		
+	// Add each skin to the tree view
+	for (ModelSkinList::iterator i = skins.begin();
+		 i != skins.end();
+		 ++i)
+	{
+		GtkTreeIter iter;
+		gtk_tree_store_append(_treeStore, &iter, NULL);
+		gtk_tree_store_set(_treeStore, &iter, DISPLAYNAME_COL, i->c_str(), -1); 		
+	}
+}
+
 // Static method to display singleton instance and choose a skin
-std::string SkinChooser::chooseSkin() {
+std::string SkinChooser::chooseSkin(const std::string& model) {
 	
 	// The static instance
 	static SkinChooser _instance;
 	
 	// Show and block the instance, returning the selected skin
-	return _instance.showAndBlock();	
+	return _instance.showAndBlock(model);	
 }
 
 }

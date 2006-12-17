@@ -59,7 +59,8 @@ void SkinPropertyEditor::_onBrowseButton(GtkWidget* w,
 										 SkinPropertyEditor* self)
 {
 	// Display the SkinChooser to get a skin from the user
-	std::string skin = SkinChooser::chooseSkin();
+	std::string modelName = self->getEntity()->getKeyValue("model");
+	std::string skin = SkinChooser::chooseSkin(modelName);
 	
 	// Add the skin to the entry box
 	gtk_entry_set_text(GTK_ENTRY(self->_textEntry), skin.c_str());
