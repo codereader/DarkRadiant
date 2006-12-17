@@ -3,6 +3,7 @@
 #include "gtkutil/glwidget.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/TextColumn.h"
 #include "signal/isignal.h"
 #include "texturelib.h"
 #include "ishaders.h"
@@ -244,18 +245,16 @@ GtkWidget* LightTextureSelector::createTreeView() {
 	
 	// Tree view
 	_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
-	g_object_unref(store); // tree view owns the reference now
-	
-	GtkCellRenderer* rend = gtk_cell_renderer_text_new();
-	GtkTreeViewColumn* col = 
-		gtk_tree_view_column_new_with_attributes("Texture",
-												 rend,
-												 "text", DISPLAYNAME_COL,
-												 NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), col);				
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_treeView), FALSE);
-	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
+	g_object_unref(store); // tree view owns the reference now
+
+	// Single text column to display texture name	
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), 
+								gtkutil::TextColumn("Texture", 
+													DISPLAYNAME_COL));				
 	
+	// Get selection and connect the changed callback
+	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
 	g_signal_connect(G_OBJECT(_selection), 
 					 "changed", 
 					 G_CALLBACK(_onSelChange), 
@@ -308,12 +307,8 @@ GtkWidget* LightTextureSelector::createPreview() {
 	g_object_set(G_OBJECT(rend), "weight", 700, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree), col);
 	
-	rend = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes("Value",
-												   rend,
-												   "text", 1,
-												   NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(tree), col);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tree),
+								gtkutil::TextColumn("Value", 1));
 
 	gtk_box_pack_start(GTK_BOX(hbx), 
 					   gtkutil::ScrolledFrame(tree), 
