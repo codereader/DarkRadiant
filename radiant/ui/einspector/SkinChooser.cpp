@@ -3,6 +3,7 @@
 #include "groupdialog.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/TextColumn.h"
 
 #include <gtk/gtk.h>
 
@@ -61,13 +62,8 @@ GtkWidget* SkinChooser::createTreeView() {
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_treeView), FALSE);
 	
 	// Single column to display the skin name
-	GtkCellRenderer* textRend = gtk_cell_renderer_text_new();
-	GtkTreeViewColumn* col = 
-		gtk_tree_view_column_new_with_attributes("Skin",
-											  	 textRend,
-												 "text", DISPLAYNAME_COL,
-												 NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), col);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), 
+								gtkutil::TextColumn("Skin", DISPLAYNAME_COL));
 	
 	// Pack treeview into a ScrolledFrame and return
 	return gtkutil::ScrolledFrame(_treeView);
