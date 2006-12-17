@@ -1,14 +1,13 @@
 #ifndef MODELSELECTOR_H_
 #define MODELSELECTOR_H_
 
+#include "modelskin.h"
 #include "ui/common/ModelPreview.h"
 
-#include <gtk/gtk.h>
-#include <GL/glew.h>
-
-#include "modelskin.h"
-#include "imodel.h"
-#include "math/matrix.h"
+#include <gtk/gtkwidget.h>
+#include <gtk/gtktreestore.h>
+#include <gtk/gtkliststore.h>
+#include <gtk/gtkliststore.h>
 
 #include <string>
 
