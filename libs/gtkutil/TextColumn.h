@@ -8,7 +8,8 @@ namespace gtkutil
 {
 
 /** A GtkTreeViewColumn that displays the text contained in the provided
- * column number.
+ * column number. The text is interpreted as Pango markup to allow formatting
+ * such as bold text.
  */
 
 class TextColumn
@@ -34,7 +35,7 @@ public:
 		// Construct the column itself
 		_column = gtk_tree_view_column_new_with_attributes(title.c_str(),
 														   rend,
-														   "text", colno,
+														   "markup", colno,
 														   NULL);
 	}
 	

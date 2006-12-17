@@ -296,16 +296,8 @@ GtkWidget* LightTextureSelector::createPreview() {
 	GtkWidget* tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_infoStore));
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tree), FALSE);
 	
-	GtkCellRenderer* rend;
-	GtkTreeViewColumn* col;
-	
-	rend = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes("Attribute",
-												   rend,
-												   "text", 0,
-												   NULL);
-	g_object_set(G_OBJECT(rend), "weight", 700, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(tree), col);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tree),
+								gtkutil::TextColumn("Attribute", 0));
 	
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree),
 								gtkutil::TextColumn("Value", 1));
@@ -399,7 +391,7 @@ void LightTextureSelector::updateInfoTable() {
 
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter, 
-					   0, "Shader",
+					   0, "<b>Shader</b>",
 					   1, selName.c_str(),
 					   -1);
 
@@ -415,7 +407,7 @@ void LightTextureSelector::updateInfoTable() {
 
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter, 
-					   0, "Image map",
+					   0, "<b>Image map</b>",
 					   1, texName.c_str(),
 					   -1);
 
@@ -423,7 +415,7 @@ void LightTextureSelector::updateInfoTable() {
 
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter, 
-					   0, "Defined in",
+					   0, "<b>Defined in</b>",
 					   1, shader->getShaderFileName(),
 					   -1);
 
@@ -441,7 +433,7 @@ void LightTextureSelector::updateInfoTable() {
 	
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter, 
-					   0, "Light flags",
+					   0, "<b>Light flags</b>",
 					   1, lightType.c_str(),
 					   -1);
 					   
