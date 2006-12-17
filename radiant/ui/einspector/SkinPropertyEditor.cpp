@@ -1,4 +1,5 @@
 #include "SkinPropertyEditor.h"
+#include "SkinChooser.h"
 
 #include <gtk/gtkhbox.h>
 #include <gtk/gtkvbox.h>
@@ -57,7 +58,11 @@ const std::string SkinPropertyEditor::getValue() {
 void SkinPropertyEditor::_onBrowseButton(GtkWidget* w, 
 										 SkinPropertyEditor* self)
 {
+	// Display the SkinChooser to get a skin from the user
+	std::string skin = SkinChooser::chooseSkin();
 	
+	// Add the skin to the entry box
+	gtk_entry_set_text(GTK_ENTRY(self->_textEntry), skin.c_str());
 }
 
 }
