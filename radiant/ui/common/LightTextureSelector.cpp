@@ -2,6 +2,7 @@
 
 #include "gtkutil/glwidget.h"
 #include "gtkutil/TreeModel.h"
+#include "gtkutil/ScrolledFrame.h"
 #include "signal/isignal.h"
 #include "texturelib.h"
 #include "ishaders.h"
@@ -314,16 +315,9 @@ GtkWidget* LightTextureSelector::createPreview() {
 												   NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree), col);
 
-	GtkWidget* scroll = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
-								   GTK_POLICY_AUTOMATIC,
-								   GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(scroll), tree);
-
-	GtkWidget* attFrame = gtk_frame_new(NULL);
-	gtk_container_add(GTK_CONTAINER(attFrame), scroll);
-
-	gtk_box_pack_start(GTK_BOX(hbx), attFrame, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), 
+					   gtkutil::ScrolledFrame(tree), 
+					   TRUE, TRUE, 0);
 
 	return hbx;
 	
