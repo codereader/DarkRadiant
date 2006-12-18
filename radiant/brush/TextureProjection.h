@@ -38,7 +38,7 @@ public:
 	void constructDefault();
 		
 	void setTransform(float width, float height, const Matrix4& transform);
-	Matrix4 getTransform(float width, float height) const;
+	Matrix4 getTransform() const;
 	
 	void shift(float s, float t);
 	void scale(float s, float t);
@@ -54,7 +54,10 @@ public:
 	void fitTexture(std::size_t width, std::size_t height, const Vector3& normal, const Winding& w, float s_repeat, float t_repeat);
 	
 	// greebo: Looks like this method saves the texture definitions into the brush winding points
-	void emitTextureCoordinates(std::size_t width, std::size_t height, Winding& w, const Vector3& normal, const Matrix4& localToWorld) const;
+	void emitTextureCoordinates(Winding& w, const Vector3& normal, const Matrix4& localToWorld) const;
+	
+	// greebo: This returns a matrix that transforms world vertex coordinates into this texture space
+	Matrix4 getWorldToTexture(const Vector3& normal, const Matrix4& localToWorld) const;
 	
 }; // class TextureProjection
 

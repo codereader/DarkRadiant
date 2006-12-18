@@ -30,7 +30,7 @@ void TextureProjection::setTransform(float width, float height, const Matrix4& t
 /* greebo: Returns the transformation matrix from the
  * texture definitions members. 
  */
-Matrix4 TextureProjection::getTransform(float width, float height) const {
+Matrix4 TextureProjection::getTransform() const {
 	return m_brushprimit_texdef.getTransform();
 }
 
@@ -51,6 +51,13 @@ void TextureProjection::normalise(float width, float height) {
 	m_brushprimit_texdef.normalise(width, height);
 }
 
+/* greebo: This returns the basis vectors of the texture (plane) space.
+ * The vectors are normalised and stored within the basis matrix <basis>
+ * as line vectors.
+ * 
+ * Note: the normal vector MUST be normalised already when this function is called,
+ * but this should be fulfilled as it represents a FacePlane vector (which is usually normalised)
+ */
 Matrix4 TextureProjection::getBasisForNormal(const Vector3& normal) const {
 	
 	Matrix4 basis;
@@ -58,6 +65,14 @@ Matrix4 TextureProjection::getBasisForNormal(const Vector3& normal) const {
 	basis = g_matrix4_identity;
 	ComputeAxisBase(normal, basis.x().getVector3(), basis.y().getVector3());
 	basis.z().getVector3() = normal;
+	
+	// At this point the basis matrix contains three lines that are
+	// perpendicular to each other. 
+	
+	// The x-line of <basis> contains the <texS> basis vector (within the face plane)
+	// The y-line of <basis> contains the <texT> basis vector (within the face plane)
+	// The z-line of <basis> contains the <normal> basis vector (perpendicular to the face plane)
+	
 	basis.transpose();
 					
 	return basis;
@@ -91,7 +106,7 @@ void TextureProjection::transformLocked(std::size_t width, std::size_t height, c
 	
 	Vector3 transformedProjectionAxis(stTransformed2identity.z().getVector3());
 	
-	Matrix4 stIdentity2stOriginal = getTransform((float)width, (float)height);
+	Matrix4 stIdentity2stOriginal = getTransform();
 	Matrix4 identity2stOriginal(matrix4_multiplied_by_matrix4(stIdentity2stOriginal, identity2stIdentity));
 
 	//globalOutputStream() << "originalProj: " << originalProjectionAxis << "\n";
@@ -131,7 +146,7 @@ void TextureProjection::fitTexture(std::size_t width, std::size_t height, const 
 		return;
 	}
 
-	Matrix4 st2tex = getTransform((float)width, (float)height);
+	Matrix4 st2tex = getTransform();
 
 	// the current texture transform
 	Matrix4 local2tex = st2tex;
@@ -165,34 +180,83 @@ void TextureProjection::fitTexture(std::size_t width, std::size_t height, const 
 	normalise((float)width, (float)height);
 }
 
-// greebo: Looks like this method saves the texture definitions into the brush winding points
-void TextureProjection::emitTextureCoordinates(std::size_t width, std::size_t height, Winding& w, const Vector3& normal, const Matrix4& localToWorld) const {
-	if (w.numpoints < 3) {
-		return;
-	}
-	//globalOutputStream() << "normal: " << normal << "\n";
+Matrix4 TextureProjection::getWorldToTexture(const Vector3& normal, const Matrix4& localToWorld) const {
+	// Get the transformation matrix, that contains the shift, scale and rotation 
+	// of the texture in "condensed" form (as matrix components).
+	Matrix4 local2tex = getTransform();
 
-	Matrix4 local2tex = getTransform((float)width, (float)height);
-	//globalOutputStream() << "texdef: " << static_cast<const Vector3&>(local2tex.x()) << static_cast<const Vector3&>(local2tex.y()) << "\n";
-
+	// Now combine the normal vector with the local2tex matrix
+	// to retrieve the final transformation that transforms vertex
+	// coordinates into the texture plane.   
 	{
 		Matrix4 xyz2st; 
 		// we don't care if it's not normalised...
+		
+		// Retrieve the basis vectors of the texture plane space, they are perpendicular to <normal>
 		xyz2st = getBasisForNormal(matrix4_transformed_direction(localToWorld, normal));
-		//globalOutputStream() << "basis: " << static_cast<const Vector3&>(xyz2st.x()) << static_cast<const Vector3&>(xyz2st.y()) << static_cast<const Vector3&>(xyz2st.z()) << "\n";
+		
+		// Transform the basis vectors with the according texture scale, rotate and shift operations
+		// These are contained in the local2tex matrix, so the matrices have to be multiplied. 
 		matrix4_multiply_by_matrix4(local2tex, xyz2st);
 	}
+	
+	// Transform the texture basis vectors into the "BrushFace space"
+	// usually the localToWorld matrix is identity, so this doesn't do anything.
+	matrix4_multiply_by_matrix4(local2tex, localToWorld);
+	
+	return local2tex;
+}
 
+/* greebo: This method calculates the texture coordinates for the brush winding vertices
+ * via matrix operations and stores the results into the Winding vertices (together with the
+ * tangent and bitangent vectors)
+ * 
+ * Note: The matrix localToWorld is basically useless at the moment, as it is the identity matrix for faces, and this method
+ * gets called on face operations only... */ 
+void TextureProjection::emitTextureCoordinates(Winding& w, const Vector3& normal, const Matrix4& localToWorld) const {
+	
+	// Quit, if we have less than three points (degenerate brushes?) 
+	if (w.numpoints < 3) {
+		return;
+	}
+	
+	// Get the transformation matrix, that contains the shift, scale and rotation 
+	// of the texture in "condensed" form (as matrix components).
+	Matrix4 local2tex = getTransform();
+
+	// Now combine the face normal vector with the local2tex matrix
+	// to retrieve the final transformation that transforms brush vertex
+	// coordinates into the texture plane.   
+	{
+		Matrix4 xyz2st; 
+		// we don't care if it's not normalised...
+		
+		// Retrieve the basis vectors of the texture plane space, they are perpendicular to <normal>
+		xyz2st = getBasisForNormal(matrix4_transformed_direction(localToWorld, normal));
+		
+		// Transform the basis vectors with the according texture scale, rotate and shift operations
+		// These are contained in the local2tex matrix, so the matrices have to be multiplied. 
+		matrix4_multiply_by_matrix4(local2tex, xyz2st);
+	}
+	
+	// Calculate the tangent and bitangent vectors to allow the correct openGL transformations
 	Vector3 tangent(local2tex.getTransposed().x().getVector3().getNormalised());
 	Vector3 bitangent(local2tex.getTransposed().y().getVector3().getNormalised());
 	
+	// Transform the texture basis vectors into the "BrushFace space"
+	// usually the localToWorld matrix is identity, so this doesn't do anything.
 	matrix4_multiply_by_matrix4(local2tex, localToWorld);
 	
+	// Cycle through the winding vertices and apply the texture transformation matrix
+	// onto each of them.
 	for (Winding::iterator i = w.begin(); i != w.end(); ++i) {
-		Vector3 texcoord = matrix4_transformed_point(local2tex, i->vertex);
+		Vector3 texcoord = local2tex.transform(i->vertex).getVector3();
+		
+		// Store the s,t coordinates into the winding texcoord vector
 		i->texcoord[0] = texcoord[0];
 		i->texcoord[1] = texcoord[1];
 	
+		// Save the tangent and bitangent vectors, they are the same for all the face vertices
 		i->tangent = tangent;
 		i->bitangent = bitangent;
 	}

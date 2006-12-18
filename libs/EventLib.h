@@ -34,7 +34,8 @@ namespace ui {
 		obsReplace,		// replace/cycle selection through possible candidates
 		obsReplaceFace,	// replace/cycle selection through possible face candidates
 		obsCopyTexture,	// copy texture from object
-		obsPasteTexture,	// paste texture to object
+		obsPasteTextureProjected,	// paste texture to object (projected)
+		obsPasteTextureNatural,	// paste texture to object, but do not distort it
 	};
 
 } // namespace ui

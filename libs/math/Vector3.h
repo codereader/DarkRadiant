@@ -18,6 +18,7 @@
 #include <string>
 #include <cmath>
 #include <float.h>
+#include "math/pi.h"
 #include "lrint.h"
 
 #include <boost/format.hpp>
@@ -376,6 +377,10 @@ public:
 		return std::min(fabs(m_elements[0]), std::min(fabs(m_elements[1]), fabs(m_elements[2])));
 	}
 
+	template<typename OtherT>
+	bool isParallel(const BasicVector3<OtherT>& other) const {
+		return (float_equal_epsilon(angle(other), 0.0f, 0.001f) || float_equal_epsilon(angle(other), c_pi, 0.001f)); 
+	}
 };
 
 /** Stream insertion operator for BasicVector3. Formats vector as "<x, y, z>".
@@ -391,6 +396,9 @@ std::ostream& operator<<(std::ostream& st, BasicVector3<T> vec) {
 
 // A 3-element vector stored in single-precision floating-point.
 typedef BasicVector3<float> Vector3;
+
+// Same as above, but with its components stored in double precision
+typedef BasicVector3<double> DoubleVector3;
 
 // =============== Common Vector3 Methods ==================================================
 

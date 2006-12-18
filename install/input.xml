@@ -32,7 +32,8 @@
 		<event name="CycleSelection" button="MOUSE_LEFT" modifiers="ALT+SHIFT" />
 		<event name="CycleFaceSelection" button="MOUSE_LEFT" modifiers="SHIFT+CONTROL+ALT" />
 		<event name="CopyTexture" button="MOUSE_MIDDLE" modifiers="CONTROL+ALT" />
-		<event name="PasteTexture" button="MOUSE_MIDDLE" modifiers="CONTROL+SHIFT" />
+		<event name="PasteTextureProjected" button="MOUSE_MIDDLE" modifiers="CONTROL+SHIFT" />
+		<event name="PasteTextureNatural" button="MOUSE_MIDDLE" modifiers="CONTROL+SHIFT+ALT" />
 	</observer>
 	<cameraview>
 		<event name="EnableFreeLookMode" button="MOUSE_RIGHT" modifiers="" />
