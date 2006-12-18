@@ -876,46 +876,57 @@ inline TexCoord2f texcoord2f_quantised(const TexCoord2f& texcoord, float precisi
 }
 
 /// \brief Standard vertex type for lines and points.
-struct PointVertex
-{
-  Colour4b colour;
-  Vertex3f vertex;
+// greebo: A PointVertex basically consists of a location 
+class PointVertex {
+public:
+	Colour4b colour;
+	Vertex3f vertex;
 
-  PointVertex()
-  {
-  }
-  PointVertex(Vertex3f _vertex)
-    : colour(Colour4b(255, 255, 255, 255)), vertex(_vertex)
-  {
-  }
-  PointVertex(Vertex3f _vertex, Colour4b _colour)
-    : colour(_colour), vertex(_vertex)
-  {
-  }
+	PointVertex() {}
+	
+	PointVertex(Vertex3f _vertex)
+		: colour(Colour4b(255, 255, 255, 255)), vertex(_vertex) {}
+    
+	PointVertex(Vertex3f _vertex, Colour4b _colour)
+		: colour(_colour), vertex(_vertex) {}
+		
+	// greebo: Construct a PointVertex out of a Vector3 and a colour
+	PointVertex(const DoubleVector3& point, const Colour4b& _colour) {
+		vertex = Vertex3f(
+			static_cast<float>(point.x()),
+			static_cast<float>(point.y()),
+			static_cast<float>(point.z())
+		);
+		
+		colour = _colour;
+	}
+	
+	// greebo: Same as above, but with a Vector3 as <point> argument
+	PointVertex(const Vector3& point, const Colour4b& _colour) {
+		vertex = Vertex3f(point);
+    	colour = _colour;
+	}
+	
+	bool operator< (const PointVertex& other) const {
+		if (vertex != other.vertex) {
+			return vertex < other.vertex;
+		}
+		
+		if (colour != other.colour) {
+			return colour < other.colour;
+		}
+		
+		return false;
+	}
+	
+	bool operator== (const PointVertex& other) const {
+		return colour == other.colour && vertex == other.vertex;
+	}
+
+	bool operator!= (const PointVertex& other) const {
+		return !(*this == other);
+	}
 };
-
-inline bool operator<(const PointVertex& self, const PointVertex& other)
-{
-  if(self.vertex != other.vertex)
-  {
-    return self.vertex < other.vertex;
-  }
-  if(self.colour != other.colour)
-  {
-    return self.colour < other.colour;
-  }
-  return false;
-}
-
-inline bool operator==(const PointVertex& self, const PointVertex& other)
-{
-  return self.colour == other.colour && self.vertex == other.vertex;
-}
-
-inline bool operator!=(const PointVertex& self, const PointVertex& other)
-{
-  return !operator==(self, other);
-}
 
 /// \brief Standard vertex type for lit/textured meshes.
 struct ArbitraryMeshVertex

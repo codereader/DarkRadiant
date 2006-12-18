@@ -11,6 +11,7 @@
 #include "plugin.h"
 #include "texturelib.h"
 #include "brush/TextureProjection.h"
+#include "winding.h"	// Maybe redundant (see #include "brush.h" >> in "Patch.h")
 
 #include "PatchSavedState.h"
 
@@ -1056,7 +1057,7 @@ void Patch::NaturalTexture() {
 			if (w+1 == m_width)
 				break;
 
-			// Determine the longest distance to the next column. If it is even longer
+			// Determine the longest distance to the next column.
 			{
 				// Set the pointer pHeight to the current control vertex column
 				PatchControl* pHeight = pWidth;
@@ -1543,6 +1544,275 @@ void Patch::ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width)
   }
   CapTexture();
   controlPointsChanged();
+}
+
+// greebo: Calculates the nearest patch CORNER vertex from the given <point>
+// Note: if this routine returns NULL, something's rotten with the patch
+PatchControl* Patch::getClosestPatchControlToPoint(const Vector3& point) {
+	
+	PatchControl* pBest = NULL;
+	
+	// Initialise with an illegal distance value
+	double closestDist = -1.0;
+	
+	PatchControl* corners[4];
+	
+	corners[0] = &m_ctrl[0];
+	corners[1] = &m_ctrl[m_width-1];
+	corners[2] = &m_ctrl[m_width*(m_height-1)];
+	corners[3] = &m_ctrl[m_width*m_height - 1];	
+	
+	// Cycle through all the control points with an iterator
+	//for (PatchControlIter i = m_ctrl.data(); i != m_ctrl.data() + m_ctrl.size(); ++i) {
+	for (unsigned int i = 0; i < 4; i++) {
+		
+		// Calculate the distance of the current vertex
+		double candidateDist = (corners[i]->m_vertex - point).getLength();
+		
+		// Compare the distance to the currently closest one
+		if (candidateDist < closestDist || pBest == NULL) {
+			// Store this distance as best value so far
+			closestDist = candidateDist;
+			
+			// Store the pointer in <best>
+			pBest = corners[i];
+		}
+	}
+	
+	return pBest;
+}
+
+/* greebo: This calculates the nearest patch control to the given brush <face>
+ * 
+ * @returns: a pointer to the nearest patch face. (Can technically be NULL, but really should not happen).*/
+PatchControl* Patch::getClosestPatchControlToFace(const Face* face) {
+	
+	// A pointer to the patch vertex closest to the face
+	PatchControl* pBest = NULL;
+	// Initialise the best distance with an illegal value
+	double closestDist = -1.0;
+	
+	// Check for NULL pointer, just to make sure
+	if (face != NULL) {
+		// Retrieve the winding from the brush face
+		const Winding& winding = face->getWinding();
+		
+		// Cycle through the winding vertices and calculate the distance to each patch vertex
+		for (Winding::const_iterator i = winding.begin(); i != winding.end(); ++i) {
+			// Retrieve the vertex
+			Vector3 faceVertex = i->vertex;
+			
+			// Get the nearest control point to the current face vertex
+			PatchControl* candidate = getClosestPatchControlToPoint(faceVertex);
+			
+			if (candidate != NULL) {
+				
+				double candidateDist = (faceVertex - candidate->m_vertex).getLength();
+				
+				// If we haven't found a best patch control so far or 
+				// the candidate distance is even better, save it! 
+				if (pBest == NULL || candidateDist < closestDist) {
+					// Memorise this patch control
+					pBest = candidate;
+					closestDist =  candidateDist;
+				}
+			}
+		} // end for
+	}
+	
+	return pBest;
+}
+
+Vector2 Patch::getPatchControlArrayIndices(const PatchControl* control) {
+	
+	// Go through the patch column per column and find the control vertex
+	PatchControl* pWidth = m_ctrl.data();
+	
+	for (std::size_t w=0; w < m_width; w++, pWidth++) {
+		// Create another pointer and set it to the current pWidth pointer
+		// then cycle through the height. This "scans" the patch column-wise.
+		PatchControl* pHeight = pWidth;
+		
+		// Note the increment of m_width, which relocates the pointer by a whole row each step 
+		for (std::size_t h=0; h<m_height; h++, pHeight+=m_width) {
+			// Compare the pointers to check if we have found the control
+			if (pHeight == control) {
+				return Vector2(w,h);
+			}
+		}
+	}
+	
+	return Vector2(0,0);
+}
+
+/* Project the vertex onto the given plane and transform it into the texture space using the worldToTexture matrix
+ */
+Vector2 getProjectedTextureCoords(const Vector3& vertex, const Plane3& plane, const Matrix4& worldToTexture) {
+	// Project the patch vertex onto the brush face plane
+	Vector3 projection = plane.getProjection(vertex);
+	
+	// Transform the projection coordinates into texture space
+	Vector3 texcoord = worldToTexture.transform(projection).getVector3();
+	
+	// Return the texture coordinates
+	return Vector2(texcoord[0], texcoord[1]);
+}
+
+/* greebo: This routine can be used to create seamless texture transitions from brushes to patches.
+ * 
+ * The idea is to flatten out the patch so that the distances between the patch control vertices
+ * are preserved, but all of them lie flat in a plane. These points can then be projected onto
+ * the brush faceplane and this way the texture coordinates can be easily calculated via the
+ * world-to-texture-space transformations (the matrix is retrieved from the TexDef class).
+ * 
+ * The main problem that has to be tackled is not the "natural" texturing itself (the method
+ * "natural" already takes care of that), but the goal that the patch/brush texture transition 
+ * is seamless. 
+ * 
+ * The starting point of the "flattening" is the nearest control vertex of the patch (the closest
+ * patch vertex to any of the brush winding vertices. Once this point has been found, the patch is
+ * systematically flattened into a "virtual" patch plane. From there the points are projected into 
+ * the texture space and you're already there.  
+ * 
+ * Note: This took me quite a bit and it's entirely possible that there is a more clever solution
+ * to this, but for this weekend I'm done with this (and it works ;)). 
+ * 
+ * Note: The angle between patch and brush can also be 90 degrees, the algorithm catches this case
+ * and calculates its own virtual patch directions. 
+ */
+void Patch::pasteTextureNatural(const Face* face) {
+	// Save the undo memento
+	undoSave();
+
+	// Check for NULL pointers
+	if (face != NULL) {
+		
+		// Convert the size_t stuff into int, because we need it for signed comparisons
+		int patchHeight = static_cast<int>(m_height);
+		int patchWidth = static_cast<int>(m_width);
+		
+		// Get the plane and its normalised normal vector of the face
+		Plane3 plane = face->getPlane().plane3().getNormalised();
+		Vector3 faceNormal = plane.normal();
+		
+		// Get the conversion matrix from the FaceTextureDef, the local2World argument is the identity matrix
+		Matrix4 worldToTexture = face->getTexdef().m_projection.getWorldToTexture(faceNormal, Matrix4::getIdentity());
+		
+		// Calculate the nearest corner vertex of this patch (to the face's winding vertices)
+		PatchControl* nearestControl = getClosestPatchControlToFace(face);
+		
+		// Determine the control array indices of the nearest control vertex
+		Vector2 indices = getPatchControlArrayIndices(nearestControl);
+		
+		// this is the point from where the patch is virtually flattened
+		int wStart = static_cast<int>(indices.x());
+		int hStart = static_cast<int>(indices.y());
+		
+		// Calculate the increments in the patch array, needed for the loops
+		int wIncr = (wStart == patchWidth-1) ? -1 : 1;
+		int wEnd = (wIncr<0) ? -1 : patchWidth;
+		
+		int hIncr = (hStart == patchHeight-1) ? -1 : 1;
+		int hEnd = (hIncr<0) ? -1 : patchHeight;
+		
+		PatchControl* startControl = &m_ctrl[(patchWidth*hStart) + wStart];
+		
+		// Calculate the base directions that are used to "flatten" the patch
+		// These have to be orthogonal to the facePlane normal, so that the texture coordinates
+		// can be retrieved by projection onto the facePlane.
+		
+		// Get the control points of the next column and the next row
+		PatchControl& nextColumn = m_ctrl[(patchWidth*(hStart + hIncr)) + wStart];
+		PatchControl& nextRow = m_ctrl[(patchWidth*hStart) + (wStart + wIncr)];
+		
+		// Calculate the world direction of these control points and extract a base
+		Vector3 widthVector = (nextRow.m_vertex - startControl->m_vertex);
+		Vector3 heightVector = (nextColumn.m_vertex - startControl->m_vertex);
+
+		// Calculate the base vectors of the virtual plane the patch is flattened in		
+		Vector3 widthBase, heightBase;
+		getVirtualPatchBase(widthVector, heightVector, faceNormal, widthBase, heightBase);
+		
+		// Now cycle (systematically) through all the patch vertices, flatten them out by 
+		// calculating the 3D distances of each vertex and projecting them onto the facePlane.
+		
+		// Initialise the starting point
+		PatchControl* prevColumn = startControl; 
+		Vector3 prevColumnVirtualVertex = prevColumn->m_vertex;
+		
+		for (int w = wStart; w != wEnd; w += wIncr) {
+			
+			// The first control in this row, calculate its virtual coords
+			PatchControl* curColumn = &m_ctrl[(patchWidth*hStart) + w];
+			
+			// The distance between the last column and this column
+			double xyzColDist = (curColumn->m_vertex - prevColumn->m_vertex).getLength();
+			
+			// The vector pointing to the next control point, if it *was* a completely planar patch
+			Vector3 curColumnVirtualVertex = prevColumnVirtualVertex + widthBase * xyzColDist;
+
+			// Store this value for the upcoming column cycle			
+			PatchControl* prevRow = curColumn;
+			Vector3 prevRowVirtualVertex = curColumnVirtualVertex;
+			
+			// Cycle through all the columns
+			for (int h = hStart; h != hEnd; h += hIncr) {
+				
+				// The current control
+				PatchControl* control = &m_ctrl[(patchWidth*h) + w];
+				
+				// The distance between the last and the current vertex
+				double xyzRowDist = (control->m_vertex - prevRow->m_vertex).getLength();
+			
+				// The vector pointing to the next control point, if it *was* a completely planar patch
+				Vector3 virtualControlVertex = prevRowVirtualVertex + heightBase * xyzRowDist;
+				
+				// Project the virtual vertex onto the brush faceplane and transform it into texture space 
+				control->m_texcoord = getProjectedTextureCoords(virtualControlVertex, plane, worldToTexture);
+				
+				// Update the variables for the next loop
+				prevRow = control;
+				prevRowVirtualVertex = virtualControlVertex;
+			}
+			
+			// Set the prevColumn control vertex to this one
+			prevColumn = curColumn;
+			prevColumnVirtualVertex = curColumnVirtualVertex;
+		}
+	}
+	
+	// Notify the patch about the change
+	controlPointsChanged();
+}
+
+void Patch::pasteTextureProjected(const Face* face) {
+	// Save the undo memento
+	undoSave();
+	
+	/* greebo: If there is a face pointer being passed to this method,
+	 * the algorithm takes each vertex of the patch, projects it onto
+	 * the plane (defined by the brush face) and transforms the coordinates
+	 * into the texture space. */
+	
+	if (face != NULL) {
+		// Get the normal vector of the face
+		Plane3 plane = face->getPlane().plane3().getNormalised();
+		
+		// Get the (already normalised) facePlane normal
+		Vector3 faceNormal = plane.normal();
+		
+		// Get the conversion matrix from the FaceTextureDef, the local2World argument is the identity matrix
+		Matrix4 worldToTexture = face->getTexdef().m_projection.getWorldToTexture(faceNormal, Matrix4::getIdentity());
+		
+		// Cycle through all the control points with an iterator
+		for (PatchControlIter i = m_ctrl.data(); i != m_ctrl.data() + m_ctrl.size(); ++i) {
+			// Project the vertex onto the face plane and transform it into texture space
+			i->m_texcoord = getProjectedTextureCoords(i->m_vertex, plane, worldToTexture);
+		}
+	
+		// Notify the patch about the change
+		controlPointsChanged();
+	}
 }
 
 /* greebo: This gets called when clicking on the "CAP" button in the surface dialogs.

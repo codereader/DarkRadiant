@@ -339,7 +339,12 @@ radiant_src = [
 'brush/BrushNode.cpp',
 'brush/BrushPrimitTexDef.cpp',
 'brush/TexDef.cpp',
-'brush/TextureProjection.cpp'
+'brush/TextureProjection.cpp',
+'brush/FaceShader.cpp',
+'brush/FaceTexDef.cpp',
+'brush/FacePlane.cpp',
+'brush/Face.cpp',
+'brush/BrushClass.cpp'
 ]
 
 for i in range(len(radiant_src)):

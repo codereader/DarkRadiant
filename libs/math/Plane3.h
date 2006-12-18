@@ -95,7 +95,7 @@ public:
 	
 	/* greebo: This normalises the plane by turning the normal vector into a unit vector (dividing it by its length)
 	 * and scaling the distance down by the same amount */  
-	Plane3 getNormalised() {
+	Plane3 getNormalised() const {
 		double rmagnitude = sqrt(a*a + b*b + c*c); // the length of the normal vector
   		return Plane3(a / rmagnitude, b / rmagnitude, c / rmagnitude, d / rmagnitude);
   	}
@@ -111,6 +111,22 @@ public:
   	bool isValid() const {
 		return float_equal_epsilon(this->normal().dot(this->normal()), 1.0, 0.01);
 	}
+  	
+  	/* greebo: Use this to calculate the projection of a <pointToProject> onto this plane.
+  	 * 
+  	 * @returns: the Vector3 pointing to the point on the plane with the shortest
+  	 * distance from the passed <pointToProject> */
+  	Vector3 getProjection(const Vector3& pointToProject) const {
+  	
+  		// Get the normal vector of this plane and normalise it 
+  		Vector3 n = normal().getNormalised();
+  		
+  		// Retrieve a point of the plane
+  		Vector3 planePoint = n*dist();
+  		
+  		// Calculate the projection and return it  		
+  		return pointToProject + planePoint - n*pointToProject.dot(n);
+  	}
   	
   	/* greebo: This calculates the intersection point of three planes. 
 	 * Returns <0,0,0> if no intersection point could be found, otherwise returns the coordinates of the intersection point 

@@ -17,6 +17,8 @@
 #include "PatchTesselation.h"
 #include "PatchXMLState.h"
 #include "PatchRenderables.h"
+#include "brush/TexDef.h"
+#include "brush.h"	// for FacePlane definition, be sure to replace this as soon as brush.h is disentangled
 
 void Patch_addTextureChangedCallback(const SignalHandler& handler);
 void Patch_textureChanged();
@@ -268,6 +270,19 @@ public:
 	void CapTexture();
 	void NaturalTexture();
 	void ProjectTexture(int nAxis);
+
+	/* greebo: This basically projects all the patch vertices into the brush plane and 
+	 * transforms the projected coordinates into the texture plane space */
+	void pasteTextureProjected(const Face* face);
+	
+	// This returns the PatchControl pointer that is closest to the given <point>
+	PatchControl* getClosestPatchControlToPoint(const Vector3& point);
+	PatchControl* getClosestPatchControlToFace(const Face* face);
+	
+	// Returns the w,h coordinates within the PatchControlArray of the given <control>
+	Vector2 getPatchControlArrayIndices(const PatchControl* control);
+	
+	void pasteTextureNatural(const Face* face);
 
 	// called just before an action to save the undo state
 	void undoSave();

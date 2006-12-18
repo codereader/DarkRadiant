@@ -44,13 +44,13 @@ bool getTextureLockEnabled()
 
 void Face_importSnapPlanes(bool value)
 {
-  Face::m_quantise = value ? quantiseInteger : quantiseFloating;
+  Face::m_quantise = /*value ? quantiseInteger : */quantiseFloating;
 }
 typedef FreeCaller1<bool, Face_importSnapPlanes> FaceImportSnapPlanesCaller;
 
 void Face_exportSnapPlanes(const BoolImportCallback& importer)
 {
-  importer(Face::m_quantise == quantiseInteger);
+  importer(false/*Face::m_quantise == quantiseInteger*/);
 }
 typedef FreeCaller1<const BoolImportCallback&, Face_exportSnapPlanes> FaceExportSnapPlanesCaller;
 
@@ -109,7 +109,7 @@ void Brush_Construct(EBrushType type)
 
   BrushClipPlane::constructStatic();
   BrushInstance::constructStatic();
-  Brush::constructStatic(type);
+  Brush::constructStatic(/*type*/);
 
   Brush::m_maxWorldCoord = g_MaxWorldCoord;
   BrushInstance::m_counter = &g_brushCount;

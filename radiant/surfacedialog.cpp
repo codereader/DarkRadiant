@@ -1303,50 +1303,14 @@ void SurfaceInspector::ApplyFlags()
   Select_SetFlags(ContentsFlagsValue(surfaceflags, contentflags, value, true));
 }
 
-
-void Face_getTexture(Face& face, CopiedString& shader, TextureProjection& projection, ContentsFlagsValue& flags)
-{
-  shader = face.GetShader();
-  face.GetTexdef(projection);
-  flags = face.getShader().m_flags;
-}
-typedef Function4<Face&, CopiedString&, TextureProjection&, ContentsFlagsValue&, void, Face_getTexture> FaceGetTexture;
-
-void Face_setTexture(Face& face, const char* shader, const TextureProjection& projection, const ContentsFlagsValue& flags)
-{
-  face.SetShader(shader);
-  face.SetTexdef(projection);
-  face.SetFlags(flags);
-}
-typedef Function4<Face&, const char*, const TextureProjection&, const ContentsFlagsValue&, void, Face_setTexture> FaceSetTexture;
-
-
-void Patch_getTexture(Patch& patch, CopiedString& shader, TextureProjection& projection, ContentsFlagsValue& flags)
-{
-  shader = patch.GetShader();
-  projection = TextureProjection(TexDef(), BrushPrimitTexDef(), Vector3(0, 0, 0), Vector3(0, 0, 0));
-  flags = ContentsFlagsValue(0, 0, 0, false);
-}
-typedef Function4<Patch&, CopiedString&, TextureProjection&, ContentsFlagsValue&, void, Patch_getTexture> PatchGetTexture;
-
-void Patch_setTexture(Patch& patch, const char* shader, const TextureProjection& projection, const ContentsFlagsValue& flags)
-{
-  patch.SetShader(shader);
-}
-typedef Function4<Patch&, const char*, const TextureProjection&, const ContentsFlagsValue&, void, Patch_setTexture> PatchSetTexture;
-
-
-typedef Callback3<CopiedString&, TextureProjection&, ContentsFlagsValue&> GetTextureCallback;
-typedef Callback3<const char*, const TextureProjection&, const ContentsFlagsValue&> SetTextureCallback;
-
-struct Texturable
-{
-  GetTextureCallback getTexture;
-  SetTextureCallback setTexture;
+struct Texturable {
+	BrushInstance* _brushInstance;
+	Patch* _patch;
+	Face* _face;
 };
 
 
-void Face_getClosest(Face& face, SelectionTest& test, SelectionIntersection& bestIntersection, Texturable& texturable)
+bool Face_getClosest(Face& face, SelectionTest& test, SelectionIntersection& bestIntersection, Texturable& texturable)
 {
   SelectionIntersection intersection;
   face.testSelect(test, intersection);
@@ -1354,9 +1318,9 @@ void Face_getClosest(Face& face, SelectionTest& test, SelectionIntersection& bes
     && SelectionIntersection_closer(intersection, bestIntersection))
   {
     bestIntersection = intersection;
-    texturable.setTexture = makeCallback3(FaceSetTexture(), face);
-    texturable.getTexture = makeCallback3(FaceGetTexture(), face);
+    return true;
   }
+  return false;
 }
 
 
@@ -1393,6 +1357,9 @@ class BrushGetClosestFaceVisibleWalker : public scene::Graph::Walker
 public:
   BrushGetClosestFaceVisibleWalker(SelectionTest& test, Texturable& texturable) : m_test(test), m_texturable(texturable)
   {
+  	m_texturable._face = NULL;
+	m_texturable._brushInstance = NULL;
+	m_texturable._patch = NULL;
   }
   bool pre(const scene::Path& path, scene::Instance& instance) const
   {
@@ -1401,11 +1368,16 @@ public:
       BrushInstance* brush = Instance_getBrush(instance);
       if(brush != 0)
       {
-        m_test.BeginMesh(brush->localToWorld());
+      	m_test.BeginMesh(brush->localToWorld());
 
         for(Brush::const_iterator i = brush->getBrush().begin(); i != brush->getBrush().end(); ++i)
         {
-          Face_getClosest(*(*i), m_test, m_bestIntersection, m_texturable);
+        	// If something was found, save the according brush
+          if (Face_getClosest(*(*i), m_test, m_bestIntersection, m_texturable)) {
+          	 m_texturable._face = (*i);
+			 m_texturable._brushInstance = brush;
+			 m_texturable._patch = NULL;
+          }
         }
       }
       else
@@ -1421,8 +1393,9 @@ public:
             Patch* patch = Node_getPatch(path.top());
             if(patch != 0)
             {
-              m_texturable.setTexture = makeCallback3(PatchSetTexture(), *patch);
-              m_texturable.getTexture = makeCallback3(PatchGetTexture(), *patch);
+              m_texturable._brushInstance = NULL;
+              m_texturable._face = NULL;
+			  m_texturable._patch = patch;
             }
             else
             {
@@ -1443,40 +1416,92 @@ Texturable Scene_getClosestTexturable(scene::Graph& graph, SelectionTest& test)
   return texturable;
 }
 
-bool Scene_getClosestTexture(scene::Graph& graph, SelectionTest& test, CopiedString& shader, TextureProjection& projection, ContentsFlagsValue& flags)
-{
-  Texturable texturable = Scene_getClosestTexturable(graph, test);
-  if(texturable.getTexture != GetTextureCallback())
-  {
-    texturable.getTexture(shader, projection, flags);
-    return true;
-  }
-  return false;
-}
-
-void Scene_setClosestTexture(scene::Graph& graph, SelectionTest& test, const char* shader, const TextureProjection& projection, const ContentsFlagsValue& flags)
-{
-  Texturable texturable = Scene_getClosestTexturable(graph, test);
-  if(texturable.setTexture != SetTextureCallback())
-  {
-    texturable.setTexture(shader, projection, flags);
-  }
-}
-
-
-class FaceTexture
+class TextureClipBoard
 {
 public:
-  TextureProjection m_projection;
-  ContentsFlagsValue m_flags;
+  TextureProjection _projection;
+  ContentsFlagsValue _flags;
+  BrushInstance* _brushInstance;
+  Patch* _patch;
+  Face* _face;
 };
 
-FaceTexture g_faceTextureClipboard;
+TextureClipBoard g_faceTextureClipboard;
+
+//bool Scene_getClosestTexture(scene::Graph& graph, SelectionTest& test, CopiedString& shader, TextureProjection& projection, ContentsFlagsValue& flags)
+bool Scene_getClosestTexture(scene::Graph& graph, SelectionTest& test, CopiedString& shader, TextureClipBoard& clipBoard) {
+  	Texturable texturable = Scene_getClosestTexturable(graph, test);
+  	
+	// Check if we have a brush
+	if (texturable._brushInstance != NULL && texturable._face != NULL) {
+		clipBoard._brushInstance = texturable._brushInstance;
+		clipBoard._face = texturable._face;
+		
+	  	shader = texturable._face->GetShader();
+	 	texturable._face->GetTexdef(clipBoard._projection);
+	 	clipBoard._flags = texturable._face->getShader().m_flags;
+		return true;
+	}
+	else if (texturable._patch != NULL) {
+		shader = texturable._patch->GetShader();
+		clipBoard._projection = TextureProjection(TexDef(), BrushPrimitTexDef(), Vector3(0, 0, 0), Vector3(0, 0, 0));
+		clipBoard._flags = ContentsFlagsValue(0, 0, 0, false);
+		clipBoard._patch = texturable._patch;
+		return true;
+	}
+	
+	return false;
+}
+
+void Scene_setClosestTexture(scene::Graph& graph, SelectionTest& test, const char* shader, const TextureClipBoard& clipBoard, const bool& project) {
+	Texturable texturable = Scene_getClosestTexturable(graph, test);
+  
+	// Check if we have a brush to copy from
+	if (clipBoard._brushInstance != NULL && clipBoard._face != NULL) {
+		
+		// Copy brush >> brush?
+  		if (texturable._brushInstance != NULL && texturable._face != NULL) {
+		 	texturable._face->SetShader(shader);
+		 	texturable._face->SetTexdef(clipBoard._projection);
+		 	texturable._face->SetFlags(clipBoard._flags);
+		}
+		// Copy brush >> patch?
+		else if (texturable._patch != NULL) {
+		 	texturable._patch->SetShader(shader);
+		 	
+		 	if (project) {
+		 		texturable._patch->pasteTextureProjected(clipBoard._face);
+		 	}
+		 	else {
+		 		texturable._patch->pasteTextureNatural(clipBoard._face);
+		 	}
+		}
+	}
+	// or a patch to copy from
+	else if (clipBoard._patch != NULL) {
+		
+  		// Copy patch >> brush?
+  		if (texturable._brushInstance != NULL && texturable._face != NULL) {
+		 	texturable._face->SetShader(shader);
+		 	texturable._face->SetTexdef(clipBoard._projection);
+		 	texturable._face->SetFlags(clipBoard._flags);
+		}
+		// Copy patch >> patch?
+		else if (texturable._patch != NULL) {
+		 	texturable._patch->SetShader(shader);
+		 	// greebo: patch >> patch copy alignment is not done yet
+		 	//texturable._patch->alignTexture(projection.m_brushprimit_texdef.getFakeTexCoords());
+		}
+	}
+}
 
 void FaceTextureClipboard_setDefault()
 {
-  g_faceTextureClipboard.m_flags = ContentsFlagsValue(0, 0, 0, false);
-  g_faceTextureClipboard.m_projection.constructDefault();
+  g_faceTextureClipboard._flags = ContentsFlagsValue(0, 0, 0, false);
+  g_faceTextureClipboard._projection.constructDefault();
+  g_faceTextureClipboard._brushInstance = NULL;
+  g_faceTextureClipboard._patch = NULL;
+  g_faceTextureClipboard._face = NULL;
 }
 
 void TextureClipboard_textureSelected(const char* shader)
@@ -1492,17 +1517,16 @@ const char* TextureBrowser_GetSelectedShader(TextureBrowser& textureBrowser);
 void Scene_copyClosestTexture(SelectionTest& test)
 {
   CopiedString shader;
-  if(Scene_getClosestTexture(GlobalSceneGraph(), test, shader, g_faceTextureClipboard.m_projection, g_faceTextureClipboard.m_flags))
-  {
-    TextureBrowser_SetSelectedShader(g_TextureBrowser, shader.c_str());
+  if (Scene_getClosestTexture(GlobalSceneGraph(), test, shader, g_faceTextureClipboard)) {
+	TextureBrowser_SetSelectedShader(g_TextureBrowser, shader.c_str());
   }
 }
 
-void Scene_applyClosestTexture(SelectionTest& test)
+void Scene_applyClosestTexture(SelectionTest& test, const bool& project)
 {
   UndoableCommand command("facePaintTexture");
 
-  Scene_setClosestTexture(GlobalSceneGraph(), test, TextureBrowser_GetSelectedShader(g_TextureBrowser), g_faceTextureClipboard.m_projection, g_faceTextureClipboard.m_flags);
+  Scene_setClosestTexture(GlobalSceneGraph(), test, TextureBrowser_GetSelectedShader(g_TextureBrowser), g_faceTextureClipboard, project);
 
   SceneChangeNotify();
 }
@@ -1516,8 +1540,8 @@ void SelectedFaces_copyTexture()
   if(!g_SelectedFaceInstances.empty())
   {
     Face& face = g_SelectedFaceInstances.last().getFace();
-    face.GetTexdef(g_faceTextureClipboard.m_projection);
-    g_faceTextureClipboard.m_flags = face.getShader().m_flags;
+    face.GetTexdef(g_faceTextureClipboard._projection);
+    g_faceTextureClipboard._flags = face.getShader().m_flags;
 
     TextureBrowser_SetSelectedShader(g_TextureBrowser, face.getShader().getShader());
   }
@@ -1525,9 +1549,9 @@ void SelectedFaces_copyTexture()
 
 void FaceInstance_pasteTexture(FaceInstance& faceInstance)
 {
-  faceInstance.getFace().SetTexdef(g_faceTextureClipboard.m_projection);
+  faceInstance.getFace().SetTexdef(g_faceTextureClipboard._projection);
   faceInstance.getFace().SetShader(TextureBrowser_GetSelectedShader(g_TextureBrowser));
-  faceInstance.getFace().SetFlags(g_faceTextureClipboard.m_flags);
+  faceInstance.getFace().SetFlags(g_faceTextureClipboard._flags);
   SceneChangeNotify();
 }
 
