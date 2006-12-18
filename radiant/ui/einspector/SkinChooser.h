@@ -24,6 +24,9 @@ class SkinChooser
 	
 	// The model name to use for skin matching
 	std::string _model;
+	
+	// The last skin selected
+	std::string _lastSkin;
 
 private:
 
@@ -39,6 +42,10 @@ private:
 	
 	// Populate the tree with skins
 	void populateSkins();
+	
+	// GTK callbacks
+	static void _onOK(GtkWidget*, SkinChooser*);
+	static void _onCancel(GtkWidget*, SkinChooser*);
 	
 public:
 
