@@ -5,6 +5,7 @@
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"
+#include "gtkutil/TreeModel.h"
 
 #include <gtk/gtk.h>
 
@@ -26,7 +27,8 @@ namespace {
 
 // Constructor
 SkinChooser::SkinChooser()
-: _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL))
+: _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
+  _lastSkin("")
 {
 	// Set up window
 	GtkWindow* gd = GroupDialog_getWindow();
@@ -73,12 +75,17 @@ GtkWidget* SkinChooser::createTreeView() {
 // Create the buttons panel
 GtkWidget* SkinChooser::createButtons() {
 	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
-	gtk_box_pack_end(GTK_BOX(hbx), 
-					   gtk_button_new_from_stock(GTK_STOCK_OK),
-					   TRUE, TRUE, 0);	
-	gtk_box_pack_end(GTK_BOX(hbx), 
-					   gtk_button_new_from_stock(GTK_STOCK_CANCEL),
-					   TRUE, TRUE, 0);
+	
+	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
+	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+
+	g_signal_connect(G_OBJECT(okButton), "clicked", 
+					 G_CALLBACK(_onOK), this);
+	g_signal_connect(G_OBJECT(cancelButton), "clicked", 
+					 G_CALLBACK(_onCancel), this);
+	
+	gtk_box_pack_end(GTK_BOX(hbx), okButton, TRUE, TRUE, 0);	
+	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
 					   
 	return gtkutil::RightAlignment(hbx);	
 }
@@ -92,11 +99,28 @@ std::string SkinChooser::showAndBlock(const std::string& model) {
 	
 	// Show the dialog
 	gtk_widget_show_all(_widget);
-	return "_none";
+	
+	// Enter main loop and block
+	gtk_main();
+	
+	// Hide the dialog and return the selection
+	gtk_widget_hide(_widget);
+	return _lastSkin;
 }
 
 // Populate the list of skins
 void SkinChooser::populateSkins() {
+	
+	// Clear the treestore
+	gtk_tree_store_clear(_treeStore);
+	
+	// Add "default" option to select no skin
+	GtkTreeIter iter;
+	gtk_tree_store_append(_treeStore, &iter, NULL);
+	gtk_tree_store_set(_treeStore, &iter, 
+					   DISPLAYNAME_COL, "*Default", 
+					   FULLNAME_COL, "",
+					   -1); 		
 	
 	// Get the list of skins for the model
 	ModelSkinList skins = GlobalModelSkinCache().getSkinsForModel(_model);
@@ -108,7 +132,10 @@ void SkinChooser::populateSkins() {
 	{
 		GtkTreeIter iter;
 		gtk_tree_store_append(_treeStore, &iter, NULL);
-		gtk_tree_store_set(_treeStore, &iter, DISPLAYNAME_COL, i->c_str(), -1); 		
+		gtk_tree_store_set(_treeStore, &iter, 
+						   DISPLAYNAME_COL, i->c_str(), 
+						   FULLNAME_COL, i->c_str(),
+						   -1); 		
 	}
 }
 
@@ -120,6 +147,37 @@ std::string SkinChooser::chooseSkin(const std::string& model) {
 	
 	// Show and block the instance, returning the selected skin
 	return _instance.showAndBlock(model);	
+}
+
+/* GTK CALLBACKS */
+
+void SkinChooser::_onOK(GtkWidget* widget, SkinChooser* self) {
+
+	// Get the selection
+	GtkTreeSelection* sel = 
+		gtk_tree_view_get_selection(GTK_TREE_VIEW(self->_treeView));
+
+	// Get the selected skin, and set the lastskin variable for return
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+	if (gtk_tree_selection_get_selected(sel, &model, &iter)) {
+		self->_lastSkin = gtkutil::TreeModel::getString(model, 
+														&iter, 
+														FULLNAME_COL);
+	}
+	else {
+		// Nothing selected, return empty string
+		self->_lastSkin = "";
+	}
+	
+	// Exit main loop
+	gtk_main_quit();
+}
+
+void SkinChooser::_onCancel(GtkWidget* widget, SkinChooser* self) {
+	// Clear the last skin and quit the main loop
+	self->_lastSkin = "";
+	gtk_main_quit();	
 }
 
 }
