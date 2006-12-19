@@ -84,6 +84,7 @@ gtkutil_src = '\
   xorrectangle.cpp\
   ModalProgressDialog.cpp\
   TreeModel.cpp\
+  VFSTreePopulator.cpp\
 '
 
 gtkutil_lib = gtkutil_env.StaticLibrary(target='libs/gtkutil', source=build_list('libs/gtkutil', gtkutil_src))

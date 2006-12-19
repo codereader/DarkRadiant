@@ -3,6 +3,8 @@
 #include "mainframe.h"
 #include "gtkutil/image.h"
 #include "gtkutil/glwidget.h"
+#include "gtkutil/VFSTreePopulator.h"
+#include "gtkutil/TreeModel.h"
 #include "math/Vector3.h"
 #include "ifilesystem.h"
 #include "iregistry.h"
@@ -17,7 +19,6 @@
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/functional/hash/hash.hpp>
 #include <boost/lexical_cast.hpp>
 
 namespace ui
@@ -125,177 +126,89 @@ ModelAndSkin ModelSelector::chooseModel() {
 	return _selector.showAndBlock();
 }
 
-// File-local functor object to retrieve model names from global VFS
 
 namespace {
 
-	struct ModelFileFunctor {
+// File-local functor object to retrieve model names from global VFS
+class ModelFileFunctor {
+
+	// VFSTreePopulator to populate
+	gtkutil::VFSTreePopulator& _populator;
 	
-		typedef const char* first_argument_type;
-		
-		// Tree store to populate
-
-		GtkTreeStore* _store;
-
-		// Map between model directory names (e.g. "models/darkmod/architecture") and
-		// a GtkTreeIter pointing to the equivalent row in the TreeModel. Subsequent
-		// modelpaths with this directory will be added as children of this iter.
-
-		typedef __gnu_cxx::hash_map<std::string, GtkTreeIter*, boost::hash<std::string> > DirIterMap;
-		DirIterMap _dirIterMap;
-		
-		// Constructor
-		
-		ModelFileFunctor(GtkTreeStore* store)
-		: _store(store) {}
-		
-		// Destructor. The GtkTreeIters are dynamically allocated so we must free them
-		
-		~ModelFileFunctor() {
-			for (DirIterMap::iterator i = _dirIterMap.begin();
-					i != _dirIterMap.end();
-						++i) 
-			{
-				gtk_tree_iter_free(i->second);
-			}
-		}
-		
-		// Recursive function to add a given model path ("models/darkmod/something/model.lwo")
-		// to its correct place in the tree. This is done by maintaining a cache of 
-		// directory nodes ("models/darkmod/something", "models/darkmod") against 
-		// GtkIters that point to the corresponding row in the tree model. On each call,
-		// the parent node is recursively calculated, and the node provided as an argument
-		// added as a child.
-		
-		GtkTreeIter* addRecursive(const std::string& dirPath) {
-			
-			// We first try to lookup the directory name in the map. Return it
-			// if it exists, otherwise recursively obtain the parent of this directory name,
-			// and add this directory as a child in the tree model. We also add this
-			// directory to the map for future lookups.
-			
-			DirIterMap::iterator iTemp = _dirIterMap.find(dirPath);
-			if (iTemp != _dirIterMap.end()) { // found in map
-				return iTemp->second;
-			}
-			else { 
-
-				// Perform the search for final "/" which identifies the parent
-				// of this directory, and call recursively. If there is no slash, we
-				// are looking at a toplevel directory in which case the parent is
-				// NULL.
-				unsigned int slashPos = dirPath.rfind("/");
-				GtkTreeIter* parIter = NULL;
-				
-				if (slashPos != std::string::npos) {
-					parIter = addRecursive(dirPath.substr(0, slashPos));
-				}
-
-				/* Add this directory to the treemodel. For the displayed tree, we
-				** want the last component of the directory name, not the entire path
-				** at each node.
-				*/
-
-				std::stringstream nodeName;
-				nodeName << dirPath.substr(slashPos + 1);
-
-				// Get the list of skins for this model. The number of skins is appended
-				// to the model node name in brackets.
-				ModelSkinList skins = GlobalModelSkinCache().getSkinsForModel(MODELS_FOLDER + dirPath);
-				int numSk = skins.size();
-				if (numSk > 0) {
-					nodeName << " [" << numSk << (numSk == 1 ? " skin]" : " skins]");
-				}
-
-				// Decide which image to use, based on the file extension (or the folder
-				// image if there is no extension). Also, set a flag indicating that we
-				// have an actual model rather than a directory, so that the fullname
-				// tree column can be populated
-				
-				std::string imgPath = FOLDER_ICON;
-				bool isModel = false;
-
-				if (boost::algorithm::iends_with(dirPath, LWO_EXTENSION)) {
-					imgPath = LWO_ICON;
-					isModel = true;
-				}
-				else if (boost::algorithm::iends_with(dirPath, ASE_EXTENSION)) {
-					imgPath = ASE_ICON;
-					isModel = true;
-				}
-
-				// Add the fields to the treeview
-				
-				GtkTreeIter iter;
-				gtk_tree_store_append(_store, &iter, parIter);
-				gtk_tree_store_set(_store, &iter, 
-						NAME_COLUMN, nodeName.str().c_str(),
-						FULLNAME_COLUMN, (isModel ? (MODELS_FOLDER + dirPath).c_str() : ""),
-						SKIN_COLUMN, "",
-						IMAGE_COLUMN, gtkutil::getLocalPixbuf(imgPath),
-						-1);
-				GtkTreeIter* dynIter = gtk_tree_iter_copy(&iter); // get a heap-allocated iter
-
-				// Determine if this model has any associated skins, and add them as
-				// children. We also set the fullpath column to the model name for each skin.
-				
-				for (ModelSkinList::iterator i = skins.begin(); i != skins.end(); ++i) {
-					GtkTreeIter skIter;
-					gtk_tree_store_append(_store, &skIter, &iter);
-					gtk_tree_store_set(_store, &skIter, 
-							NAME_COLUMN, i->c_str(),
-							FULLNAME_COLUMN, (MODELS_FOLDER + dirPath).c_str(),
-							SKIN_COLUMN, i->c_str(),
-							IMAGE_COLUMN, gtkutil::getLocalPixbuf(SKIN_ICON),
-							-1);
-				}
-				
-				// Now add a map entry that maps our directory name to the row we just
-				// added
-				_dirIterMap[dirPath] = dynIter;
-				
-				// Return our new dynamic iter. 
-				return dynIter;
-
-			}				
-
-		}
-
-		// Functor operator
-		
-		void operator() (const char* file) {
-
-			std::string rawPath(file);			
-
-			// Test the extension. If it is not LWO or ASE (case-insensitive),
-			// not interested
-			if (!boost::algorithm::iends_with(rawPath, LWO_EXTENSION) 
-					&& !boost::algorithm::iends_with(rawPath, ASE_EXTENSION)) 
-			{
-				return;
-			}
-			else 
-			{
-				addRecursive(rawPath);
-			}
-							   
-		}
-
+public:
 	
-	};
+	typedef const char* first_argument_type;
 
-}
+	// Constructor sets the populator
+	ModelFileFunctor(gtkutil::VFSTreePopulator& pop)
+	: _populator(pop)
+	{}
+
+	// Functor operator
+	void operator() (const char* file) {
+
+		std::string rawPath(file);			
+
+		// Test the extension. If it is not LWO or ASE (case-insensitive),
+		// not interested
+		if (!boost::algorithm::iends_with(rawPath, LWO_EXTENSION) 
+				&& !boost::algorithm::iends_with(rawPath, ASE_EXTENSION)) 
+		{
+			return;
+		}
+		else 
+		{
+			_populator.addPath(rawPath);
+		}
+						   
+	}
+};
+
+// VFSPopulatorVisitor to fill in column data for the populator tree nodes
+class ModelDataInserter
+: public gtkutil::VFSTreePopulator::Visitor
+{
+	// Required visit function
+	void visit(GtkTreeStore* store, 
+			   GtkTreeIter* iter, 
+			   const std::string& path)
+	{
+		// Determine whether this is a model or a directory
+		bool isModel = boost::algorithm::iends_with(path, LWO_EXTENSION)
+					   || boost::algorithm::iends_with(path, ASE_EXTENSION);
+					   
+		// Fill in the column values
+		gtk_tree_store_set(store, iter, 
+			NAME_COLUMN, path.c_str(),
+			FULLNAME_COLUMN, (isModel ? (MODELS_FOLDER + path).c_str() : ""),
+			SKIN_COLUMN, "",
+			-1);
+	} 	
+};
+
+} // blank namespace
 
 // Helper function to create the TreeView
 
 GtkWidget* ModelSelector::createTreeView() {
 
-	// Populate the treestore using the VFS callback functor
+	// Create a VFSTreePopulator for the treestore
+	gtkutil::VFSTreePopulator pop(_treeStore);
 	
-	ModelFileFunctor functor(_treeStore);
-	GlobalFileSystem().forEachFile(MODELS_FOLDER, "*", makeCallback1(functor), 0);
+	// Use a ModelFileFunctor to add paths to the populator
+	ModelFileFunctor functor(pop);
+	GlobalFileSystem().forEachFile(MODELS_FOLDER, 
+								   "*", 
+								   makeCallback1(functor), 
+								   0);
 
-	GtkWidget* treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
+	// Fill in the column data
+	ModelDataInserter inserter;
+	pop.forEachNode(inserter);
+
+	// Create the treeview
+	GtkWidget* treeView = 
+		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
 
 	// Single visible column, containing the directory/model name and the icon
 	
@@ -413,11 +326,7 @@ std::string ModelSelector::getSelectedValue(gint colNum) {
 	GtkTreeModel* model;
 
 	if (gtk_tree_selection_get_selected(_selection, &model, &iter)) {
-		// Get the value
-		GValue val = {0, 0};
-		gtk_tree_model_get_value(model, &iter, colNum, &val);
-		// Get the string
-		return g_value_get_string(&val);	
+		return gtkutil::TreeModel::getString(model, &iter, colNum);	
 	}
 	else {
 		// Nothing selected, return empty string
