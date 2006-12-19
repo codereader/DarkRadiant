@@ -91,10 +91,13 @@ GtkWidget* SkinChooser::createButtons() {
 }
 
 // Show the dialog and block for a selection
-std::string SkinChooser::showAndBlock(const std::string& model) {
+std::string SkinChooser::showAndBlock(const std::string& model,
+									  const std::string& prev)
+{
 	
-	// Set the model and populate the skins
+	// Set the model and previous skin, then populate the skins
 	_model = model;
+	_prevSkin = prev;
 	populateSkins();
 	
 	// Show the dialog
@@ -140,13 +143,15 @@ void SkinChooser::populateSkins() {
 }
 
 // Static method to display singleton instance and choose a skin
-std::string SkinChooser::chooseSkin(const std::string& model) {
+std::string SkinChooser::chooseSkin(const std::string& model,
+									const std::string& prev) 
+{
 	
 	// The static instance
 	static SkinChooser _instance;
 	
 	// Show and block the instance, returning the selected skin
-	return _instance.showAndBlock(model);	
+	return _instance.showAndBlock(model, prev);	
 }
 
 /* GTK CALLBACKS */
@@ -176,7 +181,7 @@ void SkinChooser::_onOK(GtkWidget* widget, SkinChooser* self) {
 
 void SkinChooser::_onCancel(GtkWidget* widget, SkinChooser* self) {
 	// Clear the last skin and quit the main loop
-	self->_lastSkin = "";
+	self->_lastSkin = self->_prevSkin;
 	gtk_main_quit();	
 }
 

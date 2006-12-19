@@ -25,8 +25,9 @@ class SkinChooser
 	// The model name to use for skin matching
 	std::string _model;
 	
-	// The last skin selected
+	// The last skin selected, and the original (previous) skin
 	std::string _lastSkin;
+	std::string _prevSkin;
 
 private:
 
@@ -38,7 +39,7 @@ private:
 	GtkWidget* createButtons();
 	
 	// Show the dialog and block until selection is made
-	std::string showAndBlock(const std::string& model);
+	std::string showAndBlock(const std::string& model, const std::string& prev);
 	
 	// Populate the tree with skins
 	void populateSkins();
@@ -56,8 +57,13 @@ public:
 	 * 
 	 * @param model
 	 * The full VFS path of the model for which matching skins should be found.
+	 * 
+	 * @param prevSkin
+	 * The current skin set on the model, so that the original can be returned
+	 * if the dialog is cancelled.
 	 */
-	static std::string chooseSkin(const std::string& model);
+	static std::string chooseSkin(const std::string& model,
+								  const std::string& prevSkin);
 
 };
 
