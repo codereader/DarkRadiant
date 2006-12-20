@@ -1815,6 +1815,36 @@ void Patch::pasteTextureProjected(const Face* face) {
 	}
 }
 
+/* This clones the texture u/v coordinates from the <other> patch onto this one
+ * Note: the patch dimensions must match exactly for this function to be performed.
+ */
+void Patch::pasteTextureCoordinates(const Patch* otherPatch) {
+	undoSave();
+	
+	if (otherPatch != NULL) {
+		
+		if (otherPatch->getWidth() == m_width && otherPatch->getHeight() == m_height) {
+			
+			PatchControlConstIter other;
+			PatchControlIter self;
+			
+			// Clone the texture coordinates one by one
+			for (other = otherPatch->begin(), self = m_ctrl.data(); 
+				 other != otherPatch->end(); 
+				 ++other, ++self) 
+			{
+				self->m_texcoord = other->m_texcoord;
+			}
+			
+			// Notify the patch about the change
+			controlPointsChanged();
+		}
+		else {
+			globalOutputStream() << "Error: Cannot copy texture coordinates, patch dimensions must match!\n";
+		}
+	}
+}
+
 /* greebo: This gets called when clicking on the "CAP" button in the surface dialogs.
  * 
  * The texture is projected onto either the <x,y>, <y,z>, or <x,z> planes and the result

@@ -1493,6 +1493,26 @@ void Scene_setClosestTexture(scene::Graph& graph, SelectionTest& test, const cha
 	}
 }
 
+void Scene_setClosestTextureCoordinates(scene::Graph& graph, SelectionTest& test, const TextureClipBoard& clipBoard) {
+	Texturable texturable = Scene_getClosestTexturable(graph, test);
+  
+	// Check if we have a brush to copy from
+	if (clipBoard._brushInstance != NULL && clipBoard._face != NULL) {
+		// Nothing to do yet, this only works for patches
+	}
+	// or a patch to copy from
+	else if (clipBoard._patch != NULL) {
+  		// Copy patch >> brush?
+  		if (texturable._brushInstance != NULL && texturable._face != NULL) {
+		 	// Nothing to do, this works for patches only, perhaps in the future...
+		}
+		// Copy patch >> patch?
+		else if (texturable._patch != NULL) {
+		 	texturable._patch->pasteTextureCoordinates(clipBoard._patch);
+		}
+	}
+}
+
 void FaceTextureClipboard_setDefault()
 {
   g_faceTextureClipboard._flags = ContentsFlagsValue(0, 0, 0, false);
@@ -1529,7 +1549,14 @@ void Scene_applyClosestTexture(SelectionTest& test, const bool& project)
   SceneChangeNotify();
 }
 
+void Scene_pasteTextureCoordinates(SelectionTest& test)
+{
+  UndoableCommand command("facePaintTexture");
 
+  Scene_setClosestTextureCoordinates(GlobalSceneGraph(), test, g_faceTextureClipboard);
+
+  SceneChangeNotify();
+}
 
 
 

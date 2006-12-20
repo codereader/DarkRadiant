@@ -36,6 +36,7 @@ namespace ui {
 		obsCopyTexture,	// copy texture from object
 		obsPasteTextureProjected,	// paste texture to object (projected)
 		obsPasteTextureNatural,	// paste texture to object, but do not distort it
+		obsPasteTextureCoordinates, // paste the texture coordinates only (patch>>patch)
 	};
 
 } // namespace ui
