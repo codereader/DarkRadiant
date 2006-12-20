@@ -282,6 +282,9 @@ public:
 	// Returns the w,h coordinates within the PatchControlArray of the given <control>
 	Vector2 getPatchControlArrayIndices(const PatchControl* control);
 	
+	/* This takes the texture from the given brush face and applies it to this patch.
+	 * It determines the closest control vertex of this patch to the brush and 
+	 * tries to continue the texture seamlessly. The resulting texturing is undistorted.*/
 	void pasteTextureNatural(const Face* face);
 
 	// called just before an action to save the undo state

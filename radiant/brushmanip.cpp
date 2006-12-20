@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "dialog.h"
 #include "xywindow.h"
 #include "preferences.h"
+#include "shaderlib.h"
 
 #include <list>
 

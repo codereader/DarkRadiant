@@ -60,7 +60,6 @@ class Face :
 
 public:
 	static QuantiseFunc m_quantise;
-	//static EBrushType m_type; // is always Doom3
 
 	PlanePoints m_move_planepts;
 	PlanePoints m_move_planeptsTransformed;

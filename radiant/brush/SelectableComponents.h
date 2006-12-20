@@ -1,6 +1,9 @@
 #ifndef SELECTABLECOMPONENTS_H_
 #define SELECTABLECOMPONENTS_H_
 
+#include "winding.h"
+#include "Face.h"
+
 class FaceVertexId {
 	std::size_t m_face;
 	std::size_t m_vertex;

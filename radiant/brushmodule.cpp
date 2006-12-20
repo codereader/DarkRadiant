@@ -23,6 +23,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "qerplugin.h"
 
+#include "brush/TexDef.h"
+#include "ibrush.h"
+#include "ifilter.h"
 #include "brush/BrushNode.h"
 #include "brushmanip.h"
 
@@ -85,25 +88,8 @@ void Brush_registerPreferencesPage()
 }
 
 
-void Brush_Construct(EBrushType type)
+void Brush_Construct()
 {
-  if(type == eBrushTypeQuake3)
-  {
-    g_showAlternativeTextureProjectionOption = true;
-
-    GlobalPreferenceSystem().registerPreference(
-      "AlternativeTextureProjection",
-      BoolImportStringCaller(g_useAlternativeTextureProjection.m_latched),
-      BoolExportStringCaller(g_useAlternativeTextureProjection.m_latched)
-    );
-    g_useAlternativeTextureProjection.useLatched();
-
-    if(g_useAlternativeTextureProjection.m_value)
-    {
-      type = eBrushTypeQuake3BP;
-    }
-  }
-
   Brush_registerCommands();
   Brush_registerPreferencesPage();
 
@@ -207,7 +193,7 @@ public:
 
   BrushDoom3API()
   {
-    Brush_Construct(eBrushTypeDoom3);
+    Brush_Construct(/*eBrushTypeDoom3*/); // greebo: is always Doom 3
 
      m_brushdoom3 = &GetBrushCreator();
   }
