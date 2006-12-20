@@ -208,6 +208,25 @@ class ModelDataInserter
 						   SKIN_COLUMN, "",
 						   IMAGE_COLUMN, pixBuf,
 						   -1);
+						   
+		// Now check if there are any skins for this model, and add them as
+		// children if so
+		const StringList& skinList = 
+			GlobalModelSkinCache().getSkinsForModel(fullPath);
+			
+		for (StringList::const_iterator i = skinList.begin();
+			 i != skinList.end();
+			 ++i)
+		{
+			GtkTreeIter tmpIter;
+			gtk_tree_store_append(store, &tmpIter, iter);
+			gtk_tree_store_set(store, &tmpIter,
+							   NAME_COLUMN, i->c_str(),
+							   FULLNAME_COLUMN, fullPath.c_str(),
+							   SKIN_COLUMN, i->c_str(),
+							   IMAGE_COLUMN, gtkutil::getLocalPixbuf(SKIN_ICON),
+							   -1);
+		}
 	} 	
 };
 

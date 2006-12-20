@@ -126,10 +126,10 @@ void SkinChooser::populateSkins() {
 					   -1); 		
 	
 	// Get the list of skins for the model
-	ModelSkinList skins = GlobalModelSkinCache().getSkinsForModel(_model);
+	const StringList& skins = GlobalModelSkinCache().getSkinsForModel(_model);
 		
 	// Add each skin to the tree view
-	for (ModelSkinList::iterator i = skins.begin();
+	for (StringList::const_iterator i = skins.begin();
 		 i != skins.end();
 		 ++i)
 	{

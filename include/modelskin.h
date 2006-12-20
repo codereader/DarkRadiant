@@ -66,7 +66,7 @@ public:
 };
 
 // Model skinlist typedef
-typedef std::vector<std::string> ModelSkinList;
+typedef std::vector<std::string> StringList;
 
 class ModelSkinCache
 {
@@ -90,7 +90,7 @@ public:
 	 * given model. The vector may be empty as a model does not require any associated skins.
 	 */
 	 
-	virtual const ModelSkinList& getSkinsForModel(const std::string& modelName) = 0;
+	virtual const StringList& getSkinsForModel(const std::string& modelName) = 0;
 };
 
 
