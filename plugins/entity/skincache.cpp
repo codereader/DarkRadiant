@@ -390,7 +390,7 @@ public:
   
 	// Get the vector of skin names corresponding to the given model.
 
-	const ModelSkinList& getSkinsForModel(const std::string& model) {
+	const StringList& getSkinsForModel(const std::string& model) {
 
 		// Pass on call to the GlobalSkins class
 		return g_skins.getSkinsForModel(model);
