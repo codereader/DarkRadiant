@@ -39,7 +39,8 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 	ui::ObserverEvent observerEvent = GlobalEventMapper().getObserverEvent(event);
 	
 	// Check if the user wants to copy/paste a texture
-	if (observerEvent == ui::obsCopyTexture || observerEvent == ui::obsPasteTextureProjected || observerEvent == ui::obsPasteTextureNatural) {
+	if (observerEvent == ui::obsCopyTexture || observerEvent == ui::obsPasteTextureProjected 
+		|| observerEvent == ui::obsPasteTextureNatural || observerEvent == ui::obsPasteTextureCoordinates) {
 		// Get the mouse position
 		DeviceVector devicePosition(device_constrained(window_to_normalised_device(position, _width, _height)));
 
@@ -60,6 +61,10 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 		else if (observerEvent == ui::obsPasteTextureNatural) {
 			// Apply the texture, but do not distort the (patch's) textures, hence "false"
 			Scene_applyClosestTexture(volume, false);
+		}
+		else if (observerEvent == ui::obsPasteTextureCoordinates) {
+			// Clone the texture coordinates from the patch in the clipboard
+			Scene_pasteTextureCoordinates(volume);
 		}
 	}
 		

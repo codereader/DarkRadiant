@@ -286,6 +286,8 @@ public:
 	 * It determines the closest control vertex of this patch to the brush and 
 	 * tries to continue the texture seamlessly. The resulting texturing is undistorted.*/
 	void pasteTextureNatural(const Face* face);
+	
+	void pasteTextureCoordinates(const Patch* otherPatch);
 
 	// called just before an action to save the undo state
 	void undoSave();

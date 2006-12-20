@@ -192,6 +192,9 @@ void EventMapper::loadObserverEventDefinitions() {
 			else if (eventName == "PasteTextureNatural") {
 				_observerConditions[obsPasteTextureNatural] = getCondition(eventList[i]);
 			}
+			else if (eventName == "PasteTextureCoordinates") {
+				_observerConditions[obsPasteTextureCoordinates] = getCondition(eventList[i]);
+			}
 			else {
 				globalOutputStream() << "EventMapper: Warning: Ignoring unkown event name: " << eventName.c_str() << "\n";
 			}
@@ -512,6 +515,7 @@ std::string EventMapper::printObserverEvent(const ObserverEvent& observerEvent) 
 		case obsCopyTexture: return "CopyTexture";
 		case obsPasteTextureProjected: return "PasteTextureProjected";		
 		case obsPasteTextureNatural: return "PasteTextureNatural";
+		case obsPasteTextureCoordinates: return "PasteTextureCoordinates";
 		default: return "Unknown event";
 	}
 }

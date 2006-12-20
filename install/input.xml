@@ -34,6 +34,7 @@
 		<event name="CopyTexture" button="MOUSE_MIDDLE" modifiers="CONTROL+ALT" />
 		<event name="PasteTextureProjected" button="MOUSE_MIDDLE" modifiers="CONTROL+SHIFT" />
 		<event name="PasteTextureNatural" button="MOUSE_MIDDLE" modifiers="CONTROL+SHIFT+ALT" />
+		<event name="PasteTextureCoordinates" button="MOUSE_MIDDLE" modifiers="ALT" />
 	</observer>
 	<cameraview>
 		<event name="EnableFreeLookMode" button="MOUSE_RIGHT" modifiers="" />
