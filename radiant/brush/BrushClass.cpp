@@ -1,6 +1,7 @@
 #include "BrushClass.h"
 
 #include "math/frustum.h"
+#include "signal/signal.h"
 #include "renderable.h"
 
 #include "Face.h"
@@ -302,14 +303,10 @@ Face* Brush::addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2, c
 	return m_faces.back();
 }
 
-void Brush::constructStatic(/*EBrushType type*/) {
-	//m_type = type;
-    //Face::m_type = type;	// greebo: this is always Doom3...
-    //FacePlane::m_type = type; // greebo: this is always Doom3...
-
+void Brush::constructStatic() {
 	g_brush_texturelock_enabled = true;
 
-	Face::m_quantise = /* (m_type == eBrushTypeQuake) ? quantiseInteger : */quantiseFloating;
+	Face::m_quantise = quantiseFloating;
 
 	m_state_point = GlobalShaderCache().capture("$POINT");
 }
@@ -932,3 +929,16 @@ void Brush::buildBRep() {
     }
   }
 }
+
+// ----------------------------------------------------------------------------
+
+Signal0 g_brushTextureChangedCallbacks;
+
+void Brush_addTextureChangedCallback(const SignalHandler& handler) {
+	g_brushTextureChangedCallbacks.connectLast(handler);
+}
+
+void Brush_textureChanged() {
+	g_brushTextureChangedCallbacks();
+}
+

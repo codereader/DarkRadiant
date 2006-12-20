@@ -153,7 +153,6 @@ public:
 	static Shader* m_state_point;
 	// ----
 	
-	//static EBrushType m_type; // greebo: is always Doom3
 	static double m_maxWorldCoord;
 	
 	// Constructors
@@ -235,7 +234,7 @@ public:
 	/// \brief Appends a new face constructed from the parameters to the end of the face list.
 	Face* addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2, const char* shader, const TextureProjection& projection);
 	
-	static void constructStatic(/*EBrushType type*/);
+	static void constructStatic();
 	static void destroyStatic();
 
 	std::size_t DEBUG_size();
@@ -313,5 +312,8 @@ private:
 	/// \brief Constructs the face windings and updates anything that depends on them.
 	void buildBRep();
 }; // class Brush
+
+void Brush_addTextureChangedCallback(const SignalHandler& callback);
+void Brush_textureChanged();
 
 #endif /*BRUSH_BRUSH_H_*/

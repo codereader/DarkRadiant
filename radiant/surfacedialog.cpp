@@ -1489,8 +1489,6 @@ void Scene_setClosestTexture(scene::Graph& graph, SelectionTest& test, const cha
 		// Copy patch >> patch?
 		else if (texturable._patch != NULL) {
 		 	texturable._patch->SetShader(shader);
-		 	// greebo: patch >> patch copy alignment is not done yet
-		 	//texturable._patch->alignTexture(projection.m_brushprimit_texdef.getFakeTexCoords());
 		}
 	}
 }

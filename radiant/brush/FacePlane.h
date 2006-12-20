@@ -15,12 +15,7 @@ class FacePlane {
 public:
 	Vector3 m_funcStaticOrigin;
 
-	/* greebo: This is always a Doom3 FacePlane
-	 * 
-	 * static EBrushType m_type;*/
-
 	static bool isDoom3Plane() {
-		//return FacePlane::m_type == eBrushTypeDoom3 || FacePlane::m_type == eBrushTypeQuake4;
 		return true;
 	}
 
