@@ -174,15 +174,40 @@ class ModelDataInserter
 			   const std::string& path)
 	{
 		// Determine whether this is a model or a directory
-		bool isModel = boost::algorithm::iends_with(path, LWO_EXTENSION)
-					   || boost::algorithm::iends_with(path, ASE_EXTENSION);
+		enum { FOLDER, ASE, LWO } pathType;
+		if (boost::algorithm::iends_with(path, LWO_EXTENSION))
+			pathType = LWO;
+		else if (boost::algorithm::iends_with(path, ASE_EXTENSION))
+			pathType = ASE;
+		else
+			pathType = FOLDER;
+
+		// Get the display name by stripping off everything before the last
+		// slash
+		int slashPos = path.rfind("/");
+		std::string displayName = path.substr(slashPos > 0 ? slashPos + 1: 0);
+
+		// Pathname is the model VFS name for a model, and blank for a folder
+		std::string fullPath = (pathType != FOLDER) 
+							   ? (MODELS_FOLDER + path)
+							   : "";
+					   
+		// Pixbuf depends on model type
+		GdkPixbuf* pixBuf;
+		if (pathType == FOLDER)
+			pixBuf = gtkutil::getLocalPixbuf(FOLDER_ICON);
+		else if (pathType == ASE)
+			pixBuf = gtkutil::getLocalPixbuf(ASE_ICON);
+		else
+			pixBuf = gtkutil::getLocalPixbuf(LWO_ICON); 
 					   
 		// Fill in the column values
 		gtk_tree_store_set(store, iter, 
-			NAME_COLUMN, path.c_str(),
-			FULLNAME_COLUMN, (isModel ? (MODELS_FOLDER + path).c_str() : ""),
-			SKIN_COLUMN, "",
-			-1);
+						   NAME_COLUMN, displayName.c_str(),
+						   FULLNAME_COLUMN, fullPath.c_str(),
+						   SKIN_COLUMN, "",
+						   IMAGE_COLUMN, pixBuf,
+						   -1);
 	} 	
 };
 
