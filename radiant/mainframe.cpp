@@ -152,8 +152,6 @@ struct layout_globals_t
 };
 
 layout_globals_t g_layout_globals;
-glwindow_globals_t g_glwindow_globals;
-
 
 // VFS
 class VFSModuleObserver : public ModuleObserver
@@ -3305,14 +3303,4 @@ void MainFrame_Destroy()
   GlobalEntityCreator().setCounter(0);
   g_entityCount.setCountChangedCallback(Callback());
   g_brushCount.setCountChangedCallback(Callback());
-}
-
-
-void GLWindow_Construct()
-{
-  GlobalPreferenceSystem().registerPreference("MouseButtons", IntImportStringCaller(g_glwindow_globals.m_nMouseType), IntExportStringCaller(g_glwindow_globals.m_nMouseType));
-}
-
-void GLWindow_Destroy()
-{
 }

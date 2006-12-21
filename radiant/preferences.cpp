@@ -83,25 +83,6 @@ void Interface_constructPreferences(PreferencesPage& page)
 #endif
 }
 
-void Mouse_constructPreferences(PreferencesPage& page)
-{
-  {
-    const char* buttons[] = { "2 button", "3 button", };
-    page.appendRadio("Mouse Type",  g_glwindow_globals.m_nMouseType, STRING_ARRAY_RANGE(buttons));
-  }
-  page.appendCheckBox("Right Button", "Activates Context Menu", g_xywindow_globals.m_bRightClick);
-}
-void Mouse_constructPage(PreferenceGroup& group)
-{
-  PreferencesPage page(group.createPage("Mouse", "Mouse Preferences"));
-  Mouse_constructPreferences(page);
-}
-void Mouse_registerPreferencesPage()
-{
-  PreferencesDialog_addInterfacePage(FreeCaller1<PreferenceGroup&, Mouse_constructPage>());
-}
-
-
 /*!
 =========================================================
 Games selection dialog
@@ -763,7 +744,7 @@ public:
 GtkWindow* PrefsDlg::BuildDialog()
 {
     PreferencesDialog_addInterfacePreferences(FreeCaller1<PreferencesPage&, Interface_constructPreferences>());
-    Mouse_registerPreferencesPage();
+    //Mouse_registerPreferencesPage();
 
     // Construct the main dialog window. Set a vertical default size as the
     // size_request is too small.

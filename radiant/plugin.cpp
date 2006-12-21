@@ -257,7 +257,6 @@ public:
     MultiMon_Construct();
     MRU_Construct();
     Pointfile_Construct();
-    GLWindow_Construct();
     Map_Construct();
     EntityList_Construct();
     MainFrame_Construct();
@@ -294,7 +293,6 @@ public:
     MainFrame_Destroy();
     EntityList_Destroy();
     Map_Destroy();
-    GLWindow_Destroy();
     Pointfile_Destroy();
     MRU_Destroy();
     MultiMon_Destroy();

@@ -248,11 +248,11 @@ inline void XYWnd_Update(XYWnd& xywnd)
 
 struct xywindow_globals_t
 {
-  bool m_bRightClick;
+  //bool m_bRightClick;
   bool m_bNoStipple;
 
   xywindow_globals_t() :
-    m_bRightClick(true),
+    //m_bRightClick(true),
     m_bNoStipple(false)
   {
   }
