@@ -41,7 +41,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "typesystem.h"
 
 #include "entity.h"
-#include "skincache.h"
 
 #include "modulesystem/singletonmodule.h"
 
@@ -96,5 +95,4 @@ extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
   initialiseModule(server);
 
   g_EntityDoom3Module.selfRegister();
-  Doom3ModelSkinCacheModule_selfRegister(server);
 }
