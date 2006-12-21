@@ -90,6 +90,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/IconTextMenuToggle.h"
 #include "gtkutil/TextMenuItem.h"
 #include "gtkutil/messagebox.h"
+#include "gtkutil/dialog.h"
 
 #include "autosave.h"
 #include "brushmanip.h"
@@ -590,25 +591,43 @@ void Radiant_detachGameToolsPathObserver(ModuleObserver& observer)
   g_gameToolsPathObservers.detach(observer);
 }
 
-// This is called from main() to start up the Radiant stuff.
-void Radiant_Initialise() 
-{
-	// Initialise the module server
-	GlobalModuleServer_Initialise();
-  
-	// Load the Radiant modules from the modules/ dir.
-	Radiant_loadModulesFromRoot(AppPath_get());
-
-	// Initialise the registry
-	// Instantiate registry
-	GlobalModuleServer::instance().set(GlobalModuleServer_get());
-	GlobalRegistryModuleRef registryRef;
-	
+void populateRegistry() {
 	// Load default values for darkradiant, located in the game directory
-	GlobalRegistry().importFromFile(std::string(AppPath_get()) + "user.xml", "");
-	GlobalRegistry().importFromFile(std::string(AppPath_get()) + "upgradepaths.xml", "user");
-	GlobalRegistry().importFromFile(std::string(AppPath_get()) + "colours.xml", "user/ui");
-	GlobalRegistry().importFromFile(std::string(AppPath_get()) + "input.xml", "user/ui");
+	const std::string base = std::string(AppPath_get()) + "user.xml";
+	const std::string upgradePaths = std::string(AppPath_get()) + "upgradepaths.xml";
+	const std::string colours = std::string(AppPath_get()) + "colours.xml";
+	const std::string input = std::string(AppPath_get()) + "input.xml";
+	
+	if (file_exists(base.c_str())) {
+		GlobalRegistry().importFromFile(base, "");
+		
+		// Try to load the upgradepaths
+		if (file_exists(upgradePaths.c_str())) {
+			GlobalRegistry().importFromFile(upgradePaths, "user");
+		}
+		else {
+			gtkutil::errorDialog(std::string("Could not find upgrade paths:\n") + upgradePaths);
+		}
+		
+		// Try to load the default colour schemes
+		if (file_exists(colours.c_str())) {
+			GlobalRegistry().importFromFile(colours, "user/ui");
+		}
+		else {
+			gtkutil::errorDialog(std::string("Could not find default colour schemes:\n") + colours);
+		}
+		
+		// Try to load the default input definitions
+		if (file_exists(input.c_str())) {
+			GlobalRegistry().importFromFile(input, "user/ui");
+		}
+		else {
+			gtkutil::errorDialog(std::string("Could not find default input definitions:\n") + input);
+		}
+	}
+	else {
+		gtkutil::fatalErrorDialog(std::string("Could not find base registry:\n") + base);
+	}
 	
 	// Traverse the game files stored in the GamesDialog class and load them into the registry
 	// The information stored in the game files is needed to successfully instantiate the other modules
@@ -624,9 +643,36 @@ void Radiant_Initialise()
 	// The called method also checks for any upgrades that have to be performed
 	const std::string userSettingsFile = std::string(SettingsPath_get()) + "user.xml";
 	if (file_exists(userSettingsFile.c_str())) {
-		GlobalRegistry().importUserXML(SettingsPath_get());
+		GlobalRegistry().importUserXML(userSettingsFile);
 	}
- 
+	
+	const std::string userColoursFile = std::string(SettingsPath_get()) + "colours.xml";
+	if (file_exists(userColoursFile.c_str())) {
+		GlobalRegistry().importFromFile(userColoursFile, "user/ui");
+	}
+	
+	const std::string userInputFile = std::string(SettingsPath_get()) + "input.xml";
+	if (file_exists(userInputFile.c_str())) {
+		GlobalRegistry().importFromFile(userInputFile, "user/ui");
+	}
+}
+
+// This is called from main() to start up the Radiant stuff.
+void Radiant_Initialise() 
+{
+	// Initialise the module server
+	GlobalModuleServer_Initialise();
+  
+	// Load the Radiant modules from the modules/ dir.
+	Radiant_loadModulesFromRoot(AppPath_get());
+
+	// Initialise and instantiate the registry
+	GlobalModuleServer::instance().set(GlobalModuleServer_get());
+	GlobalRegistryModuleRef registryRef;
+	
+	// Try to load all the XML files into the registry
+	populateRegistry();
+	
 	// Load the ColourSchemes from the registry
 	ColourSchemes().loadColourSchemes();
 
@@ -640,10 +686,25 @@ void Radiant_Initialise()
 	g_gameNameObservers.realise();
 }
 
-void Radiant_Shutdown()
-{
-  // Save the whole /darkradiant/user tree to user.xml so that the current settings are preserved
-  GlobalRegistry().exportToFile("user", std::string(SettingsPath_get()) + "user.xml");	
+void Radiant_Shutdown() {
+	// Export the colour schemes and remove them from the registry
+	GlobalRegistry().exportToFile("user/ui/colourschemes", std::string(SettingsPath_get()) + "colours.xml");
+	GlobalRegistry().deleteXPath("user/ui/colourschemes");
+	
+	// Export the input definitions into the user's settings folder and remove them as well
+	GlobalRegistry().exportToFile("user/ui/input", std::string(SettingsPath_get()) + "input.xml");
+	GlobalRegistry().deleteXPath("user/ui/input");
+	
+	// Delete all nodes markes as "transient", they are NOT exported into the user's xml file
+	GlobalRegistry().deleteXPath("user/*[@transient='1']");
+	
+	// Remove any remaining upgradePaths (from older registry files)
+	GlobalRegistry().deleteXPath("user/upgradePaths");
+	// Remove legacy <interface> node
+	GlobalRegistry().deleteXPath("user/ui/interface");
+	
+	// Save the remaining /darkradiant/user tree to user.xml so that the current settings are preserved
+	GlobalRegistry().exportToFile("user", std::string(SettingsPath_get()) + "user.xml");
 
   g_gameNameObservers.unrealise();
   g_gameModeObservers.unrealise();

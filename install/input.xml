@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<interface>
+<input>
 	<buttons>
 		<!-- Define the button IDs -->
 		<button name="MOUSE_LEFT" id="1" />
@@ -41,4 +41,4 @@
 		<event name="DisableFreeLookMode" button="MOUSE_RIGHT" modifiers="" />
 		<strafemode toggle="CONTROL" forward="SHIFT" speed="0.65" forwardFactor="-1" />
 	</cameraview>
-</interface>
+</input>
