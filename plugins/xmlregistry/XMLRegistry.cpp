@@ -44,6 +44,7 @@ typedef std::vector<std::string> stringParts;
 
 // The "memory" structure for the upgrade methods
 typedef std::map<const std::string, std::string> MemoryMap;
+typedef std::map<RegistryKeyObserver*, std::string> KeyObserverMap;
 
 class XMLRegistry : 
 	public Registry 
@@ -71,6 +72,9 @@ private:
 	
 	// The "memory" as used by the upgrade methods
 	MemoryMap _memory;
+	
+	// The map with all the keyobservers that are currently connected
+	KeyObserverMap _keyObservers;
 
 public:
 
@@ -306,6 +310,9 @@ public:
 			// Load the node and set the value
 			xml::Node node = nodeList[0];
 			node.setAttributeValue("value", value);
+			
+			// Notify the observers, but use the unprepared key as argument!
+			notifyKeyObservers(key);
 		}
 		else {
 			// If the key is still not found, something nasty has happened
@@ -770,8 +777,37 @@ public:
 	  	}
 	}
 	
+	// Add an observer watching the <observedKey> to the internal list of observers. 
+	void addKeyObserver(RegistryKeyObserver* observer, const std::string& observedKey) {
+		_keyObservers[observer] = observedKey;
+	}
+	
+	// Removes an observer watching the <observedKey> from the internal list of observers. 
+	void removeKeyObserver(RegistryKeyObserver* observer) {
+		KeyObserverMap::iterator it = _keyObservers.find(observer);
+   		if (it != _keyObservers.end()) {
+   			_keyObservers.erase(observer);
+   		}
+	}
+	
 	// Destructor
 	~XMLRegistry() {}
+	
+private:
+
+	// Cycles through the key observers and notifies the ones that observe the given <changedKey>
+	void notifyKeyObservers(const std::string& changedKey) {
+		for (KeyObserverMap::iterator i = _keyObservers.begin(); i != _keyObservers.end(); i++) {
+			RegistryKeyObserver* keyObserver = i->first;
+			const std::string observedKey = i->second;
+			
+			// If the key matches, notify the observer
+			if (observedKey == changedKey && keyObserver != NULL) {
+				keyObserver->keyChanged();
+			}
+		}
+	}
+	
 }; // class XMLRegistry
 
 

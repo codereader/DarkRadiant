@@ -54,6 +54,14 @@ public:
   {
     return m_dialog.addCheckBox(m_vbox, name, flag, importCallback, exportCallback);
   }
+  
+	/* greebo: This adds a checkbox and connects it to an XMLRegistry key.
+	 * @returns: the pointer to the created GtkWidget */
+	GtkWidget* appendCheckBox(const std::string& name, const std::string& flag, const std::string& registryKey, RegistryKeyObserver* keyObserver) {
+		return m_dialog.addCheckBox(m_vbox, name, flag, registryKey, keyObserver);
+	}
+
+  
   void appendCombo(const char* name, StringArrayRange values, const IntImportCallback& importCallback, const IntExportCallback& exportCallback)
   {
     m_dialog.addCombo(m_vbox, name, values, importCallback, exportCallback);
@@ -373,56 +381,55 @@ extern CGameDialog g_GamesDialog;
 
 class TexDef;
 
-class PrefsDlg : public Dialog
-{
-public:  
-protected:
-  std::list<CGameDescription *> mGames;
-  
+class PrefsDlg : public Dialog {
 public:
-  
-  GtkWidget *m_notebook;
+protected:
+	std::list<CGameDescription *> mGames;
 
-  virtual ~PrefsDlg()
-  {
-    g_string_free (m_rc_path, true );
-    g_string_free (m_inipath, true );
-  }
+public:
 
-  /*!
-  path for global settings
-  win32: AppPath
-  linux: ~/.radiant/[version]/
-  */
-  GString *m_global_rc_path;
+	GtkWidget *m_notebook;
 
-  /*!
-  path to per-game settings
-  used for various game dependant storage
-  win32: GameToolsPath
-  linux: ~/.radiant/[version]/[gamename]/
-  */
-  GString *m_rc_path;
+	virtual ~PrefsDlg() {
+		g_string_free (m_rc_path, true );
+		g_string_free (m_inipath, true );
+	}
 
-  /*!
-  holds per-game settings
-  m_rc_path+"local.pref"
-  \todo FIXME at some point this should become XML property bag code too
-  */
-  GString *m_inipath;
+	/*!
+	path for global settings
+	win32: AppPath
+	linux: ~/.radiant/[version]/
+	*/
+	GString *m_global_rc_path;
 
-  // initialize the above paths
-  void Init();
+	/*!
+	path to per-game settings
+	used for various game dependant storage
+	win32: GameToolsPath
+	linux: ~/.radiant/[version]/[gamename]/
+	*/
+	GString *m_rc_path;
 
-  /*! Utility function for swapping notebook pages for tree list selections */
-  void showPrefPage(GtkWidget* prefpage);
+	/*!
+	holds per-game settings
+	m_rc_path+"local.pref"
+	\todo FIXME at some point this should become XML property bag code too
+	*/
+	GString *m_inipath;
+
+	// initialize the above paths
+	void Init();
+	
+	/*! Utility function for swapping notebook pages for tree list selections */
+	void showPrefPage(GtkWidget* prefpage);
 
 protected:
 
-  /*! Dialog API */
-  GtkWindow* BuildDialog();
-  void PostModal (EMessageBoxReturn code);
+	/*! Dialog API */
+	GtkWindow* BuildDialog();
+	void PostModal (EMessageBoxReturn code);
 };
+
 
 extern PrefsDlg g_Preferences;
 
