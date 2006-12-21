@@ -19,8 +19,6 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "skincache.h"
-
 #include "ifilesystem.h"
 #include "iscriplib.h"
 #include "iarchive.h"
@@ -168,7 +166,6 @@ public:
 	// Return the vector of skin names corresponding to the given model
 	
 	const std::vector<std::string>& getSkinsForModel(const std::string& model) {
-//		std::cout << "GlobalSkins::getSkinsForModel(" << model << ")" << std::endl;
 		return _mSkinMap[model];
 	}
 
@@ -306,8 +303,16 @@ public:
   }
 };
 
-class Doom3ModelSkinCache : public ModelSkinCache, public ModuleObserver
+/**
+ * Implementation of ModelSkinCache interface for Doom 3 skin management.
+ */
+class Doom3ModelSkinCache 
+: public ModelSkinCache, 
+  public ModuleObserver
 {
+	// List of all skins
+	StringList _allSkins;
+	
   class CreateDoom3ModelSkin
   {
     Doom3ModelSkinCache& m_cache;
@@ -389,27 +394,40 @@ public:
   }
   
 	// Get the vector of skin names corresponding to the given model.
-
 	const StringList& getSkinsForModel(const std::string& model) {
 
 		// Pass on call to the GlobalSkins class
 		return g_skins.getSkinsForModel(model);
 	}
 	
-	
+	/* Return a complete list of skins.
+	 */
+	const StringList& getAllSkins() const {
+		return _allSkins;
+	}	
   
 };
 
-class Doom3ModelSkinCacheDependencies : public GlobalFileSystemModuleRef, public GlobalScripLibModuleRef
+/* Module dependencies and registration */
+
+class Doom3ModelSkinCacheDependencies : 
+public GlobalFileSystemModuleRef, 
+public GlobalScripLibModuleRef
 {
 };
 
-typedef SingletonModule<Doom3ModelSkinCache, Doom3ModelSkinCacheDependencies> Doom3ModelSkinCacheModule;
+typedef SingletonModule<Doom3ModelSkinCache, 
+						Doom3ModelSkinCacheDependencies> 
+Doom3ModelSkinCacheModule;
 
-Doom3ModelSkinCacheModule g_Doom3ModelSkinCacheModule;
-
-void Doom3ModelSkinCacheModule_selfRegister(ModuleServer& server)
+extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
 {
-  g_Doom3ModelSkinCacheModule.selfRegister();
+	// Static skins module instance
+	static Doom3ModelSkinCacheModule _module;
+	
+	// Register the module with the module server
+	initialiseModule(server);
+	_module.selfRegister();
 }
+
 

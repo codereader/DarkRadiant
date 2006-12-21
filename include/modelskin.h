@@ -80,17 +80,24 @@ public:
 	/// \brief Decrements the reference-count of the skin uniquely identified by 'name'.
 	virtual void release(const std::string& name) = 0;
   
-	/** Return the skins associated with the given model.
+	/** 
+	 * Return the skins associated with the given model.
 	 * 
 	 * @param
-	 * The full pathname of the model, as given by the "model" key in the skin definition.
+	 * The full pathname of the model, as given by the "model" key in the skin 
+	 * definition.
 	 * 
 	 * @returns
-	 * A vector of strings, each identifying the name of a skin which is associated with the
-	 * given model. The vector may be empty as a model does not require any associated skins.
+	 * A vector of strings, each identifying the name of a skin which is 
+	 * associated with the given model. The vector may be empty as a model does
+	 * not require any associated skins.
 	 */
-	 
-	virtual const StringList& getSkinsForModel(const std::string& modelName) = 0;
+	virtual const StringList& getSkinsForModel(const std::string& model) = 0;
+	
+	/**
+	 * Return the complete list of available skins.
+	 */
+	virtual const StringList& getAllSkins() const = 0;
 };
 
 

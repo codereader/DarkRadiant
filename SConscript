@@ -156,6 +156,12 @@ shaders_env.Depends(shaders_lib, cmdlib_lib)
 shaders_env.Depends(shaders_lib, xmlutil)
 shaders_env.Install(INSTALL + '/modules', shaders_lib)
 
+# Skins module
+skinsEnv = module_env.Copy()
+skinsList = build_list('plugins/skins', 'skincache.cpp')
+skinsLib = skinsEnv.SharedLibrary(target='skins', source=skinsList, no_import_lib=1)
+skinsEnv.Install(INSTALL + '/modules', skinsLib)
+
 image_env = module_env.Copy()
 image_lst = build_list('plugins/image', 'bmp.cpp jpeg.cpp image.cpp pcx.cpp tga.cpp dds.cpp')
 image_lib = image_env.SharedLibrary(target='image', source=image_lst, LIBS=['jpeg6', 'ddslib'], LIBPATH='libs', no_import_lib=1, WIN32_INSERT_DEF=0)
@@ -198,7 +204,6 @@ entity_src = [
 	'generic.cpp',
 	'light.cpp',
 	'doom3group.cpp',
-	'skincache.cpp',
 	'angle.cpp',
 	'angles.cpp',
 	'colour.cpp',
