@@ -34,6 +34,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/replace.hpp>
 #include <boost/regex.hpp>
 
 #include "qerplugin.h"
@@ -718,7 +719,7 @@ public:
 	
 	// Imports the specified file and checks if an upgrade has to be made
 	void importUserXML(const std::string& pathToUserXML) {
-		std::string filename = pathToUserXML + "user.xml";
+		std::string filename = pathToUserXML;
 		std::string userVersion = "0.5.0";
 		
 		globalOutputStream() << "XMLRegistry: Importing user.xml from " << filename.c_str() << "\n";
@@ -739,7 +740,7 @@ public:
 	  		}
 	  		else {
 	  			// No version tag, this definitely has to be upgraded...
-	  			globalOutputStream() << "XMLRegistry: No version tag found, assuming version 0.6.0" << "\n";
+	  			globalOutputStream() << "XMLRegistry: No version tag found, assuming version 0.5.0" << "\n";
 	  		}
 	  		
 	  		std::string baseVersion = get("user/version");
@@ -747,11 +748,12 @@ public:
 	  		// Check if the upgrade is necessary
 	  		if (baseVersion > userVersion) {
 	  			// Yes it is necessary, userVersion < baseVersion
-	  			globalOutputStream() << "XMLRegistry: Upgrading user.xml from version: " 
+	  			globalOutputStream() << "XMLRegistry: Upgrading " << filename.c_str() << " from version: " 
 	  		                     	 << userVersion.c_str() << " to " << baseVersion.c_str() << "\n";
 	  			                     
 	  			// Create a backup of the old file
-				std::string backupFileName = pathToUserXML + "user." + userVersion + ".xml";
+	  			std::string backupFileName = filename;
+	  			boost::algorithm::replace_last(backupFileName, ".xml", std::string(".") + userVersion + ".xml");
 				userDoc.saveToFile(backupFileName);
 	  				
 	  			// Everything is loaded and backed up, call the upgrade method

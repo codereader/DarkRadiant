@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
-<upgradePaths>
+<upgradePaths transient="1">
 	<upgradePath fromVersion="0.5.0">
-		<!-- Upgrade the version tag -->
 		<!-- Find the currently active scheme and store its name to Memory 1 -->
 		<saveAttribute name="name" xPath="/user/ui/colourschemes//scheme[@active='1']" memoryIndex="1" />
 		<!-- Make sure the default schemes are removed before copying user schemes -->
