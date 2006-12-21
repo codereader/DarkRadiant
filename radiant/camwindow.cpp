@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "iscenegraph.h"
 #include "irender.h"
+#include "iregistry.h"
 #include "igl.h"
 #include "icamera.h"
 #include "cullable.h"
@@ -80,14 +81,14 @@ struct camwindow_globals_private_t
   int m_nAngleSpeed;
   bool m_bCamInverseMouse;
   bool m_bCamDiscrete;
-  bool m_bCubicClipping;
+  //bool m_bCubicClipping;
 
   camwindow_globals_private_t() :
     m_nMoveSpeed(100),
     m_nAngleSpeed(3),
     m_bCamInverseMouse(false),
-    m_bCamDiscrete(true),
-    m_bCubicClipping(true)
+    m_bCamDiscrete(true)/*,
+    m_bCubicClipping(true)*/
   {
   }
 
@@ -194,9 +195,8 @@ inline Matrix4 projection_for_camera(float near_z, float far_z, float fieldOfVie
   );
 }
 
-float Camera_getFarClipPlane(camera_t& camera)
-{
-  return (g_camwindow_globals_private.m_bCubicClipping)? pow(2.0, (g_camwindow_globals.m_nCubicScale + 7) / 2.0) : 32768.0f;
+float Camera_getFarClipPlane(camera_t& camera) {
+	return (GlobalRegistry().get("user/ui/camera/enableCubicClipping")=="1")? pow(2.0, (g_camwindow_globals.m_nCubicScale + 7) / 2.0) : 32768.0f;
 }
 
 void Camera_updateProjection(camera_t& camera)
@@ -1742,28 +1742,61 @@ void Camera_CubeOut()
   g_pParentWnd->SetGridStatus();
 }
 
-bool Camera_GetFarClip()
-{
-  return g_camwindow_globals_private.m_bCubicClipping;
+bool Camera_GetFarClip() {
+	return (GlobalRegistry().get("user/ui/camera/enableCubicClipping") == "1");
 }
 
-BoolExportCaller g_getfarclip_caller(g_camwindow_globals_private.m_bCubicClipping);
-ToggleItem g_getfarclip_item(g_getfarclip_caller);
-
-void Camera_SetFarClip(bool value)
-{
-  CamWnd& camwnd = *g_camwnd;
-  g_camwindow_globals_private.m_bCubicClipping = value;
-  g_getfarclip_item.update();
-  Camera_updateProjection(camwnd.getCamera());
-  CamWnd_Update(camwnd);
+void CubicClippingExport(const BoolImportCallback& importCallback) {
+	importCallback(GlobalRegistry().get("user/ui/camera/enableCubicClipping") == "1");
 }
 
-void Camera_ToggleFarClip()
-{
-  Camera_SetFarClip(!Camera_GetFarClip());
+FreeCaller1<const BoolImportCallback&, CubicClippingExport> cubicClippingCaller;
+BoolExportCallback cubicClippingButtonCallBack(cubicClippingCaller);
+ToggleItem g_getfarclip_item(cubicClippingButtonCallBack);
+
+/*FreeCaller1<const BoolImportCallback&, Camera_GetFarClip> cubicClippingCaller;
+BoolExportCallback cubicClippingCallBack(cubicClippingCaller);
+ToggleItem g_getfarclip_item(cubicClippingCallBack);*/
+/*BoolExportCaller g_getfarclip_caller(g_camwindow_globals_private.m_bCubicClipping);
+ToggleItem g_getfarclip_item(g_getfarclip_caller);*/
+
+void Camera_SetFarClip(bool value) {
+	CamWnd& camwnd = *g_camwnd;
+  
+	GlobalRegistry().set("user/ui/camera/enableCubicClipping", value ? "1" : "0");
+  
+	g_getfarclip_item.update();
+	Camera_updateProjection(camwnd.getCamera());
+	CamWnd_Update(camwnd);
 }
 
+class CameraFarClipObserver : public RegistryKeyObserver {
+	bool _callbackActive;
+public:
+	CameraFarClipObserver() : _callbackActive(false) {}
+
+	void keyChanged() {
+		// Check for iterative loops
+		if (_callbackActive) {
+			return;
+		}
+		else {
+			_callbackActive = true;
+			// Call the setFarClip method to update the current far clip state
+			Camera_SetFarClip( Camera_GetFarClip() );
+		}
+		_callbackActive = false;
+	}
+};
+
+CameraFarClipObserver* getFarClipObserver() {
+	static CameraFarClipObserver _farClipObserver;
+	return &_farClipObserver;
+}
+
+void Camera_ToggleFarClip() {
+	Camera_SetFarClip(!Camera_GetFarClip());
+}
 
 void CamWnd_registerShortcuts()
 {
@@ -1917,11 +1950,13 @@ void Camera_constructPreferences(PreferencesPage& page)
     FreeCaller1<bool, CamWnd_Move_Discrete_Import>(),
     BoolExportCaller(g_camwindow_globals_private.m_bCamDiscrete)
   );
-  page.appendCheckBox(
+  /*page.appendCheckBox(
     "", "Enable far-clip plane",
     FreeCaller1<bool, Camera_SetFarClip>(),
     BoolExportCaller(g_camwindow_globals_private.m_bCubicClipping)
-  );
+  );*/
+  // Add the checkbox and connect it with the registry key and the according observer
+  page.appendCheckBox("", "Enable far-clip plane (hides distant objects)", "user/ui/camera/enableCubicClipping", getFarClipObserver());
 
   if(g_pGameDescription->mGameType == "doom3")
   {
@@ -1965,6 +2000,7 @@ typedef FreeCaller1<bool, CamWnd_Move_Discrete_Import> CamWndMoveDiscreteImportC
 /// \brief Initialisation for things that have the same lifespan as this module.
 void CamWnd_Construct()
 {
+	
   GlobalCommands_insert("CenterView", FreeCaller<GlobalCamera_ResetAngles>(), Accelerator(GDK_End));
 
   GlobalToggles_insert("ToggleCubicClip", FreeCaller<Camera_ToggleFarClip>(), ToggleItem::AddCallbackCaller(g_getfarclip_item), Accelerator('\\', (GdkModifierType)GDK_CONTROL_MASK));
@@ -2004,7 +2040,7 @@ void CamWnd_Construct()
   GlobalPreferenceSystem().registerPreference("AngleSpeed", IntImportStringCaller(g_camwindow_globals_private.m_nAngleSpeed), IntExportStringCaller(g_camwindow_globals_private.m_nAngleSpeed));
   GlobalPreferenceSystem().registerPreference("CamInverseMouse", BoolImportStringCaller(g_camwindow_globals_private.m_bCamInverseMouse), BoolExportStringCaller(g_camwindow_globals_private.m_bCamInverseMouse));
   GlobalPreferenceSystem().registerPreference("CamDiscrete", makeBoolStringImportCallback(CamWndMoveDiscreteImportCaller()), BoolExportStringCaller(g_camwindow_globals_private.m_bCamDiscrete));
-  GlobalPreferenceSystem().registerPreference("CubicClipping", BoolImportStringCaller(g_camwindow_globals_private.m_bCubicClipping), BoolExportStringCaller(g_camwindow_globals_private.m_bCubicClipping));
+  //GlobalPreferenceSystem().registerPreference("CubicClipping", BoolImportStringCaller(g_camwindow_globals_private.m_bCubicClipping), BoolExportStringCaller(g_camwindow_globals_private.m_bCubicClipping));
   GlobalPreferenceSystem().registerPreference("CubicScale", IntImportStringCaller(g_camwindow_globals.m_nCubicScale), IntExportStringCaller(g_camwindow_globals.m_nCubicScale));
   GlobalPreferenceSystem().registerPreference("CameraRenderMode", makeIntStringImportCallback(RenderModeImportCaller()), makeIntStringExportCallback(RenderModeExportCaller()));
 

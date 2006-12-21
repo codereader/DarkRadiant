@@ -978,6 +978,10 @@ void PrefsDlg::PostModal (EMessageBoxReturn code)
   if (code == eIDOK)
   {
     Preferences_Save();
+    
+    // Save the values back into the registry
+    _registryConnector.exportValues();
+    
     UpdateAllWindows();
   }
 }

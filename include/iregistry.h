@@ -6,6 +6,14 @@
 #include "xmlutil/Node.h"
 #include "generic/constant.h"
 
+// Abstract base class for a registry key observer, gets called by the registry
+// when a certain key changes.
+class RegistryKeyObserver {
+public:
+	// the callback method
+	virtual void keyChanged() = 0;
+};
+
 /** Abstract base class for a registry system
  */
 
@@ -46,6 +54,12 @@ public:
 	
 	// Deletes an entire subtree from the registry
 	virtual void deleteXPath(const std::string& path) = 0;
+	
+	// Add an observer watching the <observedKey> to the internal list of observers. 
+	virtual void addKeyObserver(RegistryKeyObserver* observer, const std::string& observedKey);
+	
+	// Remove the specified observer from the list
+	virtual void removeKeyObserver(RegistryKeyObserver* observer);
 };
 
 // Module definitions

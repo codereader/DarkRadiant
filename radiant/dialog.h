@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/dialog.h"
 #include "generic/callback.h"
 #include "string/string.h"
+#include "gtkutil/RegistryConnector.h"
 
 template<typename Environment, typename FirstArgument, void(*func)(Environment&, FirstArgument)>
 class ReferenceCaller1;
@@ -119,6 +120,8 @@ class Dialog
 {
   GtkWindow* m_window;
   DialogDataList m_data;
+protected:
+  gtkutil::RegistryConnector _registryConnector;
 public:
   ModalDialog m_modal;
   GtkWindow* m_parent;
@@ -152,6 +155,10 @@ public:
 
   GtkWidget* addCheckBox(GtkWidget* vbox, const char* name, const char* flag, const BoolImportCallback& importCallback, const BoolExportCallback& exportCallback);
   GtkWidget* addCheckBox(GtkWidget* vbox, const char* name, const char* flag, bool& data);
+  
+  // Adds a checkbox and connects it to the given registry key
+  GtkWidget* addCheckBox(GtkWidget* vbox, const std::string& name, const std::string& flag, const std::string& registryKey, RegistryKeyObserver* keyObserver);
+  	
   void addCombo(GtkWidget* vbox, const char* name, StringArrayRange values, const IntImportCallback& importCallback, const IntExportCallback& exportCallback);
   void addCombo(GtkWidget* vbox, const char* name, int& data, StringArrayRange values);
   void addSlider(GtkWidget* vbox, const char* name, int& data, gboolean draw_value, const char* low, const char* high, double value, double lower, double upper, double step_increment, double page_increment, double page_size);
