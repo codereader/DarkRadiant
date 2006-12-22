@@ -68,18 +68,20 @@ public:
 // Model skinlist typedef
 typedef std::vector<std::string> StringList;
 
-class ModelSkinCache
+/**
+ * Interface class for the skin manager.
+ */
+struct ModelSkinCache
 {
-public:
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "modelskin");
+	INTEGER_CONSTANT(Version, 1);
+	STRING_CONSTANT(Name, "modelskin");
 
-	/// \brief Increments the reference count of and returns a reference to the skin uniquely identified by 'name'.
+	/**
+	 * Lookup a specific named skin and return the corresponding ModelSkin
+	 * object.
+	 */
 	virtual ModelSkin& capture(const std::string& name) = 0;
 	
-	/// \brief Decrements the reference-count of the skin uniquely identified by 'name'.
-	virtual void release(const std::string& name) = 0;
-  
 	/** 
 	 * Return the skins associated with the given model.
 	 * 
@@ -97,7 +99,7 @@ public:
 	/**
 	 * Return the complete list of available skins.
 	 */
-	virtual const StringList& getAllSkins() const = 0;
+	virtual const StringList& getAllSkins() = 0;
 };
 
 

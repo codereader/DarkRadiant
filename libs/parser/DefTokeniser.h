@@ -4,8 +4,6 @@
 #include "ParseException.h"
 
 #include <string>
-#include <iostream>
-
 #include <boost/tokenizer.hpp>
 
 namespace parser {

@@ -451,12 +451,11 @@ ArchiveFile* OpenFile(const char* filename)
   return 0;
 }
 
-ArchiveTextFile* OpenTextFile(const char* filename)
+ArchiveTextFile* OpenTextFile(const std::string& filename)
 {
-  ASSERT_MESSAGE(strchr(filename, '\\') == 0, "path contains invalid separator '\\': \"" << filename << "\""); 
   for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
   {
-    ArchiveTextFile* file = (*i).archive->openTextFile(filename);
+    ArchiveTextFile* file = (*i).archive->openTextFile(filename.c_str());
     if(file != 0)
     {
       return file;
@@ -570,7 +569,7 @@ public:
   {
     return OpenFile(filename);
   }
-  ArchiveTextFile* openTextFile(const char* filename)
+  ArchiveTextFile* openTextFile(const std::string& filename)
   {
     return OpenTextFile(filename);
   }

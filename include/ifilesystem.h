@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_IFILESYSTEM_H
 
 #include <cstddef>
+#include <string>
+
 #include "generic/constant.h"
 #include "generic/callbackfwd.h"
 
@@ -56,9 +58,10 @@ public:
   /// \brief Returns the file identified by \p filename opened in binary mode, or 0 if not found.
   /// The caller must \c release() the file returned if it is not 0.
   virtual ArchiveFile* openFile(const char* filename) = 0;
+  
   /// \brief Returns the file identified by \p filename opened in text mode, or 0 if not found.
   /// The caller must \c release() the file returned if it is not 0.
-  virtual ArchiveTextFile* openTextFile(const char* filename) = 0;
+  virtual ArchiveTextFile* openTextFile(const std::string& filename) = 0;
 
   /// \brief Opens the file identified by \p filename and reads it into \p buffer, or sets *\p buffer to 0 if not found.
   /// Returns the size of the buffer allocated, or undefined value if *\p buffer is 0;
