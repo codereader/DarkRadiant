@@ -159,7 +159,7 @@ shaders_env.Install(INSTALL + '/modules', shaders_lib)
 
 # Skins module
 skinsEnv = module_env.Copy()
-skinsList = build_list('plugins/skins', 'skincache.cpp')
+skinsList = build_list('plugins/skins', 'skincache.cpp Doom3SkinCache.cpp')
 skinsLib = skinsEnv.SharedLibrary(target='skins', source=skinsList, no_import_lib=1)
 skinsEnv.Install(INSTALL + '/modules', skinsLib)
 

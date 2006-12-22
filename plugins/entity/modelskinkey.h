@@ -54,7 +54,6 @@ class ModelSkinKey : public ModuleObserver
   void destroy()
   {
     m_skin->detach(*this);
-    GlobalModelSkinCache().release(m_name.c_str());
   }
 
 public:
