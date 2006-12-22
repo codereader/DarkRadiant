@@ -10,6 +10,7 @@
 	<camera>
 		<enableCubicClipping value="1" />
 		<discreteMovement value="1" />
+		<invertMouseVerticalAxis value="1" />
 	</camera>
     <toolbar name="view" align="horizontal">
 			<toolbutton name="open" action="OpenMap" tooltip="Open a map file" icon="file_open.png"/>
