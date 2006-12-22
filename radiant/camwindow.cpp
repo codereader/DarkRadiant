@@ -79,12 +79,10 @@ struct camwindow_globals_private_t
 {
   int m_nMoveSpeed;
   int m_nAngleSpeed;
-  bool m_bCamInverseMouse;
-
+  
   camwindow_globals_private_t() :
     m_nMoveSpeed(100),
-    m_nAngleSpeed(3),
-    m_bCamInverseMouse(false)
+    m_nAngleSpeed(3)
   {
   }
 
@@ -293,12 +291,11 @@ void Camera_FreeMove(camera_t& camera, int dx, int dy) {
 	}
 	else { // free rotation
 		const float dtime = 0.1f;
-
-		if (g_camwindow_globals_private.m_bCamInverseMouse)
-			camera.angles[CAMERA_PITCH] -= dy * dtime * g_camwindow_globals_private.m_nAngleSpeed;
-		else
-			camera.angles[CAMERA_PITCH] += dy * dtime * g_camwindow_globals_private.m_nAngleSpeed;
-
+		
+		const float zAxisFactor = (GlobalRegistry().get("user/ui/camera/invertMouseVerticalAxis") == "1") ? -1.0f : 1.0f;
+		
+		camera.angles[CAMERA_PITCH] += dy * dtime * g_camwindow_globals_private.m_nAngleSpeed * zAxisFactor;
+		
 		camera.angles[CAMERA_YAW] += dx * dtime * g_camwindow_globals_private.m_nAngleSpeed;
 
 		if (camera.angles[CAMERA_PITCH] > 90)
@@ -1945,11 +1942,13 @@ void Camera_constructPreferences(PreferencesPage& page)
 {
   page.appendSlider("Movement Speed", g_camwindow_globals_private.m_nMoveSpeed, TRUE, 0, 0, 100, 50, 300, 1, 10, 10);
   page.appendSlider("Rotation Speed", g_camwindow_globals_private.m_nAngleSpeed, TRUE, 0, 0, 3, 1, 180, 1, 10, 10);
-  page.appendCheckBox("", "Invert mouse vertical axis", g_camwindow_globals_private.m_bCamInverseMouse);
-  
+    
 	// Add the checkboxes and connect them with the registry key and the according observer 
 	page.appendCheckBox("", "Discrete movement (non-freelook mode)", "user/ui/camera/discreteMovement", getDiscreteMovementObserver());
 	page.appendCheckBox("", "Enable far-clip plane (hides distant objects)", "user/ui/camera/enableCubicClipping", getFarClipObserver());
+	
+	// Add the inverse mouse vertical axis in free-look mode
+	page.appendCheckBox("", "Invert mouse vertical axis (freelook mode)", "user/ui/camera/invertMouseVerticalAxis", NULL);
 
   if(g_pGameDescription->mGameType == "doom3")
   {
@@ -2029,7 +2028,6 @@ void CamWnd_Construct()
 
   GlobalPreferenceSystem().registerPreference("MoveSpeed", IntImportStringCaller(g_camwindow_globals_private.m_nMoveSpeed), IntExportStringCaller(g_camwindow_globals_private.m_nMoveSpeed));
   GlobalPreferenceSystem().registerPreference("AngleSpeed", IntImportStringCaller(g_camwindow_globals_private.m_nAngleSpeed), IntExportStringCaller(g_camwindow_globals_private.m_nAngleSpeed));
-  GlobalPreferenceSystem().registerPreference("CamInverseMouse", BoolImportStringCaller(g_camwindow_globals_private.m_bCamInverseMouse), BoolExportStringCaller(g_camwindow_globals_private.m_bCamInverseMouse));
   GlobalPreferenceSystem().registerPreference("CubicScale", IntImportStringCaller(g_camwindow_globals.m_nCubicScale), IntExportStringCaller(g_camwindow_globals.m_nCubicScale));
   GlobalPreferenceSystem().registerPreference("CameraRenderMode", makeIntStringImportCallback(RenderModeImportCaller()), makeIntStringExportCallback(RenderModeExportCaller()));
 
