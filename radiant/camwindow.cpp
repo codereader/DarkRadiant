@@ -80,15 +80,11 @@ struct camwindow_globals_private_t
   int m_nMoveSpeed;
   int m_nAngleSpeed;
   bool m_bCamInverseMouse;
-  bool m_bCamDiscrete;
-  //bool m_bCubicClipping;
 
   camwindow_globals_private_t() :
     m_nMoveSpeed(100),
     m_nAngleSpeed(3),
-    m_bCamInverseMouse(false),
-    m_bCamDiscrete(true)/*,
-    m_bCubicClipping(true)*/
+    m_bCamInverseMouse(false)
   {
   }
 
@@ -1105,43 +1101,6 @@ void CamWnd_Move_Discrete_Disable(CamWnd& camwnd)
   command_disconnect_accelerator("CameraAngleDown");
 }
 
-void CamWnd_Move_Discrete_Import(CamWnd& camwnd, bool value)
-{
-  if(g_camwindow_globals_private.m_bCamDiscrete)
-  {
-    CamWnd_Move_Discrete_Disable(camwnd);
-  }
-  else
-  {
-    CamWnd_Move_Disable(camwnd);
-  }
-
-  g_camwindow_globals_private.m_bCamDiscrete = value;
-
-  if(g_camwindow_globals_private.m_bCamDiscrete)
-  {
-    CamWnd_Move_Discrete_Enable(camwnd);
-  }
-  else
-  {
-    CamWnd_Move_Enable(camwnd);
-  }
-}
-
-void CamWnd_Move_Discrete_Import(bool value)
-{
-  if(g_camwnd != 0)
-  {
-    CamWnd_Move_Discrete_Import(*g_camwnd, value);
-  }
-  else
-  {
-    g_camwindow_globals_private.m_bCamDiscrete = value;
-  }
-}
-
-
-
 void CamWnd_Add_Handlers_Move(CamWnd& camwnd)
 {
   camwnd.m_selection_button_press_handler = g_signal_connect(G_OBJECT(camwnd.m_gl_widget), "button_press_event", G_CALLBACK(selection_button_press), camwnd.m_window_observer);
@@ -1150,14 +1109,12 @@ void CamWnd_Add_Handlers_Move(CamWnd& camwnd)
 
   camwnd.m_freelook_button_press_handler = g_signal_connect(G_OBJECT(camwnd.m_gl_widget), "button_press_event", G_CALLBACK(enable_freelook_button_press), &camwnd);
 
-  if(g_camwindow_globals_private.m_bCamDiscrete)
-  {
-    CamWnd_Move_Discrete_Enable(camwnd);
-  }
-  else
-  {
-    CamWnd_Move_Enable(camwnd);
-  }
+	if (GlobalRegistry().get("user/ui/camera/enableCubicClipping") == "1") {
+		CamWnd_Move_Discrete_Enable(camwnd);
+	}
+	else {
+		CamWnd_Move_Enable(camwnd);
+	}
 }
 
 void CamWnd_Remove_Handlers_Move(CamWnd& camwnd)
@@ -1168,14 +1125,12 @@ void CamWnd_Remove_Handlers_Move(CamWnd& camwnd)
 
   g_signal_handler_disconnect(G_OBJECT(camwnd.m_gl_widget), camwnd.m_freelook_button_press_handler);
 
-  if(g_camwindow_globals_private.m_bCamDiscrete)
-  {
-    CamWnd_Move_Discrete_Disable(camwnd);
-  }
-  else
-  {
-    CamWnd_Move_Disable(camwnd);
-  }
+	if (GlobalRegistry().get("user/ui/camera/enableCubicClipping") == "1") {
+		CamWnd_Move_Discrete_Disable(camwnd);
+	}
+	else {
+		CamWnd_Move_Disable(camwnd);
+	}
 }
 
 void CamWnd_Add_Handlers_FreeMove(CamWnd& camwnd)
@@ -1754,12 +1709,6 @@ FreeCaller1<const BoolImportCallback&, CubicClippingExport> cubicClippingCaller;
 BoolExportCallback cubicClippingButtonCallBack(cubicClippingCaller);
 ToggleItem g_getfarclip_item(cubicClippingButtonCallBack);
 
-/*FreeCaller1<const BoolImportCallback&, Camera_GetFarClip> cubicClippingCaller;
-BoolExportCallback cubicClippingCallBack(cubicClippingCaller);
-ToggleItem g_getfarclip_item(cubicClippingCallBack);*/
-/*BoolExportCaller g_getfarclip_caller(g_camwindow_globals_private.m_bCubicClipping);
-ToggleItem g_getfarclip_item(g_getfarclip_caller);*/
-
 void Camera_SetFarClip(bool value) {
 	CamWnd& camwnd = *g_camwnd;
   
@@ -1792,6 +1741,58 @@ public:
 CameraFarClipObserver* getFarClipObserver() {
 	static CameraFarClipObserver _farClipObserver;
 	return &_farClipObserver;
+}
+
+class CameraDiscreteMovementObserver : public RegistryKeyObserver {
+	bool _callbackActive;
+	bool _previousState;
+public:
+	CameraDiscreteMovementObserver() : _callbackActive(false) {
+		initMovement();
+	}
+	
+	void initMovement() {
+		_previousState = (GlobalRegistry().get("user/ui/camera/discreteMovement") == "1");
+		
+		// If it is activated now, take the appropriate action
+		if (_previousState) {
+			CamWnd_Move_Discrete_Enable(*g_camwnd);
+		}
+		else {
+			CamWnd_Move_Enable(*g_camwnd);
+		}
+	}
+	
+	void keyChanged() {
+		// Check for iterative loops
+		if (_callbackActive) {
+			return;
+		}
+		else {
+			_callbackActive = true;
+			
+			// Check if a global camwindow is set
+			if (g_camwnd != 0) {
+				// Disable discrete movement if it was active before
+				if (_previousState == true) {
+					CamWnd_Move_Discrete_Disable(*g_camwnd);
+				}
+				else {
+					CamWnd_Move_Disable(*g_camwnd);
+				}
+			
+				// Check the value and take the according actions
+				initMovement();
+			}
+			
+		}
+		_callbackActive = false;
+	}
+};
+
+CameraDiscreteMovementObserver* getDiscreteMovementObserver() {
+	static CameraDiscreteMovementObserver _discreteMovementObserver;
+	return &_discreteMovementObserver;
 }
 
 void Camera_ToggleFarClip() {
@@ -1945,18 +1946,10 @@ void Camera_constructPreferences(PreferencesPage& page)
   page.appendSlider("Movement Speed", g_camwindow_globals_private.m_nMoveSpeed, TRUE, 0, 0, 100, 50, 300, 1, 10, 10);
   page.appendSlider("Rotation Speed", g_camwindow_globals_private.m_nAngleSpeed, TRUE, 0, 0, 3, 1, 180, 1, 10, 10);
   page.appendCheckBox("", "Invert mouse vertical axis", g_camwindow_globals_private.m_bCamInverseMouse);
-  page.appendCheckBox(
-    "", "Discrete movement",
-    FreeCaller1<bool, CamWnd_Move_Discrete_Import>(),
-    BoolExportCaller(g_camwindow_globals_private.m_bCamDiscrete)
-  );
-  /*page.appendCheckBox(
-    "", "Enable far-clip plane",
-    FreeCaller1<bool, Camera_SetFarClip>(),
-    BoolExportCaller(g_camwindow_globals_private.m_bCubicClipping)
-  );*/
-  // Add the checkbox and connect it with the registry key and the according observer
-  page.appendCheckBox("", "Enable far-clip plane (hides distant objects)", "user/ui/camera/enableCubicClipping", getFarClipObserver());
+  
+	// Add the checkboxes and connect them with the registry key and the according observer 
+	page.appendCheckBox("", "Discrete movement (non-freelook mode)", "user/ui/camera/discreteMovement", getDiscreteMovementObserver());
+	page.appendCheckBox("", "Enable far-clip plane (hides distant objects)", "user/ui/camera/enableCubicClipping", getFarClipObserver());
 
   if(g_pGameDescription->mGameType == "doom3")
   {
@@ -1994,8 +1987,6 @@ void Camera_registerPreferencesPage()
 #include "preferencesystem.h"
 #include "stringio.h"
 #include "dialog.h"
-
-typedef FreeCaller1<bool, CamWnd_Move_Discrete_Import> CamWndMoveDiscreteImportCaller;
 
 /// \brief Initialisation for things that have the same lifespan as this module.
 void CamWnd_Construct()
@@ -2039,8 +2030,6 @@ void CamWnd_Construct()
   GlobalPreferenceSystem().registerPreference("MoveSpeed", IntImportStringCaller(g_camwindow_globals_private.m_nMoveSpeed), IntExportStringCaller(g_camwindow_globals_private.m_nMoveSpeed));
   GlobalPreferenceSystem().registerPreference("AngleSpeed", IntImportStringCaller(g_camwindow_globals_private.m_nAngleSpeed), IntExportStringCaller(g_camwindow_globals_private.m_nAngleSpeed));
   GlobalPreferenceSystem().registerPreference("CamInverseMouse", BoolImportStringCaller(g_camwindow_globals_private.m_bCamInverseMouse), BoolExportStringCaller(g_camwindow_globals_private.m_bCamInverseMouse));
-  GlobalPreferenceSystem().registerPreference("CamDiscrete", makeBoolStringImportCallback(CamWndMoveDiscreteImportCaller()), BoolExportStringCaller(g_camwindow_globals_private.m_bCamDiscrete));
-  //GlobalPreferenceSystem().registerPreference("CubicClipping", BoolImportStringCaller(g_camwindow_globals_private.m_bCubicClipping), BoolExportStringCaller(g_camwindow_globals_private.m_bCubicClipping));
   GlobalPreferenceSystem().registerPreference("CubicScale", IntImportStringCaller(g_camwindow_globals.m_nCubicScale), IntExportStringCaller(g_camwindow_globals.m_nCubicScale));
   GlobalPreferenceSystem().registerPreference("CameraRenderMode", makeIntStringImportCallback(RenderModeImportCaller()), makeIntStringExportCallback(RenderModeExportCaller()));
 
