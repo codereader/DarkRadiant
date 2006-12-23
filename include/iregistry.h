@@ -59,10 +59,10 @@ public:
 	virtual void deleteXPath(const std::string& path) = 0;
 	
 	// Add an observer watching the <observedKey> to the internal list of observers. 
-	virtual void addKeyObserver(RegistryKeyObserver* observer, const std::string& observedKey);
+	virtual void addKeyObserver(RegistryKeyObserver* observer, const std::string& observedKey) = 0;
 	
 	// Remove the specified observer from the list
-	virtual void removeKeyObserver(RegistryKeyObserver* observer);
+	virtual void removeKeyObserver(RegistryKeyObserver* observer) = 0;
 };
 
 // Module definitions
