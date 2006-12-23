@@ -91,12 +91,16 @@ void Doom3SkinCache::parseFile(const std::string& contents) {
 // Parse an individual skin declaration
 void Doom3SkinCache::parseSkin(parser::DefTokeniser& tok) {
 	
-	// "skin" <name> "{" [ "model" <modelname> ] ( <sourceTex> <destTex> )* "}"
+	// [ "skin" ] <name> "{" 
+	//			[ "model" <modelname> ] 
+	//			( <sourceTex> <destTex> )* 
+	// "}"
 
-	tok.assertNextToken("skin");
-	
-	// Parse the skin name
+	// Parse the skin name, this is either the first token or the second token
+	// (preceded by "skin")
 	std::string skinName = tok.nextToken();
+	if (skinName == "skin")
+		skinName = tok.nextToken();
 	
 	tok.assertNextToken("{");
 
