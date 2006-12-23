@@ -353,7 +353,10 @@ radiant_src = [
 'brush/Face.cpp',
 'brush/BrushClass.cpp',
 'brush/FaceInstance.cpp',
-'brush/BrushInstance.cpp'
+'brush/BrushInstance.cpp',
+'camera/CameraSettings.cpp',
+'camera/Camera.cpp',
+'camera/CamWnd.cpp'
 ]
 
 for i in range(len(radiant_src)):

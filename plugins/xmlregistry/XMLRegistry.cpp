@@ -44,7 +44,7 @@ typedef std::vector<std::string> stringParts;
 
 // The "memory" structure for the upgrade methods
 typedef std::map<const std::string, std::string> MemoryMap;
-typedef std::map<RegistryKeyObserver*, std::string> KeyObserverMap;
+typedef std::multimap<const std::string, RegistryKeyObserver*> KeyObserverMap;
 
 class XMLRegistry : 
 	public Registry 
@@ -274,8 +274,7 @@ public:
 	}
 	
 	/* Gets a key containing a float from the registry, basically loads the string and
-	 * converts it into a float via boost libraries 
-	 */
+	 * converts it into a float via boost libraries */
 	float getFloat(const std::string& key) {
 		// Load the key
 		const std::string valueStr = get(key);
@@ -290,6 +289,24 @@ public:
 		}
 		
 		return tempFloat;
+	}
+	
+	/* Gets a key containing an integer from the registry, basically loads the string and
+	 * converts it into an int via boost libraries */
+	int getInt(const std::string& key) {
+		// Load the key
+		const std::string valueStr = get(key);
+		
+		// Try to convert it into a float variable
+		int tempInt;
+		try {
+			tempInt = boost::lexical_cast<int>(valueStr);
+		}
+		catch (boost::bad_lexical_cast e) {
+			tempInt = 0;
+		}
+		
+		return tempInt;
 	}
 	
 	// Sets the value of a key from the registry, 
@@ -779,15 +796,20 @@ public:
 	
 	// Add an observer watching the <observedKey> to the internal list of observers. 
 	void addKeyObserver(RegistryKeyObserver* observer, const std::string& observedKey) {
-		_keyObservers[observer] = observedKey;
+		_keyObservers.insert( std::make_pair(observedKey, observer) );
 	}
 	
 	// Removes an observer watching the <observedKey> from the internal list of observers. 
 	void removeKeyObserver(RegistryKeyObserver* observer) {
-		KeyObserverMap::iterator it = _keyObservers.find(observer);
-   		if (it != _keyObservers.end()) {
-   			_keyObservers.erase(observer);
-   		}
+		
+		// Traverse through the keyObserverMap and try to find the specified observer
+		
+		for (KeyObserverMap::iterator it = _keyObservers.begin(); it != _keyObservers.end(); it++) {
+			if (it->second == observer) {
+				// Delete the found key (by passing the iterator pointing to it)
+				_keyObservers.erase(it);
+			} 
+		}
 	}
 	
 	// Destructor
@@ -797,12 +819,14 @@ private:
 
 	// Cycles through the key observers and notifies the ones that observe the given <changedKey>
 	void notifyKeyObservers(const std::string& changedKey) {
-		for (KeyObserverMap::iterator i = _keyObservers.begin(); i != _keyObservers.end(); i++) {
-			RegistryKeyObserver* keyObserver = i->first;
-			const std::string observedKey = i->second;
-			
-			// If the key matches, notify the observer
-			if (observedKey == changedKey && keyObserver != NULL) {
+		
+		for (KeyObserverMap::iterator it = _keyObservers.find(changedKey);
+			 it != _keyObservers.upper_bound(changedKey);
+			 it++)
+		{
+			RegistryKeyObserver* keyObserver = it->second;
+
+			if (keyObserver != NULL) {
 				keyObserver->keyChanged();
 			}
 		}
