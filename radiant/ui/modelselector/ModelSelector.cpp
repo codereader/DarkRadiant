@@ -5,6 +5,7 @@
 #include "gtkutil/glwidget.h"
 #include "gtkutil/VFSTreePopulator.h"
 #include "gtkutil/TreeModel.h"
+#include "gtkutil/IconTextColumn.h"
 #include "math/Vector3.h"
 #include "ifilesystem.h"
 #include "iregistry.h"
@@ -253,23 +254,13 @@ GtkWidget* ModelSelector::createTreeView() {
 	// Create the treeview
 	GtkWidget* treeView = 
 		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeView), FALSE);
 
 	// Single visible column, containing the directory/model name and the icon
-	
-    GtkTreeViewColumn* col = gtk_tree_view_column_new();
-    gtk_tree_view_column_set_title(col, "Value");
-    gtk_tree_view_column_set_spacing(col, 3);
-
-	GtkCellRenderer* pixRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_column_pack_start(col, pixRenderer, FALSE);
-    gtk_tree_view_column_set_attributes(col, pixRenderer, "pixbuf", IMAGE_COLUMN, NULL);
-
-	GtkCellRenderer* rend = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(col, rend, FALSE);
-	gtk_tree_view_column_set_attributes(col, rend, "text", NAME_COLUMN, NULL);
-
-	gtk_tree_view_append_column(GTK_TREE_VIEW(treeView), col);				
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeView), FALSE);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(treeView),
+								gtkutil::IconTextColumn("Value",
+														NAME_COLUMN,
+														IMAGE_COLUMN));				
 
 	// Get the selection object and connect to its changed signal
 
