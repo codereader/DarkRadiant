@@ -34,8 +34,7 @@ namespace {
 
 	const char* ASE_EXTENSION = ".ase";
 	const char* LWO_EXTENSION = ".lwo";
-	const char* LWO_ICON = "model16red.png";
-	const char* ASE_ICON = "model16green.png";
+	const char* MODEL_ICON = "model16green.png";
 	const char* SKIN_ICON = "skin16.png";
 	const char* FOLDER_ICON = "folder16.png";
 	
@@ -172,36 +171,21 @@ class ModelDataInserter
 	// Required visit function
 	void visit(GtkTreeStore* store, 
 			   GtkTreeIter* iter, 
-			   const std::string& path)
+			   const std::string& path,
+			   bool isExplicit)
 	{
-		// Determine whether this is a model or a directory
-		enum { FOLDER, ASE, LWO } pathType;
-		if (boost::algorithm::iends_with(path, LWO_EXTENSION))
-			pathType = LWO;
-		else if (boost::algorithm::iends_with(path, ASE_EXTENSION))
-			pathType = ASE;
-		else
-			pathType = FOLDER;
-
 		// Get the display name by stripping off everything before the last
 		// slash
-		int slashPos = path.rfind("/");
-		std::string displayName = path.substr(slashPos > 0 ? slashPos + 1: 0);
+		std::string displayName = path.substr(path.rfind("/") + 1);
 
 		// Pathname is the model VFS name for a model, and blank for a folder
-		std::string fullPath = (pathType != FOLDER) 
-							   ? (MODELS_FOLDER + path)
-							   : "";
+		std::string fullPath = isExplicit ? (MODELS_FOLDER + path) : "";
 					   
 		// Pixbuf depends on model type
-		GdkPixbuf* pixBuf;
-		if (pathType == FOLDER)
-			pixBuf = gtkutil::getLocalPixbuf(FOLDER_ICON);
-		else if (pathType == ASE)
-			pixBuf = gtkutil::getLocalPixbuf(ASE_ICON);
-		else
-			pixBuf = gtkutil::getLocalPixbuf(LWO_ICON); 
-					   
+		GdkPixbuf* pixBuf = isExplicit 
+							? gtkutil::getLocalPixbuf(MODEL_ICON)
+							: gtkutil::getLocalPixbuf(FOLDER_ICON);
+
 		// Fill in the column values
 		gtk_tree_store_set(store, iter, 
 						   NAME_COLUMN, displayName.c_str(),
