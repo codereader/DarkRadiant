@@ -4,9 +4,10 @@
 #include "groupdialog.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/TextColumn.h"
+#include "gtkutil/IconTextColumn.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/VFSTreePopulator.h"
+#include "gtkutil/image.h"
 
 #include <gtk/gtk.h>
 
@@ -17,10 +18,14 @@ namespace ui
 
 namespace {
 	
+	const char* FOLDER_ICON = "folder16.png";
+	const char* SKIN_ICON = "skin16.png";
+	
 	// Tree column enum
 	enum {
 		DISPLAYNAME_COL,
 		FULLNAME_COL,
+		ICON_COL,
 		N_COLUMNS
 	};
 	
@@ -59,7 +64,8 @@ GtkWidget* SkinChooser::createTreeView() {
 	// Create the treestore
 	_treeStore = gtk_tree_store_new(N_COLUMNS, 
   									G_TYPE_STRING, 
-  									G_TYPE_STRING);
+  									G_TYPE_STRING,
+  									GDK_TYPE_PIXBUF);
   									
 	// Create the tree view
 	_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
@@ -67,9 +73,9 @@ GtkWidget* SkinChooser::createTreeView() {
 	
 	// Single column to display the skin name
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), 
-								gtkutil::TextColumn("Skin", 
-													DISPLAYNAME_COL, 
-													false));
+								gtkutil::IconTextColumn("Skin", 
+														DISPLAYNAME_COL, 
+														ICON_COL));
 	
 	// Pack treeview into a ScrolledFrame and return
 	return gtkutil::ScrolledFrame(_treeView);
@@ -130,10 +136,18 @@ public:
 			   const std::string& path,
 			   bool isExplicit) 
 	{
+		// Get the display path, everything after rightmost slash
 		std::string displayPath = path.substr(path.rfind("/") + 1);
+		
+		// Get the icon, either folder or skin
+		GdkPixbuf* pixBuf = isExplicit
+							? gtkutil::getLocalPixbuf(SKIN_ICON)
+							: gtkutil::getLocalPixbuf(FOLDER_ICON);
+		
 		gtk_tree_store_set(store, it, 
 						   DISPLAYNAME_COL, displayPath.c_str(),
 						   FULLNAME_COL, path.c_str(),
+						   ICON_COL, pixBuf,
 						   -1);
 	}
 };
@@ -146,12 +160,38 @@ void SkinChooser::populateSkins() {
 	// Clear the treestore
 	gtk_tree_store_clear(_treeStore);
 	
+	// Add the "Matching skins" toplevel node
+	GtkTreeIter matchingSkins;
+	gtk_tree_store_append(_treeStore, &matchingSkins, NULL);
+	gtk_tree_store_set(_treeStore, &matchingSkins, 
+					   DISPLAYNAME_COL, "Matching skins", 
+					   FULLNAME_COL, "",
+					   ICON_COL, gtkutil::getLocalPixbuf(FOLDER_ICON),
+					   -1); 		
+
+	// Get the skins for the associated model, and add them as matching skins
+	const StringList& matchList = 
+		GlobalModelSkinCache().getSkinsForModel(_model);
+	for (StringList::const_iterator i = matchList.begin();
+		 i != matchList.end();
+		 ++i)
+	{
+		GtkTreeIter temp;
+		gtk_tree_store_append(_treeStore, &temp, &matchingSkins);
+		gtk_tree_store_set(_treeStore, &temp, 
+						   DISPLAYNAME_COL, i->c_str(), 
+						   FULLNAME_COL, i->c_str(),
+						   ICON_COL, gtkutil::getLocalPixbuf(SKIN_ICON),
+						   -1); 		
+	}
+	
 	// Add "All skins" toplevel node
 	GtkTreeIter allSkins;
 	gtk_tree_store_append(_treeStore, &allSkins, NULL);
 	gtk_tree_store_set(_treeStore, &allSkins, 
 					   DISPLAYNAME_COL, "All skins", 
 					   FULLNAME_COL, "",
+					   ICON_COL, gtkutil::getLocalPixbuf(FOLDER_ICON),
 					   -1); 		
 	
 	// Get the list of skins for the model
