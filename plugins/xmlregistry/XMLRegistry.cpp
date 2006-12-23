@@ -819,9 +819,8 @@ private:
 
 	// Cycles through the key observers and notifies the ones that observe the given <changedKey>
 	void notifyKeyObservers(const std::string& changedKey) {
-		
 		for (KeyObserverMap::iterator it = _keyObservers.find(changedKey);
-			 it != _keyObservers.upper_bound(changedKey);
+			 it != _keyObservers.upper_bound(changedKey) && it != _keyObservers.end();
 			 it++)
 		{
 			RegistryKeyObserver* keyObserver = it->second;
