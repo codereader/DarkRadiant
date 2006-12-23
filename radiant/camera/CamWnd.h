@@ -61,8 +61,8 @@ public:
 	static void captureStates();
 	static void releaseStates();
 
-	static void setMode(camera_draw_mode mode);
-	static camera_draw_mode getMode();
+	static void setMode(CameraDrawMode mode);
+	static CameraDrawMode getMode();
 
 	Camera& getCamera();
 	
@@ -111,8 +111,6 @@ private:
 typedef MemberCaller<CamWnd, &CamWnd::queueDraw> CamWndQueueDraw;
 typedef MemberCaller<CamWnd, &CamWnd::update> CamWndUpdate;
 
-void CameraMovedNotify();
-
 struct camwindow_globals_private_t {
 	int m_nMoveSpeed;
 	int m_nAngleSpeed;
@@ -122,8 +120,6 @@ struct camwindow_globals_private_t {
 			m_nAngleSpeed(3) {}
 
 };
-
-void CameraMovedNotify();
 
 extern camwindow_globals_private_t g_camwindow_globals_private;
 

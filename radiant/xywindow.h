@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "map.h"
 
 #include "EventLib.h"
+#include "camera/CameraObserver.h"
 #include "selection/RadiantWindowObserver.h"
 
 // Constants
@@ -73,7 +74,8 @@ inline const char* ViewType_getTitle(VIEWTYPE viewtype)
   return "";
 }
 
-class XYWnd
+class XYWnd : 
+	public CameraObserver
 {
   GtkWidget* m_gl_widget;
   guint m_sizeHandler;
@@ -237,6 +239,9 @@ public:
 	// The method handling the different mouseDown situations
 	void mouseDown(int x, int y, GdkEventButton* event);
 	typedef Member3<XYWnd, int, int, GdkEventButton*, void, &XYWnd::mouseDown> MouseDownCaller;
+	
+	// greebo: CameraObserver implementation; gets called when the camera is moved
+	void cameraMoved();
 	
 }; // class XYWnd
 
