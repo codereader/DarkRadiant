@@ -33,6 +33,9 @@ class VFSTreePopulator
 	// The GtkTreeStore to populate
 	GtkTreeStore* _store;
 	
+	// Toplevel node to add children under
+	GtkTreeIter* _topLevel;
+	
 	// Maps of names to corresponding GtkTreeIter* nodes, for both intermediate
 	// paths and explicitly presented paths
 	typedef __gnu_cxx::hash_map<std::string, 
@@ -49,9 +52,18 @@ private:
 	
 public:
 
-	/** Construct a VFSTreePopulator which will populate the given tree store.
+	/** 
+	 * Construct a VFSTreePopulator which will populate the given tree store.
+	 * 
+	 * @param store
+	 * Tree store to populate.
+	 * 
+	 * @param toplevel
+	 * GtkTreeIter pointing to the toplevel node, under which all paths should
+	 * be added. Default is NULL to indicate that paths should be added under 
+	 * the tree root.
 	 */
-	VFSTreePopulator(GtkTreeStore* store);
+	VFSTreePopulator(GtkTreeStore* store, GtkTreeIter* toplevel = NULL);
 
 	/** Destroy the VFSTreePopulator and all temporary data.
 	 */

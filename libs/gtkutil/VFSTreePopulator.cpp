@@ -6,8 +6,9 @@ namespace gtkutil
 {
 
 // Constructor
-VFSTreePopulator::VFSTreePopulator(GtkTreeStore* store)
-: _store(store)
+VFSTreePopulator::VFSTreePopulator(GtkTreeStore* store, GtkTreeIter* toplevel)
+: _store(store),
+  _topLevel(toplevel)
 {
 }
 
@@ -46,9 +47,9 @@ GtkTreeIter* VFSTreePopulator::addRecursive(const std::string& path) {
 	// Find rightmost slash
 	unsigned int slashPos = path.rfind("/");
 	
-	// Call recursively to get parent iter, leaving it at NULL (toplevel) if
+	// Call recursively to get parent iter, leaving it at the toplevel if
 	// there is no slash
-	GtkTreeIter* parIter = NULL;
+	GtkTreeIter* parIter = _topLevel;
 	if (slashPos != std::string::npos) {
 		parIter = addRecursive(path.substr(0, slashPos));
 	}

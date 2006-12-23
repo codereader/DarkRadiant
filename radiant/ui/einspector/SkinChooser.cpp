@@ -6,6 +6,7 @@
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/TreeModel.h"
+#include "gtkutil/VFSTreePopulator.h"
 
 #include <gtk/gtk.h>
 
@@ -66,7 +67,9 @@ GtkWidget* SkinChooser::createTreeView() {
 	
 	// Single column to display the skin name
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), 
-								gtkutil::TextColumn("Skin", DISPLAYNAME_COL));
+								gtkutil::TextColumn("Skin", 
+													DISPLAYNAME_COL, 
+													false));
 	
 	// Pack treeview into a ScrolledFrame and return
 	return gtkutil::ScrolledFrame(_treeView);
@@ -111,42 +114,65 @@ std::string SkinChooser::showAndBlock(const std::string& model,
 	return _lastSkin;
 }
 
+namespace {
+	
+/*
+ * Visitor class to fill in column data for the skins tree.
+ */
+class SkinTreeVisitor
+: public gtkutil::VFSTreePopulator::Visitor
+{
+public:
+
+	// Required visit function
+	void visit(GtkTreeStore* store, GtkTreeIter* it, const std::string& path) {
+		std::string displayPath = path.substr(path.rfind("/") + 1);
+		gtk_tree_store_set(store, it, 
+						   DISPLAYNAME_COL, displayPath.c_str(),
+						   FULLNAME_COL, path.c_str(),
+						   -1);
+	}
+};
+
+} // namespace
+
 // Populate the list of skins
 void SkinChooser::populateSkins() {
 	
 	// Clear the treestore
 	gtk_tree_store_clear(_treeStore);
 	
-	// Add "default" option to select no skin
-	GtkTreeIter iter;
-	gtk_tree_store_append(_treeStore, &iter, NULL);
-	gtk_tree_store_set(_treeStore, &iter, 
-					   DISPLAYNAME_COL, "*Default", 
+	// Add "All skins" toplevel node
+	GtkTreeIter allSkins;
+	gtk_tree_store_append(_treeStore, &allSkins, NULL);
+	gtk_tree_store_set(_treeStore, &allSkins, 
+					   DISPLAYNAME_COL, "All skins", 
 					   FULLNAME_COL, "",
 					   -1); 		
 	
 	// Get the list of skins for the model
-	const StringList& skins = GlobalModelSkinCache().getSkinsForModel(_model);
-		
-	// Add each skin to the tree view
+	const StringList& skins = GlobalModelSkinCache().getAllSkins();
+	
+	// Create a TreePopulator for the tree store and pass in each of the
+	// skin names.
+	gtkutil::VFSTreePopulator pop(_treeStore, &allSkins);
+
 	for (StringList::const_iterator i = skins.begin();
 		 i != skins.end();
 		 ++i)
 	{
-		GtkTreeIter iter;
-		gtk_tree_store_append(_treeStore, &iter, NULL);
-		gtk_tree_store_set(_treeStore, &iter, 
-						   DISPLAYNAME_COL, i->c_str(), 
-						   FULLNAME_COL, i->c_str(),
-						   -1); 		
+		pop.addPath(*i);
 	}
+	
+	// Visit the tree populator in order to fill in the column data
+	SkinTreeVisitor visitor;
+	pop.forEachNode(visitor);
 }
 
 // Static method to display singleton instance and choose a skin
 std::string SkinChooser::chooseSkin(const std::string& model,
 									const std::string& prev) 
 {
-	
 	// The static instance
 	static SkinChooser _instance;
 	
