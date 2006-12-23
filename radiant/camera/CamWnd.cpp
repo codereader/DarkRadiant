@@ -17,6 +17,7 @@
 
 #include "CamRenderer.h"
 #include "CameraSettings.h"
+#include "GlobalCamera.h"
 
 inline WindowVector windowvector_for_widget_centre(GtkWidget* widget) {
 	return WindowVector(static_cast<float>(widget->allocation.width / 2), static_cast<float>(widget->allocation.height / 2));
@@ -90,7 +91,6 @@ void AddCameraMovedCallback(const SignalHandler& handler) {
 }
 
 void CameraMovedNotify() {
-
 	g_cameraMoved_callbacks();
 }
 
@@ -176,6 +176,7 @@ void Camera_PitchDown_KeyUp(Camera& camera) {
 	camera.clearMovementFlags(MOVE_PITCHDOWN);
 }
 
+// greebo: TODO: Move this into camera class
 typedef ReferenceCaller<Camera, &Camera_MoveForward_KeyDown> FreeMoveCameraMoveForwardKeyDownCaller;
 typedef ReferenceCaller<Camera, &Camera_MoveForward_KeyUp> FreeMoveCameraMoveForwardKeyUpCaller;
 typedef ReferenceCaller<Camera, &Camera_MoveBack_KeyDown> FreeMoveCameraMoveBackKeyDownCaller;
@@ -271,11 +272,11 @@ gboolean wheelmove_scroll(GtkWidget* widget, GdkEventScroll* event, CamWnd* camw
 	// Determine the direction we are moving.
 	if (event->direction == GDK_SCROLL_UP) {
 		camwnd->getCamera().freemoveUpdateAxes();
-		Camera_setOrigin(*camwnd, Camera_getOrigin(*camwnd) + camwnd->getCamera().forward * static_cast<float>(g_camwindow_globals_private.m_nMoveSpeed));
+		camwnd->setCameraOrigin(camwnd->getCameraOrigin() + camwnd->getCamera().forward * static_cast<float>(g_camwindow_globals_private.m_nMoveSpeed));
 	}
 	else if (event->direction == GDK_SCROLL_DOWN) {
 		camwnd->getCamera().freemoveUpdateAxes();
-		Camera_setOrigin(*camwnd, Camera_getOrigin(*camwnd) + camwnd->getCamera().forward * (-static_cast<float>(g_camwindow_globals_private.m_nMoveSpeed)));
+		camwnd->setCameraOrigin(camwnd->getCameraOrigin() + camwnd->getCamera().forward * (-static_cast<float>(g_camwindow_globals_private.m_nMoveSpeed)));
 	}
 
 	return FALSE;
@@ -448,7 +449,7 @@ void CamWnd::registerCommands() {
 	GlobalCommands_insert("CameraAngleDown", ReferenceCaller<Camera, Camera_PitchDown_Discrete>(getCamera()), Accelerator('Z'));
 }
 
-void CamWnd::Cam_ChangeFloor(bool up) {
+void CamWnd::changeFloor(const bool up) {
 	float current = m_Camera.origin[2] - 48;
 	float bestUp;
 	float bestDown;
@@ -723,7 +724,7 @@ void CamWnd::BenchMark() {
 		angles[CAMERA_ROLL] = 0;
 		angles[CAMERA_PITCH] = 0;
 		angles[CAMERA_YAW] = static_cast<float>(i * (360.0 / 100.0));
-		Camera_setAngles(*this, angles);
+		setCameraAngles(angles);
 	}
 
 	double dEnd = Sys_DoubleTime();
@@ -747,31 +748,6 @@ CamWnd::~CamWnd() {
 }
 
 // ----------------------------------------------------------
-
-Shader* CamWnd::m_state_select1 = 0;
-Shader* CamWnd::m_state_select2 = 0;
-
-CamWnd* NewCamWnd() {
-	return new CamWnd;
-}
-
-void DeleteCamWnd(CamWnd* camwnd) {
-	delete camwnd;
-}
-
-void CamWnd_constructStatic() {
-	CamWnd::captureStates();
-}
-
-void CamWnd_destroyStatic() {
-	CamWnd::releaseStates();
-}
-
-CamWnd*& GlobalCamWnd() {
-	static CamWnd* _camWnd;
-
-	return _camWnd;
-}
 
 void CamWnd::addHandlersMove() {
 	m_selection_button_press_handler = g_signal_connect(G_OBJECT(m_gl_widget), "button_press_event", G_CALLBACK(selection_button_press), m_window_observer);
@@ -917,8 +893,8 @@ void CamWnd::setMode(camera_draw_mode mode) {
 	ShaderCache_setBumpEnabled(mode == cd_lighting);
 	Camera::setDrawMode(mode);
 
-	if (GlobalCamWnd() != 0) {
-		GlobalCamWnd()->update();
+	if (GlobalCamera().getCamWnd() != 0) {
+		GlobalCamera().getCamWnd()->update();
 	}
 }
 
@@ -926,8 +902,8 @@ camera_draw_mode CamWnd::getMode() {
 	return Camera::draw_mode;
 }
 
-CameraView& CamWnd::getCameraView() {
-	return m_cameraview;
+CameraView* CamWnd::getCameraView() {
+	return &m_cameraview;
 }
 
 GtkWidget* CamWnd::getWidget()
@@ -938,3 +914,48 @@ GtkWidget* CamWnd::getWidget()
 GtkWindow* CamWnd::getParent() {
 	return m_parent;
 }
+
+const Vector3& CamWnd::getCameraOrigin() {
+	return getCamera().getOrigin();
+}
+
+void CamWnd::setCameraOrigin(const Vector3& origin) {
+	getCamera().setOrigin(origin);
+}
+
+const Vector3& CamWnd::getCameraAngles() {
+	return getCamera().getAngles();
+}
+
+void CamWnd::setCameraAngles(const Vector3& angles) {
+	getCamera().setAngles(angles);
+}
+
+void CamWnd::toggleLightingMode() {
+	// switch between textured and lighting mode
+	setMode((getMode() == cd_lighting) ? cd_texture : cd_lighting);
+	update();
+}
+
+void CamWnd::cubicScaleOut() {
+	getCameraSettings()->setCubicScale( getCameraSettings()->getCubicScale() + 1 );
+
+	getCamera().updateProjection();
+	update();
+	g_pParentWnd->SetGridStatus();
+}
+
+void CamWnd::cubicScaleIn() {
+	getCameraSettings()->setCubicScale( getCameraSettings()->getCubicScale() - 1 );
+
+	getCamera().updateProjection();
+	update();
+	
+	g_pParentWnd->SetGridStatus();
+}
+
+
+// -------------------------------------------------------------------------------
+
+Shader* CamWnd::m_state_select1 = 0;
+Shader* CamWnd::m_state_select2 = 0;

@@ -33,20 +33,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "camera/Camera.h"
 
-// Constants
-
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkWindow GtkWindow;
 
 class CamWnd;
-CamWnd* NewCamWnd();
-void DeleteCamWnd(CamWnd* camwnd);
 
 void AddCameraMovedCallback(const SignalHandler& handler);
-
-void CamWnd_setParent(CamWnd& camwnd, GtkWindow* parent);
-
-void GlobalCamera_setCamWnd(CamWnd& camwnd);
 
 typedef struct _GtkMenu GtkMenu;
 void fill_view_camera_menu(GtkMenu* menu);
@@ -54,27 +46,8 @@ void CamWnd_registerShortcuts();
 
 void GlobalCamera_Benchmark();
 
-const Vector3& Camera_getOrigin(CamWnd& camwnd);
-void Camera_setOrigin(CamWnd& camwnd, const Vector3& origin);
-
-const Vector3& Camera_getAngles(CamWnd& camwnd);
-void Camera_setAngles(CamWnd& camwnd, const Vector3& angles);
-
 bool Camera_GetFarClip();
 void Camera_SetFarClip(bool value);
-
-struct camwindow_globals_t
-{
-  int m_nCubicScale;
-
-  camwindow_globals_t() :
-    m_nCubicScale(13)
-  {
-  }
-
-};
-
-extern camwindow_globals_t g_camwindow_globals;
 
 void CamWnd_Construct();
 void CamWnd_Destroy();

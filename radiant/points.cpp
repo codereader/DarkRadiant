@@ -41,7 +41,7 @@ please contact Id Software immediately at info@idsoftware.com.
 
 #include "map.h"
 #include "qe3.h"
-#include "camwindow.h"
+#include "camera/CamWnd.h"
 #include "xywindow.h"
 #include "xmlstuff.h"
 #include "mainframe.h"
@@ -212,14 +212,14 @@ void Pointfile_Next (void)
 
 
   CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
-	Camera_setOrigin(camwnd, *i);
+	camwnd.setCameraOrigin(*i);
 	g_pParentWnd->GetXYWnd()->SetOrigin(*i);
   {
-	  Vector3 dir((*(++i) - Camera_getOrigin(camwnd)).getNormalised());
-    Vector3 angles(Camera_getAngles(camwnd));
+	  Vector3 dir((*(++i) - camwnd.getCameraOrigin()).getNormalised());
+    Vector3 angles(camwnd.getCameraAngles());
 	  angles[CAMERA_YAW] = static_cast<float>(radians_to_degrees(atan2(dir[1], dir[0])));
 	  angles[CAMERA_PITCH] = static_cast<float>(radians_to_degrees(asin(dir[2])));
-    Camera_setAngles(camwnd, angles);
+    camwnd.setCameraAngles(angles);
   }
 }
 
@@ -238,14 +238,14 @@ void Pointfile_Prev (void)
 	CPointfile::const_iterator i = --s_check_point;
 
   CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
-	Camera_setOrigin(camwnd, *i);
+	camwnd.setCameraOrigin(*i);
 	g_pParentWnd->GetXYWnd()->SetOrigin(*i);
   {
-	  Vector3 dir((*(++i) - Camera_getOrigin(camwnd)).getNormalised());
-    Vector3 angles(Camera_getAngles(camwnd));
+	  Vector3 dir((*(++i) - camwnd.getCameraOrigin()).getNormalised());
+    Vector3 angles(camwnd.getCameraAngles());
 	  angles[CAMERA_YAW] = static_cast<float>(radians_to_degrees(atan2(dir[1], dir[0])));
 	  angles[CAMERA_PITCH] = static_cast<float>(radians_to_degrees(asin(dir[2])));
-    Camera_setAngles(camwnd, angles);
+    camwnd.setCameraAngles(angles);
   }
 }
 

@@ -14,7 +14,10 @@ const int CAMWND_MINSIZE_Y = 200;
 
 class CamWnd {
 	View m_view;
+	
+	// The contained camera
 	Camera m_Camera;
+	
 	RadiantCameraView m_cameraview;
 #if 0
 	int m_PositionDragCursorX;
@@ -62,9 +65,15 @@ public:
 	static camera_draw_mode getMode();
 
 	Camera& getCamera();
+	
+	const Vector3& getCameraOrigin();
+	void setCameraOrigin(const Vector3& origin);
+	
+	const Vector3& getCameraAngles();
+	void setCameraAngles(const Vector3& angles);
 
 	void BenchMark();
-	void Cam_ChangeFloor(bool up);
+	void changeFloor(const bool up);
 
 	GtkWidget* getWidget();
 	GtkWindow* getParent();
@@ -74,7 +83,7 @@ public:
 
 	bool m_bFreeMove;
 
-	CameraView& getCameraView();
+	CameraView* getCameraView();
 
 	void addHandlersMove();
 
@@ -88,6 +97,12 @@ public:
 
 	void moveDisable();
 	void moveDiscreteDisable();
+	
+	// This toggles between lighting and solid rendering mode
+	void toggleLightingMode();
+	
+	void cubicScaleIn();
+	void cubicScaleOut();
 
 private:
 	void Cam_Draw();
@@ -96,9 +111,6 @@ private:
 typedef MemberCaller<CamWnd, &CamWnd::queueDraw> CamWndQueueDraw;
 typedef MemberCaller<CamWnd, &CamWnd::update> CamWndUpdate;
 
-CamWnd*& GlobalCamWnd();
-void CamWnd_constructStatic();
-void CamWnd_destroyStatic();
 void CameraMovedNotify();
 
 struct camwindow_globals_private_t {

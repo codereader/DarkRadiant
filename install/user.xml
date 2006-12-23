@@ -12,6 +12,7 @@
 		<discreteMovement value="1" />
 		<invertMouseVerticalAxis value="0" />
 		<movementSpeed value="2" />
+		<cubicScale value="13" />
 	</camera>
     <toolbar name="view" align="horizontal">
 			<toolbutton name="open" action="OpenMap" tooltip="Open a map file" icon="file_open.png"/>

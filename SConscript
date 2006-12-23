@@ -356,7 +356,8 @@ radiant_src = [
 'brush/BrushInstance.cpp',
 'camera/CameraSettings.cpp',
 'camera/Camera.cpp',
-'camera/CamWnd.cpp'
+'camera/CamWnd.cpp',
+'camera/GlobalCamera.cpp'
 ]
 
 for i in range(len(radiant_src)):

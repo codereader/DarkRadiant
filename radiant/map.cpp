@@ -84,6 +84,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "autosave.h"
 #include "brush.h"
 #include "brush/BrushNode.h"
+#include "camera/CamWnd.h"
 
 #include <string>
 #include <boost/lexical_cast.hpp>
@@ -542,11 +543,11 @@ Entity *Scene_FindPlayerStart()
 void FocusViews(const Vector3& point, float angle)
 {
   CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
-  Camera_setOrigin(camwnd, point);
-  Vector3 angles(Camera_getAngles(camwnd));
+  camwnd.setCameraOrigin(point);
+  Vector3 angles(camwnd.getCameraAngles());
   angles[CAMERA_PITCH] = 0;
   angles[CAMERA_YAW] = angle;
-  Camera_setAngles(camwnd, angles);
+  camwnd.setCameraAngles(angles);
 
   XYWnd* xywnd = g_pParentWnd->GetXYWnd();
   xywnd->SetOrigin(point);
@@ -1394,7 +1395,7 @@ void ConstructRegionStartpoint(scene::Node* startpoint, const Vector3& region_mi
   for now, let's just print an error
   */
   
-  Vector3 vOrig(Camera_getOrigin(*g_pParentWnd->GetCamWnd()));
+  Vector3 vOrig(g_pParentWnd->GetCamWnd()->getCameraOrigin());
 
   for (int i=0 ; i<3 ; i++)
   {
@@ -1409,7 +1410,7 @@ void ConstructRegionStartpoint(scene::Node* startpoint, const Vector3& region_mi
   char sTmp[1024];
   sprintf(sTmp, "%d %d %d", (int)vOrig[0], (int)vOrig[1], (int)vOrig[2]);
   Node_getEntity(*startpoint)->setKeyValue("origin", sTmp);
-  sprintf(sTmp, "%d", (int)Camera_getAngles(*g_pParentWnd->GetCamWnd())[CAMERA_YAW]);
+  sprintf(sTmp, "%d", (int)g_pParentWnd->GetCamWnd()->getCameraAngles()[CAMERA_YAW]);
   Node_getEntity(*startpoint)->setKeyValue("angle", sTmp);
 }
 

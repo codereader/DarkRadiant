@@ -237,8 +237,13 @@ void Camera::moveUpdateAxes() {
   right[1] = -forward[0];
 }
 
+bool Camera::farClipEnabled() {
+	return (GlobalRegistry().get("user/ui/camera/enableCubicClipping")=="1");
+}
+
 float Camera::getFarClipPlane() {
-	return (GlobalRegistry().get("user/ui/camera/enableCubicClipping")=="1") ? pow(2.0, (g_camwindow_globals.m_nCubicScale + 7) / 2.0) : 32768.0f;
+	//return (farClipEnabled()) ? pow(2.0, (g_camwindow_globals.m_nCubicScale + 7) / 2.0) : 32768.0f;
+	return (farClipEnabled()) ? pow(2.0, (getCameraSettings()->getCubicScale() + 7) / 2.0) : 32768.0f;
 }
 
 void Camera::updateProjection() {
