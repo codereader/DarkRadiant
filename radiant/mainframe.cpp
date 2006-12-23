@@ -127,6 +127,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "windowobservers.h"
 #include "renderstate.h"
 #include "referencecache.h"
+#include "camera/CamWnd.h"
 
 struct layout_globals_t
 {
@@ -1723,7 +1724,7 @@ void GlobalCamera_UpdateWindow()
 {
   if(g_pParentWnd != 0)
   {
-    CamWnd_Update(*g_pParentWnd->GetCamWnd());
+    g_pParentWnd->GetCamWnd()->update();
   }
 }
 
@@ -2758,7 +2759,7 @@ void MainFrame::Create()
           m_pCamWnd = NewCamWnd();
           GlobalCamera_setCamWnd(*m_pCamWnd);
           CamWnd_setParent(*m_pCamWnd, window);
-          GtkFrame* camera_window = create_framed_widget(CamWnd_getWidget(*m_pCamWnd));
+          GtkFrame* camera_window = create_framed_widget(m_pCamWnd->getWidget());
 
           gtk_paned_add1(GTK_PANED(vsplit2), GTK_WIDGET(camera_window));
 
@@ -2797,7 +2798,7 @@ void MainFrame::Create()
       GlobalCamera_setCamWnd(*m_pCamWnd);
 
       {
-        GtkFrame* frame = create_framed_widget(CamWnd_getWidget(*m_pCamWnd));
+        GtkFrame* frame = create_framed_widget(m_pCamWnd->getWidget());
         gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(frame));
       }
       CamWnd_setParent(*m_pCamWnd, window);
@@ -2878,7 +2879,7 @@ void MainFrame::Create()
     GlobalCamera_setCamWnd(*m_pCamWnd);
     CamWnd_setParent(*m_pCamWnd, window);
 
-    GtkWidget* camera = CamWnd_getWidget(*m_pCamWnd);
+    GtkWidget* camera = m_pCamWnd->getWidget();
 
     m_pYZWnd = new XYWnd();
     m_pYZWnd->SetViewType(YZ);

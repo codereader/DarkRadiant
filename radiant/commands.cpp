@@ -123,7 +123,19 @@ const KeyEvent& GlobalKeyEvents_find(const char* name)
   return (*i).second;
 }
 
+void KeyEvent_connect(const char* name)
+{
+  const KeyEvent& keyEvent = GlobalKeyEvents_find(name);
+  keydown_accelerators_add(keyEvent.m_accelerator, keyEvent.m_keyDown);
+  keyup_accelerators_add(keyEvent.m_accelerator, keyEvent.m_keyUp);
+}
 
+void KeyEvent_disconnect(const char* name)
+{
+  const KeyEvent& keyEvent = GlobalKeyEvents_find(name);
+  keydown_accelerators_remove(keyEvent.m_accelerator);
+  keyup_accelerators_remove(keyEvent.m_accelerator);
+}
 
 
 #include <cctype>
