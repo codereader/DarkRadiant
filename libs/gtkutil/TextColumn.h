@@ -26,17 +26,28 @@ public:
 	 * 
 	 * @param colno
 	 * The integer column id to display text from.
+	 * 
+	 * @param useMarkup
+	 * Whether to use Pango markup to format text in the column (default true).
 	 */
-	TextColumn(const std::string& title, gint colno) {
+	TextColumn(const std::string& title, gint colno, bool useMarkup = true) {
 		
 		// Create the cell renderer
 		GtkCellRenderer* rend = gtk_cell_renderer_text_new();
 		
 		// Construct the column itself
-		_column = gtk_tree_view_column_new_with_attributes(title.c_str(),
-														   rend,
-														   "markup", colno,
-														   NULL);
+		if (useMarkup) {
+			_column = gtk_tree_view_column_new_with_attributes(title.c_str(),
+														   	   rend,
+														   	   "markup", colno,
+														   	   NULL);
+		}
+		else {
+			_column = gtk_tree_view_column_new_with_attributes(title.c_str(),
+														   	   rend,
+														   	   "text", colno,
+														   	   NULL);
+		}
 	}
 	
 	/** Operator cast to GtkTreeViewColumn*.
