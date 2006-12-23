@@ -1,0 +1,75 @@
+#ifndef GLOBALCAMERA_H_
+#define GLOBALCAMERA_H_
+
+#include "icamera.h"
+#include "gtkutil/widget.h"
+
+#include "CamWnd.h"
+
+/* greebo: This is the gateway class to access the currently active CamWindow
+ * 
+ * This class provides an interface for creating and deleting CamWnd instances
+ * as well as some methods that are passed to the currently active CamWnd, like
+ * resetCameraAngles() or lookThroughSelected().
+ * 
+ * The active CamWnd class is referenced by the _camWnd member pointer. */
+
+class GlobalCameraManager {
+	
+	// The currently active camera window
+	CamWnd* _camWnd;
+	
+	CameraModel* _cameraModel;
+	
+	ToggleShown _cameraShown;
+	
+public:
+	
+	// Constructor
+	GlobalCameraManager();
+	
+	// Creates a new CamWnd class and returns the according pointer 
+	CamWnd* newCamWnd();
+	
+	// Specifies the parent window of the given CamWnd
+	void setParent(CamWnd* camwnd, GtkWindow* parent);
+	
+	// Frees the created CamWnd class
+	void deleteCamWnd(CamWnd* camWnd);
+	
+	// Retrieves/Sets the pointer to the current CamWnd
+	CamWnd* getCamWnd();
+	void setCamWnd(CamWnd* camWnd);
+	
+	// Shows/hides the currently active camera window
+	void toggleCamera();
+	
+	// Return the ToggleShown class (needed to connect the GlobalToggle command)
+	ToggleShown& getToggleShown();
+	
+	// Resets the camera angles of the currently active Camera
+	void resetCameraAngles();
+	
+	// Change the floor up/down, passes the call on to the CamWnd class
+	void changeFloorUp();
+	void changeFloorDown();
+	
+	/* greebo: Tries to get a CameraModel from the most recently selected instance
+	 * Note: Currently NO instances are supporting the InstanceTypeCast onto a
+	 * CameraModel, so actually these functions don't do anything. I'll leave them
+	 * where they are, they should work in principle... */
+	void lookThroughSelected();
+	void lookThroughCamera();
+	
+	void benchmark();
+	void update();
+	
+}; // class GlobalCameraManager
+
+// The accessor function to the GlobalCameraManager instance 
+inline GlobalCameraManager& GlobalCamera() {
+	static GlobalCameraManager _cameraManager;
+	return _cameraManager;
+}
+
+#endif /*GLOBALCAMERA_H_*/

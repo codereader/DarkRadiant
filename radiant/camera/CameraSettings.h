@@ -7,6 +7,10 @@
  * from a RegistryKeyObserver, it can be connected to the according registry keys
  * and gets notified if any of the observed keys are changed.*/
 
+namespace {
+	const int MAX_CUBIC_SCALE = 23;
+}
+
 class CameraSettings : public RegistryKeyObserver {
 	bool _callbackActive;
 	
@@ -14,6 +18,8 @@ class CameraSettings : public RegistryKeyObserver {
 	
 	bool _invertMouseVerticalAxis;
 	bool _discreteMovement;
+	
+	int _cubicScale;
 	
 public:
 	CameraSettings();
@@ -32,6 +38,10 @@ public:
 	bool discreteMovement() const {
 		return _discreteMovement;
 	}
+	
+	// Gets/Sets the cubic scale member variable (is automatically constrained [1..MAX_CUBIC_SCALE])
+	int& getCubicScale();
+	void setCubicScale(const int& scale);
 	
 private:
 

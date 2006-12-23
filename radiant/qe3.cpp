@@ -52,7 +52,7 @@ please contact Id Software immediately at info@idsoftware.com.
 #include "error.h"
 #include "map.h"
 #include "points.h"
-#include "camwindow.h"
+#include "camera/CamWnd.h"
 #include "mainframe.h"
 #include "preferences.h"
 #include "autosave.h"
@@ -182,7 +182,7 @@ const char* const EXECUTABLE_TYPE =
 
 bool Region_cameraValid()
 {
-  Vector3 vOrig(vector3_snapped(Camera_getOrigin(*g_pParentWnd->GetCamWnd())));
+  Vector3 vOrig(vector3_snapped(g_pParentWnd->GetCamWnd()->getCameraOrigin()));
 
   for (int i=0 ; i<3 ; i++)
   {

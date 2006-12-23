@@ -10,9 +10,9 @@
 #include "view.h"
 
 enum {
-  CAMERA_PITCH = 0, // up / down
-  CAMERA_YAW = 1, // left / right
-  CAMERA_ROLL = 2, // fall over
+    CAMERA_PITCH = 0, // up / down
+    CAMERA_YAW = 1, // left / right
+    CAMERA_ROLL = 2, // fall over
 };
 
 #define SPEED_MOVE 32
@@ -32,89 +32,93 @@ const unsigned int MOVE_PITCHDOWN = 1 << 9;
 const unsigned int MOVE_ALL = MOVE_FORWARD|MOVE_BACK|MOVE_ROTRIGHT|MOVE_ROTLEFT|MOVE_STRAFERIGHT|MOVE_STRAFELEFT|MOVE_UP|MOVE_DOWN|MOVE_PITCHUP|MOVE_PITCHDOWN;
 
 enum camera_draw_mode {
-  cd_wire,
-  cd_solid,
-  cd_texture,
-  cd_lighting
+    cd_wire,
+    cd_solid,
+    cd_texture,
+    cd_lighting
 };
 
 class Camera {
+
 public:
-  int width, height;
+	int width, height;
 
-  bool timing;
+	bool timing;
 
-  Vector3 origin;
-  Vector3 angles;
+	Vector3 origin;
+	Vector3 angles;
 
-  Vector3 color;   // background 
+	Vector3 color;   // background
 
-  Vector3  forward, right; // move matrix (TTimo: used to have up but it was not updated)
-  Vector3 vup, vpn, vright; // view matrix (taken from the modelview matrix)
+	Vector3 forward, right; // move matrix (TTimo: used to have up but it was not updated)
+	Vector3 vup, vpn, vright; // view matrix (taken from the modelview matrix)
 
-  Matrix4 projection;
-  Matrix4 modelview;
+	Matrix4 projection;
+	Matrix4 modelview;
 
-  bool m_strafe; // true when in strafemode toggled by the ctrl-key
-  bool m_strafe_forward; // true when in strafemode by ctrl-key and shift is pressed for forward strafing
+	bool m_strafe; // true when in strafemode toggled by the ctrl-key
+	bool m_strafe_forward; // true when in strafemode by ctrl-key and shift is pressed for forward strafing
 
-  unsigned int movementflags;  // movement flags
-  Timer m_keycontrol_timer;
-  guint m_keymove_handler;
+	unsigned int movementflags;  // movement flags
+	Timer m_keycontrol_timer;
+	guint m_keymove_handler;
 
 
-  float fieldOfView;
+	float fieldOfView;
 
-  DeferredMotionDelta m_mouseMove;
+	DeferredMotionDelta m_mouseMove;
 
-  static void motionDelta(int x, int y, void* data);
-  static gboolean camera_keymove(gpointer data);
+	static void motionDelta(int x, int y, void* data);
+	static gboolean camera_keymove(gpointer data);
 
-  View* m_view;
-  Callback m_update;
+	View* m_view;
+	Callback m_update;
 
-  static camera_draw_mode draw_mode;
+	static camera_draw_mode draw_mode;
 
-  Camera(View* view, const Callback& update);
-  
-  static void setDrawMode(camera_draw_mode mode);
-  
-  void keyControl(float dtime);
-  void setMovementFlags(unsigned int mask);
-  void clearMovementFlags(unsigned int mask);
-  void keyMove();
-  
-  void updateVectors();
-  void updateModelview();
-  void updateProjection();
-  
-  float getFarClipPlane();
-  
-  void freemoveUpdateAxes();
-  void moveUpdateAxes();
-  
-  const Vector3& getOrigin();
-  void setOrigin(const Vector3& newOrigin);
-  
-  void mouseMove(int x, int y);
-  void freeMove(int dx, int dy);
-  
-  void mouseControl(int x, int y);
-  void setAngles(const Vector3& newAngles);
-  const Vector3& getAngles();
+	Camera(View* view, const Callback& update);
 
-  void pitchUpDiscrete();
-  void pitchDownDiscrete();
-  void rotateRightDiscrete();
-  void rotateLeftDiscrete();
-  void moveRightDiscrete();
-  void moveLeftDiscrete();
-  void moveDownDiscrete();
-  void moveUpDiscrete();
-  void moveBackDiscrete();
-  void moveForwardDiscrete();
-  typedef MemberCaller<Camera, &Camera::moveForwardDiscrete> MoveForwardDiscreteCaller;
-  
-};
+	static void setDrawMode(camera_draw_mode mode);
+
+	void keyControl(float dtime);
+	void setMovementFlags(unsigned int mask);
+	void clearMovementFlags(unsigned int mask);
+	void keyMove();
+
+	void updateVectors();
+	void updateModelview();
+	void updateProjection();
+
+	float getFarClipPlane();
+
+	// Returns true if cubic clipping is "on"
+	bool farClipEnabled();
+
+	void freemoveUpdateAxes();
+	void moveUpdateAxes();
+
+	const Vector3& getOrigin();
+	void setOrigin(const Vector3& newOrigin);
+
+	void mouseMove(int x, int y);
+	void freeMove(int dx, int dy);
+
+	void mouseControl(int x, int y);
+	void setAngles(const Vector3& newAngles);
+	const Vector3& getAngles();
+
+	void pitchUpDiscrete();
+	void pitchDownDiscrete();
+	void rotateRightDiscrete();
+	void rotateLeftDiscrete();
+	void moveRightDiscrete();
+	void moveLeftDiscrete();
+	void moveDownDiscrete();
+	void moveUpDiscrete();
+	void moveBackDiscrete();
+	void moveForwardDiscrete();
+	typedef MemberCaller<Camera, &Camera::moveForwardDiscrete> MoveForwardDiscreteCaller;
+
+}; // class Camera
 
 #endif /*CAMERA_H_*/

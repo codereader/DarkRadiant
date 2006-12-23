@@ -127,7 +127,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "windowobservers.h"
 #include "renderstate.h"
 #include "referencecache.h"
-#include "camera/CamWnd.h"
+#include "camera/GlobalCamera.h"
+#include "camera/CameraSettings.h"
 
 struct layout_globals_t
 {
@@ -807,7 +808,7 @@ void PasteToCamera()
   // Work out the delta
   Vector3 mid;
   Select_GetMid(mid);
-  Vector3 delta = vector3_snapped(Camera_getOrigin(camwnd), GetGridSize()) - mid;
+  Vector3 delta = vector3_snapped(camwnd.getCameraOrigin(), GetGridSize()) - mid;
   
   // Move to camera
   GlobalSelectionSystem().translateSelected(delta);
@@ -2756,9 +2757,9 @@ void MainFrame::Create()
 
 
           // camera
-          m_pCamWnd = NewCamWnd();
-          GlobalCamera_setCamWnd(*m_pCamWnd);
-          CamWnd_setParent(*m_pCamWnd, window);
+          m_pCamWnd = GlobalCamera().newCamWnd();
+          GlobalCamera().setCamWnd(m_pCamWnd);
+          GlobalCamera().setParent(m_pCamWnd, window);
           GtkFrame* camera_window = create_framed_widget(m_pCamWnd->getWidget());
 
           gtk_paned_add1(GTK_PANED(vsplit2), GTK_WIDGET(camera_window));
@@ -2794,14 +2795,14 @@ void MainFrame::Create()
 
       gtk_widget_show(GTK_WIDGET(window));
 
-      m_pCamWnd = NewCamWnd();
-      GlobalCamera_setCamWnd(*m_pCamWnd);
+      m_pCamWnd = GlobalCamera().newCamWnd();
+      GlobalCamera().setCamWnd(m_pCamWnd);
 
       {
         GtkFrame* frame = create_framed_widget(m_pCamWnd->getWidget());
         gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(frame));
       }
-      CamWnd_setParent(*m_pCamWnd, window);
+      GlobalCamera().setParent(m_pCamWnd, window);
 
       g_floating_windows.push_back(GTK_WIDGET(window));
     }
@@ -2875,9 +2876,9 @@ void MainFrame::Create()
   }
   else // 4 way
   {
-    m_pCamWnd = NewCamWnd();
-    GlobalCamera_setCamWnd(*m_pCamWnd);
-    CamWnd_setParent(*m_pCamWnd, window);
+    m_pCamWnd = GlobalCamera().newCamWnd();
+    GlobalCamera().setCamWnd(m_pCamWnd);
+    GlobalCamera().setParent(m_pCamWnd, window);
 
     GtkWidget* camera = m_pCamWnd->getWidget();
 
@@ -2968,7 +2969,7 @@ void MainFrame::Shutdown()
 
   TextureBrowser_destroyWindow();
 
-  DeleteCamWnd(m_pCamWnd);
+  GlobalCamera().deleteCamWnd(m_pCamWnd);
   m_pCamWnd = 0;
 
   PreferencesDialog_destroyWindow();
@@ -3013,9 +3014,8 @@ int getRotateIncrement()
   return static_cast<int>(g_si_globals.rotate);
 }
 
-int getFarClipDistance()
-{
-  return g_camwindow_globals.m_nCubicScale;
+int getFarClipDistance() {
+	return getCameraSettings()->getCubicScale();
 }
 
 float (*GridStatus_getGridSize)() = GetGridSize;

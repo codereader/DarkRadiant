@@ -64,99 +64,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "camera/CamRenderer.h"
 #include "camera/CamWnd.h"
 
-void GlobalCamera_setCamWnd(CamWnd& camwnd)
-{
-  GlobalCamWnd() = &camwnd;
-}
+#include "camera/GlobalCamera.h"
 
-ToggleShown g_camera_shown(true);
-
-void CamWnd_setParent(CamWnd& camwnd, GtkWindow* parent)
-{
-  camwnd.m_parent = parent;
-  g_camera_shown.connect(GTK_WIDGET(camwnd.m_parent));
-}
-
-camwindow_globals_t g_camwindow_globals;
-
-const Vector3& Camera_getOrigin(CamWnd& camwnd)
-{
-  return camwnd.getCamera().getOrigin();
-}
-
-void Camera_setOrigin(CamWnd& camwnd, const Vector3& origin)
-{
-  camwnd.getCamera().setOrigin(origin);
-}
-
-const Vector3& Camera_getAngles(CamWnd& camwnd)
-{
-  return camwnd.getCamera().getAngles();
-}
-
-void Camera_setAngles(CamWnd& camwnd, const Vector3& angles)
-{
-  camwnd.getCamera().setAngles(angles);
-}
-
-
-// =============================================================================
-// CamWnd class
-
-void fill_view_camera_menu(GtkMenu* menu)
-{
-  create_check_menu_item_with_mnemonic(menu, "Camera View", "ToggleCamera");
-}
-
-void GlobalCamera_ResetAngles()
-{
-  CamWnd& camwnd = *GlobalCamWnd();
-  Vector3 angles;
-  angles[CAMERA_ROLL] = angles[CAMERA_PITCH] = 0;
-  angles[CAMERA_YAW] = static_cast<float>(22.5 * floor((Camera_getAngles(camwnd)[CAMERA_YAW]+11)/22.5));
-  Camera_setAngles(camwnd, angles);
-}
-
-void Camera_ChangeFloorUp()
-{
-  //CamWnd& camwnd = *GlobalCamWnd();
-  GlobalCamWnd()->Cam_ChangeFloor(true);
-}
-
-void Camera_ChangeFloorDown()
-{
-  //CamWnd& camwnd = *GlobalCamWnd();
-  GlobalCamWnd()->Cam_ChangeFloor(false);
-}
-
-void Camera_CubeIn()
-{
-  CamWnd& camwnd = *GlobalCamWnd();
-  g_camwindow_globals.m_nCubicScale--;
-  if (g_camwindow_globals.m_nCubicScale < 1)
-    g_camwindow_globals.m_nCubicScale = 1;
-  camwnd.getCamera().updateProjection();
-  camwnd.update();
-  g_pParentWnd->SetGridStatus();
-}
-
-void Camera_CubeOut()
-{
-  CamWnd& camwnd = *GlobalCamWnd();
-  g_camwindow_globals.m_nCubicScale++;
-  if (g_camwindow_globals.m_nCubicScale > 23)
-    g_camwindow_globals.m_nCubicScale = 23;
-  camwnd.getCamera().updateProjection();
-  camwnd.update();
-  g_pParentWnd->SetGridStatus();
-}
-
-bool Camera_GetFarClip() {
-	return (GlobalRegistry().get("user/ui/camera/enableCubicClipping") == "1");
+void fill_view_camera_menu(GtkMenu* menu) {
+	create_check_menu_item_with_mnemonic(menu, "Camera View", "ToggleCamera");
 }
 
 void CubicClippingExport(const BoolImportCallback& importCallback) {
-	importCallback(GlobalRegistry().get("user/ui/camera/enableCubicClipping") == "1");
+	importCallback(GlobalCamera().getCamWnd()->getCamera().farClipEnabled());
 }
 
 FreeCaller1<const BoolImportCallback&, CubicClippingExport> cubicClippingCaller;
@@ -164,7 +79,7 @@ BoolExportCallback cubicClippingButtonCallBack(cubicClippingCaller);
 ToggleItem g_getfarclip_item(cubicClippingButtonCallBack);
 
 void Camera_SetFarClip(bool value) {
-	CamWnd& camwnd = *GlobalCamWnd();
+	CamWnd& camwnd = *GlobalCamera().getCamWnd();
   
 	GlobalRegistry().set("user/ui/camera/enableCubicClipping", value ? "1" : "0");
   
@@ -174,7 +89,7 @@ void Camera_SetFarClip(bool value) {
 }
 
 void Camera_ToggleFarClip() {
-	Camera_SetFarClip(!Camera_GetFarClip());
+	Camera_SetFarClip(!GlobalCamera().getCamWnd()->getCamera().farClipEnabled());
 }
 
 void CamWnd_registerShortcuts()
@@ -186,95 +101,6 @@ void CamWnd_registerShortcuts()
     command_connect_accelerator("TogglePreview");
   }
 }
-
-
-void GlobalCamera_Benchmark()
-{
-  CamWnd& camwnd = *GlobalCamWnd();
-  camwnd.BenchMark();
-}
-
-void GlobalCamera_Update()
-{
-  CamWnd& camwnd = *GlobalCamWnd();
-  camwnd.update();
-}
-
-/*camera_draw_mode CamWnd_GetMode()
-{
-  return Camera::draw_mode;
-}*/
-/*void CamWnd_SetMode(camera_draw_mode mode)
-{
-  ShaderCache_setBumpEnabled(mode == cd_lighting);
-  Camera::draw_mode = mode;
-  if (GlobalCamWnd() != 0) {
-  		GlobalCamWnd()->update();
-  }
-}*/
-
-void CamWnd_TogglePreview(void)
-{
-  // gametype must be doom3 for this function to work
-  // if the gametype is not doom3 something is wrong with the
-  // global command list or somebody else calls this function.
-  ASSERT_MESSAGE(g_pGameDescription->mGameType == "doom3", "CamWnd_TogglePreview called although mGameType is not doom3 compatible");
-
-  // switch between textured and lighting mode
-  CamWnd::setMode((CamWnd::getMode() == cd_lighting) ? cd_texture : cd_lighting);
-}
-
-
-CameraModel* g_camera_model = 0;
-
-void CamWnd_LookThroughCamera(CamWnd& camwnd)
-{
-  if(g_camera_model != 0)
-  {
-    camwnd.addHandlersMove();
-    g_camera_model->setCameraView(0, Callback());
-    g_camera_model = 0;
-    camwnd.getCamera().updateModelview();
-    camwnd.getCamera().updateProjection();
-    camwnd.update();
-  }
-}
-
-inline CameraModel* Instance_getCameraModel(scene::Instance& instance)
-{
-  return InstanceTypeCast<CameraModel>::cast(instance);
-}
-
-void CamWnd_LookThroughSelected(CamWnd& camwnd)
-{
-  if(g_camera_model != 0)
-  {
-    CamWnd_LookThroughCamera(camwnd);
-  }
-
-  if(GlobalSelectionSystem().countSelected() != 0)
-  {
-    scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
-    CameraModel* cameraModel = Instance_getCameraModel(instance);
-    if(cameraModel != 0)
-    {
-      camwnd.removeHandlersMove();
-      g_camera_model = cameraModel;
-      g_camera_model->setCameraView(&camwnd.getCameraView(), ReferenceCaller<CamWnd, CamWnd_LookThroughCamera>(camwnd));
-    }
-  }
-}
-
-void GlobalCamera_LookThroughSelected()
-{
-	CamWnd_LookThroughSelected(*GlobalCamWnd());
-}
-
-void GlobalCamera_LookThroughCamera()
-{
-  CamWnd_LookThroughCamera(*GlobalCamWnd());
-}
-
 
 void RenderModeImport(int value)
 {
@@ -368,54 +194,53 @@ void Camera_registerPreferencesPage()
 #include "dialog.h"
 
 /// \brief Initialisation for things that have the same lifespan as this module.
-void CamWnd_Construct()
-{
-	
-  GlobalCommands_insert("CenterView", FreeCaller<GlobalCamera_ResetAngles>(), Accelerator(GDK_End));
+// greebo: this gets called when the main Radiant class is instantiated. This is _before_ a GlobalCamWnd actually exists. 
+void CamWnd_Construct() {
+	GlobalCommands_insert("CenterView", MemberCaller<GlobalCameraManager, &GlobalCameraManager::resetCameraAngles>(GlobalCamera()), Accelerator(GDK_End));
 
-  GlobalToggles_insert("ToggleCubicClip", FreeCaller<Camera_ToggleFarClip>(), ToggleItem::AddCallbackCaller(g_getfarclip_item), Accelerator('\\', (GdkModifierType)GDK_CONTROL_MASK));
-  GlobalCommands_insert("CubicClipZoomIn", FreeCaller<Camera_CubeIn>(), Accelerator('[', (GdkModifierType)GDK_CONTROL_MASK));
-  GlobalCommands_insert("CubicClipZoomOut", FreeCaller<Camera_CubeOut>(), Accelerator(']', (GdkModifierType)GDK_CONTROL_MASK));
+	GlobalToggles_insert("ToggleCubicClip", FreeCaller<Camera_ToggleFarClip>(), ToggleItem::AddCallbackCaller(g_getfarclip_item), Accelerator('\\', (GdkModifierType)GDK_CONTROL_MASK));
 
-  GlobalCommands_insert("UpFloor", FreeCaller<Camera_ChangeFloorUp>(), Accelerator(GDK_Prior));
-  GlobalCommands_insert("DownFloor", FreeCaller<Camera_ChangeFloorDown>(), Accelerator(GDK_Next));
+	GlobalCommands_insert("CubicClipZoomIn", MemberCaller<CamWnd, &CamWnd::cubicScaleIn>(*GlobalCamera().getCamWnd()), Accelerator('[', (GdkModifierType)GDK_CONTROL_MASK));
+	GlobalCommands_insert("CubicClipZoomOut", MemberCaller<CamWnd, &CamWnd::cubicScaleOut>(*GlobalCamera().getCamWnd()), Accelerator(']', (GdkModifierType)GDK_CONTROL_MASK));
 
-  GlobalToggles_insert("ToggleCamera", ToggleShown::ToggleCaller(g_camera_shown), ToggleItem::AddCallbackCaller(g_camera_shown.m_item), Accelerator('C', (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
-  GlobalCommands_insert("LookThroughSelected", FreeCaller<GlobalCamera_LookThroughSelected>());
-  GlobalCommands_insert("LookThroughCamera", FreeCaller<GlobalCamera_LookThroughCamera>());
+	GlobalCommands_insert("UpFloor", MemberCaller<GlobalCameraManager, &GlobalCameraManager::changeFloorUp>(GlobalCamera()), Accelerator(GDK_Prior));
+	GlobalCommands_insert("DownFloor", MemberCaller<GlobalCameraManager, &GlobalCameraManager::changeFloorDown>(GlobalCamera()), Accelerator(GDK_Prior));
 
-  if(g_pGameDescription->mGameType == "doom3")
-  {
-    GlobalCommands_insert("TogglePreview", FreeCaller<CamWnd_TogglePreview>(), Accelerator(GDK_F3));
-  }
+	GlobalToggles_insert("ToggleCamera", ToggleShown::ToggleCaller(GlobalCamera().getToggleShown()),
+	                     ToggleItem::AddCallbackCaller(GlobalCamera().getToggleShown().m_item), Accelerator('C', (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
+	GlobalCommands_insert("LookThroughSelected", MemberCaller<GlobalCameraManager, &GlobalCameraManager::lookThroughSelected>(GlobalCamera()));
+	GlobalCommands_insert("LookThroughCamera", MemberCaller<GlobalCameraManager, &GlobalCameraManager::lookThroughCamera>(GlobalCamera()));
 
-  GlobalShortcuts_insert("CameraForward", Accelerator(GDK_Up));
-  GlobalShortcuts_insert("CameraBack", Accelerator(GDK_Down));
-  GlobalShortcuts_insert("CameraLeft", Accelerator(GDK_Left));
-  GlobalShortcuts_insert("CameraRight", Accelerator(GDK_Right));
-  GlobalShortcuts_insert("CameraStrafeRight", Accelerator(GDK_period));
-  GlobalShortcuts_insert("CameraStrafeLeft", Accelerator(GDK_comma));
+	if (g_pGameDescription->mGameType == "doom3") {
+		GlobalCommands_insert("TogglePreview", MemberCaller<CamWnd, &CamWnd::toggleLightingMode>(*GlobalCamera().getCamWnd()), Accelerator(GDK_F3));
+	}
 
-  GlobalShortcuts_insert("CameraUp", Accelerator('D'));
-  GlobalShortcuts_insert("CameraDown", Accelerator('C'));
-  GlobalShortcuts_insert("CameraAngleUp", Accelerator('A'));
-  GlobalShortcuts_insert("CameraAngleDown", Accelerator('Z'));
+	GlobalShortcuts_insert("CameraForward", Accelerator(GDK_Up));
+	GlobalShortcuts_insert("CameraBack", Accelerator(GDK_Down));
+	GlobalShortcuts_insert("CameraLeft", Accelerator(GDK_Left));
+	GlobalShortcuts_insert("CameraRight", Accelerator(GDK_Right));
+	GlobalShortcuts_insert("CameraStrafeRight", Accelerator(GDK_period));
+	GlobalShortcuts_insert("CameraStrafeLeft", Accelerator(GDK_comma));
 
-  GlobalShortcuts_insert("CameraFreeMoveForward", Accelerator(GDK_Up));
-  GlobalShortcuts_insert("CameraFreeMoveBack", Accelerator(GDK_Down));
-  GlobalShortcuts_insert("CameraFreeMoveLeft", Accelerator(GDK_Left));
-  GlobalShortcuts_insert("CameraFreeMoveRight", Accelerator(GDK_Right));
+	GlobalShortcuts_insert("CameraUp", Accelerator('D'));
+	GlobalShortcuts_insert("CameraDown", Accelerator('C'));
+	GlobalShortcuts_insert("CameraAngleUp", Accelerator('A'));
+	GlobalShortcuts_insert("CameraAngleDown", Accelerator('Z'));
 
-  GlobalPreferenceSystem().registerPreference("MoveSpeed", IntImportStringCaller(g_camwindow_globals_private.m_nMoveSpeed), IntExportStringCaller(g_camwindow_globals_private.m_nMoveSpeed));
-  GlobalPreferenceSystem().registerPreference("AngleSpeed", IntImportStringCaller(g_camwindow_globals_private.m_nAngleSpeed), IntExportStringCaller(g_camwindow_globals_private.m_nAngleSpeed));
-  GlobalPreferenceSystem().registerPreference("CubicScale", IntImportStringCaller(g_camwindow_globals.m_nCubicScale), IntExportStringCaller(g_camwindow_globals.m_nCubicScale));
-  GlobalPreferenceSystem().registerPreference("CameraRenderMode", makeIntStringImportCallback(RenderModeImportCaller()), makeIntStringExportCallback(RenderModeExportCaller()));
+	GlobalShortcuts_insert("CameraFreeMoveForward", Accelerator(GDK_Up));
+	GlobalShortcuts_insert("CameraFreeMoveBack", Accelerator(GDK_Down));
+	GlobalShortcuts_insert("CameraFreeMoveLeft", Accelerator(GDK_Left));
+	GlobalShortcuts_insert("CameraFreeMoveRight", Accelerator(GDK_Right));
 
-  CamWnd_constructStatic();
+	GlobalPreferenceSystem().registerPreference("MoveSpeed", IntImportStringCaller(g_camwindow_globals_private.m_nMoveSpeed), IntExportStringCaller(g_camwindow_globals_private.m_nMoveSpeed));
+	GlobalPreferenceSystem().registerPreference("AngleSpeed", IntImportStringCaller(g_camwindow_globals_private.m_nAngleSpeed), IntExportStringCaller(g_camwindow_globals_private.m_nAngleSpeed));
+	GlobalPreferenceSystem().registerPreference("CameraRenderMode", makeIntStringImportCallback(RenderModeImportCaller()), makeIntStringExportCallback(RenderModeExportCaller()));
 
-  Camera_registerPreferencesPage();
+	CamWnd::captureStates();
+
+	Camera_registerPreferencesPage();
 }
-void CamWnd_Destroy()
-{
-  CamWnd_destroyStatic();
+
+void CamWnd_Destroy() {
+	CamWnd::releaseStates();
 }

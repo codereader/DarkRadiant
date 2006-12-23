@@ -28,8 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "gtkmisc.h"
 
-#include "camwindow.h"
-
+#include "camera/CamWnd.h"
 #include "mainframe.h"
 
 
@@ -37,15 +36,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 void QERApp_GetCamera( Vector3& origin, Vector3& angles )
 {
   CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
-  origin = Camera_getOrigin(camwnd);
-  angles = Camera_getAngles(camwnd);
+  origin = camwnd.getCameraOrigin();
+  angles = camwnd.getCameraAngles();
 }
 
 void QERApp_SetCamera( const Vector3& origin, const Vector3& angles )
 {
   CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
-  Camera_setOrigin(camwnd, origin);
-  Camera_setAngles(camwnd, angles);
+  camwnd.setCameraOrigin(origin);
+  camwnd.setCameraAngles(angles);
 }
 
 void QERApp_GetCamWindowExtents( int *x, int *y, int *width, int *height )
