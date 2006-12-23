@@ -1,10 +1,13 @@
 #ifndef GLOBALCAMERA_H_
 #define GLOBALCAMERA_H_
 
+#include <list>
 #include "icamera.h"
+
 #include "gtkutil/widget.h"
 
 #include "CamWnd.h"
+#include "CameraObserver.h"
 
 /* greebo: This is the gateway class to access the currently active CamWindow
  * 
@@ -20,11 +23,13 @@ class GlobalCameraManager {
 	CamWnd* _camWnd;
 	
 	CameraModel* _cameraModel;
-	
 	ToggleShown _cameraShown;
 	
-public:
+	// The connected callbacks (get invoked when movedNotify() is called)	
+	CameraObserverList _cameraObservers;
 	
+public:
+
 	// Constructor
 	GlobalCameraManager();
 	
@@ -49,11 +54,11 @@ public:
 	
 	// Resets the camera angles of the currently active Camera
 	void resetCameraAngles();
-	
+
 	// Change the floor up/down, passes the call on to the CamWnd class
 	void changeFloorUp();
 	void changeFloorDown();
-	
+
 	/* greebo: Tries to get a CameraModel from the most recently selected instance
 	 * Note: Currently NO instances are supporting the InstanceTypeCast onto a
 	 * CameraModel, so actually these functions don't do anything. I'll leave them
@@ -64,12 +69,15 @@ public:
 	void benchmark();
 	void update();
 	
+	// Add a "CameraMoved" callback to the signal member
+	void addCameraObserver(CameraObserver* observer);
+	
+	// Notify the attached "CameraMoved" callbacks
+	void movedNotify();
+	
 }; // class GlobalCameraManager
 
-// The accessor function to the GlobalCameraManager instance 
-inline GlobalCameraManager& GlobalCamera() {
-	static GlobalCameraManager _cameraManager;
-	return _cameraManager;
-}
+// The accessor function that contains the static instance of the GlobalCameraManager class 
+GlobalCameraManager& GlobalCamera();
 
 #endif /*GLOBALCAMERA_H_*/

@@ -57,7 +57,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "csg.h"
 #include "brushmanip.h"
 #include "entity.h"
-#include "camera/CamWnd.h"
+#include "camera/GlobalCamera.h"
 #include "texwindow.h"
 #include "mainframe.h"
 #include "preferences.h"
@@ -747,13 +747,13 @@ gboolean xywnd_expose(GtkWidget* widget, GdkEventExpose* event, XYWnd* xywnd)
 }
 
 
-void XYWnd_CameraMoved(XYWnd& xywnd)
+/*void XYWnd_CameraMoved(XYWnd& xywnd)
 {
   if(g_xywindow_globals_private.m_bCamXYUpdate)
   {
     XYWnd_Update(xywnd);
   }
-}
+}*/
 
 XYWnd::XYWnd() :
   m_gl_widget(glwidget_new(FALSE)),
@@ -811,8 +811,9 @@ XYWnd::XYWnd() :
   updateModelview();
 
   AddSceneChangeCallback(ReferenceCaller<XYWnd, &XYWnd_Update>(*this));
-  AddCameraMovedCallback(ReferenceCaller<XYWnd, &XYWnd_CameraMoved>(*this));
-
+  // greebo: Connect <self> as CameraObserver to the CamWindow. This way this class gets notified on camera change 
+  GlobalCamera().addCameraObserver(this);
+  
   PressedButtons_connect(g_pressedButtons, m_gl_widget);
 
   onMouseDown.connectLast(makeSignalHandler3(MouseDownCaller(), *this));
@@ -957,6 +958,13 @@ void XYWnd_OrientCamera(XYWnd* xywnd, int x, int y, CamWnd& camwnd)
     angles[nAngle] = static_cast<float>(radians_to_degrees(atan2 (point[n1], point[n2])));
     camwnd.setCameraAngles(angles);
   }
+}
+
+// Callback that gets invoked on camera move
+void XYWnd::cameraMoved() {
+	if (g_xywindow_globals_private.m_bCamXYUpdate) {
+		XYWnd_Update(*this);
+	}
 }
 
 /*

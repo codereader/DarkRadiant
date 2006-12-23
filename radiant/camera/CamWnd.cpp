@@ -84,16 +84,6 @@ gboolean camera_expose(GtkWidget* widget, GdkEventExpose* event, gpointer data) 
 	return FALSE;
 }
 
-Signal0 g_cameraMoved_callbacks;
-
-void AddCameraMovedCallback(const SignalHandler& handler) {
-	g_cameraMoved_callbacks.connectLast(handler);
-}
-
-void CameraMovedNotify() {
-	g_cameraMoved_callbacks();
-}
-
 camwindow_globals_private_t g_camwindow_globals_private;
 
 void Camera_MoveForward_KeyDown(Camera& camera) {
@@ -467,7 +457,7 @@ void CamWnd::changeFloor(const bool up) {
 
 	getCamera().updateModelview();
 	update();
-	CameraMovedNotify();
+	GlobalCamera().movedNotify();
 }
 
 // NOTE TTimo if there's an OS-level focus out of the application
@@ -889,7 +879,7 @@ void CamWnd::queueDraw() {
 	m_deferredDraw.draw();
 }
 
-void CamWnd::setMode(camera_draw_mode mode) {
+void CamWnd::setMode(CameraDrawMode mode) {
 	ShaderCache_setBumpEnabled(mode == cd_lighting);
 	Camera::setDrawMode(mode);
 
@@ -898,7 +888,7 @@ void CamWnd::setMode(camera_draw_mode mode) {
 	}
 }
 
-camera_draw_mode CamWnd::getMode() {
+CameraDrawMode CamWnd::getMode() {
 	return Camera::draw_mode;
 }
 

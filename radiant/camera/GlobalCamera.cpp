@@ -104,3 +104,30 @@ void GlobalCameraManager::changeFloorDown() {
 	// Pass the call to the currently active CamWnd 
 	_camWnd->changeFloor(false);
 }
+
+void GlobalCameraManager::addCameraObserver(CameraObserver* observer) {
+	if (observer != NULL) {
+		// Add the passed observer to the list
+		_cameraObservers.push_back(observer);
+	}
+}
+
+void GlobalCameraManager::movedNotify() {
+	
+	// Cycle through the list of observers and call the moved method
+	for (CameraObserverList::iterator i = _cameraObservers.begin(); i != _cameraObservers.end(); i++) {
+		CameraObserver* observer = *i;
+		
+		if (observer != NULL) {
+			observer->cameraMoved();
+		}
+	}
+}
+
+// ------------------------------------------------------------------------------------
+
+// The accessor function to the GlobalCameraManager instance 
+GlobalCameraManager& GlobalCamera() {
+	static GlobalCameraManager _cameraManager;
+	return _cameraManager;
+}

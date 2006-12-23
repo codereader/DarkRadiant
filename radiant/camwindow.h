@@ -24,21 +24,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "math/Vector3.h"
 #include "math/matrix.h"
-#include "timer.h"
 #include "gtkutil/cursor.h"
 #include "gtkmisc.h"
 #include "generic/callback.h"
-#include "signal/signalfwd.h"
 #include "view.h"
 
 #include "camera/Camera.h"
-
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkWindow GtkWindow;
-
-class CamWnd;
-
-void AddCameraMovedCallback(const SignalHandler& handler);
 
 typedef struct _GtkMenu GtkMenu;
 void fill_view_camera_menu(GtkMenu* menu);
