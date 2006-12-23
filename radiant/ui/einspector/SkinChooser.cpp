@@ -125,7 +125,11 @@ class SkinTreeVisitor
 public:
 
 	// Required visit function
-	void visit(GtkTreeStore* store, GtkTreeIter* it, const std::string& path) {
+	void visit(GtkTreeStore* store, 
+			   GtkTreeIter* it, 
+			   const std::string& path,
+			   bool isExplicit) 
+	{
 		std::string displayPath = path.substr(path.rfind("/") + 1);
 		gtk_tree_store_set(store, it, 
 						   DISPLAYNAME_COL, displayPath.c_str(),

@@ -2,8 +2,10 @@
 #define VFSTREEPOPULATOR_H_
 
 #include <gtk/gtktreestore.h>
+
 #include <ext/hash_map>
 #include <string>
+#include <set>
 
 #include <boost/functional/hash/hash.hpp>
 
@@ -43,6 +45,10 @@ class VFSTreePopulator
 								boost::hash<std::string> > NamedIterMap;
 	NamedIterMap _iters;
 	
+	// Set of paths that are passed in through addPath(), to distinguish them
+	// from intermediate constructed paths
+	std::set<std::string> _explicitPaths;
+	
 private:
 
 	// Main recursive add function. Accepts a VFS path and adds the new node,
@@ -77,9 +83,27 @@ public:
 	/** Visitor interface.
 	 */
 	struct Visitor {
+		
+		/**
+		 * Visit callback function, called for each node in the tree.
+		 * 
+		 * @param store
+		 * The tree store to insert into.
+		 * 
+		 * @param iter
+		 * A GtkTreeIter* pointing to the current node.
+		 * 
+		 * @param path
+		 * Full VFS path of the current node, as presented to addPath().
+		 * 
+		 * @param isExplicit
+		 * true if the path was explicitly inserted via addPath(), false if the
+		 * path was created as an intermediate parent of another explicit path.
+		 */
 		virtual void visit(GtkTreeStore* store,
 						   GtkTreeIter* iter, 
-						   const std::string& path) = 0;
+						   const std::string& path,
+						   bool isExplicit) = 0;
 	};
 	
 	/** Visit each node in the constructed tree, passing the GtkTreeIter* and

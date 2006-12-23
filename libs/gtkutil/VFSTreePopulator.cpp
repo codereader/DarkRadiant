@@ -23,11 +23,11 @@ VFSTreePopulator::~VFSTreePopulator()
 // Interface add function
 void VFSTreePopulator::addPath(const std::string& path) {
 	
-	// Get the iter for the path's node
-	GtkTreeIter* finalIter = addRecursive(path);
-	assert(finalIter);
-	 
-	_iters[path] = finalIter; 	
+	// Call the addRecursive method to create all necessary nodes
+	addRecursive(path);
+	
+	// Add the explicit path to the set
+	_explicitPaths.insert(path);
 }
 
 // Recursive add function
@@ -69,7 +69,10 @@ void VFSTreePopulator::forEachNode(Visitor& visitor) {
 	
 	// Visit every entry in the iter map
 	for (NamedIterMap::iterator i = _iters.begin(); i != _iters.end(); ++i) {
-		visitor.visit(_store, i->second, i->first);
+		visitor.visit(_store, 
+					  i->second, 
+					  i->first,
+					  _explicitPaths.find(i->first) != _explicitPaths.end());
 	}
 		
 }
