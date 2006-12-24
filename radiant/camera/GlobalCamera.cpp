@@ -72,7 +72,7 @@ void GlobalCameraManager::lookThroughSelected() {
 }
 
 void GlobalCameraManager::benchmark() {
-	_camWnd->BenchMark();
+	_camWnd->benchmark();
 }
 
 void GlobalCameraManager::update() {
@@ -80,10 +80,10 @@ void GlobalCameraManager::update() {
 }
 
 void GlobalCameraManager::setParent(CamWnd* camwnd, GtkWindow* parent) {
-	camwnd->m_parent = parent;
+	camwnd->setParent(parent);
 	
 	// Connect the ToggleShown class to the parent
-	_cameraShown.connect(GTK_WIDGET(camwnd->m_parent));
+	_cameraShown.connect(GTK_WIDGET(camwnd->getParent()));
 }
 
 void GlobalCameraManager::toggleCamera() {

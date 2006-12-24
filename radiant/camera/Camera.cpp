@@ -208,7 +208,7 @@ void Camera::setAngles(const Vector3& newAngles) {
 	GlobalCamera().movedNotify();
 }
 
-const Vector3& Camera::getAngles() {
+Vector3 Camera::getAngles() const {
 	return angles;
 }
 
@@ -219,7 +219,7 @@ void Camera::setOrigin(const Vector3& newOrigin) {
 	GlobalCamera().movedNotify();
 }
 
-const Vector3& Camera::getOrigin() {
+Vector3 Camera::getOrigin() const {
 	return origin;
 }
 
