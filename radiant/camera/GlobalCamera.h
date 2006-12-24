@@ -55,7 +55,7 @@ public:
 	// Resets the camera angles of the currently active Camera
 	void resetCameraAngles();
 
-	// Toggles between lighting and solid rendering mode (passes the call to the CamWnd class)
+	// Toggles between lighting and solid rendering mode (passes the call to the CameraSettings class)
 	void toggleLightingMode();
 	
 	// Increases/decreases the far clip plane distance (passes the call to CamWnd)

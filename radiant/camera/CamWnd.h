@@ -64,9 +64,6 @@ public:
 	static void captureStates();
 	static void releaseStates();
 
-	static void setMode(CameraDrawMode mode);
-	static CameraDrawMode getMode();
-
 	Camera& getCamera();
 	
 	void updateXORRectangle(Rectangle area);
@@ -105,9 +102,6 @@ public:
 
 	void moveDisable();
 	void moveDiscreteDisable();
-	
-	// This toggles between lighting and solid rendering mode
-	void toggleLightingMode();
 	
 	// Increases/decreases the far clip plane distance
 	void cubicScaleIn();

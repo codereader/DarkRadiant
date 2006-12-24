@@ -304,7 +304,7 @@ public:
 			valueStr = "0.0";
 		}
 		
-		// Pass the call to get() to do the rest
+		// Pass the call to set() to do the rest
 		set(key, valueStr);
 	}
 	
@@ -324,6 +324,22 @@ public:
 		}
 		
 		return tempInt;
+	}
+	
+	// Sets a registry key value to the given integer. The value is converted via boost libraries first.
+	void setInt(const std::string& key, const int& value) {
+		
+		// Try to convert the int into a string
+		std::string valueStr;
+		try {
+			valueStr = boost::lexical_cast<std::string>(value);
+		}
+		catch (boost::bad_lexical_cast e) {
+			valueStr = "0";
+		}
+		
+		// Pass the call to set() to do the rest
+		set(key, valueStr);
 	}
 	
 	// Sets the value of a key from the registry, 

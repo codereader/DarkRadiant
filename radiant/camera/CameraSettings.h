@@ -19,6 +19,14 @@ namespace {
 	const std::string RKEY_DISCRETE_MOVEMENT = "user/ui/camera/discreteMovement";
 	const std::string RKEY_CUBIC_SCALE = "user/ui/camera/cubicScale";
 	const std::string RKEY_ENABLE_FARCLIP = "user/ui/camera/enableCubicClipping";
+	const std::string RKEY_DRAWMODE = "user/ui/camera/drawMode";
+	
+	enum CameraDrawMode {
+		drawWire,
+		drawSolid,
+		drawTexture,
+		drawLighting,
+	};
 }
 
 class CameraSettings : public RegistryKeyObserver {
@@ -30,8 +38,9 @@ class CameraSettings : public RegistryKeyObserver {
 	bool _invertMouseVerticalAxis;
 	bool _discreteMovement;
 	
-	int _cubicScale;
+	CameraDrawMode _cameraDrawMode;
 	
+	int _cubicScale;
 	bool _farClipEnabled;
 	
 	void farClipExport(const BoolImportCallback& importCallback);
@@ -55,6 +64,11 @@ public:
 	bool invertMouseVerticalAxis() const;
 	bool discreteMovement() const;
 	
+	// Sets/returns the draw mode (wireframe, solid, textured, lighting)
+	CameraDrawMode getMode() const;
+	void setMode(const CameraDrawMode& mode);
+	void toggleLightingMode();
+	
 	// Gets/Sets the cubic scale member variable (is automatically constrained [1..MAX_CUBIC_SCALE])
 	int cubicScale() const;
 	void setCubicScale(const int& scale);
@@ -64,6 +78,8 @@ public:
 	void setFarClip(bool farClipEnabled);
 	ToggleItem& farClipItem();
 
+private:
+	void importDrawMode(const int mode);
 }; // class CameraSettings
 
 CameraSettings* getCameraSettings();

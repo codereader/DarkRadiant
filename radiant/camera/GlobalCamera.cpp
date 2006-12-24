@@ -1,6 +1,7 @@
 #include "GlobalCamera.h"
 
 #include "iselection.h"
+#include "CameraSettings.h"
 
 // Constructor
 GlobalCameraManager::GlobalCameraManager() : 
@@ -125,7 +126,7 @@ void GlobalCameraManager::movedNotify() {
 }
 
 void GlobalCameraManager::toggleLightingMode() {
-	_camWnd->toggleLightingMode();
+	getCameraSettings()->toggleLightingMode();
 }
 
 void GlobalCameraManager::cubicScaleIn() {

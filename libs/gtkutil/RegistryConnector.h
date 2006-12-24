@@ -5,50 +5,51 @@
 #include <string>
 #include "iregistry.h"
 
-/* greebo: This class establishes connections between values stored in GtkWidgets and
- * registry key/values. It provides methods for connecting the widget to certain keys,
- * and loading/saving the values from/to the registry. */
+/* greebo: This class establishes connections between values stored in GtkObjects and
+ * registry key/values. It provides methods for connecting the objects to certain keys,
+ * and loading/saving the values from/to the registry. 
+ * 
+ * The references to the GtkWidgets/GtkObjects are stored as GtkObject* pointers, that
+ * are cast onto the supported types (e.g. GtkToggleButton, GtkAdjustment, etc.).
+ * 
+ * The stored objects have to be supported by this class, otherwise an error is thrown to std::cout
+ * 
+ * Note to avoid any confusion:
+ * 
+ * "import" is to be understood as importing values FROM the XMLRegistry and storing them TO the widgets.
+ * "export" is naturally the opposite: values are exported TO the XMLRegistry (with values FROM the widgets).
+ * */
 
 // Forward declarations to avoid including the whole GTK headers
-typedef struct _GtkToggleButton GtkToggleButton;
-typedef struct _GtkAdjustment GtkAdjustment;
+typedef struct _GtkObject GtkObject;
 
 namespace gtkutil {
 
 	namespace {
-		typedef std::map<GtkToggleButton*, std::string> ToggleButtonMap;
-		typedef std::map<GtkAdjustment*, std::string> AdjustmentMap;
+		typedef std::map<GtkObject*, std::string> ObjectKeyMap;
 	}
 
 class RegistryConnector {
 
-	// The association of ToggleButtons and registry keys
-	ToggleButtonMap _toggleButtons;
-
-	// This maps adjustments to registry keys 
-	AdjustmentMap _adjustments;	
+	// The association of widgets and registry keys
+	ObjectKeyMap _objectKeyMap;
 
 public:
-	// Connect a toggle button widget with the specified registryKey
-	void connectToggleButton(GtkToggleButton* toggleButton, const std::string& registryKey);
+	// Connect a GtkObject to the specified XMLRegistry key
+	void connectGtkObject(GtkObject* object, const std::string& registryKey);
 	
-	// Connect a gtk_adjustment (for horizontal sliders) with the specified registryKey
-	void connectAdjustment(GtkAdjustment* adjustment, const std::string& registryKey);
-	
-	// Loads all the values from the registry into the connected GtkWidgets
+	// Loads all the values from the registry into the connected GtkObjects
 	void importValues();
 	
-	// Reads the values from the GtkWidgets and writes them into the XMLRegistry
+	// Reads the values from the GtkObjects and writes them into the XMLRegistry
 	void exportValues();
 
 private:
-	// Imports/Exports the values for the connected toggle buttons
-	void importToggleButtonValues();
-	void exportToggleButtonValues();
-	
-	// Imports/Exports the values for the connected gtk_adjustments
-	void importAdjustmentValues();
-	void exportAdjustmentValues();
+	// Load the value from the registry and store it into the GtkObject
+	void importKey(GtkObject* obj, const std::string& registryKey);
+
+	// Retrieve the value from the GtkObject and save it into the registry
+	void exportKey(GtkObject* obj, const std::string& registryKey);
 
 }; // class RegistryConnector
 

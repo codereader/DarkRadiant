@@ -80,85 +80,33 @@ void CamWnd_registerShortcuts()
   }
 }
 
-void RenderModeImport(int value)
-{
-  switch(value)
-  {
-  case 0:
-    CamWnd::setMode(cd_wire);
-    break;
-  case 1:
-    CamWnd::setMode(cd_solid);
-    break;
-  case 2:
-    CamWnd::setMode(cd_texture);
-    break;
-  case 3:
-    CamWnd::setMode(cd_lighting);
-    break;
-  default:
-    CamWnd::setMode(cd_texture);
-  }
-}
-typedef FreeCaller1<int, RenderModeImport> RenderModeImportCaller;
-
-void RenderModeExport(const IntImportCallback& importer)
-{
-	switch (CamWnd::getMode()) {
-		case cd_wire:
-			importer(0);
-			break;
-		case cd_solid:
-			importer(1);
-			break;
-		case cd_texture:
-			importer(2);
-			break;
-		case cd_lighting:
-			importer(3);
-			break;
-	}
-}
-
-typedef FreeCaller1<const IntImportCallback&, RenderModeExport> RenderModeExportCaller;
-
 void Camera_constructPreferences(PreferencesPage& page) {
 	// Add the sliders for the movement and angle speed and connect them to the observer   
-    page.appendSlider("Movement Speed (game units)", RKEY_MOVEMENT_SPEED, getCameraSettings(), TRUE, 100, 50, 300, 1, 10, 10);
-    page.appendSlider("Rotation Speed", RKEY_ROTATION_SPEED, getCameraSettings(), TRUE, 3, 1, 180, 1, 10, 10);
+    page.appendSlider("Movement Speed (game units)", RKEY_MOVEMENT_SPEED, TRUE, 100, 50, 300, 1, 10, 10);
+    page.appendSlider("Rotation Speed", RKEY_ROTATION_SPEED, TRUE, 3, 1, 180, 1, 10, 10);
     
 	// Add the checkboxes and connect them with the registry key and the according observer 
-	page.appendCheckBox("", "Discrete movement (non-freelook mode)", RKEY_DISCRETE_MOVEMENT, getCameraSettings());
-	page.appendCheckBox("", "Enable far-clip plane (hides distant objects)", RKEY_ENABLE_FARCLIP, getCameraSettings());
+	page.appendCheckBox("", "Discrete movement (non-freelook mode)", RKEY_DISCRETE_MOVEMENT);
+	page.appendCheckBox("", "Enable far-clip plane (hides distant objects)", RKEY_ENABLE_FARCLIP);
 	
 	// Add the "inverse mouse vertical axis in free-look mode" preference
-	page.appendCheckBox("", "Invert mouse vertical axis (freelook mode)", RKEY_INVERT_MOUSE_VERTICAL_AXIS, getCameraSettings());
+	page.appendCheckBox("", "Invert mouse vertical axis (freelook mode)", RKEY_INVERT_MOUSE_VERTICAL_AXIS);
 
-  if(g_pGameDescription->mGameType == "doom3")
-  {
-    const char* render_mode[] = { "Wireframe", "Flatshade", "Textured", "Lighting" };
-
-    page.appendCombo(
-      "Render Mode",
-      STRING_ARRAY_RANGE(render_mode),
-      IntImportCallback(RenderModeImportCaller()),
-      IntExportCallback(RenderModeExportCaller())
-    );
-  }
-  else
-  {
-    const char* render_mode[] = { "Wireframe", "Flatshade", "Textured" };
-
-    page.appendCombo(
-      "Render Mode",
-      STRING_ARRAY_RANGE(render_mode),
-      IntImportCallback(RenderModeImportCaller()),
-      IntExportCallback(RenderModeExportCaller())
-    );
-  }
+	// Create the string list containing the render mode captions
+	std::list<std::string> renderModeDescriptions;
+	
+	renderModeDescriptions.push_back("WireFrame");
+	renderModeDescriptions.push_back("Flatshade");
+	renderModeDescriptions.push_back("Textured");
+	
+	if (g_pGameDescription->mGameType == "doom3") {
+		renderModeDescriptions.push_back("Lighting");
+	}
+	
+	page.appendCombo("Render Mode", RKEY_DRAWMODE, renderModeDescriptions);
 }
-void Camera_constructPage(PreferenceGroup& group)
-{
+
+void Camera_constructPage(PreferenceGroup& group) {
   PreferencesPage page(group.createPage("Camera", "Camera View Preferences"));
   Camera_constructPreferences(page);
 }
@@ -206,8 +154,6 @@ void CamWnd_Construct() {
 	GlobalCommands_insert("CameraDown", MemberCaller<GlobalCameraManager, &GlobalCameraManager::moveDownDiscrete>(GlobalCamera()), Accelerator('C'));
 	GlobalCommands_insert("CameraAngleUp", MemberCaller<GlobalCameraManager, &GlobalCameraManager::pitchUpDiscrete>(GlobalCamera()), Accelerator('A'));
 	GlobalCommands_insert("CameraAngleDown", MemberCaller<GlobalCameraManager, &GlobalCameraManager::pitchDownDiscrete>(GlobalCamera()), Accelerator('Z'));
-
-	GlobalPreferenceSystem().registerPreference("CameraRenderMode", makeIntStringImportCallback(RenderModeImportCaller()), makeIntStringExportCallback(RenderModeExportCaller()));
 
 	CamWnd::captureStates();
 
