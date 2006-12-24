@@ -84,8 +84,6 @@ gboolean camera_expose(GtkWidget* widget, GdkEventExpose* event, gpointer data) 
 	return FALSE;
 }
 
-camwindow_globals_private_t g_camwindow_globals_private;
-
 void Camera_MoveForward_KeyDown(Camera& camera) {
 	camera.setMovementFlags(MOVE_FORWARD);
 }
@@ -180,46 +178,6 @@ typedef ReferenceCaller<Camera, &Camera_MoveUp_KeyUp> FreeMoveCameraMoveUpKeyUpC
 typedef ReferenceCaller<Camera, &Camera_MoveDown_KeyDown> FreeMoveCameraMoveDownKeyDownCaller;
 typedef ReferenceCaller<Camera, &Camera_MoveDown_KeyUp> FreeMoveCameraMoveDownKeyUpCaller;
 
-void Camera_MoveForward_Discrete(Camera& camera) {
-	camera.moveForwardDiscrete();
-}
-
-void Camera_MoveBack_Discrete(Camera& camera) {
-	camera.moveBackDiscrete();
-}
-
-void Camera_MoveUp_Discrete(Camera& camera) {
-	camera.moveUpDiscrete();
-}
-
-void Camera_MoveDown_Discrete(Camera& camera) {
-	camera.moveDownDiscrete();
-}
-
-void Camera_MoveLeft_Discrete(Camera& camera) {
-	camera.moveLeftDiscrete();
-}
-
-void Camera_MoveRight_Discrete(Camera& camera) {
-	camera.moveRightDiscrete();
-}
-
-void Camera_RotateLeft_Discrete(Camera& camera) {
-	camera.rotateLeftDiscrete();
-}
-
-void Camera_RotateRight_Discrete(Camera& camera) {
-	camera.rotateRightDiscrete();
-}
-
-void Camera_PitchUp_Discrete(Camera& camera) {
-	camera.pitchUpDiscrete();
-}
-
-void Camera_PitchDown_Discrete(Camera& camera) {
-	camera.pitchDownDiscrete();
-}
-
 void Camera_motionDelta(int x, int y, unsigned int state, void* data) {
 	Camera* cam = reinterpret_cast<Camera*>(data);
 
@@ -262,11 +220,11 @@ gboolean wheelmove_scroll(GtkWidget* widget, GdkEventScroll* event, CamWnd* camw
 	// Determine the direction we are moving.
 	if (event->direction == GDK_SCROLL_UP) {
 		camwnd->getCamera().freemoveUpdateAxes();
-		camwnd->setCameraOrigin(camwnd->getCameraOrigin() + camwnd->getCamera().forward * static_cast<float>(g_camwindow_globals_private.m_nMoveSpeed));
+		camwnd->setCameraOrigin(camwnd->getCameraOrigin() + camwnd->getCamera().forward * static_cast<float>(getCameraSettings()->movementSpeed()));
 	}
 	else if (event->direction == GDK_SCROLL_DOWN) {
 		camwnd->getCamera().freemoveUpdateAxes();
-		camwnd->setCameraOrigin(camwnd->getCameraOrigin() + camwnd->getCamera().forward * (-static_cast<float>(g_camwindow_globals_private.m_nMoveSpeed)));
+		camwnd->setCameraOrigin(camwnd->getCameraOrigin() + camwnd->getCamera().forward * (-static_cast<float>(getCameraSettings()->movementSpeed())));
 	}
 
 	return FALSE;
@@ -426,17 +384,22 @@ void CamWnd::registerCommands() {
 	                       FreeMoveCameraMoveDownKeyUpCaller(getCamera())
 	                      );
 
-	GlobalCommands_insert("CameraForward", ReferenceCaller<Camera, Camera_MoveForward_Discrete>(getCamera()), Accelerator(GDK_Up));
-	GlobalCommands_insert("CameraBack", ReferenceCaller<Camera, Camera_MoveBack_Discrete>(getCamera()), Accelerator(GDK_Down));
-	GlobalCommands_insert("CameraLeft", ReferenceCaller<Camera, Camera_RotateLeft_Discrete>(getCamera()), Accelerator(GDK_Left));
-	GlobalCommands_insert("CameraRight", ReferenceCaller<Camera, Camera_RotateRight_Discrete>(getCamera()), Accelerator(GDK_Right));
-	GlobalCommands_insert("CameraStrafeRight", ReferenceCaller<Camera, Camera_MoveRight_Discrete>(getCamera()), Accelerator(GDK_period));
-	GlobalCommands_insert("CameraStrafeLeft", ReferenceCaller<Camera, Camera_MoveLeft_Discrete>(getCamera()), Accelerator(GDK_comma));
+	GlobalShortcuts_insert("CameraForward", Accelerator(GDK_Up));
+	GlobalShortcuts_insert("CameraBack", Accelerator(GDK_Down));
+	GlobalShortcuts_insert("CameraLeft", Accelerator(GDK_Left));
+	GlobalShortcuts_insert("CameraRight", Accelerator(GDK_Right));
+	GlobalShortcuts_insert("CameraStrafeRight", Accelerator(GDK_period));
+	GlobalShortcuts_insert("CameraStrafeLeft", Accelerator(GDK_comma));
 
-	GlobalCommands_insert("CameraUp", ReferenceCaller<Camera, Camera_MoveUp_Discrete>(getCamera()), Accelerator('D'));
-	GlobalCommands_insert("CameraDown", ReferenceCaller<Camera, Camera_MoveDown_Discrete>(getCamera()), Accelerator('C'));
-	GlobalCommands_insert("CameraAngleUp", ReferenceCaller<Camera, Camera_PitchUp_Discrete>(getCamera()), Accelerator('A'));
-	GlobalCommands_insert("CameraAngleDown", ReferenceCaller<Camera, Camera_PitchDown_Discrete>(getCamera()), Accelerator('Z'));
+	GlobalShortcuts_insert("CameraUp", Accelerator('D'));
+	GlobalShortcuts_insert("CameraDown", Accelerator('C'));
+	GlobalShortcuts_insert("CameraAngleUp", Accelerator('A'));
+	GlobalShortcuts_insert("CameraAngleDown", Accelerator('Z'));
+
+	GlobalShortcuts_insert("CameraFreeMoveForward", Accelerator(GDK_Up));
+	GlobalShortcuts_insert("CameraFreeMoveBack", Accelerator(GDK_Down));
+	GlobalShortcuts_insert("CameraFreeMoveLeft", Accelerator(GDK_Left));
+	GlobalShortcuts_insert("CameraFreeMoveRight", Accelerator(GDK_Right));
 }
 
 void CamWnd::changeFloor(const bool up) {
@@ -928,7 +891,7 @@ void CamWnd::toggleLightingMode() {
 }
 
 void CamWnd::cubicScaleOut() {
-	getCameraSettings()->setCubicScale( getCameraSettings()->getCubicScale() + 1 );
+	getCameraSettings()->setCubicScale( getCameraSettings()->cubicScale() + 1 );
 
 	getCamera().updateProjection();
 	update();
@@ -936,7 +899,7 @@ void CamWnd::cubicScaleOut() {
 }
 
 void CamWnd::cubicScaleIn() {
-	getCameraSettings()->setCubicScale( getCameraSettings()->getCubicScale() - 1 );
+	getCameraSettings()->setCubicScale( getCameraSettings()->cubicScale() - 1 );
 
 	getCamera().updateProjection();
 	update();

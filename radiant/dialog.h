@@ -156,8 +156,13 @@ public:
   GtkWidget* addCheckBox(GtkWidget* vbox, const char* name, const char* flag, const BoolImportCallback& importCallback, const BoolExportCallback& exportCallback);
   GtkWidget* addCheckBox(GtkWidget* vbox, const char* name, const char* flag, bool& data);
   
-  // Adds a checkbox and connects it to the given registry key
+  // greebo: Adds a checkbox and connects it to the given registry key
   GtkWidget* addCheckBox(GtkWidget* vbox, const std::string& name, const std::string& flag, const std::string& registryKey, RegistryKeyObserver* keyObserver);
+  
+  // greebo: Adds a slider and connects it to the registryKey
+  void addSlider(GtkWidget* vbox, const std::string& name, const std::string& registryKey, 
+				 RegistryKeyObserver* keyObserver, gboolean draw_value, double value, double lower, 
+				 double upper, double step_increment, double page_increment, double page_size);
   	
   void addCombo(GtkWidget* vbox, const char* name, StringArrayRange values, const IntImportCallback& importCallback, const IntExportCallback& exportCallback);
   void addCombo(GtkWidget* vbox, const char* name, int& data, StringArrayRange values);

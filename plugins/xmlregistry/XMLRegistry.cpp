@@ -291,6 +291,23 @@ public:
 		return tempFloat;
 	}
 	
+	/* Sets a registry key value to the given float. The floating point variable
+	 * is converted via boost libraries first. */
+	void setFloat(const std::string& key, const double& value) {
+		
+		// Try to convert the float into a string
+		std::string valueStr;
+		try {
+			valueStr = boost::lexical_cast<std::string>(value);
+		}
+		catch (boost::bad_lexical_cast e) {
+			valueStr = "0.0";
+		}
+		
+		// Pass the call to get() to do the rest
+		set(key, valueStr);
+	}
+	
 	/* Gets a key containing an integer from the registry, basically loads the string and
 	 * converts it into an int via boost libraries */
 	int getInt(const std::string& key) {

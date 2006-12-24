@@ -101,6 +101,7 @@ public:
 	// This toggles between lighting and solid rendering mode
 	void toggleLightingMode();
 	
+	// Increases/decreases the far clip plane distance
 	void cubicScaleIn();
 	void cubicScaleOut();
 
@@ -110,17 +111,5 @@ private:
 
 typedef MemberCaller<CamWnd, &CamWnd::queueDraw> CamWndQueueDraw;
 typedef MemberCaller<CamWnd, &CamWnd::update> CamWndUpdate;
-
-struct camwindow_globals_private_t {
-	int m_nMoveSpeed;
-	int m_nAngleSpeed;
-
-	camwindow_globals_private_t() :
-			m_nMoveSpeed(100),
-			m_nAngleSpeed(3) {}
-
-};
-
-extern camwindow_globals_private_t g_camwindow_globals_private;
 
 #endif /*CAMWND_H_*/

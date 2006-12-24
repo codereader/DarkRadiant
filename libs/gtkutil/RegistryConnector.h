@@ -11,21 +11,29 @@
 
 // Forward declarations to avoid including the whole GTK headers
 typedef struct _GtkToggleButton GtkToggleButton;
+typedef struct _GtkAdjustment GtkAdjustment;
 
 namespace gtkutil {
 
 	namespace {
 		typedef std::map<GtkToggleButton*, std::string> ToggleButtonMap;
+		typedef std::map<GtkAdjustment*, std::string> AdjustmentMap;
 	}
 
 class RegistryConnector {
 
-	// The association of ToggleButtons and Registry keys
+	// The association of ToggleButtons and registry keys
 	ToggleButtonMap _toggleButtons;
+
+	// This maps adjustments to registry keys 
+	AdjustmentMap _adjustments;	
 
 public:
 	// Connect a toggle button widget with the specified registryKey
 	void connectToggleButton(GtkToggleButton* toggleButton, const std::string& registryKey);
+	
+	// Connect a gtk_adjustment (for horizontal sliders) with the specified registryKey
+	void connectAdjustment(GtkAdjustment* adjustment, const std::string& registryKey);
 	
 	// Loads all the values from the registry into the connected GtkWidgets
 	void importValues();
@@ -37,6 +45,10 @@ private:
 	// Imports/Exports the values for the connected toggle buttons
 	void importToggleButtonValues();
 	void exportToggleButtonValues();
+	
+	// Imports/Exports the values for the connected gtk_adjustments
+	void importAdjustmentValues();
+	void exportAdjustmentValues();
 
 }; // class RegistryConnector
 

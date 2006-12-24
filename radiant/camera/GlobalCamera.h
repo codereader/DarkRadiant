@@ -55,6 +55,13 @@ public:
 	// Resets the camera angles of the currently active Camera
 	void resetCameraAngles();
 
+	// Toggles between lighting and solid rendering mode (passes the call to the CamWnd class)
+	void toggleLightingMode();
+	
+	// Increases/decreases the far clip plane distance (passes the call to CamWnd)
+	void cubicScaleIn();
+	void cubicScaleOut();
+
 	// Change the floor up/down, passes the call on to the CamWnd class
 	void changeFloorUp();
 	void changeFloorDown();
@@ -74,6 +81,18 @@ public:
 	
 	// Notify the attached "CameraMoved" callbacks
 	void movedNotify();
+	
+	// Movement commands (the calls are passed on to the Camera class)
+	void moveForwardDiscrete();
+	void moveBackDiscrete();
+	void moveUpDiscrete();
+	void moveDownDiscrete();
+	void moveLeftDiscrete();
+	void moveRightDiscrete();
+	void rotateLeftDiscrete();
+	void rotateRightDiscrete();
+	void pitchUpDiscrete();
+	void pitchDownDiscrete();
 	
 }; // class GlobalCameraManager
 
