@@ -124,6 +124,60 @@ void GlobalCameraManager::movedNotify() {
 	}
 }
 
+void GlobalCameraManager::toggleLightingMode() {
+	_camWnd->toggleLightingMode();
+}
+
+void GlobalCameraManager::cubicScaleIn() {
+	_camWnd->cubicScaleIn();
+}
+
+void GlobalCameraManager::cubicScaleOut() {
+	_camWnd->cubicScaleOut();
+}
+
+// --------------- Keyboard movement methods ------------------------------------------
+
+void GlobalCameraManager::moveForwardDiscrete() {
+	_camWnd->getCamera().moveForwardDiscrete();
+}
+
+void GlobalCameraManager::moveBackDiscrete() {
+	_camWnd->getCamera().moveBackDiscrete();
+}
+
+void GlobalCameraManager::moveUpDiscrete() {
+	_camWnd->getCamera().moveUpDiscrete();
+}
+
+void GlobalCameraManager::moveDownDiscrete() {
+	_camWnd->getCamera().moveDownDiscrete();
+}
+
+void GlobalCameraManager::moveLeftDiscrete() {
+	_camWnd->getCamera().moveLeftDiscrete();
+}
+
+void GlobalCameraManager::moveRightDiscrete() {
+	_camWnd->getCamera().moveRightDiscrete();
+}
+
+void GlobalCameraManager::rotateLeftDiscrete() {
+	_camWnd->getCamera().rotateLeftDiscrete();
+}
+
+void GlobalCameraManager::rotateRightDiscrete() {
+	_camWnd->getCamera().rotateRightDiscrete();
+}
+
+void GlobalCameraManager::pitchUpDiscrete() {
+	_camWnd->getCamera().pitchUpDiscrete();
+}
+
+void GlobalCameraManager::pitchDownDiscrete() {
+	_camWnd->getCamera().pitchDownDiscrete();
+}
+
 // ------------------------------------------------------------------------------------
 
 // The accessor function to the GlobalCameraManager instance 

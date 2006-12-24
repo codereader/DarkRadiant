@@ -89,10 +89,10 @@ public:
 	void updateModelview();
 	void updateProjection();
 
-	float getFarClipPlane();
+	float getFarClipPlane() const;
 
 	// Returns true if cubic clipping is "on"
-	bool farClipEnabled();
+	bool farClipEnabled() const;
 
 	void freemoveUpdateAxes();
 	void moveUpdateAxes();
@@ -117,7 +117,6 @@ public:
 	void moveUpDiscrete();
 	void moveBackDiscrete();
 	void moveForwardDiscrete();
-	typedef MemberCaller<Camera, &Camera::moveForwardDiscrete> MoveForwardDiscreteCaller;
 
 }; // class Camera
 

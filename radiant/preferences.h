@@ -61,6 +61,13 @@ public:
 		return m_dialog.addCheckBox(m_vbox, name, flag, registryKey, keyObserver);
 	}
 
+	/* greebo: This adds a horizontal slider to the given vBox and connects 
+	 * it to the given registryKey. */
+	void appendSlider(const std::string& name, const std::string& registryKey, RegistryKeyObserver* keyObserver, gboolean draw_value, 
+					  double value, double lower, double upper, double step_increment, double page_increment, double page_size) 
+	{
+		m_dialog.addSlider(m_vbox, name, registryKey, keyObserver, draw_value, value, lower, upper, step_increment, page_increment, page_size);
+	}
   
   void appendCombo(const char* name, StringArrayRange values, const IntImportCallback& importCallback, const IntExportCallback& exportCallback)
   {

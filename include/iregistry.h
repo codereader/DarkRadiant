@@ -29,6 +29,7 @@ public:
 	
 	// Loads a floating point value from the specified <key>, returns 0.0f if conversion failed
 	virtual float getFloat(const std::string& key) = 0;
+	virtual void setFloat(const std::string& key, const double& value) = 0;
 	
 	// Loads an integer value from the specified <key>, returns 0 if conversion failed
 	virtual int getInt(const std::string& key) = 0;

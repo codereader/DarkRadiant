@@ -19,18 +19,21 @@ Camera::Camera(View* view, const Callback& update)
 	m_update(update) {}
 
 void Camera::keyControl(float dtime) {
+	int angleSpeed = getCameraSettings()->angleSpeed();
+	int movementSpeed = getCameraSettings()->movementSpeed();
+	
 	// Update angles
 	if (movementflags & MOVE_ROTLEFT)
-		angles[CAMERA_YAW] += 15 * dtime* g_camwindow_globals_private.m_nAngleSpeed;
+		angles[CAMERA_YAW] += 15 * dtime* angleSpeed;
 	if (movementflags & MOVE_ROTRIGHT)
-		angles[CAMERA_YAW] -= 15 * dtime * g_camwindow_globals_private.m_nAngleSpeed;
+		angles[CAMERA_YAW] -= 15 * dtime * angleSpeed;
 	if (movementflags & MOVE_PITCHUP) {
-		angles[CAMERA_PITCH] += 15 * dtime* g_camwindow_globals_private.m_nAngleSpeed;
+		angles[CAMERA_PITCH] += 15 * dtime* angleSpeed;
 		if (angles[CAMERA_PITCH] > 90)
 			angles[CAMERA_PITCH] = 90;
 	}
 	if (movementflags & MOVE_PITCHDOWN) {
-		angles[CAMERA_PITCH] -= 15 * dtime * g_camwindow_globals_private.m_nAngleSpeed;
+		angles[CAMERA_PITCH] -= 15 * dtime * angleSpeed;
 		if (angles[CAMERA_PITCH] < -90)
 			angles[CAMERA_PITCH] = -90;
 	}
@@ -40,17 +43,17 @@ void Camera::keyControl(float dtime) {
 
 	// Update position
 	if (movementflags & MOVE_FORWARD)
-		origin += forward * (dtime * g_camwindow_globals_private.m_nMoveSpeed);
+		origin += forward * (dtime * movementSpeed);
 	if (movementflags & MOVE_BACK)
-		origin += forward * (-dtime * g_camwindow_globals_private.m_nMoveSpeed);
+		origin += forward * (-dtime * movementSpeed);
 	if (movementflags & MOVE_STRAFELEFT)
-		origin += right * (-dtime * g_camwindow_globals_private.m_nMoveSpeed);
+		origin += right * (-dtime * movementSpeed);
 	if (movementflags & MOVE_STRAFERIGHT)
-		origin += right * (dtime * g_camwindow_globals_private.m_nMoveSpeed);
+		origin += right * (dtime * movementSpeed);
 	if (movementflags & MOVE_UP)
-		origin += g_vector3_axis_z * (dtime * g_camwindow_globals_private.m_nMoveSpeed);
+		origin += g_vector3_axis_z * (dtime * movementSpeed);
 	if (movementflags & MOVE_DOWN)
-		origin += g_vector3_axis_z * (-dtime * g_camwindow_globals_private.m_nMoveSpeed);
+		origin += g_vector3_axis_z * (-dtime * movementSpeed);
 
 	updateModelview();
 }
@@ -128,6 +131,8 @@ void Camera::mouseMove(int x, int y) {
 }
 
 void Camera::freeMove(int dx, int dy) {
+	int angleSpeed = getCameraSettings()->angleSpeed();
+	
 	// free strafe mode, toggled by the keyboard modifiers
 	if (m_strafe) {
 		const float strafespeed = GlobalEventMapper().getCameraStrafeSpeed();
@@ -145,9 +150,9 @@ void Camera::freeMove(int dx, int dy) {
 
 		const float zAxisFactor = getCameraSettings()->invertMouseVerticalAxis() ? -1.0f : 1.0f;
 
-		angles[CAMERA_PITCH] += dy * dtime * g_camwindow_globals_private.m_nAngleSpeed * zAxisFactor;
+		angles[CAMERA_PITCH] += dy * dtime * angleSpeed * zAxisFactor;
 
-		angles[CAMERA_YAW] += dx * dtime * g_camwindow_globals_private.m_nAngleSpeed;
+		angles[CAMERA_YAW] += dx * dtime * angleSpeed;
 
 		if (angles[CAMERA_PITCH] > 90)
 			angles[CAMERA_PITCH] = 90;
@@ -165,6 +170,8 @@ void Camera::freeMove(int dx, int dy) {
 }
 
 void Camera::mouseControl(int x, int y) {
+	int movementSpeed = getCameraSettings()->movementSpeed();
+	
 	int   xl, xh;
 	int yl, yh;
 	float xf, yf;
@@ -188,8 +195,8 @@ void Camera::mouseControl(int x, int y) {
 			xf = 0;
 	}
 
-	origin += forward * (yf * 0.1f* g_camwindow_globals_private.m_nMoveSpeed);
-	angles[CAMERA_YAW] += xf * -0.1f * g_camwindow_globals_private.m_nAngleSpeed;
+	origin += forward * (yf * 0.1f* movementSpeed);
+	angles[CAMERA_YAW] += xf * -0.1f * movementSpeed;
 
 	updateModelview();
 }
@@ -227,13 +234,12 @@ void Camera::moveUpdateAxes() {
 	right[1] = -forward[0];
 }
 
-bool Camera::farClipEnabled() {
-	return (GlobalRegistry().get("user/ui/camera/enableCubicClipping")=="1");
+bool Camera::farClipEnabled() const {
+	return getCameraSettings()->farClipEnabled();
 }
 
-float Camera::getFarClipPlane() {
-	//return (farClipEnabled()) ? pow(2.0, (g_camwindow_globals.m_nCubicScale + 7) / 2.0) : 32768.0f;
-	return (farClipEnabled()) ? pow(2.0, (getCameraSettings()->getCubicScale() + 7) / 2.0) : 32768.0f;
+float Camera::getFarClipPlane() const {
+	return (farClipEnabled()) ? pow(2.0, (getCameraSettings()->cubicScale() + 7) / 2.0) : 32768.0f;
 }
 
 void Camera::updateProjection() {

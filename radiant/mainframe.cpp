@@ -3015,7 +3015,7 @@ int getRotateIncrement()
 }
 
 int getFarClipDistance() {
-	return getCameraSettings()->getCubicScale();
+	return getCameraSettings()->cubicScale();
 }
 
 float (*GridStatus_getGridSize)() = GetGridSize;

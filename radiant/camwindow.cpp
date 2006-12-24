@@ -70,28 +70,6 @@ void fill_view_camera_menu(GtkMenu* menu) {
 	create_check_menu_item_with_mnemonic(menu, "Camera View", "ToggleCamera");
 }
 
-void CubicClippingExport(const BoolImportCallback& importCallback) {
-	importCallback(GlobalCamera().getCamWnd()->getCamera().farClipEnabled());
-}
-
-FreeCaller1<const BoolImportCallback&, CubicClippingExport> cubicClippingCaller;
-BoolExportCallback cubicClippingButtonCallBack(cubicClippingCaller);
-ToggleItem g_getfarclip_item(cubicClippingButtonCallBack);
-
-void Camera_SetFarClip(bool value) {
-	CamWnd& camwnd = *GlobalCamera().getCamWnd();
-  
-	GlobalRegistry().set("user/ui/camera/enableCubicClipping", value ? "1" : "0");
-  
-	g_getfarclip_item.update();
-	camwnd.getCamera().updateProjection();
-	camwnd.update();
-}
-
-void Camera_ToggleFarClip() {
-	Camera_SetFarClip(!GlobalCamera().getCamWnd()->getCamera().farClipEnabled());
-}
-
 void CamWnd_registerShortcuts()
 {
   toggle_add_accelerator("ToggleCubicClip");
@@ -144,17 +122,17 @@ void RenderModeExport(const IntImportCallback& importer)
 
 typedef FreeCaller1<const IntImportCallback&, RenderModeExport> RenderModeExportCaller;
 
-void Camera_constructPreferences(PreferencesPage& page)
-{
-  page.appendSlider("Movement Speed", g_camwindow_globals_private.m_nMoveSpeed, TRUE, 0, 0, 100, 50, 300, 1, 10, 10);
-  page.appendSlider("Rotation Speed", g_camwindow_globals_private.m_nAngleSpeed, TRUE, 0, 0, 3, 1, 180, 1, 10, 10);
+void Camera_constructPreferences(PreferencesPage& page) {
+	// Add the sliders for the movement and angle speed and connect them to the observer   
+    page.appendSlider("Movement Speed (game units)", RKEY_MOVEMENT_SPEED, getCameraSettings(), TRUE, 100, 50, 300, 1, 10, 10);
+    page.appendSlider("Rotation Speed", RKEY_ROTATION_SPEED, getCameraSettings(), TRUE, 3, 1, 180, 1, 10, 10);
     
 	// Add the checkboxes and connect them with the registry key and the according observer 
-	page.appendCheckBox("", "Discrete movement (non-freelook mode)", "user/ui/camera/discreteMovement", getCameraSettings());
-	page.appendCheckBox("", "Enable far-clip plane (hides distant objects)", "user/ui/camera/enableCubicClipping", getCameraSettings());
+	page.appendCheckBox("", "Discrete movement (non-freelook mode)", RKEY_DISCRETE_MOVEMENT, getCameraSettings());
+	page.appendCheckBox("", "Enable far-clip plane (hides distant objects)", RKEY_ENABLE_FARCLIP, getCameraSettings());
 	
 	// Add the "inverse mouse vertical axis in free-look mode" preference
-	page.appendCheckBox("", "Invert mouse vertical axis (freelook mode)", "user/ui/camera/invertMouseVerticalAxis", getCameraSettings());
+	page.appendCheckBox("", "Invert mouse vertical axis (freelook mode)", RKEY_INVERT_MOUSE_VERTICAL_AXIS, getCameraSettings());
 
   if(g_pGameDescription->mGameType == "doom3")
   {
@@ -198,10 +176,11 @@ void Camera_registerPreferencesPage()
 void CamWnd_Construct() {
 	GlobalCommands_insert("CenterView", MemberCaller<GlobalCameraManager, &GlobalCameraManager::resetCameraAngles>(GlobalCamera()), Accelerator(GDK_End));
 
-	GlobalToggles_insert("ToggleCubicClip", FreeCaller<Camera_ToggleFarClip>(), ToggleItem::AddCallbackCaller(g_getfarclip_item), Accelerator('\\', (GdkModifierType)GDK_CONTROL_MASK));
+	GlobalToggles_insert("ToggleCubicClip", MemberCaller<CameraSettings, &CameraSettings::toggleFarClip>(*getCameraSettings()), 
+						 ToggleItem::AddCallbackCaller(getCameraSettings()->farClipItem()), Accelerator('\\', (GdkModifierType)GDK_CONTROL_MASK));
 
-	GlobalCommands_insert("CubicClipZoomIn", MemberCaller<CamWnd, &CamWnd::cubicScaleIn>(*GlobalCamera().getCamWnd()), Accelerator('[', (GdkModifierType)GDK_CONTROL_MASK));
-	GlobalCommands_insert("CubicClipZoomOut", MemberCaller<CamWnd, &CamWnd::cubicScaleOut>(*GlobalCamera().getCamWnd()), Accelerator(']', (GdkModifierType)GDK_CONTROL_MASK));
+	GlobalCommands_insert("CubicClipZoomIn", MemberCaller<GlobalCameraManager, &GlobalCameraManager::cubicScaleIn>(GlobalCamera()), Accelerator('[', (GdkModifierType)GDK_CONTROL_MASK));
+	GlobalCommands_insert("CubicClipZoomOut", MemberCaller<GlobalCameraManager, &GlobalCameraManager::cubicScaleOut>(GlobalCamera()), Accelerator(']', (GdkModifierType)GDK_CONTROL_MASK));
 
 	GlobalCommands_insert("UpFloor", MemberCaller<GlobalCameraManager, &GlobalCameraManager::changeFloorUp>(GlobalCamera()), Accelerator(GDK_Prior));
 	GlobalCommands_insert("DownFloor", MemberCaller<GlobalCameraManager, &GlobalCameraManager::changeFloorDown>(GlobalCamera()), Accelerator(GDK_Prior));
@@ -212,28 +191,22 @@ void CamWnd_Construct() {
 	GlobalCommands_insert("LookThroughCamera", MemberCaller<GlobalCameraManager, &GlobalCameraManager::lookThroughCamera>(GlobalCamera()));
 
 	if (g_pGameDescription->mGameType == "doom3") {
-		GlobalCommands_insert("TogglePreview", MemberCaller<CamWnd, &CamWnd::toggleLightingMode>(*GlobalCamera().getCamWnd()), Accelerator(GDK_F3));
+		GlobalCommands_insert("TogglePreview", MemberCaller<GlobalCameraManager, &GlobalCameraManager::toggleLightingMode>(GlobalCamera()), Accelerator(GDK_F3));
 	}
+	
+	// Insert movement commands
+	GlobalCommands_insert("CameraForward", MemberCaller<GlobalCameraManager, &GlobalCameraManager::moveForwardDiscrete>(GlobalCamera()), Accelerator(GDK_Up));
+	GlobalCommands_insert("CameraBack", MemberCaller<GlobalCameraManager, &GlobalCameraManager::moveBackDiscrete>(GlobalCamera()), Accelerator(GDK_Down));
+	GlobalCommands_insert("CameraLeft", MemberCaller<GlobalCameraManager, &GlobalCameraManager::rotateLeftDiscrete>(GlobalCamera()), Accelerator(GDK_Left));
+	GlobalCommands_insert("CameraRight", MemberCaller<GlobalCameraManager, &GlobalCameraManager::rotateRightDiscrete>(GlobalCamera()), Accelerator(GDK_Right));
+	GlobalCommands_insert("CameraStrafeRight", MemberCaller<GlobalCameraManager, &GlobalCameraManager::moveRightDiscrete>(GlobalCamera()), Accelerator(GDK_period));
+	GlobalCommands_insert("CameraStrafeLeft", MemberCaller<GlobalCameraManager, &GlobalCameraManager::moveLeftDiscrete>(GlobalCamera()), Accelerator(GDK_comma));
 
-	GlobalShortcuts_insert("CameraForward", Accelerator(GDK_Up));
-	GlobalShortcuts_insert("CameraBack", Accelerator(GDK_Down));
-	GlobalShortcuts_insert("CameraLeft", Accelerator(GDK_Left));
-	GlobalShortcuts_insert("CameraRight", Accelerator(GDK_Right));
-	GlobalShortcuts_insert("CameraStrafeRight", Accelerator(GDK_period));
-	GlobalShortcuts_insert("CameraStrafeLeft", Accelerator(GDK_comma));
+	GlobalCommands_insert("CameraUp", MemberCaller<GlobalCameraManager, &GlobalCameraManager::moveUpDiscrete>(GlobalCamera()), Accelerator('D'));
+	GlobalCommands_insert("CameraDown", MemberCaller<GlobalCameraManager, &GlobalCameraManager::moveDownDiscrete>(GlobalCamera()), Accelerator('C'));
+	GlobalCommands_insert("CameraAngleUp", MemberCaller<GlobalCameraManager, &GlobalCameraManager::pitchUpDiscrete>(GlobalCamera()), Accelerator('A'));
+	GlobalCommands_insert("CameraAngleDown", MemberCaller<GlobalCameraManager, &GlobalCameraManager::pitchDownDiscrete>(GlobalCamera()), Accelerator('Z'));
 
-	GlobalShortcuts_insert("CameraUp", Accelerator('D'));
-	GlobalShortcuts_insert("CameraDown", Accelerator('C'));
-	GlobalShortcuts_insert("CameraAngleUp", Accelerator('A'));
-	GlobalShortcuts_insert("CameraAngleDown", Accelerator('Z'));
-
-	GlobalShortcuts_insert("CameraFreeMoveForward", Accelerator(GDK_Up));
-	GlobalShortcuts_insert("CameraFreeMoveBack", Accelerator(GDK_Down));
-	GlobalShortcuts_insert("CameraFreeMoveLeft", Accelerator(GDK_Left));
-	GlobalShortcuts_insert("CameraFreeMoveRight", Accelerator(GDK_Right));
-
-	GlobalPreferenceSystem().registerPreference("MoveSpeed", IntImportStringCaller(g_camwindow_globals_private.m_nMoveSpeed), IntExportStringCaller(g_camwindow_globals_private.m_nMoveSpeed));
-	GlobalPreferenceSystem().registerPreference("AngleSpeed", IntImportStringCaller(g_camwindow_globals_private.m_nAngleSpeed), IntExportStringCaller(g_camwindow_globals_private.m_nAngleSpeed));
 	GlobalPreferenceSystem().registerPreference("CameraRenderMode", makeIntStringImportCallback(RenderModeImportCaller()), makeIntStringExportCallback(RenderModeExportCaller()));
 
 	CamWnd::captureStates();
