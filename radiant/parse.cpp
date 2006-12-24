@@ -35,7 +35,6 @@ public:
 
   ScriptLibraryAPI()
   {
-    m_scriptlibrary.m_pfnNewScriptTokeniser = &NewScriptTokeniser;
     m_scriptlibrary.m_pfnNewSimpleTokeniser = &NewSimpleTokeniser;
   }
   _QERScripLibTable* getTable()

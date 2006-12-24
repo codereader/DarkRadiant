@@ -370,11 +370,6 @@ public:
 };
 
 
-inline Tokeniser& NewScriptTokeniser(TextInputStream& istream)
-{
-  return *(new ScriptTokeniser(istream, true));
-}
-
 inline Tokeniser& NewSimpleTokeniser(TextInputStream& istream)
 {
   return *(new ScriptTokeniser(istream, false));
