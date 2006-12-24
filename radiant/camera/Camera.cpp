@@ -4,8 +4,8 @@
 #include "GlobalCamera.h"
 #include "CameraSettings.h"
 
-Camera::Camera(View* view, const Callback& update)
-	: width(0),
+Camera::Camera(View* view, const Callback& update) : 
+	width(0),
 	height(0),
 	timing(false),
 	origin(0, 0, 0),
@@ -16,7 +16,8 @@ Camera::Camera(View* view, const Callback& update)
 	fieldOfView(75.0f),
 	m_mouseMove(motionDelta, this),
 	m_view(view),
-	m_update(update) {}
+	m_update(update)
+{}
 
 void Camera::keyControl(float dtime) {
 	int angleSpeed = getCameraSettings()->angleSpeed();
@@ -317,9 +318,3 @@ void Camera::rotateRightDiscrete() {
 	angles[CAMERA_YAW] -= SPEED_TURN;
 	setAngles(angles);
 }
-
-void Camera::setDrawMode(CameraDrawMode mode) {
-	draw_mode = mode;
-}
-
-CameraDrawMode Camera::draw_mode = cd_texture;

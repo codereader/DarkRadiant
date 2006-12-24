@@ -3,78 +3,71 @@
 #include "iregistry.h"
 #include <iostream>
 #include "gtk/gtktogglebutton.h"
-#include <boost/lexical_cast.hpp>
+#include "gtk/gtkcombobox.h"
 
 namespace gtkutil {
 
-void RegistryConnector::connectToggleButton(GtkToggleButton* toggleButton, const std::string& registryKey) {
-	_toggleButtons[toggleButton] = registryKey;
+// Connects the given GtkObject to the passed registryKey
+void RegistryConnector::connectGtkObject(GtkObject* object, const std::string& registryKey) {
 	
-	// Initialise the value of the button
-	gtk_toggle_button_set_active(toggleButton, GlobalRegistry().get(registryKey)=="1");
-}
-
-void RegistryConnector::connectAdjustment(GtkAdjustment* adjustment, const std::string& registryKey) {
-	_adjustments[adjustment] = registryKey;
+	// Add the GtkObject to the internal list
+	_objectKeyMap[object] = registryKey;
 	
-	// Initialise the adjustment value
-	gtk_adjustment_set_value(adjustment, GlobalRegistry().getFloat(registryKey));
+	// Initialise the value of the GtkObject by importing it from the registry
+	importKey(object, registryKey);
 }
 
-void RegistryConnector::importAdjustmentValues() {
-	for (AdjustmentMap::iterator i = _adjustments.begin(); i != _adjustments.end(); i++) {
-		GtkAdjustment* adjustment = i->first;
-		const std::string registryKey = i->second;
-		
-		// Set the value of the adjustment according to the registry value
-		gtk_adjustment_set_value(adjustment, GlobalRegistry().getFloat(registryKey));
-	}
-}
-
-void RegistryConnector::exportAdjustmentValues() {
-	for (AdjustmentMap::iterator i = _adjustments.begin(); i != _adjustments.end(); i++) {
-		GtkAdjustment* adjustment = i->first;
-		const std::string registryKey = i->second;
-		
-		// Retrieve the current value of the adjustment
-		double adjustmentValue = gtk_adjustment_get_value(adjustment);
-		
-		// Store the new value into the registry
-		GlobalRegistry().setFloat(registryKey, adjustmentValue);
-	}
-}
-
-void RegistryConnector::importToggleButtonValues() {
-	for (ToggleButtonMap::iterator i = _toggleButtons.begin(); i != _toggleButtons.end(); i++) {
-		GtkToggleButton* toggleButton = i->first;
-		const std::string registryKey = i->second;
-		
+void RegistryConnector::importKey(GtkObject* obj, const std::string& registryKey) {
+	
+	if (GTK_IS_TOGGLE_BUTTON(obj)) {
 		// Set the "active" state of the toggle button according to the registry value
-		gtk_toggle_button_set_active(toggleButton, GlobalRegistry().get(registryKey)=="1");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(obj), GlobalRegistry().get(registryKey)=="1");
+	}
+	else if (GTK_IS_ADJUSTMENT(obj)) {
+		// Set the value of the adjustment according to the registry value
+		gtk_adjustment_set_value(GTK_ADJUSTMENT(obj), GlobalRegistry().getFloat(registryKey));
+	}
+	else if (GTK_IS_COMBO_BOX(obj)) {
+		// Set the "active" state of the combo box according to the registry value
+		gtk_combo_box_set_active(GTK_COMBO_BOX(obj), GlobalRegistry().getInt(registryKey));
+	}
+	else {
+		std::cout << "RegistryConnector::importKey failed to identify GTKObject\n";
 	}
 }
 
-void RegistryConnector::exportToggleButtonValues() {
-	for (ToggleButtonMap::iterator i = _toggleButtons.begin(); i != _toggleButtons.end(); i++) {
-		GtkToggleButton* toggleButton = i->first;
-		const std::string registryKey = i->second;
-		
-		// Retrieve the current state of the toggle button
-		const std::string valueStr = gtk_toggle_button_get_active(toggleButton) ? "1" : "0";
-		
+// Retrieve the value from the GtkObject and save it into the registry
+void RegistryConnector::exportKey(GtkObject* obj, const std::string& registryKey) {
+	
+	if (GTK_IS_TOGGLE_BUTTON(obj)) {
+		// Set the registry key to "1" or "0", according on the toggle button state
+		GlobalRegistry().set(registryKey, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(obj)) ? "1" : "0");
+	}
+	else if (GTK_IS_ADJUSTMENT(obj)) {
 		// Store the new value into the registry
-		GlobalRegistry().set(registryKey, valueStr);
+		GlobalRegistry().setFloat(registryKey, gtk_adjustment_get_value(GTK_ADJUSTMENT(obj)));
+	}
+	else if (GTK_IS_COMBO_BOX(obj)) {
+		// Store the value into the registry
+		GlobalRegistry().setInt(registryKey, gtk_combo_box_get_active(GTK_COMBO_BOX(obj)));
+	}
+	else {
+		std::cout << "RegistryConnector::exportKey failed to identify GTKObject\n";
 	}
 }
 
 void RegistryConnector::importValues() {
-	importToggleButtonValues();
-	importAdjustmentValues();
+	for (ObjectKeyMap::iterator i = _objectKeyMap.begin(); i != _objectKeyMap.end(); i++) {
+		// Call the importer method with the GtkObject and the registryKey
+		importKey(i->first, i->second);
+	}
 }
 
 void RegistryConnector::exportValues() {
-	exportToggleButtonValues();
-	exportAdjustmentValues();
+	for (ObjectKeyMap::iterator i = _objectKeyMap.begin(); i != _objectKeyMap.end(); i++) {
+		// Call the export method that takes care of the specific GtkObject type
+		exportKey(i->first, i->second);
+	}
 }
 
 } // namespace xml

@@ -57,16 +57,23 @@ public:
   
 	/* greebo: This adds a checkbox and connects it to an XMLRegistry key.
 	 * @returns: the pointer to the created GtkWidget */
-	GtkWidget* appendCheckBox(const std::string& name, const std::string& flag, const std::string& registryKey, RegistryKeyObserver* keyObserver) {
-		return m_dialog.addCheckBox(m_vbox, name, flag, registryKey, keyObserver);
+	GtkWidget* appendCheckBox(const std::string& name, const std::string& flag, const std::string& registryKey) {
+		return m_dialog.addCheckBox(m_vbox, name, flag, registryKey);
 	}
 
-	/* greebo: This adds a horizontal slider to the given vBox and connects 
+	/* greebo: This adds a horizontal slider to the internally referenced VBox and connects 
 	 * it to the given registryKey. */
-	void appendSlider(const std::string& name, const std::string& registryKey, RegistryKeyObserver* keyObserver, gboolean draw_value, 
+	void appendSlider(const std::string& name, const std::string& registryKey, gboolean draw_value, 
 					  double value, double lower, double upper, double step_increment, double page_increment, double page_size) 
 	{
-		m_dialog.addSlider(m_vbox, name, registryKey, keyObserver, draw_value, value, lower, upper, step_increment, page_increment, page_size);
+		m_dialog.addSlider(m_vbox, name, registryKey, draw_value, value, lower, upper, step_increment, page_increment, page_size);
+	}
+	
+	/* greebo: Use this to add a dropdown selection box with the given list of strings as captions. The value
+	 * stored in the registryKey is used to determine the currently selected combobox item */
+	void appendCombo(const std::string& name, const std::string& registryKey, const ComboBoxValueList& valueList) 
+	{
+		m_dialog.addCombo(m_vbox, name, registryKey, valueList);
 	}
   
   void appendCombo(const char* name, StringArrayRange values, const IntImportCallback& importCallback, const IntExportCallback& exportCallback)

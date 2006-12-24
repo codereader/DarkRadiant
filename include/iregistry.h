@@ -27,12 +27,13 @@ public:
 	virtual void 		set(const std::string& key, const std::string& value) = 0;
 	virtual std::string	get(const std::string& key) = 0;
 	
-	// Loads a floating point value from the specified <key>, returns 0.0f if conversion failed
+	// Loads/saves a floating point value from/to the specified <key>, getFloat returns 0.0f if conversion failed
 	virtual float getFloat(const std::string& key) = 0;
 	virtual void setFloat(const std::string& key, const double& value) = 0;
 	
-	// Loads an integer value from the specified <key>, returns 0 if conversion failed
+	// Loads/saves an integer value from/to the specified <key>, getInt returns 0 if conversion failed
 	virtual int getInt(const std::string& key) = 0;
+	virtual void setInt(const std::string& key, const int& value) = 0;
 	
 	// Checks whether a key exists in the registry
 	virtual bool keyExists(const std::string& key) = 0;

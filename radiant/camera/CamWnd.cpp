@@ -271,6 +271,8 @@ CamWnd::CamWnd() :
 	m_view(true),
 	m_Camera(&m_view, CamWndQueueDraw(*this)),
 	m_cameraview(m_Camera, &m_view, CamWndUpdate(*this)),
+	m_drawing(false),
+	m_bFreeMove(false),
 	m_gl_widget(glwidget_new(TRUE)),
 	m_window_observer(NewWindowObserver()),
 	m_XORRectangle(m_gl_widget),
@@ -279,9 +281,7 @@ CamWnd::CamWnd() :
 	m_selection_button_press_handler(0),
 	m_selection_button_release_handler(0),
 	m_selection_motion_handler(0),
-	m_freelook_button_press_handler(0),
-	m_drawing(false),
-	m_bFreeMove(false) 
+	m_freelook_button_press_handler(0)
 {
 	GlobalWindowObservers_add(m_window_observer);
 	GlobalWindowObservers_connectWidget(m_gl_widget);
@@ -476,7 +476,7 @@ void CamWnd::Cam_Draw() {
 
 	Vector3 clearColour(0, 0, 0);
 
-	if (m_Camera.draw_mode != cd_lighting) {
+	if (getCameraSettings()->getMode() != drawLighting) {
 		clearColour = ColourSchemes().getColourVector3("camera_background");
 	}
 
@@ -528,12 +528,12 @@ void CamWnd::Cam_Draw() {
 
 	unsigned int globalstate = RENDER_DEPTHTEST|RENDER_COLOURWRITE|RENDER_DEPTHWRITE|RENDER_ALPHATEST|RENDER_BLEND|RENDER_CULLFACE|RENDER_COLOURARRAY|RENDER_OFFSETLINE|RENDER_POLYGONSMOOTH|RENDER_LINESMOOTH|RENDER_FOG|RENDER_COLOURCHANGE;
 
-	switch (m_Camera.draw_mode) {
+	switch (getCameraSettings()->getMode()) {
 
-		case cd_wire:
+		case drawWire:
 			break;
 
-		case cd_solid:
+		case drawSolid:
 			globalstate |= RENDER_FILL
 			               | RENDER_LIGHTING
 			               | RENDER_SMOOTH
@@ -541,7 +541,7 @@ void CamWnd::Cam_Draw() {
 
 			break;
 
-		case cd_texture:
+		case drawTexture:
 			globalstate |= RENDER_FILL
 			               | RENDER_LIGHTING
 			               | RENDER_TEXTURE
@@ -550,7 +550,7 @@ void CamWnd::Cam_Draw() {
 
 			break;
 
-		case cd_lighting:
+		case drawLighting:
 			globalstate |= RENDER_FILL
 			               | RENDER_LIGHTING
 			               | RENDER_TEXTURE
@@ -842,19 +842,6 @@ void CamWnd::queueDraw() {
 	m_deferredDraw.draw();
 }
 
-void CamWnd::setMode(CameraDrawMode mode) {
-	ShaderCache_setBumpEnabled(mode == cd_lighting);
-	Camera::setDrawMode(mode);
-
-	if (GlobalCamera().getCamWnd() != 0) {
-		GlobalCamera().getCamWnd()->update();
-	}
-}
-
-CameraDrawMode CamWnd::getMode() {
-	return Camera::draw_mode;
-}
-
 CameraView* CamWnd::getCameraView() {
 	return &m_cameraview;
 }
@@ -885,12 +872,6 @@ Vector3 CamWnd::getCameraAngles() const {
 
 void CamWnd::setCameraAngles(const Vector3& angles) {
 	m_Camera.setAngles(angles);
-}
-
-void CamWnd::toggleLightingMode() {
-	// switch between textured and lighting mode
-	setMode((getMode() == cd_lighting) ? cd_texture : cd_lighting);
-	update();
 }
 
 void CamWnd::cubicScaleOut() {
