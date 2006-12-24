@@ -64,12 +64,6 @@ void selection_motion(gdouble x, gdouble y, guint state, void* data) {
 	reinterpret_cast<WindowObserver*>(data)->onMouseMotion(WindowVector(x, y), state);
 }
 
-void camwnd_update_xor_rectangle(CamWnd& self, Rectangle area) {
-	if (GTK_WIDGET_VISIBLE(self.m_gl_widget)) {
-		self.m_XORRectangle.set(rectangle_from_area(area.min, area.max, self.getCamera().width, self.getCamera().height));
-	}
-}
-
 gboolean camera_size_allocate(GtkWidget* widget, GtkAllocation* allocation, CamWnd* camwnd) {
 	camwnd->getCamera().width = allocation->width;
 	camwnd->getCamera().height = allocation->height;
@@ -274,25 +268,25 @@ gboolean disable_freelook_button_press(GtkWidget* widget, GdkEventButton* event,
 // ---------- CamWnd Implementation --------------------------------------------------
 
 CamWnd::CamWnd() :
-		m_view(true),
-		m_Camera(&m_view, CamWndQueueDraw(*this)),
-		m_cameraview(m_Camera, &m_view, CamWndUpdate(*this)),
-		m_gl_widget(glwidget_new(TRUE)),
-		m_window_observer(NewWindowObserver()),
-		m_XORRectangle(m_gl_widget),
-		m_deferredDraw(WidgetQueueDrawCaller(*m_gl_widget)),
-		m_deferred_motion(selection_motion, m_window_observer),
-		m_selection_button_press_handler(0),
-		m_selection_button_release_handler(0),
-		m_selection_motion_handler(0),
-		m_freelook_button_press_handler(0),
-		m_drawing(false) {
-	m_bFreeMove = false;
-
+	m_view(true),
+	m_Camera(&m_view, CamWndQueueDraw(*this)),
+	m_cameraview(m_Camera, &m_view, CamWndUpdate(*this)),
+	m_gl_widget(glwidget_new(TRUE)),
+	m_window_observer(NewWindowObserver()),
+	m_XORRectangle(m_gl_widget),
+	m_deferredDraw(WidgetQueueDrawCaller(*m_gl_widget)),
+	m_deferred_motion(selection_motion, m_window_observer),
+	m_selection_button_press_handler(0),
+	m_selection_button_release_handler(0),
+	m_selection_motion_handler(0),
+	m_freelook_button_press_handler(0),
+	m_drawing(false),
+	m_bFreeMove(false) 
+{
 	GlobalWindowObservers_add(m_window_observer);
 	GlobalWindowObservers_connectWidget(m_gl_widget);
 
-	m_window_observer->setRectangleDrawCallback(ReferenceCaller1<CamWnd, Rectangle, camwnd_update_xor_rectangle>(*this));
+	m_window_observer->setRectangleDrawCallback(updateXORRectangleCallback(*this));
 	m_window_observer->setView(m_view);
 
 	gtk_widget_ref(m_gl_widget);
@@ -319,69 +313,69 @@ CamWnd::CamWnd() :
 
 void CamWnd::registerCommands() {
 	GlobalKeyEvents_insert("CameraForward", Accelerator(GDK_Up),
-	                       ReferenceCaller<Camera, Camera_MoveForward_KeyDown>(getCamera()),
-	                       ReferenceCaller<Camera, Camera_MoveForward_KeyUp>(getCamera())
+	                       ReferenceCaller<Camera, Camera_MoveForward_KeyDown>(m_Camera),
+	                       ReferenceCaller<Camera, Camera_MoveForward_KeyUp>(m_Camera)
 	                      );
 	GlobalKeyEvents_insert("CameraBack", Accelerator(GDK_Down),
-	                       ReferenceCaller<Camera, Camera_MoveBack_KeyDown>(getCamera()),
-	                       ReferenceCaller<Camera, Camera_MoveBack_KeyUp>(getCamera())
+	                       ReferenceCaller<Camera, Camera_MoveBack_KeyDown>(m_Camera),
+	                       ReferenceCaller<Camera, Camera_MoveBack_KeyUp>(m_Camera)
 	                      );
 	GlobalKeyEvents_insert("CameraLeft", Accelerator(GDK_Left),
-	                       ReferenceCaller<Camera, Camera_RotateLeft_KeyDown>(getCamera()),
-	                       ReferenceCaller<Camera, Camera_RotateLeft_KeyUp>(getCamera())
+	                       ReferenceCaller<Camera, Camera_RotateLeft_KeyDown>(m_Camera),
+	                       ReferenceCaller<Camera, Camera_RotateLeft_KeyUp>(m_Camera)
 	                      );
 	GlobalKeyEvents_insert("CameraRight", Accelerator(GDK_Right),
-	                       ReferenceCaller<Camera, Camera_RotateRight_KeyDown>(getCamera()),
-	                       ReferenceCaller<Camera, Camera_RotateRight_KeyUp>(getCamera())
+	                       ReferenceCaller<Camera, Camera_RotateRight_KeyDown>(m_Camera),
+	                       ReferenceCaller<Camera, Camera_RotateRight_KeyUp>(m_Camera)
 	                      );
 	GlobalKeyEvents_insert("CameraStrafeRight", Accelerator(GDK_period),
-	                       ReferenceCaller<Camera, Camera_MoveRight_KeyDown>(getCamera()),
-	                       ReferenceCaller<Camera, Camera_MoveRight_KeyUp>(getCamera())
+	                       ReferenceCaller<Camera, Camera_MoveRight_KeyDown>(m_Camera),
+	                       ReferenceCaller<Camera, Camera_MoveRight_KeyUp>(m_Camera)
 	                      );
 	GlobalKeyEvents_insert("CameraStrafeLeft", Accelerator(GDK_comma),
-	                       ReferenceCaller<Camera, Camera_MoveLeft_KeyDown>(getCamera()),
-	                       ReferenceCaller<Camera, Camera_MoveLeft_KeyUp>(getCamera())
+	                       ReferenceCaller<Camera, Camera_MoveLeft_KeyDown>(m_Camera),
+	                       ReferenceCaller<Camera, Camera_MoveLeft_KeyUp>(m_Camera)
 	                      );
 	GlobalKeyEvents_insert("CameraUp", Accelerator('D'),
-	                       ReferenceCaller<Camera, Camera_MoveUp_KeyDown>(getCamera()),
-	                       ReferenceCaller<Camera, Camera_MoveUp_KeyUp>(getCamera())
+	                       ReferenceCaller<Camera, Camera_MoveUp_KeyDown>(m_Camera),
+	                       ReferenceCaller<Camera, Camera_MoveUp_KeyUp>(m_Camera)
 	                      );
 	GlobalKeyEvents_insert("CameraDown", Accelerator('C'),
-	                       ReferenceCaller<Camera, Camera_MoveDown_KeyDown>(getCamera()),
-	                       ReferenceCaller<Camera, Camera_MoveDown_KeyUp>(getCamera())
+	                       ReferenceCaller<Camera, Camera_MoveDown_KeyDown>(m_Camera),
+	                       ReferenceCaller<Camera, Camera_MoveDown_KeyUp>(m_Camera)
 	                      );
 	GlobalKeyEvents_insert("CameraAngleDown", Accelerator('A'),
-	                       ReferenceCaller<Camera, Camera_PitchDown_KeyDown>(getCamera()),
-	                       ReferenceCaller<Camera, Camera_PitchDown_KeyUp>(getCamera())
+	                       ReferenceCaller<Camera, Camera_PitchDown_KeyDown>(m_Camera),
+	                       ReferenceCaller<Camera, Camera_PitchDown_KeyUp>(m_Camera)
 	                      );
 	GlobalKeyEvents_insert("CameraAngleUp", Accelerator('Z'),
-	                       ReferenceCaller<Camera, Camera_PitchUp_KeyDown>(getCamera()),
-	                       ReferenceCaller<Camera, Camera_PitchUp_KeyUp>(getCamera())
+	                       ReferenceCaller<Camera, Camera_PitchUp_KeyDown>(m_Camera),
+	                       ReferenceCaller<Camera, Camera_PitchUp_KeyUp>(m_Camera)
 	                      );
 
 	GlobalKeyEvents_insert("CameraFreeMoveForward", Accelerator(GDK_Up),
-	                       FreeMoveCameraMoveForwardKeyDownCaller(getCamera()),
-	                       FreeMoveCameraMoveForwardKeyUpCaller(getCamera())
+	                       FreeMoveCameraMoveForwardKeyDownCaller(m_Camera),
+	                       FreeMoveCameraMoveForwardKeyUpCaller(m_Camera)
 	                      );
 	GlobalKeyEvents_insert("CameraFreeMoveBack", Accelerator(GDK_Down),
-	                       FreeMoveCameraMoveBackKeyDownCaller(getCamera()),
-	                       FreeMoveCameraMoveBackKeyUpCaller(getCamera())
+	                       FreeMoveCameraMoveBackKeyDownCaller(m_Camera),
+	                       FreeMoveCameraMoveBackKeyUpCaller(m_Camera)
 	                      );
 	GlobalKeyEvents_insert("CameraFreeMoveLeft", Accelerator(GDK_Left),
-	                       FreeMoveCameraMoveLeftKeyDownCaller(getCamera()),
-	                       FreeMoveCameraMoveLeftKeyUpCaller(getCamera())
+	                       FreeMoveCameraMoveLeftKeyDownCaller(m_Camera),
+	                       FreeMoveCameraMoveLeftKeyUpCaller(m_Camera)
 	                      );
 	GlobalKeyEvents_insert("CameraFreeMoveRight", Accelerator(GDK_Right),
-	                       FreeMoveCameraMoveRightKeyDownCaller(getCamera()),
-	                       FreeMoveCameraMoveRightKeyUpCaller(getCamera())
+	                       FreeMoveCameraMoveRightKeyDownCaller(m_Camera),
+	                       FreeMoveCameraMoveRightKeyUpCaller(m_Camera)
 	                      );
 	GlobalKeyEvents_insert("CameraFreeMoveUp", Accelerator('D'),
-	                       FreeMoveCameraMoveUpKeyDownCaller(getCamera()),
-	                       FreeMoveCameraMoveUpKeyUpCaller(getCamera())
+	                       FreeMoveCameraMoveUpKeyDownCaller(m_Camera),
+	                       FreeMoveCameraMoveUpKeyUpCaller(m_Camera)
 	                      );
 	GlobalKeyEvents_insert("CameraFreeMoveDown", Accelerator('C'),
-	                       FreeMoveCameraMoveDownKeyDownCaller(getCamera()),
-	                       FreeMoveCameraMoveDownKeyUpCaller(getCamera())
+	                       FreeMoveCameraMoveDownKeyDownCaller(m_Camera),
+	                       FreeMoveCameraMoveDownKeyUpCaller(m_Camera)
 	                      );
 
 	GlobalShortcuts_insert("CameraForward", Accelerator(GDK_Up));
@@ -402,6 +396,12 @@ void CamWnd::registerCommands() {
 	GlobalShortcuts_insert("CameraFreeMoveRight", Accelerator(GDK_Right));
 }
 
+void CamWnd::updateXORRectangle(Rectangle area) {
+	if (GTK_WIDGET_VISIBLE(m_gl_widget)) {
+		m_XORRectangle.set(rectangle_from_area(area.min, area.max, m_Camera.width, m_Camera.height));
+	}
+}
+
 void CamWnd::changeFloor(const bool up) {
 	float current = m_Camera.origin[2] - 48;
 	float bestUp;
@@ -418,7 +418,7 @@ void CamWnd::changeFloor(const bool up) {
 
 	m_Camera.origin[2] = current + 48;
 
-	getCamera().updateModelview();
+	m_Camera.updateModelview();
 	update();
 	GlobalCamera().movedNotify();
 }
@@ -436,14 +436,14 @@ void CamWnd::EnableFreeMove() {
 
 	ASSERT_MESSAGE(!m_bFreeMove, "EnableFreeMove: free-move was already enabled");
 	m_bFreeMove = true;
-	getCamera().clearMovementFlags(MOVE_ALL);
+	m_Camera.clearMovementFlags(MOVE_ALL);
 
 	removeHandlersMove();
 	addHandlersFreeMove();
 
-	gtk_window_set_focus(m_parent, m_gl_widget);
+	gtk_window_set_focus(_parentWidget, m_gl_widget);
 	m_freemove_handle_focusout = g_signal_connect(G_OBJECT(m_gl_widget), "focus_out_event", G_CALLBACK(camwindow_freemove_focusout), this);
-	m_freezePointer.freeze_pointer(m_parent, Camera_motionDelta, &m_Camera);
+	m_freezePointer.freeze_pointer(_parentWidget, Camera_motionDelta, &m_Camera);
 
 	update();
 }
@@ -453,12 +453,12 @@ void CamWnd::DisableFreeMove() {
 
 	ASSERT_MESSAGE(m_bFreeMove, "DisableFreeMove: free-move was not enabled");
 	m_bFreeMove = false;
-	getCamera().clearMovementFlags(MOVE_ALL);
+	m_Camera.clearMovementFlags(MOVE_ALL);
 
 	removeHandlersFreeMove();
 	addHandlersMove();
 
-	m_freezePointer.unfreeze_pointer(m_parent);
+	m_freezePointer.unfreeze_pointer(_parentWidget);
 	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_freemove_handle_focusout);
 
 	update();
@@ -669,7 +669,7 @@ void CamWnd::draw() {
 	m_drawing = false;
 }
 
-void CamWnd::BenchMark() {
+void CamWnd::benchmark() {
 	double dStart = Sys_DoubleTime();
 
 	for (int i=0 ; i < 100 ; i++) {
@@ -859,29 +859,32 @@ CameraView* CamWnd::getCameraView() {
 	return &m_cameraview;
 }
 
-GtkWidget* CamWnd::getWidget()
-{
+GtkWidget* CamWnd::getWidget() const {
 	return m_gl_widget;
 }
 
-GtkWindow* CamWnd::getParent() {
-	return m_parent;
+GtkWindow* CamWnd::getParent() const {
+	return _parentWidget;
 }
 
-const Vector3& CamWnd::getCameraOrigin() {
-	return getCamera().getOrigin();
+void CamWnd::setParent(GtkWindow* newParent) {
+	_parentWidget = newParent;
+}
+
+Vector3 CamWnd::getCameraOrigin() const {
+	return m_Camera.getOrigin();
 }
 
 void CamWnd::setCameraOrigin(const Vector3& origin) {
-	getCamera().setOrigin(origin);
+	m_Camera.setOrigin(origin);
 }
 
-const Vector3& CamWnd::getCameraAngles() {
-	return getCamera().getAngles();
+Vector3 CamWnd::getCameraAngles() const {
+	return m_Camera.getAngles();
 }
 
 void CamWnd::setCameraAngles(const Vector3& angles) {
-	getCamera().setAngles(angles);
+	m_Camera.setAngles(angles);
 }
 
 void CamWnd::toggleLightingMode() {
@@ -893,7 +896,7 @@ void CamWnd::toggleLightingMode() {
 void CamWnd::cubicScaleOut() {
 	getCameraSettings()->setCubicScale( getCameraSettings()->cubicScale() + 1 );
 
-	getCamera().updateProjection();
+	m_Camera.updateProjection();
 	update();
 	g_pParentWnd->SetGridStatus();
 }
@@ -901,7 +904,7 @@ void CamWnd::cubicScaleOut() {
 void CamWnd::cubicScaleIn() {
 	getCameraSettings()->setCubicScale( getCameraSettings()->cubicScale() - 1 );
 
-	getCamera().updateProjection();
+	m_Camera.updateProjection();
 	update();
 	
 	g_pParentWnd->SetGridStatus();

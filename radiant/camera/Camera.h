@@ -97,15 +97,15 @@ public:
 	void freemoveUpdateAxes();
 	void moveUpdateAxes();
 
-	const Vector3& getOrigin();
+	Vector3 getOrigin() const;
 	void setOrigin(const Vector3& newOrigin);
+
+	Vector3 getAngles() const;
+	void setAngles(const Vector3& newAngles);
 
 	void mouseMove(int x, int y);
 	void freeMove(int dx, int dy);
-
 	void mouseControl(int x, int y);
-	void setAngles(const Vector3& newAngles);
-	const Vector3& getAngles();
 
 	void pitchUpDiscrete();
 	void pitchDownDiscrete();

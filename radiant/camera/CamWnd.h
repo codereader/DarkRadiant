@@ -19,19 +19,23 @@ class CamWnd {
 	Camera m_Camera;
 	
 	RadiantCameraView m_cameraview;
-#if 0
-	int m_PositionDragCursorX;
-	int m_PositionDragCursorY;
-#endif
 
 	guint m_freemove_handle_focusout;
+	
 	static Shader* m_state_select1;
 	static Shader* m_state_select2;
+	
 	FreezePointer m_freezePointer;
 
-public:
+	// Is true during an active drawing process
+	bool m_drawing;
+
+	bool m_bFreeMove;
+
 	GtkWidget* m_gl_widget;
-	GtkWindow* m_parent;
+	GtkWindow* _parentWidget;
+
+public:
 
 	SelectionSystemWindowObserver* m_window_observer;
 
@@ -47,12 +51,11 @@ public:
 	guint m_sizeHandler;
 	guint m_exposeHandler;
 
+	// Constructor and destructor
 	CamWnd();
 	~CamWnd();
 
 	void registerCommands();
-
-	bool m_drawing;
 
 	void queueDraw();
 	void draw();
@@ -66,22 +69,27 @@ public:
 
 	Camera& getCamera();
 	
-	const Vector3& getCameraOrigin();
+	void updateXORRectangle(Rectangle area);
+	typedef MemberCaller1<CamWnd, Rectangle, &CamWnd::updateXORRectangle> updateXORRectangleCallback;
+	
+	Vector3 getCameraOrigin() const;
 	void setCameraOrigin(const Vector3& origin);
 	
-	const Vector3& getCameraAngles();
+	Vector3 getCameraAngles() const;
 	void setCameraAngles(const Vector3& angles);
 
-	void BenchMark();
+	// greebo: This measures the rendering time during a 360° turn of the camera.
+	void benchmark();
+	
+	// This tries to find brushes above/below the current camera position and moves the view upwards/downwards
 	void changeFloor(const bool up);
 
-	GtkWidget* getWidget();
-	GtkWindow* getParent();
+	GtkWidget* getWidget() const;
+	GtkWindow* getParent() const;
+	void setParent(GtkWindow* newParent);
 
 	void EnableFreeMove();
 	void DisableFreeMove();
-
-	bool m_bFreeMove;
 
 	CameraView* getCameraView();
 
