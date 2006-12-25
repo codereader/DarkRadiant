@@ -32,8 +32,8 @@ class FloorHeightWalker : public scene::Graph::Walker
 public:
 	FloorHeightWalker(float current, float& bestUp, float& bestDown) :
 			m_current(current), m_bestUp(bestUp), m_bestDown(bestDown) {
-		bestUp = g_MaxWorldCoord;
-		bestDown = -g_MaxWorldCoord;
+		bestUp = GlobalRegistry().getFloat("game/defaults/maxWorldCoord");
+		bestDown = -GlobalRegistry().getFloat("game/defaults/maxWorldCoord");
 	}
 
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
@@ -408,11 +408,11 @@ void CamWnd::changeFloor(const bool up) {
 	float bestDown;
 	GlobalSceneGraph().traverse(FloorHeightWalker(current, bestUp, bestDown));
 
-	if (up && bestUp != g_MaxWorldCoord) {
+	if (up && bestUp != GlobalRegistry().getFloat("game/defaults/maxWorldCoord")) {
 		current = bestUp;
 	}
 
-	if (!up && bestDown != -g_MaxWorldCoord) {
+	if (!up && bestDown != -GlobalRegistry().getFloat("game/defaults/maxWorldCoord")) {
 		current = bestDown;
 	}
 

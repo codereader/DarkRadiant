@@ -83,6 +83,10 @@ class XYWnd :
 
   DeferredDraw m_deferredDraw;
   DeferredMotion m_deferred_motion;
+  
+  // The maximum/minimum values of a coordinate
+  float _minWorldCoord;
+  float _maxWorldCoord;
 public:
   GtkWindow* m_parent;
   XYWnd();
@@ -131,6 +135,8 @@ public:
   void Zoom_End();
   bool m_zoom_started;
   guint m_zoom_focusOut;
+  
+  void zoomOut();
 
   void SetActive(bool b)
   {

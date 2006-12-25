@@ -7,9 +7,9 @@
 #include "winding.h"
 #include "cullable.h"
 
-void Brush_textureChanged();
+#include "brushmodule.h"
 
-extern bool g_brush_texturelock_enabled;
+void Brush_textureChanged();
 
 Face::Face(FaceObserver* observer) :
 	m_refcount(0),
@@ -147,7 +147,7 @@ void Face::render(Renderer& renderer, const Matrix4& localToWorld) const {
 }
 
 void Face::transform(const Matrix4& matrix, bool mirror) {
-	if (g_brush_texturelock_enabled) {
+	if (GlobalBrush()->textureLockEnabled()) {
 		m_texdefTransformed.transformLocked(m_shader.width(), m_shader.height(), m_plane.plane3(), matrix);
 	}
 
@@ -353,3 +353,7 @@ bool Face::is_bounded() const {
 	}
 	return true;
 }
+
+// ---------------------------------------------------------------------------------------
+
+QuantiseFunc Face::m_quantise;

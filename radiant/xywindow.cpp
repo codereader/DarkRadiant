@@ -422,26 +422,6 @@ void XYWnd_ZoomIn(XYWnd* xy)
 }
 
 
-// NOTE: the zoom out factor is 4/5, we could think about customizing it
-//  we don't go below a zoom factor corresponding to 10% of the max world size
-//  (this has to be computed against the window size)
-void XYWnd_ZoomOut(XYWnd* xy)
-{
-  float min_scale = MIN(xy->Width(),xy->Height()) / ( 1.1f * (g_MaxWorldCoord-g_MinWorldCoord));
-  float scale = xy->Scale() * 4.0f / 5.0f;
-  if(scale < min_scale)
-  {
-    if(xy->Scale() != min_scale)
-    {
-      xy->SetScale (min_scale);
-    }
-  }
-  else
-  {
-    xy->SetScale(scale);
-  }
-}
-
 VIEWTYPE GlobalXYWnd_getCurrentViewType()
 {
   ASSERT_NOTNULL(g_pParentWnd);
@@ -715,7 +695,7 @@ gboolean xywnd_wheel_scroll(GtkWidget* widget, GdkEventScroll* event, XYWnd* xyw
   }
   else if(event->direction == GDK_SCROLL_DOWN)
   {
-    XYWnd_ZoomOut(xywnd);
+    xywnd->zoomOut();
   }
   return FALSE;
 }
@@ -759,6 +739,8 @@ XYWnd::XYWnd() :
   m_gl_widget(glwidget_new(FALSE)),
   m_deferredDraw(WidgetQueueDrawCaller(*m_gl_widget)),
   m_deferred_motion(xywnd_motion, this),
+  _minWorldCoord(GlobalRegistry().getFloat("game/defaults/minWorldCoord")),
+  _maxWorldCoord(GlobalRegistry().getFloat("game/defaults/maxWorldCoord")),
   m_parent(0),
   m_window_observer(NewWindowObserver()),
   m_XORRectangle(m_gl_widget),
@@ -1190,7 +1172,7 @@ void XYWnd_zoomDelta(int x, int y, unsigned int state, void* data)
     {
       if(g_dragZoom > 0)
       {
-        XYWnd_ZoomOut(reinterpret_cast<XYWnd*>(data));
+      	reinterpret_cast<XYWnd*>(data)->zoomOut();
         g_dragZoom -= 8;
       }
       else
@@ -2030,7 +2012,7 @@ void XYWnd::updateProjection()
 {
   m_projection[0] = 1.0f / static_cast<float>(m_nWidth / 2);
   m_projection[5] = 1.0f / static_cast<float>(m_nHeight / 2);
-  m_projection[10] = 1.0f / (g_MaxWorldCoord * m_fScale);
+  m_projection[10] = 1.0f / (_maxWorldCoord * m_fScale);
 
   m_projection[12] = 0.0f;
   m_projection[13] = 0.0f;
@@ -2062,7 +2044,7 @@ void XYWnd::updateModelview()
   // translation
   m_modelview[12] = -m_vOrigin[nDim1] * m_fScale;
   m_modelview[13] = -m_vOrigin[nDim2] * m_fScale;
-  m_modelview[14] = g_MaxWorldCoord * m_fScale;
+  m_modelview[14] = _maxWorldCoord * m_fScale;
 
   // axis base
   switch(m_viewType)
@@ -2224,24 +2206,24 @@ void XYWnd::XY_Draw()
     glBegin (GL_LINES);
     if (m_viewType == XY)
     {
-      glVertex2f(2.0f * g_MinWorldCoord, m_mousePosition[1]);
-      glVertex2f(2.0f * g_MaxWorldCoord, m_mousePosition[1]);
-      glVertex2f(m_mousePosition[0], 2.0f * g_MinWorldCoord);
-      glVertex2f(m_mousePosition[0], 2.0f * g_MaxWorldCoord);
+      glVertex2f(2.0f * _minWorldCoord, m_mousePosition[1]);
+      glVertex2f(2.0f * _maxWorldCoord, m_mousePosition[1]);
+      glVertex2f(m_mousePosition[0], 2.0f * _minWorldCoord);
+      glVertex2f(m_mousePosition[0], 2.0f * _maxWorldCoord);
     }
     else if (m_viewType == YZ)
     {
-      glVertex3f(m_mousePosition[0], 2.0f * g_MinWorldCoord, m_mousePosition[2]);
-      glVertex3f(m_mousePosition[0], 2.0f * g_MaxWorldCoord, m_mousePosition[2]);
-      glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * g_MinWorldCoord);
-      glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * g_MaxWorldCoord);
+      glVertex3f(m_mousePosition[0], 2.0f * _minWorldCoord, m_mousePosition[2]);
+      glVertex3f(m_mousePosition[0], 2.0f * _maxWorldCoord, m_mousePosition[2]);
+      glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * _minWorldCoord);
+      glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * _maxWorldCoord);
     }
     else
     {
-      glVertex3f (2.0f * g_MinWorldCoord, m_mousePosition[1], m_mousePosition[2]);
-      glVertex3f (2.0f * g_MaxWorldCoord, m_mousePosition[1], m_mousePosition[2]);
-      glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * g_MinWorldCoord);
-      glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * g_MaxWorldCoord);
+      glVertex3f (2.0f * _minWorldCoord, m_mousePosition[1], m_mousePosition[2]);
+      glVertex3f (2.0f * _maxWorldCoord, m_mousePosition[1], m_mousePosition[2]);
+      glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * _minWorldCoord);
+      glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * _maxWorldCoord);
     }
     glEnd();
   }
@@ -2323,7 +2305,21 @@ void XYWnd::OnEntityCreate (const char* item)
   Entity_createFromSelection(item, point);
 }
 
-
+// NOTE: the zoom out factor is 4/5, we could think about customizing it
+//  we don't go below a zoom factor corresponding to 10% of the max world size
+//  (this has to be computed against the window size)
+//void XYWnd_ZoomOut(XYWnd* xy);
+void XYWnd::zoomOut() {
+	float min_scale = MIN(Width(),Height()) / ( 1.1f * (_maxWorldCoord - _minWorldCoord));
+	float scale = Scale() * 4.0f / 5.0f;
+	if (scale < min_scale) {
+		if (Scale() != min_scale) {
+			SetScale (min_scale);
+		}
+	} else {
+		SetScale(scale);
+	}
+}
 
 void GetFocusPosition(Vector3& position)
 {
@@ -2411,7 +2407,7 @@ void XY_ZoomIn()
 //  (this has to be computed against the window size)
 void XY_ZoomOut()
 {
-  XYWnd_ZoomOut(g_pParentWnd->ActiveXY());
+  g_pParentWnd->ActiveXY()->zoomOut();
 }
 
 

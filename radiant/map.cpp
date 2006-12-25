@@ -440,12 +440,6 @@ void Map_SetWorldspawn(Map& map, scene::Node* node)
   map.m_world_node.set(node);
 }
 
-
-// TTimo
-// need that in a variable, will have to tweak depending on the game
-float g_MaxWorldCoord = 64*1024;
-float g_MinWorldCoord = -64*1024;
-
 void AddRegionBrushes (void);
 void RemoveRegionBrushes (void);
 
@@ -1421,8 +1415,14 @@ void ConstructRegionStartpoint(scene::Node* startpoint, const Vector3& region_mi
 ===========================================================
 */
 bool	region_active;
-Vector3	region_mins(g_MinWorldCoord, g_MinWorldCoord, g_MinWorldCoord);
-Vector3	region_maxs(g_MaxWorldCoord, g_MaxWorldCoord, g_MaxWorldCoord);
+// greebo: this has to be moved into some class and the values should be loaded from the registry
+// I'll leave it hardcoded for now
+Vector3	region_mins(-65536, -65536, -65536);
+Vector3	region_maxs(65536, 65536, 65536);
+
+// old code:
+//Vector3	region_mins(g_MinWorldCoord, g_MinWorldCoord, g_MinWorldCoord);
+//Vector3	region_maxs(g_MaxWorldCoord, g_MaxWorldCoord, g_MaxWorldCoord);
 
 scene::Node* region_sides[6];
 scene::Node* region_startpoint = 0;
@@ -1559,12 +1559,15 @@ void Map_RegionOff()
 {
 	region_active = false;
 
-	region_maxs[0] = g_MaxWorldCoord - 64;
-	region_mins[0] = g_MinWorldCoord + 64;
-	region_maxs[1] = g_MaxWorldCoord - 64;
-	region_mins[1] = g_MinWorldCoord + 64;
-	region_maxs[2] = g_MaxWorldCoord - 64;
-	region_mins[2] = g_MinWorldCoord + 64;
+	float maxWorldCoord = GlobalRegistry().getFloat("game/defaults/maxWorldCoord");
+	float minWorldCoord = GlobalRegistry().getFloat("game/defaults/minWorldCoord");
+
+	region_maxs[0] = maxWorldCoord - 64;
+	region_mins[0] = minWorldCoord + 64;
+	region_maxs[1] = maxWorldCoord - 64;
+	region_mins[1] = minWorldCoord + 64;
+	region_maxs[2] = maxWorldCoord - 64;
+	region_mins[2] = minWorldCoord + 64;
 	
 	Scene_Exclude_All(false);
 }
@@ -1612,8 +1615,8 @@ void Map_RegionXY(float x_min, float y_min, float x_max, float y_max)
   region_maxs[0] = x_max;
   region_mins[1] = y_min;
   region_maxs[1] = y_max;
-  region_mins[2] = g_MinWorldCoord + 64;
-	region_maxs[2] = g_MaxWorldCoord - 64;
+  region_mins[2] = GlobalRegistry().getFloat("game/defaults/minWorldCoord") + 64;
+	region_maxs[2] = GlobalRegistry().getFloat("game/defaults/maxWorldCoord") - 64;
 
 	Map_ApplyRegion();
 }

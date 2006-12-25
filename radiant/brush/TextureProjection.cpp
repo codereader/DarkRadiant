@@ -6,7 +6,7 @@ void TextureProjection::assign(const TextureProjection& other) {
 }
 
 void TextureProjection::constructDefault() {
-	float scale = GlobalRegistry().getFloat("game/defaults/textureScale");
+	float scale = GlobalRegistry().getFloat("user/ui/defaultTextureScale");
 	
 	m_texdef._scale[0] = scale;
 	m_texdef._scale[1] = scale;

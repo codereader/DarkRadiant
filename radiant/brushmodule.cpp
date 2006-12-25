@@ -37,86 +37,99 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "mainframe.h"
 #include "preferences.h"
 
-LatchedBool g_useAlternativeTextureProjection(false, "Use alternative texture-projection");
-bool g_showAlternativeTextureProjectionOption = false;
 
-bool getTextureLockEnabled()
+// ---------------------------------------------------------------------------------------
+
+// Constructor, connect self to the observed registryKey
+BrushModuleClass::BrushModuleClass() :
+	_textureLockEnabled(GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1"),
+	_textureLockCaller(*this),
+	_textureLockCallBack(_textureLockCaller),
+	_textureLockItem(_textureLockCallBack)
 {
-  return g_brush_texturelock_enabled;
+	GlobalRegistry().addKeyObserver(this, RKEY_ENABLE_TEXTURE_LOCK);
 }
 
-void Face_importSnapPlanes(bool value)
-{
-  Face::m_quantise = /*value ? quantiseInteger : */quantiseFloating;
-}
-typedef FreeCaller1<bool, Face_importSnapPlanes> FaceImportSnapPlanesCaller;
+void BrushModuleClass::constructPreferences(PreferencesPage& page) {
+	// Add the default texture scale preference and connect it to the according registryKey
+	// Note: this should be moved somewhere else, I think
+	page.appendEntry("Default texture scale", "user/ui/defaultTextureScale");
 
-void Face_exportSnapPlanes(const BoolImportCallback& importer)
-{
-  importer(false/*Face::m_quantise == quantiseInteger*/);
-}
-typedef FreeCaller1<const BoolImportCallback&, Face_exportSnapPlanes> FaceExportSnapPlanesCaller;
-
-void Brush_constructPreferences(PreferencesPage& page)
-{
-  page.appendCheckBox(
-    "", "Snap planes to integer grid",
-    FaceImportSnapPlanesCaller(),
-    FaceExportSnapPlanesCaller()
-  );
-  /*page.appendEntry(
-    "Default texture scale",
-    g_texdef_default_scale
-  );*/
-  if(g_showAlternativeTextureProjectionOption)
-  {
-    page.appendCheckBox(
-      "", "Use alternative texture-projection",
-      LatchedBoolImportCaller(g_useAlternativeTextureProjection),
-      BoolExportCaller(g_useAlternativeTextureProjection.m_latched)
-    );
-  }
-}
-void Brush_constructPage(PreferenceGroup& group)
-{
-  PreferencesPage page(group.createPage("Brush", "Brush Settings"));
-  Brush_constructPreferences(page);
-}
-void Brush_registerPreferencesPage()
-{
-  PreferencesDialog_addSettingsPage(FreeCaller1<PreferenceGroup&, Brush_constructPage>());
+	// The checkbox to enable/disable the texture lock option
+	page.appendCheckBox("", "Enable Texture Lock", "user/ui/brush/textureLock");
 }
 
 
-void Brush_Construct()
-{
-  Brush_registerCommands();
-  Brush_registerPreferencesPage();
-
-  BrushClipPlane::constructStatic();
-  BrushInstance::constructStatic();
-  Brush::constructStatic(/*type*/);
-
-  Brush::m_maxWorldCoord = g_MaxWorldCoord;
-  BrushInstance::m_counter = &g_brushCount;
-
-  GlobalPreferenceSystem().registerPreference("TextureLock", BoolImportStringCaller(g_brush_texturelock_enabled), BoolExportStringCaller(g_brush_texturelock_enabled));
-  GlobalPreferenceSystem().registerPreference("BrushSnapPlanes", makeBoolStringImportCallback(FaceImportSnapPlanesCaller()), makeBoolStringExportCallback(FaceExportSnapPlanesCaller()));
-  //GlobalPreferenceSystem().registerPreference("TexdefDefaultScale", FloatImportStringCaller(g_texdef_default_scale), FloatExportStringCaller(g_texdef_default_scale));
-
-  GridStatus_getTextureLockEnabled = getTextureLockEnabled;
-  g_texture_lock_status_changed = FreeCaller<GridStatus_onTextureLockEnabledChanged>();
+void BrushModuleClass::constructPreferencePage(PreferenceGroup& group) {
+	PreferencesPage page(group.createPage("Brush", "Brush Settings"));
+	constructPreferences(page);
 }
 
-void Brush_Destroy()
-{
-  Brush::m_maxWorldCoord = 0;
-  BrushInstance::m_counter = 0;
-
-  Brush::destroyStatic();
-  BrushInstance::destroyStatic();
-  BrushClipPlane::destroyStatic();
+void BrushModuleClass::registerPreferencesPage() {
+	// Instantiate a callback using <this> class and pass it to the preference system
+	PreferencesDialog_addSettingsPage(PreferencePageConstructor(*this));
 }
+
+void BrushModuleClass::construct() {
+	Brush_registerCommands();
+	registerPreferencesPage();
+	
+	BrushClipPlane::constructStatic();
+	BrushInstance::constructStatic();
+	Brush::constructStatic();
+	
+	Brush::m_maxWorldCoord = GlobalRegistry().getFloat("game/defaults/minWorldCoord");
+	BrushInstance::m_counter = &g_brushCount;
+}
+
+void BrushModuleClass::destroy() {
+	Brush::m_maxWorldCoord = 0;
+	BrushInstance::m_counter = 0;
+	
+	Brush::destroyStatic();
+	BrushInstance::destroyStatic();
+	BrushClipPlane::destroyStatic();
+}
+
+void BrushModuleClass::keyChanged() {
+	_textureLockEnabled = (GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1");
+	
+	// Call the update method for the texture lock
+	_textureLockItem.update();
+}
+
+void BrushModuleClass::textureLockExport(const BoolImportCallback& importCallback) {
+	importCallback((GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1"));
+}
+
+bool BrushModuleClass::textureLockEnabled() const {
+	return _textureLockEnabled;
+}
+
+void BrushModuleClass::setTextureLock(bool enabled) {
+	// Write the value to the registry, the keyChanged() method is triggered automatically
+	GlobalRegistry().set(RKEY_ENABLE_TEXTURE_LOCK, enabled ? "1" : "0");
+}
+
+void BrushModuleClass::toggleTextureLock() {
+	setTextureLock(!textureLockEnabled());
+	
+	if (g_pParentWnd != 0) {
+		g_pParentWnd->SetGridStatus();
+	}
+}
+
+ToggleItem& BrushModuleClass::textureLockItem() {
+	return _textureLockItem;
+}
+
+// greebo: The accessor function for the brush module containing the static instance
+BrushModuleClass* GlobalBrush() {
+	static BrushModuleClass _brushModule;
+	return &_brushModule;
+}
+
+// ---------------------------------------------------------------------------------------
 
 void Brush_clipperColourChanged()
 {
@@ -147,10 +160,6 @@ public:
   {
     return (new BrushNode)->node();
   }
-  bool useAlternativeTextureProjection() const
-  {
-    return g_useAlternativeTextureProjection.m_value;
-  }
   void Brush_forEachFace(scene::Node& brush, const BrushFaceDataCallback& callback)
   {
     ::Brush_forEachFace(*Node_getBrush(brush), FaceCallback(BrushFaceDataFromFaceCaller(callback)));
@@ -162,49 +171,44 @@ public:
   }
 };
 
-Quake3BrushCreator g_Quake3BrushCreator;
-
-BrushCreator& GetBrushCreator()
-{
-  return g_Quake3BrushCreator;
+BrushCreator& GetBrushCreator() {
+	static Quake3BrushCreator _quake3BrushCreator; 
+	return _quake3BrushCreator;
 }
 
 #include "modulesystem/singletonmodule.h"
 #include "modulesystem/moduleregistry.h"
 
-
 class BrushDependencies :
-  public GlobalRadiantModuleRef,
-  public GlobalSceneGraphModuleRef,
-  public GlobalShaderCacheModuleRef,
-  public GlobalSelectionModuleRef,
-  public GlobalOpenGLModuleRef,
-  public GlobalUndoModuleRef,
-  public GlobalFilterModuleRef
-{
-};
+	public GlobalRadiantModuleRef,
+	public GlobalSceneGraphModuleRef,
+	public GlobalShaderCacheModuleRef,
+	public GlobalSelectionModuleRef,
+	public GlobalOpenGLModuleRef,
+	public GlobalUndoModuleRef,
+	public GlobalFilterModuleRef 
+{};
 
-class BrushDoom3API : public TypeSystemRef
-{
-  BrushCreator* m_brushdoom3;
+
+class BrushDoom3API : public TypeSystemRef {
+	BrushCreator* m_brushdoom3;
 public:
-  typedef BrushCreator Type;
-  STRING_CONSTANT(Name, "doom3");
+	typedef BrushCreator Type;
+	STRING_CONSTANT(Name, "doom3");
 
-  BrushDoom3API()
-  {
-    Brush_Construct(/*eBrushTypeDoom3*/); // greebo: is always Doom 3
+	BrushDoom3API() {
+		GlobalBrush()->construct();
 
-     m_brushdoom3 = &GetBrushCreator();
-  }
-  ~BrushDoom3API()
-  {
-    Brush_Destroy();
-  }
-  BrushCreator* getTable()
-  {
-    return m_brushdoom3;
-  }
+		m_brushdoom3 = &GetBrushCreator();
+	}
+	
+	~BrushDoom3API() {
+		GlobalBrush()->destroy();
+	}
+	
+	BrushCreator* getTable() {
+		return m_brushdoom3;
+	}
 };
 
 typedef SingletonModule<BrushDoom3API, BrushDependencies> BrushDoom3Module;

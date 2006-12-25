@@ -36,6 +36,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "preferences.h"
 #include "shaderlib.h"
 
+#include "brushmodule.h"
+
 #include <list>
 
 void Brush_ConstructCuboid(Brush& brush, const AABB& bounds, const char* shader, const TextureProjection& projection)
@@ -1164,24 +1166,11 @@ void FlipClipper()
 }
 
 
-Callback g_texture_lock_status_changed;
-BoolExportCaller g_texdef_movelock_caller(g_brush_texturelock_enabled);
-ToggleItem g_texdef_movelock_item(g_texdef_movelock_caller);
-
-void Texdef_ToggleMoveLock()
-{
-  g_brush_texturelock_enabled = !g_brush_texturelock_enabled;
-  g_texdef_movelock_item.update();
-  g_texture_lock_status_changed();
-}
-
-
-
-
-
 void Brush_registerCommands()
 {
-  GlobalToggles_insert("TogTexLock", FreeCaller<Texdef_ToggleMoveLock>(), ToggleItem::AddCallbackCaller(g_texdef_movelock_item), Accelerator('T', (GdkModifierType)GDK_SHIFT_MASK));
+	//GlobalToggles_insert("TogTexLock", FreeCaller<Texdef_ToggleMoveLock>(), ToggleItem::AddCallbackCaller(g_texdef_movelock_item), Accelerator('T', (GdkModifierType)GDK_SHIFT_MASK));
+	GlobalToggles_insert("TogTexLock", MemberCaller<BrushModuleClass, &BrushModuleClass::toggleTextureLock>(*GlobalBrush()), 
+						 ToggleItem::AddCallbackCaller(GlobalBrush()->textureLockItem()), Accelerator('T', (GdkModifierType)GDK_SHIFT_MASK));
 
   GlobalCommands_insert("BrushPrism", BrushPrefab::SetCaller(g_brushprism));
   GlobalCommands_insert("BrushCone", BrushPrefab::SetCaller(g_brushcone));
