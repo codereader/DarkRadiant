@@ -12,8 +12,6 @@
 #include "SelectableComponents.h"
 #include "RenderableWireFrame.h"
 
-extern bool g_brush_texturelock_enabled;
-
 typedef std::size_t faceIndex_t;
 
 inline double quantiseFloating(double f) {
@@ -312,6 +310,8 @@ private:
 	/// \brief Constructs the face windings and updates anything that depends on them.
 	void buildBRep();
 }; // class Brush
+
+typedef std::vector<Brush*> BrushVector;
 
 void Brush_addTextureChangedCallback(const SignalHandler& callback);
 void Brush_textureChanged();

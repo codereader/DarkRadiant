@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brush/BrushNode.h"
 #include "grid.h"
 
-void Face_makeBrush(Face& face, const Brush& brush, brush_vector_t& out, float offset)
+void Face_makeBrush(Face& face, const Brush& brush, BrushVector& out, float offset)
 {
   if(face.contributes())
   {
@@ -49,10 +49,10 @@ void Face_makeBrush(Face& face, const Brush& brush, brush_vector_t& out, float o
 class FaceMakeBrush
 {
   const Brush& brush;
-  brush_vector_t& out;
+  BrushVector& out;
   float offset;
 public:
-  FaceMakeBrush(const Brush& brush, brush_vector_t& out, float offset)
+  FaceMakeBrush(const Brush& brush, BrushVector& out, float offset)
     : brush(brush), out(out), offset(offset)
   {
   }
@@ -62,7 +62,7 @@ public:
   }
 };
 
-void Brush_makeHollow(const Brush& brush, brush_vector_t& out, float offset)
+void Brush_makeHollow(const Brush& brush, BrushVector& out, float offset)
 {
   Brush_forEachFace(brush, FaceMakeBrush(brush, out, offset));
 }
@@ -84,9 +84,9 @@ public:
         && Instance_getSelectable(instance)->isSelected()
         && path.size() > 1)
       {
-        brush_vector_t out;
+        BrushVector out;
         Brush_makeHollow(*brush, out, m_offset);
-        for(brush_vector_t::const_iterator i = out.begin(); i != out.end(); ++i)
+        for(BrushVector::const_iterator i = out.begin(); i != out.end(); ++i)
         {
           (*i)->removeEmptyFaces();
           NodeSmartReference node((new BrushNode())->node());
@@ -104,9 +104,9 @@ typedef std::list<Brush*> brushlist_t;
 
 class BrushGatherSelected : public scene::Graph::Walker
 {
-  brush_vector_t& m_brushlist;
+  BrushVector& m_brushlist;
 public:
-  BrushGatherSelected(brush_vector_t& brushlist)
+  BrushGatherSelected(BrushVector& brushlist)
     : m_brushlist(brushlist)
   {
   }
@@ -300,11 +300,11 @@ brushsplit_t Brush_classifyPlane(const Brush& brush, const Plane3& plane)
   return split;
 }
 
-bool Brush_subtract(const Brush& brush, const Brush& other, brush_vector_t& ret_fragments)
+bool Brush_subtract(const Brush& brush, const Brush& other, BrushVector& ret_fragments)
 {
   if(aabb_intersects_aabb(brush.localAABB(), other.localAABB()))
   {
-    brush_vector_t fragments;
+    BrushVector fragments;
     fragments.reserve(other.size());
     Brush back(brush);
 
@@ -326,7 +326,7 @@ bool Brush_subtract(const Brush& brush, const Brush& other, brush_vector_t& ret_
         }
         else if(split.counts[ePlaneBack] == 0)
         {
-          for(brush_vector_t::iterator i = fragments.begin(); i != fragments.end(); ++i)
+          for(BrushVector::iterator i = fragments.begin(); i != fragments.end(); ++i)
           {
             delete(*i);
           }
@@ -342,11 +342,11 @@ bool Brush_subtract(const Brush& brush, const Brush& other, brush_vector_t& ret_
 
 class SubtractBrushesFromUnselected : public scene::Graph::Walker
 {
-  const brush_vector_t& m_brushlist;
+  const BrushVector& m_brushlist;
   std::size_t& m_before;
   std::size_t& m_after;
 public:
-  SubtractBrushesFromUnselected(const brush_vector_t& brushlist, std::size_t& before, std::size_t& after)
+  SubtractBrushesFromUnselected(const BrushVector& brushlist, std::size_t& before, std::size_t& after)
     : m_brushlist(brushlist), m_before(before), m_after(after)
   {
   }
@@ -362,15 +362,15 @@ public:
       if(brush != 0
         && !Instance_getSelectable(instance)->isSelected())
       {
-        brush_vector_t buffer[2];
+        BrushVector buffer[2];
         bool swap = false;
         Brush* original = new Brush(*brush);
         buffer[static_cast<std::size_t>(swap)].push_back(original);
         
         {
-          for(brush_vector_t::const_iterator i(m_brushlist.begin()); i != m_brushlist.end(); ++i)
+          for(BrushVector::const_iterator i(m_brushlist.begin()); i != m_brushlist.end(); ++i)
           {
-            for(brush_vector_t::iterator j(buffer[static_cast<std::size_t>(swap)].begin()); j != buffer[static_cast<std::size_t>(swap)].end(); ++j)
+            for(BrushVector::iterator j(buffer[static_cast<std::size_t>(swap)].begin()); j != buffer[static_cast<std::size_t>(swap)].end(); ++j)
             {
               if(Brush_subtract(*(*j), *(*i), buffer[static_cast<std::size_t>(!swap)]))
               {
@@ -386,7 +386,7 @@ public:
           }
         }
 
-        brush_vector_t& out = buffer[static_cast<std::size_t>(swap)];
+        BrushVector& out = buffer[static_cast<std::size_t>(swap)];
 
         if(out.size() == 1 && out.back() == original)
         {
@@ -395,7 +395,7 @@ public:
         else
         {
           ++m_before;
-          for(brush_vector_t::const_iterator i = out.begin(); i != out.end(); ++i)
+          for(BrushVector::const_iterator i = out.begin(); i != out.end(); ++i)
           {
             ++m_after;
             NodeSmartReference node((new BrushNode())->node());
@@ -414,7 +414,7 @@ public:
 
 void CSG_Subtract()
 {
-  brush_vector_t selected_brushes;
+  BrushVector selected_brushes;
   GlobalSceneGraph().traverse(BrushGatherSelected(selected_brushes));
 
   if (selected_brushes.empty())
@@ -554,14 +554,14 @@ void Scene_BrushSetClipPlane(scene::Graph& graph, const Plane3& plane)
 CSG_Merge
 =============
 */
-bool Brush_merge(Brush& brush, const brush_vector_t& in, bool onlyshape)
+bool Brush_merge(Brush& brush, const BrushVector& in, bool onlyshape)
 {
   // gather potential outer faces 
 
   {
     typedef std::vector<const Face*> Faces;
     Faces faces;
-    for(brush_vector_t::const_iterator i(in.begin()); i != in.end(); ++i)
+    for(BrushVector::const_iterator i(in.begin()); i != in.end(); ++i)
     {
       (*i)->evaluateBRep();
       for(Brush::const_iterator j((*i)->begin()); j != (*i)->end(); ++j)
@@ -576,7 +576,7 @@ bool Brush_merge(Brush& brush, const brush_vector_t& in, bool onlyshape)
         bool skip = false;
         // test faces of all input brushes
         //!\todo SPEEDUP: Flag already-skip faces and only test brushes from i+1 upwards.
-        for(brush_vector_t::const_iterator k(in.begin()); !skip && k != in.end(); ++k)
+        for(BrushVector::const_iterator k(in.begin()); !skip && k != in.end(); ++k)
         {
           if(k != i) // don't test a brush against itself
           {
@@ -644,7 +644,7 @@ bool Brush_merge(Brush& brush, const brush_vector_t& in, bool onlyshape)
 
 void CSG_Merge(void)
 {
-  brush_vector_t selected_brushes;
+  BrushVector selected_brushes;
 
   // remove selected
   GlobalSceneGraph().traverse(BrushGatherSelected(selected_brushes));

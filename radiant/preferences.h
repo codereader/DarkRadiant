@@ -75,6 +75,12 @@ public:
 	{
 		m_dialog.addCombo(m_vbox, name, registryKey, valueList);
 	}
+	
+	/* greebo: Appends an entry field with <name> as caption which is connected to the given registryKey
+	 */
+	GtkWidget* appendEntry(const std::string& name, const std::string& registryKey) {
+		return m_dialog.addEntry(m_vbox, name, registryKey);
+	}
   
   void appendCombo(const char* name, StringArrayRange values, const IntImportCallback& importCallback, const IntExportCallback& exportCallback)
   {

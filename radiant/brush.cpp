@@ -20,18 +20,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "brush.h"
-#include "signal/signal.h"
-
-
-
-QuantiseFunc Face::m_quantise;
-bool g_brush_texturelock_enabled = false;
-
-double Brush::m_maxWorldCoord = 0;
-Shader* Brush::m_state_point;
-Shader* BrushClipPlane::m_state = 0;
-Shader* BrushInstance::m_state_selpoint;
-Counter* BrushInstance::m_counter = 0;
 
 FaceInstanceSet g_SelectedFaceInstances;
 

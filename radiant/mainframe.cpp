@@ -3020,12 +3020,11 @@ int getFarClipDistance() {
 float (*GridStatus_getGridSize)() = GetGridSize;
 int (*GridStatus_getRotateIncrement)() = getRotateIncrement;
 int (*GridStatus_getFarClipDistance)() = getFarClipDistance;
-bool (*GridStatus_getTextureLockEnabled)();
 
 void MainFrame::SetGridStatus()
 {
   StringOutputStream status(64);
-  const char* lock = (GridStatus_getTextureLockEnabled()) ? "ON" : "OFF";
+  const char* lock = (GlobalBrush()->textureLockEnabled()) ? "ON" : "OFF";
   status << "G:" << GridStatus_getGridSize()
     << "  R:" << GridStatus_getRotateIncrement()
     << "  C:" << GridStatus_getFarClipDistance()

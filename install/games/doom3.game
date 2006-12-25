@@ -60,7 +60,8 @@
 		<lightShader>lights/defaultpointlight</lightShader>
 		<lightScale>1</lightScale>
 		<lightRadius value="320 320 320" />
-		<textureScale value="0.5" />
+		<maxWorldCoord value="65536" />
+		<minWorldCoord value="-65536" />
 	</defaults>
 	<entityChooser>
 		<displayFolderKey value="editor_displayFolder" />

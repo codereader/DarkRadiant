@@ -304,8 +304,6 @@ Face* Brush::addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2, c
 }
 
 void Brush::constructStatic() {
-	g_brush_texturelock_enabled = true;
-
 	Face::m_quantise = quantiseFloating;
 
 	m_state_point = GlobalShaderCache().capture("$POINT");
@@ -931,6 +929,9 @@ void Brush::buildBRep() {
 }
 
 // ----------------------------------------------------------------------------
+
+double Brush::m_maxWorldCoord = 0;
+Shader* Brush::m_state_point;
 
 Signal0 g_brushTextureChangedCallbacks;
 

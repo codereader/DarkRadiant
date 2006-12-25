@@ -108,10 +108,6 @@ typedef BasicVector3<float> Vector3;
 extern Vector3 region_mins, region_maxs;
 extern bool region_active;
 
-// used to be #defines, multiple engine support suggests we should go towards dynamic
-extern float g_MaxWorldCoord;
-extern float g_MinWorldCoord;
-
 void Map_LoadFile(const char* filename);
 bool Map_SaveFile(const char* filename);
 

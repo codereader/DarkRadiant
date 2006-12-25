@@ -4,6 +4,7 @@
 #include <iostream>
 #include "gtk/gtktogglebutton.h"
 #include "gtk/gtkcombobox.h"
+#include "gtk/gtkentry.h"
 
 namespace gtkutil {
 
@@ -31,6 +32,10 @@ void RegistryConnector::importKey(GtkObject* obj, const std::string& registryKey
 		// Set the "active" state of the combo box according to the registry value
 		gtk_combo_box_set_active(GTK_COMBO_BOX(obj), GlobalRegistry().getInt(registryKey));
 	}
+	else if (GTK_IS_ENTRY(obj)) {
+		// Set the content of the input field to the registryKey
+		gtk_entry_set_text(GTK_ENTRY(obj), GlobalRegistry().get(registryKey).c_str());
+	}
 	else {
 		std::cout << "RegistryConnector::importKey failed to identify GTKObject\n";
 	}
@@ -50,6 +55,10 @@ void RegistryConnector::exportKey(GtkObject* obj, const std::string& registryKey
 	else if (GTK_IS_COMBO_BOX(obj)) {
 		// Store the value into the registry
 		GlobalRegistry().setInt(registryKey, gtk_combo_box_get_active(GTK_COMBO_BOX(obj)));
+	}
+	else if (GTK_IS_ENTRY(obj)) {
+		// Get the content of the input field and write it to the registry
+		GlobalRegistry().set(registryKey, gtk_entry_get_text(GTK_ENTRY(obj)));
 	}
 	else {
 		std::cout << "RegistryConnector::exportKey failed to identify GTKObject\n";

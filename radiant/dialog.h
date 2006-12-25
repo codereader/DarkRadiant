@@ -168,6 +168,9 @@ public:
   // greebo: Adds a combo box with the given string list and connects it to the registryKey
   void addCombo(GtkWidget* vbox, const std::string& name, const std::string& registryKey, const ComboBoxValueList& valueList);
   
+  // greebo: Adds an entry field with the given caption <name> and connects it to the <registryKey>
+  GtkWidget* addEntry(GtkWidget* vbox, const std::string& name, const std::string& registryKey);
+  
   void addCombo(GtkWidget* vbox, const char* name, StringArrayRange values, const IntImportCallback& importCallback, const IntExportCallback& exportCallback);
   void addCombo(GtkWidget* vbox, const char* name, int& data, StringArrayRange values);
   void addSlider(GtkWidget* vbox, const char* name, int& data, gboolean draw_value, const char* low, const char* high, double value, double lower, double upper, double step_increment, double page_increment, double page_size);

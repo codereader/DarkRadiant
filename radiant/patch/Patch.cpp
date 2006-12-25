@@ -1009,7 +1009,7 @@ void Patch::NaturalTexture() {
 	undoSave();
 
 	// Retrieve the default scale from the registry
-	float defaultScale = GlobalRegistry().getFloat("game/defaults/textureScale");
+	float defaultScale = GlobalRegistry().getFloat("user/ui/defaultTextureScale");
 
 	/* In this next block, the routine cycles through all the patch columns and
 	 * measures the distances to the next column. 
@@ -1883,7 +1883,7 @@ void Patch::ProjectTexture(int nAxis) {
 	}
 
 	// Retrieve the default scale from the registry
-	float defaultScale = GlobalRegistry().getFloat("game/defaults/textureScale");
+	float defaultScale = GlobalRegistry().getFloat("user/ui/defaultTextureScale");
 
 	/* Calculate the conversion factor between world and texture coordinates
 	 * by using the image width/height.*/

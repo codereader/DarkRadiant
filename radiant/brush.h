@@ -33,7 +33,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// be used to find edge-pairs and vertex-rings.
 
 #include "signal/isignal.h"
-#include <vector>
 
 #include "brush/FaceShader.h"
 #include "brush/ContentsFlagsValue.h"
@@ -50,9 +49,5 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brush/VertexInstance.h"
 #include "brush/BrushInstance.h"
 #include "brush/BrushVisit.h"
-
-extern bool g_brush_texturelock_enabled;
-
-typedef std::vector<Brush*> brush_vector_t;
 
 #endif

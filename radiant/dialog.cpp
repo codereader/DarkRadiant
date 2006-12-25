@@ -790,6 +790,19 @@ GtkWidget* Dialog::addPathEntry(GtkWidget* vbox, const char* name, CopiedString&
   return addPathEntry(vbox, name, browse_directory, StringImportCallback(StringImportCaller(data)), StringExportCallback(StringExportCaller(data))); 
 }
 
+// greebo: add an entry box connected to the given registryKey
+GtkWidget* Dialog::addEntry(GtkWidget* vbox, const std::string& name, const std::string& registryKey) {
+	
+	// Create a new row containing an input field
+	DialogEntryRow row(DialogEntryRow_new(name.c_str()));
+
+	// Connect the registry key to the newly created input field
+	_registryConnector.connectGtkObject(GTK_OBJECT(row.m_entry), registryKey);
+
+	DialogVBox_packRow(GTK_VBOX(vbox), row.m_row);
+	return row.m_row;
+}
+
 GtkWidget* Dialog::addSpinner(GtkWidget* vbox, const char* name, double value, double lower, double upper, const IntImportCallback& importViewer, const IntExportCallback& exportViewer)
 {
   DialogSpinnerRow row(DialogSpinnerRow_new(name, value, lower, upper, 1));
