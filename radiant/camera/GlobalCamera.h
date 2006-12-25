@@ -6,6 +6,7 @@
 
 #include "gtkutil/widget.h"
 
+#include "preferences.h"
 #include "CamWnd.h"
 #include "CameraObserver.h"
 
@@ -32,6 +33,16 @@ public:
 
 	// Constructor
 	GlobalCameraManager();
+	
+	// greebo: The construct method registers all the commands and preferences 
+	// plus initialises the shader states of the camera window. 
+	void construct();
+	
+	// Activates the shortcuts for some commands
+	void registerShortcuts();
+	
+	// This releases the shader states of the CamWnd class
+	void destroy();
 	
 	// Creates a new CamWnd class and returns the according pointer 
 	CamWnd* newCamWnd();
@@ -73,7 +84,10 @@ public:
 	void lookThroughSelected();
 	void lookThroughCamera();
 	
+	// greebo: This measures the rendering time for a full 360 degrees turn of the camera
+	// Note: unused at the moment
 	void benchmark();
+	
 	void update();
 	
 	// Add a "CameraMoved" callback to the signal member
@@ -93,6 +107,18 @@ public:
 	void rotateRightDiscrete();
 	void pitchUpDiscrete();
 	void pitchDownDiscrete();
+
+private:
+
+	// This constructs the preference page "Camera"
+	void registerPreferences();
+	
+	// This gets called by the preference dialog to add the "camera" page to the given <group>
+	void constructPreferencePage(PreferenceGroup& group);
+	typedef MemberCaller1<GlobalCameraManager, PreferenceGroup&, &GlobalCameraManager::constructPreferencePage> PreferencePageConstructor;
+	
+	// This actually adds the settings widgets to the preference page created by constructPreferencePage() 
+	void constructPreferences(PreferencesPage& page);
 	
 }; // class GlobalCameraManager
 

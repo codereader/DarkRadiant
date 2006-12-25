@@ -95,7 +95,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "autosave.h"
 #include "brushmanip.h"
 #include "brushmodule.h"
-#include "camwindow.h"
 #include "csg.h"
 #include "commands.h"
 #include "console.h"
@@ -1907,7 +1906,7 @@ GtkMenuItem* create_view_menu(MainFrame::EViewStyle style)
 
   if(style == MainFrame::eFloating)
   {
-    fill_view_camera_menu(menu);
+    create_check_menu_item_with_mnemonic(menu, "Camera View", "ToggleCamera");
     fill_view_xy_top_menu(menu);
     fill_view_yz_side_menu(menu);
     fill_view_xz_front_menu(menu);
@@ -2249,7 +2248,7 @@ void register_shortcuts()
   Patch_registerShortcuts();
   Grid_registerShortcuts();
   XYWnd_registerShortcuts();
-  CamWnd_registerShortcuts();
+  GlobalCamera().registerShortcuts();
   Manipulators_registerShortcuts();
   SurfaceInspector_registerShortcuts();
   TexdefNudge_registerShortcuts();

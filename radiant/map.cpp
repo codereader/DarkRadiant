@@ -74,7 +74,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkdlgs.h"
 #include "points.h"
 #include "qe3.h"
-#include "camwindow.h"
 #include "xywindow.h"
 #include "mainframe.h"
 #include "preferences.h"
