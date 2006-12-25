@@ -5,7 +5,7 @@
 #include "math/frustum.h"
 
 #include "view.h"
-#include "camwindow.h"
+#include "Camera.h"
 
 const Matrix4 g_radiant2opengl(
   0,-1, 0, 0,

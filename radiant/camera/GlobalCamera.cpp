@@ -1,6 +1,10 @@
 #include "GlobalCamera.h"
 
 #include "iselection.h"
+#include "gdk/gdkkeysyms.h"
+
+#include "commands.h"
+
 #include "CameraSettings.h"
 
 // Constructor
@@ -9,6 +13,97 @@ GlobalCameraManager::GlobalCameraManager() :
 	_cameraModel(NULL),
 	_cameraShown(true)
 {}
+
+void GlobalCameraManager::registerShortcuts() {
+	toggle_add_accelerator("ToggleCubicClip");
+
+	if (g_pGameDescription->mGameType == "doom3") {
+		command_connect_accelerator("TogglePreview");
+	}
+}
+
+void GlobalCameraManager::constructPreferences(PreferencesPage& page) {
+	// Add the sliders for the movement and angle speed and connect them to the observer   
+    page.appendSlider("Movement Speed (game units)", RKEY_MOVEMENT_SPEED, TRUE, 100, 50, 300, 1, 10, 10);
+    page.appendSlider("Rotation Speed", RKEY_ROTATION_SPEED, TRUE, 3, 1, 180, 1, 10, 10);
+    
+	// Add the checkboxes and connect them with the registry key and the according observer 
+	page.appendCheckBox("", "Discrete movement (non-freelook mode)", RKEY_DISCRETE_MOVEMENT);
+	page.appendCheckBox("", "Enable far-clip plane (hides distant objects)", RKEY_ENABLE_FARCLIP);
+	
+	// Add the "inverse mouse vertical axis in free-look mode" preference
+	page.appendCheckBox("", "Invert mouse vertical axis (freelook mode)", RKEY_INVERT_MOUSE_VERTICAL_AXIS);
+
+	// Create the string list containing the render mode captions
+	std::list<std::string> renderModeDescriptions;
+	
+	renderModeDescriptions.push_back("WireFrame");
+	renderModeDescriptions.push_back("Flatshade");
+	renderModeDescriptions.push_back("Textured");
+	
+	if (g_pGameDescription->mGameType == "doom3") {
+		renderModeDescriptions.push_back("Lighting");
+	}
+	
+	page.appendCombo("Render Mode", RKEY_DRAWMODE, renderModeDescriptions);
+}
+
+void GlobalCameraManager::constructPreferencePage(PreferenceGroup& group) {
+	
+	// Add a page to the given group
+	PreferencesPage page(group.createPage("Camera", "Camera View Preferences"));
+	
+	// Now add the preferences to the newly created page
+	constructPreferences(page);
+}
+
+void GlobalCameraManager::registerPreferences() {
+	// Tell the preference dialog to add a page by using the member method construcPreferencePage()
+	PreferencesDialog_addSettingsPage(PreferencePageConstructor(*this));
+}
+
+void GlobalCameraManager::construct() {
+	GlobalCommands_insert("CenterView", MemberCaller<GlobalCameraManager, &GlobalCameraManager::resetCameraAngles>(*this), Accelerator(GDK_End));
+
+	GlobalToggles_insert("ToggleCubicClip", MemberCaller<CameraSettings, &CameraSettings::toggleFarClip>(*getCameraSettings()), 
+						 ToggleItem::AddCallbackCaller(getCameraSettings()->farClipItem()), Accelerator('\\', (GdkModifierType)GDK_CONTROL_MASK));
+
+	GlobalCommands_insert("CubicClipZoomIn", MemberCaller<GlobalCameraManager, &GlobalCameraManager::cubicScaleIn>(*this), Accelerator('[', (GdkModifierType)GDK_CONTROL_MASK));
+	GlobalCommands_insert("CubicClipZoomOut", MemberCaller<GlobalCameraManager, &GlobalCameraManager::cubicScaleOut>(*this), Accelerator(']', (GdkModifierType)GDK_CONTROL_MASK));
+
+	GlobalCommands_insert("UpFloor", MemberCaller<GlobalCameraManager, &GlobalCameraManager::changeFloorUp>(*this), Accelerator(GDK_Prior));
+	GlobalCommands_insert("DownFloor", MemberCaller<GlobalCameraManager, &GlobalCameraManager::changeFloorDown>(*this), Accelerator(GDK_Prior));
+
+	GlobalToggles_insert("ToggleCamera", ToggleShown::ToggleCaller(getToggleShown()),
+	                     ToggleItem::AddCallbackCaller(getToggleShown().m_item), Accelerator('C', (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
+	GlobalCommands_insert("LookThroughSelected", MemberCaller<GlobalCameraManager, &GlobalCameraManager::lookThroughSelected>(*this));
+	GlobalCommands_insert("LookThroughCamera", MemberCaller<GlobalCameraManager, &GlobalCameraManager::lookThroughCamera>(*this));
+
+	if (g_pGameDescription->mGameType == "doom3") {
+		GlobalCommands_insert("TogglePreview", MemberCaller<GlobalCameraManager, &GlobalCameraManager::toggleLightingMode>(*this), Accelerator(GDK_F3));
+	}
+	
+	// Insert movement commands
+	GlobalCommands_insert("CameraForward", MemberCaller<GlobalCameraManager, &GlobalCameraManager::moveForwardDiscrete>(*this), Accelerator(GDK_Up));
+	GlobalCommands_insert("CameraBack", MemberCaller<GlobalCameraManager, &GlobalCameraManager::moveBackDiscrete>(*this), Accelerator(GDK_Down));
+	GlobalCommands_insert("CameraLeft", MemberCaller<GlobalCameraManager, &GlobalCameraManager::rotateLeftDiscrete>(*this), Accelerator(GDK_Left));
+	GlobalCommands_insert("CameraRight", MemberCaller<GlobalCameraManager, &GlobalCameraManager::rotateRightDiscrete>(*this), Accelerator(GDK_Right));
+	GlobalCommands_insert("CameraStrafeRight", MemberCaller<GlobalCameraManager, &GlobalCameraManager::moveRightDiscrete>(*this), Accelerator(GDK_period));
+	GlobalCommands_insert("CameraStrafeLeft", MemberCaller<GlobalCameraManager, &GlobalCameraManager::moveLeftDiscrete>(*this), Accelerator(GDK_comma));
+
+	GlobalCommands_insert("CameraUp", MemberCaller<GlobalCameraManager, &GlobalCameraManager::moveUpDiscrete>(*this), Accelerator('D'));
+	GlobalCommands_insert("CameraDown", MemberCaller<GlobalCameraManager, &GlobalCameraManager::moveDownDiscrete>(*this), Accelerator('C'));
+	GlobalCommands_insert("CameraAngleUp", MemberCaller<GlobalCameraManager, &GlobalCameraManager::pitchUpDiscrete>(*this), Accelerator('A'));
+	GlobalCommands_insert("CameraAngleDown", MemberCaller<GlobalCameraManager, &GlobalCameraManager::pitchDownDiscrete>(*this), Accelerator('Z'));
+	
+	CamWnd::captureStates();
+	
+	registerPreferences();
+}
+
+void GlobalCameraManager::destroy() {
+	CamWnd::releaseStates();
+}
 
 // Creates a new CamWnd class on the heap and returns the according pointer 
 CamWnd* GlobalCameraManager::newCamWnd() {

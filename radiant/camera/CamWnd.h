@@ -1,13 +1,15 @@
 #ifndef CAMWND_H_
 #define CAMWND_H_
 
-#include "RadiantCameraView.h"
 #include "irender.h"
 #include "gtkutil/xorrectangle.h"
 #include "selection/RadiantWindowObserver.h"
 
 #include "view.h"
 #include "map.h"
+
+#include "RadiantCameraView.h"
+#include "Camera.h"
 
 const int CAMWND_MINSIZE_X = 240;
 const int CAMWND_MINSIZE_Y = 200;

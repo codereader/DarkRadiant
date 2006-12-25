@@ -66,7 +66,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "surfacedialog.h"
 #include "groupdialog.h"
 #include "patchdialog.h"
-#include "camwindow.h"
+#include "camera/GlobalCamera.h"
 #include "xywindow.h"
 #include "entity.h"
 #include "select.h"
@@ -263,7 +263,7 @@ public:
     GroupDialog_Construct();
     SurfaceInspector_Construct();
     PatchInspector_Construct();
-    CamWnd_Construct();
+    GlobalCamera().construct();
     XYWindow_Construct();
     TextureBrowser_Construct();
     Entity_Construct();
@@ -286,7 +286,7 @@ public:
     Entity_Destroy();
     TextureBrowser_Destroy();
     XYWindow_Destroy();
-    CamWnd_Destroy();
+    GlobalCamera().destroy();
     PatchInspector_Destroy();
     SurfaceInspector_Destroy();
     GroupDialog_Destroy();
