@@ -102,7 +102,7 @@ Vector3 getColour(const std::string& colourName) {
 
 const char* getMapName()
 {
-  return Map_Name(g_map);
+  return map::getFileName().c_str();
 }
 
 scene::Node& getMapWorldEntity()

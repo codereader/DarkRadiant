@@ -87,7 +87,6 @@ typedef ReferenceCaller<DeferredDraw, DeferredDraw_onMapValidChanged> DeferredDr
 
 
 
-const char* Map_Name(const Map& map);
 const MapFormat& Map_getFormat(const Map& map);
 bool Map_Unnamed(const Map& map);
 

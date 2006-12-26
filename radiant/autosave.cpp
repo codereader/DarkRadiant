@@ -58,8 +58,8 @@ void Map_Snapshot()
   // 1. make sure the snapshot directory exists (create it if it doesn't)
   // 2. find out what the lastest save is based on number
   // 3. inc that and save the map
-  const char* path = Map_Name(g_map);
-  const char* name = path_get_filename_start(path);
+	const char* path = map::getFileName().c_str();
+	const char* name = path_get_filename_start(path);
 
   StringOutputStream snapshotsDir(256);
   snapshotsDir << StringRange(path, name) << "snapshots";
@@ -174,7 +174,7 @@ void QE_CheckAutoSave( void )
         }
         else
         {
-          const char* name = Map_Name(g_map);
+          const char* name = map::getFileName().c_str();
           const char* extension = path_get_filename_base_end(name);
           StringOutputStream autosave(256);
           autosave << StringRange(name, extension) << ".autosave" << extension;

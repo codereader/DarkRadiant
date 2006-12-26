@@ -569,7 +569,7 @@ int main (int argc, char* argv[])
 
   if (!Map_Unnamed(g_map))
   {
-    g_strLastMap = Map_Name(g_map);
+    g_strLastMap = map::getFileName().c_str();
   }
 
   delete g_pParentWnd;
