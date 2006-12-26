@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_BRUSHNODE_H
 
 #include "instancelib.h"
-#include "brush.h"
 #include "brushtokens.h"
 
 class BrushNode :

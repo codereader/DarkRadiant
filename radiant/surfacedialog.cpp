@@ -70,12 +70,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "mainframe.h"
 #include "gtkdlgs.h"
 #include "dialog.h"
-#include "brush.h"				//Shamus: for Textool
 #include "patch.h"
 #include "commands.h"
 #include "stream/stringstream.h"
 #include "grid.h"
 #include "textureentry.h"
+
+#include "brush/BrushInstance.h"
+#include "brush/Face.h"
+
+extern FaceInstanceSet g_SelectedFaceInstances;
 
 #define TEXTOOL_ENABLED 0
 

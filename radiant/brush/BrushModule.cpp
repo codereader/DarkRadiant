@@ -25,6 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ifilter.h"
 #include "brush/BrushNode.h"
+#include "brush/BrushInstance.h"
+#include "brush/BrushClipPlane.h"
+#include "brush/BrushVisit.h"
 #include "brushmanip.h"
 
 #include "preferencesystem.h"

@@ -5,6 +5,7 @@
 #include "ieclass.h"
 #include "scenelib.h"
 #include "selectable.h"
+#include "editable.h"
 
 // -------------- Helper functions -------------------------------------
 

@@ -7,7 +7,7 @@
 #include "winding.h"
 #include "cullable.h"
 
-#include "brushmodule.h"
+#include "BrushModule.h"
 
 void Brush_textureChanged();
 

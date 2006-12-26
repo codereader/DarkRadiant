@@ -3,7 +3,7 @@
 #include "plugin.h"
 #include "iregistry.h"
 #include "mainframe.h"
-#include "brushmodule.h"
+#include "brush/BrushModule.h"
 #include "iscenegraph.h"
 
 namespace ui {
