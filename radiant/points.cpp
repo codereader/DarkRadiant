@@ -43,7 +43,6 @@ please contact Id Software immediately at info@idsoftware.com.
 #include "qe3.h"
 #include "camera/CamWnd.h"
 #include "xywindow.h"
-#include "xmlstuff.h"
 #include "mainframe.h"
 #include "commands.h"
 
@@ -52,7 +51,9 @@ class CPointfile;
 void Pointfile_Parse(CPointfile& pointfile);
 
 
-class CPointfile : public ISAXHandler, public Renderable, public OpenGLRenderable
+class CPointfile 
+: public Renderable, 
+  public OpenGLRenderable
 {
   enum
   {
@@ -73,14 +74,6 @@ public:
   void Init();
   void PushPoint (const Vector3& v);
   void GenerateDisplayList();
-  // SAX interface
-  void Release()
-  {
-    // blank because not heap-allocated
-  }
-  void saxStartElement (message_info_t *ctx, const xmlChar *name, const xmlChar **attrs);
-  void saxEndElement (message_info_t *ctx, const xmlChar *name);
-  void saxCharacters (message_info_t *ctx, const xmlChar *ch, int len);
   const char* getName();
 
   typedef const Vector3* const_iterator;
@@ -150,8 +143,6 @@ namespace
 {
   CPointfile s_pointfile;
 }
-
-ISAXHandler& g_pointfile = s_pointfile;
 
 static CPointfile::const_iterator s_check_point;
 
@@ -370,39 +361,6 @@ void Pointfile_Destroy()
 }
 
 
-
-// CPointfile implementation for SAX-specific stuff -------------------------------
-void CPointfile::saxStartElement (message_info_t *ctx, const xmlChar *name, const xmlChar **attrs)
-{
-  if(string_equal(reinterpret_cast<const char*>(name), "polyline"))
-  {
-    Init();
-  }
-}
-
-void CPointfile::saxEndElement (message_info_t *ctx, const xmlChar *name)
-{
-  if(string_equal(reinterpret_cast<const char*>(name), "polyline"))
-  {
-    // we are done
-    GenerateDisplayList();
-    SceneChangeNotify();
-    s_check_point = begin();
-  }
-  else if(string_equal(reinterpret_cast<const char*>(name), "point"))
-  {
-    Vector3 v;  
-    sscanf(m_characters.c_str(), "%f %f %f\n", &v[0], &v[1], &v[2]);
-    PushPoint(v);
-    m_characters.clear();
-  }
-}
-
-// only "point" is expected to have characters around here
-void CPointfile::saxCharacters (message_info_t *ctx, const xmlChar *ch, int len)
-{
-  m_characters.write(reinterpret_cast<const char*>(ch), len);
-}
 
 const char* CPointfile::getName()
 {
