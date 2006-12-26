@@ -293,7 +293,7 @@ void ColourSchemeEditor::updateWindows() {
 	// Call the update, so all colours can be previewed
 	XY_UpdateAllWindows();
 	GlobalCamera_UpdateWindow();
-	Brush_clipperColourChanged();
+	GlobalBrush()->clipperColourChanged();
 	SceneChangeNotify();
 }
 

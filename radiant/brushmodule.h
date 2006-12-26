@@ -24,18 +24,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "iregistry.h"
 
+#include "brush/TexDef.h"
+#include "ibrush.h"
+
 #include "gtkutil/widget.h"
 
 #include "preferences.h"
-
-void Brush_clipperColourChanged();
 
 	// Some constants
 	namespace {
 		const std::string RKEY_ENABLE_TEXTURE_LOCK = "user/ui/brush/textureLock";
 	}
 
-class BrushModuleClass : public RegistryKeyObserver {
+class BrushModuleClass : 
+	public RegistryKeyObserver,
+	public BrushCreator 
+{
 	
 	bool _textureLockEnabled;
 	
@@ -56,6 +60,22 @@ public:
 	
 	// The opposite of the above construct()
 	void destroy();
+	
+	
+	// --------------- BrushCreator methods ---------------------------------------------
+	
+	// Creates a new brush node on the heap and returns it 
+	scene::Node& createBrush();
+	
+	void Brush_forEachFace(scene::Node& brush, const BrushFaceDataCallback& callback);
+	
+	// Adds a face plan to the given brush
+	bool Brush_addFace(scene::Node& brush, const _QERFaceData& faceData);
+	
+	// ----------------------------------------------------------------------------------
+	
+	// Re-constructs the BrushClipPlane to activate the colour change
+	void clipperColourChanged();
 	
 	// returns true if the texture lock is enabled
 	bool textureLockEnabled() const;
