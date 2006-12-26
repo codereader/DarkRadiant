@@ -296,7 +296,6 @@ radiant_src = [
 'view.cpp',
 'winding.cpp',
 'windowobservers.cpp',
-'xmlstuff.cpp',
 'xywindow.cpp',
 'ui/einspector/EntityInspector.cpp',
 'ui/einspector/AddPropertyDialog.cpp',
