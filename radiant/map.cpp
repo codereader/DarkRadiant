@@ -392,15 +392,9 @@ std::string getFileName() {
 	
 } // namespace map
 
-// Old map name function
-const char* Map_Name(const Map& map)
-{
-  return map.m_name.c_str();
-}
-
 bool Map_Unnamed(const Map& map)
 {
-  return string_equal(Map_Name(map), "unnamed.map");
+	return map::getFileName() == "unnamed.map";
 }
 
 inline const MapFormat& MapFormat_forFile(const char* filename)
@@ -413,7 +407,7 @@ inline const MapFormat& MapFormat_forFile(const char* filename)
 
 const MapFormat& Map_getFormat(const Map& map)
 {
-  return MapFormat_forFile(Map_Name(map));
+  return MapFormat_forFile(map::getFileName().c_str());
 }
 
 
