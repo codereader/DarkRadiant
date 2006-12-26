@@ -23,8 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "qerplugin.h"
 
-#include "brush/TexDef.h"
-#include "ibrush.h"
 #include "ifilter.h"
 #include "brush/BrushNode.h"
 #include "brushmanip.h"
@@ -91,6 +89,11 @@ void BrushModuleClass::destroy() {
 	BrushClipPlane::destroyStatic();
 }
 
+void BrushModuleClass::clipperColourChanged() {
+	BrushClipPlane::destroyStatic();
+	BrushClipPlane::constructStatic();
+}
+
 void BrushModuleClass::keyChanged() {
 	_textureLockEnabled = (GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1");
 	
@@ -123,6 +126,39 @@ ToggleItem& BrushModuleClass::textureLockItem() {
 	return _textureLockItem;
 }
 
+// ------------ BrushCreator implementation --------------------------------------------
+
+void BrushFaceData_fromFace(const BrushFaceDataCallback& callback, Face& face) {
+	  _QERFaceData faceData;
+	  faceData.m_p0 = face.getPlane().planePoints()[0];
+	  faceData.m_p1 = face.getPlane().planePoints()[1];
+	  faceData.m_p2 = face.getPlane().planePoints()[2];
+	  faceData.m_shader = face.GetShader();
+	  faceData.m_texdef = face.getTexdef().m_projection.m_texdef;
+	  faceData.contents = face.getShader().m_flags.m_contentFlags;
+	  faceData.flags = face.getShader().m_flags.m_surfaceFlags;
+	  faceData.value = face.getShader().m_flags.m_value;
+	  callback(faceData);
+}
+typedef ConstReferenceCaller1<BrushFaceDataCallback, Face&, BrushFaceData_fromFace> BrushFaceDataFromFaceCaller;
+typedef Callback1<Face&> FaceCallback;
+
+scene::Node& BrushModuleClass::createBrush() {
+	return (new BrushNode)->node();
+}
+
+void BrushModuleClass::Brush_forEachFace(scene::Node& brush, const BrushFaceDataCallback& callback) {
+	::Brush_forEachFace(*Node_getBrush(brush), FaceCallback(BrushFaceDataFromFaceCaller(callback)));
+}
+
+// Adds a face plan to the given brush
+bool BrushModuleClass::Brush_addFace(scene::Node& brush, const _QERFaceData& faceData) {
+	Node_getBrush(brush)->undoSave();
+	return Node_getBrush(brush)->addPlane(faceData.m_p0, faceData.m_p1, faceData.m_p2, faceData.m_shader, TextureProjection(faceData.m_texdef, BrushPrimitTexDef(), Vector3(0, 0, 0), Vector3(0, 0, 0))) != 0;
+}
+
+// -------------------------------------------------------------------------------------
+
 // greebo: The accessor function for the brush module containing the static instance
 BrushModuleClass* GlobalBrush() {
 	static BrushModuleClass _brushModule;
@@ -130,51 +166,6 @@ BrushModuleClass* GlobalBrush() {
 }
 
 // ---------------------------------------------------------------------------------------
-
-void Brush_clipperColourChanged()
-{
-  BrushClipPlane::destroyStatic();
-  BrushClipPlane::constructStatic();
-}
-
-void BrushFaceData_fromFace(const BrushFaceDataCallback& callback, Face& face)
-{
-  _QERFaceData faceData;
-  faceData.m_p0 = face.getPlane().planePoints()[0];
-  faceData.m_p1 = face.getPlane().planePoints()[1];
-  faceData.m_p2 = face.getPlane().planePoints()[2];
-  faceData.m_shader = face.GetShader();
-  faceData.m_texdef = face.getTexdef().m_projection.m_texdef;
-  faceData.contents = face.getShader().m_flags.m_contentFlags;
-  faceData.flags = face.getShader().m_flags.m_surfaceFlags;
-  faceData.value = face.getShader().m_flags.m_value;
-  callback(faceData);
-}
-typedef ConstReferenceCaller1<BrushFaceDataCallback, Face&, BrushFaceData_fromFace> BrushFaceDataFromFaceCaller;
-typedef Callback1<Face&> FaceCallback;
-
-class Quake3BrushCreator : public BrushCreator
-{
-public:
-  scene::Node& createBrush()
-  {
-    return (new BrushNode)->node();
-  }
-  void Brush_forEachFace(scene::Node& brush, const BrushFaceDataCallback& callback)
-  {
-    ::Brush_forEachFace(*Node_getBrush(brush), FaceCallback(BrushFaceDataFromFaceCaller(callback)));
-  }
-  bool Brush_addFace(scene::Node& brush, const _QERFaceData& faceData)
-  {
-    Node_getBrush(brush)->undoSave();
-    return Node_getBrush(brush)->addPlane(faceData.m_p0, faceData.m_p1, faceData.m_p2, faceData.m_shader, TextureProjection(faceData.m_texdef, BrushPrimitTexDef(), Vector3(0, 0, 0), Vector3(0, 0, 0))) != 0;
-  }
-};
-
-BrushCreator& GetBrushCreator() {
-	static Quake3BrushCreator _quake3BrushCreator; 
-	return _quake3BrushCreator;
-}
 
 #include "modulesystem/singletonmodule.h"
 #include "modulesystem/moduleregistry.h"
@@ -189,7 +180,6 @@ class BrushDependencies :
 	public GlobalFilterModuleRef 
 {};
 
-
 class BrushDoom3API : public TypeSystemRef {
 	BrushCreator* m_brushdoom3;
 public:
@@ -199,7 +189,7 @@ public:
 	BrushDoom3API() {
 		GlobalBrush()->construct();
 
-		m_brushdoom3 = &GetBrushCreator();
+		m_brushdoom3 = GlobalBrush();
 	}
 	
 	~BrushDoom3API() {
