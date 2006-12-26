@@ -87,7 +87,7 @@ public:
 	// Constructors
 	Face(FaceObserver* observer);
 	Face(const Vector3& p0, const Vector3& p1, const Vector3& p2,
-		const char* shader,	const TextureProjection& projection, FaceObserver* observer);
+		const std::string& shader, const TextureProjection& projection, FaceObserver* observer);
 		
 	// Copy Constructor
 	Face(const Face& other, FaceObserver* observer);
@@ -137,8 +137,8 @@ public:
 
 	void shaderChanged();
 
-	const char* GetShader() const;
-	void SetShader(const char* name);
+	const std::string& GetShader() const;
+	void SetShader(const std::string& name);
 
 	void revertTexdef();
 	void texdefChanged();

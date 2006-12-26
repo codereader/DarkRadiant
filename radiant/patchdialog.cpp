@@ -1106,7 +1106,7 @@ void PatchInspector::GetPatchInfo()
 
   if (m_Patch != 0)
   {
-    m_strName = m_Patch->GetShader();
+    m_strName = m_Patch->GetShader().c_str();
   
     // fill in the numbers for Row / Col selection
     m_bListenChanged = false;

@@ -182,7 +182,7 @@ inline void Patch_exportHeader(const Patch& patch, std::ostream& os)
 
 inline void PatchDoom3_exportShader(const Patch& patch, std::ostream& os)
 {
-	if(*(shader_get_textureName(patch.GetShader())) == '\0') {
+	if (*(shader_get_textureName(patch.GetShader().c_str())) == '\0') {
     	os << "\"_emptyname\"";
 	}
 	else  {

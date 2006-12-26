@@ -308,9 +308,9 @@ void Scene_PatchTranspose_Selected(scene::Graph& graph)
 
 class PatchSetShader
 {
-  const char* m_name;
+  const std::string& m_name;
 public:
-  PatchSetShader(const char* name)
+  PatchSetShader(const std::string& name)
     : m_name(name)
   {
   }
@@ -320,13 +320,13 @@ public:
   }
 };
 
-void Scene_PatchSetShader_Selected(scene::Graph& graph, const char* name)
+void Scene_PatchSetShader_Selected(scene::Graph& graph, const std::string& name)
 {
   Scene_forEachVisibleSelectedPatch(PatchSetShader(name));
   SceneChangeNotify();
 }
 
-void Scene_PatchGetShader_Selected(scene::Graph& graph, CopiedString& name)
+void Scene_PatchGetShader_Selected(scene::Graph& graph, std::string& name)
 {
   Patch* patch = Scene_GetUltimateSelectedVisiblePatch();
   if(patch != 0)

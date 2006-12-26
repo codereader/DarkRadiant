@@ -323,10 +323,9 @@ void SurfaceInspector_SetCurrent_FromSelected()
       Scene_BrushGetTexdef_Component_Selected(GlobalSceneGraph(), projection);
       SurfaceInspector_SetSelectedTexdef(projection);
 
-      CopiedString name;
+      std::string name;
       Scene_BrushGetShader_Component_Selected(GlobalSceneGraph(), name);
-      if(string_not_empty(name.c_str()))
-      {
+      if (name != "") {
         SurfaceInspector_SetSelectedShader(name.c_str());
       }
 
@@ -340,13 +339,12 @@ void SurfaceInspector_SetCurrent_FromSelected()
       Scene_BrushGetTexdef_Selected(GlobalSceneGraph(), projection);
       SurfaceInspector_SetSelectedTexdef(projection);
 
-      CopiedString name;
+      std::string name;
       Scene_BrushGetShader_Selected(GlobalSceneGraph(), name);
-      if(string_empty(name.c_str()))
-      {
+      if (name == "") {
         Scene_PatchGetShader_Selected(GlobalSceneGraph(), name);
       }
-      if(string_not_empty(name.c_str()))
+      if(name != "")
       {
         SurfaceInspector_SetSelectedShader(name.c_str());
       }
@@ -1429,7 +1427,7 @@ public:
 TextureClipBoard g_faceTextureClipboard;
 
 //bool Scene_getClosestTexture(scene::Graph& graph, SelectionTest& test, CopiedString& shader, TextureProjection& projection, ContentsFlagsValue& flags)
-bool Scene_getClosestTexture(scene::Graph& graph, SelectionTest& test, CopiedString& shader, TextureClipBoard& clipBoard) {
+bool Scene_getClosestTexture(scene::Graph& graph, SelectionTest& test, std::string& shader, TextureClipBoard& clipBoard) {
   	Texturable texturable = Scene_getClosestTexturable(graph, test);
   	
 	// Check if we have a brush
@@ -1453,7 +1451,7 @@ bool Scene_getClosestTexture(scene::Graph& graph, SelectionTest& test, CopiedStr
 	return false;
 }
 
-void Scene_setClosestTexture(scene::Graph& graph, SelectionTest& test, const char* shader, const TextureClipBoard& clipBoard, const bool& project) {
+void Scene_setClosestTexture(scene::Graph& graph, SelectionTest& test, const std::string& shader, const TextureClipBoard& clipBoard, const bool& project) {
 	Texturable texturable = Scene_getClosestTexturable(graph, test);
   
 	// Check if we have a brush to copy from
@@ -1529,14 +1527,14 @@ void TextureClipboard_textureSelected(const char* shader)
 
 class TextureBrowser;
 extern TextureBrowser g_TextureBrowser;
-void TextureBrowser_SetSelectedShader(TextureBrowser& textureBrowser, const char* shader);
+void TextureBrowser_SetSelectedShader(TextureBrowser& textureBrowser, const std::string& shader);
 const char* TextureBrowser_GetSelectedShader(TextureBrowser& textureBrowser);
 
 void Scene_copyClosestTexture(SelectionTest& test)
 {
-  CopiedString shader;
+  std::string shader;
   if (Scene_getClosestTexture(GlobalSceneGraph(), test, shader, g_faceTextureClipboard)) {
-	TextureBrowser_SetSelectedShader(g_TextureBrowser, shader.c_str());
+	TextureBrowser_SetSelectedShader(g_TextureBrowser, shader);
   }
 }
 

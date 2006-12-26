@@ -29,7 +29,7 @@ Face::Face(
 	const Vector3& p0,
 	const Vector3& p1,
 	const Vector3& p2,
-	const char* shader,
+	const std::string& shader,
 	const TextureProjection& projection,
 	FaceObserver* observer
 ) :
@@ -219,10 +219,10 @@ void Face::shaderChanged() {
 	SceneChangeNotify();
 }
 
-const char* Face::GetShader() const {
+const std::string& Face::GetShader() const {
 	return m_shader.getShader();
 }
-void Face::SetShader(const char* name) {
+void Face::SetShader(const std::string& name) {
 	undoSave();
 	m_shader.setShader(name);
 	shaderChanged();

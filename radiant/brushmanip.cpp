@@ -495,22 +495,22 @@ void Scene_BrushRotateTexdef_Component_Selected(scene::Graph& graph, float angle
 
 class FaceSetShader
 {
-  const char* m_name;
+  const std::string& m_name;
 public:
-  FaceSetShader(const char* name) : m_name(name) {}
-  void operator()(Face& face) const
-  {
+  FaceSetShader(const std::string& name) : m_name(name) {}
+  
+  void operator()(Face& face) const {
     face.SetShader(m_name);
   }
 };
 
-void Scene_BrushSetShader_Selected(scene::Graph& graph, const char* name)
+void Scene_BrushSetShader_Selected(scene::Graph& graph, const std::string& name)
 {
   Scene_ForEachSelectedBrush_ForEachFace(graph, FaceSetShader(name));
   SceneChangeNotify();
 }
 
-void Scene_BrushSetShader_Component_Selected(scene::Graph& graph, const char* name)
+void Scene_BrushSetShader_Component_Selected(scene::Graph& graph, const std::string& name)
 {
   Scene_ForEachSelectedBrushFace(graph, FaceSetShader(name));
   SceneChangeNotify();
@@ -791,10 +791,10 @@ void Scene_BrushGetFlags_Component_Selected(scene::Graph& graph, ContentsFlagsVa
 
 class FaceGetShader
 {
-  CopiedString& m_shader;
+  mutable std::string& m_shader;
   mutable bool m_done;
 public:
-  FaceGetShader(CopiedString& shader)
+  FaceGetShader(std::string& shader)
     : m_shader(shader), m_done(false)
   {
   }
@@ -808,7 +808,7 @@ public:
   }
 };
 
-void Scene_BrushGetShader_Selected(scene::Graph& graph, CopiedString& shader)
+void Scene_BrushGetShader_Selected(scene::Graph& graph, std::string& shader)
 {
 #if 1
   if(GlobalSelectionSystem().countSelected() != 0)
@@ -824,7 +824,7 @@ void Scene_BrushGetShader_Selected(scene::Graph& graph, CopiedString& shader)
 #endif
 }
 
-void Scene_BrushGetShader_Component_Selected(scene::Graph& graph, CopiedString& shader)
+void Scene_BrushGetShader_Component_Selected(scene::Graph& graph, std::string& shader)
 {
 #if 1
   if(!g_SelectedFaceInstances.empty())

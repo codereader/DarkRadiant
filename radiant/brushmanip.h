@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_BRUSHWRAPPER_H
 
 #include <cstddef>
+#include <string>
 #include "string/stringfwd.h"
 #include "generic/callbackfwd.h"
 
@@ -57,10 +58,10 @@ void Scene_BrushScaleTexdef_Selected(scene::Graph& graph, float s, float t);
 void Scene_BrushScaleTexdef_Component_Selected(scene::Graph& graph, float s, float t);
 void Scene_BrushRotateTexdef_Selected(scene::Graph& graph, float angle);
 void Scene_BrushRotateTexdef_Component_Selected(scene::Graph& graph, float angle);
-void Scene_BrushSetShader_Selected(scene::Graph& graph, const char* name);
-void Scene_BrushSetShader_Component_Selected(scene::Graph& graph, const char* name);
-void Scene_BrushGetShader_Selected(scene::Graph& graph, CopiedString& shader);
-void Scene_BrushGetShader_Component_Selected(scene::Graph& graph, CopiedString& shader);
+void Scene_BrushSetShader_Selected(scene::Graph& graph, const std::string& name);
+void Scene_BrushSetShader_Component_Selected(scene::Graph& graph, const std::string& name);
+void Scene_BrushGetShader_Selected(scene::Graph& graph, std::string& shader);
+void Scene_BrushGetShader_Component_Selected(scene::Graph& graph, std::string& shader);
 void Scene_BrushFindReplaceShader(scene::Graph& graph, const char* find, const char* replace);
 void Scene_BrushFindReplaceShader_Selected(scene::Graph& graph, const char* find, const char* replace);
 void Scene_BrushFindReplaceShader_Component_Selected(scene::Graph& graph, const char* find, const char* replace);

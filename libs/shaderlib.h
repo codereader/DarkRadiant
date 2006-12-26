@@ -26,9 +26,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "character.h"
 #include "ishaders.h"
 
-inline bool shader_equal(const char* shader, const char* other)
+inline bool shader_equal(const std::string& shader, const std::string& other)
 {
-  return string_equal_nocase(shader, other);
+  return string_equal_nocase(shader.c_str(), other.c_str());
 }
 
 inline bool shader_equal_n(const char* shader, const char* other, std::size_t n)

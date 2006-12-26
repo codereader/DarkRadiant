@@ -230,7 +230,7 @@ public:
 	Face* addFace(const Face& face);
 
 	/// \brief Appends a new face constructed from the parameters to the end of the face list.
-	Face* addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2, const char* shader, const TextureProjection& projection);
+	Face* addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2, const std::string& shader, const TextureProjection& projection);
 	
 	static void constructStatic();
 	static void destroyStatic();

@@ -103,7 +103,7 @@ Patch::Patch(const Patch& other, scene::Node& node, const Callback& evaluateTran
 	m_subdivisions_y = other.m_subdivisions_y;
 	setDims(other.m_width, other.m_height);
 	copy_ctrl(m_ctrl.data(), other.m_ctrl.data(), other.m_ctrl.data()+(m_width*m_height));
-	SetShader(other.m_shader.c_str());
+	SetShader(other.m_shader);
 	controlPointsChanged();
 }
 
@@ -137,7 +137,7 @@ Patch::Patch(const Patch& other) :
 	m_subdivisions_y = other.m_subdivisions_y;
 	setDims(other.m_width, other.m_height);
 	copy_ctrl(m_ctrl.data(), other.m_ctrl.data(), other.m_ctrl.data()+(m_width*m_height));
-	SetShader(other.m_shader.c_str());
+	SetShader(other.m_shader);
 	controlPointsChanged();
 }
 
@@ -481,15 +481,15 @@ void Patch::exportXML(XMLImporter& importer) {
 	importer.popElement(patchElement.name());
 }
 
-const char* Patch::GetShader() const {
-	return m_shader.c_str();
+const std::string& Patch::GetShader() const {
+	return m_shader;
 }
 
-void Patch::SetShader(const char* name) {
-		ASSERT_NOTNULL(name);
+void Patch::SetShader(const std::string& name) {
+		ASSERT_NOTNULL(name.c_str());
   
   		// return, if the shader is the same as the currently used 
-	if (shader_equal(m_shader.c_str(), name))
+	if (shader_equal(m_shader, name))
 		return;
 
 	undoSave();
@@ -549,7 +549,7 @@ void Patch::undoSave() {
 
 // Save the current patch state into a new UndoMemento instance (allocated on heap) and return it to the undo observer
 UndoMemento* Patch::exportState() const {
-	return new SavedState(m_width, m_height, m_ctrl, m_shader.c_str(), m_patchDef3, m_subdivisions_x, m_subdivisions_y);
+	return new SavedState(m_width, m_height, m_ctrl, m_shader, m_patchDef3, m_subdivisions_x, m_subdivisions_y);
 }
 
 // Revert the state of this patch to the one that has been saved in the UndoMemento
@@ -564,7 +564,7 @@ void Patch::importState(const UndoMemento* state) {
 	{
 		m_width = other.m_width;
 		m_height = other.m_height;
-		SetShader(other.m_shader.c_str());
+		SetShader(other.m_shader);
 		m_ctrl = other.m_ctrl;
 		onAllocate(m_ctrl.size());
 		m_patchDef3 = other.m_patchDef3;
@@ -588,8 +588,8 @@ void Patch::releaseShader() {
 }
 
 void Patch::check_shader() {
-	if (!shader_valid(GetShader())) {
-		globalErrorStream() << "patch has invalid texture name: '" << GetShader() << "'\n";
+	if (!shader_valid(GetShader().c_str())) {
+		globalErrorStream() << "patch has invalid texture name: '" << GetShader().c_str() << "'\n";
 	}
 }
 

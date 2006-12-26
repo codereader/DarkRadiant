@@ -378,15 +378,15 @@ void TextureBrowser_SetStatus(TextureBrowser& textureBrowser, const char* name)
 
 void TextureBrowser_Focus(TextureBrowser& textureBrowser, const char* name);
 
-void TextureBrowser_SetSelectedShader(TextureBrowser& textureBrowser, const char* shader)
+void TextureBrowser_SetSelectedShader(TextureBrowser& textureBrowser, const std::string& shader)
 {
-  textureBrowser.shader = shader;
-  TextureBrowser_SetStatus(textureBrowser, shader);
-  TextureBrowser_Focus(textureBrowser, shader);
+  textureBrowser.shader = shader.c_str();
+  TextureBrowser_SetStatus(textureBrowser, shader.c_str());
+  TextureBrowser_Focus(textureBrowser, shader.c_str());
 
   if(FindTextureDialog_isOpen())
   {
-    FindTextureDialog_selectTexture(shader);
+    FindTextureDialog_selectTexture(shader.c_str());
   }
 }
 
