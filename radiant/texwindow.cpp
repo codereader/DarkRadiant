@@ -84,7 +84,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "patchdialog.h"
 #include "groupdialog.h"
 #include "preferences.h"
-#include "shaders.h"
 #include "commands.h"
 #include "ui/common/ToolbarCreator.h"
 
@@ -876,15 +875,6 @@ void SelectTexture(TextureBrowser& textureBrowser, int mx, int my, bool bShift)
   IShader* shader = Texture_At(textureBrowser, mx, my);
   if(shader != 0)
   {
-    if (bShift)
-    {
-      if (shader->IsDefault())
-        globalOutputStream() << "ERROR: " << shader->getName() << " is not a shader, it's a texture.\n";
-      else
-        ViewShader( shader->getShaderFileName(), shader->getName() );
-    }
-    else
-    {
       TextureBrowser_SetSelectedShader(textureBrowser, shader->getName());
       TextureBrowser_textureSelected(shader->getName());
 
@@ -893,7 +883,6 @@ void SelectTexture(TextureBrowser& textureBrowser, int mx, int my, bool bShift)
         UndoableCommand undo("textureNameSetSelected");
         Select_SetShader(shader->getName());
       }
-    }
   }
 }
 

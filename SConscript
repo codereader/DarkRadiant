@@ -286,7 +286,6 @@ radiant_src = [
 'select.cpp',
 'selection.cpp',
 'server.cpp',
-'shaders.cpp',
 'surfacedialog.cpp',
 'texmanip.cpp',
 'textures.cpp',
