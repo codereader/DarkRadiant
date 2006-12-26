@@ -128,6 +128,7 @@ public:
 
 	bool isSelected() const;
 	void setSelected(bool select);
+	void invertSelected();
 
 	void update_selected() const;
 

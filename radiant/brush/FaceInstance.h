@@ -27,27 +27,28 @@ class FaceInstance {
 public:
 	mutable VectorLightList m_lights;
 
-	FaceInstance::FaceInstance(Face& face, const SelectionChangeCallback& observer);
-	FaceInstance::FaceInstance(const FaceInstance& other);
+	FaceInstance(Face& face, const SelectionChangeCallback& observer);
+	FaceInstance(const FaceInstance& other);
 
 	FaceInstance& FaceInstance::operator=(const FaceInstance& other);
 	
-	Face& FaceInstance::getFace();
+	Face& getFace();
 	
-	const Face& FaceInstance::getFace() const;
+	const Face& getFace() const;
 	
-	void FaceInstance::selectedChanged(const Selectable& selectable);
+	void selectedChanged(const Selectable& selectable);
 	typedef MemberCaller1<FaceInstance, const Selectable&, &FaceInstance::selectedChanged> SelectedChangedCaller;
 	 
-	bool FaceInstance::selectedVertices() const;
-	bool FaceInstance::selectedEdges() const;
+	bool selectedVertices() const;
+	bool selectedEdges() const;
 	
-	bool FaceInstance::isSelected() const;
+	bool isSelected() const;
 	
-	bool FaceInstance::selectedComponents() const;
-	bool FaceInstance::selectedComponents(SelectionSystem::EComponentMode mode) const;
+	bool selectedComponents() const;
+	bool selectedComponents(SelectionSystem::EComponentMode mode) const;
 	
-	void FaceInstance::setSelected(SelectionSystem::EComponentMode mode, bool select);
+	void setSelected(SelectionSystem::EComponentMode mode, bool select);
+	void invertSelected();
 
 	template<typename Functor>
 	void SelectedVertices_foreach(Functor functor) const {

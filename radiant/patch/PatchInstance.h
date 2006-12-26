@@ -115,6 +115,7 @@ public:
 	// Set the selection status. As this is an ObservedSelectable, the onChanged callback is performed automatically.
 	void setSelected(bool select);
 	bool isSelected() const;
+	void invertSelected();
 
 	// greebo: Updates the internal render array m_render_selected, that contains all control vertices that should be
 	// rendered as highlighted.

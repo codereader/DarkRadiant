@@ -101,6 +101,21 @@ bool PatchInstance::isSelected() const {
 	return m_selectable.isSelected();
 }
 
+void PatchInstance::invertSelected() {
+	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent) {
+		// Cycle through the transformed patch vertices and set the colour of all selected control vertices to BLUE (hardcoded)
+		PatchControlIter ctrl = m_patch.getControlPointsTransformed().begin();
+		
+		for (PatchControlInstances::iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i, ++ctrl) {
+			i->m_selectable.invertSelected();
+		}
+	}
+	else {
+		// Invert the selection of the patch itself
+		setSelected(!isSelected());
+	}
+}
+
 void PatchInstance::update_selected() const {
 	// Clear the renderable point vector that represents the selection
 	m_render_selected.clear();

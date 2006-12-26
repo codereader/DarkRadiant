@@ -286,44 +286,45 @@ void Select_Delete (void)
 
 class InvertSelectionWalker : public scene::Graph::Walker
 {
-  SelectionSystem::EMode m_mode;
-  mutable Selectable* m_selectable;
+	SelectionSystem::EMode m_mode;
+	mutable Selectable* m_selectable;
 public:
-  InvertSelectionWalker(SelectionSystem::EMode mode)
-    : m_mode(mode), m_selectable(0)
-  {
-  }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
-  {
-    Selectable* selectable = Instance_getSelectable(instance);
-    if(selectable)
-    {
-      switch(m_mode)
-      {
-      case SelectionSystem::eEntity:
-        if(Node_isEntity(path.top()) != 0)
-        {
-          m_selectable = path.top().get().visible() ? selectable : 0;
-        }
-        break;
-      case SelectionSystem::ePrimitive:
-        m_selectable = path.top().get().visible() ? selectable : 0;
-        break;
-      case SelectionSystem::eComponent:
-        break;
-      }
-    }
-    return true;
-  }
-  void post(const scene::Path& path, scene::Instance& instance) const
-  {
-    if(m_selectable != 0)
-    {
-      m_selectable->setSelected(!m_selectable->isSelected());
-      m_selectable = 0;
-    }
-  }
+	InvertSelectionWalker(SelectionSystem::EMode mode)
+			: m_mode(mode), m_selectable(0) {}
+	bool pre(const scene::Path& path, scene::Instance& instance) const {
+		Selectable* selectable = Instance_getSelectable(instance);
+		if (selectable) {
+			switch (m_mode) {
+				case SelectionSystem::eEntity:
+					if (Node_isEntity(path.top()) != 0) {
+						m_selectable = path.top().get().visible() ? selectable : 0;
+					}
+					break;
+				case SelectionSystem::ePrimitive:
+					m_selectable = path.top().get().visible() ? selectable : 0;
+					break;
+				case SelectionSystem::eComponent:
+					// Check if we have a componentselectiontestable instance
+					ComponentSelectionTestable* compSelTestable = Instance_getComponentSelectionTestable(instance);
+
+					// Only add it to the list if the instance has components and is already selected
+					if (compSelTestable && selectable->isSelected()) {
+						m_selectable = path.top().get().visible() ? selectable : 0;
+					}
+					break;
+			}
+		}
+		return true;
+	}
+	void post(const scene::Path& path, scene::Instance& instance) const {
+		if (m_selectable != 0) {
+			//m_selectable->setSelected(!m_selectable->isSelected());
+			m_selectable->invertSelected();
+			m_selectable = 0;
+		}
+	}
 };
+
 
 void Scene_Invert_Selection(scene::Graph& graph)
 {
