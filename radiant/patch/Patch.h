@@ -18,7 +18,8 @@
 #include "PatchXMLState.h"
 #include "PatchRenderables.h"
 #include "brush/TexDef.h"
-#include "brush.h"	// for FacePlane definition, be sure to replace this as soon as brush.h is disentangled
+#include "brush/FacePlane.h"
+#include "brush/Face.h"
 
 void Patch_addTextureChangedCallback(const SignalHandler& handler);
 void Patch_textureChanged();

@@ -38,7 +38,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/dialog.h"
 #include "gtkutil/widget.h"
 #include "brushmanip.h"
-#include "brush.h"
 #include "patchmanip.h"
 #include "patchdialog.h"
 #include "texwindow.h"
@@ -47,7 +46,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "grid.h"
 #include "map.h"
 #include "selection/SceneWalkers.h"
-
+#include "brush/BrushInstance.h"
 
 select_workzone_t g_select_workzone;
 

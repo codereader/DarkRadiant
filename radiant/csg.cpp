@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/Plane3.h"
 #include "map.h"
 #include "brushmanip.h"
+#include "brush/BrushVisit.h"
 #include "brush/BrushNode.h"
 #include "grid.h"
 

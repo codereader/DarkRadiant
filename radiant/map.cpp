@@ -81,7 +81,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "mru.h"
 #include "commands.h"
 #include "autosave.h"
-#include "brush.h"
 #include "brush/BrushNode.h"
 #include "camera/CamWnd.h"
 

@@ -1,5 +1,7 @@
 #include "BrushNode.h"
 
+#include "BrushInstance.h"
+
 // Constructor
 BrushNode::BrushNode() :
 	m_node(this, this, StaticTypeCasts::instance().get()),

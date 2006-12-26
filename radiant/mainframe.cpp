@@ -94,7 +94,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "autosave.h"
 #include "brushmanip.h"
-#include "brushmodule.h"
+#include "brush/BrushModule.h"
 #include "csg.h"
 #include "commands.h"
 #include "console.h"

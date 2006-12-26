@@ -243,9 +243,7 @@ radiant_env.useOpenGL()
 
 radiant_src = [
 'autosave.cpp',
-'brush.cpp',
 'brushmanip.cpp',
-'brushmodule.cpp',
 'clippertool.cpp',
 'commands.cpp',
 'console.cpp',
@@ -351,6 +349,7 @@ radiant_src = [
 'brush/BrushClass.cpp',
 'brush/FaceInstance.cpp',
 'brush/BrushInstance.cpp',
+'brush/BrushModule.cpp',
 'camera/CameraSettings.cpp',
 'camera/Camera.cpp',
 'camera/CamWnd.cpp',

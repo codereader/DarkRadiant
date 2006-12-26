@@ -11,7 +11,7 @@
 #include "plugin.h"
 #include "texturelib.h"
 #include "brush/TextureProjection.h"
-#include "winding.h"	// Maybe redundant (see #include "brush.h" >> in "Patch.h")
+#include "winding.h"
 
 #include "PatchSavedState.h"
 

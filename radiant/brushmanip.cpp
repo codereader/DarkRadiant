@@ -36,9 +36,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "preferences.h"
 #include "shaderlib.h"
 
-#include "brushmodule.h"
+#include "brush/BrushVisit.h"
+#include "brush/BrushModule.h"
+#include "brush/FaceInstance.h"
 
 #include <list>
+
+FaceInstanceSet g_SelectedFaceInstances;
 
 void Brush_ConstructCuboid(Brush& brush, const AABB& bounds, const char* shader, const TextureProjection& projection)
 {

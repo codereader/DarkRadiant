@@ -2,6 +2,8 @@
 #define BRUSHVISIT_H_
 
 #include "iselection.h"
+#include "FaceInstance.h"
+#include "BrushInstance.h"
 
 extern FaceInstanceSet g_SelectedFaceInstances;
 
