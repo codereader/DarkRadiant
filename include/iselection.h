@@ -37,6 +37,7 @@ public:
 
   virtual void setSelected(bool select) = 0;
   virtual bool isSelected() const = 0;
+  virtual void invertSelected() = 0;
 };
 
 namespace scene

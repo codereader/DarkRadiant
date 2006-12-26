@@ -128,11 +128,40 @@ void BrushInstance::setSelected(bool select) {
 	m_selectable.setSelected(select);
 }
 
+void BrushInstance::invertSelected() {
+	// Check if we are in component mode or not
+	if (GlobalSelectionSystem().Mode() == SelectionSystem::ePrimitive) {
+		// Non-component mode, invert the selection of the whole brush
+		m_selectable.invertSelected();
+	} else {
+		// Component mode, invert the component selection
+		
+		switch (GlobalSelectionSystem().ComponentMode()) {
+			case SelectionSystem::eVertex:
+				for (VertexInstances::iterator i = m_vertexInstances.begin(); i != m_vertexInstances.end(); ++i) {
+					i->invertSelected();
+				}
+				break;
+			case SelectionSystem::eEdge:
+				for (EdgeInstances::iterator i = m_edgeInstances.begin(); i != m_edgeInstances.end(); ++i) {
+					i->invertSelected();
+				}
+				break;
+			case SelectionSystem::eFace:
+				for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
+					i->invertSelected();
+				}
+				break;
+		}
+	}
+}
+
+
 void BrushInstance::update_selected() const {
 	m_render_selected.clear();
 	for (FaceInstances::const_iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
-		if ((*i).getFace().contributes()) {
-			(*i).iterate_selected(m_render_selected);
+		if (i->getFace().contributes()) {
+			i->iterate_selected(m_render_selected);
 		}
 	}
 }

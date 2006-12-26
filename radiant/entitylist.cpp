@@ -404,6 +404,9 @@ public:
   {
     return true;
   }
+  void invertSelected() {
+  	// nothing to do
+  }  
 };
 
 typedef LazyStatic<NullSelectedInstance> StaticNullSelectedInstance;

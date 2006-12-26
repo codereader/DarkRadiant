@@ -43,6 +43,10 @@ public:
 	bool isSelected() const {
 		return selected_edge();
 	}
+	
+	void invertSelected() {
+		setSelected(!isSelected());
+	}
 
 	void testSelect(Selector& selector, SelectionTest& test) {
 		SelectionIntersection best;
