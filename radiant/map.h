@@ -170,6 +170,11 @@ const char* getMapsPath();
 
 namespace map {
 
+	/**
+	 * Return the filename of the current map, as a string.
+	 */
+	std::string getFileName();
+
 	/** Subtract the provided origin vector from all selected brushes. This is 
 	 * necessary when reparenting worldspawn brushes to an entity, since the entity's
 	 * "origin" key will be added to all child brushes.
