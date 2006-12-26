@@ -34,10 +34,7 @@ please contact Id Software immediately at info@idsoftware.com.
 #include "igl.h"
 #include "renderable.h"
 
-#include "stream/stringstream.h"
-#include "os/path.h"
-#include "os/file.h"
-#include "cmdlib.h"
+#include "gtkutil/dialog.h"
 
 #include "map.h"
 #include "qe3.h"
@@ -46,85 +43,119 @@ please contact Id Software immediately at info@idsoftware.com.
 #include "mainframe.h"
 #include "commands.h"
 
-
-class CPointfile;
-void Pointfile_Parse(CPointfile& pointfile);
-
+#include <iostream>
+#include <fstream>
 
 class CPointfile 
 : public Renderable, 
   public OpenGLRenderable
 {
-  enum
-  {
-    MAX_POINTFILE = 8192,
-  };
-  Vector3 s_pointvecs[MAX_POINTFILE];
-  std::size_t s_num_points;
-  int m_displaylist;
-  static Shader* m_renderstate;
-  StringOutputStream m_characters;
+	// Vector of point coordinates
+	typedef std::vector<Vector3> VectorList;
+	VectorList _points;
+	
+	// GL display list pointer for rendering the point path
+	int _displayList;
+	
+	static Shader* m_renderstate;
+
+private:
+
+	// Parse the current pointfile and read the vectors into the point list
+	void parse() {
+
+		// Pointfile is the same as the map file but with a .lin extension
+		// instead of .map
+		std::string mapName = map::getFileName();
+		std::string pfName = mapName.substr(0, mapName.rfind(".")) + ".lin";
+		
+		// Open the pointfile and get its input stream if possible
+		std::ifstream inFile(pfName.c_str());
+		if (!inFile) {
+			gtkutil::errorDialog("Could not open pointfile:\n\n" + pfName);
+			return;
+		}
+
+		// Pointfile is a list of float vectors, one per line, with components
+		// separated by spaces.
+		while (inFile.good()) {
+			float x, y, z;
+			inFile >> x; inFile >> y; inFile >> z;
+			_points.push_back(Vector3(x, y, z));			
+		}
+	}
+
 public:
-  CPointfile()
-  {
-  }
-  ~CPointfile()
-  {
-  }
-  void Init();
-  void PushPoint (const Vector3& v);
+
+	// Constructor
+	CPointfile()
+	: _displayList(0)
+	{}
+
+	// Query whether the point path is currently visible
+	bool isVisible() const {
+		return _displayList != 0;
+	}
+
   void GenerateDisplayList();
   const char* getName();
 
-  typedef const Vector3* const_iterator;
+  typedef VectorList::const_iterator const_iterator;
 
   const_iterator begin() const
   {
-    return &s_pointvecs[0];
+    return _points.begin();
   }
   const_iterator end() const
   {
-    return &s_pointvecs[s_num_points];
+    return _points.end();
   }
 
-  bool shown() const
-  {
-    return m_displaylist != 0;
-  }
-  void show(bool show)
-  {
-    if(show && !shown())
-    {
-      Pointfile_Parse(*this);
-	    GenerateDisplayList();
-      SceneChangeNotify();
-    }
-    else if(!show && shown())
-    {
-	    glDeleteLists (m_displaylist, 1);
-	    m_displaylist = 0;
-      SceneChangeNotify();
-    }
-  }
+	/*
+	 * Toggle the status of the pointfile rendering. If the pointfile must be
+	 * shown, the file is parsed automatically.
+	 */
+	void show(bool show) {
+		
+		// Update the status if required
+		if(show && _displayList == 0) {
+			// Parse the pointfile from disk
+			parse();
+			GenerateDisplayList();
+		}
+		else if(!show && _displayList != 0) {
+			glDeleteLists (_displayList, 1);
+			_displayList = 0;
+		}
+		
+		// Redraw the scene
+		SceneChangeNotify();
+	}
 
-  void render(RenderStateFlags state) const
-  {
-    glCallList(m_displaylist);
-  }
+	/*
+	 * OpenGL render function (back-end).
+	 */
+	void render(RenderStateFlags state) const {
+		glCallList(_displayList);
+	}
 
-  void renderSolid(Renderer& renderer, const VolumeTest& volume) const
-  {
-    if(shown())
-    {
-      renderer.SetState(m_renderstate, Renderer::eWireframeOnly);
-      renderer.SetState(m_renderstate, Renderer::eFullMaterials);
-      renderer.addRenderable(*this, g_matrix4_identity);
-    }
-  }
-  void renderWireframe(Renderer& renderer, const VolumeTest& volume) const
-  {
-    renderSolid(renderer, volume);
-  }
+	/*
+	 * Solid renderable submission function (front-end)
+	 */
+	void renderSolid(Renderer& renderer, const VolumeTest& volume) const {
+		if(isVisible()) {
+			renderer.SetState(m_renderstate, Renderer::eWireframeOnly);
+			renderer.SetState(m_renderstate, Renderer::eFullMaterials);
+			renderer.addRenderable(*this, g_matrix4_identity);
+		}
+	}
+
+	/*
+	 * Wireframe renderable submission function (front-end).
+	 */
+	void renderWireframe(Renderer& renderer, const VolumeTest& volume) const {
+		renderSolid(renderer, volume);
+	}
 
   static void constructStatic()
   {
@@ -146,51 +177,33 @@ namespace
 
 static CPointfile::const_iterator s_check_point;
 
-void CPointfile::Init()
-{
-  s_num_points = 0;
-  m_displaylist = 0;
-}
-
-void CPointfile::PushPoint(const Vector3& v)
-{
-	if (s_num_points < MAX_POINTFILE)
-	{
-		s_pointvecs[s_num_points] = v;
-		++s_num_points;
-	}
-}
-
 // create the display list at the end
 void CPointfile::GenerateDisplayList()
 {
-  m_displaylist = glGenLists(1);
+	_displayList = glGenLists(1);
 
-  glNewList (m_displaylist,  GL_COMPILE);
+	glNewList (_displayList,  GL_COMPILE);
 
-  glBegin(GL_LINE_STRIP);
-	for(std::size_t i=0;i<s_num_points;i++)
-	  glVertex3fv (s_pointvecs[i]);
-  glEnd();
-  glLineWidth (1);
+	glBegin(GL_LINE_STRIP);
+	for (VectorList::iterator i = _points.begin();
+		 i != _points.end();
+		 ++i)
+	{
+		glVertex3fv(*i);
+	}
+	glEnd();
+	glLineWidth (1);
 	
-  glEndList();
+	glEndList();
 }
 
 // old (but still relevant) pointfile code -------------------------------------
 
-void Pointfile_Delete (void)
-{
-  const char* mapname = Map_Name(g_map);
-  StringOutputStream name(256);
-  name << StringRange(mapname, path_get_filename_base_end(mapname)) << ".lin";
-	file_remove(name.c_str());
-}
-
 // advance camera to next point
 void Pointfile_Next (void)
 {
-  if(!s_pointfile.shown())
+	// Return if pointfile is not visible
+	if(!s_pointfile.isVisible())
     return;
 
 	if (s_check_point+2 == s_pointfile.end())
@@ -217,7 +230,7 @@ void Pointfile_Next (void)
 // advance camera to previous point
 void Pointfile_Prev (void)
 {
-  if(!s_pointfile.shown())
+  if(!s_pointfile.isVisible())
     return;
 
 	if (s_check_point == s_pointfile.begin())
@@ -240,96 +253,6 @@ void Pointfile_Prev (void)
   }
 }
 
-int LoadFile (const char *filename, void **bufferptr)
-{
-  FILE *f;
-  long len;
-
-  f = fopen (filename, "rb");
-  if (f == 0)
-    return -1;
-
-  fseek (f, 0, SEEK_END);
-  len = ftell (f);
-  rewind (f);
-
-  *bufferptr = malloc (len+1);
-  if (*bufferptr == 0)
-    return -1;
-
-  fread (*bufferptr, 1, len, f);
-  fclose (f);
-
-  // we need to end the buffer with a 0
-  ((char*) (*bufferptr))[len] = 0;
-
-  return len;
-}
-
-void Pointfile_Parse(CPointfile& pointfile)
-{
-	int		size;
-	char	*data;
-  char  *text;
-  int   line = 1;
-
-  const char* mapname = Map_Name(g_map);
-  StringOutputStream name(256);
-  name << StringRange(mapname, path_get_filename_base_end(mapname)) << ".lin";
-
-	size = LoadFile (name.c_str(), (void**)&data);
-  if (size == -1)
-  {
-    globalErrorStream() << "Pointfile " << name.c_str() << " not found\n";
-		return;
-  }
-
-  // store a pointer
-  text = data;
-
-	globalOutputStream() << "Reading pointfile " << name.c_str() << "\n";
-
-  pointfile.Init();
-
-	while (*data)
-	{
-	  Vector3 v;
-    if (sscanf(data,"%f %f %f", &v[0], &v[1], &v[2]) != 3)
-    {
-      globalOutputStream() << "Corrupt point file, line " << line << "\n";
-			break;
-    }
-
-  	while (*data && *data != '\n')
-    {
-      if (*(data-1) == ' ' && *(data) == '-' && *(data+1) == ' ')
-        break;
-		  data++;
-    }
-    // deal with zhlt style point files.
-    if (*data == '-')
-    {
-      if (sscanf(data,"- %f %f %f", &v[0], &v[1], &v[2]) != 3)
-      {
-        globalOutputStream() << "Corrupt point file, line " << line << "\n";
-        break;
-      }
-
-      while (*data && *data != '\n')
-		    data++;
-
-    }
-    while (*data == '\n')
-    {
-      data++; // skip the \n
-      line++;
-    }
-		pointfile.PushPoint (v);
-	}
-
-  g_free(text);
-}
-
 void Pointfile_Clear()
 {
   s_pointfile.show(false);
@@ -337,9 +260,9 @@ void Pointfile_Clear()
 
 void Pointfile_Toggle()
 {
-  s_pointfile.show(!s_pointfile.shown());
+	s_pointfile.show(!s_pointfile.isVisible());
 
-  s_check_point = s_pointfile.begin();
+	s_check_point = s_pointfile.begin();
 }
 
 void Pointfile_Construct()

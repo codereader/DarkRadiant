@@ -1345,38 +1345,16 @@ public:
 
 	/* Capture the given shader.
 	 */
-	 
 	Shader* capture(const std::string& name) {
 		return m_shaders.capture(name.c_str()).get();	
 	}
 
-  Shader* capture(const char* name)
-  {
-    ASSERT_MESSAGE(name[0] == '$'
-      || *name == '['
-      || *name == '<'
-      || *name == '('
-      || strchr(name, '\\') == 0, "shader name contains invalid characters: \"" << name << "\""); 
-#if DEBUG_SHADERS
-    globalOutputStream() << "shaders capture: " << makeQuoted(name) << '\n';
-#endif
-    return m_shaders.capture(name).get();
-  }
-  
 	/* Release the given shader.
 	 */
-	 
 	void release(const std::string& name) {
 		m_shaders.release(name.c_str());
 	}
   
-  void release(const char *name)
-  {
-#if DEBUG_SHADERS
-    globalOutputStream() << "shaders release: " << makeQuoted(name) << '\n';
-#endif
-    m_shaders.release(name);
-  }
   void render(RenderStateFlags globalstate, const Matrix4& modelview, const Matrix4& projection, const Vector3& viewer)
   {
     glMatrixMode(GL_PROJECTION);

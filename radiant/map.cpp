@@ -308,7 +308,7 @@ void Map_SetWorldspawn(Map& map, scene::Node* node);
 class Map : public ModuleObserver
 {
 public:
-  CopiedString m_name;
+  std::string m_name;
   Resource* m_resource;
   bool m_valid;
 
@@ -382,7 +382,17 @@ void Map_SetValid(Map& map, bool valid)
   map.m_mapValidCallbacks();
 }
 
+namespace map {
 
+/* Return the name of the current map.
+ */
+std::string getFileName() {
+	return g_map.m_name;
+}	
+	
+} // namespace map
+
+// Old map name function
 const char* Map_Name(const Map& map)
 {
   return map.m_name.c_str();
