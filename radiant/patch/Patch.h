@@ -58,8 +58,8 @@ private:
 
 	AABB m_aabb_local; // local bbox
 
-	// greebo: The name of the shader, should be std::string
-	CopiedString m_shader;
+	// greebo: The name of the shader
+	std::string m_shader;
 	
 	Shader* m_state;
 
@@ -213,8 +213,8 @@ public:
 	void UpdateCachedData();
 
 	// Gets the shader name or sets the shader to <name>
-	const char *GetShader() const;
-	void SetShader(const char* name);
+	const std::string& GetShader() const;
+	void SetShader(const std::string& name);
 	
 	// As the name states: get the shader flags of the m_state shader
 	int getShaderFlags() const;

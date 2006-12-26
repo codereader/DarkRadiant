@@ -11,7 +11,7 @@ void brush_check_shader(const std::string& name) {
 }
 
 // Constructor
-FaceShader::FaceShader(const char* shader, const ContentsFlagsValue& flags) :
+FaceShader::FaceShader(const std::string& shader, const ContentsFlagsValue& flags) :
 	m_shader(shader),
 	m_state(0),
 	m_flags(flags),
@@ -76,8 +76,8 @@ void FaceShader::detach(FaceShaderObserver& observer) {
 	m_observers.detach(observer);
 }
 
-const char* FaceShader::getShader() const {
-	return m_shader.c_str();
+const std::string& FaceShader::getShader() const {
+	return m_shader;
 }
 
 void FaceShader::setShader(const std::string& name) {

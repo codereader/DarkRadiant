@@ -215,11 +215,11 @@ inline void FaceShader_ContentsFlagsValue_exportTokens(const FaceShader& faceSha
 
 inline void FaceShader_Doom3_exportTokens(const FaceShader& faceShader, std::ostream& os)
 {
-	if(string_empty(shader_get_textureName(faceShader.getShader()))) {
+	if(string_empty(shader_get_textureName(faceShader.getShader().c_str()))) {
 		os << "\"_emptyname\" ";
 	}
 	else {
-    	os << "\"" << faceShader.getShader() << "\" ";
+    	os << "\"" << faceShader.getShader().c_str() << "\" ";
 	}
 }
 

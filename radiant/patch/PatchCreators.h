@@ -38,12 +38,12 @@ public:
 	}
 	
 	// Get the shadername of the patch stored in this node 
-	const char* Patch_getShader(scene::Node& patch) const {
+	const std::string& Patch_getShader(scene::Node& patch) const {
 		return Node_getPatch(patch)->GetShader();
 	}
   	
   	// Set the shadername of the patch in this node
-	void Patch_setShader(scene::Node& patch, const char* shader) const {
+	void Patch_setShader(scene::Node& patch, const std::string& shader) const {
 		Node_getPatch(patch)->SetShader(shader);
 	}
 }; // class CommonPatchCreator

@@ -12,7 +12,7 @@ class SavedState : public UndoMemento {
 	
 	// The members to store the state information
 	std::size_t m_width, m_height;
-	CopiedString m_shader;
+	std::string m_shader;
 	PatchControlArray m_ctrl;
 	bool m_patchDef3;
 	std::size_t m_subdivisions_x;
@@ -23,7 +23,7 @@ class SavedState : public UndoMemento {
 		std::size_t width,
 		std::size_t height,
 		const PatchControlArray& ctrl,
-		const char* shader,
+		const std::string& shader,
 		bool patchDef3,
 		std::size_t subdivisions_x,
 		std::size_t subdivisions_y
@@ -40,7 +40,7 @@ class SavedState : public UndoMemento {
 
 	// Delete this memento from the heap
     void release() {
-      delete this;
+		delete this;
     }
 };
 

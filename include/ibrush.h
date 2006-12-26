@@ -92,7 +92,7 @@ public:
   Vector3 m_p1;
   Vector3 m_p2;
   TexDef m_texdef;
-  const char* m_shader;
+  std::string m_shader;
   int contents;
   int flags;
   int value;

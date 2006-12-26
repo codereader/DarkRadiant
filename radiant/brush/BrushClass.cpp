@@ -292,7 +292,7 @@ Face* Brush::addFace(const Face& face) {
 }
 
 /// \brief Appends a new face constructed from the parameters to the end of the face list.
-Face* Brush::addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2, const char* shader, const TextureProjection& projection) {
+Face* Brush::addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2, const std::string& shader, const TextureProjection& projection) {
 	if(m_faces.size() == c_brush_maxFaces) {
 		return 0;
 	}

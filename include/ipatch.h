@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_IPATCH_H)
 #define INCLUDED_IPATCH_H
 
+#include <string>
+
 #include "generic/constant.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
@@ -283,8 +285,8 @@ public:
 	virtual void Patch_controlPointsChanged(scene::Node& patch) const = 0;
 	
 	// Get/Set the shader name of the patch
-	virtual const char* Patch_getShader(scene::Node& patch) const = 0;
-	virtual void Patch_setShader(scene::Node& patch, const char* shader) const = 0;
+	virtual const std::string& Patch_getShader(scene::Node& patch) const = 0;
+	virtual void Patch_setShader(scene::Node& patch, const std::string& shader) const = 0;
 };
 
 // Module-related stuff

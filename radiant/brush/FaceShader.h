@@ -62,7 +62,7 @@ public:
 	bool m_realised;
 
 	// Constructor
-	FaceShader(const char* shader, const ContentsFlagsValue& flags = ContentsFlagsValue(0, 0, 0, false));
+	FaceShader(const std::string& shader, const ContentsFlagsValue& flags = ContentsFlagsValue(0, 0, 0, false));
 	
 	// Destructor
 	~FaceShader();
@@ -82,7 +82,7 @@ public:
 	void attach(FaceShaderObserver& observer);
 	void detach(FaceShaderObserver& observer);
 
-	const char* getShader() const;
+	const std::string& getShader() const;
 	void setShader(const std::string& name);
 	
 	Shader* state() const;
