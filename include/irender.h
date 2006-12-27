@@ -168,11 +168,6 @@ public:
 	 
 	virtual void release(const std::string& name) = 0;
 
-	// Old capture and release
-
-	virtual Shader* capture(const char* name) = 0;
-	virtual void release(const char* name) = 0;
-
   /*! Render all Shader objects. */
   virtual void render(RenderStateFlags globalstate, const Matrix4& modelview, const Matrix4& projection, const Vector3& viewer = Vector3(0, 0, 0)) = 0;
 

@@ -135,7 +135,6 @@ void BrushInstance::invertSelected() {
 		m_selectable.invertSelected();
 	} else {
 		// Component mode, invert the component selection
-		
 		switch (GlobalSelectionSystem().ComponentMode()) {
 			case SelectionSystem::eVertex:
 				for (VertexInstances::iterator i = m_vertexInstances.begin(); i != m_vertexInstances.end(); ++i) {
@@ -152,7 +151,9 @@ void BrushInstance::invertSelected() {
 					i->invertSelected();
 				}
 				break;
-		}
+			case SelectionSystem::eDefault:
+				break;
+		} // switch
 	}
 }
 
