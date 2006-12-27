@@ -69,43 +69,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/eventmapper/EventMapper.h"
 
 #include "selection/SelectionBox.h"
+#include "xyview/ClipPoint.h"
 
 #include <boost/lexical_cast.hpp>
-
-//!\todo Rewrite.
-class ClipPoint
-{
-public:
-  Vector3 m_ptClip;      // the 3d point
-  bool m_bSet;
-
-  ClipPoint()
-  {
-    Reset();
-  };
-  void Reset()
-  {
-    m_ptClip[0] = m_ptClip[1] = m_ptClip[2] = 0.0;
-    m_bSet = false;
-  }
-  bool Set()
-  {
-    return m_bSet;
-  }
-  void Set(bool b)
-  {
-    m_bSet = b;
-  }
-  operator Vector3&()
-  {
-    return m_ptClip;
-  };
-  
-  /*! Draw clip/path point with rasterized number label */
-  void Draw(int num, float scale);
-  /*! Draw clip/path point with rasterized string label */
-  void Draw(const char *label, float scale);
-};
 
 VIEWTYPE g_clip_viewtype;
 bool g_bSwitch = true;
@@ -115,60 +81,13 @@ ClipPoint g_Clip2;
 ClipPoint g_Clip3;
 ClipPoint* g_pMovingClip = 0;
 
-/* Drawing clip points */
-void ClipPoint::Draw(int num, float scale)
-{
-  StringOutputStream label(4);
-  label << num;
-  Draw(label.c_str(), scale);
-}
 
-void ClipPoint::Draw(const char *label, float scale)
-{
-  // draw point
-  glPointSize (4);
-  glColor3fv(ColourSchemes().getColourVector3("clipper"));
-  glBegin (GL_POINTS);
-  glVertex3fv(m_ptClip);
-  glEnd();
-  glPointSize (1);
-
-  float offset = 2.0f / scale;
-
-  // draw label
-  glRasterPos3f (m_ptClip[0] + offset, m_ptClip[1] + offset, m_ptClip[2] + offset);
-  glCallLists (GLsizei(strlen(label)), GL_UNSIGNED_BYTE, label);
-}
-
-float fDiff(float f1, float f2)
-{
-  if (f1 > f2)
-    return f1 - f2;
-  else
-    return f2 - f1;
-}
-
-inline double ClipPoint_Intersect(const ClipPoint& clip, const Vector3& point, VIEWTYPE viewtype, float scale)
-{
-  int nDim1 = (viewtype == YZ) ? 1 : 0;
-  int nDim2 = (viewtype == XY) ? 1 : 2;
-  double screenDistanceSquared(
-  	Vector2(
-  		fDiff(clip.m_ptClip[nDim1], point[nDim1]) * scale, 
-  		fDiff(clip.m_ptClip[nDim2], point[nDim2]) * scale).getLengthSquared()
-  	);
-  if(screenDistanceSquared < 8*8)
-  {
-    return screenDistanceSquared;
-  }
-  return FLT_MAX;
-}
 
 inline void ClipPoint_testSelect(ClipPoint& clip, const Vector3& point, VIEWTYPE viewtype, float scale, double& bestDistance, ClipPoint*& bestClip)
 {
   if(clip.Set())
   {
-    double distance = ClipPoint_Intersect(clip, point, viewtype, scale);
+    double distance = clip.intersect(point, viewtype, scale);
     if(distance < bestDistance)
     {
       bestDistance = distance;
