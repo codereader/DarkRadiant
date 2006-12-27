@@ -404,24 +404,6 @@ void XYWnd::SetScale(float f)
   XYWnd_Update(*this);
 }
 
-void XYWnd_ZoomIn(XYWnd* xy)
-{
-  float max_scale = 64;
-  float scale = xy->Scale() * 5.0f / 4.0f;
-  if(scale > max_scale)
-  {
-    if(xy->Scale() != max_scale)
-    {
-      xy->SetScale (max_scale);
-    }
-  }
-  else
-  {
-    xy->SetScale(scale);
-  }
-}
-
-
 VIEWTYPE GlobalXYWnd_getCurrentViewType()
 {
   ASSERT_NOTNULL(g_pParentWnd);
@@ -630,14 +612,6 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, const unsigned int& state) 
 // XYWnd class
 Shader* XYWnd::m_state_selected = 0;
 
-void xy_update_xor_rectangle(XYWnd& self, Rectangle area)
-{
-  if(GTK_WIDGET_VISIBLE(self.GetWidget()))
-  {
-    self.m_XORRectangle.set(rectangle_from_area(area.min, area.max, self.Width(), self.Height()));
-  }
-}
-
 /* greebo: This is the callback for the mouse_press event that is invoked by GTK
  * it checks for the correct event type and passes the call to the according xy view window.
  * 
@@ -687,17 +661,16 @@ void xywnd_motion(gdouble x, gdouble y, guint state, void* data) {
 	xywnd->mouseMoved(static_cast<int>(x), static_cast<int>(y), state);
 }
 
+// This is the onWheelScroll event, that is used to Zoom in/out in the xyview
 gboolean xywnd_wheel_scroll(GtkWidget* widget, GdkEventScroll* event, XYWnd* xywnd)
 {
-  if(event->direction == GDK_SCROLL_UP)
-  {
-    XYWnd_ZoomIn(xywnd);
-  }
-  else if(event->direction == GDK_SCROLL_DOWN)
-  {
-    xywnd->zoomOut();
-  }
-  return FALSE;
+	if (event->direction == GDK_SCROLL_UP) {
+		xywnd->zoomIn();
+	}
+	else if (event->direction == GDK_SCROLL_DOWN) {
+		xywnd->zoomOut();
+	}
+	return FALSE;
 }
 
 gboolean xywnd_size_allocate(GtkWidget* widget, GtkAllocation* allocation, XYWnd* xywnd)
@@ -726,220 +699,195 @@ gboolean xywnd_expose(GtkWidget* widget, GdkEventExpose* event, XYWnd* xywnd)
   return FALSE;
 }
 
-
-/*void XYWnd_CameraMoved(XYWnd& xywnd)
-{
-  if(g_xywindow_globals_private.m_bCamXYUpdate)
-  {
-    XYWnd_Update(xywnd);
-  }
-}*/
-
+// Constructor
 XYWnd::XYWnd() :
-  m_gl_widget(glwidget_new(FALSE)),
-  m_deferredDraw(WidgetQueueDrawCaller(*m_gl_widget)),
-  m_deferred_motion(xywnd_motion, this),
-  _minWorldCoord(GlobalRegistry().getFloat("game/defaults/minWorldCoord")),
-  _maxWorldCoord(GlobalRegistry().getFloat("game/defaults/maxWorldCoord")),
-  m_parent(0),
-  m_window_observer(NewWindowObserver()),
-  m_XORRectangle(m_gl_widget),
-  m_chasemouse_handler(0)
+	m_gl_widget(glwidget_new(FALSE)),
+	m_deferredDraw(WidgetQueueDrawCaller(*m_gl_widget)),
+	m_deferred_motion(xywnd_motion, this),
+	_minWorldCoord(GlobalRegistry().getFloat("game/defaults/minWorldCoord")),
+	_maxWorldCoord(GlobalRegistry().getFloat("game/defaults/maxWorldCoord")),
+	m_parent(0),
+	m_window_observer(NewWindowObserver()),
+	m_XORRectangle(m_gl_widget),
+	m_chasemouse_handler(0) 
 {
-  m_bActive = false;
-  m_buttonstate = 0;
+	m_bActive = false;
+	m_buttonstate = 0;
 
-  m_bNewBrushDrag = false;
-  m_move_started = false;
-  m_zoom_started = false;
+	m_bNewBrushDrag = false;
+	m_move_started = false;
+	m_zoom_started = false;
 
-  m_nWidth = 0;
-  m_nHeight = 0;
+	m_nWidth = 0;
+	m_nHeight = 0;
 
-  m_vOrigin[0] = 0;
-  m_vOrigin[1] = 20;
-  m_vOrigin[2] = 46;
-  m_fScale = 1;
-  m_viewType = XY;
+	m_vOrigin[0] = 0;
+	m_vOrigin[1] = 20;
+	m_vOrigin[2] = 46;
+	m_fScale = 1;
+	m_viewType = XY;
 
-  m_entityCreate = false;
+	m_entityCreate = false;
 
-  m_mnuDrop = 0;
+	m_mnuDrop = 0;
 
-  GlobalWindowObservers_add(m_window_observer);
-  GlobalWindowObservers_connectWidget(m_gl_widget);
+	GlobalWindowObservers_add(m_window_observer);
+	GlobalWindowObservers_connectWidget(m_gl_widget);
 
-  m_window_observer->setRectangleDrawCallback(ReferenceCaller1<XYWnd, Rectangle, xy_update_xor_rectangle>(*this));
-  m_window_observer->setView(m_view);
+	m_window_observer->setRectangleDrawCallback(MemberCaller1<XYWnd, Rectangle, &XYWnd::updateXORRectangle>(*this));
+	m_window_observer->setView(m_view);
 
-  gtk_widget_ref(m_gl_widget);
+	gtk_widget_ref(m_gl_widget);
 
-  gtk_widget_set_events(m_gl_widget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
-  GTK_WIDGET_SET_FLAGS(m_gl_widget, GTK_CAN_FOCUS);
-  gtk_widget_set_size_request(m_gl_widget, XYWND_MINSIZE_X, XYWND_MINSIZE_Y);
+	gtk_widget_set_events(m_gl_widget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
+	GTK_WIDGET_SET_FLAGS(m_gl_widget, GTK_CAN_FOCUS);
+	gtk_widget_set_size_request(m_gl_widget, XYWND_MINSIZE_X, XYWND_MINSIZE_Y);
 
-  m_sizeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "size_allocate", G_CALLBACK(xywnd_size_allocate), this);
-  m_exposeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "expose_event", G_CALLBACK(xywnd_expose), this);
+	m_sizeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "size_allocate", G_CALLBACK(xywnd_size_allocate), this);
+	m_exposeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "expose_event", G_CALLBACK(xywnd_expose), this);
 
-  g_signal_connect(G_OBJECT(m_gl_widget), "button_press_event", G_CALLBACK(xywnd_button_press), this);
-  g_signal_connect(G_OBJECT(m_gl_widget), "button_release_event", G_CALLBACK(xywnd_button_release), this);
-  g_signal_connect(G_OBJECT(m_gl_widget), "motion_notify_event", G_CALLBACK(DeferredMotion::gtk_motion), &m_deferred_motion);
+	g_signal_connect(G_OBJECT(m_gl_widget), "button_press_event", G_CALLBACK(xywnd_button_press), this);
+	g_signal_connect(G_OBJECT(m_gl_widget), "button_release_event", G_CALLBACK(xywnd_button_release), this);
+	g_signal_connect(G_OBJECT(m_gl_widget), "motion_notify_event", G_CALLBACK(DeferredMotion::gtk_motion), &m_deferred_motion);
 
-  g_signal_connect(G_OBJECT(m_gl_widget), "scroll_event", G_CALLBACK(xywnd_wheel_scroll), this);
+	g_signal_connect(G_OBJECT(m_gl_widget), "scroll_event", G_CALLBACK(xywnd_wheel_scroll), this);
 
-  Map_addValidCallback(g_map, DeferredDrawOnMapValidChangedCaller(m_deferredDraw));
+	Map_addValidCallback(g_map, DeferredDrawOnMapValidChangedCaller(m_deferredDraw));
 
-  updateProjection();
-  updateModelview();
+	updateProjection();
+	updateModelview();
 
-  AddSceneChangeCallback(ReferenceCaller<XYWnd, &XYWnd_Update>(*this));
-  // greebo: Connect <self> as CameraObserver to the CamWindow. This way this class gets notified on camera change 
-  GlobalCamera().addCameraObserver(this);
-  
-  PressedButtons_connect(g_pressedButtons, m_gl_widget);
+	AddSceneChangeCallback(ReferenceCaller<XYWnd, &XYWnd_Update>(*this));
+	// greebo: Connect <self> as CameraObserver to the CamWindow. This way this class gets notified on camera change
+	GlobalCamera().addCameraObserver(this);
 
-  onMouseDown.connectLast(makeSignalHandler3(MouseDownCaller(), *this));
+	PressedButtons_connect(g_pressedButtons, m_gl_widget);
+
+	onMouseDown.connectLast(makeSignalHandler3(MouseDownCaller(), *this));
 }
 
-XYWnd::~XYWnd()
-{
-  onDestroyed();
+// Destructor
+XYWnd::~XYWnd() {
+	onDestroyed();
 
-  if(m_mnuDrop != 0)
-  {
-    gtk_widget_destroy(GTK_WIDGET(m_mnuDrop));
-    m_mnuDrop = 0;
-  }
+	if (m_mnuDrop != 0) {
+		gtk_widget_destroy(GTK_WIDGET(m_mnuDrop));
+		m_mnuDrop = 0;
+	}
 
-  g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_sizeHandler);
-  g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_exposeHandler);
+	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_sizeHandler);
+	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_exposeHandler);
 
-  gtk_widget_unref(m_gl_widget);
+	gtk_widget_unref(m_gl_widget);
 
-  m_window_observer->release();
+	m_window_observer->release();
 }
+
 
 void XYWnd::setEvent(GdkEventButton* event) {
 	_event = event;
 }
 
-void XYWnd::captureStates()
-{
-  m_state_selected = GlobalShaderCache().capture("$XY_OVERLAY");
+void XYWnd::captureStates() {
+	m_state_selected = GlobalShaderCache().capture("$XY_OVERLAY");
 }
 
-void XYWnd::releaseStates()
-{
-  GlobalShaderCache().release("$XY_OVERLAY");
+void XYWnd::releaseStates() {
+	GlobalShaderCache().release("$XY_OVERLAY");
 }
 
-const Vector3& XYWnd::GetOrigin()
-{
-  return m_vOrigin;
+const Vector3& XYWnd::GetOrigin() {
+	return m_vOrigin;
 }
 
-void XYWnd::SetOrigin(const Vector3& origin)
-{
-  m_vOrigin = origin;
-  updateModelview();
+void XYWnd::SetOrigin(const Vector3& origin) {
+	m_vOrigin = origin;
+	updateModelview();
 }
 
-void XYWnd::Scroll(int x, int y)
-{
-  int nDim1 = (m_viewType == YZ) ? 1 : 0;
-  int nDim2 = (m_viewType == XY) ? 1 : 2;
-  m_vOrigin[nDim1] += x / m_fScale;
-  m_vOrigin[nDim2] += y / m_fScale;
-  updateModelview();
-  queueDraw();
+void XYWnd::Scroll(int x, int y) {
+	int nDim1 = (m_viewType == YZ) ? 1 : 0;
+	int nDim2 = (m_viewType == XY) ? 1 : 2;
+	m_vOrigin[nDim1] += x / m_fScale;
+	m_vOrigin[nDim2] += y / m_fScale;
+	updateModelview();
+	queueDraw();
 }
 
-void XYWnd::DropClipPoint(int pointx, int pointy)
-{
-  Vector3 point;
+void XYWnd::DropClipPoint(int pointx, int pointy) {
+	Vector3 point;
 
-  XY_ToPoint(pointx, pointy, point);
+	XY_ToPoint(pointx, pointy, point);
 
-  Vector3 mid;
-  Select_GetMid(mid);
-  g_clip_viewtype = static_cast<VIEWTYPE>(GetViewType());
-  int nDim = (g_clip_viewtype == YZ ) ?  0 : ( (g_clip_viewtype == XZ) ? 1 : 2 );
-  point[nDim] = mid[nDim];
-  vector3_snap(point, GetGridSize());
-  NewClipPoint(point);
+	Vector3 mid;
+	Select_GetMid(mid);
+	g_clip_viewtype = static_cast<VIEWTYPE>(GetViewType());
+	int nDim = (g_clip_viewtype == YZ ) ?  0 : ( (g_clip_viewtype == XZ) ? 1 : 2 );
+	point[nDim] = mid[nDim];
+	vector3_snap(point, GetGridSize());
+	NewClipPoint(point);
 }
 
-void XYWnd::Clipper_OnLButtonDown(int x, int y)
-{
-  Vector3 mousePosition;
-  XY_ToPoint(x, y , mousePosition);
-  g_pMovingClip = GlobalClipPoints_Find(mousePosition, (VIEWTYPE)m_viewType, m_fScale);
-  if(!g_pMovingClip)
-  {
-    DropClipPoint(x, y);
-  }
+
+void XYWnd::Clipper_OnLButtonDown(int x, int y) {
+	Vector3 mousePosition;
+	XY_ToPoint(x, y , mousePosition);
+	g_pMovingClip = GlobalClipPoints_Find(mousePosition, (VIEWTYPE)m_viewType, m_fScale);
+	if (!g_pMovingClip) {
+		DropClipPoint(x, y);
+	}
 }
 
-void XYWnd::Clipper_OnLButtonUp(int x, int y)
-{
-  if (g_pMovingClip)
-  {
-    g_pMovingClip = 0;
-  }
+void XYWnd::Clipper_OnLButtonUp(int x, int y) {
+	if (g_pMovingClip) {
+		g_pMovingClip = 0;
+	}
 }
 
 void XYWnd::Clipper_OnMouseMoved(int x, int y)
 {
-  if (g_pMovingClip)
-  {
-    XY_ToPoint(x, y , g_pMovingClip->m_ptClip);
-    XY_SnapToGrid(g_pMovingClip->m_ptClip);
-    Clip_Update();
-    ClipperChangeNotify();
-  }
+	if (g_pMovingClip) {
+		XY_ToPoint(x, y , g_pMovingClip->m_ptClip);
+		XY_SnapToGrid(g_pMovingClip->m_ptClip);
+		Clip_Update();
+		ClipperChangeNotify();
+	}
 }
 
-void XYWnd::Clipper_Crosshair_OnMouseMoved(int x, int y)
-{
-  Vector3 mousePosition;
-  XY_ToPoint(x, y , mousePosition);
-  if(ClipMode() && GlobalClipPoints_Find(mousePosition, (VIEWTYPE)m_viewType, m_fScale) != 0)
-  {
-    GdkCursor *cursor;
-    cursor = gdk_cursor_new (GDK_CROSSHAIR);
-    gdk_window_set_cursor (m_gl_widget->window, cursor);
-    gdk_cursor_unref (cursor);
-  }
-  else
-  {
-    gdk_window_set_cursor (m_gl_widget->window, 0);
-  }
+void XYWnd::Clipper_Crosshair_OnMouseMoved(int x, int y) {
+	Vector3 mousePosition;
+	XY_ToPoint(x, y , mousePosition);
+	if (ClipMode() && GlobalClipPoints_Find(mousePosition, (VIEWTYPE)m_viewType, m_fScale) != 0) {
+		GdkCursor *cursor;
+		cursor = gdk_cursor_new (GDK_CROSSHAIR);
+		gdk_window_set_cursor (m_gl_widget->window, cursor);
+		gdk_cursor_unref (cursor);
+	} else {
+		gdk_window_set_cursor (m_gl_widget->window, 0);
+	}
 }
 
-void XYWnd_PositionCamera(XYWnd* xywnd, int x, int y, CamWnd& camwnd)
-{
-  Vector3 origin = camwnd.getCameraOrigin();
-  xywnd->XY_ToPoint(x, y, origin);
-  xywnd->XY_SnapToGrid(origin);
-  camwnd.setCameraOrigin(origin);
+void XYWnd::positionCamera(int x, int y, CamWnd& camwnd) {
+	Vector3 origin = camwnd.getCameraOrigin();
+	XY_ToPoint(x, y, origin);
+	XY_SnapToGrid(origin);
+	camwnd.setCameraOrigin(origin);
 }
 
-void XYWnd_OrientCamera(XYWnd* xywnd, int x, int y, CamWnd& camwnd)
-{
-  Vector3	point = g_vector3_identity;
-  xywnd->XY_ToPoint(x, y, point);
-  xywnd->XY_SnapToGrid(point);
-  point -= camwnd.getCameraOrigin();
+void XYWnd::orientCamera(int x, int y, CamWnd& camwnd) {
+	Vector3	point = g_vector3_identity;
+	XY_ToPoint(x, y, point);
+	XY_SnapToGrid(point);
+	point -= camwnd.getCameraOrigin();
 
-  int n1 = (xywnd->GetViewType() == XY) ? 1 : 2;
-  int n2 = (xywnd->GetViewType() == YZ) ? 1 : 0;
-  int nAngle = (xywnd->GetViewType() == XY) ? CAMERA_YAW : CAMERA_PITCH;
-  if (point[n1] || point[n2])
-  {
-    Vector3 angles(camwnd.getCameraAngles());
-    angles[nAngle] = static_cast<float>(radians_to_degrees(atan2 (point[n1], point[n2])));
-    camwnd.setCameraAngles(angles);
-  }
+	int n1 = (GetViewType() == XY) ? 1 : 2;
+	int n2 = (GetViewType() == YZ) ? 1 : 0;
+	int nAngle = (GetViewType() == XY) ? CAMERA_YAW : CAMERA_PITCH;
+	if (point[n1] || point[n2]) {
+		Vector3 angles(camwnd.getCameraAngles());
+		angles[nAngle] = static_cast<float>(radians_to_degrees(atan2 (point[n1], point[n2])));
+		camwnd.setCameraAngles(angles);
+	}
 }
 
 // Callback that gets invoked on camera move
@@ -948,6 +896,7 @@ void XYWnd::cameraMoved() {
 		XYWnd_Update(*this);
 	}
 }
+
 
 /*
 ==============
@@ -1114,19 +1063,13 @@ public:
 
 #include "ui/ortho/OrthoContextMenu.h"
 
-// Forward decl
-void XYWnd_MouseToPoint(XYWnd* xywnd, int x, int y, Vector3& point);
-
 void XYWnd::OnContextMenu() {
 	// Get the click point in 3D space
 	Vector3 point;
-	XYWnd_MouseToPoint(this, m_entityCreate_x, m_entityCreate_y, point);
+	mouseToPoint(m_entityCreate_x, m_entityCreate_y, point);
 	// Display the menu, passing the coordinates for creation
 	ui::OrthoContextMenu::displayInstance(point);	
 }
-
-/*
- */
 
 FreezePointer g_xywnd_freezePointer;
 
@@ -1177,7 +1120,7 @@ void XYWnd_zoomDelta(int x, int y, unsigned int state, void* data)
       }
       else
       {
-        XYWnd_ZoomIn(reinterpret_cast<XYWnd*>(data));
+        reinterpret_cast<XYWnd*>(data)->zoomIn();
         g_dragZoom += 8;
       }
     }
@@ -1248,11 +1191,11 @@ void XYWnd::mouseDown(int x, int y, GdkEventButton* event) {
 	}
 	
 	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xyCameraMove, event)) {
-		XYWnd_PositionCamera(this, x, y, *g_pParentWnd->GetCamWnd());
+		positionCamera(x, y, *g_pParentWnd->GetCamWnd());
 	}
 	
 	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xyCameraAngle, event)) {
-		XYWnd_OrientCamera(this, x, y, *g_pParentWnd->GetCamWnd());
+		orientCamera(x, y, *g_pParentWnd->GetCamWnd());
 	}
 	
 	// Only start a NewBrushDrag operation, if not other elements are selected
@@ -1279,11 +1222,11 @@ void XYWnd::mouseDown(int x, int y, GdkEventButton* event) {
 void XYWnd::mouseMoved(int x, int y, const unsigned int& state) {
 	
 	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xyCameraMove, state)) {
-		XYWnd_PositionCamera(this, x, y, *g_pParentWnd->GetCamWnd());
+		positionCamera(x, y, *g_pParentWnd->GetCamWnd());
 	}
 	
 	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xyCameraAngle, state)) {
-		XYWnd_OrientCamera(this, x, y, *g_pParentWnd->GetCamWnd());
+		orientCamera(x, y, *g_pParentWnd->GetCamWnd());
 	}
 	
 	// Check, if we are in a NewBrushDrag operation and continue it
@@ -1352,28 +1295,23 @@ void XYWnd::mouseUp(int x, int y, GdkEventButton* event) {
 	m_window_observer->onMouseUp(WindowVector(x, y), event);
 }
 
-void XYWnd::EntityCreate_MouseDown(int x, int y)
-{
-  m_entityCreate = true;
-  m_entityCreate_x = x;
-  m_entityCreate_y = y;
+void XYWnd::EntityCreate_MouseDown(int x, int y) {
+	m_entityCreate = true;
+	m_entityCreate_x = x;
+	m_entityCreate_y = y;
 }
 
-void XYWnd::EntityCreate_MouseMove(int x, int y)
-{
-  if(m_entityCreate && (m_entityCreate_x != x || m_entityCreate_y != y))
-  {
-    m_entityCreate = false;
-  }
+void XYWnd::EntityCreate_MouseMove(int x, int y) {
+	if (m_entityCreate && (m_entityCreate_x != x || m_entityCreate_y != y)) {
+		m_entityCreate = false;
+	}
 }
 
-void XYWnd::EntityCreate_MouseUp(int x, int y)
-{
-  if(m_entityCreate)
-  {
-    m_entityCreate = false;
-    OnContextMenu();
-  }
+void XYWnd::EntityCreate_MouseUp(int x, int y) {
+	if (m_entityCreate) {
+		m_entityCreate = false;
+		OnContextMenu();
+	}
 }
 
 inline float screen_normalised(int pos, unsigned int size)
@@ -1388,45 +1326,40 @@ inline float normalised_to_world(float normalised, float world_origin, float nor
 
 
 // TTimo: watch it, this doesn't init one of the 3 coords
-void XYWnd::XY_ToPoint (int x, int y, Vector3& point)
-{
-  float normalised2world_scale_x = m_nWidth / 2 / m_fScale;
-  float normalised2world_scale_y = m_nHeight / 2 / m_fScale;
-  if (m_viewType == XY)
-  {
-    point[0] = normalised_to_world(screen_normalised(x, m_nWidth), m_vOrigin[0], normalised2world_scale_x);
-    point[1] = normalised_to_world(-screen_normalised(y, m_nHeight), m_vOrigin[1], normalised2world_scale_y);
-  }
-  else if (m_viewType == YZ)
-  {
-    point[1] = normalised_to_world(screen_normalised(x, m_nWidth), m_vOrigin[1], normalised2world_scale_x);
-    point[2] = normalised_to_world(-screen_normalised(y, m_nHeight), m_vOrigin[2], normalised2world_scale_y);
-  }
-  else
-  {
-    point[0] = normalised_to_world(screen_normalised(x, m_nWidth), m_vOrigin[0], normalised2world_scale_x);
-    point[2] = normalised_to_world(-screen_normalised(y, m_nHeight), m_vOrigin[2], normalised2world_scale_y);
-  }
+void XYWnd::XY_ToPoint (int x, int y, Vector3& point) {
+	float normalised2world_scale_x = m_nWidth / 2 / m_fScale;
+	float normalised2world_scale_y = m_nHeight / 2 / m_fScale;
+	
+	if (m_viewType == XY) {
+		point[0] = normalised_to_world(screen_normalised(x, m_nWidth), m_vOrigin[0], normalised2world_scale_x);
+		point[1] = normalised_to_world(-screen_normalised(y, m_nHeight), m_vOrigin[1], normalised2world_scale_y);
+	} 
+	else if (m_viewType == YZ) {
+		point[1] = normalised_to_world(screen_normalised(x, m_nWidth), m_vOrigin[1], normalised2world_scale_x);
+		point[2] = normalised_to_world(-screen_normalised(y, m_nHeight), m_vOrigin[2], normalised2world_scale_y);
+	} 
+	else {
+		point[0] = normalised_to_world(screen_normalised(x, m_nWidth), m_vOrigin[0], normalised2world_scale_x);
+		point[2] = normalised_to_world(-screen_normalised(y, m_nHeight), m_vOrigin[2], normalised2world_scale_y);
+	}
 }
 
-void XYWnd::XY_SnapToGrid(Vector3& point)
-{
-  if (m_viewType == XY)
-  {
-    point[0] = float_snapped(point[0], GetGridSize());
-    point[1] = float_snapped(point[1], GetGridSize());
-  }
-  else if (m_viewType == YZ)
-  {
-    point[1] = float_snapped(point[1], GetGridSize());
-    point[2] = float_snapped(point[2], GetGridSize());
-  }
-  else
-  {
-    point[0] = float_snapped(point[0], GetGridSize());
-    point[2] = float_snapped(point[2], GetGridSize());
-  }
+
+void XYWnd::XY_SnapToGrid(Vector3& point) {
+	if (m_viewType == XY) {
+		point[0] = float_snapped(point[0], GetGridSize());
+		point[1] = float_snapped(point[1], GetGridSize());
+	}
+	else if (m_viewType == YZ) {
+		point[1] = float_snapped(point[1], GetGridSize());
+		point[2] = float_snapped(point[2], GetGridSize());
+	}
+	else {
+		point[0] = float_snapped(point[0], GetGridSize());
+		point[2] = float_snapped(point[2], GetGridSize());
+	}
 }
+
 
 /*
 ============================================================================
@@ -2285,24 +2218,29 @@ void XYWnd::XY_Draw()
   glFinish();
 }
 
-void XYWnd_MouseToPoint(XYWnd* xywnd, int x, int y, Vector3& point)
-{
-  xywnd->XY_ToPoint(x, y, point);
-  xywnd->XY_SnapToGrid(point);
+void XYWnd::mouseToPoint(int x, int y, Vector3& point) {
+	XY_ToPoint(x, y, point);
+	XY_SnapToGrid(point);
 
-  int nDim = (xywnd->GetViewType() == XY) ? 2 : (xywnd->GetViewType() == YZ) ? 0 : 1;
-  float fWorkMid = float_mid(Select_getWorkZone().d_work_min[nDim], Select_getWorkZone().d_work_max[nDim]);
-  point[nDim] = float_snapped(fWorkMid, GetGridSize());
+	int nDim = (GetViewType() == XY) ? 2 : (GetViewType() == YZ) ? 0 : 1;
+	float fWorkMid = float_mid(Select_getWorkZone().d_work_min[nDim], Select_getWorkZone().d_work_max[nDim]);
+	point[nDim] = float_snapped(fWorkMid, GetGridSize());
 }
 
-void XYWnd::OnEntityCreate (const char* item)
-{
-  StringOutputStream command;
-  command << "entityCreate -class " << item;
-  UndoableCommand undo(command.c_str());
-  Vector3 point;
-  XYWnd_MouseToPoint(this, m_entityCreate_x, m_entityCreate_y, point);
-  Entity_createFromSelection(item, point);
+
+void XYWnd::OnEntityCreate (const std::string& item) {
+	StringOutputStream command;
+	command << "entityCreate -class " << item.c_str();
+	UndoableCommand undo(command.c_str());
+	Vector3 point;
+	mouseToPoint(m_entityCreate_x, m_entityCreate_y, point);
+	Entity_createFromSelection(item.c_str(), point);
+}
+
+void XYWnd::updateXORRectangle(Rectangle area) {
+	if(GTK_WIDGET_VISIBLE(GetWidget())) {
+		m_XORRectangle.set(rectangle_from_area(area.min, area.max, Width(), Height()));
+	}
 }
 
 // NOTE: the zoom out factor is 4/5, we could think about customizing it
@@ -2317,6 +2255,20 @@ void XYWnd::zoomOut() {
 			SetScale (min_scale);
 		}
 	} else {
+		SetScale(scale);
+	}
+}
+
+void XYWnd::zoomIn() {
+	float max_scale = 64;
+	float scale = Scale() * 5.0f / 4.0f;
+	
+	if (scale > max_scale) {
+		if (Scale() != max_scale) {
+			SetScale (max_scale);
+		}
+	}
+	else {
 		SetScale(scale);
 	}
 }
@@ -2397,17 +2349,15 @@ void XY_Zoom100()
     g_pParentWnd->GetYZWnd()->SetScale(1);
 }
 
-void XY_ZoomIn()
-{
-  XYWnd_ZoomIn(g_pParentWnd->ActiveXY());
+void XY_ZoomIn() {
+	g_pParentWnd->ActiveXY()->zoomIn();
 }
 
 // NOTE: the zoom out factor is 4/5, we could think about customizing it
 //  we don't go below a zoom factor corresponding to 10% of the max world size
 //  (this has to be computed against the window size)
-void XY_ZoomOut()
-{
-  g_pParentWnd->ActiveXY()->zoomOut();
+void XY_ZoomOut() {
+	g_pParentWnd->ActiveXY()->zoomOut();
 }
 
 

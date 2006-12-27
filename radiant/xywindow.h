@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "EventLib.h"
 #include "camera/CameraObserver.h"
+#include "camera/CamWnd.h"
 #include "selection/RadiantWindowObserver.h"
 
 // Constants
@@ -114,6 +115,9 @@ public:
   void SetOrigin(const Vector3& origin);
   void Scroll(int x, int y);
 
+	void positionCamera(int x, int y, CamWnd& camwnd);
+	void orientCamera(int x, int y, CamWnd& camwnd);
+
   void XY_Draw();
   void DrawCameraIcon(const Vector3& origin, const Vector3& angles);
   void XY_DrawBlockGrid();
@@ -125,6 +129,10 @@ public:
 
   void XY_ToPoint(int x, int y, Vector3& point);
   void XY_SnapToGrid(Vector3& point);
+  
+  void mouseToPoint(int x, int y, Vector3& point);
+  
+  void updateXORRectangle(Rectangle area);
 
   void Move_Begin();
   void Move_End();
@@ -136,6 +144,7 @@ public:
   bool m_zoom_started;
   guint m_zoom_focusOut;
   
+  void zoomIn();
   void zoomOut();
 
   void SetActive(bool b)
@@ -211,7 +220,7 @@ public:
   void EntityCreate_MouseMove(int x, int y);
   void EntityCreate_MouseUp(int x, int y);
 
-  void OnEntityCreate(const char* item);
+  void OnEntityCreate(const std::string& item);
   VIEWTYPE GetViewType()
   {
     return m_viewType;
