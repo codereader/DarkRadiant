@@ -76,8 +76,8 @@ public:
 	
 	float getCameraStrafeSpeed();
 	float getCameraForwardStrafeFactor();
-	bool EventMapper::strafeActive(unsigned int& state);
-	bool EventMapper::strafeForwardActive(unsigned int& state);
+	bool strafeActive(unsigned int& state);
+	bool strafeForwardActive(unsigned int& state);
 
 private:
 
