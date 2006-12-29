@@ -298,8 +298,20 @@ bool MD5Model_parse(MD5Model& model, Tokeniser& tokeniser)
     MD5_RETURN_FALSE_IF_FAIL(MD5_parseString(tokeniser, jointName));
     MD5_RETURN_FALSE_IF_FAIL(MD5_parseInteger(tokeniser, (*i).parent));
     MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, (*i).position));
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, (*i).rotation.getVector3()));
-    (*i).rotation.w() = -static_cast<float>(sqrt(1.0f - (float_squared((*i).rotation.x()) + float_squared((*i).rotation.y()) + float_squared((*i).rotation.z()))));
+
+    // Parse the rotation
+    Vector3 rawRotation;
+    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, rawRotation));
+    
+    // Calculate the W value. If it is NaN (due to underflow in the sqrt),
+    // set it to 0.
+    float w = -sqrt(1.0 - rawRotation.getLengthSquared());
+    if (isnan(w))
+    	w = 0;
+
+	// Set the Vector4 rotation on the joint
+    i->rotation = Vector4(rawRotation, w); 
+
     tokeniser.nextLine();
   }
 
@@ -308,7 +320,7 @@ bool MD5Model_parse(MD5Model& model, Tokeniser& tokeniser)
 
   for(std::size_t i = 0; i < numMeshes; ++i)
   {
-    Surface& surface = model.newSurface();
+  	Surface& surface = model.newSurface();
 
     MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "mesh"));
     MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "{"));
@@ -389,11 +401,13 @@ bool MD5Model_parse(MD5Model& model, Tokeniser& tokeniser)
       {
         MD5Weight& weight = weights[vert.weight_index + k];
         MD5Joint& joint = joints[weight.joint];
-
-        skinned += (quaternion_transformed_point(joint.rotation, weight.v) + joint.position) * weight.t;
+	
+		Vector3 rotatedPoint = quaternion_transformed_point(joint.rotation, 
+															weight.v);
+        skinned += (rotatedPoint + joint.position) * weight.t;
       }
       
-      surface.vertices().push_back(ArbitraryMeshVertex(vertex3f_for_vector3(skinned), Normal3f(0, 0, 0), TexCoord2f(vert.u, vert.v)));
+		surface.vertices().push_back(ArbitraryMeshVertex(vertex3f_for_vector3(skinned), Normal3f(0, 0, 0), TexCoord2f(vert.u, vert.v)));
     }
 
     for(MD5Tris::iterator j = tris.begin(); j != tris.end(); ++j)
