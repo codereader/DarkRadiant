@@ -27,8 +27,9 @@
 template<typename Element>
 class BasicVector3 {
 	
-	// The actual values of the vector, an array containing 3 values of type Element
-	Element m_elements[3];
+	// The actual values of the vector, an array containing 3 values of type 
+	// Element
+	Element _v[3];
   
 public:
 
@@ -56,7 +57,7 @@ public:
 	 */
 	BasicVector3(const Element* array) {
 		for (int i = 0; i < 3; ++i)
-			m_elements[i] = array[i];
+			_v[i] = array[i];
 	}
 	 
     /** Construct a BasicVector3 by parsing the supplied string. The string
@@ -68,7 +69,7 @@ public:
      
     BasicVector3(const std::string& str) {
     	// Initialise the vector with 0, in case the string parse fails
-    	m_elements[0] = m_elements[1] = m_elements[2] = 0;
+    	_v[0] = _v[1] = _v[2] = 0;
     	// Use a stringstream to parse the string
         std::stringstream strm(str);
         strm << std::skipws;
@@ -80,31 +81,39 @@ public:
 	/** Set all 3 components to the provided values.
 	 */
 	void set(const Element& x, const Element& y, const Element& z) {
-		m_elements[0] = x;
-		m_elements[1] = y;
-		m_elements[2] = z;
+		_v[0] = x;
+		_v[1] = y;
+		_v[2] = z;
+	}
+
+	/**
+	 * Check if this Vector is valid. A Vector is invalid if any of its
+	 * components are NaN.
+	 */
+	bool isValid() const {
+		return !isnan(_v[0]) && !isnan(_v[0]) && !isnan(_v[0]);		
 	}
 
 	// Return NON-CONSTANT references to the vector components
   	Element& x() { 
-  		return m_elements[0]; 
+  		return _v[0]; 
   	}
   	Element& y() {
-    	return m_elements[1];
+    	return _v[1];
   	}
   	Element& z() {
-    	return m_elements[2];
+    	return _v[2];
   	}
   
   	// Return CONSTANT references to the vector components
   	const Element& x() const {  
-  		return m_elements[0]; 
+  		return _v[0]; 
   	}  
   	const Element& y() const {
-    	return m_elements[1];
+    	return _v[1];
   	}  
   	const Element& z() const {
-    	return m_elements[2];
+    	return _v[2];
   	}
   
 	/** Compare this BasicVector3 against another for equality.
@@ -126,9 +135,9 @@ public:
 	 */
 	BasicVector3<Element> operator- () const {
 		return BasicVector3<Element>(
-			-m_elements[0],
-			-m_elements[1],
-			-m_elements[2]
+			-_v[0],
+			-_v[1],
+			-_v[2]
 		);
 	}
 	
@@ -138,17 +147,17 @@ public:
 	template<typename OtherElement>
 	BasicVector3<Element> operator+ (const BasicVector3<OtherElement>& other) const {
 		return BasicVector3<Element>(
-			m_elements[0] + static_cast<Element>(other.x()),
-			m_elements[1] + static_cast<Element>(other.y()),
-			m_elements[2] + static_cast<Element>(other.z())
+			_v[0] + static_cast<Element>(other.x()),
+			_v[1] + static_cast<Element>(other.y()),
+			_v[2] + static_cast<Element>(other.z())
 		);
 	}
 	
 	template<typename OtherElement>
 	void operator+= (const BasicVector3<OtherElement>& other) {
-		m_elements[0] += static_cast<Element>(other.x());
-		m_elements[1] += static_cast<Element>(other.y());
-		m_elements[2] += static_cast<Element>(other.z());
+		_v[0] += static_cast<Element>(other.x());
+		_v[1] += static_cast<Element>(other.y());
+		_v[2] += static_cast<Element>(other.z());
 	}
 	
 	/*	Define the substraction operators - and -= with any other BasicVector3 of type OtherElement
@@ -157,17 +166,17 @@ public:
 	template<typename OtherElement>
 	BasicVector3<Element> operator- (const BasicVector3<OtherElement>& other) const {
 		return BasicVector3<Element>(
-			m_elements[0] - static_cast<Element>(other.x()),
-			m_elements[1] - static_cast<Element>(other.y()),
-			m_elements[2] - static_cast<Element>(other.z())
+			_v[0] - static_cast<Element>(other.x()),
+			_v[1] - static_cast<Element>(other.y()),
+			_v[2] - static_cast<Element>(other.z())
 		);
 	}
 	
 	template<typename OtherElement>
 	void operator-= (const BasicVector3<OtherElement>& other) {
-		m_elements[0] -= static_cast<Element>(other.x());
-		m_elements[1] -= static_cast<Element>(other.y());
-		m_elements[2] -= static_cast<Element>(other.z());
+		_v[0] -= static_cast<Element>(other.x());
+		_v[1] -= static_cast<Element>(other.y());
+		_v[2] -= static_cast<Element>(other.z());
 	}
 	
 	
@@ -182,17 +191,17 @@ public:
 	template<typename OtherElement>
 	BasicVector3<Element> operator* (const BasicVector3<OtherElement>& other) const {
 		return BasicVector3<Element>(
-			m_elements[0] * static_cast<Element>(other.x()),
-			m_elements[1] * static_cast<Element>(other.y()),
-			m_elements[2] * static_cast<Element>(other.z())
+			_v[0] * static_cast<Element>(other.x()),
+			_v[1] * static_cast<Element>(other.y()),
+			_v[2] * static_cast<Element>(other.z())
 		);
 	}
 	
 	template<typename OtherElement>
 	void operator*= (const BasicVector3<OtherElement>& other) {
-		m_elements[0] *= static_cast<Element>(other.x());
-		m_elements[1] *= static_cast<Element>(other.y());
-		m_elements[2] *= static_cast<Element>(other.z());		
+		_v[0] *= static_cast<Element>(other.x());
+		_v[1] *= static_cast<Element>(other.y());
+		_v[2] *= static_cast<Element>(other.z());		
 	}
 	
 	
@@ -202,18 +211,18 @@ public:
 	BasicVector3<Element> operator* (const OtherElement& other) const {
 		Element factor = static_cast<Element>(other);
 		return BasicVector3<Element>(
-			m_elements[0] * factor,
-			m_elements[1] * factor,
-			m_elements[2] * factor
+			_v[0] * factor,
+			_v[1] * factor,
+			_v[2] * factor
 		);
 	}
 	
 	template<typename OtherElement>
 	void operator*= (const OtherElement& other) {
 		Element factor = static_cast<Element>(other);
-		m_elements[0] *= factor;
-		m_elements[1] *= factor;
-		m_elements[2] *= factor;		
+		_v[0] *= factor;
+		_v[1] *= factor;
+		_v[2] *= factor;		
 	}
 	
 	/*	Define the division operators / and /= with another Vector3 of type OtherElement
@@ -222,17 +231,17 @@ public:
 	template<typename OtherElement>
 	BasicVector3<Element> operator/ (const BasicVector3<OtherElement>& other) const {
 		return BasicVector3<Element>(
-			m_elements[0] / static_cast<Element>(other.x()),
-			m_elements[1] / static_cast<Element>(other.y()),
-			m_elements[2] / static_cast<Element>(other.z())
+			_v[0] / static_cast<Element>(other.x()),
+			_v[1] / static_cast<Element>(other.y()),
+			_v[2] / static_cast<Element>(other.z())
 		);
 	}
 	
 	template<typename OtherElement>
 	void operator/= (const BasicVector3<OtherElement>& other) {
-		m_elements[0] /= static_cast<Element>(other.x());
-		m_elements[1] /= static_cast<Element>(other.y());
-		m_elements[2] /= static_cast<Element>(other.z());		
+		_v[0] /= static_cast<Element>(other.x());
+		_v[1] /= static_cast<Element>(other.y());
+		_v[2] /= static_cast<Element>(other.z());		
 	}
 	
 	/*	Define the scalar divisions / and /= 
@@ -241,18 +250,18 @@ public:
 	BasicVector3<Element> operator/ (const OtherElement& other) const {
 		Element divisor = static_cast<Element>(other);
 		return BasicVector3<Element>(
-			m_elements[0] / divisor,
-			m_elements[1] / divisor,
-			m_elements[2] / divisor
+			_v[0] / divisor,
+			_v[1] / divisor,
+			_v[2] / divisor
 		);
 	}
 	
 	template<typename OtherElement>
 	void operator/= (const OtherElement& other) {
 		Element divisor = static_cast<Element>(other);
-		m_elements[0] /= divisor;
-		m_elements[1] /= divisor;
-		m_elements[2] /= divisor;		
+		_v[0] /= divisor;
+		_v[1] /= divisor;
+		_v[2] /= divisor;		
 	}
   
 	/** Cast to std::string, formats vector correctly for use as a
@@ -261,9 +270,9 @@ public:
 	 
 	operator std::string() const {
 		return (boost::format("%s %s %s")
-				 % m_elements[0]
-				 % m_elements[1]
-				 % m_elements[2]).str();
+				 % _v[0]
+				 % _v[1]
+				 % _v[2]).str();
 	}
 
 	/* 
@@ -276,18 +285,16 @@ public:
      * The Pythagorean length of this vector.
      */
 	double getLength() const {
-		double lenSquared = m_elements[0]*m_elements[0] + 
-							m_elements[1]*m_elements[1] + 
-							m_elements[2]*m_elements[2];
+		double lenSquared = getLengthSquared();
 		return sqrt(lenSquared);
 	}
 	
 	/** Return the squared length of this vector.          
      */
 	double getLengthSquared() const {
-		double lenSquared = m_elements[0]*m_elements[0] + 
-							m_elements[1]*m_elements[1] + 
-							m_elements[2]*m_elements[2];
+		double lenSquared = double(_v[0]) * double(_v[0]) + 
+							double(_v[1]) * double(_v[1]) + 
+							double(_v[2]) * double(_v[2]);
 		return lenSquared;
 	}
 
@@ -300,9 +307,9 @@ public:
 	// Returns a vector with the reciprocal values of each component
 	BasicVector3<Element> getInversed() {
   		return BasicVector3<Element>(
-			1.0 / m_elements[0],
-			1.0 / m_elements[1],
-			1.0 / m_elements[2]
+			1.0 / _v[0],
+			1.0 / _v[1],
+			1.0 / _v[2]
 		);
 	}
 
@@ -318,9 +325,9 @@ public:
 	 
 	template<typename OtherT>
 	Element dot(const BasicVector3<OtherT>& other) const {
-		return 	Element(m_elements[0] * other.x() +
-				 		m_elements[1] * other.y() +
-				 		m_elements[2] * other.z());
+		return 	Element(_v[0] * other.x() +
+				 		_v[1] * other.y() +
+				 		_v[2] * other.z());
 	}
 	
 	/* Returns the angle between <self> and <other> 
@@ -348,9 +355,9 @@ public:
 	template<typename OtherT>
 	BasicVector3<Element> crossProduct(const BasicVector3<OtherT>& other) const {
 		return BasicVector3<Element>(
-			m_elements[1] * other.z() - m_elements[2] * other.y(),
-			m_elements[2] * other.x() - m_elements[0] * other.z(),
-			m_elements[0] * other.y() - m_elements[1] * other.x());
+			_v[1] * other.z() - _v[2] * other.y(),
+			_v[2] * other.x() - _v[0] * other.z(),
+			_v[0] * other.y() - _v[1] * other.x());
 	}
 
 	/** Implicit cast to C-style array. This allows a Vector3 to be
@@ -360,21 +367,21 @@ public:
 	 */
 	 
 	operator const Element* () const {
-		return m_elements;
+		return _v;
 	}
 
 	operator Element* () {
-		return m_elements;
+		return _v;
 	}
 	
 	// Returns the maximum absolute value of the components 
 	Element max() const {
-		return std::max(fabs(m_elements[0]), std::max(fabs(m_elements[1]), fabs(m_elements[2])));
+		return std::max(fabs(_v[0]), std::max(fabs(_v[1]), fabs(_v[2])));
 	}
 	
 	// Returns the minimum absolute value of the components
 	Element min() const {
-		return std::min(fabs(m_elements[0]), std::min(fabs(m_elements[1]), fabs(m_elements[2])));
+		return std::min(fabs(_v[0]), std::min(fabs(_v[1]), fabs(_v[2])));
 	}
 
 	template<typename OtherT>
