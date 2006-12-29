@@ -8,6 +8,10 @@
 	<showAllLightRadii value="0"/>
 	<alwaysShowLightVertices value="1"/>
 	<defaultTextureScale value="0.5" />
+	<clipper>
+		<useCaulk value="1" />
+		<caulkTexture value="textures/common/caulk" />
+	</clipper>
 	<brush>
 		<textureLock value="1" />
 	</brush>

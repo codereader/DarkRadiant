@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_CSG_H)
 #define INCLUDED_CSG_H
 
+#include <string>
+
 void CSG_MakeHollow (void);
 void CSG_Subtract (void);
 void CSG_Merge (void);
@@ -41,6 +43,6 @@ enum EBrushSplit
   eBack,
   eFrontAndBack,
 };
-void Scene_BrushSplitByPlane(scene::Graph& graph, const Vector3& p0, const Vector3& p1, const Vector3& p2, const char* shader, EBrushSplit split);
+void Scene_BrushSplitByPlane(scene::Graph& graph, const Vector3& p0, const Vector3& p1, const Vector3& p2, const std::string& shader, EBrushSplit split);
 
 #endif

@@ -38,6 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/colourscheme/ColourSchemeManager.h"
 #include "ui/colourscheme/ColourSchemeEditor.h"
 #include "ui/menu/FiltersMenu.h"
+#include "xyview/GlobalClipPoints.h"
 #include "ifilesystem.h"
 #include "iundo.h"
 #include "ifilter.h"
@@ -1275,7 +1276,7 @@ void DragMode()
     g_currentToolMode = DragMode;
     g_currentToolModeSupportsComponentEditing = true;
 
-    OnClipMode(false);
+    GlobalClipPoints()->onClipMode(false);
 
     Sys_Status(c_ResizeMode_status);
     GlobalSelectionSystem().SetManipulatorMode(SelectionSystem::eDrag);
@@ -1298,7 +1299,7 @@ void TranslateMode()
     g_currentToolMode = TranslateMode;
     g_currentToolModeSupportsComponentEditing = true;
 
-    OnClipMode(false);
+    GlobalClipPoints()->onClipMode(false);
 
     Sys_Status(c_TranslateMode_status);
     GlobalSelectionSystem().SetManipulatorMode(SelectionSystem::eTranslate);
@@ -1320,7 +1321,7 @@ void RotateMode()
     g_currentToolMode = RotateMode;
     g_currentToolModeSupportsComponentEditing = true;
 
-    OnClipMode(false);
+    GlobalClipPoints()->onClipMode(false);
 
     Sys_Status(c_RotateMode_status);
     GlobalSelectionSystem().SetManipulatorMode(SelectionSystem::eRotate);
@@ -1342,7 +1343,7 @@ void ScaleMode()
     g_currentToolMode = ScaleMode;
     g_currentToolModeSupportsComponentEditing = true;
 
-    OnClipMode(false);
+    GlobalClipPoints()->onClipMode(false);
 
     Sys_Status(c_ScaleMode_status);
     GlobalSelectionSystem().SetManipulatorMode(SelectionSystem::eScale);
@@ -1368,7 +1369,7 @@ void ClipperMode()
 
     SelectionSystem_DefaultMode();
 
-    OnClipMode(true);
+    GlobalClipPoints()->onClipMode(true);
 
     Sys_Status(c_ClipperMode_status);
     GlobalSelectionSystem().SetManipulatorMode(SelectionSystem::eClip);

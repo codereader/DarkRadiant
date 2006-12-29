@@ -7,15 +7,15 @@
 #include "plugin.h"
 
 ClipPoint::ClipPoint() {
-	Reset();
+	reset();
 };
 
-void ClipPoint::Reset() {
+void ClipPoint::reset() {
 	m_ptClip[0] = m_ptClip[1] = m_ptClip[2] = 0.0;
 	m_bSet = false;
 }
 
-bool ClipPoint::Set() {
+bool ClipPoint::isSet() const {
 	return m_bSet;
 }
 
@@ -69,5 +69,16 @@ double ClipPoint::intersect(const Vector3& point, VIEWTYPE viewtype, float scale
 		return screenDistanceSquared;
 	}
 	return FLT_MAX;
+}
+
+void ClipPoint::testSelect(const Vector3& point, VIEWTYPE viewtype, float scale, double& bestDistance, ClipPoint*& bestClip) {
+	if (isSet()) {
+		double distance = intersect(point, viewtype, scale);
+		
+		if (distance < bestDistance) {
+			bestDistance = distance;
+			bestClip = this;
+		}
+	}
 }
 
