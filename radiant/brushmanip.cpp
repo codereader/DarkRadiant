@@ -40,6 +40,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brush/BrushModule.h"
 #include "brush/FaceInstance.h"
 
+#include "xyview/GlobalClipPoints.h"
+
 #include <list>
 
 FaceInstanceSet g_SelectedFaceInstances;
@@ -1138,37 +1140,23 @@ BrushPrefab g_brushprism(eBrushPrism);
 BrushPrefab g_brushcone(eBrushCone);
 BrushPrefab g_brushsphere(eBrushSphere);
 
-
-void FlipClip();
-void SplitClip();
-void Clip();
-void OnClipMode(bool enable);
-bool ClipMode();
-
-
-void ClipSelected()
-{
-  if(ClipMode())
-  {
-    UndoableCommand undo("clipperClip");
-    Clip();
-  }
+void ClipSelected() {
+	if (GlobalClipPoints()->clipMode()) {
+		UndoableCommand undo("clipperClip");
+		GlobalClipPoints()->clip();
+	}
 }
 
-void SplitSelected()
-{
-  if(ClipMode())
-  {
-    UndoableCommand undo("clipperSplit");
-    SplitClip();
-  }
+void SplitSelected() {
+	if (GlobalClipPoints()->clipMode()) {
+		UndoableCommand undo("clipperSplit");
+		GlobalClipPoints()->splitClip();
+	}
 }
 
-void FlipClipper()
-{
-  FlipClip();
+void FlipClipper() {
+	GlobalClipPoints()->flipClip();
 }
-
 
 void Brush_registerCommands()
 {

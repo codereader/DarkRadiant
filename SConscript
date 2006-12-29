@@ -354,7 +354,8 @@ radiant_src = [
 'camera/Camera.cpp',
 'camera/CamWnd.cpp',
 'camera/GlobalCamera.cpp',
-'xyview/ClipPoint.cpp'
+'xyview/ClipPoint.cpp',
+'xyview/GlobalClipPoints.cpp'
 ]
 
 for i in range(len(radiant_src)):

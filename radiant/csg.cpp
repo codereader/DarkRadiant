@@ -445,11 +445,11 @@ class BrushSplitByPlaneSelected : public scene::Graph::Walker
   const Vector3& m_p0;
   const Vector3& m_p1;
   const Vector3& m_p2;
-  const char* m_shader;
+  const std::string& m_shader;
   const TextureProjection& m_projection;
   EBrushSplit m_split;
 public:
-  BrushSplitByPlaneSelected(const Vector3& p0, const Vector3& p1, const Vector3& p2, const char* shader, const TextureProjection& projection, EBrushSplit split)
+  BrushSplitByPlaneSelected(const Vector3& p0, const Vector3& p1, const Vector3& p2, const std::string& shader, const TextureProjection& projection, EBrushSplit split)
     : m_p0(p0), m_p1(p1), m_p2(p2), m_shader(shader), m_projection(projection), m_split(split)
   {
   }
@@ -514,7 +514,7 @@ public:
   }
 };
 
-void Scene_BrushSplitByPlane(scene::Graph& graph, const Vector3& p0, const Vector3& p1, const Vector3& p2, const char* shader, EBrushSplit split)
+void Scene_BrushSplitByPlane(scene::Graph& graph, const Vector3& p0, const Vector3& p1, const Vector3& p2, const std::string& shader, EBrushSplit split)
 {
   TextureProjection projection;
   projection.constructDefault();
