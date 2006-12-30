@@ -15,20 +15,17 @@ ClipPointManager::ClipPointManager() :
 {
 	GlobalRegistry().addKeyObserver(this, RKEY_CLIPPER_USE_CAULK);
 	GlobalRegistry().addKeyObserver(this, RKEY_CLIPPER_CAULK_SHADER);
-}
-
-void ClipPointManager::constructPreferences(PreferencesPage& page) {
-	page.appendCheckBox("", "Clipper tool uses caulk texture", RKEY_CLIPPER_USE_CAULK);
-	page.appendEntry("Caulk shader name", RKEY_CLIPPER_CAULK_SHADER);
+	
+	// greebo: Register this class in the preference system so that the 
+	// constructPreferencePage() gets called.
+	GlobalPreferenceSystem().addConstructor(this);
 }
 
 void ClipPointManager::constructPreferencePage(PreferenceGroup& group) {
 	PreferencesPage page(group.createPage("Clipper", "Clipper Tool Settings"));
-	constructPreferences(page);
-}
-
-void ClipPointManager::registerPreferencesPage() {
-	PreferencesDialog_addSettingsPage(PreferencePageConstructor(*this));
+	
+	page.appendCheckBox("", "Clipper tool uses caulk texture", RKEY_CLIPPER_USE_CAULK);
+	page.appendEntry("Caulk shader name", RKEY_CLIPPER_CAULK_SHADER);
 }
 
 // Update the internally stored variables on registry key change

@@ -29,6 +29,8 @@ please contact Id Software immediately at info@idsoftware.com.
 #if !defined(INCLUDED_PREFERENCES_H)
 #define INCLUDED_PREFERENCES_H
 
+#include "preferencesystem.h"
+
 #include "xmlutil/Document.h"
 
 #include "libxml/parser.h"
@@ -38,7 +40,8 @@ please contact Id Software immediately at info@idsoftware.com.
 
 void Widget_connectToggleDependency(GtkWidget* self, GtkWidget* toggleButton);
 
-class PreferencesPage
+class PreferencesPage : 
+	public IPreferencesPage
 {
   Dialog& m_dialog;
   GtkWidget* m_vbox;
@@ -63,10 +66,10 @@ public:
 
 	/* greebo: This adds a horizontal slider to the internally referenced VBox and connects 
 	 * it to the given registryKey. */
-	void appendSlider(const std::string& name, const std::string& registryKey, gboolean draw_value, 
+	void appendSlider(const std::string& name, const std::string& registryKey, bool drawValue, 
 					  double value, double lower, double upper, double step_increment, double page_increment, double page_size) 
 	{
-		m_dialog.addSlider(m_vbox, name, registryKey, draw_value, value, lower, upper, step_increment, page_increment, page_size);
+		m_dialog.addSlider(m_vbox, name, registryKey, drawValue, value, lower, upper, step_increment, page_increment, page_size);
 	}
 	
 	/* greebo: Use this to add a dropdown selection box with the given list of strings as captions. The value
@@ -157,12 +160,6 @@ public:
 };
 
 typedef Callback1<PreferencesPage&> PreferencesPageCallback;
-
-class PreferenceGroup
-{
-public:
-  virtual PreferencesPage createPage(const char* treeName, const char* frameName) = 0;
-};
 
 typedef Callback1<PreferenceGroup&> PreferenceGroupCallback;
 
@@ -400,8 +397,14 @@ extern CGameDialog g_GamesDialog;
 
 
 class TexDef;
+class PreferenceTreeGroup;
 
 class PrefsDlg : public Dialog {
+	
+	typedef std::list<PreferenceConstructor*> PreferenceConstructorList;
+	// The list of all the constructors that have to be called on dialog construction
+	PreferenceConstructorList _constructors;
+	
 public:
 protected:
 	std::list<CGameDescription *> mGames;
@@ -443,11 +446,18 @@ public:
 	/*! Utility function for swapping notebook pages for tree list selections */
 	void showPrefPage(GtkWidget* prefpage);
 
+	// Add the given preference constructor to the internal list
+	void addConstructor(PreferenceConstructor* constructor);
+	
 protected:
 
 	/*! Dialog API */
 	GtkWindow* BuildDialog();
 	void PostModal (EMessageBoxReturn code);
+	
+private:
+	// greebo: calls the constructors to add the preference elements
+	void callConstructors(PreferenceTreeGroup& preferenceGroup);
 };
 
 

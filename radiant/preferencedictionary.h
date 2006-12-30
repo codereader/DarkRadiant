@@ -29,6 +29,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "versionlib.h"
 #include <map>
 
+#include "preferences.h"
+
 class PreferenceDictionary : public PreferenceSystem
 {
   class PreferenceEntry
@@ -57,6 +59,13 @@ class PreferenceDictionary : public PreferenceSystem
   PreferenceCache m_cache;
 
 public:
+
+	// greebo: Use this to add a preference constructor to the internal list. They get called when time comes.
+	void addConstructor(PreferenceConstructor* constructor) {
+		// greebo: pass the call to the global preference dialog (note the capital P, this smells like a pitfall!) 
+		g_Preferences.addConstructor(constructor);
+	}
+
   typedef PreferenceEntries::iterator iterator;
 
   iterator begin()

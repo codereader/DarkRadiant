@@ -2,6 +2,7 @@
 #define GLOBALCLIPPOINTS_H_
 
 #include "iregistry.h"
+#include "preferencesystem.h"
 
 #include "ClipPoint.h"
 #include "math/aabb.h"
@@ -16,7 +17,8 @@
 	}
 
 class ClipPointManager :
-	public RegistryKeyObserver
+	public RegistryKeyObserver,
+	public PreferenceConstructor
 {
 	// Hold the currently active xy view type
 	VIEWTYPE _viewType;
@@ -41,6 +43,9 @@ public:
 	
 	// The RegistryKeyObserver implementation, gets called when the observed keys change
 	void keyChanged();
+	
+	// The PreferenceConstructor implementation, used to add the widgets to the dialog
+	void constructPreferencePage(PreferenceGroup& group);
 	
 	VIEWTYPE getViewType() const;
 	void setViewType(VIEWTYPE viewType);
@@ -83,18 +88,6 @@ public:
 	
 	// Adds the given clip point coordinates 
 	void newClipPoint(const Vector3& point);
-	
-	// Adds the preferences settings to the preference dialog
-	void registerPreferencesPage();
-	
-private:
-
-	// Construct the actual preference pages/settings
-	void constructPreferences(PreferencesPage& page);
-	
-	// The method that is passed to the preference system
-	void constructPreferencePage(PreferenceGroup& group);
-	typedef MemberCaller1<ClipPointManager, PreferenceGroup&, &ClipPointManager::constructPreferencePage> PreferencePageConstructor;
 };
 
 ClipPointManager* GlobalClipPoints();
