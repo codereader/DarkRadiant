@@ -79,66 +79,74 @@ bool MD5_parseVector3(Tokeniser& tokeniser, Vector3& v)
   return true;
 }
 
-template<typename Element>
-inline Element float_squared(const Element& f)
+/**
+ * Data structure containing MD5 Joint information.
+ */
+struct MD5Joint
 {
-  return f * f;
-}
-
-class MD5Joint
-{
-public:
-  int parent;
-  Vector3 position;
-  Vector4 rotation;
+	int parent;
+	Vector3 position;
+	Vector4 rotation;
 };
 
-typedef Array<MD5Joint> MD5Joints;
+typedef std::vector<MD5Joint> MD5Joints;
 
-class MD5Vert
+/**
+ * Data structure containing MD5 Vertex information. Vertices do not contain 
+ * their own positional information, but are instead attached to joints
+ * according to one or more "weight" parameters.
+ */
+struct MD5Vert
 {
-public:
-  std::size_t index;
-  float u;
-  float v;
-  std::size_t weight_index;
-  std::size_t weight_count;
+	std::size_t index;
+	float u;
+	float v;
+	std::size_t weight_index;
+	std::size_t weight_count;
 };
 
-typedef Array<MD5Vert> MD5Verts;
+typedef std::vector<MD5Vert> MD5Verts;
 
-class MD5Tri
+/**
+ * Data structure containing MD5 triangle information. A triangle connects
+ * three vertices, addressed by index.
+ */
+struct MD5Tri
 {
-public:
-  std::size_t index;
-  std::size_t a;
-  std::size_t b;
-  std::size_t c;
+	std::size_t index;
+	std::size_t a;
+	std::size_t b;
+	std::size_t c;
 };
 
-typedef Array<MD5Tri> MD5Tris;
+typedef std::vector<MD5Tri> MD5Tris;
 
-class MD5Weight
+/**
+ * Data structure containing weight information.
+ */
+struct MD5Weight
 {
-public:
-  std::size_t index;
-  std::size_t joint;
-  float t;
-  Vector3 v;
+	std::size_t index;
+	std::size_t joint;
+	float t;
+	Vector3 v;
 };
 
-typedef Array<MD5Weight> MD5Weights;
+typedef std::vector<MD5Weight> MD5Weights;
+
+
+
+
+typedef std::vector<MD5Weight> MD5Weights;
 
 typedef float MD5Component;
-typedef Array<MD5Component> MD5Components;
+typedef std::vector<MD5Component> MD5Components;
 
 class MD5Frame
 {
 public:
-  MD5Components m_components;
+	MD5Components m_components;
 };
-
-typedef Array<MD5Weight> MD5Weights;
 
 bool MD5_parseVersion(Tokeniser& tokeniser)
 {
