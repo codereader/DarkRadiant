@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "md5.h"
 
+#include "math/FloatTools.h"
+
 #include "iscriplib.h"
 #include "imodel.h"
 
@@ -306,7 +308,7 @@ bool MD5Model_parse(MD5Model& model, Tokeniser& tokeniser)
     // Calculate the W value. If it is NaN (due to underflow in the sqrt),
     // set it to 0.
     float w = -sqrt(1.0 - rawRotation.getLengthSquared());
-    if (isnan(w))
+    if (isNaN(w))
     	w = 0;
 
 	// Set the Vector4 rotation on the joint
