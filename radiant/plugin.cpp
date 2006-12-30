@@ -114,7 +114,7 @@ scene::Node& getMapWorldEntity()
 
 EViewType XYWindow_getViewType()
 {
-  return g_pParentWnd->GetXYWnd()->GetViewType();
+  return g_pParentWnd->GetXYWnd()->getViewType();
 }
 
 Vector3 XYWindow_windowToWorld(const WindowVector& position)

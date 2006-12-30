@@ -31,6 +31,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "view.h"
 #include "map.h"
 
+#include "timer.h"
+
 #include "EventLib.h"
 #include "camera/CameraObserver.h"
 #include "camera/CamWnd.h"
@@ -68,32 +70,46 @@ inline const char* ViewType_getTitle(EViewType viewtype)
   return "";
 }
 
-class XYWnd : 
-	public CameraObserver
+class XYWnd :
+	public CameraObserver 
 {
-  GtkWidget* m_gl_widget;
-  guint m_sizeHandler;
-  guint m_exposeHandler;
+	GtkWidget* m_gl_widget;
+	guint m_sizeHandler;
+	guint m_exposeHandler;
 
-  DeferredDraw m_deferredDraw;
-  DeferredMotion m_deferred_motion;
-  
-  // The maximum/minimum values of a coordinate
-  float _minWorldCoord;
-  float _maxWorldCoord;
+	DeferredDraw m_deferredDraw;
+	DeferredMotion m_deferred_motion;
+
+	// The maximum/minimum values of a coordinate
+	float _minWorldCoord;
+	float _maxWorldCoord;
+
+	// The timer used for chase mouse xyview movements
+	Timer _chaseMouseTimer;
+
+	FreezePointer _freezePointer;
+
+	bool _moveStarted;
+	bool _zoomStarted;
+	
+	guint _chaseMouseHandler;
+
 public:
-  GtkWindow* m_parent;
-  XYWnd();
-  ~XYWnd();
-
-  void queueDraw()
-  {
-    m_deferredDraw.draw();
-  }
-  GtkWidget* GetWidget()
-  {
-    return m_gl_widget;
-  }
+	GtkWindow* m_parent;
+	
+	// Constructor
+	XYWnd();
+	
+	// Destructor
+	~XYWnd();
+	
+	void queueDraw() {
+		m_deferredDraw.draw();
+	}
+	
+	GtkWidget* GetWidget() {
+		return m_gl_widget;
+	}
 
 public:
   SelectionSystemWindowObserver* m_window_observer;
@@ -103,38 +119,38 @@ public:
   static void captureStates();
   static void releaseStates();
 
-  void PositionView(const Vector3& position);
-  const Vector3& GetOrigin();
-  void SetOrigin(const Vector3& origin);
-  void Scroll(int x, int y);
+  void positionView(const Vector3& position);
+  const Vector3& getOrigin();
+  void setOrigin(const Vector3& origin);
+  void scroll(int x, int y);
 
 	void positionCamera(int x, int y, CamWnd& camwnd);
 	void orientCamera(int x, int y, CamWnd& camwnd);
 
-  void XY_Draw();
-  void DrawCameraIcon(const Vector3& origin, const Vector3& angles);
-  void XY_DrawBlockGrid();
-  void XY_DrawGrid();
+  void draw();
+  void drawCameraIcon(const Vector3& origin, const Vector3& angles);
+  void drawBlockGrid();
+  void drawGrid();
 
   void NewBrushDrag_Begin(int x, int y);
   void NewBrushDrag(int x, int y);
   void NewBrushDrag_End(int x, int y);
 
   void XY_ToPoint(int x, int y, Vector3& point);
-  void XY_SnapToGrid(Vector3& point);
+  void snapToGrid(Vector3& point);
   
   void mouseToPoint(int x, int y, Vector3& point);
   
   void updateXORRectangle(Rectangle area);
 
-  void Move_Begin();
-  void Move_End();
-  bool m_move_started;
+  void beginMove();
+  void endMove();
+
   guint m_move_focusOut;
 
-  void Zoom_Begin();
-  void Zoom_End();
-  bool m_zoom_started;
+  void beginZoom();
+  void endZoom();
+
   guint m_zoom_focusOut;
   
   void zoomIn();
@@ -155,7 +171,7 @@ public:
   void Clipper_Crosshair_OnMouseMoved(int x, int y);
   void DropClipPoint(int pointx, int pointy);
 
-  void SetViewType(EViewType n);
+  
   bool m_bActive;
 
   static GtkMenu* m_mnuDrop;
@@ -163,9 +179,7 @@ public:
   int m_chasemouse_current_x, m_chasemouse_current_y;
   int m_chasemouse_delta_x, m_chasemouse_delta_y;
   
-
-  guint m_chasemouse_handler;
-  void ChaseMouse();
+  void chaseMouse();
   bool chaseMouseMotion(int pointx, int pointy, const unsigned int& state);
 
   void updateModelview();
@@ -200,7 +214,7 @@ private:
   void OriginalButtonDown(guint32 nFlags, int point, int pointy);
 
   void OnContextMenu();
-  void PaintSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vMaxBounds);
+  void drawSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vMaxBounds);
 
   int m_entityCreate_x, m_entityCreate_y;
   bool m_entityCreate;
@@ -213,11 +227,11 @@ public:
   void EntityCreate_MouseMove(int x, int y);
   void EntityCreate_MouseUp(int x, int y);
 
-  void OnEntityCreate(const std::string& item);
-  EViewType GetViewType()
-  {
-    return m_viewType;
-  }
+  void onEntityCreate(const std::string& item);
+  
+  void setViewType(EViewType n);
+  EViewType getViewType() const;
+  
   void SetScale(float f);
   float Scale()
   {
@@ -251,6 +265,19 @@ public:
 	// greebo: CameraObserver implementation; gets called when the camera is moved
 	void cameraMoved();
 	
+private:
+	
+	// GTK Callbacks, these have to be static
+	static gboolean	callbackButtonPress(GtkWidget* widget, GdkEventButton* event, XYWnd* self);
+	static gboolean	callbackButtonRelease(GtkWidget* widget, GdkEventButton* event, XYWnd* self);
+	static void 	callbackMouseMotion(gdouble x, gdouble y, guint state, void* data);
+	static gboolean	callbackMouseWheelScroll(GtkWidget* widget, GdkEventScroll* event, XYWnd* self);
+	static gboolean	callbackSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, XYWnd* self);	
+	static gboolean	callbackExpose(GtkWidget* widget, GdkEventExpose* event, XYWnd* self);
+	static void 	callbackMoveDelta(int x, int y, unsigned int state, void* data);
+	static gboolean callbackMoveFocusOut(GtkWidget* widget, GdkEventFocus* event, XYWnd* self);
+	static gboolean	callbackChaseMouse(gpointer data);
+
 }; // class XYWnd
 
 inline void XYWnd_Update(XYWnd& xywnd)
