@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "debugging/debugging.h"
 
+#include "iclipper.h"
 #include "ientity.h"
 #include "ieclass.h"
 #include "igl.h"
@@ -69,8 +70,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/eventmapper/EventMapper.h"
 
 #include "selection/SelectionBox.h"
-#include "xyview/ClipPoint.h"
-#include "xyview/GlobalClipPoints.h"
 
 #include <boost/lexical_cast.hpp>
 
@@ -124,7 +123,7 @@ void XYWnd::SetScale(float f)
   XYWnd_Update(*this);
 }
 
-VIEWTYPE GlobalXYWnd_getCurrentViewType()
+EViewType GlobalXYWnd_getCurrentViewType()
 {
   ASSERT_NOTNULL(g_pParentWnd);
   ASSERT_NOTNULL(g_pParentWnd->ActiveXY());
@@ -541,20 +540,20 @@ void XYWnd::DropClipPoint(int pointx, int pointy) {
 
 	Vector3 mid;
 	Select_GetMid(mid);
-	GlobalClipPoints()->setViewType(static_cast<VIEWTYPE>(GetViewType()));
-	int nDim = (GlobalClipPoints()->getViewType() == YZ ) ?  0 : ( (GlobalClipPoints()->getViewType() == XZ) ? 1 : 2 );
+	GlobalClipper().setViewType(static_cast<EViewType>(GetViewType()));
+	int nDim = (GlobalClipper().getViewType() == YZ ) ?  0 : ( (GlobalClipper().getViewType() == XZ) ? 1 : 2 );
 	point[nDim] = mid[nDim];
 	vector3_snap(point, GetGridSize());
-	GlobalClipPoints()->newClipPoint(point);
+	GlobalClipper().newClipPoint(point);
 }
 
 void XYWnd::Clipper_OnLButtonDown(int x, int y) {
 	Vector3 mousePosition;
 	XY_ToPoint(x, y , mousePosition);
 	
-	ClipPoint* foundClipPoint = GlobalClipPoints()->find(mousePosition, (VIEWTYPE)m_viewType, m_fScale);
+	ClipPoint* foundClipPoint = GlobalClipper().find(mousePosition, (EViewType)m_viewType, m_fScale);
 	
-	GlobalClipPoints()->setMovingClip(foundClipPoint);
+	GlobalClipper().setMovingClip(foundClipPoint);
 	
 	if (foundClipPoint == NULL) {
 		DropClipPoint(x, y);
@@ -562,16 +561,16 @@ void XYWnd::Clipper_OnLButtonDown(int x, int y) {
 }
 
 void XYWnd::Clipper_OnLButtonUp(int x, int y) {
-	GlobalClipPoints()->setMovingClip(NULL);
+	GlobalClipper().setMovingClip(NULL);
 }
 
 void XYWnd::Clipper_OnMouseMoved(int x, int y) {
-	ClipPoint* movingClip = GlobalClipPoints()->getMovingClip();
+	ClipPoint* movingClip = GlobalClipper().getMovingClip();
 	
 	if (movingClip != NULL) {
-		XY_ToPoint(x, y , movingClip->m_ptClip);
-		XY_SnapToGrid(movingClip->m_ptClip);
-		GlobalClipPoints()->update();
+		XY_ToPoint(x, y , GlobalClipper().getMovingClipCoords());
+		XY_SnapToGrid(GlobalClipper().getMovingClipCoords());
+		GlobalClipper().update();
 		ClipperChangeNotify();
 	}
 }
@@ -579,7 +578,7 @@ void XYWnd::Clipper_OnMouseMoved(int x, int y) {
 void XYWnd::Clipper_Crosshair_OnMouseMoved(int x, int y) {
 	Vector3 mousePosition;
 	XY_ToPoint(x, y , mousePosition);
-	if (GlobalClipPoints()->clipMode() && GlobalClipPoints()->find(mousePosition, (VIEWTYPE)m_viewType, m_fScale) != 0) {
+	if (GlobalClipper().clipMode() && GlobalClipper().find(mousePosition, (EViewType)m_viewType, m_fScale) != 0) {
 		GdkCursor *cursor;
 		cursor = gdk_cursor_new (GDK_CROSSHAIR);
 		gdk_window_set_cursor (m_gl_widget->window, cursor);
@@ -888,7 +887,7 @@ void XYWnd::PositionView(const Vector3& position)
   XYWnd_Update(*this);
 }
 
-void XYWnd::SetViewType(VIEWTYPE viewType)
+void XYWnd::SetViewType(EViewType viewType)
 {
   m_viewType = viewType; 
   updateModelview();
@@ -930,7 +929,7 @@ void XYWnd::mouseDown(int x, int y, GdkEventButton* event) {
 	
 	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xySelect, event)) {
 		// There are two possibilites for the "select" click: Clip or Select
-		if (GlobalClipPoints()->clipMode()) {
+		if (GlobalClipper().clipMode()) {
 			Clipper_OnLButtonDown(x, y);
 			return; // Prevent the call from being passed to the windowobserver
 		}
@@ -959,7 +958,7 @@ void XYWnd::mouseMoved(int x, int y, const unsigned int& state) {
 	
 	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xySelect, state)) {
 		// Check, if we have a clip point operation running
-		if (GlobalClipPoints()->clipMode() && GlobalClipPoints()->getMovingClip() != 0) {
+		if (GlobalClipper().clipMode() && GlobalClipper().getMovingClip() != 0) {
 			Clipper_OnMouseMoved(x, y);
 			return; // Prevent the call from being passed to the windowobserver
 		}
@@ -1007,7 +1006,7 @@ void XYWnd::mouseUp(int x, int y, GdkEventButton* event) {
 		return; // Prevent the call from being passed to the windowobserver
 	}
 	
-	if (GlobalClipPoints()->clipMode() && GlobalEventMapper().stateMatchesXYViewEvent(ui::xySelect, event)) {
+	if (GlobalClipper().clipMode() && GlobalEventMapper().stateMatchesXYViewEvent(ui::xySelect, event)) {
 		// End the clip operation
 		Clipper_OnLButtonUp(x, y);
 		return; // Prevent the call from being passed to the windowobserver
@@ -1883,8 +1882,8 @@ void XYWnd::XY_Draw()
     glEnd();
   }
 
-  if (GlobalClipPoints()->clipMode()) {
-	GlobalClipPoints()->draw(m_fScale);
+  if (GlobalClipper().clipMode()) {
+	GlobalClipper().draw(m_fScale);
   }
 
   GlobalOpenGL_debugAssertNoErrors();
@@ -2278,16 +2277,16 @@ void XYWnd_registerShortcuts()
 
 
 
-void Orthographic_constructPreferences(PreferencesPage& page)
+void Orthographic_constructPreferences(PrefPage* page)
 {
-  page.appendCheckBox("", "Solid selection boxes", g_xywindow_globals.m_bNoStipple);
-  page.appendCheckBox("", "Chase mouse during drags", g_xywindow_globals_private.m_bChaseMouse);
-  page.appendCheckBox("", "Update views on camera move", g_xywindow_globals_private.m_bCamXYUpdate);
+  page->appendCheckBox("", "Solid selection boxes", g_xywindow_globals.m_bNoStipple);
+  page->appendCheckBox("", "Chase mouse during drags", g_xywindow_globals_private.m_bChaseMouse);
+  page->appendCheckBox("", "Update views on camera move", g_xywindow_globals_private.m_bCamXYUpdate);
 }
 void Orthographic_constructPage(PreferenceGroup& group)
 {
-  PreferencesPage page(group.createPage("Orthographic", "Orthographic View Preferences"));
-  Orthographic_constructPreferences(page);
+  PreferencesPage* page(group.createPage("Orthographic", "Orthographic View Preferences"));
+  Orthographic_constructPreferences(reinterpret_cast<PrefPage*>(page));
 }
 void Orthographic_registerPreferencesPage()
 {
@@ -2340,9 +2339,7 @@ void XYWindow_Construct()
   GlobalPreferenceSystem().registerPreference("XZVIS", makeBoolStringImportCallback(ToggleShownImportBoolCaller(g_xz_front_shown)), makeBoolStringExportCallback(ToggleShownExportBoolCaller(g_xz_front_shown)));
   GlobalPreferenceSystem().registerPreference("YZVIS", makeBoolStringImportCallback(ToggleShownImportBoolCaller(g_yz_side_shown)), makeBoolStringExportCallback(ToggleShownExportBoolCaller(g_yz_side_shown)));
 
-  Orthographic_registerPreferencesPage();
-  // Instantiate the GlobalClipPoints module to trigger the constructor
-  GlobalClipPoints();
+  Orthographic_registerPreferencesPage();  
 
   XYWnd::captureStates();
   GlobalEntityClassManager().attach(g_EntityClassMenu);

@@ -186,9 +186,9 @@ bool Winding_PlanesConcave(const Winding& w1, const Winding& w2, const Plane3& p
   return !Winding_TestPlane(w1, plane2, false) || !Winding_TestPlane(w2, plane1, false);
 }
 
-brushsplit_t Winding_ClassifyPlane(const Winding& winding, const Plane3& plane) 
+BrushSplitType Winding_ClassifyPlane(const Winding& winding, const Plane3& plane) 
 {
-  brushsplit_t split;
+  BrushSplitType split;
   for(Winding::const_iterator i = winding.begin(); i != winding.end(); ++i)
   {
     ++split.counts[Winding_ClassifyDistance(plane3_distance_to_point(plane, (*i).vertex), ON_EPSILON)];

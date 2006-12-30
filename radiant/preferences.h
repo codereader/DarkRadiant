@@ -40,13 +40,13 @@ please contact Id Software immediately at info@idsoftware.com.
 
 void Widget_connectToggleDependency(GtkWidget* self, GtkWidget* toggleButton);
 
-class PreferencesPage : 
-	public IPreferencesPage
+class PrefPage : 
+	public PreferencesPage
 {
   Dialog& m_dialog;
   GtkWidget* m_vbox;
 public:
-  PreferencesPage(Dialog& dialog, GtkWidget* vbox) : m_dialog(dialog), m_vbox(vbox)
+  PrefPage(Dialog& dialog, GtkWidget* vbox) : m_dialog(dialog), m_vbox(vbox)
   {
   }
   GtkWidget* appendCheckBox(const char* name, const char* flag, bool& data)
@@ -159,7 +159,7 @@ public:
   }
 };
 
-typedef Callback1<PreferencesPage&> PreferencesPageCallback;
+typedef Callback1<PrefPage*> PreferencesPageCallback;
 
 typedef Callback1<PreferenceGroup&> PreferenceGroupCallback;
 
@@ -274,7 +274,7 @@ extern CGameDescription *g_pGameDescription;
 typedef struct _GtkWidget GtkWidget;
 class PrefsDlg;
 
-class PreferencesPage;
+class PrefPage;
 
 class StringOutputStream;
 
@@ -359,7 +359,7 @@ public:
   for prefs, we hook the frame in the main notebook
   build the frame on-demand (only once)
   */
-  void CreateGlobalFrame(PreferencesPage& page);
+  void CreateGlobalFrame(PrefPage* page);
 
   /*!
   global preferences subsystem

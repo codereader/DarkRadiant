@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "qerplugin.h"
 #include "ifilesystem.h"
 #include "ishaders.h"
+#include "iclipper.h"
 #include "ientity.h"
 #include "ieclass.h"
 #include "irender.h"
@@ -53,6 +54,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/filechooser.h"
 #include "maplib.h"
 
+#include "csg.h"
 #include "error.h"
 #include "map.h"
 #include "qe3.h"
@@ -110,7 +112,7 @@ scene::Node& getMapWorldEntity()
   return Map_FindOrInsertWorldspawn(g_map);
 }
 
-VIEWTYPE XYWindow_getViewType()
+EViewType XYWindow_getViewType()
 {
   return g_pParentWnd->GetXYWnd()->GetViewType();
 }
@@ -154,6 +156,9 @@ public:
     m_radiantcore.getRequiredGameDescriptionKeyValue = &GameDescription_getRequiredKeyValue;
     
     m_radiantcore.getColour = &getColour;
+    m_radiantcore.updateAllWindows = &UpdateAllWindows;
+    m_radiantcore.splitSelectedBrushes = &Scene_BrushSplitByPlane;
+    m_radiantcore.brushSetClipPlane = &Scene_BrushSetClipPlane; 
     
     m_radiantcore.attachGameToolsPathObserver = Radiant_attachGameToolsPathObserver;
     m_radiantcore.detachGameToolsPathObserver = Radiant_detachGameToolsPathObserver;
@@ -203,7 +208,8 @@ class RadiantDependencies :
   public GlobalEntityClassManagerModuleRef,
   public GlobalUndoModuleRef,
   public GlobalScripLibModuleRef,
-  public GlobalNamespaceModuleRef
+  public GlobalNamespaceModuleRef,
+  public GlobalClipperModuleRef
 {
   ImageModulesRef m_image_modules;
   MapModulesRef m_map_modules;

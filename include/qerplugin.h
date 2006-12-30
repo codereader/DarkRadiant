@@ -29,7 +29,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define __QERPLUGIN_H__
 
 #include "generic/constant.h"
+#include "iclipper.h"
 #include "math/Vector3.h"
+#include "math/Plane3.h"
 #include "ui/colourscheme/ColourSchemeManager.h"
 
 // ========================================
@@ -107,13 +109,6 @@ typedef struct _GdkEventButton GdkEventButton;
 typedef SignalHandler3<int, int, GdkEventButton*> MouseEventHandler;
 typedef SignalFwd<MouseEventHandler>::handler_id_type MouseEventHandlerId;
 
-// Possible types of the orthogonal view window
-enum VIEWTYPE {
-  YZ = 0,
-  XZ = 1,
-  XY = 2
-};
-
 // The radiant core API, formerly known as _QERFuncTable_1
 // This contains pointers to all the core functions that should be available via GlobalRadiant()
 struct IRadiant
@@ -140,6 +135,10 @@ struct IRadiant
   const char* (*getGameDescriptionKeyValue)(const char* key);
   const char* (*getRequiredGameDescriptionKeyValue)(const char* key);
   Vector3 (*getColour)(const std::string& colourName);
+  
+  void (*updateAllWindows)();
+  void (*splitSelectedBrushes)(const Vector3 planePoints[3], const std::string& shader, EBrushSplit split);
+  void (*brushSetClipPlane)(const Plane3& plane);
 
   void (*attachGameToolsPathObserver)(ModuleObserver& observer);
   void (*detachGameToolsPathObserver)(ModuleObserver& observer);
@@ -154,7 +153,7 @@ struct IRadiant
   void (*XYWindowDestroyed_disconnect)(SignalHandlerId id);
   MouseEventHandlerId (*XYWindowMouseDown_connect)(const MouseEventHandler& handler);
   void (*XYWindowMouseDown_disconnect)(MouseEventHandlerId id);
-  VIEWTYPE (*XYWindow_getViewType)();
+  EViewType (*XYWindow_getViewType)();
   Vector3 (*XYWindow_windowToWorld)(const WindowVector& position);
   
   const char* (*TextureBrowser_getSelectedShader)();

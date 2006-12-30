@@ -94,7 +94,7 @@ private:
 	void registerPreferencesPage();
 	
 	// Adds the actual preference items to the given page
-	void constructPreferences(PreferencesPage& page);
+	void constructPreferences(PrefPage* page);
 	
 	// Create the "brush" preference page
 	void constructPreferencePage(PreferenceGroup& group);

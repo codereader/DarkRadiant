@@ -38,7 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/colourscheme/ColourSchemeManager.h"
 #include "ui/colourscheme/ColourSchemeEditor.h"
 #include "ui/menu/FiltersMenu.h"
-#include "xyview/GlobalClipPoints.h"
+#include "iclipper.h"
 #include "ifilesystem.h"
 #include "iundo.h"
 #include "ifilter.h"
@@ -363,17 +363,17 @@ void EnginePathImport(CopiedString& self, const char* value)
 }
 typedef ReferenceCaller1<CopiedString, const char*, EnginePathImport> EnginePathImportCaller;
 
-void Paths_constructPreferences(PreferencesPage& page)
+void Paths_constructPreferences(PrefPage* page)
 {
-  page.appendPathEntry("Engine Path", true,
+  page->appendPathEntry("Engine Path", true,
     StringImportCallback(EnginePathImportCaller(g_strEnginePath)),
     StringExportCallback(StringExportCaller(g_strEnginePath))
   );
 }
 void Paths_constructPage(PreferenceGroup& group)
 {
-  PreferencesPage page(group.createPage("Paths", "Path Settings"));
-  Paths_constructPreferences(page);
+  PreferencesPage* page(group.createPage("Paths", "Path Settings"));
+  Paths_constructPreferences(reinterpret_cast<PrefPage*>(page));
 }
 void Paths_registerPreferencesPage()
 {
@@ -392,8 +392,8 @@ public:
     gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(vbox2));
 
     {
-      PreferencesPage preferencesPage(*this, GTK_WIDGET(vbox2));
-      Paths_constructPreferences(preferencesPage);
+      PrefPage preferencesPage(*this, GTK_WIDGET(vbox2));
+      Paths_constructPreferences(&preferencesPage);
     }
 
     return create_simple_modal_dialog_window("Engine Path Not Found", m_modal, GTK_WIDGET(frame));
@@ -1082,7 +1082,7 @@ struct AxisBase
   }
 };
 
-AxisBase AxisBase_forViewType(VIEWTYPE viewtype)
+AxisBase AxisBase_forViewType(EViewType viewtype)
 {
   switch(viewtype)
   {
@@ -1116,7 +1116,7 @@ Vector3 AxisBase_axisForDirection(const AxisBase& axes, ENudgeDirection directio
   return Vector3(0, 0, 0);
 }
 
-void NudgeSelection(ENudgeDirection direction, float fAmount, VIEWTYPE viewtype)
+void NudgeSelection(ENudgeDirection direction, float fAmount, EViewType viewtype)
 {
   AxisBase axes(AxisBase_forViewType(viewtype));
   Vector3 view_direction(-axes.z);
@@ -1276,7 +1276,7 @@ void DragMode()
     g_currentToolMode = DragMode;
     g_currentToolModeSupportsComponentEditing = true;
 
-    GlobalClipPoints()->onClipMode(false);
+    GlobalClipper().onClipMode(false);
 
     Sys_Status(c_ResizeMode_status);
     GlobalSelectionSystem().SetManipulatorMode(SelectionSystem::eDrag);
@@ -1299,7 +1299,7 @@ void TranslateMode()
     g_currentToolMode = TranslateMode;
     g_currentToolModeSupportsComponentEditing = true;
 
-    GlobalClipPoints()->onClipMode(false);
+    GlobalClipper().onClipMode(false);
 
     Sys_Status(c_TranslateMode_status);
     GlobalSelectionSystem().SetManipulatorMode(SelectionSystem::eTranslate);
@@ -1321,7 +1321,7 @@ void RotateMode()
     g_currentToolMode = RotateMode;
     g_currentToolModeSupportsComponentEditing = true;
 
-    GlobalClipPoints()->onClipMode(false);
+    GlobalClipper().onClipMode(false);
 
     Sys_Status(c_RotateMode_status);
     GlobalSelectionSystem().SetManipulatorMode(SelectionSystem::eRotate);
@@ -1343,7 +1343,7 @@ void ScaleMode()
     g_currentToolMode = ScaleMode;
     g_currentToolModeSupportsComponentEditing = true;
 
-    GlobalClipPoints()->onClipMode(false);
+    GlobalClipper().onClipMode(false);
 
     Sys_Status(c_ScaleMode_status);
     GlobalSelectionSystem().SetManipulatorMode(SelectionSystem::eScale);
@@ -1369,7 +1369,7 @@ void ClipperMode()
 
     SelectionSystem_DefaultMode();
 
-    GlobalClipPoints()->onClipMode(true);
+    GlobalClipper().onClipMode(true);
 
     Sys_Status(c_ClipperMode_status);
     GlobalSelectionSystem().SetManipulatorMode(SelectionSystem::eClip);
@@ -3075,31 +3075,31 @@ void GlobalGL_sharedContextDestroyed()
 }
 
 
-void Layout_constructPreferences(PreferencesPage& page)
+void Layout_constructPreferences(PrefPage* page)
 {
   {
     const char* layouts[] = { "window1.bmp", "window2.bmp", "window3.bmp", "window4.bmp" };
-    page.appendRadioIcons(
+    page->appendRadioIcons(
       "Window Layout",
       STRING_ARRAY_RANGE(layouts),
       LatchedIntImportCaller(g_Layout_viewStyle),
       IntExportCaller(g_Layout_viewStyle.m_latched)
     );
   }
-  page.appendCheckBox(
+  page->appendCheckBox(
     "", "Detachable Menus",
     LatchedBoolImportCaller(g_Layout_enableDetachableMenus),
     BoolExportCaller(g_Layout_enableDetachableMenus.m_latched)
   );
   if (!string_empty(g_pGameDescription->getKeyValue("no_patch")))
   {
-    page.appendCheckBox(
+    page->appendCheckBox(
       "", "Patch Toolbar",
       LatchedBoolImportCaller(g_Layout_enablePatchToolbar),
       BoolExportCaller(g_Layout_enablePatchToolbar.m_latched)
     );
   }
-  page.appendCheckBox(
+  page->appendCheckBox(
     "", "Plugin Toolbar",
     LatchedBoolImportCaller(g_Layout_enablePluginToolbar),
     BoolExportCaller(g_Layout_enablePluginToolbar.m_latched)
@@ -3108,8 +3108,8 @@ void Layout_constructPreferences(PreferencesPage& page)
 
 void Layout_constructPage(PreferenceGroup& group)
 {
-  PreferencesPage page(group.createPage("Layout", "Layout Preferences"));
-  Layout_constructPreferences(page);
+  PreferencesPage* page(group.createPage("Layout", "Layout Preferences"));
+  Layout_constructPreferences(reinterpret_cast<PrefPage*>(page));
 }
 
 void Layout_registerPreferencesPage()

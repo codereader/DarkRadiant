@@ -287,10 +287,10 @@ bool Brush_testPlane(const Brush& brush, const Plane3& plane, bool flipped)
 #endif
 }
 
-brushsplit_t Brush_classifyPlane(const Brush& brush, const Plane3& plane)
+BrushSplitType Brush_classifyPlane(const Brush& brush, const Plane3& plane)
 {
   brush.evaluateBRep();
-  brushsplit_t split;
+  BrushSplitType split;
   for(Brush::const_iterator i(brush.begin()); i != brush.end(); ++i)
   {
     if((*i)->contributes())
@@ -313,7 +313,7 @@ bool Brush_subtract(const Brush& brush, const Brush& other, BrushVector& ret_fra
     {
       if((*i)->contributes())
       {
-        brushsplit_t split = Brush_classifyPlane(back, (*i)->plane3());
+        BrushSplitType split = Brush_classifyPlane(back, (*i)->plane3());
         if(split.counts[ePlaneFront] != 0
           && split.counts[ePlaneBack] != 0)
         {
@@ -468,7 +468,7 @@ public:
         Plane3 plane(m_p0, m_p1, m_p2);
         if(plane.isValid())
         {
-          brushsplit_t split = Brush_classifyPlane(*brush, m_split == eFront ? -plane : plane);
+          BrushSplitType split = Brush_classifyPlane(*brush, m_split == eFront ? -plane : plane);
           if(split.counts[ePlaneBack] && split.counts[ePlaneFront])
           {
             // the plane intersects this brush
@@ -514,11 +514,10 @@ public:
   }
 };
 
-void Scene_BrushSplitByPlane(scene::Graph& graph, const Vector3& p0, const Vector3& p1, const Vector3& p2, const std::string& shader, EBrushSplit split)
-{
+void Scene_BrushSplitByPlane(const Vector3 planePoints[3], const std::string& shader, EBrushSplit split) { 
   TextureProjection projection;
   projection.constructDefault();
-  graph.traverse(BrushSplitByPlaneSelected(p0, p1, p2, shader, projection, split));
+  GlobalSceneGraph().traverse(BrushSplitByPlaneSelected(planePoints[0], planePoints[1], planePoints[2], shader, projection, split));
   SceneChangeNotify();
 }
 
@@ -545,9 +544,8 @@ public:
   }
 };
 
-void Scene_BrushSetClipPlane(scene::Graph& graph, const Plane3& plane)
-{
-  graph.traverse(BrushInstanceSetClipPlane(plane));
+void Scene_BrushSetClipPlane(const Plane3& plane) {
+  GlobalSceneGraph().traverse(BrushInstanceSetClipPlane(plane));
 }
 
 /*

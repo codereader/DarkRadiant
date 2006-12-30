@@ -22,17 +22,17 @@ void GlobalCameraManager::registerShortcuts() {
 	}
 }
 
-void GlobalCameraManager::constructPreferences(PreferencesPage& page) {
+void GlobalCameraManager::constructPreferences(PrefPage* page) {
 	// Add the sliders for the movement and angle speed and connect them to the observer   
-    page.appendSlider("Movement Speed (game units)", RKEY_MOVEMENT_SPEED, TRUE, 100, 50, 300, 1, 10, 10);
-    page.appendSlider("Rotation Speed", RKEY_ROTATION_SPEED, TRUE, 3, 1, 180, 1, 10, 10);
+    page->appendSlider("Movement Speed (game units)", RKEY_MOVEMENT_SPEED, TRUE, 100, 50, 300, 1, 10, 10);
+    page->appendSlider("Rotation Speed", RKEY_ROTATION_SPEED, TRUE, 3, 1, 180, 1, 10, 10);
     
 	// Add the checkboxes and connect them with the registry key and the according observer 
-	page.appendCheckBox("", "Discrete movement (non-freelook mode)", RKEY_DISCRETE_MOVEMENT);
-	page.appendCheckBox("", "Enable far-clip plane (hides distant objects)", RKEY_ENABLE_FARCLIP);
+	page->appendCheckBox("", "Discrete movement (non-freelook mode)", RKEY_DISCRETE_MOVEMENT);
+	page->appendCheckBox("", "Enable far-clip plane (hides distant objects)", RKEY_ENABLE_FARCLIP);
 	
 	// Add the "inverse mouse vertical axis in free-look mode" preference
-	page.appendCheckBox("", "Invert mouse vertical axis (freelook mode)", RKEY_INVERT_MOUSE_VERTICAL_AXIS);
+	page->appendCheckBox("", "Invert mouse vertical axis (freelook mode)", RKEY_INVERT_MOUSE_VERTICAL_AXIS);
 
 	// Create the string list containing the render mode captions
 	std::list<std::string> renderModeDescriptions;
@@ -45,16 +45,16 @@ void GlobalCameraManager::constructPreferences(PreferencesPage& page) {
 		renderModeDescriptions.push_back("Lighting");
 	}
 	
-	page.appendCombo("Render Mode", RKEY_DRAWMODE, renderModeDescriptions);
+	page->appendCombo("Render Mode", RKEY_DRAWMODE, renderModeDescriptions);
 }
 
 void GlobalCameraManager::constructPreferencePage(PreferenceGroup& group) {
 	
 	// Add a page to the given group
-	PreferencesPage page(group.createPage("Camera", "Camera View Preferences"));
+	PreferencesPage* page(group.createPage("Camera", "Camera View Preferences"));
 	
 	// Now add the preferences to the newly created page
-	constructPreferences(page);
+	constructPreferences(reinterpret_cast<PrefPage*>(page));
 }
 
 void GlobalCameraManager::registerPreferences() {

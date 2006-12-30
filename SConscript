@@ -197,6 +197,13 @@ md5model_lib = md5model_env.SharedLibrary(target='md5model', source=md5model_lst
 md5model_env.Depends(md5model_lib, math)
 md5model_env.Install(INSTALL + '/modules', md5model_lib)
 
+clipper_env = module_env.Copy()
+clipper_lst=build_list('plugins/clipper', 'Clipper.cpp ClipPoint.cpp')
+clipper_env.Append(LIBS = ['math'])
+clipper_lib = clipper_env.SharedLibrary(target='clipper', source=clipper_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
+clipper_env.Depends(clipper_lib, math)
+clipper_env.Install(INSTALL + '/modules', clipper_lib)
+
 entity_env = module_env.Copy()
 entity_src = [
 	'plugin.cpp',
@@ -353,9 +360,7 @@ radiant_src = [
 'camera/CameraSettings.cpp',
 'camera/Camera.cpp',
 'camera/CamWnd.cpp',
-'camera/GlobalCamera.cpp',
-'xyview/ClipPoint.cpp',
-'xyview/GlobalClipPoints.cpp'
+'camera/GlobalCamera.cpp'
 ]
 
 for i in range(len(radiant_src)):

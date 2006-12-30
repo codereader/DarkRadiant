@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_CSG_H
 
 #include <string>
+#include "iclipper.h"
 
 void CSG_MakeHollow (void);
 void CSG_Subtract (void);
@@ -36,13 +37,7 @@ template<typename Element> class BasicVector3;
 typedef BasicVector3<float> Vector3;
 class Plane3;
 
-void Scene_BrushSetClipPlane(scene::Graph& graph, const Plane3& plane);
-enum EBrushSplit
-{
-  eFront,
-  eBack,
-  eFrontAndBack,
-};
-void Scene_BrushSplitByPlane(scene::Graph& graph, const Vector3& p0, const Vector3& p1, const Vector3& p2, const std::string& shader, EBrushSplit split);
+void Scene_BrushSetClipPlane(const Plane3& plane);
+void Scene_BrushSplitByPlane(const Vector3 planePoints[3], const std::string& shader, EBrushSplit split);
 
 #endif

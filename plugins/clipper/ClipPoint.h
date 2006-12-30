@@ -9,7 +9,7 @@
 class ClipPoint
 {
 public:
-	Vector3 m_ptClip;      // the 3d point
+	Vector3 _coords;      // the 3d point
 	bool m_bSet;
 
 	// Constructor, sets the clip point coords to <0,0,0> and m_bSet to <false>
@@ -25,9 +25,9 @@ public:
 	
 	operator Vector3&();
 
-	double intersect(const Vector3& point, VIEWTYPE viewtype, float scale);
+	double intersect(const Vector3& point, EViewType viewtype, float scale);
 	
-	void testSelect(const Vector3& point, VIEWTYPE viewtype, float scale, double& bestDistance, ClipPoint*& bestClip);
+	void testSelect(const Vector3& point, EViewType viewtype, float scale, double& bestDistance, ClipPoint*& bestClip);
 
 	/*! Draw clip/path point with rasterized number label */
 	void Draw(int num, float scale);

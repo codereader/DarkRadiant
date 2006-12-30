@@ -612,14 +612,14 @@ void Patch_NaturalTexture()
 
 #include "preferences.h"
 
-void Patch_constructPreferences(PreferencesPage& page)
+void Patch_constructPreferences(PrefPage* page)
 {
-  page.appendEntry("Patch Subdivide Threshold", g_PatchSubdivideThreshold);
+  page->appendEntry("Patch Subdivide Threshold", g_PatchSubdivideThreshold);
 }
 void Patch_constructPage(PreferenceGroup& group)
 {
-  PreferencesPage page(group.createPage("Patches", "Patch Display Preferences"));
-  Patch_constructPreferences(page);
+  PreferencesPage* page(group.createPage("Patches", "Patch Display Preferences"));
+  Patch_constructPreferences(reinterpret_cast<PrefPage*>(page));
 }
 void Patch_registerPreferencesPage()
 {
