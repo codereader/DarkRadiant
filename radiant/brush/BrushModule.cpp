@@ -51,19 +51,19 @@ BrushModuleClass::BrushModuleClass() :
 	GlobalRegistry().addKeyObserver(this, RKEY_ENABLE_TEXTURE_LOCK);
 }
 
-void BrushModuleClass::constructPreferences(PreferencesPage& page) {
+void BrushModuleClass::constructPreferences(PrefPage* page) {
 	// Add the default texture scale preference and connect it to the according registryKey
 	// Note: this should be moved somewhere else, I think
-	page.appendEntry("Default texture scale", "user/ui/defaultTextureScale");
+	page->appendEntry("Default texture scale", "user/ui/defaultTextureScale");
 
 	// The checkbox to enable/disable the texture lock option
-	page.appendCheckBox("", "Enable Texture Lock", "user/ui/brush/textureLock");
+	page->appendCheckBox("", "Enable Texture Lock", "user/ui/brush/textureLock");
 }
 
 
 void BrushModuleClass::constructPreferencePage(PreferenceGroup& group) {
-	PreferencesPage page(group.createPage("Brush", "Brush Settings"));
-	constructPreferences(page);
+	PreferencesPage* page(group.createPage("Brush", "Brush Settings"));
+	constructPreferences(reinterpret_cast<PrefPage*>(page));
 }
 
 void BrushModuleClass::registerPreferencesPage() {

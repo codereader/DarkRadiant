@@ -1470,21 +1470,21 @@ void TextureUniformSizeExport(TextureBrowser& textureBrowser, const IntImportCal
 typedef ReferenceCaller1<TextureBrowser, const IntImportCallback&, TextureUniformSizeExport> TextureUniformSizeExportCaller;
 
 
-void TextureBrowser_constructPreferences(PreferencesPage& page)
+void TextureBrowser_constructPreferences(PrefPage* page)
 {
-  page.appendCheckBox(
+  page->appendCheckBox(
     "", "Texture subsets",
     TextureBrowserImportShowFilterCaller(GlobalTextureBrowser()),
     BoolExportCaller(GlobalTextureBrowser().m_showTextureFilter)
   );
-  page.appendCheckBox(
+  page->appendCheckBox(
     "", "Texture scrollbar",
     TextureBrowserImportShowScrollbarCaller(GlobalTextureBrowser()),
     BoolExportCaller(GlobalTextureBrowser().m_showTextureScrollbar)
   );
   {
     const char* texture_scale[] = { "10%", "25%", "50%", "100%", "200%" };
-    page.appendCombo(
+    page->appendCombo(
       "Texture thumbnail scale",
       STRING_ARRAY_RANGE(texture_scale),
       IntImportCallback(TextureScaleImportCaller(GlobalTextureBrowser())),
@@ -1492,22 +1492,22 @@ void TextureBrowser_constructPreferences(PreferencesPage& page)
     );
   }
   
-  page.appendEntry("Uniform texture thumbnail size (pixels)",
+  page->appendEntry("Uniform texture thumbnail size (pixels)",
     IntImportCallback(TextureUniformSizeImportCaller(GlobalTextureBrowser())),
     IntExportCallback(TextureUniformSizeExportCaller(GlobalTextureBrowser()))
   );
   
-  page.appendEntry("Mousewheel Increment", GlobalTextureBrowser().m_mouseWheelScrollIncrement);
+  page->appendEntry("Mousewheel Increment", GlobalTextureBrowser().m_mouseWheelScrollIncrement);
 
   {
     const char* startup_shaders[] = { "None", TextureBrowser_getComonShadersName(), "All" };
-    page.appendCombo("Load Shaders at Startup", reinterpret_cast<int&>(GlobalTextureBrowser().m_startupShaders), STRING_ARRAY_RANGE(startup_shaders));
+    page->appendCombo("Load Shaders at Startup", reinterpret_cast<int&>(GlobalTextureBrowser().m_startupShaders), STRING_ARRAY_RANGE(startup_shaders));
   }
 }
 void TextureBrowser_constructPage(PreferenceGroup& group)
 {
-  PreferencesPage page(group.createPage("Texture Browser", "Texture Browser Preferences"));
-  TextureBrowser_constructPreferences(page);
+  PreferencesPage* page(group.createPage("Texture Browser", "Texture Browser Preferences"));
+  TextureBrowser_constructPreferences(reinterpret_cast<PrefPage*>(page));
 }
 void TextureBrowser_registerPreferencesPage()
 {

@@ -118,7 +118,7 @@ private:
 	typedef MemberCaller1<GlobalCameraManager, PreferenceGroup&, &GlobalCameraManager::constructPreferencePage> PreferencePageConstructor;
 	
 	// This actually adds the settings widgets to the preference page created by constructPreferencePage() 
-	void constructPreferences(PreferencesPage& page);
+	void constructPreferences(PrefPage* page);
 	
 }; // class GlobalCameraManager
 

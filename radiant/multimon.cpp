@@ -31,15 +31,21 @@ multimon_globals_t g_multimon_globals;
 
 LatchedBool g_Multimon_enableSysMenuPopups(false, "Floating windows sysmenu icons");
 
-void MultiMonitor_constructPreferences(PreferencesPage& page)
+void MultiMonitor_constructPreferences(PrefPage* page)
 {
-  GtkWidget* primary_monitor = page.appendCheckBox("Multi Monitor", "Start on Primary Monitor", g_multimon_globals.m_bStartOnPrimMon);
-  GtkWidget* popup = page.appendCheckBox(
+  GtkWidget* primary_monitor = page->appendCheckBox("Multi Monitor", "Start on Primary Monitor", g_multimon_globals.m_bStartOnPrimMon);
+  GtkWidget* popup = page->appendCheckBox(
     "", "Disable system menu on popup windows",
     LatchedBoolImportCaller(g_Multimon_enableSysMenuPopups),
     BoolExportCaller(g_Multimon_enableSysMenuPopups.m_latched)
   );
   Widget_connectToggleDependency(popup, primary_monitor);
+}
+
+void Multimon_constructPage(PreferenceGroup& group)
+{
+  PreferencesPage* page(group.createPage("Multi Monitor", "Multi Monitor Preferences"));
+  MultiMonitor_constructPreferences(reinterpret_cast<PrefPage*>(page));
 }
 
 #include "preferencesystem.h"
@@ -72,6 +78,11 @@ void PositionWindowOnPrimaryScreen(WindowPosition& position)
   }
 }
 
+void Multimon_registerPreferencesPage()
+{
+  PreferencesDialog_addSettingsPage(FreeCaller1<PreferenceGroup&, Multimon_constructPage>());
+}
+
 void MultiMon_Construct()
 {
   // detect multiple monitors
@@ -101,7 +112,7 @@ void MultiMon_Construct()
 
   g_Multimon_enableSysMenuPopups.useLatched();
 
-  PreferencesDialog_addInterfacePreferences(FreeCaller1<PreferencesPage&, MultiMonitor_constructPreferences>());
+	Multimon_registerPreferencesPage();
 }
 void MultiMon_Destroy()
 {

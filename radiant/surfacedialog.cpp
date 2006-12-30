@@ -1595,14 +1595,14 @@ void SelectedFaces_pasteTexture()
 
 
 
-void SurfaceInspector_constructPreferences(PreferencesPage& page)
+void SurfaceInspector_constructPreferences(PrefPage* page)
 {
-  page.appendCheckBox("", "Surface Inspector Increments Match Grid", g_si_globals.m_bSnapTToGrid);
+  page->appendCheckBox("", "Surface Inspector Increments Match Grid", g_si_globals.m_bSnapTToGrid);
 }
 void SurfaceInspector_constructPage(PreferenceGroup& group)
 {
-  PreferencesPage page(group.createPage("Surface Inspector", "Surface Inspector Preferences"));
-  SurfaceInspector_constructPreferences(page);
+  PreferencesPage* page(group.createPage("Surface Inspector", "Surface Inspector Preferences"));
+  SurfaceInspector_constructPreferences(reinterpret_cast<PrefPage*>(page));
 }
 void SurfaceInspector_registerPreferencesPage()
 {

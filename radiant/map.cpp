@@ -2360,11 +2360,15 @@ void DoFind()
   gtk_widget_destroy(GTK_WIDGET(window));
 }
 
-void Map_constructPreferences(PreferencesPage& page)
+void Map_constructPreferences(PrefPage* page)
 {
-  page.appendCheckBox("", "Load last map on open", g_bLoadLastMap);
+  page->appendCheckBox("", "Load last map on open", g_bLoadLastMap);
 }
 
+void Map_constructPage(PreferenceGroup& group) {
+	PreferencesPage* page(group.createPage("Map", "Map Preferences"));
+	Map_constructPreferences(reinterpret_cast<PrefPage*>(page));
+}
 
 class MapEntityClasses : public ModuleObserver
 {
@@ -2444,7 +2448,7 @@ void Map_Construct()
   GlobalPreferenceSystem().registerPreference("LoadLastMap", BoolImportStringCaller(g_bLoadLastMap), BoolExportStringCaller(g_bLoadLastMap));
   GlobalPreferenceSystem().registerPreference("MapInfoDlg", WindowPositionImportStringCaller(g_posMapInfoWnd), WindowPositionExportStringCaller(g_posMapInfoWnd));
   
-  PreferencesDialog_addSettingsPreferences(FreeCaller1<PreferencesPage&, Map_constructPreferences>());
+  PreferencesDialog_addSettingsPage(FreeCaller1<PreferenceGroup&, Map_constructPage>());
 
   GlobalEntityClassManager().attach(g_MapEntityClasses);
   Radiant_attachHomePathsObserver(g_MapModuleObserver);

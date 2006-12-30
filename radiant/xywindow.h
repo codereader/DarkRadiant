@@ -51,7 +51,7 @@ namespace scene
 typedef struct _GtkWindow GtkWindow;
 typedef struct _GtkMenu GtkMenu;
 
-inline const char* ViewType_getTitle(VIEWTYPE viewtype)
+inline const char* ViewType_getTitle(EViewType viewtype)
 {
   if(viewtype == XY)
   {
@@ -155,7 +155,7 @@ public:
   void Clipper_Crosshair_OnMouseMoved(int x, int y);
   void DropClipPoint(int pointx, int pointy);
 
-  void SetViewType(VIEWTYPE n);
+  void SetViewType(EViewType n);
   bool m_bActive;
 
   static GtkMenu* m_mnuDrop;
@@ -194,7 +194,7 @@ private:
 
   Vector3 m_mousePosition;
 
-  VIEWTYPE m_viewType;
+  EViewType m_viewType;
 
   void OriginalButtonUp(guint32 nFlags, int point, int pointy);
   void OriginalButtonDown(guint32 nFlags, int point, int pointy);
@@ -214,7 +214,7 @@ public:
   void EntityCreate_MouseUp(int x, int y);
 
   void OnEntityCreate(const std::string& item);
-  VIEWTYPE GetViewType()
+  EViewType GetViewType()
   {
     return m_viewType;
   }
@@ -275,7 +275,7 @@ struct xywindow_globals_t
 extern xywindow_globals_t g_xywindow_globals;
 
 
-VIEWTYPE GlobalXYWnd_getCurrentViewType();
+EViewType GlobalXYWnd_getCurrentViewType();
 
 typedef struct _GtkWindow GtkWindow;
 void XY_Top_Shown_Construct(GtkWindow* parent);

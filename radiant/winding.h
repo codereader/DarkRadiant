@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <vector>
 
+#include "iclipper.h"
 #include "irender.h"
 #include "igl.h"
 #include "selectable.h"
@@ -54,12 +55,7 @@ inline indexremap_t indexremap_for_projectionaxis(const ProjectionAxis axis)
   }
 }
 
-enum PlaneClassification
-{
-  ePlaneFront = 0,
-  ePlaneBack = 1,
-  ePlaneOn = 2,
-};
+
 
 #define MAX_POINTS_ON_WINDING 64
 const std::size_t c_brush_maxFaces = 1024;
@@ -256,25 +252,7 @@ inline bool Edge_isDegenerate(const Vector3& x, const Vector3& y)
 
 void Winding_Clip(const FixedWinding& winding, const Plane3& plane, const Plane3& clipPlane, std::size_t adjacent, FixedWinding& clipped);
 
-struct brushsplit_t
-{
-  brushsplit_t()
-  {
-    counts[0] = 0;
-    counts[1] = 0;
-    counts[2] = 0;
-  }
-  brushsplit_t& operator+=(const brushsplit_t& other)
-  {
-    counts[0] += other.counts[0];
-    counts[1] += other.counts[1];
-    counts[2] += other.counts[2];
-    return *this;
-  }
-  std::size_t counts[3];
-};
-
-brushsplit_t Winding_ClassifyPlane(const Winding& w, const Plane3& plane);
+BrushSplitType Winding_ClassifyPlane(const Winding& w, const Plane3& plane);
 
 bool Winding_PlanesConcave(const Winding& w1, const Winding& w2, const Plane3& plane1, const Plane3& plane2);
 bool Winding_TestPlane(const Winding& w, const Plane3& plane, bool flipped);

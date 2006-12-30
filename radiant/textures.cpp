@@ -735,18 +735,18 @@ void TextureModeExport(ETexturesMode& self, const IntImportCallback& importer)
 }
 typedef ReferenceCaller1<ETexturesMode, const IntImportCallback&, TextureModeExport> TextureModeExportCaller;
 
-void Textures_constructPreferences(PreferencesPage& page)
+void Textures_constructPreferences(PrefPage* page)
 {
   {
     const char* percentages[] = { "12.5%", "25%", "50%", "100%", };
-    page.appendRadio(
+    page->appendRadio(
       "Texture Quality",
       STRING_ARRAY_RANGE(percentages),
       LatchedIntImportCaller(g_Textures_textureQuality),
       IntExportCaller(g_Textures_textureQuality.m_latched)
     );
   }
-  page.appendSpinner(
+  page->appendSpinner(
     "Texture Gamma",
     1.0,
     0.0,
@@ -756,7 +756,7 @@ void Textures_constructPreferences(PreferencesPage& page)
   );
   {
     const char* texture_mode[] = { "Nearest", "Nearest Mipmap", "Linear", "Bilinear", "Bilinear Mipmap", "Trilinear" };
-    page.appendCombo(
+    page->appendCombo(
       "Texture Render Mode",
       STRING_ARRAY_RANGE(texture_mode),
       IntImportCallback(TextureModeImportCaller(g_texture_mode)),
@@ -777,7 +777,7 @@ void Textures_constructPreferences(PreferencesPage& page)
           ? STRING_ARRAY_RANGE(compression_s3tc)
           : STRING_ARRAY_RANGE(compression_none)
     );
-    page.appendCombo(
+    page->appendCombo(
       "Hardware Texture Compression",
       compression,
       TextureCompressionImportCaller(g_texture_globals.m_nTextureCompressionFormat),
@@ -787,8 +787,8 @@ void Textures_constructPreferences(PreferencesPage& page)
 }
 void Textures_constructPage(PreferenceGroup& group)
 {
-  PreferencesPage page(group.createPage("Textures", "Texture Settings"));
-  Textures_constructPreferences(page);
+  PreferencesPage* page(group.createPage("Textures", "Texture Settings"));
+  Textures_constructPreferences(reinterpret_cast<PrefPage*>(page));
 }
 void Textures_registerPreferencesPage()
 {

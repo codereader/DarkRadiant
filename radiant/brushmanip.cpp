@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "brushmanip.h"
 
+#include "iclipper.h"
 
 #include "gtkutil/widget.h"
 #include "gtkutil/menu.h"
@@ -39,8 +40,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brush/BrushVisit.h"
 #include "brush/BrushModule.h"
 #include "brush/FaceInstance.h"
-
-#include "xyview/GlobalClipPoints.h"
 
 #include <list>
 
@@ -1141,21 +1140,21 @@ BrushPrefab g_brushcone(eBrushCone);
 BrushPrefab g_brushsphere(eBrushSphere);
 
 void ClipSelected() {
-	if (GlobalClipPoints()->clipMode()) {
+	if (GlobalClipper().clipMode()) {
 		UndoableCommand undo("clipperClip");
-		GlobalClipPoints()->clip();
+		GlobalClipper().clip();
 	}
 }
 
 void SplitSelected() {
-	if (GlobalClipPoints()->clipMode()) {
+	if (GlobalClipper().clipMode()) {
 		UndoableCommand undo("clipperSplit");
-		GlobalClipPoints()->splitClip();
+		GlobalClipper().splitClip();
 	}
 }
 
 void FlipClipper() {
-	GlobalClipPoints()->flipClip();
+	GlobalClipper().flipClip();
 }
 
 void Brush_registerCommands()

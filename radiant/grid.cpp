@@ -236,9 +236,9 @@ void Grid_registerShortcuts()
   command_connect_accelerator("GridUp");
 }
 
-void Grid_constructPreferences(PreferencesPage& page)
+void Grid_constructPreferences(PrefPage* page)
 {
-  page.appendCombo(
+  page->appendCombo(
     "Default grid spacing",
     g_grid_default,
     ARRAY_RANGE(g_gridnames)
@@ -246,8 +246,8 @@ void Grid_constructPreferences(PreferencesPage& page)
 }
 void Grid_constructPage(PreferenceGroup& group)
 {
-  PreferencesPage page(group.createPage("Grid", "Grid Settings"));
-  Grid_constructPreferences(page);
+  PreferencesPage* page (group.createPage("Grid", "Grid Settings"));
+  Grid_constructPreferences(reinterpret_cast<PrefPage*>(page));
 }
 void Grid_registerPreferencesPage()
 {
