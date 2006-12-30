@@ -95,4 +95,9 @@ inline Element float_mod(const Element& self, const ModulusElement& modulus)
   return float_mod_range(Element(fmod(static_cast<double>(self), static_cast<double>(modulus))), modulus);
 }
 
+template<typename Element>
+inline bool isNaN(Element x) {
+	return x != x;
+}
+
 #endif /*FLOATTOOLS_H_*/
