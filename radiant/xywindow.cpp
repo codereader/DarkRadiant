@@ -73,6 +73,68 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <boost/lexical_cast.hpp>
 
+class XYRenderer : 
+	public Renderer
+{
+	struct state_type {
+		state_type() :
+				m_highlight(0),
+				m_state(0) {}
+		unsigned int m_highlight;
+		Shader* m_state;
+	};
+	
+	std::vector<state_type> m_state_stack;
+	RenderStateFlags m_globalstate;
+	Shader* m_state_selected;
+
+public:
+	XYRenderer(RenderStateFlags globalstate, Shader* selected) :
+			m_globalstate(globalstate),
+			m_state_selected(selected) {
+		ASSERT_NOTNULL(selected);
+		m_state_stack.push_back(state_type());
+	}
+
+	void SetState(Shader* state, EStyle style) {
+		ASSERT_NOTNULL(state);
+		if (style == eWireframeOnly)
+			m_state_stack.back().m_state = state;
+	}
+	
+	const EStyle getStyle() const {
+		return eWireframeOnly;
+	}
+	
+	void PushState() {
+		m_state_stack.push_back(m_state_stack.back());
+	}
+	
+	void PopState() {
+		ASSERT_MESSAGE(!m_state_stack.empty(), "popping empty stack");
+		m_state_stack.pop_back();
+	}
+	
+	void Highlight(EHighlightMode mode, bool bEnable = true) {
+		(bEnable)
+		? m_state_stack.back().m_highlight |= mode
+		                                      : m_state_stack.back().m_highlight &= ~mode;
+	}
+	
+	void addRenderable(const OpenGLRenderable& renderable, const Matrix4& localToWorld) {
+		if (m_state_stack.back().m_highlight & ePrimitive) {
+			m_state_selected->addRenderable(renderable, localToWorld);
+		}
+		else {
+			m_state_stack.back().m_state->addRenderable(renderable, localToWorld);
+		}
+	}
+
+	void render(const Matrix4& modelview, const Matrix4& projection) {
+		GlobalShaderCache().render(m_globalstate, modelview, projection);
+	}
+}; // class XYRenderer
+
 struct xywindow_globals_private_t
 {
   bool  d_showgrid;
@@ -127,7 +189,7 @@ EViewType GlobalXYWnd_getCurrentViewType()
 {
   ASSERT_NOTNULL(g_pParentWnd);
   ASSERT_NOTNULL(g_pParentWnd->ActiveXY());
-  return g_pParentWnd->ActiveXY()->GetViewType();
+  return g_pParentWnd->ActiveXY()->getViewType();
 }
 
 // =============================================================================
@@ -137,119 +199,19 @@ bool g_bCrossHairs = false;
 
 GtkMenu* XYWnd::m_mnuDrop = 0;
 
-// this is disabled, and broken
-// http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=394
-#if 0
-void WXY_Print()
-{
-  long width, height;
-  width = g_pParentWnd->ActiveXY()->Width();
-  height = g_pParentWnd->ActiveXY()->Height();
-  unsigned char* img;
-  const char* filename;
-
-  filename = file_dialog(GTK_WIDGET(MainFrame_getWindow()), FALSE, "Save Image", 0, FILTER_BMP);
-  if (!filename)
-    return;
-
-  g_pParentWnd->ActiveXY()->MakeCurrent();
-  img = (unsigned char*)malloc (width*height*3);
-  glReadPixels (0,0,width,height,GL_RGB,GL_UNSIGNED_BYTE,img);
-
-  FILE *fp; 
-  fp = fopen(filename, "wb");
-  if (fp)
-  {
-    unsigned short bits;
-    unsigned long cmap, bfSize;
-
-    bits = 24;
-    cmap = 0;
-    bfSize = 54 + width*height*3;
-
-    long byteswritten = 0;
-    long pixoff = 54 + cmap*4;
-    short res = 0;
-    char m1 ='B', m2 ='M';
-    fwrite(&m1, 1, 1, fp);      byteswritten++; // B
-    fwrite(&m2, 1, 1, fp);      byteswritten++; // M
-    fwrite(&bfSize, 4, 1, fp);  byteswritten+=4;// bfSize
-    fwrite(&res, 2, 1, fp);     byteswritten+=2;// bfReserved1
-    fwrite(&res, 2, 1, fp);     byteswritten+=2;// bfReserved2
-    fwrite(&pixoff, 4, 1, fp);  byteswritten+=4;// bfOffBits
-
-    unsigned long biSize = 40, compress = 0, size = 0;
-    long pixels = 0;
-    unsigned short planes = 1;
-    fwrite(&biSize, 4, 1, fp);  byteswritten+=4;// biSize
-    fwrite(&width, 4, 1, fp);   byteswritten+=4;// biWidth
-    fwrite(&height, 4, 1, fp);  byteswritten+=4;// biHeight
-    fwrite(&planes, 2, 1, fp);  byteswritten+=2;// biPlanes
-    fwrite(&bits, 2, 1, fp);    byteswritten+=2;// biBitCount
-    fwrite(&compress, 4, 1, fp);byteswritten+=4;// biCompression
-    fwrite(&size, 4, 1, fp);    byteswritten+=4;// biSizeImage
-    fwrite(&pixels, 4, 1, fp);  byteswritten+=4;// biXPelsPerMeter
-    fwrite(&pixels, 4, 1, fp);  byteswritten+=4;// biYPelsPerMeter
-    fwrite(&cmap, 4, 1, fp);    byteswritten+=4;// biClrUsed
-    fwrite(&cmap, 4, 1, fp);    byteswritten+=4;// biClrImportant
-
-    unsigned long widthDW = (((width*24) + 31) / 32 * 4);
-    long row, row_size = width*3;
-    for (row = 0; row < height; row++)
-    {
-        unsigned char* buf = img+row*row_size;
-
-      // write a row
-      int col;
-      for (col = 0; col < row_size; col += 3)
-        {
-          putc(buf[col+2], fp);
-          putc(buf[col+1], fp);
-          putc(buf[col], fp);
-        }
-      byteswritten += row_size; 
-
-      unsigned long count;
-      for (count = row_size; count < widthDW; count++)
-        {
-        putc(0, fp);    // dummy
-          byteswritten++;
-        }
-    }
-
-    fclose(fp);
-  }
-
-  free (img);
-}
-#endif
-
-
-#include "timer.h"
-
-Timer g_chasemouse_timer;
-
 /* greebo: This gets repeatedly called during a mouse chase operation.
  * The call is triggered by a timer, that gets start in XYWnd::chaseMouseMotion();
  */
-void XYWnd::ChaseMouse() {
-	float multiplier = g_chasemouse_timer.elapsed_msec() / 10.0f;
-	Scroll(float_to_integer(multiplier * m_chasemouse_delta_x), float_to_integer(multiplier * -m_chasemouse_delta_y));
+void XYWnd::chaseMouse() {
+	float multiplier = _chaseMouseTimer.elapsed_msec() / 10.0f;
+	scroll(float_to_integer(multiplier * m_chasemouse_delta_x), float_to_integer(multiplier * -m_chasemouse_delta_y));
 
 	//globalOutputStream() << "chasemouse: multiplier=" << multiplier << " x=" << m_chasemouse_delta_x << " y=" << m_chasemouse_delta_y << '\n';
 
 	mouseMoved(m_chasemouse_current_x, m_chasemouse_current_y , _event->state);
   
 	// greebo: Restart the timer, so that it can trigger again
-	g_chasemouse_timer.start();
-}
-
-// This is the chase mouse handler that gets connected by XYWnd::chaseMouseMotion()
-// It passes te call on to the XYWnd::ChaseMouse() method. 
-gboolean xywnd_chasemouse(gpointer data) {
-	// Convert the pointer <data> in and XYWnd* pointer and call the method
-	reinterpret_cast<XYWnd*>(data)->ChaseMouse();
-	return TRUE;
+	_chaseMouseTimer.start();
 }
 
 /* greebo: This handles the "chase mouse" behaviour, if the user drags something
@@ -294,12 +256,12 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, const unsigned int& state) 
 			m_chasemouse_current_x = pointx;
 			m_chasemouse_current_y = pointy;
 			
-			// Start the timer, if there isn't one connected already
-			if (m_chasemouse_handler == 0) {
+			// Start the timer, if there isn't one already connected
+			if (_chaseMouseHandler == 0) {
 				//globalOutputStream() << "chasemouse timer start... ";
-				g_chasemouse_timer.start();
+				_chaseMouseTimer.start();
 				
-				m_chasemouse_handler = g_idle_add(xywnd_chasemouse, this);
+				_chaseMouseHandler = g_idle_add(callbackChaseMouse, this);
 			}
 			// Return true to signal that there are no other mouseMotion handlers to be performed
 			// see xywnd_motion() callback function
@@ -307,19 +269,19 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, const unsigned int& state) 
 		}
 		else {
 			// All deltas are zero, so there is no more mouse chasing necessary, remove the handlers
-			if (m_chasemouse_handler != 0) {
+			if (_chaseMouseHandler != 0) {
 				//globalOutputStream() << "chasemouse cancel\n";
-				g_source_remove(m_chasemouse_handler);
-				m_chasemouse_handler = 0;
+				g_source_remove(_chaseMouseHandler);
+				_chaseMouseHandler = 0;
 			}
 		}
 	}
 	else {
 		// Remove the handlers, the user has probably released the mouse button during chase
-		if(m_chasemouse_handler != 0) {
+		if(_chaseMouseHandler != 0) {
 			//globalOutputStream() << "chasemouse cancel\n";
-			g_source_remove(m_chasemouse_handler);
-			m_chasemouse_handler = 0;
+			g_source_remove(_chaseMouseHandler);
+			_chaseMouseHandler = 0;
 		}
 	}
 	
@@ -331,111 +293,24 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, const unsigned int& state) 
 // XYWnd class
 Shader* XYWnd::m_state_selected = 0;
 
-/* greebo: This is the callback for the mouse_press event that is invoked by GTK
- * it checks for the correct event type and passes the call to the according xy view window.
- * 
- * Note: I think these should be static members of the XYWnd class, shouldn't they? 
- */
-gboolean xywnd_button_press(GtkWidget* widget, GdkEventButton* event, XYWnd* xywnd) {
-	if (event->type == GDK_BUTTON_PRESS) {
-		// Put the focus on the xy view that has been clicked on
-		g_pParentWnd->SetActiveXY(xywnd);
-
-		//xywnd->ButtonState_onMouseDown(buttons_for_event_button(event));
-		xywnd->setEvent(event);
-		
-		// Pass the GdkEventButton* to the XYWnd class, the boolean <true> is passed but never used
-		xywnd->onMouseDown(static_cast<int>(event->x), static_cast<int>(event->y), event);
-	}
-	return FALSE;
-}
-
-// greebo: This is the GTK callback for mouseUp. 
-gboolean xywnd_button_release(GtkWidget* widget, GdkEventButton* event, XYWnd* xywnd) {
-	
-	// greebo: Check for the correct event type (redundant?)
-	if (event->type == GDK_BUTTON_RELEASE) {
-		// Call the according mouseUp method
-		xywnd->mouseUp(static_cast<int>(event->x), static_cast<int>(event->y), event);
-
-		// Clear the buttons that the button_release has been called with
-		//xywnd->ButtonState_onMouseUp(buttons_for_event_button(event));
-		xywnd->setEvent(event);
-	}
-	return FALSE;
-}
-
-/* greebo: This is the GTK callback for mouse movement. */
-void xywnd_motion(gdouble x, gdouble y, guint state, void* data) {
-	
-	// Convert the passed pointer into a XYWnd pointer
-	XYWnd* xywnd = reinterpret_cast<XYWnd*>(data);
-	
-	// Call the chaseMouse method
-	if (xywnd->chaseMouseMotion(static_cast<int>(x), static_cast<int>(y), state)) {
-		return;
-	}
-	
-	// This gets executed, if the above chaseMouse call returned false, i.e. no mouse chase has been performed
-	xywnd->mouseMoved(static_cast<int>(x), static_cast<int>(y), state);
-}
-
-// This is the onWheelScroll event, that is used to Zoom in/out in the xyview
-gboolean xywnd_wheel_scroll(GtkWidget* widget, GdkEventScroll* event, XYWnd* xywnd)
-{
-	if (event->direction == GDK_SCROLL_UP) {
-		xywnd->zoomIn();
-	}
-	else if (event->direction == GDK_SCROLL_DOWN) {
-		xywnd->zoomOut();
-	}
-	return FALSE;
-}
-
-gboolean xywnd_size_allocate(GtkWidget* widget, GtkAllocation* allocation, XYWnd* xywnd)
-{
-  xywnd->m_nWidth = allocation->width;
-  xywnd->m_nHeight = allocation->height;
-  xywnd->updateProjection();
-  xywnd->m_window_observer->onSizeChanged(xywnd->Width(), xywnd->Height());
-  return FALSE;
-}
-
-gboolean xywnd_expose(GtkWidget* widget, GdkEventExpose* event, XYWnd* xywnd)
-{
-  if(glwidget_make_current(xywnd->GetWidget()) != FALSE)
-  {
-    if(Map_Valid(g_map) && ScreenUpdates_Enabled())
-    {
-      GlobalOpenGL_debugAssertNoErrors();
-      xywnd->XY_Draw();
-      GlobalOpenGL_debugAssertNoErrors();
-
-      xywnd->m_XORRectangle.set(rectangle_t());
-    }
-    glwidget_swap_buffers(xywnd->GetWidget());
-  }
-  return FALSE;
-}
-
 // Constructor
 XYWnd::XYWnd() :
 	m_gl_widget(glwidget_new(FALSE)),
 	m_deferredDraw(WidgetQueueDrawCaller(*m_gl_widget)),
-	m_deferred_motion(xywnd_motion, this),
+	m_deferred_motion(callbackMouseMotion, this),
 	_minWorldCoord(GlobalRegistry().getFloat("game/defaults/minWorldCoord")),
 	_maxWorldCoord(GlobalRegistry().getFloat("game/defaults/maxWorldCoord")),
+	_moveStarted(false),
+	_zoomStarted(false),
+	_chaseMouseHandler(0), 
 	m_parent(0),
 	m_window_observer(NewWindowObserver()),
-	m_XORRectangle(m_gl_widget),
-	m_chasemouse_handler(0) 
+	m_XORRectangle(m_gl_widget)
 {
 	m_bActive = false;
 	m_buttonstate = 0;
 
 	m_bNewBrushDrag = false;
-	m_move_started = false;
-	m_zoom_started = false;
 
 	m_nWidth = 0;
 	m_nHeight = 0;
@@ -462,14 +337,14 @@ XYWnd::XYWnd() :
 	GTK_WIDGET_SET_FLAGS(m_gl_widget, GTK_CAN_FOCUS);
 	gtk_widget_set_size_request(m_gl_widget, XYWND_MINSIZE_X, XYWND_MINSIZE_Y);
 
-	m_sizeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "size_allocate", G_CALLBACK(xywnd_size_allocate), this);
-	m_exposeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "expose_event", G_CALLBACK(xywnd_expose), this);
+	m_sizeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "size_allocate", G_CALLBACK(callbackSizeAllocate), this);
+	m_exposeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "expose_event", G_CALLBACK(callbackExpose), this);
 
-	g_signal_connect(G_OBJECT(m_gl_widget), "button_press_event", G_CALLBACK(xywnd_button_press), this);
-	g_signal_connect(G_OBJECT(m_gl_widget), "button_release_event", G_CALLBACK(xywnd_button_release), this);
+	g_signal_connect(G_OBJECT(m_gl_widget), "button_press_event", G_CALLBACK(callbackButtonPress), this);
+	g_signal_connect(G_OBJECT(m_gl_widget), "button_release_event", G_CALLBACK(callbackButtonRelease), this);
 	g_signal_connect(G_OBJECT(m_gl_widget), "motion_notify_event", G_CALLBACK(DeferredMotion::gtk_motion), &m_deferred_motion);
 
-	g_signal_connect(G_OBJECT(m_gl_widget), "scroll_event", G_CALLBACK(xywnd_wheel_scroll), this);
+	g_signal_connect(G_OBJECT(m_gl_widget), "scroll_event", G_CALLBACK(callbackMouseWheelScroll), this);
 
 	Map_addValidCallback(g_map, DeferredDrawOnMapValidChangedCaller(m_deferredDraw));
 
@@ -515,16 +390,16 @@ void XYWnd::releaseStates() {
 	GlobalShaderCache().release("$XY_OVERLAY");
 }
 
-const Vector3& XYWnd::GetOrigin() {
+const Vector3& XYWnd::getOrigin() {
 	return m_vOrigin;
 }
 
-void XYWnd::SetOrigin(const Vector3& origin) {
+void XYWnd::setOrigin(const Vector3& origin) {
 	m_vOrigin = origin;
 	updateModelview();
 }
 
-void XYWnd::Scroll(int x, int y) {
+void XYWnd::scroll(int x, int y) {
 	int nDim1 = (m_viewType == YZ) ? 1 : 0;
 	int nDim2 = (m_viewType == XY) ? 1 : 2;
 	m_vOrigin[nDim1] += x / m_fScale;
@@ -540,7 +415,7 @@ void XYWnd::DropClipPoint(int pointx, int pointy) {
 
 	Vector3 mid;
 	Select_GetMid(mid);
-	GlobalClipper().setViewType(static_cast<EViewType>(GetViewType()));
+	GlobalClipper().setViewType(static_cast<EViewType>(getViewType()));
 	int nDim = (GlobalClipper().getViewType() == YZ ) ?  0 : ( (GlobalClipper().getViewType() == XZ) ? 1 : 2 );
 	point[nDim] = mid[nDim];
 	vector3_snap(point, GetGridSize());
@@ -569,7 +444,7 @@ void XYWnd::Clipper_OnMouseMoved(int x, int y) {
 	
 	if (movingClip != NULL) {
 		XY_ToPoint(x, y , GlobalClipper().getMovingClipCoords());
-		XY_SnapToGrid(GlobalClipper().getMovingClipCoords());
+		snapToGrid(GlobalClipper().getMovingClipCoords());
 		GlobalClipper().update();
 		ClipperChangeNotify();
 	}
@@ -591,19 +466,19 @@ void XYWnd::Clipper_Crosshair_OnMouseMoved(int x, int y) {
 void XYWnd::positionCamera(int x, int y, CamWnd& camwnd) {
 	Vector3 origin = camwnd.getCameraOrigin();
 	XY_ToPoint(x, y, origin);
-	XY_SnapToGrid(origin);
+	snapToGrid(origin);
 	camwnd.setCameraOrigin(origin);
 }
 
 void XYWnd::orientCamera(int x, int y, CamWnd& camwnd) {
 	Vector3	point = g_vector3_identity;
 	XY_ToPoint(x, y, point);
-	XY_SnapToGrid(point);
+	snapToGrid(point);
 	point -= camwnd.getCameraOrigin();
 
-	int n1 = (GetViewType() == XY) ? 1 : 2;
-	int n2 = (GetViewType() == YZ) ? 1 : 0;
-	int nAngle = (GetViewType() == XY) ? CAMERA_YAW : CAMERA_PITCH;
+	int n1 = (getViewType() == XY) ? 1 : 2;
+	int n2 = (getViewType() == YZ) ? 1 : 0;
+	int nAngle = (getViewType() == XY) ? CAMERA_YAW : CAMERA_PITCH;
 	if (point[n1] || point[n2]) {
 		Vector3 angles(camwnd.getCameraAngles());
 		angles[nAngle] = static_cast<float>(radians_to_degrees(atan2 (point[n1], point[n2])));
@@ -646,9 +521,9 @@ void XYWnd::NewBrushDrag(int x, int y)
 {
   Vector3	mins, maxs;
   XY_ToPoint(m_nNewBrushPressx, m_nNewBrushPressy, mins);
-  XY_SnapToGrid(mins);
+  snapToGrid(mins);
 	XY_ToPoint(x, y, maxs);
-  XY_SnapToGrid(maxs);
+  snapToGrid(maxs);
 
   int nDim = (m_viewType == XY) ? 2 : (m_viewType == YZ) ? 0 : 1;
 
@@ -690,7 +565,7 @@ void XYWnd::NewBrushDrag(int x, int y)
 
 void entitycreate_activated(GtkWidget* item)
 {
-  g_pParentWnd->ActiveXY()->OnEntityCreate(gtk_label_get_text(GTK_LABEL(GTK_BIN(item)->child)));
+  g_pParentWnd->ActiveXY()->onEntityCreate(gtk_label_get_text(GTK_LABEL(GTK_BIN(item)->child)));
 }
 
 void EntityClassMenu_addItem(GtkMenu* menu, const char* name)
@@ -792,37 +667,34 @@ void XYWnd::OnContextMenu() {
 	ui::OrthoContextMenu::displayInstance(point);	
 }
 
-FreezePointer g_xywnd_freezePointer;
-
-void XYWnd_moveDelta(int x, int y, unsigned int state, void* data)
-{
-  reinterpret_cast<XYWnd*>(data)->EntityCreate_MouseMove(x, y);
-  reinterpret_cast<XYWnd*>(data)->Scroll(-x, y);
+void XYWnd::callbackMoveDelta(int x, int y, unsigned int state, void* data) {
+	XYWnd* self = reinterpret_cast<XYWnd*>(data);
+	
+	self->EntityCreate_MouseMove(x, y);
+	self->scroll(-x, y);
 }
 
-gboolean XYWnd_Move_focusOut(GtkWidget* widget, GdkEventFocus* event, XYWnd* xywnd)
-{
-  xywnd->Move_End();
-  return FALSE;
+gboolean XYWnd::callbackMoveFocusOut(GtkWidget* widget, GdkEventFocus* event, XYWnd* self) {
+	self->endMove();
+	return FALSE;
 }
 
-void XYWnd::Move_Begin()
-{
-  if(m_move_started)
-  {
-    Move_End();
-  }
-  m_move_started = true;
-  g_xywnd_freezePointer.freeze_pointer(m_parent != 0 ? m_parent : MainFrame_getWindow(), XYWnd_moveDelta, this);
-  m_move_focusOut = g_signal_connect(G_OBJECT(m_gl_widget), "focus_out_event", G_CALLBACK(XYWnd_Move_focusOut), this);
+void XYWnd::beginMove() {
+	if (_moveStarted) {
+		endMove();
+	}
+	_moveStarted = true;
+	_freezePointer.freeze_pointer(m_parent != 0 ? m_parent : MainFrame_getWindow(), callbackMoveDelta, this);
+	m_move_focusOut = g_signal_connect(G_OBJECT(m_gl_widget), "focus_out_event", G_CALLBACK(callbackMoveFocusOut), this);
 }
 
-void XYWnd::Move_End()
-{
-  m_move_started = false;
-  g_xywnd_freezePointer.unfreeze_pointer(m_parent != 0 ? m_parent : MainFrame_getWindow());
-  g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_move_focusOut);
+
+void XYWnd::endMove() {
+	_moveStarted = false;
+	_freezePointer.unfreeze_pointer(m_parent != 0 ? m_parent : MainFrame_getWindow());
+	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_move_focusOut);
 }
+
 
 int g_dragZoom = 0;
 
@@ -850,31 +722,31 @@ void XYWnd_zoomDelta(int x, int y, unsigned int state, void* data)
 
 gboolean XYWnd_Zoom_focusOut(GtkWidget* widget, GdkEventFocus* event, XYWnd* xywnd)
 {
-  xywnd->Zoom_End();
+  xywnd->endZoom();
   return FALSE;
 }
 
-void XYWnd::Zoom_Begin()
+void XYWnd::beginZoom()
 {
-  if(m_zoom_started)
+  if(_zoomStarted)
   {
-    Zoom_End();
+    endZoom();
   }
-  m_zoom_started = true;
+  _zoomStarted = true;
   g_dragZoom = 0;
-  g_xywnd_freezePointer.freeze_pointer(m_parent != 0 ? m_parent : MainFrame_getWindow(), XYWnd_zoomDelta, this);
+  _freezePointer.freeze_pointer(m_parent != 0 ? m_parent : MainFrame_getWindow(), XYWnd_zoomDelta, this);
   m_zoom_focusOut = g_signal_connect(G_OBJECT(m_gl_widget), "focus_out_event", G_CALLBACK(XYWnd_Zoom_focusOut), this);
 }
 
-void XYWnd::Zoom_End()
+void XYWnd::endZoom()
 {
-  m_zoom_started = false;
-  g_xywnd_freezePointer.unfreeze_pointer(m_parent != 0 ? m_parent : MainFrame_getWindow());
+  _zoomStarted = false;
+  _freezePointer.unfreeze_pointer(m_parent != 0 ? m_parent : MainFrame_getWindow());
   g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_zoom_focusOut);
 }
 
 // makes sure the selected brush or camera is in view
-void XYWnd::PositionView(const Vector3& position)
+void XYWnd::positionView(const Vector3& position)
 {
   int nDim1 = (m_viewType == YZ) ? 1 : 0;
   int nDim2 = (m_viewType == XY) ? 1 : 2;
@@ -887,7 +759,7 @@ void XYWnd::PositionView(const Vector3& position)
   XYWnd_Update(*this);
 }
 
-void XYWnd::SetViewType(EViewType viewType)
+void XYWnd::setViewType(EViewType viewType)
 {
   m_viewType = viewType; 
   updateModelview();
@@ -898,17 +770,21 @@ void XYWnd::SetViewType(EViewType viewType)
   }
 }
 
+EViewType XYWnd::getViewType() const {
+	return m_viewType;
+}
+
 /* This gets called by the GTK callback function.
  */
 void XYWnd::mouseDown(int x, int y, GdkEventButton* event) {
 
 	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xyMoveView, event)) {
-		Move_Begin();
+		beginMove();
     	EntityCreate_MouseDown(x, y);
 	}
 	
 	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xyZoom, event)) {
-		Zoom_Begin();
+		beginZoom();
 	}
 	
 	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xyCameraMove, event)) {
@@ -969,7 +845,7 @@ void XYWnd::mouseMoved(int x, int y, const unsigned int& state) {
 
 	m_mousePosition[0] = m_mousePosition[1] = m_mousePosition[2] = 0.0;
 	XY_ToPoint(x, y , m_mousePosition);
-	XY_SnapToGrid(m_mousePosition);
+	snapToGrid(m_mousePosition);
 
 	StringOutputStream status(64);
 	status << "x:: " << FloatFormat(m_mousePosition[0], 6, 1)
@@ -988,14 +864,14 @@ void XYWnd::mouseMoved(int x, int y, const unsigned int& state) {
 void XYWnd::mouseUp(int x, int y, GdkEventButton* event) {
 	
 	// End move
-	if (m_move_started) {
-		Move_End();
+	if (_moveStarted) {
+		endMove();
 		EntityCreate_MouseUp(x, y);
 	}
 	
 	// End zoom
-	if (m_zoom_started) {
-		Zoom_End();
+	if (_zoomStarted) {
+		endZoom();
 	}
 	
 	// Finish any pending NewBrushDrag operations
@@ -1047,7 +923,7 @@ inline float normalised_to_world(float normalised, float world_origin, float nor
 
 
 // TTimo: watch it, this doesn't init one of the 3 coords
-void XYWnd::XY_ToPoint (int x, int y, Vector3& point) {
+void XYWnd::XY_ToPoint(int x, int y, Vector3& point) {
 	float normalised2world_scale_x = m_nWidth / 2 / m_fScale;
 	float normalised2world_scale_y = m_nHeight / 2 / m_fScale;
 	
@@ -1065,8 +941,7 @@ void XYWnd::XY_ToPoint (int x, int y, Vector3& point) {
 	}
 }
 
-
-void XYWnd::XY_SnapToGrid(Vector3& point) {
+void XYWnd::snapToGrid(Vector3& point) {
 	if (m_viewType == XY) {
 		point[0] = float_snapped(point[0], GetGridSize());
 		point[1] = float_snapped(point[1], GetGridSize());
@@ -1083,16 +958,8 @@ void XYWnd::XY_SnapToGrid(Vector3& point) {
 
 
 /*
-============================================================================
-
-DRAWING
-
-============================================================================
-*/
-
-/*
 ==============
-XY_DrawGrid
+drawGrid
 ==============
 */
 
@@ -1101,7 +968,7 @@ double two_to_the_power(int power)
   return pow(2.0f, power);
 }
 
-void XYWnd::XY_DrawGrid()
+void XYWnd::drawGrid()
 {
   float	x, y, xb, xe, yb, ye;
   float		w, h;
@@ -1304,10 +1171,10 @@ void XYWnd::XY_DrawGrid()
 
 /*
 ==============
-XY_DrawBlockGrid
+drawBlockGrid
 ==============
 */
-void XYWnd::XY_DrawBlockGrid()
+void XYWnd::drawBlockGrid()
 {
   if(Map_FindWorldspawn(g_map) == 0)
   {
@@ -1403,7 +1270,7 @@ void XYWnd::XY_DrawBlockGrid()
   glColor4f(0, 0, 0, 0);
 }
 
-void XYWnd::DrawCameraIcon(const Vector3& origin, const Vector3& angles)
+void XYWnd::drawCameraIcon(const Vector3& origin, const Vector3& angles)
 {
   float	x, y, fov, box;
   double a;
@@ -1460,7 +1327,7 @@ float Betwixt(float f1, float f2)
 
 // can be greatly simplified but per usual i am in a hurry 
 // which is not an excuse, just a fact
-void XYWnd::PaintSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vMaxBounds)
+void XYWnd::drawSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vMaxBounds)
 {
   if (vMinBounds == vMaxBounds) {
     return;
@@ -1594,74 +1461,6 @@ void XYWnd::PaintSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vM
   }
 }
 
-class XYRenderer: public Renderer
-{
-  struct state_type
-  {
-    state_type() :
-    m_highlight(0),
-    m_state(0)
-    {
-    }  
-    unsigned int m_highlight;
-    Shader* m_state;
-  };
-public:
-  XYRenderer(RenderStateFlags globalstate, Shader* selected) :
-    m_globalstate(globalstate),
-    m_state_selected(selected)
-  {
-    ASSERT_NOTNULL(selected);
-    m_state_stack.push_back(state_type());
-  }
-
-  void SetState(Shader* state, EStyle style)
-  {
-    ASSERT_NOTNULL(state);
-    if(style == eWireframeOnly)
-      m_state_stack.back().m_state = state;
-  }
-  const EStyle getStyle() const
-  {
-    return eWireframeOnly;
-  }
-  void PushState()
-  {
-    m_state_stack.push_back(m_state_stack.back());
-  }
-  void PopState()
-  {
-    ASSERT_MESSAGE(!m_state_stack.empty(), "popping empty stack");
-    m_state_stack.pop_back();
-  }
-  void Highlight(EHighlightMode mode, bool bEnable = true)
-  {
-    (bEnable)
-      ? m_state_stack.back().m_highlight |= mode
-      : m_state_stack.back().m_highlight &= ~mode;
-  }
-  void addRenderable(const OpenGLRenderable& renderable, const Matrix4& localToWorld)
-  {
-    if(m_state_stack.back().m_highlight & ePrimitive)
-    {
-      m_state_selected->addRenderable(renderable, localToWorld);
-    }
-    else
-    {
-      m_state_stack.back().m_state->addRenderable(renderable, localToWorld);
-    }
-  }
-
-  void render(const Matrix4& modelview, const Matrix4& projection)
-  {
-    GlobalShaderCache().render(m_globalstate, modelview, projection);
-  }
-private:
-  std::vector<state_type> m_state_stack;
-  RenderStateFlags m_globalstate;
-  Shader* m_state_selected;
-};
-
 void XYWnd::updateProjection()
 {
   m_projection[0] = 1.0f / static_cast<float>(m_nWidth / 2);
@@ -1750,16 +1549,7 @@ void XYWnd::updateModelview()
   m_view.Construct(m_projection, m_modelview, m_nWidth, m_nHeight);
 }
 
-/*
-==============
-XY_Draw
-==============
-*/
-
-//#define DBG_SCENEDUMP
-
-void XYWnd::XY_Draw()
-{
+void XYWnd::draw() {
   //
   // clear
   //
@@ -1793,9 +1583,9 @@ void XYWnd::XY_Draw()
   glDisable(GL_COLOR_MATERIAL);
   glDisable(GL_DEPTH_TEST);
 
-  XY_DrawGrid();
+  drawGrid();
   if ( g_xywindow_globals_private.show_blocks)
-    XY_DrawBlockGrid();
+    drawBlockGrid();
 
   glLoadMatrixf(reinterpret_cast<const float*>(&m_modelview));
 
@@ -1851,7 +1641,7 @@ void XYWnd::XY_Draw()
   if (GlobalRegistry().get("user/ui/showSizeInfo")=="1" && GlobalSelectionSystem().countSelected() != 0) {
     Vector3 min, max;
     Select_GetBounds(min, max);
-    PaintSizeInfo(nDim1, nDim2, min, max);
+    drawSizeInfo(nDim1, nDim2, min, max);
   }
 
   if (g_bCrossHairs)
@@ -1893,7 +1683,7 @@ void XYWnd::XY_Draw()
   glScalef(m_fScale, m_fScale, 1);
   glTranslatef(-m_vOrigin[nDim1], -m_vOrigin[nDim2], 0);
 
-  DrawCameraIcon (g_pParentWnd->GetCamWnd()->getCameraOrigin(), g_pParentWnd->GetCamWnd()->getCameraAngles());
+  drawCameraIcon(g_pParentWnd->GetCamWnd()->getCameraOrigin(), g_pParentWnd->GetCamWnd()->getCameraAngles());
 
   if (g_xywindow_globals_private.show_outline)
   {
@@ -1940,15 +1730,14 @@ void XYWnd::XY_Draw()
 
 void XYWnd::mouseToPoint(int x, int y, Vector3& point) {
 	XY_ToPoint(x, y, point);
-	XY_SnapToGrid(point);
+	snapToGrid(point);
 
-	int nDim = (GetViewType() == XY) ? 2 : (GetViewType() == YZ) ? 0 : 1;
+	int nDim = (getViewType() == XY) ? 2 : (getViewType() == YZ) ? 0 : 1;
 	float fWorkMid = float_mid(Select_getWorkZone().d_work_min[nDim], Select_getWorkZone().d_work_max[nDim]);
 	point[nDim] = float_snapped(fWorkMid, GetGridSize());
 }
 
-
-void XYWnd::OnEntityCreate (const std::string& item) {
+void XYWnd::onEntityCreate(const std::string& item) {
 	StringOutputStream command;
 	command << "entityCreate -class " << item.c_str();
 	UndoableCommand undo(command.c_str());
@@ -1993,6 +1782,99 @@ void XYWnd::zoomIn() {
 	}
 }
 
+// ================ GTK CALLBACKS ======================================
+
+/* greebo: This is the callback for the mouse_press event that is invoked by GTK
+ * it checks for the correct event type and passes the call to the according xy view window. 
+ */
+gboolean XYWnd::callbackButtonPress(GtkWidget* widget, GdkEventButton* event, XYWnd* self) {
+	if (event->type == GDK_BUTTON_PRESS) {
+		// Put the focus on the xy view that has been clicked on
+		g_pParentWnd->SetActiveXY(self);
+
+		//xywnd->ButtonState_onMouseDown(buttons_for_event_button(event));
+		self->setEvent(event);
+		
+		// Pass the GdkEventButton* to the XYWnd class, the boolean <true> is passed but never used
+		self->onMouseDown(static_cast<int>(event->x), static_cast<int>(event->y), event);
+	}
+	return FALSE;
+}
+
+// greebo: This is the GTK callback for mouseUp. 
+gboolean XYWnd::callbackButtonRelease(GtkWidget* widget, GdkEventButton* event, XYWnd* self) {
+	
+	// greebo: Check for the correct event type (redundant?)
+	if (event->type == GDK_BUTTON_RELEASE) {
+		// Call the according mouseUp method
+		self->mouseUp(static_cast<int>(event->x), static_cast<int>(event->y), event);
+
+		// Clear the buttons that the button_release has been called with
+		self->setEvent(event);
+	}
+	return FALSE;
+}
+
+/* greebo: This is the GTK callback for mouse movement. */
+void XYWnd::callbackMouseMotion(gdouble x, gdouble y, guint state, void* data) {
+	
+	// Convert the passed pointer into a XYWnd pointer
+	XYWnd* self = reinterpret_cast<XYWnd*>(data);
+	
+	// Call the chaseMouse method
+	if (self->chaseMouseMotion(static_cast<int>(x), static_cast<int>(y), state)) {
+		return;
+	}
+	
+	// This gets executed, if the above chaseMouse call returned false, i.e. no mouse chase has been performed
+	self->mouseMoved(static_cast<int>(x), static_cast<int>(y), state);
+}
+
+// This is the onWheelScroll event, that is used to Zoom in/out in the xyview
+gboolean XYWnd::callbackMouseWheelScroll(GtkWidget* widget, GdkEventScroll* event, XYWnd* self) {
+	if (event->direction == GDK_SCROLL_UP) {
+		self->zoomIn();
+	}
+	else if (event->direction == GDK_SCROLL_DOWN) {
+		self->zoomOut();
+	}
+	return FALSE;
+}
+
+gboolean XYWnd::callbackSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, XYWnd* self) {
+	self->m_nWidth = allocation->width;
+	self->m_nHeight = allocation->height;
+	self->updateProjection();
+	self->m_window_observer->onSizeChanged(self->Width(), self->Height());
+
+	return FALSE;
+}
+
+gboolean XYWnd::callbackExpose(GtkWidget* widget, GdkEventExpose* event, XYWnd* self) {
+
+	if (glwidget_make_current(self->GetWidget()) != FALSE) {
+		if (Map_Valid(g_map) && ScreenUpdates_Enabled()) {
+			GlobalOpenGL_debugAssertNoErrors();
+			self->draw();
+			GlobalOpenGL_debugAssertNoErrors();
+
+			self->m_XORRectangle.set(rectangle_t());
+		}
+		glwidget_swap_buffers(self->GetWidget());
+	}
+	return FALSE;
+}
+
+// This is the chase mouse handler that gets connected by XYWnd::chaseMouseMotion()
+// It passes te call on to the XYWnd::chaseMouse() method. 
+gboolean XYWnd::callbackChaseMouse(gpointer data) {
+	// Convert the pointer <data> in and XYWnd* pointer and call the method
+	reinterpret_cast<XYWnd*>(data)->chaseMouse();
+	return TRUE;
+}
+
+// =====================================================================
+
 void GetFocusPosition(Vector3& position)
 {
   if(GlobalSelectionSystem().countSelected() != 0)
@@ -2009,16 +1891,16 @@ void XYWnd_Focus(XYWnd* xywnd)
 {
   Vector3 position;
   GetFocusPosition(position);
-  xywnd->PositionView(position);
+  xywnd->positionView(position);
 }
 
 void XY_Split_Focus()
 {
   Vector3 position;
   GetFocusPosition(position);
-  g_pParentWnd->GetXYWnd()->PositionView(position);
-  g_pParentWnd->GetXZWnd()->PositionView(position);
-  g_pParentWnd->GetYZWnd()->PositionView(position);
+  g_pParentWnd->GetXYWnd()->positionView(position);
+  g_pParentWnd->GetXZWnd()->positionView(position);
+  g_pParentWnd->GetYZWnd()->positionView(position);
 }
 
 void XY_Focus()
@@ -2030,32 +1912,32 @@ void XY_Focus()
 void XY_Top()
 {
   XYWnd* xywnd = g_pParentWnd->GetXYWnd();
-  xywnd->SetViewType(XY);
+  xywnd->setViewType(XY);
   XYWnd_Focus(xywnd);
 }
 
 void XY_Side()
 {
   XYWnd* xywnd = g_pParentWnd->GetXYWnd();
-  xywnd->SetViewType(XZ);
+  xywnd->setViewType(XZ);
   XYWnd_Focus(xywnd);
 }
 
 void XY_Front()
 {
-  g_pParentWnd->GetXYWnd()->SetViewType(YZ);
+  g_pParentWnd->GetXYWnd()->setViewType(YZ);
   XYWnd_Focus(g_pParentWnd->GetXYWnd());
 }
 
 void XY_Next()
 {
   XYWnd* xywnd = g_pParentWnd->GetXYWnd();
-  if (xywnd->GetViewType() == XY)
-    xywnd->SetViewType(XZ);
-  else if (xywnd->GetViewType() ==  XZ)
-    xywnd->SetViewType(YZ);
+  if (xywnd->getViewType() == XY)
+    xywnd->setViewType(XZ);
+  else if (xywnd->getViewType() ==  XZ)
+    xywnd->setViewType(YZ);
   else
-    xywnd->SetViewType(XY);
+    xywnd->setViewType(XY);
   XYWnd_Focus(xywnd);
 }
 

@@ -546,7 +546,7 @@ void FocusViews(const Vector3& point, float angle)
   camwnd.setCameraAngles(angles);
 
   XYWnd* xywnd = g_pParentWnd->GetXYWnd();
-  xywnd->SetOrigin(point);
+  xywnd->setOrigin(point);
 }
 
 /* Find the start position in the map and focus the viewport on it.
@@ -2106,10 +2106,10 @@ void RegionOff()
 void RegionXY()
 {
   Map_RegionXY(
-    g_pParentWnd->GetXYWnd()->GetOrigin()[0] - 0.5f * g_pParentWnd->GetXYWnd()->Width() / g_pParentWnd->GetXYWnd()->Scale(),
-    g_pParentWnd->GetXYWnd()->GetOrigin()[1] - 0.5f * g_pParentWnd->GetXYWnd()->Height() / g_pParentWnd->GetXYWnd()->Scale(),
-    g_pParentWnd->GetXYWnd()->GetOrigin()[0] + 0.5f * g_pParentWnd->GetXYWnd()->Width() / g_pParentWnd->GetXYWnd()->Scale(),
-    g_pParentWnd->GetXYWnd()->GetOrigin()[1] + 0.5f * g_pParentWnd->GetXYWnd()->Height() / g_pParentWnd->GetXYWnd()->Scale()
+    g_pParentWnd->GetXYWnd()->getOrigin()[0] - 0.5f * g_pParentWnd->GetXYWnd()->Width() / g_pParentWnd->GetXYWnd()->Scale(),
+    g_pParentWnd->GetXYWnd()->getOrigin()[1] - 0.5f * g_pParentWnd->GetXYWnd()->Height() / g_pParentWnd->GetXYWnd()->Scale(),
+    g_pParentWnd->GetXYWnd()->getOrigin()[0] + 0.5f * g_pParentWnd->GetXYWnd()->Width() / g_pParentWnd->GetXYWnd()->Scale(),
+    g_pParentWnd->GetXYWnd()->getOrigin()[1] + 0.5f * g_pParentWnd->GetXYWnd()->Height() / g_pParentWnd->GetXYWnd()->Scale()
     );
   SceneChangeNotify();
 }
@@ -2201,7 +2201,7 @@ void SelectBrush (int entitynum, int brushnum)
     Selectable* selectable = Instance_getSelectable(*instance);
     ASSERT_MESSAGE(selectable != 0, "SelectBrush: path not selectable");
     selectable->setSelected(true);
-    g_pParentWnd->GetXYWnd()->PositionView(instance->worldAABB().origin);
+    g_pParentWnd->GetXYWnd()->positionView(instance->worldAABB().origin);
   }
 }
 

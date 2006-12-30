@@ -2736,7 +2736,7 @@ void MainFrame::Create()
 
         // xy
         m_pXYWnd = new XYWnd();
-        m_pXYWnd->SetViewType(XY);
+        m_pXYWnd->setViewType(XY);
         GtkWidget* xy_window = GTK_WIDGET(create_framed_widget(m_pXYWnd->GetWidget()));
 
         {
@@ -2814,7 +2814,7 @@ void MainFrame::Create()
 
       m_pXYWnd = new XYWnd();
       m_pXYWnd->m_parent = window;
-      m_pXYWnd->SetViewType(XY);
+      m_pXYWnd->setViewType(XY);
       
 
       {
@@ -2833,7 +2833,7 @@ void MainFrame::Create()
 
       m_pXZWnd = new XYWnd();
       m_pXZWnd->m_parent = window;
-      m_pXZWnd->SetViewType(XZ);
+      m_pXZWnd->setViewType(XZ);
 
       {
         GtkFrame* frame = create_framed_widget(m_pXZWnd->GetWidget());
@@ -2852,7 +2852,7 @@ void MainFrame::Create()
 
       m_pYZWnd = new XYWnd();
       m_pYZWnd->m_parent = window;
-      m_pYZWnd->SetViewType(YZ);
+      m_pYZWnd->setViewType(YZ);
 
       {
         GtkFrame* frame = create_framed_widget(m_pYZWnd->GetWidget());
@@ -2883,17 +2883,17 @@ void MainFrame::Create()
     GtkWidget* camera = m_pCamWnd->getWidget();
 
     m_pYZWnd = new XYWnd();
-    m_pYZWnd->SetViewType(YZ);
+    m_pYZWnd->setViewType(YZ);
 
     GtkWidget* yz = m_pYZWnd->GetWidget();
 
     m_pXYWnd = new XYWnd();
-    m_pXYWnd->SetViewType(XY);
+    m_pXYWnd->setViewType(XY);
 
     GtkWidget* xy = m_pXYWnd->GetWidget();
 
     m_pXZWnd = new XYWnd();
-    m_pXZWnd->SetViewType(XZ);
+    m_pXZWnd->setViewType(XZ);
 
     GtkWidget* xz = m_pXZWnd->GetWidget();
 

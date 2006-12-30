@@ -217,7 +217,7 @@ void Pointfile_Next (void)
 
   CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
 	camwnd.setCameraOrigin(*i);
-	g_pParentWnd->GetXYWnd()->SetOrigin(*i);
+	g_pParentWnd->GetXYWnd()->setOrigin(*i);
   {
 	  Vector3 dir((*(++i) - camwnd.getCameraOrigin()).getNormalised());
     Vector3 angles(camwnd.getCameraAngles());
@@ -243,7 +243,7 @@ void Pointfile_Prev (void)
 
   CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
 	camwnd.setCameraOrigin(*i);
-	g_pParentWnd->GetXYWnd()->SetOrigin(*i);
+	g_pParentWnd->GetXYWnd()->setOrigin(*i);
   {
 	  Vector3 dir((*(++i) - camwnd.getCameraOrigin()).getNormalised());
     Vector3 angles(camwnd.getCameraAngles());
