@@ -307,7 +307,8 @@ bool MD5Model_parse(MD5Model& model, Tokeniser& tokeniser)
     
     // Calculate the W value. If it is NaN (due to underflow in the sqrt),
     // set it to 0.
-    float w = -sqrt(1.0 - rawRotation.getLengthSquared());
+    double lSq = rawRotation.getLengthSquared();
+    float w = -sqrt(1.0 - lSq);
     if (isNaN(w))
     	w = 0;
 
