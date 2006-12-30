@@ -2341,7 +2341,8 @@ void XYWindow_Construct()
   GlobalPreferenceSystem().registerPreference("YZVIS", makeBoolStringImportCallback(ToggleShownImportBoolCaller(g_yz_side_shown)), makeBoolStringExportCallback(ToggleShownExportBoolCaller(g_yz_side_shown)));
 
   Orthographic_registerPreferencesPage();
-  GlobalClipPoints()->registerPreferencesPage();
+  // Instantiate the GlobalClipPoints module to trigger the constructor
+  GlobalClipPoints();
 
   XYWnd::captureStates();
   GlobalEntityClassManager().attach(g_EntityClassMenu);

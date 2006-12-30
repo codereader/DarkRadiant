@@ -731,13 +731,26 @@ public:
     m_group(group)
   {
   }
-  PreferencesPage createPage(const char* treeName, const char* frameName)
+  PreferencesPage createPage(const std::string& treeName, const std::string& frameName)
   {
-    GtkWidget* page = PreferencePages_addPage(m_notebook, frameName);
-    PreferenceTree_appendPage(m_store, &m_group, treeName, page);
+    GtkWidget* page = PreferencePages_addPage(m_notebook, frameName.c_str());
+    PreferenceTree_appendPage(m_store, &m_group, treeName.c_str(), page);
     return PreferencesPage(m_dialog, getVBox(page));
   }
 };
+
+void PrefsDlg::addConstructor(PreferenceConstructor* constructor) {
+	_constructors.push_back(constructor);
+}
+
+void PrefsDlg::callConstructors(PreferenceTreeGroup& preferenceGroup) {
+	for (PreferenceConstructorList::iterator i = _constructors.begin(); i != _constructors.end(); i++) {
+		PreferenceConstructor* constructor = *i;
+		if (constructor != NULL) {
+			constructor->constructPreferencePage(preferenceGroup);
+		}
+	}
+}
 
 // Construct the GTK elements for the Preferences Dialog.
 
@@ -748,7 +761,7 @@ GtkWindow* PrefsDlg::BuildDialog()
 
     // Construct the main dialog window. Set a vertical default size as the
     // size_request is too small.
-    GtkWindow* dialog = create_floating_window("GtkRadiant Preferences", m_parent);
+    GtkWindow* dialog = create_floating_window("DarkRadiant Preferences", m_parent);
     gtk_window_set_default_size(dialog, -1, 450);
 
   {
@@ -876,6 +889,9 @@ GtkWindow* PrefsDlg::BuildDialog()
               GtkTreeIter group = PreferenceTree_appendPage(store, 0, "Settings", settings);
               PreferenceTreeGroup preferenceGroup(*this, m_notebook, store, group);
 
+				// greebo: Invoke the registered constructors to do their stuff
+				callConstructors(preferenceGroup);
+				
               PreferenceGroupCallbacks_constructGroup(g_settingsCallbacks, preferenceGroup);
             }
           }
