@@ -3,6 +3,7 @@
 
 #include <string>
 #include "iregistry.h"
+#include "preferencesystem.h"
 
 #include "gtkutil/widget.h"
 
@@ -30,7 +31,10 @@ namespace {
 	};
 }
 
-class CameraSettings : public RegistryKeyObserver {
+class CameraSettings : 
+	public RegistryKeyObserver,
+	public PreferenceConstructor 
+{
 	bool _callbackActive;
 	
 	int _movementSpeed;
@@ -80,6 +84,9 @@ public:
 	void toggleFarClip();
 	void setFarClip(bool farClipEnabled);
 	ToggleItem& farClipItem();
+	
+	// PreferenceConstructor implementation, adds the elements to the according preference page
+	void constructPreferencePage(PreferenceGroup& group);
 
 private:
 	void importDrawMode(const int mode);

@@ -14,6 +14,7 @@ CameraSettings::CameraSettings() :
 	_cameraDrawMode(drawTexture),
 	_cubicScale(GlobalRegistry().getInt(RKEY_CUBIC_SCALE)),
 	_farClipEnabled(GlobalRegistry().get(RKEY_ENABLE_FARCLIP) == "1"),
+	_solidSelectionBoxes(GlobalRegistry().get(RKEY_SOLID_SELECTION_BOXES) == "1"),
 	_farClipCaller(*this),
 	_farClipCallBack(_farClipCaller),
 	_farClipItem(_farClipCallBack)
@@ -34,6 +35,41 @@ CameraSettings::CameraSettings() :
 	GlobalRegistry().addKeyObserver(this, RKEY_ENABLE_FARCLIP);
 	GlobalRegistry().addKeyObserver(this, RKEY_DRAWMODE);
 	GlobalRegistry().addKeyObserver(this, RKEY_SOLID_SELECTION_BOXES);
+	
+	// greebo: Register this class in the preference system so that the constructPreferencePage() gets called.
+	GlobalPreferenceSystem().addConstructor(this);
+}
+
+void CameraSettings::constructPreferencePage(PreferenceGroup& group) {
+	// Add a page to the given group
+	PreferencesPage* page(group.createPage("Camera", "Camera View Preferences"));
+	
+	// Add the sliders for the movement and angle speed and connect them to the observer   
+    page->appendSlider("Movement Speed (game units)", RKEY_MOVEMENT_SPEED, TRUE, 100, 50, 300, 1, 10, 10);
+    page->appendSlider("Rotation Speed", RKEY_ROTATION_SPEED, TRUE, 3, 1, 180, 1, 10, 10);
+    
+	// Add the checkboxes and connect them with the registry key and the according observer 
+	page->appendCheckBox("", "Discrete movement (non-freelook mode)", RKEY_DISCRETE_MOVEMENT);
+	page->appendCheckBox("", "Enable far-clip plane (hides distant objects)", RKEY_ENABLE_FARCLIP);
+	
+	// Add the "inverse mouse vertical axis in free-look mode" preference
+	page->appendCheckBox("", "Invert mouse vertical axis (freelook mode)", RKEY_INVERT_MOUSE_VERTICAL_AXIS);
+	
+	// States whether the selection boxes are stippled or not
+	page->appendCheckBox("", "Solid selection boxes", RKEY_SOLID_SELECTION_BOXES);
+
+	// Create the string list containing the render mode captions
+	std::list<std::string> renderModeDescriptions;
+	
+	renderModeDescriptions.push_back("WireFrame");
+	renderModeDescriptions.push_back("Flatshade");
+	renderModeDescriptions.push_back("Textured");
+	
+	if (g_pGameDescription->mGameType == "doom3") {
+		renderModeDescriptions.push_back("Lighting");
+	}
+	
+	page->appendCombo("Render Mode", RKEY_DRAWMODE, renderModeDescriptions);
 }
 
 void CameraSettings::farClipExport(const BoolImportCallback& importCallback) {
