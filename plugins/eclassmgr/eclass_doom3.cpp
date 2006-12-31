@@ -254,22 +254,18 @@ void EntityClassDoom3_parse(const std::string& inStr)
 
 void EntityClassDoom3_loadFile(const char* filename)
 {
-  globalOutputStream() << "parsing entity classes from " << makeQuoted(filename) << "\n";
-
     const std::string fullname = "def/" + std::string(filename);
 
 	ArchiveTextFile* file = GlobalFileSystem().openTextFile(fullname.c_str());
-  if(file != 0)
-  {
+	if(file != 0) {
         try {
-            EntityClassDoom3_parse(file->getString());
+            EntityClassDoom3_parse(file->getInputStream().getAsString());
         }
         catch (parser::ParseException e) {
-            //gtkutil::errorDialog("Unable to parse DEF file: " + std::string(filename) + "\n\n" + e.what());
             std::cerr << "Unable to parse DEF file: " << filename << "\n\n" << e.what();
         }
         file->release();
-  }
+	}
 }
 
 // Find or insert an EntityClass with the given name.

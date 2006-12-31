@@ -71,13 +71,6 @@ inline VertexPointer vertexpointer_arbitrarymeshvertex(const ArbitraryMeshVertex
   return VertexPointer(VertexPointer::pointer(&array->vertex), sizeof(ArbitraryMeshVertex));
 }
 
-inline void parseTextureName(CopiedString& name, const char* token)
-{
-  StringOutputStream cleaned(256);
-  cleaned << PathCleaned(token);
-  name = StringRange(cleaned.c_str(), path_get_filename_base_end(cleaned.c_str())); // remove extension
-}
-
 // generic renderable triangle surface
 class Surface : 
 public OpenGLRenderable
@@ -88,32 +81,40 @@ public:
 private:
 
   AABB m_aabb_local;
-  CopiedString m_shader;
-  Shader* m_state;
+  
+	// Shader name
+	std::string _shaderName;
+	
+	// Shader object
+	Shader* _shader;
 
   vertices_t m_vertices;
   indices_t m_indices;
 
-  void CaptureShader()
-  {
-    m_state = GlobalShaderCache().capture(m_shader.c_str());
-  }
-  void ReleaseShader()
-  {
-    GlobalShaderCache().release(m_shader.c_str());
-  }
+private:
+
+	// Capture the named shader
+	void captureShader() {
+		_shader = GlobalShaderCache().capture(_shaderName);
+	}
+	
+	// Release the named shader
+	void releaseShader() {
+		if (_shader != NULL)
+			GlobalShaderCache().release(_shaderName);
+	}
 
 public:
 
-  Surface()
-    : m_shader(""), m_state(0)
-  {
-    CaptureShader();
-  }
-  ~Surface()
-  {
-    ReleaseShader();
-  }
+	// Constructor
+	Surface()
+    : _shaderName(""), _shader(NULL)
+	{ }
+	
+	// Destructor. Release the shader
+	~Surface() {
+		releaseShader();
+	}
 
   vertices_t& vertices()
   {
@@ -124,20 +125,27 @@ public:
     return m_indices;
   }
 
-  void setShader(const char* name)
-  {
-    ReleaseShader();
-    parseTextureName(m_shader, name);
-    CaptureShader();
-  }
-  const char* getShader() const
-  {
-    return m_shader.c_str();
-  }
-  Shader* getState() const
-  {
-    return m_state;
-  }
+	// Set the shader name
+	void setShader(const std::string& name) {
+		releaseShader();
+		_shaderName = name;
+		captureShader();
+	}
+
+	/**
+	 * Get the shader name.
+	 */
+	std::string getShader() const {
+		return _shaderName;
+	}
+	
+	/**
+	 * Get the Shader object.
+	 */
+	Shader* getState() const {
+		return _shader;
+	}
+	
   void updateAABB()
   {
     m_aabb_local = AABB();
@@ -164,7 +172,6 @@ public:
 
   void render(RenderStateFlags state) const
   {
-#if 1
     if((state & RENDER_BUMP) != 0)
     {
       if(GlobalShaderCache().useShaderLanguage())
@@ -189,28 +196,7 @@ public:
     }
     glVertexPointer(3, GL_FLOAT, sizeof(ArbitraryMeshVertex), &m_vertices.data()->vertex);
     glDrawElements(GL_TRIANGLES, GLsizei(m_indices.size()), RenderIndexTypeID, m_indices.data());
-#else
-    glBegin(GL_TRIANGLES);
-    for(unsigned int i = 0; i < m_indices.size(); ++i)
-    {
-      glTexCoord2fv(&m_vertices[m_indices[i]].texcoord.s);
-      glNormal3fv(&m_vertices[m_indices[i]].normal.x);
-      glVertex3fv(&m_vertices[m_indices[i]].vertex.x);
-    }
-    glEnd();
-#endif
 
-#if defined(_DEBUG)
-    glBegin(GL_LINES);
-
-    for(VertexBuffer<ArbitraryMeshVertex>::const_iterator i = m_vertices.begin(); i != m_vertices.end(); ++i)
-    {
-      Vector3 normal = vertex3f_to_vector3((*i).vertex) + normal3f_to_vector3((*i).normal)*8;
-      glVertex3fv(vertex3f_to_array((*i).vertex));
-      glVertex3fv(normal);
-    }
-    glEnd();
-#endif
   }
 
   VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const
@@ -229,10 +215,9 @@ public:
     renderer.addRenderable(*this, localToWorld);
   }
 
-  void render(Renderer& renderer, const Matrix4& localToWorld) const
-  {
-    render(renderer, localToWorld, m_state);
-  }
+	void render(Renderer& renderer, const Matrix4& localToWorld) const {
+		render(renderer, localToWorld, _shader);
+	}
 
   void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld)
   {

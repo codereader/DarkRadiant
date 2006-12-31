@@ -958,7 +958,7 @@ void loadShaderFile(const char* filename)
 
   if(file != 0) {
     globalOutputStream() << "Parsing shaderfile " << filename << "\n";        
-    parseShaderFile(file->getString(), filename);           
+    parseShaderFile(file->getInputStream().getAsString(), filename);           
     file->release();
   } 
   else {
