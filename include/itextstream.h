@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// \brief Text-stream interfaces.
 
 #include <cstddef>
+#include <string>
 #include "generic/static.h"
 
 /// \brief A read-only character-stream.
@@ -35,6 +36,28 @@ public:
   /// \brief Attempts to read the next \p length characters from the stream to \p buffer.
   /// Returns the number of characters actually stored in \p buffer.
   virtual std::size_t read(char* buffer, std::size_t length) = 0;
+  
+	/**
+	 * Read the entire TextInputStream into a std::string and return the 
+	 * result. This will end the stream and prevent subsequent calls to read().
+	 */
+	std::string getAsString() {
+
+		static const int BUFFER_SIZE = 65536;
+		
+		// Allocate return string and read buffer
+		std::string rv;
+        char buf[BUFFER_SIZE];
+        
+        // Read the InputStream and append to the string
+        std::size_t numRead;
+        while ((numRead = read(buf, BUFFER_SIZE)) > 0)
+            rv.append(buf, numRead);
+            
+		// Return the string
+        return rv;
+		
+	}
 };
 
 /// \brief A write-only character-stream.

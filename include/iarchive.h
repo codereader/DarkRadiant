@@ -60,24 +60,6 @@ public:
   /// The stream remains valid for the lifetime of the file.
   virtual TextInputStream& getInputStream() = 0;
   
-
-    /** Return the contents of this file in the form of a string.
-     * 
-     * @returns std::string containing the file's text contents
-     */
-    
-    virtual std::string getString() {
-        TextInputStream& strm = getInputStream();
-        std::string rv;
-        char buf[2048];
-        
-        std::size_t numRead;
-        while ((numRead = strm.read(buf, 2048)) > 0)
-            rv.append(buf, numRead);
-            
-        return rv;
-    }   
-    
 };
 
 class ScopedArchiveFile

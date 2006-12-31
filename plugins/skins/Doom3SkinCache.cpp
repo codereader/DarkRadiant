@@ -42,7 +42,7 @@ public:
 			GlobalFileSystem().openTextFile(SKINS_FOLDER 
 											+ std::string(fileName));
 		assert(file);
-		std::string contents = file->getString();
+		std::string contents = file->getInputStream().getAsString();
 		file->release();
 	
 		// Pass the contents back to the SkinCache module for parsing

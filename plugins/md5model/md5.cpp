@@ -20,64 +20,38 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "md5.h"
-
-#include "math/FloatTools.h"
-
-#include "iscriplib.h"
-#include "imodel.h"
-
-#include "archivelib.h"
-#include "stringio.h"
-
 #include "md5model.h"
 
-#define MD5_RETURN_FALSE_IF_FAIL(expression) if(!(expression)) { globalErrorStream() << "md5 parse failed: " #expression "\n"; return false; } else
+#include "math/FloatTools.h"
+#include "imodel.h"
+#include "archivelib.h"
 
-bool MD5_parseToken(Tokeniser& tokeniser, const char* string)
+#include "parser/DefTokeniser.h"
+
+#include <boost/lexical_cast.hpp>
+
+namespace {
+	
+/*
+ * Parse an MD5 vector, which consists of three separated floats enclosed with
+ * parentheses.
+ */
+Vector3 parseVector3(parser::DefTokeniser& tok)
 {
-  const char* token = tokeniser.getToken();
-  MD5_RETURN_FALSE_IF_FAIL(token != 0);
-  return string_equal(token, string);
+	using boost::lexical_cast;
+	
+	tok.assertNextToken("(");
+
+	float x = lexical_cast<float>(tok.nextToken());
+	float y = lexical_cast<float>(tok.nextToken());
+	float z = lexical_cast<float>(tok.nextToken());
+
+	tok.assertNextToken(")");
+	
+	return Vector3(x, y, z);
 }
 
-bool MD5_parseFloat(Tokeniser& tokeniser, float& f)
-{
-  const char* token = tokeniser.getToken();
-  MD5_RETURN_FALSE_IF_FAIL(token != 0);
-  return string_parse_float(token, f);
-}
-
-bool MD5_parseString(Tokeniser& tokeniser, const char*& s)
-{
-  const char* token = tokeniser.getToken();
-  MD5_RETURN_FALSE_IF_FAIL(token != 0);
-  s = token;
-  return true;
-}
-
-bool MD5_parseInteger(Tokeniser& tokeniser, int& i)
-{
-  const char* token = tokeniser.getToken();
-  MD5_RETURN_FALSE_IF_FAIL(token != 0);
-  return string_parse_int(token, i);
-}
-
-bool MD5_parseSize(Tokeniser& tokeniser, std::size_t& i)
-{
-  const char* token = tokeniser.getToken();
-  MD5_RETURN_FALSE_IF_FAIL(token != 0);
-  return string_parse_size(token, i);
-}
-
-bool MD5_parseVector3(Tokeniser& tokeniser, Vector3& v)
-{
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "("));
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseFloat(tokeniser, v.x()));
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseFloat(tokeniser, v.y()));
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseFloat(tokeniser, v.z()));
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, ")"));
-  return true;
-}
+} // namespace
 
 /**
  * Data structure containing MD5 Joint information.
@@ -90,6 +64,19 @@ struct MD5Joint
 };
 
 typedef std::vector<MD5Joint> MD5Joints;
+
+#ifdef _DEBUG
+
+// Stream insertion for MD5Joint
+std::ostream& operator<< (std::ostream& os, const MD5Joint& jt) {
+	os << "MD5Joint { parent=" << jt.parent
+	   << " position=" << jt.position
+	   << " rotation=" << jt.rotation
+	   << " }";
+	return os;
+}
+
+#endif
 
 /**
  * Data structure containing MD5 Vertex information. Vertices do not contain 
@@ -134,11 +121,6 @@ struct MD5Weight
 
 typedef std::vector<MD5Weight> MD5Weights;
 
-
-
-
-typedef std::vector<MD5Weight> MD5Weights;
-
 typedef float MD5Component;
 typedef std::vector<MD5Component> MD5Components;
 
@@ -148,260 +130,269 @@ public:
 	MD5Components m_components;
 };
 
-bool MD5_parseVersion(Tokeniser& tokeniser)
+//bool MD5Anim_parse(Tokeniser& tokeniser)
+//{
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseVersion(tokeniser));
+//  tokeniser.nextLine();
+//
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "commandline"));
+//  const char* commandline;
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseString(tokeniser, commandline));
+//  tokeniser.nextLine();
+//
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "numFrames"));
+//  std::size_t numFrames;
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, numFrames));
+//  tokeniser.nextLine();
+//
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "numJoints"));
+//  std::size_t numJoints;
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, numJoints));
+//  tokeniser.nextLine();
+//
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "frameRate"));
+//  std::size_t frameRate;
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, frameRate));
+//  tokeniser.nextLine();
+//
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "numAnimatedComponents"));
+//  std::size_t numAnimatedComponents;
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, numAnimatedComponents));
+//  tokeniser.nextLine();
+//
+//  // parse heirarchy
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "hierarchy"));
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "{"));
+//  tokeniser.nextLine();
+//
+//  for(std::size_t i = 0; i < numJoints; ++i)
+//  {
+//    const char* name;
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseString(tokeniser, name));
+//    int parent;
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseInteger(tokeniser, parent));
+//    std::size_t flags;
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, flags));
+//    std::size_t index;
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, index));
+//    tokeniser.nextLine();
+//  }
+//
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "}"));
+//  tokeniser.nextLine();
+//
+//  // parse bounds
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "bounds"));
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "{"));
+//  tokeniser.nextLine();
+//
+//  for(std::size_t i = 0; i < numFrames; ++i)
+//  {
+//    Vector3 mins;
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, mins));
+//    Vector3 maxs;
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, maxs));
+//    tokeniser.nextLine();
+//  }
+//
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "}"));
+//  tokeniser.nextLine();
+//
+//  // parse baseframe
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "baseframe"));
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "{"));
+//  tokeniser.nextLine();
+//
+//  for(std::size_t i = 0; i < numJoints; ++i)
+//  {
+//    Vector3 position;
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, position));
+//    Vector3 rotation;
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, rotation));
+//    tokeniser.nextLine();
+//  }
+//
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "}"));
+//  tokeniser.nextLine();
+//
+//  // parse frames
+//  for(std::size_t i = 0; i < numFrames; ++i)
+//  {
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "frame"));
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "{"));
+//    tokeniser.nextLine();
+//
+//    for(std::size_t i = 0; i < numAnimatedComponents; ++i)
+//    {
+//      float component;
+//      MD5_RETURN_FALSE_IF_FAIL(MD5_parseFloat(tokeniser, component));
+//      tokeniser.nextLine();
+//    }
+//
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "}"));
+//    tokeniser.nextLine();
+//  }
+//
+//  return true;
+//}
+
+/**
+ * Main parse function for an MD5MESH file.
+ */
+bool MD5Model_parse(MD5Model& model, parser::DefTokeniser& tok)
 {
-  {
-    const char* versionKey = tokeniser.getToken();
-    if(versionKey == 0 || !string_equal(versionKey, "MD5Version"))
-    {
-      globalErrorStream() << "not a valid md5 file\n";
-      return false;
-    }
-  }
-  {
-    const char* versionValue = tokeniser.getToken();
-    if(versionValue == 0 || !string_equal(versionValue, "10"))
-    {
-      globalErrorStream() << "only md5 version 10 supported\n";
-      return false;
-    }
-  }
+	using boost::lexical_cast;
+	
+	// Check the version number
+	tok.assertNextToken("MD5Version");
+	tok.assertNextToken("10");
 
-  return true;
-}
+	// Commandline
+	tok.assertNextToken("commandline");
+	tok.skipTokens(1); // quoted command string
 
-bool MD5Anim_parse(Tokeniser& tokeniser)
-{
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseVersion(tokeniser));
-  tokeniser.nextLine();
+	// Number of joints and meshes
+	tok.assertNextToken("numJoints");
+	std::size_t numJoints = lexical_cast<std::size_t>(tok.nextToken());
+	tok.assertNextToken("numMeshes");
+	std::size_t numMeshes = lexical_cast<std::size_t>(tok.nextToken());
 
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "commandline"));
-  const char* commandline;
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseString(tokeniser, commandline));
-  tokeniser.nextLine();
+	/* JOINTS */
 
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "numFrames"));
-  std::size_t numFrames;
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, numFrames));
-  tokeniser.nextLine();
+	// Start of joints datablock
+	tok.assertNextToken("joints");
+	tok.assertNextToken("{");
 
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "numJoints"));
-  std::size_t numJoints;
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, numJoints));
-  tokeniser.nextLine();
+	// Initialise the Joints vector with the specified number of objects
+	MD5Joints joints(numJoints);
 
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "frameRate"));
-  std::size_t frameRate;
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, frameRate));
-  tokeniser.nextLine();
+	// Iterate over the vector of Joints, filling in each one with parsed
+	// values
+	for(MD5Joints::iterator i = joints.begin(); i != joints.end(); ++i) {
 
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "numAnimatedComponents"));
-  std::size_t numAnimatedComponents;
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, numAnimatedComponents));
-  tokeniser.nextLine();
+		// Skip the joint name
+		tok.skipTokens(1);
+		
+		// Index of parent joint
+		i->parent = lexical_cast<int>(tok.nextToken());
+		
+		// Joint's position vector
+		i->position = parseVector3(tok);
 
-  // parse heirarchy
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "hierarchy"));
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "{"));
-  tokeniser.nextLine();
+	    // Parse joint's rotation
+		Vector3 rawRotation = parseVector3(tok);
 
-  for(std::size_t i = 0; i < numJoints; ++i)
-  {
-    const char* name;
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseString(tokeniser, name));
-    int parent;
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseInteger(tokeniser, parent));
-    std::size_t flags;
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, flags));
-    std::size_t index;
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, index));
-    tokeniser.nextLine();
-  }
+	    // Calculate the W value. If it is NaN (due to underflow in the sqrt),
+	    // set it to 0.
+	    double lSq = rawRotation.getLengthSquared();
+	    float w = -sqrt(1.0 - lSq);
+	    if (isNaN(w))
+	    	w = 0;
+	
+		// Set the Vector4 rotation on the joint
+	    i->rotation = Vector4(rawRotation, w); 
+	    
+	}
 
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "}"));
-  tokeniser.nextLine();
+	// End of joints datablock
+	tok.assertNextToken("}");
 
-  // parse bounds
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "bounds"));
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "{"));
-  tokeniser.nextLine();
+	/* MESHES */
 
-  for(std::size_t i = 0; i < numFrames; ++i)
-  {
-    Vector3 mins;
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, mins));
-    Vector3 maxs;
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, maxs));
-    tokeniser.nextLine();
-  }
+	// For each mesh, there should be a mesh datablock
+	for(std::size_t i = 0; i < numMeshes; ++i) {
+		
+		// Start of datablock
+		tok.assertNextToken("mesh");
+		tok.assertNextToken("{");
+		
+		// Construct the surface for this mesh
+		Surface& surface = model.newSurface();
 
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "}"));
-  tokeniser.nextLine();
+		// Get the shader name
+		tok.assertNextToken("shader");
+		surface.setShader(tok.nextToken().c_str());
 
-  // parse baseframe
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "baseframe"));
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "{"));
-  tokeniser.nextLine();
+		/* VERTICES */
 
-  for(std::size_t i = 0; i < numJoints; ++i)
-  {
-    Vector3 position;
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, position));
-    Vector3 rotation;
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, rotation));
-    tokeniser.nextLine();
-  }
+		// Read the vertex count
+		tok.assertNextToken("numverts");
+	    std::size_t numVerts = lexical_cast<std::size_t>(tok.nextToken());	
 
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "}"));
-  tokeniser.nextLine();
+		// Initialise the vertex vector
+		MD5Verts verts(numVerts);
 
-  // parse frames
-  for(std::size_t i = 0; i < numFrames; ++i)
-  {
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "frame"));
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "{"));
-    tokeniser.nextLine();
+		// Populate each vertex struct with parsed values
+		for(MD5Verts::iterator vt = verts.begin(); vt != verts.end(); ++vt) {
+			
+			tok.assertNextToken("vert");
 
-    for(std::size_t i = 0; i < numAnimatedComponents; ++i)
-    {
-      float component;
-      MD5_RETURN_FALSE_IF_FAIL(MD5_parseFloat(tokeniser, component));
-      tokeniser.nextLine();
-    }
+			// Index of vert
+			vt->index = lexical_cast<std::size_t>(tok.nextToken());
 
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "}"));
-    tokeniser.nextLine();
-  }
+			// U and V texcoords
+			tok.assertNextToken("(");
+			vt->u = lexical_cast<float>(tok.nextToken());
+			vt->v = lexical_cast<float>(tok.nextToken());
+			tok.assertNextToken(")");
 
-  return true;
-}
+			// Weight index and count
+			vt->weight_index = lexical_cast<std::size_t>(tok.nextToken());
+			vt->weight_count = lexical_cast<std::size_t>(tok.nextToken());
+		
+		} // for each vertex
+	
+		/* TRIANGLES */
+	
+		// Read the number of triangles
+		tok.assertNextToken("numtris");
+		std::size_t numTris = lexical_cast<std::size_t>(tok.nextToken());
 
-bool MD5Model_parse(MD5Model& model, Tokeniser& tokeniser)
-{
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseVersion(tokeniser));
-  tokeniser.nextLine();
+		// Initialise the triangle vector
+		MD5Tris tris(numTris);
 
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "commandline"));
-  const char* commandline;
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseString(tokeniser, commandline));
-  tokeniser.nextLine();
+		// Read each triangle
+		for(MD5Tris::iterator tr = tris.begin(); tr != tris.end(); ++tr) {
 
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "numJoints"));
-  std::size_t numJoints;
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, numJoints));
-  tokeniser.nextLine();
+			tok.assertNextToken("tri");
 
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "numMeshes"));
-  std::size_t numMeshes;
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, numMeshes));
-  tokeniser.nextLine();
+			// Triangle index, followed by the indexes of its 3 vertices
+			tr->index = lexical_cast<std::size_t>(tok.nextToken());
+			tr->a = 	lexical_cast<std::size_t>(tok.nextToken());
+			tr->b = 	lexical_cast<std::size_t>(tok.nextToken());
+			tr->c = 	lexical_cast<std::size_t>(tok.nextToken());
 
-  MD5Joints joints(numJoints);
+		} // for each triangle
 
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "joints"));
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "{"));
-  tokeniser.nextLine();
+		/* WEIGHTS */
 
-  for(MD5Joints::iterator i = joints.begin(); i != joints.end(); ++i)
-  {
-    const char* jointName;
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseString(tokeniser, jointName));
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseInteger(tokeniser, (*i).parent));
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, (*i).position));
+		// Read the number of weights
+		tok.assertNextToken("numweights");
+		std::size_t numWeights = lexical_cast<std::size_t>(tok.nextToken());
 
-    // Parse the rotation
-    Vector3 rawRotation;
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, rawRotation));
-    
-    // Calculate the W value. If it is NaN (due to underflow in the sqrt),
-    // set it to 0.
-    double lSq = rawRotation.getLengthSquared();
-    float w = -sqrt(1.0 - lSq);
-    if (isNaN(w))
-    	w = 0;
+		// Initialise weights vector
+		MD5Weights weights(numWeights);
 
-	// Set the Vector4 rotation on the joint
-    i->rotation = Vector4(rawRotation, w); 
+		// Populate with weight data
+		for(MD5Weights::iterator w = weights.begin(); w != weights.end(); ++w) {
 
-    tokeniser.nextLine();
-  }
+			tok.assertNextToken("weight");
 
-  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "}"));
-  tokeniser.nextLine();
+			// Index and joint
+			w->index = lexical_cast<std::size_t>(tok.nextToken());
+			w->joint = lexical_cast<std::size_t>(tok.nextToken());
 
-  for(std::size_t i = 0; i < numMeshes; ++i)
-  {
-  	Surface& surface = model.newSurface();
+			// Strength and direction (?)
+			w->t = lexical_cast<float>(tok.nextToken());
+			w->v = parseVector3(tok);
 
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "mesh"));
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "{"));
-    tokeniser.nextLine();
+		} // for each weight
+		
+		/* END OF MESH DECL */
+		
+		tok.assertNextToken("}");
 
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "shader"));
-    const char* shader;
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseString(tokeniser, shader));
-    surface.setShader(shader);
-    tokeniser.nextLine();
- 
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "numverts"));
-    std::size_t numVerts;
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, numVerts));
-    tokeniser.nextLine();
-
-    MD5Verts verts(numVerts);
-
-    for(MD5Verts::iterator j = verts.begin(); j != verts.end(); ++j)
-    {
-      MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "vert"));
-      MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, (*j).index));
-      MD5_RETURN_FALSE_IF_FAIL((*j).index == std::size_t(j - verts.begin()));
-      MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "("));
-      MD5_RETURN_FALSE_IF_FAIL(MD5_parseFloat(tokeniser, (*j).u));
-      MD5_RETURN_FALSE_IF_FAIL(MD5_parseFloat(tokeniser, (*j).v));
-      MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, ")"));
-      MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, (*j).weight_index));
-      MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, (*j).weight_count));
-      tokeniser.nextLine();
-    }
-
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "numtris"));
-    std::size_t numTris;
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, numTris));
-    tokeniser.nextLine();
-
-    MD5Tris tris(numTris);
-
-    for(MD5Tris::iterator j = tris.begin(); j != tris.end(); ++j)
-    {
-      MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "tri"));
-      MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, (*j).index));
-      MD5_RETURN_FALSE_IF_FAIL((*j).index == std::size_t(j - tris.begin()));
-      MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, (*j).a));
-      MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, (*j).b));
-      MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, (*j).c));
-      tokeniser.nextLine();
-    }
-
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "numweights"));
-    std::size_t numWeights;
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, numWeights));
-    tokeniser.nextLine();
-
-    MD5Weights weights(numWeights);
-
-    for(MD5Weights::iterator j = weights.begin(); j != weights.end(); ++j)
-    {
-      MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "weight"));
-      MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, (*j).index));
-      MD5_RETURN_FALSE_IF_FAIL((*j).index == std::size_t(j - weights.begin()));
-      MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, (*j).joint));
-      MD5_RETURN_FALSE_IF_FAIL(MD5_parseFloat(tokeniser, (*j).t));
-      MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, (*j).v));
-      tokeniser.nextLine();
-    }
-
-    MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "}"));
-    tokeniser.nextLine();
+		/* CALCULATION */
 
     for(MD5Verts::iterator j = verts.begin(); j != verts.end(); ++j)
     {
@@ -449,18 +440,28 @@ bool MD5Model_parse(MD5Model& model, Tokeniser& tokeniser)
     }
 
     surface.updateAABB();
-  }
 
-  model.updateAABB();
+	} // for each mesh
 
-  return true;
+	model.updateAABB();
+
+	return true;
 }
 
 void MD5Model_construct(MD5Model& model, TextInputStream& inputStream)
 {
-  Tokeniser& tokeniser = GlobalScriptLibrary().m_pfnNewSimpleTokeniser(inputStream);
-  MD5Model_parse(model, tokeniser);
-  tokeniser.release();
+	// Get the model contents as a string
+	std::string md5mesh = inputStream.getAsString();
+	
+	// Construct a DefTokeniser and start parsing
+	try {
+		parser::DefTokeniser tok(md5mesh);
+		MD5Model_parse(model, tok);
+	}
+	catch (parser::ParseException e) {
+		globalErrorStream() << "[md5model] Parse failure. Exception was:\n"
+							<< e.what() << "\n";		
+	}
 }
 
 scene::Node& MD5Model_new(TextInputStream& inputStream)
