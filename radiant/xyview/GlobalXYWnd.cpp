@@ -7,6 +7,8 @@ XYWndManager::XYWndManager() :
 	// Connect self to the according registry keys
 	GlobalRegistry().addKeyObserver(this, RKEY_CHASE_MOUSE);
 	GlobalRegistry().addKeyObserver(this, RKEY_CAMERA_XY_UPDATE);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_CROSSHAIRS);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_GRID);
 	
 	// Trigger loading the values of the observed registry keys
 	keyChanged();
@@ -23,14 +25,18 @@ XYWndManager::~XYWndManager() {
 void XYWndManager::constructPreferencePage(PreferenceGroup& group) {
 	PreferencesPage* page(group.createPage("Orthographic", "Orthographic View Settings"));
 	
-	page->appendCheckBox("", "View chases mouse cursor during drags", RKEY_CHASE_MOUSE);
-	page->appendCheckBox("", "Update views on camera move", RKEY_CAMERA_XY_UPDATE);
+	page->appendCheckBox("", "View chases Mouse Cursor during Drags", RKEY_CHASE_MOUSE);
+	page->appendCheckBox("", "Update Views on Camera Movement", RKEY_CAMERA_XY_UPDATE);
+	page->appendCheckBox("", "Show Crosshairs", RKEY_SHOW_CROSSHAIRS);
+	page->appendCheckBox("", "Show Grid", RKEY_SHOW_GRID);
 }
 
 // Load/Reload the values from the registry
 void XYWndManager::keyChanged() {
 	_chaseMouse = (GlobalRegistry().get(RKEY_CHASE_MOUSE) == "1");
 	_camXYUpdate = (GlobalRegistry().get(RKEY_CAMERA_XY_UPDATE) == "1");
+	_showCrossHairs = (GlobalRegistry().get(RKEY_SHOW_CROSSHAIRS) == "1");
+	_showGrid = (GlobalRegistry().get(RKEY_SHOW_GRID) == "1");
 }
 
 bool XYWndManager::chaseMouse() const {
@@ -39,6 +45,26 @@ bool XYWndManager::chaseMouse() const {
 
 bool XYWndManager::camXYUpdate() const {
 	return _camXYUpdate;
+}
+
+bool XYWndManager::showCrossHairs() const {
+	return _showCrossHairs;
+}
+
+void XYWndManager::toggleCrossHairs() {
+	// Invert the registry value, the _showCrossHairs bool is updated automatically as this class observes the key
+	GlobalRegistry().set(RKEY_SHOW_CROSSHAIRS, _showCrossHairs ? "0" : "1");
+	updateAllViews();
+}
+
+bool XYWndManager::showGrid() const {
+	return _showGrid;
+}
+
+void XYWndManager::toggleGrid() {
+	// Invert the registry value, the _showCrossHairs bool is updated automatically as this class observes the key
+	GlobalRegistry().set(RKEY_SHOW_GRID, _showGrid ? "0" : "1");
+	updateAllViews();
 }
 
 void XYWndManager::updateAllViews() {

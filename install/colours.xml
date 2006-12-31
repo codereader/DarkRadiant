@@ -28,6 +28,7 @@
 		<colour name="light_vertex_normal" value="1 0 0" />
 		<colour name="light_startend_selected" value="0 0 1" />
 		<colour name="light_startend_deselected" value="0 1 1" />
+		<colour name="xyview_crosshairs" value="0.2 0.9 0.2" />
 	</scheme>
 	<scheme name="QE3Radiant Original" readonly="1">
  		<colour name="texture_background" value="0.25 0.25 0.25" />
@@ -57,6 +58,7 @@
 		<colour name="light_vertex_normal" value="1 0 0" />
 		<colour name="light_startend_selected" value="0 0 1" />
 		<colour name="light_startend_deselected" value="0 1 1" />
+		<colour name="xyview_crosshairs" value="0.2 0.9 0.2" />
 	</scheme>
 	<scheme name="Black &amp; Green" readonly="1">
  		<colour name="texture_background" value="0.25 0.25 0.25" />
@@ -86,6 +88,7 @@
 		<colour name="light_vertex_normal" value="1 0 0" />
 		<colour name="light_startend_selected" value="0 0 1" />
 		<colour name="light_startend_deselected" value="0 1 1" />
+		<colour name="xyview_crosshairs" value="0.2 0.9 0.2" />
 	</scheme>
 	<scheme name="Maya/Max/Lightwave Emulation" readonly="1">
  		<colour name="texture_background" value="0.25 0.25 0.25" />
@@ -115,6 +118,7 @@
 		<colour name="light_vertex_normal" value="1 0 0" />
 		<colour name="light_startend_selected" value="0 0 1" />
 		<colour name="light_startend_deselected" value="0 1 1" />
+		<colour name="xyview_crosshairs" value="0.2 0.9 0.2" />
 	</scheme>
 	<description>
 		<texture_background value="Texture Background" />
@@ -144,5 +148,6 @@
 		<light_vertex_normal value="Light Vertices (normal)" />
 		<light_startend_selected value="Light Start/End (selected)" />
 		<light_startend_deselected value="Light Start/End (deselected)" />
+		<xyview_crosshairs value="XYView Crosshairs" />
 	</description>
 </colourschemes>

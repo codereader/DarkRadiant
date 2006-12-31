@@ -28,8 +28,6 @@
 
 #include <boost/lexical_cast.hpp>
 
-extern bool g_bCrossHairs;
-
 float Betwixt(float f1, float f2) {
 	if (f1 > f2)
 		return f2 + ((f1 - f2) / 2);
@@ -592,7 +590,7 @@ void XYWnd::mouseMoved(int x, int y, const unsigned int& state) {
 			<< "  z:: " << FloatFormat(m_mousePosition[2], 6, 1);
 	g_pParentWnd->SetStatusText(g_pParentWnd->m_position_status, status.c_str());
 
-	if (g_bCrossHairs) {
+	if (GlobalXYWnd().showCrossHairs()) {
 		queueDraw();
 	}
 
@@ -745,13 +743,12 @@ void XYWnd::drawGrid() {
 		ye = region_maxs[nDim2];
 	ye = step * ceil (ye/step);
 
-	// djbob
-	// draw minor blocks
-	if (g_xywindow_globals_private.d_showgrid) {
+	if (GlobalXYWnd().showGrid()) {
 		ui::ColourItem& colourGridBack = ColourSchemes().getColour("grid_background");
 		ui::ColourItem& colourGridMinor = ColourSchemes().getColour("grid_minor");
 		ui::ColourItem& colourGridMajor = ColourSchemes().getColour("grid_major");
-
+		
+		// draw minor blocks
 		if (colourGridMinor != colourGridBack) {
 			glColor3fv(colourGridMinor);
 
@@ -1309,8 +1306,9 @@ void XYWnd::draw() {
 		drawSizeInfo(nDim1, nDim2, min, max);
 	}
 
-	if (g_bCrossHairs) {
-		glColor4f(0.2f, 0.9f, 0.2f, 0.8f);
+	if (GlobalXYWnd().showCrossHairs()) {
+		Vector3 colour = ColourSchemes().getColourVector3("xyview_crosshairs");
+		glColor4f(colour[0], colour[1], colour[2], 0.8f);
 		glBegin (GL_LINES);
 		if (m_viewType == XY) {
 			glVertex2f(2.0f * _minWorldCoord, m_mousePosition[1]);
