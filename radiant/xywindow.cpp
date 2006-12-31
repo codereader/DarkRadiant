@@ -68,10 +68,31 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "plugin.h"
 #include "ui/colourscheme/ColourScheme.h"
 #include "ui/eventmapper/EventMapper.h"
+#include "ui/ortho/OrthoContextMenu.h"
 
 #include "selection/SelectionBox.h"
 
 #include <boost/lexical_cast.hpp>
+
+double two_to_the_power(int power) {
+	return pow(2.0f, power);
+}
+
+inline float screen_normalised(int pos, unsigned int size) {
+	return ((2.0f * pos) / size) - 1.0f;
+}
+
+inline float normalised_to_world(float normalised, float world_origin, float normalised2world_scale) {
+	return world_origin + normalised * normalised2world_scale;
+}
+
+float Betwixt(float f1, float f2) {
+	if (f1 > f2)
+		return f2 + ((f1 - f2) / 2);
+	else
+		return f1 + ((f2 - f1) / 2);
+}
+
 
 class XYRenderer : 
 	public Renderer
@@ -177,14 +198,6 @@ struct xywindow_globals_private_t
 xywindow_globals_t g_xywindow_globals;
 xywindow_globals_private_t g_xywindow_globals_private;
 
-void XYWnd::SetScale(float f)
-{
-  m_fScale = f;
-  updateProjection();
-  updateModelview();
-  XYWnd_Update(*this);
-}
-
 EViewType GlobalXYWnd_getCurrentViewType()
 {
   ASSERT_NOTNULL(g_pParentWnd);
@@ -197,7 +210,152 @@ EViewType GlobalXYWnd_getCurrentViewType()
 
 bool g_bCrossHairs = false;
 
-GtkMenu* XYWnd::m_mnuDrop = 0;
+// =============================================================================
+// XYWnd class
+
+// Constructor
+XYWnd::XYWnd() :
+	m_gl_widget(glwidget_new(FALSE)),
+	m_deferredDraw(WidgetQueueDrawCaller(*m_gl_widget)),
+	m_deferred_motion(callbackMouseMotion, this),
+	_minWorldCoord(GlobalRegistry().getFloat("game/defaults/minWorldCoord")),
+	_maxWorldCoord(GlobalRegistry().getFloat("game/defaults/maxWorldCoord")),
+	_moveStarted(false),
+	_zoomStarted(false),
+	_chaseMouseHandler(0),
+	m_window_observer(NewWindowObserver()),
+	m_XORRectangle(m_gl_widget),
+	_isActive(false),
+	m_parent(0)
+{
+	m_buttonstate = 0;
+
+	m_bNewBrushDrag = false;
+
+	_width = 0;
+	_height = 0;
+
+	m_vOrigin[0] = 0;
+	m_vOrigin[1] = 20;
+	m_vOrigin[2] = 46;
+	m_fScale = 1;
+	m_viewType = XY;
+
+	m_entityCreate = false;
+
+	GlobalWindowObservers_add(m_window_observer);
+	GlobalWindowObservers_connectWidget(m_gl_widget);
+
+	m_window_observer->setRectangleDrawCallback(MemberCaller1<XYWnd, Rectangle, &XYWnd::updateXORRectangle>(*this));
+	m_window_observer->setView(m_view);
+
+	gtk_widget_ref(m_gl_widget);
+
+	gtk_widget_set_events(m_gl_widget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
+	GTK_WIDGET_SET_FLAGS(m_gl_widget, GTK_CAN_FOCUS);
+	gtk_widget_set_size_request(m_gl_widget, XYWND_MINSIZE_X, XYWND_MINSIZE_Y);
+
+	m_sizeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "size_allocate", G_CALLBACK(callbackSizeAllocate), this);
+	m_exposeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "expose_event", G_CALLBACK(callbackExpose), this);
+
+	g_signal_connect(G_OBJECT(m_gl_widget), "button_press_event", G_CALLBACK(callbackButtonPress), this);
+	g_signal_connect(G_OBJECT(m_gl_widget), "button_release_event", G_CALLBACK(callbackButtonRelease), this);
+	g_signal_connect(G_OBJECT(m_gl_widget), "motion_notify_event", G_CALLBACK(DeferredMotion::gtk_motion), &m_deferred_motion);
+
+	g_signal_connect(G_OBJECT(m_gl_widget), "scroll_event", G_CALLBACK(callbackMouseWheelScroll), this);
+
+	Map_addValidCallback(g_map, DeferredDrawOnMapValidChangedCaller(m_deferredDraw));
+
+	updateProjection();
+	updateModelview();
+
+	AddSceneChangeCallback(ReferenceCaller<XYWnd, &XYWnd_Update>(*this));
+	// greebo: Connect <self> as CameraObserver to the CamWindow. This way this class gets notified on camera change
+	GlobalCamera().addCameraObserver(this);
+
+	PressedButtons_connect(g_pressedButtons, m_gl_widget);
+
+	onMouseDown.connectLast(makeSignalHandler3(MouseDownCaller(), *this));
+}
+
+// Destructor
+XYWnd::~XYWnd() {
+	onDestroyed();
+
+	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_sizeHandler);
+	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_exposeHandler);
+
+	gtk_widget_unref(m_gl_widget);
+
+	m_window_observer->release();
+}
+
+
+void XYWnd::setEvent(GdkEventButton* event) {
+	_event = event;
+}
+
+void XYWnd::setScale(float f) {
+	m_fScale = f;
+	updateProjection();
+	updateModelview();
+	XYWnd_Update(*this);
+}
+
+float XYWnd::getScale() const {
+	return m_fScale;
+}
+
+int XYWnd::getWidth() const {
+	return _width;
+}
+
+int XYWnd::getHeight() const {
+	return _height;
+}
+
+
+void XYWnd::captureStates() {
+	m_state_selected = GlobalShaderCache().capture("$XY_OVERLAY");
+}
+
+void XYWnd::releaseStates() {
+	GlobalShaderCache().release("$XY_OVERLAY");
+}
+
+void XYWnd::queueDraw() {
+	m_deferredDraw.draw();
+}
+
+GtkWidget* XYWnd::getWidget() {
+	return m_gl_widget;
+}
+
+void XYWnd::setActive(bool b) {
+	_isActive = b;
+};
+
+bool XYWnd::isActive() const {
+	return _isActive;
+};
+
+const Vector3& XYWnd::getOrigin() {
+	return m_vOrigin;
+}
+
+void XYWnd::setOrigin(const Vector3& origin) {
+	m_vOrigin = origin;
+	updateModelview();
+}
+
+void XYWnd::scroll(int x, int y) {
+	int nDim1 = (m_viewType == YZ) ? 1 : 0;
+	int nDim2 = (m_viewType == XY) ? 1 : 2;
+	m_vOrigin[nDim1] += x / m_fScale;
+	m_vOrigin[nDim2] += y / m_fScale;
+	updateModelview();
+	queueDraw();
+}
 
 /* greebo: This gets repeatedly called during a mouse chase operation.
  * The call is triggered by a timer, that gets start in XYWnd::chaseMouseMotion();
@@ -237,16 +395,16 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, const unsigned int& state) 
 		if (pointx < epsilon) {
 			m_chasemouse_delta_x = std::max(pointx, 0) - epsilon;
 		}
-		else if ((pointx - m_nWidth) > -epsilon) {
-			m_chasemouse_delta_x = std::min((pointx - m_nWidth), 0) + epsilon;
+		else if ((pointx - _width) > -epsilon) {
+			m_chasemouse_delta_x = std::min((pointx - _width), 0) + epsilon;
 		}
 
 		// Calculate the Y delta
 		if (pointy < epsilon) {
 			m_chasemouse_delta_y = std::max(pointy, 0) - epsilon;
 		}
-		else if ((pointy - m_nHeight) > -epsilon) {
-			m_chasemouse_delta_y = std::min((pointy - m_nHeight), 0) + epsilon;
+		else if ((pointy - _height) > -epsilon) {
+			m_chasemouse_delta_y = std::min((pointy - _height), 0) + epsilon;
 		}
 
 		// If any of the deltas is uneqal to zero the mouse chase is to be performed
@@ -289,129 +447,10 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, const unsigned int& state) 
 	return false;
 }
 
-// =============================================================================
-// XYWnd class
-Shader* XYWnd::m_state_selected = 0;
-
-// Constructor
-XYWnd::XYWnd() :
-	m_gl_widget(glwidget_new(FALSE)),
-	m_deferredDraw(WidgetQueueDrawCaller(*m_gl_widget)),
-	m_deferred_motion(callbackMouseMotion, this),
-	_minWorldCoord(GlobalRegistry().getFloat("game/defaults/minWorldCoord")),
-	_maxWorldCoord(GlobalRegistry().getFloat("game/defaults/maxWorldCoord")),
-	_moveStarted(false),
-	_zoomStarted(false),
-	_chaseMouseHandler(0), 
-	m_parent(0),
-	m_window_observer(NewWindowObserver()),
-	m_XORRectangle(m_gl_widget)
-{
-	m_bActive = false;
-	m_buttonstate = 0;
-
-	m_bNewBrushDrag = false;
-
-	m_nWidth = 0;
-	m_nHeight = 0;
-
-	m_vOrigin[0] = 0;
-	m_vOrigin[1] = 20;
-	m_vOrigin[2] = 46;
-	m_fScale = 1;
-	m_viewType = XY;
-
-	m_entityCreate = false;
-
-	m_mnuDrop = 0;
-
-	GlobalWindowObservers_add(m_window_observer);
-	GlobalWindowObservers_connectWidget(m_gl_widget);
-
-	m_window_observer->setRectangleDrawCallback(MemberCaller1<XYWnd, Rectangle, &XYWnd::updateXORRectangle>(*this));
-	m_window_observer->setView(m_view);
-
-	gtk_widget_ref(m_gl_widget);
-
-	gtk_widget_set_events(m_gl_widget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
-	GTK_WIDGET_SET_FLAGS(m_gl_widget, GTK_CAN_FOCUS);
-	gtk_widget_set_size_request(m_gl_widget, XYWND_MINSIZE_X, XYWND_MINSIZE_Y);
-
-	m_sizeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "size_allocate", G_CALLBACK(callbackSizeAllocate), this);
-	m_exposeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "expose_event", G_CALLBACK(callbackExpose), this);
-
-	g_signal_connect(G_OBJECT(m_gl_widget), "button_press_event", G_CALLBACK(callbackButtonPress), this);
-	g_signal_connect(G_OBJECT(m_gl_widget), "button_release_event", G_CALLBACK(callbackButtonRelease), this);
-	g_signal_connect(G_OBJECT(m_gl_widget), "motion_notify_event", G_CALLBACK(DeferredMotion::gtk_motion), &m_deferred_motion);
-
-	g_signal_connect(G_OBJECT(m_gl_widget), "scroll_event", G_CALLBACK(callbackMouseWheelScroll), this);
-
-	Map_addValidCallback(g_map, DeferredDrawOnMapValidChangedCaller(m_deferredDraw));
-
-	updateProjection();
-	updateModelview();
-
-	AddSceneChangeCallback(ReferenceCaller<XYWnd, &XYWnd_Update>(*this));
-	// greebo: Connect <self> as CameraObserver to the CamWindow. This way this class gets notified on camera change
-	GlobalCamera().addCameraObserver(this);
-
-	PressedButtons_connect(g_pressedButtons, m_gl_widget);
-
-	onMouseDown.connectLast(makeSignalHandler3(MouseDownCaller(), *this));
-}
-
-// Destructor
-XYWnd::~XYWnd() {
-	onDestroyed();
-
-	if (m_mnuDrop != 0) {
-		gtk_widget_destroy(GTK_WIDGET(m_mnuDrop));
-		m_mnuDrop = 0;
-	}
-
-	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_sizeHandler);
-	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_exposeHandler);
-
-	gtk_widget_unref(m_gl_widget);
-
-	m_window_observer->release();
-}
-
-
-void XYWnd::setEvent(GdkEventButton* event) {
-	_event = event;
-}
-
-void XYWnd::captureStates() {
-	m_state_selected = GlobalShaderCache().capture("$XY_OVERLAY");
-}
-
-void XYWnd::releaseStates() {
-	GlobalShaderCache().release("$XY_OVERLAY");
-}
-
-const Vector3& XYWnd::getOrigin() {
-	return m_vOrigin;
-}
-
-void XYWnd::setOrigin(const Vector3& origin) {
-	m_vOrigin = origin;
-	updateModelview();
-}
-
-void XYWnd::scroll(int x, int y) {
-	int nDim1 = (m_viewType == YZ) ? 1 : 0;
-	int nDim2 = (m_viewType == XY) ? 1 : 2;
-	m_vOrigin[nDim1] += x / m_fScale;
-	m_vOrigin[nDim2] += y / m_fScale;
-	updateModelview();
-	queueDraw();
-}
-
 void XYWnd::DropClipPoint(int pointx, int pointy) {
 	Vector3 point;
 
-	XY_ToPoint(pointx, pointy, point);
+	convertXYToWorld(pointx, pointy, point);
 
 	Vector3 mid;
 	Select_GetMid(mid);
@@ -424,7 +463,7 @@ void XYWnd::DropClipPoint(int pointx, int pointy) {
 
 void XYWnd::Clipper_OnLButtonDown(int x, int y) {
 	Vector3 mousePosition;
-	XY_ToPoint(x, y , mousePosition);
+	convertXYToWorld(x, y , mousePosition);
 	
 	ClipPoint* foundClipPoint = GlobalClipper().find(mousePosition, (EViewType)m_viewType, m_fScale);
 	
@@ -443,7 +482,7 @@ void XYWnd::Clipper_OnMouseMoved(int x, int y) {
 	ClipPoint* movingClip = GlobalClipper().getMovingClip();
 	
 	if (movingClip != NULL) {
-		XY_ToPoint(x, y , GlobalClipper().getMovingClipCoords());
+		convertXYToWorld(x, y , GlobalClipper().getMovingClipCoords());
 		snapToGrid(GlobalClipper().getMovingClipCoords());
 		GlobalClipper().update();
 		ClipperChangeNotify();
@@ -452,7 +491,7 @@ void XYWnd::Clipper_OnMouseMoved(int x, int y) {
 
 void XYWnd::Clipper_Crosshair_OnMouseMoved(int x, int y) {
 	Vector3 mousePosition;
-	XY_ToPoint(x, y , mousePosition);
+	convertXYToWorld(x, y , mousePosition);
 	if (GlobalClipper().clipMode() && GlobalClipper().find(mousePosition, (EViewType)m_viewType, m_fScale) != 0) {
 		GdkCursor *cursor;
 		cursor = gdk_cursor_new (GDK_CROSSHAIR);
@@ -465,14 +504,14 @@ void XYWnd::Clipper_Crosshair_OnMouseMoved(int x, int y) {
 
 void XYWnd::positionCamera(int x, int y, CamWnd& camwnd) {
 	Vector3 origin = camwnd.getCameraOrigin();
-	XY_ToPoint(x, y, origin);
+	convertXYToWorld(x, y, origin);
 	snapToGrid(origin);
 	camwnd.setCameraOrigin(origin);
 }
 
 void XYWnd::orientCamera(int x, int y, CamWnd& camwnd) {
 	Vector3	point = g_vector3_identity;
-	XY_ToPoint(x, y, point);
+	convertXYToWorld(x, y, point);
 	snapToGrid(point);
 	point -= camwnd.getCameraOrigin();
 
@@ -520,9 +559,9 @@ void XYWnd::NewBrushDrag_End(int x, int y)
 void XYWnd::NewBrushDrag(int x, int y)
 {
   Vector3	mins, maxs;
-  XY_ToPoint(m_nNewBrushPressx, m_nNewBrushPressy, mins);
+  convertXYToWorld(m_nNewBrushPressx, m_nNewBrushPressy, mins);
   snapToGrid(mins);
-	XY_ToPoint(x, y, maxs);
+	convertXYToWorld(x, y, maxs);
   snapToGrid(maxs);
 
   int nDim = (m_viewType == XY) ? 2 : (m_viewType == YZ) ? 0 : 1;
@@ -654,29 +693,12 @@ public:
   }
 };
 
-/* Context menu
- */
-
-#include "ui/ortho/OrthoContextMenu.h"
-
-void XYWnd::OnContextMenu() {
+void XYWnd::onContextMenu() {
 	// Get the click point in 3D space
 	Vector3 point;
 	mouseToPoint(m_entityCreate_x, m_entityCreate_y, point);
 	// Display the menu, passing the coordinates for creation
 	ui::OrthoContextMenu::displayInstance(point);	
-}
-
-void XYWnd::callbackMoveDelta(int x, int y, unsigned int state, void* data) {
-	XYWnd* self = reinterpret_cast<XYWnd*>(data);
-	
-	self->EntityCreate_MouseMove(x, y);
-	self->scroll(-x, y);
-}
-
-gboolean XYWnd::callbackMoveFocusOut(GtkWidget* widget, GdkEventFocus* event, XYWnd* self) {
-	self->endMove();
-	return FALSE;
 }
 
 void XYWnd::beginMove() {
@@ -695,54 +717,20 @@ void XYWnd::endMove() {
 	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_move_focusOut);
 }
 
-
-int g_dragZoom = 0;
-
-void XYWnd_zoomDelta(int x, int y, unsigned int state, void* data)
-{
-  if(y != 0)
-  {
-    g_dragZoom += y;
-
-    while(abs(g_dragZoom) > 8)
-    {
-      if(g_dragZoom > 0)
-      {
-      	reinterpret_cast<XYWnd*>(data)->zoomOut();
-        g_dragZoom -= 8;
-      }
-      else
-      {
-        reinterpret_cast<XYWnd*>(data)->zoomIn();
-        g_dragZoom += 8;
-      }
-    }
-  }
+void XYWnd::beginZoom() {
+	if (_zoomStarted) {
+		endZoom();
+	}
+	_zoomStarted = true;
+	_dragZoom = 0;
+	_freezePointer.freeze_pointer(m_parent != 0 ? m_parent : MainFrame_getWindow(), callbackZoomDelta, this);
+	m_zoom_focusOut = g_signal_connect(G_OBJECT(m_gl_widget), "focus_out_event", G_CALLBACK(callbackZoomFocusOut), this);
 }
 
-gboolean XYWnd_Zoom_focusOut(GtkWidget* widget, GdkEventFocus* event, XYWnd* xywnd)
-{
-  xywnd->endZoom();
-  return FALSE;
-}
-
-void XYWnd::beginZoom()
-{
-  if(_zoomStarted)
-  {
-    endZoom();
-  }
-  _zoomStarted = true;
-  g_dragZoom = 0;
-  _freezePointer.freeze_pointer(m_parent != 0 ? m_parent : MainFrame_getWindow(), XYWnd_zoomDelta, this);
-  m_zoom_focusOut = g_signal_connect(G_OBJECT(m_gl_widget), "focus_out_event", G_CALLBACK(XYWnd_Zoom_focusOut), this);
-}
-
-void XYWnd::endZoom()
-{
-  _zoomStarted = false;
-  _freezePointer.unfreeze_pointer(m_parent != 0 ? m_parent : MainFrame_getWindow());
-  g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_zoom_focusOut);
+void XYWnd::endZoom() {
+	_zoomStarted = false;
+	_freezePointer.unfreeze_pointer(m_parent != 0 ? m_parent : MainFrame_getWindow());
+	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_zoom_focusOut);
 }
 
 // makes sure the selected brush or camera is in view
@@ -844,7 +832,7 @@ void XYWnd::mouseMoved(int x, int y, const unsigned int& state) {
 	m_window_observer->onMouseMotion(WindowVector(x, y), state);
 
 	m_mousePosition[0] = m_mousePosition[1] = m_mousePosition[2] = 0.0;
-	XY_ToPoint(x, y , m_mousePosition);
+	convertXYToWorld(x, y , m_mousePosition);
 	snapToGrid(m_mousePosition);
 
 	StringOutputStream status(64);
@@ -907,37 +895,26 @@ void XYWnd::EntityCreate_MouseMove(int x, int y) {
 void XYWnd::EntityCreate_MouseUp(int x, int y) {
 	if (m_entityCreate) {
 		m_entityCreate = false;
-		OnContextMenu();
+		onContextMenu();
 	}
 }
 
-inline float screen_normalised(int pos, unsigned int size)
-{
-  return ((2.0f * pos) / size) - 1.0f;
-}
-
-inline float normalised_to_world(float normalised, float world_origin, float normalised2world_scale)
-{
-  return world_origin + normalised * normalised2world_scale;
-}
-
-
 // TTimo: watch it, this doesn't init one of the 3 coords
-void XYWnd::XY_ToPoint(int x, int y, Vector3& point) {
-	float normalised2world_scale_x = m_nWidth / 2 / m_fScale;
-	float normalised2world_scale_y = m_nHeight / 2 / m_fScale;
+void XYWnd::convertXYToWorld(int x, int y, Vector3& point) {
+	float normalised2world_scale_x = _width / 2 / m_fScale;
+	float normalised2world_scale_y = _height / 2 / m_fScale;
 	
 	if (m_viewType == XY) {
-		point[0] = normalised_to_world(screen_normalised(x, m_nWidth), m_vOrigin[0], normalised2world_scale_x);
-		point[1] = normalised_to_world(-screen_normalised(y, m_nHeight), m_vOrigin[1], normalised2world_scale_y);
+		point[0] = normalised_to_world(screen_normalised(x, _width), m_vOrigin[0], normalised2world_scale_x);
+		point[1] = normalised_to_world(-screen_normalised(y, _height), m_vOrigin[1], normalised2world_scale_y);
 	} 
 	else if (m_viewType == YZ) {
-		point[1] = normalised_to_world(screen_normalised(x, m_nWidth), m_vOrigin[1], normalised2world_scale_x);
-		point[2] = normalised_to_world(-screen_normalised(y, m_nHeight), m_vOrigin[2], normalised2world_scale_y);
+		point[1] = normalised_to_world(screen_normalised(x, _width), m_vOrigin[1], normalised2world_scale_x);
+		point[2] = normalised_to_world(-screen_normalised(y, _height), m_vOrigin[2], normalised2world_scale_y);
 	} 
 	else {
-		point[0] = normalised_to_world(screen_normalised(x, m_nWidth), m_vOrigin[0], normalised2world_scale_x);
-		point[2] = normalised_to_world(-screen_normalised(y, m_nHeight), m_vOrigin[2], normalised2world_scale_y);
+		point[0] = normalised_to_world(screen_normalised(x, _width), m_vOrigin[0], normalised2world_scale_x);
+		point[2] = normalised_to_world(-screen_normalised(y, _height), m_vOrigin[2], normalised2world_scale_y);
 	}
 }
 
@@ -956,230 +933,199 @@ void XYWnd::snapToGrid(Vector3& point) {
 	}
 }
 
+void XYWnd::drawGrid() {
+	float	x, y, xb, xe, yb, ye;
+	float	w, h;
+	char	text[32];
+	float	step, minor_step, stepx, stepy;
 
-/*
-==============
-drawGrid
-==============
-*/
+	step = minor_step = stepx = stepy = GetGridSize();
 
-double two_to_the_power(int power)
-{
-  return pow(2.0f, power);
-}
+	int minor_power = Grid_getPower();
+	int mask;
 
-void XYWnd::drawGrid()
-{
-  float	x, y, xb, xe, yb, ye;
-  float		w, h;
-  char	text[32];
-  float step, minor_step, stepx, stepy;
-  step = minor_step = stepx = stepy = GetGridSize();
-  
-  int minor_power = Grid_getPower();
-  int mask;
+	while ((minor_step * m_fScale) <= 4.0f) // make sure minor grid spacing is at least 4 pixels on the screen
+	{
+		++minor_power;
+		minor_step *= 2;
+	}
+	int power = minor_power;
+	while ((power % 3) != 0 || (step * m_fScale) <= 32.0f) // make sure major grid spacing is at least 32 pixels on the screen
+	{
+		++power;
+		step = float(two_to_the_power(power));
+	}
+	mask = (1 << (power - minor_power)) - 1;
+	while ((stepx * m_fScale) <= 32.0f) // text step x must be at least 32
+		stepx *= 2;
+	while ((stepy * m_fScale) <= 32.0f) // text step y must be at least 32
+		stepy *= 2;
 
-  while((minor_step * m_fScale) <= 4.0f) // make sure minor grid spacing is at least 4 pixels on the screen
-  {
-    ++minor_power;
-    minor_step *= 2;
-  }
-  int power = minor_power;
-  while((power % 3) != 0 || (step * m_fScale) <= 32.0f) // make sure major grid spacing is at least 32 pixels on the screen
-  {
-    ++power;
-    step = float(two_to_the_power(power));
-  }
-  mask = (1 << (power - minor_power)) - 1;
-  while ((stepx * m_fScale) <= 32.0f) // text step x must be at least 32
-    stepx *= 2;
-  while ((stepy * m_fScale) <= 32.0f) // text step y must be at least 32
-    stepy *= 2;
-  
 
-  glDisable(GL_TEXTURE_2D);
-  glDisable(GL_TEXTURE_1D);
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_BLEND);
-  glLineWidth(1);
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_TEXTURE_1D);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+	glLineWidth(1);
 
-  w = (m_nWidth / 2 / m_fScale);
-  h = (m_nHeight / 2 / m_fScale);
+	w = (_width / 2 / m_fScale);
+	h = (_height / 2 / m_fScale);
 
-  int nDim1 = (m_viewType == YZ) ? 1 : 0;
-  int nDim2 = (m_viewType == XY) ? 1 : 2;
+	int nDim1 = (m_viewType == YZ) ? 1 : 0;
+	int nDim2 = (m_viewType == XY) ? 1 : 2;
 
-  xb = m_vOrigin[nDim1] - w;
-  if (xb < region_mins[nDim1])
-    xb = region_mins[nDim1];
-  xb = step * floor (xb/step);
+	xb = m_vOrigin[nDim1] - w;
+	if (xb < region_mins[nDim1])
+		xb = region_mins[nDim1];
+	xb = step * floor (xb/step);
 
-  xe = m_vOrigin[nDim1] + w;
-  if (xe > region_maxs[nDim1])
-    xe = region_maxs[nDim1];
-  xe = step * ceil (xe/step);
+	xe = m_vOrigin[nDim1] + w;
+	if (xe > region_maxs[nDim1])
+		xe = region_maxs[nDim1];
+	xe = step * ceil (xe/step);
 
-  yb = m_vOrigin[nDim2] - h;
-  if (yb < region_mins[nDim2])
-    yb = region_mins[nDim2];
-  yb = step * floor (yb/step);
+	yb = m_vOrigin[nDim2] - h;
+	if (yb < region_mins[nDim2])
+		yb = region_mins[nDim2];
+	yb = step * floor (yb/step);
 
-  ye = m_vOrigin[nDim2] + h;
-  if (ye > region_maxs[nDim2])
-    ye = region_maxs[nDim2];
-  ye = step * ceil (ye/step);
+	ye = m_vOrigin[nDim2] + h;
+	if (ye > region_maxs[nDim2])
+		ye = region_maxs[nDim2];
+	ye = step * ceil (ye/step);
 
-  // djbob
-  // draw minor blocks
-  if (g_xywindow_globals_private.d_showgrid)
-  {
-  	ui::ColourItem& colourGridBack = ColourSchemes().getColour("grid_background");
-  	ui::ColourItem& colourGridMinor = ColourSchemes().getColour("grid_minor");
-  	ui::ColourItem& colourGridMajor = ColourSchemes().getColour("grid_major");
-  	
-  	if (colourGridMinor != colourGridBack) {
-      glColor3fv(colourGridMinor);
+	// djbob
+	// draw minor blocks
+	if (g_xywindow_globals_private.d_showgrid) {
+		ui::ColourItem& colourGridBack = ColourSchemes().getColour("grid_background");
+		ui::ColourItem& colourGridMinor = ColourSchemes().getColour("grid_minor");
+		ui::ColourItem& colourGridMajor = ColourSchemes().getColour("grid_major");
 
-      glBegin (GL_LINES);
-      int i = 0;
-      for (x = xb ; x < xe ; x += minor_step, ++i)
-      {
-        if((i & mask) != 0)
-        {
-          glVertex2f (x, yb);
-          glVertex2f (x, ye);
-        }
-      }
-      i = 0;
-      for (y = yb ; y < ye ; y += minor_step, ++i)
-      {
-        if((i & mask) != 0)
-        {
-          glVertex2f (xb, y);
-          glVertex2f (xe, y);
-        }
-      }
-      glEnd();
-    }
+		if (colourGridMinor != colourGridBack) {
+			glColor3fv(colourGridMinor);
 
-    // draw major blocks
-    if (colourGridMajor != colourGridBack) {
-      glColor3fv(colourGridMajor);
+			glBegin (GL_LINES);
+			int i = 0;
+			for (x = xb ; x < xe ; x += minor_step, ++i) {
+				if ((i & mask) != 0) {
+					glVertex2f (x, yb);
+					glVertex2f (x, ye);
+				}
+			}
+			i = 0;
+			for (y = yb ; y < ye ; y += minor_step, ++i) {
+				if ((i & mask) != 0) {
+					glVertex2f (xb, y);
+					glVertex2f (xe, y);
+				}
+			}
+			glEnd();
+		}
 
-      glBegin (GL_LINES);
-      for (x=xb ; x<=xe ; x+=step)
-      {
-        glVertex2f (x, yb);
-        glVertex2f (x, ye);
-      }
-      for (y=yb ; y<=ye ; y+=step)
-      {
-        glVertex2f (xb, y);
-        glVertex2f (xe, y);
-      }
-      glEnd();
-    }
-  }
+		// draw major blocks
+		if (colourGridMajor != colourGridBack) {
+			glColor3fv(colourGridMajor);
 
-  // draw coordinate text if needed
-  if ( g_xywindow_globals_private.show_coordinates)
-  {
-  	glColor3fv(ColourSchemes().getColourVector3("grid_text"));
+			glBegin (GL_LINES);
+			for (x=xb ; x<=xe ; x+=step) {
+				glVertex2f (x, yb);
+				glVertex2f (x, ye);
+			}
+			for (y=yb ; y<=ye ; y+=step) {
+				glVertex2f (xb, y);
+				glVertex2f (xe, y);
+			}
+			glEnd();
+		}
+	}
+
+	// draw coordinate text if needed
+	if ( g_xywindow_globals_private.show_coordinates) {
+		glColor3fv(ColourSchemes().getColourVector3("grid_text"));
 		float offx = m_vOrigin[nDim2] + h - 6 / m_fScale, offy = m_vOrigin[nDim1] - w + 1 / m_fScale;
-		for (x = xb - fmod(xb, stepx); x <= xe ; x += stepx)
-		{
-		  glRasterPos2f (x, offx);
+		for (x = xb - fmod(xb, stepx); x <= xe ; x += stepx) {
+			glRasterPos2f (x, offx);
 			sprintf (text, "%g", x);
 			GlobalOpenGL().drawString(text);
 		}
-		for (y = yb - fmod(yb, stepy); y <= ye ; y += stepy)
-		{
-		  glRasterPos2f (offy, y);
+		for (y = yb - fmod(yb, stepy); y <= ye ; y += stepy) {
+			glRasterPos2f (offy, y);
 			sprintf (text, "%g", y);
 			GlobalOpenGL().drawString(text);
 		}
 
-    if (Active()) {
-    	glColor3fv(ColourSchemes().getColourVector3("active_view_name"));
-    }
+		if (isActive()) {
+			glColor3fv(ColourSchemes().getColourVector3("active_view_name"));
+		}
 
-    // we do this part (the old way) only if show_axis is disabled
-    if (!g_xywindow_globals_private.show_axis)
-    {
-      glRasterPos2f ( m_vOrigin[nDim1] - w + 35 / m_fScale, m_vOrigin[nDim2] + h - 20 / m_fScale );
+		// we do this part (the old way) only if show_axis is disabled
+		if (!g_xywindow_globals_private.show_axis) {
+			glRasterPos2f ( m_vOrigin[nDim1] - w + 35 / m_fScale, m_vOrigin[nDim2] + h - 20 / m_fScale );
 
-      GlobalOpenGL().drawString(ViewType_getTitle(m_viewType));
-    }
-  }
+			GlobalOpenGL().drawString(ViewType_getTitle(m_viewType));
+		}
+	}
 
-  if ( g_xywindow_globals_private.show_axis)
-  {
-    const char g_AxisName[3] = { 'X', 'Y', 'Z' };
+	if (g_xywindow_globals_private.show_axis) {
+		const char g_AxisName[3] = { 'X', 'Y', 'Z'
+		                           };
 
-	const std::string colourNameX = (m_viewType == YZ) ? "axis_y" : "axis_x";
-	const std::string colourNameY = (m_viewType == XY) ? "axis_y" : "axis_z";
-	const Vector3& colourX = ColourSchemes().getColourVector3(colourNameX);
-	const Vector3& colourY = ColourSchemes().getColourVector3(colourNameY);
+		const std::string colourNameX = (m_viewType == YZ) ? "axis_y" : "axis_x";
+		const std::string colourNameY = (m_viewType == XY) ? "axis_y" : "axis_z";
+		const Vector3& colourX = ColourSchemes().getColourVector3(colourNameX);
+		const Vector3& colourY = ColourSchemes().getColourVector3(colourNameY);
 
-    // draw two lines with corresponding axis colors to highlight current view
-    // horizontal line: nDim1 color
-    glLineWidth(2);
-    glBegin( GL_LINES );
-    glColor3fv (colourX);
-    glVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
-    glVertex2f( m_vOrigin[nDim1] - w + 65 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
-    glVertex2f( 0, 0 );
-    glVertex2f( 32 / m_fScale, 0 );
-    glColor3fv (colourY);
-    glVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
-    glVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 20 / m_fScale );
-    glVertex2f( 0, 0 );
-    glVertex2f( 0, 32 / m_fScale );
-    glEnd();
-    glLineWidth(1);
-    // now print axis symbols
-    glColor3fv (colourX);
-    glRasterPos2f ( m_vOrigin[nDim1] - w + 55 / m_fScale, m_vOrigin[nDim2] + h - 55 / m_fScale );
-    GlobalOpenGL().drawChar(g_AxisName[nDim1]);
-    glRasterPos2f (28 / m_fScale, -10 / m_fScale );
-    GlobalOpenGL().drawChar(g_AxisName[nDim1]);
-    glColor3fv (colourY);
-    glRasterPos2f ( m_vOrigin[nDim1] - w + 25 / m_fScale, m_vOrigin[nDim2] + h - 30 / m_fScale );
-    GlobalOpenGL().drawChar(g_AxisName[nDim2]);
-    glRasterPos2f ( -10 / m_fScale, 28 / m_fScale );
-    GlobalOpenGL().drawChar(g_AxisName[nDim2]);
+		// draw two lines with corresponding axis colors to highlight current view
+		// horizontal line: nDim1 color
+		glLineWidth(2);
+		glBegin( GL_LINES );
+		glColor3fv (colourX);
+		glVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
+		glVertex2f( m_vOrigin[nDim1] - w + 65 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
+		glVertex2f( 0, 0 );
+		glVertex2f( 32 / m_fScale, 0 );
+		glColor3fv (colourY);
+		glVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
+		glVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 20 / m_fScale );
+		glVertex2f( 0, 0 );
+		glVertex2f( 0, 32 / m_fScale );
+		glEnd();
+		glLineWidth(1);
+		// now print axis symbols
+		glColor3fv (colourX);
+		glRasterPos2f ( m_vOrigin[nDim1] - w + 55 / m_fScale, m_vOrigin[nDim2] + h - 55 / m_fScale );
+		GlobalOpenGL().drawChar(g_AxisName[nDim1]);
+		glRasterPos2f (28 / m_fScale, -10 / m_fScale );
+		GlobalOpenGL().drawChar(g_AxisName[nDim1]);
+		glColor3fv (colourY);
+		glRasterPos2f ( m_vOrigin[nDim1] - w + 25 / m_fScale, m_vOrigin[nDim2] + h - 30 / m_fScale );
+		GlobalOpenGL().drawChar(g_AxisName[nDim2]);
+		glRasterPos2f ( -10 / m_fScale, 28 / m_fScale );
+		GlobalOpenGL().drawChar(g_AxisName[nDim2]);
 
-  }
+	}
 
-  // show current work zone?
-  // the work zone is used to place dropped points and brushes
-  if (g_xywindow_globals_private.d_show_work)
-  {
-    glColor3fv( ColourSchemes().getColourVector3("workzone") );
-    glBegin( GL_LINES );
-    glVertex2f( xb, Select_getWorkZone().d_work_min[nDim2] );
-    glVertex2f( xe, Select_getWorkZone().d_work_min[nDim2] );
-    glVertex2f( xb, Select_getWorkZone().d_work_max[nDim2] );
-    glVertex2f( xe, Select_getWorkZone().d_work_max[nDim2] );
-    glVertex2f( Select_getWorkZone().d_work_min[nDim1], yb );
-    glVertex2f( Select_getWorkZone().d_work_min[nDim1], ye );
-    glVertex2f( Select_getWorkZone().d_work_max[nDim1], yb );
-    glVertex2f( Select_getWorkZone().d_work_max[nDim1], ye );
-    glEnd();
-  }
+	// show current work zone?
+	// the work zone is used to place dropped points and brushes
+	if (g_xywindow_globals_private.d_show_work) {
+		glColor3fv( ColourSchemes().getColourVector3("workzone") );
+		glBegin( GL_LINES );
+		glVertex2f( xb, Select_getWorkZone().d_work_min[nDim2] );
+		glVertex2f( xe, Select_getWorkZone().d_work_min[nDim2] );
+		glVertex2f( xb, Select_getWorkZone().d_work_max[nDim2] );
+		glVertex2f( xe, Select_getWorkZone().d_work_max[nDim2] );
+		glVertex2f( Select_getWorkZone().d_work_min[nDim1], yb );
+		glVertex2f( Select_getWorkZone().d_work_min[nDim1], ye );
+		glVertex2f( Select_getWorkZone().d_work_max[nDim1], yb );
+		glVertex2f( Select_getWorkZone().d_work_max[nDim1], ye );
+		glEnd();
+	}
 }
 
-/*
-==============
-drawBlockGrid
-==============
-*/
-void XYWnd::drawBlockGrid()
-{
-  if(Map_FindWorldspawn(g_map) == 0)
-  {
-    return;
-  }
+void XYWnd::drawBlockGrid() {
+	if (Map_FindWorldspawn(g_map) == 0) {
+		return;
+	}
 	// Set a default blocksize of 1024
 	g_xywindow_globals_private.blockSize = 1024;
 
@@ -1190,140 +1136,121 @@ void XYWnd::drawBlockGrid()
 
 	// Parse and set the custom blocksize if found
 	if (!sizeVal.empty()) {
-		g_xywindow_globals_private.blockSize = 
-			boost::lexical_cast<int>(sizeVal);
+		g_xywindow_globals_private.blockSize =
+		    boost::lexical_cast<int>(sizeVal);
 	}
 
-  float	x, y, xb, xe, yb, ye;
-  float		w, h;
-  char	text[32];
+	float	x, y, xb, xe, yb, ye;
+	float	w, h;
+	char	text[32];
 
-  glDisable(GL_TEXTURE_2D);
-  glDisable(GL_TEXTURE_1D);
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_TEXTURE_1D);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
 
-  w = (m_nWidth / 2 / m_fScale);
-  h = (m_nHeight / 2 / m_fScale);
+	w = (_width / 2 / m_fScale);
+	h = (_height / 2 / m_fScale);
 
-  int nDim1 = (m_viewType == YZ) ? 1 : 0;
-  int nDim2 = (m_viewType == XY) ? 1 : 2;
+	int nDim1 = (m_viewType == YZ) ? 1 : 0;
+	int nDim2 = (m_viewType == XY) ? 1 : 2;
 
-  xb = m_vOrigin[nDim1] - w;
-  if (xb < region_mins[nDim1])
-    xb = region_mins[nDim1];
-  xb = static_cast<float>(g_xywindow_globals_private.blockSize * floor (xb/g_xywindow_globals_private.blockSize));
+	xb = m_vOrigin[nDim1] - w;
+	if (xb < region_mins[nDim1])
+		xb = region_mins[nDim1];
+	xb = static_cast<float>(g_xywindow_globals_private.blockSize * floor (xb/g_xywindow_globals_private.blockSize));
 
-  xe = m_vOrigin[nDim1] + w;
-  if (xe > region_maxs[nDim1])
-    xe = region_maxs[nDim1];
-  xe = static_cast<float>(g_xywindow_globals_private.blockSize * ceil (xe/g_xywindow_globals_private.blockSize));
+	xe = m_vOrigin[nDim1] + w;
+	if (xe > region_maxs[nDim1])
+		xe = region_maxs[nDim1];
+	xe = static_cast<float>(g_xywindow_globals_private.blockSize * ceil (xe/g_xywindow_globals_private.blockSize));
 
-  yb = m_vOrigin[nDim2] - h;
-  if (yb < region_mins[nDim2])
-    yb = region_mins[nDim2];
-  yb = static_cast<float>(g_xywindow_globals_private.blockSize * floor (yb/g_xywindow_globals_private.blockSize));
+	yb = m_vOrigin[nDim2] - h;
+	if (yb < region_mins[nDim2])
+		yb = region_mins[nDim2];
+	yb = static_cast<float>(g_xywindow_globals_private.blockSize * floor (yb/g_xywindow_globals_private.blockSize));
 
-  ye = m_vOrigin[nDim2] + h;
-  if (ye > region_maxs[nDim2])
-    ye = region_maxs[nDim2];
-  ye = static_cast<float>(g_xywindow_globals_private.blockSize * ceil (ye/g_xywindow_globals_private.blockSize));
+	ye = m_vOrigin[nDim2] + h;
+	if (ye > region_maxs[nDim2])
+		ye = region_maxs[nDim2];
+	ye = static_cast<float>(g_xywindow_globals_private.blockSize * ceil (ye/g_xywindow_globals_private.blockSize));
 
-  // draw major blocks
+	// draw major blocks
 
-  glColor3fv(ColourSchemes().getColourVector3("grid_block"));
-  glLineWidth (2);
+	glColor3fv(ColourSchemes().getColourVector3("grid_block"));
+	glLineWidth (2);
 
-  glBegin (GL_LINES);
-	
-  for (x=xb ; x<=xe ; x+=g_xywindow_globals_private.blockSize)
-  {
-    glVertex2f (x, yb);
-    glVertex2f (x, ye);
-  }
+	glBegin (GL_LINES);
 
-  if (m_viewType == XY)
-  {
-	for (y=yb ; y<=ye ; y+=g_xywindow_globals_private.blockSize)
-	{
-	  glVertex2f (xb, y);
-	  glVertex2f (xe, y);
+	for (x=xb ; x<=xe ; x+=g_xywindow_globals_private.blockSize) {
+		glVertex2f (x, yb);
+		glVertex2f (x, ye);
 	}
-  }
-	
-  glEnd();
-  glLineWidth (1);
 
-  // draw coordinate text if needed
-
-  if (m_viewType == XY && m_fScale > .1)
-  {
-	for (x=xb ; x<xe ; x+=g_xywindow_globals_private.blockSize)
-		for (y=yb ; y<ye ; y+=g_xywindow_globals_private.blockSize)
-		{
-		  glRasterPos2f (x+(g_xywindow_globals_private.blockSize/2), y+(g_xywindow_globals_private.blockSize/2));
-			sprintf (text, "%i,%i",(int)floor(x/g_xywindow_globals_private.blockSize), (int)floor(y/g_xywindow_globals_private.blockSize) );
-			GlobalOpenGL().drawString(text);
+	if (m_viewType == XY) {
+		for (y=yb ; y<=ye ; y+=g_xywindow_globals_private.blockSize) {
+			glVertex2f (xb, y);
+			glVertex2f (xe, y);
 		}
-  }
+	}
 
-  glColor4f(0, 0, 0, 0);
+	glEnd();
+	glLineWidth (1);
+
+	// draw coordinate text if needed
+
+	if (m_viewType == XY && m_fScale > .1) {
+		for (x=xb ; x<xe ; x+=g_xywindow_globals_private.blockSize)
+			for (y=yb ; y<ye ; y+=g_xywindow_globals_private.blockSize) {
+				glRasterPos2f (x+(g_xywindow_globals_private.blockSize/2), y+(g_xywindow_globals_private.blockSize/2));
+				sprintf (text, "%i,%i",(int)floor(x/g_xywindow_globals_private.blockSize), (int)floor(y/g_xywindow_globals_private.blockSize) );
+				GlobalOpenGL().drawString(text);
+			}
+	}
+
+	glColor4f(0, 0, 0, 0);
 }
 
 void XYWnd::drawCameraIcon(const Vector3& origin, const Vector3& angles)
 {
-  float	x, y, fov, box;
-  double a;
+	float	x, y, fov, box;
+	double a;
 
-  fov = 48 / m_fScale;
-  box = 16 / m_fScale;
+	fov = 48 / m_fScale;
+	box = 16 / m_fScale;
 
-  if (m_viewType == XY)
-  {
-    x = origin[0];
-    y = origin[1];
-    a = degrees_to_radians(angles[CAMERA_YAW]);
-  }
-  else if (m_viewType == YZ)
-  {
-    x = origin[1];
-    y = origin[2];
-    a = degrees_to_radians(angles[CAMERA_PITCH]);
-  }
-  else
-  {
-    x = origin[0];
-    y = origin[2];
-    a = degrees_to_radians(angles[CAMERA_PITCH]);
-  }
+	if (m_viewType == XY) {
+		x = origin[0];
+		y = origin[1];
+		a = degrees_to_radians(angles[CAMERA_YAW]);
+	}
+	else if (m_viewType == YZ) {
+		x = origin[1];
+		y = origin[2];
+		a = degrees_to_radians(angles[CAMERA_PITCH]);
+	}
+	else {
+		x = origin[0];
+		y = origin[2];
+		a = degrees_to_radians(angles[CAMERA_PITCH]);
+	}
 
-  glColor3fv ( ColourSchemes().getColourVector3("camera_icon") );
-  glBegin(GL_LINE_STRIP);
-  glVertex3f (x-box,y,0);
-  glVertex3f (x,y+(box/2),0);
-  glVertex3f (x+box,y,0);
-  glVertex3f (x,y-(box/2),0);
-  glVertex3f (x-box,y,0);
-  glVertex3f (x+box,y,0);
-  glEnd();
-	
-  glBegin(GL_LINE_STRIP);
-  glVertex3f (x + static_cast<float>(fov*cos(a+c_pi/4)), y + static_cast<float>(fov*sin(a+c_pi/4)), 0);
-  glVertex3f (x, y, 0);
-  glVertex3f (x + static_cast<float>(fov*cos(a-c_pi/4)), y + static_cast<float>(fov*sin(a-c_pi/4)), 0);
-  glEnd();
+	glColor3fv ( ColourSchemes().getColourVector3("camera_icon") );
+	glBegin(GL_LINE_STRIP);
+	glVertex3f (x-box,y,0);
+	glVertex3f (x,y+(box/2),0);
+	glVertex3f (x+box,y,0);
+	glVertex3f (x,y-(box/2),0);
+	glVertex3f (x-box,y,0);
+	glVertex3f (x+box,y,0);
+	glEnd();
 
+	glBegin(GL_LINE_STRIP);
+	glVertex3f (x + static_cast<float>(fov*cos(a+c_pi/4)), y + static_cast<float>(fov*sin(a+c_pi/4)), 0);
+	glVertex3f (x, y, 0);
+	glVertex3f (x + static_cast<float>(fov*cos(a-c_pi/4)), y + static_cast<float>(fov*sin(a-c_pi/4)), 0);
+	glEnd();
 }
-
-
-float Betwixt(float f1, float f2)
-{
-  if (f1 > f2)
-    return f2 + ((f1 - f2) / 2);
-  else
-    return f1 + ((f2 - f1) / 2);
-}
-
 
 // can be greatly simplified but per usual i am in a hurry 
 // which is not an excuse, just a fact
@@ -1461,275 +1388,256 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vMa
   }
 }
 
-void XYWnd::updateProjection()
-{
-  m_projection[0] = 1.0f / static_cast<float>(m_nWidth / 2);
-  m_projection[5] = 1.0f / static_cast<float>(m_nHeight / 2);
-  m_projection[10] = 1.0f / (_maxWorldCoord * m_fScale);
+void XYWnd::updateProjection() {
+	m_projection[0] = 1.0f / static_cast<float>(_width / 2);
+	m_projection[5] = 1.0f / static_cast<float>(_height / 2);
+	m_projection[10] = 1.0f / (_maxWorldCoord * m_fScale);
 
-  m_projection[12] = 0.0f;
-  m_projection[13] = 0.0f;
-  m_projection[14] = -1.0f;
+	m_projection[12] = 0.0f;
+	m_projection[13] = 0.0f;
+	m_projection[14] = -1.0f;
 
-  m_projection[1] =
-  m_projection[2] =
-  m_projection[3] =
+	m_projection[1] = m_projection[2] = m_projection[3] =
+    m_projection[4] = m_projection[6] = m_projection[7] =
+    m_projection[8] = m_projection[9] = m_projection[11] = 0.0f;
 
-  m_projection[4] =
-  m_projection[6] =
-  m_projection[7] =
+	m_projection[15] = 1.0f;
 
-  m_projection[8] =
-  m_projection[9] =
-  m_projection[11] = 0.0f;
-
-  m_projection[15] = 1.0f;
-
-  m_view.Construct(m_projection, m_modelview, m_nWidth, m_nHeight);
+	m_view.Construct(m_projection, m_modelview, _width, _height);
 }
 
 // note: modelview matrix must have a uniform scale, otherwise strange things happen when rendering the rotation manipulator.
-void XYWnd::updateModelview()
-{
-  int nDim1 = (m_viewType == YZ) ? 1 : 0;
-  int nDim2 = (m_viewType == XY) ? 1 : 2;
+void XYWnd::updateModelview() {
+	int nDim1 = (m_viewType == YZ) ? 1 : 0;
+	int nDim2 = (m_viewType == XY) ? 1 : 2;
 
-  // translation
-  m_modelview[12] = -m_vOrigin[nDim1] * m_fScale;
-  m_modelview[13] = -m_vOrigin[nDim2] * m_fScale;
-  m_modelview[14] = _maxWorldCoord * m_fScale;
+	// translation
+	m_modelview[12] = -m_vOrigin[nDim1] * m_fScale;
+	m_modelview[13] = -m_vOrigin[nDim2] * m_fScale;
+	m_modelview[14] = _maxWorldCoord * m_fScale;
 
-  // axis base
-  switch(m_viewType)
-  {
-  case XY:
-    m_modelview[0]  =  m_fScale;
-    m_modelview[1]  =  0;
-    m_modelview[2]  =  0;
+	// axis base
+	switch (m_viewType) {
+		case XY:
+			m_modelview[0]  =  m_fScale;
+			m_modelview[1]  =  0;
+			m_modelview[2]  =  0;
 
-    m_modelview[4]  =  0;
-    m_modelview[5]  =  m_fScale;
-    m_modelview[6]  =  0;
+			m_modelview[4]  =  0;
+			m_modelview[5]  =  m_fScale;
+			m_modelview[6]  =  0;
 
-    m_modelview[8]  =  0;
-    m_modelview[9]  =  0;
-    m_modelview[10] = -m_fScale;
-    break;
-  case XZ:
-    m_modelview[0]  =  m_fScale;
-    m_modelview[1]  =  0;
-    m_modelview[2]  =  0;
+			m_modelview[8]  =  0;
+			m_modelview[9]  =  0;
+			m_modelview[10] = -m_fScale;
+			break;
+		case XZ:
+			m_modelview[0]  =  m_fScale;
+			m_modelview[1]  =  0;
+			m_modelview[2]  =  0;
 
-    m_modelview[4]  =  0;
-    m_modelview[5]  =  0;
-    m_modelview[6]  =  m_fScale;
+			m_modelview[4]  =  0;
+			m_modelview[5]  =  0;
+			m_modelview[6]  =  m_fScale;
 
-    m_modelview[8]  =  0;
-    m_modelview[9]  =  m_fScale;
-    m_modelview[10] =  0;
-    break;
-  case YZ:
-    m_modelview[0]  =  0;
-    m_modelview[1]  =  0;
-    m_modelview[2]  = -m_fScale;
+			m_modelview[8]  =  0;
+			m_modelview[9]  =  m_fScale;
+			m_modelview[10] =  0;
+			break;
+		case YZ:
+			m_modelview[0]  =  0;
+			m_modelview[1]  =  0;
+			m_modelview[2]  = -m_fScale;
 
-    m_modelview[4]  =  m_fScale;
-    m_modelview[5]  =  0;
-    m_modelview[6]  =  0;
+			m_modelview[4]  =  m_fScale;
+			m_modelview[5]  =  0;
+			m_modelview[6]  =  0;
 
-    m_modelview[8]  =  0;
-    m_modelview[9]  =  m_fScale;
-    m_modelview[10] =  0;
-    break;
-  }
+			m_modelview[8]  =  0;
+			m_modelview[9]  =  m_fScale;
+			m_modelview[10] =  0;
+			break;
+	}
 
-  m_modelview[3] = m_modelview[7] = m_modelview[11] = 0;
-  m_modelview[15] = 1;
+	m_modelview[3] = m_modelview[7] = m_modelview[11] = 0;
+	m_modelview[15] = 1;
 
-  m_view.Construct(m_projection, m_modelview, m_nWidth, m_nHeight);
+	m_view.Construct(m_projection, m_modelview, _width, _height);
 }
 
 void XYWnd::draw() {
-  //
-  // clear
-  //
-  glViewport(0, 0, m_nWidth, m_nHeight);
-  Vector3 colourGridBack = ColourSchemes().getColourVector3("grid_background");
-  glClearColor (colourGridBack[0], colourGridBack[1], colourGridBack[2], 0);
+	//
+	// clear
+	//
+	glViewport(0, 0, _width, _height);
+	Vector3 colourGridBack = ColourSchemes().getColourVector3("grid_background");
+	glClearColor (colourGridBack[0], colourGridBack[1], colourGridBack[2], 0);
 
-  glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
 
-  //
-  // set up viewpoint
-  //
+	//
+	// set up viewpoint
+	//
 
-  glMatrixMode(GL_PROJECTION);
-  glLoadMatrixf(reinterpret_cast<const float*>(&m_projection));
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(reinterpret_cast<const float*>(&m_projection));
 
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  glScalef(m_fScale, m_fScale, 1);
-  int nDim1 = (m_viewType == YZ) ? 1 : 0;
-  int nDim2 = (m_viewType == XY) ? 1 : 2;
-  glTranslatef(-m_vOrigin[nDim1], -m_vOrigin[nDim2], 0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glScalef(m_fScale, m_fScale, 1);
+	int nDim1 = (m_viewType == YZ) ? 1 : 0;
+	int nDim2 = (m_viewType == XY) ? 1 : 2;
+	glTranslatef(-m_vOrigin[nDim1], -m_vOrigin[nDim2], 0);
 
-  glDisable (GL_LINE_STIPPLE);
-  glLineWidth(1);
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  glDisableClientState(GL_NORMAL_ARRAY);
-  glDisableClientState(GL_COLOR_ARRAY);
-  glDisable(GL_TEXTURE_2D);
-  glDisable(GL_LIGHTING);
-  glDisable(GL_COLOR_MATERIAL);
-  glDisable(GL_DEPTH_TEST);
+	glDisable (GL_LINE_STIPPLE);
+	glLineWidth(1);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_COLOR_MATERIAL);
+	glDisable(GL_DEPTH_TEST);
 
-  drawGrid();
-  if ( g_xywindow_globals_private.show_blocks)
-    drawBlockGrid();
+	drawGrid();
+	if ( g_xywindow_globals_private.show_blocks)
+		drawBlockGrid();
 
-  glLoadMatrixf(reinterpret_cast<const float*>(&m_modelview));
+	glLoadMatrixf(reinterpret_cast<const float*>(&m_modelview));
 
-  unsigned int globalstate = RENDER_COLOURARRAY | RENDER_COLOURWRITE | RENDER_POLYGONSMOOTH | RENDER_LINESMOOTH;
-  if(!g_xywindow_globals.m_bNoStipple)
-  {
-    globalstate |= RENDER_LINESTIPPLE;
-  }
+	unsigned int globalstate = RENDER_COLOURARRAY | RENDER_COLOURWRITE | RENDER_POLYGONSMOOTH | RENDER_LINESMOOTH;
+	if (!g_xywindow_globals.m_bNoStipple) {
+		globalstate |= RENDER_LINESTIPPLE;
+	}
 
-  {
-    XYRenderer renderer(globalstate, m_state_selected);
+	{
+		XYRenderer renderer(globalstate, m_state_selected);
 
-    Scene_Render(renderer, m_view);
+		Scene_Render(renderer, m_view);
 
-    GlobalOpenGL_debugAssertNoErrors();
-    renderer.render(m_modelview, m_projection);
-    GlobalOpenGL_debugAssertNoErrors();
-  }
+		GlobalOpenGL_debugAssertNoErrors();
+		renderer.render(m_modelview, m_projection);
+		GlobalOpenGL_debugAssertNoErrors();
+	}
 
-  glDepthMask(GL_FALSE);
+	glDepthMask(GL_FALSE);
 
-  GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL_debugAssertNoErrors();
 
-  glLoadMatrixf(reinterpret_cast<const float*>(&m_modelview));
-  
-  GlobalOpenGL_debugAssertNoErrors();
-  glDisable(GL_LINE_STIPPLE);
-  GlobalOpenGL_debugAssertNoErrors();
-  glLineWidth(1);
-  GlobalOpenGL_debugAssertNoErrors();
-  if(GLEW_VERSION_1_3)
-  {
-    glActiveTexture(GL_TEXTURE0);
-    glClientActiveTexture(GL_TEXTURE0);
-  }
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  GlobalOpenGL_debugAssertNoErrors();
-  glDisableClientState(GL_NORMAL_ARRAY);
-  GlobalOpenGL_debugAssertNoErrors();
-  glDisableClientState(GL_COLOR_ARRAY);
-  GlobalOpenGL_debugAssertNoErrors();
-  glDisable(GL_TEXTURE_2D);
-  GlobalOpenGL_debugAssertNoErrors();
-  glDisable(GL_LIGHTING);
-  GlobalOpenGL_debugAssertNoErrors();
-  glDisable(GL_COLOR_MATERIAL);
-  GlobalOpenGL_debugAssertNoErrors();
+	glLoadMatrixf(reinterpret_cast<const float*>(&m_modelview));
 
-  GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL_debugAssertNoErrors();
+	glDisable(GL_LINE_STIPPLE);
+	GlobalOpenGL_debugAssertNoErrors();
+	glLineWidth(1);
+	GlobalOpenGL_debugAssertNoErrors();
+	if (GLEW_VERSION_1_3) {
+		glActiveTexture(GL_TEXTURE0);
+		glClientActiveTexture(GL_TEXTURE0);
+	}
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	GlobalOpenGL_debugAssertNoErrors();
+	glDisableClientState(GL_NORMAL_ARRAY);
+	GlobalOpenGL_debugAssertNoErrors();
+	glDisableClientState(GL_COLOR_ARRAY);
+	GlobalOpenGL_debugAssertNoErrors();
+	glDisable(GL_TEXTURE_2D);
+	GlobalOpenGL_debugAssertNoErrors();
+	glDisable(GL_LIGHTING);
+	GlobalOpenGL_debugAssertNoErrors();
+	glDisable(GL_COLOR_MATERIAL);
+	GlobalOpenGL_debugAssertNoErrors();
+
+	GlobalOpenGL_debugAssertNoErrors();
 
 
-  // greebo: Check, if the brush/patch size info should be displayed (if there are any items selected)
-  if (GlobalRegistry().get("user/ui/showSizeInfo")=="1" && GlobalSelectionSystem().countSelected() != 0) {
-    Vector3 min, max;
-    Select_GetBounds(min, max);
-    drawSizeInfo(nDim1, nDim2, min, max);
-  }
+	// greebo: Check, if the brush/patch size info should be displayed (if there are any items selected)
+	if (GlobalRegistry().get("user/ui/showSizeInfo")=="1" && GlobalSelectionSystem().countSelected() != 0) {
+		Vector3 min, max;
+		Select_GetBounds(min, max);
+		drawSizeInfo(nDim1, nDim2, min, max);
+	}
 
-  if (g_bCrossHairs)
-  {
-    glColor4f(0.2f, 0.9f, 0.2f, 0.8f);
-    glBegin (GL_LINES);
-    if (m_viewType == XY)
-    {
-      glVertex2f(2.0f * _minWorldCoord, m_mousePosition[1]);
-      glVertex2f(2.0f * _maxWorldCoord, m_mousePosition[1]);
-      glVertex2f(m_mousePosition[0], 2.0f * _minWorldCoord);
-      glVertex2f(m_mousePosition[0], 2.0f * _maxWorldCoord);
-    }
-    else if (m_viewType == YZ)
-    {
-      glVertex3f(m_mousePosition[0], 2.0f * _minWorldCoord, m_mousePosition[2]);
-      glVertex3f(m_mousePosition[0], 2.0f * _maxWorldCoord, m_mousePosition[2]);
-      glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * _minWorldCoord);
-      glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * _maxWorldCoord);
-    }
-    else
-    {
-      glVertex3f (2.0f * _minWorldCoord, m_mousePosition[1], m_mousePosition[2]);
-      glVertex3f (2.0f * _maxWorldCoord, m_mousePosition[1], m_mousePosition[2]);
-      glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * _minWorldCoord);
-      glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * _maxWorldCoord);
-    }
-    glEnd();
-  }
+	if (g_bCrossHairs) {
+		glColor4f(0.2f, 0.9f, 0.2f, 0.8f);
+		glBegin (GL_LINES);
+		if (m_viewType == XY) {
+			glVertex2f(2.0f * _minWorldCoord, m_mousePosition[1]);
+			glVertex2f(2.0f * _maxWorldCoord, m_mousePosition[1]);
+			glVertex2f(m_mousePosition[0], 2.0f * _minWorldCoord);
+			glVertex2f(m_mousePosition[0], 2.0f * _maxWorldCoord);
+		}
+		else if (m_viewType == YZ) {
+			glVertex3f(m_mousePosition[0], 2.0f * _minWorldCoord, m_mousePosition[2]);
+			glVertex3f(m_mousePosition[0], 2.0f * _maxWorldCoord, m_mousePosition[2]);
+			glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * _minWorldCoord);
+			glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * _maxWorldCoord);
+		}
+		else {
+			glVertex3f (2.0f * _minWorldCoord, m_mousePosition[1], m_mousePosition[2]);
+			glVertex3f (2.0f * _maxWorldCoord, m_mousePosition[1], m_mousePosition[2]);
+			glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * _minWorldCoord);
+			glVertex3f(m_mousePosition[0], m_mousePosition[1], 2.0f * _maxWorldCoord);
+		}
+		glEnd();
+	}
 
-  if (GlobalClipper().clipMode()) {
-	GlobalClipper().draw(m_fScale);
-  }
+	if (GlobalClipper().clipMode()) {
+		GlobalClipper().draw(m_fScale);
+	}
 
-  GlobalOpenGL_debugAssertNoErrors();
-    
-    // reset modelview
-  glLoadIdentity();
-  glScalef(m_fScale, m_fScale, 1);
-  glTranslatef(-m_vOrigin[nDim1], -m_vOrigin[nDim2], 0);
+	GlobalOpenGL_debugAssertNoErrors();
 
-  drawCameraIcon(g_pParentWnd->GetCamWnd()->getCameraOrigin(), g_pParentWnd->GetCamWnd()->getCameraAngles());
+	// reset modelview
+	glLoadIdentity();
+	glScalef(m_fScale, m_fScale, 1);
+	glTranslatef(-m_vOrigin[nDim1], -m_vOrigin[nDim2], 0);
 
-  if (g_xywindow_globals_private.show_outline)
-  {
-    if (Active())
-    {
-      glMatrixMode (GL_PROJECTION);
-      glLoadIdentity();
-      glOrtho (0, m_nWidth, 0, m_nHeight, 0, 1);
+	drawCameraIcon(g_pParentWnd->GetCamWnd()->getCameraOrigin(), g_pParentWnd->GetCamWnd()->getCameraAngles());
 
-      glMatrixMode (GL_MODELVIEW);
-      glLoadIdentity();
+	if (g_xywindow_globals_private.show_outline) {
+		if (isActive()) {
+			glMatrixMode (GL_PROJECTION);
+			glLoadIdentity();
+			glOrtho (0, _width, 0, _height, 0, 1);
 
-      // four view mode doesn't colorize
-      if (g_pParentWnd->CurrentStyle() == MainFrame::eSplit) {
-        glColor3fv(ColourSchemes().getColourVector3("active_view_name"));
-      }
-      else {
-        switch(m_viewType) {
-        	case YZ:
-          		glColor3fv(ColourSchemes().getColourVector3("axis_x"));
-          		break;
-        	case XZ:
-          		glColor3fv(ColourSchemes().getColourVector3("axis_y"));
-          		break;
-        	case XY:
-          		glColor3fv(ColourSchemes().getColourVector3("axis_z"));
-          		break;
-        	}
-      }
-      
-      glBegin (GL_LINE_LOOP);
-      glVertex2i (0, 0);
-      glVertex2i (m_nWidth-1, 0);
-      glVertex2i (m_nWidth-1, m_nHeight-1);
-      glVertex2i (0, m_nHeight-1);
-      glEnd();
-    }
-  }
+			glMatrixMode (GL_MODELVIEW);
+			glLoadIdentity();
 
-  GlobalOpenGL_debugAssertNoErrors();
+			// four view mode doesn't colorize
+			if (g_pParentWnd->CurrentStyle() == MainFrame::eSplit) {
+				glColor3fv(ColourSchemes().getColourVector3("active_view_name"));
+			}
+			else {
+				switch (m_viewType) {
+					case YZ:
+						glColor3fv(ColourSchemes().getColourVector3("axis_x"));
+						break;
+					case XZ:
+						glColor3fv(ColourSchemes().getColourVector3("axis_y"));
+						break;
+					case XY:
+						glColor3fv(ColourSchemes().getColourVector3("axis_z"));
+						break;
+				}
+			}
 
-  glFinish();
+			glBegin (GL_LINE_LOOP);
+			glVertex2i (0, 0);
+			glVertex2i (_width-1, 0);
+			glVertex2i (_width-1, _height-1);
+			glVertex2i (0, _height-1);
+			glEnd();
+		}
+	}
+
+	GlobalOpenGL_debugAssertNoErrors();
+
+	glFinish();
 }
 
 void XYWnd::mouseToPoint(int x, int y, Vector3& point) {
-	XY_ToPoint(x, y, point);
+	convertXYToWorld(x, y, point);
 	snapToGrid(point);
 
 	int nDim = (getViewType() == XY) ? 2 : (getViewType() == YZ) ? 0 : 1;
@@ -1747,8 +1655,8 @@ void XYWnd::onEntityCreate(const std::string& item) {
 }
 
 void XYWnd::updateXORRectangle(Rectangle area) {
-	if(GTK_WIDGET_VISIBLE(GetWidget())) {
-		m_XORRectangle.set(rectangle_from_area(area.min, area.max, Width(), Height()));
+	if(GTK_WIDGET_VISIBLE(getWidget())) {
+		m_XORRectangle.set(rectangle_from_area(area.min, area.max, getWidth(), getHeight()));
 	}
 }
 
@@ -1757,29 +1665,33 @@ void XYWnd::updateXORRectangle(Rectangle area) {
 //  (this has to be computed against the window size)
 //void XYWnd_ZoomOut(XYWnd* xy);
 void XYWnd::zoomOut() {
-	float min_scale = MIN(Width(),Height()) / ( 1.1f * (_maxWorldCoord - _minWorldCoord));
-	float scale = Scale() * 4.0f / 5.0f;
+	float min_scale = MIN(getWidth(),getHeight()) / ( 1.1f * (_maxWorldCoord - _minWorldCoord));
+	float scale = getScale() * 4.0f / 5.0f;
 	if (scale < min_scale) {
-		if (Scale() != min_scale) {
-			SetScale (min_scale);
+		if (getScale() != min_scale) {
+			setScale(min_scale);
 		}
 	} else {
-		SetScale(scale);
+		setScale(scale);
 	}
 }
 
 void XYWnd::zoomIn() {
 	float max_scale = 64;
-	float scale = Scale() * 5.0f / 4.0f;
+	float scale = getScale() * 5.0f / 4.0f;
 	
 	if (scale > max_scale) {
-		if (Scale() != max_scale) {
-			SetScale (max_scale);
+		if (getScale() != max_scale) {
+			setScale(max_scale);
 		}
 	}
 	else {
-		SetScale(scale);
+		setScale(scale);
 	}
+}
+
+int& XYWnd::dragZoom() {
+	return _dragZoom;
 }
 
 // ================ GTK CALLBACKS ======================================
@@ -1842,17 +1754,17 @@ gboolean XYWnd::callbackMouseWheelScroll(GtkWidget* widget, GdkEventScroll* even
 }
 
 gboolean XYWnd::callbackSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, XYWnd* self) {
-	self->m_nWidth = allocation->width;
-	self->m_nHeight = allocation->height;
+	self->_width = allocation->width;
+	self->_height = allocation->height;
 	self->updateProjection();
-	self->m_window_observer->onSizeChanged(self->Width(), self->Height());
+	self->m_window_observer->onSizeChanged(self->getWidth(), self->getHeight());
 
 	return FALSE;
 }
 
 gboolean XYWnd::callbackExpose(GtkWidget* widget, GdkEventExpose* event, XYWnd* self) {
 
-	if (glwidget_make_current(self->GetWidget()) != FALSE) {
+	if (glwidget_make_current(self->getWidget()) != FALSE) {
 		if (Map_Valid(g_map) && ScreenUpdates_Enabled()) {
 			GlobalOpenGL_debugAssertNoErrors();
 			self->draw();
@@ -1860,7 +1772,7 @@ gboolean XYWnd::callbackExpose(GtkWidget* widget, GdkEventExpose* event, XYWnd* 
 
 			self->m_XORRectangle.set(rectangle_t());
 		}
-		glwidget_swap_buffers(self->GetWidget());
+		glwidget_swap_buffers(self->getWidget());
 	}
 	return FALSE;
 }
@@ -1873,7 +1785,46 @@ gboolean XYWnd::callbackChaseMouse(gpointer data) {
 	return TRUE;
 }
 
+gboolean XYWnd::callbackZoomFocusOut(GtkWidget* widget, GdkEventFocus* event, XYWnd* self) {
+	self->endZoom();
+	return FALSE;
+}
+
+
+gboolean XYWnd::callbackMoveFocusOut(GtkWidget* widget, GdkEventFocus* event, XYWnd* self) {
+	self->endMove();
+	return FALSE;
+}
+
+void XYWnd::callbackZoomDelta(int x, int y, unsigned int state, void* data) {
+	XYWnd* self = reinterpret_cast<XYWnd*>(data);
+	
+	if (y != 0) {
+		self->dragZoom() += y;
+
+		while (abs(self->dragZoom()) > 8) {
+			if (self->dragZoom() > 0) {
+				self->zoomOut();
+				self->dragZoom() -= 8;
+			}
+			else {
+				self->zoomIn();
+				self->dragZoom() += 8;
+			}
+		}
+	}
+}
+
+void XYWnd::callbackMoveDelta(int x, int y, unsigned int state, void* data) {
+	XYWnd* self = reinterpret_cast<XYWnd*>(data);
+	
+	self->EntityCreate_MouseMove(x, y);
+	self->scroll(-x, y);
+}
+
 // =====================================================================
+
+Shader* XYWnd::m_state_selected = 0;
 
 void GetFocusPosition(Vector3& position)
 {
@@ -1944,11 +1895,11 @@ void XY_Next()
 void XY_Zoom100()
 {
   if (g_pParentWnd->GetXYWnd())
-    g_pParentWnd->GetXYWnd()->SetScale(1);
+    g_pParentWnd->GetXYWnd()->setScale(1);
   if (g_pParentWnd->GetXZWnd())
-    g_pParentWnd->GetXZWnd()->SetScale(1);
+    g_pParentWnd->GetXZWnd()->setScale(1);
   if (g_pParentWnd->GetYZWnd())
-    g_pParentWnd->GetYZWnd()->SetScale(1);
+    g_pParentWnd->GetYZWnd()->setScale(1);
 }
 
 void XY_ZoomIn() {
@@ -1996,38 +1947,6 @@ void XZ_Front_Shown_Construct(GtkWindow* parent)
 {
   g_xz_front_shown.connect(GTK_WIDGET(parent));
 }
-
-
-class EntityClassMenu : public ModuleObserver
-{
-  std::size_t m_unrealised;
-public:
-  EntityClassMenu() : m_unrealised(1)
-  {
-  }
-  void realise()
-  {
-    if(--m_unrealised == 0)
-    {
-    }
-  }
-  void unrealise()
-  {
-    if(++m_unrealised == 1)
-    {
-      if(XYWnd::m_mnuDrop != 0)
-      {
-        gtk_widget_destroy(GTK_WIDGET(XYWnd::m_mnuDrop));
-        XYWnd::m_mnuDrop = 0;
-      }
-    }
-  }
-};
-
-EntityClassMenu g_EntityClassMenu;
-
-
-
 
 void ShowNamesToggle()
 {
@@ -2157,8 +2076,6 @@ void XYWnd_registerShortcuts()
   command_connect_accelerator("ToggleCrosshairs");
 }
 
-
-
 void Orthographic_constructPreferences(PrefPage* page)
 {
   page->appendCheckBox("", "Solid selection boxes", g_xywindow_globals.m_bNoStipple);
@@ -2177,9 +2094,6 @@ void Orthographic_registerPreferencesPage()
 
 #include "preferencesystem.h"
 #include "stringio.h"
-
-
-
 
 void ToggleShown_importBool(ToggleShown& self, bool value)
 {
@@ -2224,11 +2138,8 @@ void XYWindow_Construct()
   Orthographic_registerPreferencesPage();  
 
   XYWnd::captureStates();
-  GlobalEntityClassManager().attach(g_EntityClassMenu);
 }
 
-void XYWindow_Destroy()
-{
-  GlobalEntityClassManager().detach(g_EntityClassMenu);
-  XYWnd::releaseStates();
+void XYWindow_Destroy() {
+	XYWnd::releaseStates();
 }

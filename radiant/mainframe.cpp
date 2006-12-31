@@ -2432,12 +2432,12 @@ MainFrame::~MainFrame()
 void MainFrame::SetActiveXY(XYWnd* p)
 {
   if (m_pActiveXY)
-    m_pActiveXY->SetActive(false);
+    m_pActiveXY->setActive(false);
 
   m_pActiveXY = p;
 
   if (m_pActiveXY)
-    m_pActiveXY->SetActive(true);
+    m_pActiveXY->setActive(true);
 
 }
 
@@ -2737,7 +2737,7 @@ void MainFrame::Create()
         // xy
         m_pXYWnd = new XYWnd();
         m_pXYWnd->setViewType(XY);
-        GtkWidget* xy_window = GTK_WIDGET(create_framed_widget(m_pXYWnd->GetWidget()));
+        GtkWidget* xy_window = GTK_WIDGET(create_framed_widget(m_pXYWnd->getWidget()));
 
         {
           GtkWidget* vsplit2 = gtk_vpaned_new();
@@ -2818,7 +2818,7 @@ void MainFrame::Create()
       
 
       {
-        GtkFrame* frame = create_framed_widget(m_pXYWnd->GetWidget());
+        GtkFrame* frame = create_framed_widget(m_pXYWnd->getWidget());
         gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(frame));
       }
       XY_Top_Shown_Construct(window);
@@ -2836,7 +2836,7 @@ void MainFrame::Create()
       m_pXZWnd->setViewType(XZ);
 
       {
-        GtkFrame* frame = create_framed_widget(m_pXZWnd->GetWidget());
+        GtkFrame* frame = create_framed_widget(m_pXZWnd->getWidget());
         gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(frame));
       }
 
@@ -2855,7 +2855,7 @@ void MainFrame::Create()
       m_pYZWnd->setViewType(YZ);
 
       {
-        GtkFrame* frame = create_framed_widget(m_pYZWnd->GetWidget());
+        GtkFrame* frame = create_framed_widget(m_pYZWnd->getWidget());
         gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(frame));
       }
 
@@ -2885,17 +2885,17 @@ void MainFrame::Create()
     m_pYZWnd = new XYWnd();
     m_pYZWnd->setViewType(YZ);
 
-    GtkWidget* yz = m_pYZWnd->GetWidget();
+    GtkWidget* yz = m_pYZWnd->getWidget();
 
     m_pXYWnd = new XYWnd();
     m_pXYWnd->setViewType(XY);
 
-    GtkWidget* xy = m_pXYWnd->GetWidget();
+    GtkWidget* xy = m_pXYWnd->getWidget();
 
     m_pXZWnd = new XYWnd();
     m_pXZWnd->setViewType(XZ);
 
-    GtkWidget* xz = m_pXZWnd->GetWidget();
+    GtkWidget* xz = m_pXZWnd->getWidget();
 
     GtkHPaned* split = create_split_views(camera, yz, xy, xz);
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(split), TRUE, TRUE, 0);
