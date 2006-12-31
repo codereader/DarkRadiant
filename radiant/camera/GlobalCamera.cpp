@@ -33,6 +33,9 @@ void GlobalCameraManager::constructPreferences(PrefPage* page) {
 	
 	// Add the "inverse mouse vertical axis in free-look mode" preference
 	page->appendCheckBox("", "Invert mouse vertical axis (freelook mode)", RKEY_INVERT_MOUSE_VERTICAL_AXIS);
+	
+	// States whether the selection boxes are stippled or not
+	page->appendCheckBox("", "Solid selection boxes", RKEY_SOLID_SELECTION_BOXES);
 
 	// Create the string list containing the render mode captions
 	std::list<std::string> renderModeDescriptions;

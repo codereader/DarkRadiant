@@ -20,6 +20,7 @@ namespace {
 	const std::string RKEY_CUBIC_SCALE = "user/ui/camera/cubicScale";
 	const std::string RKEY_ENABLE_FARCLIP = "user/ui/camera/enableCubicClipping";
 	const std::string RKEY_DRAWMODE = "user/ui/camera/drawMode";
+	const std::string RKEY_SOLID_SELECTION_BOXES = "user/ui/xyview/solidSelectionBoxes";
 	
 	enum CameraDrawMode {
 		drawWire,
@@ -42,6 +43,7 @@ class CameraSettings : public RegistryKeyObserver {
 	
 	int _cubicScale;
 	bool _farClipEnabled;
+	bool _solidSelectionBoxes;
 	
 	void farClipExport(const BoolImportCallback& importCallback);
 	
@@ -63,6 +65,7 @@ public:
 	bool farClipEnabled() const;
 	bool invertMouseVerticalAxis() const;
 	bool discreteMovement() const;
+	bool solidSelectionBoxes() const;
 	
 	// Sets/returns the draw mode (wireframe, solid, textured, lighting)
 	CameraDrawMode getMode() const;

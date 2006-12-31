@@ -121,20 +121,8 @@ void XY_Front() {
 }
 
 void toggleActiveOrthoView() {
-	XYWnd* xywnd = GlobalXYWnd().getActiveXY();
-
-	if (xywnd != NULL) {
-		if (xywnd->getViewType() == XY) {
-			xywnd->setViewType(XZ);
-		}
-		else if (xywnd->getViewType() == XZ) {
-			xywnd->setViewType(YZ);
-		}
-		else {
-			xywnd->setViewType(XY);
-		}
-	}
-	xywnd->positionView(getFocusPosition());
+	GlobalXYWnd().toggleActiveView();
+	GlobalXYWnd().positionView(getFocusPosition());
 }
 
 void XY_Zoom100() {
@@ -318,22 +306,6 @@ void XYWnd_registerShortcuts()
   command_connect_accelerator("ToggleCrosshairs");
 }
 
-void Orthographic_constructPreferences(PrefPage* page)
-{
-  page->appendCheckBox("", "Solid selection boxes", g_xywindow_globals.m_bNoStipple);
-  page->appendCheckBox("", "Chase mouse during drags", g_xywindow_globals_private.m_bChaseMouse);
-  page->appendCheckBox("", "Update views on camera move", g_xywindow_globals_private.m_bCamXYUpdate);
-}
-void Orthographic_constructPage(PreferenceGroup& group)
-{
-  PreferencesPage* page(group.createPage("Orthographic", "Orthographic View Preferences"));
-  Orthographic_constructPreferences(reinterpret_cast<PrefPage*>(page));
-}
-void Orthographic_registerPreferencesPage()
-{
-  PreferencesDialog_addSettingsPage(FreeCaller1<PreferenceGroup&, Orthographic_constructPage>());
-}
-
 #include "preferencesystem.h"
 #include "stringio.h"
 
@@ -367,17 +339,12 @@ void XYWindow_Construct()
   GlobalCommands_insert("CenterXYViews", FreeCaller<XY_Split_Focus>(), Accelerator(GDK_Tab, (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
   GlobalCommands_insert("CenterXYView", FreeCaller<XY_Focus>(), Accelerator(GDK_Tab, (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
 
-  GlobalPreferenceSystem().registerPreference("ChaseMouse", BoolImportStringCaller(g_xywindow_globals_private.m_bChaseMouse), BoolExportStringCaller(g_xywindow_globals_private.m_bChaseMouse));
-  GlobalPreferenceSystem().registerPreference("NoStipple", BoolImportStringCaller(g_xywindow_globals.m_bNoStipple), BoolExportStringCaller(g_xywindow_globals.m_bNoStipple));
   GlobalPreferenceSystem().registerPreference("SI_ShowCoords", BoolImportStringCaller(g_xywindow_globals_private.show_coordinates), BoolExportStringCaller(g_xywindow_globals_private.show_coordinates));
   GlobalPreferenceSystem().registerPreference("SI_ShowOutlines", BoolImportStringCaller(g_xywindow_globals_private.show_outline), BoolExportStringCaller(g_xywindow_globals_private.show_outline));
   GlobalPreferenceSystem().registerPreference("SI_ShowAxis", BoolImportStringCaller(g_xywindow_globals_private.show_axis), BoolExportStringCaller(g_xywindow_globals_private.show_axis));
-  GlobalPreferenceSystem().registerPreference("CamXYUpdate", BoolImportStringCaller(g_xywindow_globals_private.m_bCamXYUpdate), BoolExportStringCaller(g_xywindow_globals_private.m_bCamXYUpdate));
 
   GlobalPreferenceSystem().registerPreference("XZVIS", makeBoolStringImportCallback(ToggleShownImportBoolCaller(g_xz_front_shown)), makeBoolStringExportCallback(ToggleShownExportBoolCaller(g_xz_front_shown)));
   GlobalPreferenceSystem().registerPreference("YZVIS", makeBoolStringImportCallback(ToggleShownImportBoolCaller(g_yz_side_shown)), makeBoolStringExportCallback(ToggleShownExportBoolCaller(g_yz_side_shown)));
-
-  Orthographic_registerPreferencesPage();  
 
   XYWnd::captureStates();
 }

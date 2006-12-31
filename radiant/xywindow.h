@@ -28,8 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 typedef struct _GtkWindow GtkWindow;
 typedef struct _GtkMenu GtkMenu;
 
-extern xywindow_globals_t g_xywindow_globals;
-
 typedef struct _GtkWindow GtkWindow;
 void XY_Top_Shown_Construct(GtkWindow* parent);
 void YZ_Side_Shown_Construct(GtkWindow* parent);

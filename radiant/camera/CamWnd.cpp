@@ -568,7 +568,7 @@ void CamWnd::Cam_Draw() {
 			break;
 	}
 
-	if (!g_xywindow_globals.m_bNoStipple) {
+	if (!getCameraSettings()->solidSelectionBoxes()) {
 		globalstate |= RENDER_LINESTIPPLE|RENDER_POLYGONSTIPPLE;
 	}
 

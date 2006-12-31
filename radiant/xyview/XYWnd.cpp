@@ -20,6 +20,7 @@
 #include "renderer.h"
 #include "windowobservers.h"
 #include "camera/GlobalCamera.h"
+#include "camera/CameraSettings.h"
 #include "ui/ortho/OrthoContextMenu.h"
 
 #include "GlobalXYWnd.h"
@@ -240,7 +241,7 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, const unsigned int& state) 
 
 	// greebo: The mouse chase is only active when the according global is set to true and if we 
 	// are in the right state
-	if (g_xywindow_globals_private.m_bChaseMouse && isAllowedEvent) {
+	if (GlobalXYWnd().chaseMouse() && isAllowedEvent) {
 		const int epsilon = 16;
 
 		// Calculate the X delta
@@ -379,7 +380,7 @@ void XYWnd::orientCamera(int x, int y, CamWnd& camwnd) {
 
 // Callback that gets invoked on camera move
 void XYWnd::cameraMoved() {
-	if (g_xywindow_globals_private.m_bCamXYUpdate) {
+	if (GlobalXYWnd().camXYUpdate()) {
 		queueDraw();
 	}
 }
@@ -1256,7 +1257,7 @@ void XYWnd::draw() {
 	glLoadMatrixf(reinterpret_cast<const float*>(&m_modelview));
 
 	unsigned int globalstate = RENDER_COLOURARRAY | RENDER_COLOURWRITE | RENDER_POLYGONSMOOTH | RENDER_LINESMOOTH;
-	if (!g_xywindow_globals.m_bNoStipple) {
+	if (!getCameraSettings()->solidSelectionBoxes()) {
 		globalstate |= RENDER_LINESTIPPLE;
 	}
 
@@ -1576,4 +1577,3 @@ void XYWnd::callbackMoveDelta(int x, int y, unsigned int state, void* data) {
 Shader* XYWnd::m_state_selected = 0;
 
 xywindow_globals_private_t g_xywindow_globals_private; // TODO Move this into Registry
-xywindow_globals_t g_xywindow_globals;

@@ -1,20 +1,34 @@
 #ifndef GLOBALXYWND_H_
 #define GLOBALXYWND_H_
 
-#include "iclipper.h"
 #include <list>
+
+#include "iclipper.h"
+#include "iregistry.h"
+#include "preferencesystem.h"
+
 #include "XYWnd.h"
 
 	namespace {
+		const std::string RKEY_CHASE_MOUSE = "user/ui/xyview/chaseMouse";
+		const std::string RKEY_CAMERA_XY_UPDATE = "user/ui/xyview/camXYUpdate";
+				
 		typedef std::list<XYWnd*> XYWndList;
 	}
 
-class XYWndManager
+class XYWndManager : 
+	public RegistryKeyObserver,
+	public PreferenceConstructor
 {
 	// The list containing the pointers to all the allocated views
 	XYWndList _XYViews;
 
 	XYWnd* _activeXY;
+	
+	// True, if the view is moved when the mouse cursor exceeds the view window borders
+	bool _chaseMouse;
+	
+	bool _camXYUpdate;
 
 public:
 
@@ -23,6 +37,13 @@ public:
 	
 	// Destructor, calls destroy to free all remaining views
 	~XYWndManager();
+	
+	// The callback that gets called on registry key changes
+	void keyChanged();
+	
+	// Returns the state of the xy view preferences
+	bool chaseMouse() const;
+	bool camXYUpdate() const;
 	
 	// Passes a queueDraw() call to each allocated view
 	void updateAllViews();
@@ -47,12 +68,17 @@ public:
 	EViewType getActiveViewType() const;
 	void setActiveViewType(EViewType viewType);
 	
+	void toggleActiveView();
+	
 	// Retrieves the pointer to the first view matching the given view type
 	// @returns: NULL if no matching window could be found, the according pointer otherwise 
 	XYWnd* getView(EViewType viewType);
 
 	// Allocates a new XY view on the heap and returns its pointer
 	XYWnd* createXY();
+	
+	// Construct the orthoview preference page and add it to the given group
+	void constructPreferencePage(PreferenceGroup& group);
 
 }; // class XYWndManager
 

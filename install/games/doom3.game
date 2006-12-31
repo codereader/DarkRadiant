@@ -86,9 +86,11 @@
 		<property name="noshadows" category="Light" type="boolean" />
 		<property name="nospecular" category="Light" type="boolean" />
 		<property name="texture" category="Light" type="texture" options="lights,fogs" />
+		<property name="extinguished" category="Light" type="boolean" />
 		<property name="model" category="Model" type="text" />
 		<property name="skin" category="Model" type="skin" />
 		<property name="noshadow" category="Model" type="boolean" />
+		<property name="solid" category="Model" type="boolean" />
 		<property name="angle" category="AI" type="text" />
 		<property name="anim" category="AI" type="text" />
 		<property name="neverDormant" category="AI" type="boolean" />
@@ -105,6 +107,7 @@
 		<property name="s_occlusion" category="Sound" type="boolean" />
 		<property name="s_omni" category="Sound" type="boolean" />
 		<property name="s_volume" category="Sound" type="text" />
+		<property name="s_global" category="Sound" type="boolean" />
 	</entityInspector>
 
 	<!-- Game-specific values for light entities -->
