@@ -94,7 +94,55 @@ class XYWnd :
 	
 	guint _chaseMouseHandler;
 
+	float	m_fScale;
+	Vector3 m_vOrigin;
+	
+	View m_view;
+	static Shader* m_state_selected;
+	
+	int m_ptCursorX, m_ptCursorY;
+	
+	unsigned int m_buttonstate;
+	
+	int m_nNewBrushPressx;
+	int m_nNewBrushPressy;
+	scene::Node* m_NewBrushDrag;
+	bool m_bNewBrushDrag;
+	
+	Vector3 m_mousePosition;
+	
+	EViewType m_viewType;
+
+	SelectionSystemWindowObserver* m_window_observer;
+	XORRectangle m_XORRectangle;
+	WindowPositionTracker m_positionTracker;
+
+	int m_entityCreate_x, m_entityCreate_y;
+	bool m_entityCreate;
+	
+  	// Save the current event state
+  	GdkEventButton* _event;
+  	
+  	guint m_move_focusOut;
+	guint m_zoom_focusOut;
+	
+	bool _isActive;
+	
+	int m_chasemouse_current_x, m_chasemouse_current_y;
+	int m_chasemouse_delta_x, m_chasemouse_delta_y;
+	
+	Matrix4 m_projection;
+	Matrix4 m_modelview;
+	
+	int _width;
+	int _height;
+	
+	int _dragZoom;
+	
 public:
+	Signal0 onDestroyed;
+	Signal3<int, int, GdkEventButton*> onMouseDown;
+
 	GtkWindow* m_parent;
 	
 	// Constructor
@@ -103,149 +151,77 @@ public:
 	// Destructor
 	~XYWnd();
 	
-	void queueDraw() {
-		m_deferredDraw.draw();
-	}
+	void queueDraw();	
+	GtkWidget* getWidget();
+
+	static void captureStates();
+	static void releaseStates();
 	
-	GtkWidget* GetWidget() {
-		return m_gl_widget;
-	}
-
-public:
-  SelectionSystemWindowObserver* m_window_observer;
-  XORRectangle m_XORRectangle;
-  WindowPositionTracker m_positionTracker;
-
-  static void captureStates();
-  static void releaseStates();
-
-  void positionView(const Vector3& position);
-  const Vector3& getOrigin();
-  void setOrigin(const Vector3& origin);
-  void scroll(int x, int y);
-
+	void positionView(const Vector3& position);
+	const Vector3& getOrigin();
+	void setOrigin(const Vector3& origin);
+	void scroll(int x, int y);
+	
 	void positionCamera(int x, int y, CamWnd& camwnd);
 	void orientCamera(int x, int y, CamWnd& camwnd);
-
-  void draw();
-  void drawCameraIcon(const Vector3& origin, const Vector3& angles);
-  void drawBlockGrid();
-  void drawGrid();
-
-  void NewBrushDrag_Begin(int x, int y);
-  void NewBrushDrag(int x, int y);
-  void NewBrushDrag_End(int x, int y);
-
-  void XY_ToPoint(int x, int y, Vector3& point);
-  void snapToGrid(Vector3& point);
-  
-  void mouseToPoint(int x, int y, Vector3& point);
-  
-  void updateXORRectangle(Rectangle area);
-
-  void beginMove();
-  void endMove();
-
-  guint m_move_focusOut;
-
-  void beginZoom();
-  void endZoom();
-
-  guint m_zoom_focusOut;
-  
-  void zoomIn();
-  void zoomOut();
-
-  void SetActive(bool b)
-  {
-    m_bActive = b;
-  };
-  bool Active()
-  {
-    return m_bActive;
-  };
-
-  void Clipper_OnLButtonDown(int x, int y);
-  void Clipper_OnLButtonUp(int x, int y);
-  void Clipper_OnMouseMoved(int x, int y);
-  void Clipper_Crosshair_OnMouseMoved(int x, int y);
-  void DropClipPoint(int pointx, int pointy);
-
-  
-  bool m_bActive;
-
-  static GtkMenu* m_mnuDrop;
-
-  int m_chasemouse_current_x, m_chasemouse_current_y;
-  int m_chasemouse_delta_x, m_chasemouse_delta_y;
-  
-  void chaseMouse();
-  bool chaseMouseMotion(int pointx, int pointy, const unsigned int& state);
-
-  void updateModelview();
-  void updateProjection();
-  Matrix4 m_projection;
-  Matrix4 m_modelview;
-
-  int m_nWidth;
-  int m_nHeight;
-private:
-  float	m_fScale;
-  Vector3 m_vOrigin;
-
-
-  View m_view;
-  static Shader* m_state_selected;
-
-  int m_ptCursorX, m_ptCursorY;
-
-  unsigned int m_buttonstate;
-
-  int m_nNewBrushPressx;
-  int m_nNewBrushPressy;
-  scene::Node* m_NewBrushDrag;
-  bool m_bNewBrushDrag;
-
-  Vector3 m_mousePosition;
-
-  EViewType m_viewType;
-
-  void OriginalButtonUp(guint32 nFlags, int point, int pointy);
-  void OriginalButtonDown(guint32 nFlags, int point, int pointy);
-
-  void OnContextMenu();
-  void drawSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vMaxBounds);
-
-  int m_entityCreate_x, m_entityCreate_y;
-  bool m_entityCreate;
-  
-  	// Save the current event state
-  	GdkEventButton* _event;
+	
+	void draw();
+	void drawCameraIcon(const Vector3& origin, const Vector3& angles);
+	void drawBlockGrid();
+	void drawGrid();
+	
+	void NewBrushDrag_Begin(int x, int y);
+	void NewBrushDrag(int x, int y);
+	void NewBrushDrag_End(int x, int y);
+	
+	void convertXYToWorld(int x, int y, Vector3& point);
+	void snapToGrid(Vector3& point);
+	
+	void mouseToPoint(int x, int y, Vector3& point);
+	
+	void updateXORRectangle(Rectangle area);
+	
+	void beginMove();
+	void endMove();
+	
+	void beginZoom();
+	void endZoom();
+	
+	void zoomIn();
+	void zoomOut();
+	
+	void setActive(bool b);
+	bool isActive() const;
+	
+	void Clipper_OnLButtonDown(int x, int y);
+	void Clipper_OnLButtonUp(int x, int y);
+	void Clipper_OnMouseMoved(int x, int y);
+	void Clipper_Crosshair_OnMouseMoved(int x, int y);
+	void DropClipPoint(int pointx, int pointy);
+	
+	void chaseMouse();
+	bool chaseMouseMotion(int pointx, int pointy, const unsigned int& state);
+	
+	void updateModelview();
+	void updateProjection();
   	
-public:
-  void EntityCreate_MouseDown(int x, int y);
-  void EntityCreate_MouseMove(int x, int y);
-  void EntityCreate_MouseUp(int x, int y);
+	void EntityCreate_MouseDown(int x, int y);
+	void EntityCreate_MouseMove(int x, int y);
+	void EntityCreate_MouseUp(int x, int y);
+	
+	void onEntityCreate(const std::string& item);
+	
+	void setViewType(EViewType n);
+	EViewType getViewType() const;
+	
+	void setScale(float f);
+	float getScale() const;
+	
+	int getWidth() const;
+	int getHeight() const;
 
-  void onEntityCreate(const std::string& item);
-  
-  void setViewType(EViewType n);
-  EViewType getViewType() const;
-  
-  void SetScale(float f);
-  float Scale()
-  {
-    return m_fScale;
-  }
-  int Width()
-  {
-    return m_nWidth;
-  }
-  int Height()
-  {
-    return m_nHeight;
-  }
-  
+	int& dragZoom();
+
   	// Save the current GDK event state
   	void setEvent(GdkEventButton* event);
   
@@ -255,18 +231,17 @@ public:
 	// The method responsible for mouseMove situations according to <event>
 	void mouseMoved(int x, int y, const unsigned int& state);
 
-	Signal0 onDestroyed;
-	Signal3<int, int, GdkEventButton*> onMouseDown;
-
 	// The method handling the different mouseDown situations
 	void mouseDown(int x, int y, GdkEventButton* event);
 	typedef Member3<XYWnd, int, int, GdkEventButton*, void, &XYWnd::mouseDown> MouseDownCaller;
 	
 	// greebo: CameraObserver implementation; gets called when the camera is moved
 	void cameraMoved();
-	
+
 private:
-	
+	void onContextMenu();
+	void drawSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vMaxBounds);
+
 	// GTK Callbacks, these have to be static
 	static gboolean	callbackButtonPress(GtkWidget* widget, GdkEventButton* event, XYWnd* self);
 	static gboolean	callbackButtonRelease(GtkWidget* widget, GdkEventButton* event, XYWnd* self);
@@ -277,30 +252,25 @@ private:
 	static void 	callbackMoveDelta(int x, int y, unsigned int state, void* data);
 	static gboolean callbackMoveFocusOut(GtkWidget* widget, GdkEventFocus* event, XYWnd* self);
 	static gboolean	callbackChaseMouse(gpointer data);
+	static gboolean callbackZoomFocusOut(GtkWidget* widget, GdkEventFocus* event, XYWnd* self);
+	static void		callbackZoomDelta(int x, int y, unsigned int state, void* data);
 
 }; // class XYWnd
 
-inline void XYWnd_Update(XYWnd& xywnd)
-{
+inline void XYWnd_Update(XYWnd& xywnd) {
   xywnd.queueDraw();
 }
 
-
 struct xywindow_globals_t
 {
-  //bool m_bRightClick;
   bool m_bNoStipple;
 
   xywindow_globals_t() :
-    //m_bRightClick(true),
     m_bNoStipple(false)
-  {
-  }
-
+  {}
 };
 
 extern xywindow_globals_t g_xywindow_globals;
-
 
 EViewType GlobalXYWnd_getCurrentViewType();
 
