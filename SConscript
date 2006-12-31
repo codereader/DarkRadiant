@@ -360,7 +360,8 @@ radiant_src = [
 'camera/CameraSettings.cpp',
 'camera/Camera.cpp',
 'camera/CamWnd.cpp',
-'camera/GlobalCamera.cpp'
+'camera/GlobalCamera.cpp',
+'xyview/XYWnd.cpp'
 ]
 
 for i in range(len(radiant_src)):
