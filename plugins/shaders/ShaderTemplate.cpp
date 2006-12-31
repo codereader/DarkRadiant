@@ -1,16 +1,20 @@
 #include "ShaderTemplate.h"
 
-// clean a texture name to the qtexture_t name format we use internally
-// NOTE: case sensitivity: the engine is case sensitive. we store the shader name with case information and save with case
-// information as well. but we assume there won't be any case conflict and so when doing lookups based on shader name,
-// we compare as case insensitive. That is Radiant is case insensitive, but knows that the engine is case sensitive.
-//++timo FIXME: we need to put code somewhere to detect when two shaders that are case insensitive equal are present
-template<typename StringType>
-void parseTextureName(StringType& name, const char* token)
+#include "os/path.h"
+
+/**
+ * Replace backslashes with forward slashes and strip of the file extension of
+ * the provided token, and store the result in the provided string.
+ * 
+ * @name
+ * String to set with cleaned result.
+ * 
+ * @token
+ * The raw texture path.
+ */
+void parseTextureName(std::string& name, const std::string& token)
 {
-  StringOutputStream cleaned(256);
-  cleaned << PathCleaned(token);
-  name = CopiedString(StringRange(cleaned.c_str(), path_get_filename_base_end(cleaned.c_str()))).c_str(); // remove extension
+	name = os::standardPath(token).substr(0, token.rfind("."));
 }
 
 /*	Searches a token for known shaderflags (e.g. "translucent") and sets the flags
@@ -107,7 +111,7 @@ bool ShaderTemplate::parseMap(parser::DefTokeniser& tokeniser)
 		tokeniser.assertNextToken("(");
 		parseTextureName(m_currentLayer.m_texture, tokeniser.nextToken().c_str());
 		tokeniser.assertNextToken(",");
-		TextureExpression map2;
+		std::string map2;
 		parseTextureName(map2, tokeniser.nextToken().c_str());
 		tokeniser.assertNextToken(")");
 	}

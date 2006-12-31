@@ -246,7 +246,7 @@ Image* loadSpecial(void* environment, const char* name)
 }
 
 typedef SmartPointer<ShaderTemplate> ShaderTemplatePointer;
-typedef std::map<CopiedString, ShaderTemplatePointer> ShaderTemplateMap;
+typedef std::map<std::string, ShaderTemplatePointer> ShaderTemplateMap;
 
 ShaderTemplateMap g_shaders;
 ShaderTemplateMap g_shaderTemplates;
@@ -264,23 +264,23 @@ ShaderTemplate* findTemplate(const char* name)
 class ShaderDefinition
 {
 public:
-  ShaderDefinition(ShaderTemplate* shaderTemplate, const ShaderArguments& args, const char* filename)
+  ShaderDefinition(ShaderTemplate* shaderTemplate, const StringList& args, const char* filename)
     : shaderTemplate(shaderTemplate), args(args), filename(filename)
   {
   }
   ShaderTemplate* shaderTemplate;
-  ShaderArguments args;
+  StringList args;
   const char* filename;
 };
 
-typedef std::map<CopiedString, ShaderDefinition> ShaderDefinitionMap;
+typedef std::map<std::string, ShaderDefinition> ShaderDefinitionMap;
 
 ShaderDefinitionMap g_shaderDefinitions;
 
-const char* evaluateShaderValue(const char* value, const ShaderParameters& params, const ShaderArguments& args)
+const char* evaluateShaderValue(const char* value, const StringList& params, const StringList& args)
 {
-  ShaderArguments::const_iterator j = args.begin();
-  for(ShaderParameters::const_iterator i = params.begin(); i != params.end(); ++i, ++j)
+  StringList::const_iterator j = args.begin();
+  for(StringList::const_iterator i = params.begin(); i != params.end(); ++i, ++j)
   {
     const char* other = (*i).c_str();
     if(string_equal(value, other))
@@ -292,12 +292,17 @@ const char* evaluateShaderValue(const char* value, const ShaderParameters& param
 }
 
 ///\todo BlendFunc parsing
-BlendFunc evaluateBlendFunc(const BlendFuncExpression& blendFunc, const ShaderParameters& params, const ShaderArguments& args)
+BlendFunc evaluateBlendFunc(const BlendFuncExpression& blendFunc, const StringList& params, const StringList& args)
 {
   return BlendFunc(BLEND_ONE, BLEND_ZERO);
 }
 
-qtexture_t* evaluateTexture(const TextureExpression& texture, const ShaderParameters& params, const ShaderArguments& args, const LoadImageCallback& loader = GlobalTexturesCache().defaultLoader())
+// Evaluate a texture (??)
+qtexture_t* evaluateTexture(
+	const std::string& texture, 
+	const StringList& params, 
+	const StringList& args, 
+	const LoadImageCallback& loader = GlobalTexturesCache().defaultLoader())
 {
   StringOutputStream result(64);
   const char* expression = texture.c_str();
@@ -309,8 +314,8 @@ qtexture_t* evaluateTexture(const TextureExpression& texture, const ShaderParame
       const char* best = end;
       const char* bestParam = 0;
       const char* bestArg = 0;
-      ShaderArguments::const_iterator j = args.begin();
-      for(ShaderParameters::const_iterator i = params.begin(); i != params.end(); ++i, ++j)
+      StringList::const_iterator j = args.begin();
+      for(StringList::const_iterator i = params.begin(); i != params.end(); ++i, ++j)
       {
         const char* found = strstr(expression, (*i).c_str());
         if(found != 0 && found < best)
@@ -336,7 +341,7 @@ qtexture_t* evaluateTexture(const TextureExpression& texture, const ShaderParame
   return GlobalTexturesCache().capture(loader, result.c_str());
 }
 
-float evaluateFloat(const ShaderValue& value, const ShaderParameters& params, const ShaderArguments& args)
+float evaluateFloat(const std::string& value, const StringList& params, const StringList& args)
 {
   const char* result = evaluateShaderValue(value.c_str(), params, args);
   float f;
@@ -347,7 +352,7 @@ float evaluateFloat(const ShaderValue& value, const ShaderParameters& params, co
   return f;
 }
 
-BlendFactor evaluateBlendFactor(const ShaderValue& value, const ShaderParameters& params, const ShaderArguments& args)
+BlendFactor evaluateBlendFactor(const std::string& value, const StringList& params, const StringList& args)
 {
   const char* result = evaluateShaderValue(value.c_str(), params, args);
 
@@ -405,10 +410,10 @@ class CShader : public IShader
   std::size_t m_refcount;
 
   const ShaderTemplate& m_template;
-  const ShaderArguments& m_args;
+  const StringList& m_args;
   const char* m_filename;
   // name is shader-name, otherwise texture-name (if not a real shader)
-  CopiedString m_Name;
+  std::string m_Name;
 
   qtexture_t* m_pTexture;
   qtexture_t* m_notfound;
@@ -692,7 +697,7 @@ public:
     }
   };
 
-  static MapLayer evaluateLayer(const ShaderTemplate::MapLayerTemplate& layerTemplate, const ShaderParameters& params, const ShaderArguments& args)
+  static MapLayer evaluateLayer(const ShaderTemplate::MapLayerTemplate& layerTemplate, const StringList& params, const StringList& args)
   {
     return MapLayer(
       evaluateTexture(layerTemplate.texture(), params, args),
@@ -745,10 +750,22 @@ public:
   }
 };
 
+#ifdef _DEBUG
+
+// IShader stream insertion
+std::ostream& operator<< (std::ostream& st, const IShader& sh) {
+	st << "IShader: { name=" << sh.getName() << " "
+	   << "filename=" << sh.getShaderFileName() << " "
+	   << "}";
+	return st;
+}
+
+#endif
+
 bool CShader::m_lightingEnabled = false;
 
 typedef SmartPointer<CShader> ShaderPointer;
-typedef std::map<CopiedString, ShaderPointer, shader_less_t> shaders_t;
+typedef std::map<std::string, ShaderPointer> shaders_t;
 
 shaders_t g_ActiveShaders;
 
@@ -796,7 +813,7 @@ void FreeShaders()
   g_ActiveShadersChangedNotify();
 }
 
-std::list<CopiedString> g_shaderFilenames;
+std::list<std::string> g_shaderFilenames;
 
 typedef FreeCaller1<const char*, loadShaderFile> LoadShaderFileCaller;
 
@@ -818,7 +835,7 @@ CShader* Try_Shader_ForName(const char* name)
     shaderTemplate->CreateDefault(name);
     g_shaderTemplates.insert(ShaderTemplateMap::value_type(shaderTemplate->getName(), shaderTemplate));
 
-    i = g_shaderDefinitions.insert(ShaderDefinitionMap::value_type(name, ShaderDefinition(shaderTemplate.get(), ShaderArguments(), ""))).first;
+    i = g_shaderDefinitions.insert(ShaderDefinitionMap::value_type(name, ShaderDefinition(shaderTemplate.get(), StringList(), ""))).first;
   }
 
   ShaderPointer pShader(new CShader((*i).second));
@@ -912,7 +929,7 @@ void parseShaderStage(parser::DefTokeniser& tokeniser,
 	if (result) {
 		// do we already have this shader?
         if (!g_shaderDefinitions.insert(ShaderDefinitionMap::value_type(shaderTemplate->getName(),
-            	ShaderDefinition(shaderTemplate.get(), ShaderArguments(), filename))).second) {
+            	ShaderDefinition(shaderTemplate.get(), StringList(), filename))).second) {
         	throw parser::ParseException(std::string("shader ") + shaderTemplate->getName() + " is already in memory");
         }
     }
