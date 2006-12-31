@@ -1733,7 +1733,7 @@ void XY_UpdateWindow(MainFrame& mainframe)
 {
   if(mainframe.GetXYWnd() != 0)
   {
-    XYWnd_Update(*mainframe.GetXYWnd());
+  	mainframe.GetXYWnd()->queueDraw();
   }
 }
 
@@ -1741,7 +1741,7 @@ void XZ_UpdateWindow(MainFrame& mainframe)
 {
   if(mainframe.GetXZWnd() != 0)
   {
-    XYWnd_Update(*mainframe.GetXZWnd());
+  	mainframe.GetXZWnd()->queueDraw();
   }
 }
 
@@ -1749,7 +1749,7 @@ void YZ_UpdateWindow(MainFrame& mainframe)
 {
   if(mainframe.GetYZWnd() != 0)
   {
-    XYWnd_Update(*mainframe.GetYZWnd());
+  	mainframe.GetYZWnd()->queueDraw();
   }
 }
 
@@ -2808,7 +2808,7 @@ void MainFrame::Create()
     }
 
     {
-      GtkWindow* window = create_persistent_floating_window(ViewType_getTitle(XY), m_window);
+      GtkWindow* window = create_persistent_floating_window(XYWnd::getViewTypeTitle(XY).c_str(), m_window);
       global_accel_connect_window(window);
       g_posXYWnd.connect(window);
 
@@ -2827,7 +2827,7 @@ void MainFrame::Create()
     }
 
     {
-      GtkWindow* window = create_persistent_floating_window(ViewType_getTitle(XZ), m_window);
+      GtkWindow* window = create_persistent_floating_window(XYWnd::getViewTypeTitle(XZ).c_str(), m_window);
       global_accel_connect_window(window);
       g_posXZWnd.connect(window);
 
@@ -2846,7 +2846,7 @@ void MainFrame::Create()
     }
 
     {
-      GtkWindow* window = create_persistent_floating_window(ViewType_getTitle(YZ), m_window);
+      GtkWindow* window = create_persistent_floating_window(XYWnd::getViewTypeTitle(YZ).c_str(), m_window);
       global_accel_connect_window(window);
       g_posYZWnd.connect(window);
 
