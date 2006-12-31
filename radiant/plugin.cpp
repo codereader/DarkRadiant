@@ -77,6 +77,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "findtexturedialog.h"
 #include "nullmodel.h"
 #include "grid.h"
+#include "xyview/GlobalXYWnd.h"
 
 #include "modulesystem/modulesmap.h"
 #include "modulesystem/singletonmodule.h"
@@ -112,16 +113,17 @@ scene::Node& getMapWorldEntity()
   return Map_FindOrInsertWorldspawn(g_map);
 }
 
-EViewType XYWindow_getViewType()
-{
-  return g_pParentWnd->GetXYWnd()->getViewType();
+EViewType XYWindow_getViewType() {
+	return GlobalXYWnd().getActiveViewType();
 }
 
-Vector3 XYWindow_windowToWorld(const WindowVector& position)
-{
-  Vector3 result(0, 0, 0);
-  g_pParentWnd->GetXYWnd()->convertXYToWorld(static_cast<int>(position.x()), static_cast<int>(position.y()), result);
-  return result;
+Vector3 XYWindow_windowToWorld(const WindowVector& position) {
+	Vector3 result(0, 0, 0);
+	XYWnd* xyWnd = GlobalXYWnd().getActiveXY();
+	if (xyWnd != NULL) {
+		xyWnd->convertXYToWorld(static_cast<int>(position.x()), static_cast<int>(position.y()), result);
+	}
+	return result;
 }
 
 const char* TextureBrowser_getSelectedShader()
@@ -169,10 +171,6 @@ public:
     m_radiantcore.attachGameModeObserver = Radiant_attachGameModeObserver;
     m_radiantcore.detachGameModeObserver = Radiant_detachGameModeObserver;
 
-    m_radiantcore.XYWindowDestroyed_connect = XYWindowDestroyed_connect;
-    m_radiantcore.XYWindowDestroyed_disconnect = XYWindowDestroyed_disconnect;
-    m_radiantcore.XYWindowMouseDown_connect = XYWindowMouseDown_connect;
-    m_radiantcore.XYWindowMouseDown_disconnect = XYWindowMouseDown_disconnect;
     m_radiantcore.XYWindow_getViewType = XYWindow_getViewType;
     m_radiantcore.XYWindow_windowToWorld = XYWindow_windowToWorld;
     m_radiantcore.TextureBrowser_getSelectedShader = TextureBrowser_getSelectedShader;

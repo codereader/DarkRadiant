@@ -77,12 +77,7 @@ private:
   GtkWidget* m_hSplit;
   GtkWidget* m_vSplit2;
 
-  XYWnd* m_pXYWnd;
-  XYWnd* m_pYZWnd;
-  XYWnd* m_pXZWnd;
   CamWnd* m_pCamWnd;
-  ZWnd* m_pZWnd;
-  XYWnd* m_pActiveXY;
 
   bool m_bSleeping;
 
@@ -110,27 +105,6 @@ public:
   void SetGridStatus();
   typedef MemberCaller<MainFrame, &MainFrame::SetGridStatus> SetGridStatusCaller;
 
-  void SetActiveXY(XYWnd* p);
-  XYWnd* ActiveXY()
-  {
-    return m_pActiveXY;
-  };
-  XYWnd* GetXYWnd()
-  {
-    return m_pXYWnd;
-  }
-  XYWnd* GetXZWnd()
-  {
-    return m_pXZWnd;
-  }
-  XYWnd* GetYZWnd()
-  {
-    return m_pYZWnd;
-  }
-  ZWnd* GetZWnd()
-  {
-    return m_pZWnd;
-  }
   CamWnd* GetCamWnd()
   {
     return m_pCamWnd;
@@ -250,10 +224,5 @@ void MainFrame_Destroy();
 extern float (*GridStatus_getGridSize)();
 extern int (*GridStatus_getRotateIncrement)();
 extern int (*GridStatus_getFarClipDistance)();
-
-SignalHandlerId XYWindowDestroyed_connect(const SignalHandler& handler);
-void XYWindowDestroyed_disconnect(SignalHandlerId id);
-MouseEventHandlerId XYWindowMouseDown_connect(const MouseEventHandler& handler);
-void XYWindowMouseDown_disconnect(MouseEventHandlerId id);
 
 #endif

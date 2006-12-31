@@ -22,37 +22,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_XYWINDOW_H)
 #define INCLUDED_XYWINDOW_H
 
-#include "math/matrix.h"
-#include "signal/signal.h"
-
-#include "gtkutil/cursor.h"
-#include "gtkutil/window.h"
-#include "gtkutil/xorrectangle.h"
-#include "view.h"
-#include "map.h"
-
-#include "EventLib.h"
-#include "camera/CameraObserver.h"
-#include "camera/CamWnd.h"
-#include "selection/RadiantWindowObserver.h"
-
+#include "iclipper.h"
 #include "xyview/XYWnd.h"
 
-// Constants
-
-#include "qerplugin.h"
-
-class Shader;
-namespace scene
-{
-  class Node;
-}
 typedef struct _GtkWindow GtkWindow;
 typedef struct _GtkMenu GtkMenu;
 
 extern xywindow_globals_t g_xywindow_globals;
-
-EViewType GlobalXYWnd_getCurrentViewType();
 
 typedef struct _GtkWindow GtkWindow;
 void XY_Top_Shown_Construct(GtkWindow* parent);

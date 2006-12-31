@@ -143,13 +143,10 @@ class XYWnd :
 	
 	int _dragZoom;
 	
-public:
-	Signal0 onDestroyed;
-	Signal3<int, int, GdkEventButton*> onMouseDown;
-
-	GtkWindow* m_parent;
+	GtkWindow* _parent;
 	
-	// Constructor
+public:
+	// Constructor, this allocates the GL widget
 	XYWnd();
 	
 	// Destructor
@@ -157,6 +154,9 @@ public:
 	
 	void queueDraw();	
 	GtkWidget* getWidget();
+	
+	void setParent(GtkWindow* parent);
+	GtkWindow* getParent() const;
 
 	static void captureStates();
 	static void releaseStates();
