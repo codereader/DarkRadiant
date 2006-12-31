@@ -33,6 +33,7 @@ CameraSettings::CameraSettings() :
 	GlobalRegistry().addKeyObserver(this, RKEY_DISCRETE_MOVEMENT);
 	GlobalRegistry().addKeyObserver(this, RKEY_ENABLE_FARCLIP);
 	GlobalRegistry().addKeyObserver(this, RKEY_DRAWMODE);
+	GlobalRegistry().addKeyObserver(this, RKEY_SOLID_SELECTION_BOXES);
 }
 
 void CameraSettings::farClipExport(const BoolImportCallback& importCallback) {
@@ -74,6 +75,7 @@ void CameraSettings::keyChanged() {
 		_angleSpeed = GlobalRegistry().getInt(RKEY_ROTATION_SPEED);
 		_invertMouseVerticalAxis = (GlobalRegistry().get(RKEY_INVERT_MOUSE_VERTICAL_AXIS) == "1");
 		_farClipEnabled = (GlobalRegistry().get(RKEY_ENABLE_FARCLIP) == "1");
+		_solidSelectionBoxes = (GlobalRegistry().get(RKEY_SOLID_SELECTION_BOXES) == "1");
 		
 		// Determine the draw mode represented by the integer registry value
 		importDrawMode(GlobalRegistry().getInt(RKEY_DRAWMODE));
@@ -126,6 +128,10 @@ void CameraSettings::toggleLightingMode() {
 
 bool CameraSettings::farClipEnabled() const {
 	return _farClipEnabled;
+}
+
+bool CameraSettings::solidSelectionBoxes() const {
+	return _solidSelectionBoxes;
 }
 
 int CameraSettings::cubicScale() const {

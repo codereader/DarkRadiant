@@ -39,9 +39,6 @@ struct xywindow_globals_private_t
   bool     show_blocks;
   int		       blockSize;
 
-  bool m_bCamXYUpdate;
-  bool m_bChaseMouse;
-
   xywindow_globals_private_t() :
     d_showgrid(true),
 
@@ -53,25 +50,12 @@ struct xywindow_globals_private_t
 
     d_show_work(false),
 
-    show_blocks(false),
-
-    m_bCamXYUpdate(true),
-    m_bChaseMouse(true)
+    show_blocks(false)
   {
   }
 
 };
 
-struct xywindow_globals_t
-{
-  bool m_bNoStipple;
-
-  xywindow_globals_t() :
-    m_bNoStipple(false)
-  {}
-};
-
-extern xywindow_globals_t g_xywindow_globals;
 extern xywindow_globals_private_t g_xywindow_globals_private;
 
 class XYWnd :
