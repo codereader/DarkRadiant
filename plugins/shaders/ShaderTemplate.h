@@ -9,25 +9,13 @@
 
 #include "parser/DefTokeniser.h"
 #include "stringio.h"
-#include "string/pooledstring.h"
 #include "stream/stringstream.h"
 #include "os/path.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 
-class ShaderPoolContext
-{
-};
-typedef Static<StringPool, ShaderPoolContext> ShaderPool;
-typedef PooledString<ShaderPool> ShaderString;
-typedef ShaderString ShaderValue;
-typedef ShaderString ShaderVariable;
-
-typedef std::list<ShaderVariable> ShaderParameters;
-typedef std::list<ShaderVariable> ShaderArguments;
-typedef std::pair<ShaderVariable, ShaderVariable> BlendFuncExpression;
-
-typedef CopiedString TextureExpression;
+typedef std::list<std::string> StringList;
+typedef std::pair<std::string, std::string> BlendFuncExpression;
 
 enum ShaderLanguage
 {
@@ -55,11 +43,11 @@ class LayerTemplate
 {
 public:
   LayerTypeId m_type;
-  TextureExpression m_texture;
+  std::string m_texture;
   BlendFuncExpression m_blendFunc;
   bool m_clampToBorder;
-  ShaderValue m_alphaTest;
-  ShaderValue m_heightmapScale;
+  std::string m_alphaTest;
+  std::string m_heightmapScale;
 
   LayerTemplate() : 
   	m_type(LAYER_NONE), 
@@ -77,17 +65,17 @@ public:
 class ShaderTemplate
 {
   std::size_t m_refcount;
-  CopiedString m_Name;
+  std::string m_Name;
 public:
   LayerTemplate 	m_currentLayer;
-  ShaderParameters 	m_params;
+  StringList 	m_params;
 
-  TextureExpression m_textureName;
-  TextureExpression m_diffuse;
-  TextureExpression m_bump;
-  ShaderValue m_heightmapScale;
-  TextureExpression m_specular;
-  TextureExpression m_lightFalloffImage;
+  std::string m_textureName;
+  std::string m_diffuse;
+  std::string m_bump;
+  std::string m_heightmapScale;
+  std::string m_specular;
+  std::string m_lightFalloffImage;
 
   /* Light type booleans */	
   bool fogLight;
@@ -167,19 +155,19 @@ public:
 
   class MapLayerTemplate
   {
-    TextureExpression m_texture;
+    std::string m_texture;
     BlendFuncExpression m_blendFunc;
     bool m_clampToBorder;
-    ShaderValue m_alphaTest;
+    std::string m_alphaTest;
   public:
-    MapLayerTemplate(const TextureExpression& texture, const BlendFuncExpression& blendFunc, bool clampToBorder, const ShaderValue& alphaTest) :
+    MapLayerTemplate(const std::string& texture, const BlendFuncExpression& blendFunc, bool clampToBorder, const std::string& alphaTest) :
       m_texture(texture),
       m_blendFunc(blendFunc),
       m_clampToBorder(false),
       m_alphaTest(alphaTest)
     {
     }
-    const TextureExpression& texture() const
+    const std::string& texture() const
     {
       return m_texture;
     }
@@ -191,7 +179,7 @@ public:
     {
       return m_clampToBorder;
     }
-    const ShaderValue& alphaTest() const
+    const std::string& alphaTest() const
     {
       return m_alphaTest;
     }
