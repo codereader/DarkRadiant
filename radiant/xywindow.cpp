@@ -72,118 +72,101 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "selection/SelectionBox.h"
 
 #include "xyview/XYWnd.h"
-
-EViewType GlobalXYWnd_getCurrentViewType()
-{
-  ASSERT_NOTNULL(g_pParentWnd);
-  ASSERT_NOTNULL(g_pParentWnd->ActiveXY());
-  return g_pParentWnd->ActiveXY()->getViewType();
-}
+#include "xyview/GlobalXYWnd.h"
 
 // =============================================================================
 // variables
 
 bool g_bCrossHairs = false;
 
-void GetFocusPosition(Vector3& position)
-{
-  if(GlobalSelectionSystem().countSelected() != 0)
-  {
-    Select_GetMid(position);
-  }
-  else
-  {
-    position = g_pParentWnd->GetCamWnd()->getCameraOrigin();
-  }
+/* This function determines the point currently being "looked" at, it is used for toggling the ortho views
+ * If something is selected the center of the selection is taken as new origin, otherwise the camera
+ * position is considered to be the new origin of the toggled orthoview.
+*/
+Vector3 getFocusPosition() {
+	Vector3 position(0,0,0);
+	
+	if (GlobalSelectionSystem().countSelected() != 0) {
+		Select_GetMid(position);
+	}
+	else {
+		position = g_pParentWnd->GetCamWnd()->getCameraOrigin();
+	}
+	
+	return position;
 }
 
-void XYWnd_Focus(XYWnd* xywnd)
-{
-  Vector3 position;
-  GetFocusPosition(position);
-  xywnd->positionView(position);
+void XY_Split_Focus() {
+	// Re-position all available views
+	GlobalXYWnd().positionAllViews(getFocusPosition());
 }
 
-void XY_Split_Focus()
-{
-  Vector3 position;
-  GetFocusPosition(position);
-  g_pParentWnd->GetXYWnd()->positionView(position);
-  g_pParentWnd->GetXZWnd()->positionView(position);
-  g_pParentWnd->GetYZWnd()->positionView(position);
+void XY_Focus() {
+	GlobalXYWnd().positionView(getFocusPosition());
 }
 
-void XY_Focus()
-{
-  XYWnd* xywnd = g_pParentWnd->GetXYWnd();
-  XYWnd_Focus(xywnd);
+void XY_Top() {
+	GlobalXYWnd().setActiveViewType(XY);
+	GlobalXYWnd().positionView(getFocusPosition());
 }
 
-void XY_Top()
-{
-  XYWnd* xywnd = g_pParentWnd->GetXYWnd();
-  xywnd->setViewType(XY);
-  XYWnd_Focus(xywnd);
+void XY_Side() {
+	GlobalXYWnd().setActiveViewType(XZ);
+	GlobalXYWnd().positionView(getFocusPosition());
 }
 
-void XY_Side()
-{
-  XYWnd* xywnd = g_pParentWnd->GetXYWnd();
-  xywnd->setViewType(XZ);
-  XYWnd_Focus(xywnd);
+void XY_Front() {
+	GlobalXYWnd().setActiveViewType(YZ);
+	GlobalXYWnd().positionView(getFocusPosition());
 }
 
-void XY_Front()
-{
-  g_pParentWnd->GetXYWnd()->setViewType(YZ);
-  XYWnd_Focus(g_pParentWnd->GetXYWnd());
+void toggleActiveOrthoView() {
+	XYWnd* xywnd = GlobalXYWnd().getActiveXY();
+
+	if (xywnd != NULL) {
+		if (xywnd->getViewType() == XY) {
+			xywnd->setViewType(XZ);
+		}
+		else if (xywnd->getViewType() == XZ) {
+			xywnd->setViewType(YZ);
+		}
+		else {
+			xywnd->setViewType(XY);
+		}
+	}
+	xywnd->positionView(getFocusPosition());
 }
 
-void XY_Next()
-{
-  XYWnd* xywnd = g_pParentWnd->GetXYWnd();
-  if (xywnd->getViewType() == XY)
-    xywnd->setViewType(XZ);
-  else if (xywnd->getViewType() ==  XZ)
-    xywnd->setViewType(YZ);
-  else
-    xywnd->setViewType(XY);
-  XYWnd_Focus(xywnd);
-}
-
-void XY_Zoom100()
-{
-  if (g_pParentWnd->GetXYWnd())
-    g_pParentWnd->GetXYWnd()->setScale(1);
-  if (g_pParentWnd->GetXZWnd())
-    g_pParentWnd->GetXZWnd()->setScale(1);
-  if (g_pParentWnd->GetYZWnd())
-    g_pParentWnd->GetYZWnd()->setScale(1);
+void XY_Zoom100() {
+	GlobalXYWnd().setScale(1);
 }
 
 void XY_ZoomIn() {
-	g_pParentWnd->ActiveXY()->zoomIn();
+	XYWnd* xywnd = GlobalXYWnd().getActiveXY();
+
+	if (xywnd != NULL) {
+		xywnd->zoomIn();
+	}
 }
 
-// NOTE: the zoom out factor is 4/5, we could think about customizing it
-//  we don't go below a zoom factor corresponding to 10% of the max world size
-//  (this has to be computed against the window size)
 void XY_ZoomOut() {
-	g_pParentWnd->ActiveXY()->zoomOut();
+	XYWnd* xywnd = GlobalXYWnd().getActiveXY();
+
+	if (xywnd != NULL) {
+		xywnd->zoomOut();
+	}
 }
-
-
 
 void ToggleShowCrosshair()
 {
   g_bCrossHairs ^= 1; 
-  XY_UpdateAllWindows();
+  GlobalXYWnd().updateAllViews();
 }
 
 void ToggleShowGrid()
 {
   g_xywindow_globals_private.d_showgrid = !g_xywindow_globals_private.d_showgrid;
-  XY_UpdateAllWindows();
+  GlobalXYWnd().updateAllViews();
 }
 
 ToggleShown g_xy_top_shown(true);
@@ -210,7 +193,7 @@ void XZ_Front_Shown_Construct(GtkWindow* parent)
 void ShowNamesToggle()
 {
   GlobalEntityCreator().setShowNames(!GlobalEntityCreator().getShowNames());
-  XY_UpdateAllWindows();
+  GlobalXYWnd().updateAllViews();
 }
 typedef FreeCaller<ShowNamesToggle> ShowNamesToggleCaller;
 void ShowNamesExport(const BoolImportCallback& importer)
@@ -222,7 +205,7 @@ typedef FreeCaller1<const BoolImportCallback&, ShowNamesExport> ShowNamesExportC
 void ShowAnglesToggle()
 {
   GlobalEntityCreator().setShowAngles(!GlobalEntityCreator().getShowAngles());
-  XY_UpdateAllWindows();
+  GlobalXYWnd().updateAllViews();
 }
 typedef FreeCaller<ShowAnglesToggle> ShowAnglesToggleCaller;
 void ShowAnglesExport(const BoolImportCallback& importer)
@@ -234,7 +217,7 @@ typedef FreeCaller1<const BoolImportCallback&, ShowAnglesExport> ShowAnglesExpor
 void ShowBlocksToggle()
 {
   g_xywindow_globals_private.show_blocks ^= 1;
-  XY_UpdateAllWindows();
+  GlobalXYWnd().updateAllViews();
 }
 typedef FreeCaller<ShowBlocksToggle> ShowBlocksToggleCaller;
 void ShowBlocksExport(const BoolImportCallback& importer)
@@ -246,7 +229,7 @@ typedef FreeCaller1<const BoolImportCallback&, ShowBlocksExport> ShowBlocksExpor
 void ShowCoordinatesToggle()
 {
   g_xywindow_globals_private.show_coordinates ^= 1;
-  XY_UpdateAllWindows();
+  GlobalXYWnd().updateAllViews();
 }
 typedef FreeCaller<ShowCoordinatesToggle> ShowCoordinatesToggleCaller;
 void ShowCoordinatesExport(const BoolImportCallback& importer)
@@ -258,7 +241,7 @@ typedef FreeCaller1<const BoolImportCallback&, ShowCoordinatesExport> ShowCoordi
 void ShowOutlineToggle()
 {
   g_xywindow_globals_private.show_outline ^= 1;
-  XY_UpdateAllWindows();
+  GlobalXYWnd().updateAllViews();
 }
 typedef FreeCaller<ShowOutlineToggle> ShowOutlineToggleCaller;
 void ShowOutlineExport(const BoolImportCallback& importer)
@@ -270,7 +253,7 @@ typedef FreeCaller1<const BoolImportCallback&, ShowOutlineExport> ShowOutlineExp
 void ShowAxesToggle()
 {
   g_xywindow_globals_private.show_axis ^= 1;
-  XY_UpdateAllWindows();
+  GlobalXYWnd().updateAllViews();
 }
 typedef FreeCaller<ShowAxesToggle> ShowAxesToggleCaller;
 void ShowAxesExport(const BoolImportCallback& importer)
@@ -282,7 +265,7 @@ typedef FreeCaller1<const BoolImportCallback&, ShowAxesExport> ShowAxesExportCal
 void ShowWorkzoneToggle()
 {
   g_xywindow_globals_private.d_show_work ^= 1;
-  XY_UpdateAllWindows();
+  GlobalXYWnd().updateAllViews();
 }
 typedef FreeCaller<ShowWorkzoneToggle> ShowWorkzoneToggleCaller;
 void ShowWorkzoneExport(const BoolImportCallback& importer)
@@ -374,7 +357,7 @@ void XYWindow_Construct()
   GlobalToggles_insert("ToggleView", ToggleShown::ToggleCaller(g_xy_top_shown), ToggleItem::AddCallbackCaller(g_xy_top_shown.m_item), Accelerator('V', (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
   GlobalToggles_insert("ToggleSideView", ToggleShown::ToggleCaller(g_yz_side_shown), ToggleItem::AddCallbackCaller(g_yz_side_shown.m_item));
   GlobalToggles_insert("ToggleFrontView", ToggleShown::ToggleCaller(g_xz_front_shown), ToggleItem::AddCallbackCaller(g_xz_front_shown.m_item));
-  GlobalCommands_insert("NextView", FreeCaller<XY_Next>(), Accelerator(GDK_Tab, (GdkModifierType)GDK_CONTROL_MASK));
+  GlobalCommands_insert("NextView", FreeCaller<toggleActiveOrthoView>(), Accelerator(GDK_Tab, (GdkModifierType)GDK_CONTROL_MASK));
   GlobalCommands_insert("ZoomIn", FreeCaller<XY_ZoomIn>(), Accelerator(GDK_Delete));
   GlobalCommands_insert("ZoomOut", FreeCaller<XY_ZoomOut>(), Accelerator(GDK_Insert));
   GlobalCommands_insert("ViewTop", FreeCaller<XY_Top>());

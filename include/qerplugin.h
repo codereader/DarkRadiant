@@ -149,10 +149,6 @@ struct IRadiant
   void (*attachGameModeObserver)(ModuleObserver& observer);
   void (*detachGameModeObserver)(ModuleObserver& observer);
 
-  SignalHandlerId (*XYWindowDestroyed_connect)(const SignalHandler& handler);
-  void (*XYWindowDestroyed_disconnect)(SignalHandlerId id);
-  MouseEventHandlerId (*XYWindowMouseDown_connect)(const MouseEventHandler& handler);
-  void (*XYWindowMouseDown_disconnect)(MouseEventHandlerId id);
   EViewType (*XYWindow_getViewType)();
   Vector3 (*XYWindow_windowToWorld)(const WindowVector& position);
   

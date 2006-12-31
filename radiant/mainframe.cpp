@@ -129,6 +129,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "referencecache.h"
 #include "camera/GlobalCamera.h"
 #include "camera/CameraSettings.h"
+#include "xyview/GlobalXYWnd.h"
 
 struct layout_globals_t
 {
@@ -1169,25 +1170,25 @@ void Selection_Deselect()
 void Selection_NudgeUp()
 {
   UndoableCommand undo("nudgeSelectedUp");
-  NudgeSelection(eNudgeUp, GetGridSize(), GlobalXYWnd_getCurrentViewType());
+  NudgeSelection(eNudgeUp, GetGridSize(), GlobalXYWnd().getActiveViewType());
 }
 
 void Selection_NudgeDown()
 {
   UndoableCommand undo("nudgeSelectedDown");
-  NudgeSelection(eNudgeDown, GetGridSize(), GlobalXYWnd_getCurrentViewType());
+  NudgeSelection(eNudgeDown, GetGridSize(), GlobalXYWnd().getActiveViewType());
 }
 
 void Selection_NudgeLeft()
 {
   UndoableCommand undo("nudgeSelectedLeft");
-  NudgeSelection(eNudgeLeft, GetGridSize(), GlobalXYWnd_getCurrentViewType());
+  NudgeSelection(eNudgeLeft, GetGridSize(), GlobalXYWnd().getActiveViewType());
 }
 
 void Selection_NudgeRight()
 {
   UndoableCommand undo("nudgeSelectedRight");
-  NudgeSelection(eNudgeRight, GetGridSize(), GlobalXYWnd_getCurrentViewType());
+  NudgeSelection(eNudgeRight, GetGridSize(), GlobalXYWnd().getActiveViewType());
 }
 
 
@@ -1729,35 +1730,8 @@ void GlobalCamera_UpdateWindow()
   }
 }
 
-void XY_UpdateWindow(MainFrame& mainframe)
-{
-  if(mainframe.GetXYWnd() != 0)
-  {
-  	mainframe.GetXYWnd()->queueDraw();
-  }
-}
-
-void XZ_UpdateWindow(MainFrame& mainframe)
-{
-  if(mainframe.GetXZWnd() != 0)
-  {
-  	mainframe.GetXZWnd()->queueDraw();
-  }
-}
-
-void YZ_UpdateWindow(MainFrame& mainframe)
-{
-  if(mainframe.GetYZWnd() != 0)
-  {
-  	mainframe.GetYZWnd()->queueDraw();
-  }
-}
-
-void XY_UpdateAllWindows(MainFrame& mainframe)
-{
-  XY_UpdateWindow(mainframe);
-  XZ_UpdateWindow(mainframe);
-  YZ_UpdateWindow(mainframe);
+void XY_UpdateAllWindows(MainFrame& mainframe) {
+	GlobalXYWnd().updateAllViews();
 }
 
 void XY_UpdateAllWindows()
@@ -2358,26 +2332,6 @@ public:
 
 MainWindowActive g_MainWindowActive;
 
-SignalHandlerId XYWindowDestroyed_connect(const SignalHandler& handler)
-{
-  return g_pParentWnd->GetXYWnd()->onDestroyed.connectFirst(handler);
-}
-
-void XYWindowDestroyed_disconnect(SignalHandlerId id)
-{
-  g_pParentWnd->GetXYWnd()->onDestroyed.disconnect(id);
-}
-
-MouseEventHandlerId XYWindowMouseDown_connect(const MouseEventHandler& handler)
-{
-  return g_pParentWnd->GetXYWnd()->onMouseDown.connectFirst(handler);
-}
-
-void XYWindowMouseDown_disconnect(MouseEventHandlerId id)
-{
-  g_pParentWnd->GetXYWnd()->onMouseDown.disconnect(id);
-}
-
 // =============================================================================
 // MainFrame class
 
@@ -2396,12 +2350,7 @@ std::vector<GtkWidget*> g_floating_windows;
 
 MainFrame::MainFrame() : m_window(0), m_idleRedrawStatusText(RedrawStatusTextCaller(*this))
 {
-  m_pXYWnd = 0;
   m_pCamWnd = 0;
-  m_pZWnd = 0;
-  m_pYZWnd = 0;
-  m_pXZWnd = 0;
-  m_pActiveXY = 0;
 
   for (int n = 0;n < c_count_status;n++)
   {
@@ -2429,52 +2378,14 @@ MainFrame::~MainFrame()
   gtk_widget_destroy(GTK_WIDGET(m_window));
 }
 
-void MainFrame::SetActiveXY(XYWnd* p)
-{
-  if (m_pActiveXY)
-    m_pActiveXY->setActive(false);
-
-  m_pActiveXY = p;
-
-  if (m_pActiveXY)
-    m_pActiveXY->setActive(true);
-
-}
-
 void MainFrame::ReleaseContexts()
 {
-#if 0
-  if (m_pXYWnd)
-    m_pXYWnd->DestroyContext();
-  if (m_pYZWnd)
-    m_pYZWnd->DestroyContext();
-  if (m_pXZWnd)
-    m_pXZWnd->DestroyContext();
-  if (m_pCamWnd)
-    m_pCamWnd->DestroyContext();
-  if (m_pTexWnd)
-    m_pTexWnd->DestroyContext();
-  if (m_pZWnd)
-    m_pZWnd->DestroyContext();
-#endif
+
 }
 
 void MainFrame::CreateContexts()
 {
-#if 0
-  if (m_pCamWnd)
-    m_pCamWnd->CreateContext();
-  if (m_pXYWnd)
-    m_pXYWnd->CreateContext();
-  if (m_pYZWnd)
-    m_pYZWnd->CreateContext();
-  if (m_pXZWnd)
-    m_pXZWnd->CreateContext();
-  if (m_pTexWnd)
-    m_pTexWnd->CreateContext();
-  if (m_pZWnd)
-    m_pZWnd->CreateContext();
-#endif
+
 }
 
 #ifdef _DEBUG
@@ -2716,6 +2627,9 @@ void MainFrame::Create()
 
   gtk_widget_show(GTK_WIDGET(window));
 
+	// The default XYView pointer
+	XYWnd* xyWnd;
+
   if (CurrentStyle() == eRegular || CurrentStyle() == eRegularLeft)
   {
     {
@@ -2734,10 +2648,12 @@ void MainFrame::Create()
         m_hSplit = hsplit;
         gtk_paned_add1(GTK_PANED(vsplit), hsplit);
 
-        // xy
-        m_pXYWnd = new XYWnd();
-        m_pXYWnd->setViewType(XY);
-        GtkWidget* xy_window = GTK_WIDGET(create_framed_widget(m_pXYWnd->getWidget()));
+		// Allocate a new OrthoView and set its ViewType to XY
+		xyWnd = GlobalXYWnd().createXY();
+        xyWnd->setViewType(XY);
+        
+        // Create a framed window out of the view's internal widget
+        GtkWidget* xy_window = GTK_WIDGET(create_framed_widget(xyWnd->getWidget()));
 
         {
           GtkWidget* vsplit2 = gtk_vpaned_new();
@@ -2807,18 +2723,18 @@ void MainFrame::Create()
       g_floating_windows.push_back(GTK_WIDGET(window));
     }
 
+	// Now allocate the three default XY views
     {
       GtkWindow* window = create_persistent_floating_window(XYWnd::getViewTypeTitle(XY).c_str(), m_window);
       global_accel_connect_window(window);
       g_posXYWnd.connect(window);
 
-      m_pXYWnd = new XYWnd();
-      m_pXYWnd->m_parent = window;
-      m_pXYWnd->setViewType(XY);
+      xyWnd = GlobalXYWnd().createXY();
+      xyWnd->setParent(window);
+      xyWnd->setViewType(XY);
       
-
       {
-        GtkFrame* frame = create_framed_widget(m_pXYWnd->getWidget());
+        GtkFrame* frame = create_framed_widget(xyWnd->getWidget());
         gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(frame));
       }
       XY_Top_Shown_Construct(window);
@@ -2831,12 +2747,12 @@ void MainFrame::Create()
       global_accel_connect_window(window);
       g_posXZWnd.connect(window);
 
-      m_pXZWnd = new XYWnd();
-      m_pXZWnd->m_parent = window;
-      m_pXZWnd->setViewType(XZ);
+      XYWnd* xzWnd = GlobalXYWnd().createXY();
+      xzWnd->setParent(window);
+      xzWnd->setViewType(XZ);
 
       {
-        GtkFrame* frame = create_framed_widget(m_pXZWnd->getWidget());
+        GtkFrame* frame = create_framed_widget(xzWnd->getWidget());
         gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(frame));
       }
 
@@ -2850,12 +2766,12 @@ void MainFrame::Create()
       global_accel_connect_window(window);
       g_posYZWnd.connect(window);
 
-      m_pYZWnd = new XYWnd();
-      m_pYZWnd->m_parent = window;
-      m_pYZWnd->setViewType(YZ);
+      XYWnd* yzWnd = GlobalXYWnd().createXY();
+      yzWnd->setParent(window);
+      yzWnd->setViewType(YZ);
 
       {
-        GtkFrame* frame = create_framed_widget(m_pYZWnd->getWidget());
+        GtkFrame* frame = create_framed_widget(yzWnd->getWidget());
         gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(frame));
       }
 
@@ -2882,20 +2798,18 @@ void MainFrame::Create()
 
     GtkWidget* camera = m_pCamWnd->getWidget();
 
-    m_pYZWnd = new XYWnd();
-    m_pYZWnd->setViewType(YZ);
+	// Allocate the three ortho views
+    xyWnd = GlobalXYWnd().createXY();;
+    xyWnd->setViewType(XY);
+    GtkWidget* xy = xyWnd->getWidget();
+    
+    XYWnd* yzWnd = GlobalXYWnd().createXY();;
+    yzWnd->setViewType(YZ);
+    GtkWidget* yz = yzWnd->getWidget();
 
-    GtkWidget* yz = m_pYZWnd->getWidget();
-
-    m_pXYWnd = new XYWnd();
-    m_pXYWnd->setViewType(XY);
-
-    GtkWidget* xy = m_pXYWnd->getWidget();
-
-    m_pXZWnd = new XYWnd();
-    m_pXZWnd->setViewType(XZ);
-
-    GtkWidget* xz = m_pXZWnd->getWidget();
+    XYWnd* xzWnd = GlobalXYWnd().createXY();;
+    xzWnd->setViewType(XZ);
+    GtkWidget* xz = xzWnd->getWidget();
 
     GtkHPaned* split = create_split_views(camera, yz, xy, xz);
     gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(split), TRUE, TRUE, 0);
@@ -2915,7 +2829,8 @@ void MainFrame::Create()
   SurfaceInspector_constructWindow(window);
   PatchInspector_constructWindow(window);
 
-  SetActiveXY(m_pXYWnd);
+	// greebo: In any layout, there is at least the XY view present, make it active 
+	GlobalXYWnd().setActiveXY(xyWnd);
 
   AddGridChangeCallback(SetGridStatusCaller(*this));
   AddGridChangeCallback(ReferenceCaller<MainFrame, XY_UpdateAllWindows>(*this));
@@ -2960,12 +2875,7 @@ void MainFrame::Shutdown()
 
   g_textures_menu = 0;
 
-  delete m_pXYWnd;
-  m_pXYWnd = 0;
-  delete m_pYZWnd;
-  m_pYZWnd = 0;
-  delete m_pXZWnd;
-  m_pXZWnd = 0;
+	GlobalXYWnd().destroy();
 
   TextureBrowser_destroyWindow();
 

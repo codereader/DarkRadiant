@@ -22,6 +22,7 @@
 #include "camera/GlobalCamera.h"
 #include "ui/ortho/OrthoContextMenu.h"
 
+#include "GlobalXYWnd.h"
 #include "XYRenderer.h"
 
 #include <boost/lexical_cast.hpp>
@@ -60,7 +61,7 @@ XYWnd::XYWnd() :
 	m_window_observer(NewWindowObserver()),
 	m_XORRectangle(m_gl_widget),
 	_isActive(false),
-	m_parent(0)
+	_parent(NULL)
 {
 	m_buttonstate = 0;
 
@@ -110,14 +111,10 @@ XYWnd::XYWnd() :
 	GlobalCamera().addCameraObserver(this);
 
 	PressedButtons_connect(g_pressedButtons, m_gl_widget);
-
-	onMouseDown.connectLast(makeSignalHandler3(MouseDownCaller(), *this));
 }
 
 // Destructor
 XYWnd::~XYWnd() {
-	onDestroyed();
-
 	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_sizeHandler);
 	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_exposeHandler);
 
@@ -147,6 +144,14 @@ int XYWnd::getWidth() const {
 
 int XYWnd::getHeight() const {
 	return _height;
+}
+
+void XYWnd::setParent(GtkWindow* parent) {
+	_parent = parent;
+}
+
+GtkWindow* XYWnd::getParent() const {
+	return _parent;
 }
 
 void XYWnd::captureStates() {
@@ -454,14 +459,14 @@ void XYWnd::beginMove() {
 		endMove();
 	}
 	_moveStarted = true;
-	_freezePointer.freeze_pointer(m_parent != 0 ? m_parent : MainFrame_getWindow(), callbackMoveDelta, this);
+	_freezePointer.freeze_pointer(_parent != 0 ? _parent : MainFrame_getWindow(), callbackMoveDelta, this);
 	m_move_focusOut = g_signal_connect(G_OBJECT(m_gl_widget), "focus_out_event", G_CALLBACK(callbackMoveFocusOut), this);
 }
 
 
 void XYWnd::endMove() {
 	_moveStarted = false;
-	_freezePointer.unfreeze_pointer(m_parent != 0 ? m_parent : MainFrame_getWindow());
+	_freezePointer.unfreeze_pointer(_parent != 0 ? _parent : MainFrame_getWindow());
 	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_move_focusOut);
 }
 
@@ -471,13 +476,13 @@ void XYWnd::beginZoom() {
 	}
 	_zoomStarted = true;
 	_dragZoom = 0;
-	_freezePointer.freeze_pointer(m_parent != 0 ? m_parent : MainFrame_getWindow(), callbackZoomDelta, this);
+	_freezePointer.freeze_pointer(_parent != 0 ? _parent : MainFrame_getWindow(), callbackZoomDelta, this);
 	m_zoom_focusOut = g_signal_connect(G_OBJECT(m_gl_widget), "focus_out_event", G_CALLBACK(callbackZoomFocusOut), this);
 }
 
 void XYWnd::endZoom() {
 	_zoomStarted = false;
-	_freezePointer.unfreeze_pointer(m_parent != 0 ? m_parent : MainFrame_getWindow());
+	_freezePointer.unfreeze_pointer(_parent != 0 ? _parent : MainFrame_getWindow());
 	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_zoom_focusOut);
 }
 
@@ -498,8 +503,8 @@ void XYWnd::setViewType(EViewType viewType) {
 	m_viewType = viewType;
 	updateModelview();
 
-	if (m_parent != 0) {
-		gtk_window_set_title(m_parent, getViewTypeTitle(m_viewType).c_str());
+	if (_parent != 0) {
+		gtk_window_set_title(_parent, getViewTypeTitle(m_viewType).c_str());
 	}
 }
 
@@ -1447,13 +1452,13 @@ int& XYWnd::dragZoom() {
 gboolean XYWnd::callbackButtonPress(GtkWidget* widget, GdkEventButton* event, XYWnd* self) {
 	if (event->type == GDK_BUTTON_PRESS) {
 		// Put the focus on the xy view that has been clicked on
-		g_pParentWnd->SetActiveXY(self);
+		GlobalXYWnd().setActiveXY(self);
 
 		//xywnd->ButtonState_onMouseDown(buttons_for_event_button(event));
 		self->setEvent(event);
 		
 		// Pass the GdkEventButton* to the XYWnd class, the boolean <true> is passed but never used
-		self->onMouseDown(static_cast<int>(event->x), static_cast<int>(event->y), event);
+		self->mouseDown(static_cast<int>(event->x), static_cast<int>(event->y), event);
 	}
 	return FALSE;
 }
