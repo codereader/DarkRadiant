@@ -76,6 +76,18 @@ void XYWndManager::updateAllViews() {
 	}
 }
 
+void XYWndManager::zoomIn() {
+	if (_activeXY != NULL) {
+		_activeXY->zoomIn();
+	}
+}
+
+void XYWndManager::zoomOut() {
+	if (_activeXY != NULL) {
+		_activeXY->zoomOut();
+	}
+}
+
 // Free the allocated XYViews from the heap
 void XYWndManager::destroy() {
 	for (XYWndList::iterator i = _XYViews.begin(); i != _XYViews.end(); i++) {

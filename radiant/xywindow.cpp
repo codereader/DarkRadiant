@@ -127,28 +127,6 @@ void XY_Zoom100() {
 	GlobalXYWnd().setScale(1);
 }
 
-void XY_ZoomIn() {
-	XYWnd* xywnd = GlobalXYWnd().getActiveXY();
-
-	if (xywnd != NULL) {
-		xywnd->zoomIn();
-	}
-}
-
-void XY_ZoomOut() {
-	XYWnd* xywnd = GlobalXYWnd().getActiveXY();
-
-	if (xywnd != NULL) {
-		xywnd->zoomOut();
-	}
-}
-
-void ToggleShowGrid()
-{
-  GlobalXYWnd().toggleGrid();
-  GlobalXYWnd().updateAllViews();
-}
-
 ToggleShown g_xy_top_shown(true);
 
 void XY_Top_Shown_Construct(GtkWindow* parent)
@@ -316,14 +294,14 @@ typedef ConstReferenceCaller1<ToggleShown, const BoolImportCallback&, ToggleShow
 void XYWindow_Construct()
 {
   GlobalCommands_insert("ToggleCrosshairs", MemberCaller<XYWndManager, &XYWndManager::toggleCrossHairs>(GlobalXYWnd()), Accelerator('X', (GdkModifierType)GDK_SHIFT_MASK));
-  GlobalCommands_insert("ToggleGrid", FreeCaller<ToggleShowGrid>(), Accelerator('0'));
+  GlobalCommands_insert("ToggleGrid", MemberCaller<XYWndManager, &XYWndManager::toggleGrid>(GlobalXYWnd()), Accelerator('0'));
 
   GlobalToggles_insert("ToggleView", ToggleShown::ToggleCaller(g_xy_top_shown), ToggleItem::AddCallbackCaller(g_xy_top_shown.m_item), Accelerator('V', (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
   GlobalToggles_insert("ToggleSideView", ToggleShown::ToggleCaller(g_yz_side_shown), ToggleItem::AddCallbackCaller(g_yz_side_shown.m_item));
   GlobalToggles_insert("ToggleFrontView", ToggleShown::ToggleCaller(g_xz_front_shown), ToggleItem::AddCallbackCaller(g_xz_front_shown.m_item));
   GlobalCommands_insert("NextView", FreeCaller<toggleActiveOrthoView>(), Accelerator(GDK_Tab, (GdkModifierType)GDK_CONTROL_MASK));
-  GlobalCommands_insert("ZoomIn", FreeCaller<XY_ZoomIn>(), Accelerator(GDK_Delete));
-  GlobalCommands_insert("ZoomOut", FreeCaller<XY_ZoomOut>(), Accelerator(GDK_Insert));
+  GlobalCommands_insert("ZoomIn", MemberCaller<XYWndManager, &XYWndManager::zoomIn>(GlobalXYWnd()), Accelerator(GDK_Delete));
+  GlobalCommands_insert("ZoomOut", MemberCaller<XYWndManager, &XYWndManager::zoomOut>(GlobalXYWnd()), Accelerator(GDK_Insert));
   GlobalCommands_insert("ViewTop", FreeCaller<XY_Top>());
   GlobalCommands_insert("ViewSide", FreeCaller<XY_Side>());
   GlobalCommands_insert("ViewFront", FreeCaller<XY_Front>());

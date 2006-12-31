@@ -69,6 +69,10 @@ public:
 	// Sets the scale of all available views
 	void setScale(float scale);
 	
+	// Zooms the currently active view in/out
+	void zoomIn();
+	void zoomOut();
+	
 	// Positions the view of all available views / the active view
 	void positionAllViews(const Vector3& origin);
 	void positionView(const Vector3& origin);
