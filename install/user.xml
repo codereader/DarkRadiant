@@ -9,9 +9,11 @@
 	<alwaysShowLightVertices value="1"/>
 	<defaultTextureScale value="0.5" />
 	<xyview>
+		<showGrid value="1" />
 		<chaseMouse value="1" />
 		<camXYUpdate value="1" />
-		<solidSelectionBoxes value="1" />
+		<solidSelectionBoxes value="0" />
+		<showCrossHairs value="0" />
 	</xyview>
 	<clipper>
 		<useCaulk value="1" />

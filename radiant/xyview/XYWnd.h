@@ -25,8 +25,6 @@
 
 struct xywindow_globals_private_t
 {
-  bool  d_showgrid;
-
   // these are in the View > Show menu with Show coordinates
   bool  show_names;
   bool  show_coordinates;
@@ -40,8 +38,6 @@ struct xywindow_globals_private_t
   int		       blockSize;
 
   xywindow_globals_private_t() :
-    d_showgrid(true),
-
     show_names(false),
     show_coordinates(true),
     show_angles(true),

@@ -77,8 +77,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // =============================================================================
 // variables
 
-bool g_bCrossHairs = false;
-
 /* This function determines the point currently being "looked" at, it is used for toggling the ortho views
  * If something is selected the center of the selection is taken as new origin, otherwise the camera
  * position is considered to be the new origin of the toggled orthoview.
@@ -145,15 +143,9 @@ void XY_ZoomOut() {
 	}
 }
 
-void ToggleShowCrosshair()
-{
-  g_bCrossHairs ^= 1; 
-  GlobalXYWnd().updateAllViews();
-}
-
 void ToggleShowGrid()
 {
-  g_xywindow_globals_private.d_showgrid = !g_xywindow_globals_private.d_showgrid;
+  GlobalXYWnd().toggleGrid();
   GlobalXYWnd().updateAllViews();
 }
 
@@ -323,7 +315,7 @@ typedef ConstReferenceCaller1<ToggleShown, const BoolImportCallback&, ToggleShow
 
 void XYWindow_Construct()
 {
-  GlobalCommands_insert("ToggleCrosshairs", FreeCaller<ToggleShowCrosshair>(), Accelerator('X', (GdkModifierType)GDK_SHIFT_MASK));
+  GlobalCommands_insert("ToggleCrosshairs", MemberCaller<XYWndManager, &XYWndManager::toggleCrossHairs>(GlobalXYWnd()), Accelerator('X', (GdkModifierType)GDK_SHIFT_MASK));
   GlobalCommands_insert("ToggleGrid", FreeCaller<ToggleShowGrid>(), Accelerator('0'));
 
   GlobalToggles_insert("ToggleView", ToggleShown::ToggleCaller(g_xy_top_shown), ToggleItem::AddCallbackCaller(g_xy_top_shown.m_item), Accelerator('V', (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
