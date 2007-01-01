@@ -42,7 +42,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "ShaderTemplate.h"
 
 #include <map>
-#include <list>
 
 #include "ifilesystem.h"
 #include "ishaders.h"
@@ -66,6 +65,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/lexical_cast.hpp>
 
 /* GLOBALS */
 
@@ -248,13 +248,12 @@ ShaderTemplate* findTemplate(const char* name)
 }
 
 /**
- * Wrapper class that associates a ShaderTemplate with its filename and some
- * other stuff.
+ * Wrapper class that associates a ShaderTemplate with its filename.
  */
 struct ShaderDefinition
 {
+	// The shader template
 	ShaderTemplate* shaderTemplate;
-	StringList args;
 	
 	// Filename from which the shader was parsed
 	std::string filename;
@@ -262,9 +261,9 @@ struct ShaderDefinition
 	/* Constructor
 	 */
 	ShaderDefinition(ShaderTemplate* shaderTemplate, 
-					 const StringList& args, 
 					 const std::string& filename)
-    : shaderTemplate(shaderTemplate), args(args), filename(filename)
+    : shaderTemplate(shaderTemplate),
+      filename(filename)
 	{ }
 	
 };
@@ -273,131 +272,60 @@ typedef std::map<std::string, ShaderDefinition> ShaderDefinitionMap;
 
 ShaderDefinitionMap g_shaderDefinitions;
 
-const char* evaluateShaderValue(const char* value, const StringList& params, const StringList& args)
-{
-  StringList::const_iterator j = args.begin();
-  for(StringList::const_iterator i = params.begin(); i != params.end(); ++i, ++j)
-  {
-    const char* other = (*i).c_str();
-    if(string_equal(value, other))
-    {
-      return (*j).c_str();
-    }
-  }
-  return value;
-}
-
 ///\todo BlendFunc parsing
-BlendFunc evaluateBlendFunc(const BlendFuncExpression& blendFunc, const StringList& params, const StringList& args)
+BlendFunc evaluateBlendFunc(const BlendFuncExpression& blendFunc)
 {
   return BlendFunc(BLEND_ONE, BLEND_ZERO);
 }
 
-// Evaluate a texture (??)
-qtexture_t* evaluateTexture(
-	const std::string& texture, 
-	const StringList& params, 
-	const StringList& args, 
-	const LoadImageCallback& loader = GlobalTexturesCache().defaultLoader())
+// Map string blend functions to their enum equivalents
+BlendFactor evaluateBlendFactor(const std::string& value)
 {
-  StringOutputStream result(64);
-  const char* expression = texture.c_str();
-  const char* end = expression + string_length(expression);
-  if(!string_empty(expression))
-  {
-    for(;;)
-    {
-      const char* best = end;
-      const char* bestParam = 0;
-      const char* bestArg = 0;
-      StringList::const_iterator j = args.begin();
-      for(StringList::const_iterator i = params.begin(); i != params.end(); ++i, ++j)
-      {
-        const char* found = strstr(expression, (*i).c_str());
-        if(found != 0 && found < best)
-        {
-          best = found;
-          bestParam = (*i).c_str();
-          bestArg = (*j).c_str();
-        }
-      }
-      if(best != end)
-      {
-        result << StringRange(expression, best);
-        result << PathCleaned(bestArg);
-        expression = best + string_length(bestParam);
-      }
-      else
-      {
-        break;
-      }
-    }
-    result << expression;
-  }
-  return GlobalTexturesCache().capture(loader, result.c_str());
-}
-
-float evaluateFloat(const std::string& value, const StringList& params, const StringList& args)
-{
-  const char* result = evaluateShaderValue(value.c_str(), params, args);
-  float f;
-  if(!string_parse_float(result, f))
-  {
-    globalErrorStream() << "parsing float value failed: " << makeQuoted(result) << "\n";
-  }
-  return f;
-}
-
-BlendFactor evaluateBlendFactor(const std::string& value, const StringList& params, const StringList& args)
-{
-  const char* result = evaluateShaderValue(value.c_str(), params, args);
-
-  if(string_equal_nocase(result, "gl_zero"))
+  if(value == "gl_zero")
   {
     return BLEND_ZERO;
   }
-  if(string_equal_nocase(result, "gl_one"))
+  if(value == "gl_one")
   {
     return BLEND_ONE;
   }
-  if(string_equal_nocase(result, "gl_src_color"))
+  if(value == "gl_src_color")
   {
     return BLEND_SRC_COLOUR;
   }
-  if(string_equal_nocase(result, "gl_one_minus_src_color"))
+  if(value == "gl_one_minus_src_color")
   {
     return BLEND_ONE_MINUS_SRC_COLOUR;
   }
-  if(string_equal_nocase(result, "gl_src_alpha"))
+  if(value == "gl_src_alpha")
   {
     return BLEND_SRC_ALPHA;
   }
-  if(string_equal_nocase(result, "gl_one_minus_src_alpha"))
+  if(value == "gl_one_minus_src_alpha")
   {
     return BLEND_ONE_MINUS_SRC_ALPHA;
   }
-  if(string_equal_nocase(result, "gl_dst_color"))
+  if(value == "gl_dst_color")
   {
     return BLEND_DST_COLOUR;
   }
-  if(string_equal_nocase(result, "gl_one_minus_dst_color"))
+  if(value == "gl_one_minus_dst_color")
   {
     return BLEND_ONE_MINUS_DST_COLOUR;
   }
-  if(string_equal_nocase(result, "gl_dst_alpha"))
+  if(value == "gl_dst_alpha")
   {
     return BLEND_DST_ALPHA;
   }
-  if(string_equal_nocase(result, "gl_one_minus_dst_alpha"))
+  if(value == "gl_one_minus_dst_alpha")
   {
     return BLEND_ONE_MINUS_DST_ALPHA;
   }
-  if(string_equal_nocase(result, "gl_src_alpha_saturate"))
+  if(value == "gl_src_alpha_saturate")
   {
     return BLEND_SRC_ALPHA_SATURATE;
   }
 
-  globalErrorStream() << "parsing blend-factor value failed: " << makeQuoted(result) << "\n";
   return BLEND_ZERO;
 }
 
@@ -406,7 +334,6 @@ class CShader : public IShader
   std::size_t m_refcount;
 
   const ShaderTemplate& m_template;
-  const StringList& m_args;
   std::string m_filename;
   // name is shader-name, otherwise texture-name (if not a real shader)
   std::string m_Name;
@@ -429,7 +356,6 @@ public:
   CShader(const ShaderDefinition& definition) :
     m_refcount(0),
     m_template(*definition.shaderTemplate),
-    m_args(definition.args),
     m_filename(definition.filename),
     m_blendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA),
     m_bInUse(false)
@@ -537,7 +463,7 @@ public:
 
   void realise()
   {
-    m_pTexture = evaluateTexture(m_template.m_textureName, m_template.m_params, m_args);
+    m_pTexture = GlobalTexturesCache().capture(m_template.m_textureName);
 
     if(m_pTexture->texture_number == 0)
     {
@@ -572,24 +498,25 @@ public:
       LoadImageCallback loader = GlobalTexturesCache().defaultLoader();
       if(!string_empty(m_template.m_heightmapScale.c_str()))
       {
-        m_heightmapScale = evaluateFloat(m_template.m_heightmapScale, m_template.m_params, m_args);
+        m_heightmapScale = 
+        	boost::lexical_cast<float>(m_template.m_heightmapScale);
         loader = LoadImageCallback(&m_heightmapScale, loadHeightmap);
       }
 
 		// Set up the diffuse, bump and specular stages. Bump and specular will be set to defaults
 		// _flat and _black respectively, if an image map is not specified in the material.
 
-		m_pDiffuse = evaluateTexture(m_template.m_diffuse, m_template.m_params, m_args);
+		m_pDiffuse = GlobalTexturesCache().capture(m_template.m_diffuse);
 
     	std::string flatName = std::string(GlobalRadiant().getAppPath()) + "bitmaps/_flat.bmp";
-		m_pBump = evaluateTexture(m_template.m_bump, m_template.m_params, m_args, loader);
+		m_pBump = GlobalTexturesCache().capture(m_template.m_bump);
 		if (m_pBump == 0 || m_pBump->texture_number == 0) {
 			GlobalTexturesCache().release(m_pBump); // release old object first
 			m_pBump = GlobalTexturesCache().capture(LoadImageCallback(0, loadBitmap), flatName.c_str());
 		}
 		
 		std::string blackName = std::string(GlobalRadiant().getAppPath()) + "bitmaps/_black.bmp";
-		m_pSpecular = evaluateTexture(m_template.m_specular, m_template.m_params, m_args);
+		m_pSpecular = GlobalTexturesCache().capture(m_template.m_specular);
 		if (m_pSpecular == 0 || m_pSpecular->texture_number == 0) {
 			GlobalTexturesCache().release(m_pSpecular);
 			m_pSpecular = GlobalTexturesCache().capture(LoadImageCallback(0, loadBitmap), blackName.c_str());
@@ -597,46 +524,38 @@ public:
 		
 		// Get light falloff image
 		
-		m_pLightFalloffImage = evaluateTexture(m_template.m_lightFalloffImage, m_template.m_params, m_args);
+		m_pLightFalloffImage = 
+			GlobalTexturesCache().capture(m_template.m_lightFalloffImage);
 
 		for(ShaderTemplate::Layers::const_iterator i = m_template.m_layers.begin(); 
 			i != m_template.m_layers.end(); 
 			++i)
 		{
-        	m_layers.push_back(evaluateLayer(*i, m_template.m_params, m_args));
+        	m_layers.push_back(evaluateLayer(*i));
 		}
 
       if(m_layers.size() == 1)
       {
         const BlendFuncExpression& blendFunc = 
         	m_template.m_layers.front().m_blendFunc;
-        if(!string_empty(blendFunc.second.c_str()))
-        {
-          m_blendFunc = BlendFunc(
-            evaluateBlendFactor(blendFunc.first.c_str(), m_template.m_params, m_args),
-            evaluateBlendFactor(blendFunc.second.c_str(), m_template.m_params, m_args)
-          );
+        
+		// If explicit blend function (2-components), evaluate it, otherwise
+		// use a standard one
+        if(!blendFunc.second.empty()) {
+			m_blendFunc = BlendFunc(evaluateBlendFactor(blendFunc.first),
+									evaluateBlendFactor(blendFunc.second));
         }
-        else
-        {
-          const char* blend = evaluateShaderValue(blendFunc.first.c_str(), m_template.m_params, m_args);
-
-          if(string_equal_nocase(blend, "add"))
-          {
-            m_blendFunc = BlendFunc(BLEND_ONE, BLEND_ONE);
-          }
-          else if(string_equal_nocase(blend, "filter"))
-          {
-            m_blendFunc = BlendFunc(BLEND_DST_COLOUR, BLEND_ZERO);
-          }
-          else if(string_equal_nocase(blend, "blend"))
-          {
-            m_blendFunc = BlendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA);
-          }
-          else
-          {
-            globalErrorStream() << "parsing blend value failed: " << makeQuoted(blend) << "\n";
-          }
+        else {
+			if(blendFunc.first == "add") {
+				m_blendFunc = BlendFunc(BLEND_ONE, BLEND_ONE);
+			}
+			else if(blendFunc.first == "filter") {
+				m_blendFunc = BlendFunc(BLEND_DST_COLOUR, BLEND_ZERO);
+			}
+			else if(blendFunc.first == "blend") {
+				m_blendFunc = BlendFunc(BLEND_SRC_ALPHA, 
+										BLEND_ONE_MINUS_SRC_ALPHA);
+			}
         }
       }
   }
@@ -696,15 +615,13 @@ public:
     }
   };
 
-	static MapLayer evaluateLayer(const LayerTemplate& layerTemplate, 
-  								  const StringList& params, 
-  								  const StringList& args)
+	static MapLayer evaluateLayer(const LayerTemplate& layerTemplate) 
 	{
     	return MapLayer(
-      		evaluateTexture(layerTemplate.m_texture, params, args),
-      		evaluateBlendFunc(layerTemplate.m_blendFunc, params, args),
+      		GlobalTexturesCache().capture(layerTemplate.m_texture),
+      		evaluateBlendFunc(layerTemplate.m_blendFunc),
       		layerTemplate.m_clampToBorder,
-      		evaluateFloat(layerTemplate.m_alphaTest, params, args)
+      		boost::lexical_cast<float>(layerTemplate.m_alphaTest)
     	);
   	}
 
@@ -814,8 +731,6 @@ void FreeShaders()
   g_ActiveShadersChangedNotify();
 }
 
-std::list<std::string> g_shaderFilenames;
-
 /**
  * Lookup a named shader and return its CShader object.
  */
@@ -835,7 +750,9 @@ CShader* Try_Shader_ForName(const std::string& name)
 		ShaderTemplatePtr shaderTemplate(new ShaderTemplate(name));
 		g_shaderTemplates[name] = shaderTemplate;
 
-		i = g_shaderDefinitions.insert(ShaderDefinitionMap::value_type(name, ShaderDefinition(shaderTemplate.get(), StringList(), ""))).first;
+		i = g_shaderDefinitions.insert(
+			ShaderDefinitionMap::value_type(name, 
+											ShaderDefinition(shaderTemplate.get(), ""))).first;
 	}
 
 	ShaderPointer pShader(new CShader((*i).second));
@@ -915,7 +832,7 @@ void parseShaderDecl(parser::DefTokeniser& tokeniser,
 	if (result) {
 		
 		// Construct the ShaderDefinition wrapper class
-		ShaderDefinition def(shaderTemplate.get(), StringList(), filename);
+		ShaderDefinition def(shaderTemplate.get(), filename);
 		
 		// Get the parsed shader name
 		std::string name = shaderTemplate->getName();
@@ -938,8 +855,6 @@ void parseShaderDecl(parser::DefTokeniser& tokeniser,
  */ 
 void parseShaderFile(const std::string& inStr, const std::string& filename)
 {
-	g_shaderFilenames.push_back(filename);
-	
 	parser::DefTokeniser tokeniser(inStr, " \t\n\v\r", "{}(),");
 	
 	while (tokeniser.hasMoreTokens()) {
@@ -1007,8 +922,7 @@ void Shaders_Load()
 
 void Shaders_Free()
 {
-  FreeShaders();
-  g_shaderFilenames.clear();
+	FreeShaders();
 }
 
 ModuleObservers g_observers;

@@ -430,17 +430,19 @@ public:
   {
     return defaultLoader().loadImage(name);
   }
-  qtexture_t* capture(const char* name)
-  {
-    return capture(defaultLoader(), name);
-  }
-  qtexture_t* capture(const LoadImageCallback& loader, const char* name)
-  {
-#if DEBUG_TEXTURES
-    globalOutputStream() << "textures capture: " << makeQuoted(name) << '\n';
-#endif
-    return m_qtextures.capture(TextureKey(loader, name)).get();
-  }
+  
+	// Capture the named texture
+	qtexture_t* capture(const std::string& name) {
+		return capture(defaultLoader(), name);
+	}
+
+	// Capture the named texture using the provided image loader	
+	qtexture_t* capture(const LoadImageCallback& loader, 
+						const std::string& name) 
+	{
+		return m_qtextures.capture(TextureKey(loader, name.c_str())).get();
+	}
+	
   void release(qtexture_t* texture)
   {
 #if DEBUG_TEXTURES
