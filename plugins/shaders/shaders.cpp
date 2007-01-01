@@ -261,16 +261,26 @@ ShaderTemplate* findTemplate(const char* name)
   return 0;
 }
 
-class ShaderDefinition
+/**
+ * Wrapper class that associates a ShaderTemplate with its filename and some
+ * other stuff.
+ */
+struct ShaderDefinition
 {
-public:
-  ShaderDefinition(ShaderTemplate* shaderTemplate, const StringList& args, const char* filename)
+	ShaderTemplate* shaderTemplate;
+	StringList args;
+	
+	// Filename from which the shader was parsed
+	std::string filename;
+
+	/* Constructor
+	 */
+	ShaderDefinition(ShaderTemplate* shaderTemplate, 
+					 const StringList& args, 
+					 const std::string& filename)
     : shaderTemplate(shaderTemplate), args(args), filename(filename)
-  {
-  }
-  ShaderTemplate* shaderTemplate;
-  StringList args;
-  const char* filename;
+	{ }
+	
 };
 
 typedef std::map<std::string, ShaderDefinition> ShaderDefinitionMap;
@@ -411,7 +421,7 @@ class CShader : public IShader
 
   const ShaderTemplate& m_template;
   const StringList& m_args;
-  const char* m_filename;
+  std::string m_filename;
   // name is shader-name, otherwise texture-name (if not a real shader)
   std::string m_Name;
 
@@ -519,7 +529,7 @@ public:
   // test if it's a true shader, or a default shader created to wrap around a texture
   bool IsDefault() const 
   {
-    return string_empty(m_filename);
+    return m_filename.empty();
   }
   // get the alphaFunc
   void getAlphaFunc(EAlphaFunc *func, float *ref) { *func = m_template.m_AlphaFunc; *ref = m_template.m_AlphaRef; };
@@ -535,7 +545,7 @@ public:
   // get shader file name (ie the file where this one is defined)
   const char* getShaderFileName() const
   {
-    return m_filename;
+    return m_filename.c_str();
   }
   // -----------------------------------------
 
@@ -887,7 +897,7 @@ ShaderTemplatePointer parseShaderName(std::string& rawName)
 	ShaderTemplatePointer shaderTemplate(new ShaderTemplate());
     shaderTemplate->setName(rawName.c_str());
 	g_shaders.insert(ShaderTemplateMap::value_type(shaderTemplate->getName(), shaderTemplate));
-	
+
 	return shaderTemplate;
 } 
 
@@ -917,11 +927,23 @@ void parseShaderTable(parser::DefTokeniser& tokeniser)
 	}	
 }
 
-/* Parses the contents of a material definition's stage, maybe called recursively
+/**
+ * Parses the contents of a material definition. The shader name and opening
+ * brace "{" will already have been removed when this function is called.
+ * 
+ * @param tokeniser
+ * DefTokeniser to retrieve tokens from.
+ * 
+ * @param shaderTemplate
+ * An empty ShaderTemplate which will parse the token stream and populate
+ * itself.
+ * 
+ * @param filename
+ * The name of the shader file we are parsing.
  */
-void parseShaderStage(parser::DefTokeniser& tokeniser, 
+void parseShaderDecl(parser::DefTokeniser& tokeniser, 
 					  ShaderTemplatePointer& shaderTemplate, 
-					  const char* filename) 
+					  const std::string& filename) 
 {
 	// Call the shader parser	
 	bool result = shaderTemplate->parseDoom3(tokeniser);
@@ -938,19 +960,19 @@ void parseShaderStage(parser::DefTokeniser& tokeniser,
     }
 }
 
-/* Parses through the shader file and processes the tokens delivered by DefTokeniser. 
+/* Parses through the shader file and processes the tokens delivered by 
+ * DefTokeniser. 
  */ 
-void parseShaderFile(const std::string& inStr, const char* filename)
+void parseShaderFile(const std::string& inStr, const std::string& filename)
 {
 	g_shaderFilenames.push_back(filename);
-	filename = g_shaderFilenames.back().c_str();
 	
-	parser::DefTokeniser tokeniser(inStr, " \t\n\v\r", "{}(),");	
+	parser::DefTokeniser tokeniser(inStr, " \t\n\v\r", "{}(),");
 	
 	while (tokeniser.hasMoreTokens()) {
 		// Load the first token, it should be a name
 		std::string token = tokeniser.nextToken();		
-		
+
 		if (token == "table") {
 			parseShaderTable(tokeniser);		 		
 		} 
@@ -960,9 +982,17 @@ void parseShaderFile(const std::string& inStr, const char* filename)
 		} 
 		else {			
 			// We are still outside of any braces, so this must be a shader name			
-			ShaderTemplatePointer shaderTemplate = parseShaderName(token);
-			tokeniser.assertNextToken("{");
-			parseShaderStage(tokeniser, shaderTemplate, filename);
+			try {
+				ShaderTemplatePointer shaderTemplate = parseShaderName(token);
+				tokeniser.assertNextToken("{");
+				parseShaderDecl(tokeniser, shaderTemplate, filename);
+			}
+			catch (parser::ParseException e) {
+				std::cerr << "[shaders] Failed to parse " << filename 
+									<< "\n" << e.what() << std::endl;
+				return;
+			}
+			
 		}
 	}
 }
