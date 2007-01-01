@@ -81,13 +81,8 @@ in game descriptor";
 	
 }
 
-bool g_enableDefaultShaders = true;
-ShaderLanguage g_shaderLanguage = SHADERLANGUAGE_QUAKE3;
-bool g_useShaderList = true;
 _QERPlugImageTable* g_bitmapModule = 0;
 const char* g_texturePrefix = "textures/";
-
-
 
 void ActiveShaders_IteratorBegin();
 bool ActiveShaders_IteratorAtEnd();
@@ -96,7 +91,6 @@ void ActiveShaders_IteratorIncrement();
 Callback g_ActiveShadersChangedNotify;
 
 void FreeShaders();
-void loadShaderFile (const char *filename);
 qtexture_t *Texture_ForName (const char *filename);
 
 
@@ -237,8 +231,8 @@ Image* loadSpecial(void* environment, const char* name)
   return GlobalTexturesCache().loadImage(name);
 }
 
-typedef SmartPointer<ShaderTemplate> ShaderTemplatePointer;
-typedef std::map<std::string, ShaderTemplatePointer> ShaderTemplateMap;
+typedef boost::shared_ptr<ShaderTemplate> ShaderTemplatePtr;
+typedef std::map<std::string, ShaderTemplatePtr> ShaderTemplateMap;
 
 ShaderTemplateMap g_shaders;
 ShaderTemplateMap g_shaderTemplates;
@@ -662,7 +656,7 @@ public:
   }
 
   // set shader name
-  void setName(const char* name)
+  void setName(const std::string& name)
   {
     m_Name = name;
   }
@@ -817,7 +811,10 @@ void FreeShaders()
 
 std::list<std::string> g_shaderFilenames;
 
-CShader* Try_Shader_ForName(const char* name)
+/**
+ * Lookup a named shader and return its CShader object.
+ */
+CShader* Try_Shader_ForName(const std::string& name)
 {
   {
     shaders_t::iterator i = g_ActiveShaders.find(name);
@@ -827,28 +824,26 @@ CShader* Try_Shader_ForName(const char* name)
     }
   }
 
-  // not found, create it
-  ShaderDefinitionMap::iterator i = g_shaderDefinitions.find(name);
-  if(i == g_shaderDefinitions.end())
-  {
-    ShaderTemplatePointer shaderTemplate(new ShaderTemplate());
-    shaderTemplate->CreateDefault(name);
-    g_shaderTemplates.insert(ShaderTemplateMap::value_type(shaderTemplate->getName(), shaderTemplate));
+	// not found, create it
+	ShaderDefinitionMap::iterator i = g_shaderDefinitions.find(name);
+	if(i == g_shaderDefinitions.end()) {
+		ShaderTemplatePtr shaderTemplate(new ShaderTemplate(name));
+		g_shaderTemplates[name] = shaderTemplate;
 
-    i = g_shaderDefinitions.insert(ShaderDefinitionMap::value_type(name, ShaderDefinition(shaderTemplate.get(), StringList(), ""))).first;
-  }
+		i = g_shaderDefinitions.insert(ShaderDefinitionMap::value_type(name, ShaderDefinition(shaderTemplate.get(), StringList(), ""))).first;
+	}
 
-  ShaderPointer pShader(new CShader((*i).second));
-  pShader->setName(name);
-  g_ActiveShaders.insert(shaders_t::value_type(name, pShader));
-  g_ActiveShadersChangedNotify();
-  return pShader;
+	ShaderPointer pShader(new CShader((*i).second));
+	pShader->setName(name);
+	g_ActiveShaders.insert(shaders_t::value_type(name, pShader));
+	g_ActiveShadersChangedNotify();
+	return pShader;
 }
 
 /* Normalises a given (raw) shadername (slash conversion, extension removal, ...) 
  * and inserts a new shader 
  */
-ShaderTemplatePointer parseShaderName(std::string& rawName) 
+ShaderTemplatePtr parseShaderName(std::string& rawName) 
 {
 	boost::algorithm::replace_all(rawName, "\\", "/"); // use forward slashes
 	boost::algorithm::to_lower(rawName); // use lowercase
@@ -859,9 +854,8 @@ ShaderTemplatePointer parseShaderName(std::string& rawName)
 		rawName = rawName.substr(0, dotPos);
 	}
 	
-	ShaderTemplatePointer shaderTemplate(new ShaderTemplate());
-    shaderTemplate->setName(rawName.c_str());
-	g_shaders.insert(ShaderTemplateMap::value_type(shaderTemplate->getName(), shaderTemplate));
+	ShaderTemplatePtr shaderTemplate(new ShaderTemplate(rawName));
+	g_shaders[rawName] = shaderTemplate;
 
 	return shaderTemplate;
 } 
@@ -907,7 +901,7 @@ void parseShaderTable(parser::DefTokeniser& tokeniser)
  * The name of the shader file we are parsing.
  */
 void parseShaderDecl(parser::DefTokeniser& tokeniser, 
-					  ShaderTemplatePointer& shaderTemplate, 
+					  ShaderTemplatePtr shaderTemplate, 
 					  const std::string& filename) 
 {
 	// Call the shader parser	
@@ -948,7 +942,7 @@ void parseShaderFile(const std::string& inStr, const std::string& filename)
 		else {			
 			// We are still outside of any braces, so this must be a shader name			
 			try {
-				ShaderTemplatePointer shaderTemplate = parseShaderName(token);
+				ShaderTemplatePtr shaderTemplate = parseShaderName(token);
 				tokeniser.assertNextToken("{");
 				parseShaderDecl(tokeniser, shaderTemplate, filename);
 			}

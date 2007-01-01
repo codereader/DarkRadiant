@@ -17,17 +17,6 @@
 typedef std::list<std::string> StringList;
 typedef std::pair<std::string, std::string> BlendFuncExpression;
 
-enum ShaderLanguage
-{
-  SHADERLANGUAGE_QUAKE3, 
-  SHADERLANGUAGE_DOOM3, 
-  SHADERLANGUAGE_QUAKE4
-};
-
-extern ShaderLanguage g_shaderLanguage;
-extern bool g_enableDefaultShaders;
-extern bool g_useShaderList;
-
 enum LayerTypeId
 {
   LAYER_NONE,
@@ -59,23 +48,29 @@ public:
   }
 };
 
-/* -------------------------------------- ShaderTemplate -----------------------------
+/**
+ * Data structure storing parsed material information from a material decl. This
+ * class parses the decl using a tokeniser and stores the relevant information
+ * internally, for later use by a CShader.
  */
-
 class ShaderTemplate
 {
-  std::size_t m_refcount;
-  std::string m_Name;
+	std::size_t m_refcount;
+  
+	// Template name
+	std::string _name;
+  
 public:
   LayerTemplate 	m_currentLayer;
   StringList 	m_params;
 
-  std::string m_textureName;
-  std::string m_diffuse;
-  std::string m_bump;
-  std::string m_heightmapScale;
-  std::string m_specular;
-  std::string m_lightFalloffImage;
+	// Image maps
+	std::string m_textureName;
+	std::string m_diffuse;
+	std::string m_bump;
+	std::string m_heightmapScale;
+	std::string m_specular;
+	std::string m_lightFalloffImage;
 
   /* Light type booleans */	
   bool fogLight;
@@ -91,15 +86,20 @@ public:
   // cull stuff
   IShader::ECull m_Cull;
 
-  ShaderTemplate() :
-    m_refcount(0),
-    fogLight(false),
-    ambientLight(false),
-    blendLight(false)
-  {
-    m_nFlags = 0;
-    m_fTrans = 1.0f;    
-  }
+	/** 
+	 * Constructor. Accepts the name to use for this template.
+	 */
+	ShaderTemplate(const std::string& name) 
+	: m_refcount(0),
+	  _name(name),
+	  m_textureName(""),
+      fogLight(false),
+      ambientLight(false),
+      blendLight(false)
+	{
+    	m_nFlags = 0;
+    	m_fTrans = 1.0f;    
+	}
 
   void IncRef()
   {
@@ -119,40 +119,28 @@ public:
     return m_refcount;
   }
 
-  const char* getName() const
-  {
-    return m_Name.c_str();
-  }
-  void setName(const char* name)
-  {
-    m_Name = name;
-  }
+	std::string getName() const {
+    	return _name;
+	}
+	
+	void setName(const std::string& name) {
+		_name = name;
+	}
 
-  // -----------------------------------------  
-  bool parseDoom3(parser::DefTokeniser&);
-  bool parseShaderFlags(parser::DefTokeniser&, const std::string&);
-  bool parseLightFlags(parser::DefTokeniser&, const std::string&);
-  bool parseBlendShortcuts(parser::DefTokeniser&, const std::string&);
-  bool parseBlendType(parser::DefTokeniser&, const std::string&);
-  bool parseBlendMaps(parser::DefTokeniser&, const std::string&);
-  bool parseClamp(parser::DefTokeniser&, const std::string&);
-  bool parseMap(parser::DefTokeniser&);
-  bool saveLayer();
+	/* Parse functions. These are NOT recursive descent parsers, instead they
+	 * each run through a list of keywords of interest, setting internal state
+	 * if appropriate and then returning true or false depending on whether they
+	 * found anything or not. */
+	bool parseDoom3(parser::DefTokeniser&);
+	bool parseShaderFlags(parser::DefTokeniser&, const std::string&);
+	bool parseLightFlags(parser::DefTokeniser&, const std::string&);
+	bool parseBlendShortcuts(parser::DefTokeniser&, const std::string&);
+	bool parseBlendType(parser::DefTokeniser&, const std::string&);
+	bool parseBlendMaps(parser::DefTokeniser&, const std::string&);
+	bool parseClamp(parser::DefTokeniser&, const std::string&);
+	bool parseMap(parser::DefTokeniser&);
+	bool saveLayer();
   
-  void CreateDefault(const char *name)
-  {
-    if(g_enableDefaultShaders)
-    {
-      m_textureName = name;
-    }
-    else
-    {
-      m_textureName = "";
-    }
-    setName(name);
-  }
-
-
   class MapLayerTemplate
   {
     std::string m_texture;
