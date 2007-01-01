@@ -253,17 +253,16 @@ ShaderTemplate* findTemplate(const char* name)
 struct ShaderDefinition
 {
 	// The shader template
-	ShaderTemplate* shaderTemplate;
+	ShaderTemplatePtr shaderTemplate;
 	
 	// Filename from which the shader was parsed
 	std::string filename;
 
 	/* Constructor
 	 */
-	ShaderDefinition(ShaderTemplate* shaderTemplate, 
-					 const std::string& filename)
-    : shaderTemplate(shaderTemplate),
-      filename(filename)
+	ShaderDefinition(ShaderTemplatePtr templ, const std::string& fname)
+    : shaderTemplate(templ),
+      filename(fname)
 	{ }
 	
 };
@@ -353,22 +352,30 @@ class CShader : public IShader
 public:
   static bool m_lightingEnabled;
 
-  CShader(const ShaderDefinition& definition) :
-    m_refcount(0),
-    m_template(*definition.shaderTemplate),
-    m_filename(definition.filename),
-    m_blendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA),
-    m_bInUse(false)
-  {
-    m_pTexture = 0;
-    m_pDiffuse = 0;
-    m_pBump = 0;
-    m_pSpecular = 0;
+	/*
+	 * Constructor.
+	 */
+	CShader(const ShaderDefinition& definition)
+	: m_refcount(0),
+	  m_template(*definition.shaderTemplate),
+      m_filename(definition.filename),
+      m_blendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA),
+      m_bInUse(false) 
+	{
+		assert(definition.shaderTemplate != NULL); // otherwise we have NULL ref
+		
+		// Initialise texture pointers
+	    m_pTexture = 0;
+	    m_pDiffuse = 0;
+	    m_pBump = 0;
+	    m_pSpecular = 0;
+	
+	    m_notfound = 0;
 
-    m_notfound = 0;
-
-    realise();
-  }
+		// Realise the shader
+	    realise();
+	}
+	
   virtual ~CShader()
   {
     unrealise();
@@ -744,18 +751,21 @@ CShader* Try_Shader_ForName(const std::string& name)
     }
   }
 
-	// not found, create it
+	// Search for a matching ShaderDefinition. If none is found, create a 
+	// default one and return this instead (this is how unrecognised textures
+	// get rendered with notex.bmp).
 	ShaderDefinitionMap::iterator i = g_shaderDefinitions.find(name);
 	if(i == g_shaderDefinitions.end()) {
 		ShaderTemplatePtr shaderTemplate(new ShaderTemplate(name));
 		g_shaderTemplates[name] = shaderTemplate;
 
+		// Create and insert new ShaderDefinition wrapper
+		ShaderDefinition def(shaderTemplate, "");
 		i = g_shaderDefinitions.insert(
-			ShaderDefinitionMap::value_type(name, 
-											ShaderDefinition(shaderTemplate.get(), ""))).first;
+							ShaderDefinitionMap::value_type(name, def)).first;
 	}
 
-	ShaderPointer pShader(new CShader((*i).second));
+	ShaderPointer pShader(new CShader(i->second));
 	pShader->setName(name);
 	g_ActiveShaders.insert(shaders_t::value_type(name, pShader));
 	g_ActiveShadersChangedNotify();
@@ -832,7 +842,7 @@ void parseShaderDecl(parser::DefTokeniser& tokeniser,
 	if (result) {
 		
 		// Construct the ShaderDefinition wrapper class
-		ShaderDefinition def(shaderTemplate.get(), filename);
+		ShaderDefinition def(shaderTemplate, filename);
 		
 		// Get the parsed shader name
 		std::string name = shaderTemplate->getName();
