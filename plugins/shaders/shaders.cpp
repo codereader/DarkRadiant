@@ -41,36 +41,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "ShaderTemplate.h"
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <map>
 #include <list>
 
 #include "ifilesystem.h"
 #include "ishaders.h"
-#include "iscriplib.h"
 #include "itextures.h"
 #include "qerplugin.h"
 #include "irender.h"
 #include "iregistry.h"
 
-#include <glib/gslist.h>
-
 #include "debugging/debugging.h"
-#include "string/pooledstring.h"
 #include "math/FloatTools.h"
 #include "generic/callback.h"
 #include "generic/referencecounted.h"
-#include "stream/memstream.h"
-#include "stream/stringstream.h"
-#include "stream/textfilestream.h"
 #include "os/path.h"
-#include "os/dir.h"
-#include "os/file.h"
-#include "stringio.h"
 #include "shaderlib.h"
 #include "texturelib.h"
-#include "cmdlib.h"
 #include "moduleobservers.h"
 #include "archivelib.h"
 #include "imagelib.h"
@@ -84,8 +71,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace {
 
-	// The shader extension (e.g. MTR) loaded from the gamedescriptor
-	std::string g_shadersExtension;
+	const char* MISSING_BASEPATH_NODE =
+	"Failed to find \"/game/filesystem/shaders/basepath\" node \
+in game descriptor";
+	 
+	const char* MISSING_EXTENSION_NODE =
+	"Failed to find \"/game/filesystem/shaders/extension\" node \
+in game descriptor";
 	
 }
 
@@ -825,8 +817,6 @@ void FreeShaders()
 
 std::list<std::string> g_shaderFilenames;
 
-typedef FreeCaller1<const char*, loadShaderFile> LoadShaderFileCaller;
-
 CShader* Try_Shader_ForName(const char* name)
 {
   {
@@ -853,31 +843,6 @@ CShader* Try_Shader_ForName(const char* name)
   g_ActiveShaders.insert(shaders_t::value_type(name, pShader));
   g_ActiveShadersChangedNotify();
   return pShader;
-}
-
-// the list of scripts/*.shader files we need to work with
-// those are listed in shaderlist file
-GSList *l_shaderfiles = 0;
-
-GSList* Shaders_getShaderFileList()
-{
-  return l_shaderfiles;
-}
-
-void ShaderList_addShaderFile(const char* dirstring)
-{
-	l_shaderfiles = g_slist_append(l_shaderfiles, strdup(dirstring));
-}
-
-typedef FreeCaller1<const char*, ShaderList_addShaderFile> AddShaderFileCaller;
-
-void FreeShaderList()
-{
-  while(l_shaderfiles != 0)
-  {
-    free(l_shaderfiles->data);
-    l_shaderfiles = g_slist_remove(l_shaderfiles, l_shaderfiles->data);
-  }
 }
 
 /* Normalises a given (raw) shadername (slash conversion, extension removal, ...) 
@@ -997,67 +962,41 @@ void parseShaderFile(const std::string& inStr, const std::string& filename)
 	}
 }
 
-/* Loads a given material file and parses its contents 
- */
-void loadShaderFile(const char* filename)
-{
-  ArchiveTextFile* file = GlobalFileSystem().openTextFile(filename);
-
-  if(file != 0) {
-    globalOutputStream() << "Parsing shaderfile " << filename << "\n";        
-    parseShaderFile(file->getInputStream().getAsString(), filename);           
-    file->release();
-  } 
-  else {
-  	throw parser::ParseException(std::string("Unable to read shaderfile: ") + filename);  	
-  }
-}
+#include "ShaderFileLoader.h"
 
 /** Load the shaders from the MTR files.
  */
 void Shaders_Load()
 {
 	// Get the shaders path and extension from the XML game file
-
-	xml::NodeList nlShaderPath = GlobalRegistry().findXPath("game/filesystem/shaders/basepath");
+	xml::NodeList nlShaderPath = 
+		GlobalRegistry().findXPath("game/filesystem/shaders/basepath");
 	if (nlShaderPath.size() != 1)
-		throw shaders::MissingXMLNodeException("Failed to find \"/game/filesystem/shaders/basepath\" node in game descriptor");
+		throw shaders::MissingXMLNodeException(MISSING_BASEPATH_NODE);
 
-	xml::NodeList nlShaderExt = GlobalRegistry().findXPath("game/filesystem/shaders/extension");
+	xml::NodeList nlShaderExt = 
+		GlobalRegistry().findXPath("game/filesystem/shaders/extension");
 	if (nlShaderExt.size() != 1)
-		throw shaders::MissingXMLNodeException("Failed to find \"/game/filesystem/shaders/extension\" node in game descriptor");
+		throw shaders::MissingXMLNodeException(MISSING_EXTENSION_NODE);
 
 	// Load the shader files from the VFS
-
 	std::string sPath = nlShaderPath[0].getContent();
 	if (!boost::algorithm::ends_with(sPath, "/"))
 		sPath += "/";
 		
-	g_shadersExtension = nlShaderExt[0].getContent();
+	std::string extension = nlShaderExt[0].getContent();
 	
-	GlobalFileSystem().forEachFile(sPath.c_str(), g_shadersExtension.c_str(), AddShaderFileCaller(), 0);
-
-    GSList *lst = l_shaderfiles;
-    StringOutputStream shadername(256);
-    globalOutputStream() << "Begin: parsing shader files... \n";
-    while(lst) {
-		shadername << sPath.c_str() << reinterpret_cast<const char*>(lst->data);
-		try {
-			loadShaderFile(shadername.c_str());
-		}
-        catch (parser::ParseException e) {
-        	globalOutputStream() << "Warning: in shaderfile: " << shadername.c_str() << ": " << e.what() << "\n";
-        }        
-      shadername.clear();
-      lst = lst->next;
-    }
-	globalOutputStream() << "End: parsing shader files. \n";
+	// Load each file from the global filesystem
+	shaders::ShaderFileLoader ldr(sPath);
+	GlobalFileSystem().forEachFile(sPath.c_str(), 
+								   extension.c_str(), 
+								   makeCallback1(ldr), 
+								   0);
 }
 
 void Shaders_Free()
 {
   FreeShaders();
-  FreeShaderList();
   g_shaderFilenames.clear();
 }
 
