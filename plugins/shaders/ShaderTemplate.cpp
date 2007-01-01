@@ -2,6 +2,8 @@
 
 #include "os/path.h"
 
+#include <boost/lexical_cast.hpp>
+
 /**
  * Replace backslashes with forward slashes and strip of the file extension of
  * the provided token, and store the result in the provided string.
@@ -25,7 +27,7 @@ void parseTextureName(std::string& name, const std::string& token)
 bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser, const std::string& token) 
 {	
 	if (token == "qer_trans") {
-		m_fTrans = string_read_float(tokeniser.nextToken().c_str());
+		m_fTrans = boost::lexical_cast<float>(tokeniser.nextToken());
         m_nFlags |= QER_TRANS;
 	}
 	else if (token == "translucent") {

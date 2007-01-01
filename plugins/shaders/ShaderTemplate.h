@@ -1,20 +1,15 @@
 #ifndef SHADERTEMPLATE_H_
 #define SHADERTEMPLATE_H_
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <map>
-#include <list>
 #include "ishaders.h"
 
 #include "parser/DefTokeniser.h"
-#include "stringio.h"
 #include "stream/stringstream.h"
 #include "os/path.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 
-typedef std::list<std::string> StringList;
 typedef std::pair<std::string, std::string> BlendFuncExpression;
 
 enum LayerTypeId
@@ -60,8 +55,7 @@ class ShaderTemplate
   
 public:
   LayerTemplate 	m_currentLayer;
-  StringList 	m_params;
-
+  
 	// Image maps
 	std::string m_textureName;
 	std::string m_diffuse;
