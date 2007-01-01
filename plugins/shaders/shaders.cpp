@@ -599,14 +599,17 @@ public:
 		
 		m_pLightFalloffImage = evaluateTexture(m_template.m_lightFalloffImage, m_template.m_params, m_args);
 
-      for(ShaderTemplate::MapLayers::const_iterator i = m_template.m_layers.begin(); i != m_template.m_layers.end(); ++i)
-      {
-        m_layers.push_back(evaluateLayer(*i, m_template.m_params, m_args));
-      }
+		for(ShaderTemplate::Layers::const_iterator i = m_template.m_layers.begin(); 
+			i != m_template.m_layers.end(); 
+			++i)
+		{
+        	m_layers.push_back(evaluateLayer(*i, m_template.m_params, m_args));
+		}
 
       if(m_layers.size() == 1)
       {
-        const BlendFuncExpression& blendFunc = m_template.m_layers.front().blendFunc();
+        const BlendFuncExpression& blendFunc = 
+        	m_template.m_layers.front().m_blendFunc;
         if(!string_empty(blendFunc.second.c_str()))
         {
           m_blendFunc = BlendFunc(
@@ -693,15 +696,17 @@ public:
     }
   };
 
-  static MapLayer evaluateLayer(const ShaderTemplate::MapLayerTemplate& layerTemplate, const StringList& params, const StringList& args)
-  {
-    return MapLayer(
-      evaluateTexture(layerTemplate.texture(), params, args),
-      evaluateBlendFunc(layerTemplate.blendFunc(), params, args),
-      layerTemplate.clampToBorder(),
-      evaluateFloat(layerTemplate.alphaTest(), params, args)
-    );
-  }
+	static MapLayer evaluateLayer(const LayerTemplate& layerTemplate, 
+  								  const StringList& params, 
+  								  const StringList& args)
+	{
+    	return MapLayer(
+      		evaluateTexture(layerTemplate.m_texture, params, args),
+      		evaluateBlendFunc(layerTemplate.m_blendFunc, params, args),
+      		layerTemplate.m_clampToBorder,
+      		evaluateFloat(layerTemplate.m_alphaTest, params, args)
+    	);
+  	}
 
   typedef std::vector<MapLayer> MapLayers;
   MapLayers m_layers;
@@ -936,8 +941,11 @@ void parseShaderFile(const std::string& inStr, const std::string& filename)
 			parseShaderTable(tokeniser);		 		
 		} 
 		else if (token[0] == '{' || token[0] == '}') {
-			// This is not supposed to happen, as the shaderName is still undefined
-			throw parser::ParseException("Missing shadername."); 
+			// This is not supposed to happen, as the shaderName is still 
+			// undefined
+			std::cerr << "[shaders] Missing shadername in " 
+					  << filename << std::endl;
+			return; 
 		} 
 		else {			
 			// We are still outside of any braces, so this must be a shader name			

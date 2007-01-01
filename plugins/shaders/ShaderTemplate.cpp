@@ -84,19 +84,8 @@ bool ShaderTemplate::parseMap(parser::DefTokeniser& tokeniser)
 		parseTextureName(m_currentLayer.m_texture, tokeniser.nextToken().c_str());
 		tokeniser.assertNextToken(")");
 	}
-	// Currently the second argument for addnormals() is ignored and the first is returned
 	else if (token == "addnormals") {
-		tokeniser.assertNextToken("(");
-		
-		// Load the first argument into the member variable		
-		parseTextureName(m_currentLayer.m_texture, tokeniser.nextToken().c_str());
-		
-		tokeniser.assertNextToken(",");
-		
-		std::string normal2;
-		parseTextureName(normal2, tokeniser.nextToken().c_str());
-								
-		tokeniser.assertNextToken(")");
+		parseAddNormals(tokeniser);
 	} 
 	// The second argument for heightmap (the height scale) is ignored at the moment
 	else if (token == "heightmap") {
@@ -129,6 +118,26 @@ bool ShaderTemplate::parseMap(parser::DefTokeniser& tokeniser)
 	}
 	
 	return true;
+}
+
+/* Parse an addnormals() expression. The initial "addnormals" token will already
+ * have been removed.
+ * 
+ * @todo
+ * Make this do something useful, rather than just calling the parseMap function
+ * again.
+ */
+void ShaderTemplate::parseAddNormals(parser::DefTokeniser& tok) {
+	
+	tok.assertNextToken("(");
+		
+	parseMap(tok);
+		
+	tok.assertNextToken(",");
+		
+	parseMap(tok);
+								
+	tok.assertNextToken(")");
 }
 
 /* Searches for light-specific keywords and takes the appropriate actions
@@ -263,11 +272,7 @@ bool ShaderTemplate::saveLayer()
 			break;
 		default:
 			if (m_currentLayer.m_texture != "") {
-				m_layers.push_back(MapLayerTemplate(
-					m_currentLayer.m_texture.c_str(),
-					m_currentLayer.m_blendFunc,
-            		m_currentLayer.m_clampToBorder,
-					m_currentLayer.m_alphaTest));
+				m_layers.push_back(m_currentLayer);
 			}
 	}
 	
