@@ -26,8 +26,6 @@ enum LayerTypeId
   LAYER_SPECULARMAP
 };
 
-/* -------------------------------------- LayerTemplate -----------------------------
- */
 class LayerTemplate
 {
 public:
@@ -72,10 +70,10 @@ public:
 	std::string m_specular;
 	std::string m_lightFalloffImage;
 
-  /* Light type booleans */	
-  bool fogLight;
-  bool ambientLight;
-  bool blendLight;
+	/* Light type booleans */	
+	bool fogLight;
+	bool ambientLight;
+	bool blendLight;
 
   int m_nFlags;
   float m_fTrans;
@@ -131,49 +129,28 @@ public:
 	 * each run through a list of keywords of interest, setting internal state
 	 * if appropriate and then returning true or false depending on whether they
 	 * found anything or not. */
+	
+	// Parse a Doom 3 material decl
 	bool parseDoom3(parser::DefTokeniser&);
+
+	// Parse an image map expression, possibly recursively if addnormals() or
+	// other functions are used	
+	bool parseMap(parser::DefTokeniser&);
+
+	// Parse an addnormals() expression
+	void parseAddNormals(parser::DefTokeniser&);
+
 	bool parseShaderFlags(parser::DefTokeniser&, const std::string&);
 	bool parseLightFlags(parser::DefTokeniser&, const std::string&);
 	bool parseBlendShortcuts(parser::DefTokeniser&, const std::string&);
 	bool parseBlendType(parser::DefTokeniser&, const std::string&);
 	bool parseBlendMaps(parser::DefTokeniser&, const std::string&);
 	bool parseClamp(parser::DefTokeniser&, const std::string&);
-	bool parseMap(parser::DefTokeniser&);
 	bool saveLayer();
   
-  class MapLayerTemplate
-  {
-    std::string m_texture;
-    BlendFuncExpression m_blendFunc;
-    bool m_clampToBorder;
-    std::string m_alphaTest;
-  public:
-    MapLayerTemplate(const std::string& texture, const BlendFuncExpression& blendFunc, bool clampToBorder, const std::string& alphaTest) :
-      m_texture(texture),
-      m_blendFunc(blendFunc),
-      m_clampToBorder(false),
-      m_alphaTest(alphaTest)
-    {
-    }
-    const std::string& texture() const
-    {
-      return m_texture;
-    }
-    const BlendFuncExpression& blendFunc() const
-    {
-      return m_blendFunc;
-    }
-    bool clampToBorder() const
-    {
-      return m_clampToBorder;
-    }
-    const std::string& alphaTest() const
-    {
-      return m_alphaTest;
-    }
-  };
-  typedef std::vector<MapLayerTemplate> MapLayers;
-  MapLayers m_layers;
+  	// Vector of LayerTemplates representing each stage in the material
+  	typedef std::vector<LayerTemplate> Layers;
+	Layers m_layers;
 };
 
 #endif /*SHADERTEMPLATE_H_*/
