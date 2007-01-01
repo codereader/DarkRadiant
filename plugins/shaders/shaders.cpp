@@ -913,10 +913,19 @@ void parseShaderDecl(parser::DefTokeniser& tokeniser,
 	bool result = shaderTemplate->parseDoom3(tokeniser);
 	
 	if (result) {
-		// do we already have this shader?
-        if (!g_shaderDefinitions.insert(ShaderDefinitionMap::value_type(shaderTemplate->getName(),
-            	ShaderDefinition(shaderTemplate.get(), StringList(), filename))).second) {
-        	throw parser::ParseException(std::string("shader ") + shaderTemplate->getName() + " is already in memory");
+		
+		// Construct the ShaderDefinition wrapper class
+		ShaderDefinition def(shaderTemplate.get(), StringList(), filename);
+		
+		// Get the parsed shader name
+		std::string name = shaderTemplate->getName();
+		
+		// Insert into the definitions map, if not already present
+        if (!g_shaderDefinitions.insert(
+        				ShaderDefinitionMap::value_type(name, def)).second) 
+		{
+        	std::cout << "[shaders] " << filename << ": shader " << name
+        			  << " already defined." << std::endl;
         }
     }
     else {
@@ -956,7 +965,7 @@ void parseShaderFile(const std::string& inStr, const std::string& filename)
 			}
 			catch (parser::ParseException e) {
 				std::cerr << "[shaders] Failed to parse " << filename 
-									<< "\n" << e.what() << std::endl;
+									<< " (" << e.what() << ")" << std::endl;
 				return;
 			}
 			
