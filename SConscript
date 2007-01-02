@@ -148,7 +148,9 @@ archivezip_env.Depends(archivezip_lib, cmdlib_lib)
 archivezip_env.Install(INSTALL + '/modules', archivezip_lib)
 
 shaders_env = module_env.Copy()
-shaders_lst = build_list('plugins/shaders', 'shaders.cpp plugin.cpp ShaderTemplate.cpp')
+shaders_lst = build_list('plugins/shaders', 
+						 'shaders.cpp plugin.cpp \
+						 ShaderTemplate.cpp ShaderFileLoader.cpp')
 shaders_env.useGlib2()
 shaders_env.Append(LIBS = ['cmdlib', 'xmlutil'])
 shaders_env.Append(LIBPATH = ['libs'])

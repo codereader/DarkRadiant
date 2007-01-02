@@ -36,10 +36,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "shaders.h"
 #include "MissingXMLNodeException.h"
-#include "parser/ParseException.h"
-#include "parser/DefTokeniser.h"
-
 #include "ShaderTemplate.h"
+#include "ShaderFileLoader.h"
 
 #include <map>
 
@@ -50,11 +48,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "irender.h"
 #include "iregistry.h"
 
+#include "parser/ParseException.h"
+#include "parser/DefTokeniser.h"
 #include "debugging/debugging.h"
-#include "math/FloatTools.h"
 #include "generic/callback.h"
 #include "generic/referencecounted.h"
-#include "os/path.h"
 #include "shaderlib.h"
 #include "texturelib.h"
 #include "moduleobservers.h"
@@ -64,6 +62,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "xmlutil/Node.h"
 
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -214,25 +213,6 @@ Image* loadHeightmap(void* environment, const char* name)
   }
   return 0;
 }
-
-
-Image* loadSpecial(void* environment, const char* name)
-{
-  if(*name == '_') // special image
-  {
-    StringOutputStream bitmapName(256);
-    bitmapName << GlobalRadiant().getAppPath() << "bitmaps/" << name + 1 << ".bmp";
-    Image* image = loadBitmap(environment, bitmapName.c_str());
-    if(image != 0)
-    {
-      return image;
-    }
-  }
-  return GlobalTexturesCache().loadImage(name);
-}
-
-typedef boost::shared_ptr<ShaderTemplate> ShaderTemplatePtr;
-typedef std::map<std::string, ShaderTemplatePtr> ShaderTemplateMap;
 
 ShaderTemplateMap g_shaders;
 ShaderTemplateMap g_shaderTemplates;
@@ -477,8 +457,9 @@ public:
       m_notfound = m_pTexture;
 
       {
-        StringOutputStream name(256);
-        name << GlobalRadiant().getAppPath() << "bitmaps/" << (IsDefault() ? "notex.bmp" : "shadernotex.bmp");
+        std::string name = std::string(GlobalRadiant().getAppPath())
+        				   + "bitmaps/" 
+        				   + (IsDefault() ? "notex.bmp" : "shadernotex.bmp");
         m_pTexture = GlobalTexturesCache().capture(LoadImageCallback(0, loadBitmap), name.c_str());
       }
     }
@@ -792,32 +773,6 @@ ShaderTemplatePtr parseShaderName(std::string& rawName)
 	return shaderTemplate;
 } 
 
-
-/* Parses through a table definition within a material file.
- * It just skips over the whole content 
- */
-void parseShaderTable(parser::DefTokeniser& tokeniser) 
-{
-	// This is the name of the table
-	tokeniser.nextToken();
-	
-	tokeniser.assertNextToken("{");
-	unsigned short int openBraces = 1; 
-	
-	// Continue parsing till the table is over, i.e. the according closing brace is found
-	while (openBraces>0 && tokeniser.hasMoreTokens()) {
-		const std::string token = tokeniser.nextToken();
-		
-		if (token == "{") {
-			openBraces++;
-		}
-		
-		if (token == "}") {
-			openBraces--;
-		}
-	}	
-}
-
 /**
  * Parses the contents of a material definition. The shader name and opening
  * brace "{" will already have been removed when this function is called.
@@ -854,50 +809,6 @@ void parseShaderDecl(parser::DefTokeniser& tokeniser,
     			  << " already defined." << std::endl;
     }
 }
-
-/* Parses through the shader file and processes the tokens delivered by 
- * DefTokeniser. 
- */ 
-void parseShaderFile(const std::string& inStr, const std::string& filename)
-{
-	// Create the tokeniser
-	parser::DefTokeniser tokeniser(inStr, " \t\n\v\r", "{}(),");
-	
-	while (tokeniser.hasMoreTokens()) {
-		// Load the first token, it should be a name
-		std::string token = tokeniser.nextToken();		
-
-		if (token == "table") {
-			parseShaderTable(tokeniser);		 		
-		} 
-		else if (token[0] == '{' || token[0] == '}') {
-			// This is not supposed to happen, as the shaderName is still 
-			// undefined
-			std::cerr << "[shaders] Missing shadername in " 
-					  << filename << std::endl;
-			return; 
-		} 
-		else {			
-			// We are still outside of any braces, so this must be a shader name			
-			ShaderTemplatePtr shaderTemplate = parseShaderName(token);
-
-			// Try to parse the rest of the decl, catching and printing any
-			// exception
-			try {
-				tokeniser.assertNextToken("{");
-				parseShaderDecl(tokeniser, shaderTemplate, filename);
-			}
-			catch (parser::ParseException e) {
-				std::cerr << "[shaders] " << filename << ": Failed to parse \"" 
-						  << shaderTemplate->getName() << "\" (" << e.what() 
-						  << ")" << std::endl;
-				return;
-			}
-		}
-	}
-}
-
-#include "ShaderFileLoader.h"
 
 /** Load the shaders from the MTR files.
  */

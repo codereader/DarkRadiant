@@ -1,6 +1,11 @@
 #ifndef SHADERFILELOADER_H_
 #define SHADERFILELOADER_H_
 
+#include <string>
+
+// FORWARD DECLS
+namespace parser { class DefTokeniser; }
+
 namespace shaders
 {
 
@@ -11,6 +16,14 @@ class ShaderFileLoader
 {
 	// The base path for the shaders (e.g. "materials/")
 	std::string _basePath;
+	
+private:
+
+	// Parse a shader file with the given contents and filename
+	void parseShaderFile(const std::string& inStr, const std::string& filename);
+
+	// Parse a "table" definition in a shader file
+	void parseShaderTable(parser::DefTokeniser& tokeniser);
 	
 public:
 
@@ -23,22 +36,7 @@ public:
 	{}
 	
 	// Functor operator
-	void operator() (const char* fileName) {
-		
-		// Construct the full VFS path
-		std::string fullPath = _basePath + fileName;
-		
-		// Open the file
-		ArchiveTextFile* file = GlobalFileSystem().openTextFile(fullPath);
-
-		if (file != 0) {
-			parseShaderFile(file->getInputStream().getAsString(), fullPath);           
-			file->release();
-		} 
-		else {
-			throw std::runtime_error("Unable to read shaderfile: " + fullPath);  	
-		}
-	}
+	void operator() (const char* fileName);
 };
 
 }
