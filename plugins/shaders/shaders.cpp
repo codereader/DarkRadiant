@@ -62,8 +62,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "xmlutil/Node.h"
 
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/replace.hpp>
-#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/lexical_cast.hpp>
 
 /* GLOBALS */
@@ -210,19 +208,6 @@ Image* loadHeightmap(void* environment, const char* name)
     Image& normalmap = convertHeightmapToNormalmap(*heightmap, *reinterpret_cast<float*>(environment));
     heightmap->release();
     return &normalmap;
-  }
-  return 0;
-}
-
-ShaderTemplateMap g_shaders;
-ShaderTemplateMap g_shaderTemplates;
-
-ShaderTemplate* findTemplate(const char* name)
-{
-  ShaderTemplateMap::iterator i = g_shaderTemplates.find(name);
-  if(i != g_shaderTemplates.end())
-  {
-    return (*i).second.get();
   }
   return 0;
 }
@@ -713,8 +698,6 @@ void FreeShaders()
   // empty the actives shaders list
   debug_check_shaders(g_ActiveShaders);
   g_ActiveShaders.clear();
-  g_shaders.clear();
-  g_shaderTemplates.clear();
   g_shaderDefinitions.clear();
   g_ActiveShadersChangedNotify();
 }
@@ -738,7 +721,6 @@ CShader* Try_Shader_ForName(const std::string& name)
 	ShaderDefinitionMap::iterator i = g_shaderDefinitions.find(name);
 	if(i == g_shaderDefinitions.end()) {
 		ShaderTemplatePtr shaderTemplate(new ShaderTemplate(name));
-		g_shaderTemplates[name] = shaderTemplate;
 
 		// Create and insert new ShaderDefinition wrapper
 		ShaderDefinition def(shaderTemplate, "");
@@ -752,26 +734,6 @@ CShader* Try_Shader_ForName(const std::string& name)
 	g_ActiveShadersChangedNotify();
 	return pShader;
 }
-
-/* Normalises a given (raw) shadername (slash conversion, extension removal, ...) 
- * and inserts a new shader 
- */
-ShaderTemplatePtr parseShaderName(std::string& rawName) 
-{
-	boost::algorithm::replace_all(rawName, "\\", "/"); // use forward slashes
-	boost::algorithm::to_lower(rawName); // use lowercase
-
-	// Remove the extension if present
-	size_t dotPos = rawName.rfind(".");
-	if (dotPos != std::string::npos) {
-		rawName = rawName.substr(0, dotPos);
-	}
-	
-	ShaderTemplatePtr shaderTemplate(new ShaderTemplate(rawName));
-	g_shaders[rawName] = shaderTemplate;
-
-	return shaderTemplate;
-} 
 
 /**
  * Parses the contents of a material definition. The shader name and opening
