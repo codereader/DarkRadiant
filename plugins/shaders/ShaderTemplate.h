@@ -1,14 +1,11 @@
 #ifndef SHADERTEMPLATE_H_
 #define SHADERTEMPLATE_H_
 
-#include <map>
 #include "ishaders.h"
-
 #include "parser/DefTokeniser.h"
-#include "stream/stringstream.h"
-#include "os/path.h"
 
-#include <boost/algorithm/string/case_conv.hpp>
+#include <map>
+#include <boost/shared_ptr.hpp>
 
 typedef std::pair<std::string, std::string> BlendFuncExpression;
 
@@ -133,5 +130,13 @@ public:
 	bool saveLayer();
   
 };
+
+/* TYPEDEFS */
+
+// Pointer to ShaderTemplate
+typedef boost::shared_ptr<ShaderTemplate> ShaderTemplatePtr;
+
+// Map of named ShaderTemplates
+typedef std::map<std::string, ShaderTemplatePtr> ShaderTemplateMap;
 
 #endif /*SHADERTEMPLATE_H_*/

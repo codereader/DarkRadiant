@@ -3,6 +3,7 @@
 #include "os/path.h"
 
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
 
 /**
  * Replace backslashes with forward slashes and strip of the file extension of
