@@ -836,28 +836,22 @@ void parseShaderDecl(parser::DefTokeniser& tokeniser,
 					  ShaderTemplatePtr shaderTemplate, 
 					  const std::string& filename) 
 {
-	// Call the shader parser	
-	bool result = shaderTemplate->parseDoom3(tokeniser);
+	// Get the ShaderTemplate to populate itself by parsing tokens from the
+	// DefTokeniser. This may throw exceptions.	
+	shaderTemplate->parseDoom3(tokeniser);
 	
-	if (result) {
-		
-		// Construct the ShaderDefinition wrapper class
-		ShaderDefinition def(shaderTemplate, filename);
-		
-		// Get the parsed shader name
-		std::string name = shaderTemplate->getName();
-		
-		// Insert into the definitions map, if not already present
-        if (!g_shaderDefinitions.insert(
-        				ShaderDefinitionMap::value_type(name, def)).second) 
-		{
-        	std::cout << "[shaders] " << filename << ": shader " << name
-        			  << " already defined." << std::endl;
-        }
-    }
-    else {
-    	std::cerr << "[shaders] " << filename 
-    			  << ": ShaderTemplate failed to parse." << std::endl;
+	// Construct the ShaderDefinition wrapper class
+	ShaderDefinition def(shaderTemplate, filename);
+	
+	// Get the parsed shader name
+	std::string name = shaderTemplate->getName();
+	
+	// Insert into the definitions map, if not already present
+    if (!g_shaderDefinitions.insert(
+    				ShaderDefinitionMap::value_type(name, def)).second) 
+	{
+    	std::cout << "[shaders] " << filename << ": shader " << name
+    			  << " already defined." << std::endl;
     }
 }
 
