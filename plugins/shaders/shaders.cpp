@@ -856,7 +856,8 @@ void parseShaderDecl(parser::DefTokeniser& tokeniser,
         }
     }
     else {
-    	throw parser::ParseException(std::string("Error while parsing") + shaderTemplate->getName());
+    	std::cerr << "[shaders] " << filename 
+    			  << ": ShaderTemplate failed to parse." << std::endl;
     }
 }
 
@@ -865,6 +866,7 @@ void parseShaderDecl(parser::DefTokeniser& tokeniser,
  */ 
 void parseShaderFile(const std::string& inStr, const std::string& filename)
 {
+	// Create the tokeniser
 	parser::DefTokeniser tokeniser(inStr, " \t\n\v\r", "{}(),");
 	
 	while (tokeniser.hasMoreTokens()) {
@@ -883,17 +885,20 @@ void parseShaderFile(const std::string& inStr, const std::string& filename)
 		} 
 		else {			
 			// We are still outside of any braces, so this must be a shader name			
+			ShaderTemplatePtr shaderTemplate = parseShaderName(token);
+
+			// Try to parse the rest of the decl, catching and printing any
+			// exception
 			try {
-				ShaderTemplatePtr shaderTemplate = parseShaderName(token);
 				tokeniser.assertNextToken("{");
 				parseShaderDecl(tokeniser, shaderTemplate, filename);
 			}
 			catch (parser::ParseException e) {
-				std::cerr << "[shaders] Failed to parse " << filename 
-									<< " (" << e.what() << ")" << std::endl;
+				std::cerr << "[shaders] " << filename << ": Failed to parse \"" 
+						  << shaderTemplate->getName() << "\" (" << e.what() 
+						  << ")" << std::endl;
 				return;
 			}
-			
 		}
 	}
 }
