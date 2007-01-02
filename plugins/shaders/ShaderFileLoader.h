@@ -1,6 +1,7 @@
 #ifndef SHADERFILELOADER_H_
 #define SHADERFILELOADER_H_
 
+#include "ShaderTemplate.h"
 #include <string>
 
 // FORWARD DECLS
@@ -21,6 +22,10 @@ private:
 
 	// Parse a shader file with the given contents and filename
 	void parseShaderFile(const std::string& inStr, const std::string& filename);
+
+	// Parse the name of a shader and return a ShaderTemplate ready to be
+	// filled in with parsed data
+	ShaderTemplatePtr parseShaderName(std::string& name); 
 
 	// Parse a "table" definition in a shader file
 	void parseShaderTable(parser::DefTokeniser& tokeniser);

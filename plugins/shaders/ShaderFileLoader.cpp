@@ -1,16 +1,16 @@
 #include "ShaderFileLoader.h"
-#include "ShaderTemplate.h"
 
 #include "ifilesystem.h"
 #include "iarchive.h"
 #include "parser/DefTokeniser.h"
 
 #include <iostream>
+#include <boost/algorithm/string/replace.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
 
 /* FORWARD DECLS */
 
 // Funtions from shaders.cpp - TODO: refactor these into members of this class
-ShaderTemplatePtr parseShaderName(std::string& rawName);
 void parseShaderDecl(parser::DefTokeniser&, 
 					 ShaderTemplatePtr, 
 					 const std::string&);
@@ -63,6 +63,25 @@ void ShaderFileLoader::parseShaderFile(const std::string& inStr,
 		}
 	}
 }
+
+/* Normalises a given (raw) shadername (slash conversion, extension removal, ...) 
+ * and inserts a new shader 
+ */
+ShaderTemplatePtr ShaderFileLoader::parseShaderName(std::string& rawName) 
+{
+	boost::algorithm::replace_all(rawName, "\\", "/"); // use forward slashes
+	boost::algorithm::to_lower(rawName); // use lowercase
+
+	// Remove the extension if present
+	size_t dotPos = rawName.rfind(".");
+	if (dotPos != std::string::npos) {
+		rawName = rawName.substr(0, dotPos);
+	}
+
+	// Construct and return the ShaderTemplate pointer	
+	ShaderTemplatePtr shaderTemplate(new ShaderTemplate(rawName));
+	return shaderTemplate;
+} 
 
 /* Parses through a table definition within a material file.
  * It just skips over the whole content 
