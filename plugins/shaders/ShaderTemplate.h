@@ -48,14 +48,18 @@ public:
  */
 class ShaderTemplate
 {
-	std::size_t m_refcount;
-  
 	// Template name
 	std::string _name;
   
 public:
-  LayerTemplate 	m_currentLayer;
+
+	// The current layer (used by the parsing functions)
+	LayerTemplate 	m_currentLayer;
   
+  	// Vector of LayerTemplates representing each stage in the material
+  	typedef std::vector<LayerTemplate> Layers;
+	Layers m_layers;
+
 	// Image maps
 	std::string m_textureName;
 	std::string m_diffuse;
@@ -82,8 +86,7 @@ public:
 	 * Constructor. Accepts the name to use for this template.
 	 */
 	ShaderTemplate(const std::string& name) 
-	: m_refcount(0),
-	  _name(name),
+	: _name(name),
 	  m_textureName(""),
       fogLight(false),
       ambientLight(false),
@@ -93,39 +96,26 @@ public:
     	m_fTrans = 1.0f;    
 	}
 
-  void IncRef()
-  {
-    ++m_refcount;
-  }
-  void DecRef() 
-  {
-    ASSERT_MESSAGE(m_refcount != 0, "shader reference-count going below zero");
-    if(--m_refcount == 0)
-    {
-      delete this;
-    }
-  }
-
-  std::size_t refcount()
-  {
-    return m_refcount;
-  }
-
+	/**
+	 * Get the name of this shader template.
+	 */
 	std::string getName() const {
     	return _name;
 	}
 	
+	/**
+	 * Set the name of this shader template.
+	 */
 	void setName(const std::string& name) {
 		_name = name;
 	}
 
-	/* Parse functions. These are NOT recursive descent parsers, instead they
-	 * each run through a list of keywords of interest, setting internal state
-	 * if appropriate and then returning true or false depending on whether they
-	 * found anything or not. */
-	
-	// Parse a Doom 3 material decl
-	bool parseDoom3(parser::DefTokeniser&);
+	/**
+	 * Parse a Doom 3 material decl. This is the master parse function, it
+	 * returns no value but exceptions may be thrown at any stage of the 
+	 * parsing.
+	 */
+	void parseDoom3(parser::DefTokeniser&);
 
 	// Parse an image map expression, possibly recursively if addnormals() or
 	// other functions are used	
@@ -142,9 +132,6 @@ public:
 	bool parseClamp(parser::DefTokeniser&, const std::string&);
 	bool saveLayer();
   
-  	// Vector of LayerTemplates representing each stage in the material
-  	typedef std::vector<LayerTemplate> Layers;
-	Layers m_layers;
 };
 
 #endif /*SHADERTEMPLATE_H_*/

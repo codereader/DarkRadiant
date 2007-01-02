@@ -284,9 +284,10 @@ bool ShaderTemplate::saveLayer()
 	return true;
 }
 
-/* Parses a material definition for shader keywords and takes the according actions.
+/* Parses a material definition for shader keywords and takes the according 
+ * actions. 
  */
-bool ShaderTemplate::parseDoom3(parser::DefTokeniser& tokeniser)
+void ShaderTemplate::parseDoom3(parser::DefTokeniser& tokeniser)
 {
 	int curStage = 1;	// we always start at stage 1
 		
@@ -326,5 +327,4 @@ bool ShaderTemplate::parseDoom3(parser::DefTokeniser& tokeniser)
 		} 
 	}
 	
-	return true;
 }
