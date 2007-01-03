@@ -38,7 +38,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 class BrushModuleClass : 
 	public RegistryKeyObserver,
-	public BrushCreator 
+	public BrushCreator,
+	public PreferenceConstructor
 {
 	
 	bool _textureLockEnabled;
@@ -53,6 +54,8 @@ public:
 	// The opposite of the above construct()
 	void destroy();
 	
+	// PreferenceConstructor implementation
+	void constructPreferencePage(PreferenceGroup& group);
 	
 	// --------------- BrushCreator methods ---------------------------------------------
 	
@@ -78,18 +81,6 @@ public:
 	
 	// The callback for registry key changes
 	void keyChanged();
-
-private:
-
-	// Attaches the "brush" preference page constructor to the preference system
-	void registerPreferencesPage();
-	
-	// Adds the actual preference items to the given page
-	void constructPreferences(PrefPage* page);
-	
-	// Create the "brush" preference page
-	void constructPreferencePage(PreferenceGroup& group);
-	typedef MemberCaller1<BrushModuleClass, PreferenceGroup&, &BrushModuleClass::constructPreferencePage> PreferencePageConstructor;
 	
 }; // class BrushModuleClass
 

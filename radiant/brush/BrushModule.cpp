@@ -46,9 +46,15 @@ BrushModuleClass::BrushModuleClass() :
 	_textureLockEnabled(GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1")
 {
 	GlobalRegistry().addKeyObserver(this, RKEY_ENABLE_TEXTURE_LOCK);
+	
+	// greebo: Register this class in the preference system so that the constructPreferencePage() gets called.
+	GlobalPreferenceSystem().addConstructor(this);
 }
 
-void BrushModuleClass::constructPreferences(PrefPage* page) {
+void BrushModuleClass::constructPreferencePage(PreferenceGroup& group) {
+	// Add a page to the given group
+	PreferencesPage* page(group.createPage("Brush", "Brush Settings"));
+	
 	// Add the default texture scale preference and connect it to the according registryKey
 	// Note: this should be moved somewhere else, I think
 	page->appendEntry("Default texture scale", "user/ui/defaultTextureScale");
@@ -57,20 +63,8 @@ void BrushModuleClass::constructPreferences(PrefPage* page) {
 	page->appendCheckBox("", "Enable Texture Lock", "user/ui/brush/textureLock");
 }
 
-
-void BrushModuleClass::constructPreferencePage(PreferenceGroup& group) {
-	PreferencesPage* page(group.createPage("Brush", "Brush Settings"));
-	constructPreferences(reinterpret_cast<PrefPage*>(page));
-}
-
-void BrushModuleClass::registerPreferencesPage() {
-	// Instantiate a callback using <this> class and pass it to the preference system
-	PreferencesDialog_addSettingsPage(PreferencePageConstructor(*this));
-}
-
 void BrushModuleClass::construct() {
 	Brush_registerCommands();
-	registerPreferencesPage();
 	
 	BrushClipPlane::constructStatic();
 	BrushInstance::constructStatic();
