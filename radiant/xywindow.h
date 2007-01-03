@@ -26,9 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "xyview/XYWnd.h"
 
 typedef struct _GtkWindow GtkWindow;
-typedef struct _GtkMenu GtkMenu;
-
-typedef struct _GtkWindow GtkWindow;
 void XY_Top_Shown_Construct(GtkWindow* parent);
 void YZ_Side_Shown_Construct(GtkWindow* parent);
 void XZ_Front_Shown_Construct(GtkWindow* parent);
@@ -37,6 +34,5 @@ void XYWindow_Construct();
 void XYWindow_Destroy();
 
 void XYShow_registerCommands();
-void XYWnd_registerShortcuts();
 
 #endif

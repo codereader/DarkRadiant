@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 #include "warnings.h"
 
+#include "ieventmanager.h"
 #include "iscenegraph.h"
 #include "iregistry.h"
 #include "brush/TexDef.h"
@@ -1611,11 +1612,11 @@ void SurfaceInspector_registerPreferencesPage()
 
 void SurfaceInspector_registerCommands()
 {
-  GlobalCommands_insert("FitTexture", FreeCaller<SurfaceInspector_FitTexture>(), Accelerator('B', (GdkModifierType)GDK_SHIFT_MASK));
-  GlobalCommands_insert("SurfaceInspector", FreeCaller<SurfaceInspector_toggleShown>(), Accelerator('S'));
+  GlobalEventManager().addCommand("FitTexture", FreeCaller<SurfaceInspector_FitTexture>());
+  GlobalEventManager().addCommand("SurfaceInspector", FreeCaller<SurfaceInspector_toggleShown>());
 
-  GlobalCommands_insert("FaceCopyTexture", FreeCaller<SelectedFaces_copyTexture>());
-  GlobalCommands_insert("FacePasteTexture", FreeCaller<SelectedFaces_pasteTexture>());
+  GlobalEventManager().addCommand("FaceCopyTexture", FreeCaller<SelectedFaces_copyTexture>());
+  GlobalEventManager().addCommand("FacePasteTexture", FreeCaller<SelectedFaces_pasteTexture>());
 }
 
 

@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "mru.h"
 
+#include "ieventmanager.h"
+
 #include <string.h>
 #include <stdio.h>
 #include <gtk/gtklabel.h>
@@ -30,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stream/stringstream.h"
 #include "convert.h"
 
+#include "gtkmisc.h"
 #include "gtkutil/menu.h"
 #include "map.h"
 #include "qe3.h"
@@ -213,23 +216,27 @@ LoadMRU g_load_mru4(4);
 
 void MRU_constructMenu(GtkMenu* menu)
 {
+	GlobalEventManager().addCommand("LoadMRU1", LoadMRUCaller(g_load_mru1));
+	GlobalEventManager().addCommand("LoadMRU2", LoadMRUCaller(g_load_mru2));
+	GlobalEventManager().addCommand("LoadMRU3", LoadMRUCaller(g_load_mru3));
+	GlobalEventManager().addCommand("LoadMRU4", LoadMRUCaller(g_load_mru4));
   {
-    GtkMenuItem* item = create_menu_item_with_mnemonic(menu, "Recent Files", LoadMRUCaller(g_load_mru1));
+    GtkMenuItem* item = createMenuItemWithMnemonic(menu, "Recent Files", "LoadMRU1");
     gtk_widget_set_sensitive(GTK_WIDGET(item), FALSE);
     MRU_AddWidget(item, 0);
   }
   {
-    GtkMenuItem* item = create_menu_item_with_mnemonic(menu, "2", LoadMRUCaller(g_load_mru2));
+    GtkMenuItem* item = createMenuItemWithMnemonic(menu, "2", "LoadMRU2");
     gtk_widget_hide(GTK_WIDGET(item));
     MRU_AddWidget(item, 1);
   }
   {
-    GtkMenuItem* item = create_menu_item_with_mnemonic(menu, "3", LoadMRUCaller(g_load_mru3));
+    GtkMenuItem* item = createMenuItemWithMnemonic(menu, "3", "LoadMRU3");
     gtk_widget_hide(GTK_WIDGET(item));
     MRU_AddWidget(item, 2);
   }
   {
-    GtkMenuItem* item = create_menu_item_with_mnemonic(menu, "4", LoadMRUCaller(g_load_mru4));
+    GtkMenuItem* item = createMenuItemWithMnemonic(menu, "4", "LoadMRU4");
     gtk_widget_hide(GTK_WIDGET(item));
     MRU_AddWidget(item, 3);
   }

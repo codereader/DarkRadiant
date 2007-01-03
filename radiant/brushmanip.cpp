@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brushmanip.h"
 
 #include "iclipper.h"
+#include "ieventmanager.h"
 
 #include "gtkutil/widget.h"
 #include "gtkutil/menu.h"
@@ -1161,64 +1162,54 @@ void FlipClipper() {
 
 void Brush_registerCommands()
 {
-	//GlobalToggles_insert("TogTexLock", FreeCaller<Texdef_ToggleMoveLock>(), ToggleItem::AddCallbackCaller(g_texdef_movelock_item), Accelerator('T', (GdkModifierType)GDK_SHIFT_MASK));
-	GlobalToggles_insert("TogTexLock", MemberCaller<BrushModuleClass, &BrushModuleClass::toggleTextureLock>(*GlobalBrush()), 
-						 ToggleItem::AddCallbackCaller(GlobalBrush()->textureLockItem()), Accelerator('T', (GdkModifierType)GDK_SHIFT_MASK));
+	GlobalEventManager().addRegistryToggle("TogTexLock", RKEY_ENABLE_TEXTURE_LOCK);
 
-  GlobalCommands_insert("BrushPrism", BrushPrefab::SetCaller(g_brushprism));
-  GlobalCommands_insert("BrushCone", BrushPrefab::SetCaller(g_brushcone));
-  GlobalCommands_insert("BrushSphere", BrushPrefab::SetCaller(g_brushsphere));
+	GlobalEventManager().addCommand("BrushPrism", BrushPrefab::SetCaller(g_brushprism));
+	GlobalEventManager().addCommand("BrushCone", BrushPrefab::SetCaller(g_brushcone));
+	GlobalEventManager().addCommand("BrushSphere", BrushPrefab::SetCaller(g_brushsphere));
 
-  GlobalCommands_insert("Brush3Sided", BrushMakeSided::SetCaller(g_brushmakesided3), Accelerator('3', (GdkModifierType)GDK_CONTROL_MASK));
-  GlobalCommands_insert("Brush4Sided", BrushMakeSided::SetCaller(g_brushmakesided4), Accelerator('4', (GdkModifierType)GDK_CONTROL_MASK));
-  GlobalCommands_insert("Brush5Sided", BrushMakeSided::SetCaller(g_brushmakesided5), Accelerator('5', (GdkModifierType)GDK_CONTROL_MASK));
-  GlobalCommands_insert("Brush6Sided", BrushMakeSided::SetCaller(g_brushmakesided6), Accelerator('6', (GdkModifierType)GDK_CONTROL_MASK));
-  GlobalCommands_insert("Brush7Sided", BrushMakeSided::SetCaller(g_brushmakesided7), Accelerator('7', (GdkModifierType)GDK_CONTROL_MASK));
-  GlobalCommands_insert("Brush8Sided", BrushMakeSided::SetCaller(g_brushmakesided8), Accelerator('8', (GdkModifierType)GDK_CONTROL_MASK));
-  GlobalCommands_insert("Brush9Sided", BrushMakeSided::SetCaller(g_brushmakesided9), Accelerator('9', (GdkModifierType)GDK_CONTROL_MASK));
+	GlobalEventManager().addCommand("Brush3Sided", BrushMakeSided::SetCaller(g_brushmakesided3));
+	GlobalEventManager().addCommand("Brush4Sided", BrushMakeSided::SetCaller(g_brushmakesided4));
+	GlobalEventManager().addCommand("Brush5Sided", BrushMakeSided::SetCaller(g_brushmakesided5));
+	GlobalEventManager().addCommand("Brush6Sided", BrushMakeSided::SetCaller(g_brushmakesided6));
+	GlobalEventManager().addCommand("Brush7Sided", BrushMakeSided::SetCaller(g_brushmakesided7));
+	GlobalEventManager().addCommand("Brush8Sided", BrushMakeSided::SetCaller(g_brushmakesided8));
+	GlobalEventManager().addCommand("Brush9Sided", BrushMakeSided::SetCaller(g_brushmakesided9));
 
-  GlobalCommands_insert("ClipSelected", FreeCaller<ClipSelected>(), Accelerator(GDK_Return));
-  GlobalCommands_insert("SplitSelected", FreeCaller<SplitSelected>(), Accelerator(GDK_Return, (GdkModifierType)GDK_SHIFT_MASK));
-  GlobalCommands_insert("FlipClip", FreeCaller<FlipClipper>(), Accelerator(GDK_Return, (GdkModifierType)GDK_CONTROL_MASK));
+	GlobalEventManager().addCommand("ClipSelected", FreeCaller<ClipSelected>());
+	GlobalEventManager().addCommand("SplitSelected", FreeCaller<SplitSelected>());
+	GlobalEventManager().addCommand("FlipClip", FreeCaller<FlipClipper>());
 
-  GlobalCommands_insert("MakeDetail", FreeCaller<Select_MakeDetail>(), Accelerator('M', (GdkModifierType)GDK_CONTROL_MASK));
-  GlobalCommands_insert("MakeStructural", FreeCaller<Select_MakeStructural>(), Accelerator('S', (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
+	GlobalEventManager().addCommand("MakeDetail", FreeCaller<Select_MakeDetail>());
+	GlobalEventManager().addCommand("MakeStructural", FreeCaller<Select_MakeStructural>());
 }
 
 void Brush_constructMenu(GtkMenu* menu)
 {
-  create_menu_item_with_mnemonic(menu, "Prism...", "BrushPrism");
-  create_menu_item_with_mnemonic(menu, "Cone...", "BrushCone");
-  create_menu_item_with_mnemonic(menu, "Sphere...", "BrushSphere");
-  menu_separator (menu);
+  createMenuItemWithMnemonic(menu, "Prism...", "BrushPrism");
+  createMenuItemWithMnemonic(menu, "Cone...", "BrushCone");
+  createMenuItemWithMnemonic(menu, "Sphere...", "BrushSphere");
+  createSeparatorMenuItem (menu);
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "CSG");
-    create_menu_item_with_mnemonic(menu_in_menu, "Make _Hollow", "CSGHollow");
-    create_menu_item_with_mnemonic(menu_in_menu, "CSG _Subtract", "CSGSubtract");
-    create_menu_item_with_mnemonic(menu_in_menu, "CSG _Merge", "CSGMerge");
+    createMenuItemWithMnemonic(menu_in_menu, "Make _Hollow", "CSGHollow");
+    createMenuItemWithMnemonic(menu_in_menu, "CSG _Subtract", "CSGSubtract");
+    createMenuItemWithMnemonic(menu_in_menu, "CSG _Merge", "CSGMerge");
   }
-  menu_separator(menu);
+  createSeparatorMenuItem(menu);
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Clipper");
 
-    create_menu_item_with_mnemonic(menu_in_menu, "Clip selection", "ClipSelected");
-    create_menu_item_with_mnemonic(menu_in_menu, "Split selection", "SplitSelected");
-    create_menu_item_with_mnemonic(menu_in_menu, "Flip Clip orientation", "FlipClip");
+    createMenuItemWithMnemonic(menu_in_menu, "Clip selection", "ClipSelected");
+    createMenuItemWithMnemonic(menu_in_menu, "Split selection", "SplitSelected");
+    createMenuItemWithMnemonic(menu_in_menu, "Flip Clip orientation", "FlipClip");
   }
-  menu_separator(menu);
-  create_menu_item_with_mnemonic(menu, "Make detail", "MakeDetail");
-  create_menu_item_with_mnemonic(menu, "Make structural", "MakeStructural");
+  createSeparatorMenuItem(menu);
+  createMenuItemWithMnemonic(menu, "Make detail", "MakeDetail");
+  createMenuItemWithMnemonic(menu, "Make structural", "MakeStructural");
 
-  create_check_menu_item_with_mnemonic(menu, "Texture Lock", "TogTexLock");
-  menu_separator(menu);
-  create_menu_item_with_mnemonic(menu, "Copy Face Texture", "FaceCopyTexture");
-  create_menu_item_with_mnemonic(menu, "Paste Face Texture", "FacePasteTexture");
-
-  command_connect_accelerator("Brush3Sided");
-  command_connect_accelerator("Brush4Sided");
-  command_connect_accelerator("Brush5Sided");
-  command_connect_accelerator("Brush6Sided");
-  command_connect_accelerator("Brush7Sided");
-  command_connect_accelerator("Brush8Sided");
-  command_connect_accelerator("Brush9Sided");
+  createCheckMenuItemWithMnemonic(menu, "Texture Lock", "TogTexLock");
+  createSeparatorMenuItem(menu);
+  createMenuItemWithMnemonic(menu, "Copy Face Texture", "FaceCopyTexture");
+  createMenuItemWithMnemonic(menu, "Paste Face Texture", "FacePasteTexture");
 }

@@ -43,10 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // Constructor, connect self to the observed registryKey
 BrushModuleClass::BrushModuleClass() :
-	_textureLockEnabled(GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1"),
-	_textureLockCaller(*this),
-	_textureLockCallBack(_textureLockCaller),
-	_textureLockItem(_textureLockCallBack)
+	_textureLockEnabled(GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1")
 {
 	GlobalRegistry().addKeyObserver(this, RKEY_ENABLE_TEXTURE_LOCK);
 }
@@ -99,13 +96,6 @@ void BrushModuleClass::clipperColourChanged() {
 
 void BrushModuleClass::keyChanged() {
 	_textureLockEnabled = (GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1");
-	
-	// Call the update method for the texture lock
-	_textureLockItem.update();
-}
-
-void BrushModuleClass::textureLockExport(const BoolImportCallback& importCallback) {
-	importCallback((GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1"));
 }
 
 bool BrushModuleClass::textureLockEnabled() const {
@@ -123,10 +113,6 @@ void BrushModuleClass::toggleTextureLock() {
 	if (g_pParentWnd != 0) {
 		g_pParentWnd->SetGridStatus();
 	}
-}
-
-ToggleItem& BrushModuleClass::textureLockItem() {
-	return _textureLockItem;
 }
 
 // ------------ BrushCreator implementation --------------------------------------------

@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ifilesystem.h"
 #include "ishaders.h"
 #include "iclipper.h"
+#include "ieventmanager.h"
 #include "ientity.h"
 #include "ieclass.h"
 #include "irender.h"
@@ -193,6 +194,7 @@ StaticRegisterModule staticRegisterRadiantCore(StaticRadiantCoreModule::instance
 
 class RadiantDependencies :
   public GlobalRadiantModuleRef,
+  public GlobalEventManagerModuleRef,
   public GlobalFileSystemModuleRef,
   public GlobalEntityModuleRef,
   public GlobalShadersModuleRef,
@@ -278,6 +280,9 @@ public:
 
     EnginePath_verify();
     EnginePath_Realise();
+    
+    // Load the shortcuts from the registry
+ 	GlobalEventManager().loadAccelerators();
   }
   ~Radiant()
   {

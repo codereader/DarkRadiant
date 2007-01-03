@@ -1,5 +1,7 @@
 #include "CameraSettings.h"
 
+#include "ieventmanager.h"
+
 #include "GlobalCamera.h"
 #include "renderstate.h"
 
@@ -14,10 +16,7 @@ CameraSettings::CameraSettings() :
 	_cameraDrawMode(drawTexture),
 	_cubicScale(GlobalRegistry().getInt(RKEY_CUBIC_SCALE)),
 	_farClipEnabled(GlobalRegistry().get(RKEY_ENABLE_FARCLIP) == "1"),
-	_solidSelectionBoxes(GlobalRegistry().get(RKEY_SOLID_SELECTION_BOXES) == "1"),
-	_farClipCaller(*this),
-	_farClipCallBack(_farClipCaller),
-	_farClipItem(_farClipCallBack)
+	_solidSelectionBoxes(GlobalRegistry().get(RKEY_SOLID_SELECTION_BOXES) == "1")
 {
 	// Constrain the cubic scale to a fixed value
 	if (_cubicScale > MAX_CUBIC_SCALE) {
@@ -72,10 +71,6 @@ void CameraSettings::constructPreferencePage(PreferenceGroup& group) {
 	page->appendCombo("Render Mode", RKEY_DRAWMODE, renderModeDescriptions);
 }
 
-void CameraSettings::farClipExport(const BoolImportCallback& importCallback) {
-	importCallback((GlobalRegistry().get(RKEY_ENABLE_FARCLIP) == "1"));
-}
-
 void CameraSettings::importDrawMode(const int mode) {
 	switch (mode) {
 		case 0: 
@@ -113,32 +108,22 @@ void CameraSettings::keyChanged() {
 		_farClipEnabled = (GlobalRegistry().get(RKEY_ENABLE_FARCLIP) == "1");
 		_solidSelectionBoxes = (GlobalRegistry().get(RKEY_SOLID_SELECTION_BOXES) == "1");
 		
+		GlobalEventManager().setToggled("ToggleCubicClip", _farClipEnabled);
+		
 		// Determine the draw mode represented by the integer registry value
 		importDrawMode(GlobalRegistry().getInt(RKEY_DRAWMODE));
 		
 		// Check if a global camwindow is set
 		if (GlobalCamera().getCamWnd() != 0) {
-			// Disable discrete movement if it was active before
-			if (_discreteMovement == true) {
-				GlobalCamera().getCamWnd()->moveDiscreteDisable();
-			}
-			else {
-				GlobalCamera().getCamWnd()->moveDisable();
-			}
+			// Disconnect the handlers for the old state and re-connect after reading the registry value
+			GlobalCamera().getCamWnd()->removeHandlersMove();
 		
 			// Check the value and take the according actions
 			_discreteMovement = (GlobalRegistry().get(RKEY_DISCRETE_MOVEMENT) == "1");
 			
-			// If it is activated now, take the appropriate action
-			if (_discreteMovement) {
-				GlobalCamera().getCamWnd()->moveDiscreteEnable();
-			}
-			else {
-				GlobalCamera().getCamWnd()->moveEnable();
-			}
+			// Reconnect the new handlers
+			GlobalCamera().getCamWnd()->addHandlersMove();
 			
-			// Call the update method for the farclip plane
-			_farClipItem.update();
 			GlobalCamera().getCamWnd()->getCamera().updateProjection();
 			
 			// Call the update method in case the render mode has changed
@@ -212,11 +197,6 @@ void CameraSettings::setCubicScale(const int& scale) {
 	if (_cubicScale < 1) {
 		_cubicScale = 1;
 	}
-}
-
-
-ToggleItem& CameraSettings::farClipItem() {
-	return _farClipItem;
 }
 
 void CameraSettings::setFarClip(bool farClipEnabled) {

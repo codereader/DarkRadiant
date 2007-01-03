@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 #include "warnings.h"
 
+#include "ieventmanager.h"
 #include "iimage.h"
 #include "ifilesystem.h"
 #include "ishaders.h"
@@ -1528,8 +1529,8 @@ void TextureClipboard_textureSelected(const char* shader);
 void TextureBrowser_Construct()
 {
   GlobalToggles_insert("ShowInUse", FreeCaller<TextureBrowser_ToggleHideUnused>(), ToggleItem::AddCallbackCaller(g_TexturesMenu.m_hideunused_item), Accelerator('U'));
-  GlobalCommands_insert("ShowAllTextures", FreeCaller<TextureBrowser_showAll>(), Accelerator('A', (GdkModifierType)GDK_CONTROL_MASK));
-  GlobalCommands_insert("ViewTextures", FreeCaller<TextureBrowser_toggleShown>(), Accelerator('T'));
+  GlobalEventManager().addCommand("ShowAllTextures", FreeCaller<TextureBrowser_showAll>());
+  GlobalEventManager().addCommand("ViewTextures", FreeCaller<TextureBrowser_toggleShown>());
   GlobalToggles_insert("ToggleShowShaders", FreeCaller<TextureBrowser_ToggleShowShaders>(), ToggleItem::AddCallbackCaller(g_TexturesMenu.m_showshaders_item));
   GlobalToggles_insert("ToggleShowShaderlistOnly", FreeCaller<TextureBrowser_ToggleShowShaderListOnly>(), ToggleItem::AddCallbackCaller(g_TexturesMenu.m_showshaderlistonly_item));
 

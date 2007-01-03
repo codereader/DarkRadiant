@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "debugging/debugging.h"
 
+#include "ieventmanager.h"
 #include "imap.h"
 #include "iselection.h"
 #include "iundo.h"
@@ -2451,10 +2452,10 @@ bool g_bLoadLastMap = false;
 
 void Map_Construct()
 {
-  GlobalCommands_insert("RegionOff", FreeCaller<RegionOff>());
-  GlobalCommands_insert("RegionSetXY", FreeCaller<RegionXY>());
-  GlobalCommands_insert("RegionSetBrush", FreeCaller<RegionBrush>());
-  GlobalCommands_insert("RegionSetSelection", FreeCaller<RegionSelected>(), Accelerator('R', (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
+  GlobalEventManager().addCommand("RegionOff", FreeCaller<RegionOff>());
+  GlobalEventManager().addCommand("RegionSetXY", FreeCaller<RegionXY>());
+  GlobalEventManager().addCommand("RegionSetBrush", FreeCaller<RegionBrush>());
+  GlobalEventManager().addCommand("RegionSetSelection", FreeCaller<RegionSelected>());
 
   GlobalPreferenceSystem().registerPreference("LastMap", CopiedStringImportStringCaller(g_strLastMap), CopiedStringExportStringCaller(g_strLastMap));
   GlobalPreferenceSystem().registerPreference("LoadLastMap", BoolImportStringCaller(g_bLoadLastMap), BoolExportStringCaller(g_bLoadLastMap));

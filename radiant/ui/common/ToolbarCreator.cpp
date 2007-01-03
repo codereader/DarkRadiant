@@ -3,6 +3,8 @@
 #include <gtk/gtk.h>
 #include <string>
 
+#include "ieventmanager.h"
+
 #include "stringio.h"
 #include "stream/stringstream.h"
 #include "stream/textfilestream.h"
@@ -81,23 +83,31 @@ GtkWidget* ToolbarCreator::createToolItem(xml::Node& node) {
 		if (nodeName == "toolbutton") {
 			// Create a new GtkToolButton and assign the right callback
 			toolItem = GTK_WIDGET(gtk_tool_button_new(NULL, name.c_str()));
-						
-			const Callback cb = GlobalCommands_find(action.c_str()).m_callback;
-			g_signal_connect_swapped(G_OBJECT(toolItem), "clicked", G_CALLBACK(cb.getThunk()), cb.getEnvironment());
+			
+			IEvent* event = GlobalEventManager().findEvent(action);
+			
+			if (event != NULL) {
+				event->connectWidget(GTK_WIDGET(toolItem));
+			}
+			else {
+				globalErrorStream() << "ToolbarCreator: Failed to lookup command " << action.c_str() << "\n"; 
+			}
 		}
 		else {
 			// Create a new GtkToggleToolButton and assign the right callback
 			toolItem = GTK_WIDGET(gtk_toggle_tool_button_new());
 			
-			const Toggle toggle = GlobalToggles_find(action.c_str());
-			const Callback cb = toggle.m_command.m_callback;
-			guint handler = g_signal_connect_swapped(G_OBJECT(toolItem), "toggled", 
-													 G_CALLBACK(cb.getThunk()), cb.getEnvironment());
-			g_object_set_data(G_OBJECT(toolItem), "handler", gint_to_pointer(handler));
+			IEvent* event = GlobalEventManager().findEvent(action);
 			
-			GtkToggleToolButton* toggleToolButton = GTK_TOGGLE_TOOL_BUTTON(toolItem);
-							
-			toggle.m_exportCallback(ToggleButtonSetActiveCaller(*toggleToolButton));				
+			if (event != NULL) {
+				event->connectWidget(GTK_WIDGET(toolItem));
+
+				// Tell the event to update the state of this button
+				event->updateWidgets();
+			}
+			else {
+				globalErrorStream() << "ToolbarCreator: Failed to lookup command " << action.c_str() << "\n"; 
+			}
 		}
 		
 		// Set the tooltip, if not empty

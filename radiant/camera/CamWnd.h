@@ -57,8 +57,6 @@ public:
 	CamWnd();
 	~CamWnd();
 
-	void registerCommands();
-
 	void queueDraw();
 	void draw();
 	void update();
@@ -87,23 +85,19 @@ public:
 	GtkWindow* getParent() const;
 	void setParent(GtkWindow* newParent);
 
-	void EnableFreeMove();
-	void DisableFreeMove();
+	void enableFreeMove();
+	void disableFreeMove();
 
 	CameraView* getCameraView();
 
+	// Enables/disables the (ordinary) camera movement (non-freelook)
 	void addHandlersMove();
-
-	void addHandlersFreeMove();
-
 	void removeHandlersMove();
-	void removeHandlersFreeMove();
 
-	void moveEnable();
-	void moveDiscreteEnable();
-
-	void moveDisable();
-	void moveDiscreteDisable();
+	void enableDiscreteMoveEvents();
+	void enableFreeMoveEvents();
+	void disableDiscreteMoveEvents();
+	void disableFreeMoveEvents();
 	
 	// Increases/decreases the far clip plane distance
 	void cubicScaleIn();

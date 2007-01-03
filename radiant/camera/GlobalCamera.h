@@ -4,8 +4,6 @@
 #include <list>
 #include "icamera.h"
 
-#include "gtkutil/widget.h"
-
 #include "preferences.h"
 #include "CamWnd.h"
 #include "CameraObserver.h"
@@ -24,8 +22,7 @@ class GlobalCameraManager {
 	CamWnd* _camWnd;
 	
 	CameraModel* _cameraModel;
-	ToggleShown _cameraShown;
-	
+		
 	// The connected callbacks (get invoked when movedNotify() is called)	
 	CameraObserverList _cameraObservers;
 	
@@ -37,9 +34,6 @@ public:
 	// greebo: The construct method registers all the commands and preferences 
 	// plus initialises the shader states of the camera window. 
 	void construct();
-	
-	// Activates the shortcuts for some commands
-	void registerShortcuts();
 	
 	// This releases the shader states of the CamWnd class
 	void destroy();
@@ -56,12 +50,6 @@ public:
 	// Retrieves/Sets the pointer to the current CamWnd
 	CamWnd* getCamWnd();
 	void setCamWnd(CamWnd* camWnd);
-	
-	// Shows/hides the currently active camera window
-	void toggleCamera();
-	
-	// Return the ToggleShown class (needed to connect the GlobalToggle command)
-	ToggleShown& getToggleShown();
 	
 	// Resets the camera angles of the currently active Camera
 	void resetCameraAngles();
@@ -107,6 +95,25 @@ public:
 	void rotateRightDiscrete();
 	void pitchUpDiscrete();
 	void pitchDownDiscrete();
+	
+private:
+	void freelookMoveForwardKeyUp();
+	void freelookMoveForwardKeyDown();
+	
+	void freelookMoveBackKeyUp();
+	void freelookMoveBackKeyDown();
+	
+	void freelookMoveLeftKeyUp();
+	void freelookMoveLeftKeyDown();
+	
+	void freelookMoveRightKeyUp();
+	void freelookMoveRightKeyDown();
+	
+	void freelookMoveUpKeyUp();
+	void freelookMoveUpKeyDown();
+	
+	void freelookMoveDownKeyUp();
+	void freelookMoveDownKeyDown();
 	
 }; // class GlobalCameraManager
 

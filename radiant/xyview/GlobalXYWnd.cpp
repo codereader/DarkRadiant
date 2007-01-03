@@ -9,6 +9,7 @@ XYWndManager::XYWndManager() :
 	GlobalRegistry().addKeyObserver(this, RKEY_CAMERA_XY_UPDATE);
 	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_CROSSHAIRS);
 	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_GRID);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_SIZE_INFO);
 	
 	// Trigger loading the values of the observed registry keys
 	keyChanged();
@@ -29,6 +30,7 @@ void XYWndManager::constructPreferencePage(PreferenceGroup& group) {
 	page->appendCheckBox("", "Update Views on Camera Movement", RKEY_CAMERA_XY_UPDATE);
 	page->appendCheckBox("", "Show Crosshairs", RKEY_SHOW_CROSSHAIRS);
 	page->appendCheckBox("", "Show Grid", RKEY_SHOW_GRID);
+	page->appendCheckBox("", "Show Size Info", RKEY_SHOW_SIZE_INFO);
 }
 
 // Load/Reload the values from the registry
@@ -37,6 +39,8 @@ void XYWndManager::keyChanged() {
 	_camXYUpdate = (GlobalRegistry().get(RKEY_CAMERA_XY_UPDATE) == "1");
 	_showCrossHairs = (GlobalRegistry().get(RKEY_SHOW_CROSSHAIRS) == "1");
 	_showGrid = (GlobalRegistry().get(RKEY_SHOW_GRID) == "1");
+	_showSizeInfo = (GlobalRegistry().get(RKEY_SHOW_SIZE_INFO) == "1");
+	updateAllViews();
 }
 
 bool XYWndManager::chaseMouse() const {

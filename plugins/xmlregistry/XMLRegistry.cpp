@@ -193,7 +193,6 @@ public:
 	}
 	
 	/*	Adds a key to the XMLRegistry (without value, just the node)
-	 *  The key has to be an absolute path like "/darkradiant/globals/ui/something
 	 *  All required parent nodes are created automatically, if they don't exist     
 	 */
 	xmlNodePtr createKey(const std::string& key) {

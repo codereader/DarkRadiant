@@ -206,6 +206,15 @@ clipper_lib = clipper_env.SharedLibrary(target='clipper', source=clipper_lst, no
 clipper_env.Depends(clipper_lib, math)
 clipper_env.Install(INSTALL + '/modules', clipper_lib)
 
+eventmanager_env = module_env.Copy()
+eventmanager_lst=build_list('plugins/eventmanager', 'EventManager.cpp Accelerator.cpp Command.cpp Toggle.cpp WidgetToggle.cpp')
+eventmanager_env.Append(LIBS = ['gtkutil', 'xmlutil'])
+eventmanager_env.useGtk2()
+eventmanager_env.useGlib2()
+eventmanager_lib = eventmanager_env.SharedLibrary(target='eventmanager', source=eventmanager_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
+eventmanager_env.Depends(eventmanager_lib, gtkutil_lib)
+eventmanager_env.Install(INSTALL + '/modules', eventmanager_lib)
+
 entity_env = module_env.Copy()
 entity_src = [
 	'plugin.cpp',
@@ -228,6 +237,7 @@ entity_src = [
 	'light/Renderables.cpp',
 	'light/LightInstance.cpp',
 	'light/LightNode.cpp',
+	'light/LightSettings.cpp'
 ]
 entity_lst = build_list('plugins/entity', entity_src)
 entity_env.Append(LIBS = ['math', 'xmlutil'])

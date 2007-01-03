@@ -3,6 +3,7 @@
 #include "iregistry.h"
 #include "iscenegraph.h"
 #include "iundo.h"
+#include "ieventmanager.h"
 #include "ientity.h"
 
 #include "gtkutil/accelerator.h"
@@ -110,6 +111,7 @@ XYWnd::XYWnd() :
 	GlobalCamera().addCameraObserver(this);
 
 	PressedButtons_connect(g_pressedButtons, m_gl_widget);
+	GlobalEventManager().connect(GTK_OBJECT(m_gl_widget));
 }
 
 // Destructor
@@ -1300,7 +1302,7 @@ void XYWnd::draw() {
 
 
 	// greebo: Check, if the brush/patch size info should be displayed (if there are any items selected)
-	if (GlobalRegistry().get("user/ui/showSizeInfo")=="1" && GlobalSelectionSystem().countSelected() != 0) {
+	if (GlobalRegistry().get(RKEY_SHOW_SIZE_INFO)=="1" && GlobalSelectionSystem().countSelected() != 0) {
 		Vector3 min, max;
 		Select_GetBounds(min, max);
 		drawSizeInfo(nDim1, nDim2, min, max);

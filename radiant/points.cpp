@@ -30,6 +30,7 @@ please contact Id Software immediately at info@idsoftware.com.
 
 #include "debugging/debugging.h"
 
+#include "ieventmanager.h"
 #include "irender.h"
 #include "igl.h"
 #include "renderable.h"
@@ -272,9 +273,9 @@ void Pointfile_Construct()
 
   GlobalShaderCache().attachRenderable(s_pointfile);
 
-  GlobalCommands_insert("TogglePointfile", FreeCaller<Pointfile_Toggle>());
-  GlobalCommands_insert("NextLeakSpot", FreeCaller<Pointfile_Next>(), Accelerator('K', (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
-  GlobalCommands_insert("PrevLeakSpot", FreeCaller<Pointfile_Prev>(), Accelerator('L', (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
+  GlobalEventManager().addCommand("TogglePointfile", FreeCaller<Pointfile_Toggle>());
+  GlobalEventManager().addCommand("NextLeakSpot", FreeCaller<Pointfile_Next>());
+  GlobalEventManager().addCommand("PrevLeakSpot", FreeCaller<Pointfile_Prev>());
 }
 
 void Pointfile_Destroy()

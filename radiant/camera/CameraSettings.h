@@ -5,8 +5,6 @@
 #include "iregistry.h"
 #include "preferencesystem.h"
 
-#include "gtkutil/widget.h"
-
 /* greebo: This is the home of all the camera settings. As this class derives
  * from a RegistryKeyObserver, it can be connected to the according registry keys
  * and gets notified if any of the observed keys are changed.*/
@@ -49,13 +47,6 @@ class CameraSettings :
 	bool _farClipEnabled;
 	bool _solidSelectionBoxes;
 	
-	void farClipExport(const BoolImportCallback& importCallback);
-	
-	// Callback and callers for the ToggleItem stuff (farClipPlane)
-	MemberCaller1<CameraSettings, const BoolImportCallback&, &CameraSettings::farClipExport> _farClipCaller;
-	BoolExportCallback _farClipCallBack;
-	ToggleItem _farClipItem;
-	
 public:
 	CameraSettings();
 
@@ -83,7 +74,6 @@ public:
 	// Enables/disables the cubic clipping
 	void toggleFarClip();
 	void setFarClip(bool farClipEnabled);
-	ToggleItem& farClipItem();
 	
 	// PreferenceConstructor implementation, adds the elements to the according preference page
 	void constructPreferencePage(PreferenceGroup& group);

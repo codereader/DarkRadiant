@@ -41,4 +41,127 @@
 		<event name="DisableFreeLookMode" button="MOUSE_RIGHT" modifiers="" />
 		<strafemode toggle="CONTROL" forward="SHIFT" speed="0.65" forwardFactor="-1" />
 	</cameraview>
+	<shortcuts>
+		<shortcut command="Sleep" key="P" modifiers="SHIFT+CONTROL" />
+		<shortcut command="OpenMap" key="O" modifiers="CONTROL" />
+		<shortcut command="SaveMap" key="S" modifiers="CONTROL" />
+		<shortcut command="Undo" key="Z" modifiers="CONTROL" />
+		<shortcut command="Redo" key="Y" modifiers="CONTROL" />
+		<shortcut command="Copy" key="C" modifiers="CONTROL" />
+		<shortcut command="Paste" key="V" modifiers="CONTROL" />
+		<shortcut command="PasteToCamera" key="V" modifiers="ALT" />
+		<shortcut command="CloneSelection" key="space" />
+		<shortcut command="DeleteSelection" key="BackSpace" />
+		<shortcut command="UnSelectSelection" key="Escape" />
+		<shortcut command="InvertSelection" key="I" />
+		<shortcut command="ExpandSelectionToEntities" key="E" modifiers="CONTROL+ALT" />
+		<shortcut command="Preferences" key="P" />
+		<shortcut command="ToggleConsole" key="O" />
+		<shortcut command="EntityList" key="L" />
+		<shortcut command="ToggleEntityInspector" key="N" />
+		<shortcut command="ToggleLightInspector" key="J" />
+		<shortcut command="ShowHidden" key="H" modifiers="SHIFT" />
+		<shortcut command="HideSelected" key="H" />
+		<shortcut command="MapInfo" key="M" />
+		<shortcut command="RotateSelectionX" key="V" modifiers="ALT" />
+		<shortcut command="MirrorSelectionY" key="V" modifiers="ALT" />
+		<shortcut command="CSGSubtract" key="U" modifiers="SHIFT" />
+		<shortcut command="CSGMerge" key="U" modifiers="CONTROL" />
+		<shortcut command="SnapToGrid" key="G" modifiers="CONTROL" />
+		<shortcut command="SelectAllOfType" key="A" modifiers="SHIFT" />
+		<shortcut command="TexRotateClock" key="Next" modifiers="SHIFT" />
+		<shortcut command="TexRotateCounter" key="Prior" modifiers="ALT" />
+		<shortcut command="TexScaleUp" key="Up" modifiers="CONTROL" />
+		<shortcut command="TexScaleDown" key="Down" modifiers="CONTROL" />
+		<shortcut command="TexScaleLeft" key="Left" modifiers="CONTROL" />
+		<shortcut command="TexScaleRight" key="Right" modifiers="CONTROL" />
+		<shortcut command="TexShiftUp" key="Up" modifiers="SHIFT" />
+		<shortcut command="TexShiftDown" key="Down" modifiers="SHIFT" />
+		<shortcut command="TexShiftLeft" key="Left" modifiers="SHIFT" />
+		<shortcut command="TexShiftRight" key="Right" modifiers="SHIFT" />
+		<shortcut command="MoveSelectionDOWN" key="KP_Subtract" modifiers="SHIFT" />
+		<shortcut command="MoveSelectionUP" key="KP_Add" modifiers="SHIFT" />
+		<shortcut command="SelectNudgeLeft" key="Left" modifiers="ALT" />
+		<shortcut command="SelectNudgeRight" key="Right" modifiers="ALT" />
+		<shortcut command="SelectNudgeUp" key="Up" modifiers="ALT" />
+		<shortcut command="SelectNudgeDown" key="Down" modifiers="ALT" />
+		<shortcut command="CenterView" key="End" />
+		<shortcut command="CubicClipZoomIn" key="[" modifiers="CONTROL" />
+		<shortcut command="CubicClipZoomOut" key="]" modifiers="CONTROL" />
+		<shortcut command="UpFloor" key="Prior" />
+		<shortcut command="DownFloor" key="Next" />
+		<shortcut command="TogglePreview" key="F3" />
+		<shortcut command="CameraForward" key="Up" />
+		<shortcut command="CameraBack" key="Down" />
+		<shortcut command="CameraLeft" key="Left" />
+		<shortcut command="CameraRight" key="Right" />
+		<shortcut command="CameraStrafeRight" key="period" />
+		<shortcut command="CameraStrafeLeft" key="comma" />
+		<shortcut command="CameraUp" key="D" />
+		<shortcut command="CameraDown" key="C" />
+		<shortcut command="CameraAngleUp" key="A" />
+		<shortcut command="CameraAngleDown" key="Z" />
+		<shortcut command="CameraFreeMoveForward" key="Up" />
+		<shortcut command="CameraFreeMoveBack" key="Down" />
+		<shortcut command="CameraFreeMoveLeft" key="Left" />
+		<shortcut command="CameraFreeMoveRight" key="Right" />
+		<shortcut command="Brush3Sided" key="3" modifiers="CONTROL" />
+		<shortcut command="Brush4Sided" key="4" modifiers="CONTROL" />
+		<shortcut command="Brush5Sided" key="5" modifiers="CONTROL" />
+		<shortcut command="Brush6Sided" key="6" modifiers="CONTROL" />
+		<shortcut command="Brush7Sided" key="7" modifiers="CONTROL" />
+		<shortcut command="Brush8Sided" key="8" modifiers="CONTROL" />
+		<shortcut command="Brush9Sided" key="9" modifiers="CONTROL" />
+		<shortcut command="ClipSelected" key="Return" />
+		<shortcut command="SplitSelected" key="Return" modifiers="SHIFT" />
+		<shortcut command="FlipClip" key="Return" modifiers="CONTROL" />
+		<shortcut command="MakeDetail" key="M" modifiers="CONTROL" />
+		<shortcut command="MakeStructural" key="S" modifiers="SHIFT+CONTROL" />
+		<shortcut command="ConnectSelection" key="K" modifiers="CONTROL" />
+		<shortcut command="GridUp" key="]" />
+		<shortcut command="GridDown" key="[" />
+		<shortcut command="ViewEntityInfo" key="N" />
+		<shortcut command="RegionSetSelection" key="R" modifiers="SHIFT+CONTROL" />
+		<shortcut command="PatchInspector" key="S" modifiers="SHIFT" />
+		<shortcut command="InvertCurveTextureX" key="I" modifiers="SHIFT+CONTROL" />
+		<shortcut command="InvertCurveTextureY" key="I" modifiers="SHIFT" />
+		<shortcut command="IncPatchColumn" key="KP_Add" modifiers="SHIFT+CONTROL" />
+		<shortcut command="IncPatchRow" key="KP_Add" modifiers="CONTROL" />
+		<shortcut command="DecPatchColumn" key="KP_Subtract" modifiers="SHIFT+CONTROL" />
+		<shortcut command="DecPatchRow" key="KP_Subtract" modifiers="CONTROL" />
+		<shortcut command="NaturalizePatch" key="N" modifiers="CONTROL" />
+		<shortcut command="SimplePatchMesh" key="P" modifiers="SHIFT" />
+		<shortcut command="InvertCurve" key="I" modifiers="CONTROL" />
+		<shortcut command="RedisperseRows" key="E" modifiers="CONTROL" />
+		<shortcut command="RedisperseCols" key="E" modifiers="SHIFT+CONTROL" />
+		<shortcut command="MatrixTranspose" key="M" modifiers="SHIFT+CONTROL" />
+		<shortcut command="CapCurrentCurve" key="C" modifiers="SHIFT" />
+		<shortcut command="CycleCapTexturePatch" key="N" modifiers="SHIFT+CONTROL" />
+		<shortcut command="MakeOverlayPatch" key="Y" />
+		<shortcut command="NextLeakSpot" key="K" modifiers="SHIFT+CONTROL" />
+		<shortcut command="PrevLeakSpot" key="L" modifiers="SHIFT+CONTROL" />
+		<shortcut command="FitTexture" key="B" modifiers="SHIFT" />
+		<shortcut command="SurfaceInspector" key="S" />
+		<shortcut command="ShowAllTextures" key="A" modifiers="CONTROL" />
+		<shortcut command="ViewTextures" key="T" />
+		<shortcut command="ToggleCrosshairs" key="X" modifiers="SHIFT" />
+		<shortcut command="ToggleGrid" key="0" />
+		<shortcut command="ToggleView" key="V" modifiers="SHIFT+CONTROL" />
+		<shortcut command="NextView" key="Tab" modifiers="CONTROL" />
+		<shortcut command="ZoomIn" key="Delete" />
+		<shortcut command="ZoomOut" key="Insert" />
+		<shortcut command="CenterXYViews" key="Tab" modifiers="CONTROL+SHIFT" />
+		<shortcut command="CenterXYView" key="Tab" modifiers="CONTROL+ALT" />
+		<shortcut command="ToggleCubicClip" key="F" modifiers="SHIFT" />
+		<shortcut command="ToggleCamera" key="C" modifiers="SHIFT+CONTROL" />
+		<shortcut command="TogTexLock" key="T" modifiers="SHIFT" />
+		<shortcut command="DragVertices" key="V" />
+		<shortcut command="DragEdges" key="E" />
+		<shortcut command="DragFaces" key="F" />
+		<shortcut command="ToggleShowAllLightRadii" key="F" modifiers="CONTROL+SHIFT+ALT" />
+		<shortcut command="ToggleClipper" key="X" />
+		<shortcut command="MouseTranslate" key="W" />
+		<shortcut command="MouseRotate" key="R" />
+		<shortcut command="MouseDrag" key="Q" />
+	</shortcuts>
 </input>

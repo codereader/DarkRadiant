@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 
 #include "iclipper.h"
+#include "ieventmanager.h"
 #include "ientity.h"
 #include "ieclass.h"
 #include "igl.h"
@@ -271,11 +272,6 @@ void XYShow_registerCommands()
   GlobalToggles_insert("ShowWorkzone", ShowWorkzoneToggleCaller(), ToggleItem::AddCallbackCaller(g_show_workzone));
 }
 
-void XYWnd_registerShortcuts()
-{
-  command_connect_accelerator("ToggleCrosshairs");
-}
-
 #include "preferencesystem.h"
 #include "stringio.h"
 
@@ -293,21 +289,21 @@ typedef ConstReferenceCaller1<ToggleShown, const BoolImportCallback&, ToggleShow
 
 void XYWindow_Construct()
 {
-  GlobalCommands_insert("ToggleCrosshairs", MemberCaller<XYWndManager, &XYWndManager::toggleCrossHairs>(GlobalXYWnd()), Accelerator('X', (GdkModifierType)GDK_SHIFT_MASK));
-  GlobalCommands_insert("ToggleGrid", MemberCaller<XYWndManager, &XYWndManager::toggleGrid>(GlobalXYWnd()), Accelerator('0'));
+  GlobalEventManager().addCommand("ToggleCrosshairs", MemberCaller<XYWndManager, &XYWndManager::toggleCrossHairs>(GlobalXYWnd()));
+  GlobalEventManager().addCommand("ToggleGrid", MemberCaller<XYWndManager, &XYWndManager::toggleGrid>(GlobalXYWnd()));
 
-  GlobalToggles_insert("ToggleView", ToggleShown::ToggleCaller(g_xy_top_shown), ToggleItem::AddCallbackCaller(g_xy_top_shown.m_item), Accelerator('V', (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
+  GlobalToggles_insert("ToggleView", ToggleShown::ToggleCaller(g_xy_top_shown), ToggleItem::AddCallbackCaller(g_xy_top_shown.m_item));
   GlobalToggles_insert("ToggleSideView", ToggleShown::ToggleCaller(g_yz_side_shown), ToggleItem::AddCallbackCaller(g_yz_side_shown.m_item));
   GlobalToggles_insert("ToggleFrontView", ToggleShown::ToggleCaller(g_xz_front_shown), ToggleItem::AddCallbackCaller(g_xz_front_shown.m_item));
-  GlobalCommands_insert("NextView", FreeCaller<toggleActiveOrthoView>(), Accelerator(GDK_Tab, (GdkModifierType)GDK_CONTROL_MASK));
-  GlobalCommands_insert("ZoomIn", MemberCaller<XYWndManager, &XYWndManager::zoomIn>(GlobalXYWnd()), Accelerator(GDK_Delete));
-  GlobalCommands_insert("ZoomOut", MemberCaller<XYWndManager, &XYWndManager::zoomOut>(GlobalXYWnd()), Accelerator(GDK_Insert));
-  GlobalCommands_insert("ViewTop", FreeCaller<XY_Top>());
-  GlobalCommands_insert("ViewSide", FreeCaller<XY_Side>());
-  GlobalCommands_insert("ViewFront", FreeCaller<XY_Front>());
-  GlobalCommands_insert("Zoom100", FreeCaller<XY_Zoom100>());
-  GlobalCommands_insert("CenterXYViews", FreeCaller<XY_Split_Focus>(), Accelerator(GDK_Tab, (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
-  GlobalCommands_insert("CenterXYView", FreeCaller<XY_Focus>(), Accelerator(GDK_Tab, (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
+  GlobalEventManager().addCommand("NextView", FreeCaller<toggleActiveOrthoView>());
+  GlobalEventManager().addCommand("ZoomIn", MemberCaller<XYWndManager, &XYWndManager::zoomIn>(GlobalXYWnd()));
+  GlobalEventManager().addCommand("ZoomOut", MemberCaller<XYWndManager, &XYWndManager::zoomOut>(GlobalXYWnd()));
+  GlobalEventManager().addCommand("ViewTop", FreeCaller<XY_Top>());
+  GlobalEventManager().addCommand("ViewSide", FreeCaller<XY_Side>());
+  GlobalEventManager().addCommand("ViewFront", FreeCaller<XY_Front>());
+  GlobalEventManager().addCommand("Zoom100", FreeCaller<XY_Zoom100>());
+  GlobalEventManager().addCommand("CenterXYViews", FreeCaller<XY_Split_Focus>());
+  GlobalEventManager().addCommand("CenterXYView", FreeCaller<XY_Focus>());
 
   GlobalPreferenceSystem().registerPreference("SI_ShowCoords", BoolImportStringCaller(g_xywindow_globals_private.show_coordinates), BoolExportStringCaller(g_xywindow_globals_private.show_coordinates));
   GlobalPreferenceSystem().registerPreference("SI_ShowOutlines", BoolImportStringCaller(g_xywindow_globals_private.show_outline), BoolExportStringCaller(g_xywindow_globals_private.show_outline));
