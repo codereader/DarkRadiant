@@ -34,14 +34,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "gtkmisc.h"
 
+#include "ieventmanager.h"
+
 #include <gtk/gtkcolorseldialog.h>
 #include <gtk/gtkentry.h>
 
 #include "os/path.h"
 
+#include "gtk/gtkmenuitem.h"
+#include "gtk/gtkmenu.h"
+
 #include "gtkutil/dialog.h"
 #include "gtkutil/filechooser.h"
 #include "gtkutil/menu.h"
+#include "gtkutil/TextMenuItem.h"
+#include "gtkutil/TextMenuItemToggle.h"
+#include "gtkutil/SeparatorMenuItem.h"
 #include "commands.h"
 
 
@@ -82,6 +90,64 @@ GtkMenuItem* create_menu_item_with_mnemonic(GtkMenu* menu, const char *mnemonic,
   const Command& command = GlobalCommands_find(commandName);
   global_accel_group_connect(command.m_accelerator, command.m_callback);
   return create_menu_item_with_mnemonic(menu, mnemonic, command);
+}
+
+/* greebo: Create a menu item under the given <menu> and connect it to the given <command> name
+ */
+GtkMenuItem* createMenuItemWithMnemonic(GtkMenu* menu, const std::string& caption, const std::string& commandName) {
+
+	GtkWidget* menuItem = gtkutil::TextMenuItemMnemonic(caption);
+	
+	gtk_widget_show_all(GTK_WIDGET(menuItem));
+	
+	// Add the menu item to the container
+	gtk_container_add(GTK_CONTAINER(menu), GTK_WIDGET(menuItem));
+	
+	IEvent* event = GlobalEventManager().findEvent(commandName);
+
+	if (event != NULL) {
+		event->connectWidget(GTK_WIDGET(menuItem));
+	}
+	else {
+		globalErrorStream() << "gtkutil::createMenuItem failed to lookup command " << commandName.c_str() << "\n"; 
+	}
+
+	return GTK_MENU_ITEM(menuItem);
+}
+
+/* greebo: Create a check menuitem under the given <menu> and connect it to the given <command> name
+ */
+GtkMenuItem* createCheckMenuItemWithMnemonic(GtkMenu* menu, const std::string& caption, const std::string& commandName) {
+
+	GtkWidget* menuItem = gtkutil::TextMenuItemToggle(caption);
+	
+	gtk_widget_show_all(GTK_WIDGET(menuItem));
+	
+	// Add the menu item to the container
+	gtk_container_add(GTK_CONTAINER(menu), GTK_WIDGET(menuItem));
+	
+	IEvent* event = GlobalEventManager().findEvent(commandName);
+	
+	if (event != NULL) {
+		event->connectWidget(GTK_WIDGET(menuItem));
+	}
+	else {
+		globalErrorStream() << "gtkutil::createMenuItem failed to lookup command " << commandName.c_str() << "\n"; 
+	}
+
+	return GTK_MENU_ITEM(menuItem);
+}
+
+/* Adds a separator to the given menu
+ */
+GtkMenuItem* createSeparatorMenuItem(GtkMenu* menu) {
+	GtkWidget* separator = gtkutil::SeparatorMenuItem();
+	gtk_widget_show(separator);
+	
+	// Add the menu item to the container
+	gtk_container_add(GTK_CONTAINER(menu), GTK_WIDGET(separator));
+	
+	return GTK_MENU_ITEM(separator);
 }
 
 // =============================================================================

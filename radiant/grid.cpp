@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "grid.h"
 
+#include "ieventmanager.h"
+
 #include <math.h>
 #include <vector>
 #include <algorithm>
@@ -195,8 +197,8 @@ void GridNext()
 
 void Grid_registerCommands()
 {
-  GlobalCommands_insert("GridDown", FreeCaller<GridPrev>(), Accelerator('['));
-  GlobalCommands_insert("GridUp", FreeCaller<GridNext>(), Accelerator(']'));
+  GlobalEventManager().addCommand("GridDown", FreeCaller<GridPrev>());
+  GlobalEventManager().addCommand("GridUp", FreeCaller<GridNext>());
 
   GlobalToggles_insert("SetGrid0.125", GridMenuItem::SetCaller(g_gridMenu0125), ToggleItem::AddCallbackCaller(g_gridMenu0125.m_item));
   GlobalToggles_insert("SetGrid0.25", GridMenuItem::SetCaller(g_gridMenu025), ToggleItem::AddCallbackCaller(g_gridMenu025.m_item));
@@ -227,13 +229,6 @@ void Grid_constructMenu(GtkMenu* menu)
   create_check_menu_item_with_mnemonic(menu, "Grid64", "SetGrid64");
   create_check_menu_item_with_mnemonic(menu, "Grid128", "SetGrid128");
   create_check_menu_item_with_mnemonic(menu, "Grid256", "SetGrid256");
-}
-
-void Grid_registerShortcuts()
-{
-  command_connect_accelerator("ToggleGrid");
-  command_connect_accelerator("GridDown");
-  command_connect_accelerator("GridUp");
 }
 
 void Grid_constructPreferences(PrefPage* page)

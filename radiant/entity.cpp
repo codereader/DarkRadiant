@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "entity.h"
 
+#include "ieventmanager.h"
 #include "ientity.h"
 #include "ieclass.h"
 #include "iselection.h"
@@ -288,8 +289,8 @@ NodeSmartReference Entity_createFromSelection(const char* name,
 
 void Entity_constructMenu(GtkMenu* menu)
 {
-  create_menu_item_with_mnemonic(menu, "_Ungroup", "UngroupSelection");
-  create_menu_item_with_mnemonic(menu, "_Connect", "ConnectSelection");
+  createMenuItemWithMnemonic(menu, "_Ungroup", "UngroupSelection");
+  createMenuItemWithMnemonic(menu, "_Connect", "ConnectSelection");
 }
 
 
@@ -299,8 +300,8 @@ void Entity_constructMenu(GtkMenu* menu)
 
 void Entity_Construct()
 {
-  GlobalCommands_insert("ConnectSelection", FreeCaller<Entity_connectSelected>(), Accelerator('K', (GdkModifierType)GDK_CONTROL_MASK));
-  GlobalCommands_insert("UngroupSelection", FreeCaller<Entity_ungroupSelected>());
+  GlobalEventManager().addCommand("ConnectSelection", FreeCaller<Entity_connectSelected>());
+  GlobalEventManager().addCommand("UngroupSelection", FreeCaller<Entity_ungroupSelected>());
 
   GlobalPreferenceSystem().registerPreference("SI_Colors5", Vector3ImportStringCaller(g_entity_globals.color_entity), Vector3ExportStringCaller(g_entity_globals.color_entity));
   GlobalPreferenceSystem().registerPreference("LastLightIntensity", IntImportStringCaller(g_iLastLightIntensity), IntExportStringCaller(g_iLastLightIntensity));

@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 
 #include "ishaders.h"
+#include "ieventmanager.h"
 
 #include <gtk/gtkhbox.h>
 #include <gtk/gtkentry.h>
@@ -291,7 +292,7 @@ void FindTextureDialog_selectTexture(const char* name)
 
 void FindTextureDialog_Construct()
 {
-  GlobalCommands_insert("FindReplaceTextures", FindTextureDialog::ShowCaller());
+  GlobalEventManager().addCommand("FindReplaceTextures", FindTextureDialog::ShowCaller());
 }
 
 void FindTextureDialog_Destroy()

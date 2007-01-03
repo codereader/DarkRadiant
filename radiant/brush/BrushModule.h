@@ -43,14 +43,6 @@ class BrushModuleClass :
 	
 	bool _textureLockEnabled;
 	
-	// The exporter needed for the globalcommand stuff 
-	void textureLockExport(const BoolImportCallback& importCallback);
-	
-	// Callback and callers for the ToggleItem stuff (farClipPlane)
-	MemberCaller1<BrushModuleClass, const BoolImportCallback&, &BrushModuleClass::textureLockExport> _textureLockCaller;
-	BoolExportCallback _textureLockCallBack;
-	ToggleItem _textureLockItem;
-
 public:
 	// Constructor
 	BrushModuleClass();
@@ -83,7 +75,6 @@ public:
 	
 	// Switches the texture lock on/off
 	void toggleTextureLock();
-	ToggleItem& textureLockItem();
 	
 	// The callback for registry key changes
 	void keyChanged();

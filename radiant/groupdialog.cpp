@@ -47,7 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "console.h"
 #include "commands.h"
 
-
+#include "ieventmanager.h"
 #include <gtk/gtkwidget.h>
 #include "gtkutil/window.h"
 
@@ -237,7 +237,7 @@ void GroupDialog_Construct()
 {
   GlobalPreferenceSystem().registerPreference("EntityWnd", WindowPositionTrackerImportStringCaller(g_GroupDlg.m_position_tracker), WindowPositionTrackerExportStringCaller(g_GroupDlg.m_position_tracker));
 
-  GlobalCommands_insert("ViewEntityInfo", FreeCaller<GroupDialog_ToggleShow>(), Accelerator('N'));
+  GlobalEventManager().addCommand("ViewEntityInfo", FreeCaller<GroupDialog_ToggleShow>());
 }
 void GroupDialog_Destroy()
 {

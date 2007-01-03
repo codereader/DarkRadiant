@@ -3,6 +3,7 @@
 #include "qerplugin.h"
 #include "Doom3LightRadius.h"
 #include "LightShader.h"
+#include "LightSettings.h"
 
 LightType g_lightType = LIGHTTYPE_DEFAULT;
 
@@ -633,7 +634,7 @@ void Light::renderSolid(Renderer& renderer, const VolumeTest& volume, const Matr
 	renderer.SetState(m_entity.getEntityClass().getWireShader(), Renderer::eFullMaterials);
 
 	// Always draw Doom 3 light bounding boxes, if the global is set
-	if (GlobalRegistry().get("user/ui/showAllLightRadii") == "1" && !isProjected()) {
+	if (LightSettings().showAllLightRadii() && !isProjected()) {
 		updateLightRadiiBox();
 		renderer.addRenderable(m_radii_box, localToWorld);
 	}

@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "debugging/debugging.h"
 
-
+#include "ieventmanager.h"
 #include "iselection.h"
 #include "ipatch.h"
 
@@ -640,96 +640,96 @@ void PatchPreferences_construct()
 
 void Patch_registerCommands()
 {
-  GlobalCommands_insert("InvertCurveTextureX", FreeCaller<Patch_FlipTextureX>(), Accelerator('I', (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
-  GlobalCommands_insert("InvertCurveTextureY", FreeCaller<Patch_FlipTextureY>(), Accelerator('I', (GdkModifierType)GDK_SHIFT_MASK));
-  GlobalCommands_insert("IncPatchColumn", FreeCaller<Patch_InsertInsertColumn>(), Accelerator(GDK_KP_Add, (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
-  GlobalCommands_insert("IncPatchRow", FreeCaller<Patch_InsertInsertRow>(), Accelerator(GDK_KP_Add, (GdkModifierType)GDK_CONTROL_MASK));
-  GlobalCommands_insert("DecPatchColumn", FreeCaller<Patch_DeleteLastColumn>(), Accelerator(GDK_KP_Subtract, (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
-  GlobalCommands_insert("DecPatchRow", FreeCaller<Patch_DeleteLastRow>(), Accelerator(GDK_KP_Subtract, (GdkModifierType)GDK_CONTROL_MASK));
-  GlobalCommands_insert("NaturalizePatch", FreeCaller<Patch_NaturalTexture>(), Accelerator('N', (GdkModifierType)GDK_CONTROL_MASK));
-  GlobalCommands_insert("PatchCylinder", FreeCaller<Patch_Cylinder>());
-  GlobalCommands_insert("PatchDenseCylinder", FreeCaller<Patch_DenseCylinder>());
-  GlobalCommands_insert("PatchVeryDenseCylinder", FreeCaller<Patch_VeryDenseCylinder>());
-  GlobalCommands_insert("PatchSquareCylinder", FreeCaller<Patch_SquareCylinder>());
-  GlobalCommands_insert("PatchEndCap", FreeCaller<Patch_Endcap>());
-  GlobalCommands_insert("PatchBevel", FreeCaller<Patch_Bevel>());
-  GlobalCommands_insert("PatchSquareBevel", FreeCaller<Patch_SquareBevel>());
-  GlobalCommands_insert("PatchSquareEndcap", FreeCaller<Patch_SquareEndcap>());
-  GlobalCommands_insert("PatchCone", FreeCaller<Patch_Cone>());
-  GlobalCommands_insert("SimplePatchMesh", FreeCaller<Patch_Plane>(), Accelerator('P', (GdkModifierType)GDK_SHIFT_MASK));
-  GlobalCommands_insert("PatchInsertInsertColumn", FreeCaller<Patch_InsertInsertColumn>());
-  GlobalCommands_insert("PatchInsertAddColumn", FreeCaller<Patch_InsertAddColumn>());
-  GlobalCommands_insert("PatchInsertInsertRow", FreeCaller<Patch_InsertInsertRow>());
-  GlobalCommands_insert("PatchInsertAddRow", FreeCaller<Patch_InsertAddRow>());
-  GlobalCommands_insert("PatchDeleteFirstColumn", FreeCaller<Patch_DeleteFirstColumn>());
-  GlobalCommands_insert("PatchDeleteLastColumn", FreeCaller<Patch_DeleteLastColumn>());
-  GlobalCommands_insert("PatchDeleteFirstRow", FreeCaller<Patch_DeleteFirstRow>());
-  GlobalCommands_insert("PatchDeleteLastRow", FreeCaller<Patch_DeleteLastRow>());
-  GlobalCommands_insert("InvertCurve", FreeCaller<Patch_Invert>(), Accelerator('I', (GdkModifierType)GDK_CONTROL_MASK));
-  GlobalCommands_insert("RedisperseRows", FreeCaller<Patch_RedisperseRows>(), Accelerator('E', (GdkModifierType)GDK_CONTROL_MASK));
-  GlobalCommands_insert("RedisperseCols", FreeCaller<Patch_RedisperseCols>(), Accelerator('E', (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
-  GlobalCommands_insert("MatrixTranspose", FreeCaller<Patch_Transpose>(), Accelerator('M', (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
-  GlobalCommands_insert("CapCurrentCurve", FreeCaller<Patch_Cap>(), Accelerator('C', (GdkModifierType)GDK_SHIFT_MASK));
-  GlobalCommands_insert("CycleCapTexturePatch", FreeCaller<Patch_CycleProjection>(), Accelerator('N', (GdkModifierType)(GDK_SHIFT_MASK|GDK_CONTROL_MASK)));
-  GlobalCommands_insert("MakeOverlayPatch", FreeCaller<Patch_OverlayOn>(), Accelerator('Y'));
-  GlobalCommands_insert("ClearPatchOverlays", FreeCaller<Patch_OverlayOff>(), Accelerator('L', (GdkModifierType)GDK_CONTROL_MASK));
+  GlobalEventManager().addCommand("InvertCurveTextureX", FreeCaller<Patch_FlipTextureX>());
+  GlobalEventManager().addCommand("InvertCurveTextureY", FreeCaller<Patch_FlipTextureY>());
+  GlobalEventManager().addCommand("IncPatchColumn", FreeCaller<Patch_InsertInsertColumn>());
+  GlobalEventManager().addCommand("IncPatchRow", FreeCaller<Patch_InsertInsertRow>());
+  GlobalEventManager().addCommand("DecPatchColumn", FreeCaller<Patch_DeleteLastColumn>());
+  GlobalEventManager().addCommand("DecPatchRow", FreeCaller<Patch_DeleteLastRow>());
+  GlobalEventManager().addCommand("NaturalizePatch", FreeCaller<Patch_NaturalTexture>());
+  GlobalEventManager().addCommand("PatchCylinder", FreeCaller<Patch_Cylinder>());
+  GlobalEventManager().addCommand("PatchDenseCylinder", FreeCaller<Patch_DenseCylinder>());
+  GlobalEventManager().addCommand("PatchVeryDenseCylinder", FreeCaller<Patch_VeryDenseCylinder>());
+  GlobalEventManager().addCommand("PatchSquareCylinder", FreeCaller<Patch_SquareCylinder>());
+  GlobalEventManager().addCommand("PatchEndCap", FreeCaller<Patch_Endcap>());
+  GlobalEventManager().addCommand("PatchBevel", FreeCaller<Patch_Bevel>());
+  GlobalEventManager().addCommand("PatchSquareBevel", FreeCaller<Patch_SquareBevel>());
+  GlobalEventManager().addCommand("PatchSquareEndcap", FreeCaller<Patch_SquareEndcap>());
+  GlobalEventManager().addCommand("PatchCone", FreeCaller<Patch_Cone>());
+  GlobalEventManager().addCommand("SimplePatchMesh", FreeCaller<Patch_Plane>());
+  GlobalEventManager().addCommand("PatchInsertInsertColumn", FreeCaller<Patch_InsertInsertColumn>());
+  GlobalEventManager().addCommand("PatchInsertAddColumn", FreeCaller<Patch_InsertAddColumn>());
+  GlobalEventManager().addCommand("PatchInsertInsertRow", FreeCaller<Patch_InsertInsertRow>());
+  GlobalEventManager().addCommand("PatchInsertAddRow", FreeCaller<Patch_InsertAddRow>());
+  GlobalEventManager().addCommand("PatchDeleteFirstColumn", FreeCaller<Patch_DeleteFirstColumn>());
+  GlobalEventManager().addCommand("PatchDeleteLastColumn", FreeCaller<Patch_DeleteLastColumn>());
+  GlobalEventManager().addCommand("PatchDeleteFirstRow", FreeCaller<Patch_DeleteFirstRow>());
+  GlobalEventManager().addCommand("PatchDeleteLastRow", FreeCaller<Patch_DeleteLastRow>());
+  GlobalEventManager().addCommand("InvertCurve", FreeCaller<Patch_Invert>());
+  GlobalEventManager().addCommand("RedisperseRows", FreeCaller<Patch_RedisperseRows>());
+  GlobalEventManager().addCommand("RedisperseCols", FreeCaller<Patch_RedisperseCols>());
+  GlobalEventManager().addCommand("MatrixTranspose", FreeCaller<Patch_Transpose>());
+  GlobalEventManager().addCommand("CapCurrentCurve", FreeCaller<Patch_Cap>());
+  GlobalEventManager().addCommand("CycleCapTexturePatch", FreeCaller<Patch_CycleProjection>());
+  GlobalEventManager().addCommand("MakeOverlayPatch", FreeCaller<Patch_OverlayOn>());
+  GlobalEventManager().addCommand("ClearPatchOverlays", FreeCaller<Patch_OverlayOff>());
 }
 
 void Patch_constructMenu(GtkMenu* menu)
 {
-  create_menu_item_with_mnemonic(menu, "Cylinder", "PatchCylinder");
+  createMenuItemWithMnemonic(menu, "Cylinder", "PatchCylinder");
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "More Cylinders");
-    create_menu_item_with_mnemonic(menu_in_menu, "Dense Cylinder", "PatchDenseCylinder");
-    create_menu_item_with_mnemonic(menu_in_menu, "Very Dense Cylinder", "PatchVeryDenseCylinder");
-    create_menu_item_with_mnemonic(menu_in_menu, "Square Cylinder", "PatchSquareCylinder");
+    createMenuItemWithMnemonic(menu_in_menu, "Dense Cylinder", "PatchDenseCylinder");
+    createMenuItemWithMnemonic(menu_in_menu, "Very Dense Cylinder", "PatchVeryDenseCylinder");
+    createMenuItemWithMnemonic(menu_in_menu, "Square Cylinder", "PatchSquareCylinder");
   }
   menu_separator (menu);
-  create_menu_item_with_mnemonic(menu, "End cap", "PatchEndCap");
-  create_menu_item_with_mnemonic(menu, "Bevel", "PatchBevel");
+  createMenuItemWithMnemonic(menu, "End cap", "PatchEndCap");
+  createMenuItemWithMnemonic(menu, "Bevel", "PatchBevel");
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "More End caps, Bevels");
-    create_menu_item_with_mnemonic(menu_in_menu, "Square Endcap", "PatchSquareBevel");
-    create_menu_item_with_mnemonic(menu_in_menu, "Square Bevel", "PatchSquareEndcap");
+    createMenuItemWithMnemonic(menu_in_menu, "Square Endcap", "PatchSquareBevel");
+    createMenuItemWithMnemonic(menu_in_menu, "Square Bevel", "PatchSquareEndcap");
   }
   menu_separator (menu);
-  create_menu_item_with_mnemonic(menu, "Cone", "PatchCone");
+  createMenuItemWithMnemonic(menu, "Cone", "PatchCone");
   menu_separator (menu);
-  create_menu_item_with_mnemonic(menu, "Simple Patch Mesh...", "SimplePatchMesh");
+  createMenuItemWithMnemonic(menu, "Simple Patch Mesh...", "SimplePatchMesh");
   menu_separator (menu);
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Insert");
-    create_menu_item_with_mnemonic(menu_in_menu, "Insert (2) Columns", "PatchInsertInsertColumn");
-    create_menu_item_with_mnemonic(menu_in_menu, "Add (2) Columns", "PatchInsertAddColumn");
+    createMenuItemWithMnemonic(menu_in_menu, "Insert (2) Columns", "PatchInsertInsertColumn");
+    createMenuItemWithMnemonic(menu_in_menu, "Add (2) Columns", "PatchInsertAddColumn");
     menu_separator (menu_in_menu);
-    create_menu_item_with_mnemonic(menu_in_menu, "Insert (2) Rows", "PatchInsertInsertRow");
-    create_menu_item_with_mnemonic(menu_in_menu, "Add (2) Rows", "PatchInsertAddRow");
+    createMenuItemWithMnemonic(menu_in_menu, "Insert (2) Rows", "PatchInsertInsertRow");
+    createMenuItemWithMnemonic(menu_in_menu, "Add (2) Rows", "PatchInsertAddRow");
   }
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Delete");
-    create_menu_item_with_mnemonic(menu_in_menu, "First (2) Columns", "PatchDeleteFirstColumn");
-    create_menu_item_with_mnemonic(menu_in_menu, "Last (2) Columns", "PatchDeleteLastColumn");
+    createMenuItemWithMnemonic(menu_in_menu, "First (2) Columns", "PatchDeleteFirstColumn");
+    createMenuItemWithMnemonic(menu_in_menu, "Last (2) Columns", "PatchDeleteLastColumn");
     menu_separator (menu_in_menu);
-    create_menu_item_with_mnemonic(menu_in_menu, "First (2) Rows", "PatchDeleteFirstRow");
-    create_menu_item_with_mnemonic(menu_in_menu, "Last (2) Rows", "PatchDeleteLastRow");
+    createMenuItemWithMnemonic(menu_in_menu, "First (2) Rows", "PatchDeleteFirstRow");
+    createMenuItemWithMnemonic(menu_in_menu, "Last (2) Rows", "PatchDeleteLastRow");
   }
   menu_separator (menu);
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Matrix");
-    create_menu_item_with_mnemonic(menu_in_menu, "Invert", "InvertCurve");
+    createMenuItemWithMnemonic(menu_in_menu, "Invert", "InvertCurve");
     GtkMenu* menu_3 = create_sub_menu_with_mnemonic (menu_in_menu, "Re-disperse");
-    create_menu_item_with_mnemonic(menu_3, "Rows", "RedisperseRows");
-    create_menu_item_with_mnemonic(menu_3, "Columns", "RedisperseCols");
-    create_menu_item_with_mnemonic(menu_in_menu, "Transpose", "MatrixTranspose");
+    createMenuItemWithMnemonic(menu_3, "Rows", "RedisperseRows");
+    createMenuItemWithMnemonic(menu_3, "Columns", "RedisperseCols");
+    createMenuItemWithMnemonic(menu_in_menu, "Transpose", "MatrixTranspose");
   }
   menu_separator (menu);
-  create_menu_item_with_mnemonic(menu, "Cap Selection", "CapCurrentCurve");
-  create_menu_item_with_mnemonic(menu, "Cycle Cap Texture", "CycleCapTexturePatch");
+  createMenuItemWithMnemonic(menu, "Cap Selection", "CapCurrentCurve");
+  createMenuItemWithMnemonic(menu, "Cycle Cap Texture", "CycleCapTexturePatch");
   menu_separator (menu);
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Overlay");
-    create_menu_item_with_mnemonic(menu_in_menu, "Set", "MakeOverlayPatch");
-    create_menu_item_with_mnemonic(menu_in_menu, "Clear", "ClearPatchOverlays");
+    createMenuItemWithMnemonic(menu_in_menu, "Set", "MakeOverlayPatch");
+    createMenuItemWithMnemonic(menu_in_menu, "Clear", "ClearPatchOverlays");
   }
 }
 

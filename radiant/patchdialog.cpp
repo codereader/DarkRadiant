@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "patchdialog.h"
 
+#include "ieventmanager.h"
 #include "brush/TexDef.h"
 
 #include "debugging/debugging.h"
@@ -1199,7 +1200,7 @@ void PatchInspector_SelectionChanged(const Selectable& selectable)
 
 void PatchInspector_Construct()
 {
-  GlobalCommands_insert("PatchInspector", FreeCaller<PatchInspector_toggleShown>(), Accelerator('S', (GdkModifierType)GDK_SHIFT_MASK));
+  GlobalEventManager().addCommand("PatchInspector", FreeCaller<PatchInspector_toggleShown>());
 
   GlobalPreferenceSystem().registerPreference("PatchWnd", WindowPositionTrackerImportStringCaller(g_PatchInspector.m_position_tracker), WindowPositionTrackerExportStringCaller(g_PatchInspector.m_position_tracker));
   GlobalPreferenceSystem().registerPreference("SI_PatchTexdef_Scale1", FloatImportStringCaller(g_pi_globals.scale[0]), FloatExportStringCaller(g_pi_globals.scale[0]));      
