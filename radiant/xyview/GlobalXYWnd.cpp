@@ -1,8 +1,16 @@
 #include "GlobalXYWnd.h"
 
+#include "ieventmanager.h"
+
+#include "gtkutil/FramedTransientWidget.h"
+
+#include "select.h"
+#include "mainframe.h"
+
 // Constructor
 XYWndManager::XYWndManager() :
-	_activeXY(NULL)
+	_activeXY(NULL),
+	_globalParentWindow(NULL)
 {
 	// Connect self to the according registry keys
 	GlobalRegistry().addKeyObserver(this, RKEY_CHASE_MOUSE);
@@ -24,11 +32,18 @@ XYWndManager::XYWndManager() :
 	
 	// greebo: Register this class in the preference system so that the constructPreferencePage() gets called.
 	GlobalPreferenceSystem().addConstructor(this);
+	
+	// Add the commands to the EventManager
+	registerCommands();
 }
 
 // Destructor
 XYWndManager::~XYWndManager() {
 	destroy();
+}
+
+void XYWndManager::registerCommands() {
+	GlobalEventManager().addCommand("NewOrthoView", MemberCaller<XYWndManager, &XYWndManager::createNewOrthoView>(*this));
 }
 
 void XYWndManager::constructPreferencePage(PreferenceGroup& group) {
@@ -219,6 +234,8 @@ void XYWndManager::toggleActiveView() {
 		else {
 			_activeXY->setViewType(XY);
 		}
+		
+		positionView(getFocusPosition());
 	}
 }
 
@@ -261,6 +278,46 @@ XYWnd* XYWndManager::createXY() {
 	_XYViews.push_back(newWnd);
 	
 	return newWnd;
+}
+
+void XYWndManager::setGlobalParentWindow(GtkWindow* globalParentWindow) {
+	_globalParentWindow = globalParentWindow;
+}
+
+void XYWndManager::createNewOrthoView() {
+	
+	// Allocate a new XYWindow (TODO: Migrate this to boost::shared_ptr)
+	XYWnd* newWnd = new XYWnd();
+	
+	// Add the pointer to the internal list
+	_XYViews.push_back(newWnd);
+	
+	// Add the new XYView GL widget to a framed window
+	GtkWidget* window = gtkutil::FramedTransientWidget(XYWnd::getViewTypeTitle(XY), 
+													   _globalParentWindow, 
+													   newWnd->getWidget());
+	
+	newWnd->setParent(GTK_WINDOW(window));
+	
+	// Set the viewtype (and with it the window title)
+	newWnd->setViewType(XY);
+}
+
+/* greebo: This function determines the point currently being "looked" at, it is used for toggling the ortho views
+ * If something is selected the center of the selection is taken as new origin, otherwise the camera
+ * position is considered to be the new origin of the toggled orthoview.
+*/
+Vector3 XYWndManager::getFocusPosition() {
+	Vector3 position(0,0,0);
+	
+	if (GlobalSelectionSystem().countSelected() != 0) {
+		Select_GetMid(position);
+	}
+	else {
+		position = g_pParentWnd->GetCamWnd()->getCameraOrigin();
+	}
+	
+	return position;
 }
 
 // Accessor function returning a reference to the static instance

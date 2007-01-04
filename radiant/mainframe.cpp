@@ -2255,6 +2255,9 @@ static gint mainframe_delete (GtkWidget *widget, GdkEvent *event, gpointer data)
 void MainFrame::Create()
 {
   GtkWindow* window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
+  
+  // Tell the XYManager which window the xyviews should be transient for
+  GlobalXYWnd().setGlobalParentWindow(window);
 
   GlobalWindowObservers_connectTopLevel(window);
 

@@ -163,5 +163,6 @@
 		<shortcut command="MouseTranslate" key="W" />
 		<shortcut command="MouseRotate" key="R" />
 		<shortcut command="MouseDrag" key="Q" />
+		<shortcut command="NewOrthoView" key="N" modifiers="CONTROL+ALT" />
 	</shortcuts>
 </input>
