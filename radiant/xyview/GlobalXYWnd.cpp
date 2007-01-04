@@ -44,6 +44,16 @@ XYWndManager::~XYWndManager() {
 
 void XYWndManager::registerCommands() {
 	GlobalEventManager().addCommand("NewOrthoView", MemberCaller<XYWndManager, &XYWndManager::createNewOrthoView>(*this));
+
+	GlobalEventManager().addRegistryToggle("ToggleCrosshairs", RKEY_SHOW_CROSSHAIRS);
+	GlobalEventManager().addRegistryToggle("ToggleGrid", RKEY_SHOW_GRID);
+	GlobalEventManager().addRegistryToggle("ShowAngles", RKEY_SHOW_ENTITY_ANGLES);
+	GlobalEventManager().addRegistryToggle("ShowNames", RKEY_SHOW_ENTITY_NAMES);
+	GlobalEventManager().addRegistryToggle("ShowBlocks", RKEY_SHOW_BLOCKS);
+	GlobalEventManager().addRegistryToggle("ShowCoordinates", RKEY_SHOW_COORDINATES);
+	GlobalEventManager().addRegistryToggle("ShowWindowOutline", RKEY_SHOW_OUTLINE);
+	GlobalEventManager().addRegistryToggle("ShowAxes", RKEY_SHOW_AXES);
+	GlobalEventManager().addRegistryToggle("ShowWorkzone", RKEY_SHOW_WORKZONE);
 }
 
 void XYWndManager::constructPreferencePage(PreferenceGroup& group) {
@@ -91,12 +101,6 @@ bool XYWndManager::showCrossHairs() const {
 	return _showCrossHairs;
 }
 
-void XYWndManager::toggleCrossHairs() {
-	// Invert the registry value, the _showCrossHairs bool is updated automatically as this class observes the key
-	GlobalRegistry().set(RKEY_SHOW_CROSSHAIRS, _showCrossHairs ? "0" : "1");
-	updateAllViews();
-}
-
 bool XYWndManager::showBlocks() const {
 	return _showBlocks;
 }
@@ -123,12 +127,6 @@ bool XYWndManager::showWorkzone() const {
 
 bool XYWndManager::showGrid() const {
 	return _showGrid;
-}
-
-void XYWndManager::toggleGrid() {
-	// Invert the registry value, the _showCrossHairs bool is updated automatically as this class observes the key
-	GlobalRegistry().set(RKEY_SHOW_GRID, _showGrid ? "0" : "1");
-	updateAllViews();
 }
 
 void XYWndManager::updateAllViews() {
@@ -307,7 +305,9 @@ gboolean XYWndManager::onDeleteOrthoView(GtkWidget *widget, GdkEvent *event, gpo
 	// Get the pointer to the deleted XY view from data
 	XYWnd* deletedView = reinterpret_cast<XYWnd*>(data);
 	
-	GlobalXYWnd().destroyOrthoView(deletedView); 
+	GlobalXYWnd().destroyOrthoView(deletedView);
+	
+	return true;
 }
 
 void XYWndManager::createNewOrthoView() {

@@ -27,50 +27,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "xywindow.h"
 
-#include "debugging/debugging.h"
-
-#include "iclipper.h"
 #include "ieventmanager.h"
-#include "ientity.h"
-#include "ieclass.h"
-#include "igl.h"
-#include "brush/TexDef.h"
-#include "ibrush.h"
-#include "iundo.h"
-#include "iregistry.h"
-
-#include <gtk/gtklabel.h>
-#include <gtk/gtkmenuitem.h>
 
 #include "generic/callback.h"
-#include "string/string.h"
-#include "stream/stringstream.h"
-
-#include "scenelib.h"
-#include "renderer.h"
-#include "moduleobserver.h"
-
-#include "gtkutil/menu.h"
-#include "gtkutil/container.h"
 #include "gtkutil/widget.h"
-#include "gtkutil/glwidget.h"
-#include "gtkmisc.h"
-#include "select.h"
-#include "csg.h"
-#include "brushmanip.h"
-#include "entity.h"
-#include "camera/GlobalCamera.h"
-#include "texwindow.h"
-#include "mainframe.h"
-#include "preferences.h"
 #include "commands.h"
-#include "grid.h"
-#include "windowobservers.h"
-#include "plugin.h"
-#include "ui/colourscheme/ColourScheme.h"
-#include "ui/eventmapper/EventMapper.h"
-
-#include "selection/SelectionBox.h"
 
 #include "xyview/XYWnd.h"
 #include "xyview/GlobalXYWnd.h"
@@ -124,17 +85,6 @@ void XZ_Front_Shown_Construct(GtkWindow* parent)
   g_xz_front_shown.connect(GTK_WIDGET(parent));
 }
 
-void XYShow_registerCommands()
-{
-	GlobalEventManager().addRegistryToggle("ShowAngles", RKEY_SHOW_ENTITY_ANGLES);
-	GlobalEventManager().addRegistryToggle("ShowNames", RKEY_SHOW_ENTITY_NAMES);
-	GlobalEventManager().addRegistryToggle("ShowBlocks", RKEY_SHOW_BLOCKS);
-	GlobalEventManager().addRegistryToggle("ShowCoordinates", RKEY_SHOW_COORDINATES);
-	GlobalEventManager().addRegistryToggle("ShowWindowOutline", RKEY_SHOW_OUTLINE);
-	GlobalEventManager().addRegistryToggle("ShowAxes", RKEY_SHOW_AXES);
-	GlobalEventManager().addRegistryToggle("ShowWorkzone", RKEY_SHOW_WORKZONE);
-}
-
 #include "preferencesystem.h"
 #include "stringio.h"
 
@@ -152,9 +102,6 @@ typedef ConstReferenceCaller1<ToggleShown, const BoolImportCallback&, ToggleShow
 
 void XYWindow_Construct()
 {
-  GlobalEventManager().addCommand("ToggleCrosshairs", MemberCaller<XYWndManager, &XYWndManager::toggleCrossHairs>(GlobalXYWnd()));
-  GlobalEventManager().addCommand("ToggleGrid", MemberCaller<XYWndManager, &XYWndManager::toggleGrid>(GlobalXYWnd()));
-
   GlobalToggles_insert("ToggleView", ToggleShown::ToggleCaller(g_xy_top_shown), ToggleItem::AddCallbackCaller(g_xy_top_shown.m_item));
   GlobalToggles_insert("ToggleSideView", ToggleShown::ToggleCaller(g_yz_side_shown), ToggleItem::AddCallbackCaller(g_yz_side_shown.m_item));
   GlobalToggles_insert("ToggleFrontView", ToggleShown::ToggleCaller(g_xz_front_shown), ToggleItem::AddCallbackCaller(g_xz_front_shown.m_item));

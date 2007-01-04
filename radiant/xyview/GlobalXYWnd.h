@@ -79,9 +79,6 @@ public:
 	
 	unsigned int defaultBlockSize() const;
 	
-	void toggleCrossHairs(); 
-	void toggleGrid();
-	
 	// Passes a queueDraw() call to each allocated view
 	void updateAllViews();
 	
