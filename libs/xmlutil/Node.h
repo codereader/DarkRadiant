@@ -42,7 +42,10 @@ public:
 	// Get a list of nodes which are children of this node
     NodeList getChildren() const;
 
-    // Get a list of nodes which are children of this node and match the
+	// Creates a new child under this XML Node
+	Node createChild(const std::string& name);
+
+	// Get a list of nodes which are children of this node and match the
     // given name.
     NodeList getNamedChildren(const std::string& name) const;
     
@@ -60,6 +63,8 @@ public:
      */
      
 	std::string getContent() const;
+
+	Node addText(const std::string& text);
 
 	// Unlink and delete the node and all its children
 	void erase();

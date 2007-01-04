@@ -39,6 +39,15 @@ NodeList Node::getChildren() const {
     return retval;
 }
 
+// Creates a new child with no content (i.e. <name />)
+Node Node::createChild(const std::string& name) {
+	// Create a new child under the contained node
+	xmlNodePtr newChild = xmlNewChild(_xmlNode,	NULL, xmlCharStrdup(name.c_str()), NULL);
+	
+	// Create a new xml::Node out of this pointer and return it
+	return Node(newChild);
+}
+
 // Return a NodeList of named children of this node
 
 NodeList Node::getNamedChildren(const std::string& name) const {
@@ -89,6 +98,14 @@ std::string Node::getContent() const {
 	else {
 		return "";
 	}
+}
+
+Node Node::addText(const std::string& text) {
+	// Allocate a new text node
+	xmlNodePtr whitespace = xmlNewText(xmlCharStrdup("\n\t"));
+	
+	// Add the newly allocated text as sibling of this node
+	xmlAddSibling(_xmlNode, whitespace);
 }
 
 void Node::erase() {
