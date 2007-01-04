@@ -121,7 +121,7 @@ XYWnd::~XYWnd() {
 	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_sizeHandler);
 	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_exposeHandler);
 
-	gtk_widget_unref(m_gl_widget);
+	gtk_widget_hide(m_gl_widget);
 
 	m_window_observer->release();
 }

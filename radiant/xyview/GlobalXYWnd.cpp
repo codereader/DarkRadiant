@@ -291,13 +291,24 @@ void XYWndManager::destroyOrthoView(XYWnd* xyWnd) {
 		
 			// If the view is found, remove it from the list
 			if (listItem == xyWnd) {
+				// Retrieve the parent from the view (for later destruction)
+				GtkWindow* parent = xyWnd->getParent();
+				GtkWidget* glWidget = xyWnd->getWidget();
+				
+				// Destroy the window
+				delete xyWnd;
+				
+				// Remove it from the list
 				_XYViews.erase(i);
+				
+				// Destroy the parent window (and the contained frame) as well
+				if (parent != NULL) {
+					gtk_widget_destroy(GTK_WIDGET(glWidget));
+					gtk_widget_destroy(GTK_WIDGET(parent));
+				}
 				break;
 			}
 		}
-		
-		// Destroy the window
-		delete xyWnd;
 	}
 }
 
@@ -307,7 +318,7 @@ gboolean XYWndManager::onDeleteOrthoView(GtkWidget *widget, GdkEvent *event, gpo
 	
 	GlobalXYWnd().destroyOrthoView(deletedView);
 	
-	return true;
+	return false;
 }
 
 void XYWndManager::createNewOrthoView() {
