@@ -22,19 +22,20 @@ class SaveEventVisitor :
 	const std::string _rootKey;
 	
 	// The node containing all the <shortcut> tags
-	xmlNodePtr _shortcutsNode;
+	xml::Node _shortcutsNode;
 	
 	IEventManager* _eventManager;
 	
 public:
 	SaveEventVisitor(const std::string rootKey, IEventManager* eventManager) : 
 		_rootKey(rootKey),
+		_shortcutsNode(NULL),
 		_eventManager(eventManager)
 	{
 		// Remove any existing shortcut definitions
 		GlobalRegistry().deleteXPath(_rootKey + "//shortcuts");
 		
-		_shortcutsNode = GlobalRegistry().createKey(_rootKey + "/shortcuts");
+		_shortcutsNode = xml::Node(GlobalRegistry().createKey(_rootKey + "/shortcuts"));
 	}
 	
 	void visit(const std::string& eventName, IEventPtr event) {
@@ -49,16 +50,15 @@ public:
 			const std::string modifierStr = _eventManager->getModifierStr(accelerator.getModifiers());
 			
 			// Create a new child under the _shortcutsNode
-			xmlNodePtr createdNodePtr = xmlNewChild(_shortcutsNode, NULL, xmlCharStrdup("shortcut"), NULL);
+			xml::Node createdNode = _shortcutsNode.createChild("shortcut");
 			
 			// Convert it into an xml::Node and set the attributes
-			xml::Node(createdNodePtr).setAttributeValue("command", eventName);
-			xml::Node(createdNodePtr).setAttributeValue("key", keyStr);
-			xml::Node(createdNodePtr).setAttributeValue("modifiers", modifierStr);
-			
-			// Add some whitespace to the node
-			xmlNodePtr whitespace = xmlNewText(xmlCharStrdup("\n\t"));
-			xmlAddSibling(createdNodePtr, whitespace);
+			createdNode.setAttributeValue("command", eventName);
+			createdNode.setAttributeValue("key", keyStr);
+			createdNode.setAttributeValue("modifiers", modifierStr);
+
+			// Add some whitespace to the node (nicer output formatting)			
+			createdNode.addText("\n\t");
 		}
 	}
 
