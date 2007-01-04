@@ -116,6 +116,8 @@ XYWnd::XYWnd() :
 
 // Destructor
 XYWnd::~XYWnd() {
+	GlobalEventManager().disconnect(GTK_OBJECT(m_gl_widget));
+	
 	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_sizeHandler);
 	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_exposeHandler);
 

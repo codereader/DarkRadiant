@@ -96,8 +96,9 @@ public:
 	// Connects the given accelerator to the given command (identified by the string)
 	virtual void connectAccelerator(IAccelerator& accelerator, const std::string& command) = 0;
 	
-	// Connects the keyboard handlers of the keyeventmanager to the specified window, so that key events are catched
+	// Connects/disconnects the keyboard handlers of the keyeventmanager to the specified window, so that key events are catched
 	virtual void connect(GtkObject* object) = 0;
+	virtual void disconnect(GtkObject* object) = 0;
 	
 	// Tells the key event manager about the main window so that the accelgroup can be connected correctly
 	virtual void connectAccelGroup(GtkWindow* window) = 0;
