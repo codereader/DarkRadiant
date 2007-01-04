@@ -284,6 +284,32 @@ void XYWndManager::setGlobalParentWindow(GtkWindow* globalParentWindow) {
 	_globalParentWindow = globalParentWindow;
 }
 
+void XYWndManager::destroyOrthoView(XYWnd* xyWnd) {
+	if (xyWnd != NULL) {		
+		
+		// Remove the pointer from the list
+		for (XYWndList::iterator i = _XYViews.begin(); i != _XYViews.end(); i++) {
+			XYWnd* listItem = (*i);
+		
+			// If the view is found, remove it from the list
+			if (listItem == xyWnd) {
+				_XYViews.erase(i);
+				break;
+			}
+		}
+		
+		// Destroy the window
+		delete xyWnd;
+	}
+}
+
+gboolean XYWndManager::onDeleteOrthoView(GtkWidget *widget, GdkEvent *event, gpointer data) {
+	// Get the pointer to the deleted XY view from data
+	XYWnd* deletedView = reinterpret_cast<XYWnd*>(data);
+	
+	GlobalXYWnd().destroyOrthoView(deletedView); 
+}
+
 void XYWndManager::createNewOrthoView() {
 	
 	// Allocate a new XYWindow (TODO: Migrate this to boost::shared_ptr)
@@ -296,6 +322,9 @@ void XYWndManager::createNewOrthoView() {
 	GtkWidget* window = gtkutil::FramedTransientWidget(XYWnd::getViewTypeTitle(XY), 
 													   _globalParentWindow, 
 													   newWnd->getWidget());
+	
+	// Connect the destroyed signal to the callback of this class 
+	g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(onDeleteOrthoView), newWnd);
 	
 	newWnd->setParent(GTK_WINDOW(window));
 	
