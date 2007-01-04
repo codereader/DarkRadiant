@@ -17,7 +17,13 @@
 		const std::string RKEY_SHOW_SIZE_INFO = "user/ui/xyview/showSizeInfo";
 		const std::string RKEY_SHOW_ENTITY_ANGLES = "user/ui/xyview/showEntityAngles";
 		const std::string RKEY_SHOW_ENTITY_NAMES = "user/ui/xyview/showEntityNames";
-
+		const std::string RKEY_SHOW_BLOCKS = "user/ui/xyview/showBlocks";
+		const std::string RKEY_SHOW_COORDINATES = "user/ui/xyview/showCoordinates";
+		const std::string RKEY_SHOW_OUTLINE = "user/ui/xyview/showOutline";
+		const std::string RKEY_SHOW_AXES = "user/ui/xyview/showAxes";
+		const std::string RKEY_SHOW_WORKZONE = "user/ui/xyview/showWorkzone";
+		const std::string RKEY_DEFAULT_BLOCKSIZE = "user/ui/xyview/defaultBlockSize";
+		
 		typedef std::list<XYWnd*> XYWndList;
 	}
 
@@ -34,9 +40,18 @@ class XYWndManager :
 	bool _chaseMouse;
 	
 	bool _camXYUpdate;
+	
+	// The various display settings for xyviews 
 	bool _showCrossHairs;
 	bool _showGrid;
 	bool _showSizeInfo;
+	bool _showBlocks;
+	bool _showCoordinates;
+	bool _showOutline;
+	bool _showAxes;
+	bool _showWorkzone;
+	
+	unsigned int _defaultBlockSize;
 
 public:
 
@@ -54,6 +69,13 @@ public:
 	bool camXYUpdate() const;
 	bool showCrossHairs() const;
 	bool showGrid() const;
+	bool showBlocks() const;
+	bool showCoordinates() const;
+	bool showOutline() const;
+	bool showAxes() const;
+	bool showWorkzone() const;
+	
+	unsigned int defaultBlockSize() const;
 	
 	void toggleCrossHairs(); 
 	void toggleGrid();

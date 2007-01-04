@@ -12,6 +12,12 @@ XYWndManager::XYWndManager() :
 	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_SIZE_INFO);
 	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ENTITY_ANGLES);
 	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ENTITY_NAMES);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_BLOCKS);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_COORDINATES);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_OUTLINE);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_AXES);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_WORKZONE);
+	GlobalRegistry().addKeyObserver(this, RKEY_DEFAULT_BLOCKSIZE);
 	
 	// Trigger loading the values of the observed registry keys
 	keyChanged();
@@ -35,6 +41,11 @@ void XYWndManager::constructPreferencePage(PreferenceGroup& group) {
 	page->appendCheckBox("", "Show Size Info", RKEY_SHOW_SIZE_INFO);
 	page->appendCheckBox("", "Show Entity Angle Arrow", RKEY_SHOW_ENTITY_ANGLES);
 	page->appendCheckBox("", "Show Entity Names", RKEY_SHOW_ENTITY_NAMES);
+	page->appendCheckBox("", "Show Blocks", RKEY_SHOW_BLOCKS);
+	page->appendCheckBox("", "Show Coordinates", RKEY_SHOW_COORDINATES);
+	page->appendCheckBox("", "Show Axes", RKEY_SHOW_AXES);
+	page->appendCheckBox("", "Show Window Outline", RKEY_SHOW_OUTLINE);
+	page->appendCheckBox("", "Show Workzone", RKEY_SHOW_WORKZONE);
 }
 
 // Load/Reload the values from the registry
@@ -44,6 +55,12 @@ void XYWndManager::keyChanged() {
 	_showCrossHairs = (GlobalRegistry().get(RKEY_SHOW_CROSSHAIRS) == "1");
 	_showGrid = (GlobalRegistry().get(RKEY_SHOW_GRID) == "1");
 	_showSizeInfo = (GlobalRegistry().get(RKEY_SHOW_SIZE_INFO) == "1");
+	_showBlocks = (GlobalRegistry().get(RKEY_SHOW_BLOCKS) == "1");
+	_showCoordinates = (GlobalRegistry().get(RKEY_SHOW_COORDINATES) == "1");
+	_showOutline = (GlobalRegistry().get(RKEY_SHOW_OUTLINE) == "1");
+	_showAxes = (GlobalRegistry().get(RKEY_SHOW_AXES) == "1");
+	_showWorkzone = (GlobalRegistry().get(RKEY_SHOW_WORKZONE) == "1");
+	_defaultBlockSize = (GlobalRegistry().getInt(RKEY_DEFAULT_BLOCKSIZE));
 	updateAllViews();
 }
 
@@ -63,6 +80,30 @@ void XYWndManager::toggleCrossHairs() {
 	// Invert the registry value, the _showCrossHairs bool is updated automatically as this class observes the key
 	GlobalRegistry().set(RKEY_SHOW_CROSSHAIRS, _showCrossHairs ? "0" : "1");
 	updateAllViews();
+}
+
+bool XYWndManager::showBlocks() const {
+	return _showBlocks;
+}
+
+unsigned int XYWndManager::defaultBlockSize() const {
+	return _defaultBlockSize;
+}
+
+bool XYWndManager::showCoordinates() const {
+	return _showCoordinates;
+}
+
+bool XYWndManager::showOutline() const  {
+	return _showOutline;
+}
+
+bool XYWndManager::showAxes() const {
+	return _showAxes;
+}
+
+bool XYWndManager::showWorkzone() const {
+	return _showWorkzone;
 }
 
 bool XYWndManager::showGrid() const {

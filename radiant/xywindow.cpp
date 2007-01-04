@@ -149,95 +149,15 @@ void XZ_Front_Shown_Construct(GtkWindow* parent)
   g_xz_front_shown.connect(GTK_WIDGET(parent));
 }
 
-void ShowBlocksToggle()
-{
-  g_xywindow_globals_private.show_blocks ^= 1;
-  GlobalXYWnd().updateAllViews();
-}
-typedef FreeCaller<ShowBlocksToggle> ShowBlocksToggleCaller;
-void ShowBlocksExport(const BoolImportCallback& importer)
-{
-  importer(g_xywindow_globals_private.show_blocks);
-}
-typedef FreeCaller1<const BoolImportCallback&, ShowBlocksExport> ShowBlocksExportCaller;
-
-void ShowCoordinatesToggle()
-{
-  g_xywindow_globals_private.show_coordinates ^= 1;
-  GlobalXYWnd().updateAllViews();
-}
-typedef FreeCaller<ShowCoordinatesToggle> ShowCoordinatesToggleCaller;
-void ShowCoordinatesExport(const BoolImportCallback& importer)
-{
-  importer(g_xywindow_globals_private.show_coordinates);
-}
-typedef FreeCaller1<const BoolImportCallback&, ShowCoordinatesExport> ShowCoordinatesExportCaller;
-
-void ShowOutlineToggle()
-{
-  g_xywindow_globals_private.show_outline ^= 1;
-  GlobalXYWnd().updateAllViews();
-}
-typedef FreeCaller<ShowOutlineToggle> ShowOutlineToggleCaller;
-void ShowOutlineExport(const BoolImportCallback& importer)
-{
-  importer(g_xywindow_globals_private.show_outline);
-}
-typedef FreeCaller1<const BoolImportCallback&, ShowOutlineExport> ShowOutlineExportCaller;
-
-void ShowAxesToggle()
-{
-  g_xywindow_globals_private.show_axis ^= 1;
-  GlobalXYWnd().updateAllViews();
-}
-typedef FreeCaller<ShowAxesToggle> ShowAxesToggleCaller;
-void ShowAxesExport(const BoolImportCallback& importer)
-{
-  importer(g_xywindow_globals_private.show_axis);
-}
-typedef FreeCaller1<const BoolImportCallback&, ShowAxesExport> ShowAxesExportCaller;
-
-void ShowWorkzoneToggle()
-{
-  g_xywindow_globals_private.d_show_work ^= 1;
-  GlobalXYWnd().updateAllViews();
-}
-typedef FreeCaller<ShowWorkzoneToggle> ShowWorkzoneToggleCaller;
-void ShowWorkzoneExport(const BoolImportCallback& importer)
-{
-  importer(g_xywindow_globals_private.d_show_work);
-}
-typedef FreeCaller1<const BoolImportCallback&, ShowWorkzoneExport> ShowWorkzoneExportCaller;
-
-ShowBlocksExportCaller g_show_blocks_caller;
-BoolExportCallback g_show_blocks_callback(g_show_blocks_caller);
-ToggleItem g_show_blocks(g_show_blocks_callback);
-
-ShowCoordinatesExportCaller g_show_coordinates_caller;
-BoolExportCallback g_show_coordinates_callback(g_show_coordinates_caller);
-ToggleItem g_show_coordinates(g_show_coordinates_callback);
-
-ShowOutlineExportCaller g_show_outline_caller;
-BoolExportCallback g_show_outline_callback(g_show_outline_caller);
-ToggleItem g_show_outline(g_show_outline_callback);
-
-ShowAxesExportCaller g_show_axes_caller;
-BoolExportCallback g_show_axes_callback(g_show_axes_caller);
-ToggleItem g_show_axes(g_show_axes_callback);
-
-ShowWorkzoneExportCaller g_show_workzone_caller;
-BoolExportCallback g_show_workzone_callback(g_show_workzone_caller);
-ToggleItem g_show_workzone(g_show_workzone_callback);
-
 void XYShow_registerCommands()
 {
 	GlobalEventManager().addRegistryToggle("ShowAngles", RKEY_SHOW_ENTITY_ANGLES);
 	GlobalEventManager().addRegistryToggle("ShowNames", RKEY_SHOW_ENTITY_NAMES);
-  GlobalToggles_insert("ShowBlocks", ShowBlocksToggleCaller(), ToggleItem::AddCallbackCaller(g_show_blocks));
-  GlobalToggles_insert("ShowCoordinates", ShowCoordinatesToggleCaller(), ToggleItem::AddCallbackCaller(g_show_coordinates));
-  GlobalToggles_insert("ShowWindowOutline", ShowOutlineToggleCaller(), ToggleItem::AddCallbackCaller(g_show_outline));
-  GlobalToggles_insert("ShowAxes", ShowAxesToggleCaller(), ToggleItem::AddCallbackCaller(g_show_axes));
-  GlobalToggles_insert("ShowWorkzone", ShowWorkzoneToggleCaller(), ToggleItem::AddCallbackCaller(g_show_workzone));
+	GlobalEventManager().addRegistryToggle("ShowBlocks", RKEY_SHOW_BLOCKS);
+	GlobalEventManager().addRegistryToggle("ShowCoordinates", RKEY_SHOW_COORDINATES);
+	GlobalEventManager().addRegistryToggle("ShowWindowOutline", RKEY_SHOW_OUTLINE);
+	GlobalEventManager().addRegistryToggle("ShowAxes", RKEY_SHOW_AXES);
+	GlobalEventManager().addRegistryToggle("ShowWorkzone", RKEY_SHOW_WORKZONE);
 }
 
 #include "preferencesystem.h"
@@ -272,10 +192,6 @@ void XYWindow_Construct()
   GlobalEventManager().addCommand("Zoom100", FreeCaller<XY_Zoom100>());
   GlobalEventManager().addCommand("CenterXYViews", FreeCaller<XY_Split_Focus>());
   GlobalEventManager().addCommand("CenterXYView", FreeCaller<XY_Focus>());
-
-  GlobalPreferenceSystem().registerPreference("SI_ShowCoords", BoolImportStringCaller(g_xywindow_globals_private.show_coordinates), BoolExportStringCaller(g_xywindow_globals_private.show_coordinates));
-  GlobalPreferenceSystem().registerPreference("SI_ShowOutlines", BoolImportStringCaller(g_xywindow_globals_private.show_outline), BoolExportStringCaller(g_xywindow_globals_private.show_outline));
-  GlobalPreferenceSystem().registerPreference("SI_ShowAxis", BoolImportStringCaller(g_xywindow_globals_private.show_axis), BoolExportStringCaller(g_xywindow_globals_private.show_axis));
 
   GlobalPreferenceSystem().registerPreference("XZVIS", makeBoolStringImportCallback(ToggleShownImportBoolCaller(g_xz_front_shown)), makeBoolStringExportCallback(ToggleShownExportBoolCaller(g_xz_front_shown)));
   GlobalPreferenceSystem().registerPreference("YZVIS", makeBoolStringImportCallback(ToggleShownImportBoolCaller(g_yz_side_shown)), makeBoolStringExportCallback(ToggleShownExportBoolCaller(g_yz_side_shown)));
