@@ -103,9 +103,9 @@ GtkMenuItem* createMenuItemWithMnemonic(GtkMenu* menu, const std::string& captio
 	// Add the menu item to the container
 	gtk_container_add(GTK_CONTAINER(menu), GTK_WIDGET(menuItem));
 	
-	IEvent* event = GlobalEventManager().findEvent(commandName);
+	IEventPtr event = GlobalEventManager().findEvent(commandName);
 
-	if (event != NULL) {
+	if (!event->empty()) {
 		event->connectWidget(GTK_WIDGET(menuItem));
 	}
 	else {
@@ -126,9 +126,9 @@ GtkMenuItem* createCheckMenuItemWithMnemonic(GtkMenu* menu, const std::string& c
 	// Add the menu item to the container
 	gtk_container_add(GTK_CONTAINER(menu), GTK_WIDGET(menuItem));
 	
-	IEvent* event = GlobalEventManager().findEvent(commandName);
-	
-	if (event != NULL) {
+	IEventPtr event = GlobalEventManager().findEvent(commandName);
+
+	if (!event->empty()) {
 		event->connectWidget(GTK_WIDGET(menuItem));
 	}
 	else {

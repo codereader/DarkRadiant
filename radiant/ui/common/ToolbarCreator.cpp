@@ -83,31 +83,22 @@ GtkWidget* ToolbarCreator::createToolItem(xml::Node& node) {
 		if (nodeName == "toolbutton") {
 			// Create a new GtkToolButton and assign the right callback
 			toolItem = GTK_WIDGET(gtk_tool_button_new(NULL, name.c_str()));
-			
-			IEvent* event = GlobalEventManager().findEvent(action);
-			
-			if (event != NULL) {
-				event->connectWidget(GTK_WIDGET(toolItem));
-			}
-			else {
-				globalErrorStream() << "ToolbarCreator: Failed to lookup command " << action.c_str() << "\n"; 
-			}
 		}
 		else {
 			// Create a new GtkToggleToolButton and assign the right callback
 			toolItem = GTK_WIDGET(gtk_toggle_tool_button_new());
+		}
+		
+		IEventPtr event = GlobalEventManager().findEvent(action);
 			
-			IEvent* event = GlobalEventManager().findEvent(action);
-			
-			if (event != NULL) {
-				event->connectWidget(GTK_WIDGET(toolItem));
+		if (!event->empty()) {
+			event->connectWidget(GTK_WIDGET(toolItem));
 
-				// Tell the event to update the state of this button
-				event->updateWidgets();
-			}
-			else {
-				globalErrorStream() << "ToolbarCreator: Failed to lookup command " << action.c_str() << "\n"; 
-			}
+			// Tell the event to update the state of this button
+			event->updateWidgets();
+		}
+		else {
+			globalErrorStream() << "ToolbarCreator: Failed to lookup command " << action.c_str() << "\n"; 
 		}
 		
 		// Set the tooltip, if not empty

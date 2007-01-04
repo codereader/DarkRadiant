@@ -5,6 +5,8 @@
 #include <map>
 #include <string>
 
+#include <boost/shared_ptr.hpp>
+
 #include "generic/constant.h"
 #include "generic/callbackfwd.h"
 
@@ -28,7 +30,15 @@ public:
 	
 	// Exports the current state to the widgets
 	virtual void updateWidgets() = 0;
+	
+	// Returns true if this event could be toggled (returns false if the event is not a Toggle).
+	virtual bool setToggled(const bool toggled) = 0;
+	
+	// Returns true, if this is any empty Event (no command attached)
+	virtual bool empty() const = 0;
 };
+
+typedef boost::shared_ptr<IEvent> IEventPtr;
 
 class IAccelerator
 {
@@ -42,13 +52,13 @@ public:
 	virtual unsigned int getModifiers() const = 0;
 	
 	// Connect this IEvent to this accelerator
-	virtual void connectEvent(IEvent* event) = 0; 
+	virtual void connectEvent(IEventPtr event) = 0; 
 };
 
 // Event visitor class
 class IEventVisitor {
 public:
-	virtual void visit(const std::string& eventName, IEvent* event) = 0;
+	virtual void visit(const std::string& eventName, IEventPtr event) = 0;
 };
 
 class IEventManager
@@ -63,27 +73,28 @@ public:
 	 * @modifierStr: A string containing the modifiers, e.g. "Shift+Control" or "Shift"
 	 * 
 	 * @returns: the pointer to the newly created accelerator object */
-	virtual IAccelerator* addAccelerator(const std::string& key, const std::string& modifierStr) = 0;
-	virtual IAccelerator* findAccelerator(const IEvent* event) = 0;
+	virtual IAccelerator& addAccelerator(const std::string& key, const std::string& modifierStr) = 0;
+	virtual IAccelerator& findAccelerator(const IEventPtr event) = 0;
 	
 	// Creates a new command that calls the given callback when invoked  
-	virtual IEvent* addCommand(const std::string& name, const Callback& callback) = 0;
+	virtual IEventPtr addCommand(const std::string& name, const Callback& callback) = 0;
 	
 	// Creates a new keyevent that calls the given callback when invoked  
-	virtual IEvent* addKeyEvent(const std::string& name, const Callback& keyUpCallback, const Callback& keyDownCallback) = 0;
+	virtual IEventPtr addKeyEvent(const std::string& name, const Callback& keyUpCallback, const Callback& keyDownCallback) = 0;
 	
 	// Creates a new toggle event that calls the given callback when toggled
-	virtual IEvent* addToggle(const std::string& name, const Callback& onToggled) = 0;
+	virtual IEventPtr addToggle(const std::string& name, const Callback& onToggled) = 0;
+	virtual IEventPtr addWidgetToggle(const std::string& name) = 0;
+	virtual IEventPtr addRegistryToggle(const std::string& name, const std::string& registryKey) = 0;
+	
+	// Set the according Toggle command (identified by <name>) to the bool <toggled> 
 	virtual void setToggled(const std::string& name, const bool toggled) = 0;
 	
-	virtual IEvent* addWidgetToggle(const std::string& name) = 0;
-	virtual IEvent* addRegistryToggle(const std::string& name, const std::string& registryKey) = 0;
-	
 	// Returns the pointer to the command specified by the <given> commandName
-	virtual IEvent* findEvent(const std::string& name) = 0;
+	virtual IEventPtr findEvent(const std::string& name) = 0;
 	
 	// Connects the given accelerator to the given command (identified by the string)
-	virtual void connectAccelerator(IAccelerator* accelerator, const std::string& command) = 0;
+	virtual void connectAccelerator(IAccelerator& accelerator, const std::string& command) = 0;
 	
 	// Connects the keyboard handlers of the keyeventmanager to the specified window, so that key events are catched
 	virtual void connect(GtkObject* object) = 0;
@@ -102,7 +113,7 @@ public:
 	virtual void disableEvent(const std::string& eventName) = 0;
 	
 	// Visit each event with the given class
-	virtual void foreachEvent(IEventVisitor* eventVisitor) = 0;
+	virtual void foreachEvent(IEventVisitor& eventVisitor) = 0;
 	
 	virtual std::string getModifierStr(const unsigned int& modifierFlags) = 0;
 };

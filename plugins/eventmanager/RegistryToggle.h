@@ -36,6 +36,13 @@ public:
 	// Dummy callback for the Toggle base class, we don't need any callbacks...
 	void doNothing() {}
 
+	virtual bool setToggled(const bool toggled) {
+		// Set the registry key, this triggers the keyChanged() method
+		GlobalRegistry().set(_registryKey, toggled ? "1" : "0");
+		
+		return true;
+	}
+
 	// The RegistryKeyObserver implementation, gets called on key changes
 	void keyChanged() {
 		// Update the internal toggle state according to the key value 

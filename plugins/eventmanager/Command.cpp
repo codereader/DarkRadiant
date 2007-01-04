@@ -4,6 +4,10 @@ Command::Command(const Callback& callback) :
 	_callback(callback)
 {}
 
+bool Command::empty() const {
+	return false;
+}
+
 // Invoke the registered callback
 void Command::execute() {
 	if (_enabled) {

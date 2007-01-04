@@ -36,9 +36,12 @@ protected:
 public:
 	Toggle(const Callback& callback);
 	
+	// Returns usually false, because a Toggle is never empty 
+	virtual bool empty() const;
+	
 	// Set the toggled state to true/false, according to <toggled> and update
 	// any associated widgets or notify any callbacks.
-	virtual void setToggled(const bool toggled);
+	virtual bool setToggled(const bool toggled);
 	
 	// Update the "active" state of the connected widgets
 	virtual void updateWidgets();
@@ -60,5 +63,7 @@ public:
 	static gboolean onCheckMenuItemClicked(GtkMenuItem* menuitem, gpointer data);
 
 }; // class Toggle
+
+typedef boost::shared_ptr<Toggle> TogglePtr;
 
 #endif /*TOGGLE_H_*/

@@ -22,23 +22,20 @@ class Accelerator :
 	unsigned int _modifiers;
 	
 	// The connected event
-	IEvent* _event;
+	IEventPtr _event;
 
 public:
-	// Constructor with no arguments
-	Accelerator();
-	
-	// Construct an accelerator with just the key/modifier combination
-	Accelerator(const unsigned int& key, const unsigned int& modifiers);
-	
 	// Construct an accelerator out of the key/modifier plus a command
-	Accelerator(const unsigned int& key, const unsigned int& modifiers, IEvent* event);
+	Accelerator(const unsigned int& key, const unsigned int& modifiers, IEventPtr event);
+	
+	// Copy Constructor
+	Accelerator(const Accelerator& other);
 
 	// Returns true if the key/modifier combination matches this accelerator
 	bool match(const unsigned int& key, const unsigned int& modifiers) const;
 	
 	// Returns true if the event is attached to this Accelerator
-	bool match(const IEvent* event) const;
+	bool match(const IEventPtr event) const;
 
 	// Reads out the interal key/modifier combination of this Accelerator
 	unsigned int getKey() const;
@@ -49,7 +46,7 @@ public:
 	void setModifiers(const unsigned int& modifiers);
 
 	// Connect this modifier to the specified command
-	void connectEvent(IEvent* event);
+	void connectEvent(IEventPtr event);
 	
 	// Call the connected event keyup/keydown callbacks
 	void keyUp();

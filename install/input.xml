@@ -41,7 +41,7 @@
 		<event name="DisableFreeLookMode" button="MOUSE_RIGHT" modifiers="" />
 		<strafemode toggle="CONTROL" forward="SHIFT" speed="0.65" forwardFactor="-1" />
 	</cameraview>
-	<shortcuts>
+	<shortcuts name="default">
 		<shortcut command="Sleep" key="P" modifiers="SHIFT+CONTROL" />
 		<shortcut command="OpenMap" key="O" modifiers="CONTROL" />
 		<shortcut command="SaveMap" key="S" modifiers="CONTROL" />
@@ -86,8 +86,8 @@
 		<shortcut command="SelectNudgeUp" key="Up" modifiers="ALT" />
 		<shortcut command="SelectNudgeDown" key="Down" modifiers="ALT" />
 		<shortcut command="CenterView" key="End" />
-		<shortcut command="CubicClipZoomIn" key="[" modifiers="CONTROL" />
-		<shortcut command="CubicClipZoomOut" key="]" modifiers="CONTROL" />
+		<shortcut command="CubicClipZoomIn" key="plus" modifiers="CONTROL" />
+		<shortcut command="CubicClipZoomOut" key="minus" modifiers="CONTROL" />
 		<shortcut command="UpFloor" key="Prior" />
 		<shortcut command="DownFloor" key="Next" />
 		<shortcut command="TogglePreview" key="F3" />
@@ -118,8 +118,8 @@
 		<shortcut command="MakeDetail" key="M" modifiers="CONTROL" />
 		<shortcut command="MakeStructural" key="S" modifiers="SHIFT+CONTROL" />
 		<shortcut command="ConnectSelection" key="K" modifiers="CONTROL" />
-		<shortcut command="GridUp" key="]" />
-		<shortcut command="GridDown" key="[" />
+		<shortcut command="GridUp" key="minus" />
+		<shortcut command="GridDown" key="plus" />
 		<shortcut command="ViewEntityInfo" key="N" />
 		<shortcut command="RegionSetSelection" key="R" modifiers="SHIFT+CONTROL" />
 		<shortcut command="PatchInspector" key="S" modifiers="SHIFT" />

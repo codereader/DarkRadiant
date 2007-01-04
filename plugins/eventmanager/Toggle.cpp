@@ -8,16 +8,22 @@ Toggle::Toggle(const Callback& callback) :
 	_toggled(false)
 {}
 
+bool Toggle::empty() const {
+	return false;
+}
+
 // Set the toggled state to true/false, according to <toggled> and update
 // any associated widgets or notify any callbacks.
-void Toggle::setToggled(const bool toggled) {
+bool Toggle::setToggled(const bool toggled) {
 	if (_callbackActive) {
-		return;
+		return false;
 	}
 	
 	// Update the toggle status and export it to the GTK button
 	_toggled = toggled;
 	updateWidgets();
+	
+	return true;
 }
 
 void Toggle::updateWidgets() {

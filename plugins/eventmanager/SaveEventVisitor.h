@@ -37,19 +37,16 @@ public:
 		_shortcutsNode = GlobalRegistry().createKey(_rootKey + "/shortcuts");
 	}
 	
-	void visit(const std::string& eventName, IEvent* event) {
-		// Sanity check 
-		if (event != NULL && eventName != "") {
+	void visit(const std::string& eventName, IEventPtr event) {
+		// Only export events with non-empty name 
+		if (eventName != "") {
 			// Try to find an accelerator connected to this event
-			Accelerator* accelerator = dynamic_cast<Accelerator*>(_eventManager->findAccelerator(event));
+			Accelerator& accelerator = dynamic_cast<Accelerator&>(_eventManager->findAccelerator(event));
 			
-			std::string keyStr = "";
-			std::string modifierStr = "";
+			unsigned int keyVal = accelerator.getKey();
 			
-			if (accelerator != NULL) {
-				keyStr = gdk_keyval_name(accelerator->getKey());
-				modifierStr = _eventManager->getModifierStr(accelerator->getModifiers());
-			}
+			const std::string keyStr = (keyVal != 0) ? gdk_keyval_name(keyVal) : "";
+			const std::string modifierStr = _eventManager->getModifierStr(accelerator.getModifiers());
 			
 			// Create a new child under the _shortcutsNode
 			xmlNodePtr createdNodePtr = xmlNewChild(_shortcutsNode, NULL, xmlCharStrdup("shortcut"), NULL);
