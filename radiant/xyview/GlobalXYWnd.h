@@ -52,6 +52,8 @@ class XYWndManager :
 	bool _showWorkzone;
 	
 	unsigned int _defaultBlockSize;
+	
+	GtkWindow* _globalParentWindow;
 
 public:
 
@@ -116,8 +118,22 @@ public:
 	// Allocates a new XY view on the heap and returns its pointer
 	XYWnd* createXY();
 	
+	// Creates a new orthoview
+	void createNewOrthoView();
+	
+	// Determines the global parent the xyviews are children of
+	void setGlobalParentWindow(GtkWindow* globalParentWindow);
+	
+	/* greebo: This function determines the point currently being "looked" at, it is used for toggling the ortho views
+	 * If something is selected the center of the selection is taken as new origin, otherwise the camera
+	 * position is considered to be the new origin of the toggled orthoview. */
+	Vector3 getFocusPosition();
+	
 	// Construct the orthoview preference page and add it to the given group
 	void constructPreferencePage(PreferenceGroup& group);
+	
+	// Registers all the XY commands in the EventManager 
+	void registerCommands();
 
 }; // class XYWndManager
 

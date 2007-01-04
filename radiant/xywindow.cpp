@@ -75,53 +75,28 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "xyview/XYWnd.h"
 #include "xyview/GlobalXYWnd.h"
 
-// =============================================================================
-// variables
-
-/* This function determines the point currently being "looked" at, it is used for toggling the ortho views
- * If something is selected the center of the selection is taken as new origin, otherwise the camera
- * position is considered to be the new origin of the toggled orthoview.
-*/
-Vector3 getFocusPosition() {
-	Vector3 position(0,0,0);
-	
-	if (GlobalSelectionSystem().countSelected() != 0) {
-		Select_GetMid(position);
-	}
-	else {
-		position = g_pParentWnd->GetCamWnd()->getCameraOrigin();
-	}
-	
-	return position;
-}
-
 void XY_Split_Focus() {
 	// Re-position all available views
-	GlobalXYWnd().positionAllViews(getFocusPosition());
+	GlobalXYWnd().positionAllViews(GlobalXYWnd().getFocusPosition());
 }
 
 void XY_Focus() {
-	GlobalXYWnd().positionView(getFocusPosition());
+	GlobalXYWnd().positionView(GlobalXYWnd().getFocusPosition());
 }
 
 void XY_Top() {
 	GlobalXYWnd().setActiveViewType(XY);
-	GlobalXYWnd().positionView(getFocusPosition());
+	GlobalXYWnd().positionView(GlobalXYWnd().getFocusPosition());
 }
 
 void XY_Side() {
 	GlobalXYWnd().setActiveViewType(XZ);
-	GlobalXYWnd().positionView(getFocusPosition());
+	GlobalXYWnd().positionView(GlobalXYWnd().getFocusPosition());
 }
 
 void XY_Front() {
 	GlobalXYWnd().setActiveViewType(YZ);
-	GlobalXYWnd().positionView(getFocusPosition());
-}
-
-void toggleActiveOrthoView() {
-	GlobalXYWnd().toggleActiveView();
-	GlobalXYWnd().positionView(getFocusPosition());
+	GlobalXYWnd().positionView(GlobalXYWnd().getFocusPosition());
 }
 
 void XY_Zoom100() {
@@ -183,7 +158,7 @@ void XYWindow_Construct()
   GlobalToggles_insert("ToggleView", ToggleShown::ToggleCaller(g_xy_top_shown), ToggleItem::AddCallbackCaller(g_xy_top_shown.m_item));
   GlobalToggles_insert("ToggleSideView", ToggleShown::ToggleCaller(g_yz_side_shown), ToggleItem::AddCallbackCaller(g_yz_side_shown.m_item));
   GlobalToggles_insert("ToggleFrontView", ToggleShown::ToggleCaller(g_xz_front_shown), ToggleItem::AddCallbackCaller(g_xz_front_shown.m_item));
-  GlobalEventManager().addCommand("NextView", FreeCaller<toggleActiveOrthoView>());
+  GlobalEventManager().addCommand("NextView", MemberCaller<XYWndManager, &XYWndManager::toggleActiveView>(GlobalXYWnd()));
   GlobalEventManager().addCommand("ZoomIn", MemberCaller<XYWndManager, &XYWndManager::zoomIn>(GlobalXYWnd()));
   GlobalEventManager().addCommand("ZoomOut", MemberCaller<XYWndManager, &XYWndManager::zoomOut>(GlobalXYWnd()));
   GlobalEventManager().addCommand("ViewTop", FreeCaller<XY_Top>());
