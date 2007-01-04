@@ -262,7 +262,8 @@ void EntityClassDoom3_loadFile(const char* filename)
             EntityClassDoom3_parse(file->getInputStream().getAsString());
         }
         catch (parser::ParseException e) {
-            std::cerr << "Unable to parse DEF file: " << filename << "\n\n" << e.what();
+            std::cerr << "[eclassmgr] failed to parse " << filename 
+            		  << " (" << e.what() << ")" << std::endl;
         }
         file->release();
 	}

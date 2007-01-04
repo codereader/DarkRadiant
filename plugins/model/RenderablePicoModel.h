@@ -4,9 +4,9 @@
 #include "RenderablePicoSurface.h"
 
 #include "imodel.h"
+#include "cullable.h"
 #include "picomodel.h"
 
-#include <GL/glew.h>
 #include <boost/shared_ptr.hpp>
 
 namespace model
@@ -20,7 +20,8 @@ namespace model
  */
 
 class RenderablePicoModel
-: public IModel
+: public IModel,
+  public Cullable
 {
 	// Vector of renderable surfaces for this model
 	typedef std::vector<boost::shared_ptr<RenderablePicoSurface> > SurfaceList;
@@ -91,20 +92,27 @@ public:
 	
 	/** Return the enclosing AABB for this model.
 	 */
-	 
 	const AABB& getAABB() const {
 		return _localAABB;
 	}
 	
 	/** Return the list of active materials for this model.
 	 */
-
 	const std::vector<std::string>& getActiveMaterials() const;
 	
 	/** Apply the given skin to this model.
 	 */
-	 
 	void applySkin(const ModelSkin& skin);
+
+	/**
+	 * Test this model for intersection with the provided VolumeTest. This is
+	 * a simple AABB check. Defined in Cullable interface.
+	 * 
+	 * @returns
+	 * VolumeIntersectionValue enumeration with the intersection result.
+	 */
+	VolumeIntersectionValue intersectVolume(const VolumeTest&,
+											const Matrix4&) const;
 	
 };
 

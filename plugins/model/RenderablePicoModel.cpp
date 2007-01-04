@@ -3,11 +3,11 @@
 #include "texturelib.h"
 #include "ishaders.h"
 #include "ifilter.h"
+#include "math/frustum.h" // VolumeIntersectionValue
 
 namespace model {
 
 // Constructor
-
 RenderablePicoModel::RenderablePicoModel(picoModel_t* mod, const std::string& fExt) {
 	
 	// Get the number of surfaces to create
@@ -35,7 +35,6 @@ RenderablePicoModel::RenderablePicoModel(picoModel_t* mod, const std::string& fE
 }
 
 // Virtual render function
-
 void RenderablePicoModel::render(RenderStateFlags flags) const {
 	
 	glEnable(GL_VERTEX_ARRAY);
@@ -65,7 +64,6 @@ void RenderablePicoModel::render(RenderStateFlags flags) const {
 }
 	
 // Apply the given skin to this model
-
 void RenderablePicoModel::applySkin(const ModelSkin& skin) {
 	// Apply the skin to each surface
 	for (SurfaceList::iterator i = _surfVec.begin();
@@ -77,7 +75,6 @@ void RenderablePicoModel::applySkin(const ModelSkin& skin) {
 }
 
 // Update the list of active materials
-
 void RenderablePicoModel::updateMaterialList() const {
 	_materialList.clear();
 	for (SurfaceList::const_iterator i = _surfVec.begin();
@@ -89,7 +86,6 @@ void RenderablePicoModel::updateMaterialList() const {
 }
 
 // Return the list of active skins for this model
-
 const std::vector<std::string>& RenderablePicoModel::getActiveMaterials() const {
 	// If the material list is empty, populate it
 	if (_materialList.empty()) {
@@ -97,6 +93,16 @@ const std::vector<std::string>& RenderablePicoModel::getActiveMaterials() const 
 	}	
 	// Return the list
 	return _materialList;
+}
+	
+// Perform volume intersection test
+VolumeIntersectionValue 
+RenderablePicoModel::intersectVolume(const VolumeTest& test,
+									 const Matrix4& localToWorld) const
+{
+	// Simple AABB intersection check between the test volume and the local
+	// AABB
+	return test.TestAABB(_localAABB);
 }
 	
 }
