@@ -1720,6 +1720,8 @@ GtkMenuItem* create_view_menu(MainFrame::EViewStyle style)
   if (g_Layout_enableDetachableMenus.m_value)
     menu_tearoff (menu);
 
+	createMenuItemWithMnemonic(menu, "New XY View", "NewOrthoView");
+
   if(style == MainFrame::eFloating)
   {
     createCheckMenuItemWithMnemonic(menu, "Camera View", "ToggleCamera");

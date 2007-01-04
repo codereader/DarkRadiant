@@ -121,6 +121,9 @@ public:
 	// Creates a new orthoview
 	void createNewOrthoView();
 	
+	// Deletes the specified view
+	void destroyOrthoView(XYWnd* xyWnd);
+	
 	// Determines the global parent the xyviews are children of
 	void setGlobalParentWindow(GtkWindow* globalParentWindow);
 	
@@ -134,6 +137,11 @@ public:
 	
 	// Registers all the XY commands in the EventManager 
 	void registerCommands();
+	
+private:
+
+	// The GTK callback to catch the delete-event of orthoviews
+	static gboolean onDeleteOrthoView(GtkWidget *widget, GdkEvent *event, gpointer data);
 
 }; // class XYWndManager
 
