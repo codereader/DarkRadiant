@@ -70,7 +70,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "groupdialog.h"
 #include "patchdialog.h"
 #include "camera/GlobalCamera.h"
-#include "xywindow.h"
 #include "entity.h"
 #include "select.h"
 #include "preferences.h"
@@ -270,7 +269,7 @@ public:
     SurfaceInspector_Construct();
     PatchInspector_Construct();
     GlobalCamera().construct();
-    XYWindow_Construct();
+    GlobalXYWnd().construct();
     TextureBrowser_Construct();
     Entity_Construct();
     Autosave_Construct();
@@ -294,7 +293,6 @@ public:
     Autosave_Destroy();
     Entity_Destroy();
     TextureBrowser_Destroy();
-    XYWindow_Destroy();
     GlobalCamera().destroy();
     PatchInspector_Destroy();
     SurfaceInspector_Destroy();

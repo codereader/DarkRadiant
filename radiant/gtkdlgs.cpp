@@ -74,7 +74,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "brushmanip.h"
 #include "qe3.h"
 #include "texwindow.h"
-#include "xywindow.h"
 #include "mainframe.h"
 #include "preferences.h"
 #include "cmdlib.h"

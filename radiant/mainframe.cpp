@@ -124,7 +124,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "surfacedialog.h"
 #include "textures.h"
 #include "texwindow.h"
-#include "xywindow.h"
 #include "windowobservers.h"
 #include "renderstate.h"
 #include "referencecache.h"
@@ -2492,7 +2491,7 @@ void MainFrame::Create()
         GtkFrame* frame = create_framed_widget(xyWnd->getWidget());
         gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(frame));
       }
-      XY_Top_Shown_Construct(window);
+      GlobalXYWnd().xyTopShownConstruct(window);
 
       g_floating_windows.push_back(GTK_WIDGET(window));
     }
@@ -2511,7 +2510,7 @@ void MainFrame::Create()
         gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(frame));
       }
 
-      XZ_Front_Shown_Construct(window);
+      GlobalXYWnd().xzFrontShownConstruct(window);
 
       g_floating_windows.push_back(GTK_WIDGET(window));
     }
@@ -2530,7 +2529,7 @@ void MainFrame::Create()
         gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(frame));
       }
 
-      YZ_Side_Shown_Construct(window);
+      GlobalXYWnd().yzSideShownConstruct(window);
 
       g_floating_windows.push_back(GTK_WIDGET(window));
     }

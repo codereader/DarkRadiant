@@ -3,14 +3,29 @@
 #include "ieventmanager.h"
 
 #include "gtkutil/FramedTransientWidget.h"
+#include "stringio.h"
 
 #include "select.h"
 #include "mainframe.h"
+#include "commands.h"
+
+void ToggleShown_importBool(ToggleShown& self, bool value) {
+	self.set(value);
+}
+typedef ReferenceCaller1<ToggleShown, bool, ToggleShown_importBool> ToggleShownImportBoolCaller;
+
+void ToggleShown_exportBool(const ToggleShown& self, const BoolImportCallback& importer) {
+	importer(self.active());
+}
+typedef ConstReferenceCaller1<ToggleShown, const BoolImportCallback&, ToggleShown_exportBool> ToggleShownExportBoolCaller;
 
 // Constructor
 XYWndManager::XYWndManager() :
 	_activeXY(NULL),
-	_globalParentWindow(NULL)
+	_globalParentWindow(NULL),
+	_xyTopShown(true),
+	_yzSideShown(false),
+	_xzFrontShown(false)
 {
 	// Connect self to the according registry keys
 	GlobalRegistry().addKeyObserver(this, RKEY_CHASE_MOUSE);
@@ -39,12 +54,58 @@ XYWndManager::XYWndManager() :
 
 // Destructor
 XYWndManager::~XYWndManager() {
-	destroy();
+
+}
+
+void XYWndManager::construct() {
+	GlobalToggles_insert("ToggleView", ToggleShown::ToggleCaller(_xyTopShown), ToggleItem::AddCallbackCaller(_xyTopShown.m_item));
+	GlobalToggles_insert("ToggleSideView", ToggleShown::ToggleCaller(_yzSideShown), ToggleItem::AddCallbackCaller(_yzSideShown.m_item));
+	GlobalToggles_insert("ToggleFrontView", ToggleShown::ToggleCaller(_xzFrontShown), ToggleItem::AddCallbackCaller(_xzFrontShown.m_item));
+
+	GlobalPreferenceSystem().registerPreference("XZVIS", makeBoolStringImportCallback(ToggleShownImportBoolCaller(_xzFrontShown)), makeBoolStringExportCallback(ToggleShownExportBoolCaller(_xzFrontShown)));
+	GlobalPreferenceSystem().registerPreference("YZVIS", makeBoolStringImportCallback(ToggleShownImportBoolCaller(_yzSideShown)), makeBoolStringExportCallback(ToggleShownExportBoolCaller(_yzSideShown)));
+
+	XYWnd::captureStates();
+}
+
+// Free the allocated XYViews from the heap
+void XYWndManager::destroy() {
+
+	XYWnd::releaseStates();
+	
+	for (XYWndList::iterator i = _XYViews.begin(); i != _XYViews.end(); i++) {
+		// Free the view from the heap
+		XYWnd* xyView = *i;
+		delete xyView;
+	}
+	// Discard the whole list
+	_XYViews.clear();
+}
+
+void XYWndManager::xyTopShownConstruct(GtkWindow* parent) {
+	_xyTopShown.connect(GTK_WIDGET(parent));
+}
+
+void XYWndManager::yzSideShownConstruct(GtkWindow* parent) {
+	_yzSideShown.connect(GTK_WIDGET(parent));
+}
+
+void XYWndManager::xzFrontShownConstruct(GtkWindow* parent) {
+	_xzFrontShown.connect(GTK_WIDGET(parent));
 }
 
 void XYWndManager::registerCommands() {
 	GlobalEventManager().addCommand("NewOrthoView", MemberCaller<XYWndManager, &XYWndManager::createNewOrthoView>(*this));
-
+	GlobalEventManager().addCommand("NextView", MemberCaller<XYWndManager, &XYWndManager::toggleActiveView>(*this));
+	GlobalEventManager().addCommand("ZoomIn", MemberCaller<XYWndManager, &XYWndManager::zoomIn>(*this));
+	GlobalEventManager().addCommand("ZoomOut", MemberCaller<XYWndManager, &XYWndManager::zoomOut>(*this));
+	GlobalEventManager().addCommand("ViewTop", MemberCaller<XYWndManager, &XYWndManager::setActiveViewXY>(*this));
+	GlobalEventManager().addCommand("ViewSide", MemberCaller<XYWndManager, &XYWndManager::setActiveViewXZ>(*this));
+	GlobalEventManager().addCommand("ViewFront", MemberCaller<XYWndManager, &XYWndManager::setActiveViewYZ>(*this));
+	GlobalEventManager().addCommand("CenterXYViews", MemberCaller<XYWndManager, &XYWndManager::splitViewFocus>(*this));
+	GlobalEventManager().addCommand("CenterXYView", MemberCaller<XYWndManager, &XYWndManager::focusActiveView>(*this));
+	GlobalEventManager().addCommand("Zoom100", MemberCaller<XYWndManager, &XYWndManager::zoom100>(*this));
+	
 	GlobalEventManager().addRegistryToggle("ToggleCrosshairs", RKEY_SHOW_CROSSHAIRS);
 	GlobalEventManager().addRegistryToggle("ToggleGrid", RKEY_SHOW_GRID);
 	GlobalEventManager().addRegistryToggle("ShowAngles", RKEY_SHOW_ENTITY_ANGLES);
@@ -150,17 +211,6 @@ void XYWndManager::zoomOut() {
 	}
 }
 
-// Free the allocated XYViews from the heap
-void XYWndManager::destroy() {
-	for (XYWndList::iterator i = _XYViews.begin(); i != _XYViews.end(); i++) {
-		// Free the view from the heap
-		XYWnd* xyView = *i;
-		delete xyView;
-	}
-	// Discard the whole list
-	_XYViews.clear();
-}
-
 XYWnd* XYWndManager::getActiveXY() const {
 	return _activeXY;
 }
@@ -235,6 +285,33 @@ void XYWndManager::toggleActiveView() {
 		
 		positionView(getFocusPosition());
 	}
+}
+
+void XYWndManager::setActiveViewXY() {
+	setActiveViewType(XY);
+	positionView(getFocusPosition());
+}
+
+void XYWndManager::setActiveViewXZ() {
+	setActiveViewType(XZ);
+	positionView(getFocusPosition());
+}
+
+void XYWndManager::setActiveViewYZ() {
+	setActiveViewType(YZ);
+	positionView(getFocusPosition());
+}
+
+void XYWndManager::splitViewFocus() {
+	positionAllViews(getFocusPosition());
+}
+
+void XYWndManager::zoom100() {
+	setScale(1);
+}
+
+void XYWndManager::focusActiveView() {
+	positionView(getFocusPosition());
 }
 
 XYWnd* XYWndManager::getView(EViewType viewType) {
