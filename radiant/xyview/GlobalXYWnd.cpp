@@ -10,6 +10,8 @@ XYWndManager::XYWndManager() :
 	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_CROSSHAIRS);
 	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_GRID);
 	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_SIZE_INFO);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ENTITY_ANGLES);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ENTITY_NAMES);
 	
 	// Trigger loading the values of the observed registry keys
 	keyChanged();
@@ -31,6 +33,8 @@ void XYWndManager::constructPreferencePage(PreferenceGroup& group) {
 	page->appendCheckBox("", "Show Crosshairs", RKEY_SHOW_CROSSHAIRS);
 	page->appendCheckBox("", "Show Grid", RKEY_SHOW_GRID);
 	page->appendCheckBox("", "Show Size Info", RKEY_SHOW_SIZE_INFO);
+	page->appendCheckBox("", "Show Entity Angle Arrow", RKEY_SHOW_ENTITY_ANGLES);
+	page->appendCheckBox("", "Show Entity Names", RKEY_SHOW_ENTITY_NAMES);
 }
 
 // Load/Reload the values from the registry

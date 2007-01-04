@@ -14,6 +14,8 @@
 		<camXYUpdate value="1" />
 		<solidSelectionBoxes value="0" />
 		<showCrossHairs value="0" />
+		<showEntityAngles value="1" />
+		<showEntityNames value="0" />
 	</xyview>
 	<clipper>
 		<useCaulk value="1" />

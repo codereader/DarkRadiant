@@ -22,12 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_ENTITY_H)
 #define INCLUDED_ENTITY_H
 
-// CONSTANTS
-
-//const float DEFAULT_LIGHT_RADIUS = 320;
-
-//
-
 class EntityCreator;
 EntityCreator & GetEntityCreator();
 
@@ -42,9 +36,5 @@ extern EGameType g_gameType;
 class FilterSystem;
 void Entity_Construct(EGameType gameType = eGameTypeQuake3);
 void Entity_Destroy();
-
-extern bool g_showNames;
-extern bool g_showAngles;
-//extern bool g_newLightDraw;
 
 #endif
