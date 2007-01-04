@@ -23,37 +23,6 @@
 		const int XYWND_MINSIZE_Y = 200;
 	}
 
-struct xywindow_globals_private_t
-{
-  // these are in the View > Show menu with Show coordinates
-  bool  show_names;
-  bool  show_coordinates;
-  bool  show_angles;
-  bool  show_outline;
-  bool  show_axis;
-
-  bool d_show_work;
-
-  bool     show_blocks;
-  int		       blockSize;
-
-  xywindow_globals_private_t() :
-    show_names(false),
-    show_coordinates(true),
-    show_angles(true),
-    show_outline(false),
-    show_axis(true),
-
-    d_show_work(false),
-
-    show_blocks(false)
-  {
-  }
-
-};
-
-extern xywindow_globals_private_t g_xywindow_globals_private;
-
 class XYWnd :
 	public CameraObserver 
 {

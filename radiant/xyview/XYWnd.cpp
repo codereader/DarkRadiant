@@ -790,7 +790,7 @@ void XYWnd::drawGrid() {
 	}
 
 	// draw coordinate text if needed
-	if ( g_xywindow_globals_private.show_coordinates) {
+	if (GlobalXYWnd().showCoordinates()) {
 		glColor3fv(ColourSchemes().getColourVector3("grid_text"));
 		float offx = m_vOrigin[nDim2] + h - 6 / m_fScale, offy = m_vOrigin[nDim1] - w + 1 / m_fScale;
 		for (x = xb - fmod(xb, stepx); x <= xe ; x += stepx) {
@@ -809,14 +809,14 @@ void XYWnd::drawGrid() {
 		}
 
 		// we do this part (the old way) only if show_axis is disabled
-		if (!g_xywindow_globals_private.show_axis) {
+		if (!GlobalXYWnd().showAxes()) {
 			glRasterPos2f ( m_vOrigin[nDim1] - w + 35 / m_fScale, m_vOrigin[nDim2] + h - 20 / m_fScale );
 
 			GlobalOpenGL().drawString(getViewTypeTitle(m_viewType).c_str());
 		}
 	}
 
-	if (g_xywindow_globals_private.show_axis) {
+	if (GlobalXYWnd().showAxes()) {
 		const char g_AxisName[3] = { 'X', 'Y', 'Z'
 		                           };
 
@@ -857,7 +857,7 @@ void XYWnd::drawGrid() {
 
 	// show current work zone?
 	// the work zone is used to place dropped points and brushes
-	if (g_xywindow_globals_private.d_show_work) {
+	if (GlobalXYWnd().showWorkzone()) {
 		glColor3fv( ColourSchemes().getColourVector3("workzone") );
 		glBegin( GL_LINES );
 		glVertex2f( xb, Select_getWorkZone().d_work_min[nDim2] );
@@ -877,7 +877,7 @@ void XYWnd::drawBlockGrid() {
 		return;
 	}
 	// Set a default blocksize of 1024
-	g_xywindow_globals_private.blockSize = 1024;
+	int blockSize = GlobalXYWnd().defaultBlockSize(); 
 
 	// Check the worldspawn for a custom blocksize
 	Entity* worldSpawn = Node_getEntity(*Map_GetWorldspawn(g_map));
@@ -886,8 +886,12 @@ void XYWnd::drawBlockGrid() {
 
 	// Parse and set the custom blocksize if found
 	if (!sizeVal.empty()) {
-		g_xywindow_globals_private.blockSize =
-		    boost::lexical_cast<int>(sizeVal);
+		try {
+			blockSize = boost::lexical_cast<unsigned int>(sizeVal);
+		}
+		catch (boost::bad_lexical_cast e) {
+			// Leave the value alone
+		}
 	}
 
 	float	x, y, xb, xe, yb, ye;
@@ -908,22 +912,22 @@ void XYWnd::drawBlockGrid() {
 	xb = m_vOrigin[nDim1] - w;
 	if (xb < region_mins[nDim1])
 		xb = region_mins[nDim1];
-	xb = static_cast<float>(g_xywindow_globals_private.blockSize * floor (xb/g_xywindow_globals_private.blockSize));
+	xb = static_cast<float>(blockSize * floor (xb/blockSize));
 
 	xe = m_vOrigin[nDim1] + w;
 	if (xe > region_maxs[nDim1])
 		xe = region_maxs[nDim1];
-	xe = static_cast<float>(g_xywindow_globals_private.blockSize * ceil (xe/g_xywindow_globals_private.blockSize));
+	xe = static_cast<float>(blockSize * ceil (xe/blockSize));
 
 	yb = m_vOrigin[nDim2] - h;
 	if (yb < region_mins[nDim2])
 		yb = region_mins[nDim2];
-	yb = static_cast<float>(g_xywindow_globals_private.blockSize * floor (yb/g_xywindow_globals_private.blockSize));
+	yb = static_cast<float>(blockSize * floor (yb/blockSize));
 
 	ye = m_vOrigin[nDim2] + h;
 	if (ye > region_maxs[nDim2])
 		ye = region_maxs[nDim2];
-	ye = static_cast<float>(g_xywindow_globals_private.blockSize * ceil (ye/g_xywindow_globals_private.blockSize));
+	ye = static_cast<float>(blockSize * ceil (ye/blockSize));
 
 	// draw major blocks
 
@@ -932,13 +936,13 @@ void XYWnd::drawBlockGrid() {
 
 	glBegin (GL_LINES);
 
-	for (x=xb ; x<=xe ; x+=g_xywindow_globals_private.blockSize) {
+	for (x=xb ; x<=xe ; x+=blockSize) {
 		glVertex2f (x, yb);
 		glVertex2f (x, ye);
 	}
 
 	if (m_viewType == XY) {
-		for (y=yb ; y<=ye ; y+=g_xywindow_globals_private.blockSize) {
+		for (y=yb ; y<=ye ; y+=blockSize) {
 			glVertex2f (xb, y);
 			glVertex2f (xe, y);
 		}
@@ -950,10 +954,10 @@ void XYWnd::drawBlockGrid() {
 	// draw coordinate text if needed
 
 	if (m_viewType == XY && m_fScale > .1) {
-		for (x=xb ; x<xe ; x+=g_xywindow_globals_private.blockSize)
-			for (y=yb ; y<ye ; y+=g_xywindow_globals_private.blockSize) {
-				glRasterPos2f (x+(g_xywindow_globals_private.blockSize/2), y+(g_xywindow_globals_private.blockSize/2));
-				sprintf (text, "%i,%i",(int)floor(x/g_xywindow_globals_private.blockSize), (int)floor(y/g_xywindow_globals_private.blockSize) );
+		for (x=xb ; x<xe ; x+=blockSize)
+			for (y=yb ; y<ye ; y+=blockSize) {
+				glRasterPos2f (x+(blockSize/2), y+(blockSize/2));
+				sprintf (text, "%i,%i",(int)floor(x/blockSize), (int)floor(y/blockSize) );
 				GlobalOpenGL().drawString(text);
 			}
 	}
@@ -1250,7 +1254,7 @@ void XYWnd::draw() {
 	glDisable(GL_DEPTH_TEST);
 
 	drawGrid();
-	if ( g_xywindow_globals_private.show_blocks)
+	if (GlobalXYWnd().showBlocks())
 		drawBlockGrid();
 
 	glLoadMatrixf(reinterpret_cast<const float*>(&m_modelview));
@@ -1346,7 +1350,7 @@ void XYWnd::draw() {
 
 	drawCameraIcon(g_pParentWnd->GetCamWnd()->getCameraOrigin(), g_pParentWnd->GetCamWnd()->getCameraAngles());
 
-	if (g_xywindow_globals_private.show_outline) {
+	if (GlobalXYWnd().showOutline()) {
 		if (isActive()) {
 			glMatrixMode (GL_PROJECTION);
 			glLoadIdentity();
@@ -1575,5 +1579,3 @@ void XYWnd::callbackMoveDelta(int x, int y, unsigned int state, void* data) {
 // =====================================================================
 
 Shader* XYWnd::m_state_selected = 0;
-
-xywindow_globals_private_t g_xywindow_globals_private; // TODO Move this into Registry
