@@ -33,6 +33,4 @@ void XZ_Front_Shown_Construct(GtkWindow* parent);
 void XYWindow_Construct();
 void XYWindow_Destroy();
 
-void XYShow_registerCommands();
-
 #endif

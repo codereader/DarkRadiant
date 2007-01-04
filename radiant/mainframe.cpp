@@ -2902,7 +2902,6 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("About", FreeCaller<DoAbout>());
   
   Patch_registerCommands();
-  XYShow_registerCommands();
 
   typedef FreeCaller1<const Selectable&, ComponentMode_SelectionChanged> ComponentModeSelectionChangedCaller;
   GlobalSelectionSystem().addSelectionChangeCallback(ComponentModeSelectionChangedCaller());
