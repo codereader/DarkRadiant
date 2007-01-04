@@ -664,7 +664,7 @@ void Light::renderLightCentre(Renderer& renderer, const VolumeTest& volume, cons
 
 void Light::renderWireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const {
 	renderSolid(renderer, volume, localToWorld, selected);
-	if (g_showNames) {
+	if (GlobalRegistry().get("user/ui/xyview/showEntityNames") == "1") {
 		renderer.addRenderable(m_renderName, localToWorld);
 	}
 }

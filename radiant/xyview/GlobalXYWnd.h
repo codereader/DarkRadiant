@@ -15,6 +15,8 @@
 		const std::string RKEY_SHOW_CROSSHAIRS = "user/ui/xyview/showCrossHairs";
 		const std::string RKEY_SHOW_GRID = "user/ui/xyview/showGrid";
 		const std::string RKEY_SHOW_SIZE_INFO = "user/ui/xyview/showSizeInfo";
+		const std::string RKEY_SHOW_ENTITY_ANGLES = "user/ui/xyview/showEntityAngles";
+		const std::string RKEY_SHOW_ENTITY_NAMES = "user/ui/xyview/showEntityNames";
 
 		typedef std::list<XYWnd*> XYWndList;
 	}

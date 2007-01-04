@@ -114,10 +114,6 @@ EntityCreator::KeyValueChangedFunc EntityKeyValues::m_entityKeyValueChanged = 0;
 EntityCreator::KeyValueChangedFunc KeyValue::m_entityKeyValueChanged = 0;
 Counter* EntityKeyValues::m_counter = 0;
 
-bool g_showNames = true;
-bool g_showAngles = true;
-bool g_newLightDraw = true;
-
 class ConnectEntities
 {
 public:
@@ -203,23 +199,6 @@ public:
 		SceneChangeNotify();
 	}
 
-  void setShowNames(bool showNames)
-  {
-    g_showNames = showNames;
-  }
-  bool getShowNames()
-  {
-    return g_showNames;
-  }
-  void setShowAngles(bool showAngles)
-  {
-    g_showAngles = showAngles;
-  }
-  bool getShowAngles()
-  {
-    return g_showAngles;
-  }
-
   void printStatistics() const
   {
     StringPool_analyse(EntityKeyValues::getPool());
@@ -245,14 +224,6 @@ void Entity_Construct(EGameType gameType)
   Static<KeyIsName>::instance().m_keyIsName = keyIsNameDoom3;
   Static<KeyIsName>::instance().m_nameKey = "name";
 
-	// Register the entity preferences
-  GlobalPreferenceSystem().registerPreference("SI_ShowNames", BoolImportStringCaller(g_showNames), BoolExportStringCaller(g_showNames));
-  GlobalPreferenceSystem().registerPreference("SI_ShowAngles", BoolImportStringCaller(g_showAngles), BoolExportStringCaller(g_showAngles));
-  // greebo: disabled this, it doesn't seem to be used anymore
-  //GlobalPreferenceSystem().registerPreference("NewLightStyle", BoolImportStringCaller(g_newLightDraw), BoolExportStringCaller(g_newLightDraw));
-
-	// Setup the lights
-  //LightType lightType = LIGHTTYPE_DOOM3;
   Light_Construct(LIGHTTYPE_DOOM3);
   Doom3Group_construct();
 

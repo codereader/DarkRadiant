@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "eclassmodel.h"
 
+#include "iregistry.h"
 #include "cullable.h"
 #include "renderable.h"
 #include "editable.h"
@@ -248,7 +249,7 @@ public:
   void renderWireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const
   {
     renderSolid(renderer, volume, localToWorld, selected);
-    if(g_showNames)
+    if(GlobalRegistry().get("user/ui/xyview/showEntityNames") == "1")
     {
       renderer.addRenderable(m_renderName, localToWorld);
     }

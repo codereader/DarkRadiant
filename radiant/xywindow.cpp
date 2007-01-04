@@ -149,30 +149,6 @@ void XZ_Front_Shown_Construct(GtkWindow* parent)
   g_xz_front_shown.connect(GTK_WIDGET(parent));
 }
 
-void ShowNamesToggle()
-{
-  GlobalEntityCreator().setShowNames(!GlobalEntityCreator().getShowNames());
-  GlobalXYWnd().updateAllViews();
-}
-typedef FreeCaller<ShowNamesToggle> ShowNamesToggleCaller;
-void ShowNamesExport(const BoolImportCallback& importer)
-{
-  importer(GlobalEntityCreator().getShowNames());
-}
-typedef FreeCaller1<const BoolImportCallback&, ShowNamesExport> ShowNamesExportCaller;
-
-void ShowAnglesToggle()
-{
-  GlobalEntityCreator().setShowAngles(!GlobalEntityCreator().getShowAngles());
-  GlobalXYWnd().updateAllViews();
-}
-typedef FreeCaller<ShowAnglesToggle> ShowAnglesToggleCaller;
-void ShowAnglesExport(const BoolImportCallback& importer)
-{
-  importer(GlobalEntityCreator().getShowAngles());
-}
-typedef FreeCaller1<const BoolImportCallback&, ShowAnglesExport> ShowAnglesExportCaller;
-
 void ShowBlocksToggle()
 {
   g_xywindow_globals_private.show_blocks ^= 1;
@@ -233,14 +209,6 @@ void ShowWorkzoneExport(const BoolImportCallback& importer)
 }
 typedef FreeCaller1<const BoolImportCallback&, ShowWorkzoneExport> ShowWorkzoneExportCaller;
 
-ShowNamesExportCaller g_show_names_caller;
-BoolExportCallback g_show_names_callback(g_show_names_caller);
-ToggleItem g_show_names(g_show_names_callback);
-
-ShowAnglesExportCaller g_show_angles_caller;
-BoolExportCallback g_show_angles_callback(g_show_angles_caller);
-ToggleItem g_show_angles(g_show_angles_callback);
-
 ShowBlocksExportCaller g_show_blocks_caller;
 BoolExportCallback g_show_blocks_callback(g_show_blocks_caller);
 ToggleItem g_show_blocks(g_show_blocks_callback);
@@ -263,8 +231,8 @@ ToggleItem g_show_workzone(g_show_workzone_callback);
 
 void XYShow_registerCommands()
 {
-  GlobalToggles_insert("ShowAngles", ShowAnglesToggleCaller(), ToggleItem::AddCallbackCaller(g_show_angles));
-  GlobalToggles_insert("ShowNames", ShowNamesToggleCaller(), ToggleItem::AddCallbackCaller(g_show_names));
+	GlobalEventManager().addRegistryToggle("ShowAngles", RKEY_SHOW_ENTITY_ANGLES);
+	GlobalEventManager().addRegistryToggle("ShowNames", RKEY_SHOW_ENTITY_NAMES);
   GlobalToggles_insert("ShowBlocks", ShowBlocksToggleCaller(), ToggleItem::AddCallbackCaller(g_show_blocks));
   GlobalToggles_insert("ShowCoordinates", ShowCoordinatesToggleCaller(), ToggleItem::AddCallbackCaller(g_show_coordinates));
   GlobalToggles_insert("ShowWindowOutline", ShowOutlineToggleCaller(), ToggleItem::AddCallbackCaller(g_show_outline));

@@ -1779,8 +1779,8 @@ GtkMenuItem* create_view_menu(MainFrame::EViewStyle style)
 
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Show");
-    create_check_menu_item_with_mnemonic(menu_in_menu, "Show _Angles", "ShowAngles");
-    create_check_menu_item_with_mnemonic(menu_in_menu, "Show _Names", "ShowNames");
+    createCheckMenuItemWithMnemonic(menu_in_menu, "Show _Angles", "ShowAngles");
+    createCheckMenuItemWithMnemonic(menu_in_menu, "Show _Names", "ShowNames");
     create_check_menu_item_with_mnemonic(menu_in_menu, "Show Blocks", "ShowBlocks");
     create_check_menu_item_with_mnemonic(menu_in_menu, "Show C_oordinates", "ShowCoordinates");
     create_check_menu_item_with_mnemonic(menu_in_menu, "Show Window Outline", "ShowWindowOutline");

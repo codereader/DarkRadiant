@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// The "origin" key directly controls the entity's local-to-parent transform.
 /// An arrow is drawn to visualise the "angle" key.
 
+#include "iregistry.h"
 #include "cullable.h"
 #include "renderable.h"
 #include "editable.h"
@@ -215,8 +216,7 @@ public:
 
   void renderArrow(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const
   {
-    if(g_showAngles)
-    {
+    if (GlobalRegistry().get("user/ui/xyview/showEntityAngles") == "1") {
       renderer.addRenderable(m_arrow, localToWorld);
     }
   }
@@ -231,7 +231,7 @@ public:
     renderer.SetState(m_entity.getEntityClass().getWireShader(), Renderer::eWireframeOnly);
     renderer.addRenderable(m_aabb_wire, localToWorld);
     renderArrow(renderer, volume, localToWorld);
-    if(g_showNames)
+    if(GlobalRegistry().get("user/ui/xyview/showEntityNames") == "1")
     {
       renderer.addRenderable(m_renderName, localToWorld);
     }
