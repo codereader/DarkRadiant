@@ -6,6 +6,7 @@
 #include "iclipper.h"
 #include "iregistry.h"
 #include "preferencesystem.h"
+#include "gtkutil/widget.h"
 
 #include "XYWnd.h"
 
@@ -54,6 +55,10 @@ class XYWndManager :
 	unsigned int _defaultBlockSize;
 	
 	GtkWindow* _globalParentWindow;
+	
+	ToggleShown _xyTopShown;
+	ToggleShown _yzSideShown;
+	ToggleShown _xzFrontShown;
 
 public:
 
@@ -82,11 +87,26 @@ public:
 	// Passes a queueDraw() call to each allocated view
 	void updateAllViews();
 	
+	// Register the commands and capture the renderer states
+	void construct();
+	
 	// Free all the allocated views from the heap
 	void destroy();
 	
 	XYWnd* getActiveXY() const;
 	void setActiveXY(XYWnd* wnd);
+	
+	// Shortcut commands for connect view the EventManager
+	void setActiveViewXY(); // top view
+	void setActiveViewXZ(); // side view
+	void setActiveViewYZ(); // front view
+	void splitViewFocus(); // Re-position all available views
+	void zoom100(); // Sets the scale of all windows to 1
+	void focusActiveView(); // sets the focus of the active view
+	
+	void xyTopShownConstruct(GtkWindow* parent);
+	void yzSideShownConstruct(GtkWindow* parent);
+	void xzFrontShownConstruct(GtkWindow* parent);
 	
 	// Sets the origin of all available views
 	void setOrigin(const Vector3& origin);

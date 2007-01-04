@@ -67,7 +67,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "patchdialog.h"
 #include "preferences.h"
 #include "brush/TextureProjection.h"
-#include "xywindow.h"
 #include "mainframe.h"
 #include "gtkdlgs.h"
 #include "dialog.h"

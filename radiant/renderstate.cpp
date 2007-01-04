@@ -53,7 +53,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "os/file.h"
 #include "preferences.h"
 #include "plugin.h"
-#include "xywindow.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 
