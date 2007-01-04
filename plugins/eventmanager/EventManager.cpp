@@ -29,7 +29,7 @@ class EventManager :
 	public IEventManager 
 {
 	// The handler ID of the connected keyboard handler
-	typedef std::list<gulong> HandlerList;
+	typedef std::map<gulong, GtkObject*> HandlerMap;
 	
 	// Needed for boost::algorithm::split
 	typedef std::vector<std::string> StringParts;
@@ -42,7 +42,7 @@ class EventManager :
 	// The list of all allocated Accelerators
 	typedef std::list<Accelerator> AcceleratorList;
 
-	HandlerList _handlers;
+	HandlerMap _handlers;
 	
 	// The list containing all registered accelerator objects
 	AcceleratorList _accelerators;
@@ -229,8 +229,21 @@ public:
 
 	// Catches the keypress/keyrelease events from the given GtkObject
 	void connect(GtkObject* object)	{
-		_handlers.push_back(g_signal_connect(G_OBJECT(object), "key_press_event", G_CALLBACK(onKeyPress), this));
-		_handlers.push_back(g_signal_connect(G_OBJECT(object), "key_release_event", G_CALLBACK(onKeyRelease), this));
+		// Create and store the handler into the map
+		gulong handlerId = g_signal_connect(G_OBJECT(object), "key_press_event", G_CALLBACK(onKeyPress), this);
+		_handlers[handlerId] = object;
+		
+		handlerId = g_signal_connect(G_OBJECT(object), "key_release_event", G_CALLBACK(onKeyRelease), this);
+		_handlers[handlerId] = object;
+	}
+	
+	void disconnect(GtkObject* object) {
+		for (HandlerMap::iterator i = _handlers.begin(); i != _handlers.end(); i++) {
+			if (i->second == object) {
+				g_signal_handler_disconnect(G_OBJECT(i->second), i->first);
+				_handlers.erase(i);
+			}
+		}
 	}
 	
 	void connectAccelGroup(GtkWindow* window) {
