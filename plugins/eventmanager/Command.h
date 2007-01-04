@@ -26,13 +26,15 @@ public:
 	Command(const Callback& callback);
 	
 	// Invoke the registered callback
-	void execute();
+	virtual void execute();
 	
 	// Override the derived keyDown method
-	void keyDown();
+	virtual void keyDown();
 	
 	// Connect the given menuitem/toolbutton to this Command
-	void connectWidget(GtkWidget* widget);
+	virtual void connectWidget(GtkWidget* widget);
+	
+	virtual bool empty() const;
 	
 private:
 

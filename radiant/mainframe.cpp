@@ -686,15 +686,15 @@ void Radiant_Initialise()
 	g_gameToolsPathObservers.realise();
 	g_gameModeObservers.realise();
 	g_gameNameObservers.realise();
-	
-	// Save the current event set to the Registry and export it 
-	GlobalEventManager().saveEventListToRegistry();
 }
 
 void Radiant_Shutdown() {
 	// Export the colour schemes and remove them from the registry
 	GlobalRegistry().exportToFile("user/ui/colourschemes", std::string(SettingsPath_get()) + "colours.xml");
 	GlobalRegistry().deleteXPath("user/ui/colourschemes");
+	
+	// Save the current event set to the Registry and export it 
+	GlobalEventManager().saveEventListToRegistry();
 	
 	// Export the input definitions into the user's settings folder and remove them as well
 	GlobalRegistry().exportToFile("user/ui/input", std::string(SettingsPath_get()) + "input.xml");
@@ -890,7 +890,6 @@ bool FaceMode() {
 }
 
 void ComponentModeChanged() {
-	std::cout << "Updating Icons...\n";
 	GlobalEventManager().setToggled("DragVertices", VertexMode());
 	GlobalEventManager().setToggled("DragEdges", EdgeMode());
 	GlobalEventManager().setToggled("DragFaces", FaceMode()); 
@@ -1739,9 +1738,7 @@ GtkMenuItem* create_view_menu(MainFrame::EViewStyle style)
     createMenuItemWithMnemonic(menu, "Entity Inspector", "ViewEntityInfo");
   }
 	// Light inspector
-	createMenuItemWithMnemonic(menu, 
-								   "_Light Inspector", 
-								   "ToggleLightInspector");
+	createMenuItemWithMnemonic(menu, "_Light Inspector", "ToggleLightInspector");
 								   
   createMenuItemWithMnemonic(menu, "_Surface Inspector", "SurfaceInspector");
   createMenuItemWithMnemonic(menu, "Entity List", "EntityList");

@@ -28,6 +28,10 @@ public:
 		_keyDownCallback(keyDownCallback)
 	{}
 	
+	virtual bool empty() const {
+		return false;
+	}
+	
 	void keyDown() {
 		if (_enabled) {
 			// Execute the command on key down event
