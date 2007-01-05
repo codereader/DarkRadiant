@@ -200,7 +200,10 @@ public:
 	void cameraMoved();
 	
 	void saveStateToNode(xml::Node& rootNode);
-	void readStateFromNode(xml::Node& rootNode);
+	void readStateFromNode(xml::Node& rootNode, GtkWindow* window);
+	
+	// Connects the internal windowposition with the parent window
+	void connectWindowPosition();
 
 private:
 	void onContextMenu();

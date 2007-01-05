@@ -3,6 +3,8 @@
 #include "ieventmanager.h"
 
 #include "gtkutil/FramedTransientWidget.h"
+#include "gtkutil/TransientWindow.h"
+#include "gtkutil/FramedWidget.h"
 #include "stringio.h"
 
 #include "select.h"
@@ -53,7 +55,18 @@ void XYWndManager::destroy() {
 	XYWnd::releaseStates();
 }
 
-void XYWndManager::restoreStateFromRegistry() {
+/* greebo: This method restores all xy views from the information stored in the registry.
+ * 
+ * Note: The window creation code looks very unelegant (in fact it is), but this is required
+ * to restore the exact position of the windows (at least on my WinXP/GTK2+ system).
+ * 
+ * The position of the TransientWindow has to be set IMMEDIATELY after creation, before
+ * any widgets are added to this container. When trying to apply the position restore
+ * on the fully "fabricated" xyview widget, the position tends to be some 20 pixels below
+ * the original position. I have no full explanation for this and it is nasty, but the code
+ * below seems to work.    
+ */
+void XYWndManager::restoreState() {
 	xml::NodeList views = GlobalRegistry().findXPath(RKEY_XYVIEW_ROOT + "//views");
 	
 	if (views.size() > 0) {
@@ -62,10 +75,33 @@ void XYWndManager::restoreStateFromRegistry() {
 	
 		if (viewList.size() > 0) {
 			for (unsigned int i = 0; i < viewList.size(); i++) {
-				// Create a default OrthoView
-				XYWnd* newWnd = createOrthoView(XY);
+				GtkWidget* window = gtkutil::TransientWindow("OrthoView", _globalParentWindow);
 				
-				newWnd->readStateFromNode(viewList[i]);
+				// Create the view and restore the size
+				XYWnd* newWnd = createXY();
+				newWnd->readStateFromNode(viewList[i], GTK_WINDOW(window));
+				
+				// Connect the destroyed signal to the callback of this class 
+				g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(onDeleteOrthoView), newWnd);
+				
+				newWnd->setParent(GTK_WINDOW(window));
+				
+				const std::string typeStr = viewList[i].getAttributeValue("type");
+		
+				if (typeStr == "YZ") {
+					newWnd->setViewType(YZ);
+				}
+				else if (typeStr == "XZ") {
+					newWnd->setViewType(XZ);
+				}
+				else {
+					newWnd->setViewType(XY);
+				}
+				
+				GtkWidget* framedXYView = gtkutil::FramedWidget(newWnd->getWidget());
+				
+				gtk_container_add(GTK_CONTAINER(window), framedXYView);
+				gtk_widget_show_all(GTK_WIDGET(window));
 			}
 		}
 	}
@@ -78,7 +114,7 @@ void XYWndManager::restoreStateFromRegistry() {
 	}
 }
 
-void XYWndManager::saveStateToRegistry() {
+void XYWndManager::saveState() {
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_XYVIEW_ROOT + "//views");
 	
@@ -428,6 +464,7 @@ XYWnd* XYWndManager::createOrthoView(EViewType viewType) {
 	g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(onDeleteOrthoView), newWnd);
 	
 	newWnd->setParent(GTK_WINDOW(window));
+	newWnd->connectWindowPosition();
 	
 	// Set the viewtype (and with it the window title)
 	newWnd->setViewType(viewType);

@@ -3,6 +3,7 @@
 
 #include "irender.h"
 #include "gtkutil/xorrectangle.h"
+#include "gtkutil/WindowPosition.h"
 #include "selection/RadiantWindowObserver.h"
 
 #include "view.h"
@@ -102,7 +103,7 @@ public:
 	// Increases/decreases the far clip plane distance
 	void cubicScaleIn();
 	void cubicScaleOut();
-
+	
 private:
 	void Cam_Draw();
 };

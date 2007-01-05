@@ -12,14 +12,16 @@
 namespace {
 	const int MAX_CUBIC_SCALE = 23;
 	
-	const std::string RKEY_MOVEMENT_SPEED = "user/ui/camera/movementSpeed";
-	const std::string RKEY_ROTATION_SPEED = "user/ui/camera/rotationSpeed";
-	const std::string RKEY_INVERT_MOUSE_VERTICAL_AXIS = "user/ui/camera/invertMouseVerticalAxis";
-	const std::string RKEY_DISCRETE_MOVEMENT = "user/ui/camera/discreteMovement";
-	const std::string RKEY_CUBIC_SCALE = "user/ui/camera/cubicScale";
-	const std::string RKEY_ENABLE_FARCLIP = "user/ui/camera/enableCubicClipping";
-	const std::string RKEY_DRAWMODE = "user/ui/camera/drawMode";
+	const std::string RKEY_CAMERA_ROOT = "user/ui/camera"; 
+	const std::string RKEY_MOVEMENT_SPEED = RKEY_CAMERA_ROOT + "/movementSpeed";
+	const std::string RKEY_ROTATION_SPEED = RKEY_CAMERA_ROOT + "/rotationSpeed";
+	const std::string RKEY_INVERT_MOUSE_VERTICAL_AXIS = RKEY_CAMERA_ROOT + "/invertMouseVerticalAxis";
+	const std::string RKEY_DISCRETE_MOVEMENT = RKEY_CAMERA_ROOT + "/discreteMovement";
+	const std::string RKEY_CUBIC_SCALE = RKEY_CAMERA_ROOT + "/cubicScale";
+	const std::string RKEY_ENABLE_FARCLIP = RKEY_CAMERA_ROOT + "/enableCubicClipping";
+	const std::string RKEY_DRAWMODE = RKEY_CAMERA_ROOT + "/drawMode";
 	const std::string RKEY_SOLID_SELECTION_BOXES = "user/ui/xyview/solidSelectionBoxes";
+	const std::string RKEY_CAMERA_WINDOW_STATE = RKEY_CAMERA_ROOT + "/window";
 	
 	enum CameraDrawMode {
 		drawWire,
@@ -74,7 +76,7 @@ public:
 	// Enables/disables the cubic clipping
 	void toggleFarClip();
 	void setFarClip(bool farClipEnabled);
-	
+
 	// PreferenceConstructor implementation, adds the elements to the according preference page
 	void constructPreferencePage(PreferenceGroup& group);
 
