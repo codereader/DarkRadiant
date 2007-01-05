@@ -94,10 +94,9 @@ public:
 	void destroyViews();
 	
 	// Saves the current state of all open views to the registry
-	void saveStateToRegistry();
-	
+	void saveState();
 	// Restores the xy windows according to the state saved in the XMLRegistry 
-	void restoreStateFromRegistry();
+	void restoreState();
 	
 	XYWnd* getActiveXY() const;
 	void setActiveXY(XYWnd* wnd);

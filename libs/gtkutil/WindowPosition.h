@@ -44,7 +44,7 @@ public:
 	// Connect the passed window to this object
 	void connect(GtkWindow* window) {
 		_window = window;
-		readPosition();
+		applyPosition();
 		g_signal_connect(G_OBJECT(window), "configure_event", G_CALLBACK(onConfigure), this);
 	}
 
@@ -82,7 +82,7 @@ public:
 	
 	// Applies the internally stored size/position info to the GtkWindow
 	// The algorithm was adapted from original GtkRadiant code (window.h) 
-	void setPosition() {
+	void applyPosition() {
 		if (_window != NULL) {
 			gtk_window_set_gravity(_window, GDK_GRAVITY_STATIC);
 
@@ -104,13 +104,14 @@ public:
 		}
 	}
 
-private:
-
 	// Reads the position from the GtkWindow
 	void readPosition() {
+		//gtk_window_set_gravity(_window, GDK_GRAVITY_STATIC);
 		gtk_window_get_position(_window, &_position[0], &_position[1]);
 		gtk_window_get_size(_window, &_size[0], &_size[1]);
 	}
+	
+private:
 
 	// The static GTK callback that gets invoked on window size/position changes
 	static gboolean onConfigure(GtkWidget* widget, GdkEventConfigure *event, WindowPosition* self) {

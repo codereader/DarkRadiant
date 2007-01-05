@@ -1875,8 +1875,6 @@ GtkMenuItem* create_misc_menu()
   
   createMenuItemWithMnemonic(menu, "Find brush...", "FindBrush");
   createMenuItemWithMnemonic(menu, "Map Info...", "MapInfo");
-  // http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=394
-//  createMenuItemWithMnemonic(menu, "_Print XY View", FreeCaller<WXY_Print>());
 
   return misc_menu_item;
 }
@@ -2214,8 +2212,6 @@ void hide_splash()
   gtk_widget_destroy(GTK_WIDGET(splash_screen));
 }
 
-WindowPositionTracker g_posCamWnd;
-
 static gint mainframe_delete (GtkWidget *widget, GdkEvent *event, gpointer data)
 {
   if(ConfirmModified("Exit Radiant"))
@@ -2434,8 +2430,8 @@ void MainFrame::Create()
     {
       GtkWindow* window = create_persistent_floating_window("Camera", m_window);
       global_accel_connect_window(window);
-      g_posCamWnd.connect(window);
-
+      GlobalCamera().restoreCamWndState(window);
+      
       gtk_widget_show(GTK_WIDGET(window));
 
       m_pCamWnd = GlobalCamera().newCamWnd();
@@ -2493,9 +2489,6 @@ void MainFrame::Create()
     }
   }
   
-  // Restore any XYViews that were active before, this applies to all view layouts
-  GlobalXYWnd().restoreStateFromRegistry();
-
   EntityList_constructWindow(window);
   PreferencesDialog_constructWindow(window);
   FindTextureDialog_constructWindow(window);
@@ -2511,6 +2504,9 @@ void MainFrame::Create()
 
   EverySecondTimer_enable();
   //GlobalShortcuts_reportUnregistered();
+  
+  // Restore any XYViews that were active before, this applies to all view layouts
+  GlobalXYWnd().restoreState();
 }
 
 void MainFrame::SaveWindowInfo()
@@ -2544,7 +2540,11 @@ void MainFrame::Shutdown()
 
   g_textures_menu = 0;
 
-	GlobalXYWnd().saveStateToRegistry();
+	// Save the camera size to the registry
+	GlobalCamera().saveCamWndState();
+	
+	// Save the current XYViews to the registry
+	GlobalXYWnd().saveState();
 	GlobalXYWnd().destroyViews();
 
   TextureBrowser_destroyWindow();
@@ -2836,8 +2836,6 @@ void MainFrame_Construct()
   GlobalPreferenceSystem().registerPreference("PositionY", IntImportStringCaller(g_layout_globals.m_position.y), IntExportStringCaller(g_layout_globals.m_position.y));
   GlobalPreferenceSystem().registerPreference("Width", IntImportStringCaller(g_layout_globals.m_position.w), IntExportStringCaller(g_layout_globals.m_position.w));
   GlobalPreferenceSystem().registerPreference("Height", IntImportStringCaller(g_layout_globals.m_position.h), IntExportStringCaller(g_layout_globals.m_position.h));
-
-  GlobalPreferenceSystem().registerPreference("CamWnd", WindowPositionTrackerImportStringCaller(g_posCamWnd), WindowPositionTrackerExportStringCaller(g_posCamWnd));
 
   {
     const char* ENGINEPATH_ATTRIBUTE =

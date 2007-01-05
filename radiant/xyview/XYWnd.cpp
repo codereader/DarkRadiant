@@ -154,8 +154,7 @@ void XYWnd::setParent(GtkWindow* parent) {
 	
 	// Connect the position observer to the new parent
 	_windowPosition.connect(_parent);
-	// Apply the default settings to the new parent
-	_windowPosition.setPosition();
+	_windowPosition.applyPosition();
 }
 
 GtkWindow* XYWnd::getParent() const {
@@ -1475,6 +1474,7 @@ void XYWnd::saveStateToNode(xml::Node& rootNode) {
 			xml::Node viewNode = rootNode.createChild("view");
 			viewNode.setAttributeValue("type", getViewTypeStr(m_viewType));
 			
+			_windowPosition.readPosition();
 			_windowPosition.saveToNode(viewNode);
 			
 			viewNode.addText("\n\t");
@@ -1482,26 +1482,17 @@ void XYWnd::saveStateToNode(xml::Node& rootNode) {
 	}
 }
 
-void XYWnd::readStateFromNode(xml::Node& node) {
-	if (_parent != NULL) {
-		
-		const std::string typeStr = node.getAttributeValue("type");
-		
-		if (typeStr == "YZ") {
-			setViewType(YZ);
-		}
-		else if (typeStr == "XZ") {
-			setViewType(XZ);
-		}
-		else {
-			setViewType(XY);
-		}
-		
+void XYWnd::readStateFromNode(xml::Node& node, GtkWindow* window) {
+	if (window != NULL) {
 		// Load the sizes from the node
 		_windowPosition.loadFromNode(node);
-		
-		// Apply the window size/position
-		_windowPosition.setPosition();
+		_windowPosition.connect(window);
+	}
+}
+
+void XYWnd::connectWindowPosition() {
+	if (_parent != NULL) {
+		_windowPosition.connect(_parent);
 	}
 }
 

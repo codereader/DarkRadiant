@@ -41,6 +41,7 @@
 		<rotationSpeed value="3" />
 		<cubicScale value="13" />
 		<drawMode value="2" />
+		<window xPosition="32" yPosition="79" width="452" height="430" />
 	</camera>
     <toolbar name="view" align="horizontal">
 			<toolbutton name="open" action="OpenMap" tooltip="Open a map file" icon="file_open.png"/>

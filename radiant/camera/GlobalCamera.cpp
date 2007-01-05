@@ -3,6 +3,7 @@
 #include "ieventmanager.h"
 #include "iselection.h"
 #include "gdk/gdkkeysyms.h"
+#include "xmlutil/Node.h"
 
 #include "commands.h"
 
@@ -200,6 +201,32 @@ void GlobalCameraManager::cubicScaleIn() {
 
 void GlobalCameraManager::cubicScaleOut() {
 	_camWnd->cubicScaleOut();
+}
+
+void GlobalCameraManager::restoreCamWndState(GtkWindow* window) {
+	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_CAMERA_WINDOW_STATE);
+	
+	if (windowStateList.size() > 0) {
+		xml::Node windowState = windowStateList[0];
+	
+		if (window != NULL) {
+			_windowPosition.loadFromNode(windowState);
+			_windowPosition.connect(window);
+		}
+	}
+	else {
+		// Nothing found, nothing to do
+	}
+}
+
+void GlobalCameraManager::saveCamWndState() {
+	// Delete all the current window states from the registry  
+	GlobalRegistry().deleteXPath(RKEY_CAMERA_WINDOW_STATE);
+	
+	// Create a new node
+	xml::Node node(GlobalRegistry().createKey(RKEY_CAMERA_WINDOW_STATE));
+	
+	_windowPosition.saveToNode(node);
 }
 
 // --------------- Keyboard movement methods ------------------------------------------

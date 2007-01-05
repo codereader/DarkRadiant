@@ -26,6 +26,9 @@ class GlobalCameraManager {
 	// The connected callbacks (get invoked when movedNotify() is called)	
 	CameraObserverList _cameraObservers;
 	
+	// The window position tracker
+	gtkutil::WindowPosition _windowPosition;
+	
 public:
 
 	// Constructor
@@ -46,6 +49,12 @@ public:
 	
 	// Frees the created CamWnd class
 	void deleteCamWnd(CamWnd* camWnd);
+	
+	// Saves the current state of the camera window to the registry
+	void saveCamWndState();
+
+	// Restores the state of the given camera window according to the stored registry values 
+	void restoreCamWndState(GtkWindow* window);
 	
 	// Retrieves/Sets the pointer to the current CamWnd
 	CamWnd* getCamWnd();
