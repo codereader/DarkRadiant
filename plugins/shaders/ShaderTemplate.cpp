@@ -54,13 +54,6 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser, const std
 	return true;
 }
 
-/* Parse a map expression recursively. 
- */
-shaders::MapExpressionPtr ShaderTemplate::parseMap(parser::DefTokeniser& tok)
-{
-	return shaders::MapExpression::construct(tok);
-}
-
 /* Searches for light-specific keywords and takes the appropriate actions
  */
 bool ShaderTemplate::parseLightFlags(parser::DefTokeniser& tokeniser, const std::string& token) 
@@ -75,7 +68,7 @@ bool ShaderTemplate::parseLightFlags(parser::DefTokeniser& tokeniser, const std:
         fogLight = true;
     }
     else if (!fogLight && token == "lightfalloffimage") {
-    	_lightFallOff = parseMap(tokeniser);
+    	_lightFallOff = shaders::MapExpression::construct(tokeniser);
     }
 	else {
 		// No light-specific keywords found, return false
@@ -89,16 +82,16 @@ bool ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser,
 										 const std::string& token) 
 {
 	if (token == "qer_editorimage") {
-		_texture = parseMap(tokeniser);
+		_texture = shaders::MapExpression::construct(tokeniser);
 	}
 	else if (token == "diffusemap") {
-		_diffuse = parseMap(tokeniser);
+		_diffuse = shaders::MapExpression::construct(tokeniser);
 	}
 	else if (token == "specularmap") {
-		_specular = parseMap(tokeniser);
+		_specular = shaders::MapExpression::construct(tokeniser);
 	}
 	else if (token == "bumpmap") {
-		_bump = parseMap(tokeniser);
+		_bump = shaders::MapExpression::construct(tokeniser);
 	}
 	else {
 		// No shortcuts found, return false
@@ -164,7 +157,7 @@ bool ShaderTemplate::parseClamp(parser::DefTokeniser& tokeniser, const std::stri
 bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::string& token) 
 {	
 	if (token == "map") {
-		m_currentLayer.mapExpr = parseMap(tokeniser);		
+		m_currentLayer.mapExpr = shaders::MapExpression::construct(tokeniser);		
 	}
 	else {
 		return false;
