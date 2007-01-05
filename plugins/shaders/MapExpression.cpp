@@ -63,7 +63,7 @@ std::string MapExpression::getTextureName() const {
 	// If this expression has a texture name, return it, otherwise recursively
 	// search the child tree for a texture name and return this instead.
 	std::string retVal = _value;
-	if (retVal == "") {
+	if (_nodeType != LEAF) {
 		for (MapExpressionList::const_iterator i = _children.begin();
 			 i != _children.end();
 			 ++i)
@@ -75,7 +75,6 @@ std::string MapExpression::getTextureName() const {
 		}
 	}
 	
-	std::cout << "MapExpressoin:: returning " << retVal << std::endl;
 	return retVal; 
 }
 

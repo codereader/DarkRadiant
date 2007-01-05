@@ -318,12 +318,13 @@ public:
   static bool m_lightingEnabled;
 
 	/*
-	 * Constructor.
+	 * Constructor. Sets the name and the ShaderDefinition to use.
 	 */
-	CShader(const ShaderDefinition& definition)
+	CShader(const std::string& name, const ShaderDefinition& definition)
 	: m_refcount(0),
 	  m_template(*definition.shaderTemplate),
       m_filename(definition.filename),
+	  m_Name(name),
       m_blendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA),
       m_bInUse(false) 
 	{
@@ -436,10 +437,11 @@ public:
 	void realise() {
 		
 		// Grab the display texture (may be null)
-		m_pTexture = GlobalTexturesCache().capture(
-    								m_template._texture->getTextureName());
+		std::string displayTex = m_template._texture->getTextureName();
+		m_pTexture = GlobalTexturesCache().capture(displayTex);
 
     	if(m_pTexture->texture_number == 0) {
+
 	      m_notfound = m_pTexture;
 	
 	      {
@@ -726,8 +728,7 @@ CShader* Try_Shader_ForName(const std::string& name)
 							ShaderDefinitionMap::value_type(name, def)).first;
 	}
 
-	ShaderPointer pShader(new CShader(i->second));
-	pShader->setName(name);
+	ShaderPointer pShader(new CShader(name, i->second));
 	g_ActiveShaders.insert(shaders_t::value_type(name, pShader));
 	g_ActiveShadersChangedNotify();
 	return pShader;

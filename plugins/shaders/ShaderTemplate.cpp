@@ -5,6 +5,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
+#include <iostream>
 
 /*	Searches a token for known shaderflags (e.g. "translucent") and sets the flags
  *  in the member variable m_nFlags
@@ -58,26 +59,6 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser, const std
 shaders::MapExpressionPtr ShaderTemplate::parseMap(parser::DefTokeniser& tok)
 {
 	return shaders::MapExpression::construct(tok);
-}
-
-/* Parse an addnormals() expression. The initial "addnormals" token will already
- * have been removed.
- * 
- * @todo
- * Make this do something useful, rather than just calling the parseMap function
- * again.
- */
-void ShaderTemplate::parseAddNormals(parser::DefTokeniser& tok) {
-	
-	tok.assertNextToken("(");
-		
-	parseMap(tok);
-		
-	tok.assertNextToken(",");
-		
-	parseMap(tok);
-								
-	tok.assertNextToken(")");
 }
 
 /* Searches for light-specific keywords and takes the appropriate actions
@@ -183,7 +164,7 @@ bool ShaderTemplate::parseClamp(parser::DefTokeniser& tokeniser, const std::stri
 bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::string& token) 
 {	
 	if (token == "map") {
-		parseMap(tokeniser);		
+		m_currentLayer.mapExpr = parseMap(tokeniser);		
 	}
 	else {
 		return false;
@@ -230,16 +211,14 @@ void ShaderTemplate::parseDoom3(parser::DefTokeniser& tokeniser)
 		std::string token_lowercase = boost::algorithm::to_lower_copy(token);
 		
 		if (token=="}") {
-			--curStage;
-			switch (curStage) {
-				case 1:
-					saveLayer();
-					break;
+			
+			if (--curStage == 1) {
+				saveLayer();
 			}
 			
 			// If the texture is missing (i.e. no editorimage provided), 
 			// substitute this with the diffusemap
-			if (!_texture && _diffuse) {				
+			if (_texture->getTextureName() == "") {		
 				_texture = _diffuse;
 			}
 		} 
