@@ -1688,24 +1688,6 @@ GtkMenuItem* create_edit_menu()
   return edit_menu_item;
 }
 
-void fill_view_xy_top_menu(GtkMenu* menu)
-{
-  create_check_menu_item_with_mnemonic(menu, "XY (Top) View", "ToggleView");
-}
-
-
-void fill_view_yz_side_menu(GtkMenu* menu)
-{
-  create_check_menu_item_with_mnemonic(menu, "YZ (Side) View", "ToggleSideView");
-}
-
-
-void fill_view_xz_front_menu(GtkMenu* menu)
-{
-  create_check_menu_item_with_mnemonic(menu, "XZ (Front) View", "ToggleFrontView");
-}
-
-
 GtkWidget* g_toggle_z_item = 0;
 GtkWidget* g_toggle_console_item = 0;
 GtkWidget* g_toggle_entity_item = 0;
@@ -1724,9 +1706,6 @@ GtkMenuItem* create_view_menu(MainFrame::EViewStyle style)
   if(style == MainFrame::eFloating)
   {
     createCheckMenuItemWithMnemonic(menu, "Camera View", "ToggleCamera");
-    fill_view_xy_top_menu(menu);
-    fill_view_yz_side_menu(menu);
-    fill_view_xz_front_menu(menu);
   }
   if(style == MainFrame::eFloating || style == MainFrame::eSplit)
   {
@@ -2236,9 +2215,6 @@ void hide_splash()
 }
 
 WindowPositionTracker g_posCamWnd;
-WindowPositionTracker g_posXYWnd;
-WindowPositionTracker g_posXZWnd;
-WindowPositionTracker g_posYZWnd;
 
 static gint mainframe_delete (GtkWidget *widget, GdkEvent *event, gpointer data)
 {
@@ -2381,9 +2357,6 @@ void MainFrame::Create()
 
   gtk_widget_show(GTK_WIDGET(window));
 
-	// The default XYView pointer
-	XYWnd* xyWnd;
-
   if (CurrentStyle() == eRegular || CurrentStyle() == eRegularLeft)
   {
     {
@@ -2403,7 +2376,7 @@ void MainFrame::Create()
         gtk_paned_add1(GTK_PANED(vsplit), hsplit);
 
 		// Allocate a new OrthoView and set its ViewType to XY
-		xyWnd = GlobalXYWnd().createXY();
+		XYWnd* xyWnd = GlobalXYWnd().createXY();
         xyWnd->setViewType(XY);
         
         // Create a framed window out of the view's internal widget
@@ -2477,64 +2450,7 @@ void MainFrame::Create()
       g_floating_windows.push_back(GTK_WIDGET(window));
     }
 
-	// Now allocate the three default XY views
-    {
-      GtkWindow* window = create_persistent_floating_window(XYWnd::getViewTypeTitle(XY).c_str(), m_window);
-      global_accel_connect_window(window);
-      g_posXYWnd.connect(window);
-
-      xyWnd = GlobalXYWnd().createXY();
-      xyWnd->setParent(window);
-      xyWnd->setViewType(XY);
-      
-      {
-        GtkFrame* frame = create_framed_widget(xyWnd->getWidget());
-        gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(frame));
-      }
-      GlobalXYWnd().xyTopShownConstruct(window);
-
-      g_floating_windows.push_back(GTK_WIDGET(window));
-    }
-
-    {
-      GtkWindow* window = create_persistent_floating_window(XYWnd::getViewTypeTitle(XZ).c_str(), m_window);
-      global_accel_connect_window(window);
-      g_posXZWnd.connect(window);
-
-      XYWnd* xzWnd = GlobalXYWnd().createXY();
-      xzWnd->setParent(window);
-      xzWnd->setViewType(XZ);
-
-      {
-        GtkFrame* frame = create_framed_widget(xzWnd->getWidget());
-        gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(frame));
-      }
-
-      GlobalXYWnd().xzFrontShownConstruct(window);
-
-      g_floating_windows.push_back(GTK_WIDGET(window));
-    }
-
-    {
-      GtkWindow* window = create_persistent_floating_window(XYWnd::getViewTypeTitle(YZ).c_str(), m_window);
-      global_accel_connect_window(window);
-      g_posYZWnd.connect(window);
-
-      XYWnd* yzWnd = GlobalXYWnd().createXY();
-      yzWnd->setParent(window);
-      yzWnd->setViewType(YZ);
-
-      {
-        GtkFrame* frame = create_framed_widget(yzWnd->getWidget());
-        gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(frame));
-      }
-
-      GlobalXYWnd().yzSideShownConstruct(window);
-
-      g_floating_windows.push_back(GTK_WIDGET(window));
-    }
-
-    {
+   	{
       GtkFrame* frame = create_framed_widget(TextureBrowser_constructWindow(GroupDialog_getWindow()));
       g_page_textures = GroupDialog_addPage("Textures", 
       										"icon_texture.png",
@@ -2553,15 +2469,15 @@ void MainFrame::Create()
     GtkWidget* camera = m_pCamWnd->getWidget();
 
 	// Allocate the three ortho views
-    xyWnd = GlobalXYWnd().createXY();;
+    XYWnd* xyWnd = GlobalXYWnd().createXY();
     xyWnd->setViewType(XY);
     GtkWidget* xy = xyWnd->getWidget();
     
-    XYWnd* yzWnd = GlobalXYWnd().createXY();;
+    XYWnd* yzWnd = GlobalXYWnd().createXY();
     yzWnd->setViewType(YZ);
     GtkWidget* yz = yzWnd->getWidget();
 
-    XYWnd* xzWnd = GlobalXYWnd().createXY();;
+    XYWnd* xzWnd = GlobalXYWnd().createXY();
     xzWnd->setViewType(XZ);
     GtkWidget* xz = xzWnd->getWidget();
 
@@ -2576,15 +2492,15 @@ void MainFrame::Create()
       										TextureBrowserExportTitleCaller());
     }
   }
+  
+  // Restore any XYViews that were active before, this applies to all view layouts
+  GlobalXYWnd().restoreStateFromRegistry();
 
   EntityList_constructWindow(window);
   PreferencesDialog_constructWindow(window);
   FindTextureDialog_constructWindow(window);
   SurfaceInspector_constructWindow(window);
   PatchInspector_constructWindow(window);
-
-	// greebo: In any layout, there is at least the XY view present, make it active 
-	GlobalXYWnd().setActiveXY(xyWnd);
 
   AddGridChangeCallback(SetGridStatusCaller(*this));
   AddGridChangeCallback(ReferenceCaller<MainFrame, XY_UpdateAllWindows>(*this));
@@ -2628,7 +2544,8 @@ void MainFrame::Shutdown()
 
   g_textures_menu = 0;
 
-	GlobalXYWnd().destroy();
+	GlobalXYWnd().saveStateToRegistry();
+	GlobalXYWnd().destroyViews();
 
   TextureBrowser_destroyWindow();
 
@@ -2921,9 +2838,6 @@ void MainFrame_Construct()
   GlobalPreferenceSystem().registerPreference("Height", IntImportStringCaller(g_layout_globals.m_position.h), IntExportStringCaller(g_layout_globals.m_position.h));
 
   GlobalPreferenceSystem().registerPreference("CamWnd", WindowPositionTrackerImportStringCaller(g_posCamWnd), WindowPositionTrackerExportStringCaller(g_posCamWnd));
-  GlobalPreferenceSystem().registerPreference("XYWnd", WindowPositionTrackerImportStringCaller(g_posXYWnd), WindowPositionTrackerExportStringCaller(g_posXYWnd));
-  GlobalPreferenceSystem().registerPreference("YZWnd", WindowPositionTrackerImportStringCaller(g_posYZWnd), WindowPositionTrackerExportStringCaller(g_posYZWnd));
-  GlobalPreferenceSystem().registerPreference("XZWnd", WindowPositionTrackerImportStringCaller(g_posXZWnd), WindowPositionTrackerExportStringCaller(g_posXZWnd));
 
   {
     const char* ENGINEPATH_ATTRIBUTE =

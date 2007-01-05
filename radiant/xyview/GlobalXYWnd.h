@@ -6,23 +6,24 @@
 #include "iclipper.h"
 #include "iregistry.h"
 #include "preferencesystem.h"
-#include "gtkutil/widget.h"
 
 #include "XYWnd.h"
 
 	namespace {
-		const std::string RKEY_CHASE_MOUSE = "user/ui/xyview/chaseMouse";
-		const std::string RKEY_CAMERA_XY_UPDATE = "user/ui/xyview/camXYUpdate";
-		const std::string RKEY_SHOW_CROSSHAIRS = "user/ui/xyview/showCrossHairs";
-		const std::string RKEY_SHOW_GRID = "user/ui/xyview/showGrid";
-		const std::string RKEY_SHOW_SIZE_INFO = "user/ui/xyview/showSizeInfo";
-		const std::string RKEY_SHOW_ENTITY_ANGLES = "user/ui/xyview/showEntityAngles";
-		const std::string RKEY_SHOW_ENTITY_NAMES = "user/ui/xyview/showEntityNames";
-		const std::string RKEY_SHOW_BLOCKS = "user/ui/xyview/showBlocks";
-		const std::string RKEY_SHOW_COORDINATES = "user/ui/xyview/showCoordinates";
-		const std::string RKEY_SHOW_OUTLINE = "user/ui/xyview/showOutline";
-		const std::string RKEY_SHOW_AXES = "user/ui/xyview/showAxes";
-		const std::string RKEY_SHOW_WORKZONE = "user/ui/xyview/showWorkzone";
+		const std::string RKEY_XYVIEW_ROOT = "user/ui/xyview";
+		
+		const std::string RKEY_CHASE_MOUSE = RKEY_XYVIEW_ROOT + "/chaseMouse";
+		const std::string RKEY_CAMERA_XY_UPDATE = RKEY_XYVIEW_ROOT + "/camXYUpdate";
+		const std::string RKEY_SHOW_CROSSHAIRS = RKEY_XYVIEW_ROOT + "/showCrossHairs";
+		const std::string RKEY_SHOW_GRID = RKEY_XYVIEW_ROOT + "/showGrid";
+		const std::string RKEY_SHOW_SIZE_INFO = RKEY_XYVIEW_ROOT + "/showSizeInfo";
+		const std::string RKEY_SHOW_ENTITY_ANGLES = RKEY_XYVIEW_ROOT + "/showEntityAngles";
+		const std::string RKEY_SHOW_ENTITY_NAMES = RKEY_XYVIEW_ROOT + "/showEntityNames";
+		const std::string RKEY_SHOW_BLOCKS = RKEY_XYVIEW_ROOT + "/showBlocks";
+		const std::string RKEY_SHOW_COORDINATES = RKEY_XYVIEW_ROOT + "/showCoordinates";
+		const std::string RKEY_SHOW_OUTLINE = RKEY_XYVIEW_ROOT + "/showOutline";
+		const std::string RKEY_SHOW_AXES = RKEY_XYVIEW_ROOT + "/showAxes";
+		const std::string RKEY_SHOW_WORKZONE = RKEY_XYVIEW_ROOT + "/showWorkzone";
 		const std::string RKEY_DEFAULT_BLOCKSIZE = "user/ui/xyview/defaultBlockSize";
 		
 		typedef std::list<XYWnd*> XYWndList;
@@ -56,10 +57,6 @@ class XYWndManager :
 	
 	GtkWindow* _globalParentWindow;
 	
-	ToggleShown _xyTopShown;
-	ToggleShown _yzSideShown;
-	ToggleShown _xzFrontShown;
-
 public:
 
 	// Constructor
@@ -90,8 +87,17 @@ public:
 	// Register the commands and capture the renderer states
 	void construct();
 	
-	// Free all the allocated views from the heap
+	// Release the shader states
 	void destroy();
+	
+	// Free all the allocated views from the heap
+	void destroyViews();
+	
+	// Saves the current state of all open views to the registry
+	void saveStateToRegistry();
+	
+	// Restores the xy windows according to the state saved in the XMLRegistry 
+	void restoreStateFromRegistry();
 	
 	XYWnd* getActiveXY() const;
 	void setActiveXY(XYWnd* wnd);
@@ -103,10 +109,6 @@ public:
 	void splitViewFocus(); // Re-position all available views
 	void zoom100(); // Sets the scale of all windows to 1
 	void focusActiveView(); // sets the focus of the active view
-	
-	void xyTopShownConstruct(GtkWindow* parent);
-	void yzSideShownConstruct(GtkWindow* parent);
-	void xzFrontShownConstruct(GtkWindow* parent);
 	
 	// Sets the origin of all available views
 	void setOrigin(const Vector3& origin);
@@ -132,8 +134,11 @@ public:
 	// @returns: NULL if no matching window could be found, the according pointer otherwise 
 	XYWnd* getView(EViewType viewType);
 
-	// Allocates a new XY view on the heap and returns its pointer
+	// Allocates a new XY view on the heap and returns its pointer (only used by paned views)
 	XYWnd* createXY();
+	
+	// Creates a new floating XY View transient to the global parent window
+	XYWnd* createOrthoView(EViewType viewType);
 	
 	// Creates a new orthoview
 	void createNewOrthoView();

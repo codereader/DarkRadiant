@@ -238,10 +238,14 @@ public:
 	}
 	
 	void disconnect(GtkObject* object) {
-		for (HandlerMap::iterator i = _handlers.begin(); i != _handlers.end(); i++) {
+		for (HandlerMap::iterator i = _handlers.begin(); i != _handlers.end(); ) {
 			if (i->second == object) {
 				g_signal_handler_disconnect(G_OBJECT(i->second), i->first);
-				_handlers.erase(i);
+				// Be sure to increment the iterator with a postfix ++, so that the "old" iterator is passed
+				_handlers.erase(i++);
+			}
+			else {
+				i++;
 			}
 		}
 	}

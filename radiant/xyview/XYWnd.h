@@ -11,6 +11,8 @@
 #include "gtkutil/cursor.h"
 #include "gtkutil/window.h"
 #include "gtkutil/xorrectangle.h"
+#include "gtkutil/WindowPosition.h"
+#include "xmlutil/Node.h"
 #include "timer.h"
 
 #include "map.h"
@@ -19,8 +21,8 @@
 #include "selection/RadiantWindowObserver.h"
 
 	namespace {
-		const int XYWND_MINSIZE_X = 200;
-		const int XYWND_MINSIZE_Y = 200;
+		const int XYWND_MINSIZE_X = 100;
+		const int XYWND_MINSIZE_Y = 100;
 	}
 
 class XYWnd :
@@ -68,7 +70,7 @@ class XYWnd :
 
 	SelectionSystemWindowObserver* m_window_observer;
 	XORRectangle m_XORRectangle;
-	WindowPositionTracker m_positionTracker;
+	gtkutil::WindowPosition _windowPosition;
 
 	int m_entityCreate_x, m_entityCreate_y;
 	bool m_entityCreate;
@@ -110,7 +112,11 @@ public:
 	static void captureStates();
 	static void releaseStates();
 	
+	// Returns the long type string ("XY Top", "YZ Side", "XZ Front") for use in window titles 
 	static const std::string getViewTypeTitle(EViewType viewtype);
+	
+	// Returns the short type string (XY, XZ, YZ)
+	static const std::string getViewTypeStr(EViewType viewtype);
 	
 	void positionView(const Vector3& position);
 	const Vector3& getOrigin();
@@ -192,6 +198,9 @@ public:
 	
 	// greebo: CameraObserver implementation; gets called when the camera is moved
 	void cameraMoved();
+	
+	void saveStateToNode(xml::Node& rootNode);
+	void readStateFromNode(xml::Node& rootNode);
 
 private:
 	void onContextMenu();
