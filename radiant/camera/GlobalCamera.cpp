@@ -179,6 +179,18 @@ void GlobalCameraManager::addCameraObserver(CameraObserver* observer) {
 	}
 }
 
+void GlobalCameraManager::removeCameraObserver(CameraObserver* observer) {
+	// Cycle through the list of observers and call the moved method
+	for (CameraObserverList::iterator i = _cameraObservers.begin(); i != _cameraObservers.end(); i++) {
+		CameraObserver* registered = *i;
+		
+		if (registered == observer) {
+			_cameraObservers.erase(i++);
+			return; // Don't continue the loop, the iterator is obsolete 
+		}
+	}
+}
+
 void GlobalCameraManager::movedNotify() {
 	
 	// Cycle through the list of observers and call the moved method
