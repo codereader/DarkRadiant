@@ -151,6 +151,11 @@ int XYWnd::getHeight() const {
 
 void XYWnd::setParent(GtkWindow* parent) {
 	_parent = parent;
+	
+	// Connect the position observer to the new parent
+	_windowPosition.connect(_parent);
+	// Apply the default settings to the new parent
+	_windowPosition.setPosition();
 }
 
 GtkWindow* XYWnd::getParent() const {
@@ -174,6 +179,19 @@ const std::string XYWnd::getViewTypeTitle(EViewType viewtype) {
 	}
 	if (viewtype == YZ) {
 		return "YZ Side";
+	}
+	return "";
+}
+
+const std::string XYWnd::getViewTypeStr(EViewType viewtype) {
+	if (viewtype == XY) {
+		return "XY";
+	}
+	if (viewtype == XZ) {
+		return "XZ";
+	}
+	if (viewtype == YZ) {
+		return "YZ";
 	}
 	return "";
 }
@@ -1449,6 +1467,42 @@ void XYWnd::zoomIn() {
 
 int& XYWnd::dragZoom() {
 	return _dragZoom;
+}
+
+void XYWnd::saveStateToNode(xml::Node& rootNode) {
+	if (_parent != NULL) {
+		if (GTK_WIDGET_VISIBLE(GTK_WIDGET(_parent))) {
+			xml::Node viewNode = rootNode.createChild("view");
+			viewNode.setAttributeValue("type", getViewTypeStr(m_viewType));
+			
+			_windowPosition.saveToNode(viewNode);
+			
+			viewNode.addText("\n\t");
+		}
+	}
+}
+
+void XYWnd::readStateFromNode(xml::Node& node) {
+	if (_parent != NULL) {
+		
+		const std::string typeStr = node.getAttributeValue("type");
+		
+		if (typeStr == "YZ") {
+			setViewType(YZ);
+		}
+		else if (typeStr == "XZ") {
+			setViewType(XZ);
+		}
+		else {
+			setViewType(XY);
+		}
+		
+		// Load the sizes from the node
+		_windowPosition.loadFromNode(node);
+		
+		// Apply the window size/position
+		_windowPosition.setPosition();
+	}
 }
 
 // ================ GTK CALLBACKS ======================================

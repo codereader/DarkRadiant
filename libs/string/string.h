@@ -32,6 +32,34 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "memory/allocator.h"
 #include "generic/arrayrange.h"
 
+#include <boost/lexical_cast.hpp>
+
+inline std::string intToStr(const int& i) {
+	std::string returnValue;
+	
+	try {
+		returnValue = boost::lexical_cast<std::string>(i);
+	}
+	catch (boost::bad_lexical_cast e) {
+		returnValue = "";
+	}
+	
+	return returnValue;
+}
+
+inline int strToInt(const std::string& str) {
+	int returnValue;
+	
+	try {
+		returnValue = boost::lexical_cast<int>(str);
+	}
+	catch (boost::bad_lexical_cast e) {
+		returnValue = 0;
+	}
+	
+	return returnValue;
+}
+
 /// \brief Returns true if \p string length is zero.
 /// O(1)
 inline bool string_empty(const char* string)

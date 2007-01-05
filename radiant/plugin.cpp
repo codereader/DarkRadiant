@@ -293,6 +293,7 @@ public:
     Autosave_Destroy();
     Entity_Destroy();
     TextureBrowser_Destroy();
+    GlobalXYWnd().destroy();
     GlobalCamera().destroy();
     PatchInspector_Destroy();
     SurfaceInspector_Destroy();
