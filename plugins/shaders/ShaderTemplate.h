@@ -131,9 +131,6 @@ public:
 	 */
 	shaders::MapExpressionPtr parseMap(parser::DefTokeniser&);
 
-	// Parse an addnormals() expression
-	void parseAddNormals(parser::DefTokeniser&);
-
 	bool parseShaderFlags(parser::DefTokeniser&, const std::string&);
 	bool parseLightFlags(parser::DefTokeniser&, const std::string&);
 	bool parseBlendShortcuts(parser::DefTokeniser&, const std::string&);
