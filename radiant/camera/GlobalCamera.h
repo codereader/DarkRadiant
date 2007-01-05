@@ -89,6 +89,7 @@ public:
 	
 	// Add a "CameraMoved" callback to the signal member
 	void addCameraObserver(CameraObserver* observer);
+	void removeCameraObserver(CameraObserver* observer);
 	
 	// Notify the attached "CameraMoved" callbacks
 	void movedNotify();
