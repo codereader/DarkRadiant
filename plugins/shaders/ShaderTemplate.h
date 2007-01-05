@@ -124,13 +124,6 @@ public:
 	 */
 	void parseDoom3(parser::DefTokeniser&);
 
-	/**
-	 * Parse an image map expression, possibly recursively if addnormals() or
-	 * other functions are used, and return a MapExpression containing the
-	 * parsed tree.
-	 */
-	shaders::MapExpressionPtr parseMap(parser::DefTokeniser&);
-
 	bool parseShaderFlags(parser::DefTokeniser&, const std::string&);
 	bool parseLightFlags(parser::DefTokeniser&, const std::string&);
 	bool parseBlendShortcuts(parser::DefTokeniser&, const std::string&);

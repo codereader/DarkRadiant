@@ -24,11 +24,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ishaders.h"
 #include "ifilesystem.h"
 #include "itextures.h"
-#include "iscriplib.h"
 #include "iregistry.h"
 #include "qerplugin.h"
 
-#include "string/string.h"
 #include "modulesystem/singletonmodule.h"
 
 #include "ShaderTemplate.h"
@@ -37,7 +35,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class ShadersDependencies :
   public GlobalFileSystemModuleRef,
   public GlobalTexturesModuleRef,
-  public GlobalScripLibModuleRef,
   public GlobalRadiantModuleRef,
   public GlobalRegistryModuleRef
 {
