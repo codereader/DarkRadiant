@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iselection.h"
 #include "ientity.h"
 #include "iundo.h"
+#include "igrid.h"
 #include "ieclass.h"
 #include "igl.h"
 #include "ireference.h"
@@ -56,7 +57,8 @@ class EntityDependencies :
   public GlobalPreferenceSystemModuleRef,
   public GlobalNamespaceModuleRef,
   public GlobalModelSkinCacheModuleRef,
-  public GlobalRegistryModuleRef
+  public GlobalRegistryModuleRef,
+  public GlobalGridModuleRef
 {
 };
 

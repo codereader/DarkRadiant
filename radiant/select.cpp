@@ -43,7 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "texwindow.h"
 #include "gtkmisc.h"
 #include "mainframe.h"
-#include "grid.h"
+#include "igrid.h"
 #include "map.h"
 #include "selection/SceneWalkers.h"
 #include "brush/BrushInstance.h"
@@ -894,12 +894,12 @@ void Selection_NudgeZ(float amount)
 
 void Selection_MoveDown()
 {
-  Selection_NudgeZ(-GetGridSize());
+  Selection_NudgeZ(-GlobalGrid().getGridSize());
 }
 
 void Selection_MoveUp()
 {
-  Selection_NudgeZ(GetGridSize());
+  Selection_NudgeZ(GlobalGrid().getGridSize());
 }
 
 void SceneSelectionChange(const Selectable& selectable)

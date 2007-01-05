@@ -5,6 +5,7 @@
 #include "iundo.h"
 #include "ieventmanager.h"
 #include "ientity.h"
+#include "igrid.h"
 
 #include "gtkutil/accelerator.h"
 #include "gtkutil/glwidget.h"
@@ -332,7 +333,7 @@ void XYWnd::DropClipPoint(int pointx, int pointy) {
 	GlobalClipper().setViewType(static_cast<EViewType>(getViewType()));
 	int nDim = (GlobalClipper().getViewType() == YZ ) ?  0 : ( (GlobalClipper().getViewType() == XZ) ? 1 : 2 );
 	point[nDim] = mid[nDim];
-	vector3_snap(point, GetGridSize());
+	vector3_snap(point, GlobalGrid().getGridSize());
 	GlobalClipper().newClipPoint(point);
 }
 
@@ -436,11 +437,11 @@ void XYWnd::NewBrushDrag(int x, int y) {
 
 	int nDim = (m_viewType == XY) ? 2 : (m_viewType == YZ) ? 0 : 1;
 
-	mins[nDim] = float_snapped(Select_getWorkZone().d_work_min[nDim], GetGridSize());
-	maxs[nDim] = float_snapped(Select_getWorkZone().d_work_max[nDim], GetGridSize());
+	mins[nDim] = float_snapped(Select_getWorkZone().d_work_min[nDim], GlobalGrid().getGridSize());
+	maxs[nDim] = float_snapped(Select_getWorkZone().d_work_max[nDim], GlobalGrid().getGridSize());
 
 	if (maxs[nDim] <= mins[nDim])
-		maxs[nDim] = mins[nDim] + GetGridSize();
+		maxs[nDim] = mins[nDim] + GlobalGrid().getGridSize();
 
 	for (int i=0 ; i<3 ; i++) {
 		if (mins[i] == maxs[i])
@@ -693,16 +694,16 @@ void XYWnd::convertXYToWorld(int x, int y, Vector3& point) {
 
 void XYWnd::snapToGrid(Vector3& point) {
 	if (m_viewType == XY) {
-		point[0] = float_snapped(point[0], GetGridSize());
-		point[1] = float_snapped(point[1], GetGridSize());
+		point[0] = float_snapped(point[0], GlobalGrid().getGridSize());
+		point[1] = float_snapped(point[1], GlobalGrid().getGridSize());
 	}
 	else if (m_viewType == YZ) {
-		point[1] = float_snapped(point[1], GetGridSize());
-		point[2] = float_snapped(point[2], GetGridSize());
+		point[1] = float_snapped(point[1], GlobalGrid().getGridSize());
+		point[2] = float_snapped(point[2], GlobalGrid().getGridSize());
 	}
 	else {
-		point[0] = float_snapped(point[0], GetGridSize());
-		point[2] = float_snapped(point[2], GetGridSize());
+		point[0] = float_snapped(point[0], GlobalGrid().getGridSize());
+		point[2] = float_snapped(point[2], GlobalGrid().getGridSize());
 	}
 }
 
@@ -712,9 +713,9 @@ void XYWnd::drawGrid() {
 	char	text[32];
 	float	step, minor_step, stepx, stepy;
 
-	step = minor_step = stepx = stepy = GetGridSize();
+	step = minor_step = stepx = stepy = GlobalGrid().getGridSize();
 
-	int minor_power = Grid_getPower();
+	int minor_power = GlobalGrid().getGridPower();
 	int mask;
 
 	while ((minor_step * m_fScale) <= 4.0f) // make sure minor grid spacing is at least 4 pixels on the screen
@@ -1419,7 +1420,7 @@ void XYWnd::mouseToPoint(int x, int y, Vector3& point) {
 
 	int nDim = (getViewType() == XY) ? 2 : (getViewType() == YZ) ? 0 : 1;
 	float fWorkMid = float_mid(Select_getWorkZone().d_work_min[nDim], Select_getWorkZone().d_work_max[nDim]);
-	point[nDim] = float_snapped(fWorkMid, GetGridSize());
+	point[nDim] = float_snapped(fWorkMid, GlobalGrid().getGridSize());
 }
 
 void XYWnd::onEntityCreate(const std::string& item) {

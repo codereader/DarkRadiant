@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iselection.h"
 #include "iscenegraph.h"
 #include "igl.h"
+#include "igrid.h"
 
 #include "selection/RadiantSelectionSystem.h"
 
@@ -42,7 +43,8 @@ SignalHandlerId SelectionSystem_boundsChanged;
 class SelectionDependencies :
   public GlobalSceneGraphModuleRef,
   public GlobalShaderCacheModuleRef,
-  public GlobalOpenGLModuleRef
+  public GlobalOpenGLModuleRef,
+  public GlobalGridModuleRef
 {
 };
 

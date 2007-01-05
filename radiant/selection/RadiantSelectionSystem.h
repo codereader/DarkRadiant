@@ -86,23 +86,7 @@ private:
 
 public:
 
-	RadiantSelectionSystem() :
-		_undoBegun(false),
-		_mode(ePrimitive),
-		_componentMode(eDefault),
-		_countPrimitive(SelectionChangedCaller(*this)),
-		_countComponent(SelectionChangedCaller(*this)),
-		_translateManipulator(*this, 2, 64),	// initialise the Manipulators with a pointer to self 
-		_rotateManipulator(*this, 8, 64),
-		_scaleManipulator(*this, 0, 64),
-		_pivotChanged(false),
-		_pivotMoving(false)
-	{
-		SetManipulatorMode(eTranslate);
-		pivotChanged();
-		addSelectionChangeCallback(PivotChangedSelectionCaller(*this));
-		AddGridChangeCallback(PivotChangedCaller(*this));
-	}
+	RadiantSelectionSystem();
 	
 	void pivotChanged() const;
 	typedef ConstMemberCaller<RadiantSelectionSystem, &RadiantSelectionSystem::pivotChanged> PivotChangedCaller;

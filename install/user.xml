@@ -8,6 +8,9 @@
 	<showAllLightRadii value="0"/>
 	<alwaysShowLightVertices value="1"/>
 	<defaultTextureScale value="0.5" />
+	<grid>
+		<defaultGridPower value="3" />
+	</grid>
 	<xyview>
 		<views name="default">
 			<view type="XY" xPosition="510" yPosition="100" width="400" height="400"/>

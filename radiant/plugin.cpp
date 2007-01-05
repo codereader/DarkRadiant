@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ifilesystem.h"
 #include "ishaders.h"
 #include "iclipper.h"
+#include "igrid.h"
 #include "ieventmanager.h"
 #include "ientity.h"
 #include "ieclass.h"
@@ -76,7 +77,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "autosave.h"
 #include "findtexturedialog.h"
 #include "nullmodel.h"
-#include "grid.h"
 #include "xyview/GlobalXYWnd.h"
 
 #include "modulesystem/modulesmap.h"
@@ -152,7 +152,6 @@ public:
 
     m_radiantcore.getMapName = &getMapName;
     m_radiantcore.getMapWorldEntity = getMapWorldEntity;
-    m_radiantcore.getGridSize = GetGridSize;
 
     m_radiantcore.getGameDescriptionKeyValue = &GameDescription_getKeyValue;
     m_radiantcore.getRequiredGameDescriptionKeyValue = &GameDescription_getRequiredKeyValue;
@@ -208,7 +207,8 @@ class RadiantDependencies :
   public GlobalUndoModuleRef,
   public GlobalScripLibModuleRef,
   public GlobalNamespaceModuleRef,
-  public GlobalClipperModuleRef
+  public GlobalClipperModuleRef,
+  public GlobalGridModuleRef
 {
   ImageModulesRef m_image_modules;
   MapModulesRef m_map_modules;
@@ -258,7 +258,6 @@ public:
     Selection_construct();
     HomePaths_Construct();
     VFS_Construct();
-    Grid_construct();
     MultiMon_Construct();
     MRU_Construct();
     Pointfile_Construct();
@@ -304,7 +303,6 @@ public:
     Pointfile_Destroy();
     MRU_Destroy();
     MultiMon_Destroy();
-    Grid_destroy();
     VFS_Destroy();
     HomePaths_Destroy();
     Selection_destroy();

@@ -1,6 +1,7 @@
 #include "Light.h"
 
 #include "qerplugin.h"
+#include "igrid.h"
 #include "Doom3LightRadius.h"
 #include "LightShader.h"
 #include "LightSettings.h"
@@ -700,7 +701,7 @@ void Light::translateLightStart(const Vector3& translation) {
 	if (dist > 0) {
 		// Light_Start is too "high", project it back onto the origin plane 
 		_lightStartTransformed = candidate - normal*dist;
-		vector3_snap(_lightStartTransformed, GlobalRadiant().getGridSize());
+		vector3_snap(_lightStartTransformed, GlobalGrid().getGridSize());
 	}
 	else {
 		// The candidate seems to be ok, apply it to the selection
@@ -725,13 +726,13 @@ void Light::translateLightTarget(const Vector3& translation) {
 			_lightStartTransformed = rotationMatrix.transform(_lightStart).getProjected();
 			_lightEndTransformed = rotationMatrix.transform(_lightEnd).getProjected();
 			
-			vector3_snap(_lightStartTransformed, GlobalRadiant().getGridSize());
-			vector3_snap(_lightEndTransformed, GlobalRadiant().getGridSize());
+			vector3_snap(_lightStartTransformed, GlobalGrid().getGridSize());
+			vector3_snap(_lightEndTransformed, GlobalGrid().getGridSize());
 		}
 		
 		// Snap the rotated vectors to the grid
-		vector3_snap(_lightRightTransformed, GlobalRadiant().getGridSize());
-		vector3_snap(_lightUpTransformed, GlobalRadiant().getGridSize());
+		vector3_snap(_lightRightTransformed, GlobalGrid().getGridSize());
+		vector3_snap(_lightUpTransformed, GlobalGrid().getGridSize());
 	}
 	
 	// if we are at 180 degrees, invert the light_start and light_end vectors
