@@ -1,24 +1,10 @@
 #include "ShaderTemplate.h"
+#include "MapExpression.h"
 
 #include "os/path.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
-
-/**
- * Replace backslashes with forward slashes and strip of the file extension of
- * the provided token, and store the result in the provided string.
- * 
- * @name
- * String to set with cleaned result.
- * 
- * @token
- * The raw texture path.
- */
-void parseTextureName(std::string& name, const std::string& token)
-{
-	name = os::standardPath(token).substr(0, token.rfind("."));
-}
 
 /*	Searches a token for known shaderflags (e.g. "translucent") and sets the flags
  *  in the member variable m_nFlags
@@ -67,60 +53,11 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser, const std
 	return true;
 }
 
-/* Searches the next token for a map (e.g. textures/name), 
- * also accepts Image Program Functions like heightmap(), scale() etc.
- * the implementation for some of these programs are still to be done.
- * 
- * Results are stored in m_currentLayer for further use within the calling function 
+/* Parse a map expression recursively. 
  */
-bool ShaderTemplate::parseMap(parser::DefTokeniser& tokeniser)
+shaders::MapExpressionPtr ShaderTemplate::parseMap(parser::DefTokeniser& tok)
 {
-	std::string token = boost::algorithm::to_lower_copy(tokeniser.nextToken());	
-		
-	if (token == "") {
-		throw parser::ParseException("Missing map identifier");
-	}
-	// These keywords are ignored at the moment and their argument is taken as texture name
-	else if (token == "makeintensity" || token == "makealpha" || token == "invertcolor"
-			 || token == "invertalpha" || token == "smoothnormals" ) {
-		tokeniser.assertNextToken("(");
-		parseTextureName(m_currentLayer.m_texture, tokeniser.nextToken().c_str());
-		tokeniser.assertNextToken(")");
-	}
-	else if (token == "addnormals") {
-		parseAddNormals(tokeniser);
-	} 
-	// The second argument for heightmap (the height scale) is ignored at the moment
-	else if (token == "heightmap") {
-		tokeniser.assertNextToken("(");		
-		parseTextureName(m_currentLayer.m_texture, tokeniser.nextToken().c_str());
-		tokeniser.assertNextToken(",");		
-		m_currentLayer.m_heightmapScale = tokeniser.nextToken().c_str();		
-		tokeniser.assertNextToken(")");
-	}
-	// The second argument for add is ignored at the moment
-	else if (token == "add") {
-		tokeniser.assertNextToken("(");
-		parseTextureName(m_currentLayer.m_texture, tokeniser.nextToken().c_str());
-		tokeniser.assertNextToken(",");
-		std::string map2;
-		parseTextureName(map2, tokeniser.nextToken().c_str());
-		tokeniser.assertNextToken(")");
-	}
-	// The floating point values for the scale program are ignored and the texture name is returned
-	else if (token == "scale") {
-		tokeniser.assertNextToken("(");
-		parseTextureName(m_currentLayer.m_texture, tokeniser.nextToken().c_str());
-		tokeniser.assertNextToken(",");
-		while (tokeniser.nextToken() != ")") {
-			// do nothing
-		}
-	}
-	else {
-		parseTextureName(m_currentLayer.m_texture, token.c_str());
-	}
-	
-	return true;
+	return shaders::MapExpression::construct(tok);
 }
 
 /* Parse an addnormals() expression. The initial "addnormals" token will already
@@ -157,8 +94,7 @@ bool ShaderTemplate::parseLightFlags(parser::DefTokeniser& tokeniser, const std:
         fogLight = true;
     }
     else if (!fogLight && token == "lightfalloffimage") {
-    	parseMap(tokeniser);
-    	m_lightFalloffImage = m_currentLayer.m_texture;
+    	_lightFallOff = parseMap(tokeniser);
     }
 	else {
 		// No light-specific keywords found, return false
@@ -167,24 +103,21 @@ bool ShaderTemplate::parseLightFlags(parser::DefTokeniser& tokeniser, const std:
 	return true;
 }
 
-bool ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser, const std::string& token) 
+// Parse any single-line stages (such as "diffusemap x/y/z")
+bool ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser, 
+										 const std::string& token) 
 {
 	if (token == "qer_editorimage") {
-		parseMap(tokeniser);
-		m_textureName = m_currentLayer.m_texture;		
+		_texture = parseMap(tokeniser);
 	}
 	else if (token == "diffusemap") {
-		parseMap(tokeniser);
-		m_diffuse = m_currentLayer.m_texture;		
+		_diffuse = parseMap(tokeniser);
 	}
 	else if (token == "specularmap") {
-		parseMap(tokeniser);
-		m_specular = m_currentLayer.m_texture;
+		_specular = parseMap(tokeniser);
 	}
 	else if (token == "bumpmap") {
-		parseMap(tokeniser);
-		m_bump = m_currentLayer.m_texture;
-		m_heightmapScale = m_currentLayer.m_heightmapScale;
+		_bump = parseMap(tokeniser);
 	}
 	else {
 		// No shortcuts found, return false
@@ -265,23 +198,23 @@ bool ShaderTemplate::saveLayer()
 {
 	switch (m_currentLayer.m_type) {
 		case LAYER_DIFFUSEMAP:
-			m_diffuse = m_currentLayer.m_texture;
+			_diffuse = m_currentLayer.mapExpr;
 			break;
 		case LAYER_BUMPMAP:
-			m_bump = m_currentLayer.m_texture;
+			_bump = m_currentLayer.mapExpr;
 			break;
 		case LAYER_SPECULARMAP:
-			m_specular = m_currentLayer.m_texture;
+			_specular = m_currentLayer.mapExpr;
 			break;
 		default:
-			if (m_currentLayer.m_texture != "") {
+			if (m_currentLayer.mapExpr) {
 				m_layers.push_back(m_currentLayer);
 			}
 	}
 	
 	// Clear the currentLayer structure for possible future layers
 	m_currentLayer.m_type = LAYER_NONE;
-	m_currentLayer.m_texture = "";
+	m_currentLayer.mapExpr = shaders::MapExpression::constructNull();
 	return true;
 }
 
@@ -304,9 +237,10 @@ void ShaderTemplate::parseDoom3(parser::DefTokeniser& tokeniser)
 					break;
 			}
 			
-			// If the textureName is missing (i.e. no editorimage provided), substitute this with the diffusemap
-			if (m_textureName == "" && m_diffuse != "") {				
-				m_textureName = m_diffuse;
+			// If the texture is missing (i.e. no editorimage provided), 
+			// substitute this with the diffusemap
+			if (!_texture && _diffuse) {				
+				_texture = _diffuse;
 			}
 		} 
 		else if (token=="{") {

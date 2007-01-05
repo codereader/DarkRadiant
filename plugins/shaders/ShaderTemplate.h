@@ -1,6 +1,8 @@
 #ifndef SHADERTEMPLATE_H_
 #define SHADERTEMPLATE_H_
 
+#include "MapExpression.h"
+
 #include "ishaders.h"
 #include "parser/DefTokeniser.h"
 
@@ -18,24 +20,29 @@ enum LayerTypeId
   LAYER_SPECULARMAP
 };
 
-class LayerTemplate
+/**
+ * Parsed structure for a single material stage.
+ */
+struct LayerTemplate
 {
-public:
+	// The Map Expression for this stage
+	shaders::MapExpressionPtr mapExpr;
+
   LayerTypeId m_type;
-  std::string m_texture;
   BlendFuncExpression m_blendFunc;
   bool m_clampToBorder;
   std::string m_alphaTest;
   std::string m_heightmapScale;
 
-  LayerTemplate() : 
-  	m_type(LAYER_NONE), 
-  	m_blendFunc("GL_ONE", "GL_ZERO"), 
-  	m_clampToBorder(false), 
-  	m_alphaTest("-1"), 
-  	m_heightmapScale("0")
-  {
-  }
+	// Constructor
+	LayerTemplate() 
+	: mapExpr(shaders::MapExpression::constructNull()),
+	  m_type(LAYER_NONE), 
+	  m_blendFunc("GL_ONE", "GL_ZERO"), 
+  	  m_clampToBorder(false), 
+  	  m_alphaTest("-1"), 
+  	  m_heightmapScale("0")
+	{ }
 };
 
 /**
@@ -57,13 +64,12 @@ public:
   	typedef std::vector<LayerTemplate> Layers;
 	Layers m_layers;
 
-	// Image maps
-	std::string m_textureName;
-	std::string m_diffuse;
-	std::string m_bump;
-	std::string m_heightmapScale;
-	std::string m_specular;
-	std::string m_lightFalloffImage;
+	// Map expressions
+	shaders::MapExpressionPtr _texture;
+	shaders::MapExpressionPtr _diffuse;
+	shaders::MapExpressionPtr _bump;
+	shaders::MapExpressionPtr _specular;
+	shaders::MapExpressionPtr _lightFallOff;
 
 	/* Light type booleans */	
 	bool fogLight;
@@ -84,7 +90,11 @@ public:
 	 */
 	ShaderTemplate(const std::string& name) 
 	: _name(name),
-	  m_textureName(""),
+	  _texture(shaders::MapExpression::constructNull()),
+	  _diffuse(shaders::MapExpression::constructNull()),
+	  _bump(shaders::MapExpression::constructNull()),
+	  _specular(shaders::MapExpression::constructNull()),
+	  _lightFallOff(shaders::MapExpression::constructNull()),
       fogLight(false),
       ambientLight(false),
       blendLight(false)
@@ -114,9 +124,12 @@ public:
 	 */
 	void parseDoom3(parser::DefTokeniser&);
 
-	// Parse an image map expression, possibly recursively if addnormals() or
-	// other functions are used	
-	bool parseMap(parser::DefTokeniser&);
+	/**
+	 * Parse an image map expression, possibly recursively if addnormals() or
+	 * other functions are used, and return a MapExpression containing the
+	 * parsed tree.
+	 */
+	shaders::MapExpressionPtr parseMap(parser::DefTokeniser&);
 
 	// Parse an addnormals() expression
 	void parseAddNormals(parser::DefTokeniser&);
