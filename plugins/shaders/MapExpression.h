@@ -53,7 +53,8 @@ class MapExpression
 	} _nodeType;
 		
 	// Vector of child nodes (N-tree)
-	std::vector<MapExpression> _children;
+	typedef std::vector<MapExpression> MapExpressionList; 
+	MapExpressionList _children;
 	
 	// String value of this node, if there is one (image or float)
 	std::string _value;
@@ -66,6 +67,11 @@ private:
 	 */
 	MapExpression(parser::DefTokeniser&);
 
+	/*
+	 * Construct an empty MapExpression.
+	 */
+	MapExpression() {}
+
 public:
 
 	/**
@@ -75,6 +81,26 @@ public:
 	static MapExpressionPtr construct(parser::DefTokeniser& tok) {
 		return MapExpressionPtr(new MapExpression(tok));	
 	}
+
+	/**
+	 * Construct a null MapExpression that will evaluate to the empty texture.
+	 */
+	static MapExpressionPtr constructNull() {
+		return MapExpressionPtr(new MapExpression());
+	}
+
+	/**
+	 * Reduce this MapExpression to a string containing the name of the texture
+	 * to use for rendering.
+	 * 
+	 * TODO: This is a hack to accomodate the current textures system -- in 
+	 * reality the MapExpression should flatten to an image, not the name of
+	 * a pre-existing image (which almost certainly won't reflect the
+	 * expression's result). Accomplishing this will require the textures
+	 * system to be upgraded to allow the insertion of newly-generated images
+	 * in addition to those loaded from disk.
+	 */
+	std::string getTextureName() const;
 
 };
 

@@ -433,24 +433,25 @@ public:
   }
   // -----------------------------------------
 
-  void realise()
-  {
-    m_pTexture = GlobalTexturesCache().capture(m_template.m_textureName);
+	void realise() {
+		
+		// Grab the display texture (may be null)
+		m_pTexture = GlobalTexturesCache().capture(
+    								m_template._texture->getTextureName());
 
-    if(m_pTexture->texture_number == 0)
-    {
-      m_notfound = m_pTexture;
+    	if(m_pTexture->texture_number == 0) {
+	      m_notfound = m_pTexture;
+	
+	      {
+	        std::string name = std::string(GlobalRadiant().getAppPath())
+	        				   + "bitmaps/" 
+	        				   + (IsDefault() ? "notex.bmp" : "shadernotex.bmp");
+	        m_pTexture = GlobalTexturesCache().capture(LoadImageCallback(0, loadBitmap), name.c_str());
+	      }
+		}
 
-      {
-        std::string name = std::string(GlobalRadiant().getAppPath())
-        				   + "bitmaps/" 
-        				   + (IsDefault() ? "notex.bmp" : "shadernotex.bmp");
-        m_pTexture = GlobalTexturesCache().capture(LoadImageCallback(0, loadBitmap), name.c_str());
-      }
-    }
-
-    realiseLighting();
-  }
+		realiseLighting();
+	}
 
   void unrealise()
   {
@@ -465,31 +466,27 @@ public:
   }
 
 	// Parse and load image maps for this shader
+	void realiseLighting() {
+		
+		TexturesCache& cache = GlobalTexturesCache();
+		LoadImageCallback loader = cache.defaultLoader();
 
-  void realiseLighting()
-  {
-      LoadImageCallback loader = GlobalTexturesCache().defaultLoader();
-      if(!string_empty(m_template.m_heightmapScale.c_str()))
-      {
-        m_heightmapScale = 
-        	boost::lexical_cast<float>(m_template.m_heightmapScale);
-        loader = LoadImageCallback(&m_heightmapScale, loadHeightmap);
-      }
+		// Set up the diffuse, bump and specular stages. Bump and specular will 
+		// be set to defaults _flat and _black respectively, if an image map is 
+		// not specified in the material.
 
-		// Set up the diffuse, bump and specular stages. Bump and specular will be set to defaults
-		// _flat and _black respectively, if an image map is not specified in the material.
+		m_pDiffuse = cache.capture(m_template._diffuse->getTextureName());
 
-		m_pDiffuse = GlobalTexturesCache().capture(m_template.m_diffuse);
-
-    	std::string flatName = std::string(GlobalRadiant().getAppPath()) + "bitmaps/_flat.bmp";
-		m_pBump = GlobalTexturesCache().capture(m_template.m_bump);
+    	std::string flatName = std::string(GlobalRadiant().getAppPath()) 
+    									   + "bitmaps/_flat.bmp";
+		m_pBump = cache.capture(m_template._bump->getTextureName());
 		if (m_pBump == 0 || m_pBump->texture_number == 0) {
 			GlobalTexturesCache().release(m_pBump); // release old object first
 			m_pBump = GlobalTexturesCache().capture(LoadImageCallback(0, loadBitmap), flatName.c_str());
 		}
 		
 		std::string blackName = std::string(GlobalRadiant().getAppPath()) + "bitmaps/_black.bmp";
-		m_pSpecular = GlobalTexturesCache().capture(m_template.m_specular);
+		m_pSpecular = cache.capture(m_template._specular->getTextureName());
 		if (m_pSpecular == 0 || m_pSpecular->texture_number == 0) {
 			GlobalTexturesCache().release(m_pSpecular);
 			m_pSpecular = GlobalTexturesCache().capture(LoadImageCallback(0, loadBitmap), blackName.c_str());
@@ -498,7 +495,7 @@ public:
 		// Get light falloff image
 		
 		m_pLightFalloffImage = 
-			GlobalTexturesCache().capture(m_template.m_lightFalloffImage);
+			cache.capture(m_template._lightFallOff->getTextureName());
 
 		for(ShaderTemplate::Layers::const_iterator i = m_template.m_layers.begin(); 
 			i != m_template.m_layers.end(); 
@@ -591,7 +588,8 @@ public:
 	static MapLayer evaluateLayer(const LayerTemplate& layerTemplate) 
 	{
     	return MapLayer(
-      		GlobalTexturesCache().capture(layerTemplate.m_texture),
+      		GlobalTexturesCache().
+      					capture(layerTemplate.mapExpr->getTextureName()),
       		evaluateBlendFunc(layerTemplate.m_blendFunc),
       		layerTemplate.m_clampToBorder,
       		boost::lexical_cast<float>(layerTemplate.m_alphaTest)
@@ -633,7 +631,7 @@ public:
 
   qtexture_t* lightFalloffImage() const
   {
-    if(!string_empty(m_template.m_lightFalloffImage.c_str()))
+    if (m_template._lightFallOff)
     {
       return m_pLightFalloffImage;
     }
