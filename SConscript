@@ -122,6 +122,12 @@ xmlRegistryEnv.useBoostRegex()
 xmlRegistryLib = xmlRegistryEnv.SharedLibrary(target='xmlregistry', source=xmlRegistrySrc)
 xmlRegistryEnv.Install(INSTALL + '/modules', xmlRegistryLib)
 
+# Grid module
+gridEnv = module_env.Copy()
+gridSrc = build_list('plugins/grid', 'Grid.cpp')
+gridLib = gridEnv.SharedLibrary(target='grid', source=gridSrc)
+gridEnv.Install(INSTALL + '/modules', gridLib)
+
 # Eclassmgr module
 eclassSrc = build_list('plugins/eclassmgr', 'eclass_doom3.cpp Doom3EntityClass.cpp')
 eclassEnv = module_env.Copy()
@@ -278,7 +284,6 @@ radiant_src = [
 'filetypes.cpp',
 'findtexturedialog.cpp',
 'glwidget.cpp',
-'grid.cpp',
 'groupdialog.cpp',
 'gtkdlgs.cpp',
 'gtkmisc.cpp',

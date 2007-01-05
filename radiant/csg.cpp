@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brushmanip.h"
 #include "brush/BrushVisit.h"
 #include "brush/BrushNode.h"
-#include "grid.h"
+#include "igrid.h"
 
 void Face_makeBrush(Face& face, const Brush& brush, BrushVector& out, float offset)
 {
@@ -150,7 +150,7 @@ public:
 
 void Scene_BrushMakeHollow_Selected(scene::Graph& graph)
 {
-  GlobalSceneGraph().traverse(BrushHollowSelectedWalker(GetGridSize()));
+  GlobalSceneGraph().traverse(BrushHollowSelectedWalker(GlobalGrid().getGridSize()));
   GlobalSceneGraph().traverse(BrushDeleteSelected());
 }
 

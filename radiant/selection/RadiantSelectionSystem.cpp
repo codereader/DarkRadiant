@@ -1,6 +1,7 @@
 #include "RadiantSelectionSystem.h"
 
 #include "iundo.h"
+#include "igrid.h"
 #include "renderer.h"
 #include "scenelib.h"
 #include "editable.h"
@@ -38,6 +39,24 @@ void matrix4_assign_rotation_for_pivot(Matrix4& matrix, scene::Instance& instanc
 }
 
 // --------- RadiantSelectionSystem Implementation ------------------------------------------
+
+RadiantSelectionSystem::RadiantSelectionSystem() :
+	_undoBegun(false),
+	_mode(ePrimitive),
+	_componentMode(eDefault),
+	_countPrimitive(SelectionChangedCaller(*this)),
+	_countComponent(SelectionChangedCaller(*this)),
+	_translateManipulator(*this, 2, 64),	// initialise the Manipulators with a pointer to self 
+	_rotateManipulator(*this, 8, 64),
+	_scaleManipulator(*this, 0, 64),
+	_pivotChanged(false),
+	_pivotMoving(false)
+{
+	SetManipulatorMode(eTranslate);
+	pivotChanged();
+	addSelectionChangeCallback(PivotChangedSelectionCaller(*this));
+	GlobalGrid().addGridChangeCallback(PivotChangedCaller(*this));
+}
 
 void RadiantSelectionSystem::Scene_TestSelect(Selector& selector, SelectionTest& test, const View& view, SelectionSystem::EMode mode, SelectionSystem::EComponentMode componentMode) {
 	switch(mode) {
@@ -661,7 +680,7 @@ void RadiantSelectionSystem::ConstructPivot() const {
 		}
 
 		// Snap the pivot point to the grid
-		vector3_snap(objectPivot, GetGridSize());
+		vector3_snap(objectPivot, GlobalGrid().getGridSize());
 		
 		// The pivot2world matrix is just a translation from the world origin (0,0,0) to the object pivot  
 		_pivot2world = Matrix4::getTranslation(objectPivot);

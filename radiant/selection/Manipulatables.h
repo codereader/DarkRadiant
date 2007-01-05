@@ -5,7 +5,6 @@
 #include "math/matrix.h"
 #include "math/quaternion.h"
 
-#include "grid.h"
 #include "render.h"
 
 #include "TransformationVisitors.h"

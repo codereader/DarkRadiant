@@ -40,7 +40,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "texwindow.h"
 #include "select.h"
 #include "patch.h"
-#include "grid.h"
+#include "igrid.h"
 #include "xyview/GlobalXYWnd.h"
 
 PatchCreator* g_patchCreator = 0;
@@ -391,7 +391,7 @@ AABB PatchCreator_getBounds()
   AABB aabb(AABB::createFromMinMax(Select_getWorkZone().d_work_min, 
   								   Select_getWorkZone().d_work_max));
 
-  float gridSize = GetGridSize();
+  float gridSize = GlobalGrid().getGridSize();
 
   if(aabb.extents[0] == 0)
   {

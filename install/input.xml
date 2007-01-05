@@ -164,5 +164,17 @@
 		<shortcut command="MouseRotate" key="R" />
 		<shortcut command="MouseDrag" key="Q" />
 		<shortcut command="NewOrthoView" key="N" modifiers="CONTROL+ALT" />
+		<shortcut command="SetGrid0.125" key="" modifiers=""/>
+		<shortcut command="SetGrid0.25" key="" modifiers=""/>
+		<shortcut command="SetGrid0.5" key="" modifiers=""/>
+		<shortcut command="SetGrid1" key="1" modifiers=""/>
+		<shortcut command="SetGrid2" key="2" modifiers=""/>
+		<shortcut command="SetGrid4" key="3" modifiers=""/>
+		<shortcut command="SetGrid8" key="4" modifiers=""/>
+		<shortcut command="SetGrid16" key="5" modifiers=""/>
+		<shortcut command="SetGrid32" key="6" modifiers=""/>
+		<shortcut command="SetGrid64" key="7" modifiers=""/>
+		<shortcut command="SetGrid128" key="8" modifiers=""/>
+		<shortcut command="SetGrid256" key="9" modifiers=""/>
 	</shortcuts>
 </input>

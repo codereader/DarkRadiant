@@ -2,6 +2,8 @@
 #include "Manipulatables.h"
 #include "Intersection.h"
 
+#include "igrid.h"
+
 void transform_local2object(Matrix4& object, const Matrix4& local, const Matrix4& local2object) {
   object = matrix4_multiplied_by_matrix4(
     matrix4_multiplied_by_matrix4(local2object, local),
@@ -64,7 +66,7 @@ void TranslateAxis::Transform(const Matrix4& manip2object, const Matrix4& device
     current = _axis * distance_for_axis(_start, current, _axis);
 
     translation_local2object(current, current, manip2object);
-    vector3_snap(current, GetGridSize());
+    vector3_snap(current, GlobalGrid().getGridSize());
 
     _translatable.translate(current);
 }
@@ -81,7 +83,7 @@ void TranslateFree::Transform(const Matrix4& manip2object, const Matrix4& device
     current = current - _start;
 
     translation_local2object(current, current, manip2object);
-    vector3_snap(current, GetGridSize());
+    vector3_snap(current, GlobalGrid().getGridSize());
     
     _translatable.translate(current);
 }
@@ -98,9 +100,9 @@ void ScaleAxis::Transform(const Matrix4& manip2object, const Matrix4& device2man
     Vector3 delta = current - _start;
 
     translation_local2object(delta, delta, manip2object);
-    vector3_snap(delta, GetGridSize());
+    vector3_snap(delta, GlobalGrid().getGridSize());
     
-    Vector3 start(vector3_snapped(_start, GetGridSize()));
+    Vector3 start(vector3_snapped(_start, GlobalGrid().getGridSize()));
     Vector3 scale(
       start[0] == 0 ? 1 : 1 + delta[0] / start[0],
       start[1] == 0 ? 1 : 1 + delta[1] / start[1],
@@ -121,9 +123,9 @@ void ScaleFree::Transform(const Matrix4& manip2object, const Matrix4& device2man
     Vector3 delta = current - _start;
 
     translation_local2object(delta, delta, manip2object);
-    vector3_snap(delta, GetGridSize());
+    vector3_snap(delta, GlobalGrid().getGridSize());
     
-    Vector3 start(vector3_snapped(_start, GetGridSize()));
+    Vector3 start(vector3_snapped(_start, GlobalGrid().getGridSize()));
     Vector3 scale(
       start[0] == 0 ? 1 : 1 + delta[0] / start[0],
       start[1] == 0 ? 1 : 1 + delta[1] / start[1],

@@ -41,6 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iclipper.h"
 #include "ifilesystem.h"
 #include "iundo.h"
+#include "igrid.h"
 #include "ifilter.h"
 #include "itoolbar.h"
 #include "editable.h"
@@ -103,7 +104,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "entity.h"
 #include "entitylist.h"
 #include "findtexturedialog.h"
-#include "grid.h"
 #include "groupdialog.h"
 #include "gtkdlgs.h"
 #include "gtkmisc.h"
@@ -812,7 +812,7 @@ void PasteToCamera()
   // Work out the delta
   Vector3 mid;
   Select_GetMid(mid);
-  Vector3 delta = vector3_snapped(camwnd.getCameraOrigin(), GetGridSize()) - mid;
+  Vector3 delta = vector3_snapped(camwnd.getCameraOrigin(), GlobalGrid().getGridSize()) - mid;
   
   // Move to camera
   GlobalSelectionSystem().translateSelected(delta);
@@ -1072,8 +1072,8 @@ void Selection_Clone()
 
     Scene_Clone_Selected(GlobalSceneGraph());
 
-    //NudgeSelection(eNudgeRight, GetGridSize(), GlobalXYWnd_getCurrentViewType());
-    //NudgeSelection(eNudgeDown, GetGridSize(), GlobalXYWnd_getCurrentViewType());
+    //NudgeSelection(eNudgeRight, GlobalGrid().getGridSize(), GlobalXYWnd_getCurrentViewType());
+    //NudgeSelection(eNudgeDown, GlobalGrid().getGridSize(), GlobalXYWnd_getCurrentViewType());
   }
 }
 
@@ -1109,25 +1109,25 @@ void Selection_Deselect()
 void Selection_NudgeUp()
 {
   UndoableCommand undo("nudgeSelectedUp");
-  NudgeSelection(eNudgeUp, GetGridSize(), GlobalXYWnd().getActiveViewType());
+  NudgeSelection(eNudgeUp, GlobalGrid().getGridSize(), GlobalXYWnd().getActiveViewType());
 }
 
 void Selection_NudgeDown()
 {
   UndoableCommand undo("nudgeSelectedDown");
-  NudgeSelection(eNudgeDown, GetGridSize(), GlobalXYWnd().getActiveViewType());
+  NudgeSelection(eNudgeDown, GlobalGrid().getGridSize(), GlobalXYWnd().getActiveViewType());
 }
 
 void Selection_NudgeLeft()
 {
   UndoableCommand undo("nudgeSelectedLeft");
-  NudgeSelection(eNudgeLeft, GetGridSize(), GlobalXYWnd().getActiveViewType());
+  NudgeSelection(eNudgeLeft, GlobalGrid().getGridSize(), GlobalXYWnd().getActiveViewType());
 }
 
 void Selection_NudgeRight()
 {
   UndoableCommand undo("nudgeSelectedRight");
-  NudgeSelection(eNudgeRight, GetGridSize(), GlobalXYWnd().getActiveViewType());
+  NudgeSelection(eNudgeRight, GlobalGrid().getGridSize(), GlobalXYWnd().getActiveViewType());
 }
 
 void ToolChanged() {  
@@ -1385,16 +1385,16 @@ void Scene_SnapToGrid_Component_Selected(scene::Graph& graph, float snap)
 void Selection_SnapToGrid()
 {
   StringOutputStream command;
-  command << "snapSelected -grid " << GetGridSize();
+  command << "snapSelected -grid " << GlobalGrid().getGridSize();
   UndoableCommand undo(command.c_str());
 
   if(GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
   {
-    Scene_SnapToGrid_Component_Selected(GlobalSceneGraph(), GetGridSize());
+    Scene_SnapToGrid_Component_Selected(GlobalSceneGraph(), GlobalGrid().getGridSize());
   }
   else
   {
-    Scene_SnapToGrid_Selected(GlobalSceneGraph(), GetGridSize());
+    Scene_SnapToGrid_Selected(GlobalSceneGraph(), GlobalGrid().getGridSize());
   }
 }
 
@@ -1839,7 +1839,18 @@ GtkMenuItem* create_grid_menu()
   if (g_Layout_enableDetachableMenus.m_value)
     menu_tearoff (menu);
 
-  Grid_constructMenu(menu);
+	createCheckMenuItemWithMnemonic(menu, "Grid0.125", "SetGrid0.125");
+	createCheckMenuItemWithMnemonic(menu, "Grid0.25", "SetGrid0.25");
+	createCheckMenuItemWithMnemonic(menu, "Grid0.5", "SetGrid0.5");
+	createCheckMenuItemWithMnemonic(menu, "Grid1", "SetGrid1");
+	createCheckMenuItemWithMnemonic(menu, "Grid2", "SetGrid2");
+	createCheckMenuItemWithMnemonic(menu, "Grid4", "SetGrid4");
+	createCheckMenuItemWithMnemonic(menu, "Grid8", "SetGrid8");
+	createCheckMenuItemWithMnemonic(menu, "Grid16", "SetGrid16");
+	createCheckMenuItemWithMnemonic(menu, "Grid32", "SetGrid32");
+	createCheckMenuItemWithMnemonic(menu, "Grid64", "SetGrid64");
+	createCheckMenuItemWithMnemonic(menu, "Grid128", "SetGrid128");
+	createCheckMenuItemWithMnemonic(menu, "Grid256", "SetGrid256");
 
   return grid_menu_item;
 }
@@ -2495,8 +2506,8 @@ void MainFrame::Create()
   SurfaceInspector_constructWindow(window);
   PatchInspector_constructWindow(window);
 
-  AddGridChangeCallback(SetGridStatusCaller(*this));
-  AddGridChangeCallback(ReferenceCaller<MainFrame, XY_UpdateAllWindows>(*this));
+  GlobalGrid().addGridChangeCallback(SetGridStatusCaller(*this));
+  GlobalGrid().addGridChangeCallback(ReferenceCaller<MainFrame, XY_UpdateAllWindows>(*this));
 
   g_defaultToolMode = DragMode;
   g_defaultToolMode();
@@ -2505,7 +2516,7 @@ void MainFrame::Create()
   EverySecondTimer_enable();
   //GlobalShortcuts_reportUnregistered();
   
-  // Restore any XYViews that were active before, this applies to all view layouts
+  // Restore any floating XYViews that were active before, this applies to all view layouts
   GlobalXYWnd().restoreState();
 }
 
@@ -2598,7 +2609,6 @@ int getFarClipDistance() {
 	return getCameraSettings()->cubicScale();
 }
 
-float (*GridStatus_getGridSize)() = GetGridSize;
 int (*GridStatus_getRotateIncrement)() = getRotateIncrement;
 int (*GridStatus_getFarClipDistance)() = getFarClipDistance;
 
@@ -2606,7 +2616,7 @@ void MainFrame::SetGridStatus()
 {
   StringOutputStream status(64);
   const char* lock = (GlobalBrush()->textureLockEnabled()) ? "ON" : "OFF";
-  status << "G:" << GridStatus_getGridSize()
+  status << "G:" << GlobalGrid().getGridSize()
     << "  R:" << GridStatus_getRotateIncrement()
     << "  C:" << GridStatus_getFarClipDistance()
     << "  L:" << lock;
@@ -2785,8 +2795,6 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("TextureDirectoryList", FreeCaller<DoTextureListDlg>());
 	
 	GlobalEventManager().addCommand("RefreshShaders", FreeCaller<RefreshShaders>());
-	
-	Grid_registerCommands();
 	
 	GlobalEventManager().addCommand("SnapToGrid", FreeCaller<Selection_SnapToGrid>());
 	

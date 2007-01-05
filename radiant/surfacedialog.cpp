@@ -73,7 +73,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "patch.h"
 #include "commands.h"
 #include "stream/stringstream.h"
-#include "grid.h"
+#include "igrid.h"
 #include "textureentry.h"
 
 #include "brush/BrushInstance.h"
@@ -218,7 +218,7 @@ public:
   {
     m_parent = main_window;
     Create();
-    AddGridChangeCallback(FreeCaller<SurfaceInspector_GridChange>());
+    GlobalGrid().addGridChangeCallback(FreeCaller<SurfaceInspector_GridChange>());
   }
   void destroyWindow()
   {
@@ -403,8 +403,8 @@ si_globals_t g_si_globals;
 // see fenris #2810
 void DoSnapTToGrid(float hscale, float vscale)
 {
-  g_si_globals.shift[0] = static_cast<float>(float_to_integer(static_cast<float>(GetGridSize()) / hscale));
-  g_si_globals.shift[1] = static_cast<float>(float_to_integer(static_cast<float>(GetGridSize()) / vscale));
+  g_si_globals.shift[0] = static_cast<float>(float_to_integer(static_cast<float>(GlobalGrid().getGridSize()) / hscale));
+  g_si_globals.shift[1] = static_cast<float>(float_to_integer(static_cast<float>(GlobalGrid().getGridSize()) / vscale));
   getSurfaceInspector().queueDraw();
 }
 
