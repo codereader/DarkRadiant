@@ -100,6 +100,11 @@ public:
 	virtual void connect(GtkObject* object) = 0;
 	virtual void disconnect(GtkObject* object) = 0;
 	
+	// Connects/Disconnects a Dialog Window to the eventmanager. Dialog windows get the chance
+	// to process an incoming keypress event, BEFORE the global shortcuts are searched and launched.
+	virtual void connectDialogWindow(GtkWindow* window) = 0;
+	virtual void disconnectDialogWindow(GtkWindow* window) = 0;
+	
 	// Tells the key event manager about the main window so that the accelgroup can be connected correctly
 	virtual void connectAccelGroup(GtkWindow* window) = 0;
 	

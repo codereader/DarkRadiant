@@ -42,7 +42,12 @@ class EventManager :
 	// The list of all allocated Accelerators
 	typedef std::list<Accelerator> AcceleratorList;
 
+	// The list of connect (top-level) windows, whose keypress events are immediately processed 
 	HandlerMap _handlers;
+	
+	// The list of connected dialog window handlers, whose keypress events are 
+	// processed AFTER the dialog window's default event handler.
+	HandlerMap _dialogWindows;
 	
 	// The list containing all registered accelerator objects
 	AcceleratorList _accelerators;
@@ -250,6 +255,41 @@ public:
 		}
 	}
 	
+	/* greebo: This connects an dialog window to the event handler. This means the following:
+	 * 
+	 * An incoming key-press event reaches the static method onDialogKeyPress which
+	 * passes the key event to the connect dialog FIRST, before the key event has a
+	 * chance to be processed by the standard shortcut processor. IF the dialog window
+	 * standard handler returns TRUE, that is. If the gtk_window_propagate_key_event()
+	 * function returns FALSE, the window couldn't find a use for this specific key event
+	 * and the event can be passed safely to the onKeyPress() method. 
+	 * 
+	 * This way it is ensured that the dialog window can handle, say, text entries without
+	 * firing global shortcuts all the time.   
+	 */
+	void connectDialogWindow(GtkWindow* window) {
+		gulong handlerId = g_signal_connect(G_OBJECT(window), "key_press_event", 
+											G_CALLBACK(onDialogKeyPress), this);
+
+		_dialogWindows[handlerId] = GTK_OBJECT(window);		
+	}
+	
+	void disconnectDialogWindow(GtkWindow* window) {
+		GtkObject* object = GTK_OBJECT(window);
+		
+		for (HandlerMap::iterator i = _dialogWindows.begin(); i != _dialogWindows.end(); ) {
+			// If the object pointer matches the one stored in the list, remove the handler id
+			if (i->second == object) {
+				g_signal_handler_disconnect(G_OBJECT(i->second), i->first);
+				// Be sure to increment the iterator with a postfix ++, so that the "old" iterator is passed
+				_dialogWindows.erase(i++);
+			}
+			else {
+				i++;
+			}
+		}
+	}
+	
 	void connectAccelGroup(GtkWindow* window) {
 		gtk_window_add_accel_group(window, _accelGroup); 
 	}
@@ -404,6 +444,24 @@ private:
 		}
 		
 		return findAccelerator(keyval, getKeyboardFlags(event->state));
+	}
+
+	// The GTK keypress callback
+	static gboolean onDialogKeyPress(GtkWindow* window, GdkEventKey* event, gpointer data) {
+		
+		// Convert the passed pointer onto a KeyEventManager pointer
+		EventManager* self = reinterpret_cast<EventManager*>(data);
+		
+		// Pass the key event to the connected dialog window and see if it can process it (returns TRUE)
+		gboolean keyProcessed = gtk_window_propagate_key_event(window, event);
+		
+		if (!keyProcessed) {
+			// The dialog window returned FALSE, pass the key on to the default onKeyPress handler
+			self->onKeyPress(window, event, data);
+		}
+		
+		// If we return true here, the dialog window could process the key, and the GTK callback chain is stopped 
+		return keyProcessed;
 	}
 
 	// The GTK keypress callback

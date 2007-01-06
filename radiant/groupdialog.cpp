@@ -108,7 +108,7 @@ void GroupDlg::Create(GtkWindow* parent)
   ASSERT_MESSAGE(m_window == 0, "dialog already created");
 
   GtkWindow* window = create_persistent_floating_window("Entities", parent);
-  //GlobalEventManager().connect(GTK_OBJECT(window));
+  GlobalEventManager().connectDialogWindow(window);
   global_accel_connect_window(window);
 
   window_connect_focus_in_clear_focus_widget(window);
@@ -239,6 +239,10 @@ void GroupDialog_Construct()
 
   GlobalEventManager().addCommand("ViewEntityInfo", FreeCaller<GroupDialog_ToggleShow>());
 }
+
 void GroupDialog_Destroy()
 {
+	if (g_GroupDlg.m_window != NULL) {
+		GlobalEventManager().disconnectDialogWindow(g_GroupDlg.m_window);
+	}
 }
