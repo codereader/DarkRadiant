@@ -621,6 +621,7 @@ GtkWindow* PatchInspector::BuildDialog()
   m_position_tracker.connect(window);
 
   global_accel_connect_window(window);
+  GlobalEventManager().connectDialogWindow(window);
 
   window_connect_focus_in_clear_focus_widget(window);
   
