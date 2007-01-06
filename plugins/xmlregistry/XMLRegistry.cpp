@@ -81,16 +81,16 @@ public:
 	/* Constructor: 
 	 * Creates an empty XML structure in the memory and adds the nodes _topLevelNode 
 	 */
-	XMLRegistry():
-	_registry(NULL),
-	_origXmlDocPtr(NULL),
-	_importNode(NULL),
-	_topLevelNode("darkradiant")
+	XMLRegistry() :
+		_topLevelNode("darkradiant"),
+		_registry(NULL),
+		_origXmlDocPtr(NULL),
+		_importNode(NULL)
 	{
-		_defaultImportNode	= std::string("/") + _topLevelNode;
+		_defaultImportNode = std::string("/") + _topLevelNode;
 		
 		// Create the base XML structure with the <darkradiant> top-level tag
-		_origXmlDocPtr	 = xmlNewDoc(xmlCharStrdup("1.0"));
+		_origXmlDocPtr = xmlNewDoc(xmlCharStrdup("1.0"));
 	  	_origXmlDocPtr->children = xmlNewDocNode(_origXmlDocPtr, NULL, 
 	  												xmlCharStrdup(_topLevelNode.c_str()), 
 	  												xmlCharStrdup(""));
