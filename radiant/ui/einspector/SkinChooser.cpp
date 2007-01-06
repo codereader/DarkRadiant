@@ -45,13 +45,18 @@ SkinChooser::SkinChooser()
 	gtk_window_set_title(GTK_WINDOW(_widget), "Choose skin");
 
 	// Set the default size of the window
-	gint w, h;
-	gtk_window_get_size(gd, &w, &h);
-	gtk_window_set_default_size(GTK_WINDOW(_widget), w, h);
+	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
+	gint w = gdk_screen_get_width(scr);
 	
-	// Vbox contains treeview and buttons panel
+	// Main vbox
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(vbx), createTreeView(), TRUE, TRUE, 0);
+
+	// HBox containing tree view and preview
+	GtkWidget* hbx = gtk_hbox_new(FALSE, 12);
+	gtk_box_pack_start(GTK_BOX(hbx), createTreeView(w / 5), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), createPreview(w / 3), FALSE, FALSE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(vbx), hbx, TRUE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
@@ -59,7 +64,7 @@ SkinChooser::SkinChooser()
 }
 
 // Create the TreeView
-GtkWidget* SkinChooser::createTreeView() {
+GtkWidget* SkinChooser::createTreeView(gint width) {
 	
 	// Create the treestore
 	_treeStore = gtk_tree_store_new(N_COLUMNS, 
@@ -78,7 +83,14 @@ GtkWidget* SkinChooser::createTreeView() {
 														ICON_COL));
 	
 	// Pack treeview into a ScrolledFrame and return
+	gtk_widget_set_size_request(_treeView, width, -1);
 	return gtkutil::ScrolledFrame(_treeView);
+}
+
+// Create the model preview
+GtkWidget* SkinChooser::createPreview(gint size) {
+	_preview.setSize(size);
+	return _preview;
 }
 
 // Create the buttons panel

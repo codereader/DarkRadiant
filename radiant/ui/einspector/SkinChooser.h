@@ -1,6 +1,8 @@
 #ifndef SKINCHOOSER_H_
 #define SKINCHOOSER_H_
 
+#include "ui/common/ModelPreview.h"
+
 #include <gtk/gtkwidget.h>
 #include <gtk/gtktreestore.h>
 
@@ -29,13 +31,17 @@ class SkinChooser
 	std::string _lastSkin;
 	std::string _prevSkin;
 
+	// Model preview widget
+	ModelPreview _preview;
+
 private:
 
 	// Constructor creates GTK widgets
 	SkinChooser();
 	
 	// Widget creation functions
-	GtkWidget* createTreeView();
+	GtkWidget* createTreeView(gint width);
+	GtkWidget* createPreview(gint size);
 	GtkWidget* createButtons();
 	
 	// Show the dialog and block until selection is made
