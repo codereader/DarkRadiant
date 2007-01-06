@@ -56,42 +56,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // =============================================================================
 // Misc stuff
 
-void command_connect_accelerator(const char* name)
-{
-  const Command& command = GlobalCommands_find(name);
-  GlobalShortcuts_register(name);
-  global_accel_group_connect(command.m_accelerator, command.m_callback);
-}
-
-void command_disconnect_accelerator(const char* name)
-{
-  const Command& command = GlobalCommands_find(name);
-  global_accel_group_disconnect(command.m_accelerator, command.m_callback);
-}
-
-void toggle_add_accelerator(const char* name)
-{
-  const Toggle& toggle = GlobalToggles_find(name);
-  GlobalShortcuts_register(name);
-  global_accel_group_connect(toggle.m_command.m_accelerator, toggle.m_command.m_callback);
-}
-
-GtkCheckMenuItem* create_check_menu_item_with_mnemonic(GtkMenu* menu, const char* mnemonic, const char* commandName)
-{
-  GlobalShortcuts_register(commandName);
-  const Toggle& toggle = GlobalToggles_find(commandName);
-  global_accel_group_connect(toggle.m_command.m_accelerator, toggle.m_command.m_callback);
-  return create_check_menu_item_with_mnemonic(menu, mnemonic, toggle);
-}
-
-GtkMenuItem* create_menu_item_with_mnemonic(GtkMenu* menu, const char *mnemonic, const char* commandName)
-{
-  GlobalShortcuts_register(commandName);
-  const Command& command = GlobalCommands_find(commandName);
-  global_accel_group_connect(command.m_accelerator, command.m_callback);
-  return create_menu_item_with_mnemonic(menu, mnemonic, command);
-}
-
 /* greebo: Create a menu item under the given <menu> and connect it to the given <command> name
  */
 GtkMenuItem* createMenuItemWithMnemonic(GtkMenu* menu, const std::string& caption, const std::string& commandName) {

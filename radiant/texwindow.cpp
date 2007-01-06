@@ -1548,12 +1548,9 @@ void TextureClipboard_textureSelected(const char* shader);
 
 void TextureBrowser_Construct()
 {
-  //GlobalToggles_insert("ShowInUse", FreeCaller<TextureBrowser_ToggleHideUnused>(), ToggleItem::AddCallbackCaller(g_TexturesMenu.m_hideunused_item), Accelerator('U'));
   GlobalEventManager().addRegistryToggle("ShowInUse", RKEY_TEXTURES_HIDE_UNUSED);
   GlobalEventManager().addCommand("ShowAllTextures", FreeCaller<TextureBrowser_showAll>());
   GlobalEventManager().addCommand("ViewTextures", FreeCaller<TextureBrowser_toggleShown>());
-  GlobalToggles_insert("ToggleShowShaders", FreeCaller<TextureBrowser_ToggleShowShaders>(), ToggleItem::AddCallbackCaller(g_TexturesMenu.m_showshaders_item));
-  GlobalToggles_insert("ToggleShowShaderlistOnly", FreeCaller<TextureBrowser_ToggleShowShaderListOnly>(), ToggleItem::AddCallbackCaller(g_TexturesMenu.m_showshaderlistonly_item));
 
   GlobalPreferenceSystem().registerPreference("TextureScale",
     makeSizeStringImportCallback(TextureBrowserSetScaleCaller(g_TextureBrowser)),
