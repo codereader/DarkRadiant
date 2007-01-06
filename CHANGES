@@ -1,10 +1,21 @@
+06/01/2007
+OrbWeaver
+- Added skin chooser dialog for entity inspector, allows selection of arbitrary
+  skins for a model.
+
+05/01/2007
+OrbWeaver
+- Fixed bug causing parse failure of .mtr files with recursive map expressions.
+greebo
+- Multiple orthogonal views can now be created.
+
 15/12/2006
 OrbWeaver
-- Added Light Inspector
+- Added Light Inspector.
 
 07/12/2006
 greebo
-- Added draggable projected lights
+- Added draggable projected lights.
 
 25/11/2006
 OrbWeaver

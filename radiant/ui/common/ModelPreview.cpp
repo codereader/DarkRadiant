@@ -24,7 +24,8 @@ namespace {
 // Construct the widgets
 
 ModelPreview::ModelPreview()
-: _widget(gtk_frame_new(NULL))
+: _widget(gtk_frame_new(NULL)),
+  _lastModel("")
 {
 	// Main vbox - above is the GL widget, below is the toolbar
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 0);
@@ -122,8 +123,6 @@ void ModelPreview::setModel(const std::string& model) {
 	}
 
 	// Reset camera if the model has changed
-	static std::string _lastModel;	
-
 	if (model != _lastModel) {
 		// Reset the rotation
 		_rotation = Matrix4::getIdentity();
@@ -209,8 +208,8 @@ void ModelPreview::callbackGLMotion(GtkWidget* widget, GdkEventMotion* ev, Model
 		static Vector3 _zAxis(0, 0, 1);
 		Vector3 axisRot = deltaPos.crossProduct(_zAxis);
 		
-		// Grab the GL widget, and update the modelview matrix with the additional
-		// rotation (TODO: may not be the best way to do this).
+		// Grab the GL widget, and update the modelview matrix with the 
+		// additional rotation
 		if (glwidget_make_current(widget) != FALSE) {
 
 			// Premultiply the current modelview matrix with the rotation,
