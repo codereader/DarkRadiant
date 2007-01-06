@@ -1009,7 +1009,7 @@ void Patch::NaturalTexture() {
 	undoSave();
 
 	// Retrieve the default scale from the registry
-	float defaultScale = GlobalRegistry().getFloat("user/ui/defaultTextureScale");
+	float defaultScale = GlobalRegistry().getFloat("user/ui/textures/defaultTextureScale");
 
 	/* In this next block, the routine cycles through all the patch columns and
 	 * measures the distances to the next column. 
