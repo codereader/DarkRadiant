@@ -78,6 +78,7 @@ public:
 	bool showOutline() const;
 	bool showAxes() const;
 	bool showWorkzone() const;
+	bool showSizeInfo() const;
 	
 	unsigned int defaultBlockSize() const;
 	

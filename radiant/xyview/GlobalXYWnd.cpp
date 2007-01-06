@@ -237,6 +237,10 @@ bool XYWndManager::showGrid() const {
 	return _showGrid;
 }
 
+bool XYWndManager::showSizeInfo() const {
+	return _showSizeInfo;
+}
+
 void XYWndManager::updateAllViews() {
 	for (XYWndList::iterator i = _XYViews.begin(); i != _XYViews.end(); i++) {
 		XYWnd* xyview = *i;
