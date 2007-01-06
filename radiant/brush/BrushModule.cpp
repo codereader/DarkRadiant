@@ -57,7 +57,7 @@ void BrushModuleClass::constructPreferencePage(PreferenceGroup& group) {
 	
 	// Add the default texture scale preference and connect it to the according registryKey
 	// Note: this should be moved somewhere else, I think
-	page->appendEntry("Default texture scale", "user/ui/defaultTextureScale");
+	page->appendEntry("Default texture scale", "user/ui/textures/defaultTextureScale");
 
 	// The checkbox to enable/disable the texture lock option
 	page->appendCheckBox("", "Enable Texture Lock", "user/ui/brush/textureLock");

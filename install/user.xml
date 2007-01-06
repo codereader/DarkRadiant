@@ -7,13 +7,16 @@
     </ModelSelector>
 	<showAllLightRadii value="0"/>
 	<alwaysShowLightVertices value="1"/>
-	<defaultTextureScale value="0.5" />
+	<textures>
+		<hideUnused value="0" />
+		<defaultTextureScale value="0.5" />
+	</textures>
 	<grid>
 		<defaultGridPower value="3" />
 	</grid>
 	<xyview>
 		<views name="default">
-			<view type="XY" xPosition="510" yPosition="100" width="400" height="400"/>
+			<view type="XY" xPosition="500" yPosition="100" width="400" height="430"/>
 		</views>
 		<showGrid value="1" />
 		<chaseMouse value="1" />
@@ -44,7 +47,7 @@
 		<rotationSpeed value="3" />
 		<cubicScale value="13" />
 		<drawMode value="2" />
-		<window xPosition="32" yPosition="79" width="452" height="430" />
+		<window xPosition="37" yPosition="100" width="450" height="430" />
 	</camera>
     <toolbar name="view" align="horizontal">
 			<toolbutton name="open" action="OpenMap" tooltip="Open a map file" icon="file_open.png"/>

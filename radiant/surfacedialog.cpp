@@ -411,7 +411,7 @@ void DoSnapTToGrid(float hscale, float vscale)
 void SurfaceInspector_GridChange()
 {
   if (g_si_globals.m_bSnapTToGrid) {
-  	float defaultScale = GlobalRegistry().getFloat("user/ui/defaultTextureScale");
+  	float defaultScale = GlobalRegistry().getFloat("user/ui/textures/defaultTextureScale");
     DoSnapTToGrid(defaultScale, defaultScale);
   }
 }

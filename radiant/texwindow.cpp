@@ -195,7 +195,14 @@ enum StartupShaders
   STARTUPSHADERS_ALL,
 };
 
-class TextureBrowser
+namespace {
+	const std::string RKEY_TEXTURES_HIDE_UNUSED = "user/ui/textures/hideUnused";
+}
+
+void TextureBrowser_heightChanged(TextureBrowser& textureBrowser);
+
+class TextureBrowser :
+	public RegistryKeyObserver
 {
 public:
 	int width, height;
@@ -245,6 +252,12 @@ public:
     TextureBrowser_queueDraw(*this);
   }
   
+  void keyChanged() {
+  	m_hideUnused = (GlobalRegistry().get(RKEY_TEXTURES_HIDE_UNUSED) == "1");
+  	
+  	TextureBrowser_heightChanged(*this);
+	m_originInvalid = true;
+  }
   
   // Return the display width of a texture in the texture browser
   int getTextureWidth(qtexture_t* tex)
@@ -313,6 +326,11 @@ public:
     m_resizeTextures(true),
     m_uniformTextureSize(128)
   {
+  }
+  
+  void construct() {
+  	m_hideUnused = (GlobalRegistry().get(RKEY_TEXTURES_HIDE_UNUSED) == "1");
+  	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_HIDE_UNUSED);
   }
 };
 
@@ -653,7 +671,7 @@ public:
   }
 };
 
-void TextureBrowser_SetHideUnused(TextureBrowser& textureBrowser, bool hideUnused);
+//void TextureBrowser_SetHideUnused(TextureBrowser& textureBrowser, bool hideUnused);
 
 GtkWidget* g_page_textures;
 
@@ -732,13 +750,13 @@ public:
   }
 };
 
-bool TextureBrowser_hideUnused();
+/*bool TextureBrowser_hideUnused();
 
 void TextureBrowser_hideUnusedExport(const BoolImportCallback& importer)
 {
   importer(TextureBrowser_hideUnused());
 }
-typedef FreeCaller1<const BoolImportCallback&, TextureBrowser_hideUnusedExport> TextureBrowserHideUnusedExport;
+typedef FreeCaller1<const BoolImportCallback&, TextureBrowser_hideUnusedExport> TextureBrowserHideUnusedExport;*/
 
 void TextureBrowser_showShadersExport(const BoolImportCallback& importer)
 {
@@ -755,12 +773,12 @@ typedef FreeCaller1<const BoolImportCallback&, TextureBrowser_showShaderlistOnly
 class TexturesMenu
 {
 public:
-  ToggleItem m_hideunused_item;
+  //ToggleItem m_hideunused_item;
   ToggleItem m_showshaders_item;
   ToggleItem m_showshaderlistonly_item;
 
   TexturesMenu() :
-    m_hideunused_item(TextureBrowserHideUnusedExport()),
+    //m_hideunused_item(TextureBrowserHideUnusedExport()),
     m_showshaders_item(TextureBrowserShowShadersExport()),
     m_showshaderlistonly_item(TextureBrowserShowShaderlistOnlyExport())
   {
@@ -769,7 +787,7 @@ public:
 
 TexturesMenu g_TexturesMenu;
 
-void TextureBrowser_SetHideUnused(TextureBrowser& textureBrowser, bool hideUnused)
+/*void TextureBrowser_SetHideUnused(TextureBrowser& textureBrowser, bool hideUnused)
 {
   if(hideUnused)
   {
@@ -784,7 +802,7 @@ void TextureBrowser_SetHideUnused(TextureBrowser& textureBrowser, bool hideUnuse
 
   TextureBrowser_heightChanged(textureBrowser);
   textureBrowser.m_originInvalid = true;
-}
+}*/
 
 //++timo NOTE: this is a mix of Shader module stuff and texture explorer
 // it might need to be split in parts or moved out .. dunno
@@ -1251,12 +1269,12 @@ TextureBrowser& GlobalTextureBrowser()
   return g_TextureBrowser;
 }
 
-bool TextureBrowser_hideUnused()
+/*bool TextureBrowser_hideUnused()
 {
   return g_TextureBrowser.m_hideUnused;
-}
+}*/
 
-void TextureBrowser_ToggleHideUnused()
+/*void TextureBrowser_ToggleHideUnused()
 {
   if(g_TextureBrowser.m_hideUnused)
   {
@@ -1266,10 +1284,12 @@ void TextureBrowser_ToggleHideUnused()
   {
     TextureBrowser_SetHideUnused(g_TextureBrowser, true);
   }
-}
+}*/
 
 GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel)
 {
+	g_TextureBrowser.construct();
+	
   GlobalShaderSystem().setActiveShadersChangedNotify(ReferenceCaller<TextureBrowser, TextureBrowser_activeShadersChanged>(g_TextureBrowser));
 
   GtkWidget* hbox = gtk_hbox_new (FALSE, 0);
@@ -1528,7 +1548,8 @@ void TextureClipboard_textureSelected(const char* shader);
 
 void TextureBrowser_Construct()
 {
-  GlobalToggles_insert("ShowInUse", FreeCaller<TextureBrowser_ToggleHideUnused>(), ToggleItem::AddCallbackCaller(g_TexturesMenu.m_hideunused_item), Accelerator('U'));
+  //GlobalToggles_insert("ShowInUse", FreeCaller<TextureBrowser_ToggleHideUnused>(), ToggleItem::AddCallbackCaller(g_TexturesMenu.m_hideunused_item), Accelerator('U'));
+  GlobalEventManager().addRegistryToggle("ShowInUse", RKEY_TEXTURES_HIDE_UNUSED);
   GlobalEventManager().addCommand("ShowAllTextures", FreeCaller<TextureBrowser_showAll>());
   GlobalEventManager().addCommand("ViewTextures", FreeCaller<TextureBrowser_toggleShown>());
   GlobalToggles_insert("ToggleShowShaders", FreeCaller<TextureBrowser_ToggleShowShaders>(), ToggleItem::AddCallbackCaller(g_TexturesMenu.m_showshaders_item));
