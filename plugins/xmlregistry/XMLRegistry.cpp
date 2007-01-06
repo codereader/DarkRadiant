@@ -84,9 +84,9 @@ public:
 	XMLRegistry():
 	_registry(NULL),
 	_origXmlDocPtr(NULL),
-	_importNode(NULL)
+	_importNode(NULL),
+	_topLevelNode("darkradiant")
 	{
-		_topLevelNode		= "darkradiant";
 		_defaultImportNode	= std::string("/") + _topLevelNode;
 		
 		// Create the base XML structure with the <darkradiant> top-level tag
@@ -596,17 +596,22 @@ public:
 	 * 
 	 *  Note: This can and is intended to affect multiple nodes as well 
 	 * 
-	 *  @returns: true, if everything went fine, false otherwise  
+	 *  @returns: true  
 	 */
 	bool setAttribute(xml::Document& doc, const std::string& xPath, 
 	             const std::string& attrName, const std::string& attrValue) 
 	{
+		globalOutputStream() << "XMLRegistry: Setting attribute " << attrName.c_str()
+							 << " of nodes matching XPath: " << xPath.c_str() << "..."; 
+		
 		// Obtain a list of the nodes whose attributes should be altered 
 		xml::NodeList nodeList = doc.findXPath(xPath);
 		
 		for (unsigned int i = 0; i<nodeList.size(); i++) {
 			nodeList[i].setAttributeValue(attrName, attrValue);
 		}
+		
+		globalOutputStream() << nodeList.size() << " nodes affected.\n";
 		
 		return true;
 	}
@@ -663,6 +668,21 @@ public:
 			const std::string replacement = getMemory(std::string(results[1].first, results[1].second));
 			
 			// Replace the entire regex match results[0] with the replacement string
+			output.replace(results[0].first, results[0].second, replacement);
+			
+			// Set the iterator to right after the match
+  			start = results[0].second;
+		}
+		
+		// Now replace the {$ROOT} occurence with the XMLRegistry root key
+		// The regex would be \{\$ROOT\}, but the backslashes have to be escaped for C++, hence the double
+		expr = "\\{\\$ROOT\\}";
+		start = output.begin();
+ 		end = output.end();
+		while (boost::regex_search(start, end, results, expr, boost::match_default)) {
+ 			const std::string replacement = std::string("/") + _topLevelNode;
+ 			
+ 			// Replace the entire regex match results[0] with the replacement string
 			output.replace(results[0].first, results[0].second, replacement);
 			
 			// Set the iterator to right after the match
