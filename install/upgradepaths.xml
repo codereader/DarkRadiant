@@ -75,17 +75,19 @@
 		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_vertex_normal" />
 		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_startend_selected" />
 		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="light_startend_deselected" />
+		<addNode toXPath="/user/ui/colourschemes//scheme" nodeName="colour" name="xyview_crosshairs" />
 		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_vertex_deselected']" name="value" value="0 1 0" />
 		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_vertex_selected']" name="value" value="0 0 1" />
 		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_vertex_normal']" name="value" value="1 0 0" />
 		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_startend_selected']" name="value" value="0 0 1" />
 		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='light_startend_deselected']" name="value" value="0 1 1" />
+		<setAttribute xPath="/user/ui/colourschemes//scheme/colour[@name='xyview_crosshairs']" name="value" value="0.2 0.9 0.2" />
 		<!-- Clear all active attributes in the base registry -->
 		<setAttribute target="base" xPath="//user/ui/colourschemes//scheme" name="active" value="0" />
 		<!-- Copy all remaining colour schemes into the new registry -->
 		<copyNode fromXPath="/user/ui/colourschemes//scheme[@readonly!='1']" toXPath="user/ui/colourschemes" />
 		<!-- Set the active scheme to the one that was stored in Memory 1 -->
-		<setAttribute xPath="/user/ui/colourschemes//scheme[@name='{$1}']" name="active" value="1" />
+		<setAttribute target="base" xPath="{$ROOT}/user/ui/colourschemes//scheme[@name='{$1}']" name="active" value="1" />
 		<!-- Import the state of showAllLightRadii into the new registry -->
 		<copyValue fromXPath="/user/ui/showAllLightRadii" toXPath="user/ui/showAllLightRadii" />
 	</upgradePath>
