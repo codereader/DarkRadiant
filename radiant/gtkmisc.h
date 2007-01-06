@@ -42,18 +42,9 @@ inline void process_gui()
   }
 }
 
-void command_connect_accelerator(const char* commandName);
-void command_disconnect_accelerator(const char* commandName);
-void toggle_add_accelerator(const char* commandName);
-
 typedef struct _GtkMenu GtkMenu;
 typedef struct _GtkMenuItem GtkMenuItem;
 typedef struct _GtkCheckMenuItem GtkCheckMenuItem;
-
-// this also sets up the shortcut using command_connect_accelerator (greebo: DEPRECATED)
-GtkMenuItem* create_menu_item_with_mnemonic(GtkMenu *menu, const char *mnemonic, const char* commandName);
-// this also sets up the shortcut using command_connect_accelerator (greebo: DEPRECATED)
-GtkCheckMenuItem* create_check_menu_item_with_mnemonic(GtkMenu* menu, const char* mnemonic, const char* commandName);
 
 // greebo: This is the new function to add a menu item to the given <menu> and connect it to the passed <commandName> 
 GtkMenuItem* createMenuItemWithMnemonic(GtkMenu* menu, const std::string& caption, const std::string& commandName);

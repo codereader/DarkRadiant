@@ -428,6 +428,10 @@ void XYWndManager::destroyOrthoView(XYWnd* xyWnd) {
 				GtkWindow* parent = xyWnd->getParent();
 				GtkWidget* glWidget = xyWnd->getWidget();
 				
+				if (_activeXY == xyWnd) {
+					_activeXY = NULL;
+				}
+				
 				// Destroy the window
 				delete xyWnd;
 				

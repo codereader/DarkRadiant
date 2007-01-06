@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 class WindowObserver;
 void GlobalWindowObservers_add(WindowObserver* observer);
+void GlobalWindowObservers_remove(WindowObserver* observer);
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkWindow GtkWindow;
 void GlobalWindowObservers_connectWidget(GtkWidget* widget);

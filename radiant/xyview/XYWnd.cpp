@@ -111,7 +111,7 @@ XYWnd::XYWnd() :
 	// greebo: Connect <self> as CameraObserver to the CamWindow. This way this class gets notified on camera change
 	GlobalCamera().addCameraObserver(this);
 
-	PressedButtons_connect(g_pressedButtons, m_gl_widget);
+	//PressedButtons_connect(g_pressedButtons, m_gl_widget);
 	GlobalEventManager().connect(GTK_OBJECT(m_gl_widget));
 }
 
@@ -127,6 +127,10 @@ XYWnd::~XYWnd() {
 
 	gtk_widget_hide(m_gl_widget);
 
+	// greebo: Unregister the allocated window observer from the global list, before destroying it
+	GlobalWindowObservers_remove(m_window_observer);
+
+	// This deletes the RadiantWindowObserver from the heap
 	m_window_observer->release();
 }
 

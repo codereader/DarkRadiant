@@ -88,8 +88,9 @@ public:
 		loadModifierDefinitions();
 	}
 	
-	// Destructor, free all allocated objects
+	// Destructor, un-reference the GTK accelerator group
 	~EventManager() {
+		g_object_unref(_accelGroup);
 		globalOutputStream() << "EventManager successfully shut down.\n";
 	}
 	

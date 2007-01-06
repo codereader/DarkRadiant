@@ -51,6 +51,7 @@ inline void WindowObservers_OnModifierUp(WindowObservers& observers, ModifierFla
 }
 
 #include <gdk/gdkkeysyms.h>
+#include <iostream>
 
 gboolean selection_modifier_key_press(GtkWidget* widget, GdkEventKey* event, WindowObservers& observers)
 {
@@ -152,6 +153,20 @@ void GlobalWindowObservers_updateModifiers(ModifierFlags modifiers)
 void GlobalWindowObservers_add(WindowObserver* observer)
 {
   g_window_observers.push_back(observer);
+}
+
+void GlobalWindowObservers_remove(WindowObserver* observer) 
+{
+	for (WindowObservers::iterator i = g_window_observers.begin(); 
+		 i != g_window_observers.end(); i++) 
+	{
+		WindowObserver* registered = (*i);
+		
+		if (registered == observer) {
+			g_window_observers.erase(i);
+			break;
+		}
+	}
 }
 
 void GlobalWindowObservers_connectTopLevel(GtkWindow* window)
