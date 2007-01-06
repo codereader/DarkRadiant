@@ -82,6 +82,13 @@ GtkWidget* SkinChooser::createTreeView(gint width) {
 														DISPLAYNAME_COL, 
 														ICON_COL));
 	
+	// Connect up selection changed callback
+	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
+	g_signal_connect(G_OBJECT(_selection), 
+					 "changed", 
+					 G_CALLBACK(_onSelChanged), 
+					 this);
+	
 	// Pack treeview into a ScrolledFrame and return
 	gtk_widget_set_size_request(_treeView, width, -1);
 	return gtkutil::ScrolledFrame(_treeView);
@@ -123,6 +130,7 @@ std::string SkinChooser::showAndBlock(const std::string& model,
 	
 	// Show the dialog
 	gtk_widget_show_all(_widget);
+	_preview.initialisePreview();
 	
 	// Enter main loop and block
 	gtk_main();
@@ -240,23 +248,9 @@ std::string SkinChooser::chooseSkin(const std::string& model,
 
 void SkinChooser::_onOK(GtkWidget* widget, SkinChooser* self) {
 
-	// Get the selection
-	GtkTreeSelection* sel = 
-		gtk_tree_view_get_selection(GTK_TREE_VIEW(self->_treeView));
-
-	// Get the selected skin, and set the lastskin variable for return
-	GtkTreeIter iter;
-	GtkTreeModel* model;
-	if (gtk_tree_selection_get_selected(sel, &model, &iter)) {
-		self->_lastSkin = gtkutil::TreeModel::getString(model, 
-														&iter, 
-														FULLNAME_COL);
-	}
-	else {
-		// Nothing selected, return empty string
-		self->_lastSkin = "";
-	}
-	
+	// Get the selected skin
+	self->_lastSkin = gtkutil::TreeModel::getSelectedString(self->_selection, 
+															FULLNAME_COL);
 	// Exit main loop
 	gtk_main_quit();
 }
@@ -267,4 +261,15 @@ void SkinChooser::_onCancel(GtkWidget* widget, SkinChooser* self) {
 	gtk_main_quit();	
 }
 
+void SkinChooser::_onSelChanged(GtkWidget*, SkinChooser* self) {
+
+	// Get the selected skin
+	std::string skin = gtkutil::TreeModel::getSelectedString(self->_selection, 
+															 FULLNAME_COL);
+
+	// Set the model preview to show the model with the selected skin
+	self->_preview.setModel(self->_model);
+	self->_preview.setSkin(skin);
 }
+
+} // namespace ui

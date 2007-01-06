@@ -5,6 +5,7 @@
 
 #include <gtk/gtkwidget.h>
 #include <gtk/gtktreestore.h>
+#include <gtk/gtktreeselection.h>
 
 #include <string>
 
@@ -20,9 +21,10 @@ class SkinChooser
 	// Main dialog widget
 	GtkWidget* _widget;
 	
-	// Tree store and view
+	// Tree store, view and selection
 	GtkWidget* _treeView;
 	GtkTreeStore* _treeStore;
+	GtkTreeSelection* _selection;
 	
 	// The model name to use for skin matching
 	std::string _model;
@@ -53,6 +55,7 @@ private:
 	// GTK callbacks
 	static void _onOK(GtkWidget*, SkinChooser*);
 	static void _onCancel(GtkWidget*, SkinChooser*);
+	static void _onSelChanged(GtkWidget*, SkinChooser*);
 	
 public:
 
