@@ -111,36 +111,6 @@ guint check_menu_item_connect_callback(GtkCheckMenuItem* item, const Callback& c
   return handler;
 }
 
-GtkMenuItem* new_menu_item_with_mnemonic(const char *mnemonic, const Callback& callback)
-{
-  GtkMenuItem* item = GTK_MENU_ITEM(gtk_menu_item_new_with_mnemonic(mnemonic));
-  gtk_widget_show(GTK_WIDGET(item));
-  menu_item_connect_callback(item, callback);
-  return item;
-}
-
-GtkMenuItem* create_menu_item_with_mnemonic(GtkMenu* menu, const char *mnemonic, const Callback& callback)
-{
-  GtkMenuItem* item = new_menu_item_with_mnemonic(mnemonic, callback);
-  container_add_widget(GTK_CONTAINER(menu), GTK_WIDGET(item));
-  return item;
-}
-
-GtkCheckMenuItem* new_check_menu_item_with_mnemonic(const char* mnemonic, const Callback& callback)
-{
-  GtkCheckMenuItem* item = GTK_CHECK_MENU_ITEM(gtk_check_menu_item_new_with_mnemonic(mnemonic));
-  gtk_widget_show(GTK_WIDGET(item));
-  check_menu_item_connect_callback(item, callback);
-  return item;
-}
-
-GtkCheckMenuItem* create_check_menu_item_with_mnemonic(GtkMenu* menu, const char* mnemonic, const Callback& callback)
-{
-  GtkCheckMenuItem* item = new_check_menu_item_with_mnemonic(mnemonic, callback);
-  container_add_widget(GTK_CONTAINER(menu), GTK_WIDGET(item));
-  return item;
-}
-
 GtkRadioMenuItem* new_radio_menu_item_with_mnemonic(GSList** group, const char* mnemonic, const Callback& callback)
 {
   GtkRadioMenuItem* item = GTK_RADIO_MENU_ITEM(gtk_radio_menu_item_new_with_mnemonic(*group, mnemonic));
@@ -186,13 +156,6 @@ void radio_menu_item_set_active_no_signal(GtkRadioMenuItem* item, gboolean activ
       g_signal_handler_unblock(G_OBJECT(l->data), gpointer_to_int(g_object_get_data(G_OBJECT(l->data), "handler")));
     }
   }
-}
-
-
-void menu_item_set_accelerator(GtkMenuItem* item, GClosure* closure)
-{
-  GtkAccelLabel* accel_label = GTK_ACCEL_LABEL(gtk_bin_get_child(GTK_BIN(item)));
-  gtk_accel_label_set_accel_closure(accel_label, closure);
 }
 
 void accelerator_name(const Accelerator& accelerator, GString* gstring)
@@ -247,65 +210,9 @@ void accelerator_name(const Accelerator& accelerator, GString* gstring)
   }
 }
 
-void menu_item_set_accelerator(GtkMenuItem* item, Accelerator accelerator)
-{
-  GtkAccelLabel* accel_label = GTK_ACCEL_LABEL(gtk_bin_get_child(GTK_BIN(item)));
-
-  g_free (accel_label->accel_string);
-  accel_label->accel_string = 0;
-
-  GString* gstring = g_string_new (accel_label->accel_string);
-  g_string_append (gstring, "   ");
-
-  accelerator_name(accelerator, gstring);
-
-  g_free (accel_label->accel_string);
-  accel_label->accel_string = gstring->str;
-  g_string_free (gstring, FALSE);
-
-  if (!accel_label->accel_string)
-    accel_label->accel_string = g_strdup ("");
-
-  gtk_widget_queue_resize (GTK_WIDGET (accel_label));
-}
-
-void menu_item_add_accelerator(GtkMenuItem* item, Accelerator accelerator)
-{
-  if(accelerator.key != 0)
-  {
-    GClosure* closure = global_accel_group_find(accelerator);
-    if(closure != 0)
-    {
-      menu_item_set_accelerator(item, closure);
-    }
-    else
-    {
-      menu_item_set_accelerator(item, accelerator);
-    }
-  }
-}
-
-GtkMenuItem* create_menu_item_with_mnemonic(GtkMenu* menu, const char* mnemonic, const Command& command)
-{
-  GtkMenuItem* item = create_menu_item_with_mnemonic(menu, mnemonic, command.m_callback);
-  menu_item_add_accelerator(item, command.m_accelerator);
-  return item;
-}
-
 void check_menu_item_set_active_callback(GtkCheckMenuItem& item, bool enabled)
 {
   check_menu_item_set_active_no_signal(&item, enabled);
 }
 typedef ReferenceCaller1<GtkCheckMenuItem, bool, check_menu_item_set_active_callback> CheckMenuItemSetActiveCaller;
-
-GtkCheckMenuItem* create_check_menu_item_with_mnemonic(GtkMenu* menu, const char* mnemonic, const Toggle& toggle)
-{
-  GtkCheckMenuItem* item = create_check_menu_item_with_mnemonic(menu, mnemonic, toggle.m_command.m_callback);
-  menu_item_add_accelerator(GTK_MENU_ITEM(item), toggle.m_command.m_accelerator);
-  toggle.m_exportCallback(CheckMenuItemSetActiveCaller(*item));
-  return item;
-}
-
-
-
 

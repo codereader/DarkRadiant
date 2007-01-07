@@ -474,14 +474,6 @@ void remove_local_pid()
   remove(g_pidGameFile.c_str());
 }
 
-void user_shortcuts_init()
-{
-  StringOutputStream path(256);
-  path << SettingsPath_get() << g_pGameDescription->mGameFile.c_str() << '/';
-  LoadCommandMap(path.c_str());
-  SaveCommandMap(path.c_str());
-}
-
 int main (int argc, char* argv[])
 {
   crt_init();
@@ -536,10 +528,6 @@ int main (int argc, char* argv[])
 
   Radiant_Initialise();
 
-  global_accel_init();
-
-  user_shortcuts_init();
-
   g_pParentWnd = 0;
   g_pParentWnd = new MainFrame();
 
@@ -573,8 +561,6 @@ int main (int argc, char* argv[])
   }
 
   delete g_pParentWnd;
-
-  global_accel_destroy();
 
   Radiant_Shutdown();
 

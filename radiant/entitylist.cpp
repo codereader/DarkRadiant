@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "entitylist.h"
 
 #include "iselection.h"
+#include "ieventmanager.h"
 
 #include <gtk/gtktreemodel.h>
 #include <gtk/gtktreeview.h>
@@ -318,8 +319,7 @@ void EntityList_constructWindow(GtkWindow* main_window)
   ASSERT_MESSAGE(getEntityList().m_window == 0, "error");
 
   GtkWindow* window = create_persistent_floating_window("Entity List", main_window);  
-
-  gtk_window_add_accel_group(window, global_accel);
+  GlobalEventManager().connectAccelGroup(window);
 
   getEntityList().m_positionTracker.connect(window);
   

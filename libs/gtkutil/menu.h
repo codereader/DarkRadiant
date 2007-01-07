@@ -40,15 +40,7 @@ GtkTearoffMenuItem* menu_tearoff(GtkMenu* menu);
 GtkMenuItem* new_sub_menu_item_with_mnemonic(const char* mnemonic);
 GtkMenu* create_sub_menu_with_mnemonic(GtkMenuBar* bar, const char* mnemonic);
 GtkMenu* create_sub_menu_with_mnemonic(GtkMenu* parent, const char* mnemonic);
-GtkMenuItem* create_menu_item_with_mnemonic(GtkMenu* menu, const char* mnemonic, const Callback& callback);
-GtkCheckMenuItem* create_check_menu_item_with_mnemonic(GtkMenu* menu, const char* mnemonic, const Callback& callback);
 GtkRadioMenuItem* create_radio_menu_item_with_mnemonic(GtkMenu* menu, GSList** group, const char* mnemonic, const Callback& callback);
-
-class Command;
-GtkMenuItem* create_menu_item_with_mnemonic(GtkMenu* menu, const char* mnemonic, const Command& command);
-class Toggle;
-GtkCheckMenuItem* create_check_menu_item_with_mnemonic(GtkMenu* menu, const char* mnemonic, const Toggle& toggle);
-
 
 typedef struct _GtkCheckMenuItem GtkCheckMenuItem;
 void check_menu_item_set_active_no_signal(GtkCheckMenuItem* item, gboolean active);
