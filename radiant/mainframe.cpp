@@ -592,42 +592,28 @@ void Radiant_detachGameToolsPathObserver(ModuleObserver& observer)
   g_gameToolsPathObservers.detach(observer);
 }
 
+/*
+ * Load XML config files into the XML registry.
+ */
 void populateRegistry() {
-	// Load default values for darkradiant, located in the game directory
-	const std::string base = std::string(AppPath_get()) + "user.xml";
-	const std::string upgradePaths = std::string(AppPath_get()) + "upgradepaths.xml";
-	const std::string colours = std::string(AppPath_get()) + "colours.xml";
-	const std::string input = std::string(AppPath_get()) + "input.xml";
 	
-	if (file_exists(base.c_str())) {
-		GlobalRegistry().importFromFile(base, "");
+	// Load the XML files from the installation directory
+	std::string base = AppPath_get();
+
+	try {
+		// Load all of the required XML files
+		GlobalRegistry().importFromFile(base + "user.xml", "");
+		GlobalRegistry().importFromFile(base + "upgradepaths.xml", "user");
+		GlobalRegistry().importFromFile(base + "colours.xml", "user/ui");
+		GlobalRegistry().importFromFile(base + "input.xml", "user/ui");
 		
-		// Try to load the upgradepaths
-		if (file_exists(upgradePaths.c_str())) {
-			GlobalRegistry().importFromFile(upgradePaths, "user");
-		}
-		else {
-			gtkutil::errorDialog(std::string("Could not find upgrade paths:\n") + upgradePaths);
-		}
-		
-		// Try to load the default colour schemes
-		if (file_exists(colours.c_str())) {
-			GlobalRegistry().importFromFile(colours, "user/ui");
-		}
-		else {
-			gtkutil::errorDialog(std::string("Could not find default colour schemes:\n") + colours);
-		}
-		
-		// Try to load the default input definitions
-		if (file_exists(input.c_str())) {
-			GlobalRegistry().importFromFile(input, "user/ui");
-		}
-		else {
-			gtkutil::errorDialog(std::string("Could not find default input definitions:\n") + input);
-		}
+		// Load the debug.xml file only if the relevant key is set in user.xml
+		if (GlobalRegistry().get("user/debug") == "1")
+			GlobalRegistry().importFromFile(base + "debug.xml", "");
 	}
-	else {
-		gtkutil::fatalErrorDialog(std::string("Could not find base registry:\n") + base);
+	catch (std::runtime_error e) {
+		gtkutil::fatalErrorDialog("XML registry population failed:\n\n"
+								  + std::string(e.what()));
 	}
 	
 	// Traverse the game files stored in the GamesDialog class and load them into the registry

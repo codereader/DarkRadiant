@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <user>
-  <version value="0.8.0" />
+	<version value="0.8.0" />
+
+	<!-- Load the debug.xml for debugging purposes -->
+	<debug value="0" />
+	
   <ui>
 	<ModelSelector>
     	<previewSizeFactor value="0.4"/>
