@@ -1,10 +1,11 @@
 #ifndef IREGISTRY_H_
 #define IREGISTRY_H_
 
-#include <string>
 #include "xmlutil/Document.h"
 #include "xmlutil/Node.h"
 #include "generic/constant.h"
+
+#include <string>
 
 // Abstract base class for a registry key observer, gets called by the registry
 // when a certain key changes.
@@ -14,9 +15,9 @@ public:
 	virtual void keyChanged() = 0;
 };
 
-/** Abstract base class for a registry system
+/**
+ * Abstract base class for a registry system
  */
-
 class Registry {
 	
 public:
@@ -38,8 +39,20 @@ public:
 	// Checks whether a key exists in the registry
 	virtual bool keyExists(const std::string& key) = 0;
 	
-	// Adds a whole XML file to the registry, no versioning check
-	virtual void importFromFile(const std::string& importFilePath, const std::string& parentKey) = 0;
+	/**
+	 * Import an XML file into the registry, without a version check. If the 
+	 * file cannot be imported for any reason, a std::runtime_error exception
+	 * will be thrown.
+	 * 
+	 * @param importFilePath
+	 * Full pathname of the file to import.
+	 * 
+	 * @param parentKey
+	 * The path to the node within the current registry under which the
+	 * imported nodes should be added.
+	 */
+	virtual void importFromFile(const std::string& importFilePath, 
+								const std::string& parentKey) = 0;
 	
 	// Adds an XML file to the registry and checks if any version upgrade has to be performed
 	virtual void importUserXML(const std::string& pathToUserXML) = 0;

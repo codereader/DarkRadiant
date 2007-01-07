@@ -373,7 +373,9 @@ public:
 	 * are appended to _topLevelNode (e.g. <darkradiant>) if parentKey is set to the empty string "", 
 	 * otherwise they are imported as a child of the specified parentKey
 	 */
-	void importFromFile(const std::string& importFilePath, const std::string& parentKey) {
+	void importFromFile(const std::string& importFilePath, 
+						const std::string& parentKey) 
+	{
 		std::string importKey = parentKey;
 		
 		// If an empty parentKey was passed, set it to the default import node
@@ -383,8 +385,6 @@ public:
 		
 		// Check if the importKey exists - if not: create it 
 	  	std::string fullImportKey = prepareKey(importKey);
-	  	
-	  	//globalOutputStream() << "XMLRegistry: Looking for key " << fullImportKey.c_str() << "\n";
 	  	
 	  	if (!keyExists(fullImportKey)) {
 	  		createKey(fullImportKey);	
@@ -427,8 +427,8 @@ public:
 	  		}
 	  	}
 	  	else {
-	  		globalOutputStream() << "XMLRegistry: Critical: Could not parse " << importFilePath.c_str() << "\n";
-	  		globalOutputStream() << "XMLRegistry: Critical: File does not exist or is not valid XML!\n";
+	  		// Throw the XMLImportException
+	  		throw std::runtime_error("Unable to load file: " + importFilePath);
 	  	}
 	}
 	
