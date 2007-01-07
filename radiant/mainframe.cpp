@@ -1939,7 +1939,7 @@ GtkMenuItem* create_help_menu()
   if (g_Layout_enableDetachableMenus.m_value)
     menu_tearoff (menu);
 
-  createMenuItemWithMnemonic(menu, "Shortcuts list", "ShowCommandList");
+  //createMenuItemWithMnemonic(menu, "Shortcuts list", "ShowCommandList");
   createMenuItemWithMnemonic(menu, "_About", "About");
 
   return help_menu_item;
