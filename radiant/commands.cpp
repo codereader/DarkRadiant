@@ -42,101 +42,19 @@ void Shortcuts_foreach(Shortcuts& shortcuts, CommandVisitor& visitor)
 
 Shortcuts g_shortcuts;
 
-const Accelerator& GlobalShortcuts_insert(const char* name, const Accelerator& accelerator)
-{
-  return (*g_shortcuts.insert(Shortcuts::value_type(name, ShortcutValue(accelerator, false))).first).second.first;
-}
-
 void GlobalShortcuts_foreach(CommandVisitor& visitor)
 {
   Shortcuts_foreach(g_shortcuts, visitor);
-}
-
-void GlobalShortcuts_register(const char* name)
-{
-  Shortcuts::iterator i = g_shortcuts.find(name);
-  if(i != g_shortcuts.end())
-  {
-    (*i).second.second = true;
-  }
-}
-
-void GlobalShortcuts_reportUnregistered()
-{
-  for(Shortcuts::iterator i = g_shortcuts.begin(); i != g_shortcuts.end(); ++i)
-  {
-    if((*i).second.first.key != 0 && !(*i).second.second)
-    {
-      globalOutputStream() << "shortcut not registered: " << (*i).first.c_str() << "\n";
-    }
-  }
 }
 
 typedef std::map<CopiedString, Command> Commands;
 
 Commands g_commands;
 
-void GlobalCommands_insert(const char* name, const Callback& callback, const Accelerator& accelerator)
-{
-  bool added = g_commands.insert(Commands::value_type(name, Command(callback, GlobalShortcuts_insert(name, accelerator)))).second;
-  ASSERT_MESSAGE(added, "command already registered: " << makeQuoted(name));
-}
-
-const Command& GlobalCommands_find(const char* command)
-{
-  Commands::iterator i = g_commands.find(command);
-  ASSERT_MESSAGE(i != g_commands.end(), "failed to lookup command " << makeQuoted(command));
-  return (*i).second;
-}
-
 typedef std::map<CopiedString, Toggle> Toggles;
 
 
 Toggles g_toggles;
-
-void GlobalToggles_insert(const char* name, const Callback& callback, const BoolExportCallback& exportCallback, const Accelerator& accelerator)
-{
-  bool added = g_toggles.insert(Toggles::value_type(name, Toggle(callback, GlobalShortcuts_insert(name, accelerator), exportCallback))).second;
-  ASSERT_MESSAGE(added, "toggle already registered: " << makeQuoted(name));
-}
-const Toggle& GlobalToggles_find(const char* name)
-{
-  Toggles::iterator i = g_toggles.find(name);
-  ASSERT_MESSAGE(i != g_toggles.end(), "failed to lookup toggle " << makeQuoted(name));
-  return (*i).second;
-}
-
-typedef std::map<CopiedString, KeyEvent> KeyEvents;
-
-
-KeyEvents g_keyEvents;
-
-void GlobalKeyEvents_insert(const char* name, const Accelerator& accelerator, const Callback& keyDown, const Callback& keyUp)
-{
-  bool added = g_keyEvents.insert(KeyEvents::value_type(name, KeyEvent(GlobalShortcuts_insert(name, accelerator), keyDown, keyUp))).second;
-  ASSERT_MESSAGE(added, "command already registered: " << makeQuoted(name));
-}
-const KeyEvent& GlobalKeyEvents_find(const char* name)
-{
-  KeyEvents::iterator i = g_keyEvents.find(name);
-  ASSERT_MESSAGE(i != g_keyEvents.end(), "failed to lookup keyEvent " << makeQuoted(name));
-  return (*i).second;
-}
-
-void KeyEvent_connect(const char* name)
-{
-  const KeyEvent& keyEvent = GlobalKeyEvents_find(name);
-  keydown_accelerators_add(keyEvent.m_accelerator, keyEvent.m_keyDown);
-  keyup_accelerators_add(keyEvent.m_accelerator, keyEvent.m_keyUp);
-}
-
-void KeyEvent_disconnect(const char* name)
-{
-  const KeyEvent& keyEvent = GlobalKeyEvents_find(name);
-  keydown_accelerators_remove(keyEvent.m_accelerator);
-  keyup_accelerators_remove(keyEvent.m_accelerator);
-}
-
 
 #include <cctype>
 
@@ -253,7 +171,7 @@ void DoCommandListDlg()
 
 #include "profile/profile.h"
 
-const char* const COMMANDS_VERSION = "1.0";
+/*const char* const COMMANDS_VERSION = "1.0";
 
 void SaveCommandMap(const char* path)
 {
@@ -433,4 +351,4 @@ void LoadCommandMap(const char* path)
   {
     globalOutputStream() << "failed to load custom shortcuts from " << makeQuoted(strINI.c_str()) << "\n";
   }
-}
+}*/

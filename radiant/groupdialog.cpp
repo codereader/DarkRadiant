@@ -109,7 +109,7 @@ void GroupDlg::Create(GtkWindow* parent)
 
   GtkWindow* window = create_persistent_floating_window("Entities", parent);
   GlobalEventManager().connectDialogWindow(window);
-  global_accel_connect_window(window);
+  GlobalEventManager().connectAccelGroup(window);
 
   window_connect_focus_in_clear_focus_widget(window);
 

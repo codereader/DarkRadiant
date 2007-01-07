@@ -2277,7 +2277,6 @@ void MainFrame::Create()
     gtk_container_add(GTK_CONTAINER(window), vbox);
     gtk_widget_show(vbox);
     
-    //global_accel_connect_window(window);
     PressedButtons_connect(g_pressedButtons, GTK_WIDGET(window));
     GlobalEventManager().connect(GTK_OBJECT(window));
     GlobalEventManager().connectAccelGroup(GTK_WINDOW(window));
@@ -2440,7 +2439,7 @@ void MainFrame::Create()
   {
     {
       GtkWindow* window = create_persistent_floating_window("Camera", m_window);
-      global_accel_connect_window(window);
+	  GlobalEventManager().connectAccelGroup(window);
       GlobalCamera().restoreCamWndState(window);
       
       gtk_widget_show(GTK_WIDGET(window));

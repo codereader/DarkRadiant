@@ -324,7 +324,7 @@ bool Buttons_press(ButtonMask& buttons, guint button, guint state)
       GtkWindow* toplevel = *i;
       ASSERT_MESSAGE(window_has_accel(toplevel), "ERROR");
       ASSERT_MESSAGE(GTK_WIDGET_TOPLEVEL(toplevel), "disabling accel for non-toplevel window");
-      gtk_window_remove_accel_group(toplevel,  global_accel);
+      //gtk_window_remove_accel_group(toplevel,  global_accel);
 #if 0
       globalOutputStream() << reinterpret_cast<unsigned int>(toplevel) << ": disabled global accelerators\n";
 #endif
@@ -352,7 +352,7 @@ bool Buttons_release(ButtonMask& buttons, guint button, guint state)
       GtkWindow* toplevel = *i;
       ASSERT_MESSAGE(!window_has_accel(toplevel), "ERROR");
       ASSERT_MESSAGE(GTK_WIDGET_TOPLEVEL(toplevel), "enabling accel for non-toplevel window");
-      gtk_window_add_accel_group(toplevel, global_accel);
+      //gtk_window_add_accel_group(toplevel, global_accel);
 #if 0
       globalOutputStream() << reinterpret_cast<unsigned int>(toplevel) << ": enabled global accelerators\n";
 #endif
@@ -421,7 +421,7 @@ PressedButtons g_pressedButtons;
 
 #include <set>
 
-struct PressedKeys
+/*struct PressedKeys
 {
   typedef std::set<guint> Keys;
   Keys keys;
@@ -430,12 +430,12 @@ struct PressedKeys
   PressedKeys() : refcount(0)
   {
   }
-};
+};*/
 
-AcceleratorMap g_keydown_accelerators;
-AcceleratorMap g_keyup_accelerators;
+//AcceleratorMap g_keydown_accelerators;
+//AcceleratorMap g_keyup_accelerators;
 
-bool Keys_press(PressedKeys::Keys& keys, guint keyval)
+/*bool Keys_press(PressedKeys::Keys& keys, guint keyval)
 {
   if(keys.insert(keyval).second)
   {
@@ -451,18 +451,18 @@ bool Keys_release(PressedKeys::Keys& keys, guint keyval)
     return AcceleratorMap_activate(g_keyup_accelerators, accelerator_for_event_key(keyval, 0));
   }
   return g_keyup_accelerators.find(accelerator_for_event_key(keyval, 0)) != g_keyup_accelerators.end();
-}
+}*/
 
-void Keys_releaseAll(PressedKeys::Keys& keys, guint state)
+/*void Keys_releaseAll(PressedKeys::Keys& keys, guint state)
 {
   for(PressedKeys::Keys::iterator i = keys.begin(); i != keys.end(); ++i)
   {
     AcceleratorMap_activate(g_keyup_accelerators, accelerator_for_event_key(*i, state));
   }
   keys.clear();
-}
+}*/
 
-gboolean PressedKeys_key_press(GtkWidget* widget, GdkEventKey* event, PressedKeys* pressedKeys)
+/*gboolean PressedKeys_key_press(GtkWidget* widget, GdkEventKey* event, PressedKeys* pressedKeys)
 {
   //globalOutputStream() << "pressed: " << event->keyval << "\n";
   return event->state == 0 && Keys_press(pressedKeys->keys, event->keyval);
@@ -472,9 +472,9 @@ gboolean PressedKeys_key_release(GtkWidget* widget, GdkEventKey* event, PressedK
 {
   //globalOutputStream() << "released: " << event->keyval << "\n";
   return Keys_release(pressedKeys->keys, event->keyval);
-}
+}*/
 
-gboolean PressedKeys_focus_in(GtkWidget* widget, GdkEventFocus* event, PressedKeys* pressedKeys)
+/*gboolean PressedKeys_focus_in(GtkWidget* widget, GdkEventFocus* event, PressedKeys* pressedKeys)
 {
   ++pressedKeys->refcount;
   return FALSE;
@@ -487,16 +487,16 @@ gboolean PressedKeys_focus_out(GtkWidget* widget, GdkEventFocus* event, PressedK
     Keys_releaseAll(pressedKeys->keys, 0);
   }
   return FALSE;
-}
+}*/
 
-PressedKeys g_pressedKeys;
+//PressedKeys g_pressedKeys;
 
-void GlobalPressedKeys_releaseAll()
+/*void GlobalPressedKeys_releaseAll()
 {
   Keys_releaseAll(g_pressedKeys.keys, 0);
-}
+}*/
 
-void GlobalPressedKeys_connect(GtkWindow* window)
+/*void GlobalPressedKeys_connect(GtkWindow* window)
 {
   unsigned int key_press_handler = g_signal_connect(G_OBJECT(window), "key_press_event", G_CALLBACK(PressedKeys_key_press), &g_pressedKeys);
   unsigned int key_release_handler = g_signal_connect(G_OBJECT(window), "key_release_event", G_CALLBACK(PressedKeys_key_release), &g_pressedKeys);
@@ -514,7 +514,7 @@ void GlobalPressedKeys_disconnect(GtkWindow* window)
   g_signal_handler_disconnect(G_OBJECT(window), gpointer_to_int(g_object_get_data(G_OBJECT(window), "key_release_handler")));
   g_signal_handler_disconnect(G_OBJECT(window), gpointer_to_int(g_object_get_data(G_OBJECT(window), "focus_in_handler")));
   g_signal_handler_disconnect(G_OBJECT(window), gpointer_to_int(g_object_get_data(G_OBJECT(window), "focus_out_handler")));
-}
+}*/
 
 
 
@@ -535,7 +535,7 @@ void special_accelerators_remove(Accelerator accelerator)
   }
 }
 
-void keydown_accelerators_add(Accelerator accelerator, const Callback& callback)
+/*void keydown_accelerators_add(Accelerator accelerator, const Callback& callback)
 {
   //globalOutputStream() << "keydown_accelerators_add: " << makeQuoted(accelerator) << "\n";
   if(!accelerator_map_insert(g_keydown_accelerators, accelerator, callback))
@@ -567,7 +567,7 @@ void keyup_accelerators_remove(Accelerator accelerator)
   {
     globalErrorStream() << "keyup_accelerators_remove: not found: " << makeQuoted(accelerator) << "\n";
   }
-}
+}*/
 
 
 gboolean accel_closure_callback(GtkAccelGroup* group, GtkWidget* widget, guint key, GdkModifierType modifiers, gpointer data)
@@ -607,7 +607,7 @@ void accel_group_remove_accelerator(GtkAccelGroup* group, Accelerator accelerato
 
 GtkAccelGroup* global_accel = 0;
 
-void global_accel_init()
+/*void global_accel_init()
 {
   global_accel = gtk_accel_group_new();
 }
@@ -615,7 +615,7 @@ void global_accel_init()
 void global_accel_destroy()
 {
   g_object_unref(global_accel);
-}
+}*/
 
 GClosure* global_accel_group_add_accelerator(Accelerator accelerator, const Callback& callback)
 {
@@ -640,13 +640,13 @@ void global_accel_group_remove_accelerator(Accelerator accelerator)
 }
 
 /// \brief Propagates key events to the focus-widget, overriding global accelerators.
-static gboolean override_global_accelerators(GtkWindow* window, GdkEventKey* event, gpointer data)
+/*static gboolean override_global_accelerators(GtkWindow* window, GdkEventKey* event, gpointer data)
 {
   gboolean b = gtk_window_propagate_key_event(window, event);
   return b;
-}
+}*/
 
-void global_accel_connect_window(GtkWindow* window)
+/*void global_accel_connect_window(GtkWindow* window)
 {
 #if 1
   unsigned int override_handler = g_signal_connect(G_OBJECT(window), "key_press_event", G_CALLBACK(override_global_accelerators), 0);
@@ -679,7 +679,7 @@ void global_accel_disconnect_window(GtkWindow* window)
   gtk_window_remove_accel_group(window, global_accel);
   std::size_t count = g_accel_windows.erase(window);
   ASSERT_MESSAGE(count == 1, "failed to remove accel group\n");
-}
+}*/
 
 
 GClosure* global_accel_group_find(Accelerator accelerator)
@@ -699,7 +699,7 @@ GClosure* global_accel_group_find(Accelerator accelerator)
   return 0;
 }
 
-void global_accel_group_connect(const Accelerator& accelerator, const Callback& callback)
+/*void global_accel_group_connect(const Accelerator& accelerator, const Callback& callback)
 {
   if(accelerator.key != 0)
   {
@@ -713,6 +713,6 @@ void global_accel_group_disconnect(const Accelerator& accelerator, const Callbac
   {
     global_accel_group_remove_accelerator(accelerator);
   }
-}
+}*/
 
 

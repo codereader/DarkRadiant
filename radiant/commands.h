@@ -24,28 +24,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "gtkutil/accelerator.h"
 
-
-/*const Accelerator& GlobalShortcuts_insert(const char* name, const Accelerator& accelerator);
-void GlobalShortcuts_register(const char* name);
-void GlobalShortcuts_reportUnregistered();*/
-
 class CommandVisitor
 {
 public:
   virtual void visit(const char* name, Accelerator& accelerator) = 0;
 };
-
-/*void GlobalCommands_insert(const char* name, const Callback& callback, const Accelerator& accelerator = accelerator_null());
-const Command& GlobalCommands_find(const char* name);
-
-void GlobalToggles_insert(const char* name, const Callback& callback, const BoolExportCallback& exportCallback, const Accelerator& accelerator = accelerator_null());
-const Toggle& GlobalToggles_find(const char* name);
-
-void GlobalKeyEvents_insert(const char* name, const Accelerator& accelerator, const Callback& keyDown, const Callback& keyUp);
-const KeyEvent& GlobalKeyEvents_find(const char* name);
-
-void KeyEvent_connect(const char* name);
-void KeyEvent_disconnect(const char* name);*/
 
 void DoCommandListDlg();
 

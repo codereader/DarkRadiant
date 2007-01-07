@@ -63,28 +63,10 @@ TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const Acceler
   return ostream;
 }
 
-void keydown_accelerators_add(Accelerator accelerator, const Callback& callback);
-void keydown_accelerators_remove(Accelerator accelerator);
-void keyup_accelerators_add(Accelerator accelerator, const Callback& callback);
-void keyup_accelerators_remove(Accelerator accelerator);
-
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkWindow GtkWindow;
-void global_accel_connect_window(GtkWindow* window);
-void global_accel_disconnect_window(GtkWindow* window);
-
-void GlobalPressedKeys_releaseAll();
-
 typedef struct _GtkAccelGroup GtkAccelGroup;
 extern GtkAccelGroup* global_accel;
-void global_accel_init();
-void global_accel_destroy();
 
 GClosure* global_accel_group_find(Accelerator accelerator);
-
-void global_accel_group_connect(const Accelerator& accelerator, const Callback& callback);
-void global_accel_group_disconnect(const Accelerator& accelerator, const Callback& callback);
-
 
 class Command
 {
