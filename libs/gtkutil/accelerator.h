@@ -66,8 +66,6 @@ TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const Acceler
 typedef struct _GtkAccelGroup GtkAccelGroup;
 extern GtkAccelGroup* global_accel;
 
-GClosure* global_accel_group_find(Accelerator accelerator);
-
 class Command
 {
 public:
