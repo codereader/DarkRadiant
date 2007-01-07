@@ -32,8 +32,4 @@ public:
 
 void DoCommandListDlg();
 
-void LoadCommandMap(const char* path);
-void SaveCommandMap(const char* path);
-
-
 #endif
