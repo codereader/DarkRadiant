@@ -47,44 +47,6 @@ extern const char* g_targetable_nameKey;
 
 targetables_t* getTargetables(const char* targetname);
 
-class EntityConnectionLine : public OpenGLRenderable
-{
-public:
-  Vector3 start;
-  Vector3 end;
-
-  void render(RenderStateFlags state) const
-  {
-    float s1[2], s2[2];
-    Vector3 dir(end - start);
-    double len = dir.getLength();
-    dir *= 8.0 * (1.0 / len);
-    s1[0] = dir[0] - dir[1];
-    s1[1] = dir[0] + dir[1];
-    s2[0] = dir[0] + dir[1];
-    s2[1] = -dir[0] + dir[1];
-    
-    glBegin(GL_LINES);
-
-    glVertex3fv(start);
-    glVertex3fv(end);
-
-    len*=0.0625; // half / 8
-
-    Vector3 arrow(start);
-    for (unsigned int i = 0, count = (len<32)? 1 : static_cast<unsigned int>(len*0.0625); i < count; i++)
-    {
-      arrow += dir * ( (len<32) ? len : 32 );
-      glVertex3fv(arrow);
-      glVertex3f(arrow[0]+s1[0], arrow[1]+s1[1], arrow[2]+dir[2]);
-      glVertex3fv(arrow);
-      glVertex3f(arrow[0]+s2[0], arrow[1]+s2[1], arrow[2]+dir[2]);
-    }
-    
-    glEnd();
-  }
-};
-
 class TargetedEntity
 {
   Targetable& m_targetable;
