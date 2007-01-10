@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <list>
 
 #include "ientity.h"
+#include "iregistry.h"
 #include "brush/TexDef.h"
 #include "ibrush.h"
 #include "ipatch.h"
@@ -32,7 +33,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "qerplugin.h"
 #include "scenelib.h"
 #include "traverselib.h"
-#include "string/string.h"
 #include "stringio.h"
 
 #include "gtkutil/ModalProgressDialog.h"
@@ -45,7 +45,7 @@ inline MapImporter* Node_getMapImporter(scene::Node& node)
 }
 
 
-typedef std::list< std::pair<CopiedString, CopiedString> > KeyValues;
+typedef std::list< std::pair<std::string, std::string> > KeyValues;
 
 NodeSmartReference g_nullNode(NewNullNode());
 
@@ -64,7 +64,7 @@ NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entit
 {
   NodeSmartReference entity(g_nullNode);
   KeyValues keyValues;
-  const char* classname = "";
+  std::string classname = "";
 
   int count_primitives = 0;
   while(1)
@@ -124,7 +124,7 @@ NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entit
     }
     else // epair
     {
-      CopiedString key(token);
+      std::string key(token);
       token = tokeniser.getToken();
       if(token == 0)
       {
@@ -132,9 +132,9 @@ NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entit
         return g_nullNode;
       }
       keyValues.push_back(KeyValues::value_type(key, token));
-      if(string_equal(key.c_str(), "classname"))
+      if(key == "classname")
       {
-        classname = keyValues.back().second.c_str();
+        classname = token;
       }
     }
   }
@@ -142,7 +142,46 @@ NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entit
   return g_nullNode;
 }
 
-void Map_Read(scene::Node& root, Tokeniser& tokeniser, EntityCreator& entityTable, const PrimitiveParser& parser)
+// Insert an entity node into the scenegraph, checking if the debug flags
+// exclude this class type
+void checkInsert(NodeSmartReference node, scene::Node& root) {
+
+	// Static "debug" flag obtained from the registry
+	static bool _debug = GlobalRegistry().get("user/debug") == "1";
+	if (_debug) {
+
+		// Obtain the entity class of this node
+		const IEntityClass& entityClass = 
+				Node_getEntity(node)->getEntityClass();
+
+		// Obtain list of entityclasses to skip
+		xml::NodeList skipLst = 
+			GlobalRegistry().findXPath("debug/mapdoom3//discardEntityClass");
+
+		// Skip this entity class if it is in the list
+		for (xml::NodeList::const_iterator i = skipLst.begin();
+			 i != skipLst.end();
+			 ++i)
+		{
+			if (i->getAttributeValue("value") == entityClass.getName()) {
+				std::cout << "DEBUG: discarding entity class " 
+						  << entityClass.getName() << std::endl;
+				return;
+			}
+		}
+	}
+	
+	// Insert the node into the scenegraph root
+	Node_getTraversable(root)->insert(node);
+}
+		
+	
+	
+
+void Map_Read(scene::Node& root, 
+			  Tokeniser& tokeniser, 
+			  EntityCreator& entityTable, 
+			  const PrimitiveParser& parser)
 {
 	// Create an info display panel to track load progress
 	gtkutil::ModalProgressDialog dialog(GlobalRadiant().getMainWindow(),
@@ -166,9 +205,8 @@ void Map_Read(scene::Node& root, Tokeniser& tokeniser, EntityCreator& entityTabl
 			globalErrorStream() << "entity " << entCount << ": parse error\n";
 			return;
 		}
-
-		// Insert the new entity into the scene graph
-		Node_getTraversable(root)->insert(entity);
-
+		
+		// Insert the entity
+		checkInsert(entity, root);
 	}
 }

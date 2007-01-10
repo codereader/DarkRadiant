@@ -1,0 +1,5 @@
+<debug>
+	<mapdoom3>
+		<discardEntityClass value="func_static" />
+	</mapdoom3>
+</debug>
