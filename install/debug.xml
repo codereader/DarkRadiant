@@ -1,5 +1,6 @@
 <debug>
 	<mapdoom3>
-		<discardEntityClass value="func_static" />
+		<!-- <discardEntityClass value="func_static" /> -->
+		<!-- <entityRange start="0" end="100" /> -->
 	</mapdoom3>
 </debug>

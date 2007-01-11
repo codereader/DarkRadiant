@@ -142,34 +142,66 @@ NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entit
   return g_nullNode;
 }
 
-// Insert an entity node into the scenegraph, checking if the debug flags
-// exclude this class type
-void checkInsert(NodeSmartReference node, scene::Node& root) {
+// Check if the given node is excluded based on entity class (debug code). 
+// Return true if not excluded, false otherwise
+bool checkEntityClass(NodeSmartReference node) {
+	// Obtain list of entityclasses to skip
+	static xml::NodeList skipLst = 
+		GlobalRegistry().findXPath("debug/mapdoom3//discardEntityClass");
+
+	// Obtain the entity class of this node
+	const IEntityClass& entityClass = 
+			Node_getEntity(node)->getEntityClass();
+
+	// Skip this entity class if it is in the list
+	for (xml::NodeList::const_iterator i = skipLst.begin();
+		 i != skipLst.end();
+		 ++i)
+	{
+		if (i->getAttributeValue("value") == entityClass.getName()) {
+			std::cout << "DEBUG: discarding entity class " 
+					  << entityClass.getName() << std::endl;
+			return false;
+		}
+	}
+	return true;
+	
+}
+
+// Check if the entity with the given number should be inserted (debug)
+bool checkEntityNum(int num) {
+	
+	using boost::lexical_cast;
+
+	// Entity range XPath
+	static xml::NodeList entityRange = 
+					GlobalRegistry().findXPath("debug/mapdoom3/entityRange");
+	static xml::NodeList::iterator i = entityRange.begin();
+	
+	// Test the entity number is in the range
+	if (i != entityRange.end()) {
+		static int lower = lexical_cast<int>(i->getAttributeValue("start"));
+		static int upper = lexical_cast<int>(i->getAttributeValue("end"));
+	
+		if (num < lower || num > upper) {
+			std::cout << "DEBUG: Discarding entity " << num << ", out of range"
+					  << std::endl;
+			return false;
+		}
+	}
+	return true;
+}
+
+// Insert an entity node into the scenegraph, checking if any of the debug flags
+// exclude this node
+void checkInsert(NodeSmartReference node, scene::Node& root, int count) {
 
 	// Static "debug" flag obtained from the registry
 	static bool _debug = GlobalRegistry().get("user/debug") == "1";
-	if (_debug) {
-
-		// Obtain the entity class of this node
-		const IEntityClass& entityClass = 
-				Node_getEntity(node)->getEntityClass();
-
-		// Obtain list of entityclasses to skip
-		xml::NodeList skipLst = 
-			GlobalRegistry().findXPath("debug/mapdoom3//discardEntityClass");
-
-		// Skip this entity class if it is in the list
-		for (xml::NodeList::const_iterator i = skipLst.begin();
-			 i != skipLst.end();
-			 ++i)
-		{
-			if (i->getAttributeValue("value") == entityClass.getName()) {
-				std::cout << "DEBUG: discarding entity class " 
-						  << entityClass.getName() << std::endl;
-				return;
-			}
-		}
-	}
+	
+	// Abort if any of the tests fail
+	if (_debug && (!checkEntityClass(node) || !checkEntityNum(count)))
+		return;
 	
 	// Insert the node into the scenegraph root
 	Node_getTraversable(root)->insert(node);
@@ -207,6 +239,6 @@ void Map_Read(scene::Node& root,
 		}
 		
 		// Insert the entity
-		checkInsert(entity, root);
+		checkInsert(entity, root, entCount);
 	}
 }
