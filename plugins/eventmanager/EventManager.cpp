@@ -28,6 +28,10 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
 
+	namespace {
+		const std::string RKEY_DEBUG = "debug/ui/debugEventManager";
+	}
+
 class EventManager : 
 	public IEventManager 
 {
@@ -64,6 +68,8 @@ class EventManager :
 	
 	Modifiers _modifiers;
 	MouseEventManager _mouseEvents;
+	
+	bool _debugMode;
 
 public:
 	// Radiant Module stuff
@@ -80,7 +86,8 @@ public:
 		_emptyEvent(new Event()),
 		_emptyAccelerator(0, 0, _emptyEvent),
 		_modifiers(),
-		_mouseEvents(_modifiers)
+		_mouseEvents(_modifiers),
+		_debugMode(GlobalRegistry().get(RKEY_DEBUG) == "1")
 	{
 		// Deactivate the empty event, so it's safe to return it as NullEvent
 		_emptyEvent->setEnabled(false);
@@ -88,7 +95,12 @@ public:
 		// Create an empty GClosure
 		_accelGroup = gtk_accel_group_new();
 		
-		globalOutputStream() << "EventManager started.\n";
+		if (_debugMode) {
+			globalOutputStream() << "EventManager started in debug mode.\n";
+		}
+		else {
+			globalOutputStream() << "EventManager successfully started.\n";
+		}
 	}
 	
 	// Destructor, un-reference the GTK accelerator group
@@ -331,7 +343,15 @@ public:
 	
 	// Loads the default shortcuts from the registry
 	void loadAccelerators() {
+		if (_debugMode) {
+			std::cout << "EventManager: Loading accelerators...\n";
+		}
+		
 		xml::NodeList shortcutSets = GlobalRegistry().findXPath("user/ui/input//shortcuts");
+		
+		if (_debugMode) {
+			std::cout << "Found " << shortcutSets.size() << " sets.\n";
+		}
 		
 		// If we have two sets of shortcuts, delete the default ones
 		if (shortcutSets.size() > 1) {
@@ -345,6 +365,11 @@ public:
 			globalOutputStream() << "EventManager: Shortcuts found in Registry: " << shortcutList.size() << "\n";
 			for (unsigned int i = 0; i < shortcutList.size(); i++) {
 				const std::string key = shortcutList[i].getAttributeValue("key");
+				
+				if (_debugMode) {
+					std::cout << "Looking up command: " << shortcutList[i].getAttributeValue("command").c_str() << "\n";
+					std::cout << "Key is: >> " << key.c_str() << " << \n";
+				} 
 				
 				// Try to lookup the command
 				IEventPtr event = findEvent(shortcutList[i].getAttributeValue("command"));

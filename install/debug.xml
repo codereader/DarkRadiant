@@ -3,4 +3,7 @@
 		<!-- <discardEntityClass value="func_static" /> -->
 		<!-- <entityRange start="0" end="100" /> -->
 	</mapdoom3>
+	<ui>
+		<debugEventManager value="0" />
+	</ui>
 </debug>
