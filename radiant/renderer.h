@@ -22,16 +22,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_RENDERER_H)
 #define INCLUDED_RENDERER_H
 
+#include "render/ForEachVisible.h"
+
 #include "irender.h"
-#include "ientity.h"
 #include "ieclass.h"
-#include "ifilter.h"
 #include "renderable.h"
 #include "iselection.h"
 #include "cullable.h"
 #include "scenelib.h"
 #include "math/frustum.h"
-#include <vector>
 
 inline Cullable* Instance_getCullable(scene::Instance& instance)
 {
@@ -57,12 +56,21 @@ inline VolumeIntersectionValue Cullable_testVisible(scene::Instance& instance, c
 }
 
 #include "render/CullingWalker.h"
-#include "render/ForEachVisible.h"
 
+/**
+ * Enumeration function for visible objects in the scene. Calls the Functor
+ * object on each visible object after performing a volume intersection test
+ * with the supplied VolumeTest.
+ */
 template<typename Functor>
-inline void Scene_forEachVisible(scene::Graph& graph, const VolumeTest& volume, const Functor& functor)
+inline void Scene_forEachVisible(scene::Graph& graph, 
+								 const VolumeTest& volume, 
+								 const Functor& functor)
 {
-  graph.traverse(ForEachVisible< CullingWalker<Functor> >(volume, CullingWalker<Functor>(volume, functor)));
+	graph.traverse(
+		ForEachVisible< CullingWalker<Functor> >(
+			volume, 
+			CullingWalker<Functor>(volume, functor)));
 }
 
 #include "render/RenderHighlighted.h"
