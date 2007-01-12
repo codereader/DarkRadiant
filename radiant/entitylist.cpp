@@ -320,6 +320,7 @@ void EntityList_constructWindow(GtkWindow* main_window)
 
   GtkWindow* window = create_persistent_floating_window("Entity List", main_window);  
   GlobalEventManager().connectAccelGroup(window);
+  GlobalEventManager().connectDialogWindow(window);
 
   getEntityList().m_positionTracker.connect(window);
   
@@ -359,6 +360,7 @@ void EntityList_constructWindow(GtkWindow* main_window)
 
 void EntityList_destroyWindow()
 {
+	GlobalEventManager().disconnectDialogWindow(getEntityList().m_window);
   DetachEntityTreeModel();
   EntityList_DisconnectSignals(getEntityList().m_tree_view);
   destroy_floating_window(getEntityList().m_window);
