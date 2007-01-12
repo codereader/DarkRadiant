@@ -68,6 +68,15 @@ public:
 		return origin;
 	}
 	
+	/** Get the extents of this AABB.
+	 * 
+	 * @returns
+	 * A const reference to a Vector3 containing the AABB's extents.
+	 */
+	const Vector3& getExtents() const {
+		return extents;
+	}
+
 	/** Get the radius of the smallest sphere which encloses this
 	 * bounding box.
 	 */
@@ -91,6 +100,16 @@ public:
 	 */
 	void includeAABB(const AABB& other);	 
 };
+
+/**
+ * Stream insertion for AABB class.
+ */
+inline 
+std::ostream& operator<< (std::ostream& os, const AABB& aabb) {
+	os << "AABB { origin=" << aabb.getOrigin() 
+	   << ", extents=" << aabb.getExtents() << " }";
+	return os;
+}
 
 class AABBExtendByPoint
 {
