@@ -136,8 +136,8 @@ void Camera::freeMove(int dx, int dy) {
 	
 	// free strafe mode, toggled by the keyboard modifiers
 	if (m_strafe) {
-		const float strafespeed = GlobalEventMapper().getCameraStrafeSpeed();
-		const float forwardStrafeFactor = GlobalEventMapper().getCameraForwardStrafeFactor();
+		const float strafespeed = GlobalEventManager().MouseEvents().getCameraStrafeSpeed();
+		const float forwardStrafeFactor = GlobalEventManager().MouseEvents().getCameraForwardStrafeFactor();
 
 		origin -= vright * strafespeed * dx;
 

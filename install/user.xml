@@ -6,6 +6,10 @@
 	<debug value="0" />
 	
   <ui>
+	<map>
+		<numMRU value="5" />
+		<loadLastMap value="0" />
+	</map>
 	<ModelSelector>
     	<previewSizeFactor value="0.4"/>
     </ModelSelector>
@@ -49,6 +53,9 @@
 		<invertMouseVerticalAxis value="0" />
 		<movementSpeed value="100" />
 		<rotationSpeed value="3" />
+		<strafespeed value="0.65" />
+		<!-- Use the forward strafe factor to invert the direction of the mouse movement -->
+		<forwardStrafeFactor value="1" />
 		<cubicScale value="13" />
 		<drawMode value="2" />
 		<window xPosition="37" yPosition="100" width="450" height="430" />

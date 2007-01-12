@@ -216,7 +216,7 @@ clipper_env.Depends(clipper_lib, math)
 clipper_env.Install(INSTALL + '/modules', clipper_lib)
 
 eventmanager_env = module_env.Copy()
-eventmanager_lst=build_list('plugins/eventmanager', 'EventManager.cpp Accelerator.cpp Command.cpp Toggle.cpp WidgetToggle.cpp')
+eventmanager_lst=build_list('plugins/eventmanager', 'EventManager.cpp Accelerator.cpp Command.cpp Toggle.cpp WidgetToggle.cpp Modifiers.cpp MouseEvents.cpp')
 eventmanager_env.Append(LIBS = ['gtkutil', 'xmlutil'])
 eventmanager_env.useGtk2()
 eventmanager_env.useGlib2()
@@ -291,7 +291,6 @@ radiant_src = [
 'main.cpp',
 'mainframe.cpp',
 'map.cpp',
-'mru.cpp',
 'nullmodel.cpp',
 'parse.cpp',
 'patchdialog.cpp',
@@ -363,7 +362,6 @@ radiant_src = [
 'plugin/PluginManager.cpp',
 'plugin/PluginSlots.cpp',
 'brushexport/BrushExportOBJ.cpp',
-'ui/eventmapper/EventMapper.cpp',
 'brush/BrushNode.cpp',
 'brush/BrushPrimitTexDef.cpp',
 'brush/TexDef.cpp',
@@ -381,7 +379,9 @@ radiant_src = [
 'camera/CamWnd.cpp',
 'camera/GlobalCamera.cpp',
 'xyview/XYWnd.cpp',
-'xyview/GlobalXYWnd.cpp'
+'xyview/GlobalXYWnd.cpp',
+'ui/mru/MRU.cpp',
+'ui/mru/MRUMenuItem.cpp'
 ]
 
 for i in range(len(radiant_src)):

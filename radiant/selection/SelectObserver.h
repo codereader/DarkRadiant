@@ -5,7 +5,7 @@
 #include "windowobserver.h"
 #include "SelectionBox.h"
 #include "gdk/gdkevents.h"
-#include "ui/eventmapper/EventMapper.h"
+#include "ieventmanager.h"
 
 /* greebo: This is the class that handles the selection-related mouse operations, like Alt-Shift-Click,
  * Selection toggles and drag selections. All the other modifier combinations that might occur are ignored,
@@ -34,8 +34,11 @@ private:
 	* Note: standard return value is eManipulator
 	*/
 	SelectionSystem::EModifier getModifier() {
+		
+		IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
+		
 		// Retrieve the according ObserverEvent for the GdkEventButton
-		ui::ObserverEvent observerEvent = GlobalEventMapper().getObserverEvent(_event);
+		ui::ObserverEvent observerEvent = mouseEvents.getObserverEvent(_event);
 		
 		if (observerEvent == ui::obsSelect || observerEvent == ui::obsToggle 
 			|| observerEvent == ui::obsToggleFace) {
@@ -89,12 +92,16 @@ public:
 	 * The DeviceVector position is passed with constrained values that are between [-1,+1]
 	 */
   	void testSelect(DeviceVector position) {
+  		
+  		// Get the MouseEvents class from the EventManager 
+  		IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
+  		
   		// Obtain the current modifier status (eManipulator, etc.)
 	    SelectionSystem::EModifier modifier = getModifier();
 		
 		// Determine, if we have a face operation
     	// Retrieve the according ObserverEvent for the GdkEventButton
-		ui::ObserverEvent observerEvent = GlobalEventMapper().getObserverEvent(_event);
+		ui::ObserverEvent observerEvent = mouseEvents.getObserverEvent(_event);
 		bool isFaceOperation = (observerEvent == ui::obsToggleFace || observerEvent == ui::obsReplaceFace);
 		
 		// If the user pressed some of the modifiers (Shift, Alt, Ctrl) the mode is NOT eManipulator
@@ -130,7 +137,7 @@ public:
 
 	// Returns true if the user is currently selecting something (i.e. if any modifieres are held) 
 	bool selecting() const {
-		ui::ObserverEvent observerEvent = GlobalEventMapper().getObserverEvent(_state);
+		ui::ObserverEvent observerEvent = GlobalEventManager().MouseEvents().getObserverEvent(_state);
 		return observerEvent != ui::obsManipulate;
 	}
 

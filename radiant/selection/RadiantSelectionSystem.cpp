@@ -2,6 +2,7 @@
 
 #include "iundo.h"
 #include "igrid.h"
+#include "ieventmanager.h"
 #include "renderer.h"
 #include "scenelib.h"
 #include "editable.h"
@@ -56,6 +57,9 @@ RadiantSelectionSystem::RadiantSelectionSystem() :
 	pivotChanged();
 	addSelectionChangeCallback(PivotChangedSelectionCaller(*this));
 	GlobalGrid().addGridChangeCallback(PivotChangedCaller(*this));
+	
+	// Pass a reference to self to the global event manager 
+	GlobalEventManager().connectSelectionSystem(this);
 }
 
 void RadiantSelectionSystem::Scene_TestSelect(Selector& selector, SelectionTest& test, const View& view, SelectionSystem::EMode mode, SelectionSystem::EComponentMode componentMode) {

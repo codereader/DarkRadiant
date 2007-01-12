@@ -33,14 +33,14 @@ public:
 };
 
 // greebo: Same as above, just adds a menu item with mnemonic
-class TextMenuItemMnemonic
-	: public TextMenuItem
+class TextMenuItemMnemonic :
+	public TextMenuItem
 {
 public:
 
 	// Constructor
-	TextMenuItemMnemonic(const std::string& text)
-		: TextMenuItem(text)
+	TextMenuItemMnemonic(const std::string& text) : 
+		TextMenuItem(text)
 	{}
 	
 	// Operator cast to GtkWidget* for packing into a menu

@@ -262,9 +262,11 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, const unsigned int& state) 
 	m_chasemouse_delta_x = 0;
 	m_chasemouse_delta_y = 0;
 
+	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
+
 	// These are the events that are allowed
-	bool isAllowedEvent = GlobalEventMapper().stateMatchesXYViewEvent(ui::xySelect, state)
-						  || GlobalEventMapper().stateMatchesXYViewEvent(ui::xyNewBrushDrag, state);
+	bool isAllowedEvent = mouseEvents.stateMatchesXYViewEvent(ui::xySelect, state)
+						  || mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, state);
 
 	// greebo: The mouse chase is only active when the according global is set to true and if we 
 	// are in the right state
@@ -544,32 +546,34 @@ EViewType XYWnd::getViewType() const {
  */
 void XYWnd::mouseDown(int x, int y, GdkEventButton* event) {
 
-	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xyMoveView, event)) {
+	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
+
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, event)) {
 		beginMove();
     	EntityCreate_MouseDown(x, y);
 	}
 	
-	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xyZoom, event)) {
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyZoom, event)) {
 		beginZoom();
 	}
 	
-	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xyCameraMove, event)) {
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, event)) {
 		positionCamera(x, y, *g_pParentWnd->GetCamWnd());
 	}
 	
-	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xyCameraAngle, event)) {
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, event)) {
 		orientCamera(x, y, *g_pParentWnd->GetCamWnd());
 	}
 	
 	// Only start a NewBrushDrag operation, if not other elements are selected
 	if (GlobalSelectionSystem().countSelected() == 0 && 
-		GlobalEventMapper().stateMatchesXYViewEvent(ui::xyNewBrushDrag, event)) 
+		mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, event)) 
 	{
 		NewBrushDrag_Begin(x, y);
 		return; // Prevent the call from being passed to the windowobserver
 	}
 	
-	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xySelect, event)) {
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, event)) {
 		// There are two possibilites for the "select" click: Clip or Select
 		if (GlobalClipper().clipMode()) {
 			Clipper_OnLButtonDown(x, y);
@@ -584,21 +588,23 @@ void XYWnd::mouseDown(int x, int y, GdkEventButton* event) {
 // This gets called by either the GTK Callback or the method that is triggered by the mousechase timer 
 void XYWnd::mouseMoved(int x, int y, const unsigned int& state) {
 	
-	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xyCameraMove, state)) {
+	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
+	
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, state)) {
 		positionCamera(x, y, *g_pParentWnd->GetCamWnd());
 	}
 	
-	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xyCameraAngle, state)) {
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, state)) {
 		orientCamera(x, y, *g_pParentWnd->GetCamWnd());
 	}
 	
 	// Check, if we are in a NewBrushDrag operation and continue it
-	if (m_bNewBrushDrag && GlobalEventMapper().stateMatchesXYViewEvent(ui::xyNewBrushDrag, state)) {
+	if (m_bNewBrushDrag && mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, state)) {
 		NewBrushDrag(x, y);
 		return; // Prevent the call from being passed to the windowobserver
 	}
 	
-	if (GlobalEventMapper().stateMatchesXYViewEvent(ui::xySelect, state)) {
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, state)) {
 		// Check, if we have a clip point operation running
 		if (GlobalClipper().clipMode() && GlobalClipper().getMovingClip() != 0) {
 			Clipper_OnMouseMoved(x, y);
@@ -629,6 +635,8 @@ void XYWnd::mouseMoved(int x, int y, const unsigned int& state) {
 // greebo: The mouseUp method gets called by the GTK callback above
 void XYWnd::mouseUp(int x, int y, GdkEventButton* event) {
 	
+	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
+	
 	// End move
 	if (_moveStarted) {
 		endMove();
@@ -648,7 +656,7 @@ void XYWnd::mouseUp(int x, int y, GdkEventButton* event) {
 		return; // Prevent the call from being passed to the windowobserver
 	}
 	
-	if (GlobalClipper().clipMode() && GlobalEventMapper().stateMatchesXYViewEvent(ui::xySelect, event)) {
+	if (GlobalClipper().clipMode() && mouseEvents.stateMatchesXYViewEvent(ui::xySelect, event)) {
 		// End the clip operation
 		Clipper_OnLButtonUp(x, y);
 		return; // Prevent the call from being passed to the windowobserver

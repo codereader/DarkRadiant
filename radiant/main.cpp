@@ -87,6 +87,7 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "environment.h"
 #include "referencecache.h"
 #include "stacktrace.h"
+#include "ui/mru/MRU.h"
 
 #include <iostream>
 
@@ -533,14 +534,12 @@ int main (int argc, char* argv[])
 
   hide_splash();
 
-  if (g_bLoadLastMap && !g_strLastMap.empty())
-  {
-    Map_LoadFile(g_strLastMap.c_str());
-  }
-  else
-  {
-    Map_New();
-  }
+	if (GlobalMRU().loadLastMap() && GlobalMRU().getLastMapName() != "") {
+		Map_LoadFile(GlobalMRU().getLastMapName().c_str());
+	}
+	else {
+		Map_New();
+	}
 
   remove_local_pid();
 
@@ -554,11 +553,6 @@ int main (int argc, char* argv[])
   }
 
   Map_Free();
-
-  if (!Map_Unnamed(g_map))
-  {
-    g_strLastMap = map::getFileName().c_str();
-  }
 
   delete g_pParentWnd;
 

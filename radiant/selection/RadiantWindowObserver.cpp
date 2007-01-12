@@ -1,6 +1,6 @@
 #include "RadiantWindowObserver.h"
 
-#include "ui/eventmapper/EventMapper.h"
+#include "ieventmanager.h"
 
 // mouse callback instances
 Single<MouseEventCallback> g_mouseMovedCallback;
@@ -36,7 +36,7 @@ void RadiantWindowObserver::onSizeChanged(int width, int height) {
 void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventButton* event) {
 	
 	// Retrieve the according ObserverEvent for the GdkEventButton
-	ui::ObserverEvent observerEvent = GlobalEventMapper().getObserverEvent(event);
+	ui::ObserverEvent observerEvent = GlobalEventManager().MouseEvents().getObserverEvent(event);
 	
 	// Check if the user wants to copy/paste a texture
 	if (observerEvent == ui::obsCopyTexture || observerEvent == ui::obsPasteTextureProjected 
@@ -49,12 +49,12 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 		ConstructSelectionTest(scissored, SelectionBoxForPoint(&devicePosition[0], &_selectObserver._epsilon[0]));
 		SelectionVolume volume(scissored);
 
-		// If the apply texture modifier is held (standard: Ctrl-Shift)
+		// If the apply texture modifier is held
 		if (observerEvent == ui::obsPasteTextureProjected) {
 			// Apply the texture, with the boolean set to true (this means "project")
 			Scene_applyClosestTexture(volume, true);
 		}
-		// If the copy texture modifier is held (standard: Alt-Ctrl)
+		// If the copy texture modifier is held
 		else if (observerEvent == ui::obsCopyTexture) {
 			Scene_copyClosestTexture(volume);
 		}
@@ -122,7 +122,7 @@ void RadiantWindowObserver::onMouseMotion(const WindowVector& position, const un
 void RadiantWindowObserver::onMouseUp(const WindowVector& position, GdkEventButton* event) {
 	
 	// Retrieve the according ObserverEvent for the GdkEventButton
-	ui::ObserverEvent observerEvent = GlobalEventMapper().getObserverEvent(event);
+	ui::ObserverEvent observerEvent = GlobalEventManager().MouseEvents().getObserverEvent(event);
 	
 	// Only react, if the "select" or "manipulate" is held, ignore this otherwise
 	bool reactToEvent = (observerEvent == ui::obsManipulate || observerEvent == ui::obsSelect ||

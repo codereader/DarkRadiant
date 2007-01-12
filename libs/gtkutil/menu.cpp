@@ -91,15 +91,6 @@ void activate_closure_callback(GtkWidget* widget, gpointer data)
   (*reinterpret_cast<Callback*>(data))();
 }
 
-guint menu_item_connect_callback(GtkMenuItem* item, const Callback& callback)
-{
-#if 1
-  return g_signal_connect_swapped(G_OBJECT(item), "activate", G_CALLBACK(callback.getThunk()), callback.getEnvironment());
-#else
-  return g_signal_connect_closure(G_OBJECT(item), "activate", create_cclosure(G_CALLBACK(activate_closure_callback), callback), FALSE);
-#endif
-}
-
 guint check_menu_item_connect_callback(GtkCheckMenuItem* item, const Callback& callback)
 {
 #if 1
