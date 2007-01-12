@@ -304,7 +304,6 @@ radiant_src = [
 'qe3.cpp',
 'qgl.cpp',
 'referencecache.cpp',
-'renderer.cpp',
 'renderstate.cpp',
 'scenegraph.cpp',
 'select.cpp',
