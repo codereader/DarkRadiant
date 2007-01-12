@@ -2,8 +2,9 @@
 
 #include "gtkutil/glwidget.h"
 #include "gtkutil/GLWidgetSentry.h"
+#include "generic/referencecounted.h"
 
-#include "IShaderPtr.h"
+#include "ishaders.h"
 #include "texturelib.h"
 
 #include <gtk/gtkhbox.h>
@@ -94,7 +95,9 @@ void TexturePreviewCombo::refreshInfoTable() {
 	// Other properties require a valid shader name	
 	if (_texName.empty())
 		return;
-	shaders::IShaderPtr shader(GlobalShaderSystem().getShaderForName(_texName));
+		
+	SmartPointer<IShader> shader(
+							GlobalShaderSystem().getShaderForName(_texName));
 
 	// Containing MTR	
 	gtk_list_store_append(_infoStore, &iter);
@@ -127,10 +130,11 @@ void TexturePreviewCombo::_onExpose(GtkWidget* widget, GdkEventExpose* ev, Textu
 	glOrtho(0, 1, 0, 1, -1, 1);
 	
 	// Get a reference to the selected shader
-	shaders::IShaderPtr shader(GlobalShaderSystem().getShaderForName(self->_texName));
+	SmartPointer<IShader> shader(
+						GlobalShaderSystem().getShaderForName(self->_texName));
 	
 	// Bind the texture from the shader
-	qtexture_t* tex = (*shader)->getTexture();
+	qtexture_t* tex = shader->getTexture();
 	glBindTexture(GL_TEXTURE_2D, tex->texture_number);
 
 	// Calculate the correct aspect ratio for preview
