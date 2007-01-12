@@ -108,7 +108,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkdlgs.h"
 #include "gtkmisc.h"
 #include "map.h"
-#include "mru.h"
 #include "multimon.h"
 #include "patchdialog.h"
 #include "patchmanip.h"
@@ -130,6 +129,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "camera/GlobalCamera.h"
 #include "camera/CameraSettings.h"
 #include "xyview/GlobalXYWnd.h"
+#include "ui/mru/MRU.h"
 
 struct layout_globals_t
 {
@@ -671,9 +671,14 @@ void Radiant_Initialise()
 	g_gameToolsPathObservers.realise();
 	g_gameModeObservers.realise();
 	g_gameNameObservers.realise();
+	
+	// Initialise the most recently used files list
+	GlobalMRU().loadRecentFiles();
 }
 
 void Radiant_Shutdown() {
+	GlobalMRU().saveRecentFiles();
+	
 	// Export the colour schemes and remove them from the registry
 	GlobalRegistry().exportToFile("user/ui/colourschemes", std::string(SettingsPath_get()) + "colours.xml");
 	GlobalRegistry().deleteXPath("user/ui/colourschemes");
@@ -1631,7 +1636,7 @@ GtkMenuItem* create_file_menu()
 	createSeparatorMenuItem(menu);
 	createMenuItemWithMnemonic(menu, "_Pointfile...", "TogglePointfile");
 	createSeparatorMenuItem(menu);
-	MRU_constructMenu(menu);
+	GlobalMRU().constructMenu(menu);
 	createSeparatorMenuItem(menu);
 	createMenuItemWithMnemonic(menu, "E_xit", "Exit");
 

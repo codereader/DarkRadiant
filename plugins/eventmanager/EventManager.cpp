@@ -1,6 +1,7 @@
 #include "ieventmanager.h"
 
 #include "iregistry.h"
+#include "iselection.h"
 #include <iostream>
 #include <typeinfo>
 
@@ -11,6 +12,8 @@
 
 #include "xmlutil/Node.h"
 
+#include "MouseEvents.h"
+#include "Modifiers.h"
 #include "Command.h"
 #include "Toggle.h"
 #include "WidgetToggle.h"
@@ -34,8 +37,6 @@ class EventManager :
 	// Needed for boost::algorithm::split
 	typedef std::vector<std::string> StringParts;
 
-	typedef std::map<const std::string, unsigned int> ModifierBitIndexMap;
-
 	// Each command has a name, this is the map where the name->command association is stored
 	typedef std::map<const std::string, IEventPtr> EventMap;
 	
@@ -46,7 +47,7 @@ class EventManager :
 	HandlerMap _handlers;
 	
 	// The list of connected dialog window handlers, whose keypress events are 
-	// processed AFTER the dialog window's default event handler.
+	// processed AFTER the dialog window's default keyboard handler.
 	HandlerMap _dialogWindows;
 	
 	// The list containing all registered accelerator objects
@@ -55,14 +56,14 @@ class EventManager :
 	// The map of all registered events
 	EventMap _events;
 	
-	// The list of all modifier bit indices
-	ModifierBitIndexMap _modifierBitIndices;
-	
 	// The GTK accelerator group for the main window
 	GtkAccelGroup* _accelGroup;
 	
 	IEventPtr _emptyEvent;
 	Accelerator _emptyAccelerator;
+	
+	Modifiers _modifiers;
+	MouseEventManager _mouseEvents;
 
 public:
 	// Radiant Module stuff
@@ -77,15 +78,17 @@ public:
 	// Constructor
 	EventManager() :
 		_emptyEvent(new Event()),
-		_emptyAccelerator(0, 0, _emptyEvent)
+		_emptyAccelerator(0, 0, _emptyEvent),
+		_modifiers(),
+		_mouseEvents(_modifiers)
 	{
 		// Deactivate the empty event, so it's safe to return it as NullEvent
 		_emptyEvent->setEnabled(false);
 		
-		globalOutputStream() << "EventManager started.\n";
+		// Create an empty GClosure
 		_accelGroup = gtk_accel_group_new();
 		
-		loadModifierDefinitions();
+		globalOutputStream() << "EventManager started.\n";
 	}
 	
 	// Destructor, un-reference the GTK accelerator group
@@ -94,9 +97,18 @@ public:
 		globalOutputStream() << "EventManager successfully shut down.\n";
 	}
 	
+	void connectSelectionSystem(SelectionSystem* selectionSystem) {
+		_mouseEvents.connectSelectionSystem(selectionSystem);
+	}
+	
+	// Returns a reference to the mouse event mapper
+	IMouseEvents& MouseEvents() {
+		return _mouseEvents;
+	}
+	
 	IAccelerator& addAccelerator(const std::string& key, const std::string& modifierStr) {
 		guint keyVal = getGDKCode(key);
-		unsigned int modifierFlags = getModifierFlags(modifierStr); 
+		unsigned int modifierFlags = _modifiers.getModifierFlags(modifierStr); 
 		
 		Accelerator accel(keyVal, modifierFlags, _emptyEvent);
 		
@@ -121,6 +133,28 @@ public:
 			// Nothing found, return the NullEvent
 			return _emptyEvent;
 		}
+	}
+	
+	std::string getAcceleratorStr(const IEventPtr event, bool forMenu) {
+		std::string returnValue = "";
+		
+		IAccelerator& accelerator = findAccelerator(event);
+		
+		unsigned int keyVal = accelerator.getKey();
+		const std::string keyStr = (keyVal != 0) ? gdk_keyval_name(keyVal) : "";
+		
+		if (keyStr != "") {
+			// Return a modifier string for a menu
+			const std::string modifierStr = getModifierStr(accelerator.getModifiers(), forMenu);
+			
+			const std::string connector = (forMenu) ? "-" : "+";
+			
+			returnValue = modifierStr;
+			returnValue += (modifierStr != "") ? connector : "";
+			returnValue += keyStr;
+		}
+		
+		return returnValue;
 	}
 	
 	// Checks if the eventName is already registered and writes to globalOutputStream, if so 
@@ -376,33 +410,17 @@ public:
 		return _emptyAccelerator;
 	}
 
-	// Returns a bit field with the according modifier flags set 
-	std::string getModifierStr(const unsigned int& modifierFlags) {
-		std::string returnValue = "";
-		
-		if ((modifierFlags & (1 << getModifierBitIndex("CONTROL"))) != 0) {
-			returnValue += (returnValue != "") ? "+" : "";
-			returnValue += "CONTROL";
-		}
-		
-		if ((modifierFlags & (1 << getModifierBitIndex("SHIFT"))) != 0) {
-			returnValue += (returnValue != "") ? "+" : "";
-			returnValue += "SHIFT";
-		}
-		
-		if ((modifierFlags & (1 << getModifierBitIndex("ALT"))) != 0) {
-			returnValue += (returnValue != "") ? "+" : "";
-			returnValue += "ALT";
-		}
-		
-		return returnValue;
+	// Returns the string representation of the given modifier flags 
+	std::string getModifierStr(const unsigned int& modifierFlags, bool forMenu = false) {
+		// Pass the call to the modifiers helper class
+		return _modifiers.getModifierStr(modifierFlags, forMenu);
 	}
 
 private:
 
 	AcceleratorList findAccelerator(const std::string& key, const std::string& modifierStr) {
 		guint keyVal = getGDKCode(key);
-		unsigned int modifierFlags = getModifierFlags(modifierStr); 
+		unsigned int modifierFlags = _modifiers.getModifierFlags(modifierStr); 
 		
 		return findAccelerator(keyVal, modifierFlags);
 	}
@@ -444,7 +462,7 @@ private:
 			keyval = GDK_Tab;
 		}
 		
-		return findAccelerator(keyval, getKeyboardFlags(event->state));
+		return findAccelerator(keyval, _modifiers.getKeyboardFlags(event->state));
 	}
 
 	// The GTK keypress callback
@@ -514,117 +532,6 @@ private:
 			globalOutputStream() << "EventManager: Warning: Could not recognise key " << keyStr.c_str() << "\n";
 		}
 
-		return returnValue;
-	} 
-	
-	void loadModifierDefinitions() {
-		// Find all button definitions
-		xml::NodeList modifierList = GlobalRegistry().findXPath("user/ui/input/modifiers//modifier");
-		
-		if (modifierList.size() > 0) {
-			globalOutputStream() << "EventManager: Modifiers found: " << modifierList.size() << "\n";
-			for (unsigned int i = 0; i < modifierList.size(); i++) {
-				const std::string name = modifierList[i].getAttributeValue("name");
-				
-				int bitIndex;
-				try {
-					bitIndex = boost::lexical_cast<int>(modifierList[i].getAttributeValue("bitIndex"));
-				}
-				catch (boost::bad_lexical_cast e) {
-					bitIndex = -1;
-				}
-				
-				if (name != "" && bitIndex >= 0) {
-					//std::cout << "EventMapper: Found modifier definition " << name.c_str() << " with BitIndex " << bitIndex << "\n";
-					
-					// Save the modifier ID into the map
-					_modifierBitIndices[name] = static_cast<unsigned int>(bitIndex);
-				} 
-				else {
-					globalOutputStream() << "EventManager: Warning: Invalid modifier definition found.\n";
-				}
-			}
-		}
-		else {
-			// No Button definitions found!
-			globalOutputStream() << "EventManager: Critical: No modifiers definitions found!\n";
-		}
-	}
-	
-	unsigned int getModifierFlags(const std::string& modifierStr) {
-		StringParts parts;
-		boost::algorithm::split(parts, modifierStr, boost::algorithm::is_any_of("+"));
-		
-		// Do we have any modifiers at all?
-		if (parts.size() > 0) {
-			unsigned int returnValue = 0;
-			
-			// Cycle through all the modifier names and construct the bitfield
-			for (unsigned int i = 0; i < parts.size(); i++) {
-				if (parts[i] == "") continue;
-				
-				// Try to find the modifierBitIndex
-				int bitIndex = getModifierBitIndex(parts[i]);
-							
-				// Was anything found? 
-				if (bitIndex >= 0) {
-					unsigned int bitValue = (1 << static_cast<unsigned int>(bitIndex));
-					returnValue |= bitValue;
-				}
-			}
-			
-			return returnValue;
-		}
-		else {
-			return 0;
-		}
-	}
-	
-	GdkModifierType getGdkModifierType(const unsigned int& modifierFlags) {
-		unsigned int returnValue = 0;
-		
-		if ((modifierFlags & (1 << getModifierBitIndex("CONTROL"))) != 0) {
-			returnValue |= GDK_CONTROL_MASK;
-		}
-		
-		if ((modifierFlags & (1 << getModifierBitIndex("SHIFT"))) != 0) {
-			returnValue |= GDK_SHIFT_MASK;
-		}
-		
-		if ((modifierFlags & (1 << getModifierBitIndex("ALT"))) != 0) {
-			returnValue |= GDK_MOD1_MASK;
-		}
-		
-		return static_cast<GdkModifierType>(returnValue); 
-	}
-
-	int getModifierBitIndex(const std::string& modifierName) {
-		ModifierBitIndexMap::iterator it = _modifierBitIndices.find(modifierName);
-	   	if (it != _modifierBitIndices.end()) {
-	   		return it->second;
-	   	}
-	   	else {
-	   		globalOutputStream() << "EventManager: Warning: Modifier " << modifierName.c_str() << " not found, returning -1\n";
-	   		return -1;
-	   	}
-	}
-	
-	// Returns a bit field with the according modifier flags set 
-	unsigned int getKeyboardFlags(const unsigned int& state) {
-		unsigned int returnValue = 0;
-		
-		if ((state & GDK_CONTROL_MASK) != 0) {
-	    	returnValue |= (1 << getModifierBitIndex("CONTROL"));
-		}
-		
-		if ((state & GDK_SHIFT_MASK) != 0) {
-	    	returnValue |= (1 << getModifierBitIndex("SHIFT"));
-		}
-		
-		if ((state & GDK_MOD1_MASK) != 0) {
-	    	returnValue |= (1 << getModifierBitIndex("ALT"));
-		}
-		
 		return returnValue;
 	}
 

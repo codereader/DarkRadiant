@@ -78,12 +78,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "mainframe.h"
 #include "preferences.h"
 #include "referencecache.h"
-#include "mru.h"
 #include "commands.h"
 #include "autosave.h"
 #include "brush/BrushNode.h"
 #include "camera/CamWnd.h"
 #include "xyview/GlobalXYWnd.h"
+#include "ui/mru/MRU.h"
 
 #include <string>
 #include <boost/lexical_cast.hpp>
@@ -2029,7 +2029,7 @@ void OpenMap()
 
   if (filename != 0)
   {
-    MRU_AddFile(filename);
+    GlobalMRU().insert(filename);
     Map_RegionOff();
     Map_Free();
     Map_LoadFile(filename);
@@ -2053,7 +2053,7 @@ bool Map_SaveAs()
   
   if(filename != 0)
   {
-    MRU_AddFile(filename);
+    GlobalMRU().insert(filename);
     Map_Rename(filename);
     return Map_Save();
   }
@@ -2372,16 +2372,6 @@ void DoFind()
   gtk_widget_destroy(GTK_WIDGET(window));
 }
 
-void Map_constructPreferences(PrefPage* page)
-{
-  page->appendCheckBox("", "Load last map on open", g_bLoadLastMap);
-}
-
-void Map_constructPage(PreferenceGroup& group) {
-	PreferencesPage* page(group.createPage("Map", "Map Preferences"));
-	Map_constructPreferences(reinterpret_cast<PrefPage*>(page));
-}
-
 class MapEntityClasses : public ModuleObserver
 {
   std::size_t m_unrealised;
@@ -2446,9 +2436,6 @@ MapModuleObserver g_MapModuleObserver;
 
 #include "preferencesystem.h"
 
-CopiedString g_strLastMap;
-bool g_bLoadLastMap = false;
-
 void Map_Construct()
 {
   GlobalEventManager().addCommand("RegionOff", FreeCaller<RegionOff>());
@@ -2456,12 +2443,8 @@ void Map_Construct()
   GlobalEventManager().addCommand("RegionSetBrush", FreeCaller<RegionBrush>());
   GlobalEventManager().addCommand("RegionSetSelection", FreeCaller<RegionSelected>());
 
-  GlobalPreferenceSystem().registerPreference("LastMap", CopiedStringImportStringCaller(g_strLastMap), CopiedStringExportStringCaller(g_strLastMap));
-  GlobalPreferenceSystem().registerPreference("LoadLastMap", BoolImportStringCaller(g_bLoadLastMap), BoolExportStringCaller(g_bLoadLastMap));
   GlobalPreferenceSystem().registerPreference("MapInfoDlg", WindowPositionImportStringCaller(g_posMapInfoWnd), WindowPositionExportStringCaller(g_posMapInfoWnd));
   
-  PreferencesDialog_addSettingsPage(FreeCaller1<PreferenceGroup&, Map_constructPage>());
-
   GlobalEntityClassManager().attach(g_MapEntityClasses);
   Radiant_attachHomePathsObserver(g_MapModuleObserver);
 }

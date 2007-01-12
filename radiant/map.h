@@ -154,9 +154,6 @@ void Map_Traverse(scene::Node& root, const scene::Traversable::Walker& walker);
 
 void SelectBrush (int entitynum, int brushnum);
 
-extern CopiedString g_strLastMap;
-extern bool g_bLoadLastMap;
-
 void Map_Construct();
 void Map_Destroy();
 

@@ -7,11 +7,11 @@
 
 #include <iostream>
 
-/* greebo: An Accelerator consists of a key/modifier combination plus a connected Command object.
+/* greebo: An Accelerator consists of a key/modifier combination plus a connected Event object.
  * 
  * Use the match() method to test if the accelerator matches a certain key/modifier combination.
  * Use the connectCommand() method to assign a command to this accelerator. 
- * Use the executeCommand() method to trigger the attached command. 
+ * Use the keyUp()/keyDown() methods to trigger the keyup/keydown command callbacks. 
  */
 
 class Accelerator :

@@ -81,10 +81,10 @@ void Camera_motionDelta(int x, int y, unsigned int state, void* data) {
 	Camera* cam = reinterpret_cast<Camera*>(data);
 
 	cam->m_mouseMove.motion_delta(x, y, state);
-	cam->m_strafe = GlobalEventMapper().strafeActive(state);
+	cam->m_strafe = GlobalEventManager().MouseEvents().strafeActive(state);
 
 	if (cam->m_strafe) {
-		cam->m_strafe_forward = GlobalEventMapper().strafeForwardActive(state);
+		cam->m_strafe_forward = GlobalEventManager().MouseEvents().strafeForwardActive(state);
 	} else {
 		cam->m_strafe_forward = false;
 	}
@@ -152,7 +152,7 @@ gboolean selection_button_release(GtkWidget* widget, GdkEventButton* event, Wind
 gboolean enable_freelook_button_press(GtkWidget* widget, GdkEventButton* event, CamWnd* camwnd) {
 	if (event->type == GDK_BUTTON_PRESS) {
 		
-		if (GlobalEventMapper().stateMatchesCameraViewEvent(ui::camEnableFreeLookMode, event)) {
+		if (GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camEnableFreeLookMode, event)) {
 			camwnd->enableFreeMove();
 			return TRUE;
 		}
@@ -162,7 +162,7 @@ gboolean enable_freelook_button_press(GtkWidget* widget, GdkEventButton* event, 
 
 gboolean disable_freelook_button_press(GtkWidget* widget, GdkEventButton* event, CamWnd* camwnd) {
 	if (event->type == GDK_BUTTON_PRESS) {
-		if (GlobalEventMapper().stateMatchesCameraViewEvent(ui::camDisableFreeLookMode, event)) {
+		if (GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camDisableFreeLookMode, event)) {
 			camwnd->disableFreeMove();
 			return TRUE;
 		}
