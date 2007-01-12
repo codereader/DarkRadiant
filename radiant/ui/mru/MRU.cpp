@@ -117,7 +117,6 @@ std::string MRU::getLastMapName() {
 	}
 	else {
 		MRUList::iterator i = _list.begin();
-		std::cout << "Iterator says: " << i->c_str() << "\n";
 		return *i;
 	}
 }
