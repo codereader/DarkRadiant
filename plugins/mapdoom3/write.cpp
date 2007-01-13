@@ -68,7 +68,7 @@ void Entity_ExportTokens(const Entity& entity, std::ostream& os)
 	    {}
 
 		// Required visit function
-    	void visit(const char* key, const char* value) {
+    	void visit(const std::string& key, const std::string& value) {
 			_os << "\"" << key << "\" \"" << value << "\"\n";
 		}
 

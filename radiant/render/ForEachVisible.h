@@ -19,9 +19,14 @@ template<typename Walker_>
 class ForEachVisible 
 : public scene::Graph::Walker
 {
+	// The VolumeTest object that all instances must be tested against
 	const VolumeTest& m_volume;
+	
+	// Contained walker that will be called for each visible instance
 	const Walker_& m_walker;
-	mutable std::vector<VolumeIntersectionValue> m_state;
+	
+	// Stack of parent visibility values
+	mutable std::vector<VolumeIntersectionValue> _visStack;
 
 public:
 
@@ -29,14 +34,14 @@ public:
 	ForEachVisible(const VolumeTest& volume, const Walker_& walker)
 	: m_volume(volume), m_walker(walker)
 	{
-		m_state.push_back(c_volumePartial);
+		_visStack.push_back(c_volumePartial);
 	}
   
 	// Pre-descent walker function
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
 		
 		VolumeIntersectionValue visible = (path.top().get().visible()) 
-										   ? m_state.back() 
+										   ? _visStack.back() 
 										   : c_volumeOutside;
 
 		// Examine the entity class for its filter status. If it is filtered, 
@@ -56,7 +61,7 @@ public:
 			visible = m_volume.TestAABB(instance.worldAABB());
 	    }
 
-		m_state.push_back(visible);
+		_visStack.push_back(visible);
 
 		// Abort descent for invisible instances, otherwise invoke the contained
 		// walker
@@ -64,7 +69,7 @@ public:
 			return false;
 		}
 		else {
-			return m_walker.pre(path, instance, m_state.back());
+			return m_walker.pre(path, instance, visible);
 		}
 	}
 	
@@ -72,11 +77,11 @@ public:
 	void post(const scene::Path& path, scene::Instance& instance) const {
 		
 		// If instance was visible, call the contained walker's post-descent
-		if(m_state.back() != c_volumeOutside) {
-			m_walker.post(path, instance, m_state.back());
+		if(_visStack.back() != c_volumeOutside) {
+			m_walker.post(path, instance, _visStack.back());
 		}
 
-    	m_state.pop_back();
+    	_visStack.pop_back();
 	}
 };
 
