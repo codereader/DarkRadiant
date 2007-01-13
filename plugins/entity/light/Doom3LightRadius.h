@@ -29,7 +29,9 @@ public:
 	Doom3LightRadius() :
 		_defaultRadius(GlobalRegistry().get("game/defaults/lightRadius")), 
 		m_radius(_defaultRadius),
-		m_center(0, 0, 0), 
+		m_radiusTransformed(0, 0, 0),  
+		m_center(0, 0, 0),
+		m_centerTransformed(0, 0, 0),  
 		_centerColour(0,0,0)
 	{
 	}
