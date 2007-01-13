@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/constant.h"
 
-#include "string/string.h"
 #include "scenelib.h"
 
 class IEntityClass;
@@ -53,14 +52,25 @@ public:
     virtual void clear() { };
   };
 
-  class Visitor
-  {
-  public:
-    virtual void visit(const char* key, const char* value) = 0;
-  };
+	/**
+	 * Visitor class for keyvalues on an entity.
+	 */
+	struct Visitor 
+	{
+		// Visit function called for each key/value pair
+    	virtual void visit(const std::string& key, 
+    					   const std::string& value) = 0;
+	};
 
-  virtual const IEntityClass& getEntityClass() const = 0;
-  virtual void forEachKeyValue(Visitor& visitor) const = 0;
+	/**
+	 * Return the entity class object for this entity.
+	 */
+	virtual const IEntityClass& getEntityClass() const = 0;
+  
+	/**
+	 * Enumerate key values on this entity using a Entity::Visitor class.
+	 */
+	virtual void forEachKeyValue(Visitor& visitor) const = 0;
 
 	/** Set a key value on this entity. Setting the value to "" will
 	 * remove the key.
@@ -98,14 +108,14 @@ public:
     : m_entity(entity)
   {
   }
-
-  void visit(const char* key, const char* value)
-  {
-    if(!string_equal(key, "classname"))
-    {
-      m_entity.setKeyValue(key, value);
-    }
-  }
+	
+	// Required visit function, copies keyvalues (except classname) between
+	// entities
+	void visit(const std::string& key, const std::string& value) {
+		if(key != "classname") {
+			m_entity.setKeyValue(key, value);
+		}
+	}
 };
 
 inline Entity* Node_getEntity(scene::Node& node)

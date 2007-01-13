@@ -449,20 +449,24 @@ void EntityInspector::refreshTreeModel() {
 		{}
 		
 		// Required visit function
-		virtual void visit(const char* key, const char* value) {
+		virtual void visit(const std::string& key, const std::string& value) {
+
 			// Look up type for this key
 			PropertyParmMap::const_iterator typeIter = _map.find(key);
-			std::string type = (typeIter != _map.end() ? typeIter->second.type : "");
+			std::string type = (typeIter != _map.end() 
+								? typeIter->second.type 
+								: "");
 
 			GtkTreeIter iter;
 			gtk_list_store_append(_store, &iter);
-			gtk_list_store_set(_store, &iter,
-             			       PROPERTY_NAME_COLUMN, key,
-						       PROPERTY_VALUE_COLUMN, value,
-						       TEXT_COLOUR_COLUMN, "black",
-						       PROPERTY_ICON_COLUMN, PropertyEditorFactory::getPixbufFor(type),
-						       INHERITED_FLAG_COLUMN, "", // not inherited
-						       -1);
+			gtk_list_store_set(
+				_store, &iter,
+				PROPERTY_NAME_COLUMN, key,
+				PROPERTY_VALUE_COLUMN, value,
+				TEXT_COLOUR_COLUMN, "black",
+				PROPERTY_ICON_COLUMN, PropertyEditorFactory::getPixbufFor(type),
+				INHERITED_FLAG_COLUMN, "", // not inherited
+				-1);
 							   	
 		}
 			

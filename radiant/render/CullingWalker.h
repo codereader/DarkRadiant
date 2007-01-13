@@ -23,7 +23,9 @@ public:
 			 scene::Instance& instance, 
 			 VolumeIntersectionValue parentVisible) const 
 	{
-    	VolumeIntersectionValue visible = Cullable_testVisible(instance, m_volume, parentVisible);
+    	VolumeIntersectionValue visible = Cullable_testVisible(instance, 
+    														   m_volume, 
+    														   parentVisible);
 		if(visible != c_volumeOutside) {
 			return m_walker.pre(path, instance);
 		}

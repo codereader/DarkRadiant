@@ -32,27 +32,36 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "scenelib.h"
 #include "math/frustum.h"
 
-inline Cullable* Instance_getCullable(scene::Instance& instance)
-{
-  return InstanceTypeCast<Cullable>::cast(instance);
-}
-
 inline Renderable* Instance_getRenderable(scene::Instance& instance)
 {
   return InstanceTypeCast<Renderable>::cast(instance);
 }
 
-inline VolumeIntersectionValue Cullable_testVisible(scene::Instance& instance, const VolumeTest& volume, VolumeIntersectionValue parentVisible)
+/**
+ * Test the visibility of the given Instance by intersecting with the given
+ * VolumeTest, subject to the visibility of the parent. If the parent's
+ * intersection is partial, this instance is tested, otherwise the parent's
+ * visibility is used instead.
+ */
+inline 
+VolumeIntersectionValue Cullable_testVisible(scene::Instance& instance, 
+											 const VolumeTest& volume, 
+											 VolumeIntersectionValue parent)
 {
-  if(parentVisible == c_volumePartial)
-  {
-    Cullable* cullable = Instance_getCullable(instance);
-    if(cullable != 0)
-    {
-      return cullable->intersectVolume(volume, instance.localToWorld());
-    }
-  }
-  return parentVisible;
+	// Check for partial intersection with the parent
+	if(parent == c_volumePartial) {
+		
+		// Parent has partial visibility, so test this Instance and return
+		// its result
+		Cullable* cullable = InstanceTypeCast<Cullable>::cast(instance);
+		if(cullable != 0) {
+			return cullable->intersectVolume(volume, instance.localToWorld());
+		}
+	}
+	
+	// Parent was not partially visible or this instance is not Cullable, so
+	// pass back the parent's visibility
+	return parent;
 }
 
 #include "render/CullingWalker.h"
@@ -75,10 +84,20 @@ inline void Scene_forEachVisible(scene::Graph& graph,
 
 #include "render/RenderHighlighted.h"
 
+/**
+ * Scene render function. Uses the visibility walkers to traverse the scene
+ * graph and submit all visible objects to the provided Renderer.
+ */
 inline void Scene_Render(Renderer& renderer, const VolumeTest& volume)
 {
-  GlobalSceneGraph().traverse(ForEachVisible<RenderHighlighted>(volume, RenderHighlighted(renderer, volume)));
-  GlobalShaderCache().forEachRenderable(RenderHighlighted::RenderCaller(RenderHighlighted(renderer, volume)));
+	// Submit renderables from scene graph
+	GlobalSceneGraph().traverse(
+		ForEachVisible<RenderHighlighted>(volume, 
+										  RenderHighlighted(renderer, volume)));
+	
+	// Submit renderables directly attached to the ShaderCache
+	GlobalShaderCache().forEachRenderable(
+		RenderHighlighted::RenderCaller(RenderHighlighted(renderer, volume)));
 }
 
 #endif
