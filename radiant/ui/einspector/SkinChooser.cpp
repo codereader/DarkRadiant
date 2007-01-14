@@ -1,7 +1,7 @@
 #include "SkinChooser.h"
 
 #include "modelskin.h"
-#include "groupdialog.h"
+#include "mainframe.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/IconTextColumn.h"
@@ -37,9 +37,7 @@ SkinChooser::SkinChooser()
   _lastSkin("")
 {
 	// Set up window
-	GtkWindow* gd = GroupDialog_getWindow();
-
-	gtk_window_set_transient_for(GTK_WINDOW(_widget), gd);
+	gtk_window_set_transient_for(GTK_WINDOW(_widget), MainFrame_getWindow());
     gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
 	gtk_window_set_title(GTK_WINDOW(_widget), "Choose skin");
