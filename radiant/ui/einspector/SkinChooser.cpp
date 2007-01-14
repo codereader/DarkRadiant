@@ -41,6 +41,10 @@ SkinChooser::SkinChooser()
     gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
 	gtk_window_set_title(GTK_WINDOW(_widget), "Choose skin");
+	g_signal_connect(G_OBJECT(_widget), 
+					 "delete-event", 
+					 G_CALLBACK(_onCloseButton),
+					 this);
 
 	// Set the default size of the window
 	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
@@ -134,6 +138,7 @@ std::string SkinChooser::showAndBlock(const std::string& model,
 	gtk_main();
 	
 	// Hide the dialog and return the selection
+	_preview.setModel(""); // release model
 	gtk_widget_hide(_widget);
 	return _lastSkin;
 }
@@ -268,6 +273,13 @@ void SkinChooser::_onSelChanged(GtkWidget*, SkinChooser* self) {
 	// Set the model preview to show the model with the selected skin
 	self->_preview.setModel(self->_model);
 	self->_preview.setSkin(skin);
+}
+
+bool SkinChooser::_onCloseButton(GtkWidget*, SkinChooser* self) {
+	// Clear the last skin and quit the main loop
+	self->_lastSkin = self->_prevSkin;
+	gtk_main_quit();
+	return true;
 }
 
 } // namespace ui

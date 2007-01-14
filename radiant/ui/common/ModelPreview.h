@@ -11,10 +11,11 @@
 namespace ui
 {
 	
-/** Preview widget for models and skins. This class encapsulates the GTK widgets to
- * render a specified model and skin using OpenGL, and return a single GTK widget
- * to be packed into the parent window. The model and skin is changed with setModel()
- * and setSkin(). This class handles zooming and rotating the model itself.
+/** Preview widget for models and skins. This class encapsulates the GTK widgets 
+ * to render a specified model and skin using OpenGL, and return a single GTK 
+ * widget to be packed into the parent window. The model and skin is changed 
+ * with setModel() and setSkin(). This class handles zooming and rotating the 
+ * model itself.
  */
 
 class ModelPreview
@@ -57,27 +58,32 @@ public:
 	 */
 	ModelPreview();
 	
-	/** Set the pixel size of the ModelPreview widget. The widget is always square.
+	/** 
+	 * Set the pixel size of the ModelPreview widget. The widget is always 
+	 * square.
 	 * 
 	 * @param size
 	 * The pixel size of the square widget.
 	 */
 	void setSize(int size);
 	
-	/** Initialise the GL preview. This clears the window and sets up the initial 
-	 * matrices and lights.
+	/** 
+	 * Initialise the GL preview. This clears the window and sets up the 
+	 * initial matrices and lights.
 	 */
 	void initialisePreview();	 
 
-	/** Set the widget to display the given model. If the model name is the empty string,
-	 * the widget will release the currently displayed model.
+	/** 
+	 * Set the widget to display the given model. If the model name is the 
+	 * empty string, the widget will release the currently displayed model.
 	 * 
 	 * @param
 	 * String name of the model to display.
 	 */
 	void setModel(const std::string& model);
 	
-	/** Set the skin to apply on the currently-displayed model.
+	/**
+	 * Set the skin to apply on the currently-displayed model.
 	 * 
 	 * @param
 	 * Name of the skin to apply.
@@ -90,7 +96,8 @@ public:
 		return _widget;
 	}
 	
-	/** Get the model from the widget, in order to display properties about it.
+	/** 
+	 * Get the model from the widget, in order to display properties about it.
 	 */
 	model::IModelPtr getModel() {
 		return _model;	

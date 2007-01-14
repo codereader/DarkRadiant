@@ -56,6 +56,7 @@ private:
 	static void _onOK(GtkWidget*, SkinChooser*);
 	static void _onCancel(GtkWidget*, SkinChooser*);
 	static void _onSelChanged(GtkWidget*, SkinChooser*);
+	static bool _onCloseButton(GtkWidget*, SkinChooser*);
 	
 public:
 
