@@ -6,6 +6,7 @@
 #include "gtkutil/VFSTreePopulator.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/IconTextColumn.h"
+#include "gtkutil/RightAlignment.h"
 #include "math/Vector3.h"
 #include "ifilesystem.h"
 #include "iregistry.h"
@@ -63,11 +64,11 @@ ModelSelector::ModelSelector()
   _lastSkin("")
 {
 	// Window properties
-	
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), MainFrame_getWindow());
 	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
 	gtk_window_set_title(GTK_WINDOW(_widget), MODELSELECTOR_TITLE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
+	gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
 
 	// Set the default size of the window
 	
@@ -75,7 +76,9 @@ ModelSelector::ModelSelector()
 	gint w = gdk_screen_get_width(scr);
 	gint h = gdk_screen_get_height(scr);
 	
-	gtk_window_set_default_size(GTK_WINDOW(_widget), gint(w * 0.75), gint(h * 0.8));
+	gtk_window_set_default_size(GTK_WINDOW(_widget), 
+								gint(w * 0.75), 
+								gint(h * 0.8));
 
 	// Create the model preview widget
 	
@@ -85,14 +88,17 @@ ModelSelector::ModelSelector()
 	_modelPreview.setSize(glSize);
 
 	// Signals
-	
-	g_signal_connect(G_OBJECT(_widget), "delete_event", G_CALLBACK(callbackHide), this);
+	g_signal_connect(G_OBJECT(_widget), 
+					 "delete_event", 
+					 G_CALLBACK(callbackHide), 
+					 this);
 	
 	// Main window contains a VBox
-	
-	GtkWidget* vbx = gtk_vbox_new(FALSE, 3);
+	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbx), createTreeView(), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), createPreviewAndInfoPanel(), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), 
+					   createPreviewAndInfoPanel(), 
+					   FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
 }
@@ -269,27 +275,29 @@ GtkWidget* ModelSelector::createTreeView() {
 // Create the buttons panel at bottom of dialog
 
 GtkWidget* ModelSelector::createButtons() {
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
+	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
 	
 	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
 	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	
-	g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(callbackOK), this);
-	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(callbackCancel), this);
+	g_signal_connect(G_OBJECT(okButton), "clicked", 
+					 G_CALLBACK(callbackOK), this);
+	g_signal_connect(G_OBJECT(cancelButton), "clicked", 
+					 G_CALLBACK(callbackCancel), this);
 	
-	gtk_box_pack_end(GTK_BOX(hbx), okButton, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, FALSE, FALSE, 0);
-	return hbx;
+	gtk_box_pack_end(GTK_BOX(hbx), okButton, TRUE, TRUE, 0);
+	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
+	
+	return gtkutil::RightAlignment(hbx);
 }
 
 // Create the preview widget and info panel
 
 GtkWidget* ModelSelector::createPreviewAndInfoPanel() {
 
-	// This is an HBox with the preview GL widget on the left, and an info TreeView on the
-	// right
-	
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
+	// This is an HBox with the preview GL widget on the left, and an info 
+	// TreeView on the right
+	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
 	
 	// Pack in the GL widget, which is already created
 	
@@ -297,7 +305,8 @@ GtkWidget* ModelSelector::createPreviewAndInfoPanel() {
 	
 	// Info table. Has key and value columns.
 	
-	GtkWidget* infTreeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_infoStore));
+	GtkWidget* infTreeView = 
+		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_infoStore));
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(infTreeView), FALSE);
 	
 	GtkCellRenderer* rend;
