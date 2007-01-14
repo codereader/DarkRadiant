@@ -461,8 +461,8 @@ void EntityInspector::refreshTreeModel() {
 			gtk_list_store_append(_store, &iter);
 			gtk_list_store_set(
 				_store, &iter,
-				PROPERTY_NAME_COLUMN, key,
-				PROPERTY_VALUE_COLUMN, value,
+				PROPERTY_NAME_COLUMN, key.c_str(),
+				PROPERTY_VALUE_COLUMN, value.c_str(),
 				TEXT_COLOUR_COLUMN, "black",
 				PROPERTY_ICON_COLUMN, PropertyEditorFactory::getPixbufFor(type),
 				INHERITED_FLAG_COLUMN, "", // not inherited
