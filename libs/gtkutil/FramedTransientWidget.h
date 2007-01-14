@@ -5,6 +5,7 @@
 #include "gtk/gtkwindow.h"
 #include "gtk/gtkframe.h"
 #include "gtk/gtkwidget.h"
+#include "TransientWindow.h"
 
 namespace gtkutil
 {
@@ -39,9 +40,8 @@ public:
 	
 	// Operator cast to GtkWindow* (use this to create and retrieve the GtkWidget* pointer)
 	virtual operator GtkWidget* () {
-		// Create a new top level window and set the "transient_for" property
-		GtkWindow* window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
-		gtk_window_set_transient_for(window, _parent);
+		// Create a new top level window that is transient for _parent
+		GtkWidget* window = TransientWindow(_title, _parent);
 		
 		// Create a new frame and set its properties
 		GtkFrame* frame = GTK_FRAME(gtk_frame_new(0));
@@ -56,10 +56,10 @@ public:
 		gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(frame));
 		
 		// Now show the whole widget tree
-		gtk_widget_show_all(GTK_WIDGET(window));
+		gtk_widget_show_all(window);
 		
 		// Return the readily fabricated widget
-		return GTK_WIDGET(window);
+		return window;
 	}
 };
 
