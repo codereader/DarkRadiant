@@ -33,8 +33,14 @@ class BasicVector3 {
   
 public:
 
-	// Constructor with no argument
-  	BasicVector3() {}
+	/**
+	 * Default constructor. Initialise Vector with all zeroes.
+	 */
+  	BasicVector3() {
+		_v[0] = 0;
+		_v[1] = 0;
+		_v[2] = 0;  	
+  	}
 
 	// Templated copy constructor
 	template<typename OtherElement>
