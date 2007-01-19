@@ -7,7 +7,6 @@
 #include "ientity.h"
 #include "igrid.h"
 
-#include "gtkutil/accelerator.h"
 #include "gtkutil/glwidget.h"
 #include "stream/stringstream.h"
 

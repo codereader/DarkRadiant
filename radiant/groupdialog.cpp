@@ -40,7 +40,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtkhbox.h>
 
 #include "gtkutil/widget.h"
-#include "gtkutil/accelerator.h"
 #include "gtkutil/image.h"
 #include "gtkmisc.h"
 #include "multimon.h"
