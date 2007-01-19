@@ -1,6 +1,5 @@
 #include "CamWnd.h"
 
-#include "iscenegraph.h"
 #include "ieventmanager.h"
 
 #include "gdk/gdkkeysyms.h"
@@ -214,9 +213,9 @@ CamWnd::CamWnd() :
 
 	g_signal_connect(G_OBJECT(m_gl_widget), "scroll_event", G_CALLBACK(wheelmove_scroll), this);
 
-	AddSceneChangeCallback(CamWndUpdate(*this));
+	// Subscribe to the global scene graph update 
+	GlobalSceneGraph().addSceneObserver(this);
 
-	PressedButtons_connect(g_pressedButtons, m_gl_widget);
 	GlobalEventManager().connect(GTK_OBJECT(m_gl_widget));
 }
 
@@ -518,7 +517,15 @@ void CamWnd::benchmark() {
 	globalOutputStream() << FloatFormat(dEnd - dStart, 5, 2) << " seconds\n";
 }
 
+void CamWnd::sceneChanged() {
+	// Just pass the call to the update method
+	update();
+}
+
 CamWnd::~CamWnd() {
+	// Subscribe to the global scene graph update 
+	GlobalSceneGraph().removeSceneObserver(this);
+	
 	if (m_bFreeMove) {
 		disableFreeMove();
 	}

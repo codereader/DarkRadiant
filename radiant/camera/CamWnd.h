@@ -1,6 +1,7 @@
 #ifndef CAMWND_H_
 #define CAMWND_H_
 
+#include "iscenegraph.h"
 #include "irender.h"
 #include "gtkutil/xorrectangle.h"
 #include "gtkutil/WindowPosition.h"
@@ -15,7 +16,9 @@
 const int CAMWND_MINSIZE_X = 240;
 const int CAMWND_MINSIZE_Y = 200;
 
-class CamWnd {
+class CamWnd :
+	public scene::Graph::Observer
+{
 	View m_view;
 	
 	// The contained camera
@@ -61,6 +64,9 @@ public:
 	void queueDraw();
 	void draw();
 	void update();
+	
+	// The callback when the scene gets changed
+	void sceneChanged();
 
 	static void captureStates();
 	static void releaseStates();

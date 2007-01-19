@@ -2,6 +2,7 @@
 #define XYWND_H_
 
 #include "iclipper.h"
+#include "iscenegraph.h"
 
 #include "gdk/gdkevents.h"
 #include "gtk/gtkwidget.h"
@@ -26,7 +27,8 @@
 	}
 
 class XYWnd :
-	public CameraObserver 
+	public CameraObserver,
+	public scene::Graph::Observer
 {
 	GtkWidget* m_gl_widget;
 	guint m_sizeHandler;
@@ -198,6 +200,9 @@ public:
 	
 	// greebo: CameraObserver implementation; gets called when the camera is moved
 	void cameraMoved();
+	
+	// greebo: This gets called upon scene change
+	void sceneChanged();
 	
 	void saveStateToNode(xml::Node& rootNode);
 	void readStateFromNode(xml::Node& rootNode, GtkWindow* window);
