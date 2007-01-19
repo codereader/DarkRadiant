@@ -216,6 +216,7 @@ void Face::shaderChanged() {
 	EmitTextureCoordinates();
 	Brush_textureChanged();
 	m_observer->shaderChanged();
+	planeChanged();
 	SceneChangeNotify();
 }
 
