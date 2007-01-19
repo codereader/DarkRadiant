@@ -41,7 +41,6 @@ please contact Id Software immediately at info@idsoftware.com.
 #include "qe3.h"
 #include "camera/CamWnd.h"
 #include "mainframe.h"
-#include "commands.h"
 #include "xyview/GlobalXYWnd.h"
 
 #include <iostream>

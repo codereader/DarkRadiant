@@ -273,7 +273,6 @@ radiant_src = [
 'autosave.cpp',
 'brushmanip.cpp',
 'clippertool.cpp',
-'commands.cpp',
 'console.cpp',
 'csg.cpp',
 'dialog.cpp',
@@ -380,7 +379,8 @@ radiant_src = [
 'xyview/XYWnd.cpp',
 'xyview/GlobalXYWnd.cpp',
 'ui/mru/MRU.cpp',
-'ui/mru/MRUMenuItem.cpp'
+'ui/mru/MRUMenuItem.cpp',
+'ui/commandlist/CommandList.cpp'
 ]
 
 for i in range(len(radiant_src)):

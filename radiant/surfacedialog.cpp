@@ -71,7 +71,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkdlgs.h"
 #include "dialog.h"
 #include "patch.h"
-#include "commands.h"
 #include "stream/stringstream.h"
 #include "igrid.h"
 #include "textureentry.h"

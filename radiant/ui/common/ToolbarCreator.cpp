@@ -9,7 +9,6 @@
 #include "stream/stringstream.h"
 #include "stream/textfilestream.h"
 
-#include "commands.h"
 #include "iregistry.h"
 #include "gtkutil/pointer.h"
 #include "gtkutil/image.h"

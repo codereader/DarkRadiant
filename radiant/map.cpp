@@ -51,6 +51,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtktreeview.h>
 #include <gtk/gtkliststore.h>
 #include <gtk/gtkcellrenderertext.h>
+#include <gdk/gdkkeysyms.h>
 
 #include "scenelib.h"
 #include "transformlib.h"
@@ -78,7 +79,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "mainframe.h"
 #include "preferences.h"
 #include "referencecache.h"
-#include "commands.h"
 #include "autosave.h"
 #include "brush/BrushNode.h"
 #include "camera/CamWnd.h"

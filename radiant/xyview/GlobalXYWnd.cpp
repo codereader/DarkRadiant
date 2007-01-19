@@ -9,7 +9,6 @@
 
 #include "select.h"
 #include "mainframe.h"
-#include "commands.h"
 
 // Constructor
 XYWndManager::XYWndManager() :

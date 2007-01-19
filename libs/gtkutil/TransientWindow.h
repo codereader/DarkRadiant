@@ -32,12 +32,11 @@ public:
 	TransientWindow(const std::string& title, GtkWindow* parent) : 
 		_title(title),
 		_parent(parent),
-		_window(NULL)
+		_window(gtk_window_new(GTK_WINDOW_TOPLEVEL))
 	{}
 	
 	// Operator cast to GtkWindow* (use this to create and retrieve the GtkWidget* pointer)
 	virtual operator GtkWidget* () {
-		_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 		gtk_window_set_transient_for(GTK_WINDOW(_window), _parent);
 		
 		// Connect the "resize"-event of the _parent window to the callback, so that the 

@@ -9,7 +9,7 @@
 #include "gtkutil/widget.h"
 #include "cmdlib.h"
 
-#include "commands.h"
+#include "gtkutil/accelerator.h"
 #include "windowobservers.h"
 #include "plugin.h"
 #include "mainframe.h"

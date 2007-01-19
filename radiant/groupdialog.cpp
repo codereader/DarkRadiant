@@ -45,7 +45,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkmisc.h"
 #include "multimon.h"
 #include "console.h"
-#include "commands.h"
 
 #include "ieventmanager.h"
 #include <gtk/gtkwidget.h>

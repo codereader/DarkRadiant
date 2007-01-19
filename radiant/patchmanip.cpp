@@ -30,11 +30,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/aabb.h"
 #include "generic/callback.h"
 
+#include "gdk/gdkkeysyms.h"
 #include "gtkutil/menu.h"
 #include "gtkutil/image.h"
 #include "map.h"
 #include "mainframe.h"
-#include "commands.h"
 #include "gtkmisc.h"
 #include "gtkdlgs.h"
 #include "texwindow.h"

@@ -82,7 +82,6 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "texwindow.h"
 #include "map.h"
 #include "mainframe.h"
-#include "commands.h"
 #include "preferences.h"
 #include "environment.h"
 #include "referencecache.h"
