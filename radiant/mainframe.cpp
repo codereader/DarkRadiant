@@ -99,7 +99,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brushmanip.h"
 #include "brush/BrushModule.h"
 #include "csg.h"
-#include "commands.h"
+#include "gtkutil/accelerator.h"
 #include "console.h"
 #include "entity.h"
 #include "entitylist.h"
@@ -130,6 +130,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "camera/CameraSettings.h"
 #include "xyview/GlobalXYWnd.h"
 #include "ui/mru/MRU.h"
+#include "ui/commandlist/CommandList.h"
 
 struct layout_globals_t
 {
@@ -1930,7 +1931,7 @@ GtkMenuItem* create_help_menu()
   if (g_Layout_enableDetachableMenus.m_value)
     menu_tearoff (menu);
 
-  //createMenuItemWithMnemonic(menu, "Shortcuts list", "ShowCommandList");
+  createMenuItemWithMnemonic(menu, "Shortcuts list", "ShowCommandList");
   createMenuItemWithMnemonic(menu, "_About", "About");
 
   return help_menu_item;
@@ -2812,7 +2813,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("EditColourScheme", FreeCaller<EditColourScheme>());
 	GlobalEventManager().addCommand("BrushExportOBJ", FreeCaller<CallBrushExportOBJ>());
 
-	GlobalEventManager().addCommand("ShowCommandList", FreeCaller<DoCommandListDlg>());
+	GlobalEventManager().addCommand("ShowCommandList", FreeCaller<ShowCommandListDialog>());
 	GlobalEventManager().addCommand("About", FreeCaller<DoAbout>());
   
   Patch_registerCommands();

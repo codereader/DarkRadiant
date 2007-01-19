@@ -5,8 +5,6 @@
 #include "gdk/gdkkeysyms.h"
 #include "xmlutil/Node.h"
 
-#include "commands.h"
-
 #include "Camera.h"
 #include "CameraSettings.h"
 

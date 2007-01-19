@@ -49,7 +49,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "gtkutil/menu.h"
 #include "gtkutil/MenuItemAccelerator.h"
 #include "gtkutil/SeparatorMenuItem.h"
-#include "commands.h"
 
 
 // =============================================================================

@@ -111,7 +111,6 @@ XYWnd::XYWnd() :
 	// greebo: Connect <self> as CameraObserver to the CamWindow. This way this class gets notified on camera change
 	GlobalCamera().addCameraObserver(this);
 
-	//PressedButtons_connect(g_pressedButtons, m_gl_widget);
 	GlobalEventManager().connect(GTK_OBJECT(m_gl_widget));
 }
 
