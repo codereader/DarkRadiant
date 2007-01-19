@@ -154,6 +154,7 @@ void Brush::planeChanged() {
 }
 
 void Brush::shaderChanged() {
+	planeChanged();
 }
 
 void Brush::evaluateBRep() const {
