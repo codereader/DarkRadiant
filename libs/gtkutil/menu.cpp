@@ -30,7 +30,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/callback.h"
 
-#include "accelerator.h"
 #include "closure.h"
 #include "container.h"
 #include "pointer.h"
@@ -146,58 +145,6 @@ void radio_menu_item_set_active_no_signal(GtkRadioMenuItem* item, gboolean activ
     {
       g_signal_handler_unblock(G_OBJECT(l->data), gpointer_to_int(g_object_get_data(G_OBJECT(l->data), "handler")));
     }
-  }
-}
-
-void accelerator_name(const Accelerator& accelerator, GString* gstring)
-{
-  gboolean had_mod = FALSE;
-  if (accelerator.modifiers & GDK_SHIFT_MASK)
-  {
-    g_string_append (gstring, "Shift");
-    had_mod = TRUE;
-  }
-  if (accelerator.modifiers & GDK_CONTROL_MASK)
-  {
-    if (had_mod)
-      g_string_append (gstring, "+");
-    g_string_append (gstring, "Ctrl");
-    had_mod = TRUE;
-  }
-  if (accelerator.modifiers & GDK_MOD1_MASK)
-  {
-    if (had_mod)
-      g_string_append (gstring, "+");
-    g_string_append (gstring, "Alt");
-    had_mod = TRUE;
-  }
-
-  if (had_mod)
-    g_string_append (gstring, "+");
-  if (accelerator.key < 0x80 || (accelerator.key > 0x80 && accelerator.key <= 0xff))
-  {
-    switch (accelerator.key)
-    {
-    case ' ':
-      g_string_append (gstring, "Space");
-      break;
-    case '\\':
-      g_string_append (gstring, "Backslash");
-      break;
-    default:
-      g_string_append_c (gstring, gchar(toupper(accelerator.key)));
-      break;
-    }
-  }
-  else
-  {
-    gchar *tmp;
-
-    tmp = gtk_accelerator_name (accelerator.key, (GdkModifierType)0);
-    if (tmp[0] != 0 && tmp[1] == 0)
-      tmp[0] = gchar(toupper(tmp[0]));
-    g_string_append (gstring, tmp);
-    g_free (tmp);
   }
 }
 

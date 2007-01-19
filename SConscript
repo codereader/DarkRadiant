@@ -60,7 +60,6 @@ gtkutil_env.useGtkGLExt()
 gtkutil_env.useXML2()
 
 gtkutil_src = '\
-  accelerator.cpp\
   button.cpp\
   clipboard.cpp\
   closure.cpp\
