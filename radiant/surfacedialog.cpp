@@ -275,6 +275,7 @@ namespace
   CopiedString g_selectedShader;
   TextureProjection g_selectedTexdef;
   ContentsFlagsValue g_selectedFlags;
+  size_t g_selectedShaderSize[2];
 }
 
 void SurfaceInspector_SetSelectedShader(const char* shader)
@@ -325,6 +326,10 @@ void SurfaceInspector_SetCurrent_FromSelected()
 //Yep, there was a call to removeScale in there...
       Scene_BrushGetTexdef_Component_Selected(GlobalSceneGraph(), projection);
       SurfaceInspector_SetSelectedTexdef(projection);
+
+	  Scene_BrushGetShaderSize_Component_Selected(GlobalSceneGraph(), g_selectedShaderSize[0], g_selectedShaderSize[1]);
+	  g_selectedTexdef.m_brushprimit_texdef.coords[0][2] = float_mod(g_selectedTexdef.m_brushprimit_texdef.coords[0][2], (float)g_selectedShaderSize[0]);
+	  g_selectedTexdef.m_brushprimit_texdef.coords[1][2] = float_mod(g_selectedTexdef.m_brushprimit_texdef.coords[1][2], (float)g_selectedShaderSize[1]);
 
       std::string name;
       Scene_BrushGetShader_Component_Selected(GlobalSceneGraph(), name);
@@ -1182,6 +1187,10 @@ globalOutputStream() << "BP: (" << g_selectedBrushPrimitTexdef.coords[0][0] << "
 //Ok, it's screwed up *before* we get here...
 	
   shiftScaleRotate = SurfaceInspector_GetSelectedTexdef().m_brushprimit_texdef.getFakeTexCoords();
+
+  // normalize again to hide the ridiculously high scale values that get created when using texlock
+  shiftScaleRotate._shift[0] = float_mod(shiftScaleRotate._shift[0], (float)g_selectedShaderSize[0]);
+  shiftScaleRotate._shift[1] = float_mod(shiftScaleRotate._shift[1], (float)g_selectedShaderSize[1]);
 
   {
     spin_button_set_value_no_signal(m_hshiftIncrement.m_spin, shiftScaleRotate._shift[0]);
