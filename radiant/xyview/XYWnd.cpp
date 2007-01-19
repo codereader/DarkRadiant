@@ -106,8 +106,8 @@ XYWnd::XYWnd() :
 	updateModelview();
 
 	// Add self to the scenechange callbacks
-	AddSceneChangeCallback(MemberCaller<XYWnd, &XYWnd::queueDraw>(*this));
-
+	GlobalSceneGraph().addSceneObserver(this);
+	
 	// greebo: Connect <self> as CameraObserver to the CamWindow. This way this class gets notified on camera change
 	GlobalCamera().addCameraObserver(this);
 
@@ -116,6 +116,9 @@ XYWnd::XYWnd() :
 
 // Destructor
 XYWnd::~XYWnd() {
+	// Remove <self> from the scene change callback list
+	GlobalSceneGraph().removeSceneObserver(this);
+	
 	// greebo: Remove <self> as CameraObserver to the CamWindow.
 	GlobalCamera().removeCameraObserver(this);
 	
@@ -204,6 +207,11 @@ const std::string XYWnd::getViewTypeStr(EViewType viewtype) {
 
 void XYWnd::queueDraw() {
 	m_deferredDraw.draw();
+}
+
+void XYWnd::sceneChanged() {
+	// Pass the call to queueDraw.
+	queueDraw();
 }
 
 GtkWidget* XYWnd::getWidget() {

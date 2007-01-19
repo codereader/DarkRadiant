@@ -85,6 +85,14 @@ namespace scene
       {
       }
     };
+    
+    /* greebo: Derive from this class to get notified on scene changes 
+     */
+    class Observer 
+    {
+    public:
+    	virtual void sceneChanged() = 0;
+    };
 
     /// \brief Returns the root-node of the graph.
     virtual Node& root() = 0;
@@ -104,7 +112,9 @@ namespace scene
     virtual void sceneChanged() = 0;
     /// \brief Add a \p callback to be invoked when the scene changes.
     /// \todo Move to a separate class.
-    virtual void addSceneChangedCallback(const SignalHandler& handler) = 0;
+    virtual void addSceneObserver(Observer* observer) = 0;
+    // greebo: Remove the scene observer from the list
+    virtual void removeSceneObserver(Observer* observer) = 0;
 
     /// \brief Invokes all bounds-changed callbacks. Called when the bounds of any instance in the scene change.
     /// \todo Move to a separate class.
@@ -207,10 +217,6 @@ inline scene::Graph& GlobalSceneGraph()
   return GlobalSceneGraphModule::getTable();
 }
 
-inline void AddSceneChangeCallback(const SignalHandler& handler)
-{
-  GlobalSceneGraph().addSceneChangedCallback(handler);
-}
 inline void SceneChangeNotify()
 {
   GlobalSceneGraph().sceneChanged();

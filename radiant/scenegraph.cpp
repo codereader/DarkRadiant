@@ -73,12 +73,13 @@ public:
 class CompiledGraph : public scene::Graph, public scene::Instantiable::Observer
 {
   typedef std::map<PathConstReference, scene::Instance*> InstanceMap;
+	typedef std::list<scene::Graph::Observer*> ObserverList;
 
+	ObserverList _sceneObservers;
   InstanceMap m_instances;
   scene::Instantiable::Observer* m_observer;
   Signal0 m_boundsChanged;
   scene::Path m_rootpath;
-  Signal0 m_sceneChangedCallbacks;
 
   TypeIdMap<NODETYPEID_MAX> m_nodeTypeIds;
   TypeIdMap<INSTANCETYPEID_MAX> m_instanceTypeIds;
@@ -89,15 +90,32 @@ public:
     : m_observer(observer)
   {
   }
+  
+	void addSceneObserver(scene::Graph::Observer* observer) {
+		if (observer != NULL) {
+			// Add the passed observer to the list
+			_sceneObservers.push_back(observer);
+		}
+	}
 
-  void addSceneChangedCallback(const SignalHandler& handler)
-  {
-    m_sceneChangedCallbacks.connectLast(handler);
-  }
-  void sceneChanged()
-  {
-    m_sceneChangedCallbacks();
-  }
+	void removeSceneObserver(scene::Graph::Observer* observer) {
+		// Cycle through the list of observers and call the moved method
+		for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); i++) {
+			scene::Graph::Observer* registered = *i;
+			
+			if (registered == observer) {
+				_sceneObservers.erase(i++);
+				return; // Don't continue the loop, the iterator is obsolete 
+			}
+		}
+	}
+
+	void sceneChanged() {
+		for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); i++) {
+			scene::Graph::Observer* observer = *i;
+			observer->sceneChanged();
+		}
+	}
 
   scene::Node& root()
   {
