@@ -379,7 +379,8 @@ radiant_src = [
 'xyview/GlobalXYWnd.cpp',
 'ui/mru/MRU.cpp',
 'ui/mru/MRUMenuItem.cpp',
-'ui/commandlist/CommandList.cpp'
+'ui/commandlist/CommandList.cpp',
+'ui/commandlist/ShortcutChooser.cpp'
 ]
 
 for i in range(len(radiant_src)):
