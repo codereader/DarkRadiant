@@ -46,6 +46,10 @@ void Accelerator::connectEvent(IEventPtr event) {
 	_event = event;
 }
 
+IEventPtr Accelerator::getEvent() {
+	return _event;
+}
+
 void Accelerator::keyUp() {
 	_event->keyUp();
 }
