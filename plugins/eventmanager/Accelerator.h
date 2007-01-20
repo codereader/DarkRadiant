@@ -48,6 +48,9 @@ public:
 	// Connect this modifier to the specified command
 	void connectEvent(IEventPtr event);
 	
+	// Retrieve the contained event pointer
+	IEventPtr getEvent();
+	
 	// Call the connected event keyup/keydown callbacks
 	void keyUp();
 	void keyDown();

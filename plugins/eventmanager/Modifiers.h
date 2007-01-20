@@ -37,7 +37,7 @@ public:
 	// @returns: -1, if not matching name is found (warning to globalOutput is written)
 	int getModifierBitIndex(const std::string& modifierName);
 	
-	// Returns a bit field with the according modifier flags set 
+	// Returns a bit field with the according modifier flags set for the given GDK event->state 
 	unsigned int getKeyboardFlags(const unsigned int& state);
 	
 	// Returns a string for the given modifier flags set (e.g. "SHIFT+CONTROL") 

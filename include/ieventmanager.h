@@ -16,6 +16,7 @@ typedef struct _GtkObject GtkObject;
 typedef struct _GtkWindow GtkWindow;
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GdkEventButton GdkEventButton;
+typedef struct _GdkEventKey GdkEventKey;
 
 /* greebo: Below are the actual events that are "read" by the views/observers to 
  * interpret the mouseclicks. */
@@ -159,6 +160,8 @@ public:
 	 * 
 	 * @returns: the pointer to the newly created accelerator object */
 	virtual IAccelerator& addAccelerator(const std::string& key, const std::string& modifierStr) = 0;
+	// The same as above, but with GDK event values as argument (event->keyval, event->state) 
+	virtual IAccelerator& addAccelerator(GdkEventKey* event) = 0;
 	virtual IAccelerator& findAccelerator(const IEventPtr event) = 0;
 	virtual std::string getAcceleratorStr(const IEventPtr event, bool forMenu) = 0;
 	
@@ -178,9 +181,15 @@ public:
 	
 	// Returns the pointer to the command specified by the <given> commandName
 	virtual IEventPtr findEvent(const std::string& name) = 0;
+	virtual IEventPtr findEvent(GdkEventKey* event) = 0;
+	
+	// Retrieves the event name for the given IEventPtr
+	virtual std::string getEventName(IEventPtr event) = 0;
 	
 	// Connects the given accelerator to the given command (identified by the string)
 	virtual void connectAccelerator(IAccelerator& accelerator, const std::string& command) = 0;
+	// Disconnects the given command from any accelerators
+	virtual void disconnectAccelerator(const std::string& command) = 0;
 	
 	// Connects/disconnects the keyboard handlers of the keyeventmanager to the specified window, so that key events are catched
 	virtual void connect(GtkObject* object) = 0;
@@ -207,7 +216,18 @@ public:
 	// Visit each event with the given class
 	virtual void foreachEvent(IEventVisitor& eventVisitor) = 0;
 	
+	/* greebo: Retrieves a string representation of the modifiers set in <modifierFlags> 
+	 * (This is used internally by Modifers class)
+	 * 
+	 * @forMenu: 
+	 * <true> yields a string of type: Ctrl-Shift
+	 * <false> results in a string of type: CTRL+SHIFT 
+	 */
 	virtual std::string getModifierStr(const unsigned int& modifierFlags, bool forMenu = false) = 0;
+	
+	/* greebo: Retrieves the string representation of the given GDK <event>
+	 */
+	virtual std::string getGDKEventStr(GdkEventKey* event) = 0;
 };
 
 // Module definitions
