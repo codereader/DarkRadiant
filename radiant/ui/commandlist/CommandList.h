@@ -12,12 +12,13 @@
  * 
  * The actual re-assignment is taken care of by the ShortcutChooser helper class.
  * 
- * Note: Instantiate this class with NEW on the heap, as it's deriving from gtkutil::DialogWindow.
- * It destroys itself upon dialog closure and frees the allocated memory. 
+ * Note: Show the dialog by instantiating this class with NEW on the heap, 
+ * as it's deriving from gtkutil::DialogWindow. It destroys itself upon dialog closure 
+ * and frees the allocated memory. 
  */
 
 	namespace {
-		const int CMDLISTDLG_DEFAULT_SIZE_X = 450;
+		const int CMDLISTDLG_DEFAULT_SIZE_X = 550;
 	    const int CMDLISTDLG_DEFAULT_SIZE_Y = 400;
 	    	    
 	    const std::string CMDLISTDLG_WINDOW_TITLE = "Shortcut List";
