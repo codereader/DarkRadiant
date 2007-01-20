@@ -1570,15 +1570,11 @@ void GlobalCamera_UpdateWindow()
   }
 }
 
-void XY_UpdateAllWindows(MainFrame& mainframe) {
-	GlobalXYWnd().updateAllViews();
-}
-
 void XY_UpdateAllWindows()
 {
   if(g_pParentWnd != 0)
   {
-    XY_UpdateAllWindows(*g_pParentWnd);
+    GlobalXYWnd().updateAllViews();
     
     // Set the World Spawn Colour
 	SetWorldspawnColour(ColourSchemes().getColourVector3("default_brush"));
@@ -2496,14 +2492,13 @@ void MainFrame::Create()
   PatchInspector_constructWindow(window);
 
   GlobalGrid().addGridChangeCallback(SetGridStatusCaller(*this));
-  GlobalGrid().addGridChangeCallback(ReferenceCaller<MainFrame, XY_UpdateAllWindows>(*this));
+  GlobalGrid().addGridChangeCallback(FreeCaller<XY_UpdateAllWindows>());
 
   g_defaultToolMode = DragMode;
   g_defaultToolMode();
   SetStatusText(m_command_status, c_TranslateMode_status);
 
   EverySecondTimer_enable();
-  //GlobalShortcuts_reportUnregistered();
   
   // Restore any floating XYViews that were active before, this applies to all view layouts
   GlobalXYWnd().restoreState();
