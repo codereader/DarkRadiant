@@ -1,3 +1,7 @@
+20/01/2007
+greebo
+- Added shortcut editor / refactored command & event system
+
 06/01/2007
 OrbWeaver
 - Added skin chooser dialog for entity inspector, allows selection of arbitrary
