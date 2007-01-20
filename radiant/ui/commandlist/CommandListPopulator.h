@@ -3,6 +3,11 @@
 
 #include "ieventmanager.h"
 
+/* greebo: The CommandListPopulator is an Event visitor class that cycles
+ * through all the registered events and stores the name and the associated
+ * shortcut representation into the given GtkListStore widget.
+ */
+
 namespace ui {
 
 class CommandListPopulator :

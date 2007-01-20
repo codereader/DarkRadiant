@@ -7,6 +7,15 @@
 #include "gtk/gtkliststore.h"
 #include "gtkutil/DialogWindow.h"
 
+/* greebo: The CommandListDialog class displays a list of all available
+ * DarkRadiant commands and provides methods to clear and assign the shortcuts.
+ * 
+ * The actual re-assignment is taken care of by the ShortcutChooser helper class.
+ * 
+ * Note: Instantiate this class with NEW on the heap, as it's deriving from gtkutil::DialogWindow.
+ * It destroys itself upon dialog closure and frees the allocated memory. 
+ */
+
 	namespace {
 		const int CMDLISTDLG_DEFAULT_SIZE_X = 450;
 	    const int CMDLISTDLG_DEFAULT_SIZE_Y = 400;
@@ -24,13 +33,6 @@ class CommandListDialog :
 	
 	// The treeview containing the above liststore
 	GtkWidget* _treeView;
-	
-	// The label to hold the status text of the shortcut chooser
-	GtkWidget* _statusWidget;
-	
-	// Working variables to store the new key/modifier from the user input
-	unsigned int _keyval;
-	unsigned int _state;
 
 public:
 	// Constructor
@@ -49,12 +51,6 @@ private:
 	// Gets the currently selected event name
 	std::string getSelectedCommand(); 
 	
-	// Asks the user to enter a new shortcut
-	void retrieveShortcut(const std::string& commandName);
-	
-	// Create the actual dialog and return a string with the result (TODO: Move into helper class)
-	bool shortcutDialog(const std::string& title, const std::string& label);
-
 	// The callback for the buttons
 	static void callbackClose(GtkWidget* widget, CommandListDialog* self);
 	static void callbackClear(GtkWidget* widget, CommandListDialog* self);
@@ -62,10 +58,6 @@ private:
 	
 	// The callback to catch the double click on a treeview row
 	static gboolean callbackViewButtonPress(GtkWidget* widget, GdkEventButton* event, CommandListDialog* self);
-	
-	// The callback for catching the keypress events in the shortcut entry field
-	static gboolean onShortcutKeyPress(GtkWidget* widget, GdkEventKey* event, CommandListDialog* self);
-	static gboolean onShortcutKeyRelease(GtkWidget* widget, GdkEventKey* event, CommandListDialog* self);
 	
 }; // class CommandListDialog
 
