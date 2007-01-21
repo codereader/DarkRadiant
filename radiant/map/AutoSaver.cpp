@@ -13,11 +13,28 @@
 #include "mainframe.h"
 #include "qe3.h"
 
+#include <boost/filesystem/path.hpp>
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/exception.hpp>
 
 namespace map {
 
+namespace {
+	
+	/* Registry key names */
+	const char* RKEY_AUTOSAVE_ENABLED = "user/ui/map/autoSaveEnabled";
+	const char* RKEY_AUTOSAVE_INTERVAL = "user/ui/map/autoSaveInterval";
+	const char* RKEY_AUTOSAVE_SNAPSHOTS_ENABLED = "user/ui/map/autoSaveSnapshots";
+	const char* RKEY_AUTOSAVE_SNAPSHOTS_FOLDER = "user/ui/map/snapshotFolder";
+	const char* RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE = "user/ui/map/maxSnapshotFolderSize";
+	const char* RKEY_MAP_FOLDER = "game/mapFormat/mapFolder";
+	const char* RKEY_MAP_EXTENSION = "game/mapFormat/fileExtension";
+	
+	// Filesystem path typedef
+	typedef boost::filesystem::path Path;
+}
+	
+	
 AutoMapSaver::AutoMapSaver() :
 	_enabled(GlobalRegistry().get(RKEY_AUTOSAVE_ENABLED) == "1"),
 	_snapshotsEnabled(GlobalRegistry().get(RKEY_AUTOSAVE_SNAPSHOTS_ENABLED) == "1"),
