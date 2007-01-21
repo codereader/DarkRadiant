@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_RENDERER_H)
 #define INCLUDED_RENDERER_H
 
-#include "render/ForEachVisible.h"
+#include "render/frontend/ForEachVisible.h"
 
 #include "irender.h"
 #include "ieclass.h"
@@ -64,7 +64,7 @@ VolumeIntersectionValue Cullable_testVisible(scene::Instance& instance,
 	return parent;
 }
 
-#include "render/CullingWalker.h"
+#include "render/frontend/CullingWalker.h"
 
 /**
  * Enumeration function for visible objects in the scene. Calls the Functor
@@ -82,7 +82,7 @@ inline void Scene_forEachVisible(scene::Graph& graph,
 			CullingWalker<Functor>(volume, functor)));
 }
 
-#include "render/RenderHighlighted.h"
+#include "render/frontend/RenderHighlighted.h"
 
 /**
  * Scene render function. Uses the visibility walkers to traverse the scene

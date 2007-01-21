@@ -32,7 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iclipper.h"
 #include "math/Vector3.h"
 #include "math/Plane3.h"
-#include "ui/colourscheme/ColourSchemeManager.h"
 
 // ========================================
 // GTK+ helper functions

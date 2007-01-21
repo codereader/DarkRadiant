@@ -28,18 +28,63 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class AABB;
 class Matrix4;
 
-
+/**
+ * Representation of a GL vertex/fragment program.
+ */
 class GLProgram
 {
 public:
-  virtual void enable() = 0;
-  virtual void disable() = 0;
-  virtual void setParameters(const Vector3& viewer, 
-  							  const Matrix4& localToWorld, 
-  							  const Vector3& origin, 
-  							  const Vector3& colour, 
-  							  const Matrix4& world2light,
-  							  float ambientFactor) = 0;
+	
+	/**
+	 * Create this program using glGenProgramsARB and siblings. This needs the
+	 * OpenGL system to be initialised so cannot happen in the constructor.
+	 */
+	virtual void create() = 0;
+	
+	/**
+	 * Destroy this program using GL calls.
+	 */
+	virtual void destroy() = 0;
+
+	/**
+	 * Bind this program as the currently-operative shader.
+	 */
+	virtual void enable() = 0;
+  
+  	/**
+  	 * Unbind this program from OpenGL.
+  	 */
+	virtual void disable() = 0;
+	
+	/**
+	 * Provide the local parameters that should be passed to the shader program.
+	 * 
+	 * @param viewer
+	 * Location of the viewer in 3D space.
+	 * 
+	 * @param localToWorld
+	 * Local to world transformation matrix.
+	 * 
+	 * @param origin
+	 * Origin of the light in 3D space.
+	 * 
+	 * @param colour
+	 * Colour of the light in 3D space.
+	 * 
+	 * @param world2light
+	 * Transformation from world space into light space, based on the position
+	 * and transformations of the light volume.
+	 * 
+	 * @param ambientFactor
+	 * 0.0 for a normal light, 1.0 for an ambient light. This affects whether
+	 * the lighting is directional or not.
+	 */
+	virtual void setParameters(const Vector3& viewer, 
+  							   const Matrix4& localToWorld, 
+  							   const Vector3& origin, 
+  							   const Vector3& colour, 
+  							   const Matrix4& world2light,
+  							   float ambientFactor) = 0;
 };
 
 class OpenGLFogState
@@ -106,16 +151,33 @@ public:
   }
 };
 
+/**
+ * Library of named OpenGLState objects.
+ */
 class OpenGLStateLibrary
 {
 public:
   INTEGER_CONSTANT(Version, 1);
   STRING_CONSTANT(Name, "openglshaderlibrary");
 
-  virtual void getDefaultState(OpenGLState& state) const = 0;
+	virtual void getDefaultState(OpenGLState& state) const = 0;
 
-  virtual void insert(const char* name, const OpenGLState& state) = 0;
-  virtual void erase(const char* name) = 0;
+	/** 
+	 * Add a named state.
+	 */
+	virtual void insert(const std::string& name, const OpenGLState& state) = 0;
+	
+	/**
+	 * Erase a named state.
+	 */
+	virtual void erase(const std::string& name) = 0;
+	
+	/**
+	 * Find a named state. Throws an std::runtime_error exception if the
+	 * state is not found.
+	 */
+	virtual const OpenGLState& find(const std::string& name) = 0;
+	
 };
 
 #include "modulesystem.h"

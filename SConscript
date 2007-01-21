@@ -380,7 +380,10 @@ radiant_src = [
 'ui/mru/MRU.cpp',
 'ui/mru/MRUMenuItem.cpp',
 'ui/commandlist/CommandList.cpp',
-'ui/commandlist/ShortcutChooser.cpp'
+'ui/commandlist/ShortcutChooser.cpp',
+'render/backend/OpenGLStateBucket.cpp',
+'render/backend/OpenGLShader.cpp',
+'render/backend/GLProgramFactory.cpp'
 ]
 
 for i in range(len(radiant_src)):
