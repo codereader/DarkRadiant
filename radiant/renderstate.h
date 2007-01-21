@@ -37,8 +37,6 @@ void OpenGLState_apply(const OpenGLState& self,
 					   unsigned int globalstate);
 
 
-void OpenGLState_constructDefault(OpenGLState& state);
-
 class OpenGLStateBucket;
 
 /* Sorted state map */

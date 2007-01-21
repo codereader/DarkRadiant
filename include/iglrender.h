@@ -146,9 +146,29 @@ public:
   OpenGLFogState m_fog;
   GLProgram* m_program;
 
-  OpenGLState() : m_program(0)
-  {
-  }
+	// Default constructor
+	OpenGLState() 
+	: m_state(0), // corresponds to RENDER_DEFAULT. TODO: potentially fragile
+	  m_texture(0),
+	  m_texture1(0),
+	  m_texture2(0),
+	  m_texture3(0),
+	  m_texture4(0),
+	  m_texture5(0),
+	  m_texture6(0),
+	  m_texture7(0),
+	  m_colour(1, 1, 1, 1),
+	  m_blend_src(GL_SRC_ALPHA),
+	  m_blend_dst(GL_ONE_MINUS_SRC_ALPHA),
+	  m_depthfunc(GL_LESS),
+	  m_alphafunc(GL_ALWAYS),
+	  m_alpharef(0),
+	  m_linewidth(1),
+	  m_pointsize(1),
+	  m_linestipple_factor(1),
+	  m_linestipple_pattern(0xAAAA),
+	  m_program(0)
+	{ }
 };
 
 /**

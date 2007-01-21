@@ -246,45 +246,6 @@ bool g_normalArray_enabled = false;
 bool g_texcoordArray_enabled = false;
 bool g_colorArray_enabled = false;
 
-void OpenGLState_constructDefault(OpenGLState& state)
-{
-  state.m_state = RENDER_DEFAULT;
-
-  state.m_texture = 0;
-  state.m_texture1 = 0;
-  state.m_texture2 = 0;
-  state.m_texture3 = 0;
-  state.m_texture4 = 0;
-  state.m_texture5 = 0;
-  state.m_texture6 = 0;
-  state.m_texture7 = 0;
-
-  state.m_colour[0] = 1;
-  state.m_colour[1] = 1;
-  state.m_colour[2] = 1;
-  state.m_colour[3] = 1;
-
-  state.m_depthfunc = GL_LESS;
-
-  state.m_blend_src = GL_SRC_ALPHA;
-  state.m_blend_dst = GL_ONE_MINUS_SRC_ALPHA;
-
-  state.m_alphafunc = GL_ALWAYS;
-  state.m_alpharef = 0;
-
-  state.m_linewidth = 1;
-  state.m_pointsize = 1;
-
-  state.m_linestipple_factor = 1;
-  state.m_linestipple_pattern = 0xaaaa;
-
-  state.m_fog = OpenGLFogState();
-}
-
-
-
-
-
 #define LIGHT_SHADER_DEBUG 0
 
 #if LIGHT_SHADER_DEBUG
@@ -469,22 +430,21 @@ public:
 		m_shaders.release(name.c_str());
 	}
   
-  void render(RenderStateFlags globalstate, const Matrix4& modelview, const Matrix4& projection, const Vector3& viewer)
-  {
-    glMatrixMode(GL_PROJECTION);
-    glLoadMatrixf(reinterpret_cast<const float*>(&projection));
-  #if 0
-    //qglGetFloatv(GL_PROJECTION_MATRIX, reinterpret_cast<float*>(&projection));
-  #endif
+  	/*
+  	 * Render all states in the ShaderCache along with their renderables.
+  	 */
+	void render(RenderStateFlags globalstate, 
+				const Matrix4& modelview, 
+				const Matrix4& projection, 
+				const Vector3& viewer)
+	{
+		// Set the projection and modelview matrices
+	    glMatrixMode(GL_PROJECTION);
+	    glLoadMatrixf(reinterpret_cast<const float*>(&projection));
 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixf(reinterpret_cast<const float*>(&modelview));
-  #if 0
-    //qglGetFloatv(GL_MODELVIEW_MATRIX, reinterpret_cast<float*>(&modelview));
-  #endif
+	    glMatrixMode(GL_MODELVIEW);
+	    glLoadMatrixf(reinterpret_cast<const float*>(&modelview));
  
-    ASSERT_MESSAGE(realised(), "render states are not realised");
-
     // global settings that are not set in renderstates
     glFrontFace(GL_CW);
     glCullFace(GL_BACK);
@@ -534,9 +494,9 @@ public:
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     }
 
-    OpenGLState current;
-    OpenGLState_constructDefault(current);
-    current.m_sort = OpenGLState::eSortFirst;
+		// Construct default OpenGL state
+		OpenGLState current;
+		current.m_sort = OpenGLState::eSortFirst;
 
     // default renderstate settings
     glLineStipple(current.m_linestipple_factor, current.m_linestipple_pattern);

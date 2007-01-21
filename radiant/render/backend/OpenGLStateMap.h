@@ -25,10 +25,12 @@ public:
     return _states.end();
   }
 
-  void getDefaultState(OpenGLState& state) const
-  {
-    OpenGLState_constructDefault(state);
-  }
+	/**
+	 * Construct a default OpenGLState in the provided reference.
+	 */
+	void getDefaultState(OpenGLState& state) const {
+		state = OpenGLState();
+	}
 
 	void insert(const std::string& name, const OpenGLState& state) {
     	_states.insert(States::value_type(name, state)).second;
