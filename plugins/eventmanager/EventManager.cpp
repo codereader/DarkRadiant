@@ -1,6 +1,7 @@
 #include "ieventmanager.h"
 
 #include "iregistry.h"
+#include "qerplugin.h"
 #include "iselection.h"
 #include <iostream>
 #include <typeinfo>
@@ -340,13 +341,15 @@ public:
 		findEvent(eventName)->setEnabled(true);
 	}
 
-	// Catches the keypress/keyrelease events from the given GtkObject
+	// Catches the key/mouse press/release events from the given GtkObject
 	void connect(GtkObject* object)	{
 		// Create and store the handler into the map
-		gulong handlerId = g_signal_connect(G_OBJECT(object), "key_press_event", G_CALLBACK(onKeyPress), this);
+		gulong handlerId = g_signal_connect(G_OBJECT(object), "key_press_event", 
+											G_CALLBACK(onKeyPress), this);
 		_handlers[handlerId] = object;
 		
-		handlerId = g_signal_connect(G_OBJECT(object), "key_release_event", G_CALLBACK(onKeyRelease), this);
+		handlerId = g_signal_connect(G_OBJECT(object), "key_release_event", 
+									 G_CALLBACK(onKeyRelease), this);
 		_handlers[handlerId] = object;
 	}
 	
@@ -568,6 +571,23 @@ private:
 		// If we return true here, the dialog window could process the key, and the GTK callback chain is stopped 
 		return keyProcessed;
 	}
+	
+	void updateStatusText(GdkEventKey* event, bool keyPress) {
+		// Make a copy of the given event key
+		GdkEventKey eventKey = *event;
+		
+		// Sometimes the ALT modifier is not set, so this is a workaround for this
+		if (eventKey.keyval == GDK_Alt_L || eventKey.keyval == GDK_Alt_R) {
+			if (keyPress) {
+				eventKey.state |= GDK_MOD1_MASK;
+			}
+			else {
+				eventKey.state &= ~GDK_MOD1_MASK;
+			}
+		}
+		
+		_mouseEvents.updateStatusText(&eventKey);
+	}
 
 	// The GTK keypress callback
 	static gboolean onKeyPress(GtkWindow* window, GdkEventKey* event, gpointer data) {
@@ -586,6 +606,8 @@ private:
 			
 			return true;
 		}
+		
+		self->updateStatusText(event, true);
 		
 		return false;
 	}
@@ -607,6 +629,8 @@ private:
 			
 			return true;
 		}
+		
+		self->updateStatusText(event, false);
 		
 		return false;
 	}
@@ -653,7 +677,8 @@ private:
 /* EventManager dependencies class. 
  */ 
 class EventManagerDependencies :
-	public GlobalRegistryModuleRef
+	public GlobalRegistryModuleRef,
+	public GlobalRadiantModuleRef
 {
 };
 

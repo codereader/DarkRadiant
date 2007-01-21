@@ -140,6 +140,7 @@ public:
   RadiantCoreAPI()
   {
   	m_radiantcore.getMainWindow = MainFrame_getWindow;
+  	m_radiantcore.setStatusText = Sys_Status;
   	
     m_radiantcore.getEnginePath = &EnginePath_get;
     m_radiantcore.getAppPath = &AppPath_get;

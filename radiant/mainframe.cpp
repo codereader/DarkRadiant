@@ -2523,11 +2523,11 @@ void MainFrame::Shutdown()
 
 void MainFrame::RedrawStatusText()
 {
-  gtk_label_set_text(GTK_LABEL(m_pStatusLabel[c_command_status]), m_command_status.c_str());
-  gtk_label_set_text(GTK_LABEL(m_pStatusLabel[c_position_status]), m_position_status.c_str());
-  gtk_label_set_text(GTK_LABEL(m_pStatusLabel[c_brushcount_status]), m_brushcount_status.c_str());
-  gtk_label_set_text(GTK_LABEL(m_pStatusLabel[c_texture_status]), m_texture_status.c_str());
-  gtk_label_set_text(GTK_LABEL(m_pStatusLabel[c_grid_status]), m_grid_status.c_str());
+  gtk_label_set_markup(GTK_LABEL(m_pStatusLabel[c_command_status]), m_command_status.c_str());
+  gtk_label_set_markup(GTK_LABEL(m_pStatusLabel[c_position_status]), m_position_status.c_str());
+  gtk_label_set_markup(GTK_LABEL(m_pStatusLabel[c_brushcount_status]), m_brushcount_status.c_str());
+  gtk_label_set_markup(GTK_LABEL(m_pStatusLabel[c_texture_status]), m_texture_status.c_str());
+  gtk_label_set_markup(GTK_LABEL(m_pStatusLabel[c_grid_status]), m_grid_status.c_str());
 }
 
 void MainFrame::UpdateStatusText()
@@ -2541,13 +2541,12 @@ void MainFrame::SetStatusText(CopiedString& status_text, const char* pText)
   UpdateStatusText();
 }
 
-void Sys_Status(const char* status)
-{
-  if(g_pParentWnd != 0)
-  {
-    g_pParentWnd->SetStatusText (g_pParentWnd->m_command_status, status);
-  }
+void Sys_Status(const std::string& statusText) {
+	if (g_pParentWnd != 0) {
+		g_pParentWnd->SetStatusText(g_pParentWnd->m_command_status, statusText.c_str());
+	}
 }
+
 
 int getRotateIncrement()
 {

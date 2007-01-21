@@ -134,8 +134,8 @@ extern LatchedBool g_Layout_enableDetachableMenus;
 
 void deleteSelection();
 
-
-void Sys_Status(const char* status);
+// Set the text to be displayed in the status bar
+void Sys_Status(const std::string& statusText);
 
 
 void ScreenUpdates_Disable(const char* message, const char* title = "");
