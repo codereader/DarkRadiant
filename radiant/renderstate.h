@@ -22,7 +22,42 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_RENDERSTATE_H)
 #define INCLUDED_RENDERSTATE_H
 
+#include "irender.h"
+#include "moduleobservers.h"
+#include "string/string.h"
+
+#include <list>
+
 void ShaderCache_setBumpEnabled(bool enabled);
 void ShaderCache_extensionsInitialised();
+
+class OpenGLState;
+void OpenGLState_apply(const OpenGLState& self, 
+					   OpenGLState& current, 
+					   unsigned int globalstate);
+
+
+void OpenGLState_constructDefault(OpenGLState& state);
+
+class OpenGLStateBucket;
+
+/* Sorted state map */
+
+#include "render/backend/OpenGLStateLess.h"
+#include "generic/reference.h"
+#include <map>
+
+typedef ConstReference<OpenGLState> OpenGLStateReference;
+typedef std::map<OpenGLStateReference, 
+				 OpenGLStateBucket*, 
+				 OpenGLStateLess> OpenGLStates;
+
+void insertSortedState(const OpenGLStates::value_type& val);
+void eraseSortedState(const OpenGLStates::key_type& key);
+
+/**
+ * Load a GL Program from the given filename and load directly into OpenGL.
+ */
+void createARBProgram(const char* filename, GLenum type);
 
 #endif

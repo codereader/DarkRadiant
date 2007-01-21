@@ -174,8 +174,17 @@ public:
   virtual void realise() = 0;
   virtual void unrealise() = 0;
 
-  virtual bool lightingSupported() const = 0;
-  virtual bool useShaderLanguage() const = 0;
+	/**
+	 * Test if lighting mode is supported, depending on OpenGL extensions.
+	 */
+	virtual bool lightingSupported() const = 0;
+	
+	/**
+	 * Test if lighting mode is ENABLED.
+	 */
+	virtual bool lightingEnabled() const = 0;
+	
+	virtual bool useShaderLanguage() const = 0;
 
   virtual const LightList& attach(LightCullable& cullable) = 0;
   virtual void detach(LightCullable& cullable) = 0;
