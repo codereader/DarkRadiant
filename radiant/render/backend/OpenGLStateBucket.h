@@ -32,7 +32,10 @@ private:
 
 private:
 
+	// The state applied to this bucket
 	OpenGLState m_state;
+	
+	// Vector of transformed renderables using this state
 	Renderables m_renderables;
 
 private:
