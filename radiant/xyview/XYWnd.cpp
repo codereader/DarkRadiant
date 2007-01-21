@@ -244,7 +244,8 @@ void XYWnd::scroll(int x, int y) {
 }
 
 /* greebo: This gets repeatedly called during a mouse chase operation.
- * The call is triggered by a timer, that gets start in XYWnd::chaseMouseMotion();
+ * The method is making use of a timer to determine the amount of time that has 
+ * passed since the chaseMouse has been started
  */
 void XYWnd::chaseMouse() {
 	float multiplier = _chaseMouseTimer.elapsed_msec() / 10.0f;
@@ -254,7 +255,7 @@ void XYWnd::chaseMouse() {
 
 	mouseMoved(m_chasemouse_current_x, m_chasemouse_current_y , _event->state);
   
-	// greebo: Restart the timer, so that it can trigger again
+	// greebo: Restart the timer
 	_chaseMouseTimer.start();
 }
 
@@ -307,6 +308,9 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, const unsigned int& state) 
 				//globalOutputStream() << "chasemouse timer start... ";
 				_chaseMouseTimer.start();
 				
+				// Add the chase mouse handler to the idle callbacks, so it gets called as
+				// soon as there is nothing more important to do. The callback queries the timer
+				// and takes the according window movement actions
 				_chaseMouseHandler = g_idle_add(callbackChaseMouse, this);
 			}
 			// Return true to signal that there are no other mouseMotion handlers to be performed

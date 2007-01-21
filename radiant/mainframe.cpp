@@ -95,7 +95,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/messagebox.h"
 #include "gtkutil/dialog.h"
 
-#include "autosave.h"
+#include "map/AutoSaver.h"
 #include "brushmanip.h"
 #include "brush/BrushModule.h"
 #include "csg.h"
@@ -1389,40 +1389,6 @@ void Selection_SnapToGrid()
   }
 }
 
-
-static gint qe_every_second(gpointer data)
-{
-  GdkModifierType mask;
-
-  gdk_window_get_pointer (0, 0, 0, &mask);
-
-  if ((mask & (GDK_BUTTON1_MASK|GDK_BUTTON2_MASK|GDK_BUTTON3_MASK)) == 0)
-  {
-    QE_CheckAutoSave();
-  }
-
-  return TRUE;
-}
-
-guint s_qe_every_second_id = 0;
-
-void EverySecondTimer_enable()
-{
-  if(s_qe_every_second_id == 0)
-  {
-    s_qe_every_second_id = gtk_timeout_add(1000, qe_every_second, 0);
-  }
-}
-
-void EverySecondTimer_disable()
-{
-  if(s_qe_every_second_id != 0)
-  {
-    gtk_timeout_remove(s_qe_every_second_id);
-    s_qe_every_second_id = 0;
-  }
-}
-
 gint window_realize_remove_decoration(GtkWidget* widget, gpointer data)
 {
   gdk_window_set_decorations(widget->window, (GdkWMDecoration)(GDK_DECOR_ALL|GDK_DECOR_MENU|GDK_DECOR_MINIMIZE|GDK_DECOR_MAXIMIZE));
@@ -1510,12 +1476,11 @@ void ScreenUpdates_process()
   }
 }
 
-
 void ScreenUpdates_Disable(const char* message, const char* title)
 {
   if(g_wait_stack.empty())
   {
-    EverySecondTimer_disable();
+    map::AutoSaver().stopTimer();
 
     process_gui();
 
@@ -1544,7 +1509,7 @@ void ScreenUpdates_Enable()
   g_wait_stack.pop_back();
   if(g_wait_stack.empty())
   {
-    EverySecondTimer_enable();
+    map::AutoSaver().startTimer();
     //gtk_widget_set_sensitive(GTK_WIDGET(MainFrame_getWindow()), TRUE);
 
     gtk_grab_remove(GTK_WIDGET(g_wait.m_window));
@@ -1559,8 +1524,6 @@ void ScreenUpdates_Enable()
     ScreenUpdates_process();
   }
 }
-
-
 
 void GlobalCamera_UpdateWindow()
 {
@@ -2498,10 +2461,11 @@ void MainFrame::Create()
   g_defaultToolMode();
   SetStatusText(m_command_status, c_TranslateMode_status);
 
-  EverySecondTimer_enable();
+	// Start the autosave timer so that it can periodically check the map for changes 
+	map::AutoSaver().startTimer();
   
-  // Restore any floating XYViews that were active before, this applies to all view layouts
-  GlobalXYWnd().restoreState();
+	// Restore any floating XYViews that were active before, this applies to all view layouts
+	GlobalXYWnd().restoreState();
 }
 
 void MainFrame::SaveWindowInfo()
@@ -2529,7 +2493,8 @@ void MainFrame::SaveWindowInfo()
 
 void MainFrame::Shutdown()
 {
-  EverySecondTimer_disable();
+	// Stop the AutoSaver class from being called
+	map::AutoSaver().stopTimer();
 
   EntityList_destroyWindow();
 
