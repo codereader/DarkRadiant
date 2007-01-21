@@ -1,7 +1,11 @@
 #include "MouseEvents.h"
 
 #include "iregistry.h"
+#include "qerplugin.h"
 #include "iselection.h"
+
+#include "gdk/gdkkeys.h"
+
 #include <iostream>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/classification.hpp>
@@ -18,7 +22,8 @@
 
 MouseEventManager::MouseEventManager(Modifiers& modifiers) : 
 	_modifiers(modifiers),
-	_selectionSystem(NULL)
+	_selectionSystem(NULL),
+	_activeFlags(0)
 {
 	loadButtonDefinitions();
 	
@@ -289,6 +294,8 @@ unsigned int MouseEventManager::getButtonFlags(const unsigned int& state) {
 	if ((state & GDK_BUTTON1_MASK) != 0) return 1;
 	if ((state & GDK_BUTTON2_MASK) != 0) return 2;
 	if ((state & GDK_BUTTON3_MASK) != 0) return 3;
+	if ((state & GDK_BUTTON4_MASK) != 0) return 4;
+	if ((state & GDK_BUTTON5_MASK) != 0) return 5;
 
 	return 0;
 }
@@ -483,32 +490,32 @@ ui::ObserverEvent MouseEventManager::getObserverEvent(const unsigned int& state)
 std::string MouseEventManager::printXYViewEvent(const ui::XYViewEvent& xyViewEvent) {
 	
 	switch (xyViewEvent) {
-		case ui::xyNothing: return "Nothing";
-		case ui::xyMoveView: return "MoveView";
-		case ui::xySelect: return "Select";
-		case ui::xyZoom: return "Zoom";
-		case ui::xyCameraMove: return "CameraMove";
-		case ui::xyCameraAngle: return "CameraAngle";
-		case ui::xyNewBrushDrag: return "NewBrushDrag";
-		default: return "Unknown event";
+		case ui::xyNothing: return "<b>Nothing</b>";
+		case ui::xyMoveView: return "<b>Move View</b>";
+		case ui::xySelect: return "<b>Select</b>";
+		case ui::xyZoom: return "<b>Zoom View</b>";
+		case ui::xyCameraMove: return "<b>Drag Camera</b>";
+		case ui::xyCameraAngle: return "<b>Point Camera</b>";
+		case ui::xyNewBrushDrag: return "<b>Create New Brush</b>";
+		default: return "<b>Unknown event</b>";
 	}
 }
 
 std::string MouseEventManager::printObserverEvent(const ui::ObserverEvent& observerEvent) {
 	
 	switch (observerEvent) {
-		case ui::obsNothing: return "Nothing";
-		case ui::obsManipulate: return "Manipulate";
-		case ui::obsSelect: return "Select"; 
-		case ui::obsToggle: return "Toggle";
-		case ui::obsToggleFace: return "ToggleFace";
-		case ui::obsReplace: return "Replace";
-		case ui::obsReplaceFace: return "ReplaceFace";
-		case ui::obsCopyTexture: return "CopyTexture";
-		case ui::obsPasteTextureProjected: return "PasteTextureProjected";		
-		case ui::obsPasteTextureNatural: return "PasteTextureNatural";
-		case ui::obsPasteTextureCoordinates: return "PasteTextureCoordinates";
-		default: return "Unknown event";
+		case ui::obsNothing: return "<b>Nothing</b>";
+		case ui::obsManipulate: return "<b>Manipulate</b>";
+		case ui::obsSelect: return "<b>Select</b>"; 
+		case ui::obsToggle: return "<b>Toggle Selection</b>";
+		case ui::obsToggleFace: return "<b>Toggle Face Selection</b>";
+		case ui::obsReplace: return "<b>Cycle Selection</b>";
+		case ui::obsReplaceFace: return "<b>Cycle Face Selection</b>";
+		case ui::obsCopyTexture: return "<b>Copy Texture</b>";
+		case ui::obsPasteTextureProjected: return "<b>PasteTexture Projected</b>";		
+		case ui::obsPasteTextureNatural: return "<b>PasteTexture Natural</b>";
+		case ui::obsPasteTextureCoordinates: return "<b>PasteTexture Coordinates</b>";
+		default: return "<b>Unknown event</b>";
 	}
 }
 
@@ -526,4 +533,57 @@ bool MouseEventManager::strafeActive(unsigned int& state) {
 
 bool MouseEventManager::strafeForwardActive(unsigned int& state) {
 	return ((_modifiers.getKeyboardFlags(state) & _toggleForwardStrafeCondition.modifierFlags) != 0);
+}
+
+std::string MouseEventManager::getShortButtonName(const std::string& longName) {
+	if (longName == "MOUSE_LEFT") {
+		return "LMB";
+	}
+	else if (longName == "MOUSE_RIGHT") {
+		return "RMB";
+	}
+	else if (longName == "MOUSE_MIDDLE") {
+		return "MMB";
+	}
+	else if (longName == "MOUSE_THUMB") {
+		return "MB4";
+	}
+	else if (longName == "MOUSE_FIVE") {
+		return "MB5";
+	}
+	else {
+		return "";
+	} 
+}
+
+void MouseEventManager::updateStatusText(GdkEventKey* event) {
+	_activeFlags = _modifiers.getKeyboardFlags(event->state);
+	
+	std::string statusText("");
+	
+	if (_activeFlags != 0) {
+		for (ButtonIdMap::iterator it = _buttonId.begin(); it != _buttonId.end(); it++) {
+			// Look up an event with this button ID and the given modifier			
+			ui::XYViewEvent xyEvent = findXYViewEvent(it->second, _activeFlags);
+			
+			if (xyEvent != ui::xyNothing) {
+				statusText += _modifiers.getModifierStr(_activeFlags, true) + "-";
+				statusText += getShortButtonName(it->first) + ": ";
+				statusText += printXYViewEvent(xyEvent);
+				statusText += " ";
+			}
+			
+			// Look up an event with this button ID and the given modifier			
+			ui::ObserverEvent obsEvent = findObserverEvent(it->second, _activeFlags);
+			
+			if (obsEvent != ui::obsNothing) {
+				statusText += _modifiers.getModifierStr(_activeFlags, true) + "-";
+				statusText += getShortButtonName(it->first) + ": ";
+				statusText += printObserverEvent(obsEvent);
+				statusText += " ";
+			}
+		}
+	}
+	
+	GlobalRadiant().setStatusText(statusText);
 }

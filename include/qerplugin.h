@@ -118,6 +118,8 @@ struct IRadiant
 	/** Return the main application GtkWindow.
 	 */
 	GtkWindow* (*getMainWindow) ();
+	
+	void (*setStatusText)(const std::string& statusText);
 
   const char* (*getEnginePath)();
   const char* (*getAppPath)();

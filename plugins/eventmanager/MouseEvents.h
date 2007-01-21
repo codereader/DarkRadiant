@@ -43,6 +43,8 @@ class MouseEventManager :
 	// The reference to the modifier class (is passed by the EventManager)
 	Modifiers& _modifiers;
 	SelectionSystem* _selectionSystem;
+	
+	unsigned int _activeFlags;
 
 public:
 	// Constructor
@@ -78,8 +80,13 @@ public:
 	float getCameraForwardStrafeFactor();
 	bool strafeActive(unsigned int& state);
 	bool strafeForwardActive(unsigned int& state);
-
+	
+	// Updates the status text with the according mouse event state
+	void updateStatusText(GdkEventKey* event);
+	
 private:
+	
+	std::string getShortButtonName(const std::string& longName);
 
 	// Loads the button and modifier definitions from the XMLRegistry
 	void loadButtonDefinitions();
