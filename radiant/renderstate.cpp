@@ -67,6 +67,26 @@ namespace {
 	
 	// Name of default pointlight shader, retrieved from game descriptor.
 	std::string _defaultLightShaderName;
+
+	// Polygon stipple pattern
+	const GLubyte POLYGON_STIPPLE_PATTERN[132] = {
+	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+ 	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+ 	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+ 	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+ 	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55
+	};
 	
 }
 
@@ -203,12 +223,6 @@ void createARBProgram(const char* filename, GLenum type)
     ERROR_MESSAGE("error in gl program");
   }
 }
-
-
-bool g_vertexArray_enabled = false;
-bool g_normalArray_enabled = false;
-bool g_texcoordArray_enabled = false;
-bool g_colorArray_enabled = false;
 
 #define LIGHT_SHADER_DEBUG 0
 
@@ -395,7 +409,8 @@ public:
 	}
   
   	/*
-  	 * Render all states in the ShaderCache along with their renderables.
+  	 * Render all states in the ShaderCache along with their renderables. This
+  	 * is where the actual OpenGL rendering starts.
   	 */
 	void render(RenderStateFlags globalstate, 
 				const Matrix4& modelview, 
@@ -409,54 +424,33 @@ public:
 	    glMatrixMode(GL_MODELVIEW);
 	    glLoadMatrixf(reinterpret_cast<const float*>(&modelview));
  
-    // global settings that are not set in renderstates
-    glFrontFace(GL_CW);
-    glCullFace(GL_BACK);
-    glPolygonOffset(-1, 1);
-    {
-      const GLubyte pattern[132] = {
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
- 	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
- 	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
- 	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
- 	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55
-     };
-      glPolygonStipple(pattern);
-    }
-    glEnableClientState(GL_VERTEX_ARRAY);
-    g_vertexArray_enabled = true;
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	    // global settings that are not set in renderstates
+	    glFrontFace(GL_CW);
+	    glCullFace(GL_BACK);
+	    glPolygonOffset(-1, 1);
 
-    if(GLEW_VERSION_1_3)
-    {
-      glActiveTexture(GL_TEXTURE0);
-      glClientActiveTexture(GL_TEXTURE0);
-    }
+		// Set polygon stipple pattern from constant
+		glPolygonStipple(POLYGON_STIPPLE_PATTERN);
 
-    if(GLEW_ARB_shader_objects)
-    {
-      glUseProgramObjectARB(0);
-      glDisableVertexAttribArrayARB(c_attr_TexCoord0);
-      glDisableVertexAttribArrayARB(c_attr_Tangent);
-      glDisableVertexAttribArrayARB(c_attr_Binormal);
-    }
+	    glEnableClientState(GL_VERTEX_ARRAY);
+	    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
-    if(globalstate & RENDER_TEXTURE)
-    {
-      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    }
+	    if(GLEW_VERSION_1_3) {
+			glActiveTexture(GL_TEXTURE0);
+			glClientActiveTexture(GL_TEXTURE0);
+	    }
+
+	    if(GLEW_ARB_shader_objects) {
+			glUseProgramObjectARB(0);
+			glDisableVertexAttribArrayARB(c_attr_TexCoord0);
+			glDisableVertexAttribArrayARB(c_attr_Tangent);
+			glDisableVertexAttribArrayARB(c_attr_Binormal);
+	    }
+
+	    if(globalstate & RENDER_TEXTURE) {
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	    }
 
 		// Construct default OpenGL state
 		OpenGLState current;
@@ -469,11 +463,8 @@ public:
 	    glDisable(GL_LIGHTING);
 	    glDisable(GL_TEXTURE_2D);
 	    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	    g_texcoordArray_enabled = false;
 	    glDisableClientState(GL_COLOR_ARRAY);
-	    g_colorArray_enabled = false;
 	    glDisableClientState(GL_NORMAL_ARRAY);
-	    g_normalArray_enabled = false;
 	    glDisable(GL_BLEND);
 	    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -856,7 +847,6 @@ void OpenGLState_apply(const OpenGLState& self,
     //qglEnable(GL_RESCALE_NORMAL);
     glEnableClientState(GL_NORMAL_ARRAY);
     GlobalOpenGL_debugAssertNoErrors();
-    g_normalArray_enabled = true;
   }
   else if(delta & ~state & RENDER_LIGHTING)
   {
@@ -865,7 +855,6 @@ void OpenGLState_apply(const OpenGLState& self,
     //qglDisable(GL_RESCALE_NORMAL);
     glDisableClientState(GL_NORMAL_ARRAY);
     GlobalOpenGL_debugAssertNoErrors();
-    g_normalArray_enabled = false;
   }
 
   if(delta & state & RENDER_TEXTURE)
@@ -884,7 +873,6 @@ void OpenGLState_apply(const OpenGLState& self,
 
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     GlobalOpenGL_debugAssertNoErrors();
-    g_texcoordArray_enabled = true;
   }
   else if(delta & ~state & RENDER_TEXTURE)
   {
@@ -899,7 +887,6 @@ void OpenGLState_apply(const OpenGLState& self,
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     GlobalOpenGL_debugAssertNoErrors();
-    g_texcoordArray_enabled = false;
   }
 
   if(delta & state & RENDER_BLEND)
@@ -976,14 +963,12 @@ void OpenGLState_apply(const OpenGLState& self,
   {
     glEnableClientState(GL_COLOR_ARRAY);
     GlobalOpenGL_debugAssertNoErrors();
-    g_colorArray_enabled = true;
   }
   else if(delta & ~state & RENDER_COLOURARRAY)
   {
     glDisableClientState(GL_COLOR_ARRAY);
     glColor4fv(self.m_colour);
     GlobalOpenGL_debugAssertNoErrors();
-    g_colorArray_enabled = false;
   }
 
   if(delta & ~state & RENDER_COLOURCHANGE)
