@@ -87,20 +87,6 @@ public:
   							   float ambientFactor) = 0;
 };
 
-class OpenGLFogState
-{
-public:
-  OpenGLFogState() : mode(GL_EXP), density(0), start(0), end(0), index(0), colour(1, 1, 1, 1)
-  {
-  }
-  GLenum mode;
-  GLfloat density;
-  GLfloat start;
-  GLfloat end;
-  GLint index;
-  Vector4 colour;
-};
-
 //! A collection of opengl state information.
 class OpenGLState
 {
@@ -143,7 +129,6 @@ public:
   GLfloat m_pointsize;
   GLint m_linestipple_factor;
   GLushort m_linestipple_pattern;
-  OpenGLFogState m_fog;
   GLProgram* m_program;
 
 	// Default constructor

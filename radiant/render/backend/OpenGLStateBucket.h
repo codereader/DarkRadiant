@@ -33,12 +33,16 @@ private:
 private:
 
 	// The state applied to this bucket
-	OpenGLState m_state;
+	OpenGLState _state;
 	
 	// Vector of transformed renderables using this state
 	Renderables m_renderables;
 
 private:
+
+	// Apply own state to the "current" state object passed in as a reference,
+	// in combination with the global state parameter
+	void applyState(OpenGLState& current, unsigned int globalState);
 
 	// Flush out the renderables in the vector and draw them to screen
 	void flushRenderables(OpenGLState& current, 
@@ -62,7 +66,7 @@ public:
 	 * Return the OpenGL state associated with this bucket.
 	 */
 	OpenGLState& state() {
-		return m_state;
+		return _state;
 	}
 
 	/**
