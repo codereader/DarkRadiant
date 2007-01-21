@@ -79,11 +79,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "mainframe.h"
 #include "preferences.h"
 #include "referencecache.h"
-#include "autosave.h"
 #include "brush/BrushNode.h"
 #include "camera/CamWnd.h"
 #include "xyview/GlobalXYWnd.h"
 #include "ui/mru/MRU.h"
+#include "map/AutoSaver.h"
 
 #include <string>
 #include <boost/lexical_cast.hpp>
@@ -344,7 +344,7 @@ public:
 
       GlobalSceneGraph().insert_root(*m_resource->getNode());
 
-      AutoSave_clear();
+      map::AutoSaver().clearChanges();
 
       Map_SetValid(g_map, true);
     }

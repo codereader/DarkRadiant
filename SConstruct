@@ -230,7 +230,15 @@ class idEnvironment(Environment):
 			self.Append(LIBS = ['libboost_regex-gcc'])
 		else:
 			self.Append(LIBS = ['boost_regex'])
-		
+	
+	# Link with the boost_filesystem library
+	def useBoostFilesystem(self):
+		self.useBoost()
+		if (self['PLATFORM'] == 'win32'):
+			self.Append(LIBS = ['libboost_filesystem-gcc-1_33_1'])
+		else:
+			self.Append(LIBS = ['boost_filesystem'])
+	
 	def useGlib2(self):
 	# On Win32 we need to add the local paths, since there is no
 	# global include/lib path.

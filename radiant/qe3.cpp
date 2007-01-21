@@ -55,7 +55,6 @@ please contact Id Software immediately at info@idsoftware.com.
 #include "camera/CamWnd.h"
 #include "mainframe.h"
 #include "preferences.h"
-#include "autosave.h"
 #include "convert.h"
 
 QEGlobals_t  g_qeglobals;

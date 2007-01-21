@@ -273,9 +273,9 @@ radiant_env.useXML2()
 radiant_env.useGtk2()
 radiant_env.useGtkGLExt()
 radiant_env.useOpenGL()
+radiant_env.useBoostFilesystem()
 
 radiant_src = [
-'autosave.cpp',
 'brushmanip.cpp',
 'clippertool.cpp',
 'console.cpp',
@@ -387,6 +387,7 @@ radiant_src = [
 'ui/mru/MRUMenuItem.cpp',
 'ui/commandlist/CommandList.cpp',
 'ui/commandlist/ShortcutChooser.cpp',
+'map/AutoSaver.cpp',
 'render/backend/OpenGLStateBucket.cpp',
 'render/backend/OpenGLShader.cpp',
 'render/backend/GLProgramFactory.cpp'

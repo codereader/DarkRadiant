@@ -9,6 +9,11 @@
 	<map>
 		<numMRU value="5" />
 		<loadLastMap value="0" />
+		<autoSaveEnabled value="1" />
+		<autoSaveInterval value="5" />
+		<autoSaveSnapshots value="0" />
+		<snapshotFolder value="snapshots/" />
+		<maxSnapshotFolderSize value="100" />
 	</map>
 	<ModelSelector>
     	<previewSizeFactor value="0.4"/>

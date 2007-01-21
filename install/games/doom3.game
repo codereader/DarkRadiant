@@ -123,7 +123,8 @@
 
 	<!-- Information about the map format, for loading and saving -->		
 	<mapFormat>
-	
+		<fileExtension value="map" />
+		<mapFolder value="maps/" />
 		<!-- Compatibility options -->
 		<compatibility>
 			<addDummyBrushes value="true" />
