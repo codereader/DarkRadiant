@@ -419,10 +419,10 @@ public:
 	{
 		// Set the projection and modelview matrices
 	    glMatrixMode(GL_PROJECTION);
-	    glLoadMatrixf(reinterpret_cast<const float*>(&projection));
+	    glLoadMatrixf(projection);
 
 	    glMatrixMode(GL_MODELVIEW);
-	    glLoadMatrixf(reinterpret_cast<const float*>(&modelview));
+	    glLoadMatrixf(modelview);
  
 	    // global settings that are not set in renderstates
 	    glFrontFace(GL_CW);

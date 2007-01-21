@@ -23,9 +23,11 @@ cmdlib_lib = g_env.StaticLibrary(target='libs/cmdlib', source='libs/cmdlib/cmdli
 mathlib_src = 'mathlib.c bbox.c line.c m4x4.c ray.c'
 mathlib_lib = g_env.StaticLibrary(target='libs/mathlib', source=build_list('libs/mathlib', mathlib_src))
 
+# libs/math library
 mathEnv = g_env.Copy()
-mathSrc = 'aabb.cpp'
-math = mathEnv.StaticLibrary(target='libs/math', source=build_list('libs/math', mathSrc))
+mathSrc = 'aabb.cpp matrix.cpp'
+math = mathEnv.StaticLibrary(target='libs/math', 
+							 source=build_list('libs/math', mathSrc))
 
 md5lib_lib = g_env.StaticLibrary(target='libs/md5lib', source='libs/md5lib/md5lib.c')
 
@@ -223,6 +225,7 @@ eventmanager_lib = eventmanager_env.SharedLibrary(target='eventmanager', source=
 eventmanager_env.Depends(eventmanager_lib, gtkutil_lib)
 eventmanager_env.Install(INSTALL + '/modules', eventmanager_lib)
 
+# Entity creator module
 entity_env = module_env.Copy()
 entity_src = [
 	'plugin.cpp',
@@ -249,8 +252,11 @@ entity_src = [
 ]
 entity_lst = build_list('plugins/entity', entity_src)
 entity_env.Append(LIBS = ['math', 'xmlutil'])
-entity_lib = entity_env.SharedLibrary(target='entity', source=entity_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
+entity_lib = entity_env.SharedLibrary(target='entity', 
+									  source=entity_lst, 
+									  no_import_lib=1)
 entity_env.Depends(entity_lib, math)
+entity_env.Depends(entity_lib, xmlutil)
 entity_env.Install(INSTALL + '/modules', entity_lib)
 
 radiant_env = g_env.Copy()
