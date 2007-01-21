@@ -62,27 +62,12 @@ public:
 						translation.x(), translation.y(), translation.z(), 1);
 	}
 	
-	/* greebo: Returns the rotation matrix defined by two three-component vectors.
-	 * The rotational axis is defined by the normalised cross product of those two vectors,
-	 * the angle can be retrieved from the dot product.
+	/* greebo: Returns the rotation matrix defined by two three-component 
+	 * vectors.
+	 * The rotational axis is defined by the normalised cross product of those 
+	 * two vectors, the angle can be retrieved from the dot product.
 	 */
-	static Matrix4 getRotation(const Vector3& a, const Vector3& b) {
-		double angle = a.angle(b);
-		Vector3 axis = b.crossProduct(a).getNormalised();
-		// Pre-calculate the terms
-		double cosPhi = cos(angle);
-		double sinPhi = sin(angle);
-		double oneMinusCosPhi = static_cast<double>(1) - cos(angle);
-		double x = axis.x();
-		double y = axis.y();
-		double z = axis.z(); 
-		return Matrix4(
-			cosPhi + oneMinusCosPhi*x*x, oneMinusCosPhi*x*y - sinPhi*z, oneMinusCosPhi*x*z + sinPhi*y, 0,
-			oneMinusCosPhi*y*x + sinPhi*z, cosPhi + oneMinusCosPhi*y*y, oneMinusCosPhi*y*z - sinPhi*x, 0,
-			oneMinusCosPhi*z*x - sinPhi*y, oneMinusCosPhi*z*y + sinPhi*x, cosPhi + oneMinusCosPhi*z*z, 0,
-			0, 0, 0, 1
-		);
-	}
+	static Matrix4 getRotation(const Vector3& a, const Vector3& b);
 
 	// Custom constructor
 
@@ -375,7 +360,7 @@ public:
 			m_elements[12] * plane.a + m_elements[13] * plane.b + m_elements[14] * plane.c + m_elements[15] * plane.d
 		);
 	}
-
+	
 };
 
 /// \brief The 4x4 identity matrix.
