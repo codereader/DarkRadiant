@@ -32,11 +32,6 @@ void ShaderCache_setBumpEnabled(bool enabled);
 void ShaderCache_extensionsInitialised();
 
 class OpenGLState;
-void OpenGLState_apply(const OpenGLState& self, 
-					   OpenGLState& current, 
-					   unsigned int globalstate);
-
-
 class OpenGLStateBucket;
 
 /* Sorted state map */
