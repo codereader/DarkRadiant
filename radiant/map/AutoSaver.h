@@ -1,12 +1,10 @@
 #ifndef AUTOSAVER_H_
 #define AUTOSAVER_H_
 
-#include <string>
 #include "iregistry.h"
 #include "preferencesystem.h"
 
 #include "gtkutil/Timer.h"
-#include <boost/filesystem/path.hpp>
 
 /* greebo: The AutoMapSaver class lets itself being called in distinct intervals
  * and saves the map files either to snapshots or to a single yyyy.autosave.map file.  
@@ -14,22 +12,10 @@
 
 namespace map {
 	
-	namespace {
-		const std::string RKEY_AUTOSAVE_ENABLED = "user/ui/map/autoSaveEnabled";
-		const std::string RKEY_AUTOSAVE_INTERVAL = "user/ui/map/autoSaveInterval";
-		const std::string RKEY_AUTOSAVE_SNAPSHOTS_ENABLED = "user/ui/map/autoSaveSnapshots";
-		const std::string RKEY_AUTOSAVE_SNAPSHOTS_FOLDER = "user/ui/map/snapshotFolder";
-		const std::string RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE = "user/ui/map/maxSnapshotFolderSize";
-		const std::string RKEY_MAP_FOLDER = "game/mapFormat/mapFolder";
-		const std::string RKEY_MAP_EXTENSION = "game/mapFormat/fileExtension";
-	}
-	
 class AutoMapSaver :
 	public RegistryKeyObserver,
 	public PreferenceConstructor
 {
-	typedef boost::filesystem::path Path;
-	
 	// TRUE, if autosaving is enabled
 	bool _enabled;
 	
