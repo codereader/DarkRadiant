@@ -86,42 +86,6 @@ void eraseSortedState(const OpenGLStates::key_type& key) {
 
 #define DEBUG_RENDER 0
 
-inline void debug_string(const char* string)
-{
-#if(DEBUG_RENDER)
-  globalOutputStream() << string << "\n";
-#endif
-}
-
-inline void debug_int(const char* comment, int i)
-{
-#if(DEBUG_RENDER)
-  globalOutputStream() << comment << " " << i << "\n";
-#endif
-}
-
-inline void debug_colour(const char* comment)
-{
-#if(DEBUG_RENDER)
-  Vector4 v;
-  glGetFloatv(GL_CURRENT_COLOR, reinterpret_cast<float*>(&v));
-  globalOutputStream() << comment << " colour: "
-    << v[0] << " "
-    << v[1] << " "
-    << v[2] << " "
-    << v[3];
-  if(glIsEnabled(GL_COLOR_ARRAY))
-  {
-    globalOutputStream() << " ARRAY";
-  }
-  if(glIsEnabled(GL_COLOR_MATERIAL))
-  {
-    globalOutputStream() << " MATERIAL";
-  }
-  globalOutputStream() << "\n";
-#endif
-}
-
 #include "timer.h"
 
 StringOutputStream g_renderer_stats;
@@ -498,48 +462,52 @@ public:
 		OpenGLState current;
 		current.m_sort = OpenGLState::eSortFirst;
 
-    // default renderstate settings
-    glLineStipple(current.m_linestipple_factor, current.m_linestipple_pattern);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glDisable(GL_LIGHTING);
-    glDisable(GL_TEXTURE_2D);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    g_texcoordArray_enabled = false;
-    glDisableClientState(GL_COLOR_ARRAY);
-    g_colorArray_enabled = false;
-    glDisableClientState(GL_NORMAL_ARRAY);
-    g_normalArray_enabled = false;
-    glDisable(GL_BLEND);
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDisable(GL_CULL_FACE);
-    glShadeModel(GL_FLAT);
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
-    glDisable(GL_ALPHA_TEST);
-    glDisable(GL_LINE_STIPPLE);
-    glDisable(GL_POLYGON_STIPPLE);
-    glDisable(GL_POLYGON_OFFSET_LINE);
+	    // default renderstate settings
+	    glLineStipple(current.m_linestipple_factor, 
+	    			  current.m_linestipple_pattern);
+	    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	    glDisable(GL_LIGHTING);
+	    glDisable(GL_TEXTURE_2D);
+	    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	    g_texcoordArray_enabled = false;
+	    glDisableClientState(GL_COLOR_ARRAY);
+	    g_colorArray_enabled = false;
+	    glDisableClientState(GL_NORMAL_ARRAY);
+	    g_normalArray_enabled = false;
+	    glDisable(GL_BLEND);
+	    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	    glDisable(GL_CULL_FACE);
+	    glShadeModel(GL_FLAT);
+	    glDisable(GL_DEPTH_TEST);
+	    glDepthMask(GL_FALSE);
+	    glDisable(GL_ALPHA_TEST);
+	    glDisable(GL_LINE_STIPPLE);
+	    glDisable(GL_POLYGON_STIPPLE);
+	    glDisable(GL_POLYGON_OFFSET_LINE);
+	
+	    glBindTexture(GL_TEXTURE_2D, 0);
+	    glColor4f(1,1,1,1);
+	    glDepthFunc(GL_LESS);
+	    glAlphaFunc(GL_ALWAYS, 0);
+	    glLineWidth(1);
+	    glPointSize(1);
 
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glColor4f(1,1,1,1);
-    glDepthFunc(GL_LESS);
-    glAlphaFunc(GL_ALWAYS, 0);
-    glLineWidth(1);
-    glPointSize(1);
+		glHint(GL_FOG_HINT, GL_NICEST);
+	    glDisable(GL_FOG);
+	    setFogState(OpenGLFogState());
 
-	  glHint(GL_FOG_HINT, GL_NICEST);
-    glDisable(GL_FOG);
-    setFogState(OpenGLFogState());
-
-    GlobalOpenGL_debugAssertNoErrors();
-
-    debug_string("begin rendering");
-    for(OpenGLStates::iterator i = g_state_sorted.begin(); i != g_state_sorted.end(); ++i)
-    {
-      (*i).second->render(current, globalstate, viewer);
-    }
-    debug_string("end rendering");
+		// Iterate over the sorted mapping between OpenGLStates and their
+		// OpenGLStateBuckets (containing the renderable geometry), and render
+		// the contents of each bucket. Each state bucket is passed a reference
+		// to the "current" state, which it can change.
+		for(OpenGLStates::iterator i = g_state_sorted.begin(); 
+			i != g_state_sorted.end(); 
+			++i)
+		{
+			// Render the OpenGLStateBucket
+			i->second->render(current, globalstate, viewer);
+		}
   }
   void realise()
   {
@@ -830,13 +798,12 @@ inline void setState(unsigned int state, unsigned int delta, unsigned int flag, 
   }
 }
 
-void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned int globalstate)
+// Apply the state "self" to the state "current" using certain conditional
+// rules. This is where the GLProgram gets set, amongst other things.
+void OpenGLState_apply(const OpenGLState& self, 
+					   OpenGLState& current, 
+					   unsigned int globalstate)
 {
-  debug_int("sort", int(self.m_sort));
-  debug_int("texture", self.m_texture);
-  debug_int("state", self.m_state);
-  debug_int("address", int(std::size_t(&self)));
-
   count_state();
 
   if(self.m_state & RENDER_OVERRIDE)
@@ -857,7 +824,6 @@ void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned i
     {
       current.m_program->disable();
       glColor4fv(current.m_colour);
-      debug_colour("cleaning program");
     }
 
     current.m_program = program;
@@ -915,7 +881,6 @@ void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned i
     glEnable(GL_TEXTURE_2D);
 
     glColor4f(1,1,1,self.m_colour[3]);
-    debug_colour("setting texture");
 
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     GlobalOpenGL_debugAssertNoErrors();
@@ -985,25 +950,11 @@ void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned i
   {
     glDepthMask(GL_TRUE);
 
-#if DEBUG_RENDER
-    GLboolean depthEnabled;
-    glGetBooleanv(GL_DEPTH_WRITEMASK, &depthEnabled);
-    ASSERT_MESSAGE(depthEnabled, "failed to set depth buffer mask bit");
-#endif
-    debug_string("enabled depth-buffer writing");
-
     GlobalOpenGL_debugAssertNoErrors();
   }
   else if(delta & ~state & RENDER_DEPTHWRITE)
   {
     glDepthMask(GL_FALSE);
-
-#if DEBUG_RENDER
-    GLboolean depthEnabled;
-    glGetBooleanv(GL_DEPTH_WRITEMASK, &depthEnabled);
-    ASSERT_MESSAGE(!depthEnabled, "failed to set depth buffer mask bit");
-#endif
-    debug_string("disabled depth-buffer writing");
 
     GlobalOpenGL_debugAssertNoErrors();
   }
@@ -1025,14 +976,12 @@ void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned i
   {
     glEnableClientState(GL_COLOR_ARRAY);
     GlobalOpenGL_debugAssertNoErrors();
-    debug_colour("enabling color_array");
     g_colorArray_enabled = true;
   }
   else if(delta & ~state & RENDER_COLOURARRAY)
   {
     glDisableClientState(GL_COLOR_ARRAY);
     glColor4fv(self.m_colour);
-    debug_colour("cleaning color_array");
     GlobalOpenGL_debugAssertNoErrors();
     g_colorArray_enabled = false;
   }
@@ -1127,7 +1076,6 @@ void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned i
 
   if(state & RENDER_TEXTURE && self.m_colour[3] != current.m_colour[3])
   {
-    debug_colour("setting alpha");
     glColor4f(1,1,1,self.m_colour[3]);
     GlobalOpenGL_debugAssertNoErrors();
   }
@@ -1139,7 +1087,6 @@ void OpenGLState_apply(const OpenGLState& self, OpenGLState& current, unsigned i
     || self.m_colour[3] != current.m_colour[3]))
   {
     glColor4fv(self.m_colour);
-    debug_colour("setting non-texture");
     GlobalOpenGL_debugAssertNoErrors();
   }
   current.m_colour = self.m_colour;
