@@ -287,7 +287,6 @@ radiant_src = [
 'error.cpp',
 'filetypes.cpp',
 'findtexturedialog.cpp',
-'glwidget.cpp',
 'groupdialog.cpp',
 'gtkdlgs.cpp',
 'gtkmisc.cpp',
