@@ -53,6 +53,6 @@ private:
 
 }; // class RegistryConnector
 
-} // namespace xml
+} // namespace gtkutil
 
 #endif /* REGISTRYCONNECTOR_H_ */

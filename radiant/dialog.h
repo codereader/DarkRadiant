@@ -171,6 +171,9 @@ public:
   // greebo: Adds an entry field with the given caption <name> and connects it to the <registryKey>
   GtkWidget* addEntry(GtkWidget* vbox, const std::string& name, const std::string& registryKey);
   
+  // greebo: Adds an GtkSpinner with the given caption <name>, bounds <lower> and <upper> and connects it to the <registryKey>
+  GtkWidget* addSpinner(GtkWidget* vbox, const std::string& name, const std::string& registryKey, double lower, double upper);
+  
   void addCombo(GtkWidget* vbox, const char* name, StringArrayRange values, const IntImportCallback& importCallback, const IntExportCallback& exportCallback);
   void addCombo(GtkWidget* vbox, const char* name, int& data, StringArrayRange values);
   void addSlider(GtkWidget* vbox, const char* name, int& data, gboolean draw_value, const char* low, const char* high, double value, double lower, double upper, double step_increment, double page_increment, double page_size);

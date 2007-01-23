@@ -803,6 +803,21 @@ GtkWidget* Dialog::addEntry(GtkWidget* vbox, const std::string& name, const std:
 	return row.m_row;
 }
 
+GtkWidget* Dialog::addSpinner(GtkWidget* vbox, const std::string& name, const std::string& registryKey, double lower, double upper) {
+	
+	// Load the initial value (maybe unnecessary, as the value is loaded upon dialog show)
+	float value = GlobalRegistry().getFloat(registryKey); 
+	
+	// Create a new row containing an input field
+	DialogSpinnerRow row(DialogSpinnerRow_new(name.c_str(), value, lower, upper, 1));
+
+	// Connect the registry key to the newly created input field
+	_registryConnector.connectGtkObject(GTK_OBJECT(row.m_spin), registryKey);
+
+	DialogVBox_packRow(GTK_VBOX(vbox), row.m_row);
+	return row.m_row;
+}
+
 GtkWidget* Dialog::addSpinner(GtkWidget* vbox, const char* name, double value, double lower, double upper, const IntImportCallback& importViewer, const IntExportCallback& exportViewer)
 {
   DialogSpinnerRow row(DialogSpinnerRow_new(name, value, lower, upper, 1));
