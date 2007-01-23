@@ -24,12 +24,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 #include "warnings.h"
 
+#include "iregistry.h"
 #include "iundo.h"
 #include "preferencesystem.h"
-#include "string/string.h"
-#include "generic/callback.h"
 #include "preferences.h"
-#include "stringio.h"
 
 #include <list>
 #include <map>
@@ -40,8 +38,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "undo/Stack.h"
 #include "undo/StackFiller.h"
 
+namespace {
+	const std::string RKEY_UNDO_QUEUE_SIZE = "user/ui/undo/queueSize";
+}
+
 class RadiantUndoSystem : 
-	public UndoSystem 
+	public UndoSystem,
+	public PreferenceConstructor,
+	public RegistryKeyObserver
 {
 	INTEGER_CONSTANT(MAX_UNDO_LEVELS, 1024);
 
@@ -59,12 +63,24 @@ class RadiantUndoSystem :
 
 public:
 
+	// Constructor
 	RadiantUndoSystem()
-		: _undoLevels(64) 
-	{}
+		: _undoLevels(GlobalRegistry().getInt(RKEY_UNDO_QUEUE_SIZE)) 
+	{
+		// Add self to the key observers to get notified on change
+		GlobalRegistry().addKeyObserver(this, RKEY_UNDO_QUEUE_SIZE);
+		
+		// greebo: Register this class in the preference system so that the constructPreferencePage() gets called.
+		GlobalPreferenceSystem().addConstructor(this);
+	}
 
 	~RadiantUndoSystem() {
 		clear();
+	}
+
+	// Gets called as soon as the observed registry keys get changed
+	void keyChanged() {
+		_undoLevels = GlobalRegistry().getInt(RKEY_UNDO_QUEUE_SIZE);
 	}
 
 	UndoObserver* observer(Undoable* undoable) {
@@ -208,6 +224,12 @@ public:
 			(*i)->redo();
 		}
 	}
+	
+	// Gets called by the PreferenceSystem as request to create the according settings page
+	void constructPreferencePage(PreferenceGroup& group) {
+		PreferencesPage* page(group.createPage("Undo", "Undo Queue Settings"));
+		page->appendSpinner("Undo Queue Size", RKEY_UNDO_QUEUE_SIZE, 0, 1024);
+	}
 
 private:
 
@@ -220,57 +242,25 @@ private:
 
 }; // class RadiantUndoSystem
 
-
-
-void UndoLevels_importString(RadiantUndoSystem& undo, const char* value) {
-	int levels;
-	Int_importString(levels, value);
-	undo.setLevels(levels);
-}
-typedef ReferenceCaller1<RadiantUndoSystem, const char*, UndoLevels_importString> UndoLevelsImportStringCaller;
-void UndoLevels_exportString(const RadiantUndoSystem& undo, const StringImportCallback& importer) {
-	Int_exportString(static_cast<int>(undo.getLevels()), importer);
-}
-typedef ConstReferenceCaller1<RadiantUndoSystem, const StringImportCallback&, UndoLevels_exportString> UndoLevelsExportStringCaller;
-
 #include "generic/callback.h"
 
-void UndoLevelsImport(RadiantUndoSystem& self, int value) {
-	self.setLevels(value);
-}
-typedef ReferenceCaller1<RadiantUndoSystem, int, UndoLevelsImport> UndoLevelsImportCaller;
-void UndoLevelsExport(const RadiantUndoSystem& self, const IntImportCallback& importCallback) {
-	importCallback(static_cast<int>(self.getLevels()));
-}
-typedef ConstReferenceCaller1<RadiantUndoSystem, const IntImportCallback&, UndoLevelsExport> UndoLevelsExportCaller;
+// The dependencies class
+class UndoSystemDependencies : 
+	public GlobalRegistryModuleRef,
+	public GlobalPreferenceSystemModuleRef 
+{};
 
-
-void Undo_constructPreferences(RadiantUndoSystem& undo, PrefPage* page) {
-	page->appendSpinner("Undo Queue Size", 64, 0, 1024, IntImportCallback(UndoLevelsImportCaller(undo)), IntExportCallback(UndoLevelsExportCaller(undo)));
-}
-void Undo_constructPage(RadiantUndoSystem& undo, PreferenceGroup& group) {
-	PreferencesPage* page(group.createPage("Undo", "Undo Queue Settings"));
-	Undo_constructPreferences(undo, reinterpret_cast<PrefPage*>(page));
-}
-void Undo_registerPreferencesPage(RadiantUndoSystem& undo) {
-	PreferencesDialog_addSettingsPage(ReferenceCaller1<RadiantUndoSystem, PreferenceGroup&, Undo_constructPage>(undo));
-}
-
-class UndoSystemDependencies : public GlobalPreferenceSystemModuleRef {};
-
-class UndoSystemAPI {
-	RadiantUndoSystem m_undosystem;
+class UndoSystemAPI 
+{
+	RadiantUndoSystem _undoSystem;
 public:
 	typedef UndoSystem Type;
 	STRING_CONSTANT(Name, "*");
 
-	UndoSystemAPI() {
-		GlobalPreferenceSystem().registerPreference("UndoLevels", makeIntStringImportCallback(UndoLevelsImportCaller(m_undosystem)), makeIntStringExportCallback(UndoLevelsExportCaller(m_undosystem)));
-
-		Undo_registerPreferencesPage(m_undosystem);
-	}
+	UndoSystemAPI() {}
+	
 	UndoSystem* getTable() {
-		return &m_undosystem;
+		return &_undoSystem;
 	}
 };
 
@@ -280,68 +270,3 @@ public:
 typedef SingletonModule<UndoSystemAPI, UndoSystemDependencies> UndoSystemModule;
 typedef Static<UndoSystemModule> StaticUndoSystemModule;
 StaticRegisterModule staticRegisterUndoSystem(StaticUndoSystemModule::instance());
-
-
-
-
-
-
-
-
-
-
-class undoable_test : public Undoable {
-struct state_type : public UndoMemento {
-		state_type() : test_data(0) {}
-		state_type(const state_type& other) : UndoMemento(other), test_data(other.test_data) {}
-		void release() {
-			delete this;
-		}
-
-		int test_data;
-	};
-	state_type m_state;
-	UndoObserver* m_observer;
-public:
-	undoable_test()
-			: m_observer(GlobalUndoSystem().observer(this)) {}
-	~undoable_test() {
-		GlobalUndoSystem().release(this);
-	}
-	UndoMemento* exportState() const {
-		return new state_type(m_state);
-	}
-	void importState(const UndoMemento* state) {
-		ASSERT_NOTNULL(state);
-
-		m_observer->save(this);
-		m_state = *(static_cast<const state_type*>(state));
-	}
-
-	void mutate(unsigned int data) {
-		m_observer->save(this);
-		m_state.test_data = data;
-	}
-};
-
-#if 0
-
-class TestUndo {
-public:
-	TestUndo() {
-		undoable_test test;
-		GlobalUndoSystem().begin("bleh");
-		test.mutate(3);
-		GlobalUndoSystem().begin("blah");
-		test.mutate(4);
-		GlobalUndoSystem().undo();
-		GlobalUndoSystem().undo();
-		GlobalUndoSystem().redo();
-		GlobalUndoSystem().redo();
-	}
-};
-
-TestUndo g_TestUndo;
-
-#endif
-

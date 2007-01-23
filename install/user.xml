@@ -15,6 +15,9 @@
 		<snapshotFolder value="snapshots/" />
 		<maxSnapshotFolderSize value="100" />
 	</map>
+	<undo>
+		<queueSize value="64" />
+	</undo>
 	<ModelSelector>
     	<previewSizeFactor value="0.4"/>
     </ModelSelector>
