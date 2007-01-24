@@ -39,8 +39,6 @@ inline void setTextureState(GLint& current, const GLint& texture)
   }
 }
 
-
-
 // Utility function to toggle an OpenGL state flag
 inline void setState(unsigned int state, 
 					 unsigned int delta, 
@@ -69,14 +67,18 @@ void OpenGLStateBucket::applyState(OpenGLState& current,
   {
     globalstate |= RENDER_FILL | RENDER_DEPTHWRITE;
   }
+  
+	// Required state bitmask is combination of this statebucket's internal
+	// state and the current global state
+	const unsigned int requiredState = _state.m_state & globalstate;
+	
+	// Delta is change between the current state and the required state
+	const unsigned int stateDelta = requiredState ^ current.m_state;
 
-  const unsigned int state = _state.m_state & globalstate;
-  const unsigned int delta = state ^ current.m_state;
-
-  GlobalOpenGL_debugAssertNoErrors();
-
-  GLProgram* program = (state & RENDER_PROGRAM) != 0 ? _state.m_program : 0;
-
+	GLProgram* program = (requiredState & RENDER_PROGRAM) != 0 
+						  ? _state.m_program 
+						  : 0;
+						  
   if(program != current.m_program)
   {
     if(current.m_program != 0)
@@ -93,22 +95,22 @@ void OpenGLStateBucket::applyState(OpenGLState& current,
     }
   }
 
-  if(delta & state & RENDER_FILL)
+  if(stateDelta & requiredState & RENDER_FILL)
   {
     //qglPolygonMode (GL_BACK, GL_LINE);
     //qglPolygonMode (GL_FRONT, GL_FILL);
     glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
     GlobalOpenGL_debugAssertNoErrors();
   }
-  else if(delta & ~state & RENDER_FILL)
+  else if(stateDelta & ~requiredState & RENDER_FILL)
   {
     glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
     GlobalOpenGL_debugAssertNoErrors();
   }
 
-  setState(state, delta, RENDER_OFFSETLINE, GL_POLYGON_OFFSET_LINE);
+  setState(requiredState, stateDelta, RENDER_OFFSETLINE, GL_POLYGON_OFFSET_LINE);
 
-  if(delta & state & RENDER_LIGHTING)
+  if(stateDelta & requiredState & RENDER_LIGHTING)
   {
     glEnable(GL_LIGHTING);
     glEnable(GL_COLOR_MATERIAL);
@@ -116,7 +118,7 @@ void OpenGLStateBucket::applyState(OpenGLState& current,
     glEnableClientState(GL_NORMAL_ARRAY);
     GlobalOpenGL_debugAssertNoErrors();
   }
-  else if(delta & ~state & RENDER_LIGHTING)
+  else if(stateDelta & ~requiredState & RENDER_LIGHTING)
   {
     glDisable(GL_LIGHTING);
     glDisable(GL_COLOR_MATERIAL);
@@ -125,7 +127,7 @@ void OpenGLStateBucket::applyState(OpenGLState& current,
     GlobalOpenGL_debugAssertNoErrors();
   }
 
-  if(delta & state & RENDER_TEXTURE)
+  if(stateDelta & requiredState & RENDER_TEXTURE)
   {
     GlobalOpenGL_debugAssertNoErrors();
 
@@ -142,7 +144,7 @@ void OpenGLStateBucket::applyState(OpenGLState& current,
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     GlobalOpenGL_debugAssertNoErrors();
   }
-  else if(delta & ~state & RENDER_TEXTURE)
+  else if(stateDelta & ~requiredState & RENDER_TEXTURE)
   {
     if(GLEW_VERSION_1_3)
     {
@@ -157,7 +159,7 @@ void OpenGLStateBucket::applyState(OpenGLState& current,
     GlobalOpenGL_debugAssertNoErrors();
   }
 
-  if(delta & state & RENDER_BLEND)
+  if(stateDelta & requiredState & RENDER_BLEND)
   {
 // FIXME: some .TGA are buggy, have a completely empty alpha channel
 // if such brushes are rendered in this loop they would be totally transparent with GL_MODULATE
@@ -173,7 +175,7 @@ void OpenGLStateBucket::applyState(OpenGLState& current,
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
     GlobalOpenGL_debugAssertNoErrors();
   }
-  else if(delta & ~state & RENDER_BLEND)
+  else if(stateDelta & ~requiredState & RENDER_BLEND)
   {
     glDisable(GL_BLEND);
     if(GLEW_VERSION_1_3)
@@ -184,83 +186,83 @@ void OpenGLStateBucket::applyState(OpenGLState& current,
     GlobalOpenGL_debugAssertNoErrors();
   }
 
-  setState(state, delta, RENDER_CULLFACE, GL_CULL_FACE);
+  setState(requiredState, stateDelta, RENDER_CULLFACE, GL_CULL_FACE);
 
-  if(delta & state & RENDER_SMOOTH)
+  if(stateDelta & requiredState & RENDER_SMOOTH)
   {
     glShadeModel(GL_SMOOTH);
     GlobalOpenGL_debugAssertNoErrors();
   }
-  else if(delta & ~state & RENDER_SMOOTH)
+  else if(stateDelta & ~requiredState & RENDER_SMOOTH)
   {
     glShadeModel(GL_FLAT);
     GlobalOpenGL_debugAssertNoErrors();
   }
 
-  setState(state, delta, RENDER_SCALED, GL_NORMALIZE); // not GL_RESCALE_NORMAL
+  setState(requiredState, stateDelta, RENDER_SCALED, GL_NORMALIZE); // not GL_RESCALE_NORMAL
 
-  setState(state, delta, RENDER_DEPTHTEST, GL_DEPTH_TEST);
+  setState(requiredState, stateDelta, RENDER_DEPTHTEST, GL_DEPTH_TEST);
 
-  if(delta & state & RENDER_DEPTHWRITE)
+  if(stateDelta & requiredState & RENDER_DEPTHWRITE)
   {
     glDepthMask(GL_TRUE);
 
     GlobalOpenGL_debugAssertNoErrors();
   }
-  else if(delta & ~state & RENDER_DEPTHWRITE)
+  else if(stateDelta & ~requiredState & RENDER_DEPTHWRITE)
   {
     glDepthMask(GL_FALSE);
 
     GlobalOpenGL_debugAssertNoErrors();
   }
 
-  if(delta & state & RENDER_COLOURWRITE)
+  if(stateDelta & requiredState & RENDER_COLOURWRITE)
   {
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     GlobalOpenGL_debugAssertNoErrors();
   }
-  else if(delta & ~state & RENDER_COLOURWRITE)
+  else if(stateDelta & ~requiredState & RENDER_COLOURWRITE)
   {
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
     GlobalOpenGL_debugAssertNoErrors();
   }
 
-  setState(state, delta, RENDER_ALPHATEST, GL_ALPHA_TEST);
+  setState(requiredState, stateDelta, RENDER_ALPHATEST, GL_ALPHA_TEST);
   
-  if(delta & state & RENDER_COLOURARRAY)
+  if(stateDelta & requiredState & RENDER_COLOURARRAY)
   {
     glEnableClientState(GL_COLOR_ARRAY);
     GlobalOpenGL_debugAssertNoErrors();
   }
-  else if(delta & ~state & RENDER_COLOURARRAY)
+  else if(stateDelta & ~requiredState & RENDER_COLOURARRAY)
   {
     glDisableClientState(GL_COLOR_ARRAY);
     glColor4fv(_state.m_colour);
     GlobalOpenGL_debugAssertNoErrors();
   }
 
-  if(delta & ~state & RENDER_COLOURCHANGE)
+  if(stateDelta & ~requiredState & RENDER_COLOURCHANGE)
   {
     glColor4fv(_state.m_colour);
     GlobalOpenGL_debugAssertNoErrors();
   }
 
-  setState(state, delta, RENDER_LINESTIPPLE, GL_LINE_STIPPLE);
-  setState(state, delta, RENDER_LINESMOOTH, GL_LINE_SMOOTH);
+  setState(requiredState, stateDelta, RENDER_LINESTIPPLE, GL_LINE_STIPPLE);
+  setState(requiredState, stateDelta, RENDER_LINESMOOTH, GL_LINE_SMOOTH);
 
-  setState(state, delta, RENDER_POLYGONSTIPPLE, GL_POLYGON_STIPPLE);
-  setState(state, delta, RENDER_POLYGONSMOOTH, GL_POLYGON_SMOOTH);
+  setState(requiredState, stateDelta, RENDER_POLYGONSTIPPLE, GL_POLYGON_STIPPLE);
+  setState(requiredState, stateDelta, RENDER_POLYGONSMOOTH, GL_POLYGON_SMOOTH);
 
-  setState(state, delta, RENDER_FOG, GL_FOG);
+  setState(requiredState, stateDelta, RENDER_FOG, GL_FOG);
 
-  if(state & RENDER_DEPTHTEST && _state.m_depthfunc != current.m_depthfunc)
+  if(requiredState & RENDER_DEPTHTEST && _state.m_depthfunc != current.m_depthfunc)
   {
     glDepthFunc(_state.m_depthfunc);
     GlobalOpenGL_debugAssertNoErrors();
     current.m_depthfunc = _state.m_depthfunc;
   }
 
-  if(state & RENDER_LINESTIPPLE
+  if(requiredState & RENDER_LINESTIPPLE
     && (_state.m_linestipple_factor != current.m_linestipple_factor
     || _state.m_linestipple_pattern != current.m_linestipple_pattern))
   {
@@ -271,7 +273,7 @@ void OpenGLStateBucket::applyState(OpenGLState& current,
   }
 
 
-  if(state & RENDER_ALPHATEST
+  if(requiredState & RENDER_ALPHATEST
     && ( _state.m_alphafunc != current.m_alphafunc
     || _state.m_alpharef != current.m_alpharef ) )
   {
@@ -320,13 +322,13 @@ void OpenGLStateBucket::applyState(OpenGLState& current,
   }
 
 
-  if(state & RENDER_TEXTURE && _state.m_colour[3] != current.m_colour[3])
+  if(requiredState & RENDER_TEXTURE && _state.m_colour[3] != current.m_colour[3])
   {
     glColor4f(1,1,1,_state.m_colour[3]);
     GlobalOpenGL_debugAssertNoErrors();
   }
 
-  if(!(state & RENDER_TEXTURE)
+  if(!(requiredState & RENDER_TEXTURE)
     && (_state.m_colour[0] != current.m_colour[0]
     || _state.m_colour[1] != current.m_colour[1]
     || _state.m_colour[2] != current.m_colour[2]
@@ -337,7 +339,7 @@ void OpenGLStateBucket::applyState(OpenGLState& current,
   }
   current.m_colour = _state.m_colour;
 
-  if(state & RENDER_BLEND
+  if(requiredState & RENDER_BLEND
     && (_state.m_blend_src != current.m_blend_src || _state.m_blend_dst != current.m_blend_dst))
   {
     glBlendFunc(_state.m_blend_src, _state.m_blend_dst);
@@ -346,7 +348,7 @@ void OpenGLStateBucket::applyState(OpenGLState& current,
     current.m_blend_dst = _state.m_blend_dst;
   }
 
-  if(!(state & RENDER_FILL)
+  if(!(requiredState & RENDER_FILL)
     && _state.m_linewidth != current.m_linewidth)
   {
     glLineWidth(_state.m_linewidth);
@@ -354,7 +356,7 @@ void OpenGLStateBucket::applyState(OpenGLState& current,
     current.m_linewidth = _state.m_linewidth;
   }
 
-  if(!(state & RENDER_FILL)
+  if(!(requiredState & RENDER_FILL)
     && _state.m_pointsize != current.m_pointsize)
   {
     glPointSize(_state.m_pointsize);
@@ -362,10 +364,31 @@ void OpenGLStateBucket::applyState(OpenGLState& current,
     current.m_pointsize = _state.m_pointsize;
   }
 
-  current.m_state = state;
+  current.m_state = requiredState;
 
   GlobalOpenGL_debugAssertNoErrors();
 }
+
+// DEBUG: Stream insertion for RendererLight 
+
+#include "math/aabb.h"
+
+inline 
+std::ostream& operator<< (std::ostream& os, const RendererLight& light) {
+	os << "RendererLight { aabb = " << light.aabb()
+	   << ", offset = " << light.offset() << ", colour = " << light.colour()
+	   << " }";
+	return os;
+}
+
+// Add a Renderable to this bucket
+void OpenGLStateBucket::addRenderable(const OpenGLRenderable& renderable, 
+									  const Matrix4& modelview, 
+									  const RendererLight* light)
+{
+	m_renderables.push_back(TransformedRenderable(renderable, modelview, light));
+}
+
 
 // Render the bucket contents
 void OpenGLStateBucket::render(OpenGLState& current, 
@@ -414,25 +437,32 @@ void OpenGLStateBucket::flushRenderables(OpenGLState& current,
   	  	i != m_renderables.end(); 
   	  	++i)
 	{
-    //qglLoadMatrixf(i->m_transform);
-    if(!transform || (transform != (*i).m_transform && !matrix4_affine_equal(*transform, *(*i).m_transform)))
+    //qglLoadMatrixf(i->transform);
+    if(!transform || (transform != (*i).transform && !matrix4_affine_equal(*transform, *(*i).transform)))
     {
-      transform = (*i).m_transform;
+      transform = i->transform;
       glPopMatrix();
       glPushMatrix();
-      glMultMatrixf(reinterpret_cast<const float*>(transform));
+      glMultMatrixf(*transform);
       glFrontFace(((current.m_state & RENDER_CULLFACE) != 0 && matrix4_handedness(*transform) == MATRIX4_RIGHTHANDED) ? GL_CW : GL_CCW);
     }
 
-    if(current.m_program != 0 && (*i).m_light != 0)
+    if(current.m_program != 0 && i->light != 0)
     {
-      const IShader* lightShader = i->m_light->getShader()->getIShader();
+
+		// Get the light shader and examine its first (and only valid) layer
+		const IShader* lightShader = i->light->getShader()->getIShader();
+      
       if(lightShader->firstLayer() != 0)
       {
+		// Get the XY and Z falloff texture numbers. If the light shader has no
+		// Z falloff, use the one from the default light shader.
         GLuint attenuation_xy = lightShader->firstLayer()->texture()->texture_number;
-        GLuint attenuation_z = lightShader->lightFalloffImage() != 0
-          ? lightShader->lightFalloffImage()->texture_number
-          : static_cast<OpenGLShader*>(g_defaultPointLight)->getShader().lightFalloffImage()->texture_number;
+        
+        const IShader* zAttenShader = lightShader->lightFalloffImage() != 0
+        							  ? lightShader
+        							  : g_defaultPointLight->getIShader();
+        GLuint attenuation_z = zAttenShader->lightFalloffImage()->texture_number;
 
         setTextureState(current.m_texture3, attenuation_xy, GL_TEXTURE3);
         glActiveTexture(GL_TEXTURE3);
@@ -447,22 +477,22 @@ void OpenGLStateBucket::flushRenderables(OpenGLState& current,
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 
-        AABB lightBounds((*i).m_light->aabb());
+        AABB lightBounds((*i).light->aabb());
 
         Matrix4 world2light(g_matrix4_identity);
 
-        if (i->m_light->isProjected()) {
-          world2light = (*i).m_light->projection();
-          matrix4_multiply_by_matrix4(world2light, i->m_light->rotation().getTransposed());
+        if (i->light->isProjected()) {
+          world2light = (*i).light->projection();
+          matrix4_multiply_by_matrix4(world2light, i->light->rotation().getTransposed());
           
           // greebo: old code: matrix4_translate_by_vec3(world2light, -lightBounds.origin); // world->lightBounds
-          matrix4_translate_by_vec3(world2light, -(i->m_light->offset()));
+          matrix4_translate_by_vec3(world2light, -(i->light->offset()));
         }
         else {
           matrix4_translate_by_vec3(world2light, Vector3(0.5f, 0.5f, 0.5f));
           matrix4_scale_by_vec3(world2light, Vector3(0.5f, 0.5f, 0.5f));
           matrix4_scale_by_vec3(world2light, Vector3(1.0f / lightBounds.extents.x(), 1.0f / lightBounds.extents.y(), 1.0f / lightBounds.extents.z()));
-          matrix4_multiply_by_matrix4(world2light, i->m_light->rotation().getTransposed());
+          matrix4_multiply_by_matrix4(world2light, i->light->rotation().getTransposed());
           matrix4_translate_by_vec3(world2light, -lightBounds.origin); // world->lightBounds
         }
 
@@ -471,11 +501,11 @@ void OpenGLStateBucket::flushRenderables(OpenGLState& current,
 		if (lightShader->isAmbientLight())
 			ambient = 1.0;
 
-        current.m_program->setParameters(viewer, *(*i).m_transform, lightBounds.origin + (*i).m_light->offset(), (*i).m_light->colour(), world2light, ambient);
+        current.m_program->setParameters(viewer, *(*i).transform, lightBounds.origin + (*i).light->offset(), (*i).light->colour(), world2light, ambient);
       }
     }
 
-    (*i).m_renderable->render(current.m_state);
+    i->renderable->render(current.m_state);
   }
   glPopMatrix();
   m_renderables.clear();

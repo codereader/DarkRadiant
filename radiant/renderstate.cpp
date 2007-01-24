@@ -722,13 +722,13 @@ void ShaderCache_Construct()
 	_defaultLightShaderName = nlDefaultLight[0].getContent();
 	boost::algorithm::to_lower(_defaultLightShaderName);
 
-	g_defaultPointLight = g_ShaderCache->capture(_defaultLightShaderName.c_str());
+	g_defaultPointLight = g_ShaderCache->capture(_defaultLightShaderName);
 	g_ShaderCache->capture("$OVERBRIGHT");
 }
 
 void ShaderCache_Destroy()
 {
-    g_ShaderCache->release(_defaultLightShaderName.c_str());
+    g_ShaderCache->release(_defaultLightShaderName);
     g_ShaderCache->release("$OVERBRIGHT");
     g_defaultPointLight = 0;
 

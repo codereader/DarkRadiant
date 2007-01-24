@@ -119,10 +119,37 @@ class ModuleObserver;
 
 class IShader;
 
+/**
+ * A Shader represents a single material which can be rendered in OpenGL, which
+ * may correspond to an actual material (IShader), a raw colour or a special 
+ * GL shader.
+ * 
+ * Importantly, a Shader also maintains its own list of OpenGLRenderable objects
+ * which use it -- the actual rendering is performed by traversing a list of
+ * Shaders and rendering the geometry attached to each one.
+ */
 class Shader
 {
 public:
-  virtual void addRenderable(const OpenGLRenderable& renderable, const Matrix4& modelview, const LightList* lights = 0) = 0;
+	
+	/**
+	 * Attach a renderable object to this Shader, which will be rendered using
+	 * this Shader when the render backend is activated.
+	 * 
+	 * @param renderable
+	 * The OpenGLRenderable object to add.
+	 * 
+	 * @param modelview
+	 * The modelview transform for this object.
+	 * 
+	 * @param lights
+	 * A LightList containing all of the lights which should illuminate this
+	 * object.
+	 */
+	virtual void addRenderable(const OpenGLRenderable& renderable, 
+							   const Matrix4& modelview, 
+							   const LightList* lights = 0) = 0;
+  
   virtual void incrementUsed() = 0;
   virtual void decrementUsed() = 0;
   virtual void attach(ModuleObserver& observer) = 0;

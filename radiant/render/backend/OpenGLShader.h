@@ -85,10 +85,6 @@ public:
 
 	unsigned int getFlags() const;
 
-	IShader& getShader() const {
-    	return *m_shader;
-	}
-  
 	OpenGLState& appendDefaultPass();
 };
 

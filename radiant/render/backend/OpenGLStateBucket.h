@@ -15,27 +15,36 @@ class RendererLight;
 /// May contain the same Renderable multiple times, with different transforms.
 class OpenGLStateBucket
 {
-private:
-  struct RenderTransform
-  {
-    const Matrix4* m_transform;
-    const OpenGLRenderable *m_renderable;
-    const RendererLight* m_light;
-
-    RenderTransform(const OpenGLRenderable& renderable, const Matrix4& transform, const RendererLight* light)
-      : m_transform(&transform), m_renderable(&renderable), m_light(light)
-    {
-    }
-  };
-
-  typedef std::vector<RenderTransform> Renderables;
-
-private:
-
 	// The state applied to this bucket
 	OpenGLState _state;
 	
+	/*
+	 * Representation of a transformed-and-lit renderable object. Stores a 
+	 * single object, with its transform matrix and illuminating light source.
+	 */
+	struct TransformedRenderable {
+    
+    	// The renderable object
+    	const OpenGLRenderable* renderable;
+
+    	// The modelview transform for this renderable
+    	const Matrix4* transform;
+
+		// The light falling on this obejct    	
+    	const RendererLight* light;
+
+		// Default constructor
+		TransformedRenderable(const OpenGLRenderable& r, 
+							  const Matrix4& t, 
+							  const RendererLight* l)
+		: renderable(&r),
+		  transform(&t),		   
+		  light(l)
+		{ }
+	};
+
 	// Vector of transformed renderables using this state
+	typedef std::vector<TransformedRenderable> Renderables;
 	Renderables m_renderables;
 
 private:
@@ -57,10 +66,7 @@ public:
 	 */
 	void addRenderable(const OpenGLRenderable& renderable, 
 					   const Matrix4& modelview, 
-					   const RendererLight* light = 0) 
-	{
-    	m_renderables.push_back(RenderTransform(renderable, modelview, light));
-	}
+					   const RendererLight* light = 0);
 
 	/**
 	 * Return the OpenGL state associated with this bucket.

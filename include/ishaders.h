@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/callbackfwd.h"
 
 #include <string>
+#include <ostream>
 
 enum
 {
@@ -83,7 +84,6 @@ public:
 };
 
 typedef Callback1<const ShaderLayer&> ShaderLayerCallback;
-
 
 class IShader
 {
@@ -149,6 +149,18 @@ public:
 
   virtual qtexture_t* lightFalloffImage() const = 0;
 };
+
+/**
+ * Stream insertion of IShader for debugging purposes.
+ */
+inline
+std::ostream& operator<< (std::ostream& os, const IShader& shader) {
+	os << "IShader { name = " << shader.getName()
+	   << ", filename = " << shader.getShaderFileName()
+	   << ", firstlayer = " << shader.firstLayer()
+	   << " }";
+	return os;
+}
 
 typedef struct _GSList GSList;
 typedef Callback1<const char*> ShaderNameCallback;
