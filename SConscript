@@ -283,7 +283,6 @@ radiant_env.useBoostFilesystem()
 
 radiant_src = [
 'brushmanip.cpp',
-'clippertool.cpp',
 'console.cpp',
 'csg.cpp',
 'dialog.cpp',
