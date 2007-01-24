@@ -47,6 +47,9 @@
 		<showOutline value="0" />
 		<showAxes value="1" />
 		<showWorkzone value="0" />
+		<overlay>
+			<visible value="1" />
+		</overlay>
 	</xyview>
 	<clipper>
 		<useCaulk value="1" />
