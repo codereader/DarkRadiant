@@ -25,57 +25,77 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// \file
 /// \brief The undo-system interface. Uses the 'memento' pattern.
 
+#include <string>
 #include <cstddef>
 #include "generic/constant.h"
 #include "generic/callbackfwd.h"
 
+/* greebo: An UndoMemento has to be allocated on the heap
+ * and contains all the information that is needed to describe
+ * the status of an Undoable. 
+ * 
+ * Mandatory interface method is release() which should free 
+ * itself from the heap.  
+ */
 class UndoMemento
 {
 public:
-  virtual void release() = 0;
+	virtual void release() = 0;
 };
 
+/* greebo: This is the abstract base class for an Undoable object.
+ * Derive from this class if your instance/object should be Undoable.
+ * 
+ * The exportState method has to allocate a new UndoMemento with all
+ * the necessary object data and return its pointer, so it can be
+ * referenced to later.
+ * 
+ * The importState() method should re-import the values saved in the
+ * UndoMemento (could be named restoreFromMemento() as well). 
+ */
 class Undoable
 {
 public:
-  virtual UndoMemento* exportState() const = 0;
-  virtual void importState(const UndoMemento* state) = 0;
+	virtual UndoMemento* exportState() const = 0;
+	virtual void importState(const UndoMemento* state) = 0;
 };
 
 class UndoObserver
 {
 public:
-  virtual void save(Undoable* undoable) = 0;
+	virtual void save(Undoable* undoable) = 0;
 };
 
 class UndoTracker
 {
 public:
-  virtual void clear() = 0;
-  virtual void begin() = 0;
-  virtual void undo() = 0;
-  virtual void redo() = 0;
+	virtual void clear() = 0;
+	virtual void begin() = 0;
+	virtual void undo() = 0;
+	virtual void redo() = 0;
 };
 
 class UndoSystem
 {
 public:
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "undo");
+	INTEGER_CONSTANT(Version, 1);
+	STRING_CONSTANT(Name, "undo");
 
-  virtual UndoObserver* observer(Undoable* undoable) = 0;
-  virtual void release(Undoable* undoable) = 0;
+	virtual UndoObserver* observer(Undoable* undoable) = 0;
+	virtual void release(Undoable* undoable) = 0;
 
-  virtual std::size_t size() const = 0;
-  virtual void start() = 0;
-  virtual void finish(const char* command) = 0;
-  virtual void undo() = 0;
-  virtual void redo() = 0;
-  virtual void clear() = 0;
+	virtual std::size_t size() const = 0;
+	virtual void start() = 0;
+	virtual void finish(const std::string& command) = 0;
+	virtual void undo() = 0;
+	virtual void redo() = 0;
+	virtual void clear() = 0;
 
-  virtual void trackerAttach(UndoTracker& tracker) = 0;
-  virtual void trackerDetach(UndoTracker& tracker) = 0;
+	virtual void trackerAttach(UndoTracker& tracker) = 0;
+	virtual void trackerDetach(UndoTracker& tracker) = 0;
 };
+
+// Module Definitions 
 
 #include "modulesystem.h"
 
@@ -87,24 +107,25 @@ template<typename Type>
 class GlobalModuleRef;
 typedef GlobalModuleRef<UndoSystem> GlobalUndoModuleRef;
 
-inline UndoSystem& GlobalUndoSystem()
-{
-  return GlobalUndoModule::getTable();
+// The accessor function
+inline UndoSystem& GlobalUndoSystem() {
+	return GlobalUndoModule::getTable();
 }
 
 class UndoableCommand
 {
-  const char* m_command;
+	const std::string _command;
 public:
-  UndoableCommand(const char* command) : m_command(command)
-  {
-    GlobalUndoSystem().start();
-  }
-  ~UndoableCommand()
-  {
-    GlobalUndoSystem().finish(m_command);
-  }
-};
 
+	UndoableCommand(const std::string& command) : 
+		_command(command) 
+	{
+		GlobalUndoSystem().start();
+	}
+
+	~UndoableCommand() {
+		GlobalUndoSystem().finish(_command);
+	}
+};
 
 #endif

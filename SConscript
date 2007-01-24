@@ -129,6 +129,12 @@ gridSrc = build_list('plugins/grid', 'Grid.cpp')
 gridLib = gridEnv.SharedLibrary(target='grid', source=gridSrc)
 gridEnv.Install(INSTALL + '/modules', gridLib)
 
+# UndoSystem module
+undoEnv = module_env.Copy()
+undoSrc = build_list('plugins/undo', 'UndoSystem.cpp')
+undoLib = undoEnv.SharedLibrary(target='undo', source=undoSrc)
+undoEnv.Install(INSTALL + '/modules', undoLib)
+
 # Eclassmgr module
 eclassSrc = build_list('plugins/eclassmgr', 'eclass_doom3.cpp Doom3EntityClass.cpp')
 eclassEnv = module_env.Copy()
@@ -318,7 +324,6 @@ radiant_src = [
 'texwindow.cpp',
 'timer.cpp',
 'treemodel.cpp',
-'undo.cpp',
 'view.cpp',
 'winding.cpp',
 'windowobservers.cpp',
