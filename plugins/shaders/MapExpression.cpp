@@ -49,6 +49,12 @@ MapExpression::MapExpression(parser::DefTokeniser& tok)
 		_children.push_back(MapExpression(tok)); // should be a float
 		tok.assertNextToken(")");
 	}
+	else if (token == "makeintensity") {
+		_nodeType = MAKEINTENSITY;
+		tok.assertNextToken("(");
+		_children.push_back(MapExpression(tok));
+		tok.assertNextToken(")");
+	}
 	else { 
 		// Leaf node. This could be a texture or a float value, which we will
 		// store as a string in either case

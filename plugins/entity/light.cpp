@@ -44,7 +44,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 void Light_Construct(LightType lightType) {
 	g_lightType = lightType;
-	LightShader::m_defaultShader = "lights/defaultPointLight";  
+	LightShader::m_defaultShader = "lights/defaultpointlight";  
 }
 
 void Light_Destroy() {

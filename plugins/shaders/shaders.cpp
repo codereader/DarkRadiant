@@ -299,17 +299,19 @@ class CShader : public IShader
 
   const ShaderTemplate& m_template;
   std::string m_filename;
-  // name is shader-name, otherwise texture-name (if not a real shader)
-  std::string m_Name;
+	
+	// Name of shader
+	std::string _name;
 
-  qtexture_t* m_pTexture;
-  qtexture_t* m_notfound;
-  qtexture_t* m_pDiffuse;
-  float m_heightmapScale;
-  qtexture_t* m_pBump;
-  qtexture_t* m_pSpecular;
-  qtexture_t* m_pLightFalloffImage;
-  BlendFunc m_blendFunc;
+	// Textures for this shader
+	qtexture_t* m_pTexture;
+	qtexture_t* m_notfound;
+	qtexture_t* m_pDiffuse;
+	float m_heightmapScale;
+	qtexture_t* m_pBump;
+	qtexture_t* m_pSpecular;
+	qtexture_t* _texLightFalloff;
+	BlendFunc m_blendFunc;
 
   bool m_bInUse;
 
@@ -324,7 +326,7 @@ public:
 	: m_refcount(0),
 	  m_template(*definition.shaderTemplate),
       m_filename(definition.filename),
-	  m_Name(name),
+	  _name(name),
       m_blendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA),
       m_bInUse(false) 
 	{
@@ -342,12 +344,9 @@ public:
 	    realise();
 	}
 	
-  virtual ~CShader()
-  {
-    unrealise();
-
-    ASSERT_MESSAGE(m_refcount == 0, "deleting active shader");
-  }
+	virtual ~CShader() {
+		unrealise();
+	}
 
   // IShaders implementation -----------------
   void IncRef()
@@ -387,11 +386,14 @@ public:
   {
     return m_pSpecular;
   }
-  // get shader name
-  const char* getName() const
-  {
-    return m_Name.c_str();
-  }
+  
+	/*
+	 * Return name of shader.
+	 */
+	const char* getName() const {
+		return _name.c_str();
+	}
+	
   bool IsInUse() const
   {
     return m_bInUse;
@@ -494,10 +496,15 @@ public:
 			m_pSpecular = GlobalTexturesCache().capture(LoadImageCallback(0, loadBitmap), blackName.c_str());
 		}
 		
-		// Get light falloff image
-		
-		m_pLightFalloffImage = 
-			cache.capture(m_template._lightFallOff->getTextureName());
+		// Get light falloff image. If a falloff image is defined but invalid,
+		// emit a warning since this will result in a black light
+		std::string foTexName = m_template._lightFallOff->getTextureName();
+		_texLightFalloff = cache.capture(foTexName);
+		if (!foTexName.empty() && _texLightFalloff->texture_number == 0) {
+			std::cerr << "[shaders] " << _name 
+					  << " : defines invalid lightfalloff \"" << foTexName
+					  << "\"" << std::endl;
+		}  
 
 		for(ShaderTemplate::Layers::const_iterator i = m_template.m_layers.begin(); 
 			i != m_template.m_layers.end(); 
@@ -538,7 +545,7 @@ public:
       GlobalTexturesCache().release(m_pBump);
       GlobalTexturesCache().release(m_pSpecular);
 
-      GlobalTexturesCache().release(m_pLightFalloffImage);
+      GlobalTexturesCache().release(_texLightFalloff);
 
       for(MapLayers::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
       {
@@ -549,11 +556,12 @@ public:
       m_blendFunc = BlendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA);
   }
 
-  // set shader name
-  void setName(const std::string& name)
-  {
-    m_Name = name;
-  }
+	/*
+	 * Set name of shader.
+	 */
+	void setName(const std::string& name) {
+		_name = name;
+	}
 
   class MapLayer : public ShaderLayer
   {
@@ -631,25 +639,18 @@ public:
 		return m_template.fogLight;
 	}
 
-  qtexture_t* lightFalloffImage() const
-  {
-    if (m_template._lightFallOff)
-    {
-      return m_pLightFalloffImage;
-    }
-    return 0;
-  }
+	/*
+	 * Return the light falloff texture (Z dimension).
+	 */
+	qtexture_t* lightFalloffImage() const {
+		if (m_template._lightFallOff)
+			return _texLightFalloff;
+		else 
+			return 0;
+	}
 };
 
 #ifdef _DEBUG
-
-// IShader stream insertion
-std::ostream& operator<< (std::ostream& st, const IShader& sh) {
-	st << "IShader: { name=" << sh.getName() << " "
-	   << "filename=" << sh.getShaderFileName() << " "
-	   << "}";
-	return st;
-}
 
 #endif
 
