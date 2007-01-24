@@ -135,6 +135,12 @@ undoSrc = build_list('plugins/undo', 'UndoSystem.cpp')
 undoLib = undoEnv.SharedLibrary(target='undo', source=undoSrc)
 undoEnv.Install(INSTALL + '/modules', undoLib)
 
+# Overlay module
+overlayEnv = module_env.Copy()
+overlaySrc = build_list('plugins/overlay', 'Overlay.cpp')
+overlayLib = overlayEnv.SharedLibrary(target='overlay', source=overlaySrc)
+overlayEnv.Install(INSTALL + '/modules', overlayLib)
+
 # Eclassmgr module
 eclassSrc = build_list('plugins/eclassmgr', 'eclass_doom3.cpp Doom3EntityClass.cpp')
 eclassEnv = module_env.Copy()
