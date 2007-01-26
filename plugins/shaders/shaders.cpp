@@ -295,7 +295,8 @@ BlendFactor evaluateBlendFactor(const std::string& value)
 
 class CShader : public IShader
 {
-  std::size_t m_refcount;
+	// Internal reference count
+	int _nRef;
 
   const ShaderTemplate& m_template;
   std::string m_filename;
@@ -323,7 +324,7 @@ public:
 	 * Constructor. Sets the name and the ShaderDefinition to use.
 	 */
 	CShader(const std::string& name, const ShaderDefinition& definition)
-	: m_refcount(0),
+	: _nRef(0),
 	  m_template(*definition.shaderTemplate),
       m_filename(definition.filename),
 	  _name(name),
@@ -348,23 +349,21 @@ public:
 		unrealise();
 	}
 
-  // IShaders implementation -----------------
-  void IncRef()
-  {
-    ++m_refcount;
-  }
-  void DecRef() 
-  {
-    ASSERT_MESSAGE(m_refcount != 0, "shader reference-count going below zero");
-    if(--m_refcount == 0)
-    {
-      delete this;
-    }
-  }
+	// Increase reference count
+	void IncRef() {
+		++_nRef;
+	}
+	
+	// Decrease reference count
+	void DecRef()  {
+		if(--_nRef == 0) {
+			delete this;
+		}
+	}
 
   std::size_t refcount()
   {
-    return m_refcount;
+    return _nRef;
   }
 
   // get/set the qtexture_t* Radiant uses to represent this shader object
