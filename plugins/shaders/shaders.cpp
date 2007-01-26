@@ -683,21 +683,23 @@ void ActiveShaders_IteratorIncrement()
   ++g_ActiveShadersIterator;
 }
 
-void debug_check_shaders(shaders_t& shaders)
-{
-  for(shaders_t::iterator i = shaders.begin(); i != shaders.end(); ++i)
-  {
-    ASSERT_MESSAGE(i->second->refcount() == 1, "orphan shader still referenced");
-  }
-}
-
 // will free all GL binded qtextures and shaders
 // NOTE: doesn't make much sense out of Radiant exit or called during a reload
 void FreeShaders()
 {
+	// Warn if any shaders have refcounts > 1
+	for (shaders_t::iterator i = g_ActiveShaders.begin(); 
+		 i != g_ActiveShaders.end(); 
+		 ++i) 
+	{
+		if (i->second->refcount() > 1) {
+  			std::cerr << "Warning: shader \"" << i->first 
+  					  << "\" still referenced." << std::endl;
+		}
+	}
+
   // reload shaders
   // empty the actives shaders list
-  debug_check_shaders(g_ActiveShaders);
   g_ActiveShaders.clear();
   g_shaderDefinitions.clear();
   g_ActiveShadersChangedNotify();
