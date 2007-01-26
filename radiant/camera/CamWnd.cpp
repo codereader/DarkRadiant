@@ -295,6 +295,10 @@ void CamWnd::disableFreeMove() {
 	update();
 }
 
+bool CamWnd::freeMoveEnabled() const {
+	return m_bFreeMove;
+}
+
 void CamWnd::Cam_Draw() {
 	glViewport(0, 0, m_Camera.width, m_Camera.height);
 #if 0
