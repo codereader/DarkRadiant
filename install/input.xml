@@ -120,7 +120,6 @@
 		<shortcut command="ConnectSelection" key="K" modifiers="CONTROL" />
 		<shortcut command="GridUp" key="minus" />
 		<shortcut command="GridDown" key="plus" />
-		<shortcut command="ViewEntityInfo" key="N" />
 		<shortcut command="RegionSetSelection" key="R" modifiers="SHIFT+CONTROL" />
 		<shortcut command="PatchInspector" key="S" modifiers="SHIFT" />
 		<shortcut command="InvertCurveTextureX" key="I" modifiers="SHIFT+CONTROL" />

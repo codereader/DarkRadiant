@@ -234,8 +234,6 @@ void GroupDialog_updatePageTitle(GtkWidget* page)
 void GroupDialog_Construct()
 {
   GlobalPreferenceSystem().registerPreference("EntityWnd", WindowPositionTrackerImportStringCaller(g_GroupDlg.m_position_tracker), WindowPositionTrackerExportStringCaller(g_GroupDlg.m_position_tracker));
-
-  GlobalEventManager().addCommand("ViewEntityInfo", FreeCaller<GroupDialog_ToggleShow>());
 }
 
 void GroupDialog_Destroy()
