@@ -54,7 +54,7 @@ inline bool PatchDoom3_importShader(Patch& patch, Tokeniser& tokeniser)
     Tokeniser_unexpectedError(tokeniser, shader, "#shader-name");
     return false;
   }
-  if(string_equal(shader, "_emptyname"))
+  if(string_equal(shader, "_default"))
   {
     shader = texdef_name_default();
   }
@@ -183,7 +183,7 @@ inline void Patch_exportHeader(const Patch& patch, std::ostream& os)
 inline void PatchDoom3_exportShader(const Patch& patch, std::ostream& os)
 {
 	if (*(shader_get_textureName(patch.GetShader().c_str())) == '\0') {
-    	os << "\"_emptyname\"";
+    	os << "\"_default\"";
 	}
 	else  {
     	os << "\"" << patch.GetShader() << "\"";

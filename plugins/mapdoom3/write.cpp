@@ -34,12 +34,12 @@ const char* DUMMY_BRUSH =
 {\n\
 brushDef3\n\
 {\n\
-( 0 0 -1 0 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_emptyname\" 0 0 0\n\
-( 0 0 1 -8 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_emptyname\" 0 0 0\n\
-( 0 -1 0 -16 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_emptyname\" 0 0 0\n\
-( 1 0 0 -16 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_emptyname\" 0 0 0\n\
-( 0 1 0 -16 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_emptyname\" 0 0 0\n\
-( -1 0 0 -16 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_emptyname\" 0 0 0\n\
+( 0 0 -1 0 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_default\" 0 0 0\n\
+( 0 0 1 -8 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_default\" 0 0 0\n\
+( 0 -1 0 -16 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_default\" 0 0 0\n\
+( 1 0 0 -16 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_default\" 0 0 0\n\
+( 0 1 0 -16 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_default\" 0 0 0\n\
+( -1 0 0 -16 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_default\" 0 0 0\n\
 }\n\
 }\n";
 
@@ -151,7 +151,7 @@ public:
 		if(exporter != 0) {
 
 			// Brush count comment
-	        _outStream << "// brush " << _brushCount++ << "\n";
+	        _outStream << "// primitive " << _brushCount++ << "\n";
 
 			// Pass the ostream to the primitive's contained tokenexporter
 			exporter->exportTokens(_outStream);

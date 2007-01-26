@@ -113,7 +113,7 @@ inline bool FaceShader_Doom3_importTokens(FaceShader& faceShader, Tokeniser& tok
     Tokeniser_unexpectedError(tokeniser, shader, "#shader-name");
     return false;
   }
-  if(string_equal(shader, "_emptyname"))
+  if(string_equal(shader, "_default"))
   {
     shader = texdef_name_default();
   }
@@ -217,7 +217,7 @@ inline void FaceShader_ContentsFlagsValue_exportTokens(const FaceShader& faceSha
 inline void FaceShader_Doom3_exportTokens(const FaceShader& faceShader, std::ostream& os)
 {
 	if(string_empty(shader_get_textureName(faceShader.getShader().c_str()))) {
-		os << "\"_emptyname\" ";
+		os << "\"_default\" ";
 	}
 	else {
     	os << "\"" << faceShader.getShader().c_str() << "\" ";
