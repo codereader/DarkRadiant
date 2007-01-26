@@ -2,7 +2,6 @@
 
 #include "gtkutil/glwidget.h"
 #include "gtkutil/GLWidgetSentry.h"
-#include "generic/referencecounted.h"
 
 #include "ishaders.h"
 #include "texturelib.h"
@@ -96,8 +95,7 @@ void TexturePreviewCombo::refreshInfoTable() {
 	if (_texName.empty())
 		return;
 		
-	SmartPointer<IShader> shader(
-							GlobalShaderSystem().getShaderForName(_texName));
+	IShader* shader = GlobalShaderSystem().getShaderForName(_texName);
 
 	// Containing MTR	
 	gtk_list_store_append(_infoStore, &iter);
@@ -105,6 +103,9 @@ void TexturePreviewCombo::refreshInfoTable() {
 					   0, "Defined in",
 					   1, shader->getShaderFileName(),
 					   -1);
+					   
+	// Release the shader
+	shader->DecRef();
 
 }
 
@@ -130,8 +131,7 @@ void TexturePreviewCombo::_onExpose(GtkWidget* widget, GdkEventExpose* ev, Textu
 	glOrtho(0, 1, 0, 1, -1, 1);
 	
 	// Get a reference to the selected shader
-	SmartPointer<IShader> shader(
-						GlobalShaderSystem().getShaderForName(self->_texName));
+	IShader* shader = GlobalShaderSystem().getShaderForName(self->_texName);
 	
 	// Bind the texture from the shader
 	qtexture_t* tex = shader->getTexture();
@@ -159,6 +159,8 @@ void TexturePreviewCombo::_onExpose(GtkWidget* widget, GdkEventExpose* ev, Textu
 		glTexCoord2i(0, 0);	glVertex2f(0.5 - hfWidth, 0.5 + hfHeight);
 	glEnd();
 	
+	// Release the shader
+	shader->DecRef();
 }
 
 }
