@@ -94,6 +94,7 @@ public:
 
 	void enableFreeMove();
 	void disableFreeMove();
+	bool freeMoveEnabled() const;
 
 	CameraView* getCameraView();
 

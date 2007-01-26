@@ -115,6 +115,11 @@ void CameraSettings::keyChanged() {
 		
 		// Check if a global camwindow is set
 		if (GlobalCamera().getCamWnd() != 0) {
+			// Disable free move if it was enabled during key change (e.g. LightingMode Toggle)
+			if (GlobalCamera().getCamWnd()->freeMoveEnabled()) {
+				GlobalCamera().getCamWnd()->disableFreeMove();
+			}
+			
 			// Disconnect the handlers for the old state and re-connect after reading the registry value
 			GlobalCamera().getCamWnd()->removeHandlersMove();
 		
