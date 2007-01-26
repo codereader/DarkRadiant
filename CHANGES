@@ -1,3 +1,9 @@
+** RELEASE 0.8.0
+
+26/01/2007
+OrbWeaver
+- Fixed leaks in saved maps caused by use of "_emptyname" instead of "_default"
+
 20/01/2007
 greebo
 - Added shortcut editor / refactored command & event system
@@ -20,6 +26,8 @@ OrbWeaver
 07/12/2006
 greebo
 - Added draggable projected lights.
+- Improve patch texturing, allows "natural" projection to match the surface of
+  the patch
 
 25/11/2006
 OrbWeaver
