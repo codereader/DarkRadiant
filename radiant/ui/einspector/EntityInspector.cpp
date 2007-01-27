@@ -388,9 +388,8 @@ void EntityInspector::_onToggleShowInherited(GtkToggleButton* b, EntityInspector
 
 /* END GTK CALLBACKS */
 
-// Update the PropertyEditor pane, displaying the PropertyEditor if necessary and
-// making sure it refers to the currently-selected Entity.
-
+// Update the PropertyEditor pane, displaying the PropertyEditor if necessary 
+// and making sure it refers to the currently-selected Entity.
 void EntityInspector::treeSelectionChanged() {
 
     // Delete current property editor
@@ -414,12 +413,17 @@ void EntityInspector::treeSelectionChanged() {
                                                            key,
                                                            options);
     if (_currentPropertyEditor != NULL) {
-        gtk_container_add(GTK_CONTAINER(_editorFrame), _currentPropertyEditor->getWidget());
+        gtk_container_add(GTK_CONTAINER(_editorFrame), 
+        				  _currentPropertyEditor->getWidget());
     }
     
-    // Update key and value entry boxes
-	gtk_entry_set_text(GTK_ENTRY(_keyEntry), key.c_str());
-	gtk_entry_set_text(GTK_ENTRY(_valEntry), value.c_str());
+    // Update key and value entry boxes, but only if there is a key value. If
+    // there is no selection we do not clear the boxes, to allow keyval copying
+    // between entities.
+	if (!key.empty()) {
+		gtk_entry_set_text(GTK_ENTRY(_keyEntry), key.c_str());
+		gtk_entry_set_text(GTK_ENTRY(_valEntry), value.c_str());
+	}
 
 }
 
