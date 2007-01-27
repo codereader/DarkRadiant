@@ -68,7 +68,7 @@ private:
 	// Helper functions to create GUI components
 	GtkWidget* createTreeView();
 	GtkWidget* createButtons();
-	GtkWidget* createPreviewAndInfoPanel();
+	GtkWidget* createInfoPanel();
 	
 	// Initialise the GL widget, to avoid doing this every frame
 	void initialisePreview();
