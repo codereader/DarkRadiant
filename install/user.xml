@@ -18,9 +18,16 @@
 	<undo>
 		<queueSize value="64" />
 	</undo>
+	
 	<ModelSelector>
-    	<previewSizeFactor value="0.4"/>
+
+		<!-- Size of the model preview, as a fraction of the screen height. The
+		     preview is always square.
+		-->
+    	<previewSizeFactor value="0.6"/>
+
     </ModelSelector>
+    
 	<showAllLightRadii value="0"/>
 	<alwaysShowLightVertices value="1"/>
 	<textures>

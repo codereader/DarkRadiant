@@ -7,6 +7,7 @@
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/IconTextColumn.h"
 #include "gtkutil/RightAlignment.h"
+#include "gtkutil/ScrolledFrame.h"
 #include "math/Vector3.h"
 #include "ifilesystem.h"
 #include "iregistry.h"
@@ -71,17 +72,11 @@ ModelSelector::ModelSelector()
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
 
 	// Set the default size of the window
-	
 	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
 	gint w = gdk_screen_get_width(scr);
 	gint h = gdk_screen_get_height(scr);
 	
-	gtk_window_set_default_size(GTK_WINDOW(_widget), 
-								gint(w * 0.75), 
-								gint(h * 0.8));
-
-	// Create the model preview widget
-	
+	// Size the model preview widget
 	float previewHeightFactor = boost::lexical_cast<float>(
 		GlobalRegistry().get("user/ui/ModelSelector/previewSizeFactor"));
 	gint glSize = gint(h * previewHeightFactor);
@@ -93,12 +88,23 @@ ModelSelector::ModelSelector()
 					 G_CALLBACK(callbackHide), 
 					 this);
 	
-	// Main window contains a VBox
+	// Main window contains a VBox. On the top goes the widgets, the bottom
+	// contains the button panel
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(vbx), createTreeView(), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), 
-					   createPreviewAndInfoPanel(), 
-					   FALSE, FALSE, 0);
+	
+	// Pack the tree view into a VBox above the info panel
+	GtkWidget* leftVbx = gtk_vbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(leftVbx), createTreeView(), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(leftVbx), createInfoPanel(), TRUE, TRUE, 0);
+	gtk_widget_set_size_request(leftVbx, w / 3, -1);
+	
+	// Pack the left Vbox into an HBox next to the preview widget on the right
+	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(hbx), leftVbx, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), _modelPreview, FALSE, FALSE, 0);
+	
+	// Pack widgets into main Vbox above the buttons
+	gtk_box_pack_start(GTK_BOX(vbx), hbx, TRUE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
 }
@@ -291,18 +297,9 @@ GtkWidget* ModelSelector::createButtons() {
 	return gtkutil::RightAlignment(hbx);
 }
 
-// Create the preview widget and info panel
+// Create the info panel treeview
+GtkWidget* ModelSelector::createInfoPanel() {
 
-GtkWidget* ModelSelector::createPreviewAndInfoPanel() {
-
-	// This is an HBox with the preview GL widget on the left, and an info 
-	// TreeView on the right
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
-	
-	// Pack in the GL widget, which is already created
-	
-	gtk_box_pack_start(GTK_BOX(hbx), _modelPreview, FALSE, FALSE, 0);
-	
 	// Info table. Has key and value columns.
 	
 	GtkWidget* infTreeView = 
@@ -327,22 +324,8 @@ GtkWidget* ModelSelector::createPreviewAndInfoPanel() {
 												   NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(infTreeView), col);
 	
-	// Pack into scroll window and frame
-	
-	GtkWidget* scroll = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
-								   GTK_POLICY_AUTOMATIC,
-								   GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(scroll), infTreeView);
-
-	GtkWidget* frame = gtk_frame_new(NULL);
-	gtk_container_add(GTK_CONTAINER(frame), scroll);
-
-	gtk_box_pack_start(GTK_BOX(hbx), frame, TRUE, TRUE, 0);
-	
-	// Return the HBox
-	return hbx;	
-	
+	// Pack into scrolled frame and return
+	return gtkutil::ScrolledFrame(infTreeView);
 }
 
 // Get the value from the selected column
