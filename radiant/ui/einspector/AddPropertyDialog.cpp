@@ -2,6 +2,7 @@
 #include "PropertyEditorFactory.h"
 
 #include "gtkutil/image.h"
+#include "gtkutil/RightAlignment.h"
 
 #include "groupdialog.h"
 #include "qerplugin.h"
@@ -52,6 +53,7 @@ AddPropertyDialog::AddPropertyDialog()
 	gtk_window_set_title(GTK_WINDOW(_widget), ADDPROPERTY_TITLE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
     
+    // Set size of dialog
     gint w, h;
 	gtk_window_get_size(groupdialog, &w, &h);
 	gtk_window_set_default_size(GTK_WINDOW(_widget), w, h);
@@ -60,10 +62,13 @@ AddPropertyDialog::AddPropertyDialog()
     g_signal_connect(G_OBJECT(_widget), "delete-event", G_CALLBACK(_onDelete), this);
     
     // Create components
-    GtkWidget* vbx = gtk_vbox_new(FALSE, 3);
+    GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
     gtk_box_pack_start(GTK_BOX(vbx), createTreeView(), TRUE, TRUE, 0);
     gtk_box_pack_end(GTK_BOX(vbx), createButtonsPanel(), FALSE, FALSE, 0);
     
+    
+    // Pack into window
+    gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
     gtk_container_add(GTK_CONTAINER(_widget), vbx);
     
     // Populate the tree view with properties
@@ -124,7 +129,7 @@ GtkWidget* AddPropertyDialog::createTreeView() {
 // Construct the buttons panel
 
 GtkWidget* AddPropertyDialog::createButtonsPanel() {
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
+	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
 	
 	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
 	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
@@ -132,10 +137,10 @@ GtkWidget* AddPropertyDialog::createButtonsPanel() {
 	g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(_onOK), this);
 	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(_onCancel), this);
 	
-	gtk_box_pack_end(GTK_BOX(hbx), okButton, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(hbx), okButton, TRUE, TRUE, 0);
+	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
 	
-	return hbx;
+	return gtkutil::RightAlignment(hbx);	
 }
 
 // Populate tree view

@@ -140,9 +140,13 @@ void ModelPreview::setModel(const std::string& model) {
 // Set the skin, this does NOT reset the camera
 
 void ModelPreview::setSkin(const std::string& skin) {
-	// Load and apply the skin
-	ModelSkin& mSkin = GlobalModelSkinCache().capture(skin);
-	_model->applySkin(mSkin);
+	
+	// Load and apply the skin, checking first to make sure the model is valid
+	// and not null
+	if (_model.get() != NULL) {
+		ModelSkin& mSkin = GlobalModelSkinCache().capture(skin);
+		_model->applySkin(mSkin);
+	}
 	
 	// Redraw
 	gtk_widget_queue_draw(_glWidget);
