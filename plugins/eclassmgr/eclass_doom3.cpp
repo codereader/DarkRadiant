@@ -21,27 +21,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "Doom3EntityClass.h"
 
-#include "debugging/debugging.h"
-
-#include <map>
-
 #include "ifilesystem.h"
-#include "iscriplib.h"
 #include "iarchive.h"
 #include "qerplugin.h"
 
 #include "generic/callback.h"
-#include "string/string.h"
 #include "parser/DefTokeniser.h"
 #include "os/path.h"
 #include "os/dir.h"
-#include "stream/stringstream.h"
 #include "moduleobservers.h"
 #include "stringio.h"
 
 #include <iostream>
+#include <map>
 
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 
 /* Static map of named entity classes, using case-insensitive comparison */
 typedef std::map<std::string, IEntityClass*> EntityClasses;
@@ -212,6 +207,16 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
             if (value == "idLight") {
                 entityClass->setIsLight(true);
             }
+        }
+        else if (boost::algorithm::istarts_with(key, "editor_var ")) {
+        	// "editor_var" represents an attribute that may be set on this
+        	// entity. Construct a value-less EntityClassAttribute to add to
+        	// the class, so that it will show in the entity inspector.
+        	std::string attName = key.substr(key.find(" ") + 1);
+        	if (!attName.empty()) {
+        		entityClass->addAttribute(
+        			EntityClassAttribute("string", attName, "", value));
+        	}
         }
 
 		// Following key-specific processing, add the keyvalue to the entity
