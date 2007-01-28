@@ -1,3 +1,16 @@
+** RELEASE 0.8.1
+
+28/01/2007
+OrbWeaver
+- Fixed crash when SkinChooser displayed for an AI rather than a static model.
+- Fixed assertion failure when shutting down after browsing some textures in the
+  Media Browser.
+greebo
+- Fixed assertion failure when switching render modes while freelook mode was
+  active.
+- Fixed inability to display Entity Inspector due to double-binding of the
+  shortcut.
+
 ** RELEASE 0.8.0
 
 26/01/2007
