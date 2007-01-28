@@ -1,6 +1,8 @@
 #ifndef SKINCHOOSER_H_
 #define SKINCHOOSER_H_
 
+#include "modelskin.h"
+
 #include "ui/common/ModelPreview.h"
 
 #include <gtk/gtkwidget.h>
@@ -16,7 +18,8 @@ namespace ui
  * into two toplevel categories - matching skins which are associated with the
  * model, and all skins available.
  */
-class SkinChooser
+class SkinChooser :
+	private GlobalModelSkinCacheModuleRef
 {
 	// Main dialog widget
 	GtkWidget* _widget;
