@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "bmp.h"
 #include "pcx.h"
 #include "dds.h"
-
+#include "ImageGDK.h"
 
 #include "modulesystem/singletonmodule.h"
 
@@ -149,6 +149,29 @@ typedef SingletonModule<ImageDDSAPI, ImageDependencies> ImageDDSModule;
 ImageDDSModule g_ImageDDSModule;
 
 
+/* greebo: A loader that makes use of GdkPixBuf* to load the images from the disk
+ */
+class ImageGDKAPI
+{
+	_QERPlugImageTable _imageGDK;
+public:
+	typedef _QERPlugImageTable Type;
+	STRING_CONSTANT(Name, "GDK");
+
+	ImageGDKAPI() {
+		_imageGDK.loadImage = LoadImageGDK;
+		_imageGDK.prefix = "";
+	}
+	_QERPlugImageTable* getTable() {
+		return &_imageGDK;
+	}
+};
+
+typedef SingletonModule<ImageGDKAPI> ImageGDKModule;
+
+// A global instance of the GDK module
+ImageGDKModule g_ImageGDKModule;
+
 extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
 {
   initialiseModule(server);
@@ -158,4 +181,5 @@ extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
   g_ImageBMPModule.selfRegister();
   g_ImagePCXModule.selfRegister();
   g_ImageDDSModule.selfRegister();
+  g_ImageGDKModule.selfRegister();
 }

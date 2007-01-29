@@ -68,7 +68,12 @@ public:
 	 * RegistryKey. The lower and upper values have to be passed as well.
 	 */
 	virtual GtkWidget* appendSpinner(const std::string& name, const std::string& registryKey, 
-									 double lower, double upper) = 0;
+									 double lower, double upper, int fraction) = 0;
+									
+	// greebo: Adds a PathEntry to choose files or directories (depending on the given boolean)
+	virtual GtkWidget* appendPathEntry(const std::string& name, 
+									   const std::string& registryKey, 
+									   bool browseDirectories) = 0;
 };
 
 /* greebo: A PreferenceGroup consists of several PreferencePages and provides a method to add one of these. */

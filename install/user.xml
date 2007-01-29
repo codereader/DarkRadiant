@@ -18,21 +18,21 @@
 	<undo>
 		<queueSize value="64" />
 	</undo>
-	
 	<ModelSelector>
-
 		<!-- Size of the model preview, as a fraction of the screen height. The
 		     preview is always square.
 		-->
     	<previewSizeFactor value="0.6"/>
-
     </ModelSelector>
-    
 	<showAllLightRadii value="0"/>
 	<alwaysShowLightVertices value="1"/>
 	<textures>
 		<hideUnused value="0" />
 		<defaultTextureScale value="0.5" />
+		<quality value="3" />
+		<mode value="5" />
+		<gamma value="1.0" />
+		<compressionFormat value="0" />
 	</textures>
 	<grid>
 		<defaultGridPower value="3" />
@@ -55,7 +55,14 @@
 		<showAxes value="1" />
 		<showWorkzone value="0" />
 		<overlay>
-			<visible value="1" />
+			<visible value="0" />
+			<transparency value="0.3" />
+			<image value="" />
+			<proportional value="1" />
+			<translationX value="0.0" />
+			<translationY value="0.0" />
+			<scale value="1.0" />
+			<scaleWithOrthoView value="1" />
 		</overlay>
 	</xyview>
 	<clipper>

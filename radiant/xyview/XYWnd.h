@@ -9,6 +9,7 @@
 
 #include "math/Vector3.h"
 #include "math/matrix.h"
+#include "math/Vector4.h"
 #include "gtkutil/cursor.h"
 #include "gtkutil/window.h"
 #include "gtkutil/xorrectangle.h"
@@ -124,6 +125,7 @@ public:
 	const Vector3& getOrigin();
 	void setOrigin(const Vector3& origin);
 	void scroll(int x, int y);
+	Vector4 getWindowCoordinates();
 	
 	void positionCamera(int x, int y, CamWnd& camwnd);
 	void orientCamera(int x, int y, CamWnd& camwnd);

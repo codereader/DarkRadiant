@@ -502,41 +502,17 @@ public:
 	}
 };
 
-Entity* Scene_FindEntityByClass(const char* name)
-{
-  Entity* entity;
-  GlobalSceneGraph().traverse(EntityFindByClassname(name, entity));
-  return entity;
-}
-
-Entity *Scene_FindPlayerStart()
-{
-  typedef const char* StaticString;
-  StaticString strings[] = {
-    "info_player_start",
-    "info_player_deathmatch",
-    "team_CTF_redplayer",
-    "team_CTF_blueplayer",
-    "team_CTF_redspawn",
-    "team_CTF_bluespawn",
-  };
-  typedef const StaticString* StaticStringIterator;
-  for(StaticStringIterator i = strings, end = strings+(sizeof(strings)/sizeof(StaticString)); i != end; ++i)
-  {
-    Entity* entity = Scene_FindEntityByClass(*i);
-    if(entity != 0)
-    {
-      return entity;
-    }
-  }
-  return 0;
+/* greebo: Finds an entity with the given classname
+ */
+Entity* Scene_FindEntityByClass(const std::string& className) {
+	Entity* entity;
+	GlobalSceneGraph().traverse(EntityFindByClassname(className, entity));
+	return entity;
 }
 
 //
 // move the view to a start position
 //
-
-
 void FocusViews(const Vector3& point, float angle)
 {
   CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
@@ -550,33 +526,68 @@ void FocusViews(const Vector3& point, float angle)
 	GlobalXYWnd().setOrigin(point);
 }
 
+/* greebo: Saves the current camera position/angles to worldspawn
+ */
+void Map_SavePosition() {
+	Entity* worldspawn = Scene_FindEntityByClass("worldspawn");
+	
+	if (worldspawn != NULL) {
+		CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
+				
+		worldspawn->setKeyValue("editor_drLastCameraPos", camwnd.getCameraOrigin());
+		worldspawn->setKeyValue("editor_drLastCameraAngle", camwnd.getCameraAngles());
+	}
+}
+
 /* Find the start position in the map and focus the viewport on it.
  */
 void Map_StartPosition()
 {
-	// Get the player start entity
-	Entity* entity = Scene_FindPlayerStart();
-
-	if (entity) {
-
-		// Get the entity origin
-		Vector3 origin(entity->getKeyValue("origin"));
+	float angle = 0;
+	Vector3 origin(0,0,0);
+	
+	Entity* worldspawn = Scene_FindEntityByClass("worldspawn");
+	
+	if (worldspawn != NULL) {
+		// Try to find a saved "last camera position"
+		const std::string savedOrigin = worldspawn->getKeyValue("editor_drLastCameraPos");
 		
-		// Check for an angle key, and use it if present
-		float angle;
-		try {
-			angle = boost::lexical_cast<float>(entity->getKeyValue("angle"));
+		if (savedOrigin != "") {
+			// Construct the vector out of the std::string
+			origin = Vector3(savedOrigin);
+			
+			Vector3 angles = worldspawn->getKeyValue("editor_drLastCameraAngle");
+			
+			// Focus the view with the default angle
+			FocusViews(origin, angle);
+			
+			// Now store the angles vector to the camview
+			CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
+			camwnd.setCameraAngles(angles);
+			
+			return;
 		}
-		catch (boost::bad_lexical_cast e) {
-			angle = 0;
+		else {
+			// Get the player start entity
+			Entity* playerStart = Scene_FindEntityByClass("info_player_start");
+			
+			if (playerStart != NULL) {
+				// Get the entity origin
+				origin = playerStart->getKeyValue("origin");
+				
+				// Check for an angle key, and use it if present
+				try {
+					angle = boost::lexical_cast<float>(playerStart->getKeyValue("angle"));
+				}
+				catch (boost::bad_lexical_cast e) {
+					angle = 0;
+				}
+			}
 		}
-		
-		// Focus the view with the given parameters
-		FocusViews(origin, angle);
 	}
-	else {
-		FocusViews(g_vector3_identity, 0);
-	}
+	
+	// Focus the view with the given parameters
+	FocusViews(origin, angle);
 }
 
 /* Check if a node is the worldspawn.
@@ -1349,6 +1360,8 @@ void Map_Rename(const char* filename)
 
 bool Map_Save()
 {
+	// Store the camview position into worldspawn
+	Map_SavePosition();
 	Pointfile_Clear();
 
   ScopeTimer timer("map save");

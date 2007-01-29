@@ -136,10 +136,10 @@ undoLib = undoEnv.SharedLibrary(target='undo', source=undoSrc)
 undoEnv.Install(INSTALL + '/modules', undoLib)
 
 # Overlay module
-#overlayEnv = module_env.Copy()
-#overlaySrc = build_list('plugins/overlay', 'Overlay.cpp')
-#overlayLib = overlayEnv.SharedLibrary(target='overlay', source=overlaySrc)
-#overlayEnv.Install(INSTALL + '/modules', overlayLib)
+overlayEnv = module_env.Copy()
+overlaySrc = build_list('plugins/overlay', 'Overlay.cpp')
+overlayLib = overlayEnv.SharedLibrary(target='overlay', source=overlaySrc)
+overlayEnv.Install(INSTALL + '/modules', overlayLib)
 
 # Eclassmgr module
 eclassSrc = build_list('plugins/eclassmgr', 'eclass_doom3.cpp Doom3EntityClass.cpp')
@@ -188,8 +188,12 @@ skinsLib = skinsEnv.SharedLibrary(target='skins', source=skinsList, no_import_li
 skinsEnv.Install(INSTALL + '/modules', skinsLib)
 
 image_env = module_env.Copy()
-image_lst = build_list('plugins/image', 'bmp.cpp jpeg.cpp image.cpp pcx.cpp tga.cpp dds.cpp')
-image_lib = image_env.SharedLibrary(target='image', source=image_lst, LIBS=['jpeg6', 'ddslib'], LIBPATH='libs', no_import_lib=1, WIN32_INSERT_DEF=0)
+image_lst = build_list('plugins/image', 'bmp.cpp jpeg.cpp image.cpp pcx.cpp tga.cpp dds.cpp ImageGDK.cpp')
+image_env.useGtk2()
+image_env.useGlib2()
+image_env.Append(LIBS=['jpeg6', 'ddslib'])
+image_env.Append(LIBPATH = ['libs'])
+image_lib = image_env.SharedLibrary(target='image', source=image_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
 image_env.Depends(image_lib, jpeg_lib)
 image_env.Depends(image_lib, ddslib_lib)
 image_env.Install(INSTALL + '/modules', image_lib)

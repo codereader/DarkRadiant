@@ -85,12 +85,17 @@ public:
 		return m_dialog.addEntry(m_vbox, name, registryKey);
 	}
 	
+	// greebo: Adds a PathEntry to choose files or directories (depending on the given boolean)
+	GtkWidget* appendPathEntry(const std::string& name, const std::string& registryKey, bool browseDirectories) {
+		return m_dialog.addPathEntry(m_vbox, name, registryKey, browseDirectories);
+	}
+	
 	/* greebo: Appends an entry field with spinner buttons which retrieves its value from the given
 	 * RegistryKey. The lower and upper values have to be passed as well.
 	 */
 	GtkWidget* appendSpinner(const std::string& name, const std::string& registryKey, 
-							 double lower, double upper) {
-		return m_dialog.addSpinner(m_vbox, name, registryKey, lower, upper);
+							 double lower, double upper, int fraction) {
+		return m_dialog.addSpinner(m_vbox, name, registryKey, lower, upper, fraction);
 	}
   
   void appendCombo(const char* name, StringArrayRange values, const IntImportCallback& importCallback, const IntExportCallback& exportCallback)
