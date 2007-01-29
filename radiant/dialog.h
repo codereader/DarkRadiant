@@ -172,7 +172,11 @@ public:
   GtkWidget* addEntry(GtkWidget* vbox, const std::string& name, const std::string& registryKey);
   
   // greebo: Adds an GtkSpinner with the given caption <name>, bounds <lower> and <upper> and connects it to the <registryKey>
-  GtkWidget* addSpinner(GtkWidget* vbox, const std::string& name, const std::string& registryKey, double lower, double upper);
+  GtkWidget* addSpinner(GtkWidget* vbox, const std::string& name, const std::string& registryKey, 
+  						double lower, double upper, int fraction);
+  
+  // greebo: Adds a PathEntry to choose files or directories (depending on the given boolean)
+  GtkWidget* addPathEntry(GtkWidget* vbox, const std::string& name, const std::string& registryKey, bool browseDirectories);
   
   void addCombo(GtkWidget* vbox, const char* name, StringArrayRange values, const IntImportCallback& importCallback, const IntExportCallback& exportCallback);
   void addCombo(GtkWidget* vbox, const char* name, int& data, StringArrayRange values);

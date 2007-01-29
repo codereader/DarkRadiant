@@ -30,47 +30,58 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "os/path.h"
 #include "stream/stringstream.h"
 
-#include <iostream>
-
 typedef Modules<_QERPlugImageTable> ImageModules;
 ImageModules& Textures_getImageModules();
 
-/// \brief Returns a new image for the first file matching \p name in one of the available texture formats, or 0 if no file is found.
-Image* QERApp_LoadImage(void* environment, const char* name)
+class LoadImageVisitor : public ImageModules::Visitor 
 {
-  Image* image = 0;
-  class LoadImageVisitor : public ImageModules::Visitor
-  {
-    const char* m_name;
-    Image*& m_image;
-  public:
-    LoadImageVisitor(const char* name, Image*& image)
-      : m_name(name), m_image(image)
-    {
-    }
-    
-    // Visit function called for each image module. Provides the file extension and
-    // a table with the loadImage function.
-    
-    void visit(const char* extension, const _QERPlugImageTable& table)
-    {
-      if(m_image == 0)
-      {
-		// Construct the full name of the image to load, including the prefix (e.g. "dds/")
-		// and the file extension.
-		std::string fullName = table.prefix + std::string(m_name) + "." + extension;
-        ArchiveFile* file = GlobalFileSystem().openFile(fullName.c_str());
-        if(file != 0)
-        {
-          m_image = table.loadImage(*file);
-          file->release();
-        }
-      }
-    }
-  } visitor(name, image);
+	// The filename to load
+	const std::string _name;
+	
+	// The reference to the pointer in the parent function
+	Image*& _image;
+	
+public:
+	// Constructor
+	LoadImageVisitor(const std::string& name, Image*& image) : 
+		_name(name), 
+		_image(image)
+	{}
 
-  Textures_getImageModules().foreachModule(visitor);
+	// Visit function called for each image module. Provides the file extension and
+	// a table with the loadImage function.
+	void visit(const char* extension, const _QERPlugImageTable& table) {
+		// Only do anything, if the image pointer is still NULL (i.e. the image load has not succeeded yet)
+		if (_image == NULL) {
+			// Construct the full name of the image to load, including the prefix (e.g. "dds/")
+			// and the file extension.
+			std::string fullName = table.prefix + std::string(_name) + "." + extension;
+			
+			// Try to open the file (will fail if the extension does not fit)
+			ArchiveFile* file = GlobalFileSystem().openFile(fullName.c_str());
+			
+			// Has the file been loaded?
+			if (file != NULL) {
+				// Try to invoke the imageloader with a reference to the ArchiveFile
+				_image = table.loadImage(*file);
+				
+				// Release the loaded file
+				file->release();
+			}
+		}
+	}
+}; // class LoadImageVisitor
 
-  return image;
+/// \brief Returns a new image for the first file matching \p name in one of the available texture formats, or 0 if no file is found.
+Image* QERApp_LoadImage(void* environment, const char* name) {
+
+	Image* image = NULL;
+
+	// Instantiate a visitor class
+	LoadImageVisitor visitor(name, image);
+
+	// Cycle through all modules and tell them to visit the local class
+	Textures_getImageModules().foreachModule(visitor);
+	
+	return image;
 }
-

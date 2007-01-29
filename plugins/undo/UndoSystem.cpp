@@ -221,7 +221,7 @@ public:
 	// Gets called by the PreferenceSystem as request to create the according settings page
 	void constructPreferencePage(PreferenceGroup& group) {
 		PreferencesPage* page(group.createPage("Undo", "Undo Queue Settings"));
-		page->appendSpinner("Undo Queue Size", RKEY_UNDO_QUEUE_SIZE, 0, 1024);
+		page->appendSpinner("Undo Queue Size", RKEY_UNDO_QUEUE_SIZE, 0, 1024, 1);
 	}
 
 private:

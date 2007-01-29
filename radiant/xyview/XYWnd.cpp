@@ -6,6 +6,7 @@
 #include "ieventmanager.h"
 #include "ientity.h"
 #include "igrid.h"
+#include "ioverlay.h"
 
 #include "gtkutil/glwidget.h"
 #include "stream/stringstream.h"
@@ -729,6 +730,36 @@ void XYWnd::snapToGrid(Vector3& point) {
 	}
 }
 
+/* greebo: This calculates the coordinates of the xy view window corners.
+ * 
+ * @returns: Vector4( xbegin, xend, ybegin, yend);
+ */
+Vector4 XYWnd::getWindowCoordinates() {
+	int nDim1 = (m_viewType == YZ) ? 1 : 0;
+	int nDim2 = (m_viewType == XY) ? 1 : 2;
+	
+	float w = (_width / 2 / m_fScale);
+	float h = (_height / 2 / m_fScale);
+
+	float xb = m_vOrigin[nDim1] - w;
+	if (xb < region_mins[nDim1])
+		xb = region_mins[nDim1];
+
+	float xe = m_vOrigin[nDim1] + w;
+	if (xe > region_maxs[nDim1])
+		xe = region_maxs[nDim1];
+
+	float yb = m_vOrigin[nDim2] - h;
+	if (yb < region_mins[nDim2])
+		yb = region_mins[nDim2];
+
+	float ye = m_vOrigin[nDim2] + h;
+	if (ye > region_maxs[nDim2])
+		ye = region_maxs[nDim2];
+	
+	return Vector4(xb, xe, yb, ye);
+}
+
 void XYWnd::drawGrid() {
 	float	x, y, xb, xe, yb, ye;
 	float	w, h;
@@ -767,28 +798,12 @@ void XYWnd::drawGrid() {
 	w = (_width / 2 / m_fScale);
 	h = (_height / 2 / m_fScale);
 
-	int nDim1 = (m_viewType == YZ) ? 1 : 0;
-	int nDim2 = (m_viewType == XY) ? 1 : 2;
+	Vector4 windowCoords = getWindowCoordinates();
 
-	xb = m_vOrigin[nDim1] - w;
-	if (xb < region_mins[nDim1])
-		xb = region_mins[nDim1];
-	xb = step * floor (xb/step);
-
-	xe = m_vOrigin[nDim1] + w;
-	if (xe > region_maxs[nDim1])
-		xe = region_maxs[nDim1];
-	xe = step * ceil (xe/step);
-
-	yb = m_vOrigin[nDim2] - h;
-	if (yb < region_mins[nDim2])
-		yb = region_mins[nDim2];
-	yb = step * floor (yb/step);
-
-	ye = m_vOrigin[nDim2] + h;
-	if (ye > region_maxs[nDim2])
-		ye = region_maxs[nDim2];
-	ye = step * ceil (ye/step);
+	xb = step * floor (windowCoords[0]/step);
+	xe = step * ceil (windowCoords[1]/step);
+	yb = step * floor (windowCoords[2]/step);
+	ye = step * ceil (windowCoords[3]/step);
 
 	if (GlobalXYWnd().showGrid()) {
 		ui::ColourItem& colourGridBack = ColourSchemes().getColour("grid_background");
@@ -833,6 +848,9 @@ void XYWnd::drawGrid() {
 			glEnd();
 		}
 	}
+
+	int nDim1 = (m_viewType == YZ) ? 1 : 0;
+	int nDim2 = (m_viewType == XY) ? 1 : 2;
 
 	// draw coordinate text if needed
 	if (GlobalXYWnd().showCoordinates()) {
@@ -951,28 +969,12 @@ void XYWnd::drawBlockGrid() {
 	w = (_width / 2 / m_fScale);
 	h = (_height / 2 / m_fScale);
 
-	int nDim1 = (m_viewType == YZ) ? 1 : 0;
-	int nDim2 = (m_viewType == XY) ? 1 : 2;
-
-	xb = m_vOrigin[nDim1] - w;
-	if (xb < region_mins[nDim1])
-		xb = region_mins[nDim1];
-	xb = static_cast<float>(blockSize * floor (xb/blockSize));
-
-	xe = m_vOrigin[nDim1] + w;
-	if (xe > region_maxs[nDim1])
-		xe = region_maxs[nDim1];
-	xe = static_cast<float>(blockSize * ceil (xe/blockSize));
-
-	yb = m_vOrigin[nDim2] - h;
-	if (yb < region_mins[nDim2])
-		yb = region_mins[nDim2];
-	yb = static_cast<float>(blockSize * floor (yb/blockSize));
-
-	ye = m_vOrigin[nDim2] + h;
-	if (ye > region_maxs[nDim2])
-		ye = region_maxs[nDim2];
-	ye = static_cast<float>(blockSize * ceil (ye/blockSize));
+	Vector4 windowCoords = getWindowCoordinates();
+		
+	xb = static_cast<float>(blockSize * floor (windowCoords[0]/blockSize));
+	xe = static_cast<float>(blockSize * ceil (windowCoords[1]/blockSize));
+	yb = static_cast<float>(blockSize * floor (windowCoords[2]/blockSize));
+	ye = static_cast<float>(blockSize * ceil (windowCoords[3]/blockSize));
 
 	// draw major blocks
 
@@ -1288,6 +1290,10 @@ void XYWnd::draw() {
 	int nDim2 = (m_viewType == XY) ? 1 : 2;
 	glTranslatef(-m_vOrigin[nDim1], -m_vOrigin[nDim2], 0);
 
+	// Call the image overlay draw method with the window coordinates
+	Vector4 windowCoords = getWindowCoordinates();
+	GlobalOverlay().draw(windowCoords[0], windowCoords[1], windowCoords[2], windowCoords[3], m_fScale);
+	
 	glDisable (GL_LINE_STIPPLE);
 	glLineWidth(1);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);

@@ -644,7 +644,8 @@ void Dialog::addSlider(GtkWidget* vbox, const std::string& name, const std::stri
 	gtk_container_add(GTK_CONTAINER(alignment), scale);
 	
 	gtk_scale_set_draw_value(GTK_SCALE (scale), draw_value);
-	gtk_scale_set_digits(GTK_SCALE (scale), 0);
+	int digits = (step_increment < 1.0f) ? 2 : 0; 
+	gtk_scale_set_digits(GTK_SCALE (scale), digits);
 	
 	GtkTable* row = DialogRow_new(name.c_str(), alignment);
 	DialogVBox_packRow(GTK_VBOX(vbox), GTK_WIDGET(row));
@@ -790,6 +791,21 @@ GtkWidget* Dialog::addPathEntry(GtkWidget* vbox, const char* name, CopiedString&
   return addPathEntry(vbox, name, browse_directory, StringImportCallback(StringImportCaller(data)), StringExportCallback(StringExportCaller(data))); 
 }
 
+// greebo: Adds a PathEntry to choose files or directories (depending on the given boolean)
+GtkWidget* Dialog::addPathEntry(GtkWidget* vbox, const std::string& name, const std::string& registryKey, bool browseDirectories) {
+	
+	PathEntry pathEntry = PathEntry_new();
+	g_signal_connect(G_OBJECT(pathEntry.m_button), "clicked", G_CALLBACK(browseDirectories ? button_clicked_entry_browse_directory : button_clicked_entry_browse_file), pathEntry.m_entry);
+
+	// Connect the registry key to the newly created input field
+	_registryConnector.connectGtkObject(GTK_OBJECT(pathEntry.m_entry), registryKey);
+
+	GtkTable* row = DialogRow_new(name.c_str(), GTK_WIDGET(pathEntry.m_frame));
+	DialogVBox_packRow(GTK_VBOX(vbox), GTK_WIDGET(row));
+
+	return GTK_WIDGET(row);
+}
+
 // greebo: add an entry box connected to the given registryKey
 GtkWidget* Dialog::addEntry(GtkWidget* vbox, const std::string& name, const std::string& registryKey) {
 	
@@ -803,13 +819,14 @@ GtkWidget* Dialog::addEntry(GtkWidget* vbox, const std::string& name, const std:
 	return row.m_row;
 }
 
-GtkWidget* Dialog::addSpinner(GtkWidget* vbox, const std::string& name, const std::string& registryKey, double lower, double upper) {
-	
+GtkWidget* Dialog::addSpinner(GtkWidget* vbox, const std::string& name, const std::string& registryKey, 
+							  double lower, double upper, int fraction) 
+{
 	// Load the initial value (maybe unnecessary, as the value is loaded upon dialog show)
 	float value = GlobalRegistry().getFloat(registryKey); 
 	
 	// Create a new row containing an input field
-	DialogSpinnerRow row(DialogSpinnerRow_new(name.c_str(), value, lower, upper, 1));
+	DialogSpinnerRow row(DialogSpinnerRow_new(name.c_str(), value, lower, upper, fraction));
 
 	// Connect the registry key to the newly created input field
 	_registryConnector.connectGtkObject(GTK_OBJECT(row.m_spin), registryKey);

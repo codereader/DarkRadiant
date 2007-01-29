@@ -39,16 +39,32 @@ enum ProjectionAxis {
 // describes a GL texture
 struct qtexture_t
 {
-  qtexture_t(const LoadImageCallback& load, const char* name) : load(load), name(name)
-  {
-  }
-  const LoadImageCallback& load;
-  const char* name;
-  std::size_t width, height;
-  GLuint texture_number; // gl bind number
-  Colour3 color; // for flat shade mode
-  int surfaceFlags, contentFlags, value;
-};
+	// The name of this texture
+	const std::string name;
+	
+	// The callback for loading the texture
+	const LoadImageCallback& load;
+	
+	// Texture Dimensions
+	std::size_t width, height;
+	
+	// The GL bind number for use in OpenGL calls
+	GLuint texture_number;
+	
+	// for flat shade mode (greebo: is this used anymore?)
+	Colour3 color;
+	
+	// The flags
+	int surfaceFlags, contentFlags, value;
+
+	// Constructor
+	qtexture_t(const LoadImageCallback& load, const std::string& name) :
+		name(name),
+		load(load)
+	{}
+
+}; // struct qtexture_t
+
 
 inline Matrix4 matrix4_rotation_for_vector3(const Vector3& x, const Vector3& y, const Vector3& z) {
 	return Matrix4(

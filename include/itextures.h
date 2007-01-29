@@ -24,24 +24,31 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "iimage.h"
 #include "generic/constant.h"
+#include "igl.h"
+#include <string>
 
-struct qtexture_t;
+// Forward declaration
+struct qtexture_t; // defined in texturelib.h
 
 class LoadImageCallback
 {
-  typedef Image* (*LoadFunc)(void* environment, const char* name);
-public:
-  void* m_environment;
-  LoadFunc m_func;
+	// The type of a load function
+	typedef Image* (*LoadFunc)(void* environment, const char* name);
 
-  LoadImageCallback(void* environment, LoadFunc func) : m_environment(environment), m_func(func)
-  {
-  }
-  Image* loadImage(const char* name) const
-  {
-    return m_func(m_environment, name);
-  }
+public:
+	void* m_environment;
+	LoadFunc m_func;
+
+	LoadImageCallback(void* environment, LoadFunc func) : 
+		m_environment(environment), 
+		m_func(func) 
+	{}
+	
+	Image* loadImage(const std::string& name) const {
+		return m_func(m_environment, name.c_str());
+	}
 };
+
 
 inline bool operator==(const LoadImageCallback& self, const LoadImageCallback& other)
 {
@@ -60,13 +67,35 @@ public:
   virtual void realise() = 0;
 };
 
+/* greebo: A TextureModeObserver gets notified if the
+ * texture mode gets changed. 
+ */
+class TextureModeObserver
+{
+public:
+	virtual void textureModeChanged() = 0;
+};
+
+enum ETexturesMode {
+    eTextures_NEAREST = 0,
+    eTextures_NEAREST_MIPMAP_NEAREST = 1,
+    eTextures_NEAREST_MIPMAP_LINEAR = 2,
+    eTextures_LINEAR = 3,
+    eTextures_LINEAR_MIPMAP_NEAREST = 4,
+    eTextures_LINEAR_MIPMAP_LINEAR = 5,
+};
+
 class TexturesCache
 {
 public:
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "textures");
-  virtual LoadImageCallback defaultLoader() const = 0;
-  virtual Image* loadImage(const char* name) = 0;
+	INTEGER_CONSTANT(Version, 1);
+	STRING_CONSTANT(Name, "textures");
+  
+	// Retrieves the default image loader
+	virtual LoadImageCallback defaultLoader() const = 0;
+  
+	// Loads an image by using the default loader and returns the pointer
+	virtual Image* loadImage(const std::string& name) = 0;
   
 	/**
 	 * Capture the named image texture and return the associated qtexture_t
@@ -83,6 +112,29 @@ public:
   virtual void release(qtexture_t* texture) = 0;
   virtual void attach(TexturesCacheObserver& observer) = 0;
   virtual void detach(TexturesCacheObserver& observer) = 0;
+  
+  	// Realises / unrealises all the textures (loads them into memory)
+	virtual void realise() = 0;
+	virtual void unrealise() = 0;
+	
+	// Returns true if the textures have already been realised
+	virtual bool realised() const = 0; 
+	
+	// Sets the openGL states according to the internal texturemode
+	virtual void setTextureParameters() = 0;
+	
+	virtual void setTextureComponents(GLint textureComponents) = 0;
+	
+	// Get / Set the texture mode
+	virtual ETexturesMode getTextureMode() const = 0;
+	virtual void setTextureMode(ETexturesMode mode) = 0;
+	
+	// Notifies the observers of the texture mode change
+	virtual void modeChanged() = 0;
+	
+	// Adds/Removes an observer that gets notified upon texture mode change
+	virtual void addTextureModeObserver(TextureModeObserver* observer) = 0;
+	virtual void removeTextureModeObserver(TextureModeObserver* observer) = 0;
 };
 
 #include "modulesystem.h"

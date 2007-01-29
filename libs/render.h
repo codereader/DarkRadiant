@@ -543,6 +543,11 @@ struct TexCoord2f : public Vector2
 	TexCoord2f(const float* array)
 	: Vector2(array[0], array[1]) {}
 
+	// Copy constructor
+	TexCoord2f(const TexCoord2f& other) 
+		: Vector2(other.x(), other.y())
+	{}
+
   float& s()
   {
     return x();

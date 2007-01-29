@@ -201,7 +201,8 @@ namespace {
 void TextureBrowser_heightChanged(TextureBrowser& textureBrowser);
 
 class TextureBrowser :
-	public RegistryKeyObserver
+	public RegistryKeyObserver,
+	public TextureModeObserver
 {
 public:
 	int width, height;
@@ -324,13 +325,29 @@ public:
     m_hideUnused(false),
     m_resizeTextures(true),
     m_uniformTextureSize(128)
-  {
-  }
+  {}
   
-  void construct() {
-  	m_hideUnused = (GlobalRegistry().get(RKEY_TEXTURES_HIDE_UNUSED) == "1");
-  	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_HIDE_UNUSED);
-  }
+	void construct() {
+		m_hideUnused = (GlobalRegistry().get(RKEY_TEXTURES_HIDE_UNUSED) == "1");
+		GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_HIDE_UNUSED);
+		GlobalTexturesCache().addTextureModeObserver(this);
+	}
+
+  
+	void destroy() {
+		GlobalTexturesCache().removeTextureModeObserver(this);
+	}
+  
+	void queueDraw() {
+		if (m_gl_widget != NULL) {
+			gtk_widget_queue_draw(m_gl_widget);
+		}
+	} 
+  
+	// greebo: This gets called as soon as the texture mode gets changed
+	void textureModeChanged() {
+		queueDraw();
+	}
 };
 
 void(*TextureBrowser_textureSelected)(const char* shader);
@@ -1102,12 +1119,8 @@ void Texture_Draw(TextureBrowser& textureBrowser)
   //qglFinish();
 }
 
-void TextureBrowser_queueDraw(TextureBrowser& textureBrowser)
-{
-  if(textureBrowser.m_gl_widget != 0)
-  {
-    gtk_widget_queue_draw(textureBrowser.m_gl_widget);
-  }
+void TextureBrowser_queueDraw(TextureBrowser& textureBrowser) {
+	textureBrowser.queueDraw();
 }
 
 
@@ -1386,6 +1399,7 @@ GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel)
 
 void TextureBrowser_destroyWindow()
 {
+	g_TextureBrowser.destroy();
   GlobalShaderSystem().setActiveShadersChangedNotify(Callback());
 
   g_signal_handler_disconnect(G_OBJECT(g_TextureBrowser.m_gl_widget), g_TextureBrowser.m_sizeHandler);
@@ -1576,8 +1590,6 @@ void TextureBrowser_Construct()
   
   g_TextureBrowser.shader = texdef_name_default();
 
-  Textures_setModeChangedNotify(ReferenceCaller<TextureBrowser, TextureBrowser_queueDraw>(g_TextureBrowser));
-
   TextureBrowser_registerPreferencesPage();
 
   GlobalShaderSystem().attach(g_ShadersObserver);
@@ -1587,6 +1599,4 @@ void TextureBrowser_Construct()
 void TextureBrowser_Destroy()
 {
   GlobalShaderSystem().detach(g_ShadersObserver);
-
-  Textures_setModeChangedNotify(Callback());
 }
