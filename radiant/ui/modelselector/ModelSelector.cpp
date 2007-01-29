@@ -69,6 +69,7 @@ ModelSelector::ModelSelector()
 	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
 	gtk_window_set_title(GTK_WINDOW(_widget), MODELSELECTOR_TITLE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
+	gtk_window_set_resizable(GTK_WINDOW(_widget), FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
 
 	// Set the default size of the window
@@ -99,9 +100,14 @@ ModelSelector::ModelSelector()
 	gtk_widget_set_size_request(leftVbx, w / 3, -1);
 	
 	// Pack the left Vbox into an HBox next to the preview widget on the right
+	// The preview gets a Vbox of its own, to stop it from expanding vertically
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(hbx), leftVbx, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbx), _modelPreview, FALSE, FALSE, 0);
+	
+	GtkWidget* previewBox = gtk_vbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(previewBox), _modelPreview, FALSE, FALSE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(hbx), previewBox, FALSE, FALSE, 0);
 	
 	// Pack widgets into main Vbox above the buttons
 	gtk_box_pack_start(GTK_BOX(vbx), hbx, TRUE, TRUE, 0);
