@@ -129,7 +129,9 @@
 		<compatibility>
 			<addDummyBrushes value="true" />
 		</compatibility>
-
+		<lastCameraPositionKey value="editor_drLastCameraPos" />
+		<lastCameraAngleKey value="editor_drLastCameraAngle" />
+		<playerStartPoint value="info_player_start" />
 	</mapFormat>
 
 </game>

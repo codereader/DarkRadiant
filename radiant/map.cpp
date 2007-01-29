@@ -88,6 +88,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <string>
 #include <boost/lexical_cast.hpp>
 
+	namespace {
+		const std::string RKEY_LAST_CAM_POSITION = "game/mapFormat/lastCameraPositionKey";
+		const std::string RKEY_LAST_CAM_ANGLE = "game/mapFormat/lastCameraAngleKey";
+		const std::string RKEY_PLAYER_START_ECLASS = "game/mapFormat/playerStartEClass";
+	}
+
 class NameObserver
 {
   UniqueNames& m_names;
@@ -526,16 +532,31 @@ void FocusViews(const Vector3& point, float angle)
 	GlobalXYWnd().setOrigin(point);
 }
 
+void Map_RemoveSavedPosition() {
+	const std::string keyLastCamPos = GlobalRegistry().get(RKEY_LAST_CAM_POSITION);
+	const std::string keyLastCamAngle = GlobalRegistry().get(RKEY_LAST_CAM_ANGLE);
+	
+	Entity* worldspawn = Scene_FindEntityByClass("worldspawn");
+	
+	if (worldspawn != NULL) {
+		worldspawn->setKeyValue(keyLastCamPos, "");
+		worldspawn->setKeyValue(keyLastCamAngle, "");
+	}
+}
+
 /* greebo: Saves the current camera position/angles to worldspawn
  */
 void Map_SavePosition() {
+	const std::string keyLastCamPos = GlobalRegistry().get(RKEY_LAST_CAM_POSITION);
+	const std::string keyLastCamAngle = GlobalRegistry().get(RKEY_LAST_CAM_ANGLE); 
+	
 	Entity* worldspawn = Scene_FindEntityByClass("worldspawn");
 	
 	if (worldspawn != NULL) {
 		CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
 				
-		worldspawn->setKeyValue("editor_drLastCameraPos", camwnd.getCameraOrigin());
-		worldspawn->setKeyValue("editor_drLastCameraAngle", camwnd.getCameraAngles());
+		worldspawn->setKeyValue(keyLastCamPos, camwnd.getCameraOrigin());
+		worldspawn->setKeyValue(keyLastCamAngle, camwnd.getCameraAngles());
 	}
 }
 
@@ -543,6 +564,10 @@ void Map_SavePosition() {
  */
 void Map_StartPosition()
 {
+	const std::string keyLastCamPos = GlobalRegistry().get(RKEY_LAST_CAM_POSITION);
+	const std::string keyLastCamAngle = GlobalRegistry().get(RKEY_LAST_CAM_ANGLE); 
+	const std::string eClassPlayerStart = GlobalRegistry().get(RKEY_PLAYER_START_ECLASS);
+	
 	float angle = 0;
 	Vector3 origin(0,0,0);
 	
@@ -550,13 +575,13 @@ void Map_StartPosition()
 	
 	if (worldspawn != NULL) {
 		// Try to find a saved "last camera position"
-		const std::string savedOrigin = worldspawn->getKeyValue("editor_drLastCameraPos");
+		const std::string savedOrigin = worldspawn->getKeyValue(keyLastCamPos);
 		
 		if (savedOrigin != "") {
 			// Construct the vector out of the std::string
 			origin = Vector3(savedOrigin);
 			
-			Vector3 angles = worldspawn->getKeyValue("editor_drLastCameraAngle");
+			Vector3 angles = worldspawn->getKeyValue(keyLastCamAngle);
 			
 			// Focus the view with the default angle
 			FocusViews(origin, angle);
@@ -565,11 +590,14 @@ void Map_StartPosition()
 			CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
 			camwnd.setCameraAngles(angles);
 			
+			// Remove the saved entity key value so it doesn't appear during map edit
+			Map_RemoveSavedPosition();
+			
 			return;
 		}
 		else {
 			// Get the player start entity
-			Entity* playerStart = Scene_FindEntityByClass("info_player_start");
+			Entity* playerStart = Scene_FindEntityByClass(eClassPlayerStart);
 			
 			if (playerStart != NULL) {
 				// Get the entity origin
@@ -1366,6 +1394,9 @@ bool Map_Save()
 
   ScopeTimer timer("map save");
   SaveReferences();
+  
+	// Remove the saved camera position
+	Map_RemoveSavedPosition();
   return true; // assume success..
 }
 
@@ -1463,7 +1494,9 @@ void AddRegionBrushes (void)
     Node_getTraversable(Map_FindOrInsertWorldspawn(g_map))->insert(NodeSmartReference(*region_sides[i]));
   }
 
-  region_startpoint = &GlobalEntityCreator().createEntity(GlobalEntityClassManager().findOrInsert("info_player_start", false));
+	const std::string eClassPlayerStart = GlobalRegistry().get(RKEY_PLAYER_START_ECLASS);
+	region_startpoint = &GlobalEntityCreator().createEntity(
+							GlobalEntityClassManager().findOrInsert(eClassPlayerStart, false));
 
   ConstructRegionBrushes(region_sides, region_mins, region_maxs);
   ConstructRegionStartpoint(region_startpoint, region_mins, region_maxs);
