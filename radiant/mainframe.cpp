@@ -603,14 +603,14 @@ void populateRegistry() {
 
 	try {
 		// Load all of the required XML files
-		GlobalRegistry().importFromFile(base + "user.xml", "");
-		GlobalRegistry().importFromFile(base + "upgradepaths.xml", "user");
-		GlobalRegistry().importFromFile(base + "colours.xml", "user/ui");
-		GlobalRegistry().importFromFile(base + "input.xml", "user/ui");
+		GlobalRegistry().import(base + "user.xml", "", Registry::treeStandard);
+		GlobalRegistry().import(base + "upgradepaths.xml", "user", Registry::treeStandard);
+		GlobalRegistry().import(base + "colours.xml", "user/ui", Registry::treeStandard);
+		GlobalRegistry().import(base + "input.xml", "user/ui", Registry::treeStandard);
 		
 		// Load the debug.xml file only if the relevant key is set in user.xml
 		if (GlobalRegistry().get("user/debug") == "1")
-			GlobalRegistry().importFromFile(base + "debug.xml", "");
+			GlobalRegistry().import(base + "debug.xml", "", Registry::treeStandard);
 	}
 	catch (std::runtime_error e) {
 		gtkutil::fatalErrorDialog("XML registry population failed:\n\n"
@@ -624,24 +624,24 @@ void populateRegistry() {
 	{
 		// Construct the filename and load it into the registry
 		const std::string filename = std::string(AppPath_get()) + "games/" + (*game)->mGameFile.c_str();  	
-		GlobalRegistry().importFromFile(filename, "");
+		GlobalRegistry().import(filename, "", Registry::treeUser);
 	}
   
 	// Load user preferences, these overwrite any values that have defined before
 	// The called method also checks for any upgrades that have to be performed
 	const std::string userSettingsFile = std::string(SettingsPath_get()) + "user.xml";
 	if (file_exists(userSettingsFile.c_str())) {
-		GlobalRegistry().importUserXML(userSettingsFile);
+		GlobalRegistry().import(userSettingsFile, "", Registry::treeUser);
 	}
 	
 	const std::string userColoursFile = std::string(SettingsPath_get()) + "colours.xml";
 	if (file_exists(userColoursFile.c_str())) {
-		GlobalRegistry().importFromFile(userColoursFile, "user/ui");
+		GlobalRegistry().import(userColoursFile, "user/ui", Registry::treeUser);
 	}
 	
 	const std::string userInputFile = std::string(SettingsPath_get()) + "input.xml";
 	if (file_exists(userInputFile.c_str())) {
-		GlobalRegistry().importFromFile(userInputFile, "user/ui");
+		GlobalRegistry().import(userInputFile, "user/ui", Registry::treeUser);
 	}
 }
 
