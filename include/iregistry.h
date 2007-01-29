@@ -23,6 +23,11 @@ class Registry {
 public:
 	INTEGER_CONSTANT(Version, 1);
 	STRING_CONSTANT(Name, "registry");
+	
+	enum Tree {
+		treeStandard,
+		treeUser
+	};
 
 	// Sets a variable in the XMLRegistry or retrieves one
 	virtual void 		set(const std::string& key, const std::string& value) = 0;
@@ -50,12 +55,10 @@ public:
 	 * @param parentKey
 	 * The path to the node within the current registry under which the
 	 * imported nodes should be added.
+	 * 
+	 * @param tree: the tree the file should be imported to (e.g. eDefault)
 	 */
-	virtual void importFromFile(const std::string& importFilePath, 
-								const std::string& parentKey) = 0;
-	
-	// Adds an XML file to the registry and checks if any version upgrade has to be performed
-	virtual void importUserXML(const std::string& pathToUserXML) = 0;
+	virtual void import(const std::string& importFilePath, const std::string& parentKey, Tree tree) = 0;
 	
 	// Dumps the whole XML content to std::out for debugging purposes
 	virtual void dump() const = 0;
