@@ -4,6 +4,7 @@
 #include "gtkutil/image.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/TreeModel.h"
+#include "gtkutil/ScrolledFrame.h"
 
 #include "groupdialog.h"
 #include "qerplugin.h"
@@ -24,6 +25,7 @@ namespace {
 		DISPLAY_NAME_COLUMN,
 		PROPERTY_NAME_COLUMN,
 		ICON_COLUMN,
+		DESCRIPTION_COLUMN,
 		N_COLUMNS
 	};
 	
@@ -53,13 +55,14 @@ AddPropertyDialog::AddPropertyDialog(const IEntityClass& eclass)
 	gtk_window_set_default_size(GTK_WINDOW(_widget), w, h);
     
     // Signals
-    g_signal_connect(G_OBJECT(_widget), "delete-event", G_CALLBACK(_onDelete), this);
+    g_signal_connect(G_OBJECT(_widget), "delete-event", 
+    				 G_CALLBACK(_onDelete), this);
     
     // Create components
     GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
     gtk_box_pack_start(GTK_BOX(vbx), createTreeView(), TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(vbx), createUsagePanel(), FALSE, FALSE, 0);
     gtk_box_pack_end(GTK_BOX(vbx), createButtonsPanel(), FALSE, FALSE, 0);
-    
     
     // Pack into window
     gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
@@ -76,14 +79,16 @@ GtkWidget* AddPropertyDialog::createTreeView() {
 	_treeStore = gtk_tree_store_new(N_COLUMNS,
 									G_TYPE_STRING, // display name
 									G_TYPE_STRING, // property name
-									GDK_TYPE_PIXBUF); // icon
+									GDK_TYPE_PIXBUF, // icon
+									G_TYPE_STRING); // description
 	// Create tree view
 	_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_treeView), FALSE);
 
 	// Connect up selection changed callback
 	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
-	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(_onSelectionChanged), this);
+	g_signal_connect(G_OBJECT(_selection), "changed", 
+					 G_CALLBACK(_onSelectionChanged), this);
 	
 	// Display name column with icon
 	GtkTreeViewColumn* nameCol = gtk_tree_view_column_new();
@@ -120,8 +125,16 @@ GtkWidget* AddPropertyDialog::createTreeView() {
 	return frame;
 }
 
-// Construct the buttons panel
+// Construct the usage panel
+GtkWidget* AddPropertyDialog::createUsagePanel() {
+	// Create a GtkTextView
+	_usageTextView = gtk_text_view_new();
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(_usageTextView), GTK_WRAP_WORD);
 
+	return gtkutil::ScrolledFrame(_usageTextView);	
+}
+
+// Construct the buttons panel
 GtkWidget* AddPropertyDialog::createButtonsPanel() {
 	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
 	
@@ -171,6 +184,7 @@ public:
 				DISPLAY_NAME_COLUMN, attr.name.c_str(),
 				PROPERTY_NAME_COLUMN, attr.name.c_str(),
 				ICON_COLUMN, PropertyEditorFactory::getPixbufFor(attr.type),
+				DESCRIPTION_COLUMN, attr.description.c_str(),
 				-1);	
 		}
 	}
@@ -194,6 +208,7 @@ void AddPropertyDialog::populateTreeView() {
 					   DISPLAY_NAME_COLUMN, cName.c_str(),
 					   PROPERTY_NAME_COLUMN, "",
 					   ICON_COLUMN, gtkutil::getLocalPixbuf(FOLDER_ICON),
+					   DESCRIPTION_COLUMN, "",
 					   -1);
 					   
 	// Use a CustomPropertyAdder class to visit the entityclass and add all
@@ -229,10 +244,12 @@ void AddPropertyDialog::populateTreeView() {
 				GtkTreeIter tIter;
 				gtk_tree_store_append(_treeStore, &tIter, NULL);
 				gtk_tree_store_set(_treeStore, &tIter,
-								   DISPLAY_NAME_COLUMN, category.c_str(),
-								   PROPERTY_NAME_COLUMN, "",
-								   ICON_COLUMN, gtkutil::getLocalPixbuf(FOLDER_ICON),
-								   -1);
+					DISPLAY_NAME_COLUMN, category.c_str(),
+					PROPERTY_NAME_COLUMN, "",
+					ICON_COLUMN, gtkutil::getLocalPixbuf(FOLDER_ICON),
+					DESCRIPTION_COLUMN, "",
+					-1);
+					
 				// Add to map
 				mIter = categories.insert(CategoryMap::value_type(category, gtk_tree_iter_copy(&tIter))).first;
 			}
@@ -249,10 +266,11 @@ void AddPropertyDialog::populateTreeView() {
 		std::string type = iter->getAttributeValue("type");
 		
 		gtk_tree_store_set(_treeStore, &t,
-						   DISPLAY_NAME_COLUMN, name.c_str(),
-						   PROPERTY_NAME_COLUMN, name.c_str(),
-						   ICON_COLUMN, PropertyEditorFactory::getPixbufFor(type),
-						   -1);
+			DISPLAY_NAME_COLUMN, name.c_str(),
+			PROPERTY_NAME_COLUMN, name.c_str(),
+			ICON_COLUMN, PropertyEditorFactory::getPixbufFor(type),
+			DESCRIPTION_COLUMN, "",
+			-1);
 	}
 }
 
@@ -293,9 +311,19 @@ void AddPropertyDialog::_onCancel(GtkWidget* w, AddPropertyDialog* self) {
 void AddPropertyDialog::_onSelectionChanged(GtkWidget* w, 
 											AddPropertyDialog* self) 
 {
+	using gtkutil::TreeModel;
+	
+	// Update the selected property
 	self->_selectedProperty = 
-		gtkutil::TreeModel::getSelectedString(self->_selection,
-											  PROPERTY_NAME_COLUMN);
+		TreeModel::getSelectedString(self->_selection, PROPERTY_NAME_COLUMN);
+											  
+	// Display the description in the text view
+	std::string desc = TreeModel::getSelectedString(self->_selection,
+													DESCRIPTION_COLUMN);
+	GtkTextBuffer* buf = 
+		gtk_text_view_get_buffer(GTK_TEXT_VIEW(self->_usageTextView));
+	gtk_text_buffer_set_text(buf, desc.c_str() , -1);
+
 }
 
 }
