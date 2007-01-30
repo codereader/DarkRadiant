@@ -361,17 +361,26 @@ bool EntityInspector::_onPopupMenu(GtkWidget* w, GdkEventButton* ev, EntityInspe
 	return FALSE;
 }
 
-void EntityInspector::_onDeleteProperty(GtkMenuItem* item, EntityInspector* self) {
+// Callback for Delete property command
+void EntityInspector::_onDeleteProperty(GtkMenuItem* item, 
+										EntityInspector* self) 
+{
 	std::string property = self->getListSelection(PROPERTY_NAME_COLUMN);
-	if (property.size() > 0)
+	if (!property.empty())
 		self->_selectedEntity->setKeyValue(property, "");
 }
 
-void EntityInspector::_onAddProperty(GtkMenuItem* item, EntityInspector* self) {
+// Callback for Add Property command
+void EntityInspector::_onAddProperty(GtkMenuItem* item, 
+									 EntityInspector* self) 
+{
+	// Obtain the entity class to provide to the AddPropertyDialog
+	const IEntityClass& ec = self->_selectedEntity->getEntityClass();
+	
 	// Choose a property, and add to entity with a default value
-	std::string property = AddPropertyDialog::chooseProperty();
-	if (property.size() > 0)
-		self->_selectedEntity->setKeyValue(property.c_str(), "-");
+	std::string property = AddPropertyDialog::chooseProperty(ec);
+	if (!property.empty())
+		self->_selectedEntity->setKeyValue(property, "-");
 }
 
 void EntityInspector::_onToggleShowInherited(GtkToggleButton* b, EntityInspector* self) {
