@@ -8,17 +8,9 @@
 #include "groupdialog.h"
 #include "qerplugin.h"
 #include "iregistry.h"
+#include "ieclass.h"
 
-#include <gtk/gtkwindow.h>
-#include <gtk/gtkmain.h>
-#include <gtk/gtkhbox.h>
-#include <gtk/gtkvbox.h>
-#include <gtk/gtkbutton.h>
-#include <gtk/gtkstock.h>
-#include <gtk/gtkscrolledwindow.h>
-#include <gtk/gtkframe.h>
-#include <gtk/gtkcellrenderertext.h>
-#include <gtk/gtkcellrendererpixbuf.h>
+#include <gtk/gtk.h>
 
 #include <map>
 
@@ -43,8 +35,9 @@ namespace {
 
 // Constructor creates GTK widgets
 
-AddPropertyDialog::AddPropertyDialog()
-: _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL))
+AddPropertyDialog::AddPropertyDialog(const IEntityClass& eclass)
+: _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
+  _eclass(eclass)
 {
 	// Window properties
 	GtkWindow* groupdialog = GroupDialog_getWindow();
@@ -104,7 +97,7 @@ GtkWidget* AddPropertyDialog::createTreeView() {
 	gtk_tree_view_column_pack_start(nameCol, textRenderer, FALSE);
     gtk_tree_view_column_set_attributes(nameCol,
                                         textRenderer,
-                                        "text",
+                                        "markup",
                                         DISPLAY_NAME_COLUMN,
                                         NULL);
 
@@ -145,8 +138,19 @@ GtkWidget* AddPropertyDialog::createButtonsPanel() {
 }
 
 // Populate tree view
-
 void AddPropertyDialog::populateTreeView() {
+
+	// First add a top-level category named after the entity class, and populate
+	// it with custom keyvals defined in the DEF for that class
+	std::string cName = "<b>" + _eclass.getName() + "</b>";
+	GtkTreeIter cnIter;
+	gtk_tree_store_append(_treeStore, &cnIter, NULL);
+	gtk_tree_store_set(_treeStore, &cnIter, 
+					   DISPLAY_NAME_COLUMN, cName.c_str(),
+					   PROPERTY_NAME_COLUMN, "",
+					   ICON_COLUMN, gtkutil::getLocalPixbuf(FOLDER_ICON),
+					   -1);
+
 	// Ask the XML registry for the list of properties
 	xml::NodeList propNodes = GlobalRegistry().findXPath(PROPERTIES_XPATH);
 	
@@ -155,7 +159,7 @@ void AddPropertyDialog::populateTreeView() {
 	typedef std::map<std::string, GtkTreeIter*> CategoryMap;
 	CategoryMap categories;
 	
-	// Add each property to the tree view
+	// Add each .game-specified property to the tree view
 	for (xml::NodeList::const_iterator iter = propNodes.begin();
 		 iter != propNodes.end();
 		 ++iter)
@@ -202,11 +206,10 @@ void AddPropertyDialog::populateTreeView() {
 
 // Static method to create and show an instance, and return the chosen
 // property to calling function.
-
-std::string AddPropertyDialog::chooseProperty() {
+std::string AddPropertyDialog::chooseProperty(const IEntityClass& eclass) {
 	
 	// Construct a dialog and show the main widget
-	AddPropertyDialog dialog;
+	AddPropertyDialog dialog(eclass);
 	gtk_widget_show_all(dialog._widget);
 	
 	// Block for a selection

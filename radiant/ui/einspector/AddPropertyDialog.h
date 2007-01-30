@@ -8,6 +8,9 @@
 
 #include <string>
 
+/* FORWARD DECLS */
+class IEntityClass;
+
 namespace ui
 {
 
@@ -30,6 +33,9 @@ class AddPropertyDialog
 	// The selected property
 	std::string _selectedProperty;
 	
+	// EntityClass to query for def-defined custom keyvals
+	const IEntityClass& _eclass;
+	
 private:
 
 	// Create GUI components
@@ -46,19 +52,25 @@ private:
 	static void _onCancel(GtkWidget*, AddPropertyDialog*);
 	static void _onSelectionChanged(GtkWidget*, AddPropertyDialog*);
 		
-	/* Private constructor creates the dialog widgets.
+	/* Private constructor creates the dialog widgets. Accepts an EntityClass
+	 * to use for populating class-specific keys.
 	 */
-	AddPropertyDialog();
+	AddPropertyDialog(const IEntityClass& eclass);
 	
 public:
 
-	/** Static method to display an AddPropertyDialog and return the
-	 * chosen property.
+	/** 
+	 * Static method to display an AddPropertyDialog and return the chosen 
+	 * property.
+	 * 
+	 * @param eclass
+	 * The IEntityClass to be queried for custom properties (those defined in a
+	 * DEF file).
 	 * 
 	 * @returns
 	 * String name of the chosen property (e.g. "light_radius").
 	 */
-	static std::string chooseProperty();
+	static std::string chooseProperty(const IEntityClass& eclass);
 
 };
 
