@@ -45,13 +45,13 @@ private:
 	static void _onOK(GtkWidget*, AddPropertyDialog*);
 	static void _onCancel(GtkWidget*, AddPropertyDialog*);
 	static void _onSelectionChanged(GtkWidget*, AddPropertyDialog*);
-	
-public:
-
-	/** Constructor creates the dialog widgets.
+		
+	/* Private constructor creates the dialog widgets.
 	 */
 	AddPropertyDialog();
 	
+public:
+
 	/** Static method to display an AddPropertyDialog and return the
 	 * chosen property.
 	 * 
@@ -60,13 +60,6 @@ public:
 	 */
 	static std::string chooseProperty();
 
-	/** Show this AddPropertyDialog and block in a gtk_main loop until
-	 * a selection is made.
-	 * 
-	 * @returns
-	 * The string property that was selected.
-	 */
-	const std::string& showAndBlock();
 };
 
 }
