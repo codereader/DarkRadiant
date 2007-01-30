@@ -72,7 +72,8 @@ private:
 		// Open the pointfile and get its input stream if possible
 		std::ifstream inFile(pfName.c_str());
 		if (!inFile) {
-			gtkutil::errorDialog("Could not open pointfile:\n\n" + pfName);
+			gtkutil::errorDialog("Could not open pointfile:\n\n" + pfName,
+								 MainFrame_getWindow());
 			return;
 		}
 

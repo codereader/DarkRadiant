@@ -20,7 +20,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "dialog.h"
-#include "mainframe.h"
 #include "EntryAbortedException.h"
 
 #include <gtk/gtkmain.h>
@@ -312,8 +311,7 @@ namespace gtkutil {
 	
 // Display a Gtk Error dialog
 
-void errorDialog(const std::string& errorText) {
-	GtkWindow* mainFrame = MainFrame_getWindow();
+void errorDialog(const std::string& errorText, GtkWindow* mainFrame) {
 	GtkWidget* dialog = 
 		gtk_message_dialog_new_with_markup (mainFrame,
                        				        GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -326,18 +324,20 @@ void errorDialog(const std::string& errorText) {
 
 // Display a fatal Gtk Error dialog
 
-void fatalErrorDialog(const std::string& errorText) {
-	errorDialog(errorText);
+void fatalErrorDialog(const std::string& errorText, GtkWindow* mainFrame) {
+	errorDialog(errorText, mainFrame);
 	abort();	
 }
 	
     
 // Display a text entry dialog
 
-const std::string textEntryDialog(const std::string& title, const std::string& prompt) {
-    GtkWindow* mainframe = MainFrame_getWindow();
+const std::string textEntryDialog(const std::string& title, 
+								  const std::string& prompt,
+								  GtkWindow* mainFrame) 
+{
     GtkWidget* dialog = gtk_dialog_new_with_buttons(title.c_str(),
-                                                    mainframe,
+                                                    mainFrame,
                                                     static_cast<GtkDialogFlags>(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
                                                     GTK_STOCK_CANCEL,
                                                     GTK_RESPONSE_REJECT,

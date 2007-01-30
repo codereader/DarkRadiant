@@ -614,7 +614,8 @@ void populateRegistry() {
 	}
 	catch (std::runtime_error e) {
 		gtkutil::fatalErrorDialog("XML registry population failed:\n\n"
-								  + std::string(e.what()));
+								  + std::string(e.what()),
+								  MainFrame_getWindow());
 	}
 	
 	// Traverse the game files stored in the GamesDialog class and load them into the registry
