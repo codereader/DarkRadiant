@@ -215,13 +215,13 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
         	std::string attName = key.substr(key.find(" ") + 1);
         	if (!attName.empty()) {
         		entityClass->addAttribute(
-        			EntityClassAttribute("string", attName, "", value));
+        			EntityClassAttribute("text", attName, "", value));
         	}
         }
 
 		// Following key-specific processing, add the keyvalue to the entity
 		// class
-		EntityClassAttribute attribute("string", key, value, "");
+		EntityClassAttribute attribute("text", key, value, "");
 		entityClass->addAttribute(attribute);
             
     } // while true

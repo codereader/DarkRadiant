@@ -137,12 +137,57 @@ GtkWidget* AddPropertyDialog::createButtonsPanel() {
 	return gtkutil::RightAlignment(hbx);	
 }
 
+namespace {
+
+/* EntityClassAttributeVisitor instance to obtain custom properties from an 
+ * entityclass and add them into the provided GtkTreeStore under the provided 
+ * parent iter.
+ */
+class CustomPropertyAdder
+: public EntityClassAttributeVisitor
+{
+	// Treestore to add to
+	GtkTreeStore* _store;
+	
+	// Parent iter
+	GtkTreeIter* _parent;
+		
+public:
+
+	// Constructor sets tree stuff
+	CustomPropertyAdder(GtkTreeStore* store, GtkTreeIter* par)
+	: _store(store), _parent(par)
+	{ }
+
+	// Required visit function
+	void visit(const EntityClassAttribute& attr) {
+		
+		// Only add the property if its value is empty, this indicates a 
+		// *possible* key rather than one which is already set
+		if (attr.value.empty()) {
+			GtkTreeIter tmp;
+			gtk_tree_store_append(_store, &tmp, _parent);
+			gtk_tree_store_set(_store, &tmp,
+				DISPLAY_NAME_COLUMN, attr.name.c_str(),
+				PROPERTY_NAME_COLUMN, attr.name.c_str(),
+				ICON_COLUMN, PropertyEditorFactory::getPixbufFor(attr.type),
+				-1);	
+		}
+	}
+	
+};	
+	
+} // namespace
+
 // Populate tree view
 void AddPropertyDialog::populateTreeView() {
 
+	/* DEF-DEFINED PROPERTIES */
+
 	// First add a top-level category named after the entity class, and populate
 	// it with custom keyvals defined in the DEF for that class
-	std::string cName = "<b>" + _eclass.getName() + "</b>";
+	std::string cName = "<b><span foreground=\"blue\">" 
+						+ _eclass.getName() + "</span></b>";
 	GtkTreeIter cnIter;
 	gtk_tree_store_append(_treeStore, &cnIter, NULL);
 	gtk_tree_store_set(_treeStore, &cnIter, 
@@ -150,6 +195,13 @@ void AddPropertyDialog::populateTreeView() {
 					   PROPERTY_NAME_COLUMN, "",
 					   ICON_COLUMN, gtkutil::getLocalPixbuf(FOLDER_ICON),
 					   -1);
+					   
+	// Use a CustomPropertyAdder class to visit the entityclass and add all
+	// custom properties from it
+	CustomPropertyAdder a(_treeStore, &cnIter);
+	_eclass.forEachClassAttribute(a);
+
+	/* REGISTRY (GAME FILE) DEFINED PROPERTIES */
 
 	// Ask the XML registry for the list of properties
 	xml::NodeList propNodes = GlobalRegistry().findXPath(PROPERTIES_XPATH);
