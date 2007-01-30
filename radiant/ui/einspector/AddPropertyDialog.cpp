@@ -3,6 +3,7 @@
 
 #include "gtkutil/image.h"
 #include "gtkutil/RightAlignment.h"
+#include "gtkutil/TreeModel.h"
 
 #include "groupdialog.h"
 #include "qerplugin.h"
@@ -199,20 +200,20 @@ void AddPropertyDialog::populateTreeView() {
 	}
 }
 
-// Show the widgets and block for a selection
-
-const std::string& AddPropertyDialog::showAndBlock() {
-	gtk_widget_show_all(_widget);
-	gtk_main();
-	return _selectedProperty;	
-}
-
 // Static method to create and show an instance, and return the chosen
 // property to calling function.
 
 std::string AddPropertyDialog::chooseProperty() {
+	
+	// Construct a dialog and show the main widget
 	AddPropertyDialog dialog;
-	return dialog.showAndBlock();	
+	gtk_widget_show_all(dialog._widget);
+	
+	// Block for a selection
+	gtk_main();
+	
+	// Return the last selection to calling process
+	return dialog._selectedProperty;
 }
 
 /* GTK CALLBACKS */
@@ -234,21 +235,12 @@ void AddPropertyDialog::_onCancel(GtkWidget* w, AddPropertyDialog* self) {
 	gtk_main_quit(); // exit recursive main loop	
 }
 
-void AddPropertyDialog::_onSelectionChanged(GtkWidget* w, AddPropertyDialog* self) {
-
-	// Check for a selection, and retrieve it if it exists
-	GtkTreeIter tmpIter;
-	GtkTreeModel* model;
-	
-	if (gtk_tree_selection_get_selected(self->_selection, &model, &tmpIter)) {
-        GValue selString = {0, 0};
-        gtk_tree_model_get_value(GTK_TREE_MODEL(model), &tmpIter, PROPERTY_NAME_COLUMN, &selString);
-        self->_selectedProperty = g_value_get_string(&selString);
-        g_value_unset(&selString);
-            }
-    else {
-    	self->_selectedProperty = "";
-    }
+void AddPropertyDialog::_onSelectionChanged(GtkWidget* w, 
+											AddPropertyDialog* self) 
+{
+	self->_selectedProperty = 
+		gtkutil::TreeModel::getSelectedString(self->_selection,
+											  PROPERTY_NAME_COLUMN);
 }
 
 }
