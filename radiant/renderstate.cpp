@@ -717,7 +717,8 @@ void ShaderCache_Construct()
 	
 	xml::NodeList nlDefaultLight = GlobalRegistry().findXPath("game/defaults/lightShader");
 	if (nlDefaultLight.size() != 1)
-		gtkutil::fatalErrorDialog("Failed to find default lightshader in XML game descriptor.\n\nNode <b>/game/defaults/lightShader</b> not found.");
+		gtkutil::fatalErrorDialog("Failed to find default lightshader in XML game descriptor.\n\nNode <b>/game/defaults/lightShader</b> not found.",
+								  GlobalRadiant().getMainWindow());
 
 	_defaultLightShaderName = nlDefaultLight[0].getContent();
 	boost::algorithm::to_lower(_defaultLightShaderName);

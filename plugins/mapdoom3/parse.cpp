@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stringio.h"
 
 #include "gtkutil/ModalProgressDialog.h"
+#include "gtkutil/dialog.h"
 
 #include <boost/lexical_cast.hpp>
 
@@ -71,11 +72,12 @@ NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entit
   {
     tokeniser.nextLine();
     const char* token = tokeniser.getToken();
-    if(token == 0)
-    {
-      Tokeniser_unexpectedError(tokeniser, token, "#entity-token");
-      return g_nullNode;
+    
+    // Throw exception if no token found
+	if(token == 0) {
+		throw std::runtime_error("Invalid token.");
     }
+    
     if (!strcmp(token, "}")) // end entity
     {
       if(entity == g_nullNode)
@@ -95,12 +97,15 @@ NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entit
 
       tokeniser.nextLine();
 
-      NodeSmartReference primitive(parser.parsePrimitive(tokeniser));
-      if(primitive == g_nullNode || !Node_getMapImporter(primitive)->importTokens(tokeniser))
-      {
-        globalErrorStream() << "brush " << count_primitives << ": parse error\n";
-        return g_nullNode;
-      }
+		// Try to import the primitive, throwing exception if failed
+		NodeSmartReference primitive(parser.parsePrimitive(tokeniser));
+		if (primitive == g_nullNode 
+			|| !Node_getMapImporter(primitive)->importTokens(tokeniser))
+		{
+        	throw std::runtime_error("Brush " 
+				+ boost::lexical_cast<std::string>(count_primitives) 
+				+ ": parse error\n");
+		}
 
 		scene::Traversable* traversable = Node_getTraversable(entity);
 		if(Node_getEntity(entity)->isContainer() 
@@ -126,20 +131,17 @@ NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entit
     {
       std::string key(token);
       token = tokeniser.getToken();
-      if(token == 0)
-      {
-        Tokeniser_unexpectedError(tokeniser, token, "#epair-value");
-        return g_nullNode;
-      }
-      keyValues.push_back(KeyValues::value_type(key, token));
-      if(key == "classname")
-      {
-        classname = token;
-      }
+      
+		// Throw exception if invalid token
+		if(token == 0) {
+			throw std::runtime_error("Parsing keyvalues: invalid token");
+		}
+		keyValues.push_back(KeyValues::value_type(key, token));
+		if(key == "classname") {
+			classname = token;
+		}
     }
   }
-  // unreachable code
-  return g_nullNode;
 }
 
 // Check if the given node is excluded based on entity class (debug code). 
@@ -230,15 +232,21 @@ void Map_Read(scene::Node& root,
 		if (!tokeniser.getToken()) // { or 0
 			break;
 
-		// Create an entity node by parsing from the stream
-		NodeSmartReference entity(Entity_parseTokens(tokeniser, entityTable, parser, entCount));
-
-		if(entity == g_nullNode) {
-			globalErrorStream() << "entity " << entCount << ": parse error\n";
-			return;
+		// Create an entity node by parsing from the stream. If there is an
+		// exception, display it and return
+		try {
+			// Get a node reference to the new entity
+			NodeSmartReference entity(Entity_parseTokens(tokeniser, 
+														 entityTable, 
+														 parser, 
+														 entCount));
+			// Insert the entity
+			checkInsert(entity, root, entCount);
+		}
+		catch (std::runtime_error e) {
+			gtkutil::errorDialog(e.what(), GlobalRadiant().getMainWindow());
+			return;			
 		}
 		
-		// Insert the entity
-		checkInsert(entity, root, entCount);
 	}
 }

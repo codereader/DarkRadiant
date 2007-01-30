@@ -5,6 +5,7 @@
 #include "entity.h" // Entity_createFromSelection()
 #include "ientity.h" // Node_getEntity()
 #include "map.h" // Scene_countSelectedBrushes()
+#include "mainframe.h"
 
 #include "gtkutil/dialog.h"
 
@@ -101,7 +102,8 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
 		
 	}
 	else {
-		gtkutil::errorDialog("Either nothing or exactly one brush must be selected for model creation");
+		gtkutil::errorDialog("Either nothing or exactly one brush must be selected for model creation",
+							 MainFrame_getWindow());
 	}
 
 }

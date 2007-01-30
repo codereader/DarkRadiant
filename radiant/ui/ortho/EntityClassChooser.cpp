@@ -284,7 +284,7 @@ void EntityClassChooser::callbackAdd(GtkWidget* widget, EntityClassChooser* self
 		gtk_widget_hide(self->_widget);
 	}
 	catch (EntityCreationException e) {
-		gtkutil::errorDialog(e.what());
+		gtkutil::errorDialog(e.what(), MainFrame_getWindow());
 	}
 }
 

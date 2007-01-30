@@ -144,15 +144,17 @@ void DialogVBox_packRow(GtkVBox* vbox, GtkWidget* row);
 namespace gtkutil {
 
 	// Display a modal error dialog	
-	void errorDialog(const std::string&);
+	void errorDialog(const std::string&, GtkWindow* mainFrame);
 	
 	// Display a modal error dialog and quit immediately
-	void fatalErrorDialog(const std::string&);
+	void fatalErrorDialog(const std::string&, GtkWindow* mainFrame);
 
     // Display a text entry dialog with the given title and prompt text. Returns a
     // std::string with the entered value, or throws EntryAbortedException if the
     // dialog was cancelled.
-    const std::string textEntryDialog(const std::string& title, const std::string& prompt);
+    const std::string textEntryDialog(const std::string& title, 
+    								  const std::string& prompt,
+    								  GtkWindow* mainFrame);
 
 }
 

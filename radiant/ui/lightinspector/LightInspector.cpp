@@ -207,7 +207,8 @@ void LightInspector::show() {
 
 	// Abort if selection count is not 1
 	if (s.countSelected() != 1) {
-		gtkutil::errorDialog("Exactly one light must be selected.");
+		gtkutil::errorDialog("Exactly one light must be selected.",
+							 MainFrame_getWindow());
 		return;
 	}
 	
@@ -216,7 +217,8 @@ void LightInspector::show() {
 	if (e == NULL 							// not an entity
 		|| !e->getEntityClass().isLight())	// not a light
 	{
-		gtkutil::errorDialog("The selected entity must be a light.");
+		gtkutil::errorDialog("The selected entity must be a light.",
+							 MainFrame_getWindow());
 		return;	
 	}
 
