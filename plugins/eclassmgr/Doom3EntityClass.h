@@ -28,9 +28,6 @@ class Doom3EntityClass
 	// The name of this entity class
 	std::string _name;
 
-	// Usage string for this entity class
-	std::string _usage;
-
     // Should this entity type be treated as a light?
     bool _isLight;
     
@@ -136,18 +133,6 @@ public:
 		return AABB::createFromMinMax(_mins, _maxs);
 	}
 
-    /** Set the usage information for this entity class.
-     */
-	void setUsage(const std::string& usage) {
-		_usage = usage;
-	}
-	
-	/** Get the usage information.
-	 */
-	const std::string& getUsage() const {
-		return _usage;
-	}
-    
     /** Get whether this entity type is a light entity
      * 
      * @returns
@@ -209,7 +194,20 @@ public:
 	/** Insert an EntityClassAttribute.
 	 */
 	void addAttribute(const EntityClassAttribute& attribute) {
-		_attributes.insert(EntityAttributeMap::value_type(attribute.name, attribute));
+		_attributes.insert(EntityAttributeMap::value_type(attribute.name, 
+														  attribute));
+	}
+	
+	/**
+	 * Find an EntityClassAttribute.
+	 */
+	const EntityClassAttribute& findAttribute(const std::string& name) const {
+		EntityAttributeMap::const_iterator i = _attributes.find(name);
+		if (i != _attributes.end())
+			return i->second;
+		else
+			throw std::runtime_error("Doom3EntityClass: attribute " + name
+									 + " not found in class " + _name);
 	}
 
 	/** Look up the given key in the list of attributes and return
