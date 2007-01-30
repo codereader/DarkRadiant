@@ -218,6 +218,14 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
         			EntityClassAttribute("text", attName, "", value));
         	}
         }
+        else if (boost::algorithm::istarts_with(key, "editor_bool ")) {
+			// Same as editor_var, but with boolean rather than text type
+        	std::string attName = key.substr(key.find(" ") + 1);
+        	if (!attName.empty()) {
+        		entityClass->addAttribute(
+        			EntityClassAttribute("boolean", attName, "", value));
+        	}
+        }
 
 		// Following key-specific processing, add the keyvalue to the entity
 		// class

@@ -33,6 +33,10 @@ namespace {
 	const char* ADDPROPERTY_TITLE = "Add property";
 	const char* PROPERTIES_XPATH = "game/entityInspector//property";
 	const char* FOLDER_ICON = "folder16.png";
+	
+	const char* CUSTOM_PROPERTY_TEXT = "Custom properties defined for this "
+	"entity class, if any";
+	
 }
 
 // Constructor creates GTK widgets
@@ -208,7 +212,7 @@ void AddPropertyDialog::populateTreeView() {
 					   DISPLAY_NAME_COLUMN, cName.c_str(),
 					   PROPERTY_NAME_COLUMN, "",
 					   ICON_COLUMN, gtkutil::getLocalPixbuf(FOLDER_ICON),
-					   DESCRIPTION_COLUMN, "",
+					   DESCRIPTION_COLUMN, CUSTOM_PROPERTY_TEXT,
 					   -1);
 					   
 	// Use a CustomPropertyAdder class to visit the entityclass and add all
