@@ -30,6 +30,9 @@ class AddPropertyDialog
 	GtkWidget* _treeView;
 	GtkTreeSelection* _selection;
 	
+	// Text view for displaying usage info
+	GtkWidget* _usageTextView;
+	
 	// The selected property
 	std::string _selectedProperty;
 	
@@ -41,6 +44,7 @@ private:
 	// Create GUI components
 	GtkWidget* createTreeView();
 	GtkWidget* createButtonsPanel();
+	GtkWidget* createUsagePanel();
 	
 	// Populate tree view with properties
 	void populateTreeView();
