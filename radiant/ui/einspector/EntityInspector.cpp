@@ -411,10 +411,21 @@ void EntityInspector::treeSelectionChanged() {
     std::string key = getListSelection(PROPERTY_NAME_COLUMN);
     std::string value = getListSelection(PROPERTY_VALUE_COLUMN);
     
-    // Get the type for this key if it exists
+    // Get the type for this key if it exists, and the options
     PropertyParmMap::const_iterator tIter = getPropertyMap().find(key);
     std::string type = (tIter != getPropertyMap().end() ? tIter->second.type : "");
     std::string options = (tIter != getPropertyMap().end() ? tIter->second.options : "");
+    
+    // If the type was not found, also try looking on the entity class
+    if (type.empty()) {
+    	const IEntityClass& eclass = _selectedEntity->getEntityClass();
+		try {
+			type = eclass.findAttribute(key).type;
+		}
+		catch (std::runtime_error e) {
+			type = "";
+		}
+    }
     
     // Construct and add a new PropertyEditor
     _currentPropertyEditor = PropertyEditorFactory::create(type,
