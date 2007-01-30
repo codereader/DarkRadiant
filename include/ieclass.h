@@ -148,9 +148,17 @@ struct IEntityClass {
 
 	/* ENTITY CLASS ATTRIBUTES */		
 
-	/** Insert an EntityClassAttribute.
+	/** 
+	 * Insert an EntityClassAttribute.
 	 */
 	virtual void addAttribute(const EntityClassAttribute& attribute) = 0;
+
+	/**
+	 * Find a named EntityClassAttribute. Throws an exception if the named
+	 * attribute does not exist.
+	 */
+	virtual const EntityClassAttribute& 
+		findAttribute(const std::string& name) const = 0;
 
 	/** Return the value associated with a given entity class attribute.
 	 * Any key may be looked up, including "editor_" keys.

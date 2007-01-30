@@ -12,7 +12,6 @@ Doom3EntityClass::Doom3EntityClass(const std::string& name,
 								   const Vector3& mins,
 								   const Vector3& maxs)				 
 : _name(name),
-  _usage(""),
   _isLight(false),
   _colour(colour),
   _colourSpecified(false),

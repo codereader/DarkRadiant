@@ -436,9 +436,7 @@ void EntityInspector::treeSelectionChanged() {
 
 }
 
-// Main refresh function. The TreeStore is populated with categories,
-// but the values are not yet set.
-
+// Main refresh function.
 void EntityInspector::refreshTreeModel() {
 
 	// Clear the existing list
@@ -447,7 +445,7 @@ void EntityInspector::refreshTreeModel() {
 	// Local functor to enumerate keyvals on object and add them to the list
 	// view.
 	
-	struct ListPopulateVisitor
+	class ListPopulateVisitor
 	: public Entity::Visitor
 	{
 		// List store to populate
@@ -456,20 +454,39 @@ void EntityInspector::refreshTreeModel() {
 		// Property map to look up types
 		const PropertyParmMap& _map;
 		
+		// Entity class to check for types
+		const IEntityClass& _eclass;
+	
+	public:
+	
 		// Constructor
-		ListPopulateVisitor(GtkListStore* store, const PropertyParmMap& map)
-		: _store(store), _map(map)
+		ListPopulateVisitor(GtkListStore* store, 
+							const PropertyParmMap& map,
+							const IEntityClass& cls)
+		: _store(store), _map(map), _eclass(cls)
 		{}
 		
 		// Required visit function
 		virtual void visit(const std::string& key, const std::string& value) {
 
-			// Look up type for this key
+			// Look up type for this key. First check the property parm map,
+			// then the entity class itself. If nothing is found, leave blank.
 			PropertyParmMap::const_iterator typeIter = _map.find(key);
-			std::string type = (typeIter != _map.end() 
-								? typeIter->second.type 
-								: "");
+			std::string type;
+			if (typeIter != _map.end()) {
+				type = typeIter->second.type;
+			}
+			else {
+				// Check the entityclass, or return blank of not found
+				try {
+					type = _eclass.findAttribute(key).type;
+				}
+				catch (std::runtime_error e) {
+					type = "";
+				}
+			}
 
+			// Append the details to the treestore
 			GtkTreeIter iter;
 			gtk_list_store_append(_store, &iter);
 			gtk_list_store_set(
@@ -486,7 +503,9 @@ void EntityInspector::refreshTreeModel() {
 	};
 	
 	// Populate the list view
-	ListPopulateVisitor visitor(_listStore, getPropertyMap());
+	ListPopulateVisitor visitor(_listStore, 
+								getPropertyMap(),
+								_selectedEntity->getEntityClass());
 	_selectedEntity->forEachKeyValue(visitor);
 
 	// Add the inherited properties if the toggle is set
@@ -523,15 +542,20 @@ void EntityInspector::appendClassProperties() {
 
 		// Required visitor function
 		void visit(const EntityClassAttribute& a) {
-			GtkTreeIter iter;
-			gtk_list_store_append(_store, &iter);
-			gtk_list_store_set(_store, &iter,
-             			       PROPERTY_NAME_COLUMN, a.name.c_str(),
-						       PROPERTY_VALUE_COLUMN, a.value.c_str(),
-						       TEXT_COLOUR_COLUMN, "#707070",
-						       PROPERTY_ICON_COLUMN, NULL,
-						       INHERITED_FLAG_COLUMN, "1", // inherited
-						       -1);
+			
+			// Only add properties with values, we don't want the optional
+			// "editor_var xxx" properties here.
+			if (!a.value.empty()) {
+				GtkTreeIter iter;
+				gtk_list_store_append(_store, &iter);
+				gtk_list_store_set(_store, &iter,
+					PROPERTY_NAME_COLUMN, a.name.c_str(),
+					PROPERTY_VALUE_COLUMN, a.value.c_str(),
+					TEXT_COLOUR_COLUMN, "#707070",
+					PROPERTY_ICON_COLUMN, NULL,
+					INHERITED_FLAG_COLUMN, "1", // inherited
+					-1);
+			}
 		}
 	};
 	
