@@ -77,7 +77,7 @@ private:
 	qtexture_t* _texture;
 	
 	// The instance of the GDKModule loader
-	ImageModuleRef _imageGDKModule;
+	ImageLoaderModuleRef _imageGDKModule;
 	
 public:
 	
@@ -326,7 +326,7 @@ private:
 		
 		if (!file.failed()) {
 			// Invoke the imagefile loader
-			return self->_imageGDKModule.getTable()->loadImage(file);
+			return self->_imageGDKModule.getTable()->load(file);
 		}
 		
 		return NULL;
