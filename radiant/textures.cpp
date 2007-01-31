@@ -39,6 +39,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "image.h"
 #include "texmanip.h"
 
+#include "textures/DefaultImageConstructor.h"
+
 enum TextureCompressionFormat {
     TEXTURECOMPRESSION_NONE = 0,
     TEXTURECOMPRESSION_RGBA = 1,
@@ -155,6 +157,8 @@ class TexturesMap :
 	TextureCompressionFormat _textureCompressionFormat;
 	
 	GLint _textureComponents;
+	
+	ImageConstructorPtr _defaultConstructor; 
 
 public:
 	TexturesMap() : 
@@ -168,7 +172,8 @@ public:
 		_openGLCompressionSupported(false),
 		_S3CompressionSupported(false),
 		_textureCompressionFormat(TEXTURECOMPRESSION_NONE),
-		_textureComponents(GL_RGBA)
+		_textureComponents(GL_RGBA),
+		_defaultConstructor(new DefaultImageConstructor())
 	{
 		GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_QUALITY);
 		GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_MODE);
