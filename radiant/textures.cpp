@@ -745,9 +745,9 @@ class TexturesDependencies :
 	ImageLoaderModulesRef _imageLoaders;
 public:
 	TexturesDependencies() :
-		//m_image_modules(GlobalRadiant().getRequiredGameDescriptionKeyValue("texturetypes")),
-		m_image_modules("jpg dds"),
-		_imageLoaders("tga")
+		//m_image_modules(),
+		m_image_modules(""),
+		_imageLoaders(GlobalRadiant().getRequiredGameDescriptionKeyValue("texturetypes"))
 	{}
 	
 	ImageModules& getImageModules() {

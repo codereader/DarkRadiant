@@ -22,10 +22,61 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined (INCLUDED_TGA_H)
 #define INCLUDED_TGA_H
 
-class Image;
-class ArchiveFile;
+#include "ifilesystem.h"
+#include "iimage.h"
+#include "modulesystem/singletonmodule.h"
 
 Image* LoadTGA(ArchiveFile& file);
+
+/* greebo: A TGALoader is capable of loading TGA files.
+ *  
+ * Use the load() to actually retrieve an Image* object with the loaded image.
+ * 
+ * Shouldn't be used to load textures directly, use the 
+ * GlobalTexturesCache() module instead.  
+ * 
+ * Complies with the ImageLoader interface defined in "iimage.h" 
+ */
+class TGALoader :
+	public ImageLoader
+{
+public:
+	// Definitions to enable the lookup by the radiant modulesystem
+	typedef ImageLoader Type;
+	STRING_CONSTANT(Name, "tga");
+
+	// Return the instance pointer
+	ImageLoader* getTable() {
+		return this;
+	}
+
+public:
+	// Constructor
+	TGALoader() {}
+	
+	/* greebo: This loads the file and returns the pointer to 
+	 * the allocated Image object (or NULL, if the load failed). 
+	 */
+	Image* load(ArchiveFile& file) const {
+		// Pass the call to the according load function
+		return LoadTGA(file);
+	}
+	
+	/* greebo: Gets the file extension of the supported image file type (e.g. "tga") 
+	 */
+	std::string getExtension() const {
+		return "tga";
+	}
+
+};
+
+// The dependency class
+class TGALoaderDependencies :
+	public GlobalFileSystemModuleRef
+{};
+
+// Define the TGA module with the TGALoader and its dependencies
+typedef SingletonModule<TGALoader, TGALoaderDependencies> TGALoaderModule;
 
 #endif
 
