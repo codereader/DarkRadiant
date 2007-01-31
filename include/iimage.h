@@ -51,6 +51,48 @@ public:
 };
 
 class ArchiveFile;
+class ImageLoader
+{
+public:
+	INTEGER_CONSTANT(Version, 1);
+	STRING_CONSTANT(Name, "imageloader");
+  
+	/* greebo: Loads an image from the given ArchiveFile class
+	 * 
+	 * @returns: NULL, if the load failed, the pointer to the image otherwise
+	 */
+	virtual Image* load(ArchiveFile& file) const = 0;
+	
+	/* greebo: Gets the file extension of the supported image file type
+	 * 
+	 * @returns the lowercase extension (e.g. "tga"). 
+	 */
+	virtual std::string getExtension() const = 0;
+	
+	/* greebo: Retrieves the directory prefix needed to construct the
+	 * full path to the image (mainly needed for the "dds/" prefix for DDS textures).
+	 * 
+	 * @returns: the lowercase prefix (e.g. "dds/").
+	 */
+	virtual std::string getPrefix() const {
+		return "";
+	}
+
+}; // class ImageLoader
+
+template<typename Type>
+class ModuleRef;
+typedef ModuleRef<ImageLoader> ImageLoaderModuleRef;
+
+template<typename Type>
+class Modules;
+typedef Modules<ImageLoader> ImageLoaderModules;
+
+template<typename Type>
+class ModulesRef;
+typedef ModulesRef<ImageLoader> ImageLoaderModulesRef;
+
+class ArchiveFile;
 
 struct _QERPlugImageTable
 {
