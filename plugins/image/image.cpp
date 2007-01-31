@@ -171,10 +171,13 @@ typedef SingletonModule<ImageGDKAPI> ImageGDKModule;
 // A global instance of the GDK module
 ImageGDKModule g_ImageGDKModule;
 
-// Create a global instance of each of the imageloader modules
+// Create a global instance for each of the imageloader modules
 TGALoaderModule _tgaLoader;
 JPGLoaderModule _jpgLoader;
 DDSLoaderModule _ddsLoader;
+BMPLoaderModule _bmpLoader;
+PCXLoaderModule _pcxLoader;
+GDKLoaderModule _gdkLoader;
 
 extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
 {
@@ -189,4 +192,7 @@ extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
   _tgaLoader.selfRegister();
   _jpgLoader.selfRegister();
   _ddsLoader.selfRegister();
+  _bmpLoader.selfRegister();
+  _pcxLoader.selfRegister();
+  _gdkLoader.selfRegister();
 }

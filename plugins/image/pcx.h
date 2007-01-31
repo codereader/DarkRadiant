@@ -22,9 +22,60 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined (INCLUDED_PCX_H)
 #define INCLUDED_PCX_H
 
-class Image;
-class ArchiveFile;
+#include "ifilesystem.h"
+#include "iimage.h"
+#include "modulesystem/singletonmodule.h"
 
 Image* LoadPCX32(ArchiveFile& file);
+
+/* greebo: A PCXLoader is capable of loading PCX files.
+ *  
+ * Use load() to actually retrieve an Image* object with the loaded image.
+ * 
+ * Shouldn't be used to load textures directly, use the 
+ * GlobalTexturesCache() module instead.  
+ * 
+ * Complies with the ImageLoader interface defined in "iimage.h" 
+ */
+class PCXLoader :
+	public ImageLoader
+{
+public:
+	// Definitions to enable the lookup by the radiant modulesystem
+	typedef ImageLoader Type;
+	STRING_CONSTANT(Name, "pcx");
+
+	// Return the instance pointer
+	ImageLoader* getTable() {
+		return this;
+	}
+
+public:
+	// Constructor
+	PCXLoader() {}
+	
+	/* greebo: This loads the file and returns the pointer to 
+	 * the allocated Image object (or NULL, if the load failed). 
+	 */
+	Image* load(ArchiveFile& file) const {
+		// Pass the call to the according load function
+		return LoadPCX32(file);
+	}
+	
+	/* greebo: Gets the file extension of the supported image file type (e.g. "PCX") 
+	 */
+	std::string getExtension() const {
+		return "pcx";
+	}
+
+};
+
+// The dependency class
+class PCXLoaderDependencies :
+	public GlobalFileSystemModuleRef
+{};
+
+// Define the PCX module with the PCXLoader class and its dependencies
+typedef SingletonModule<PCXLoader, PCXLoaderDependencies> PCXLoaderModule;
 
 #endif

@@ -28,9 +28,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 Image* LoadDDS(ArchiveFile& file);
 
-/* greebo: A DDSLoader is capable of loading JPEG files.
+/* greebo: A DDSLoader is capable of loading DDS image files.
  *  
- * Use the load() to actually retrieve an Image* object with the loaded image.
+ * Use load() to actually retrieve an Image* object with the loaded image.
  * 
  * Shouldn't be used to load textures directly, use the 
  * GlobalTexturesCache() module instead.  
