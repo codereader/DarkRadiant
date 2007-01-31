@@ -26,6 +26,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/Vector3.h"
 #include "math/matrix.h"
 #include "math/Plane3.h"
+
+#include "iimage.h"
+#include <boost/shared_ptr.hpp>
+
 typedef Vector3 Colour3;
 typedef unsigned int GLuint;
 class LoadImageCallback;
@@ -36,6 +40,8 @@ enum ProjectionAxis {
 	eProjectionAxisZ = 2,
 };
 
+typedef boost::shared_ptr<ImageConstructor> ImageConstructorPtr;
+
 // describes a GL texture
 struct qtexture_t
 {
@@ -44,6 +50,8 @@ struct qtexture_t
 	
 	// The callback for loading the texture
 	const LoadImageCallback& load;
+	
+	ImageConstructorPtr constructor;
 	
 	// Texture Dimensions
 	std::size_t width, height;

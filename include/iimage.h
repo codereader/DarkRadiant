@@ -50,6 +50,19 @@ public:
   }
 };
 
+/* greebo: An ImageConstructor is a function object that is used 
+ * to realise a specific texture by delivering a pointer to 
+ * a readily fabricated Image object which can be loaded into graphics 
+ * memory. The actual disk loading process and blending using 
+ * mapexpressions is hidden behind this constructor and is the business 
+ * of the Shadersystem module.    
+ */
+class ImageConstructor
+{
+public:
+	virtual Image* construct() = 0;
+};
+
 class ArchiveFile;
 class ImageLoader
 {
