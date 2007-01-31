@@ -65,20 +65,21 @@ NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entit
 {
   NodeSmartReference entity(g_nullNode);
   KeyValues keyValues;
-  std::string classname = "";
+	std::string classname = "";
 
   int count_primitives = 0;
-  while(1)
-  {
-    tokeniser.nextLine();
-    const char* token = tokeniser.getToken();
+	while(1) {
+		
+		// Get the token and check for NULL
+		tokeniser.nextLine();
+		const char* szToken = tokeniser.getToken();
+		if (szToken == NULL) {
+			throw std::runtime_error("Invalid token.");
+		}
+		
+		std::string token = szToken;
     
-    // Throw exception if no token found
-	if(token == 0) {
-		throw std::runtime_error("Invalid token.");
-    }
-    
-    if (!strcmp(token, "}")) // end entity
+    if (token == "}") // end entity
     {
       if(entity == g_nullNode)
       {
@@ -87,7 +88,7 @@ NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entit
       }
       return entity;
     }
-    else if(!strcmp(token, "{")) // begin primitive
+    else if(token == "{") // begin primitive
     {
       if(entity == g_nullNode)
       {
@@ -127,18 +128,26 @@ NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entit
 		
 		++count_primitives;
     }
-    else // epair
-    {
-      std::string key(token);
-      token = tokeniser.getToken();
-      
-		// Throw exception if invalid token
-		if(token == 0) {
+	else { 
+		
+		// Keyvalue pair. Get the value, and check that we haven't swallowed
+		// the { or } which will happen if the number of tokens is wrong.
+		
+		const char* szValue = tokeniser.getToken();
+		if (szValue == NULL) {
 			throw std::runtime_error("Parsing keyvalues: invalid token");
 		}
-		keyValues.push_back(KeyValues::value_type(key, token));
-		if(key == "classname") {
-			classname = token;
+		 
+      	std::string value = szValue;
+		if (value == "{" || value == "}") {
+			throw std::runtime_error(
+				"Parsed invalid value \"" + value + "\"");
+		}
+				 
+		// Push the pair, and set the classname if we have it
+		keyValues.push_back(KeyValues::value_type(token, value));
+		if(token == "classname") {
+			classname = value;
 		}
     }
   }
