@@ -740,19 +740,12 @@ class TexturesDependencies :
 	public GlobalOpenGLModuleRef,
 	public GlobalPreferenceSystemModuleRef 
 {
-	ImageModulesRef m_image_modules;
 	// The reference collection of ImageLoaders 
 	ImageLoaderModulesRef _imageLoaders;
 public:
 	TexturesDependencies() :
-		//m_image_modules(),
-		m_image_modules(""),
 		_imageLoaders(GlobalRadiant().getRequiredGameDescriptionKeyValue("texturetypes"))
 	{}
-	
-	ImageModules& getImageModules() {
-		return m_image_modules.get();
-	}
 	
 	// Returns the module collection of ImageLoaders
 	ImageLoaderModules& getImageLoaders() {
@@ -784,10 +777,6 @@ public:
 typedef SingletonModule<TexturesAPI, TexturesDependencies> TexturesModule;
 typedef Static<TexturesModule> StaticTexturesModule;
 StaticRegisterModule staticRegisterTextures(StaticTexturesModule::instance());
-
-ImageModules& Textures_getImageModules() {
-	return StaticTexturesModule::instance().getDependencies().getImageModules();
-}
 
 ImageLoaderModules& Textures_getImageLoaders() {
 	return StaticTexturesModule::instance().getDependencies().getImageLoaders();
