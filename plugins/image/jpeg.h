@@ -31,10 +31,61 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #if !defined (INCLUDED_JPEG_H)
 #define INCLUDED_JPEG_H
 
-class Image;
-class ArchiveFile;
+#include "ifilesystem.h"
+#include "iimage.h"
+#include "modulesystem/singletonmodule.h"
 
 Image* LoadJPG(ArchiveFile& file);
+
+/* greebo: A JPGLoader is capable of loading JPEG files.
+ *  
+ * Use the load() to actually retrieve an Image* object with the loaded image.
+ * 
+ * Shouldn't be used to load textures directly, use the 
+ * GlobalTexturesCache() module instead.  
+ * 
+ * Complies with the ImageLoader interface defined in "iimage.h" 
+ */
+class JPGLoader :
+	public ImageLoader
+{
+public:
+	// Definitions to enable the lookup by the radiant modulesystem
+	typedef ImageLoader Type;
+	STRING_CONSTANT(Name, "jpg");
+
+	// Return the instance pointer
+	ImageLoader* getTable() {
+		return this;
+	}
+
+public:
+	// Constructor
+	JPGLoader() {}
+	
+	/* greebo: This loads the file and returns the pointer to 
+	 * the allocated Image object (or NULL, if the load failed). 
+	 */
+	Image* load(ArchiveFile& file) const {
+		// Pass the call to the according load function
+		return LoadJPG(file);
+	}
+	
+	/* greebo: Gets the file extension of the supported image file type (e.g. "jpg") 
+	 */
+	std::string getExtension() const {
+		return "jpg";
+	}
+
+};
+
+// The dependency class
+class JPGLoaderDependencies :
+	public GlobalFileSystemModuleRef
+{};
+
+// Define the JPG module with the JPGLoader class and its dependencies
+typedef SingletonModule<JPGLoader, JPGLoaderDependencies> JPGLoaderModule;
 
 #endif
 
