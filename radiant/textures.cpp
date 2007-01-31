@@ -741,13 +741,22 @@ class TexturesDependencies :
 	public GlobalPreferenceSystemModuleRef 
 {
 	ImageModulesRef m_image_modules;
+	// The reference collection of ImageLoaders 
+	ImageLoaderModulesRef _imageLoaders;
 public:
 	TexturesDependencies() :
-		m_image_modules(GlobalRadiant().getRequiredGameDescriptionKeyValue("texturetypes")) 
+		//m_image_modules(GlobalRadiant().getRequiredGameDescriptionKeyValue("texturetypes")),
+		m_image_modules("jpg dds"),
+		_imageLoaders("tga")
 	{}
 	
 	ImageModules& getImageModules() {
 		return m_image_modules.get();
+	}
+	
+	// Returns the module collection of ImageLoaders
+	ImageLoaderModules& getImageLoaders() {
+		return _imageLoaders.get();
 	}
 };
 
@@ -778,4 +787,8 @@ StaticRegisterModule staticRegisterTextures(StaticTexturesModule::instance());
 
 ImageModules& Textures_getImageModules() {
 	return StaticTexturesModule::instance().getDependencies().getImageModules();
+}
+
+ImageLoaderModules& Textures_getImageLoaders() {
+	return StaticTexturesModule::instance().getDependencies().getImageLoaders();
 }

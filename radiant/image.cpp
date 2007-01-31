@@ -30,10 +30,52 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "os/path.h"
 #include "stream/stringstream.h"
 
-typedef Modules<_QERPlugImageTable> ImageModules;
+// retrieves the deprecated modules
 ImageModules& Textures_getImageModules();
 
-class LoadImageVisitor : public ImageModules::Visitor 
+// Retrieves a set of ImageLoaders as defined in the Dependency class 
+ImageLoaderModules& Textures_getImageLoaders();
+
+class LoadImageVisitor :
+	public ImageLoaderModules::Visitor
+{
+	// The filename to load
+	const std::string _name;
+
+	// The reference to the pointer in the parent function
+	Image*& _image;
+
+public:
+	LoadImageVisitor(const std::string& name, Image*& image) :
+		_name(name), 
+		_image(image)
+	{}
+
+	// Visit function called for each imageloader module.
+	void visit(const char* moduleName, const ImageLoader& loader) {
+		// Only do anything, if the image pointer is still NULL (i.e. the image load has not succeeded yet)
+		if (_image == NULL) {
+			// Construct the full name of the image to load, including the prefix (e.g. "dds/")
+			// and the file extension.
+			std::string fullName = loader.getPrefix() + _name + "." + loader.getExtension();
+			
+			// Try to open the file (will fail if the extension does not fit)
+			ArchiveFile* file = GlobalFileSystem().openFile(fullName.c_str());
+			
+			// Has the file been loaded?
+			if (file != NULL) {
+				// Try to invoke the imageloader with a reference to the ArchiveFile
+				_image = loader.load(*file);
+				
+				// Release the loaded file
+				file->release();
+			}
+		}
+	}
+
+}; // class LoadImageVisitor
+
+class LoadImageVisitorOld : public ImageModules::Visitor 
 {
 	// The filename to load
 	const std::string _name;
@@ -43,7 +85,7 @@ class LoadImageVisitor : public ImageModules::Visitor
 	
 public:
 	// Constructor
-	LoadImageVisitor(const std::string& name, Image*& image) : 
+	LoadImageVisitorOld(const std::string& name, Image*& image) : 
 		_name(name), 
 		_image(image)
 	{}
@@ -70,18 +112,26 @@ public:
 			}
 		}
 	}
-}; // class LoadImageVisitor
+}; // class LoadImageVisitorOld
 
 /// \brief Returns a new image for the first file matching \p name in one of the available texture formats, or 0 if no file is found.
 Image* QERApp_LoadImage(void* environment, const char* name) {
 
 	Image* image = NULL;
-
-	// Instantiate a visitor class
-	LoadImageVisitor visitor(name, image);
-
+	
+	// Instantiate a visitor class to cycle through the ImageLoader modules 
+	LoadImageVisitor loadVisitor(name, image);
+	
 	// Cycle through all modules and tell them to visit the local class
-	Textures_getImageModules().foreachModule(visitor);
+	Textures_getImageLoaders().foreachModule(loadVisitor);
+
+	if (image == NULL) {
+		// Instantiate a visitor class
+		LoadImageVisitorOld visitor(name, image);
+
+		// Cycle through all modules and tell them to visit the local class
+		Textures_getImageModules().foreachModule(visitor);
+	}
 	
 	return image;
 }
