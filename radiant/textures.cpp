@@ -126,7 +126,7 @@ public:
 	}
 	
 	~TexturesMap() {
-		std::cout << "TexturesMap: Textures still in map at shutdown: " << _textures.size() << "\n";
+		globalOutputStream() << "TexturesMap: Textures still mapped at shutdown: " << _textures.size() << "\n";
 	}
 	
 	ETexturesMode readTextureMode(const unsigned int& mode) {
@@ -242,23 +242,16 @@ public:
 	// Capture the named texture using the provided image loader
 	qtexture_t* capture(ImageConstructorPtr constructor, 
 						const std::string& name) {
-		std::cout << "capture with ImageConstructor called\n";
-		
 		// Try to lookup the texture in the map
 		iterator i = _textures.find(name);
 		
 		if (i != _textures.end()) {
-			std::cout << "Found a match for " << name.c_str() << "\n";
 			// Increase the counter and return the qtexture_t*
 			i->second->referenceCounter++;
-			
-			std::cout << "Reference counter is now: " << i->second->referenceCounter << "\n";
 			
 			return i->second;
 		}
 		else {
-			std::cout << "No match found, creating new: " << name.c_str() << "\n";
-		
 			// Allocate a new qtexture_t object
 			qtexture_t* texture = new qtexture_t(name);
 			texture->constructor = constructor;
