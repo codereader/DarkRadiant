@@ -441,8 +441,6 @@ public:
 
 	void realise() {
 		
-		std::cout << "CShader::realise called\n";
-		
 		// Grab the display texture (may be null)
 		std::string displayTex = m_template._texture->getTextureName();
 		
@@ -453,9 +451,7 @@ public:
 
 		// Has the texture been successfully realised? 
     	if (m_pTexture->texture_number == 0) {
-    		std::cout << "CShader::realise failed, falling back to shadernotex\n";
-    		
-    		// No, it has not
+	   		// No, it has not
 			m_notfound = m_pTexture;
 			
 			std::string name = std::string(GlobalRadiant().getAppPath())
