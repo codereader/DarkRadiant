@@ -91,7 +91,7 @@ void ActiveShaders_IteratorIncrement();
 Callback g_ActiveShadersChangedNotify;
 
 void FreeShaders();
-qtexture_t *Texture_ForName (const char *filename);
+Texture *Texture_ForName (const char *filename);
 
 
 /*!
@@ -309,13 +309,13 @@ class CShader : public IShader
 	std::string _name;
 
 	// Textures for this shader
-	qtexture_t* m_pTexture;
-	qtexture_t* m_notfound;
-	qtexture_t* m_pDiffuse;
+	Texture* m_pTexture;
+	Texture* m_notfound;
+	Texture* m_pDiffuse;
 	float m_heightmapScale;
-	qtexture_t* m_pBump;
-	qtexture_t* m_pSpecular;
-	qtexture_t* _texLightFalloff;
+	Texture* m_pBump;
+	Texture* m_pSpecular;
+	Texture* _texLightFalloff;
 	BlendFunc m_blendFunc;
 
   bool m_bInUse;
@@ -370,22 +370,22 @@ public:
     return _nRef;
   }
 
-  // get/set the qtexture_t* Radiant uses to represent this shader object
-  qtexture_t* getTexture() const
+  // get/set the Texture* Radiant uses to represent this shader object
+  Texture* getTexture() const
   {
     return m_pTexture;
   }
-  qtexture_t* getDiffuse() const
+  Texture* getDiffuse() const
   {
     return m_pDiffuse;
   }
 
 	// Return bumpmap if it exists, otherwise _flat
-  qtexture_t* getBump() const
+  Texture* getBump() const
   {
     	return m_pBump;
   }
-  qtexture_t* getSpecular() const
+  Texture* getSpecular() const
   {
     return m_pSpecular;
   }
@@ -597,19 +597,19 @@ public:
 
   class MapLayer : public ShaderLayer
   {
-    qtexture_t* m_texture;
+    Texture* m_texture;
     BlendFunc m_blendFunc;
     bool m_clampToBorder;
     float m_alphaTest;
   public:
-    MapLayer(qtexture_t* texture, BlendFunc blendFunc, bool clampToBorder, float alphaTest) :
+    MapLayer(Texture* texture, BlendFunc blendFunc, bool clampToBorder, float alphaTest) :
       m_texture(texture),
       m_blendFunc(blendFunc),
       m_clampToBorder(false),
       m_alphaTest(alphaTest)
     {
     }
-    qtexture_t* texture() const
+    Texture* texture() const
     {
       return m_texture;
     }
@@ -679,7 +679,7 @@ public:
 	/*
 	 * Return the light falloff texture (Z dimension).
 	 */
-	qtexture_t* lightFalloffImage() const {
+	Texture* lightFalloffImage() const {
 		if (m_template._lightFallOff)
 			return _texLightFalloff;
 		else 

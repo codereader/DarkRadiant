@@ -81,7 +81,7 @@ public:
 		return m_shader;
 	}
 
-	qtexture_t& getTexture() const;
+	Texture& getTexture() const;
 
 	unsigned int getFlags() const;
 

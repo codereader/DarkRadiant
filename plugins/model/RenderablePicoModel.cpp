@@ -56,7 +56,7 @@ void RenderablePicoModel::render(RenderStateFlags flags) const {
 		IShader* surfaceShader = (*i)->getShader()->getIShader();
 		if (GlobalFilterSystem().isVisible("texture", surfaceShader->getName())) {
 			// Bind the OpenGL texture and render the surface geometry
-			qtexture_t& tex = (*i)->getShader()->getTexture();
+			Texture& tex = (*i)->getShader()->getTexture();
 			glBindTexture(GL_TEXTURE_2D, tex.texture_number);
 			(*i)->render(flags);
 		}

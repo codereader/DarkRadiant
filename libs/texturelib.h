@@ -42,8 +42,9 @@ enum ProjectionAxis {
 typedef boost::shared_ptr<ImageConstructor> ImageConstructorPtr;
 
 // describes a GL texture
-struct qtexture_t
+class Texture
 {
+public:
 	// The name of this texture
 	const std::string name;
 	
@@ -65,13 +66,12 @@ struct qtexture_t
 	int referenceCounter;
 
 	// Constructor
-	qtexture_t(const std::string& name) :
+	Texture(const std::string& name) :
 		name(name),
 		referenceCounter(0)
 	{}
 
-}; // struct qtexture_t
-
+}; // class Texture 
 
 inline Matrix4 matrix4_rotation_for_vector3(const Vector3& x, const Vector3& y, const Vector3& z) {
 	return Matrix4(

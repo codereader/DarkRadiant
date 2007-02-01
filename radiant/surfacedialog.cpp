@@ -1281,7 +1281,7 @@ void SurfaceInspector::ApplyTexdef()
 //This is actually OK. :-P
 
 	// compute texture matrix
-	// the matrix returned must be understood as a qtexture_t with width=2 height=2
+	// the matrix returned must be understood as a Texture with width=2 height=2
 	projection.m_brushprimit_texdef = BrushPrimitTexDef(shiftScaleRotate);
   
   UndoableCommand undo("textureProjectionSetSelected");
