@@ -155,6 +155,8 @@ BrushModuleClass* GlobalBrush() {
 
 class BrushDependencies :
 	public GlobalRadiantModuleRef,
+	public GlobalRegistryModuleRef,
+	public GlobalPreferenceSystemModuleRef,
 	public GlobalSceneGraphModuleRef,
 	public GlobalShaderCacheModuleRef,
 	public GlobalSelectionModuleRef,

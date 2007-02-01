@@ -210,7 +210,8 @@ class RadiantDependencies :
   public GlobalNamespaceModuleRef,
   public GlobalClipperModuleRef,
   public GlobalGridModuleRef,
-  public GlobalOverlayModuleRef
+  public GlobalOverlayModuleRef,
+  public GlobalTexturesModuleRef
 {
   ImageModulesRef m_image_modules;
   MapModulesRef m_map_modules;
