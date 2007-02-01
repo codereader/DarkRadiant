@@ -41,8 +41,7 @@ public:
   virtual void realise() = 0;
 };
 
-/* greebo: A TextureModeObserver gets notified if the
- * texture mode gets changed. 
+/* greebo: A TextureModeObserver gets notified if the texture mode gets changed. 
  */
 class TextureModeObserver
 {
@@ -71,10 +70,10 @@ public:
 	virtual qtexture_t* capture(ImageConstructorPtr constructor, 
 								const std::string& name) = 0;
 	
-  virtual void release(qtexture_t* texture) = 0;
-  virtual void attach(TexturesCacheObserver& observer) = 0;
-  virtual void detach(TexturesCacheObserver& observer) = 0;
-  
+	virtual void release(qtexture_t* texture) = 0;
+	virtual void attach(TexturesCacheObserver& observer) = 0;
+	virtual void detach(TexturesCacheObserver& observer) = 0;
+
   	// Realises / unrealises all the textures (loads them into memory)
 	virtual void realise() = 0;
 	virtual void unrealise() = 0;

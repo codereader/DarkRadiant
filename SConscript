@@ -307,7 +307,6 @@ radiant_src = [
 'groupdialog.cpp',
 'gtkdlgs.cpp',
 'gtkmisc.cpp',
-'image.cpp',
 'main.cpp',
 'mainframe.cpp',
 'map.cpp',
