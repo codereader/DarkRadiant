@@ -38,6 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/colourscheme/ColourSchemeManager.h"
 #include "ui/colourscheme/ColourSchemeEditor.h"
 #include "ui/menu/FiltersMenu.h"
+#include "ui/overlay/OverlayDialog.h"
 #include "iclipper.h"
 #include "ifilesystem.h"
 #include "iundo.h"
@@ -1735,7 +1736,12 @@ GtkMenuItem* create_view_menu(MainFrame::EViewStyle style)
     createMenuItemWithMnemonic(menu_in_menu, "Set Se_lected Brushes", "RegionSetSelection");
   }
   menu_separator(menu);
-  createMenuItemWithMnemonic(menu, "Colours...", "EditColourScheme");
+  
+  createMenuItemWithMnemonic(
+  	menu, "Colours...", "EditColourScheme", "editcolour16.png");
+  
+  createMenuItemWithMnemonic(
+  	menu, "Background image...", "OverlayDialog", "bgimage16.png");
   
   return view_menu_item;
 }
@@ -2703,6 +2709,10 @@ void MainFrame_Construct()
 	// Light inspector
 	GlobalEventManager().addCommand("ToggleLightInspector",
 	                                   FreeCaller<ui::LightInspector::displayDialog>());
+	
+	// Overlay dialog
+	GlobalEventManager().addCommand("OverlayDialog",
+									FreeCaller<ui::OverlayDialog::display>());
 	
 	GlobalEventManager().addCommand("ShowHidden", FreeCaller<Select_ShowAllHidden>());
 	GlobalEventManager().addCommand("HideSelected", FreeCaller<HideSelected>());

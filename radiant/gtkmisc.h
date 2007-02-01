@@ -34,6 +34,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <gtk/gtkmain.h>
 #include <string>
 
+namespace {
+	
+	/* CONSTANTS */
+	const char* EMPTY_ICON = "";
+	
+}
+
 inline void process_gui()
 {
   while(gtk_events_pending())
@@ -46,9 +53,21 @@ typedef struct _GtkMenu GtkMenu;
 typedef struct _GtkMenuItem GtkMenuItem;
 typedef struct _GtkCheckMenuItem GtkCheckMenuItem;
 
-// greebo: This is the new function to add a menu item to the given <menu> and connect it to the passed <commandName> 
-GtkMenuItem* createMenuItemWithMnemonic(GtkMenu* menu, const std::string& caption, const std::string& commandName);
-GtkMenuItem* createCheckMenuItemWithMnemonic(GtkMenu* menu, const std::string& caption, const std::string& commandName);
+/**
+ * Add a menu item to the given menu, with an optional icon. The given global
+ * command will be called when the item is chosen.
+ */
+GtkMenuItem* createMenuItemWithMnemonic(
+		GtkMenu* menu, 
+		const std::string& caption, 
+		const std::string& commandName,
+		const std::string& iconName = EMPTY_ICON);
+										
+GtkMenuItem* createCheckMenuItemWithMnemonic(
+		GtkMenu* menu, 
+		const std::string& caption, 
+		const std::string& commandName,
+		const std::string& iconName = EMPTY_ICON);
 
 GtkMenuItem* createSeparatorMenuItem(GtkMenu* menu);
 
