@@ -205,7 +205,8 @@ Image& convertHeightmapToNormalmap(Image& heightmap, float scale)
 
 Image* loadHeightmap(void* environment, const char* name)
 {
-  Image* heightmap = GlobalTexturesCache().loadImage(name);
+	ImageConstructorPtr heightLoader(new DefaultConstructor(name));
+	Image* heightmap = heightLoader->construct();
   if(heightmap != 0)
   {
     Image& normalmap = convertHeightmapToNormalmap(*heightmap, *reinterpret_cast<float*>(environment));

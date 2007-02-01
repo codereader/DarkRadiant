@@ -95,24 +95,12 @@ public:
 	INTEGER_CONSTANT(Version, 1);
 	STRING_CONSTANT(Name, "textures");
   
-	// Retrieves the default image loader
-	virtual LoadImageCallback defaultLoader() const = 0;
-  
-	// Loads an image by using the default loader and returns the pointer
-	virtual Image* loadImage(const std::string& name) = 0;
-  
 	/**
 	 * Capture the named image texture and return the associated qtexture_t
 	 * struct.
 	 */
 	virtual qtexture_t* capture(const std::string& name) = 0;
   
-	/**
-	 * Capture the named image texture using the provided image loader.
-	 */
-	virtual qtexture_t* capture(const LoadImageCallback& load, 
-								const std::string& name) = 0;
-								
 	/**
 	 * Capture the named image texture using the provided ImageConstructor.
 	 */
