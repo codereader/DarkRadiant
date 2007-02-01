@@ -2,6 +2,7 @@
 #define OVERLAYDIALOG_H_
 
 #include <gtk/gtkwidget.h>
+#include <gtk/gtktogglebutton.h>
 
 namespace ui
 {
@@ -19,6 +20,14 @@ private:
 
 	// Constructor creates GTK widgets	
 	OverlayDialog();
+	
+	// Widget construction helpers
+	GtkWidget* createWidgets();
+	GtkWidget* createButtons();
+	
+	// GTK callbacks
+	static void _onClose(GtkWidget*, OverlayDialog*);
+	static void _onUseImage(GtkToggleButton*, OverlayDialog*);
 
 public:
 
