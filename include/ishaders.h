@@ -27,6 +27,40 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <string>
 #include <ostream>
+#include <boost/shared_ptr.hpp>
+
+class Texture; 	// defined in texturelib.h
+typedef boost::shared_ptr<Texture> TexturePtr;
+
+class Image;
+
+/* greebo: A TextureConstructor creates an actual bitmap image
+ * that can be used to perform an OpenGL bind.
+ * 
+ * The image can either be loaded from a disk file (simple)
+ * or the result of a MapExpression hierarchy (addnormals and such)
+ */
+class TextureConstructor
+{
+public:
+	virtual Image* construct() = 0;
+};
+typedef boost::shared_ptr<TextureConstructor> TextureConstructorPtr;
+
+/* greebo: The TextureManager keeps track of all the Textures that are
+ * bound in OpenGL. It is responsible for loading/unloading the textures
+ * on demand and/or retrieving the pointers to these textures.
+ */
+class IGLTextureManager
+{
+public:
+	/* greebo: Retrieves the pointer to the Texture object named by
+	 * the textureKey string. If the texture is already bound in OpenGL
+	 * the pointer to the existing Texture is returned. 
+	 */
+	virtual TexturePtr getBinding(const std::string& textureKey, 
+								  TextureConstructorPtr constructor) = 0;
+};
 
 enum
 {
@@ -43,8 +77,6 @@ enum
   QER_CLIP = 1 << 10,
   QER_BOTCLIP = 1 << 11,
 };
-
-struct qtexture_t;
 
 template<typename Element> class BasicVector3;
 typedef BasicVector3<float> Vector3;
@@ -77,7 +109,7 @@ public:
 class ShaderLayer
 {
 public:
-  virtual qtexture_t* texture() const = 0;
+  virtual Texture* texture() const = 0;
   virtual BlendFunc blendFunc() const = 0;
   virtual bool clampToBorder() const = 0;
   virtual float alphaTest() const = 0;
@@ -107,10 +139,10 @@ public:
   // Decrement the reference count
   virtual void DecRef() = 0;
   // get/set the qtexture_t* Radiant uses to represent this shader object
-  virtual qtexture_t* getTexture() const = 0;
-  virtual qtexture_t* getDiffuse() const = 0;
-  virtual qtexture_t* getBump() const = 0;
-  virtual qtexture_t* getSpecular() const = 0;
+  virtual Texture* getTexture() const = 0;
+  virtual Texture* getDiffuse() const = 0;
+  virtual Texture* getBump() const = 0;
+  virtual Texture* getSpecular() const = 0;
   // get shader name
   virtual const char* getName() const = 0;
   virtual bool IsInUse() const = 0;
@@ -147,7 +179,7 @@ public:
   virtual const ShaderLayer* firstLayer() const = 0;
   virtual void forEachLayer(const ShaderLayerCallback& layer) const = 0;
 
-  virtual qtexture_t* lightFalloffImage() const = 0;
+  virtual Texture* lightFalloffImage() const = 0;
 };
 
 /**

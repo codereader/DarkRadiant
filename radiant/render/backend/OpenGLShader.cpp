@@ -127,7 +127,7 @@ void OpenGLShader::unrealise() {
     destroy();
 }
 
-qtexture_t& OpenGLShader::getTexture() const {
+Texture& OpenGLShader::getTexture() const {
     return *(m_shader->getTexture());
 }
 

@@ -98,7 +98,7 @@ void CSpriteModel::Draw(int state, int rflags) const
   g_QglTable.m_pfn_qglEnd ();
 */
 
-  qtexture_t	*q = m_pShader->getTexture();
+  Texture	*q = m_pShader->getTexture();
 
   // convert pixels to units and divide in half again so we draw in the middle
   // of the bbox.

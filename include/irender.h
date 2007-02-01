@@ -112,7 +112,7 @@ public:
 };
 
 class Matrix4;
-struct qtexture_t;
+class Texture;
 class ModuleObserver;
 
 #include "math/Vector3.h"
@@ -154,7 +154,7 @@ public:
   virtual void decrementUsed() = 0;
   virtual void attach(ModuleObserver& observer) = 0;
   virtual void detach(ModuleObserver& observer) = 0;
-  virtual qtexture_t& getTexture() const = 0;
+  virtual Texture& getTexture() const = 0;
   
 	/** Retrieve the contained IShader from this object.
 	 * 

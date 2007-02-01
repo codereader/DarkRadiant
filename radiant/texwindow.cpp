@@ -259,7 +259,7 @@ public:
   }
   
   // Return the display width of a texture in the texture browser
-  int getTextureWidth(qtexture_t* tex)
+  int getTextureWidth(Texture* tex)
   {
     int width;
     if (!m_resizeTextures)
@@ -283,7 +283,7 @@ public:
   
   
   // Return the display height of a texture in the texture browser
-  int getTextureHeight(qtexture_t* tex)
+  int getTextureHeight(Texture* tex)
   {
     int height;
     if (!m_resizeTextures)
@@ -403,7 +403,7 @@ const char* TextureBrowser_GetSelectedShader(TextureBrowser& textureBrowser)
 void TextureBrowser_SetStatus(TextureBrowser& textureBrowser, const char* name)
 {
   IShader* shader = QERApp_Shader_ForName( name);
-  qtexture_t* q = shader->getTexture();
+  Texture* q = shader->getTexture();
   StringOutputStream strTex(256);
   strTex << name << " W: " << Unsigned(q->width) << " H: " << Unsigned(q->height);
   shader->DecRef();
@@ -453,9 +453,9 @@ void Texture_StartPos(TextureLayout& layout)
   layout.current_row = 0;
 }
 
-void Texture_NextPos(TextureBrowser& textureBrowser, TextureLayout& layout, qtexture_t* current_texture, int *x, int *y)
+void Texture_NextPos(TextureBrowser& textureBrowser, TextureLayout& layout, Texture* current_texture, int *x, int *y)
 {
-  qtexture_t* q = current_texture;
+  Texture* q = current_texture;
 
   int nWidth = textureBrowser.getTextureWidth(q);
   int nHeight = textureBrowser.getTextureHeight(q);
@@ -838,7 +838,7 @@ void TextureBrowser_Focus(TextureBrowser& textureBrowser, const char* name)
 
     int x, y;
     Texture_NextPos(textureBrowser, layout, shader->getTexture(), &x, &y);
-    qtexture_t* q = shader->getTexture();
+    Texture* q = shader->getTexture();
     if (!q)
       break;
 
@@ -881,7 +881,7 @@ IShader* Texture_At(TextureBrowser& textureBrowser, int mx, int my)
 
     int   x, y;
     Texture_NextPos(textureBrowser, layout, shader->getTexture(), &x, &y);
-    qtexture_t  *q = shader->getTexture();
+    Texture  *q = shader->getTexture();
     if (!q)
       break;
 
@@ -971,7 +971,7 @@ DRAWING
 ============
 Texture_Draw
 TTimo: relying on the shaders list to display the textures
-we must query all qtexture_t* to manage and display through the IShaders interface
+we must query all Texture* to manage and display through the IShaders interface
 this allows a plugin to completely override the texture system
 ============
 */
@@ -1006,7 +1006,7 @@ void Texture_Draw(TextureBrowser& textureBrowser)
 
     int x, y;
     Texture_NextPos(textureBrowser, layout, shader->getTexture(), &x, &y);
-    qtexture_t *q = shader->getTexture();
+    Texture *q = shader->getTexture();
     if (!q)
       break;
 

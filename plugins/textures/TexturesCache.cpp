@@ -51,7 +51,7 @@ private:
 
 	byte _gammaTable[256];
 
-	typedef std::map<std::string, qtexture_t*> TextureMap;
+	typedef std::map<std::string, Texture*> TextureMap;
 	typedef TextureMap::iterator iterator;
 	
 	TextureMap _textures;
@@ -227,20 +227,20 @@ public:
 	}
 
 	// Capture the named texture using the provided image loader
-	qtexture_t* capture(ImageConstructorPtr constructor, 
+	Texture* capture(ImageConstructorPtr constructor, 
 						const std::string& name) {
 		// Try to lookup the texture in the map
 		iterator i = _textures.find(name);
 		
 		if (i != _textures.end()) {
-			// Increase the counter and return the qtexture_t*
+			// Increase the counter and return the Texture*
 			i->second->referenceCounter++;
 			
 			return i->second;
 		}
 		else {
-			// Allocate a new qtexture_t object
-			qtexture_t* texture = new qtexture_t(name);
+			// Allocate a new Texture object
+			Texture* texture = new Texture(name);
 			texture->constructor = constructor;
 			
 			// Store the texture into the map
@@ -258,11 +258,11 @@ public:
 		}
 	}
 
-	void release(qtexture_t* texture) {
+	void release(Texture* texture) {
 		// Try to lookup the texture in the existing ones
 		for (iterator i = begin(); i != end(); i++) {
 			const std::string textureName = i->first; 
-			qtexture_t* registeredTexture = i->second;
+			Texture* registeredTexture = i->second;
 			
 			// Do we have a match (check loader too)
 			if (registeredTexture == texture) {
@@ -300,7 +300,7 @@ public:
 	
 	/// \brief This function does the actual processing of raw RGBA data into a GL texture.
 	/// It will also resample to power-of-two dimensions, generate the mipmaps and adjust gamma.
-	void loadTextureRGBA(qtexture_t* q, unsigned char* pPixels, int nWidth, int nHeight) {
+	void loadTextureRGBA(Texture* q, unsigned char* pPixels, int nWidth, int nHeight) {
 		
 		// The gamma value is -1 at radiant startup and gets changed later on
 		static float fGamma = -1;
@@ -389,7 +389,7 @@ public:
 			free(outpixels);
 	}	
 	
-	void realiseTexture(qtexture_t* texture) {
+	void realiseTexture(Texture* texture) {
 
 		texture->texture_number = 0;
 		
@@ -427,7 +427,7 @@ public:
 	}
 	
 	// This deletes a given texture from OpenGL
-	void unrealiseTexture(qtexture_t* texture) {
+	void unrealiseTexture(Texture* texture) {
 		// Sanity checks
 		if (GlobalOpenGL().contextValid && texture->texture_number != 0) {
 			glDeleteTextures(1, &texture->texture_number);

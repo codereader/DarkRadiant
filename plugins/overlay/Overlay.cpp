@@ -76,7 +76,7 @@ private:
 	float _translationY;
 
 	// The loaded texture
-	qtexture_t* _texture;
+	Texture* _texture;
 	
 	// The instance of the GDKModule loader
 	ImageLoaderModuleRef _imageGDKModule;
