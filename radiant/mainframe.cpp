@@ -1596,7 +1596,8 @@ GtkMenuItem* create_file_menu()
 	createSeparatorMenuItem(menu);
 	createMenuItemWithMnemonic(menu, "Pro_ject settings...", "ProjectSettings");
 	createSeparatorMenuItem(menu);
-	createMenuItemWithMnemonic(menu, "_Pointfile...", "TogglePointfile");
+	createMenuItemWithMnemonic(
+		menu, "_Pointfile...", "TogglePointfile", "pointfile16.png");
 	createSeparatorMenuItem(menu);
 	GlobalMRU().constructMenu(menu);
 	createSeparatorMenuItem(menu);
