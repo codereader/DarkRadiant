@@ -64,6 +64,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/lexical_cast.hpp>
 
+#include "constructors/DefaultConstructor.h"
+#include "constructors/FileLoader.h"
+
 /* GLOBALS */
 
 namespace {
@@ -437,20 +440,30 @@ public:
 
 	void realise() {
 		
+		std::cout << "CShader::realise called\n";
+		
 		// Grab the display texture (may be null)
 		std::string displayTex = m_template._texture->getTextureName();
-		m_pTexture = GlobalTexturesCache().capture(displayTex);
+		
+		// Allocate a default ImageConstructor with this name
+		ImageConstructorPtr imageConstructor(new DefaultConstructor(displayTex));
+		
+		m_pTexture = GlobalTexturesCache().capture(imageConstructor, displayTex);
 
-    	if(m_pTexture->texture_number == 0) {
-
-	      m_notfound = m_pTexture;
-	
-	      {
-	        std::string name = std::string(GlobalRadiant().getAppPath())
-	        				   + "bitmaps/" 
-	        				   + (IsDefault() ? "notex.bmp" : "shadernotex.bmp");
-	        m_pTexture = GlobalTexturesCache().capture(LoadImageCallback(0, loadBitmap), name.c_str());
-	      }
+		// Has the texture been successfully realised? 
+    	if (m_pTexture->texture_number == 0) {
+    		std::cout << "CShader::realise failed, falling back to shadernotex\n";
+    		
+    		// No, it has not
+			m_notfound = m_pTexture;
+			
+			std::string name = std::string(GlobalRadiant().getAppPath())
+			                   + "bitmaps/"
+			                   + (IsDefault() ? "notex.bmp" : "shadernotex.bmp");
+			
+			// Construct a new BMP loader
+			ImageConstructorPtr bmpConstructor(new FileLoader(name, "bmp"));
+			m_pTexture = GlobalTexturesCache().capture(bmpConstructor, name);
 		}
 
 		realiseLighting();
@@ -471,39 +484,62 @@ public:
 	// Parse and load image maps for this shader
 	void realiseLighting() {
 		
+		// Create a shortcut reference
 		TexturesCache& cache = GlobalTexturesCache();
-		LoadImageCallback loader = cache.defaultLoader();
-
+		
 		// Set up the diffuse, bump and specular stages. Bump and specular will 
 		// be set to defaults _flat and _black respectively, if an image map is 
 		// not specified in the material.
+		
+		// Load the diffuse map
+		ImageConstructorPtr diffuseConstructor(new DefaultConstructor(m_template._diffuse->getTextureName()));
+		m_pDiffuse = cache.capture(diffuseConstructor, m_template._diffuse->getTextureName());
 
-		m_pDiffuse = cache.capture(m_template._diffuse->getTextureName());
-
-    	std::string flatName = std::string(GlobalRadiant().getAppPath()) 
-    									   + "bitmaps/_flat.bmp";
-		m_pBump = cache.capture(m_template._bump->getTextureName());
+		// Load the bump map
+    	ImageConstructorPtr bumpConstructor(new DefaultConstructor(m_template._bump->getTextureName()));
+		m_pBump = cache.capture(bumpConstructor, m_template._bump->getTextureName());
+		
 		if (m_pBump == 0 || m_pBump->texture_number == 0) {
-			GlobalTexturesCache().release(m_pBump); // release old object first
-			m_pBump = GlobalTexturesCache().capture(LoadImageCallback(0, loadBitmap), flatName.c_str());
+			// Bump Map load failed
+			cache.release(m_pBump); // release old object first
+			
+			// Flat image name
+			std::string flatName = std::string(GlobalRadiant().getAppPath()) 
+    									   + "bitmaps/_flat.bmp";
+			
+			// Construct a new BMP loader
+			ImageConstructorPtr bmpConstructor(new FileLoader(flatName, "bmp"));
+			m_pBump = cache.capture(bmpConstructor, flatName);
 		}
 		
-		std::string blackName = std::string(GlobalRadiant().getAppPath()) + "bitmaps/_black.bmp";
-		m_pSpecular = cache.capture(m_template._specular->getTextureName());
+		// Load the specular map
+    	ImageConstructorPtr specConstructor(new DefaultConstructor(m_template._specular->getTextureName()));
+		m_pSpecular = cache.capture(specConstructor, m_template._specular->getTextureName());
+		
 		if (m_pSpecular == 0 || m_pSpecular->texture_number == 0) {
-			GlobalTexturesCache().release(m_pSpecular);
-			m_pSpecular = GlobalTexturesCache().capture(LoadImageCallback(0, loadBitmap), blackName.c_str());
+			cache.release(m_pSpecular);
+			
+			// Default specular (black image)
+			std::string blackName = std::string(GlobalRadiant().getAppPath()) + "bitmaps/_black.bmp";
+			
+			// Construct a new BMP loader
+			ImageConstructorPtr bmpConstructor(new FileLoader(blackName, "bmp"));
+			m_pSpecular = cache.capture(bmpConstructor, blackName);
 		}
 		
 		// Get light falloff image. If a falloff image is defined but invalid,
 		// emit a warning since this will result in a black light
 		std::string foTexName = m_template._lightFallOff->getTextureName();
-		_texLightFalloff = cache.capture(foTexName);
+		
+		// Allocate a default ImageConstructor with this name
+		ImageConstructorPtr imageConstructor(new DefaultConstructor(foTexName));
+		
+		_texLightFalloff = cache.capture(imageConstructor, foTexName);
 		if (!foTexName.empty() && _texLightFalloff->texture_number == 0) {
 			std::cerr << "[shaders] " << _name 
 					  << " : defines invalid lightfalloff \"" << foTexName
 					  << "\"" << std::endl;
-		}  
+		}
 
 		for(ShaderTemplate::Layers::const_iterator i = m_template.m_layers.begin(); 
 			i != m_template.m_layers.end(); 
@@ -596,9 +632,14 @@ public:
 
 	static MapLayer evaluateLayer(const LayerTemplate& layerTemplate) 
 	{
+		// Allocate a default ImageConstructor with this name
+		ImageConstructorPtr imageConstructor(
+			new DefaultConstructor(layerTemplate.mapExpr->getTextureName())
+		);
+		
     	return MapLayer(
       		GlobalTexturesCache().
-      					capture(layerTemplate.mapExpr->getTextureName()),
+      					capture(imageConstructor, layerTemplate.mapExpr->getTextureName()),
       		evaluateBlendFunc(layerTemplate.m_blendFunc),
       		layerTemplate.m_clampToBorder,
       		boost::lexical_cast<float>(layerTemplate.m_alphaTest)

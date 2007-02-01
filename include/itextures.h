@@ -26,6 +26,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/constant.h"
 #include "igl.h"
 #include <string>
+#include <boost/shared_ptr.hpp>
+
+class ImageConstructor;
+typedef boost::shared_ptr<ImageConstructor> ImageConstructorPtr;
 
 // Forward declaration
 struct qtexture_t; // defined in texturelib.h
@@ -107,6 +111,12 @@ public:
 	 * Capture the named image texture using the provided image loader.
 	 */
 	virtual qtexture_t* capture(const LoadImageCallback& load, 
+								const std::string& name) = 0;
+								
+	/**
+	 * Capture the named image texture using the provided ImageConstructor.
+	 */
+	virtual qtexture_t* capture(ImageConstructorPtr constructor, 
 								const std::string& name) = 0;
 	
   virtual void release(qtexture_t* texture) = 0;

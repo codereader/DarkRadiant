@@ -65,10 +65,13 @@ struct qtexture_t
 	// The flags
 	int surfaceFlags, contentFlags, value;
 
+	int referenceCounter;
+
 	// Constructor
 	qtexture_t(const LoadImageCallback& load, const std::string& name) :
 		name(name),
-		load(load)
+		load(load),
+		referenceCounter(0)
 	{}
 
 }; // struct qtexture_t

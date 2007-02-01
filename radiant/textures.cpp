@@ -32,14 +32,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "qgl.h"
 
 #include "texturelib.h"
-#include "container/hashfunc.h"
-#include "container/cache.h"
 #include "stringio.h"
 
 #include "image.h"
 #include "texmanip.h"
-
-#include "textures/DefaultImageConstructor.h"
+#include <map>
 
 enum TextureCompressionFormat {
     TEXTURECOMPRESSION_NONE = 0,
@@ -48,29 +45,6 @@ enum TextureCompressionFormat {
     TEXTURECOMPRESSION_RGBA_S3TC_DXT3 = 3,
     TEXTURECOMPRESSION_RGBA_S3TC_DXT5 = 4,
 };
-
-typedef std::pair<LoadImageCallback, CopiedString> TextureKey;
-
-class TextureKeyEqualNoCase
-{
-public:
-  bool operator()(const TextureKey& key, const TextureKey& other) const
-  {
-    return key.first == other.first && string_equal_nocase(key.second.c_str(), other.second.c_str());
-  }
-};
-
-class TextureKeyHashNoCase
-{
-public:
-  typedef hash_t hash_type;
-  hash_t operator()(const TextureKey& key) const
-  {
-    return hash_combine(string_hash_nocase(key.second.c_str()), pod_hash(key.first));
-  }
-};
-
-#define DEBUG_TEXTURES 0
 
 namespace {
 	const int MAX_TEXTURE_QUALITY = 3;
@@ -91,49 +65,23 @@ class TexturesMap :
 	public PreferenceConstructor,
 	public RegistryKeyObserver
 {
-	class TextureConstructor 
+	class EmptyConstructor :
+		public ImageConstructor 
 	{
-		// The linkback to the TexturesMap parent class
-		TexturesMap* m_cache;
 	public:
-	
-		// Nonconverting constructor
-		explicit TextureConstructor(TexturesMap* cache)
-			: m_cache(cache) 
-		{}
-		
-		// Construct a new Texture
-		qtexture_t* construct(const TextureKey& key) {
-			
-			// Allocate a new Texture object with a load callback and a name
-			qtexture_t* texture = new qtexture_t(key.first, key.second.c_str());
-			
-			// If the other texturesMap is already realised, realise this texture as well
-			if (m_cache->realised()) {
-				m_cache->realiseTexture(*texture, key);
-			}
-			return texture;
-		}
-		
-		// Releases a texture from the heap
-		void destroy(qtexture_t* texture) {
-			if (m_cache->realised()) {
-				// Only destroy this distinct texture if all the others are still realised
-				// otherwise this texture isn't realised any more as well.
-				m_cache->unrealiseTexture(*texture);
-			}
-			
-			// Remove it from the heap
-			delete texture;
+		EmptyConstructor() {}
+		Image* construct() {
+			std::cout << "EmptyLoader called\n";
+			return NULL;
 		}
 	};
 	
 	byte _gammaTable[256];
 
-	typedef HashedCache<TextureKey, qtexture_t, TextureKeyHashNoCase, TextureKeyEqualNoCase, TextureConstructor> qtextures_t;
-	typedef qtextures_t::iterator iterator;
+	typedef std::map<std::string, qtexture_t*> TextureMap;
+	typedef TextureMap::iterator iterator;
 	
-	qtextures_t m_qtextures;
+	TextureMap _textures;
 	TexturesCacheObserver* m_observer;
 	std::size_t m_unrealised;
 	
@@ -158,11 +106,10 @@ class TexturesMap :
 	
 	GLint _textureComponents;
 	
-	ImageConstructorPtr _defaultConstructor; 
+	ImageConstructorPtr _emptyConstructor;
 
 public:
 	TexturesMap() : 
-		m_qtextures(TextureConstructor(this)), 
 		m_observer(0), 
 		m_unrealised(1),
 		_textureQuality(GlobalRegistry().getInt(RKEY_TEXTURES_QUALITY)),
@@ -173,7 +120,7 @@ public:
 		_S3CompressionSupported(false),
 		_textureCompressionFormat(TEXTURECOMPRESSION_NONE),
 		_textureComponents(GL_RGBA),
-		_defaultConstructor(new DefaultImageConstructor())
+		_emptyConstructor(new EmptyConstructor())
 	{
 		GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_QUALITY);
 		GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_MODE);
@@ -191,6 +138,14 @@ public:
 		
 		// greebo: Register this class in the preference system so that the constructPreferencePage() gets called.
 		GlobalPreferenceSystem().addConstructor(this);
+	}
+	
+	~TexturesMap() {
+		std::cout << "TexturesMap: Textures still in map at shutdown: " << _textures.size() << "\n";
+	}
+	
+	ImageConstructorPtr getDefaultConstructor() const {
+		return _emptyConstructor;
 	}
 	
 	ETexturesMode readTextureMode(const unsigned int& mode) {
@@ -243,7 +198,7 @@ public:
 		if (realised()) {
 			setTextureParameters();
 			for (TexturesMap::iterator i = begin(); i != end(); ++i) {
-				glBindTexture (GL_TEXTURE_2D, i->value->texture_number);
+				glBindTexture (GL_TEXTURE_2D, i->second->texture_number);
 				setTextureParameters();
 			}
 	
@@ -296,11 +251,11 @@ public:
 	}
 
 	iterator begin() {
-		return m_qtextures.begin();
+		return _textures.begin();
 	}
 	
 	iterator end() {
-		return m_qtextures.end();
+		return _textures.end();
 	}
 
 	LoadImageCallback defaultLoader() const {
@@ -314,21 +269,90 @@ public:
 	
 	// Capture the named texture
 	qtexture_t* capture(const std::string& name) {
-		return capture(defaultLoader(), name);
+		std::cout << "Capturing texture using default loader.\n";
+		qtexture_t* texture = capture(defaultLoader(), name);
+		texture->constructor = _emptyConstructor;
+				
+		return texture;
 	}
 
 	// Capture the named texture using the provided image loader
 	qtexture_t* capture(const LoadImageCallback& loader,
-	                    const std::string& name) {
-		return m_qtextures.capture(TextureKey(loader, name.c_str())).get();
+	                    const std::string& name) 
+	{
+		std::cout << "capture with LoadImageCallback called\n";
+		// TODO: remove this entire method
+		return capture(_emptyConstructor, name);
+	}
+	
+	// Capture the named texture using the provided image loader
+	qtexture_t* capture(ImageConstructorPtr constructor, 
+						const std::string& name) {
+		std::cout << "capture with ImageConstructor called\n";
+		
+		// Try to lookup the texture in the map
+		iterator i = _textures.find(name);
+		
+		if (i != _textures.end()) {
+			std::cout << "Found a match for " << name.c_str() << "\n";
+			// Increase the counter and return the qtexture_t*
+			i->second->referenceCounter++;
+			
+			std::cout << "Reference counter is now: " << i->second->referenceCounter << "\n";
+			
+			return i->second;
+		}
+		else {
+			std::cout << "No match found, creating new: " << name.c_str() << "\n";
+		
+			// Allocate a new qteture_t object with a load callback and a name
+			qtexture_t* texture = new qtexture_t(defaultLoader(), name);
+			
+			texture->constructor = constructor;
+			
+			// Store the texture into the map
+			_textures[name] = texture;
+			
+			// Increase the counter to 1
+			_textures[name]->referenceCounter++;
+			
+			// If the other texturesMap is already realised, realise this texture as well
+			if (realised()) {
+				realiseTexture(texture);
+			}
+			
+			return texture;
+		}
 	}
 
 	void release(qtexture_t* texture) {
-		
-		#if DEBUG_TEXTURES
-		globalOutputStream() << "textures release: " << makeQuoted(texture->name) << '\n';
-		#endif
-		m_qtextures.release(TextureKey(texture->load, texture->name.c_str()));
+		// Try to lookup the texture in the existing ones
+		for (iterator i = begin(); i != end(); i++) {
+			const std::string textureName = i->first; 
+			qtexture_t* registeredTexture = i->second;
+			
+			// Do we have a match (check loader too)
+			if (registeredTexture == texture) {
+				// Decrease the counter
+				i->second->referenceCounter--;
+				
+				// Check if this texture is referenced any longer
+				if (i->second->referenceCounter == 0) {
+					if (realised()) {
+						unrealiseTexture(registeredTexture);
+					}
+					
+					// Remove the map element
+					_textures.erase(i);
+					
+					// Remove the texture from the heap
+					delete registeredTexture;
+					
+					// Don't continue, the iterator is outdated now
+					return;
+				}
+			}
+		}
 	}
 	
 	void attach(TexturesCacheObserver& observer) {
@@ -432,43 +456,48 @@ public:
 			free(outpixels);
 	}	
 	
-	void realiseTexture(qtexture_t& texture, const TextureKey& key) {
+	void realiseTexture(qtexture_t* texture) {
 
-		texture.texture_number = 0;
+		texture->texture_number = 0;
 		
-		if (!string_empty(key.second.c_str())) {
+		if (texture->name != "") {
 			
-			// Try to load the image using the specified loader
-			// TODO: remove the c_str() as soon as the CopiedString is gone
-			Image* image = key.first.loadImage(key.second.c_str());
+			Image* image = NULL;
+			
+			if (texture->constructor != NULL) {
+				image = texture->constructor->construct();
+			}
+			else {
+				globalErrorStream() << "ImageConstructor is empty.\n";
+			}
 			
 			// If the image load was successful, the pointer is not NULL
 			if (image != NULL) {
 				
 				// Load the actual pixel data
-				loadTextureRGBA(&texture, image->getRGBAPixels(), image->getWidth(), image->getHeight());
+				loadTextureRGBA(texture, image->getRGBAPixels(), image->getWidth(), image->getHeight());
 				
-				texture.surfaceFlags = image->getSurfaceFlags();
-				texture.contentFlags = image->getContentFlags();
-				texture.value = image->getValue();
+				texture->surfaceFlags = image->getSurfaceFlags();
+				texture->contentFlags = image->getContentFlags();
+				texture->value = image->getValue();
 				
 				// Delete the image object (usually from the heap)
 				image->release();
 				
-				globalOutputStream() << "Loaded Texture: \"" << key.second.c_str() << "\"\n";
+				globalOutputStream() << "Loaded Texture: \"" << texture->name.c_str() << "\"\n";
 				GlobalOpenGL_debugAssertNoErrors();
 			}
 			else {
-				globalErrorStream() << "Texture load failed: \"" << key.second.c_str() << "\"\n";
+				globalErrorStream() << "Texture load failed: \"" << texture->name.c_str() << "\"\n";
 			}
 		}
 	}
 	
 	// This deletes a given texture from OpenGL
-	void unrealiseTexture(qtexture_t& texture) {
+	void unrealiseTexture(qtexture_t* texture) {
 		// Sanity checks
-		if (GlobalOpenGL().contextValid && texture.texture_number != 0) {
-			glDeleteTextures(1, &texture.texture_number);
+		if (GlobalOpenGL().contextValid && texture->texture_number != 0) {
+			glDeleteTextures(1, &texture->texture_number);
 			GlobalOpenGL_debugAssertNoErrors();
 		}
 	}
@@ -493,11 +522,12 @@ public:
 				_maxTextureSize = 1024;
 			}
 
-			for (qtextures_t::iterator i = m_qtextures.begin(); i != m_qtextures.end(); ++i) {
-				if (!i->value.empty()) {
-					realiseTexture(*(i->value), i->key);
+			for (iterator i = begin(); i != end(); ++i) {
+				if (i->second->referenceCounter > 0) {
+					realiseTexture(i->second);
 				}
 			}
+
 			if (m_observer != 0) {
 				m_observer->realise();
 			}
@@ -511,9 +541,9 @@ public:
 			}
 			
 			// Now unrealise all the textures
-			for (qtextures_t::iterator i = m_qtextures.begin(); i != m_qtextures.end(); ++i) {
-				if (!i->value.empty()) {
-					unrealiseTexture(*(i->value));
+			for (iterator i = begin(); i != end(); ++i) {
+				if (i->second->referenceCounter > 0) {
+					unrealiseTexture(i->second);
 				}
 			}
 		}

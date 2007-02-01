@@ -10,6 +10,8 @@
 #include "texturelib.h"
 #include "archivelib.h"
 
+#include "FileLoader.h"
+
 /* greebo: The Overlay module adds the ability to use an arbitrary image as
  * background image in the orthogonal views.
  * 
@@ -296,7 +298,8 @@ private:
 
 	void captureTexture() {
 		if (_texture == NULL && _imageName != "") {
-			_texture = GlobalTexturesCache().capture(LoadImageCallback(this, &loadImageGDK), _imageName);
+			ImageConstructorPtr constructor(new FileLoader(_imageName));
+			_texture = GlobalTexturesCache().capture(constructor, _imageName);
 			
 			if (_texture->texture_number == 0) {
 				// Image load seemed to have failed
@@ -314,22 +317,6 @@ private:
 			GlobalTexturesCache().release(_texture);
 			_texture = NULL;
 		}
-	}
-	
-	/* greebo: The custom loader that delivers the loaded Image* to the
-	 * GlobalTexturesCache() system. 
-	 */
-	static Image* loadImageGDK(void* environment, const char* name) {
-		Overlay* self = reinterpret_cast<Overlay*>(environment);
-		
-		DirectoryArchiveFile file(name, name);
-		
-		if (!file.failed()) {
-			// Invoke the imagefile loader
-			return self->_imageGDKModule.getTable()->load(file);
-		}
-		
-		return NULL;
 	}
 }; // class Overlay
 
