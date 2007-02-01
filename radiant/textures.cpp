@@ -34,7 +34,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "texturelib.h"
 #include "stringio.h"
 
-#include "image.h"
 #include "texmanip.h"
 #include <map>
 
@@ -728,19 +727,7 @@ class TexturesDependencies :
 	public GlobalRegistryModuleRef,
 	public GlobalOpenGLModuleRef,
 	public GlobalPreferenceSystemModuleRef 
-{
-	// The reference collection of ImageLoaders 
-	ImageLoaderModulesRef _imageLoaders;
-public:
-	TexturesDependencies() :
-		_imageLoaders(GlobalRadiant().getRequiredGameDescriptionKeyValue("texturetypes"))
-	{}
-	
-	// Returns the module collection of ImageLoaders
-	ImageLoaderModules& getImageLoaders() {
-		return _imageLoaders.get();
-	}
-};
+{};
 
 class TexturesAPI
 {
@@ -766,7 +753,3 @@ public:
 typedef SingletonModule<TexturesAPI, TexturesDependencies> TexturesModule;
 typedef Static<TexturesModule> StaticTexturesModule;
 StaticRegisterModule staticRegisterTextures(StaticTexturesModule::instance());
-
-ImageLoaderModules& Textures_getImageLoaders() {
-	return StaticTexturesModule::instance().getDependencies().getImageLoaders();
-}
