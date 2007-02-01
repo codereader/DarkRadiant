@@ -137,7 +137,7 @@ undoEnv.Install(INSTALL + '/modules', undoLib)
 
 # Overlay module
 overlayEnv = module_env.Copy()
-overlaySrc = build_list('plugins/overlay', 'Overlay.cpp')
+overlaySrc = build_list('plugins/overlay', 'Overlay.cpp FileLoader.cpp')
 overlayLib = overlayEnv.SharedLibrary(target='overlay', source=overlaySrc)
 overlayEnv.Install(INSTALL + '/modules', overlayLib)
 
@@ -172,7 +172,9 @@ shaders_lst = build_list('plugins/shaders',
 						 'shaders.cpp \
 						 plugin.cpp \
 						 MapExpression.cpp \
-						 ShaderTemplate.cpp ShaderFileLoader.cpp')
+						 ShaderTemplate.cpp ShaderFileLoader.cpp \
+						 constructors/DefaultConstructor.cpp \
+						 constructors/FileLoader.cpp')
 shaders_env.useGlib2()
 shaders_env.Append(LIBS = ['cmdlib', 'xmlutil'])
 shaders_env.Append(LIBPATH = ['libs'])
