@@ -32,7 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 typedef Vector3 Colour3;
 typedef unsigned int GLuint;
-class LoadImageCallback;
 
 enum ProjectionAxis {
 	eProjectionAxisX = 0,
@@ -48,9 +47,7 @@ struct qtexture_t
 	// The name of this texture
 	const std::string name;
 	
-	// The callback for loading the texture
-	const LoadImageCallback& load;
-	
+	// The constructor object to retrieve the pixel data for this texture
 	ImageConstructorPtr constructor;
 	
 	// Texture Dimensions
@@ -68,9 +65,8 @@ struct qtexture_t
 	int referenceCounter;
 
 	// Constructor
-	qtexture_t(const LoadImageCallback& load, const std::string& name) :
+	qtexture_t(const std::string& name) :
 		name(name),
-		load(load),
 		referenceCounter(0)
 	{}
 

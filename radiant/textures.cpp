@@ -65,17 +65,6 @@ class TexturesMap :
 	public PreferenceConstructor,
 	public RegistryKeyObserver
 {
-	class EmptyConstructor :
-		public ImageConstructor 
-	{
-	public:
-		EmptyConstructor() {}
-		Image* construct() {
-			std::cout << "EmptyLoader called\n";
-			return NULL;
-		}
-	};
-	
 	byte _gammaTable[256];
 
 	typedef std::map<std::string, qtexture_t*> TextureMap;
@@ -105,8 +94,6 @@ class TexturesMap :
 	TextureCompressionFormat _textureCompressionFormat;
 	
 	GLint _textureComponents;
-	
-	ImageConstructorPtr _emptyConstructor;
 
 public:
 	TexturesMap() : 
@@ -119,8 +106,7 @@ public:
 		_openGLCompressionSupported(false),
 		_S3CompressionSupported(false),
 		_textureCompressionFormat(TEXTURECOMPRESSION_NONE),
-		_textureComponents(GL_RGBA),
-		_emptyConstructor(new EmptyConstructor())
+		_textureComponents(GL_RGBA)
 	{
 		GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_QUALITY);
 		GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_MODE);
@@ -142,10 +128,6 @@ public:
 	
 	~TexturesMap() {
 		std::cout << "TexturesMap: Textures still in map at shutdown: " << _textures.size() << "\n";
-	}
-	
-	ImageConstructorPtr getDefaultConstructor() const {
-		return _emptyConstructor;
 	}
 	
 	ETexturesMode readTextureMode(const unsigned int& mode) {
@@ -258,33 +240,6 @@ public:
 		return _textures.end();
 	}
 
-	LoadImageCallback defaultLoader() const {
-		// Return the QERApp image loader that cycles through all the image modules
-		return LoadImageCallback(NULL, QERApp_LoadImage);
-	}
-	
-	Image* loadImage(const std::string& name) {
-		return defaultLoader().loadImage(name);
-	}
-	
-	// Capture the named texture
-	qtexture_t* capture(const std::string& name) {
-		std::cout << "Capturing texture using default loader.\n";
-		qtexture_t* texture = capture(defaultLoader(), name);
-		texture->constructor = _emptyConstructor;
-				
-		return texture;
-	}
-
-	// Capture the named texture using the provided image loader
-	qtexture_t* capture(const LoadImageCallback& loader,
-	                    const std::string& name) 
-	{
-		std::cout << "capture with LoadImageCallback called\n";
-		// TODO: remove this entire method
-		return capture(_emptyConstructor, name);
-	}
-	
 	// Capture the named texture using the provided image loader
 	qtexture_t* capture(ImageConstructorPtr constructor, 
 						const std::string& name) {
@@ -305,9 +260,8 @@ public:
 		else {
 			std::cout << "No match found, creating new: " << name.c_str() << "\n";
 		
-			// Allocate a new qteture_t object with a load callback and a name
-			qtexture_t* texture = new qtexture_t(defaultLoader(), name);
-			
+			// Allocate a new qtexture_t object
+			qtexture_t* texture = new qtexture_t(name);
 			texture->constructor = constructor;
 			
 			// Store the texture into the map
@@ -404,7 +358,7 @@ public:
 	
 		glBindTexture(GL_TEXTURE_2D, q->texture_number);
 	
-		GlobalTexturesCache().setTextureParameters();
+		setTextureParameters();
 	
 		int gl_width = 1;
 		while (gl_width < nWidth)

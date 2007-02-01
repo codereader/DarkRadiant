@@ -34,36 +34,6 @@ typedef boost::shared_ptr<ImageConstructor> ImageConstructorPtr;
 // Forward declaration
 struct qtexture_t; // defined in texturelib.h
 
-class LoadImageCallback
-{
-	// The type of a load function
-	typedef Image* (*LoadFunc)(void* environment, const char* name);
-
-public:
-	void* m_environment;
-	LoadFunc m_func;
-
-	LoadImageCallback(void* environment, LoadFunc func) : 
-		m_environment(environment), 
-		m_func(func) 
-	{}
-	
-	Image* loadImage(const std::string& name) const {
-		return m_func(m_environment, name.c_str());
-	}
-};
-
-
-inline bool operator==(const LoadImageCallback& self, const LoadImageCallback& other)
-{
-  return self.m_environment == other.m_environment && self.m_func == other.m_func; 
-}
-inline bool operator<(const LoadImageCallback& self, const LoadImageCallback& other)
-{
-  return self.m_environment < other.m_environment || 
-        (!(other.m_environment < self.m_environment) && self.m_func < other.m_func); 
-}
-
 class TexturesCacheObserver
 {
 public:
@@ -94,12 +64,6 @@ class TexturesCache
 public:
 	INTEGER_CONSTANT(Version, 1);
 	STRING_CONSTANT(Name, "textures");
-  
-	/**
-	 * Capture the named image texture and return the associated qtexture_t
-	 * struct.
-	 */
-	virtual qtexture_t* capture(const std::string& name) = 0;
   
 	/**
 	 * Capture the named image texture using the provided ImageConstructor.
