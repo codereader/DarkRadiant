@@ -82,7 +82,7 @@ GtkWidget* OverlayDialog::createWidgets() {
 	
 	// Other widgets are in a table, which is indented with respect to the
 	// Use Image checkbox, and becomes enabled/disabled with it.
-	GtkWidget* tbl = gtk_table_new(2, 2, FALSE);
+	GtkWidget* tbl = gtk_table_new(4, 2, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(tbl), 12);
 	gtk_table_set_col_spacings(GTK_TABLE(tbl), 12);
 	_subWidgets["subTable"] = tbl;
@@ -113,7 +113,25 @@ GtkWidget* OverlayDialog::createWidgets() {
 	_subWidgets["transparency"] = transSlider;
 							  				
 	gtk_table_attach_defaults(GTK_TABLE(tbl), transSlider, 1, 2, 1, 2);
-							  				
+	
+	// Options list
+	gtk_table_attach(GTK_TABLE(tbl), 
+					 gtkutil::LeftAlignedLabel("<b>Options</b>"),
+					 0, 1, 2, 3, 
+					 GTK_FILL, GTK_FILL, 0, 0);
+	
+	GtkWidget* keepAspect = 
+		gtk_check_button_new_with_label("Keep aspect ratio"); 
+	g_signal_connect(G_OBJECT(keepAspect), "toggled",
+					 G_CALLBACK(_onKeepAspect), this);
+	_subWidgets["keepAspect"] = keepAspect;
+	gtk_table_attach_defaults(GTK_TABLE(tbl), keepAspect, 1, 2, 2, 3);
+	
+	gtk_table_attach_defaults(
+		GTK_TABLE(tbl),
+		gtk_check_button_new_with_label("Zoom image with viewport"),
+		1, 2, 3, 4);
+	
 	// Pack table into vbox and return
 	gtk_box_pack_start(GTK_BOX(vbx), 
 					   gtkutil::LeftAlignment(tbl, 18, 1.0), 
@@ -170,6 +188,12 @@ void OverlayDialog::getStateFromRegistry() {
 		GTK_RANGE(_subWidgets["transparency"]),
 		boost::lexical_cast<double>(
 			GlobalRegistry().get(RKEY_OVERLAY_TRANSPARENCY)));
+			
+	// Options: Keep aspect
+	gtk_toggle_button_set_active(
+		GTK_TOGGLE_BUTTON(_subWidgets["keepAspect"]),
+		GlobalRegistry().get(RKEY_OVERLAY_PROPORTIONAL) == "1" ? TRUE : FALSE);
+	
 }
 
 /* GTK CALLBACKS */
@@ -177,6 +201,21 @@ void OverlayDialog::getStateFromRegistry() {
 // Close button
 void OverlayDialog::_onClose(GtkWidget* w, OverlayDialog* self) {
 	gtk_widget_hide(self->_widget);
+}
+
+// Keep aspect toggle
+void OverlayDialog::_onKeepAspect(GtkToggleButton* w, OverlayDialog* self) {
+
+	// Set the registry key
+	if (gtk_toggle_button_get_active(w)) {
+		GlobalRegistry().set(RKEY_OVERLAY_PROPORTIONAL, "1");
+	}
+	else {
+		GlobalRegistry().set(RKEY_OVERLAY_PROPORTIONAL, "0");
+	}	
+
+	// Refresh
+	GlobalSceneGraph().sceneChanged();
 }
 
 // Use image toggle
