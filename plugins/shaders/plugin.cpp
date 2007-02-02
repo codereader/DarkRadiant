@@ -41,7 +41,7 @@ class ShadersDependencies :
 
 class ShadersDoom3API
 {
-  ShaderSystem* m_shadersdoom3;
+  Doom3ShaderSystem* m_shadersdoom3;
 public:
   typedef ShaderSystem Type;
   STRING_CONSTANT(Name, "doom3");
@@ -57,7 +57,7 @@ public:
   }
   ShaderSystem* getTable()
   {
-    return m_shadersdoom3;
+    return dynamic_cast<ShaderSystem*>(m_shadersdoom3);
   }
 };
 

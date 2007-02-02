@@ -42,7 +42,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <map>
 
 #include "ifilesystem.h"
-#include "ishaders.h"
 #include "itextures.h"
 #include "qerplugin.h"
 #include "irender.h"
@@ -68,7 +67,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "textures/FileLoader.h"
 #include "textures/GLTextureManager.h"
 #include "CShader.h"
-#include "ShaderLibrary.h"
 
 /* GLOBALS */
 
@@ -156,6 +154,7 @@ void FreeShaders()
  */
 CShader* Try_Shader_ForName(const std::string& name)
 {
+	// Try to lookup a specific shader by name and return it, if successful
   {
     shaders_t::iterator i = g_ActiveShaders.find(name);
     if(i != g_ActiveShaders.end())
@@ -164,6 +163,8 @@ CShader* Try_Shader_ForName(const std::string& name)
     }
   }
 
+	// No shader found in the active shaders list, try to find a ShaderTemplate 
+	
 	// Search for a matching ShaderDefinition. If none is found, create a 
 	// default one and return this instead (this is how unrecognised textures
 	// get rendered with notex.bmp).
@@ -177,6 +178,7 @@ CShader* Try_Shader_ForName(const std::string& name)
 							ShaderDefinitionMap::value_type(name, def)).first;
 	}
 
+	// Now create a new Shader object out of the found or created template
 	ShaderPointer pShader(new CShader(name, i->second));
 	g_ActiveShaders.insert(shaders_t::value_type(name, pShader));
 	g_ActiveShadersChangedNotify();
@@ -285,108 +287,98 @@ void Shaders_Refresh()
   Shaders_Realise();
 }
 
-class Quake3ShaderSystem : public ShaderSystem, public ModuleObserver
-{
-public:
-  void realise()
-  {
-    Shaders_Realise();
-  }
-  void unrealise()
-  {
-    Shaders_Unrealise();
-  }
-  void refresh()
-  {
-    Shaders_Refresh();
-  }
+// ---------- Begin Shadersystem implementation ------------------------------------
 
-	// Is the shader system realised
-	bool isRealised() {
-		return g_shaders_unrealised == 0;
+Doom3ShaderSystem::Doom3ShaderSystem() {
+	_library = new ShaderLibrary();
+}
+
+Doom3ShaderSystem::~Doom3ShaderSystem() {
+	delete _library;
+}
+
+void Doom3ShaderSystem::realise() {
+	Shaders_Realise();
+}
+void Doom3ShaderSystem::unrealise() {
+	Shaders_Unrealise();
+}
+void Doom3ShaderSystem::refresh() {
+	Shaders_Refresh();
+}
+
+// Is the shader system realised
+bool Doom3ShaderSystem::isRealised() {
+	return g_shaders_unrealised == 0;
+}
+
+// Return a shader by name
+IShader* Doom3ShaderSystem::getShaderForName(const std::string& name) {
+	IShader *pShader = Try_Shader_ForName(name.c_str());
+	pShader->IncRef();
+	return pShader;
+}
+
+void Doom3ShaderSystem::foreachShaderName(const ShaderNameCallback& callback) {
+	for (ShaderDefinitionMap::const_iterator i = g_shaderDefinitions.begin(); i != g_shaderDefinitions.end(); ++i) {
+		callback((*i).first.c_str());
 	}
+}
 
-	// Return a shader by name
-	IShader* getShaderForName(const std::string& name) {
-		IShader *pShader = Try_Shader_ForName(name.c_str());
-		pShader->IncRef();
-		return pShader;
+void Doom3ShaderSystem::beginActiveShadersIterator() {
+	ActiveShaders_IteratorBegin();
+}
+bool Doom3ShaderSystem::endActiveShadersIterator() {
+	return ActiveShaders_IteratorAtEnd();
+}
+IShader* Doom3ShaderSystem::dereferenceActiveShadersIterator() {
+	return ActiveShaders_IteratorCurrent();
+}
+void Doom3ShaderSystem::incrementActiveShadersIterator() {
+	ActiveShaders_IteratorIncrement();
+}
+void Doom3ShaderSystem::setActiveShadersChangedNotify(const Callback& notify) {
+	g_ActiveShadersChangedNotify = notify;
+}
+
+void Doom3ShaderSystem::attach(ModuleObserver& observer) {
+	g_observers.attach(observer);
+}
+void Doom3ShaderSystem::detach(ModuleObserver& observer) {
+	g_observers.detach(observer);
+}
+
+void Doom3ShaderSystem::setLightingEnabled(bool enabled) {
+	if (CShader::m_lightingEnabled != enabled) {
+		for (shaders_t::const_iterator i = g_ActiveShaders.begin(); i != g_ActiveShaders.end(); ++i) {
+			(*i).second->unrealiseLighting();
+		}
+		CShader::m_lightingEnabled = enabled;
+		for (shaders_t::const_iterator i = g_ActiveShaders.begin(); i != g_ActiveShaders.end(); ++i) {
+			(*i).second->realiseLighting();
+		}
 	}
+}
 
-  void foreachShaderName(const ShaderNameCallback& callback)
-  {
-    for(ShaderDefinitionMap::const_iterator i = g_shaderDefinitions.begin(); i != g_shaderDefinitions.end(); ++i)
-    {
-      callback((*i).first.c_str());
-    }
-  }
+const char* Doom3ShaderSystem::getTexturePrefix() const {
+	return g_texturePrefix;
+}
 
-  void beginActiveShadersIterator()
-  {
-    ActiveShaders_IteratorBegin();
-  }
-  bool endActiveShadersIterator()
-  {
-    return ActiveShaders_IteratorAtEnd();
-  }
-  IShader* dereferenceActiveShadersIterator()
-  {
-    return ActiveShaders_IteratorCurrent();
-  }
-  void incrementActiveShadersIterator()
-  {
-    ActiveShaders_IteratorIncrement();
-  }
-  void setActiveShadersChangedNotify(const Callback& notify)
-  {
-    g_ActiveShadersChangedNotify = notify;
-  }
+// ---------- End Shadersystem implementation ------------------------------------
 
-  void attach(ModuleObserver& observer)
-  {
-    g_observers.attach(observer);
-  }
-  void detach(ModuleObserver& observer)
-  {
-    g_observers.detach(observer);
-  }
-
-  void setLightingEnabled(bool enabled)
-  {
-    if(CShader::m_lightingEnabled != enabled)
-    {
-      for(shaders_t::const_iterator i = g_ActiveShaders.begin(); i != g_ActiveShaders.end(); ++i)
-      {
-        (*i).second->unrealiseLighting();
-      }
-      CShader::m_lightingEnabled = enabled;
-      for(shaders_t::const_iterator i = g_ActiveShaders.begin(); i != g_ActiveShaders.end(); ++i)
-      {
-        (*i).second->realiseLighting();
-      }
-    }
-  }
-
-  const char* getTexturePrefix() const
-  {
-    return g_texturePrefix;
-  }
-};
-
-Quake3ShaderSystem g_Quake3ShaderSystem;
-
-ShaderSystem& GetShaderSystem()
+Doom3ShaderSystem& GetShaderSystem()
 {
-  return g_Quake3ShaderSystem;
+	static Doom3ShaderSystem _shaderSystem;
+	return _shaderSystem;
 }
 
 void Shaders_Construct()
 {
-  GlobalFileSystem().attach(g_Quake3ShaderSystem);
+  GlobalFileSystem().attach(GetShaderSystem());
 }
 void Shaders_Destroy()
 {
-  GlobalFileSystem().detach(g_Quake3ShaderSystem);
+  GlobalFileSystem().detach(GetShaderSystem());
 
   if(Shaders_realised())
   {
