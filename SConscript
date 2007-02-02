@@ -171,7 +171,7 @@ shaders_env = module_env.Copy()
 shaders_lst = build_list('plugins/shaders', 
 						 'shaders.cpp \
 						 plugin.cpp \
-						 MapExpression.cpp \
+						 MapExpression.cpp CShader.cpp \
 						 ShaderTemplate.cpp ShaderFileLoader.cpp \
 						 textures/GLTextureManager.cpp \
 						 textures/TextureManipulator.cpp \
