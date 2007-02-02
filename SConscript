@@ -174,6 +174,7 @@ shaders_lst = build_list('plugins/shaders',
 						 MapExpression.cpp CShader.cpp \
 						 ShaderTemplate.cpp ShaderFileLoader.cpp \
 						 ShaderLibrary.cpp \
+						 Doom3ShaderSystem.cpp \
 						 textures/GLTextureManager.cpp \
 						 textures/TextureManipulator.cpp \
 						 textures/DefaultConstructor.cpp \
