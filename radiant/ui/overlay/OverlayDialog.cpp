@@ -127,10 +127,12 @@ GtkWidget* OverlayDialog::createWidgets() {
 	_subWidgets["keepAspect"] = keepAspect;
 	gtk_table_attach_defaults(GTK_TABLE(tbl), keepAspect, 1, 2, 2, 3);
 	
-	gtk_table_attach_defaults(
-		GTK_TABLE(tbl),
-		gtk_check_button_new_with_label("Zoom image with viewport"),
-		1, 2, 3, 4);
+	GtkWidget* scaleWithViewport =
+		gtk_check_button_new_with_label("Zoom image with viewport");
+	g_signal_connect(G_OBJECT(scaleWithViewport), "toggled",
+					 G_CALLBACK(_onScaleImage), this);
+	_subWidgets["scaleImage"] = scaleWithViewport;	
+	gtk_table_attach_defaults(GTK_TABLE(tbl), scaleWithViewport, 1, 2, 3, 4);
 	
 	// Pack table into vbox and return
 	gtk_box_pack_start(GTK_BOX(vbx), 
@@ -194,6 +196,10 @@ void OverlayDialog::getStateFromRegistry() {
 		GTK_TOGGLE_BUTTON(_subWidgets["keepAspect"]),
 		GlobalRegistry().get(RKEY_OVERLAY_PROPORTIONAL) == "1" ? TRUE : FALSE);
 	
+	// Options: Scale with window
+	gtk_toggle_button_set_active(
+		GTK_TOGGLE_BUTTON(_subWidgets["scaleImage"]),
+		GlobalRegistry().get(RKEY_OVERLAY_SCALE_WITH_XY) == "1" ? TRUE : FALSE);
 }
 
 /* GTK CALLBACKS */
@@ -216,6 +222,19 @@ void OverlayDialog::_onKeepAspect(GtkToggleButton* w, OverlayDialog* self) {
 
 	// Refresh
 	GlobalSceneGraph().sceneChanged();
+}
+
+// Scale with viewport toggle
+void OverlayDialog::_onScaleImage(GtkToggleButton* w, OverlayDialog* self) {
+
+	// Set the registry key
+	if (gtk_toggle_button_get_active(w)) {
+		GlobalRegistry().set(RKEY_OVERLAY_SCALE_WITH_XY, "1");
+	}
+	else {
+		GlobalRegistry().set(RKEY_OVERLAY_SCALE_WITH_XY, "0");
+	}	
+
 }
 
 // Use image toggle
