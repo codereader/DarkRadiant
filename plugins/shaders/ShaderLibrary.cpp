@@ -43,4 +43,30 @@ ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name) {
 	}
 }
 
+ShaderPtr ShaderLibrary::findShader(const std::string& name) {
+	// Try to lookup the shader in the active shaders list
+	ShaderMap::iterator i = _shaders.find(name);
+	
+	if (i != _shaders.end()) {
+		// A shader has been found, return its pointer
+		return i->second;
+	}
+	else {
+		// No shader has been found, retrieve its definition (may also be a dummy def)
+		ShaderDefinition& def = getDefinition(name);
+		
+		// Construct a new shader object with this def and insert it into the map
+		ShaderPtr shader(new CShader(name, def));
+		
+		_shaders[name] = shader;
+		
+		return shader;
+	}
+}
+
+void ShaderLibrary::clear() {
+	_shaders.clear();
+	_definitions.clear();
+}
+
 } // namespace shader

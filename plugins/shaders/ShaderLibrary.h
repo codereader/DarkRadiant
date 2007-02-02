@@ -35,6 +35,17 @@ public:
 	 * name is not found in the map. 
 	 */
 	ShaderDefinition& getDefinition(const std::string& name);
+	
+	/* greebo: Clears out the stored shader definitions
+	 */
+	void clear();
+	
+	/* greebo: Retrieves the shader with the given name.
+	 * 
+	 * @returns: the according ShaderPtr, this may also
+	 * be a pointer to a dummy shader (shader not found) 
+	 */
+	ShaderPtr findShader(const std::string& name);
 
 }; // class ShaderLibrary
 
