@@ -4,6 +4,7 @@
 #include <gtk/gtkwidget.h>
 #include <gtk/gtktogglebutton.h>
 #include <gtk/gtkfilechooser.h>
+#include <gtk/gtkrange.h>
 
 #include <map>
 #include <string>
@@ -42,6 +43,8 @@ private:
 	static void _onClose(GtkWidget*, OverlayDialog*);
 	static void _onUseImage(GtkToggleButton*, OverlayDialog*);
 	static void _onFileSelection(GtkFileChooser*, OverlayDialog*);
+	static bool _onTransparencyScroll(
+							GtkRange*, GtkScrollType, double, OverlayDialog*);
 
 public:
 
