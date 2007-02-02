@@ -68,6 +68,7 @@ public:
 	// Constructor
 	Texture(const std::string& name) :
 		name(name),
+		texture_number(0),
 		referenceCounter(0)
 	{}
 

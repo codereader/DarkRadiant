@@ -3,6 +3,7 @@
 
 #include "qerplugin.h"
 #include "iimage.h"
+#include "ishaders.h"
 #include "modulesystem/modulesmap.h"
 
 /* greebo: This is the default imageconstructor that loads a given file 
@@ -12,7 +13,8 @@
  * and searches for the file formats defined in doom3.game. 
  */
 class DefaultConstructor : 
-	public ImageConstructor
+	public ImageConstructor,
+	public TextureConstructor
 {
 	// The reference to the ImageLoader modules 
 	ImageLoaderModulesRef _imageLoaders;
