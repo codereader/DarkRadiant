@@ -145,6 +145,7 @@ void FreeShaders()
   // empty the actives shaders list
   g_ActiveShaders.clear();
   g_shaderDefinitions.clear();
+	GetShaderLibrary().clear();
   g_ActiveShadersChangedNotify();
 }
 
@@ -153,6 +154,12 @@ void FreeShaders()
  */
 CShader* Try_Shader_ForName(const std::string& name)
 {
+	// Retrieve the shader from the library (may as well return a dummy shader) 
+	ShaderPtr shader = GetShaderLibrary().findShader(name);
+	
+	
+	// Old code below
+	
 	// Try to lookup a specific shader by name and return it, if successful
   {
     shaders_t::iterator i = g_ActiveShaders.find(name);
@@ -169,9 +176,6 @@ CShader* Try_Shader_ForName(const std::string& name)
 	// get rendered with notex.bmp).
 	ShaderDefinitionMap::iterator i = g_shaderDefinitions.find(name);
 	
-	// Retrieve the shader definition for this name (may be an new, empty one as well) 
-	ShaderDefinition& def = GetShaderLibrary().getDefinition(name);
-	
 	if (i == g_shaderDefinitions.end()) {
 		ShaderTemplatePtr shaderTemplate(new ShaderTemplate(name));
 
@@ -180,7 +184,7 @@ CShader* Try_Shader_ForName(const std::string& name)
 		i = g_shaderDefinitions.insert(
 							ShaderDefinitionMap::value_type(name, def)).first;
 	}
-
+	
 	// Now create a new Shader object out of the found or created template
 	ShaderPointer pShader(new CShader(name, i->second));
 	g_ActiveShaders.insert(shaders_t::value_type(name, pShader));
