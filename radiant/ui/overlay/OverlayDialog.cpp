@@ -3,6 +3,7 @@
 
 #include "ioverlay.h"
 #include "iscenegraph.h"
+#include "iregistry.h"
 
 #include <gtk/gtk.h>
 
@@ -13,7 +14,28 @@ namespace ui
 namespace {
 	
 	const char* DIALOG_TITLE = "Background image";
+
+	// Registry keys
+	const char* RKEY_OVERLAY_VISIBLE = "user/ui/xyview/overlay/visible";
 	
+	const char* 
+	RKEY_OVERLAY_TRANSPARENCY = "user/ui/xyview/overlay/transparency";
+	
+	const char* RKEY_OVERLAY_IMAGE = "user/ui/xyview/overlay/image";
+	const char* RKEY_OVERLAY_SCALE = "user/ui/xyview/overlay/scale";
+	
+	const char* 
+	RKEY_OVERLAY_TRANSLATIONX = "user/ui/xyview/overlay/translationX";
+	
+	const char* 
+	RKEY_OVERLAY_TRANSLATIONY = "user/ui/xyview/overlay/translationY";
+	
+	const char* 
+	RKEY_OVERLAY_PROPORTIONAL = "user/ui/xyview/overlay/proportional";
+	
+	const char* 
+	RKEY_OVERLAY_SCALE_WITH_XY = "user/ui/xyview/overlay/scaleWithOrthoView";
+
 }
 
 // Create GTK stuff in c-tor
@@ -38,10 +60,14 @@ OverlayDialog::OverlayDialog()
 
 // Construct main widgets
 GtkWidget* OverlayDialog::createWidgets() {
+	
+	// "Use image" checkbox
 	GtkWidget* useImage = gtk_check_button_new_with_label(
 							"Use background image"); 
+	_subWidgets["useImage"] = useImage;
 	g_signal_connect(G_OBJECT(useImage), "toggled",
 					 G_CALLBACK(_onUseImage), this);
+	
 	return useImage;
 }
 
@@ -62,7 +88,24 @@ void OverlayDialog::display() {
 	
 	// Maintain a static dialog instance and display it on demand
 	static OverlayDialog _instance;
+	
+	// Update the dialog state from the registry, and show it
+	_instance.getStateFromRegistry();
 	gtk_widget_show_all(_instance._widget);
+}
+
+// Get the dialog state from the registry
+void OverlayDialog::getStateFromRegistry() {
+	
+	// Use image
+	if (GlobalRegistry().get(RKEY_OVERLAY_VISIBLE) == "1") {
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_subWidgets["useImage"]),
+									 TRUE);
+	}
+	else {
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_subWidgets["useImage"]),
+									 FALSE);
+	}
 }
 
 /* GTK CALLBACKS */
@@ -78,9 +121,12 @@ void OverlayDialog::_onUseImage(GtkToggleButton* w, OverlayDialog* self) {
 	// Enable or disable the overlay based on checked status
 	if (gtk_toggle_button_get_active(w)) {
 		GlobalOverlay().show(true);
+		GlobalRegistry().set(RKEY_OVERLAY_VISIBLE, "1");
+		
 	}
 	else {
 		GlobalOverlay().show(false);
+		GlobalRegistry().set(RKEY_OVERLAY_VISIBLE, "0");
 	}	
 	
 	// Refresh
