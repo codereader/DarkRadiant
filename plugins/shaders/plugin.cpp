@@ -37,18 +37,7 @@ class ShadersDependencies :
   public GlobalTexturesModuleRef,
   public GlobalRadiantModuleRef,
   public GlobalRegistryModuleRef
-{
-  ImageModuleRef m_bitmapModule;
-public:
-  ShadersDependencies() :
-    m_bitmapModule("bmp")
-  {
-  }
-  ImageModuleRef& getBitmapModule()
-  {
-    return m_bitmapModule;
-  }
-};
+{};
 
 class ShadersDoom3API
 {
@@ -59,7 +48,6 @@ public:
 
   ShadersDoom3API(ShadersDependencies& dependencies)
   {
-    g_bitmapModule = dependencies.getBitmapModule().getTable();
     Shaders_Construct();
     m_shadersdoom3 = &GetShaderSystem();
   }
