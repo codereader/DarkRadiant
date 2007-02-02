@@ -7,6 +7,10 @@
 
 class ShaderLibrary
 {
+	// The shader definitions act as precursor for a real shader
+	// These are referenced by name. 
+	ShaderDefinitionMap _definitions;
+	
 	typedef std::map<std::string, ShaderPtr> ShaderMap;
 	typedef ShaderMap::iterator iterator;
 	
@@ -19,9 +23,10 @@ public:
 	// Destructor
 	~ShaderLibrary();
 	
-	iterator begin();
-	iterator end();
-	iterator find(const std::string& name);
+	/* greebo: Add a shader definition to the internal list 
+	 * @returns: FALSE, if such a name already exists, TRUE otherwise
+	 */
+	bool addDefinition(const std::string& name, ShaderDefinition& def);
 
 }; // class ShaderLibrary
 

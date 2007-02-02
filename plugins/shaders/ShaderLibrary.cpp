@@ -1,20 +1,19 @@
 #include "ShaderLibrary.h"
 
+#include <iostream>
+
 ShaderLibrary::ShaderLibrary()
-{}
+{
+	std::cout << "ShaderLibrary initialised.\n";
+}
 
 ShaderLibrary::~ShaderLibrary() {
-	
+	std::cout << "ShaderLibrary shutdown.\n";
 }
 	
-ShaderLibrary::iterator ShaderLibrary::begin() {
-	return _shaders.begin();
-}
-
-ShaderLibrary::iterator ShaderLibrary::end()  {
-	return _shaders.end();
-}
-
-ShaderLibrary::iterator ShaderLibrary::find(const std::string& name)  {
-	return _shaders.find(name);
+// Insert into the definitions map, if not already present
+bool ShaderLibrary::addDefinition(const std::string& name, 
+								  ShaderDefinition& def) 
+{
+	return _definitions.insert(ShaderDefinitionMap::value_type(name, def)).second;
 }
