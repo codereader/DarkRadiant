@@ -5,6 +5,8 @@
 #include "moduleobserver.h"
 #include "ShaderLibrary.h"
 
+namespace shader {
+
 class Doom3ShaderSystem : 
 	public ShaderSystem, 
 	public ModuleObserver
@@ -46,9 +48,15 @@ public:
 
 	const char* getTexturePrefix() const;
 
+	ShaderLibrary& getLibrary();
+
 }; // class Doom3ShaderSystem
 
+} // namespace shader
+
 // Accessor function for the shader system
-Doom3ShaderSystem& GetShaderSystem();
+shader::Doom3ShaderSystem& GetShaderSystem();
+
+shader::ShaderLibrary& GetShaderLibrary();
 
 #endif /*DOOM3SHADERSYSTEM_H_*/
