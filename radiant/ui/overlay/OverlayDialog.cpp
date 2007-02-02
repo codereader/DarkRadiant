@@ -84,13 +84,14 @@ GtkWidget* OverlayDialog::createWidgets() {
 	// Use Image checkbox, and becomes enabled/disabled with it.
 	GtkWidget* tbl = gtk_table_new(2, 2, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(tbl), 12);
-	gtk_table_set_col_spacings(GTK_TABLE(tbl), 6);
+	gtk_table_set_col_spacings(GTK_TABLE(tbl), 12);
+	_subWidgets["subTable"] = tbl;
 	
 	// Image file
 	gtk_table_attach(GTK_TABLE(tbl), 
 					 gtkutil::LeftAlignedLabel("<b>Image file</b>"),
 					 0, 1, 0, 1, 
-					 GTK_SHRINK, GTK_FILL, 0, 0);
+					 GTK_FILL, GTK_FILL, 0, 0);
 	
 	GtkWidget* fileButton = gtk_file_chooser_button_new(
 							  	"Choose image", GTK_FILE_CHOOSER_ACTION_OPEN);
@@ -99,9 +100,21 @@ GtkWidget* OverlayDialog::createWidgets() {
 	_subWidgets["fileChooser"] = fileButton;
 	
 	gtk_table_attach_defaults(GTK_TABLE(tbl), fileButton, 1, 2, 0, 1);
+	
+	// Transparency slider
+	gtk_table_attach(GTK_TABLE(tbl), 
+					 gtkutil::LeftAlignedLabel("<b>Transparency</b>"),
+					 0, 1, 1, 2, 
+					 GTK_FILL, GTK_FILL, 0, 0);
+				
+	GtkWidget* transSlider = gtk_hscale_new_with_range(0, 1, 0.1);
+	_subWidgets["transparency"] = transSlider;
 							  				
+	gtk_table_attach_defaults(GTK_TABLE(tbl), transSlider, 1, 2, 1, 2);
+							  				
+	// Pack table into vbox and return
 	gtk_box_pack_start(GTK_BOX(vbx), 
-					   gtkutil::LeftAlignment(tbl, 12, 1.0), 
+					   gtkutil::LeftAlignment(tbl, 18, 1.0), 
 					   TRUE, TRUE, 0);				
 	
 	return vbx;
@@ -159,12 +172,15 @@ void OverlayDialog::_onClose(GtkWidget* w, OverlayDialog* self) {
 // Use image toggle
 void OverlayDialog::_onUseImage(GtkToggleButton* w, OverlayDialog* self) {
 	
-	// Enable or disable the overlay based on checked status
+	// Enable or disable the overlay based on checked status, also update the
+	// sensitivity of the subtable
 	if (gtk_toggle_button_get_active(w)) {
 		GlobalRegistry().set(RKEY_OVERLAY_VISIBLE, "1");
+		gtk_widget_set_sensitive(self->_subWidgets["subTable"], TRUE);
 	}
 	else {
 		GlobalRegistry().set(RKEY_OVERLAY_VISIBLE, "0");
+		gtk_widget_set_sensitive(self->_subWidgets["subTable"], FALSE);
 	}	
 	
 	// Refresh
