@@ -173,6 +173,7 @@ shaders_lst = build_list('plugins/shaders',
 						 plugin.cpp \
 						 MapExpression.cpp CShader.cpp \
 						 ShaderTemplate.cpp ShaderFileLoader.cpp \
+						 ShaderLibrary.cpp \
 						 textures/GLTextureManager.cpp \
 						 textures/TextureManipulator.cpp \
 						 textures/DefaultConstructor.cpp \

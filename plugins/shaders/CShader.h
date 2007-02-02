@@ -3,6 +3,7 @@
 
 #include "ShaderDefinition.h"
 #include "generic/callback.h"
+#include <boost/shared_ptr.hpp>
 
 class CShader : 
 	public IShader 
@@ -141,6 +142,8 @@ public:
 	Texture* lightFalloffImage() const;
 
 }; // class CShader
+
+typedef boost::shared_ptr<CShader> ShaderPtr;
 
 extern Callback g_ActiveShadersChangedNotify;
 
