@@ -84,7 +84,6 @@ in game descriptor";
 	
 }
 
-_QERPlugImageTable* g_bitmapModule = 0;
 const char* g_texturePrefix = "textures/";
 
 void ActiveShaders_IteratorBegin();
@@ -102,16 +101,6 @@ SHADER_NOT_FOUND means we didn't find the raw texture or the shader for this
 SHADER_NOTEX means we recognize this as a shader script, but we are missing the texture to represent it
 this was in the initial design of the shader code since early GtkRadiant alpha, and got sort of foxed in 1.2 and put back in
 */
-
-Image* loadBitmap(void* environment, const char* name)
-{
-  DirectoryArchiveFile file(name, name);
-  if(!file.failed())
-  {
-    return g_bitmapModule->loadImage(file);
-  }
-  return 0;
-}
 
 inline byte* getPixel(byte* pixels, int width, int height, int x, int y)
 {

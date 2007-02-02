@@ -36,7 +36,4 @@ void Shaders_Destroy();
 class ShaderSystem;
 ShaderSystem& GetShaderSystem();
 
-struct _QERPlugImageTable;
-extern _QERPlugImageTable* g_bitmapModule;
-
 #endif
