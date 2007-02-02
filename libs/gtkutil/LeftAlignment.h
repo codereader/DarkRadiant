@@ -1,6 +1,8 @@
 #ifndef LEFTALIGNMENT_H_
 #define LEFTALIGNMENT_H_
 
+#include <gtk/gtkalignment.h>
+
 namespace gtkutil
 {
 	
