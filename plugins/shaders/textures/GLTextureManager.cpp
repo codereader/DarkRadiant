@@ -1,6 +1,11 @@
 #include "GLTextureManager.h"
 
 #include "texturelib.h"
+#include "igl.h"
+
+namespace {
+	const int MAX_TEXTURE_QUALITY = 3;
+}
 
 GLTextureManager::GLTextureManager() 
 {}
@@ -51,23 +56,18 @@ TexturePtr GLTextureManager::getBinding(const std::string& textureKey,
 }
 
 void GLTextureManager::load(TexturePtr texture, Image* image) {
-//void loadTextureRGBA(Texture* q, unsigned char* pPixels, int nWidth, int nHeight) {
-		// The gamma value is -1 at radiant startup and gets changed later on
-/*		static float fGamma = -1;
-		
-		float total[3];
-		byte *outpixels = 0;
-		int nCount = nWidth * nHeight;
 	
-		if (fGamma != _textureGamma) {
-			fGamma = _textureGamma;
-			resampleGamma(fGamma);
-		}
+	int nWidth = image->getWidth();
+	int nHeight = image->getHeight();
 	
-		q->width = nWidth;
-		q->height = nHeight;
+	texture->width = nWidth;
+	texture->height = nHeight;
 	
-		total[0] = total[1] = total[2] = 0.0f;
+	unsigned char* pPixels = image->getRGBAPixels();
+	
+	byte* outpixels;
+	
+/*	total[0] = total[1] = total[2] = 0.0f;
 	
 		// resample texture gamma according to user settings
 		for (int i = 0; i < (nCount * 4); i += 4) {
@@ -80,61 +80,69 @@ void GLTextureManager::load(TexturePtr texture, Image* image) {
 	
 		q->color[0] = total[0] / (nCount * 255);
 		q->color[1] = total[1] / (nCount * 255);
-		q->color[2] = total[2] / (nCount * 255);
+		q->color[2] = total[2] / (nCount * 255);*/
 	
-		// Allocate a new texture number and store it into the Texture structure
-		glGenTextures(1, &q->texture_number);
+	// Allocate a new texture number and store it into the Texture structure
+	glGenTextures(1, &texture->texture_number);
 	
-		glBindTexture(GL_TEXTURE_2D, q->texture_number);
+	glBindTexture(GL_TEXTURE_2D, texture->texture_number);
 	
-		setTextureParameters();
+	//setTextureParameters();
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 	
-		int gl_width = 1;
-		while (gl_width < nWidth)
-			gl_width <<= 1;
+	int gl_width = 1;
+	while (gl_width < nWidth)
+		gl_width <<= 1;
 	
-		int gl_height = 1;
-		while (gl_height < nHeight)
-			gl_height <<= 1;
+	int gl_height = 1;
+	while (gl_height < nHeight)
+		gl_height <<= 1;
 	
-		bool resampled = false;
+	bool resampled = false;
 		
-		if (!(gl_width == nWidth && gl_height == nHeight)) {
-			resampled = true;
-			outpixels = (byte *)malloc(gl_width * gl_height * 4);
-			_manipulator.resampleTexture(pPixels, nWidth, nHeight, outpixels, gl_width, gl_height, 4);
-		}
-		else {
-			outpixels = pPixels;
-		}
+	if (!(gl_width == nWidth && gl_height == nHeight)) {
+		resampled = true;
+		outpixels = (byte *)malloc(gl_width * gl_height * 4);
+		_manipulator.resampleTexture(pPixels, nWidth, nHeight, outpixels, gl_width, gl_height, 4);
+	}
+	else {
+		outpixels = pPixels;
+	}
 	
-		int quality_reduction = MAX_TEXTURE_QUALITY - _textureQuality;
-		int target_width = std::min(gl_width >> quality_reduction, _maxTextureSize);
-		int target_height = std::min(gl_height >> quality_reduction, _maxTextureSize);
+	int _maxTextureSize = 0;
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &_maxTextureSize);
+	if (_maxTextureSize == 0) {
+		_maxTextureSize = 1024;
+	}
 	
-		while (gl_width > target_width || gl_height > target_height) {
-			_manipulator.mipReduce(outpixels, outpixels, gl_width, gl_height, target_width, target_height);
+	int quality_reduction = MAX_TEXTURE_QUALITY - 0;//_textureQuality;
+	int target_width = std::min(gl_width >> quality_reduction, _maxTextureSize);
+	int target_height = std::min(gl_height >> quality_reduction, _maxTextureSize);
 	
-			if (gl_width > target_width)
-				gl_width >>= 1;
-			if (gl_height > target_height)
-				gl_height >>= 1;
-		}
-	
-		int mip = 0;
-		glTexImage2D(GL_TEXTURE_2D, mip++, _textureComponents, gl_width, gl_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, outpixels);
-		while (gl_width > 1 || gl_height > 1) {
-			_manipulator.mipReduce(outpixels, outpixels, gl_width, gl_height, 1, 1);
-	
-			if (gl_width > 1)
-				gl_width >>= 1;
-			if (gl_height > 1)
-				gl_height >>= 1;
-	
-			glTexImage2D(GL_TEXTURE_2D, mip++, _textureComponents, gl_width, gl_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, outpixels);
-		}
-	
-		glBindTexture(GL_TEXTURE_2D, 0);
-		if (resampled)
-			free(outpixels);*/
+	while (gl_width > target_width || gl_height > target_height) {
+		_manipulator.mipReduce(outpixels, outpixels, gl_width, gl_height, target_width, target_height);
+
+		if (gl_width > target_width)
+			gl_width >>= 1;
+		if (gl_height > target_height)
+			gl_height >>= 1;
+	}
+
+	int mip = 0;
+	glTexImage2D(GL_TEXTURE_2D, mip++, GL_RGBA, gl_width, gl_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, outpixels);
+	while (gl_width > 1 || gl_height > 1) {
+		_manipulator.mipReduce(outpixels, outpixels, gl_width, gl_height, 1, 1);
+
+		if (gl_width > 1)
+			gl_width >>= 1;
+		if (gl_height > 1)
+			gl_height >>= 1;
+
+		glTexImage2D(GL_TEXTURE_2D, mip++, GL_RGBA, gl_width, gl_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, outpixels);
+	}
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	if (resampled)
+		free(outpixels);
 }

@@ -3,11 +3,9 @@
 #include <stdlib.h>
 #include "stream/textstream.h"
 
-static byte *row1 = NULL, *row2 = NULL;
-static int rowsize = 0;
-
-void TextureManipulator::resampleGamma(float gamma) {
-	
+namespace {
+	static byte *row1 = NULL, *row2 = NULL;
+	static int rowsize = 0;
 }
 
 void TextureManipulator::resampleTextureLerpLine(const byte *in, byte *out, 
