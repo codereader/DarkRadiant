@@ -5,6 +5,9 @@
 #include "iscenegraph.h"
 #include "iregistry.h"
 
+#include "gtkutil/LeftAlignment.h"
+#include "gtkutil/LeftAlignedLabel.h"
+
 #include <gtk/gtk.h>
 
 namespace ui
@@ -48,7 +51,12 @@ OverlayDialog::OverlayDialog()
     gtk_window_set_title(GTK_WINDOW(_widget), DIALOG_TITLE);
     g_signal_connect(G_OBJECT(_widget), "delete-event",
     				 G_CALLBACK(gtk_widget_hide_on_delete), NULL);
-    				 
+
+	// Set default size
+	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
+	gint w = gdk_screen_get_width(scr);
+	gtk_window_set_default_size(GTK_WINDOW(_widget), w / 3, -1);
+
 	// Pack in widgets
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
 	gtk_box_pack_start(GTK_BOX(vbx), createWidgets(), TRUE, TRUE, 0);
@@ -61,6 +69,8 @@ OverlayDialog::OverlayDialog()
 // Construct main widgets
 GtkWidget* OverlayDialog::createWidgets() {
 	
+	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
+	
 	// "Use image" checkbox
 	GtkWidget* useImage = gtk_check_button_new_with_label(
 							"Use background image"); 
@@ -68,7 +78,33 @@ GtkWidget* OverlayDialog::createWidgets() {
 	g_signal_connect(G_OBJECT(useImage), "toggled",
 					 G_CALLBACK(_onUseImage), this);
 	
-	return useImage;
+	gtk_box_pack_start(GTK_BOX(vbx), useImage, FALSE, FALSE, 0);
+	
+	// Other widgets are in a table, which is indented with respect to the
+	// Use Image checkbox, and becomes enabled/disabled with it.
+	GtkWidget* tbl = gtk_table_new(2, 2, FALSE);
+	gtk_table_set_row_spacings(GTK_TABLE(tbl), 12);
+	gtk_table_set_col_spacings(GTK_TABLE(tbl), 6);
+	
+	// Image file
+	gtk_table_attach(GTK_TABLE(tbl), 
+					 gtkutil::LeftAlignedLabel("<b>Image file</b>"),
+					 0, 1, 0, 1, 
+					 GTK_SHRINK, GTK_FILL, 0, 0);
+	
+	GtkWidget* fileButton = gtk_file_chooser_button_new(
+							  	"Choose image", GTK_FILE_CHOOSER_ACTION_OPEN);
+	g_signal_connect(G_OBJECT(fileButton), "selection-changed",
+					 G_CALLBACK(_onFileSelection), this);
+	_subWidgets["fileChooser"] = fileButton;
+	
+	gtk_table_attach_defaults(GTK_TABLE(tbl), fileButton, 1, 2, 0, 1);
+							  				
+	gtk_box_pack_start(GTK_BOX(vbx), 
+					   gtkutil::LeftAlignment(tbl, 12, 1.0), 
+					   TRUE, TRUE, 0);				
+	
+	return vbx;
 }
 
 // Create button panel
@@ -106,6 +142,11 @@ void OverlayDialog::getStateFromRegistry() {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_subWidgets["useImage"]),
 									 FALSE);
 	}
+	
+	// Image filename
+	gtk_file_chooser_set_filename(
+			GTK_FILE_CHOOSER(_subWidgets["fileChooser"]),
+			GlobalRegistry().get(RKEY_OVERLAY_IMAGE).c_str());
 }
 
 /* GTK CALLBACKS */
@@ -120,17 +161,30 @@ void OverlayDialog::_onUseImage(GtkToggleButton* w, OverlayDialog* self) {
 	
 	// Enable or disable the overlay based on checked status
 	if (gtk_toggle_button_get_active(w)) {
-		GlobalOverlay().show(true);
 		GlobalRegistry().set(RKEY_OVERLAY_VISIBLE, "1");
-		
 	}
 	else {
-		GlobalOverlay().show(false);
 		GlobalRegistry().set(RKEY_OVERLAY_VISIBLE, "0");
 	}	
 	
 	// Refresh
 	GlobalSceneGraph().sceneChanged();
+}
+
+// File selection
+void OverlayDialog::_onFileSelection(GtkFileChooser* w, OverlayDialog* self) {
+	
+	// Get the raw filename from GTK
+	char* szFilename = gtk_file_chooser_get_filename(w);
+	if (szFilename == NULL)
+		return;
+		
+	// Convert to string and free the pointer
+	std::string fileName(szFilename);
+	g_free(szFilename);
+	
+	// Set registry key
+	GlobalRegistry().set(RKEY_OVERLAY_IMAGE, fileName);	
 }
 
 } // namespace ui

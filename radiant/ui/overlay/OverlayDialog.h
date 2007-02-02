@@ -3,6 +3,7 @@
 
 #include <gtk/gtkwidget.h>
 #include <gtk/gtktogglebutton.h>
+#include <gtk/gtkfilechooser.h>
 
 #include <map>
 #include <string>
@@ -19,7 +20,8 @@ class OverlayDialog
 	// Main widget
 	GtkWidget* _widget;
 
-	// Subwidgets
+	// Subwidgets, held in a map. This is just a named list of widgets, to 
+	// avoid adding new member variables for each widget.
 	typedef std::map<std::string, GtkWidget*> WidgetMap;
 	WidgetMap _subWidgets;
 
@@ -39,6 +41,7 @@ private:
 	// GTK callbacks
 	static void _onClose(GtkWidget*, OverlayDialog*);
 	static void _onUseImage(GtkToggleButton*, OverlayDialog*);
+	static void _onFileSelection(GtkFileChooser*, OverlayDialog*);
 
 public:
 
