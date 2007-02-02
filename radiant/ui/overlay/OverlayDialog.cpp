@@ -108,6 +108,8 @@ GtkWidget* OverlayDialog::createWidgets() {
 					 GTK_FILL, GTK_FILL, 0, 0);
 				
 	GtkWidget* transSlider = gtk_hscale_new_with_range(0, 1, 0.1);
+	g_signal_connect(G_OBJECT(transSlider), "value-changed",
+					 G_CALLBACK(_onTransparencyScroll), this);
 	_subWidgets["transparency"] = transSlider;
 							  				
 	gtk_table_attach_defaults(GTK_TABLE(tbl), transSlider, 1, 2, 1, 2);
@@ -150,16 +152,24 @@ void OverlayDialog::getStateFromRegistry() {
 	if (GlobalRegistry().get(RKEY_OVERLAY_VISIBLE) == "1") {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_subWidgets["useImage"]),
 									 TRUE);
+		gtk_widget_set_sensitive(_subWidgets["subTable"], TRUE);
 	}
 	else {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_subWidgets["useImage"]),
 									 FALSE);
+		gtk_widget_set_sensitive(_subWidgets["subTable"], FALSE);
 	}
 	
 	// Image filename
 	gtk_file_chooser_set_filename(
 			GTK_FILE_CHOOSER(_subWidgets["fileChooser"]),
 			GlobalRegistry().get(RKEY_OVERLAY_IMAGE).c_str());
+			
+	// Transparency
+	gtk_range_set_value(
+		GTK_RANGE(_subWidgets["transparency"]),
+		boost::lexical_cast<double>(
+			GlobalRegistry().get(RKEY_OVERLAY_TRANSPARENCY)));
 }
 
 /* GTK CALLBACKS */
@@ -201,6 +211,23 @@ void OverlayDialog::_onFileSelection(GtkFileChooser* w, OverlayDialog* self) {
 	
 	// Set registry key
 	GlobalRegistry().set(RKEY_OVERLAY_IMAGE, fileName);	
+}
+
+// Transparency change
+bool OverlayDialog::_onTransparencyScroll(GtkRange* w, 
+										  GtkScrollType t,
+										  double value,
+										  OverlayDialog* self)
+{
+	// Get the value and set the transparency key
+	std::string sVal = boost::lexical_cast<std::string>(gtk_range_get_value(w));
+	GlobalRegistry().set(RKEY_OVERLAY_TRANSPARENCY, sVal);
+
+	// Refresh display
+	GlobalSceneGraph().sceneChanged();
+
+	// Don't stop signal handling for this event
+	return FALSE;
 }
 
 } // namespace ui
