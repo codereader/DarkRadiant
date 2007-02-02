@@ -5,7 +5,6 @@ typedef unsigned char byte;
 
 class TextureManipulator
 {
-	
 public:
 	TextureManipulator() 
 	{}
@@ -16,8 +15,6 @@ public:
 	void mipReduce(byte *in, byte *out, 
 				   int width, int height, 
 				   int destwidth, int destheight);
-
-	void resampleGamma(float gamma);
 
 private:
 	
