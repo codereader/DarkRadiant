@@ -68,6 +68,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "textures/FileLoader.h"
 #include "textures/GLTextureManager.h"
 #include "CShader.h"
+#include "ShaderLibrary.h"
 
 /* GLOBALS */
 
