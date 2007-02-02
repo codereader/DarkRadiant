@@ -4,6 +4,9 @@
 #include <gtk/gtkwidget.h>
 #include <gtk/gtktogglebutton.h>
 
+#include <map>
+#include <string>
+
 namespace ui
 {
 
@@ -16,6 +19,10 @@ class OverlayDialog
 	// Main widget
 	GtkWidget* _widget;
 
+	// Subwidgets
+	typedef std::map<std::string, GtkWidget*> WidgetMap;
+	WidgetMap _subWidgets;
+
 private:
 
 	// Constructor creates GTK widgets	
@@ -24,6 +31,10 @@ private:
 	// Widget construction helpers
 	GtkWidget* createWidgets();
 	GtkWidget* createButtons();
+	
+	// Get the overlay state from the registry, and set dialog widgets
+	// accordingly
+	void getStateFromRegistry();
 	
 	// GTK callbacks
 	static void _onClose(GtkWidget*, OverlayDialog*);
