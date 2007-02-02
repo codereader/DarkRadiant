@@ -64,8 +64,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include "constructors/DefaultConstructor.h"
-#include "constructors/FileLoader.h"
+#include "textures/DefaultConstructor.h"
+#include "textures/FileLoader.h"
+#include "textures/GLTextureManager.h"
 
 /* GLOBALS */
 

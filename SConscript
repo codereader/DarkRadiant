@@ -173,8 +173,10 @@ shaders_lst = build_list('plugins/shaders',
 						 plugin.cpp \
 						 MapExpression.cpp \
 						 ShaderTemplate.cpp ShaderFileLoader.cpp \
-						 constructors/DefaultConstructor.cpp \
-						 constructors/FileLoader.cpp')
+						 textures/GLTextureManager.cpp \
+						 textures/TextureManipulator.cpp \
+						 textures/DefaultConstructor.cpp \
+						 textures/FileLoader.cpp')
 shaders_env.useGlib2()
 shaders_env.Append(LIBS = ['cmdlib', 'xmlutil'])
 shaders_env.Append(LIBPATH = ['libs'])
