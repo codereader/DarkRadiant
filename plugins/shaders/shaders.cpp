@@ -168,7 +168,11 @@ CShader* Try_Shader_ForName(const std::string& name)
 	// default one and return this instead (this is how unrecognised textures
 	// get rendered with notex.bmp).
 	ShaderDefinitionMap::iterator i = g_shaderDefinitions.find(name);
-	if(i == g_shaderDefinitions.end()) {
+	
+	// Retrieve the shader definition for this name (may be an new, empty one as well) 
+	ShaderDefinition& def = GetShaderLibrary().getDefinition(name);
+	
+	if (i == g_shaderDefinitions.end()) {
 		ShaderTemplatePtr shaderTemplate(new ShaderTemplate(name));
 
 		// Create and insert new ShaderDefinition wrapper

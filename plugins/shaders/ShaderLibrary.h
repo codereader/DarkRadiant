@@ -5,6 +5,8 @@
 #include <map>
 #include "CShader.h"
 
+namespace shader {
+
 class ShaderLibrary
 {
 	// The shader definitions act as precursor for a real shader
@@ -15,7 +17,7 @@ class ShaderLibrary
 	typedef ShaderMap::iterator iterator;
 	
 	ShaderMap _shaders;
-	  
+
 public:
 	// Constructor
 	ShaderLibrary();
@@ -26,8 +28,16 @@ public:
 	/* greebo: Add a shader definition to the internal list 
 	 * @returns: FALSE, if such a name already exists, TRUE otherwise
 	 */
-	bool addDefinition(const std::string& name, ShaderDefinition& def);
+	bool addDefinition(const std::string& name, const ShaderDefinition& def);
+	
+	/* greebo: Trys to lookup the named shader definition and returns
+	 * its reference. Throws a MissingShaderDefException, if the
+	 * name is not found in the map. 
+	 */
+	ShaderDefinition& getDefinition(const std::string& name);
 
 }; // class ShaderLibrary
+
+} // namespace shader
 
 #endif /*SHADERLIBRARY_H_*/
