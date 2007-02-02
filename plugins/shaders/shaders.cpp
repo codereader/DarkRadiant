@@ -67,6 +67,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "textures/FileLoader.h"
 #include "textures/GLTextureManager.h"
 #include "CShader.h"
+#include "Doom3ShaderSystem.h"
 
 /* GLOBALS */
 
@@ -81,8 +82,6 @@ in game descriptor";
 in game descriptor";
 	
 }
-
-const char* g_texturePrefix = "textures/";
 
 void ActiveShaders_IteratorBegin();
 bool ActiveShaders_IteratorAtEnd();
@@ -285,91 +284,6 @@ void Shaders_Refresh()
 {
   Shaders_Unrealise();
   Shaders_Realise();
-}
-
-// ---------- Begin Shadersystem implementation ------------------------------------
-
-Doom3ShaderSystem::Doom3ShaderSystem() {
-	_library = new ShaderLibrary();
-}
-
-Doom3ShaderSystem::~Doom3ShaderSystem() {
-	delete _library;
-}
-
-void Doom3ShaderSystem::realise() {
-	Shaders_Realise();
-}
-void Doom3ShaderSystem::unrealise() {
-	Shaders_Unrealise();
-}
-void Doom3ShaderSystem::refresh() {
-	Shaders_Refresh();
-}
-
-// Is the shader system realised
-bool Doom3ShaderSystem::isRealised() {
-	return g_shaders_unrealised == 0;
-}
-
-// Return a shader by name
-IShader* Doom3ShaderSystem::getShaderForName(const std::string& name) {
-	IShader *pShader = Try_Shader_ForName(name.c_str());
-	pShader->IncRef();
-	return pShader;
-}
-
-void Doom3ShaderSystem::foreachShaderName(const ShaderNameCallback& callback) {
-	for (ShaderDefinitionMap::const_iterator i = g_shaderDefinitions.begin(); i != g_shaderDefinitions.end(); ++i) {
-		callback((*i).first.c_str());
-	}
-}
-
-void Doom3ShaderSystem::beginActiveShadersIterator() {
-	ActiveShaders_IteratorBegin();
-}
-bool Doom3ShaderSystem::endActiveShadersIterator() {
-	return ActiveShaders_IteratorAtEnd();
-}
-IShader* Doom3ShaderSystem::dereferenceActiveShadersIterator() {
-	return ActiveShaders_IteratorCurrent();
-}
-void Doom3ShaderSystem::incrementActiveShadersIterator() {
-	ActiveShaders_IteratorIncrement();
-}
-void Doom3ShaderSystem::setActiveShadersChangedNotify(const Callback& notify) {
-	g_ActiveShadersChangedNotify = notify;
-}
-
-void Doom3ShaderSystem::attach(ModuleObserver& observer) {
-	g_observers.attach(observer);
-}
-void Doom3ShaderSystem::detach(ModuleObserver& observer) {
-	g_observers.detach(observer);
-}
-
-void Doom3ShaderSystem::setLightingEnabled(bool enabled) {
-	if (CShader::m_lightingEnabled != enabled) {
-		for (shaders_t::const_iterator i = g_ActiveShaders.begin(); i != g_ActiveShaders.end(); ++i) {
-			(*i).second->unrealiseLighting();
-		}
-		CShader::m_lightingEnabled = enabled;
-		for (shaders_t::const_iterator i = g_ActiveShaders.begin(); i != g_ActiveShaders.end(); ++i) {
-			(*i).second->realiseLighting();
-		}
-	}
-}
-
-const char* Doom3ShaderSystem::getTexturePrefix() const {
-	return g_texturePrefix;
-}
-
-// ---------- End Shadersystem implementation ------------------------------------
-
-Doom3ShaderSystem& GetShaderSystem()
-{
-	static Doom3ShaderSystem _shaderSystem;
-	return _shaderSystem;
 }
 
 void Shaders_Construct()

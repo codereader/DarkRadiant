@@ -1,0 +1,106 @@
+#include "Doom3ShaderSystem.h"
+
+#include "shaders.h"
+#include "ShaderDefinition.h"
+
+// TODO: remove this as soon as shaderlibrary is in place
+extern ShaderDefinitionMap g_shaderDefinitions;
+
+#include "generic/referencecounted.h"
+
+typedef SmartPointer<CShader> ShaderPointer;
+typedef std::map<std::string, ShaderPointer> shaders_t;
+extern shaders_t g_ActiveShaders;
+
+#include "moduleobservers.h"
+extern ModuleObservers g_observers;
+
+extern std::size_t g_shaders_unrealised;
+// end TODO
+
+namespace {
+	const char* TEXTURE_PREFIX = "textures/";
+}
+
+// Constructor
+Doom3ShaderSystem::Doom3ShaderSystem() {
+	_library = new ShaderLibrary();
+}
+
+// Destructor
+Doom3ShaderSystem::~Doom3ShaderSystem() {
+	delete _library;
+}
+
+void Doom3ShaderSystem::realise() {
+	Shaders_Realise();
+}
+void Doom3ShaderSystem::unrealise() {
+	Shaders_Unrealise();
+}
+void Doom3ShaderSystem::refresh() {
+	Shaders_Refresh();
+}
+
+// Is the shader system realised
+bool Doom3ShaderSystem::isRealised() {
+	return g_shaders_unrealised == 0;
+}
+
+// Return a shader by name
+IShader* Doom3ShaderSystem::getShaderForName(const std::string& name) {
+	IShader *pShader = Try_Shader_ForName(name.c_str());
+	pShader->IncRef();
+	return pShader;
+}
+
+void Doom3ShaderSystem::foreachShaderName(const ShaderNameCallback& callback) {
+	for (ShaderDefinitionMap::const_iterator i = g_shaderDefinitions.begin(); i != g_shaderDefinitions.end(); ++i) {
+		callback((*i).first.c_str());
+	}
+}
+
+void Doom3ShaderSystem::beginActiveShadersIterator() {
+	ActiveShaders_IteratorBegin();
+}
+bool Doom3ShaderSystem::endActiveShadersIterator() {
+	return ActiveShaders_IteratorAtEnd();
+}
+IShader* Doom3ShaderSystem::dereferenceActiveShadersIterator() {
+	return ActiveShaders_IteratorCurrent();
+}
+void Doom3ShaderSystem::incrementActiveShadersIterator() {
+	ActiveShaders_IteratorIncrement();
+}
+void Doom3ShaderSystem::setActiveShadersChangedNotify(const Callback& notify) {
+	g_ActiveShadersChangedNotify = notify;
+}
+
+void Doom3ShaderSystem::attach(ModuleObserver& observer) {
+	g_observers.attach(observer);
+}
+void Doom3ShaderSystem::detach(ModuleObserver& observer) {
+	g_observers.detach(observer);
+}
+
+void Doom3ShaderSystem::setLightingEnabled(bool enabled) {
+	if (CShader::m_lightingEnabled != enabled) {
+		for (shaders_t::const_iterator i = g_ActiveShaders.begin(); i != g_ActiveShaders.end(); ++i) {
+			(*i).second->unrealiseLighting();
+		}
+		CShader::m_lightingEnabled = enabled;
+		for (shaders_t::const_iterator i = g_ActiveShaders.begin(); i != g_ActiveShaders.end(); ++i) {
+			(*i).second->realiseLighting();
+		}
+	}
+}
+
+const char* Doom3ShaderSystem::getTexturePrefix() const {
+	return TEXTURE_PREFIX;
+}
+
+// Accessor function encapsulating the static shadersystem instance
+Doom3ShaderSystem& GetShaderSystem() {
+	static Doom3ShaderSystem _shaderSystem;
+	return _shaderSystem;
+}

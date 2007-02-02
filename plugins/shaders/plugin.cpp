@@ -30,44 +30,41 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "modulesystem/singletonmodule.h"
 
 #include "ShaderTemplate.h"
+#include "Doom3ShaderSystem.h"
 #include "shaders.h"
 
 class ShadersDependencies :
-  public GlobalFileSystemModuleRef,
-  public GlobalTexturesModuleRef,
-  public GlobalRadiantModuleRef,
-  public GlobalRegistryModuleRef
+	public GlobalFileSystemModuleRef,
+	public GlobalTexturesModuleRef,
+	public GlobalRadiantModuleRef,
+	public GlobalRegistryModuleRef 
 {};
 
 class ShadersDoom3API
 {
-  Doom3ShaderSystem* m_shadersdoom3;
+	Doom3ShaderSystem* _shaderSystem;
 public:
-  typedef ShaderSystem Type;
-  STRING_CONSTANT(Name, "doom3");
+	typedef ShaderSystem Type;
+	STRING_CONSTANT(Name, "doom3");
 
-  ShadersDoom3API(ShadersDependencies& dependencies)
-  {
-    Shaders_Construct();
-    m_shadersdoom3 = &GetShaderSystem();
-  }
-  ~ShadersDoom3API()
-  {
-    Shaders_Destroy();
-  }
-  ShaderSystem* getTable()
-  {
-    return dynamic_cast<ShaderSystem*>(m_shadersdoom3);
-  }
+	ShadersDoom3API(ShadersDependencies& dependencies) {
+		Shaders_Construct();
+		_shaderSystem = &GetShaderSystem();
+	}
+	~ShadersDoom3API() {
+		Shaders_Destroy();
+	}
+	ShaderSystem* getTable() {
+		return dynamic_cast<ShaderSystem*>(_shaderSystem);
+	}
 };
 
 typedef SingletonModule<ShadersDoom3API, ShadersDependencies, DependenciesAPIConstructor<ShadersDoom3API, ShadersDependencies> > ShadersDoom3Module;
 
 ShadersDoom3Module g_ShadersDoom3Module;
 
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
-{
-  initialiseModule(server);
+extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server) {
+	initialiseModule(server);
 
-  g_ShadersDoom3Module.selfRegister();
+	g_ShadersDoom3Module.selfRegister();
 }
