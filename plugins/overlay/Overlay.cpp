@@ -76,7 +76,7 @@ private:
 	float _translationY;
 
 	// The loaded texture
-	Texture* _texture;
+	TexturePtr _texture;
 	
 	// The instance of the GDKModule loader
 	ImageLoaderModuleRef _imageGDKModule;
@@ -92,7 +92,6 @@ public:
 		_keepProportions(GlobalRegistry().get(RKEY_OVERLAY_PROPORTIONAL) == "1"),
 		_translationX(GlobalRegistry().getFloat(RKEY_OVERLAY_TRANSLATIONX)),
 		_translationY(GlobalRegistry().getFloat(RKEY_OVERLAY_TRANSLATIONY)),
-		_texture(NULL),
 		_imageGDKModule("GDK")
 	{
 		// Watch the relevant registry keys		
@@ -304,7 +303,6 @@ private:
 			if (_texture->texture_number == 0) {
 				// Image load seemed to have failed
 				GlobalTexturesCache().release(_texture);
-				_texture = NULL;
 			}
 		}
 		else {
@@ -315,7 +313,6 @@ private:
 	void releaseTexture() {
 		if (_texture != NULL) {
 			GlobalTexturesCache().release(_texture);
-			_texture = NULL;
 		}
 	}
 }; // class Overlay

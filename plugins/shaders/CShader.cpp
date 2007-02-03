@@ -65,14 +65,6 @@ CShader::CShader(const std::string& name, const ShaderDefinition& definition)
 		m_bInUse(false) {
 	assert(definition.shaderTemplate != NULL); // otherwise we have NULL ref
 
-	// Initialise texture pointers
-	m_pTexture = 0;
-	m_pDiffuse = 0;
-	m_pBump = 0;
-	m_pSpecular = 0;
-
-	m_notfound = 0;
-
 	// Realise the shader
 	realise();
 }
@@ -98,20 +90,20 @@ std::size_t CShader::refcount() {
 }
 
 // get/set the Texture* Radiant uses to represent this shader object
-Texture* CShader::getTexture() const {
+TexturePtr CShader::getTexture() const {
 	return m_pTexture;
 }
 
-Texture* CShader::getDiffuse() const {
+TexturePtr CShader::getDiffuse() const {
 	return m_pDiffuse;
 }
 
 // Return bumpmap if it exists, otherwise _flat
-Texture* CShader::getBump() const {
+TexturePtr CShader::getBump() const {
 	return m_pBump;
 }
 
-Texture* CShader::getSpecular() const {
+TexturePtr CShader::getSpecular() const {
 	return m_pSpecular;
 }
 
@@ -304,7 +296,7 @@ void CShader::unrealiseLighting() {
 	GlobalTexturesCache().release(_texLightFalloff);
 
 	for (MapLayers::iterator i = m_layers.begin(); i != m_layers.end(); ++i) {
-		GlobalTexturesCache().release((*i).texture());
+		GlobalTexturesCache().release(i->texture());
 	}
 	m_layers.clear();
 
@@ -363,11 +355,13 @@ bool CShader::isFogLight() const {
 /*
  * Return the light falloff texture (Z dimension).
  */
-Texture* CShader::lightFalloffImage() const {
+TexturePtr CShader::lightFalloffImage() const {
 	if (m_template._lightFallOff)
 		return _texLightFalloff;
 	else
-		return 0;
+		return _emptyLightFallOff;
 }
 
 bool CShader::m_lightingEnabled = false;
+
+TexturePtr CShader::_emptyLightFallOff(new Texture("$emptyLightFallOff"));

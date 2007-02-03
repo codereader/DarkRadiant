@@ -459,7 +459,7 @@ void OpenGLStateBucket::flushRenderables(OpenGLState& current,
 		// Z falloff, use the one from the default light shader.
         GLuint attenuation_xy = lightShader->firstLayer()->texture()->texture_number;
         
-        const IShader* zAttenShader = lightShader->lightFalloffImage() != 0
+        const IShader* zAttenShader = lightShader->lightFalloffImage()->texture_number != 0
         							  ? lightShader
         							  : g_defaultPointLight->getIShader();
         GLuint attenuation_z = zAttenShader->lightFalloffImage()->texture_number;

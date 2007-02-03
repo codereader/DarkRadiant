@@ -33,6 +33,7 @@ typedef boost::shared_ptr<ImageConstructor> ImageConstructorPtr;
 
 // Forward declaration
 struct Texture; // defined in texturelib.h
+typedef boost::shared_ptr<Texture> TexturePtr;
 
 class TexturesCacheObserver
 {
@@ -67,10 +68,10 @@ public:
 	/**
 	 * Capture the named image texture using the provided ImageConstructor.
 	 */
-	virtual Texture* capture(ImageConstructorPtr constructor, 
-								const std::string& name) = 0;
+	virtual TexturePtr capture(ImageConstructorPtr constructor, 
+							   const std::string& name) = 0;
 	
-	virtual void release(Texture* texture) = 0;
+	virtual void release(TexturePtr texture) = 0;
 	virtual void attach(TexturesCacheObserver& observer) = 0;
 	virtual void detach(TexturesCacheObserver& observer) = 0;
 

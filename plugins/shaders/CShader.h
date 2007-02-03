@@ -18,19 +18,20 @@ class CShader :
 	std::string _name;
 
 	// Textures for this shader
-	Texture* m_pTexture;
-	Texture* m_notfound;
-	Texture* m_pDiffuse;
+	TexturePtr m_pTexture;
+	TexturePtr m_notfound;
+	TexturePtr m_pDiffuse;
 	float m_heightmapScale;
-	Texture* m_pBump;
-	Texture* m_pSpecular;
-	Texture* _texLightFalloff;
+	TexturePtr m_pBump;
+	TexturePtr m_pSpecular;
+	TexturePtr _texLightFalloff;
 	BlendFunc m_blendFunc;
 
 	bool m_bInUse;
 
 public:
 	static bool m_lightingEnabled;
+	static TexturePtr _emptyLightFallOff;
 
 	/*
 	 * Constructor. Sets the name and the ShaderDefinition to use.
@@ -48,12 +49,12 @@ public:
 	std::size_t refcount();
 
 	// get/set the Texture* Radiant uses to represent this shader object
-	Texture* getTexture() const;
-	Texture* getDiffuse() const;
+	TexturePtr getTexture() const;
+	TexturePtr getDiffuse() const;
 
 	// Return bumpmap if it exists, otherwise _flat
-	Texture* getBump() const;
-	Texture* getSpecular() const;
+	TexturePtr getBump() const;
+	TexturePtr getSpecular() const;
 
 	/*
 	 * Return name of shader.
@@ -99,25 +100,31 @@ public:
 	void setName(const std::string& name);
 
 	class MapLayer : public ShaderLayer {
-		Texture* m_texture;
+		TexturePtr m_texture;
 		BlendFunc m_blendFunc;
 		bool m_clampToBorder;
 		float m_alphaTest;
+	
 	public:
-		MapLayer(Texture* texture, BlendFunc blendFunc, bool clampToBorder, float alphaTest) :
+		MapLayer(TexturePtr texture, BlendFunc blendFunc, bool clampToBorder, float alphaTest) :
 				m_texture(texture),
 				m_blendFunc(blendFunc),
 				m_clampToBorder(false),
-				m_alphaTest(alphaTest) {}
-		Texture* texture() const {
+				m_alphaTest(alphaTest) 
+		{}
+		
+		TexturePtr texture() const {
 			return m_texture;
 		}
+		
 		BlendFunc blendFunc() const {
 			return m_blendFunc;
 		}
+		
 		bool clampToBorder() const {
 			return m_clampToBorder;
 		}
+		
 		float alphaTest() const {
 			return m_alphaTest;
 		}
@@ -139,7 +146,7 @@ public:
 	bool isFogLight() const;
 
 	// Return the light falloff texture (Z dimension).
-	Texture* lightFalloffImage() const;
+	TexturePtr lightFalloffImage() const;
 
 }; // class CShader
 

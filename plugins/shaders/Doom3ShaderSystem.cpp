@@ -51,6 +51,7 @@ bool Doom3ShaderSystem::isRealised() {
 
 // Return a shader by name
 IShader* Doom3ShaderSystem::getShaderForName(const std::string& name) {
+	ShaderPtr shader = _library->findShader(name);
 	IShader *pShader = Try_Shader_ForName(name.c_str());
 	pShader->IncRef();
 	return pShader;
