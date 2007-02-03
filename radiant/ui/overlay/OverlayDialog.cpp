@@ -82,7 +82,7 @@ GtkWidget* OverlayDialog::createWidgets() {
 	
 	// Other widgets are in a table, which is indented with respect to the
 	// Use Image checkbox, and becomes enabled/disabled with it.
-	GtkWidget* tbl = gtk_table_new(4, 2, FALSE);
+	GtkWidget* tbl = gtk_table_new(5, 2, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(tbl), 12);
 	gtk_table_set_col_spacings(GTK_TABLE(tbl), 12);
 	_subWidgets["subTable"] = tbl;
@@ -114,10 +114,23 @@ GtkWidget* OverlayDialog::createWidgets() {
 							  				
 	gtk_table_attach_defaults(GTK_TABLE(tbl), transSlider, 1, 2, 1, 2);
 	
+	// Image size slider
+	gtk_table_attach(GTK_TABLE(tbl), 
+					 gtkutil::LeftAlignedLabel("<b>Image scale</b>"),
+					 0, 1, 2, 3, 
+					 GTK_FILL, GTK_FILL, 0, 0);
+
+	GtkWidget* scale = gtk_hscale_new_with_range(0, 20, 0.1);
+	g_signal_connect(G_OBJECT(scale), "value-changed",
+					 G_CALLBACK(_onScaleScroll), this);
+	_subWidgets["scale"] = scale;
+							  				
+	gtk_table_attach_defaults(GTK_TABLE(tbl), scale, 1, 2, 2, 3);
+	
 	// Options list
 	gtk_table_attach(GTK_TABLE(tbl), 
 					 gtkutil::LeftAlignedLabel("<b>Options</b>"),
-					 0, 1, 2, 3, 
+					 0, 1, 3, 4, 
 					 GTK_FILL, GTK_FILL, 0, 0);
 	
 	GtkWidget* keepAspect = 
@@ -125,14 +138,14 @@ GtkWidget* OverlayDialog::createWidgets() {
 	g_signal_connect(G_OBJECT(keepAspect), "toggled",
 					 G_CALLBACK(_onKeepAspect), this);
 	_subWidgets["keepAspect"] = keepAspect;
-	gtk_table_attach_defaults(GTK_TABLE(tbl), keepAspect, 1, 2, 2, 3);
+	gtk_table_attach_defaults(GTK_TABLE(tbl), keepAspect, 1, 2, 3, 4);
 	
 	GtkWidget* scaleWithViewport =
 		gtk_check_button_new_with_label("Zoom image with viewport");
 	g_signal_connect(G_OBJECT(scaleWithViewport), "toggled",
 					 G_CALLBACK(_onScaleImage), this);
 	_subWidgets["scaleImage"] = scaleWithViewport;	
-	gtk_table_attach_defaults(GTK_TABLE(tbl), scaleWithViewport, 1, 2, 3, 4);
+	gtk_table_attach_defaults(GTK_TABLE(tbl), scaleWithViewport, 1, 2, 4, 5);
 	
 	// Pack table into vbox and return
 	gtk_box_pack_start(GTK_BOX(vbx), 
@@ -190,6 +203,11 @@ void OverlayDialog::getStateFromRegistry() {
 		GTK_RANGE(_subWidgets["transparency"]),
 		boost::lexical_cast<double>(
 			GlobalRegistry().get(RKEY_OVERLAY_TRANSPARENCY)));
+	
+	// Image scale
+	gtk_range_set_value(
+		GTK_RANGE(_subWidgets["scale"]),
+		boost::lexical_cast<double>(GlobalRegistry().get(RKEY_OVERLAY_SCALE)));
 			
 	// Options: Keep aspect
 	gtk_toggle_button_set_active(
@@ -287,5 +305,23 @@ bool OverlayDialog::_onTransparencyScroll(GtkRange* w,
 	// Don't stop signal handling for this event
 	return FALSE;
 }
+
+// Image scale change
+bool OverlayDialog::_onScaleScroll(GtkRange* w, 
+								   GtkScrollType t,
+								   double value,
+								   OverlayDialog* self)
+{
+	// Get the value and set the size key
+	std::string sVal = boost::lexical_cast<std::string>(gtk_range_get_value(w));
+	GlobalRegistry().set(RKEY_OVERLAY_SCALE, sVal);
+
+	// Refresh display
+	GlobalSceneGraph().sceneChanged();
+
+	// Don't stop signal handling for this event
+	return FALSE;
+}
+
 
 } // namespace ui
