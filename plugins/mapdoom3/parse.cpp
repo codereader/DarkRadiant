@@ -233,8 +233,17 @@ void Map_Read(scene::Node& root,
 	// Read each entity in the map, until EOF is reached
 	for (int entCount = 0; ; entCount++) {
 
-		// Update the dialog text
-		dialog.setText("Loading entity " + boost::lexical_cast<std::string>(entCount));
+		// Update the dialog text. This will throw an exception if the cancel
+		// button is clicked, which we must catch and handle.
+		try {
+			dialog.setText("Loading entity " 
+						   + boost::lexical_cast<std::string>(entCount));
+		}
+		catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
+			gtkutil::errorDialog("Map loading cancelled", 
+								 GlobalRadiant().getMainWindow());
+			return;			
+		}
 
 		// Check for end of file
 		tokeniser.nextLine();
