@@ -9,10 +9,12 @@ class CShader :
 	public IShader 
 {
 	// Internal reference count
-	int _nRef;
+	int _refCount;
 
-	const ShaderTemplate& m_template;
-	std::string m_filename;
+	const ShaderTemplate& _template;
+	
+	// The shader file name (i.e. the file where this one is defined)
+	std::string _fileName;
 
 	// Name of shader
 	std::string _name;
@@ -20,10 +22,12 @@ class CShader :
 	// Textures for this shader
 	TexturePtr m_pTexture;
 	TexturePtr m_notfound;
-	TexturePtr m_pDiffuse;
-	float m_heightmapScale;
-	TexturePtr m_pBump;
-	TexturePtr m_pSpecular;
+	TexturePtr _diffuse;
+	TexturePtr _specular;
+	
+	//float _heightMapScale; // unused at the moment
+	TexturePtr _bump;
+	
 	TexturePtr _texLightFalloff;
 	BlendFunc m_blendFunc;
 

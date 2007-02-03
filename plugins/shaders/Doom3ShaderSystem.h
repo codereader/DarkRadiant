@@ -5,7 +5,7 @@
 #include "moduleobserver.h"
 #include "ShaderLibrary.h"
 
-namespace shader {
+namespace shaders {
 
 class Doom3ShaderSystem : 
 	public ShaderSystem, 
@@ -52,11 +52,11 @@ public:
 
 }; // class Doom3ShaderSystem
 
-} // namespace shader
+} // namespace shaders
 
 // Accessor function for the shader system
-shader::Doom3ShaderSystem& GetShaderSystem();
+shaders::Doom3ShaderSystem& GetShaderSystem();
 
-shader::ShaderLibrary& GetShaderLibrary();
+shaders::ShaderLibrary& GetShaderLibrary();
 
 #endif /*DOOM3SHADERSYSTEM_H_*/

@@ -3,7 +3,7 @@
 #include <iostream>
 #include "ShaderTemplate.h"
 
-namespace shader {
+namespace shaders {
 
 ShaderLibrary::ShaderLibrary()
 {
@@ -69,4 +69,4 @@ void ShaderLibrary::clear() {
 	_definitions.clear();
 }
 
-} // namespace shader
+} // namespace shaders

@@ -42,7 +42,7 @@ class ShadersDependencies :
 
 class ShadersDoom3API
 {
-	shader::Doom3ShaderSystem* _shaderSystem;
+	shaders::Doom3ShaderSystem* _shaderSystem;
 public:
 	typedef ShaderSystem Type;
 	STRING_CONSTANT(Name, "doom3");

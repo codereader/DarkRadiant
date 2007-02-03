@@ -5,7 +5,7 @@
 #include <map>
 #include "CShader.h"
 
-namespace shader {
+namespace shaders {
 
 class ShaderLibrary
 {
@@ -49,6 +49,6 @@ public:
 
 }; // class ShaderLibrary
 
-} // namespace shader
+} // namespace shaders
 
 #endif /*SHADERLIBRARY_H_*/

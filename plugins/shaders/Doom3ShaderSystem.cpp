@@ -22,7 +22,7 @@ namespace {
 	const char* TEXTURE_PREFIX = "textures/";
 }
 
-namespace shader {
+namespace shaders {
 
 // Constructor
 Doom3ShaderSystem::Doom3ShaderSystem() {
@@ -106,15 +106,15 @@ ShaderLibrary& Doom3ShaderSystem::getLibrary() {
 	return *_library;
 }
 
-} // namespace shader
+} // namespace shaders
 
 // Accessor function encapsulating the static shadersystem instance
-shader::Doom3ShaderSystem& GetShaderSystem() {
-	static shader::Doom3ShaderSystem _shaderSystem;
+shaders::Doom3ShaderSystem& GetShaderSystem() {
+	static shaders::Doom3ShaderSystem _shaderSystem;
 	return _shaderSystem;
 }
 
-shader::ShaderLibrary& GetShaderLibrary() {
+shaders::ShaderLibrary& GetShaderLibrary() {
 	return GetShaderSystem().getLibrary();
 }
 
