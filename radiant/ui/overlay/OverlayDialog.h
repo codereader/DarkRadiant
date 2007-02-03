@@ -47,6 +47,8 @@ private:
 	static void _onScaleImage(GtkToggleButton*, OverlayDialog*);
 	static bool _onTransparencyScroll(
 							GtkRange*, GtkScrollType, double, OverlayDialog*);
+	static bool _onScaleScroll(
+							GtkRange*, GtkScrollType, double, OverlayDialog*);
 
 public:
 
