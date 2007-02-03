@@ -286,10 +286,18 @@ bool MediaBrowser::_onRightClick(GtkWidget* widget, GdkEventButton* ev, MediaBro
 	return FALSE;
 }
 
-void MediaBrowser::_onActivateLoadContained(GtkMenuItem* item, MediaBrowser* self) {
-	// Use a TextureDirectoryLoader functor to search the directory
+void MediaBrowser::_onActivateLoadContained(GtkMenuItem* item, 
+											MediaBrowser* self) 
+{
+	// Use a TextureDirectoryLoader functor to search the directory. This may
+	// throw an exception if cancelled by user.
 	TextureDirectoryLoader loader(self->getSelectedName());
-	GlobalShaderSystem().foreachShaderName(makeCallback1(loader));
+	try {
+		GlobalShaderSystem().foreachShaderName(makeCallback1(loader));
+	}
+	catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
+		// Ignore the error and return from the function normally	
+	}
 }
 
 void MediaBrowser::_onActivateApplyTexture(GtkMenuItem* item, MediaBrowser* self) {
