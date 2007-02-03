@@ -55,9 +55,14 @@ public:
 		// Create the text. This consists of the icon, the label string (left-
 		// aligned) and the accelerator string (right-aligned).
 		GtkWidget* hbx = gtk_hbox_new(FALSE, 4);
-		gtk_box_pack_start(GTK_BOX(hbx), 
-			gtk_image_new_from_pixbuf(gtkutil::getLocalPixbuf(_iconName)),
-			FALSE, FALSE, 0);
+		
+		// Pack in icon ONLY if it is not blank
+		if (!_iconName.empty()) {
+			gtk_box_pack_start(GTK_BOX(hbx), 
+				gtk_image_new_from_pixbuf(gtkutil::getLocalPixbuf(_iconName)),
+				FALSE, FALSE, 0);
+		}
+		
 		gtk_box_pack_start(GTK_BOX(hbx),
 						   gtk_label_new_with_mnemonic(_label.c_str()),
 						   FALSE, FALSE, 0);
