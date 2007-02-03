@@ -5,6 +5,7 @@
 #include <gtk/gtkwindow.h>
 
 #include <string>
+#include <stdexcept>
 
 namespace gtkutil
 {
@@ -25,6 +26,9 @@ class ModalProgressDialog
 	// Progress bar
 	GtkWidget* _progressBar;
 	
+	// Flag to indicate the operation has aborted
+	bool _aborted;
+	
 private:
 
 	// GTK Callback to catch delete-event, to prevent destruction of the
@@ -32,6 +36,9 @@ private:
 	static gboolean _onDelete(GtkWidget* widget, gpointer data) {
 		return TRUE; // stop event	
 	}
+	
+	// Cancel button callback
+	static void _onCancel(GtkWidget*, ModalProgressDialog*);
 	
 	// Process the GTK events to ensure the progress bar/text is updated
 	// on screen
@@ -50,7 +57,20 @@ public:
 		gtk_widget_destroy(_widget);
 	}
 	
-	/** Set the text to display in the label.
+	/**
+	 * Exception thrown when cancel button is pressed.
+	 */
+	struct OperationAbortedException
+	: public std::runtime_error
+	{
+		OperationAbortedException(const std::string& what)
+		: std::runtime_error(what) {}		
+	};
+	
+	/** 
+	 * Set the text to display in the label, and pulse the progress bar. If the
+	 * user has clicked the Cancel button since the last update, this method
+	 * will throw an exception to indicate an aborted operation.
 	 */
 	void setText(const std::string& text);
 };
