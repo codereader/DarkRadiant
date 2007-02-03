@@ -19,7 +19,7 @@
  * the texture with the specified <scale> and <translation>.
  * 
  * All the settings are stored in the XMLRegistry and can be accessed via the
- * preferences dialog. 
+ * preferences dialog or the according GUI. 
  */
 
 namespace {
@@ -207,11 +207,6 @@ public:
 		if (_texture == NULL) {
 			// Try to realise it
 			captureTexture();
-			
-			// If it's still not realised >> error
-			if (_texture == NULL) {
-				return;
-			}
 		}
 		
 		// The two corners of the window (default: stretches to window borders)
@@ -296,7 +291,7 @@ public:
 private:
 
 	void captureTexture() {
-		if (_texture == NULL && _imageName != "") {
+		if (_imageName != "") {
 			ImageConstructorPtr constructor(new FileLoader(_imageName));
 			_texture = GlobalTexturesCache().capture(constructor, _imageName);
 			
@@ -311,9 +306,7 @@ private:
 	}
 	
 	void releaseTexture() {
-		if (_texture != NULL) {
-			GlobalTexturesCache().release(_texture);
-		}
+		GlobalTexturesCache().release(_texture);
 	}
 }; // class Overlay
 
