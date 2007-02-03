@@ -57,9 +57,9 @@ BlendFunc evaluateBlendFunc(const BlendFuncExpression& blendFunc) {
 /* Constructor. Sets the name and the ShaderDefinition to use.
  */
 CShader::CShader(const std::string& name, const ShaderDefinition& definition)
-		: _nRef(0),
-		m_template(*definition.shaderTemplate),
-		m_filename(definition.filename),
+		: _refCount(0),
+		_template(*definition.shaderTemplate),
+		_fileName(definition.filename),
 		_name(name),
 		m_blendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA),
 		m_bInUse(false) {
@@ -75,18 +75,18 @@ CShader::~CShader() {
 
 // Increase reference count
 void CShader::IncRef() {
-	++_nRef;
+	++_refCount;
 }
 
 // Decrease reference count
 void CShader::DecRef()  {
-	if (--_nRef == 0) {
+	if (--_refCount == 0) {
 		delete this;
 	}
 }
 
 std::size_t CShader::refcount() {
-	return _nRef;
+	return _refCount;
 }
 
 // get/set the Texture* Radiant uses to represent this shader object
@@ -95,16 +95,16 @@ TexturePtr CShader::getTexture() const {
 }
 
 TexturePtr CShader::getDiffuse() const {
-	return m_pDiffuse;
+	return _diffuse;
 }
 
 // Return bumpmap if it exists, otherwise _flat
 TexturePtr CShader::getBump() const {
-	return m_pBump;
+	return _bump;
 }
 
 TexturePtr CShader::getSpecular() const {
-	return m_pSpecular;
+	return _specular;
 }
 
 /*
@@ -125,23 +125,23 @@ void CShader::SetInUse(bool bInUse) {
 
 // get the shader flags
 int CShader::getFlags() const {
-	return m_template.m_nFlags;
+	return _template.m_nFlags;
 }
 
 // get the transparency value
 float CShader::getTrans() const {
-	return m_template.m_fTrans;
+	return _template.m_fTrans;
 }
 
 // test if it's a true shader, or a default shader created to wrap around a texture
 bool CShader::IsDefault() const {
-	return m_filename.empty();
+	return _fileName.empty();
 }
 
 // get the alphaFunc
 void CShader::getAlphaFunc(EAlphaFunc *func, float *ref) {
-	*func = m_template.m_AlphaFunc;
-	*ref = m_template.m_AlphaRef;
+	*func = _template.m_AlphaFunc;
+	*ref = _template.m_AlphaRef;
 };
 
 BlendFunc CShader::getBlendFunc() const {
@@ -150,12 +150,12 @@ BlendFunc CShader::getBlendFunc() const {
 
 // get the cull type
 IShader::ECull CShader::getCull() {
-	return m_template.m_Cull;
+	return _template.m_Cull;
 };
 
 // get shader file name (ie the file where this one is defined)
 const char* CShader::getShaderFileName() const {
-	return m_filename.c_str();
+	return _fileName.c_str();
 }
 
 // -----------------------------------------
@@ -163,7 +163,7 @@ const char* CShader::getShaderFileName() const {
 void CShader::realise() {
 
 	// Grab the display texture (may be null)
-	std::string displayTex = m_template._texture->getTextureName();
+	std::string displayTex = _template._texture->getTextureName();
 
 	// Allocate a default ImageConstructor with this name
 	ImageConstructorPtr imageConstructor(new DefaultConstructor(displayTex));
@@ -208,16 +208,16 @@ void CShader::realiseLighting() {
 	// not specified in the material.
 
 	// Load the diffuse map
-	ImageConstructorPtr diffuseConstructor(new DefaultConstructor(m_template._diffuse->getTextureName()));
-	m_pDiffuse = cache.capture(diffuseConstructor, m_template._diffuse->getTextureName());
+	ImageConstructorPtr diffuseConstructor(new DefaultConstructor(_template._diffuse->getTextureName()));
+	_diffuse = cache.capture(diffuseConstructor, _template._diffuse->getTextureName());
 
 	// Load the bump map
-	ImageConstructorPtr bumpConstructor(new DefaultConstructor(m_template._bump->getTextureName()));
-	m_pBump = cache.capture(bumpConstructor, m_template._bump->getTextureName());
+	ImageConstructorPtr bumpConstructor(new DefaultConstructor(_template._bump->getTextureName()));
+	_bump = cache.capture(bumpConstructor, _template._bump->getTextureName());
 
-	if (m_pBump == 0 || m_pBump->texture_number == 0) {
+	if (_bump == 0 || _bump->texture_number == 0) {
 		// Bump Map load failed
-		cache.release(m_pBump); // release old object first
+		cache.release(_bump); // release old object first
 
 		// Flat image name
 		std::string flatName = std::string(GlobalRadiant().getAppPath())
@@ -225,27 +225,27 @@ void CShader::realiseLighting() {
 
 		// Construct a new BMP loader
 		ImageConstructorPtr bmpConstructor(new FileLoader(flatName, "bmp"));
-		m_pBump = cache.capture(bmpConstructor, flatName);
+		_bump = cache.capture(bmpConstructor, flatName);
 	}
 
 	// Load the specular map
-	ImageConstructorPtr specConstructor(new DefaultConstructor(m_template._specular->getTextureName()));
-	m_pSpecular = cache.capture(specConstructor, m_template._specular->getTextureName());
+	ImageConstructorPtr specConstructor(new DefaultConstructor(_template._specular->getTextureName()));
+	_specular = cache.capture(specConstructor, _template._specular->getTextureName());
 
-	if (m_pSpecular == 0 || m_pSpecular->texture_number == 0) {
-		cache.release(m_pSpecular);
+	if (_specular == 0 || _specular->texture_number == 0) {
+		cache.release(_specular);
 
 		// Default specular (black image)
 		std::string blackName = std::string(GlobalRadiant().getAppPath()) + "bitmaps/_black.bmp";
 
 		// Construct a new BMP loader
 		ImageConstructorPtr bmpConstructor(new FileLoader(blackName, "bmp"));
-		m_pSpecular = cache.capture(bmpConstructor, blackName);
+		_specular = cache.capture(bmpConstructor, blackName);
 	}
 
 	// Get light falloff image. If a falloff image is defined but invalid,
 	// emit a warning since this will result in a black light
-	std::string foTexName = m_template._lightFallOff->getTextureName();
+	std::string foTexName = _template._lightFallOff->getTextureName();
 
 	// Allocate a default ImageConstructor with this name
 	ImageConstructorPtr imageConstructor(new DefaultConstructor(foTexName));
@@ -257,15 +257,15 @@ void CShader::realiseLighting() {
 		<< "\"" << std::endl;
 	}
 
-	for (ShaderTemplate::Layers::const_iterator i = m_template.m_layers.begin();
-	        i != m_template.m_layers.end();
+	for (ShaderTemplate::Layers::const_iterator i = _template.m_layers.begin();
+	        i != _template.m_layers.end();
 	        ++i) {
 		m_layers.push_back(evaluateLayer(*i));
 	}
 
 	if (m_layers.size() == 1) {
 		const BlendFuncExpression& blendFunc =
-		    m_template.m_layers.front().m_blendFunc;
+		    _template.m_layers.front().m_blendFunc;
 
 		// If explicit blend function (2-components), evaluate it, otherwise
 		// use a standard one
@@ -289,9 +289,9 @@ void CShader::realiseLighting() {
 }
 
 void CShader::unrealiseLighting() {
-	GlobalTexturesCache().release(m_pDiffuse);
-	GlobalTexturesCache().release(m_pBump);
-	GlobalTexturesCache().release(m_pSpecular);
+	GlobalTexturesCache().release(_diffuse);
+	GlobalTexturesCache().release(_bump);
+	GlobalTexturesCache().release(_specular);
 
 	GlobalTexturesCache().release(_texLightFalloff);
 
@@ -341,22 +341,22 @@ void CShader::forEachLayer(const ShaderLayerCallback& callback) const {
 /* Required IShader light type predicates */
 
 bool CShader::isAmbientLight() const {
-	return m_template.ambientLight;
+	return _template.ambientLight;
 }
 
 bool CShader::isBlendLight() const {
-	return m_template.blendLight;
+	return _template.blendLight;
 }
 
 bool CShader::isFogLight() const {
-	return m_template.fogLight;
+	return _template.fogLight;
 }
 
 /*
  * Return the light falloff texture (Z dimension).
  */
 TexturePtr CShader::lightFalloffImage() const {
-	if (m_template._lightFallOff)
+	if (_template._lightFallOff)
 		return _texLightFalloff;
 	else
 		return _emptyLightFallOff;
