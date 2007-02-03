@@ -109,7 +109,7 @@ public:
 class ShaderLayer
 {
 public:
-  virtual Texture* texture() const = 0;
+  virtual TexturePtr texture() const = 0;
   virtual BlendFunc blendFunc() const = 0;
   virtual bool clampToBorder() const = 0;
   virtual float alphaTest() const = 0;
@@ -139,10 +139,10 @@ public:
   // Decrement the reference count
   virtual void DecRef() = 0;
   // get/set the qtexture_t* Radiant uses to represent this shader object
-  virtual Texture* getTexture() const = 0;
-  virtual Texture* getDiffuse() const = 0;
-  virtual Texture* getBump() const = 0;
-  virtual Texture* getSpecular() const = 0;
+  virtual TexturePtr getTexture() const = 0;
+  virtual TexturePtr getDiffuse() const = 0;
+  virtual TexturePtr getBump() const = 0;
+  virtual TexturePtr getSpecular() const = 0;
   // get shader name
   virtual const char* getName() const = 0;
   virtual bool IsInUse() const = 0;
@@ -179,7 +179,7 @@ public:
   virtual const ShaderLayer* firstLayer() const = 0;
   virtual void forEachLayer(const ShaderLayerCallback& layer) const = 0;
 
-  virtual Texture* lightFalloffImage() const = 0;
+  virtual TexturePtr lightFalloffImage() const = 0;
 };
 
 /**

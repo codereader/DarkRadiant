@@ -134,7 +134,7 @@ void TexturePreviewCombo::_onExpose(GtkWidget* widget, GdkEventExpose* ev, Textu
 	IShader* shader = GlobalShaderSystem().getShaderForName(self->_texName);
 	
 	// Bind the texture from the shader
-	Texture* tex = shader->getTexture();
+	TexturePtr tex = shader->getTexture();
 	glBindTexture(GL_TEXTURE_2D, tex->texture_number);
 
 	// Calculate the correct aspect ratio for preview

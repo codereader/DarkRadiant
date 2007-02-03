@@ -340,7 +340,7 @@ void LightTextureSelector::_onExpose(GtkWidget* widget,
 		IShader* shader = self->getSelectedShader();
 		const ShaderLayer* first = shader->firstLayer();
 		if (first != NULL) {
-			Texture* tex = shader->firstLayer()->texture();
+			TexturePtr tex = shader->firstLayer()->texture();
 			glBindTexture (GL_TEXTURE_2D, tex->texture_number);
 		} else {
 			goto swapAndRelease; // don't draw, leave window cleared
@@ -401,7 +401,7 @@ void LightTextureSelector::updateInfoTable() {
 	const ShaderLayer* first = shader->firstLayer();
 	std::string texName = "None";
 	if (first != NULL) {
-		Texture* tex = shader->firstLayer()->texture();
+		TexturePtr tex = shader->firstLayer()->texture();
 		texName = tex->name;
 	}
 
