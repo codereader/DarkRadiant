@@ -139,8 +139,8 @@ public:
   // Decrement the reference count
   virtual void DecRef() = 0;
   // get/set the qtexture_t* Radiant uses to represent this shader object
-  virtual TexturePtr getTexture() const = 0;
-  virtual TexturePtr getDiffuse() const = 0;
+  virtual TexturePtr getTexture() = 0;
+  virtual TexturePtr getDiffuse() = 0;
   virtual TexturePtr getBump() const = 0;
   virtual TexturePtr getSpecular() const = 0;
   // get shader name

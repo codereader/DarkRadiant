@@ -30,6 +30,8 @@ ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name) {
 		return i->second;
 	}
 	else {
+		std::cout << "Definition not found: " << name.c_str() << "\n";
+		
 		// Create an empty template with this name
 		ShaderTemplatePtr shaderTemplate(new ShaderTemplate(name));
 				

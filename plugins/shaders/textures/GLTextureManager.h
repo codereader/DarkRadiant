@@ -35,6 +35,10 @@ public:
 	TexturePtr getBinding(const std::string& textureKey, 
 						  TextureConstructorPtr constructor);
 
+	// Returns the fallback Textures
+	TexturePtr getShaderNotFound();
+	TexturePtr getShaderImageMissing();
+
 private:
 
 	/* greebo: Binds the specified texture to openGL and populates the texture object 
