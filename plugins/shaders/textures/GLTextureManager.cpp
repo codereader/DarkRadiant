@@ -1,11 +1,17 @@
 #include "GLTextureManager.h"
 
+#include "qerplugin.h"
 #include "texturelib.h"
 #include "igl.h"
 #include <iostream>
+#include "FileLoader.h"
 
 namespace {
 	const int MAX_TEXTURE_QUALITY = 3;
+	
+	// TODO: Move this into doom3.game or other xml files
+	const std::string SHADER_IMAGE_MISSING = "bitmaps/shadernotex.bmp";
+	const std::string SHADER_NOT_FOUND = "bitmaps/notex.bmp";
 }
 
 namespace shaders {
@@ -13,6 +19,8 @@ namespace shaders {
 GLTextureManager::GLTextureManager() 
 {
 	std::cout << "GLTextureManager initialised.\n";
+	_shaderImageMissing = loadStandardTexture(SHADER_IMAGE_MISSING);
+	_shaderNotFound = loadStandardTexture(SHADER_NOT_FOUND);
 }
 
 GLTextureManager::~GLTextureManager() {
@@ -34,34 +42,70 @@ GLTextureManager::iterator GLTextureManager::find(const std::string& textureKey)
 TexturePtr GLTextureManager::getBinding(const std::string& textureKey, 
 										TextureConstructorPtr constructor) 
 {
+	if (textureKey == "") {
+		std::cout << "Empty texture name, returning shader not found.\n";
+		return _shaderNotFound;
+	}
+	
 	iterator i = find(textureKey);
 	
-	// Check if the texture already exists
-	if (i != end()) {
-		// It exists
-		return _textures[textureKey];
-	}
-	else {
-		// Doesn't exist yet, create a new texture object
-		TexturePtr newTexture(new Texture(textureKey));
-		_textures[textureKey] = newTexture;
-		
+	// Check if the texture has to be loaded
+	if (i == end()) {
+		// Is the constructor pointer valid?
 		if (constructor != NULL) {
 			// Retrieve the fabricated image from the TextureConstructor
 			Image* image = constructor->construct();
 			
-			// Bind the texture and get the OpenGL id
-			load(_textures[textureKey], image);
-			
-			// We don't need the image anymore
-			image->release();
+			if (image != NULL) {
+				// Constructor returned a valid image, now create the texture object
+				_textures[textureKey] = TexturePtr(new Texture(textureKey));
+				
+				// Bind the texture and get the OpenGL id
+				load(_textures[textureKey], image);
+				
+				// We don't need the image pixel data anymore
+				image->release();
+				std::cout << "[shaders] Loaded texture: " << textureKey.c_str() << "\n";
+			}
+			else {
+				// No image has been loaded, assign it to the "image missing texture"
+				std::cout << "[shaders] Shader Image Missing: " << textureKey.c_str() << "\n"; 
+				_textures[textureKey] = _shaderImageMissing;
+			}
 		}
 		else {
 			std::cout << "Can't construct texture, constructor is invalid.\n";
+						
+			// assign this name to the shader image missing texture;
+			_textures[textureKey] = _shaderImageMissing;
 		}
-		
-		return _textures[textureKey];
 	}
+	
+	return _textures[textureKey];
+}
+
+TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
+	// Create the texture constructor
+	std::string fullpath = GlobalRadiant().getAppPath() + SHADER_IMAGE_MISSING;
+	TextureConstructorPtr constructor(new FileLoader(fullpath, "bmp"));
+	
+	TexturePtr returnValue(new Texture(filename));
+	
+	// Retrieve the fabricated image from the TextureConstructor
+	Image* image = constructor->construct();
+	
+	if (image != NULL) {
+		// Bind the texture and get the OpenGL id
+		load(returnValue, image);
+		
+		// We don't need the image pixel data anymore
+		image->release();
+	}
+	else {
+		std::cout << "[shaders] Couldn't load \"shader image missing\" texture!\n";
+	}
+	
+	return returnValue;
 }
 
 void GLTextureManager::load(TexturePtr texture, Image* image) {
