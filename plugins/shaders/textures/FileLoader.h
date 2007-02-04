@@ -3,6 +3,7 @@
 
 #include "qerplugin.h"
 #include "iimage.h"
+#include "ishaders.h"
 #include "modulesystem/modulesmap.h"
 
 /* greebo: This is another simple imageconstructor that loads a given file 
@@ -16,7 +17,8 @@
  * covers a wide range of file formats.
  */
 class FileLoader : 
-	public ImageConstructor
+	public ImageConstructor,
+	public TextureConstructor
 {
 	// The reference to the ImageLoader modules 
 	ImageLoaderModulesRef _imageLoaders;
