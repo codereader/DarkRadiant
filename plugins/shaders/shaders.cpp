@@ -157,6 +157,9 @@ CShader* Try_Shader_ForName(const std::string& name)
 	// Retrieve the shader from the library (may as well return a dummy shader) 
 	ShaderPtr shader = GetShaderLibrary().findShader(name);
 	
+	// Hack to enable casting of the boost::shared_ptr to CShader* (TODO!)
+	// Dereference to get the contained object and return the pointer it
+	//return &(*shader);
 	
 	// Old code below
 	
@@ -220,6 +223,13 @@ void parseShaderDecl(parser::DefTokeniser& tokeniser,
 	// Get the parsed shader name
 	std::string name = shaderTemplate->getName();
 	
+	// Insert into the definitions map, if not already present
+    if (!GetShaderLibrary().addDefinition(name, def)) {
+    	std::cout << "[shaders] " << filename << ": shader " << name
+    			  << " already defined." << std::endl;
+    }
+	
+	// OLD CODE
 	// Insert into the definitions map, if not already present
     if (!g_shaderDefinitions.insert(
     				ShaderDefinitionMap::value_type(name, def)).second) 

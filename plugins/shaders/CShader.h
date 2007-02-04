@@ -20,7 +20,7 @@ class CShader :
 	std::string _name;
 
 	// Textures for this shader
-	TexturePtr m_pTexture;
+	TexturePtr _editorTexture;
 	TexturePtr m_notfound;
 	TexturePtr _diffuse;
 	TexturePtr _specular;
@@ -58,10 +58,12 @@ public:
 
 	std::size_t refcount();
 
-	// get/set the Texture* Radiant uses to represent this shader object
-	TexturePtr getTexture() const;
-	TexturePtr getDiffuse() const;
-
+	// get/set the TexturePtr Radiant uses to represent this shader object
+	TexturePtr getTexture();
+	
+	// getDiffuse() retrieves the TexturePtr and realises the shader if necessary
+	TexturePtr getDiffuse();
+	
 	// Return bumpmap if it exists, otherwise _flat
 	TexturePtr getBump() const;
 	TexturePtr getSpecular() const;
@@ -157,6 +159,11 @@ public:
 
 	// Return the light falloff texture (Z dimension).
 	TexturePtr lightFalloffImage() const;
+
+private:
+	// The internal methods to realise the textures
+	TexturePtr constructTexture();
+	TexturePtr constructDiffuse();
 
 }; // class CShader
 

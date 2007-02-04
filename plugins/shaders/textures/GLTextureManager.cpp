@@ -19,8 +19,6 @@ namespace shaders {
 GLTextureManager::GLTextureManager() 
 {
 	std::cout << "GLTextureManager initialised.\n";
-	_shaderImageMissing = loadStandardTexture(SHADER_IMAGE_MISSING);
-	_shaderNotFound = loadStandardTexture(SHADER_NOT_FOUND);
 }
 
 GLTextureManager::~GLTextureManager() {
@@ -43,8 +41,7 @@ TexturePtr GLTextureManager::getBinding(const std::string& textureKey,
 										TextureConstructorPtr constructor) 
 {
 	if (textureKey == "") {
-		std::cout << "Empty texture name, returning shader not found.\n";
-		return _shaderNotFound;
+		return getShaderNotFound();
 	}
 	
 	iterator i = find(textureKey);
@@ -70,14 +67,14 @@ TexturePtr GLTextureManager::getBinding(const std::string& textureKey,
 			else {
 				// No image has been loaded, assign it to the "image missing texture"
 				std::cout << "[shaders] Shader Image Missing: " << textureKey.c_str() << "\n"; 
-				_textures[textureKey] = _shaderImageMissing;
+				_textures[textureKey] = getShaderImageMissing();
 			}
 		}
 		else {
 			std::cout << "Can't construct texture, constructor is invalid.\n";
 						
 			// assign this name to the shader image missing texture;
-			_textures[textureKey] = _shaderImageMissing;
+			_textures[textureKey] = getShaderImageMissing();
 		}
 	}
 	
@@ -86,17 +83,20 @@ TexturePtr GLTextureManager::getBinding(const std::string& textureKey,
 
 TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
 	// Create the texture constructor
-	std::string fullpath = GlobalRadiant().getAppPath() + SHADER_IMAGE_MISSING;
+	std::string fullpath = GlobalRadiant().getAppPath() + filename;
 	TextureConstructorPtr constructor(new FileLoader(fullpath, "bmp"));
 	
-	TexturePtr returnValue(new Texture(filename));
+	TexturePtr returnValue(new Texture(fullpath));
 	
 	// Retrieve the fabricated image from the TextureConstructor
 	Image* image = constructor->construct();
 	
 	if (image != NULL) {
+		std::cout << "Loading image: " << fullpath.c_str() << "\n";
 		// Bind the texture and get the OpenGL id
 		load(returnValue, image);
+		
+		std::cout << "texture_number: " << returnValue->texture_number << "\n";
 		
 		// We don't need the image pixel data anymore
 		image->release();
@@ -108,6 +108,20 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
 	return returnValue;
 }
 
+TexturePtr GLTextureManager::getShaderNotFound() {
+	if (_shaderNotFound == NULL) {
+		_shaderNotFound = loadStandardTexture(SHADER_NOT_FOUND); 
+	}
+	return _shaderNotFound;
+}
+
+TexturePtr GLTextureManager::getShaderImageMissing() {
+	if (_shaderImageMissing == NULL) {
+		_shaderImageMissing = loadStandardTexture(SHADER_IMAGE_MISSING); 
+	}
+	return _shaderImageMissing;
+}
+
 void GLTextureManager::load(TexturePtr texture, Image* image) {
 	
 	int nWidth = image->getWidth();
@@ -115,6 +129,10 @@ void GLTextureManager::load(TexturePtr texture, Image* image) {
 	
 	texture->width = nWidth;
 	texture->height = nHeight;
+	
+	texture->surfaceFlags = image->getSurfaceFlags();
+	texture->contentFlags = image->getContentFlags();
+	texture->value = image->getValue();
 	
 	unsigned char* pPixels = image->getRGBAPixels();
 	
@@ -138,7 +156,11 @@ void GLTextureManager::load(TexturePtr texture, Image* image) {
 	// Allocate a new texture number and store it into the Texture structure
 	glGenTextures(1, &texture->texture_number);
 	
+	std::cout << "texture_number1: " << texture->texture_number << "\n";
+	
 	glBindTexture(GL_TEXTURE_2D, texture->texture_number);
+	
+	std::cout << "texture_number2: " << texture->texture_number << "\n";
 	
 	//setTextureParameters();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
@@ -169,7 +191,7 @@ void GLTextureManager::load(TexturePtr texture, Image* image) {
 		_maxTextureSize = 1024;
 	}
 	
-	int quality_reduction = MAX_TEXTURE_QUALITY - 0;//_textureQuality;
+	int quality_reduction = MAX_TEXTURE_QUALITY - MAX_TEXTURE_QUALITY;//_textureQuality;
 	int target_width = std::min(gl_width >> quality_reduction, _maxTextureSize);
 	int target_height = std::min(gl_height >> quality_reduction, _maxTextureSize);
 	

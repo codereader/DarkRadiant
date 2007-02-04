@@ -8,6 +8,8 @@
 #include "textures/DefaultConstructor.h"
 #include "textures/FileLoader.h"
 
+#include "Doom3ShaderSystem.h"
+
 Callback g_ActiveShadersChangedNotify;
 
 // Map string blend functions to their enum equivalents
@@ -91,11 +93,19 @@ std::size_t CShader::refcount() {
 }
 
 // get/set the Texture* Radiant uses to represent this shader object
-TexturePtr CShader::getTexture() const {
-	return m_pTexture;
+TexturePtr CShader::getTexture() {
+	// Check if the boost::shared_ptr is already initialised
+	if (_editorTexture != NULL) {
+		return _editorTexture;
+	}
+	else {
+		// Request this texture to be loaded
+		std::cout << "EditorTexture not yet realised. constructing now...\n";
+		return constructTexture();
+	}
 }
 
-TexturePtr CShader::getDiffuse() const {
+TexturePtr CShader::getDiffuse() {
 	// Check if the boost::shared_ptr is already initialised
 	if (_diffuse != NULL) {
 		return _diffuse;
@@ -103,9 +113,45 @@ TexturePtr CShader::getDiffuse() const {
 	else {
 		// Request this texture to be loaded
 		std::cout << "Texture not yet realised. constructing now...\n";
-		
-		return _diffuse;
+		return constructDiffuse();
 	}
+}
+
+TexturePtr CShader::constructTexture() {
+	std::cout << "Constructing Editor Image: " << _name.c_str() << " - ";
+	std::string displayTex = _template._texture->getTextureName();
+	std::cout << "TextureName: " << displayTex.c_str() << " - ";
+
+	// Allocate a default TexConstructor with this name
+	TextureConstructorPtr constructor(new DefaultConstructor(displayTex));
+
+	//_editorTexture = GlobalTexturesCache().capture(imageConstructor, displayTex);
+	
+	// Pass the call to the GLTextureManager to realise this image 
+	_editorTexture = GetTextureManager().getBinding(displayTex, constructor);
+	
+	// Has the texture been successfully realised?
+	/*if (_editorTexture->texture_number == 0) {
+		std::cout << "No texture_number for " << displayTex.c_str() << "\n";
+		// No, it has not
+		m_notfound = _editorTexture;
+
+		std::string name = std::string(GlobalRadiant().getAppPath())
+		                   + "bitmaps/"
+		                   + (IsDefault() ? "notex.bmp" : "shadernotex.bmp");
+
+		// Construct a new BMP loader
+		ImageConstructorPtr bmpConstructor(new FileLoader(name, "bmp"));
+		_editorTexture = GlobalTexturesCache().capture(bmpConstructor, name);
+	}*/
+	
+	std::cout << "Result: " << _editorTexture->texture_number << "\n";
+	
+	return _editorTexture;
+}
+
+TexturePtr CShader::constructDiffuse() {
+	return _diffuse;
 }
 
 // Return bumpmap if it exists, otherwise _flat
@@ -171,19 +217,20 @@ const char* CShader::getShaderFileName() const {
 // -----------------------------------------
 
 void CShader::realise() {
+	std::cout << "Realising shader: " << _name.c_str() << "\n";
 
 	// Grab the display texture (may be null)
-	std::string displayTex = _template._texture->getTextureName();
+	/*std::string displayTex = _template._texture->getTextureName();
 
 	// Allocate a default ImageConstructor with this name
 	ImageConstructorPtr imageConstructor(new DefaultConstructor(displayTex));
 
-	m_pTexture = GlobalTexturesCache().capture(imageConstructor, displayTex);
+	_editorTexture = GlobalTexturesCache().capture(imageConstructor, displayTex);
 
 	// Has the texture been successfully realised?
-	if (m_pTexture->texture_number == 0) {
+	if (_editorTexture->texture_number == 0) {
 		// No, it has not
-		m_notfound = m_pTexture;
+		m_notfound = _editorTexture;
 
 		std::string name = std::string(GlobalRadiant().getAppPath())
 		                   + "bitmaps/"
@@ -191,14 +238,14 @@ void CShader::realise() {
 
 		// Construct a new BMP loader
 		ImageConstructorPtr bmpConstructor(new FileLoader(name, "bmp"));
-		m_pTexture = GlobalTexturesCache().capture(bmpConstructor, name);
-	}
+		_editorTexture = GlobalTexturesCache().capture(bmpConstructor, name);
+	}*/
 
 	realiseLighting();
 }
 
 void CShader::unrealise() {
-	GlobalTexturesCache().release(m_pTexture);
+	GlobalTexturesCache().release(_editorTexture);
 
 	if (m_notfound != 0) {
 		GlobalTexturesCache().release(m_notfound);
