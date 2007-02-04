@@ -5,6 +5,8 @@
 #include <map>
 #include "TextureManipulator.h"
 
+namespace shaders {
+
 class GLTextureManager :
 	public IGLTextureManager
 {
@@ -17,7 +19,11 @@ class GLTextureManager :
 	TextureManipulator _manipulator;
 
 public:
+	// Constructor
 	GLTextureManager();
+	
+	// Destructor
+	~GLTextureManager();
 
 	iterator begin();
 	iterator end();
@@ -31,6 +37,10 @@ private:
 	/* greebo: Binds the specified texture to openGL and populates the texture object 
 	 */
 	void load(TexturePtr texture, Image* image);
-}; 
+};
+
+typedef boost::shared_ptr<GLTextureManager> GLTextureManagerPtr;
+
+} // namespace shaders
 
 #endif /*GLTEXTUREMANAGER_H_*/

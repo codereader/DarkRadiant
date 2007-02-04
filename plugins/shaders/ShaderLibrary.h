@@ -49,6 +49,8 @@ public:
 
 }; // class ShaderLibrary
 
+typedef boost::shared_ptr<ShaderLibrary> ShaderLibraryPtr;
+
 } // namespace shaders
 
 #endif /*SHADERLIBRARY_H_*/

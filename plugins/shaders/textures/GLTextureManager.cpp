@@ -2,13 +2,22 @@
 
 #include "texturelib.h"
 #include "igl.h"
+#include <iostream>
 
 namespace {
 	const int MAX_TEXTURE_QUALITY = 3;
 }
 
+namespace shaders {
+
 GLTextureManager::GLTextureManager() 
-{}
+{
+	std::cout << "GLTextureManager initialised.\n";
+}
+
+GLTextureManager::~GLTextureManager() {
+	std::cout << "GLTextureManager shutdown.\n";
+}
 
 GLTextureManager::iterator GLTextureManager::begin() {
 	return _textures.begin();
@@ -146,3 +155,5 @@ void GLTextureManager::load(TexturePtr texture, Image* image) {
 	if (resampled)
 		free(outpixels);
 }
+
+} // namespace shaders
