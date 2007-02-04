@@ -160,11 +160,6 @@ public:
 	// Return the light falloff texture (Z dimension).
 	TexturePtr lightFalloffImage() const;
 
-private:
-	// The internal methods to realise the textures
-	TexturePtr constructTexture();
-	TexturePtr constructDiffuse();
-
 }; // class CShader
 
 typedef boost::shared_ptr<CShader> ShaderPtr;

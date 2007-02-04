@@ -68,6 +68,14 @@ CShader::CShader(const std::string& name, const ShaderDefinition& definition)
 {
 	assert(definition.shaderTemplate != NULL); // otherwise we have NULL ref
 
+	// Get the texture lookup name (e.g. textures/darkmod/stone/floor/block_008)
+	std::string displayTex = _template._texture->getTextureName();
+	_editorConstructor = TextureConstructorPtr(new DefaultConstructor(displayTex));
+	
+	// Get the diffuse lookup name (e.g. textures/darkmod/stone/floor/block_008)
+	std::string diffuseName = _template._diffuse->getTextureName();
+	_diffuseConstructor = TextureConstructorPtr(new DefaultConstructor(diffuseName));
+	
 	// Realise the shader
 	realise();
 }
@@ -96,8 +104,11 @@ std::size_t CShader::refcount() {
 TexturePtr CShader::getTexture() {
 	// Check if the boost::shared_ptr is still uninitialised
 	if (_editorTexture == NULL) {
-		// Request this texture to be loaded
-		_editorTexture = constructTexture();
+		// Pass the call to the GLTextureManager to realise this image 
+		_editorTexture = GetTextureManager().getBinding(
+			_template._texture->getTextureName(), 
+			_editorConstructor
+		);
 	}
 	return _editorTexture;
 }
@@ -105,26 +116,12 @@ TexturePtr CShader::getTexture() {
 TexturePtr CShader::getDiffuse() {
 	// Check if the boost::shared_ptr is still uninitialised
 	if (_diffuse == NULL) {
-		// Request this texture to be loaded
-		_diffuse = constructDiffuse();
+		// Pass the call to the GLTextureManager to realise this image 
+		_diffuse = GetTextureManager().getBinding(
+			_template._diffuse->getTextureName(), 
+			_diffuseConstructor
+		);
 	}
-	return _diffuse;
-}
-
-TexturePtr CShader::constructTexture() {
-	// Get the texture lookup name (e.g. textures/darkmod/stone/floor/block_008)
-	std::string displayTex = _template._texture->getTextureName();
-
-	// Allocate a default TexConstructor with this name
-	TextureConstructorPtr constructor(new DefaultConstructor(displayTex));
-
-	// Pass the call to the GLTextureManager to realise this image 
-	_editorTexture = GetTextureManager().getBinding(displayTex, constructor);
-	
-	return _editorTexture;
-}
-
-TexturePtr CShader::constructDiffuse() {
 	return _diffuse;
 }
 
@@ -193,28 +190,6 @@ const char* CShader::getShaderFileName() const {
 void CShader::realise() {
 	std::cout << "Realising shader: " << _name.c_str() << "\n";
 
-	// Grab the display texture (may be null)
-	/*std::string displayTex = _template._texture->getTextureName();
-
-	// Allocate a default ImageConstructor with this name
-	ImageConstructorPtr imageConstructor(new DefaultConstructor(displayTex));
-
-	_editorTexture = GlobalTexturesCache().capture(imageConstructor, displayTex);
-
-	// Has the texture been successfully realised?
-	if (_editorTexture->texture_number == 0) {
-		// No, it has not
-		m_notfound = _editorTexture;
-
-		std::string name = std::string(GlobalRadiant().getAppPath())
-		                   + "bitmaps/"
-		                   + (IsDefault() ? "notex.bmp" : "shadernotex.bmp");
-
-		// Construct a new BMP loader
-		ImageConstructorPtr bmpConstructor(new FileLoader(name, "bmp"));
-		_editorTexture = GlobalTexturesCache().capture(bmpConstructor, name);
-	}*/
-
 	realiseLighting();
 }
 
@@ -239,8 +214,8 @@ void CShader::realiseLighting() {
 	// not specified in the material.
 
 	// Load the diffuse map
-	ImageConstructorPtr diffuseConstructor(new DefaultConstructor(_template._diffuse->getTextureName()));
-	_diffuse = cache.capture(diffuseConstructor, _template._diffuse->getTextureName());
+/*	ImageConstructorPtr diffuseConstructor(new DefaultConstructor(_template._diffuse->getTextureName()));
+	_diffuse = cache.capture(diffuseConstructor, _template._diffuse->getTextureName());*/
 
 	// Load the bump map
 	ImageConstructorPtr bumpConstructor(new DefaultConstructor(_template._bump->getTextureName()));
