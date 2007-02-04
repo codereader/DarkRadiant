@@ -3,7 +3,7 @@
 #include "shaders.h"
 #include "ShaderDefinition.h"
 
-// TODO: remove this as soon as shaderlibrary is in place
+// TODO: remove this as soon as shaderlibrary is fully functional
 extern ShaderDefinitionMap g_shaderDefinitions;
 
 #include "generic/referencecounted.h"
@@ -25,14 +25,14 @@ namespace {
 namespace shaders {
 
 // Constructor
-Doom3ShaderSystem::Doom3ShaderSystem() {
-	_library = new ShaderLibrary();
-}
+Doom3ShaderSystem::Doom3ShaderSystem() :
+	_library(new ShaderLibrary()),
+	_textureManager(new GLTextureManager())
+{}
 
 // Destructor
-Doom3ShaderSystem::~Doom3ShaderSystem() {
-	delete _library;
-}
+Doom3ShaderSystem::~Doom3ShaderSystem()
+{}
 
 void Doom3ShaderSystem::realise() {
 	Shaders_Realise();
@@ -106,6 +106,10 @@ ShaderLibrary& Doom3ShaderSystem::getLibrary() {
 	return *_library;
 }
 
+GLTextureManager& Doom3ShaderSystem::getTextureManager() {
+	return *_textureManager;
+}
+
 } // namespace shaders
 
 // Accessor function encapsulating the static shadersystem instance
@@ -118,3 +122,6 @@ shaders::ShaderLibrary& GetShaderLibrary() {
 	return GetShaderSystem().getLibrary();
 }
 
+shaders::GLTextureManager& GetTextureManager() {
+	return GetShaderSystem().getTextureManager();
+}

@@ -25,6 +25,12 @@ class CShader :
 	TexturePtr _diffuse;
 	TexturePtr _specular;
 	
+	// The texture constructors for this image
+	TextureConstructorPtr _diffuseConstructor;
+	TextureConstructorPtr _bumpConstructor;
+	TextureConstructorPtr _specularConstructor;
+	TextureConstructorPtr _editorConstructor;
+	
 	//float _heightMapScale; // unused at the moment
 	TexturePtr _bump;
 	

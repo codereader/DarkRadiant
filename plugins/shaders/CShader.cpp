@@ -62,7 +62,8 @@ CShader::CShader(const std::string& name, const ShaderDefinition& definition)
 		_fileName(definition.filename),
 		_name(name),
 		m_blendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA),
-		m_bInUse(false) {
+		m_bInUse(false) 
+{
 	assert(definition.shaderTemplate != NULL); // otherwise we have NULL ref
 
 	// Realise the shader
@@ -95,7 +96,16 @@ TexturePtr CShader::getTexture() const {
 }
 
 TexturePtr CShader::getDiffuse() const {
-	return _diffuse;
+	// Check if the boost::shared_ptr is already initialised
+	if (_diffuse != NULL) {
+		return _diffuse;
+	}
+	else {
+		// Request this texture to be loaded
+		std::cout << "Texture not yet realised. constructing now...\n";
+		
+		return _diffuse;
+	}
 }
 
 // Return bumpmap if it exists, otherwise _flat

@@ -4,6 +4,7 @@
 #include "ishaders.h"
 #include "moduleobserver.h"
 #include "ShaderLibrary.h"
+#include "textures/GLTextureManager.h"
 
 namespace shaders {
 
@@ -13,7 +14,10 @@ class Doom3ShaderSystem :
 {
 	// The shaderlibrary stores all the known shaderdefinitions 
 	// as well as the active shaders
-	ShaderLibrary* _library;
+	ShaderLibraryPtr _library;
+	
+	// The manager that handles the texture caching. 
+	GLTextureManagerPtr _textureManager;
 	
 public:
 	// Constructor, allocates the library
@@ -49,6 +53,7 @@ public:
 	const char* getTexturePrefix() const;
 
 	ShaderLibrary& getLibrary();
+	GLTextureManager& getTextureManager();
 
 }; // class Doom3ShaderSystem
 
@@ -58,5 +63,7 @@ public:
 shaders::Doom3ShaderSystem& GetShaderSystem();
 
 shaders::ShaderLibrary& GetShaderLibrary();
+
+shaders::GLTextureManager& GetTextureManager();
 
 #endif /*DOOM3SHADERSYSTEM_H_*/
