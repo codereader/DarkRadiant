@@ -155,13 +155,8 @@ void GLTextureManager::load(TexturePtr texture, Image* image) {
 	
 	// Allocate a new texture number and store it into the Texture structure
 	glGenTextures(1, &texture->texture_number);
-	
-	std::cout << "texture_number1: " << texture->texture_number << "\n";
-	
 	glBindTexture(GL_TEXTURE_2D, texture->texture_number);
-	
-	std::cout << "texture_number2: " << texture->texture_number << "\n";
-	
+
 	//setTextureParameters();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );

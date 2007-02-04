@@ -94,58 +94,32 @@ std::size_t CShader::refcount() {
 
 // get/set the Texture* Radiant uses to represent this shader object
 TexturePtr CShader::getTexture() {
-	// Check if the boost::shared_ptr is already initialised
-	if (_editorTexture != NULL) {
-		return _editorTexture;
-	}
-	else {
+	// Check if the boost::shared_ptr is still uninitialised
+	if (_editorTexture == NULL) {
 		// Request this texture to be loaded
-		std::cout << "EditorTexture not yet realised. constructing now...\n";
-		return constructTexture();
+		_editorTexture = constructTexture();
 	}
+	return _editorTexture;
 }
 
 TexturePtr CShader::getDiffuse() {
-	// Check if the boost::shared_ptr is already initialised
-	if (_diffuse != NULL) {
-		return _diffuse;
-	}
-	else {
+	// Check if the boost::shared_ptr is still uninitialised
+	if (_diffuse == NULL) {
 		// Request this texture to be loaded
-		std::cout << "Texture not yet realised. constructing now...\n";
-		return constructDiffuse();
+		_diffuse = constructDiffuse();
 	}
+	return _diffuse;
 }
 
 TexturePtr CShader::constructTexture() {
-	std::cout << "Constructing Editor Image: " << _name.c_str() << " - ";
+	// Get the texture lookup name (e.g. textures/darkmod/stone/floor/block_008)
 	std::string displayTex = _template._texture->getTextureName();
-	std::cout << "TextureName: " << displayTex.c_str() << " - ";
 
 	// Allocate a default TexConstructor with this name
 	TextureConstructorPtr constructor(new DefaultConstructor(displayTex));
 
-	//_editorTexture = GlobalTexturesCache().capture(imageConstructor, displayTex);
-	
 	// Pass the call to the GLTextureManager to realise this image 
 	_editorTexture = GetTextureManager().getBinding(displayTex, constructor);
-	
-	// Has the texture been successfully realised?
-	/*if (_editorTexture->texture_number == 0) {
-		std::cout << "No texture_number for " << displayTex.c_str() << "\n";
-		// No, it has not
-		m_notfound = _editorTexture;
-
-		std::string name = std::string(GlobalRadiant().getAppPath())
-		                   + "bitmaps/"
-		                   + (IsDefault() ? "notex.bmp" : "shadernotex.bmp");
-
-		// Construct a new BMP loader
-		ImageConstructorPtr bmpConstructor(new FileLoader(name, "bmp"));
-		_editorTexture = GlobalTexturesCache().capture(bmpConstructor, name);
-	}*/
-	
-	std::cout << "Result: " << _editorTexture->texture_number << "\n";
 	
 	return _editorTexture;
 }
