@@ -21,18 +21,20 @@ class CShader :
 
 	// Textures for this shader
 	TexturePtr _editorTexture;
-	TexturePtr m_notfound;
 	TexturePtr _diffuse;
+	TexturePtr _bump;
 	TexturePtr _specular;
 	
 	// The texture constructors for this image
+	TextureConstructorPtr _editorConstructor;
 	TextureConstructorPtr _diffuseConstructor;
 	TextureConstructorPtr _bumpConstructor;
 	TextureConstructorPtr _specularConstructor;
-	TextureConstructorPtr _editorConstructor;
+	
+	// The constructor of the light falloff texture
+	TextureConstructorPtr _falloffConstructor;
 	
 	//float _heightMapScale; // unused at the moment
-	TexturePtr _bump;
 	
 	TexturePtr _texLightFalloff;
 	BlendFunc m_blendFunc;
@@ -160,7 +162,7 @@ public:
 	bool isFogLight() const;
 
 	// Return the light falloff texture (Z dimension).
-	TexturePtr lightFalloffImage() const;
+	TexturePtr lightFalloffImage();
 
 }; // class CShader
 

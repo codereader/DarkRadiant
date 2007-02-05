@@ -43,13 +43,10 @@ TexturePtr GLTextureManager::getStandardTexture(eTextureType textureType) {
 	switch (textureType) {
 		case texEditor:
 		case texDiffuse:
-			std::cout << "returning empty diffuse/editor\n";
 			return getShaderImageMissing();
 		case texBump:
-			std::cout << "returning empty bump\n"; 
 			return getEmptyBump();
 		case texSpecular:
-			std::cout << "returning empty specular\n";
 			return getEmptySpecular();
 		case texLightFalloff:
 			// TODO: place correct image here
@@ -62,9 +59,6 @@ TexturePtr GLTextureManager::getBinding(const std::string& textureKey,
 										TextureConstructorPtr constructor,
 										eTextureType textureType) 
 {
-	std::cout << "getBinding called with " << textureKey.c_str() << " - ";
-	std::cout << "texture type: " << textureType << "\n";
-	
 	if (textureKey == "") {
 		return getStandardTexture(textureType);
 	}
