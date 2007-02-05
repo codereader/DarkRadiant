@@ -15,10 +15,13 @@ class ShaderLibrary
 	
 	typedef std::map<std::string, ShaderPtr> ShaderMap;
 	typedef ShaderMap::iterator iterator;
-	
+		
 	ShaderMap _shaders;
 
+	iterator _publicIterator;
+
 public:
+
 	// Constructor
 	ShaderLibrary();
 	
@@ -47,6 +50,14 @@ public:
 	 */
 	ShaderPtr findShader(const std::string& name);
 
+	// --- Support for this ActiveShaders_IteratorAtEnd() stuff ---
+	
+	// Returns the public iterator that is used by texwindow.cpp
+	iterator& getIterator();
+	void incrementIterator();
+	iterator begin();
+	iterator end();
+	
 }; // class ShaderLibrary
 
 typedef boost::shared_ptr<ShaderLibrary> ShaderLibraryPtr;

@@ -106,7 +106,7 @@ void CShader::IncRef() {
 // Decrease reference count
 void CShader::DecRef()  {
 	if (--_refCount == 0) {
-		delete this;
+		//delete this;
 	}
 }
 

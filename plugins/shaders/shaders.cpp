@@ -106,45 +106,26 @@ shaders_t g_ActiveShaders;
 
 static shaders_t::iterator g_ActiveShadersIterator;
 
-void ActiveShaders_IteratorBegin()
-{
-  g_ActiveShadersIterator = g_ActiveShaders.begin();
+void ActiveShaders_IteratorBegin() {
+	GetShaderLibrary().getIterator() = GetShaderLibrary().begin();
 }
 
-bool ActiveShaders_IteratorAtEnd()
-{
-  return g_ActiveShadersIterator == g_ActiveShaders.end();
+bool ActiveShaders_IteratorAtEnd() {
+	return GetShaderLibrary().getIterator() == GetShaderLibrary().end();
 }
 
-IShader *ActiveShaders_IteratorCurrent()
-{
-  return static_cast<CShader*>(g_ActiveShadersIterator->second);
+IShader* ActiveShaders_IteratorCurrent() {
+	return &(*GetShaderLibrary().getIterator()->second);
 }
 
-void ActiveShaders_IteratorIncrement()
-{
-  ++g_ActiveShadersIterator;
+void ActiveShaders_IteratorIncrement() {
+	GetShaderLibrary().incrementIterator();
 }
 
 // will free all GL binded qtextures and shaders
 // NOTE: doesn't make much sense out of Radiant exit or called during a reload
 void FreeShaders()
 {
-	// Warn if any shaders have refcounts > 1
-	for (shaders_t::iterator i = g_ActiveShaders.begin(); 
-		 i != g_ActiveShaders.end(); 
-		 ++i) 
-	{
-		if (i->second->refcount() > 1) {
-  			std::cerr << "Warning: shader \"" << i->first 
-  					  << "\" still referenced." << std::endl;
-		}
-	}
-
-  // reload shaders
-  // empty the actives shaders list
-  g_ActiveShaders.clear();
-  g_shaderDefinitions.clear();
 	GetShaderLibrary().clear();
   g_ActiveShadersChangedNotify();
 }
@@ -159,40 +140,9 @@ CShader* Try_Shader_ForName(const std::string& name)
 	
 	// Hack to enable casting of the boost::shared_ptr to CShader* (TODO!)
 	// Dereference to get the contained object and return the pointer it
-	//return &(*shader);
+	return &(*shader);
 	
-	// Old code below
-	
-	// Try to lookup a specific shader by name and return it, if successful
-  {
-    shaders_t::iterator i = g_ActiveShaders.find(name);
-    if(i != g_ActiveShaders.end())
-    {
-      return (*i).second;
-    }
-  }
-
-	// No shader found in the active shaders list, try to find a ShaderTemplate 
-	
-	// Search for a matching ShaderDefinition. If none is found, create a 
-	// default one and return this instead (this is how unrecognised textures
-	// get rendered with notex.bmp).
-	ShaderDefinitionMap::iterator i = g_shaderDefinitions.find(name);
-	
-	if (i == g_shaderDefinitions.end()) {
-		ShaderTemplatePtr shaderTemplate(new ShaderTemplate(name));
-
-		// Create and insert new ShaderDefinition wrapper
-		ShaderDefinition def(shaderTemplate, "");
-		i = g_shaderDefinitions.insert(
-							ShaderDefinitionMap::value_type(name, def)).first;
-	}
-	
-	// Now create a new Shader object out of the found or created template
-	ShaderPointer pShader(new CShader(name, i->second));
-	g_ActiveShaders.insert(shaders_t::value_type(name, pShader));
-	g_ActiveShadersChangedNotify();
-	return pShader;
+	//g_ActiveShadersChangedNotify(); TODO
 }
 
 /**
@@ -225,15 +175,6 @@ void parseShaderDecl(parser::DefTokeniser& tokeniser,
 	
 	// Insert into the definitions map, if not already present
     if (!GetShaderLibrary().addDefinition(name, def)) {
-    	std::cout << "[shaders] " << filename << ": shader " << name
-    			  << " already defined." << std::endl;
-    }
-	
-	// OLD CODE
-	// Insert into the definitions map, if not already present
-    if (!g_shaderDefinitions.insert(
-    				ShaderDefinitionMap::value_type(name, def)).second) 
-	{
     	std::cout << "[shaders] " << filename << ": shader " << name
     			  << " already defined." << std::endl;
     }
