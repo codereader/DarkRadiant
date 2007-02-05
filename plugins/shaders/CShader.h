@@ -43,8 +43,7 @@ class CShader :
 
 public:
 	static bool m_lightingEnabled;
-	static TexturePtr _emptyLightFallOff;
-
+	
 	/*
 	 * Constructor. Sets the name and the ShaderDefinition to use.
 	 */

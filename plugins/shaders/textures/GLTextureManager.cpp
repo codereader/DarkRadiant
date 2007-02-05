@@ -14,6 +14,7 @@ namespace {
 	const std::string SHADER_NOT_FOUND = "bitmaps/notex.bmp";
 	const std::string SHADER_BUMP_EMPTY = "bitmaps/_flat.bmp";
 	const std::string SHADER_SPECULAR_EMPTY = "bitmaps/_black.bmp";
+	const std::string SHADER_FALLOFF_EMPTY = "bitmaps/_black.bmp";
 }
 
 namespace shaders {
@@ -85,7 +86,9 @@ TexturePtr GLTextureManager::getBinding(const std::string& textureKey,
 			}
 			else {
 				// No image has been loaded, assign it to the "image missing texture"
-				std::cout << "[shaders] Shader Image Missing: " << textureKey.c_str() << "\n";
+				std::cout << "[shaders] Unable to load shader texture for: " 
+						  << textureKey.c_str() << "\n";			
+				
 				_textures[textureKey] = getStandardTexture(textureType);
 			}
 		}
@@ -136,6 +139,13 @@ TexturePtr GLTextureManager::getEmptySpecular() {
 		_emptySpecular = loadStandardTexture(SHADER_SPECULAR_EMPTY); 
 	}
 	return _emptySpecular;
+}
+
+TexturePtr GLTextureManager::getEmptyFalloff() {
+	if (_emptyFalloff == NULL) {
+		_emptyFalloff = loadStandardTexture(SHADER_FALLOFF_EMPTY); 
+	}
+	return _emptyFalloff;
 }
 
 TexturePtr GLTextureManager::getShaderNotFound() {
