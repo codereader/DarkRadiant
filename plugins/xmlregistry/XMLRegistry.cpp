@@ -268,11 +268,14 @@ public:
 	void removeKeyObserver(RegistryKeyObserver* observer) {
 		
 		// Traverse through the keyObserverMap and try to find the specified observer
-		for (KeyObserverMap::iterator it = _keyObservers.begin(); it != _keyObservers.end(); it++) {
-			if (it->second == observer) {
-				// Delete the found key (by passing the iterator pointing to it)
-				_keyObservers.erase(it);
-			} 
+		for (KeyObserverMap::iterator i = _keyObservers.begin(); i != _keyObservers.end(); ) {
+			if (i->second == observer) {
+				// Be sure to increment the iterator with a postfix ++, so that the "old" iterator is passed
+				_keyObservers.erase(i++);
+			}
+			else {
+				i++;
+			}
 		}
 	}
 	
