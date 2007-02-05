@@ -95,6 +95,7 @@ CShader::CShader(const std::string& name, const ShaderDefinition& definition)
 
 CShader::~CShader() {
 	unrealise();
+	GetTextureManager().checkBindings();
 }
 
 // Increase reference count
@@ -225,16 +226,11 @@ void CShader::realise() {
 }
 
 void CShader::unrealise() {
-	GlobalTexturesCache().release(_editorTexture);
-
 	unrealiseLighting();
 }
 
 // Parse and load image maps for this shader
 void CShader::realiseLighting() {
-
-	// Create a shortcut reference
-	TexturesCache& cache = GlobalTexturesCache();
 
 	for (ShaderTemplate::Layers::const_iterator i = _template.m_layers.begin();
 	        i != _template.m_layers.end();
@@ -268,17 +264,7 @@ void CShader::realiseLighting() {
 }
 
 void CShader::unrealiseLighting() {
-	GlobalTexturesCache().release(_diffuse);
-	GlobalTexturesCache().release(_bump);
-	GlobalTexturesCache().release(_specular);
-
-	GlobalTexturesCache().release(_texLightFalloff);
-
-	for (MapLayers::iterator i = m_layers.begin(); i != m_layers.end(); ++i) {
-		GlobalTexturesCache().release(i->texture());
-	}
 	m_layers.clear();
-
 	m_blendFunc = BlendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA);
 }
 
@@ -290,18 +276,21 @@ void CShader::setName(const std::string& name) {
 }
 
 CShader::MapLayer CShader::evaluateLayer(const LayerTemplate& layerTemplate) {
-	// Allocate a default ImageConstructor with this name
-	ImageConstructorPtr imageConstructor(
+	// Allocate a default TextureConstructor with this name
+	TextureConstructorPtr constructor(
 	    new DefaultConstructor(layerTemplate.mapExpr->getTextureName())
 	);
 
 	return MapLayer(
-           GlobalTexturesCache().
-           capture(imageConstructor, layerTemplate.mapExpr->getTextureName()),
-           evaluateBlendFunc(layerTemplate.m_blendFunc),
-           layerTemplate.m_clampToBorder,
-           boost::lexical_cast<float>(layerTemplate.m_alphaTest)
-       );
+		GetTextureManager().getBinding(
+			layerTemplate.mapExpr->getTextureName(),
+        	constructor,
+        	texDiffuse	// texDiffuse returns a shaderimagemissing if anything goes wrong
+        ),
+		evaluateBlendFunc(layerTemplate.m_blendFunc),
+		layerTemplate.m_clampToBorder,
+		boost::lexical_cast<float>(layerTemplate.m_alphaTest)
+	);
 }
 
 const ShaderLayer* CShader::firstLayer() const {
