@@ -8,6 +8,7 @@ namespace shaders {
 ShaderLibrary::ShaderLibrary()
 {
 	std::cout << "ShaderLibrary initialised.\n";
+	_publicIterator = _shaders.begin();
 }
 
 ShaderLibrary::~ShaderLibrary() {
@@ -69,6 +70,24 @@ ShaderPtr ShaderLibrary::findShader(const std::string& name) {
 void ShaderLibrary::clear() {
 	_shaders.clear();
 	_definitions.clear();
+}
+
+ShaderLibrary::iterator& ShaderLibrary::getIterator() {
+	return _publicIterator;
+}
+
+void ShaderLibrary::incrementIterator() {
+	if (_publicIterator != end()) {
+		_publicIterator++;
+	}
+}
+
+ShaderLibrary::iterator ShaderLibrary::begin() {
+	return _shaders.begin();
+}
+
+ShaderLibrary::iterator ShaderLibrary::end() {
+	return _shaders.end();
 }
 
 } // namespace shaders
