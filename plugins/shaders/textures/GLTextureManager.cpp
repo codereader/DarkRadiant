@@ -50,10 +50,26 @@ TexturePtr GLTextureManager::getStandardTexture(eTextureType textureType) {
 		case texSpecular:
 			return getEmptySpecular();
 		case texLightFalloff:
-			// TODO: place correct image here
-			return getEmptySpecular();
+			return getEmptyFalloff();
 	};
+	// This won't be executed, it's for avoiding compiler warnings.
 	return getShaderImageMissing();
+}
+
+void GLTextureManager::checkBindings() {
+	// Check the TextureMap for unique pointers and release them
+	// as they aren't used by anyone else than this class.
+	for (iterator i = begin(); i != end(); ) {
+		// If the boost::shared_ptr is unique (i.e. refcount==1), remove it
+		if (i->second.unique()) {
+			// Be sure to increment the iterator with a postfix ++, 
+			// so that the "old" iterator is passed
+			_textures.erase(i++);
+		}
+		else {
+			i++;
+		}
+	}
 }
 
 TexturePtr GLTextureManager::getBinding(const std::string& textureKey, 
