@@ -20,6 +20,8 @@ class GLTextureManager :
 	
 	TexturePtr _shaderImageMissing;
 	TexturePtr _shaderNotFound;
+	TexturePtr _emptyBump;
+	TexturePtr _emptySpecular;
 
 public:
 	// Constructor
@@ -33,11 +35,17 @@ public:
 	iterator find(const std::string& textureKey);
 
 	TexturePtr getBinding(const std::string& textureKey, 
-						  TextureConstructorPtr constructor);
+						  TextureConstructorPtr constructor,
+						  eTextureType textureType);
+
+	// Retrieves the "fallback" texture for the given textureType
+	TexturePtr getStandardTexture(eTextureType textureType);
 
 	// Returns the fallback Textures
 	TexturePtr getShaderNotFound();
 	TexturePtr getShaderImageMissing();
+	TexturePtr getEmptyBump();
+	TexturePtr getEmptySpecular();
 
 private:
 

@@ -76,6 +76,14 @@ CShader::CShader(const std::string& name, const ShaderDefinition& definition)
 	std::string diffuseName = _template._diffuse->getTextureName();
 	_diffuseConstructor = TextureConstructorPtr(new DefaultConstructor(diffuseName));
 	
+	// Initialise the bump map constructor
+	std::string bumpName = _template._bump->getTextureName();
+	_bumpConstructor = TextureConstructorPtr(new DefaultConstructor(bumpName));
+	
+	// Initialise the specular map constructor
+	std::string specularName = _template._specular->getTextureName();
+	_specularConstructor = TextureConstructorPtr(new DefaultConstructor(specularName));
+	
 	// Realise the shader
 	realise();
 }
@@ -107,7 +115,8 @@ TexturePtr CShader::getTexture() {
 		// Pass the call to the GLTextureManager to realise this image 
 		_editorTexture = GetTextureManager().getBinding(
 			_template._texture->getTextureName(), 
-			_editorConstructor
+			_editorConstructor,
+			texEditor
 		);
 	}
 	return _editorTexture;
@@ -119,18 +128,41 @@ TexturePtr CShader::getDiffuse() {
 		// Pass the call to the GLTextureManager to realise this image 
 		_diffuse = GetTextureManager().getBinding(
 			_template._diffuse->getTextureName(), 
-			_diffuseConstructor
+			_diffuseConstructor,
+			texDiffuse
 		);
 	}
 	return _diffuse;
 }
 
 // Return bumpmap if it exists, otherwise _flat
-TexturePtr CShader::getBump() const {
+TexturePtr CShader::getBump() {
+	std::cout << "getBump called for " << _name.c_str() << "\n";
+	// Check if the boost::shared_ptr is still uninitialised
+	if (_bump == NULL) {
+		// Pass the call to the GLTextureManager to realise this image 
+		_bump = GetTextureManager().getBinding(
+			_template._bump->getTextureName(), 
+			_bumpConstructor,
+			texBump
+		);
+	}
 	return _bump;
 }
 
-TexturePtr CShader::getSpecular() const {
+TexturePtr CShader::getSpecular() {
+	std::cout << "getSpecular called for " << _name.c_str() << "\n";
+	// Check if the boost::shared_ptr is still uninitialised
+	if (_specular == NULL) {
+		std::cout << "Specular not yet initialised. Getting binding for " << _template._specular->getTextureName().c_str() << "\n";
+		// Pass the call to the GLTextureManager to realise this image 
+		_specular = GetTextureManager().getBinding(
+			_template._specular->getTextureName(), 
+			_specularConstructor,
+			texSpecular
+		);
+	}
+	std::cout << "Result: " << _specular->texture_number << "\n";
 	return _specular;
 }
 
@@ -218,7 +250,7 @@ void CShader::realiseLighting() {
 	_diffuse = cache.capture(diffuseConstructor, _template._diffuse->getTextureName());*/
 
 	// Load the bump map
-	ImageConstructorPtr bumpConstructor(new DefaultConstructor(_template._bump->getTextureName()));
+	/*ImageConstructorPtr bumpConstructor(new DefaultConstructor(_template._bump->getTextureName()));
 	_bump = cache.capture(bumpConstructor, _template._bump->getTextureName());
 
 	if (_bump == 0 || _bump->texture_number == 0) {
@@ -247,7 +279,7 @@ void CShader::realiseLighting() {
 		// Construct a new BMP loader
 		ImageConstructorPtr bmpConstructor(new FileLoader(blackName, "bmp"));
 		_specular = cache.capture(bmpConstructor, blackName);
-	}
+	}*/
 
 	// Get light falloff image. If a falloff image is defined but invalid,
 	// emit a warning since this will result in a black light
