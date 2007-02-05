@@ -12,6 +12,8 @@ namespace {
 	// TODO: Move this into doom3.game or other xml files
 	const std::string SHADER_IMAGE_MISSING = "bitmaps/shadernotex.bmp";
 	const std::string SHADER_NOT_FOUND = "bitmaps/notex.bmp";
+	const std::string SHADER_BUMP_EMPTY = "bitmaps/_flat.bmp";
+	const std::string SHADER_SPECULAR_EMPTY = "bitmaps/_black.bmp";
 }
 
 namespace shaders {
@@ -37,11 +39,34 @@ GLTextureManager::iterator GLTextureManager::find(const std::string& textureKey)
 	return _textures.find(textureKey);
 }
 
+TexturePtr GLTextureManager::getStandardTexture(eTextureType textureType) {
+	switch (textureType) {
+		case texEditor:
+		case texDiffuse:
+			std::cout << "returning empty diffuse/editor\n";
+			return getShaderImageMissing();
+		case texBump:
+			std::cout << "returning empty bump\n"; 
+			return getEmptyBump();
+		case texSpecular:
+			std::cout << "returning empty specular\n";
+			return getEmptySpecular();
+		case texLightFalloff:
+			// TODO: place correct image here
+			return getEmptySpecular();
+	};
+	return getShaderImageMissing();
+}
+
 TexturePtr GLTextureManager::getBinding(const std::string& textureKey, 
-										TextureConstructorPtr constructor) 
+										TextureConstructorPtr constructor,
+										eTextureType textureType) 
 {
+	std::cout << "getBinding called with " << textureKey.c_str() << " - ";
+	std::cout << "texture type: " << textureType << "\n";
+	
 	if (textureKey == "") {
-		return getShaderNotFound();
+		return getStandardTexture(textureType);
 	}
 	
 	iterator i = find(textureKey);
@@ -66,8 +91,8 @@ TexturePtr GLTextureManager::getBinding(const std::string& textureKey,
 			}
 			else {
 				// No image has been loaded, assign it to the "image missing texture"
-				std::cout << "[shaders] Shader Image Missing: " << textureKey.c_str() << "\n"; 
-				_textures[textureKey] = getShaderImageMissing();
+				std::cout << "[shaders] Shader Image Missing: " << textureKey.c_str() << "\n";
+				_textures[textureKey] = getStandardTexture(textureType);
 			}
 		}
 		else {
@@ -92,20 +117,31 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
 	Image* image = constructor->construct();
 	
 	if (image != NULL) {
-		std::cout << "Loading image: " << fullpath.c_str() << "\n";
 		// Bind the texture and get the OpenGL id
 		load(returnValue, image);
-		
-		std::cout << "texture_number: " << returnValue->texture_number << "\n";
 		
 		// We don't need the image pixel data anymore
 		image->release();
 	}
 	else {
-		std::cout << "[shaders] Couldn't load \"shader image missing\" texture!\n";
+		std::cout << "[shaders] Couldn't load Standard Texture texture: " << filename.c_str() << "\n";
 	}
 	
 	return returnValue;
+}
+
+TexturePtr GLTextureManager::getEmptyBump() {
+	if (_emptyBump == NULL) {
+		_emptyBump = loadStandardTexture(SHADER_BUMP_EMPTY); 
+	}
+	return _emptyBump;
+}
+
+TexturePtr GLTextureManager::getEmptySpecular() {
+	if (_emptySpecular == NULL) {
+		_emptySpecular = loadStandardTexture(SHADER_SPECULAR_EMPTY); 
+	}
+	return _emptySpecular;
 }
 
 TexturePtr GLTextureManager::getShaderNotFound() {

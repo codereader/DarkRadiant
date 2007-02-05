@@ -47,6 +47,14 @@ public:
 };
 typedef boost::shared_ptr<TextureConstructor> TextureConstructorPtr;
 
+enum eTextureType {
+	texEditor,
+	texDiffuse,
+	texBump,
+	texSpecular,
+	texLightFalloff
+};
+
 /* greebo: The TextureManager keeps track of all the Textures that are
  * bound in OpenGL. It is responsible for loading/unloading the textures
  * on demand and/or retrieving the pointers to these textures.
@@ -59,7 +67,8 @@ public:
 	 * the pointer to the existing Texture is returned. 
 	 */
 	virtual TexturePtr getBinding(const std::string& textureKey, 
-								  TextureConstructorPtr constructor) = 0;
+								  TextureConstructorPtr constructor,
+								  eTextureType textureType) = 0;
 };
 
 enum
@@ -141,8 +150,8 @@ public:
   // get/set the qtexture_t* Radiant uses to represent this shader object
   virtual TexturePtr getTexture() = 0;
   virtual TexturePtr getDiffuse() = 0;
-  virtual TexturePtr getBump() const = 0;
-  virtual TexturePtr getSpecular() const = 0;
+  virtual TexturePtr getBump() = 0;
+  virtual TexturePtr getSpecular() = 0;
   // get shader name
   virtual const char* getName() const = 0;
   virtual bool IsInUse() const = 0;

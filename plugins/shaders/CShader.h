@@ -65,8 +65,10 @@ public:
 	TexturePtr getDiffuse();
 	
 	// Return bumpmap if it exists, otherwise _flat
-	TexturePtr getBump() const;
-	TexturePtr getSpecular() const;
+	TexturePtr getBump();
+	
+	// Return specular map or a black texture
+	TexturePtr getSpecular();
 
 	/*
 	 * Return name of shader.
