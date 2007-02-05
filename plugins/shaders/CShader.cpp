@@ -84,6 +84,11 @@ CShader::CShader(const std::string& name, const ShaderDefinition& definition)
 	std::string specularName = _template._specular->getTextureName();
 	_specularConstructor = TextureConstructorPtr(new DefaultConstructor(specularName));
 	
+	// Get the texture filename of the lightfalloff image (TODO, see ShaderTempate.h)
+	// and instantiate the TextureConstructor object 
+	std::string foTexName = _template._lightFallOff->getTextureName();
+	_falloffConstructor = TextureConstructorPtr(new DefaultConstructor(foTexName));
+	
 	// Realise the shader
 	realise();
 }
@@ -231,20 +236,6 @@ void CShader::realiseLighting() {
 	// Create a shortcut reference
 	TexturesCache& cache = GlobalTexturesCache();
 
-	// Get light falloff image. If a falloff image is defined but invalid,
-	// emit a warning since this will result in a black light
-	std::string foTexName = _template._lightFallOff->getTextureName();
-
-	// Allocate a default ImageConstructor with this name
-	ImageConstructorPtr imageConstructor(new DefaultConstructor(foTexName));
-
-	_texLightFalloff = cache.capture(imageConstructor, foTexName);
-	if (!foTexName.empty() && _texLightFalloff->texture_number == 0) {
-		std::cerr << "[shaders] " << _name
-		<< " : defines invalid lightfalloff \"" << foTexName
-		<< "\"" << std::endl;
-	}
-
 	for (ShaderTemplate::Layers::const_iterator i = _template.m_layers.begin();
 	        i != _template.m_layers.end();
 	        ++i) {
@@ -344,12 +335,27 @@ bool CShader::isFogLight() const {
  * Return the light falloff texture (Z dimension).
  */
 TexturePtr CShader::lightFalloffImage() {
-	if (_template._lightFallOff)
-		return _texLightFalloff;
-	else
-		return _emptyLightFallOff;
+	if (_texLightFalloff == NULL) {
+		// TODO: Move this algorithm into a FallOffConstructor object
+		// deriving from a TextureConstructor class, if appropriate (check). 
+		
+		if (_template._lightFallOff) {
+			// There is a lightfalloff defined in the template
+			std::string foTexName = _template._lightFallOff->getTextureName();
+			
+			// Pass the call to the GLTextureManager to realise this image 
+			_texLightFalloff = GetTextureManager().getBinding(
+				foTexName,
+				_falloffConstructor,
+				texLightFalloff
+			);
+		}
+		else {
+			// No falloff defined in the template
+			_texLightFalloff = GetTextureManager().getEmptyFalloff();
+		}
+	}
+	return _texLightFalloff;
 }
 
 bool CShader::m_lightingEnabled = false;
-
-TexturePtr CShader::_emptyLightFallOff(new Texture("$emptyLightFallOff"));

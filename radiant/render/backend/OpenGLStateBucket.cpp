@@ -459,6 +459,9 @@ void OpenGLStateBucket::flushRenderables(OpenGLState& current,
 		// Z falloff, use the one from the default light shader.
         GLuint attenuation_xy = lightShader->firstLayer()->texture()->texture_number;
         
+        // greebo: Note, that the check for empty texture_numbers should not
+        // necessarily placed here, that kind of error handling should go into
+        // the shaders module.
         IShader* zAttenShader = lightShader->lightFalloffImage()->texture_number != 0
         							  ? lightShader
         							  : g_defaultPointLight->getIShader();

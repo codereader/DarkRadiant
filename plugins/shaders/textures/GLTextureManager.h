@@ -18,10 +18,12 @@ class GLTextureManager :
 	
 	TextureManipulator _manipulator;
 	
+	// The fallback textures in case a texture is empty or broken
 	TexturePtr _shaderImageMissing;
 	TexturePtr _shaderNotFound;
 	TexturePtr _emptyBump;
 	TexturePtr _emptySpecular;
+	TexturePtr _emptyFalloff;
 
 public:
 	// Constructor
@@ -46,6 +48,7 @@ public:
 	TexturePtr getShaderImageMissing();
 	TexturePtr getEmptyBump();
 	TexturePtr getEmptySpecular();
+	TexturePtr getEmptyFalloff();
 
 private:
 
