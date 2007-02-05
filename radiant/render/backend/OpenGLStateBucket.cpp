@@ -451,7 +451,7 @@ void OpenGLStateBucket::flushRenderables(OpenGLState& current,
     {
 
 		// Get the light shader and examine its first (and only valid) layer
-		const IShader* lightShader = i->light->getShader()->getIShader();
+		IShader* lightShader = i->light->getShader()->getIShader();
       
       if(lightShader->firstLayer() != 0)
       {
@@ -459,7 +459,7 @@ void OpenGLStateBucket::flushRenderables(OpenGLState& current,
 		// Z falloff, use the one from the default light shader.
         GLuint attenuation_xy = lightShader->firstLayer()->texture()->texture_number;
         
-        const IShader* zAttenShader = lightShader->lightFalloffImage()->texture_number != 0
+        IShader* zAttenShader = lightShader->lightFalloffImage()->texture_number != 0
         							  ? lightShader
         							  : g_defaultPointLight->getIShader();
         GLuint attenuation_z = zAttenShader->lightFalloffImage()->texture_number;

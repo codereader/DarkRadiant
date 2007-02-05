@@ -137,7 +137,6 @@ TexturePtr CShader::getDiffuse() {
 
 // Return bumpmap if it exists, otherwise _flat
 TexturePtr CShader::getBump() {
-	std::cout << "getBump called for " << _name.c_str() << "\n";
 	// Check if the boost::shared_ptr is still uninitialised
 	if (_bump == NULL) {
 		// Pass the call to the GLTextureManager to realise this image 
@@ -151,10 +150,8 @@ TexturePtr CShader::getBump() {
 }
 
 TexturePtr CShader::getSpecular() {
-	std::cout << "getSpecular called for " << _name.c_str() << "\n";
 	// Check if the boost::shared_ptr is still uninitialised
 	if (_specular == NULL) {
-		std::cout << "Specular not yet initialised. Getting binding for " << _template._specular->getTextureName().c_str() << "\n";
 		// Pass the call to the GLTextureManager to realise this image 
 		_specular = GetTextureManager().getBinding(
 			_template._specular->getTextureName(), 
@@ -162,7 +159,6 @@ TexturePtr CShader::getSpecular() {
 			texSpecular
 		);
 	}
-	std::cout << "Result: " << _specular->texture_number << "\n";
 	return _specular;
 }
 
@@ -220,17 +216,11 @@ const char* CShader::getShaderFileName() const {
 // -----------------------------------------
 
 void CShader::realise() {
-	std::cout << "Realising shader: " << _name.c_str() << "\n";
-
 	realiseLighting();
 }
 
 void CShader::unrealise() {
 	GlobalTexturesCache().release(_editorTexture);
-
-	if (m_notfound != 0) {
-		GlobalTexturesCache().release(m_notfound);
-	}
 
 	unrealiseLighting();
 }
@@ -240,46 +230,6 @@ void CShader::realiseLighting() {
 
 	// Create a shortcut reference
 	TexturesCache& cache = GlobalTexturesCache();
-
-	// Set up the diffuse, bump and specular stages. Bump and specular will
-	// be set to defaults _flat and _black respectively, if an image map is
-	// not specified in the material.
-
-	// Load the diffuse map
-/*	ImageConstructorPtr diffuseConstructor(new DefaultConstructor(_template._diffuse->getTextureName()));
-	_diffuse = cache.capture(diffuseConstructor, _template._diffuse->getTextureName());*/
-
-	// Load the bump map
-	/*ImageConstructorPtr bumpConstructor(new DefaultConstructor(_template._bump->getTextureName()));
-	_bump = cache.capture(bumpConstructor, _template._bump->getTextureName());
-
-	if (_bump == 0 || _bump->texture_number == 0) {
-		// Bump Map load failed
-		cache.release(_bump); // release old object first
-
-		// Flat image name
-		std::string flatName = std::string(GlobalRadiant().getAppPath())
-		                       + "bitmaps/_flat.bmp";
-
-		// Construct a new BMP loader
-		ImageConstructorPtr bmpConstructor(new FileLoader(flatName, "bmp"));
-		_bump = cache.capture(bmpConstructor, flatName);
-	}
-
-	// Load the specular map
-	ImageConstructorPtr specConstructor(new DefaultConstructor(_template._specular->getTextureName()));
-	_specular = cache.capture(specConstructor, _template._specular->getTextureName());
-
-	if (_specular == 0 || _specular->texture_number == 0) {
-		cache.release(_specular);
-
-		// Default specular (black image)
-		std::string blackName = std::string(GlobalRadiant().getAppPath()) + "bitmaps/_black.bmp";
-
-		// Construct a new BMP loader
-		ImageConstructorPtr bmpConstructor(new FileLoader(blackName, "bmp"));
-		_specular = cache.capture(bmpConstructor, blackName);
-	}*/
 
 	// Get light falloff image. If a falloff image is defined but invalid,
 	// emit a warning since this will result in a black light
@@ -393,7 +343,7 @@ bool CShader::isFogLight() const {
 /*
  * Return the light falloff texture (Z dimension).
  */
-TexturePtr CShader::lightFalloffImage() const {
+TexturePtr CShader::lightFalloffImage() {
 	if (_template._lightFallOff)
 		return _texLightFalloff;
 	else

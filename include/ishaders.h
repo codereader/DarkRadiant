@@ -188,7 +188,7 @@ public:
   virtual const ShaderLayer* firstLayer() const = 0;
   virtual void forEachLayer(const ShaderLayerCallback& layer) const = 0;
 
-  virtual TexturePtr lightFalloffImage() const = 0;
+  virtual TexturePtr lightFalloffImage() = 0;
 };
 
 /**
