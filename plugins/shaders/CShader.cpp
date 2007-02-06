@@ -100,18 +100,18 @@ CShader::~CShader() {
 
 // Increase reference count
 void CShader::IncRef() {
-	++_refCount;
+	//++_refCount;
 }
 
 // Decrease reference count
 void CShader::DecRef()  {
-	if (--_refCount == 0) {
+	/*if (--_refCount == 0) {
 		//delete this;
-	}
+	}*/
 }
 
 std::size_t CShader::refcount() {
-	return _refCount;
+	return 1;
 }
 
 // get/set the Texture* Radiant uses to represent this shader object

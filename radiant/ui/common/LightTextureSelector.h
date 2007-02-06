@@ -4,12 +4,14 @@
 #include <gtk/gtkwidget.h>
 #include <gtk/gtktreeselection.h>
 #include <gtk/gtkliststore.h>
+#include <boost/shared_ptr.hpp>
 
 #include <string>
 
 /* FORWARD DECLS */
 
 class IShader;
+typedef boost::shared_ptr<IShader> IShaderPtr;
 
 namespace ui
 {
@@ -49,7 +51,7 @@ private:
 	void updateInfoTable();
 	
 	// Get the selected IShader
-	IShader* getSelectedShader();
+	IShaderPtr getSelectedShader();
 	
 	/* GTK CALLBACKS */
 	static void _onExpose(GtkWidget*, GdkEventExpose*, LightTextureSelector*);

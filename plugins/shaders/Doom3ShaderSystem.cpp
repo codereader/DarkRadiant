@@ -50,11 +50,10 @@ bool Doom3ShaderSystem::isRealised() {
 }
 
 // Return a shader by name
-IShader* Doom3ShaderSystem::getShaderForName(const std::string& name) {
+IShaderPtr Doom3ShaderSystem::getShaderForName(const std::string& name) {
 	ShaderPtr shader = _library->findShader(name);
-	IShader *pShader = Try_Shader_ForName(name.c_str());
-	pShader->IncRef();
-	return pShader;
+	//g_ActiveShadersChangedNotify(); TODO
+	return shader;
 }
 
 void Doom3ShaderSystem::foreachShaderName(const ShaderNameCallback& callback) {
@@ -64,16 +63,16 @@ void Doom3ShaderSystem::foreachShaderName(const ShaderNameCallback& callback) {
 }
 
 void Doom3ShaderSystem::beginActiveShadersIterator() {
-	ActiveShaders_IteratorBegin();
+	_library->getIterator() = _library->begin();
 }
 bool Doom3ShaderSystem::endActiveShadersIterator() {
-	return ActiveShaders_IteratorAtEnd();
+	return _library->getIterator() == _library->end();
 }
-IShader* Doom3ShaderSystem::dereferenceActiveShadersIterator() {
-	return ActiveShaders_IteratorCurrent();
+IShaderPtr Doom3ShaderSystem::dereferenceActiveShadersIterator() {
+	return _library->getIterator()->second;
 }
 void Doom3ShaderSystem::incrementActiveShadersIterator() {
-	ActiveShaders_IteratorIncrement();
+	_library->incrementIterator();
 }
 void Doom3ShaderSystem::setActiveShadersChangedNotify(const Callback& notify) {
 	g_ActiveShadersChangedNotify = notify;
@@ -88,12 +87,23 @@ void Doom3ShaderSystem::detach(ModuleObserver& observer) {
 
 void Doom3ShaderSystem::setLightingEnabled(bool enabled) {
 	if (CShader::m_lightingEnabled != enabled) {
-		for (shaders_t::const_iterator i = g_ActiveShaders.begin(); i != g_ActiveShaders.end(); ++i) {
-			(*i).second->unrealiseLighting();
+		// First unrealise the lighting of all shaders
+		for (ShaderLibrary::iterator i = _library->begin(); 
+			 i != _library->end(); 
+			 i++)
+		{
+			i->second->unrealiseLighting();
 		}
+		
+		// Set the global (greebo: Does this really need to be done this way?) 
 		CShader::m_lightingEnabled = enabled;
-		for (shaders_t::const_iterator i = g_ActiveShaders.begin(); i != g_ActiveShaders.end(); ++i) {
-			(*i).second->realiseLighting();
+		
+		// Now realise the lighting of all shaders
+		for (ShaderLibrary::iterator i = _library->begin(); 
+			 i != _library->end(); 
+			 i++)
+		{
+			i->second->realiseLighting();
 		}
 	}
 }

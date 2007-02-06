@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/Vector3.h"
 #include "math/matrix.h"
 #include "math/Plane3.h"
+#include "igl.h"
 
 #include "iimage.h"
 #include <boost/shared_ptr.hpp>
@@ -57,7 +58,7 @@ public:
 	// The GL bind number for use in OpenGL calls
 	GLuint texture_number;
 	
-	// for flat shade mode (greebo: is this used anymore?)
+	// for flat shade mode
 	Colour3 color;
 	
 	// The flags
@@ -71,6 +72,13 @@ public:
 		texture_number(0),
 		referenceCounter(0)
 	{}
+	
+	~Texture() {
+		if (texture_number != 0) {
+			// Remove this texture from openGL if it's still loaded
+			glDeleteTextures(1, &texture_number);
+		}
+	}
 
 }; // class Texture 
 

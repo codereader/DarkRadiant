@@ -311,7 +311,7 @@ GtkWidget* LightTextureSelector::createPreview() {
 } 
 
 // Get the selected shader
-IShader* LightTextureSelector::getSelectedShader() {
+IShaderPtr LightTextureSelector::getSelectedShader() {
 	return GlobalShaderSystem().getShaderForName(getSelection());	
 }
 
@@ -337,7 +337,7 @@ void LightTextureSelector::_onExpose(GtkWidget* widget,
 
 		// Get the selected texture, and set up OpenGL to render it on
 		// the quad.
-		IShader* shader = self->getSelectedShader();
+		IShaderPtr shader = self->getSelectedShader();
 		const ShaderLayer* first = shader->firstLayer();
 		if (first != NULL) {
 			TexturePtr tex = shader->firstLayer()->texture();
@@ -396,7 +396,7 @@ void LightTextureSelector::updateInfoTable() {
 					   -1);
 
 	// Get the shader, and its image map if possible
-	IShader* shader = getSelectedShader();
+	IShaderPtr shader = getSelectedShader();
 
 	const ShaderLayer* first = shader->firstLayer();
 	std::string texName = "None";

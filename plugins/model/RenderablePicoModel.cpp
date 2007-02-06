@@ -53,7 +53,7 @@ void RenderablePicoModel::render(RenderStateFlags flags) const {
 			 ++i)
 	{
 		// Get the IShader to test the shader name against the filter system
-		IShader* surfaceShader = (*i)->getShader()->getIShader();
+		IShaderPtr surfaceShader = (*i)->getShader()->getIShader();
 		if (GlobalFilterSystem().isVisible("texture", surfaceShader->getName())) {
 			// Bind the OpenGL texture and render the surface geometry
 			Texture& tex = (*i)->getShader()->getTexture();

@@ -93,7 +93,7 @@ public:
   {
     for(QERApp_ActiveShaders_IteratorBegin(); !QERApp_ActiveShaders_IteratorAtEnd(); QERApp_ActiveShaders_IteratorIncrement())
     {
-      IShader *shader = QERApp_ActiveShaders_IteratorCurrent();
+      IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 
       if(shader_equal_prefix(shader->getName(), "textures/"))
       {
