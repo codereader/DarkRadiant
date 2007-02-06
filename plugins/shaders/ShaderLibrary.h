@@ -62,6 +62,8 @@ public:
 	iterator begin();
 	iterator end();
 	
+	void foreachShaderName(const ShaderNameCallback& callback);
+	
 }; // class ShaderLibrary
 
 typedef boost::shared_ptr<ShaderLibrary> ShaderLibraryPtr;
