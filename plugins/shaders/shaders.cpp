@@ -88,7 +88,7 @@ in game descriptor";
 void FreeShaders()
 {
 	GetShaderLibrary().clear();
-  g_ActiveShadersChangedNotify();
+	GetShaderSystem().activeShadersChangedNotify();
 }
 
 /**

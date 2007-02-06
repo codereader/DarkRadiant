@@ -167,6 +167,4 @@ public:
 
 typedef boost::shared_ptr<CShader> ShaderPtr;
 
-extern Callback g_ActiveShadersChangedNotify;
-
 #endif /*CSHADER_H_*/

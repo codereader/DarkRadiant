@@ -44,7 +44,7 @@ bool Doom3ShaderSystem::isRealised() {
 // Return a shader by name
 IShaderPtr Doom3ShaderSystem::getShaderForName(const std::string& name) {
 	ShaderPtr shader = _library->findShader(name);
-	//g_ActiveShadersChangedNotify(); TODO
+	activeShadersChangedNotify();
 	return shader;
 }
 
@@ -66,7 +66,7 @@ void Doom3ShaderSystem::incrementActiveShadersIterator() {
 	_library->incrementIterator();
 }
 void Doom3ShaderSystem::setActiveShadersChangedNotify(const Callback& notify) {
-	g_ActiveShadersChangedNotify = notify;
+	_activeShadersChangedNotify = notify;
 }
 
 void Doom3ShaderSystem::attach(ModuleObserver& observer) {
@@ -109,6 +109,10 @@ ShaderLibrary& Doom3ShaderSystem::getLibrary() {
 
 GLTextureManager& Doom3ShaderSystem::getTextureManager() {
 	return *_textureManager;
+}
+
+void Doom3ShaderSystem::activeShadersChangedNotify() {
+	_activeShadersChangedNotify();
 }
 
 } // namespace shaders
