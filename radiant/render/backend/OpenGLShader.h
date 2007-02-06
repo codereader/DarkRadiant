@@ -4,6 +4,7 @@
 #include "OpenGLStateBucket.h"
 
 #include "irender.h"
+#include "ishaders.h"
 #include "moduleobservers.h"
 #include "string/string.h"
 
@@ -17,7 +18,7 @@ class OpenGLShader
 {
 	typedef std::list<OpenGLStateBucket*> Passes;
 	Passes m_passes;
-	IShader* m_shader;
+	IShaderPtr m_shader;
 	std::size_t m_used;
 	ModuleObservers m_observers;
 
@@ -27,8 +28,7 @@ public:
 	 * Constructor.
 	 */
 	OpenGLShader() 
-	: m_shader(0), 
-	  m_used(0)
+	: m_used(0)
 	{ }
 
 	void construct(const char* name);
@@ -77,7 +77,7 @@ public:
 	void unrealise();
 
 	// Return the IShader*
-	IShader* getIShader() const {
+	IShaderPtr getIShader() const {
 		return m_shader;
 	}
 

@@ -451,7 +451,7 @@ void OpenGLStateBucket::flushRenderables(OpenGLState& current,
     {
 
 		// Get the light shader and examine its first (and only valid) layer
-		IShader* lightShader = i->light->getShader()->getIShader();
+		IShaderPtr lightShader = i->light->getShader()->getIShader();
       
       if(lightShader->firstLayer() != 0)
       {
@@ -460,9 +460,9 @@ void OpenGLStateBucket::flushRenderables(OpenGLState& current,
         GLuint attenuation_xy = lightShader->firstLayer()->texture()->texture_number;
         
         // greebo: Note, that the check for empty texture_numbers should not
-        // necessarily placed here, that kind of error handling should go into
+        // necessarily be placed here, that kind of error handling should go into
         // the shaders module.
-        IShader* zAttenShader = lightShader->lightFalloffImage()->texture_number != 0
+        IShaderPtr zAttenShader = lightShader->lightFalloffImage()->texture_number != 0
         							  ? lightShader
         							  : g_defaultPointLight->getIShader();
         GLuint attenuation_z = zAttenShader->lightFalloffImage()->texture_number;

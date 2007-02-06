@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/constant.h"
 #include "generic/callbackfwd.h"
+#include <boost/shared_ptr.hpp>
 
 // Rendering states to sort by.
 // Higher bits have the most effect - slowest state changes should be highest.
@@ -118,6 +119,7 @@ class ModuleObserver;
 #include "math/Vector3.h"
 
 class IShader;
+typedef boost::shared_ptr<IShader> IShaderPtr;
 
 /**
  * A Shader represents a single material which can be rendered in OpenGL, which
@@ -162,7 +164,7 @@ public:
 	 * An IShader subclass with information about the shader definition
 	 */
 	 
-	virtual IShader* getIShader() const = 0;
+	virtual IShaderPtr getIShader() const = 0;
   
   virtual unsigned int getFlags() const = 0;
 };

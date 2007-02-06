@@ -45,7 +45,4 @@ bool ActiveShaders_IteratorAtEnd();
 void ActiveShaders_IteratorIncrement();
 IShader *ActiveShaders_IteratorCurrent();
 
-class CShader;
-CShader* Try_Shader_ForName(const std::string& name);
-
 #endif

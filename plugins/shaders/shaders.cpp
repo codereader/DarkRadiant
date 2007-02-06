@@ -104,45 +104,12 @@ typedef std::map<std::string, ShaderPointer> shaders_t;
 
 shaders_t g_ActiveShaders;
 
-static shaders_t::iterator g_ActiveShadersIterator;
-
-void ActiveShaders_IteratorBegin() {
-	GetShaderLibrary().getIterator() = GetShaderLibrary().begin();
-}
-
-bool ActiveShaders_IteratorAtEnd() {
-	return GetShaderLibrary().getIterator() == GetShaderLibrary().end();
-}
-
-IShader* ActiveShaders_IteratorCurrent() {
-	return &(*GetShaderLibrary().getIterator()->second);
-}
-
-void ActiveShaders_IteratorIncrement() {
-	GetShaderLibrary().incrementIterator();
-}
-
 // will free all GL binded qtextures and shaders
 // NOTE: doesn't make much sense out of Radiant exit or called during a reload
 void FreeShaders()
 {
 	GetShaderLibrary().clear();
   g_ActiveShadersChangedNotify();
-}
-
-/**
- * Lookup a named shader and return its CShader object.
- */
-CShader* Try_Shader_ForName(const std::string& name)
-{
-	// Retrieve the shader from the library (may as well return a dummy shader) 
-	ShaderPtr shader = GetShaderLibrary().findShader(name);
-	
-	// Hack to enable casting of the boost::shared_ptr to CShader* (TODO!)
-	// Dereference to get the contained object and return the pointer it
-	return &(*shader);
-	
-	//g_ActiveShadersChangedNotify(); TODO
 }
 
 /**

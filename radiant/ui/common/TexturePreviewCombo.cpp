@@ -95,7 +95,7 @@ void TexturePreviewCombo::refreshInfoTable() {
 	if (_texName.empty())
 		return;
 		
-	IShader* shader = GlobalShaderSystem().getShaderForName(_texName);
+	IShaderPtr shader = GlobalShaderSystem().getShaderForName(_texName);
 
 	// Containing MTR	
 	gtk_list_store_append(_infoStore, &iter);
@@ -131,7 +131,7 @@ void TexturePreviewCombo::_onExpose(GtkWidget* widget, GdkEventExpose* ev, Textu
 	glOrtho(0, 1, 0, 1, -1, 1);
 	
 	// Get a reference to the selected shader
-	IShader* shader = GlobalShaderSystem().getShaderForName(self->_texName);
+	IShaderPtr shader = GlobalShaderSystem().getShaderForName(self->_texName);
 	
 	// Bind the texture from the shader
 	TexturePtr tex = shader->getTexture();

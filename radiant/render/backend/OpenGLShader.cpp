@@ -49,11 +49,11 @@ inline GLenum convertBlendFactor(BlendFactor factor)
 } // namespace
 
 void OpenGLShader::destroy() {
-    if(m_shader)
+    /*if(m_shader)
     {
       m_shader->DecRef();
     }
-    m_shader = 0;
+    m_shader = 0;*/
 
     for(Passes::iterator i = m_passes.begin(); i != m_passes.end(); ++i)
     {

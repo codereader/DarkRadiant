@@ -402,7 +402,7 @@ const char* TextureBrowser_GetSelectedShader(TextureBrowser& textureBrowser)
 
 void TextureBrowser_SetStatus(TextureBrowser& textureBrowser, const char* name)
 {
-  IShader* shader = QERApp_Shader_ForName( name);
+  IShaderPtr shader = QERApp_Shader_ForName( name);
   TexturePtr q = shader->getTexture();
   StringOutputStream strTex(256);
   strTex << name << " W: " << Unsigned(q->width) << " H: " << Unsigned(q->height);
@@ -481,7 +481,7 @@ void Texture_NextPos(TextureBrowser& textureBrowser, TextureLayout& layout, Text
 }
 
 // if texture_showinuse jump over non in-use textures
-bool Texture_IsShown(IShader* shader, bool show_shaders, bool hideUnused, const char* filter)
+bool Texture_IsShown(IShaderPtr shader, bool show_shaders, bool hideUnused, const char* filter)
 {
   if(!shader_equal_prefix(shader->getName(), "textures/"))
     return false;
@@ -530,7 +530,7 @@ void TextureBrowser_evaluateHeight(TextureBrowser& textureBrowser)
     Texture_StartPos(layout);
     for(QERApp_ActiveShaders_IteratorBegin(); !QERApp_ActiveShaders_IteratorAtEnd(); QERApp_ActiveShaders_IteratorIncrement())
     {
-      IShader* shader = QERApp_ActiveShaders_IteratorCurrent();
+      IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 
       if(!Texture_IsShown(shader, textureBrowser.m_showShaders, textureBrowser.m_hideUnused, TextureBrowser_getFilter(textureBrowser)))
         continue;
@@ -681,7 +681,7 @@ class LoadShaderVisitor : public Archive::Visitor
 public:
   void visit(const char* name)
   {
-    IShader* shader = QERApp_Shader_ForName(CopiedString(StringRange(name, path_get_filename_base_end(name))).c_str());
+    IShaderPtr shader = QERApp_Shader_ForName(CopiedString(StringRange(name, path_get_filename_base_end(name))).c_str());
     shader->DecRef();
   }
 };
@@ -723,7 +723,7 @@ public:
       ++m_count;
       // request the shader, this will load the texture if needed
       // this Shader_ForName call is a kind of hack
-      IShader *pFoo = QERApp_Shader_ForName(name);
+      IShaderPtr pFoo = QERApp_Shader_ForName(name);
       pFoo->DecRef();
     }
   }
@@ -746,7 +746,7 @@ void TextureDirectory_loadTexture(const char* directory, const char* texture)
   }
 
   // if a texture is already in use to represent a shader, ignore it
-  IShader* shader = QERApp_Shader_ForName(name.c_str());
+  IShaderPtr shader = QERApp_Shader_ForName(name.c_str());
   shader->DecRef();
 }
 typedef ConstPointerCaller1<char, const char*, TextureDirectory_loadTexture> TextureDirectoryLoadTextureCaller;
@@ -831,7 +831,7 @@ void TextureBrowser_Focus(TextureBrowser& textureBrowser, const char* name)
   
   for(QERApp_ActiveShaders_IteratorBegin(); !QERApp_ActiveShaders_IteratorAtEnd(); QERApp_ActiveShaders_IteratorIncrement())
   {
-    IShader* shader = QERApp_ActiveShaders_IteratorCurrent();
+    IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 
     if(!Texture_IsShown(shader, textureBrowser.m_showShaders, textureBrowser.m_hideUnused, TextureBrowser_getFilter(textureBrowser)))
       continue;
@@ -866,7 +866,17 @@ void TextureBrowser_Focus(TextureBrowser& textureBrowser, const char* name)
   }
 }
 
-IShader* Texture_At(TextureBrowser& textureBrowser, int mx, int my)
+// greebo: Workaround for being unable to return NULL (Texture_At function)
+class NoTextureSelectedException
+: public std::runtime_error
+{
+public:
+	// Constructor
+	NoTextureSelectedException(const std::string& what)
+	: std::runtime_error(what) {}
+};
+
+IShaderPtr Texture_At(TextureBrowser& textureBrowser, int mx, int my)
 {
   my += TextureBrowser_getOriginY(textureBrowser) - textureBrowser.height;
 
@@ -874,7 +884,7 @@ IShader* Texture_At(TextureBrowser& textureBrowser, int mx, int my)
   Texture_StartPos(layout);
   for(QERApp_ActiveShaders_IteratorBegin(); !QERApp_ActiveShaders_IteratorAtEnd(); QERApp_ActiveShaders_IteratorIncrement())
   {
-    IShader* shader = QERApp_ActiveShaders_IteratorCurrent();
+    IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 
     if(!Texture_IsShown(shader, textureBrowser.m_showShaders, textureBrowser.m_hideUnused, TextureBrowser_getFilter(textureBrowser)))
       continue;
@@ -894,7 +904,7 @@ IShader* Texture_At(TextureBrowser& textureBrowser, int mx, int my)
     }
   }
 
-  return 0;
+  throw NoTextureSelectedException("no texture selected");
 }
 
 /*
@@ -906,18 +916,19 @@ SelectTexture
 */
 void SelectTexture(TextureBrowser& textureBrowser, int mx, int my, bool bShift)
 {
-  IShader* shader = Texture_At(textureBrowser, mx, my);
-  if(shader != 0)
-  {
-      TextureBrowser_SetSelectedShader(textureBrowser, shader->getName());
-      TextureBrowser_textureSelected(shader->getName());
+	try {
+  		IShaderPtr shader = Texture_At(textureBrowser, mx, my);
+  		TextureBrowser_SetSelectedShader(textureBrowser, shader->getName());
+		TextureBrowser_textureSelected(shader->getName());
 
-      if (!FindTextureDialog_isOpen())
-      {
-        UndoableCommand undo("textureNameSetSelected");
-        Select_SetShader(shader->getName());
-      }
-  }
+		if (!FindTextureDialog_isOpen()) {
+			UndoableCommand undo("textureNameSetSelected");
+			Select_SetShader(shader->getName());
+		}
+	}
+	catch (NoTextureSelectedException n) {
+		
+	}
 }
 
 /*
@@ -999,7 +1010,7 @@ void Texture_Draw(TextureBrowser& textureBrowser)
   Texture_StartPos(layout);
   for(QERApp_ActiveShaders_IteratorBegin(); !QERApp_ActiveShaders_IteratorAtEnd(); QERApp_ActiveShaders_IteratorIncrement())
   {
-    IShader* shader = QERApp_ActiveShaders_IteratorCurrent();
+    IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 
     if(!Texture_IsShown(shader, textureBrowser.m_showShaders, textureBrowser.m_hideUnused, TextureBrowser_getFilter(textureBrowser)))
       continue;

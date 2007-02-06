@@ -14,14 +14,18 @@ class ShaderLibrary
 	ShaderDefinitionMap _definitions;
 	
 	typedef std::map<std::string, ShaderPtr> ShaderMap;
-	typedef ShaderMap::iterator iterator;
-		
+	
 	ShaderMap _shaders;
+	
+public:
+	typedef ShaderMap::iterator iterator;
 
+private:
+	// greebo: This is the iterator used by texwindow.cpp 
+	// to cycle through the system (somewhat deprecated)
 	iterator _publicIterator;
 
 public:
-
 	// Constructor
 	ShaderLibrary();
 	

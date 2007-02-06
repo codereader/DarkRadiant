@@ -191,6 +191,8 @@ public:
   virtual TexturePtr lightFalloffImage() = 0;
 };
 
+typedef boost::shared_ptr<IShader> IShaderPtr;
+
 /**
  * Stream insertion of IShader for debugging purposes.
  */
@@ -237,16 +239,16 @@ public:
 	 * The text name of the shader to load.
 	 * 
 	 * @returns
-	 * IShader* corresponding to the named shader object.
+	 * IShaderPtr shared ptr corresponding to the named shader object.
 	 */
-	virtual IShader* getShaderForName(const std::string& name) = 0;
+	virtual IShaderPtr getShaderForName(const std::string& name) = 0;
 
   virtual void foreachShaderName(const ShaderNameCallback& callback) = 0;
 
   // iterate over the list of active shaders
   virtual void beginActiveShadersIterator() = 0;
   virtual bool endActiveShadersIterator() = 0;
-  virtual IShader* dereferenceActiveShadersIterator() = 0;
+  virtual IShaderPtr dereferenceActiveShadersIterator() = 0;
   virtual void incrementActiveShadersIterator() = 0;
 
   virtual void setActiveShadersChangedNotify(const Callback& notify) = 0;

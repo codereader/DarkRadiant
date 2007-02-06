@@ -34,13 +34,13 @@ public:
 	bool isRealised();
 
 	// Return a shader by name
-	IShader* getShaderForName(const std::string& name);
+	IShaderPtr getShaderForName(const std::string& name);
 
 	void foreachShaderName(const ShaderNameCallback& callback);
 
 	void beginActiveShadersIterator();
 	bool endActiveShadersIterator();
-	IShader* dereferenceActiveShadersIterator();
+	IShaderPtr dereferenceActiveShadersIterator();
 	void incrementActiveShadersIterator();
 	
 	void setActiveShadersChangedNotify(const Callback& notify);
