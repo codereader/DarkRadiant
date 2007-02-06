@@ -5,6 +5,7 @@
 #include "moduleobserver.h"
 
 #include "generic/callback.h"
+#include "moduleobservers.h"
 
 #include "ShaderLibrary.h"
 #include "textures/GLTextureManager.h"
@@ -22,7 +23,17 @@ class Doom3ShaderSystem :
 	// The manager that handles the texture caching. 
 	GLTextureManagerPtr _textureManager;
 	
+	// greebo: Legacy callback (points to the TextureBrowser)
 	Callback _activeShadersChangedNotify;
+	
+	// greebo: Legacy "unrealised" counter, gets 0 as soon as the
+	// global filesystem calls the realise() method of this class,
+	// (This ShaderSystem acts as ModuleObserver)
+	std::size_t _shadersUnrealised;
+	
+	// The observers that are attached to this system. These get
+	// notified upon realisation of this class.
+	ModuleObservers _observers;
 	
 public:
 	// Constructor, allocates the library

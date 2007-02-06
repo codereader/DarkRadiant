@@ -69,20 +69,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "CShader.h"
 #include "Doom3ShaderSystem.h"
 
-/* GLOBALS */
-
-namespace {
-
-	const char* MISSING_BASEPATH_NODE =
-	"Failed to find \"/game/filesystem/shaders/basepath\" node \
-in game descriptor";
-	 
-	const char* MISSING_EXTENSION_NODE =
-	"Failed to find \"/game/filesystem/shaders/extension\" node \
-in game descriptor";
-	
-}
-
 /**
  * Parses the contents of a material definition. The shader name and opening
  * brace "{" will already have been removed when this function is called.
@@ -117,11 +103,3 @@ void parseShaderDecl(parser::DefTokeniser& tokeniser,
     			  << " already defined." << std::endl;
     }
 }
-
-ModuleObservers g_observers;
-
-std::size_t g_shaders_unrealised = 1; // wait until filesystem and is realised before loading anything
-/*bool Shaders_realised()
-{
-  return g_shaders_unrealised == 0;
-}*/

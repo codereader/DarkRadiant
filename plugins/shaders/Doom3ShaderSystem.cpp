@@ -12,13 +12,6 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 
-// TODO: remove this as soon as shaderlibrary is fully functional
-#include "moduleobservers.h"
-extern ModuleObservers g_observers;
-
-extern std::size_t g_shaders_unrealised;
-// end TODO
-
 namespace {
 	const char* TEXTURE_PREFIX = "textures/";
 	const char* MISSING_BASEPATH_NODE =
@@ -35,7 +28,8 @@ namespace shaders {
 // Constructor
 Doom3ShaderSystem::Doom3ShaderSystem() :
 	_library(new ShaderLibrary()),
-	_textureManager(new GLTextureManager())
+	_textureManager(new GLTextureManager()),
+	_shadersUnrealised(1)
 {}
 
 // Destructor
@@ -51,7 +45,8 @@ void Doom3ShaderSystem::destroy() {
 	// De-register this class
 	GlobalFileSystem().detach(*this);
 	
-	if (g_shaders_unrealised == 0) {
+	// Free the shaders if we're in realised state
+	if (_shadersUnrealised == 0) {
 		freeShaders();
 	}
 }
@@ -84,15 +79,15 @@ void Doom3ShaderSystem::loadMaterialFiles() {
 }
 
 void Doom3ShaderSystem::realise() {
-	if (--g_shaders_unrealised == 0) {
+	if (--_shadersUnrealised == 0) {
 		loadMaterialFiles();
-		g_observers.realise();
+		_observers.realise();
 	}
 }
 
 void Doom3ShaderSystem::unrealise() {
-	if (++g_shaders_unrealised == 1) {
-		g_observers.unrealise();
+	if (++_shadersUnrealised == 1) {
+		_observers.unrealise();
 		freeShaders();
 	}
 }
@@ -109,7 +104,7 @@ void Doom3ShaderSystem::refresh() {
 
 // Is the shader system realised
 bool Doom3ShaderSystem::isRealised() {
-	return g_shaders_unrealised == 0;
+	return _shadersUnrealised == 0;
 }
 
 // Return a shader by name
@@ -141,10 +136,10 @@ void Doom3ShaderSystem::setActiveShadersChangedNotify(const Callback& notify) {
 }
 
 void Doom3ShaderSystem::attach(ModuleObserver& observer) {
-	g_observers.attach(observer);
+	_observers.attach(observer);
 }
 void Doom3ShaderSystem::detach(ModuleObserver& observer) {
-	g_observers.detach(observer);
+	_observers.detach(observer);
 }
 
 void Doom3ShaderSystem::setLightingEnabled(bool enabled) {
