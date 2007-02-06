@@ -7,13 +7,11 @@ namespace shaders {
 
 ShaderLibrary::ShaderLibrary()
 {
-	std::cout << "ShaderLibrary initialised.\n";
 	_publicIterator = _shaders.begin();
 }
 
-ShaderLibrary::~ShaderLibrary() {
-	std::cout << "ShaderLibrary shutdown.\n";
-}
+ShaderLibrary::~ShaderLibrary() 
+{}
 	
 // Insert into the definitions map, if not already present
 bool ShaderLibrary::addDefinition(const std::string& name, 

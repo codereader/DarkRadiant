@@ -5,7 +5,6 @@
 
 #include "xmlutil/Node.h"
 
-#include "shaders.h"
 #include "ShaderDefinition.h"
 #include "ShaderFileLoader.h"
 #include "MissingXMLNodeException.h"
