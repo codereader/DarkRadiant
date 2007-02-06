@@ -127,10 +127,11 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
 	Image* image = constructor->construct();
 	
 	if (image != NULL) {
-		// Bind the texture and get the OpenGL id
-		load(returnValue, image);
+		// Bind the (processed) texture and get the OpenGL id
+		// The getProcessed() call may substitute the passed image by another
+		load(returnValue, _manipulator.getProcessedImage(image));
 		
-		// We don't need the image pixel data anymore
+		// We don't need the (substituted) image pixel data anymore
 		image->release();
 	}
 	else {

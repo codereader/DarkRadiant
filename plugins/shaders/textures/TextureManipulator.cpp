@@ -8,6 +8,15 @@ namespace {
 	static int rowsize = 0;
 }
 
+namespace shaders {
+
+TextureManipulator::TextureManipulator() 
+{}
+
+Image* TextureManipulator::getProcessedImage(Image* input) {
+	return input;
+}
+
 void TextureManipulator::resampleTextureLerpLine(const byte *in, byte *out, 
 							 int inwidth, int outwidth, int bytesperpixel) 
 {
@@ -321,3 +330,4 @@ void TextureManipulator::mipReduce(byte *in, byte *out,
 	}
 }
 
+} // namespace shaders
