@@ -90,4 +90,13 @@ ShaderLibrary::iterator ShaderLibrary::end() {
 	return _shaders.end();
 }
 
+void ShaderLibrary::foreachShaderName(const ShaderNameCallback& callback) {	
+	for (ShaderDefinitionMap::const_iterator i = _definitions.begin(); 
+		 i != _definitions.end(); 
+		 i++) 
+	{
+		callback(i->first.c_str());
+	}
+}
+
 } // namespace shaders

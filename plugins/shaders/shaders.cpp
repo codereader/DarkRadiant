@@ -83,27 +83,6 @@ in game descriptor";
 	
 }
 
-void ActiveShaders_IteratorBegin();
-bool ActiveShaders_IteratorAtEnd();
-IShader *ActiveShaders_IteratorCurrent();
-void ActiveShaders_IteratorIncrement();
-
-void FreeShaders();
-
-/*!
-NOTE TTimo: there is an important distinction between SHADER_NOT_FOUND and SHADER_NOTEX:
-SHADER_NOT_FOUND means we didn't find the raw texture or the shader for this
-SHADER_NOTEX means we recognize this as a shader script, but we are missing the texture to represent it
-this was in the initial design of the shader code since early GtkRadiant alpha, and got sort of foxed in 1.2 and put back in
-*/
-
-ShaderDefinitionMap g_shaderDefinitions;
-
-typedef SmartPointer<CShader> ShaderPointer;
-typedef std::map<std::string, ShaderPointer> shaders_t;
-
-shaders_t g_ActiveShaders;
-
 // will free all GL binded qtextures and shaders
 // NOTE: doesn't make much sense out of Radiant exit or called during a reload
 void FreeShaders()

@@ -4,14 +4,6 @@
 #include "ShaderDefinition.h"
 
 // TODO: remove this as soon as shaderlibrary is fully functional
-extern ShaderDefinitionMap g_shaderDefinitions;
-
-#include "generic/referencecounted.h"
-
-typedef SmartPointer<CShader> ShaderPointer;
-typedef std::map<std::string, ShaderPointer> shaders_t;
-extern shaders_t g_ActiveShaders;
-
 #include "moduleobservers.h"
 extern ModuleObservers g_observers;
 
@@ -57,9 +49,8 @@ IShaderPtr Doom3ShaderSystem::getShaderForName(const std::string& name) {
 }
 
 void Doom3ShaderSystem::foreachShaderName(const ShaderNameCallback& callback) {
-	for (ShaderDefinitionMap::const_iterator i = g_shaderDefinitions.begin(); i != g_shaderDefinitions.end(); ++i) {
-		callback((*i).first.c_str());
-	}
+	// Pass the call to the Library
+	_library->foreachShaderName(callback);
 }
 
 void Doom3ShaderSystem::beginActiveShadersIterator() {
