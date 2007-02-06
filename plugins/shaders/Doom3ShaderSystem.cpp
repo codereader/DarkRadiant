@@ -51,8 +51,8 @@ void Doom3ShaderSystem::destroy() {
 	// De-register this class
 	GlobalFileSystem().detach(*this);
 	
-	if (Shaders_realised()) {
-		FreeShaders();
+	if (g_shaders_unrealised == 0) {
+		freeShaders();
 	}
 }
 
@@ -91,10 +91,20 @@ void Doom3ShaderSystem::realise() {
 }
 
 void Doom3ShaderSystem::unrealise() {
-	Shaders_Unrealise();
+	if (++g_shaders_unrealised == 1) {
+		g_observers.unrealise();
+		freeShaders();
+	}
 }
+
+void Doom3ShaderSystem::freeShaders() {
+	_library->clear();
+	activeShadersChangedNotify();
+}
+
 void Doom3ShaderSystem::refresh() {
-	Shaders_Refresh();
+	unrealise();
+	realise();
 }
 
 // Is the shader system realised
