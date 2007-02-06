@@ -126,41 +126,6 @@ void parseShaderDecl(parser::DefTokeniser& tokeniser,
     }
 }
 
-/** Load the shaders from the MTR files.
- */
-void Shaders_Load()
-{
-	// Get the shaders path and extension from the XML game file
-	xml::NodeList nlShaderPath = 
-		GlobalRegistry().findXPath("game/filesystem/shaders/basepath");
-	if (nlShaderPath.size() != 1)
-		throw shaders::MissingXMLNodeException(MISSING_BASEPATH_NODE);
-
-	xml::NodeList nlShaderExt = 
-		GlobalRegistry().findXPath("game/filesystem/shaders/extension");
-	if (nlShaderExt.size() != 1)
-		throw shaders::MissingXMLNodeException(MISSING_EXTENSION_NODE);
-
-	// Load the shader files from the VFS
-	std::string sPath = nlShaderPath[0].getContent();
-	if (!boost::algorithm::ends_with(sPath, "/"))
-		sPath += "/";
-		
-	std::string extension = nlShaderExt[0].getContent();
-	
-	// Load each file from the global filesystem
-	shaders::ShaderFileLoader ldr(sPath);
-	GlobalFileSystem().forEachFile(sPath.c_str(), 
-								   extension.c_str(), 
-								   makeCallback1(ldr), 
-								   0);
-}
-
-void Shaders_Free()
-{
-	FreeShaders();
-}
-
 ModuleObservers g_observers;
 
 std::size_t g_shaders_unrealised = 1; // wait until filesystem and is realised before loading anything
@@ -168,39 +133,18 @@ bool Shaders_realised()
 {
   return g_shaders_unrealised == 0;
 }
-void Shaders_Realise()
-{
-  if(--g_shaders_unrealised == 0)
-  {
-    Shaders_Load();
-    g_observers.realise();
-  }
-}
+
 void Shaders_Unrealise()
 {
   if(++g_shaders_unrealised == 1)
   {
     g_observers.unrealise();
-    Shaders_Free();
+    FreeShaders();
   }
 }
 
 void Shaders_Refresh() 
 {
   Shaders_Unrealise();
-  Shaders_Realise();
-}
-
-void Shaders_Construct()
-{
-  GlobalFileSystem().attach(GetShaderSystem());
-}
-void Shaders_Destroy()
-{
-  GlobalFileSystem().detach(GetShaderSystem());
-
-  if(Shaders_realised())
-  {
-    Shaders_Free();
-  }
+  GetShaderSystem().realise();
 }

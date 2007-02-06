@@ -31,7 +31,14 @@ public:
 	// Destructor, removes the library from heap
 	~Doom3ShaderSystem();
 
+	// This attaches this class as ModuleObserver to the Filesystem
+	void construct();
+	void destroy();
+
+	// greebo: This parses the material files and calls realise() on any 
+	// attached moduleobservers
 	void realise();
+	
 	void unrealise();
 	void refresh();
 	
@@ -62,7 +69,12 @@ public:
 
 	// greebo: Legacy method, don't know what this is exactly used for
 	void activeShadersChangedNotify();
-	
+
+public:
+	/** Load the shader definitions from the MTR files 
+	 * (doesn't load any textures yet).	*/
+	void loadMaterialFiles();
+
 }; // class Doom3ShaderSystem
 
 } // namespace shaders

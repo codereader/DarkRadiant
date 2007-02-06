@@ -31,7 +31,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ShaderTemplate.h"
 #include "Doom3ShaderSystem.h"
-#include "shaders.h"
 
 class ShadersDependencies :
 	public GlobalFileSystemModuleRef,
@@ -42,18 +41,20 @@ class ShadersDependencies :
 
 class ShadersDoom3API
 {
+	// The pointer to the shadersystem instance
 	shaders::Doom3ShaderSystem* _shaderSystem;
+
 public:
 	typedef ShaderSystem Type;
 	STRING_CONSTANT(Name, "doom3");
 
 	ShadersDoom3API(ShadersDependencies& dependencies) {
-		Shaders_Construct();
 		_shaderSystem = &GetShaderSystem();
+		_shaderSystem->construct();
 	}
 
 	~ShadersDoom3API() {
-		Shaders_Destroy();
+		_shaderSystem->destroy();
 	}
 
 	ShaderSystem* getTable() {
