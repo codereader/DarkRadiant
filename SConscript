@@ -169,10 +169,11 @@ archivezip_env.Install(INSTALL + '/modules', archivezip_lib)
 # Shaders module
 shaders_env = module_env.Copy()
 shaders_lst = build_list('plugins/shaders', 
-						 'shaders.cpp \
-						 plugin.cpp \
-						 MapExpression.cpp CShader.cpp \
-						 ShaderTemplate.cpp ShaderFileLoader.cpp \
+						 'plugin.cpp \
+						 CShader.cpp \
+						 MapExpression.cpp \
+						 ShaderTemplate.cpp \
+						 ShaderFileLoader.cpp \
 						 ShaderLibrary.cpp \
 						 Doom3ShaderSystem.cpp \
 						 textures/GLTextureManager.cpp \

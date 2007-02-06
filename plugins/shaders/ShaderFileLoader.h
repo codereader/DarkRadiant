@@ -20,6 +20,12 @@ class ShaderFileLoader
 	
 private:
 
+	/*Parses the contents of a material definition. The shader name and opening
+ 	 * brace "{" will already have been removed when this function is called. */
+	void parseShaderDecl(parser::DefTokeniser& tokeniser, 
+					  ShaderTemplatePtr shaderTemplate, 
+					  const std::string& filename); 
+
 	// Parse a shader file with the given contents and filename
 	void parseShaderFile(const std::string& inStr, const std::string& filename);
 

@@ -3,7 +3,6 @@
 #include "qerplugin.h"
 #include "texturelib.h"
 #include "igl.h"
-#include <iostream>
 #include "FileLoader.h"
 
 namespace {
@@ -20,13 +19,10 @@ namespace {
 namespace shaders {
 
 GLTextureManager::GLTextureManager() 
-{
-	std::cout << "GLTextureManager initialised.\n";
-}
+{}
 
-GLTextureManager::~GLTextureManager() {
-	std::cout << "GLTextureManager shutdown.\n";
-}
+GLTextureManager::~GLTextureManager() 
+{}
 
 GLTextureManager::iterator GLTextureManager::begin() {
 	return _textures.begin();
@@ -98,18 +94,19 @@ TexturePtr GLTextureManager::getBinding(const std::string& textureKey,
 				
 				// We don't need the image pixel data anymore
 				image->release();
-				std::cout << "[shaders] Loaded texture: " << textureKey.c_str() << "\n";
+				globalOutputStream() << "[shaders] Loaded texture: " 
+									 << textureKey.c_str() << "\n";
 			}
 			else {
 				// No image has been loaded, assign it to the "image missing texture"
-				std::cout << "[shaders] Unable to load shader texture for: " 
-						  << textureKey.c_str() << "\n";			
+				globalErrorStream() << "[shaders] Unable to load shader texture: " 
+						  			<< textureKey.c_str() << "\n";			
 				
 				_textures[textureKey] = getStandardTexture(textureType);
 			}
 		}
 		else {
-			std::cout << "Can't construct texture, constructor is invalid.\n";
+			globalErrorStream() << "Can't construct texture, constructor is invalid.\n";
 						
 			// assign this name to the shader image missing texture;
 			_textures[textureKey] = getShaderImageMissing();
@@ -137,7 +134,8 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
 		image->release();
 	}
 	else {
-		std::cout << "[shaders] Couldn't load Standard Texture texture: " << filename.c_str() << "\n";
+		globalErrorStream() << "[shaders] Couldn't load Standard Texture texture: " 
+							<< filename.c_str() << "\n";
 	}
 	
 	return returnValue;

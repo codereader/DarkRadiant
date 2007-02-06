@@ -3,6 +3,8 @@
 #include "ifilesystem.h"
 #include "iarchive.h"
 #include "parser/DefTokeniser.h"
+#include "ShaderDefinition.h"
+#include "Doom3ShaderSystem.h"
 
 #include <iostream>
 #include <boost/algorithm/string/replace.hpp>
@@ -10,13 +12,43 @@
 
 /* FORWARD DECLS */
 
-// Funtions from shaders.cpp - TODO: refactor these into members of this class
-void parseShaderDecl(parser::DefTokeniser&, 
-					 ShaderTemplatePtr, 
-					 const std::string&);
-
 namespace shaders {
+
+/**
+ * Parses the contents of a material definition. The shader name and opening
+ * brace "{" will already have been removed when this function is called.
+ * 
+ * @param tokeniser
+ * DefTokeniser to retrieve tokens from.
+ * 
+ * @param shaderTemplate
+ * An empty ShaderTemplate which will parse the token stream and populate
+ * itself.
+ * 
+ * @param filename
+ * The name of the shader file we are parsing.
+ */
+void ShaderFileLoader::parseShaderDecl(parser::DefTokeniser& tokeniser, 
+					  ShaderTemplatePtr shaderTemplate, 
+					  const std::string& filename) 
+{
+	// Get the ShaderTemplate to populate itself by parsing tokens from the
+	// DefTokeniser. This may throw exceptions.	
+	shaderTemplate->parseDoom3(tokeniser);
 	
+	// Construct the ShaderDefinition wrapper class
+	ShaderDefinition def(shaderTemplate, filename);
+	
+	// Get the parsed shader name
+	std::string name = shaderTemplate->getName();
+	
+	// Insert into the definitions map, if not already present
+    if (!GetShaderLibrary().addDefinition(name, def)) {
+    	std::cout << "[shaders] " << filename << ": shader " << name
+    			  << " already defined." << std::endl;
+    }
+}
+
 /* Parses through the shader file and processes the tokens delivered by 
  * DefTokeniser. 
  */ 
