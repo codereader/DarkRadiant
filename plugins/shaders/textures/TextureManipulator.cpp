@@ -2,6 +2,9 @@
 
 #include <stdlib.h>
 #include "stream/textstream.h"
+#include "math/Vector3.h"
+
+#include <iostream>
 
 namespace {
 	static byte *row1 = NULL, *row2 = NULL;
@@ -10,11 +13,103 @@ namespace {
 
 namespace shaders {
 
-TextureManipulator::TextureManipulator() 
-{}
+TextureManipulator::TextureManipulator() :
+	_gamma(1.0) 
+{
+	calculateGammaTable();
+}
+
+Colour3 TextureManipulator::getFlatshadeColour(Image* input) {
+	// Calculate the number of pixels in this image
+	int numPixels = input->getWidth() * input->getHeight();
+	
+	int incr = static_cast<int>(static_cast<float>(numPixels) / 20.0f);
+	
+	// Set the pixel pointer to the very first pixel
+	unsigned char* pixels = input->getRGBAPixels();
+	
+	Colour3 returnValue;
+	int pixelCount = 0;
+	
+	// Go over all the pixels and change their value accordingly
+	for (int i = 0; i < (numPixels*4); i += incr*4, pixelCount++) {
+		// Sum up the RGBA values 
+		returnValue[0] += pixels[i];
+		returnValue[1] += (pixels + 1)[i];
+		returnValue[2] += (pixels + 2)[i];
+	}
+	
+	// Take the average value of each RGB channel
+	returnValue /= pixelCount;
+	
+	// Normalise the colour to 1.0
+	returnValue /= 255;
+	
+	return returnValue;
+}
 
 Image* TextureManipulator::getProcessedImage(Image* input) {
+	
+	Image* output;
+	
+	output = processGamma(input); 
+	
+	return output;
+}
+
+// resample texture gamma according to user settings
+Image* TextureManipulator::processGamma(Image* input) {
+	
+	// Don't do unnecessary work here...
+	if (_gamma == 1.0f) {
+		return input;
+	}
+	
+	// Calculate the number of pixels in this image
+	int numPixels = input->getWidth() * input->getHeight();
+	
+	// Set the pixel pointer to the very first pixel
+	unsigned char* pixels = input->getRGBAPixels();
+	
+	// Go over all the pixels and change their value accordingly
+	for (int i = 0; i < (numPixels*4); i += 4) {
+		// Change the current RGB pixel value to the one in the gamma table 
+		pixels[i] = _gammaTable[pixels[i]];
+		(pixels + 1)[i] = _gammaTable[(pixels + 1)[i]];
+		(pixels + 2)[i] = _gammaTable[(pixels + 2)[i]];
+	}
+	
 	return input;
+}
+
+// Recalculates the gamma table according to the given gamma value
+// This is called on first startup or if the user changes the value
+void TextureManipulator::calculateGammaTable() {
+	// Linear gamma, just fill the array linearly 
+	if (_gamma == 1.0) {
+		for (int i = 0; i < 256; i++)
+			_gammaTable[i] = i;
+	}
+	else {
+		// Calculate the gamma values
+		for (int i = 0; i < 256; i++) {
+			int inf = (int)(
+				255 * 
+				pow(static_cast<double>((i + 0.5) / 255.5), 
+					static_cast<double>(_gamma)) + 0.5
+			);
+			
+			// Constrain the values to (0..255)
+			if (inf < 0) {
+				inf = 0;
+			}
+			else if (inf > 255) {
+				inf = 255;
+			}
+			
+			_gammaTable[i] = inf;
+		}
+	}
 }
 
 void TextureManipulator::resampleTextureLerpLine(const byte *in, byte *out, 
