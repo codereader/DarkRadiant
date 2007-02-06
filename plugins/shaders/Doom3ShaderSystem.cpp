@@ -1,7 +1,16 @@
 #include "Doom3ShaderSystem.h"
 
+#include "iregistry.h"
+#include "ifilesystem.h"
+
+#include "xmlutil/Node.h"
+
 #include "shaders.h"
 #include "ShaderDefinition.h"
+#include "ShaderFileLoader.h"
+#include "MissingXMLNodeException.h"
+
+#include <boost/algorithm/string/predicate.hpp>
 
 // TODO: remove this as soon as shaderlibrary is fully functional
 #include "moduleobservers.h"
@@ -12,6 +21,13 @@ extern std::size_t g_shaders_unrealised;
 
 namespace {
 	const char* TEXTURE_PREFIX = "textures/";
+	const char* MISSING_BASEPATH_NODE =
+		"Failed to find \"/game/filesystem/shaders/basepath\" node \
+in game descriptor";
+	 
+	const char* MISSING_EXTENSION_NODE =
+		"Failed to find \"/game/filesystem/shaders/extension\" node \
+in game descriptor";
 }
 
 namespace shaders {
@@ -26,9 +42,54 @@ Doom3ShaderSystem::Doom3ShaderSystem() :
 Doom3ShaderSystem::~Doom3ShaderSystem()
 {}
 
-void Doom3ShaderSystem::realise() {
-	Shaders_Realise();
+void Doom3ShaderSystem::construct() {
+	// Register this class as moduleobserver 
+	GlobalFileSystem().attach(*this);
 }
+
+void Doom3ShaderSystem::destroy() {
+	// De-register this class
+	GlobalFileSystem().detach(*this);
+	
+	if (Shaders_realised()) {
+		FreeShaders();
+	}
+}
+
+void Doom3ShaderSystem::loadMaterialFiles() {
+	// Get the shaders path and extension from the XML game file
+	xml::NodeList nlShaderPath = 
+		GlobalRegistry().findXPath("game/filesystem/shaders/basepath");
+	if (nlShaderPath.size() != 1)
+		throw MissingXMLNodeException(MISSING_BASEPATH_NODE);
+
+	xml::NodeList nlShaderExt = 
+		GlobalRegistry().findXPath("game/filesystem/shaders/extension");
+	if (nlShaderExt.size() != 1)
+		throw MissingXMLNodeException(MISSING_EXTENSION_NODE);
+
+	// Load the shader files from the VFS
+	std::string sPath = nlShaderPath[0].getContent();
+	if (!boost::algorithm::ends_with(sPath, "/"))
+		sPath += "/";
+		
+	std::string extension = nlShaderExt[0].getContent();
+	
+	// Load each file from the global filesystem
+	ShaderFileLoader ldr(sPath);
+	GlobalFileSystem().forEachFile(sPath.c_str(), 
+								   extension.c_str(), 
+								   makeCallback1(ldr), 
+								   0);
+}
+
+void Doom3ShaderSystem::realise() {
+	if (--g_shaders_unrealised == 0) {
+		loadMaterialFiles();
+		g_observers.realise();
+	}
+}
+
 void Doom3ShaderSystem::unrealise() {
 	Shaders_Unrealise();
 }

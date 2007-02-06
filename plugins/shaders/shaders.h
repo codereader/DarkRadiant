@@ -33,16 +33,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <string>
 
-void Shaders_Construct();
-void Shaders_Destroy();
-void Shaders_Realise();
 void Shaders_Unrealise();
 void Shaders_Refresh();
-
-class IShader;
-void ActiveShaders_IteratorBegin();
-bool ActiveShaders_IteratorAtEnd();
-void ActiveShaders_IteratorIncrement();
-IShader *ActiveShaders_IteratorCurrent();
+bool Shaders_realised();
+void FreeShaders();
 
 #endif
