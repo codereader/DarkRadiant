@@ -90,7 +90,7 @@ TexturePtr GLTextureManager::getBinding(const std::string& textureKey,
 				_textures[textureKey] = TexturePtr(new Texture(textureKey));
 				
 				// Bind the texture and get the OpenGL id
-				load(_textures[textureKey], image);
+				load(_textures[textureKey], _manipulator.getProcessedImage(image));
 				
 				// We don't need the image pixel data anymore
 				image->release();
@@ -129,7 +129,7 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
 	if (image != NULL) {
 		// Bind the (processed) texture and get the OpenGL id
 		// The getProcessed() call may substitute the passed image by another
-		load(returnValue, _manipulator.getProcessedImage(image));
+		load(returnValue, image);
 		
 		// We don't need the (substituted) image pixel data anymore
 		image->release();
@@ -193,20 +193,8 @@ void GLTextureManager::load(TexturePtr texture, Image* image) {
 	
 	byte* outpixels;
 	
-/*	total[0] = total[1] = total[2] = 0.0f;
-	
-		// resample texture gamma according to user settings
-		for (int i = 0; i < (nCount * 4); i += 4) {
-			for (int j = 0; j < 3; j++) {
-				total[j] += (pPixels + i)[j];
-				byte b = (pPixels + i)[j];
-				(pPixels + i)[j] = _gammaTable[b];
-			}
-		}
-	
-		q->color[0] = total[0] / (nCount * 255);
-		q->color[1] = total[1] / (nCount * 255);
-		q->color[2] = total[2] / (nCount * 255);*/
+	// Calculate an average, representative colour for flatshade rendering 
+	texture->color = _manipulator.getFlatshadeColour(image);
 	
 	// Allocate a new texture number and store it into the Texture structure
 	glGenTextures(1, &texture->texture_number);
