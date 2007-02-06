@@ -83,14 +83,6 @@ in game descriptor";
 	
 }
 
-// will free all GL binded qtextures and shaders
-// NOTE: doesn't make much sense out of Radiant exit or called during a reload
-void FreeShaders()
-{
-	GetShaderLibrary().clear();
-	GetShaderSystem().activeShadersChangedNotify();
-}
-
 /**
  * Parses the contents of a material definition. The shader name and opening
  * brace "{" will already have been removed when this function is called.
@@ -129,22 +121,7 @@ void parseShaderDecl(parser::DefTokeniser& tokeniser,
 ModuleObservers g_observers;
 
 std::size_t g_shaders_unrealised = 1; // wait until filesystem and is realised before loading anything
-bool Shaders_realised()
+/*bool Shaders_realised()
 {
   return g_shaders_unrealised == 0;
-}
-
-void Shaders_Unrealise()
-{
-  if(++g_shaders_unrealised == 1)
-  {
-    g_observers.unrealise();
-    FreeShaders();
-  }
-}
-
-void Shaders_Refresh() 
-{
-  Shaders_Unrealise();
-  GetShaderSystem().realise();
-}
+}*/

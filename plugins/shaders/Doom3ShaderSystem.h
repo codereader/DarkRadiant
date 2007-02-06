@@ -39,7 +39,10 @@ public:
 	// attached moduleobservers
 	void realise();
 	
+	// greebo: Unrealises the attached ModuleObservers and frees the shaders 
 	void unrealise();
+	
+	// Flushes the shaders from memory and reloads the material files
 	void refresh();
 	
 	// Is the shader system realised
@@ -67,14 +70,17 @@ public:
 	ShaderLibrary& getLibrary();
 	GLTextureManager& getTextureManager();
 
-	// greebo: Legacy method, don't know what this is exactly used for
-	void activeShadersChangedNotify();
-
 public:
 	/** Load the shader definitions from the MTR files 
 	 * (doesn't load any textures yet).	*/
 	void loadMaterialFiles();
 
+	// Unloads all the existing shaders and calls activeShadersChangedNotify()
+	void freeShaders();
+	
+	// greebo: Legacy method, don't know what this is exactly used for
+	void activeShadersChangedNotify();
+	
 }; // class Doom3ShaderSystem
 
 } // namespace shaders

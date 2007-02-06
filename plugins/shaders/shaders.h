@@ -31,11 +31,4 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #if !defined(INCLUDED_SHADERS_H)
 #define INCLUDED_SHADERS_H
 
-#include <string>
-
-void Shaders_Unrealise();
-void Shaders_Refresh();
-bool Shaders_realised();
-void FreeShaders();
-
 #endif
