@@ -3,20 +3,90 @@
 #include <stdlib.h>
 #include "stream/textstream.h"
 #include "math/Vector3.h"
+#include "../Doom3ShaderSystem.h"
 
 #include <iostream>
 
 namespace {
 	static byte *row1 = NULL, *row2 = NULL;
 	static int rowsize = 0;
+	
+	const std::string RKEY_TEXTURES_GAMMA = "user/ui/textures/gamma";
+	const std::string RKEY_TEXTURES_MODE = "user/ui/textures/mode";
 }
 
 namespace shaders {
 
 TextureManipulator::TextureManipulator() :
-	_gamma(1.0) 
+	_gamma(GlobalRegistry().getFloat(RKEY_TEXTURES_GAMMA)) 
 {
+	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_GAMMA);
+	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_MODE);
+	
+	// Load the texture mode
+	_textureMode = readTextureMode(GlobalRegistry().getInt(RKEY_TEXTURES_MODE));
+	
 	calculateGammaTable();
+	
+	// greebo: Register this class in the preference system so that the constructPreferencePage() gets called.
+	GlobalPreferenceSystem().addConstructor(this);
+}
+
+// RegistryKeyObserver implementation
+void TextureManipulator::keyChanged() {
+	_textureMode = readTextureMode(GlobalRegistry().getInt(RKEY_TEXTURES_MODE));
+	
+	float newGamma = GlobalRegistry().getFloat(RKEY_TEXTURES_GAMMA);
+
+	// Has the gamma actually changed? 
+	if (_gamma != newGamma) {
+		_gamma = newGamma;
+		calculateGammaTable();
+		GetShaderSystem().refresh();
+	}
+}
+
+void TextureManipulator::setTextureParameters() {
+	switch (_textureMode) {
+		case eTextures_NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+			break;
+		case eTextures_NEAREST_MIPMAP_NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST );
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+			break;
+		case eTextures_NEAREST_MIPMAP_LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR );
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+			break;
+		case eTextures_LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+			break;
+		case eTextures_LINEAR_MIPMAP_NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST );
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+			break;
+		case eTextures_LINEAR_MIPMAP_LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+			break;
+		default:
+			globalOutputStream() << "invalid texture mode\n";
+	}
+}
+
+ETexturesMode TextureManipulator::readTextureMode(const unsigned int& mode) {
+	switch (mode) {
+		case 0: return eTextures_NEAREST;
+		case 1: return eTextures_NEAREST_MIPMAP_NEAREST;
+		case 2: return eTextures_NEAREST_MIPMAP_LINEAR;
+		case 3: return eTextures_LINEAR;
+		case 4: return eTextures_LINEAR_MIPMAP_NEAREST;
+		case 5: return eTextures_LINEAR_MIPMAP_LINEAR;
+		default: return eTextures_NEAREST;
+	}
 }
 
 Colour3 TextureManipulator::getFlatshadeColour(Image* input) {
@@ -423,6 +493,27 @@ void TextureManipulator::mipReduce(byte *in, byte *out,
 			globalOutputStream() << "GL_MipReduce: desired size already achieved\n";
 		}
 	}
+}
+
+/* greebo: This gets called by the preference system and is responsible for adding the
+ * according pages and elements to the preference dialog.*/
+void TextureManipulator::constructPreferencePage(PreferenceGroup& group) {
+	PreferencesPage* page(group.createPage("Textures", "Texture Settings"));
+	
+	// Texture Gamma Settings
+	page->appendSpinner("Texture Gamma", RKEY_TEXTURES_GAMMA, 0.0f, 1.0f, 10);
+	
+	// Create the string list containing the mode captions
+	std::list<std::string> textureModes;
+	
+	textureModes.push_back("Nearest");
+	textureModes.push_back("Nearest Mipmap");
+	textureModes.push_back("Linear");
+	textureModes.push_back("Bilinear");
+	textureModes.push_back("Bilinear Mipmap");
+	textureModes.push_back("Trilinear");
+	
+	page->appendCombo("Texture Render Mode", RKEY_TEXTURES_MODE, textureModes);
 }
 
 } // namespace shaders
