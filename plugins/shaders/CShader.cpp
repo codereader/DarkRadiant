@@ -10,8 +10,6 @@
 
 #include "Doom3ShaderSystem.h"
 
-Callback g_ActiveShadersChangedNotify;
-
 // Map string blend functions to their enum equivalents
 BlendFactor evaluateBlendFactor(const std::string& value) {
 	if (value == "gl_zero") {
@@ -181,7 +179,7 @@ bool CShader::IsInUse() const {
 
 void CShader::SetInUse(bool bInUse) {
 	m_bInUse = bInUse;
-	g_ActiveShadersChangedNotify();
+	GetShaderSystem().activeShadersChangedNotify();
 }
 
 // get the shader flags

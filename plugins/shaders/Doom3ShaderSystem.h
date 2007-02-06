@@ -3,6 +3,9 @@
 
 #include "ishaders.h"
 #include "moduleobserver.h"
+
+#include "generic/callback.h"
+
 #include "ShaderLibrary.h"
 #include "textures/GLTextureManager.h"
 
@@ -18,6 +21,8 @@ class Doom3ShaderSystem :
 	
 	// The manager that handles the texture caching. 
 	GLTextureManagerPtr _textureManager;
+	
+	Callback _activeShadersChangedNotify;
 	
 public:
 	// Constructor, allocates the library
@@ -55,6 +60,9 @@ public:
 	ShaderLibrary& getLibrary();
 	GLTextureManager& getTextureManager();
 
+	// greebo: Legacy method, don't know what this is exactly used for
+	void activeShadersChangedNotify();
+	
 }; // class Doom3ShaderSystem
 
 } // namespace shaders
