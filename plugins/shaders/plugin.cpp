@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "itextures.h"
 #include "iregistry.h"
 #include "qerplugin.h"
+#include "preferencesystem.h"
 
 #include "modulesystem/singletonmodule.h"
 
@@ -36,7 +37,8 @@ class ShadersDependencies :
 	public GlobalFileSystemModuleRef,
 	public GlobalTexturesModuleRef,
 	public GlobalRadiantModuleRef,
-	public GlobalRegistryModuleRef 
+	public GlobalRegistryModuleRef,
+	public GlobalPreferenceSystemModuleRef 
 {};
 
 class ShadersDoom3API
