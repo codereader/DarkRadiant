@@ -179,17 +179,13 @@ TexturePtr GLTextureManager::getShaderImageMissing() {
 
 void GLTextureManager::load(TexturePtr texture, Image* image) {
 	
-	int nWidth = image->getWidth();
-	int nHeight = image->getHeight();
-	
-	texture->width = nWidth;
-	texture->height = nHeight;
+	// Fill the Texture structure with the metadata
+	texture->width = image->getWidth();
+	texture->height = image->getHeight();
 	
 	texture->surfaceFlags = image->getSurfaceFlags();
 	texture->contentFlags = image->getContentFlags();
 	texture->value = image->getValue();
-	
-	unsigned char* pixels = image->getRGBAPixels();
 	
 	// Calculate an average, representative colour for flatshade rendering 
 	texture->color = _manipulator.getFlatshadeColour(image);
@@ -198,17 +194,12 @@ void GLTextureManager::load(TexturePtr texture, Image* image) {
 	glGenTextures(1, &texture->texture_number);
 	glBindTexture(GL_TEXTURE_2D, texture->texture_number);
 
-	//setTextureParameters();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+	// Tell OpenGL how to use the mip maps we will be creating here
+	_manipulator.setTextureParameters();
 	
-	// Retrieve the image dimensions
-	int gl_width = image->getWidth();
-	int gl_height = image->getHeight();
-
 	// Now create the mipmaps; conveniently, there exists an openGL method for this 
-	gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, gl_width, gl_height, 
-					  GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+	gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, image->getWidth(), image->getHeight(), 
+					  GL_RGBA, GL_UNSIGNED_BYTE, image->getRGBAPixels());
 	
 	// Clear the texture binding
 	glBindTexture(GL_TEXTURE_2D, 0);

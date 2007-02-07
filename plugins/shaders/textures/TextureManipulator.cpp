@@ -12,6 +12,9 @@ namespace {
 	static byte *row1 = NULL, *row2 = NULL;
 	static int rowsize = 0;
 	
+	const int MAX_TEXTURE_QUALITY = 3;
+	
+	const std::string RKEY_TEXTURES_QUALITY = "user/ui/textures/quality";
 	const std::string RKEY_TEXTURES_GAMMA = "user/ui/textures/gamma";
 	const std::string RKEY_TEXTURES_MODE = "user/ui/textures/mode";
 }
@@ -19,10 +22,13 @@ namespace {
 namespace shaders {
 
 TextureManipulator::TextureManipulator() :
-	_gamma(GlobalRegistry().getFloat(RKEY_TEXTURES_GAMMA)) 
+	_gamma(GlobalRegistry().getFloat(RKEY_TEXTURES_GAMMA)),
+	_maxTextureSize(0),
+	_textureQuality(GlobalRegistry().getInt(RKEY_TEXTURES_QUALITY))
 {
 	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_GAMMA);
 	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_MODE);
+	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_QUALITY);
 	
 	// Load the texture mode
 	_textureMode = readTextureMode(GlobalRegistry().getInt(RKEY_TEXTURES_MODE));
@@ -35,6 +41,7 @@ TextureManipulator::TextureManipulator() :
 
 // RegistryKeyObserver implementation
 void TextureManipulator::keyChanged() {
+	_textureQuality = GlobalRegistry().getInt(RKEY_TEXTURES_QUALITY);
 	_textureMode = readTextureMode(GlobalRegistry().getInt(RKEY_TEXTURES_MODE));
 	
 	float newGamma = GlobalRegistry().getFloat(RKEY_TEXTURES_GAMMA);
@@ -167,15 +174,18 @@ Image* TextureManipulator::getResized(Image* input) {
 		output = input;
 	}
 	
-	// Now retrieve the maximum texture size opengl can handle (TODO: cache this value)
-	int _maxTextureSize = 0;
-	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &_maxTextureSize);
+	// Now retrieve the maximum texture size opengl can handle
 	if (_maxTextureSize == 0) {
-		_maxTextureSize = 1024;
+		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &_maxTextureSize);
+		
+		// If the value is still zero, fill it to some default value of 1024
+		if (_maxTextureSize == 0) {
+			_maxTextureSize = 1024;
+		}
 	}
 	
 	// Determine the target dimensions
-	int qualityReduction = 0;//MAX_TEXTURE_QUALITY - MAX_TEXTURE_QUALITY;//_textureQuality;
+	int qualityReduction = MAX_TEXTURE_QUALITY - _textureQuality;
 	int targetWidth = std::min(gl_width >> qualityReduction, _maxTextureSize);
 	int targetHeight = std::min(gl_height >> qualityReduction, _maxTextureSize);
 	
@@ -566,6 +576,16 @@ void TextureManipulator::mipReduce(byte *in, byte *out,
  * according pages and elements to the preference dialog.*/
 void TextureManipulator::constructPreferencePage(PreferenceGroup& group) {
 	PreferencesPage* page(group.createPage("Textures", "Texture Settings"));
+	
+	// Create the string list containing the quality captions
+	std::list<std::string> percentages;
+	
+	percentages.push_back("12.5%");
+	percentages.push_back("25%");
+	percentages.push_back("50%");
+	percentages.push_back("100%");
+	
+	page->appendCombo("Texture Quality", RKEY_TEXTURES_QUALITY, percentages);
 	
 	// Texture Gamma Settings
 	page->appendSpinner("Texture Gamma", RKEY_TEXTURES_GAMMA, 0.0f, 1.0f, 10);

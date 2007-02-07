@@ -23,6 +23,12 @@ class TextureManipulator :
 	// The filtering mode (mipmap_linear and such)
 	ETexturesMode _textureMode;
 	
+	// Gets filled in by an OpenGL query
+	int _maxTextureSize;
+	
+	// The image reduction indicator (3 = no reduction, 0 = 12.5%)
+	int _textureQuality;
+	
 public:
 	TextureManipulator();
 	
@@ -49,6 +55,11 @@ public:
 	 */
 	Colour3 getFlatshadeColour(Image* input);
 
+	/* greebo: Sends the openGL texturemode commands according to the internal
+	 * texture mode member variable. (e.g. MIPMAP_LINEAR)
+	 */
+	void setTextureParameters();
+
 private:
 
 	// Returns the gamma corrected image taken from <input>
@@ -67,11 +78,6 @@ private:
 	// Recalculates the gamma table according to the given gamma value
 	// This is called on first startup or if the user changes the value
 	void calculateGammaTable();
-	
-	/* greebo: Sends the openGL texturemode commands according to the internal
-	 * texture mode member variable. (e.g. MIPMAP_LINEAR)
-	 */
-	void setTextureParameters();
 	
 	// Converts the <int> to the ETexturesMode enumeration
 	ETexturesMode readTextureMode(const unsigned int& mode);
