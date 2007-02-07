@@ -35,13 +35,6 @@ typedef boost::shared_ptr<ImageConstructor> ImageConstructorPtr;
 struct Texture; // defined in texturelib.h
 typedef boost::shared_ptr<Texture> TexturePtr;
 
-class TexturesCacheObserver
-{
-public:
-  virtual void unrealise() = 0;
-  virtual void realise() = 0;
-};
-
 /* greebo: A TextureModeObserver gets notified if the texture mode gets changed. 
  */
 class TextureModeObserver
@@ -72,8 +65,6 @@ public:
 							   const std::string& name) = 0;
 	
 	virtual void release(TexturePtr texture) = 0;
-	virtual void attach(TexturesCacheObserver& observer) = 0;
-	virtual void detach(TexturesCacheObserver& observer) = 0;
 
   	// Realises / unrealises all the textures (loads them into memory)
 	virtual void realise() = 0;
