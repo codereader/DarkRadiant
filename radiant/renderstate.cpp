@@ -31,7 +31,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ishaders.h"
 #include "irender.h"
-#include "itextures.h"
 #include "igl.h"
 #include "iglrender.h"
 #include "renderable.h"
@@ -773,7 +772,7 @@ typedef SingletonModule<OpenGLStateLibraryAPI> OpenGLStateLibraryModule;
 typedef Static<OpenGLStateLibraryModule> StaticOpenGLStateLibraryModule;
 StaticRegisterModule staticRegisterOpenGLStateLibrary(StaticOpenGLStateLibraryModule::instance());
 
-class ShaderCacheDependencies : public GlobalShadersModuleRef, public GlobalTexturesModuleRef, public GlobalOpenGLStateLibraryModuleRef
+class ShaderCacheDependencies : public GlobalShadersModuleRef, public GlobalOpenGLStateLibraryModuleRef
 {
 public:
   ShaderCacheDependencies() :

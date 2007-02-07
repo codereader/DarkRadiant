@@ -5,8 +5,19 @@
 #include "ishaders.h"
 #include "iregistry.h"
 #include "preferencesystem.h"
-#include "itextures.h"
 typedef unsigned char byte;
+
+namespace {
+	// The OpenGL Texture render modes 
+	enum ETexturesMode {
+	    eTextures_NEAREST = 0,
+	    eTextures_NEAREST_MIPMAP_NEAREST = 1,
+	    eTextures_NEAREST_MIPMAP_LINEAR = 2,
+	    eTextures_LINEAR = 3,
+	    eTextures_LINEAR_MIPMAP_NEAREST = 4,
+	    eTextures_LINEAR_MIPMAP_LINEAR = 5,
+	};	
+}
 
 namespace shaders {
 

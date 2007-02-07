@@ -1,12 +1,11 @@
 #include "TextureManipulator.h"
 
+#include "igl.h"
 #include <stdlib.h>
 #include "imagelib.h"
 #include "stream/textstream.h"
 #include "math/Vector3.h"
 #include "../Doom3ShaderSystem.h"
-
-#include <iostream>
 
 namespace {
 	static byte *row1 = NULL, *row2 = NULL;
