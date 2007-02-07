@@ -59,11 +59,6 @@ private:
 	
 	ETexturesMode _textureMode;
 	
-	// The connected callbacks	
-	typedef std::list<TextureModeObserver*> TextureModeObserverList;
-	
-	TextureModeObserverList _textureModeObservers;
-
 	int _textureQuality;
 	float _textureGamma;
 	
@@ -467,41 +462,9 @@ public:
 		return m_unrealised == 0;
 	}
 	
-	void addTextureModeObserver(TextureModeObserver* observer) {
-		if (observer != NULL) {
-			// Add the passed observer to the list
-			_textureModeObservers.push_back(observer);
-		}
-	}
-	
-	void removeTextureModeObserver(TextureModeObserver* observer) {
-		// Cycle through the list of observers and call the moved method
-		for (TextureModeObserverList::iterator i = _textureModeObservers.begin(); 
-			 i != _textureModeObservers.end(); 
-			 i++) 
-		{
-			TextureModeObserver* registered = *i;
-			
-			if (registered == observer) {
-				_textureModeObservers.erase(i++);
-				return; // Don't continue the loop, the iterator is obsolete 
-			}
-		}
-	}
-	
 	// Call the attached observers
 	void modeChangeNotify() {
-		// Cycle through the list of observers and call the changed() method
-		for (TextureModeObserverList::iterator i = _textureModeObservers.begin(); 
-			 i != _textureModeObservers.end(); 
-			 i++) 
-		{
-			TextureModeObserver* observer = *i;
-			
-			if (observer != NULL) {
-				observer->textureModeChanged();
-			}
-		}
+		
 	}
 	
 	/* greebo: This gets called by the preference system and is responsible for adding the

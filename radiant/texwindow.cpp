@@ -57,7 +57,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stream/textfilestream.h"
 #include "stream/stringstream.h"
 #include "cmdlib.h"
-#include "textures.h"
 #include "convert.h"
 
 #include "gtkutil/image.h"
@@ -200,8 +199,7 @@ namespace {
 void TextureBrowser_heightChanged(TextureBrowser& textureBrowser);
 
 class TextureBrowser :
-	public RegistryKeyObserver,
-	public TextureModeObserver
+	public RegistryKeyObserver
 {
 public:
 	int width, height;
@@ -329,13 +327,11 @@ public:
 	void construct() {
 		m_hideUnused = (GlobalRegistry().get(RKEY_TEXTURES_HIDE_UNUSED) == "1");
 		GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_HIDE_UNUSED);
-		GlobalTexturesCache().addTextureModeObserver(this);
 	}
 
   
-	void destroy() {
-		GlobalTexturesCache().removeTextureModeObserver(this);
-	}
+	void destroy() 
+	{}
   
 	void queueDraw() {
 		if (m_gl_widget != NULL) {
