@@ -340,7 +340,6 @@ radiant_src = [
 'selection.cpp',
 'server.cpp',
 'surfacedialog.cpp',
-'textures.cpp',
 'texwindow.cpp',
 'timer.cpp',
 'treemodel.cpp',

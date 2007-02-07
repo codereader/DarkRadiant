@@ -122,7 +122,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "select.h"
 #include "server.h"
 #include "surfacedialog.h"
-#include "textures.h"
 #include "texwindow.h"
 #include "windowobservers.h"
 #include "renderstate.h"
@@ -2606,7 +2605,6 @@ void GlobalGL_sharedContextCreated()
   ShaderCache_extensionsInitialised();
 
   GlobalShaderCache().realise();
-  Textures_Realise();
 
   g_font = glfont_create("courier 8");
   GlobalOpenGL().m_font = g_font.getDisplayList();
@@ -2615,7 +2613,6 @@ void GlobalGL_sharedContextCreated()
 
 void GlobalGL_sharedContextDestroyed()
 {
-  Textures_Unrealise();
   GlobalShaderCache().unrealise();
 
   QGL_sharedContextDestroyed(GlobalOpenGL());

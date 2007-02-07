@@ -35,14 +35,6 @@ typedef boost::shared_ptr<ImageConstructor> ImageConstructorPtr;
 struct Texture; // defined in texturelib.h
 typedef boost::shared_ptr<Texture> TexturePtr;
 
-/* greebo: A TextureModeObserver gets notified if the texture mode gets changed. 
- */
-class TextureModeObserver
-{
-public:
-	virtual void textureModeChanged() = 0;
-};
-
 enum ETexturesMode {
     eTextures_NEAREST = 0,
     eTextures_NEAREST_MIPMAP_NEAREST = 1,
@@ -84,10 +76,6 @@ public:
 	
 	// Notifies the observers of the texture mode change
 	virtual void modeChanged() = 0;
-	
-	// Adds/Removes an observer that gets notified upon texture mode change
-	virtual void addTextureModeObserver(TextureModeObserver* observer) = 0;
-	virtual void removeTextureModeObserver(TextureModeObserver* observer) = 0;
 };
 
 #include "modulesystem.h"
