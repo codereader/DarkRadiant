@@ -1,6 +1,7 @@
 #include "TextureManipulator.h"
 
 #include <stdlib.h>
+#include "imagelib.h"
 #include "stream/textstream.h"
 #include "math/Vector3.h"
 #include "../Doom3ShaderSystem.h"
@@ -122,7 +123,73 @@ Image* TextureManipulator::getProcessedImage(Image* input) {
 	
 	Image* output;
 	
-	output = processGamma(input); 
+	// Make the image dimensions match powers of two
+	output = getResized(input);
+	
+	// Apply the gamma
+	output = processGamma(output); 
+	
+	return output;
+}
+
+Image* TextureManipulator::getResized(Image* input) {
+	
+	int width = input->getWidth();
+	int height = input->getHeight();
+	unsigned char* sourcePixels = input->getRGBAPixels();
+	
+	Image* output;
+	
+	// Determine the next larger power of two
+	int gl_width = 1;
+	while (gl_width < width)
+		gl_width <<= 1;
+	
+	int gl_height = 1;
+	while (gl_height < height)
+		gl_height <<= 1;
+	
+	// Check, if the image dimensions are already powers of two, if not, rescale it
+	if (!(gl_width == width && gl_height == height)) {
+		
+		// Create a new Image that hold the resampled texture
+		output = new RGBAImage(gl_width, gl_height);
+		
+		// Resample the texture into the allocated image
+		resampleTexture(sourcePixels, width, height, 
+						output->getRGBAPixels(), gl_width, gl_height, 4);
+						
+		// Remove the source image from the heap
+		input->release();
+	}
+	else {
+		// Nothing to do, return the source image
+		output = input;
+	}
+	
+	// Now retrieve the maximum texture size opengl can handle (TODO: cache this value)
+	int _maxTextureSize = 0;
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &_maxTextureSize);
+	if (_maxTextureSize == 0) {
+		_maxTextureSize = 1024;
+	}
+	
+	// Determine the target dimensions
+	int qualityReduction = 0;//MAX_TEXTURE_QUALITY - MAX_TEXTURE_QUALITY;//_textureQuality;
+	int targetWidth = std::min(gl_width >> qualityReduction, _maxTextureSize);
+	int targetHeight = std::min(gl_height >> qualityReduction, _maxTextureSize);
+	
+	// Reduce the image to the next smaller power of two until it fits the openGL max texture size
+	while (gl_width > targetWidth || gl_height > targetHeight) {
+		
+		mipReduce(output->getRGBAPixels(), output->getRGBAPixels(), 
+				  gl_width, gl_height, targetWidth, targetHeight);
+
+		if (gl_width > targetWidth)
+			gl_width >>= 1;
+		if (gl_height > targetHeight)
+			gl_height >>= 1;
+	}
 	
 	return output;
 }

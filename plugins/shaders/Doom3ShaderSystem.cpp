@@ -93,6 +93,7 @@ void Doom3ShaderSystem::unrealise() {
 
 void Doom3ShaderSystem::freeShaders() {
 	_library->clear();
+	_textureManager->checkBindings();
 	activeShadersChangedNotify();
 }
 
