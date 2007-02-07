@@ -55,6 +55,15 @@ private:
 	// (Does not allocate new memory)
 	Image* processGamma(Image* input);
 	
+	/* greebo: This ensures that the image has dimensions that 
+	 * match a power of two. If it does not, the according length is
+	 * stretched to match the next largest power of two.
+	 * 
+	 * Additionally, this ensures that the image is not larger
+	 * than the maximum texture size openGL can handle.
+	 */
+	Image* getResized(Image* input);
+	
 	// Recalculates the gamma table according to the given gamma value
 	// This is called on first startup or if the user changes the value
 	void calculateGammaTable();

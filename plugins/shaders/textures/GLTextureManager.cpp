@@ -189,9 +189,7 @@ void GLTextureManager::load(TexturePtr texture, Image* image) {
 	texture->contentFlags = image->getContentFlags();
 	texture->value = image->getValue();
 	
-	unsigned char* pPixels = image->getRGBAPixels();
-	
-	byte* outpixels;
+	unsigned char* pixels = image->getRGBAPixels();
 	
 	// Calculate an average, representative colour for flatshade rendering 
 	texture->color = _manipulator.getFlatshadeColour(image);
@@ -204,60 +202,16 @@ void GLTextureManager::load(TexturePtr texture, Image* image) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 	
-	int gl_width = 1;
-	while (gl_width < nWidth)
-		gl_width <<= 1;
-	
-	int gl_height = 1;
-	while (gl_height < nHeight)
-		gl_height <<= 1;
-	
-	bool resampled = false;
-		
-	if (!(gl_width == nWidth && gl_height == nHeight)) {
-		resampled = true;
-		outpixels = (byte *)malloc(gl_width * gl_height * 4);
-		_manipulator.resampleTexture(pPixels, nWidth, nHeight, outpixels, gl_width, gl_height, 4);
-	}
-	else {
-		outpixels = pPixels;
-	}
-	
-	int _maxTextureSize = 0;
-	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &_maxTextureSize);
-	if (_maxTextureSize == 0) {
-		_maxTextureSize = 1024;
-	}
-	
-	int quality_reduction = MAX_TEXTURE_QUALITY - MAX_TEXTURE_QUALITY;//_textureQuality;
-	int target_width = std::min(gl_width >> quality_reduction, _maxTextureSize);
-	int target_height = std::min(gl_height >> quality_reduction, _maxTextureSize);
-	
-	while (gl_width > target_width || gl_height > target_height) {
-		_manipulator.mipReduce(outpixels, outpixels, gl_width, gl_height, target_width, target_height);
+	// Retrieve the image dimensions
+	int gl_width = image->getWidth();
+	int gl_height = image->getHeight();
 
-		if (gl_width > target_width)
-			gl_width >>= 1;
-		if (gl_height > target_height)
-			gl_height >>= 1;
-	}
-
-	int mip = 0;
-	glTexImage2D(GL_TEXTURE_2D, mip++, GL_RGBA, gl_width, gl_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, outpixels);
-	while (gl_width > 1 || gl_height > 1) {
-		_manipulator.mipReduce(outpixels, outpixels, gl_width, gl_height, 1, 1);
-
-		if (gl_width > 1)
-			gl_width >>= 1;
-		if (gl_height > 1)
-			gl_height >>= 1;
-
-		glTexImage2D(GL_TEXTURE_2D, mip++, GL_RGBA, gl_width, gl_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, outpixels);
-	}
-
+	// Now create the mipmaps; conveniently, there exists an openGL method for this 
+	gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, gl_width, gl_height, 
+					  GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+	
+	// Clear the texture binding
 	glBindTexture(GL_TEXTURE_2D, 0);
-	if (resampled)
-		free(outpixels);
 }
 
 } // namespace shaders
