@@ -41,7 +41,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iscriplib.h"
 #include "igl.h"
 #include "iundo.h"
-#include "itextures.h"
 #include "ireference.h"
 #include "ifiletypes.h"
 #include "preferencesystem.h"
@@ -210,8 +209,7 @@ class RadiantDependencies :
   public GlobalNamespaceModuleRef,
   public GlobalClipperModuleRef,
   public GlobalGridModuleRef,
-  public GlobalOverlayModuleRef,
-  public GlobalTexturesModuleRef
+  public GlobalOverlayModuleRef
 {
   ImageModulesRef m_image_modules;
   MapModulesRef m_map_modules;

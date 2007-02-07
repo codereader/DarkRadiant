@@ -32,7 +32,6 @@
 		<quality value="3" />
 		<mode value="5" />
 		<gamma value="1.0" />
-		<compressionFormat value="0" />
 	</textures>
 	<grid>
 		<defaultGridPower value="3" />

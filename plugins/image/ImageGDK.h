@@ -13,7 +13,7 @@ Image* LoadImageGDK(ArchiveFile& file);
  * Use load() to actually retrieve an Image* object with the loaded image.
  * 
  * Shouldn't be used to load textures directly, use the 
- * GlobalTexturesCache() module instead.  
+ * GlobalShaderSystem() module instead.  
  * 
  * Complies with the ImageLoader interface defined in "iimage.h" 
  */

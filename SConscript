@@ -194,12 +194,6 @@ skinsList = build_list('plugins/skins', 'skincache.cpp Doom3SkinCache.cpp')
 skinsLib = skinsEnv.SharedLibrary(target='skins', source=skinsList, no_import_lib=1)
 skinsEnv.Install(INSTALL + '/modules', skinsLib)
 
-# TexturesCache module
-texturesEnv = module_env.Copy()
-texturesList = build_list('plugins/textures', 'TextureManipulator.cpp TexturesCache.cpp')
-texturesLib = texturesEnv.SharedLibrary(target='textures', source=texturesList, no_import_lib=1)
-texturesEnv.Install(INSTALL + '/modules', texturesLib)
-
 image_env = module_env.Copy()
 image_lst = build_list('plugins/image', 'bmp.cpp jpeg.cpp image.cpp pcx.cpp tga.cpp dds.cpp ImageGDK.cpp')
 image_env.useGtk2()

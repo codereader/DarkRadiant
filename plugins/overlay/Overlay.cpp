@@ -3,7 +3,6 @@
 #include "iregistry.h"
 #include "preferencesystem.h"
 #include "igl.h"
-#include "itextures.h"
 #include "qerplugin.h"
 #include "ishaders.h"
 
