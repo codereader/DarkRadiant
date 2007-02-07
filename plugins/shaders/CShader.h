@@ -8,9 +8,6 @@
 class CShader : 
 	public IShader 
 {
-	// Internal reference count
-	int _refCount;
-
 	const ShaderTemplate& _template;
 	
 	// The shader file name (i.e. the file where this one is defined)
@@ -50,14 +47,6 @@ public:
 	CShader(const std::string& name, const ShaderDefinition& definition);
 
 	virtual ~CShader();
-
-	// Increase reference count
-	void IncRef();
-
-	// Decrease reference count
-	void DecRef();
-
-	std::size_t refcount();
 
 	// get/set the TexturePtr Radiant uses to represent this shader object
 	TexturePtr getTexture();
