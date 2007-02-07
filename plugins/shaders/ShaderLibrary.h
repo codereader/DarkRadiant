@@ -64,6 +64,8 @@ public:
 	
 	void foreachShaderName(const ShaderNameCallback& callback);
 	
+	TexturePtr loadTextureFromFile(const std::string& filename);
+	
 }; // class ShaderLibrary
 
 typedef boost::shared_ptr<ShaderLibrary> ShaderLibraryPtr;

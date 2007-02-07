@@ -77,6 +77,11 @@ public:
 	void setLightingEnabled(bool enabled);
 
 	const char* getTexturePrefix() const;
+	
+	/* greebo: Loads an image from disk and creates a basic shader
+	 * object out of it (i.e. only diffuse and editor image are non-empty).
+	 */
+	TexturePtr loadTextureFromFile(const std::string& filename);
 
 	ShaderLibrary& getLibrary();
 	GLTextureManager& getTextureManager();

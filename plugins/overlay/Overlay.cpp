@@ -4,6 +4,8 @@
 #include "preferencesystem.h"
 #include "igl.h"
 #include "itextures.h"
+#include "qerplugin.h"
+#include "ishaders.h"
 
 #include "math/Vector3.h"
 #include "math/matrix.h"
@@ -108,9 +110,8 @@ public:
 		GlobalPreferenceSystem().addConstructor(this);
 	}
 	
-	~Overlay() {
-		releaseTexture();
-	}
+	~Overlay() 
+	{}
 	
 	void show(bool shown) {
 		_visible = shown;
@@ -118,12 +119,10 @@ public:
 	
 	// Sets the name of the image that should be loaded
 	void setImage(const std::string& imageName) {
-		// Do nothing, if the extension removal failed or if the current image is the same
+		// Do nothing, if the current image is the same
 		if (imageName == _imageName) {
 			return;
 		}
-		
-		releaseTexture();
 		
 		_imageName = imageName;
 		
@@ -292,31 +291,24 @@ private:
 
 	void captureTexture() {
 		if (_imageName != "") {
-			ImageConstructorPtr constructor(new FileLoader(_imageName));
-			_texture = GlobalTexturesCache().capture(constructor, _imageName);
-			
-			if (_texture->texture_number == 0) {
-				// Image load seemed to have failed
-				GlobalTexturesCache().release(_texture);
-			}
+			_texture = GlobalShaderSystem().loadTextureFromFile(_imageName);
 		}
-		else {
-			globalErrorStream() << "Texture already captured!\n";
-		}
-	}
-	
-	void releaseTexture() {
-		GlobalTexturesCache().release(_texture);
 	}
 }; // class Overlay
 
 /* Overlay dependencies class. 
  */
 class OverlayDependencies :
+	public GlobalRadiantModuleRef,
 	public GlobalRegistryModuleRef,
-	public GlobalTexturesModuleRef,
+	public GlobalShadersModuleRef,
 	public GlobalPreferenceSystemModuleRef
-{};
+{
+public:
+	OverlayDependencies() :
+		GlobalShadersModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("shaders"))
+	{}
+};
 
 /* Required code to register the module with the ModuleServer.
  */

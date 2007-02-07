@@ -52,7 +52,8 @@ enum eTextureType {
 	texDiffuse,
 	texBump,
 	texSpecular,
-	texLightFalloff
+	texLightFalloff,
+	texOverlay
 };
 
 /* greebo: The TextureManager keeps track of all the Textures that are
@@ -259,6 +260,12 @@ public:
   virtual void setLightingEnabled(bool enabled) = 0;
 
   virtual const char* getTexturePrefix() const = 0;
+  
+	/* greebo: This is a substitution for the "old" TexturesCache method
+	 * used to load an image from a file to graphics memory for arbitrary
+	 * use (e.g. the Overlay module).
+	 */
+	virtual TexturePtr loadTextureFromFile(const std::string& filename) = 0;
 };
 
 #include "modulesystem.h"

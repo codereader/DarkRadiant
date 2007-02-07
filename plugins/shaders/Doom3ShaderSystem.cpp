@@ -181,6 +181,14 @@ void Doom3ShaderSystem::activeShadersChangedNotify() {
 	_activeShadersChangedNotify();
 }
 
+TexturePtr Doom3ShaderSystem::loadTextureFromFile(const std::string& filename) {
+	// Remove any unused Textures before allocating new ones.
+	_textureManager->checkBindings();
+	
+	// Pass the call to the library
+	return _library->loadTextureFromFile(filename);
+}
+
 } // namespace shaders
 
 // Accessor function encapsulating the static shadersystem instance
