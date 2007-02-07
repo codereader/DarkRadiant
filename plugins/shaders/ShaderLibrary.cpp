@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include "ShaderTemplate.h"
+#include "Doom3ShaderSystem.h"
+#include "textures/FileLoader.h"
 
 namespace shaders {
 
@@ -95,6 +97,17 @@ void ShaderLibrary::foreachShaderName(const ShaderNameCallback& callback) {
 	{
 		callback(i->first.c_str());
 	}
+}
+
+TexturePtr ShaderLibrary::loadTextureFromFile(const std::string& filename) {
+
+	// Create the according TextureConstructor
+	TextureConstructorPtr constructor(new FileLoader(filename));
+
+	// Get the binding (i.e. load the texture)
+	TexturePtr texture = GetTextureManager().getBinding(filename, constructor, texOverlay);
+
+	return texture;
 }
 
 } // namespace shaders

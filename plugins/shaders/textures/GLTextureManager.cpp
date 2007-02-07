@@ -47,6 +47,8 @@ TexturePtr GLTextureManager::getStandardTexture(eTextureType textureType) {
 			return getEmptySpecular();
 		case texLightFalloff:
 			return getEmptyFalloff();
+		case texOverlay:
+			return getShaderImageMissing();
 	};
 	// This won't be executed, it's for avoiding compiler warnings.
 	return getShaderImageMissing();
@@ -82,6 +84,7 @@ TexturePtr GLTextureManager::getBinding(const std::string& textureKey,
 	if (i == end()) {
 		// Is the constructor pointer valid?
 		if (constructor != NULL) {
+			
 			// Retrieve the fabricated image from the TextureConstructor
 			Image* image = constructor->construct();
 			
@@ -89,11 +92,20 @@ TexturePtr GLTextureManager::getBinding(const std::string& textureKey,
 				// Constructor returned a valid image, now create the texture object
 				_textures[textureKey] = TexturePtr(new Texture(textureKey));
 				
-				// Bind the texture and get the OpenGL id
-				load(_textures[textureKey], _manipulator.getProcessedImage(image));
+				// Tell the manipulator to do the standard operations 
+				// This might return a different image than the passed one
 				
+				// Do not touch overlay images (no gamma or scaling)
+				if (textureType != texOverlay) {
+					image = _manipulator.getProcessedImage(image);
+				}
+				
+				// Bind the texture and get the OpenGL id
+				load(_textures[textureKey], image);
+
 				// We don't need the image pixel data anymore
 				image->release();
+
 				globalOutputStream() << "[shaders] Loaded texture: " 
 									 << textureKey.c_str() << "\n";
 			}
@@ -112,7 +124,7 @@ TexturePtr GLTextureManager::getBinding(const std::string& textureKey,
 			_textures[textureKey] = getShaderImageMissing();
 		}
 	}
-	
+
 	return _textures[textureKey];
 }
 
