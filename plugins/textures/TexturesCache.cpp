@@ -55,7 +55,6 @@ private:
 	typedef TextureMap::iterator iterator;
 	
 	TextureMap _textures;
-	TexturesCacheObserver* m_observer;
 	std::size_t m_unrealised;
 	
 	ETexturesMode _textureMode;
@@ -83,7 +82,6 @@ private:
 
 public:
 	TexturesMap() : 
-		m_observer(0), 
 		m_unrealised(1),
 		_textureQuality(GlobalRegistry().getInt(RKEY_TEXTURES_QUALITY)),
 		_textureGamma(GlobalRegistry().getFloat(RKEY_TEXTURES_GAMMA)),
@@ -288,16 +286,6 @@ public:
 		}
 	}
 	
-	void attach(TexturesCacheObserver& observer) {
-		ASSERT_MESSAGE(m_observer == 0, "TexturesMap::attach: cannot attach observer");
-		m_observer = &observer;
-	}
-	
-	void detach(TexturesCacheObserver& observer) {
-		ASSERT_MESSAGE(m_observer == &observer, "TexturesMap::detach: cannot detach observer");
-		m_observer = 0;
-	}
-	
 	/// \brief This function does the actual processing of raw RGBA data into a GL texture.
 	/// It will also resample to power-of-two dimensions, generate the mipmaps and adjust gamma.
 	void loadTextureRGBA(TexturePtr q, unsigned char* pPixels, int nWidth, int nHeight) {
@@ -461,19 +449,11 @@ public:
 					realiseTexture(i->second);
 				}
 			}
-
-			if (m_observer != 0) {
-				m_observer->realise();
-			}
 		}
 	}
 	
 	void unrealise() {
 		if (++m_unrealised == 1) {
-			if (m_observer != 0) {
-				m_observer->unrealise();
-			}
-			
 			// Now unrealise all the textures
 			for (iterator i = begin(); i != end(); ++i) {
 				if (i->second->referenceCounter > 0) {

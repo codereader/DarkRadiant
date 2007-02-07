@@ -330,7 +330,7 @@ public:
 
 #define DEBUG_SHADERS 0
 
-class OpenGLShaderCache : public ShaderCache, public TexturesCacheObserver, public ModuleObserver
+class OpenGLShaderCache : public ShaderCache, public ModuleObserver
 {
   class CreateOpenGLShader
   {
@@ -370,7 +370,9 @@ class OpenGLShaderCache : public ShaderCache, public TexturesCacheObserver, publ
 public:
   OpenGLShaderCache()
     : m_shaders(CreateOpenGLShader(this)),
-    m_unrealised(3), // wait until shaders, gl-context and textures are realised before creating any render-states
+    m_unrealised(2), // wait until shaders, gl-context and textures are realised before creating any render-states
+    				 // greebo: I set this down to the value 2 after removing TexturesCache 
+    				 // (What the heck *is* this anyway, a hardcoded egg-timer?)
     m_lightingEnabled(true),
     m_lightingSupported(false),
     m_useShaderLanguage(false),
@@ -710,7 +712,6 @@ Shader* g_defaultPointLight = 0;
 void ShaderCache_Construct()
 {
   g_ShaderCache = new OpenGLShaderCache;
-  GlobalTexturesCache().attach(*g_ShaderCache);
   GlobalShaderSystem().attach(*g_ShaderCache);
 
 	// Get the global default lightshader from the XML gamedescriptor.
@@ -734,7 +735,6 @@ void ShaderCache_Destroy()
     g_defaultPointLight = 0;
 
 	GlobalShaderSystem().detach(*g_ShaderCache);
-	GlobalTexturesCache().detach(*g_ShaderCache);
 	delete g_ShaderCache;
 }
 
