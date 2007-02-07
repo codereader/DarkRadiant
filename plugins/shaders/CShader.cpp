@@ -55,13 +55,12 @@ BlendFunc evaluateBlendFunc(const BlendFuncExpression& blendFunc) {
 
 /* Constructor. Sets the name and the ShaderDefinition to use.
  */
-CShader::CShader(const std::string& name, const ShaderDefinition& definition)
-		: _refCount(0),
-		_template(*definition.shaderTemplate),
-		_fileName(definition.filename),
-		_name(name),
-		m_blendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA),
-		m_bInUse(false) 
+CShader::CShader(const std::string& name, const ShaderDefinition& definition) : 
+	_template(*definition.shaderTemplate),
+	_fileName(definition.filename),
+	_name(name),
+	m_blendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA),
+	m_bInUse(false) 
 {
 	assert(definition.shaderTemplate != NULL); // otherwise we have NULL ref
 
@@ -93,22 +92,6 @@ CShader::CShader(const std::string& name, const ShaderDefinition& definition)
 CShader::~CShader() {
 	unrealise();
 	GetTextureManager().checkBindings();
-}
-
-// Increase reference count
-void CShader::IncRef() {
-	//++_refCount;
-}
-
-// Decrease reference count
-void CShader::DecRef()  {
-	/*if (--_refCount == 0) {
-		//delete this;
-	}*/
-}
-
-std::size_t CShader::refcount() {
-	return 1;
 }
 
 // get/set the Texture* Radiant uses to represent this shader object

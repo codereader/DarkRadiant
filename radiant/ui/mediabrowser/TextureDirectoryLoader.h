@@ -45,7 +45,6 @@ public:
 			_dialog.setText("<b>" + sName + "</b>");
 			// Load the shader
 			IShaderPtr ref = GlobalShaderSystem().getShaderForName(shaderName);
-			ref->DecRef();
 		}
 	}
 	

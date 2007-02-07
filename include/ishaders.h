@@ -144,10 +144,7 @@ public:
     eCullNone,
     eCullBack,
   };
-  // Increment the number of references to this object
-  virtual void IncRef() = 0;
-  // Decrement the reference count
-  virtual void DecRef() = 0;
+
   // get/set the qtexture_t* Radiant uses to represent this shader object
   virtual TexturePtr getTexture() = 0;
   virtual TexturePtr getDiffuse() = 0;

@@ -401,7 +401,6 @@ void TextureBrowser_SetStatus(TextureBrowser& textureBrowser, const char* name)
   TexturePtr q = shader->getTexture();
   StringOutputStream strTex(256);
   strTex << name << " W: " << Unsigned(q->width) << " H: " << Unsigned(q->height);
-  shader->DecRef();
   g_pParentWnd->SetStatusText(g_pParentWnd->m_texture_status, strTex.c_str());
 }
 
@@ -677,7 +676,6 @@ public:
   void visit(const char* name)
   {
     IShaderPtr shader = QERApp_Shader_ForName(CopiedString(StringRange(name, path_get_filename_base_end(name))).c_str());
-    shader->DecRef();
   }
 };
 
@@ -719,7 +717,6 @@ public:
       // request the shader, this will load the texture if needed
       // this Shader_ForName call is a kind of hack
       IShaderPtr pFoo = QERApp_Shader_ForName(name);
-      pFoo->DecRef();
     }
   }
 };
@@ -742,7 +739,6 @@ void TextureDirectory_loadTexture(const char* directory, const char* texture)
 
   // if a texture is already in use to represent a shader, ignore it
   IShaderPtr shader = QERApp_Shader_ForName(name.c_str());
-  shader->DecRef();
 }
 typedef ConstPointerCaller1<char, const char*, TextureDirectory_loadTexture> TextureDirectoryLoadTextureCaller;
 

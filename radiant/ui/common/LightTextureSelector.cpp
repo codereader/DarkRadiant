@@ -364,9 +364,6 @@ swapAndRelease:
 
 		// Update GtkGlExt buffer
 		glwidget_swap_buffers(widget);
-		
-		// Release the IShader
-		shader->DecRef();
 	}
 }
 
@@ -436,10 +433,6 @@ void LightTextureSelector::updateInfoTable() {
 					   0, "<b>Light flags</b>",
 					   1, lightType.c_str(),
 					   -1);
-					   
-	// Release the IShader reference
-	shader->DecRef();
-	
 }
 	
 

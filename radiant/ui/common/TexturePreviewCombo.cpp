@@ -103,10 +103,6 @@ void TexturePreviewCombo::refreshInfoTable() {
 					   0, "Defined in",
 					   1, shader->getShaderFileName(),
 					   -1);
-					   
-	// Release the shader
-	shader->DecRef();
-
 }
 
 
@@ -159,8 +155,6 @@ void TexturePreviewCombo::_onExpose(GtkWidget* widget, GdkEventExpose* ev, Textu
 		glTexCoord2i(0, 0);	glVertex2f(0.5 - hfWidth, 0.5 + hfHeight);
 	glEnd();
 	
-	// Release the shader
-	shader->DecRef();
 }
 
 }
