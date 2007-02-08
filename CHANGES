@@ -1,3 +1,9 @@
+08/02/1007
+OrbWeaver
+- Added GUI to edit background image, accessed from View menu
+- Fixed crash when loading a .BAK copy of a map file
+- Changing an entity keyvalue now correctly sets the "map modified" flag
+
 29/01/2007
 greebo
 - Added option to show a background image in orthoviews.
