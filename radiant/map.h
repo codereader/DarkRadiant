@@ -125,7 +125,6 @@ void Map_ImportSelected(TextInputStream& in, const MapFormat& format);
 void Map_ExportSelected(std::ostream& out, const MapFormat& format);
 
 bool Map_Modified(const Map& map);
-void Map_SetModified(Map& map, bool modified);
 
 bool Map_Save();
 bool Map_SaveAs();

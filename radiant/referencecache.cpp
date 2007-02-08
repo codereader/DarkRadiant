@@ -62,7 +62,8 @@ bool References_Saved();
 
 void MapChanged()
 {
-  Map_SetModified(g_map, !References_Saved());
+	if (!References_Saved())
+		map::setModified();
 }
 
 

@@ -431,16 +431,6 @@ bool Map_Modified(const Map& map)
   return map.m_modified;
 }
 
-void Map_SetModified(Map& map, bool modified)
-{
-  if(map.m_modified ^ modified)
-  {
-    map.m_modified = modified;
-
-    map.m_modified_changed(map);
-  }
-}
-
 namespace map {
 
 	// Set the modified flag
