@@ -160,6 +160,7 @@ void ModelPreview::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelPr
 	gtkutil::GLWidgetSentry sentry(self->_glWidget);
 
 	// Set up the render
+	glClearColor(0.2, 0.2, 0.2, 0.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
