@@ -24,36 +24,83 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/constant.h"
 
-class filetype_t
+#include <list>
+#include <string>
+
+#include <boost/shared_ptr.hpp>
+
+/**
+ * Simple structure to store a file pattern (e.g. "*.map") along with its name
+ * (e.g. "Map files").
+ */
+struct FileTypePattern
 {
-public:
-  filetype_t()
-    : name(""), pattern("")
-  {
-  }
-  filetype_t(const char* _name, const char* _pattern)
-    : name(_name), pattern(_pattern)
-  {
-  }
-  const char* name;
-  const char* pattern;
+	// The user-friendly name
+	std::string name;
+	
+	// The mask pattern
+	std::string pattern;
+
+	// Constructor with optional initialisation parameters
+	FileTypePattern(const std::string& n = "", const std::string& p = "")
+    : name(n), pattern(p)
+	{ }
 };
 
-
-class IFileTypeList
+/**
+ * Structure associating a module name with a FileTypePattern.
+ */
+struct ModuleFileType
 {
-public:
-  virtual void addType(const char* moduleName, filetype_t type) = 0;
+	// Module name
+	std::string moduleName;
+	
+	// File type pattern
+	FileTypePattern filePattern;
+	
+	// Initialising constructor
+	ModuleFileType(const std::string& n, const FileTypePattern& p)
+	: moduleName(n), filePattern(p)
+	{ }
 };
 
+/**
+ * List of ModuleFileType objects.
+ */
+typedef std::list<ModuleFileType> ModuleTypeList;
+typedef boost::shared_ptr<ModuleTypeList> ModuleTypeListPtr;
+
+/**
+ * Interface for the FileType registry module. This module retains a list of
+ * FileTypePattern objects along with their associated module names.
+ */
 class IFileTypeRegistry
 {
 public:
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "filetypes");
+	INTEGER_CONSTANT(Version, 1);
+	STRING_CONSTANT(Name, "filetypes");
 
-  virtual void addType(const char* moduleType, const char* moduleName, filetype_t type) = 0;
-  virtual void getTypeList(const char* moduleType, IFileTypeList* typelist) = 0;
+	/**
+	 * Add a type to the registry.
+	 * 
+	 * @param moduleType
+	 * The type of the module, e.g. "map".
+	 * 
+	 * @param moduleName
+	 * Name of the module.
+	 * 
+	 * @param type
+	 * The FileTypePattern to associate with this module name.
+	 */
+	virtual void addType(const std::string& moduleType, 
+						 const std::string& moduleName, 
+						 const FileTypePattern& type) = 0;
+						 
+	/**
+	 * Get a list of ModuleFileTypes associated with the given module type.
+	 */
+	virtual ModuleTypeListPtr getTypesFor(const std::string& moduleType) = 0;
+	
 };
 
 #include "modulesystem.h"

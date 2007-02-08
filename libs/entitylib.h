@@ -730,10 +730,11 @@ public:
 
 /// \brief A Resource reference with a controlled lifetime.
 /// \brief The resource is released when the ResourceReference is destroyed.
+// TODO: Deprecated, use ResourcePtr instead
 class ResourceReference
 {
-  CopiedString m_name;
-  Resource* m_resource;
+  std::string m_name;
+  ReferenceCache::ResourcePtr m_resource;
 public:
   ResourceReference(const char* name)
     : m_name(name)
@@ -758,11 +759,11 @@ public:
 
   void capture()
   {
-    m_resource = GlobalReferenceCache().capture(m_name.c_str());
+    m_resource = GlobalReferenceCache().capture(m_name);
   }
   void release()
   {
-    GlobalReferenceCache().release(m_name.c_str());
+    GlobalReferenceCache().release(m_name);
   }
 
   const char* getName() const
@@ -790,7 +791,7 @@ public:
     m_resource->detach(observer);
   }
 
-  Resource* get()
+  ReferenceCache::ResourcePtr get()
   {
     return m_resource;
   }

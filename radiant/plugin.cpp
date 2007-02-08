@@ -254,7 +254,8 @@ public:
   {
     Preferences_Init();
 
-    GlobalFiletypes().addType("sound", "wav", filetype_t("PCM sound files", "*.wav"));
+	GlobalFiletypes().addType(
+    	"sound", "wav", FileTypePattern("PCM sound files", "*.wav"));
 
     Selection_construct();
     HomePaths_Construct();

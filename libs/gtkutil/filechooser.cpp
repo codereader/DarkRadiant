@@ -39,289 +39,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "messagebox.h"
 
-
-struct filetype_pair_t
+const char* file_dialog_show(GtkWidget* parent, 
+							 bool open, 
+							 const char* title, 
+							 const char* path, 
+							 const char* pattern)
 {
-  filetype_pair_t()
-    : m_moduleName("")
-  {
-  }
-  filetype_pair_t(const char* moduleName, filetype_t type)
-    : m_moduleName(moduleName), m_type(type)
-  {
-  }
-  const char* m_moduleName;
-  filetype_t m_type;
-};
-
-class FileTypeList : public IFileTypeList
-{
-  struct filetype_copy_t
-  {
-    filetype_copy_t(const filetype_pair_t& other)
-      : m_moduleName(other.m_moduleName), m_name(other.m_type.name), m_pattern(other.m_type.pattern)
-    {
-    }
-    CopiedString m_moduleName;
-    CopiedString m_name;
-    CopiedString m_pattern;
-  };
-
-  typedef std::list<filetype_copy_t> Types;
-  Types m_types;
-public:
-
-  typedef Types::const_iterator const_iterator;
-  const_iterator begin() const
-  {
-    return m_types.begin();
-  }
-  const_iterator end() const
-  {
-    return m_types.end();
-  }
-
-  std::size_t size() const
-  {
-    return m_types.size();
-  }
-
-  void addType(const char* moduleName, filetype_t type)
-  {
-    m_types.push_back(filetype_pair_t(moduleName, type));
-  }
-};
-
-#ifdef WIN32
-
-class Win32Filters
-{
-  const FileTypeList& m_types;
-  Array<char> m_filters;
-public:
-  Win32Filters(const FileTypeList& typeList) : m_types(typeList)
-  {
-    std::size_t len = 0;
-    for(FileTypeList::const_iterator i = m_types.begin(); i != m_types.end(); ++i)
-    {
-      len = len + strlen((*i).m_name.c_str()) + strlen((*i).m_pattern.c_str()) * 2 + 5;
-    }
-    m_filters.resize(len + 1); // length + null char
-    char *w = m_filters.data();
-    for(FileTypeList::const_iterator i = m_types.begin(); i != m_types.end(); ++i)
-    {
-      for(const char *r = (*i).m_name.c_str(); *r!='\0'; r++, w++)
-      {
-        *w = *r;
-      }
-      *w++ = ' ';
-      *w++ = '(';
-      for(const char *r = (*i).m_pattern.c_str(); *r!='\0'; r++, w++)
-      {
-        *w = *r;
-      }
-      *w++ = ')';
-      *w++ = '\0';
-      for(const char *r = (*i).m_pattern.c_str(); *r!='\0'; r++, w++)
-      {
-        *w = (*r == ',') ? ';' : *r;
-      }
-      *w++ = '\0';
-    }
-    m_filters[len] = '\0';
-  }
-  filetype_pair_t getType(const char *filter) const
-  {
-    for(FileTypeList::const_iterator i = m_types.begin(); i != m_types.end(); ++i)
-    {
-      if(string_equal((*i).m_pattern.c_str(), filter))
-      {
-        return filetype_pair_t((*i).m_moduleName.c_str(), filetype_t((*i).m_name.c_str(), (*i).m_pattern.c_str()));
-      }
-    }
-    return filetype_pair_t();
-  }
-  const char* getFilters() const
-  {
-    return m_filters.data();
-  }
-};
-
-#define WIN32_LEAN_AND_MEAN
-#include <gdk/gdkwin32.h>
-#include <commdlg.h>
-
-static char szFile[MAX_PATH];       /* filename string */
-
-
-#define FILEDLG_CUSTOM_FILTER_LENGTH 64
-// to be used with the advanced file selector
-
-const char* file_dialog_show_win32(GtkWidget* parent, bool open, const char* title, const char* path, const char* pattern)
-{
-  const char* r;
-  char* w;
-  filetype_t type;
-  FileTypeList typelist;
-
   if(pattern == 0)
   {
     pattern = "*";
   }
-
-  GlobalFiletypes().getTypeList(pattern, &typelist);
-
-  Win32Filters filters(typelist);
-
-  // win32 dialog stores the selected "save as type" extension in the second null-terminated string
-  char customfilter[FILEDLG_CUSTOM_FILTER_LENGTH];
-
-  static OPENFILENAME ofn;       /* common dialog box structure   */ 
-  static char szDirName[MAX_PATH];    /* directory string              */ 
-  static char szFile[MAX_PATH];       /* filename string               */ 
-  static char szFileTitle[MAX_PATH];  /* file title string             */ 
-  static int i, cbString;        /* integer count variables       */ 
-  static HANDLE hf;              /* file handle                   */ 
-
-  // do that the native way
-  /* Place the terminating null character in the szFile. */  
-  szFile[0] = '\0';
-  customfilter[0] = customfilter[1] = customfilter[2] = '\0';
-  
-  /* Set the members of the OPENFILENAME structure. */     
-  ofn.lStructSize = sizeof(OPENFILENAME); 
-  ofn.hwndOwner = (HWND)GDK_WINDOW_HWND(parent->window);
-  ofn.nFilterIndex = 0;
-  ofn.lpstrFilter = filters.getFilters();
-  ofn.lpstrCustomFilter = customfilter;
-  ofn.nMaxCustFilter = sizeof(customfilter);
-  ofn.lpstrFile = szFile;
-  ofn.nMaxFile = sizeof(szFile); 
-  ofn.lpstrFileTitle = 0; // we don't need to get the name of the file
-  if(path)
-  {
-    // szDirName: Radiant uses unix convention for paths internally
-    //   Win32 (of course) and Gtk (who would have thought) expect the '\\' convention
-    // copy path, replacing dir separators as appropriate
-    for(r=path, w=szDirName; *r!='\0'; r++)
-      *w++ = (*r=='/') ? '\\' : *r;
-    // terminate string
-    *w = '\0';
-    ofn.lpstrInitialDir = szDirName;
-  }
-  else ofn.lpstrInitialDir = 0;
-  ofn.lpstrTitle = title;
-  ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY; 
-
-  /* Display the Open dialog box. */
-  // it's open or close depending on 'open' parameter
-  if (open)
-  {
-    if (!GetOpenFileName(&ofn))
-      return 0; // canceled
-  }
-  else
-  {
-    if (!GetSaveFileName(&ofn))
-      return 0; // canceled
-  }
-
-  if(!string_equal(pattern, "*"))
-  {
-    type = filters.getType(customfilter+1).m_type;
-  }
-
-  // don't return an empty filename
-  if(szFile[0] == '\0') return 0;
-
-  // convert back to unix format
-  for(w=szFile; *w!='\0'; w++)
-  {
-    if(*w=='\\')
-    {
-      *w = '/';
-    }
-  }
-  // when saving, force an extension depending on filetype
-  /* \todo SPoG - file_dialog should return filetype information separately.. not force file extension.. */
-  if(!open && !string_equal(pattern, "*"))
-  {
-    // last ext separator
-    const char* extension = path_get_extension(szFile);
-    // no extension
-    if(string_empty(extension))
-    {
-      strcat(szFile, type.pattern+1);
-    }
-    else
-    {
-      strcpy(szFile + (extension - szFile), type.pattern+2);
-    }
-  }
-
-  return szFile;
-}
-
-#endif
-
-
-class GTKMasks
-{
-  const FileTypeList& m_types;
-public:
-  std::vector<CopiedString> m_filters;
-  std::vector<CopiedString> m_masks;
-
-  GTKMasks(const FileTypeList& types) : m_types(types)
-  {
-    m_masks.reserve(m_types.size());
-    for(FileTypeList::const_iterator i = m_types.begin(); i != m_types.end(); ++i)
-    {
-      std::size_t len = strlen((*i).m_name.c_str()) + strlen((*i).m_pattern.c_str()) + 3;
-      StringOutputStream buffer(len + 1); // length + null char
-
-      buffer << (*i).m_name.c_str() << " <" << (*i).m_pattern.c_str() << ">";
-
-      m_masks.push_back(buffer.c_str());
-    }
-
-    m_filters.reserve(m_types.size());
-    for(FileTypeList::const_iterator i = m_types.begin(); i != m_types.end(); ++i)
-    {
-      m_filters.push_back((*i).m_pattern);
-    }
-  }
-
-  filetype_pair_t GetTypeForGTKMask(const char *mask) const
-  {
-    std::vector<CopiedString>::const_iterator j = m_masks.begin();
-    for(FileTypeList::const_iterator i = m_types.begin(); i != m_types.end(); ++i, ++j)
-    {
-      if(string_equal((*j).c_str(), mask))
-      {
-        return filetype_pair_t((*i).m_moduleName.c_str(), filetype_t((*i).m_name.c_str(), (*i).m_pattern.c_str()));
-      }
-    }
-    return filetype_pair_t();
-  }
-
-};
-
-static char g_file_dialog_file[1024];
-
-const char* file_dialog_show(GtkWidget* parent, bool open, const char* title, const char* path, const char* pattern)
-{
-  filetype_t type;
-
-  if(pattern == 0)
-  {
-    pattern = "*";
-  }
-
-  FileTypeList typelist;
-  GlobalFiletypes().getTypeList(pattern, &typelist);
-
-  GTKMasks masks(typelist);
 
   if (title == 0)
     title = open ? "Open File" : "Save File";
@@ -374,62 +101,37 @@ const char* file_dialog_show(GtkWidget* parent, bool open, const char* title, co
     gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), new_path.data());
   }
 
-  // we should add all important paths as shortcut folder...
-  // gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(dialog), "/tmp/", NULL);
+	// Add the filetype masks
+	ModuleTypeListPtr typeList = GlobalFiletypes().getTypesFor(pattern);
+	for (ModuleTypeList::iterator i = typeList->begin();
+		 i != typeList->end();
+		 ++i)
+	{
+		// Create a GTK file filter and add it to the chooser dialog
+	    GtkFileFilter* filter = gtk_file_filter_new();
+	    gtk_file_filter_add_pattern(filter, i->filePattern.pattern.c_str());
 
-  
-  for(std::size_t i = 0; i < masks.m_filters.size(); ++i)
-  {
-    GtkFileFilter* filter = gtk_file_filter_new();
-    gtk_file_filter_add_pattern(filter, masks.m_filters[i].c_str());
-    gtk_file_filter_set_name(filter, masks.m_masks[i].c_str());
-    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
-  }
+		std::string combinedName = i->filePattern.name + " ("
+								 + i->filePattern.pattern + ")";
+	    gtk_file_filter_set_name(filter, combinedName.c_str());
+	    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
+	}
+	
+	// Add a final mask for All Files (*.*)
+	GtkFileFilter* allFilter = gtk_file_filter_new();
+	gtk_file_filter_add_pattern(allFilter, "*.*");
+	gtk_file_filter_set_name(allFilter, "All Files (*.*)");
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), allFilter);
 
-  if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
-  {
-    strcpy(g_file_dialog_file, gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog)));
+	// Display the dialog and return the selected filename, or NULL	
+	const char* retName = NULL;
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+		retName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+	}
 
-    if(!string_equal(pattern, "*"))
-    {
-      GtkFileFilter* filter = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(dialog));
-      if(filter != 0) // no filter set? some file-chooser implementations may allow the user to set no filter, which we treat as 'all files'
-      {
-        type = masks.GetTypeForGTKMask(gtk_file_filter_get_name(filter)).m_type;
-        // last ext separator
-        const char* extension = path_get_extension(g_file_dialog_file);
-        // no extension
-        if(string_empty(extension))
-        {
-          strcat(g_file_dialog_file, type.pattern+1);
-        }
-        else
-        {
-          strcpy(g_file_dialog_file + (extension - g_file_dialog_file), type.pattern+2);
-        }
-      }
-    }
-
-    // convert back to unix format
-    for(char* w = g_file_dialog_file; *w!='\0'; w++)
-    {
-      if(*w=='\\') 
-      {
-        *w = '/';
-      }
-    }
-  }
-  else
-  {
-    g_file_dialog_file[0] = '\0';
-  }
-
-  gtk_widget_destroy(dialog);
-
-  // don't return an empty filename
-  if(g_file_dialog_file[0] == '\0') return NULL;
-
-  return g_file_dialog_file;
+	// Destroy the dialog and return the value
+	gtk_widget_destroy(dialog);
+	return retName;
 }
 
 char* dir_dialog(GtkWidget* parent, const char* title, const char* path)
@@ -461,19 +163,11 @@ char* dir_dialog(GtkWidget* parent, const char* title, const char* path)
 }
 
 
-#ifdef WIN32
-bool g_FileChooser_nativeGUI = true;
-#endif
-
 const char* file_dialog(GtkWidget* parent, bool open, const char* title, const char* path, const char* pattern)
 {
   for(;;)
   {
     const char* file =
-#ifdef WIN32
-	                g_FileChooser_nativeGUI
-      ? file_dialog_show_win32(parent, open, title, path, pattern) :
-#endif
         file_dialog_show(parent, open, title, path, pattern);
 
     if(open

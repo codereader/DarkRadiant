@@ -21,59 +21,65 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "filetypes.h"
 
-#include "debugging/debugging.h"
-
 #include "ifiletypes.h"
-
-#include "string/string.h"
 #include "os/path.h"
 
-#include <vector>
 #include <map>
 #include <iostream>
-
 #include <boost/algorithm/string/predicate.hpp>
 
-class RadiantFileTypeRegistry : public IFileTypeRegistry
+/**
+ * Implementation of the file type registry.
+ */
+class RadiantFileTypeRegistry 
+: public IFileTypeRegistry
 {
-  struct filetype_copy_t
-  {
-    filetype_copy_t(const char* moduleName, const filetype_t other)
-      : m_moduleName(moduleName), m_name(other.name), m_pattern(other.pattern)
-    {
-    }
-    const char* getModuleName() const
-    {
-      return m_moduleName.c_str();
-    }
-    filetype_t getType() const
-    {
-      return filetype_t(m_name.c_str(), m_pattern.c_str());
-    }
-  private:
-    CopiedString m_moduleName;
-    CopiedString m_name;
-    CopiedString m_pattern;
-  };
-  typedef std::vector<filetype_copy_t> filetype_list_t;
-  std::map<CopiedString, filetype_list_t> m_typelists;
+	// Map of named ModuleTypeListPtrs. Each ModuleTypeList is a list of structs
+	// associating a module name with a filetype pattern
+	typedef std::map<std::string, ModuleTypeListPtr> TypeListMap;
+	TypeListMap _typeLists;
+
 public:
-  RadiantFileTypeRegistry()
-  {
-    addType("*", "*", filetype_t("All Files", "*.*"));
-  }
-  void addType(const char* moduleType, const char* moduleName, filetype_t type)
-  {
-    m_typelists[moduleType].push_back(filetype_copy_t(moduleName, type));
-  }
-  void getTypeList(const char* moduleType, IFileTypeList* typelist)
-  {
-    filetype_list_t& list_ref = m_typelists[moduleType];
-    for(filetype_list_t::iterator i = list_ref.begin(); i != list_ref.end(); ++i)
-    {
-      typelist->addType((*i).getModuleName(), (*i).getType());
-    }
-  }
+
+	/*
+	 * Constructor, adds the All Files type.
+	 */
+	RadiantFileTypeRegistry() {
+		addType("*", "*", FileTypePattern("All Files", "*.*"));
+	}
+	
+	/*
+	 * Add a type.
+	 */
+	void addType(const std::string& moduleType, 
+				 const std::string& moduleName, 
+				 const FileTypePattern& type)
+	{
+		// Create the association between module name and file type pattern
+		ModuleFileType fileType(moduleName, type);
+		
+		// If there is already a list for this type, add our new type to the
+		// back of it
+		TypeListMap::iterator i = _typeLists.find(moduleType);
+		if (i != _typeLists.end()) {
+			i->second->push_back(fileType);
+		}
+		else {
+			// Otherwise create a new type list and add it to our map
+			ModuleTypeListPtr newList(new ModuleTypeList());
+			newList->push_back(fileType);
+			
+			_typeLists.insert(TypeListMap::value_type(moduleType, newList));
+		}
+	}
+  
+	/*
+	 * Return list of types for an associated module type.
+	 */
+	ModuleTypeListPtr getTypesFor(const std::string& moduleType) {
+		return _typeLists[moduleType];		
+	}
+  
 };
 
 static RadiantFileTypeRegistry g_patterns;
@@ -83,38 +89,29 @@ IFileTypeRegistry* GetFileTypeRegistry()
   return &g_patterns;
 }
 
-const char* findModuleName(IFileTypeRegistry* registry, const char* moduleType, const char* extension)
+// Look for a module which loads the given extension, by searching under the
+// given type category
+std::string findModuleName(IFileTypeRegistry* registry, 
+						   const std::string& moduleType, 
+						   const std::string& extension)
 {
-
-	// Local searcher class
-	class SearchFileTypeList : public IFileTypeList {
-    
-		// The glob pattern to search for
-    	std::string _pattern;
-		const char* m_moduleName;
+	// Get the list of types for the type category
+	ModuleTypeListPtr list = registry->getTypesFor(moduleType);
 	
-	public:
-
-		SearchFileTypeList(const char* ext)
-        : _pattern("*." + std::string(ext)),
-          m_moduleName("")
-		{}
-			
-	    void addType(const char* moduleName, filetype_t type) {
-			if (boost::algorithm::iequals(_pattern, std::string(type.pattern))) {
-		        m_moduleName = moduleName;
-		    }
-    	}
-
-	    const char* getModuleName() {
-		    return m_moduleName;
+	// Search in the list for the given extension
+	for (ModuleTypeList::const_iterator i = list->begin();
+		 i != list->end();
+		 i++)
+	{
+		std::string patternExt = os::getExtension(i->filePattern.pattern);
+		if (patternExt == extension) {
+			// Match
+			return i->moduleName;	
 		}
-		
-	} search(extension);
-
-	// Perform the search
-	registry->getTypeList(moduleType, &search);
-	return search.getModuleName();
+	}
+	
+	// Not found, return empty string
+	return "";
 }
 
 

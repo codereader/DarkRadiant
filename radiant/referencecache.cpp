@@ -55,6 +55,8 @@ ModelModules& ReferenceAPI_getModelModules();
 #include "map.h"
 #include "filetypes.h"
 
+#include <boost/utility.hpp>
+#include <boost/weak_ptr.hpp>
 
 bool References_Saved();
 
@@ -190,7 +192,9 @@ public:
   }
   
   	// Required function, not implemented.
-	model::IModelPtr loadModelFromPath(const std::string& name) {}
+	model::IModelPtr loadModelFromPath(const std::string& name) {
+		return model::IModelPtr();
+	}
   
 };
 
@@ -203,17 +207,20 @@ namespace
 /// \brief Returns the model loader for the model \p type or 0 if the model \p type has no loader module
 ModelLoader* ModelLoader_forType(const char* type)
 {
-  const char* moduleName = findModuleName(&GlobalFiletypes(), ModelLoader::Name(), type);
-  if(string_not_empty(moduleName))
+  std::string moduleName = findModuleName(&GlobalFiletypes(), 
+  										  std::string(ModelLoader::Name()),
+  										  type);
+  if(!moduleName.empty())
   {
-    ModelLoader* table = ReferenceAPI_getModelModules().findModule(moduleName);
+    ModelLoader* table = ReferenceAPI_getModelModules().findModule(moduleName.c_str());
     if(table != 0)
     {
       return table;
     }
     else
     {
-      globalErrorStream() << "ERROR: Model type incorrectly registered: \"" << moduleName << "\"\n";
+      globalErrorStream() << "ERROR: Model type incorrectly registered: \"" 
+      					  << moduleName.c_str() << "\"\n";
       return &g_NullModelLoader;
     }
   }
@@ -331,35 +338,51 @@ void ModelCache_clear()
 
 NodeSmartReference Model_load(ModelLoader* loader, const char* path, const char* name, const char* type)
 {
-  if(loader != 0)
-  {
-    return ModelResource_load(loader, name);
-  }
-  else
-  {
-    const char* moduleName = findModuleName(&GlobalFiletypes(), MapFormat::Name(), type);
-    if(string_not_empty(moduleName))
-    {
-      const MapFormat* format = ReferenceAPI_getMapModules().findModule(moduleName);
-      if(format != 0)
-      {
-        return MapResource_load(*format, path, name);
-      }
-      else
-      {
-        globalErrorStream() << "ERROR: Map type incorrectly registered: \"" << moduleName << "\"\n";
-        return g_nullModel;
-      }
-    }
-    else
-    {
-      if(string_not_empty(type))
-      {
-        globalErrorStream() << "Model type not supported: \"" << name << "\"\n";
-      }
-      return g_nullModel;
-    }
-  }
+	// Model types should have a loader, so use this to load. Map types do not
+	// have a loader		  
+	if(loader != 0) {
+		return ModelResource_load(loader, name);
+	}
+	else {
+		// Get a loader module name for this type, if possible. If none is 
+		// found, try again with the "map" type, since we might be loading a 
+		// map with a different extension
+	    std::string moduleName = findModuleName(&GlobalFiletypes(), 
+	    										std::string(MapFormat::Name()), 
+	    										type);
+		// Empty, try again with "map" type
+		if (moduleName.empty()) {
+			moduleName = findModuleName(&GlobalFiletypes(), 
+										std::string(MapFormat::Name()),
+										"map"); 
+		}
+	
+		// If we have a module, use it to load the map if possible, otherwise 
+		// return an error
+	    if (!moduleName.empty()) {
+	      
+			const MapFormat* format = ReferenceAPI_getMapModules().findModule(
+										moduleName.c_str());
+										
+	      if(format != 0)
+	      {
+	        return MapResource_load(*format, path, name);
+	      }
+	      else
+	      {
+	        globalErrorStream() << "ERROR: Map type incorrectly registered: \"" << moduleName.c_str() << "\"\n";
+	        return g_nullModel;
+	      }
+	    }
+	    else
+	    {
+	      if(string_not_empty(type))
+	      {
+	        globalErrorStream() << "Model type not supported: \"" << name << "\"\n";
+	      }
+	      return g_nullModel;
+	    }
+	}
 }
 
 namespace
@@ -377,33 +400,47 @@ namespace
   }
 }
 
-struct ModelResource : public Resource
+struct ModelResource 
+: public Resource,
+  public boost::noncopyable
 {
   NodeSmartReference m_model;
-  const CopiedString m_originalName;
-  CopiedString m_path;
-  CopiedString m_name;
-  CopiedString m_type;
-  ModelLoader* m_loader;
+  
+	// Name given during construction
+	const std::string m_originalName;
+	
+  std::string m_path;
+  std::string m_name;
+  
+	// Type of resource (map, lwo etc)
+	std::string _type;
+	
+	// ModelLoader for this resource type
+	ModelLoader* m_loader;
+	
   ModuleObservers m_observers;
   std::time_t m_modified;
   std::size_t m_unrealised;
 
-  ModelResource(const CopiedString& name) :
-    m_model(g_nullModel),
-    m_originalName(name),
-    m_type(path_get_extension(name.c_str())),
-    m_loader(0),
-    m_modified(0),
-    m_unrealised(1)
-  {
-    m_loader = ModelLoader_forType(m_type.c_str());
-
-    if(g_realised)
-    {
-      realise();
-    }
-  }
+	// Constructor
+	ModelResource(const std::string& name) 
+	: m_model(g_nullModel),
+	  m_originalName(name),
+	  _type(name.substr(name.rfind(".") + 1)),
+	  m_loader(0),
+	  m_modified(0),
+	  m_unrealised(1)
+	{
+		// Get the model loader for this resource type
+		m_loader = ModelLoader_forType(_type.c_str());
+					  
+		// Realise self if the ReferenceCache is itself realised. TODO: evil
+		// global variable, remove this
+		if(g_realised) {
+      		realise();
+		}
+	}
+	
   ~ModelResource()
   {
     if(realised())
@@ -412,10 +449,6 @@ struct ModelResource : public Resource
     }
     ASSERT_MESSAGE(!realised(), "ModelResource::~ModelResource: resource reference still realised: " << makeQuoted(m_name.c_str()));
   }
-  // NOT COPYABLE
-  ModelResource(const ModelResource&);
-  // NOT ASSIGNABLE
-  ModelResource& operator=(const ModelResource&);
 
   void setModel(const NodeSmartReference& model)
   {
@@ -437,7 +470,7 @@ struct ModelResource : public Resource
         i = ModelCache_insert(
           m_path.c_str(),
           m_name.c_str(),
-          Model_load(m_loader, m_path.c_str(), m_name.c_str(), m_type.c_str())
+          Model_load(m_loader, m_path.c_str(), m_name.c_str(), _type.c_str())
         );
       }
 
@@ -445,7 +478,7 @@ struct ModelResource : public Resource
     }
     else
     {
-      setModel(Model_load(m_loader, m_path.c_str(), m_name.c_str(), m_type.c_str()));
+      setModel(Model_load(m_loader, m_path.c_str(), m_name.c_str(), _type.c_str()));
     }
   }
 
@@ -471,10 +504,12 @@ struct ModelResource : public Resource
 //  	std::cout << "[referencecache.cpp] ModelResource::save() - " << m_name.c_str() << std::endl;
     if(!mapSaved())
     {
-      const char* moduleName = findModuleName(GetFileTypeRegistry(), MapFormat::Name(), m_type.c_str());
-      if(string_not_empty(moduleName))
+      std::string moduleName = findModuleName(GetFileTypeRegistry(), 
+      										  std::string(MapFormat::Name()),
+      										  _type);
+      if(!moduleName.empty())
       {
-        const MapFormat* format = ReferenceAPI_getMapModules().findModule(moduleName);
+        const MapFormat* format = ReferenceAPI_getMapModules().findModule(moduleName.c_str());
         if(format != 0 && MapResource_save(*format, m_model.get(), m_path.c_str(), m_name.c_str()))
         {
           mapSave();
@@ -530,19 +565,19 @@ struct ModelResource : public Resource
   {
     return m_unrealised == 0;
   }
-  void realise()
-  {
-    ASSERT_MESSAGE(m_unrealised != 0, "ModelResource::realise: already realised");
-    if(--m_unrealised == 0)
-    {
-      m_path = rootPath(m_originalName.c_str());
-      m_name = path_make_relative(m_originalName.c_str(), m_path.c_str());
+  
+	// Realise this ModelResource
+	void realise() {
+	    if(--m_unrealised == 0) {
 
-      //globalOutputStream() << "ModelResource::realise: " << m_path.c_str() << m_name.c_str() << "\n";
+    		m_path = rootPath(m_originalName.c_str());
+    		m_name = path_make_relative(m_originalName.c_str(), m_path.c_str());
 
-      m_observers.realise();
-    }
-  }
+			// Realise the observers
+			m_observers.realise();
+		}
+	}
+	
   void unrealise()
   {
     if(++m_unrealised == 1)
@@ -606,43 +641,19 @@ struct ModelResource : public Resource
   }
 };
 
-class HashtableReferenceCache : public ReferenceCache, public ModuleObserver
+class HashtableReferenceCache 
+: public ReferenceCache, 
+  public ModuleObserver
 {
-  typedef HashedCache<CopiedString, ModelResource, PathHash, PathEqual> ModelReferences;
-  ModelReferences m_references;
-  std::size_t m_unrealised;
-
-  class ModelReferencesSnapshot
-  {
-    ModelReferences& m_references;
-    typedef std::list<ModelReferences::iterator> Iterators;
-    Iterators m_iterators;
-  public:
-    typedef Iterators::iterator iterator;
-    ModelReferencesSnapshot(ModelReferences& references) : m_references(references)
-    {
-      for(ModelReferences::iterator i = m_references.begin(); i != m_references.end(); ++i)
-      {
-        m_references.capture(i);
-        m_iterators.push_back(i);
-      }
-    }
-    ~ModelReferencesSnapshot()
-    {
-      for(Iterators::iterator i = m_iterators.begin(); i != m_iterators.end(); ++i)
-      {
-        m_references.release(*i);
-      }
-    }
-    iterator begin()
-    {
-      return m_iterators.begin();
-    }
-    iterator end()
-    {
-      return m_iterators.end();
-    }
-  };
+	// Resource pointer types
+	typedef boost::shared_ptr<ModelResource> ModelResourcePtr;
+	typedef boost::weak_ptr<ModelResource> ModelResourceWeakPtr;
+	
+	// Map of named ModelResource objects
+	typedef std::map<std::string, ModelResourceWeakPtr> ModelReferences;
+	ModelReferences m_references;
+  
+	std::size_t m_unrealised;
 
 public:
 
@@ -666,16 +677,39 @@ public:
     m_references.clear();
   }
 
-  Resource* capture(const char* path)
-  {
-    //globalOutputStream() << "capture: \"" << path << "\"\n";
-    return m_references.capture(CopiedString(path)).get();
-  }
-  void release(const char* path)
-  {
-    m_references.release(CopiedString(path));
-    //globalOutputStream() << "release: \"" << path << "\"\n";
-  }
+	/*
+	 * Capture a named resource.
+	 */
+	ResourcePtr capture(const std::string& path) {
+		
+		// First lookup the reference in the map. If it is found, we need to
+		// lock the weak_ptr to get a shared_ptr, which may fail. If we cannot
+		// get a shared_ptr (because the object as already been deleted) or the
+		// item is not found at all, we create a new ModelResource and add it
+		// into the map before returning.
+		ModelReferences::iterator i = m_references.find(path);
+		if (i != m_references.end()) {
+			// Found. Try to lock the pointer. If it is valid, return it.
+			ModelResourcePtr candidate = i->second.lock();
+			if (candidate) {
+				return candidate;
+			}
+		}
+		
+		// Either we did not find the resource, or the pointer was not valid.
+		// In this case we create a new ModelResource, add it to the map and
+		// return it.
+		ModelResourcePtr newResource(new ModelResource(path));
+		m_references[path] = ModelResourceWeakPtr(newResource);
+		return newResource;
+	}
+	
+	/*
+	 * Release a named resource.
+	 */
+	void release(const std::string& path) {
+		// Does nothing. TODO: remove this or implement weak pointer references
+	}
 
   void setEntityCreator(EntityCreator& entityCreator)
   {
@@ -691,19 +725,17 @@ public:
     ASSERT_MESSAGE(m_unrealised != 0, "HashtableReferenceCache::realise: already realised");
     if(--m_unrealised == 0)
     {
-      g_realised = true;
-
-      {
-        ModelReferencesSnapshot snapshot(m_references);
-        for(ModelReferencesSnapshot::iterator i = snapshot.begin(); i != snapshot.end(); ++i)
-        {
-          ModelReferences::value_type& value = *(*i);
-          if(value.value.count() != 1)
-          {
-            value.value.get()->realise();
-          }
-        }
-      }
+      	g_realised = true;
+		
+		// Realise ModelResources
+		for (ModelReferences::iterator i = m_references.begin();
+	  	     i != m_references.end();
+	  	     ++i)
+		{
+			ModelResourcePtr res = i->second.lock();
+			if (res)
+				res->realise();
+		}
     }
   }
   void unrealise()
@@ -712,32 +744,30 @@ public:
     {
       g_realised = false;
 
-      {
-        ModelReferencesSnapshot snapshot(m_references);
-        for(ModelReferencesSnapshot::iterator i = snapshot.begin(); i != snapshot.end(); ++i)
-        {
-          ModelReferences::value_type& value = *(*i);
-          if(value.value.count() != 1)
-          {
-            value.value.get()->unrealise();
-          }
-        }
-      }
+		// Unrealise ModelResources
+		for (ModelReferences::iterator i = m_references.begin();
+	  	     i != m_references.end();
+	  	     ++i)
+		{
+			ModelResourcePtr res = i->second.lock();
+			if (res)
+				res->unrealise();
+		}
 
       ModelCache_clear();
     }
   }
   void refresh()
   {
-    ModelReferencesSnapshot snapshot(m_references);
-    for(ModelReferencesSnapshot::iterator i = snapshot.begin(); i != snapshot.end(); ++i)
-    {
-      ModelResource* resource = (*(*i)).value.get();
-      if(!resource->isMap())
-      {
-        resource->refresh();
-      }
-    }
+		for (ModelReferences::iterator i = m_references.begin();
+	  	     i != m_references.end();
+	  	     ++i)
+		{
+			ModelResourcePtr resource = i->second.lock();
+      		if(resource && !resource->isMap()) {
+        		resource->refresh();
+      		}
+    	}
   }
 };
 
@@ -757,18 +787,29 @@ public:
 void SaveReferences()
 {
   ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Saving Map");
-  for(HashtableReferenceCache::iterator i = g_referenceCache.begin(); i != g_referenceCache.end(); ++i)
-  {
-    (*i).value->save();
-  }
-  MapChanged();
+
+	for (HashtableReferenceCache::iterator i = g_referenceCache.begin(); 
+		 i != g_referenceCache.end(); 
+		 ++i)
+	{
+    	boost::shared_ptr<ModelResource> res = i->second.lock();
+    	if (res)
+    		res->save();
+	}
+	
+	MapChanged();
 }
 
 bool References_Saved()
 {
   for(HashtableReferenceCache::iterator i = g_referenceCache.begin(); i != g_referenceCache.end(); ++i)
   {
-    scene::Node* node = (*i).value->getNode();
+    scene::Node* node = NULL;
+    
+    boost::shared_ptr<ModelResource> res = i->second.lock();
+    if (res)
+    	node = res->getNode();
+    	
     if(node != 0)
     {
       MapFile* map = Node_getMapFile(*node);
