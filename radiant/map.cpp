@@ -316,7 +316,10 @@ class Map : public ModuleObserver
 {
 public:
   std::string m_name;
-  Resource* m_resource;
+	
+	// Pointer to the Model Resource for this map
+	ReferenceCache::ResourcePtr m_resource;
+	
   bool m_valid;
 
   bool m_modified;
@@ -326,9 +329,10 @@ public:
 
   WorldNode m_world_node; // "classname" "worldspawn" !
 
-  Map() : m_resource(0), m_valid(false), m_modified_changed(Map_UpdateTitle)
-  {
-  }
+	Map() 
+	: m_valid(false), 
+	  m_modified_changed(Map_UpdateTitle)
+	{ }
 
   void realise()
   {
@@ -406,8 +410,12 @@ bool Map_Unnamed(const Map& map)
 
 inline const MapFormat& MapFormat_forFile(const char* filename)
 {
-  const char* moduleName = findModuleName(GetFileTypeRegistry(), MapFormat::Name(), path_get_extension(filename));
-  MapFormat* format = Radiant_getMapModules().findModule(moduleName);
+	// Look up the module name which loads the given extension
+	std::string moduleName = findModuleName(GetFileTypeRegistry(), 
+											std::string(MapFormat::Name()), 
+											path_get_extension(filename));
+											
+  MapFormat* format = Radiant_getMapModules().findModule(moduleName.c_str());
   ASSERT_MESSAGE(format != 0, "map format not found for file " << makeQuoted(filename));
   return *format;
 }
@@ -466,7 +474,9 @@ void Map_Free()
 
   g_map.m_resource->detach(g_map);
   GlobalReferenceCache().release(g_map.m_name.c_str());
-  g_map.m_resource = 0;
+
+	// Reset the resource pointer
+	g_map.m_resource = ReferenceCache::ResourcePtr();
 
   FlushReferences();
 
@@ -1107,10 +1117,15 @@ void Map_LoadFile (const char *filename)
   {
     ScopeTimer timer("map load");
 
-    g_map.m_resource = GlobalReferenceCache().capture(g_map.m_name.c_str());
+    g_map.m_resource = GlobalReferenceCache().capture(g_map.m_name);
     g_map.m_resource->attach(g_map);
 
-    Node_getTraversable(GlobalSceneGraph().root())->traverse(entity_updateworldspawn());
+	// Get the traversable root
+	scene::Traversable* rt = Node_getTraversable(GlobalSceneGraph().root());
+	assert(rt != NULL);
+	
+	// Traverse the scenegraph and find the worldspawn 
+    rt->traverse(entity_updateworldspawn());
   }
 
   globalOutputStream() << "--- LoadMapFile ---\n";
@@ -1350,7 +1365,9 @@ bool Map_SaveRegion(const char *filename)
 
 void Map_RenameAbsolute(const char* absolute)
 {
-  Resource* resource = GlobalReferenceCache().capture(absolute);
+	ReferenceCache::ResourcePtr resource = 
+		GlobalReferenceCache().capture(absolute);
+		
   NodeSmartReference clone(NewMapRoot(path_make_relative(absolute, GlobalFileSystem().findRoot(absolute))));
   resource->setNode(clone.get_pointer());
 
@@ -1362,7 +1379,7 @@ void Map_RenameAbsolute(const char* absolute)
   g_map.m_resource->detach(g_map);
   GlobalReferenceCache().release(g_map.m_name.c_str());
 
-  g_map.m_resource = resource;
+	g_map.m_resource = resource;
 
   g_map.m_name = absolute;
   Map_UpdateTitle(g_map);
@@ -1706,7 +1723,9 @@ bool Map_ImportFile(const char* filename)
 {
   bool success = false;
   {
-    Resource* resource = GlobalReferenceCache().capture(filename);
+	ReferenceCache::ResourcePtr resource = 
+		GlobalReferenceCache().capture(filename);
+		
     resource->refresh(); // avoid loading old version if map has changed on disk since last import
     if(resource->load())
     {

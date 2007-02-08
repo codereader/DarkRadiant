@@ -73,7 +73,8 @@ public:
 
   ModelMD5API()
   {
-    GlobalFiletypesModule::getTable().addType(Type::Name(), Name(), filetype_t("md5 meshes", "*.md5mesh"));
+    GlobalFiletypesModule::getTable().addType("model", "md5mesh", 
+    	FileTypePattern("md5 meshes", "*.md5mesh"));
   }
   ModelLoader* getTable()
   {

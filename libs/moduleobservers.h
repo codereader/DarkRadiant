@@ -26,15 +26,28 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <set>
 #include "moduleobserver.h"
 
+#ifdef _DEBUG
+#include <iostream>
+#endif
+
 class ModuleObservers
 {
   typedef std::set<ModuleObserver*> Observers;
   Observers m_observers;
 public:
-  ~ModuleObservers()
-  {
-    ASSERT_MESSAGE(m_observers.empty(), "ModuleObservers::~ModuleObservers: observers still attached");
-  }
+
+#ifdef _DEBUG
+	// Warning if observers still attached in destructor (may not be necessary,
+	// replaces previous ASSERT.
+	~ModuleObservers() {
+		if (!m_observers.empty()) {
+			std::cout << "Warning: destroying ModuleObservers with " 
+				<< m_observers.size() << " observers attached." << std::endl;
+		}
+	}
+#endif
+	
+	
   void attach(ModuleObserver& observer)
   {
     ASSERT_MESSAGE(m_observers.find(&observer) == m_observers.end(), "ModuleObservers::attach: cannot attach observer");

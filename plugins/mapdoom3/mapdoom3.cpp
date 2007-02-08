@@ -80,11 +80,16 @@ public:
   STRING_CONSTANT(Name, "mapdoom3");
   INTEGER_CONSTANT(MapVersion, 2);
 
-  MapDoom3API(MapDoom3Dependencies& dependencies) : m_dependencies(dependencies)
-  {
-    GlobalFiletypesModule::getTable().addType(Type::Name(), Name(), filetype_t("doom3 maps", "*.map"));
-    GlobalFiletypesModule::getTable().addType(Type::Name(), Name(), filetype_t("doom3 region", "*.reg"));
-  }
+	// Construct registers file types
+	MapDoom3API(MapDoom3Dependencies& dependencies) 
+	: m_dependencies(dependencies)
+	{
+    	GlobalFiletypes().addType("map", "mapdoom3", 
+			FileTypePattern("Doom 3 map", "*.map"));
+    	GlobalFiletypes().addType("map", "mapdoom3", 
+    		FileTypePattern("Doom 3 region", "*.reg"));
+	}
+	
   MapFormat* getTable()
   {
     return this;

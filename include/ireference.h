@@ -24,6 +24,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/constant.h"
 
+#include <string>
+#include <boost/shared_ptr.hpp>
+
 namespace scene
 {
   class Node;
@@ -54,8 +57,15 @@ public:
   INTEGER_CONSTANT(Version, 1);
   STRING_CONSTANT(Name, "reference");
 
-  virtual Resource* capture(const char* path) = 0;
-  virtual void release(const char* path) = 0;
+	/* Resource pointer type */
+	typedef boost::shared_ptr<Resource> ResourcePtr;
+	
+	/**
+	 * Capture a named model resource, and return a pointer to it.
+	 */
+	virtual ResourcePtr capture(const std::string& path) = 0;
+	
+  virtual void release(const std::string& path) = 0;
 
   virtual void setEntityCreator(EntityCreator& entityCreator) = 0;
 };
