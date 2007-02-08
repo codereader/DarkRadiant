@@ -12,9 +12,8 @@
 #include "gtkutil/StockIconMenuItem.h"
 #include "xmlutil/Document.h"
 #include "signal/signal.h"
-#include "error.h"
+#include "map.h"
 
-#include <iostream>
 #include <map>
 #include <string>
 
@@ -69,7 +68,8 @@ EntityInspector::EntityInspector()
     
     // Set the function to call when a keyval is changed. This is a requirement
     // of the EntityCreator interface.
-    GlobalEntityCreator().setKeyValueChangedFunc(EntityInspector::redrawInstance);
+    GlobalEntityCreator().setKeyValueChangedFunc(
+    	EntityInspector::keyValueChanged);
 
     // Create callback object to redraw the dialog when the selected entity is
     // changed
@@ -255,12 +255,14 @@ void EntityInspector::callbackRedraw() {
     }
 }
 
-// Static function to get the singleton instance and invoke its redraw function.
-// This is necessary since the EntityCreator interface requires a pointer to 
-// a non-member function to call when a keyval is changed.
-
-void EntityInspector::redrawInstance() {
+// Entity keyvalue changed callback
+void EntityInspector::keyValueChanged() {
+    
+    // Redraw the entity inspector GUI
     getInstance().queueDraw();
+    
+    // Set the map modified flag
+    map::setModified();
 }
 
 // Pass on a queueDraw request to the contained IdleDraw object.
@@ -270,9 +272,8 @@ inline void EntityInspector::queueDraw() {
 }
 
 // Selection changed callback
-
 void EntityInspector::selectionChanged(const Selectable& sel) {
-    EntityInspector::redrawInstance();   
+    getInstance().queueDraw();   
 }
 
 // Set entity property from entry boxes

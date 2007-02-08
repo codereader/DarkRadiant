@@ -136,9 +136,8 @@ public:
     // and a queueDraw request has been passed.
     void callbackRedraw();
     
-    // Static class function to instigate a redraw. This is passed as a pointer
-    // to the GlobalEntityCreator's setKeyValueChangedFunc function.
-    static void redrawInstance();
+	// Callback used by the EntityCreator when a key value changes on an entity
+    static void keyValueChanged();
 
     // Function to call when the current Selection is changed by the selection
     // system. Internally this function will just stimulate a redraw, but it
