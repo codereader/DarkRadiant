@@ -189,6 +189,11 @@ namespace map {
 	 
 	int countSelectedBrushes();
 	
+	/**
+	 * Set the "modified" flag on the current map, to allow saving.
+	 */
+	void setModified();
+	
 }
 
 

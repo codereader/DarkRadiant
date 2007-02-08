@@ -441,6 +441,16 @@ void Map_SetModified(Map& map, bool modified)
   }
 }
 
+namespace map {
+
+	// Set the modified flag
+	void setModified() {
+		g_map.m_modified = true;
+	    g_map.m_modified_changed(g_map);
+	}
+	
+}
+
 void Map_UpdateTitle(const Map& map)
 {
   Sys_SetTitle(map.m_name.c_str(), Map_Modified(map));
