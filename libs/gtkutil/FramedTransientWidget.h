@@ -2,10 +2,8 @@
 #define FRAMEDTRANSIENTWIDGET_H_
 
 #include <string>
-#include "gtk/gtkwindow.h"
-#include "gtk/gtkframe.h"
 #include "gtk/gtkwidget.h"
-#include "TransientWindow.h"
+#include "gtk/gtkwindow.h"
 
 namespace gtkutil
 {
@@ -18,7 +16,6 @@ namespace gtkutil
 
 class FramedTransientWidget
 {
-	
 protected:
 	// The text label
 	const std::string _title;
@@ -32,35 +29,13 @@ protected:
 public:
 
 	// Constructor
-	FramedTransientWidget(const std::string& title, GtkWindow* parent, GtkWidget* containedWidget) : 
-		_title(title),
-		_parent(parent),
-		_containedWidget(containedWidget)
-	{}
+	FramedTransientWidget(const std::string& title, 
+						  GtkWindow* parent, 
+						  GtkWidget* containedWidget);
 	
 	// Operator cast to GtkWindow* (use this to create and retrieve the GtkWidget* pointer)
-	virtual operator GtkWidget* () {
-		// Create a new top level window that is transient for _parent
-		GtkWidget* window = TransientWindow(_title, _parent);
-		
-		// Create a new frame and set its properties
-		GtkFrame* frame = GTK_FRAME(gtk_frame_new(0));
-		gtk_widget_show(GTK_WIDGET(frame));
-		gtk_frame_set_shadow_type(frame, GTK_SHADOW_IN);
-		
-		// Add the contained widget as children to the frame
-		gtk_container_add(GTK_CONTAINER(frame), _containedWidget);
-		gtk_widget_show(_containedWidget);
-	
-		// Now pack the frame into the transient window
-		gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(frame));
-		
-		// Now show the whole widget tree
-		gtk_widget_show_all(window);
-		
-		// Return the readily fabricated widget
-		return window;
-	}
+	virtual operator GtkWidget* ();
+
 };
 
 } // namespace gtkutil
