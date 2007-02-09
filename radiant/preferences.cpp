@@ -71,8 +71,8 @@ void Global_constructPreferences(PrefPage* page)
 void Interface_constructPreferences(PrefPage* page)
 {
 #ifdef WIN32
-  page->appendCheckBox("", "Native File-Chooser", g_FileChooser_nativeGUI);
-  page->appendCheckBox("", "Default Text Editor", g_TextEditor_useWin32Editor);
+  //page->appendCheckBox("", "Native File-Chooser", g_FileChooser_nativeGUI);
+  //page->appendCheckBox("", "Default Text Editor", g_TextEditor_useWin32Editor);
 #else
   {
     GtkWidget* use_custom = page->appendCheckBox("Text Editor", "Custom", g_TextEditor_useCustomEditor);
@@ -1073,7 +1073,7 @@ void RegisterPreferences(PreferenceSystem& preferences)
 {
 
 #ifdef WIN32
-  preferences.registerPreference("NativeGUI", BoolImportStringCaller(g_FileChooser_nativeGUI), BoolExportStringCaller(g_FileChooser_nativeGUI));
+  //preferences.registerPreference("NativeGUI", BoolImportStringCaller(g_FileChooser_nativeGUI), BoolExportStringCaller(g_FileChooser_nativeGUI));
 #endif
 
 
