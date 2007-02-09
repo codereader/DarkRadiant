@@ -78,7 +78,6 @@ gtkutil_src = '\
   menu.cpp\
   messagebox.cpp\
   nonmodal.cpp\
-  paned.cpp\
   pointer.cpp\
   widget.cpp\
   window.cpp\

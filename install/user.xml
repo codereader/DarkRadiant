@@ -36,6 +36,13 @@
 	<grid>
 		<defaultGridPower value="3" />
 	</grid>
+	<mainFrame>
+		<splitPane>
+			<pane name="horizontal" position="300" />
+			<pane name="vertical1" position="250" />
+			<pane name="vertical2" position="250" />
+		</splitPane>
+	</mainFrame>
 	<xyview>
 		<views name="default">
 			<view type="XY" xPosition="500" yPosition="100" width="400" height="430"/>

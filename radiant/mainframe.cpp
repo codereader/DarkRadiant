@@ -90,10 +90,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/glwidget.h"
 #include "gtkutil/image.h"
 #include "gtkutil/menu.h"
-#include "gtkutil/paned.h"
+#include "gtkutil/Paned.h"
 #include "gtkutil/widget.h"
 #include "gtkutil/IconTextMenuToggle.h"
 #include "gtkutil/TextMenuItem.h"
+#include "gtkutil/FramedWidget.h"
 #include "gtkutil/messagebox.h"
 #include "gtkutil/dialog.h"
 
@@ -2423,7 +2424,7 @@ void MainFrame::Create()
 
     GroupDialog_show();
   }
-  else // 4 way
+  else // 4 way (aka Splitplane view)
   {
     m_pCamWnd = GlobalCamera().newCamWnd();
     GlobalCamera().setCamWnd(m_pCamWnd);
@@ -2444,9 +2445,47 @@ void MainFrame::Create()
     xzWnd->setViewType(XZ);
     GtkWidget* xz = xzWnd->getWidget();
 
-    GtkHPaned* split = create_split_views(camera, yz, xy, xz);
-    gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(split), TRUE, TRUE, 0);
+	// Arrange the widgets into the paned views
+	_splitPane.vertPane1 = gtkutil::Paned(gtkutil::FramedWidget(camera), 
+										  gtkutil::FramedWidget(yz), 
+										  false);
+	_splitPane.vertPane2 = gtkutil::Paned(gtkutil::FramedWidget(xy), 
+										  gtkutil::FramedWidget(xz), 
+										  false);
+	_splitPane.horizPane = gtkutil::Paned(_splitPane.vertPane1, _splitPane.vertPane2, true);
 
+	gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(_splitPane.horizPane), TRUE, TRUE, 0);
+
+	gtk_paned_set_position(GTK_PANED(_splitPane.horizPane), 200);
+	gtk_paned_set_position(GTK_PANED(_splitPane.vertPane1), 200);
+	gtk_paned_set_position(GTK_PANED(_splitPane.vertPane2), 400);
+
+	_splitPane.posHPane.connect(_splitPane.horizPane);
+	_splitPane.posVPane1.connect(_splitPane.vertPane1);
+	_splitPane.posVPane2.connect(_splitPane.vertPane2);
+	
+	// TODO: Move this whole stuff into a class (maybe some deriving from a Layout class)
+	xml::NodeList list = GlobalRegistry().findXPath("user/ui/mainFrame/splitPane/pane[@name='horizontal']");
+	
+	if (list.size() > 0) {
+		_splitPane.posHPane.loadFromNode(list[0]);
+		_splitPane.posHPane.applyPosition();
+	}
+	
+	list = GlobalRegistry().findXPath("user/ui/mainFrame/splitPane/pane[@name='vertical1']");
+	
+	if (list.size() > 0) {
+		_splitPane.posVPane1.loadFromNode(list[0]);
+		_splitPane.posVPane1.applyPosition();
+	}
+	
+	list = GlobalRegistry().findXPath("user/ui/mainFrame/splitPane/pane[@name='vertical2']");
+	
+	if (list.size() > 0) {
+		_splitPane.posVPane2.loadFromNode(list[0]);
+		_splitPane.posVPane2.applyPosition();
+	}
+	
     {      
       GtkFrame* frame = create_framed_widget(TextureBrowser_constructWindow(window));
       g_page_textures = GroupDialog_addPage("Textures", 
@@ -2497,6 +2536,26 @@ void MainFrame::SaveWindowInfo()
   g_layout_globals.m_position = m_position_tracker.getPosition();
  
   g_layout_globals.nState = gdk_window_get_state(GTK_WIDGET(m_window)->window);
+  
+	// Save the splitpane widths/heights 
+	if (CurrentStyle() == eSplit) {
+		// TODO: Move this whole stuff into a class 
+		// (maybe some deriving from a Layout class)
+		
+		std::string path("user/ui/mainFrame/splitPane");
+		
+		// Remove all previously stored pane information 
+		GlobalRegistry().deleteXPath(path + "//pane");
+		
+		xml::Node node = GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
+		_splitPane.posHPane.saveToNode(node);
+		
+		node = GlobalRegistry().createKeyWithName(path, "pane", "vertical1");
+		_splitPane.posVPane1.saveToNode(node);
+		
+		node = GlobalRegistry().createKeyWithName(path, "pane", "vertical2");
+		_splitPane.posVPane2.saveToNode(node);
+	}
 }
 
 void MainFrame::Shutdown()
