@@ -85,7 +85,13 @@ gtkutil_src = '\
   ModalProgressDialog.cpp\
   TreeModel.cpp\
   VFSTreePopulator.cpp\
+  FramedTransientWidget.cpp\
   RegistryConnector.cpp\
+  TransientWindow.cpp\
+  PanedPosition.cpp\
+  MenuItemAccelerator.cpp\
+  Timer.cpp\
+  WindowPosition.cpp\
 '
 
 gtkutil_lib = gtkutil_env.StaticLibrary(target='libs/gtkutil', source=build_list('libs/gtkutil', gtkutil_src))
