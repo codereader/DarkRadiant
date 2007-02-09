@@ -378,6 +378,8 @@ radiant_src = [
 'selection/Intersection.cpp',
 'selection/TransformationVisitors.cpp',
 'selection/SelectionTest.cpp',
+'selection/SelectObserver.cpp',
+'selection/ManipulateObserver.cpp',
 'selection/Planes.cpp',
 'selection/RadiantWindowObserver.cpp',
 'selection/RadiantSelectionSystem.cpp',

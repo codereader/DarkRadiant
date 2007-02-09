@@ -1,5 +1,6 @@
 #include "Camera.h"
 
+#include "ieventmanager.h"
 #include "iregistry.h"
 #include "GlobalCamera.h"
 #include "CameraSettings.h"
