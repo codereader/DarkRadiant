@@ -2,6 +2,8 @@
 #define MANIPULATEOBSERVER_H_
 
 #include "gdk/gdkevents.h"
+#include "generic/callbackfwd.h"
+#include "windowobserver.h"
 #include "Device.h"
 #include "RadiantSelectionSystem.h"
 
@@ -16,31 +18,18 @@ public:
 	const View* _view;
 
 	// Updates the internal event pointer
-	void setEvent(GdkEventButton* event) {
-		_event = event;
-	}
+	void setEvent(GdkEventButton* event);
 
 	// greebo: Handles the mouseDown event and checks whether a manipulator can be made active 
-	bool mouseDown(DeviceVector position) {
-		return GlobalSelectionSystem().SelectManipulator(*_view, &position[0], &_epsilon[0]);
-	}
+	bool mouseDown(DeviceVector position);
 
 	/* greebo: Pass the mouse movement to the current selection.
 	 * This is connected to the according mouse events by the RadiantWindowObserver class 
 	 */
-  	void mouseMoved(DeviceVector position) {
-    	GlobalSelectionSystem().MoveSelected(*_view, &position[0]);
-  	}
+  	void mouseMoved(DeviceVector position);
   	
   	// The mouse operation is finished, update the selection and unconnect the callbacks
-  	void mouseUp(DeviceVector position) {
-  		// Notify the selectionsystem about the ended operation 
-    	GlobalSelectionSystem().endMove();
-    	
-    	// Unconnect this method from the callbacks
-    	g_mouseMovedCallback.clear();
-    	g_mouseUpCallback.clear();
-  	}
+  	void mouseUp(DeviceVector position);
   
   	typedef MemberCaller1<ManipulateObserver, DeviceVector, &ManipulateObserver::mouseMoved> MouseMovedCaller;
   	typedef MemberCaller1<ManipulateObserver, DeviceVector, &ManipulateObserver::mouseUp> MouseUpCaller;
