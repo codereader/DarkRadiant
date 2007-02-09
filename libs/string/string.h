@@ -60,6 +60,32 @@ inline int strToInt(const std::string& str) {
 	return returnValue;
 }
 
+inline std::string floatToStr(const float& f) {
+	std::string returnValue;
+	
+	try {
+		returnValue = boost::lexical_cast<std::string>(f);
+	}
+	catch (boost::bad_lexical_cast e) {
+		returnValue = "";
+	}
+	
+	return returnValue;
+}
+
+inline float strToFloat(const std::string& str) {
+	float returnValue;
+	
+	try {
+		returnValue = boost::lexical_cast<float>(str);
+	}
+	catch (boost::bad_lexical_cast e) {
+		returnValue = 0;
+	}
+	
+	return returnValue;
+}
+
 /// \brief Returns true if \p string length is zero.
 /// O(1)
 inline bool string_empty(const char* string)

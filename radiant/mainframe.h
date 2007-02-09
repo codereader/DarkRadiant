@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/window.h"
 #include "gtkutil/idledraw.h"
 #include "gtkutil/widget.h"
+#include "gtkutil/PanedPosition.h"
 #include "string/string.h"
 
 #include "qerplugin.h"
@@ -76,6 +77,16 @@ private:
   GtkWidget* m_vSplit;
   GtkWidget* m_hSplit;
   GtkWidget* m_vSplit2;
+
+	struct SplitPaneView {
+		GtkWidget* horizPane;
+		GtkWidget* vertPane1;
+		GtkWidget* vertPane2;
+		
+		gtkutil::PanedPosition posHPane;
+		gtkutil::PanedPosition posVPane1;
+		gtkutil::PanedPosition posVPane2;
+	} _splitPane;
 
   CamWnd* m_pCamWnd;
 
