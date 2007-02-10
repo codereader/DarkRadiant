@@ -93,100 +93,6 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 void show_splash();
 void hide_splash();
 
-void error_redirect (const gchar *domain, GLogLevelFlags log_level, const gchar *message, gpointer user_data)
-{
-  gboolean in_recursion;
-  gboolean is_fatal;
-  char buf[256];
-
-  in_recursion = (log_level & G_LOG_FLAG_RECURSION) != 0;
-  is_fatal = (log_level & G_LOG_FLAG_FATAL) != 0;
-  log_level = (GLogLevelFlags) (log_level & G_LOG_LEVEL_MASK);
-
-  if (!message)
-    message = "(0) message";
-
-  if (domain)
-    strcpy (buf, domain);
-  else
-    strcpy (buf, "**");
-  strcat (buf, "-");
-
-  switch (log_level)
-  {
-  case G_LOG_LEVEL_ERROR:
-    if (in_recursion)
-      strcat (buf, "ERROR (recursed) **: ");
-    else
-      strcat (buf, "ERROR **: ");
-    break;
-  case G_LOG_LEVEL_CRITICAL:
-    if (in_recursion)
-      strcat (buf, "CRITICAL (recursed) **: ");
-    else
-      strcat (buf, "CRITICAL **: ");
-    break;
-  case G_LOG_LEVEL_WARNING:
-    if (in_recursion)
-      strcat (buf, "WARNING (recursed) **: ");
-    else
-      strcat (buf, "WARNING **: ");
-    break;
-  case G_LOG_LEVEL_MESSAGE:
-    if (in_recursion)
-      strcat (buf, "Message (recursed): ");
-    else
-      strcat (buf, "Message: ");
-    break;
-  case G_LOG_LEVEL_INFO:
-    if (in_recursion)
-      strcat (buf, "INFO (recursed): ");
-    else
-      strcat (buf, "INFO: ");
-    break;
-  case G_LOG_LEVEL_DEBUG:
-    if (in_recursion)
-      strcat (buf, "DEBUG (recursed): ");
-    else
-      strcat (buf, "DEBUG: ");
-    break;
-  default:
-    /* we are used for a log level that is not defined by GLib itself,
-     * try to make the best out of it.
-     */
-    if (in_recursion)
-      strcat (buf, "LOG (recursed:");
-    else
-      strcat (buf, "LOG (");
-    if (log_level)
-    {
-      gchar string[] = "0x00): ";
-      gchar *p = string + 2;
-      guint i;
-
-      i = g_bit_nth_msf (log_level, -1);
-      *p = i >> 4;
-      p++;
-      *p = '0' + (i & 0xf);
-      if (*p > '9')
-        *p += 'A' - '9' - 1;
-
-      strcat (buf, string);
-    } else
-      strcat (buf, "): ");
-  }
-
-  strcat (buf, message);
-  if (is_fatal)
-    strcat (buf, "\naborting...\n");
-  else
-    strcat (buf, "\n");
-
-  printf ("%s\n", buf);
-
-  ERROR_MESSAGE("GTK+ error: " << buf);
-}
-
 #if defined (_DEBUG) && defined (WIN32) && defined (_MSC_VER)
 #include "crtdbg.h"
 #endif
@@ -482,18 +388,6 @@ int main (int argc, char* argv[])
 
   gtk_disable_setlocale();
   gtk_init(&argc, &argv);
-
-  // redirect Gtk warnings to the console
-  g_log_set_handler ("Gdk", (GLogLevelFlags)(G_LOG_LEVEL_ERROR|G_LOG_LEVEL_CRITICAL|G_LOG_LEVEL_WARNING|
-                                             G_LOG_LEVEL_MESSAGE|G_LOG_LEVEL_INFO|G_LOG_LEVEL_DEBUG), error_redirect, 0);
-  g_log_set_handler ("Gtk", (GLogLevelFlags)(G_LOG_LEVEL_ERROR|G_LOG_LEVEL_CRITICAL|G_LOG_LEVEL_WARNING|
-                                             G_LOG_LEVEL_MESSAGE|G_LOG_LEVEL_INFO|G_LOG_LEVEL_DEBUG), error_redirect, 0);
-  g_log_set_handler ("GtkGLExt", (GLogLevelFlags)(G_LOG_LEVEL_ERROR|G_LOG_LEVEL_CRITICAL|G_LOG_LEVEL_WARNING|
-                                             G_LOG_LEVEL_MESSAGE|G_LOG_LEVEL_INFO|G_LOG_LEVEL_DEBUG), error_redirect, 0);
-  g_log_set_handler ("GLib", (GLogLevelFlags)(G_LOG_LEVEL_ERROR|G_LOG_LEVEL_CRITICAL|G_LOG_LEVEL_WARNING|
-                                             G_LOG_LEVEL_MESSAGE|G_LOG_LEVEL_INFO|G_LOG_LEVEL_DEBUG), error_redirect, 0);
-  g_log_set_handler (0, (GLogLevelFlags)(G_LOG_LEVEL_ERROR|G_LOG_LEVEL_CRITICAL|G_LOG_LEVEL_WARNING|
-                                             G_LOG_LEVEL_MESSAGE|G_LOG_LEVEL_INFO|G_LOG_LEVEL_DEBUG), error_redirect, 0);
 
   GlobalDebugMessageHandler::instance().setHandler(GlobalPopupDebugMessageHandler::instance());
 
