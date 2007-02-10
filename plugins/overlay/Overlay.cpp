@@ -207,6 +207,10 @@ public:
 			captureTexture();
 		}
 		
+		// Return without drawing anything if the texture pointer is invalid
+		if (!_texture)
+			return;
+		
 		// The two corners of the window (default: stretches to window borders)
 		Vector3 windowUpperLeft(xbegin, ybegin, 0);
 		Vector3 windowLowerRight(xend, yend, 0);
