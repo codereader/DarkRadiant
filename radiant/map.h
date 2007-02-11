@@ -193,6 +193,9 @@ namespace map {
 	 */
 	void setModified();
 	
+	/** greebo: Focus the XYViews and the Camera to the given point/angle.
+	 */
+	void focusViews(const Vector3& point, const Vector3& angles);
 }
 
 

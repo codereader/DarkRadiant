@@ -213,6 +213,14 @@ void GlobalCameraManager::cubicScaleOut() {
 	_camWnd->cubicScaleOut();
 }
 
+void GlobalCameraManager::focusCamera(const Vector3& point, const Vector3& angles) {
+	
+	if (_camWnd != NULL) {
+		_camWnd->setCameraOrigin(point);
+		_camWnd->setCameraAngles(angles);
+	}
+}
+
 void GlobalCameraManager::restoreCamWndState(GtkWindow* window) {
 	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_CAMERA_WINDOW_STATE);
 	
