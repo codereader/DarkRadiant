@@ -163,7 +163,7 @@ char* dir_dialog(GtkWidget* parent, const char* title, const char* path)
 }
 
 // Display a file chooser
-const char* file_dialog(GtkWidget* parent, 
+std::string file_dialog(GtkWidget* parent, 
 						bool open, 
 						const std::string& title, 
 						const std::string& path, 
@@ -183,7 +183,8 @@ const char* file_dialog(GtkWidget* parent,
       					eMB_NOYES, 
       					eMB_ICONQUESTION) == eIDYES)
     {
-      return file;
+      return file == NULL ? "" : std::string(file);
     }
+    
   }
 }
