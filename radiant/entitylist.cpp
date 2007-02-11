@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "entitylist.h"
 
+#include "ientity.h"
 #include "iselection.h"
 #include "ieventmanager.h"
 
@@ -41,6 +42,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/closure.h"
 
 #include "treemodel.h"
+#include "map.h"
+#include "camera/Camera.h"
 
 void RedrawEntityList();
 typedef FreeCaller<RedrawEntityList> RedrawEntityListCaller;
@@ -169,6 +172,22 @@ static gboolean entitylist_tree_select(GtkTreeSelection *selection, GtkTreeModel
   {
     getEntityList().m_selection_disabled = true;
     selectable->setSelected(path_currently_selected == FALSE);
+    
+    // greebo: Grab the origin keyvalue from the entity and focus the view on it
+    Entity* entity = Node_getEntity(*node);
+    if (entity != NULL) {
+    	Vector3 entityOrigin(entity->getKeyValue("origin"));
+    	
+    	// Move the camera a bit off the entity origin
+    	entityOrigin += Vector3(-50, 0, 50);
+    	
+    	// Rotate the camera a bit towards the "ground"
+    	Vector3 angles(0, 0, 0);
+    	angles[CAMERA_PITCH] = -30;
+    	
+    	map::focusViews(entityOrigin, angles);
+    }
+    
     getEntityList().m_selection_disabled = false;
     return TRUE;
   }

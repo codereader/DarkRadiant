@@ -81,6 +81,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "referencecache.h"
 #include "brush/BrushNode.h"
 #include "camera/CamWnd.h"
+#include "camera/GlobalCamera.h"
 #include "xyview/GlobalXYWnd.h"
 #include "ui/mru/MRU.h"
 #include "map/AutoSaver.h"
@@ -400,7 +401,15 @@ namespace map {
 std::string getFileName() {
 	return g_map.m_name;
 }	
-	
+
+// move the view to a start position
+//
+void focusViews(const Vector3& point, const Vector3& angles) {
+	// Set the camera and the views to the given point
+	GlobalCamera().focusCamera(point, angles);
+	GlobalXYWnd().setOrigin(point);
+}
+
 } // namespace map
 
 bool Map_Unnamed(const Map& map)
@@ -526,22 +535,6 @@ Entity* Scene_FindEntityByClass(const std::string& className) {
 	return entity;
 }
 
-//
-// move the view to a start position
-//
-void FocusViews(const Vector3& point, float angle)
-{
-  CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
-  camwnd.setCameraOrigin(point);
-  Vector3 angles(camwnd.getCameraAngles());
-  angles[CAMERA_PITCH] = 0;
-  angles[CAMERA_YAW] = angle;
-  camwnd.setCameraAngles(angles);
-
-	// Try to retrieve the XY view, if there exists one
-	GlobalXYWnd().setOrigin(point);
-}
-
 void Map_RemoveSavedPosition() {
 	const std::string keyLastCamPos = GlobalRegistry().get(RKEY_LAST_CAM_POSITION);
 	const std::string keyLastCamAngle = GlobalRegistry().get(RKEY_LAST_CAM_ANGLE);
@@ -578,7 +571,7 @@ void Map_StartPosition()
 	const std::string keyLastCamAngle = GlobalRegistry().get(RKEY_LAST_CAM_ANGLE); 
 	const std::string eClassPlayerStart = GlobalRegistry().get(RKEY_PLAYER_START_ECLASS);
 	
-	float angle = 0;
+	Vector3 angles(0,0,0);
 	Vector3 origin(0,0,0);
 	
 	Entity* worldspawn = Scene_FindEntityByClass("worldspawn");
@@ -594,11 +587,7 @@ void Map_StartPosition()
 			Vector3 angles = worldspawn->getKeyValue(keyLastCamAngle);
 			
 			// Focus the view with the default angle
-			FocusViews(origin, angle);
-			
-			// Now store the angles vector to the camview
-			CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
-			camwnd.setCameraAngles(angles);
+			map::focusViews(origin, angles);
 			
 			// Remove the saved entity key value so it doesn't appear during map edit
 			Map_RemoveSavedPosition();
@@ -615,17 +604,17 @@ void Map_StartPosition()
 				
 				// Check for an angle key, and use it if present
 				try {
-					angle = boost::lexical_cast<float>(playerStart->getKeyValue("angle"));
+					angles[CAMERA_YAW] = boost::lexical_cast<float>(playerStart->getKeyValue("angle"));
 				}
 				catch (boost::bad_lexical_cast e) {
-					angle = 0;
+					angles[CAMERA_YAW] = 0;
 				}
 			}
 		}
 	}
 	
 	// Focus the view with the given parameters
-	FocusViews(origin, angle);
+	map::focusViews(origin, angles);
 }
 
 /* Check if a node is the worldspawn.
@@ -1439,7 +1428,7 @@ void Map_New()
     SceneChangeNotify();
   }
 
-  FocusViews(g_vector3_identity, 0);
+  map::focusViews(g_vector3_identity, Vector3(0,0,0));
 
   g_currentMap = &g_map;
 }
