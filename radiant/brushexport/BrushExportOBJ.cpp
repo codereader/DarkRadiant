@@ -1,13 +1,17 @@
 #include "BrushExportOBJ.h"
+#include "gtkutil/filechooser.h"
 
 /*	This exports the current selection into a WaveFrontOBJ file
  */
 void export_selected(GtkWindow* mainWindow) {		
+	
 	// Obtain the path from a File Dialog Window
-	const char* path = GlobalRadiant().m_pfnFileDialog(GTK_WIDGET(mainWindow), false, "Save as Obj", 0, 0);
+	std::string path = file_dialog(GTK_WIDGET(mainWindow), 
+								   false, 
+								   "Save as Obj");
 	
 	// Open the file
-	TextFileOutputStream file(path);
+	TextFileOutputStream file(path.c_str());
 	
 	if (!file.failed()) {
 		// Instantiate the Exporter of type CExportFormatWavefront

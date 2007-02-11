@@ -97,7 +97,11 @@ public:
 						 const FileTypePattern& type) = 0;
 						 
 	/**
-	 * Get a list of ModuleFileTypes associated with the given module type.
+	 * Get a list of ModuleFileTypes associated with the given module type. If
+	 * the moduleType is not found, returns an empty list.
+	 * 
+	 * @param moduleType
+	 * The module category for which a list of types should be retrieved.
 	 */
 	virtual ModuleTypeListPtr getTypesFor(const std::string& moduleType) = 0;
 	

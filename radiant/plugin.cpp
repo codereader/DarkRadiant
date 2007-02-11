@@ -175,7 +175,6 @@ public:
     m_radiantcore.TextureBrowser_getSelectedShader = TextureBrowser_getSelectedShader;
 
     m_radiantcore.m_pfnMessageBox = &gtk_MessageBox;
-    m_radiantcore.m_pfnFileDialog = &file_dialog;
     m_radiantcore.m_pfnColorDialog = &color_dialog;
     m_radiantcore.m_pfnDirDialog = &dir_dialog;
   }
