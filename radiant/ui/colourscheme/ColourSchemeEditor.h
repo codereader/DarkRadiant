@@ -84,6 +84,11 @@ class ColourSchemeEditor
 		static void callbackColorChanged(GtkWidget* widget, ColourItem* colour);
 		static void callbackDelete(GtkWidget* widget, ColourSchemeEditor* self);
 		static void callbackCopy(GtkWidget* widget, ColourSchemeEditor* self);
+		static void _onDeleteEvent(GtkWidget*, GdkEvent*, ColourSchemeEditor*);
+		
+		// Destroy window and delete self, called by both Cancel and window
+		// delete callbacks
+		void doCancel();
 		
 		// Updates the windows after a colour change
 		static void updateWindows();
