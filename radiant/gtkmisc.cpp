@@ -181,11 +181,11 @@ bool color_dialog (GtkWidget *parent, Vector3& color, const char* title)
 
 void button_clicked_entry_browse_file(GtkWidget* widget, GtkEntry* entry)
 {
-  const char *filename = file_dialog(gtk_widget_get_toplevel(widget), TRUE, "Choose File", gtk_entry_get_text(entry));
+  std::string filename = file_dialog(gtk_widget_get_toplevel(widget), TRUE, "Choose File", gtk_entry_get_text(entry));
   
-  if(filename != 0)
+  if(!filename.empty())
   {
-    gtk_entry_set_text(entry, filename);
+    gtk_entry_set_text(entry, filename.c_str());
   }
 }
 

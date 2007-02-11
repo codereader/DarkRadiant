@@ -32,7 +32,7 @@ typedef struct _GtkWidget GtkWidget;
 /**
  * Display a file chooser dialog.
  */
-const char* file_dialog(GtkWidget *parent, 
+std::string file_dialog(GtkWidget *parent, 
 						bool open, 
 						const std::string& title, 
 						const std::string& path = "", 
