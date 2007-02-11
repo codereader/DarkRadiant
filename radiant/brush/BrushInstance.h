@@ -6,7 +6,7 @@
 #include "scenelib.h"
 #include "selectable.h"
 
-#include "BrushClass.h"
+#include "Brush.h"
 #include "FaceInstance.h"
 #include "EdgeInstance.h"
 #include "VertexInstance.h"
