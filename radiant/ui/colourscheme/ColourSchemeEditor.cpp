@@ -6,6 +6,8 @@
 #include "brush/BrushModule.h"
 #include "iscenegraph.h"
 
+#include "gtkutil/RightAlignment.h"
+
 namespace ui {
 
 	namespace {
@@ -50,34 +52,31 @@ void ColourSchemeEditor::createTreeView() {
 }
 
 GtkWidget* ColourSchemeEditor::constructButtons() {
-	GtkWidget* buttonFrame = gtk_frame_new(NULL);
 	
-	  // Create the buttons and put them into a horizontal box
-	  GtkWidget* buttonBox = gtk_hbox_new(FALSE, 0);
-	  gtk_container_set_border_width(GTK_CONTAINER(buttonBox), 3);
+	// Create the buttons and put them into a horizontal box
+	GtkWidget* buttonBox = gtk_hbox_new(TRUE, 12);
+
+	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
+	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+
+	gtk_box_pack_end(GTK_BOX(buttonBox), okButton, TRUE, TRUE, 0);
+	gtk_box_pack_end(GTK_BOX(buttonBox), cancelButton, TRUE, TRUE, 0);
+
+	g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(callbackOK), this);
+	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(callbackCancel), this);
 	
-	  GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-	  GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-	
-	  gtk_box_pack_end(GTK_BOX(buttonBox), okButton, FALSE, FALSE, 4);
-	  gtk_box_pack_end(GTK_BOX(buttonBox), cancelButton, FALSE, FALSE, 4);
-	
-	  g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(callbackOK), this);
-	  g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(callbackCancel), this);
-	
-	gtk_container_add(GTK_CONTAINER(buttonFrame), buttonBox);
-	
-	return buttonFrame;
+	return gtkutil::RightAlignment(buttonBox);
 }
 
+// Construct buttons underneath the list box
 GtkWidget* ColourSchemeEditor::constructTreeviewButtons() {
-	GtkWidget* buttonBox = gtk_hbox_new(FALSE, 8);
+	GtkWidget* buttonBox = gtk_hbox_new(TRUE, 6);
 	
 	_deleteButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
 	GtkWidget* copyButton = gtk_button_new_from_stock(GTK_STOCK_COPY);
 	
-	gtk_box_pack_start(GTK_BOX(buttonBox), copyButton, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(buttonBox), _deleteButton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonBox), copyButton, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonBox), _deleteButton, TRUE, TRUE, 0);
 	
 	g_signal_connect(G_OBJECT(copyButton), "clicked", G_CALLBACK(callbackCopy), this);
 	g_signal_connect(G_OBJECT(_deleteButton), "clicked", G_CALLBACK(callbackDelete), this);
@@ -86,31 +85,30 @@ GtkWidget* ColourSchemeEditor::constructTreeviewButtons() {
 }
 
 GtkWidget* ColourSchemeEditor::constructWindow() {
-	GtkWidget* windowframe = gtk_frame_new(NULL);
 	
 	  // The vbox that separates the buttons and the upper part of the window
-	  GtkWidget* vbox = gtk_vbox_new(FALSE, 3);
+	  GtkWidget* vbox = gtk_vbox_new(FALSE, 12);
 	
 	  // Place the buttons at the bottom of the window
 	  gtk_box_pack_end(GTK_BOX(vbox), constructButtons(), FALSE, FALSE, 0);
 	
 		// This is the box for the treeview and the whole rest
-		GtkWidget* hbox = gtk_hbox_new(FALSE, 5);
+		GtkWidget* hbox = gtk_hbox_new(FALSE, 12);
 	
-		  GtkWidget* treeAndButtonFrame = gtk_frame_new(NULL);
-		  GtkWidget* treeAndButtons = gtk_vbox_new(FALSE, 0);
+			// VBox containing the tree view and copy/delete buttons underneath
+		  GtkWidget* treeAndButtons = gtk_vbox_new(FALSE, 6);
 		  		  
 		  // Create the treeview and pack it into the treeViewFrame
 		  createTreeView();
 		  GtkWidget* treeViewFrame = gtk_frame_new(NULL);
 		  gtk_container_add(GTK_CONTAINER(treeViewFrame), _treeView);
-		  gtk_box_pack_start(GTK_BOX(treeAndButtons), treeViewFrame, TRUE, TRUE, 0);
-		  
-		  gtk_box_pack_end(GTK_BOX(treeAndButtons), constructTreeviewButtons(), FALSE, FALSE, 3);
+		  gtk_box_pack_start(GTK_BOX(treeAndButtons), treeViewFrame, 
+		  					 TRUE, TRUE, 0);
+		  gtk_box_pack_end(GTK_BOX(treeAndButtons), constructTreeviewButtons(), 
+		  				   FALSE, FALSE, 0);
 		  
 		// Pack the treeViewFrame into the hbox
-		gtk_container_add(GTK_CONTAINER(treeAndButtonFrame), treeAndButtons);
-		gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(treeAndButtonFrame), FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(treeAndButtons), FALSE, FALSE, 0);
 	
 		  // The Box containing the Colour, pack it into the right half of the hbox
 		  _colourFrame = gtk_frame_new(NULL);
@@ -121,9 +119,7 @@ GtkWidget* ColourSchemeEditor::constructWindow() {
 	
 	  gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 	
-	gtk_container_add(GTK_CONTAINER(windowframe), vbox);
-	
-	return windowframe;
+	return vbox;
 }
 
 void ColourSchemeEditor::selectActiveScheme() {
@@ -160,6 +156,7 @@ ColourSchemeEditor::ColourSchemeEditor()
 	gtk_window_set_title(GTK_WINDOW(_editorWidget), EDITOR_WINDOW_TITLE.c_str());
 	
 	// Get the constructed windowframe and pack it into the editor widget
+	gtk_container_set_border_width(GTK_CONTAINER(_editorWidget), 12);
 	gtk_container_add(GTK_CONTAINER(_editorWidget), constructWindow());
 	
 	// Load all the list items
