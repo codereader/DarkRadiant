@@ -109,6 +109,7 @@ public:
   virtual void setRotation(const Rotation& value) = 0;
   virtual void setScale(const Scale& value) = 0;
   virtual void freezeTransform() = 0;
+  virtual void revertTransform() = 0;
 };
 
 const Translation c_translation_identity = Translation(0, 0, 0);
@@ -170,6 +171,19 @@ public:
       m_scale = c_scale_identity;
       m_changed();
     }
+  }
+  
+  /* greebo: This reverts the currently active transformation
+   * by setting the scale/rotation/translation to identity and
+   * calling apply()
+   */
+  void revertTransform()
+  {
+    m_translation = c_translation_identity;
+    m_rotation = c_rotation_identity;
+    m_scale = c_scale_identity;
+    m_apply();
+    m_changed();
   }
   const Translation& getTranslation() const
   {

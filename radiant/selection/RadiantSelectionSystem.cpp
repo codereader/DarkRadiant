@@ -605,6 +605,34 @@ void RadiantSelectionSystem::destroyStatic() {
 	GlobalShaderCache().release("$POINT");
 }
 
+void RadiantSelectionSystem::cancelMove() {
+
+	// Unselect any currently selected manipulators to be sure
+	_manipulator->setSelected(false);
+
+	// Tell all the scene objects to revert their transformations
+	GlobalSceneGraph().traverse(RevertTransforms());
+	
+	_pivotMoving = false;
+	pivotChanged();
+	
+	// greebo: Deselect all faces if we are in brush and drag mode
+	if (Mode() == ePrimitive) {
+		if (ManipulatorMode() == eDrag) {
+			GlobalSceneGraph().traverse(SelectAllComponentWalker(false, SelectionSystem::eFace));
+			//Scene_SelectAll_Component(false, SelectionSystem::eFace);
+		}
+	}
+	
+	if (_undoBegun) {
+		// Cancel the undo operation, if one has been begun 
+		GlobalUndoSystem().cancel();
+	}
+	
+	// Update the views
+	SceneChangeNotify();
+}
+
 // This actually applies the transformation to the objects
 void RadiantSelectionSystem::freezeTransforms() {
 	GlobalSceneGraph().traverse(FreezeTransforms());

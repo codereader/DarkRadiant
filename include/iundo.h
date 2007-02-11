@@ -90,6 +90,10 @@ public:
 	virtual void undo() = 0;
 	virtual void redo() = 0;
 	virtual void clear() = 0;
+	
+	// greebo: This finishes the current operation and removes
+	// it immediately adding it to the stack, therefore it never existed. 
+	virtual void cancel() = 0;
 
 	virtual void trackerAttach(UndoTracker& tracker) = 0;
 	virtual void trackerDetach(UndoTracker& tracker) = 0;

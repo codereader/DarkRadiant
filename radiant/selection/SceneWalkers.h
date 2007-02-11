@@ -75,6 +75,21 @@ public:
 	}
 };
 
+// As the name states, all visited instances have their transformations reverted
+class RevertTransforms : public scene::Graph::Walker {
+public:
+	bool pre(const scene::Path& path, scene::Instance& instance) const {
+		TransformNode* transformNode = Node_getTransformNode(path.top());
+		if (transformNode != 0) {
+			Transformable* transform = Instance_getTransformable(instance);
+			if (transform != 0) {
+				transform->revertTransform(); 
+			}
+		}
+	return true;
+	}
+};
+
 // greebo: Calculates the axis-aligned bounding box of the selection.
 // The constructor is called with a reference to an AABB variable that is updated during the walk
 class BoundsSelected : public scene::Graph::Walker {
