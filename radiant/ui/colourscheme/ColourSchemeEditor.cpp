@@ -176,7 +176,10 @@ ColourSchemeEditor::ColourSchemeEditor()
 	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(callbackSelChanged), this);
 	
 	// Be sure that everything is properly destroyed upon window closure
-	g_signal_connect(G_OBJECT(_editorWidget), "delete_event", G_CALLBACK(callbackCancel), this);
+	g_signal_connect(G_OBJECT(_editorWidget), 
+					 "delete_event", 
+					 G_CALLBACK(_onDeleteEvent),
+					 this);
 	
 	// Show all the widgets and enter the loop
 	gtk_widget_show_all(_editorWidget);
@@ -418,19 +421,34 @@ void ColourSchemeEditor::callbackOK(GtkWidget* widget, ColourSchemeEditor* self)
 	delete self;
 }
 
-void ColourSchemeEditor::callbackCancel(GtkWidget* widget, ColourSchemeEditor* self) {
+// Destroy self function
+void ColourSchemeEditor::doCancel() {
+
 	// Restore all the colour settings from the XMLRegistry, changes get lost
 	ColourSchemes().restoreColourSchemes();
 	
 	// Call the update, so all restored colours are displayed
 	updateWindows();
-	
-	if (GTK_IS_WIDGET(self->_editorWidget)) {
-		gtk_widget_hide(GTK_WIDGET(self->_editorWidget));
-		gtk_widget_destroy(GTK_WIDGET(self->_editorWidget));
-	}
-	delete self;
+
+	// Destroy GTK widgets and the object itself	
+	gtk_widget_hide(_editorWidget);
+	gtk_widget_destroy(_editorWidget);
+	delete this;
 }
+
+// Cancel button callback
+void ColourSchemeEditor::callbackCancel(GtkWidget* widget, ColourSchemeEditor* self) {
+	self->doCancel();
+}
+
+// Window destroy callback
+void ColourSchemeEditor::_onDeleteEvent(GtkWidget* w, 
+										GdkEvent* e, 
+										ColourSchemeEditor* self)
+{
+	self->doCancel();
+}
+
 
 } // namespace ui
 
