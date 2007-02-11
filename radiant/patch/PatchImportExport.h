@@ -56,7 +56,7 @@ inline bool PatchDoom3_importShader(Patch& patch, Tokeniser& tokeniser)
   }
   if(string_equal(shader, "_default"))
   {
-    shader = texdef_name_default();
+    shader = texdef_name_default().c_str();
   }
   patch.SetShader(shader);
   return true;

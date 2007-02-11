@@ -361,7 +361,7 @@ static void OnApply (GtkWidget *widget, gpointer data)
     if (!texdef_name_valid(g_PatchInspector.m_strName.c_str()))
     {
       globalErrorStream() << "invalid texture name '" << g_PatchInspector.m_strName.c_str() << "'\n";
-      g_PatchInspector.m_strName = texdef_name_default();
+      g_PatchInspector.m_strName = texdef_name_default().c_str();
     }
     g_PatchInspector.m_Patch->SetShader(g_PatchInspector.m_strName.c_str());
 

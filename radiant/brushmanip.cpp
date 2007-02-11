@@ -46,7 +46,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 FaceInstanceSet g_SelectedFaceInstances;
 
-void Brush_ConstructCuboid(Brush& brush, const AABB& bounds, const char* shader, const TextureProjection& projection)
+void Brush_ConstructCuboid(Brush& brush, const AABB& bounds, const std::string& shader, const TextureProjection& projection)
 {
   const unsigned char box[3][2] = { { 0, 1 }, { 2, 0 }, { 1, 2 } };
   Vector3 mins(bounds.origin - bounds.extents);

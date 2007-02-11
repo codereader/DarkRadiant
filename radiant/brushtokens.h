@@ -115,7 +115,7 @@ inline bool FaceShader_Doom3_importTokens(FaceShader& faceShader, Tokeniser& tok
   }
   if(string_equal(shader, "_default"))
   {
-    shader = texdef_name_default();
+    shader = texdef_name_default().c_str();
   }
   faceShader.setShader(shader);
   return true;

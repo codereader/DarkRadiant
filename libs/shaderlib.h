@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "string/string.h"
 #include "character.h"
 #include "ishaders.h"
+#include "iregistry.h"
 
 inline bool shader_equal(const std::string& shader, const std::string& other)
 {
@@ -72,9 +73,9 @@ inline bool texdef_name_valid(const char* name)
   return shader_valid(name) && shader_is_texture(name);
 }
 
-inline const char* texdef_name_default()
-{
-  return GlobalTexturePrefix_get();
+inline std::string texdef_name_default() {
+  //return GlobalTexturePrefix_get();
+	return GlobalRegistry().get("game/defaults/defaultTexture");
 }
 
 
