@@ -178,7 +178,7 @@ public:
 	// Transform this patch as defined by the transformation matrix <matrix>
 	void transform(const Matrix4& matrix);
 	
-	// Called if the patch has changed, so that the scene graph can be updated
+	// Called by the transform modifier (owned by the instance) if the transformation gets changed
 	void transformChanged();
 	
 	// The callback type definition
