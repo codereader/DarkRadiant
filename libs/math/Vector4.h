@@ -295,6 +295,17 @@ public:
 
 // ==========================================================================================
 
+/** Stream insertion operator for BasicVector4. Formats vector as "<x, y, z, w>".
+ */
+ 
+template<typename T>
+inline std::ostream& operator<<(std::ostream& st, BasicVector4<T> vec) {
+	st << "<" << vec.x() << ", " << vec.y() << ", " << vec.z() << ", " << vec.w() << ">";
+	return st;
+}
+
+// ==========================================================================================
+
 // A 4-element vector stored in single-precision floating-point.
 typedef BasicVector4<float> Vector4;
 

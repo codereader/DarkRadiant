@@ -1384,5 +1384,15 @@ inline void matrix4_pivoted_transform_by_euler_xyz_degrees(Matrix4& self, const 
   matrix4_translate_by_vec3(self, -pivotpoint);
 }
 
+/** Stream insertion operator for Matrix4.
+ */
+ 
+inline std::ostream& operator<<(std::ostream& st, const Matrix4& m) {
+	st << "|" << m.xx() << ", " << m.xy() << ", " << m.xz() << ", " << m.xw() << "|\n";
+	st << "|" << m.yx() << ", " << m.yy() << ", " << m.yz() << ", " << m.yw() << "|\n";
+	st << "|" << m.zx() << ", " << m.zy() << ", " << m.zz() << ", " << m.zw() << "|\n";
+	st << "|" << m.tx() << ", " << m.ty() << ", " << m.tz() << ", " << m.tw() << "|\n";
+	return st;
+}
 
 #endif
