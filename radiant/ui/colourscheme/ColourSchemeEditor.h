@@ -13,7 +13,6 @@ namespace {
 
     const int EDITOR_DEFAULT_SIZE_X = 650;
     const int EDITOR_DEFAULT_SIZE_Y = 450;
-    const int TREE_VIEW_WIDTH = 180;
     
     const int COLOURS_PER_COLUMN = 10;
     

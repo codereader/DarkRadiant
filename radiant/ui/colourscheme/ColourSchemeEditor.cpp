@@ -7,6 +7,7 @@
 #include "iscenegraph.h"
 
 #include "gtkutil/RightAlignment.h"
+#include "gtkutil/ScrolledFrame.h"
 
 namespace ui {
 
@@ -33,13 +34,12 @@ void ColourSchemeEditor::createTreeView() {
 	
 	// Create the treeView
     _treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore));
-    // Unreference the list store as this is now owned by GTK 
+	
+	// Unreference the list store so it will be destroyed with the treeview 
     g_object_unref(G_OBJECT(_listStore));
 	
 	// Create a new column and set its parameters  
  	GtkTreeViewColumn* col = gtk_tree_view_column_new();
-  	gtk_tree_view_column_set_sizing(col, GTK_TREE_VIEW_COLUMN_FIXED);
-  	gtk_tree_view_column_set_fixed_width(col, TREE_VIEW_WIDTH);
   
   	// Pack the new column into the treeView
   	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), col);
@@ -100,9 +100,8 @@ GtkWidget* ColourSchemeEditor::constructWindow() {
 		  		  
 		  // Create the treeview and pack it into the treeViewFrame
 		  createTreeView();
-		  GtkWidget* treeViewFrame = gtk_frame_new(NULL);
-		  gtk_container_add(GTK_CONTAINER(treeViewFrame), _treeView);
-		  gtk_box_pack_start(GTK_BOX(treeAndButtons), treeViewFrame, 
+		  gtk_box_pack_start(GTK_BOX(treeAndButtons), 
+		  					 gtkutil::ScrolledFrame(_treeView),
 		  					 TRUE, TRUE, 0);
 		  gtk_box_pack_end(GTK_BOX(treeAndButtons), constructTreeviewButtons(), 
 		  				   FALSE, FALSE, 0);
