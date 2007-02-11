@@ -1107,7 +1107,7 @@ Map_LoadFile
 ================
 */
 
-void Map_LoadFile (const char *filename)
+void Map_LoadFile (const std::string& filename)
 {
   globalOutputStream() << "Loading map from " << filename << "\n";
 
@@ -1351,11 +1351,14 @@ void Map_Traverse_Region(scene::Node& root, const scene::Traversable::Walker& wa
   }
 }
 
-bool Map_SaveRegion(const char *filename)
+bool Map_SaveRegion(const std::string& filename)
 {
   AddRegionBrushes();
 
-  bool success = MapResource_saveFile(MapFormat_forFile(filename), GlobalSceneGraph().root(), Map_Traverse_Region, filename); 
+  bool success = MapResource_saveFile(MapFormat_forFile(filename.c_str()), 
+  									  GlobalSceneGraph().root(), 
+  									  Map_Traverse_Region, 
+  									  filename.c_str()); 
 
   RemoveRegionBrushes();
 
@@ -1387,20 +1390,18 @@ void Map_RenameAbsolute(const char* absolute)
   g_map.m_resource->attach(g_map);
 }
 
-void Map_Rename(const char* filename)
+void Map_Rename(const std::string& filename)
 {
-  if(!string_equal(g_map.m_name.c_str(), filename))
-  {
-    ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Saving Map");
+	if(g_map.m_name != filename) {
+    	ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Saving Map");
 
-    Map_RenameAbsolute(filename);
+    	Map_RenameAbsolute(filename.c_str());
     
-    SceneChangeNotify();
-  }
-  else
-  {
-    SaveReferences();
-  }
+    	SceneChangeNotify();
+	}
+	else {
+    	SaveReferences();
+  	}
 }
 
 bool Map_Save()
@@ -1719,7 +1720,7 @@ void Map_RegionBrush (void)
 //Map_ImportFile
 //================
 //
-bool Map_ImportFile(const char* filename)
+bool Map_ImportFile(const std::string& filename)
 {
   bool success = false;
   {
@@ -1767,9 +1768,12 @@ bool Map_SaveFile(const char* filename)
 //
 // Saves selected world brushes and whole entities with partial/full selections
 //
-bool Map_SaveSelected(const char* filename)
+bool Map_SaveSelected(const std::string& filename)
 {
-  return MapResource_saveFile(MapFormat_forFile(filename), GlobalSceneGraph().root(), Map_Traverse_Selected, filename); 
+  return MapResource_saveFile(MapFormat_forFile(filename.c_str()), 
+  							  GlobalSceneGraph().root(), 
+  							  Map_Traverse_Selected, 
+  							  filename.c_str()); 
 }
 
 
@@ -2068,17 +2072,23 @@ namespace ui {
  * 
  */
 
-const char* selectMapFile(const char* title, bool open)
+std::string selectMapFile(const std::string& title, bool open)
 {
 	// Save the most recently-used path so that successive maps can be opened
 	// from the same directory.
 	static std::string lastPath = getMapsPath();
-	const char* filePath = file_dialog(GTK_WIDGET(MainFrame_getWindow()), open, title, lastPath.c_str(), MapFormat::Name());
+	
+	// Display a file chooser dialog to get a new path
+	std::string filePath = file_dialog(GTK_WIDGET(MainFrame_getWindow()), 
+									   open, 
+									   title, 
+									   lastPath, 
+									   std::string(MapFormat::Name()));
 
 	// Update the lastPath static variable with the path to the last directory
 	// opened.
-	if (filePath != NULL)
-		lastPath = std::string(filePath).substr(0, std::string(filePath).find_last_of("/"));
+	if (!filePath.empty())
+		lastPath = filePath.substr(0, filePath.find_last_of("/"));
 
 	return filePath;
 }
@@ -2090,38 +2100,37 @@ void OpenMap()
   if (!ConfirmModified("Open Map"))
     return;
 
-  const char* filename = ui::selectMapFile("Open Map", true);
+  std::string filename = ui::selectMapFile("Open Map", true);
 
-  if (filename != 0)
-  {
-    GlobalMRU().insert(filename);
-    Map_RegionOff();
-    Map_Free();
-    Map_LoadFile(filename);
-  }
+	if (!filename.empty()) {
+	    GlobalMRU().insert(filename);
+	    Map_RegionOff();
+	    Map_Free();
+	    Map_LoadFile(filename);
+	}
 }
 
 void ImportMap()
 {
-  const char* filename = ui::selectMapFile("Import Map", true);
+  std::string filename = ui::selectMapFile("Import Map", true);
 
-  if(filename != 0)
-  {
-    UndoableCommand undo("mapImport");
-    Map_ImportFile(filename);
-  }
+	if (!filename.empty()) {
+	    UndoableCommand undo("mapImport");
+	    Map_ImportFile(filename);
+	}
 }
 
 bool Map_SaveAs()
 {
-  const char* filename = ui::selectMapFile("Save Map", false);
+  std::string filename = ui::selectMapFile("Save Map", false);
   
-  if(filename != 0)
-  {
-    GlobalMRU().insert(filename);
-    Map_Rename(filename);
-    return Map_Save();
-  }
+  std::cout << "Map_SaveAs() got filename " << filename << std::endl;
+  
+	if (!filename.empty()) {
+	    GlobalMRU().insert(filename);
+	    Map_Rename(filename);
+	    return Map_Save();
+	}
   return false;
 }
 
@@ -2144,22 +2153,20 @@ void SaveMap()
 
 void ExportMap()
 {
-  const char* filename = ui::selectMapFile("Export Selection", false);
+  std::string filename = ui::selectMapFile("Export Selection", false);
 
-  if(filename != 0)
-  {
-    Map_SaveSelected(filename);
-  }
+	if (!filename.empty()) {
+	    Map_SaveSelected(filename);
+  	}
 }
 
 void SaveRegion()
 {
-  const char* filename = ui::selectMapFile("Export Region", false);
+  std::string filename = ui::selectMapFile("Export Region", false);
   
-  if(filename != 0)
-  {
-    Map_SaveRegion(filename);
-  }
+	if (!filename.empty()) {
+	    Map_SaveRegion(filename);
+  	}
 }
 
 

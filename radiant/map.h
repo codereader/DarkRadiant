@@ -107,7 +107,7 @@ typedef BasicVector3<float> Vector3;
 extern Vector3 region_mins, region_maxs;
 extern bool region_active;
 
-void Map_LoadFile(const char* filename);
+void Map_LoadFile(const std::string& filename);
 bool Map_SaveFile(const char* filename);
 
 void Map_New();

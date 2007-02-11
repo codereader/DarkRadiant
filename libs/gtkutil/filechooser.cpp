@@ -162,18 +162,26 @@ char* dir_dialog(GtkWidget* parent, const char* title, const char* path)
   return filename;
 }
 
-
-const char* file_dialog(GtkWidget* parent, bool open, const char* title, const char* path, const char* pattern)
+// Display a file chooser
+const char* file_dialog(GtkWidget* parent, 
+						bool open, 
+						const std::string& title, 
+						const std::string& path, 
+						const std::string& pattern)
 {
   for(;;)
   {
-    const char* file =
-        file_dialog_show(parent, open, title, path, pattern);
+    const char* file = file_dialog_show(
+    	parent, open, title.c_str(), path.c_str(), pattern.c_str());
 
     if(open
       || file == 0
       || !file_exists(file)
-      || gtk_MessageBox(parent, "The file specified already exists.\nDo you want to replace it?", title, eMB_NOYES, eMB_ICONQUESTION) == eIDYES)
+      || gtk_MessageBox(parent, 
+      					"The file specified already exists.\nDo you want to replace it?", 
+      					title.c_str(), 
+      					eMB_NOYES, 
+      					eMB_ICONQUESTION) == eIDYES)
     {
       return file;
     }

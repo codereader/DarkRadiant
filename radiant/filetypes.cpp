@@ -77,7 +77,17 @@ public:
 	 * Return list of types for an associated module type.
 	 */
 	ModuleTypeListPtr getTypesFor(const std::string& moduleType) {
-		return _typeLists[moduleType];		
+		
+		// Try to find the type list in the map
+		TypeListMap::iterator i = _typeLists.find(moduleType);
+		if (i != _typeLists.end()) {
+			return i->second;
+		}
+		else {
+			// Create a pointer to an empty ModuleTypeList and return this
+			// instead of a null shared_ptr
+			return ModuleTypeListPtr(new ModuleTypeList());
+		}		
 	}
   
 };

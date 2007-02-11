@@ -72,12 +72,6 @@ enum EMessageBoxReturn
 
 typedef EMessageBoxReturn (* PFN_QERAPP_MESSAGEBOX) (GtkWidget *parent, const char* text, const char* caption/* = "GtkRadiant"*/, EMessageBoxType type/* = eMB_OK*/, EMessageBoxIcon icon/* = eMB_ICONDEFAULT*/);
 
-// file and directory selection functions return null if the user hits cancel
-// - 'title' is the dialog title (can be null)
-// - 'path' is used to set the initial directory (can be null)
-// - 'pattern': the first pattern is for the win32 mode, then comes the Gtk pattern list, see Radiant source for samples
-typedef const char* (* PFN_QERAPP_FILEDIALOG) (GtkWidget *parent, bool open, const char* title, const char* path/* = 0*/, const char* pattern/* = 0*/);
-
 // returns a gchar* string that must be g_free'd by the user
 typedef char* (* PFN_QERAPP_DIRDIALOG) (GtkWidget *parent, const char* title/* = "Choose Directory"*/, const char* path/* = 0*/);
 
@@ -156,7 +150,6 @@ struct IRadiant
 
   // GTK+ functions
   PFN_QERAPP_MESSAGEBOX  m_pfnMessageBox;
-  PFN_QERAPP_FILEDIALOG  m_pfnFileDialog;
   PFN_QERAPP_DIRDIALOG   m_pfnDirDialog;
   PFN_QERAPP_COLORDIALOG m_pfnColorDialog;
 };
