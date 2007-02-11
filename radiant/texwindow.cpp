@@ -1589,7 +1589,7 @@ void TextureBrowser_Construct()
   GlobalPreferenceSystem().registerPreference("LoadShaders", IntImportStringCaller(reinterpret_cast<int&>(GlobalTextureBrowser().m_startupShaders)), IntExportStringCaller(reinterpret_cast<int&>(GlobalTextureBrowser().m_startupShaders)));
   GlobalPreferenceSystem().registerPreference("WheelMouseInc", SizeImportStringCaller(GlobalTextureBrowser().m_mouseWheelScrollIncrement), SizeExportStringCaller(GlobalTextureBrowser().m_mouseWheelScrollIncrement));
   
-  g_TextureBrowser.shader = texdef_name_default();
+  g_TextureBrowser.shader = texdef_name_default().c_str();
 
   TextureBrowser_registerPreferencesPage();
 

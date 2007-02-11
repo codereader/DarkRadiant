@@ -62,6 +62,7 @@
 		<lightRadius value="320 320 320" />
 		<maxWorldCoord value="65536" />
 		<minWorldCoord value="-65536" />
+		<defaultTexture value="_default" />
 	</defaults>
 	<entityChooser>
 		<displayFolderKey value="editor_displayFolder" />
