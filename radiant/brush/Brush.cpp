@@ -576,8 +576,8 @@ void Brush::removeDegenerateFaces() {
 		Winding& degen = m_faces[i]->getWinding();
   
 		if (degen.numpoints == 2) {
-			std::cout << "Removed degenerate face: " << Vector3(m_faces[i]->getPlane().plane3().normal()) 
-								<< " - " << float(m_faces[i]->getPlane().plane3().dist()) << "\n";
+			/*std::cout << "Removed degenerate face: " << Vector3(m_faces[i]->getPlane().plane3().normal()) 
+								<< " - " << float(m_faces[i]->getPlane().plane3().dist()) << "\n";*/
 			
 			// this is an "edge" face, where the plane touches the edge of the brush
 			{

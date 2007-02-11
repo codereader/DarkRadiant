@@ -649,6 +649,9 @@ void RadiantSelectionSystem::endMove() {
 			//Scene_SelectAll_Component(false, SelectionSystem::eFace);
 		}
 	}
+	
+	// Remove all degenerated brushes from the scene graph (should emit a warning)
+	GlobalSceneGraph().traverse(RemoveDegenerateBrushWalker());
 
 	_pivotMoving = false;
 	pivotChanged();
