@@ -84,7 +84,7 @@ XYWnd::XYWnd() :
 
 	m_window_observer->setRectangleDrawCallback(MemberCaller1<XYWnd, Rectangle, &XYWnd::updateXORRectangle>(*this));
 	m_window_observer->setView(m_view);
-
+	
 	gtk_widget_ref(m_gl_widget);
 
 	gtk_widget_set_events(m_gl_widget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
@@ -165,6 +165,8 @@ void XYWnd::setParent(GtkWindow* parent) {
 	// Connect the position observer to the new parent
 	_windowPosition.connect(_parent);
 	_windowPosition.applyPosition();
+	
+	m_window_observer->setObservedWidget(GTK_WIDGET(_parent));
 }
 
 GtkWindow* XYWnd::getParent() const {

@@ -1,6 +1,9 @@
 #include "RadiantWindowObserver.h"
 
+#include "gdk/gdkkeysyms.h"
 #include "ieventmanager.h"
+#include "iscenegraph.h"
+#include <iostream>
 
 // mouse callback instances
 Single<MouseEventCallback> g_mouseMovedCallback;
@@ -8,6 +11,10 @@ Single<MouseEventCallback> g_mouseUpCallback;
 
 SelectionSystemWindowObserver* NewWindowObserver() {
   return new RadiantWindowObserver;
+}
+
+void RadiantWindowObserver::setObservedWidget(GtkWidget* observed) {
+	_observedWidget = observed;
 }
 
 void RadiantWindowObserver::setView(const View& view) {
@@ -86,6 +93,14 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 			// so a manipulator could be successfully selected
 			g_mouseMovedCallback.insert(MouseEventCallback(ManipulateObserver::MouseMovedCaller(_manipulateObserver)));
 			g_mouseUpCallback.insert(MouseEventCallback(ManipulateObserver::MouseUpCaller(_manipulateObserver)));
+			
+			if (_observedWidget != NULL) {
+				// Connect the keypress event to catch the "cancel" call
+				_keyPressHandler = g_signal_connect(G_OBJECT(_observedWidget), 
+								 					"key_press_event", 
+								 					G_CALLBACK(onKeyPress), 
+								 					this);
+			}
 		} 
 		else {
 			// Call the mouseDown method of the selector class, this covers all of the other events
@@ -140,6 +155,11 @@ void RadiantWindowObserver::onMouseUp(const WindowVector& position, GdkEventButt
   		// Get the callback and call it with the arguments
 		g_mouseUpCallback.get()(window_to_normalised_device(position, _width, _height));
 	}
+	
+	if (_observedWidget != NULL && _keyPressHandler != 0) {
+		g_signal_handler_disconnect(G_OBJECT(_observedWidget), _keyPressHandler);
+		_keyPressHandler = 0;
+	}
 }
 
 // Called upon modifier key press
@@ -150,4 +170,35 @@ void RadiantWindowObserver::onModifierDown(ModifierFlags type) {
 // Called upon modifier key release
 void RadiantWindowObserver::onModifierUp(ModifierFlags type) {
 	//_selectObserver.updateState();
+}
+
+void RadiantWindowObserver::onCancel() {
+	
+	// Disconnect the mouseMoved and mouseUp callbacks
+	g_mouseMovedCallback.clear();
+	g_mouseUpCallback.clear();
+	
+	// Disconnect the key handler
+	if (_observedWidget != NULL && _keyPressHandler != 0) {
+		g_signal_handler_disconnect(G_OBJECT(_observedWidget), _keyPressHandler);
+		_keyPressHandler = 0;
+	}
+	
+	// Update the views
+	GlobalSelectionSystem().cancelMove();
+}
+
+// The GTK keypress callback
+gboolean RadiantWindowObserver::onKeyPress(GtkWindow* window, 
+	GdkEventKey* event, RadiantWindowObserver* self) 
+{
+	// Check for ESC and call the onCancel method, if found
+	if (event->keyval == GDK_Escape) {
+		self->onCancel();
+		
+		// Don't pass the key event to the event chain 
+		return true;
+	}
+	
+	return false;
 }

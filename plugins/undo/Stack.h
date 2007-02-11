@@ -95,6 +95,7 @@ public:
 			return false;
 		}
 		else {
+			// Rename the last undo operation (it was "unnamed" till now)
 			ASSERT_MESSAGE(!_stack.empty(), "undo stack empty");
 			_stack.back()->_command = command;
 			return true;

@@ -139,6 +139,7 @@ public:
   
   virtual void MoveSelected(const View& view, const float device_point[2]) = 0;
   virtual void endMove() = 0;
+  virtual void cancelMove() = 0;
 };
 
 #include "modulesystem.h"

@@ -139,6 +139,16 @@ public:
 		trackersBegin();
 	}
 
+	// greebo: This finishes the current operation and
+	// removes it instantly from the stack
+	void cancel() {
+		// Try to add the last operation as "temp"
+		if (finishUndo("$TEMPORARY")) {
+			// Instantly remove the added operation
+			_undoStack.pop_back();
+		}
+	}
+
 	void finish(const std::string& command) {
 		if (finishUndo(command)) {
 			globalOutputStream() << command.c_str() << '\n';

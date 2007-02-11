@@ -150,6 +150,8 @@ public:
 	/// \todo Support view-dependent nudge.
 	void NudgeManipulator(const Vector3& nudge, const Vector3& view);
 	
+	void cancelMove();
+	
 	void endMove();
 	void freezeTransforms();
 	
