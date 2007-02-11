@@ -398,7 +398,7 @@ radiant_src = [
 'brush/FaceTexDef.cpp',
 'brush/FacePlane.cpp',
 'brush/Face.cpp',
-'brush/BrushClass.cpp',
+'brush/Brush.cpp',
 'brush/FaceInstance.cpp',
 'brush/BrushInstance.cpp',
 'brush/BrushModule.cpp',

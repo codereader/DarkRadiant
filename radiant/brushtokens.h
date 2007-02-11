@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stream/stringstream.h"
 #include "shaderlib.h"
 #include "brush/Face.h"
-#include "brush/BrushClass.h"
+#include "brush/Brush.h"
 
 inline bool FaceShader_importContentsFlagsValue(FaceShader& faceShader, Tokeniser& tokeniser)
 {
