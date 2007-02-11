@@ -151,8 +151,8 @@ void Face::transform(const Matrix4& matrix, bool mirror) {
 		m_texdefTransformed.transformLocked(m_shader.width(), m_shader.height(), m_plane.plane3(), matrix);
 	}
 
+	// Transform the FacePlane using the given matrix
 	m_planeTransformed.transform(matrix, mirror);
-
 	m_observer->planeChanged();
 }
 

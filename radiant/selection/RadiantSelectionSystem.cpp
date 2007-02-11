@@ -489,7 +489,7 @@ void RadiantSelectionSystem::rotate(const Quaternion& rotation) {
 	}
 }
 
-// Applies the scaling vector <scaling> to the current selection
+// Applies the scaling vector <scaling> to the current selection, this is called by the according Manipulatables
 void RadiantSelectionSystem::scale(const Vector3& scaling) {
 	// Check if anything is selected
 	if (!nothingSelected()) {

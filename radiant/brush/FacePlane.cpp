@@ -1,10 +1,5 @@
 #include "FacePlane.h"
 
-inline Plane3 Plane3_applyTransform(const Plane3& plane, const Matrix4& matrix) {
-	Plane3 tmp(matrix.transform(Plane3(plane.normal(), -plane.dist())));
-	return Plane3(tmp.normal(), -tmp.dist());
-}
-
 inline Plane3 Plane3_applyTranslation(const Plane3& plane, const Vector3& translation) {
 	Plane3 tmp = Plane3(plane.normal(), -plane.dist()).getTranslated(translation);
 	return Plane3(tmp.normal(), -tmp.dist());
@@ -54,7 +49,18 @@ void FacePlane::transform(const Matrix4& matrix, bool mirror) {
 		MakePlane();
 	}
 	else {
-		m_planeCached = Plane3_applyTransform(m_planeCached, matrix);
+		// Prepare the plane to be transformed (negate the distance)
+		m_planeCached.dist() = -m_planeCached.dist();
+		
+		// Transform the plane
+		m_planeCached = matrix.transform(m_planeCached);
+		
+		// Re-negate the distance
+		m_planeCached.dist() = -m_planeCached.dist();
+		
+		// Now normalise the plane, otherwise the next transformation will screw up
+		m_planeCached = m_planeCached.getNormalised(); 
+		
 		updateSource();
 	}
 }
