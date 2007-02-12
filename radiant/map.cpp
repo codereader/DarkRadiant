@@ -85,6 +85,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "xyview/GlobalXYWnd.h"
 #include "ui/mru/MRU.h"
 #include "map/AutoSaver.h"
+#include "surfacedialog.h"
 
 #include <string>
 #include <boost/lexical_cast.hpp>
@@ -480,6 +481,8 @@ free all map elements, reinitialize the structures that depend on them
 void Map_Free()
 {
 	Pointfile_Clear();
+
+	FaceTextureClipboard_setDefault();
 
   g_map.m_resource->detach(g_map);
   GlobalReferenceCache().release(g_map.m_name.c_str());
