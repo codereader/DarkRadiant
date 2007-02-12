@@ -1443,6 +1443,10 @@ TextureClipBoard g_faceTextureClipboard;
 bool Scene_getClosestTexture(scene::Graph& graph, SelectionTest& test, std::string& shader, TextureClipBoard& clipBoard) {
   	Texturable texturable = Scene_getClosestTexturable(graph, test);
   	
+  	clipBoard._face = NULL;
+  	clipBoard._brushInstance = NULL;
+  	clipBoard._patch = NULL;
+  	
 	// Check if we have a brush
 	if (texturable._brushInstance != NULL && texturable._face != NULL) {
 		clipBoard._brushInstance = texturable._brushInstance;
@@ -1510,16 +1514,29 @@ void Scene_setClosestTextureCoordinates(scene::Graph& graph, SelectionTest& test
 	// Check if we have a brush to copy from
 	if (clipBoard._brushInstance != NULL && clipBoard._face != NULL) {
 		// Nothing to do yet, this only works for patches
+		gtkutil::errorDialog("Can't copy Texture Coordinates from brushes.",
+							 MainFrame_getWindow());
 	}
 	// or a patch to copy from
 	else if (clipBoard._patch != NULL) {
   		// Copy patch >> brush?
   		if (texturable._brushInstance != NULL && texturable._face != NULL) {
 		 	// Nothing to do, this works for patches only, perhaps in the future...
+		 	gtkutil::errorDialog("Can't paste Texture Coordinates from patches to brushes.",
+							 MainFrame_getWindow());
 		}
 		// Copy patch >> patch?
 		else if (texturable._patch != NULL) {
-		 	texturable._patch->pasteTextureCoordinates(clipBoard._patch);
+			// Check if the dimensions match, emit an error otherwise 
+			if (texturable._patch->getWidth() == clipBoard._patch->getWidth() && 
+				texturable._patch->getHeight() == clipBoard._patch->getHeight()) 
+			{
+		 		texturable._patch->pasteTextureCoordinates(clipBoard._patch);
+			}
+			else {
+				gtkutil::errorDialog("Can't paste Texture Coordinates.\nTarget patch dimensions must match.",
+							 MainFrame_getWindow());
+			}
 		}
 	}
 }
