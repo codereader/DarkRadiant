@@ -1,3 +1,10 @@
+12/02/2007
+greebo
+- Added Entity Selection Mode Toggle to limit mouse operations to entities.
+- Added Flip X / Flip Y texture commands.
+- Fixed Scale Manipulator for brushes.
+- Entity List Selection now focuses the camera and orthoviews on the selected entity.
+
 11/02/2007
 greebo
 - Added ability to cancel transformation operations by hitting ESC.
