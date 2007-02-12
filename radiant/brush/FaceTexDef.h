@@ -57,7 +57,7 @@ public:
 	void fit(const Vector3& normal, const Winding& winding, float s_repeat, float t_repeat);
 
 	// Mirrors the texture around the given axis
-	void flipTexture(const Vector3& flipAxis);
+	void flipTexture(unsigned int flipAxis);
 
 	// greebo: Calculate the texture coordinates and save them into the winding points
 	void emitTextureCoordinates(Winding& winding, const Vector3& normal, const Matrix4& localToWorld);

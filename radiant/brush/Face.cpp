@@ -283,7 +283,7 @@ void Face::FitTexture(float s_repeat, float t_repeat) {
 	texdefChanged();
 }
 
-void Face::flipTexture(const Vector3& flipAxis) {
+void Face::flipTexture(unsigned int flipAxis) {
 	undoSave();
 	m_texdef.flipTexture(flipAxis);
 	texdefChanged();
