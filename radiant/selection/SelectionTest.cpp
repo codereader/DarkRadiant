@@ -200,7 +200,7 @@ void SelectionVolume::TestQuadStrip(const VertexPointer& vertices, const IndexPo
 bool testselect_entity_visible::pre(const scene::Path& path, scene::Instance& instance) const {
     Selectable* selectable = Instance_getSelectable(instance);
     if(selectable != 0 && Node_isEntity(path.top())) {
-      _selector.pushSelectable(*selectable);
+    	_selector.pushSelectable(*selectable);
     }
 
     SelectionTestable* selectionTestable = Instance_getSelectionTestable(instance);
@@ -214,7 +214,13 @@ bool testselect_entity_visible::pre(const scene::Path& path, scene::Instance& in
 void testselect_entity_visible::post(const scene::Path& path, scene::Instance& instance) const {
     Selectable* selectable = Instance_getSelectable(instance);
     if(selectable != 0 && Node_isEntity(path.top())) {
-      _selector.popSelectable();
+    	// Get the Entity from this node
+    	Entity* entity = Node_getEntity(path.top());
+    	
+    	// Don't select the worldspawn entity
+    	if (entity != NULL && entity->getKeyValue("classname") != "worldspawn") {
+    		_selector.popSelectable();
+    	}
     }
 }
 

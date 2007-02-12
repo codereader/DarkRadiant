@@ -5,6 +5,7 @@
 #include "TransformationVisitors.h"
 #include "SelectionTest.h"
 #include "Planes.h"
+#include "renderer.h"
 
 // ------------ Helper functions ---------------------------
 
@@ -596,6 +597,21 @@ void DragManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
       {
         _selected = Scene_forEachPlaneSelectable_selectPlanes(GlobalSceneGraph(), selector, test);
       }
+    }
+    // Check for entities that can be selected
+    else if(GlobalSelectionSystem().Mode() == SelectionSystem::eEntity) {
+    	// Create a boolean selection pool (can have exactly one selectable or none)
+		BooleanSelector booleanSelector;
+	
+		// Find the visible entities
+		Scene_forEachVisible(GlobalSceneGraph(), view, 
+							 testselect_entity_visible(booleanSelector, test));
+
+		// Check, if an entity could be found
+      	if (booleanSelector.isSelected()) {
+        	selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
+        	_selected = false;
+		}
     }
     else
     {

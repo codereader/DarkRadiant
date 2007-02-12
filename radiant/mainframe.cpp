@@ -885,7 +885,7 @@ bool FaceMode() {
 void ComponentModeChanged() {
 	GlobalEventManager().setToggled("DragVertices", VertexMode());
 	GlobalEventManager().setToggled("DragEdges", EdgeMode());
-	GlobalEventManager().setToggled("DragFaces", FaceMode()); 
+	GlobalEventManager().setToggled("DragFaces", FaceMode());
 }
 
 void ComponentMode_SelectionChanged(const Selectable& selectable) {
@@ -894,6 +894,20 @@ void ComponentMode_SelectionChanged(const Selectable& selectable) {
 		SelectionSystem_DefaultMode();
 		ComponentModeChanged();
 	}
+}
+
+void ToggleEntityMode() {
+	if (GlobalSelectionSystem().Mode() == SelectionSystem::eEntity) {
+		SelectionSystem_DefaultMode();
+	}
+	else {
+		GlobalSelectionSystem().SetMode(SelectionSystem::eEntity);
+		GlobalSelectionSystem().SetComponentMode(SelectionSystem::eDefault);
+	}
+
+	ComponentModeChanged();
+
+	ModeChangeNotify();
 }
 
 void ToggleEdgeMode() {
@@ -1760,6 +1774,7 @@ GtkMenuItem* create_selection_menu()
     createCheckMenuItemWithMnemonic(menu_in_menu, "_Edges", "DragEdges");
     createCheckMenuItemWithMnemonic(menu_in_menu, "_Vertices", "DragVertices");
     createCheckMenuItemWithMnemonic(menu_in_menu, "_Faces", "DragFaces");
+    createCheckMenuItemWithMnemonic(menu_in_menu, "En_tities", "DragEntities");
   }
 
   menu_separator(menu);
@@ -2777,9 +2792,11 @@ void MainFrame_Construct()
 	GlobalEventManager().addToggle("DragVertices", FreeCaller<ToggleVertexMode>());
 	GlobalEventManager().addToggle("DragEdges", FreeCaller<ToggleEdgeMode>());
 	GlobalEventManager().addToggle("DragFaces", FreeCaller<ToggleFaceMode>());
+	GlobalEventManager().addToggle("DragEntities", FreeCaller<ToggleEntityMode>());
 	GlobalEventManager().setToggled("DragVertices", false);
 	GlobalEventManager().setToggled("DragEdges", false);
 	GlobalEventManager().setToggled("DragFaces", false); 
+	GlobalEventManager().setToggled("DragEntities", false);
 	
 	GlobalEventManager().addCommand("MirrorSelectionX", FreeCaller<Selection_Flipx>());
 	GlobalEventManager().addCommand("RotateSelectionX", FreeCaller<Selection_Rotatex>());
