@@ -68,6 +68,10 @@ void FaceTexdef::fit(const Vector3& normal, const Winding& winding, float s_repe
 	m_projection.fitTexture(m_shader.width(), m_shader.height(), normal, winding, s_repeat, t_repeat);
 }
 
+void FaceTexdef::flipTexture(const Vector3& flipAxis) {
+	m_projection.flipTexture(flipAxis);
+}
+
 void FaceTexdef::emitTextureCoordinates(Winding& winding, const Vector3& normal, const Matrix4& localToWorld) {
 	// old code // m_projection.emitTextureCoordinates(m_shader.width(), m_shader.height(), winding, normal, localToWorld);
 	m_projection.emitTextureCoordinates(winding, normal, localToWorld);

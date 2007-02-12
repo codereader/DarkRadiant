@@ -53,6 +53,16 @@ public:
 	// Fits a texture to a brush face
 	void fitTexture(std::size_t width, std::size_t height, const Vector3& normal, const Winding& w, float s_repeat, float t_repeat);
 	
+	/** greebo: Mirrors the texture around the given axis.
+	 * 
+	 * @parameter: If the first component (x-component) of the vector is not 0, the texture is flipped
+	 * around the x-axis. Same goes for the y-component (a value unequal to 0 flips it around y).
+	 * The z-component is ignored.
+	 * 
+	 * @flipAxis: Pass <1,0,0> to flipX, <0,1,0> to flipY (haven't tested what happens, if <1,1,0> is passed.
+	 */
+	void flipTexture(const Vector3& flipAxis);
+	
 	// greebo: Looks like this method saves the texture definitions into the brush winding points
 	void emitTextureCoordinates(Winding& w, const Vector3& normal, const Matrix4& localToWorld) const;
 	

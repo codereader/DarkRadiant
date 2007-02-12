@@ -57,4 +57,10 @@ struct BrushPrimitTexDef {
 	Matrix4 getTransform() const;
 };
 
+inline std::ostream& operator<<(std::ostream& st, const BrushPrimitTexDef& texdef) {
+	st << "<" << texdef.coords[0][0] << ", " << texdef.coords[0][1] << ", " << texdef.coords[0][2] << ">\n";
+	st << "<" << texdef.coords[1][0] << ", " << texdef.coords[1][1] << ", " << texdef.coords[1][2] << ">";
+	return st;
+}
+
 #endif /*BRUSHTEXTUREDEFINTION_H_*/

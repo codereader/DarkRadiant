@@ -30,4 +30,10 @@ public:
 	Matrix4 getTransform(float width, float height) const;
 };
 
+inline std::ostream& operator<< (std::ostream& st, const TexDef& texdef) {
+	st << "Scale: <" << texdef._scale[0] << ", " << texdef._scale[1] << ">, ";
+	st << "Rotation: <" << texdef._rotate << ">";
+	return st;
+}
+
 #endif /*TEXDEF_H_*/

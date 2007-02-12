@@ -1602,7 +1602,13 @@ void SelectedFaces_pasteTexture()
   g_SelectedFaceInstances.foreach(FaceInstance_pasteTexture);
 }
 
+void FlipTextureX() {
+	Select_FlipTexture(Vector3(1,0,0));
+}
 
+void FlipTextureY() {
+	Select_FlipTexture(Vector3(0,1,0));
+}
 
 void SurfaceInspector_constructPreferences(PrefPage* page)
 {
@@ -1625,6 +1631,9 @@ void SurfaceInspector_registerCommands()
 
   GlobalEventManager().addCommand("FaceCopyTexture", FreeCaller<SelectedFaces_copyTexture>());
   GlobalEventManager().addCommand("FacePasteTexture", FreeCaller<SelectedFaces_pasteTexture>());
+  
+  GlobalEventManager().addCommand("FlipTextureX", FreeCaller<FlipTextureX>());
+  GlobalEventManager().addCommand("FlipTextureY", FreeCaller<FlipTextureY>());
 }
 
 

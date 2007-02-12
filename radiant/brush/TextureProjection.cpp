@@ -180,6 +180,27 @@ void TextureProjection::fitTexture(std::size_t width, std::size_t height, const 
 	normalise((float)width, (float)height);
 }
 
+void TextureProjection::flipTexture(const Vector3& flipAxis) {
+	// Retrieve the "fake" texture coordinates (shift, scale, rotation)	
+	TexDef texdef = m_brushprimit_texdef.getFakeTexCoords();
+	
+	// Check for x flip (x-component not zero)
+	if (flipAxis[0] != 0) {
+		// Invert the x scale and rotate 180°
+		texdef._scale[0] *= -1;
+		texdef._rotate -= 180;
+	}
+	
+	// Check for y flip (y-component not zero)
+	if (flipAxis[1] != 0) {
+		// Invert the y scale and rotate 180°
+		texdef._scale[1] *= -1;
+		texdef._rotate -= 180;
+	}
+	
+	m_brushprimit_texdef = BrushPrimitTexDef(texdef);
+}
+
 Matrix4 TextureProjection::getWorldToTexture(const Vector3& normal, const Matrix4& localToWorld) const {
 	// Get the transformation matrix, that contains the shift, scale and rotation 
 	// of the texture in "condensed" form (as matrix components).

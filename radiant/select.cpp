@@ -613,6 +613,17 @@ void Select_RotateTexture(float amt)
   Scene_BrushRotateTexdef_Component_Selected(GlobalSceneGraph(), amt);
 }
 
+void Select_FlipTexture(const Vector3& flipAxis) {
+	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
+		// Flip the texture of all the brushes (selected as a whole)
+		Scene_BrushFlipTexture_Selected(flipAxis);
+		//Scene_PatchScaleTexture_Selected(GlobalSceneGraph(), x, y);
+	}
+	// Now flip all the seperately selected faces
+	Scene_BrushFlipTexture_Component_Selected(flipAxis);
+	SceneChangeNotify();
+}
+
 // TTimo modified to handle shader architecture:
 // expects shader names at input, comparison relies on shader names .. texture names no longer relevant
 void FindReplaceTextures(const char* pFind, const char* pReplace, bool bSelected)
