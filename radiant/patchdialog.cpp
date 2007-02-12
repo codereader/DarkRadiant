@@ -511,6 +511,24 @@ void Scene_PatchTranslateTexture_Selected(scene::Graph& graph, float s, float t)
   Scene_forEachVisibleSelectedPatch(PatchTranslateTexture(s, t));
 }
 
+class PatchTextureFlipper
+{
+	unsigned int _flipAxis;
+public:
+	PatchTextureFlipper(unsigned int flipAxis) :
+		_flipAxis(flipAxis)
+	{}
+	
+	void operator()(Patch& patch) const {
+		patch.FlipTexture(_flipAxis);
+	}
+};
+
+
+void Scene_PatchFlipTexture_Selected(unsigned int flipAxis) {
+	Scene_forEachVisibleSelectedPatch(PatchTextureFlipper(flipAxis));
+}
+
 static void OnSpinChanged (GtkAdjustment *adj, gpointer data)
 {
   TexDef td;

@@ -38,6 +38,7 @@ namespace scene
 void Scene_PatchTranslateTexture_Selected(scene::Graph& graph, float s, float t);
 void Scene_PatchRotateTexture_Selected(scene::Graph& graph, float angle);
 void Scene_PatchScaleTexture_Selected(scene::Graph& graph, float s, float t);
+void Scene_PatchFlipTexture_Selected(unsigned int flipAxis);
 
 
 #endif

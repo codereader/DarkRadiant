@@ -68,7 +68,7 @@ void FaceTexdef::fit(const Vector3& normal, const Winding& winding, float s_repe
 	m_projection.fitTexture(m_shader.width(), m_shader.height(), normal, winding, s_repeat, t_repeat);
 }
 
-void FaceTexdef::flipTexture(const Vector3& flipAxis) {
+void FaceTexdef::flipTexture(unsigned int flipAxis) {
 	m_projection.flipTexture(flipAxis);
 }
 

@@ -26,7 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <string>
 #include "string/stringfwd.h"
 #include "generic/callbackfwd.h"
-#include "math/Vector3.h"
 
 enum EBrushPrefab
 {
@@ -71,8 +70,8 @@ void Scene_BrushSelectByShader(scene::Graph& graph, const char* name);
 void Scene_BrushSelectByShader_Component(scene::Graph& graph, const char* name);
 void Scene_BrushFitTexture_Selected(scene::Graph& graph, float s_repeat, float t_repeat);
 void Scene_BrushFitTexture_Component_Selected(scene::Graph& graph, float s_repeat, float t_repeat);
-void Scene_BrushFlipTexture_Selected(const Vector3& flipAxis);
-void Scene_BrushFlipTexture_Component_Selected(const Vector3& flipAxis);
+void Scene_BrushFlipTexture_Selected(unsigned int flipAxis);
+void Scene_BrushFlipTexture_Component_Selected(unsigned int flipAxis);
 
 typedef struct _GtkMenu GtkMenu;
 void Brush_constructMenu(GtkMenu* menu);

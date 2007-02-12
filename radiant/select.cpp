@@ -613,11 +613,12 @@ void Select_RotateTexture(float amt)
   Scene_BrushRotateTexdef_Component_Selected(GlobalSceneGraph(), amt);
 }
 
-void Select_FlipTexture(const Vector3& flipAxis) {
+void Select_FlipTexture(unsigned int flipAxis) {
 	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
 		// Flip the texture of all the brushes (selected as a whole)
 		Scene_BrushFlipTexture_Selected(flipAxis);
-		//Scene_PatchScaleTexture_Selected(GlobalSceneGraph(), x, y);
+		// Flip the texture coordinates of the selected patches
+		Scene_PatchFlipTexture_Selected(flipAxis);
 	}
 	// Now flip all the seperately selected faces
 	Scene_BrushFlipTexture_Component_Selected(flipAxis);
