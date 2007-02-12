@@ -283,6 +283,12 @@ void Face::FitTexture(float s_repeat, float t_repeat) {
 	texdefChanged();
 }
 
+void Face::flipTexture(const Vector3& flipAxis) {
+	undoSave();
+	m_texdef.flipTexture(flipAxis);
+	texdefChanged();
+}
+
 void Face::EmitTextureCoordinates() {
 	//m_texdefTransformed.emitTextureCoordinates(m_shader.width(), m_shader.height(), m_winding, plane3().normal(), g_matrix4_identity);
 	m_texdefTransformed.emitTextureCoordinates(m_winding, plane3().normal(), Matrix4::getIdentity());

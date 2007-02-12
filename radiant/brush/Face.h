@@ -153,6 +153,7 @@ public:
 	void ScaleTexdef(float s, float t);
 	void RotateTexdef(float angle);
 	void FitTexture(float s_repeat, float t_repeat);
+	void flipTexture(const Vector3& flipAxis);
 
 	void EmitTextureCoordinates();
 
