@@ -208,24 +208,6 @@ void Scene_PatchCapTexture_Selected(scene::Graph& graph)
   SceneChangeNotify();
 }
 
-class PatchFlipTexture
-{
-  int m_axis;
-public:
-  PatchFlipTexture(int axis) : m_axis(axis)
-  {
-  }
-  void operator()(Patch& patch) const
-  {
-    patch.FlipTexture(m_axis);
-  }
-};
-
-void Scene_PatchFlipTexture_Selected(scene::Graph& graph, int axis)
-{
-  Scene_forEachVisibleSelectedPatch(PatchFlipTexture(axis));
-}
-
 class PatchNaturalTexture
 {
 public:
@@ -589,26 +571,20 @@ void Patch_OverlayOff()
 {
 }
 
-void Patch_FlipTextureX()
-{
-  UndoableCommand undo("patchFlipTextureU");
-
-  Scene_PatchFlipTexture_Selected(GlobalSceneGraph(), 0);
-}
-
-void Patch_FlipTextureY()
-{
-  UndoableCommand undo("patchFlipTextureV");
-
-  Scene_PatchFlipTexture_Selected(GlobalSceneGraph(), 1);
-}
-
 void Patch_NaturalTexture()
 {
   UndoableCommand undo("patchNaturalTexture");
 
   Scene_PatchNaturalTexture_Selected(GlobalSceneGraph());
 }
+
+namespace patch {
+
+void thickenSelectedPatch() {
+	// Thicken code goes here
+}
+
+} // namespace patch
 
 #include "preferences.h"
 
@@ -639,8 +615,6 @@ void PatchPreferences_construct()
 
 void Patch_registerCommands()
 {
-  GlobalEventManager().addCommand("InvertCurveTextureX", FreeCaller<Patch_FlipTextureX>());
-  GlobalEventManager().addCommand("InvertCurveTextureY", FreeCaller<Patch_FlipTextureY>());
   GlobalEventManager().addCommand("IncPatchColumn", FreeCaller<Patch_InsertInsertColumn>());
   GlobalEventManager().addCommand("IncPatchRow", FreeCaller<Patch_InsertInsertRow>());
   GlobalEventManager().addCommand("DecPatchColumn", FreeCaller<Patch_DeleteLastColumn>());
@@ -672,6 +646,7 @@ void Patch_registerCommands()
   GlobalEventManager().addCommand("CycleCapTexturePatch", FreeCaller<Patch_CycleProjection>());
   GlobalEventManager().addCommand("MakeOverlayPatch", FreeCaller<Patch_OverlayOn>());
   GlobalEventManager().addCommand("ClearPatchOverlays", FreeCaller<Patch_OverlayOff>());
+  GlobalEventManager().addCommand("ThickenPatch", FreeCaller<patch::thickenSelectedPatch>());
 }
 
 void Patch_constructMenu(GtkMenu* menu)
