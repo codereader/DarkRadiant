@@ -157,6 +157,7 @@
 		<shortcut command="DragVertices" key="V" />
 		<shortcut command="DragEdges" key="E" />
 		<shortcut command="DragFaces" key="F" />
+		<shortcut command="ThickenPatch" key="T" modifiers="CONTROL" />
 		<shortcut command="ToggleShowAllLightRadii" key="F" modifiers="CONTROL+SHIFT+ALT" />
 		<shortcut command="ToggleClipper" key="X" />
 		<shortcut command="MouseTranslate" key="W" />
