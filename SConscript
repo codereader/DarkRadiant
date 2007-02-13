@@ -372,6 +372,7 @@ radiant_src = [
 'ui/colourscheme/ColourSchemeManager.cpp',
 'ui/colourscheme/ColourSchemeEditor.cpp',
 'ui/overlay/OverlayDialog.cpp',
+'ui/patch/PatchThickenDialog.cpp',
 'selection/Manipulatables.cpp',
 'selection/Manipulators.cpp',
 'selection/BestPoint.cpp',
