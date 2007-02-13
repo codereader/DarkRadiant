@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gdk/gdkkeysyms.h"
 #include "gtkutil/menu.h"
 #include "gtkutil/image.h"
+#include "gtkutil/dialog.h"
 #include "map.h"
 #include "mainframe.h"
 #include "gtkmisc.h"
@@ -42,6 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "patch.h"
 #include "igrid.h"
 #include "xyview/GlobalXYWnd.h"
+#include "ui/patch/PatchThickenDialog.h"
 
 PatchCreator* g_patchCreator = 0;
 
@@ -580,8 +582,42 @@ void Patch_NaturalTexture()
 
 namespace patch {
 
+class PatchThickener
+{
+	const float& _thickness;
+	const bool& _createSeams;
+
+public:
+	PatchThickener(const float& thickness, const bool& createSeams) : 
+		_thickness(thickness), 
+		_createSeams(createSeams) 
+	{}
+	
+	void operator()(PatchInstance& patch) const {
+		std::cout << "PatchInstance visited.\n";
+	}
+};
+
 void thickenSelectedPatch() {
 	// Thicken code goes here
+	if (GlobalSelectionSystem().countSelected() != 0) {
+		UndoableCommand undo("patchThicken");
+		
+		ui::PatchThickenDialog dialog;
+		
+		bool createSeams = false;
+		float thickness = 0.0f;
+		
+		if (dialog.queryPatchThickness(thickness, createSeams)) {
+			Scene_forEachVisibleSelectedPatchInstance(
+				PatchThickener(thickness, createSeams)
+			);
+		}
+	}
+	else {
+		gtkutil::errorDialog("Cannot thicken patch. Nothing selected.",
+							 MainFrame_getWindow());
+	}
 }
 
 } // namespace patch
