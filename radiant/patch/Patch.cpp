@@ -3556,3 +3556,62 @@ void Patch::BuildVertexArray()
     }
   }
 }
+
+void Patch::createThickenedOpposite(const Patch& sourcePatch, const float& thickness) {
+	// Clone the dimensions from the other patch
+	setDims(sourcePatch.getWidth(), sourcePatch.getHeight());
+	
+	// Copy the shader from the source patch
+	SetShader(sourcePatch.GetShader());
+	
+	// Convert the size_t stuff into int, because we need it for signed comparisons
+	int patchHeight = static_cast<int>(m_height);
+	int patchWidth = static_cast<int>(m_width);
+	
+	for (int w = 0; w < patchWidth; w++) {
+		for (int h = 0; h < patchHeight; h++) {
+			// The current control vertex on the other patch
+			const PatchControl& curCtrl = sourcePatch.ctrlAt(w, h);
+			
+			// Retrieve the index of the next control vertex
+			// If we are at the end of the row/col, take the last visited one
+			int wNext = (w == patchWidth-1) ? (w - 1) : (w + 1);
+			int hNext = (h == patchHeight-1) ? (h - 1) : (h + 1);
+			
+			// These are factors that take the possibly reversed direction
+			// into account. If the row index reaches the end of the row, the
+			// vertex with index w-1 is taken (which points in the opposite direction).
+			// Same goes for the col index h.
+			int mul1 = (w == patchWidth-1) ? -1 : +1;
+			int mul2 = (h == patchHeight-1) ? -1 : +1;
+			
+			// Take two neighbouring vertices that should form a triangle
+			const PatchControl& neighbour1 = sourcePatch.ctrlAt(wNext, h);
+			const PatchControl& neighbour2 = sourcePatch.ctrlAt(w, hNext);
+			
+			// Calculate the tangent vectors of these vertices
+			Vector3 tangent1 = neighbour1.m_vertex - curCtrl.m_vertex;
+			Vector3 tangent2 = neighbour2.m_vertex - curCtrl.m_vertex;
+			
+			// Reverse the tangents if necessary (at the end of a row/col).
+			tangent1 *= mul1;
+			tangent2 *= mul2;
+			
+			// Calculate the normal vector based on this triangle
+			// this gives us the direction of the thickening
+			Vector3 normal = tangent1.crossProduct(tangent2).getNormalised();
+			
+			// Store the new coordinates into this patch at the current coords
+			ctrlAt(w, h).m_vertex = curCtrl.m_vertex + normal*thickness;
+			
+			// Clone the texture cooordinates of the source patch
+			ctrlAt(w, h).m_texcoord = curCtrl.m_texcoord;
+		}
+	}
+	
+	// Reverse the patch, so that it faces the opposite direction
+	InvertMatrix();
+	
+	// Notify the patch about the change
+	controlPointsChanged();
+}

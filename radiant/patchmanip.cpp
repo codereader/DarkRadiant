@@ -582,25 +582,79 @@ void Patch_NaturalTexture()
 
 namespace patch {
 
-class PatchThickener
+/** greebo: This populates the given list with patchinstance references
+ */
+class PatchFinder
 {
-	const float& _thickness;
-	const bool& _createSeams;
-
 public:
-	PatchThickener(const float& thickness, const bool& createSeams) : 
-		_thickness(thickness), 
-		_createSeams(createSeams) 
-	{}
+	typedef std::list<PatchInstance*> PatchList;
+
+	// The list that is going to be populated
+	mutable PatchList& _list;
 	
+	PatchFinder(PatchList& list) : 
+		_list(list) 
+	{}
+
 	void operator()(PatchInstance& patch) const {
-		std::cout << "PatchInstance visited.\n";
+		_list.push_back(&patch);
 	}
 };
 
-void thickenSelectedPatch() {
-	// Thicken code goes here
-	if (GlobalSelectionSystem().countSelected() != 0) {
+void thickenPatches(PatchFinder::PatchList list, const float& thickness, const bool& createSeams) {
+	// Go through the list and thicken all the found ones
+	for (PatchFinder::PatchList::iterator i = list.begin();
+		 i != list.end();
+		 i++)
+	{
+		// Retrieve the reference from the pointer
+		PatchInstance& sourcePatch = *(*i); 
+		
+		// Create a new patch node
+		NodeSmartReference node(g_patchCreator->createPatch());
+		// Insert the node into worldspawn
+		Node_getTraversable(Map_FindOrInsertWorldspawn(g_map))->insert(node);
+	
+		// Retrieve the contained patch from the node
+		Patch* targetPatch = Node_getPatch(node);
+	
+		// Create the opposite patch with the given thickness = distance
+		targetPatch->createThickenedOpposite(sourcePatch.getPatch(), thickness);
+	
+		// Now select the newly created patches
+		{
+			scene::Path patchpath(makeReference(GlobalSceneGraph().root()));
+			patchpath.push(makeReference(*Map_GetWorldspawn(g_map)));
+			patchpath.push(makeReference(node.get()));
+			Instance_getSelectable(*GlobalSceneGraph().find(patchpath))->setSelected(true);
+		}
+		
+		if (createSeams && thickness > 0.0f) {
+			// Allocate four new patches
+			
+			
+			// seam1->createThickenedWall(sourcePatch, targetPatch, 0, 0);
+		}
+	}
+}
+
+/** greebo: This collects a list of all selected patches and thickens them
+ * after querying the user for the thickness and the "createSeams" boolean.
+ * 
+ * Note: I chose to populate a list first, because otherwise the visitor
+ * class would get stuck in a loop (as the newly created patches get selected,
+ * and they are thickened as well, and again and again).  
+ */
+void thickenSelectedPatches() {
+	// The list of all the selected patches
+	PatchFinder::PatchList list;
+	
+	// Now populate the list
+	Scene_forEachVisibleSelectedPatchInstance(
+		PatchFinder(list)
+	);
+	
+	if (list.size() > 0) {
 		UndoableCommand undo("patchThicken");
 		
 		ui::PatchThickenDialog dialog;
@@ -609,9 +663,8 @@ void thickenSelectedPatch() {
 		float thickness = 0.0f;
 		
 		if (dialog.queryPatchThickness(thickness, createSeams)) {
-			Scene_forEachVisibleSelectedPatchInstance(
-				PatchThickener(thickness, createSeams)
-			);
+			// Thicken all the patches in the list
+			thickenPatches(list, thickness, createSeams);
 		}
 	}
 	else {
@@ -682,7 +735,7 @@ void Patch_registerCommands()
   GlobalEventManager().addCommand("CycleCapTexturePatch", FreeCaller<Patch_CycleProjection>());
   GlobalEventManager().addCommand("MakeOverlayPatch", FreeCaller<Patch_OverlayOn>());
   GlobalEventManager().addCommand("ClearPatchOverlays", FreeCaller<Patch_OverlayOff>());
-  GlobalEventManager().addCommand("ThickenPatch", FreeCaller<patch::thickenSelectedPatch>());
+  GlobalEventManager().addCommand("ThickenPatch", FreeCaller<patch::thickenSelectedPatches>());
 }
 
 void Patch_constructMenu(GtkMenu* menu)
