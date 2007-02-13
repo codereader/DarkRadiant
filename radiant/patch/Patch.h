@@ -239,6 +239,7 @@ public:
 
 	// Get the current control point array
 	PatchControlArray& getControlPoints();	
+	const PatchControlArray& getControlPoints() const;
 	// Get the (temporary) transformed control point array, not the saved ones
 	PatchControlArray& getControlPointsTransformed();
 
@@ -294,6 +295,15 @@ public:
 	 * with the given <thickness>
 	 */
 	void createThickenedOpposite(const Patch& sourcePatch, const float& thickness);
+
+	/** greebo: This creates on of the "wall" patches when thickening patches.
+	 * 
+	 * @sourcePath, targetPatch: these are the top and bottom patches. The wall connects
+	 * 				a distinct edge of these two, depending on the wallIndex.
+	 *  
+	 * @wallIndex: 0..3 (cycle through them to create all four walls).
+	 */
+	void createThickenedWall(const Patch& sourcePatch, const Patch& targetPatch, const int& wallIndex);
 
 	// called just before an action to save the undo state
 	void undoSave();

@@ -164,6 +164,11 @@ PatchControlArray& Patch::getControlPoints() {
 	return m_ctrl;
 }
 
+// Same as above, just for const arguments
+const PatchControlArray& Patch::getControlPoints() const {
+	return m_ctrl;
+}
+
 // Get the (temporary) transformed control point array, not the saved ones
 PatchControlArray& Patch::getControlPointsTransformed() {
 	return m_ctrlTransformed;
@@ -3568,31 +3573,31 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch, const float& thick
 	int patchHeight = static_cast<int>(m_height);
 	int patchWidth = static_cast<int>(m_width);
 	
-	for (int w = 0; w < patchWidth; w++) {
-		for (int h = 0; h < patchHeight; h++) {
+	for (int col = 0; col < patchWidth; col++) {
+		for (int row = 0; row < patchHeight; row++) {
 			// The current control vertex on the other patch
-			const PatchControl& curCtrl = sourcePatch.ctrlAt(w, h);
+			const PatchControl& curCtrl = sourcePatch.ctrlAt(row, col);
 			
 			// Retrieve the index of the next control vertex
 			// If we are at the end of the row/col, take the last visited one
-			int wNext = (w == patchWidth-1) ? (w - 1) : (w + 1);
-			int hNext = (h == patchHeight-1) ? (h - 1) : (h + 1);
+			int nextCol = (col == patchWidth-1) ? (col - 1) : (col + 1);
+			int nextRow = (row == patchHeight-1) ? (row - 1) : (row + 1);
 			
 			// These are factors that take the possibly reversed direction
 			// into account. If the row index reaches the end of the row, the
 			// vertex with index w-1 is taken (which points in the opposite direction).
 			// Same goes for the col index h.
-			int mul1 = (w == patchWidth-1) ? -1 : +1;
-			int mul2 = (h == patchHeight-1) ? -1 : +1;
+			int mul1 = (col == patchWidth-1) ? -1 : +1;
+			int mul2 = (row == patchHeight-1) ? -1 : +1;
 			
 			// Take two neighbouring vertices that should form a triangle
-			const PatchControl& neighbour1 = sourcePatch.ctrlAt(wNext, h);
-			const PatchControl& neighbour2 = sourcePatch.ctrlAt(w, hNext);
+			const PatchControl& neighbour1 = sourcePatch.ctrlAt(row, nextCol);
+			const PatchControl& neighbour2 = sourcePatch.ctrlAt(nextRow, col);
 			
 			// Calculate the tangent vectors of these vertices
 			Vector3 tangent1 = neighbour1.m_vertex - curCtrl.m_vertex;
 			Vector3 tangent2 = neighbour2.m_vertex - curCtrl.m_vertex;
-			
+
 			// Reverse the tangents if necessary (at the end of a row/col).
 			tangent1 *= mul1;
 			tangent2 *= mul2;
@@ -3602,16 +3607,92 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch, const float& thick
 			Vector3 normal = tangent1.crossProduct(tangent2).getNormalised();
 			
 			// Store the new coordinates into this patch at the current coords
-			ctrlAt(w, h).m_vertex = curCtrl.m_vertex + normal*thickness;
+			ctrlAt(row, col).m_vertex = curCtrl.m_vertex - normal*thickness;
 			
 			// Clone the texture cooordinates of the source patch
-			ctrlAt(w, h).m_texcoord = curCtrl.m_texcoord;
+			ctrlAt(row, col).m_texcoord = curCtrl.m_texcoord;
 		}
 	}
 	
-	// Reverse the patch, so that it faces the opposite direction
-	InvertMatrix();
+	// Notify the patch about the change
+	controlPointsChanged();
+}
+
+void Patch::createThickenedWall(const Patch& sourcePatch, 
+								const Patch& targetPatch, 
+								const int& wallIndex) 
+{
+	// Copy the shader from the source patch
+	SetShader(sourcePatch.GetShader());
+	
+	// The start and end control vertex indices
+	int start = 0;
+	int end = 0;
+	// The increment (incr = 1 for the "long" edge, incr = width for the "short" edge)
+	int incr = 1;
+	
+	// These are the target dimensions of this wall
+	// The width is depending on which edge is "seamed".
+	int cols = 0;
+	int rows = 3;
+	
+	int sourceWidth = sourcePatch.getWidth();
+	int sourceHeight = sourcePatch.getHeight();
+	
+	// Determine which of the four edges have to be connected
+	// and calculate the start, end & stepsize for the following loop
+	switch (wallIndex) {
+		case 0:
+			cols = sourceWidth;
+			start = 0;
+			end = sourceWidth - 1;
+			incr = 1;
+			break;
+		case 1:
+			cols = sourceWidth;
+			start = sourceWidth * (sourceHeight-1);
+			end = sourceWidth*sourceHeight - 1;
+			incr = 1;
+			break;
+		case 2:
+			cols = sourceHeight;
+			start = 0;
+			end = sourceWidth*(sourceHeight-1);
+			incr = sourceWidth;
+			break;
+		case 3:
+			cols = sourceHeight;
+			start = sourceWidth - 1;
+			end = sourceWidth*sourceHeight - 1;
+			incr = sourceWidth;
+			break;
+	}
+	
+	setDims(cols, rows);
+	
+	const PatchControlArray& sourceCtrl = sourcePatch.getControlPoints();
+	const PatchControlArray& targetCtrl = targetPatch.getControlPoints(); 
+	
+	int col = 0;
+	// Now go through the control vertices with these calculated stepsize 
+	for (int idx = start; idx <= end; idx += incr, col++) {
+		Vector3 sourceCoord = sourceCtrl[idx].m_vertex;
+		Vector3 targetCoord = targetCtrl[idx].m_vertex;
+		Vector3 middleCoord = (sourceCoord + targetCoord) / 2;
+		
+		// Now assign the vertex coordinates
+		ctrlAt(0, col).m_vertex = sourceCoord;
+		ctrlAt(1, col).m_vertex = middleCoord;
+		ctrlAt(2, col).m_vertex = targetCoord;
+	}
+	
+	if (wallIndex == 0 || wallIndex == 3) {
+		InvertMatrix();
+	}
 	
 	// Notify the patch about the change
 	controlPointsChanged();
+	
+	// Texture the patch "naturally"
+	NaturalTexture();
 }
