@@ -812,6 +812,7 @@ void Patch_constructMenu(GtkMenu* menu)
     createMenuItemWithMnemonic(menu_in_menu, "Transpose", "MatrixTranspose");
   }
   menu_separator (menu);
+  createMenuItemWithMnemonic(menu, "Thicken Selected Patches", "ThickenPatch");
   createMenuItemWithMnemonic(menu, "Cap Selection", "CapCurrentCurve");
   createMenuItemWithMnemonic(menu, "Cycle Cap Texture", "CycleCapTexturePatch");
   menu_separator (menu);
