@@ -71,6 +71,11 @@ PatchThickenDialog::PatchThickenDialog() :
 	
 	// Pack the table into the dialog
 	gtk_box_pack_end(GTK_BOX(GTK_DIALOG(_dialog)->vbox), GTK_WIDGET(alignment), true, true, 0);
+	
+	// Make the enter key to the OK button by default 
+	gtk_dialog_set_default_response(GTK_DIALOG(_dialog), GTK_RESPONSE_OK);
+	// Make the entry field to activate the OK button on pressing "enter"
+	gtk_entry_set_activates_default(GTK_ENTRY(_thicknessEntry), true);
 }
 
 bool PatchThickenDialog::queryPatchThickness(float& thickness, bool& createSeams) {
