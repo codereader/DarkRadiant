@@ -631,10 +631,36 @@ void thickenPatches(PatchFinder::PatchList list, const float& thickness, const b
 		
 		if (createSeams && thickness > 0.0f) {
 			// Allocate four new patches
+			NodeSmartReference nodes[4] = {
+				NodeSmartReference(g_patchCreator->createPatch()),
+				NodeSmartReference(g_patchCreator->createPatch()),
+				NodeSmartReference(g_patchCreator->createPatch()),
+				NodeSmartReference(g_patchCreator->createPatch())
+			};
 			
-			
-			// seam1->createThickenedWall(sourcePatch, targetPatch, 0, 0);
+			// Now create the four walls
+			for (int i = 0; i < 4; i++) {
+				// Insert each node into worldspawn 
+				Node_getTraversable(Map_FindOrInsertWorldspawn(g_map))->insert(nodes[i]);
+				
+				// Retrieve the contained patch from the node
+				Patch* wallPatch = Node_getPatch(nodes[i]);
+				
+				// Create the wall patch by passing i as wallIndex
+				wallPatch->createThickenedWall(sourcePatch.getPatch(), *targetPatch, i);
+				
+				// Now select the newly created patches
+				{
+					scene::Path patchpath(makeReference(GlobalSceneGraph().root()));
+					patchpath.push(makeReference(*Map_GetWorldspawn(g_map)));
+					patchpath.push(makeReference(nodes[i].get()));
+					Instance_getSelectable(*GlobalSceneGraph().find(patchpath))->setSelected(true);
+				}
+			}
 		}
+		
+		// Invert the target patch so that it faces the opposite direction
+		targetPatch->InvertMatrix();
 	}
 }
 
