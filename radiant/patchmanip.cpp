@@ -439,14 +439,6 @@ void Patch_Bevel()
   Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), TextureBrowser_GetSelectedShader(GlobalTextureBrowser()), eBevel, GlobalXYWnd().getActiveViewType());
 }
 
-void Patch_SquareBevel()
-{
-}
-
-void Patch_SquareEndcap()
-{
-}
-
 void Patch_Cone()
 {
   UndoableCommand undo("patchCreateCone");
@@ -561,16 +553,6 @@ void Patch_CycleProjection()
   UndoableCommand undo("patchCycleUVProjectionAxis");
 
   Scene_PatchCapTexture_Selected(GlobalSceneGraph());
-}
-
-///\todo Unfinished.
-void Patch_OverlayOn()
-{
-}
-
-///\todo Unfinished.
-void Patch_OverlayOff()
-{
 }
 
 void Patch_NaturalTexture()
@@ -741,8 +723,6 @@ void Patch_registerCommands()
   GlobalEventManager().addCommand("PatchSquareCylinder", FreeCaller<Patch_SquareCylinder>());
   GlobalEventManager().addCommand("PatchEndCap", FreeCaller<Patch_Endcap>());
   GlobalEventManager().addCommand("PatchBevel", FreeCaller<Patch_Bevel>());
-  GlobalEventManager().addCommand("PatchSquareBevel", FreeCaller<Patch_SquareBevel>());
-  GlobalEventManager().addCommand("PatchSquareEndcap", FreeCaller<Patch_SquareEndcap>());
   GlobalEventManager().addCommand("PatchCone", FreeCaller<Patch_Cone>());
   GlobalEventManager().addCommand("SimplePatchMesh", FreeCaller<Patch_Plane>());
   GlobalEventManager().addCommand("PatchInsertInsertColumn", FreeCaller<Patch_InsertInsertColumn>());
@@ -759,8 +739,6 @@ void Patch_registerCommands()
   GlobalEventManager().addCommand("MatrixTranspose", FreeCaller<Patch_Transpose>());
   GlobalEventManager().addCommand("CapCurrentCurve", FreeCaller<Patch_Cap>());
   GlobalEventManager().addCommand("CycleCapTexturePatch", FreeCaller<Patch_CycleProjection>());
-  GlobalEventManager().addCommand("MakeOverlayPatch", FreeCaller<Patch_OverlayOn>());
-  GlobalEventManager().addCommand("ClearPatchOverlays", FreeCaller<Patch_OverlayOff>());
   GlobalEventManager().addCommand("ThickenPatch", FreeCaller<patch::thickenSelectedPatches>());
 }
 
@@ -776,11 +754,6 @@ void Patch_constructMenu(GtkMenu* menu)
   menu_separator (menu);
   createMenuItemWithMnemonic(menu, "End cap", "PatchEndCap");
   createMenuItemWithMnemonic(menu, "Bevel", "PatchBevel");
-  {
-    GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "More End caps, Bevels");
-    createMenuItemWithMnemonic(menu_in_menu, "Square Endcap", "PatchSquareBevel");
-    createMenuItemWithMnemonic(menu_in_menu, "Square Bevel", "PatchSquareEndcap");
-  }
   menu_separator (menu);
   createMenuItemWithMnemonic(menu, "Cone", "PatchCone");
   menu_separator (menu);
@@ -815,12 +788,6 @@ void Patch_constructMenu(GtkMenu* menu)
   createMenuItemWithMnemonic(menu, "Thicken Selected Patches", "ThickenPatch");
   createMenuItemWithMnemonic(menu, "Cap Selection", "CapCurrentCurve");
   createMenuItemWithMnemonic(menu, "Cycle Cap Texture", "CycleCapTexturePatch");
-  menu_separator (menu);
-  {
-    GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Overlay");
-    createMenuItemWithMnemonic(menu_in_menu, "Set", "MakeOverlayPatch");
-    createMenuItemWithMnemonic(menu_in_menu, "Clear", "ClearPatchOverlays");
-  }
 }
 
 
