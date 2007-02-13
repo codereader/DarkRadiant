@@ -290,6 +290,11 @@ public:
 	
 	void pasteTextureCoordinates(const Patch* otherPatch);
 
+	/** greebo: Converts this patch as thickened counterpart of the given <sourcePatch>
+	 * with the given <thickness>
+	 */
+	void createThickenedOpposite(const Patch& sourcePatch, const float& thickness);
+
 	// called just before an action to save the undo state
 	void undoSave();
 
