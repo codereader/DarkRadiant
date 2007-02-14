@@ -180,6 +180,14 @@ namespace map {
 	 
 	void selectedBrushesSubtractOrigin(const Vector3& origin);
 	
+	/** Count the number of selected primitives in the current map.
+	 * 
+	 * @returns
+	 * The number of selected primitives.
+	 */
+	 
+	int countSelectedPrimitives();
+	
 	/** Count the number of selected brushes in the current map.
 	 * 
 	 * @returns
