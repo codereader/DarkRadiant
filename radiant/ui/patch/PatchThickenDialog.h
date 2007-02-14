@@ -7,7 +7,6 @@
 /** greebo: Dialog to query the user for the desired patch thickness and
  *  if seams are to be created.
  * 
- *  @returns: TRUE, if the user pressed ok, FALSE if the dialog was cancelled 
  */
 namespace ui {
 
