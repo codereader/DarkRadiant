@@ -292,9 +292,11 @@ public:
 	void pasteTextureCoordinates(const Patch* otherPatch);
 
 	/** greebo: Converts this patch as thickened counterpart of the given <sourcePatch>
-	 * with the given <thickness>
+	 * with the given <thickness> along the chosen <axis>
+	 * 
+	 * @axis: 0 = x-axis, 1 = y-axis, 2 = z-axis, 3 = vertex normals
 	 */
-	void createThickenedOpposite(const Patch& sourcePatch, const float& thickness);
+	void createThickenedOpposite(const Patch& sourcePatch, const float& thickness, const int& axis);
 
 	/** greebo: This creates on of the "wall" patches when thickening patches.
 	 * 

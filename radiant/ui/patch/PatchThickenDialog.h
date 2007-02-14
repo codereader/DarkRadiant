@@ -19,6 +19,11 @@ class PatchThickenDialog
 	GtkWidget* _seamsCheckBox;
 	
 	GtkWidget* _dialog;
+	
+	GtkWidget* _radNormals;
+	GtkWidget* _radX;
+	GtkWidget* _radY;
+	GtkWidget* _radZ;
 
 public:
 	// Constructor, instantiate this class by specifying the parent window 
@@ -29,7 +34,7 @@ public:
 	 * 
 	 * @returns: TRUE, if the user pressed ok, FALSE if cancelled 
 	 */
-	bool queryPatchThickness(float& thickness, bool& createSeams);
+	bool queryPatchThickness(float& thickness, bool& createSeams, int& axis);
 
 }; // class PatchThickenDialog
 

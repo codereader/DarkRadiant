@@ -3562,12 +3562,33 @@ void Patch::BuildVertexArray()
   }
 }
 
-void Patch::createThickenedOpposite(const Patch& sourcePatch, const float& thickness) {
+void Patch::createThickenedOpposite(const Patch& sourcePatch, 
+									const float& thickness, 
+									const int& axis) 
+{
 	// Clone the dimensions from the other patch
 	setDims(sourcePatch.getWidth(), sourcePatch.getHeight());
 	
 	// Copy the shader from the source patch
 	SetShader(sourcePatch.GetShader());
+	
+	// if extrudeAxis == 0,0,0 the patch is extruded along its vertex normals
+	Vector3 extrudeAxis(0,0,0);
+	
+	switch (axis) {
+		case 0: // X-Axis
+			extrudeAxis = Vector3(1,0,0);
+			break;
+		case 1: // Y-Axis
+			extrudeAxis = Vector3(0,1,0);
+			break;
+		case 2: // Z-Axis
+			extrudeAxis = Vector3(0,0,1);
+			break;
+		default:
+			// Default value already set during initialisation
+			break;
+	}
 	
 	// Convert the size_t stuff into int, because we need it for signed comparisons
 	int patchHeight = static_cast<int>(m_height);
@@ -3602,9 +3623,18 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch, const float& thick
 			tangent1 *= mul1;
 			tangent2 *= mul2;
 			
-			// Calculate the normal vector based on this triangle
-			// this gives us the direction of the thickening
-			Vector3 normal = tangent1.crossProduct(tangent2).getNormalised();
+			Vector3 normal;
+			
+			// Are we extruding along vertex normals (i.e. extrudeAxis == 0,0,0)?
+			if (extrudeAxis == Vector3(0,0,0)) {
+				// Calculate the normal vector based on this triangle
+				// this gives us the direction of the thickening
+				normal = tangent1.crossProduct(tangent2).getNormalised();
+			}
+			else {
+				// Take the predefined extrude direction instead
+				normal = extrudeAxis;
+			}
 			
 			// Store the new coordinates into this patch at the current coords
 			ctrlAt(row, col).m_vertex = curCtrl.m_vertex - normal*thickness;
