@@ -3596,40 +3596,88 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 	
 	for (int col = 0; col < patchWidth; col++) {
 		for (int row = 0; row < patchHeight; row++) {
+			
 			// The current control vertex on the other patch
 			const PatchControl& curCtrl = sourcePatch.ctrlAt(row, col);
 			
-			// Retrieve the index of the next control vertex
-			// If we are at the end of the row/col, take the last visited one
-			int nextCol = (col == patchWidth-1) ? (col - 1) : (col + 1);
+			// The col vertices that are averaged (or ignored if 0,0,0)
+			Vector3 colTangent[2] = {
+				Vector3(0,0,0),
+				Vector3(0,0,0)
+			};
+			
+			// Are we at the end of the column?
+			if (col == patchWidth-1) {
+				// Take the one neighbour vertex
+				const PatchControl& neighbour = sourcePatch.ctrlAt(row, col-1);
+				// Only fill one of the rowTangens
+				colTangent[0] = neighbour.m_vertex - curCtrl.m_vertex;
+				// Reverse it, as it faces the other direction
+				colTangent[0] *= -1;
+			}
+			// Are we at the beginning of the column?
+			else if (col == 0) {
+				// Take the one neighbour vertex
+				const PatchControl& neighbour = sourcePatch.ctrlAt(row, col+1);
+				// Only fill one of the rowTangens
+				colTangent[0] = neighbour.m_vertex - curCtrl.m_vertex;
+			}
+			// We are in between, two normals tangents can be calculated
+			else {
+				// Take two neighbouring vertices that should form a triangle
+				const PatchControl& neighbour1 = sourcePatch.ctrlAt(row, col+1);
+				const PatchControl& neighbour2 = sourcePatch.ctrlAt(row, col-1);
+				
+				// Calculate both available tangents
+				colTangent[0] = neighbour1.m_vertex - curCtrl.m_vertex;
+				colTangent[1] = neighbour2.m_vertex - curCtrl.m_vertex;
+				
+				// Reverse the second one
+				colTangent[1] *= -1;
+			}
+			
+			// Get the next row index
 			int nextRow = (row == patchHeight-1) ? (row - 1) : (row + 1);
 			
-			// These are factors that take the possibly reversed direction
-			// into account. If the row index reaches the end of the row, the
-			// vertex with index w-1 is taken (which points in the opposite direction).
-			// Same goes for the col index h.
-			int mul1 = (col == patchWidth-1) ? -1 : +1;
-			int mul2 = (row == patchHeight-1) ? -1 : +1;
+			const PatchControl& rowNeighbour = sourcePatch.ctrlAt(nextRow, col);
 			
-			// Take two neighbouring vertices that should form a triangle
-			const PatchControl& neighbour1 = sourcePatch.ctrlAt(row, nextCol);
-			const PatchControl& neighbour2 = sourcePatch.ctrlAt(nextRow, col);
-			
-			// Calculate the tangent vectors of these vertices
-			Vector3 tangent1 = neighbour1.m_vertex - curCtrl.m_vertex;
-			Vector3 tangent2 = neighbour2.m_vertex - curCtrl.m_vertex;
-
-			// Reverse the tangents if necessary (at the end of a row/col).
-			tangent1 *= mul1;
-			tangent2 *= mul2;
+			// Calculate the tangent vector to the next row
+			Vector3 rowTangent = rowNeighbour.m_vertex - curCtrl.m_vertex;
+			// Reverse it accordingly
+			rowTangent *= (row == patchHeight-1) ? -1 : +1;
 			
 			Vector3 normal;
 			
 			// Are we extruding along vertex normals (i.e. extrudeAxis == 0,0,0)?
 			if (extrudeAxis == Vector3(0,0,0)) {
-				// Calculate the normal vector based on this triangle
-				// this gives us the direction of the thickening
-				normal = tangent1.crossProduct(tangent2).getNormalised();
+				// Calculate the normal vector with the first tangent
+				// this gives us the first direction of the thickening
+				normal = rowTangent.crossProduct(colTangent[0]).getNormalised();
+				
+				// Check if we have another normal available
+				if (colTangent[1] != Vector3(0,0,0)) {
+					
+					// Calculate the other normal
+					Vector3 normal2 = rowTangent.crossProduct(colTangent[1]).getNormalised();
+					
+					// Now calculate the length correction out of the angle 
+					// of the two normals
+					float factor = cos(normal.angle(normal2)/2);
+			
+					// Calculate the mean value and normalise it
+					normal += normal2;
+					normal /= 2;
+					normal = normal.getNormalised();
+					
+					// Check for div by zero (if the normals are antiparallel)
+					// and stretch the resulting normal, if necessary
+					if (factor != 0) {
+						normal *= 1/factor;
+					}
+					else {
+						normal = Vector3(0,0,0);
+					}
+				}
 			}
 			else {
 				// Take the predefined extrude direction instead
@@ -3637,7 +3685,7 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 			}
 			
 			// Store the new coordinates into this patch at the current coords
-			ctrlAt(row, col).m_vertex = curCtrl.m_vertex - normal*thickness;
+			ctrlAt(row, col).m_vertex = curCtrl.m_vertex + normal*thickness;
 			
 			// Clone the texture cooordinates of the source patch
 			ctrlAt(row, col).m_texcoord = curCtrl.m_texcoord;
