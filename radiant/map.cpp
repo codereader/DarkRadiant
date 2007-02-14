@@ -1874,12 +1874,12 @@ namespace map {
 		 * scene.
 		 */
 	
-		class CountSelectedBrushes : public scene::Graph::Walker
+		class CountSelectedPrimitives : public scene::Graph::Walker
 		{
 		  int& m_count;
 		  mutable std::size_t m_depth;
 		public:
-		  CountSelectedBrushes(int& count) : m_count(count), m_depth(0)
+		  CountSelectedPrimitives(int& count) : m_count(count), m_depth(0)
 		  {
 		    m_count = 0;
 		  }
@@ -1903,6 +1903,41 @@ namespace map {
 		    --m_depth;
 		  }
 		};
+		
+		/** greebo: Counts the selected brushes in the scenegraph
+		 */
+		class BrushCounter : public scene::Graph::Walker
+		{
+			int& _count;
+			mutable std::size_t _depth;
+		public:
+			BrushCounter(int& count) : 
+				_count(count), 
+				_depth(0) 
+			{
+				_count = 0;
+			}
+			
+			bool pre(const scene::Path& path, scene::Instance& instance) const {
+				
+				if (++_depth != 1 && path.top().get().isRoot()) {
+					return false;
+				}
+				
+				Selectable* selectable = Instance_getSelectable(instance);
+				if (selectable != NULL && selectable->isSelected()
+				        && Node_isBrush(path.top())) 
+				{
+					++_count;
+				}
+				
+				return true;
+			}
+			
+			void post(const scene::Path& path, scene::Instance& instance) const {
+				--_depth;
+			}
+		};
 
 	} // namespace
 
@@ -1915,13 +1950,21 @@ namespace map {
 		GlobalSceneGraph().traverse(BrushOriginSubtractor(origin));
 	}	
 	
+	/* Return the number of selected primitives in the map, using the
+	 * CountSelectedPrimitives walker.
+	 */
+	int countSelectedPrimitives() {
+		int count;
+		GlobalSceneGraph().traverse(CountSelectedPrimitives(count));
+		return count;
+	}
+	
 	/* Return the number of selected brushes in the map, using the
 	 * CountSelectedBrushes walker.
 	 */
-
 	int countSelectedBrushes() {
 		int count;
-		GlobalSceneGraph().traverse(CountSelectedBrushes(count));
+		GlobalSceneGraph().traverse(BrushCounter(count));
 		return count;
 	}
 

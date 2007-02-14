@@ -62,10 +62,10 @@ void OrthoContextMenu::show(const Vector3& point) {
 void OrthoContextMenu::checkConvertStatic() {
 
 	// Command should be enabled if there is at least one selected
-	// brush and no non-brush selections.
+	// primitive and no non-primitive selections.
 	int numSelections = GlobalSelectionSystem().countSelected();
 	if (numSelections > 0 
-		&& map::countSelectedBrushes() == numSelections) 
+		&& map::countSelectedPrimitives() == numSelections) 
 	{
 		gtk_widget_set_sensitive(_convertStatic, TRUE);
 	}
