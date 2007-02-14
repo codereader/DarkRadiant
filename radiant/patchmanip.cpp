@@ -447,15 +447,6 @@ void Patch_Cone()
   Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), TextureBrowser_GetSelectedShader(GlobalTextureBrowser()), eCone, GlobalXYWnd().getActiveViewType());
 }
 
-void DoNewPatchDlg();
-
-void Patch_Plane()
-{
-  UndoableCommand undo("patchCreatePlane");
-
-  DoNewPatchDlg();
-}
-
 void Patch_InsertInsertColumn()
 {
   UndoableCommand undo("patchInsertColumns");
@@ -834,110 +825,6 @@ void Patch_constructMenu(GtkMenu* menu)
 #include <gtk/gtklabel.h>
 #include "gtkutil/dialog.h"
 #include "gtkutil/widget.h"
-
-void DoNewPatchDlg()
-{
-  ModalDialog dialog;
-  GtkComboBox* width;
-  GtkComboBox* height;
-
-  GtkWindow* window = create_dialog_window(MainFrame_getWindow(), "Patch density", G_CALLBACK(dialog_delete_callback), &dialog);
-
-  GtkAccelGroup* accel = gtk_accel_group_new();
-  gtk_window_add_accel_group(window, accel);
-
-  {
-    GtkHBox* hbox = create_dialog_hbox(4, 4);
-    gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(hbox));
-    {
-      GtkTable* table = create_dialog_table(2, 2, 4, 4);
-      gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(table), TRUE, TRUE, 0);
-      {
-        GtkLabel* label = GTK_LABEL(gtk_label_new("Width:"));
-        gtk_widget_show(GTK_WIDGET(label));
-        gtk_table_attach(table, GTK_WIDGET(label), 0, 1, 0, 1,
-                          (GtkAttachOptions) (GTK_FILL),
-                          (GtkAttachOptions) (0), 0, 0);
-        gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-      }
-      {
-        GtkLabel* label = GTK_LABEL(gtk_label_new("Height:"));
-        gtk_widget_show(GTK_WIDGET(label));
-        gtk_table_attach(table, GTK_WIDGET(label), 0, 1, 1, 2,
-                          (GtkAttachOptions) (GTK_FILL),
-                          (GtkAttachOptions) (0), 0, 0);
-        gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-      }
-
-      {
-        GtkComboBox* combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
-        gtk_combo_box_append_text(combo, "3");
-        gtk_combo_box_append_text(combo, "5");
-        gtk_combo_box_append_text(combo, "7");
-        gtk_combo_box_append_text(combo, "9");
-        gtk_combo_box_append_text(combo, "11");
-        gtk_combo_box_append_text(combo, "13");
-        gtk_combo_box_append_text(combo, "15");
-        gtk_widget_show(GTK_WIDGET(combo));
-        gtk_table_attach(table, GTK_WIDGET(combo), 1, 2, 0, 1,
-                          (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                          (GtkAttachOptions) (0), 0, 0);
-
-        width = combo;
-      }
-      {
-        GtkComboBox* combo = GTK_COMBO_BOX(gtk_combo_box_new_text());
-        gtk_combo_box_append_text(combo, "3");
-        gtk_combo_box_append_text(combo, "5");
-        gtk_combo_box_append_text(combo, "7");
-        gtk_combo_box_append_text(combo, "9");
-        gtk_combo_box_append_text(combo, "11");
-        gtk_combo_box_append_text(combo, "13");
-        gtk_combo_box_append_text(combo, "15");
-        gtk_widget_show(GTK_WIDGET(combo));
-        gtk_table_attach(table, GTK_WIDGET(combo), 1, 2, 1, 2,
-                          (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                          (GtkAttachOptions) (0), 0, 0);
-
-        height = combo;
-      }
-    }
-
-    {
-      GtkVBox* vbox = create_dialog_vbox(4);
-      gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(vbox), TRUE, TRUE, 0);
-      {
-        GtkButton* button = create_dialog_button("OK", G_CALLBACK(dialog_button_ok), &dialog);
-        gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(button), FALSE, FALSE, 0);
-        widget_make_default(GTK_WIDGET(button));
-        gtk_widget_grab_focus(GTK_WIDGET(button));
-        gtk_widget_add_accelerator(GTK_WIDGET(button), "clicked", accel, GDK_Return, (GdkModifierType)0, (GtkAccelFlags)0);
-      }
-      {
-        GtkButton* button = create_dialog_button("Cancel", G_CALLBACK(dialog_button_cancel), &dialog);
-        gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(button), FALSE, FALSE, 0);
-        gtk_widget_add_accelerator(GTK_WIDGET(button), "clicked", accel, GDK_Escape, (GdkModifierType)0, (GtkAccelFlags)0);
-      }
-    }
-  }
-
-  // Initialize dialog
-  gtk_combo_box_set_active(width, 0);
-  gtk_combo_box_set_active(height, 0);
-
-  if(modal_dialog_show(window, dialog) == eIDOK)
-  {
-    int w = gtk_combo_box_get_active(width) * 2 + 3;
-    int h = gtk_combo_box_get_active(height) * 2 + 3;
-
-    Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), TextureBrowser_GetSelectedShader(GlobalTextureBrowser()), ePlane, GlobalXYWnd().getActiveViewType(), w, h);
-  }
-
-  gtk_widget_destroy(GTK_WIDGET(window));
-}
-
-
-
 
 EMessageBoxReturn DoCapDlg(ECapDialog* type)
 {
