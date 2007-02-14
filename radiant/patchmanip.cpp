@@ -583,7 +583,11 @@ public:
 	}
 };
 
-void thickenPatches(PatchFinder::PatchList list, const float& thickness, const bool& createSeams) {
+void thickenPatches(PatchFinder::PatchList list, 
+					const float& thickness, 
+					const bool& createSeams, 
+					const int& axis) 
+{
 	// Go through the list and thicken all the found ones
 	for (PatchFinder::PatchList::iterator i = list.begin();
 		 i != list.end();
@@ -601,7 +605,7 @@ void thickenPatches(PatchFinder::PatchList list, const float& thickness, const b
 		Patch* targetPatch = Node_getPatch(node);
 	
 		// Create the opposite patch with the given thickness = distance
-		targetPatch->createThickenedOpposite(sourcePatch.getPatch(), thickness);
+		targetPatch->createThickenedOpposite(sourcePatch.getPatch(), thickness, axis);
 	
 		// Now select the newly created patches
 		{
@@ -669,10 +673,12 @@ void thickenSelectedPatches() {
 		
 		bool createSeams = false;
 		float thickness = 0.0f;
+		// Extrude along normals is the default (axis=3)
+		int axis = 3;
 		
-		if (dialog.queryPatchThickness(thickness, createSeams)) {
+		if (dialog.queryPatchThickness(thickness, createSeams, axis)) {
 			// Thicken all the patches in the list
-			thickenPatches(list, thickness, createSeams);
+			thickenPatches(list, thickness, createSeams, axis);
 		}
 	}
 	else {
