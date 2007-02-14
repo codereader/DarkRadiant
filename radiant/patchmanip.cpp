@@ -44,6 +44,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "igrid.h"
 #include "xyview/GlobalXYWnd.h"
 #include "ui/patch/PatchThickenDialog.h"
+#include "ui/patch/PatchCreateDialog.h"
 
 PatchCreator* g_patchCreator = 0;
 
@@ -687,6 +688,35 @@ void thickenSelectedPatches() {
 	}
 }
 
+void createSimplePatch() {
+	ui::PatchCreateDialog dialog;
+	
+	int width = 3;
+	int height = 3;
+	bool removeSelectedBrush = false;
+	
+	if (dialog.queryPatchDimensions(width, height, 
+									map::countSelectedBrushes(), 
+									removeSelectedBrush)) 
+	{
+		UndoableCommand undo("patchCreatePlane");
+		
+		// Retrieve the boundaries 
+		AABB bounds = PatchCreator_getBounds();
+		
+		if (removeSelectedBrush) {
+			// Delete the selection, the should be only one brush selected
+			Select_Delete();
+		}
+		
+		// Call the PatchConstruct routine (GtkRadiant legacy)
+		Scene_PatchConstructPrefab(GlobalSceneGraph(), bounds, 
+								   TextureBrowser_GetSelectedShader(GlobalTextureBrowser()), 
+								   ePlane, GlobalXYWnd().getActiveViewType(), 
+								   width, height);
+	}
+}
+
 } // namespace patch
 
 #include "preferences.h"
@@ -730,7 +760,7 @@ void Patch_registerCommands()
   GlobalEventManager().addCommand("PatchEndCap", FreeCaller<Patch_Endcap>());
   GlobalEventManager().addCommand("PatchBevel", FreeCaller<Patch_Bevel>());
   GlobalEventManager().addCommand("PatchCone", FreeCaller<Patch_Cone>());
-  GlobalEventManager().addCommand("SimplePatchMesh", FreeCaller<Patch_Plane>());
+  GlobalEventManager().addCommand("SimplePatchMesh", FreeCaller<patch::createSimplePatch>());
   GlobalEventManager().addCommand("PatchInsertInsertColumn", FreeCaller<Patch_InsertInsertColumn>());
   GlobalEventManager().addCommand("PatchInsertAddColumn", FreeCaller<Patch_InsertAddColumn>());
   GlobalEventManager().addCommand("PatchInsertInsertRow", FreeCaller<Patch_InsertInsertRow>());
@@ -750,20 +780,19 @@ void Patch_registerCommands()
 
 void Patch_constructMenu(GtkMenu* menu)
 {
-  createMenuItemWithMnemonic(menu, "Cylinder", "PatchCylinder");
+	createMenuItemWithMnemonic(menu, "Simple Patch Mesh...", "SimplePatchMesh");
+	menu_separator (menu);
+	createMenuItemWithMnemonic(menu, "End cap", "PatchEndCap");
+	createMenuItemWithMnemonic(menu, "Bevel", "PatchBevel");
+	menu_separator (menu);
+	createMenuItemWithMnemonic(menu, "Cone", "PatchCone");
+	createMenuItemWithMnemonic(menu, "Cylinder", "PatchCylinder");
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "More Cylinders");
     createMenuItemWithMnemonic(menu_in_menu, "Dense Cylinder", "PatchDenseCylinder");
     createMenuItemWithMnemonic(menu_in_menu, "Very Dense Cylinder", "PatchVeryDenseCylinder");
     createMenuItemWithMnemonic(menu_in_menu, "Square Cylinder", "PatchSquareCylinder");
   }
-  menu_separator (menu);
-  createMenuItemWithMnemonic(menu, "End cap", "PatchEndCap");
-  createMenuItemWithMnemonic(menu, "Bevel", "PatchBevel");
-  menu_separator (menu);
-  createMenuItemWithMnemonic(menu, "Cone", "PatchCone");
-  menu_separator (menu);
-  createMenuItemWithMnemonic(menu, "Simple Patch Mesh...", "SimplePatchMesh");
   menu_separator (menu);
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Insert");
