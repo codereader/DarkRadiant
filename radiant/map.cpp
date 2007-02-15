@@ -85,6 +85,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "xyview/GlobalXYWnd.h"
 #include "ui/mru/MRU.h"
 #include "map/AutoSaver.h"
+#include "map/MapFileManager.h"
 #include "surfacedialog.h"
 
 #include <string>
@@ -2135,7 +2136,8 @@ void OpenMap()
   if (!ConfirmModified("Open Map"))
     return;
 
-  std::string filename = ui::selectMapFile("Open Map", true);
+	// Get the map file name to load
+	std::string filename = map::MapFileManager::getLoadFilename();
 
 	if (!filename.empty()) {
 	    GlobalMRU().insert(filename);
