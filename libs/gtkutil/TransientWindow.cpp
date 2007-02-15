@@ -14,6 +14,7 @@ TransientWindow::TransientWindow(const std::string& title, GtkWindow* parent) :
 // Operator cast to GtkWindow* (use this to create and retrieve the GtkWidget* pointer)
 TransientWindow::operator GtkWidget* () {
 	gtk_window_set_transient_for(GTK_WINDOW(_window), _parent);
+	gtk_window_set_title(GTK_WINDOW(_window), _title.c_str());
 	
 	// Connect the "resize"-event of the _parent window to the callback, so that the 
 	// child can be hidden as well 

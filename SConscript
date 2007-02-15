@@ -374,6 +374,7 @@ radiant_src = [
 'ui/overlay/OverlayDialog.cpp',
 'ui/patch/PatchCreateDialog.cpp',
 'ui/patch/PatchThickenDialog.cpp',
+'ui/surfaceinspector/SurfaceInspector.cpp',
 'selection/Manipulatables.cpp',
 'selection/Manipulators.cpp',
 'selection/BestPoint.cpp',
