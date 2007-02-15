@@ -68,7 +68,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stream/stringstream.h"
 #include "signal/signal.h"
 
-#include "gtkutil/filechooser.h"
 #include "timer.h"
 #include "select.h"
 #include "plugin.h"
@@ -2097,47 +2096,14 @@ const char* getMapsPath()
   return g_mapsPath.c_str();
 }
 
-namespace ui {
-
-/* Display a GTK file chooser and select a map file to open or close. The last
- * path used is set as the default the next time the dialog is displayed.
- * 
- * Parameters:
- * title -- the title to display in the dialog
- * open -- true to open, false to save
- * 
- */
-
-std::string selectMapFile(const std::string& title, bool open)
-{
-	// Save the most recently-used path so that successive maps can be opened
-	// from the same directory.
-	static std::string lastPath = getMapsPath();
-	
-	// Display a file chooser dialog to get a new path
-	std::string filePath = file_dialog(GTK_WIDGET(MainFrame_getWindow()), 
-									   open, 
-									   title, 
-									   lastPath, 
-									   std::string(MapFormat::Name()));
-
-	// Update the lastPath static variable with the path to the last directory
-	// opened.
-	if (!filePath.empty())
-		lastPath = filePath.substr(0, filePath.find_last_of("/"));
-
-	return filePath;
-}
-
-} // namespace ui
-
 void OpenMap()
 {
   if (!ConfirmModified("Open Map"))
     return;
 
 	// Get the map file name to load
-	std::string filename = map::MapFileManager::getLoadFilename();
+	std::string filename = map::MapFileManager::getMapFilename(true, 
+															   "Open map");
 
 	if (!filename.empty()) {
 	    GlobalMRU().insert(filename);
@@ -2149,7 +2115,8 @@ void OpenMap()
 
 void ImportMap()
 {
-  std::string filename = ui::selectMapFile("Import Map", true);
+	std::string filename = map::MapFileManager::getMapFilename(true,
+															   "Import map");
 
 	if (!filename.empty()) {
 	    UndoableCommand undo("mapImport");
@@ -2159,9 +2126,10 @@ void ImportMap()
 
 bool Map_SaveAs()
 {
-  std::string filename = ui::selectMapFile("Save Map", false);
+	std::string filename = map::MapFileManager::getMapFilename(false,
+															   "Save map");
   
-  std::cout << "Map_SaveAs() got filename " << filename << std::endl;
+	std::cout << "Map_SaveAs() got filename " << filename << std::endl;
   
 	if (!filename.empty()) {
 	    GlobalMRU().insert(filename);
@@ -2190,7 +2158,8 @@ void SaveMap()
 
 void ExportMap()
 {
-  std::string filename = ui::selectMapFile("Export Selection", false);
+	std::string filename = map::MapFileManager::getMapFilename(
+								false, "Export selection");
 
 	if (!filename.empty()) {
 	    Map_SaveSelected(filename);
@@ -2199,8 +2168,9 @@ void ExportMap()
 
 void SaveRegion()
 {
-  std::string filename = ui::selectMapFile("Export Region", false);
-  
+  	std::string filename = map::MapFileManager::getMapFilename(false,
+															   "Export region");
+
 	if (!filename.empty()) {
 	    Map_SaveRegion(filename);
   	}

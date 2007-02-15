@@ -30,30 +30,29 @@ private:
 	static MapFileManager& getInstance();
 
 	// Utility function to display a file chooser and return the selected path
-	std::string selectFile(bool open);
+	std::string selectFile(bool open, const std::string& title);
 
 public:
 
 	/* STATIC INTERFACE */
 
 	/**
-	 * Query the user for a map file to load.
+	 * Query the user for a map file to load or save.
+	 * 
+	 * @param open
+	 * Whether this is an open operation or a save operation (changes file
+	 * dialog behaviour).
+	 * 
+	 * @param title
+	 * The title to display on the dialog, such as "Open map" or "Export
+	 * selection".
 	 * 
 	 * @returns
-	 * The full path of the file to load, or the empty string if no selection
+	 * The full path of the file selected, or the empty string if no selection
 	 * was made.
 	 */
-	 static std::string getLoadFilename();
+	 static std::string getMapFilename(bool open, const std::string& title);
 	 
-	 /**
-	  * Query the user for a map file to save.
-	  * 
-	  * @returns
-	  * The full path of the file to save, or the empty string if no selection
-	  * was made.
-	  */
-	static std::string getSaveFilename();
-
 };
 
 }
