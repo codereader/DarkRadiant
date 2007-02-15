@@ -5,6 +5,7 @@
 
 #include "imodel.h"
 #include "cullable.h"
+#include "Bounded.h"
 #include "picomodel.h"
 
 #include <boost/shared_ptr.hpp>
@@ -21,7 +22,8 @@ namespace model
 
 class RenderablePicoModel
 : public IModel,
-  public Cullable
+  public Cullable,
+  public Bounded
 {
 	// Vector of renderable surfaces for this model
 	typedef std::vector<boost::shared_ptr<RenderablePicoSurface> > SurfaceList;
@@ -92,7 +94,7 @@ public:
 	
 	/** Return the enclosing AABB for this model.
 	 */
-	const AABB& getAABB() const {
+	const AABB& localAABB() const {
 		return _localAABB;
 	}
 	

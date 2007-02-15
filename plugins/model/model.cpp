@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "model.h"
 
 #include "picomodel.h"
+#include "RenderablePicoModel.h"
 
 #include "iarchive.h"
 #include "idatastream.h"
@@ -581,11 +582,12 @@ public:
       }
     }
   }
-  void skinChanged()
-  {
-    destroyRemaps();
-    constructRemaps();
-  }
+	
+	// Skin changed notify (from SkinnedModel)
+	void skinChanged() {
+	    destroyRemaps();
+	    constructRemaps();
+	}
 
   PicoModelInstance(const scene::Path& path, scene::Instance* parent, PicoModel& picomodel) :
     Instance(path, parent, this, StaticTypeCasts::instance().get()),

@@ -128,7 +128,7 @@ void ModelPreview::setModel(const std::string& model) {
 		_rotation = Matrix4::getIdentity();
 		
 		// Calculate camera distance so model is appropriately zoomed
-		_camDist = -(_model->getAABB().getRadius() * 2.0); 
+		_camDist = -(_model->localAABB().getRadius() * 2.0); 
 
 		_lastModel = model;
 	}
@@ -171,7 +171,7 @@ void ModelPreview::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelPr
 	if (model == NULL)
 		return;
 		
-	AABB aabb(model->getAABB());
+	AABB aabb(model->localAABB());
 
 	// Premultiply with the translations
 	glLoadIdentity();
@@ -235,7 +235,7 @@ void ModelPreview::callbackGLMotion(GtkWidget* widget, GdkEventMotion* ev, Model
 }
 
 void ModelPreview::callbackGLScroll(GtkWidget* widget, GdkEventScroll* ev, ModelPreview* self) {
-	float inc = self->_model->getAABB().getRadius() * 0.1; // Scroll increment is a fraction of the AABB radius
+	float inc = self->_model->localAABB().getRadius() * 0.1; // Scroll increment is a fraction of the AABB radius
 	if (ev->direction == GDK_SCROLL_UP)
 		self->_camDist += inc;
 	else if (ev->direction == GDK_SCROLL_DOWN)
