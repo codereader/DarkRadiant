@@ -280,6 +280,7 @@ public:
 	// This returns the PatchControl pointer that is closest to the given <point>
 	PatchControl* getClosestPatchControlToPoint(const Vector3& point);
 	PatchControl* getClosestPatchControlToFace(const Face* face);
+	PatchControl* getClosestPatchControlToPatch(const Patch& patch);
 	
 	// Returns the w,h coordinates within the PatchControlArray of the given <control>
 	Vector2 getPatchControlArrayIndices(const PatchControl* control);
@@ -288,6 +289,11 @@ public:
 	 * It determines the closest control vertex of this patch to the brush and 
 	 * tries to continue the texture seamlessly. The resulting texturing is undistorted.*/
 	void pasteTextureNatural(const Face* face);
+	
+	/** greebo: Pastes the texture from the given sourcepatch
+	 * trying to make the transition seamless.
+	 */
+	void pasteTextureNatural(Patch& sourcePatch);
 	
 	void pasteTextureCoordinates(const Patch* otherPatch);
 

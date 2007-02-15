@@ -1590,6 +1590,41 @@ PatchControl* Patch::getClosestPatchControlToPoint(const Vector3& point) {
 /* greebo: This calculates the nearest patch control to the given brush <face>
  * 
  * @returns: a pointer to the nearest patch face. (Can technically be NULL, but really should not happen).*/
+PatchControl* Patch::getClosestPatchControlToPatch(const Patch& patch) {
+	
+	// A pointer to the patch vertex closest to the patch
+	PatchControl* pBest = NULL;
+	// Initialise the best distance with an illegal value
+	double closestDist = -1.0;
+	
+	// Cycle through the winding vertices and calculate the distance to each patch vertex
+	for (PatchControlConstIter i = patch.begin(); i != patch.end(); i++) {
+		// Retrieve the vertex
+		Vector3 patchVertex = i->m_vertex;
+		
+		// Get the nearest control point to the current otherpatch vertex
+		PatchControl* candidate = getClosestPatchControlToPoint(patchVertex);
+		
+		if (candidate != NULL) {
+			
+			double candidateDist = (patchVertex - candidate->m_vertex).getLength();
+			
+			// If we haven't found a best patch control so far or 
+			// the candidate distance is even better, save it! 
+			if (pBest == NULL || candidateDist < closestDist) {
+				// Memorise this patch control
+				pBest = candidate;
+				closestDist =  candidateDist;
+			}
+		}
+	} // end for<
+	
+	return pBest;
+}
+
+/* greebo: This calculates the nearest patch control to the given brush <face>
+ * 
+ * @returns: a pointer to the nearest patch face. (Can technically be NULL, but really should not happen).*/
 PatchControl* Patch::getClosestPatchControlToFace(const Face* face) {
 	
 	// A pointer to the patch vertex closest to the face
@@ -1783,6 +1818,32 @@ void Patch::pasteTextureNatural(const Face* face) {
 			// Set the prevColumn control vertex to this one
 			prevColumn = curColumn;
 			prevColumnVirtualVertex = curColumnVirtualVertex;
+		}
+	}
+	
+	// Notify the patch about the change
+	controlPointsChanged();
+}
+
+void Patch::pasteTextureNatural(Patch& sourcePatch) {
+	// Save the undo memento
+	undoSave();
+	
+	// Convert the size_t stuff into int, because we need it for signed comparisons
+	int patchHeight = static_cast<int>(m_height);
+	int patchWidth = static_cast<int>(m_width);
+	
+	// Calculate the nearest corner vertex of this patch (to the sourcepatch vertices)
+	PatchControl* nearestControl = getClosestPatchControlToPatch(sourcePatch);
+	
+	PatchControl* refControl = sourcePatch.getClosestPatchControlToPatch(*this);
+	
+	Vector2 texDiff = refControl->m_texcoord - nearestControl->m_texcoord;
+	
+	for (int col = 0; col < patchWidth; col++) {
+		for (int row = 0; row < patchHeight; row++) {
+			// Substract the texture coord difference from each control vertex
+			ctrlAt(row, col).m_texcoord += texDiff;
 		}
 	}
 	
