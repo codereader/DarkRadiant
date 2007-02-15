@@ -199,7 +199,7 @@ namespace map {
 	/**
 	 * Set the "modified" flag on the current map, to allow saving.
 	 */
-	void setModified();
+	void setModified(bool modifiedFlag);
 	
 	/** greebo: Focus the XYViews and the Camera to the given point/angle.
 	 */
