@@ -1504,6 +1504,7 @@ void Scene_setClosestTexture(scene::Graph& graph, SelectionTest& test, const std
 		// Copy patch >> patch?
 		else if (texturable._patch != NULL) {
 		 	texturable._patch->SetShader(shader);
+		 	texturable._patch->pasteTextureNatural(*clipBoard._patch);
 		}
 	}
 }
