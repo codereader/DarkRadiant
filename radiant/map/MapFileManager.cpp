@@ -19,12 +19,12 @@ MapFileManager& MapFileManager::getInstance() {
 }
 
 // Utility method to select a map file
-std::string MapFileManager::selectFile(bool open) {
+std::string MapFileManager::selectFile(bool open, const std::string& title) {
 
 	// Display a file chooser dialog to get a new path
 	std::string filePath = file_dialog(GTK_WIDGET(MainFrame_getWindow()), 
 									   open, 
-									   open ? "Open map" : "Save map", 
+									   title, 
 									   _lastDir, 
 									   "map");
 
@@ -39,8 +39,10 @@ std::string MapFileManager::selectFile(bool open) {
 /* PUBLIC INTERFACE METHODS */
 
 // Static method to get a load filename
-std::string MapFileManager::getLoadFilename() {
-	return getInstance().selectFile(true);
+std::string MapFileManager::getMapFilename(bool open, 
+										   const std::string& title) 
+{
+	return getInstance().selectFile(open, title);
 }
 
 } // namespace map
