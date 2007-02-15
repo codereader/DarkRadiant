@@ -9,6 +9,7 @@
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/RightAlignment.h"
+#include "gtkutil/IconTextColumn.h"
 
 #include "entity.h" // Entity_createFromSelection()
 
@@ -49,7 +50,10 @@ void EntityClassChooser::displayInstance(const Vector3& point) {
 
 void EntityClassChooser::show(const Vector3& point) {
 	_lastPoint = point;
+	
+	// Show the widget and set keyboard focus to the tree view
 	gtk_widget_show_all(_widget);
+	gtk_widget_grab_focus(_treeView);
 }
 
 // Constructor. Creates GTK widgets.
@@ -194,29 +198,19 @@ GtkWidget* EntityClassChooser::createTreeView() {
 	
 	// Construct the tree view widget with the now-populated model
 
-	GtkWidget* treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeView), FALSE);
+	_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_treeView), FALSE);
 
-	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeView));
+	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
 	gtk_tree_selection_set_mode(_selection, GTK_SELECTION_BROWSE);
 	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(callbackSelectionChanged), this);
 
 	// Single column with icon and name
-	GtkTreeViewColumn* col = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_spacing(col, 3);
-
-	GtkCellRenderer* pixRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_column_pack_start(col, pixRenderer, FALSE);
-    gtk_tree_view_column_set_attributes(col, pixRenderer, "pixbuf", ICON_COLUMN, NULL);
-
-	GtkCellRenderer* textRenderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(col, textRenderer, FALSE);
-	gtk_tree_view_column_set_attributes(col, textRenderer, "text", NAME_COLUMN, NULL);
-
-	gtk_tree_view_append_column(GTK_TREE_VIEW(treeView), col);				
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), 
+		gtkutil::IconTextColumn("Entity", NAME_COLUMN, ICON_COLUMN));				
 
 	// Pack treeview into a scrolled frame and return
-	return gtkutil::ScrolledFrame(treeView);
+	return gtkutil::ScrolledFrame(_treeView);
 }
 
 // Create the entity usage information panel
