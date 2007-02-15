@@ -23,17 +23,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ifiletypes.h"
 
-#include <list>
-#include <vector>
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkwindow.h>
 #include <gtk/gtkfilechooser.h>
 #include <gtk/gtkfilechooserdialog.h>
 #include <gtk/gtkstock.h>
 
-#include "string/string.h"
-#include "stream/stringstream.h"
-#include "container/array.h"
 #include "os/path.h"
 #include "os/file.h"
 
@@ -42,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 const char* file_dialog_show(GtkWidget* parent, 
 							 bool open, 
 							 const char* title, 
-							 const char* path, 
+							 const std::string& path, 
 							 const char* pattern)
 {
   if(pattern == 0)
@@ -74,32 +69,17 @@ const char* file_dialog_show(GtkWidget* parent,
     gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "unnamed");
   }
 
-  gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
-  gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER_ON_PARENT);
+	// Set the Enter key to activate the default response
+	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
 
-  // we expect an actual path below, if the path is 0 we might crash
-  if (path != 0 && !string_empty(path))
-  {
-    ASSERT_MESSAGE(path_is_absolute(path), "file_dialog_show: path not absolute: " << makeQuoted(path));
+	// Set position and modality of the dialog
+	gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
+	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER_ON_PARENT);
 
-    Array<char> new_path(strlen(path)+1);
-
-    // copy path, replacing dir separators as appropriate
-    Array<char>::iterator w = new_path.begin();
-    for(const char* r = path; *r != '\0'; ++r)
-    {
-      *w++ = (*r == '/') ? G_DIR_SEPARATOR : *r;
-    }
-    // remove separator from end of path if required
-    if(*(w-1) == G_DIR_SEPARATOR)
-    {
-      --w;
-    }
-    // terminate string
-    *w = '\0';
-
-    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), new_path.data());
-  }
+	// Convert path to standard and set the folder in the dialog
+	std::string sPath = os::standardPath(path);
+    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), 
+    									sPath.c_str());
 
 	// Add the filetype masks
 	ModuleTypeListPtr typeList = GlobalFiletypes().getTypesFor(pattern);
@@ -172,7 +152,7 @@ std::string file_dialog(GtkWidget* parent,
   for(;;)
   {
     const char* file = file_dialog_show(
-    	parent, open, title.c_str(), path.c_str(), pattern.c_str());
+    	parent, open, title.c_str(), path, pattern.c_str());
 
     if(open
       || file == 0
