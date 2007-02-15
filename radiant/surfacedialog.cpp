@@ -75,6 +75,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "igrid.h"
 #include "textureentry.h"
 
+#include "ui/surfaceinspector/SurfaceInspector.h"
 #include "brush/BrushInstance.h"
 #include "brush/Face.h"
 
@@ -458,6 +459,9 @@ void DoSurface (void)
 
 void SurfaceInspector_toggleShown()
 {
+	// Toggle the inspector window
+	ui::SurfaceInspector::toggleInspector();
+	
   if (getSurfaceInspector().visible())
   {
     getSurfaceInspector().HideDlg();
