@@ -28,8 +28,9 @@ private:
 	// Main dialog window
 	GtkWidget* _widget;
 	
-	// Tree model holding the classnames
+	// Tree model holding the classnames, and the corresponding treeview
 	GtkTreeStore* _treeStore;
+	GtkWidget* _treeView;
 	
 	// GtkTreeSelection holding the currently-selected classname
 	GtkTreeSelection* _selection;
