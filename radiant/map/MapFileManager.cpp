@@ -4,6 +4,8 @@
 #include "mainframe.h"
 #include "gtkutil/filechooser.h"
 
+#include <boost/algorithm/string/predicate.hpp>
+
 namespace map
 {
 
@@ -32,8 +34,12 @@ std::string MapFileManager::selectFile(bool open, const std::string& title) {
 	if (!filePath.empty())
 		_lastDir = filePath.substr(0, filePath.rfind("/"));
 		
-	// Return the chosen file
-	return filePath;
+	// Return the chosen file. If this is a save operation and the chosen path
+	// does not end in ".map", add it here.
+	if (!boost::algorithm::iends_with(filePath, ".map"))
+		return filePath + ".map";
+	else
+		return filePath;
 }
 
 /* PUBLIC INTERFACE METHODS */

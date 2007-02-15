@@ -2129,8 +2129,6 @@ bool Map_SaveAs()
 	std::string filename = map::MapFileManager::getMapFilename(false,
 															   "Save map");
   
-	std::cout << "Map_SaveAs() got filename " << filename << std::endl;
-  
 	if (!filename.empty()) {
 	    GlobalMRU().insert(filename);
 	    Map_Rename(filename);
