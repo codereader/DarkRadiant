@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_IMODEL_H
 
 #include "generic/constant.h"
+#include "Bounded.h"
 #include "irender.h"
 
 #include <boost/shared_ptr.hpp>
@@ -40,14 +41,16 @@ class ModelSkin;
 
 namespace model {
 
-	/** Interface for static models. This interface provides functions for obtaining
-	 * information about a LWO or ASE model, such as its bounding box or poly count.
-	 * The interface also inherits from OpenGLRenderable to allow model instances
-	 * to be used for rendering.
+	/** 
+	 * Interface for static models. This interface provides functions for 
+	 * obtaining information about a LWO or ASE model, such as its bounding box 
+	 * or poly count. The interface also inherits from OpenGLRenderable to allow 
+	 * model instances to be used for rendering.
 	 */
 	 
 	class IModel
-	: public OpenGLRenderable
+	: public OpenGLRenderable,
+	  public Bounded
 	{
 	public:
 		
@@ -72,10 +75,6 @@ namespace model {
 		 * triangle count from each surface.
 		 */
 		virtual int getPolyCount() const = 0;
-		
-		/** Return the local AABB that encloses this model.
-		 */
-		virtual const AABB& getAABB() const = 0;
 		
 		/** Return a vector of strings listing the active materials used in this
 		 * model, after any skin remaps. The list is owned by the model instance.

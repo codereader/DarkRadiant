@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined (INCLUDED_SCENELIB_H)
 #define INCLUDED_SCENELIB_H
 
+#include "Bounded.h"
 #include "iscenegraph.h"
 #include "iselection.h"
 
@@ -71,14 +72,6 @@ public:
   STRING_CONSTANT(Name, "ComponentSnappable");
 
   virtual void snapComponents(float snap) = 0;
-};
-
-class Bounded
-{
-public:
-  STRING_CONSTANT(Name, "Bounded");
-
-  virtual const AABB& localAABB() const = 0;
 };
 
 class BrushDoom3
