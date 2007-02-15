@@ -444,8 +444,8 @@ bool Map_Modified(const Map& map)
 namespace map {
 
 	// Set the modified flag
-	void setModified() {
-		g_map.m_modified = true;
+	void setModified(bool modifiedFlag) {
+		g_map.m_modified = modifiedFlag;
 	    g_map.m_modified_changed(g_map);
 	}
 	
