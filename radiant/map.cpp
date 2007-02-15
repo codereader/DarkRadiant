@@ -377,7 +377,6 @@ public:
 };
 
 Map g_map;
-Map* g_currentMap = 0;
 
 void Map_addValidCallback(Map& map, const SignalHandler& handler)
 {
@@ -492,7 +491,6 @@ void Map_Free()
 
   FlushReferences();
 
-  g_currentMap = 0;
 }
 
 /** Walker to locate an Entity in the scenegraph with a specific classname.
@@ -1126,14 +1124,11 @@ void Map_LoadFile (const std::string& filename)
   globalOutputStream() << makeLeftJustified(Unsigned(g_brushCount.get()), 5) << " primitive\n";
   globalOutputStream() << makeLeftJustified(Unsigned(g_entityCount.get()), 5) << " entities\n";
 
-  //GlobalEntityCreator().printStatistics();
-  
-  //
-  // move the view to a start position
-  //
-  Map_StartPosition();
+	// Move the view to a start position
+	Map_StartPosition();
 
-  g_currentMap = &g_map;
+	// Clear the modified flag
+	map::setModified(false);
 }
 
 class Excluder
@@ -1433,7 +1428,6 @@ void Map_New()
 
   map::focusViews(g_vector3_identity, Vector3(0,0,0));
 
-  g_currentMap = &g_map;
 }
 
 extern void ConstructRegionBrushes(scene::Node* brushes[6], const Vector3& region_mins, const Vector3& region_maxs);
