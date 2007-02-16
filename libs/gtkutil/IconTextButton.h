@@ -43,9 +43,13 @@ public:
 				   const std::string& iconPath,
 				   bool isToggle)
 	: _icon(gtkutil::getLocalPixbuf(iconPath)),
-	  _label(gtk_label_new(name.c_str())),
+	  _label(NULL),
 	  _isToggle(isToggle)
-	{ }
+	{ 
+		if (name != "") {
+			_label = gtk_label_new(name.c_str());
+		}
+	}
 	
 	/** Operator cast to GtkWidget* packs the widgets and returns a button with
 	 * the contents.
@@ -56,7 +60,9 @@ public:
 		gtk_box_pack_start(GTK_BOX(vbx), 
 						   gtk_image_new_from_pixbuf(_icon),
 						   TRUE, FALSE, 0);
-		gtk_box_pack_end(GTK_BOX(vbx), _label, TRUE, FALSE, 0);
+		if (_label != NULL) {
+			gtk_box_pack_end(GTK_BOX(vbx), _label, TRUE, FALSE, 0);
+		}
 		
 		// Create a button and add the vbox
 		GtkWidget* button;

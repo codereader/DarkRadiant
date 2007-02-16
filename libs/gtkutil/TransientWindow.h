@@ -24,10 +24,13 @@ protected:
 	// The actual transient window
 	GtkWidget* _window;
 	
+	// True, if the onDelete event is connected to a self-destruct method
+	bool _deletable;
+
 public:
 
 	// Constructor
-	TransientWindow(const std::string& title, GtkWindow* parent);
+	TransientWindow(const std::string& title, GtkWindow* parent, bool deletable = true);
 	
 	// Operator cast to GtkWindow* (use this to create and retrieve the GtkWidget* pointer)
 	virtual operator GtkWidget* ();
