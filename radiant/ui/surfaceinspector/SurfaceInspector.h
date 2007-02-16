@@ -45,19 +45,14 @@ class SurfaceInspector
 		GtkWidget* label;
 	} _flipTexture;
 	
-	struct TexturePatches {
+	struct ApplyTextureWidgets {
 		GtkWidget* hbox;
 		GtkWidget* label;
-		GtkWidget* cycleCap;
 		GtkWidget* natural;
-	} _patches;
-	
-	struct TextureBrushes {
-		GtkWidget* hbox;
-		GtkWidget* label;
 		GtkWidget* axial;
-		GtkWidget* texLock;
-	} _brushes;
+	} _applyTex;
+	
+	GtkWidget* _defaultTexScale;
 
 public:
 

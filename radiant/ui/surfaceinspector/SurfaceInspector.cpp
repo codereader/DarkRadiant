@@ -33,12 +33,11 @@ namespace ui {
 		const char* LABEL_FLIPX = "Flip Horizontal";
 		const char* LABEL_FLIPY = "Flip Vertical";
 				
-		const char* LABEL_PATCHES = "Patches:";
+		const char* LABEL_APPLY_TEXTURE = "Apply Texture:";
 		const char* LABEL_NATURAL = "Natural";
-		const char* LABEL_CAP = "Cycle CAP";
-		
-		const char* LABEL_BRUSHES = "Brushes:";
 		const char* LABEL_AXIAL = "Axial";
+		
+		const char* LABEL_DEFAULT_SCALE = "Default Scale:";
 		const char* LABEL_TEXTURE_LOCK = "Texture Lock";
 	}
 
@@ -57,7 +56,12 @@ SurfaceInspector::SurfaceInspector() {
 }
 
 void SurfaceInspector::toggle() {
-	gtk_widget_show_all(_dialog);
+	if (GTK_WIDGET_VISIBLE(_dialog)) {
+		gtk_widget_hide_all(_dialog);
+	}
+	else {
+		gtk_widget_show_all(_dialog);
+	}
 }
 
 void SurfaceInspector::populateWindow() {
@@ -181,31 +185,37 @@ void SurfaceInspector::populateWindow() {
 	
 	gtk_table_attach_defaults(operTable, _flipTexture.hbox, 1, 2, 1, 2);
 	
-	// Create the "Patches" label
-	_patches.label = gtk_label_new(LABEL_PATCHES);
-	gtk_misc_set_alignment(GTK_MISC(_patches.label), 0.0f, 0.5f);
-	gtk_table_attach_defaults(operTable, _patches.label, 0, 1, 2, 3);
+	// Create the "Apply Texture" label
+	_applyTex.label = gtk_label_new(LABEL_APPLY_TEXTURE);
+	gtk_misc_set_alignment(GTK_MISC(_applyTex.label), 0.0f, 0.5f);
+	gtk_table_attach_defaults(operTable, _applyTex.label, 0, 1, 2, 3);
 	
-	_patches.hbox = gtk_hbox_new(true, 6); 
-	_patches.natural = gtk_button_new_with_label(LABEL_NATURAL);
-	_patches.cycleCap = gtk_button_new_with_label(LABEL_CAP);
-	gtk_box_pack_start(GTK_BOX(_patches.hbox), _patches.natural, true, true, 0);
-	gtk_box_pack_start(GTK_BOX(_patches.hbox), _patches.cycleCap, true, true, 0);
+	_applyTex.hbox = gtk_hbox_new(true, 6); 
+	_applyTex.natural = gtk_button_new_with_label(LABEL_NATURAL);
+	_applyTex.axial = gtk_button_new_with_label(LABEL_AXIAL);
+	gtk_box_pack_start(GTK_BOX(_applyTex.hbox), _applyTex.natural, true, true, 0);
+	gtk_box_pack_start(GTK_BOX(_applyTex.hbox), _applyTex.axial, true, true, 0);
 	
-	gtk_table_attach_defaults(operTable, _patches.hbox, 1, 2, 2, 3);
+	gtk_table_attach_defaults(operTable, _applyTex.hbox, 1, 2, 2, 3);
 	
-	// Brushes
-	_brushes.label = gtk_label_new(LABEL_BRUSHES);
-	gtk_misc_set_alignment(GTK_MISC(_brushes.label), 0.0f, 0.5f);
-	gtk_table_attach_defaults(operTable, _brushes.label, 0, 1, 3, 4);
+	// Default Scale
+	GtkWidget* defaultScaleLabel = gtk_label_new(LABEL_DEFAULT_SCALE);
+	gtk_misc_set_alignment(GTK_MISC(defaultScaleLabel), 0.0f, 0.5f);
+	gtk_table_attach_defaults(operTable, defaultScaleLabel, 0, 1, 3, 4);
 	
-	_brushes.hbox = gtk_hbox_new(true, 6); 
-	_brushes.axial = gtk_button_new_with_label(LABEL_AXIAL);
-	_brushes.texLock = gtk_toggle_button_new_with_label(LABEL_TEXTURE_LOCK);
-	gtk_box_pack_start(GTK_BOX(_brushes.hbox), _brushes.axial, true, true, 0);
-	gtk_box_pack_start(GTK_BOX(_brushes.hbox), _brushes.texLock, true, true, 0);
+	GtkWidget* hbox2 = gtk_hbox_new(true, 6);
+	 
+	// Create the width entry field
+	GtkObject* defaultAdj = gtk_adjustment_new(1.0f, 0.0f, 1000.0f, 0.1f, 0.1f, 0.1f);
+	_defaultTexScale = gtk_spin_button_new(GTK_ADJUSTMENT(defaultAdj), 1.0f, 4);
+	gtk_widget_set_size_request(_defaultTexScale, 55, -1);
+	gtk_box_pack_start(GTK_BOX(hbox2), _defaultTexScale, true, true, 0);
 	
-	gtk_table_attach_defaults(operTable, _brushes.hbox, 1, 2, 3, 4);
+	// Texture Lock Toggle
+	GtkWidget* texLockButton = gtk_toggle_button_new_with_label(LABEL_TEXTURE_LOCK); 
+	gtk_box_pack_start(GTK_BOX(hbox2), texLockButton, true, true, 0);
+	
+	gtk_table_attach_defaults(operTable, hbox2, 1, 2, 3, 4);
 }
 
 SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
@@ -255,7 +265,7 @@ void SurfaceInspector::toggleInspector() {
 	static SurfaceInspector _inspector;
 
 	// Now toggle the dialog
-	//_inspector.toggle();
+	_inspector.toggle();
 }
 
 gboolean SurfaceInspector::onDelete(GtkWidget* widget, GdkEvent* event, SurfaceInspector* self) {
