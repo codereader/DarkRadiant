@@ -47,7 +47,14 @@ void RenderablePicoModel::submitRenderables(Renderer& rend,
 		 i != _surfVec.end();
 		 ++i)
 	{
-		(*i)->submitRenderables(rend, localToWorld);
+		// Check if the surface's shader is filtered, if not then submit it for
+		// rendering
+		IShaderPtr surfaceShader = (*i)->getShader()->getIShader();
+		if (GlobalFilterSystem().isVisible("texture", 
+										   surfaceShader->getName())) 
+		{		
+			(*i)->submitRenderables(rend, localToWorld);
+		}
 	}
 }
 
@@ -71,7 +78,9 @@ void RenderablePicoModel::render(RenderStateFlags flags) const {
 	{
 		// Get the IShader to test the shader name against the filter system
 		IShaderPtr surfaceShader = (*i)->getShader()->getIShader();
-		if (GlobalFilterSystem().isVisible("texture", surfaceShader->getName())) {
+		if (GlobalFilterSystem().isVisible("texture", 
+										   surfaceShader->getName())) 
+		{
 			// Bind the OpenGL texture and render the surface geometry
 			Texture& tex = (*i)->getShader()->getTexture();
 			glBindTexture(GL_TEXTURE_2D, tex.texture_number);
