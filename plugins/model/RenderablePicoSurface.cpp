@@ -89,13 +89,33 @@ void RenderablePicoSurface::render(RenderStateFlags flags) const {
 	// acceptable to perform pointer arithmetic over the elements of a 
 	// std::vector, starting from the address of element 0.
 	
-	glNormalPointer(
-		GL_FLOAT, sizeof(ArbitraryMeshVertex), &_vertices[0].normal);
+    if(flags & RENDER_BUMP) {
+		// Bump mode, we are using an ARB shader so set the correct parameters
+		glVertexAttribPointerARB(
+        	11, 3, GL_FLOAT, 0, 
+        	sizeof(ArbitraryMeshVertex), &_vertices[0].normal);
+        glVertexAttribPointerARB(
+        	8, 2, GL_FLOAT, 0, 
+        	sizeof(ArbitraryMeshVertex), &_vertices[0].texcoord);
+        glVertexAttribPointerARB(
+        	9, 3, GL_FLOAT, 0, 
+        	sizeof(ArbitraryMeshVertex), &_vertices[0].tangent);
+        glVertexAttribPointerARB(10, 3, GL_FLOAT, 0, 
+        	sizeof(ArbitraryMeshVertex), &_vertices[0].bitangent);
+    }
+    else {
+    	// Standard GL calls
+		glNormalPointer(
+			GL_FLOAT, sizeof(ArbitraryMeshVertex), &_vertices[0].normal);
+		glTexCoordPointer(
+			2, GL_FLOAT, sizeof(ArbitraryMeshVertex), &_vertices[0].texcoord);
+	}
+
+	// Vertex pointer is invariant over bump/nobump render modes
 	glVertexPointer(
 		3, GL_FLOAT, sizeof(ArbitraryMeshVertex), &_vertices[0].vertex);
-	glTexCoordPointer(
-		2, GL_FLOAT, sizeof(ArbitraryMeshVertex), &_vertices[0].texcoord);
 	
+	// Draw the elements
 	glDrawElements(GL_TRIANGLES, _nIndices, GL_UNSIGNED_INT, &_indices[0]);
 
 }
