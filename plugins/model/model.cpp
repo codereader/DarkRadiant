@@ -108,6 +108,14 @@ public:
 	// Skin changed notify (from SkinnedModel)
 	void skinChanged() {
 
+		// Get the model skin object from the parent entity, and apply it to
+		// the PicoModel if valid.
+		ModelSkin* skin = NodeTypeCast<ModelSkin>::cast(path().parent());
+		if (skin != NULL && skin->realised())
+			_picoModel.applySkin(*skin);
+		
+		// Refresh the scene
+		GlobalSceneGraph().sceneChanged();
 	}
 
 	/* Main constructor */
@@ -265,8 +273,6 @@ scene::Node& loadPicoModel(const picoModule_t* module, ArchiveFile& file) {
 /* Load the provided file as a model object and return as an IModel
  * shared pointer.
  */
- 
-#include "RenderablePicoModel.h"
  
 model::IModelPtr loadIModel(const picoModule_t* module, ArchiveFile& file) {
 
