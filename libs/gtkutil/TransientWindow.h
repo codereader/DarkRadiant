@@ -43,7 +43,8 @@ private:
 	 * Parts of this are taken from original GtkRadiant code (window.cpp)
 	 */
 	static gboolean onParentResize(GtkWidget* widget, GdkEventWindowState* event, GtkWidget* child);
-	
+
+public:	
 	/* greebo: The following two functions are copied over from window.cpp (GtkRadiant original code)
 	 */
 
@@ -56,6 +57,7 @@ private:
 	// order to allow it to be restored correctly.
 	static void minimise(GtkWidget* window);
 
+private:
 	/* greebo: This disconnects the onResize handler from the _parent window
 	 */	
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, GtkWindow* parent);
