@@ -126,7 +126,7 @@ void Map_ExportSelected(std::ostream& out, const MapFormat& format);
 
 bool Map_Modified(const Map& map);
 
-bool Map_Save();
+void Map_Save();
 bool Map_SaveAs();
 
 scene::Node& Node_Clone(scene::Node& node);

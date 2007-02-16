@@ -160,7 +160,7 @@ bool ConfirmModified(const char* title)
     }
     else
     {
-      return Map_Save();
+      Map_Save();
     }
   }
   return true;
