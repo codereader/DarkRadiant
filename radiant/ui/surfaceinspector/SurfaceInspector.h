@@ -13,6 +13,7 @@ class SurfaceInspector
 	GtkWidget* _dialog;
 
 	struct ManipulatorRow {
+		GtkWidget* hbox;
 		GtkWidget* label;
 		GtkWidget* value;
 		GtkWidget* leftArrow; 
@@ -29,10 +30,34 @@ class SurfaceInspector
 	GtkWidget* _shaderEntry;
 	
 	struct FitTextureWidgets {
+		GtkObject* widthAdj;
+		GtkObject* heightAdj;
 		GtkWidget* width;
 		GtkWidget* height;
 		GtkWidget* button;
+		GtkWidget* label;
 	} _fitTexture;
+
+	struct FlipTextureWidgets {
+		GtkWidget* hbox;
+		GtkWidget* flipX;
+		GtkWidget* flipY;
+		GtkWidget* label;
+	} _flipTexture;
+	
+	struct TexturePatches {
+		GtkWidget* hbox;
+		GtkWidget* label;
+		GtkWidget* cycleCap;
+		GtkWidget* natural;
+	} _patches;
+	
+	struct TextureBrushes {
+		GtkWidget* hbox;
+		GtkWidget* label;
+		GtkWidget* axial;
+		GtkWidget* texLock;
+	} _brushes;
 
 public:
 
