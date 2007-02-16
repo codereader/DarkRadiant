@@ -56,10 +56,13 @@ SurfaceInspector::SurfaceInspector() {
 }
 
 void SurfaceInspector::toggle() {
+	// Pass the call to the utility methods that save/restore the window position
 	if (GTK_WIDGET_VISIBLE(_dialog)) {
+		gtkutil::TransientWindow::minimise(_dialog);
 		gtk_widget_hide_all(_dialog);
 	}
 	else {
+		gtkutil::TransientWindow::restore(_dialog);
 		gtk_widget_show_all(_dialog);
 	}
 }
