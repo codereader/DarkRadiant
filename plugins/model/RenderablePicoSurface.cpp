@@ -33,7 +33,9 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 			_originalShaderName = rawMapName.substr(basePos + 5, dotPos - basePos - 5);
 		}
     }
-    globalOutputStream() << "  RenderablePicoSurface: using shader " << _originalShaderName.c_str() << "\n";
+    
+    globalOutputStream() << "  RenderablePicoSurface: using shader " 
+    					 << _originalShaderName.c_str() << "\n";
     
     _mappedShaderName = _originalShaderName; // no skin at this time
     
@@ -63,6 +65,36 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
     for (unsigned int i = 0; i < _nIndices; i++)
     	_indices[i] = ind[i];
 	
+	// Calculate the tangent and bitangent vectors
+	calculateTangents();
+	
+}
+
+// Tangent calculation
+void RenderablePicoSurface::calculateTangents() {
+	
+	// Calculate the tangents and bitangents using the indices into the vertex
+	// array.
+	for (Indices::iterator i = _indices.begin();
+		 i != _indices.end();
+		 i += 3)
+	{
+		ArbitraryMeshVertex& a = _vertices[*i];
+		ArbitraryMeshVertex& b = _vertices[*(i + 1)];
+		ArbitraryMeshVertex& c = _vertices[*(i + 2)];
+		
+		// Call the tangent calculation function from render.h
+		ArbitraryMeshTriangle_sumTangents(a, b, c);
+	}
+	
+	// Normalise all of the tangent and bitangent vectors
+	for (VertexVector::iterator j = _vertices.begin();
+		 j != _vertices.end();
+		 ++j)
+	{
+		j->tangent.normalise();
+		j->bitangent.normalise();		
+	}
 }
 
 // Destructor

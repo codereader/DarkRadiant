@@ -304,10 +304,22 @@ public:
 		return lenSquared;
 	}
 
-	// Return a new BasicVector3 equivalent to the normalised
-	// version of this BasicVector3 (scaled by the inverse of its size)
+	/**
+	 * Return a new BasicVector3 equivalent to the normalised version of this 
+	 * BasicVector3 (scaled by the inverse of its size)
+	 */
 	BasicVector3<Element> getNormalised() const {
 		return (*this)/getLength();
+	}
+	
+	/**
+	 * Normalise this vector in-place by scaling by the inverse of its size.
+	 */
+	void normalise() {
+		double l = getLength();
+		_v[0] /= l;
+		_v[1] /= l;
+		_v[2] /= l; 		
 	}
 	
 	// Returns a vector with the reciprocal values of each component
