@@ -1,3 +1,8 @@
+16/02/2007
+OrbWeaver
+- Filter system now affects static models in the camera view.
+- Static models in camera view display with their correct skins.
+
 15/02/2007
 OrbWeaver
 - Save and load dialogs now activate on Enter key.

@@ -38,11 +38,13 @@ class RenderablePicoSurface
 	
 	// Vector of ArbitraryMeshVertex structures, containing the coordinates,
 	// normals, tangents and texture coordinates of the component vertices
-	std::vector<ArbitraryMeshVertex> _vertices;
+	typedef std::vector<ArbitraryMeshVertex> VertexVector; 
+	VertexVector _vertices;
 	
 	// Vector of render indices, representing the groups of vertices to be
 	// used to create triangles
-	std::vector<unsigned int> _indices;
+	typedef std::vector<unsigned int> Indices;
+	Indices _indices;
 	
 	// Keep track of the number of indices to iterate over, since vector::size()
 	// may not be fast
@@ -53,7 +55,12 @@ class RenderablePicoSurface
 	
 	// Vector of RendererLight references which illuminate this surface
 	VectorLightList _lights;
-	
+
+private:
+
+	// Calculate tangent and bitangent vectors for all vertices.
+	void calculateTangents();
+
 public:
 
 	/** Constructor. Accepts a picoSurface_t struct and the file extension to determine
