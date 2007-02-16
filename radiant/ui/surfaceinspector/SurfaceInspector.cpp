@@ -104,11 +104,11 @@ void SurfaceInspector::populateWindow() {
 	gtk_table_attach_defaults(table, _shaderEntry, 1, 2, 0, 1);
 	
 	// Populate the table with the according widgets
-	_manipulators[HSHIFT] = createManipulatorRow(LABEL_HSHIFT, table, 1);
-	_manipulators[VSHIFT] = createManipulatorRow(LABEL_VSHIFT, table, 2);
-	_manipulators[HSCALE] = createManipulatorRow(LABEL_HSCALE, table, 3);
-	_manipulators[VSCALE] = createManipulatorRow(LABEL_VSCALE, table, 4);
-	_manipulators[ROTATION] = createManipulatorRow(LABEL_ROTATION, table, 5);
+	_manipulators[HSHIFT] = createManipulatorRow(LABEL_HSHIFT, table, 1, false);
+	_manipulators[VSHIFT] = createManipulatorRow(LABEL_VSHIFT, table, 2, true);
+	_manipulators[HSCALE] = createManipulatorRow(LABEL_HSCALE, table, 3, false);
+	_manipulators[VSCALE] = createManipulatorRow(LABEL_VSCALE, table, 4, true);
+	_manipulators[ROTATION] = createManipulatorRow(LABEL_ROTATION, table, 5, true);
 	
 	// ======================== Texture Operations ====================================
 	
@@ -131,7 +131,7 @@ void SurfaceInspector::populateWindow() {
     	gtk_table_set_row_spacings(operTable, 6);
     
     	// Indent the table by adding a left-padding to the alignment
-    	gtk_alignment_set_padding(GTK_ALIGNMENT(operAlignment), 0, 0, 18, 6); 
+    	gtk_alignment_set_padding(GTK_ALIGNMENT(operAlignment), 0, 6, 18, 6); 
     	gtk_container_add(GTK_CONTAINER(operAlignment), GTK_WIDGET(operTable));
     
     // Pack the table into the dialog
@@ -219,7 +219,7 @@ void SurfaceInspector::populateWindow() {
 }
 
 SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
-	const std::string& label, GtkTable* table, int row) 
+	const std::string& label, GtkTable* table, int row, bool vertical) 
 {
 	ManipulatorRow manipRow;
 	
@@ -235,13 +235,32 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	gtk_entry_set_width_chars(GTK_ENTRY(manipRow.value), 7);
 	gtk_box_pack_start(GTK_BOX(manipRow.hbox), manipRow.value, true, true, 0);
 	
-	manipRow.leftArrow = gtkutil::IconTextButton("", "left_arrow.png", false);
-	gtk_widget_set_size_request(manipRow.leftArrow, -1, -1);
-	gtk_box_pack_start(GTK_BOX(manipRow.hbox), manipRow.leftArrow, false, false, 0);
-	
-	manipRow.rightArrow = gtkutil::IconTextButton("", "right_arrow.png", false);
-	gtk_widget_set_size_request(manipRow.rightArrow, -1, -1);
-	gtk_box_pack_start(GTK_BOX(manipRow.hbox), manipRow.rightArrow, false, false, 0);
+	if (vertical) {
+		GtkWidget* vbox = gtk_vbox_new(true, 0);
+		
+		manipRow.larger = gtkutil::IconTextButton("", "arrow_up.png", false);
+		gtk_widget_set_size_request(manipRow.larger, 30, 12);
+		gtk_box_pack_start(GTK_BOX(vbox), manipRow.larger, false, false, 0);
+		
+		manipRow.smaller = gtkutil::IconTextButton("", "arrow_down.png", false);
+		gtk_widget_set_size_request(manipRow.smaller, 30, 12);
+		gtk_box_pack_start(GTK_BOX(vbox), manipRow.smaller, false, false, 0);
+		
+		gtk_box_pack_start(GTK_BOX(manipRow.hbox), vbox, false, false, 0);
+	}
+	else {
+		GtkWidget* hbox = gtk_hbox_new(true, 0);
+		
+		manipRow.smaller = gtkutil::IconTextButton("", "arrow_left.png", false);
+		gtk_widget_set_size_request(manipRow.smaller, 15, 24);
+		gtk_box_pack_start(GTK_BOX(hbox), manipRow.smaller, false, false, 0);
+		
+		manipRow.larger = gtkutil::IconTextButton("", "arrow_right.png", false);
+		gtk_widget_set_size_request(manipRow.larger, 15, 24);
+		gtk_box_pack_start(GTK_BOX(hbox), manipRow.larger, false, false, 0);
+		
+		gtk_box_pack_start(GTK_BOX(manipRow.hbox), hbox, false, false, 0);
+	}
 	
 	// Create the label
 	manipRow.steplabel = gtk_label_new(LABEL_STEP);
@@ -253,7 +272,7 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	gtk_entry_set_width_chars(GTK_ENTRY(manipRow.step), 5);
 	gtk_box_pack_start(GTK_BOX(manipRow.hbox), manipRow.step, false, false, 0);
 	
-	// Packt the hbox into the table
+	// Pack the hbox into the table
 	gtk_table_attach_defaults(table, manipRow.hbox, 1, 2, row, row+1);
 	
 	// Return the filled structure

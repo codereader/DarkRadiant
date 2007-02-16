@@ -16,8 +16,8 @@ class SurfaceInspector
 		GtkWidget* hbox;
 		GtkWidget* label;
 		GtkWidget* value;
-		GtkWidget* leftArrow; 
-		GtkWidget* rightArrow;
+		GtkWidget* smaller; 
+		GtkWidget* larger;
 		GtkWidget* step;
 		GtkWidget* steplabel;
 	};
@@ -75,7 +75,8 @@ private:
 	 */
 	ManipulatorRow createManipulatorRow(const std::string& label, 
 										GtkTable* table, 
-										int row);
+										int row,
+										bool vertical);
 
 	// Adds all the widgets to the window
 	void populateWindow();
