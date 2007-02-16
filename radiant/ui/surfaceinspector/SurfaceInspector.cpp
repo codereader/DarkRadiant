@@ -187,7 +187,7 @@ void SurfaceInspector::toggleInspector() {
 	static SurfaceInspector _inspector;
 
 	// Now toggle the dialog
-	_inspector.toggle();
+	//_inspector.toggle();
 }
 
 gboolean SurfaceInspector::onDelete(GtkWidget* widget, GdkEvent* event, SurfaceInspector* self) {

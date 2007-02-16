@@ -265,6 +265,12 @@ public:
 	void ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width);
   
 	void FlipTexture(int nAxis);
+	
+	/** greebo: Translate all control vertices in texture space
+	 * with the given translation vector (helper method)
+	 */
+	void translateTexCoords(Vector2 translation);
+	
 	void TranslateTexture(float s, float t);
 	void ScaleTexture(float s, float t);
 	void RotateTexture(float angle);
@@ -296,6 +302,12 @@ public:
 	void pasteTextureNatural(Patch& sourcePatch);
 	
 	void pasteTextureCoordinates(const Patch* otherPatch);
+
+	/** greebo: Tries to make the texture transition seamless (from
+	 * the source patch to the this patch), leaving the sourcepatch
+	 * intact.
+	 */
+	void stitchTextureFrom(Patch& sourcePatch);
 
 	/** greebo: Converts this patch as thickened counterpart of the given <sourcePatch>
 	 * with the given <thickness> along the chosen <axis>

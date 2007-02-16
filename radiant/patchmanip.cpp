@@ -708,6 +708,38 @@ void createSimplePatch() {
 	}
 }
 
+void stitchPatchTextures() {
+	// The list of all the selected patches
+	PatchFinder::PatchList list;
+	
+	// Now populate the list
+	Scene_forEachVisibleSelectedPatchInstance(
+		PatchFinder(list)
+	);
+	
+	if (list.size() == 2) {
+		UndoableCommand undo("patchStitchTexture");
+
+		// Fetch the instances from the selectionsystem		
+		scene::Instance& targetInstance = 
+			GlobalSelectionSystem().ultimateSelected();
+			
+		scene::Instance& sourceInstance =
+			GlobalSelectionSystem().penultimateSelected();
+			
+		// Cast the instances onto a patch
+		PatchInstance& source = *(Instance_getPatch(sourceInstance));
+		PatchInstance& target = *(Instance_getPatch(targetInstance));
+		
+		// Stitch the texture leaving the source patch intact 
+		target.getPatch().stitchTextureFrom(source.getPatch());
+	}
+	else {
+		gtkutil::errorDialog("Cannot stitch patch textures. \nExactly 2 patches must be selected.",
+							 MainFrame_getWindow());
+	}
+}
+
 } // namespace patch
 
 #include "preferences.h"
@@ -767,6 +799,7 @@ void Patch_registerCommands()
   GlobalEventManager().addCommand("CapCurrentCurve", FreeCaller<Patch_Cap>());
   GlobalEventManager().addCommand("CycleCapTexturePatch", FreeCaller<Patch_CycleProjection>());
   GlobalEventManager().addCommand("ThickenPatch", FreeCaller<patch::thickenSelectedPatches>());
+  GlobalEventManager().addCommand("StitchPatchTexture", FreeCaller<patch::stitchPatchTextures>());
 }
 
 void Patch_constructMenu(GtkMenu* menu)
@@ -814,6 +847,8 @@ void Patch_constructMenu(GtkMenu* menu)
   createMenuItemWithMnemonic(menu, "Thicken Selected Patches", "ThickenPatch");
   createMenuItemWithMnemonic(menu, "Cap Selection", "CapCurrentCurve");
   createMenuItemWithMnemonic(menu, "Cycle Cap Texture", "CycleCapTexturePatch");
+  menu_separator (menu);
+  createMenuItemWithMnemonic(menu, "Stitch Patch Textures", "StitchPatchTexture");
 }
 
 
