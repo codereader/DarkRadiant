@@ -28,13 +28,25 @@ namespace ui {
 		
 		const char* LABEL_FIT_TEXTURE = "Fit Texture:";
 		const char* LABEL_FIT = "Fit";
+		
+		const char* LABEL_FLIP_TEXTURE = "Flip Texture:";
+		const char* LABEL_FLIPX = "Flip Horizontal";
+		const char* LABEL_FLIPY = "Flip Vertical";
+				
+		const char* LABEL_PATCHES = "Patches:";
+		const char* LABEL_NATURAL = "Natural";
+		const char* LABEL_CAP = "Cycle CAP";
+		
+		const char* LABEL_BRUSHES = "Brushes:";
+		const char* LABEL_AXIAL = "Axial";
+		const char* LABEL_TEXTURE_LOCK = "Texture Lock";
 	}
 
 SurfaceInspector::SurfaceInspector() {
 	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
 	_dialog = gtkutil::TransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
 	
-	gtk_window_set_resizable(GTK_WINDOW(_dialog), false);
+	gtk_window_set_resizable(GTK_WINDOW(_dialog), true);
 	
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 6);
@@ -63,11 +75,11 @@ void SurfaceInspector::populateWindow() {
     
     gtk_box_pack_start(GTK_BOX(dialogVBox), topLabel, true, true, 0);
     
-    // Create a new 6x6 table and pack it into an alignment
+    // Create a new 2x6 table and pack it into an alignment
 	GtkWidget* alignment = gtk_alignment_new(0.0f, 0.0f, 1.0f, 1.0f);
 	
 		// Setup the table with default spacings
-		GtkTable* table = GTK_TABLE(gtk_table_new(6, 6, false));
+		GtkTable* table = GTK_TABLE(gtk_table_new(6, 2, false));
     	gtk_table_set_col_spacings(table, 12);
     	gtk_table_set_row_spacings(table, 6);
     
@@ -84,8 +96,8 @@ void SurfaceInspector::populateWindow() {
 	gtk_table_attach_defaults(table, shaderLabel, 0, 1, 0, 1);
 	
 	_shaderEntry = gtk_entry_new();
-	gtk_entry_set_width_chars(GTK_ENTRY(_shaderEntry), 30);
-	gtk_table_attach_defaults(table, _shaderEntry, 1, 6, 0, 1);
+	//gtk_entry_set_width_chars(GTK_ENTRY(_shaderEntry), 40);
+	gtk_table_attach_defaults(table, _shaderEntry, 1, 2, 0, 1);
 	
 	// Populate the table with the according widgets
 	_manipulators[HSHIFT] = createManipulatorRow(LABEL_HSHIFT, table, 1);
@@ -106,11 +118,11 @@ void SurfaceInspector::populateWindow() {
     
     gtk_box_pack_start(GTK_BOX(dialogVBox), operLabel, true, true, 0);
     
-    // Create a new 5x2 table and pack it into another alignment
-	GtkWidget* operAlignment = gtk_alignment_new(0.0f, 0.0f, 0.0f, 1.0f);
+    // Create a new 2x4 table and pack it into another alignment
+	GtkWidget* operAlignment = gtk_alignment_new(0.0f, 0.0f, 1.0f, 1.0f);
 	
 		// Setup the table with default spacings
-		GtkTable* operTable = GTK_TABLE(gtk_table_new(5, 2, false));
+		GtkTable* operTable = GTK_TABLE(gtk_table_new(4, 2, false));
     	gtk_table_set_col_spacings(operTable, 12);
     	gtk_table_set_row_spacings(operTable, 6);
     
@@ -123,28 +135,77 @@ void SurfaceInspector::populateWindow() {
 	
 	// ------------------------ Fit Texture -----------------------------------
 	
+	GtkWidget* fitHBox = gtk_hbox_new(false, 6); 
+	
 	// Create the "Fit Texture" label
-	GtkWidget* fitTexLabel = gtk_label_new(LABEL_FIT_TEXTURE);
-	gtk_misc_set_alignment(GTK_MISC(fitTexLabel), 0.0f, 0.5f);
-	gtk_table_attach_defaults(operTable, fitTexLabel, 0, 1, 0, 1);
+	_fitTexture.label = gtk_label_new(LABEL_FIT_TEXTURE);
+	gtk_misc_set_alignment(GTK_MISC(_fitTexture.label), 0.0f, 0.5f);
+	gtk_table_attach_defaults(operTable, _fitTexture.label, 0, 1, 0, 1);
+	
+	_fitTexture.widthAdj = gtk_adjustment_new(1.0f, 0.0f, 1000.0f, 1.0f, 1.0f, 1.0f);
+	_fitTexture.heightAdj = gtk_adjustment_new(1.0f, 0.0f, 1000.0f, 1.0f, 1.0f, 1.0f);
 	
 	// Create the width entry field
-	_fitTexture.width = gtk_entry_new();
-	gtk_entry_set_width_chars(GTK_ENTRY(_fitTexture.width), 5);
-	gtk_table_attach_defaults(operTable, _fitTexture.width, 1, 2, 0, 1);
+	_fitTexture.width = gtk_spin_button_new(GTK_ADJUSTMENT(_fitTexture.widthAdj), 1.0f, 4);
+	gtk_widget_set_size_request(_fitTexture.width, 55, -1);
+	gtk_box_pack_start(GTK_BOX(fitHBox), _fitTexture.width, false, false, 0);
 	
 	// Create the "x" label
 	GtkWidget* xLabel = gtk_label_new("x");
 	gtk_misc_set_alignment(GTK_MISC(xLabel), 0.0f, 0.5f);
-	gtk_table_attach_defaults(operTable, xLabel, 2, 3, 0, 1);
+	gtk_box_pack_start(GTK_BOX(fitHBox), xLabel, false, false, 0);
 	
 	// Create the height entry field
-	_fitTexture.height = gtk_entry_new();
-	gtk_entry_set_width_chars(GTK_ENTRY(_fitTexture.height), 5);
-	gtk_table_attach_defaults(operTable, _fitTexture.height, 3, 4, 0, 1);
+	_fitTexture.height = gtk_spin_button_new(GTK_ADJUSTMENT(_fitTexture.heightAdj), 1.0f, 4);
+	gtk_widget_set_size_request(_fitTexture.height, 55, -1);
+	gtk_box_pack_start(GTK_BOX(fitHBox), _fitTexture.height, false, false, 0);
 	
 	_fitTexture.button = gtk_button_new_with_label(LABEL_FIT);
-	gtk_table_attach_defaults(operTable, _fitTexture.button, 5, 6, 0, 1);
+	gtk_widget_set_size_request(_fitTexture.button, 30, -1);
+	gtk_box_pack_start(GTK_BOX(fitHBox), _fitTexture.button, true, true, 0);
+		
+	gtk_table_attach_defaults(operTable, fitHBox, 1, 2, 0, 1);
+	
+	// ------------------------ Operation Buttons ------------------------------
+	
+	// Create the "Flip Texture" label
+	_flipTexture.label = gtk_label_new(LABEL_FLIP_TEXTURE);
+	gtk_misc_set_alignment(GTK_MISC(_flipTexture.label), 0.0f, 0.5f);
+	gtk_table_attach_defaults(operTable, _flipTexture.label, 0, 1, 1, 2);
+	
+	_flipTexture.hbox = gtk_hbox_new(true, 6); 
+	_flipTexture.flipX = gtk_button_new_with_label(LABEL_FLIPX);
+	_flipTexture.flipY = gtk_button_new_with_label(LABEL_FLIPY);
+	gtk_box_pack_start(GTK_BOX(_flipTexture.hbox), _flipTexture.flipX, true, true, 0);
+	gtk_box_pack_start(GTK_BOX(_flipTexture.hbox), _flipTexture.flipY, true, true, 0);
+	
+	gtk_table_attach_defaults(operTable, _flipTexture.hbox, 1, 2, 1, 2);
+	
+	// Create the "Patches" label
+	_patches.label = gtk_label_new(LABEL_PATCHES);
+	gtk_misc_set_alignment(GTK_MISC(_patches.label), 0.0f, 0.5f);
+	gtk_table_attach_defaults(operTable, _patches.label, 0, 1, 2, 3);
+	
+	_patches.hbox = gtk_hbox_new(true, 6); 
+	_patches.natural = gtk_button_new_with_label(LABEL_NATURAL);
+	_patches.cycleCap = gtk_button_new_with_label(LABEL_CAP);
+	gtk_box_pack_start(GTK_BOX(_patches.hbox), _patches.natural, true, true, 0);
+	gtk_box_pack_start(GTK_BOX(_patches.hbox), _patches.cycleCap, true, true, 0);
+	
+	gtk_table_attach_defaults(operTable, _patches.hbox, 1, 2, 2, 3);
+	
+	// Brushes
+	_brushes.label = gtk_label_new(LABEL_BRUSHES);
+	gtk_misc_set_alignment(GTK_MISC(_brushes.label), 0.0f, 0.5f);
+	gtk_table_attach_defaults(operTable, _brushes.label, 0, 1, 3, 4);
+	
+	_brushes.hbox = gtk_hbox_new(true, 6); 
+	_brushes.axial = gtk_button_new_with_label(LABEL_AXIAL);
+	_brushes.texLock = gtk_toggle_button_new_with_label(LABEL_TEXTURE_LOCK);
+	gtk_box_pack_start(GTK_BOX(_brushes.hbox), _brushes.axial, true, true, 0);
+	gtk_box_pack_start(GTK_BOX(_brushes.hbox), _brushes.texLock, true, true, 0);
+	
+	gtk_table_attach_defaults(operTable, _brushes.hbox, 1, 2, 3, 4);
 }
 
 SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
@@ -152,31 +213,38 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 {
 	ManipulatorRow manipRow;
 	
+	manipRow.hbox = gtk_hbox_new(false, 6);
+		
 	// Create the label
 	manipRow.label = gtk_label_new(label.c_str());
 	gtk_misc_set_alignment(GTK_MISC(manipRow.label), 0.0f, 0.5f);
 	gtk_table_attach_defaults(table, manipRow.label, 0, 1, row, row+1);
-	
+		
 	// Create the entry field
 	manipRow.value = gtk_entry_new();
 	gtk_entry_set_width_chars(GTK_ENTRY(manipRow.value), 7);
-	gtk_table_attach_defaults(table, manipRow.value, 1, 2, row, row+1);
+	gtk_box_pack_start(GTK_BOX(manipRow.hbox), manipRow.value, true, true, 0);
 	
 	manipRow.leftArrow = gtkutil::IconTextButton("", "left_arrow.png", false);
-	gtk_table_attach_defaults(table, manipRow.leftArrow, 2, 3, row, row+1);
+	gtk_widget_set_size_request(manipRow.leftArrow, -1, -1);
+	gtk_box_pack_start(GTK_BOX(manipRow.hbox), manipRow.leftArrow, false, false, 0);
 	
 	manipRow.rightArrow = gtkutil::IconTextButton("", "right_arrow.png", false);
-	gtk_table_attach_defaults(table, manipRow.rightArrow, 3, 4, row, row+1);
+	gtk_widget_set_size_request(manipRow.rightArrow, -1, -1);
+	gtk_box_pack_start(GTK_BOX(manipRow.hbox), manipRow.rightArrow, false, false, 0);
 	
 	// Create the label
 	manipRow.steplabel = gtk_label_new(LABEL_STEP);
 	gtk_misc_set_alignment(GTK_MISC(manipRow.steplabel), 0.0f, 0.5f);
-	gtk_table_attach_defaults(table, manipRow.steplabel, 4, 5, row, row+1);
+	gtk_box_pack_start(GTK_BOX(manipRow.hbox), manipRow.steplabel, false, false, 0);
 	
 	// Create the entry field
 	manipRow.step = gtk_entry_new();
 	gtk_entry_set_width_chars(GTK_ENTRY(manipRow.step), 5);
-	gtk_table_attach_defaults(table, manipRow.step, 5, 6, row, row+1);
+	gtk_box_pack_start(GTK_BOX(manipRow.hbox), manipRow.step, false, false, 0);
+	
+	// Packt the hbox into the table
+	gtk_table_attach_defaults(table, manipRow.hbox, 1, 2, row, row+1);
 	
 	// Return the filled structure
 	return manipRow;
