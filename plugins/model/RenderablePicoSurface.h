@@ -1,14 +1,19 @@
 #ifndef RENDERABLEPICOSURFACE_H_
 #define RENDERABLEPICOSURFACE_H_
 
+#include "VectorLightList.h"
+
 #include "picomodel.h"
-#include "irender.h"
+#include "cullable.h"
 #include "render.h"
 #include "math/aabb.h"
 
 /* FORWARD DECLS */
-
-class ModelSkin; // modelskin.h
+class ModelSkin;
+class Renderer;
+class SelectionTest;
+class Selector;
+class Shader;
 
 namespace model
 {
@@ -19,7 +24,8 @@ namespace model
  */
 
 class RenderablePicoSurface
-: public OpenGLRenderable
+: public OpenGLRenderable,
+  public Cullable
 {
 	// Name of the material this surface is using, both originally and after a skin
 	// remap.
@@ -44,6 +50,9 @@ class RenderablePicoSurface
 	// The AABB containing this surface, in local object space.
 	AABB _localAABB;
 	
+	// Vector of RendererLight references which illuminate this surface
+	VectorLightList _lights;
+	
 public:
 
 	/** Constructor. Accepts a picoSurface_t struct and the file extension to determine
@@ -51,16 +60,38 @@ public:
 	 */
 	RenderablePicoSurface(picoSurface_t* surf, const std::string& fExt);
 	
-	/** Destructor. Vectors will be automatically destructed, but we need to release the
-	 * shader.
+	/** 
+	 * Destructor. Vectors will be automatically destructed, but we need to 
+	 * release the shader.
 	 */
-	~RenderablePicoSurface() {
-		GlobalShaderCache().release(_mappedShaderName);
-	}
+	~RenderablePicoSurface();
 	
-	/** Render function from OpenGLRenderable
+	/**
+	 * Front-end render function used by the main renderer.
+	 * 
+	 * @param rend
+	 * The sorting Renderer object which accepts renderable geometry.
+	 * 
+	 * @param localToWorld
+	 * Object to world-space transform.
+	 */
+	void submitRenderables(Renderer& rend, const Matrix4& localToWorld);		
+	
+	/** 
+	 * Render function from OpenGLRenderable
 	 */
 	void render(RenderStateFlags flags) const;
+	
+	/**
+	 * Add a light to this surface. No volume intersection tests are performed,
+	 * so this should already have been done by the PicoModel.
+	 */
+	void addLight(const RendererLight& light);
+	
+	/**
+	 * Remove all lights from this surface.
+	 */
+	void clearLights();
 	
 	/** Return the vertex count for this surface
 	 */
@@ -100,7 +131,19 @@ public:
 	 * ModelSkin object to apply to this surface.
 	 */
 	void applySkin(const ModelSkin& skin);
-	 
+	
+	/**
+	 * Perform a volume intersection (AABB) test on this surface.
+	 */
+	VolumeIntersectionValue intersectVolume(const VolumeTest& test,
+									 		const Matrix4& localToWorld) const;
+									 		
+	/** 
+	 * Perform a selection test on this surface.
+	 */
+	void testSelect(Selector& selector, 
+					SelectionTest& test,
+					const Matrix4& localToWorld) const; 
 };
 
 }

@@ -1,14 +1,17 @@
 #include "RenderablePicoSurface.h"
 
 #include "modelskin.h"
+#include "math/frustum.h"
+#include "selectable.h"
+#include "renderable.h"
 
 #include <boost/algorithm/string/replace.hpp>
 
 namespace model {
 
 // Constructor. Copy the provided picoSurface_t structure into this object
-
-RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf, const std::string& fExt)
+RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf, 
+											 const std::string& fExt)
 : _originalShaderName(""),
   _mappedShaderName("")
 {
@@ -62,23 +65,52 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf, const std::str
 	
 }
 
-// Render function
+// Destructor
+RenderablePicoSurface::~RenderablePicoSurface() {
+	GlobalShaderCache().release(_mappedShaderName);
+}
 
+// Front-end renderable submission
+void RenderablePicoSurface::submitRenderables(Renderer& rend,
+											  const Matrix4& localToWorld)
+{
+	// Submit the lights
+	rend.setLights(_lights);
+	
+	// Submit geometry
+	rend.SetState(_shader, Renderer::eFullMaterials);
+    rend.addRenderable(*this, localToWorld);
+}
+
+// Back-end render function
 void RenderablePicoSurface::render(RenderStateFlags flags) const {
 
 	// Use Vertex Arrays to submit data to the GL. We will assume that it is
-	// acceptable to perform pointer arithmetic over the elements of a std::vector,
-	// starting from the address of element 0.
+	// acceptable to perform pointer arithmetic over the elements of a 
+	// std::vector, starting from the address of element 0.
 	
-	glNormalPointer(GL_FLOAT, sizeof(ArbitraryMeshVertex), &_vertices[0].normal);
-	glVertexPointer(3, GL_FLOAT, sizeof(ArbitraryMeshVertex), &_vertices[0].vertex);
-	glTexCoordPointer(2, GL_FLOAT, sizeof(ArbitraryMeshVertex), &_vertices[0].texcoord);
+	glNormalPointer(
+		GL_FLOAT, sizeof(ArbitraryMeshVertex), &_vertices[0].normal);
+	glVertexPointer(
+		3, GL_FLOAT, sizeof(ArbitraryMeshVertex), &_vertices[0].vertex);
+	glTexCoordPointer(
+		2, GL_FLOAT, sizeof(ArbitraryMeshVertex), &_vertices[0].texcoord);
+	
 	glDrawElements(GL_TRIANGLES, _nIndices, GL_UNSIGNED_INT, &_indices[0]);
 
 }
 
-// Apply a skin to this surface
+// Add a light to our light list
+void RenderablePicoSurface::addLight(const RendererLight& light) {
+	_lights.addLight(light);
+}
 
+// Clear the light list
+void RenderablePicoSurface::clearLights() {
+	_lights.clear();	
+}
+
+// Apply a skin to this surface
 void RenderablePicoSurface::applySkin(const ModelSkin& skin) {
 	// Look up the remap for this surface's material name. If there is a remap
 	// change the Shader* to point to the new shader.
@@ -99,6 +131,36 @@ void RenderablePicoSurface::applySkin(const ModelSkin& skin) {
 		// Reset the remapped shader name
 		_mappedShaderName = _originalShaderName; 
 	}
+}
+
+// Perform volume intersection test on this surface's geometry
+VolumeIntersectionValue RenderablePicoSurface::intersectVolume(
+	const VolumeTest& test, 
+	const Matrix4& localToWorld) const
+{
+	return test.TestAABB(_localAABB, localToWorld);
+}
+
+// Perform selection test for this surface
+void RenderablePicoSurface::testSelect(Selector& selector, 
+									   SelectionTest& test,
+									   const Matrix4& localToWorld) const
+{
+	// Test for triangle selection
+    test.BeginMesh(localToWorld);
+    SelectionIntersection result;
+    test.TestTriangles(
+		VertexPointer(VertexPointer::pointer(&_vertices[0].vertex), 
+					  sizeof(ArbitraryMeshVertex)),
+      	IndexPointer(&_indices[0], 
+      				 IndexPointer::index_type(_indices.size())),
+		result
+    );
+
+	// Add the intersection to the selector if it is valid
+    if(result.valid()) {
+		selector.addIntersection(result);
+    }
 }
 
 } // namespace model
