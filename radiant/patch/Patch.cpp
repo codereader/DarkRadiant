@@ -865,6 +865,16 @@ void Patch::FlipTexture(int nAxis)
   controlPointsChanged();
 }
 
+/** greebo: Helper function that shifts all control points in
+ * texture space about <s,t>
+ */
+void Patch::translateTexCoords(Vector2 translation) {
+	// Cycle through all control points and shift them in texture space
+	for (PatchControlIter i = m_ctrl.data(); i != m_ctrl.data() + m_ctrl.size(); ++i) {
+    	i->m_texcoord += translation;
+  	}
+}
+
 void Patch::TranslateTexture(float s, float t)
 {
   undoSave();
@@ -872,12 +882,8 @@ void Patch::TranslateTexture(float s, float t)
   s = -1 * s / m_state->getTexture().width;
   t = t / m_state->getTexture().height;
 
-  for(PatchControlIter i = m_ctrl.data(); i != m_ctrl.data() + m_ctrl.size(); ++i)
-  {
-    (*i).m_texcoord[0] += s;
-    (*i).m_texcoord[1] += t;
-  }
-
+	translateTexCoords(Vector2(s,t));
+  
   controlPointsChanged();
 }
 
@@ -3834,4 +3840,78 @@ void Patch::createThickenedWall(const Patch& sourcePatch,
 	
 	// Texture the patch "naturally"
 	NaturalTexture();
+}
+
+void Patch::stitchTextureFrom(Patch& sourcePatch) {
+	// Save the undo memento
+	undoSave();
+	
+	// Convert the size_t stuff into int, because we need it for signed comparisons
+	int patchHeight = static_cast<int>(m_height);
+	int patchWidth = static_cast<int>(m_width);
+	
+	// Calculate the nearest corner vertex of this patch (to the sourcepatch vertices)
+	PatchControl* nearestControl = getClosestPatchControlToPatch(sourcePatch);
+	
+	PatchControl* refControl = sourcePatch.getClosestPatchControlToPatch(*this);
+	
+	// Get the distance in texture space
+	Vector2 texDiff = refControl->m_texcoord - nearestControl->m_texcoord;
+	
+	// Get the shift direction
+	Vector2 texShift = texDiff;
+	texShift[0] /= fabs(texShift[0]);
+	texShift[1] /= fabs(texShift[1]);
+	
+	// Now shift the texture in the right direction, till this patch
+	// is getting as close as possible to the source patch (in texture space)
+	// Be sure to check the nearestControl if it's getting out of bounds
+	for (int coord = 0; coord < 2; coord++) {
+		
+		// The loop will continue if there is space for at least one
+		// entire texture (a texture has the size 1.0f in texture space)
+		while (fabs(refControl->m_texcoord[coord] - nearestControl->m_texcoord[coord]) > 1.0f &&
+			   fabs(nearestControl->m_texcoord[coord]) < 65000.0f) 
+		{
+			Vector2 translation(texShift);
+			translation[1 - coord] = 0;
+			
+			translateTexCoords(translation);
+		}
+		
+		if (fabs(nearestControl->m_texcoord[coord]) >= 65000.0f) {
+			globalErrorStream() << "Patch::stitchTextureFrom(): texcoord out of bounds.\n";
+		}
+	}
+	
+	int sourceHeight = static_cast<int>(sourcePatch.getHeight());
+	int sourceWidth = static_cast<int>(sourcePatch.getWidth());
+	
+	// Go through all the 3D vertices and see if they are shared by the other patch
+	for (int col = 0; col < patchWidth; col++) {
+		for (int row = 0; row < patchHeight; row++) {
+			
+			// The control vertex that is to be manipulated			
+			PatchControl& self = ctrlAt(row, col);
+			
+			// Check all the other patch controls for spatial conincidences
+			for (int srcCol = 0; srcCol < sourceWidth; srcCol++) {
+				for (int srcRow = 0; srcRow < sourceHeight; srcRow++) {
+					// Get the other control
+					const PatchControl& other = sourcePatch.ctrlAt(srcRow, srcCol);
+					
+					float dist = (other.m_vertex - self.m_vertex).getLength();
+					
+					// Allow the coords to be a _bit_ distant  
+					if (fabs(dist) < 0.005f) {
+						// Assimilate the texture coordinates
+						self.m_texcoord = other.m_texcoord;
+					}
+				}
+			}
+		}
+	}
+	
+	// Notify the patch about the change
+	controlPointsChanged();
 }
