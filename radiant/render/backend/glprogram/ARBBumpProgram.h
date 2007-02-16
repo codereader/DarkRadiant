@@ -1,6 +1,7 @@
 #ifndef ARBBUMPPROGRAM_H_
 #define ARBBUMPPROGRAM_H_
 
+#include "GLProgramAttributes.h"
 #include "renderstate.h"
 #include "iglrender.h"
 #include "iregistry.h"
@@ -71,10 +72,10 @@ public:
     glBindProgramARB(GL_VERTEX_PROGRAM_ARB, m_vertex_program);
     glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, m_fragment_program);
 
-    glEnableVertexAttribArrayARB(8);
-    glEnableVertexAttribArrayARB(9);
-    glEnableVertexAttribArrayARB(10);
-    glEnableVertexAttribArrayARB(11);
+    glEnableVertexAttribArrayARB(ATTR_TEXCOORD);
+    glEnableVertexAttribArrayARB(ATTR_TANGENT);
+    glEnableVertexAttribArrayARB(ATTR_BITANGENT);
+    glEnableVertexAttribArrayARB(ATTR_NORMAL);
 
     GlobalOpenGL_debugAssertNoErrors();
   }
@@ -84,10 +85,10 @@ public:
     glDisable(GL_VERTEX_PROGRAM_ARB);
     glDisable(GL_FRAGMENT_PROGRAM_ARB);
 
-    glDisableVertexAttribArrayARB(8);
-    glDisableVertexAttribArrayARB(9);
-    glDisableVertexAttribArrayARB(10);
-    glDisableVertexAttribArrayARB(11);
+    glDisableVertexAttribArrayARB(ATTR_TEXCOORD);
+    glDisableVertexAttribArrayARB(ATTR_TANGENT);
+    glDisableVertexAttribArrayARB(ATTR_BITANGENT);
+    glDisableVertexAttribArrayARB(ATTR_NORMAL);
 
     GlobalOpenGL_debugAssertNoErrors();
   }

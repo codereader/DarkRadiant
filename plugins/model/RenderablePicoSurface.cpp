@@ -91,17 +91,18 @@ void RenderablePicoSurface::render(RenderStateFlags flags) const {
 	
     if(flags & RENDER_BUMP) {
 		// Bump mode, we are using an ARB shader so set the correct parameters
-		glVertexAttribPointerARB(
-        	11, 3, GL_FLOAT, 0, 
-        	sizeof(ArbitraryMeshVertex), &_vertices[0].normal);
         glVertexAttribPointerARB(
-        	8, 2, GL_FLOAT, 0, 
+        	ATTR_TEXCOORD, 2, GL_FLOAT, 0, 
         	sizeof(ArbitraryMeshVertex), &_vertices[0].texcoord);
         glVertexAttribPointerARB(
-        	9, 3, GL_FLOAT, 0, 
+        	ATTR_TANGENT, 3, GL_FLOAT, 0, 
         	sizeof(ArbitraryMeshVertex), &_vertices[0].tangent);
-        glVertexAttribPointerARB(10, 3, GL_FLOAT, 0, 
+        glVertexAttribPointerARB(
+        	ATTR_BITANGENT, 3, GL_FLOAT, 0, 
         	sizeof(ArbitraryMeshVertex), &_vertices[0].bitangent);
+		glVertexAttribPointerARB(
+        	ATTR_NORMAL, 3, GL_FLOAT, 0, 
+        	sizeof(ArbitraryMeshVertex), &_vertices[0].normal);
     }
     else {
     	// Standard GL calls
