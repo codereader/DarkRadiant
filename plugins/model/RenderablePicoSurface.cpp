@@ -40,15 +40,15 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
     // Capture the shader
     _shader = GlobalShaderCache().capture(_originalShaderName);
     
-    // Get the number of vertices and indices, and reserve capacity in our vectors in advance
-    // by populating them with empty structs.
+    // Get the number of vertices and indices, and reserve capacity in our 
+    // vectors in advance by populating them with empty structs.
     int nVerts = PicoGetSurfaceNumVertexes(surf);
     _nIndices = PicoGetSurfaceNumIndexes(surf);
     _vertices.resize(nVerts);
     _indices.resize(_nIndices);
     
-    // Stream in the vertex data from the raw struct, expanding the local AABB to include
-    // each vertex.
+    // Stream in the vertex data from the raw struct, expanding the local AABB 
+    // to include each vertex.
     for (int vNum = 0; vNum < nVerts; ++vNum) {
 		Vertex3f vertex(PicoGetSurfaceXYZ(surf, vNum));
     	_localAABB.includePoint(vertex);

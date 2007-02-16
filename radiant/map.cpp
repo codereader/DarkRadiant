@@ -1391,7 +1391,7 @@ void Map_Rename(const std::string& filename)
   	}
 }
 
-bool Map_Save()
+void Map_Save()
 {
 	// Store the camview position into worldspawn
 	Map_SavePosition();
@@ -1402,7 +1402,9 @@ bool Map_Save()
   
 	// Remove the saved camera position
 	Map_RemoveSavedPosition();
-  return true; // assume success..
+	
+	// Clear the modified flag
+	map::setModified(false);
 }
 
 /*
@@ -2126,9 +2128,12 @@ bool Map_SaveAs()
 	if (!filename.empty()) {
 	    GlobalMRU().insert(filename);
 	    Map_Rename(filename);
-	    return Map_Save();
+	    Map_Save();
+	    return true;
 	}
-  return false;
+	else {
+		return false;
+	}
 }
 
 void SaveMapAs()
