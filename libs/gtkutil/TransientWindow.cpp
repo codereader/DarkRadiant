@@ -5,10 +5,11 @@
 namespace gtkutil
 {
 
-TransientWindow::TransientWindow(const std::string& title, GtkWindow* parent) : 
+TransientWindow::TransientWindow(const std::string& title, GtkWindow* parent, bool deletable) : 
 	_title(title),
 	_parent(parent),
-	_window(gtk_window_new(GTK_WINDOW_TOPLEVEL))
+	_window(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
+	_deletable(deletable)
 {}
 
 // Operator cast to GtkWindow* (use this to create and retrieve the GtkWidget* pointer)
@@ -23,8 +24,10 @@ TransientWindow::operator GtkWidget* () {
 	// Pack the handler ID into the window, so that it can be disconnected upon destroy 
 	g_object_set_data(G_OBJECT(_window), "resizeHandler", gint_to_pointer(resizeHandler));
 	
-	// Connect the "destroy"-event, so that the handler can be disconnected properly, be sure to pass _parent
-	g_signal_connect(G_OBJECT(_window), "delete_event", G_CALLBACK(onDelete), _parent);
+	if (_deletable) {
+		// Connect the "destroy"-event, so that the handler can be disconnected properly, be sure to pass _parent
+		g_signal_connect(G_OBJECT(_window), "delete_event", G_CALLBACK(onDelete), _parent);
+	}
 	
 	return _window;
 }
