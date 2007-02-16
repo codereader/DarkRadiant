@@ -3,6 +3,7 @@
 
 #include "VectorLightList.h"
 
+#include "GLProgramAttributes.h"
 #include "picomodel.h"
 #include "cullable.h"
 #include "render.h"
