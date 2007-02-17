@@ -12,8 +12,6 @@ class GLTextureManager :
 {
 	// The mapping between texturekeys and Texture instances
 	typedef std::map<std::string, TexturePtr> TextureMap;
-	typedef TextureMap::iterator iterator; 
-	
 	TextureMap _textures;
 	
 	TextureManipulator _manipulator;
@@ -26,15 +24,6 @@ class GLTextureManager :
 	TexturePtr _emptyFalloff;
 
 public:
-	// Constructor
-	GLTextureManager();
-	
-	// Destructor
-	~GLTextureManager();
-
-	iterator begin();
-	iterator end();
-	iterator find(const std::string& textureKey);
 
 	/* greebo: Use this method to request a Texture to be realised
 	 * (i.e. loaded into graphics memory and assigned a texture_number).
