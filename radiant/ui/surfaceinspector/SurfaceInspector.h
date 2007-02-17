@@ -4,10 +4,13 @@
 #include <gtk/gtkwidget.h>
 #include <gtk/gtktable.h>
 #include <map>
+#include "iregistry.h"
+#include "gtkutil/RegistryConnector.h"
 
 namespace ui {
 
-class SurfaceInspector
+class SurfaceInspector :
+	public RegistryKeyObserver
 {
 	// The actual dialog window
 	GtkWidget* _dialog;
@@ -53,6 +56,11 @@ class SurfaceInspector
 	} _applyTex;
 	
 	GtkWidget* _defaultTexScale;
+	GtkWidget* _texLockButton;
+	
+	bool _callbackActive; 
+
+	gtkutil::RegistryConnector _connector;
 
 public:
 
@@ -63,6 +71,10 @@ public:
 	 * Constructs the instance and calls toggle() when invoked.
 	 */
 	static void toggleInspector();
+
+	/** greebo: Gets called when the default texscale registry key changes
+	 */
+	void keyChanged();
 
 private:
 	/** greebo: Creates a row consisting of label, value entry,

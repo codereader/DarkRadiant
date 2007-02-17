@@ -54,7 +54,9 @@ void TransientWindow::restore(GtkWidget* window) {
 		if (gpointer_to_int(g_object_get_data(G_OBJECT(window), "was_mapped")) != 0) {
 			gint x = gpointer_to_int(g_object_get_data(G_OBJECT(window), "old_x_position"));
 			gint y = gpointer_to_int(g_object_get_data(G_OBJECT(window), "old_y_position"));
+			gtk_window_move(GTK_WINDOW(window), x, y);
 			gtk_widget_show(window);
+			// Workaround for some linux window managers resetting window positions after show()
 			gtk_window_move(GTK_WINDOW(window), x, y);
 		}
 	}
