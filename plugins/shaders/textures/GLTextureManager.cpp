@@ -18,24 +18,6 @@ namespace {
 
 namespace shaders {
 
-GLTextureManager::GLTextureManager() 
-{}
-
-GLTextureManager::~GLTextureManager() 
-{}
-
-GLTextureManager::iterator GLTextureManager::begin() {
-	return _textures.begin();
-}
-
-GLTextureManager::iterator GLTextureManager::end() {
-	return _textures.end();
-}
-
-GLTextureManager::iterator GLTextureManager::find(const std::string& textureKey) {
-	return _textures.find(textureKey);
-}
-
 TexturePtr GLTextureManager::getStandardTexture(eTextureType textureType) {
 	switch (textureType) {
 		case texEditor:
@@ -55,17 +37,19 @@ TexturePtr GLTextureManager::getStandardTexture(eTextureType textureType) {
 }
 
 void GLTextureManager::checkBindings() {
-	// Check the TextureMap for unique pointers and release them
-	// as they aren't used by anyone else than this class.
-	for (iterator i = begin(); i != end(); ) {
-		// If the boost::shared_ptr is unique (i.e. refcount==1), remove it
+	
+	// Check the TextureMap for unique pointers and release them as they aren't 
+	// used by anyone else than this class.
+	for (TextureMap::iterator i = _textures.begin(); 
+		 i != _textures.end();
+		 ++i) 
+	{
+		// If the boost::shared_ptr is unique (i.e. refcount==1), remove it.
+		// This is explicitly allowed by the std::map iterator invalidation
+		// semantics, which specify that erasing an element from a map does not
+		// invalidate any other iterators.
 		if (i->second.unique()) {
-			// Be sure to increment the iterator with a postfix ++, 
-			// so that the "old" iterator is passed
-			_textures.erase(i++);
-		}
-		else {
-			i++;
+			_textures.erase(i);
 		}
 	}
 }
@@ -78,10 +62,10 @@ TexturePtr GLTextureManager::getBinding(const std::string& textureKey,
 		return getStandardTexture(textureType);
 	}
 	
-	iterator i = find(textureKey);
+	TextureMap::iterator i = _textures.find(textureKey);
 	
 	// Check if the texture has to be loaded
-	if (i == end()) {
+	if (i == _textures.end()) {
 		// Is the constructor pointer valid?
 		if (constructor != NULL) {
 			
