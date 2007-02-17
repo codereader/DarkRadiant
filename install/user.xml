@@ -32,6 +32,13 @@
 		<quality value="3" />
 		<mode value="5" />
 		<gamma value="1.0" />
+		<surfaceInspector>
+			<hShiftStep value="1" />
+			<vShiftStep value="1" />
+			<hScaleStep value="0.05" />
+			<vScaleStep value="0.05" />
+			<rotStep value="45" />
+		</surfaceInspector>
 	</textures>
 	<grid>
 		<defaultGridPower value="3" />
