@@ -39,20 +39,33 @@ namespace ui {
 		
 		const char* LABEL_DEFAULT_SCALE = "Default Scale:";
 		const char* LABEL_TEXTURE_LOCK = "Texture Lock";
+		
+		const std::string RKEY_ENABLE_TEXTURE_LOCK = "user/ui/brush/textureLock";
+		const std::string RKEY_DEFAULT_TEXTURE_SCALE = "user/ui/textures/defaultTextureScale";
 	}
 
-SurfaceInspector::SurfaceInspector() {
+SurfaceInspector::SurfaceInspector() :
+	_callbackActive(false)
+{
 	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
 	_dialog = gtkutil::TransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
-	
-	gtk_window_set_resizable(GTK_WINDOW(_dialog), true);
 	
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 6);
 	
 	g_signal_connect(G_OBJECT(_dialog), "delete-event", G_CALLBACK(onDelete), this);
 	
+	// Create all the widgets and pack them into the window
 	populateWindow();
+	
+	// Connect the defaultTexScale and texLockButton widgets to "their" registry keys
+	_connector.connectGtkObject(GTK_OBJECT(_defaultTexScale), RKEY_DEFAULT_TEXTURE_SCALE);
+	_connector.connectGtkObject(GTK_OBJECT(_texLockButton), RKEY_ENABLE_TEXTURE_LOCK);
+	// Load the values from the Registry
+	_connector.importValues();
+	
+	GlobalRegistry().addKeyObserver(this, RKEY_ENABLE_TEXTURE_LOCK);
+	GlobalRegistry().addKeyObserver(this, RKEY_DEFAULT_TEXTURE_SCALE);
 }
 
 void SurfaceInspector::toggle() {
@@ -63,8 +76,23 @@ void SurfaceInspector::toggle() {
 	}
 	else {
 		gtkutil::TransientWindow::restore(_dialog);
+		_connector.importValues();
 		gtk_widget_show_all(_dialog);
 	}
+}
+
+void SurfaceInspector::keyChanged() {
+	// Avoid callback loops
+	if (_callbackActive) { 
+		return;
+	}
+	
+	_callbackActive = true;
+	
+	// Tell the registryconnector to import the values from the Registry
+	_connector.importValues();
+	
+	_callbackActive = false;
 }
 
 void SurfaceInspector::populateWindow() {
@@ -111,7 +139,7 @@ void SurfaceInspector::populateWindow() {
 	_manipulators[VSHIFT] = createManipulatorRow(LABEL_VSHIFT, table, 2, true);
 	_manipulators[HSCALE] = createManipulatorRow(LABEL_HSCALE, table, 3, false);
 	_manipulators[VSCALE] = createManipulatorRow(LABEL_VSCALE, table, 4, true);
-	_manipulators[ROTATION] = createManipulatorRow(LABEL_ROTATION, table, 5, true);
+	_manipulators[ROTATION] = createManipulatorRow(LABEL_ROTATION, table, 5, false);
 	
 	// ======================== Texture Operations ====================================
 	
@@ -208,15 +236,18 @@ void SurfaceInspector::populateWindow() {
 	
 	GtkWidget* hbox2 = gtk_hbox_new(true, 6);
 	 
-	// Create the width entry field
-	GtkObject* defaultAdj = gtk_adjustment_new(1.0f, 0.0f, 1000.0f, 0.1f, 0.1f, 0.1f);
+	// Create the default texture scale spinner
+	GtkObject* defaultAdj = gtk_adjustment_new(
+		GlobalRegistry().getFloat(RKEY_DEFAULT_TEXTURE_SCALE), 
+		0.0f, 1000.0f, 0.1f, 0.1f, 0.1f
+	);
 	_defaultTexScale = gtk_spin_button_new(GTK_ADJUSTMENT(defaultAdj), 1.0f, 4);
 	gtk_widget_set_size_request(_defaultTexScale, 55, -1);
 	gtk_box_pack_start(GTK_BOX(hbox2), _defaultTexScale, true, true, 0);
 	
 	// Texture Lock Toggle
-	GtkWidget* texLockButton = gtk_toggle_button_new_with_label(LABEL_TEXTURE_LOCK); 
-	gtk_box_pack_start(GTK_BOX(hbox2), texLockButton, true, true, 0);
+	_texLockButton = gtk_toggle_button_new_with_label(LABEL_TEXTURE_LOCK); 
+	gtk_box_pack_start(GTK_BOX(hbox2), _texLockButton, true, true, 0);
 	
 	gtk_table_attach_defaults(operTable, hbox2, 1, 2, 3, 4);
 }
