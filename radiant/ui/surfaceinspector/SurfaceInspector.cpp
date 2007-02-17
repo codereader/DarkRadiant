@@ -4,6 +4,8 @@
 #include "ieventmanager.h"
 #include "gtkutil/TransientWindow.h"
 #include "gtkutil/IconTextButton.h"
+#include "gtkutil/LeftAlignedLabel.h"
+#include "gtkutil/LeftAlignment.h"
 #include "mainframe.h"
 
 namespace ui {
@@ -52,7 +54,7 @@ SurfaceInspector::SurfaceInspector() :
 	_dialog = gtkutil::TransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
 	
 	// Set the default border width in accordance to the HIG
-	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 6);
+	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 12);
 	
 	g_signal_connect(G_OBJECT(_dialog), "delete-event", G_CALLBACK(onDelete), this);
 	
@@ -108,33 +110,22 @@ void SurfaceInspector::populateWindow() {
 	gtk_container_add(GTK_CONTAINER(_dialog), dialogVBox);
 	
 	// Create the title label (bold font)
-    GtkWidget* topLabel = gtk_label_new(NULL);
-    	std::string markup = std::string("<span weight=\"bold\">") + 
-    						 LABEL_PROPERTIES + "</span>";
-    	gtk_label_set_markup(GTK_LABEL(topLabel), markup.c_str());
-    	gtk_misc_set_alignment(GTK_MISC(topLabel), 0.0f, 0.5f);
-    	gtk_misc_set_padding(GTK_MISC(topLabel), 6, 2);
-    
+	GtkWidget* topLabel = gtkutil::LeftAlignedLabel(
+    	std::string("<span weight=\"bold\">") + LABEL_PROPERTIES + "</span>"
+    );
     gtk_box_pack_start(GTK_BOX(dialogVBox), topLabel, true, true, 0);
     
-    // Create a new 2x6 table and pack it into an alignment
-	GtkWidget* alignment = gtk_alignment_new(0.0f, 0.0f, 1.0f, 1.0f);
-	
-		// Setup the table with default spacings
-		GtkTable* table = GTK_TABLE(gtk_table_new(6, 2, false));
-    	gtk_table_set_col_spacings(table, 12);
-    	gtk_table_set_row_spacings(table, 6);
+    // Setup the table with default spacings
+	GtkTable* table = GTK_TABLE(gtk_table_new(6, 2, false));
+    gtk_table_set_col_spacings(table, 12);
+    gtk_table_set_row_spacings(table, 6);
     
-    	// Indent the table by adding a left-padding to the alignment
-    	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, 18, 6); 
-    	gtk_container_add(GTK_CONTAINER(alignment), GTK_WIDGET(table));
-    
-    // Pack the table into the dialog
+    // Pack it into an alignment so that it is indented
+	GtkWidget* alignment = gtkutil::LeftAlignment(GTK_WIDGET(table), 18, 1.0); 
 	gtk_box_pack_start(GTK_BOX(dialogVBox), GTK_WIDGET(alignment), true, true, 0);
 	
 	// Create the entry field and pack it into the first table row
-	GtkWidget* shaderLabel = gtk_label_new(LABEL_SHADER);
-	gtk_misc_set_alignment(GTK_MISC(shaderLabel), 0.0f, 0.5f);
+	GtkWidget* shaderLabel = gtkutil::LeftAlignedLabel(LABEL_SHADER);
 	gtk_table_attach_defaults(table, shaderLabel, 0, 1, 0, 1);
 	
 	_shaderEntry = gtk_entry_new();
@@ -151,26 +142,19 @@ void SurfaceInspector::populateWindow() {
 	// ======================== Texture Operations ====================================
 	
 	// Create the texture operations label (bold font)
-    GtkWidget* operLabel = gtk_label_new(NULL);
-    	std::string operMarkup = std::string("<span weight=\"bold\">") + 
-    						 LABEL_OPERATIONS + "</span>";
-    	gtk_label_set_markup(GTK_LABEL(operLabel), operMarkup.c_str());
-    	gtk_misc_set_alignment(GTK_MISC(operLabel), 0.0f, 0.5f);
-    	gtk_misc_set_padding(GTK_MISC(operLabel), 6, 2);
-    
+    GtkWidget* operLabel = gtkutil::LeftAlignedLabel(
+    	std::string("<span weight=\"bold\">") + LABEL_OPERATIONS + "</span>"
+    );
+    gtk_misc_set_padding(GTK_MISC(operLabel), 0, 2); // Small spacing to the top/bottom
     gtk_box_pack_start(GTK_BOX(dialogVBox), operLabel, true, true, 0);
     
-    // Create a new 2x4 table and pack it into another alignment
-	GtkWidget* operAlignment = gtk_alignment_new(0.0f, 0.0f, 1.0f, 1.0f);
-	
-		// Setup the table with default spacings
-		GtkTable* operTable = GTK_TABLE(gtk_table_new(4, 2, false));
-    	gtk_table_set_col_spacings(operTable, 12);
-    	gtk_table_set_row_spacings(operTable, 6);
+    // Setup the table with default spacings
+	GtkTable* operTable = GTK_TABLE(gtk_table_new(4, 2, false));
+    gtk_table_set_col_spacings(operTable, 12);
+    gtk_table_set_row_spacings(operTable, 6);
     
-    	// Indent the table by adding a left-padding to the alignment
-    	gtk_alignment_set_padding(GTK_ALIGNMENT(operAlignment), 0, 6, 18, 6); 
-    	gtk_container_add(GTK_CONTAINER(operAlignment), GTK_WIDGET(operTable));
+    // Pack this into another alignment
+	GtkWidget* operAlignment = gtkutil::LeftAlignment(GTK_WIDGET(operTable), 18, 1.0);
     
     // Pack the table into the dialog
 	gtk_box_pack_start(GTK_BOX(dialogVBox), GTK_WIDGET(operAlignment), true, true, 0);
@@ -180,8 +164,7 @@ void SurfaceInspector::populateWindow() {
 	GtkWidget* fitHBox = gtk_hbox_new(false, 6); 
 	
 	// Create the "Fit Texture" label
-	_fitTexture.label = gtk_label_new(LABEL_FIT_TEXTURE);
-	gtk_misc_set_alignment(GTK_MISC(_fitTexture.label), 0.0f, 0.5f);
+	_fitTexture.label = gtkutil::LeftAlignedLabel(LABEL_FIT_TEXTURE);
 	gtk_table_attach_defaults(operTable, _fitTexture.label, 0, 1, 0, 1);
 	
 	_fitTexture.widthAdj = gtk_adjustment_new(1.0f, 0.0f, 1000.0f, 1.0f, 1.0f, 1.0f);
@@ -194,7 +177,7 @@ void SurfaceInspector::populateWindow() {
 	
 	// Create the "x" label
 	GtkWidget* xLabel = gtk_label_new("x");
-	gtk_misc_set_alignment(GTK_MISC(xLabel), 0.0f, 0.5f);
+	gtk_misc_set_alignment(GTK_MISC(xLabel), 0.5f, 0.5f);
 	gtk_box_pack_start(GTK_BOX(fitHBox), xLabel, false, false, 0);
 	
 	// Create the height entry field
@@ -211,8 +194,7 @@ void SurfaceInspector::populateWindow() {
 	// ------------------------ Operation Buttons ------------------------------
 	
 	// Create the "Flip Texture" label
-	_flipTexture.label = gtk_label_new(LABEL_FLIP_TEXTURE);
-	gtk_misc_set_alignment(GTK_MISC(_flipTexture.label), 0.0f, 0.5f);
+	_flipTexture.label = gtkutil::LeftAlignedLabel(LABEL_FLIP_TEXTURE);
 	gtk_table_attach_defaults(operTable, _flipTexture.label, 0, 1, 1, 2);
 	
 	_flipTexture.hbox = gtk_hbox_new(true, 6); 
@@ -224,8 +206,7 @@ void SurfaceInspector::populateWindow() {
 	gtk_table_attach_defaults(operTable, _flipTexture.hbox, 1, 2, 1, 2);
 	
 	// Create the "Apply Texture" label
-	_applyTex.label = gtk_label_new(LABEL_APPLY_TEXTURE);
-	gtk_misc_set_alignment(GTK_MISC(_applyTex.label), 0.0f, 0.5f);
+	_applyTex.label = gtkutil::LeftAlignedLabel(LABEL_APPLY_TEXTURE);
 	gtk_table_attach_defaults(operTable, _applyTex.label, 0, 1, 2, 3);
 	
 	_applyTex.hbox = gtk_hbox_new(true, 6); 
@@ -237,8 +218,7 @@ void SurfaceInspector::populateWindow() {
 	gtk_table_attach_defaults(operTable, _applyTex.hbox, 1, 2, 2, 3);
 	
 	// Default Scale
-	GtkWidget* defaultScaleLabel = gtk_label_new(LABEL_DEFAULT_SCALE);
-	gtk_misc_set_alignment(GTK_MISC(defaultScaleLabel), 0.0f, 0.5f);
+	GtkWidget* defaultScaleLabel = gtkutil::LeftAlignedLabel(LABEL_DEFAULT_SCALE);
 	gtk_table_attach_defaults(operTable, defaultScaleLabel, 0, 1, 3, 4);
 	
 	GtkWidget* hbox2 = gtk_hbox_new(true, 6);
@@ -267,8 +247,7 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	manipRow.hbox = gtk_hbox_new(false, 6);
 		
 	// Create the label
-	manipRow.label = gtk_label_new(label.c_str());
-	gtk_misc_set_alignment(GTK_MISC(manipRow.label), 0.0f, 0.5f);
+	manipRow.label = gtkutil::LeftAlignedLabel(label);
 	gtk_table_attach_defaults(table, manipRow.label, 0, 1, row, row+1);
 		
 	// Create the entry field
@@ -304,8 +283,7 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	}
 	
 	// Create the label
-	manipRow.steplabel = gtk_label_new(LABEL_STEP);
-	gtk_misc_set_alignment(GTK_MISC(manipRow.steplabel), 0.0f, 0.5f);
+	manipRow.steplabel = gtkutil::LeftAlignedLabel(LABEL_STEP); 
 	gtk_box_pack_start(GTK_BOX(manipRow.hbox), manipRow.steplabel, false, false, 0);
 	
 	// Create the entry field
