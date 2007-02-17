@@ -58,14 +58,18 @@ class SurfaceInspector :
 	GtkWidget* _defaultTexScale;
 	GtkWidget* _texLockButton;
 	
+	// To avoid key changed loopbacks when the registry is updated 
 	bool _callbackActive; 
 
+	// This member takes care of importing/exporting Registry
+	// key values from and to widgets
 	gtkutil::RegistryConnector _connector;
 
 public:
 
-	// Constructor
+	// Constructor & Destructor
 	SurfaceInspector();
+	~SurfaceInspector();
 
 	/** greebo: Contains the static instance of this dialog.
 	 * Constructs the instance and calls toggle() when invoked.
