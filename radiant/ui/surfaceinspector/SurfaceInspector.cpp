@@ -82,6 +82,12 @@ SurfaceInspector::SurfaceInspector() :
 	
 	// Update the widget status
 	update();
+	
+	// Connect the ToggleTexLock item to the according command
+	IEventPtr texLockEvent = GlobalEventManager().findEvent("TogTexLock");
+	std::cout << "calling connectWidget...";
+	texLockEvent->connectWidget(_texLockButton);
+	std::cout << "finished.\n";
 }
 
 SurfaceInspector::~SurfaceInspector() {
