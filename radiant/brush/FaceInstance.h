@@ -168,6 +168,10 @@ public:
 	FaceInstance& last() const {
 		return m_faceInstances.back();
 	}
+	
+	std::size_t size() const {
+		return m_faceInstances.size();
+	}
 };
 
 #endif /*FACEINSTANCE_H_*/

@@ -4,6 +4,7 @@
 #include "iscenegraph.h"
 #include "brush/FaceInstance.h"
 #include "brush/BrushVisit.h"
+#include "brush/TextureProjection.h"
 #include "patch/PatchSceneWalk.h"
 
 // greebo: Nasty global that contains all the selected face instances
@@ -144,6 +145,54 @@ std::string getShaderFromSelection() {
 	}
 	
 	return returnValue;
+}
+
+class FaceGetTexdef
+{
+	TextureProjection& _projection;
+	mutable bool _done;
+public:
+	FaceGetTexdef(TextureProjection& projection) : 
+		_projection(projection), 
+		_done(false) 
+	{}
+			
+	void operator()(Face& face) const {
+		if (!_done) {
+			_done = true;
+			face.GetTexdef(_projection);
+		}
+	}
+};
+
+TextureProjection getSelectedTextureProjection() {
+	TextureProjection returnValue;
+	
+	if (selectedFaceCount() == 1) {
+		// Get the last selected face instance from the global
+		FaceInstance& faceInstance = g_SelectedFaceInstances.last();
+		faceInstance.getFace().GetTexdef(returnValue);
+	}
+	
+	return returnValue;
+}
+
+Vector2 getSelectedFaceShaderSize() {
+	Vector2 returnValue(0,0);
+	
+	if (selectedFaceCount() == 1) {
+		// Get the last selected face instance from the global
+		FaceInstance& faceInstance = g_SelectedFaceInstances.last();
+		
+		returnValue[0] = faceInstance.getFace().getShader().width();
+		returnValue[1] = faceInstance.getFace().getShader().height();
+	}
+	
+	return returnValue;
+}
+
+int selectedFaceCount() {
+	return static_cast<int>(g_SelectedFaceInstances.size());
 }
 
 	} // namespace algorithm

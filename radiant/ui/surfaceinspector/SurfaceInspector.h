@@ -61,7 +61,11 @@ class SurfaceInspector :
 	GtkWidget* _texLockButton;
 	
 	// To avoid key changed loopbacks when the registry is updated 
-	bool _callbackActive; 
+	bool _callbackActive;
+
+	// The TexDef gets emitted if this is set to TRUE.
+	// Set this to FALSE to update the widget values without triggering the update 
+	bool _widgetsActive;
 
 	// This member takes care of importing/exporting Registry
 	// key values from and to widgets
@@ -113,6 +117,8 @@ private:
 	
 	// Updates the widgets
 	void update();
+	// Updates the texture shift/scale/rotation fields
+	void updateTexDef();
 	
 	// The callback for the delete event (toggles the visibility)
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, SurfaceInspector* self);

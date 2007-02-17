@@ -8,7 +8,9 @@
 #include "gtkutil/LeftAlignment.h"
 #include "selectionlib.h"
 #include "mainframe.h"
+#include "math/FloatTools.h"
 
+#include "brush/TextureProjection.h"
 #include "selection/algorithm/Shader.h"
 
 namespace ui {
@@ -52,6 +54,7 @@ namespace ui {
 
 SurfaceInspector::SurfaceInspector() :
 	_callbackActive(false),
+	_widgetsActive(true),
 	_selectionInfo(GlobalSelectionSystem().getSelectionInfo())
 {
 	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
@@ -85,9 +88,7 @@ SurfaceInspector::SurfaceInspector() :
 	
 	// Connect the ToggleTexLock item to the according command
 	IEventPtr texLockEvent = GlobalEventManager().findEvent("TogTexLock");
-	std::cout << "calling connectWidget...";
 	texLockEvent->connectWidget(_texLockButton);
-	std::cout << "finished.\n";
 }
 
 SurfaceInspector::~SurfaceInspector() {
@@ -324,12 +325,39 @@ void SurfaceInspector::toggleInspector() {
 	_inspector.toggle();
 }
 
+void SurfaceInspector::updateTexDef() {
+	TextureProjection curProjection = selection::algorithm::getSelectedTextureProjection();
+	
+	// Calculate the "fake" texture properties (shift/scale/rotation) 
+	TexDef texdef = curProjection.m_brushprimit_texdef.getFakeTexCoords(); 
+	Vector2 shaderDims = selection::algorithm::getSelectedFaceShaderSize(); 
+	
+	if (shaderDims != Vector2(0,0)) {
+		// normalize again to hide the ridiculously high scale values that get created when using texlock
+  		texdef._shift[0] = float_mod(texdef._shift[0], shaderDims[0]);
+  		texdef._shift[1] = float_mod(texdef._shift[1], shaderDims[1]);
+	}
+	
+	// Load the values into the widgets
+	gtk_entry_set_text(GTK_ENTRY(_manipulators[HSHIFT].value), floatToStr(texdef._shift[0]).c_str());
+	gtk_entry_set_text(GTK_ENTRY(_manipulators[VSHIFT].value), floatToStr(texdef._shift[1]).c_str());
+	
+	gtk_entry_set_text(GTK_ENTRY(_manipulators[HSCALE].value), floatToStr(texdef._scale[0]).c_str());
+	gtk_entry_set_text(GTK_ENTRY(_manipulators[VSCALE].value), floatToStr(texdef._scale[1]).c_str());
+	
+	gtk_entry_set_text(GTK_ENTRY(_manipulators[ROTATION].value), floatToStr(texdef._rotate).c_str());
+}
+
 void SurfaceInspector::update() {
+	
+	// Disable the widget callbacks during the update process
+	_widgetsActive = false;
 	
 	bool valueSensitivity = false;
 	
 	// If patches are selected, the value entry fields have no meaning
-	valueSensitivity = (_selectionInfo.patchCount == 0 && _selectionInfo.totalCount > 0);
+	valueSensitivity = (_selectionInfo.patchCount == 0 && _selectionInfo.totalCount > 0
+						&& selection::algorithm::selectedFaceCount() == 1);
 	
 	gtk_widget_set_sensitive(_manipulators[HSHIFT].value, valueSensitivity);
 	gtk_widget_set_sensitive(_manipulators[VSHIFT].value, valueSensitivity);
@@ -339,6 +367,13 @@ void SurfaceInspector::update() {
 	
 	std::string selectedShader = selection::algorithm::getShaderFromSelection();
 	gtk_entry_set_text(GTK_ENTRY(_shaderEntry), selectedShader.c_str());
+	
+	if (valueSensitivity) {
+		updateTexDef();
+	}
+	
+	// Re-enable the widget callbacks
+	_widgetsActive = true;
 }
 
 // Gets notified upon selection change
