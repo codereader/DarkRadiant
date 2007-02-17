@@ -2,8 +2,6 @@
 
 Toggle::Toggle(const Callback& callback) :
 	_callback(callback),
-	_toggleToolButton(NULL),
-	_checkMenuItem(NULL),
 	_callbackActive(false),
 	_toggled(false)
 {}
@@ -29,12 +27,17 @@ bool Toggle::setToggled(const bool toggled) {
 void Toggle::updateWidgets() {
 	_callbackActive = true;
 	
-	if (_toggleToolButton != NULL) {
-		gtk_toggle_tool_button_set_active(_toggleToolButton, _toggled);
-	}
-	
-	if (_checkMenuItem != NULL) {
-		gtk_check_menu_item_set_active(_checkMenuItem, _toggled);
+	for (ToggleWidgetList::iterator i = _toggleWidgets.begin();
+		 i != _toggleWidgets.end();
+		 i++)
+	{
+		GtkWidget* widget = *i;
+		if (GTK_IS_TOGGLE_TOOL_BUTTON(widget)) {
+			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(widget), _toggled);
+		}
+		else if (GTK_IS_CHECK_MENU_ITEM(widget)) {
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(widget), _toggled);
+		}
 	}
 	
 	_callbackActive = false;
@@ -51,21 +54,32 @@ bool Toggle::isToggled() const {
 
 void Toggle::connectWidget(GtkWidget* widget) {
 	if (GTK_IS_TOGGLE_TOOL_BUTTON(widget)) {
+		
 		// Store the pointer for later use
-		_toggleToolButton = GTK_TOGGLE_TOOL_BUTTON(widget);
-	
-		gtk_toggle_tool_button_set_active(_toggleToolButton, _toggled);
+		_toggleWidgets.push_back(widget);
+			
+		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(widget), _toggled);
 		
 		// Connect the toggleToolbutton to the static callback of this class
-		g_signal_connect(G_OBJECT(_toggleToolButton), "toggled", G_CALLBACK(onToggleToolButtonClicked), this);
+		g_signal_connect(G_OBJECT(widget), "toggled", G_CALLBACK(onToggleToolButtonClicked), this);
+	}
+	else if (GTK_IS_TOGGLE_BUTTON(widget)) {
+		
+		// Store the pointer for later use
+		_toggleWidgets.push_back(widget);
+		
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), _toggled);
+		
+		// Connect the toggleToolbutton to the static callback of this class
+		g_signal_connect(G_OBJECT(widget), "toggled", G_CALLBACK(onToggleToolButtonClicked), this);
 	}
 	else if (GTK_IS_CHECK_MENU_ITEM(widget)) {
 		// Store it internally
-		_checkMenuItem = GTK_CHECK_MENU_ITEM(widget);
+		_toggleWidgets.push_back(widget);
 		
-		gtk_check_menu_item_set_active(_checkMenuItem, _toggled);
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(widget), _toggled);
 		
-		g_signal_connect(G_OBJECT(_checkMenuItem), "toggled", G_CALLBACK(onCheckMenuItemClicked), this);
+		g_signal_connect(G_OBJECT(widget), "toggled", G_CALLBACK(onCheckMenuItemClicked), this);
 	}
 }
 
@@ -90,6 +104,20 @@ void Toggle::toggle() {
 
 // The static GTK callback methods that can be connected to a ToolButton or a MenuItem
 gboolean Toggle::onToggleToolButtonClicked(GtkToggleToolButton* toolButton, gpointer data) {
+	
+	// Cast the passed pointer onto a Toggle class. Note: this may also call a toggle() method
+	// of a derived class.
+	Toggle* self = reinterpret_cast<Toggle*>(data);
+	
+	// Check sanity and toggle this item
+	if (self != NULL) {
+		self->toggle();
+	}
+	
+	return true;
+}
+
+gboolean Toggle::onToggleButtonClicked(GtkToggleButton* toggleButton, gpointer data) {
 	
 	// Cast the passed pointer onto a Toggle class. Note: this may also call a toggle() method
 	// of a derived class.

@@ -5,6 +5,7 @@
 #include "generic/callback.h"
 
 #include "gtk/gtktoggletoolbutton.h"
+#include "gtk/gtktogglebutton.h"
 #include "gtk/gtkcheckmenuitem.h"
 
 #include "Event.h"
@@ -24,9 +25,9 @@ class Toggle :
 	Callback _callback;
 	
 protected:
-	// The pointer to the associated toggleToolButton (or NULL)
-	GtkToggleToolButton* _toggleToolButton;
-	GtkCheckMenuItem* _checkMenuItem;
+	// The list of connected widgets
+	typedef std::list<GtkWidget*> ToggleWidgetList;
+	ToggleWidgetList _toggleWidgets;
 	
 	bool _callbackActive;
 	
@@ -60,6 +61,7 @@ public:
 
 	// The static GTK callback methods that can be connected to a ToolButton or a MenuItem
 	static gboolean onToggleToolButtonClicked(GtkToggleToolButton* toolButton, gpointer data);
+	static gboolean onToggleButtonClicked(GtkToggleButton* toggleButton, gpointer data);
 	static gboolean onCheckMenuItemClicked(GtkMenuItem* menuitem, gpointer data);
 
 }; // class Toggle
