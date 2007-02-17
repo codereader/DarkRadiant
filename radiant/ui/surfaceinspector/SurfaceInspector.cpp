@@ -9,6 +9,8 @@
 #include "selectionlib.h"
 #include "mainframe.h"
 
+#include "selection/algorithm/Shader.h"
+
 namespace ui {
 
 	namespace {
@@ -329,7 +331,8 @@ void SurfaceInspector::update() {
 	gtk_widget_set_sensitive(_manipulators[VSCALE].value, valueSensitivity);
 	gtk_widget_set_sensitive(_manipulators[ROTATION].value, valueSensitivity);
 	
-	
+	std::string selectedShader = selection::algorithm::getShaderFromSelection();
+	gtk_entry_set_text(GTK_ENTRY(_shaderEntry), selectedShader.c_str());
 }
 
 // Gets notified upon selection change
