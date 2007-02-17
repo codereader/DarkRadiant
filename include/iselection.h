@@ -61,6 +61,8 @@ typedef Vector4 Quaternion;
 typedef Callback1<const Selectable&> SelectionChangeCallback;
 typedef SignalHandler1<const Selectable&> SelectionChangeHandler;
 
+class SelectionInfo;
+
 class SelectionSystem
 {
 public:
@@ -109,6 +111,8 @@ public:
 	
 	virtual void addObserver(Observer* observer) = 0;
 	virtual void removeObserver(Observer* observer) = 0;
+
+	virtual const SelectionInfo& getSelectionInfo() = 0;
 
   virtual void SetMode(EMode mode) = 0;
   virtual EMode Mode() const = 0;

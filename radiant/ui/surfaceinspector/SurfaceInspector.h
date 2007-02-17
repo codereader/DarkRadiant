@@ -67,6 +67,9 @@ class SurfaceInspector :
 	// key values from and to widgets
 	gtkutil::RegistryConnector _connector;
 
+	// A reference to the SelectionInfo structure (with the counters)
+	const SelectionInfo& _selectionInfo;
+
 public:
 
 	// Constructor & Destructor
@@ -107,6 +110,9 @@ private:
 
 	// Shows/hides this dialog
 	void toggle();
+	
+	// Updates the widgets
+	void update();
 	
 	// The callback for the delete event (toggles the visibility)
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, SurfaceInspector* self);

@@ -27,6 +27,34 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "scenelib.h"
 #include <stdlib.h>
 
+/** greebo: A structure containing information about the current 
+ * Selection. An instance of this is maintained by the 
+ * RadiantSelectionSystem, and a const reference can be
+ * retrieved via the according getSelectionInfo() method.
+ */
+class SelectionInfo {
+public:
+	int totalCount; 	// number of selected items
+	int patchCount; 	// number of selected patches
+	int brushCount; 	// -- " -- brushes
+	int entityCount; 	// -- " -- entities
+	
+	SelectionInfo() :
+		totalCount(0),
+		patchCount(0),
+		brushCount(0),
+		entityCount(0)
+	{}
+	
+	// Zeroes all the counters
+	void clear() {
+		totalCount = 0;
+		patchCount = 0;
+		brushCount = 0;
+		entityCount = 0;
+	}
+};
+
 class SelectableBool : public Selectable
 {
   bool m_selected;
