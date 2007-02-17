@@ -98,6 +98,18 @@ public:
 		eClip,
 	};
 
+	/** greebo: An SelectionSystem::Observer gets notified
+	 * as soon as the selection is changed.
+	 */
+	class Observer 
+	{
+	public:
+		virtual void selectionChanged() = 0;
+	};
+	
+	virtual void addObserver(Observer* observer) = 0;
+	virtual void removeObserver(Observer* observer) = 0;
+
   virtual void SetMode(EMode mode) = 0;
   virtual EMode Mode() const = 0;
   virtual void SetComponentMode(EComponentMode mode) = 0;

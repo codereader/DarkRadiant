@@ -62,6 +62,37 @@ RadiantSelectionSystem::RadiantSelectionSystem() :
 	GlobalEventManager().connectSelectionSystem(this);
 }
 
+void RadiantSelectionSystem::addObserver(Observer* observer) {
+	if (observer != NULL) {
+		// Add the passed observer to the list
+		_observers.push_back(observer);
+	}
+}
+
+void RadiantSelectionSystem::removeObserver(Observer* observer) {
+	// Cycle through the list of observers and call the moved method
+	for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); i++) {
+		Observer* registered = *i;
+		
+		if (registered == observer) {
+			_observers.erase(i++);
+			return; // Don't continue the loop, the iterator is obsolete 
+		}
+	}
+}
+
+void RadiantSelectionSystem::notifyObservers() {
+	
+	// Cycle through the list of observers and call the moved method
+	for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); i++) {
+		Observer* observer = *i;
+		
+		if (observer != NULL) {
+			observer->selectionChanged();
+		}
+	}
+}
+
 void RadiantSelectionSystem::Scene_TestSelect(Selector& selector, SelectionTest& test, const View& view, SelectionSystem::EMode mode, SelectionSystem::EComponentMode componentMode) {
 	switch(mode) {
 		case eEntity: {
@@ -236,6 +267,8 @@ void RadiantSelectionSystem::addSelectionChangeCallback(const SelectionChangeHan
 // Call the "selection changed" callback with the selectable
 void RadiantSelectionSystem::selectionChanged(const Selectable& selectable) {
 	_selectionChangedCallbacks(selectable);
+	// Notify the registered SelectionSystem::Observer classes
+	notifyObservers();
 }
 
 // Start a move, the current pivot point is saved as a start point

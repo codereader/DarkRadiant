@@ -45,6 +45,9 @@ class RadiantSelectionSystem :
 	Matrix4 _pivot2worldStart;
 	Matrix4 _manip2pivotStart;
 	
+	typedef std::list<Observer*> ObserverList;
+	ObserverList _observers;
+	
 	Translation _translation;	// This is a vector3
 	Rotation _rotation;			// This is a quaternion
 	Scale _scale;				// This is a vector3
@@ -94,6 +97,9 @@ public:
 	void pivotChangedSelection(const Selectable& selectable);
 	typedef MemberCaller1<RadiantSelectionSystem, const Selectable&, &RadiantSelectionSystem::pivotChangedSelection> PivotChangedSelectionCaller;
 
+	void addObserver(Observer* observer);
+	void removeObserver(Observer* observer);
+	
 	void SetMode(EMode mode);  
 	EMode Mode() const;
 	  
@@ -162,6 +168,9 @@ public:
 	
 	static void constructStatic();
 	static void destroyStatic();
+	
+private:
+	void notifyObservers();
 };
 
 #endif /*RADIANTSELECTIONSYSTEM_H_*/

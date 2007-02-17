@@ -55,6 +55,7 @@ SurfaceInspector::SurfaceInspector() :
 	
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 12);
+	gtk_window_set_type_hint(GTK_WINDOW(_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 	
 	g_signal_connect(G_OBJECT(_dialog), "delete-event", G_CALLBACK(onDelete), this);
 	
@@ -71,9 +72,13 @@ SurfaceInspector::SurfaceInspector() :
 	GlobalRegistry().addKeyObserver(this, RKEY_DEFAULT_TEXTURE_SCALE);
 	
 	GlobalEventManager().connectDialogWindow(GTK_WINDOW(_dialog));
+	
+	// Register self to the SelSystem to get notified upon selection changes.
+	GlobalSelectionSystem().addObserver(this);
 }
 
 SurfaceInspector::~SurfaceInspector() {
+	GlobalSelectionSystem().removeObserver(this);
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(_dialog));
 }
 
@@ -304,6 +309,11 @@ void SurfaceInspector::toggleInspector() {
 
 	// Now toggle the dialog
 	_inspector.toggle();
+}
+
+// Gets notified upon selection change
+void SurfaceInspector::selectionChanged() {
+	gtk_entry_set_text(GTK_ENTRY(_shaderEntry), "Selection changed!");
 }
 
 gboolean SurfaceInspector::onDelete(GtkWidget* widget, GdkEvent* event, SurfaceInspector* self) {

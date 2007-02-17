@@ -4,13 +4,15 @@
 #include <gtk/gtkwidget.h>
 #include <gtk/gtktable.h>
 #include <map>
+#include "iselection.h"
 #include "iregistry.h"
 #include "gtkutil/RegistryConnector.h"
 
 namespace ui {
 
 class SurfaceInspector :
-	public RegistryKeyObserver
+	public RegistryKeyObserver,
+	public SelectionSystem::Observer
 {
 	// The actual dialog window
 	GtkWidget* _dialog;
@@ -80,6 +82,12 @@ public:
 	 */
 	void keyChanged();
 
+	/** greebo: SelectionSystem::Observer implementation. Gets called by
+	 * the SelectionSystem upon selection change to allow updating of the
+	 * texture properties.
+	 */
+	void selectionChanged();
+	
 private:
 	/** greebo: Creates a row consisting of label, value entry,
 	 * two arrow buttons and a step entry field.
