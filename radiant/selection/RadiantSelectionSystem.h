@@ -2,6 +2,7 @@
 #define RADIANTSELECTIONSYSTEM_H_
 
 #include "iselection.h"
+#include "selectionlib.h"
 #include "math/matrix.h"
 #include "signal/signal.h"
 #include "SelectionCounter.h"
@@ -54,6 +55,8 @@ class RadiantSelectionSystem :
 public:
 	static Shader* _state;
 private:
+	SelectionInfo _selectionInfo;
+
 	EManipulatorMode _manipulatorMode;
 	// The currently active manipulator
 	Manipulator* _manipulator;
@@ -90,6 +93,12 @@ private:
 public:
 
 	RadiantSelectionSystem();
+	
+	/** greebo: Returns a structure with all the related
+	 * information about the current selection (brush count,
+	 * entity count, etc.)
+	 */
+	const SelectionInfo& getSelectionInfo();
 	
 	void pivotChanged() const;
 	typedef ConstMemberCaller<RadiantSelectionSystem, &RadiantSelectionSystem::pivotChanged> PivotChangedCaller;

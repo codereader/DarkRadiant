@@ -6,6 +6,7 @@
 #include "gtkutil/IconTextButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
+#include "selectionlib.h"
 #include "mainframe.h"
 
 namespace ui {
@@ -48,7 +49,8 @@ namespace ui {
 	}
 
 SurfaceInspector::SurfaceInspector() :
-	_callbackActive(false)
+	_callbackActive(false),
+	_selectionInfo(GlobalSelectionSystem().getSelectionInfo())
 {
 	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
 	_dialog = gtkutil::TransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
@@ -75,6 +77,9 @@ SurfaceInspector::SurfaceInspector() :
 	
 	// Register self to the SelSystem to get notified upon selection changes.
 	GlobalSelectionSystem().addObserver(this);
+	
+	// Update the widget status
+	update();
 }
 
 SurfaceInspector::~SurfaceInspector() {
@@ -311,9 +316,25 @@ void SurfaceInspector::toggleInspector() {
 	_inspector.toggle();
 }
 
+void SurfaceInspector::update() {
+	
+	bool valueSensitivity = false;
+	
+	// If patches are selected, the value entry fields have no meaning
+	valueSensitivity = (_selectionInfo.patchCount == 0 && _selectionInfo.totalCount > 0);
+	
+	gtk_widget_set_sensitive(_manipulators[HSHIFT].value, valueSensitivity);
+	gtk_widget_set_sensitive(_manipulators[VSHIFT].value, valueSensitivity);
+	gtk_widget_set_sensitive(_manipulators[HSCALE].value, valueSensitivity);
+	gtk_widget_set_sensitive(_manipulators[VSCALE].value, valueSensitivity);
+	gtk_widget_set_sensitive(_manipulators[ROTATION].value, valueSensitivity);
+	
+	
+}
+
 // Gets notified upon selection change
 void SurfaceInspector::selectionChanged() {
-	gtk_entry_set_text(GTK_ENTRY(_shaderEntry), "Selection changed!");
+	update();
 }
 
 gboolean SurfaceInspector::onDelete(GtkWidget* widget, GdkEvent* event, SurfaceInspector* self) {

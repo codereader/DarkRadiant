@@ -3,7 +3,7 @@
 
 #include "iscenegraph.h"
 #include "iselection.h"
-#include "Patch.h"
+#include "PatchInstance.h"
 
 // Casts a node onto a patch
 inline Patch* Node_getPatch(scene::Node& node) {

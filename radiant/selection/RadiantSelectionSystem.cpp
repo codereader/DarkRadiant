@@ -10,6 +10,8 @@
 #include "Selectors.h"
 #include "SelectionTest.h"
 #include "SceneWalkers.h"
+#include "patch/PatchSceneWalk.h"
+#include "brush/BrushInstance.h"
 
 // Initialise the shader pointer
 Shader* RadiantSelectionSystem::_state = 0;
@@ -60,6 +62,10 @@ RadiantSelectionSystem::RadiantSelectionSystem() :
 	
 	// Pass a reference to self to the global event manager 
 	GlobalEventManager().connectSelectionSystem(this);
+}
+
+const SelectionInfo& RadiantSelectionSystem::getSelectionInfo() {
+	return _selectionInfo;
 }
 
 void RadiantSelectionSystem::addObserver(Observer* observer) {
@@ -187,7 +193,22 @@ std::size_t RadiantSelectionSystem::countSelectedComponents() const {
 }
 
 // This is called if the selection changes, so that the local list of selected instances can be updated
+// greebo: Interestingly, this is called by the instance itself (deriving from SelectableInstance).
+// (This is a really annoying mess of callbacks. Hmpf.)
 void RadiantSelectionSystem::onSelectedChanged(scene::Instance& instance, const Selectable& selectable) {
+	
+	_selectionInfo.totalCount += (selectable.isSelected()) ? +1 : -1;
+	
+	if (Instance_getPatch(instance) != NULL) {
+		_selectionInfo.patchCount += (selectable.isSelected()) ? +1 : -1;
+	}
+	else if (Instance_getBrush(instance) != NULL) {
+		_selectionInfo.brushCount += (selectable.isSelected()) ? +1 : -1;
+	}
+	else {
+		_selectionInfo.entityCount += (selectable.isSelected()) ? +1 : -1;
+	}
+	
 	// If the selectable is selected, add it to the local selection list, otherwise remove it 
 	if (selectable.isSelected()) {
 		_selection.append(instance);
@@ -196,6 +217,8 @@ void RadiantSelectionSystem::onSelectedChanged(scene::Instance& instance, const 
 		_selection.erase(instance);
 	}
 
+	notifyObservers();
+
 	// Check if the number of selected primitives in the list matches the value of the selection counter
 	ASSERT_MESSAGE(_selection.size() == _countPrimitive.size(), "selection-tracking error");
 }
@@ -203,6 +226,9 @@ void RadiantSelectionSystem::onSelectedChanged(scene::Instance& instance, const 
 // greebo: This should be called "onComponentSelectionChanged", as it is a similar function of the above one
 // Updates the internal list of component instances if the component selection gets changed
 void RadiantSelectionSystem::onComponentSelection(scene::Instance& instance, const Selectable& selectable) {
+	
+	_selectionInfo.totalCount += (selectable.isSelected()) ? +1 : -1;
+	
 	// If the instance got selected, add it to the list, otherwise remove it
 	if (selectable.isSelected()) {
 		_componentSelection.append(instance);
@@ -210,6 +236,8 @@ void RadiantSelectionSystem::onComponentSelection(scene::Instance& instance, con
     else {
 		_componentSelection.erase(instance);
 	}
+
+	notifyObservers();
 
 	// Check if the number of selected components in the list matches the value of the selection counter 
 	ASSERT_MESSAGE(_componentSelection.size() == _countComponent.size(), "selection-tracking error");
