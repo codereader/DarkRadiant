@@ -81,7 +81,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 extern FaceInstanceSet g_SelectedFaceInstances;
 
-#define TEXTOOL_ENABLED 0
+#define TEXTOOL_ENABLED 1
 
 #if TEXTOOL_ENABLED
 
