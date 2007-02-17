@@ -120,8 +120,14 @@ private:
 	// Updates the texture shift/scale/rotation fields
 	void updateTexDef();
 	
+	// Saves the connected widget content into the registry
+	void saveToRegistry();
+	
 	// The callback for the delete event (toggles the visibility)
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, SurfaceInspector* self);
+	
+	// Gets called when the step entry fields get changed
+	static gboolean onStepFocusOut(GtkWidget* widget, GdkEventFocus *event, SurfaceInspector* self);
 	
 }; // class SurfaceInspector
 

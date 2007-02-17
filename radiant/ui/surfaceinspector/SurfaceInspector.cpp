@@ -50,6 +50,12 @@ namespace ui {
 		
 		const std::string RKEY_ENABLE_TEXTURE_LOCK = "user/ui/brush/textureLock";
 		const std::string RKEY_DEFAULT_TEXTURE_SCALE = "user/ui/textures/defaultTextureScale";
+
+		const std::string RKEY_HSHIFT_STEP = "user/ui/textures/surfaceInspector/hShiftStep";
+		const std::string RKEY_VSHIFT_STEP = "user/ui/textures/surfaceInspector/vShiftStep";
+		const std::string RKEY_HSCALE_STEP = "user/ui/textures/surfaceInspector/hScaleStep";
+		const std::string RKEY_VSCALE_STEP = "user/ui/textures/surfaceInspector/vScaleStep";
+		const std::string RKEY_ROTATION_STEP = "user/ui/textures/surfaceInspector/rotStep";
 	}
 
 SurfaceInspector::SurfaceInspector() :
@@ -72,6 +78,14 @@ SurfaceInspector::SurfaceInspector() :
 	// Connect the defaultTexScale and texLockButton widgets to "their" registry keys
 	_connector.connectGtkObject(GTK_OBJECT(_defaultTexScale), RKEY_DEFAULT_TEXTURE_SCALE);
 	_connector.connectGtkObject(GTK_OBJECT(_texLockButton), RKEY_ENABLE_TEXTURE_LOCK);
+	
+	// Connect the step values to the according registry values
+	_connector.connectGtkObject(GTK_OBJECT(_manipulators[HSHIFT].step), RKEY_HSHIFT_STEP);
+	_connector.connectGtkObject(GTK_OBJECT(_manipulators[VSHIFT].step), RKEY_VSHIFT_STEP);
+	_connector.connectGtkObject(GTK_OBJECT(_manipulators[HSCALE].step), RKEY_HSCALE_STEP);
+	_connector.connectGtkObject(GTK_OBJECT(_manipulators[VSCALE].step), RKEY_VSCALE_STEP);
+	_connector.connectGtkObject(GTK_OBJECT(_manipulators[ROTATION].step), RKEY_ROTATION_STEP);
+	
 	// Load the values from the Registry
 	_connector.importValues();
 	
@@ -308,8 +322,10 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	// Create the entry field
 	manipRow.step = gtk_entry_new();
 	gtk_entry_set_width_chars(GTK_ENTRY(manipRow.step), 5);
-	gtk_box_pack_start(GTK_BOX(manipRow.hbox), manipRow.step, false, false, 0);
+	g_signal_connect(G_OBJECT(manipRow.step), "focus-out-event", G_CALLBACK(onStepFocusOut), this);
 	
+	gtk_box_pack_start(GTK_BOX(manipRow.hbox), manipRow.step, false, false, 0);
+		
 	// Pack the hbox into the table
 	gtk_table_attach_defaults(table, manipRow.hbox, 1, 2, row, row+1);
 	
@@ -380,6 +396,27 @@ void SurfaceInspector::update() {
 void SurfaceInspector::selectionChanged() {
 	update();
 }
+
+void SurfaceInspector::saveToRegistry() {
+	// Disable the keyChanged() callback during the update process
+	_callbackActive = true;
+	
+	// Pass the call to the RegistryConnector
+	_connector.exportValues();
+	
+	// Re-enable the callbacks
+	_callbackActive = false;
+}
+
+gboolean SurfaceInspector::onStepFocusOut(GtkWidget* widget, GdkEventFocus *event, SurfaceInspector* self) {
+	
+	// Tell the class instance to save its contents into the registry
+	if (self != NULL) {
+		self->saveToRegistry();
+	}
+	
+	return false;
+} 
 
 gboolean SurfaceInspector::onDelete(GtkWidget* widget, GdkEvent* event, SurfaceInspector* self) {
 	// Toggle the visibility of the inspector window
