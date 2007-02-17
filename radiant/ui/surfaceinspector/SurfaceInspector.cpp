@@ -1,6 +1,7 @@
 #include "SurfaceInspector.h"
 
 #include <gtk/gtk.h>
+#include "ieventmanager.h"
 #include "gtkutil/TransientWindow.h"
 #include "gtkutil/IconTextButton.h"
 #include "mainframe.h"
@@ -66,6 +67,12 @@ SurfaceInspector::SurfaceInspector() :
 	
 	GlobalRegistry().addKeyObserver(this, RKEY_ENABLE_TEXTURE_LOCK);
 	GlobalRegistry().addKeyObserver(this, RKEY_DEFAULT_TEXTURE_SCALE);
+	
+	GlobalEventManager().connectDialogWindow(GTK_WINDOW(_dialog));
+}
+
+SurfaceInspector::~SurfaceInspector() {
+	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(_dialog));
 }
 
 void SurfaceInspector::toggle() {
