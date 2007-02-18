@@ -73,10 +73,6 @@ class SurfaceInspector :
 	// To avoid key changed loopbacks when the registry is updated 
 	bool _callbackActive;
 
-	// The TexDef gets emitted if this is set to TRUE.
-	// Set this to FALSE to update the widget values without triggering the update 
-	bool _widgetsActive;
-
 	// This member takes care of importing/exporting Registry
 	// key values from and to widgets
 	gtkutil::RegistryConnector _connector;
@@ -154,8 +150,6 @@ private:
 	
 	// The callback for the Fit Texture button
 	static gboolean onFit(GtkWidget* widget, SurfaceInspector* self);
-	static gboolean onFlip(GtkWidget* widget, SurfaceInspector* self);
-	static gboolean onNatural(GtkWidget* widget, SurfaceInspector* self);
 	static gboolean doUpdate(GtkWidget* widget, SurfaceInspector* self);
 	
 }; // class SurfaceInspector

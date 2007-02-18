@@ -61,12 +61,11 @@ namespace ui {
 		
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 		
-		const float MAX_FLOAT_RESOLUTION = 0.00001f;
+		const float MAX_FLOAT_RESOLUTION = 0.0001f;
 	}
 
 SurfaceInspector::SurfaceInspector() :
 	_callbackActive(false),
-	_widgetsActive(true),
 	_selectionInfo(GlobalSelectionSystem().getSelectionInfo())
 {
 	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
@@ -156,9 +155,9 @@ void SurfaceInspector::connectEvents() {
 	// Be sure to connect these signals after the buttons are connected 
 	// to the events, so that the update() call gets invoked after the actual event has ben fired.
 	g_signal_connect(G_OBJECT(_fitTexture.button), "clicked", G_CALLBACK(onFit), this);
-	g_signal_connect(G_OBJECT(_flipTexture.flipX), "clicked", G_CALLBACK(onFlip), this);
-	g_signal_connect(G_OBJECT(_flipTexture.flipY), "clicked", G_CALLBACK(onFlip), this);
-	g_signal_connect(G_OBJECT(_applyTex.natural), "clicked", G_CALLBACK(onNatural), this);
+	g_signal_connect(G_OBJECT(_flipTexture.flipX), "clicked", G_CALLBACK(doUpdate), this);
+	g_signal_connect(G_OBJECT(_flipTexture.flipY), "clicked", G_CALLBACK(doUpdate), this);
+	g_signal_connect(G_OBJECT(_applyTex.natural), "clicked", G_CALLBACK(doUpdate), this);
 }
 
 void SurfaceInspector::toggle() {
@@ -430,9 +429,6 @@ void SurfaceInspector::updateTexDef() {
 
 void SurfaceInspector::update() {
 	
-	// Disable the widget callbacks during the update process
-	_widgetsActive = false;
-	
 	bool valueSensitivity = false;
 	bool fitSensitivity = (_selectionInfo.totalCount > 0);
 	bool flipSensitivity = (_selectionInfo.totalCount > 0);
@@ -469,9 +465,6 @@ void SurfaceInspector::update() {
 	if (valueSensitivity) {
 		updateTexDef();
 	}
-	
-	// Re-enable the widget callbacks
-	_widgetsActive = true;
 }
 
 // Gets notified upon selection change
@@ -524,18 +517,6 @@ gboolean SurfaceInspector::onDelete(GtkWidget* widget, GdkEvent* event, SurfaceI
 gboolean SurfaceInspector::onFit(GtkWidget* widget, SurfaceInspector* self) {
 	// Call the according member method
 	self->fitTexture();
-	self->update();
-	return false;
-}
-
-gboolean SurfaceInspector::onFlip(GtkWidget* widget, SurfaceInspector* self) {
-	// Update the widgets, everything else is done by the called Event
-	self->update();
-	return false;
-}
-
-gboolean SurfaceInspector::onNatural(GtkWidget* widget, SurfaceInspector* self) {
-	// Update the widgets, everything else is done by the called Event
 	self->update();
 	return false;
 }

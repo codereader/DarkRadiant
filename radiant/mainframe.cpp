@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "version.h"
 
 #include "ui/surfaceinspector/SurfaceInspector.h"
+#include "ui/textool/TexTool.h"
 #include "brushexport/BrushExportOBJ.h"
 #include "ui/einspector/EntityInspector.h"
 #include "ui/lightinspector/LightInspector.h"
@@ -2576,7 +2577,9 @@ void MainFrame::SaveWindowInfo()
 
 void MainFrame::Shutdown()
 {
+	// Tell the inspectors to safely shutdown (de-register callbacks, etc.)
 	ui::SurfaceInspector::Instance().shutdown();
+	ui::TexTool::Instance().shutdown();
 	
 	// Stop the AutoSaver class from being called
 	map::AutoSaver().stopTimer();
