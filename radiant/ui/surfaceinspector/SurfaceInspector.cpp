@@ -89,9 +89,11 @@ SurfaceInspector::SurfaceInspector() :
 	// Load the values from the Registry
 	_connector.importValues();
 	
+	// Be notified upon key changes
 	GlobalRegistry().addKeyObserver(this, RKEY_ENABLE_TEXTURE_LOCK);
 	GlobalRegistry().addKeyObserver(this, RKEY_DEFAULT_TEXTURE_SCALE);
 	
+	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
 	GlobalEventManager().connectDialogWindow(GTK_WINDOW(_dialog));
 	
 	// Register self to the SelSystem to get notified upon selection changes.
@@ -100,14 +102,25 @@ SurfaceInspector::SurfaceInspector() :
 	// Update the widget status
 	update();
 	
-	// Connect the ToggleTexLock item to the according command
-	IEventPtr texLockEvent = GlobalEventManager().findEvent("TogTexLock");
-	texLockEvent->connectWidget(_texLockButton);
+	// Get the relevant Events from the Manager and connect the widgets
+	connectEvents();
 }
 
 SurfaceInspector::~SurfaceInspector() {
 	GlobalSelectionSystem().removeObserver(this);
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(_dialog));
+}
+
+void SurfaceInspector::connectEvents() {
+	// Connect the ToggleTexLock item to the according command
+	IEventPtr texLockEvent = GlobalEventManager().findEvent("TogTexLock");
+	texLockEvent->connectWidget(_texLockButton);
+	
+	IEventPtr flipXEvent = GlobalEventManager().findEvent("FlipTextureX");
+	flipXEvent->connectWidget(_flipTexture.flipX);
+	
+	IEventPtr flipYEvent = GlobalEventManager().findEvent("FlipTextureY");
+	flipYEvent->connectWidget(_flipTexture.flipY);
 }
 
 void SurfaceInspector::toggle() {

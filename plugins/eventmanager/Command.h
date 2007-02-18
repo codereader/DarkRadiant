@@ -6,6 +6,7 @@
 
 #include "gtk/gtkmenuitem.h"
 #include "gtk/gtktoolbutton.h"
+#include "gtk/gtkbutton.h"
 #include "gdk/gdk.h"
 
 #include "Event.h"
@@ -14,7 +15,7 @@
  * 
  * Trigger the command via the execute() method (usually done by the associated accelerator).
  * 
- * Connect the command to a GtkToolButton or a GtkMenuItem via the connectWidget method. 
+ * Connect the command to a GtkToolButton / GtkButton / GtkMenuItem via the connectWidget method. 
  */
 class Command :
 	public Event
@@ -39,6 +40,7 @@ public:
 private:
 
 	// The static GTK callback methods that can be connected to a ToolButton or a MenuItem
+	static gboolean onButtonPress(GtkButton* button, gpointer data);
 	static gboolean onToolButtonPress(GtkToolButton* toolButton, gpointer data);
 	static gboolean onMenuItemClicked(GtkMenuItem* menuitem, gpointer data);
 
