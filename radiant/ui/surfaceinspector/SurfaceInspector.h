@@ -35,6 +35,7 @@ class SurfaceInspector :
 	GtkWidget* _shaderEntry;
 	
 	struct FitTextureWidgets {
+		GtkWidget* hbox;
 		GtkObject* widthAdj;
 		GtkObject* heightAdj;
 		GtkWidget* width;
@@ -126,11 +127,17 @@ private:
 	// Saves the connected widget content into the registry
 	void saveToRegistry();
 	
+	// Executes the fit command for the selection 
+	void fitTexture();
+	
 	// The callback for the delete event (toggles the visibility)
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, SurfaceInspector* self);
 	
 	// Gets called when the step entry fields get changed
 	static gboolean onStepFocusOut(GtkWidget* widget, GdkEventFocus *event, SurfaceInspector* self);
+	
+	// The callback for the Fit Texture button
+	static gboolean onFit(GtkWidget* widget, SurfaceInspector* self);
 	
 }; // class SurfaceInspector
 

@@ -33,6 +33,11 @@ namespace selection {
 	 */
 	Vector2 getSelectedFaceShaderSize();
 	
+	/** greebo: Rescales the texture of the selected primitives to fit
+	 * <repeatX> times horizontally and <repeatY> times vertically 
+	 */
+	void fitTexture(const float& repeatS, const float& repeatT);
+	
 	} // namespace algorithm
 } // namespace selection
 

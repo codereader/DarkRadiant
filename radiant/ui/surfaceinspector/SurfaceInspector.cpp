@@ -6,6 +6,7 @@
 #include "gtkutil/IconTextButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
+#include "gtkutil/dialog.h"
 #include "selectionlib.h"
 #include "mainframe.h"
 #include "math/FloatTools.h"
@@ -121,6 +122,8 @@ void SurfaceInspector::connectEvents() {
 	
 	IEventPtr flipYEvent = GlobalEventManager().findEvent("FlipTextureY");
 	flipYEvent->connectWidget(_flipTexture.flipY);
+	
+	g_signal_connect(G_OBJECT(_fitTexture.button), "clicked", G_CALLBACK(onFit), this);
 }
 
 void SurfaceInspector::toggle() {
@@ -207,7 +210,7 @@ void SurfaceInspector::populateWindow() {
 	
 	// ------------------------ Fit Texture -----------------------------------
 	
-	GtkWidget* fitHBox = gtk_hbox_new(false, 6); 
+	_fitTexture.hbox = gtk_hbox_new(false, 6);
 	
 	// Create the "Fit Texture" label
 	_fitTexture.label = gtkutil::LeftAlignedLabel(LABEL_FIT_TEXTURE);
@@ -219,23 +222,23 @@ void SurfaceInspector::populateWindow() {
 	// Create the width entry field
 	_fitTexture.width = gtk_spin_button_new(GTK_ADJUSTMENT(_fitTexture.widthAdj), 1.0f, 4);
 	gtk_widget_set_size_request(_fitTexture.width, 55, -1);
-	gtk_box_pack_start(GTK_BOX(fitHBox), _fitTexture.width, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(_fitTexture.hbox), _fitTexture.width, false, false, 0);
 	
 	// Create the "x" label
 	GtkWidget* xLabel = gtk_label_new("x");
 	gtk_misc_set_alignment(GTK_MISC(xLabel), 0.5f, 0.5f);
-	gtk_box_pack_start(GTK_BOX(fitHBox), xLabel, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(_fitTexture.hbox), xLabel, false, false, 0);
 	
 	// Create the height entry field
 	_fitTexture.height = gtk_spin_button_new(GTK_ADJUSTMENT(_fitTexture.heightAdj), 1.0f, 4);
 	gtk_widget_set_size_request(_fitTexture.height, 55, -1);
-	gtk_box_pack_start(GTK_BOX(fitHBox), _fitTexture.height, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(_fitTexture.hbox), _fitTexture.height, false, false, 0);
 	
 	_fitTexture.button = gtk_button_new_with_label(LABEL_FIT);
 	gtk_widget_set_size_request(_fitTexture.button, 30, -1);
-	gtk_box_pack_start(GTK_BOX(fitHBox), _fitTexture.button, true, true, 0);
+	gtk_box_pack_start(GTK_BOX(_fitTexture.hbox), _fitTexture.button, true, true, 0);
 		
-	gtk_table_attach_defaults(operTable, fitHBox, 1, 2, 0, 1);
+	gtk_table_attach_defaults(operTable, _fitTexture.hbox, 1, 2, 0, 1);
 	
 	// ------------------------ Operation Buttons ------------------------------
 	
@@ -383,6 +386,9 @@ void SurfaceInspector::update() {
 	_widgetsActive = false;
 	
 	bool valueSensitivity = false;
+	bool fitSensitivity = (_selectionInfo.totalCount > 0);
+	bool flipSensitivity = (_selectionInfo.totalCount > 0);
+	bool applySensitivity = (_selectionInfo.totalCount > 0);
 	
 	// If patches are selected, the value entry fields have no meaning
 	valueSensitivity = (_selectionInfo.patchCount == 0 && _selectionInfo.totalCount > 0
@@ -393,6 +399,18 @@ void SurfaceInspector::update() {
 	gtk_widget_set_sensitive(_manipulators[HSCALE].value, valueSensitivity);
 	gtk_widget_set_sensitive(_manipulators[VSCALE].value, valueSensitivity);
 	gtk_widget_set_sensitive(_manipulators[ROTATION].value, valueSensitivity);
+	
+	// The fit widget sensitivity
+	gtk_widget_set_sensitive(_fitTexture.hbox, fitSensitivity);
+	gtk_widget_set_sensitive(_fitTexture.label, fitSensitivity);
+	
+	// The flip texture widget sensitivity
+	gtk_widget_set_sensitive(_flipTexture.hbox, flipSensitivity);
+	gtk_widget_set_sensitive(_flipTexture.label, flipSensitivity);
+	
+	// The natural/axial widget sensitivity
+	gtk_widget_set_sensitive(_applyTex.hbox, applySensitivity);
+	gtk_widget_set_sensitive(_applyTex.label, applySensitivity);
 	
 	std::string selectedShader = selection::algorithm::getShaderFromSelection();
 	gtk_entry_set_text(GTK_ENTRY(_shaderEntry), selectedShader.c_str());
@@ -421,6 +439,19 @@ void SurfaceInspector::saveToRegistry() {
 	_callbackActive = false;
 }
 
+void SurfaceInspector::fitTexture() {
+	float repeatX = gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(_fitTexture.width));
+	float repeatY = gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(_fitTexture.height));
+	
+	if (repeatX > 0.0 && repeatY > 0.0) {
+		selection::algorithm::fitTexture(repeatX, repeatY);
+	}
+	else {
+		// Invalid repeatX && repeatY values
+		gtkutil::errorDialog("Both fit values must be > 0.0.", GTK_WINDOW(_dialog));
+	}
+}
+
 gboolean SurfaceInspector::onStepFocusOut(GtkWidget* widget, GdkEventFocus *event, SurfaceInspector* self) {
 	
 	// Tell the class instance to save its contents into the registry
@@ -437,6 +468,13 @@ gboolean SurfaceInspector::onDelete(GtkWidget* widget, GdkEvent* event, SurfaceI
 	
 	// Don't propagate the delete event
 	return true;
+}
+
+gboolean SurfaceInspector::onFit(GtkWidget* widget, SurfaceInspector* self) {
+	// Call the according member method
+	self->fitTexture();
+	
+	return false;
 }
 
 } // namespace ui
