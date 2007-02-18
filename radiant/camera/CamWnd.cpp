@@ -529,6 +529,10 @@ CamWnd::~CamWnd() {
 	// Subscribe to the global scene graph update 
 	GlobalSceneGraph().removeSceneObserver(this);
 	
+	// Disconnect self from EventManager
+	GlobalEventManager().disconnect(GTK_OBJECT(m_gl_widget));
+	GlobalEventManager().disconnect(GTK_OBJECT(_parentWidget));
+	
 	if (m_bFreeMove) {
 		disableFreeMove();
 	}
@@ -659,6 +663,7 @@ GtkWindow* CamWnd::getParent() const {
 
 void CamWnd::setParent(GtkWindow* newParent) {
 	_parentWidget = newParent;
+	GlobalEventManager().connect(GTK_OBJECT(_parentWidget));
 }
 
 Vector3 CamWnd::getCameraOrigin() const {
