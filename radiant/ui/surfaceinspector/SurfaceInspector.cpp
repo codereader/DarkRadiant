@@ -60,6 +60,8 @@ namespace ui {
 		const std::string RKEY_ROTATION_STEP = RKEY_ROOT + "rotStep";
 		
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
+		
+		const float MAX_FLOAT_RESOLUTION = 0.00001f;
 	}
 
 SurfaceInspector::SurfaceInspector() :
@@ -114,8 +116,9 @@ SurfaceInspector::SurfaceInspector() :
 	
 	if (windowStateList.size() > 0) {
 		_windowPosition.loadFromNode(windowStateList[0]);
-		_windowPosition.connect(GTK_WINDOW(_dialog));
 	}
+	
+	_windowPosition.connect(GTK_WINDOW(_dialog));
 }
 
 void SurfaceInspector::shutdown() {
@@ -407,6 +410,13 @@ void SurfaceInspector::updateTexDef() {
   		texdef._shift[0] = float_mod(texdef._shift[0], shaderDims[0]);
   		texdef._shift[1] = float_mod(texdef._shift[1], shaderDims[1]);
 	}
+	
+	// Snap the floating point variables to the max resolution to avoid things like "1.45e-14"
+	texdef._shift[0] = float_snapped(texdef._shift[0], MAX_FLOAT_RESOLUTION);
+	texdef._shift[1] = float_snapped(texdef._shift[1], MAX_FLOAT_RESOLUTION);
+	texdef._scale[0] = float_snapped(texdef._scale[0], MAX_FLOAT_RESOLUTION);
+	texdef._scale[1] = float_snapped(texdef._scale[1], MAX_FLOAT_RESOLUTION);
+	texdef._rotate = float_snapped(texdef._rotate, MAX_FLOAT_RESOLUTION);
 	
 	// Load the values into the widgets
 	gtk_entry_set_text(GTK_ENTRY(_manipulators[HSHIFT].value), floatToStr(texdef._shift[0]).c_str());
