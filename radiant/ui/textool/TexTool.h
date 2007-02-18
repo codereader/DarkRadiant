@@ -3,10 +3,14 @@
 
 #include "gtk/gtkwidget.h"
 #include "gtkutil/WindowPosition.h"
+#include "math/Vector3.h"
+#include "ishaders.h"
+#include "iselection.h"
 
 namespace ui {
 
-class TexTool
+class TexTool :
+	public SelectionSystem::Observer
 {
 	// The textool gtkwindow
 	GtkWidget* _window;
@@ -16,6 +20,12 @@ class TexTool
 
 	// GL widget
 	GtkWidget* _glWidget;
+	
+	// The two vectors defining the visible area
+	Vector3 _extents[2];
+	
+	// The shader we're working with (shared ptr)
+	IShaderPtr _shader;
 	
 public:
 	TexTool();
@@ -36,9 +46,23 @@ public:
 	 */
 	static TexTool& Instance();
 	
+	/** greebo: SelectionSystem::Observer implementation. Gets called by
+	 * the SelectionSystem upon selection change to allow updating.
+	 */
+	void selectionChanged();
+	
 private:
 	// Creates, packs and connects the child widgets
 	void populateWindow();
+	
+	/** greebo: Updates the GL window
+	 */
+	void draw();
+	
+	/** greebo: Loads all the relevant data from the
+	 * selectionsystem and prepares the member variables for drawing. 
+	 */
+	void update();
 
 	// The callback for the delete event (toggles the visibility)
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, TexTool* self);
