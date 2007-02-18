@@ -76,6 +76,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "textureentry.h"
 
 #include "ui/surfaceinspector/SurfaceInspector.h"
+#include "ui/textool/TexTool.h"
 #include "brush/BrushInstance.h"
 #include "brush/Face.h"
 
@@ -1632,6 +1633,11 @@ void FlipTextureY() {
 	Select_FlipTexture(1);
 }
 
+void ToggleTexTool() {
+	// Call the toggle() method of the static instance
+	ui::TexTool::Instance().toggle();
+}
+
 void SurfaceInspector_constructPreferences(PrefPage* page)
 {
   page->appendCheckBox("", "Surface Inspector Increments Match Grid", g_si_globals.m_bSnapTToGrid);
@@ -1650,6 +1656,7 @@ void SurfaceInspector_registerCommands()
 {
   GlobalEventManager().addCommand("FitTexture", FreeCaller<SurfaceInspector_FitTexture>());
   GlobalEventManager().addCommand("SurfaceInspector", FreeCaller<SurfaceInspector_toggleShown>());
+  GlobalEventManager().addCommand("TextureTool", FreeCaller<ToggleTexTool>());
 
   GlobalEventManager().addCommand("FaceCopyTexture", FreeCaller<SelectedFaces_copyTexture>());
   GlobalEventManager().addCommand("FacePasteTexture", FreeCaller<SelectedFaces_pasteTexture>());
