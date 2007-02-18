@@ -47,15 +47,6 @@ public:
 };
 typedef boost::shared_ptr<TextureConstructor> TextureConstructorPtr;
 
-enum eTextureType {
-	texEditor,
-	texDiffuse,
-	texBump,
-	texSpecular,
-	texLightFalloff,
-	texOverlay
-};
-
 /* greebo: The TextureManager keeps track of all the Textures that are
  * bound in OpenGL. It is responsible for loading/unloading the textures
  * on demand and/or retrieving the pointers to these textures.
@@ -63,13 +54,21 @@ enum eTextureType {
 class IGLTextureManager
 {
 public:
-	/* greebo: Retrieves the pointer to the Texture object named by
-	 * the textureKey string. If the texture is already bound in OpenGL
-	 * the pointer to the existing Texture is returned. 
+	
+	/**
+	 * Retrieves the pointer to the Texture object named by the textureKey 
+	 * string. If the texture is already bound in OpenGL the pointer to the 
+	 * existing Texture is returned.
+	 * 
+	 * @param textureKey
+	 * Name of the texture to look up.
+	 * 
+	 * @param constructor
+	 * TextureConstructor object which will be used to populate and bind this
+	 * texture if it is not found in the cache. 
 	 */
 	virtual TexturePtr getBinding(const std::string& textureKey, 
-								  TextureConstructorPtr constructor,
-								  eTextureType textureType) = 0;
+								  TextureConstructorPtr constructor) = 0;
 };
 
 enum

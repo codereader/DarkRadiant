@@ -39,9 +39,6 @@ public:
 	// Constructor, allocates the library
 	Doom3ShaderSystem();
 	
-	// Destructor, removes the library from heap
-	~Doom3ShaderSystem();
-
 	// This attaches this class as ModuleObserver to the Filesystem
 	void construct();
 	void destroy();

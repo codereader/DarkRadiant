@@ -57,7 +57,7 @@
 		</shaders>
 	</filesystem>
 	<defaults>
-		<lightShader>lights/defaultpointlight</lightShader>
+		<lightShader value="lights/defaultpointlight" />
 		<lightScale>1</lightScale>
 		<lightRadius value="320 320 320" />
 		<maxWorldCoord value="65536" />

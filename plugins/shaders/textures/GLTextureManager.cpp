@@ -8,33 +8,10 @@
 namespace {
 	const int MAX_TEXTURE_QUALITY = 3;
 	
-	// TODO: Move this into doom3.game or other xml files
-	const std::string SHADER_IMAGE_MISSING = "bitmaps/shadernotex.bmp";
 	const std::string SHADER_NOT_FOUND = "bitmaps/notex.bmp";
-	const std::string SHADER_BUMP_EMPTY = "bitmaps/_flat.bmp";
-	const std::string SHADER_SPECULAR_EMPTY = "bitmaps/_black.bmp";
-	const std::string SHADER_FALLOFF_EMPTY = "bitmaps/_black.bmp";
 }
 
 namespace shaders {
-
-TexturePtr GLTextureManager::getStandardTexture(eTextureType textureType) {
-	switch (textureType) {
-		case texEditor:
-		case texDiffuse:
-			return getShaderImageMissing();
-		case texBump:
-			return getEmptyBump();
-		case texSpecular:
-			return getEmptySpecular();
-		case texLightFalloff:
-			return getEmptyFalloff();
-		case texOverlay:
-			return getShaderImageMissing();
-	};
-	// This won't be executed, it's for avoiding compiler warnings.
-	return getShaderImageMissing();
-}
 
 void GLTextureManager::checkBindings() {
 	
@@ -55,61 +32,63 @@ void GLTextureManager::checkBindings() {
 }
 
 TexturePtr GLTextureManager::getBinding(const std::string& textureKey, 
-										TextureConstructorPtr constructor,
-										eTextureType textureType) 
+										TextureConstructorPtr constructor) 
 {
-	if (textureKey == "") {
-		return getStandardTexture(textureType);
-	}
-	
+	assert(constructor);
+
 	TextureMap::iterator i = _textures.find(textureKey);
 	
 	// Check if the texture has to be loaded
 	if (i == _textures.end()) {
-		// Is the constructor pointer valid?
-		if (constructor != NULL) {
-			
-			// Retrieve the fabricated image from the TextureConstructor
-			Image* image = constructor->construct();
-			
-			if (image != NULL) {
-				// Constructor returned a valid image, now create the texture object
-				_textures[textureKey] = TexturePtr(new Texture(textureKey));
-				
-				// Tell the manipulator to do the standard operations 
-				// This might return a different image than the passed one
-				
-				// Do not touch overlay images (no gamma or scaling)
-				if (textureType != texOverlay) {
-					image = _manipulator.getProcessedImage(image);
-				}
-				
-				// Bind the texture and get the OpenGL id
-				load(_textures[textureKey], image);
 
-				// We don't need the image pixel data anymore
-				image->release();
+		// Retrieve the fabricated image from the TextureConstructor
+		Image* image = constructor->construct();
+		
+		if (image != NULL) {
 
-				globalOutputStream() << "[shaders] Loaded texture: " 
-									 << textureKey.c_str() << "\n";
-			}
-			else {
-				// No image has been loaded, assign it to the "image missing texture"
-				globalErrorStream() << "[shaders] Unable to load shader texture: " 
-						  			<< textureKey.c_str() << "\n";			
-				
-				_textures[textureKey] = getStandardTexture(textureType);
-			}
+			// Constructor returned a valid image, now create the texture object
+			_textures[textureKey] = TexturePtr(new Texture(textureKey));
+			
+			// Tell the manipulator to do the standard operations 
+			// This might return a different image than the passed one
+			
+			// Do not touch overlay images (no gamma or scaling)
+//				if (textureType != texOverlay) {
+//					image = _manipulator.getProcessedImage(image);
+//				}
+			
+			// Bind the texture and get the OpenGL id
+			load(_textures[textureKey], image);
+
+			// We don't need the image pixel data anymore
+			image->release();
+
+			globalOutputStream() << "[shaders] Loaded texture: " 
+								 << textureKey.c_str() << "\n";
 		}
 		else {
-			globalErrorStream() << "Can't construct texture, constructor is invalid.\n";
-						
-			// assign this name to the shader image missing texture;
-			_textures[textureKey] = getShaderImageMissing();
+			// No image has been loaded, assign it to the "image missing texture"
+			globalErrorStream() << "[shaders] Unable to load shader texture: " 
+					  			<< textureKey.c_str() << "\n";			
+			
+			_textures[textureKey] = getShaderNotFound();
 		}
 	}
 
 	return _textures[textureKey];
+}
+
+// Return the shader-not-found texture, loading if necessary
+TexturePtr GLTextureManager::getShaderNotFound() {
+	
+	// Construct the texture if necessary
+	if (!_shaderNotFound) {
+		_shaderNotFound = loadStandardTexture(SHADER_NOT_FOUND);
+	}
+	
+	// Return the texture
+	return _shaderNotFound;				  
+	
 }
 
 TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
@@ -136,41 +115,6 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
 	}
 	
 	return returnValue;
-}
-
-TexturePtr GLTextureManager::getEmptyBump() {
-	if (_emptyBump == NULL) {
-		_emptyBump = loadStandardTexture(SHADER_BUMP_EMPTY); 
-	}
-	return _emptyBump;
-}
-
-TexturePtr GLTextureManager::getEmptySpecular() {
-	if (_emptySpecular == NULL) {
-		_emptySpecular = loadStandardTexture(SHADER_SPECULAR_EMPTY); 
-	}
-	return _emptySpecular;
-}
-
-TexturePtr GLTextureManager::getEmptyFalloff() {
-	if (_emptyFalloff == NULL) {
-		_emptyFalloff = loadStandardTexture(SHADER_FALLOFF_EMPTY); 
-	}
-	return _emptyFalloff;
-}
-
-TexturePtr GLTextureManager::getShaderNotFound() {
-	if (_shaderNotFound == NULL) {
-		_shaderNotFound = loadStandardTexture(SHADER_NOT_FOUND); 
-	}
-	return _shaderNotFound;
-}
-
-TexturePtr GLTextureManager::getShaderImageMissing() {
-	if (_shaderImageMissing == NULL) {
-		_shaderImageMissing = loadStandardTexture(SHADER_IMAGE_MISSING); 
-	}
-	return _shaderImageMissing;
 }
 
 void GLTextureManager::load(TexturePtr texture, Image* image) {
