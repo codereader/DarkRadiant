@@ -37,8 +37,12 @@ public:
 	static TexTool& Instance();
 	
 private:
+	// Creates, packs and connects the child widgets
+	void populateWindow();
+
 	// The callback for the delete event (toggles the visibility)
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, TexTool* self);
+	static void onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self);
 
 }; // class TexTool
 
