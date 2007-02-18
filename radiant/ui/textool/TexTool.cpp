@@ -3,6 +3,7 @@
 #include "ieventmanager.h"
 #include "iregistry.h"
 #include "gtkutil/TransientWindow.h"
+#include "gtkutil/glwidget.h"
 #include "mainframe.h"
 
 namespace ui {
@@ -18,6 +19,8 @@ TexTool::TexTool()
 {
 	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
 	_window = gtkutil::TransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
+	
+	_glWidget = glwidget_new(TRUE);
 	
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(_window), 12);

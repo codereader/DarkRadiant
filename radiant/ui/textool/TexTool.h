@@ -14,6 +14,9 @@ class TexTool
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
 
+	// GL widget
+	GtkWidget* _glWidget;
+	
 public:
 	TexTool();
 	
