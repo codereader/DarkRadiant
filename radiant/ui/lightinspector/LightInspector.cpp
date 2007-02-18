@@ -308,8 +308,14 @@ void LightInspector::getValuesFromEntity() {
 			i->second = val;
 	}
 
-	// Get the colour key from the entity to set the GtkColorButton
-	Vector3 colour(_entity->getKeyValue("_color"));
+	// Get the colour key from the entity to set the GtkColorButton. If the 
+	// light has no colour key, use a default of white rather than the Vector3
+	// default of black (0, 0, 0).
+	std::string colString = _entity->getKeyValue("_color");
+	if (colString.empty())
+		colString = "1.0 1.0 1.0";
+		 
+	Vector3 colour(colString);
 	GdkColor col = { 0,
 					 static_cast<guint>(colour.x() * 65535),
 					 static_cast<guint>(colour.y() * 65535),
