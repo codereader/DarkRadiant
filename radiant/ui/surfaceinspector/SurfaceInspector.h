@@ -7,6 +7,8 @@
 #include "iselection.h"
 #include "iregistry.h"
 #include "gtkutil/RegistryConnector.h"
+#include "gtkutil/ControlButton.h"
+#include <boost/shared_ptr.hpp>
 
 namespace ui {
 
@@ -17,12 +19,14 @@ class SurfaceInspector :
 	// The actual dialog window
 	GtkWidget* _dialog;
 
+	typedef boost::shared_ptr<gtkutil::ControlButton> ControlButtonPtr;
+
 	struct ManipulatorRow {
 		GtkWidget* hbox;
 		GtkWidget* label;
 		GtkWidget* value;
-		GtkWidget* smaller; 
-		GtkWidget* larger;
+		ControlButtonPtr smaller; 
+		ControlButtonPtr larger;
 		GtkWidget* step;
 		GtkWidget* steplabel;
 	};
@@ -140,6 +144,7 @@ private:
 	static gboolean onFit(GtkWidget* widget, SurfaceInspector* self);
 	static gboolean onFlip(GtkWidget* widget, SurfaceInspector* self);
 	static gboolean onNatural(GtkWidget* widget, SurfaceInspector* self);
+	static gboolean doUpdate(GtkWidget* widget, SurfaceInspector* self);
 	
 }; // class SurfaceInspector
 

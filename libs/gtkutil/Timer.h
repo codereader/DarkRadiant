@@ -7,7 +7,7 @@
  * periodically call a certain function in the given intervals (resolution: 1 ms).
  * 
  * Instantiate this Timer with a timeout in ms and a GTK-compatible callback.
- * (e.g. Cast a static member function using G_CALLBACK() and pass it).
+ * (e.g. a static member function that can be cast by using G_CALLBACK()).
  */
 namespace gtkutil {
 
@@ -32,7 +32,7 @@ public:
 	Timer(const unsigned long timeout, TimerCallback callback, gpointer data);
 	
 	// Sets the timeout to the given value (in ms). The changes get 
-	// activate when enable() is called the next time.
+	// activated when enable() is called the next time.
 	void setTimeout(const unsigned long timeout);
 	
 	// Sets the callback to the given <callback>
