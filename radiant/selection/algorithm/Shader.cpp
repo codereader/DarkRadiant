@@ -247,18 +247,19 @@ void fitTexture(const float& repeatS, const float& repeatT) {
 	SceneChangeNotify();
 }
 
-/** greebo: Applies the given scale <s, t> to the visited faces
+/** greebo: Applies the default texture projection to all
+ * the visited faces.
  */
-class FaceTextureScaler
+class FaceTextureProjectionSetter
 {
-	float _s, _t;
+	TextureProjection& _projection;
 public:
-	FaceTextureScaler(float s, float t) : 
-		_s(s), _t(t) 
+	FaceTextureProjectionSetter(TextureProjection& projection) : 
+		_projection(projection) 
 	{}
 	
 	void operator()(Face& face) const {
-		face.ScaleTexdef(_s, _t);
+		face.SetTexdef(_projection);
 	}
 };
 
@@ -273,21 +274,23 @@ public:
 void naturalTexture() {
 	UndoableCommand undo("naturalTexture");
 	
-	float defaultScale = GlobalRegistry().getFloat(RKEY_DEFAULT_TEXTURE_SCALE);
-	
 	// Patches
 	Scene_forEachVisibleSelectedPatch(PatchTextureNaturaliser());
 	
-	// Brushes
-	Scene_ForEachSelectedBrush_ForEachFace(
-		GlobalSceneGraph(), 
-		FaceTextureScaler(defaultScale, defaultScale)
-	);
+	TextureProjection projection;
+	projection.constructDefault();
+	
+	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
+		Scene_ForEachSelectedBrush_ForEachFace(
+			GlobalSceneGraph(), 
+			FaceTextureProjectionSetter(projection)
+		);
+	}
 	
 	// Faces
 	Scene_ForEachSelectedBrushFace(
 		GlobalSceneGraph(), 
-		FaceTextureScaler(defaultScale, defaultScale)
+		FaceTextureProjectionSetter(projection)
 	);
 	
 	SceneChangeNotify();
