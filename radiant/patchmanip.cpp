@@ -775,7 +775,6 @@ void Patch_registerCommands()
   GlobalEventManager().addCommand("IncPatchRow", FreeCaller<Patch_InsertInsertRow>());
   GlobalEventManager().addCommand("DecPatchColumn", FreeCaller<Patch_DeleteLastColumn>());
   GlobalEventManager().addCommand("DecPatchRow", FreeCaller<Patch_DeleteLastRow>());
-  GlobalEventManager().addCommand("NaturalizePatch", FreeCaller<Patch_NaturalTexture>());
   GlobalEventManager().addCommand("PatchCylinder", FreeCaller<Patch_Cylinder>());
   GlobalEventManager().addCommand("PatchDenseCylinder", FreeCaller<Patch_DenseCylinder>());
   GlobalEventManager().addCommand("PatchVeryDenseCylinder", FreeCaller<Patch_VeryDenseCylinder>());

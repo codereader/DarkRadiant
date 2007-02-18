@@ -38,6 +38,11 @@ namespace selection {
 	 */
 	void fitTexture(const float& repeatS, const float& repeatT);
 	
+	/** greebo: Applies the texture "naturally" to the selected
+	 * primitives. Natural makes use of the currently active default scale. 
+	 */
+	void naturalTexture();
+	
 	} // namespace algorithm
 } // namespace selection
 

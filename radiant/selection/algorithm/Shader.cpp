@@ -12,6 +12,11 @@ extern FaceInstanceSet g_SelectedFaceInstances;
 
 namespace selection {
 	namespace algorithm {
+	
+// Constants	
+namespace {
+	const std::string RKEY_DEFAULT_TEXTURE_SCALE = "user/ui/textures/defaultTextureScale";
+}	
 
 class AmbiguousShaderException:
 	public std::runtime_error
@@ -238,6 +243,52 @@ void fitTexture(const float& repeatS, const float& repeatT) {
 	
 	// Cycle through all the selected patches
 	Scene_forEachVisibleSelectedPatch(PatchTextureFitter(repeatS, repeatT));
+	
+	SceneChangeNotify();
+}
+
+/** greebo: Applies the given scale <s, t> to the visited faces
+ */
+class FaceTextureScaler
+{
+	float _s, _t;
+public:
+	FaceTextureScaler(float s, float t) : 
+		_s(s), _t(t) 
+	{}
+	
+	void operator()(Face& face) const {
+		face.ScaleTexdef(_s, _t);
+	}
+};
+
+class PatchTextureNaturaliser
+{
+public:
+	void operator()(Patch& patch) const {
+		patch.NaturalTexture();
+	}
+};
+
+void naturalTexture() {
+	UndoableCommand undo("naturalTexture");
+	
+	float defaultScale = GlobalRegistry().getFloat(RKEY_DEFAULT_TEXTURE_SCALE);
+	
+	// Patches
+	Scene_forEachVisibleSelectedPatch(PatchTextureNaturaliser());
+	
+	// Brushes
+	Scene_ForEachSelectedBrush_ForEachFace(
+		GlobalSceneGraph(), 
+		FaceTextureScaler(defaultScale, defaultScale)
+	);
+	
+	// Faces
+	Scene_ForEachSelectedBrushFace(
+		GlobalSceneGraph(), 
+		FaceTextureScaler(defaultScale, defaultScale)
+	);
 	
 	SceneChangeNotify();
 }
