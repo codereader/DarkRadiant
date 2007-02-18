@@ -35,7 +35,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iglrender.h"
 #include "renderable.h"
 #include "qerplugin.h"
-#include "iregistry.h"
 
 #include <set>
 #include <vector>
@@ -64,9 +63,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 namespace {
 	
-	// Name of default pointlight shader, retrieved from game descriptor.
-	std::string _defaultLightShaderName;
-
 	// Polygon stipple pattern
 	const GLubyte POLYGON_STIPPLE_PATTERN[132] = {
 	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
@@ -706,32 +702,18 @@ void ShaderCache_setBumpEnabled(bool enabled)
 
 
 Vector3 g_DebugShaderColours[256];
-Shader* g_defaultPointLight = 0;
 
 void ShaderCache_Construct()
 {
   g_ShaderCache = new OpenGLShaderCache;
   GlobalShaderSystem().attach(*g_ShaderCache);
 
-	// Get the global default lightshader from the XML gamedescriptor.
-	
-	xml::NodeList nlDefaultLight = GlobalRegistry().findXPath("game/defaults/lightShader");
-	if (nlDefaultLight.size() != 1)
-		gtkutil::fatalErrorDialog("Failed to find default lightshader in XML game descriptor.\n\nNode <b>/game/defaults/lightShader</b> not found.",
-								  GlobalRadiant().getMainWindow());
-
-	_defaultLightShaderName = nlDefaultLight[0].getContent();
-	boost::algorithm::to_lower(_defaultLightShaderName);
-
-	g_defaultPointLight = g_ShaderCache->capture(_defaultLightShaderName);
 	g_ShaderCache->capture("$OVERBRIGHT");
 }
 
 void ShaderCache_Destroy()
 {
-    g_ShaderCache->release(_defaultLightShaderName);
     g_ShaderCache->release("$OVERBRIGHT");
-    g_defaultPointLight = 0;
 
 	GlobalShaderSystem().detach(*g_ShaderCache);
 	delete g_ShaderCache;

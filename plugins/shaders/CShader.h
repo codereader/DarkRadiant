@@ -16,24 +16,20 @@ class CShader :
 	// Name of shader
 	std::string _name;
 
+	// String names of textures for this shader
+	std::string _editorTexName;
+	std::string _diffuseName;
+	std::string _bumpName;
+	std::string _specularName;
+	std::string _falloffName;
+
 	// Textures for this shader
 	TexturePtr _editorTexture;
 	TexturePtr _diffuse;
 	TexturePtr _bump;
 	TexturePtr _specular;
-	
-	// The texture constructors for this image
-	TextureConstructorPtr _editorConstructor;
-	TextureConstructorPtr _diffuseConstructor;
-	TextureConstructorPtr _bumpConstructor;
-	TextureConstructorPtr _specularConstructor;
-	
-	// The constructor of the light falloff texture
-	TextureConstructorPtr _falloffConstructor;
-	
-	//float _heightMapScale; // unused at the moment
-	
 	TexturePtr _texLightFalloff;
+
 	BlendFunc m_blendFunc;
 
 	bool m_bInUse;
@@ -59,6 +55,16 @@ public:
 	
 	// Return specular map or a black texture
 	TexturePtr getSpecular();
+
+	// Return the light falloff texture (Z dimension).
+	TexturePtr lightFalloffImage();
+
+	/**
+	 * Return the name of the light falloff texture for use with this shader.
+	 * Shaders which do not define their own falloff will take the default from
+	 * the defaultPointLight shader.
+	 */
+	std::string getFalloffName() const;
 
 	/*
 	 * Return name of shader.
@@ -148,9 +154,6 @@ public:
 
 	bool isBlendLight() const;
 	bool isFogLight() const;
-
-	// Return the light falloff texture (Z dimension).
-	TexturePtr lightFalloffImage();
 
 }; // class CShader
 

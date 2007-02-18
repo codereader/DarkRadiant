@@ -45,7 +45,7 @@ class OpenGLStateBucket
 
 	// Vector of transformed renderables using this state
 	typedef std::vector<TransformedRenderable> Renderables;
-	Renderables m_renderables;
+	Renderables _renderables;
 
 private:
 

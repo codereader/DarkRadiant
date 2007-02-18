@@ -1,13 +1,22 @@
 #include "CShader.h"
-
-#include "ishaders.h"
-
-#include "texturelib.h"
-
+#include "Doom3ShaderSystem.h"
 #include "textures/DefaultConstructor.h"
 #include "textures/FileLoader.h"
 
-#include "Doom3ShaderSystem.h"
+#include "ishaders.h"
+#include "texturelib.h"
+
+/* CONSTANTS */
+namespace {
+	
+	// Default image maps for optional material stages
+	const std::string IMAGE_FLAT = "bitmaps/_flat.bmp";
+	const std::string IMAGE_BLACK = "bitmaps/_black.bmp";
+	
+	// Registry path for default light shader
+	const std::string DEFAULT_LIGHT_PATH = "game/defaults/lightShader";	
+	
+}
 
 // Map string blend functions to their enum equivalents
 BlendFactor evaluateBlendFactor(const std::string& value) {
@@ -62,29 +71,13 @@ CShader::CShader(const std::string& name, const ShaderDefinition& definition) :
 	m_blendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA),
 	m_bInUse(false) 
 {
-	assert(definition.shaderTemplate != NULL); // otherwise we have NULL ref
+	// Obtain texture names from the template
+	_editorTexName = _template._texture->getTextureName();
+	_diffuseName = _template._diffuse->getTextureName();
+	_bumpName = _template._bump->getTextureName();
+	_specularName = _template._specular->getTextureName();
+	_falloffName = _template._lightFallOff->getTextureName();
 
-	// Get the texture lookup name (e.g. textures/darkmod/stone/floor/block_008)
-	std::string displayTex = _template._texture->getTextureName();
-	_editorConstructor = TextureConstructorPtr(new DefaultConstructor(displayTex));
-	
-	// Get the diffuse lookup name (e.g. textures/darkmod/stone/floor/block_008)
-	std::string diffuseName = _template._diffuse->getTextureName();
-	_diffuseConstructor = TextureConstructorPtr(new DefaultConstructor(diffuseName));
-	
-	// Initialise the bump map constructor
-	std::string bumpName = _template._bump->getTextureName();
-	_bumpConstructor = TextureConstructorPtr(new DefaultConstructor(bumpName));
-	
-	// Initialise the specular map constructor
-	std::string specularName = _template._specular->getTextureName();
-	_specularConstructor = TextureConstructorPtr(new DefaultConstructor(specularName));
-	
-	// Get the texture filename of the lightfalloff image (TODO, see ShaderTempate.h)
-	// and instantiate the TextureConstructor object 
-	std::string foTexName = _template._lightFallOff->getTextureName();
-	_falloffConstructor = TextureConstructorPtr(new DefaultConstructor(foTexName));
-	
 	// Realise the shader
 	realise();
 }
@@ -96,57 +89,135 @@ CShader::~CShader() {
 
 // get/set the Texture* Radiant uses to represent this shader object
 TexturePtr CShader::getTexture() {
+
 	// Check if the boost::shared_ptr is still uninitialised
-	if (_editorTexture == NULL) {
+	if (!_editorTexture) {
+		
+		// Create constructor
+		TextureConstructorPtr cons(new DefaultConstructor(_editorTexName));
+		
 		// Pass the call to the GLTextureManager to realise this image 
-		_editorTexture = GetTextureManager().getBinding(
-			_template._texture->getTextureName(), 
-			_editorConstructor,
-			texEditor
-		);
+		_editorTexture = GetTextureManager().getBinding(_editorTexName,	cons);
 	}
+	
 	return _editorTexture;
 }
 
 TexturePtr CShader::getDiffuse() {
+
 	// Check if the boost::shared_ptr is still uninitialised
-	if (_diffuse == NULL) {
+	if (!_diffuse) {
+		
+		// Create constructor
+		TextureConstructorPtr cons(new DefaultConstructor(_diffuseName));
+		
 		// Pass the call to the GLTextureManager to realise this image 
-		_diffuse = GetTextureManager().getBinding(
-			_template._diffuse->getTextureName(), 
-			_diffuseConstructor,
-			texDiffuse
-		);
+		_diffuse = GetTextureManager().getBinding(_diffuseName, cons); 
 	}
+
 	return _diffuse;
 }
 
 // Return bumpmap if it exists, otherwise _flat
 TexturePtr CShader::getBump() {
+	
 	// Check if the boost::shared_ptr is still uninitialised
-	if (_bump == NULL) {
+	if (!_bump) {
+	
+		// Create constructor. If the bump map is not set, we need to use the
+		// flat image here
+		TextureConstructorPtr cons;
+		if (!_bumpName.empty()) {
+			cons = TextureConstructorPtr(new DefaultConstructor(_bumpName));
+		}
+		else {
+			// Create a FileLoader for the _flat.bmp local image. We also set
+			// the bump name so that the correct caching key is passed to the
+			// GLTextureManager ("" would return SHADER NOT FOUND).
+			_bumpName = IMAGE_FLAT;
+			cons = TextureConstructorPtr(
+				new FileLoader(GlobalRadiant().getAppPath() + IMAGE_FLAT, "bmp")
+			);
+		}
+		
 		// Pass the call to the GLTextureManager to realise this image 
-		_bump = GetTextureManager().getBinding(
-			_template._bump->getTextureName(), 
-			_bumpConstructor,
-			texBump
-		);
+		_bump = GetTextureManager().getBinding(_bumpName, cons);
 	}
+	
 	return _bump;
 }
 
+// Get the specular texture
 TexturePtr CShader::getSpecular() {
+
 	// Check if the boost::shared_ptr is still uninitialised
-	if (_specular == NULL) {
+	if (!_specular) {
+		
+		// Create constructor. If the specular map is not set, we need to use 
+		// the _black image here
+		TextureConstructorPtr cons;
+		if (!_specularName.empty()) {
+			cons = TextureConstructorPtr(new DefaultConstructor(_specularName));
+		}
+		else {
+			// Load the _black image
+			_specularName = IMAGE_BLACK;
+			cons = TextureConstructorPtr(
+				new FileLoader(GlobalRadiant().getAppPath() + IMAGE_BLACK, 
+							   "bmp")
+			);
+		}
+
 		// Pass the call to the GLTextureManager to realise this image 
-		_specular = GetTextureManager().getBinding(
-			_template._specular->getTextureName(), 
-			_specularConstructor,
-			texSpecular
-		);
+		_specular = GetTextureManager().getBinding(_specularName, cons); 
 	}
+
 	return _specular;
 }
+
+// Return the falloff texture name
+std::string CShader::getFalloffName() const {
+	return _falloffName;
+}
+
+/*
+ * Return the light falloff texture (Z dimension).
+ */
+TexturePtr CShader::lightFalloffImage() {
+
+	// Construct the texture if necessary
+	if (!_texLightFalloff) {
+
+		// Create constructor. If there is no falloff image defined, use the
+		// default.
+		if (_falloffName.empty()) {
+			
+			// Find the default light shader in the ShaderSystem and query its
+			// falloff texture name.
+			std::string defLight = GlobalRegistry().get(DEFAULT_LIGHT_PATH);
+			IShaderPtr defLightShader = GetShaderSystem().getShaderForName(
+											defLight);
+			
+			// Cast to a CShader so we can call getFalloffName().
+			boost::shared_ptr<CShader> cshaderPtr = 
+				boost::static_pointer_cast<CShader>(defLightShader);
+				
+			// Set the falloff name
+			_falloffName = cshaderPtr->getFalloffName();
+		}
+		
+		// Create texture constructor
+		TextureConstructorPtr cons(new DefaultConstructor(_falloffName));
+
+		// Pass the call to the GLTextureManager to realise this image 
+		_texLightFalloff = GetTextureManager().getBinding(_falloffName, cons); 
+	}
+	
+	// Return the texture
+	return _texLightFalloff;
+}
+
+
 
 /*
  * Return name of shader.
@@ -256,6 +327,7 @@ void CShader::setName(const std::string& name) {
 }
 
 CShader::MapLayer CShader::evaluateLayer(const LayerTemplate& layerTemplate) {
+	
 	// Allocate a default TextureConstructor with this name
 	TextureConstructorPtr constructor(
 	    new DefaultConstructor(layerTemplate.mapExpr->getTextureName())
@@ -264,8 +336,7 @@ CShader::MapLayer CShader::evaluateLayer(const LayerTemplate& layerTemplate) {
 	return MapLayer(
 		GetTextureManager().getBinding(
 			layerTemplate.mapExpr->getTextureName(),
-        	constructor,
-        	texDiffuse	// texDiffuse returns a shaderimagemissing if anything goes wrong
+        	constructor
         ),
 		evaluateBlendFunc(layerTemplate.m_blendFunc),
 		layerTemplate.m_clampToBorder,
@@ -298,33 +369,6 @@ bool CShader::isBlendLight() const {
 
 bool CShader::isFogLight() const {
 	return _template.fogLight;
-}
-
-/*
- * Return the light falloff texture (Z dimension).
- */
-TexturePtr CShader::lightFalloffImage() {
-	if (_texLightFalloff == NULL) {
-		// TODO: Move this algorithm into a FallOffConstructor object
-		// deriving from a TextureConstructor class, if appropriate (check). 
-		
-		if (_template._lightFallOff) {
-			// There is a lightfalloff defined in the template
-			std::string foTexName = _template._lightFallOff->getTextureName();
-			
-			// Pass the call to the GLTextureManager to realise this image 
-			_texLightFalloff = GetTextureManager().getBinding(
-				foTexName,
-				_falloffConstructor,
-				texLightFalloff
-			);
-		}
-		else {
-			// No falloff defined in the template
-			_texLightFalloff = GetTextureManager().getEmptyFalloff();
-		}
-	}
-	return _texLightFalloff;
 }
 
 bool CShader::m_lightingEnabled = false;

@@ -31,10 +31,6 @@ Doom3ShaderSystem::Doom3ShaderSystem() :
 	_shadersUnrealised(1)
 {}
 
-// Destructor
-Doom3ShaderSystem::~Doom3ShaderSystem()
-{}
-
 void Doom3ShaderSystem::construct() {
 	// Register this class as moduleobserver 
 	GlobalFileSystem().attach(*this);

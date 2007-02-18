@@ -8,9 +8,6 @@
 #include "ishaders.h"
 #include "texturelib.h"
 
-/* Externals */
-extern Shader* g_defaultPointLight; // renderstate.cpp, TODO: get rid of this
-
 namespace {
 	
 // Utility function to set OpenGL texture state
@@ -386,7 +383,7 @@ void OpenGLStateBucket::addRenderable(const OpenGLRenderable& renderable,
 									  const Matrix4& modelview, 
 									  const RendererLight* light)
 {
-	m_renderables.push_back(TransformedRenderable(renderable, modelview, light));
+	_renderables.push_back(TransformedRenderable(renderable, modelview, light));
 }
 
 
@@ -421,7 +418,7 @@ void OpenGLStateBucket::render(OpenGLState& current,
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
   }
-	else if(!m_renderables.empty()) {
+	else if(!_renderables.empty()) {
 		flushRenderables(current, globalstate, viewer);
 	}
 }
@@ -431,41 +428,53 @@ void OpenGLStateBucket::flushRenderables(OpenGLState& current,
 										 unsigned int globalstate, 
 										 const Vector3& viewer)
 {
+	// Keep a pointer to the last transform matrix used
 	const Matrix4* transform = 0;
+	
 	glPushMatrix();
-	for(OpenGLStateBucket::Renderables::const_iterator i = m_renderables.begin(); 
-  	  	i != m_renderables.end(); 
+	
+	// Iterate over each transformed renderable in the vector
+	for(OpenGLStateBucket::Renderables::const_iterator i = _renderables.begin(); 
+  	  	i != _renderables.end(); 
   	  	++i)
 	{
-    //qglLoadMatrixf(i->transform);
-    if(!transform || (transform != (*i).transform && !matrix4_affine_equal(*transform, *(*i).transform)))
-    {
-      transform = i->transform;
-      glPopMatrix();
-      glPushMatrix();
-      glMultMatrixf(*transform);
-      glFrontFace(((current.m_state & RENDER_CULLFACE) != 0 && matrix4_handedness(*transform) == MATRIX4_RIGHTHANDED) ? GL_CW : GL_CCW);
-    }
+		// If the current iteration's transform matrix was different from the
+		// last, apply it and store for the next iteration
+	    if (!transform 
+	    	|| (transform != i->transform 
+	    		&& !matrix4_affine_equal(*transform, *(*i).transform)))
+		{
+			transform = i->transform;
+      		glPopMatrix();
+      		glPushMatrix();
+      		glMultMatrixf(*transform);
+      		
+      		// Determine the face direction
+      		if ((current.m_state & RENDER_CULLFACE) != 0
+      			&& matrix4_handedness(*transform) == MATRIX4_RIGHTHANDED)
+      		{
+      			glFrontFace(GL_CW);
+      		}
+      		else 
+      		{
+      			glFrontFace(GL_CCW);
+      		}
+    	}
 
-    if(current.m_program != 0 && i->light != 0)
-    {
+		// If we are using a lighting program and this renderable is lit, set
+		// up the lighting calculation
+		if(current.m_program != 0 && i->light != 0) {
 
-		// Get the light shader and examine its first (and only valid) layer
-		IShaderPtr lightShader = i->light->getShader()->getIShader();
+			// Get the light shader and examine its first (and only valid) layer
+			IShaderPtr lightShader = i->light->getShader()->getIShader();
       
-      if(lightShader->firstLayer() != 0)
-      {
-		// Get the XY and Z falloff texture numbers. If the light shader has no
-		// Z falloff, use the one from the default light shader.
-        GLuint attenuation_xy = lightShader->firstLayer()->texture()->texture_number;
-        
-        // greebo: Note, that the check for empty texture_numbers should not
-        // necessarily be placed here, that kind of error handling should go into
-        // the shaders module.
-        IShaderPtr zAttenShader = lightShader->lightFalloffImage()->texture_number != 0
-        							  ? lightShader
-        							  : g_defaultPointLight->getIShader();
-        GLuint attenuation_z = zAttenShader->lightFalloffImage()->texture_number;
+			if(lightShader->firstLayer() != 0) {
+		
+				// Get the XY and Z falloff texture numbers.
+	        	GLuint attenuation_xy = 
+	        		lightShader->firstLayer()->texture()->texture_number;
+                GLuint attenuation_z = 
+                	lightShader->lightFalloffImage()->texture_number;
 
         setTextureState(current.m_texture3, attenuation_xy, GL_TEXTURE3);
         glActiveTexture(GL_TEXTURE3);
@@ -511,7 +520,7 @@ void OpenGLStateBucket::flushRenderables(OpenGLState& current,
     i->renderable->render(current.m_state);
   }
   glPopMatrix();
-  m_renderables.clear();
+  _renderables.clear();
 }
 
 

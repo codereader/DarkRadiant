@@ -105,7 +105,7 @@ TexturePtr ShaderLibrary::loadTextureFromFile(const std::string& filename) {
 	TextureConstructorPtr constructor(new FileLoader(filename));
 
 	// Get the binding (i.e. load the texture)
-	TexturePtr texture = GetTextureManager().getBinding(filename, constructor, texOverlay);
+	TexturePtr texture = GetTextureManager().getBinding(filename, constructor);
 
 	return texture;
 }
