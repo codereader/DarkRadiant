@@ -460,7 +460,7 @@ void DoSurface (void)
 void SurfaceInspector_toggleShown()
 {
 	// Toggle the inspector window
-	ui::SurfaceInspector::toggleInspector();
+	ui::SurfaceInspector::Instance().toggle();
 	
   if (getSurfaceInspector().visible())
   {

@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 #include "version.h"
 
+#include "ui/surfaceinspector/SurfaceInspector.h"
 #include "brushexport/BrushExportOBJ.h"
 #include "ui/einspector/EntityInspector.h"
 #include "ui/lightinspector/LightInspector.h"
@@ -2575,6 +2576,8 @@ void MainFrame::SaveWindowInfo()
 
 void MainFrame::Shutdown()
 {
+	ui::SurfaceInspector::Instance().shutdown();
+	
 	// Stop the AutoSaver class from being called
 	map::AutoSaver().stopTimer();
 
