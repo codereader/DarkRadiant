@@ -8,6 +8,8 @@
 #include "iregistry.h"
 #include "gtkutil/RegistryConnector.h"
 #include "gtkutil/ControlButton.h"
+#include "gtkutil/WindowPosition.h"
+
 #include <boost/shared_ptr.hpp>
 
 namespace ui {
@@ -65,6 +67,9 @@ class SurfaceInspector :
 	GtkWidget* _defaultTexScale;
 	GtkWidget* _texLockButton;
 	
+	// The window position tracker
+	gtkutil::WindowPosition _windowPosition;
+	
 	// To avoid key changed loopbacks when the registry is updated 
 	bool _callbackActive;
 
@@ -81,14 +86,24 @@ class SurfaceInspector :
 
 public:
 
-	// Constructor & Destructor
+	// Constructor
 	SurfaceInspector();
-	~SurfaceInspector();
-
+	
+	/** greebo: Some sort of "soft" destructor that de-registers
+	 * this class from the SelectionSystem, saves the window state, etc.
+	 */
+	void shutdown();
+	
 	/** greebo: Contains the static instance of this dialog.
 	 * Constructs the instance and calls toggle() when invoked.
 	 */
-	static void toggleInspector();
+	static SurfaceInspector& Instance();
+
+	/** greebo: This toggles the visibility of the surface dialog.
+	 * The dialog is constructed only once and never destructed 
+	 * during runtime.
+	 */
+	void toggle();
 
 	/** greebo: Gets called when the default texscale registry key changes
 	 */
@@ -119,9 +134,6 @@ private:
 	
 	// Connect IEvents to the widgets 
 	void connectEvents();
-
-	// Shows/hides this dialog
-	void toggle();
 	
 	// Updates the widgets
 	void update();

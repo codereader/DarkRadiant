@@ -23,7 +23,7 @@ namespace ui {
 		
 		const std::string HSHIFT = "horizshift";
 		const std::string VSHIFT = "vertshift";
-		const std::string HSCALE = "horziscale";
+		const std::string HSCALE = "horizscale";
 		const std::string VSCALE = "vertscale";
 		const std::string ROTATION = "rotation";
 	
@@ -52,11 +52,14 @@ namespace ui {
 		const std::string RKEY_ENABLE_TEXTURE_LOCK = "user/ui/brush/textureLock";
 		const std::string RKEY_DEFAULT_TEXTURE_SCALE = "user/ui/textures/defaultTextureScale";
 
-		const std::string RKEY_HSHIFT_STEP = "user/ui/textures/surfaceInspector/hShiftStep";
-		const std::string RKEY_VSHIFT_STEP = "user/ui/textures/surfaceInspector/vShiftStep";
-		const std::string RKEY_HSCALE_STEP = "user/ui/textures/surfaceInspector/hScaleStep";
-		const std::string RKEY_VSCALE_STEP = "user/ui/textures/surfaceInspector/vScaleStep";
-		const std::string RKEY_ROTATION_STEP = "user/ui/textures/surfaceInspector/rotStep";
+		const std::string RKEY_ROOT = "user/ui/textures/surfaceInspector/";
+		const std::string RKEY_HSHIFT_STEP = RKEY_ROOT + "hShiftStep";
+		const std::string RKEY_VSHIFT_STEP = RKEY_ROOT + "vShiftStep";
+		const std::string RKEY_HSCALE_STEP = RKEY_ROOT + "hScaleStep";
+		const std::string RKEY_VSCALE_STEP = RKEY_ROOT + "vScaleStep";
+		const std::string RKEY_ROTATION_STEP = RKEY_ROOT + "rotStep";
+		
+		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 	}
 
 SurfaceInspector::SurfaceInspector() :
@@ -105,9 +108,26 @@ SurfaceInspector::SurfaceInspector() :
 	
 	// Get the relevant Events from the Manager and connect the widgets
 	connectEvents();
+	
+	// Connect the window position tracker
+	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
+	
+	if (windowStateList.size() > 0) {
+		_windowPosition.loadFromNode(windowStateList[0]);
+		_windowPosition.connect(GTK_WINDOW(_dialog));
+	}
 }
 
-SurfaceInspector::~SurfaceInspector() {
+void SurfaceInspector::shutdown() {
+	// Delete all the current window states from the registry  
+	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
+	
+	// Create a new node
+	xml::Node node(GlobalRegistry().createKey(RKEY_WINDOW_STATE));
+	
+	// Tell the position tracker to save the information
+	_windowPosition.saveToNode(node);
+	
 	GlobalSelectionSystem().removeObserver(this);
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(_dialog));
 }
@@ -147,6 +167,7 @@ void SurfaceInspector::toggle() {
 	else {
 		gtkutil::TransientWindow::restore(_dialog);
 		_connector.importValues();
+		_windowPosition.applyPosition();
 		gtk_widget_show_all(_dialog);
 	}
 }
@@ -367,12 +388,11 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	return manipRow;
 }
 
-void SurfaceInspector::toggleInspector() {
+SurfaceInspector& SurfaceInspector::Instance() {
 	// The static instance
 	static SurfaceInspector _inspector;
-
-	// Now toggle the dialog
-	_inspector.toggle();
+	
+	return _inspector;
 }
 
 void SurfaceInspector::updateTexDef() {
