@@ -43,6 +43,26 @@ namespace selection {
 	 */
 	void naturalTexture();
 	
+	/** greebo: Shifts the texture of the current selection about
+	 * the specified Vector2
+	 */
+	void shiftTexture(const Vector2& shift);
+	
+	/** greebo: These are the shortcut methods that scale/shift/rotate the 
+	 * texture of the selected primitives about the values that are currently
+	 * active in the Surface Inspector.
+	 */
+	void shiftTextureLeft();
+	void shiftTextureRight();
+	void shiftTextureUp();
+	void shiftTextureDown();
+	void scaleTextureLeft();
+	void scaleTextureRight();
+	void scaleTextureUp();
+	void scaleTextureDown();
+	void rotateTextureClock();
+	void rotateTextureCounter();
+	
 	} // namespace algorithm
 } // namespace selection
 

@@ -296,5 +296,96 @@ void naturalTexture() {
 	SceneChangeNotify();
 }
 
+/** greebo: Translates the texture of the visited faces
+ * about the specified <shift> Vector2
+ */
+class FaceTextureShifter
+{
+	const Vector2& _shift;
+public:
+	FaceTextureShifter(const Vector2& shift) : 
+		_shift(shift) 
+	{}
+	
+	void operator()(Face& face) const {
+		face.ShiftTexdef(_shift[0], _shift[1]);
+	}
+};
+
+/** greebo: Translates the texture of the visited patches
+ * about the specified <shift> Vector2
+ */
+class PatchTextureShifter
+{
+	const Vector2& _shift;
+public:
+	PatchTextureShifter(const Vector2& shift) :
+		_shift(shift) 
+	{}
+	
+	void operator()(Patch& patch) const {
+		patch.TranslateTexture(_shift[0], _shift[1]);
+	}
+};
+
+void shiftTexture(const Vector2& shift) {
+	std::string command("shiftTexture: ");
+	command += "s=" + floatToStr(shift[0]) + ", t=" + floatToStr(shift[1]);
+	
+	UndoableCommand undo(command.c_str());
+	
+	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
+		Scene_ForEachSelectedBrush_ForEachFace(GlobalSceneGraph(), FaceTextureShifter(shift));
+  		Scene_forEachVisibleSelectedPatch(PatchTextureShifter(shift));
+	}
+	// Translate the face textures
+	Scene_ForEachSelectedBrushFace(
+		GlobalSceneGraph(), 
+		FaceTextureShifter(shift)
+	);
+	
+	SceneChangeNotify();
+}
+
+void shiftTextureLeft() {
+	shiftTexture(Vector2(-GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/hShiftStep"), 0.0f));
+}
+
+void shiftTextureRight() {
+	shiftTexture(Vector2(GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/hShiftStep"), 0.0f));
+}
+
+void shiftTextureUp() {
+	shiftTexture(Vector2(0.0f, GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vShiftStep")));
+}
+
+void shiftTextureDown() {
+	shiftTexture(Vector2(0.0f, -GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vShiftStep")));
+}
+
+void scaleTextureLeft() {
+	
+}
+
+void scaleTextureRight() {
+	
+}
+
+void scaleTextureUp() {
+	
+}
+
+void scaleTextureDown() {
+	
+}
+
+void rotateTextureClock() {
+	
+}
+
+void rotateTextureCounter() {
+	
+}
+
 	} // namespace algorithm
 } // namespace selection

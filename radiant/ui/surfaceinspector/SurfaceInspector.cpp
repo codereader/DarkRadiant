@@ -3,7 +3,7 @@
 #include <gtk/gtk.h>
 #include "ieventmanager.h"
 #include "gtkutil/TransientWindow.h"
-#include "gtkutil/IconTextButton.h"
+#include "gtkutil/ControlButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/dialog.h"
@@ -114,17 +114,21 @@ SurfaceInspector::~SurfaceInspector() {
 
 void SurfaceInspector::connectEvents() {
 	// Connect the ToggleTexLock item to the according command
-	IEventPtr texLockEvent = GlobalEventManager().findEvent("TogTexLock");
-	texLockEvent->connectWidget(_texLockButton);
+	GlobalEventManager().findEvent("TogTexLock")->connectWidget(_texLockButton);
+	GlobalEventManager().findEvent("FlipTextureX")->connectWidget(_flipTexture.flipX);
+	GlobalEventManager().findEvent("FlipTextureY")->connectWidget(_flipTexture.flipY);
+	GlobalEventManager().findEvent("TextureNatural")->connectWidget(_applyTex.natural);
 	
-	IEventPtr flipXEvent = GlobalEventManager().findEvent("FlipTextureX");
-	flipXEvent->connectWidget(_flipTexture.flipX);
-	
-	IEventPtr flipYEvent = GlobalEventManager().findEvent("FlipTextureY");
-	flipYEvent->connectWidget(_flipTexture.flipY);
-	
-	IEventPtr naturalEvent = GlobalEventManager().findEvent("TextureNatural");
-	naturalEvent->connectWidget(_applyTex.natural);
+	GlobalEventManager().findEvent("TexShiftLeft")->connectWidget(*_manipulators[HSHIFT].smaller);
+	GlobalEventManager().findEvent("TexShiftRight")->connectWidget(*_manipulators[HSHIFT].larger);
+	GlobalEventManager().findEvent("TexShiftUp")->connectWidget(*_manipulators[VSHIFT].larger);
+	GlobalEventManager().findEvent("TexShiftDown")->connectWidget(*_manipulators[VSHIFT].smaller);
+	GlobalEventManager().findEvent("TexScaleLeft")->connectWidget(*_manipulators[HSCALE].smaller);
+	GlobalEventManager().findEvent("TexScaleRight")->connectWidget(*_manipulators[HSCALE].larger);
+	GlobalEventManager().findEvent("TexScaleUp")->connectWidget(*_manipulators[VSCALE].larger);
+	GlobalEventManager().findEvent("TexScaleDown")->connectWidget(*_manipulators[VSCALE].smaller);
+	GlobalEventManager().findEvent("TexRotateClock")->connectWidget(*_manipulators[ROTATION].smaller);
+	GlobalEventManager().findEvent("TexRotateCounter")->connectWidget(*_manipulators[ROTATION].larger);
 	
 	// Be sure to connect these signals after the buttons are connected 
 	// to the events, so that the update() call gets invoked after the actual event has ben fired.
@@ -315,29 +319,35 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	if (vertical) {
 		GtkWidget* vbox = gtk_vbox_new(true, 0);
 		
-		manipRow.larger = gtkutil::IconTextButton("", "arrow_up.png", false);
-		gtk_widget_set_size_request(manipRow.larger, 30, 12);
-		gtk_box_pack_start(GTK_BOX(vbox), manipRow.larger, false, false, 0);
+		manipRow.larger = ControlButtonPtr(new gtkutil::ControlButton("arrow_up.png"));
+		gtk_widget_set_size_request(*manipRow.larger, 30, 12);
+		gtk_box_pack_start(GTK_BOX(vbox), *manipRow.larger, false, false, 0);
 		
-		manipRow.smaller = gtkutil::IconTextButton("", "arrow_down.png", false);
-		gtk_widget_set_size_request(manipRow.smaller, 30, 12);
-		gtk_box_pack_start(GTK_BOX(vbox), manipRow.smaller, false, false, 0);
+		manipRow.smaller = ControlButtonPtr(new gtkutil::ControlButton("arrow_down.png"));
+		gtk_widget_set_size_request(*manipRow.smaller, 30, 12);
+		gtk_box_pack_start(GTK_BOX(vbox), *manipRow.smaller, false, false, 0);
 		
 		gtk_box_pack_start(GTK_BOX(manipRow.hbox), vbox, false, false, 0);
 	}
 	else {
 		GtkWidget* hbox = gtk_hbox_new(true, 0);
 		
-		manipRow.smaller = gtkutil::IconTextButton("", "arrow_left.png", false);
-		gtk_widget_set_size_request(manipRow.smaller, 15, 24);
-		gtk_box_pack_start(GTK_BOX(hbox), manipRow.smaller, false, false, 0);
+		manipRow.smaller = ControlButtonPtr(new gtkutil::ControlButton("arrow_left.png"));
+		gtk_widget_set_size_request(*manipRow.smaller, 15, 24);
+		gtk_box_pack_start(GTK_BOX(hbox), *manipRow.smaller, false, false, 0);
 		
-		manipRow.larger = gtkutil::IconTextButton("", "arrow_right.png", false);
-		gtk_widget_set_size_request(manipRow.larger, 15, 24);
-		gtk_box_pack_start(GTK_BOX(hbox), manipRow.larger, false, false, 0);
+		manipRow.larger = ControlButtonPtr(new gtkutil::ControlButton("arrow_right.png"));
+		gtk_widget_set_size_request(*manipRow.larger, 15, 24);
+		gtk_box_pack_start(GTK_BOX(hbox), *manipRow.larger, false, false, 0);
 		
 		gtk_box_pack_start(GTK_BOX(manipRow.hbox), hbox, false, false, 0);
 	}
+	
+	GtkWidget* smallerButton = *manipRow.smaller;
+	GtkWidget* largerButton = *manipRow.larger;
+	
+	g_signal_connect(G_OBJECT(smallerButton), "clicked", G_CALLBACK(doUpdate), this);
+	g_signal_connect(G_OBJECT(largerButton), "clicked", G_CALLBACK(doUpdate), this);
 	
 	// Create the label
 	manipRow.steplabel = gtkutil::LeftAlignedLabel(LABEL_STEP); 
@@ -420,6 +430,9 @@ void SurfaceInspector::update() {
 	gtk_widget_set_sensitive(_applyTex.hbox, applySensitivity);
 	gtk_widget_set_sensitive(_applyTex.label, applySensitivity);
 	
+	// Temporary disable of Axial button, as it's redundant to "Natural"
+	gtk_widget_set_sensitive(_applyTex.axial, false);
+	
 	std::string selectedShader = selection::algorithm::getShaderFromSelection();
 	gtk_entry_set_text(GTK_ENTRY(_shaderEntry), selectedShader.c_str());
 	
@@ -492,6 +505,12 @@ gboolean SurfaceInspector::onFlip(GtkWidget* widget, SurfaceInspector* self) {
 }
 
 gboolean SurfaceInspector::onNatural(GtkWidget* widget, SurfaceInspector* self) {
+	// Update the widgets, everything else is done by the called Event
+	self->update();
+	return false;
+}
+
+gboolean SurfaceInspector::doUpdate(GtkWidget* widget, SurfaceInspector* self) {
 	// Update the widgets, everything else is done by the called Event
 	self->update();
 	return false;

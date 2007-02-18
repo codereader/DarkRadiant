@@ -1314,22 +1314,22 @@ void Texdef_Shift(float x, float y)
 
 void Texdef_ShiftLeft()
 {
-  Texdef_Shift(-g_si_globals.shift[0], 0);
+  Texdef_Shift(-GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/hShiftStep"), 0);
 }
 
 void Texdef_ShiftRight()
 {
-  Texdef_Shift(g_si_globals.shift[0], 0);
+  Texdef_Shift(GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/hShiftStep"), 0);
 }
 
 void Texdef_ShiftUp()
 {
-  Texdef_Shift(0, g_si_globals.shift[1]);
+  Texdef_Shift(0, GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vShiftStep"));
 }
 
 void Texdef_ShiftDown()
 {
-  Texdef_Shift(0, -g_si_globals.shift[1]);
+  Texdef_Shift(0, -GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vShiftStep"));
 }
 
 
