@@ -195,5 +195,52 @@ int selectedFaceCount() {
 	return static_cast<int>(g_SelectedFaceInstances.size());
 }
 
+/** greebo: Applies the given texture repeat to the visited patch
+ */
+class PatchTextureFitter
+{
+	float _repeatS, _repeatT;
+public:
+	PatchTextureFitter(float repeatS, float repeatT) : 
+		_repeatS(repeatS), _repeatT(repeatT) 
+	{}
+	
+	void operator()(Patch& patch) const {
+		patch.SetTextureRepeat(_repeatS, _repeatT);
+	}
+};
+
+/** greebo: Applies the given texture repeat to the visited face
+ */
+class FaceTextureFitter
+{
+	float _repeatS, _repeatT;
+public:
+	FaceTextureFitter(float repeatS, float repeatT) : 
+		_repeatS(repeatS), _repeatT(repeatT) 
+	{}
+	
+	void operator()(Face& face) const {
+		face.FitTexture(_repeatS, _repeatT);
+	}
+};
+
+void fitTexture(const float& repeatS, const float& repeatT) {
+	UndoableCommand command("fitTexture");
+	
+	// Cycle through all selected brushes
+	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
+		Scene_ForEachSelectedBrush_ForEachFace(GlobalSceneGraph(), FaceTextureFitter(repeatS, repeatT));
+	}
+	
+	// Cycle through all selected components
+	Scene_ForEachSelectedBrushFace(GlobalSceneGraph(), FaceTextureFitter(repeatS, repeatT));
+	
+	// Cycle through all the selected patches
+	Scene_forEachVisibleSelectedPatch(PatchTextureFitter(repeatS, repeatT));
+	
+	SceneChangeNotify();
+}
+
 	} // namespace algorithm
 } // namespace selection
