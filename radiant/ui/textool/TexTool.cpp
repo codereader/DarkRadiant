@@ -6,9 +6,11 @@
 #include <gtk/gtk.h>
 #include <GL/glew.h>
 
+#include "texturelib.h"
 #include "gtkutil/TransientWindow.h"
 #include "gtkutil/glwidget.h"
 #include "gtkutil/GLWidgetSentry.h"
+#include "selection/algorithm/Shader.h"
 #include "mainframe.h"
 
 namespace ui {
@@ -22,6 +24,9 @@ namespace ui {
 
 TexTool::TexTool()
 {
+	_extents[0] = Vector3(-1.0f, -1.0f, 0.0f);
+	_extents[1] = -_extents[0];
+	
 	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
 	_window = gtkutil::TransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
 	
@@ -44,6 +49,9 @@ TexTool::TexTool()
 	}
 	
 	_windowPosition.connect(GTK_WINDOW(_window));
+	
+	// Register self to the SelSystem to get notified upon selection changes.
+	GlobalSelectionSystem().addObserver(this);
 }
 
 void TexTool::populateWindow() {
@@ -69,6 +77,8 @@ void TexTool::toggle() {
 		gtk_widget_hide_all(_window);
 	}
 	else {
+		// Update the relevant member variables like shader, etc.
+		update();
 		// First restore the window
 		gtkutil::TransientWindow::restore(_window);
 		// then apply the saved position
@@ -79,6 +89,9 @@ void TexTool::toggle() {
 }
 
 void TexTool::shutdown() {
+	// De-register this as selectionsystem observer
+	GlobalSelectionSystem().removeObserver(this);
+	
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
 	
@@ -98,14 +111,65 @@ TexTool& TexTool::Instance() {
 	return _instance;
 }
 
+void TexTool::update() {
+	std::string selectedShader = selection::algorithm::getShaderFromSelection();
+	_shader = GlobalShaderSystem().getShaderForName(selectedShader);
+	
+}
+
+void TexTool::selectionChanged() {
+	update();
+	// Redraw
+	gtk_widget_queue_draw(_glWidget);
+}
+
+void TexTool::draw() {
+
+}
+
 void TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self) {
-	// Make the GL widget active
+	self->update();
+	
+	// Activate the GL widget
 	gtkutil::GLWidgetSentry sentry(self->_glWidget);
 	
 	glClearColor(0, 0, 0, 0);
+	glViewport(0, 0, event->area.width, event->area.height);
+	
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
+	
+	// Initialise the 2D projection matrix with: left, right, bottom, top, znear, zfar 
+	glOrtho(self->_extents[0].x(), self->_extents[1].x(), 
+			self->_extents[1].y(), self->_extents[0].y(), 
+			-1, 1);
+	
+	glColor3f(1, 1, 1);
+	// Tell openGL to draw front and back of the polygons in textured mode
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	
+	TexturePtr tex = self->_shader->getTexture();
+	glBindTexture(GL_TEXTURE_2D, tex->texture_number);
+	
+	globalOutputStream() << "texture number: " << tex->texture_number << "\n";
+	
+	// Draw the background texture
+	glEnable(GL_TEXTURE_2D);
+	glBegin(GL_QUADS);
+	glTexCoord2f(self->_extents[0].x(), self->_extents[0].y());
+	glVertex2f(self->_extents[0].x(), self->_extents[0].y());
+	glTexCoord2f(self->_extents[0].x(), self->_extents[0].y());
+	glVertex2f(self->_extents[0].x(), self->_extents[0].y());
+	glTexCoord2f(self->_extents[0].x(), self->_extents[1].y());
+	glVertex2f(self->_extents[0].x(), self->_extents[1].y());
+	glTexCoord2f(self->_extents[0].x(), self->_extents[1].y());
+	glVertex2f(self->_extents[0].x(), self->_extents[1].y());
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
 }
 
 gboolean TexTool::onDelete(GtkWidget* widget, GdkEvent* event, TexTool* self) {
