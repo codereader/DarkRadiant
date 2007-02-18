@@ -111,6 +111,9 @@ private:
 
 	// Adds all the widgets to the window
 	void populateWindow();
+	
+	// Connect IEvents to the widgets 
+	void connectEvents();
 
 	// Shows/hides this dialog
 	void toggle();

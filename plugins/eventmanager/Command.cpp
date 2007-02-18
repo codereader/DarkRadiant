@@ -31,6 +31,20 @@ void Command::connectWidget(GtkWidget* widget) {
 		// Connect the static callback function and pass the pointer to this class
 		g_signal_connect(G_OBJECT(widget), "clicked", G_CALLBACK(onToolButtonPress), this);
 	}
+	else if (GTK_IS_BUTTON(widget)) {
+		// Connect the static callback function and pass the pointer to this class
+		g_signal_connect(G_OBJECT(widget), "clicked", G_CALLBACK(onButtonPress), this);
+	}
+}
+
+gboolean Command::onButtonPress(GtkButton* button, gpointer data) {
+	// Retrieve the right Command object from the user <data>
+	Command* self = reinterpret_cast<Command*>(data);
+
+	// Execute the command
+	self->execute();
+
+	return true;
 }
 
 gboolean Command::onToolButtonPress(GtkToolButton* toolButton, gpointer data) {
