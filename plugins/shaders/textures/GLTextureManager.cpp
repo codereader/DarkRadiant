@@ -14,19 +14,20 @@ namespace {
 namespace shaders {
 
 void GLTextureManager::checkBindings() {
-	
-	// Check the TextureMap for unique pointers and release them as they aren't 
-	// used by anyone else than this class.
+	// Check the TextureMap for unique pointers and release them
+	// as they aren't used by anyone else than this class.
 	for (TextureMap::iterator i = _textures.begin(); 
-		 i != _textures.end();
-		 ++i) 
+		 i != _textures.end(); 
+		 /* in-loop increment */) 
 	{
-		// If the boost::shared_ptr is unique (i.e. refcount==1), remove it.
-		// This is explicitly allowed by the std::map iterator invalidation
-		// semantics, which specify that erasing an element from a map does not
-		// invalidate any other iterators.
+		// If the boost::shared_ptr is unique (i.e. refcount==1), remove it
 		if (i->second.unique()) {
-			_textures.erase(i);
+			// Be sure to increment the iterator with a postfix ++, 
+			// so that the iterator is incremented right before deletion
+			_textures.erase(i++);
+		}
+		else {
+			i++;
 		}
 	}
 }
