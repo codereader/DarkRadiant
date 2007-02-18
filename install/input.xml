@@ -128,7 +128,7 @@
 		<shortcut command="IncPatchRow" key="KP_Add" modifiers="CONTROL" />
 		<shortcut command="DecPatchColumn" key="KP_Subtract" modifiers="SHIFT+CONTROL" />
 		<shortcut command="DecPatchRow" key="KP_Subtract" modifiers="CONTROL" />
-		<shortcut command="NaturalizePatch" key="N" modifiers="CONTROL" />
+		<shortcut command="TextureNatural" key="N" modifiers="CONTROL" />
 		<shortcut command="SimplePatchMesh" key="P" modifiers="SHIFT" />
 		<shortcut command="InvertCurve" key="I" modifiers="CONTROL" />
 		<shortcut command="RedisperseRows" key="E" modifiers="CONTROL" />

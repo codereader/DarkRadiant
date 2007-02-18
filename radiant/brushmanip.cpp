@@ -40,6 +40,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brush/BrushModule.h"
 #include "brush/FaceInstance.h"
 
+#include "selection/algorithm/Shader.h"
 #include "xyview/GlobalXYWnd.h"
 
 #include <list>
@@ -1210,6 +1211,8 @@ void Brush_registerCommands()
 
 	GlobalEventManager().addCommand("MakeDetail", FreeCaller<Select_MakeDetail>());
 	GlobalEventManager().addCommand("MakeStructural", FreeCaller<Select_MakeStructural>());
+	
+	GlobalEventManager().addCommand("TextureNatural", FreeCaller<selection::algorithm::naturalTexture>());
 }
 
 void Brush_constructMenu(GtkMenu* menu)

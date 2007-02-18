@@ -138,6 +138,8 @@ private:
 	
 	// The callback for the Fit Texture button
 	static gboolean onFit(GtkWidget* widget, SurfaceInspector* self);
+	static gboolean onFlip(GtkWidget* widget, SurfaceInspector* self);
+	static gboolean onNatural(GtkWidget* widget, SurfaceInspector* self);
 	
 }; // class SurfaceInspector
 

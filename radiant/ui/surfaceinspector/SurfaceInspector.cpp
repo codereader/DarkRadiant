@@ -123,7 +123,15 @@ void SurfaceInspector::connectEvents() {
 	IEventPtr flipYEvent = GlobalEventManager().findEvent("FlipTextureY");
 	flipYEvent->connectWidget(_flipTexture.flipY);
 	
+	IEventPtr naturalEvent = GlobalEventManager().findEvent("TextureNatural");
+	naturalEvent->connectWidget(_applyTex.natural);
+	
+	// Be sure to connect these signals after the buttons are connected 
+	// to the events, so that the update() call gets invoked after the actual event has ben fired.
 	g_signal_connect(G_OBJECT(_fitTexture.button), "clicked", G_CALLBACK(onFit), this);
+	g_signal_connect(G_OBJECT(_flipTexture.flipX), "clicked", G_CALLBACK(onFlip), this);
+	g_signal_connect(G_OBJECT(_flipTexture.flipY), "clicked", G_CALLBACK(onFlip), this);
+	g_signal_connect(G_OBJECT(_applyTex.natural), "clicked", G_CALLBACK(onNatural), this);
 }
 
 void SurfaceInspector::toggle() {
@@ -473,7 +481,19 @@ gboolean SurfaceInspector::onDelete(GtkWidget* widget, GdkEvent* event, SurfaceI
 gboolean SurfaceInspector::onFit(GtkWidget* widget, SurfaceInspector* self) {
 	// Call the according member method
 	self->fitTexture();
-	
+	self->update();
+	return false;
+}
+
+gboolean SurfaceInspector::onFlip(GtkWidget* widget, SurfaceInspector* self) {
+	// Update the widgets, everything else is done by the called Event
+	self->update();
+	return false;
+}
+
+gboolean SurfaceInspector::onNatural(GtkWidget* widget, SurfaceInspector* self) {
+	// Update the widgets, everything else is done by the called Event
+	self->update();
 	return false;
 }
 
