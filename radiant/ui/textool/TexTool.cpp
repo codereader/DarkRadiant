@@ -145,6 +145,12 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 	
+	// Do nothing, if the shader name is empty
+	std::string shaderName = self->_shader->getName(); 
+	if (shaderName == "") {
+		return false;
+	}
+	
 	// Initialise the 2D projection matrix with: left, right, bottom, top, znear, zfar 
 	glOrtho(-100, 100, 
 			-100, 100, 
@@ -154,6 +160,7 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 	// Tell openGL to draw front and back of the polygons in textured mode
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	
+	// Acquire the texture number of the active texture
 	TexturePtr tex = self->_shader->getTexture();
 	glBindTexture(GL_TEXTURE_2D, tex->texture_number);
 	

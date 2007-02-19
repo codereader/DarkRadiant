@@ -6,11 +6,15 @@ OrbWeaver
 OrbWeaver
 - Light Inspector uses white as a default colour (rather than black) for lights
   with no explicit colour key.
+greebo
+- Rewrote Surface Inspector (handles both brushes and patches now).
 
 16/02/2007
 OrbWeaver
 - Filter system now affects static models in the camera view.
 - Static models in camera view display with their correct skins.
+greebo
+- Added "Stitch Patch Textures" feature to snap texture coords of adjacent patches.
 
 15/02/2007
 OrbWeaver
