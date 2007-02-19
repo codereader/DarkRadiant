@@ -337,6 +337,7 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	// Create the entry field
 	manipRow.value = gtk_entry_new();
 	gtk_entry_set_width_chars(GTK_ENTRY(manipRow.value), 7);
+	g_signal_connect(G_OBJECT(manipRow.value), "changed", G_CALLBACK(onValueChanged), this);
 	gtk_box_pack_start(GTK_BOX(manipRow.hbox), manipRow.value, true, true, 0);
 	
 	if (vertical) {
@@ -395,6 +396,24 @@ SurfaceInspector& SurfaceInspector::Instance() {
 	static SurfaceInspector _inspector;
 	
 	return _inspector;
+}
+
+void SurfaceInspector::emitTexDef() {
+	TexDef shiftScaleRotate;
+
+	shiftScaleRotate._shift[0] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_manipulators[HSHIFT].value)));
+	shiftScaleRotate._shift[1] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_manipulators[VSHIFT].value)));
+	shiftScaleRotate._scale[0] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_manipulators[HSCALE].value)));
+	shiftScaleRotate._scale[1] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_manipulators[VSCALE].value)));
+	shiftScaleRotate._rotate = strToFloat(gtk_entry_get_text(GTK_ENTRY(_manipulators[ROTATION].value)));
+	
+	TextureProjection projection;
+
+	// Construct the BPTexDef out of the TexDef by using the according constructor
+	projection.m_brushprimit_texdef = BrushPrimitTexDef(shiftScaleRotate);
+	
+	// Apply it to the selection
+	selection::algorithm::applyTextureProjectionToFaces(projection);
 }
 
 void SurfaceInspector::updateTexDef() {
@@ -518,6 +537,7 @@ gboolean SurfaceInspector::onFit(GtkWidget* widget, SurfaceInspector* self) {
 	// Call the according member method
 	self->fitTexture();
 	self->update();
+
 	return false;
 }
 
@@ -525,6 +545,10 @@ gboolean SurfaceInspector::doUpdate(GtkWidget* widget, SurfaceInspector* self) {
 	// Update the widgets, everything else is done by the called Event
 	self->update();
 	return false;
+}
+
+void SurfaceInspector::onValueChanged(GtkEditable* editable, SurfaceInspector* self) {
+	self->emitTexDef();
 }
 
 } // namespace ui

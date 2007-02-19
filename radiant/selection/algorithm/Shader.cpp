@@ -296,6 +296,25 @@ void naturalTexture() {
 	SceneChangeNotify();
 }
 
+void applyTextureProjectionToFaces(TextureProjection& projection) {
+	UndoableCommand undo("textureProjectionSetSelected");
+	
+	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
+		Scene_ForEachSelectedBrush_ForEachFace(
+			GlobalSceneGraph(), 
+			FaceTextureProjectionSetter(projection)
+		);
+	}
+	
+	// Faces
+	Scene_ForEachSelectedBrushFace(
+		GlobalSceneGraph(), 
+		FaceTextureProjectionSetter(projection)
+	);
+	
+	SceneChangeNotify();
+}
+
 /** greebo: Translates the texture of the visited faces
  * about the specified <shift> Vector2
  */
