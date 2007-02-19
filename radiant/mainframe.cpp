@@ -41,6 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/colourscheme/ColourSchemeEditor.h"
 #include "ui/menu/FiltersMenu.h"
 #include "ui/overlay/OverlayDialog.h"
+#include "selection/algorithm/Shader.h"
 #include "iclipper.h"
 #include "ifilesystem.h"
 #include "iundo.h"
@@ -2840,16 +2841,16 @@ void MainFrame_Construct()
 	
 	GlobalEventManager().addCommand("SelectAllOfType", FreeCaller<Select_AllOfType>());
 	
-	GlobalEventManager().addCommand("TexRotateClock", FreeCaller<Texdef_RotateClockwise>());
-	GlobalEventManager().addCommand("TexRotateCounter", FreeCaller<Texdef_RotateAntiClockwise>());
-	GlobalEventManager().addCommand("TexScaleUp", FreeCaller<Texdef_ScaleUp>());
-	GlobalEventManager().addCommand("TexScaleDown", FreeCaller<Texdef_ScaleDown>());
-	GlobalEventManager().addCommand("TexScaleLeft", FreeCaller<Texdef_ScaleLeft>());
-	GlobalEventManager().addCommand("TexScaleRight", FreeCaller<Texdef_ScaleRight>());
-	GlobalEventManager().addCommand("TexShiftUp", FreeCaller<Texdef_ShiftUp>());
-	GlobalEventManager().addCommand("TexShiftDown", FreeCaller<Texdef_ShiftDown>());
-	GlobalEventManager().addCommand("TexShiftLeft", FreeCaller<Texdef_ShiftLeft>());
-	GlobalEventManager().addCommand("TexShiftRight", FreeCaller<Texdef_ShiftRight>());
+	GlobalEventManager().addCommand("TexRotateClock", FreeCaller<selection::algorithm::rotateTextureClock>());
+	GlobalEventManager().addCommand("TexRotateCounter", FreeCaller<selection::algorithm::rotateTextureCounter>());
+	GlobalEventManager().addCommand("TexScaleUp", FreeCaller<selection::algorithm::scaleTextureUp>());
+	GlobalEventManager().addCommand("TexScaleDown", FreeCaller<selection::algorithm::scaleTextureDown>());
+	GlobalEventManager().addCommand("TexScaleLeft", FreeCaller<selection::algorithm::scaleTextureLeft>());
+	GlobalEventManager().addCommand("TexScaleRight", FreeCaller<selection::algorithm::scaleTextureRight>());
+	GlobalEventManager().addCommand("TexShiftUp", FreeCaller<selection::algorithm::shiftTextureUp>());
+	GlobalEventManager().addCommand("TexShiftDown", FreeCaller<selection::algorithm::shiftTextureDown>());
+	GlobalEventManager().addCommand("TexShiftLeft", FreeCaller<selection::algorithm::shiftTextureLeft>());
+	GlobalEventManager().addCommand("TexShiftRight", FreeCaller<selection::algorithm::shiftTextureRight>());
 	
 	GlobalEventManager().addCommand("MoveSelectionDOWN", FreeCaller<Selection_MoveDown>());
 	GlobalEventManager().addCommand("MoveSelectionUP", FreeCaller<Selection_MoveUp>());
