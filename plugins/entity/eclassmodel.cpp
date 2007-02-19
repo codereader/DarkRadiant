@@ -143,7 +143,7 @@ class EclassModel :
 
 public:
 
-  EclassModel(IEntityClass* eclass, scene::Node& node, const Callback& transformChanged, const Callback& evaluateTransform) :
+  EclassModel(IEntityClassPtr eclass, scene::Node& node, const Callback& transformChanged, const Callback& evaluateTransform) :
     m_entity(eclass),
     m_originKey(OriginChangedCaller(*this)),
     m_origin(ORIGINKEY_IDENTITY),
@@ -451,7 +451,7 @@ public:
     return m_contained.getModelSkin();
   }
 
-  EclassModelNode(IEntityClass* eclass) :
+  EclassModelNode(IEntityClassPtr eclass) :
     m_node(this, this, StaticTypeCasts::instance().get()),
     m_contained(eclass, m_node, InstanceSet::TransformChangedCaller(m_instances), InstanceSetEvaluateTransform<EclassModelInstance>::Caller(m_instances))
   {
@@ -512,7 +512,7 @@ public:
   }
 };
 
-scene::Node& New_EclassModel(IEntityClass* eclass)
+scene::Node& New_EclassModel(IEntityClassPtr eclass)
 {
   return (new EclassModelNode(eclass))->node();
 }

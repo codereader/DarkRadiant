@@ -209,8 +209,8 @@ NodeSmartReference Entity_createFromSelection(const char* name,
 											  const Vector3& origin) 
 {
 
-    IEntityClass *entityClass = GlobalEntityClassManager().findOrInsert(name, 
-    																	true);
+    IEntityClassPtr entityClass = GlobalEntityClassManager().findOrInsert(name, 
+    																	  true);
 
     // TODO: to be replaced by inheritance-based class detection
     bool isModel = (GlobalSelectionSystem().countSelected() == 0 

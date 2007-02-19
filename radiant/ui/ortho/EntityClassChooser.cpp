@@ -160,7 +160,7 @@ GtkWidget* EntityClassChooser::createTreeView() {
 		}
 
 		// Add parent folder
-		GtkTreeIter* addDisplayFolder(IEntityClass* e) {
+		GtkTreeIter* addDisplayFolder(IEntityClassPtr e) {
 
 			// Get the parent folder from the entity class. If it is not
 			// present, return NULL
@@ -173,7 +173,7 @@ GtkWidget* EntityClassChooser::createTreeView() {
 		}
 
 		// Required visit function
-		virtual void visit(IEntityClass* e) {
+		virtual void visit(IEntityClassPtr e) {
 
 			// Recursively create the folder to put this EntityClass in,
 			// depending on the value of the DISPLAY_FOLDER_KEY. This may return
@@ -242,7 +242,7 @@ GtkWidget* EntityClassChooser::createButtonPanel() {
 void EntityClassChooser::updateUsageInfo(const std::string& eclass) {
 
 	// Lookup the IEntityClass instance
-	IEntityClass* e = GlobalEntityClassManager().findOrInsert(eclass.c_str(), true);	
+	IEntityClassPtr e = GlobalEntityClassManager().findOrInsert(eclass, true);	
 
 	// Set the usage panel to the IEntityClass' usage information string
 	GtkTextBuffer* buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(_usageTextView));

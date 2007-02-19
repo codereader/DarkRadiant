@@ -58,7 +58,7 @@ class Doom3EntityClass
 	// The parent entity classname, if there is one, and the IEntityClass
 	// of the parent itself.
 	std::string _parentName;
-	IEntityClass* _parentClass;
+	IEntityClassPtr _parentClass;
 	
 private:
 
@@ -78,7 +78,7 @@ public:
 	 * @param brushes
 	 * Whether the entity contains brushes or not.
 	 */
-	static IEntityClass* create(const std::string& name, bool brushes);
+	static IEntityClassPtr create(const std::string& name, bool brushes);
 	
     /** Default constructor.
      * 
@@ -269,7 +269,7 @@ public:
 	
 	/** Set the parent entityclass object.
 	 */
-	void setParentEntity(IEntityClass* p) {
+	void setParentEntity(IEntityClassPtr p) {
 		_parentClass = p;
 	}
 	

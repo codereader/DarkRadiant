@@ -51,6 +51,6 @@ void Light_Destroy() {
 	// nothing to destroy here
 }
 
-scene::Node& New_Light(IEntityClass* eclass) {
+scene::Node& New_Light(IEntityClassPtr eclass) {
 	return (new LightNode(eclass))->node();
 }

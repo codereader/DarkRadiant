@@ -24,6 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 class IEntityClass;
 
-scene::Node& New_GenericEntity(IEntityClass* eclass);
+scene::Node& New_GenericEntity(IEntityClassPtr eclass);
 
 #endif

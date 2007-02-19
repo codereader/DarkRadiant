@@ -55,7 +55,7 @@ public:
 	Nameable& get(NullType<Nameable>);
 	Namespaced& get(NullType<Namespaced>);
 
-	LightNode(IEntityClass* eclass) :
+	LightNode(IEntityClassPtr eclass) :
 		m_node(this, this, StaticTypeCasts::instance().get()),
 		m_contained(eclass, m_node, InstanceSet::TransformChangedCaller(m_instances), InstanceSet::BoundsChangedCaller(m_instances), InstanceSetEvaluateTransform<LightInstance>::Caller(m_instances))
 	{

@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 EGameType g_gameType;
 
-scene::Node& entity_for_eclass(IEntityClass* eclass)
+scene::Node& entity_for_eclass(IEntityClassPtr eclass)
 {
 	if(eclass->isLight()) {
 	    return New_Light(eclass);
@@ -85,7 +85,7 @@ std::string cleanEntityName(const std::string& rawName) {
 	return returnValue;
 }
 
-scene::Node& node_for_eclass(IEntityClass* eclass)
+scene::Node& node_for_eclass(IEntityClassPtr eclass)
 {
     
   scene::Node& node = entity_for_eclass(eclass);
@@ -143,7 +143,7 @@ inline Entity* ScenePath_getEntity(const scene::Path& path)
 class Quake3EntityCreator : public EntityCreator
 {
 public:
-  scene::Node& createEntity(IEntityClass* eclass)
+  scene::Node& createEntity(IEntityClassPtr eclass)
   {
     return node_for_eclass(eclass);
   }

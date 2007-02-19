@@ -22,14 +22,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_ECLASSMODEL_H)
 #define INCLUDED_ECLASSMODEL_H
 
+#include "entity.h"
+#include <boost/shared_ptr.hpp>
+
 namespace scene
 {
   class Node;
 };
 class IEntityClass;
 
-scene::Node& New_EclassModel(IEntityClass* eclass);
-
-#include "entity.h"
+scene::Node& New_EclassModel(boost::shared_ptr<IEntityClass>);
 
 #endif
