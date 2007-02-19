@@ -66,7 +66,7 @@ private:
 
 	// The callback for the delete event (toggles the visibility)
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, TexTool* self);
-	static void onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self);
+	static gboolean onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self);
 
 }; // class TexTool
 
