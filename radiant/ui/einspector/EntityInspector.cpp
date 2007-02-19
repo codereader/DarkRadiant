@@ -136,10 +136,13 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     
     // Create the TreeView widget and link it to the model
     _treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore));
-	g_signal_connect(G_OBJECT(_treeView), "button-release-event", G_CALLBACK(_onPopupMenu), this);
+	g_signal_connect(G_OBJECT(_treeView), "button-release-event", 
+					 G_CALLBACK(_onPopupMenu), this);
+
+	// Allow the treeview to be sorted by clicking on column headers
+	
 
     // Create the Property column
-    
     GtkTreeViewColumn* nameCol = gtk_tree_view_column_new();
     gtk_tree_view_column_set_title(nameCol, "Property");
 	gtk_tree_view_column_set_resizable(nameCol, TRUE);
@@ -156,10 +159,10 @@ GtkWidget* EntityInspector::createTreeViewPane() {
                                         "foreground", TEXT_COLOUR_COLUMN,
                                         NULL);
 
+	gtk_tree_view_column_set_sort_column_id(nameCol, PROPERTY_NAME_COLUMN);
     gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), nameCol);                                                                        
 
 	// Create the value column
-
     GtkTreeViewColumn* valCol = gtk_tree_view_column_new();
     gtk_tree_view_column_set_title(valCol, "Value");
 
@@ -170,6 +173,7 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     									"foreground", TEXT_COLOUR_COLUMN,
     									NULL);
 
+	gtk_tree_view_column_set_sort_column_id(valCol, PROPERTY_VALUE_COLUMN);
     gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), valCol);
 
     // Set up the signals
