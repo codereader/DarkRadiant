@@ -6,7 +6,6 @@
 #include "ieventmanager.h"
 #include "ientity.h"
 #include "igrid.h"
-#include "ioverlay.h"
 
 #include "gtkutil/glwidget.h"
 #include "stream/stringstream.h"
@@ -24,6 +23,7 @@
 #include "camera/GlobalCamera.h"
 #include "camera/CameraSettings.h"
 #include "ui/ortho/OrthoContextMenu.h"
+#include "ui/overlay/Overlay.h"
 
 #include "GlobalXYWnd.h"
 #include "XYRenderer.h"
@@ -1294,7 +1294,9 @@ void XYWnd::draw() {
 
 	// Call the image overlay draw method with the window coordinates
 	Vector4 windowCoords = getWindowCoordinates();
-	GlobalOverlay().draw(windowCoords[0], windowCoords[1], windowCoords[2], windowCoords[3], m_fScale);
+	ui::Overlay::getInstance().draw(
+		windowCoords[0], windowCoords[1], windowCoords[2], windowCoords[3], 
+		m_fScale);
 	
 	glDisable (GL_LINE_STIPPLE);
 	glLineWidth(1);

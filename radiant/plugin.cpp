@@ -34,7 +34,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ientity.h"
 #include "ieclass.h"
 #include "irender.h"
-#include "ioverlay.h"
 #include "iscenegraph.h"
 #include "iselection.h"
 #include "ifilter.h"
@@ -207,8 +206,7 @@ class RadiantDependencies :
   public GlobalScripLibModuleRef,
   public GlobalNamespaceModuleRef,
   public GlobalClipperModuleRef,
-  public GlobalGridModuleRef,
-  public GlobalOverlayModuleRef
+  public GlobalGridModuleRef
 {
   ImageModulesRef m_image_modules;
   MapModulesRef m_map_modules;
