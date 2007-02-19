@@ -150,7 +150,7 @@ private:
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, SurfaceInspector* self);
 	
 	// Gets called when the step entry fields get changed
-	static gboolean onStepFocusOut(GtkWidget* widget, GdkEventFocus *event, SurfaceInspector* self);
+	static void onStepChanged(GtkEditable* editable, SurfaceInspector* self);
 	
 	// Gets called when the value entry field is changed (shift/scale/rotation) - emits the texcoords
 	static void onValueChanged(GtkEditable* editable, SurfaceInspector* self);

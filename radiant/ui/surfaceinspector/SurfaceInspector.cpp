@@ -153,11 +153,19 @@ void SurfaceInspector::connectEvents() {
 	GlobalEventManager().findEvent("TexRotateCounter")->connectWidget(*_manipulators[ROTATION].larger);
 	
 	// Be sure to connect these signals after the buttons are connected 
-	// to the events, so that the update() call gets invoked after the actual event has ben fired.
+	// to the events, so that the update() call gets invoked after the actual event has been fired.
 	g_signal_connect(G_OBJECT(_fitTexture.button), "clicked", G_CALLBACK(onFit), this);
 	g_signal_connect(G_OBJECT(_flipTexture.flipX), "clicked", G_CALLBACK(doUpdate), this);
 	g_signal_connect(G_OBJECT(_flipTexture.flipY), "clicked", G_CALLBACK(doUpdate), this);
 	g_signal_connect(G_OBJECT(_applyTex.natural), "clicked", G_CALLBACK(doUpdate), this);
+	
+	for (ManipulatorMap::iterator i = _manipulators.begin(); i != _manipulators.end(); i++) {
+		GtkWidget* smaller = *(i->second.smaller);
+		GtkWidget* larger = *(i->second.larger);
+		
+		g_signal_connect(G_OBJECT(smaller), "clicked", G_CALLBACK(doUpdate), this);
+		g_signal_connect(G_OBJECT(larger), "clicked", G_CALLBACK(doUpdate), this);
+	}
 }
 
 void SurfaceInspector::toggle() {
@@ -367,12 +375,6 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 		gtk_box_pack_start(GTK_BOX(manipRow.hbox), hbox, false, false, 0);
 	}
 	
-	GtkWidget* smallerButton = *manipRow.smaller;
-	GtkWidget* largerButton = *manipRow.larger;
-	
-	g_signal_connect(G_OBJECT(smallerButton), "clicked", G_CALLBACK(doUpdate), this);
-	g_signal_connect(G_OBJECT(largerButton), "clicked", G_CALLBACK(doUpdate), this);
-	
 	// Create the label
 	manipRow.steplabel = gtkutil::LeftAlignedLabel(LABEL_STEP); 
 	gtk_box_pack_start(GTK_BOX(manipRow.hbox), manipRow.steplabel, false, false, 0);
@@ -380,7 +382,7 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	// Create the entry field
 	manipRow.step = gtk_entry_new();
 	gtk_entry_set_width_chars(GTK_ENTRY(manipRow.step), 5);
-	g_signal_connect(G_OBJECT(manipRow.step), "focus-out-event", G_CALLBACK(onStepFocusOut), this);
+	g_signal_connect(G_OBJECT(manipRow.step), "changed", G_CALLBACK(onStepChanged), this);
 	
 	gtk_box_pack_start(GTK_BOX(manipRow.hbox), manipRow.step, false, false, 0);
 		
@@ -515,14 +517,10 @@ void SurfaceInspector::fitTexture() {
 	}
 }
 
-gboolean SurfaceInspector::onStepFocusOut(GtkWidget* widget, GdkEventFocus *event, SurfaceInspector* self) {
+void SurfaceInspector::onStepChanged(GtkEditable* editable, SurfaceInspector* self) {
 	
 	// Tell the class instance to save its contents into the registry
-	if (self != NULL) {
-		self->saveToRegistry();
-	}
-	
-	return false;
+	self->saveToRegistry();
 } 
 
 gboolean SurfaceInspector::onDelete(GtkWidget* widget, GdkEvent* event, SurfaceInspector* self) {

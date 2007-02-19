@@ -366,6 +366,115 @@ void shiftTexture(const Vector2& shift) {
 	SceneChangeNotify();
 }
 
+/** greebo: Scales the texture of the visited faces
+ * about the specified x,y-scale values in the given Vector2
+ */
+class FaceTextureScaler
+{
+	const Vector2& _scale;
+public:
+	FaceTextureScaler(const Vector2& scale) : 
+		_scale(scale) 
+	{}
+	
+	void operator()(Face& face) const {
+		face.ScaleTexdef(_scale[0], _scale[1]);
+	}
+};
+
+/** greebo: Scales the texture of the visited patches
+ * about the specified x,y-scale values in the given Vector2
+ */
+class PatchTextureScaler
+{
+	const Vector2& _scale;
+public:
+	PatchTextureScaler(const Vector2& scale) :
+		_scale(scale) 
+	{}
+	
+	void operator()(Patch& patch) const {
+		patch.ScaleTexture(_scale[0], _scale[1]);
+	}
+};
+
+/** greebo: Rotates the texture of the visited faces
+ * about the specified angle
+ */
+class FaceTextureRotater
+{
+	const float& _angle;
+public:
+	FaceTextureRotater(const float& angle) : 
+		_angle(angle) 
+	{}
+	
+	void operator()(Face& face) const {
+		face.RotateTexdef(_angle);
+	}
+};
+
+/** greebo: Rotates the texture of the visited patches
+ * about the specified angle
+ */
+class PatchTextureRotater
+{
+	const float& _angle;
+public:
+	PatchTextureRotater(const float& angle) : 
+		_angle(angle) 
+	{}
+	
+	void operator()(Patch& patch) const {
+		patch.RotateTexture(_angle);
+	}
+};
+
+void scaleTexture(const Vector2& scale) {
+	std::string command("scaleTexture: ");
+	command += "sScale=" + floatToStr(scale[0]) + ", tScale=" + floatToStr(scale[1]);
+
+	UndoableCommand undo(command.c_str());
+	
+	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
+		Scene_ForEachSelectedBrush_ForEachFace(
+			GlobalSceneGraph(), 
+			FaceTextureScaler(scale)
+		);
+  		Scene_forEachVisibleSelectedPatch(PatchTextureScaler(scale));
+	}
+	// Scale the face textures
+	Scene_ForEachSelectedBrushFace(
+		GlobalSceneGraph(), 
+		FaceTextureScaler(scale)
+	);
+	
+	SceneChangeNotify();
+}
+
+void rotateTexture(const float& angle) {
+	std::string command("rotateTexture: ");
+	command += "angle=" + floatToStr(angle);
+	
+	UndoableCommand undo(command.c_str());
+	
+	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
+		Scene_ForEachSelectedBrush_ForEachFace(
+			GlobalSceneGraph(), 
+			FaceTextureRotater(angle)
+		);
+  		Scene_forEachVisibleSelectedPatch(PatchTextureRotater(angle));
+	}
+	
+	// Rotate the face textures
+	Scene_ForEachSelectedBrushFace(
+		GlobalSceneGraph(), 
+		FaceTextureRotater(angle)
+	);
+
+	SceneChangeNotify();
+}
+
 void shiftTextureLeft() {
 	shiftTexture(Vector2(-GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/hShiftStep"), 0.0f));
 }
@@ -383,27 +492,27 @@ void shiftTextureDown() {
 }
 
 void scaleTextureLeft() {
-	
+	scaleTexture(Vector2(-GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/hScaleStep"), 0.0f));
 }
 
 void scaleTextureRight() {
-	
+	scaleTexture(Vector2(GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/hScaleStep"), 0.0f));
 }
 
 void scaleTextureUp() {
-	
+	scaleTexture(Vector2(0.0f, GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vScaleStep")));
 }
 
 void scaleTextureDown() {
-	
+	scaleTexture(Vector2(0.0f, -GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vScaleStep")));
 }
 
 void rotateTextureClock() {
-	
+	rotateTexture(fabs(GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/rotStep")));
 }
 
 void rotateTextureCounter() {
-	
+	rotateTexture(-fabs(GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/rotStep")));
 }
 
 	} // namespace algorithm
