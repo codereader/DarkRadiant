@@ -1,7 +1,6 @@
 #include "OverlayDialog.h"
 #include "mainframe.h"
 
-#include "ioverlay.h"
 #include "iscenegraph.h"
 #include "iregistry.h"
 
