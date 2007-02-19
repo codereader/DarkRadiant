@@ -139,9 +139,6 @@ GtkWidget* EntityInspector::createTreeViewPane() {
 	g_signal_connect(G_OBJECT(_treeView), "button-release-event", 
 					 G_CALLBACK(_onPopupMenu), this);
 
-	// Allow the treeview to be sorted by clicking on column headers
-	
-
     // Create the Property column
     GtkTreeViewColumn* nameCol = gtk_tree_view_column_new();
     gtk_tree_view_column_set_title(nameCol, "Property");
