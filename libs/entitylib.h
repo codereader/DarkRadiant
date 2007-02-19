@@ -465,7 +465,7 @@ private:
   static EntityCreator::KeyValueChangedFunc m_entityKeyValueChanged;
   static Counter* m_counter;
 
-  IEntityClass* m_eclass;
+  IEntityClassPtr m_eclass;
 
   class KeyContext{};
   typedef Static<StringPool, KeyContext> KeyPool;
@@ -566,7 +566,7 @@ private:
 public:
   bool m_isContainer;
 
-  EntityKeyValues(IEntityClass* eclass) :
+  EntityKeyValues(IEntityClassPtr eclass) :
     m_eclass(eclass),
     m_undo(m_keyValues, UndoImportCaller(*this)),
     m_instanced(false),

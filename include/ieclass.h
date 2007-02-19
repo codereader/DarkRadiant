@@ -30,6 +30,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/Vector3.h"
 #include "modulesystem.h"
 
+#include <boost/shared_ptr.hpp>
+
 /* FORWARD DECLS */
 
 class Shader;
@@ -77,7 +79,14 @@ struct EntityClassAttributeVisitor {
 	virtual void visit(const EntityClassAttribute&) = 0;
 };
 
-/** Entity class interface. An entity class represents a single type
+/**
+ * IEntityClass shared pointer.
+ */
+class IEntityClass;
+typedef boost::shared_ptr<IEntityClass> IEntityClassPtr;
+
+/*
+ * * Entity class interface. An entity class represents a single type
  * of entity that can be created by the EntityCreator.
  */
 struct IEntityClass {
@@ -224,7 +233,7 @@ struct IEntityClass {
 	/** Set the parent IEntityClass object. This is used for inheritance
 	 * resolution.
 	 */
-	virtual void setParentEntity(IEntityClass*) = 0;
+	virtual void setParentEntity(IEntityClassPtr) = 0;
 	
 	/** Trigger a recursive inheritance resolution. The parent IEntityClass
 	 * will be asked to resolve its own inheritance, then all relevant properties
@@ -235,14 +244,13 @@ struct IEntityClass {
 	virtual void resolveInheritance() = 0;
 };
 
-
 /** EntityClass visitor interface.
  */
 
 class EntityClassVisitor
 {
 public:
-	virtual void visit(IEntityClass* eclass) = 0;
+	virtual void visit(IEntityClassPtr eclass) = 0;
 };
 
 class ModuleObserver;
@@ -255,10 +263,16 @@ class ModuleObserver;
 
 struct EntityClassManager
 {
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "eclassmanager");
+	INTEGER_CONSTANT(Version, 1);
+	STRING_CONSTANT(Name, "eclassmanager");
 
-  IEntityClass* (*findOrInsert)(const std::string& name, bool has_brushes);
+	/**
+	 * Return the IEntityClass corresponding to the given name, creating it if
+	 * necessary. If it is created, the has_brushes parameter will be used to
+	 * determine whether the new entity class should be brush-based or not.
+	 */
+	IEntityClassPtr (*findOrInsert)(const std::string& name, bool has_brushes);
+	
   const ListAttributeType* (*findListType)(const char* name);
   void (*forEach)(EntityClassVisitor& visitor);
   void (*attach)(ModuleObserver& observer);

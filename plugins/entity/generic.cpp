@@ -129,7 +129,7 @@ class GenericEntity :
   typedef MemberCaller<GenericEntity, &GenericEntity::angleChanged> AngleChangedCaller;
 public:
 
-  GenericEntity(IEntityClass* eclass, scene::Node& node, const Callback& transformChanged, const Callback& evaluateTransform) :
+  GenericEntity(IEntityClassPtr eclass, scene::Node& node, const Callback& transformChanged, const Callback& evaluateTransform) :
     m_entity(eclass),
     m_originKey(OriginChangedCaller(*this)),
     m_origin(ORIGINKEY_IDENTITY),
@@ -429,7 +429,7 @@ public:
     return m_contained.getNamespaced();
   }
 
-  GenericEntityNode(IEntityClass* eclass) :
+  GenericEntityNode(IEntityClassPtr eclass) :
     m_node(this, this, StaticTypeCasts::instance().get()),
     m_contained(eclass, m_node, InstanceSet::TransformChangedCaller(m_instances), InstanceSetEvaluateTransform<GenericEntityInstance>::Caller(m_instances))
   {
@@ -474,7 +474,7 @@ public:
   }
 };
 
-scene::Node& New_GenericEntity(IEntityClass* eclass)
+scene::Node& New_GenericEntity(IEntityClassPtr eclass)
 {
   return (new GenericEntityNode(eclass))->node();
 }

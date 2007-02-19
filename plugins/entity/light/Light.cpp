@@ -151,7 +151,7 @@ void light_draw(const AABB& aabb_light, RenderStateFlags state) {
 // ----- Light Class Implementation -------------------------------------------------
 
 // Constructor
-Light::Light(IEntityClass* eclass, scene::Node& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform) :
+Light::Light(IEntityClassPtr eclass, scene::Node& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform) :
 	m_entity(eclass),
 	m_originKey(OriginChangedCaller(*this)),
 	m_rotationKey(RotationChangedCaller(*this)),

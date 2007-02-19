@@ -199,7 +199,7 @@ class Light :
 
 public:
 	// Constructor
-	Light(IEntityClass* eclass, scene::Node& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform);
+	Light(IEntityClassPtr eclass, scene::Node& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform);
 	
 	// Copy Constructor
 	Light(const Light& other, scene::Node& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform);

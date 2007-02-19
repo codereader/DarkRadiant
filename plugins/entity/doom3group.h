@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_STATIC_H)
 #define INCLUDED_STATIC_H
 
+#include <boost/shared_ptr.hpp>
+
 namespace scene
 {
   class Node;
@@ -30,6 +32,6 @@ class IEntityClass;
 
 void Doom3Group_construct();
 void Doom3Group_destroy();
-scene::Node& New_Doom3Group(IEntityClass* eclass);
+scene::Node& New_Doom3Group(boost::shared_ptr<IEntityClass> eclass);
 
 #endif

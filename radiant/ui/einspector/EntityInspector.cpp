@@ -537,8 +537,8 @@ void EntityInspector::appendClassProperties() {
 
 	// Get the entityclass for the current entity
 	std::string className = _selectedEntity->getKeyValue("classname");
-	IEntityClass* eclass = GlobalEntityClassManager().findOrInsert(className, 
-																   true);
+	IEntityClassPtr eclass = GlobalEntityClassManager().findOrInsert(className, 
+																	 true);
 	
 	// Use a functor to walk the entityclass and add all of its attributes
 	// to the tree

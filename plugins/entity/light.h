@@ -23,13 +23,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_LIGHT_H
 
 #include "light/LightTypes.h"
+#include <boost/shared_ptr.hpp>
 
 namespace scene {
   class Node;
 };
 class IEntityClass;
 
-scene::Node& New_Light(IEntityClass* eclass);
+scene::Node& New_Light(boost::shared_ptr<IEntityClass>);
 void Light_Construct(LightType lightType);
 void Light_Destroy();
 

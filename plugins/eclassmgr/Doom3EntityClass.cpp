@@ -20,24 +20,23 @@ Doom3EntityClass::Doom3EntityClass(const std::string& name,
   _skin(""),
   _mins(mins),
   _maxs(maxs),
-  _parentName(""),
-  _parentClass(NULL)
+  _parentName("")
 {
 	// Capture the shaders
 	captureColour();		
 }
 
 // Static function to create an EntityClass (named constructor idiom)
-IEntityClass* Doom3EntityClass::create(const std::string& name, bool brushes) {
+IEntityClassPtr Doom3EntityClass::create(const std::string& name, bool brushes) {
 	if (!brushes) {
-		return new Doom3EntityClass(name, 
-									Vector3(0, 0.4, 0), 
-									true, 
-									Vector3(-8, -8, -8),
-									Vector3(8, 8, 8));
+		return IEntityClassPtr(new Doom3EntityClass(name, 
+													Vector3(0, 0.4, 0),
+													true, 
+													Vector3(-8, -8, -8),
+													Vector3(8, 8, 8)));
 	}
 	else {
-		return new Doom3EntityClass(name);
+		return IEntityClassPtr(new Doom3EntityClass(name));
 	}
 }
 

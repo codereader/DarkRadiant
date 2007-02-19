@@ -36,21 +36,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <boost/algorithm/string/predicate.hpp>
 
 /* Static map of named entity classes, using case-insensitive comparison */
-typedef std::map<std::string, IEntityClass*> EntityClasses;
+typedef std::map<std::string, IEntityClassPtr> EntityClasses;
 EntityClasses g_EntityClassDoom3_classes;
 
 void EntityClassDoom3_clear()
 {
-	for(EntityClasses::iterator i = g_EntityClassDoom3_classes.begin(); i != g_EntityClassDoom3_classes.end(); ++i)
-	{
-		delete i->second;
-	}
 	g_EntityClassDoom3_classes.clear();
 }
 
 // entityClass will be inserted only if another of the same name does not already exist.
 // if entityClass was inserted, the same object is returned, otherwise the already-existing object is returned.
-IEntityClass* EntityClassDoom3_insertUnique(IEntityClass* entityClass)
+IEntityClassPtr EntityClassDoom3_insertUnique(IEntityClassPtr entityClass)
 {
   return (*g_EntityClassDoom3_classes.insert(EntityClasses::value_type(entityClass->getName(), entityClass)).first).second;
 }
@@ -59,7 +55,7 @@ void EntityClassDoom3_forEach(EntityClassVisitor& visitor)
 {
   for(EntityClasses::iterator i = g_EntityClassDoom3_classes.begin(); i != g_EntityClassDoom3_classes.end(); ++i)
   {
-    visitor.visit((*i).second);
+    visitor.visit(i->second);
   }
 }
 
@@ -159,8 +155,9 @@ void EntityClassDoom3_parseModel(parser::DefTokeniser& tokeniser)
 void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
 {
     // Get the (lowercase) entity name and create the entity class for it
-    const std::string sName = boost::algorithm::to_lower_copy(tokeniser.nextToken());
-	IEntityClass* entityClass = new eclass::Doom3EntityClass(sName);
+    const std::string sName = 
+    	boost::algorithm::to_lower_copy(tokeniser.nextToken());
+	IEntityClassPtr entityClass(new eclass::Doom3EntityClass(sName));
 
     // Required open brace
     tokeniser.assertNextToken("{");
@@ -232,12 +229,7 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
     } // while true
     
     // Insert into the EntityClassManager
-	IEntityClass* inserted = EntityClassDoom3_insertUnique(entityClass);
-	if(inserted != entityClass) {
-		globalErrorStream() << "entityDef " << entityClass->getName().c_str() 
-			<< " is already defined, second definition ignored\n";
-		delete entityClass;
-	}
+	EntityClassDoom3_insertUnique(entityClass);
 }
 
 // Parse the provided string containing the contents of a single .def file.
@@ -282,11 +274,12 @@ void EntityClassDoom3_loadFile(const char* filename)
 
 // Find or insert an EntityClass with the given name.
 
-IEntityClass *EntityClassDoom3_findOrInsert(const std::string& name, bool has_brushes)
+IEntityClassPtr EntityClassDoom3_findOrInsert(const std::string& name, 
+											  bool has_brushes)
 {
     // Return an error if no name is given
-    if (name.size() == 0) {
-        return NULL;
+    if (name.empty()) {
+        return IEntityClassPtr();
     }
 
 	// Convert string to lowercase, for case-insensitive lookup
@@ -299,8 +292,8 @@ IEntityClass *EntityClassDoom3_findOrInsert(const std::string& name, bool has_br
     }
 
     // Otherwise insert the new EntityClass
-    IEntityClass *e = eclass::Doom3EntityClass::create(lName, has_brushes);
-    IEntityClass *inserted = EntityClassDoom3_insertUnique(e);
+    IEntityClassPtr e = eclass::Doom3EntityClass::create(lName, has_brushes);
+    IEntityClassPtr inserted = EntityClassDoom3_insertUnique(e);
 
     return inserted;
 }

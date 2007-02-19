@@ -23,10 +23,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_IENTITY_H
 
 #include "generic/constant.h"
-
 #include "scenelib.h"
 
+#include <boost/shared_ptr.hpp>
+
 class IEntityClass;
+typedef boost::shared_ptr<IEntityClass> IEntityClassPtr;
 
 typedef Callback1<const char*> KeyObserver;
 
@@ -149,7 +151,7 @@ public:
   INTEGER_CONSTANT(Version, 2);
   STRING_CONSTANT(Name, "entity");
 
-  virtual scene::Node& createEntity(IEntityClass* eclass) = 0;
+  virtual scene::Node& createEntity(IEntityClassPtr eclass) = 0;
 
   typedef void (*KeyValueChangedFunc)();
   virtual void setKeyValueChangedFunc(KeyValueChangedFunc func) = 0;
