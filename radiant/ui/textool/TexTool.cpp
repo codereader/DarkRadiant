@@ -35,6 +35,7 @@ TexTool::TexTool()
 	gtk_window_set_type_hint(GTK_WINDOW(_window), GDK_WINDOW_TYPE_HINT_DIALOG);
 	
 	g_signal_connect(G_OBJECT(_window), "delete-event", G_CALLBACK(onDelete), this);
+	g_signal_connect(G_OBJECT(_window), "focus-in-event", G_CALLBACK(triggerRedraw), this);
 	
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
 	GlobalEventManager().connect(GTK_OBJECT(_window));
@@ -60,6 +61,7 @@ void TexTool::populateWindow() {
 	
 	// Connect the events
 	g_signal_connect(G_OBJECT(_glWidget), "expose-event", G_CALLBACK(onExpose), this);
+	g_signal_connect(G_OBJECT(_glWidget), "focus-in-event", G_CALLBACK(triggerRedraw), this);
 	
 	// Make the GL widget accept the global shortcuts
 	GlobalEventManager().connect(GTK_OBJECT(_glWidget));
@@ -119,20 +121,19 @@ void TexTool::update() {
 
 void TexTool::selectionChanged() {
 	update();
-	// Redraw
-	gtk_widget_queue_draw(_glWidget);
+	draw();
 }
 
 void TexTool::draw() {
-
+	// Redraw
+	gtk_widget_queue_draw(_glWidget);
 }
 
 gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self) {
 	self->update();
 	
 	// Activate the GL widget
-	//gtkutil::GLWidgetSentry sentry(self->_glWidget);
-	glwidget_make_current(self->_glWidget);
+	gtkutil::GLWidgetSentry sentry(self->_glWidget);
 	
 	glClearColor(0.1f, 0.1f, 0.1f, 0);
 	glViewport(0, 0, event->area.width, event->area.height);
@@ -175,8 +176,12 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 	
-	glwidget_swap_buffers(self->_glWidget);
-	
+	return false;
+}
+
+gboolean TexTool::triggerRedraw(GtkWidget* widget, GdkEventFocus* event, TexTool* self) {
+	// Trigger a redraw
+	self->draw();
 	return false;
 }
 
