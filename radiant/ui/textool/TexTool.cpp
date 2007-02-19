@@ -127,13 +127,14 @@ void TexTool::draw() {
 
 }
 
-void TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self) {
+gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self) {
 	self->update();
 	
 	// Activate the GL widget
-	gtkutil::GLWidgetSentry sentry(self->_glWidget);
+	//gtkutil::GLWidgetSentry sentry(self->_glWidget);
+	glwidget_make_current(self->_glWidget);
 	
-	glClearColor(0, 0, 0, 0);
+	glClearColor(0.1f, 0.1f, 0.1f, 0);
 	glViewport(0, 0, event->area.width, event->area.height);
 	
 	glMatrixMode(GL_PROJECTION);
@@ -144,8 +145,8 @@ void TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self) 
 	glDisable(GL_BLEND);
 	
 	// Initialise the 2D projection matrix with: left, right, bottom, top, znear, zfar 
-	glOrtho(self->_extents[0].x(), self->_extents[1].x(), 
-			self->_extents[1].y(), self->_extents[0].y(), 
+	glOrtho(-100, 100, 
+			-100, 100, 
 			-1, 1);
 	
 	glColor3f(1, 1, 1);
@@ -155,21 +156,28 @@ void TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self) 
 	TexturePtr tex = self->_shader->getTexture();
 	glBindTexture(GL_TEXTURE_2D, tex->texture_number);
 	
-	globalOutputStream() << "texture number: " << tex->texture_number << "\n";
-	
 	// Draw the background texture
 	glEnable(GL_TEXTURE_2D);
 	glBegin(GL_QUADS);
-	glTexCoord2f(self->_extents[0].x(), self->_extents[0].y());
-	glVertex2f(self->_extents[0].x(), self->_extents[0].y());
-	glTexCoord2f(self->_extents[0].x(), self->_extents[0].y());
-	glVertex2f(self->_extents[0].x(), self->_extents[0].y());
-	glTexCoord2f(self->_extents[0].x(), self->_extents[1].y());
-	glVertex2f(self->_extents[0].x(), self->_extents[1].y());
-	glTexCoord2f(self->_extents[0].x(), self->_extents[1].y());
-	glVertex2f(self->_extents[0].x(), self->_extents[1].y());
+	
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex2f(-100, 100);	// Upper left
+	
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex2f(100, 100);	// Upper right
+	
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex2f(100, -100);	// Lower right
+	
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(-100, -100);	// Lower left
+	
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
+	
+	glwidget_swap_buffers(self->_glWidget);
+	
+	return false;
 }
 
 gboolean TexTool::onDelete(GtkWidget* widget, GdkEvent* event, TexTool* self) {
