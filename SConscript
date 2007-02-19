@@ -85,7 +85,6 @@ gtkutil_src = '\
   ModalProgressDialog.cpp\
   TreeModel.cpp\
   VFSTreePopulator.cpp\
-  FramedTransientWidget.cpp\
   RegistryConnector.cpp\
   TransientWindow.cpp\
   PanedPosition.cpp\
