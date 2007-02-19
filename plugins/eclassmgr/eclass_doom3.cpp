@@ -23,16 +23,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ifilesystem.h"
 #include "iarchive.h"
-#include "qerplugin.h"
 
 #include "generic/callback.h"
 #include "parser/DefTokeniser.h"
 #include "os/path.h"
 #include "os/dir.h"
 #include "moduleobservers.h"
-#include "stringio.h"
 
-#include <iostream>
 #include <map>
 
 #include <boost/algorithm/string/case_conv.hpp>
@@ -73,7 +70,7 @@ public:
   std::string m_mesh;
   std::string m_skin;
   std::string m_parent;
-  typedef std::map<CopiedString, CopiedString> Anims;
+  typedef std::map<std::string, std::string> Anims;
   Anims m_anims;
   Model() : m_resolved(false)
   {
@@ -111,7 +108,7 @@ void EntityClassDoom3_parseModel(parser::DefTokeniser& tokeniser)
 {
     // Add the named model to the global list
     const std::string name = tokeniser.nextToken(); 
-    Model& model = g_models[name.c_str()];
+    Model& model = g_models[name];
 
     tokeniser.assertNextToken("{");
 
@@ -237,7 +234,8 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
     // Insert into the EntityClassManager
 	IEntityClass* inserted = EntityClassDoom3_insertUnique(entityClass);
 	if(inserted != entityClass) {
-		globalErrorStream() << "entityDef " << entityClass->getName() << " is already defined, second definition ignored\n";
+		globalErrorStream() << "entityDef " << entityClass->getName().c_str() 
+			<< " is already defined, second definition ignored\n";
 		delete entityClass;
 	}
 }
