@@ -28,6 +28,7 @@ class SurfaceInspector :
 		GtkWidget* hbox;
 		GtkWidget* label;
 		GtkWidget* value;
+		gulong valueChangedHandler;
 		ControlButtonPtr smaller; 
 		ControlButtonPtr larger;
 		GtkWidget* step;
@@ -145,6 +146,10 @@ private:
 	
 	// Executes the fit command for the selection 
 	void fitTexture();
+	
+	// Connects/Disconnects the GTK callbacks for callback-free value updates 
+	void connectValueChanged();
+	void disconnectValueChanged();
 	
 	// The callback for the delete event (toggles the visibility)
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, SurfaceInspector* self);
