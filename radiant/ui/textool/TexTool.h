@@ -7,6 +7,9 @@
 #include "ishaders.h"
 #include "iselection.h"
 
+class Winding;
+class AABB;
+
 namespace ui {
 
 class TexTool :
@@ -26,6 +29,11 @@ class TexTool :
 	
 	// The shader we're working with (shared ptr)
 	IShaderPtr _shader;
+	
+	Winding* _winding;
+	
+	// A reference to the SelectionInfo structure (with the counters)
+	const SelectionInfo& _selectionInfo;
 	
 public:
 	TexTool();
@@ -51,13 +59,26 @@ public:
 	 */
 	void selectionChanged();
 	
+	/** greebo: Updates the GL window
+	 */
+	void draw();
+	
 private:
 	// Creates, packs and connects the child widgets
 	void populateWindow();
 	
-	/** greebo: Updates the GL window
+	/** greebo: Calculates the extents the selection has in
+	 * texture space.
+	 * 
+	 * @returns: the AABB with the z-component set to 0.
+	 * 			 Can return an invalid AABB as well (if no selection was found). 
 	 */
-	void draw();
+	AABB getExtents();
+	
+	/** greebo: Visualises the U/V coordinates by drawing the points
+	 * into the "texture space".
+	 */
+	void drawUVCoords();
 	
 	/** greebo: Loads all the relevant data from the
 	 * selectionsystem and prepares the member variables for drawing. 

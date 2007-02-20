@@ -5,6 +5,7 @@
 #include "math/Vector2.h"
 
 class TextureProjection;
+class Face;
 
 namespace selection {
 	namespace algorithm {
@@ -25,6 +26,14 @@ namespace selection {
 	 * @returns: the TextureProjection of the last selected face/brush.
 	 */
 	TextureProjection getSelectedTextureProjection();
+	
+	/** greebo: Retrieves the reference to the last selected face.
+	 * 
+	 * Do not call this unless the selectedFaceCount is ensured to be > 0.
+	 * 
+	 * @returns: the Face& reference of the last element.
+	 */
+	Face& getLastSelectedFace();
 	
 	/** greebo: Applies the given textureprojection to the selected
 	 * brushes and brush faces.

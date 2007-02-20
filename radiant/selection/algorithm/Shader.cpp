@@ -182,6 +182,10 @@ TextureProjection getSelectedTextureProjection() {
 	return returnValue;
 }
 
+Face& getLastSelectedFace() {
+	return g_SelectedFaceInstances.last().getFace();
+}
+
 Vector2 getSelectedFaceShaderSize() {
 	Vector2 returnValue(0,0);
 	
