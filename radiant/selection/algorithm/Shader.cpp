@@ -6,6 +6,7 @@
 #include "brush/BrushVisit.h"
 #include "brush/TextureProjection.h"
 #include "patch/PatchSceneWalk.h"
+#include "selection/algorithm/Primitives.h"
 
 // greebo: Nasty global that contains all the selected face instances
 extern FaceInstanceSet g_SelectedFaceInstances;
@@ -152,24 +153,6 @@ std::string getShaderFromSelection() {
 	return returnValue;
 }
 
-class FaceGetTexdef
-{
-	TextureProjection& _projection;
-	mutable bool _done;
-public:
-	FaceGetTexdef(TextureProjection& projection) : 
-		_projection(projection), 
-		_done(false) 
-	{}
-			
-	void operator()(Face& face) const {
-		if (!_done) {
-			_done = true;
-			face.GetTexdef(_projection);
-		}
-	}
-};
-
 TextureProjection getSelectedTextureProjection() {
 	TextureProjection returnValue;
 	
@@ -180,10 +163,6 @@ TextureProjection getSelectedTextureProjection() {
 	}
 	
 	return returnValue;
-}
-
-Face& getLastSelectedFace() {
-	return g_SelectedFaceInstances.last().getFace();
 }
 
 Vector2 getSelectedFaceShaderSize() {
@@ -198,10 +177,6 @@ Vector2 getSelectedFaceShaderSize() {
 	}
 	
 	return returnValue;
-}
-
-int selectedFaceCount() {
-	return static_cast<int>(g_SelectedFaceInstances.size());
 }
 
 /** greebo: Applies the given texture repeat to the visited patch
