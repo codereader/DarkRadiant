@@ -149,8 +149,8 @@ void SurfaceInspector::connectEvents() {
 	GlobalEventManager().findEvent("TexScaleRight")->connectWidget(*_manipulators[HSCALE].larger);
 	GlobalEventManager().findEvent("TexScaleUp")->connectWidget(*_manipulators[VSCALE].larger);
 	GlobalEventManager().findEvent("TexScaleDown")->connectWidget(*_manipulators[VSCALE].smaller);
-	GlobalEventManager().findEvent("TexRotateClock")->connectWidget(*_manipulators[ROTATION].smaller);
-	GlobalEventManager().findEvent("TexRotateCounter")->connectWidget(*_manipulators[ROTATION].larger);
+	GlobalEventManager().findEvent("TexRotateClock")->connectWidget(*_manipulators[ROTATION].larger);
+	GlobalEventManager().findEvent("TexRotateCounter")->connectWidget(*_manipulators[ROTATION].smaller);
 	
 	// Be sure to connect these signals after the buttons are connected 
 	// to the events, so that the update() call gets invoked after the actual event has been fired.
