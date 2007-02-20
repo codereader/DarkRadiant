@@ -16,7 +16,7 @@ namespace selection {
 // Constants	
 namespace {
 	const std::string RKEY_DEFAULT_TEXTURE_SCALE = "user/ui/textures/defaultTextureScale";
-}	
+}
 
 class AmbiguousShaderException:
 	public std::runtime_error
@@ -441,7 +441,8 @@ void scaleTexture(const Vector2& scale) {
 			GlobalSceneGraph(), 
 			FaceTextureScaler(scale)
 		);
-  		Scene_forEachVisibleSelectedPatch(PatchTextureScaler(scale));
+		// Pass the scale value + 1.0f to the patches as they are scaled in relative steps
+  		Scene_forEachVisibleSelectedPatch(PatchTextureScaler(scale + Vector2(1.0f, 1.0f)));
 	}
 	// Scale the face textures
 	Scene_ForEachSelectedBrushFace(
