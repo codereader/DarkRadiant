@@ -8,13 +8,18 @@
 
 #include "texturelib.h"
 #include "gtkutil/TransientWindow.h"
+#include "gtkutil/FramedWidget.h"
 #include "gtkutil/glwidget.h"
 #include "gtkutil/GLWidgetSentry.h"
-#include "selection/algorithm/Shader.h"
 #include "math/aabb.h"
 #include "mainframe.h"
 #include "brush/Face.h"
+#include "patch/Patch.h"
 #include "winding.h"
+
+#include "selection/algorithm/Primitives.h"
+#include "selection/algorithm/Shader.h"
+
 
 namespace ui {
 	
@@ -27,6 +32,7 @@ namespace ui {
 
 TexTool::TexTool() :
 	_winding(NULL),
+	_patch(NULL),
 	_selectionInfo(GlobalSelectionSystem().getSelectionInfo())
 {
 	_extents[0] = Vector3(-1.0f, -1.0f, 0.0f);
@@ -63,7 +69,8 @@ TexTool::TexTool() :
 void TexTool::populateWindow() {
 	// Create the GL widget
 	_glWidget = glwidget_new(TRUE);
-	
+	GtkWidget* frame = gtkutil::FramedWidget(_glWidget);
+		
 	// Connect the events
 	g_signal_connect(G_OBJECT(_glWidget), "expose-event", G_CALLBACK(onExpose), this);
 	g_signal_connect(G_OBJECT(_glWidget), "focus-in-event", G_CALLBACK(triggerRedraw), this);
@@ -72,7 +79,7 @@ void TexTool::populateWindow() {
 	GlobalEventManager().connect(GTK_OBJECT(_glWidget));
 	
 	GtkWidget* vbox = gtk_vbox_new(true, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), _glWidget, true, true, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), frame, true, true, 0);
 	
 	gtk_container_add(GTK_CONTAINER(_window), vbox);
 }
@@ -122,14 +129,23 @@ void TexTool::update() {
 	std::string selectedShader = selection::algorithm::getShaderFromSelection();
 	_shader = GlobalShaderSystem().getShaderForName(selectedShader);
 	
-	if (selection::algorithm::selectedFaceCount() == 1) {
+	// Try to retrieve the single selected face (throws on failure)
+	try {
 		Face& face = selection::algorithm::getLastSelectedFace();
 		
 		// Retrieve the winding from the face
 		_winding = &face.getWinding();
 	}
-	else {
+	catch (selection::InvalidSelectionException i) {
 		_winding = NULL;
+	}
+	
+	try {
+		Patch& found = selection::algorithm::getLastSelectedPatch();
+		_patch = &found;
+	}
+	catch (selection::InvalidSelectionException i) {
+		_patch = NULL;
 	}
 }
 
@@ -152,6 +168,13 @@ AABB TexTool::getExtents() {
 		}
 	}
 	
+	// Check for valid winding
+	if (_patch != NULL) {
+		for (PatchControlIter i = _patch->begin(); i != _patch->end(); i++) {
+			extents.includePoint(Vector3(i->m_texcoord[0], i->m_texcoord[1], 0));
+		}
+	}
+	
 	return extents;
 }
 
@@ -164,6 +187,19 @@ void TexTool::drawUVCoords() {
 		
 		for (Winding::iterator i = _winding->begin(); i != _winding->end(); i++) {
 			glVertex2f(i->texcoord[0], i->texcoord[1]);
+		}
+		
+		glEnd();
+	}
+	
+	// Check for valid patch
+	if (_patch != NULL) {
+		glPointSize(5);
+		glBegin(GL_POINTS);
+		glColor3f(1, 1, 1);
+		
+		for (PatchControlIter i = _patch->begin(); i != _patch->end(); i++) {
+			glVertex2f(i->m_texcoord[0], i->m_texcoord[1]);
 		}
 		
 		glEnd();

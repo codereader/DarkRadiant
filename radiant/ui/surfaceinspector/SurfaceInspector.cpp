@@ -13,6 +13,7 @@
 #include "ui/textool/TexTool.h"
 
 #include "brush/TextureProjection.h"
+#include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Shader.h"
 
 namespace ui {

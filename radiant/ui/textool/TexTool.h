@@ -8,6 +8,7 @@
 #include "iselection.h"
 
 class Winding;
+class Patch;
 class AABB;
 
 namespace ui {
@@ -31,6 +32,7 @@ class TexTool :
 	IShaderPtr _shader;
 	
 	Winding* _winding;
+	Patch* _patch;
 	
 	// A reference to the SelectionInfo structure (with the counters)
 	const SelectionInfo& _selectionInfo;

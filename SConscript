@@ -381,6 +381,7 @@ radiant_src = [
 'selection/Planes.cpp',
 'selection/RadiantWindowObserver.cpp',
 'selection/RadiantSelectionSystem.cpp',
+'selection/algorithm/Primitives.cpp',
 'selection/algorithm/Shader.cpp',
 'patch/Patch.cpp',
 'patch/PatchBezier.cpp',
