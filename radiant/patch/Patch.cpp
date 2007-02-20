@@ -12,6 +12,8 @@
 #include "texturelib.h"
 #include "brush/TextureProjection.h"
 #include "winding.h"
+#include "gtkutil/dialog.h"
+#include "mainframe.h"
 
 #include "PatchSavedState.h"
 
@@ -1727,9 +1729,6 @@ Vector2 getProjectedTextureCoords(const Vector3& vertex, const Plane3& plane, co
  * and calculates its own virtual patch directions. 
  */
 void Patch::pasteTextureNatural(const Face* face) {
-	// Save the undo memento
-	undoSave();
-
 	// Check for NULL pointers
 	if (face != NULL) {
 		
@@ -1774,6 +1773,15 @@ void Patch::pasteTextureNatural(const Face* face) {
 		// Calculate the world direction of these control points and extract a base
 		Vector3 widthVector = (nextRow.m_vertex - startControl->m_vertex);
 		Vector3 heightVector = (nextColumn.m_vertex - startControl->m_vertex);
+
+		if (widthVector.getLength() == 0.0f || heightVector.getLength() == 0.0f) {
+			gtkutil::errorDialog("Sorry. Patch is not suitable for this kind of operation.",
+								 MainFrame_getWindow());
+			return;
+		}
+		
+		// Save the undo memento
+		undoSave();
 
 		// Calculate the base vectors of the virtual plane the patch is flattened in		
 		Vector3 widthBase, heightBase;
