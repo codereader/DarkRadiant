@@ -182,8 +182,20 @@ void TexTool::drawUVCoords() {
 	// Check for valid winding
 	if (_winding != NULL) {
 		
+		// Draw the Line Loop polygon representing the polygon
 		glBegin(GL_LINE_LOOP);
 		glColor3f(1, 1, 1);		
+		
+		for (Winding::iterator i = _winding->begin(); i != _winding->end(); i++) {
+			glVertex2f(i->texcoord[0], i->texcoord[1]);
+		}
+		
+		glEnd();
+		
+		// Draw again, this time draw only the winding points
+		glPointSize(5);
+		glBegin(GL_POINTS);
+		glColor3f(1, 1, 1);
 		
 		for (Winding::iterator i = _winding->begin(); i != _winding->end(); i++) {
 			glVertex2f(i->texcoord[0], i->texcoord[1]);
