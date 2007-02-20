@@ -73,6 +73,7 @@ private:
 	static void _onPointToggle(GtkWidget*, LightInspector*);	
 	static void _onOK(GtkWidget*, LightInspector*);
 	static void _onCancel(GtkWidget*, LightInspector*);
+	static gboolean _onKeyPress(GtkWidget*, GdkEventKey*, LightInspector*);
 
 	// Update the dialog widgets from keyvals on the entity
 	void getValuesFromEntity();

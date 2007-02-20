@@ -14,6 +14,7 @@
 #include "gtkutil/dialog.h"
 
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace ui
@@ -41,6 +42,8 @@ LightInspector::LightInspector()
 	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
 	gtk_window_set_title(GTK_WINDOW(_widget), LIGHTINSPECTOR_TITLE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
+    g_signal_connect(G_OBJECT(_widget), "key-press-event",
+    				 G_CALLBACK(_onKeyPress), this);
     
     // Window size
 	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
@@ -195,6 +198,8 @@ GtkWidget* LightInspector::createButtons() {
 	gtk_box_pack_end(GTK_BOX(hbx), okButton, TRUE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
 
+	gtk_window_add_mnemonic(GTK_WINDOW(_widget), GDK_Escape, cancelButton);
+
 	return gtkutil::RightAlignment(hbx);
 }
 
@@ -282,6 +287,16 @@ void LightInspector::_onOK(GtkWidget* w, LightInspector* self) {
 
 void LightInspector::_onCancel(GtkWidget* w, LightInspector* self) {
 	gtk_widget_hide(self->_widget);
+}
+
+// Keypress callback
+gboolean LightInspector::_onKeyPress(GtkWidget* w, 
+								 GdkEventKey* ev, 
+								 LightInspector* self)
+{
+	if (ev->keyval == GDK_Escape)
+		gtk_widget_hide(self->_widget);
+	return FALSE;
 }
 
 // Get keyvals from entity and insert into text entries
