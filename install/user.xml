@@ -38,6 +38,7 @@
 			<hScaleStep value="0.05" />
 			<vScaleStep value="0.05" />
 			<rotStep value="45" />
+			<useLegacyInspector value="0" />
 		</surfaceInspector>
 	</textures>
 	<grid>

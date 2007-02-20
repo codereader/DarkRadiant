@@ -82,6 +82,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 extern FaceInstanceSet g_SelectedFaceInstances;
 
+namespace {
+	const std::string RKEY_LEGACY_SURFACE_INSPECTOR = "user/ui/textures/surfaceInspector/useLegacyInspector";
+}
+
 #define TEXTOOL_ENABLED 1
 
 #if TEXTOOL_ENABLED
@@ -460,17 +464,19 @@ void DoSurface (void)
 
 void SurfaceInspector_toggleShown()
 {
-	// Toggle the inspector window
-	ui::SurfaceInspector::Instance().toggle();
-	
-  if (getSurfaceInspector().visible())
-  {
-    getSurfaceInspector().HideDlg();
-  }
-  else
-  {
-    DoSurface();
-  }
+	// Check if the user wants to use the "old" surface inspector	
+	if (GlobalRegistry().get(RKEY_LEGACY_SURFACE_INSPECTOR) == "1") {
+  		if (getSurfaceInspector().visible()) {
+    		getSurfaceInspector().HideDlg();
+  		}
+  		else {
+			DoSurface();
+		}
+	}
+	else {
+		// Toggle the inspector window
+		ui::SurfaceInspector::Instance().toggle();
+	}
 }
 
 void SurfaceInspector_FitTexture()
@@ -1641,6 +1647,7 @@ void ToggleTexTool() {
 void SurfaceInspector_constructPreferences(PrefPage* page)
 {
   page->appendCheckBox("", "Surface Inspector Increments Match Grid", g_si_globals.m_bSnapTToGrid);
+  page->appendCheckBox("", "Use legacy Surface Inspector", RKEY_LEGACY_SURFACE_INSPECTOR);
 }
 void SurfaceInspector_constructPage(PreferenceGroup& group)
 {
