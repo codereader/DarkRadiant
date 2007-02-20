@@ -10,6 +10,7 @@
 #include "selectionlib.h"
 #include "mainframe.h"
 #include "math/FloatTools.h"
+#include "ui/textool/TexTool.h"
 
 #include "brush/TextureProjection.h"
 #include "selection/algorithm/Shader.h"
@@ -437,6 +438,9 @@ void SurfaceInspector::emitTexDef() {
 	
 	// Apply it to the selection
 	selection::algorithm::applyTextureProjectionToFaces(projection);
+	
+	// Update the TexTool instance as well
+	ui::TexTool::Instance().draw();
 }
 
 void SurfaceInspector::updateTexDef() {
@@ -513,6 +517,9 @@ void SurfaceInspector::update() {
 	if (valueSensitivity) {
 		updateTexDef();
 	}
+	
+	// Update the TexTool instance as well
+	ui::TexTool::Instance().draw();
 }
 
 // Gets notified upon selection change

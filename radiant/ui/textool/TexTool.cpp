@@ -11,7 +11,10 @@
 #include "gtkutil/glwidget.h"
 #include "gtkutil/GLWidgetSentry.h"
 #include "selection/algorithm/Shader.h"
+#include "math/aabb.h"
 #include "mainframe.h"
+#include "brush/Face.h"
+#include "winding.h"
 
 namespace ui {
 	
@@ -22,7 +25,9 @@ namespace ui {
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 	}
 
-TexTool::TexTool()
+TexTool::TexTool() :
+	_winding(NULL),
+	_selectionInfo(GlobalSelectionSystem().getSelectionInfo())
 {
 	_extents[0] = Vector3(-1.0f, -1.0f, 0.0f);
 	_extents[1] = -_extents[0];
@@ -117,16 +122,52 @@ void TexTool::update() {
 	std::string selectedShader = selection::algorithm::getShaderFromSelection();
 	_shader = GlobalShaderSystem().getShaderForName(selectedShader);
 	
+	if (selection::algorithm::selectedFaceCount() == 1) {
+		Face& face = selection::algorithm::getLastSelectedFace();
+		
+		// Retrieve the winding from the face
+		_winding = &face.getWinding();
+	}
+	else {
+		_winding = NULL;
+	}
 }
 
 void TexTool::selectionChanged() {
-	update();
 	draw();
 }
 
 void TexTool::draw() {
 	// Redraw
 	gtk_widget_queue_draw(_glWidget);
+}
+
+AABB TexTool::getExtents() {
+	AABB extents;
+	
+	// Check for valid winding
+	if (_winding != NULL) {
+		for (Winding::iterator i = _winding->begin(); i != _winding->end(); i++) {
+			extents.includePoint(Vector3(i->texcoord[0], i->texcoord[1], 0));
+		}
+	}
+	
+	return extents;
+}
+
+void TexTool::drawUVCoords() {
+	// Check for valid winding
+	if (_winding != NULL) {
+		
+		glBegin(GL_LINE_LOOP);
+		glColor3f(1, 1, 1);		
+		
+		for (Winding::iterator i = _winding->begin(); i != _winding->end(); i++) {
+			glVertex2f(i->texcoord[0], i->texcoord[1]);
+		}
+		
+		glEnd();
+	}
 }
 
 gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self) {
@@ -151,9 +192,20 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 		return false;
 	}
 	
+	AABB texAABB = self->getExtents();
+	
+	if (!texAABB.isValid()) {
+		return false;
+	}
+	
+	Vector3 orthoTopLeft = texAABB.origin - texAABB.extents * 1.5;
+	Vector3 orthoBottomRight = texAABB.origin + texAABB.extents * 1.5;
+	
 	// Initialise the 2D projection matrix with: left, right, bottom, top, znear, zfar 
-	glOrtho(-100, 100, 
-			-100, 100, 
+	glOrtho(orthoTopLeft[0], 	// left 
+			orthoBottomRight[0], // right
+			orthoBottomRight[1], // bottom 
+			orthoTopLeft[1], 	// top 
 			-1, 1);
 	
 	glColor3f(1, 1, 1);
@@ -168,20 +220,33 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 	glEnable(GL_TEXTURE_2D);
 	glBegin(GL_QUADS);
 	
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(-100, 100);	// Upper left
+	glTexCoord2f(orthoTopLeft[0], orthoTopLeft[1]);
+	glVertex2f(orthoTopLeft[0], orthoTopLeft[1]);	// Upper left
 	
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f(100, 100);	// Upper right
+	glTexCoord2f(orthoBottomRight[0], orthoTopLeft[1]);
+	glVertex2f(orthoBottomRight[0], orthoTopLeft[1]);	// Upper right
 	
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f(100, -100);	// Lower right
+	glTexCoord2f(orthoBottomRight[0], orthoBottomRight[1]);
+	glVertex2f(orthoBottomRight[0], orthoBottomRight[1]);	// Lower right
 	
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(-100, -100);	// Lower left
+	glTexCoord2f(orthoTopLeft[0], orthoBottomRight[1]);
+	glVertex2f(orthoTopLeft[0], orthoBottomRight[1]);	// Lower left
 	
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
+	
+	// Draw the u/v coordinates
+	self->drawUVCoords();
+	
+	/*glColor3f(1, 1, 1);
+	std::string topLeftStr = floatToStr(orthoTopLeft[0]) + "," + floatToStr(orthoTopLeft[1]);
+	std::string bottomRightStr = floatToStr(orthoBottomRight[0]) + "," + floatToStr(orthoBottomRight[1]);
+	
+	glRasterPos2f(orthoTopLeft[0] + 0.5, orthoTopLeft[1] + 0.5);
+	GlobalOpenGL().drawString(topLeftStr.c_str());
+	
+	glRasterPos2f(orthoBottomRight[0] - 0.2, orthoBottomRight[1] + 0.2);
+	GlobalOpenGL().drawString(bottomRightStr.c_str());*/
 	
 	return false;
 }
