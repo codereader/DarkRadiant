@@ -737,12 +737,14 @@ void Undo()
 {
   GlobalUndoSystem().undo();
   SceneChangeNotify();
+  ui::SurfaceInspector::Instance().update();
 }
 
 void Redo()
 {
   GlobalUndoSystem().redo();
   SceneChangeNotify();
+  ui::SurfaceInspector::Instance().update();
 }
 
 void deleteSelection()

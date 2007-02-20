@@ -113,6 +113,9 @@ public:
 	 */
 	void selectionChanged();
 	
+	// Updates the widgets
+	void update();
+	
 private:
 	/** greebo: Creates a row consisting of label, value entry,
 	 * two arrow buttons and a step entry field.
@@ -133,8 +136,6 @@ private:
 	// Connect IEvents to the widgets 
 	void connectEvents();
 	
-	// Updates the widgets
-	void update();
 	// Updates the texture shift/scale/rotation fields
 	void updateTexDef();
 	
