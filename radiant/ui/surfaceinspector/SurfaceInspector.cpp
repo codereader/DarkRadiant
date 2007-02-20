@@ -331,6 +331,24 @@ void SurfaceInspector::populateWindow() {
 	gtk_table_attach_defaults(operTable, hbox2, 1, 2, 3, 4);
 }
 
+void SurfaceInspector::disconnectValueChanged() {
+	for (ManipulatorMap::iterator i = _manipulators.begin(); i != _manipulators.end(); i++) {
+		if (i->second.valueChangedHandler != 0) {
+			g_signal_handler_disconnect(G_OBJECT(i->second.value), i->second.valueChangedHandler);
+			i->second.valueChangedHandler = 0;
+		}
+	}
+}
+
+void SurfaceInspector::connectValueChanged() {
+	for (ManipulatorMap::iterator i = _manipulators.begin(); i != _manipulators.end(); i++) {
+		if (i->second.valueChangedHandler == 0) {
+			i->second.valueChangedHandler = 
+				g_signal_connect(G_OBJECT(i->second.value), "changed", G_CALLBACK(onValueChanged), this);
+		}
+	}
+}
+
 SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	const std::string& label, GtkTable* table, int row, bool vertical) 
 {
@@ -345,7 +363,10 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	// Create the entry field
 	manipRow.value = gtk_entry_new();
 	gtk_entry_set_width_chars(GTK_ENTRY(manipRow.value), 7);
-	g_signal_connect(G_OBJECT(manipRow.value), "changed", G_CALLBACK(onValueChanged), this);
+	
+	manipRow.valueChangedHandler = 
+		g_signal_connect(G_OBJECT(manipRow.value), "changed", G_CALLBACK(onValueChanged), this);
+	
 	gtk_box_pack_start(GTK_BOX(manipRow.hbox), manipRow.value, true, true, 0);
 	
 	if (vertical) {
@@ -438,6 +459,9 @@ void SurfaceInspector::updateTexDef() {
 	texdef._scale[1] = float_snapped(texdef._scale[1], MAX_FLOAT_RESOLUTION);
 	texdef._rotate = float_snapped(texdef._rotate, MAX_FLOAT_RESOLUTION);
 	
+	// Disable the callbacks
+	disconnectValueChanged();
+	
 	// Load the values into the widgets
 	gtk_entry_set_text(GTK_ENTRY(_manipulators[HSHIFT].value), floatToStr(texdef._shift[0]).c_str());
 	gtk_entry_set_text(GTK_ENTRY(_manipulators[VSHIFT].value), floatToStr(texdef._shift[1]).c_str());
@@ -446,6 +470,9 @@ void SurfaceInspector::updateTexDef() {
 	gtk_entry_set_text(GTK_ENTRY(_manipulators[VSCALE].value), floatToStr(texdef._scale[1]).c_str());
 	
 	gtk_entry_set_text(GTK_ENTRY(_manipulators[ROTATION].value), floatToStr(texdef._rotate).c_str());
+	
+	// Re-connect the callbacks
+	connectValueChanged();
 }
 
 void SurfaceInspector::update() {
