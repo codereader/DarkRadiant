@@ -48,7 +48,7 @@ LightInspector::LightInspector()
     // Window size
 	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
 	gtk_window_set_default_size(GTK_WINDOW(_widget), 
-								gint(gdk_screen_get_width(scr) * 0.6), 
+								gint(gdk_screen_get_width(scr) * 0.5), 
 								-1);
     
     // Widget must hide not destroy when closed
@@ -140,7 +140,7 @@ GtkWidget* LightInspector::createProjectedPanel() {
 					 this);
 
 	// Start/end checkbox
-	_useStartEnd = gtk_check_button_new_with_label("Use start and end planes");
+	_useStartEnd = gtk_check_button_new_with_label("Use start/end");
 					
 	// VBox for panel
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
