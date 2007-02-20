@@ -54,9 +54,26 @@ void BrushPrimitTexDef::scale(float s, float t) {
 	// compute fake shift scale rot
 	TexDef texdef = getFakeTexCoords();
 	
+	float newXScale = texdef._scale[0] + s;
+	float newYScale = texdef._scale[1] + t;
+	
+	// Don't allow zero (or almost zero) scale values
+	if (float_equal_epsilon(newXScale, 0.0f, 0.00001f) || 
+		float_equal_epsilon(newYScale, 0.0f, 0.00001f)) 
+	{
+		return;
+	}
+	
+	// Don't allow sign changes
+	if ((newXScale*texdef._scale[0]) < 0.0f || 
+		(newYScale*texdef._scale[1]) < 0.0f)
+	{
+		return;
+	}
+	
 	// update
-	texdef._scale[0] += s;
-	texdef._scale[1] += t;
+	texdef._scale[0] = newXScale;
+	texdef._scale[1] = newYScale;
 	
 	// compute new normalized texture matrix
 	*this = BrushPrimitTexDef(texdef);
