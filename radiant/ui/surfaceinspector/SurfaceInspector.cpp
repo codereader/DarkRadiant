@@ -61,7 +61,7 @@ namespace ui {
 		
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 		
-		const float MAX_FLOAT_RESOLUTION = 0.0001f;
+		const double MAX_FLOAT_RESOLUTION = 1.0E-5;
 	}
 
 SurfaceInspector::SurfaceInspector() :
@@ -453,11 +453,11 @@ void SurfaceInspector::updateTexDef() {
 	}
 	
 	// Snap the floating point variables to the max resolution to avoid things like "1.45e-14"
-	texdef._shift[0] = float_snapped(texdef._shift[0], MAX_FLOAT_RESOLUTION);
-	texdef._shift[1] = float_snapped(texdef._shift[1], MAX_FLOAT_RESOLUTION);
-	texdef._scale[0] = float_snapped(texdef._scale[0], MAX_FLOAT_RESOLUTION);
-	texdef._scale[1] = float_snapped(texdef._scale[1], MAX_FLOAT_RESOLUTION);
-	texdef._rotate = float_snapped(texdef._rotate, MAX_FLOAT_RESOLUTION);
+	texdef._shift[0] = float_snapped(static_cast<double>(texdef._shift[0]), MAX_FLOAT_RESOLUTION);
+	texdef._shift[1] = float_snapped(static_cast<double>(texdef._shift[1]), MAX_FLOAT_RESOLUTION);
+	texdef._scale[0] = float_snapped(static_cast<double>(texdef._scale[0]), MAX_FLOAT_RESOLUTION);
+	texdef._scale[1] = float_snapped(static_cast<double>(texdef._scale[1]), MAX_FLOAT_RESOLUTION);
+	texdef._rotate = float_snapped(static_cast<double>(texdef._rotate), MAX_FLOAT_RESOLUTION);
 	
 	// Disable the callbacks
 	disconnectValueChanged();
