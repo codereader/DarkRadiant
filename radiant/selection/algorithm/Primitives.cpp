@@ -36,6 +36,30 @@ Patch& getLastSelectedPatch() {
 	}
 }
 
+class SelectedPatchFinder
+{
+	// The target list that gets populated
+	PatchPtrVector& _vector;
+public:
+	SelectedPatchFinder(PatchPtrVector& targetVector) :
+		_vector(targetVector)
+	{}
+	
+	void operator()(PatchInstance& patchInstance) const {
+		_vector.push_back(&patchInstance.getPatch());
+	}
+};
+
+PatchPtrVector getSelectedPatches() {
+	PatchPtrVector returnVector;
+	
+	Scene_forEachSelectedPatch(
+		SelectedPatchFinder(returnVector)
+	);
+	
+	return returnVector;
+}
+
 Face& getLastSelectedFace() {
 	if (selectedFaceCount() == 1) {
 		return g_SelectedFaceInstances.last().getFace();

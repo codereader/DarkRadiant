@@ -5,17 +5,6 @@
 namespace selection {
 	namespace textool {
 
-// Adds the given TexToolItem as child of this object
-void PatchControlVertex::addChild(TexToolItemPtr child) {
-	_children.push_back(child);
-}
-
-/** greebo: Returns the vector reference of this object's children.
- */
-TexToolItemVec& PatchControlVertex::getChildren() {
-	return _children;
-}
-
 // Gets the AABB of this object in texture space
 AABB PatchControlVertex::getExtents() {
 	return AABB();

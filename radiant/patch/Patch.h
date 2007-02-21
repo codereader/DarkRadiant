@@ -1,6 +1,8 @@
 #ifndef PATCHCLASS_H_
 #define PATCHCLASS_H_
 
+#include <vector>
+
 #include "xml/ixml.h"
 #include "transformlib.h"
 #include "scenelib.h"
@@ -384,5 +386,6 @@ public:
 	~Patch();
 }; // end class Patch
 
+typedef std::vector<Patch*> PatchPtrVector;
 
 #endif /*PATCHCLASS_H_*/
