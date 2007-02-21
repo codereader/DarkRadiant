@@ -168,7 +168,7 @@ void TexTool::selectionChanged() {
 			for (std::size_t i = 0; i < patchList.size(); i++) {
 				// Allocate a new PatchItem on the heap (shared_ptr)
 				selection::textool::TexToolItemPtr patchItem(
-					new selection::textool::PatchItem(*patchList[0])
+					new selection::textool::PatchItem(*patchList[i])
 				);
 				
 				// Add it to the list
@@ -215,8 +215,14 @@ Vector2 TexTool::getTextureCoords(const double& x, const double& y) {
 }
 
 void TexTool::drawUVCoords() {
+	
+	// Cycle through the items and tell them to render themselves
+	for (unsigned int i = 0; i < _items.size(); i++) {
+		_items[i]->render();
+	}
+	
 	// Check for valid winding
-	if (_winding != NULL) {
+	/*if (_winding != NULL) {
 		
 		// Draw the Line Loop polygon representing the polygon
 		glBegin(GL_LINE_LOOP);
@@ -238,20 +244,7 @@ void TexTool::drawUVCoords() {
 		}
 		
 		glEnd();
-	}
-	
-	// Check for valid patch
-	if (_patch != NULL) {
-		glPointSize(5);
-		glBegin(GL_POINTS);
-		glColor3f(1, 1, 1);
-		
-		for (PatchControlIter i = _patch->begin(); i != _patch->end(); i++) {
-			glVertex2f(i->m_texcoord[0], i->m_texcoord[1]);
-		}
-		
-		glEnd();
-	}
+	}*/
 }
 
 bool TexTool::testSelectPoint(const Vector2& coords) {
@@ -264,17 +257,29 @@ bool TexTool::testSelectPoint(const Vector2& coords) {
 	testRectangle.topLeft[1] = coords[1] - _texSpaceAABB.extents[1]*0.01;
 	testRectangle.bottomRight[0] = coords[0] + _texSpaceAABB.extents[0]*0.01; 
 	testRectangle.bottomRight[1] = coords[1] + _texSpaceAABB.extents[1]*0.01;
-	
+
+	// Cycle through all the items and ask them to deliver the list of selectables
+	// residing within the test rectangle	
 	for (unsigned int i = 0; i < _items.size(); i++) {
-		// Expand the selection AABB by the extents of the item
+		// Get the list from each item
 		selection::textool::TexToolItemVec found = 
 			_items[i]->getSelectables(testRectangle);
 		
-		// Join the two vectors
+		// and join the two vectors
 		selectables.insert(selectables.end(), found.begin(), found.end());
 	}
 	
-	globalOutputStream() << "Total selectables: " << selectables.size() << "\n"; 
+	// Now go through the result and toggle all of the found selectables
+	for (unsigned int i = 0; i < selectables.size(); i++) {
+		// Toggle the selection of the found selectables
+		selectables[i]->toggle();
+	}
+	
+	// Return TRUE if there happened anything
+	if (selectables.size() > 0) {
+		draw();
+		return true;
+	}
 	
 	return false;
 }
