@@ -48,10 +48,9 @@ public:
 		// use the c_volumeOutside state to ensure it is not rendered.
 		Entity* entity = Node_getEntity(path.top());
 		if (entity) {
-			const IEntityClass& eclass = entity->getEntityClass();
-			if (!GlobalFilterSystem().isVisible("entityclass", 
-												eclass.getName())) 
-			{
+			IEntityClassConstPtr eclass = entity->getEntityClass();
+			std::string name = eclass->getName();
+			if (!GlobalFilterSystem().isVisible("entityclass", name)) {
 				visible = c_volumeOutside;
 			}
 		}

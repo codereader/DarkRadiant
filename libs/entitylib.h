@@ -465,7 +465,7 @@ private:
   static EntityCreator::KeyValueChangedFunc m_entityKeyValueChanged;
   static Counter* m_counter;
 
-  IEntityClassPtr m_eclass;
+  IEntityClassConstPtr m_eclass;
 
   class KeyContext{};
   typedef Static<StringPool, KeyContext> KeyPool;
@@ -576,7 +576,7 @@ public:
   }
   EntityKeyValues(const EntityKeyValues& other) :
     Entity(other),
-    m_eclass(&other.getEntityClass()),
+    m_eclass(other.getEntityClass()),
     m_undo(m_keyValues, UndoImportCaller(*this)),
     m_instanced(false),
     m_observerMutex(false),
@@ -682,8 +682,8 @@ public:
 
 	/** Return the EntityClass associated with this entity.
 	 */
-	IEntityClass& getEntityClass() const {
-		return *m_eclass;
+	IEntityClassConstPtr getEntityClass() const {
+		return m_eclass;
 	}
 	
   void forEachKeyValue(Visitor& visitor) const

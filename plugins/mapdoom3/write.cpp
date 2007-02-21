@@ -173,8 +173,8 @@ public:
 			// the Doom 3 editor, do so here.
 			if (_writeDummyBrushes 
 				&& _brushCount == 0
-				&& ent->getEntityClass().isFixedSize()
-				&& !ent->getEntityClass().isLight()) 
+				&& ent->getEntityClass()->isFixedSize()
+				&& !ent->getEntityClass()->isLight()) 
 			{
 				_outStream << DUMMY_BRUSH;
 			}

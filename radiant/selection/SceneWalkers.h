@@ -13,7 +13,8 @@
 inline AABB Instance_getPivotBounds(scene::Instance& instance) {
 	Entity* entity = Node_getEntity(instance.path().top());
 	if (entity != 0
-		&& (entity->getEntityClass().isFixedSize() || !node_is_group(instance.path().top())))
+		&& (entity->getEntityClass()->isFixedSize() 
+			|| !node_is_group(instance.path().top())))
 	{
 		Editable* editable = Node_getEditable(instance.path().top());
 		if (editable != 0) {

@@ -220,7 +220,7 @@ void LightInspector::show() {
 	// Check the EntityClass to ensure it is a light, otherwise abort
 	Entity* e = NodeTypeCast<Entity>::cast(s.ultimateSelected().path().top());
 	if (e == NULL 							// not an entity
-		|| !e->getEntityClass().isLight())	// not a light
+		|| !e->getEntityClass()->isLight())	// not a light
 	{
 		gtkutil::errorDialog("The selected entity must be a light.",
 							 MainFrame_getWindow());

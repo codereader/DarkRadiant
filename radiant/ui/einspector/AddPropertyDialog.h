@@ -7,6 +7,7 @@
 #include <gtk/gtktreeselection.h>
 
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 /* FORWARD DECLS */
 class IEntityClass;
@@ -37,7 +38,7 @@ class AddPropertyDialog
 	std::string _selectedProperty;
 	
 	// EntityClass to query for def-defined custom keyvals
-	const IEntityClass& _eclass;
+	boost::shared_ptr<const IEntityClass> _eclass;
 	
 private:
 
@@ -59,7 +60,7 @@ private:
 	/* Private constructor creates the dialog widgets. Accepts an EntityClass
 	 * to use for populating class-specific keys.
 	 */
-	AddPropertyDialog(const IEntityClass& eclass);
+	AddPropertyDialog(boost::shared_ptr<const IEntityClass> eclass);
 	
 public:
 
@@ -74,7 +75,8 @@ public:
 	 * @returns
 	 * String name of the chosen property (e.g. "light_radius").
 	 */
-	static std::string chooseProperty(const IEntityClass& eclass);
+	static std::string chooseProperty(
+		boost::shared_ptr<const IEntityClass> eclass);
 
 };
 
