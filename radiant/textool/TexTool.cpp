@@ -17,6 +17,9 @@
 #include "patch/Patch.h"
 #include "winding.h"
 
+#include "textool/Selectable.h"
+#include "textool/Transformable.h"
+
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Shader.h"
 
