@@ -4,12 +4,12 @@
 #include "gtk/gtkwidget.h"
 #include "gtkutil/WindowPosition.h"
 #include "math/Vector3.h"
+#include "math/AABB.h"
 #include "ishaders.h"
 #include "iselection.h"
 
 class Winding;
 class Patch;
-class AABB;
 
 namespace ui {
 
@@ -25,9 +25,6 @@ class TexTool :
 	// GL widget
 	GtkWidget* _glWidget;
 	
-	// The two vectors defining the visible area
-	Vector3 _extents[2];
-	
 	// The shader we're working with (shared ptr)
 	IShaderPtr _shader;
 	
@@ -36,6 +33,15 @@ class TexTool :
 	
 	// A reference to the SelectionInfo structure (with the counters)
 	const SelectionInfo& _selectionInfo;
+	
+	// The extents of the selected objects in texture space
+	AABB _selAABB;
+	
+	// The extents of the visible rectangle in texture space
+	AABB _texSpaceAABB;
+	
+	// The dimensions of the GL widget in pixels.
+	Vector2 _windowDims;
 	
 public:
 	TexTool();
@@ -72,10 +78,10 @@ private:
 	/** greebo: Calculates the extents the selection has in
 	 * texture space.
 	 * 
-	 * @returns: the AABB with the z-component set to 0.
+	 * @returns: the reference to the internal AABB with the z-component set to 0.
 	 * 			 Can return an invalid AABB as well (if no selection was found). 
 	 */
-	AABB getExtents();
+	AABB& getExtents();
 	
 	/** greebo: Visualises the U/V coordinates by drawing the points
 	 * into the "texture space".
@@ -86,12 +92,19 @@ private:
 	 * selectionsystem and prepares the member variables for drawing. 
 	 */
 	void update();
+	
+	/** greebo: Converts the mouse/window coordinates into texture coords
+	 */
+	Vector2 getTextureCoords(const double& x, const double& y);
 
 	// The callback for the delete event (toggles the visibility)
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, TexTool* self);
 	static gboolean onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self);
 	static gboolean triggerRedraw(GtkWidget* widget, GdkEventFocus* event, TexTool* self);
 	
+	// The callbacks for capturing the mouse events
+	static gboolean onMouseUp(GtkWidget* widget, GdkEventButton* event, TexTool* self);
+	static gboolean onMouseDown(GtkWidget* widget, GdkEventButton* event, TexTool* self);
 }; // class TexTool
 
 } // namespace ui

@@ -35,9 +35,6 @@ TexTool::TexTool() :
 	_patch(NULL),
 	_selectionInfo(GlobalSelectionSystem().getSelectionInfo())
 {
-	_extents[0] = Vector3(-1.0f, -1.0f, 0.0f);
-	_extents[1] = -_extents[0];
-	
 	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
 	_window = gtkutil::TransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
 	
@@ -72,8 +69,11 @@ void TexTool::populateWindow() {
 	GtkWidget* frame = gtkutil::FramedWidget(_glWidget);
 		
 	// Connect the events
+	gtk_widget_set_events(_glWidget, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK);
 	g_signal_connect(G_OBJECT(_glWidget), "expose-event", G_CALLBACK(onExpose), this);
 	g_signal_connect(G_OBJECT(_glWidget), "focus-in-event", G_CALLBACK(triggerRedraw), this);
+	g_signal_connect(G_OBJECT(_glWidget), "button-press-event", G_CALLBACK(onMouseDown), this);
+	g_signal_connect(G_OBJECT(_glWidget), "button-release-event", G_CALLBACK(onMouseUp), this);
 	
 	// Make the GL widget accept the global shortcuts
 	GlobalEventManager().connect(GTK_OBJECT(_glWidget));
@@ -158,24 +158,42 @@ void TexTool::draw() {
 	gtk_widget_queue_draw(_glWidget);
 }
 
-AABB TexTool::getExtents() {
-	AABB extents;
+AABB& TexTool::getExtents() {
+	_selAABB = AABB();
 	
 	// Check for valid winding
 	if (_winding != NULL) {
 		for (Winding::iterator i = _winding->begin(); i != _winding->end(); i++) {
-			extents.includePoint(Vector3(i->texcoord[0], i->texcoord[1], 0));
+			_selAABB.includePoint(Vector3(i->texcoord[0], i->texcoord[1], 0));
 		}
 	}
 	
 	// Check for valid winding
 	if (_patch != NULL) {
 		for (PatchControlIter i = _patch->begin(); i != _patch->end(); i++) {
-			extents.includePoint(Vector3(i->m_texcoord[0], i->m_texcoord[1], 0));
+			_selAABB.includePoint(Vector3(i->m_texcoord[0], i->m_texcoord[1], 0));
 		}
 	}
 	
-	return extents;
+	return _selAABB;
+}
+
+Vector2 TexTool::getTextureCoords(const double& x, const double& y) {
+	Vector2 result;
+	
+	if (_selAABB.isValid()) {
+		Vector3 aabbTL = _texSpaceAABB.origin - _texSpaceAABB.extents;
+		Vector3 aabbBR = _texSpaceAABB.origin + _texSpaceAABB.extents;
+		
+		Vector2 topLeft(aabbTL[0], aabbTL[1]);
+		Vector2 bottomRight(aabbBR[0], aabbBR[1]);
+		
+		// Determine the texcoords by the according proportionality factors
+		result[0] = topLeft[0] + x * (bottomRight[0]-topLeft[0]) / _windowDims[0];
+		result[1] = topLeft[1] + y * (bottomRight[1]-topLeft[1]) / _windowDims[1];
+	}
+	
+	return result;
 }
 
 void TexTool::drawUVCoords() {
@@ -219,18 +237,24 @@ void TexTool::drawUVCoords() {
 }
 
 gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self) {
+	// Update the information about the current selection 
 	self->update();
 	
 	// Activate the GL widget
 	gtkutil::GLWidgetSentry sentry(self->_glWidget);
 	
-	glClearColor(0.1f, 0.1f, 0.1f, 0);
-	glViewport(0, 0, event->area.width, event->area.height);
+	// Store the window dimensions for later calculations
+	self->_windowDims = Vector2(event->area.width, event->area.height);
 	
+	// Initialise the viewport
+	glViewport(0, 0, event->area.width, event->area.height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	
+	// Clear the window with the specified background colour
+	glClearColor(0.1f, 0.1f, 0.1f, 0); 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 	
@@ -240,14 +264,19 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 		return false;
 	}
 	
-	AABB texAABB = self->getExtents();
+	AABB& selAABB = self->getExtents(); 
 	
-	if (!texAABB.isValid()) {
+	// Is there a valid selection?
+	if (!selAABB.isValid()) {
 		return false;
 	}
 	
-	Vector3 orthoTopLeft = texAABB.origin - texAABB.extents * 1.5;
-	Vector3 orthoBottomRight = texAABB.origin + texAABB.extents * 1.5;
+	// Calculate the window extents
+	self->_texSpaceAABB = AABB(selAABB.origin, selAABB.extents * 1.5);
+	
+	// Get the upper left and lower right corner coordinates
+	Vector3 orthoTopLeft = self->_texSpaceAABB.origin - self->_texSpaceAABB.extents;
+	Vector3 orthoBottomRight = self->_texSpaceAABB.origin + self->_texSpaceAABB.extents;
 	
 	// Initialise the 2D projection matrix with: left, right, bottom, top, znear, zfar 
 	glOrtho(orthoTopLeft[0], 	// left 
@@ -311,6 +340,17 @@ gboolean TexTool::onDelete(GtkWidget* widget, GdkEvent* event, TexTool* self) {
 	
 	// Don't propagate the delete event
 	return true;
+}
+	
+gboolean TexTool::onMouseUp(GtkWidget* widget, GdkEventButton* event, TexTool* self) {
+	return false;
+}
+
+gboolean TexTool::onMouseDown(GtkWidget* widget, GdkEventButton* event, TexTool* self) {
+	globalOutputStream() << "Coords: " << event->x << "," << event->y << "\n";
+	Vector2 texCoords = self->getTextureCoords(event->x, event->y);
+	globalOutputStream() << "TexSpace: " << texCoords[0] << ", " << texCoords[1] << "\n";
+	return false;
 }
 	
 } // namespace ui
