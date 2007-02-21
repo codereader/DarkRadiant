@@ -13,13 +13,6 @@ class PatchControlVertex :
 	TexToolItemVec _children;
 
 public:
-	// Adds the given TexToolItem as child of this object
-	void addChild(TexToolItemPtr child);
-	
-	/** greebo: Returns the vector reference of this object's children.
-	 */
-	TexToolItemVec& getChildren();
-	
 	// Gets the AABB of this object in texture space
 	AABB getExtents();
 

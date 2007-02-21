@@ -7,6 +7,7 @@
 #include <GL/glew.h>
 
 #include "texturelib.h"
+#include "selectionlib.h"
 #include "gtkutil/TransientWindow.h"
 #include "gtkutil/FramedWidget.h"
 #include "gtkutil/glwidget.h"
@@ -152,6 +153,22 @@ void TexTool::update() {
 }
 
 void TexTool::selectionChanged() {
+	std::string selectedShader = selection::algorithm::getShaderFromSelection();
+	
+	// Multiple shaders (or nothing selected), clear the list
+	_items.clear();
+	
+	// Does the selection use one single shader?
+	if (selectedShader != "") {
+		if (_selectionInfo.patchCount > 0) {
+			// One single named shader, get the selection list
+			PatchPtrVector patchList = selection::algorithm::getSelectedPatches();
+			globalOutputStream() << patchList.size() << " patches selected!\n";
+			
+			globalOutputStream() << patchList[0]->getWidth() << "x" << patchList[0]->getHeight() << "\n";
+		}
+	}
+	
 	draw();
 }
 

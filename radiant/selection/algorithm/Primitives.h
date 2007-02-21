@@ -3,9 +3,11 @@
 
 #include <string>
 #include <stdexcept>
+#include <vector>
 
 class Face;
 class Patch;
+typedef std::vector<Patch*> PatchPtrVector; 
 
 namespace selection {
 	
@@ -43,6 +45,13 @@ namespace selection {
 	 * @returns: a reference to the patch.
 	 */
 	Patch& getLastSelectedPatch();
+	
+	/** greebo: Retrieves a list of selected Patches, populated
+	 * by a scene walker.
+	 *
+	 * @returns: the vector with the selected patch pointers.
+	 */
+	PatchPtrVector getSelectedPatches();
 
 	} // namespace algorithm
 } // namespace selection

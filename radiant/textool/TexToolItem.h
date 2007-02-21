@@ -28,18 +28,26 @@ class TexToolItem :
 	public Renderable,
 	public Transformable
 {
+protected:
+	// The list of children of this object
+	TexToolItemVec _children;
+
 public:
 	/** greebo: Adds the given TexToolItem as child of this Item.
 	 * 
 	 * Any transformations will affect the children as well. 
 	 */
-	virtual void addChild(TexToolItemPtr child) = 0;
+	virtual void addChild(TexToolItemPtr child) {
+		_children.push_back(child);
+	}
 	
 	/** greebo: Returns the vector of children of this object.
 	 * 
 	 * A reference to the internal list of this object is returned. 
 	 */
-	virtual TexToolItemVec& getChildren() = 0;
+	virtual TexToolItemVec& getChildren() {
+		return _children;
+	}
 	
 	virtual AABB getExtents() = 0;
 };
