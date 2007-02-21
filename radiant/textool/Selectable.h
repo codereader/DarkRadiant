@@ -1,8 +1,21 @@
 #ifndef TEXTOOL_SELECTABLE_H_
 #define TEXTOOL_SELECTABLE_H_
 
+#include "math/Vector2.h"
+
 namespace selection {
-	namespace textool {
+
+
+/** greebo: A structure defining a 2D rectangular shape 
+ * 			by specifying the top left and the 
+ * 			bottom right corner coordinates.
+ */
+struct Rectangle {
+	Vector2 topLeft;
+	Vector2 bottomRight;
+};
+
+namespace textool {
 
 class Selectable 
 {
@@ -15,12 +28,13 @@ public:
 		_selected(false)
 	{}
 
-	/** greebo: Tests if this can be selected at the given s/t coordinates.
+	/** greebo: Tests if this can be selected within the given 
+	 * 			rectangle (s/t coordinates).
 	 * 
-	 * @returns: TRUE if the selectable corresponds to 
-	 * 			 the given coords, FALSE otherwise.
+	 * @returns: TRUE if the selectable responds to 
+	 * 			 the given rectangle, FALSE otherwise.
 	 */
-	virtual bool testSelect(const float s, const float& t) = 0;
+	virtual bool testSelect(const Rectangle& rectangle) = 0;
 	
 	/** greebo: Sets the selection status to <selected>
 	 */
@@ -42,7 +56,8 @@ public:
  
 }; // class Selectable
 
-	} // namespace TexTool
+} // namespace TexTool
+
 } // namespace selection
 
 #endif /*TEXTOOL_SELECTABLE_H_*/

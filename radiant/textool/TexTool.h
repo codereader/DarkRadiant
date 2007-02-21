@@ -102,6 +102,12 @@ private:
 	 */
 	Vector2 getTextureCoords(const double& x, const double& y);
 
+	/** greebo: Returns TRUE if anything can be selected at the 
+	 * given texture coordinates (a small rectangle is constructed
+	 * to perform the selection test), FALSE otherwise.
+	 */
+	bool testSelectPoint(const Vector2& coords);
+
 	// The callback for the delete event (toggles the visibility)
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, TexTool* self);
 	static gboolean onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self);
