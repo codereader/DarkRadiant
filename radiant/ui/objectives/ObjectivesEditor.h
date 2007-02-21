@@ -34,6 +34,9 @@ private:
 	// Show dialog widgets
 	void show();
 	
+	// Populate the dialog widgets with appropriate state from the map
+	void populateWidgets();
+	
 public:
 	
 	/**

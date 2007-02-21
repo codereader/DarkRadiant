@@ -1,6 +1,9 @@
 #include "ObjectivesEditor.h"
+#include "ObjectiveEntityFinder.h"
 
+#include "iscenegraph.h"
 #include "mainframe.h"
+#include "scenelib.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/RightAlignment.h"
@@ -18,7 +21,7 @@ namespace {
 	const char* DIALOG_TITLE = "Mission objectives"; 	
 	
 	// TODO: This should be in the .game file
-	const char* OBJECTIVE_ENTITY_CLASS = "target_addobjectives";
+	const char* OBJECTIVE_ENTITY_CLASS = "target_tdm_addobjectives";
 	
 }
 
@@ -117,7 +120,21 @@ GtkWidget* ObjectivesEditor::createButtons () {
 
 // Show the dialog
 void ObjectivesEditor::show() {
-	gtk_widget_show_all(_widget);	
+	gtk_widget_show_all(_widget);
+	populateWidgets();
+}
+
+// Populate widgets with map data
+void ObjectivesEditor::populateWidgets() {
+
+	// Use an ObjectiveEntityFinder to walk the map and add any objective
+	// entities to the list
+	gtk_list_store_clear(_objectiveEntityList);
+	ObjectiveEntityFinder finder(_objectiveEntityList, OBJECTIVE_ENTITY_CLASS);
+	
+	scene::Traversable* root = Node_getTraversable(GlobalSceneGraph().root());
+	assert(root); // root should always be traversable
+	root->traverse(finder);
 }
 
 // Static method to display dialog
