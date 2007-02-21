@@ -5,6 +5,7 @@
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/TextColumn.h"
 
 #include <gtk/gtk.h>
 
@@ -16,11 +17,15 @@ namespace {
 
 	const char* DIALOG_TITLE = "Mission objectives"; 	
 	
+	// TODO: This should be in the .game file
+	const char* OBJECTIVE_ENTITY_CLASS = "target_addobjectives";
+	
 }
 
 // Constructor creates widgets
 ObjectivesEditor::ObjectivesEditor()
-: _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL))
+: _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
+  _objectiveEntityList(gtk_list_store_new(1, G_TYPE_STRING))
 {
 	// Window properties
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), MainFrame_getWindow());
@@ -66,9 +71,13 @@ GtkWidget* ObjectivesEditor::createEntitiesPanel() {
 	
 	// Hbox containing the entity list and the buttons vbox
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(hbx),
-					   gtkutil::ScrolledFrame(gtk_tree_view_new()),
-					   TRUE, TRUE, 0);
+	
+	// Tree view listing the target_addobjectives entities
+	GtkWidget* tv = 
+		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_objectiveEntityList));
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tv), FALSE);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("", 0));
+	gtk_box_pack_start(GTK_BOX(hbx), gtkutil::ScrolledFrame(tv), TRUE, TRUE, 0);
 					   
 	// Vbox for the buttons
 	GtkWidget* buttonBox = gtk_vbox_new(FALSE, 6);

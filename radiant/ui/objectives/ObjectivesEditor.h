@@ -2,6 +2,7 @@
 #define OBJECTIVESEDITOR_H_
 
 #include <gtk/gtkwidget.h>
+#include <gtk/gtkliststore.h>
 
 namespace ui
 {
@@ -13,6 +14,9 @@ class ObjectivesEditor
 {
 	// Dialog window
 	GtkWidget* _widget;
+
+	// List of target_addobjectives entities
+	GtkListStore* _objectiveEntityList;
 
 private:
 
