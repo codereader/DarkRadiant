@@ -211,16 +211,10 @@ public:
   }
   value_type& operator()(std::size_t x, std::size_t y)
   {
-#if defined(_DEBUG)
-    ASSERT_MESSAGE(x < m_x && y < m_y, "array index out of bounds");
-#endif
     return m_data[x * m_y + y];
   }
   const value_type& operator()(std::size_t x, std::size_t y) const
   {
-#if defined(_DEBUG)
-    ASSERT_MESSAGE(x < m_x && y < m_y, "array index out of bounds");
-#endif
     return m_data[x * m_y + y];
   }
   value_type* data()
