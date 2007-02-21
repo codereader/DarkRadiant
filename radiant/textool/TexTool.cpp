@@ -254,6 +254,31 @@ void TexTool::drawUVCoords() {
 	}
 }
 
+bool TexTool::testSelectPoint(const Vector2& coords) {
+	selection::textool::TexToolItemVec selectables;
+	
+	// Construct a test rectangle with 2% of the width/height
+	// of the visible texture space
+	selection::Rectangle testRectangle;
+	testRectangle.topLeft[0] = coords[0] - _texSpaceAABB.extents[0]*0.01; 
+	testRectangle.topLeft[1] = coords[1] - _texSpaceAABB.extents[1]*0.01;
+	testRectangle.bottomRight[0] = coords[0] + _texSpaceAABB.extents[0]*0.01; 
+	testRectangle.bottomRight[1] = coords[1] + _texSpaceAABB.extents[1]*0.01;
+	
+	for (unsigned int i = 0; i < _items.size(); i++) {
+		// Expand the selection AABB by the extents of the item
+		selection::textool::TexToolItemVec found = 
+			_items[i]->getSelectables(testRectangle);
+		
+		// Join the two vectors
+		selectables.insert(selectables.end(), found.begin(), found.end());
+	}
+	
+	globalOutputStream() << "Total selectables: " << selectables.size() << "\n"; 
+	
+	return false;
+}
+
 gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self) {
 	// Update the information about the current selection 
 	self->update();
@@ -363,13 +388,16 @@ gboolean TexTool::onDelete(GtkWidget* widget, GdkEvent* event, TexTool* self) {
 }
 	
 gboolean TexTool::onMouseUp(GtkWidget* widget, GdkEventButton* event, TexTool* self) {
+	Vector2 texCoords = self->getTextureCoords(event->x, event->y);
+	
+	self->testSelectPoint(texCoords);
+	
 	return false;
 }
 
 gboolean TexTool::onMouseDown(GtkWidget* widget, GdkEventButton* event, TexTool* self) {
-	globalOutputStream() << "Coords: " << event->x << "," << event->y << "\n";
-	Vector2 texCoords = self->getTextureCoords(event->x, event->y);
-	globalOutputStream() << "TexSpace: " << texCoords[0] << ", " << texCoords[1] << "\n";
+	
+	
 	return false;
 }
 	

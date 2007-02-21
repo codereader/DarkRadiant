@@ -50,6 +50,11 @@ public:
 	}
 	
 	virtual AABB getExtents() = 0;
+	
+	/** greebo: Returns a list of selectable items that correspond
+	 * to the given coords. 
+	 */
+	virtual TexToolItemVec getSelectables(const Rectangle& rectangle) = 0;
 };
 
 	} // namespace textool

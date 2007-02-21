@@ -28,8 +28,14 @@ void PatchVertexItem::transform(const Matrix4& transform) {
 	
 }
 
-bool PatchVertexItem::testSelect(const float s, const float& t) {
+bool PatchVertexItem::testSelect(const Rectangle& rectangle) {
 	return false;
+}
+
+TexToolItemVec PatchVertexItem::getSelectables(const Rectangle& rectangle) {
+	TexToolItemVec returnVector;
+	
+	return returnVector;
 }
 
 	} // namespace TexTool
