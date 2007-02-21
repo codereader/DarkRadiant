@@ -198,8 +198,6 @@ GtkWidget* LightInspector::createButtons() {
 	gtk_box_pack_end(GTK_BOX(hbx), okButton, TRUE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
 
-	gtk_window_add_mnemonic(GTK_WINDOW(_widget), GDK_Escape, cancelButton);
-
 	return gtkutil::RightAlignment(hbx);
 }
 
