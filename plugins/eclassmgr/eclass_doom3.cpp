@@ -298,12 +298,6 @@ IEntityClassPtr EntityClassDoom3_findOrInsert(const std::string& name,
     return inserted;
 }
 
-const ListAttributeType* EntityClassDoom3_findListType(const char* name)
-{
-  return 0;
-}
-
-
 //void EntityClass_resolveInheritance(EntityClass* derivedClass)
 //{
 //  if(derivedClass->inheritanceResolved == false)
@@ -488,7 +482,6 @@ public:
         EntityClassDoom3_construct();
     
         m_eclassmanager.findOrInsert = &EntityClassDoom3_findOrInsert;
-        m_eclassmanager.findListType = &EntityClassDoom3_findListType;
         m_eclassmanager.forEach = &EntityClassDoom3_forEach;
         m_eclassmanager.attach = &EntityClassDoom3_attach;
         m_eclassmanager.detach = &EntityClassDoom3_detach;
