@@ -2,19 +2,21 @@
 
 #include <gtk/gtk.h>
 #include "ieventmanager.h"
+
 #include "gtkutil/TransientWindow.h"
 #include "gtkutil/ControlButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/dialog.h"
-#include "selectionlib.h"
-#include "mainframe.h"
-#include "math/FloatTools.h"
-#include "ui/textool/TexTool.h"
 
+#include "selectionlib.h"
+#include "math/FloatTools.h"
+
+#include "ui/textool/TexTool.h"
 #include "brush/TextureProjection.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Shader.h"
+#include "mainframe.h"
 
 namespace ui {
 
@@ -160,6 +162,7 @@ void SurfaceInspector::connectEvents() {
 	g_signal_connect(G_OBJECT(_flipTexture.flipX), "clicked", G_CALLBACK(doUpdate), this);
 	g_signal_connect(G_OBJECT(_flipTexture.flipY), "clicked", G_CALLBACK(doUpdate), this);
 	g_signal_connect(G_OBJECT(_applyTex.natural), "clicked", G_CALLBACK(doUpdate), this);
+	g_signal_connect(G_OBJECT(_defaultTexScale), "value-changed", G_CALLBACK(onDefaultScaleChanged), this);
 	
 	for (ManipulatorMap::iterator i = _manipulators.begin(); i != _manipulators.end(); i++) {
 		GtkWidget* smaller = *(i->second.smaller);
@@ -550,6 +553,12 @@ void SurfaceInspector::fitTexture() {
 		// Invalid repeatX && repeatY values
 		gtkutil::errorDialog("Both fit values must be > 0.0.", GTK_WINDOW(_dialog));
 	}
+}
+
+gboolean SurfaceInspector::onDefaultScaleChanged(GtkSpinButton* spinbutton, SurfaceInspector* self) {
+	// Tell the class instance to save its contents into the registry
+	self->saveToRegistry();
+	return false;
 }
 
 void SurfaceInspector::onStepChanged(GtkEditable* editable, SurfaceInspector* self) {

@@ -1,17 +1,20 @@
 #ifndef SURFACEINSPECTOR_H_
 #define SURFACEINSPECTOR_H_
 
-#include <gtk/gtkwidget.h>
-#include <gtk/gtktable.h>
-#include <gtk/gtkeditable.h>
 #include <map>
 #include "iselection.h"
 #include "iregistry.h"
-#include "gtkutil/RegistryConnector.h"
-#include "gtkutil/ControlButton.h"
 #include "gtkutil/WindowPosition.h"
+#include "gtkutil/RegistryConnector.h"
 
 #include <boost/shared_ptr.hpp>
+
+// Forward declarations to decrease compile times
+typedef struct _GtkSpinButton GtkSpinButton;
+typedef struct _GtkEditable GtkEditable;
+typedef struct _GtkTable GtkTable;
+typedef struct _GtkWidget GtkWidget;
+namespace gtkutil { class ControlButton; }
 
 namespace ui {
 
@@ -160,6 +163,7 @@ private:
 	
 	// Gets called when the value entry field is changed (shift/scale/rotation) - emits the texcoords
 	static void onValueChanged(GtkEditable* editable, SurfaceInspector* self);
+	static gboolean onDefaultScaleChanged(GtkSpinButton* spinbutton, SurfaceInspector* self);
 	
 	// The callback for the Fit Texture button
 	static gboolean onFit(GtkWidget* widget, SurfaceInspector* self);
