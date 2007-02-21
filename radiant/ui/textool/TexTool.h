@@ -4,7 +4,7 @@
 #include "gtk/gtkwidget.h"
 #include "gtkutil/WindowPosition.h"
 #include "math/Vector3.h"
-#include "math/AABB.h"
+#include "math/aabb.h"
 #include "ishaders.h"
 #include "iselection.h"
 
