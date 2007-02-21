@@ -76,7 +76,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "textureentry.h"
 
 #include "ui/surfaceinspector/SurfaceInspector.h"
-#include "ui/textool/TexTool.h"
+#include "textool/TexTool.h"
 #include "brush/BrushInstance.h"
 #include "brush/Face.h"
 

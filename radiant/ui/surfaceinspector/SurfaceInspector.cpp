@@ -12,7 +12,7 @@
 #include "selectionlib.h"
 #include "math/FloatTools.h"
 
-#include "ui/textool/TexTool.h"
+#include "textool/TexTool.h"
 #include "brush/TextureProjection.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Shader.h"
