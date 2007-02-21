@@ -24,6 +24,9 @@ private:
 	GtkWidget* createObjectivesPanel();
 	GtkWidget* createButtons();
 	
+	// GTK callbacks
+	static void _onCancel(GtkWidget* w, ObjectivesEditor* self);
+	
 	// Show dialog widgets
 	void show();
 	

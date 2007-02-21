@@ -32,7 +32,7 @@ ObjectivesEditor::ObjectivesEditor()
 	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
 	gtk_window_set_default_size(GTK_WINDOW(_widget), 
 								gint(gdk_screen_get_width(scr) * 0.5), 
-								-1);
+								gint(gdk_screen_get_height(scr) * 0.6));
     
     // Widget must hide not destroy when closed
     g_signal_connect(G_OBJECT(_widget), 
@@ -53,7 +53,7 @@ ObjectivesEditor::ObjectivesEditor()
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(mainVbx),
 					   gtkutil::LeftAlignment(createObjectivesPanel(), 18, 1.0),
-					   FALSE, FALSE, 0);
+					   TRUE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(mainVbx), createButtons(), FALSE, FALSE, 0);
 					   
 	// Add vbox to dialog
@@ -63,7 +63,24 @@ ObjectivesEditor::ObjectivesEditor()
 
 // Create the objects panel (for manipulating the target_addobjectives objects)
 GtkWidget* ObjectivesEditor::createEntitiesPanel() {
-	return gtkutil::ScrolledFrame(gtk_tree_view_new());
+	
+	// Hbox containing the entity list and the buttons vbox
+	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(hbx),
+					   gtkutil::ScrolledFrame(gtk_tree_view_new()),
+					   TRUE, TRUE, 0);
+					   
+	// Vbox for the buttons
+	GtkWidget* buttonBox = gtk_vbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(buttonBox),
+					   gtk_button_new_from_stock(GTK_STOCK_ADD),
+					   TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonBox),
+					   gtk_button_new_from_stock(GTK_STOCK_DELETE),
+					   TRUE, TRUE, 0);
+					   
+	gtk_box_pack_start(GTK_BOX(hbx), buttonBox, FALSE, FALSE, 0);
+	return hbx;
 }
 
 // Create the main objective editing widgets
@@ -77,6 +94,11 @@ GtkWidget* ObjectivesEditor::createButtons () {
 
 	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
 	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+	
+	g_signal_connect(
+		G_OBJECT(okButton), "clicked", G_CALLBACK(_onCancel), this);
+	g_signal_connect(
+		G_OBJECT(cancelButton), "clicked", G_CALLBACK(_onCancel), this);
 	
 	gtk_box_pack_end(GTK_BOX(hbx), okButton, TRUE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
@@ -97,6 +119,12 @@ void ObjectivesEditor::displayDialog() {
 	
 	// Show the instance
 	_instance.show();
+}
+
+/* GTK CALLBACKS */
+
+void ObjectivesEditor::_onCancel(GtkWidget* w, ObjectivesEditor* self) {
+	gtk_widget_hide(self->_widget);
 }
 
 }
