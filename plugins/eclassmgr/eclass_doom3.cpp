@@ -164,9 +164,6 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
         if (key == "model") {
         	entityClass->setModelPath(os::standardPath(value));
         }
-        else if (key == "inherit") {
-        	entityClass->setParent(value);
-        }
         else if (key == "editor_color") {
             entityClass->setColour(value);
         }
@@ -372,7 +369,7 @@ class EntityClassDoom3:
              i != _entityClasses.end(); ++i) {
 
 			// Get the parent name and find the corresponding class
-			std::string parName = i->second->getParent();
+			std::string parName = i->second->getValueForKey("inherit");
 			if (!parName.empty()) {
 				
 				// Find the parent entity class

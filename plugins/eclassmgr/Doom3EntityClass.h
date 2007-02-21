@@ -55,11 +55,6 @@ class Doom3EntityClass
 	Vector3	_mins;
 	Vector3 _maxs;
 
-	// The parent entity classname, if there is one, and the IEntityClass
-	// of the parent itself.
-	std::string _parentName;
-	IEntityClassPtr _parentClass;
-	
 private:
 
 	// Capture the shaders corresponding to the current colour
@@ -255,28 +250,6 @@ public:
 		return _skin;
 	}
 	
-	/** Set the parent entityclass name.
-	 */
-	void setParent(const std::string& p) {
-		_parentName = p;
-	}
-	
-	/** Return the parent entityclass name.
-	 */
-	const std::string& getParent() const {
-		return _parentName;
-	}
-	
-	/** Set the parent entityclass object.
-	 */
-	void setParentEntity(IEntityClassPtr p) {
-		_parentClass = p;
-	}
-	
-	/** Recursively resolve inheritance.
-	 */
-	void resolveInheritance();
-
 };
 
 }
