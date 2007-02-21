@@ -1,14 +1,87 @@
 #include "ObjectivesEditor.h"
 
+#include "mainframe.h"
+#include "gtkutil/LeftAlignedLabel.h"
+#include "gtkutil/LeftAlignment.h"
+#include "gtkutil/RightAlignment.h"
+#include "gtkutil/ScrolledFrame.h"
+
 #include <gtk/gtk.h>
 
 namespace ui
 {
 
+/* CONSTANTS */
+namespace {
+
+	const char* DIALOG_TITLE = "Mission objectives"; 	
+	
+}
+
 // Constructor creates widgets
 ObjectivesEditor::ObjectivesEditor()
 : _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL))
 {
+	// Window properties
+	gtk_window_set_transient_for(GTK_WINDOW(_widget), MainFrame_getWindow());
+	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
+	gtk_window_set_title(GTK_WINDOW(_widget), DIALOG_TITLE);
+    gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
+    
+    // Window size
+	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
+	gtk_window_set_default_size(GTK_WINDOW(_widget), 
+								gint(gdk_screen_get_width(scr) * 0.5), 
+								-1);
+    
+    // Widget must hide not destroy when closed
+    g_signal_connect(G_OBJECT(_widget), 
+    				 "delete-event",
+    				 G_CALLBACK(gtk_widget_hide_on_delete),
+    				 NULL);
+
+	// Main dialog vbox
+	GtkWidget* mainVbx = gtk_vbox_new(FALSE, 12);
+	gtk_box_pack_start(GTK_BOX(mainVbx), 
+					   gtkutil::LeftAlignedLabel("<b>Objectives entities</b>"),
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(mainVbx),
+					   gtkutil::LeftAlignment(createEntitiesPanel(), 18, 1.0),
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(mainVbx), 
+					   gtkutil::LeftAlignedLabel("<b>Objectives</b>"),
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(mainVbx),
+					   gtkutil::LeftAlignment(createObjectivesPanel(), 18, 1.0),
+					   FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(mainVbx), createButtons(), FALSE, FALSE, 0);
+					   
+	// Add vbox to dialog
+	gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
+	gtk_container_add(GTK_CONTAINER(_widget), mainVbx);
+}
+
+// Create the objects panel (for manipulating the target_addobjectives objects)
+GtkWidget* ObjectivesEditor::createEntitiesPanel() {
+	return gtkutil::ScrolledFrame(gtk_tree_view_new());
+}
+
+// Create the main objective editing widgets
+GtkWidget* ObjectivesEditor::createObjectivesPanel() {
+	return gtkutil::ScrolledFrame(gtk_tree_view_new());
+}
+
+// Create the buttons panel
+GtkWidget* ObjectivesEditor::createButtons () {
+	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
+
+	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
+	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+	
+	gtk_box_pack_end(GTK_BOX(hbx), okButton, TRUE, TRUE, 0);
+	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
+
+	return gtkutil::RightAlignment(hbx);
 }
 
 // Show the dialog

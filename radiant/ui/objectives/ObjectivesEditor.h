@@ -19,6 +19,11 @@ private:
 	// Constructor creates widgets	
 	ObjectivesEditor();
 	
+	// Widget construction helpers
+	GtkWidget* createEntitiesPanel();
+	GtkWidget* createObjectivesPanel();
+	GtkWidget* createButtons();
+	
 	// Show dialog widgets
 	void show();
 	
