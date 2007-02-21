@@ -11,7 +11,6 @@
 #include "gtkutil/FramedWidget.h"
 #include "gtkutil/glwidget.h"
 #include "gtkutil/GLWidgetSentry.h"
-#include "math/aabb.h"
 #include "mainframe.h"
 #include "brush/Face.h"
 #include "patch/Patch.h"

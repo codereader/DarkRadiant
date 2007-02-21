@@ -4,7 +4,7 @@
 class Matrix4;
 
 namespace selection {
-	namespace TexTool {
+	namespace textool {
 
 class Transformable
 {

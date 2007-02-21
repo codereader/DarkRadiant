@@ -370,6 +370,7 @@ radiant_src = [
 'ui/patch/PatchThickenDialog.cpp',
 'ui/surfaceinspector/SurfaceInspector.cpp',
 'textool/TexTool.cpp',
+'textool/PatchControlVertex.cpp',
 'selection/Manipulatables.cpp',
 'selection/Manipulators.cpp',
 'selection/BestPoint.cpp',

@@ -8,6 +8,8 @@
 #include "ishaders.h"
 #include "iselection.h"
 
+#include "TexToolItem.h"
+
 class Winding;
 class Patch;
 
@@ -42,6 +44,9 @@ class TexTool :
 	
 	// The dimensions of the GL widget in pixels.
 	Vector2 _windowDims;
+	
+	// The currently active objects in the textool window 
+	selection::textool::TexToolItemVec _items;
 	
 public:
 	TexTool();
