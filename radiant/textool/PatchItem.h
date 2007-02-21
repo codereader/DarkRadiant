@@ -1,18 +1,24 @@
-#ifndef PATCHCONTROLVERTEX_H_
-#define PATCHCONTROLVERTEX_H_
+#ifndef PATCHITEM_H_
+#define PATCHITEM_H_
 
+#include "patch/Patch.h"
 #include "TexToolItem.h"
 
 namespace selection {
 	namespace textool {
 
-class PatchControlVertex :
+class PatchItem :
 	public TexToolItem
 {
 	// The list of children of this object
 	TexToolItemVec _children;
 
+	// The patch this control is referring to
+	Patch& _sourcePatch;
+
 public:
+	PatchItem(Patch& sourcePatch); 
+
 	// Gets the AABB of this object in texture space
 	AABB getExtents();
 
@@ -36,4 +42,4 @@ public:
 	} // namespace TexTool
 } // namespace selection
 
-#endif /*PATCHCONTROLVERTEX_H_*/
+#endif /*PATCHITEM_H_*/
