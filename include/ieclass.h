@@ -273,7 +273,6 @@ struct EntityClassManager
 	 */
 	IEntityClassPtr (*findOrInsert)(const std::string& name, bool has_brushes);
 	
-  const ListAttributeType* (*findListType)(const char* name);
   void (*forEach)(EntityClassVisitor& visitor);
   void (*attach)(ModuleObserver& observer);
   void (*detach)(ModuleObserver& observer);
