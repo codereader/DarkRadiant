@@ -263,5 +263,11 @@ public:
 // A 2-element vector stored in single-precision floating-point.
 typedef BasicVector2<float> Vector2;
 
+// Stream insertion operator for a BasicVector2
+template<typename T>
+std::ostream& operator<<(std::ostream& st, BasicVector2<T> vec) {
+	st << "<" << vec.x() << ", " << vec.y() << ">";
+	return st;
+}
 
 #endif /*VECTOR2_H_*/
