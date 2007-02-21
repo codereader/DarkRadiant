@@ -41,6 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/colourscheme/ColourSchemeEditor.h"
 #include "ui/menu/FiltersMenu.h"
 #include "ui/overlay/OverlayDialog.h"
+#include "ui/objectives/ObjectivesEditor.h"
 #include "selection/algorithm/Shader.h"
 #include "iclipper.h"
 #include "ifilesystem.h"
@@ -1859,6 +1860,10 @@ GtkMenuItem* create_map_menu()
 	createMenuItemWithMnemonic(menu, "Find brush...", "FindBrush");
 	createMenuItemWithMnemonic(menu, "Map Info...", "MapInfo");
 
+	createSeparatorMenuItem(menu);
+	createMenuItemWithMnemonic(
+		menu, "_Objectives...", "ObjectivesEditor", "objectives16.png");
+
 	return map_menu_item;
 }
 
@@ -2778,15 +2783,19 @@ void MainFrame_Construct()
 	
 	// Entity inspector (part of Group Dialog)
 	GlobalEventManager().addCommand("ToggleEntityInspector",
-	                                   FreeCaller<EntityInspector_ToggleShow>());
+									FreeCaller<EntityInspector_ToggleShow>());
 	
 	// Light inspector
-	GlobalEventManager().addCommand("ToggleLightInspector",
-	                                   FreeCaller<ui::LightInspector::displayDialog>());
+	GlobalEventManager().addCommand("ToggleLightInspector",	
+							FreeCaller<ui::LightInspector::displayDialog>());
 	
 	// Overlay dialog
 	GlobalEventManager().addCommand("OverlayDialog",
 									FreeCaller<ui::OverlayDialog::display>());
+	
+	// Objectives editor
+	GlobalEventManager().addCommand("ObjectivesEditor",
+							FreeCaller<ui::ObjectivesEditor::displayDialog>());
 	
 	GlobalEventManager().addCommand("ShowHidden", FreeCaller<Select_ShowAllHidden>());
 	GlobalEventManager().addCommand("HideSelected", FreeCaller<HideSelected>());
