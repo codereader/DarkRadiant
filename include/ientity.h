@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 class IEntityClass;
 typedef boost::shared_ptr<IEntityClass> IEntityClassPtr;
+typedef boost::shared_ptr<const IEntityClass> IEntityClassConstPtr;
 
 typedef Callback1<const char*> KeyObserver;
 
@@ -67,7 +68,7 @@ public:
 	/**
 	 * Return the entity class object for this entity.
 	 */
-	virtual const IEntityClass& getEntityClass() const = 0;
+	virtual IEntityClassConstPtr getEntityClass() const = 0;
   
 	/**
 	 * Enumerate key values on this entity using a Entity::Visitor class.

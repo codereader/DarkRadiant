@@ -41,7 +41,7 @@ namespace {
 
 // Constructor creates GTK widgets
 
-AddPropertyDialog::AddPropertyDialog(const IEntityClass& eclass)
+AddPropertyDialog::AddPropertyDialog(IEntityClassConstPtr eclass)
 : _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
   _eclass(eclass)
 {
@@ -205,7 +205,7 @@ void AddPropertyDialog::populateTreeView() {
 	// First add a top-level category named after the entity class, and populate
 	// it with custom keyvals defined in the DEF for that class
 	std::string cName = "<b><span foreground=\"blue\">" 
-						+ _eclass.getName() + "</span></b>";
+						+ _eclass->getName() + "</span></b>";
 	GtkTreeIter cnIter;
 	gtk_tree_store_append(_treeStore, &cnIter, NULL);
 	gtk_tree_store_set(_treeStore, &cnIter, 
@@ -218,7 +218,7 @@ void AddPropertyDialog::populateTreeView() {
 	// Use a CustomPropertyAdder class to visit the entityclass and add all
 	// custom properties from it
 	CustomPropertyAdder a(_treeStore, &cnIter);
-	_eclass.forEachClassAttribute(a);
+	_eclass->forEachClassAttribute(a);
 
 	/* REGISTRY (GAME FILE) DEFINED PROPERTIES */
 
@@ -280,7 +280,7 @@ void AddPropertyDialog::populateTreeView() {
 
 // Static method to create and show an instance, and return the chosen
 // property to calling function.
-std::string AddPropertyDialog::chooseProperty(const IEntityClass& eclass) {
+std::string AddPropertyDialog::chooseProperty(IEntityClassConstPtr eclass) {
 	
 	// Construct a dialog and show the main widget
 	AddPropertyDialog dialog(eclass);

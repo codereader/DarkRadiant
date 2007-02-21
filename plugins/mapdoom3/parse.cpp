@@ -161,7 +161,7 @@ bool checkEntityClass(NodeSmartReference node) {
 		GlobalRegistry().findXPath("debug/mapdoom3//discardEntityClass");
 
 	// Obtain the entity class of this node
-	const IEntityClass& entityClass = 
+	IEntityClassConstPtr entityClass = 
 			Node_getEntity(node)->getEntityClass();
 
 	// Skip this entity class if it is in the list
@@ -169,9 +169,9 @@ bool checkEntityClass(NodeSmartReference node) {
 		 i != skipLst.end();
 		 ++i)
 	{
-		if (i->getAttributeValue("value") == entityClass.getName()) {
+		if (i->getAttributeValue("value") == entityClass->getName()) {
 			std::cout << "DEBUG: discarding entity class " 
-					  << entityClass.getName() << std::endl;
+					  << entityClass->getName() << std::endl;
 			return false;
 		}
 	}

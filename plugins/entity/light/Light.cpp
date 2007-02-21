@@ -244,7 +244,7 @@ void Light::construct() {
 	m_doom3ProjectionChanged = true;
 
 	// set the colours to their default values
-	m_doom3Radius.setCenterColour(m_entity.getEntityClass().getColour());
+	m_doom3Radius.setCenterColour(m_entity.getEntityClass()->getColour());
 
 	m_traverse.attach(&m_traverseObservers);
 	m_traverseObservers.attach(m_funcStaticOrigin);
@@ -628,11 +628,11 @@ void Light::renderProjectionPoints(Renderer& renderer, const VolumeTest& volume,
 
 // greebo: Note that this function has to be const according to the abstract base class definition
 void Light::renderSolid(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const {
-	renderer.SetState(m_entity.getEntityClass().getWireShader(), Renderer::eWireframeOnly);
+	renderer.SetState(m_entity.getEntityClass()->getWireShader(), Renderer::eWireframeOnly);
 	renderer.SetState(m_colour.state(), Renderer::eFullMaterials);
 	renderer.addRenderable(*this, localToWorld);
 
-	renderer.SetState(m_entity.getEntityClass().getWireShader(), Renderer::eFullMaterials);
+	renderer.SetState(m_entity.getEntityClass()->getWireShader(), Renderer::eFullMaterials);
 
 	// Always draw Doom 3 light bounding boxes, if the global is set
 	if (LightSettings().showAllLightRadii() && !isProjected()) {

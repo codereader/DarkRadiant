@@ -378,7 +378,7 @@ void EntityInspector::_onAddProperty(GtkMenuItem* item,
 									 EntityInspector* self) 
 {
 	// Obtain the entity class to provide to the AddPropertyDialog
-	const IEntityClass& ec = self->_selectedEntity->getEntityClass();
+	IEntityClassConstPtr ec = self->_selectedEntity->getEntityClass();
 	
 	// Choose a property, and add to entity with a default value
 	std::string property = AddPropertyDialog::chooseProperty(ec);
@@ -421,9 +421,9 @@ void EntityInspector::treeSelectionChanged() {
     
     // If the type was not found, also try looking on the entity class
     if (type.empty()) {
-    	const IEntityClass& eclass = _selectedEntity->getEntityClass();
+    	IEntityClassConstPtr eclass = _selectedEntity->getEntityClass();
 		try {
-			type = eclass.findAttribute(key).type;
+			type = eclass->findAttribute(key).type;
 		}
 		catch (std::runtime_error e) {
 			type = "";
@@ -469,14 +469,14 @@ void EntityInspector::refreshTreeModel() {
 		const PropertyParmMap& _map;
 		
 		// Entity class to check for types
-		const IEntityClass& _eclass;
+		IEntityClassConstPtr _eclass;
 	
 	public:
 	
 		// Constructor
 		ListPopulateVisitor(GtkListStore* store, 
 							const PropertyParmMap& map,
-							const IEntityClass& cls)
+							IEntityClassConstPtr cls)
 		: _store(store), _map(map), _eclass(cls)
 		{}
 		
@@ -493,7 +493,7 @@ void EntityInspector::refreshTreeModel() {
 			else {
 				// Check the entityclass, or return blank of not found
 				try {
-					type = _eclass.findAttribute(key).type;
+					type = _eclass->findAttribute(key).type;
 				}
 				catch (std::runtime_error e) {
 					type = "";

@@ -904,12 +904,14 @@ public:
     Entity* entity = Node_getEntity(path.top());
     if(entity != 0)
     {
-      const IEntityClass& eclass = entity->getEntityClass();
-      if(m_entitymap.find(eclass.getName()) == m_entitymap.end())
+      IEntityClassConstPtr eclass = entity->getEntityClass();
+      std::string ecName = eclass->getName();
+      
+      if(m_entitymap.find(ecName) == m_entitymap.end())
       {
-        m_entitymap[eclass.getName()] = 1;
+        m_entitymap[ecName] = 1;
       }
-      else ++m_entitymap[eclass.getName()];
+      else ++m_entitymap[ecName];
     }
     return true;
   }

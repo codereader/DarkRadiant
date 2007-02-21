@@ -183,8 +183,8 @@ public:
     {
       m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
       m_entity.attach(m_keyObservers);
-      m_model.modelChanged(m_entity.getEntityClass().getModelPath().c_str());
-      m_skin.skinChanged(m_entity.getEntityClass().getSkin().c_str());
+      m_model.modelChanged(m_entity.getEntityClass()->getModelPath().c_str());
+      m_skin.skinChanged(m_entity.getEntityClass()->getSkin().c_str());
     }
   }
   void instanceDetach(const scene::Path& path)
@@ -244,7 +244,7 @@ public:
       m_renderOrigin.render(renderer, volume, localToWorld);
     }
 
-    renderer.SetState(m_entity.getEntityClass().getWireShader(), Renderer::eWireframeOnly);
+    renderer.SetState(m_entity.getEntityClass()->getWireShader(), Renderer::eWireframeOnly);
   }
   void renderWireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const
   {

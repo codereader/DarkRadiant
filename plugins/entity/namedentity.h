@@ -63,7 +63,7 @@ public:
   {
     if(string_empty(m_name.c_str()))
     {
-      return m_entity.getEntityClass().getName().c_str();
+      return m_entity.getEntityClass()->getName().c_str();
     }
     return m_name.c_str();
   }
@@ -80,7 +80,7 @@ public:
   {
     if(string_empty(value))
     {
-      m_changed.changed(m_entity.getEntityClass().getName().c_str());
+      m_changed.changed(m_entity.getEntityClass()->getName().c_str());
     }
     else
     {
