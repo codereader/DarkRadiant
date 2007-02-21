@@ -1851,23 +1851,15 @@ void CallBrushExportOBJ() {
 	}
 }
 
-GtkMenuItem* create_misc_menu()
+// Create the Map menu
+GtkMenuItem* create_map_menu()
 {
-  // Misc menu
-  GtkMenuItem* misc_menu_item = new_sub_menu_item_with_mnemonic("M_isc");
-  GtkMenu* menu = GTK_MENU(gtk_menu_item_get_submenu(misc_menu_item));
-  if (g_Layout_enableDetachableMenus.m_value)
-    menu_tearoff (menu);
-  
-  
-#if 0
-  createMenuItemWithMnemonic(menu, "_Benchmark", FreeCaller<GlobalCamera_Benchmark>());
-#endif
-  
-  createMenuItemWithMnemonic(menu, "Find brush...", "FindBrush");
-  createMenuItemWithMnemonic(menu, "Map Info...", "MapInfo");
+	GtkMenuItem* map_menu_item = new_sub_menu_item_with_mnemonic("M_ap");
+	GtkMenu* menu = GTK_MENU(gtk_menu_item_get_submenu(map_menu_item));
+	createMenuItemWithMnemonic(menu, "Find brush...", "FindBrush");
+	createMenuItemWithMnemonic(menu, "Map Info...", "MapInfo");
 
-  return misc_menu_item;
+	return map_menu_item;
 }
 
 GtkMenuItem* create_entity_menu()
@@ -1940,7 +1932,7 @@ GtkMenuBar* create_main_menu(MainFrame::EViewStyle style)
   ui::FiltersMenu filtersMenu;
   gtk_menu_shell_append(GTK_MENU_SHELL(menu_bar), filtersMenu);
 
-  gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_misc_menu()));
+  gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_map_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_entity_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_brush_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_patch_menu()));
