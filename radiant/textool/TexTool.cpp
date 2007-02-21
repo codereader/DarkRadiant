@@ -19,6 +19,7 @@
 
 #include "textool/Selectable.h"
 #include "textool/Transformable.h"
+#include "textool/PatchItem.h"
 
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Shader.h"
@@ -153,19 +154,27 @@ void TexTool::update() {
 }
 
 void TexTool::selectionChanged() {
-	std::string selectedShader = selection::algorithm::getShaderFromSelection();
+	update();
 	
-	// Multiple shaders (or nothing selected), clear the list
+	// Clear the list to remove all the previously allocated items
 	_items.clear();
 	
 	// Does the selection use one single shader?
-	if (selectedShader != "") {
+	if (_shader->getName() != "") {
 		if (_selectionInfo.patchCount > 0) {
 			// One single named shader, get the selection list
 			PatchPtrVector patchList = selection::algorithm::getSelectedPatches();
 			globalOutputStream() << patchList.size() << " patches selected!\n";
 			
-			globalOutputStream() << patchList[0]->getWidth() << "x" << patchList[0]->getHeight() << "\n";
+			for (std::size_t i = 0; i < patchList.size(); i++) {
+				// Allocate a new PatchItem on the heap (shared_ptr)
+				selection::textool::TexToolItemPtr patchItem(
+					new selection::textool::PatchItem(*patchList[0])
+				);
+				
+				// Add it to the list
+				_items.push_back(patchItem);
+			}
 		}
 	}
 	
@@ -280,6 +289,7 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 	// Do nothing, if the shader name is empty
 	std::string shaderName = self->_shader->getName(); 
 	if (shaderName == "") {
+		globalOutputStream() << "TexTool: no unqiue shader selected.\n";
 		return false;
 	}
 	
@@ -287,6 +297,7 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 	
 	// Is there a valid selection?
 	if (!selAABB.isValid()) {
+		globalOutputStream() << "TexTool: no valid AABB.\n";
 		return false;
 	}
 	
