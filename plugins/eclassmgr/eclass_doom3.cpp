@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "Doom3EntityClass.h"
+#include "AttributeCopyingVisitor.h"
 
 #include "ifilesystem.h"
 #include "iarchive.h"
@@ -37,18 +38,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 /* Static map of named entity classes, using case-insensitive comparison */
 typedef std::map<std::string, IEntityClassPtr> EntityClasses;
-EntityClasses g_EntityClassDoom3_classes;
-
-void EntityClassDoom3_clear()
-{
-	g_EntityClassDoom3_classes.clear();
-}
+EntityClasses _entityClasses;
 
 // entityClass will be inserted only if another of the same name does not already exist.
 // if entityClass was inserted, the same object is returned, otherwise the already-existing object is returned.
 IEntityClassPtr EntityClassDoom3_insertUnique(IEntityClassPtr entityClass)
 {
-  return (*g_EntityClassDoom3_classes.insert(EntityClasses::value_type(entityClass->getName(), entityClass)).first).second;
+  return (*_entityClasses.insert(EntityClasses::value_type(entityClass->getName(), entityClass)).first).second;
 }
 
 class Model
@@ -278,8 +274,8 @@ IEntityClassPtr EntityClassDoom3_findOrInsert(const std::string& name,
 	std::string lName = boost::algorithm::to_lower_copy(name);
 
     // Find the EntityClass in the map.
-    EntityClasses::iterator i = g_EntityClassDoom3_classes.find(lName);
-    if (i != g_EntityClassDoom3_classes.end()) {
+    EntityClasses::iterator i = _entityClasses.find(lName);
+    if (i != _entityClasses.end()) {
         return i->second; // found it, return
     }
 
@@ -295,8 +291,8 @@ IEntityClassPtr EntityClassDoom3_findOrInsert(const std::string& name,
 //  if(derivedClass->inheritanceResolved == false)
 //  {
 //    derivedClass->inheritanceResolved = true;
-//    EntityClasses::iterator i = g_EntityClassDoom3_classes.find(derivedClass->m_parent.front().c_str());
-//    if(i == g_EntityClassDoom3_classes.end())
+//    EntityClasses::iterator i = _entityClasses.find(derivedClass->m_parent.front().c_str());
+//    if(i == _entityClasses.end())
 //    {
 //      globalErrorStream() << "failed to find entityDef " << makeQuoted(derivedClass->m_parent.front().c_str()) << " inherited by "  << makeQuoted(derivedClass->m_name.c_str()) << "\n";
 //    }
@@ -355,48 +351,70 @@ class EntityClassDoom3:
         
         // Count the number of times this function is called, it is activated
         // for real on the second call (why?)
-        if (--m_unrealised == 0) {
+        if (--m_unrealised != 0)
+        	return;
+
+        globalOutputStream() << "searching vfs directory " <<
+            makeQuoted("def") << " for *.def\n";
+        GlobalFileSystem().forEachFile(
+        	"def/", "def",
+            FreeCaller1<const char *, EntityClassDoom3_loadFile>());
+    
+        // Resolve inheritance on the model classes
+        for (Models::iterator i = g_models.begin(); i != g_models.end(); ++i) {
+            Model_resolveInheritance((*i).first.c_str(), (*i).second);
+        }
             
-            globalOutputStream() << "searching vfs directory " <<
-                makeQuoted("def") << " for *.def\n";
-            GlobalFileSystem().forEachFile("def/", "def",
-                                           FreeCaller1 < const char *,
-                                           EntityClassDoom3_loadFile > ());
-    
-            // Resolve inheritance on the model classes
-            for (Models::iterator i = g_models.begin(); i != g_models.end(); ++i) {
-                Model_resolveInheritance((*i).first.c_str(), (*i).second);
-            }
-            
-            // Resolve inheritance for the entities        
-            for (EntityClasses::iterator i = g_EntityClassDoom3_classes.begin();
-                 i != g_EntityClassDoom3_classes.end(); ++i) {
-    
-    			// Tell the entityclass to resolve its inheritance
-    			i->second->resolveInheritance();
-    
-                // If the entity has a model path ("model" key), lookup the actual
-                // model and apply its mesh and skin to this entity.
-                if (i->second->getModelPath().size() > 0) {
-                    Models::iterator j = g_models.find(i->second->getModelPath());
-                    if (j != g_models.end()) {
-                        i->second->setModelPath(j->second.m_mesh);
-                        i->second->setSkin(j->second.m_skin);
-                    }
+        // Resolve inheritance for the entities. At this stage the classes
+        // will have the name of their parent, but not an actual pointer to
+        // it        
+        for (EntityClasses::iterator i = _entityClasses.begin();
+             i != _entityClasses.end(); ++i) {
+
+			// Get the parent name and find the corresponding class
+			std::string parName = i->second->getParent();
+			if (!parName.empty()) {
+				
+				// Find the parent entity class
+				EntityClasses::iterator pIter = _entityClasses.find(parName);
+				if (pIter != _entityClasses.end()) {
+					
+					// Get the class object pointer
+					IEntityClassPtr par = pIter->second;
+
+					// Copy attributes from the parent to the child
+					eclass::AttributeCopyingVisitor visitor(i->second);
+					par->forEachClassAttribute(visitor);
+				}
+				else {
+					std::cout << "[eclassmgr] Warning: Entity class "
+							  << i->second->getName() << " specifies parent "
+							  << parName << " which is not found." << std::endl;
+				} 
+			}	
+
+            // If the entity has a model path ("model" key), lookup the actual
+            // model and apply its mesh and skin to this entity.
+            if (i->second->getModelPath().size() > 0) {
+                Models::iterator j = g_models.find(i->second->getModelPath());
+                if (j != g_models.end()) {
+                    i->second->setModelPath(j->second.m_mesh);
+                    i->second->setSkin(j->second.m_skin);
                 }
-            
             }
+        
+        }
     
         // Prod the observers (also on the first call)
         m_observers.realise();
-        } // endif
+
     } // end func
 
     void unrealise()
     {
         if (++m_unrealised == 1) {
             m_observers.unrealise();
-            EntityClassDoom3_clear();
+           	_entityClasses.clear();
         }
     }
 
@@ -457,8 +475,8 @@ public:
 	
 	// Visit each entity class
 	virtual void forEach(EntityClassVisitor& visitor) {
-		for(EntityClasses::iterator i = g_EntityClassDoom3_classes.begin(); 
-			i != g_EntityClassDoom3_classes.end(); 
+		for(EntityClasses::iterator i = _entityClasses.begin(); 
+			i != _entityClasses.end(); 
 			++i)
 		{
 			visitor.visit(i->second);
