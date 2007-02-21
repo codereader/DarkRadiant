@@ -51,14 +51,6 @@ IEntityClassPtr EntityClassDoom3_insertUnique(IEntityClassPtr entityClass)
   return (*g_EntityClassDoom3_classes.insert(EntityClasses::value_type(entityClass->getName(), entityClass)).first).second;
 }
 
-void EntityClassDoom3_forEach(EntityClassVisitor& visitor)
-{
-  for(EntityClasses::iterator i = g_EntityClassDoom3_classes.begin(); i != g_EntityClassDoom3_classes.end(); ++i)
-  {
-    visitor.visit(i->second);
-  }
-}
-
 class Model
 {
 public:
@@ -421,84 +413,77 @@ class EntityClassDoom3:
 
 EntityClassDoom3 g_EntityClassDoom3;
 
-void EntityClassDoom3_attach(ModuleObserver& observer)
-{
-  g_EntityClassDoom3.attach(observer);
-}
-void EntityClassDoom3_detach(ModuleObserver& observer)
-{
-  g_EntityClassDoom3.detach(observer);
-}
-
-void EntityClassDoom3_realise()
-{
-  g_EntityClassDoom3.realise();
-}
-void EntityClassDoom3_unrealise()
-{
-  g_EntityClassDoom3.unrealise();
-}
-
-// Construct the EntityClassDoom3 manager.
-
-void EntityClassDoom3_construct()
-{
-    GlobalFileSystem().attach(g_EntityClassDoom3);
-
-    EntityClassDoom3_realise();
-}
-
-void EntityClassDoom3_destroy()
-{
-  EntityClassDoom3_unrealise();
-
-  GlobalFileSystem().detach(g_EntityClassDoom3);
-}
-
 class EntityClassDoom3Dependencies : public GlobalFileSystemModuleRef, public GlobalShaderCacheModuleRef
 {
 };
 
-/* EntityClassDoom3API
- * 
- * This class contains the EntityClassManager object for Doom 3, which is
- * returned through calls to GlobalEntityClassManager()::getTable() as per
- * the plugin API. The EntityClassManager member object contains methods which
- * point to C functions in this file.
+/**
+ * API wrapper class, implements the IEntityClassManager interface.
+ * TODO: Merge this with EntityClassDoom3, rather than dispatching calls to a
+ * global object.
  */
-
 class EntityClassDoom3API
+: public IEntityClassManager
 {
-    // EntityClassManager member object
-    EntityClassManager m_eclassmanager;
-
 public:
-    typedef EntityClassManager Type;
+    typedef IEntityClassManager Type;
     STRING_CONSTANT(Name, "doom3");
 
-    // Constructor. Create the entity class manager, then set the API function
-    // pointers to the appropriate functions.
+    // Constructor, attach and realise
     EntityClassDoom3API() {
-        EntityClassDoom3_construct();
-    
-        m_eclassmanager.findOrInsert = &EntityClassDoom3_findOrInsert;
-        m_eclassmanager.forEach = &EntityClassDoom3_forEach;
-        m_eclassmanager.attach = &EntityClassDoom3_attach;
-        m_eclassmanager.detach = &EntityClassDoom3_detach;
-        m_eclassmanager.realise = &EntityClassDoom3_realise;
-        m_eclassmanager.unrealise = &EntityClassDoom3_unrealise;
+    	GlobalFileSystem().attach(g_EntityClassDoom3);
+		realise();
     }
     
     // Destructor. Destroy the entity class manager.
     ~EntityClassDoom3API() {
-        EntityClassDoom3_destroy();
+		unrealise();
+		GlobalFileSystem().detach(g_EntityClassDoom3);
     }
     
     // Return the EntityClassManager object.
-    EntityClassManager *getTable()
-    {
-        return &m_eclassmanager;
+    IEntityClassManager* getTable() {
+        return this;
     }
+    
+    /* PUBLIC INTERFACE */
+    
+    // Get a named entity class, creating if necessary
+    virtual IEntityClassPtr findOrInsert(const std::string& name,
+    									 bool has_brushes)
+	{
+		return EntityClassDoom3_findOrInsert(name, has_brushes);
+	}
+	
+	// Visit each entity class
+	virtual void forEach(EntityClassVisitor& visitor) {
+		for(EntityClasses::iterator i = g_EntityClassDoom3_classes.begin(); 
+			i != g_EntityClassDoom3_classes.end(); 
+			++i)
+		{
+			visitor.visit(i->second);
+		}
+	}
+	
+	// Attach a module observer
+	virtual void attach(ModuleObserver& observer) {
+		g_EntityClassDoom3.attach(observer);
+	}
+	
+	// Detach a module observer
+	virtual void detach(ModuleObserver& observer) {
+		g_EntityClassDoom3.detach(observer);
+	}
+	
+	// Realise the module
+	virtual void realise() {
+		g_EntityClassDoom3.realise();
+	}
+	
+	// Unrealise the module
+	virtual void unrealise() {
+		g_EntityClassDoom3.unrealise();
+	}
 };
 
 /* Required code to register the module with the ModuleServer.
@@ -506,13 +491,15 @@ public:
 
 #include "modulesystem/singletonmodule.h"
 
-typedef SingletonModule<EntityClassDoom3API, EntityClassDoom3Dependencies> EntityClassDoom3Module;
-
-// Static instance of the module
-EntityClassDoom3Module _theEclassModule;
+typedef SingletonModule<EntityClassDoom3API, 
+						EntityClassDoom3Dependencies> EntityClassDoom3Module;
 
 extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
 {
-  initialiseModule(server);
-  _theEclassModule.selfRegister();
+	// Static module instance
+	static EntityClassDoom3Module _theEclassModule;
+	
+	// Initialise and register the module	
+	initialiseModule(server);
+	_theEclassModule.selfRegister();
 }
