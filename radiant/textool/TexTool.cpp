@@ -35,9 +35,9 @@ namespace ui {
 	}
 
 TexTool::TexTool() :
-	_winding(NULL),
-	_patch(NULL),
-	_selectionInfo(GlobalSelectionSystem().getSelectionInfo())
+	_selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
+	_dragRectangle(false),
+	_manipulatorMode(false)
 {
 	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
 	_window = gtkutil::TransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
@@ -78,6 +78,7 @@ void TexTool::populateWindow() {
 	g_signal_connect(G_OBJECT(_glWidget), "focus-in-event", G_CALLBACK(triggerRedraw), this);
 	g_signal_connect(G_OBJECT(_glWidget), "button-press-event", G_CALLBACK(onMouseDown), this);
 	g_signal_connect(G_OBJECT(_glWidget), "button-release-event", G_CALLBACK(onMouseUp), this);
+	g_signal_connect(G_OBJECT(_glWidget), "motion-notify-event", G_CALLBACK(onMouseMotion), this);
 	
 	// Make the GL widget accept the global shortcuts
 	GlobalEventManager().connect(GTK_OBJECT(_glWidget));
@@ -132,25 +133,6 @@ TexTool& TexTool::Instance() {
 void TexTool::update() {
 	std::string selectedShader = selection::algorithm::getShaderFromSelection();
 	_shader = GlobalShaderSystem().getShaderForName(selectedShader);
-	
-	// Try to retrieve the single selected face (throws on failure)
-	try {
-		Face& face = selection::algorithm::getLastSelectedFace();
-		
-		// Retrieve the winding from the face
-		_winding = &face.getWinding();
-	}
-	catch (selection::InvalidSelectionException i) {
-		_winding = NULL;
-	}
-	
-	try {
-		Patch& found = selection::algorithm::getLastSelectedPatch();
-		_patch = &found;
-	}
-	catch (selection::InvalidSelectionException i) {
-		_patch = NULL;
-	}
 }
 
 void TexTool::selectionChanged() {
@@ -247,41 +229,100 @@ void TexTool::drawUVCoords() {
 	}*/
 }
 
-bool TexTool::testSelectPoint(const Vector2& coords) {
+selection::textool::TexToolItemVec 
+	TexTool::getSelectables(const selection::Rectangle& rectangle)
+{
 	selection::textool::TexToolItemVec selectables;
 	
-	// Construct a test rectangle with 2% of the width/height
-	// of the visible texture space
-	selection::Rectangle testRectangle;
-	testRectangle.topLeft[0] = coords[0] - _texSpaceAABB.extents[0]*0.01; 
-	testRectangle.topLeft[1] = coords[1] - _texSpaceAABB.extents[1]*0.01;
-	testRectangle.bottomRight[0] = coords[0] + _texSpaceAABB.extents[0]*0.01; 
-	testRectangle.bottomRight[1] = coords[1] + _texSpaceAABB.extents[1]*0.01;
-
 	// Cycle through all the items and ask them to deliver the list of selectables
 	// residing within the test rectangle	
 	for (unsigned int i = 0; i < _items.size(); i++) {
 		// Get the list from each item
 		selection::textool::TexToolItemVec found = 
-			_items[i]->getSelectables(testRectangle);
+			_items[i]->getSelectables(rectangle);
 		
 		// and join the two vectors
 		selectables.insert(selectables.end(), found.begin(), found.end());
 	}
 	
+	return selectables;
+}
+
+selection::textool::TexToolItemVec TexTool::getSelectables(const Vector2& coords) {
+	// Construct a test rectangle with 2% of the width/height
+	// of the visible texture space
+	selection::Rectangle testRectangle;
+	
+	testRectangle.topLeft[0] = coords[0] - _texSpaceAABB.extents[0]*0.01; 
+	testRectangle.topLeft[1] = coords[1] - _texSpaceAABB.extents[1]*0.01;
+	testRectangle.bottomRight[0] = coords[0] + _texSpaceAABB.extents[0]*0.01; 
+	testRectangle.bottomRight[1] = coords[1] + _texSpaceAABB.extents[1]*0.01;
+	
+	// Pass the call on to the getSelectables(<RECTANGLE>) method
+	return getSelectables(testRectangle);
+	
 	// Now go through the result and toggle all of the found selectables
-	for (unsigned int i = 0; i < selectables.size(); i++) {
+	/*for (unsigned int i = 0; i < selectables.size(); i++) {
 		// Toggle the selection of the found selectables
 		selectables[i]->toggle();
-	}
+	}*/
 	
 	// Return TRUE if there happened anything
-	if (selectables.size() > 0) {
+	/*if (selectables.size() > 0) {
 		draw();
 		return true;
 	}
 	
-	return false;
+	return false;*/
+}
+
+void TexTool::doMouseUp(const Vector2& coords) {
+	// If we are in manipulation mode, end the move
+	if (_manipulatorMode) {
+		_manipulatorMode = false;
+	}
+	
+	if (_dragRectangle) {
+		_dragRectangle = false;
+	}
+	
+	draw();
+	// If not in manipulation mode, create a rectangle
+		// If the rectangle is smaller than an epsilon, perform
+		// a Pointtest
+		// or a RectangleTest
+	// Calculate the texture coords from the x/y click coordinates
+	
+	//self->testSelectPoint(texCoords);
+}
+
+void TexTool::doMouseDown(const Vector2& coords) {
+	
+	_manipulatorMode = false;
+	_dragRectangle = false;
+	
+	// Get the list of selectables of this point
+	selection::textool::TexToolItemVec selectables = getSelectables(coords);
+	
+	// Any selectables under the mouse pointer?
+	if (selectables.size() > 0) {
+		// Check, if the clicked item is already selected
+		if (selectables[0]->isSelected()) {
+			_manipulatorMode = true;
+		}
+		else {
+			// Set all selectables to SELECTED and start the manipulation
+			for (unsigned int i = 0; i < selectables.size(); i++) {
+				selectables[i]->setSelected(true);
+			}
+			_manipulatorMode = true;
+		}
+	}
+	else {
+		_selectionRectangle.topLeft = coords;
+		_selectionRectangle.bottomRight = coords;
+		_dragRectangle = true;
+	}
 }
 
 gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self) {
@@ -365,6 +406,34 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 	// Draw the u/v coordinates
 	self->drawUVCoords();
 	
+	if (self->_dragRectangle) {
+		// Create a working reference to save typing
+		selection::Rectangle& rectangle = self->_selectionRectangle;
+		
+		// Define the blend function for transparency
+		glEnable(GL_BLEND);
+		glBlendColor(0,0,0, 0.2f);
+		glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
+		
+		glColor3f(0.8f, 0.8f, 1);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		// The transparent fill rectangle
+		glBegin(GL_QUADS);
+		glVertex2f(rectangle.topLeft[0], rectangle.topLeft[1]);
+		glVertex2f(rectangle.bottomRight[0], rectangle.topLeft[1]); 
+		glVertex2f(rectangle.bottomRight[0], rectangle.bottomRight[1]);
+		glVertex2f(rectangle.topLeft[0], rectangle.bottomRight[1]);
+		glEnd();
+		// The solid borders
+		glBlendColor(0,0,0, 0.8f);
+		glBegin(GL_LINE_LOOP);
+		glVertex2f(rectangle.topLeft[0], rectangle.topLeft[1]);
+		glVertex2f(rectangle.bottomRight[0], rectangle.topLeft[1]); 
+		glVertex2f(rectangle.bottomRight[0], rectangle.bottomRight[1]);
+		glVertex2f(rectangle.topLeft[0], rectangle.bottomRight[1]);
+		glEnd();
+		glDisable(GL_BLEND);
+	}
 	/*glColor3f(1, 1, 1);
 	std::string topLeftStr = floatToStr(orthoTopLeft[0]) + "," + floatToStr(orthoTopLeft[1]);
 	std::string bottomRightStr = floatToStr(orthoBottomRight[0]) + "," + floatToStr(orthoBottomRight[1]);
@@ -391,18 +460,40 @@ gboolean TexTool::onDelete(GtkWidget* widget, GdkEvent* event, TexTool* self) {
 	// Don't propagate the delete event
 	return true;
 }
-	
+
 gboolean TexTool::onMouseUp(GtkWidget* widget, GdkEventButton* event, TexTool* self) {
+	// Calculate the texture coords from the x/y click coordinates
 	Vector2 texCoords = self->getTextureCoords(event->x, event->y);
 	
-	self->testSelectPoint(texCoords);
+	// Pass the call to the member method
+	self->doMouseUp(texCoords);
 	
 	return false;
 }
 
 gboolean TexTool::onMouseDown(GtkWidget* widget, GdkEventButton* event, TexTool* self) {
+	// Calculate the texture coords from the x/y click coordinates
+	Vector2 texCoords = self->getTextureCoords(event->x, event->y);
 	
+	// Pass the call to the member method
+	self->doMouseDown(texCoords);
 	
+	return false;
+}
+
+gboolean TexTool::onMouseMotion(GtkWidget* widget, GdkEventMotion* event, TexTool* self) {
+	// Calculate the texture coords from the x/y click coordinates
+	Vector2 texCoords = self->getTextureCoords(event->x, event->y);
+	
+	if (self->_dragRectangle) {
+		self->_selectionRectangle.bottomRight = texCoords;
+		self->draw();
+	}
+	else if (self->_manipulatorMode) {
+		globalOutputStream() << "Manipulating\n";
+		self->draw();
+	}
+
 	return false;
 }
 	

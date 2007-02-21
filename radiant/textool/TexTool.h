@@ -30,9 +30,6 @@ class TexTool :
 	// The shader we're working with (shared ptr)
 	IShaderPtr _shader;
 	
-	Winding* _winding;
-	Patch* _patch;
-	
 	// A reference to the SelectionInfo structure (with the counters)
 	const SelectionInfo& _selectionInfo;
 	
@@ -47,6 +44,13 @@ class TexTool :
 	
 	// The currently active objects in the textool window 
 	selection::textool::TexToolItemVec _items;
+	
+	// The draggable selection rectangle
+	selection::Rectangle _selectionRectangle;
+	bool _dragRectangle;
+	
+	// TRUE, if a manipulation is currently ongoing
+	bool _manipulatorMode;
 	
 public:
 	TexTool();
@@ -98,15 +102,25 @@ private:
 	 */
 	void update();
 	
-	/** greebo: Converts the mouse/window coordinates into texture coords
+	/** greebo: Returns a list of selectables for the given rectangle.
+	 */
+	selection::textool::TexToolItemVec getSelectables(const selection::Rectangle& rectangle);
+	
+	/** greebo: Returns a list of selectables for the given point.
+	 * (A small rectangle is constructed to perform the selection test)
+	 */
+	selection::textool::TexToolItemVec getSelectables(const Vector2& coords);
+	
+	/** greebo: These two get called by the GTK callback and handle the event
+	 * 
+	 * @coords: this has already been converted into texture space. 
+	 */
+	void doMouseUp(const Vector2& coords);
+	void doMouseDown(const Vector2& coords);
+
+	/** greebo: Converts the mouse/window coordinates into texture coords.
 	 */
 	Vector2 getTextureCoords(const double& x, const double& y);
-
-	/** greebo: Returns TRUE if anything can be selected at the 
-	 * given texture coordinates (a small rectangle is constructed
-	 * to perform the selection test), FALSE otherwise.
-	 */
-	bool testSelectPoint(const Vector2& coords);
 
 	// The callback for the delete event (toggles the visibility)
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, TexTool* self);
@@ -116,6 +130,7 @@ private:
 	// The callbacks for capturing the mouse events
 	static gboolean onMouseUp(GtkWidget* widget, GdkEventButton* event, TexTool* self);
 	static gboolean onMouseDown(GtkWidget* widget, GdkEventButton* event, TexTool* self);
+	static gboolean onMouseMotion(GtkWidget* widget, GdkEventMotion* event, TexTool* self);
 }; // class TexTool
 
 } // namespace ui
