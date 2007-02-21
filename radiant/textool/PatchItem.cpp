@@ -17,23 +17,45 @@ PatchItem::PatchItem(Patch& sourcePatch) :
 		);
 		
 		// Add it to the children of this patch
-		addChild(patchVertexItem);
+		_children.push_back(patchVertexItem);
 	}
 }
 
 AABB PatchItem::getExtents() {
-	return AABB();
+	AABB returnValue;
+	
+	// Cycle through all the children and include their AABB
+	for (unsigned int i = 0; i < _children.size(); i++) {
+		returnValue.includeAABB(_children[i]->getExtents());
+	}
+	
+	return returnValue;
 }
 
 void PatchItem::render() {
-	
+	// Cycle through all the children and ask them to render themselves
+	for (unsigned int i = 0; i < _children.size(); i++) {
+		_children[i]->render();
+	}
 }
 
 void PatchItem::transform(const Matrix4& transform) {
-	
+	// Cycle through all the children and ask them to render themselves
+	for (unsigned int i = 0; i < _children.size(); i++) {
+		_children[i]->transform(transform);
+	}
 }
 
 bool PatchItem::testSelect(const float s, const float& t) {
+	// Cycle through all the children and ask them to render themselves
+	for (unsigned int i = 0; i < _children.size(); i++) {
+		// Return true on the first selected child
+		if (_children[i]->testSelect(s,t)) {
+			return true;
+		}
+	}
+	
+	// Nothing selectable, return false
 	return false;
 }
 

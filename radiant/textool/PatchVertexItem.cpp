@@ -10,7 +10,14 @@ PatchVertexItem::PatchVertexItem(PatchControl& patchControl) :
 {}
 
 AABB PatchVertexItem::getExtents() {
-	return AABB();
+	AABB returnValue;
+	
+	returnValue.origin = Vector3(
+		_patchControl.m_texcoord[0], _patchControl.m_texcoord[1], 0
+	);
+	returnValue.extents = Vector3(0.001f, 0.001f, 0);
+	
+	return returnValue;
 }
 
 void PatchVertexItem::render() {

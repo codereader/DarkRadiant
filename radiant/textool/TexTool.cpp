@@ -164,7 +164,6 @@ void TexTool::selectionChanged() {
 		if (_selectionInfo.patchCount > 0) {
 			// One single named shader, get the selection list
 			PatchPtrVector patchList = selection::algorithm::getSelectedPatches();
-			globalOutputStream() << patchList.size() << " patches selected!\n";
 			
 			for (std::size_t i = 0; i < patchList.size(); i++) {
 				// Allocate a new PatchItem on the heap (shared_ptr)
@@ -189,18 +188,9 @@ void TexTool::draw() {
 AABB& TexTool::getExtents() {
 	_selAABB = AABB();
 	
-	// Check for valid winding
-	if (_winding != NULL) {
-		for (Winding::iterator i = _winding->begin(); i != _winding->end(); i++) {
-			_selAABB.includePoint(Vector3(i->texcoord[0], i->texcoord[1], 0));
-		}
-	}
-	
-	// Check for valid winding
-	if (_patch != NULL) {
-		for (PatchControlIter i = _patch->begin(); i != _patch->end(); i++) {
-			_selAABB.includePoint(Vector3(i->m_texcoord[0], i->m_texcoord[1], 0));
-		}
+	for (unsigned int i = 0; i < _items.size(); i++) {
+		// Expand the selection AABB by the extents of the item
+		_selAABB.includeAABB(_items[i]->getExtents());
 	}
 	
 	return _selAABB;
