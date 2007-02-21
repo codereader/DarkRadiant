@@ -256,12 +256,12 @@ public:
 class ModuleObserver;
 
 
-/** EntityClassManager interface. The entity class manager 
- * is responsible for maintaining a list of available entity
- * classes which the EntityCreator can insert into a map.
+/**
+ * EntityClassManager interface. The entity class manager is responsible for 
+ * maintaining a list of available entity classes which the EntityCreator can 
+ * insert into a map.
  */
-
-struct EntityClassManager
+struct IEntityClassManager
 {
 	INTEGER_CONSTANT(Version, 1);
 	STRING_CONSTANT(Name, "eclassmanager");
@@ -271,24 +271,25 @@ struct EntityClassManager
 	 * necessary. If it is created, the has_brushes parameter will be used to
 	 * determine whether the new entity class should be brush-based or not.
 	 */
-	IEntityClassPtr (*findOrInsert)(const std::string& name, bool has_brushes);
+	virtual IEntityClassPtr findOrInsert(const std::string& name, 
+										 bool has_brushes) = 0;
 	
-  void (*forEach)(EntityClassVisitor& visitor);
-  void (*attach)(ModuleObserver& observer);
-  void (*detach)(ModuleObserver& observer);
-  void (*realise)();
-  void (*unrealise)();
+ 	virtual void forEach(EntityClassVisitor& visitor) = 0;
+	virtual void attach(ModuleObserver& observer) = 0;
+	virtual void detach(ModuleObserver& observer) = 0;
+	virtual void realise() = 0;
+	virtual void unrealise() = 0;
 };
 
 template<typename Type>
 class GlobalModule;
-typedef GlobalModule<EntityClassManager> GlobalEntityClassManagerModule;
+typedef GlobalModule<IEntityClassManager> GlobalEntityClassManagerModule;
 
 template<typename Type>
 class GlobalModuleRef;
-typedef GlobalModuleRef<EntityClassManager> GlobalEntityClassManagerModuleRef;
+typedef GlobalModuleRef<IEntityClassManager> GlobalEntityClassManagerModuleRef;
 
-inline EntityClassManager& GlobalEntityClassManager()
+inline IEntityClassManager& GlobalEntityClassManager()
 {
   return GlobalEntityClassManagerModule::getTable();
 }
