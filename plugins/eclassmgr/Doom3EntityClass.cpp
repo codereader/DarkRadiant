@@ -19,8 +19,7 @@ Doom3EntityClass::Doom3EntityClass(const std::string& name,
   _model(""),
   _skin(""),
   _mins(mins),
-  _maxs(maxs),
-  _parentName("")
+  _maxs(maxs)
 {
 	// Capture the shaders
 	captureColour();		
@@ -58,15 +57,6 @@ void Doom3EntityClass::releaseColour() {
 
 	GlobalShaderCache().release(fillCol);
 	GlobalShaderCache().release(wireCol);
-}
-
-// Recursively resolve inheritance
-void Doom3EntityClass::resolveInheritance() {
-	if (_parentClass) {
-		// Recursively resolve inheritance of parent entity
-		_parentClass->resolveInheritance();
-		// Copy properties
-	}
 }
 
 // Enumerate entity class attributes

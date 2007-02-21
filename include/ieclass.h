@@ -214,34 +214,6 @@ struct IEntityClass {
 	/** Get the model skin, or the empty string if there is no skin.
 	 */
 	virtual const std::string& getSkin() const = 0;
-	
-
-	/* INHERITANCE */
-	
-	/** Set the parent class. This is specified via an "inherit" key in the
-	 * definition.
-	 * 
-	 * @param parent
-	 * The parent entityclass name.
-	 */
-	virtual void setParent(const std::string& parent) = 0;
-	
-	/** Return the parent classname, or the empty string if there is no parent.
-	 */
-	virtual const std::string& getParent() const = 0;
-	
-	/** Set the parent IEntityClass object. This is used for inheritance
-	 * resolution.
-	 */
-	virtual void setParentEntity(IEntityClassPtr) = 0;
-	
-	/** Trigger a recursive inheritance resolution. The parent IEntityClass
-	 * will be asked to resolve its own inheritance, then all relevant properties
-	 * will be copied onto this class.
-	 * 
-	 * Resolution stops when an IEntityClass has no parent.
-	 */
-	virtual void resolveInheritance() = 0;
 };
 
 /** EntityClass visitor interface.
