@@ -1,6 +1,7 @@
 #include "PatchVertexItem.h"
 
 #include "math/aabb.h"
+#include "igl.h"
 
 namespace selection {
 	namespace textool {
@@ -21,7 +22,20 @@ AABB PatchVertexItem::getExtents() {
 }
 
 void PatchVertexItem::render() {
+	glPointSize(5);
+	glBegin(GL_POINTS);
 	
+	if (_selected) {
+		glColor3f(1, 0.5f, 0);
+	}
+	else {
+		glColor3f(1, 1, 1);
+	}
+	
+	// Draw one single point at the given coords
+	glVertex2f(_patchControl.m_texcoord[0], _patchControl.m_texcoord[1]);
+		
+	glEnd();
 }
 
 void PatchVertexItem::transform(const Matrix4& transform) {
@@ -29,13 +43,13 @@ void PatchVertexItem::transform(const Matrix4& transform) {
 }
 
 bool PatchVertexItem::testSelect(const Rectangle& rectangle) {
-	return false;
+	return rectangle.contains(_patchControl.m_texcoord);
 }
 
 TexToolItemVec PatchVertexItem::getSelectables(const Rectangle& rectangle) {
-	TexToolItemVec returnVector;
-	
-	return returnVector;
+	// Return an empty array, this is handled by the PatchItem itself
+	TexToolItemVec returnValue;
+	return returnValue;
 }
 
 	} // namespace TexTool
