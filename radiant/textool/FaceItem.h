@@ -1,8 +1,10 @@
 #ifndef FACEITEM_H_
 #define FACEITEM_H_
 
-#include "brush/Face.h"
 #include "TexToolItem.h"
+
+class Face;
+class Winding;
 
 namespace selection {
 	namespace textool {

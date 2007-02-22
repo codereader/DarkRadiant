@@ -14,21 +14,10 @@ class BrushItem :
 	Brush& _sourceBrush;
 
 public:
+	// Constructor, allocates all child FacItems
 	BrushItem(Brush& sourceBrush); 
 
-	// Gets the AABB of this object in texture space
-	virtual AABB getExtents();
-
-	// Renders this object's visual representation.
-	virtual void render();
-
-	// Transforms this object with the given transformation matrix
-	virtual void transform(const Matrix4& matrix);
-
-	/** greebo: Saves the current undo state.
-	 */
-	virtual void beginTransformation();
-};
+}; // class BrushItem
 	
 	} // namespace TexTool
 } // namespace selection
