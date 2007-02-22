@@ -52,8 +52,6 @@ TexTool::TexTool() :
 	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
 	_window = gtkutil::TransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
 	
-	// Set the default border width in accordance to the HIG
-	gtk_container_set_border_width(GTK_CONTAINER(_window), 12);
 	gtk_window_set_type_hint(GTK_WINDOW(_window), GDK_WINDOW_TYPE_HINT_DIALOG);
 	
 	g_signal_connect(G_OBJECT(_window), "delete-event", G_CALLBACK(onDelete), this);
@@ -213,6 +211,10 @@ void TexTool::recalculateVisibleTexSpace() {
 	
 	// Relocate and resize the texSpace AABB
 	_texSpaceAABB = AABB(selAABB.origin, selAABB.extents);
+	
+	// Normalise the plane to be square
+	_texSpaceAABB.extents[0] = std::max(_texSpaceAABB.extents[0], _texSpaceAABB.extents[1]);
+	_texSpaceAABB.extents[1] = std::max(_texSpaceAABB.extents[0], _texSpaceAABB.extents[1]);
 }
 
 void TexTool::draw() {

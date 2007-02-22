@@ -23,7 +23,7 @@ PatchItem::PatchItem(Patch& sourcePatch) :
 
 void PatchItem::render() {
 	glEnable(GL_BLEND);
-	glBlendColor(0,0,0, 0.2f);
+	glBlendColor(0,0,0, 0.3f);
 	glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
 	
 	glColor3f(1, 1, 1);
