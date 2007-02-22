@@ -33,34 +33,5 @@ BrushItem::BrushItem(Brush& sourceBrush) :
 	_sourceBrush.forEachFace(FaceItemCreator(_children));
 }
 
-AABB BrushItem::getExtents() {
-	AABB returnValue;
-	
-	// Cycle through all the children and include their AABB
-	for (unsigned int i = 0; i < _children.size(); i++) {
-		returnValue.includeAABB(_children[i]->getExtents());
-	}
-	
-	return returnValue;
-}
-
-void BrushItem::render() {
-	// Cycle through all the children and ask them to render themselves
-	for (unsigned int i = 0; i < _children.size(); i++) {
-		_children[i]->render();
-	}
-}
-
-void BrushItem::transform(const Matrix4& matrix) {
-	// Cycle through all the children and ask them to render themselves
-	for (unsigned int i = 0; i < _children.size(); i++) {
-		_children[i]->transform(matrix);
-	}
-}
-
-void BrushItem::beginTransformation() {
-	_sourceBrush.undoSave();
-}
-
 	} // namespace TexTool
 } // namespace selection

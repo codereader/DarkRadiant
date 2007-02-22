@@ -80,6 +80,15 @@ public:
 		return returnVector;
 	}
 	
+	/** greebo: Default transform implementation: transform all children.
+	 */
+	virtual void transform(const Matrix4& matrix) {
+		// Cycle through all the children and ask them to render themselves
+		for (unsigned int i = 0; i < _children.size(); i++) {
+			_children[i]->transform(matrix);
+		}
+	}
+	
 	/** greebo: Transforms this object if it's selected only.
 	 * 
 	 * Default implementation for a TexToolItem: transform self
@@ -95,6 +104,26 @@ public:
 			for (unsigned int i = 0; i < _children.size(); i++) {
 				_children[i]->transformSelected(matrix);
 			}
+		}
+	}
+	
+	// Default implementation of getExtents(). All children's AABB are combined.
+	virtual AABB getExtents() {
+		AABB returnValue;
+		
+		// Cycle through all the children and include their AABB
+		for (unsigned int i = 0; i < _children.size(); i++) {
+			returnValue.includeAABB(_children[i]->getExtents());
+		}
+		
+		return returnValue;
+	}
+	
+	// Default render routine: ask all children to render their part
+	virtual void render() {
+		// Cycle through all the children and ask them to render themselves
+		for (unsigned int i = 0; i < _children.size(); i++) {
+			_children[i]->render();
 		}
 	}
 

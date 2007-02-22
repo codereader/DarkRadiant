@@ -47,7 +47,7 @@ public:
 		_selected = !_selected;
 	}
 	
-	/** greebo: Returns the dimensions of this object in texture space.
+	/** greebo: Retrieves the dimensions of this object in texture space.
 	 * 			This returns the AABB with the z-component set to 0.
 	 */
 	virtual AABB getExtents() = 0;

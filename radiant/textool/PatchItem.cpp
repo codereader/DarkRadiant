@@ -21,17 +21,6 @@ PatchItem::PatchItem(Patch& sourcePatch) :
 	}
 }
 
-AABB PatchItem::getExtents() {
-	AABB returnValue;
-	
-	// Cycle through all the children and include their AABB
-	for (unsigned int i = 0; i < _children.size(); i++) {
-		returnValue.includeAABB(_children[i]->getExtents());
-	}
-	
-	return returnValue;
-}
-
 void PatchItem::render() {
 	glEnable(GL_BLEND);
 	glBlendColor(0,0,0, 0.2f);
@@ -55,17 +44,8 @@ void PatchItem::render() {
 	glEnd();
 	glDisable(GL_BLEND);
 	
-	// Cycle through all the children and ask them to render themselves
-	for (unsigned int i = 0; i < _children.size(); i++) {
-		_children[i]->render();
-	}
-}
-
-void PatchItem::transform(const Matrix4& matrix) {
-	// Cycle through all the children and ask them to render themselves
-	for (unsigned int i = 0; i < _children.size(); i++) {
-		_children[i]->transform(matrix);
-	}
+	// Now invoke the default render method (calls render() on all children)
+	TexToolItem::render();
 }
 
 void PatchItem::transformSelected(const Matrix4& matrix) {

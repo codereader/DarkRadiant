@@ -17,19 +17,9 @@ class PatchItem :
 public:
 	PatchItem(Patch& sourcePatch); 
 
-	// Gets the AABB of this object in texture space
-	virtual AABB getExtents();
-
-	// ========== Renderable implementation ================
-	
 	// Renders this object's visual representation.
 	virtual void render();
 
-	// ========== Transformable implementation ================
-	
-	// Transforms this object with the given transformation matrix
-	virtual void transform(const Matrix4& matrix);
-	
 	// Transforms this object if it's selected only and calls the
 	// Patch::controlPointsChanged() routine afterwards.
 	virtual void transformSelected(const Matrix4& matrix);

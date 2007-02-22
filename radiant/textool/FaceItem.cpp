@@ -1,5 +1,6 @@
 #include "FaceItem.h"
 
+#include "brush/Face.h"
 #include "winding.h"
 
 namespace selection {
