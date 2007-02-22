@@ -17,6 +17,7 @@
 #include "brush/Face.h"
 #include "patch/Patch.h"
 #include "winding.h"
+#include "camera/GlobalCamera.h"
 
 #include "textool/Selectable.h"
 #include "textool/Transformable.h"
@@ -389,6 +390,9 @@ void TexTool::doMouseMove(const Vector2& coords, GdkEventMotion* event) {
 		_manipulateRectangle.topLeft = coords;
 		
 		draw();
+		
+		// Update the camera to reflect the changes
+		GlobalCamera().update();
 	}
 }
 

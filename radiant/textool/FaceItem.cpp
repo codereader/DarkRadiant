@@ -34,9 +34,7 @@ void FaceItem::render() {
 	
 	glBegin(GL_QUADS);
 	
-	Winding& winding = _sourceFace.getWinding();
-	
-	for (Winding::iterator i = winding.begin(); i != winding.end(); i++) {
+	for (Winding::iterator i = _winding.begin(); i != _winding.end(); i++) {
 		glVertex2f(i->texcoord[0], i->texcoord[1]);
 	}
 	
@@ -45,7 +43,7 @@ void FaceItem::render() {
 	
 	glPointSize(5);
 	glBegin(GL_POINTS);
-	for (Winding::iterator i = winding.begin(); i != winding.end(); i++) {
+	for (Winding::iterator i = _winding.begin(); i != _winding.end(); i++) {
 		glVertex2f(i->texcoord[0], i->texcoord[1]);
 	}
 	
@@ -57,10 +55,18 @@ void FaceItem::render() {
 }
 
 void FaceItem::transform(const Matrix4& matrix) {
-	// Cycle through all the children and ask them to render themselves
-	for (unsigned int i = 0; i < _children.size(); i++) {
-		_children[i]->transform(matrix);
-	}
+	// Pick the translation components from the matrix and apply the translation
+	Vector2 translation(matrix.tx(), matrix.ty());
+	
+	// Scale the translation with the shader image dimensions
+	translation[0] *= _sourceFace.getShader().width();
+	translation[1] *= _sourceFace.getShader().height();
+	
+	// Invert the s-translation, the ShiftTexDef does it inversely for some reason. 
+	translation[0] *= -1;
+	
+	// Shift the texdef accordingly
+	_sourceFace.ShiftTexdef(translation[0], translation[1]);
 }
 
 void FaceItem::transformSelected(const Matrix4& matrix) {
@@ -68,12 +74,7 @@ void FaceItem::transformSelected(const Matrix4& matrix) {
 	if (_selected) {
 		transform(matrix);
 	}
-	else {
-		// FaceItem is not selected, propagate the call
-		for (unsigned int i = 0; i < _children.size(); i++) {
-			_children[i]->transformSelected(matrix);
-		}
-	}
+	// This object has no children, therefore the call needs not to be passed
 }
 
 Vector2 FaceItem::getCentroid() const {
