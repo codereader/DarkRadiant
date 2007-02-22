@@ -23,7 +23,7 @@ AABB FaceItem::getExtents() {
 
 void FaceItem::render() {
 	glEnable(GL_BLEND);
-	glBlendColor(0,0,0, 0.2f);
+	glBlendColor(0,0,0, 0.3f);
 	glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
 	
 	if (_selected) {
@@ -33,7 +33,7 @@ void FaceItem::render() {
 		glColor3f(1, 1, 1);
 	}
 	
-	glBegin(GL_QUADS);
+	glBegin(GL_TRIANGLE_FAN);
 	
 	for (Winding::iterator i = _winding.begin(); i != _winding.end(); i++) {
 		glVertex2f(i->texcoord[0], i->texcoord[1]);
