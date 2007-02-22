@@ -10,9 +10,6 @@ namespace selection {
 class PatchItem :
 	public TexToolItem
 {
-	// The list of children of this object
-	TexToolItemVec _children;
-
 	// The patch this control is referring to
 	Patch& _sourcePatch;
 

@@ -10,9 +10,7 @@ namespace selection {
 class PatchVertexItem :
 	public TexToolItem
 {
-	// The list of children of this object
-	TexToolItemVec _children;
-	
+	// The reference to the "real" PatchControlVertex
 	PatchControl& _patchControl;
 
 public:

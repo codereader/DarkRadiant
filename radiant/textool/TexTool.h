@@ -112,6 +112,10 @@ private:
 	 */
 	void update();
 	
+	/** greebo: Passes the given visitor to every Item in the hierarchy.
+	 */
+	void foreachItem(selection::textool::ItemVisitor& visitor);
+	
 	/** greebo: Returns a list of selectables for the given rectangle.
 	 */
 	selection::textool::TexToolItemVec getSelectables(const selection::Rectangle& rectangle);
@@ -142,6 +146,9 @@ private:
 	static gboolean onMouseUp(GtkWidget* widget, GdkEventButton* event, TexTool* self);
 	static gboolean onMouseDown(GtkWidget* widget, GdkEventButton* event, TexTool* self);
 	static gboolean onMouseMotion(GtkWidget* widget, GdkEventMotion* event, TexTool* self);
+	
+	// The static keyboard callback to catch the ESC key
+	static gboolean onKeyPress(GtkWindow* window, GdkEventKey* event, TexTool* self);
 }; // class TexTool
 
 } // namespace ui
