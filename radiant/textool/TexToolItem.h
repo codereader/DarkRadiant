@@ -55,6 +55,13 @@ public:
 	 * to the given coords. 
 	 */
 	virtual TexToolItemVec getSelectables(const Rectangle& rectangle) = 0;
+	
+	/** greebo: Tells the attached object to prepare for transformation,
+	 * 			this includes saving their current state for later undo.
+	 */
+	virtual void beginTransformation() {
+		// Empty default implementation
+	}
 };
 
 	} // namespace textool

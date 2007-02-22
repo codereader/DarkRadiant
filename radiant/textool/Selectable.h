@@ -22,6 +22,19 @@ public:
 		return (point[0] >= topLeft[0] && point[0] <= bottomRight[0] && 
 				point[1] >= topLeft[1] && point[1] <= bottomRight[1]);
 	}
+	
+	/** greebo: Makes sure that the topLeft vector is actually top left
+	 * 			relatively to bottomRight (values should be lower). 
+	 */
+	void sortCorners() {
+		if (topLeft[0] >= bottomRight[0]) {
+			std::swap(topLeft[0], bottomRight[0]);
+		}
+		
+		if (topLeft[1] >= bottomRight[1]) {
+			std::swap(topLeft[1], bottomRight[1]);
+		}
+	}
 };
 
 namespace textool {

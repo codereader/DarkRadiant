@@ -39,11 +39,26 @@ void PatchItem::render() {
 	}
 }
 
-void PatchItem::transform(const Matrix4& transform) {
+void PatchItem::transform(const Matrix4& matrix) {
 	// Cycle through all the children and ask them to render themselves
 	for (unsigned int i = 0; i < _children.size(); i++) {
-		_children[i]->transform(transform);
+		_children[i]->transform(matrix);
 	}
+}
+
+void PatchItem::transformSelected(const Matrix4& matrix) {
+	// If this object is selected, transform the whole PatchItem and all children
+	if (_selected) {
+		transform(matrix);
+	}
+	else {
+		// PatchItem is not selected, propagate the call
+		for (unsigned int i = 0; i < _children.size(); i++) {
+			_children[i]->transformSelected(matrix);
+		}
+	}
+	
+	_sourcePatch.controlPointsChanged();
 }
 
 bool PatchItem::testSelect(const Rectangle& rectangle) {
@@ -70,6 +85,10 @@ TexToolItemVec PatchItem::getSelectables(const Rectangle& rectangle) {
 	}
 	
 	return returnVector;
+}
+
+void PatchItem::beginTransformation() {
+	_sourcePatch.undoSave();
 }
 
 	} // namespace TexTool

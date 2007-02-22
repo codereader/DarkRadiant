@@ -34,12 +34,20 @@ void PatchVertexItem::render() {
 	
 	// Draw one single point at the given coords
 	glVertex2f(_patchControl.m_texcoord[0], _patchControl.m_texcoord[1]);
-		
+	
 	glEnd();
 }
 
-void PatchVertexItem::transform(const Matrix4& transform) {
-	
+void PatchVertexItem::transformSelected(const Matrix4& matrix) {
+	if (_selected) {
+		transform(matrix);
+	}
+	// This object has no children, therefore the call needs not to be passed
+}
+
+void PatchVertexItem::transform(const Matrix4& matrix) {
+	// Pick the translation components from the matrix and apply the translation
+	_patchControl.m_texcoord += Vector2(matrix.tx(), matrix.ty());
 }
 
 bool PatchVertexItem::testSelect(const Rectangle& rectangle) {
