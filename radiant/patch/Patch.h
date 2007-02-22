@@ -239,6 +239,8 @@ public:
 		return m_ctrl.data() + m_ctrl.size();
 	}
 
+	PatchTesselation& getTesselation();
+
 	// Get the current control point array
 	PatchControlArray& getControlPoints();	
 	const PatchControlArray& getControlPoints() const;
