@@ -1,6 +1,7 @@
 #include "Primitives.h"
 
 #include "brush/FaceInstance.h"
+#include "brush/BrushVisit.h"
 #include "patch/PatchSceneWalk.h"
 #include "string/string.h"
 
@@ -50,11 +51,39 @@ public:
 	}
 };
 
+class SelectedBrushFinder :
+	public SelectionSystem::Visitor
+{
+	// The target list that gets populated
+	BrushPtrVector& _vector;
+public:
+	SelectedBrushFinder(BrushPtrVector& targetVector) :
+		_vector(targetVector)
+	{}
+	
+	void visit(scene::Instance& instance) const {
+		BrushInstance* brushInstance = Instance_getBrush(instance);
+		if (brushInstance != NULL) {
+			_vector.push_back(&brushInstance->getBrush());
+		}
+	}
+};
+
 PatchPtrVector getSelectedPatches() {
 	PatchPtrVector returnVector;
 	
 	Scene_forEachSelectedPatch(
 		SelectedPatchFinder(returnVector)
+	);
+	
+	return returnVector;
+}
+
+BrushPtrVector getSelectedBrushes() {
+	BrushPtrVector returnVector;
+	
+	GlobalSelectionSystem().foreachSelected(
+		SelectedBrushFinder(returnVector)
 	);
 	
 	return returnVector;

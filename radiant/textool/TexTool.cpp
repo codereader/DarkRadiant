@@ -21,6 +21,7 @@
 #include "textool/Selectable.h"
 #include "textool/Transformable.h"
 #include "textool/PatchItem.h"
+#include "textool/BrushItem.h"
 
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Shader.h"
@@ -165,6 +166,20 @@ void TexTool::selectionChanged() {
 				
 				// Add it to the list
 				_items.push_back(patchItem);
+			}
+		}
+		
+		if (_selectionInfo.brushCount > 0) {
+			BrushPtrVector brushList = selection::algorithm::getSelectedBrushes();
+			
+			for (std::size_t i = 0; i < brushList.size(); i++) {
+				// Allocate a new PatchItem on the heap (shared_ptr)
+				selection::textool::TexToolItemPtr brushItem(
+					new selection::textool::BrushItem(*brushList[i])
+				);
+				
+				// Add it to the list
+				_items.push_back(brushItem);
 			}
 		}
 	}

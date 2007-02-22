@@ -1,26 +1,39 @@
-#include "PatchItem.h"
+#include "BrushItem.h"
 
-#include "PatchVertexItem.h"
+#include "FaceItem.h"
 
 namespace selection {
 	namespace textool {
 
-PatchItem::PatchItem(Patch& sourcePatch) : 
-	_sourcePatch(sourcePatch)
+class FaceItemCreator :
+	public BrushVisitor
 {
-	// Add all the patch control vertices as children to this class
-	for (PatchControlIter i = _sourcePatch.begin(); i != _sourcePatch.end(); i++) {
-		// Allocate a new vertex children on the heap
-		TexToolItemPtr patchVertexItem(
-			new PatchVertexItem(*i)
+	// The target vector
+	TexToolItemVec& _vector;
+public:
+	FaceItemCreator(TexToolItemVec& vector) :
+		_vector(vector)
+	{}
+	
+	void visit(Face& face) const {
+		TexToolItemPtr faceItem(
+			new FaceItem(face)
 		);
 		
-		// Add it to the children of this patch
-		_children.push_back(patchVertexItem);
+		_vector.push_back(faceItem);
 	}
+};
+
+// Constructor
+BrushItem::BrushItem(Brush& sourceBrush) : 
+	_sourceBrush(sourceBrush)
+{
+	// Visit all the brush faces with the FaceItemCreator
+	// that populates the _children vector
+	_sourceBrush.forEachFace(FaceItemCreator(_children));
 }
 
-AABB PatchItem::getExtents() {
+AABB BrushItem::getExtents() {
 	AABB returnValue;
 	
 	// Cycle through all the children and include their AABB
@@ -31,8 +44,8 @@ AABB PatchItem::getExtents() {
 	return returnValue;
 }
 
-void PatchItem::render() {
-	glEnable(GL_BLEND);
+void BrushItem::render() {
+	/*glEnable(GL_BLEND);
 	glBlendColor(0,0,0, 0.2f);
 	glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
 	
@@ -52,7 +65,7 @@ void PatchItem::render() {
 		}
 	}
 	glEnd();
-	glDisable(GL_BLEND);
+	glDisable(GL_BLEND);*/
 	
 	// Cycle through all the children and ask them to render themselves
 	for (unsigned int i = 0; i < _children.size(); i++) {
@@ -60,29 +73,27 @@ void PatchItem::render() {
 	}
 }
 
-void PatchItem::transform(const Matrix4& matrix) {
+void BrushItem::transform(const Matrix4& matrix) {
 	// Cycle through all the children and ask them to render themselves
 	for (unsigned int i = 0; i < _children.size(); i++) {
 		_children[i]->transform(matrix);
 	}
 }
 
-void PatchItem::transformSelected(const Matrix4& matrix) {
-	// If this object is selected, transform the whole PatchItem and all children
+void BrushItem::transformSelected(const Matrix4& matrix) {
+	// If this object is selected, transform the whole BrushItem and all children
 	if (_selected) {
 		transform(matrix);
 	}
 	else {
-		// PatchItem is not selected, propagate the call
+		// BrushItem is not selected, propagate the call
 		for (unsigned int i = 0; i < _children.size(); i++) {
 			_children[i]->transformSelected(matrix);
 		}
 	}
-	
-	_sourcePatch.controlPointsChanged();
 }
 
-bool PatchItem::testSelect(const Rectangle& rectangle) {
+bool BrushItem::testSelect(const Rectangle& rectangle) {
 	// Cycle through all the children and ask them to render themselves
 	for (unsigned int i = 0; i < _children.size(); i++) {
 		// Return true on the first selected child
@@ -95,7 +106,7 @@ bool PatchItem::testSelect(const Rectangle& rectangle) {
 	return false;
 }
 
-TexToolItemVec PatchItem::getSelectables(const Rectangle& rectangle) {
+TexToolItemVec BrushItem::getSelectables(const Rectangle& rectangle) {
 	TexToolItemVec returnVector;
 	
 	for (unsigned int i = 0; i < _children.size(); i++) {
@@ -108,8 +119,8 @@ TexToolItemVec PatchItem::getSelectables(const Rectangle& rectangle) {
 	return returnVector;
 }
 
-void PatchItem::beginTransformation() {
-	_sourcePatch.undoSave();
+void BrushItem::beginTransformation() {
+	_sourceBrush.undoSave();
 }
 
 	} // namespace TexTool
