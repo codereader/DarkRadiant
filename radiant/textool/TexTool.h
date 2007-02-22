@@ -43,6 +43,9 @@ class TexTool :
 	// The dimensions of the GL widget in pixels.
 	Vector2 _windowDims;
 	
+	// The zoomfactor of this window (default = 1.1)
+	float _zoomFactor;
+	
 	// The currently active objects in the textool window 
 	selection::textool::TexToolItemVec _items;
 	
@@ -102,6 +105,16 @@ private:
 	 */
 	AABB& getExtents();
 	
+	/** greebo: Returns the AABB of the currently visible texture space.
+	 */
+	AABB& getVisibleTexSpace();
+	
+	/** greebo: Recalculates and relocates the visible texture space.
+	 * 			It's basically centered onto the current selection
+	 * 			with the extents multiplied by the default zoomFactor.
+	 */
+	void recalculateVisibleTexSpace();
+	
 	/** greebo: Visualises the U/V coordinates by drawing the points
 	 * into the "texture space".
 	 */
@@ -146,6 +159,9 @@ private:
 	static gboolean onMouseUp(GtkWidget* widget, GdkEventButton* event, TexTool* self);
 	static gboolean onMouseDown(GtkWidget* widget, GdkEventButton* event, TexTool* self);
 	static gboolean onMouseMotion(GtkWidget* widget, GdkEventMotion* event, TexTool* self);
+	
+	// The callback for mouse scroll events
+	static gboolean onMouseScroll(GtkWidget* widget, GdkEventScroll* event, TexTool* self);
 	
 	// The static keyboard callback to catch the ESC key
 	static gboolean onKeyPress(GtkWindow* window, GdkEventKey* event, TexTool* self);

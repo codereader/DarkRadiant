@@ -32,10 +32,14 @@ namespace ui {
 		
 		const std::string RKEY_ROOT = "user/ui/textures/texTool/";
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
+		
+		const float DEFAULT_ZOOM_FACTOR = 1.5f;
+		const float ZOOM_MODIFIER = 1.25f;
 	}
 
 TexTool::TexTool() :
 	_selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
+	_zoomFactor(DEFAULT_ZOOM_FACTOR),
 	_dragRectangle(false),
 	_manipulatorMode(false),
 	_undoCommand(NULL)
@@ -75,13 +79,14 @@ void TexTool::populateWindow() {
 	GtkWidget* frame = gtkutil::FramedWidget(_glWidget);
 		
 	// Connect the events
-	gtk_widget_set_events(_glWidget, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK);
+	gtk_widget_set_events(_glWidget, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
 	g_signal_connect(G_OBJECT(_glWidget), "expose-event", G_CALLBACK(onExpose), this);
 	g_signal_connect(G_OBJECT(_glWidget), "focus-in-event", G_CALLBACK(triggerRedraw), this);
 	g_signal_connect(G_OBJECT(_glWidget), "button-press-event", G_CALLBACK(onMouseDown), this);
 	g_signal_connect(G_OBJECT(_glWidget), "button-release-event", G_CALLBACK(onMouseUp), this);
 	g_signal_connect(G_OBJECT(_glWidget), "motion-notify-event", G_CALLBACK(onMouseMotion), this);
 	g_signal_connect(G_OBJECT(_glWidget), "key_press_event", G_CALLBACK(onKeyPress), this);
+	g_signal_connect(G_OBJECT(_glWidget), "scroll_event", G_CALLBACK(onMouseScroll), this);
 	
 	// Make the GL widget accept the global shortcuts
 	GlobalEventManager().connect(GTK_OBJECT(_glWidget));
@@ -162,7 +167,20 @@ void TexTool::selectionChanged() {
 		}
 	}
 	
+	recalculateVisibleTexSpace();
+	
 	draw();
+}
+
+void TexTool::recalculateVisibleTexSpace() {
+	// Get the selection extents
+	AABB& selAABB = getExtents();
+	
+	// Reset the viewport zoom
+	_zoomFactor = DEFAULT_ZOOM_FACTOR;
+	
+	// Relocate and resize the texSpace AABB
+	_texSpaceAABB = AABB(selAABB.origin, selAABB.extents);
 }
 
 void TexTool::draw() {
@@ -181,12 +199,16 @@ AABB& TexTool::getExtents() {
 	return _selAABB;
 }
 
+AABB& TexTool::getVisibleTexSpace() {
+	return _texSpaceAABB;
+}
+
 Vector2 TexTool::getTextureCoords(const double& x, const double& y) {
 	Vector2 result;
 	
 	if (_selAABB.isValid()) {
-		Vector3 aabbTL = _texSpaceAABB.origin - _texSpaceAABB.extents;
-		Vector3 aabbBR = _texSpaceAABB.origin + _texSpaceAABB.extents;
+		Vector3 aabbTL = _texSpaceAABB.origin - _texSpaceAABB.extents * _zoomFactor;
+		Vector3 aabbBR = _texSpaceAABB.origin + _texSpaceAABB.extents * _zoomFactor;
 		
 		Vector2 topLeft(aabbTL[0], aabbTL[1]);
 		Vector2 bottomRight(aabbBR[0], aabbBR[1]);
@@ -256,10 +278,10 @@ selection::textool::TexToolItemVec TexTool::getSelectables(const Vector2& coords
 	// of the visible texture space
 	selection::Rectangle testRectangle;
 	
-	testRectangle.topLeft[0] = coords[0] - _texSpaceAABB.extents[0]*0.01; 
-	testRectangle.topLeft[1] = coords[1] - _texSpaceAABB.extents[1]*0.01;
-	testRectangle.bottomRight[0] = coords[0] + _texSpaceAABB.extents[0]*0.01; 
-	testRectangle.bottomRight[1] = coords[1] + _texSpaceAABB.extents[1]*0.01;
+	testRectangle.topLeft[0] = coords[0] - _texSpaceAABB.extents[0]*0.02; 
+	testRectangle.topLeft[1] = coords[1] - _texSpaceAABB.extents[1]*0.02;
+	testRectangle.bottomRight[0] = coords[0] + _texSpaceAABB.extents[0]*0.02; 
+	testRectangle.bottomRight[1] = coords[1] + _texSpaceAABB.extents[1]*0.02;
 	
 	// Pass the call on to the getSelectables(<RECTANGLE>) method
 	return getSelectables(testRectangle);
@@ -435,12 +457,11 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 		return false;
 	}
 	
-	// Calculate the window extents
-	self->_texSpaceAABB = AABB(selAABB.origin, selAABB.extents * 1.5);
+	AABB& texSpaceAABB = self->getVisibleTexSpace();
 	
 	// Get the upper left and lower right corner coordinates
-	Vector3 orthoTopLeft = self->_texSpaceAABB.origin - self->_texSpaceAABB.extents;
-	Vector3 orthoBottomRight = self->_texSpaceAABB.origin + self->_texSpaceAABB.extents;
+	Vector3 orthoTopLeft = texSpaceAABB.origin - texSpaceAABB.extents * self->_zoomFactor;
+	Vector3 orthoBottomRight = texSpaceAABB.origin + texSpaceAABB.extents * self->_zoomFactor;
 	
 	// Initialise the 2D projection matrix with: left, right, bottom, top, znear, zfar 
 	glOrtho(orthoTopLeft[0], 	// left 
@@ -578,6 +599,21 @@ gboolean TexTool::onKeyPress(GtkWindow* window, GdkEventKey* event, TexTool* sel
 		
 		// Don't propage the keypress event any further
 		return true;
+	}
+	
+	return false;
+}
+
+gboolean TexTool::onMouseScroll(GtkWidget* widget, GdkEventScroll* event, TexTool* self) {
+	
+	if (event->direction == GDK_SCROLL_UP) {
+		self->_zoomFactor /= ZOOM_MODIFIER;
+		
+		self->draw();
+	}
+	else if (event->direction == GDK_SCROLL_DOWN) {
+		self->_zoomFactor *= ZOOM_MODIFIER;
+		self->draw();
 	}
 	
 	return false;
