@@ -373,6 +373,8 @@ radiant_src = [
 'textool/TexTool.cpp',
 'textool/PatchItem.cpp',
 'textool/PatchVertexItem.cpp',
+'textool/BrushItem.cpp',
+'textool/FaceItem.cpp',
 'selection/Manipulatables.cpp',
 'selection/Manipulators.cpp',
 'selection/BestPoint.cpp',
