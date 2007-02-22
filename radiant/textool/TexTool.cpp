@@ -37,7 +37,8 @@ namespace ui {
 TexTool::TexTool() :
 	_selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
 	_dragRectangle(false),
-	_manipulatorMode(false)
+	_manipulatorMode(false),
+	_undoCommand(NULL)
 {
 	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
 	_window = gtkutil::TransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
@@ -260,68 +261,121 @@ selection::textool::TexToolItemVec TexTool::getSelectables(const Vector2& coords
 	
 	// Pass the call on to the getSelectables(<RECTANGLE>) method
 	return getSelectables(testRectangle);
-	
-	// Now go through the result and toggle all of the found selectables
-	/*for (unsigned int i = 0; i < selectables.size(); i++) {
-		// Toggle the selection of the found selectables
-		selectables[i]->toggle();
-	}*/
-	
-	// Return TRUE if there happened anything
-	/*if (selectables.size() > 0) {
-		draw();
-		return true;
-	}
-	
-	return false;*/
 }
 
-void TexTool::doMouseUp(const Vector2& coords) {
+void TexTool::doMouseUp(const Vector2& coords, GdkEventButton* event) {
+	
+	// Retrieve the according ObserverEvent for the GdkEventButton
+	ui::ObserverEvent observerEvent = 
+		GlobalEventManager().MouseEvents().getObserverEvent(event);
+	
 	// If we are in manipulation mode, end the move
-	if (_manipulatorMode) {
+	if (observerEvent == ui::obsManipulate && _manipulatorMode) {
 		_manipulatorMode = false;
+		
+		if (_undoCommand != NULL) {
+			// Remove the undo command from the heap, this triggers the 
+			// undo state save.
+			delete _undoCommand;
+			_undoCommand = NULL;
+		}
 	}
 	
-	if (_dragRectangle) {
+	// If we are in selection mode, end the selection
+	if ((observerEvent == ui::obsSelect || observerEvent == ui::obsToggle) 
+		 && _dragRectangle) 
+	{
 		_dragRectangle = false;
+		
+		// Make sure the corners are in the correct order
+		_selectionRectangle.sortCorners();
+		
+		// The minimim rectangle diameter for a rectangle test (3 % of visible texspace) 
+		float minDist = _texSpaceAABB.extents[0]*0.03;
+		
+		selection::textool::TexToolItemVec selectables;
+		
+		if ((coords - _selectionRectangle.topLeft).getLength() < minDist) {
+			// Perform a point selection test
+			selectables = getSelectables(_selectionRectangle.topLeft);
+		}
+		else {
+			// Perform the regular selectiontest
+			selectables = getSelectables(_selectionRectangle);
+		}
+		
+		// Toggle the selection
+		for (unsigned int i = 0; i < selectables.size(); i++) {
+			selectables[i]->toggle();
+		}
 	}
 	
 	draw();
-	// If not in manipulation mode, create a rectangle
-		// If the rectangle is smaller than an epsilon, perform
-		// a Pointtest
-		// or a RectangleTest
-	// Calculate the texture coords from the x/y click coordinates
-	
-	//self->testSelectPoint(texCoords);
 }
 
-void TexTool::doMouseDown(const Vector2& coords) {
+void TexTool::doMouseMove(const Vector2& coords, GdkEventMotion* event) {
+	if (_dragRectangle) {
+		_selectionRectangle.bottomRight = coords;
+		draw();
+	}
+	else if (_manipulatorMode) {
+		Vector2 delta = coords - _manipulateRectangle.topLeft;
+		
+		Vector3 translation(delta[0], delta[1], 0);
+		
+		// Create the transformation matrix
+		Matrix4 transform = Matrix4::getTranslation(translation);
+		
+		// Transform the selected
+		// The transformSelected() call is propagated down the entire tree
+		// of available items (e.g. PatchItem > PatchVertexItems)
+		for (unsigned int i = 0; i < _items.size(); i++) {
+			_items[i]->transformSelected(transform);
+		}
+		
+		// Store the new coords as new starting point
+		_manipulateRectangle.topLeft = coords;
+		
+		draw();
+	}
+}
+
+void TexTool::doMouseDown(const Vector2& coords, GdkEventButton* event) {
+	
+	// Retrieve the according ObserverEvent for the GdkEventButton
+	ui::ObserverEvent observerEvent = 
+		GlobalEventManager().MouseEvents().getObserverEvent(event);
 	
 	_manipulatorMode = false;
 	_dragRectangle = false;
 	
-	// Get the list of selectables of this point
-	selection::textool::TexToolItemVec selectables = getSelectables(coords);
-	
-	// Any selectables under the mouse pointer?
-	if (selectables.size() > 0) {
-		// Check, if the clicked item is already selected
-		if (selectables[0]->isSelected()) {
-			_manipulatorMode = true;
-		}
-		else {
-			// Set all selectables to SELECTED and start the manipulation
+	if (observerEvent == ui::obsManipulate) {
+		// Get the list of selectables of this point
+		selection::textool::TexToolItemVec selectables;
+		selectables = getSelectables(coords);
+		
+		// Any selectables under the mouse pointer?
+		if (selectables.size() > 0) {
+			// Toggle the selection
 			for (unsigned int i = 0; i < selectables.size(); i++) {
 				selectables[i]->setSelected(true);
 			}
+			
+			// Activate the manipulator mode
 			_manipulatorMode = true;
+			_manipulateRectangle.topLeft = coords; 
+			_manipulateRectangle.bottomRight = coords;
+			
+			if (_undoCommand == NULL) {
+				_undoCommand = new UndoableCommand("textureUVEdit");
+			}
 		}
 	}
-	else {
+	else if (observerEvent == ui::obsSelect || observerEvent == ui::obsToggle) {
+		// Start a drag or click operation
+		_dragRectangle = true;
 		_selectionRectangle.topLeft = coords;
 		_selectionRectangle.bottomRight = coords;
-		_dragRectangle = true;
 	}
 }
 
@@ -466,7 +520,7 @@ gboolean TexTool::onMouseUp(GtkWidget* widget, GdkEventButton* event, TexTool* s
 	Vector2 texCoords = self->getTextureCoords(event->x, event->y);
 	
 	// Pass the call to the member method
-	self->doMouseUp(texCoords);
+	self->doMouseUp(texCoords, event);
 	
 	return false;
 }
@@ -476,7 +530,7 @@ gboolean TexTool::onMouseDown(GtkWidget* widget, GdkEventButton* event, TexTool*
 	Vector2 texCoords = self->getTextureCoords(event->x, event->y);
 	
 	// Pass the call to the member method
-	self->doMouseDown(texCoords);
+	self->doMouseDown(texCoords, event);
 	
 	return false;
 }
@@ -485,14 +539,8 @@ gboolean TexTool::onMouseMotion(GtkWidget* widget, GdkEventMotion* event, TexToo
 	// Calculate the texture coords from the x/y click coordinates
 	Vector2 texCoords = self->getTextureCoords(event->x, event->y);
 	
-	if (self->_dragRectangle) {
-		self->_selectionRectangle.bottomRight = texCoords;
-		self->draw();
-	}
-	else if (self->_manipulatorMode) {
-		globalOutputStream() << "Manipulating\n";
-		self->draw();
-	}
+	// Pass the call to the member routine
+	self->doMouseMove(texCoords, event);
 
 	return false;
 }

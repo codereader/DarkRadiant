@@ -29,7 +29,10 @@ public:
 	// ========== Transformable implementation ================
 	
 	// Transforms this object with the given transformation matrix
-	void transform(const Matrix4& transform);
+	void transform(const Matrix4& matrix);
+
+	// Transforms this object if it's selected only
+	void transformSelected(const Matrix4& matrix);
 
 	// ========== Selectable implementation ================
 	

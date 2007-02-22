@@ -30,7 +30,10 @@ public:
 	// ========== Transformable implementation ================
 	
 	// Transforms this object with the given transformation matrix
-	void transform(const Matrix4& transform);
+	void transform(const Matrix4& matrix);
+
+	// Transforms this object if it's selected only
+	void transformSelected(const Matrix4& matrix);
 
 	// ========== Selectable implementation ================
 	
@@ -41,6 +44,10 @@ public:
 	/** greebo: Returns the list of selectables at the given coordinates. 
 	 */
 	virtual TexToolItemVec getSelectables(const Rectangle& rectangle);
+	
+	/** greebo: Saves the current undo state.
+	 */
+	virtual void beginTransformation();
 };
 	
 	} // namespace TexTool

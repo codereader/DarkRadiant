@@ -18,7 +18,25 @@ public:
 	 * 
 	 * Note: Hm, maybe a Matrix3 would be more appropriate for texture transformations (TODO). 
 	 */
-	virtual void transform(const Matrix4& transform) = 0;
+	virtual void transform(const Matrix4& matrix) = 0;
+	
+	/** greebo: Same as above, but applies only to selected items and subitems.
+	 *  		This is some sort of "propagation" transformation, that
+	 * 			applies to this object (if selected) and all selected subitems.
+	 */
+	virtual void transformSelected(const Matrix4& matrix) = 0;
+	
+	/** greebo: Tells the items that a transformation is about to begin.
+	 * 			This usually triggers an undoSave() which saves the current
+	 * 			item state.
+	 */
+	virtual void beginTransformation() = 0; 
+	
+	/** greebo: The counterpart of the above. Finishes the move. 
+	 */
+	virtual void endTransformation() {
+		// Empty implementation for the moment being
+	}
 };
 
 	} // namespace TexTool

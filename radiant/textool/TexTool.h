@@ -7,6 +7,7 @@
 #include "math/aabb.h"
 #include "ishaders.h"
 #include "iselection.h"
+#include "iundo.h"
 
 #include "TexToolItem.h"
 
@@ -47,10 +48,19 @@ class TexTool :
 	
 	// The draggable selection rectangle
 	selection::Rectangle _selectionRectangle;
+	
+	// The rectangle defining the manipulation's start and end point
+	selection::Rectangle _manipulateRectangle;
+	
+	// TRUE, if we are in selection mode
 	bool _dragRectangle;
 	
 	// TRUE, if a manipulation is currently ongoing
 	bool _manipulatorMode;
+	
+	// The undocommand that gets created when a transformation begins
+	// and destroyed upon end. The destruction triggers the UndoMementos being saved.  
+	UndoableCommand* _undoCommand;
 	
 public:
 	TexTool();
@@ -115,8 +125,9 @@ private:
 	 * 
 	 * @coords: this has already been converted into texture space. 
 	 */
-	void doMouseUp(const Vector2& coords);
-	void doMouseDown(const Vector2& coords);
+	void doMouseUp(const Vector2& coords, GdkEventButton* event);
+	void doMouseDown(const Vector2& coords, GdkEventButton* event);
+	void doMouseMove(const Vector2& coords, GdkEventMotion* event);
 
 	/** greebo: Converts the mouse/window coordinates into texture coords.
 	 */
