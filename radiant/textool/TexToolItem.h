@@ -7,8 +7,6 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 
-class AABB;
-
 namespace selection {
 	namespace textool {
 
@@ -27,12 +25,11 @@ public:
 /** greebo: A TexToolItem is an object that...
  * 
  * ...has a visual representation in the TexTool (Renderable).
- * ...can be selected (Selectable)
+ * ...can be selected (Selectable (implicitly derived from Transformable))
  * ...can be transformed (Transformable)
  * ...can have one or more children of the same type, to allow grouping.
  */
 class TexToolItem :
-	public Selectable,
 	public Renderable,
 	public Transformable
 {
@@ -67,20 +64,41 @@ public:
 		}
 	}
 	
-	virtual AABB getExtents() = 0;
-	
 	/** greebo: Returns a list of selectable items that correspond
 	 * to the given coords. 
 	 */
-	virtual TexToolItemVec getSelectables(const Rectangle& rectangle) = 0;
-	
-	/** greebo: Tells the attached object to prepare for transformation,
-	 * 			this includes saving their current state for later undo.
-	 */
-	virtual void beginTransformation() {
-		// Empty default implementation
+	virtual TexToolItemVec getSelectableChilds(const Rectangle& rectangle) {
+		TexToolItemVec returnVector;
+		
+		for (unsigned int i = 0; i < _children.size(); i++) {
+			// Add every children to the list
+			if (_children[i]->testSelect(rectangle)) {
+				returnVector.push_back(_children[i]);
+			}
+		}
+		
+		return returnVector;
 	}
-};
+	
+	/** greebo: Transforms this object if it's selected only.
+	 * 
+	 * Default implementation for a TexToolItem: transform self
+	 * and pass the call to the children.  
+	 */
+	virtual void transformSelected(const Matrix4& matrix) {
+		// If this object is selected, transform <self>
+		if (_selected) {
+			transform(matrix);
+		}
+		else {
+			// Object is not selected, propagate the call to the children
+			for (unsigned int i = 0; i < _children.size(); i++) {
+				_children[i]->transformSelected(matrix);
+			}
+		}
+	}
+
+}; // class TexToolItem
 
 /** greebo: Visitor class to select/deselect all visited TexToolItems
  */

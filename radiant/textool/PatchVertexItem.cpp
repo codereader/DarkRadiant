@@ -38,13 +38,6 @@ void PatchVertexItem::render() {
 	glEnd();
 }
 
-void PatchVertexItem::transformSelected(const Matrix4& matrix) {
-	if (_selected) {
-		transform(matrix);
-	}
-	// This object has no children, therefore the call needs not to be passed
-}
-
 void PatchVertexItem::transform(const Matrix4& matrix) {
 	// Pick the translation components from the matrix and apply the translation
 	_patchControl.m_texcoord += Vector2(matrix.tx(), matrix.ty());
@@ -52,12 +45,6 @@ void PatchVertexItem::transform(const Matrix4& matrix) {
 
 bool PatchVertexItem::testSelect(const Rectangle& rectangle) {
 	return rectangle.contains(_patchControl.m_texcoord);
-}
-
-TexToolItemVec PatchVertexItem::getSelectables(const Rectangle& rectangle) {
-	// Return an empty array, this is handled by the PatchItem itself
-	TexToolItemVec returnValue;
-	return returnValue;
 }
 
 	} // namespace TexTool

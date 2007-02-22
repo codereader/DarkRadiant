@@ -18,34 +18,17 @@ public:
 	FaceItem(Face& _sourceFace); 
 
 	// Gets the AABB of this object in texture space
-	AABB getExtents();
+	virtual AABB getExtents();
 
-	// ========== Renderable implementation ================
-	
 	// Renders this object's visual representation.
-	void render();
+	virtual void render();
 
-	// ========== Transformable implementation ================
-	
 	// Transforms this object with the given transformation matrix
-	void transform(const Matrix4& matrix);
+	virtual void transform(const Matrix4& matrix);
 
-	// Transforms this object if it's selected only
-	void transformSelected(const Matrix4& matrix);
-
-	// ========== Selectable implementation ================
-	
 	/** greebo: Returns true if the object can be selected at the given coords.
 	 */
 	virtual bool testSelect(const Rectangle& rectangle);
-	
-	/** greebo: Returns the list of selectables at the given coordinates. 
-	 */
-	virtual TexToolItemVec getSelectables(const Rectangle& rectangle);
-	
-	/** greebo: Saves the current undo state.
-	 */
-	virtual void beginTransformation();
 	
 private:
 	/** greebo: Calculates the mean value of all the texCoords,

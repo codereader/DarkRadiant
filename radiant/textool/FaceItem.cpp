@@ -69,14 +69,6 @@ void FaceItem::transform(const Matrix4& matrix) {
 	_sourceFace.ShiftTexdef(translation[0], translation[1]);
 }
 
-void FaceItem::transformSelected(const Matrix4& matrix) {
-	// If this object is selected, transform the whole FaceItem and all children
-	if (_selected) {
-		transform(matrix);
-	}
-	// This object has no children, therefore the call needs not to be passed
-}
-
 Vector2 FaceItem::getCentroid() const {
 	Vector2 texCentroid;
 	 
@@ -91,25 +83,8 @@ Vector2 FaceItem::getCentroid() const {
 }
 
 bool FaceItem::testSelect(const Rectangle& rectangle) {
-	globalOutputStream() << "Rectangle: " << rectangle.topLeft[0] << ", " << rectangle.topLeft[1] << " :: ";
-	globalOutputStream() << rectangle.bottomRight[0] << ", " << rectangle.bottomRight[1] << "\n";
-	
-	globalOutputStream() << "Centroid: " << getCentroid()[0] << ", " << getCentroid()[1] << "\n";
-	
 	// Check if the centroid is within the rectangle
-	return (rectangle.contains(getCentroid()));
-}
-
-TexToolItemVec FaceItem::getSelectables(const Rectangle& rectangle) {
-	TexToolItemVec returnVector;
-	
-	// No children of faces so far, return the empty list
-	
-	return returnVector;
-}
-
-void FaceItem::beginTransformation() {
-	_sourceFace.undoSave();
+	return rectangle.contains(getCentroid());
 }
 
 	} // namespace TexTool
