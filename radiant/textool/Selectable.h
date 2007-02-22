@@ -2,49 +2,17 @@
 #define TEXTOOL_SELECTABLE_H_
 
 #include "math/Vector2.h"
+#include "math/aabb.h"
+#include "Rectangle.h"
 
 namespace selection {
-
-
-/** greebo: A structure defining a 2D rectangular shape 
- * 			by specifying the top left and the 
- * 			bottom right corner coordinates.
- */
-class Rectangle {
-public:
-	Vector2 topLeft;
-	Vector2 bottomRight;
-	
-	/** greebo: Returns TRUE if the given <point> lies within the
-	 * 			boundaries described by the rectangle, FALSE otherwise. 
-	 */
-	bool contains(const Vector2& point) const {
-		return (point[0] >= topLeft[0] && point[0] <= bottomRight[0] && 
-				point[1] >= topLeft[1] && point[1] <= bottomRight[1]);
-	}
-	
-	/** greebo: Makes sure that the topLeft vector is actually top left
-	 * 			relatively to bottomRight (values should be lower). 
-	 */
-	void sortCorners() {
-		if (topLeft[0] >= bottomRight[0]) {
-			std::swap(topLeft[0], bottomRight[0]);
-		}
-		
-		if (topLeft[1] >= bottomRight[1]) {
-			std::swap(topLeft[1], bottomRight[1]);
-		}
-	}
-};
-
-namespace textool {
+	namespace textool {
 
 class Selectable 
 {
-	
 protected:
 	bool _selected;
-	 
+
 public:
 	Selectable() :
 		_selected(false)
@@ -56,7 +24,10 @@ public:
 	 * @returns: TRUE if the selectable responds to 
 	 * 			 the given rectangle, FALSE otherwise.
 	 */
-	virtual bool testSelect(const Rectangle& rectangle) = 0;
+	virtual bool testSelect(const Rectangle& rectangle) {
+		// Default implementation: returns FALSE
+		return false;
+	}
 	
 	/** greebo: Sets the selection status to <selected>
 	 */
@@ -75,6 +46,11 @@ public:
 	virtual void toggle() {
 		_selected = !_selected;
 	}
+	
+	/** greebo: Returns the dimensions of this object in texture space.
+	 * 			This returns the AABB with the z-component set to 0.
+	 */
+	virtual AABB getExtents() = 0;
  
 }; // class Selectable
 

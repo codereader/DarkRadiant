@@ -278,9 +278,9 @@ selection::textool::TexToolItemVec
 	for (unsigned int i = 0; i < _items.size(); i++) {
 		// Get the list from each item
 		selection::textool::TexToolItemVec found = 
-			_items[i]->getSelectables(rectangle);
+			_items[i]->getSelectableChilds(rectangle);
 		
-		// and join the two vectors
+		// and append the vector to the existing vector
 		selectables.insert(selectables.end(), found.begin(), found.end());
 	}
 	

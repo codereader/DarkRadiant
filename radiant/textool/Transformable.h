@@ -1,12 +1,15 @@
 #ifndef TEXTOOL_TRANSFORMABLE_H_
 #define TEXTOOL_TRANSFORMABLE_H_
 
+#include "Selectable.h"
+
 class Matrix4;
 
 namespace selection {
 	namespace textool {
 
-class Transformable
+class Transformable :
+	public Selectable
 {
 public:
 	/** greebo: This transforms the object using the given transformation matrix.
@@ -30,7 +33,9 @@ public:
 	 * 			This usually triggers an undoSave() which saves the current
 	 * 			item state.
 	 */
-	virtual void beginTransformation() = 0; 
+	virtual void beginTransformation() {
+		// Empty implementation for the moment being
+	}
 	
 	/** greebo: The counterpart of the above. Finishes the move. 
 	 */
