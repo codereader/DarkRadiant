@@ -295,10 +295,12 @@ selection::textool::TexToolItemVec TexTool::getSelectables(const Vector2& coords
 	// of the visible texture space
 	selection::Rectangle testRectangle;
 	
-	testRectangle.topLeft[0] = coords[0] - _texSpaceAABB.extents[0]*0.02; 
-	testRectangle.topLeft[1] = coords[1] - _texSpaceAABB.extents[1]*0.02;
-	testRectangle.bottomRight[0] = coords[0] + _texSpaceAABB.extents[0]*0.02; 
-	testRectangle.bottomRight[1] = coords[1] + _texSpaceAABB.extents[1]*0.02;
+	Vector3 extents = getVisibleTexSpace().extents * _zoomFactor;
+	
+	testRectangle.topLeft[0] = coords[0] - extents[0]*0.02; 
+	testRectangle.topLeft[1] = coords[1] - extents[1]*0.02;
+	testRectangle.bottomRight[0] = coords[0] + extents[0]*0.02; 
+	testRectangle.bottomRight[1] = coords[1] + extents[1]*0.02;
 	
 	// Pass the call on to the getSelectables(<RECTANGLE>) method
 	return getSelectables(testRectangle);
@@ -341,7 +343,7 @@ void TexTool::doMouseUp(const Vector2& coords, GdkEventButton* event) {
 		_selectionRectangle.sortCorners();
 		
 		// The minimim rectangle diameter for a rectangle test (3 % of visible texspace) 
-		float minDist = _texSpaceAABB.extents[0]*0.03;
+		float minDist = _texSpaceAABB.extents[0] * _zoomFactor * 0.03;
 		
 		selection::textool::TexToolItemVec selectables;
 		

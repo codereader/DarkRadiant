@@ -6,15 +6,14 @@ namespace selection {
 	namespace textool {
 
 FaceItem::FaceItem(Face& sourceFace) : 
-	_sourceFace(sourceFace)
+	_sourceFace(sourceFace),
+	_winding(sourceFace.getWinding())
 {}
 
 AABB FaceItem::getExtents() {
 	AABB returnValue;
 	
-	Winding& winding = _sourceFace.getWinding();
-	
-	for (Winding::iterator i = winding.begin(); i != winding.end(); i++) {
+	for (Winding::iterator i = _winding.begin(); i != _winding.end(); i++) {
 		returnValue.includePoint(Vector3(i->texcoord[0], i->texcoord[1], 0));
 	}
 	
@@ -26,7 +25,13 @@ void FaceItem::render() {
 	glBlendColor(0,0,0, 0.2f);
 	glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
 	
-	glColor3f(1, 1, 1);
+	if (_selected) {
+		glColor3f(1, 0.5f, 0);
+	}
+	else {
+		glColor3f(1, 1, 1);
+	}
+	
 	glBegin(GL_QUADS);
 	
 	Winding& winding = _sourceFace.getWinding();
@@ -43,6 +48,11 @@ void FaceItem::render() {
 	for (Winding::iterator i = winding.begin(); i != winding.end(); i++) {
 		glVertex2f(i->texcoord[0], i->texcoord[1]);
 	}
+	
+	glColor3f(1, 1, 1);
+	Vector2 centroid = getCentroid();
+	glVertex2f(centroid[0], centroid[1]);
+	
 	glEnd();
 }
 
@@ -66,17 +76,22 @@ void FaceItem::transformSelected(const Matrix4& matrix) {
 	}
 }
 
-bool FaceItem::testSelect(const Rectangle& rectangle) {
-	// Cycle through all the children and ask them to render themselves
-	for (unsigned int i = 0; i < _children.size(); i++) {
-		// Return true on the first selected child
-		if (_children[i]->testSelect(rectangle)) {
-			return true;
-		}
+Vector2 FaceItem::getCentroid() const {
+	Vector2 texCentroid;
+	 
+	for (Winding::iterator i = _winding.begin(); i != _winding.end(); i++) {
+		texCentroid += i->texcoord;
 	}
 	
-	// Nothing selectable, return false
-	return false;
+	// Take the average value of all the winding texcoords to retrieve the centroid
+	texCentroid /= _winding.numpoints;
+	
+	return texCentroid;
+}
+
+bool FaceItem::testSelect(const Rectangle& rectangle) {
+	// Check if the centroid is within the rectangle
+	return (rectangle.contains(getCentroid()));
 }
 
 TexToolItemVec FaceItem::getSelectables(const Rectangle& rectangle) {

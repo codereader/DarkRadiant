@@ -12,6 +12,7 @@ class FaceItem :
 {
 	// The patch this control is referring to
 	Face& _sourceFace;
+	Winding& _winding;
 
 public:
 	FaceItem(Face& _sourceFace); 
@@ -45,6 +46,14 @@ public:
 	/** greebo: Saves the current undo state.
 	 */
 	virtual void beginTransformation();
+	
+private:
+	/** greebo: Calculates the mean value of all the texCoords,
+	 * 			which is technically the centroid.
+	 * 
+	 * @returns: the Vector2 containing the centroid's coords.
+	 */
+	Vector2 getCentroid() const;
 };
 	
 	} // namespace TexTool
