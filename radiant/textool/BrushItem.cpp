@@ -45,28 +45,6 @@ AABB BrushItem::getExtents() {
 }
 
 void BrushItem::render() {
-	/*glEnable(GL_BLEND);
-	glBlendColor(0,0,0, 0.2f);
-	glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
-	
-	glColor3f(1, 1, 1);
-	glBegin(GL_QUAD_STRIP);
-	
-	// Get the tesselation and the first
-	PatchTesselation& tess = _sourcePatch.getTesselation();
-	
-	const RenderIndex* strip_indices = tess.m_indices.data();
-	
-	for (std::size_t i = 0; i<tess.m_numStrips; i++, strip_indices += tess.m_lenStrips)	{
-		for (unsigned int offset = 0; offset < tess.m_lenStrips; offset++) {
-			// Retrieve the mesh vertex from the line strip
-			ArbitraryMeshVertex& meshVertex = tess.m_vertices[*(strip_indices + offset)];
-			glVertex2f(meshVertex.texcoord[0], meshVertex.texcoord[1]);
-		}
-	}
-	glEnd();
-	glDisable(GL_BLEND);*/
-	
 	// Cycle through all the children and ask them to render themselves
 	for (unsigned int i = 0; i < _children.size(); i++) {
 		_children[i]->render();
