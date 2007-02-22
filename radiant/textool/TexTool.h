@@ -55,11 +55,17 @@ class TexTool :
 	// The rectangle defining the manipulation's start and end point
 	selection::Rectangle _manipulateRectangle;
 	
-	// TRUE, if we are in selection mode
+	// The rectangle defining the moveOrigin operation's start and end point
+	selection::Rectangle _moveOriginRectangle;
+	
+	// TRUE if we are in selection mode
 	bool _dragRectangle;
 	
-	// TRUE, if a manipulation is currently ongoing
+	// TRUE if a manipulation is currently ongoing
 	bool _manipulatorMode;
+	
+	// TRUE if the texspace center is being dragged around 
+	bool _viewOriginMove;
 	
 	// The undocommand that gets created when a transformation begins
 	// and destroyed upon end. The destruction triggers the UndoMementos being saved.  

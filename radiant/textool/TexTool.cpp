@@ -35,6 +35,7 @@ namespace ui {
 		
 		const float DEFAULT_ZOOM_FACTOR = 1.5f;
 		const float ZOOM_MODIFIER = 1.25f;
+		const float MOVE_FACTOR = 2.0f;
 	}
 
 TexTool::TexTool() :
@@ -42,6 +43,7 @@ TexTool::TexTool() :
 	_zoomFactor(DEFAULT_ZOOM_FACTOR),
 	_dragRectangle(false),
 	_manipulatorMode(false),
+	_viewOriginMove(false),
 	_undoCommand(NULL)
 {
 	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
@@ -289,6 +291,14 @@ selection::textool::TexToolItemVec TexTool::getSelectables(const Vector2& coords
 
 void TexTool::doMouseUp(const Vector2& coords, GdkEventButton* event) {
 	
+	ui::XYViewEvent xyViewEvent = 
+		GlobalEventManager().MouseEvents().getXYViewEvent(event);
+		
+	// End the origin move, if it was active before
+	if (xyViewEvent == ui::xyMoveView) {
+		_viewOriginMove = false;
+	}
+	
 	// Retrieve the according ObserverEvent for the GdkEventButton
 	ui::ObserverEvent observerEvent = 
 		GlobalEventManager().MouseEvents().getObserverEvent(event);
@@ -373,6 +383,7 @@ void TexTool::doMouseDown(const Vector2& coords, GdkEventButton* event) {
 	
 	_manipulatorMode = false;
 	_dragRectangle = false;
+	_viewOriginMove = false;
 	
 	if (observerEvent == ui::obsManipulate) {
 		// Get the list of selectables of this point
@@ -445,7 +456,6 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 	// Do nothing, if the shader name is empty
 	std::string shaderName = self->_shader->getName(); 
 	if (shaderName == "") {
-		globalOutputStream() << "TexTool: no unqiue shader selected.\n";
 		return false;
 	}
 	
@@ -453,7 +463,6 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 	
 	// Is there a valid selection?
 	if (!selAABB.isValid()) {
-		globalOutputStream() << "TexTool: no valid AABB.\n";
 		return false;
 	}
 	
@@ -562,6 +571,13 @@ gboolean TexTool::onMouseUp(GtkWidget* widget, GdkEventButton* event, TexTool* s
 	// Pass the call to the member method
 	self->doMouseUp(texCoords, event);
 	
+	// Check for view origin movements
+	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
+
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, event)) {
+		self->_viewOriginMove = false;
+	}
+	
 	return false;
 }
 
@@ -572,6 +588,14 @@ gboolean TexTool::onMouseDown(GtkWidget* widget, GdkEventButton* event, TexTool*
 	// Pass the call to the member method
 	self->doMouseDown(texCoords, event);
 	
+	// Check for view origin movements
+	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
+
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, event)) {
+		self->_moveOriginRectangle.topLeft = Vector2(event->x, event->y);
+		self->_viewOriginMove = true;
+	}
+	
 	return false;
 }
 
@@ -581,6 +605,31 @@ gboolean TexTool::onMouseMotion(GtkWidget* widget, GdkEventMotion* event, TexToo
 	
 	// Pass the call to the member routine
 	self->doMouseMove(texCoords, event);
+	
+	// Check for view origin movements
+	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
+
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, event->state)) {
+		
+		// Calculate the movement delta relative to the old window x,y coords
+		Vector2 delta = Vector2(event->x, event->y) - self->_moveOriginRectangle.topLeft;
+		
+		AABB& texSpaceAABB = self->getVisibleTexSpace();
+		
+		float speedFactor = self->_zoomFactor * MOVE_FACTOR;
+		
+		float factorX = texSpaceAABB.extents[0] / self->_windowDims[0] * speedFactor;
+		float factorY = texSpaceAABB.extents[1] / self->_windowDims[1] * speedFactor;
+		
+		texSpaceAABB.origin[0] -= delta[0] * factorX;
+		texSpaceAABB.origin[1] -= delta[1] * factorY; 
+		
+		// Store the new coordinates
+		self->_moveOriginRectangle.topLeft = Vector2(event->x, event->y);
+		
+		// Redraw to visualise the changes
+		self->draw();
+	}
 
 	return false;
 }
