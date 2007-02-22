@@ -4,6 +4,7 @@
 #include "iregistry.h"
 
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 #include <GL/glew.h>
 
 #include "texturelib.h"
@@ -23,7 +24,6 @@
 
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Shader.h"
-
 
 namespace ui {
 	
@@ -49,6 +49,7 @@ TexTool::TexTool() :
 	
 	g_signal_connect(G_OBJECT(_window), "delete-event", G_CALLBACK(onDelete), this);
 	g_signal_connect(G_OBJECT(_window), "focus-in-event", G_CALLBACK(triggerRedraw), this);
+	g_signal_connect(G_OBJECT(_window), "key_press_event", G_CALLBACK(onKeyPress), this);
 	
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
 	GlobalEventManager().connect(GTK_OBJECT(_window));
@@ -80,6 +81,7 @@ void TexTool::populateWindow() {
 	g_signal_connect(G_OBJECT(_glWidget), "button-press-event", G_CALLBACK(onMouseDown), this);
 	g_signal_connect(G_OBJECT(_glWidget), "button-release-event", G_CALLBACK(onMouseUp), this);
 	g_signal_connect(G_OBJECT(_glWidget), "motion-notify-event", G_CALLBACK(onMouseMotion), this);
+	g_signal_connect(G_OBJECT(_glWidget), "key_press_event", G_CALLBACK(onKeyPress), this);
 	
 	// Make the GL widget accept the global shortcuts
 	GlobalEventManager().connect(GTK_OBJECT(_glWidget));
@@ -97,8 +99,8 @@ void TexTool::toggle() {
 		gtk_widget_hide_all(_window);
 	}
 	else {
-		// Update the relevant member variables like shader, etc.
-		update();
+		// Simulate a selection change to trigger an update
+		selectionChanged();
 		// First restore the window
 		gtkutil::TransientWindow::restore(_window);
 		// then apply the saved position
@@ -273,12 +275,13 @@ void TexTool::doMouseUp(const Vector2& coords, GdkEventButton* event) {
 	if (observerEvent == ui::obsManipulate && _manipulatorMode) {
 		_manipulatorMode = false;
 		
-		if (_undoCommand != NULL) {
+/*		if (_undoCommand != NULL) {
+			globalOutputStream() << "Deleting undo...\n";
 			// Remove the undo command from the heap, this triggers the 
 			// undo state save.
 			delete _undoCommand;
 			_undoCommand = NULL;
-		}
+		}*/
 	}
 	
 	// If we are in selection mode, end the selection
@@ -357,18 +360,24 @@ void TexTool::doMouseDown(const Vector2& coords, GdkEventButton* event) {
 		// Any selectables under the mouse pointer?
 		if (selectables.size() > 0) {
 			// Toggle the selection
-			for (unsigned int i = 0; i < selectables.size(); i++) {
+			/*for (unsigned int i = 0; i < selectables.size(); i++) {
 				selectables[i]->setSelected(true);
-			}
+			}*/
 			
 			// Activate the manipulator mode
 			_manipulatorMode = true;
 			_manipulateRectangle.topLeft = coords; 
 			_manipulateRectangle.bottomRight = coords;
 			
-			if (_undoCommand == NULL) {
+			/*if (_undoCommand == NULL) {
+				globalOutputStream() << "Creating undo...\n";
 				_undoCommand = new UndoableCommand("textureUVEdit");
-			}
+			}*/
+			
+			/*// Prepare the items for the upcoming transformation (undoSave(), etc.)
+			for (unsigned int i = 0; i < selectables.size(); i++) {
+				selectables[i]->beginTransformation();
+			}*/
 		}
 	}
 	else if (observerEvent == ui::obsSelect || observerEvent == ui::obsToggle) {
@@ -376,6 +385,16 @@ void TexTool::doMouseDown(const Vector2& coords, GdkEventButton* event) {
 		_dragRectangle = true;
 		_selectionRectangle.topLeft = coords;
 		_selectionRectangle.bottomRight = coords;
+	}
+}
+
+void TexTool::foreachItem(selection::textool::ItemVisitor& visitor) {
+	for (unsigned int i = 0; i < _items.size(); i++) {
+		// Visit the class
+		visitor.visit(_items[i]);
+		
+		// Now propagate the visitor down the hierarchy
+		_items[i]->foreachItem(visitor);
 	}
 }
 
@@ -544,5 +563,24 @@ gboolean TexTool::onMouseMotion(GtkWidget* widget, GdkEventMotion* event, TexToo
 
 	return false;
 }
+
+// The GTK keypress callback
+gboolean TexTool::onKeyPress(GtkWindow* window, GdkEventKey* event, TexTool* self) {
 	
+	// Check for ESC to deselect all items
+	if (event->keyval == GDK_Escape) {
+		// Clear the selection using a visitor class
+		selection::textool::SetSelectedWalker visitor(false);
+		self->foreachItem(visitor);
+		
+		// Redraw to visualise the changes
+		self->draw();
+		
+		// Don't propage the keypress event any further
+		return true;
+	}
+	
+	return false;
+}
+
 } // namespace ui
