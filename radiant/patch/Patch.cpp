@@ -1982,6 +1982,10 @@ void Patch::ProjectTexture(int nAxis) {
 	controlPointsChanged();
 }
 
+PatchTesselation& Patch::getTesselation() {
+	return m_tess;
+}
+
 void Patch::constructPlane(const AABB& aabb, int axis, std::size_t width, std::size_t height)
 {
   setDims(width, height);
