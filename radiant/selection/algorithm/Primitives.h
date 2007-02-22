@@ -10,6 +10,7 @@ class Patch;
 class Brush;
 typedef std::vector<Patch*> PatchPtrVector; 
 typedef std::vector<Brush*> BrushPtrVector;
+typedef std::vector<Face*> FacePtrVector;
 
 namespace selection {
 	
@@ -61,6 +62,13 @@ namespace selection {
 	 * @returns: the vector with the selected brush pointers.
 	 */
 	BrushPtrVector getSelectedBrushes();
+	
+	/** greebo: Retrieves a list of selected Faces (those selected
+	 * 			with Ctrl-Shift-LMB by default).
+	 *
+	 * @returns: the vector with the selected face pointers.
+	 */
+	FacePtrVector getSelectedFaces();
 
 	} // namespace algorithm
 } // namespace selection

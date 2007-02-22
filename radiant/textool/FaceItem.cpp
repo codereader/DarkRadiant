@@ -91,6 +91,11 @@ Vector2 FaceItem::getCentroid() const {
 }
 
 bool FaceItem::testSelect(const Rectangle& rectangle) {
+	globalOutputStream() << "Rectangle: " << rectangle.topLeft[0] << ", " << rectangle.topLeft[1] << " :: ";
+	globalOutputStream() << rectangle.bottomRight[0] << ", " << rectangle.bottomRight[1] << "\n";
+	
+	globalOutputStream() << "Centroid: " << getCentroid()[0] << ", " << getCentroid()[1] << "\n";
+	
 	// Check if the centroid is within the rectangle
 	return (rectangle.contains(getCentroid()));
 }
@@ -98,12 +103,7 @@ bool FaceItem::testSelect(const Rectangle& rectangle) {
 TexToolItemVec FaceItem::getSelectables(const Rectangle& rectangle) {
 	TexToolItemVec returnVector;
 	
-	for (unsigned int i = 0; i < _children.size(); i++) {
-		// Return true on the first selected child
-		if (_children[i]->testSelect(rectangle)) {
-			returnVector.push_back(_children[i]);
-		}
-	}
+	// No children of faces so far, return the empty list
 	
 	return returnVector;
 }
