@@ -98,5 +98,28 @@ Face& getLastSelectedFace() {
 	}
 }
 
+class FaceVectorPopulator
+{
+	// The target list that gets populated
+	FacePtrVector& _vector;
+public:
+	FaceVectorPopulator(FacePtrVector& targetVector) :
+		_vector(targetVector)
+	{}
+	
+	void operator() (FaceInstance& faceInstance) {
+		_vector.push_back(&faceInstance.getFace());
+	}
+};
+
+FacePtrVector getSelectedFaces() {
+	FacePtrVector vector;
+	
+	// Cycle through all selected faces and fill the vector 
+	g_SelectedFaceInstances.foreach(FaceVectorPopulator(vector));
+	
+	return vector;
+}
+
 	} // namespace algorithm
 } // namespace selection

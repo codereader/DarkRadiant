@@ -23,6 +23,7 @@
 #include "textool/Transformable.h"
 #include "textool/PatchItem.h"
 #include "textool/BrushItem.h"
+#include "textool/FaceItem.h"
 
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Shader.h"
@@ -174,7 +175,7 @@ void TexTool::selectionChanged() {
 			BrushPtrVector brushList = selection::algorithm::getSelectedBrushes();
 			
 			for (std::size_t i = 0; i < brushList.size(); i++) {
-				// Allocate a new PatchItem on the heap (shared_ptr)
+				// Allocate a new BrushItem on the heap (shared_ptr)
 				selection::textool::TexToolItemPtr brushItem(
 					new selection::textool::BrushItem(*brushList[i])
 				);
@@ -182,6 +183,19 @@ void TexTool::selectionChanged() {
 				// Add it to the list
 				_items.push_back(brushItem);
 			}
+		}
+		
+		// Get the single selected faces
+		FacePtrVector faceList = selection::algorithm::getSelectedFaces();
+		
+		for (std::size_t i = 0; i < faceList.size(); i++) {
+			// Allocate a new FaceItem on the heap (shared_ptr)
+			selection::textool::TexToolItemPtr faceItem(
+				new selection::textool::FaceItem(*faceList[i])
+			);
+			
+			// Add it to the list
+			_items.push_back(faceItem);
 		}
 	}
 	
@@ -245,31 +259,6 @@ void TexTool::drawUVCoords() {
 	for (unsigned int i = 0; i < _items.size(); i++) {
 		_items[i]->render();
 	}
-	
-	// Check for valid winding
-	/*if (_winding != NULL) {
-		
-		// Draw the Line Loop polygon representing the polygon
-		glBegin(GL_LINE_LOOP);
-		glColor3f(1, 1, 1);		
-		
-		for (Winding::iterator i = _winding->begin(); i != _winding->end(); i++) {
-			glVertex2f(i->texcoord[0], i->texcoord[1]);
-		}
-		
-		glEnd();
-		
-		// Draw again, this time draw only the winding points
-		glPointSize(5);
-		glBegin(GL_POINTS);
-		glColor3f(1, 1, 1);
-		
-		for (Winding::iterator i = _winding->begin(); i != _winding->end(); i++) {
-			glVertex2f(i->texcoord[0], i->texcoord[1]);
-		}
-		
-		glEnd();
-	}*/
 }
 
 selection::textool::TexToolItemVec 
@@ -277,8 +266,15 @@ selection::textool::TexToolItemVec
 {
 	selection::textool::TexToolItemVec selectables;
 	
-	// Cycle through all the items and ask them to deliver the list of selectables
-	// residing within the test rectangle	
+	// Cycle through all the toplevel items and test them for selectability
+	for (unsigned int i = 0; i < _items.size(); i++) {
+		if (_items[i]->testSelect(rectangle)) {
+			selectables.push_back(_items[i]);
+		}
+	}
+	
+	// Cycle through all the items and ask them to deliver the list of child selectables
+	// residing within the test rectangle
 	for (unsigned int i = 0; i < _items.size(); i++) {
 		// Get the list from each item
 		selection::textool::TexToolItemVec found = 

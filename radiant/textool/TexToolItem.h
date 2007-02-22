@@ -1,7 +1,6 @@
 #ifndef TEXTOOLITEM_H_
 #define TEXTOOLITEM_H_
 
-#include "itextstream.h"
 #include "Selectable.h"
 #include "Transformable.h"
 #include "Renderable.h"
@@ -95,7 +94,6 @@ public:
 	{}
 
 	void visit(TexToolItemPtr texToolItem) {
-		globalOutputStream() << "visit called\n";
 		texToolItem->setSelected(_selected);
 	}
 };
