@@ -93,7 +93,7 @@ public:
 	/** greebo: SelectionSystem::Observer implementation. Gets called by
 	 * the SelectionSystem upon selection change to allow updating.
 	 */
-	void selectionChanged();
+	void selectionChanged(scene::Instance& instance);
 	
 	/** greebo: Updates the GL window
 	 */
@@ -134,6 +134,11 @@ private:
 	 * selectionsystem and prepares the member variables for drawing. 
 	 */
 	void update();
+	
+	/** greebo: Removes all selectable items and rescans the scene
+	 * 			for selected brushes/faces/patches.
+	 */
+	void rescanSelection();
 	
 	/** greebo: Passes the given visitor to every Item in the hierarchy.
 	 */
