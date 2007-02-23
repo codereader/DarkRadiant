@@ -71,9 +71,8 @@ EntityInspector::EntityInspector()
     GlobalEntityCreator().setKeyValueChangedFunc(
     	EntityInspector::keyValueChanged);
 
-    // Create callback object to redraw the dialog when the selected entity is
-    // changed
-    GlobalSelectionSystem().addSelectionChangeCallback(FreeCaller1<const Selectable&, EntityInspector::selectionChanged>());
+	// Register self to the SelectionSystem to get notified upon selection changes.
+	GlobalSelectionSystem().addObserver(this);
 }
 
 // Create the context menu
@@ -274,8 +273,8 @@ inline void EntityInspector::queueDraw() {
 }
 
 // Selection changed callback
-void EntityInspector::selectionChanged(const Selectable& sel) {
-    getInstance().queueDraw();   
+void EntityInspector::selectionChanged(scene::Instance& instance) {
+	getInstance().queueDraw();
 }
 
 // Set entity property from entry boxes
