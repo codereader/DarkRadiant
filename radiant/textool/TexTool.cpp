@@ -453,8 +453,7 @@ void TexTool::foreachItem(selection::textool::ItemVisitor& visitor) {
 void TexTool::drawGrid() {
 	AABB& texSpaceAABB = getVisibleTexSpace();
 	
-	glEnable(GL_LINE_STIPPLE);
-	glLineStipple(10, 0x5555);
+	glColor4f(1, 1, 1, 0.5f);
 	glBegin(GL_LINES);
 	glVertex2f(0, texSpaceAABB.origin[1] - texSpaceAABB.extents[1] * _zoomFactor);
 	glVertex2f(0, texSpaceAABB.origin[1] + texSpaceAABB.extents[1] * _zoomFactor);
@@ -462,7 +461,6 @@ void TexTool::drawGrid() {
 	glVertex2f(texSpaceAABB.origin[0] - texSpaceAABB.extents[0] * _zoomFactor, 0);
 	glVertex2f(texSpaceAABB.origin[0] + texSpaceAABB.extents[0] * _zoomFactor, 0);
 	glEnd();
-	glDisable(GL_LINE_STIPPLE);
 }
 
 gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self) {

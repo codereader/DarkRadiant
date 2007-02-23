@@ -66,7 +66,7 @@ class SurfaceInspector :
 		GtkWidget* hbox;
 		GtkWidget* label;
 		GtkWidget* natural;
-		GtkWidget* axial;
+		GtkWidget* normalise;
 	} _applyTex;
 	
 	GtkWidget* _defaultTexScale;
