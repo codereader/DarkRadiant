@@ -156,6 +156,17 @@ private:
 	 */
 	void foreachItem(selection::textool::ItemVisitor& visitor);
 	
+	/** greebo: Returns the number of selected TexToolItems.
+	 */
+	int countSelected();
+	
+	/** greebo: Sets all selectables to <selected>
+	 * 			If selected == false and no items are selected,
+	 * 			the call is propagated to the main window to
+	 * 			trigger a scene deselection. 
+	 */
+	bool setAllSelected(bool selected);
+	
 	/** greebo: Returns a list of selectables for the given rectangle.
 	 */
 	selection::textool::TexToolItemVec getSelectables(const selection::Rectangle& rectangle);

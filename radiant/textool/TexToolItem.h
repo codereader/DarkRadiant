@@ -152,6 +152,24 @@ public:
 	}
 };
 
+/** greebo: Visitor class to count the selected items
+ */
+class SelectedCounter :
+	public selection::textool::ItemVisitor
+{
+	int& _counter;
+public:
+	SelectedCounter(int& counter) : 
+		_counter(counter)
+	{}
+
+	void visit(TexToolItemPtr texToolItem) {
+		if (texToolItem->isSelected()) {
+			_counter++;
+		}
+	}
+};
+
 	} // namespace textool
 } // namespace selection
 
