@@ -126,6 +126,33 @@ public:
 		return returnValue;
 	}
 	
+	virtual AABB getSelectedExtents() {
+		AABB returnValue;
+		
+		// Add <self> to the resulting AABB if <self> is selected
+		if (_selected) {
+			returnValue.includeAABB(getExtents());
+		}
+		
+		// Cycle through all the children and include their AABB
+		for (unsigned int i = 0; i < _children.size(); i++) {
+			if (_children[i]->isSelected()) {
+				returnValue.includeAABB(_children[i]->getExtents());
+			}
+		}
+		
+		return returnValue;
+	}
+	
+	virtual void moveSelectedTo(const Vector2& targetCoords) {
+		// Default: Cycle through all children and move the selected
+		for (unsigned int i = 0; i < _children.size(); i++) {
+			if (_children[i]->isSelected()) {
+				_children[i]->moveSelectedTo(targetCoords);
+			}
+		}
+	}
+	
 	// Default render routine: ask all children to render their part
 	virtual void render() {
 		// Cycle through all the children and ask them to render themselves

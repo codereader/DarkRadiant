@@ -181,5 +181,6 @@
 		<shortcut command="TexToolGridUp" key="plus" modifiers="" />
 		<shortcut command="TexToolGridDown" key="minus" modifiers="" />
 		<shortcut command="TexToolSnapToGrid" key="G" modifiers="SHIFT" />
+		<shortcut command="TexToolMergeItems" key="M" modifiers="ALT" />
 	</shortcuts>
 </input>

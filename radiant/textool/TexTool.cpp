@@ -43,7 +43,7 @@ namespace ui {
 		const float MOVE_FACTOR = 2.0f;
 		
 		const float GRID_MAX = 1.0f;
-		const float GRID_DEFAULT = 0.25f;
+		const float GRID_DEFAULT = 0.0625f;
 		const float GRID_MIN = 0.00390625f;
 	}
 
@@ -243,6 +243,27 @@ void TexTool::rescanSelection() {
 void TexTool::selectionChanged(scene::Instance& instance) {
 	rescanSelection();
 	draw();
+}
+
+void TexTool::mergeSelectedItems() {
+	if (countSelected() > 0) {
+		AABB selExtents;
+		
+		for (unsigned int i = 0; i < _items.size(); i++) {
+			selExtents.includeAABB(_items[i]->getSelectedExtents());
+		}
+		
+		Vector2 centroid(
+			selExtents.origin[0],
+			selExtents.origin[1]
+		);
+		
+		for (unsigned int i = 0; i < _items.size(); i++) {
+			_items[i]->moveSelectedTo(centroid);
+		}
+		
+		draw();
+	}
 }
 
 void TexTool::snapToGrid() {

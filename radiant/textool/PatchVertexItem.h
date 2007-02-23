@@ -32,6 +32,10 @@ public:
 	/** greebo: Returns true if the object can be selected at the given coords.
 	 */
 	virtual bool testSelect(const Rectangle& rectangle);
+	
+	/** greebo: Moves the selected patch items to the specified coords.
+	 */
+	virtual void moveSelectedTo(const Vector2& targetCoords);
 
 };
 	

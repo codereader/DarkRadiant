@@ -66,5 +66,13 @@ void PatchItem::snapSelectedToGrid(float grid) {
 	_sourcePatch.controlPointsChanged();
 }
 
+void PatchItem::moveSelectedTo(const Vector2& targetCoords) {
+	// Pass the call to the base class for default behaviour
+	TexToolItem::moveSelectedTo(targetCoords);
+	
+	// Notify the sourcepatch what's happened 
+	_sourcePatch.controlPointsChanged();
+}
+
 	} // namespace TexTool
 } // namespace selection
