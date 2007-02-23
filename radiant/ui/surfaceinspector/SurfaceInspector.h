@@ -44,7 +44,7 @@ class SurfaceInspector :
 
 	// The "shader" entry field
 	GtkWidget* _shaderEntry;
-	
+		
 	struct FitTextureWidgets {
 		GtkWidget* hbox;
 		GtkObject* widthAdj;
@@ -145,6 +145,9 @@ private:
 	// The counter-part of updateTexDef() - emits the TexCoords to the selection
 	void emitTexDef();
 	
+	// Applies the entered shader to the current selection
+	void emitShader();
+	
 	// Saves the connected widget content into the registry
 	void saveToRegistry();
 	
@@ -169,6 +172,8 @@ private:
 	static gboolean onFit(GtkWidget* widget, SurfaceInspector* self);
 	static gboolean doUpdate(GtkWidget* widget, SurfaceInspector* self);
 	
+	// The keypress handler for catching the Enter key when in the shader entry field
+	static gboolean onKeyPress(GtkWidget* entry, GdkEventKey* event, SurfaceInspector* self);
 }; // class SurfaceInspector
 
 } // namespace ui

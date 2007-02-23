@@ -154,6 +154,61 @@ std::string getShaderFromSelection() {
 	return returnValue;
 }
 
+/** greebo: Applies the given shader to the visited patch
+ */
+class PatchShaderSetter
+{
+	std::string _shader;
+public:
+	PatchShaderSetter(const std::string& shader) : 
+		_shader(shader) 
+	{}
+	
+	void operator()(Patch& patch) const {
+		patch.SetShader(_shader);
+	}
+};
+
+/** greebo: Applies the given texture repeat to the visited face
+ */
+class FaceShaderSetter
+{
+	std::string _shader;
+public:
+	FaceShaderSetter(const std::string& shader) : 
+		_shader(shader) 
+	{}
+	
+	void operator()(Face& face) const {
+		face.SetShader(_shader);
+	}
+};
+
+void applyShaderToSelection(const std::string& shaderName) {
+	UndoableCommand undo("setShader");
+	
+	// Patches
+	Scene_forEachVisibleSelectedPatch(PatchShaderSetter(shaderName));
+	
+	// Brushes
+	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
+		Scene_ForEachSelectedBrush_ForEachFace(
+			GlobalSceneGraph(), 
+			FaceShaderSetter(shaderName)
+		);
+	}
+	
+	// Faces
+	Scene_ForEachSelectedBrushFace(
+		GlobalSceneGraph(), 
+		FaceShaderSetter(shaderName)
+	);
+	
+	SceneChangeNotify();
+	// Update the Texture Tools
+	ui::SurfaceInspector::Instance().update();
+}
+
 TextureProjection getSelectedTextureProjection() {
 	TextureProjection returnValue;
 	
