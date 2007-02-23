@@ -230,6 +230,37 @@ void TexTool::snapToGrid() {
 	draw();
 }
 
+int TexTool::countSelected() {
+	// The storage variable for use in the visitor class
+	int selCount = 0;
+	
+	// Create the visitor class and let it walk
+	selection::textool::SelectedCounter counter(selCount);
+	foreachItem(counter);
+	
+	return selCount;
+}
+
+bool TexTool::setAllSelected(bool selected) {
+	
+	if (countSelected() == 0 && !selected) {
+		// Nothing selected and de-selection requested, 
+		// return FALSE to propagate the command
+		return false;
+	}
+	else {
+		// Clear the selection using a visitor class
+		selection::textool::SetSelectedWalker visitor(selected);
+		foreachItem(visitor);
+	
+		// Redraw to visualise the changes
+		draw();
+		
+		// Return success
+		return true;
+	}
+}
+
 void TexTool::recalculateVisibleTexSpace() {
 	// Get the selection extents
 	AABB& selAABB = getExtents();
@@ -757,15 +788,9 @@ gboolean TexTool::onKeyPress(GtkWindow* window, GdkEventKey* event, TexTool* sel
 	
 	// Check for ESC to deselect all items
 	if (event->keyval == GDK_Escape) {
-		// Clear the selection using a visitor class
-		selection::textool::SetSelectedWalker visitor(false);
-		self->foreachItem(visitor);
-		
-		// Redraw to visualise the changes
-		self->draw();
-		
-		// Don't propage the keypress event any further
-		return true;
+		// Don't propage the keypress if the ESC could be processed
+		// setAllSelected returns TRUE in that case
+		return self->setAllSelected(false);
 	}
 	
 	return false;
