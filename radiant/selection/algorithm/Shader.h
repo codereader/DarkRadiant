@@ -65,6 +65,12 @@ namespace selection {
 	void rotateTextureClock();
 	void rotateTextureCounter();
 	
+	/** greebo: This translates the texture coordinates towards the origin
+	 * 			in texture space without altering the appearance.
+	 * 			The texture is translated in multiples of 1.0 
+	 */
+	void normaliseTexture();
+	
 	} // namespace algorithm
 } // namespace selection
 

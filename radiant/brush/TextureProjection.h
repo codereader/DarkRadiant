@@ -44,6 +44,7 @@ public:
 	void scale(float s, float t);
 	void rotate(float angle);
 
+	// Normalise projection for a given texture width and height.
 	void normalise(float width, float height);
 	
 	Matrix4 getBasisForNormal(const Vector3& normal) const;

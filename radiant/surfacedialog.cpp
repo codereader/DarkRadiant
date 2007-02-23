@@ -76,6 +76,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "textureentry.h"
 
 #include "ui/surfaceinspector/SurfaceInspector.h"
+#include "selection/algorithm/Shader.h"
 #include "textool/TexTool.h"
 #include "brush/BrushInstance.h"
 #include "brush/Face.h"
@@ -1662,6 +1663,7 @@ void SurfaceInspector_registerPreferencesPage()
 void SurfaceInspector_registerCommands()
 {
   GlobalEventManager().addCommand("FitTexture", FreeCaller<SurfaceInspector_FitTexture>());
+  GlobalEventManager().addCommand("NormaliseTexture", FreeCaller<selection::algorithm::normaliseTexture>());
   GlobalEventManager().addCommand("SurfaceInspector", FreeCaller<SurfaceInspector_toggleShown>());
   GlobalEventManager().addCommand("TextureTool", FreeCaller<ToggleTexTool>());
 

@@ -154,6 +154,11 @@ public:
 	void RotateTexdef(float angle);
 	void FitTexture(float s_repeat, float t_repeat);
 	void flipTexture(unsigned int flipAxis);
+	
+	/** greebo: This translates the texture as much towards 
+	 * 	the origin as possible. The face appearance stays unchanged.  
+	 */
+	void normaliseTexture();
 
 	void EmitTextureCoordinates();
 

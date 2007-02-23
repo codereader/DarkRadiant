@@ -450,6 +450,21 @@ void TexTool::foreachItem(selection::textool::ItemVisitor& visitor) {
 	}
 }
 
+void TexTool::drawGrid() {
+	AABB& texSpaceAABB = getVisibleTexSpace();
+	
+	glEnable(GL_LINE_STIPPLE);
+	glLineStipple(10, 0x5555);
+	glBegin(GL_LINES);
+	glVertex2f(0, texSpaceAABB.origin[1] - texSpaceAABB.extents[1] * _zoomFactor);
+	glVertex2f(0, texSpaceAABB.origin[1] + texSpaceAABB.extents[1] * _zoomFactor);
+	
+	glVertex2f(texSpaceAABB.origin[0] - texSpaceAABB.extents[0] * _zoomFactor, 0);
+	glVertex2f(texSpaceAABB.origin[0] + texSpaceAABB.extents[0] * _zoomFactor, 0);
+	glEnd();
+	glDisable(GL_LINE_STIPPLE);
+}
+
 gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self) {
 	// Update the information about the current selection 
 	self->update();
@@ -556,6 +571,8 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 		glEnd();
 		glDisable(GL_BLEND);
 	}
+	
+	self->drawGrid();
 	/*glColor3f(1, 1, 1);
 	std::string topLeftStr = floatToStr(orthoTopLeft[0]) + "," + floatToStr(orthoTopLeft[1]);
 	std::string bottomRightStr = floatToStr(orthoBottomRight[0]) + "," + floatToStr(orthoBottomRight[1]);

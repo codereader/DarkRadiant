@@ -126,6 +126,10 @@ private:
 	 */
 	void drawUVCoords();
 	
+	/** greebo: Draws the grid into the visible texture space. 
+	 */
+	void drawGrid();
+	
 	/** greebo: Loads all the relevant data from the
 	 * selectionsystem and prepares the member variables for drawing. 
 	 */
