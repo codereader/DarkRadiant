@@ -381,10 +381,9 @@ void Face::normaliseTexture() {
 	// The signs of the original texcoords (needed to know which direction it should be shifted)
 	Vector2 sign(texcoord[0]/fabs(texcoord[0]), texcoord[1]/fabs(texcoord[1]));
 	
-	Vector2 shift(
-		-floored[0] * sign[0] * m_texdef.m_shader.width(), 
-		-floored[1] * sign[1] * m_texdef.m_shader.height()
-	); 
+	Vector2 shift;
+	shift[0] = (fabs(texcoord[0]) > 1.0E-4) ? -floored[0] * sign[0] * m_texdef.m_shader.width() : 0.0f;
+	shift[0] = (fabs(texcoord[1]) > 1.0E-4) ? -floored[1] * sign[1] * m_texdef.m_shader.height() : 0.0f;
 	
 	// Shift the texture (note the minus sign, the FaceTexDef negates it yet again). 
 	m_texdef.shift(-shift[0], shift[1]);

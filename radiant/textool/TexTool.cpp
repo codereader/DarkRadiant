@@ -107,8 +107,8 @@ void TexTool::toggle() {
 		gtk_widget_hide_all(_window);
 	}
 	else {
-		// Simulate a selection change to trigger an update
-		selectionChanged();
+		// Trigger an update of the current selection
+		rescanSelection();
 		// First restore the window
 		gtkutil::TransientWindow::restore(_window);
 		// then apply the saved position
@@ -146,7 +146,7 @@ void TexTool::update() {
 	_shader = GlobalShaderSystem().getShaderForName(selectedShader);
 }
 
-void TexTool::selectionChanged() {
+void TexTool::rescanSelection() {
 	update();
 	
 	// Clear the list to remove all the previously allocated items
@@ -196,6 +196,11 @@ void TexTool::selectionChanged() {
 			_items.push_back(faceItem);
 		}
 	}
+}
+
+void TexTool::selectionChanged(scene::Instance& instance) {
+	//update();
+	rescanSelection();
 	
 	recalculateVisibleTexSpace();
 	
@@ -453,13 +458,47 @@ void TexTool::foreachItem(selection::textool::ItemVisitor& visitor) {
 void TexTool::drawGrid() {
 	AABB& texSpaceAABB = getVisibleTexSpace();
 	
-	glColor4f(1, 1, 1, 0.5f);
-	glBegin(GL_LINES);
-	glVertex2f(0, texSpaceAABB.origin[1] - texSpaceAABB.extents[1] * _zoomFactor);
-	glVertex2f(0, texSpaceAABB.origin[1] + texSpaceAABB.extents[1] * _zoomFactor);
+	float startX = floor(texSpaceAABB.origin[0] - texSpaceAABB.extents[0] * _zoomFactor);
+	float endX = ceil(texSpaceAABB.origin[0] + texSpaceAABB.extents[0] * _zoomFactor);
+	float startY = floor(texSpaceAABB.origin[1] - texSpaceAABB.extents[1] * _zoomFactor);
+	float endY = ceil(texSpaceAABB.origin[1] + texSpaceAABB.extents[1] * _zoomFactor);
 	
-	glVertex2f(texSpaceAABB.origin[0] - texSpaceAABB.extents[0] * _zoomFactor, 0);
-	glVertex2f(texSpaceAABB.origin[0] + texSpaceAABB.extents[0] * _zoomFactor, 0);
+	if (startX > endX) {
+		std::swap(startX, endX);
+	}
+	
+	if (startY > endY) {
+		std::swap(startY, endY);
+	}
+	
+	startX -= 1;
+	endX += 1;
+	startY -= 1;
+	endY += 1;
+	
+	glBegin(GL_LINES);
+	
+	// Draw the integer grid
+	glColor4f(0.4f, 0.4f, 0.4f, 0.4f);
+	
+	for (int y = static_cast<int>(startY); y <= static_cast<int>(endY); y++) {
+		glVertex2f(startX, y);
+		glVertex2f(endX, y); 
+	}
+	
+	for (int x = static_cast<int>(startX); x <= static_cast<int>(endX); x++) {
+		glVertex2f(x, startY);
+		glVertex2f(x, endY); 
+	}
+	
+	// Draw the axes through the origin
+	glColor4f(1, 1, 1, 0.5f);
+	glVertex2f(0, startY);
+	glVertex2f(0, endY);
+	
+	glVertex2f(startX, 0);
+	glVertex2f(endX, 0);
+	
 	glEnd();
 }
 
@@ -538,6 +577,9 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 	
+	// Draw the grid
+	self->drawGrid();
+	
 	// Draw the u/v coordinates
 	self->drawUVCoords();
 	
@@ -570,7 +612,6 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 		glDisable(GL_BLEND);
 	}
 	
-	self->drawGrid();
 	/*glColor3f(1, 1, 1);
 	std::string topLeftStr = floatToStr(orthoTopLeft[0]) + "," + floatToStr(orthoTopLeft[1]);
 	std::string bottomRightStr = floatToStr(orthoBottomRight[0]) + "," + floatToStr(orthoBottomRight[1]);

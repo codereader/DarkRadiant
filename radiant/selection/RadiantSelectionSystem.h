@@ -179,7 +179,7 @@ public:
 	static void destroyStatic();
 	
 private:
-	void notifyObservers();
+	void notifyObservers(scene::Instance& instance);
 };
 
 #endif /*RADIANTSELECTIONSYSTEM_H_*/

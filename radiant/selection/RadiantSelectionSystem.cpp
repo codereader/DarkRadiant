@@ -87,14 +87,14 @@ void RadiantSelectionSystem::removeObserver(Observer* observer) {
 	}
 }
 
-void RadiantSelectionSystem::notifyObservers() {
+void RadiantSelectionSystem::notifyObservers(scene::Instance& instance) {
 	
 	// Cycle through the list of observers and call the moved method
 	for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); i++) {
 		Observer* observer = *i;
 		
 		if (observer != NULL) {
-			observer->selectionChanged();
+			observer->selectionChanged(instance);
 		}
 	}
 }
@@ -217,7 +217,7 @@ void RadiantSelectionSystem::onSelectedChanged(scene::Instance& instance, const 
 		_selection.erase(instance);
 	}
 
-	notifyObservers();
+	notifyObservers(instance);
 
 	// Check if the number of selected primitives in the list matches the value of the selection counter
 	ASSERT_MESSAGE(_selection.size() == _countPrimitive.size(), "selection-tracking error");
@@ -237,7 +237,7 @@ void RadiantSelectionSystem::onComponentSelection(scene::Instance& instance, con
 		_componentSelection.erase(instance);
 	}
 
-	notifyObservers();
+	notifyObservers(instance);
 
 	// Check if the number of selected components in the list matches the value of the selection counter 
 	ASSERT_MESSAGE(_componentSelection.size() == _countComponent.size(), "selection-tracking error");
@@ -295,8 +295,6 @@ void RadiantSelectionSystem::addSelectionChangeCallback(const SelectionChangeHan
 // Call the "selection changed" callback with the selectable
 void RadiantSelectionSystem::selectionChanged(const Selectable& selectable) {
 	_selectionChangedCallbacks(selectable);
-	// Notify the registered SelectionSystem::Observer classes
-	notifyObservers();
 }
 
 // Start a move, the current pivot point is saved as a start point

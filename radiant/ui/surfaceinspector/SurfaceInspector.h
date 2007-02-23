@@ -114,7 +114,7 @@ public:
 	 * the SelectionSystem upon selection change to allow updating of the
 	 * texture properties.
 	 */
-	void selectionChanged();
+	void selectionChanged(scene::Instance& instance);
 	
 	// Updates the widgets
 	void update();

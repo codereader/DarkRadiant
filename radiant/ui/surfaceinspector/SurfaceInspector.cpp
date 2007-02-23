@@ -529,7 +529,7 @@ void SurfaceInspector::update() {
 }
 
 // Gets notified upon selection change
-void SurfaceInspector::selectionChanged() {
+void SurfaceInspector::selectionChanged(scene::Instance& instance) {
 	update();
 }
 

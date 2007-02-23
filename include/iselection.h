@@ -106,7 +106,7 @@ public:
 	class Observer 
 	{
 	public:
-		virtual void selectionChanged() = 0;
+		virtual void selectionChanged(scene::Instance& instance) = 0;
 	};
 	
 	virtual void addObserver(Observer* observer) = 0;
