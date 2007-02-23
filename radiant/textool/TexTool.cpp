@@ -71,6 +71,7 @@ TexTool::TexTool() :
 	}
 	
 	_windowPosition.connect(GTK_WINDOW(_window));
+	_windowPosition.applyPosition();
 	
 	// Register self to the SelSystem to get notified upon selection changes.
 	GlobalSelectionSystem().addObserver(this);
@@ -111,8 +112,6 @@ void TexTool::toggle() {
 		rescanSelection();
 		// First restore the window
 		gtkutil::TransientWindow::restore(_window);
-		// then apply the saved position
-		_windowPosition.applyPosition();
 		// Now show it
 		gtk_widget_show_all(_window);
 	}
