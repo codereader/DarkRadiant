@@ -2,10 +2,11 @@
 
 #include "ieventmanager.h"
 #include "iregistry.h"
+#include "igl.h"
+#include "iundo.h"
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
-#include "igl.h"
 
 #include "texturelib.h"
 #include "selectionlib.h"
@@ -53,7 +54,6 @@ TexTool::TexTool() :
 	_dragRectangle(false),
 	_manipulatorMode(false),
 	_viewOriginMove(false),
-	_undoCommand(NULL),
 	_grid(GRID_DEFAULT),
 	_gridActive(GlobalRegistry().get(RKEY_GRID_STATE) == "1")
 {
@@ -253,24 +253,35 @@ void TexTool::mergeSelectedItems() {
 			selExtents.includeAABB(_items[i]->getSelectedExtents());
 		}
 		
-		Vector2 centroid(
-			selExtents.origin[0],
-			selExtents.origin[1]
-		);
+		if (selExtents.isValid()) {
+			beginOperation();
 		
-		for (unsigned int i = 0; i < _items.size(); i++) {
-			_items[i]->moveSelectedTo(centroid);
+			Vector2 centroid(
+				selExtents.origin[0],
+				selExtents.origin[1]
+			);
+			
+			for (unsigned int i = 0; i < _items.size(); i++) {
+				_items[i]->moveSelectedTo(centroid);
+			}
+			
+			draw();
+			
+			endOperation("TexToolMergeItems");
 		}
-		
-		draw();
 	}
 }
 
 void TexTool::snapToGrid() {
 	if (_gridActive) {
+		beginOperation();
+		
 		for (unsigned int i = 0; i < _items.size(); i++) {
 			_items[i]->snapSelectedToGrid(_grid);
 		}
+		
+		endOperation("TexToolSnapToGrid");
+		
 		draw();
 	}
 }
@@ -360,7 +371,6 @@ Vector2 TexTool::getTextureCoords(const double& x, const double& y) {
 }
 
 void TexTool::drawUVCoords() {
-	
 	// Cycle through the items and tell them to render themselves
 	for (unsigned int i = 0; i < _items.size(); i++) {
 		_items[i]->render();
@@ -409,6 +419,20 @@ selection::textool::TexToolItemVec TexTool::getSelectables(const Vector2& coords
 	return getSelectables(testRectangle);
 }
 
+void TexTool::beginOperation() {
+	// Start an undo recording session
+	GlobalUndoSystem().start();
+	
+	// Tell all the items to save their memento
+	for (unsigned int i = 0; i < _items.size(); i++) {
+		_items[i]->beginTransformation();
+	}
+}
+
+void TexTool::endOperation(const std::string& commandName) {
+	GlobalUndoSystem().finish(commandName);
+}
+
 void TexTool::doMouseUp(const Vector2& coords, GdkEventButton* event) {
 	
 	ui::XYViewEvent xyViewEvent = 
@@ -427,13 +451,8 @@ void TexTool::doMouseUp(const Vector2& coords, GdkEventButton* event) {
 	if (observerEvent == ui::obsManipulate && _manipulatorMode) {
 		_manipulatorMode = false;
 		
-/*		if (_undoCommand != NULL) {
-			globalOutputStream() << "Deleting undo...\n";
-			// Remove the undo command from the heap, this triggers the 
-			// undo state save.
-			delete _undoCommand;
-			_undoCommand = NULL;
-		}*/
+		// Finish the undo recording, store the accumulated undomementos
+		endOperation("TexToolDrag");
 	}
 	
 	// If we are in selection mode, end the selection
@@ -538,15 +557,8 @@ void TexTool::doMouseDown(const Vector2& coords, GdkEventButton* event) {
 			_manipulateRectangle.topLeft = coords; 
 			_manipulateRectangle.bottomRight = coords;
 			
-			/*if (_undoCommand == NULL) {
-				globalOutputStream() << "Creating undo...\n";
-				_undoCommand = new UndoableCommand("textureUVEdit");
-			}*/
-			
-			/*// Prepare the items for the upcoming transformation (undoSave(), etc.)
-			for (unsigned int i = 0; i < selectables.size(); i++) {
-				selectables[i]->beginTransformation();
-			}*/
+			// Begin the undoable operation
+			beginOperation();
 		}
 	}
 	else if (observerEvent == ui::obsSelect || observerEvent == ui::obsToggle) {

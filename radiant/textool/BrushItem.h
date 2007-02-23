@@ -17,6 +17,11 @@ public:
 	// Constructor, allocates all child FacItems
 	BrushItem(Brush& sourceBrush); 
 
+	/** greebo: Saves the undoMemento of this brush,
+	 * 			so that the operation can be undone later.
+	 */
+	virtual void beginTransformation();
+
 }; // class BrushItem
 	
 	} // namespace TexTool

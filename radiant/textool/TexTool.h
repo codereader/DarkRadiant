@@ -7,7 +7,6 @@
 #include "math/aabb.h"
 #include "ishaders.h"
 #include "iselection.h"
-#include "iundo.h"
 #include "iregistry.h"
 
 #include "TexToolItem.h"
@@ -69,10 +68,6 @@ class TexTool :
 	// TRUE if the texspace center is being dragged around 
 	bool _viewOriginMove;
 	
-	// The undocommand that gets created when a transformation begins
-	// and destroyed upon end. The destruction triggers the UndoMementos being saved.  
-	UndoableCommand* _undoCommand;
-	
 	// The current grid size
 	float _grid;
 	
@@ -126,6 +121,11 @@ public:
 	void keyChanged();
 	
 private:
+	/** greebo: Helper methods that start/end an undoable operation.
+	 */
+	void beginOperation();
+	void endOperation(const std::string& commandName);
+
 	// Creates, packs and connects the child widgets
 	void populateWindow();
 	

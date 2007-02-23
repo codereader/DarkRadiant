@@ -74,5 +74,9 @@ void PatchItem::moveSelectedTo(const Vector2& targetCoords) {
 	_sourcePatch.controlPointsChanged();
 }
 
+void PatchItem::beginTransformation() {
+	_sourcePatch.undoSave();
+}
+
 	} // namespace TexTool
 } // namespace selection

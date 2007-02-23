@@ -35,6 +35,11 @@ public:
 	 * 			calls Patch::controlPointsChanged() afterwards.
 	 */
 	virtual void moveSelectedTo(const Vector2& targetCoords);
+
+	/** greebo: Saves the undoMemento for later undo.
+	 */	
+	virtual void beginTransformation();
+
 };
 	
 	} // namespace TexTool
