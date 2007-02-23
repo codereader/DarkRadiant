@@ -17,6 +17,10 @@ namespace selection {
 	 */
 	std::string getShaderFromSelection();
 	
+	/** greebo: Applies the given shader to the current selection.
+	 */
+	void applyShaderToSelection(const std::string& shaderName);
+	
 	/** greebo: Retrieves the texture projection from the current selection.
 	 * 
 	 * @returns: the TextureProjection of the last selected face/brush.

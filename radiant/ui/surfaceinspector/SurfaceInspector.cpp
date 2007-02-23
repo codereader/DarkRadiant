@@ -1,6 +1,7 @@
 #include "SurfaceInspector.h"
 
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 #include "ieventmanager.h"
 
 #include "gtkutil/TransientWindow.h"
@@ -231,7 +232,7 @@ void SurfaceInspector::populateWindow() {
 	gtk_table_attach_defaults(table, shaderLabel, 0, 1, 0, 1);
 	
 	_shaderEntry = gtk_entry_new();
-	//gtk_entry_set_width_chars(GTK_ENTRY(_shaderEntry), 40);
+	g_signal_connect(G_OBJECT(_shaderEntry), "key-press-event", G_CALLBACK(onKeyPress), this);
 	gtk_table_attach_defaults(table, _shaderEntry, 1, 2, 0, 1);
 	
 	// Populate the table with the according widgets
@@ -431,6 +432,17 @@ SurfaceInspector& SurfaceInspector::Instance() {
 	return _inspector;
 }
 
+void SurfaceInspector::emitShader() {
+	
+	std::string shaderName = gtk_entry_get_text(GTK_ENTRY(_shaderEntry));
+		
+	// Apply it to the selection
+	selection::algorithm::applyShaderToSelection(shaderName);
+	
+	// Update the TexTool instance as well
+	ui::TexTool::Instance().draw();
+}
+
 void SurfaceInspector::emitTexDef() {
 	TexDef shiftScaleRotate;
 
@@ -564,7 +576,6 @@ gboolean SurfaceInspector::onDefaultScaleChanged(GtkSpinButton* spinbutton, Surf
 }
 
 void SurfaceInspector::onStepChanged(GtkEditable* editable, SurfaceInspector* self) {
-	
 	// Tell the class instance to save its contents into the registry
 	self->saveToRegistry();
 } 
@@ -593,6 +604,19 @@ gboolean SurfaceInspector::doUpdate(GtkWidget* widget, SurfaceInspector* self) {
 
 void SurfaceInspector::onValueChanged(GtkEditable* editable, SurfaceInspector* self) {
 	self->emitTexDef();
+}
+
+// The GTK keypress callback
+gboolean SurfaceInspector::onKeyPress(GtkWidget* entry, GdkEventKey* event, SurfaceInspector* self) {
+	
+	// Check for ESC to deselect all items
+	if (event->keyval == GDK_Return) {
+		self->emitShader();
+		// Don't propage the keypress if the Enter could be processed
+		return true;
+	}
+	
+	return false;
 }
 
 } // namespace ui
