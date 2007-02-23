@@ -7,6 +7,7 @@
 #include "brush/TextureProjection.h"
 #include "patch/PatchSceneWalk.h"
 #include "selection/algorithm/Primitives.h"
+#include "ui/surfaceinspector/SurfaceInspector.h"
 
 // greebo: Nasty global that contains all the selected face instances
 extern FaceInstanceSet g_SelectedFaceInstances;
@@ -224,6 +225,8 @@ void fitTexture(const float& repeatS, const float& repeatT) {
 	Scene_forEachVisibleSelectedPatch(PatchTextureFitter(repeatS, repeatT));
 	
 	SceneChangeNotify();
+	// Update the Texture Tools
+	ui::SurfaceInspector::Instance().update();
 }
 
 /** greebo: Applies the default texture projection to all
@@ -273,6 +276,8 @@ void naturalTexture() {
 	);
 	
 	SceneChangeNotify();
+	// Update the Texture Tools
+	ui::SurfaceInspector::Instance().update();
 }
 
 void applyTextureProjectionToFaces(TextureProjection& projection) {
@@ -292,6 +297,8 @@ void applyTextureProjectionToFaces(TextureProjection& projection) {
 	);
 	
 	SceneChangeNotify();
+	// Update the Texture Tools
+	ui::SurfaceInspector::Instance().update();
 }
 
 /** greebo: Translates the texture of the visited faces
@@ -343,6 +350,8 @@ void shiftTexture(const Vector2& shift) {
 	);
 	
 	SceneChangeNotify();
+	// Update the Texture Tools
+	ui::SurfaceInspector::Instance().update();
 }
 
 /** greebo: Scales the texture of the visited faces
@@ -430,6 +439,8 @@ void scaleTexture(const Vector2& scale) {
 	);
 	
 	SceneChangeNotify();
+	// Update the Texture Tools
+	ui::SurfaceInspector::Instance().update();
 }
 
 void rotateTexture(const float& angle) {
@@ -453,6 +464,8 @@ void rotateTexture(const float& angle) {
 	);
 
 	SceneChangeNotify();
+	// Update the Texture Tools
+	ui::SurfaceInspector::Instance().update();
 }
 
 void shiftTextureLeft() {
@@ -533,6 +546,8 @@ void normaliseTexture() {
 	);
 
 	SceneChangeNotify();
+	// Update the Texture Tools
+	ui::SurfaceInspector::Instance().update();
 }
 
 	} // namespace algorithm

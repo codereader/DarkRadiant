@@ -1,3 +1,8 @@
+23/02/2007
+greebo
+- Added "Normalise Texture" command that translates textures towards the origin 
+  without changing their appearance.
+
 19/02/2007
 OrbWeaver
 - Entity Inspector allows sorting by key or value.

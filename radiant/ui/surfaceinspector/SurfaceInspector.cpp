@@ -46,9 +46,9 @@ namespace ui {
 		const char* LABEL_FLIPX = "Flip Horizontal";
 		const char* LABEL_FLIPY = "Flip Vertical";
 				
-		const char* LABEL_APPLY_TEXTURE = "Apply Texture:";
+		const char* LABEL_APPLY_TEXTURE = "Modify Texture:";
 		const char* LABEL_NATURAL = "Natural";
-		const char* LABEL_AXIAL = "Axial";
+		const char* LABEL_NORMALISE = "Normalise";
 		
 		const char* LABEL_DEFAULT_SCALE = "Default Scale:";
 		const char* LABEL_TEXTURE_LOCK = "Texture Lock";
@@ -144,6 +144,7 @@ void SurfaceInspector::connectEvents() {
 	GlobalEventManager().findEvent("FlipTextureX")->connectWidget(_flipTexture.flipX);
 	GlobalEventManager().findEvent("FlipTextureY")->connectWidget(_flipTexture.flipY);
 	GlobalEventManager().findEvent("TextureNatural")->connectWidget(_applyTex.natural);
+	GlobalEventManager().findEvent("NormaliseTexture")->connectWidget(_applyTex.normalise);
 	
 	GlobalEventManager().findEvent("TexShiftLeft")->connectWidget(*_manipulators[HSHIFT].smaller);
 	GlobalEventManager().findEvent("TexShiftRight")->connectWidget(*_manipulators[HSHIFT].larger);
@@ -162,6 +163,7 @@ void SurfaceInspector::connectEvents() {
 	g_signal_connect(G_OBJECT(_flipTexture.flipX), "clicked", G_CALLBACK(doUpdate), this);
 	g_signal_connect(G_OBJECT(_flipTexture.flipY), "clicked", G_CALLBACK(doUpdate), this);
 	g_signal_connect(G_OBJECT(_applyTex.natural), "clicked", G_CALLBACK(doUpdate), this);
+	g_signal_connect(G_OBJECT(_applyTex.normalise), "clicked", G_CALLBACK(doUpdate), this);
 	g_signal_connect(G_OBJECT(_defaultTexScale), "value-changed", G_CALLBACK(onDefaultScaleChanged), this);
 	
 	for (ManipulatorMap::iterator i = _manipulators.begin(); i != _manipulators.end(); i++) {
@@ -184,7 +186,8 @@ void SurfaceInspector::toggle() {
 		_connector.importValues();
 		_windowPosition.applyPosition();
 		gtk_widget_show_all(_dialog);
-		// Unset the focus widget for this window
+		// Unset the focus widget for this window to avoid the cursor 
+		// from jumping into the shader entry field 
 		gtk_window_set_focus(GTK_WINDOW(_dialog), NULL);
 	}
 }
@@ -310,9 +313,9 @@ void SurfaceInspector::populateWindow() {
 	
 	_applyTex.hbox = gtk_hbox_new(true, 6); 
 	_applyTex.natural = gtk_button_new_with_label(LABEL_NATURAL);
-	_applyTex.axial = gtk_button_new_with_label(LABEL_AXIAL);
+	_applyTex.normalise = gtk_button_new_with_label(LABEL_NORMALISE);
 	gtk_box_pack_start(GTK_BOX(_applyTex.hbox), _applyTex.natural, true, true, 0);
-	gtk_box_pack_start(GTK_BOX(_applyTex.hbox), _applyTex.axial, true, true, 0);
+	gtk_box_pack_start(GTK_BOX(_applyTex.hbox), _applyTex.normalise, true, true, 0);
 	
 	gtk_table_attach_defaults(operTable, _applyTex.hbox, 1, 2, 2, 3);
 	
@@ -510,12 +513,9 @@ void SurfaceInspector::update() {
 	gtk_widget_set_sensitive(_flipTexture.hbox, flipSensitivity);
 	gtk_widget_set_sensitive(_flipTexture.label, flipSensitivity);
 	
-	// The natural/axial widget sensitivity
+	// The natural/normalise widget sensitivity
 	gtk_widget_set_sensitive(_applyTex.hbox, applySensitivity);
 	gtk_widget_set_sensitive(_applyTex.label, applySensitivity);
-	
-	// Temporary disable of Axial button, as it's redundant to "Natural"
-	gtk_widget_set_sensitive(_applyTex.axial, false);
 	
 	std::string selectedShader = selection::algorithm::getShaderFromSelection();
 	gtk_entry_set_text(GTK_ENTRY(_shaderEntry), selectedShader.c_str());

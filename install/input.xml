@@ -176,5 +176,7 @@
 		<shortcut command="SetGrid64" key="7" modifiers=""/>
 		<shortcut command="SetGrid128" key="8" modifiers=""/>
 		<shortcut command="SetGrid256" key="9" modifiers=""/>
+		<shortcut command="TextureTool" key="T" modifiers="CONTROL+ALT"/>
+		<shortcut command="NormaliseTexture" key="" modifiers=""/>
 	</shortcuts>
 </input>

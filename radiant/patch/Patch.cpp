@@ -3870,30 +3870,18 @@ void Patch::stitchTextureFrom(Patch& sourcePatch) {
 	// Get the distance in texture space
 	Vector2 texDiff = refControl->m_texcoord - nearestControl->m_texcoord;
 	
-	// Get the shift direction
-	Vector2 texShift = texDiff;
-	texShift[0] /= fabs(texShift[0]);
-	texShift[1] /= fabs(texShift[1]);
+	// The floored values
+	Vector2 floored(floor(fabs(texDiff[0])), floor(fabs(texDiff[1])));
 	
-	// Now shift the texture in the right direction, till this patch
-	// is getting as close as possible to the source patch (in texture space)
-	// Be sure to check the nearestControl if it's getting out of bounds
-	for (int coord = 0; coord < 2; coord++) {
+	// Compute the shift applicable to all vertices
+	Vector2 shift;
+	shift[0] = (fabs(texDiff[0])>1.0E-4) ? -floored[0] * texDiff[0]/fabs(texDiff[0]) : 0.0f;
+	shift[1] = (fabs(texDiff[1])>1.0E-4) ? -floored[1] * texDiff[1]/fabs(texDiff[1]) : 0.0f;
 		
-		// The loop will continue if there is space for at least one
-		// entire texture (a texture has the size 1.0f in texture space)
-		while (fabs(refControl->m_texcoord[coord] - nearestControl->m_texcoord[coord]) > 1.0f &&
-			   fabs(nearestControl->m_texcoord[coord]) < 65000.0f) 
-		{
-			Vector2 translation(texShift);
-			translation[1 - coord] = 0;
-			
-			translateTexCoords(translation);
-		}
-		
-		if (fabs(nearestControl->m_texcoord[coord]) >= 65000.0f) {
-			globalErrorStream() << "Patch::stitchTextureFrom(): texcoord out of bounds.\n";
-		}
+	// Now shift all the texture vertices in the right direction, so that this patch
+	// is getting as close as possible to the origin in texture space.
+	for (PatchControlIter i = m_ctrl.data(); i != m_ctrl.data() + m_ctrl.size(); ++i) {
+		i->m_texcoord += shift;
 	}
 	
 	int sourceHeight = static_cast<int>(sourcePatch.getHeight());
@@ -3929,9 +3917,6 @@ void Patch::stitchTextureFrom(Patch& sourcePatch) {
 }
 
 void Patch::normaliseTexture() {
-	// Save the undo memento
-	undoSave();
-	
 	// Find the nearest control vertex
 	
 	// Initialise the compare value
@@ -3952,18 +3937,23 @@ void Patch::normaliseTexture() {
 	// The floored values
 	Vector2 floored(floor(fabs(texcoord[0])), floor(fabs(texcoord[1])));
 	
-	// Compute the shift applicable to all vertices 
-	Vector2 shift(
-		-floored[0] * texcoord[0]/fabs(texcoord[0]), 
-		-floored[1] * texcoord[1]/fabs(texcoord[1])
-	); 
-	
-	// Now shift all the texture vertices in the right direction, so that this patch
-	// is getting as close as possible to the origin in texture space.
-	for (PatchControlIter i = m_ctrl.data(); i != m_ctrl.data() + m_ctrl.size(); ++i) {
-		i->m_texcoord += shift;
+	// Compute the shift applicable to all vertices
+	Vector2 shift;
+	shift[0] = (fabs(texcoord[0])>1.0E-4) ? -floored[0] * texcoord[0]/fabs(texcoord[0]) : 0.0f;
+	shift[1] = (fabs(texcoord[1])>1.0E-4) ? -floored[1] * texcoord[1]/fabs(texcoord[1]) : 0.0f;
+
+	// Is there anything to do at all?		
+	if (shift.getLength() > 0.0f) {
+		// Save the undo memento
+		undoSave();
+		
+		// Now shift all the texture vertices in the right direction, so that this patch
+		// is getting as close as possible to the origin in texture space.
+		for (PatchControlIter i = m_ctrl.data(); i != m_ctrl.data() + m_ctrl.size(); ++i) {
+			i->m_texcoord += shift;
+		}
+		
+		// Notify the patch about the change
+		controlPointsChanged();
 	}
-	
-	// Notify the patch about the change
-	controlPointsChanged();
 }
