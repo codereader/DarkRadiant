@@ -361,6 +361,37 @@ bool Face::is_bounded() const {
 	return true;
 }
 
+void Face::normaliseTexture() {
+	undoSave();
+	
+	Winding::const_iterator nearest = m_winding.begin();
+		
+	// Find the vertex with the minimal distance to the origin  
+	for (Winding::const_iterator i = m_winding.begin(); i != m_winding.end(); ++i) {
+		if (nearest->texcoord.getLength() > i->texcoord.getLength()) {
+			nearest = i;
+		}
+	}
+	
+	Vector2 texcoord = nearest->texcoord;
+	
+	// The floored values
+	Vector2 floored(floor(fabs(texcoord[0])), floor(fabs(texcoord[1])));
+	
+	// The signs of the original texcoords (needed to know which direction it should be shifted)
+	Vector2 sign(texcoord[0]/fabs(texcoord[0]), texcoord[1]/fabs(texcoord[1]));
+	
+	Vector2 shift(
+		-floored[0] * sign[0] * m_texdef.m_shader.width(), 
+		-floored[1] * sign[1] * m_texdef.m_shader.height()
+	); 
+	
+	// Shift the texture (note the minus sign, the FaceTexDef negates it yet again). 
+	m_texdef.shift(-shift[0], shift[1]);
+	
+	texdefChanged();
+}
+
 // ---------------------------------------------------------------------------------------
 
 QuantiseFunc Face::m_quantise;

@@ -270,11 +270,17 @@ public:
   
 	void FlipTexture(int nAxis);
 	
+	/** greebo: This translates the texture as much towards 
+	 * 			the origin as possible. The patch appearance stays unchanged.  
+	 */
+	void normaliseTexture();
+	
 	/** greebo: Translate all control vertices in texture space
-	 * with the given translation vector (helper method)
+	 * with the given translation vector (helper method, no undoSave() call)
 	 */
 	void translateTexCoords(Vector2 translation);
 	
+	// This is the same as above, but with undoSave() for use in command sequences
 	void TranslateTexture(float s, float t);
 	void ScaleTexture(float s, float t);
 	void RotateTexture(float angle);

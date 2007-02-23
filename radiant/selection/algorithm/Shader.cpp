@@ -495,5 +495,45 @@ void rotateTextureCounter() {
 	rotateTexture(-fabs(GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/rotStep")));
 }
 
+/** greebo: Normalises the texture of the visited faces.
+ */
+class FaceTextureNormaliser
+{
+public:
+	void operator()(Face& face) const {
+		face.normaliseTexture();
+	}
+};
+
+/** greebo: Normalises the texture of the visited patches.
+ */
+class PatchTextureNormaliser
+{
+public:
+	void operator()(Patch& patch) const {
+		patch.normaliseTexture();
+	}
+};
+
+void normaliseTexture() {
+	UndoableCommand undo("normaliseTexture");
+	
+	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
+		Scene_ForEachSelectedBrush_ForEachFace(
+			GlobalSceneGraph(), 
+			FaceTextureNormaliser()
+		);
+  		Scene_forEachVisibleSelectedPatch(PatchTextureNormaliser());
+	}
+	
+	// Normalise the face textures (single face instances)
+	Scene_ForEachSelectedBrushFace(
+		GlobalSceneGraph(), 
+		FaceTextureNormaliser()
+	);
+
+	SceneChangeNotify();
+}
+
 	} // namespace algorithm
 } // namespace selection

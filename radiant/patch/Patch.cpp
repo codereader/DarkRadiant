@@ -3906,7 +3906,7 @@ void Patch::stitchTextureFrom(Patch& sourcePatch) {
 			// The control vertex that is to be manipulated			
 			PatchControl& self = ctrlAt(row, col);
 			
-			// Check all the other patch controls for spatial conincidences
+			// Check all the other patch controls for spatial coincidences
 			for (int srcCol = 0; srcCol < sourceWidth; srcCol++) {
 				for (int srcRow = 0; srcRow < sourceHeight; srcRow++) {
 					// Get the other control
@@ -3922,6 +3922,46 @@ void Patch::stitchTextureFrom(Patch& sourcePatch) {
 				}
 			}
 		}
+	}
+	
+	// Notify the patch about the change
+	controlPointsChanged();
+}
+
+void Patch::normaliseTexture() {
+	// Save the undo memento
+	undoSave();
+	
+	// Find the nearest control vertex
+	
+	// Initialise the compare value
+	PatchControlIter nearestControl = m_ctrl.data();
+	
+	// Cycle through all the control points with an iterator
+	for (PatchControlIter i = m_ctrl.data(); i != m_ctrl.data() + m_ctrl.size(); ++i) {
+		// Take the according value (e.g. s = x, t = y, depending on the nAxis argument) 
+		// and apply the appropriate texture coordinate
+		if (i->m_texcoord.getLength() < nearestControl->m_texcoord.getLength()) {
+			nearestControl = i;
+		}
+	}
+	
+	// Get the nearest texcoord
+	Vector2 texcoord = nearestControl->m_texcoord;
+	
+	// The floored values
+	Vector2 floored(floor(fabs(texcoord[0])), floor(fabs(texcoord[1])));
+	
+	// Compute the shift applicable to all vertices 
+	Vector2 shift(
+		-floored[0] * texcoord[0]/fabs(texcoord[0]), 
+		-floored[1] * texcoord[1]/fabs(texcoord[1])
+	); 
+	
+	// Now shift all the texture vertices in the right direction, so that this patch
+	// is getting as close as possible to the origin in texture space.
+	for (PatchControlIter i = m_ctrl.data(); i != m_ctrl.data() + m_ctrl.size(); ++i) {
+		i->m_texcoord += shift;
 	}
 	
 	// Notify the patch about the change
