@@ -39,6 +39,10 @@ namespace ui {
 		const float DEFAULT_ZOOM_FACTOR = 1.5f;
 		const float ZOOM_MODIFIER = 1.25f;
 		const float MOVE_FACTOR = 2.0f;
+		
+		const float GRID_MAX = 1.0f;
+		const float GRID_DEFAULT = 0.25f;
+		const float GRID_MIN = 0.00390625f;
 	}
 
 TexTool::TexTool() :
@@ -47,7 +51,8 @@ TexTool::TexTool() :
 	_dragRectangle(false),
 	_manipulatorMode(false),
 	_viewOriginMove(false),
-	_undoCommand(NULL)
+	_undoCommand(NULL),
+	_grid(GRID_DEFAULT)
 {
 	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
 	_window = gtkutil::TransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
@@ -114,6 +119,20 @@ void TexTool::toggle() {
 		gtkutil::TransientWindow::restore(_window);
 		// Now show it
 		gtk_widget_show_all(_window);
+	}
+}
+
+void TexTool::gridUp() {
+	if (_grid*2 <= GRID_MAX) {
+		_grid *= 2;
+		draw();
+	}
+}
+
+void TexTool::gridDown() {
+	if (_grid/2 >= GRID_MIN) {
+		_grid /= 2;
+		draw();
 	}
 }
 
@@ -376,25 +395,37 @@ void TexTool::doMouseMove(const Vector2& coords, GdkEventMotion* event) {
 	else if (_manipulatorMode) {
 		Vector2 delta = coords - _manipulateRectangle.topLeft;
 		
-		Vector3 translation(delta[0], delta[1], 0);
+		// Snap the operations to the grid
+		Vector3 snapped;
 		
-		// Create the transformation matrix
-		Matrix4 transform = Matrix4::getTranslation(translation);
+		snapped[0] = (fabs(delta[0]) > 0.0f) ? 
+			floor(fabs(delta[0]) / _grid)*_grid * delta[0]/fabs(delta[0]) : 
+			0.0f;
+			
+		snapped[1] = (fabs(delta[1]) > 0.0f) ? 
+			floor(fabs(delta[1]) / _grid)*_grid * delta[1]/fabs(delta[1]) : 
+			0.0f;
 		
-		// Transform the selected
-		// The transformSelected() call is propagated down the entire tree
-		// of available items (e.g. PatchItem > PatchVertexItems)
-		for (unsigned int i = 0; i < _items.size(); i++) {
-			_items[i]->transformSelected(transform);
+		if (snapped.getLength() > 0) {
+			// Create the transformation matrix
+			Matrix4 transform = Matrix4::getTranslation(snapped);
+			
+			// Transform the selected
+			// The transformSelected() call is propagated down the entire tree
+			// of available items (e.g. PatchItem > PatchVertexItems)
+			for (unsigned int i = 0; i < _items.size(); i++) {
+				_items[i]->transformSelected(transform);
+			}
+			
+			// Move the starting point by the effective translation
+			_manipulateRectangle.topLeft[0] += transform.tx();
+			_manipulateRectangle.topLeft[1] += transform.ty();
+			
+			draw();
+		
+			// Update the camera to reflect the changes
+			GlobalCamera().update();
 		}
-		
-		// Store the new coords as new starting point
-		_manipulateRectangle.topLeft = coords;
-		
-		draw();
-		
-		// Update the camera to reflect the changes
-		GlobalCamera().update();
 	}
 }
 
@@ -415,11 +446,6 @@ void TexTool::doMouseDown(const Vector2& coords, GdkEventButton* event) {
 		
 		// Any selectables under the mouse pointer?
 		if (selectables.size() > 0) {
-			// Toggle the selection
-			/*for (unsigned int i = 0; i < selectables.size(); i++) {
-				selectables[i]->setSelected(true);
-			}*/
-			
 			// Activate the manipulator mode
 			_manipulatorMode = true;
 			_manipulateRectangle.topLeft = coords; 
@@ -485,11 +511,19 @@ void TexTool::drawGrid() {
 	
 	for (int x = static_cast<int>(startX); x <= static_cast<int>(endX); x++) {
 		glVertex2f(x, startY);
+		glVertex2f(x, endY);
+	}
+	
+	// Draw the manipulation grid
+	glColor4f(0.2f, 0.2f, 0.2f, 0.4f);
+	for (float y = startY; y <= endY; y += _grid) {
+		glVertex2f(startX, y);
+		glVertex2f(endX, y);
+	}
+	
+	for (float x = startX; x <= endX; x += _grid) {
+		glVertex2f(x, startY);
 		glVertex2f(x, endY); 
-		
-		glRasterPos2f(x + 0.01f, topLeft[1] + 0.01f);
-		std::string xcoordStr = intToStr(x) + ".0";  
-		GlobalOpenGL().drawString(xcoordStr.c_str()); 
 	}
 	
 	// Draw the axes through the origin
@@ -510,7 +544,7 @@ void TexTool::drawGrid() {
 	}
 	
 	for (int x = static_cast<int>(startX); x <= static_cast<int>(endX); x++) {
-		glRasterPos2f(x + 0.05f, topLeft[1] + 0.06f * _zoomFactor);
+		glRasterPos2f(x + 0.05f, topLeft[1] + 0.03f * _zoomFactor);
 		std::string xcoordStr = intToStr(x) + ".0";  
 		GlobalOpenGL().drawString(xcoordStr.c_str()); 
 	}
@@ -625,16 +659,6 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 		glEnd();
 		glDisable(GL_BLEND);
 	}
-	
-	/*glColor3f(1, 1, 1);
-	std::string topLeftStr = floatToStr(orthoTopLeft[0]) + "," + floatToStr(orthoTopLeft[1]);
-	std::string bottomRightStr = floatToStr(orthoBottomRight[0]) + "," + floatToStr(orthoBottomRight[1]);
-	
-	glRasterPos2f(orthoTopLeft[0] + 0.5, orthoTopLeft[1] + 0.5);
-	GlobalOpenGL().drawString(topLeftStr.c_str());
-	
-	glRasterPos2f(orthoBottomRight[0] - 0.2, orthoBottomRight[1] + 0.2);
-	GlobalOpenGL().drawString(bottomRightStr.c_str());*/
 	
 	return false;
 }

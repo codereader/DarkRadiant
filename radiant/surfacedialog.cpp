@@ -1645,6 +1645,14 @@ void ToggleTexTool() {
 	ui::TexTool::Instance().toggle();
 }
 
+void TexToolGridUp() {
+	ui::TexTool::Instance().gridUp();
+}
+
+void TexToolGridDown() {
+	ui::TexTool::Instance().gridDown();
+}
+
 void SurfaceInspector_constructPreferences(PrefPage* page)
 {
   page->appendCheckBox("", "Surface Inspector Increments Match Grid", g_si_globals.m_bSnapTToGrid);
@@ -1672,6 +1680,9 @@ void SurfaceInspector_registerCommands()
   
   GlobalEventManager().addCommand("FlipTextureX", FreeCaller<FlipTextureX>());
   GlobalEventManager().addCommand("FlipTextureY", FreeCaller<FlipTextureY>());
+  
+  GlobalEventManager().addCommand("TexToolGridUp", FreeCaller<TexToolGridUp>());
+  GlobalEventManager().addCommand("TexToolGridDown", FreeCaller<TexToolGridDown>());
 }
 
 
