@@ -47,5 +47,10 @@ bool PatchVertexItem::testSelect(const Rectangle& rectangle) {
 	return rectangle.contains(_patchControl.m_texcoord);
 }
 
+void PatchVertexItem::snapSelectedToGrid(float grid) {
+	_patchControl.m_texcoord[0] = float_snapped(_patchControl.m_texcoord[0], grid);
+	_patchControl.m_texcoord[1] = float_snapped(_patchControl.m_texcoord[1], grid);
+}
+
 	} // namespace TexTool
 } // namespace selection

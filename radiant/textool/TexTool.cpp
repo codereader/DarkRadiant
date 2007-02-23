@@ -219,9 +219,14 @@ void TexTool::rescanSelection() {
 }
 
 void TexTool::selectionChanged(scene::Instance& instance) {
-	//update();
 	rescanSelection();
-	
+	draw();
+}
+
+void TexTool::snapToGrid() {
+	for (unsigned int i = 0; i < _items.size(); i++) {
+		_items[i]->snapSelectedToGrid(_grid);
+	}
 	draw();
 }
 

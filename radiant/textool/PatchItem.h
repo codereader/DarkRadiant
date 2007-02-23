@@ -24,6 +24,11 @@ public:
 	// Patch::controlPointsChanged() routine afterwards.
 	virtual void transformSelected(const Matrix4& matrix);
 
+	/** greebo: Snaps all the patch texcoords to the grid.
+	 * 			This calls the TexToolItem base method and
+	 * 			calls Patch::controlPointsChanged() afterwards.
+	 */
+	virtual void snapSelectedToGrid(float grid);
 };
 	
 	} // namespace TexTool

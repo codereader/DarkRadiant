@@ -29,6 +29,10 @@ public:
 	 */
 	virtual void transformSelected(const Matrix4& matrix) = 0;
 	
+	/** greebo: Snaps this item to the grid.
+	 */
+	virtual void snapSelectedToGrid(float grid) = 0;
+	
 	/** greebo: Tells the items that a transformation is about to begin.
 	 * 			This usually triggers an undoSave() which saves the current
 	 * 			item state.

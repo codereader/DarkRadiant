@@ -1653,6 +1653,10 @@ void TexToolGridDown() {
 	ui::TexTool::Instance().gridDown();
 }
 
+void TexToolSnapToGrid() {
+	ui::TexTool::Instance().snapToGrid();
+}
+
 void SurfaceInspector_constructPreferences(PrefPage* page)
 {
   page->appendCheckBox("", "Surface Inspector Increments Match Grid", g_si_globals.m_bSnapTToGrid);
@@ -1683,6 +1687,7 @@ void SurfaceInspector_registerCommands()
   
   GlobalEventManager().addCommand("TexToolGridUp", FreeCaller<TexToolGridUp>());
   GlobalEventManager().addCommand("TexToolGridDown", FreeCaller<TexToolGridDown>());
+  GlobalEventManager().addCommand("TexToolSnapToGrid", FreeCaller<TexToolSnapToGrid>());
 }
 
 
