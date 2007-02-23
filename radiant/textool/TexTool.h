@@ -71,6 +71,9 @@ class TexTool :
 	// and destroyed upon end. The destruction triggers the UndoMementos being saved.  
 	UndoableCommand* _undoCommand;
 	
+	// The current grid size
+	float _grid;
+	
 public:
 	TexTool();
 	
@@ -98,6 +101,11 @@ public:
 	/** greebo: Updates the GL window
 	 */
 	void draw();
+	
+	/** greebo: Increases/Decreases the grid size.
+	 */
+	void gridUp();
+	void gridDown();
 	
 private:
 	// Creates, packs and connects the child widgets
