@@ -180,5 +180,6 @@
 		<shortcut command="NormaliseTexture" key="" modifiers=""/>
 		<shortcut command="TexToolGridUp" key="plus" modifiers="" />
 		<shortcut command="TexToolGridDown" key="minus" modifiers="" />
+		<shortcut command="TexToolSnapToGrid" key="G" modifiers="SHIFT" />
 	</shortcuts>
 </input>

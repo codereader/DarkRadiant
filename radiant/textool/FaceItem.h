@@ -32,6 +32,10 @@ public:
 	 */
 	virtual bool testSelect(const Rectangle& rectangle);
 	
+	/** greebo: Snaps the face translation to the grid.
+	 */
+	virtual void snapSelectedToGrid(float grid);
+	
 private:
 	/** greebo: Calculates the mean value of all the texCoords,
 	 * 			which is technically the centroid.

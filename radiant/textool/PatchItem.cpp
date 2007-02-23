@@ -57,5 +57,14 @@ void PatchItem::transformSelected(const Matrix4& matrix) {
 	_sourcePatch.controlPointsChanged();
 }
 
+void PatchItem::snapSelectedToGrid(float grid) {
+	
+	// Pass the call to the base class for default behaviour
+	TexToolItem::snapSelectedToGrid(grid);
+	
+	// Notify the sourcepatch what's happened 
+	_sourcePatch.controlPointsChanged();
+}
+
 	} // namespace TexTool
 } // namespace selection

@@ -107,6 +107,10 @@ public:
 	void gridUp();
 	void gridDown();
 	
+	/** greebo: Snaps the current TexTool selection to the active grid.
+	 */
+	void snapToGrid();
+	
 private:
 	// Creates, packs and connects the child widgets
 	void populateWindow();

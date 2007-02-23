@@ -25,6 +25,10 @@ public:
 	// Transforms this object with the given transformation matrix
 	virtual void transform(const Matrix4& matrix);
 
+	/** greebo: Snaps this patch texcoord to the grid.
+	 */
+	virtual void snapSelectedToGrid(float grid);
+
 	/** greebo: Returns true if the object can be selected at the given coords.
 	 */
 	virtual bool testSelect(const Rectangle& rectangle);

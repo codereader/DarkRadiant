@@ -1,5 +1,6 @@
 #include "FaceItem.h"
 
+#include "math/FloatTools.h"
 #include "brush/Face.h"
 #include "winding.h"
 
@@ -86,6 +87,26 @@ Vector2 FaceItem::getCentroid() const {
 bool FaceItem::testSelect(const Rectangle& rectangle) {
 	// Check if the centroid is within the rectangle
 	return rectangle.contains(getCentroid());
+}
+
+void FaceItem::snapSelectedToGrid(float grid) {
+	if (_selected) {
+		Vector2 centroid = getCentroid();
+		
+		Vector2 snapped(
+			float_snapped(centroid[0], grid), 
+			float_snapped(centroid[1], grid)
+		);
+		
+		Vector3 translation;
+		translation[0] = snapped[0] - centroid[0];
+		translation[1] = snapped[1] - centroid[1];
+		
+		Matrix4 matrix = Matrix4::getTranslation(translation);
+		
+		// Do the transformation
+		transform(matrix);
+	}
 }
 
 	} // namespace TexTool

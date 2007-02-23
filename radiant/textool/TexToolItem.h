@@ -107,6 +107,13 @@ public:
 		}
 	}
 	
+	virtual void snapSelectedToGrid(float grid) {
+		// Default behaviour: Propagate the call to the children
+		for (unsigned int i = 0; i < _children.size(); i++) {
+			_children[i]->snapSelectedToGrid(grid);
+		}
+	}
+	
 	// Default implementation of getExtents(). All children's AABB are combined.
 	virtual AABB getExtents() {
 		AABB returnValue;
