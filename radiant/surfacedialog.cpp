@@ -1688,6 +1688,7 @@ void SurfaceInspector_registerCommands()
   GlobalEventManager().addCommand("TexToolGridUp", FreeCaller<TexToolGridUp>());
   GlobalEventManager().addCommand("TexToolGridDown", FreeCaller<TexToolGridDown>());
   GlobalEventManager().addCommand("TexToolSnapToGrid", FreeCaller<TexToolSnapToGrid>());
+  GlobalEventManager().addRegistryToggle("TexToolToggleGrid", "user/ui/textures/texTool/gridActive");
 }
 
 

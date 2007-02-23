@@ -8,6 +8,7 @@
 #include "ishaders.h"
 #include "iselection.h"
 #include "iundo.h"
+#include "iregistry.h"
 
 #include "TexToolItem.h"
 
@@ -17,6 +18,7 @@ class Patch;
 namespace ui {
 
 class TexTool :
+	public RegistryKeyObserver,
 	public SelectionSystem::Observer
 {
 	// The textool gtkwindow
@@ -74,6 +76,9 @@ class TexTool :
 	// The current grid size
 	float _grid;
 	
+	// TRUE if the grid is active
+	bool _gridActive;
+	
 public:
 	TexTool();
 	
@@ -110,6 +115,10 @@ public:
 	/** greebo: Snaps the current TexTool selection to the active grid.
 	 */
 	void snapToGrid();
+	
+	/** greebo: RegistryKeyObserver implementation, gets called upon key change
+	 */
+	void keyChanged();
 	
 private:
 	// Creates, packs and connects the child widgets
