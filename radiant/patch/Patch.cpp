@@ -59,7 +59,7 @@ EPatchType Patch::m_type;
 int Patch::m_CycleCapIndex = 0;
 
 // greebo: Another nasty global that is also referenced from patchmanip.cpp, so I'll leave it for the moment
-int g_PatchSubdivideThreshold = 4;
+int g_PatchSubdivideThreshold = 2; // greebo: changed this from 4 to 2 (issue #77)
 
 // Constructor
 Patch::Patch(scene::Node& node, const Callback& evaluateTransform, const Callback& boundsChanged) :

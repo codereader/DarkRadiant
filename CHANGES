@@ -2,6 +2,7 @@
 greebo
 - Added "Normalise Texture" command that translates textures towards the origin 
   without changing their appearance.
+- Rewrote Texture Tool (supports various manipulations of patches and brush faces).
 
 19/02/2007
 OrbWeaver
