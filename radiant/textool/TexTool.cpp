@@ -5,7 +5,7 @@
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
-#include <GL/glew.h>
+#include "igl.h"
 
 #include "texturelib.h"
 #include "selectionlib.h"
@@ -195,13 +195,13 @@ void TexTool::rescanSelection() {
 			_items.push_back(faceItem);
 		}
 	}
+	
+	recalculateVisibleTexSpace();
 }
 
 void TexTool::selectionChanged(scene::Instance& instance) {
 	//update();
 	rescanSelection();
-	
-	recalculateVisibleTexSpace();
 	
 	draw();
 }
@@ -457,23 +457,21 @@ void TexTool::foreachItem(selection::textool::ItemVisitor& visitor) {
 void TexTool::drawGrid() {
 	AABB& texSpaceAABB = getVisibleTexSpace();
 	
-	float startX = floor(texSpaceAABB.origin[0] - texSpaceAABB.extents[0] * _zoomFactor);
-	float endX = ceil(texSpaceAABB.origin[0] + texSpaceAABB.extents[0] * _zoomFactor);
-	float startY = floor(texSpaceAABB.origin[1] - texSpaceAABB.extents[1] * _zoomFactor);
-	float endY = ceil(texSpaceAABB.origin[1] + texSpaceAABB.extents[1] * _zoomFactor);
+	Vector3 topLeft = texSpaceAABB.origin - texSpaceAABB.extents * _zoomFactor;
+	Vector3 bottomRight = texSpaceAABB.origin + texSpaceAABB.extents * _zoomFactor;
 	
-	if (startX > endX) {
-		std::swap(startX, endX);
+	if (topLeft[0] > bottomRight[0]) {
+		std::swap(topLeft[0], bottomRight[0]);
 	}
 	
-	if (startY > endY) {
-		std::swap(startY, endY);
+	if (topLeft[1] > bottomRight[1]) {
+		std::swap(topLeft[1], bottomRight[1]);
 	}
 	
-	startX -= 1;
-	endX += 1;
-	startY -= 1;
-	endY += 1;
+	float startX = floor(topLeft[0]) - 1;
+	float endX = ceil(bottomRight[0]) + 1;
+	float startY = floor(topLeft[1]) - 1;
+	float endY = ceil(bottomRight[1]) + 1;
 	
 	glBegin(GL_LINES);
 	
@@ -482,12 +480,16 @@ void TexTool::drawGrid() {
 	
 	for (int y = static_cast<int>(startY); y <= static_cast<int>(endY); y++) {
 		glVertex2f(startX, y);
-		glVertex2f(endX, y); 
+		glVertex2f(endX, y);
 	}
 	
 	for (int x = static_cast<int>(startX); x <= static_cast<int>(endX); x++) {
 		glVertex2f(x, startY);
 		glVertex2f(x, endY); 
+		
+		glRasterPos2f(x + 0.01f, topLeft[1] + 0.01f);
+		std::string xcoordStr = intToStr(x) + ".0";  
+		GlobalOpenGL().drawString(xcoordStr.c_str()); 
 	}
 	
 	// Draw the axes through the origin
@@ -499,6 +501,19 @@ void TexTool::drawGrid() {
 	glVertex2f(endX, 0);
 	
 	glEnd();
+	
+	// Draw coordinate strings
+	for (int y = static_cast<int>(startY); y <= static_cast<int>(endY); y++) {
+		glRasterPos2f(topLeft[0] + 0.05f, y + 0.05f);
+		std::string ycoordStr = intToStr(y) + ".0";  
+		GlobalOpenGL().drawString(ycoordStr.c_str()); 
+	}
+	
+	for (int x = static_cast<int>(startX); x <= static_cast<int>(endX); x++) {
+		glRasterPos2f(x + 0.05f, topLeft[1] + 0.06f * _zoomFactor);
+		std::string xcoordStr = intToStr(x) + ".0";  
+		GlobalOpenGL().drawString(xcoordStr.c_str()); 
+	}
 }
 
 gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self) {
