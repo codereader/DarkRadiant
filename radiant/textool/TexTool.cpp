@@ -18,6 +18,7 @@
 #include "patch/Patch.h"
 #include "winding.h"
 #include "camera/GlobalCamera.h"
+#include "ui/common/ToolbarCreator.h"
 
 #include "textool/Selectable.h"
 #include "textool/Transformable.h"
@@ -35,6 +36,7 @@ namespace ui {
 		
 		const std::string RKEY_ROOT = "user/ui/textures/texTool/";
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
+		const std::string RKEY_GRID_STATE = RKEY_ROOT + "gridActive";
 		
 		const float DEFAULT_ZOOM_FACTOR = 1.5f;
 		const float ZOOM_MODIFIER = 1.25f;
@@ -52,7 +54,8 @@ TexTool::TexTool() :
 	_manipulatorMode(false),
 	_viewOriginMove(false),
 	_undoCommand(NULL),
-	_grid(GRID_DEFAULT)
+	_grid(GRID_DEFAULT),
+	_gridActive(GlobalRegistry().get(RKEY_GRID_STATE) == "1")
 {
 	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
 	_window = gtkutil::TransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
@@ -80,13 +83,26 @@ TexTool::TexTool() :
 	
 	// Register self to the SelSystem to get notified upon selection changes.
 	GlobalSelectionSystem().addObserver(this);
+	
+	GlobalRegistry().addKeyObserver(this, RKEY_GRID_STATE);
+}
+
+void TexTool::keyChanged() {
+	_gridActive = GlobalRegistry().get(RKEY_GRID_STATE) == "1";
+	draw();
 }
 
 void TexTool::populateWindow() {
+	
+	// Load the texture toolbar from the registry
+    ui::ToolbarCreator toolbarCreator;
+    GtkToolbar* textoolbar = toolbarCreator.getToolbar("textool");
+    GTK_WIDGET_UNSET_FLAGS(GTK_WIDGET(textoolbar), GTK_CAN_FOCUS);
+    
 	// Create the GL widget
 	_glWidget = glwidget_new(TRUE);
 	GtkWidget* frame = gtkutil::FramedWidget(_glWidget);
-		
+	
 	// Connect the events
 	gtk_widget_set_events(_glWidget, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
 	g_signal_connect(G_OBJECT(_glWidget), "expose-event", G_CALLBACK(onExpose), this);
@@ -100,7 +116,13 @@ void TexTool::populateWindow() {
 	// Make the GL widget accept the global shortcuts
 	GlobalEventManager().connect(GTK_OBJECT(_glWidget));
 	
-	GtkWidget* vbox = gtk_vbox_new(true, 0);
+	// Create a top-level vbox, pack it and add it to the window 
+	GtkWidget* vbox = gtk_vbox_new(false, 0);
+	
+	if (textoolbar != NULL) {
+    	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(textoolbar), false, false, 0);
+    }
+	
 	gtk_box_pack_start(GTK_BOX(vbox), frame, true, true, 0);
 	
 	gtk_container_add(GTK_CONTAINER(_window), vbox);
@@ -123,14 +145,14 @@ void TexTool::toggle() {
 }
 
 void TexTool::gridUp() {
-	if (_grid*2 <= GRID_MAX) {
+	if (_grid*2 <= GRID_MAX && _gridActive) {
 		_grid *= 2;
 		draw();
 	}
 }
 
 void TexTool::gridDown() {
-	if (_grid/2 >= GRID_MIN) {
+	if (_grid/2 >= GRID_MIN && _gridActive) {
 		_grid /= 2;
 		draw();
 	}
@@ -224,10 +246,12 @@ void TexTool::selectionChanged(scene::Instance& instance) {
 }
 
 void TexTool::snapToGrid() {
-	for (unsigned int i = 0; i < _items.size(); i++) {
-		_items[i]->snapSelectedToGrid(_grid);
+	if (_gridActive) {
+		for (unsigned int i = 0; i < _items.size(); i++) {
+			_items[i]->snapSelectedToGrid(_grid);
+		}
+		draw();
 	}
-	draw();
 }
 
 int TexTool::countSelected() {
@@ -432,15 +456,21 @@ void TexTool::doMouseMove(const Vector2& coords, GdkEventMotion* event) {
 		Vector2 delta = coords - _manipulateRectangle.topLeft;
 		
 		// Snap the operations to the grid
-		Vector3 snapped;
+		Vector3 snapped(0,0,0);
 		
-		snapped[0] = (fabs(delta[0]) > 0.0f) ? 
-			floor(fabs(delta[0]) / _grid)*_grid * delta[0]/fabs(delta[0]) : 
-			0.0f;
-			
-		snapped[1] = (fabs(delta[1]) > 0.0f) ? 
-			floor(fabs(delta[1]) / _grid)*_grid * delta[1]/fabs(delta[1]) : 
-			0.0f;
+		if (_gridActive) {
+			snapped[0] = (fabs(delta[0]) > 0.0f) ? 
+				floor(fabs(delta[0]) / _grid)*_grid * delta[0]/fabs(delta[0]) : 
+				0.0f;
+				
+			snapped[1] = (fabs(delta[1]) > 0.0f) ? 
+				floor(fabs(delta[1]) / _grid)*_grid * delta[1]/fabs(delta[1]) : 
+				0.0f;
+		}
+		else {
+			snapped[0] = delta[0];
+			snapped[1] = delta[1]; 
+		}
 		
 		if (snapped.getLength() > 0) {
 			// Create the transformation matrix
@@ -550,16 +580,18 @@ void TexTool::drawGrid() {
 		glVertex2f(x, endY);
 	}
 	
-	// Draw the manipulation grid
-	glColor4f(0.2f, 0.2f, 0.2f, 0.4f);
-	for (float y = startY; y <= endY; y += _grid) {
-		glVertex2f(startX, y);
-		glVertex2f(endX, y);
-	}
-	
-	for (float x = startX; x <= endX; x += _grid) {
-		glVertex2f(x, startY);
-		glVertex2f(x, endY); 
+	if (_gridActive) {
+		// Draw the manipulation grid
+		glColor4f(0.2f, 0.2f, 0.2f, 0.4f);
+		for (float y = startY; y <= endY; y += _grid) {
+			glVertex2f(startX, y);
+			glVertex2f(endX, y);
+		}
+		
+		for (float x = startX; x <= endX; x += _grid) {
+			glVertex2f(x, startY);
+			glVertex2f(x, endY); 
+		}
 	}
 	
 	// Draw the axes through the origin

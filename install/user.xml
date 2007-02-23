@@ -141,8 +141,15 @@
 	<toolbar name="texture" align="horizontal">
 		<toolbutton name="flush" action="RefreshShaders" tooltip="Flush &amp; Reload Shaders" icon="texwindow_flushandreload.png"/>
 		<toggletoolbutton name="showinuse" action="ShowInUse" tooltip="Hide Unused" icon="texwindow_hideunused.png"/>
-    <separator/>		
+		<separator/>		
 		<toolbutton name="findandreplace" action="FindReplaceTextures" tooltip="Find &amp; Replace" icon="texwindow_findandreplace.png"/>
-  </toolbar>
+    </toolbar>
+	<toolbar name="textool" align="horizontal">
+		<toolbutton name="griddown" action="TexToolGridDown" tooltip="Decrease Grid Size" icon="grid_down.png"/>
+		<toolbutton name="gridup" action="TexToolGridUp" tooltip="Increase Grid Size" icon="grid_up.png"/>
+		<toolbutton name="gridsnap" action="TexToolSnapToGrid" tooltip="Snap to Grid" icon="grid_snap.png"/>
+		<toggletoolbutton name="usegrid" action="TexToolToggleGrid" tooltip="Toggle Grid" icon="grid_toggle.png"/>
+		<separator/>
+    </toolbar>
  </ui>
 </user>
