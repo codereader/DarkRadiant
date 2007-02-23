@@ -184,6 +184,8 @@ void SurfaceInspector::toggle() {
 		_connector.importValues();
 		_windowPosition.applyPosition();
 		gtk_widget_show_all(_dialog);
+		// Unset the focus widget for this window
+		gtk_window_set_focus(GTK_WINDOW(_dialog), NULL);
 	}
 }
 
