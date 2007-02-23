@@ -150,6 +150,7 @@
 		<toolbutton name="gridsnap" action="TexToolSnapToGrid" tooltip="Snap to Grid" icon="grid_snap.png"/>
 		<toggletoolbutton name="usegrid" action="TexToolToggleGrid" tooltip="Toggle Grid" icon="grid_toggle.png"/>
 		<separator/>
+		<toolbutton name="mergeitems" action="TexToolMergeItems" tooltip="Merge Selection" icon="textool_merge.png"/>
     </toolbar>
  </ui>
 </user>

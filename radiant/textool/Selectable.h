@@ -52,6 +52,11 @@ public:
 	 */
 	virtual AABB getExtents() = 0;
  
+	/** greebo: Retrieves the extents of the selected items only.
+	 * 			Useful to retrieve an centroid of all the selected items.
+	 */ 	
+ 	virtual AABB getSelectedExtents() = 0;
+ 
 }; // class Selectable
 
 } // namespace TexTool

@@ -29,6 +29,12 @@ public:
 	 * 			calls Patch::controlPointsChanged() afterwards.
 	 */
 	virtual void snapSelectedToGrid(float grid);
+	
+	/** greebo: Moves all the selected subitems to <targetCoords>.
+	 * 			This calls the TexToolItem base method and
+	 * 			calls Patch::controlPointsChanged() afterwards.
+	 */
+	virtual void moveSelectedTo(const Vector2& targetCoords);
 };
 	
 	} // namespace TexTool

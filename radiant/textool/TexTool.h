@@ -116,6 +116,11 @@ public:
 	 */
 	void snapToGrid();
 	
+	/** greebo: Merges the selected items in terms of their UV coordinates.
+	 * 			Mainly useful for stitching patch control vertices. 
+	 */
+	void mergeSelectedItems();
+	
 	/** greebo: RegistryKeyObserver implementation, gets called upon key change
 	 */
 	void keyChanged();

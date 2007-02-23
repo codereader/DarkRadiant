@@ -29,6 +29,11 @@ public:
 	 */
 	virtual void transformSelected(const Matrix4& matrix) = 0;
 	
+	/** greebo: Moves the selected items to the specified <targetCoords>
+	 * 			This is an absolute operation, not a relative transformation. 			
+	 */
+	virtual void moveSelectedTo(const Vector2& targetCoords) = 0;
+	
 	/** greebo: Snaps this item to the grid.
 	 */
 	virtual void snapSelectedToGrid(float grid) = 0;
