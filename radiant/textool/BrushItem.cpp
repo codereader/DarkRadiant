@@ -33,5 +33,9 @@ BrushItem::BrushItem(Brush& sourceBrush) :
 	_sourceBrush.forEachFace(FaceItemCreator(_children));
 }
 
+void BrushItem::beginTransformation() {
+	_sourceBrush.undoSave();
+}
+
 	} // namespace TexTool
 } // namespace selection

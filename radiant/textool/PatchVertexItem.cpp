@@ -48,8 +48,10 @@ bool PatchVertexItem::testSelect(const Rectangle& rectangle) {
 }
 
 void PatchVertexItem::snapSelectedToGrid(float grid) {
-	_patchControl.m_texcoord[0] = float_snapped(_patchControl.m_texcoord[0], grid);
-	_patchControl.m_texcoord[1] = float_snapped(_patchControl.m_texcoord[1], grid);
+	if (_selected) {
+		_patchControl.m_texcoord[0] = float_snapped(_patchControl.m_texcoord[0], grid);
+		_patchControl.m_texcoord[1] = float_snapped(_patchControl.m_texcoord[1], grid);
+	}
 }
 
 void PatchVertexItem::moveSelectedTo(const Vector2& targetCoords) {
