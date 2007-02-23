@@ -122,6 +122,7 @@ SurfaceInspector::SurfaceInspector() :
 	}
 	
 	_windowPosition.connect(GTK_WINDOW(_dialog));
+	_windowPosition.applyPosition();
 }
 
 void SurfaceInspector::shutdown() {
@@ -184,7 +185,6 @@ void SurfaceInspector::toggle() {
 	else {
 		gtkutil::TransientWindow::restore(_dialog);
 		_connector.importValues();
-		_windowPosition.applyPosition();
 		gtk_widget_show_all(_dialog);
 		// Unset the focus widget for this window to avoid the cursor 
 		// from jumping into the shader entry field 
