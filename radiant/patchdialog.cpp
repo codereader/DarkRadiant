@@ -97,182 +97,157 @@ public:
 	}
 };
 
-class PatchGetFixedSubdivisions
-{
-  PatchFixedSubdivisions& m_subdivisions;
-public:
-  PatchGetFixedSubdivisions(PatchFixedSubdivisions& subdivisions) : m_subdivisions(subdivisions)
-  {
-  }
-  void operator()(Patch& patch)
-  {
-    m_subdivisions.importFromPatch(patch);
-    SceneChangeNotify();
-  }
-};
-
-void Scene_PatchGetFixedSubdivisions(PatchFixedSubdivisions& subdivisions)
-{
-#if 1
-  if(GlobalSelectionSystem().countSelected() != 0)
-  {
-    Patch* patch = Node_getPatch(GlobalSelectionSystem().ultimateSelected().path().top());
-    if(patch != 0)
-    {
-      subdivisions.importFromPatch(*patch);
-    }
-  }
-#else
-  Scene_forEachVisibleSelectedPatch(PatchGetFixedSubdivisions(subdivisions));
-#endif
+/** greebo: Retrieves the subdivision settings from the last selected patch.
+ */
+void Scene_PatchGetFixedSubdivisions(PatchFixedSubdivisions& subdivisions) {
+	if (GlobalSelectionSystem().countSelected() != 0) {
+		Patch* patch = Node_getPatch(GlobalSelectionSystem().ultimateSelected().path().top());
+		if (patch != 0) {
+			subdivisions.importFromPatch(*patch);
+		}
+	}
 }
 
 class PatchSetFixedSubdivisions
 {
-  const PatchFixedSubdivisions& m_subdivisions;
+	const PatchFixedSubdivisions& m_subdivisions;
 public:
-  PatchSetFixedSubdivisions(const PatchFixedSubdivisions& subdivisions) : m_subdivisions(subdivisions)
-  {
-  }
-  void operator()(Patch& patch) const
-  {
-    m_subdivisions.exportToPatch(patch);
-  }
+	PatchSetFixedSubdivisions(const PatchFixedSubdivisions& subdivisions) : 
+		m_subdivisions(subdivisions) 
+	{}
+	
+	void operator()(Patch& patch) const {
+		m_subdivisions.exportToPatch(patch);
+	}
 };
 
-void Scene_PatchSetFixedSubdivisions(const PatchFixedSubdivisions& subdivisions)
-{
-  UndoableCommand command("patchSetFixedSubdivisions");
-  Scene_forEachVisibleSelectedPatch(PatchSetFixedSubdivisions(subdivisions));
+void Scene_PatchSetFixedSubdivisions(const PatchFixedSubdivisions& subdivisions) {
+	UndoableCommand command("patchSetFixedSubdivisions");
+	Scene_forEachVisibleSelectedPatch(PatchSetFixedSubdivisions(subdivisions));
 }
 
-typedef struct _GtkCheckButton GtkCheckButton;
-
+/** greebo: The Subdivisons subclass of the PatchInspector.
+ * 	Contains the entry fields and the according callbacks. 
+ */
 class Subdivisions
 {
 public:
-  GtkCheckButton* m_enabled;
-  GtkEntry* m_horizontal;
-  GtkEntry* m_vertical;
-  Subdivisions() : m_enabled(0), m_horizontal(0), m_vertical(0)
-  {
-  }
-  void update()
-  {
-    PatchFixedSubdivisions subdivisions;
-    Scene_PatchGetFixedSubdivisions(subdivisions);
+	GtkCheckButton* m_enabled;
+	GtkEntry* m_horizontal;
+	GtkEntry* m_vertical;
+	
+	Subdivisions() : 
+		m_enabled(NULL), 
+		m_horizontal(NULL), 
+		m_vertical(NULL) 
+	{}
+	
+	void update() {
+		PatchFixedSubdivisions subdivisions;
+		Scene_PatchGetFixedSubdivisions(subdivisions);
 
-    toggle_button_set_active_no_signal(GTK_TOGGLE_BUTTON(m_enabled), subdivisions.m_enabled);
+		toggle_button_set_active_no_signal(GTK_TOGGLE_BUTTON(m_enabled), subdivisions.m_enabled);
 
-    if(subdivisions.m_enabled)
-    {
-      entry_set_int(m_horizontal, static_cast<int>(subdivisions.m_x));
-      entry_set_int(m_vertical, static_cast<int>(subdivisions.m_y));
-      gtk_widget_set_sensitive(GTK_WIDGET(m_horizontal), TRUE);
-      gtk_widget_set_sensitive(GTK_WIDGET(m_vertical), TRUE);
-    }
-    else
-    {
-      gtk_entry_set_text(m_horizontal, "");
-      gtk_entry_set_text(m_vertical, "");
-      gtk_widget_set_sensitive(GTK_WIDGET(m_horizontal), FALSE);
-      gtk_widget_set_sensitive(GTK_WIDGET(m_vertical), FALSE);
-    }
-  }
-  void cancel()
-  {
-    update();
-  }
-  typedef MemberCaller<Subdivisions, &Subdivisions::cancel> CancelCaller;
-  void apply()
-  {
-    Scene_PatchSetFixedSubdivisions(
-      PatchFixedSubdivisions(
-        gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_enabled)) != FALSE,
-        static_cast<std::size_t>(entry_get_int(m_horizontal)),
-        static_cast<std::size_t>(entry_get_int(m_vertical))
-      )
-    );
-  }
-  typedef MemberCaller<Subdivisions, &Subdivisions::apply> ApplyCaller;
-  static void applyGtk(GtkToggleButton* toggle, Subdivisions* self)
-  {
-    self->apply();
-  }
+		if (subdivisions.m_enabled) {
+			entry_set_int(m_horizontal, static_cast<int>(subdivisions.m_x));
+			entry_set_int(m_vertical, static_cast<int>(subdivisions.m_y));
+			gtk_widget_set_sensitive(GTK_WIDGET(m_horizontal), TRUE);
+			gtk_widget_set_sensitive(GTK_WIDGET(m_vertical), TRUE);
+		}
+		else {
+			gtk_entry_set_text(m_horizontal, "");
+			gtk_entry_set_text(m_vertical, "");
+			gtk_widget_set_sensitive(GTK_WIDGET(m_horizontal), FALSE);
+			gtk_widget_set_sensitive(GTK_WIDGET(m_vertical), FALSE);
+		}
+	}
+	
+	void cancel() {
+		update();
+	}
+	typedef MemberCaller<Subdivisions, &Subdivisions::cancel> CancelCaller;
+	
+	void apply() {
+		Scene_PatchSetFixedSubdivisions(
+		    PatchFixedSubdivisions(
+		        gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_enabled)) != FALSE,
+		        static_cast<std::size_t>(entry_get_int(m_horizontal)),
+		        static_cast<std::size_t>(entry_get_int(m_vertical))
+		    )
+		);
+	}
+	typedef MemberCaller<Subdivisions, &Subdivisions::apply> ApplyCaller;
+	
+	static void applyGtk(GtkToggleButton* toggle, Subdivisions* self) {
+		self->apply();
+	}
 };
 
-class PatchInspector : public Dialog
+class PatchInspector : 
+	public Dialog
 {
-  GtkWindow* BuildDialog();
-  Subdivisions m_subdivisions;
-  NonModalEntry m_horizontalSubdivisionsEntry;
-  NonModalEntry m_verticalSubdivisionsEntry;
+	GtkWindow* BuildDialog();
+	Subdivisions m_subdivisions;
+	NonModalEntry m_horizontalSubdivisionsEntry;
+	NonModalEntry m_verticalSubdivisionsEntry;
 public:
-  IdleDraw m_idleDraw;
-  WindowPositionTracker m_position_tracker;
+	IdleDraw m_idleDraw;
+	WindowPositionTracker m_position_tracker;
 
-  Patch *m_Patch;
+	Patch *m_Patch;
 
-  CopiedString m_strName;
-  float	m_fS;
-  float	m_fT;
-  float	m_fX;
-  float	m_fY;
-  float	m_fZ;
-/*  float	m_fHScale;
-  float	m_fHShift;
-  float	m_fRotate;
-  float	m_fVScale;
-  float	m_fVShift; */
-  int   m_nCol;
-  int   m_nRow;
-  GtkComboBox *m_pRowCombo;
-  GtkComboBox *m_pColCombo;
-  std::size_t m_countRows;
-  std::size_t m_countCols;
+	CopiedString m_strName;
+	float	m_fS;
+	float	m_fT;
+	float	m_fX;
+	float	m_fY;
+	float	m_fZ;
+	int   m_nCol;
+	int   m_nRow;
+	GtkComboBox *m_pRowCombo;
+	GtkComboBox *m_pColCombo;
+	std::size_t m_countRows;
+	std::size_t m_countCols;
 
-  // turn on/off processing of the "changed" "value_changed" messages
-  // (need to turn off when we are feeding data in)
-  // NOTE: much more simple than blocking signals
-  bool m_bListenChanged;
+	// turn on/off processing of the "changed" "value_changed" messages
+	// (need to turn off when we are feeding data in)
+	// NOTE: much more simple than blocking signals
+	bool m_bListenChanged;
 
-  PatchInspector() :
-    m_horizontalSubdivisionsEntry(Subdivisions::ApplyCaller(m_subdivisions), Subdivisions::CancelCaller(m_subdivisions)),
-    m_verticalSubdivisionsEntry(Subdivisions::ApplyCaller(m_subdivisions), Subdivisions::CancelCaller(m_subdivisions)),
-    m_idleDraw(MemberCaller<PatchInspector, &PatchInspector::GetPatchInfo>(*this))
-  {
-    m_fS = 0.0f;
-    m_fT = 0.0f;
-    m_fX = 0.0f;
-    m_fY = 0.0f;
-    m_fZ = 0.0f;
-    m_nCol = 0;
-    m_nRow = 0;
-    m_countRows = 0;
-    m_countCols = 0;
-    m_Patch = 0;
-    m_bListenChanged = true;
+	PatchInspector() :
+		m_horizontalSubdivisionsEntry(Subdivisions::ApplyCaller(m_subdivisions), Subdivisions::CancelCaller(m_subdivisions)),
+		m_verticalSubdivisionsEntry(Subdivisions::ApplyCaller(m_subdivisions), Subdivisions::CancelCaller(m_subdivisions)),
+		m_idleDraw(MemberCaller<PatchInspector, &PatchInspector::GetPatchInfo>(*this)) 
+	{
+		m_fS = 0.0f;
+		m_fT = 0.0f;
+		m_fX = 0.0f;
+		m_fY = 0.0f;
+		m_fZ = 0.0f;
+		m_nCol = 0;
+		m_nRow = 0;
+		m_countRows = 0;
+		m_countCols = 0;
+		m_Patch = 0;
+		m_bListenChanged = true;
 
-    m_position_tracker.setPosition(c_default_window_pos);
-  }
+		m_position_tracker.setPosition(c_default_window_pos);
+	}
 
-  bool visible()
-  {
-    return GTK_WIDGET_VISIBLE(GetWidget());
-  }
+	bool visible() {
+		return GTK_WIDGET_VISIBLE(GetWidget());
+	}
 
-//  void UpdateInfo();
-//  void SetPatchInfo();
-  void GetPatchInfo();
-  void UpdateSpinners(bool bUp, int nID);
-  // read the current patch on map and initialize m_fX m_fY accordingly
-  void UpdateRowColInfo();
-  // sync the dialog our internal data structures
-  // depending on the flag it will read or write
-  // we use m_nCol m_nRow m_fX m_fY m_fZ m_fS m_fT m_strName
-  // (NOTE: this doesn't actually commit stuff to the map or read from it)
-  void importData();
-  void exportData();
+	void GetPatchInfo();
+	void UpdateSpinners(bool bUp, int nID);
+	// read the current patch on map and initialize m_fX m_fY accordingly
+	void UpdateRowColInfo();
+	// sync the dialog our internal data structures
+	// depending on the flag it will read or write
+	// we use m_nCol m_nRow m_fX m_fY m_fZ m_fS m_fT m_strName
+	// (NOTE: this doesn't actually commit stuff to the map or read from it)
+	void importData();
+	void exportData();
 };
 
 PatchInspector g_PatchInspector;
