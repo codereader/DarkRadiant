@@ -1661,6 +1661,14 @@ void TexToolMergeItems() {
 	ui::TexTool::Instance().mergeSelectedItems();
 }
 
+void TexToolFlipS() {
+	ui::TexTool::Instance().flipSelected(0);
+}
+
+void TexToolFlipT() {
+	ui::TexTool::Instance().flipSelected(1);
+}
+
 void SurfaceInspector_constructPreferences(PrefPage* page)
 {
   page->appendCheckBox("", "Surface Inspector Increments Match Grid", g_si_globals.m_bSnapTToGrid);
@@ -1693,6 +1701,8 @@ void SurfaceInspector_registerCommands()
   GlobalEventManager().addCommand("TexToolGridDown", FreeCaller<TexToolGridDown>());
   GlobalEventManager().addCommand("TexToolSnapToGrid", FreeCaller<TexToolSnapToGrid>());
   GlobalEventManager().addCommand("TexToolMergeItems", FreeCaller<TexToolMergeItems>());
+  GlobalEventManager().addCommand("TexToolFlipS", FreeCaller<TexToolFlipS>());
+  GlobalEventManager().addCommand("TexToolFlipT", FreeCaller<TexToolFlipT>());
   GlobalEventManager().addRegistryToggle("TexToolToggleGrid", "user/ui/textures/texTool/gridActive");
 }
 

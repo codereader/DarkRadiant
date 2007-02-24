@@ -36,6 +36,13 @@ public:
 	 */
 	virtual void snapSelectedToGrid(float grid);
 	
+	/** greebo: Flips the face texdef (if selected) 
+	 * 			about the given axis in texture space.
+	 * 
+	 *  @axis:  0 = s-axis flip, 1 = t-axis flip		
+	 */
+	virtual void flipSelected(const int& axis);
+	
 private:
 	/** greebo: Calculates the mean value of all the texCoords,
 	 * 			which is technically the centroid.

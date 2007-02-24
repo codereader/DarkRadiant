@@ -34,6 +34,12 @@ public:
 	 */
 	virtual void moveSelectedTo(const Vector2& targetCoords) = 0;
 	
+	/** greebo: Flips the selected coords about the given axis in texspace. 
+	 * 
+	 *  @axis:  0 = s-axis flip, 1 = t-axis flip 			
+	 */
+	virtual void flipSelected(const int& axis) = 0;
+	
 	/** greebo: Snaps this item to the grid.
 	 */
 	virtual void snapSelectedToGrid(float grid) = 0;

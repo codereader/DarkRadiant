@@ -107,6 +107,13 @@ public:
 		}
 	}
 	
+	virtual void flipSelected(const int& axis) {
+		// Default behaviour: Propagate the call to the children
+		for (unsigned int i = 0; i < _children.size(); i++) {
+			_children[i]->flipSelected(axis);
+		}
+	}
+	
 	virtual void snapSelectedToGrid(float grid) {
 		// Default behaviour: Propagate the call to the children
 		for (unsigned int i = 0; i < _children.size(); i++) {
@@ -147,9 +154,7 @@ public:
 	virtual void moveSelectedTo(const Vector2& targetCoords) {
 		// Default: Cycle through all children and move the selected
 		for (unsigned int i = 0; i < _children.size(); i++) {
-			if (_children[i]->isSelected()) {
-				_children[i]->moveSelectedTo(targetCoords);
-			}
+			_children[i]->moveSelectedTo(targetCoords);
 		}
 	}
 	

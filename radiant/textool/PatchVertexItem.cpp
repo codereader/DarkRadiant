@@ -55,7 +55,15 @@ void PatchVertexItem::snapSelectedToGrid(float grid) {
 }
 
 void PatchVertexItem::moveSelectedTo(const Vector2& targetCoords) {
-	_patchControl.m_texcoord = targetCoords;
+	if (_selected) {
+		_patchControl.m_texcoord = targetCoords;
+	}
+}
+
+void PatchVertexItem::flipSelected(const int& axis) {
+	if (_selected) {
+		_patchControl.m_texcoord[axis] = -_patchControl.m_texcoord[axis];
+	}
 }
 
 	} // namespace TexTool

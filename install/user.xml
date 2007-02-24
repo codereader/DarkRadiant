@@ -151,6 +151,8 @@
 		<toggletoolbutton name="usegrid" action="TexToolToggleGrid" tooltip="Toggle Grid" icon="grid_toggle.png"/>
 		<separator/>
 		<toolbutton name="mergeitems" action="TexToolMergeItems" tooltip="Merge Selection" icon="textool_merge.png"/>
+		<toolbutton name="texflips" action="TexToolFlipS" tooltip="Flip Selection Horiz (S-Axis)" icon="tex_flips.png"/>
+		<toolbutton name="mergeitems" action="TexToolFlipT" tooltip="Flip Selection Vertical (T-Axis)" icon="tex_flipt.png"/>
     </toolbar>
  </ui>
 </user>
