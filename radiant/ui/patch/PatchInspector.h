@@ -34,6 +34,7 @@ class PatchInspector :
 	struct CoordRow {
 		GtkWidget* label;
 		GtkWidget* entry;
+		GtkObject* adjustment;
 	};
 	
 	// This is where the named coord rows (x,y,z,s,t) are stored 
@@ -95,6 +96,10 @@ public:
 
 private:
 
+	/** greebo: Helper method that imports the selected patch
+	 */
+	void rescanSelection();
+
 	/** greebo: Reloads the relevant information from the selected control vertex.
 	 */
 	void loadControlVertex();
@@ -121,7 +126,8 @@ private:
 	
 	static void onComboBoxChange(GtkWidget* combo, PatchInspector* self);
 	
-	static gboolean onEntryKeyPress(GtkWidget* entry, GdkEventKey* event, PatchInspector* self);
+	// Gets called if the spin buttons with the coordinates get changed
+	static void onCoordChange(GtkEditable* editable, PatchInspector* self);
 
 	// Gets called when the "Fixed Tesselation" settings are changed 
 	static void onFixedTessChange(GtkWidget* checkButton, PatchInspector* self);

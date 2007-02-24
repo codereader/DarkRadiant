@@ -14,6 +14,7 @@
 #include "math/FloatTools.h"
 
 #include "textool/TexTool.h"
+#include "ui/patch/PatchInspector.h"
 #include "brush/TextureProjection.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Shader.h"
@@ -538,6 +539,7 @@ void SurfaceInspector::update() {
 	
 	// Update the TexTool instance as well
 	ui::TexTool::Instance().draw();
+	ui::PatchInspector::Instance().update();
 }
 
 // Gets notified upon selection change
