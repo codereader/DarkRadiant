@@ -146,16 +146,18 @@ bool file_saveBackup(const char* path)
   return false;
 }
 
-/** Save a map file (outer function). This function tries to backup the map
+/** 
+ * Save a map file (outer function). This function tries to backup the map
  * file before calling MapResource_saveFile() to do the actual saving of
  * data.
  */
 
-bool MapResource_save(const MapFormat& format, scene::Node& root, const char* path, const char* name)
+bool MapResource_save(const MapFormat& format, 
+					  scene::Node& root, 
+					  const std::string& path, const std::string& name)
 {
-  StringOutputStream fullpath(256);
-  fullpath << path << name;
-
+	std::string fullpath = path + name;
+	
 	if(path_is_absolute(fullpath.c_str())) {
 
 		// Save a backup if possible. This is done by renaming the original,
@@ -499,26 +501,33 @@ struct ModelResource
 
     return m_model != g_nullModel;
   }
-  bool save()
-  {
-//  	std::cout << "[referencecache.cpp] ModelResource::save() - " << m_name.c_str() << std::endl;
-    if(!mapSaved())
-    {
-      std::string moduleName = findModuleName(GetFileTypeRegistry(), 
-      										  std::string(MapFormat::Name()),
-      										  _type);
-      if(!moduleName.empty())
-      {
-        const MapFormat* format = ReferenceAPI_getMapModules().findModule(moduleName.c_str());
-        if(format != 0 && MapResource_save(*format, m_model.get(), m_path.c_str(), m_name.c_str()))
-        {
-          mapSave();
-          return true;
-        }
-      }
-    }
-    return false;
-  }
+  
+	/**
+	 * Save this resource (only for map resources).
+	 * 
+	 * @returns
+	 * true if the resource was saved, false otherwise.
+	 */
+	bool save() {
+		std::string moduleName = findModuleName(GetFileTypeRegistry(), 
+												std::string(MapFormat::Name()),
+  												_type);
+  									
+		if(!moduleName.empty()) {
+			const MapFormat* format = 
+				ReferenceAPI_getMapModules().findModule(moduleName.c_str());
+    
+    		if (format != 0 
+    			&& MapResource_save(*format, m_model.get(), m_path, m_name))
+			{
+      			mapSave();
+      			return true;
+    		}
+  		}
+  		
+  		return false;
+	}
+	
   void flush()
   {
     if(realised())
@@ -615,15 +624,7 @@ struct ModelResource
       map->save();
     }
   }
-  bool mapSaved() const
-  {
-    MapFile* map = Node_getMapFile(m_model);
-    if(map != 0)
-    {
-      return m_modified == modified() && map->saved();
-    }
-    return true;
-  }
+
   bool isModified() const
   {
     return ((!string_empty(m_path.c_str()) // had or has an absolute path

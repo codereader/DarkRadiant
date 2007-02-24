@@ -1399,8 +1399,11 @@ void Map_Save()
 	Map_SavePosition();
 	Pointfile_Clear();
 
-  ScopeTimer timer("map save");
-  SaveReferences();
+	ScopeTimer timer("map save");
+	
+	// Save the actual map, by iterating through the reference cache and saving
+	// each ModelResource.
+	SaveReferences();
   
 	// Remove the saved camera position
 	Map_RemoveSavedPosition();
