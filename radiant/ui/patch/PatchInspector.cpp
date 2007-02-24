@@ -170,13 +170,20 @@ void PatchInspector::populateWindow() {
 	GtkWidget* tessAlignment = gtkutil::LeftAlignment(GTK_WIDGET(_tesselation.table), 18, 1.0); 
 	gtk_box_pack_start(GTK_BOX(dialogVBox), GTK_WIDGET(tessAlignment), false, false, 0);
 	
+	// Tesselation checkbox
 	_tesselation.fixed = gtk_check_button_new_with_label(LABEL_FIXED.c_str());
+	g_signal_connect(G_OBJECT(_tesselation.fixed), "toggled", G_CALLBACK(onFixedTessChange), this);
 	gtk_table_attach_defaults(_tesselation.table, _tesselation.fixed, 0, 2, 0, 1);
 	
+	// Tesselation entry fields
 	_tesselation.horiz = gtk_spin_button_new_with_range(TESS_MIN, TESS_MAX, 1.0f);
 	_tesselation.vert = gtk_spin_button_new_with_range(TESS_MIN, TESS_MAX, 1.0f);
+	
 	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_tesselation.horiz), 0);
 	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_tesselation.vert), 0);
+	
+	g_signal_connect(G_OBJECT(_tesselation.horiz), "changed", G_CALLBACK(onTessChange), this);
+	g_signal_connect(G_OBJECT(_tesselation.vert), "changed", G_CALLBACK(onTessChange), this);
 	
 	gtk_widget_set_size_request(_tesselation.horiz, 60, -1);
 	gtk_widget_set_size_request(_tesselation.vert, 60, -1);
@@ -259,6 +266,28 @@ void PatchInspector::update() {
 				0
 			);
 			
+			// Load the "fixed tesselation" value
+			bool fixed = _patch->subdivionsFixed();
+			
+			gtk_toggle_button_set_active(
+				GTK_TOGGLE_BUTTON(_tesselation.fixed), 
+				fixed
+			);
+			
+			gtk_spin_button_set_value(
+				GTK_SPIN_BUTTON(_tesselation.horiz),
+				_patch->getSubdivisions()[0]
+			);
+			gtk_spin_button_set_value(
+				GTK_SPIN_BUTTON(_tesselation.vert),
+				_patch->getSubdivisions()[1]
+			);
+			
+			gtk_widget_set_sensitive(_tesselation.horiz, fixed);
+			gtk_widget_set_sensitive(_tesselation.vert, fixed);
+			gtk_widget_set_sensitive(_tesselation.vertLabel, fixed);
+			gtk_widget_set_sensitive(_tesselation.horizLabel, fixed);
+			
 			// Load the data from the vertex
 			loadControlVertex();
 		}
@@ -274,11 +303,8 @@ void PatchInspector::update() {
 
 void PatchInspector::loadControlVertex() {
 	if (_patch != NULL) {
-		std::string rowStr = gtk_combo_box_get_active_text(GTK_COMBO_BOX(_vertexChooser.rowCombo));
-		int row = strToInt(rowStr);
-		
-		std::string colStr = gtk_combo_box_get_active_text(GTK_COMBO_BOX(_vertexChooser.colCombo));
-		int col = strToInt(colStr);
+		int row = strToInt(gtk_combo_box_get_active_text(GTK_COMBO_BOX(_vertexChooser.rowCombo)));
+		int col = strToInt(gtk_combo_box_get_active_text(GTK_COMBO_BOX(_vertexChooser.colCombo)));
 		
 		// Retrieve the controlvertex
 		const PatchControl& ctrl = _patch->ctrlAt(row, col);
@@ -318,6 +344,41 @@ void PatchInspector::selectionChanged(scene::Instance& instance) {
 
 void PatchInspector::emitCoords() {
 	// Save the coords into the patch
+	if (_patch != NULL) {
+		int row = strToInt(gtk_combo_box_get_active_text(GTK_COMBO_BOX(_vertexChooser.rowCombo)));
+		int col = strToInt(gtk_combo_box_get_active_text(GTK_COMBO_BOX(_vertexChooser.colCombo)));
+		
+		// Retrieve the controlvertex
+		PatchControl& ctrl = _patch->ctrlAt(row, col);
+		
+		ctrl.m_vertex[0] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["x"].entry)));
+		ctrl.m_vertex[1] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["y"].entry)));
+		ctrl.m_vertex[2] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["z"].entry)));
+		
+		ctrl.m_texcoord[0] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["s"].entry)));
+		ctrl.m_texcoord[1] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["t"].entry)));
+		
+		_patch->controlPointsChanged();
+	}
+}
+
+void PatchInspector::emitTesselation() {
+	// Save the setting into the patch
+	if (_patch != NULL) {
+		BasicVector2<unsigned int> tess(
+			gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(_tesselation.horiz)),
+			gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(_tesselation.vert))
+		);
+		
+		bool fixed = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_tesselation.fixed));
+		
+		_patch->setFixedSubdivisions(fixed, tess);
+		
+		gtk_widget_set_sensitive(_tesselation.horiz, fixed);
+		gtk_widget_set_sensitive(_tesselation.vert, fixed);
+		gtk_widget_set_sensitive(_tesselation.vertLabel, fixed);
+		gtk_widget_set_sensitive(_tesselation.horizLabel, fixed);
+	}
 }
 
 gboolean PatchInspector::onDelete(GtkWidget* widget, GdkEvent* event, PatchInspector* self) {
@@ -339,6 +400,20 @@ gboolean PatchInspector::onEntryKeyPress(GtkWidget* entry, GdkEventKey* event, P
 	}
 	
 	return false;
+}
+
+void PatchInspector::onTessChange(GtkEditable* editable, PatchInspector* self) {
+	if (self->_updateActive) {
+		return;
+	}
+	self->emitTesselation();
+}
+
+void PatchInspector::onFixedTessChange(GtkWidget* checkButton, PatchInspector* self) {
+	if (self->_updateActive) {
+		return;
+	}
+	self->emitTesselation();
 }
 
 } // namespace ui
