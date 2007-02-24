@@ -357,6 +357,21 @@ public:
 		GlobalShaderCache().release("$POINT");
 	}
 
+	/** greebo: Sets/gets whether this patch is a patchDef3 (fixed tesselation)
+	 */
+	bool subdivionsFixed() const;
+	
+	/** greebo: Returns the x,y subdivision values (for tesselation)
+	 */
+	BasicVector2<unsigned int> getSubdivisions() const;
+	
+	/** greebo: Sets the subdivision of this patch
+	 * 
+	 * @isFixed: TRUE, if this patch should be a patchDef3 (fixed tesselation)
+	 * @divisions: a two-component vector containing the desired subdivisions
+	 */
+	void setFixedSubdivisions(bool isFixed, BasicVector2<unsigned int> divisions);
+
 private:
 	// greebo: this allocates the shader with the passed name 
 	void captureShader();

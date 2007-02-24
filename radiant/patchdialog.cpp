@@ -60,55 +60,42 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class PatchFixedSubdivisions
 {
 public:
-  PatchFixedSubdivisions() : m_enabled(false), m_x(0), m_y(0)
-  {
-  }
-  PatchFixedSubdivisions(bool enabled, std::size_t x, std::size_t y) : m_enabled(enabled), m_x(x), m_y(y)
-  {
-  }
-  bool m_enabled;
-  std::size_t m_x;
-  std::size_t m_y;
+	bool m_enabled;
+	std::size_t m_x;
+	std::size_t m_y;
+
+	PatchFixedSubdivisions() : 
+		m_enabled(false), 
+		m_x(0), 
+		m_y(0) 
+	{}
+	
+	PatchFixedSubdivisions(bool enabled, std::size_t x, std::size_t y) : 
+		m_enabled(enabled), 
+		m_x(x), 
+		m_y(y) 
+	{}
+	
+	/** greebo: Loads the settings from the patch into the members of this class.
+	 */
+	void importFromPatch(const Patch& patch) {
+		m_enabled = patch.subdivionsFixed();
+
+		BasicVector2<unsigned int> divisions = patch.getSubdivisions();
+  		m_x = divisions[0];
+		m_y = divisions[1];
+	}
+	
+	/** greebo: Exports the settings stored in the member variables to
+	 * 			the specified patch.
+	 */
+	void exportToPatch(Patch& patch) const {
+		patch.setFixedSubdivisions(
+			m_enabled, 
+			BasicVector2<unsigned int>(m_x, m_y)
+		);
+	}
 };
-
-void Patch_getFixedSubdivisions(const Patch& patch, PatchFixedSubdivisions& subdivisions)
-{
-  subdivisions.m_enabled = patch.m_patchDef3;
-  subdivisions.m_x = patch.m_subdivisions_x;
-  subdivisions.m_y = patch.m_subdivisions_y;
-}
-
-const std::size_t MAX_PATCH_SUBDIVISIONS = 32;
-
-void Patch_setFixedSubdivisions(Patch& patch, const PatchFixedSubdivisions& subdivisions)
-{
-  patch.undoSave();
-
-  patch.m_patchDef3 = subdivisions.m_enabled;
-  patch.m_subdivisions_x = subdivisions.m_x;
-  patch.m_subdivisions_y = subdivisions.m_y;
-
-  if(patch.m_subdivisions_x == 0)
-  {
-    patch.m_subdivisions_x = 4;
-  }
-  else if(patch.m_subdivisions_x > MAX_PATCH_SUBDIVISIONS)
-  {
-    patch.m_subdivisions_x = MAX_PATCH_SUBDIVISIONS;
-  }
-  if(patch.m_subdivisions_y == 0)
-  {
-    patch.m_subdivisions_y = 4;
-  }
-  else if(patch.m_subdivisions_y > MAX_PATCH_SUBDIVISIONS)
-  {
-    patch.m_subdivisions_y = MAX_PATCH_SUBDIVISIONS;
-  }
-
-  SceneChangeNotify();
-  Patch_textureChanged();
-  patch.controlPointsChanged();
-}
 
 class PatchGetFixedSubdivisions
 {
@@ -119,7 +106,7 @@ public:
   }
   void operator()(Patch& patch)
   {
-    Patch_getFixedSubdivisions(patch, m_subdivisions);
+    m_subdivisions.importFromPatch(patch);
     SceneChangeNotify();
   }
 };
@@ -132,7 +119,7 @@ void Scene_PatchGetFixedSubdivisions(PatchFixedSubdivisions& subdivisions)
     Patch* patch = Node_getPatch(GlobalSelectionSystem().ultimateSelected().path().top());
     if(patch != 0)
     {
-      Patch_getFixedSubdivisions(*patch, subdivisions);
+      subdivisions.importFromPatch(*patch);
     }
   }
 #else
@@ -149,7 +136,7 @@ public:
   }
   void operator()(Patch& patch) const
   {
-    Patch_setFixedSubdivisions(patch, m_subdivisions);
+    m_subdivisions.exportToPatch(patch);
   }
 };
 

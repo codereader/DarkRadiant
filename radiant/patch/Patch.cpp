@@ -58,6 +58,10 @@ EPatchType Patch::m_type;
 // Initialise the cycle cap index member variable
 int Patch::m_CycleCapIndex = 0;
 
+	namespace {
+		const std::size_t MAX_PATCH_SUBDIVISIONS = 32;
+	}
+
 // greebo: Another nasty global that is also referenced from patchmanip.cpp, so I'll leave it for the moment
 int g_PatchSubdivideThreshold = 2; // greebo: changed this from 4 to 2 (issue #77)
 
@@ -3956,4 +3960,38 @@ void Patch::normaliseTexture() {
 		// Notify the patch about the change
 		controlPointsChanged();
 	}
+}
+
+BasicVector2<unsigned int> Patch::getSubdivisions() const {
+	return BasicVector2<unsigned int>(m_subdivisions_x, m_subdivisions_y);
+}
+
+void Patch::setFixedSubdivisions(bool isFixed, BasicVector2<unsigned int> divisions) {
+	undoSave();
+		
+	m_patchDef3 = isFixed;
+	m_subdivisions_x = divisions[0];
+	m_subdivisions_y = divisions[1];
+	
+	if (m_subdivisions_x == 0) {
+		m_subdivisions_x = 4;
+	}
+	else if (m_subdivisions_x > MAX_PATCH_SUBDIVISIONS) {
+		m_subdivisions_x = MAX_PATCH_SUBDIVISIONS;
+	}
+	
+	if (m_subdivisions_y == 0) {
+		m_subdivisions_y = 4;
+	}
+	else if (m_subdivisions_y > MAX_PATCH_SUBDIVISIONS) {
+		m_subdivisions_y = MAX_PATCH_SUBDIVISIONS;
+	}
+	
+	SceneChangeNotify();
+	Patch_textureChanged();
+	controlPointsChanged();
+}
+
+bool Patch::subdivionsFixed() const {
+	return m_patchDef3;
 }
