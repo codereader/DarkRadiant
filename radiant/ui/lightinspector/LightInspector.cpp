@@ -155,13 +155,13 @@ GtkWidget* LightInspector::createProjectedPanel() {
 GtkWidget* LightInspector::createOptionsPanel() {
 
 	// Add options boxes to map
-	_options["noshadow"] = gtk_check_button_new_with_label(NOSHADOW_TEXT);
+	_options["noshadows"] = gtk_check_button_new_with_label(NOSHADOW_TEXT);
 	_options["nospecular"] = gtk_check_button_new_with_label(NOSPECULAR_TEXT);
 	_options["nodiffuse"] = gtk_check_button_new_with_label(NODIFFUSE_TEXT);
 
 	// Pack checkboxes into a VBox
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(vbx), _options["noshadow"], FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), _options["noshadows"], FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), _options["nospecular"], FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), _options["nodiffuse"], FALSE, FALSE, 0);
 	return vbx;

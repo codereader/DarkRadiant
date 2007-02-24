@@ -28,6 +28,14 @@ public:
  * ...can be selected (Selectable (implicitly derived from Transformable))
  * ...can be transformed (Transformable)
  * ...can have one or more children of the same type, to allow grouping.
+ * 
+ * The virtual default implementations mainly cycle through all the children
+ * of this item and pass the call. All the default transformation routines
+ * call the object's update() method when finished.
+ * 
+ * This object should technically be instantiable, but won't do anything but
+ * cycling through its (empty) children list. Hence the according methods
+ * have to be overridden in order to make a real TexToolItem. 
  */
 class TexToolItem :
 	public Renderable,
@@ -42,162 +50,57 @@ public:
 	 * 
 	 * Any transformations will affect the children as well. 
 	 */
-	virtual void addChild(TexToolItemPtr child) {
-		_children.push_back(child);
-	}
+	virtual void addChild(TexToolItemPtr child);
 	
 	/** greebo: Returns the vector of children of this object.
 	 * 
 	 * A reference to the internal list of this object is returned. 
 	 */
-	virtual TexToolItemVec& getChildren() {
-		return _children;
-	}
+	virtual TexToolItemVec& getChildren();
 	
-	virtual void foreachItem(ItemVisitor& visitor) {
-		for (unsigned int i = 0; i < _children.size(); i++) {
-			// Visit the children
-			visitor.visit(_children[i]);
-			
-			// Propagate the visitor class down the hierarchy
-			_children[i]->foreachItem(visitor);
-		}
-	}
+	virtual void foreachItem(ItemVisitor& visitor);
 	
 	/** greebo: Returns a list of selectable items that correspond
 	 * to the given coords. 
 	 */
-	virtual TexToolItemVec getSelectableChilds(const Rectangle& rectangle) {
-		TexToolItemVec returnVector;
-		
-		for (unsigned int i = 0; i < _children.size(); i++) {
-			// Add every children to the list
-			if (_children[i]->testSelect(rectangle)) {
-				returnVector.push_back(_children[i]);
-			}
-		}
-		
-		return returnVector;
-	}
+	virtual TexToolItemVec getSelectableChilds(const Rectangle& rectangle);
 	
 	/** greebo: Default transform implementation: transform all children.
 	 */
-	virtual void transform(const Matrix4& matrix) {
-		// Cycle through all the children and ask them to render themselves
-		for (unsigned int i = 0; i < _children.size(); i++) {
-			_children[i]->transform(matrix);
-		}
-		update();
-	}
+	virtual void transform(const Matrix4& matrix);
 	
 	/** greebo: Transforms this object if it's selected only.
 	 * 
 	 * Default implementation for a TexToolItem: transform self
 	 * and pass the call to the children.  
 	 */
-	virtual void transformSelected(const Matrix4& matrix) {
-		// If this object is selected, transform <self>
-		if (_selected) {
-			transform(matrix);
-		}
-		else {
-			// Object is not selected, propagate the call to the children
-			for (unsigned int i = 0; i < _children.size(); i++) {
-				_children[i]->transformSelected(matrix);
-			}
-		}
-		update();
-	}
+	virtual void transformSelected(const Matrix4& matrix);
 	
-	virtual void flipSelected(const int& axis) {
-		// Default behaviour: Propagate the call to the children
-		for (unsigned int i = 0; i < _children.size(); i++) {
-			_children[i]->flipSelected(axis);
-		}
-		update();
-	}
+	virtual void flipSelected(const int& axis);
 	
-	virtual void snapSelectedToGrid(float grid) {
-		// Default behaviour: Propagate the call to the children
-		for (unsigned int i = 0; i < _children.size(); i++) {
-			_children[i]->snapSelectedToGrid(grid);
-		}
-		update();
-	}
+	virtual void snapSelectedToGrid(float grid);
 	
 	// Default implementation of getExtents(). All children's AABB are combined.
-	virtual AABB getExtents() {
-		AABB returnValue;
-		
-		// Cycle through all the children and include their AABB
-		for (unsigned int i = 0; i < _children.size(); i++) {
-			returnValue.includeAABB(_children[i]->getExtents());
-		}
-		
-		return returnValue;
-	}
+	virtual AABB getExtents();
 	
-	virtual AABB getSelectedExtents() {
-		AABB returnValue;
-		
-		// Add <self> to the resulting AABB if <self> is selected
-		if (_selected) {
-			returnValue.includeAABB(getExtents());
-		}
-		
-		// Cycle through all the children and include their AABB
-		for (unsigned int i = 0; i < _children.size(); i++) {
-			if (_children[i]->isSelected()) {
-				returnValue.includeAABB(_children[i]->getExtents());
-			}
-		}
-		
-		return returnValue;
-	}
+	virtual AABB getSelectedExtents();
 	
-	virtual void moveSelectedTo(const Vector2& targetCoords) {
-		// Default: Cycle through all children and move the selected
-		for (unsigned int i = 0; i < _children.size(); i++) {
-			_children[i]->moveSelectedTo(targetCoords);
-		}
-		update();
-	}
+	virtual void moveSelectedTo(const Vector2& targetCoords);
 	
 	// Default render routine: ask all children to render their part
-	virtual void render() {
-		// Cycle through all the children and ask them to render themselves
-		for (unsigned int i = 0; i < _children.size(); i++) {
-			_children[i]->render();
-		}
-	}
+	virtual void render();
 	
 	// Default beginTransformation routine: propagate the call to children
-	virtual void beginTransformation() {
-		// Cycle through all the children and pass the call
-		for (unsigned int i = 0; i < _children.size(); i++) {
-			_children[i]->beginTransformation();
-		}
-	}
+	virtual void beginTransformation();
 	
 	// Default endTransformation routine: propagate the call to children
-	virtual void endTransformation() {
-		// Cycle through all the children and pass the call
-		for (unsigned int i = 0; i < _children.size(); i++) {
-			_children[i]->endTransformation();
-		}
-		update();
-	}
+	virtual void endTransformation();
 	
 	/** greebo: This tells the Transformable to sync up their source objects
 	 * 			(e.g. by calling Patch::controlPointsChanged()) to make
 	 * 			the changes visible in the scenegraph.
 	 */ 
-	virtual void update() {
-		// Default: Cycle through all the children and pass the call
-		for (unsigned int i = 0; i < _children.size(); i++) {
-			_children[i]->update();
-		}
-	}
+	virtual void update();
 
 }; // class TexToolItem
 

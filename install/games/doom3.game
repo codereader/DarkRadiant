@@ -90,7 +90,7 @@
 		<property name="extinguished" category="Light" type="boolean" />
 		<property name="model" category="Model" type="text" />
 		<property name="skin" category="Model" type="skin" />
-		<property name="noshadow" category="Model" type="boolean" />
+		<property name="noshadows" category="Model" type="boolean" />
 		<property name="solid" category="Model" type="boolean" />
 		<property name="angle" category="AI" type="text" />
 		<property name="anim" category="AI" type="text" />

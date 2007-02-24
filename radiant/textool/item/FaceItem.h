@@ -1,7 +1,7 @@
 #ifndef FACEITEM_H_
 #define FACEITEM_H_
 
-#include "TexToolItem.h"
+#include "textool/TexToolItem.h"
 
 class Face;
 class Winding;
