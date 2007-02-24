@@ -87,6 +87,7 @@ public:
 		for (unsigned int i = 0; i < _children.size(); i++) {
 			_children[i]->transform(matrix);
 		}
+		update();
 	}
 	
 	/** greebo: Transforms this object if it's selected only.
@@ -105,6 +106,7 @@ public:
 				_children[i]->transformSelected(matrix);
 			}
 		}
+		update();
 	}
 	
 	virtual void flipSelected(const int& axis) {
@@ -112,6 +114,7 @@ public:
 		for (unsigned int i = 0; i < _children.size(); i++) {
 			_children[i]->flipSelected(axis);
 		}
+		update();
 	}
 	
 	virtual void snapSelectedToGrid(float grid) {
@@ -119,6 +122,7 @@ public:
 		for (unsigned int i = 0; i < _children.size(); i++) {
 			_children[i]->snapSelectedToGrid(grid);
 		}
+		update();
 	}
 	
 	// Default implementation of getExtents(). All children's AABB are combined.
@@ -156,6 +160,7 @@ public:
 		for (unsigned int i = 0; i < _children.size(); i++) {
 			_children[i]->moveSelectedTo(targetCoords);
 		}
+		update();
 	}
 	
 	// Default render routine: ask all children to render their part
@@ -163,6 +168,34 @@ public:
 		// Cycle through all the children and ask them to render themselves
 		for (unsigned int i = 0; i < _children.size(); i++) {
 			_children[i]->render();
+		}
+	}
+	
+	// Default beginTransformation routine: propagate the call to children
+	virtual void beginTransformation() {
+		// Cycle through all the children and pass the call
+		for (unsigned int i = 0; i < _children.size(); i++) {
+			_children[i]->beginTransformation();
+		}
+	}
+	
+	// Default endTransformation routine: propagate the call to children
+	virtual void endTransformation() {
+		// Cycle through all the children and pass the call
+		for (unsigned int i = 0; i < _children.size(); i++) {
+			_children[i]->endTransformation();
+		}
+		update();
+	}
+	
+	/** greebo: This tells the Transformable to sync up their source objects
+	 * 			(e.g. by calling Patch::controlPointsChanged()) to make
+	 * 			the changes visible in the scenegraph.
+	 */ 
+	virtual void update() {
+		// Default: Cycle through all the children and pass the call
+		for (unsigned int i = 0; i < _children.size(); i++) {
+			_children[i]->update();
 		}
 	}
 

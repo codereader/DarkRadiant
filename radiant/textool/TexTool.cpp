@@ -443,6 +443,9 @@ void TexTool::beginOperation() {
 }
 
 void TexTool::endOperation(const std::string& commandName) {
+	for (unsigned int i = 0; i < _items.size(); i++) {
+		_items[i]->endTransformation();
+	}
 	GlobalUndoSystem().finish(commandName);
 }
 
