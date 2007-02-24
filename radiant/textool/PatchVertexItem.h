@@ -37,6 +37,12 @@ public:
 	 */
 	virtual void moveSelectedTo(const Vector2& targetCoords);
 
+	/** greebo: Flips the control vertex (if selected) 
+	 * 			about the given axis in texture space.
+	 * 
+	 *  @axis:  0 = s-axis flip, 1 = t-axis flip 			
+	 */
+	virtual void flipSelected(const int& axis);
 };
 	
 	} // namespace TexTool

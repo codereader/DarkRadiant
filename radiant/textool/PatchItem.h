@@ -36,6 +36,13 @@ public:
 	 */
 	virtual void moveSelectedTo(const Vector2& targetCoords);
 
+	/** greebo: Flips the selected patch control vertices 
+	 * 			about the given axis in texture space.
+	 * 
+	 *  @axis:  0 = s-axis flip, 1 = t-axis flip 			
+	 */
+	virtual void flipSelected(const int& axis);
+
 	/** greebo: Saves the undoMemento for later undo.
 	 */	
 	virtual void beginTransformation();

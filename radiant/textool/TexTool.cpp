@@ -245,6 +245,19 @@ void TexTool::selectionChanged(scene::Instance& instance) {
 	draw();
 }
 
+void TexTool::flipSelected(int axis) {
+	if (countSelected() > 0) {
+		beginOperation();
+		
+		for (unsigned int i = 0; i < _items.size(); i++) {
+			_items[i]->flipSelected(axis);
+		}
+		
+		draw();
+		endOperation("TexToolMergeItems");
+	}
+}
+
 void TexTool::mergeSelectedItems() {
 	if (countSelected() > 0) {
 		AABB selExtents;

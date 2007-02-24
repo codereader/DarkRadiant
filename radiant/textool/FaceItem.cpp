@@ -109,5 +109,11 @@ void FaceItem::snapSelectedToGrid(float grid) {
 	}
 }
 
+void FaceItem::flipSelected(const int& axis) {
+	if (_selected) {
+		_sourceFace.flipTexture(axis);
+	}
+}
+
 	} // namespace TexTool
 } // namespace selection

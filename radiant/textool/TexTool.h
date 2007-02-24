@@ -116,6 +116,14 @@ public:
 	 */
 	void mergeSelectedItems();
 	
+	/** greebo: This flips the selection in texture space. This is the equivalent
+	 * 			of the according buttons in the Surface Inspector, but it only affects
+	 * 			the items selected in the TexTool.
+	 * 			
+	 * @axis: 0 = s-Axis flip, 1 = t-axis flip  
+	 */
+	void flipSelected(int axis);
+	
 	/** greebo: RegistryKeyObserver implementation, gets called upon key change
 	 */
 	void keyChanged();

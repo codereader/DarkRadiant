@@ -74,6 +74,13 @@ void PatchItem::moveSelectedTo(const Vector2& targetCoords) {
 	_sourcePatch.controlPointsChanged();
 }
 
+void PatchItem::flipSelected(const int& axis) {
+	// Pass the call to the base class for default behaviour
+	TexToolItem::flipSelected(axis);
+	// Notify the sourcepatch what's happened 
+	_sourcePatch.controlPointsChanged();
+}
+
 void PatchItem::beginTransformation() {
 	_sourcePatch.undoSave();
 }
