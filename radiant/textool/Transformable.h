@@ -48,15 +48,17 @@ public:
 	 * 			This usually triggers an undoSave() which saves the current
 	 * 			item state.
 	 */
-	virtual void beginTransformation() {
-		// Empty implementation for the moment being
-	}
+	virtual void beginTransformation() = 0;
 	
 	/** greebo: The counterpart of the above. Finishes the move. 
 	 */
-	virtual void endTransformation() {
-		// Empty implementation for the moment being
-	}
+	virtual void endTransformation() = 0;
+	
+	/** greebo: This tells the Transformable to sync up their source objects
+	 * 			(e.g. by calling Patch::controlPointsChanged()) to make
+	 * 			the changes visible in the scenegraph.
+	 */ 
+	virtual void update() = 0;
 };
 
 	} // namespace TexTool

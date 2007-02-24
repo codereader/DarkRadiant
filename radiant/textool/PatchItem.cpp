@@ -48,41 +48,18 @@ void PatchItem::render() {
 	TexToolItem::render();
 }
 
-void PatchItem::transformSelected(const Matrix4& matrix) {
-	
-	// Pass the call to the base class for default behaviour
-	TexToolItem::transformSelected(matrix);
-	
-	// Notify the sourcepatch what's happened 
-	_sourcePatch.controlPointsChanged();
-}
-
-void PatchItem::snapSelectedToGrid(float grid) {
-	
-	// Pass the call to the base class for default behaviour
-	TexToolItem::snapSelectedToGrid(grid);
-	
-	// Notify the sourcepatch what's happened 
-	_sourcePatch.controlPointsChanged();
-}
-
-void PatchItem::moveSelectedTo(const Vector2& targetCoords) {
-	// Pass the call to the base class for default behaviour
-	TexToolItem::moveSelectedTo(targetCoords);
-	
-	// Notify the sourcepatch what's happened 
-	_sourcePatch.controlPointsChanged();
-}
-
-void PatchItem::flipSelected(const int& axis) {
-	// Pass the call to the base class for default behaviour
-	TexToolItem::flipSelected(axis);
-	// Notify the sourcepatch what's happened 
-	_sourcePatch.controlPointsChanged();
-}
-
 void PatchItem::beginTransformation() {
+	// Call the default routine
+	TexToolItem::beginTransformation();
+	// Save the patch undomemento
 	_sourcePatch.undoSave();
+}
+
+void PatchItem::update() {
+	// Call the default routine
+	TexToolItem::update();
+	// Notify the sourcepatch what's happened 
+	_sourcePatch.controlPointsChanged();
 }
 
 	} // namespace TexTool
