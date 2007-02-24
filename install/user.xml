@@ -86,6 +86,9 @@
 	<brush>
 		<textureLock value="1" />
 	</brush>
+	<patch>
+		<patchInspector />
+	</patch>
 	<camera>
 		<enableCubicClipping value="1" />
 		<discreteMovement value="1" />

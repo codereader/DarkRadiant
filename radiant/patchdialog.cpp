@@ -53,7 +53,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "patch.h"
 #include "preferences.h"
 #include "signal/isignal.h"
-
+#include "ui/patch/PatchInspector.h"
 
 #include <gdk/gdkkeysyms.h>
 
@@ -279,6 +279,7 @@ void DoPatchInspector()
 
 void PatchInspector_toggleShown()
 {
+	ui::PatchInspector::Instance().toggle();
   if (g_PatchInspector.visible())
   {
     g_PatchInspector.m_Patch = 0;
