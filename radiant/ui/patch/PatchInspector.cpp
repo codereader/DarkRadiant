@@ -4,21 +4,44 @@
 #include "ieventmanager.h"
 
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 
+#include "selectionlib.h"
 #include "gtkutil/TransientWindow.h"
+#include "gtkutil/LeftAlignedLabel.h"
+#include "gtkutil/LeftAlignment.h"
 
 #include "mainframe.h"
+#include "patch/Patch.h"
+#include "selection/algorithm/Primitives.h"
 
 namespace ui {
 
 	namespace {
 		const std::string WINDOW_TITLE = "Patch Inspector";
+		const std::string LABEL_CONTROL_VERTICES = "Patch Control Vertices";
+		const std::string LABEL_COORDS = "Coordinates";
+		const std::string LABEL_ROW = "Row:";
+		const std::string LABEL_COL = "Column:";
+		const std::string LABEL_TESSELATION = "Patch Tesselation";
+		const std::string LABEL_FIXED = "Fixed Subdivisions";
+		const std::string LABEL_SUBDIVISION_X = "Horizontal:";
+		const std::string LABEL_SUBDIVISION_Y = "Vertical:";
+		
+		const float TESS_MIN = 1.0f;
+		const float TESS_MAX = 32.0f;
 		
 		const std::string RKEY_ROOT = "user/ui/patch/patchInspector/";
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 	}
 
-PatchInspector::PatchInspector() {
+PatchInspector::PatchInspector() :
+	_selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
+	_patchRows(0),
+	_patchCols(0),
+	_patch(NULL),
+	_updateActive(false)
+{
 	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
 	_dialog = gtkutil::TransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
 	
@@ -73,11 +96,199 @@ PatchInspector& PatchInspector::Instance() {
 }
 
 void PatchInspector::populateWindow() {
+	// Create the overall vbox
+	GtkWidget* dialogVBox = gtk_vbox_new(false, 6);
+	gtk_container_add(GTK_CONTAINER(_dialog), dialogVBox);
 	
+	// Create the title label (bold font)
+	GtkWidget* topLabel = gtkutil::LeftAlignedLabel(
+    	std::string("<span weight=\"bold\">") + LABEL_CONTROL_VERTICES + "</span>"
+    );
+    gtk_box_pack_start(GTK_BOX(dialogVBox), topLabel, false, false, 0);
+    
+    // Setup the table with default spacings
+	_vertexChooser.table = GTK_TABLE(gtk_table_new(2, 2, false));
+    gtk_table_set_col_spacings(_vertexChooser.table, 12);
+    gtk_table_set_row_spacings(_vertexChooser.table, 6);
+    
+    // Pack it into an alignment so that it is indented
+	GtkWidget* alignment = gtkutil::LeftAlignment(GTK_WIDGET(_vertexChooser.table), 18, 1.0); 
+	gtk_box_pack_start(GTK_BOX(dialogVBox), GTK_WIDGET(alignment), false, false, 0);
+	
+	// The vertex col and row chooser	
+	_vertexChooser.rowLabel = gtkutil::LeftAlignedLabel(LABEL_ROW);
+	gtk_table_attach_defaults(_vertexChooser.table, _vertexChooser.rowLabel, 0, 1, 0, 1);
+		
+	_vertexChooser.rowCombo = gtk_combo_box_new_text();
+	gtk_widget_set_size_request(_vertexChooser.rowCombo, 80, -1);
+	g_signal_connect(G_OBJECT(_vertexChooser.rowCombo), "changed", G_CALLBACK(onComboBoxChange), this);
+	gtk_table_attach_defaults(_vertexChooser.table, _vertexChooser.rowCombo, 1, 2, 0, 1);
+		
+	_vertexChooser.colLabel = gtkutil::LeftAlignedLabel(LABEL_COL);
+	gtk_table_attach_defaults(_vertexChooser.table, _vertexChooser.colLabel, 0, 1, 1, 2);
+	
+	_vertexChooser.colCombo = gtk_combo_box_new_text();
+	gtk_widget_set_size_request(_vertexChooser.colCombo, 80, -1);
+	g_signal_connect(G_OBJECT(_vertexChooser.colCombo), "changed", G_CALLBACK(onComboBoxChange), this);
+	gtk_table_attach_defaults(_vertexChooser.table, _vertexChooser.colCombo, 1, 2, 1, 2);
+	
+	// Create the title label (bold font)
+	_coordsLabel = gtkutil::LeftAlignedLabel(
+    	std::string("<span weight=\"bold\">") + LABEL_COORDS + "</span>"
+    );
+    gtk_misc_set_padding(GTK_MISC(_coordsLabel), 0, 2);
+    gtk_box_pack_start(GTK_BOX(dialogVBox), _coordsLabel, false, false, 0);
+	
+	// Setup the table with default spacings
+	_coordsTable = GTK_TABLE(gtk_table_new(5, 2, false));
+    gtk_table_set_col_spacings(_coordsTable, 12);
+    gtk_table_set_row_spacings(_coordsTable, 6);
+    
+    // Pack it into an alignment so that it is indented
+	GtkWidget* coordAlignment = gtkutil::LeftAlignment(GTK_WIDGET(_coordsTable), 18, 1.0); 
+	gtk_box_pack_start(GTK_BOX(dialogVBox), GTK_WIDGET(coordAlignment), false, false, 0);
+    
+    _coords["x"] = createCoordRow("X:", 0);
+    _coords["y"] = createCoordRow("Y:", 1);
+    _coords["z"] = createCoordRow("Z:", 2);
+    _coords["s"] = createCoordRow("S:", 3);
+    _coords["t"] = createCoordRow("T:", 4);
+    
+    // Create the title label (bold font)
+	_tesselation.title = gtkutil::LeftAlignedLabel(
+    	std::string("<span weight=\"bold\">") + LABEL_TESSELATION + "</span>"
+    );
+    gtk_misc_set_padding(GTK_MISC(_tesselation.title), 0, 2);
+    gtk_box_pack_start(GTK_BOX(dialogVBox), _tesselation.title, false, false, 0);
+    
+    // Setup the table with default spacings
+	_tesselation.table = GTK_TABLE(gtk_table_new(3, 2, false));
+    gtk_table_set_col_spacings(_tesselation.table, 12);
+    gtk_table_set_row_spacings(_tesselation.table, 6);
+    
+    // Pack it into an alignment so that it is indented
+	GtkWidget* tessAlignment = gtkutil::LeftAlignment(GTK_WIDGET(_tesselation.table), 18, 1.0); 
+	gtk_box_pack_start(GTK_BOX(dialogVBox), GTK_WIDGET(tessAlignment), false, false, 0);
+	
+	_tesselation.fixed = gtk_check_button_new_with_label(LABEL_FIXED.c_str());
+	gtk_table_attach_defaults(_tesselation.table, _tesselation.fixed, 0, 2, 0, 1);
+	
+	_tesselation.horiz = gtk_spin_button_new_with_range(TESS_MIN, TESS_MAX, 1.0f);
+	_tesselation.vert = gtk_spin_button_new_with_range(TESS_MIN, TESS_MAX, 1.0f);
+	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_tesselation.horiz), 0);
+	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_tesselation.vert), 0);
+	
+	gtk_widget_set_size_request(_tesselation.horiz, 60, -1);
+	gtk_widget_set_size_request(_tesselation.vert, 60, -1);
+	
+	_tesselation.horizLabel = gtkutil::LeftAlignedLabel(LABEL_SUBDIVISION_X);
+	_tesselation.vertLabel = gtkutil::LeftAlignedLabel(LABEL_SUBDIVISION_Y);
+	
+	gtk_table_attach_defaults(_tesselation.table, _tesselation.horizLabel, 0, 1, 1, 2);
+	gtk_table_attach_defaults(_tesselation.table, _tesselation.horiz, 1, 2, 1, 2);
+	
+	gtk_table_attach_defaults(_tesselation.table, _tesselation.vertLabel, 0, 1, 2, 3);
+	gtk_table_attach_defaults(_tesselation.table, _tesselation.vert, 1, 2, 2, 3);
+}
+
+PatchInspector::CoordRow PatchInspector::createCoordRow(
+	const std::string& label, int tableRow) 
+{
+	CoordRow returnValue;
+	
+	returnValue.label = gtkutil::LeftAlignedLabel(label);
+	returnValue.entry = gtk_entry_new();
+	gtk_entry_set_width_chars(GTK_ENTRY(returnValue.entry), 10);
+	gtk_table_attach_defaults(_coordsTable, returnValue.label, 0, 1, tableRow, tableRow+1);
+	gtk_table_attach_defaults(_coordsTable, returnValue.entry, 1, 2, tableRow, tableRow+1);
+	g_signal_connect(G_OBJECT(returnValue.entry), "key-press-event", G_CALLBACK(onEntryKeyPress), this);
+	
+	return returnValue;
 }
 
 void PatchInspector::update() {
+	// Check if there is one distinct patch selected
+	bool sensitive = (_selectionInfo.patchCount == 1);
 	
+	gtk_widget_set_sensitive(GTK_WIDGET(_vertexChooser.table), sensitive);
+	
+	gtk_widget_set_sensitive(_tesselation.title, sensitive);
+	gtk_widget_set_sensitive(GTK_WIDGET(_tesselation.table), sensitive);
+	
+	gtk_widget_set_sensitive(_coordsLabel, sensitive);
+	gtk_widget_set_sensitive(GTK_WIDGET(_coordsTable), sensitive);
+	
+	// Remove all the items from the combo boxes
+	for (std::size_t i = 0; i < _patchRows; i++) {
+		gtk_combo_box_remove_text(GTK_COMBO_BOX(_vertexChooser.rowCombo), 0);
+	}
+	
+	for (std::size_t i = 0; i < _patchCols; i++) {
+		gtk_combo_box_remove_text(GTK_COMBO_BOX(_vertexChooser.colCombo), 0);
+	}
+	
+	_updateActive = true;
+	
+	if (sensitive) {
+		PatchPtrVector list = selection::algorithm::getSelectedPatches();
+		
+		if (list.size() > 0) {
+			_patch = list[0];
+			_patchRows = _patch->getHeight();
+			_patchCols = _patch->getWidth();
+			
+			for (std::size_t i = 0; i < _patchRows; i++) {
+				gtk_combo_box_append_text(
+					GTK_COMBO_BOX(_vertexChooser.rowCombo), 
+					intToStr(i).c_str()
+				);
+			}
+			gtk_combo_box_set_active(
+				GTK_COMBO_BOX(_vertexChooser.rowCombo), 
+				0
+			);
+			
+			for (std::size_t i = 0; i < _patchCols; i++) {
+				gtk_combo_box_append_text(
+					GTK_COMBO_BOX(_vertexChooser.colCombo), 
+					intToStr(i).c_str()
+				);
+			}
+			gtk_combo_box_set_active(
+				GTK_COMBO_BOX(_vertexChooser.colCombo), 
+				0
+			);
+			
+			// Load the data from the vertex
+			loadControlVertex();
+		}
+		else {
+			_patch = NULL;
+			_patchRows = 0;
+			_patchCols = 0;
+		}
+	}
+	
+	_updateActive = false;
+}
+
+void PatchInspector::loadControlVertex() {
+	if (_patch != NULL) {
+		std::string rowStr = gtk_combo_box_get_active_text(GTK_COMBO_BOX(_vertexChooser.rowCombo));
+		int row = strToInt(rowStr);
+		
+		std::string colStr = gtk_combo_box_get_active_text(GTK_COMBO_BOX(_vertexChooser.colCombo));
+		int col = strToInt(colStr);
+		
+		// Retrieve the controlvertex
+		const PatchControl& ctrl = _patch->ctrlAt(row, col);
+		
+		gtk_entry_set_text(GTK_ENTRY(_coords["x"].entry), floatToStr(ctrl.m_vertex[0]).c_str());
+		gtk_entry_set_text(GTK_ENTRY(_coords["y"].entry), floatToStr(ctrl.m_vertex[1]).c_str());
+		gtk_entry_set_text(GTK_ENTRY(_coords["z"].entry), floatToStr(ctrl.m_vertex[2]).c_str());
+		gtk_entry_set_text(GTK_ENTRY(_coords["s"].entry), floatToStr(ctrl.m_texcoord[0]).c_str());
+		gtk_entry_set_text(GTK_ENTRY(_coords["t"].entry), floatToStr(ctrl.m_texcoord[1]).c_str());
+	}
 }
 
 void PatchInspector::toggle() {
@@ -93,8 +304,20 @@ void PatchInspector::toggle() {
 	}
 }
 
+void PatchInspector::onComboBoxChange(GtkWidget* combo, PatchInspector* self) {
+	if (self->_updateActive) {
+		return;
+	}
+	// Load the according patch row/col vertex
+	self->loadControlVertex();
+}
+
 void PatchInspector::selectionChanged(scene::Instance& instance) {
 	update();
+}
+
+void PatchInspector::emitCoords() {
+	// Save the coords into the patch
 }
 
 gboolean PatchInspector::onDelete(GtkWidget* widget, GdkEvent* event, PatchInspector* self) {
@@ -103,6 +326,19 @@ gboolean PatchInspector::onDelete(GtkWidget* widget, GdkEvent* event, PatchInspe
 	
 	// Don't propagate the delete event
 	return true;
+}
+
+// The GTK keypress callback
+gboolean PatchInspector::onEntryKeyPress(GtkWidget* entry, GdkEventKey* event, PatchInspector* self) {
+	
+	// Check for ESC to deselect all items
+	if (event->keyval == GDK_Return) {
+		self->emitCoords();
+		// Don't propage the keypress if the Enter could be processed
+		return true;
+	}
+	
+	return false;
 }
 
 } // namespace ui

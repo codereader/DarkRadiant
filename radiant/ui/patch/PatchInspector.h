@@ -1,10 +1,15 @@
 #ifndef PATCHINSPECTOR_H_
 #define PATCHINSPECTOR_H_
 
+#include <map>
 #include "iselection.h"
 #include "gtkutil/WindowPosition.h"
 
 typedef struct _GtkWidget GtkWidget;
+typedef struct _GtkTable GtkTable;
+typedef struct _GtkObject GtkObject;
+
+class Patch;
 
 namespace ui {
 
@@ -16,6 +21,47 @@ class PatchInspector :
 	
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
+
+	struct VertexChooser {
+		GtkTable* table;
+		GtkWidget* rowLabel;
+		GtkWidget* colLabel;
+		GtkWidget* rowCombo;
+		GtkWidget* colCombo;
+	} _vertexChooser;
+	
+	struct CoordRow {
+		GtkWidget* label;
+		GtkWidget* entry;
+	};
+	
+	// This is where the named coord rows (x,y,z,s,t) are stored 
+	typedef std::map<std::string, CoordRow> CoordMap;
+	CoordMap _coords;
+	
+	GtkWidget* _coordsLabel;
+	GtkTable* _coordsTable;
+	
+	struct TessWidgets {
+		GtkWidget* title;
+		GtkTable* table;
+		GtkWidget* fixed;
+		GtkWidget* horiz;
+		GtkWidget* vert;
+		GtkWidget* horizLabel;
+		GtkWidget* vertLabel;
+	} _tesselation;
+
+	const SelectionInfo& _selectionInfo;
+
+	std::size_t _patchRows;
+	std::size_t _patchCols;
+	
+	// The pointer to the active patch
+	Patch* _patch;
+	
+	// If this is set to TRUE, the GTK callbacks will be disabled
+	bool _updateActive;
 
 public:
 	PatchInspector();
@@ -48,11 +94,29 @@ public:
 
 private:
 
+	/** greebo: Reloads the relevant information from the selected control vertex.
+	 */
+	void loadControlVertex();
+
+	/** greebo: Saves the current values of the entry fields to the active patch control
+	 */
+	void emitCoords();
+
+	/** greebo: Helper method to create an coord row (label+entry)
+	 * 
+	 * @tableRow: the row index of _coordsTable to pack the row into.
+	 */
+	CoordRow createCoordRow(const std::string& label, int tableRow);
+
 	// Creates and packs the widgets into the dialog (called by constructor)
 	void populateWindow();
 
 	// The callback for the delete event (toggles the visibility)
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, PatchInspector* self);
+	
+	static void onComboBoxChange(GtkWidget* combo, PatchInspector* self);
+	
+	static gboolean onEntryKeyPress(GtkWidget* entry, GdkEventKey* event, PatchInspector* self);
 
 }; // class PatchInspector
 
