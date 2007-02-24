@@ -8,6 +8,7 @@
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkTable GtkTable;
 typedef struct _GtkObject GtkObject;
+typedef struct _GtkEditable GtkEditable;
 
 class Patch;
 
@@ -101,6 +102,10 @@ private:
 	/** greebo: Saves the current values of the entry fields to the active patch control
 	 */
 	void emitCoords();
+	
+	/** greebo: Writes the tesselation setting into the selected patch
+	 */
+	void emitTesselation();
 
 	/** greebo: Helper method to create an coord row (label+entry)
 	 * 
@@ -118,6 +123,9 @@ private:
 	
 	static gboolean onEntryKeyPress(GtkWidget* entry, GdkEventKey* event, PatchInspector* self);
 
+	// Gets called when the "Fixed Tesselation" settings are changed 
+	static void onFixedTessChange(GtkWidget* checkButton, PatchInspector* self);
+	static void onTessChange(GtkEditable* editable, PatchInspector* self);
 }; // class PatchInspector
 
 } // namespace ui
