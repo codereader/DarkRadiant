@@ -1,7 +1,7 @@
 #ifndef PATCHITEM_H_
 #define PATCHITEM_H_
 
-#include "TexToolItem.h"
+#include "textool/TexToolItem.h"
 
 class Patch;
 

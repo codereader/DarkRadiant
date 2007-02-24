@@ -1,7 +1,7 @@
 #ifndef PATCHVERTEXITEM_H_
 #define PATCHVERTEXITEM_H_
 
-#include "TexToolItem.h"
+#include "textool/TexToolItem.h"
 #include "ipatch.h"
 
 namespace selection {

@@ -23,9 +23,9 @@
 
 #include "textool/Selectable.h"
 #include "textool/Transformable.h"
-#include "textool/PatchItem.h"
-#include "textool/BrushItem.h"
-#include "textool/FaceItem.h"
+#include "textool/item/PatchItem.h"
+#include "textool/item/BrushItem.h"
+#include "textool/item/FaceItem.h"
 
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Shader.h"

@@ -2,7 +2,7 @@
 #define BRUSHITEM_H_
 
 #include "brush/Brush.h"
-#include "TexToolItem.h"
+#include "textool/TexToolItem.h"
 
 namespace selection {
 	namespace textool {
