@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "version.h"
 
 #include "ui/surfaceinspector/SurfaceInspector.h"
+#include "ui/patch/PatchInspector.h"
 #include "textool/TexTool.h"
 #include "brushexport/BrushExportOBJ.h"
 #include "ui/einspector/EntityInspector.h"
@@ -739,6 +740,7 @@ void Undo()
   GlobalUndoSystem().undo();
   SceneChangeNotify();
   ui::SurfaceInspector::Instance().update();
+  ui::PatchInspector::Instance().update();
 }
 
 void Redo()
@@ -746,6 +748,7 @@ void Redo()
   GlobalUndoSystem().redo();
   SceneChangeNotify();
   ui::SurfaceInspector::Instance().update();
+  ui::PatchInspector::Instance().update();
 }
 
 void deleteSelection()
@@ -2580,6 +2583,7 @@ void MainFrame::Shutdown()
 {
 	// Tell the inspectors to safely shutdown (de-register callbacks, etc.)
 	ui::SurfaceInspector::Instance().shutdown();
+	ui::PatchInspector::Instance().shutdown();
 	ui::TexTool::Instance().shutdown();
 	
 	// Stop the AutoSaver class from being called
