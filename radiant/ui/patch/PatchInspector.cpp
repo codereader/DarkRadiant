@@ -61,7 +61,7 @@ PatchInspector::PatchInspector() :
 	GlobalSelectionSystem().addObserver(this);
 	
 	// Update the widget status
-	update();
+	rescanSelection();
 	
 	// Connect the window position tracker
 	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
@@ -179,6 +179,9 @@ void PatchInspector::populateWindow() {
 	_tesselation.horiz = gtk_spin_button_new_with_range(TESS_MIN, TESS_MAX, 1.0f);
 	_tesselation.vert = gtk_spin_button_new_with_range(TESS_MIN, TESS_MAX, 1.0f);
 	
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(_tesselation.horiz), 4.0f);
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(_tesselation.vert), 4.0f);
+	
 	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_tesselation.horiz), 0);
 	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_tesselation.vert), 0);
 	
@@ -204,98 +207,49 @@ PatchInspector::CoordRow PatchInspector::createCoordRow(
 	CoordRow returnValue;
 	
 	returnValue.label = gtkutil::LeftAlignedLabel(label);
-	returnValue.entry = gtk_entry_new();
-	gtk_entry_set_width_chars(GTK_ENTRY(returnValue.entry), 10);
+	
+	// Create the adjustment for the spin button
+	returnValue.adjustment = gtk_adjustment_new(
+		0.0f, -65536.0f, 65536.0f, 0.1f, 0.1f, 0.1f
+	);
+	returnValue.entry = gtk_spin_button_new(GTK_ADJUSTMENT(returnValue.adjustment), 0.1f, 4);
+	gtk_widget_set_size_request(returnValue.entry, 60, -1);
+	g_signal_connect(G_OBJECT(returnValue.entry), "changed", G_CALLBACK(onCoordChange), this);
+	
 	gtk_table_attach_defaults(_coordsTable, returnValue.label, 0, 1, tableRow, tableRow+1);
 	gtk_table_attach_defaults(_coordsTable, returnValue.entry, 1, 2, tableRow, tableRow+1);
-	g_signal_connect(G_OBJECT(returnValue.entry), "key-press-event", G_CALLBACK(onEntryKeyPress), this);
 	
 	return returnValue;
 }
 
 void PatchInspector::update() {
-	// Check if there is one distinct patch selected
-	bool sensitive = (_selectionInfo.patchCount == 1);
-	
-	gtk_widget_set_sensitive(GTK_WIDGET(_vertexChooser.table), sensitive);
-	
-	gtk_widget_set_sensitive(_tesselation.title, sensitive);
-	gtk_widget_set_sensitive(GTK_WIDGET(_tesselation.table), sensitive);
-	
-	gtk_widget_set_sensitive(_coordsLabel, sensitive);
-	gtk_widget_set_sensitive(GTK_WIDGET(_coordsTable), sensitive);
-	
-	// Remove all the items from the combo boxes
-	for (std::size_t i = 0; i < _patchRows; i++) {
-		gtk_combo_box_remove_text(GTK_COMBO_BOX(_vertexChooser.rowCombo), 0);
-	}
-	
-	for (std::size_t i = 0; i < _patchCols; i++) {
-		gtk_combo_box_remove_text(GTK_COMBO_BOX(_vertexChooser.colCombo), 0);
-	}
-	
 	_updateActive = true;
 	
-	if (sensitive) {
-		PatchPtrVector list = selection::algorithm::getSelectedPatches();
+	if (_patch != NULL) {
+		// Load the "fixed tesselation" value
+		bool fixed = _patch->subdivionsFixed();
 		
-		if (list.size() > 0) {
-			_patch = list[0];
-			_patchRows = _patch->getHeight();
-			_patchCols = _patch->getWidth();
-			
-			for (std::size_t i = 0; i < _patchRows; i++) {
-				gtk_combo_box_append_text(
-					GTK_COMBO_BOX(_vertexChooser.rowCombo), 
-					intToStr(i).c_str()
-				);
-			}
-			gtk_combo_box_set_active(
-				GTK_COMBO_BOX(_vertexChooser.rowCombo), 
-				0
-			);
-			
-			for (std::size_t i = 0; i < _patchCols; i++) {
-				gtk_combo_box_append_text(
-					GTK_COMBO_BOX(_vertexChooser.colCombo), 
-					intToStr(i).c_str()
-				);
-			}
-			gtk_combo_box_set_active(
-				GTK_COMBO_BOX(_vertexChooser.colCombo), 
-				0
-			);
-			
-			// Load the "fixed tesselation" value
-			bool fixed = _patch->subdivionsFixed();
-			
-			gtk_toggle_button_set_active(
-				GTK_TOGGLE_BUTTON(_tesselation.fixed), 
-				fixed
-			);
-			
-			gtk_spin_button_set_value(
-				GTK_SPIN_BUTTON(_tesselation.horiz),
-				_patch->getSubdivisions()[0]
-			);
-			gtk_spin_button_set_value(
-				GTK_SPIN_BUTTON(_tesselation.vert),
-				_patch->getSubdivisions()[1]
-			);
-			
-			gtk_widget_set_sensitive(_tesselation.horiz, fixed);
-			gtk_widget_set_sensitive(_tesselation.vert, fixed);
-			gtk_widget_set_sensitive(_tesselation.vertLabel, fixed);
-			gtk_widget_set_sensitive(_tesselation.horizLabel, fixed);
-			
-			// Load the data from the vertex
-			loadControlVertex();
-		}
-		else {
-			_patch = NULL;
-			_patchRows = 0;
-			_patchCols = 0;
-		}
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_tesselation.fixed), 
+			fixed
+		);
+		
+		gtk_spin_button_set_value(
+			GTK_SPIN_BUTTON(_tesselation.horiz),
+			_patch->getSubdivisions()[0]
+		);
+		gtk_spin_button_set_value(
+			GTK_SPIN_BUTTON(_tesselation.vert),
+			_patch->getSubdivisions()[1]
+		);
+		
+		gtk_widget_set_sensitive(_tesselation.horiz, fixed);
+		gtk_widget_set_sensitive(_tesselation.vert, fixed);
+		gtk_widget_set_sensitive(_tesselation.vertLabel, fixed);
+		gtk_widget_set_sensitive(_tesselation.horizLabel, fixed);
+		
+		// Load the data from the vertex
+		loadControlVertex();
 	}
 	
 	_updateActive = false;
@@ -309,11 +263,15 @@ void PatchInspector::loadControlVertex() {
 		// Retrieve the controlvertex
 		const PatchControl& ctrl = _patch->ctrlAt(row, col);
 		
-		gtk_entry_set_text(GTK_ENTRY(_coords["x"].entry), floatToStr(ctrl.m_vertex[0]).c_str());
-		gtk_entry_set_text(GTK_ENTRY(_coords["y"].entry), floatToStr(ctrl.m_vertex[1]).c_str());
-		gtk_entry_set_text(GTK_ENTRY(_coords["z"].entry), floatToStr(ctrl.m_vertex[2]).c_str());
-		gtk_entry_set_text(GTK_ENTRY(_coords["s"].entry), floatToStr(ctrl.m_texcoord[0]).c_str());
-		gtk_entry_set_text(GTK_ENTRY(_coords["t"].entry), floatToStr(ctrl.m_texcoord[1]).c_str());
+		_updateActive = true;
+		
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(_coords["x"].entry), ctrl.m_vertex[0]);
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(_coords["y"].entry), ctrl.m_vertex[1]);
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(_coords["z"].entry), ctrl.m_vertex[2]);
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(_coords["s"].entry), ctrl.m_texcoord[0]);
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(_coords["t"].entry), ctrl.m_texcoord[1]);
+		
+		_updateActive = false;
 	}
 }
 
@@ -330,15 +288,72 @@ void PatchInspector::toggle() {
 	}
 }
 
-void PatchInspector::onComboBoxChange(GtkWidget* combo, PatchInspector* self) {
-	if (self->_updateActive) {
-		return;
-	}
-	// Load the according patch row/col vertex
-	self->loadControlVertex();
+void PatchInspector::selectionChanged(scene::Instance& instance) {
+	rescanSelection();
 }
 
-void PatchInspector::selectionChanged(scene::Instance& instance) {
+void PatchInspector::rescanSelection() {
+	// Check if there is one distinct patch selected
+	bool sensitive = (_selectionInfo.patchCount == 1);
+
+	gtk_widget_set_sensitive(GTK_WIDGET(_vertexChooser.table), sensitive);
+	
+	gtk_widget_set_sensitive(_tesselation.title, sensitive);
+	gtk_widget_set_sensitive(GTK_WIDGET(_tesselation.table), sensitive);
+	
+	gtk_widget_set_sensitive(_coordsLabel, sensitive);
+	gtk_widget_set_sensitive(GTK_WIDGET(_coordsTable), sensitive);
+
+	// Remove all the items from the combo boxes
+	for (std::size_t i = 0; i < _patchRows; i++) {
+		gtk_combo_box_remove_text(GTK_COMBO_BOX(_vertexChooser.rowCombo), 0);
+	}
+	
+	for (std::size_t i = 0; i < _patchCols; i++) {
+		gtk_combo_box_remove_text(GTK_COMBO_BOX(_vertexChooser.colCombo), 0);
+	}
+	
+	_patch = NULL;
+	_patchRows = 0;
+	_patchCols = 0;
+	
+	if (sensitive) {
+		PatchPtrVector list = selection::algorithm::getSelectedPatches();
+		
+		if (list.size() > 0) {
+			_patch = list[0];
+			_patchRows = _patch->getHeight();
+			_patchCols = _patch->getWidth();
+			
+			_updateActive = true;
+			
+			for (std::size_t i = 0; i < _patchRows; i++) {
+				gtk_combo_box_append_text(
+					GTK_COMBO_BOX(_vertexChooser.rowCombo), 
+					intToStr(i).c_str()
+				);
+			}
+
+			gtk_combo_box_set_active(
+				GTK_COMBO_BOX(_vertexChooser.rowCombo), 
+				0
+			);
+
+			for (std::size_t i = 0; i < _patchCols; i++) {
+				gtk_combo_box_append_text(
+					GTK_COMBO_BOX(_vertexChooser.colCombo), 
+					intToStr(i).c_str()
+				);
+			}
+			gtk_combo_box_set_active(
+				GTK_COMBO_BOX(_vertexChooser.colCombo), 
+				0
+			);
+			
+			_updateActive = false;
+		}
+	}
+	
 	update();
 }
 
@@ -389,17 +404,11 @@ gboolean PatchInspector::onDelete(GtkWidget* widget, GdkEvent* event, PatchInspe
 	return true;
 }
 
-// The GTK keypress callback
-gboolean PatchInspector::onEntryKeyPress(GtkWidget* entry, GdkEventKey* event, PatchInspector* self) {
-	
-	// Check for ESC to deselect all items
-	if (event->keyval == GDK_Return) {
-		self->emitCoords();
-		// Don't propage the keypress if the Enter could be processed
-		return true;
+void PatchInspector::onCoordChange(GtkEditable* editable, PatchInspector* self) {
+	if (self->_updateActive) {
+		return;
 	}
-	
-	return false;
+	self->emitCoords();
 }
 
 void PatchInspector::onTessChange(GtkEditable* editable, PatchInspector* self) {
@@ -414,6 +423,14 @@ void PatchInspector::onFixedTessChange(GtkWidget* checkButton, PatchInspector* s
 		return;
 	}
 	self->emitTesselation();
+}
+
+void PatchInspector::onComboBoxChange(GtkWidget* combo, PatchInspector* self) {
+	if (self->_updateActive) {
+		return;
+	}
+	// Load the according patch row/col vertex
+	self->loadControlVertex();
 }
 
 } // namespace ui
