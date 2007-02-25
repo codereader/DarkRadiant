@@ -25,6 +25,7 @@ class PatchInspector :
 
 	struct VertexChooser {
 		GtkTable* table;
+		GtkWidget* title;
 		GtkWidget* rowLabel;
 		GtkWidget* colLabel;
 		GtkWidget* rowCombo;

@@ -101,10 +101,10 @@ void PatchInspector::populateWindow() {
 	gtk_container_add(GTK_CONTAINER(_dialog), dialogVBox);
 	
 	// Create the title label (bold font)
-	GtkWidget* topLabel = gtkutil::LeftAlignedLabel(
+	_vertexChooser.title = gtkutil::LeftAlignedLabel(
     	std::string("<span weight=\"bold\">") + LABEL_CONTROL_VERTICES + "</span>"
     );
-    gtk_box_pack_start(GTK_BOX(dialogVBox), topLabel, false, false, 0);
+    gtk_box_pack_start(GTK_BOX(dialogVBox), _vertexChooser.title, false, false, 0);
     
     // Setup the table with default spacings
 	_vertexChooser.table = GTK_TABLE(gtk_table_new(2, 2, false));
@@ -120,7 +120,7 @@ void PatchInspector::populateWindow() {
 	gtk_table_attach_defaults(_vertexChooser.table, _vertexChooser.rowLabel, 0, 1, 0, 1);
 		
 	_vertexChooser.rowCombo = gtk_combo_box_new_text();
-	gtk_widget_set_size_request(_vertexChooser.rowCombo, 80, -1);
+	gtk_widget_set_size_request(_vertexChooser.rowCombo, 100, -1);
 	g_signal_connect(G_OBJECT(_vertexChooser.rowCombo), "changed", G_CALLBACK(onComboBoxChange), this);
 	gtk_table_attach_defaults(_vertexChooser.table, _vertexChooser.rowCombo, 1, 2, 0, 1);
 		
@@ -128,7 +128,7 @@ void PatchInspector::populateWindow() {
 	gtk_table_attach_defaults(_vertexChooser.table, _vertexChooser.colLabel, 0, 1, 1, 2);
 	
 	_vertexChooser.colCombo = gtk_combo_box_new_text();
-	gtk_widget_set_size_request(_vertexChooser.colCombo, 80, -1);
+	gtk_widget_set_size_request(_vertexChooser.colCombo, 100, -1);
 	g_signal_connect(G_OBJECT(_vertexChooser.colCombo), "changed", G_CALLBACK(onComboBoxChange), this);
 	gtk_table_attach_defaults(_vertexChooser.table, _vertexChooser.colCombo, 1, 2, 1, 2);
 	
@@ -179,17 +179,14 @@ void PatchInspector::populateWindow() {
 	_tesselation.horiz = gtk_spin_button_new_with_range(TESS_MIN, TESS_MAX, 1.0f);
 	_tesselation.vert = gtk_spin_button_new_with_range(TESS_MIN, TESS_MAX, 1.0f);
 	
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(_tesselation.horiz), 4.0f);
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(_tesselation.vert), 4.0f);
-	
 	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_tesselation.horiz), 0);
 	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_tesselation.vert), 0);
 	
 	g_signal_connect(G_OBJECT(_tesselation.horiz), "changed", G_CALLBACK(onTessChange), this);
 	g_signal_connect(G_OBJECT(_tesselation.vert), "changed", G_CALLBACK(onTessChange), this);
 	
-	gtk_widget_set_size_request(_tesselation.horiz, 60, -1);
-	gtk_widget_set_size_request(_tesselation.vert, 60, -1);
+	gtk_widget_set_size_request(_tesselation.horiz, 100, -1);
+	gtk_widget_set_size_request(_tesselation.vert, 100, -1);
 	
 	_tesselation.horizLabel = gtkutil::LeftAlignedLabel(LABEL_SUBDIVISION_X);
 	_tesselation.vertLabel = gtkutil::LeftAlignedLabel(LABEL_SUBDIVISION_Y);
@@ -213,7 +210,7 @@ PatchInspector::CoordRow PatchInspector::createCoordRow(
 		0.0f, -65536.0f, 65536.0f, 0.1f, 0.1f, 0.1f
 	);
 	returnValue.entry = gtk_spin_button_new(GTK_ADJUSTMENT(returnValue.adjustment), 0.1f, 4);
-	gtk_widget_set_size_request(returnValue.entry, 60, -1);
+	gtk_widget_set_size_request(returnValue.entry, 100, -1);
 	g_signal_connect(G_OBJECT(returnValue.entry), "changed", G_CALLBACK(onCoordChange), this);
 	
 	gtk_table_attach_defaults(_coordsTable, returnValue.label, 0, 1, tableRow, tableRow+1);
@@ -297,6 +294,7 @@ void PatchInspector::rescanSelection() {
 	bool sensitive = (_selectionInfo.patchCount == 1);
 
 	gtk_widget_set_sensitive(GTK_WIDGET(_vertexChooser.table), sensitive);
+	gtk_widget_set_sensitive(GTK_WIDGET(_vertexChooser.title), sensitive);
 	
 	gtk_widget_set_sensitive(_tesselation.title, sensitive);
 	gtk_widget_set_sensitive(GTK_WIDGET(_tesselation.table), sensitive);

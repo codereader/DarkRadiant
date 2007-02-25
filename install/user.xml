@@ -39,6 +39,7 @@
 			<vScaleStep value="0.05" />
 			<rotStep value="45" />
 			<useLegacyInspector value="0" />
+			<window xPosition="200" yPosition="100" width="369" height="374" />
 		</surfaceInspector>
 	</textures>
 	<grid>
@@ -87,7 +88,10 @@
 		<textureLock value="1" />
 	</brush>
 	<patch>
-		<patchInspector />
+		<patchInspector>
+			<useLegacyInspector value="0" />
+			<window xPosition="130" yPosition="100" width="225" height="391" />
+		</patchInspector>
 	</patch>
 	<camera>
 		<enableCubicClipping value="1" />

@@ -57,6 +57,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <gdk/gdkkeysyms.h>
 
+namespace {
+	const std::string RKEY_LEGACY_PATCH_INSPECTOR = "user/ui/patch/patchInspector/useLegacyInspector";
+}
+
 class PatchFixedSubdivisions
 {
 public:
@@ -279,14 +283,19 @@ void DoPatchInspector()
 
 void PatchInspector_toggleShown()
 {
-	ui::PatchInspector::Instance().toggle();
-  if (g_PatchInspector.visible())
-  {
-    g_PatchInspector.m_Patch = 0;
-    g_PatchInspector.HideDlg();
-  }
-  else
-    DoPatchInspector();
+	if (GlobalRegistry().get(RKEY_LEGACY_PATCH_INSPECTOR) == "1") {
+		if (g_PatchInspector.visible()) {
+			g_PatchInspector.m_Patch = 0;
+			g_PatchInspector.HideDlg();
+		}
+		else {
+			DoPatchInspector();
+		}
+	}
+	else {
+		// Use the "new" inspector
+		ui::PatchInspector::Instance().toggle();
+	}
 }
 
 
