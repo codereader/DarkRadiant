@@ -436,8 +436,14 @@ void Select_GetBounds (Vector3& mins, Vector3& maxs)
 {
   AABB bounds;
   GlobalSceneGraph().traverse(BoundsSelected(bounds));
-  maxs = bounds.origin + bounds.extents;
-  mins = bounds.origin - bounds.extents;
+  if (bounds.isValid()) {
+  	maxs = bounds.origin + bounds.extents;
+  	mins = bounds.origin - bounds.extents;
+  }
+  else {
+  	maxs = Vector3(0,0,0);
+  	mins = Vector3(0,0,0);
+  }
 }
 
 void Select_GetMid (Vector3& mid)
