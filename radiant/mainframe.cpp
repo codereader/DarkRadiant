@@ -741,6 +741,7 @@ void Undo()
   SceneChangeNotify();
   ui::SurfaceInspector::Instance().update();
   ui::PatchInspector::Instance().update();
+  ui::LightInspector::Instance().update();
 }
 
 void Redo()
@@ -749,6 +750,7 @@ void Redo()
   SceneChangeNotify();
   ui::SurfaceInspector::Instance().update();
   ui::PatchInspector::Instance().update();
+  ui::LightInspector::Instance().update();
 }
 
 void deleteSelection()
@@ -2584,6 +2586,7 @@ void MainFrame::Shutdown()
 	// Tell the inspectors to safely shutdown (de-register callbacks, etc.)
 	ui::SurfaceInspector::Instance().shutdown();
 	ui::PatchInspector::Instance().shutdown();
+	ui::LightInspector::Instance().shutdown();
 	ui::TexTool::Instance().shutdown();
 	
 	// Stop the AutoSaver class from being called
@@ -2791,7 +2794,7 @@ void MainFrame_Construct()
 	
 	// Light inspector
 	GlobalEventManager().addCommand("ToggleLightInspector",	
-							FreeCaller<ui::LightInspector::displayDialog>());
+							FreeCaller<ui::LightInspector::toggleInspector>());
 	
 	// Overlay dialog
 	GlobalEventManager().addCommand("OverlayDialog",
