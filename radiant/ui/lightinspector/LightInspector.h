@@ -1,7 +1,9 @@
 #ifndef LIGHTINSPECTOR_H_
 #define LIGHTINSPECTOR_H_
 
+#include "iselection.h"
 #include "ui/common/LightTextureSelector.h"
+#include "gtkutil/WindowPosition.h"
 
 #include <gtk/gtkwidget.h>
 #include <map>
@@ -21,10 +23,14 @@ namespace ui
  * between projected and point lights.
  */
 
-class LightInspector
+class LightInspector :
+	public SelectionSystem::Observer
 {
 	// Main dialog widget
 	GtkWidget* _widget;
+	
+	// The overall vbox
+	GtkWidget* _mainVBox;
 	
 	// Projected light flag
 	bool _isProjected;
@@ -53,14 +59,16 @@ class LightInspector
 	typedef std::map<std::string, std::string> StringMap;
 	StringMap _valueMap;
 	
+	gtkutil::WindowPosition _windowPosition;
+	
 private:
 
 	// Constructor creates GTK widgets
 	LightInspector();
 
 	// Show this LightInspector dialog
-	void show();
-
+	void toggle();
+	
 	// Widget construction functions
 	GtkWidget* createPointLightPanel();
 	GtkWidget* createProjectedPanel();
@@ -72,8 +80,7 @@ private:
 	static void _onProjToggle(GtkWidget*, LightInspector*);	
 	static void _onPointToggle(GtkWidget*, LightInspector*);	
 	static void _onOK(GtkWidget*, LightInspector*);
-	static void _onCancel(GtkWidget*, LightInspector*);
-	static gboolean _onKeyPress(GtkWidget*, GdkEventKey*, LightInspector*);
+	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, LightInspector* self);
 
 	// Update the dialog widgets from keyvals on the entity
 	void getValuesFromEntity();
@@ -83,10 +90,25 @@ private:
 	
 public:
 
-	/** Display the singleton dialog instance, constructing it if necessary.
-	 */
-	static void displayDialog();
+	// Gets called by the SelectionSystem when the selection is changed
+	void selectionChanged(scene::Instance& instance);
 
+	/** Toggle the visibility of the dialog instance, constructing it if necessary.
+	 * 
+	 * Note: This is declared static to make it usable as a target for FreeCaller<> stuff. 
+	 */
+	static void toggleInspector();
+	
+	/** greebo: This is the actual home of the static instance 
+	 */
+	static LightInspector& Instance();
+	
+	// Update the sensitivity of the widgets
+	void update();
+	
+	// Safely disconnects this dialog from all the systems
+	// and saves the window size/position to the registry
+	void shutdown(); 
 };
 
 }

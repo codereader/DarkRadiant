@@ -1,12 +1,13 @@
 #include "LightInspector.h"
 
-#include "iselection.h"
+#include "ieventmanager.h"
 #include "ientity.h"
 #include "ieclass.h"
 #include "ishaders.h"
 #include "iregistry.h"
 
 #include "mainframe.h"
+#include "gtkutil/TransientWindow.h"
 #include "gtkutil/IconTextButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/RightAlignment.h"
@@ -14,7 +15,6 @@
 #include "gtkutil/dialog.h"
 
 #include <gtk/gtk.h>
-#include <gdk/gdkkeysyms.h>
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace ui
@@ -30,21 +30,18 @@ namespace {
 	const char* NOSPECULAR_TEXT = "Skip specular lighting";
 	const char* NODIFFUSE_TEXT = "Skip diffuse lighting";
 	
+	const std::string RKEY_WINDOW_STATE = "user/ui/lightInspector/window";
 }
 
 // Private constructor creates GTK widgets
-LightInspector::LightInspector()
-: _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
-  _isProjected(false)
+LightInspector::LightInspector() : 
+	_isProjected(false),
+	_entity(NULL)
 {
-	// Window properties
-	gtk_window_set_transient_for(GTK_WINDOW(_widget), MainFrame_getWindow());
-	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
-	gtk_window_set_title(GTK_WINDOW(_widget), LIGHTINSPECTOR_TITLE);
-    gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
-    g_signal_connect(G_OBJECT(_widget), "key-press-event",
-    				 G_CALLBACK(_onKeyPress), this);
-    
+	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
+	_widget = gtkutil::TransientWindow(LIGHTINSPECTOR_TITLE, MainFrame_getWindow(), false);
+	gtk_window_set_type_hint(GTK_WINDOW(_widget), GDK_WINDOW_TYPE_HINT_DIALOG);
+	
     // Window size
 	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
 	gtk_window_set_default_size(GTK_WINDOW(_widget), 
@@ -52,10 +49,8 @@ LightInspector::LightInspector()
 								-1);
     
     // Widget must hide not destroy when closed
-    g_signal_connect(G_OBJECT(_widget), 
-    				 "delete-event",
-    				 G_CALLBACK(gtk_widget_hide_on_delete),
-    				 NULL);
+    g_signal_connect(G_OBJECT(_widget), "delete-event", 
+    				 G_CALLBACK(onDelete), NULL);
 
 	// Pack in widgets. 
 
@@ -99,14 +94,43 @@ LightInspector::LightInspector()
 	gtk_box_pack_start(GTK_BOX(hbx), panels, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbx), createTextureWidgets(), TRUE, TRUE, 0);
 
-	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
-	gtk_box_pack_start(GTK_BOX(vbx), hbx, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), gtk_hseparator_new(), FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
+	_mainVBox = gtk_vbox_new(FALSE, 12);
+	gtk_box_pack_start(GTK_BOX(_mainVBox), hbx, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(_mainVBox), gtk_hseparator_new(), FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(_mainVBox), createButtons(), FALSE, FALSE, 0);
 
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
-	gtk_container_add(GTK_CONTAINER(_widget), vbx);
+	gtk_container_add(GTK_CONTAINER(_widget), _mainVBox);
 	
+	// Register to get notified upon selection change
+	GlobalSelectionSystem().addObserver(this);
+	
+	// Propagate shortcuts that are not processed by this window
+	GlobalEventManager().connectDialogWindow(GTK_WINDOW(_widget));
+	
+	// Connect the window position tracker
+	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
+	
+	if (windowStateList.size() > 0) {
+		_windowPosition.loadFromNode(windowStateList[0]);
+	}
+	
+	_windowPosition.connect(GTK_WINDOW(_widget));
+	_windowPosition.applyPosition();
+}
+
+void LightInspector::shutdown() {
+	// Delete all the current window states from the registry  
+	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
+	
+	// Create a new node
+	xml::Node node(GlobalRegistry().createKey(RKEY_WINDOW_STATE));
+	
+	// Tell the position tracker to save the information
+	_windowPosition.saveToNode(node);
+	
+	GlobalSelectionSystem().removeObserver(this);
+	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(_widget));
 }
 
 // Create the point light panel
@@ -187,60 +211,73 @@ GtkWidget* LightInspector::createTextureWidgets() {
 GtkWidget* LightInspector::createButtons() {
 	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
 
-	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-	
+	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_APPLY);
+		
 	g_signal_connect(G_OBJECT(okButton), "clicked", 
 					 G_CALLBACK(_onOK), this);
-	g_signal_connect(G_OBJECT(cancelButton), "clicked", 
-					 G_CALLBACK(_onCancel), this);
-
+	
 	gtk_box_pack_end(GTK_BOX(hbx), okButton, TRUE, TRUE, 0);
-	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
-
+	
 	return gtkutil::RightAlignment(hbx);
 }
 
-// Show this dialog
-void LightInspector::show() {
-
+void LightInspector::update() {
+	// Set the entity pointer to NULL, just to be sure
+	_entity = NULL;
+	
 	// Prepare to check for a valid selection. We need exactly one object 
-	// selected and it must be a light. Anything else results in an error.
+	// selected and it must be a light.
 	SelectionSystem& s = GlobalSelectionSystem();
 
-	// Abort if selection count is not 1
-	if (s.countSelected() != 1) {
-		gtkutil::errorDialog("Exactly one light must be selected.",
-							 MainFrame_getWindow());
-		return;
+	bool sensitive = false;
+	
+	if (s.countSelected() == 1) {
+		// Check the EntityClass to ensure it is a light
+		Entity* e = NodeTypeCast<Entity>::cast(s.ultimateSelected().path().top());
+		
+		if (e != NULL && e->getEntityClass()->isLight()) {
+			// Exactly one light found, set the entity pointer
+			_entity = e;
+			
+			// Update the dialog with the correct values from the entity
+			getValuesFromEntity();
+			
+			sensitive = true;
+		}
 	}
 	
-	// Check the EntityClass to ensure it is a light, otherwise abort
-	Entity* e = NodeTypeCast<Entity>::cast(s.ultimateSelected().path().top());
-	if (e == NULL 							// not an entity
-		|| !e->getEntityClass()->isLight())	// not a light
-	{
-		gtkutil::errorDialog("The selected entity must be a light.",
-							 MainFrame_getWindow());
-		return;	
-	}
-
-	// Everything OK, set the entity and show the dialog
-	_entity = e;
-	gtk_widget_show_all(_widget);
-	
-	// Update the dialog with the correct values from the entity
-	getValuesFromEntity();
+	// Set the sensitivity of the widgets
+	gtk_widget_set_sensitive(_mainVBox, sensitive);
 }
 
-// Static method to display the dialog
-void LightInspector::displayDialog() {
+// Toggle this dialog
+void LightInspector::toggle() {
 
-	// Static instance
+	// Pass the call to the utility methods that save/restore the window position
+	if (GTK_WIDGET_VISIBLE(_widget)) {
+		gtkutil::TransientWindow::minimise(_widget);
+		gtk_widget_hide_all(_widget);
+	}
+	else {
+		gtkutil::TransientWindow::restore(_widget);
+		update();
+		gtk_widget_show_all(_widget);
+	}
+}
+
+void LightInspector::selectionChanged(scene::Instance& instance) {
+	update();
+}
+
+// Static method to toggle the dialog
+void LightInspector::toggleInspector() {
+	// Toggle the instance
+	Instance().toggle();
+}
+
+LightInspector& LightInspector::Instance() {
 	static LightInspector _instance;
-
-	// Show the instance
-	_instance.show();	
+	return _instance;
 }
 
 /* GTK CALLBACKS */
@@ -281,20 +318,6 @@ void LightInspector::_onPointToggle(GtkWidget* b, LightInspector* self) {
 
 void LightInspector::_onOK(GtkWidget* w, LightInspector* self) {
 	self->setValuesOnEntity();
-}
-
-void LightInspector::_onCancel(GtkWidget* w, LightInspector* self) {
-	gtk_widget_hide(self->_widget);
-}
-
-// Keypress callback
-gboolean LightInspector::_onKeyPress(GtkWidget* w, 
-								 GdkEventKey* ev, 
-								 LightInspector* self)
-{
-	if (ev->keyval == GDK_Escape)
-		gtk_widget_hide(self->_widget);
-	return FALSE;
 }
 
 // Get keyvals from entity and insert into text entries
@@ -426,10 +449,15 @@ void LightInspector::setValuesOnEntity() {
 		else
 			_entity->setKeyValue(i->first, "0");
 	}
-	
-	// Hide the dialog
-	gtk_widget_hide(_widget);
 }
 
+
+gboolean LightInspector::onDelete(GtkWidget* widget, GdkEvent* event, LightInspector* self) {
+	// Toggle the visibility of the inspector window
+	self->toggle();
+	
+	// Don't propagate the delete event
+	return true;
+}
 
 } // namespace ui

@@ -18,6 +18,9 @@
 	<undo>
 		<queueSize value="64" />
 	</undo>
+	<lightInspector>
+		<window xPosition="100" yPosition="150" width="750" height="390" />
+	</lightInspector>
 	<ModelSelector>
 		<!-- Size of the model preview, as a fraction of the screen height. The
 		     preview is always square.
