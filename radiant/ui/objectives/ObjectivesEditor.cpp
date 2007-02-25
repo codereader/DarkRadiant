@@ -1,5 +1,6 @@
 #include "ObjectivesEditor.h"
 #include "ObjectiveEntityFinder.h"
+#include "ObjectiveKeyExtractor.h"
 
 #include "iscenegraph.h"
 #include "mainframe.h"
@@ -31,7 +32,8 @@ ObjectivesEditor::ObjectivesEditor()
   _objectiveEntityList(gtk_list_store_new(3, 
   										  G_TYPE_STRING, 		// display text
   										  G_TYPE_BOOLEAN,		// start active
-  										  G_TYPE_POINTER))		// Entity*
+  										  G_TYPE_POINTER)),		// Entity*
+  _objTreeStore(gtk_tree_store_new(2, G_TYPE_STRING, G_TYPE_STRING))
 {
 	// Window properties
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), MainFrame_getWindow());
@@ -115,7 +117,16 @@ GtkWidget* ObjectivesEditor::createEntitiesPanel() {
 
 // Create the main objective editing widgets
 GtkWidget* ObjectivesEditor::createObjectivesPanel() {
-	return gtkutil::ScrolledFrame(gtk_tree_view_new());
+	
+	// Tree view
+	GtkWidget* tv = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_objTreeStore));
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tv), FALSE);
+	
+	// Key and value text columns
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("", 0));
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("", 1));
+	
+	return gtkutil::ScrolledFrame(tv);
 }
 
 // Create the buttons panel
@@ -165,6 +176,17 @@ void ObjectivesEditor::displayDialog() {
 	_instance.show();
 }
 
+// Populate the objective tree
+void ObjectivesEditor::populateObjectiveTree(Entity* entity) {
+	
+	// Clear the tree store
+	gtk_tree_store_clear(_objTreeStore);
+	
+	// Use a visitor object to populate the tree store
+	ObjectiveKeyExtractor visitor(_objTreeStore);
+	entity->forEachKeyValue(visitor);
+}
+
 /* GTK CALLBACKS */
 
 void ObjectivesEditor::_onCancel(GtkWidget* w, ObjectivesEditor* self) {
@@ -200,7 +222,10 @@ void ObjectivesEditor::_onEntitySelectionChanged(GtkTreeSelection* sel,
 	// Get the Entity*
 	Entity* entity;
 	gtk_tree_model_get(model, &iter, 2, &entity, -1);
-	std::cout << "Got " << *entity << std::endl;
+	
+	// Populate the tree
+	assert(entity);
+	self->populateObjectiveTree(entity);
 }
 
 }

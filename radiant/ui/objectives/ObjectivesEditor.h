@@ -3,8 +3,12 @@
 
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkliststore.h>
+#include <gtk/gtktreestore.h>
 #include <gtk/gtkcellrenderertoggle.h>
 #include <gtk/gtktreeselection.h>
+
+/* FORWARD DECLS */
+class Entity;
 
 namespace ui
 {
@@ -19,6 +23,9 @@ class ObjectivesEditor
 
 	// List of target_addobjectives entities
 	GtkListStore* _objectiveEntityList;
+
+	// Tree of actual objectives associated with the selected entity
+	GtkTreeStore* _objTreeStore;
 
 private:
 
@@ -41,6 +48,9 @@ private:
 	
 	// Populate the dialog widgets with appropriate state from the map
 	void populateWidgets();
+	
+	// Populate the objective tree with values from the selected entity
+	void populateObjectiveTree(Entity* entity);
 	
 public:
 	
