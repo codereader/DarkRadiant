@@ -1,8 +1,9 @@
 #ifndef OBJECTIVEKEYEXTRACTOR_H_
 #define OBJECTIVEKEYEXTRACTOR_H_
 
-#include <boost/regex.hpp>
 #include <boost/lexical_cast.hpp>
+
+#include <map>
 
 namespace ui
 {
@@ -58,25 +59,23 @@ public:
 	 */
 	void visit(const std::string& key, const std::string& value) {
 		
-//		// Quick discard of any non-objective keys
-//		if (key.substr(0, 3) != "obj")
-//			return;
-//			
-//		// Use a boost::regex to extract the objective number.
-//		static const boost::regex e("obj(\\d+)_(.*)");
-//		boost::smatch result;
-//		if (!boost::regex_match(key, result, e))
-//			return;
-//		
-//		// The cmatch result should now contain the objective number and the
-//		// standard objective key.
-//		int num = boost::lexical_cast<int>(result[1]);
-//		std::string objKey = result[2];
-//		
-//		GtkTreeIter iter;
-//		gtk_tree_store_append(_store, &iter, getParent(num));
-//		gtk_tree_store_set(_store, &iter, 
-//						   0, objKey.c_str(), 1, value.c_str(), -1);
+		// Quick discard of any non-objective keys
+		if (key.substr(0, 3) != "obj")
+			return;
+			
+		// Extract the objective number, which should exist between key[3] and
+		// the leftmost underscore
+		int uPos = key.find("_");
+		std::string sObjNum = key.substr(3, uPos - 3);
+		int num = boost::lexical_cast<int>(sObjNum);
+
+		// Chop of the "obj1_" prefix to get the standard parameter name
+		std::string objParm = key.substr(uPos + 1);
+
+		GtkTreeIter iter;
+		gtk_tree_store_append(_store, &iter, getParent(num));
+		gtk_tree_store_set(_store, &iter, 
+						   0, objParm.c_str(), 1, value.c_str(), -1);
 	}
 };
 
