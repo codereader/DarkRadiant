@@ -195,6 +195,7 @@ void SurfaceInspector::toggle() {
 }
 
 void SurfaceInspector::keyChanged() {
+	
 	// Avoid callback loops
 	if (_callbackActive) { 
 		return;
@@ -202,8 +203,14 @@ void SurfaceInspector::keyChanged() {
 	
 	_callbackActive = true;
 	
+	// Disable this event to prevent double-firing
+	GlobalEventManager().findEvent("TogTexLock")->setEnabled(false);
+	
 	// Tell the registryconnector to import the values from the Registry
 	_connector.importValues();
+	
+	// Re-enable the event
+	GlobalEventManager().findEvent("TogTexLock")->setEnabled(true);
 	
 	_callbackActive = false;
 }
