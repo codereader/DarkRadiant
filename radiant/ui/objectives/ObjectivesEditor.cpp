@@ -28,7 +28,10 @@ namespace {
 // Constructor creates widgets
 ObjectivesEditor::ObjectivesEditor()
 : _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
-  _objectiveEntityList(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_BOOLEAN))
+  _objectiveEntityList(gtk_list_store_new(3, 
+  										  G_TYPE_STRING, 		// display text
+  										  G_TYPE_BOOLEAN,		// start active
+  										  G_TYPE_POINTER))		// Entity*
 {
 	// Window properties
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), MainFrame_getWindow());
@@ -79,6 +82,9 @@ GtkWidget* ObjectivesEditor::createEntitiesPanel() {
 	GtkWidget* tv = 
 		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_objectiveEntityList));
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tv), FALSE);
+	GtkTreeSelection* sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
+	g_signal_connect(G_OBJECT(sel), "changed",
+					 G_CALLBACK(_onEntitySelectionChanged), this);
 	
 	// Active-at-start column (checkbox)
 	GtkCellRenderer* startToggle = gtk_cell_renderer_toggle_new();
@@ -180,6 +186,21 @@ void ObjectivesEditor::_onStartActiveCellToggled(GtkCellRendererToggle* w,
 	gtk_tree_model_get(GTK_TREE_MODEL(self->_objectiveEntityList), &iter, 
 					   1, &current, -1);
 	gtk_list_store_set(self->_objectiveEntityList, &iter, 1, !current, -1);
+}
+
+// Callback for objective entity selection changed in list box
+void ObjectivesEditor::_onEntitySelectionChanged(GtkTreeSelection* sel,
+												 ObjectivesEditor* self)
+{
+	// Get the selection
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+	gtk_tree_selection_get_selected(sel, &model, &iter);
+	
+	// Get the Entity*
+	Entity* entity;
+	gtk_tree_model_get(model, &iter, 2, &entity, -1);
+	std::cout << "Got " << *entity << std::endl;
 }
 
 }

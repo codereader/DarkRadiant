@@ -38,14 +38,14 @@ public:
 	bool pre(scene::Node& node) const {
 		
 		// Get the entity and check the classname
-		Entity* e = Node_getEntity(node);
-		if (e != NULL 
-			&& e->getKeyValue("classname") == _className) 
+		Entity* ePtr = Node_getEntity(node);
+		if (ePtr != NULL 
+			&& ePtr->getKeyValue("classname") == _className) 
 		{
 			// Construct the display string
 			std::string sDisplay = 
-				"<b>" + e->getKeyValue("name") + "</b> at [ " 
-				+ e->getKeyValue("origin") + " ]";
+				"<b>" + ePtr->getKeyValue("name") + "</b> at [ " 
+				+ ePtr->getKeyValue("origin") + " ]";
 			
 			// Add the entity to the list
 			GtkTreeIter iter;
@@ -53,6 +53,7 @@ public:
 			gtk_list_store_set(_store, &iter, 
 							   0, sDisplay.c_str(),
 							   1, FALSE,
+							   2, ePtr,
 							   -1); 
 		}
 		
