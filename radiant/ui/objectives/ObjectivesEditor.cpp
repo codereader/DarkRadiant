@@ -123,8 +123,10 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tv), FALSE);
 	
 	// Key and value text columns
-	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("", 0));
-	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("", 1));
+	gtk_tree_view_append_column(
+		GTK_TREE_VIEW(tv), gtkutil::TextColumn("Key", 0));
+	gtk_tree_view_append_column(
+		GTK_TREE_VIEW(tv), gtkutil::TextColumn("Value", 1));
 	
 	return gtkutil::ScrolledFrame(tv);
 }
