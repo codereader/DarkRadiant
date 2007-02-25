@@ -103,6 +103,17 @@ public:
   virtual void detach(Observer& observer) = 0;
 };
 
+/**
+ * Stream insertion for Entity objects.
+ */
+inline std::ostream& operator<< (std::ostream& os, const Entity& entity) {
+	os << "Entity { name=\"" << entity.getKeyValue("name") << "\", "
+	   << "classname=\"" << entity.getKeyValue("classname") << "\", "
+	   << "origin=\"" << entity.getKeyValue("origin") << "\" }";
+	
+	return os;	
+}
+
 class EntityCopyingVisitor : public Entity::Visitor
 {
   Entity& m_entity;

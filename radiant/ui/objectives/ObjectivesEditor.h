@@ -4,6 +4,7 @@
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkliststore.h>
 #include <gtk/gtkcellrenderertoggle.h>
+#include <gtk/gtktreeselection.h>
 
 namespace ui
 {
@@ -33,6 +34,7 @@ private:
 	static void _onCancel(GtkWidget* w, ObjectivesEditor* self);
 	static void _onStartActiveCellToggled(
 		GtkCellRendererToggle*, const gchar* path, ObjectivesEditor* self);
+	static void _onEntitySelectionChanged(GtkTreeSelection*, ObjectivesEditor*);
 	
 	// Show dialog widgets
 	void show();
