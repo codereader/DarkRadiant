@@ -10,6 +10,7 @@
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"
+#include "gtkutil/IconTextColumn.h"
 
 #include <gtk/gtk.h>
 
@@ -33,7 +34,10 @@ ObjectivesEditor::ObjectivesEditor()
   										  G_TYPE_STRING, 		// display text
   										  G_TYPE_BOOLEAN,		// start active
   										  G_TYPE_POINTER)),		// Entity*
-  _objTreeStore(gtk_tree_store_new(2, G_TYPE_STRING, G_TYPE_STRING))
+  _objTreeStore(gtk_tree_store_new(3, 
+  								   G_TYPE_STRING,		// display key 
+  								   G_TYPE_STRING,		// display value
+  								   GDK_TYPE_PIXBUF))	// icon
 {
 	// Window properties
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), MainFrame_getWindow());
@@ -124,7 +128,7 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 	
 	// Key and value text columns
 	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(tv), gtkutil::TextColumn("Key", 0));
+		GTK_TREE_VIEW(tv), gtkutil::IconTextColumn("Key", 0, 2));
 	gtk_tree_view_append_column(
 		GTK_TREE_VIEW(tv), gtkutil::TextColumn("Value", 1));
 	
