@@ -28,7 +28,7 @@ namespace {
 // Constructor creates widgets
 ObjectivesEditor::ObjectivesEditor()
 : _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
-  _objectiveEntityList(gtk_list_store_new(1, G_TYPE_STRING))
+  _objectiveEntityList(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_BOOLEAN))
 {
 	// Window properties
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), MainFrame_getWindow());
@@ -79,7 +79,19 @@ GtkWidget* ObjectivesEditor::createEntitiesPanel() {
 	GtkWidget* tv = 
 		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_objectiveEntityList));
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tv), FALSE);
+	
+	// Active-at-start column (checkbox)
+	GtkCellRenderer* startToggle = gtk_cell_renderer_toggle_new();
+	GtkTreeViewColumn* startCol = 
+		gtk_tree_view_column_new_with_attributes(
+			"Start", startToggle, "active", 1, NULL);
+	g_signal_connect(G_OBJECT(startToggle), "toggled", 
+					 G_CALLBACK(_onStartActiveCellToggled), this);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), startCol);
+	
+	// Name column
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("", 0));
+	
 	gtk_box_pack_start(GTK_BOX(hbx), gtkutil::ScrolledFrame(tv), TRUE, TRUE, 0);
 					   
 	// Vbox for the buttons
@@ -151,6 +163,23 @@ void ObjectivesEditor::displayDialog() {
 
 void ObjectivesEditor::_onCancel(GtkWidget* w, ObjectivesEditor* self) {
 	gtk_widget_hide(self->_widget);
+}
+
+// Callback for "start active" cell toggle in entities list
+void ObjectivesEditor::_onStartActiveCellToggled(GtkCellRendererToggle* w,
+												 const gchar* path,
+												 ObjectivesEditor* self)
+{
+	// Get the relevant row
+	GtkTreeIter iter;
+	gtk_tree_model_get_iter_from_string(
+		GTK_TREE_MODEL(self->_objectiveEntityList), &iter, path);
+	
+	// Toggle the state of the column
+	gboolean current;
+	gtk_tree_model_get(GTK_TREE_MODEL(self->_objectiveEntityList), &iter, 
+					   1, &current, -1);
+	gtk_list_store_set(self->_objectiveEntityList, &iter, 1, !current, -1);
 }
 
 }

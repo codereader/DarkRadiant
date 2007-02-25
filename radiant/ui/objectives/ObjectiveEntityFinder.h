@@ -50,7 +50,10 @@ public:
 			// Add the entity to the list
 			GtkTreeIter iter;
 			gtk_list_store_append(_store, &iter);
-			gtk_list_store_set(_store, &iter, 0, sDisplay.c_str(), -1); 
+			gtk_list_store_set(_store, &iter, 
+							   0, sDisplay.c_str(),
+							   1, FALSE,
+							   -1); 
 		}
 		
 		return false;
