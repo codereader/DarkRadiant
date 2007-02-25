@@ -191,15 +191,24 @@ public:
                     
                 case STAR:
                 
-                    // The star may indicate the end of a delimited comment. This state will
-                    // only be entered if we are inside a delimited comment.
+                    // The star may indicate the end of a delimited comment. 
+                    // This state will only be entered if we are inside a 
+                    // delimited comment.
                     
                     if (*next == '/') {
+                    	// End of comment
                         _state = SEARCHING;
                         continue;
                     }
+                    else if (*next == '*') {
+                    	// Another star, remain in the STAR state in case we
+                    	// have a "**/" end of comment.
+                    	_state = STAR;
+                    	continue;
+                    }
                     else {
-                    	_state = COMMENT_DELIM; // no end of comment, revert back to previous state
+                    	// No end of comment
+                    	_state = COMMENT_DELIM;
                         continue; 
                     }
 
