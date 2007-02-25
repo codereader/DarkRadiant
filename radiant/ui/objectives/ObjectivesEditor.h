@@ -3,6 +3,7 @@
 
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkliststore.h>
+#include <gtk/gtkcellrenderertoggle.h>
 
 namespace ui
 {
@@ -30,6 +31,8 @@ private:
 	
 	// GTK callbacks
 	static void _onCancel(GtkWidget* w, ObjectivesEditor* self);
+	static void _onStartActiveCellToggled(
+		GtkCellRendererToggle*, const gchar* path, ObjectivesEditor* self);
 	
 	// Show dialog widgets
 	void show();
