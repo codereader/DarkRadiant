@@ -3,6 +3,7 @@
 #include "qerplugin.h"
 #include "mainframe.h"
 #include "gtkutil/filechooser.h"
+#include "os/path.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -24,11 +25,12 @@ MapFileManager& MapFileManager::getInstance() {
 std::string MapFileManager::selectFile(bool open, const std::string& title) {
 
 	// Display a file chooser dialog to get a new path
-	std::string filePath = file_dialog(GTK_WIDGET(MainFrame_getWindow()), 
-									   open, 
-									   title, 
-									   _lastDir, 
-									   "map");
+	std::string filePath = 
+		os::standardPath(file_dialog(GTK_WIDGET(MainFrame_getWindow()), 
+								     open, 
+									 title, 
+									 _lastDir, 
+									 "map"));
 
 	// If a filename was chosen, update the last path
 	if (!filePath.empty())
