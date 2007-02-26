@@ -282,12 +282,13 @@ public:
   {
     renderer.PushState();
 
-    Pivot2World_worldSpace(m_localToWorld, localToWorld, volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
+	// greebo: Commented this out to avoid the point from being moved along with the view.
+    //Pivot2World_worldSpace(m_localToWorld, localToWorld, volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
 
     renderer.Highlight(Renderer::ePrimitive, false);
     renderer.SetState(getShader(), Renderer::eWireframeOnly);
     renderer.SetState(getShader(), Renderer::eFullMaterials);
-    renderer.addRenderable(*this, m_localToWorld);
+    renderer.addRenderable(*this, localToWorld);
 
     renderer.PopState();
   }

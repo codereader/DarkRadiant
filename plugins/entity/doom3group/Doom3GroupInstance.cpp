@@ -63,8 +63,10 @@ void Doom3GroupInstance::testSelect(Selector& selector, SelectionTest& test) {
 	test.BeginMesh(localToWorld());
 	SelectionIntersection best;
 
+	// Pass the selection test to the Doom3Group class
 	m_contained.testSelect(selector, test, best);
 
+	// If the selectionIntersection is non-empty, add the selectable to the SelectionPool
 	if (best.valid()) {
 		Selector_add(selector, getSelectable(), best);
 	}

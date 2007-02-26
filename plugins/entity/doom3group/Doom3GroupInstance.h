@@ -54,6 +54,10 @@ public:
 	void renderWireframe(Renderer& renderer, const VolumeTest& volume) const;
 	void renderComponents(Renderer& renderer, const VolumeTest& volume) const;
 
+	/** greebo: Tests the contained Doom3Group for selection. 
+	 * 
+	 * Note: This can be successful in vertex mode only, func_statics do not use this method.
+	 */
 	void testSelect(Selector& selector, SelectionTest& test);
 
 	bool isSelectedComponents() const;
