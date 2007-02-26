@@ -7,6 +7,7 @@
 #include "signal/signal.h"
 #include "SelectionCounter.h"
 #include "Manipulators.h"
+#include "Selectors.h"
 
 /* greebo: This can be tricky to understand (and I don't know if I do :D), but I'll try: 
  * 
@@ -87,7 +88,7 @@ private:
 	mutable bool _pivotChanged;
 	bool _pivotMoving;
 
-	void Scene_TestSelect(Selector& selector, SelectionTest& test, const View& view, SelectionSystem::EMode mode, SelectionSystem::EComponentMode componentMode);
+	void Scene_TestSelect(SelectablesList& targetList, SelectionTest& test, const View& view, SelectionSystem::EMode mode, SelectionSystem::EComponentMode componentMode);
 	bool nothingSelected() const;
 
 public:

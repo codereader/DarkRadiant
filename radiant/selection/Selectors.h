@@ -2,9 +2,15 @@
 #define SELECTOR_H_
 
 #include <map>
+#include <set>
 #include "selectable.h"
 
 typedef std::multimap<SelectionIntersection, Selectable*> SelectableSortedSet;
+
+// A simple set that gets filled after the SelectableSortedSet is populated.
+// greebo: I used this to merge two SelectionPools (entities and primitives)
+// 		   with a preferred sorting (see RadiantSelectionSystem::Scene_TestSelect())
+typedef std::list<Selectable*> SelectablesList;
 
 /* greebo: The SelectionPool contains all the instances that come into question for a selection operation.
  * It can be seen as some kind of stack that can be traversed through  

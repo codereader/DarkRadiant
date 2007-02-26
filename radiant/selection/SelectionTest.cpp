@@ -226,12 +226,12 @@ void testselect_entity_visible::post(const scene::Path& path, scene::Instance& i
 
 bool testselect_primitive_visible::pre(const scene::Path& path, scene::Instance& instance) const {
     Selectable* selectable = Instance_getSelectable(instance);
-    if(selectable != 0) {
+    if(selectable != NULL && !Node_isEntity(path.top())) {
       _selector.pushSelectable(*selectable);
     }
 
     SelectionTestable* selectionTestable = Instance_getSelectionTestable(instance);
-    if(selectionTestable) {
+    if(selectionTestable && !Node_isEntity(path.top())) {
       selectionTestable->testSelect(_selector, _test);
     }
 
@@ -240,7 +240,7 @@ bool testselect_primitive_visible::pre(const scene::Path& path, scene::Instance&
 
 void testselect_primitive_visible::post(const scene::Path& path, scene::Instance& instance) const {
     Selectable* selectable = Instance_getSelectable(instance);
-    if(selectable != 0)
+    if(selectable != NULL && !Node_isEntity(path.top()))
     {
       _selector.popSelectable();
     }
