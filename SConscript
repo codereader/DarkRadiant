@@ -269,7 +269,8 @@ entity_src = [
 	'light/Renderables.cpp',
 	'light/LightInstance.cpp',
 	'light/LightNode.cpp',
-	'light/LightSettings.cpp'
+	'light/LightSettings.cpp',
+	'doom3group/Doom3Group.cpp'
 ]
 entity_lst = build_list('plugins/entity', entity_src)
 entity_env.Append(LIBS = ['math', 'xmlutil'])
