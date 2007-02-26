@@ -99,17 +99,48 @@ void RadiantSelectionSystem::notifyObservers(scene::Instance& instance) {
 	}
 }
 
-void RadiantSelectionSystem::Scene_TestSelect(Selector& selector, SelectionTest& test, const View& view, SelectionSystem::EMode mode, SelectionSystem::EComponentMode componentMode) {
+void RadiantSelectionSystem::Scene_TestSelect(SelectablesList& targetList, SelectionTest& test, const View& view, SelectionSystem::EMode mode, SelectionSystem::EComponentMode componentMode) {
+	// The (temporary) storage pool
+	SelectionPool selector;
+	SelectionPool sel2;
 	switch(mode) {
 		case eEntity: {
 			Scene_forEachVisible(GlobalSceneGraph(), view, testselect_entity_visible(selector, test));
+			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); i++) {
+				targetList.push_back(i->second);
+			}
 		}
 		break;
 		case ePrimitive:
-			Scene_TestSelect_Primitive(selector, test, view);
+			// First, obtain all the selectable entities
+			Scene_forEachVisible(GlobalSceneGraph(), view, testselect_entity_visible(selector, test));
+		
+			// Add them to the target vector
+			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); i++) {
+				targetList.push_back(i->second);
+			}
+			
+			// Now, retrieve all the selectable primitives
+			Scene_TestSelect_Primitive(sel2, test, view);
+			
+			// Add them to the vector as well (after the entities)
+			for (SelectionPool::iterator i = sel2.begin(); i != sel2.end(); i++) {
+				// Check for duplicates
+				SelectablesList::iterator j;
+				for (j = targetList.begin(); j != targetList.end(); j++) {
+					if (*j == i->second) break;
+				}
+				// Insert if not yet in the list
+				if (j == targetList.end()) {
+					targetList.push_back(i->second);
+				}
+			}
 		break;
 		case eComponent:
 			Scene_TestSelect_Component_Selected(selector, test, view, componentMode);
+			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); i++) {
+				targetList.push_back(i->second);
+			}
 		break;
 	} // switch
 }
@@ -391,28 +422,31 @@ void RadiantSelectionSystem::SelectPoint(const View& view,
 
 		// Create a new SelectionPool instance and fill it with possible candidates
 		SelectionVolume volume(scissored);
-		// The possible candidates are stored in the SelectionPool
-		SelectionPool selector;
+		// The possible candidates are stored in the SelectablesSet
+		SelectablesList candidates;
 		if (face) {
+			SelectionPool selector;
 			Scene_TestSelect_Component(selector, volume, scissored, eFace);
+			
+			// Load them all into the vector
+			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); i++) {
+				candidates.push_back(i->second);
+			}
 		}
 		else {
-			Scene_TestSelect(selector, volume, scissored, Mode(), ComponentMode());
+			Scene_TestSelect(candidates, volume, scissored, Mode(), ComponentMode());
 		}
 		
 		// Was the selection test successful (have we found anything to select)?
-		if (!selector.failed()) {
+		if (candidates.size() > 0) {
 			// Yes, now determine how we should interpret the click
 			switch (modifier) {
 				// If we are in toggle mode (Shift-Left-Click by default), just toggle the
 				// selection of the "topmost" item
 				case SelectionSystem::eToggle: {
-					SelectableSortedSet::iterator best = selector.begin();
+					Selectable* best = *candidates.begin();
 					// toggle selection of the object with least depth (=first in the list)
-					if ((*best).second->isSelected())
-						(*best).second->setSelected(false);
-					else
-						(*best).second->setSelected(true);
+					best->setSelected(!best->isSelected());
 				}
 				break;
 				// greebo: eReplace mode gets active as soon as the user holds the replace modifiers down
@@ -421,7 +455,7 @@ void RadiantSelectionSystem::SelectPoint(const View& view,
 				// if cycle mode not enabled, enable it
 				case SelectionSystem::eReplace: {
 					// select closest (=first in the list)
-					(*selector.begin()).second->setSelected(true);
+					(*candidates.begin())->setSelected(true);
 				}
 				break;
 				// select the next object in the list from the one already selected
@@ -430,18 +464,19 @@ void RadiantSelectionSystem::SelectPoint(const View& view,
 				// Note: The mode is set in SelectObserver::testSelect()
 				case SelectionSystem::eCycle: {
 					// Cycle through the selection pool and activate the item right after the currently selected
-					SelectionPool::iterator i = selector.begin();
-					while (i != selector.end()) {
-						if ((*i).second->isSelected()) {
+					SelectablesList::iterator i = candidates.begin();
+					
+					while (i != candidates.end()) {
+						if ((*i)->isSelected()) {
 							// unselect the currently selected one
-							(*i).second->setSelected(false);
+							(*i)->setSelected(false);
 							// check if there is a "next" item in the list, if not: select the first item 
 							++i;
-							if (i != selector.end()) {
-								i->second->setSelected(true);
+							if (i != candidates.end()) {
+								(*i)->setSelected(true);
 							}
 							else {
-								selector.begin()->second->setSelected(true);
+								(*candidates.begin())->setSelected(true);
 							}
 							break;
 						}
@@ -486,16 +521,24 @@ void RadiantSelectionSystem::SelectArea(const View& view,
 		SelectionVolume volume(scissored);
 		// The posssible candidates go here
 		SelectionPool pool;
+		
+		SelectablesList candidates;
+		
 		if (face) {
 			Scene_TestSelect_Component(pool, volume, scissored, eFace);
+			
+			// Load them all into the vector
+			for (SelectionPool::iterator i = pool.begin(); i != pool.end(); i++) {
+				candidates.push_back(i->second);
+			}
 		}
 		else {
-			Scene_TestSelect(pool, volume, scissored, Mode(), ComponentMode());
+			Scene_TestSelect(candidates, volume, scissored, Mode(), ComponentMode());
 		}
 		
 		// Cycle through the selection pool and toggle the candidates, but only if we are in toggle mode
-		for (SelectionPool::iterator i = pool.begin(); i != pool.end(); ++i) {
-			(*i).second->setSelected(!(modifier == SelectionSystem::eToggle && (*i).second->isSelected()));
+		for (SelectablesList::iterator i = candidates.begin(); i != candidates.end(); i++) {
+			(*i)->setSelected(!(modifier == SelectionSystem::eToggle && (*i)->isSelected()));
 		}
 	}
 }
