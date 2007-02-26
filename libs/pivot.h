@@ -254,6 +254,21 @@ public:
     m_vertices.push_back(PointVertex(Vertex3f(0, 0, 16), g_colour_z));
   }
 
+	/** greebo: Updates the renderable vertex array to the given pivot point 
+	 */
+	void setPivot(const Vector3& pivot) {
+		m_vertices.clear();
+		
+		m_vertices.push_back(PointVertex(pivot, g_colour_x));
+		m_vertices.push_back(PointVertex(pivot + Vector3(16,0,0), g_colour_x));
+
+		m_vertices.push_back(PointVertex(pivot, g_colour_y));
+		m_vertices.push_back(PointVertex(pivot + Vector3(0, 16, 0), g_colour_y));
+
+		m_vertices.push_back(PointVertex(pivot, g_colour_z));
+		m_vertices.push_back(PointVertex(pivot + Vector3(0, 0, 16), g_colour_z));
+	}
+
   void render(RenderStateFlags state) const
   {
     if(m_vertices.size() == 0) return;
