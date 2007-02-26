@@ -57,204 +57,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "entity.h"
 
-#include "doom3group/Doom3Group.h"
-
-class ControlPointAddBounds {
-	AABB& m_bounds;
-public:
-	ControlPointAddBounds(AABB& bounds) : m_bounds(bounds) {}
-	void operator()(const Vector3& point) const {
-		m_bounds.includePoint(point);
-	}
-};
-
-class Doom3GroupInstance :
-  public TargetableInstance,
-  public TransformModifier,
-  public Renderable,
-  public SelectionTestable,
-  public ComponentSelectionTestable,
-  public ComponentEditable,
-  public ComponentSnappable
-{
-  class TypeCasts
-  {
-    InstanceTypeCastTable m_casts;
-  public:
-    TypeCasts()
-    {
-      m_casts = TargetableInstance::StaticTypeCasts::instance().get();
-      InstanceContainedCast<Doom3GroupInstance, Bounded>::install(m_casts);
-      InstanceStaticCast<Doom3GroupInstance, Renderable>::install(m_casts);
-      InstanceStaticCast<Doom3GroupInstance, SelectionTestable>::install(m_casts);
-      InstanceStaticCast<Doom3GroupInstance, ComponentSelectionTestable>::install(m_casts);
-      InstanceStaticCast<Doom3GroupInstance, ComponentEditable>::install(m_casts);
-      InstanceStaticCast<Doom3GroupInstance, ComponentSnappable>::install(m_casts);
-      InstanceStaticCast<Doom3GroupInstance, Transformable>::install(m_casts);
-      InstanceIdentityCast<Doom3GroupInstance>::install(m_casts);
-    }
-    InstanceTypeCastTable& get()
-    {
-      return m_casts;
-    }
-  };
-
-  entity::Doom3Group& m_contained;
-  CurveEdit m_curveNURBS;
-  CurveEdit m_curveCatmullRom;
-  mutable AABB m_aabb_component;
-public:
-
-  typedef LazyStatic<TypeCasts> StaticTypeCasts;
-
-
-  Bounded& get(NullType<Bounded>)
-  {
-    return m_contained;
-  }
-
-  STRING_CONSTANT(Name, "Doom3GroupInstance");
-
-  Doom3GroupInstance(const scene::Path& path, scene::Instance* parent, entity::Doom3Group& contained) :
-    TargetableInstance(path, parent, this, StaticTypeCasts::instance().get(), contained.getEntity(), *this),
-    TransformModifier(entity::Doom3Group::TransformChangedCaller(contained), ApplyTransformCaller(*this)),
-    m_contained(contained),
-    m_curveNURBS(m_contained.m_curveNURBS.m_controlPointsTransformed, SelectionChangedComponentCaller(*this)),
-    m_curveCatmullRom(m_contained.m_curveCatmullRom.m_controlPointsTransformed, SelectionChangedComponentCaller(*this))
-  {
-    m_contained.instanceAttach(Instance::path());
-    m_contained.m_curveNURBSChanged = m_contained.m_curveNURBS.connect(CurveEdit::CurveChangedCaller(m_curveNURBS));
-    m_contained.m_curveCatmullRomChanged = m_contained.m_curveCatmullRom.connect(CurveEdit::CurveChangedCaller(m_curveCatmullRom));
-
-    StaticRenderableConnectionLines::instance().attach(*this);
-  }
-  ~Doom3GroupInstance()
-  {
-    StaticRenderableConnectionLines::instance().detach(*this);
-
-    m_contained.m_curveCatmullRom.disconnect(m_contained.m_curveCatmullRomChanged);
-    m_contained.m_curveNURBS.disconnect(m_contained.m_curveNURBSChanged);
-    m_contained.instanceDetach(Instance::path());
-  }
-  void renderSolid(Renderer& renderer, const VolumeTest& volume) const
-  {
-    m_contained.renderSolid(renderer, volume, Instance::localToWorld(), getSelectable().isSelected());
-
-    m_curveNURBS.renderComponentsSelected(renderer, volume, localToWorld());
-    m_curveCatmullRom.renderComponentsSelected(renderer, volume, localToWorld());
-  }
-  void renderWireframe(Renderer& renderer, const VolumeTest& volume) const
-  {
-    m_contained.renderWireframe(renderer, volume, Instance::localToWorld(), getSelectable().isSelected());
-
-    m_curveNURBS.renderComponentsSelected(renderer, volume, localToWorld());
-    m_curveCatmullRom.renderComponentsSelected(renderer, volume, localToWorld());
-  }
-  void renderComponents(Renderer& renderer, const VolumeTest& volume) const
-  {
-    if(GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex)
-    {
-      m_curveNURBS.renderComponents(renderer, volume, localToWorld());
-      m_curveCatmullRom.renderComponents(renderer, volume, localToWorld());
-    }
-  }
-
-  void testSelect(Selector& selector, SelectionTest& test)
-  {
-    test.BeginMesh(localToWorld());
-    SelectionIntersection best;
-
-    m_contained.testSelect(selector, test, best);
-
-    if(best.valid())
-    {
-      Selector_add(selector, getSelectable(), best);
-    }
-  }
-
-  bool isSelectedComponents() const
-  {
-    return m_curveNURBS.isSelected() || m_curveCatmullRom.isSelected();
-  }
-  void setSelectedComponents(bool selected, SelectionSystem::EComponentMode mode)
-  {
-    if(mode == SelectionSystem::eVertex)
-    {
-      m_curveNURBS.setSelected(selected);
-      m_curveCatmullRom.setSelected(selected);
-    }
-  }
-  void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode)
-  {
-    if(mode == SelectionSystem::eVertex)
-    {
-      test.BeginMesh(localToWorld());
-      m_curveNURBS.testSelect(selector, test);
-      m_curveCatmullRom.testSelect(selector, test);
-    }
-  }
-
-  void transformComponents(const Matrix4& matrix)
-  {
-    if(m_curveNURBS.isSelected())
-    {
-      m_curveNURBS.transform(matrix);
-    }
-    if(m_curveCatmullRom.isSelected())
-    {
-      m_curveCatmullRom.transform(matrix);
-    }
-  }
-
-  const AABB& getSelectedComponentsBounds() const
-  {
-    m_aabb_component = AABB();
-    m_curveNURBS.forEachSelected(ControlPointAddBounds(m_aabb_component));
-    m_curveCatmullRom.forEachSelected(ControlPointAddBounds(m_aabb_component));
-    return m_aabb_component;
-  }
-
-  void snapComponents(float snap)
-  {
-    if(m_curveNURBS.isSelected())
-    {
-      m_curveNURBS.snapto(snap);
-      m_curveNURBS.write(curve_Nurbs, m_contained.getEntity());
-    }
-    if(m_curveCatmullRom.isSelected())
-    {
-      m_curveCatmullRom.snapto(snap);
-      m_curveCatmullRom.write(curve_CatmullRomSpline, m_contained.getEntity());
-    }
-  }
-
-  void evaluateTransform()
-  {
-    if(getType() == TRANSFORM_PRIMITIVE)
-    {
-      m_contained.translate(getTranslation());
-      m_contained.rotate(getRotation());
-    }
-    else
-    {
-      transformComponents(calculateTransform());
-    }
-  }
-  void applyTransform()
-  {
-    m_contained.revertTransform();
-    evaluateTransform();
-    m_contained.freezeTransform();
-  }
-  typedef MemberCaller<Doom3GroupInstance, &Doom3GroupInstance::applyTransform> ApplyTransformCaller;
-
-  void selectionChangedComponent(const Selectable& selectable)
-  {
-    GlobalSelectionSystem().getObserver(SelectionSystem::eComponent)(selectable);
-    GlobalSelectionSystem().onComponentSelection(*this, selectable);
-  }
-  typedef MemberCaller1<Doom3GroupInstance, const Selectable&, &Doom3GroupInstance::selectionChangedComponent> SelectionChangedComponentCaller;
-};
+#include "doom3group/Doom3GroupInstance.h"
 
 class Doom3GroupNode :
   public scene::Node::Symbiot,
@@ -332,7 +135,13 @@ public:
 
   Doom3GroupNode(IEntityClassPtr eclass) :
     m_node(this, this, StaticTypeCasts::instance().get()),
-      m_contained(eclass, m_node, InstanceSet::TransformChangedCaller(m_instances), InstanceSet::BoundsChangedCaller(m_instances), InstanceSetEvaluateTransform<Doom3GroupInstance>::Caller(m_instances))
+      m_contained(
+      	eclass, 
+      	m_node, 
+      	InstanceSet::TransformChangedCaller(m_instances), 
+      	InstanceSet::BoundsChangedCaller(m_instances), 
+      	InstanceSetEvaluateTransform<entity::Doom3GroupInstance>::Caller(m_instances)
+      )
   {
     construct();
   }
@@ -342,7 +151,13 @@ public:
     scene::Cloneable(other),
     scene::Traversable::Observer(other),
     m_node(this, this, StaticTypeCasts::instance().get()),
-    m_contained(other.m_contained, m_node, InstanceSet::TransformChangedCaller(m_instances), InstanceSet::BoundsChangedCaller(m_instances), InstanceSetEvaluateTransform<Doom3GroupInstance>::Caller(m_instances))
+    m_contained(
+    	other.m_contained, 
+    	m_node, 
+    	InstanceSet::TransformChangedCaller(m_instances), 
+    	InstanceSet::BoundsChangedCaller(m_instances), 
+    	InstanceSetEvaluateTransform<entity::Doom3GroupInstance>::Caller(m_instances)
+    )
   {
     construct();
   }
@@ -376,7 +191,7 @@ public:
 
   scene::Instance* create(const scene::Path& path, scene::Instance* parent)
   {
-    return new Doom3GroupInstance(path, parent, m_contained);
+    return new entity::Doom3GroupInstance(path, parent, m_contained);
   }
   void forEachInstance(const scene::Instantiable::Visitor& visitor)
   {
