@@ -49,8 +49,7 @@ LightInspector::LightInspector() :
 								-1);
     
     // Widget must hide not destroy when closed
-    g_signal_connect(G_OBJECT(_widget), "delete-event", 
-    				 G_CALLBACK(onDelete), NULL);
+    g_signal_connect(G_OBJECT(_widget), "delete-event", G_CALLBACK(onDelete), this);
 
 	// Pack in widgets. 
 
@@ -252,7 +251,6 @@ void LightInspector::update() {
 
 // Toggle this dialog
 void LightInspector::toggle() {
-
 	// Pass the call to the utility methods that save/restore the window position
 	if (GTK_WIDGET_VISIBLE(_widget)) {
 		gtkutil::TransientWindow::minimise(_widget);
