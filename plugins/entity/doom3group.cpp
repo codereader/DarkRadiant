@@ -259,6 +259,7 @@ private:
   {
     m_origin = m_originKey.m_origin;
     updateTransform();
+    m_renderOrigin.setPivot(m_origin);
   }
   typedef MemberCaller<Doom3Group, &Doom3Group::originChanged> OriginChangedCaller;
 
@@ -394,7 +395,7 @@ public:
 
   void renderSolid(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const
   {
-    if(isModel() && selected)
+    if(selected)
     {
       m_renderOrigin.render(renderer, volume, localToWorld);
     }
