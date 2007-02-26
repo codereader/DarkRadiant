@@ -1154,7 +1154,7 @@ void ToolChanged() {
 	GlobalEventManager().setToggled("ToggleClipper", GlobalClipper().clipMode());
 	GlobalEventManager().setToggled("MouseTranslate", GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eTranslate);
 	GlobalEventManager().setToggled("MouseRotate", GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eRotate);
-	GlobalEventManager().setToggled("MouseScale", GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eScale);
+	//GlobalEventManager().setToggled("MouseScale", GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eScale);
 	GlobalEventManager().setToggled("MouseDrag", GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eDrag);
 }
 
@@ -1229,7 +1229,7 @@ const char* const c_ScaleMode_status = "Scale Tool: scale objects and components
 
 void ScaleMode()
 {
-  if(g_currentToolMode == ScaleMode && g_defaultToolMode != ScaleMode)
+  /*if(g_currentToolMode == ScaleMode && g_defaultToolMode != ScaleMode)
   {
     g_defaultToolMode();
   }
@@ -1244,7 +1244,7 @@ void ScaleMode()
     GlobalSelectionSystem().SetManipulatorMode(SelectionSystem::eScale);
     ToolChanged();
     ModeChangeNotify();
-  }
+  }*/
 }
 
 
@@ -2837,7 +2837,7 @@ void MainFrame_Construct()
 	
 	GlobalEventManager().addToggle("MouseTranslate", FreeCaller<TranslateMode>());
 	GlobalEventManager().addToggle("MouseRotate", FreeCaller<RotateMode>());
-	GlobalEventManager().addToggle("MouseScale", FreeCaller<ScaleMode>());
+	//GlobalEventManager().addToggle("MouseScale", FreeCaller<ScaleMode>());
 	GlobalEventManager().addToggle("MouseDrag", FreeCaller<DragMode>());
 	
 	GlobalEventManager().addCommand("CSGSubtract", FreeCaller<CSG_Subtract>());

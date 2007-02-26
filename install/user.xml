@@ -140,7 +140,6 @@
 		<separator/>
 			<toggletoolbutton name="translate" action="MouseTranslate" tooltip="Translate" icon="select_mousetranslate.png"/>
 			<toggletoolbutton name="rotate" action="MouseRotate" tooltip="Rotate" icon="select_mouserotate.png"/>
-			<toggletoolbutton name="scale" action="MouseScale" tooltip="Scale" icon="select_mousescale.png"/>
 			<toggletoolbutton name="resize" action="MouseDrag" tooltip="Resize" icon="select_mouseresize.png"/>
 			<toggletoolbutton name="clipper" action="ToggleClipper" tooltip="Clipper" icon="view_clipper.png"/>
 		<separator/>

@@ -1,3 +1,8 @@
+26/02/2007
+greebo
+- Rewrote Patch Inspector
+- Disabled Scale Manipulator
+
 23/02/2007
 greebo
 - Added "Normalise Texture" command that translates textures towards the origin 
