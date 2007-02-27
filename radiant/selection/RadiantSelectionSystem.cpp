@@ -345,8 +345,11 @@ bool RadiantSelectionSystem::SelectManipulator(const View& view, const float dev
 		// Unselect any currently selected manipulators to be sure
 		_manipulator->setSelected(false);
 
+		globalOutputStream() << "Before testselecting manipulator...\n";
+
 		// Test, if the current manipulator can be selected
 		if (!nothingSelected() || (ManipulatorMode() == eDrag && Mode() == eComponent)) {
+			globalOutputStream() << "Constructing selectiontest...\n";
 			View scissored(view);
 			ConstructSelectionTest(scissored, SelectionBoxForPoint(device_point, device_epsilon));
 			
@@ -359,6 +362,10 @@ bool RadiantSelectionSystem::SelectManipulator(const View& view, const float dev
 		
 		// This is true, if a manipulator could be selected
 		_pivotMoving = _manipulator->isSelected();
+		
+		if (_pivotMoving) {
+			globalOutputStream() << "Successful...\n";
+		}
 		
 		// is a manipulator selected / the pivot moving?
 		if (_pivotMoving) {
