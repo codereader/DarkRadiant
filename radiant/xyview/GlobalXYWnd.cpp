@@ -177,6 +177,7 @@ void XYWndManager::constructPreferencePage(PreferenceGroup& group) {
 	page->appendCheckBox("", "Show Axes", RKEY_SHOW_AXES);
 	page->appendCheckBox("", "Show Window Outline", RKEY_SHOW_OUTLINE);
 	page->appendCheckBox("", "Show Workzone", RKEY_SHOW_WORKZONE);
+	page->appendCheckBox("", "Translate Manipulator always constrained to Axis", RKEY_TRANSLATE_CONSTRAINED);
 }
 
 // Load/Reload the values from the registry
