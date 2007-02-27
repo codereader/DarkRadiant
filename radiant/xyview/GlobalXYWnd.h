@@ -25,6 +25,7 @@
 		const std::string RKEY_SHOW_AXES = RKEY_XYVIEW_ROOT + "/showAxes";
 		const std::string RKEY_SHOW_WORKZONE = RKEY_XYVIEW_ROOT + "/showWorkzone";
 		const std::string RKEY_DEFAULT_BLOCKSIZE = "user/ui/xyview/defaultBlockSize";
+		const std::string RKEY_TRANSLATE_CONSTRAINED = "user/ui/xyview/translateConstrained";
 		
 		typedef std::list<XYWnd*> XYWndList;
 	}
