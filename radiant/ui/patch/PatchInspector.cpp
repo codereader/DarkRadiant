@@ -10,6 +10,7 @@
 #include "gtkutil/TransientWindow.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
+#include "gtkutil/ControlButton.h"
 
 #include "mainframe.h"
 #include "patch/Patch.h"
@@ -27,12 +28,18 @@ namespace ui {
 		const std::string LABEL_FIXED = "Fixed Subdivisions";
 		const std::string LABEL_SUBDIVISION_X = "Horizontal:";
 		const std::string LABEL_SUBDIVISION_Y = "Vertical:";
+		const char* LABEL_STEP = "Step:";
 		
 		const float TESS_MIN = 1.0f;
 		const float TESS_MAX = 32.0f;
 		
 		const std::string RKEY_ROOT = "user/ui/patch/patchInspector/";
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
+		const std::string RKEY_X_STEP = RKEY_ROOT + "xCoordStep";
+		const std::string RKEY_Y_STEP = RKEY_ROOT + "yCoordStep";
+		const std::string RKEY_Z_STEP = RKEY_ROOT + "zCoordStep";
+		const std::string RKEY_S_STEP = RKEY_ROOT + "sCoordStep";
+		const std::string RKEY_T_STEP = RKEY_ROOT + "tCoordStep";
 	}
 
 PatchInspector::PatchInspector() :
@@ -148,11 +155,31 @@ void PatchInspector::populateWindow() {
 	GtkWidget* coordAlignment = gtkutil::LeftAlignment(GTK_WIDGET(_coordsTable), 18, 1.0); 
 	gtk_box_pack_start(GTK_BOX(dialogVBox), GTK_WIDGET(coordAlignment), false, false, 0);
     
-    _coords["x"] = createCoordRow("X:", 0);
-    _coords["y"] = createCoordRow("Y:", 1);
-    _coords["z"] = createCoordRow("Z:", 2);
-    _coords["s"] = createCoordRow("S:", 3);
-    _coords["t"] = createCoordRow("T:", 4);
+    _coords["x"] = createCoordRow("X:", _coordsTable, 0);
+    _coords["y"] = createCoordRow("Y:", _coordsTable, 1);
+    _coords["z"] = createCoordRow("Z:", _coordsTable, 2);
+    _coords["s"] = createCoordRow("S:", _coordsTable, 3);
+    _coords["t"] = createCoordRow("T:", _coordsTable, 4);
+    
+    // Connect the step values to the according registry values
+	_connector.connectGtkObject(GTK_OBJECT(_coords["x"].step), RKEY_X_STEP);
+	_connector.connectGtkObject(GTK_OBJECT(_coords["y"].step), RKEY_Y_STEP);
+	_connector.connectGtkObject(GTK_OBJECT(_coords["z"].step), RKEY_Z_STEP);
+	_connector.connectGtkObject(GTK_OBJECT(_coords["s"].step), RKEY_S_STEP);
+	_connector.connectGtkObject(GTK_OBJECT(_coords["t"].step), RKEY_T_STEP);
+    
+    // Connect all the arrow buttons
+    for (CoordMap::iterator i = _coords.begin(); i != _coords.end(); i++) {
+    	CoordRow& row = i->second;
+    	
+    	// Cast the ControlButtons onto GtkWidgets
+    	GtkWidget* smallerButton = *row.smaller; 
+    	GtkWidget* largerButton = *row.larger;
+    	
+    	// Pass a CoordRow pointer to the callback, that's all it will need to update
+    	g_signal_connect(G_OBJECT(smallerButton), "clicked", G_CALLBACK(onClickSmaller), &row);
+    	g_signal_connect(G_OBJECT(largerButton), "clicked", G_CALLBACK(onClickLarger), &row);
+    }
     
     // Create the title label (bold font)
 	_tesselation.title = gtkutil::LeftAlignedLabel(
@@ -199,24 +226,55 @@ void PatchInspector::populateWindow() {
 }
 
 PatchInspector::CoordRow PatchInspector::createCoordRow(
-	const std::string& label, int tableRow) 
+	const std::string& label, GtkTable* table, int row) 
 {
-	CoordRow returnValue;
+	CoordRow coordRow;
 	
-	returnValue.label = gtkutil::LeftAlignedLabel(label);
+	coordRow.hbox = gtk_hbox_new(false, 6);
+		
+	// Create the label
+	coordRow.label = gtkutil::LeftAlignedLabel(label);
+	gtk_table_attach_defaults(table, coordRow.label, 0, 1, row, row+1);
+		
+	// Create the entry field
+	coordRow.value = gtk_entry_new();
+	gtk_entry_set_width_chars(GTK_ENTRY(coordRow.value), 7);
 	
-	// Create the adjustment for the spin button
-	returnValue.adjustment = gtk_adjustment_new(
-		0.0f, -65536.0f, 65536.0f, 0.1f, 0.1f, 0.1f
-	);
-	returnValue.entry = gtk_spin_button_new(GTK_ADJUSTMENT(returnValue.adjustment), 0.1f, 4);
-	gtk_widget_set_size_request(returnValue.entry, 100, -1);
-	g_signal_connect(G_OBJECT(returnValue.entry), "changed", G_CALLBACK(onCoordChange), this);
+	coordRow.valueChangedHandler = 
+		g_signal_connect(G_OBJECT(coordRow.value), "changed", G_CALLBACK(onCoordChange), this);
 	
-	gtk_table_attach_defaults(_coordsTable, returnValue.label, 0, 1, tableRow, tableRow+1);
-	gtk_table_attach_defaults(_coordsTable, returnValue.entry, 1, 2, tableRow, tableRow+1);
+	gtk_box_pack_start(GTK_BOX(coordRow.hbox), coordRow.value, true, true, 0);
 	
-	return returnValue;
+	{
+		GtkWidget* hbox = gtk_hbox_new(true, 0);
+		
+		coordRow.smaller = ControlButtonPtr(new gtkutil::ControlButton("arrow_left.png"));
+		gtk_widget_set_size_request(*coordRow.smaller, 15, 24);
+		gtk_box_pack_start(GTK_BOX(hbox), *coordRow.smaller, false, false, 0);
+		
+		coordRow.larger = ControlButtonPtr(new gtkutil::ControlButton("arrow_right.png"));
+		gtk_widget_set_size_request(*coordRow.larger, 15, 24);
+		gtk_box_pack_start(GTK_BOX(hbox), *coordRow.larger, false, false, 0); 
+		
+		gtk_box_pack_start(GTK_BOX(coordRow.hbox), hbox, false, false, 0);
+	}
+	
+	// Create the label
+	coordRow.steplabel = gtkutil::LeftAlignedLabel(LABEL_STEP); 
+	gtk_box_pack_start(GTK_BOX(coordRow.hbox), coordRow.steplabel, false, false, 0);
+	
+	// Create the entry field
+	coordRow.step = gtk_entry_new();
+	gtk_entry_set_width_chars(GTK_ENTRY(coordRow.step), 5);
+	g_signal_connect(G_OBJECT(coordRow.step), "changed", G_CALLBACK(onStepChanged), this);
+	
+	gtk_box_pack_start(GTK_BOX(coordRow.hbox), coordRow.step, false, false, 0);
+		
+	// Pack the hbox into the table
+	gtk_table_attach_defaults(table, coordRow.hbox, 1, 2, row, row+1);
+	
+	// Return the filled structure
+	return coordRow;
 }
 
 void PatchInspector::update() {
@@ -262,11 +320,11 @@ void PatchInspector::loadControlVertex() {
 		
 		_updateActive = true;
 		
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(_coords["x"].entry), ctrl.m_vertex[0]);
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(_coords["y"].entry), ctrl.m_vertex[1]);
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(_coords["z"].entry), ctrl.m_vertex[2]);
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(_coords["s"].entry), ctrl.m_texcoord[0]);
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(_coords["t"].entry), ctrl.m_texcoord[1]);
+		gtk_entry_set_text(GTK_ENTRY(_coords["x"].value), floatToStr(ctrl.m_vertex[0]).c_str());
+		gtk_entry_set_text(GTK_ENTRY(_coords["y"].value), floatToStr(ctrl.m_vertex[1]).c_str());
+		gtk_entry_set_text(GTK_ENTRY(_coords["z"].value), floatToStr(ctrl.m_vertex[2]).c_str());
+		gtk_entry_set_text(GTK_ENTRY(_coords["s"].value), floatToStr(ctrl.m_texcoord[0]).c_str());
+		gtk_entry_set_text(GTK_ENTRY(_coords["t"].value), floatToStr(ctrl.m_texcoord[1]).c_str());
 		
 		_updateActive = false;
 	}
@@ -364,12 +422,12 @@ void PatchInspector::emitCoords() {
 		// Retrieve the controlvertex
 		PatchControl& ctrl = _patch->ctrlAt(row, col);
 		
-		ctrl.m_vertex[0] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["x"].entry)));
-		ctrl.m_vertex[1] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["y"].entry)));
-		ctrl.m_vertex[2] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["z"].entry)));
+		ctrl.m_vertex[0] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["x"].value)));
+		ctrl.m_vertex[1] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["y"].value)));
+		ctrl.m_vertex[2] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["z"].value)));
 		
-		ctrl.m_texcoord[0] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["s"].entry)));
-		ctrl.m_texcoord[1] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["t"].entry)));
+		ctrl.m_texcoord[0] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["s"].value)));
+		ctrl.m_texcoord[1] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["t"].value)));
 		
 		_patch->controlPointsChanged();
 	}
@@ -394,6 +452,11 @@ void PatchInspector::emitTesselation() {
 	}
 }
 
+void PatchInspector::saveToRegistry() {
+	// Pass the call to the RegistryConnector
+	_connector.exportValues();
+}
+
 gboolean PatchInspector::onDelete(GtkWidget* widget, GdkEvent* event, PatchInspector* self) {
 	// Toggle the visibility of the inspector window
 	self->toggle();
@@ -408,6 +471,11 @@ void PatchInspector::onCoordChange(GtkEditable* editable, PatchInspector* self) 
 	}
 	self->emitCoords();
 }
+
+void PatchInspector::onStepChanged(GtkEditable* editable, PatchInspector* self) {
+	// Tell the class instance to save its contents into the registry
+	self->saveToRegistry();
+} 
 
 void PatchInspector::onTessChange(GtkEditable* editable, PatchInspector* self) {
 	if (self->_updateActive) {
@@ -429,6 +497,24 @@ void PatchInspector::onComboBoxChange(GtkWidget* combo, PatchInspector* self) {
 	}
 	// Load the according patch row/col vertex
 	self->loadControlVertex();
+}
+
+void PatchInspector::onClickLarger(GtkWidget* button, CoordRow* row) {
+	// Get the current value and the step increment
+	float value = strToFloat(gtk_entry_get_text(GTK_ENTRY(row->value)));
+	float step = strToFloat(gtk_entry_get_text(GTK_ENTRY(row->step)));
+	
+	// This triggers the onCoordChange callback method
+	gtk_entry_set_text(GTK_ENTRY(row->value), floatToStr(value + step).c_str());
+}
+
+void PatchInspector::onClickSmaller(GtkWidget* button, CoordRow* row) {
+	// Get the current value and the step increment
+	float value = strToFloat(gtk_entry_get_text(GTK_ENTRY(row->value)));
+	float step = strToFloat(gtk_entry_get_text(GTK_ENTRY(row->step)));
+	
+	// This triggers the onCoordChange callback method
+	gtk_entry_set_text(GTK_ENTRY(row->value), floatToStr(value - step).c_str());
 }
 
 } // namespace ui
