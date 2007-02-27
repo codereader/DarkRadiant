@@ -4,12 +4,13 @@
 #include <map>
 #include "iselection.h"
 #include "gtkutil/WindowPosition.h"
+#include "gtkutil/RegistryConnector.h"
 
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkTable GtkTable;
 typedef struct _GtkObject GtkObject;
 typedef struct _GtkEditable GtkEditable;
-
+namespace gtkutil { class ControlButton; }
 class Patch;
 
 namespace ui {
@@ -32,13 +33,20 @@ class PatchInspector :
 		GtkWidget* colCombo;
 	} _vertexChooser;
 	
+	typedef boost::shared_ptr<gtkutil::ControlButton> ControlButtonPtr;
+	
 	struct CoordRow {
+		GtkWidget* hbox;
 		GtkWidget* label;
-		GtkWidget* entry;
-		GtkObject* adjustment;
+		GtkWidget* value;
+		gulong valueChangedHandler;
+		ControlButtonPtr smaller; 
+		ControlButtonPtr larger;
+		GtkWidget* step;
+		GtkWidget* steplabel;
 	};
 	
-	// This is where the named coord rows (x,y,z,s,t) are stored 
+	// This are the named manipulator rows (x, y, z, s, t) 
 	typedef std::map<std::string, CoordRow> CoordMap;
 	CoordMap _coords;
 	
@@ -65,6 +73,9 @@ class PatchInspector :
 	
 	// If this is set to TRUE, the GTK callbacks will be disabled
 	bool _updateActive;
+
+	// The helper class that syncs the registry to/from widgets
+	gtkutil::RegistryConnector _connector;
 
 public:
 	PatchInspector();
@@ -97,6 +108,10 @@ public:
 
 private:
 
+	/** greebo: Saves the step values to the registry
+	 */
+	void saveToRegistry();
+
 	/** greebo: Helper method that imports the selected patch
 	 */
 	void rescanSelection();
@@ -115,9 +130,10 @@ private:
 
 	/** greebo: Helper method to create an coord row (label+entry)
 	 * 
-	 * @tableRow: the row index of _coordsTable to pack the row into.
+	 * @table: The GtkTable the widgets should be packed in
+	 * @row: the row index of _coordsTable to pack the row into.
 	 */
-	CoordRow createCoordRow(const std::string& label, int tableRow);
+	CoordRow createCoordRow(const std::string& label, GtkTable* table, int row);
 
 	// Creates and packs the widgets into the dialog (called by constructor)
 	void populateWindow();
@@ -129,6 +145,10 @@ private:
 	
 	// Gets called if the spin buttons with the coordinates get changed
 	static void onCoordChange(GtkEditable* editable, PatchInspector* self);
+	static void onStepChanged(GtkEditable* editable, PatchInspector* self);
+	
+	static void onClickSmaller(GtkWidget* button, CoordRow* row);
+	static void onClickLarger(GtkWidget* button, CoordRow* row);
 
 	// Gets called when the "Fixed Tesselation" settings are changed 
 	static void onFixedTessChange(GtkWidget* checkButton, PatchInspector* self);
