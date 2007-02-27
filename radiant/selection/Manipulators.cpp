@@ -412,6 +412,40 @@ void TranslateManipulator::testSelect(const View& view, const Matrix4& pivot2wor
 	// greebo: If any of the above arrows could be selected, select the first in the SelectionPool
     if(!selector.failed()) {
       (*selector.begin()).second->setSelected(true);
+    } else {
+    	// None of the shown arrows (or quad) has been selected, select an axis based on the precedence
+    	Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _pivot._worldSpace));
+
+    	// Get the (relative?) distance from the mouse pointer to the manipulator 
+    	Vector3 delta = local2view.t().getProjected();
+    	
+    	// Get the precedence (which axis has the absolute largest value in it)
+    	bool xGreaterY = (fabs(delta.x()) > fabs(delta.y()));
+    	
+    	Selectable* selectable = NULL;
+    	
+    	// The precedence has to be interpreted according to which axes are visible
+    	if (show_z) {
+    		// Either XZ or YZ
+    		if (show_y) {
+    			// YZ
+    			selectable = (xGreaterY) ? &_selectableY : &_selectableZ;
+    		}
+    		else {
+    			// XZ
+    			selectable = (xGreaterY) ? &_selectableX : &_selectableZ;
+    		}
+    	}
+    	else {
+    		// XY
+    		selectable = (xGreaterY) ? &_selectableX : &_selectableY;
+    	}
+    	
+    	// If everything went ok, there is a selectable available, add it
+    	if (selectable != NULL) {
+    		selector.addSelectable(SelectionIntersection(0,0), selectable);
+    		selectable->setSelected(true);
+    	}
     }
 }
 
