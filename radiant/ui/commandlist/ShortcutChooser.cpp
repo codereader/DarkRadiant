@@ -1,10 +1,11 @@
 #include "ShortcutChooser.h"
 
-#include "gtk/gtkdialog.h"
-#include "gtk/gtklabel.h"
-#include "gtk/gtkentry.h"
-#include "gtk/gtkstock.h"
-#include "gtk/gtkwidget.h"
+#include <gtk/gtkdialog.h>
+#include <gtk/gtklabel.h>
+#include <gtk/gtkentry.h>
+#include <gtk/gtkstock.h>
+#include <gtk/gtkwidget.h>
+#include <gdk/gdkkeysyms.h>
 
 #include "gtkutil/messagebox.h"
 
@@ -52,6 +53,12 @@ bool ShortcutChooser::shortcutDialog(const std::string& title, const std::string
 
 gboolean ShortcutChooser::onShortcutKeyPress(GtkWidget* widget, GdkEventKey* event, ShortcutChooser* self) {
 	std::string statusText("");
+
+	/** greebo: Workaround for allowing Shift+TAB as well (Tab becomes ISO_Left_Tab in that case)
+	 */
+	if (event->keyval == GDK_ISO_Left_Tab) {
+		event->keyval = GDK_Tab;
+	}
 
 	// Store the shortcut string representation into the GtkEntry field  
 	gtk_entry_set_text(GTK_ENTRY(widget), GlobalEventManager().getGDKEventStr(event).c_str());
