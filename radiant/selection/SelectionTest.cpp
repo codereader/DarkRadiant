@@ -247,8 +247,7 @@ void testselect_primitive_visible::post(const scene::Path& path, scene::Instance
     		Entity* parent = Node_getEntity(path.parent());
     	
 	    	if (parent != NULL) {
-	    		//std::cout << "Parent: " << parent->getKeyValue("classname") << "\n";
-	    		if (parent->getKeyValue("classname") == "worldspawn") {
+	    		if (parent->getKeyValue("classname") == "worldspawn" || _selectChildPrimitives) {
 	    			 _selector.popSelectable();
 	    		}
 	    	}
@@ -279,8 +278,8 @@ bool testselect_component_visible_selected::pre(const scene::Path& path, scene::
 
 // ==================================================================================
 
-void Scene_TestSelect_Primitive(Selector& selector, SelectionTest& test, const VolumeTest& volume) {
-  Scene_forEachVisible(GlobalSceneGraph(), volume, testselect_primitive_visible(selector, test));
+void Scene_TestSelect_Primitive(Selector& selector, SelectionTest& test, const VolumeTest& volume, bool selectChildPrimitives) {
+  Scene_forEachVisible(GlobalSceneGraph(), volume, testselect_primitive_visible(selector, test, selectChildPrimitives));
 }
 
 void Scene_TestSelect_Component_Selected(Selector& selector, SelectionTest& test, const VolumeTest& volume, SelectionSystem::EComponentMode componentMode) {

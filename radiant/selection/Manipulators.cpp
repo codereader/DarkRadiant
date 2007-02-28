@@ -640,7 +640,7 @@ void DragManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
     	
     	// Find all primitives that are selectable 
 		BooleanSelector booleanSelector;
-		Scene_TestSelect_Primitive(booleanSelector, test, view);
+		Scene_TestSelect_Primitive(booleanSelector, test, view, true);
 
 		if (entitySelector.isSelected()) {
 			// Found a selectable entity

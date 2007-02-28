@@ -122,8 +122,8 @@ void RadiantSelectionSystem::Scene_TestSelect(SelectablesList& targetList, Selec
 				targetList.push_back(i->second);
 			}
 			
-			// Now, retrieve all the selectable primitives
-			Scene_TestSelect_Primitive(sel2, test, view);
+			// Now, retrieve all the selectable primitives (and don't select child primitives (false)) 
+			Scene_TestSelect_Primitive(sel2, test, view, false);
 			
 			// Add them to the vector as well (after the entities)
 			for (SelectionPool::iterator i = sel2.begin(); i != sel2.end(); i++) {
