@@ -1,5 +1,7 @@
 #include "RadiantSelectionSystem.h"
 
+#include "gdk/gdktypes.h"
+
 #include "iundo.h"
 #include "igrid.h"
 #include "ieventmanager.h"
@@ -345,11 +347,8 @@ bool RadiantSelectionSystem::SelectManipulator(const View& view, const float dev
 		// Unselect any currently selected manipulators to be sure
 		_manipulator->setSelected(false);
 
-		globalOutputStream() << "Before testselecting manipulator...\n";
-
 		// Test, if the current manipulator can be selected
 		if (!nothingSelected() || (ManipulatorMode() == eDrag && Mode() == eComponent)) {
-			globalOutputStream() << "Constructing selectiontest...\n";
 			View scissored(view);
 			ConstructSelectionTest(scissored, SelectionBoxForPoint(device_point, device_epsilon));
 			
@@ -363,10 +362,6 @@ bool RadiantSelectionSystem::SelectManipulator(const View& view, const float dev
 		// This is true, if a manipulator could be selected
 		_pivotMoving = _manipulator->isSelected();
 		
-		if (_pivotMoving) {
-			globalOutputStream() << "Successful...\n";
-		}
-		
 		// is a manipulator selected / the pivot moving?
 		if (_pivotMoving) {
 			Pivot2World pivot;
@@ -377,6 +372,8 @@ bool RadiantSelectionSystem::SelectManipulator(const View& view, const float dev
 			Matrix4 device2manip;
 			ConstructDevice2Manip(device2manip, _pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());
 			_manipulator->GetManipulatable()->Construct(device2manip, device_point[0], device_point[1]);
+			
+			_deviceStart = Vector2(device_point[0], device_point[1]);
 
 			_undoBegun = false;
 		}
@@ -661,7 +658,7 @@ void RadiantSelectionSystem::scaleSelected(const Vector3& scaling) {
 void RadiantSelectionSystem::MoveSelected(const View& view, const float device_point[2]) {
 	// Check, if the active manipulator is selected in the first place
 	if (_manipulator->isSelected()) {
-		// Initalise the undo system
+		// Initalise the undo system, if not yet done
 		if (!_undoBegun) {
 			_undoBegun = true;
 			GlobalUndoSystem().start();
@@ -670,9 +667,27 @@ void RadiantSelectionSystem::MoveSelected(const View& view, const float device_p
 		Matrix4 device2manip;
 		ConstructDevice2Manip(device2manip, _pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());
 		
+		float devicePoint[2] = {
+			device_point[0],
+			device_point[1]
+		};
+		
+		// Constrain the movement to the axes, if the modifier is held
+		if (GlobalEventManager().getModifierState() & GDK_SHIFT_MASK != 0) {
+			// Set the "minor" value back to the starting coordinate  
+			if (fabs(device_point[0]) > fabs(device_point[1])) {
+				// X axis is major, reset the y-value to the start
+				devicePoint[1] = _deviceStart[1];
+			}
+			else {
+				// Y axis is major, reset the x-value to the start
+				devicePoint[0] = _deviceStart[0];
+			}
+		}
+		
 		// Get the manipulatable from the currently active manipulator (done by selection test)
 		// and call the Transform method (can be anything) 
-		_manipulator->GetManipulatable()->Transform(_manip2pivotStart, device2manip, device_point[0], device_point[1]);
+		_manipulator->GetManipulatable()->Transform(_manip2pivotStart, device2manip, devicePoint[0], devicePoint[1]);
 	}
 }
 

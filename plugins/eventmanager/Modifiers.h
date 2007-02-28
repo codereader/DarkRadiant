@@ -22,6 +22,9 @@ class Modifiers
 	// The list of all modifier bit indices
 	ModifierBitIndexMap _modifierBitIndices;
 	
+	// The current modifier state
+	unsigned int _modifierState;
+	
 public:
 	// Constructor, loads the modifier definitions from the XMLRegistry
 	Modifiers();
@@ -42,6 +45,17 @@ public:
 	
 	// Returns a string for the given modifier flags set (e.g. "SHIFT+CONTROL") 
 	std::string getModifierStr(const unsigned int& modifierFlags, bool forMenu = false);
+	
+	/** greebo: Retrieves the current modifier mask
+	 */
+	unsigned int getState() const;
+	
+	/** greebo: Updates the internal modifierstate with the given EventKey.
+	 * 
+	 * @keyPress: TRUE, if the eventkey is related to an KeyPress event
+	 * 			  FALSE, if according to a KeyRelease event. 
+	 */
+	void updateState(GdkEventKey* event, bool keyPress);
 	
 }; // class Modifiers
 
