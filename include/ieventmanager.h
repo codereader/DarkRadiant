@@ -228,6 +228,10 @@ public:
 	/* greebo: Retrieves the string representation of the given GDK <event>
 	 */
 	virtual std::string getGDKEventStr(GdkEventKey* event) = 0;
+	
+	/** greebo: Returns the current keyboard eventkey state
+	 */
+	virtual unsigned int getModifierState() = 0;
 };
 
 // Module definitions

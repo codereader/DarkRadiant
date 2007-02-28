@@ -71,6 +71,9 @@ class EventManager :
 	MouseEventManager _mouseEvents;
 	
 	bool _debugMode;
+	
+	// This stores the current keyboard state to allow client requests for modifiers
+	GdkEventKey _eventKey;
 
 public:
 	// Radiant Module stuff
@@ -505,6 +508,10 @@ public:
 		return _modifiers.getModifierStr(modifierFlags, forMenu);
 	}
 
+	unsigned int getModifierState() {
+		return _modifiers.getState();
+	}
+
 private:
 
 	AcceleratorList findAccelerator(const std::string& key, const std::string& modifierStr) {
@@ -588,7 +595,7 @@ private:
 		
 		_mouseEvents.updateStatusText(&eventKey);
 	}
-
+	
 	// The GTK keypress callback
 	static gboolean onKeyPress(GtkWindow* window, GdkEventKey* event, gpointer data) {
 		// Convert the passed pointer onto a KeyEventManager pointer
@@ -606,6 +613,8 @@ private:
 			
 			return true;
 		}
+		
+		self->_modifiers.updateState(event, true);
 		
 		self->updateStatusText(event, true);
 		
@@ -629,6 +638,8 @@ private:
 			
 			return true;
 		}
+		
+		self->_modifiers.updateState(event, false);
 		
 		self->updateStatusText(event, false);
 		

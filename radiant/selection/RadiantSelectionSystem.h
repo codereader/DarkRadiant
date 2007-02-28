@@ -88,6 +88,9 @@ private:
 	mutable bool _pivotChanged;
 	bool _pivotMoving;
 
+	// The coordinates of the mouse pointer when the manipulation starts
+	Vector2 _deviceStart;
+
 	void Scene_TestSelect(SelectablesList& targetList, SelectionTest& test, const View& view, SelectionSystem::EMode mode, SelectionSystem::EComponentMode componentMode);
 	bool nothingSelected() const;
 
