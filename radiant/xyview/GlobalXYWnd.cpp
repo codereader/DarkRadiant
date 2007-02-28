@@ -466,13 +466,16 @@ XYWnd* XYWndManager::createOrthoView(EViewType viewType) {
 	GtkWidget* window = gtkutil::TransientWindow(
 							XYWnd::getViewTypeTitle(viewType), 
 							_globalParentWindow);
-	gtk_container_add(GTK_CONTAINER(window), newWnd->getWidget());
 	
 	// Connect the destroyed signal to the callback of this class 
 	g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(onDeleteOrthoView), newWnd);
 	
 	newWnd->setParent(GTK_WINDOW(window));
 	newWnd->connectWindowPosition();
+	
+	GtkWidget* framedXYView = gtkutil::FramedWidget(newWnd->getWidget());
+	gtk_container_add(GTK_CONTAINER(window), framedXYView);
+	gtk_widget_show_all(GTK_WIDGET(window));
 	
 	// Set the viewtype (and with it the window title)
 	newWnd->setViewType(viewType);
