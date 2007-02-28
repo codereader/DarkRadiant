@@ -44,6 +44,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/overlay/OverlayDialog.h"
 #include "ui/objectives/ObjectivesEditor.h"
 #include "selection/algorithm/Shader.h"
+#include "selection/algorithm/Group.h"
 #include "iclipper.h"
 #include "ifilesystem.h"
 #include "iundo.h"
@@ -2851,6 +2852,8 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("SnapToGrid", FreeCaller<Selection_SnapToGrid>());
 	
 	GlobalEventManager().addCommand("SelectAllOfType", FreeCaller<Select_AllOfType>());
+	GlobalEventManager().addCommand("GroupCycleForward", FreeCaller<selection::GroupCycle::cycleForward>());
+	GlobalEventManager().addCommand("GroupCycleBackward", FreeCaller<selection::GroupCycle::cycleBackward>());
 	
 	GlobalEventManager().addCommand("TexRotateClock", FreeCaller<selection::algorithm::rotateTextureClock>());
 	GlobalEventManager().addCommand("TexRotateCounter", FreeCaller<selection::algorithm::rotateTextureCounter>());

@@ -57,9 +57,16 @@ public:
 class testselect_primitive_visible : public scene::Graph::Walker {
   Selector& _selector;
   SelectionTest& _test;
+	bool _selectChildPrimitives;
 public:
-  testselect_primitive_visible(Selector& selector, SelectionTest& test)
-    : _selector(selector), _test(test) {}
+	/** greebo: Set the selectChildPrimitives bool to TRUE if child primitives of entities like func_static
+	 * should be selected as well. This should be set to TRUE for Manipulator checks.
+	 */
+	testselect_primitive_visible(Selector& selector, SelectionTest& test, bool selectChildPrimitives) : 
+		_selector(selector), 
+		_test(test),
+		_selectChildPrimitives(selectChildPrimitives) 
+	{}
 
   bool pre(const scene::Path& path, scene::Instance& instance) const;
   void post(const scene::Path& path, scene::Instance& instance) const;
@@ -89,7 +96,7 @@ public:
 
 // --------------------------------------------------------------------------------
 
-void Scene_TestSelect_Primitive(Selector& selector, SelectionTest& test, const VolumeTest& volume);
+void Scene_TestSelect_Primitive(Selector& selector, SelectionTest& test, const VolumeTest& volume, bool selectChildPrimitives = true);
 void Scene_TestSelect_Component(Selector& selector, SelectionTest& test, const VolumeTest& volume, SelectionSystem::EComponentMode componentMode);
 void Scene_TestSelect_Component_Selected(Selector& selector, SelectionTest& test, const VolumeTest& volume, SelectionSystem::EComponentMode componentMode);
 

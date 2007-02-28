@@ -182,5 +182,7 @@
 		<shortcut command="TexToolGridDown" key="minus" modifiers="" />
 		<shortcut command="TexToolSnapToGrid" key="G" modifiers="SHIFT" />
 		<shortcut command="TexToolMergeItems" key="M" modifiers="ALT" />
+		<shortcut command="GroupCycleBackward" key="ISO_Left_Tab" modifiers="SHIFT"/>
+		<shortcut command="GroupCycleForward" key="Tab" modifiers=""/>
 	</shortcuts>
 </input>

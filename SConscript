@@ -393,6 +393,7 @@ radiant_src = [
 'selection/RadiantSelectionSystem.cpp',
 'selection/algorithm/Primitives.cpp',
 'selection/algorithm/Shader.cpp',
+'selection/algorithm/Group.cpp',
 'patch/Patch.cpp',
 'patch/PatchBezier.cpp',
 'patch/PatchInstance.cpp',
