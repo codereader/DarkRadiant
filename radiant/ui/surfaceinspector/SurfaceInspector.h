@@ -154,10 +154,6 @@ private:
 	// Executes the fit command for the selection 
 	void fitTexture();
 	
-	// Connects/Disconnects the GTK callbacks for callback-free value updates 
-	void connectValueChanged();
-	void disconnectValueChanged();
-	
 	// The callback for the delete event (toggles the visibility)
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, SurfaceInspector* self);
 	
@@ -165,7 +161,6 @@ private:
 	static void onStepChanged(GtkEditable* editable, SurfaceInspector* self);
 	
 	// Gets called when the value entry field is changed (shift/scale/rotation) - emits the texcoords
-	static void onValueChanged(GtkEditable* editable, SurfaceInspector* self);
 	static gboolean onDefaultScaleChanged(GtkSpinButton* spinbutton, SurfaceInspector* self);
 	
 	// The callback for the Fit Texture button
@@ -174,6 +169,9 @@ private:
 	
 	// The keypress handler for catching the Enter key when in the shader entry field
 	static gboolean onKeyPress(GtkWidget* entry, GdkEventKey* event, SurfaceInspector* self);
+	
+	// The keypress handler for catching the Enter key when in the value entry fields
+	static gboolean onValueKeyPress(GtkWidget* entry, GdkEventKey* event, SurfaceInspector* self);
 }; // class SurfaceInspector
 
 } // namespace ui
