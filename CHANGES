@@ -1,6 +1,8 @@
 28/02/2007
 greebo
 - Holding down SHIFT during manipulations constrains the operation to the axes
+- Added GroupCycle commands that allow cycling through child primitives of entities 
+  like func_static.
 
 26/02/2007
 greebo
