@@ -227,22 +227,32 @@ void testselect_entity_visible::post(const scene::Path& path, scene::Instance& i
 bool testselect_primitive_visible::pre(const scene::Path& path, scene::Instance& instance) const {
     Selectable* selectable = Instance_getSelectable(instance);
     if(selectable != NULL && !Node_isEntity(path.top())) {
-      _selector.pushSelectable(*selectable);
+    	_selector.pushSelectable(*selectable);
     }
 
     SelectionTestable* selectionTestable = Instance_getSelectionTestable(instance);
     if(selectionTestable && !Node_isEntity(path.top())) {
-      selectionTestable->testSelect(_selector, _test);
+		selectionTestable->testSelect(_selector, _test);
     }
-
+    
     return true;
 }
 
 void testselect_primitive_visible::post(const scene::Path& path, scene::Instance& instance) const {
     Selectable* selectable = Instance_getSelectable(instance);
-    if(selectable != NULL && !Node_isEntity(path.top()))
-    {
-      _selector.popSelectable();
+    if(selectable != NULL && !Node_isEntity(path.top())) {
+    	// Don't test for parent if the path has only 1 element
+    	if (path.size() > 1) {
+    	  	// Get the parent entity of this object, if there is one
+    		Entity* parent = Node_getEntity(path.parent());
+    	
+	    	if (parent != NULL) {
+	    		//std::cout << "Parent: " << parent->getKeyValue("classname") << "\n";
+	    		if (parent->getKeyValue("classname") == "worldspawn") {
+	    			 _selector.popSelectable();
+	    		}
+	    	}
+    	}
     }
 }
 
