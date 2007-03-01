@@ -92,18 +92,22 @@ public:
 
 #include "scenelib.h"
 
-inline BrushDoom3* Node_getBrushDoom3(scene::Node& node)
-{
-  return NodeTypeCast<BrushDoom3>::cast(node);
-}
-
-inline void BrushDoom3_setDoom3GroupOrigin(scene::Node& node, const Vector3& origin)
-{
-  BrushDoom3* brush = Node_getBrushDoom3(node);
-  if(brush != 0)
-  {
-    brush->setDoom3GroupOrigin(origin);
-  }
+/** greebo: This checks for primitive nodes of types BrushDoom3/PatchDoom3 and passes 
+ * the new origin to them so they can take the according actions like
+ * TexDef translation in case of an active texture lock, etc.
+ */
+inline void Primitives_setDoom3GroupOrigin(scene::Node& node, const Vector3& origin) {
+	// Check for BrushDoom3
+	BrushDoom3* brush = Node_getBrushDoom3(node);
+	if (brush != NULL) {
+		brush->setDoom3GroupOrigin(origin);
+	}
+	
+	// Check for PatchDoom3
+	PatchDoom3* patch = Node_getPatchDoom3(node);
+	if (patch != NULL) {
+		patch->setDoom3GroupOrigin(origin);
+	}
 }
 
 class SetDoom3GroupOriginWalker : public scene::Traversable::Walker
@@ -115,7 +119,7 @@ public:
   }
   bool pre(scene::Node& node) const
   {
-    BrushDoom3_setDoom3GroupOrigin(node, m_origin);
+    Primitives_setDoom3GroupOrigin(node, m_origin);
     return true;
   }
 };
@@ -153,14 +157,14 @@ public:
   {
     if(m_enabled)
     {
-      BrushDoom3_setDoom3GroupOrigin(node, m_origin);
+      Primitives_setDoom3GroupOrigin(node, m_origin);
     }
   }
   void erase(scene::Node& node)
   {
     if(m_enabled)
     {
-      BrushDoom3_setDoom3GroupOrigin(node, Vector3(0, 0, 0));
+      Primitives_setDoom3GroupOrigin(node, Vector3(0, 0, 0));
     }
   }
 };

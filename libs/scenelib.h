@@ -82,8 +82,20 @@ public:
   virtual void setDoom3GroupOrigin(const Vector3& origin) = 0;
 };
 
+/** greebo: This is the analoguous class to the above one.
+ * It's used to propagate origin changes of func_statics down
+ * to the actual patch, so that it can be translated along with 
+ * its parent entity.
+ */
+class PatchDoom3
+{
+public:
+	STRING_CONSTANT(Name, "PatchDoom3");
 
-
+	/** greebo: Sets the new Doom3GroupOrigin of this patch.
+	 */
+	virtual void setDoom3GroupOrigin(const Vector3& origin) = 0;
+};
 
 typedef TypeCastTable<NODETYPEID_MAX> NodeTypeCastTable;
 
@@ -1083,6 +1095,21 @@ public:
   }
 };
 
+/** greebo: Cast a node onto a PatchDoom3 pointer
+ * 
+ * @returns: NULL, if failed, the pointer to the class otherwise.
+ */
+inline PatchDoom3* Node_getPatchDoom3(scene::Node& node) {
+	return NodeTypeCast<PatchDoom3>::cast(node);
+}
+
+/** greebo: Cast a node onto a BrushDoom3 pointer
+ * 
+ * @returns: NULL, if failed, the pointer to the class otherwise.
+ */
+inline BrushDoom3* Node_getBrushDoom3(scene::Node& node) {
+	return NodeTypeCast<BrushDoom3>::cast(node);
+}
 
 template<typename Contained>
 class ConstReference;

@@ -42,7 +42,8 @@ class Patch :
 	public Cullable,
 	public Snappable,
 	public Undoable,
-	public Nameable
+	public Nameable,
+	public PatchDoom3
 {
 	XMLStateVector m_xml_state;
 
@@ -69,6 +70,11 @@ private:
 	// Patch dimensions
 	std::size_t m_width;
 	std::size_t m_height;
+	
+	// greebo: The funcstatic origin of this patch;
+	// this is used to calculate translation changes
+	// when a new origin is passed via setDoom3GroupOrigin()
+	Vector3 _funcStaticOrigin;
 	
 public:
 	bool m_patchDef3;
@@ -142,6 +148,12 @@ public:
 	}
 
 	InstanceCounter m_instanceCounter;
+
+	/** greebo: This gets called by the Doom3GroupOrigin class 
+	 * in plugins/entity/origin.h and notifies this patch if the 
+	 * origin has changed.
+	 */
+	void setDoom3GroupOrigin(const Vector3& origin);
 	
 	void instanceAttach(const scene::Path& path);	
 	// Remove the attached instance and decrease the counters
