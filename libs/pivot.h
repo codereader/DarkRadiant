@@ -232,6 +232,7 @@ class Shader;
 class RenderablePivot : public OpenGLRenderable
 {
   VertexBuffer<PointVertex> m_vertices;
+  const Vector3& _pivot;
 public:
   mutable Matrix4 m_localToWorld;
   typedef Static<Shader*> StaticShader;
@@ -240,33 +241,34 @@ public:
     return StaticShader::instance();
   }
 
-  RenderablePivot()
+  RenderablePivot(const Vector3& pivot) :
+  	_pivot(pivot)
   {
     m_vertices.reserve(6);
 
-    m_vertices.push_back(PointVertex(Vertex3f(0, 0, 0), g_colour_x));
-    m_vertices.push_back(PointVertex(Vertex3f(16, 0, 0), g_colour_x));
+	m_vertices.push_back(PointVertex(_pivot, g_colour_x));
+	m_vertices.push_back(PointVertex(_pivot + Vector3(16,0,0), g_colour_x));
 
-    m_vertices.push_back(PointVertex(Vertex3f(0, 0, 0), g_colour_y));
-    m_vertices.push_back(PointVertex(Vertex3f(0, 16, 0), g_colour_y));
+	m_vertices.push_back(PointVertex(_pivot, g_colour_y));
+	m_vertices.push_back(PointVertex(_pivot + Vector3(0, 16, 0), g_colour_y));
 
-    m_vertices.push_back(PointVertex(Vertex3f(0, 0, 0), g_colour_z));
-    m_vertices.push_back(PointVertex(Vertex3f(0, 0, 16), g_colour_z));
+	m_vertices.push_back(PointVertex(_pivot, g_colour_z));
+	m_vertices.push_back(PointVertex(_pivot + Vector3(0, 0, 16), g_colour_z));
   }
 
 	/** greebo: Updates the renderable vertex array to the given pivot point 
 	 */
-	void setPivot(const Vector3& pivot) {
+	void updatePivot() {
 		m_vertices.clear();
 		
-		m_vertices.push_back(PointVertex(pivot, g_colour_x));
-		m_vertices.push_back(PointVertex(pivot + Vector3(16,0,0), g_colour_x));
+		m_vertices.push_back(PointVertex(_pivot, g_colour_x));
+		m_vertices.push_back(PointVertex(_pivot + Vector3(16,0,0), g_colour_x));
 
-		m_vertices.push_back(PointVertex(pivot, g_colour_y));
-		m_vertices.push_back(PointVertex(pivot + Vector3(0, 16, 0), g_colour_y));
+		m_vertices.push_back(PointVertex(_pivot, g_colour_y));
+		m_vertices.push_back(PointVertex(_pivot + Vector3(0, 16, 0), g_colour_y));
 
-		m_vertices.push_back(PointVertex(pivot, g_colour_z));
-		m_vertices.push_back(PointVertex(pivot + Vector3(0, 0, 16), g_colour_z));
+		m_vertices.push_back(PointVertex(_pivot, g_colour_z));
+		m_vertices.push_back(PointVertex(_pivot + Vector3(0, 0, 16), g_colour_z));
 	}
 
   void render(RenderStateFlags state) const

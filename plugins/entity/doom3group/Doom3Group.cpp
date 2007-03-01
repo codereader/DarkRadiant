@@ -30,6 +30,7 @@ Doom3Group::Doom3Group(IEntityClassPtr eclass, scene::Node& node,
 	m_named(m_entity),
 	m_nameKeys(m_entity),
 	m_funcStaticOrigin(m_traverse, m_origin),
+	m_renderOrigin(m_origin),
 	m_renderName(m_named, m_origin),
 	m_skin(SkinChangedCaller(*this)),
 	m_transformChanged(transformChanged),
@@ -52,6 +53,7 @@ Doom3Group::Doom3Group(const Doom3Group& other, scene::Node& node,
 	m_named(m_entity),
 	m_nameKeys(m_entity),
 	m_funcStaticOrigin(m_traverse, m_origin),
+	m_renderOrigin(m_origin),
 	m_renderName(m_named, g_vector3_identity),
 	m_skin(SkinChangedCaller(*this)),
 	m_transformChanged(transformChanged),
@@ -160,6 +162,7 @@ void Doom3Group::testSelect(Selector& selector, SelectionTest& test, SelectionIn
 
 void Doom3Group::translate(const Vector3& translation) {
 	m_origin = origin_translated(m_origin, translation);
+	m_renderOrigin.updatePivot();
 }
 
 void Doom3Group::rotate(const Quaternion& rotation) {
@@ -322,7 +325,7 @@ void Doom3Group::updateTransform() {
 void Doom3Group::originChanged() {
 	m_origin = m_originKey.m_origin;
 	updateTransform();
-	m_renderOrigin.setPivot(m_origin);
+	m_renderOrigin.updatePivot();
 }
 
 void Doom3Group::rotationChanged() {
