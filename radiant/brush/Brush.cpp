@@ -4,6 +4,7 @@
 #include "signal/signal.h"
 #include "renderable.h"
 
+#include "BrushModule.h"
 #include "Face.h"
 #include "generic/referencecounted.h"
 #include "plugin.h"
@@ -64,10 +65,29 @@ Brush::~Brush() {
 }
 
 void Brush::setDoom3GroupOrigin(const Vector3& origin) {
-	//globalOutputStream() << "func_static origin before: " << m_funcStaticOrigin << " after: " << origin << "\n";
 	for (Faces::iterator i = m_faces.begin(); i != m_faces.end(); ++i) {
+		// greebo: Calculate the translation (needed for the TexDef translation below) 
+		Vector3 translation = origin - (*i)->getPlane().m_funcStaticOrigin;
+				
+		// Update the FacePlane (will be applied to the internal planeCached)
 		(*i)->getPlane().m_funcStaticOrigin = origin;
 		(*i)->getPlane().updateTranslated();
+		
+		/** greebo: Check if the texture lock is enabled, if yes,
+		 * the TexDef has to be translated to compensate the move. 
+		 */
+		if (GlobalBrush()->textureLockEnabled() && 
+			translation.getLength() > 0.0f) 
+		{
+			// Update the textureprojection with the translation
+			(*i)->getTexdef().transform(
+				(*i)->getPlane().plane3(), 
+				Matrix4::getTranslation(translation)
+			);
+			
+			(*i)->texdefChanged();
+		}
+		
 		(*i)->planeChanged();
 	}
 	planeChanged();
@@ -165,6 +185,7 @@ void Brush::evaluateBRep() const {
 }
 
 void Brush::transformChanged() {
+	std::cout << "Brush::transformChanged() called\n";
 	m_transformChanged = true;
 	planeChanged();
 }
