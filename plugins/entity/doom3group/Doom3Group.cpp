@@ -30,7 +30,7 @@ Doom3Group::Doom3Group(IEntityClassPtr eclass, scene::Node& node,
 	m_named(m_entity),
 	m_nameKeys(m_entity),
 	m_funcStaticOrigin(m_traverse, m_origin),
-	m_renderName(m_named, g_vector3_identity),
+	m_renderName(m_named, m_origin),
 	m_skin(SkinChangedCaller(*this)),
 	m_transformChanged(transformChanged),
 	m_evaluateTransform(evaluateTransform),
@@ -148,7 +148,7 @@ void Doom3Group::renderWireframe(Renderer& renderer, const VolumeTest& volume,
 	const Matrix4& localToWorld, bool selected) const 
 {
 	renderSolid(renderer, volume, localToWorld, selected);
-	if (GlobalRegistry().get("user/ui/xyview/showEntityNames") == "1" && isModel()) {
+	if (GlobalRegistry().get("user/ui/xyview/showEntityNames") == "1") {
 		renderer.addRenderable(m_renderName, localToWorld);
 	}
 }
