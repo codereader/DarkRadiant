@@ -37,7 +37,7 @@ namespace ui
 		const char* CONVERT_TO_STATIC_ICON = "cmenu_convert_static.png";
 		
 		const char* REVERT_TO_WORLDSPAWN_TEXT = "Revert to worldspawn";
-		const char* REVERT_TO_WORLDSPAWN_ICON = "cmenu_convert_static.png";
+		const char* REVERT_TO_WORLDSPAWN_ICON = "cmenu_revert_worldspawn.png";
 	}
 
 // Static class function to display the singleton instance.
