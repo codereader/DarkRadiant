@@ -180,9 +180,10 @@
 		<shortcut command="NormaliseTexture" key="" modifiers=""/>
 		<shortcut command="TexToolGridUp" key="plus" modifiers="" />
 		<shortcut command="TexToolGridDown" key="minus" modifiers="" />
-		<shortcut command="TexToolSnapToGrid" key="G" modifiers="SHIFT" />
+		<shortcut command="TexToolSnapToGrid" key="G" modifiers="CONTROL+SHIFT" />
 		<shortcut command="TexToolMergeItems" key="M" modifiers="ALT" />
 		<shortcut command="GroupCycleBackward" key="ISO_Left_Tab" modifiers="SHIFT"/>
 		<shortcut command="GroupCycleForward" key="Tab" modifiers=""/>
+		<shortcut command="RevertToWorldspawn" key="G" modifiers="SHIFT"/>
 	</shortcuts>
 </input>

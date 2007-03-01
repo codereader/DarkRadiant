@@ -2828,7 +2828,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("ArbitraryScale", FreeCaller<DoScaleDlg>());
 	
 	GlobalEventManager().addCommand("FindBrush", FreeCaller<DoFind>());
-	
+	GlobalEventManager().addCommand("RevertToWorldspawn", FreeCaller<selection::algorithm::revertGroupToWorldSpawn>());
 	GlobalEventManager().addCommand("MapInfo", FreeCaller<DoMapInfo>());
 	
 	GlobalEventManager().addRegistryToggle("ToggleShowSizeInfo", RKEY_SHOW_SIZE_INFO);

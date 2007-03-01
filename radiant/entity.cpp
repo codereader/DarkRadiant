@@ -266,6 +266,9 @@ NodeSmartReference Entity_createFromSelection(const char* name,
 	    entity->setKeyValue("origin", std::string(workzone.getOrigin()));
 	    map::selectedBrushesSubtractOrigin(workzone.getOrigin());
 	    
+	    // De-select the children and select the newly created parent entity
+	    GlobalSelectionSystem().setSelectedAll(false);
+	    Instance_setSelected(instance, true);
     }
 	
     // Set the light radius and origin
