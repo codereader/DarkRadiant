@@ -31,18 +31,22 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 		InstanceSetEvaluateTransform<Doom3GroupInstance>::Caller(m_instances)
 	) 
 {
+	// Attach this node to the contained Doom3Group as observer
 	construct();
 }
 
 void Doom3GroupNode::construct() {
+	// Attach this node to the contained Doom3Group as observer
 	m_contained.attach(this);
 }
 
 void Doom3GroupNode::destroy() {
+	// Detach this node to the contained Doom3Group as observer
 	m_contained.detach(this);
 }
 
 Doom3GroupNode::~Doom3GroupNode() {
+	// Detach this node to the contained Doom3Group as observer
 	destroy();
 }
 

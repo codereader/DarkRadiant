@@ -80,85 +80,90 @@ public:
   }
 };
 
-class InstanceSet : public scene::Traversable::Observer
+/** greebo: An InstanceSet is part of a BrushNode, PatchNode, Doom3GroupNode, etc. and
+ * contains all the child instances of a those nodes. When the actual Brush gets changed
+ * (transformed, bounds changed, etc.), the Brush/Doom3Group/Patch/whatever emits a call
+ * to this InstanceSet using the transformChangedCaller() and similar stuff. 
+ */
+class InstanceSet : 
+	public scene::Traversable::Observer
 {
-  typedef std::pair<scene::Instantiable::Observer*, PathConstReference> CachePath;
+	typedef std::pair<scene::Instantiable::Observer*, PathConstReference> CachePath;
 
-  typedef CachePath key_type;
+	typedef CachePath key_type;
 
-  typedef std::map<key_type, scene::Instance*> InstanceMap;
-  InstanceMap m_instances;
+	// The map of Instances, indexed by a CachePath structure as above
+	typedef std::map<key_type, scene::Instance*> InstanceMap;
+
+	// The actual map of the instances
+	InstanceMap m_instances;
 public:
 
-  typedef InstanceMap::iterator iterator;
+	typedef InstanceMap::iterator iterator;
 
-  iterator begin()
-  {
-    return m_instances.begin();
-  }
-  iterator end()
-  {
-    return m_instances.end();
-  }
+	iterator begin() {
+		return m_instances.begin();
+	}
+	iterator end() {
+		return m_instances.end();
+	}
 
-  // traverse observer
-  void insert(scene::Node& child)
-  {
-    for(iterator i = begin(); i != end(); ++i)
-    {
-      Node_traverseSubgraph(child, InstanceSubgraphWalker((*i).first.first, (*i).first.second, (*i).second));
-      (*i).second->boundsChanged();
-    }
-  }
-  void erase(scene::Node& child)
-  {
-    for(iterator i = begin(); i != end(); ++i)
-    {
-      Node_traverseSubgraph(child, UninstanceSubgraphWalker((*i).first.first, (*i).first.second));
-      (*i).second->boundsChanged();
-    }
-  }
+	// traverse observer
+	// greebo: This inserts the given node as child of this instance set.
+	// The call arriving at Doom3GroupNode::insert() is passed here, for example.
+	void insert(scene::Node& child) {
+		for (iterator i = begin(); i != end(); ++i) {
+			Node_traverseSubgraph(child, InstanceSubgraphWalker((*i).first.first, (*i).first.second, (*i).second));
+			(*i).second->boundsChanged();
+		}
+	}
+	
+	void erase(scene::Node& child) {
+		for (iterator i = begin(); i != end(); ++i) {
+			Node_traverseSubgraph(child, UninstanceSubgraphWalker((*i).first.first, (*i).first.second));
+			(*i).second->boundsChanged();
+		}
+	}
 
-  // instance
-  void forEachInstance(const scene::Instantiable::Visitor& visitor)
-  {
-    for(iterator i = begin(); i != end(); ++i)
-    {
-      visitor.visit(*(*i).second);
-    }
-  }
+	// Cycle through all the instances with the given visitor class
+	void forEachInstance(const scene::Instantiable::Visitor& visitor) {
+		for (iterator i = begin(); i != end(); ++i) {
+			visitor.visit(*(*i).second);
+		}
+	}
 
-  void insert(scene::Instantiable::Observer* observer, const scene::Path& path, scene::Instance* instance)
-  {
-    ASSERT_MESSAGE(m_instances.find(key_type(observer, PathConstReference(instance->path()))) == m_instances.end(), "InstanceSet::insert - element already exists");
-    m_instances.insert(InstanceMap::value_type(key_type(observer, PathConstReference(instance->path())), instance));
-  }
-  scene::Instance* erase(scene::Instantiable::Observer* observer, const scene::Path& path)
-  {
-    ASSERT_MESSAGE(m_instances.find(key_type(observer, PathConstReference(path))) != m_instances.end(), "InstanceSet::erase - failed to find element");
-    InstanceMap::iterator i = m_instances.find(key_type(observer, PathConstReference(path)));
-    scene::Instance* instance = i->second;
-    m_instances.erase(i);
-    return instance;
-  }
+	void insert(scene::Instantiable::Observer* observer, const scene::Path& path, scene::Instance* instance)
+	{
+		ASSERT_MESSAGE(m_instances.find(key_type(observer, PathConstReference(instance->path()))) == m_instances.end(), "InstanceSet::insert - element already exists");
+		m_instances.insert(InstanceMap::value_type(key_type(observer, PathConstReference(instance->path())), instance));
+	}
+	
+	scene::Instance* erase(scene::Instantiable::Observer* observer, const scene::Path& path) {
+		ASSERT_MESSAGE(m_instances.find(key_type(observer, PathConstReference(path))) != m_instances.end(), "InstanceSet::erase - failed to find element");
+		InstanceMap::iterator i = m_instances.find(key_type(observer, PathConstReference(path)));
+		scene::Instance* instance = i->second;
+		m_instances.erase(i);
+		return instance;
+	}
 
-  void transformChanged()
-  {
-    for(InstanceMap::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
-    {
-      (*i).second->transformChanged();
-    }
-  }
-  typedef MemberCaller<InstanceSet, &InstanceSet::transformChanged> TransformChangedCaller;
-  void boundsChanged()
-  {
-    for(InstanceMap::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
-    {
-      (*i).second->boundsChanged();
-    }
-  }
-  typedef MemberCaller<InstanceSet, &InstanceSet::boundsChanged> BoundsChangedCaller;
-};
+	// greebo: This is called by an Node-contained class like Brush/Patch/Doom3Group/Light, etc.
+	// Gets called after the transformation of the contained object changes - this method
+	// passes the call on to all the other child instances of the node. 
+	void transformChanged()	{
+		for (InstanceMap::iterator i = m_instances.begin(); i != m_instances.end(); ++i) {
+			i->second->transformChanged();
+		}
+	}
+	typedef MemberCaller<InstanceSet, &InstanceSet::transformChanged> TransformChangedCaller;
+	
+	void boundsChanged() {
+		for (InstanceMap::iterator i = m_instances.begin(); i != m_instances.end(); ++i) {
+			i->second->boundsChanged();
+		}
+	}
+	typedef MemberCaller<InstanceSet, &InstanceSet::boundsChanged> BoundsChangedCaller;
+
+}; // class InstanceSet
 
 template<typename Functor>
 inline void InstanceSet_forEach(InstanceSet& instances, const Functor& functor)

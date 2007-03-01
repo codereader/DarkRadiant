@@ -31,8 +31,13 @@ class Doom3GroupNode :
 		}
 	};
 
+	// The actual node
 	scene::Node m_node;
+	
+	// The Child instances of this node
 	InstanceSet m_instances;
+	
+	// The contained Doom3Group class
 	Doom3Group m_contained;
 
 public:
