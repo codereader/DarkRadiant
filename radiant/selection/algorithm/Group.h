@@ -7,8 +7,20 @@
 
 namespace selection {
 
+namespace algorithm {
+
+/** greebo: This reparents the child primitives of an entity container like func_static
+ * back to worldspawn and deletes the entity thereafter.  
+ */
+void revertGroupToWorldSpawn();
+
+} // namespace algorithm
+
 typedef std::vector<scene::Instance*> InstanceVector;
 
+/** greebo: This class allows cycling through the child primitives of the
+ * currently selected entity (like func_static).
+ */
 class GroupCycle :
 	public SelectionSystem::Observer
 {
