@@ -257,14 +257,17 @@ NodeSmartReference Entity_createFromSelection(const char* name,
     	
     	// Add selected brushes as children of non-fixed entity
 		entity->setKeyValue("model", Node_getEntity(node)->getKeyValue("name"));
+		// Add the "origin" key. Doom 3 treats the coordinates of an entity's brushes as
+	    // relative to its origin key. 
+		entity->setKeyValue("origin", std::string(workzone.getOrigin()));
+		
 	    Scene_parentSelectedPrimitivesToEntity(GlobalSceneGraph(), node);
 	    Scene_forEachChildSelectable(SelectableSetSelected(true), instance.path());
 	    
-	    // Add the "origin" key. Doom 3 treats the coordinates of an entity's brushes as
-	    // relative to its origin key. We just need to set the origin key and then
+	    // We just need to set the origin key and then
 	    // subtract this vector from each brush's coordinates.
-	    entity->setKeyValue("origin", std::string(workzone.getOrigin()));
-	    map::selectedPrimitivesSubtractOrigin(workzone.getOrigin());
+	    // greebo: Disabled, handled by the Doom3Group itself
+	    // map::selectedPrimitivesSubtractOrigin(workzone.getOrigin());
 	    
 	    // De-select the children and select the newly created parent entity
 	    GlobalSelectionSystem().setSelectedAll(false);

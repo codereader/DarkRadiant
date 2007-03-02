@@ -28,6 +28,151 @@ public:
 	void erase(scene::Node& node);
 };
 
+/** greebo: Helper classes that facilitate the transformation
+ * of child nodes. TODO: Move this into transformlib when done
+ */
+ 
+class InstanceFunctor
+{
+public:
+	virtual void operator() (scene::Instance& instance) const = 0;
+};
+
+/** greebo: This cycles through all the Instances of a given
+ * Instantiable scene::Node, calling an InstanceFunctor on visit.
+ */
+class InstanceVisitor :
+	public scene::Instantiable::Visitor
+{
+	const InstanceFunctor& _functor;
+public:
+	InstanceVisitor(const InstanceFunctor& functor) :
+		_functor(functor)
+	{}
+
+	void visit(scene::Instance& instance) const {
+		_functor(instance);
+	}
+};
+
+class ChildTranslator : 
+	public scene::Traversable::Walker,
+	public InstanceFunctor
+{
+	const Vector3& _translation;
+public:
+	ChildTranslator(const Vector3& translation) :
+		_translation(translation)
+	{}
+
+	bool pre(scene::Node& node) const {
+		scene::Instantiable* instantiable = Node_getInstantiable(node);
+		
+		if (instantiable != NULL) {
+			instantiable->forEachInstance(InstanceVisitor(*this));
+		}
+		return true;
+	}
+	
+	void operator() (scene::Instance& instance) const {
+		Transformable* transformable = Instance_getTransformable(instance);
+		
+		if (transformable != NULL) {
+			transformable->setTranslation(_translation);
+		}
+	}
+};
+
+/** greebo: Tries to translate the given node.
+ * 
+ * The path is as follows: 
+ * 
+ * scene::Node >> scene::Traversable >> WALK >> scene::Instantiable >>
+ * 			   >> VISIT >> Transformable >> setTranslation() 
+ */
+inline void translateNode(scene::Node& node, const Vector3& childTranslation) {
+	// Try to retrieve a traversable out of the given node
+	scene::Traversable* traversable = Node_getTraversable(node);
+	
+	if (traversable != NULL) {
+		traversable->traverse(ChildTranslator(childTranslation));
+	}
+}
+
+class ChildRotator : 
+	public scene::Traversable::Walker,
+	public InstanceFunctor
+{
+	const Quaternion& _rotation;
+public:
+	ChildRotator(const Quaternion& rotation) :
+		_rotation(rotation)
+	{}
+
+	bool pre(scene::Node& node) const {
+		scene::Instantiable* instantiable = Node_getInstantiable(node);
+		
+		if (instantiable != NULL) {
+			instantiable->forEachInstance(InstanceVisitor(*this));
+		}
+		return true;
+	}
+	
+	void operator() (scene::Instance& instance) const {
+		Transformable* transformable = Instance_getTransformable(instance);
+		
+		if (transformable != NULL) {
+			transformable->setRotation(_rotation);
+		}
+	}
+};
+
+class ChildTransformReverter : 
+	public scene::Traversable::Walker,
+	public InstanceFunctor
+{
+public:
+	bool pre(scene::Node& node) const {
+		scene::Instantiable* instantiable = Node_getInstantiable(node);
+		
+		if (instantiable != NULL) {
+			instantiable->forEachInstance(InstanceVisitor(*this));
+		}
+		return true;
+	}
+	
+	void operator() (scene::Instance& instance) const {
+		Transformable* transformable = Instance_getTransformable(instance);
+		
+		if (transformable != NULL) {
+			transformable->revertTransform();
+		}
+	}
+};
+
+class ChildTransformFreezer : 
+	public scene::Traversable::Walker,
+	public InstanceFunctor
+{
+public:
+	bool pre(scene::Node& node) const {
+		scene::Instantiable* instantiable = Node_getInstantiable(node);
+		
+		if (instantiable != NULL) {
+			instantiable->forEachInstance(InstanceVisitor(*this));
+		}
+		return true;
+	}
+	
+	void operator() (scene::Instance& instance) const {
+		Transformable* transformable = Instance_getTransformable(instance);
+		
+		if (transformable != NULL) {
+			transformable->freezeTransform();
+		}
+	}
+};
+
 } // namespace entity
 
 #endif /*DOOM3GROUPORIGIN_H_*/
