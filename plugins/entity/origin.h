@@ -129,10 +129,12 @@ public:
   {
   }
 
-  void enable()
+  void enable(bool triggerOriginChange = true)
   {
     m_enabled = true;
-    originChanged();
+    if (triggerOriginChange) {
+    	originChanged();
+    }
   }
   void disable()
   {
