@@ -185,7 +185,6 @@ void Brush::evaluateBRep() const {
 }
 
 void Brush::transformChanged() {
-	std::cout << "Brush::transformChanged() called\n";
 	m_transformChanged = true;
 	planeChanged();
 }

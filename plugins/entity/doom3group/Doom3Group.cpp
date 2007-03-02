@@ -285,23 +285,19 @@ void Doom3Group::testSelect(Selector& selector, SelectionTest& test, SelectionIn
 }
 
 void Doom3Group::translate(const Vector3& translation) {
-	std::cout << "Doom3Group::translate...\n";
-	//m_origin = origin_translated(m_origin, translation);
+	m_origin = origin_translated(m_originKey.m_origin, translation);
 	m_renderOrigin.updatePivot();
 	
 	if (m_instanceCounter.m_count > 0) {
 		if (m_traversable != NULL) {
-			std::cout << "Translating children..." << translation << "\n";
 			m_traversable->traverse(ChildTranslator(translation));
 		}
 	}
 }
 
 void Doom3Group::rotate(const Quaternion& rotation) {
-	std::cout << "Doom3Group::rotate...\n";
 	if (m_instanceCounter.m_count > 0) {
 		if (m_traversable != NULL) {
-			std::cout << "Rotating children..." << rotation[0] << "," << rotation[1] << "," << rotation[2] << "," << rotation[3] << "\n";
 			m_traversable->traverse(ChildRotator(rotation));
 		}
 	}
@@ -317,28 +313,39 @@ void Doom3Group::snapto(float snap) {
 
 void Doom3Group::revertTransform() {
 	m_origin = m_originKey.m_origin;
-	if (m_instanceCounter.m_count == 0) {
-		rotation_assign(m_rotation, m_rotationKey.m_rotation);
-	}
+	m_renderOrigin.updatePivot();
+	rotation_assign(m_rotation, m_rotationKey.m_rotation);
 	m_curveNURBS.m_controlPointsTransformed = m_curveNURBS.m_controlPoints;
 	m_curveCatmullRom.m_controlPointsTransformed = m_curveCatmullRom.m_controlPoints;
 }
 
 void Doom3Group::freezeTransform() {
-	m_originKey.m_origin = m_origin;
-	m_originKey.write(&m_entity);
 	
 	if (m_instanceCounter.m_count > 0) {
 		if (m_traversable != NULL) {
-			std::cout << "Freezing children...\n";
 			m_traversable->traverse(ChildTransformFreezer());
 		}
+		
+		// Disable the funcStaticOrigin callbacks to avoid the brushes from being double-translated
+		m_funcStaticOrigin.disable();
+		
+		// Now store the key
+		m_originKey.m_origin = m_origin;
+		m_originKey.write(&m_entity);
+		
+		// Re-enable the updating, but don't trigger an originchanged() call 
+		m_funcStaticOrigin.enable(false);
+		
+		// Update the renderable origin
+		m_renderOrigin.updatePivot();
+	}
+	else {
+		rotation_assign(m_rotationKey.m_rotation, m_rotation);
+		m_originKey.m_origin = m_origin;
+		m_originKey.write(&m_entity);
+		m_rotationKey.write(&m_entity);
 	}
 	
-	if (m_instanceCounter.m_count == 0) {
-		rotation_assign(m_rotationKey.m_rotation, m_rotation);
-	}
-	m_rotationKey.write(&m_entity);
 	m_curveNURBS.m_controlPoints = m_curveNURBS.m_controlPointsTransformed;
 	ControlPoints_write(m_curveNURBS.m_controlPoints, curve_Nurbs, m_entity);
 	m_curveCatmullRom.m_controlPoints = m_curveCatmullRom.m_controlPointsTransformed;
@@ -346,17 +353,12 @@ void Doom3Group::freezeTransform() {
 }
 
 void Doom3Group::transformChanged() {
-	std::cout << "Doom3Group::transformChanged() called\n";
-	
 	// If this is a container, pass the call to the children and leave the entity unharmed
 	if (m_instanceCounter.m_count > 0) {
 		if (m_traversable != NULL) {
-			std::cout << "Traversing children...\n";
-			
 			m_traversable->traverse(ChildTransformReverter());
 			m_evaluateTransform();
-			//m_traversable->traverse(ChildTransformEvaluator());
-			//m_traversable->traverse(ChildRotator(rotation));
+			m_renderOrigin.updatePivot();
 		}
 	}
 	else {
