@@ -1770,11 +1770,11 @@ bool Map_SaveSelected(const std::string& filename)
 }
 
 
-class ParentSelectedBrushesToEntityWalker : public scene::Graph::Walker
+class ParentSelectedPrimitivesToEntityWalker : public scene::Graph::Walker
 {
   scene::Node& m_parent;
 public:
-  ParentSelectedBrushesToEntityWalker(scene::Node& parent) : m_parent(parent)
+  ParentSelectedPrimitivesToEntityWalker(scene::Node& parent) : m_parent(parent)
   {
   }
   bool pre(const scene::Path& path, scene::Instance& instance) const
@@ -1814,9 +1814,9 @@ public:
   }
 };
 
-void Scene_parentSelectedBrushesToEntity(scene::Graph& graph, scene::Node& parent)
+void Scene_parentSelectedPrimitivesToEntity(scene::Graph& graph, scene::Node& parent)
 {
-  graph.traverse(ParentSelectedBrushesToEntityWalker(parent));
+  graph.traverse(ParentSelectedPrimitivesToEntityWalker(parent));
 }
 
 
@@ -1829,7 +1829,7 @@ namespace map {
 		 * that it visits.
 		 */
 	
-		class BrushOriginSubtractor
+		class PrimitiveOriginSubtractor
 		: public scene::Graph::Walker
 		{
 			// The translation matrix from the vector3
@@ -1838,7 +1838,7 @@ namespace map {
 		public:
 		
 			// Constructor
-			BrushOriginSubtractor(const Vector3& origin)
+			PrimitiveOriginSubtractor(const Vector3& origin)
 			: _transMat(Matrix4::getTranslation( origin*(-1) )) {}
 			
 			// Pre visit function
@@ -1942,13 +1942,13 @@ namespace map {
 
 	} // namespace
 
-	/* Subtract the given origin from all selected brushes in the map. Uses
-	 * a BrushOriginSubtractor walker class to subtract the origin from
-	 * each selected brush in the scene.
+	/* Subtract the given origin from all selected primitives in the map. Uses
+	 * a PrimitiveOriginSubtractor walker class to subtract the origin from
+	 * each selected primitive in the scene.
 	 */
 	 
-	void selectedBrushesSubtractOrigin(const Vector3& origin) {
-		GlobalSceneGraph().traverse(BrushOriginSubtractor(origin));
+	void selectedPrimitivesSubtractOrigin(const Vector3& origin) {
+		GlobalSceneGraph().traverse(PrimitiveOriginSubtractor(origin));
 	}	
 	
 	/* Return the number of selected primitives in the map, using the

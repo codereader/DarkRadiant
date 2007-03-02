@@ -32,7 +32,6 @@ class PatchNode :
 			NodeContainedCast<PatchNode, MapImporter>::install(m_casts);
 			NodeContainedCast<PatchNode, MapExporter>::install(m_casts);
 			NodeContainedCast<PatchNode, Nameable>::install(m_casts);
-			NodeContainedCast<PatchNode, PatchDoom3>::install(m_casts);
 		}
     	
     	InstanceTypeCastTable& get() {
@@ -121,10 +120,6 @@ public:
 	}
 	// "Casts" the Patch
 	Patch& get(NullType<Patch>) {
-		return m_patch;
-	}
-
-	PatchDoom3& get(NullType<PatchDoom3>) {
 		return m_patch;
 	}
 

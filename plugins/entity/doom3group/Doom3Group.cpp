@@ -3,8 +3,132 @@
 #include "iregistry.h"
 #include "selectable.h"
 #include "render.h"
+#include "transformlib.h"
 
 namespace entity {
+
+class InstanceFunctor
+{
+public:
+	virtual void operator() (scene::Instance& instance) const = 0;
+};
+
+class InstanceVisitor :
+	public scene::Instantiable::Visitor
+{
+	const InstanceFunctor& _functor;
+public:
+	InstanceVisitor(const InstanceFunctor& functor) :
+		_functor(functor)
+	{}
+
+	void visit(scene::Instance& instance) const {
+		_functor(instance);
+	}
+};
+
+class ChildTranslator : 
+	public scene::Traversable::Walker,
+	public InstanceFunctor
+{
+	const Vector3& _translation;
+public:
+	ChildTranslator(const Vector3& translation) :
+		_translation(translation)
+	{}
+
+	bool pre(scene::Node& node) const {
+		scene::Instantiable* instantiable = Node_getInstantiable(node);
+		
+		if (instantiable != NULL) {
+			instantiable->forEachInstance(InstanceVisitor(*this));
+		}
+		return true;
+	}
+	
+	void operator() (scene::Instance& instance) const {
+		Transformable* transformable = Instance_getTransformable(instance);
+		
+		if (transformable != NULL) {
+			transformable->setTranslation(_translation);
+		}
+	}
+};
+
+class ChildRotator : 
+	public scene::Traversable::Walker,
+	public InstanceFunctor
+{
+	const Quaternion& _rotation;
+public:
+	ChildRotator(const Quaternion& rotation) :
+		_rotation(rotation)
+	{}
+
+	bool pre(scene::Node& node) const {
+		scene::Instantiable* instantiable = Node_getInstantiable(node);
+		
+		if (instantiable != NULL) {
+			instantiable->forEachInstance(InstanceVisitor(*this));
+		}
+		return true;
+	}
+	
+	void operator() (scene::Instance& instance) const {
+		Transformable* transformable = Instance_getTransformable(instance);
+		
+		if (transformable != NULL) {
+			transformable->setRotation(_rotation);
+		}
+	}
+};
+
+class ChildTransformReverter : 
+	public scene::Traversable::Walker,
+	public InstanceFunctor
+{
+public:
+	bool pre(scene::Node& node) const {
+		scene::Instantiable* instantiable = Node_getInstantiable(node);
+		
+		if (instantiable != NULL) {
+			instantiable->forEachInstance(InstanceVisitor(*this));
+		}
+		return true;
+	}
+	
+	void operator() (scene::Instance& instance) const {
+		Transformable* transformable = Instance_getTransformable(instance);
+		
+		if (transformable != NULL) {
+			transformable->revertTransform();
+		}
+	}
+};
+
+class ChildTransformFreezer : 
+	public scene::Traversable::Walker,
+	public InstanceFunctor
+{
+public:
+	bool pre(scene::Node& node) const {
+		scene::Instantiable* instantiable = Node_getInstantiable(node);
+		
+		if (instantiable != NULL) {
+			instantiable->forEachInstance(InstanceVisitor(*this));
+		}
+		return true;
+	}
+	
+	void operator() (scene::Instance& instance) const {
+		Transformable* transformable = Instance_getTransformable(instance);
+		
+		if (transformable != NULL) {
+			transformable->freezeTransform();
+		}
+	}
+};
+
 
 inline void PointVertexArray_testSelect(PointVertex* first, std::size_t count, 
 	SelectionTest& test, SelectionIntersection& best) 
@@ -161,12 +285,29 @@ void Doom3Group::testSelect(Selector& selector, SelectionTest& test, SelectionIn
 }
 
 void Doom3Group::translate(const Vector3& translation) {
-	m_origin = origin_translated(m_origin, translation);
+	std::cout << "Doom3Group::translate...\n";
+	//m_origin = origin_translated(m_origin, translation);
 	m_renderOrigin.updatePivot();
+	
+	if (m_instanceCounter.m_count > 0) {
+		if (m_traversable != NULL) {
+			std::cout << "Translating children..." << translation << "\n";
+			m_traversable->traverse(ChildTranslator(translation));
+		}
+	}
 }
 
 void Doom3Group::rotate(const Quaternion& rotation) {
-	rotation_rotate(m_rotation, rotation);
+	std::cout << "Doom3Group::rotate...\n";
+	if (m_instanceCounter.m_count > 0) {
+		if (m_traversable != NULL) {
+			std::cout << "Rotating children..." << rotation[0] << "," << rotation[1] << "," << rotation[2] << "," << rotation[3] << "\n";
+			m_traversable->traverse(ChildRotator(rotation));
+		}
+	}
+	else {
+		rotation_rotate(m_rotation, rotation);
+	}
 }
 
 void Doom3Group::snapto(float snap) {
@@ -176,7 +317,9 @@ void Doom3Group::snapto(float snap) {
 
 void Doom3Group::revertTransform() {
 	m_origin = m_originKey.m_origin;
-	rotation_assign(m_rotation, m_rotationKey.m_rotation);
+	if (m_instanceCounter.m_count == 0) {
+		rotation_assign(m_rotation, m_rotationKey.m_rotation);
+	}
 	m_curveNURBS.m_controlPointsTransformed = m_curveNURBS.m_controlPoints;
 	m_curveCatmullRom.m_controlPointsTransformed = m_curveCatmullRom.m_controlPoints;
 }
@@ -184,7 +327,17 @@ void Doom3Group::revertTransform() {
 void Doom3Group::freezeTransform() {
 	m_originKey.m_origin = m_origin;
 	m_originKey.write(&m_entity);
-	rotation_assign(m_rotationKey.m_rotation, m_rotation);
+	
+	if (m_instanceCounter.m_count > 0) {
+		if (m_traversable != NULL) {
+			std::cout << "Freezing children...\n";
+			m_traversable->traverse(ChildTransformFreezer());
+		}
+	}
+	
+	if (m_instanceCounter.m_count == 0) {
+		rotation_assign(m_rotationKey.m_rotation, m_rotation);
+	}
 	m_rotationKey.write(&m_entity);
 	m_curveNURBS.m_controlPoints = m_curveNURBS.m_controlPointsTransformed;
 	ControlPoints_write(m_curveNURBS.m_controlPoints, curve_Nurbs, m_entity);
@@ -193,11 +346,26 @@ void Doom3Group::freezeTransform() {
 }
 
 void Doom3Group::transformChanged() {
-	revertTransform();
-	m_evaluateTransform();
-	updateTransform();
-	m_curveNURBS.curveChanged();
-	m_curveCatmullRom.curveChanged();
+	std::cout << "Doom3Group::transformChanged() called\n";
+	
+	// If this is a container, pass the call to the children and leave the entity unharmed
+	if (m_instanceCounter.m_count > 0) {
+		if (m_traversable != NULL) {
+			std::cout << "Traversing children...\n";
+			
+			m_traversable->traverse(ChildTransformReverter());
+			m_evaluateTransform();
+			//m_traversable->traverse(ChildTransformEvaluator());
+			//m_traversable->traverse(ChildRotator(rotation));
+		}
+	}
+	else {
+		revertTransform();
+		m_evaluateTransform();
+		updateTransform();
+		m_curveNURBS.curveChanged();
+		m_curveCatmullRom.curveChanged();
+	}
 }
 
 void Doom3Group::construct() {

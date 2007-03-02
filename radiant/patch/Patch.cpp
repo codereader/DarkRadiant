@@ -70,7 +70,6 @@ Patch::Patch(scene::Node& node, const Callback& evaluateTransform, const Callbac
 	m_node(&node),
 	m_shader(texdef_name_default()),
 	m_state(0),
-	_funcStaticOrigin(0,0,0),
 	m_undoable_observer(0),
 	m_map(0),
 	m_render_solid(m_tess),
@@ -90,7 +89,6 @@ Patch::Patch(const Patch& other, scene::Node& node, const Callback& evaluateTran
 	m_node(&node),
 	m_shader(texdef_name_default()),
 	m_state(0),
-	_funcStaticOrigin(other._funcStaticOrigin),
 	m_undoable_observer(0),
 	m_map(0),
 	m_render_solid(m_tess),
@@ -125,9 +123,7 @@ Patch::Patch(const Patch& other) :
 	Snappable(other),
 	Undoable(other),
 	Nameable(other),
-	PatchDoom3(other),
 	m_state(0),
-	_funcStaticOrigin(other._funcStaticOrigin),
 	m_undoable_observer(0),
 	m_map(0),
 	m_render_solid(m_tess),
@@ -167,15 +163,6 @@ void Patch::construct() {
 	captureShader();
 
 	m_xml_state.push_back(XMLState::eDefault);
-}
-
-void Patch::setDoom3GroupOrigin(const Vector3& origin) {
-	// Don't do anything if it the _funcStaticOrigin was empty before
-	if (_funcStaticOrigin != Vector3(0,0,0)) {
-		transform(Matrix4::getTranslation(origin - _funcStaticOrigin));
-	}
-	 
-	_funcStaticOrigin = origin;
 }
 
 // Get the current control point array

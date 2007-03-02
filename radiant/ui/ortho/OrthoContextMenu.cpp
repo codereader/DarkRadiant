@@ -33,7 +33,7 @@ namespace ui
 		const char* ADD_PREFAB_TEXT = "Insert prefab...";
 		const char* ADD_PREFAB_ICON = "cmenu_add_prefab.png";
 		
-		const char* CONVERT_TO_STATIC_TEXT = "Convert brushes to static";
+		const char* CONVERT_TO_STATIC_TEXT = "Convert to func_static";
 		const char* CONVERT_TO_STATIC_ICON = "cmenu_convert_static.png";
 		
 		const char* REVERT_TO_WORLDSPAWN_TEXT = "Revert to worldspawn";
