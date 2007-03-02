@@ -24,6 +24,7 @@
 #include "LightShader.h"
 #include "RenderableVertices.h"
 #include "Doom3LightRadius.h"
+#include "../doom3group/Doom3GroupOrigin.h"
 
 /* greebo: This is the actual light class. It contains the information about the geometry
  * of the light and the actual render functions.
@@ -100,7 +101,7 @@ class Light :
   NamedEntity m_named;
   NameKeys m_nameKeys;
   TraversableObserverPairRelay m_traverseObservers;
-  Doom3GroupOrigin m_funcStaticOrigin;
+  entity::Doom3GroupOrigin m_funcStaticOrigin;
 
 	Doom3LightRadius m_doom3Radius;
 

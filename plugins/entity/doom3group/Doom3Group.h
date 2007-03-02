@@ -7,6 +7,7 @@
 #include "traverselib.h"
 #include "pivot.h"
 
+#include "Doom3GroupOrigin.h"
 #include "../keyobservers.h"
 #include "../model.h"
 #include "../origin.h"
