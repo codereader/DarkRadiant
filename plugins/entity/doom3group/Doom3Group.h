@@ -31,6 +31,10 @@ class Doom3Group :
 	SingletonModel m_model;
 	OriginKey m_originKey;
 	Vector3 m_origin;
+	
+	// A separate origin for the renderable names and pivot points
+	Vector3 m_nameOrigin;
+	 
 	RotationKey m_rotationKey;
 	Float9 m_rotation;
 
@@ -116,6 +120,8 @@ public:
 	void freezeTransform();
 	void transformChanged();
 	typedef MemberCaller<Doom3Group, &Doom3Group::transformChanged> TransformChangedCaller;
+	
+	void translateChildren(const Vector3& childTranslation);
 	
 private:
 	void construct();

@@ -48,19 +48,22 @@ void Doom3GroupOrigin::disable() {
 
 void Doom3GroupOrigin::originChanged() {
 	if (m_enabled) {
-		m_set.traverse(SetDoom3GroupOriginWalker(m_origin));
+		//m_set.traverse(SetDoom3GroupOriginWalker(m_origin));
 	}
 }
 
 void Doom3GroupOrigin::insert(scene::Node& node) {
 	if (m_enabled) {
-		Primitives_setDoom3GroupOrigin(node, m_origin);
+		// Translate the newly added child to the entity origin
+		// as its coordinates are measured relatively to the entity origin
+		translateNode(node, m_origin);
 	}
 }
 
 void Doom3GroupOrigin::erase(scene::Node& node) {
 	if (m_enabled) {
-		Primitives_setDoom3GroupOrigin(node, Vector3(0, 0, 0));
+		// Translate the child back to the 0,0,0 world origin
+		translateNode(node, -m_origin);
 	}
 }
 

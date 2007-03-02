@@ -137,7 +137,8 @@ void revertGroupToWorldSpawn() {
 			    	// Add the origin vector of the old parent entity to the reparented
 			    	// children, as they are positioned relatively to the 0,0,0 origin now. 
 				    // Note the minus sign compensating the substract operation of the called method.
-				    map::selectedPrimitivesSubtractOrigin(-parentOrigin);
+				    // greebo: Disabled, handled by Doom3Group itself
+				    //map::selectedPrimitivesSubtractOrigin(-parentOrigin);
 				}
 			}
 		} // node_is_group
