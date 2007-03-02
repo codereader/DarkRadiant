@@ -36,12 +36,8 @@
  * and there are some "onChanged" callbacks for the light radius and light center.
  * 
  * Note: All the selection stuff is handled by the LightInstance class. This is just the bare bone light.
- * 
- * Note on Projectd Lights Support: There are some callbacks and the according member variables plus
- * some observers already installed, there is even a render method, but I can't say how functional
- * they really are. 
  */
-
+ 
 void light_vertices(const AABB& aabb_light, Vector3 points[6]);
 void light_draw(const AABB& aabb_light, RenderStateFlags state);
 
@@ -101,7 +97,6 @@ class Light :
   NamedEntity m_named;
   NameKeys m_nameKeys;
   TraversableObserverPairRelay m_traverseObservers;
-  entity::Doom3GroupOrigin m_funcStaticOrigin;
 
 	Doom3LightRadius m_doom3Radius;
 
