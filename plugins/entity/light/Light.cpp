@@ -158,7 +158,6 @@ Light::Light(IEntityClassPtr eclass, scene::Node& node, const Callback& transfor
 	m_colour(Callback()),
 	m_named(m_entity),
 	m_nameKeys(m_entity),
-	m_funcStaticOrigin(m_traverse, m_originKey.m_origin),
 	m_radii_box(m_aabb_light.origin),
 	_rCentre(m_doom3Radius.m_centerTransformed, m_aabb_light.origin, m_doom3Radius._centerColour),
 	_rTarget(_lightTargetTransformed, m_aabb_light.origin, _colourLightTarget),
@@ -185,7 +184,6 @@ Light::Light(const Light& other, scene::Node& node, const Callback& transformCha
 	m_colour(Callback()),
 	m_named(m_entity),
 	m_nameKeys(m_entity),
-	m_funcStaticOrigin(m_traverse, m_originKey.m_origin),
 	m_radii_box(m_aabb_light.origin),
 	_rCentre(m_doom3Radius.m_centerTransformed, m_aabb_light.origin, m_doom3Radius._centerColour),
 	_rTarget(_lightTargetTransformed, m_aabb_light.origin, _colourLightTarget),
@@ -247,24 +245,18 @@ void Light::construct() {
 	m_doom3Radius.setCenterColour(m_entity.getEntityClass()->getColour());
 
 	m_traverse.attach(&m_traverseObservers);
-	m_traverseObservers.attach(m_funcStaticOrigin);
 
 	m_entity.m_isContainer = true;
 }
 
 void Light::destroy() {
 	if(g_lightType == LIGHTTYPE_DOOM3) {
-		m_traverseObservers.detach(m_funcStaticOrigin);
 		m_traverse.detach(&m_traverseObservers);
 	}
 }
 
 void Light::updateOrigin() {
 	m_boundsChanged();
-
-	if(g_lightType == LIGHTTYPE_DOOM3) {
-		m_funcStaticOrigin.originChanged();
-	}
 
 	m_doom3Radius.m_changed();
 
@@ -422,19 +414,11 @@ void Light::instanceAttach(const scene::Path& path) {
 			m_traverse.instanceAttach(path_find_mapfile(path.begin(), path.end()));
 		}
 		m_entity.attach(m_keyObservers);
-
-		if(g_lightType == LIGHTTYPE_DOOM3) {
-			m_funcStaticOrigin.enable();
-		}
 	}
 }
 
 void Light::instanceDetach(const scene::Path& path) {
 	if(--m_instanceCounter.m_count == 0) {
-		if(g_lightType == LIGHTTYPE_DOOM3) {
-			m_funcStaticOrigin.disable();
-		}
-		
 		m_entity.detach(m_keyObservers);
 		
 		if(g_lightType == LIGHTTYPE_DOOM3) {
