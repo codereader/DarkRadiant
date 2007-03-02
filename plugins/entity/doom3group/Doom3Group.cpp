@@ -285,6 +285,7 @@ void Doom3Group::testSelect(Selector& selector, SelectionTest& test, SelectionIn
 }
 
 void Doom3Group::translate(const Vector3& translation) {
+	std::cout << "translate called with " << translation << "\n";
 	m_origin = origin_translated(m_originKey.m_origin, translation);
 	m_renderOrigin.updatePivot();
 	
