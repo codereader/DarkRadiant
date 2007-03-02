@@ -216,10 +216,10 @@ NodeSmartReference Entity_createFromSelection(const char* name,
     bool isModel = (GlobalSelectionSystem().countSelected() == 0 
                     && string_equal_nocase(name, "func_static"));
     
-    // Some entities are based on the size of the currently-selected brush(es)
-    bool brushesSelected = map::countSelectedBrushes() != 0;
+    // Some entities are based on the size of the currently-selected primitive(s)
+    bool primitivesSelected = map::countSelectedPrimitives() != 0;
 
-    if (!(entityClass->isFixedSize() || isModel) && !brushesSelected) {
+    if (!(entityClass->isFixedSize() || isModel) && !primitivesSelected) {
 		throw EntityCreationException(std::string("Unable to create entity \"") 
 									  + name 
 									  + "\", no brushes selected");
@@ -236,7 +236,7 @@ NodeSmartReference Entity_createFromSelection(const char* name,
     entitypath.push(makeReference(node.get()));
     scene::Instance & instance = findInstance(entitypath);
 
-    if (entityClass->isFixedSize() || (isModel && !brushesSelected)) {
+    if (entityClass->isFixedSize() || (isModel && !primitivesSelected)) {
         Select_Delete();
     
         Transformable *transform = Instance_getTransformable(instance);
@@ -257,14 +257,14 @@ NodeSmartReference Entity_createFromSelection(const char* name,
     	
     	// Add selected brushes as children of non-fixed entity
 		entity->setKeyValue("model", Node_getEntity(node)->getKeyValue("name"));
-	    Scene_parentSelectedBrushesToEntity(GlobalSceneGraph(), node);
+	    Scene_parentSelectedPrimitivesToEntity(GlobalSceneGraph(), node);
 	    Scene_forEachChildSelectable(SelectableSetSelected(true), instance.path());
 	    
 	    // Add the "origin" key. Doom 3 treats the coordinates of an entity's brushes as
 	    // relative to its origin key. We just need to set the origin key and then
 	    // subtract this vector from each brush's coordinates.
 	    entity->setKeyValue("origin", std::string(workzone.getOrigin()));
-	    map::selectedBrushesSubtractOrigin(workzone.getOrigin());
+	    map::selectedPrimitivesSubtractOrigin(workzone.getOrigin());
 	    
 	    // De-select the children and select the newly created parent entity
 	    GlobalSelectionSystem().setSelectedAll(false);
@@ -273,7 +273,7 @@ NodeSmartReference Entity_createFromSelection(const char* name,
 	
     // Set the light radius and origin
 
-    if (entityClass->isLight() && brushesSelected) {
+    if (entityClass->isLight() && primitivesSelected) {
         AABB bounds(Doom3Light_getBounds(workzone));    // If workzone is not valid the Doom3Light_getBounds function will return a default
         StringOutputStream key(64);
 

@@ -102,12 +102,6 @@ inline void Primitives_setDoom3GroupOrigin(scene::Node& node, const Vector3& ori
 	if (brush != NULL) {
 		brush->setDoom3GroupOrigin(origin);
 	}
-	
-	// Check for PatchDoom3
-	PatchDoom3* patch = Node_getPatchDoom3(node);
-	if (patch != NULL) {
-		patch->setDoom3GroupOrigin(origin);
-	}
 }
 
 class SetDoom3GroupOriginWalker : public scene::Traversable::Walker

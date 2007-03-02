@@ -133,7 +133,7 @@ scene::Node& Node_Clone(scene::Node& node);
 
 void DoMapInfo();
 
-void Scene_parentSelectedBrushesToEntity(scene::Graph& graph, scene::Node& parent);
+void Scene_parentSelectedPrimitivesToEntity(scene::Graph& graph, scene::Node& parent);
 
 void Scene_parentSelected();
 
@@ -178,7 +178,7 @@ namespace map {
 	 * Vector3 containing the new origin for the selected brushes.
 	 */
 	 
-	void selectedBrushesSubtractOrigin(const Vector3& origin);
+	void selectedPrimitivesSubtractOrigin(const Vector3& origin);
 	
 	/** Count the number of selected primitives in the current map.
 	 * 
