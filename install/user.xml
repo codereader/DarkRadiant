@@ -81,6 +81,7 @@
 			<translationY value="0.0" />
 			<scale value="1.0" />
 			<scaleWithOrthoView value="1" />
+			<panWithOrthoView value="0" />
 		</overlay>
 		<translateConstrained value="1" />
 	</xyview>
