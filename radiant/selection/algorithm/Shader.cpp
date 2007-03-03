@@ -484,8 +484,23 @@ void scaleTexture(const Vector2& scale) {
 			GlobalSceneGraph(), 
 			FaceTextureScaler(scale)
 		);
-		// Pass the scale value + 1.0f to the patches as they are scaled in relative steps
-  		Scene_forEachVisibleSelectedPatch(PatchTextureScaler(scale + Vector2(1.0f, 1.0f)));
+		
+		// Prepare the according patch scale value
+		Vector2 patchScale;
+		
+		// We need to have 1.05 for a +0.05 scale
+		// and a 1/1.05 for a -0.05 scale
+		for (int i = 0; i < 2; i++) {
+			if (scale[i] >= 0.0f) {
+				patchScale[i] = 1.0f + scale[i];
+			}
+			else {
+				patchScale[i] = 1/(1.0f + fabs(scale[i]));
+			}
+		}
+		
+		// Pass the scale to the patches as they are scaled in relative steps
+  		Scene_forEachVisibleSelectedPatch(PatchTextureScaler(patchScale));
 	}
 	// Scale the face textures
 	Scene_ForEachSelectedBrushFace(
