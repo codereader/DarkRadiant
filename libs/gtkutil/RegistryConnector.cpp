@@ -6,6 +6,8 @@
 #include "gtk/gtkcombobox.h"
 #include "gtk/gtkentry.h"
 #include "gtk/gtkspinbutton.h"
+#include "gtk/gtkrange.h"
+#include "gtk/gtkscale.h"
 
 namespace gtkutil {
 
@@ -20,7 +22,6 @@ void RegistryConnector::connectGtkObject(GtkObject* object, const std::string& r
 }
 
 void RegistryConnector::importKey(GtkObject* obj, const std::string& registryKey) {
-	
 	if (GTK_IS_TOGGLE_BUTTON(obj)) {
 		// Set the "active" state of the toggle button according to the registry value
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(obj), GlobalRegistry().get(registryKey)=="1");
@@ -41,6 +42,10 @@ void RegistryConnector::importKey(GtkObject* obj, const std::string& registryKey
 		// Set the content of the input field to the registryKey
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(obj), GlobalRegistry().getFloat(registryKey));
 	}
+	else if (GTK_IS_SCALE(obj)) {
+		// Set the content of the input field to the registryKey
+		gtk_range_set_value(GTK_RANGE(obj), GlobalRegistry().getFloat(registryKey));
+	}
 	else {
 		std::cout << "RegistryConnector::importKey failed to identify GTKObject\n";
 	}
@@ -48,7 +53,6 @@ void RegistryConnector::importKey(GtkObject* obj, const std::string& registryKey
 
 // Retrieve the value from the GtkObject and save it into the registry
 void RegistryConnector::exportKey(GtkObject* obj, const std::string& registryKey) {
-	
 	if (GTK_IS_TOGGLE_BUTTON(obj)) {
 		// Set the registry key to "1" or "0", according on the toggle button state
 		GlobalRegistry().set(registryKey, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(obj)) ? "1" : "0");
@@ -68,6 +72,10 @@ void RegistryConnector::exportKey(GtkObject* obj, const std::string& registryKey
 	else if (GTK_IS_SPIN_BUTTON(obj)) {
 		// Set the content of the input field to the registryKey
 		GlobalRegistry().setFloat(registryKey, gtk_spin_button_get_value(GTK_SPIN_BUTTON(obj)));
+	}
+	else if (GTK_IS_SCALE(obj)) {
+		// Set the content of the input field to the registryKey
+		GlobalRegistry().setFloat(registryKey, gtk_range_get_value(GTK_RANGE(obj)));
 	}
 	else {
 		std::cout << "RegistryConnector::exportKey failed to identify GTKObject\n";

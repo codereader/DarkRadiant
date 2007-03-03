@@ -6,6 +6,8 @@
 #include <gtk/gtkfilechooser.h>
 #include <gtk/gtkrange.h>
 
+#include "gtkutil/RegistryConnector.h"
+
 #include <map>
 #include <string>
 
@@ -26,6 +28,12 @@ class OverlayDialog
 	typedef std::map<std::string, GtkWidget*> WidgetMap;
 	WidgetMap _subWidgets;
 
+	// The helper class that syncs the widgets with the Registry on demand
+	gtkutil::RegistryConnector _connector;
+
+	// TRUE, if a widget update is in progress (to avoid callback loops)
+	bool _callbackActive;
+
 private:
 
 	// Constructor creates GTK widgets	
@@ -35,21 +43,24 @@ private:
 	GtkWidget* createWidgets();
 	GtkWidget* createButtons();
 	
+	/** greebo: Connects the widgets to the Registry
+	 */
+	void connectWidgets();
+	
 	// Get the overlay state from the registry, and set dialog widgets
 	// accordingly
 	void getStateFromRegistry();
+	
+	// Updates the sensitivity of the objects according to the registry state
+	void updateSensitivity();
 	
 	// GTK callbacks
 	static void _onClose(GtkWidget*, OverlayDialog*);
 	static void _onUseImage(GtkToggleButton*, OverlayDialog*);
 	static void _onFileSelection(GtkFileChooser*, OverlayDialog*);
-	static void _onKeepAspect(GtkToggleButton*, OverlayDialog*);
-	static void _onScaleImage(GtkToggleButton*, OverlayDialog*);
-	static void _onPanImage(GtkToggleButton*, OverlayDialog*);
-	static bool _onTransparencyScroll(
-							GtkRange*, GtkScrollType, double, OverlayDialog*);
-	static bool _onScaleScroll(
-							GtkRange*, GtkScrollType, double, OverlayDialog*);
+	
+	static void _onChange(GtkWidget*, OverlayDialog*);
+	static void _onScrollChange(GtkWidget* range, OverlayDialog* self);
 
 public:
 

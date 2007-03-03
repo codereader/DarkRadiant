@@ -4,21 +4,13 @@
 #include "math/matrix.h"
 #include "texturelib.h"
 
+#include "OverlayRegistryKeys.h"
+
 namespace ui {
 
 /* CONSTANTS */
 
 namespace {
-	const std::string RKEY_OVERLAY_VISIBLE = "user/ui/xyview/overlay/visible";
-	const std::string RKEY_OVERLAY_TRANSPARENCY = "user/ui/xyview/overlay/transparency";
-	const std::string RKEY_OVERLAY_IMAGE = "user/ui/xyview/overlay/image";
-	const std::string RKEY_OVERLAY_SCALE = "user/ui/xyview/overlay/scale";
-	const std::string RKEY_OVERLAY_TRANSLATIONX = "user/ui/xyview/overlay/translationX";
-	const std::string RKEY_OVERLAY_TRANSLATIONY = "user/ui/xyview/overlay/translationY";
-	const std::string RKEY_OVERLAY_PROPORTIONAL = "user/ui/xyview/overlay/proportional";
-	const std::string RKEY_OVERLAY_SCALE_WITH_XY = "user/ui/xyview/overlay/scaleWithOrthoView";
-	const std::string RKEY_OVERLAY_PAN_WITH_XY = "user/ui/xyview/overlay/panWithOrthoView";
-	
 	const float MIN_SCALE = 0.001f;
 	const float MAX_SCALE = 20.0f;
 }
