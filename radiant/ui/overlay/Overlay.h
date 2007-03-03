@@ -103,27 +103,11 @@ public:
 		}
 	}
 	
-	// Helper method, constrains the <input> float to the given min/max values
-	float constrainFloat(const float& input, const float& min, const float& max) {
-		if (input < min) {
-			return min;
-		}
-		else if (input > max) {
-			return max;
-		}
-		else {
-			return input;
-		}
-	}
-	
 	// Sets the image scale to the given float (1.0f is no scaling)
 	void setImageScale(float scale);
 	
-	// Sets the image position in quasi texture coordinates (-0.5f .. 0.5f)
-	void setImagePosition(const float& x, const float& y) {
-		_translationX = constrainFloat(x, -1.0f, 1.0f);
-		_translationY = constrainFloat(y, -1.0f, 1.0f);
-	}
+	// Sets the image position in quasi texture coordinates
+	void setImagePosition(const float& x, const float& y);
 
 	// RegistryKeyObserver implementation, gets called upon key change
 	void keyChanged();
@@ -133,6 +117,11 @@ public:
 	 */
 	void draw(float xbegin, float xend, 
 			  float ybegin, float yend, float xyviewscale); 
+
+private:
+
+	// Helper method, constrains the <input> float to the given min/max values
+	float constrainFloat(const float& input, const float& min, const float& max);
 
 }; // class Overlay
 

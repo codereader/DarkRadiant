@@ -13,6 +13,8 @@ namespace ui {
 namespace {
 	const float MIN_SCALE = 0.001f;
 	const float MAX_SCALE = 20.0f;
+	const float TRANSLATION_MIN = -20.0f;
+	const float TRANSLATION_MAX = 20.0f;
 }
 
 // Main constructor
@@ -163,5 +165,23 @@ void Overlay::keyChanged() {
 					  GlobalRegistry().getFloat(RKEY_OVERLAY_TRANSLATIONY) );
 }
 
+// Helper method, constrains the <input> float to the given min/max values
+float Overlay::constrainFloat(const float& input, const float& min, const float& max) {
+	if (input < min) {
+		return min;
+	}
+	else if (input > max) {
+		return max;
+	}
+	else {
+		return input;
+	}
+}
+
+// Sets the image position in quasi texture coordinates (-0.5f .. 0.5f)
+void Overlay::setImagePosition(const float& x, const float& y) {
+	_translationX = constrainFloat(x, TRANSLATION_MIN, TRANSLATION_MAX);
+	_translationY = constrainFloat(y, TRANSLATION_MIN, TRANSLATION_MAX);
+}
 
 } // namespace ui
