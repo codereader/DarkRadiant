@@ -89,8 +89,7 @@ class Brush :
 	public Snappable,
 	public Undoable,
 	public FaceObserver,
-	public Nameable,
-	public BrushDoom3
+	public Nameable
 {
 private:
 	scene::Node* m_node;
@@ -165,8 +164,6 @@ public:
 	
 	// assignment not supported
 	Brush& operator=(const Brush& other);
-	
-	void setDoom3GroupOrigin(const Vector3& origin);
 	
 	void attach(BrushObserver& observer);
 	void detach(BrushObserver& observer);
