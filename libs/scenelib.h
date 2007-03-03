@@ -74,6 +74,14 @@ public:
   virtual void snapComponents(float snap) = 0;
 };
 
+class BrushDoom3
+{
+public:
+  STRING_CONSTANT(Name, "BrushDoom3");
+
+  virtual void setDoom3GroupOrigin(const Vector3& origin) = 0;
+};
+
 typedef TypeCastTable<NODETYPEID_MAX> NodeTypeCastTable;
 
 template<typename Type>
@@ -1071,6 +1079,14 @@ public:
     return m_count;
   }
 };
+
+/** greebo: Cast a node onto a BrushDoom3 pointer
+ * 
+ * @returns: NULL, if failed, the pointer to the class otherwise.
+ */
+inline BrushDoom3* Node_getBrushDoom3(scene::Node& node) {
+	return NodeTypeCast<BrushDoom3>::cast(node);
+}
 
 // Helper class
 class InstanceFunctor
