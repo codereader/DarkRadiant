@@ -147,6 +147,8 @@ void SaveMap();
 void ExportMap();
 void SaveRegion();
 
+class Entity;
+Entity* Scene_FindEntityByClass(const std::string& className);
 
 void Map_Traverse(scene::Node& root, const scene::Traversable::Walker& walker);
 

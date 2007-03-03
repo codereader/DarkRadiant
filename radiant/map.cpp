@@ -82,6 +82,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "camera/CamWnd.h"
 #include "camera/GlobalCamera.h"
 #include "xyview/GlobalXYWnd.h"
+#include "map/MapPositionManager.h"
 #include "ui/mru/MRU.h"
 #include "map/AutoSaver.h"
 #include "map/MapFileManager.h"
@@ -1129,6 +1130,11 @@ void Map_LoadFile (const std::string& filename)
 	// Move the view to a start position
 	Map_StartPosition();
 
+	// Load the stored map positions from the worldspawn entity
+	map::GlobalMapPosition().loadPositions();
+	// Remove them, so that the user doesn't get bothered with them
+	map::GlobalMapPosition().removePositions();
+	
 	// Clear the modified flag
 	map::setModified(false);
 }
@@ -1397,6 +1403,10 @@ void Map_Save()
 {
 	// Store the camview position into worldspawn
 	Map_SavePosition();
+	
+	// Store the map positions into the worldspawn spawnargs
+	map::GlobalMapPosition().savePositions();
+	
 	Pointfile_Clear();
 
 	ScopeTimer timer("map save");
@@ -1407,6 +1417,9 @@ void Map_Save()
   
 	// Remove the saved camera position
 	Map_RemoveSavedPosition();
+	
+	// Remove the map positions again after saving
+	map::GlobalMapPosition().removePositions();
 	
 	// Clear the modified flag
 	map::setModified(false);
@@ -2523,6 +2536,9 @@ void Map_Construct()
   GlobalEventManager().addCommand("RegionSetXY", FreeCaller<RegionXY>());
   GlobalEventManager().addCommand("RegionSetBrush", FreeCaller<RegionBrush>());
   GlobalEventManager().addCommand("RegionSetSelection", FreeCaller<RegionSelected>());
+
+	// Add the map position commands to the EventManager
+	map::GlobalMapPosition().initialise();
 
   GlobalPreferenceSystem().registerPreference("MapInfoDlg", WindowPositionImportStringCaller(g_posMapInfoWnd), WindowPositionExportStringCaller(g_posMapInfoWnd));
   
