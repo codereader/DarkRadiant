@@ -64,7 +64,7 @@ GtkWidget* OverlayDialog::createWidgets() {
 	
 	// Other widgets are in a table, which is indented with respect to the
 	// Use Image checkbox, and becomes enabled/disabled with it.
-	GtkWidget* tbl = gtk_table_new(6, 2, FALSE);
+	GtkWidget* tbl = gtk_table_new(8, 2, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(tbl), 12);
 	gtk_table_set_col_spacings(GTK_TABLE(tbl), 12);
 	_subWidgets["subTable"] = tbl;
@@ -109,10 +109,36 @@ GtkWidget* OverlayDialog::createWidgets() {
 							  				
 	gtk_table_attach_defaults(GTK_TABLE(tbl), scale, 1, 2, 2, 3);
 	
+	// Translation X slider
+	gtk_table_attach(GTK_TABLE(tbl), 
+					 gtkutil::LeftAlignedLabel("<b>Horizontal offset</b>"),
+					 0, 1, 3, 4, 
+					 GTK_FILL, GTK_FILL, 0, 0);
+
+	GtkWidget* transx = gtk_hscale_new_with_range(-20, 20, 0.01);
+	g_signal_connect(G_OBJECT(transx), "value-changed",
+					 G_CALLBACK(_onScrollChange), this);
+	_subWidgets["translateX"] = transx;
+							  				
+	gtk_table_attach_defaults(GTK_TABLE(tbl), transx, 1, 2, 3, 4);
+	
+	// Translation Y slider
+	gtk_table_attach(GTK_TABLE(tbl), 
+					 gtkutil::LeftAlignedLabel("<b>Vertical offset</b>"),
+					 0, 1, 4, 5, 
+					 GTK_FILL, GTK_FILL, 0, 0);
+
+	GtkWidget* transy = gtk_hscale_new_with_range(-20, 20, 0.01);
+	g_signal_connect(G_OBJECT(transy), "value-changed",
+					 G_CALLBACK(_onScrollChange), this);
+	_subWidgets["translateY"] = transy;
+	
+	gtk_table_attach_defaults(GTK_TABLE(tbl), transy, 1, 2, 4, 5);
+	
 	// Options list
 	gtk_table_attach(GTK_TABLE(tbl), 
 					 gtkutil::LeftAlignedLabel("<b>Options</b>"),
-					 0, 1, 3, 4, 
+					 0, 1, 5, 6, 
 					 GTK_FILL, GTK_FILL, 0, 0);
 	
 	GtkWidget* keepAspect = 
@@ -120,21 +146,21 @@ GtkWidget* OverlayDialog::createWidgets() {
 	g_signal_connect(G_OBJECT(keepAspect), "toggled",
 					 G_CALLBACK(_onChange), this);
 	_subWidgets["keepAspect"] = keepAspect;
-	gtk_table_attach_defaults(GTK_TABLE(tbl), keepAspect, 1, 2, 3, 4);
+	gtk_table_attach_defaults(GTK_TABLE(tbl), keepAspect, 1, 2, 5, 6);
 	
 	GtkWidget* scaleWithViewport =
 		gtk_check_button_new_with_label("Zoom image with viewport");
 	g_signal_connect(G_OBJECT(scaleWithViewport), "toggled",
 					 G_CALLBACK(_onChange), this);
 	_subWidgets["scaleImage"] = scaleWithViewport;	
-	gtk_table_attach_defaults(GTK_TABLE(tbl), scaleWithViewport, 1, 2, 4, 5);
+	gtk_table_attach_defaults(GTK_TABLE(tbl), scaleWithViewport, 1, 2, 6, 7);
 	
 	GtkWidget* panWithViewport =
 		gtk_check_button_new_with_label("Pan image with viewport");
 	g_signal_connect(G_OBJECT(panWithViewport), "toggled",
 					 G_CALLBACK(_onChange), this);
 	_subWidgets["panImage"] = panWithViewport;	
-	gtk_table_attach_defaults(GTK_TABLE(tbl), panWithViewport, 1, 2, 5, 6);
+	gtk_table_attach_defaults(GTK_TABLE(tbl), panWithViewport, 1, 2, 7, 8);
 	
 	// Pack table into vbox and return
 	gtk_box_pack_start(GTK_BOX(vbx), 
@@ -174,6 +200,8 @@ void OverlayDialog::connectWidgets() {
 	_connector.connectGtkObject(GTK_OBJECT(_subWidgets["keepAspect"]), RKEY_OVERLAY_PROPORTIONAL);
 	_connector.connectGtkObject(GTK_OBJECT(_subWidgets["scaleImage"]), RKEY_OVERLAY_SCALE_WITH_XY);
 	_connector.connectGtkObject(GTK_OBJECT(_subWidgets["panImage"]), RKEY_OVERLAY_PAN_WITH_XY);
+	_connector.connectGtkObject(GTK_OBJECT(_subWidgets["translateX"]), RKEY_OVERLAY_TRANSLATIONX);
+	_connector.connectGtkObject(GTK_OBJECT(_subWidgets["translateY"]), RKEY_OVERLAY_TRANSLATIONY);
 }
 
 // Get the dialog state from the registry
