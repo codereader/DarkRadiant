@@ -45,6 +45,7 @@ private:
 	static void _onFileSelection(GtkFileChooser*, OverlayDialog*);
 	static void _onKeepAspect(GtkToggleButton*, OverlayDialog*);
 	static void _onScaleImage(GtkToggleButton*, OverlayDialog*);
+	static void _onPanImage(GtkToggleButton*, OverlayDialog*);
 	static bool _onTransparencyScroll(
 							GtkRange*, GtkScrollType, double, OverlayDialog*);
 	static bool _onScaleScroll(

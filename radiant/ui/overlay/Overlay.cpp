@@ -17,6 +17,7 @@ namespace {
 	const std::string RKEY_OVERLAY_TRANSLATIONY = "user/ui/xyview/overlay/translationY";
 	const std::string RKEY_OVERLAY_PROPORTIONAL = "user/ui/xyview/overlay/proportional";
 	const std::string RKEY_OVERLAY_SCALE_WITH_XY = "user/ui/xyview/overlay/scaleWithOrthoView";
+	const std::string RKEY_OVERLAY_PAN_WITH_XY = "user/ui/xyview/overlay/panWithOrthoView";
 	
 	const float MIN_SCALE = 0.001f;
 	const float MAX_SCALE = 20.0f;
@@ -29,6 +30,7 @@ Overlay::Overlay()
 	_transparency(GlobalRegistry().getFloat(RKEY_OVERLAY_TRANSPARENCY)),
 	_scale(GlobalRegistry().getFloat(RKEY_OVERLAY_SCALE)),
 	_scaleWithXYView(GlobalRegistry().get(RKEY_OVERLAY_SCALE_WITH_XY) == "1"),
+	_panWithXYView(GlobalRegistry().get(RKEY_OVERLAY_PAN_WITH_XY) == "1"),
 	_keepProportions(GlobalRegistry().get(RKEY_OVERLAY_PROPORTIONAL) == "1"),
 	_translationX(GlobalRegistry().getFloat(RKEY_OVERLAY_TRANSLATIONX)),
 	_translationY(GlobalRegistry().getFloat(RKEY_OVERLAY_TRANSLATIONY)),
@@ -43,6 +45,7 @@ Overlay::Overlay()
 	GlobalRegistry().addKeyObserver(this, RKEY_OVERLAY_TRANSLATIONY);
 	GlobalRegistry().addKeyObserver(this, RKEY_OVERLAY_PROPORTIONAL);
 	GlobalRegistry().addKeyObserver(this, RKEY_OVERLAY_SCALE_WITH_XY);
+	GlobalRegistry().addKeyObserver(this, RKEY_OVERLAY_PAN_WITH_XY);
 }
 
 // Static instance owner
@@ -114,8 +117,10 @@ void Overlay::draw(float xbegin, float xend, float ybegin, float yend,
 	windowUpperLeft = scaleTranslation.transform(windowUpperLeft).getProjected();
 	windowLowerRight = scaleTranslation.transform(windowLowerRight).getProjected();
 	
-	windowUpperLeft += windowOrigin;
-	windowLowerRight += windowOrigin;
+	if (!_panWithXYView) {
+		windowUpperLeft += windowOrigin;
+		windowLowerRight += windowOrigin;
+	}
 	
 	// Enable the blend functions and textures
 	glEnable(GL_BLEND);
@@ -158,6 +163,7 @@ void Overlay::keyChanged() {
 	show(GlobalRegistry().get(RKEY_OVERLAY_VISIBLE) == "1");
 	_keepProportions = (GlobalRegistry().get(RKEY_OVERLAY_PROPORTIONAL) == "1");
 	_scaleWithXYView = (GlobalRegistry().get(RKEY_OVERLAY_SCALE_WITH_XY) == "1"),
+	_panWithXYView = (GlobalRegistry().get(RKEY_OVERLAY_PAN_WITH_XY) == "1"),
 	setImage(GlobalRegistry().get(RKEY_OVERLAY_IMAGE));
 	setTransparency(GlobalRegistry().getFloat(RKEY_OVERLAY_TRANSPARENCY));
 	setImageScale(GlobalRegistry().getFloat(RKEY_OVERLAY_SCALE));

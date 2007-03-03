@@ -34,6 +34,9 @@ private:
 	// TRUE, if the image should be rescaled along with the orthoview scale
 	bool _scaleWithXYView;
 	
+	// TRUE, if the image should be panned along
+	bool _panWithXYView;
+	
 	// Set to TRUE, if the image should be displayed proportionally.
 	bool _keepProportions;
 	

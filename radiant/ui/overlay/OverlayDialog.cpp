@@ -37,7 +37,9 @@ namespace {
 	
 	const char* 
 	RKEY_OVERLAY_SCALE_WITH_XY = "user/ui/xyview/overlay/scaleWithOrthoView";
-
+	
+	const char* 
+	RKEY_OVERLAY_PAN_WITH_XY = "user/ui/xyview/overlay/panWithOrthoView";
 }
 
 // Create GTK stuff in c-tor
@@ -81,7 +83,7 @@ GtkWidget* OverlayDialog::createWidgets() {
 	
 	// Other widgets are in a table, which is indented with respect to the
 	// Use Image checkbox, and becomes enabled/disabled with it.
-	GtkWidget* tbl = gtk_table_new(5, 2, FALSE);
+	GtkWidget* tbl = gtk_table_new(6, 2, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(tbl), 12);
 	gtk_table_set_col_spacings(GTK_TABLE(tbl), 12);
 	_subWidgets["subTable"] = tbl;
@@ -145,6 +147,13 @@ GtkWidget* OverlayDialog::createWidgets() {
 					 G_CALLBACK(_onScaleImage), this);
 	_subWidgets["scaleImage"] = scaleWithViewport;	
 	gtk_table_attach_defaults(GTK_TABLE(tbl), scaleWithViewport, 1, 2, 4, 5);
+	
+	GtkWidget* panWithViewport =
+		gtk_check_button_new_with_label("Pan image with viewport");
+	g_signal_connect(G_OBJECT(panWithViewport), "toggled",
+					 G_CALLBACK(_onPanImage), this);
+	_subWidgets["panImage"] = panWithViewport;	
+	gtk_table_attach_defaults(GTK_TABLE(tbl), panWithViewport, 1, 2, 5, 6);
 	
 	// Pack table into vbox and return
 	gtk_box_pack_start(GTK_BOX(vbx), 
@@ -217,6 +226,11 @@ void OverlayDialog::getStateFromRegistry() {
 	gtk_toggle_button_set_active(
 		GTK_TOGGLE_BUTTON(_subWidgets["scaleImage"]),
 		GlobalRegistry().get(RKEY_OVERLAY_SCALE_WITH_XY) == "1" ? TRUE : FALSE);
+		
+	// Options: Scale with window
+	gtk_toggle_button_set_active(
+		GTK_TOGGLE_BUTTON(_subWidgets["panImage"]),
+		GlobalRegistry().get(RKEY_OVERLAY_PAN_WITH_XY) == "1" ? TRUE : FALSE);
 }
 
 /* GTK CALLBACKS */
@@ -239,6 +253,19 @@ void OverlayDialog::_onKeepAspect(GtkToggleButton* w, OverlayDialog* self) {
 
 	// Refresh
 	GlobalSceneGraph().sceneChanged();
+}
+
+// Scale with viewport toggle
+void OverlayDialog::_onPanImage(GtkToggleButton* w, OverlayDialog* self) {
+
+	// Set the registry key
+	if (gtk_toggle_button_get_active(w)) {
+		GlobalRegistry().set(RKEY_OVERLAY_PAN_WITH_XY, "1");
+	}
+	else {
+		GlobalRegistry().set(RKEY_OVERLAY_PAN_WITH_XY, "0");
+	}	
+
 }
 
 // Scale with viewport toggle
