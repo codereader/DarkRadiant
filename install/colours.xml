@@ -8,6 +8,7 @@
 		<colour name="grid_text" value="0 0 0" />
 		<colour name="grid_block" value="0 0 1" />
 		<colour name="default_brush" value="0 0 0" />
+		<colour name="default_entity" value="1 0.5 0" />
 		<colour name="camera_background" value="0.25 0.25 0.25" />
 		<colour name="selected_brush" value="1 0 0" />
 		<colour name="selected_brush_camera" value="1 0 0" />
@@ -38,6 +39,7 @@
 		<colour name="grid_text" value="0 0 0" />
 		<colour name="grid_block" value="0 0 1" />
 		<colour name="default_brush" value="0 0 0" />
+		<colour name="default_entity" value="1 0.5 0" />
 		<colour name="camera_background" value="0.25 0.25 0.25" />
 		<colour name="selected_brush" value="1 0 0" />
 		<colour name="selected_brush_camera" value="1 0 0" />
@@ -68,6 +70,7 @@
 		<colour name="grid_text" value="1 1 1" />
 		<colour name="grid_block" value="0 0 1" />
 		<colour name="default_brush" value="1 1 1" />
+		<colour name="default_entity" value="1 0.5 0" />
 		<colour name="camera_background" value="0.25 0.25 0.25" />
 		<colour name="selected_brush" value="1 0 0" />
 		<colour name="selected_brush_camera" value="1 0 0" />
@@ -98,6 +101,7 @@
 		<colour name="grid_text" value="0 0 0" />
 		<colour name="grid_block" value="1 1 1" />
 		<colour name="default_brush" value="0 0 0" />
+		<colour name="default_entity" value="0 0.4 0" />
 		<colour name="camera_background" value="0.25 0.25 0.25" />
 		<colour name="selected_brush" value="1 0 0" />
 		<colour name="selected_brush_camera" value="1 0 0" />
@@ -127,7 +131,8 @@
 		<grid_minor value="Grid Minor" />
 		<grid_text value="Grid Text" />
 		<grid_block value="Grid Block" />
-		<default_brush value="Default Brush" />
+		<default_brush value="Brushes" />
+		<default_entity value="Entities (default)" />
 		<camera_background value="Camera Background" />
 		<selected_brush value="Selected Brush" />
 		<selected_brush_camera value="Selected Brush (Camera)" />

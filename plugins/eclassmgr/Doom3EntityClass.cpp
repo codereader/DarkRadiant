@@ -1,5 +1,7 @@
 #include "Doom3EntityClass.h"
 
+#include "qerplugin.h"
+
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace eclass
@@ -21,6 +23,10 @@ Doom3EntityClass::Doom3EntityClass(const std::string& name,
   _mins(mins),
   _maxs(maxs)
 {
+	// Set the entity colour to default, if none was specified
+	if (_colour == Vector3(-1, -1, -1)) {
+		_colour = GlobalRadiant().getColour("default_entity");
+	}
 	// Capture the shaders
 	captureColour();		
 }
@@ -29,7 +35,7 @@ Doom3EntityClass::Doom3EntityClass(const std::string& name,
 IEntityClassPtr Doom3EntityClass::create(const std::string& name, bool brushes) {
 	if (!brushes) {
 		return IEntityClassPtr(new Doom3EntityClass(name, 
-													Vector3(0, 0.4, 0),
+													Vector3(-1, -1, -1),
 													true, 
 													Vector3(-8, -8, -8),
 													Vector3(8, 8, 8)));

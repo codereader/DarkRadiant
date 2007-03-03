@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ifilesystem.h"
 #include "iarchive.h"
+#include "iregistry.h"
+#include "qerplugin.h"
 
 #include "generic/callback.h"
 #include "parser/DefTokeniser.h"
@@ -428,7 +430,11 @@ class EntityClassDoom3:
 
 EntityClassDoom3 g_EntityClassDoom3;
 
-class EntityClassDoom3Dependencies : public GlobalFileSystemModuleRef, public GlobalShaderCacheModuleRef
+class EntityClassDoom3Dependencies : 
+	public GlobalFileSystemModuleRef, 
+	public GlobalShaderCacheModuleRef,
+	public GlobalRegistryModuleRef,
+	public GlobalRadiantModuleRef
 {
 };
 
