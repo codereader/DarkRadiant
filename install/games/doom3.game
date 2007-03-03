@@ -132,6 +132,9 @@
 		</compatibility>
 		<lastCameraPositionKey value="editor_drLastCameraPos" />
 		<lastCameraAngleKey value="editor_drLastCameraAngle" />
+		<!-- The root key names of the map positions (e.g. editor_drMapPos1) -->
+		<mapPositionPosKey value="editor_drMapPos" />
+		<mapPositionAngleKey value="editor_drMapAngle" />
 		<playerStartPoint value="info_player_start" />
 	</mapFormat>
 

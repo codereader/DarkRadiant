@@ -426,6 +426,8 @@ radiant_src = [
 'ui/commandlist/ShortcutChooser.cpp',
 'map/AutoSaver.cpp',
 'map/MapFileManager.cpp',
+'map/MapPosition.cpp',
+'map/MapPositionManager.cpp',
 'render/backend/OpenGLStateBucket.cpp',
 'render/backend/OpenGLShader.cpp',
 'render/backend/GLProgramFactory.cpp'

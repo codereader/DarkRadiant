@@ -1,3 +1,9 @@
+03/03/2007
+greebo
+- Added support for manipulation of func_static-style entities
+- Added "Revert To Worldspawn" method to the orthocontext menu.
+- Added feature allowing Map Position saving (10 slots)
+
 28/02/2007
 greebo
 - Holding down SHIFT during manipulations constrains the operation to the axes

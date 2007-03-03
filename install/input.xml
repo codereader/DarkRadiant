@@ -185,5 +185,25 @@
 		<shortcut command="GroupCycleBackward" key="ISO_Left_Tab" modifiers="SHIFT"/>
 		<shortcut command="GroupCycleForward" key="Tab" modifiers=""/>
 		<shortcut command="RevertToWorldspawn" key="G" modifiers="SHIFT"/>
+		<shortcut command="SavePosition1" key="1" modifiers="CONTROL+ALT"/>
+		<shortcut command="SavePosition10" key="0" modifiers="CONTROL+ALT"/>
+		<shortcut command="SavePosition2" key="2" modifiers="CONTROL+ALT"/>
+		<shortcut command="SavePosition3" key="3" modifiers="CONTROL+ALT"/>
+		<shortcut command="SavePosition4" key="4" modifiers="CONTROL+ALT"/>
+		<shortcut command="SavePosition5" key="5" modifiers="CONTROL+ALT"/>
+		<shortcut command="SavePosition6" key="6" modifiers="CONTROL+ALT"/>
+		<shortcut command="SavePosition7" key="7" modifiers="CONTROL+ALT"/>
+		<shortcut command="SavePosition8" key="8" modifiers="CONTROL+ALT"/>
+		<shortcut command="SavePosition9" key="9" modifiers="CONTROL+ALT"/>
+		<shortcut command="LoadPosition1" key="1" modifiers="ALT"/>
+		<shortcut command="LoadPosition10" key="0" modifiers="ALT"/>
+		<shortcut command="LoadPosition2" key="2" modifiers="ALT"/>
+		<shortcut command="LoadPosition3" key="3" modifiers="ALT"/>
+		<shortcut command="LoadPosition4" key="4" modifiers="ALT"/>
+		<shortcut command="LoadPosition5" key="5" modifiers="ALT"/>
+		<shortcut command="LoadPosition6" key="6" modifiers="ALT"/>
+		<shortcut command="LoadPosition7" key="7" modifiers="ALT"/>
+		<shortcut command="LoadPosition8" key="8" modifiers="ALT"/>
+		<shortcut command="LoadPosition9" key="9" modifiers="ALT"/>
 	</shortcuts>
 </input>
