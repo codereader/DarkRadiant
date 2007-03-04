@@ -26,11 +26,19 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 		else if (fExt == "ase") {
 			std::string rawMapName = PicoGetShaderMapName(shader);
 			boost::algorithm::replace_all(rawMapName, "\\", "/");
+			
 			// Take off the everything before "base/", and everything after
 			// the first period if it exists (i.e. strip off ".tga")
 			int basePos = rawMapName.find("base");
 			int dotPos = rawMapName.find(".");
-			_originalShaderName = rawMapName.substr(basePos + 5, dotPos - basePos - 5);
+			if (basePos > 0) {
+				_originalShaderName = rawMapName.substr(basePos + 5, 
+														dotPos - basePos - 5);
+			}
+			else {
+				// Unrecognised shader path
+				_originalShaderName = "";
+			}
 		}
     }
     
