@@ -14,18 +14,18 @@ class AttributeCopyingVisitor
 : public EntityClassAttributeVisitor
 {
 	// Target entity to copy values onto
-	IEntityClassPtr _target;
+	IEntityClass& _target;
 	
 public:
 
 	// Constructor sets target
-	AttributeCopyingVisitor(IEntityClassPtr target)
+	AttributeCopyingVisitor(IEntityClass& target)
 	: _target(target)
 	{ }
 
 	// Required visit function
 	void visit(const EntityClassAttribute& attr) {
-		_target->addAttribute(attr);
+		_target.addAttribute(attr);
 	}
 };
 

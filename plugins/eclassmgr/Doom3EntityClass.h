@@ -18,10 +18,10 @@ class Shader;
 namespace eclass
 {
 
-/** Implementation of the IEntityClass interface. This represents a single
+/** 
+ * Implementation of the IEntityClass interface. This represents a single
  * Doom 3 entity class, such as "light_moveable" or "monster_mancubus".
  */
-
 class Doom3EntityClass
 : public IEntityClass
 {
@@ -54,6 +54,11 @@ class Doom3EntityClass
 	// Minimum and maximum sizes, used for calculating the display AABB
 	Vector3	_mins;
 	Vector3 _maxs;
+
+	// Flag to indicate inheritance resolved. An EntityClass resolves its
+	// inheritance by copying all values from the parent onto the child,
+	// after recursively instructing the parent to resolve its own inheritance.
+	bool _inheritanceResolved;
 
 private:
 
@@ -250,6 +255,15 @@ public:
 		return _skin;
 	}
 	
+	/**
+	 * Resolve inheritance for this class.
+	 * 
+	 * @param classmap
+	 * A reference to the global map of entity classes, which should be searched
+	 * for the parent entity.
+	 */
+	typedef std::map<std::string, IEntityClassPtr> EntityClasses;
+	void resolveInheritance(EntityClasses& classmap);
 };
 
 }

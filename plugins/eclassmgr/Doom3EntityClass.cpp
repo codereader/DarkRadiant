@@ -1,4 +1,5 @@
 #include "Doom3EntityClass.h"
+#include "AttributeCopyingVisitor.h"
 
 #include "qerplugin.h"
 
@@ -77,5 +78,41 @@ void Doom3EntityClass::forEachClassAttribute(EntityClassAttributeVisitor& visito
 	}
 }
 
+// Resolve inheritance for this class
+void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
+{
+	// If we have already resolved inheritance, do nothing
+	if (_inheritanceResolved)
+		return;
+		
+	// Lookup the parent name and return if it is not set
+	std::string parName = getValueForKey("inherit");
+	if (parName.empty())
+		return;
+		
+	// Find the parent entity class
+	EntityClasses::iterator pIter = classmap.find(parName);
+	if (pIter != classmap.end()) {
+		
+		// Get the class object pointer and cast it to a Doom3EntityClass
+		boost::shared_ptr<Doom3EntityClass> par =
+			boost::static_pointer_cast<Doom3EntityClass>(pIter->second);
+
+		// Recursively resolve inheritance of parent
+		par->resolveInheritance(classmap);
+
+		// Copy attributes from the parent to the child
+		AttributeCopyingVisitor visitor(*this);
+		par->forEachClassAttribute(visitor);
+	}
+	else {
+		std::cout << "[eclassmgr] Warning: Entity class "
+				  << _name << " specifies parent "
+				  << parName << " which is not found." << std::endl;
+	} 
+
+	// Set the resolved flag
+	_inheritanceResolved = true;
+}
 
 } // namespace eclass

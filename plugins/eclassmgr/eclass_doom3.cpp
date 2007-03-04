@@ -20,7 +20,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "Doom3EntityClass.h"
-#include "AttributeCopyingVisitor.h"
 
 #include "ifilesystem.h"
 #include "iarchive.h"
@@ -285,41 +284,6 @@ IEntityClassPtr EntityClassDoom3_findOrInsert(const std::string& name,
     return inserted;
 }
 
-//void EntityClass_resolveInheritance(EntityClass* derivedClass)
-//{
-//  if(derivedClass->inheritanceResolved == false)
-//  {
-//    derivedClass->inheritanceResolved = true;
-//    EntityClasses::iterator i = _entityClasses.find(derivedClass->m_parent.front().c_str());
-//    if(i == _entityClasses.end())
-//    {
-//      globalErrorStream() << "failed to find entityDef " << makeQuoted(derivedClass->m_parent.front().c_str()) << " inherited by "  << makeQuoted(derivedClass->m_name.c_str()) << "\n";
-//    }
-//    else
-//    {
-//      EntityClass* parentClass = (*i).second;
-//      EntityClass_resolveInheritance(parentClass);
-//      if(!derivedClass->colorSpecified)
-//      {
-//        derivedClass->colorSpecified = parentClass->colorSpecified;
-//        derivedClass->setColour(parentClass->getColour());
-//      }
-//      if(!derivedClass->sizeSpecified)
-//      {
-//        derivedClass->sizeSpecified = parentClass->sizeSpecified;
-//        derivedClass->mins = parentClass->mins;
-//        derivedClass->maxs = parentClass->maxs;
-//        derivedClass->fixedsize = parentClass->fixedsize;
-//      }
-//
-//      for(EntityClassAttributes::iterator j = parentClass->m_attributes.begin(); j != parentClass->m_attributes.end(); ++j)
-//      {
-//        EntityClass_insertAttribute(*derivedClass, (*j).first.c_str(), (*j).second);
-//      }
-//    }
-//  }
-//}
-
 /* EntityClassDoom3 - master entity loader
  * 
  * This class is the master loader for the entity classes. It ensures that the
@@ -368,29 +332,15 @@ class EntityClassDoom3:
         // will have the name of their parent, but not an actual pointer to
         // it        
         for (EntityClasses::iterator i = _entityClasses.begin();
-             i != _entityClasses.end(); ++i) {
-
-			// Get the parent name and find the corresponding class
-			std::string parName = i->second->getValueForKey("inherit");
-			if (!parName.empty()) {
+             i != _entityClasses.end(); ++i) 
+		{
+			// Get a Doom3EntityClass pointer
+			boost::shared_ptr<eclass::Doom3EntityClass> d3c =
+				boost::static_pointer_cast<eclass::Doom3EntityClass>(i->second);
 				
-				// Find the parent entity class
-				EntityClasses::iterator pIter = _entityClasses.find(parName);
-				if (pIter != _entityClasses.end()) {
-					
-					// Get the class object pointer
-					IEntityClassPtr par = pIter->second;
-
-					// Copy attributes from the parent to the child
-					eclass::AttributeCopyingVisitor visitor(i->second);
-					par->forEachClassAttribute(visitor);
-				}
-				else {
-					std::cout << "[eclassmgr] Warning: Entity class "
-							  << i->second->getName() << " specifies parent "
-							  << parName << " which is not found." << std::endl;
-				} 
-			}	
+			// Tell the class to resolve its own inheritance using the given
+			// map as a source for parent lookup
+			d3c->resolveInheritance(_entityClasses);
 
             // If the entity has a model path ("model" key), lookup the actual
             // model and apply its mesh and skin to this entity.
