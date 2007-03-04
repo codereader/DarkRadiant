@@ -253,12 +253,17 @@ void LightInspector::update() {
 void LightInspector::toggle() {
 	// Pass the call to the utility methods that save/restore the window position
 	if (GTK_WIDGET_VISIBLE(_widget)) {
-		gtkutil::TransientWindow::minimise(_widget);
+		// Save the window position, to make sure
+		_windowPosition.readPosition();
+		// Hide the dialog window
 		gtk_widget_hide_all(_widget);
 	}
 	else {
-		gtkutil::TransientWindow::restore(_widget);
+		// Restore the position
+		_windowPosition.applyPosition();
+		// Update the widgets
 		update();
+		// Display the dialog
 		gtk_widget_show_all(_widget);
 	}
 }

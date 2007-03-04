@@ -1,6 +1,7 @@
 #include "TransientWindow.h"
 
 #include "gtkutil/pointer.h" // for gpointer_to_int
+#include <iostream>
 
 namespace gtkutil
 {
@@ -54,7 +55,13 @@ void TransientWindow::restore(GtkWidget* window) {
 		if (gpointer_to_int(g_object_get_data(G_OBJECT(window), "was_mapped")) != 0) {
 			gint x = gpointer_to_int(g_object_get_data(G_OBJECT(window), "old_x_position"));
 			gint y = gpointer_to_int(g_object_get_data(G_OBJECT(window), "old_y_position"));
+			
+			// Be sure to un-flag the window as "mapped", otherwise it will be restored again
+			g_object_set_data(G_OBJECT(window), "was_mapped", gint_to_pointer(0));
+			
 			gtk_window_move(GTK_WINDOW(window), x, y);
+			
+			// Set the window to visible, as it was visible before minimising the parent 
 			gtk_widget_show(window);
 			// Workaround for some linux window managers resetting window positions after show()
 			gtk_window_move(GTK_WINDOW(window), x, y);
@@ -65,11 +72,15 @@ void TransientWindow::restore(GtkWidget* window) {
 void TransientWindow::minimise(GtkWidget* window) {
 	if (GTK_IS_WINDOW(window)) {
 		if (GTK_WIDGET_VISIBLE(window)) {
+			// Set the "mapped" flag to mark this window as "to be restored again"
 			g_object_set_data(G_OBJECT(window), "was_mapped", gint_to_pointer(1));
+			
+			// Store the position into the child window
 			gint x, y;
 			gtk_window_get_position(GTK_WINDOW(window), &x, &y);
 			g_object_set_data(G_OBJECT(window), "old_x_position", gint_to_pointer(x));
 			g_object_set_data(G_OBJECT(window), "old_y_position", gint_to_pointer(y));
+			
 			gtk_widget_hide(window);
 		}
 	}
