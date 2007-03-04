@@ -1,4 +1,9 @@
 03/03/2007
+OrbWeaver
+- Fixed entity class inheritance, entities now list custom properties in the
+  Entity Inspector's "Add property" dialog.
+
+03/03/2007
 greebo
 - Added support for manipulation of func_static-style entities
 - Added "Revert To Worldspawn" method to the orthocontext menu.

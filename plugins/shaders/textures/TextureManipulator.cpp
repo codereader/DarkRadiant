@@ -100,7 +100,10 @@ Colour3 TextureManipulator::getFlatshadeColour(Image* input) {
 	// Calculate the number of pixels in this image
 	int numPixels = input->getWidth() * input->getHeight();
 	
+	// Calculate the pixel step value, ensuring it is greater than 0
 	int incr = static_cast<int>(static_cast<float>(numPixels) / 20.0f);
+	if (incr < 1)
+		incr = 1;
 	
 	// Set the pixel pointer to the very first pixel
 	unsigned char* pixels = input->getRGBAPixels();
