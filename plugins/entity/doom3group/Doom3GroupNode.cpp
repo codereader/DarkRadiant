@@ -35,6 +35,14 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	construct();
 }
 
+void Doom3GroupNode::addOriginToChildren() {
+	m_contained.addOriginToChildren();
+}
+
+void Doom3GroupNode::removeOriginFromChildren() {
+	m_contained.removeOriginFromChildren();
+}
+
 void Doom3GroupNode::construct() {
 	// Attach this node to the contained Doom3Group as observer
 	m_contained.attach(this);

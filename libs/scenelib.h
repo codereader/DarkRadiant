@@ -80,6 +80,7 @@ public:
   STRING_CONSTANT(Name, "BrushDoom3");
 
   virtual void setDoom3GroupOrigin(const Vector3& origin) = 0;
+  virtual void translateDoom3Brush(const Vector3& translation) = 0;
 };
 
 typedef TypeCastTable<NODETYPEID_MAX> NodeTypeCastTable;
@@ -148,6 +149,21 @@ class NodeIdentityCast :
 
 namespace scene
 {
+	
+	class GroupNode
+	{
+	public:
+		STRING_CONSTANT(Name, "GroupNode");
+	
+		/** greebo: This is called right before saving
+		 * to move the child brushes of the Doom3Group
+		 * according to its origin.
+		 */
+		virtual void addOriginToChildren() = 0;
+		virtual void removeOriginFromChildren() = 0;
+	};
+
+	
   class Node
   {
   public:
@@ -1088,6 +1104,14 @@ inline BrushDoom3* Node_getBrushDoom3(scene::Node& node) {
 	return NodeTypeCast<BrushDoom3>::cast(node);
 }
 
+/** greebo: Cast a node onto a BrushDoom3 pointer
+ * 
+ * @returns: NULL, if failed, the pointer to the class otherwise.
+ */
+inline scene::GroupNode* Node_getGroupNode(scene::Node& node) {
+	return NodeTypeCast<scene::GroupNode>::cast(node);
+}
+
 // Helper class
 class InstanceFunctor
 {
@@ -1111,50 +1135,6 @@ public:
 		_functor(instance);
 	}
 };
-
-class ChildTranslator : 
-	public scene::Traversable::Walker,
-	public InstanceFunctor
-{
-	const Vector3& _translation;
-public:
-	ChildTranslator(const Vector3& translation) :
-		_translation(translation)
-	{}
-
-	bool pre(scene::Node& node) const {
-		scene::Instantiable* instantiable = Node_getInstantiable(node);
-		
-		if (instantiable != NULL) {
-			instantiable->forEachInstance(InstanceVisitor(*this));
-		}
-		return true;
-	}
-	
-	void operator() (scene::Instance& instance) const {
-		Transformable* transformable = Instance_getTransformable(instance);
-		
-		if (transformable != NULL) {
-			transformable->setTranslation(_translation);
-		}
-	}
-};
-
-/** greebo: Tries to translate the given node.
- * 
- * The path is as follows: 
- * 
- * scene::Node >> scene::Traversable >> WALK >> scene::Instantiable >>
- * 			   >> VISIT >> Transformable >> setTranslation() 
- */
-inline void translateNode(scene::Node& node, const Vector3& childTranslation) {
-	// Try to retrieve a traversable out of the given node
-	scene::Traversable* traversable = Node_getTraversable(node);
-	
-	if (traversable != NULL) {
-		traversable->traverse(ChildTranslator(childTranslation));
-	}
-}
 
 class ChildRotator : 
 	public scene::Traversable::Walker,

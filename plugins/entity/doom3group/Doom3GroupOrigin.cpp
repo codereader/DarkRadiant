@@ -18,16 +18,27 @@ void Doom3GroupOrigin::disable() {
 
 void Doom3GroupOrigin::insert(scene::Node& node) {
 	if (m_enabled) {
-		// Translate the newly added child to the entity origin
-		// as its coordinates are measured relatively to the entity origin
-		translateNode(node, m_origin);
+		// Substract the origin from the newly inserted brush
+		//translateDoom3Brush(node, -m_origin);
+	}
+}
+
+void Doom3GroupOrigin::addOriginToChildren() {
+	if (m_enabled) {
+		m_set.traverse(Doom3BrushTranslator(m_origin));
+	}
+}
+
+void Doom3GroupOrigin::removeOriginFromChildren() {
+	if (m_enabled) {
+		m_set.traverse(Doom3BrushTranslator(-m_origin));
 	}
 }
 
 void Doom3GroupOrigin::erase(scene::Node& node) {
 	if (m_enabled) {
-		// Translate the child back to the 0,0,0 world origin
-		translateNode(node, -m_origin);
+		// Add the origin to the newly inserted brush
+		//translateDoom3Brush(node, m_origin);6
 	}
 }
 

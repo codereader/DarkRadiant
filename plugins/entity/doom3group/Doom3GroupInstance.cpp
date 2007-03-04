@@ -120,7 +120,10 @@ void Doom3GroupInstance::snapComponents(float snap) {
 
 void Doom3GroupInstance::evaluateTransform() {
 	if (getType() == TRANSFORM_PRIMITIVE) {
-		m_contained.translate(getTranslation());
+		m_contained.translate(
+			getTranslation(), 
+			getRotation() != c_quaternion_identity // FALSE for identity rotations 
+		);
 		m_contained.rotate(getRotation());
 	}
 	else {

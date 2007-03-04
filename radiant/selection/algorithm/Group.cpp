@@ -134,11 +134,8 @@ void revertGroupToWorldSpawn() {
 			    		globalErrorStream() << "Error while reparenting, cannot delete old parent (not empty)\n"; 
 			    	}
 			     	
-			    	// Add the origin vector of the old parent entity to the reparented
-			    	// children, as they are positioned relatively to the 0,0,0 origin now. 
-				    // Note the minus sign compensating the substract operation of the called method.
-				    // greebo: Disabled, handled by Doom3Group itself
-				    //map::selectedPrimitivesSubtractOrigin(-parentOrigin);
+			     	// Flag the map as changed
+			     	map::setModified(true);
 				}
 			}
 		} // node_is_group

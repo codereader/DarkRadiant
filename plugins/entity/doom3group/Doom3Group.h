@@ -88,6 +88,12 @@ public:
 	
 	~Doom3Group();
 
+	/** greebo: Called right before map save to recalculate
+	 * the child brush position.
+	 */
+	void addOriginToChildren();
+	void removeOriginFromChildren();
+
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
 
@@ -112,7 +118,13 @@ public:
 
 	void testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best);
 
-	void translate(const Vector3& translation);
+	/** greebo: Translates this Doom3Group
+	 * 
+	 * @translation: The translation vector
+	 * @rotation: TRUE, if the translation was due to a rotation
+	 * 			  (this inhibits the movement of the origin)
+	 */
+	void translate(const Vector3& translation, bool rotation = false);
 	void rotate(const Quaternion& rotation);
 	void snapto(float snap);
 	
