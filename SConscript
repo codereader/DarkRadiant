@@ -414,6 +414,7 @@ radiant_src = [
 'brush/FaceInstance.cpp',
 'brush/BrushInstance.cpp',
 'brush/BrushModule.cpp',
+'brush/export/CollisionModel.cpp',
 'camera/CameraSettings.cpp',
 'camera/Camera.cpp',
 'camera/CamWnd.cpp',
