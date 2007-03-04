@@ -47,6 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "map.h"
 #include "selection/SceneWalkers.h"
 #include "brush/BrushInstance.h"
+#include "xyview/GlobalXYWnd.h"
 
 select_workzone_t g_select_workzone;
 
@@ -178,6 +179,49 @@ public:
     }
   }
 };
+
+/**
+  SelectionPolicy for SelectByBounds
+  Returns true if 
+*/
+class SelectionPolicy_Complete_Tall
+{
+public:
+	bool Evaluate(const AABB& box, scene::Instance& instance) const {
+		
+		// Get the AABB of the visited instance
+		const AABB& other(instance.worldAABB());
+		
+		// Determine the viewtype
+		EViewType viewType = GlobalXYWnd().getActiveViewType();
+		
+		unsigned int axis1 = 0;
+		unsigned int axis2 = 1;
+		
+		// Determine which axes have to be compared
+		switch (viewType) {
+			case XY:
+				axis1 = 0;
+				axis2 = 1;
+			break;
+			case YZ:
+				axis1 = 1;
+				axis2 = 2;
+			break;
+			case XZ:
+				axis1 = 0;
+				axis2 = 2;
+			break;
+		};
+		
+		// Check if the AABB is contained 
+		float dist1 = fabs(other.origin[axis1] - box.origin[axis1]) + fabs(other.extents[axis1]);
+		float dist2 = fabs(other.origin[axis2] - box.origin[axis2]) + fabs(other.extents[axis2]);
+		
+		return (dist1 < fabs(box.extents[axis1]) && dist2 < fabs(box.extents[axis2]));
+	}
+};
+
 
 /**
   SelectionPolicy for SelectByBounds
@@ -771,6 +815,10 @@ void Select_Inside(void)
 void Select_Touching(void)
 {
 	SelectByBounds<SelectionPolicy_Touching>::DoSelection(false);
+}
+
+void Select_Complete_Tall() {
+	SelectByBounds<SelectionPolicy_Complete_Tall>::DoSelection();
 }
 
 void Select_FitTexture(float horizontal, float vertical)

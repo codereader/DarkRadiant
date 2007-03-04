@@ -31,6 +31,7 @@ void Select_Delete();
 void Select_Invert();
 void Select_Inside();
 void Select_Touching();
+void Select_Complete_Tall();
 void Scene_ExpandSelectionToEntities();
 
 void Selection_Flipx();
