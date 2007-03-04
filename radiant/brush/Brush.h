@@ -166,7 +166,10 @@ public:
 	// assignment not supported
 	Brush& operator=(const Brush& other);
 	
-	void setDoom3GroupOrigin(const Vector3& origin);
+	/** greebo: This translates the brush about the given translation vector,
+	 * this is used by the Doom3Group entity to add/substract the origin from
+	 * their child brushes. The translation is TextureLock-sensitive.
+	 */
 	void translateDoom3Brush(const Vector3& translation);
 	
 	void attach(BrushObserver& observer);
