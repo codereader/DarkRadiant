@@ -205,5 +205,6 @@
 		<shortcut command="LoadPosition7" key="7" modifiers="ALT"/>
 		<shortcut command="LoadPosition8" key="8" modifiers="ALT"/>
 		<shortcut command="LoadPosition9" key="9" modifiers="ALT"/>
+		<shortcut command="OverlayDialog" key="O" modifiers="ALT"/>
 	</shortcuts>
 </input>
