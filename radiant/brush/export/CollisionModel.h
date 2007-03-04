@@ -3,6 +3,7 @@
 
 #include <map>
 #include "math/Vector3.h"
+#include "math/Plane3.h"
 #include "selection/algorithm/Primitives.h"
 
 namespace selection {
@@ -14,7 +15,7 @@ namespace selection {
 class CollisionModel
 {
 	// The indexed vertices of the collisionmodel
-	typedef std::map<unsigned int, Vector3> Vertices;
+	typedef std::map<unsigned int, Vector3> VertexMap;
 	
 	struct Edge {
 		unsigned int from;	// The starting vertex index
@@ -22,7 +23,7 @@ class CollisionModel
 	};
 	
 	// The indexed Edges (each consisting of a start/end vertex)
-	typedef std::map<unsigned int, Edge> Edges;
+	typedef std::map<unsigned int, Edge> EdgeMap;
 	
 	struct Polygon {
 		// The number of edges of this polygon
@@ -31,8 +32,8 @@ class CollisionModel
 		// The indices of the edges forming this polygon
 		std::vector<unsigned int> edges;
 		
-		// The normal vector of this polygon
-		Vector3 normal;
+		// The plane (normal + distance)
+		Plane3 plane;
 		
 		// Two (opposite?) points of this polygon
 		Vector3 point1;
@@ -40,15 +41,39 @@ class CollisionModel
 	};
 	
 	// The unsorted list of Polygons
-	typedef std::vector<Polygon> Polygons;
+	typedef std::vector<Polygon> PolygonList;
 	
-	BrushPtrVector _brushes;
+	typedef std::vector<Plane3> PlaneList;
 	
+	struct BrushStruc {
+		unsigned int numFaces;
+		PlaneList planes;
+		// Two points of this face
+		Vector3 point1;
+		Vector3 point2;
+	};
+	
+	typedef std::vector<BrushStruc> BrushList;
+	
+	// The container instances with all the vertices/edges/faces
+	VertexMap _vertices;
+	EdgeMap _edges;
+	PolygonList _polygons;
+	BrushList _brushes;
+
 public:
 	void addBrush(Brush& brush);
 	
 	bool isValid() const;
 
+	/** greebo: Stream insertion operator, use this to write
+	 * the collision model into a file. Qualified as "friend" to allow the access 
+	 * of private members and the first function argument to be std::ostream.
+	 */
+	friend std::ostream& operator<<(std::ostream& st, const CollisionModel& cm);
+
+	/** greebo: The command target
+	 */
 	static void createFromSelection();
 };
 
