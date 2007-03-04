@@ -63,6 +63,7 @@
 		<maxWorldCoord value="65536" />
 		<minWorldCoord value="-65536" />
 		<defaultTexture value="_default" />
+		<collisionTexture value="textures/common/collision" />
 	</defaults>
 	<entityChooser>
 		<displayFolderKey value="editor_displayFolder" />
