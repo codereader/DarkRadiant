@@ -69,36 +69,6 @@ void Brush::translateDoom3Brush(const Vector3& translation) {
 	freezeTransform();
 }
 
-void Brush::setDoom3GroupOrigin(const Vector3& origin) {
-	return;
-	for (Faces::iterator i = m_faces.begin(); i != m_faces.end(); ++i) {
-		// greebo: Calculate the translation (needed for the TexDef translation below) 
-		Vector3 translation = origin - (*i)->getPlane().m_funcStaticOrigin;
-				
-		// Update the FacePlane (will be applied to the internal planeCached)
-		(*i)->getPlane().m_funcStaticOrigin = origin;
-		(*i)->getPlane().updateTranslated();
-		
-		/** greebo: Check if the texture lock is enabled, if yes,
-		 * the TexDef has to be translated to compensate the move. 
-		 */
-		if (GlobalBrush()->textureLockEnabled() && 
-			translation.getLength() > 0.0f) 
-		{
-			// Update the textureprojection with the translation
-			(*i)->getTexdef().transform(
-				(*i)->getPlane().plane3(), 
-				Matrix4::getTranslation(translation)
-			);
-			
-			(*i)->texdefChanged();
-		}
-		
-		(*i)->planeChanged();
-	}
-	planeChanged();
-}
-
 void Brush::attach(BrushObserver& observer) {
 	for (Faces::iterator i = m_faces.begin(); i != m_faces.end(); ++i) {
 		observer.push_back(*(*i));

@@ -74,13 +74,16 @@ public:
   virtual void snapComponents(float snap) = 0;
 };
 
+/** greebo: This is used to identify child brushes of entities. 
+ */
 class BrushDoom3
 {
 public:
-  STRING_CONSTANT(Name, "BrushDoom3");
+	STRING_CONSTANT(Name, "BrushDoom3");
 
-  virtual void setDoom3GroupOrigin(const Vector3& origin) = 0;
-  virtual void translateDoom3Brush(const Vector3& translation) = 0;
+	/** greebo: Translates the brush about the given <translation> vector.
+	 */
+	virtual void translateDoom3Brush(const Vector3& translation) = 0;
 };
 
 typedef TypeCastTable<NODETYPEID_MAX> NodeTypeCastTable;
@@ -150,6 +153,12 @@ class NodeIdentityCast :
 namespace scene
 {
 	
+	/** greebo: This is used to identify group entities right before
+	 * and after map save/load.
+	 * 
+	 * It provides methods to add/substract the origin to/from 
+	 * their child primitives.
+	 */
 	class GroupNode
 	{
 	public:
@@ -1207,6 +1216,57 @@ public:
 		if (transformable != NULL) {
 			transformable->freezeTransform();
 		}
+	}
+};
+
+class ChildTranslator : 
+	public scene::Traversable::Walker,
+	public InstanceFunctor
+{
+	const Vector3& _translation;
+public:
+	ChildTranslator(const Vector3& translation) :
+		_translation(translation)
+	{}
+
+	bool pre(scene::Node& node) const {
+		scene::Instantiable* instantiable = Node_getInstantiable(node);
+		
+		if (instantiable != NULL) {
+			instantiable->forEachInstance(InstanceVisitor(*this));
+		}
+		return true;
+	}
+	
+	void operator() (scene::Instance& instance) const {
+		Transformable* transformable = Instance_getTransformable(instance);
+		
+		if (transformable != NULL) {
+			transformable->setTranslation(_translation);
+		}
+	}
+};
+
+inline void translateDoom3Brush(scene::Node& node, const Vector3& translation) {
+	// Check for BrushDoom3
+	BrushDoom3* brush = Node_getBrushDoom3(node);
+	if (brush != NULL) {
+		brush->translateDoom3Brush(translation);
+	}
+}
+
+class Doom3BrushTranslator : 
+	public scene::Traversable::Walker
+{
+	const Vector3& m_origin;
+public:
+	Doom3BrushTranslator(const Vector3& origin) : 
+		m_origin(origin) 
+	{}
+	
+	bool pre(scene::Node& node) const {
+		translateDoom3Brush(node, m_origin);
+		return true;
 	}
 };
 
