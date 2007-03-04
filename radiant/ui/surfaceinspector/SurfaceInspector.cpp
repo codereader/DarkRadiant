@@ -181,12 +181,16 @@ void SurfaceInspector::connectEvents() {
 void SurfaceInspector::toggle() {
 	// Pass the call to the utility methods that save/restore the window position
 	if (GTK_WIDGET_VISIBLE(_dialog)) {
-		gtkutil::TransientWindow::minimise(_dialog);
+		// Save the window position, to make sure
+		_windowPosition.readPosition();
 		gtk_widget_hide_all(_dialog);
 	}
 	else {
-		gtkutil::TransientWindow::restore(_dialog);
+		// Restore the position
+		_windowPosition.applyPosition();
+		// Import the registry keys 
 		_connector.importValues();
+		// Now show the dialog window again
 		gtk_widget_show_all(_dialog);
 		// Unset the focus widget for this window to avoid the cursor 
 		// from jumping into the shader entry field 

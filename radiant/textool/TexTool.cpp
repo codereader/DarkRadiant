@@ -131,14 +131,15 @@ void TexTool::populateWindow() {
 void TexTool::toggle() {
 	// Pass the call to the utility methods that save/restore the window position
 	if (GTK_WIDGET_VISIBLE(_window)) {
-		gtkutil::TransientWindow::minimise(_window);
+		// Save the window position, to make sure
+		_windowPosition.readPosition();
 		gtk_widget_hide_all(_window);
 	}
 	else {
 		// Trigger an update of the current selection
 		rescanSelection();
-		// First restore the window
-		gtkutil::TransientWindow::restore(_window);
+		// Restore the position
+		_windowPosition.applyPosition();
 		// Now show it
 		gtk_widget_show_all(_window);
 	}
