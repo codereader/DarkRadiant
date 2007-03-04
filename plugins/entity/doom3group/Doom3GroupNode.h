@@ -3,6 +3,7 @@
 
 #include "Doom3Group.h"
 #include "instancelib.h"
+#include "scenelib.h"
 
 namespace entity {
 
@@ -10,7 +11,8 @@ class Doom3GroupNode :
 	public scene::Node::Symbiot,
 	public scene::Instantiable,
 	public scene::Cloneable,
-	public scene::Traversable::Observer 
+	public scene::Traversable::Observer,
+	public scene::GroupNode
 {
 	class TypeCasts {
 		NodeTypeCastTable m_casts;
@@ -18,6 +20,7 @@ class Doom3GroupNode :
 		TypeCasts() {
 			NodeStaticCast<Doom3GroupNode, scene::Instantiable>::install(m_casts);
 			NodeStaticCast<Doom3GroupNode, scene::Cloneable>::install(m_casts);
+			NodeStaticCast<Doom3GroupNode, scene::GroupNode>::install(m_casts);
 			NodeContainedCast<Doom3GroupNode, scene::Traversable>::install(m_casts);
 			NodeContainedCast<Doom3GroupNode, Snappable>::install(m_casts);
 			NodeContainedCast<Doom3GroupNode, TransformNode>::install(m_casts);
@@ -57,6 +60,7 @@ public:
 	Nameable& get(NullType<Nameable>);
 	Namespaced& get(NullType<Namespaced>);
 	ModelSkin& get(NullType<ModelSkin>);
+	scene::GroupNode& get(NullType<scene::GroupNode>);
 
 	void release();
 	
@@ -75,6 +79,12 @@ public:
 	void insert(scene::Instantiable::Observer* observer, const scene::Path& path, scene::Instance* instance);
 	
 	scene::Instance* erase(scene::Instantiable::Observer* observer, const scene::Path& path);
+
+	/** greebo: Call this right before map save to let the child
+	 * brushes have their origin recalculated. 
+	 */
+	void addOriginToChildren();
+	void removeOriginFromChildren();
 
 private:
 	void construct();

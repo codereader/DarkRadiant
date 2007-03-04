@@ -46,6 +46,10 @@ Nameable& BrushNode::get(NullType<Nameable>) {
 	return m_brush;
 }
 
+BrushDoom3& BrushNode::get(NullType<BrushDoom3>) {
+	return m_brush;
+}
+
 scene::Node& BrushNode::node() {
 	return m_node;
 }

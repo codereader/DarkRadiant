@@ -79,6 +79,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "preferences.h"
 #include "referencecache.h"
 #include "brush/BrushNode.h"
+#include "brush/BrushModule.h"
 #include "camera/CamWnd.h"
 #include "camera/GlobalCamera.h"
 #include "xyview/GlobalXYWnd.h"
@@ -409,6 +410,68 @@ void focusViews(const Vector3& point, const Vector3& angles) {
 	// Set the camera and the views to the given point
 	GlobalCamera().focusCamera(point, angles);
 	GlobalXYWnd().setOrigin(point);
+}
+
+class OriginRemover :
+	public scene::Graph::Walker 
+{
+public:
+	bool pre(const scene::Path& path, scene::Instance& instance) const {
+		Entity* entity = Node_getEntity(path.top());
+		
+		// Check for an entity
+		if (entity != NULL) {
+			// greebo: Check for a Doom3Group
+			scene::GroupNode* groupNode = Node_getGroupNode(path.top());
+			
+			// Don't handle the worldspawn children, they're safe&sound
+			if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn") {
+				groupNode->removeOriginFromChildren();
+				// Don't traverse the children
+				return false;
+			}
+		}
+		
+		return true;
+	}
+};
+
+class OriginAdder :
+	public scene::Graph::Walker 
+{
+public:
+	bool pre(const scene::Path& path, scene::Instance& instance) const {
+		Entity* entity = Node_getEntity(path.top());
+		
+		// Check for an entity
+		if (entity != NULL) {
+			// greebo: Check for a Doom3Group
+			scene::GroupNode* groupNode = Node_getGroupNode(path.top());
+			
+			// Don't handle the worldspawn children, they're safe&sound
+			if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn") {
+				groupNode->addOriginToChildren();
+				// Don't traverse the children
+				return false;
+			}
+		}
+		
+		return true;
+	}
+};
+
+void removeOriginFromChildPrimitives() {
+	bool textureLockStatus = GlobalBrush()->textureLockEnabled();
+	GlobalBrush()->setTextureLock(false);
+	GlobalSceneGraph().traverse(OriginRemover());
+	GlobalBrush()->setTextureLock(textureLockStatus);
+}
+
+void addOriginToChildPrimitives() {
+	bool textureLockStatus = GlobalBrush()->textureLockEnabled();
+	GlobalBrush()->setTextureLock(false);
+	GlobalSceneGraph().traverse(OriginAdder());
+	GlobalBrush()->setTextureLock(textureLockStatus);
 }
 
 } // namespace map
@@ -1127,6 +1190,9 @@ void Map_LoadFile (const std::string& filename)
   globalOutputStream() << makeLeftJustified(Unsigned(g_brushCount.get()), 5) << " primitive\n";
   globalOutputStream() << makeLeftJustified(Unsigned(g_entityCount.get()), 5) << " entities\n";
 
+	// Add the origin to all the children of func_static, etc.
+	map::addOriginToChildPrimitives();
+
 	// Move the view to a start position
 	Map_StartPosition();
 
@@ -1411,9 +1477,15 @@ void Map_Save()
 
 	ScopeTimer timer("map save");
 	
+	// Substract the origin from child primitives (of entities like func_static)
+	map::removeOriginFromChildPrimitives();
+	
 	// Save the actual map, by iterating through the reference cache and saving
 	// each ModelResource.
 	SaveReferences();
+	
+	// Re-add the origins to the child primitives (of entities like func_static)
+	map::addOriginToChildPrimitives();
   
 	// Remove the saved camera position
 	Map_RemoveSavedPosition();

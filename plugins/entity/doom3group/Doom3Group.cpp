@@ -127,6 +127,14 @@ const AABB& Doom3Group::localAABB() const {
 	return m_curveBounds;
 }
 
+void Doom3Group::addOriginToChildren() {
+	m_funcStaticOrigin.addOriginToChildren();
+}
+
+void Doom3Group::removeOriginFromChildren() {
+	m_funcStaticOrigin.removeOriginFromChildren();
+}
+
 void Doom3Group::renderSolid(Renderer& renderer, const VolumeTest& volume, 
 	const Matrix4& localToWorld, bool selected) const 
 {
@@ -159,14 +167,18 @@ void Doom3Group::testSelect(Selector& selector, SelectionTest& test, SelectionIn
 	PointVertexArray_testSelect(&m_curveCatmullRom.m_renderCurve.m_vertices[0], m_curveCatmullRom.m_renderCurve.m_vertices.size(), test, best);
 }
 
-void Doom3Group::translate(const Vector3& translation) {
-	m_origin = origin_translated(m_originKey.m_origin, translation);
-	// Only non-models should have their origin different than <0,0,0>
+void Doom3Group::translate(const Vector3& translation, bool rotation) {
+	// greebo: If the translation does not originate from 
+	// a pivoted rotation, translate the origin as well (this is a bit hacky)
+	if (!rotation) {
+		m_origin = origin_translated(m_originKey.m_origin, translation);
+	}
+	
+	// Only non-models should have their rendered origin different than <0,0,0>
 	if (!isModel()) {
 		m_nameOrigin = m_origin;
 	}
 	m_renderOrigin.updatePivot();
-	
 	translateChildren(translation);
 }
 
@@ -193,9 +205,11 @@ void Doom3Group::revertTransform() {
 	if (!isModel()) {
 		m_nameOrigin = m_origin;
 	}
-	m_renderOrigin.updatePivot();
+	else {
+		rotation_assign(m_rotation, m_rotationKey.m_rotation);
+	}
 	
-	rotation_assign(m_rotation, m_rotationKey.m_rotation);
+	m_renderOrigin.updatePivot();
 	m_curveNURBS.m_controlPointsTransformed = m_curveNURBS.m_controlPoints;
 	m_curveCatmullRom.m_controlPointsTransformed = m_curveCatmullRom.m_controlPoints;
 }
@@ -209,9 +223,10 @@ void Doom3Group::freezeTransform() {
 			m_traversable->traverse(ChildTransformFreezer());
 		}
 	}
-	
-	rotation_assign(m_rotationKey.m_rotation, m_rotation);
-	m_rotationKey.write(&m_entity);
+	else {
+		rotation_assign(m_rotationKey.m_rotation, m_rotation);
+		m_rotationKey.write(&m_entity);
+	}
 	m_curveNURBS.m_controlPoints = m_curveNURBS.m_controlPointsTransformed;
 	ControlPoints_write(m_curveNURBS.m_controlPoints, curve_Nurbs, m_entity);
 	m_curveCatmullRom.m_controlPoints = m_curveCatmullRom.m_controlPointsTransformed;
