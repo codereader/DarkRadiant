@@ -15,6 +15,11 @@ namespace selection {
 		const std::string ECLASS_CLIPMODEL = "func_clipmodel";
 	}
 
+CollisionModel::CollisionModel() {
+	// Create the "NULL" edge (numVertices = 0)
+	_edges[0] = Edge(0);
+}
+
 int CollisionModel::findVertex(const Vector3& vertex) const {
 	for (VertexMap::const_iterator i = _vertices.begin(); 
 		i != _vertices.end(); 
@@ -50,61 +55,68 @@ int CollisionModel::findEdge(const Edge& edge) const {
 		 i != _edges.end(); 
 		 i++) 
 	{
-		// Check for both edge directions
-		if ( (i->second.from == edge.from && i->second.to == edge.to) || 
-			 (i->second.from == edge.to && i->second.to == edge.from))
-		{
+		// Direction match?
+		if (i->second.from == edge.from && i->second.to == edge.to) {
 			return i->first;
 		}
+		
+		// Opposite direction match?
+		if (i->second.from == edge.to && i->second.to == edge.from) {
+			return -i->first;
+		}
 	}
-	return -1;
+	return 0;
 }  
 
 unsigned int CollisionModel::addEdge(const Edge& edge) {
 	// Check for existing edge!
 	int foundIndex = findEdge(edge);
 	
-	if (foundIndex == -1) {
-		// Not found, insert the edge with a new index
+	if (foundIndex == 0) {
+		// NULL edge found, insert the edge with a new index
 		unsigned int edgeIndex = _edges.size();
 		_edges[edgeIndex] = edge;
 		return edgeIndex;
 	}
 	else {
-		return static_cast<unsigned int>(foundIndex);
+		return abs(foundIndex);
+	}
+}
+
+void CollisionModel::addPolygon(const VertexList& vertexList) {
+	// Cycle from the beginning to the end-1 and add the edges 
+	for (unsigned int i = 0; i < vertexList.size()-1; i++) {
+		
 	}
 }
 
 void CollisionModel::addWinding(const Winding& winding) {
-	std::vector<unsigned int> _vertexList;
+	VertexList vertexList;
 	
 	for (Winding::const_iterator i = winding.begin(); i != winding.end(); i++) {
 		// Create a vertexId and add it to the stack
-		_vertexList.push_back(addVertex(i->vertex));
+		vertexList.push_back(addVertex(i->vertex));
 	}
+	// Now add the first vertex a second time to the end of the list
+	vertexList.push_back(addVertex(winding.begin()->vertex));
 	
-	if (_vertexList.size() > 1) {
+	if (vertexList.size() > 1) {
 		Edge edge;
 		
 		// Now work through the stack, adding the edges (note the -1 in the for condition)
-		for (unsigned int i = 0; i < _vertexList.size()-1; i++) {
-			edge.from = _vertexList[i];
-			edge.to = _vertexList[i+1];
+		for (unsigned int i = 0; i < vertexList.size()-1; i++) {
+			edge.from = vertexList[i];
+			edge.to = vertexList[i+1];
 			
 			addEdge(edge);
 		}
-		
-		// Now take the edge last>>first into account:
-		// Take the last vertex ID and take it as "from"
-		edge.from = _vertexList[_vertexList.size() - 1];
-		// Take the first vertex ID as "to"
-		edge.to = _vertexList[0];
-		
-		addEdge(edge);
 	}
 	else {
 		globalErrorStream() << "Warning: degenerate winding found.\n";
 	}
+	
+	// Now that all edges are added, create the polygon
+	addPolygon(vertexList);
 }
 
 void CollisionModel::addBrush(Brush& brush) {
@@ -214,19 +226,16 @@ std::ostream& operator<<(std::ostream& st, const CollisionModel& cm) {
 	}
 	st << "\t}\n";
 	
-	// Export the edges (including the (0 0) edge there are n+1)
-	st << "\tedges { /* numEdges = */ " << cm._edges.size()+1 << "\n";
-	
-	// Write the first edge (seems to be always 0 0)
-	st << "\t/* 0 */ ( 0 0 ) 0 0\n";
-	
-	// Now start with edge #1
-	counter = 1;
+	// Export the edges
+	st << "\tedges { /* numEdges = */ " << cm._edges.size() << "\n";
+	counter = 0;
 	for (CollisionModel::EdgeMap::const_iterator i = cm._edges.begin(); 
 		 i != cm._edges.end(); 
 		 i++, counter++) 
 	{
-		st << "\t/* " << counter << " */ ( " << i->second.from << " " << i->second.to << " ) 0 2\n";
+		st << "\t/* " << counter << " */ ";
+		st << "( " << i->second.from << " " << i->second.to << " ) ";
+		st << "0 " << i->second.numVertices << "\n";
 	}
 	st << "\t}\n";
 	
@@ -272,7 +281,7 @@ std::ostream& operator<<(std::ostream& st, const CollisionModel& cm) {
 		st << b.max[2] << " ) ";
 		
 		// Now append the "solid"
-		st << "\"solid\"\n";
+		st << "\"solid\"\n"; // TODO: Add correct response type (solid, opaque, trigger, etc.)
 	}
 	st << "\t}\n";
 	
