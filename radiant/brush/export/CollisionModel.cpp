@@ -15,8 +15,11 @@ namespace selection {
 		const std::string ECLASS_CLIPMODEL = "func_clipmodel";
 	}
 
-int CollisionModel::findVertex(const Vector3& vertex) {
-	for (VertexMap::iterator i = _vertices.begin(); i != _vertices.end(); i++) {
+int CollisionModel::findVertex(const Vector3& vertex) const {
+	for (VertexMap::const_iterator i = _vertices.begin(); 
+		i != _vertices.end(); 
+		i++) 
+	{
 		if (i->second == vertex) {
 			return i->first;
 		}
@@ -42,9 +45,65 @@ unsigned int CollisionModel::addVertex(const Vector3& vertex) {
 	} 
 }
 
+int CollisionModel::findEdge(const Edge& edge) const {
+	for (EdgeMap::const_iterator i = _edges.begin(); 
+		 i != _edges.end(); 
+		 i++) 
+	{
+		// Check for both edge directions
+		if ( (i->second.from == edge.from && i->second.to == edge.to) || 
+			 (i->second.from == edge.to && i->second.to == edge.from))
+		{
+			return i->first;
+		}
+	}
+	return -1;
+}  
+
+unsigned int CollisionModel::addEdge(const Edge& edge) {
+	// Check for existing edge!
+	int foundIndex = findEdge(edge);
+	
+	if (foundIndex == -1) {
+		// Not found, insert the edge with a new index
+		unsigned int edgeIndex = _edges.size();
+		_edges[edgeIndex] = edge;
+		return edgeIndex;
+	}
+	else {
+		return static_cast<unsigned int>(foundIndex);
+	}
+}
+
 void CollisionModel::addWinding(const Winding& winding) {
+	std::vector<unsigned int> _vertexList;
+	
 	for (Winding::const_iterator i = winding.begin(); i != winding.end(); i++) {
-		unsigned int vertexIdx = addVertex(i->vertex);
+		// Create a vertexId and add it to the stack
+		_vertexList.push_back(addVertex(i->vertex));
+	}
+	
+	if (_vertexList.size() > 1) {
+		Edge edge;
+		
+		// Now work through the stack, adding the edges (note the -1 in the for condition)
+		for (unsigned int i = 0; i < _vertexList.size()-1; i++) {
+			edge.from = _vertexList[i];
+			edge.to = _vertexList[i+1];
+			
+			addEdge(edge);
+		}
+		
+		// Now take the edge last>>first into account:
+		// Take the last vertex ID and take it as "from"
+		edge.from = _vertexList[_vertexList.size() - 1];
+		// Take the first vertex ID as "to"
+		edge.to = _vertexList[0];
+		
+		addEdge(edge);
+	}
+	else {
+		globalErrorStream() << "Warning: degenerate winding found.\n";
 	}
 }
 

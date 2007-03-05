@@ -91,12 +91,28 @@ private:
 	 * 
 	 * @returns: the index of the vertex or -1 if not found
 	 */
-	int findVertex(const Vector3& vertex);
+	int findVertex(const Vector3& vertex) const;
 	
 	/** greebo: "Parses" the given Winding and adds its
 	 * 			geometry info (vertices, edges, polys) into the maps.
 	 */
 	void addWinding(const Winding& winding);
+	
+	/** greebo: Adds the given edge to the internal edge map
+	 * and returns its index. If the edge already exists,
+	 * the index to the existing edge is returned.
+	 * 
+	 * @returns: the index of the (existing/inserted) edge.
+	 */
+	unsigned int addEdge(const Edge& edge);
+	
+	/** greebo: Tries to lookup the index of the given edge, 
+	 * 			regardless of the direction / order of the
+	 * 			contained vertex indices
+	 * 
+	 * @returns: the index of the edge or -1 if not found
+	 */
+	int findEdge(const Edge& edge) const;
 };
 
 typedef boost::shared_ptr<CollisionModel> CollisionModelPtr;
