@@ -69,6 +69,12 @@ namespace selection {
 	 * @returns: the vector with the selected face pointers.
 	 */
 	FacePtrVector getSelectedFaces();
+	
+	/** greebo: Tries to create a collision model from the current
+	 * 			selection. The basic check for a single selected 
+	 * 			func_clipmodel is done here and the CM object is created.
+	 */
+	void createCMFromSelection();
 
 	} // namespace algorithm
 } // namespace selection
