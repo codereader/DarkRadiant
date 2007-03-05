@@ -2,6 +2,7 @@
 #define COLLISIONMODEL_H_
 
 #include <map>
+#include <vector>
 #include "math/Vector3.h"
 #include "math/Plane3.h"
 #include "selection/algorithm/Primitives.h"
@@ -16,12 +17,22 @@ namespace selection {
 
 class CollisionModel
 {
+	// A list of indexed ("named") vertices
+	typedef std::vector<unsigned int> VertexList;
+
 	// The indexed vertices of the collisionmodel
 	typedef std::map<unsigned int, Vector3> VertexMap;
 	
 	struct Edge {
 		unsigned int from;	// The starting vertex index
 		unsigned int to;	// The end vertex index
+		unsigned int numVertices; // At least I think it's numVertices
+		
+		Edge(unsigned int num = 2) : 
+			from(0), 
+			to(0), 
+			numVertices(num) 
+		{}
 	};
 	
 	// The indexed Edges (each consisting of a start/end vertex)
@@ -64,6 +75,8 @@ class CollisionModel
 	BrushList _brushes;
 
 public:
+	CollisionModel();
+
 	void addBrush(Brush& brush);
 	
 	bool isValid() const;
@@ -107,12 +120,18 @@ private:
 	unsigned int addEdge(const Edge& edge);
 	
 	/** greebo: Tries to lookup the index of the given edge, 
-	 * 			regardless of the direction / order of the
-	 * 			contained vertex indices
+	 * 			and returns the index with the factor +1/-1
+	 * 			according to the direction. 
 	 * 
-	 * @returns: the index of the edge or -1 if not found
+	 * @returns: +index / -index of the edge or 0 for the NULL edge
 	 */
 	int findEdge(const Edge& edge) const;
+	
+	/** greebo: Adds a polygon basing on the given vertexlist.
+	 * 			Be sure to add the first vertex a second time
+	 * 			to the end of the pass a "closed" winding. 
+	 */
+	void addPolygon(const VertexList& vertexList);
 };
 
 typedef boost::shared_ptr<CollisionModel> CollisionModelPtr;
