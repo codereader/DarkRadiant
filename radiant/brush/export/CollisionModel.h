@@ -6,6 +6,8 @@
 #include "math/Plane3.h"
 #include "selection/algorithm/Primitives.h"
 
+struct Winding;
+
 namespace selection {
 
 	namespace {
@@ -75,6 +77,26 @@ public:
 	/** greebo: The command target
 	 */
 	static void createFromSelection();
+
+private:
+	/** greebo: Adds the given vertex to the internal vertex list
+	 * and returns its index. If the vertex already exists,
+	 * the index to the existing vertex is returned.
+	 * 
+	 * @returns: the index of the (existing/inserted) vertex.
+	 */
+	unsigned int addVertex(const Vector3& vertex);
+	
+	/** greebo: Tries to lookup the index of the given vertex.
+	 * 
+	 * @returns: the index of the vertex or -1 if not found
+	 */
+	int findVertex(const Vector3& vertex);
+	
+	/** greebo: "Parses" the given Winding and adds its
+	 * 			geometry info (vertices, edges, polys) into the maps.
+	 */
+	void addWinding(const Winding& winding);
 };
 
 typedef boost::shared_ptr<CollisionModel> CollisionModelPtr;
