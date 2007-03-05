@@ -136,6 +136,18 @@ struct Winding
     }
     --numpoints;
   }
+  
+	/** greebo: Calculates the AABB of this winding
+	 */
+	AABB aabb() const {
+		AABB returnValue;
+		
+		for (const_iterator i = begin(); i != end(); i++) {
+			returnValue.includePoint(i->vertex);
+		}
+		
+		return returnValue;
+	}
 };
 
 class DoubleLine

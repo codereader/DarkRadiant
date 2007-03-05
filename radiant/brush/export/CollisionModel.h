@@ -35,9 +35,9 @@ class CollisionModel
 		// The plane (normal + distance)
 		Plane3 plane;
 		
-		// Two (opposite?) points of this polygon
-		Vector3 point1;
-		Vector3 point2;
+		// Two vertices defining the AABB
+		Vector3 min;
+		Vector3 max;
 	};
 	
 	// The unsorted list of Polygons
@@ -48,9 +48,9 @@ class CollisionModel
 	struct BrushStruc {
 		unsigned int numFaces;
 		PlaneList planes;
-		// Two points of this face
-		Vector3 point1;
-		Vector3 point2;
+		// Two points defining the AABB
+		Vector3 min;
+		Vector3 max;
 	};
 	
 	typedef std::vector<BrushStruc> BrushList;
