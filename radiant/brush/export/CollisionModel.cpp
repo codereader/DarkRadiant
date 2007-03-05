@@ -3,11 +3,50 @@
 #include "stream/textstream.h"
 #include "itextstream.h"
 #include "iselection.h"
+#include "ientity.h"
 #include "selectionlib.h"
+#include "scenelib.h"
 #include "brush/Brush.h"
 #include "winding.h"
 
 namespace selection {
+
+	namespace {
+		const std::string ECLASS_CLIPMODEL = "func_clipmodel";
+	}
+
+int CollisionModel::findVertex(const Vector3& vertex) {
+	for (VertexMap::iterator i = _vertices.begin(); i != _vertices.end(); i++) {
+		if (i->second == vertex) {
+			return i->first;
+		}
+	}
+	return -1;
+}
+
+unsigned int CollisionModel::addVertex(const Vector3& vertex) {
+	// Try to lookup the index of the given vertex
+	int foundIndex = findVertex(vertex);
+	
+	if (foundIndex == -1) {
+		// Insert the vertex at the end of the VertexMap
+		// The size of the map is the highest index + 1
+		unsigned int lastIndex = _vertices.size();
+		_vertices[lastIndex] = vertex;
+		
+		return lastIndex;
+	}
+	else {
+		// Return the found index
+		return static_cast<unsigned int>(foundIndex);
+	} 
+}
+
+void CollisionModel::addWinding(const Winding& winding) {
+	for (Winding::const_iterator i = winding.begin(); i != winding.end(); i++) {
+		unsigned int vertexIdx = addVertex(i->vertex);
+	}
+}
 
 void CollisionModel::addBrush(Brush& brush) {
 	BrushStruc b;
@@ -25,6 +64,9 @@ void CollisionModel::addBrush(Brush& brush) {
 	for (Brush::const_iterator i = brush.begin(); i != brush.end(); i++) {
 		// Store the plane into the brush
 		b.planes.push_back((*i)->plane3());
+		
+		// Parse the winding of this Face for vertices/edges/polygons
+		addWinding((*i)->getWinding());
 	}
 	
 	// Store the BrushStruc into the list
@@ -40,22 +82,59 @@ void CollisionModel::createFromSelection() {
 	
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 	
-	if (info.totalCount == info.brushCount && info.totalCount > 0) {
-		// Create a new collisionmodel on the heap using a shared_ptr
-		CollisionModelPtr cm(new CollisionModel());
+	if (info.totalCount == info.entityCount && info.totalCount == 1) {
+		// Retrieve the node, instance and entity
+		scene::Instance& entityInstance = GlobalSelectionSystem().ultimateSelected();
+		scene::Node& entityNode = entityInstance.path().top();
+		Entity* entity = Node_getEntity(entityNode);
 		
-		BrushPtrVector brushes = algorithm::getSelectedBrushes();
-		
-		for (unsigned int i = 0; i < brushes.size(); i++) {
-			// Add the selected brush to the collision model
-			cm->addBrush(*brushes[i]);
+		if (entity != NULL && entity->getKeyValue("classname") == ECLASS_CLIPMODEL) {
+			// Try to retrieve the group node
+			scene::GroupNode* groupNode = Node_getGroupNode(entityNode);
+			
+			// Remove the entity origin from the brushes
+			if (groupNode != NULL) {
+				groupNode->removeOriginFromChildren();
+				
+				// Deselect the instance
+				Instance_setSelected(entityInstance, false);
+				
+				// Select all the child nodes
+				Node_getTraversable(entityNode)->traverse(
+					SelectChildren(entityInstance.path())
+				);
+				
+				BrushPtrVector brushes = algorithm::getSelectedBrushes();
+			
+				// Create a new collisionmodel on the heap using a shared_ptr
+				CollisionModelPtr cm(new CollisionModel());
+			
+				globalOutputStream() << "Brushes found: " << brushes.size() << "\n";
+			
+				// Add all the brushes to the collision model
+				for (unsigned int i = 0; i < brushes.size(); i++) {
+					cm->addBrush(*brushes[i]);
+				}
+				
+				// De-select the child brushes
+				GlobalSelectionSystem().setSelectedAll(false);
+				
+				// Re-add the origin to the brushes
+				groupNode->addOriginToChildren();
+			
+				// Re-select the instance
+				Instance_setSelected(entityInstance, true);
+			
+				// Output the data of the cm (debug)
+				std::cout << *cm;
+			}
 		}
-		
-		// Output the data of the cm (debug)
-		std::cout << *cm;
+		else {
+			globalErrorStream() << "Cannot export, wrong entity (func_clipmodel required).\n";
+		}
 	}
 	else {
-		globalErrorStream() << "Sorry, only brushes can be exported to an CM file.\n";
+		globalErrorStream() << "Cannot export, create and selecte a func_clipmodel entity.\n";
 	}
 }
 
