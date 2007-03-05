@@ -45,6 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/objectives/ObjectivesEditor.h"
 #include "selection/algorithm/Shader.h"
 #include "selection/algorithm/Group.h"
+#include "selection/algorithm/Primitives.h"
 #include "iclipper.h"
 #include "ifilesystem.h"
 #include "iundo.h"
@@ -137,7 +138,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "xyview/GlobalXYWnd.h"
 #include "ui/mru/MRU.h"
 #include "ui/commandlist/CommandList.h"
-#include "brush/export/CollisionModel.h"
 
 struct layout_globals_t
 {
@@ -2878,7 +2878,7 @@ void MainFrame_Construct()
 	
 	GlobalEventManager().addCommand("EditColourScheme", FreeCaller<EditColourScheme>());
 	GlobalEventManager().addCommand("BrushExportOBJ", FreeCaller<CallBrushExportOBJ>());
-	GlobalEventManager().addCommand("BrushExportCM", FreeCaller<selection::CollisionModel::createFromSelection>());
+	GlobalEventManager().addCommand("BrushExportCM", FreeCaller<selection::algorithm::createCMFromSelection>());
 
 	GlobalEventManager().addCommand("ShowCommandList", FreeCaller<ShowCommandListDialog>());
 	GlobalEventManager().addCommand("About", FreeCaller<DoAbout>());

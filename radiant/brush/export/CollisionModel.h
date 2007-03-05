@@ -1,95 +1,43 @@
 #ifndef COLLISIONMODEL_H_
 #define COLLISIONMODEL_H_
 
-#include <map>
-#include <vector>
-#include "math/Vector3.h"
-#include "math/Plane3.h"
-#include "selection/algorithm/Primitives.h"
+#include "Geometry.h"
 
 struct Winding;
+class Brush;
+class Face;
 
-namespace selection {
+namespace cmutil {
 
 	namespace {
 		const std::string RKEY_COLLISION_SHADER = "game/defaults/collisionTexture";
+		const std::string ECLASS_CLIPMODEL = "func_clipmodel";
 	}
 
 class CollisionModel
 {
-	// A list of indexed ("named") vertices
-	typedef std::vector<unsigned int> VertexList;
-
-	// The indexed vertices of the collisionmodel
-	typedef std::map<unsigned int, Vector3> VertexMap;
-	
-	struct Edge {
-		unsigned int from;	// The starting vertex index
-		unsigned int to;	// The end vertex index
-		unsigned int numVertices; // At least I think it's numVertices
-		
-		Edge(unsigned int num = 2) : 
-			from(0), 
-			to(0), 
-			numVertices(num) 
-		{}
-	};
-	
-	// The indexed Edges (each consisting of a start/end vertex)
-	typedef std::map<unsigned int, Edge> EdgeMap;
-	
-	struct Polygon {
-		// The number of edges of this polygon
-		unsigned int numEdges;
-		
-		// The indices of the edges forming this polygon
-		std::vector<unsigned int> edges;
-		
-		// The plane (normal + distance)
-		Plane3 plane;
-		
-		// Two vertices defining the AABB
-		Vector3 min;
-		Vector3 max;
-	};
-	
-	// The unsorted list of Polygons
-	typedef std::vector<Polygon> PolygonList;
-	
-	typedef std::vector<Plane3> PlaneList;
-	
-	struct BrushStruc {
-		unsigned int numFaces;
-		PlaneList planes;
-		// Two points defining the AABB
-		Vector3 min;
-		Vector3 max;
-	};
-	
-	typedef std::vector<BrushStruc> BrushList;
-	
 	// The container instances with all the vertices/edges/faces
 	VertexMap _vertices;
 	EdgeMap _edges;
 	PolygonList _polygons;
 	BrushList _brushes;
+	
+	std::string _model;
 
 public:
 	CollisionModel();
 
 	void addBrush(Brush& brush);
 	
-	bool isValid() const;
-
 	/** greebo: Stream insertion operator, use this to write
 	 * the collision model into a file. Qualified as "friend" to allow the access 
 	 * of private members and the first function argument to be std::ostream.
 	 */
 	friend std::ostream& operator<<(std::ostream& st, const CollisionModel& cm);
-
-	/** greebo: The command target
+	
+	/** greebo: Sets the model path this CM is associated with 
 	 */
-	static void createFromSelection();
+	void setModel(const std::string& model);
 
 private:
 	/** greebo: Adds the given vertex to the internal vertex list
@@ -108,8 +56,11 @@ private:
 	
 	/** greebo: "Parses" the given Winding and adds its
 	 * 			geometry info (vertices, edges, polys) into the maps.
+	 * 
+	 * @returns: the VertexList defining the Winding points in a 
+	 * 			 closed loop (last vertexId = first vertexId)
 	 */
-	void addWinding(const Winding& winding);
+	VertexList addWinding(const Winding& winding);
 	
 	/** greebo: Adds the given edge to the internal edge map
 	 * and returns its index. If the edge already exists,
@@ -127,15 +78,17 @@ private:
 	 */
 	int findEdge(const Edge& edge) const;
 	
-	/** greebo: Adds a polygon basing on the given vertexlist.
+	/** greebo: Adds a polygon basing on the given face & vertexlist.
 	 * 			Be sure to add the first vertex a second time
-	 * 			to the end of the pass a "closed" winding. 
+	 * 			to the end of the pass a "closed" winding.
+	 *
+	 * @returns: the populated Polygon structure 
 	 */
-	void addPolygon(const VertexList& vertexList);
+	Polygon addPolygon(const Face& face, const VertexList& vertexList);
 };
 
 typedef boost::shared_ptr<CollisionModel> CollisionModelPtr;
 
-} // namespace selection
+} // namespace cmutil
 
 #endif /*COLLISIONMODEL_H_*/

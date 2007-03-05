@@ -9,11 +9,60 @@
 #include "brush/Brush.h"
 #include "winding.h"
 
-namespace selection {
+namespace cmutil {
 
-	namespace {
-		const std::string ECLASS_CLIPMODEL = "func_clipmodel";
+// Writes the given Vector3 in the format ( 0 1 2 ) to the given stream
+void writeVector(std::ostream& st, const Vector3& vector) {
+	st << "( ";
+	st << vector[0] << " ";
+	st << vector[1] << " ";
+	st << vector[2] << " ";
+	st << ")";
+}
+
+// Writes a single polygon to the given stream <st>
+std::ostream& operator<< (std::ostream& st, const Polygon poly) {
+	st << poly.numEdges;
+	
+	// Edge List
+	st << " (";
+	for (unsigned int e = 0; e < poly.edges.size(); e++) {
+		st << " " << poly.edges[e];
 	}
+	st << " ) ";
+		
+	// Plane normal
+	writeVector(st, poly.plane.normal());
+	st << " " << poly.plane.dist() << " ";
+	writeVector(st, poly.min);
+	st << " ";
+	writeVector(st, poly.max);
+	st << " \"" << poly.shader.c_str() << "\"";
+	return st;
+}
+
+std::ostream& operator<< (std::ostream& st, const BrushStruc b) {
+	st << b.numFaces << " {\n";
+		
+	// Write all the planes
+	for (unsigned int i = 0; i < b.planes.size(); i++) {
+		st << "\t\t";
+		writeVector(st, b.planes[i].normal());
+		st << " " << b.planes[i].dist() << "\n";
+	}
+	
+	st << "\t} ";
+	
+	// Write the two AABB vertices
+	writeVector(st, b.min);
+	st << " ";
+	writeVector(st, b.max);
+	st << " ";
+	
+	// Now append the "solid"
+	st << "\"solid\"";
+	return st;
+}
 
 CollisionModel::CollisionModel() {
 	// Create the "NULL" edge (numVertices = 0)
@@ -83,14 +132,37 @@ unsigned int CollisionModel::addEdge(const Edge& edge) {
 	}
 }
 
-void CollisionModel::addPolygon(const VertexList& vertexList) {
+Polygon CollisionModel::addPolygon(
+	const Face& face, 
+	const VertexList& vertexList) 
+{
+	Polygon poly;
+	
 	// Cycle from the beginning to the end-1 and add the edges 
 	for (unsigned int i = 0; i < vertexList.size()-1; i++) {
+		Edge edge;
+		edge.from = vertexList[i];
+		edge.to = vertexList[i+1];
 		
+		// Lookup the edge (the sign is interpreted as direction) 
+		// and add it to the edge list
+		poly.edges.push_back(findEdge(edge));
 	}
+	
+	AABB faceAABB = face.getWinding().aabb();
+		
+	poly.numEdges = poly.edges.size();
+	poly.plane = face.plane3();
+	poly.min = faceAABB.origin - faceAABB.extents;
+	poly.max = faceAABB.origin + faceAABB.extents;
+	poly.shader = face.GetShader();
+	
+	return poly;
 }
 
-void CollisionModel::addWinding(const Winding& winding) {
+VertexList CollisionModel::addWinding(
+	const Winding& winding)
+{
 	VertexList vertexList;
 	
 	for (Winding::const_iterator i = winding.begin(); i != winding.end(); i++) {
@@ -115,8 +187,8 @@ void CollisionModel::addWinding(const Winding& winding) {
 		globalErrorStream() << "Warning: degenerate winding found.\n";
 	}
 	
-	// Now that all edges are added, create the polygon
-	addPolygon(vertexList);
+	// Now that all edges are added, return the VertexList defining the winding
+	return vertexList;
 }
 
 void CollisionModel::addBrush(Brush& brush) {
@@ -136,104 +208,48 @@ void CollisionModel::addBrush(Brush& brush) {
 		// Store the plane into the brush
 		b.planes.push_back((*i)->plane3());
 		
-		// Parse the winding of this Face for vertices/edges/polygons
-		addWinding((*i)->getWinding());
+		// Parse the winding of this Face for vertices/edges
+		VertexList vertexList = addWinding((*i)->getWinding());
+		
+		// Pass the Face& and the VertexList to create the polygon
+		// and add the resulting Polygon structure to the list
+		_polygons.push_back(addPolygon(*(*i), vertexList));
 	}
 	
 	// Store the BrushStruc into the list
 	_brushes.push_back(b);
 }
 
-bool CollisionModel::isValid() const {
-	return true;
-}
-
-void CollisionModel::createFromSelection() {
-	globalOutputStream() << "CollisionModel::createFromSelection started.\n";
-	
-	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-	
-	if (info.totalCount == info.entityCount && info.totalCount == 1) {
-		// Retrieve the node, instance and entity
-		scene::Instance& entityInstance = GlobalSelectionSystem().ultimateSelected();
-		scene::Node& entityNode = entityInstance.path().top();
-		Entity* entity = Node_getEntity(entityNode);
-		
-		if (entity != NULL && entity->getKeyValue("classname") == ECLASS_CLIPMODEL) {
-			// Try to retrieve the group node
-			scene::GroupNode* groupNode = Node_getGroupNode(entityNode);
-			
-			// Remove the entity origin from the brushes
-			if (groupNode != NULL) {
-				groupNode->removeOriginFromChildren();
-				
-				// Deselect the instance
-				Instance_setSelected(entityInstance, false);
-				
-				// Select all the child nodes
-				Node_getTraversable(entityNode)->traverse(
-					SelectChildren(entityInstance.path())
-				);
-				
-				BrushPtrVector brushes = algorithm::getSelectedBrushes();
-			
-				// Create a new collisionmodel on the heap using a shared_ptr
-				CollisionModelPtr cm(new CollisionModel());
-			
-				globalOutputStream() << "Brushes found: " << brushes.size() << "\n";
-			
-				// Add all the brushes to the collision model
-				for (unsigned int i = 0; i < brushes.size(); i++) {
-					cm->addBrush(*brushes[i]);
-				}
-				
-				// De-select the child brushes
-				GlobalSelectionSystem().setSelectedAll(false);
-				
-				// Re-add the origin to the brushes
-				groupNode->addOriginToChildren();
-			
-				// Re-select the instance
-				Instance_setSelected(entityInstance, true);
-			
-				// Output the data of the cm (debug)
-				std::cout << *cm;
-			}
-		}
-		else {
-			globalErrorStream() << "Cannot export, wrong entity (func_clipmodel required).\n";
-		}
-	}
-	else {
-		globalErrorStream() << "Cannot export, create and selecte a func_clipmodel entity.\n";
-	}
+void CollisionModel::setModel(const std::string& model) {
+	_model = model;
 }
 
 // The friend stream insertion operator
 std::ostream& operator<<(std::ostream& st, const CollisionModel& cm) {
-	unsigned int counter = 0;
-	
+	// Write the header
 	st << "CM \"1.00\"\n\n0\n\n";
-	st << "collisionModel \"models/props/\" {\n";
+	
+	st << "collisionModel \"" << cm._model.c_str() << "\" {\n";
 	
 	// Export the vertices
 	st << "\tvertices { /* numVertices = */ " << cm._vertices.size() << "\n";
-	for (CollisionModel::VertexMap::const_iterator i = cm._vertices.begin(); 
+	for (VertexMap::const_iterator i = cm._vertices.begin(); 
 		 i != cm._vertices.end(); 
-		 i++, counter++) 
+		 i++) 
 	{
-		st << "\t/* " << counter << " */ ( " << i->second[0] << " " << i->second[1] << " " << i->second[2] << " )\n";
+		st << "\t/* " << i->first << " */ ";
+		writeVector(st, i->second);
+		st << "\n";
 	}
 	st << "\t}\n";
 	
 	// Export the edges
 	st << "\tedges { /* numEdges = */ " << cm._edges.size() << "\n";
-	counter = 0;
-	for (CollisionModel::EdgeMap::const_iterator i = cm._edges.begin(); 
+	for (EdgeMap::const_iterator i = cm._edges.begin(); 
 		 i != cm._edges.end(); 
-		 i++, counter++) 
+		 i++) 
 	{
-		st << "\t/* " << counter << " */ ";
+		st << "\t/* " << i->first << " */ ";
 		st << "( " << i->second.from << " " << i->second.to << " ) ";
 		st << "0 " << i->second.numVertices << "\n";
 	}
@@ -245,43 +261,22 @@ std::ostream& operator<<(std::ostream& st, const CollisionModel& cm) {
 	st << "\t}\n";
 	
 	// Export the polygons
+	st << "\tpolygons /* polygonMemory = */ ";
+	st << sizeof(Polygon)*cm._polygons.size();
+	st << " {\n";
+	for (unsigned int i = 0; i < cm._polygons.size(); i++) {
+		st << "\t" << cm._polygons[i] << "\n";
+	}
+	st << "\t}\n";
 	
 	// Export the brushes, the header first
-	st << "\tbrushes { /* brushMemory = */ ";
-	st << sizeof(CollisionModel::BrushStruc)*cm._brushes.size();
+	st << "\tbrushes /* brushMemory = */ ";
+	st << sizeof(BrushStruc)*cm._brushes.size();
 	st << " {\n";
 	
 	// Now cycle through all the brushes
 	for (unsigned int i = 0; i < cm._brushes.size(); i++) {
-		CollisionModel::BrushStruc b = cm._brushes[i];
-		
-		st << "\t";
-		st << cm._brushes[i].numFaces << " {\n";
-		
-		// Write all the planes
-		for (unsigned int p = 0; p < cm._brushes[i].planes.size(); p++) {
-			st << "\t\t( ";
-			st << b.planes[p].normal()[0] << " ";
-			st << b.planes[p].normal()[1] << " ";
-			st << b.planes[p].normal()[2] << " ) ";
-			st << b.planes[p].dist() << "\n";
-		}
-		
-		st << "\t} ";
-		
-		// Write the two AABB vertices
-		st << " ( ";
-		st << b.min[0] << " ";
-		st << b.min[1] << " ";
-		st << b.min[2] << " ) ";
-		
-		st << "( ";
-		st << b.max[0] << " ";
-		st << b.max[1] << " ";
-		st << b.max[2] << " ) ";
-		
-		// Now append the "solid"
-		st << "\"solid\"\n"; // TODO: Add correct response type (solid, opaque, trigger, etc.)
+		st << "\t" << cm._brushes[i] << "\n";
 	}
 	st << "\t}\n";
 	
@@ -289,4 +284,4 @@ std::ostream& operator<<(std::ostream& st, const CollisionModel& cm) {
 	return st;
 }
 
-} // namespace selection
+} // namespace cmutil
