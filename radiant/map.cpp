@@ -95,7 +95,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	namespace {
 		const std::string RKEY_LAST_CAM_POSITION = "game/mapFormat/lastCameraPositionKey";
 		const std::string RKEY_LAST_CAM_ANGLE = "game/mapFormat/lastCameraAngleKey";
-		const std::string RKEY_PLAYER_START_ECLASS = "game/mapFormat/playerStartEClass";
+		const std::string RKEY_PLAYER_START_ECLASS = "game/mapFormat/playerStartPoint";
 	}
 
 class NameObserver
