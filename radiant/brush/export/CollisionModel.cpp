@@ -274,11 +274,6 @@ unsigned int CollisionModel::getBrushMemory(const BrushList& brushes) {
 	return faceCount*SIZEOF_FACE + brushes.size()*SIZEOF_BRUSH;
 }
 
-unsigned int CollisionModel::getPolygonMemory(const PolygonList& polys) {
-	
-	return 0;
-}
-
 // The friend stream insertion operator
 std::ostream& operator<<(std::ostream& st, const CollisionModel& cm) {
 	// Write the header
@@ -316,9 +311,7 @@ std::ostream& operator<<(std::ostream& st, const CollisionModel& cm) {
 	st << "\t}\n";
 	
 	// Export the polygons
-	st << "\tpolygons /* polygonMemory = */ ";
-	st << sizeof(Polygon)*cm._polygons.size();
-	st << " {\n";
+	st << "\tpolygons {\n";
 	for (unsigned int i = 0; i < cm._polygons.size(); i++) {
 		st << "\t" << cm._polygons[i] << "\n";
 	}

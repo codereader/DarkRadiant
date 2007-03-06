@@ -44,11 +44,6 @@ public:
 	 */
 	static unsigned int getBrushMemory(const BrushList& brushes);
 
-	/** greebo: Calculates the "PolygonMemory" number by using the constants
-	 * 			defined in the .cpp file. 
-	 */
-	static unsigned int getPolygonMemory(const PolygonList& polys);
-
 private:
 	/** greebo: Adds the given vertex to the internal vertex list
 	 * and returns its index. If the vertex already exists,
