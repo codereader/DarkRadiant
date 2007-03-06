@@ -373,8 +373,14 @@ void ModelSelector::updateSelected() {
 	_modelPreview.setModel(mName);
 	_modelPreview.setSkin(skinName);
 
-	// Update the text in the info table
+	// Check that the model is actually valid by querying the IModelPtr 
+	// returned from the preview widget.
+	model::IModelPtr mdl = _modelPreview.getModel();
+	if (!mdl) {
+		return; // no valid model
+	}
 	
+	// Update the text in the info table
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter, 
 					   0, "Model name",
@@ -390,23 +396,23 @@ void ModelSelector::updateSelected() {
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter,
 					   0, "Total vertices",
-					   1, boost::lexical_cast<std::string>(_modelPreview.getModel()->getVertexCount()).c_str(),
+					   1, boost::lexical_cast<std::string>(mdl->getVertexCount()).c_str(),
 					   -1);
 
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter,
 					   0, "Total polys",
-					   1, boost::lexical_cast<std::string>(_modelPreview.getModel()->getPolyCount()).c_str(),
+					   1, boost::lexical_cast<std::string>(mdl->getPolyCount()).c_str(),
 					   -1);
 
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter,
 					   0, "Material surfaces",
-					   1, boost::lexical_cast<std::string>(_modelPreview.getModel()->getSurfaceCount()).c_str(),
+					   1, boost::lexical_cast<std::string>(mdl->getSurfaceCount()).c_str(),
 					   -1);
 
 	// Add the list of active materials
-	const std::vector<std::string>& matList(_modelPreview.getModel()->getActiveMaterials());
+	const std::vector<std::string>& matList(mdl->getActiveMaterials());
 	
 	if (!matList.empty()) {
 		std::vector<std::string>::const_iterator i = matList.begin();
