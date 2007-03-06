@@ -39,6 +39,16 @@ public:
 	 */
 	void setModel(const std::string& model);
 
+	/** greebo: Calculates the "BrushMemory" number by using the constants
+	 * 			defined in the .cpp file. 
+	 */
+	static unsigned int getBrushMemory(const BrushList& brushes);
+
+	/** greebo: Calculates the "PolygonMemory" number by using the constants
+	 * 			defined in the .cpp file. 
+	 */
+	static unsigned int getPolygonMemory(const PolygonList& polys);
+
 private:
 	/** greebo: Adds the given vertex to the internal vertex list
 	 * and returns its index. If the vertex already exists,
@@ -78,13 +88,20 @@ private:
 	 */
 	int findEdge(const Edge& edge) const;
 	
+	/** greebo: Tries to lookup the index of the matching polygon. 
+	 * 			All the Edge indices are compared regardless of 
+	 * 			their order. 
+	 * 
+	 * @returns: the index of the polygon or -1 if not found
+	 */
+	int findPolygon(const EdgeList& otherEdges);
+	
 	/** greebo: Adds a polygon basing on the given face & vertexlist.
 	 * 			Be sure to add the first vertex a second time
 	 * 			to the end of the pass a "closed" winding.
-	 *
-	 * @returns: the populated Polygon structure 
+	 * 			Duplicate polygons are not added.
 	 */
-	Polygon addPolygon(const Face& face, const VertexList& vertexList);
+	void addPolygon(const Face& face, const VertexList& vertexList);
 };
 
 typedef boost::shared_ptr<CollisionModel> CollisionModelPtr;
