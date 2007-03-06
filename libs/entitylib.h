@@ -719,7 +719,7 @@ public:
 			return i->second->c_str();
 		}
 		else {
-			return m_eclass->getValueForKey(key).c_str();
+			return m_eclass->getValueForKey(key);
 		}
 	}
 
