@@ -14,6 +14,7 @@
 #include "SceneWalkers.h"
 #include "patch/PatchSceneWalk.h"
 #include "brush/BrushInstance.h"
+#include "xyview/GlobalXYWnd.h"
 
 // Initialise the shader pointer
 Shader* RadiantSelectionSystem::_state = 0;
@@ -114,18 +115,25 @@ void RadiantSelectionSystem::Scene_TestSelect(SelectablesList& targetList, Selec
 		}
 		break;
 		case ePrimitive:
-			// First, obtain all the selectable entities
-			Scene_forEachVisible(GlobalSceneGraph(), view, testselect_entity_visible(selector, test));
+			// Do we have a camera view (filled rendering?)
+			if (view.fill() || !GlobalXYWnd().higherEntitySelectionPriority()) {
+				// Test for any visible elements (primitives, entities), but don't select child primitives
+				Scene_forEachVisible(GlobalSceneGraph(), view, testselect_any_visible(selector, test, false)); 
+			}
+			else {
+				// We have an orthoview, here, select entities first
+				// First, obtain all the selectable entities
+				Scene_forEachVisible(GlobalSceneGraph(), view, testselect_entity_visible(selector, test));
+				// Now, retrieve all the selectable primitives (and don't select child primitives (false)) 
+				Scene_TestSelect_Primitive(sel2, test, view, false);
+			}
 		
-			// Add them to the target vector
+			// Add the first selection crop to the target vector
 			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); i++) {
 				targetList.push_back(i->second);
 			}
 			
-			// Now, retrieve all the selectable primitives (and don't select child primitives (false)) 
-			Scene_TestSelect_Primitive(sel2, test, view, false);
-			
-			// Add them to the vector as well (after the entities)
+			// Add the secondary crop to the vector (if it has any entries)
 			for (SelectionPool::iterator i = sel2.begin(); i != sel2.end(); i++) {
 				// Check for duplicates
 				SelectablesList::iterator j;

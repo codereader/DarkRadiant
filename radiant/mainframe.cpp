@@ -1663,7 +1663,7 @@ GtkMenuItem* create_edit_menu()
 
   createSeparatorMenuItem(menu);
   createMenuItemWithMnemonic(menu, "Export Selected Brushes to _OBJ", "BrushExportOBJ");
-  createMenuItemWithMnemonic(menu, "Create CollisionModel from Selection", "BrushExportCM");
+  createMenuItemWithMnemonic(menu, "Create CollisionModel from Selection...", "BrushExportCM");
 
   createSeparatorMenuItem(menu);
   createMenuItemWithMnemonic(menu, "Pre_ferences...", "Preferences");

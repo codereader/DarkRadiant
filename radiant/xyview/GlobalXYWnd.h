@@ -26,6 +26,7 @@
 		const std::string RKEY_SHOW_WORKZONE = RKEY_XYVIEW_ROOT + "/showWorkzone";
 		const std::string RKEY_DEFAULT_BLOCKSIZE = "user/ui/xyview/defaultBlockSize";
 		const std::string RKEY_TRANSLATE_CONSTRAINED = "user/ui/xyview/translateConstrained";
+		const std::string RKEY_HIGHER_ENTITY_PRIORITY = "user/ui/xyview/higherEntitySelectionPriority";
 		
 		typedef std::list<XYWnd*> XYWndList;
 	}
@@ -80,6 +81,7 @@ public:
 	bool showAxes() const;
 	bool showWorkzone() const;
 	bool showSizeInfo() const;
+	bool higherEntitySelectionPriority() const;
 	
 	unsigned int defaultBlockSize() const;
 	
