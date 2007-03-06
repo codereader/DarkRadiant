@@ -31,13 +31,15 @@ struct Edge {
 
 // The indexed Edges (each consisting of a start/end vertex)
 typedef std::map<unsigned int, Edge> EdgeMap;
+// A vector of Edges defining a polygon (the sign indicates the direction) 
+typedef std::vector<int> EdgeList;
 
 struct Polygon {
 	// The number of edges of this polygon
 	unsigned int numEdges;
 	
 	// The indices of the edges forming this polygon
-	std::vector<int> edges;
+	EdgeList edges;
 	
 	// The plane (normal + distance)
 	Plane3 plane;
