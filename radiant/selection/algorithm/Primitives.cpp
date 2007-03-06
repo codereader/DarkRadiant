@@ -1,17 +1,33 @@
 #include "Primitives.h"
 
+#include <fstream>
+
 #include "ientity.h"
 #include "brush/FaceInstance.h"
 #include "brush/BrushVisit.h"
 #include "patch/PatchSceneWalk.h"
 #include "string/string.h"
 #include "brush/export/CollisionModel.h"
+#include "gtkutil/dialog.h"
+#include "mainframe.h"
+#include "ui/modelselector/ModelSelector.h"
+#include "qe3.h"
+
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/convenience.hpp>
+#include <boost/filesystem/exception.hpp>
 
 // greebo: Nasty global that contains all the selected face instances
 extern FaceInstanceSet g_SelectedFaceInstances;
 
 namespace selection {
 	namespace algorithm {
+
+	namespace {
+		const std::string RKEY_CM_EXT = "game/defaults/collisionModelExt";
+		// Filesystem path typedef
+		typedef boost::filesystem::path Path;
+	}
 
 int selectedFaceCount() {
 	return static_cast<int>(g_SelectedFaceInstances.size());
@@ -125,8 +141,7 @@ FacePtrVector getSelectedFaces() {
 
 // Try to create a CM from the selected entity
 void createCMFromSelection() {
-	globalOutputStream() << "CollisionModel::createFromSelection started.\n";
-	
+	// Check the current selection state
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 	
 	if (info.totalCount == info.entityCount && info.totalCount == 1) {
@@ -158,11 +173,43 @@ void createCMFromSelection() {
 				// Create a new collisionmodel on the heap using a shared_ptr
 				cmutil::CollisionModelPtr cm(new cmutil::CollisionModel());
 			
-				globalOutputStream() << "Brushes found: " << brushes.size() << "\n";
-			
 				// Add all the brushes to the collision model
 				for (unsigned int i = 0; i < brushes.size(); i++) {
 					cm->addBrush(*brushes[i]);
+				}
+				
+				ui::ModelAndSkin modelAndSkin = ui::ModelSelector::chooseModel(); 
+				std::string basePath = g_qeglobals.m_userGamePath.c_str();
+				
+				std::string modelPath = basePath + modelAndSkin.model;
+				
+				std::string newExtension = "." + GlobalRegistry().get(RKEY_CM_EXT);
+				
+				try {
+					// create the new autosave filename by changing the extension
+					Path cmPath = boost::filesystem::change_extension(
+							Path(modelPath, boost::filesystem::native), 
+							newExtension
+						);
+					
+					globalOutputStream() << "Saving CollisionModel to " << cmPath.string().c_str() << "\n";
+				
+					// Open the stream to the output file
+					std::ofstream outfile(cmPath.string().c_str());
+					
+					if (outfile.is_open()) {
+						// Insert the CollisionModel into the stream
+						outfile << *cm;
+						// Close the file
+						outfile.close();
+					}
+					else {
+						gtkutil::errorDialog("Couldn't save to file: " + cmPath.string(),
+							 MainFrame_getWindow());
+					}
+				}
+				catch (boost::filesystem::filesystem_error f) {
+					globalErrorStream() << "CollisionModel: " << f.what() << "\n";
 				}
 				
 				// De-select the child brushes
@@ -173,17 +220,16 @@ void createCMFromSelection() {
 			
 				// Re-select the instance
 				Instance_setSelected(entityInstance, true);
-			
-				// Output the data of the cm (debug)
-				std::cout << *cm;
 			}
 		}
 		else {
-			globalErrorStream() << "Cannot export, wrong entity (func_clipmodel required).\n";
+			gtkutil::errorDialog("Can't export, wrong entity (func_clipmodel required).",
+							 MainFrame_getWindow());
 		}
 	}
 	else {
-		globalErrorStream() << "Cannot export, create and selecte a func_clipmodel entity.\n";
+		gtkutil::errorDialog("Can't export, create and selecte a func_clipmodel entity.",
+							 MainFrame_getWindow());
 	}
 }
 

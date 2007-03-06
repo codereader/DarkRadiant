@@ -178,6 +178,7 @@ void XYWndManager::constructPreferencePage(PreferenceGroup& group) {
 	page->appendCheckBox("", "Show Window Outline", RKEY_SHOW_OUTLINE);
 	page->appendCheckBox("", "Show Workzone", RKEY_SHOW_WORKZONE);
 	page->appendCheckBox("", "Translate Manipulator always constrained to Axis", RKEY_TRANSLATE_CONSTRAINED);
+	page->appendCheckBox("", "Higher Selection Priority for Entities", RKEY_HIGHER_ENTITY_PRIORITY);
 }
 
 // Load/Reload the values from the registry
@@ -194,6 +195,10 @@ void XYWndManager::keyChanged() {
 	_showWorkzone = (GlobalRegistry().get(RKEY_SHOW_WORKZONE) == "1");
 	_defaultBlockSize = (GlobalRegistry().getInt(RKEY_DEFAULT_BLOCKSIZE));
 	updateAllViews();
+}
+
+bool XYWndManager::higherEntitySelectionPriority() const {
+	return GlobalRegistry().get(RKEY_HIGHER_ENTITY_PRIORITY) == "1";
 }
 
 bool XYWndManager::chaseMouse() const {

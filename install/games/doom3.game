@@ -64,6 +64,7 @@
 		<minWorldCoord value="-65536" />
 		<defaultTexture value="_default" />
 		<collisionTexture value="textures/common/collision" />
+		<collisionModelExt value="cm" />
 	</defaults>
 	<entityChooser>
 		<displayFolderKey value="editor_displayFolder" />

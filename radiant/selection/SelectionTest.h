@@ -72,6 +72,25 @@ public:
   void post(const scene::Path& path, scene::Instance& instance) const;
 };
 
+/** greebo: Tests for any primitives/entities matching the selectiontest
+ */
+class testselect_any_visible : 
+	public scene::Graph::Walker 
+{
+	Selector& _selector;
+	SelectionTest& _test;
+	bool _selectChildPrimitives;
+public:
+	testselect_any_visible(Selector& selector, SelectionTest& test, bool selectChildPrimitives) : 
+		_selector(selector), 
+		_test(test),
+		_selectChildPrimitives(selectChildPrimitives)
+	{}
+
+	bool pre(const scene::Path& path, scene::Instance& instance) const;  
+	void post(const scene::Path& path, scene::Instance& instance) const;
+};
+
 class testselect_component_visible : public scene::Graph::Walker {
   Selector& _selector;
   SelectionTest& _test;

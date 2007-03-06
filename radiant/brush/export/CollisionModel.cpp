@@ -196,7 +196,8 @@ void CollisionModel::addPolygon(
 		poly.plane = face.plane3();
 		poly.min = faceAABB.origin - faceAABB.extents;
 		poly.max = faceAABB.origin + faceAABB.extents;
-		poly.shader = face.GetShader();
+		//poly.shader = face.GetShader();
+		poly.shader = GlobalRegistry().get(RKEY_COLLISION_SHADER);
 		
 		_polygons.push_back(poly);
 	}

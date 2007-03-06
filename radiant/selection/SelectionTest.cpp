@@ -255,6 +255,43 @@ void testselect_primitive_visible::post(const scene::Path& path, scene::Instance
     }
 }
 
+bool testselect_any_visible::pre(const scene::Path& path, scene::Instance& instance) const {
+    Selectable* selectable = Instance_getSelectable(instance);
+    if (selectable != NULL) {
+    	_selector.pushSelectable(*selectable);
+    }
+
+    SelectionTestable* selectionTestable = Instance_getSelectionTestable(instance);
+    if (selectionTestable != NULL) {
+		selectionTestable->testSelect(_selector, _test);
+    }
+    
+    return true;
+}
+
+void testselect_any_visible::post(const scene::Path& path, scene::Instance& instance) const {
+    Selectable* selectable = Instance_getSelectable(instance);
+    if (selectable != NULL) {
+    	// Don't test for parent if the path has only 1 element
+    	if (path.size() > 1) {
+    	  	// Get the parent entity of this object, if there is one
+    		Entity* parent = Node_getEntity(path.parent());
+    	
+	    	if (parent != NULL) {
+	    		if (parent->getKeyValue("classname") == "worldspawn" || _selectChildPrimitives) {
+	    			 _selector.popSelectable();
+	    		}
+	    	}
+	    	else {
+	    		_selector.popSelectable();
+	    	}
+    	}
+    	else {
+    		_selector.popSelectable();
+    	}
+    }
+}
+
 bool testselect_component_visible::pre(const scene::Path& path, scene::Instance& instance) const {
     ComponentSelectionTestable* componentSelectionTestable = Instance_getComponentSelectionTestable(instance);
 	if (componentSelectionTestable) {
