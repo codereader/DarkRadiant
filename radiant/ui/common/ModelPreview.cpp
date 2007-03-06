@@ -10,6 +10,8 @@
 
 #include <gtk/gtk.h>
 
+#include <boost/algorithm/string/case_conv.hpp>
+
 namespace ui
 {
 
@@ -113,12 +115,17 @@ void ModelPreview::setModel(const std::string& model) {
 		return;
 	}
 
-	// Load the model
-	ModelLoader* loader = ModelLoader_forType(os::getExtension(model).c_str());
+	// Load the model, using a lowercase version of the file extension to
+	// identify the loader module to use
+	std::string ldrName = os::getExtension(model);
+	boost::algorithm::to_lower(ldrName);
+	
+	ModelLoader* loader = ModelLoader_forType(ldrName.c_str());
 	if (loader != NULL) {
 		_model = loader->loadModelFromPath(model);
 	}
 	else {
+		_model = model::IModelPtr();
 		return;
 	}
 
