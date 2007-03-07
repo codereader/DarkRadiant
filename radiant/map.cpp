@@ -87,6 +87,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/mru/MRU.h"
 #include "map/AutoSaver.h"
 #include "map/MapFileManager.h"
+#include "map/RegionManager.h"
 #include "surfacedialog.h"
 
 #include <string>
@@ -2604,10 +2605,11 @@ MapModuleObserver g_MapModuleObserver;
 
 void Map_Construct()
 {
-  GlobalEventManager().addCommand("RegionOff", FreeCaller<RegionOff>());
-  GlobalEventManager().addCommand("RegionSetXY", FreeCaller<RegionXY>());
-  GlobalEventManager().addCommand("RegionSetBrush", FreeCaller<RegionBrush>());
-  GlobalEventManager().addCommand("RegionSetSelection", FreeCaller<RegionSelected>());
+	GlobalEventManager().addCommand("SaveRegion", FreeCaller<map::RegionManager::saveRegion>());
+	GlobalEventManager().addCommand("RegionOff", FreeCaller<map::RegionManager::disableRegion>());
+	GlobalEventManager().addCommand("RegionSetXY", FreeCaller<RegionXY>());
+	GlobalEventManager().addCommand("RegionSetBrush", FreeCaller<RegionBrush>());
+	GlobalEventManager().addCommand("RegionSetSelection", FreeCaller<RegionSelected>());
 
 	// Add the map position commands to the EventManager
 	map::GlobalMapPosition().initialise();

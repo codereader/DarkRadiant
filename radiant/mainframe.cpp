@@ -1618,7 +1618,7 @@ GtkMenuItem* create_file_menu()
 	createMenuItemWithMnemonic(menu, "Save _as...", "SaveMapAs");
 	createMenuItemWithMnemonic(menu, "Save s_elected...", "SaveSelected");
 	createSeparatorMenuItem(menu);
-	createMenuItemWithMnemonic(menu, "Save re_gion...", "SaveRegion");
+	createMenuItemWithMnemonic(menu, "Save Selected as Re_gion...", "SaveRegion");
 	createSeparatorMenuItem(menu);
 	createMenuItemWithMnemonic(menu, "_Refresh models", "RefreshReferences");
 	createSeparatorMenuItem(menu);
@@ -1760,10 +1760,10 @@ GtkMenuItem* create_view_menu(MainFrame::EViewStyle style)
   }
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Region");
-    createMenuItemWithMnemonic(menu_in_menu, "_Off", "RegionOff");
-    createMenuItemWithMnemonic(menu_in_menu, "_Set XY", "RegionSetXY");
-    createMenuItemWithMnemonic(menu_in_menu, "Set _Brush", "RegionSetBrush");
-    createMenuItemWithMnemonic(menu_in_menu, "Set Se_lected Brushes", "RegionSetSelection");
+    createMenuItemWithMnemonic(menu_in_menu, "_Switch off", "RegionOff");
+    createMenuItemWithMnemonic(menu_in_menu, "_Set from View", "RegionSetXY");
+    createMenuItemWithMnemonic(menu_in_menu, "Set from Brush", "RegionSetBrush");
+    createMenuItemWithMnemonic(menu_in_menu, "Set from Se_lection", "RegionSetSelection");
   }
   menu_separator(menu);
   
@@ -2768,7 +2768,6 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("SaveMap", FreeCaller<SaveMap>());
 	GlobalEventManager().addCommand("SaveMapAs", FreeCaller<SaveMapAs>());
 	GlobalEventManager().addCommand("SaveSelected", FreeCaller<ExportMap>());
-	GlobalEventManager().addCommand("SaveRegion", FreeCaller<SaveRegion>());
 	GlobalEventManager().addCommand("RefreshReferences", FreeCaller<RefreshReferences>());
 	GlobalEventManager().addCommand("ProjectSettings", FreeCaller<DoProjectSettings>());
 	GlobalEventManager().addCommand("Exit", FreeCaller<Exit>());
