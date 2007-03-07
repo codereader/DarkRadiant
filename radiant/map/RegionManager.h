@@ -55,6 +55,14 @@ public:
 	/** greebo: Sets the region according to the XY bounds of the current orthoview 
 	 */
 	static void setRegionXY();
+	
+	/** greebo: Sets the region to the bounds of the currently drawn brush,
+	 * 			similar to the partial tall selection method.
+	 * 			A single brush has to be selected (an errormsg is displayed otherwise).
+	 * 
+	 * Note: The brush is deleted after "use".
+	 */
+	static void setRegionFromBrush();
 };
 
 } // namespace map
