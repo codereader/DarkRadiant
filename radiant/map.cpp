@@ -2608,7 +2608,7 @@ void Map_Construct()
 	GlobalEventManager().addCommand("SaveRegion", FreeCaller<map::RegionManager::saveRegion>());
 	GlobalEventManager().addCommand("RegionOff", FreeCaller<map::RegionManager::disableRegion>());
 	GlobalEventManager().addCommand("RegionSetXY", FreeCaller<map::RegionManager::setRegionXY>());
-	GlobalEventManager().addCommand("RegionSetBrush", FreeCaller<RegionBrush>());
+	GlobalEventManager().addCommand("RegionSetBrush", FreeCaller<map::RegionManager::setRegionFromBrush>());
 	GlobalEventManager().addCommand("RegionSetSelection", FreeCaller<RegionSelected>());
 
 	// Add the map position commands to the EventManager

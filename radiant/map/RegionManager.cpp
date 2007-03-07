@@ -2,13 +2,17 @@
 
 #include "iregistry.h"
 #include "iscenegraph.h"
-#include <boost/shared_ptr.hpp>
+#include "iselection.h"
+
+#include "selectionlib.h"
 #include "gtkutil/dialog.h"
 
 #include "mainframe.h" // MainFrame_getWindow()
 
 #include "RegionWalkers.h"
 #include "xyview/GlobalXYWnd.h"
+
+#include <boost/shared_ptr.hpp>
 
 namespace map {
 
@@ -99,6 +103,28 @@ void RegionManager::setRegionXY() {
 		GlobalRegion().disable();
 	}
 	SceneChangeNotify();
+}
+
+void RegionManager::setRegionFromBrush() {
+	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+	
+	// Check, if exactly one brush is selected
+	if (info.brushCount == 1 && info.totalCount == 1) {
+		// Get the selected instance
+		scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
+		
+		// Set the bounds of the region to the selection's extents
+		GlobalRegion().setRegion(instance.worldAABB());
+		
+		// Delete the currently selected brush (undoable command)
+		deleteSelection();
+		
+		SceneChangeNotify();
+	}
+	else {
+		gtkutil::errorDialog("Could not set Region: please select a single Brush.", MainFrame_getWindow());
+		GlobalRegion().disable();
+	}
 }
 
 void RegionManager::saveRegion() {
