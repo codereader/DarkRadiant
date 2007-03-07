@@ -6,6 +6,22 @@
 #include "math/Vector2.h"
 #include "iscenegraph.h"
 
+/** greebo: The RegionManager provides methods to enable/disable
+ * 			the regioning when map editing as well as functions
+ * 			to set the region bounds from brushes/xyview/current selection.
+ * 
+ * Regioned nodes are hidden during map editing (they get their excluded bit set).
+ * It's still possible to apply additional filtering to a region via show/hide,
+ * these systems are independent of each other.
+ * 
+ * @SaveRegion: This saves the current region (all non-excluded nodes) to a
+ * 				specified file and places six wall/floor/ceiling brushes to
+ * 				the file together with an info_player_start entity.
+ * 				The info_player_start is placed at the current camera position.  
+ * 
+ * The static members are used to connect the EntityManager with the 
+ * according commands, as the FreeCaller<> stuff needs static functions.
+ */
 namespace map {
 
 class RegionManager
@@ -119,6 +135,7 @@ public:
 
 } // namespace map
 
+// Use this to call the non-static member methods.
 map::RegionManager& GlobalRegion();
 
 #endif /*MAP_REGIONMANAGER_*/

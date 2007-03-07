@@ -179,20 +179,6 @@ const char* const EXECUTABLE_TYPE =
 #endif
 ;
 
-bool Region_cameraValid()
-{
-  Vector3 vOrig(vector3_snapped(g_pParentWnd->GetCamWnd()->getCameraOrigin()));
-
-  for (int i=0 ; i<3 ; i++)
-  {
-    if (vOrig[i] > region_maxs[i] || vOrig[i] < region_mins[i])
-    {
-      return false;
-    }
-  }
-  return true;
-}
-
 // =============================================================================
 // Sys_ functions
 

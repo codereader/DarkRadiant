@@ -106,18 +106,11 @@ scene::Node& Map_FindOrInsertWorldspawn(Map& map);
 template<typename Element> class BasicVector3;
 typedef BasicVector3<float> Vector3;
 
-extern Vector3 region_mins, region_maxs;
-extern bool region_active;
-
 void Map_LoadFile(const std::string& filename);
 bool Map_SaveFile(const char* filename);
 
 void Map_New();
 void Map_Free();
-
-void Map_RegionOff();
-
-bool Map_SaveRegion(const char* filename);
 
 class TextInputStream;
 class TextOutputStream;
@@ -147,7 +140,6 @@ void ImportMap();
 void SaveMapAs();
 void SaveMap();
 void ExportMap();
-void SaveRegion();
 
 class Entity;
 Entity* Scene_FindEntityByClass(const std::string& className);
