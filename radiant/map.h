@@ -28,11 +28,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "string/stringfwd.h"
 
 #include <ostream>
+#include <string>
 
 class Map;
 extern Map g_map;
 
 class MapFormat;
+const MapFormat& MapFormat_forFile(const std::string& filename);
 
 void Map_addValidCallback(Map& map, const SignalHandler& handler);
 bool Map_Valid(const Map& map);

@@ -482,16 +482,15 @@ bool Map_Unnamed(const Map& map)
 	return map::getFileName() == "unnamed.map";
 }
 
-inline const MapFormat& MapFormat_forFile(const char* filename)
-{
+const MapFormat& MapFormat_forFile(const std::string& filename) {
 	// Look up the module name which loads the given extension
 	std::string moduleName = findModuleName(GetFileTypeRegistry(), 
 											std::string(MapFormat::Name()), 
-											path_get_extension(filename));
+											path_get_extension(filename.c_str()));
 											
-  MapFormat* format = Radiant_getMapModules().findModule(moduleName.c_str());
-  ASSERT_MESSAGE(format != 0, "map format not found for file " << makeQuoted(filename));
-  return *format;
+	MapFormat* format = Radiant_getMapModules().findModule(moduleName.c_str());
+	ASSERT_MESSAGE(format != 0, "map format not found for file " << makeQuoted(filename.c_str()));
+	return *format;
 }
 
 const MapFormat& Map_getFormat(const Map& map)
@@ -1201,6 +1200,9 @@ void Map_LoadFile (const std::string& filename)
 	map::GlobalMapPosition().loadPositions();
 	// Remove them, so that the user doesn't get bothered with them
 	map::GlobalMapPosition().removePositions();
+	
+	// Disable the region to make sure
+	GlobalRegion().disable();
 	
 	// Clear the modified flag
 	map::setModified(false);
