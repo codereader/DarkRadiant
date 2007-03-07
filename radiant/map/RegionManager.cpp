@@ -3,8 +3,12 @@
 #include "iregistry.h"
 #include "iscenegraph.h"
 #include <boost/shared_ptr.hpp>
+#include "gtkutil/dialog.h"
+
+#include "mainframe.h" // MainFrame_getWindow()
 
 #include "RegionWalkers.h"
+#include "xyview/GlobalXYWnd.h"
 
 namespace map {
 
@@ -30,10 +34,70 @@ void RegionManager::disable() {
 	GlobalSceneGraph().traverse(ExcludeAllWalker(false));
 }
 
+void RegionManager::enable() {
+	if (!_bounds.isValid()) {
+		return;
+	}
+	
+	_active = true;
+	
+	// Show all elements within the current region / hide the outsiders
+	GlobalSceneGraph().traverse(ExcludeRegionedWalker(false, _bounds));
+}
+
+void RegionManager::setRegion(const AABB& aabb) {
+	_bounds = aabb;
+	
+	enable();
+}
+
+void RegionManager::setRegionFromXY(Vector2 topLeft, Vector2 lowerRight) {
+	// Reset the regioning before doing anything else
+	disable();
+
+	// Make sure the given coordinates are correctly sorted 	
+	for (unsigned int i = 0; i < 2; i++) {
+		if (lowerRight[i] < topLeft[i]) {
+			std::swap(lowerRight[i], topLeft[i]);
+		}
+	}
+
+	Vector3 min(topLeft[0], topLeft[1], _worldMin + 64);
+	Vector3 max(lowerRight[0], lowerRight[1], _worldMax - 64);
+	
+	// Create an AABB out of the given vectors and set the region (enable() is triggered)
+	setRegion(AABB::createFromMinMax(min, max));
+}
+
 // Static members (used as command targets for EventManager)
 
 void RegionManager::disableRegion() {
 	GlobalRegion().disable();
+	SceneChangeNotify();
+}
+
+void RegionManager::setRegionXY() {
+	// Obtain the current XY orthoview, if there is one
+	XYWnd* xyWnd = GlobalXYWnd().getView(XY);
+	
+	if (xyWnd != NULL) {
+		Vector2 topLeft(
+			xyWnd->getOrigin()[0] - 0.5f * xyWnd->getWidth() / xyWnd->getScale(),
+			xyWnd->getOrigin()[1] - 0.5f * xyWnd->getHeight() / xyWnd->getScale()
+		);
+		
+		Vector2 lowerRight(
+			xyWnd->getOrigin()[0] + 0.5f * xyWnd->getWidth() / xyWnd->getScale(),
+			xyWnd->getOrigin()[1] + 0.5f * xyWnd->getHeight() / xyWnd->getScale()
+		);
+		
+		// Set the bounds from the calculated XY rectangle
+		GlobalRegion().setRegionFromXY(topLeft, lowerRight);
+	}
+	else {
+		gtkutil::errorDialog("Could not set Region: XY Top View not found.", MainFrame_getWindow());
+		GlobalRegion().disable();
+	}
 	SceneChangeNotify();
 }
 
