@@ -1761,7 +1761,7 @@ GtkMenuItem* create_view_menu(MainFrame::EViewStyle style)
   {
     GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Region");
     createMenuItemWithMnemonic(menu_in_menu, "_Switch off", "RegionOff");
-    createMenuItemWithMnemonic(menu_in_menu, "_Set from View", "RegionSetXY");
+    createMenuItemWithMnemonic(menu_in_menu, "_Set from XY View", "RegionSetXY");
     createMenuItemWithMnemonic(menu_in_menu, "Set from Brush", "RegionSetBrush");
     createMenuItemWithMnemonic(menu_in_menu, "Set from Se_lection", "RegionSetSelection");
   }
