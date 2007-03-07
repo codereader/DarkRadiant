@@ -29,6 +29,21 @@ public:
 	// Disables regioning and resets the bounds to _worldMax
 	void disable();
 	
+	/** greebo: Returns the current regioning state (true = active)
+	 */
+	bool isEnabled() const;
+	
+	/** greebo: Retrieves a reference to the internally stored AABB.
+	 */
+	const AABB& getRegion() const;
+	
+	/** greebo: Stores the corners coordinates of the currently active
+	 * 			region into the given <regionMin>, <regionMax> vectors.
+	 * 
+	 * Note: If region is inactive, the maximum possible bounds are returned.
+	 */
+	void getMinMax(Vector3& regionMin, Vector3& regionMax) const;
+	
 	/** greebo: Sets the region bounds according to the given <aabb>
 	 * 
 	 * Note: passing an invalid AABB disables the regioning. 
