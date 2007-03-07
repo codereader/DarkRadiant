@@ -1,6 +1,7 @@
 #ifndef MAP_REGIONMANAGER_
 #define MAP_REGIONMANAGER_
 
+#include <list>
 #include "math/aabb.h"
 #include "math/Vector2.h"
 #include "iscenegraph.h"
@@ -18,6 +19,13 @@ class RegionManager
 	
 	// The bounds of this region
 	AABB _bounds;
+	
+	// The brushes around the region boundaries 
+	// (legacy array to stay compatible with the ConstructRegionBrushes() function)
+	scene::Node* _brushes[6];
+	
+	// The pointer to the info_player_start entity
+	scene::Node* _playerStart;
 	
 public:
 	RegionManager();
@@ -57,6 +65,14 @@ public:
 	 * region contains the entire height of the map.
 	 */
 	void setRegionFromXY(Vector2 topLeft, Vector2 lowerRight);
+	
+	/** greebo: Adds the bounding brushes that enclose the current region.
+	 */
+	void addRegionBrushes();
+	
+	/** greebo: Removes the bounding brushes added by addRegionBrushes().
+	 */
+	void removeRegionBrushes();
 	
 	// Static command targets for use in EventManager
 	
