@@ -29,6 +29,10 @@ RegionManager::RegionManager() :
 	_worldMax = GlobalRegistry().getFloat("game/defaults/maxWorldCoord");
 }
 
+bool RegionManager::isEnabled() const {
+	return _active;
+}
+
 void RegionManager::disable() {
 	_active = false;
 
@@ -49,6 +53,22 @@ void RegionManager::enable() {
 	
 	// Show all elements within the current region / hide the outsiders
 	GlobalSceneGraph().traverse(ExcludeRegionedWalker(false, _bounds));
+}
+
+const AABB& RegionManager::getRegion() const {
+	return _bounds;
+}
+
+void RegionManager::getMinMax(Vector3& regionMin, Vector3& regionMax) const {
+	if (isEnabled()) {
+		regionMin = _bounds.origin - _bounds.extents;
+		regionMax = _bounds.origin + _bounds.extents;
+	}
+	else {
+		// Set the region corners to the maximum available coords
+		regionMin = Vector3(1,1,1)*_worldMin;
+		regionMax = Vector3(1,1,1)*_worldMax;
+	}
 }
 
 void RegionManager::setRegion(const AABB& aabb) {

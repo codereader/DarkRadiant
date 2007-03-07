@@ -24,6 +24,7 @@
 #include "camera/CameraSettings.h"
 #include "ui/ortho/OrthoContextMenu.h"
 #include "ui/overlay/Overlay.h"
+#include "map/RegionManager.h"
 
 #include "GlobalXYWnd.h"
 #include "XYRenderer.h"
@@ -743,21 +744,30 @@ Vector4 XYWnd::getWindowCoordinates() {
 	float w = (_width / 2 / m_fScale);
 	float h = (_height / 2 / m_fScale);
 
+	// Query the region minimum/maximum vectors
+	Vector3 regionMin;
+	Vector3 regionMax;
+	GlobalRegion().getMinMax(regionMin, regionMax);
+
 	float xb = m_vOrigin[nDim1] - w;
-	if (xb < region_mins[nDim1])
-		xb = region_mins[nDim1];
+	// Constrain this value to the region minimum
+	if (xb < regionMin[nDim1])
+		xb = regionMin[nDim1];
 
 	float xe = m_vOrigin[nDim1] + w;
-	if (xe > region_maxs[nDim1])
-		xe = region_maxs[nDim1];
+	// Constrain this value to the region maximum
+	if (xe > regionMax[nDim1])
+		xe = regionMax[nDim1];
 
 	float yb = m_vOrigin[nDim2] - h;
-	if (yb < region_mins[nDim2])
-		yb = region_mins[nDim2];
+	// Constrain this value to the region minimum
+	if (yb < regionMin[nDim2])
+		yb = regionMin[nDim2];
 
 	float ye = m_vOrigin[nDim2] + h;
-	if (ye > region_maxs[nDim2])
-		ye = region_maxs[nDim2];
+	// Constrain this value to the region maximum
+	if (ye > regionMax[nDim2])
+		ye = regionMax[nDim2];
 	
 	return Vector4(xb, xe, yb, ye);
 }
