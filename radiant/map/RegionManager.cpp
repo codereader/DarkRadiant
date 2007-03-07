@@ -3,11 +3,13 @@
 #include "iregistry.h"
 #include "iscenegraph.h"
 #include "iselection.h"
+#include "ieventmanager.h"
 
 #include "selectionlib.h"
 #include "gtkutil/dialog.h"
 
 #include "mainframe.h" // MainFrame_getWindow()
+#include "select.h"
 
 #include "RegionWalkers.h"
 #include "xyview/GlobalXYWnd.h"
@@ -127,8 +129,49 @@ void RegionManager::setRegionFromBrush() {
 	}
 }
 
+void RegionManager::setRegionFromSelection() {
+	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+	
+	// Check, if there is anything selected
+	if (info.totalCount > 0) {
+		if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
+			
+			// Obtain the selection size (its min/max vectors)
+			Vector3 min;
+			Vector3 max;
+			Select_GetBounds(min, max);
+			
+			// Set the region
+			GlobalRegion().setRegion(AABB::createFromMinMax(min, max));
+			
+			// De-select all the selected items
+			GlobalSelectionSystem().setSelectedAll(false);
+			
+			// Re-draw the scene
+			SceneChangeNotify();
+		}
+		else {
+			gtkutil::errorDialog("This command is not available in component mode.", 
+								 MainFrame_getWindow());
+			GlobalRegion().disable();
+		}
+	}
+	else {
+		gtkutil::errorDialog("Could not set Region: nothing selected.", MainFrame_getWindow());
+		GlobalRegion().disable();
+	}
+}
+
 void RegionManager::saveRegion() {
 	
+}
+
+void RegionManager::initialiseCommands() {
+	GlobalEventManager().addCommand("SaveRegion", FreeCaller<RegionManager::saveRegion>());
+	GlobalEventManager().addCommand("RegionOff", FreeCaller<RegionManager::disableRegion>());
+	GlobalEventManager().addCommand("RegionSetXY", FreeCaller<RegionManager::setRegionXY>());
+	GlobalEventManager().addCommand("RegionSetBrush", FreeCaller<RegionManager::setRegionFromBrush>());
+	GlobalEventManager().addCommand("RegionSetSelection", FreeCaller<RegionManager::setRegionFromSelection>());
 }
 
 } // namespace map
