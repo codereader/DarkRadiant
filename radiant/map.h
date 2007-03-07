@@ -208,6 +208,13 @@ namespace map {
 	/** greebo: Focus the XYViews and the Camera to the given point/angle.
 	 */
 	void focusViews(const Vector3& point, const Vector3& angles);
+	
+	/** greebo: This adds/removes the origin from all the child primitivies
+	 * 			of container entities like func_static. This has to be called
+	 * 			right after/before a map save and load process.
+	 */
+	void removeOriginFromChildPrimitives();
+	void addOriginToChildPrimitives();
 }
 
 

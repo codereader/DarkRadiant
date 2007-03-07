@@ -495,7 +495,7 @@ const MapFormat& MapFormat_forFile(const std::string& filename) {
 
 const MapFormat& Map_getFormat(const Map& map)
 {
-  return MapFormat_forFile(map::getFileName().c_str());
+  return MapFormat_forFile(map::getFileName());
 }
 
 
@@ -1849,12 +1849,19 @@ bool Map_SaveFile(const char* filename)
 //
 // Saves selected world brushes and whole entities with partial/full selections
 //
-bool Map_SaveSelected(const std::string& filename)
-{
-  return MapResource_saveFile(MapFormat_forFile(filename.c_str()), 
+bool Map_SaveSelected(const std::string& filename) {
+	// Substract the origin from child primitives (of entities like func_static)
+	map::removeOriginFromChildPrimitives();
+	
+	bool success = MapResource_saveFile(MapFormat_forFile(filename), 
   							  GlobalSceneGraph().root(), 
   							  Map_Traverse_Selected, 
-  							  filename.c_str()); 
+  							  filename.c_str());
+
+	// Add the origin to all the children of func_static, etc.
+	map::addOriginToChildPrimitives();
+
+	return success;
 }
 
 

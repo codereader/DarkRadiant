@@ -203,7 +203,8 @@ void RegionManager::saveRegion() {
 		
 		// Add the region brushes
 		
-		// Move the child primitives according to their origin
+		// Substract the origin from child primitives (of entities like func_static)
+		removeOriginFromChildPrimitives();
 		
 		// Save the map and pass the RegionManager::traverseRegion functor 
 		// that assures that only regioned items are traversed
@@ -212,7 +213,8 @@ void RegionManager::saveRegion() {
   							 RegionManager::traverseRegion,
   							 filename.c_str());
 		
-		// Move the child primitives back again
+		// Add the origin to all the children of func_static, etc.
+		addOriginToChildPrimitives();
 		
 		// Remove the region brushes
 		
