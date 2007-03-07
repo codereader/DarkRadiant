@@ -63,6 +63,17 @@ public:
 	 * Note: The brush is deleted after "use".
 	 */
 	static void setRegionFromBrush();
+	
+	/** greebo: Retrieves the AABB from the current selection and 
+	 * 			takes it as new region bounds. The selection is NOT deleted.
+	 * 			Not available in component selection mode.
+	 * 			The selected items are de-selected after "use".
+	 */
+	static void setRegionFromSelection();
+	
+	/** greebo: Adds the region commands to the EventManager.
+	 */
+	static void initialiseCommands();
 };
 
 } // namespace map
