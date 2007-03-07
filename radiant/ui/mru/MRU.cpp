@@ -80,7 +80,6 @@ void MRU::loadMap(const std::string& fileName) {
 	if (ConfirmModified("Open Map")) {
 		if (file_readable(fileName.c_str())) {
 			// Shut down the current map
-			Map_RegionOff();
 			Map_Free();
 			
 			// Load the file

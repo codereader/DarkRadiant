@@ -531,10 +531,6 @@ void Map_SetWorldspawn(Map& map, scene::Node* node)
   map.m_world_node.set(node);
 }
 
-void AddRegionBrushes (void);
-void RemoveRegionBrushes (void);
-
-
 /*
 ================
 Map_Free
@@ -1397,39 +1393,6 @@ void Map_Traverse(scene::Node& root, const scene::Traversable::Walker& walker)
   }
 }
 
-class RegionExcluder : public Excluder
-{
-public:
-  bool excluded(scene::Node& node) const
-  {
-    return node.excluded();
-  }
-};
-
-void Map_Traverse_Region(scene::Node& root, const scene::Traversable::Walker& walker)
-{
-  scene::Traversable* traversable = Node_getTraversable(root);
-  if(traversable != 0)
-  {
-    traversable->traverse(ExcludeWalker(walker, RegionExcluder()));
-  }
-}
-
-bool Map_SaveRegion(const std::string& filename)
-{
-  AddRegionBrushes();
-
-  bool success = MapResource_saveFile(MapFormat_forFile(filename.c_str()), 
-  									  GlobalSceneGraph().root(), 
-  									  Map_Traverse_Region, 
-  									  filename.c_str()); 
-
-  RemoveRegionBrushes();
-
-  return success;
-}
-
-
 void Map_RenameAbsolute(const char* absolute)
 {
 	ReferenceCache::ResourcePtr resource = 
@@ -1525,93 +1488,6 @@ void Map_New()
 
 }
 
-extern void ConstructRegionBrushes(scene::Node* brushes[6], const Vector3& region_mins, const Vector3& region_maxs);
-
-void ConstructRegionStartpoint(scene::Node* startpoint, const Vector3& region_mins, const Vector3& region_maxs)
-{
-  /*! 
-  \todo we need to make sure that the player start IS inside the region and bail out if it's not
-  the compiler will refuse to compile a map with a player_start somewhere in empty space..
-  for now, let's just print an error
-  */
-  
-  Vector3 vOrig(g_pParentWnd->GetCamWnd()->getCameraOrigin());
-
-  for (int i=0 ; i<3 ; i++)
-  {
-    if (vOrig[i] > region_maxs[i] || vOrig[i] < region_mins[i])
-    {
-      globalErrorStream() << "Camera is NOT in the region, it's likely that the region won't compile correctly\n";
-      break;
-    }
-  }
-  
-  // write the info_playerstart
-  char sTmp[1024];
-  sprintf(sTmp, "%d %d %d", (int)vOrig[0], (int)vOrig[1], (int)vOrig[2]);
-  Node_getEntity(*startpoint)->setKeyValue("origin", sTmp);
-  sprintf(sTmp, "%d", (int)g_pParentWnd->GetCamWnd()->getCameraAngles()[CAMERA_YAW]);
-  Node_getEntity(*startpoint)->setKeyValue("angle", sTmp);
-}
-
-/*
-===========================================================
-
-  REGION
-
-===========================================================
-*/
-bool	region_active;
-// greebo: this has to be moved into some class and the values should be loaded from the registry
-// I'll leave it hardcoded for now
-Vector3	region_mins(-65536, -65536, -65536);
-Vector3	region_maxs(65536, 65536, 65536);
-
-// old code:
-//Vector3	region_mins(g_MinWorldCoord, g_MinWorldCoord, g_MinWorldCoord);
-//Vector3	region_maxs(g_MaxWorldCoord, g_MaxWorldCoord, g_MaxWorldCoord);
-
-scene::Node* region_sides[6];
-scene::Node* region_startpoint = 0;
-
-/*
-===========
-AddRegionBrushes
-a regioned map will have temp walls put up at the region boundary
-\todo TODO TTimo old implementation of region brushes
-  we still add them straight in the worldspawn and take them out after the map is saved
-  with the new implementation we should be able to append them in a temporary manner to the data we pass to the map module
-===========
-*/
-void AddRegionBrushes (void)
-{
-	int		i;
-
-  for(i=0; i<6; i++)
-  {
-    region_sides[i] = &GlobalBrushCreator().createBrush();
-    Node_getTraversable(Map_FindOrInsertWorldspawn(g_map))->insert(NodeSmartReference(*region_sides[i]));
-  }
-
-	const std::string eClassPlayerStart = GlobalRegistry().get(RKEY_PLAYER_START_ECLASS);
-	region_startpoint = &GlobalEntityCreator().createEntity(
-							GlobalEntityClassManager().findOrInsert(eClassPlayerStart, false));
-
-  ConstructRegionBrushes(region_sides, region_mins, region_maxs);
-  ConstructRegionStartpoint(region_startpoint, region_mins, region_maxs);
-
-  Node_getTraversable(GlobalSceneGraph().root())->insert(NodeSmartReference(*region_startpoint));
-}
-
-void RemoveRegionBrushes (void)
-{
-  for(std::size_t i=0; i<6; i++)
-  {
-    Node_getTraversable(*Map_GetWorldspawn(g_map))->erase(*region_sides[i]);
-  }
-  Node_getTraversable(GlobalSceneGraph().root())->erase(*region_startpoint);
-}
-
 inline void exclude_node(scene::Node& node, bool exclude)
 {
   exclude
@@ -1664,136 +1540,6 @@ public:
 void Scene_Exclude_Selected(bool exclude)
 {
   GlobalSceneGraph().traverse(ExcludeSelectedWalker(exclude));
-}
-
-class ExcludeRegionedWalker : public scene::Graph::Walker
-{
-  bool m_exclude;
-public:
-  ExcludeRegionedWalker(bool exclude)
-    : m_exclude(exclude)
-  {
-  }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
-  {
-    exclude_node(
-      path.top(),
-      !(
-        (
-          aabb_intersects_aabb(
-            instance.worldAABB(),
-            AABB::createFromMinMax(region_mins, region_maxs)
-          ) != 0
-        ) ^ m_exclude
-      )
-    );
-
-    return true;
-  }
-};
-
-void Scene_Exclude_Region(bool exclude)
-{
-  GlobalSceneGraph().traverse(ExcludeRegionedWalker(exclude));
-}
-
-/*
-===========
-Map_RegionOff
-
-Other filtering options may still be on
-===========
-*/
-void Map_RegionOff()
-{
-	region_active = false;
-
-	float maxWorldCoord = GlobalRegistry().getFloat("game/defaults/maxWorldCoord");
-	float minWorldCoord = GlobalRegistry().getFloat("game/defaults/minWorldCoord");
-
-	region_maxs[0] = maxWorldCoord - 64;
-	region_mins[0] = minWorldCoord + 64;
-	region_maxs[1] = maxWorldCoord - 64;
-	region_mins[1] = minWorldCoord + 64;
-	region_maxs[2] = maxWorldCoord - 64;
-	region_mins[2] = minWorldCoord + 64;
-	
-	Scene_Exclude_All(false);
-}
-
-void Map_ApplyRegion (void)
-{
-	region_active = true;
-
-	Scene_Exclude_Region(false);
-}
-
-
-/*
-========================
-Map_RegionSelectedBrushes
-========================
-*/
-void Map_RegionSelectedBrushes (void)
-{
-	Map_RegionOff();
-
-  if(GlobalSelectionSystem().countSelected() != 0
-    && GlobalSelectionSystem().Mode() == SelectionSystem::ePrimitive)
-  {
-	  region_active = true;
-	  Select_GetBounds (region_mins, region_maxs);
-
-	  Scene_Exclude_Selected(false);
-    
-    GlobalSelectionSystem().setSelectedAll(false);
-  }
-}
-
-
-/*
-===========
-Map_RegionXY
-===========
-*/
-void Map_RegionXY(float x_min, float y_min, float x_max, float y_max)
-{
-	Map_RegionOff();
-
-	region_mins[0] = x_min;
-  region_maxs[0] = x_max;
-  region_mins[1] = y_min;
-  region_maxs[1] = y_max;
-  region_mins[2] = GlobalRegistry().getFloat("game/defaults/minWorldCoord") + 64;
-	region_maxs[2] = GlobalRegistry().getFloat("game/defaults/maxWorldCoord") - 64;
-
-	Map_ApplyRegion();
-}
-
-void Map_RegionBounds(const AABB& bounds)
-{
-  Map_RegionOff();
-
-  region_mins = bounds.origin - bounds.extents;
-  region_maxs = bounds.origin + bounds.extents;
-
-  deleteSelection();
-
-  Map_ApplyRegion();
-}
-
-/*
-===========
-Map_RegionBrush
-===========
-*/
-void Map_RegionBrush (void)
-{
-  if(GlobalSelectionSystem().countSelected() != 0)
-  {
-    scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
-    Map_RegionBounds(instance.worldAABB());
-  }
 }
 
 //
@@ -2170,16 +1916,14 @@ void Scene_parentSelected()
   }
 }
 
+void NewMap() {
+	if (ConfirmModified("New Map")) {
+		// Turn regioning off when starting a new map
+		GlobalRegion().disable();
 
-
-void NewMap()
-{
-  if (ConfirmModified("New Map"))
-  {
-    Map_RegionOff();
-	  Map_Free();
-    Map_New();
-  }
+		Map_Free();
+		Map_New();
+	}
 }
 
 /* Maintain and return the path to the maps directory
@@ -2203,7 +1947,6 @@ void OpenMap()
 
 	if (!filename.empty()) {
 	    GlobalMRU().insert(filename);
-	    Map_RegionOff();
 	    Map_Free();
 	    Map_LoadFile(filename);
 	}
@@ -2262,56 +2005,6 @@ void ExportMap()
 	    Map_SaveSelected(filename);
   	}
 }
-
-void SaveRegion()
-{
-  	std::string filename = map::MapFileManager::getMapFilename(false,
-															   "Export region");
-
-	if (!filename.empty()) {
-	    Map_SaveRegion(filename);
-  	}
-}
-
-
-void RegionOff()
-{
-  Map_RegionOff();
-  SceneChangeNotify();
-}
-
-void RegionXY() {
-	XYWnd* xyWnd = GlobalXYWnd().getView(XY);
-	if (xyWnd != NULL) {
-		Map_RegionXY(
-			xyWnd->getOrigin()[0] - 0.5f * xyWnd->getWidth() / xyWnd->getScale(),
-			xyWnd->getOrigin()[1] - 0.5f * xyWnd->getHeight() / xyWnd->getScale(),
-			xyWnd->getOrigin()[0] + 0.5f * xyWnd->getWidth() / xyWnd->getScale(),
-			xyWnd->getOrigin()[1] + 0.5f * xyWnd->getHeight() / xyWnd->getScale()
-		);
-	}
-	else {
-		globalErrorStream() << "Region Error: Could not find XY view\n";
-		Map_RegionXY(0,0,0,0);
-	}
-	SceneChangeNotify();
-}
-
-void RegionBrush()
-{
-  Map_RegionBrush();
-  SceneChangeNotify();
-}
-
-void RegionSelected()
-{
-  Map_RegionSelectedBrushes();
-  SceneChangeNotify();
-}
-
-
-
-
 
 class BrushFindByIndexWalker : public scene::Traversable::Walker
 {
