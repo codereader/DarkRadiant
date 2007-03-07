@@ -1,6 +1,10 @@
 #include "RegionManager.h"
 
 #include "iregistry.h"
+#include "brush/TexDef.h"
+#include "ibrush.h"
+#include "ientity.h"
+#include "ieclass.h"
 #include "iscenegraph.h"
 #include "iselection.h"
 #include "ieventmanager.h"
@@ -11,10 +15,12 @@
 #include "mainframe.h" // MainFrame_getWindow()
 #include "select.h"
 
+#include "brushmanip.h" // Construct_RegionBrushes()
 #include "referencecache.h"
 #include "RegionWalkers.h"
 #include "MapFileManager.h"
 #include "xyview/GlobalXYWnd.h"
+#include "camera/GlobalCamera.h"
 
 #include <boost/shared_ptr.hpp>
 
@@ -22,13 +28,19 @@ namespace map {
 
 	namespace {
 		typedef boost::shared_ptr<RegionManager> RegionManagerPtr;
+		const std::string RKEY_PLAYER_START_ECLASS = "game/mapFormat/playerStartPoint";
 	}
 
 RegionManager::RegionManager() :
-	_active(false)
+	_active(false),
+	_playerStart(NULL)
 {
 	_worldMin = GlobalRegistry().getFloat("game/defaults/minWorldCoord");
 	_worldMax = GlobalRegistry().getFloat("game/defaults/maxWorldCoord");
+	
+	for (int i = 0; i < 6; i++) {
+		_brushes[i] = NULL;
+	}
 }
 
 bool RegionManager::isEnabled() const {
@@ -95,6 +107,69 @@ void RegionManager::setRegionFromXY(Vector2 topLeft, Vector2 lowerRight) {
 	
 	// Create an AABB out of the given vectors and set the region (enable() is triggered)
 	setRegion(AABB::createFromMinMax(min, max));
+}
+
+void RegionManager::addRegionBrushes() {
+	
+	for (int i = 0; i < 6; i++) {
+		// Create a new brush
+		_brushes[i] = &GlobalBrushCreator().createBrush();
+		// Insert it into worldspawn
+		Node_getTraversable(Map_FindOrInsertWorldspawn(g_map))->insert(NodeSmartReference(*_brushes[i]));
+	}
+	
+	// Obtain the size of the region (the corners)
+	Vector3 min;
+	Vector3 max;
+	getMinMax(min, max);
+	
+	// Construct the region brushes (use the legacy GtkRadiant method, it works...)
+	ConstructRegionBrushes(_brushes, min, max);
+	
+	// Get the player start EClass pointer
+	const std::string eClassPlayerStart = GlobalRegistry().get(RKEY_PLAYER_START_ECLASS);
+	IEntityClassPtr playerStart = GlobalEntityClassManager().findOrInsert(eClassPlayerStart, false);
+	
+	// Create the info_player_start entity
+	_playerStart = &GlobalEntityCreator().createEntity(playerStart);
+	
+	CamWnd* camWnd = GlobalCamera().getCamWnd();
+	if (camWnd != NULL) { 
+		// Obtain the camera origin = player start point
+		Vector3 camOrigin = camWnd->getCameraOrigin();
+		// Get the start angle of the player start point
+		float angle = camWnd->getCameraAngles()[CAMERA_YAW];
+		
+		// Check if the camera origin is within the region
+		if (aabb_intersects_point(_bounds, camOrigin)) {
+			// Set the origin key of the playerStart entity
+			Node_getEntity(*_playerStart)->setKeyValue("origin", camOrigin);
+			Node_getEntity(*_playerStart)->setKeyValue("angle", floatToStr(angle));
+		}
+		else {
+			gtkutil::errorDialog(
+				"Warning: Camera not within region, can't set info_player_start.", 
+				MainFrame_getWindow()
+			);
+		}
+	}
+
+  	// Insert the info_player_start into the scenegraph root
+	Node_getTraversable(GlobalSceneGraph().root())->insert(NodeSmartReference(*_playerStart));
+}
+
+void RegionManager::removeRegionBrushes() {
+	for (int i = 0; i < 6; i++) {
+		// Remove the brushes from the scene
+		if (_brushes[i] != NULL) {
+			Node_getTraversable(*Map_GetWorldspawn(g_map))->erase(*_brushes[i]);
+			_brushes[i] = NULL;
+		}
+	}
+	
+	if (_playerStart != NULL) {
+		Node_getTraversable(GlobalSceneGraph().root())->erase(*_playerStart);
+	}
 }
 
 // Static members (used as command targets for EventManager)
@@ -202,6 +277,7 @@ void RegionManager::saveRegion() {
 		// Filename is ok, start preparation
 		
 		// Add the region brushes
+		GlobalRegion().addRegionBrushes();
 		
 		// Substract the origin from child primitives (of entities like func_static)
 		removeOriginFromChildPrimitives();
@@ -217,7 +293,7 @@ void RegionManager::saveRegion() {
 		addOriginToChildPrimitives();
 		
 		// Remove the region brushes
-		
+		GlobalRegion().removeRegionBrushes();
 	}
 }
 

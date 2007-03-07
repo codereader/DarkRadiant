@@ -339,14 +339,15 @@ void Brush_ConstructPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, 
 
 void ConstructRegionBrushes(scene::Node* brushes[6], const Vector3& region_mins, const Vector3& region_maxs)
 {
+	const float THICKNESS = 10;
   {
     // set mins
-    Vector3 mins(region_mins[0]-32, region_mins[1]-32, region_mins[2]-32);
+    Vector3 mins(region_mins[0]-THICKNESS, region_mins[1]-THICKNESS, region_mins[2]-THICKNESS);
 
     // vary maxs
     for(std::size_t i=0; i<3; i++)
     {
-      Vector3 maxs(region_maxs[0]+32, region_maxs[1]+32, region_maxs[2]+32);
+      Vector3 maxs(region_maxs[0]+THICKNESS, region_maxs[1]+THICKNESS, region_maxs[2]+THICKNESS);
       maxs[i] = region_mins[i];
       Brush_ConstructCuboid(*Node_getBrush(*brushes[i]), 
       						AABB::createFromMinMax(mins, maxs),
@@ -357,12 +358,12 @@ void ConstructRegionBrushes(scene::Node* brushes[6], const Vector3& region_mins,
 
   {
     // set maxs
-    Vector3 maxs(region_maxs[0]+32, region_maxs[1]+32, region_maxs[2]+32);
+    Vector3 maxs(region_maxs[0]+THICKNESS, region_maxs[1]+THICKNESS, region_maxs[2]+THICKNESS);
 
     // vary mins
     for(std::size_t i=0; i<3; i++)
     {
-      Vector3 mins(region_mins[0]-32, region_mins[1]-32, region_mins[2]-32);
+      Vector3 mins(region_mins[0]-THICKNESS, region_mins[1]-THICKNESS, region_mins[2]-THICKNESS);
       mins[i] = region_maxs[i];
       Brush_ConstructCuboid(*Node_getBrush(*brushes[i+3]), 
       						AABB::createFromMinMax(mins, maxs),

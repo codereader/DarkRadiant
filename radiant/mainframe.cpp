@@ -1618,7 +1618,7 @@ GtkMenuItem* create_file_menu()
 	createMenuItemWithMnemonic(menu, "Save _as...", "SaveMapAs");
 	createMenuItemWithMnemonic(menu, "Save s_elected...", "SaveSelected");
 	createSeparatorMenuItem(menu);
-	createMenuItemWithMnemonic(menu, "Save Selected as Re_gion...", "SaveRegion");
+	createMenuItemWithMnemonic(menu, "Save Re_gion...", "SaveRegion");
 	createSeparatorMenuItem(menu);
 	createMenuItemWithMnemonic(menu, "_Refresh models", "RefreshReferences");
 	createSeparatorMenuItem(menu);
