@@ -3,6 +3,7 @@
 
 #include "math/aabb.h"
 #include "math/Vector2.h"
+#include "iscenegraph.h"
 
 namespace map {
 
@@ -58,6 +59,15 @@ public:
 	void setRegionFromXY(Vector2 topLeft, Vector2 lowerRight);
 	
 	// Static command targets for use in EventManager
+	
+	/** greebo: The traversal function that is used to save the map to a file.
+	 * 			This ensures that only regioned items are saved.
+	 * 
+	 * Note: the map saver passes its own walker to this function and leaves it up to it
+	 * 		 whether the walker.pre() and walker.post() methods are invoked. This allows
+	 * 		 filtering of the non-regioned nodes.
+	 */
+	static void traverseRegion(scene::Node& root, const scene::Traversable::Walker& walker);
 	
 	/** greebo: Saves the current selection as Region to the queried file.
 	 */

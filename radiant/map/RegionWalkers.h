@@ -76,6 +76,50 @@ public:
 	}
 };
 
+/** greebo: This class is used indirectly by the map saving walker to save the region.
+ * 
+ * The map saving walker calls a function RegionManager::traverseRegion() which
+ * traverses the given node with this walker. 
+ * 
+ * This ExcludeNonRegionedWalker again invokes the map saving walker, if the
+ * visited items are regioned only, of course.
+ */
+class ExcludeNonRegionedWalker : 
+	public scene::Traversable::Walker
+{
+	const scene::Traversable::Walker& _walker;
+	mutable bool _skip;
+
+public:
+	ExcludeNonRegionedWalker(const scene::Traversable::Walker& walker) : 
+		_walker(walker), 
+		_skip(false) 
+	{}
+	
+	bool pre(scene::Node& node) const {
+		// Don't save excluded nodes or the Scenegraph root
+		if (node.excluded() || node.isRoot()) {
+			_skip = true;
+			return false;
+		}
+		else {
+			// Item passed the check, call the given walker's pre() method.
+			_walker.pre(node);
+		}
+		return true;
+	}
+
+	void post(scene::Node& node) const {
+		if (_skip) {
+			// The node failed to pass the check in pre()
+			_skip = false;
+		}
+		else {
+			// The node passed the check in pre(), we have to call post() as well. 
+			_walker.post(node);
+		}
+	}
+};
 
 } // namespace map
 

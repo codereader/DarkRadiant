@@ -11,7 +11,9 @@
 #include "mainframe.h" // MainFrame_getWindow()
 #include "select.h"
 
+#include "referencecache.h"
 #include "RegionWalkers.h"
+#include "MapFileManager.h"
 #include "xyview/GlobalXYWnd.h"
 
 #include <boost/shared_ptr.hpp>
@@ -182,8 +184,39 @@ void RegionManager::setRegionFromSelection() {
 	}
 }
 
-void RegionManager::saveRegion() {
+void RegionManager::traverseRegion(scene::Node& root, const scene::Traversable::Walker& walker) {
+	scene::Traversable* traversable = Node_getTraversable(root);
 	
+	if (traversable != NULL) {
+		// Pass the given Walker on to the ExcludeWalker, 
+		// which calls the walker.pre() and .post() methods if the visited item is regioned.
+		traversable->traverse(ExcludeNonRegionedWalker(walker));
+	}
+}
+
+void RegionManager::saveRegion() {
+	// Query the desired filename from the user
+	std::string filename = map::MapFileManager::getMapFilename(false, "Export region");
+	
+	if (!filename.empty()) {
+		// Filename is ok, start preparation
+		
+		// Add the region brushes
+		
+		// Move the child primitives according to their origin
+		
+		// Save the map and pass the RegionManager::traverseRegion functor 
+		// that assures that only regioned items are traversed
+		MapResource_saveFile(MapFormat_forFile(filename),
+							 GlobalSceneGraph().root(),
+  							 RegionManager::traverseRegion,
+  							 filename.c_str());
+		
+		// Move the child primitives back again
+		
+		// Remove the region brushes
+		
+	}
 }
 
 void RegionManager::initialiseCommands() {
