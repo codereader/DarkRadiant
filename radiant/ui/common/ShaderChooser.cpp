@@ -11,7 +11,7 @@ namespace ui {
 	namespace {
 		const std::string LABEL_TITLE = "Choose Shader";
 		const std::string SHADER_PREFIXES = "textures";
-		const int DEFAULT_SIZE_X = 500;
+		const int DEFAULT_SIZE_X = 550;
 		const int DEFAULT_SIZE_Y = 500;
 	}
 
@@ -91,15 +91,15 @@ void ShaderChooser::shaderSelectionChanged(const std::string& shaderName, GtkLis
 	std::string dimStr = intToStr(tex->width) + " x " + intToStr(tex->height);
 	
 	gtk_list_store_append(listStore, &iter);
-	gtk_list_store_set(listStore, &iter, 
-					   0, "<b>Dimensions</b>",
+	gtk_list_store_set(listStore, &iter,
+					   0, "<b>Diffuse</b>",
 					   1, dimStr.c_str(),
 					   -1);
 					   
 	// Containing MTR	
 	gtk_list_store_append(listStore, &iter);
 	gtk_list_store_set(listStore, &iter, 
-					   0, "Defined in",
+					   0, "<b>Defined in</b>",
 					   1, shader->getShaderFileName(),
 					   -1);
 }
@@ -107,11 +107,10 @@ void ShaderChooser::shaderSelectionChanged(const std::string& shaderName, GtkLis
 // Static GTK CALLBACKS
 void ShaderChooser::callbackCancel(GtkWidget* w, ShaderChooser* self) {
 	// Revert the shadername to the value it had at dialog startup
-	
 	if (self->_targetEntry != NULL) {
 		gtk_entry_set_text(GTK_ENTRY(self->_targetEntry), 
 					   	   self->_initialShader.c_str());
-					   	   
+		
 		// Propagate the call up to the client (e.g. SurfaceInspector)
 		if (self->_client != NULL) {
 			self->_client->shaderSelectionChanged(
