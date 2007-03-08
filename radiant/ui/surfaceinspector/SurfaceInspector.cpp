@@ -5,6 +5,7 @@
 #include "ieventmanager.h"
 
 #include "gtkutil/TransientWindow.h"
+#include "gtkutil/IconTextButton.h"
 #include "gtkutil/ControlButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
@@ -40,6 +41,7 @@ namespace ui {
 		const std::string LABEL_VSCALE = "Vert. Scale:";
 		const std::string LABEL_ROTATION = "Rotation:";
 		const char* LABEL_SHADER = "Shader:";
+		const char* FOLDER_ICON = "folder16.png";
 		const char* LABEL_STEP = "Step:";
 		
 		const char* LABEL_FIT_TEXTURE = "Fit Texture:";
@@ -247,7 +249,7 @@ void SurfaceInspector::populateWindow() {
 	_shaderEntry = gtk_entry_new();
 	g_signal_connect(G_OBJECT(_shaderEntry), "key-press-event", G_CALLBACK(onKeyPress), this);
 	
-	_selectShaderButton = gtk_button_new_with_label("...");
+	_selectShaderButton = gtkutil::IconTextButton("", FOLDER_ICON, false);
 	g_signal_connect(G_OBJECT(_selectShaderButton), "clicked", G_CALLBACK(onShaderSelect), this);
 	
 	GtkWidget* hbox = gtk_hbox_new(false, 0);

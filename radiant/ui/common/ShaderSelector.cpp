@@ -1,9 +1,12 @@
 #include "ShaderSelector.h"
 
 #include "gtkutil/glwidget.h"
+#include "gtkutil/image.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"
+#include "gtkutil/IconTextColumn.h"
+#include "gtkutil/VFSTreePopulator.h"
 #include "signal/isignal.h"
 #include "texturelib.h"
 #include "ishaders.h"
@@ -27,11 +30,14 @@ namespace ui
 namespace {
 	
 	const char* LIGHT_PREFIX_XPATH = "game/light/texture//prefix";
+	const char* FOLDER_ICON = "folder16.png";
+	const char* TEXTURE_ICON = "icon_texture.png";
 	
 	// Column enum
 	enum {
-		DISPLAYNAME_COL,
-		FULLNAME_COL,
+		NAME_COL, // shader name only (without path)
+		FULLNAME_COL, // Full shader name 
+		IMAGE_COL, // Icon
 		N_COLUMNS
 	};
 	
@@ -154,6 +160,37 @@ void ShaderSelector::setSelection(const std::string& sel) {
 
 namespace {
 
+	// VFSPopulatorVisitor to fill in column data for the populator tree nodes
+	class DataInserter
+	: public gtkutil::VFSTreePopulator::Visitor
+	{
+		// Required visit function
+		void visit(GtkTreeStore* store, 
+				   GtkTreeIter* iter, 
+				   const std::string& path,
+				   bool isExplicit)
+		{
+
+			// Get the display name by stripping off everything before the last
+			// slash
+			std::string displayName = path.substr(path.rfind("/") + 1);
+
+			// Pathname is the model VFS name for a model, and blank for a folder
+			std::string fullPath = isExplicit ? path : "";
+
+			// Pixbuf depends on node type
+			GdkPixbuf* pixBuf = isExplicit 
+								? gtkutil::getLocalPixbuf(TEXTURE_ICON)
+								: gtkutil::getLocalPixbuf(FOLDER_ICON);
+			// Fill in the column values
+			gtk_tree_store_set(store, iter, 
+							   NAME_COL, displayName.c_str(),
+							   FULLNAME_COL, fullPath.c_str(),
+							   IMAGE_COL, pixBuf,
+							   -1);
+		} 	
+	};
+
 	class ShaderNameFunctor 
 	{
 	public:
@@ -162,17 +199,17 @@ namespace {
 		// Interesting texture prefixes
 		ShaderSelector::PrefixList& _prefixes;
 
-		// Tree Store to add to
-		GtkTreeStore* _store;
+		// The populator that gets called to add the parsed elements
+		gtkutil::VFSTreePopulator& _populator;
 
 		// Map of prefix to an path pointing to the top-level row that contains
 		// instances of this prefix
 		std::map<std::string, GtkTreePath*> _iterMap;
 		
 		// Constructor
-		ShaderNameFunctor(GtkTreeStore* store, ShaderSelector::PrefixList& prefixes) :
+		ShaderNameFunctor(gtkutil::VFSTreePopulator& populator, ShaderSelector::PrefixList& prefixes) :
 			_prefixes(prefixes), 
-			_store(store)
+			_populator(populator)
 		{}
 		
 		// Destructor. Each GtkTreePath needs to be explicitly freed
@@ -192,9 +229,9 @@ namespace {
 				 i != _prefixes.end();
 				 i++)
 			{
-				if (boost::algorithm::istarts_with(name, (*i) + "/")) {
-
-					// Prepare to find the path to the top-level parent of this texture entry
+				if (!name.empty() && boost::algorithm::istarts_with(name, (*i) + "/")) {
+					_populator.addPath(name);
+					/*// Prepare to find the path to the top-level parent of this texture entry
 					GtkTreePath* pathToParent = NULL;
 
 					// If this prefix hasn't been seen yet, add a top-level parent for it
@@ -220,7 +257,7 @@ namespace {
 					gtk_tree_store_set(_store, &iter, 
 										0, name.substr(i->length() + 1).c_str(), // display name
 										1, name.c_str(), // full shader name
-										-1);
+										-1);*/
 										
 					break; // don't consider any further prefixes
 				}
@@ -232,22 +269,36 @@ namespace {
 // Create the Tree View
 GtkWidget* ShaderSelector::createTreeView() {
 	// Tree model
-	GtkTreeStore* store = gtk_tree_store_new(N_COLUMNS, 
+	GtkTreeStore* store = gtk_tree_store_new(N_COLUMNS,
 											 G_TYPE_STRING, // display name in tree
-											 G_TYPE_STRING); // full shader name
+											 G_TYPE_STRING, // full shader name
+											 GDK_TYPE_PIXBUF); 
 	
-	ShaderNameFunctor func(store, _prefixes);
+	// Instantiate the helper class that populates the tree according to the paths
+	gtkutil::VFSTreePopulator populator(store);
+	
+	ShaderNameFunctor func(populator, _prefixes);
 	GlobalShaderSystem().foreachShaderName(makeCallback1(func));
+	
+	// Now visit the created GtkTreeIters to load the actual data into the tree
+	DataInserter inserter;
+	populator.forEachNode(inserter);
 	
 	// Tree view
 	_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_treeView), FALSE);
 	g_object_unref(store); // tree view owns the reference now
 
-	// Single text column to display texture name	
+	// Single visible column, containing the directory/shader name and the icon
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView),
+								gtkutil::IconTextColumn("Value",
+														NAME_COL,
+														IMAGE_COL));
+
+	/*// Single text column to display texture name	
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), 
 								gtkutil::TextColumn("Texture", 
-													DISPLAYNAME_COL));				
+													NAME_COL));*/				
 	
 	// Get selection and connect the changed callback
 	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
