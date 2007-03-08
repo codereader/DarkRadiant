@@ -677,10 +677,12 @@ void DragManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
       Scene_TestSelect_Component_Selected(bestSelector, test, view, GlobalSelectionSystem().ComponentMode());
       for(std::list<Selectable*>::iterator i = bestSelector.best().begin(); i != bestSelector.best().end(); ++i)
       {
-        if(!(*i)->isSelected())
+      	/** greebo: Disabled this, it caused the currently selected patch vertices being deselected.
+      	 */
+        /*if(!(*i)->isSelected())
         {
           GlobalSelectionSystem().setSelectedAllComponents(false);
-        }
+        }*/
         _selected = false;
         selector.addSelectable(SelectionIntersection(0, 0), (*i));
         _dragSelectable.setSelected(true);
