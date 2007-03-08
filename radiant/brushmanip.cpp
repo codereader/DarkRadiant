@@ -543,46 +543,6 @@ void Scene_BrushSetDetail_Selected(scene::Graph& graph, bool detail)
   SceneChangeNotify();
 }
 
-bool Face_FindReplaceShader(Face& face, const char* find, const char* replace)
-{
-  if(shader_equal(face.GetShader(), find))
-  {
-    face.SetShader(replace);
-    return true;
-  }
-  return false;
-}
-
-class FaceFindReplaceShader
-{
-  const char* m_find;
-  const char* m_replace;
-public:
-  FaceFindReplaceShader(const char* find, const char* replace) : m_find(find), m_replace(replace)
-  {
-  }
-  void operator()(Face& face) const
-  {
-    Face_FindReplaceShader(face, m_find, m_replace);
-  }
-};
-
-void Scene_BrushFindReplaceShader(scene::Graph& graph, const char* find, const char* replace)
-{
-  Scene_ForEachBrush_ForEachFace(graph, FaceFindReplaceShader(find, replace));
-}
-
-void Scene_BrushFindReplaceShader_Selected(scene::Graph& graph, const char* find, const char* replace)
-{
-  Scene_ForEachSelectedBrush_ForEachFace(graph, FaceFindReplaceShader(find, replace));
-}
-
-void Scene_BrushFindReplaceShader_Component_Selected(scene::Graph& graph, const char* find, const char* replace)
-{
-  Scene_ForEachSelectedBrushFace(graph, FaceFindReplaceShader(find, replace));
-}
-
-
 class FaceFitTexture
 {
   float m_s_repeat, m_t_repeat;

@@ -111,7 +111,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "console.h"
 #include "entity.h"
 #include "entitylist.h"
-#include "findtexturedialog.h"
 #include "groupdialog.h"
 #include "gtkdlgs.h"
 #include "gtkmisc.h"
@@ -138,6 +137,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "xyview/GlobalXYWnd.h"
 #include "ui/mru/MRU.h"
 #include "ui/commandlist/CommandList.h"
+#include "ui/findshader/FindShader.h"
 
 struct layout_globals_t
 {
@@ -2523,7 +2523,6 @@ void MainFrame::Create()
   
   EntityList_constructWindow(window);
   PreferencesDialog_constructWindow(window);
-  FindTextureDialog_constructWindow(window);
   SurfaceInspector_constructWindow(window);
   PatchInspector_constructWindow(window);
 
@@ -2613,7 +2612,6 @@ void MainFrame::Shutdown()
 
   PreferencesDialog_destroyWindow();
   SurfaceInspector_destroyWindow();
-  FindTextureDialog_destroyWindow();
   PatchInspector_destroyWindow();
 
   // destroying group-dialog last because it may contain texture-browser
@@ -2880,6 +2878,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("BrushExportOBJ", FreeCaller<CallBrushExportOBJ>());
 	GlobalEventManager().addCommand("BrushExportCM", FreeCaller<selection::algorithm::createCMFromSelection>());
 
+	GlobalEventManager().addCommand("FindReplaceTextures", FreeCaller<ui::FindAndReplaceShader::show>());
 	GlobalEventManager().addCommand("ShowCommandList", FreeCaller<ui::CommandList::show>());
 	GlobalEventManager().addCommand("About", FreeCaller<DoAbout>());
   

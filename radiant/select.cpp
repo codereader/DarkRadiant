@@ -679,7 +679,7 @@ void Select_FlipTexture(unsigned int flipAxis) {
 
 // TTimo modified to handle shader architecture:
 // expects shader names at input, comparison relies on shader names .. texture names no longer relevant
-void FindReplaceTextures(const char* pFind, const char* pReplace, bool bSelected)
+/*void FindReplaceTextures(const char* pFind, const char* pReplace, bool bSelected)
 {
   if(!texdef_name_valid(pFind))
   {
@@ -710,7 +710,7 @@ void FindReplaceTextures(const char* pFind, const char* pReplace, bool bSelected
     Scene_BrushFindReplaceShader(GlobalSceneGraph(), pFind, pReplace);
     Scene_PatchFindReplaceShader(GlobalSceneGraph(), pFind, pReplace);
   }
-}
+}*/
 
 typedef std::vector<std::string> Classnames;
 

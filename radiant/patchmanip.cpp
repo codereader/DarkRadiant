@@ -342,35 +342,6 @@ void Scene_PatchSelectByShader(scene::Graph& graph, const char* name)
   Scene_forEachVisiblePatchInstance(PatchSelectByShader(name));
 }
 
-
-class PatchFindReplaceShader
-{
-  const char* m_find;
-  const char* m_replace;
-public:
-  PatchFindReplaceShader(const char* find, const char* replace) : m_find(find), m_replace(replace)
-  {
-  }
-  void operator()(Patch& patch) const
-  {
-    if(shader_equal(patch.GetShader(), m_find))
-    {
-      patch.SetShader(m_replace);
-    }
-  }
-};
-
-void Scene_PatchFindReplaceShader(scene::Graph& graph, const char* find, const char* replace)
-{
-  Scene_forEachVisiblePatch(PatchFindReplaceShader(find, replace));
-}
-
-void Scene_PatchFindReplaceShader_Selected(scene::Graph& graph, const char* find, const char* replace)
-{
-  Scene_forEachVisibleSelectedPatch(PatchFindReplaceShader(find, replace));
-}
-
-
 AABB PatchCreator_getBounds()
 {
   AABB aabb(AABB::createFromMinMax(Select_getWorkZone().d_work_min, 

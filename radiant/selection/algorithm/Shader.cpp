@@ -620,5 +620,92 @@ void normaliseTexture() {
 	ui::SurfaceInspector::Instance().update();
 }
 
+/** greebo: This replaces the shader of the visited face with <replace>
+ * 			if the face is textured with <find> and increases the given <counter>. 
+ */
+class FaceShaderReplacer
+{
+	const std::string& _find;
+	const std::string& _replace;
+	int& _counter;
+public:
+	FaceShaderReplacer(const std::string& find, const std::string& replace, int& counter) : 
+		_find(find), 
+		_replace(replace),
+		_counter(counter)
+	{}
+	
+	void operator()(Face& face) const {
+		if (face.GetShader() == _find) {
+			face.SetShader(_replace);
+			_counter++;
+		}
+	}
+};
+
+/** greebo: This replaces the shader of the visited face with <replace>
+ * 			if the face is textured with <find> and increases the given <counter>. 
+ */
+class PatchShaderReplacer
+{
+	const std::string& _find;
+	const std::string& _replace;
+	int& _counter;
+public:
+	PatchShaderReplacer(const std::string& find, const std::string& replace, int& counter) : 
+		_find(find), 
+		_replace(replace),
+		_counter(counter)
+	{}
+	
+	void operator()(Patch& patch) const {
+		if (patch.GetShader() == _find) {
+			patch.SetShader(_replace);
+			_counter++;
+		}
+	}
+};
+
+int findAndReplaceShader(const std::string find, 
+	const std::string replace, bool selectedOnly)
+{
+	// This gets increased by each walker on successful replacement
+	int counter = 0;
+	
+	std::string command("textureFindReplace");
+	command += "-find " + find + " -replace " + replace;
+	UndoableCommand undo(command.c_str());
+	
+	if (selectedOnly) {
+		if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
+			// Find & replace all the brush shaders
+			Scene_ForEachSelectedBrush_ForEachFace(
+				GlobalSceneGraph(), 
+				FaceShaderReplacer(find, replace, counter)
+			);
+			
+			Scene_forEachVisibleSelectedPatch(
+				PatchShaderReplacer(find, replace, counter)
+			);
+		}
+		
+		// Search the single selected faces 
+		Scene_ForEachSelectedBrushFace(
+			GlobalSceneGraph(), 
+			FaceShaderReplacer(find, replace, counter)
+		);
+	}
+	else {
+		Scene_ForEachBrush_ForEachFace(
+			GlobalSceneGraph(), 
+			FaceShaderReplacer(find, replace, counter)
+		);
+		// Search all patches
+		Scene_forEachVisiblePatch(PatchShaderReplacer(find, replace, counter));
+	}
+	
+	return counter;
+}
+
 	} // namespace algorithm
 } // namespace selection

@@ -72,7 +72,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "entity.h"
 #include "select.h"
 #include "preferences.h"
-#include "findtexturedialog.h"
 #include "nullmodel.h"
 #include "xyview/GlobalXYWnd.h"
 #include "map/AutoSaver.h"
@@ -269,7 +268,6 @@ public:
     GlobalXYWnd().construct();
     TextureBrowser_Construct();
     Entity_Construct();
-    FindTextureDialog_Construct();
     NullModel_construct();
     MapRoot_construct();
     map::AutoSaver().init();
@@ -286,7 +284,6 @@ public:
 
     MapRoot_destroy();
     NullModel_destroy();
-    FindTextureDialog_Destroy();
     Entity_Destroy();
     TextureBrowser_Destroy();
     GlobalXYWnd().destroy();
