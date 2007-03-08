@@ -2,6 +2,9 @@
 #define MODELFILEFUNCTOR_H_
 
 #include "gtkutil/VFSTreePopulator.h"
+#include "gtkutil/ModalProgressDialog.h"
+#include "mainframe.h"
+
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace ui
@@ -17,10 +20,14 @@ namespace {
  * Functor object to visit the global VFS and add model paths to a VFS tree
  * populator object.
  */
-class ModelFileFunctor {
-
+class ModelFileFunctor 
+{
 	// VFSTreePopulator to populate
 	gtkutil::VFSTreePopulator& _populator;
+
+	// Progress dialog and model count
+	gtkutil::ModalProgressDialog _progress;
+	int _count;
 	
 public:
 	
@@ -28,8 +35,12 @@ public:
 
 	// Constructor sets the populator
 	ModelFileFunctor(gtkutil::VFSTreePopulator& pop)
-	: _populator(pop)
-	{}
+	: _populator(pop),
+	  _progress(MainFrame_getWindow(), "Loading models"),
+	  _count(0)
+	{
+		_progress.setText("Searching");
+	}
 
 	// Functor operator
 	void operator() (const char* file) {
@@ -45,9 +56,10 @@ public:
 		}
 		else 
 		{
+			_progress.setText(boost::lexical_cast<std::string>(++_count)
+							  + " models loaded");
 			_populator.addPath(rawPath);
 		}
-						   
 	}
 };
 
