@@ -97,6 +97,9 @@ public:
 	 */
 	void setSelection(const std::string& selection);
 	
+	// Get the selected IShader
+	IShaderPtr getSelectedShader();
+	
 private:
 
 	// Create GUI elements
@@ -105,9 +108,6 @@ private:
 	
 	// Update the info in the table (passes the call to the client class)
 	void updateInfoTable();
-	
-	// Get the selected IShader
-	IShaderPtr getSelectedShader();
 	
 	/* GTK CALLBACKS */
 	static void _onExpose(GtkWidget*, GdkEventExpose*, ShaderSelector*);

@@ -1,6 +1,9 @@
 #include "ShaderChooser.h"
 
+#include "ishaders.h"
+#include "texturelib.h"
 #include "gtkutil/TransientWindow.h"
+#include "string/string.h"
 #include "gtk/gtk.h"
 
 namespace ui {
@@ -8,6 +11,8 @@ namespace ui {
 	namespace {
 		const std::string LABEL_TITLE = "Choose Shader";
 		const std::string SHADER_PREFIXES = "textures";
+		const int DEFAULT_SIZE_X = 500;
+		const int DEFAULT_SIZE_Y = 500;
 	}
 
 // Construct the dialog
@@ -28,9 +33,7 @@ ShaderChooser::ShaderChooser(Client* client, GtkWidget* parent, GtkWidget* targe
     gtk_window_set_position(GTK_WINDOW(_dialog), GTK_WIN_POS_CENTER_ON_PARENT);
 	
 	// Set the default size of the window
-	gint w, h;
-	gtk_window_get_size(GTK_WINDOW(_parent), &w, &h);
-	gtk_window_set_default_size(GTK_WINDOW(_dialog), w, h);
+	gtk_window_set_default_size(GTK_WINDOW(_dialog), DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
 	
 	// Construct main VBox, and pack in the ShaderSelector and buttons panel
 	GtkWidget* vbx = gtk_vbox_new(false, 3);
@@ -72,6 +75,33 @@ void ShaderChooser::shaderSelectionChanged(const std::string& shaderName, GtkLis
 	if (_client != NULL) {
 		_client->shaderSelectionChanged(shaderName);
 	}
+	
+	// Update the infostore in the ShaderSelector
+	GtkTreeIter iter;
+	
+	// Get the shader, and its image map if possible
+	IShaderPtr shader = _selector.getSelectedShader();
+	gtk_list_store_append(listStore, &iter);
+	gtk_list_store_set(listStore, &iter, 
+					   0, "<b>Shader</b>",
+					   1, shader->getName(),
+					   -1);
+	
+	TexturePtr tex = shader->getDiffuse();
+	std::string dimStr = intToStr(tex->width) + " x " + intToStr(tex->height);
+	
+	gtk_list_store_append(listStore, &iter);
+	gtk_list_store_set(listStore, &iter, 
+					   0, "<b>Dimensions</b>",
+					   1, dimStr.c_str(),
+					   -1);
+					   
+	// Containing MTR	
+	gtk_list_store_append(listStore, &iter);
+	gtk_list_store_set(listStore, &iter, 
+					   0, "Defined in",
+					   1, shader->getShaderFileName(),
+					   -1);
 }
 
 // Static GTK CALLBACKS
