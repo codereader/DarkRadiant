@@ -23,22 +23,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_MODELSKIN_H
 
 #include "generic/constant.h"
-#include "generic/callbackfwd.h"
 
 #include <vector>
 #include <string>
 
-class SkinRemap
-{
-public:
-  const char* m_from;
-  const char* m_to;
-  SkinRemap(const char* from, const char* to) : m_from(from), m_to(to)
-  {
-  }
-};
-
-typedef Callback1<SkinRemap> SkinRemapCallback;
 class ModuleObserver;
 
 class ModelSkin
@@ -53,8 +41,6 @@ public:
   virtual bool realised() const = 0;
   /// \brief Returns the shader identifier that \p name remaps to, or "" if not found or not realised.
   virtual const char* getRemap(const std::string& name) const = 0;
-  /// \brief Calls \p callback for each remap pair. Has no effect if not realised.
-  virtual void forEachRemap(const SkinRemapCallback& callback) const = 0;
 };
 
 class SkinnedModel

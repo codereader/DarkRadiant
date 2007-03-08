@@ -60,15 +60,6 @@ public:
 		}
 	}
   
-	void forEachRemap(const SkinRemapCallback& callback) const {
-		for(StringMap::const_iterator i = _remaps.begin(); 
-			i != _remaps.end(); 
-			++i)
-		{
-			//callback(SkinRemap((*i).first.c_str(), (*i).second.c_str()));
-		}
-	}
-  
 	// Return the model associated with this skin.
 	std::string getModel() {
 		return _model;
