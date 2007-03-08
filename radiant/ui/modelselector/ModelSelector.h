@@ -14,10 +14,27 @@
 namespace ui
 {
 
-/** Data structure containing both a model and a skin name, to be returned from
+/* CONSTANTS */
+namespace {
+	
+	const char* MODELSELECTOR_TITLE = "Choose model";
+	const char* MODELS_FOLDER = "models/";
+
+	// Treestore enum
+	enum {
+		NAME_COLUMN,		// e.g. "chair1.lwo"
+		FULLNAME_COLUMN,	// e.g. "models/darkmod/props/chair1.lwo"
+		SKIN_COLUMN,		// e.e. "chair1_brown_wood", or "" for no skin
+		IMAGE_COLUMN,		// icon to display
+		N_COLUMNS
+	};
+	
+}
+
+/** 
+ * Data structure containing both a model and a skin name, to be returned from
  * the Model Selector.
  */
- 
 struct ModelAndSkin {
 	// Model and skin strings
 	std::string model;
