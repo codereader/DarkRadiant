@@ -25,15 +25,14 @@ namespace ui
  * Use the GtkWidget* operator to incorporate this class into a dialog window.
  * 
  * This widget populates its list of shaders automatically, and offers a method
- * that allows calling code to retrieve the user's selection.
+ * that allows calling code to retrieve the user's selection. The set of 
+ * displayed textures can be defined by passing a list of texture prefixes to
+ * the constructor (comma-separated, e.g. "fog,light"). 
  * 
  * The client class has to derive from the abstract ShaderSelector::Client class
  * providing an interface to allow the update of the info liststore.
  * 
- * Additionally the ShaderNameFunctor has to be passed in order to filter the
- * displayed shaders.
  */
-
 class ShaderSelector
 {
 public:
@@ -65,6 +64,9 @@ private:
 	// The client of this class.
 	Client* _client;
 	
+	// TRUE, if the first light layers are to be rendered instead of the editorimages
+	bool _isLightTexture;
+	
 public:
 	// This is where the prefixes are stored (needed to filter the possible shaders)
 	typedef std::vector<std::string> PrefixList;
@@ -74,8 +76,9 @@ public:
 	 * 
 	 * @client: The client class that gets notified on selection change
 	 * @prefixes: A comma-separated list of shader prefixes.
+	 * @isLightTexture: set this to TRUE to render the light textures instead of the editor images
 	 */
-	ShaderSelector(Client* client, const std::string& prefixes);
+	ShaderSelector(Client* client, const std::string& prefixes, bool isLightTexture = false);
 	
 	/** Operator cast to GtkWidget*, for packing into parent widget.
 	 */

@@ -28,8 +28,6 @@ namespace ui
 /* CONSTANTS */
 
 namespace {
-	
-	const char* LIGHT_PREFIX_XPATH = "game/light/texture//prefix";
 	const char* FOLDER_ICON = "folder16.png";
 	const char* TEXTURE_ICON = "icon_texture.png";
 	
@@ -40,13 +38,13 @@ namespace {
 		IMAGE_COL, // Icon
 		N_COLUMNS
 	};
-	
 }
 
 // Constructor creates GTK elements
-ShaderSelector::ShaderSelector(Client* client, const std::string& prefixes) :
+ShaderSelector::ShaderSelector(Client* client, const std::string& prefixes, bool isLightTexture) :
 	_infoStore(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING)),
-	_client(client)
+	_client(client),
+	_isLightTexture(isLightTexture)
 {
 	// Split the given comma-separated list into the vector
 	boost::algorithm::split(_prefixes, prefixes, boost::algorithm::is_any_of(","));
@@ -359,29 +357,42 @@ void ShaderSelector::_onExpose(GtkWidget* widget,
 		// the quad.
 		IShaderPtr shader = self->getSelectedShader();
 		
-		TexturePtr tex = shader->getTexture();
-		if (tex != NULL) {
-			glBindTexture (GL_TEXTURE_2D, tex->texture_number);
+		bool drawQuad = false;
+		
+		// Check what part of the shader we should display in the preview 
+		if (self->_isLightTexture) {
+			// This is a light, take the first layer texture
+			const ShaderLayer* first = shader->firstLayer();
+			if (first != NULL) {
+				TexturePtr tex = shader->firstLayer()->texture();
+				glBindTexture (GL_TEXTURE_2D, tex->texture_number);
+				drawQuad = true;
+			} 
 		}
 		else {
-			goto swapAndRelease;
+			// This is an "ordinary" texture, take the editor image
+			TexturePtr tex = shader->getTexture();
+			if (tex != NULL) {
+				glBindTexture (GL_TEXTURE_2D, tex->texture_number);
+				drawQuad = true;
+			}
 		}
 		
-		// Draw a quad to put the texture on
-		glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
-		glColor3f(1, 1, 1);
-		glBegin(GL_QUADS);
-		glTexCoord2i(0, 1);
-		glVertex2i(0, 0);
-		glTexCoord2i(1, 1);
-		glVertex2i(req.height, 0);
-		glTexCoord2i(1, 0);
-		glVertex2i(req.height, req.height);
-		glTexCoord2i(0, 0);
-		glVertex2i(0, req.height);
-		glEnd();
-
-swapAndRelease:
+		if (drawQuad) {
+			// Draw a quad to put the texture on
+			glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+			glColor3f(1, 1, 1);
+			glBegin(GL_QUADS);
+			glTexCoord2i(0, 1);
+			glVertex2i(0, 0);
+			glTexCoord2i(1, 1);
+			glVertex2i(req.height, 0);
+			glTexCoord2i(1, 0);
+			glVertex2i(req.height, req.height);
+			glTexCoord2i(0, 0);
+			glVertex2i(0, req.height);
+			glEnd();
+		}
 
 		// Update GtkGlExt buffer
 		glwidget_swap_buffers(widget);

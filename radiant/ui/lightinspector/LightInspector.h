@@ -2,7 +2,7 @@
 #define LIGHTINSPECTOR_H_
 
 #include "iselection.h"
-#include "ui/common/LightTextureSelector.h"
+#include "ui/common/ShaderSelector.h"
 #include "gtkutil/WindowPosition.h"
 
 #include <gtk/gtkwidget.h>
@@ -43,7 +43,7 @@ class LightInspector :
 	GtkWidget* _colour;
 	
 	// Texture selection combo
-	ui::LightTextureSelector _texSelector;
+	ShaderSelector _texSelector;
 
 	// Checkbox to enable start/end for projected lights
 	GtkWidget* _useStartEnd;

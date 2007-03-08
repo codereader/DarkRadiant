@@ -41,7 +41,7 @@ private:
 	// Main dialog widget
 	GtkWidget* _dialog;
 	
-	// The LightTextureSelector widget, that contains the actual selection
+	// The ShaderSelector widget, that contains the actual selection
 	// tools (treeview etc.)
 	ShaderSelector _selector;
 	

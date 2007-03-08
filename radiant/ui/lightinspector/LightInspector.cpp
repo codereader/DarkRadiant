@@ -31,15 +31,39 @@ namespace {
 	const char* NODIFFUSE_TEXT = "Skip diffuse lighting";
 	
 	const std::string RKEY_WINDOW_STATE = "user/ui/lightInspector/window";
+	
+	const char* LIGHT_PREFIX_XPATH = "game/light/texture//prefix";
+		
+	/** greebo: Loads the prefixes from the registry and creates a 
+	 * 			comma-separated list string
+	 */
+	inline std::string getPrefixList() {
+		std::string prefixes;
+		
+		// Get the list of light texture prefixes from the registry
+		xml::NodeList prefList = GlobalRegistry().findXPath(LIGHT_PREFIX_XPATH);
+		
+		// Copy the Node contents into the prefix vector	
+		for (xml::NodeList::iterator i = prefList.begin();
+			 i != prefList.end();
+			 ++i)
+		{
+			prefixes += (prefixes.empty()) ? "" : ",";
+			prefixes += i->getContent();
+		}
+		
+		return prefixes;
+	}
 }
 
 // Private constructor creates GTK widgets
 LightInspector::LightInspector() : 
+	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
+	_widget(gtkutil::TransientWindow(LIGHTINSPECTOR_TITLE, MainFrame_getWindow(), false)),
 	_isProjected(false),
+	_texSelector(NULL, getPrefixList(), true),
 	_entity(NULL)
 {
-	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
-	_widget = gtkutil::TransientWindow(LIGHTINSPECTOR_TITLE, MainFrame_getWindow(), false);
 	gtk_window_set_type_hint(GTK_WINDOW(_widget), GDK_WINDOW_TYPE_HINT_DIALOG);
 	
     // Window size
