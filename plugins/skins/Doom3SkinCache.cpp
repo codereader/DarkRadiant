@@ -109,17 +109,15 @@ void Doom3SkinCache::parseSkin(parser::DefTokeniser& tok) {
 	
 	// Read key/value pairs until end of decl
 	std::string key = tok.nextToken();
-	std::string model = "";
 	while (key != "}") {
 		
 		// Read the value
 		std::string value = tok.nextToken();
 		
-		// If this is a model key, set it on the object otherwise add as a 
-		// remap
+		// If this is a model key, add to the model->skin map, otherwise assume
+		// this is a remap declaration
 		if (key == "model") {
-			model = value;
-			skin->setModel(value);
+			_modelSkins[value].push_back(skinName);		
 		}
 		else {
 			skin->addRemap(key, value);
@@ -133,11 +131,6 @@ void Doom3SkinCache::parseSkin(parser::DefTokeniser& tok) {
 	// list of all skins
 	_namedSkins[skinName] = skin;
 	_allSkins.push_back(skinName);
-	
-	// If we have a model key, append this skin name to the list of skins for
-	// the model
-	if (!model.empty())
-		_modelSkins[model].push_back(skinName);
 }
 	
 } // namespace skins
