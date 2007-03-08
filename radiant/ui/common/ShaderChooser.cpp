@@ -5,6 +5,7 @@
 #include "gtkutil/TransientWindow.h"
 #include "string/string.h"
 #include "gtk/gtk.h"
+#include "gdk/gdkkeysyms.h"
 
 namespace ui {
 	
@@ -34,6 +35,9 @@ ShaderChooser::ShaderChooser(Client* client, GtkWidget* parent, GtkWidget* targe
 	
 	// Set the default size of the window
 	gtk_window_set_default_size(GTK_WINDOW(_dialog), DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
+	
+	// Connect the key handler to catch the ESC event
+	g_signal_connect(G_OBJECT(_dialog), "key-press-event", G_CALLBACK(onKeyPress), this);
 	
 	// Construct main VBox, and pack in the ShaderSelector and buttons panel
 	GtkWidget* vbx = gtk_vbox_new(false, 3);
@@ -104,20 +108,24 @@ void ShaderChooser::shaderSelectionChanged(const std::string& shaderName, GtkLis
 					   -1);
 }
 
-// Static GTK CALLBACKS
-void ShaderChooser::callbackCancel(GtkWidget* w, ShaderChooser* self) {
+void ShaderChooser::revertShader() {
 	// Revert the shadername to the value it had at dialog startup
-	if (self->_targetEntry != NULL) {
-		gtk_entry_set_text(GTK_ENTRY(self->_targetEntry), 
-					   	   self->_initialShader.c_str());
+	if (_targetEntry != NULL) {
+		gtk_entry_set_text(GTK_ENTRY(_targetEntry), _initialShader.c_str());
 		
 		// Propagate the call up to the client (e.g. SurfaceInspector)
-		if (self->_client != NULL) {
-			self->_client->shaderSelectionChanged(
-				gtk_entry_get_text(GTK_ENTRY(self->_targetEntry))
+		if (_client != NULL) {
+			_client->shaderSelectionChanged(
+				gtk_entry_get_text(GTK_ENTRY(_targetEntry))
 			);
 		}
 	}
+}
+
+// Static GTK CALLBACKS
+void ShaderChooser::callbackCancel(GtkWidget* w, ShaderChooser* self) {
+	// Revert the shadername to the value it had at dialog startup
+	self->revertShader();
 	
 	delete self;
 }
@@ -128,6 +136,29 @@ void ShaderChooser::callbackOK(GtkWidget* w, ShaderChooser* self) {
 					   	   self->_selector.getSelection().c_str());
 	}
 	delete self;
+}
+
+gboolean ShaderChooser::onKeyPress(GtkWidget* widget, GdkEventKey* event, ShaderChooser* self) {
+	// Check for ESC to close the dialog
+	if (event->keyval == GDK_Escape) {
+		// Revert the shadername to the value it had at dialog startup
+		self->revertShader();
+		// Remove this dialog
+		delete self;
+		// Don't propagate the keypress if the ESC could be processed
+		return true;
+	}
+	else if (event->keyval == GDK_Return) {
+		if (self->_targetEntry != NULL) {
+			gtk_entry_set_text(GTK_ENTRY(self->_targetEntry), 
+					   	   self->_selector.getSelection().c_str());
+		}
+		// Remove this dialog
+		delete self;
+		return true;
+	}
+	
+	return false;
 }
 
 } // namespace ui

@@ -3,6 +3,7 @@
 
 #include "ui/common/ShaderSelector.h"
 #include <string>
+#include <gtk/gtkwidget.h>
 
 // Forward decls
 class IShader;
@@ -63,12 +64,18 @@ public:
 	~ShaderChooser();
 	
 private:
+	// Reverts the connected entry field to the value it had before 
+	void revertShader();
+
 	// Widget construction helpers
 	GtkWidget* createButtons();
 	
 	/* GTK CALLBACKS */
 	static void callbackCancel(GtkWidget*, ShaderChooser*);
 	static void callbackOK(GtkWidget*, ShaderChooser*);
+	
+	// The keypress handler for catching the Enter key when in the shader entry field
+	static gboolean onKeyPress(GtkWidget* widget, GdkEventKey* event, ShaderChooser* self);
 };
 
 } // namespace ui
