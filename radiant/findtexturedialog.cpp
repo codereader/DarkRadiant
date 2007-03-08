@@ -50,7 +50,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "dialog.h"
 #include "select.h"
 #include "textureentry.h"
-
+#include "ui/findshader/FindShader.h"
 
 
 class FindTextureDialog : public Dialog
@@ -289,9 +289,8 @@ void FindTextureDialog_selectTexture(const char* name)
   g_FindTextureDialog.updateTextures(name);
 }
 
-void FindTextureDialog_Construct()
-{
-  GlobalEventManager().addCommand("FindReplaceTextures", FindTextureDialog::ShowCaller());
+void FindTextureDialog_Construct() {
+	GlobalEventManager().addCommand("FindReplaceTextures", FreeCaller<ui::FindAndReplaceShader::show>());
 }
 
 void FindTextureDialog_Destroy()

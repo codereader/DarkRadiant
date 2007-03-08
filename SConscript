@@ -376,6 +376,7 @@ radiant_src = [
 'ui/patch/PatchCreateDialog.cpp',
 'ui/patch/PatchThickenDialog.cpp',
 'ui/surfaceinspector/SurfaceInspector.cpp',
+'ui/findshader/FindShader.cpp',
 'textool/TexTool.cpp',
 'textool/TexToolItem.cpp',
 'textool/item/PatchItem.cpp',

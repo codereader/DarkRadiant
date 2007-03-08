@@ -16,6 +16,13 @@
 #include "ShortcutChooser.h"
 
 namespace ui {
+	
+	namespace {
+		const int CMDLISTDLG_DEFAULT_SIZE_X = 550;
+	    const int CMDLISTDLG_DEFAULT_SIZE_Y = 400;
+	    	    
+	    const std::string CMDLISTDLG_WINDOW_TITLE = "Shortcut List";
+	}
 
 CommandList::CommandList() :
 	DialogWindow(CMDLISTDLG_WINDOW_TITLE, MainFrame_getWindow())
