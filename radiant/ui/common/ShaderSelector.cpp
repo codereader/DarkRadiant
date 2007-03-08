@@ -145,6 +145,8 @@ void ShaderSelector::setSelection(const std::string& sel) {
 		gtk_tree_view_expand_to_path(GTK_TREE_VIEW(_treeView), path);
 		// Highlight the target row
 		gtk_tree_view_set_cursor(GTK_TREE_VIEW(_treeView), path, NULL, false);
+		// Make the selected row visible 
+		gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(_treeView), path, NULL, true, 0.3f, 0.0f);
 	}
 }
 

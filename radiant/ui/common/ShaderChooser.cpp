@@ -16,6 +16,10 @@ ShaderChooser::ShaderChooser(GtkWidget* parent, GtkWidget* targetEntry) :
 	_targetEntry(targetEntry),
 	_selector(this, SHADER_PREFIXES)
 {
+	if (_targetEntry != NULL) {
+		_selector.setSelection(gtk_entry_get_text(GTK_ENTRY(_targetEntry)));
+	}
+	
 	_dialog = gtkutil::TransientWindow(LABEL_TITLE, GTK_WINDOW(_parent), false);
 	gtk_window_set_modal(GTK_WINDOW(_dialog), true);
     gtk_window_set_position(GTK_WINDOW(_dialog), GTK_WIN_POS_CENTER_ON_PARENT);
