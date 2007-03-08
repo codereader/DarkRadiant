@@ -52,7 +52,7 @@ void FindAndReplaceShader::populateWindow() {
 	GtkWidget* dialogVBox = gtk_vbox_new(false, 6);
 	gtk_container_add(GTK_CONTAINER(_window), dialogVBox);
 	
-	// Create the title label (bold font)
+	/*// Create the title label (bold font)
 	GtkWidget* topLabel = gtkutil::LeftAlignedLabel(
     	std::string("<span weight=\"bold\">") + LABEL_FINDSHADER + "</span>"
     );
@@ -60,7 +60,7 @@ void FindAndReplaceShader::populateWindow() {
     
     GtkWidget* spacer2 = gtk_alignment_new(0,0,0,0);
 	gtk_widget_set_usize(spacer2, 10, 1);
-	gtk_box_pack_start(GTK_BOX(dialogVBox), spacer2, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(dialogVBox), spacer2, false, false, 0);*/
     
     GtkWidget* findHBox = gtk_hbox_new(false, 0);
     GtkWidget* replaceHBox = gtk_hbox_new(false, 0);
