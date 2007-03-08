@@ -2,7 +2,6 @@
 #define COMMANDLIST_H_
 
 #include <string>
-#include <iostream>
 #include "gtk/gtkwidget.h"
 #include "gtk/gtkliststore.h"
 #include "gtkutil/DialogWindow.h"
@@ -26,7 +25,7 @@
 
 namespace ui {
 
-class CommandListDialog :
+class CommandList :
 	public gtkutil::DialogWindow
 {
 	// The list store containing the list of ColourSchemes		
@@ -37,10 +36,14 @@ class CommandListDialog :
 
 public:
 	// Constructor
-	CommandListDialog();
+	CommandList();
 	
 	// This is called to initialise the dialog window / create the widgets
 	virtual void populateWindow();
+	
+	/** greebo: Shows the dialog (allocates on heap, dialog self-destructs)
+	 */
+	static void show();
 	
 private:
 	// Handles the assignment of a new shortcut to the selected row
@@ -53,20 +56,15 @@ private:
 	std::string getSelectedCommand(); 
 	
 	// The callback for the buttons
-	static void callbackClose(GtkWidget* widget, CommandListDialog* self);
-	static void callbackClear(GtkWidget* widget, CommandListDialog* self);
-	static void callbackAssign(GtkWidget* widget, CommandListDialog* self);
+	static void callbackClose(GtkWidget* widget, CommandList* self);
+	static void callbackClear(GtkWidget* widget, CommandList* self);
+	static void callbackAssign(GtkWidget* widget, CommandList* self);
 	
 	// The callback to catch the double click on a treeview row
-	static gboolean callbackViewButtonPress(GtkWidget* widget, GdkEventButton* event, CommandListDialog* self);
+	static gboolean callbackViewButtonPress(GtkWidget* widget, GdkEventButton* event, CommandList* self);
 	
 }; // class CommandListDialog
 
 } // namespace ui
-
-// -------------------------------------------------------------------------------
-
-// This is the actual command that instantiates the dialog
-void ShowCommandListDialog();
 
 #endif /*COMMANDLIST_H_*/
