@@ -6,6 +6,7 @@
 #include "iregistry.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/RegistryConnector.h"
+#include "ui/common/ShaderChooser.h"
 
 #include <boost/shared_ptr.hpp>
 
@@ -44,6 +45,7 @@ class SurfaceInspector :
 
 	// The "shader" entry field
 	GtkWidget* _shaderEntry;
+	GtkWidget* _selectShaderButton;
 		
 	struct FitTextureWidgets {
 		GtkWidget* hbox;
@@ -153,6 +155,12 @@ private:
 	
 	// Executes the fit command for the selection 
 	void fitTexture();
+	
+	// This runs the algorithm for selecting the shader using the ShaderSelector subclass.
+	void selectShader();
+	
+	// The callback when the "select shader" button is pressed.
+	static void onShaderSelect(GtkWidget* button, SurfaceInspector* self);
 	
 	// The callback for the delete event (toggles the visibility)
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, SurfaceInspector* self);

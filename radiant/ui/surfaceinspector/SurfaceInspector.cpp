@@ -8,6 +8,7 @@
 #include "gtkutil/ControlButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
+#include "gtkutil/DialogWindow.h"
 #include "gtkutil/dialog.h"
 
 #include "selectionlib.h"
@@ -245,7 +246,15 @@ void SurfaceInspector::populateWindow() {
 	
 	_shaderEntry = gtk_entry_new();
 	g_signal_connect(G_OBJECT(_shaderEntry), "key-press-event", G_CALLBACK(onKeyPress), this);
-	gtk_table_attach_defaults(table, _shaderEntry, 1, 2, 0, 1);
+	
+	_selectShaderButton = gtk_button_new_with_label("...");
+	g_signal_connect(G_OBJECT(_selectShaderButton), "clicked", G_CALLBACK(onShaderSelect), this);
+	
+	GtkWidget* hbox = gtk_hbox_new(false, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), _shaderEntry, true, true, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), _selectShaderButton, false, false, 0);
+	
+	gtk_table_attach_defaults(table, hbox, 1, 2, 0, 1);
 	
 	// Populate the table with the according widgets
 	_manipulators[HSHIFT] = createManipulatorRow(LABEL_HSHIFT, table, 1, false);
@@ -558,6 +567,12 @@ void SurfaceInspector::fitTexture() {
 	}
 }
 
+void SurfaceInspector::selectShader() {
+	// Construct the modal dialog, self-destructs on close
+	ShaderChooser* chooser = new ShaderChooser(_dialog, _shaderEntry);
+	// Set selection
+}
+
 gboolean SurfaceInspector::onDefaultScaleChanged(GtkSpinButton* spinbutton, SurfaceInspector* self) {
 	// Tell the class instance to save its contents into the registry
 	self->saveToRegistry();
@@ -616,6 +631,10 @@ gboolean SurfaceInspector::onKeyPress(GtkWidget* entry, GdkEventKey* event, Surf
 	}
 	
 	return false;
+}
+
+void SurfaceInspector::onShaderSelect(GtkWidget* button, SurfaceInspector* self) {
+	self->selectShader();
 }
 
 } // namespace ui

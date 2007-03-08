@@ -366,6 +366,8 @@ radiant_src = [
 'ui/common/ToolbarCreator.cpp',
 'ui/common/TexturePreviewCombo.cpp',
 'ui/common/LightTextureSelector.cpp',
+'ui/common/ShaderSelector.cpp',
+'ui/common/ShaderChooser.cpp',
 'ui/mediabrowser/MediaBrowser.cpp',
 'ui/menu/FiltersMenu.cpp',
 'ui/colourscheme/ColourScheme.cpp',
