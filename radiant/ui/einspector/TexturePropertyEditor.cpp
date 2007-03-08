@@ -1,5 +1,5 @@
 #include "TexturePropertyEditor.h"
-#include "TextureChooser.h"
+#include "LightTextureChooser.h"
 
 #include "ishaders.h"
 #include "generic/callback.h"
@@ -41,7 +41,7 @@ TexturePropertyEditor::TexturePropertyEditor(Entity* entity, const std::string& 
 // Browse button callback, with local functor object
 
 void TexturePropertyEditor::callbackBrowse(GtkWidget* widget, TexturePropertyEditor* self) {
-	new TextureChooser(self->_textEntry, self->_prefixes); // self-destructs on close
+	new LightTextureChooser(self->_textEntry, self->_prefixes); // self-destructs on close
 }
 
 // Get and set functions
