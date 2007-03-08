@@ -163,6 +163,10 @@ unsigned int Modifiers::getState() const {
 	return _modifierState;
 }
 
+void Modifiers::setState(unsigned int state) {
+	_modifierState = state;
+}
+
 void Modifiers::updateState(GdkEventKey* event, bool keyPress) {
 	unsigned int mask = 0;
 	
