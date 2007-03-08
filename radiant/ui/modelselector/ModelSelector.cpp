@@ -1,9 +1,10 @@
 #include "ModelSelector.h"
+#include "ModelFileFunctor.h"
+#include "ModelDataInserter.h"
 
 #include "mainframe.h"
 #include "gtkutil/image.h"
 #include "gtkutil/glwidget.h"
-#include "gtkutil/VFSTreePopulator.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/IconTextColumn.h"
 #include "gtkutil/RightAlignment.h"
@@ -21,35 +22,10 @@
 #include <GL/glew.h>
 
 #include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/predicate.hpp>
 #include <boost/lexical_cast.hpp>
 
 namespace ui
 {
-
-// CONSTANTS
-
-namespace {
-	
-	const char* MODELSELECTOR_TITLE = "Choose model";
-	const char* MODELS_FOLDER = "models/";
-
-	const char* ASE_EXTENSION = ".ase";
-	const char* LWO_EXTENSION = ".lwo";
-	const char* MODEL_ICON = "model16green.png";
-	const char* SKIN_ICON = "skin16.png";
-	const char* FOLDER_ICON = "folder16.png";
-	
-	// Treestore enum
-	enum {
-		NAME_COLUMN,		// e.g. "chair1.lwo"
-		FULLNAME_COLUMN,	// e.g. "models/darkmod/props/chair1.lwo"
-		SKIN_COLUMN,		// e.e. "chair1_brown_wood", or "" for no skin
-		IMAGE_COLUMN,		// icon to display
-		N_COLUMNS
-	};
-	
-}
 
 // Constructor.
 
@@ -145,98 +121,7 @@ ModelAndSkin ModelSelector::chooseModel() {
 }
 
 
-namespace {
-
-// File-local functor object to retrieve model names from global VFS
-class ModelFileFunctor {
-
-	// VFSTreePopulator to populate
-	gtkutil::VFSTreePopulator& _populator;
-	
-public:
-	
-	typedef const char* first_argument_type;
-
-	// Constructor sets the populator
-	ModelFileFunctor(gtkutil::VFSTreePopulator& pop)
-	: _populator(pop)
-	{}
-
-	// Functor operator
-	void operator() (const char* file) {
-
-		std::string rawPath(file);			
-
-		// Test the extension. If it is not LWO or ASE (case-insensitive),
-		// not interested
-		if (!boost::algorithm::iends_with(rawPath, LWO_EXTENSION) 
-				&& !boost::algorithm::iends_with(rawPath, ASE_EXTENSION)) 
-		{
-			return;
-		}
-		else 
-		{
-			_populator.addPath(rawPath);
-		}
-						   
-	}
-};
-
-// VFSPopulatorVisitor to fill in column data for the populator tree nodes
-class ModelDataInserter
-: public gtkutil::VFSTreePopulator::Visitor
-{
-	// Required visit function
-	void visit(GtkTreeStore* store, 
-			   GtkTreeIter* iter, 
-			   const std::string& path,
-			   bool isExplicit)
-	{
-		// Get the display name by stripping off everything before the last
-		// slash
-		std::string displayName = path.substr(path.rfind("/") + 1);
-
-		// Pathname is the model VFS name for a model, and blank for a folder
-		std::string fullPath = isExplicit ? (MODELS_FOLDER + path) : "";
-					   
-		// Pixbuf depends on model type
-		GdkPixbuf* pixBuf = isExplicit 
-							? gtkutil::getLocalPixbuf(MODEL_ICON)
-							: gtkutil::getLocalPixbuf(FOLDER_ICON);
-
-		// Fill in the column values
-		gtk_tree_store_set(store, iter, 
-						   NAME_COLUMN, displayName.c_str(),
-						   FULLNAME_COLUMN, fullPath.c_str(),
-						   SKIN_COLUMN, "",
-						   IMAGE_COLUMN, pixBuf,
-						   -1);
-						   
-		// Now check if there are any skins for this model, and add them as
-		// children if so
-		const StringList& skinList = 
-			GlobalModelSkinCache().getSkinsForModel(fullPath);
-			
-		for (StringList::const_iterator i = skinList.begin();
-			 i != skinList.end();
-			 ++i)
-		{
-			GtkTreeIter tmpIter;
-			gtk_tree_store_append(store, &tmpIter, iter);
-			gtk_tree_store_set(store, &tmpIter,
-							   NAME_COLUMN, i->c_str(),
-							   FULLNAME_COLUMN, fullPath.c_str(),
-							   SKIN_COLUMN, i->c_str(),
-							   IMAGE_COLUMN, gtkutil::getLocalPixbuf(SKIN_ICON),
-							   -1);
-		}
-	} 	
-};
-
-} // blank namespace
-
 // Helper function to create the TreeView
-
 GtkWidget* ModelSelector::createTreeView() {
 
 	// Create a VFSTreePopulator for the treestore
