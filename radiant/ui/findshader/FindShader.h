@@ -3,6 +3,7 @@
 
 #include <string>
 #include "gtk/gtkwidget.h"
+#include "gtk/gtkeditable.h"
 #include "gtk/gtkliststore.h"
 #include "gtkutil/DialogWindow.h"
 
@@ -25,12 +26,19 @@ class FindAndReplaceShader :
 	GtkWidget* _findSelectButton;
 	GtkWidget* _replaceSelectButton;
 	
+	// The checkbox "Search Selected Only"
+	GtkWidget* _selectedOnly;
+	
+	// The counter "x shaders replaced."
+	GtkWidget* _counterLabel;
+	
 	// The treeview containing the above liststore
 	GtkWidget* _treeView;
 	
 public:
 	// Constructor
 	FindAndReplaceShader();
+	~FindAndReplaceShader();
 	
 	// This is called to initialise the dialog window / create the widgets
 	virtual void populateWindow();
@@ -49,12 +57,14 @@ private:
 	GtkWidget* createButtons();
 	
 	// The callback for the buttons
-	static void callbackReplace(GtkWidget* widget, FindAndReplaceShader* self);
-	static void callbackClose(GtkWidget* widget, FindAndReplaceShader* self);
+	static void onReplace(GtkWidget* widget, FindAndReplaceShader* self);
+	static void onClose(GtkWidget* widget, FindAndReplaceShader* self);
 	
-	static void callbackChooseFind(GtkWidget* widget, FindAndReplaceShader* self);
-	static void callbackChooseReplace(GtkWidget* widget, FindAndReplaceShader* self);
+	static void onChooseFind(GtkWidget* widget, FindAndReplaceShader* self);
+	static void onChooseReplace(GtkWidget* widget, FindAndReplaceShader* self);
 	
+	static void onFindChanged(GtkEditable* editable, FindAndReplaceShader* self);
+	static void onReplaceChanged(GtkEditable* editable, FindAndReplaceShader* self);
 }; // class FindAndReplaceShader
 
 } // namespace ui

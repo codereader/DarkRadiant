@@ -77,7 +77,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkdlgs.h"
 #include "gtkmisc.h"
 #include "mainframe.h"
-#include "findtexturedialog.h"
 #include "surfacedialog.h"
 #include "patchdialog.h"
 #include "groupdialog.h"
@@ -411,11 +410,6 @@ void TextureBrowser_SetSelectedShader(TextureBrowser& textureBrowser, const std:
   textureBrowser.shader = shader.c_str();
   TextureBrowser_SetStatus(textureBrowser, shader.c_str());
   TextureBrowser_Focus(textureBrowser, shader.c_str());
-
-  if(FindTextureDialog_isOpen())
-  {
-    FindTextureDialog_selectTexture(shader.c_str());
-  }
 }
 
 
@@ -911,11 +905,6 @@ void SelectTexture(TextureBrowser& textureBrowser, int mx, int my, bool bShift)
   		IShaderPtr shader = Texture_At(textureBrowser, mx, my);
   		TextureBrowser_SetSelectedShader(textureBrowser, shader->getName());
 		TextureBrowser_textureSelected(shader->getName());
-
-		if (!FindTextureDialog_isOpen()) {
-			UndoableCommand undo("textureNameSetSelected");
-			Select_SetShader(shader->getName());
-		}
 	}
 	catch (NoTextureSelectedException n) {
 		

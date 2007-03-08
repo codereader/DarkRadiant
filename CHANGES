@@ -1,3 +1,7 @@
+08/03/2007
+greebo
+- Rewrote broken "Find & Replace Shader" dialog.
+
 06/03/2007
 greebo
 - Added "Export CollisionModel" feature to create .cm files from brushes.
