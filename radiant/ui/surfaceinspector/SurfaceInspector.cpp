@@ -626,10 +626,10 @@ gboolean SurfaceInspector::onValueKeyPress(GtkWidget* entry, GdkEventKey* event,
 // The GTK keypress callback
 gboolean SurfaceInspector::onKeyPress(GtkWidget* entry, GdkEventKey* event, SurfaceInspector* self) {
 	
-	// Check for ESC to deselect all items
+	// Check for Enter Key to emit the shader
 	if (event->keyval == GDK_Return) {
 		self->emitShader();
-		// Don't propage the keypress if the Enter could be processed
+		// Don't propagate the keypress if the Enter could be processed
 		return true;
 	}
 	
