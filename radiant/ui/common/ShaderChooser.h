@@ -19,6 +19,19 @@ namespace ui {
 class ShaderChooser :
 	public ShaderSelector::Client
 {
+public:
+	// Derive from this class to get notified upon shader changes.
+	class Client
+	{
+	public:
+		// greebo: This gets invoked upon selection changed to allow the client to react.
+		virtual void shaderSelectionChanged(const std::string& shader) = 0;
+	};
+	
+private:
+	// The "parent" class that gets notified upon shaderchange
+	Client* _client;
+
 	// The widget this dialog is transient for.
 	GtkWidget* _parent;
 	
@@ -32,12 +45,15 @@ class ShaderChooser :
 	// tools (treeview etc.)
 	ShaderSelector _selector;
 	
+	// The shader name at dialog startup (to allow proper behaviour on cancelling)
+	std::string _initialShader;
+	
 public:
 	/** greebo: Construct the dialog window and its contents.
 	 * 
 	 * @parent: The widget this dialog is transient for.
 	 */
-	ShaderChooser(GtkWidget* parent, GtkWidget* targetEntry = NULL);
+	ShaderChooser(Client* client, GtkWidget* parent, GtkWidget* targetEntry = NULL);
 	
 	/** greebo: Gets called upon shader selection change
 	 */

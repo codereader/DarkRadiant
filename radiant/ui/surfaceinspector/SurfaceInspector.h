@@ -21,7 +21,8 @@ namespace ui {
 
 class SurfaceInspector :
 	public RegistryKeyObserver,
-	public SelectionSystem::Observer
+	public SelectionSystem::Observer,
+	public ShaderChooser::Client
 {
 	// The actual dialog window
 	GtkWidget* _dialog;
@@ -121,6 +122,10 @@ public:
 	// Updates the widgets
 	void update();
 	
+	/** greebo: Gets called upon shader selection change (during ShaderChooser display)
+	 */
+	void shaderSelectionChanged(const std::string& shaderName);
+	
 private:
 	/** greebo: Creates a row consisting of label, value entry,
 	 * two arrow buttons and a step entry field.
@@ -156,10 +161,7 @@ private:
 	// Executes the fit command for the selection 
 	void fitTexture();
 	
-	// This runs the algorithm for selecting the shader using the ShaderSelector subclass.
-	void selectShader();
-	
-	// The callback when the "select shader" button is pressed.
+	// The callback when the "select shader" button is pressed, opens the ShaderChooser dialog
 	static void onShaderSelect(GtkWidget* button, SurfaceInspector* self);
 	
 	// The callback for the delete event (toggles the visibility)

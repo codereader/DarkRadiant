@@ -11,13 +11,16 @@ namespace ui {
 	}
 
 // Construct the dialog
-ShaderChooser::ShaderChooser(GtkWidget* parent, GtkWidget* targetEntry) :
+ShaderChooser::ShaderChooser(Client* client, GtkWidget* parent, GtkWidget* targetEntry) :
+	_client(client),
 	_parent(parent), 
 	_targetEntry(targetEntry),
 	_selector(this, SHADER_PREFIXES)
 {
 	if (_targetEntry != NULL) {
-		_selector.setSelection(gtk_entry_get_text(GTK_ENTRY(_targetEntry)));
+		_initialShader = gtk_entry_get_text(GTK_ENTRY(_targetEntry));
+		// Set the cursor of the tree view to the currently selected shader
+		_selector.setSelection(_initialShader);
 	}
 	
 	_dialog = gtkutil::TransientWindow(LABEL_TITLE, GTK_WINDOW(_parent), false);
@@ -64,10 +67,29 @@ void ShaderChooser::shaderSelectionChanged(const std::string& shaderName, GtkLis
 		gtk_entry_set_text(GTK_ENTRY(_targetEntry), 
 					   	   _selector.getSelection().c_str());
 	}
+	
+	// Propagate the call up to the client (e.g. SurfaceInspector)
+	if (_client != NULL) {
+		_client->shaderSelectionChanged(shaderName);
+	}
 }
 
 // Static GTK CALLBACKS
 void ShaderChooser::callbackCancel(GtkWidget* w, ShaderChooser* self) {
+	// Revert the shadername to the value it had at dialog startup
+	
+	if (self->_targetEntry != NULL) {
+		gtk_entry_set_text(GTK_ENTRY(self->_targetEntry), 
+					   	   self->_initialShader.c_str());
+					   	   
+		// Propagate the call up to the client (e.g. SurfaceInspector)
+		if (self->_client != NULL) {
+			self->_client->shaderSelectionChanged(
+				gtk_entry_get_text(GTK_ENTRY(self->_targetEntry))
+			);
+		}
+	}
+	
 	delete self;
 }
 

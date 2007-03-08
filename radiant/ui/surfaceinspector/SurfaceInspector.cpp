@@ -249,7 +249,10 @@ void SurfaceInspector::populateWindow() {
 	_shaderEntry = gtk_entry_new();
 	g_signal_connect(G_OBJECT(_shaderEntry), "key-press-event", G_CALLBACK(onKeyPress), this);
 	
+	// Create the icon button to open the ShaderChooser
 	_selectShaderButton = gtkutil::IconTextButton("", FOLDER_ICON, false);
+	// Override the size request
+	gtk_widget_set_size_request(_selectShaderButton, -1, -1); 
 	g_signal_connect(G_OBJECT(_selectShaderButton), "clicked", G_CALLBACK(onShaderSelect), this);
 	
 	GtkWidget* hbox = gtk_hbox_new(false, 0);
@@ -569,10 +572,8 @@ void SurfaceInspector::fitTexture() {
 	}
 }
 
-void SurfaceInspector::selectShader() {
-	// Construct the modal dialog, self-destructs on close
-	ShaderChooser* chooser = new ShaderChooser(_dialog, _shaderEntry);
-	// Set selection
+void SurfaceInspector::shaderSelectionChanged(const std::string& shaderName) {
+	emitShader();
 }
 
 gboolean SurfaceInspector::onDefaultScaleChanged(GtkSpinButton* spinbutton, SurfaceInspector* self) {
@@ -636,7 +637,8 @@ gboolean SurfaceInspector::onKeyPress(GtkWidget* entry, GdkEventKey* event, Surf
 }
 
 void SurfaceInspector::onShaderSelect(GtkWidget* button, SurfaceInspector* self) {
-	self->selectShader();
+	// Construct the modal dialog, self-destructs on close
+	new ShaderChooser(self, self->_dialog, self->_shaderEntry);
 }
 
 } // namespace ui
