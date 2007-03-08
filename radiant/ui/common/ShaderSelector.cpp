@@ -323,7 +323,6 @@ IShaderPtr ShaderSelector::getSelectedShader() {
 // Update the attributes table
 void ShaderSelector::updateInfoTable() {
 	
-	//GtkTreeIter iter;
 	gtk_list_store_clear(_infoStore);
 
 	// Get the selected texture name. If nothing is selected, we just leave the
@@ -331,57 +330,9 @@ void ShaderSelector::updateInfoTable() {
 	std::string selName = getSelection();
 	
 	// Notify the client of the change to give it a chance to update the infostore
-	if (_client != NULL) {
+	if (_client != NULL && !selName.empty()) {
 		_client->shaderSelectionChanged(selName, _infoStore);
 	}
-	
-	// Get the shader, and its image map if possible
-	IShaderPtr shader = getSelectedShader();
-
-	const ShaderLayer* first = shader->firstLayer();
-	std::string texName = "None";
-	if (first != NULL) {
-		TexturePtr tex = shader->firstLayer()->texture();
-		texName = tex->name;
-	}
-	
-	/*gtk_list_store_append(_infoStore, &iter);
-	gtk_list_store_set(_infoStore, &iter, 
-					   0, "<b>Shader</b>",
-					   1, selName.c_str(),
-					   -1);
-
-	gtk_list_store_append(_infoStore, &iter);
-	gtk_list_store_set(_infoStore, &iter, 
-					   0, "<b>Image map</b>",
-					   1, texName.c_str(),
-					   -1);
-
-	// Name of file containing the shader
-
-	gtk_list_store_append(_infoStore, &iter);
-	gtk_list_store_set(_infoStore, &iter, 
-					   0, "<b>Defined in</b>",
-					   1, shader->getShaderFileName(),
-					   -1);
-
-	// Light types, from the IShader
-
-	std::string lightType;
-	if (shader->isAmbientLight())
-		lightType.append("ambient ");
-	if (shader->isBlendLight())
-		lightType.append("blend ");
-	if (shader->isFogLight())
-		lightType.append("fog");
-	if (lightType.size() == 0)
-		lightType.append("-");
-	
-	gtk_list_store_append(_infoStore, &iter);
-	gtk_list_store_set(_infoStore, &iter, 
-					   0, "<b>Light flags</b>",
-					   1, lightType.c_str(),
-					   -1);*/
 }
 
 // Callback to redraw the GL widget
@@ -415,16 +366,6 @@ void ShaderSelector::_onExpose(GtkWidget* widget,
 		else {
 			goto swapAndRelease;
 		}
-		
-		/*const ShaderLayer* first = shader->firstLayer();
-		if (first != NULL) {
-			TexturePtr tex = shader->firstLayer()->texture();
-			std::cout << "texture_number: " << tex->texture_number << "\n";
-			glBindTexture (GL_TEXTURE_2D, tex->texture_number);
-		} 
-		else {
-			goto swapAndRelease; // don't draw, leave window cleared
-		}*/
 		
 		// Draw a quad to put the texture on
 		glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
