@@ -22,24 +22,22 @@ class Doom3ModelSkin
 	typedef std::map<std::string, std::string> StringMap;
 	StringMap _remaps;
 	
-	// Associated model
-	std::string _model;
-	
 	// List of observers
 	ModuleObservers _observers;
 	
 public:
 
-	// Constructor
-	Doom3ModelSkin()
-	: _model("")
-	{}
-
+	/**
+	 * Attach a ModuleObserver.
+	 */
 	void attach(ModuleObserver& observer) {
 		_observers.attach(observer);
 		observer.realise();
 	}
 	
+	/**
+	 * Detach a ModuleObserver.
+	 */
 	void detach(ModuleObserver& observer) {
 		observer.unrealise();
 		_observers.detach(observer);
@@ -60,16 +58,6 @@ public:
 		}
 	}
   
-	// Return the model associated with this skin.
-	std::string getModel() {
-		return _model;
-	}
-	
-	// Set the model associated with this skin.
-	void setModel(const std::string& model) {
-		_model = model;
-	}
-	
 	// Add a remap pair to this skin
 	void addRemap(const std::string& src, const std::string& dst) {
 		_remaps.insert(StringMap::value_type(src, dst));
