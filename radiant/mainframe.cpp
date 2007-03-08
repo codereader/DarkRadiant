@@ -2880,7 +2880,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("BrushExportOBJ", FreeCaller<CallBrushExportOBJ>());
 	GlobalEventManager().addCommand("BrushExportCM", FreeCaller<selection::algorithm::createCMFromSelection>());
 
-	GlobalEventManager().addCommand("ShowCommandList", FreeCaller<ShowCommandListDialog>());
+	GlobalEventManager().addCommand("ShowCommandList", FreeCaller<ui::CommandList::show>());
 	GlobalEventManager().addCommand("About", FreeCaller<DoAbout>());
   
   Patch_registerCommands();

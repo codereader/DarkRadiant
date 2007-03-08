@@ -17,7 +17,7 @@
 
 namespace ui {
 
-CommandListDialog::CommandListDialog() :
+CommandList::CommandList() :
 	DialogWindow(CMDLISTDLG_WINDOW_TITLE, MainFrame_getWindow())
 {
 	setWindowSize(CMDLISTDLG_DEFAULT_SIZE_X, CMDLISTDLG_DEFAULT_SIZE_Y);
@@ -29,7 +29,7 @@ CommandListDialog::CommandListDialog() :
 	gtk_widget_show_all(_window);
 }
 
-void CommandListDialog::reloadList() {
+void CommandList::reloadList() {
 	gtk_list_store_clear(_listStore);
 	
 	// Instantiate the visitor class with the target list store
@@ -39,7 +39,7 @@ void CommandListDialog::reloadList() {
 	GlobalEventManager().foreachEvent(populator);
 }
 
-void CommandListDialog::populateWindow() {
+void CommandList::populateWindow() {
 	GtkHBox* hbox = GTK_HBOX(gtk_hbox_new(FALSE, 4));
 	gtk_widget_show(GTK_WIDGET(hbox));
 	gtk_container_add(GTK_CONTAINER(_window), GTK_WIDGET(hbox));
@@ -95,7 +95,7 @@ void CommandListDialog::populateWindow() {
 	}
 }
 
-std::string CommandListDialog::getSelectedCommand() {
+std::string CommandList::getSelectedCommand() {
 	GtkTreeIter iter;
 	GtkTreeModel* model;
 	
@@ -115,7 +115,7 @@ std::string CommandListDialog::getSelectedCommand() {
 	return "";
 }
 
-void CommandListDialog::assignShortcut() {
+void CommandList::assignShortcut() {
 	// Instantiate the helper class
 	ShortcutChooser chooser(_window);
 	
@@ -125,11 +125,11 @@ void CommandListDialog::assignShortcut() {
 	}
 }
 
-void CommandListDialog::callbackAssign(GtkWidget* widget, CommandListDialog* self) {
+void CommandList::callbackAssign(GtkWidget* widget, CommandList* self) {
 	self->assignShortcut();
 }
 
-gboolean CommandListDialog::callbackViewButtonPress(GtkWidget* widget, GdkEventButton* event, CommandListDialog* self) {
+gboolean CommandList::callbackViewButtonPress(GtkWidget* widget, GdkEventButton* event, CommandList* self) {
 	if (event->type == GDK_2BUTTON_PRESS) {
 		self->assignShortcut();
 	}
@@ -137,7 +137,7 @@ gboolean CommandListDialog::callbackViewButtonPress(GtkWidget* widget, GdkEventB
 	return false;
 }  
 
-void CommandListDialog::callbackClear(GtkWidget* widget, CommandListDialog* self) {
+void CommandList::callbackClear(GtkWidget* widget, CommandList* self) {
 	const std::string commandName = self->getSelectedCommand();
 	
 	if (commandName != "") {
@@ -147,13 +147,13 @@ void CommandListDialog::callbackClear(GtkWidget* widget, CommandListDialog* self
 	}
 }
 
-void CommandListDialog::callbackClose(GtkWidget* widget, CommandListDialog* self) {
+void CommandList::callbackClose(GtkWidget* widget, CommandList* self) {
 	// Call the DialogWindow::destroy method and remove self from heap
 	self->destroy();
 }
 
-} // namespace ui
-
-void ShowCommandListDialog() {
-	new ui::CommandListDialog(); // self-destructs in GTK callback
+void CommandList::show() {
+	new CommandList(); // self-destructs in GTK callback
 }
+
+} // namespace ui
