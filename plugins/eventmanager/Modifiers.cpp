@@ -8,7 +8,9 @@
 #include <boost/algorithm/string/split.hpp>
 
 // Constructor, loads the modifier nodes from the registry
-Modifiers::Modifiers() {
+Modifiers::Modifiers() :
+	_modifierState(0)
+{
 	loadModifierDefinitions();
 }
 
