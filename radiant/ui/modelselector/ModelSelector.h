@@ -87,6 +87,9 @@ private:
 	GtkWidget* createButtons();
 	GtkWidget* createInfoPanel();
 	
+	// Populate the tree view with models
+	void populateModels();
+	
 	// Initialise the GL widget, to avoid doing this every frame
 	void initialisePreview();
 	

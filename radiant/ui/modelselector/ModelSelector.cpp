@@ -89,6 +89,9 @@ ModelSelector::ModelSelector()
 	gtk_box_pack_start(GTK_BOX(vbx), hbx, TRUE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
+	
+	// Populate the tree of models
+	populateModels();
 }
 
 // Show the dialog and enter recursive main loop
@@ -112,31 +115,34 @@ ModelAndSkin ModelSelector::showAndBlock() {
 	return ModelAndSkin(_lastModel, _lastSkin);
 }
 
-// Static function to display the instance, and return the selected
-// model to the calling function
-
+// Static function to display the instance, and return the selected model to the 
+// calling function
 ModelAndSkin ModelSelector::chooseModel() {
-	static ModelSelector _selector;
-	return _selector.showAndBlock();
+	
+	// Static instance pointer
+	typedef boost::shared_ptr<ModelSelector> ModelSelectorPtr;
+	static ModelSelectorPtr _selector;
+	
+	// Attempt to construct the static instance. This could throw an exception
+	// if the population of models is aborted by the user.
+	try {
+		_selector = ModelSelectorPtr(new ModelSelector());
+	}
+	catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
+		// Do nothing, leave the instance pointer as invalid
+	}
+	
+	// Use the instance to select a model if it is valid, otherwise return
+	// empty strings
+	if (_selector)
+		return _selector->showAndBlock();
+	else
+		return ModelAndSkin("", "");
 }
 
 
 // Helper function to create the TreeView
 GtkWidget* ModelSelector::createTreeView() {
-
-	// Create a VFSTreePopulator for the treestore
-	gtkutil::VFSTreePopulator pop(_treeStore);
-	
-	// Use a ModelFileFunctor to add paths to the populator
-	ModelFileFunctor functor(pop);
-	GlobalFileSystem().forEachFile(MODELS_FOLDER, 
-								   "*", 
-								   makeCallback1(functor), 
-								   0);
-
-	// Fill in the column data
-	ModelDataInserter inserter;
-	pop.forEachNode(inserter);
 
 	// Create the treeview
 	GtkWidget* treeView = 
@@ -169,8 +175,25 @@ GtkWidget* ModelSelector::createTreeView() {
 	
 }
 
-// Create the buttons panel at bottom of dialog
+// Populate the tree view with models
+void ModelSelector::populateModels() {
 
+	// Create a VFSTreePopulator for the treestore
+	gtkutil::VFSTreePopulator pop(_treeStore);
+	
+	// Use a ModelFileFunctor to add paths to the populator
+	ModelFileFunctor functor(pop);
+	GlobalFileSystem().forEachFile(MODELS_FOLDER, 
+								   "*", 
+								   makeCallback1(functor), 
+								   0);
+	
+	// Fill in the column data
+	ModelDataInserter inserter;
+	pop.forEachNode(inserter);
+}
+
+// Create the buttons panel at bottom of dialog
 GtkWidget* ModelSelector::createButtons() {
 	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
 	
