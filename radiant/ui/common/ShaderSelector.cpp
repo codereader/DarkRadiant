@@ -231,34 +231,6 @@ namespace {
 			{
 				if (!name.empty() && boost::algorithm::istarts_with(name, (*i) + "/")) {
 					_populator.addPath(name);
-					/*// Prepare to find the path to the top-level parent of this texture entry
-					GtkTreePath* pathToParent = NULL;
-
-					// If this prefix hasn't been seen yet, add a top-level parent for it
-					if (_iterMap.find(*i) == _iterMap.end()) {
-						GtkTreeIter iter;
-						gtk_tree_store_append(_store, &iter, NULL);
-						gtk_tree_store_set(_store, &iter, 0, i->c_str(), 1, "", -1);
-						_iterMap[*i] = pathToParent = gtk_tree_model_get_path(GTK_TREE_MODEL(_store), &iter);
-					}
-
-					// Look up pathToParent in the map, if we didn't just add it
-					if (pathToParent == NULL) {
-						pathToParent = _iterMap.find(*i)->second;
-					}
-
-					// Get the parent iter from the pathToParent TreePath
-					GtkTreeIter parIter;
-					gtk_tree_model_get_iter(GTK_TREE_MODEL(_store), &parIter, pathToParent);
-				
-					// Add the texture entry
-					GtkTreeIter iter;
-					gtk_tree_store_append(_store, &iter, &parIter);
-					gtk_tree_store_set(_store, &iter, 
-										0, name.substr(i->length() + 1).c_str(), // display name
-										1, name.c_str(), // full shader name
-										-1);*/
-										
 					break; // don't consider any further prefixes
 				}
 			}
@@ -295,11 +267,6 @@ GtkWidget* ShaderSelector::createTreeView() {
 														NAME_COL,
 														IMAGE_COL));
 
-	/*// Single text column to display texture name	
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), 
-								gtkutil::TextColumn("Texture", 
-													NAME_COL));*/				
-	
 	// Get selection and connect the changed callback
 	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
 	g_signal_connect(G_OBJECT(_selection), 
