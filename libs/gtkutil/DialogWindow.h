@@ -22,6 +22,7 @@ public:
 	{
 		gtk_window_set_modal(GTK_WINDOW(_window), TRUE);
 	    gtk_window_set_position(GTK_WINDOW(_window), GTK_WIN_POS_CENTER_ON_PARENT);
+	    gtk_window_set_title(GTK_WINDOW(_window), title.c_str());
 	    
 		// Be sure that everything is properly destroyed upon window closure
 		g_signal_connect(G_OBJECT(_window), "delete-event", G_CALLBACK(onDelete), this);
