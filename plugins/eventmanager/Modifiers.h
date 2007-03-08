@@ -50,6 +50,10 @@ public:
 	 */
 	unsigned int getState() const;
 	
+	/** greebo: Set the state (used to reset the modifiers after a shortcut is found) 
+	 */
+	void setState(unsigned int state);
+	
 	/** greebo: Updates the internal modifierstate with the given EventKey.
 	 * 
 	 * @keyPress: TRUE, if the eventkey is related to an KeyPress event

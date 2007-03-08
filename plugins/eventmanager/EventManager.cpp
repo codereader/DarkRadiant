@@ -606,6 +606,14 @@ private:
 		
 		if (accelList.size() > 0) {
 			
+			// Release any modifiers
+			self->_modifiers.setState(0);
+			
+			// Fake a "non-modifier" event to the MouseEvents class 
+			GdkEventKey eventKey = *event;
+			eventKey.state &= ~(GDK_MOD1_MASK|GDK_SHIFT_MASK|GDK_CONTROL_MASK);
+			self->_mouseEvents.updateStatusText(&eventKey);
+			
 			// Pass the execute() call to all found accelerators
 			for (AcceleratorList::iterator i = accelList.begin(); i != accelList.end(); i++) {
 				i->keyDown();
