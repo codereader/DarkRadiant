@@ -22,7 +22,8 @@ Doom3EntityClass::Doom3EntityClass(const std::string& name,
   _model(""),
   _skin(""),
   _mins(mins),
-  _maxs(maxs)
+  _maxs(maxs),
+  _inheritanceResolved(false)
 {
 	// Set the entity colour to default, if none was specified
 	if (_colour == Vector3(-1, -1, -1)) {
@@ -85,11 +86,13 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 	if (_inheritanceResolved)
 		return;
 		
-	// Lookup the parent name and return if it is not set
+	// Lookup the parent name and return if it is not set. Also return if the
+	// parent name is the same as our own classname, to avoid infinite
+	// recursion.
 	std::string parName = getValueForKey("inherit");
-	if (parName.empty())
+	if (parName.empty() || parName == _name)
 		return;
-		
+
 	// Find the parent entity class
 	EntityClasses::iterator pIter = classmap.find(parName);
 	if (pIter != classmap.end()) {
