@@ -19,7 +19,8 @@
 		<queueSize value="64" />
 	</undo>
 	<lightInspector>
-		<window xPosition="100" yPosition="150" width="750" height="390" />
+		<window xPosition="100" yPosition="150" width="730" height="340" />
+		<instantApply value="1" />
 	</lightInspector>
 	<ModelSelector>
 		<!-- Size of the model preview, as a fraction of the screen height. The

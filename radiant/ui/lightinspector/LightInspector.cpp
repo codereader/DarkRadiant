@@ -34,6 +34,7 @@ namespace {
 	const char* NODIFFUSE_TEXT = "Skip diffuse lighting";
 	
 	const std::string RKEY_WINDOW_STATE = "user/ui/lightInspector/window";
+	const std::string RKEY_INSTANT_APPLY = "user/ui/lightInspector/instantApply";
 	
 	const char* LIGHT_PREFIX_XPATH = "game/light/texture//prefix";
 		
@@ -101,6 +102,7 @@ LightInspector::LightInspector() :
 
 	// Light colour
 	_colour = gtk_color_button_new();
+	g_signal_connect(G_OBJECT(_colour), "color-set", G_CALLBACK(_onColourChange), this);
 	gtk_box_pack_start(GTK_BOX(panels), 
 					   gtkutil::LeftAlignedLabel("<b>Colour</b>"), 
 					   FALSE, FALSE, 0);
@@ -122,8 +124,12 @@ LightInspector::LightInspector() :
 
 	_mainVBox = gtk_vbox_new(FALSE, 12);
 	gtk_box_pack_start(GTK_BOX(_mainVBox), hbx, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(_mainVBox), gtk_hseparator_new(), FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(_mainVBox), createButtons(), FALSE, FALSE, 0);
+	
+	// Create an apply button, if instant-apply is disabled
+	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "0") {
+		gtk_box_pack_start(GTK_BOX(_mainVBox), gtk_hseparator_new(), FALSE, FALSE, 0);
+		gtk_box_pack_end(GTK_BOX(_mainVBox), createButtons(), FALSE, FALSE, 0);
+	}
 
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
 	gtk_container_add(GTK_CONTAINER(_widget), _mainVBox);
@@ -167,6 +173,15 @@ void LightInspector::shaderSelectionChanged(
 	IShaderPtr ishader = _texSelector.getSelectedShader();
 	// Pass the call to the static member of ShaderSelector
 	ShaderSelector::displayLightShaderInfo(ishader, listStore);
+	
+	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1") {
+		std::string commandStr("setLightTexture: ");
+		commandStr += _texSelector.getSelection();
+		UndoableCommand command(commandStr.c_str());
+	
+		// Write the texture key
+		_entity->setKeyValue("texture", _texSelector.getSelection());
+	}
 }
 
 // Create the point light panel
@@ -218,6 +233,10 @@ GtkWidget* LightInspector::createOptionsPanel() {
 	_options["noshadows"] = gtk_check_button_new_with_label(NOSHADOW_TEXT);
 	_options["nospecular"] = gtk_check_button_new_with_label(NOSPECULAR_TEXT);
 	_options["nodiffuse"] = gtk_check_button_new_with_label(NODIFFUSE_TEXT);
+
+	g_signal_connect(G_OBJECT(_options["noshadows"]), "toggled", G_CALLBACK(_onOptionsToggle), this);
+	g_signal_connect(G_OBJECT(_options["nospecular"]), "toggled", G_CALLBACK(_onOptionsToggle), this);
+	g_signal_connect(G_OBJECT(_options["nodiffuse"]), "toggled", G_CALLBACK(_onOptionsToggle), this);
 
 	// Pack checkboxes into a VBox
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
@@ -337,7 +356,9 @@ void LightInspector::_onProjToggle(GtkWidget* b, LightInspector* self) {
 									 TRUE);	
 		gtk_widget_set_sensitive(self->_useStartEnd, FALSE);
 	}
-	self->setValuesOnEntity();
+	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1") {
+		self->setValuesOnEntity();
+	}
 }
 
 void LightInspector::_onPointToggle(GtkWidget* b, LightInspector* self) {
@@ -355,7 +376,9 @@ void LightInspector::_onPointToggle(GtkWidget* b, LightInspector* self) {
 									 FALSE);
 		gtk_widget_set_sensitive(self->_useStartEnd, FALSE);
 	}
-	self->setValuesOnEntity();
+	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1") {
+		self->setValuesOnEntity();
+	}
 }
 
 void LightInspector::_onOK(GtkWidget* w, LightInspector* self) {
@@ -494,6 +517,17 @@ void LightInspector::setValuesOnEntity() {
 	}
 }
 
+void LightInspector::_onOptionsToggle(GtkToggleButton* togglebutton, LightInspector *self) {
+	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1") {
+		self->setValuesOnEntity();
+	}
+}
+
+void LightInspector::_onColourChange(GtkColorButton* widget, LightInspector* self) {
+	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1") {
+		self->setValuesOnEntity();
+	}
+}
 
 gboolean LightInspector::onDelete(GtkWidget* widget, GdkEvent* event, LightInspector* self) {
 	// Toggle the visibility of the inspector window

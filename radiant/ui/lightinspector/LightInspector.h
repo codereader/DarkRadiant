@@ -10,7 +10,8 @@
 #include <string>
 
 /* FORWARD DECLS */
-
+typedef struct _GtkColorButton GtkColorButton;
+typedef struct _GtkToggleButton GtkToggleButton;
 class Entity;
 namespace gtkutil {
 	class Vector3Entry;
@@ -82,6 +83,8 @@ private:
 	static void _onPointToggle(GtkWidget*, LightInspector*);	
 	static void _onOK(GtkWidget*, LightInspector*);
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, LightInspector* self);
+	static void _onColourChange(GtkColorButton* widget, LightInspector* self); 
+	static void _onOptionsToggle(GtkToggleButton* togglebutton, LightInspector *self);
 
 	// Update the dialog widgets from keyvals on the entity
 	void getValuesFromEntity();
