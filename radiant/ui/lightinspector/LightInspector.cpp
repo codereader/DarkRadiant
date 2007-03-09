@@ -5,6 +5,7 @@
 #include "ieclass.h"
 #include "ishaders.h"
 #include "iregistry.h"
+#include "iundo.h"
 
 #include "mainframe.h"
 #include "gtkutil/TransientWindow.h"
@@ -425,6 +426,7 @@ void LightInspector::getValuesFromEntity() {
 
 // Set the keyvalues on the entity from the dialog widgets
 void LightInspector::setValuesOnEntity() {
+	UndoableCommand command("setLightProperties");
 	
 	// Set the "_color" keyvalue
 	GdkColor col;
