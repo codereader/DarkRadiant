@@ -103,7 +103,7 @@ NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entit
 		if (primitive == g_nullNode 
 			|| !Node_getMapImporter(primitive)->importTokens(tokeniser))
 		{
-        	throw std::runtime_error("Brush " 
+        	throw std::runtime_error("Primitive #" 
 				+ boost::lexical_cast<std::string>(count_primitives) 
 				+ ": parse error\n");
 		}

@@ -267,16 +267,42 @@ inline void Tokeniser_unexpectedError(Tokeniser& tokeniser, const char* token, c
   globalErrorStream() << Unsigned(tokeniser.getLine()) << ":" << Unsigned(tokeniser.getColumn()) << ": parse error at '" << (token != 0 ? token : "#EOF") << "': expected '" << expected << "'\n";
 }
 
+/** greebo: Tries to parse the next token retrieved from <tokeniser>
+ * 			and stores the value into the given float <f>.
+ * 
+ * @returns: TRUE if the float could be set, this is almost always the case
+ * 			 except for NULL tokens. 
+ * 
+ * 			If 1.#INF is found, the result will be 65535, no error is thrown
+ * 			If -1.#INF is found, the result will be -65535, no error is thrown
+ * 			
+ */
+inline bool Tokeniser_getFloat(Tokeniser& tokeniser, float& f) {
+	const char* token = tokeniser.getToken();
 
-inline bool Tokeniser_getFloat(Tokeniser& tokeniser, float& f)
-{
-  const char* token = tokeniser.getToken();
-  if(token != 0 && string_parse_float(token, f))
-  {
-    return true;
-  }
-  Tokeniser_unexpectedError(tokeniser, token, "#number");
-  return false;
+	if (token != NULL) {
+		// Try to parse the string
+		if (string_parse_float(token, f)) {
+			return true;
+		}
+		else {
+			if (std::string(token) == "1.INF") {
+				f = 65535.0f;
+			}
+			else if (std::string(token) == "-1.INF"){
+				f = -65535.0f;
+			}
+			else {
+				f= 0.0f;
+			}
+			return true;
+		}
+	}
+	else {
+		// token is NULL Throw an EOF error 
+		Tokeniser_unexpectedError(tokeniser, token, "#number");
+		return false;
+	}
 }
 
 inline bool Tokeniser_getDouble(Tokeniser& tokeniser, double& f)
