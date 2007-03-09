@@ -41,6 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/colourscheme/ColourSchemeManager.h"
 #include "ui/colourscheme/ColourSchemeEditor.h"
 #include "ui/menu/FiltersMenu.h"
+#include "ui/transform/TransformDialog.h"
 #include "ui/overlay/OverlayDialog.h"
 #include "ui/objectives/ObjectivesEditor.h"
 #include "selection/algorithm/Shader.h"
@@ -2590,6 +2591,7 @@ void MainFrame::Shutdown()
 	ui::PatchInspector::Instance().shutdown();
 	ui::LightInspector::Instance().shutdown();
 	ui::TexTool::Instance().shutdown();
+	ui::TransformDialog::Instance().shutdown();
 	
 	// Stop the AutoSaver class from being called
 	map::AutoSaver().stopTimer();
@@ -2824,6 +2826,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("MirrorSelectionZ", FreeCaller<Selection_Flipz>());
 	GlobalEventManager().addCommand("RotateSelectionZ", FreeCaller<Selection_Rotatez>());
 	
+	GlobalEventManager().addCommand("TransformDialog", FreeCaller<ui::TransformDialog::toggle>());
 	GlobalEventManager().addCommand("ArbitraryRotation", FreeCaller<DoRotateDlg>());
 	GlobalEventManager().addCommand("ArbitraryScale", FreeCaller<DoScaleDlg>());
 	

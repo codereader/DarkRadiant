@@ -29,6 +29,15 @@
     </ModelSelector>
 	<showAllLightRadii value="0"/>
 	<alwaysShowLightVertices value="1"/>
+	<transformDialog>
+		<window xPosition="150" yPosition="200" width="280" height="242" />
+		<rotXStep value="0" />
+		<rotYStep value="0" />
+		<rotZStep value="0" />
+		<scaleXStep value="1.0" />
+		<scaleYStep value="1.0" />
+		<scaleZStep value="1.0" />
+	</transformDialog>
 	<textures>
 		<hideUnused value="0" />
 		<defaultTextureScale value="0.5" />
