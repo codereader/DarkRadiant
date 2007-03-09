@@ -205,6 +205,17 @@ inline void Patch_exportParams(const Patch& patch, std::ostream& os)
 	os << "0 0 0 )\n";
 }
 
+inline void Patch_writeFloat(const float& f, std::ostream& os) {
+	// Check for NaN
+	if (f == f) {
+		os << f;
+	}
+	else {
+		// isNaN, write 0
+		os << "0";
+	}
+} 
+
 inline void Patch_exportMatrix(const Patch& patch, std::ostream& os)
 {
 	// Write matrix
@@ -214,12 +225,17 @@ inline void Patch_exportMatrix(const Patch& patch, std::ostream& os)
 	    os << "( ";
 		for(std::size_t r=0; r<patch.getHeight(); r++) {
 		    os << "( ";
-      		os << patch.ctrlAt(r,c).m_vertex[0] << " ";
-      		os << patch.ctrlAt(r,c).m_vertex[1] << " ";
-      		os << patch.ctrlAt(r,c).m_vertex[2] << " ";
-			os << patch.ctrlAt(r,c).m_texcoord[0] << " ";
-			os << patch.ctrlAt(r,c).m_texcoord[1] << " ";
-		    os << ") ";
+      		Patch_writeFloat(patch.ctrlAt(r,c).m_vertex[0], os); 
+      		os << " ";
+      		Patch_writeFloat(patch.ctrlAt(r,c).m_vertex[1], os); 
+      		os << " ";
+      		Patch_writeFloat(patch.ctrlAt(r,c).m_vertex[2], os); 
+      		os << " ";
+      		Patch_writeFloat(patch.ctrlAt(r,c).m_texcoord[0], os); 
+      		os << " ";
+      		Patch_writeFloat(patch.ctrlAt(r,c).m_texcoord[1], os); 
+      		os << " ";
+      		os << ") ";
 		}
 	    os << ")\n";
 	}
