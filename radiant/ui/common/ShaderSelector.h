@@ -32,6 +32,9 @@ namespace ui
  * The client class has to derive from the abstract ShaderSelector::Client class
  * providing an interface to allow the update of the info liststore.
  * 
+ * For convenience purposes, this class provides two static members that
+ * allow populating the infostore widget with common lightshader/shader information.
+ * 
  */
 class ShaderSelector
 {
@@ -102,6 +105,15 @@ public:
 	
 	// Get the selected IShader
 	IShaderPtr getSelectedShader();
+	
+	/** greebo: Static info display function (can be used by other UI classes as well
+	 * 			to allow code reuse).
+	 */
+	static void displayShaderInfo(IShaderPtr shader, GtkListStore* listStore);
+	
+	/** greebo: Populates the given listStore with the light shader information.
+	 */
+	static void displayLightShaderInfo(IShaderPtr shader, GtkListStore* listStore);
 	
 private:
 

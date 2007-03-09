@@ -80,32 +80,10 @@ void ShaderChooser::shaderSelectionChanged(const std::string& shaderName, GtkLis
 		_client->shaderSelectionChanged(shaderName);
 	}
 	
-	// Update the infostore in the ShaderSelector
-	GtkTreeIter iter;
-	
 	// Get the shader, and its image map if possible
 	IShaderPtr shader = _selector.getSelectedShader();
-	gtk_list_store_append(listStore, &iter);
-	gtk_list_store_set(listStore, &iter, 
-					   0, "<b>Shader</b>",
-					   1, shader->getName(),
-					   -1);
-	
-	TexturePtr tex = shader->getDiffuse();
-	std::string dimStr = intToStr(tex->width) + " x " + intToStr(tex->height);
-	
-	gtk_list_store_append(listStore, &iter);
-	gtk_list_store_set(listStore, &iter,
-					   0, "<b>Diffuse</b>",
-					   1, dimStr.c_str(),
-					   -1);
-					   
-	// Containing MTR	
-	gtk_list_store_append(listStore, &iter);
-	gtk_list_store_set(listStore, &iter, 
-					   0, "<b>Defined in</b>",
-					   1, shader->getShaderFileName(),
-					   -1);
+	// Pass the call to the static member
+	ShaderSelector::displayShaderInfo(shader, listStore);
 }
 
 void ShaderChooser::revertShader() {
