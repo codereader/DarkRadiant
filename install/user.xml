@@ -115,6 +115,7 @@
 		</patchInspector>
 	</patch>
 	<camera>
+		<toggleFreeMove value="1" />
 		<enableCubicClipping value="1" />
 		<discreteMovement value="1" />
 		<invertMouseVerticalAxis value="0" />

@@ -54,6 +54,7 @@ public:
 	guint m_selection_button_release_handler;
 	guint m_selection_motion_handler;
 	guint m_freelook_button_press_handler;
+	guint m_freelook_button_release_handler;
 	guint m_sizeHandler;
 	guint m_exposeHandler;
 

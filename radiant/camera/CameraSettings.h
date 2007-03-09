@@ -21,6 +21,7 @@ namespace {
 	const std::string RKEY_ENABLE_FARCLIP = RKEY_CAMERA_ROOT + "/enableCubicClipping";
 	const std::string RKEY_DRAWMODE = RKEY_CAMERA_ROOT + "/drawMode";
 	const std::string RKEY_SOLID_SELECTION_BOXES = "user/ui/xyview/solidSelectionBoxes";
+	const std::string RKEY_TOGGLE_FREE_MOVE = RKEY_CAMERA_ROOT + "/toggleFreeMove";
 	const std::string RKEY_CAMERA_WINDOW_STATE = RKEY_CAMERA_ROOT + "/window";
 	
 	enum CameraDrawMode {
@@ -48,6 +49,9 @@ class CameraSettings :
 	int _cubicScale;
 	bool _farClipEnabled;
 	bool _solidSelectionBoxes;
+	// This is TRUE if the mousebutton must be held to stay in freelook mode 
+	// instead of enabling it by clicking and clicking again to disable
+	bool _toggleFreelook;
 	
 public:
 	CameraSettings();
@@ -63,6 +67,7 @@ public:
 	bool invertMouseVerticalAxis() const;
 	bool discreteMovement() const;
 	bool solidSelectionBoxes() const;
+	bool toggleFreelook() const;
 	
 	// Sets/returns the draw mode (wireframe, solid, textured, lighting)
 	CameraDrawMode getMode() const;
