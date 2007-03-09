@@ -215,7 +215,10 @@ mapdoom3_env.Depends(mapdoom3_lib, gtkutil_lib)
 mapdoom3_env.Install(INSTALL + '/modules', mapdoom3_lib)
 
 model_env = module_env.Copy()
-model_lst = build_list('plugins/model', 'plugin.cpp model.cpp RenderablePicoModel.cpp RenderablePicoSurface.cpp')
+model_lst = build_list('plugins/model', 
+					   'plugin.cpp model.cpp \
+					   RenderablePicoModel.cpp RenderablePicoSurface.cpp \
+					   PicoModelInstance.cpp')
 model_env.Append(LIBS = ['mathlib', 'picomodel', 'math'])
 model_lib = model_env.SharedLibrary(target='model', source=model_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
 model_env.Depends(model_lib, mathlib_lib)
