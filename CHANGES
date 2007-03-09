@@ -1,3 +1,7 @@
+09/03/2007
+greebo
+- Replaced ArbitraryRotation and ArbitraryScale dialogs with new TransformationDialog.
+
 08/03/2007
 greebo
 - Rewrote broken "Find & Replace Shader" dialog.
