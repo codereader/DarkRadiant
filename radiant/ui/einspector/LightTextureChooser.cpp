@@ -84,45 +84,8 @@ void LightTextureChooser::shaderSelectionChanged(
 {
 	// Get the shader, and its image map if possible
 	IShaderPtr shader = _selector.getSelectedShader();
-
-	const ShaderLayer* first = shader->firstLayer();
-	std::string texName = "None";
-	if (first != NULL) {
-		TexturePtr tex = shader->firstLayer()->texture();
-		texName = tex->name;
-	}
-
-	GtkTreeIter iter;
-	gtk_list_store_append(listStore, &iter);
-	gtk_list_store_set(listStore, &iter, 
-					   0, "<b>Image map</b>",
-					   1, texName.c_str(),
-					   -1);
-
-	// Name of file containing the shader
-	gtk_list_store_append(listStore, &iter);
-	gtk_list_store_set(listStore, &iter, 
-					   0, "<b>Defined in</b>",
-					   1, shader->getShaderFileName(),
-					   -1);
-
-	// Light types, from the IShader
-
-	std::string lightType;
-	if (shader->isAmbientLight())
-		lightType.append("ambient ");
-	if (shader->isBlendLight())
-		lightType.append("blend ");
-	if (shader->isFogLight())
-		lightType.append("fog");
-	if (lightType.size() == 0)
-		lightType.append("-");
-	
-	gtk_list_store_append(listStore, &iter);
-	gtk_list_store_set(listStore, &iter, 
-					   0, "<b>Light flags</b>",
-					   1, lightType.c_str(),
-					   -1);
+	// Pass the call to the static member light shader info
+	ShaderSelector::displayLightShaderInfo(shader, listStore);
 }
 
 /* GTK CALLBACKS */

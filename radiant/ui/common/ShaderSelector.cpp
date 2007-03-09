@@ -9,6 +9,7 @@
 #include "gtkutil/VFSTreePopulator.h"
 #include "signal/isignal.h"
 #include "texturelib.h"
+#include "string/string.h"
 #include "ishaders.h"
 #include "iregistry.h"
 
@@ -397,6 +398,75 @@ void ShaderSelector::_onExpose(GtkWidget* widget,
 		// Update GtkGlExt buffer
 		glwidget_swap_buffers(widget);
 	}
+}
+
+void ShaderSelector::displayShaderInfo(IShaderPtr shader, GtkListStore* listStore) {
+	// Update the infostore in the ShaderSelector
+	GtkTreeIter iter;
+	
+	gtk_list_store_append(listStore, &iter);
+	gtk_list_store_set(listStore, &iter, 
+					   0, "<b>Shader</b>",
+					   1, shader->getName(),
+					   -1);
+	
+	TexturePtr tex = shader->getDiffuse();
+	std::string dimStr = intToStr(tex->width) + " x " + intToStr(tex->height);
+	
+	gtk_list_store_append(listStore, &iter);
+	gtk_list_store_set(listStore, &iter,
+					   0, "<b>Diffuse</b>",
+					   1, dimStr.c_str(),
+					   -1);
+					   
+	// Containing MTR	
+	gtk_list_store_append(listStore, &iter);
+	gtk_list_store_set(listStore, &iter, 
+					   0, "<b>Defined in</b>",
+					   1, shader->getShaderFileName(),
+					   -1);
+}
+
+void ShaderSelector::displayLightShaderInfo(IShaderPtr shader, GtkListStore* listStore) {
+	
+	const ShaderLayer* first = shader->firstLayer();
+	std::string texName = "None";
+	if (first != NULL) {
+		TexturePtr tex = shader->firstLayer()->texture();
+		texName = tex->name;
+	}
+
+	GtkTreeIter iter;
+	gtk_list_store_append(listStore, &iter);
+	gtk_list_store_set(listStore, &iter, 
+					   0, "<b>Image map</b>",
+					   1, texName.c_str(),
+					   -1);
+
+	// Name of file containing the shader
+	gtk_list_store_append(listStore, &iter);
+	gtk_list_store_set(listStore, &iter, 
+					   0, "<b>Defined in</b>",
+					   1, shader->getShaderFileName(),
+					   -1);
+
+	// Light types, from the IShader
+
+	std::string lightType;
+	if (shader->isAmbientLight())
+		lightType.append("ambient ");
+	if (shader->isBlendLight())
+		lightType.append("blend ");
+	if (shader->isFogLight())
+		lightType.append("fog");
+	if (lightType.size() == 0)
+		lightType.append("-");
+	
+	gtk_list_store_append(listStore, &iter);
+	gtk_list_store_set(listStore, &iter, 
+					   0, "<b>Light flags</b>",
+					   1, lightType.c_str(),
+					   -1);
 }
 
 // Callback for selection changed

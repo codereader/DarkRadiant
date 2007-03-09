@@ -15,6 +15,8 @@
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/dialog.h"
 
+#include "ui/common/ShaderChooser.h" // for static displayLightInfo() function
+
 #include <gtk/gtk.h>
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -62,7 +64,7 @@ LightInspector::LightInspector() :
 	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
 	_widget(gtkutil::TransientWindow(LIGHTINSPECTOR_TITLE, MainFrame_getWindow(), false)),
 	_isProjected(false),
-	_texSelector(NULL, getPrefixList(), true),
+	_texSelector(this, getPrefixList(), true),
 	_entity(NULL)
 {
 	gtk_window_set_type_hint(GTK_WINDOW(_widget), GDK_WINDOW_TYPE_HINT_DIALOG);
@@ -155,6 +157,16 @@ void LightInspector::shutdown() {
 	
 	GlobalSelectionSystem().removeObserver(this);
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(_widget));
+}
+
+void LightInspector::shaderSelectionChanged(
+	const std::string& shader, 
+	GtkListStore* listStore) 
+{
+	// Get the shader, and its image map if possible
+	IShaderPtr ishader = _texSelector.getSelectedShader();
+	// Pass the call to the static member of ShaderSelector
+	ShaderSelector::displayLightShaderInfo(ishader, listStore);
 }
 
 // Create the point light panel
@@ -325,6 +337,7 @@ void LightInspector::_onProjToggle(GtkWidget* b, LightInspector* self) {
 									 TRUE);	
 		gtk_widget_set_sensitive(self->_useStartEnd, FALSE);
 	}
+	self->setValuesOnEntity();
 }
 
 void LightInspector::_onPointToggle(GtkWidget* b, LightInspector* self) {
@@ -342,6 +355,7 @@ void LightInspector::_onPointToggle(GtkWidget* b, LightInspector* self) {
 									 FALSE);
 		gtk_widget_set_sensitive(self->_useStartEnd, FALSE);
 	}
+	self->setValuesOnEntity();
 }
 
 void LightInspector::_onOK(GtkWidget* w, LightInspector* self) {

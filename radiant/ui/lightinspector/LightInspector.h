@@ -24,7 +24,8 @@ namespace ui
  */
 
 class LightInspector :
-	public SelectionSystem::Observer
+	public SelectionSystem::Observer,
+	public ShaderSelector::Client
 {
 	// Main dialog widget
 	GtkWidget* _widget;
@@ -87,6 +88,11 @@ private:
 	
 	// Write the widget contents to the entity
 	void setValuesOnEntity();
+	
+	/** greebo: Gets called when the shader selection gets changed, so that
+	 * 			the displayed texture info can be updated.
+	 */
+	void shaderSelectionChanged(const std::string& shader, GtkListStore* listStore);
 	
 public:
 
