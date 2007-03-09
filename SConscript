@@ -400,6 +400,7 @@ radiant_src = [
 'selection/algorithm/Primitives.cpp',
 'selection/algorithm/Shader.cpp',
 'selection/algorithm/Group.cpp',
+'selection/algorithm/Transformation.cpp',
 'patch/Patch.cpp',
 'patch/PatchBezier.cpp',
 'patch/PatchInstance.cpp',

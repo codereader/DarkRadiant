@@ -53,6 +53,26 @@ inline Quaternion quaternion_for_unit_vectors(const Vector3& from, const Vector3
   return Quaternion(from.crossProduct(to), static_cast<float>(from.dot(to)));
 }
 
+/** greebo: This yields a rotation quat for the given euler angles.
+ * 			Each component of the given vector refers to an angle (in degrees)
+ * 			of one of the x-/y-/z-axis.
+ */
+inline Quaternion quaternion_for_euler_xyz_degrees(const Vector3& eulerXYZ) {
+	double cx = cos(degrees_to_radians(eulerXYZ[0] * 0.5));
+	double sx = sin(degrees_to_radians(eulerXYZ[0] * 0.5));
+	double cy = cos(degrees_to_radians(eulerXYZ[1] * 0.5));
+	double sy = sin(degrees_to_radians(eulerXYZ[1] * 0.5));
+	double cz = cos(degrees_to_radians(eulerXYZ[2] * 0.5));
+	double sz = sin(degrees_to_radians(eulerXYZ[2] * 0.5));
+
+	return Quaternion(
+		cz * cy * sx - sz * sy * cx,
+		cz * sy * cx + sz * cy * sx,
+		sz * cy * cx - cz * sy * sx,
+		cz * cy * cx + sz * sy * sx
+	);
+}
+
 inline Quaternion quaternion_for_axisangle(const Vector3& axis, double angle)
 {
   angle *= 0.5;
