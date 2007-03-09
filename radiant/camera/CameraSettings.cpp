@@ -16,7 +16,8 @@ CameraSettings::CameraSettings() :
 	_cameraDrawMode(drawTexture),
 	_cubicScale(GlobalRegistry().getInt(RKEY_CUBIC_SCALE)),
 	_farClipEnabled(GlobalRegistry().get(RKEY_ENABLE_FARCLIP) == "1"),
-	_solidSelectionBoxes(GlobalRegistry().get(RKEY_SOLID_SELECTION_BOXES) == "1")
+	_solidSelectionBoxes(GlobalRegistry().get(RKEY_SOLID_SELECTION_BOXES) == "1"),
+	_toggleFreelook(GlobalRegistry().get(RKEY_TOGGLE_FREE_MOVE) == "1")
 {
 	// Constrain the cubic scale to a fixed value
 	if (_cubicScale > MAX_CUBIC_SCALE) {
@@ -34,6 +35,7 @@ CameraSettings::CameraSettings() :
 	GlobalRegistry().addKeyObserver(this, RKEY_ENABLE_FARCLIP);
 	GlobalRegistry().addKeyObserver(this, RKEY_DRAWMODE);
 	GlobalRegistry().addKeyObserver(this, RKEY_SOLID_SELECTION_BOXES);
+	GlobalRegistry().addKeyObserver(this, RKEY_TOGGLE_FREE_MOVE);
 	
 	// greebo: Register this class in the preference system so that the constructPreferencePage() gets called.
 	GlobalPreferenceSystem().addConstructor(this);
@@ -48,6 +50,7 @@ void CameraSettings::constructPreferencePage(PreferenceGroup& group) {
     page->appendSlider("Rotation Speed", RKEY_ROTATION_SPEED, TRUE, 3, 1, 180, 1, 10, 10);
     
 	// Add the checkboxes and connect them with the registry key and the according observer 
+	page->appendCheckBox("", "Freelook mode can be toggled", RKEY_TOGGLE_FREE_MOVE);
 	page->appendCheckBox("", "Discrete movement (non-freelook mode)", RKEY_DISCRETE_MOVEMENT);
 	page->appendCheckBox("", "Enable far-clip plane (hides distant objects)", RKEY_ENABLE_FARCLIP);
 	
@@ -102,6 +105,7 @@ void CameraSettings::keyChanged() {
 		_callbackActive = true;
 		
 		// Load the values from the registry
+		_toggleFreelook = GlobalRegistry().get(RKEY_TOGGLE_FREE_MOVE) == "1";
 		_movementSpeed = GlobalRegistry().getInt(RKEY_MOVEMENT_SPEED);
 		_angleSpeed = GlobalRegistry().getInt(RKEY_ROTATION_SPEED);
 		_invertMouseVerticalAxis = (GlobalRegistry().get(RKEY_INVERT_MOUSE_VERTICAL_AXIS) == "1");
@@ -150,6 +154,10 @@ void CameraSettings::setMode(const CameraDrawMode& mode) {
 void CameraSettings::toggleLightingMode() {
 	// switch between textured and lighting mode
 	setMode((_cameraDrawMode == drawLighting) ? drawTexture : drawLighting);
+}
+
+bool CameraSettings::toggleFreelook() const {
+	return _toggleFreelook;
 }
 
 bool CameraSettings::farClipEnabled() const {

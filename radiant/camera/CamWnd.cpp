@@ -168,6 +168,16 @@ gboolean disable_freelook_button_press(GtkWidget* widget, GdkEventButton* event,
 	return FALSE;
 }
 
+gboolean disable_freelook_button_release(GtkWidget* widget, GdkEventButton* event, CamWnd* camwnd) {
+	if (event->type == GDK_BUTTON_RELEASE) {
+		if (GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camDisableFreeLookMode, event)) {
+			camwnd->disableFreeMove();
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
 // ---------- CamWnd Implementation --------------------------------------------------
 
 CamWnd::CamWnd() :
@@ -184,7 +194,8 @@ CamWnd::CamWnd() :
 	m_selection_button_press_handler(0),
 	m_selection_button_release_handler(0),
 	m_selection_motion_handler(0),
-	m_freelook_button_press_handler(0)
+	m_freelook_button_press_handler(0),
+	m_freelook_button_release_handler(0)
 {
 	GlobalWindowObservers_add(m_window_observer);
 	GlobalWindowObservers_connectWidget(m_gl_widget);
@@ -263,7 +274,12 @@ void CamWnd::enableFreeMove() {
 	m_selection_button_release_handler = g_signal_connect(G_OBJECT(m_gl_widget), "button_release_event", G_CALLBACK(selection_button_release_freemove), m_window_observer);
 	m_selection_motion_handler = g_signal_connect(G_OBJECT(m_gl_widget), "motion_notify_event", G_CALLBACK(selection_motion_freemove), m_window_observer);
 
-	m_freelook_button_press_handler = g_signal_connect(G_OBJECT(m_gl_widget), "button_press_event", G_CALLBACK(disable_freelook_button_press), this);
+	if (getCameraSettings()->toggleFreelook()) {
+		m_freelook_button_press_handler = g_signal_connect(G_OBJECT(m_gl_widget), "button_press_event", G_CALLBACK(disable_freelook_button_press), this);
+	}
+	else {
+		m_freelook_button_release_handler = g_signal_connect(G_OBJECT(m_gl_widget), "button-release-event", G_CALLBACK(disable_freelook_button_release), this);
+	}
 
 	enableFreeMoveEvents();
 
@@ -285,7 +301,12 @@ void CamWnd::disableFreeMove() {
 	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_selection_button_release_handler);
 	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_selection_motion_handler);
 
-	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_freelook_button_press_handler);	
+	if (getCameraSettings()->toggleFreelook()) {
+		g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_freelook_button_press_handler);
+	}
+	else {
+		g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_freelook_button_release_handler);
+	}	
 
 	addHandlersMove();
 
