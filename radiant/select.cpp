@@ -677,41 +677,6 @@ void Select_FlipTexture(unsigned int flipAxis) {
 	SceneChangeNotify();
 }
 
-// TTimo modified to handle shader architecture:
-// expects shader names at input, comparison relies on shader names .. texture names no longer relevant
-/*void FindReplaceTextures(const char* pFind, const char* pReplace, bool bSelected)
-{
-  if(!texdef_name_valid(pFind))
-  {
-    globalErrorStream() << "FindReplaceTextures: invalid texture name: '" << pFind << "', aborted\n";
-    return;
-  }
-  if(!texdef_name_valid(pReplace))
-  {
-    globalErrorStream() << "FindReplaceTextures: invalid texture name: '" << pReplace << "', aborted\n";
-    return;
-  }
-
-  StringOutputStream command;
-  command << "textureFindReplace -find " << pFind << " -replace " << pReplace;
-  UndoableCommand undo(command.c_str());
-
-  if(bSelected)
-  {
-    if(GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
-    {
-      Scene_BrushFindReplaceShader_Selected(GlobalSceneGraph(), pFind, pReplace);
-      Scene_PatchFindReplaceShader_Selected(GlobalSceneGraph(), pFind, pReplace);
-    }
-    Scene_BrushFindReplaceShader_Component_Selected(GlobalSceneGraph(), pFind, pReplace);
-  }
-  else
-  {
-    Scene_BrushFindReplaceShader(GlobalSceneGraph(), pFind, pReplace);
-    Scene_PatchFindReplaceShader(GlobalSceneGraph(), pFind, pReplace);
-  }
-}*/
-
 typedef std::vector<std::string> Classnames;
 
 bool classnames_match_entity(const Classnames& classnames, Entity* entity)
@@ -999,36 +964,6 @@ void Selection_destroy()
 #include <gtk/gtktable.h>
 #include <gtk/gtklabel.h>
 #include <gdk/gdkkeysyms.h>
-
-
-inline Quaternion quaternion_for_euler_xyz_degrees(const Vector3& eulerXYZ)
-{
-#if 0
-  return quaternion_for_matrix4_rotation(matrix4_rotation_for_euler_xyz_degrees(eulerXYZ));
-#elif 0
-  return quaternion_multiplied_by_quaternion(
-    quaternion_multiplied_by_quaternion(
-      quaternion_for_z(degrees_to_radians(eulerXYZ[2])),
-      quaternion_for_y(degrees_to_radians(eulerXYZ[1]))
-    ),
-    quaternion_for_x(degrees_to_radians(eulerXYZ[0]))
-  );
-#elif 1
-  double cx = cos(degrees_to_radians(eulerXYZ[0] * 0.5));
-  double sx = sin(degrees_to_radians(eulerXYZ[0] * 0.5));
-  double cy = cos(degrees_to_radians(eulerXYZ[1] * 0.5));
-  double sy = sin(degrees_to_radians(eulerXYZ[1] * 0.5));
-  double cz = cos(degrees_to_radians(eulerXYZ[2] * 0.5));
-  double sz = sin(degrees_to_radians(eulerXYZ[2] * 0.5));
-
-  return Quaternion(
-    cz * cy * sx - sz * sy * cx,
-    cz * sy * cx + sz * cy * sx,
-    sz * cy * cx - cz * sy * sx,
-    cz * cy * cx + sz * sy * sx
-  );
-#endif
-}
 
 struct RotateDialog
 {

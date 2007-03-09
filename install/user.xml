@@ -31,12 +31,12 @@
 	<alwaysShowLightVertices value="1"/>
 	<transformDialog>
 		<window xPosition="150" yPosition="200" width="280" height="242" />
-		<rotXStep value="0" />
-		<rotYStep value="0" />
-		<rotZStep value="0" />
-		<scaleXStep value="1.0" />
-		<scaleYStep value="1.0" />
-		<scaleZStep value="1.0" />
+		<rotXStep value="45" />
+		<rotYStep value="45" />
+		<rotZStep value="45" />
+		<scaleXStep value="1.1" />
+		<scaleYStep value="1.1" />
+		<scaleZStep value="1.1" />
 	</transformDialog>
 	<textures>
 		<hideUnused value="0" />

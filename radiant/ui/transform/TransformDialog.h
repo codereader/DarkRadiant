@@ -32,6 +32,8 @@ class TransformDialog :
 	
 	// The entry fields
 	struct EntryRow {
+		bool isRotator;
+		int axis;
 		GtkWidget* hbox;
 		GtkWidget* label;
 		GtkWidget* step;
@@ -43,7 +45,9 @@ class TransformDialog :
 	EntryRowMap _entries;
 	
 	GtkWidget* _rotateLabel;
+	GtkTable* _rotateTable;
 	GtkWidget* _scaleLabel;
+	GtkTable* _scaleTable;
 	
 	// The reference to the SelectionInfo (number of patches, etc.)
 	const SelectionInfo& _selectionInfo;
@@ -98,8 +102,13 @@ private:
 	void populateWindow();
 
 	/** greebo: Helper method that creates a single row
+	 * 
+	 * @row: the row index of <table> where the widgets should be packed into.
+	 * @isRotator: set to true if a rotator row is to be created.
+	 * @axis: the axis this transformation is referring to.
 	 */
-	EntryRow createEntryRow(const std::string& label, GtkTable* table, int row); 
+	EntryRow createEntryRow(const std::string& label, GtkTable* table, 
+							int row, bool isRotator, int axis);
 	
 	// Callbacks to catch the scale/rotation button clicks
 	static void onClickSmaller(GtkWidget* button, EntryRow* row);
