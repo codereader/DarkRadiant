@@ -286,10 +286,10 @@ inline bool Tokeniser_getFloat(Tokeniser& tokeniser, float& f) {
 			return true;
 		}
 		else {
-			if (std::string(token) == "1.INF") {
+			if (std::string(token) == "1.#INF") {
 				f = 65535.0f;
 			}
-			else if (std::string(token) == "-1.INF"){
+			else if (std::string(token) == "-1.#INF"){
 				f = -65535.0f;
 			}
 			else {
