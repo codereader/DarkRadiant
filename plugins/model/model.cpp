@@ -23,20 +23,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "picomodel.h"
 #include "RenderablePicoModel.h"
+#include "PicoModelInstance.h"
 
 #include "iarchive.h"
 #include "idatastream.h"
 #include "imodel.h"
-#include "modelskin.h"
 
-#include "cullable.h"
-#include "renderable.h"
-#include "selectable.h"
-
-#include "math/frustum.h"
 #include "generic/static.h"
 #include "shaderlib.h"
-#include "scenelib.h"
 #include "instancelib.h"
 #include "transformlib.h"
 #include "traverselib.h"
@@ -46,144 +40,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/replace.hpp>
-#include <boost/utility.hpp>
 
 #include <string>
-
-class PicoModelInstance :
-  public boost::noncopyable,
-  public scene::Instance,
-  public Renderable,
-  public SelectionTestable,
-  public LightCullable,
-  public SkinnedModel
-{
-  class TypeCasts
-  {
-    InstanceTypeCastTable m_casts;
-  public:
-    TypeCasts()
-    {
-      InstanceContainedCast<PicoModelInstance, Bounded>::install(m_casts);
-      InstanceContainedCast<PicoModelInstance, Cullable>::install(m_casts);
-      InstanceStaticCast<PicoModelInstance, Renderable>::install(m_casts);
-      InstanceStaticCast<PicoModelInstance, SelectionTestable>::install(m_casts);
-      InstanceStaticCast<PicoModelInstance, SkinnedModel>::install(m_casts);
-    }
-    InstanceTypeCastTable& get()
-    {
-      return m_casts;
-    }
-  };
-
-	// Reference to the actual model
-	model::RenderablePicoModel& _picoModel;
-
-	// The light list from the shader cache when we attach
-	const LightList& _lightList;
-	
-public:
-
-  typedef LazyStatic<TypeCasts> StaticTypeCasts;
-
-  void* m_test;
-
-  Bounded& get(NullType<Bounded>)
-  {
-    return _picoModel;
-  }
-  Cullable& get(NullType<Cullable>)
-  {
-    return _picoModel;
-  }
-
-	// Lights changed function
-	void lightsChanged() {
-		_lightList.lightsChanged();
-	}
-	
-  	typedef MemberCaller<PicoModelInstance, &PicoModelInstance::lightsChanged> 
-  	LightsChangedCaller;
-
-	// Skin changed notify (from SkinnedModel)
-	void skinChanged() {
-
-		// Get the model skin object from the parent entity, and apply it to
-		// the PicoModel if valid.
-		ModelSkin* skin = NodeTypeCast<ModelSkin>::cast(path().parent());
-		if (skin != NULL && skin->realised())
-			_picoModel.applySkin(*skin);
-		
-		// Refresh the scene
-		GlobalSceneGraph().sceneChanged();
-	}
-
-	/* Main constructor */
-	PicoModelInstance(const scene::Path& path, 
-					  scene::Instance* parent, 
-					  model::RenderablePicoModel& picomodel) 
-	: Instance(path, parent, this, StaticTypeCasts::instance().get()),
-      _picoModel(picomodel),
-	  _lightList(GlobalShaderCache().attach(*this))
-	{
-		Instance::setTransformChangedCallback(LightsChangedCaller(*this));
-	}
-
-	/* Destructor */	
-	~PicoModelInstance() {
-	    Instance::setTransformChangedCallback(Callback());
-
-		GlobalShaderCache().detach(*this);
-	}
-
-	/* Instance render function */
-	void submitRenderables(Renderer& renderer, 
-						   const VolumeTest& volume, 
-						   const Matrix4& localToWorld) const
-	{
-		// Test the model's intersection volume, if it intersects pass on the 
-		// render call
-		if (_picoModel.intersectVolume(volume, localToWorld) 
-			!= c_volumeOutside)
-		{
-			_picoModel.submitRenderables(renderer, localToWorld);
-		}
-	}
-
-	/* Required render functions */
-	
-  	void renderSolid(Renderer& renderer, const VolumeTest& volume) const {
-    	_lightList.evaluateLights();
-
-    	submitRenderables(renderer, volume, Instance::localToWorld());
-	}
-	
-	void renderWireframe(Renderer& renderer, const VolumeTest& volume) const {
-		renderSolid(renderer, volume);
-	}
-
-	// Test for a selection
-	void testSelect(Selector& selector, SelectionTest& test) {
-		_picoModel.testSelect(selector, test, Instance::localToWorld());
-	}
-
-	// LightCullable test function
-	bool testLight(const RendererLight& light) const {
-		return light.testAABB(worldAABB());
-	}
-	
-	// Add a light to this model instance
-	void insertLight(const RendererLight& light) {
-    	// Calculate transform and pass on to the pico model
-    	const Matrix4& localToWorld = Instance::localToWorld();
-		_picoModel.addLight(light, localToWorld);
-	}
-	
-	// Clear all lights from this model instance
-	void clearLights() {
-		_picoModel.clearLights();
-	}
-};
 
 class PicoModelNode : public scene::Node::Symbiot, public scene::Instantiable
 {
@@ -231,7 +89,7 @@ public:
 
   scene::Instance* create(const scene::Path& path, scene::Instance* parent)
   {
-    return new PicoModelInstance(path, parent, _picoModel);
+    return new model::PicoModelInstance(path, parent, _picoModel);
   }
   void forEachInstance(const scene::Instantiable::Visitor& visitor)
   {
