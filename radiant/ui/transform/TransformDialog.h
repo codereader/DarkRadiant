@@ -15,7 +15,14 @@ typedef struct _GtkEditable GtkEditable;
 typedef struct _GtkTable GtkTable;
 
 /* greebo: The dialog providing the Free Transform functionality.
+ * 	
+ * The scale and rotation steps are loaded and written from/to the registry
+ * using the RegistryConnector helper class.
  * 
+ * The Dialog gets notified upon selection change and updates the widget
+ * sensitivity accordingly.
+ * 
+ * If any entity is part of the selection, the scale widgets get disabled.
  */
 namespace ui {
 

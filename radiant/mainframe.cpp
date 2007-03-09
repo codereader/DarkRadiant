@@ -1814,9 +1814,6 @@ GtkMenuItem* create_selection_menu()
     createMenuItemWithMnemonic(menu_in_menu, "Flip _Y", "MirrorSelectionY");
     createMenuItemWithMnemonic(menu_in_menu, "Flip _Z", "MirrorSelectionZ");
   }
-  menu_separator(menu);
-  createMenuItemWithMnemonic(menu, "Arbitrary rotation...", "ArbitraryRotation");
-  createMenuItemWithMnemonic(menu, "Arbitrary scale...", "ArbitraryScale");
 
   return selection_menu_item;
 }
@@ -2827,8 +2824,6 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("RotateSelectionZ", FreeCaller<Selection_Rotatez>());
 	
 	GlobalEventManager().addCommand("TransformDialog", FreeCaller<ui::TransformDialog::toggle>());
-	GlobalEventManager().addCommand("ArbitraryRotation", FreeCaller<DoRotateDlg>());
-	GlobalEventManager().addCommand("ArbitraryScale", FreeCaller<DoScaleDlg>());
 	
 	GlobalEventManager().addCommand("FindBrush", FreeCaller<DoFind>());
 	GlobalEventManager().addCommand("RevertToWorldspawn", FreeCaller<selection::algorithm::revertGroupToWorldSpawn>());
