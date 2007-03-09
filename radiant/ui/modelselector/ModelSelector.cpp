@@ -123,21 +123,22 @@ ModelAndSkin ModelSelector::chooseModel() {
 	typedef boost::shared_ptr<ModelSelector> ModelSelectorPtr;
 	static ModelSelectorPtr _selector;
 	
-	// Attempt to construct the static instance. This could throw an exception
-	// if the population of models is aborted by the user.
-	try {
-		_selector = ModelSelectorPtr(new ModelSelector());
-	}
-	catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
-		// Do nothing, leave the instance pointer as invalid
+	// Create the ModelSelector if it is not valid
+	if (!_selector) {
+
+		// Attempt to construct the static instance. This could throw an 
+		// exception if the population of models is aborted by the user.
+		try {
+			_selector = ModelSelectorPtr(new ModelSelector());
+		}
+		catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
+			// Return a blank model and skin
+			return ModelAndSkin("", "");
+		}
 	}
 	
-	// Use the instance to select a model if it is valid, otherwise return
-	// empty strings
-	if (_selector)
-		return _selector->showAndBlock();
-	else
-		return ModelAndSkin("", "");
+	// Use the instance to select a model.
+	return _selector->showAndBlock();
 }
 
 
