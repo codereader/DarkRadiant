@@ -5,14 +5,25 @@
 #include <list>
 #include "MenuItem.h"
 
+// Forward declarations
+typedef struct _GtkWidget GtkWidget;
+
 namespace ui {
 
 class MenuManager
 {
-	MenuItemPtr _menuRoot;
+	// The root item containing the menubars as children
+	MenuItemPtr _root;	
+
 public:
 	// Constructor, initialises the menu from the registry
 	MenuManager();
+	
+	/** greebo: Retrieves the menu with the given <name>.
+	 * 
+	 * @returns: the widget, or NULL, if no <name> menu has been found.
+	 */
+	GtkWidget* getMenu(const std::string& name);
 	
 	void add(const std::string& menuPath, 
 			 const std::string& caption, 

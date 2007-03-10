@@ -4,6 +4,9 @@
 #include <string>
 #include "generic/constant.h"
 
+// Forward declarations
+typedef struct _GtkWidget GtkWidget;
+
 /** greebo: The UI Manager abstract base class.
  * 
  * The UIManager provides an interface to add UI items like menu commands
@@ -15,6 +18,12 @@ public:
 	INTEGER_CONSTANT(Version, 1);
 	STRING_CONSTANT(Name, "UIManager");
 
+	/** greebo: Requests the menu bar with the given name
+	 */
+	virtual GtkWidget* getMenu(const std::string& name);
+
+	/** greebo: Adds a menuitem to the given path.
+	 */
 	virtual void addMenuItem(const std::string& menuPath, 
 							 const std::string& caption, 
 					 		 const std::string& eventName) = 0;

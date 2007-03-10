@@ -28,6 +28,10 @@ public:
 		_enabled = enabled;
 	}
 	
+	virtual bool isToggle() const {
+		return false;
+	}
+	
 	virtual bool setToggled(const bool toggled) {
 		return false;
 	}
