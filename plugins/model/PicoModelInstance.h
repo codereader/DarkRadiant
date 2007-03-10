@@ -52,18 +52,29 @@ class PicoModelInstance :
 	
 public:
 
-  typedef LazyStatic<TypeCasts> StaticTypeCasts;
+	typedef LazyStatic<TypeCasts> StaticTypeCasts;
 
-  void* m_test;
+	/* Main constructor */
+	PicoModelInstance(const scene::Path& path, 
+					  scene::Instance* parent, 
+					  model::RenderablePicoModel& picomodel); 
 
-  Bounded& get(NullType<Bounded>)
-  {
-    return _picoModel;
-  }
-  Cullable& get(NullType<Cullable>)
-  {
-    return _picoModel;
-  }
+	/* Destructor */	
+	~PicoModelInstance();
+
+	/**
+	 * InstanceTypeCast to Bounded.
+	 */
+	Bounded& get(NullType<Bounded>) {
+		return _picoModel;
+	}
+	
+	/**
+	 * InstanceTypeCast to Cullable.
+	 */
+	Cullable& get(NullType<Cullable>) {
+		return _picoModel;
+	}
 
 	// Lights changed function
 	void lightsChanged() {
@@ -76,14 +87,6 @@ public:
 	// Skin changed notify (from SkinnedModel)
 	void skinChanged();
 	
-	/* Main constructor */
-	PicoModelInstance(const scene::Path& path, 
-					  scene::Instance* parent, 
-					  model::RenderablePicoModel& picomodel); 
-
-	/* Destructor */	
-	~PicoModelInstance();
-
 	/* Instance render function */
 	void submitRenderables(Renderer& renderer, 
 						   const VolumeTest& volume, 
