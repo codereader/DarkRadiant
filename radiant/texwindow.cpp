@@ -82,7 +82,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "groupdialog.h"
 #include "preferences.h"
 #include "ui/common/ToolbarCreator.h"
-
+#include "selection/algorithm/Shader.h"
 
 
 // globals for textures
@@ -904,7 +904,9 @@ void SelectTexture(TextureBrowser& textureBrowser, int mx, int my, bool bShift)
 	try {
   		IShaderPtr shader = Texture_At(textureBrowser, mx, my);
   		TextureBrowser_SetSelectedShader(textureBrowser, shader->getName());
-		TextureBrowser_textureSelected(shader->getName());
+  		TextureBrowser_textureSelected(shader->getName());
+		// Apply the shader to the current selection
+		selection::algorithm::applyShaderToSelection(shader->getName());
 	}
 	catch (NoTextureSelectedException n) {
 		
