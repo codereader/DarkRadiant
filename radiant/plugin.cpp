@@ -44,6 +44,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ifiletypes.h"
 #include "preferencesystem.h"
 #include "ibrush.h"
+#include "iuimanager.h"
 #include "ipatch.h"
 #include "iimage.h"
 #include "itoolbar.h"
@@ -190,6 +191,7 @@ StaticRegisterModule staticRegisterRadiantCore(StaticRadiantCoreModule::instance
 class RadiantDependencies :
   public GlobalRadiantModuleRef,
   public GlobalEventManagerModuleRef,
+  public GlobalUIManagerModuleRef,
   public GlobalFileSystemModuleRef,
   public GlobalEntityModuleRef,
   public GlobalShadersModuleRef,

@@ -55,6 +55,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "itoolbar.h"
 #include "editable.h"
 #include "ientity.h"
+#include "iuimanager.h"
 #include "ieventmanager.h"
 #include "ieclass.h"
 #include "iregistry.h"
