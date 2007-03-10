@@ -35,7 +35,7 @@ public:
 		// Remove any existing shortcut definitions
 		GlobalRegistry().deleteXPath(_rootKey + "//shortcuts");
 		
-		_shortcutsNode = xml::Node(GlobalRegistry().createKey(_rootKey + "/shortcuts"));
+		_shortcutsNode = GlobalRegistry().createKey(_rootKey + "/shortcuts");
 	}
 	
 	void visit(const std::string& eventName, IEventPtr event) {

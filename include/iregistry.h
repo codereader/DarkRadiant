@@ -70,7 +70,7 @@ public:
 	virtual xml::NodeList findXPath(const std::string& path) = 0;
 	
 	// Creates an empty key
-	virtual xmlNodePtr createKey(const std::string& key) = 0;
+	virtual xml::Node createKey(const std::string& key) = 0;
 	
 	// Creates a new node named <key> as children of <path> with the name attribute set to <name>
 	// The newly created node is returned after creation

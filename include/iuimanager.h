@@ -15,7 +15,9 @@ public:
 	INTEGER_CONSTANT(Version, 1);
 	STRING_CONSTANT(Name, "UIManager");
 
-	virtual void addMenuItem(const std::string& menuPath, const std::string& commandName) = 0;
+	virtual void addMenuItem(const std::string& menuPath, 
+							 const std::string& caption, 
+					 		 const std::string& eventName) = 0;
 };
 
 // Module definitions

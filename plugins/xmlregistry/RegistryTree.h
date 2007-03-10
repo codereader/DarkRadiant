@@ -30,7 +30,7 @@ public:
 	
 	/*	Adds a key to the XMLRegistry (without value, just the node)
 	 *  All required parent nodes are created automatically, if they don't exist */
-	xmlNodePtr createKey(const std::string& key);
+	xml::Node createKey(const std::string& key);
 	
 	//	Adds a key <key> as child to <path> to the XMLRegistry (with the name attribute set to <name>)
 	xml::Node createKeyWithName(const std::string& path, const std::string& key, const std::string& name);
