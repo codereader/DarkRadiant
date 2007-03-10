@@ -216,7 +216,8 @@ GtkWidget* LightInspector::createProjectedPanel() {
 
 	// Start/end checkbox
 	_useStartEnd = gtk_check_button_new_with_label("Use start/end");
-					
+	g_signal_connect(G_OBJECT(_useStartEnd), "toggled", G_CALLBACK(_onOptionsToggle), this);		
+		
 	// VBox for panel
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
 	gtk_box_pack_start(GTK_BOX(vbx), 
