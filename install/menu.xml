@@ -1,18 +1,14 @@
 <?xml version="1.0"?>
-<user>
-	<ui>
-		<menu name="main" transient="1">
-			<file caption="_File">
-				<newMap type="command" caption="_New Map" command="NewMap" />
-				<sep1 type="separator" />
-				<openMap type="command" caption="_Open" command="OpenMap" />
-				<import type="command" caption="_Import" command="ImportMap" />
-				<save type="command" caption="_Save" command="SaveMap" />
-				<saveAs type="command" caption="_Save as..." command="SaveMapAs" />
-				<saveSelected type="command" caption="_Save selected..." command="SaveSelected" />
-				<sep2 type="separator" />
-				<saveRegion type="command" caption="_Save as..." command="SaveRegion" />
-			</file>
-		</menu>
-	</ui>
-</user>
+<menu name="main">
+	<subMenu name="file" caption="_File">
+		<menuItem name="new" caption="_New Map" command="NewMap" />
+		<menuSeparator />
+		<menuItem name="open" caption="_Open" command="OpenMap" />
+		<menuItem name="import" caption="_Import" command="ImportMap" />
+		<menuItem name="save" caption="_Save" command="SaveMap" />
+		<menuItem name="saveas" caption="Save _as..." command="SaveMapAs" />
+		<menuItem name="saveselected" caption="_Save selected..." command="SaveSelected" />
+		<menuSeparator />
+		<menuItem name="saveregion" caption="Save _Region..." command="SaveRegion" />
+	</subMenu>
+</menu>
