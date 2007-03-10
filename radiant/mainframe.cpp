@@ -618,6 +618,7 @@ void populateRegistry() {
 		GlobalRegistry().import(base + "upgradepaths.xml", "user", Registry::treeStandard);
 		GlobalRegistry().import(base + "colours.xml", "user/ui", Registry::treeStandard);
 		GlobalRegistry().import(base + "input.xml", "user/ui", Registry::treeStandard);
+		GlobalRegistry().import(base + "menu.xml", "user/ui", Registry::treeStandard);
 		
 		// Load the debug.xml file only if the relevant key is set in user.xml
 		if (GlobalRegistry().get("user/debug") == "1")
