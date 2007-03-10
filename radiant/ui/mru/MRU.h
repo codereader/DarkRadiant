@@ -1,7 +1,7 @@
 #ifndef MRU_H_
 #define MRU_H_
 
-#include <string>
+#include <vector>
 #include "iregistry.h"
 #include "preferencesystem.h"
 
@@ -9,7 +9,8 @@
 #include "MRUList.h"
 
 // Forward declaration
-typedef struct _GtkMenu GtkMenu;
+typedef struct _GtkWidget GtkWidget;
+typedef std::vector<GtkWidget*> WidgetList;
 
 /* greebo: MRU stands for "Most Recently Used" (maps) and this is what 
  * this class is handling.
@@ -75,8 +76,8 @@ public:
 	// The callback for registry key changes
 	void keyChanged();
 	
-	// Add the widgets to the given menu
-	void constructMenu(GtkMenu* menu);
+	// Add the widgets to the given list
+	WidgetList getMenuWidgets();
 	
 	// Construct the orthoview preference page and add it to the given group
 	void constructPreferencePage(PreferenceGroup& group);

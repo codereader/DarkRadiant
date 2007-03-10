@@ -11,12 +11,13 @@
 		<menuSeparator />
 		<menuItem name="saveRegion" caption="Save _Region..." command="SaveRegion" />
 		<menuSeparator />
-		<menuItem name="refreshModels" caption="_Refresh Models" command="SaveRegion" />
+		<menuItem name="refreshModels" caption="_Refresh Models" command="RefreshReferences" />
 		<menuSeparator />
-		<menuItem name="projectSettings" caption="Pro_ject settings" command="SaveRegion" />
+		<menuItem name="projectSettings" caption="Pro_ject settings" command="ProjectSettings" />
 		<menuSeparator />
-		<menuItem name="pointfile" caption="_Pointfile" command="SaveRegion" image="XXXX"/>
+		<menuItem name="pointfile" caption="_Pointfile" command="TogglePointfile" icon="pointfile16.png"/>
 		<menuSeparator />
+		<menuMRU />
 		<menuSeparator />
 		<menuItem name="exit" caption="E_xit" command="Exit" />
 	</subMenu>
@@ -32,87 +33,87 @@
 		<menuItem name="duplicate" caption="_Duplicate" command="CloneSelection" />
 		<menuItem name="delete" caption="D_elete" command="DeleteSelection" />
 		<menuSeparator />
-		<menuItem name="parent" caption="P_arent" command="Undo" />
+		<menuItem name="parent" caption="P_arent" command="ParentSelection" />
 		<menuSeparator />
-		<menuItem name="clearSelection" caption="C_lear Selection" command="Undo" />
-		<menuItem name="invertSelection" caption="_Invert Selection" command="Undo" />
-		<menuItem name="selectInside" caption="Select I_nside" command="Undo" />
-		<menuItem name="selectTouching" caption="Select _touching" command="Undo" />
-		<menuItem name="selectionEntities" caption="Expand selection to Whole _Entities" command="Undo" />
+		<menuItem name="clearSelection" caption="C_lear Selection" command="UnSelectSelection" />
+		<menuItem name="invertSelection" caption="_Invert Selection" command="InvertSelection" />
+		<menuItem name="selectInside" caption="Select I_nside" command="SelectInside" />
+		<menuItem name="selectTouching" caption="Select _touching" command="SelectTouching" />
+		<menuItem name="selectionEntities" caption="Expand selection to Whole _Entities" command="ExpandSelectionToEntities" />
 		<menuSeparator />
 		<menuItem name="objExport" caption="Export selected brushes to _OBJ" command="BrushExportOBJ" />
 		<menuItem name="createCM" caption="Create CollisionModel from selection..." command="BrushExportCM" />
 		<menuSeparator />
-		<menuItem name="preferences" caption="Pre_ferences" command="Parent" />
+		<menuItem name="preferences" caption="Pre_ferences" command="Preferences" />
 	</subMenu>
 
 	<subMenu name="view" caption="_View">
-		<menuItem name="newxyview" caption="New XY view" command="Undo" />
-		<menuItem name="cameraview" caption="Camera View" command="Undo" />
-		<menuItem name="consoleView" caption="Console View" command="Undo" />
-		<menuItem name="textureBrowser" caption="Texture Browser" command="Undo" />
-		<menuItem name="entityInspector" caption="Entity Inspector" command="Undo" />
-		<menuItem name="lightInspector" caption="_Light Inspector" command="Undo" />
-		<menuItem name="surfaceInspector" caption="_Surface Inspector" command="Undo" />
+		<menuItem name="newxyview" caption="New XY view" command="NewOrthoView" />
+		<menuItem name="cameraview" caption="Camera View" command="ToggleCamera" />
+		<menuItem name="consoleView" caption="Console View" command="ToggleConsole" />
+		<menuItem name="textureBrowser" caption="Texture Browser" command="ViewTextures" />
+		<menuItem name="entityInspector" caption="Entity Inspector" command="ToggleEntityInspector" />
+		<menuItem name="lightInspector" caption="_Light Inspector" command="ToggleLightInspector" />
+		<menuItem name="surfaceInspector" caption="_Surface Inspector" command="SurfaceInspector" />
 		<menuItem name="entityList" caption="Entity List" command="EntityList" />
 		<menuSeparator />
 
 		<subMenu name="camera" caption="Camera">
 			<menuItem name="cameraCenter" caption="_Center" command="CenterView" />
-			<menuItem name="cameraUpFloor" caption="_Up Floor" command="Undo" />
+			<menuItem name="cameraUpFloor" caption="_Up Floor" command="UpFloor" />
 			<menuItem name="cameraDownFloor" caption="_Down Floor" command="DownFloor" />
 			<menuSeparator />
-			<menuItem name="cameraPlaneIn" caption="Far Clip Plane In" command="Undo" />
-			<menuItem name="cameraPlaneOut" caption="Far Clip Plane Out" command="Undo" />
+			<menuItem name="cameraPlaneIn" caption="Far Clip Plane In" command="CubicClipZoomIn" />
+			<menuItem name="cameraPlaneOut" caption="Far Clip Plane Out" command="CubicClipZoomOut" />
 			<menuSeparator />
-			<menuItem name="cameraNextLeak" caption="Next leak spot" command="Undo" />
-			<menuItem name="cameraPreviousLeak" caption="Previous leak spot" command="Undo" />
+			<menuItem name="cameraNextLeak" caption="Next leak spot" command="NextLeakSpot" />
+			<menuItem name="cameraPreviousLeak" caption="Previous leak spot" command="PrevLeakSpot" />
 			<menuSeparator />
 			<menuItem name="lookThroughSelected" caption="Look through selected" command="LookThroughSelected" />
 			<menuItem name="lookThroughCamera" caption="Look through camera" command="LookThroughCamera" />
 		</subMenu>
 
 		<subMenu name="orthographic" caption="Orthographic">
-			<menuItem name="nextOrtho" caption="Next (XY, XZ, YZ)" command="Undo" />
-			<menuItem name="OrthoXY" caption="XY (Top)" command="Undo" />
-			<menuItem name="OrthoYZ" caption="YZ" command="Undo" />
-			<menuItem name="OrthoXZ" caption="XZ" command="Undo" />
+			<menuItem name="nextOrtho" caption="Next (XY, XZ, YZ)" command="NextView" />
+			<menuItem name="OrthoXY" caption="XY (Top)" command="ViewTop" />
+			<menuItem name="OrthoYZ" caption="YZ" command="ViewSide" />
+			<menuItem name="OrthoXZ" caption="XZ" command="ViewFront" />
 			<menuSeparator />
-			<menuItem name="XY100%" caption="_XY 100%" command="Undo" />
-			<menuItem name="XYzoomIn" caption="_XY Zoom In" command="Undo" />
-			<menuItem name="XYzoomOut" caption="_XY Zoom Out" command="Undo" />
+			<menuItem name="XY100%" caption="_XY 100%" command="Zoom100" />
+			<menuItem name="XYzoomIn" caption="_XY Zoom In" command="ZoomIn" />
+			<menuItem name="XYzoomOut" caption="_XY Zoom Out" command="ZoomOut" />
 		</subMenu>
 
 		<menuSeparator />
 
 		<subMenu name="show" caption="Show">
-			<menuItem name="showAngles" caption="Show _Angles" command="Undo" />
-			<menuItem name="showNames" caption="Show _Names" command="Undo" />
-			<menuItem name="showBlocks" caption="Show Blocks" command="Undo" />
-			<menuItem name="showCoordinates" caption="Show C_oordinates" command="Undo" />
-			<menuItem name="showOutline" caption="Show Window Outline" command="Undo" />
-			<menuItem name="showAxes" caption="Show Axes" command="Undo" />
-			<menuItem name="showWorkzone" caption="Show Workzone" command="Undo" />
-			<menuItem name="showSizeinfo" caption="Show size info" command="Undo" />
+			<menuItem name="showAngles" caption="Show _Angles" command="ShowAngles" />
+			<menuItem name="showNames" caption="Show _Names" command="ShowNames" />
+			<menuItem name="showBlocks" caption="Show Blocks" command="ShowBlocks" />
+			<menuItem name="showCoordinates" caption="Show C_oordinates" command="ShowCoordinates" />
+			<menuItem name="showOutline" caption="Show Window Outline" command="ShowWindowOutline" />
+			<menuItem name="showAxes" caption="Show Axes" command="ShowAxes" />
+			<menuItem name="showWorkzone" caption="Show Workzone" command="ShowWorkzone" />
+			<menuItem name="showSizeinfo" caption="Show size info" command="ToggleShowSizeInfo" />
 		</subMenu>
 
 		<menuSeparator />
 
 		<subMenu name="hideShow" caption="Hide/Show">
 			<menuItem name="hideSelected" caption="Hide Selected" command="HideSelected" />
-			<menuItem name="showHidden" caption="Show hidden" command="Undo" />
+			<menuItem name="showHidden" caption="Show hidden" command="ShowHidden" />
 		</subMenu>
 
 		<subMenu name="region" caption="Region">
-			<menuItem name="regionSwitchoff" caption="_Switch off" command="Undo" />
-			<menuItem name="regionSetXY" caption="Set from _XY view" command="Undo" />
-			<menuItem name="regionSetBrush" caption="Set from _Brush" command="Undo" />
-			<menuItem name="regionSetSelection" caption="Set from Se_lection" command="Undo" />
+			<menuItem name="regionSwitchoff" caption="_Switch off" command="RegionOff" />
+			<menuItem name="regionSetXY" caption="Set from _XY view" command="RegionSetXY" />
+			<menuItem name="regionSetBrush" caption="Set from _Brush" command="RegionSetBrush" />
+			<menuItem name="regionSetSelection" caption="Set from Se_lection" command="RegionSetSelection" />
 		</subMenu>
 
 		<menuSeparator />
-		<menuItem name="colours" caption="Colours..." command="EditColourScheme" image="XXXX" />
-		<menuItem name="backgroundimage" caption="Background image..." command="Undo" image="XXXX" />
+		<menuItem name="colours" caption="Colours..." command="EditColourScheme" icon="editcolour16.png" />
+		<menuItem name="backgroundicon" caption="Background icon..." command="OverlayDialog" icon="bgimage16.png" />
 	</subMenu>
 
 	<subMenu name="modify" caption="_Modify">
@@ -127,16 +128,16 @@
 		<menuSeparator />
 
 		<subMenu name="nudge" caption="Nudge">
-			<menuItem name="nudgeLeft" caption="Nudge Left" command="Undo" />
-			<menuItem name="nudgeRight" caption="Nudge Right" command="Undo" />
-			<menuItem name="nudgeUp" caption="Nudge Up" command="Undo" />
-			<menuItem name="nudgeDown" caption="Nudge Down" command="Undo" />
+			<menuItem name="nudgeLeft" caption="Nudge Left" command="SelectNudgeLeft" />
+			<menuItem name="nudgeRight" caption="Nudge Right" command="SelectNudgeRight" />
+			<menuItem name="nudgeUp" caption="Nudge Up" command="SelectNudgeUp" />
+			<menuItem name="nudgeDown" caption="Nudge Down" command="SelectNudgeDown" />
 		</subMenu>
 
 		<subMenu name="rotate" caption="Rotate">
-			<menuItem name="rotateX" caption="Rotate X" command="Undo" />
-			<menuItem name="rotateY" caption="Rotate Y" command="Undo" />
-			<menuItem name="rotateZ" caption="Rotate Z" command="Undo" />
+			<menuItem name="rotateX" caption="Rotate X" command="RotateSelectionX" />
+			<menuItem name="rotateY" caption="Rotate Y" command="RotateSelectionY" />
+			<menuItem name="rotateZ" caption="Rotate Z" command="RotateSelectionZ" />
 		</subMenu>
 
 		<subMenu name="flip" caption="Flip">
@@ -148,40 +149,39 @@
 	</subMenu>
 
 	<subMenu name="grid" caption="_Grid">
-		<menuItem name="grid0.125" caption="Grid0.125" command="Undo" />
-		<menuItem name="grid0.25" caption="Grid0.25" command="Undo" />
-		<menuItem name="grid0.5" caption="Grid0.5" command="Undo" />
-		<menuItem name="grid1" caption="Grid1" command="Undo" />
-		<menuItem name="grid2" caption="Grid2" command="Undo" />
-		<menuItem name="grid4" caption="Grid4" command="Undo" />
-		<menuItem name="grid8" caption="Grid8" command="Undo" />
-		<menuItem name="grid16" caption="Grid16" command="Undo" />
-		<menuItem name="grid32" caption="Grid32" command="Undo" />
-		<menuItem name="grid64" caption="Grid64" command="Undo" />
-		<menuItem name="grid128" caption="Grid128" command="Undo" />
-		<menuItem name="grid256" caption="Grid256" command="Undo" />
+		<menuItem name="grid0.125" caption="Grid0.125" command="SetGrid0.125" />
+		<menuItem name="grid0.25" caption="Grid0.25" command="SetGrid0.25" />
+		<menuItem name="grid0.5" caption="Grid0.5" command="SetGrid0.5" />
+		<menuItem name="grid1" caption="Grid1" command="SetGrid1" />
+		<menuItem name="grid2" caption="Grid2" command="SetGrid2" />
+		<menuItem name="grid4" caption="Grid4" command="SetGrid4" />
+		<menuItem name="grid8" caption="Grid8" command="SetGrid8" />
+		<menuItem name="grid16" caption="Grid16" command="SetGrid16" />
+		<menuItem name="grid32" caption="Grid32" command="SetGrid32" />
+		<menuItem name="grid64" caption="Grid64" command="SetGrid64" />
+		<menuItem name="grid128" caption="Grid128" command="SetGrid128" />
+		<menuItem name="grid256" caption="Grid256" command="SetGrid256" />
 	</subMenu>
 
 	<subMenu name="filter" caption="Fi_lter">
-		<menuItem name="filterEntities" caption="All entities" command="Undo" image="XXXX" />
-		<menuItem name="filterCaulk" caption="Caulk" command="Undo" image="XXXX" />
-		<menuItem name="filterCollision" caption="Collision surfaces" command="Undo" image="XXXX" />
-		<menuItem name="filterLights" caption="Lights" command="Undo" image="XXXX" />
-		<menuItem name="filterPatches" caption="Patches" command="Undo" image="XXXX" />
-		<menuItem name="filterPatches" caption="Patches" command="Undo" image="XXXX" />
-		<menuItem name="filterWorld" caption="World geometry" command="Undo" image="XXXX" />
+		<menuItem name="filterEntities" caption="All entities" command="Undo" icon="XXXX" />
+		<menuItem name="filterCaulk" caption="Caulk" command="Undo" icon="XXXX" />
+		<menuItem name="filterCollision" caption="Collision surfaces" command="Undo" icon="XXXX" />
+		<menuItem name="filterLights" caption="Lights" command="Undo" icon="XXXX" />
+		<menuItem name="filterPatches" caption="Patches" command="Undo" icon="XXXX" />
+		<menuItem name="filterWorld" caption="World geometry" command="Undo" icon="XXXX" />
 	</subMenu>
 
 	<subMenu name="map" caption="M_ap">
-		<menuItem name="findBrush" caption="Find brush..." command="Undo" />
+		<menuItem name="findBrush" caption="Find brush..." command="FindBrush" />
 		<menuItem name="mapinfo" caption="Map info..." command="MapInfo" />
 		<menuSeparator />
-		<menuItem name="objectives" caption="_Objectives" command="ObjectivesEditor" image="XXXX" />
+		<menuItem name="objectives" caption="_Objectives" command="ObjectivesEditor" icon="objectives16.png" />
 	</subMenu>
 
 	<subMenu name="entity" caption="E_ntity">
-		<menuItem name="ungroupEntity" caption="_Ungroup" command="Undo" />
-		<menuItem name="connectEntity" caption="_Connect" command="Undo" />
+		<menuItem name="ungroupEntity" caption="_Ungroup" command="UngroupSelection" />
+		<menuItem name="connectEntity" caption="_Connect" command="ConnectSelection" />
 	</subMenu>
 
 	<subMenu name="brush" caption="B_rush">
@@ -200,39 +200,70 @@
 
 		<subMenu name="clipper" caption="Clipper">
 			<menuItem name="clipSelection" caption="Clip Selection" command="ClipSelected" />
-			<menuItem name="splitSelection" caption="Split Selection" command="Undo" />
+			<menuItem name="splitSelection" caption="Split Selection" command="SplitSelected" />
 			<menuItem name="flipClipOrientation" caption="Flip Clip Orientation" command="FlipClip" />
 		</subMenu>
 
 		<menuSeparator />
 		<menuItem name="makeDetail" caption="Make detail" command="MakeDetail" />
 		<menuItem name="makeStructural" caption="Make structural" command="MakeStructural" />
-		<menuItem name="texturelock" caption="Texture lock" command="Undo" />
+		<menuItem name="texturelock" caption="Texture lock" command="TogTexLock" />
 		<menuSeparator />
 		<menuItem name="copyFaceTexture" caption="Copy face texture" command="FaceCopyTexture" />
 		<menuItem name="pasteFaceTexture" caption="Paste face texture" command="FacePasteTexture" />
 	</subMenu>
 
 	<subMenu name="curve" caption="_Curve">
-		<menuItem name="simplePatch" caption="Simple patch mesh" command="Undo" />
+		<menuItem name="simplePatch" caption="Simple patch mesh" command="SimplePatchMesh" />
 		<menuSeparator />
-		<menuItem name="endcap" caption="End cap" command="Undo" />
+		<menuItem name="endcap" caption="End cap" command="PatchEndCap" />
 		<menuItem name="bevel" caption="Bevel" command="PatchBevel" />
 		<menuSeparator />
 		<menuItem name="cone" caption="Cone" command="PatchCone" />
 		<menuItem name="cylinder" caption="Cylinder" command="PatchCylinder" />
-		<menuItem name="moreCylinders" caption="More cylinders" command="Undo" />
+
+		<subMenu name="moreCylinders" caption="More cylinders">
+			<menuItem name="denseCylinder" caption="Dense Cylinder" command="PatchDenseCylinder" />
+			<menuItem name="veryDenseCylinder" caption="Very Dense Cylinder" command="PatchVeryDenseCylinder" />
+			<menuItem name="squareCylinder" caption="Square Cylinder" command="PatchSquareCylinder" />
+		</subMenu>
+
 		<menuSeparator />
-		<menuItem name="insertSubdivisions" caption="Insert" command="Undo" />
-		<menuItem name="insertSubdivisions" caption="Delete" command="Undo" />
+
+		<subMenu name="insertSubdivisions" caption="Insert">
+			<menuItem name="insertcolumns" caption="Insert (2) Columns" command="PatchInsertInsertColumn" />
+			<menuItem name="addcolumns" caption="Add (2) Columns" command="PatchInsertAddColumn" />
+			<menuSeparator />
+			<menuItem name="insertrows" caption="Insert (2) Rows" command="PatchInsertInsertRow" />
+			<menuItem name="addrows" caption="Add (2) Rows" command="PatchInsertAddRow" />
+		</subMenu>
+
+		<subMenu name="deleteSubdivisions" caption="Delete">
+			<menuItem name="deleteFirstcolumns" caption="First (2) Columns" command="PatchDeleteFirstColumn" />
+			<menuItem name="deleteLastcolumns" caption="Last (2) Columns" command="PatchDeleteLastColumn" />
+			<menuItem name="deleteFirstrows" caption="First (2) Rows" command="PatchDeleteFirstRow" />
+			<menuItem name="deleteLastrows" caption="Last (2) Rows" command="PatchDeleteLastRow" />
+		</subMenu>
+
 		<menuSeparator />
-		<menuItem name="matrix" caption="Matrix" command="Undo" />
+
+		<subMenu name="matrix" caption="Matrix">
+			<menuItem name="invertMatrix" caption="Invert" command="InvertCurve" />
+
+			<subMenu name="redisperse" caption="Re-disperse">
+				<menuItem name="redisperseRows" caption="Rows" command="RedisperseRows" />
+				<menuItem name="redisperseColumns" caption="Columns" command="RedisperseCols" />
+			</subMenu>
+
+			<menuItem name="transpose" caption="Transpose" command="MatrixTranspose" />
+		</subMenu>
+
 		<menuSeparator />
-		<menuItem name="thickenPatches" caption="Thicken Selected Patches" command="Undo" />
-		<menuItem name="capselection" caption="Cap Selection" command="Undo" />
-		<menuItem name="cycleCapTexture" caption="Cycle Cap Texture" command="Undo" />
+		<menuItem name="thickenPatches" caption="Thicken Selected Patches" command="ThickenPatch" />
+		<menuItem name="capselection" caption="Cap Selection" command="CapCurrentCurve" />
+		<menuItem name="cycleCapTexture" caption="Cycle Cap Texture" command="CycleCapTexturePatch" />
 		<menuSeparator />
-		<menuItem name="stitchTextures" caption="Stitch Patch Textures" command="Undo" />
+		<menuItem name="stitchTextures" caption="Stitch Patch Textures" command="StitchPatchTexture" />
 	</subMenu>
 
 
@@ -240,9 +271,7 @@
 	</subMenu>
 
 	<subMenu name="help" caption="_Help">
-		<menuItem name="shortcuts" caption="Shortcuts list" command="Undo" />
+		<menuItem name="shortcuts" caption="Shortcuts list" command="ShowCommandList" />
 		<menuItem name="about" caption="_About" command="About" />
-
-
 	</subMenu>
 </menu>

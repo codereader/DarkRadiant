@@ -155,21 +155,25 @@ void MRU::updateMenu() {
 	}
 }
 
-void MRU::constructMenu(GtkMenu* menu) {
-	gtk_container_add(GTK_CONTAINER(menu), _emptyMenuItem);
+WidgetList MRU::getMenuWidgets() {
+	WidgetList widgetList;
+
+	widgetList.push_back(_emptyMenuItem);
 	//gtk_widget_show(_emptyMenuItem);
 
 	// Add all the created widgets to the menu
 	for (MenuItems::iterator m = _menuItems.begin(); m != _menuItems.end(); m++) {
 		MRUMenuItem& item = (*m);
 		
-		// greebo: Add the item to the menu 
+		// greebo: Add the items to the list 
 		// It will be shown/hidden by the load() and insert() methods 
-		gtk_container_add(GTK_CONTAINER(menu), item);
+		widgetList.push_back(item);
 	}
 
 	// Call the update routine to load the values into the widgets
 	updateMenu();
+	
+	return widgetList;
 }
 
 // -------------------------------------------------------------------------------------

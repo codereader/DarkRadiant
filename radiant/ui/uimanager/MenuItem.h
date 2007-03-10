@@ -23,6 +23,7 @@ public:
 		eFolder,
 		eItem,
 		eSeparator,
+		eMRU,
 	};
 
 private:	
