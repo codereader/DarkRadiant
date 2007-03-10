@@ -1630,7 +1630,7 @@ GtkMenuItem* create_file_menu()
 	createMenuItemWithMnemonic(
 		menu, "_Pointfile...", "TogglePointfile", "pointfile16.png");
 	createSeparatorMenuItem(menu);
-	GlobalMRU().constructMenu(menu);
+	//GlobalMRU().constructMenu(menu);
 	createSeparatorMenuItem(menu);
 	createMenuItemWithMnemonic(menu, "E_xit", "Exit");
 
@@ -2270,6 +2270,10 @@ void MainFrame::Create()
     // Create and add main menu    
     GtkMenuBar *main_menu = create_main_menu(CurrentStyle());
     gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(main_menu), FALSE, FALSE, 0);
+    
+    // Retrieve the "main" menubar from the UIManager
+    GtkMenuBar* mainMenu = GTK_MENU_BAR(GlobalUIManager().getMenu("main"));
+    gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(mainMenu), false, false, 0);
     
     // Instantiate the ToolbarCreator and retrieve the view toolbar widget 
 	ui::ToolbarCreator toolbarCreator;

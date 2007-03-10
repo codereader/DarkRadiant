@@ -53,12 +53,7 @@ GtkWidget* MenuManager::getMenu(const std::string& name) {
 	
 	if (foundMenu != NULL) {
 		// Cast the menubar onto a GtkWidget* and return
-		GtkWidget* widget = *foundMenu;
-		
-		// Show the menubar
-		gtk_widget_show_all(widget);
-		
-		return widget;
+		return *foundMenu;
 	}
 	else {
 		globalErrorStream() << "MenuManager: Warning: Menu " << name.c_str() << " not found!\n";

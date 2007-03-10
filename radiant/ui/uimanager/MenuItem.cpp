@@ -8,6 +8,7 @@
 #include "gtkutil/MenuItemAccelerator.h"
 #include <gtk/gtk.h>
 
+#include "ui/mru/MRU.h"
 #include <iostream>
 
 namespace ui {
@@ -181,6 +182,9 @@ void MenuItem::parseNode(xml::Node& node, MenuItemPtr thisItem) {
 			}
 		}
 	} 
+	else if (nodeName == "menuMRU") {
+		_type = eMRU;
+	}
 	else {
 		_type = eNothing;
 		globalErrorStream() << "MenuItem: Unknown node found: " << nodeName.c_str() << "\n"; 
@@ -190,7 +194,6 @@ void MenuItem::parseNode(xml::Node& node, MenuItemPtr thisItem) {
 void MenuItem::construct() {
 	if (_type == eMenuBar) {
 		_widget = gtk_menu_bar_new();
-		
 		for (unsigned int i = 0; i < _children.size(); i++) {
 			// Cast each children onto GtkWidget and append it to the menu
 			gtk_menu_shell_append(GTK_MENU_SHELL(_widget), *_children[i]);
@@ -204,12 +207,24 @@ void MenuItem::construct() {
 		_widget = gtk_menu_item_new_with_mnemonic(_caption.c_str());
 		// Create the submenu
 		GtkWidget* subMenu = gtk_menu_new();
+		gtk_widget_show(subMenu);
 		// Attach the submenu to the menuitem
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(_widget), subMenu);
 		
 		for (unsigned int i = 0; i < _children.size(); i++) {
-			// Cast each children onto GtkWidget and append it to the menu
-			gtk_menu_shell_append(GTK_MENU_SHELL(subMenu), *_children[i]);
+			
+			// Special case: the MRU menu (not a folder, but a series of widgets)
+			if (_children[i]->getType() == eMRU) {
+				WidgetList widgetList = GlobalMRU().getMenuWidgets();
+		
+				for (unsigned int w = 0; w < widgetList.size(); w++) {
+					gtk_menu_shell_append(GTK_MENU_SHELL(subMenu), widgetList[w]);
+				}
+			}
+			else {
+				// Cast each children onto GtkWidget and append it to the menu
+				gtk_menu_shell_append(GTK_MENU_SHELL(subMenu), *_children[i]);
+			}
 		}
 	}
 	else if (_type == eItem) {
@@ -226,7 +241,8 @@ void MenuItem::construct() {
 														accelText, 
 														_icon,
 														event->isToggle());
-			
+
+			gtk_widget_show_all(_widget);
 			// Connect the widget to the event
 			event->connectWidget(_widget);
 		}
@@ -234,8 +250,15 @@ void MenuItem::construct() {
 			globalErrorStream() << "MenuItem: Cannot find associated event: " << _event.c_str() << "\n"; 
 		}
 	}
+	else if (_type == eMRU) {
+		// Do nothing.
+	}
 	else if (_type == eRoot) {
 		globalErrorStream() << "MenuItem: Cannot instantiate root MenuItem.\n"; 
+	}
+	
+	if (_widget != NULL) {
+		gtk_widget_show(_widget);
 	}
 	
 	_constructed = true;
