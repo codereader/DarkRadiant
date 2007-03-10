@@ -380,6 +380,7 @@ radiant_src = [
 'ui/surfaceinspector/SurfaceInspector.cpp',
 'ui/findshader/FindShader.cpp',
 'ui/transform/TransformDialog.cpp',
+'ui/uimanager/UIManager.cpp',
 'textool/TexTool.cpp',
 'textool/TexToolItem.cpp',
 'textool/item/PatchItem.cpp',
