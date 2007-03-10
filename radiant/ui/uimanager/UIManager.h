@@ -11,9 +11,13 @@ class UIManager :
 	public IUIManager
 {
 	// Local helper class taking care of the menu
-	MenuManager _menu;
+	MenuManager _menuManager;
 public:
 	UIManager();
+	
+	/** greebo: Retrieves the menu bar with the given name.
+	 */
+	GtkWidget* getMenu(const std::string& name);
 
 	/** greebo: Adds the given menuitem as child to the given path.
 	 * 			<caption> is used as display string (can contain a mnemonic).

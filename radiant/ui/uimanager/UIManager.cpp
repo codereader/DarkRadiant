@@ -14,11 +14,15 @@ UIManager::UIManager() {
 	
 }
 
+GtkWidget* UIManager::getMenu(const std::string& name) {
+	return _menuManager.getMenu(name);
+}
+
 void UIManager::addMenuItem(const std::string& menuPath, 
 							const std::string& caption, 
 					 		const std::string& eventName) 
 {
-	_menu.add(menuPath, caption, eventName);
+	_menuManager.add(menuPath, caption, eventName);
 }
 
 } // namespace ui

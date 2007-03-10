@@ -1,8 +1,12 @@
 #include "MenuItem.h"
 
+#include "ieventmanager.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
+
+#include "gtkutil/MenuItemAccelerator.h"
+#include <gtk/gtk.h>
 
 #include <iostream>
 
@@ -15,10 +19,14 @@ namespace ui {
 MenuItem::MenuItem(MenuItemPtr parent) :
 	_parent(parent),
 	_widget(NULL),
-	_type(eNothing)
+	_type(eNothing),
+	_constructed(false)
 {
 	if (_parent == NULL) {
 		_type = eRoot;
+	}
+	else if (_parent->isRoot()) {
+		_type = eMenuBar;
 	}
 }
 
@@ -37,6 +45,10 @@ bool MenuItem::isRoot() const {
 MenuItemPtr MenuItem::getParent() const {
 	return _parent;
 }
+
+void MenuItem::setParent(MenuItemPtr parent) {
+	_parent = parent;
+}
 	
 void MenuItem::setCaption(const std::string& caption) {
 	_caption = caption;
@@ -46,8 +58,12 @@ std::string MenuItem::getCaption() const {
 	return _caption;
 }
 
+void MenuItem::setIcon(const std::string& icon) {
+	_icon = icon;
+}
+
 bool MenuItem::isEmpty() const {
-	return (_event == NULL || _event->empty());
+	return (_type != eItem);
 }
 
 MenuItem::eType MenuItem::getType() const {
@@ -58,17 +74,25 @@ int MenuItem::numChildren() const {
 	return _children.size();
 }
 
-IEventPtr MenuItem::getEvent() const {
+void MenuItem::addChild(MenuItemPtr newChild) {
+	_children.push_back(newChild);
+}
+
+std::string MenuItem::getEvent() const {
 	return _event;
 }
 
 void MenuItem::setEvent(const std::string& eventName) {
-	_event = GlobalEventManager().findEvent(eventName);
+	_event = eventName;
 }
 
 MenuItem::operator GtkWidget* () {
 	// Check for toggle, allocate the GtkWidget*
-	return NULL;
+	if (!_constructed) {
+		construct();
+	}
+	
+	return _widget;
 }
 
 MenuItemPtr MenuItem::find(const std::string& menuPath) {
@@ -119,7 +143,8 @@ void MenuItem::parseNode(xml::Node& node, MenuItemPtr thisItem) {
 	if (nodeName == "menuItem") {
 		_type = eItem;
 		// Get the EventPtr according to the event
-		setEvent(node.getAttributeValue("event"));
+		setEvent(node.getAttributeValue("command"));
+		setIcon(node.getAttributeValue("icon"));
 	}
 	else if (nodeName == "menuSeparator") {
 		_type = eSeparator;
@@ -134,11 +159,14 @@ void MenuItem::parseNode(xml::Node& node, MenuItemPtr thisItem) {
 				MenuItemPtr newChild = MenuItemPtr(new MenuItem(thisItem));
 				// Let the child parse the subnode
 				newChild->parseNode(subNodes[i], newChild);
+				
+				// Add the child to the list
+				_children.push_back(newChild);
 			}
 		}
 	}
 	else if (nodeName == "menu") {
-		_type = eRoot;
+		_type = eMenuBar;
 		
 		xml::NodeList subNodes = node.getChildren();
 		for (unsigned int i = 0; i < subNodes.size(); i++) {
@@ -147,6 +175,9 @@ void MenuItem::parseNode(xml::Node& node, MenuItemPtr thisItem) {
 				MenuItemPtr newChild = MenuItemPtr(new MenuItem(thisItem));
 				// Let the child parse the subnode
 				newChild->parseNode(subNodes[i], newChild);
+				
+				// Add the child to the list
+				_children.push_back(newChild);
 			}
 		}
 	} 
@@ -154,6 +185,60 @@ void MenuItem::parseNode(xml::Node& node, MenuItemPtr thisItem) {
 		_type = eNothing;
 		globalErrorStream() << "MenuItem: Unknown node found: " << nodeName.c_str() << "\n"; 
 	}
+}
+
+void MenuItem::construct() {
+	if (_type == eMenuBar) {
+		_widget = gtk_menu_bar_new();
+		
+		for (unsigned int i = 0; i < _children.size(); i++) {
+			// Cast each children onto GtkWidget and append it to the menu
+			gtk_menu_shell_append(GTK_MENU_SHELL(_widget), *_children[i]);
+		}
+	}
+	else if (_type == eSeparator) {
+		_widget = gtk_separator_menu_item_new();
+	}
+	else if (_type == eFolder) {
+		// Create the menuitem
+		_widget = gtk_menu_item_new_with_mnemonic(_caption.c_str());
+		// Create the submenu
+		GtkWidget* subMenu = gtk_menu_new();
+		// Attach the submenu to the menuitem
+		gtk_menu_item_set_submenu(GTK_MENU_ITEM(_widget), subMenu);
+		
+		for (unsigned int i = 0; i < _children.size(); i++) {
+			// Cast each children onto GtkWidget and append it to the menu
+			gtk_menu_shell_append(GTK_MENU_SHELL(subMenu), *_children[i]);
+		}
+	}
+	else if (_type == eItem) {
+		// Try to lookup the event name
+		IEventPtr event = GlobalEventManager().findEvent(_event);
+		
+		if (!event->empty()) {
+			// Retrieve an acclerator string formatted for a menu
+			const std::string accelText = 
+				GlobalEventManager().getAcceleratorStr(event, true);
+			 
+			// Create a new menuitem
+			_widget = gtkutil::TextMenuItemAccelerator(_caption,
+														accelText, 
+														_icon,
+														event->isToggle());
+			
+			// Connect the widget to the event
+			event->connectWidget(_widget);
+		}
+		else {
+			globalErrorStream() << "MenuItem: Cannot find associated event: " << _event.c_str() << "\n"; 
+		}
+	}
+	else if (_type == eRoot) {
+		globalErrorStream() << "MenuItem: Cannot instantiate root MenuItem.\n"; 
+	}
+	
+	_constructed = true;
 }
 
 } // namespace ui

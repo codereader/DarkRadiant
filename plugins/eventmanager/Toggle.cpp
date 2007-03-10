@@ -10,6 +10,10 @@ bool Toggle::empty() const {
 	return false;
 }
 
+bool Toggle::isToggle() const {
+	return true;
+}
+
 // Set the toggled state to true/false, according to <toggled> and update
 // any associated widgets or notify any callbacks.
 bool Toggle::setToggled(const bool toggled) {
