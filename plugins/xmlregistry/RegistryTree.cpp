@@ -91,7 +91,7 @@ xml::Node RegistryTree::createKeyWithName(const std::string& path,
 	
 	// Check if the insert point <path> exists, create it otherwise
 	if (!keyExists(fullPath)) {
-		insertPoint = createKey(fullPath);
+		insertPoint = createKey(fullPath).getNodePtr();
 	}
 	else {
 		xml::NodeList nodeList = _tree.findXPath(fullPath);
@@ -119,7 +119,7 @@ xml::Node RegistryTree::createKeyWithName(const std::string& path,
 /*	Adds a key to the XMLRegistry (without value, just the node)
  *  All required parent nodes are created automatically, if they don't exist     
  */
-xmlNodePtr RegistryTree::createKey(const std::string& key) {
+xml::Node RegistryTree::createKey(const std::string& key) {
 	// Add the toplevel node to the path if required
 	std::string fullKey = prepareKey(key);
 	

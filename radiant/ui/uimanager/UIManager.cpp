@@ -1,10 +1,25 @@
 #include "UIManager.h"
 
+#include "iregistry.h"
 #include "ieventmanager.h"
 #include <boost/shared_ptr.hpp>
 
 namespace ui {
 
+	namespace {
+		
+	}
+
+UIManager::UIManager() {
+	
+}
+
+void UIManager::addMenuItem(const std::string& menuPath, 
+							const std::string& caption, 
+					 		const std::string& eventName) 
+{
+	_menu.add(menuPath, caption, eventName);
+}
 
 } // namespace ui
 
@@ -14,9 +29,9 @@ namespace ui {
 #include "modulesystem/moduleregistry.h"
 
 class UIManagerDependencies :
-	public GlobalEventManagerModuleRef
+	public GlobalEventManagerModuleRef,
+	public GlobalRegistryModuleRef
 {};
-
 
 class UIManagerAPI
 {

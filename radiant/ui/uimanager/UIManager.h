@@ -3,17 +3,24 @@
 
 #include "iuimanager.h"
 
-#include <iostream>
+#include "MenuManager.h"
 
 namespace ui {
 
 class UIManager :
 	public IUIManager
 {
+	// Local helper class taking care of the menu
+	MenuManager _menu;
 public:
-	void addMenuItem(const std::string& menuPath, const std::string& commandName) {
+	UIManager();
 
-	}
+	/** greebo: Adds the given menuitem as child to the given path.
+	 * 			<caption> is used as display string (can contain a mnemonic).
+	 */
+	void addMenuItem(const std::string& menuPath, 
+					 const std::string& caption, 
+					 const std::string& eventName);
 }; // class UIManager
 
 } // namespace ui

@@ -123,7 +123,7 @@ public:
 	
 	/*	Adds a key to the XMLRegistry (without value, just the node)
 	 *  All required parent nodes are created automatically, if they don't exist */
-	xmlNodePtr createKey(const std::string& key) {
+	xml::Node createKey(const std::string& key) {
 		return _userTree.createKey(key);
 	}
 	
