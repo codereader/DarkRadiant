@@ -1,5 +1,6 @@
 #include "FaceInstance.h"
 
+#include "ifilter.h"
 #include "renderable.h"
 #include "math/frustum.h"
 
@@ -148,7 +149,9 @@ void FaceInstance::render(Renderer& renderer, const VolumeTest& volume, const Ma
 }
 
 void FaceInstance::testSelect(SelectionTest& test, SelectionIntersection& best) {
-	m_face->testSelect(test, best);
+	if (GlobalFilterSystem().isVisible("texture", getFace().GetShader())) {
+		m_face->testSelect(test, best);
+	}
 }
 
 void FaceInstance::testSelect(Selector& selector, SelectionTest& test) {
@@ -164,8 +167,8 @@ void FaceInstance::testSelect_centroid(Selector& selector, SelectionTest& test) 
 		SelectionIntersection best;
 		m_face->testSelect_centroid(test, best);
 		if (best.valid()) {
-				Selector_add(selector, m_selectable, best);
-			}
+			Selector_add(selector, m_selectable, best);
+		}
 	}
 }
 
