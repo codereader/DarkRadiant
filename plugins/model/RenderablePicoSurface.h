@@ -1,8 +1,6 @@
 #ifndef RENDERABLEPICOSURFACE_H_
 #define RENDERABLEPICOSURFACE_H_
 
-#include "VectorLightList.h"
-
 #include "GLProgramAttributes.h"
 #include "picomodel.h"
 #include "cullable.h"
@@ -53,9 +51,6 @@ class RenderablePicoSurface
 	// The AABB containing this surface, in local object space.
 	AABB _localAABB;
 	
-	// Vector of RendererLight references which illuminate this surface
-	VectorLightList _lights;
-
 private:
 
 	// Calculate tangent and bitangent vectors for all vertices.
@@ -89,17 +84,6 @@ public:
 	 * Render function from OpenGLRenderable
 	 */
 	void render(RenderStateFlags flags) const;
-	
-	/**
-	 * Add a light to this surface. No volume intersection tests are performed,
-	 * so this should already have been done by the PicoModel.
-	 */
-	void addLight(const RendererLight& light);
-	
-	/**
-	 * Remove all lights from this surface.
-	 */
-	void clearLights();
 	
 	/** Return the vertex count for this surface
 	 */

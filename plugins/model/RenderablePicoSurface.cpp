@@ -114,9 +114,6 @@ RenderablePicoSurface::~RenderablePicoSurface() {
 void RenderablePicoSurface::submitRenderables(Renderer& rend,
 											  const Matrix4& localToWorld)
 {
-	// Submit the lights
-	rend.setLights(_lights);
-	
 	// Submit geometry
 	rend.SetState(_shader, Renderer::eFullMaterials);
     rend.addRenderable(*this, localToWorld);
@@ -159,16 +156,6 @@ void RenderablePicoSurface::render(RenderStateFlags flags) const {
 	// Draw the elements
 	glDrawElements(GL_TRIANGLES, _nIndices, GL_UNSIGNED_INT, &_indices[0]);
 
-}
-
-// Add a light to our light list
-void RenderablePicoSurface::addLight(const RendererLight& light) {
-	_lights.addLight(light);
-}
-
-// Clear the light list
-void RenderablePicoSurface::clearLights() {
-	_lights.clear();	
 }
 
 // Apply a skin to this surface

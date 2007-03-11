@@ -89,34 +89,6 @@ void RenderablePicoModel::render(RenderStateFlags flags) const {
 	}
 }
 	
-// Add a RendererLight
-void RenderablePicoModel::addLight(const RendererLight& light,
-								   const Matrix4& localToWorld)
-{
-	// Add light to each surface only if the AABB of the surface and light
-	// intersect
-	for (SurfaceList::iterator i = _surfVec.begin();
-		 i != _surfVec.end();
-		 ++i)
-	{
-		if (light.testAABB(aabb_for_oriented_aabb((*i)->getAABB(),
-												  localToWorld)))
-		{
-			(*i)->addLight(light);
-		}
-	}	
-}
-	
-// Clear all lights from all surfaces
-void RenderablePicoModel::clearLights() {
-	for (SurfaceList::iterator i = _surfVec.begin();
-		 i != _surfVec.end();
-		 ++i)
-	{
-		(*i)->clearLights();
-	}	
-}
-	
 // Return vertex count of this model
 int RenderablePicoModel::getVertexCount() const {
 	int sum = 0;

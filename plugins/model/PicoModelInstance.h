@@ -2,6 +2,7 @@
 #define PICOMODELINSTANCE_H_
 
 #include "RenderablePicoModel.h"
+#include "VectorLightList.h"
 
 #include "scenelib.h"
 #include "selectable.h"
@@ -49,6 +50,10 @@ class PicoModelInstance :
 
 	// The light list from the shader cache when we attach
 	const LightList& _lightList;
+
+	// Vector of RendererLight references which illuminate this instance, set
+	// with addLight() and clearLights()
+	VectorLightList _lights;
 	
 public:
 
@@ -115,15 +120,11 @@ public:
 	}
 	
 	// Add a light to this model instance
-	void insertLight(const RendererLight& light) {
-    	// Calculate transform and pass on to the pico model
-    	const Matrix4& localToWorld = Instance::localToWorld();
-		_picoModel.addLight(light, localToWorld);
-	}
+	void insertLight(const RendererLight& light);
 	
 	// Clear all lights from this model instance
 	void clearLights() {
-		_picoModel.clearLights();
+		_lights.clear();
 	}
 };
 
