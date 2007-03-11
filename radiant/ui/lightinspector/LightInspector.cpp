@@ -161,6 +161,8 @@ void LightInspector::shutdown() {
 	// Tell the position tracker to save the information
 	_windowPosition.saveToNode(node);
 	
+	gtk_widget_hide(_widget);
+	
 	GlobalSelectionSystem().removeObserver(this);
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(_widget));
 }
