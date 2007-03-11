@@ -39,7 +39,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/widget.h"
 #include "gtkutil/window.h"
 #include "gtkutil/idledraw.h"
-#include "gtkutil/closure.h"
 
 #include "treemodel.h"
 #include "map.h"
@@ -107,6 +106,13 @@ const char* node_get_name(scene::Node& node)
   return (nameable != 0)
     ? nameable->name()
     : "node";
+}
+
+inline GValue GValue_default()
+{
+  GValue value;
+  value.g_type = 0;
+  return value;
 }
 
 template<typename value_type>

@@ -29,9 +29,6 @@ typedef struct _GtkToggleButton GtkToggleButton;
 typedef struct _GtkRadioButton GtkRadioButton;
 typedef int gint;
 typedef gint gboolean;
-typedef unsigned int guint;
-
-guint toggle_button_connect_callback(GtkToggleButton* button, const Callback& callback);
 
 void button_set_icon(GtkButton* button, const char* icon);
 void toggle_button_set_active_no_signal(GtkToggleButton* item, gboolean active);

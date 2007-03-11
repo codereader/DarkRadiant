@@ -45,6 +45,13 @@ inline Nameable* Node_getNameable(scene::Node& node)
 
 #include "gtkutil/gtktreestore.h"
 
+inline GValue GValue_default()
+{
+  GValue value;
+  value.g_type = 0;
+  return value;
+}
+
 template<typename value_type>
 inline void gtk_tree_model_get_pointer(GtkTreeModel* model, GtkTreeIter* iter, gint column, value_type** pointer)
 {
