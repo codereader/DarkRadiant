@@ -15,7 +15,6 @@ namespace ui {
 		menuFolder,
 		menuItem,
 		menuSeparator,
-		menuMRU,
 	};
 }
 

@@ -1,7 +1,7 @@
 #include "MRU.h"
 
 #include "ieventmanager.h"
-#include <iostream>
+#include "iuimanager.h"
 #include "gtk/gtkmenu.h"
 #include "gtk/gtkcontainer.h"
 #include "string/string.h"
@@ -31,15 +31,13 @@ MRU::MRU() :
 		
 		MRUMenuItem& item = (*_menuItems.rbegin());
 		
-		const std::string commandName = std::string("MRUOpen") + intToStr(i);
+		const std::string commandName = std::string("MRUOpen") + intToStr(i+1);
 		
 		// Connect the command to the last inserted menuItem
-		IEventPtr event = GlobalEventManager().addCommand(commandName, 
-					MemberCaller<MRUMenuItem, &MRUMenuItem::activate>(item));
-		
-		if (event != NULL) {
-			event->connectWidget(item);
-		}
+		GlobalEventManager().addCommand(
+			commandName, 
+			MemberCaller<MRUMenuItem, &MRUMenuItem::activate>(item)
+		);
 	}
 }
 
@@ -135,12 +133,12 @@ void MRU::insert(const std::string& fileName) {
 }
 
 void MRU::updateMenu() {
-	// Set the iterator to the first item in the list
+	// Set the iterator to the first filename in the list
 	MRUList::iterator i = _list.begin();
 	
 	// Now cycle through the widgets and load the values
 	for (MenuItems::iterator m = _menuItems.begin(); m != _menuItems.end(); m++) {
-		
+
 		// The default string to be loaded into the widget (i.e. "inactive")
 		std::string fileName = "";
 
@@ -155,25 +153,51 @@ void MRU::updateMenu() {
 	}
 }
 
-WidgetList MRU::getMenuWidgets() {
-	WidgetList widgetList;
-
-	widgetList.push_back(_emptyMenuItem);
-	//gtk_widget_show(_emptyMenuItem);
+void MRU::constructMenu() {
+	// Get the menumanager	
+	IMenuManager* menuManager = GlobalUIManager().getMenuManager();
+	
+	// Create the "empty" MRU menu item (the desensitised one)
+	GtkWidget* empty = menuManager->insert(
+		"main/file/exit", 
+		"mruempty", 
+		ui::menuItem, 
+		RECENT_FILES_CAPTION, 
+		"", // empty icon
+		"" // empty event
+	);
+	_emptyMenuItem.setWidget(empty);
+	gtk_widget_hide(empty);
 
 	// Add all the created widgets to the menu
 	for (MenuItems::iterator m = _menuItems.begin(); m != _menuItems.end(); m++) {
 		MRUMenuItem& item = (*m);
 		
-		// greebo: Add the items to the list 
-		// It will be shown/hidden by the load() and insert() methods 
-		widgetList.push_back(item);
+		const std::string commandName = std::string("MRUOpen") + intToStr(item.getIndex());
+		
+		// Create the toplevel menu item
+		GtkWidget* menuItem = menuManager->insert(
+			"main/file/exit", 
+			"MRU" + intToStr(item.getIndex()), 
+			ui::menuItem, 
+			item.getLabel(), 
+			"", // empty icon
+			commandName
+		);
+		
+		item.setWidget(menuItem);
 	}
+	menuManager->insert(
+		"main/file/exit", 
+		"mruseparator", 
+		ui::menuSeparator, 
+		"", // empty caption
+		"", // empty icon
+		"" // empty command
+	);
 
 	// Call the update routine to load the values into the widgets
 	updateMenu();
-	
-	return widgetList;
 }
 
 // -------------------------------------------------------------------------------------

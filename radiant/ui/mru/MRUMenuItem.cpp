@@ -5,7 +5,6 @@
 #include "gtk/gtklabel.h"
 #include "gtk/gtkwidget.h"
 #include "string/string.h"
-#include <iostream>
 
 #include "MRU.h"
 
@@ -16,23 +15,23 @@ MRUMenuItem::MRUMenuItem(const std::string& label, ui::MRU& mru, unsigned int in
 	_label(label),
 	_mru(mru),
 	_index(index),
-	_menuItem(GTK_WIDGET(gtk_menu_item_new_with_label(_label.c_str())))
-{
-	show();
-}
+	_widget(NULL)
+{}
 
 // Copy Constructor
 MRUMenuItem::MRUMenuItem(const ui::MRUMenuItem& other) :
 	_label(other._label),
 	_mru(other._mru),
 	_index(other._index),
-	_menuItem(other._menuItem)
-{
-	show();
+	_widget(other._widget)
+{}
+
+void MRUMenuItem::setWidget(GtkWidget* widget) {
+	_widget = widget;
 }
 
 MRUMenuItem::operator GtkWidget* () {
-	return _menuItem;
+	return _widget;
 }
 
 void MRUMenuItem::activate() {
@@ -44,13 +43,17 @@ void MRUMenuItem::activate() {
 }
 
 void MRUMenuItem::show() {
-	gtk_widget_set_sensitive(_menuItem, _index > 0);
-	gtk_widget_show_all(_menuItem);
+	if (_widget != NULL) {
+		gtk_widget_set_sensitive(_widget, _index > 0);
+		gtk_widget_show_all(_widget);
+	}
 }
 
 void MRUMenuItem::hide() {
-	gtk_widget_set_sensitive(_menuItem, false);
-	gtk_widget_hide(_menuItem);
+	if (_widget != NULL) {
+		gtk_widget_set_sensitive(_widget, false);
+		gtk_widget_hide(_widget);
+	}
 }
 
 void MRUMenuItem::setLabel(const std::string& label) {
@@ -60,9 +63,23 @@ void MRUMenuItem::setLabel(const std::string& label) {
 	// Add the number prefix to the widget label
 	const std::string widgetLabel = intToStr(_index) + " - " + _label;
 	
-	// Retrieve the widget's label and set the text
-	GtkLabel* labelWidget = GTK_LABEL(gtk_bin_get_child(GTK_BIN(_menuItem)));
-	gtk_label_set_text(labelWidget, widgetLabel.c_str());
+	GtkWidget* hbox = gtk_bin_get_child(GTK_BIN(_widget));
+	
+	// Get the list of child widgets
+	GList* gtkChildren = gtk_container_get_children(GTK_CONTAINER(hbox));
+	
+	while (gtkChildren != NULL) {
+		// Get the widget pointer from the current list item
+		GtkWidget* candidate = reinterpret_cast<GtkWidget*>(gtkChildren->data);
+		
+		// Have we found the widget?
+		if (GTK_IS_LABEL(candidate)) {
+			gtk_label_set_text(GTK_LABEL(candidate), widgetLabel.c_str());
+			break;
+		}
+		
+		gtkChildren = gtkChildren->next;
+	}
 	
 	// Show or hide the widget according to the actual string content
 	if (_label != "") {
@@ -75,6 +92,10 @@ void MRUMenuItem::setLabel(const std::string& label) {
 
 std::string MRUMenuItem::getLabel() const {
 	return _label;
+}
+
+int MRUMenuItem::getIndex() const {
+	return _index;
 }
 	
 } // namespace ui

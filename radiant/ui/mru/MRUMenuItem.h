@@ -28,7 +28,7 @@ class MRUMenuItem
 	unsigned int _index;
 	
 	// The internally stored name and reference to the GtkWidget
-	GtkWidget* _menuItem;
+	GtkWidget* _widget;
 	
 public:
 	// Constructor
@@ -37,6 +37,7 @@ public:
 	// Copy Constructor
 	MRUMenuItem(const ui::MRUMenuItem& other);
 	
+	void setWidget(GtkWidget* widget);
 	operator GtkWidget* ();
 	
 	// Triggers loading the map represented by this widget 
@@ -49,6 +50,8 @@ public:
 	// Sets/Retrieves the label
 	void setLabel(const std::string& label);
 	std::string getLabel() const;
+	
+	int getIndex() const;
 	
 }; // class MRUMenuItem
 	
