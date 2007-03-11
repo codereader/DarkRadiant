@@ -25,22 +25,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/callbackfwd.h"
 #include "signal/signalfwd.h"
 
-// textures menu
-
-typedef struct _GSList GSList;
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkMenu GtkMenu;
-typedef struct _GtkMenuItem GtkMenuItem;
-
-extern GtkMenu* g_textures_menu;
-extern GtkMenuItem* g_textures_menu_separator;
-
 // texture browser
 
 class TextureBrowser;
 TextureBrowser& GlobalTextureBrowser();
 
 typedef struct _GtkWindow GtkWindow;
+typedef struct _GtkWidget GtkWidget;
 GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel);
 void TextureBrowser_destroyWindow();
 

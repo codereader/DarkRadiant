@@ -54,6 +54,7 @@
 		<menuItem name="entityInspector" caption="Entity Inspector" command="ToggleEntityInspector" />
 		<menuItem name="lightInspector" caption="_Light Inspector" command="ToggleLightInspector" />
 		<menuItem name="surfaceInspector" caption="_Surface Inspector" command="SurfaceInspector" />
+		<menuItem name="patchinspector" caption="_Patch Inspector" command="PatchInspector" />
 		<menuItem name="entityList" caption="Entity List" command="EntityList" />
 		<menuSeparator />
 

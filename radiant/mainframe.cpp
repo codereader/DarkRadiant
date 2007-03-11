@@ -97,7 +97,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/glfont.h"
 #include "gtkutil/glwidget.h"
 #include "gtkutil/image.h"
-#include "gtkutil/menu.h"
 #include "gtkutil/Paned.h"
 #include "gtkutil/widget.h"
 #include "gtkutil/IconTextMenuToggle.h"
@@ -122,7 +121,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "patchmanip.h"
 #include "plugin.h"
 #include "plugin/PluginManager.h"
-#include "pluginmenu.h"
 #include "points.h"
 #include "preferences.h"
 #include "qe3.h"
@@ -836,17 +834,10 @@ void updateTextureBrowser() {
 	TextureBrowser_queueDraw(GlobalTextureBrowser());
 }
 
-void Restart()
-{
-  PluginsMenu_clear();
-
-  Radiant_Shutdown();
-  Radiant_Initialise();
-
-  PluginsMenu_populate();
-
+void Restart() {
+	Radiant_Shutdown();
+	Radiant_Initialise();
 }
-
 
 void thunk_OnSleep()
 {
@@ -1602,250 +1593,13 @@ void ClipperChangeNotify()
 
 
 LatchedInt g_Layout_viewStyle(MainFrame::eFloating, "Window Layout");
-LatchedBool g_Layout_enableDetachableMenus(false, "Detachable Menus");
 LatchedBool g_Layout_enablePatchToolbar(true, "Patch Toolbar");
 LatchedBool g_Layout_enablePluginToolbar(true, "Plugin Toolbar");
-
-
-
-GtkMenuItem* create_file_menu()
-{
-  // File menu
-  GtkMenuItem* file_menu_item = new_sub_menu_item_with_mnemonic("_File");
-  GtkMenu* menu = GTK_MENU(gtk_menu_item_get_submenu(file_menu_item));
-  if (g_Layout_enableDetachableMenus.m_value)
-    menu_tearoff (menu);
-
-	createMenuItemWithMnemonic(menu, "_New Map", "NewMap");
-	createSeparatorMenuItem(menu);
-	createMenuItemWithMnemonic(menu, "_Open...", "OpenMap");
-	createMenuItemWithMnemonic(menu, "_Import...", "ImportMap");
-	createMenuItemWithMnemonic(menu, "_Save", "SaveMap");
-	createMenuItemWithMnemonic(menu, "Save _as...", "SaveMapAs");
-	createMenuItemWithMnemonic(menu, "Save s_elected...", "SaveSelected");
-	createSeparatorMenuItem(menu);
-	createMenuItemWithMnemonic(menu, "Save Re_gion...", "SaveRegion");
-	createSeparatorMenuItem(menu);
-	createMenuItemWithMnemonic(menu, "_Refresh models", "RefreshReferences");
-	createSeparatorMenuItem(menu);
-	createMenuItemWithMnemonic(menu, "Pro_ject settings...", "ProjectSettings");
-	createSeparatorMenuItem(menu);
-	createMenuItemWithMnemonic(
-		menu, "_Pointfile...", "TogglePointfile", "pointfile16.png");
-	createSeparatorMenuItem(menu);
-	//GlobalMRU().constructMenu(menu);
-	createSeparatorMenuItem(menu);
-	createMenuItemWithMnemonic(menu, "E_xit", "Exit");
-
-  return file_menu_item;
-}
-
-GtkMenuItem* create_edit_menu()
-{
-  // Edit menu
-  GtkMenuItem* edit_menu_item = new_sub_menu_item_with_mnemonic("_Edit");
-  GtkMenu* menu = GTK_MENU(gtk_menu_item_get_submenu(edit_menu_item));
-  if (g_Layout_enableDetachableMenus.m_value)
-    menu_tearoff (menu);
-  createMenuItemWithMnemonic(menu, "_Undo", "Undo");
-  createMenuItemWithMnemonic(menu, "_Redo", "Redo");
-  createSeparatorMenuItem(menu);
-  createMenuItemWithMnemonic(menu, "_Copy", "Copy");
-  createMenuItemWithMnemonic(menu, "_Paste", "Paste");
-  createMenuItemWithMnemonic(menu, "P_aste To Camera", "PasteToCamera");
-  createSeparatorMenuItem(menu);
-  createMenuItemWithMnemonic(menu, "_Duplicate", "CloneSelection");
-  createMenuItemWithMnemonic(menu, "D_elete", "DeleteSelection");
-  createSeparatorMenuItem(menu);
-  createMenuItemWithMnemonic(menu, "Pa_rent", "ParentSelection");
-  createSeparatorMenuItem(menu);
-  createMenuItemWithMnemonic(menu, "C_lear Selection", "UnSelectSelection");
-  createMenuItemWithMnemonic(menu, "_Invert Selection", "InvertSelection");
-  createMenuItemWithMnemonic(menu, "Select i_nside", "SelectInside");
-  createMenuItemWithMnemonic(menu, "Select _touching", "SelectTouching");
-
-  //GtkMenu* convert_menu = create_sub_menu_with_mnemonic(menu, "E_xpand Selection");
-  createMenuItemWithMnemonic(menu, "Expand Selection to Whole _Entities", "ExpandSelectionToEntities");
-
-  createSeparatorMenuItem(menu);
-  createMenuItemWithMnemonic(menu, "Export Selected Brushes to _OBJ", "BrushExportOBJ");
-  createMenuItemWithMnemonic(menu, "Create CollisionModel from Selection...", "BrushExportCM");
-
-  createSeparatorMenuItem(menu);
-  createMenuItemWithMnemonic(menu, "Pre_ferences...", "Preferences");
-
-  return edit_menu_item;
-}
 
 GtkWidget* g_toggle_z_item = 0;
 GtkWidget* g_toggle_console_item = 0;
 GtkWidget* g_toggle_entity_item = 0;
 GtkWidget* g_toggle_entitylist_item = 0;
-
-GtkMenuItem* create_view_menu(MainFrame::EViewStyle style)
-{
-  // View menu
-  GtkMenuItem* view_menu_item = new_sub_menu_item_with_mnemonic("_View");
-  GtkMenu* menu = GTK_MENU(gtk_menu_item_get_submenu(view_menu_item));
-  if (g_Layout_enableDetachableMenus.m_value)
-    menu_tearoff (menu);
-
-	createMenuItemWithMnemonic(menu, "New XY View", "NewOrthoView");
-
-  if(style == MainFrame::eFloating)
-  {
-    createCheckMenuItemWithMnemonic(menu, "Camera View", "ToggleCamera");
-  }
-  if(style == MainFrame::eFloating || style == MainFrame::eSplit)
-  {
-    createMenuItemWithMnemonic(menu, "Console View", "ToggleConsole");
-    createMenuItemWithMnemonic(menu, "Texture Browser", "ViewTextures");
-    createMenuItemWithMnemonic(menu, "Entity Inspector", "ToggleEntityInspector");
-  }
-  else
-  {
-    createMenuItemWithMnemonic(menu, "Entity Inspector", "ViewEntityInfo");
-  }
-	// Light inspector
-	createMenuItemWithMnemonic(menu, "_Light Inspector", "ToggleLightInspector");
-								   
-  createMenuItemWithMnemonic(menu, "_Surface Inspector", "SurfaceInspector");
-  createMenuItemWithMnemonic(menu, "Entity List", "EntityList");
-
-  menu_separator(menu);
-  {
-    GtkMenu* camera_menu = create_sub_menu_with_mnemonic (menu, "Camera");
-    createMenuItemWithMnemonic(camera_menu, "_Center", "CenterView");
-    createMenuItemWithMnemonic(camera_menu, "_Up Floor", "UpFloor");
-    createMenuItemWithMnemonic(camera_menu, "_Down Floor", "DownFloor");
-    menu_separator(camera_menu);
-    createMenuItemWithMnemonic(camera_menu, "Far Clip Plane In", "CubicClipZoomIn");
-    createMenuItemWithMnemonic(camera_menu, "Far Clip Plane Out", "CubicClipZoomOut");
-    menu_separator(camera_menu);
-    createMenuItemWithMnemonic(camera_menu, "Next leak spot", "NextLeakSpot");
-    createMenuItemWithMnemonic(camera_menu, "Previous leak spot", "PrevLeakSpot");
-    menu_separator(camera_menu);
-    createMenuItemWithMnemonic(camera_menu, "Look Through Selected", "LookThroughSelected");
-    createMenuItemWithMnemonic(camera_menu, "Look Through Camera", "LookThroughCamera");
-  }
-  {
-    GtkMenu* orthographic_menu = create_sub_menu_with_mnemonic(menu, "Orthographic");
-    if(style == MainFrame::eRegular || style == MainFrame::eRegularLeft || style == MainFrame::eFloating)
-    {
-      createMenuItemWithMnemonic(orthographic_menu, "_Next (XY, YZ, XY)", "NextView");
-      createMenuItemWithMnemonic(orthographic_menu, "XY (Top)", "ViewTop");
-      createMenuItemWithMnemonic(orthographic_menu, "YZ", "ViewSide");
-      createMenuItemWithMnemonic(orthographic_menu, "XZ", "ViewFront");
-      menu_separator(orthographic_menu);
-    }
-
-    createMenuItemWithMnemonic(orthographic_menu, "_XY 100%", "Zoom100");
-    createMenuItemWithMnemonic(orthographic_menu, "XY Zoom _In", "ZoomIn");
-    createMenuItemWithMnemonic(orthographic_menu, "XY Zoom _Out", "ZoomOut");
-  }
-
-  menu_separator(menu);
-
-  {
-    GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Show");
-    createCheckMenuItemWithMnemonic(menu_in_menu, "Show _Angles", "ShowAngles");
-    createCheckMenuItemWithMnemonic(menu_in_menu, "Show _Names", "ShowNames");
-    createCheckMenuItemWithMnemonic(menu_in_menu, "Show Blocks", "ShowBlocks");
-    createCheckMenuItemWithMnemonic(menu_in_menu, "Show C_oordinates", "ShowCoordinates");
-    createCheckMenuItemWithMnemonic(menu_in_menu, "Show Window Outline", "ShowWindowOutline");
-    createCheckMenuItemWithMnemonic(menu_in_menu, "Show Axes", "ShowAxes");
-    createCheckMenuItemWithMnemonic(menu_in_menu, "Show Workzone", "ShowWorkzone");
-    createCheckMenuItemWithMnemonic(menu_in_menu, "Show Size Info", "ToggleShowSizeInfo");
-  }
-
-  menu_separator(menu);
-  {
-    GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Hide/Show");
-    createMenuItemWithMnemonic(menu_in_menu, "Hide Selected", "HideSelected");
-    createMenuItemWithMnemonic(menu_in_menu, "Show Hidden", "ShowHidden");
-  }
-  {
-    GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Region");
-    createMenuItemWithMnemonic(menu_in_menu, "_Switch off", "RegionOff");
-    createMenuItemWithMnemonic(menu_in_menu, "_Set from XY View", "RegionSetXY");
-    createMenuItemWithMnemonic(menu_in_menu, "Set from Brush", "RegionSetBrush");
-    createMenuItemWithMnemonic(menu_in_menu, "Set from Se_lection", "RegionSetSelection");
-  }
-  menu_separator(menu);
-  
-  createMenuItemWithMnemonic(
-  	menu, "Colours...", "EditColourScheme", "editcolour16.png");
-  
-  createMenuItemWithMnemonic(
-  	menu, "Background image...", "OverlayDialog", "bgimage16.png");
-  
-  return view_menu_item;
-}
-
-GtkMenuItem* create_selection_menu()
-{
-  // Selection menu
-  GtkMenuItem* selection_menu_item = new_sub_menu_item_with_mnemonic("_Modify");
-  GtkMenu* menu = GTK_MENU(gtk_menu_item_get_submenu(selection_menu_item));
-  if (g_Layout_enableDetachableMenus.m_value)
-    menu_tearoff (menu);
-
-  {
-    GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Components");
-    createCheckMenuItemWithMnemonic(menu_in_menu, "_Edges", "DragEdges");
-    createCheckMenuItemWithMnemonic(menu_in_menu, "_Vertices", "DragVertices");
-    createCheckMenuItemWithMnemonic(menu_in_menu, "_Faces", "DragFaces");
-    createCheckMenuItemWithMnemonic(menu_in_menu, "En_tities", "DragEntities");
-  }
-
-  menu_separator(menu);
-
-  {
-    GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic(menu, "Nudge");
-    createMenuItemWithMnemonic(menu_in_menu, "Nudge Left", "SelectNudgeLeft");
-    createMenuItemWithMnemonic(menu_in_menu, "Nudge Right", "SelectNudgeRight");
-    createMenuItemWithMnemonic(menu_in_menu, "Nudge Up", "SelectNudgeUp");
-    createMenuItemWithMnemonic(menu_in_menu, "Nudge Down", "SelectNudgeDown");
-  }
-  {
-    GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Rotate");
-    createMenuItemWithMnemonic(menu_in_menu, "Rotate X", "RotateSelectionX");
-    createMenuItemWithMnemonic(menu_in_menu, "Rotate Y", "RotateSelectionY");
-    createMenuItemWithMnemonic(menu_in_menu, "Rotate Z", "RotateSelectionZ");
-  }
-  {
-    GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Flip");
-    createMenuItemWithMnemonic(menu_in_menu, "Flip _X", "MirrorSelectionX");
-    createMenuItemWithMnemonic(menu_in_menu, "Flip _Y", "MirrorSelectionY");
-    createMenuItemWithMnemonic(menu_in_menu, "Flip _Z", "MirrorSelectionZ");
-  }
-
-  return selection_menu_item;
-}
-
-GtkMenuItem* create_grid_menu()
-{
-  // Grid menu
-  GtkMenuItem* grid_menu_item = new_sub_menu_item_with_mnemonic("_Grid");
-  GtkMenu* menu = GTK_MENU(gtk_menu_item_get_submenu(grid_menu_item));
-  if (g_Layout_enableDetachableMenus.m_value)
-    menu_tearoff (menu);
-
-	createCheckMenuItemWithMnemonic(menu, "Grid0.125", "SetGrid0.125");
-	createCheckMenuItemWithMnemonic(menu, "Grid0.25", "SetGrid0.25");
-	createCheckMenuItemWithMnemonic(menu, "Grid0.5", "SetGrid0.5");
-	createCheckMenuItemWithMnemonic(menu, "Grid1", "SetGrid1");
-	createCheckMenuItemWithMnemonic(menu, "Grid2", "SetGrid2");
-	createCheckMenuItemWithMnemonic(menu, "Grid4", "SetGrid4");
-	createCheckMenuItemWithMnemonic(menu, "Grid8", "SetGrid8");
-	createCheckMenuItemWithMnemonic(menu, "Grid16", "SetGrid16");
-	createCheckMenuItemWithMnemonic(menu, "Grid32", "SetGrid32");
-	createCheckMenuItemWithMnemonic(menu, "Grid64", "SetGrid64");
-	createCheckMenuItemWithMnemonic(menu, "Grid128", "SetGrid128");
-	createCheckMenuItemWithMnemonic(menu, "Grid256", "SetGrid256");
-
-  return grid_menu_item;
-}
 
 void RefreshShaders()
 {
@@ -1861,97 +1615,6 @@ void CallBrushExportOBJ() {
 	else {
 		gtk_MessageBox(GTK_WIDGET(MainFrame_getWindow()), "No Brushes Selected!", "Error", eMB_OK, eMB_ICONERROR);
 	}
-}
-
-// Create the Map menu
-GtkMenuItem* create_map_menu()
-{
-	GtkMenuItem* map_menu_item = new_sub_menu_item_with_mnemonic("M_ap");
-	GtkMenu* menu = GTK_MENU(gtk_menu_item_get_submenu(map_menu_item));
-	createMenuItemWithMnemonic(menu, "Find brush...", "FindBrush");
-	createMenuItemWithMnemonic(menu, "Map Info...", "MapInfo");
-
-	createSeparatorMenuItem(menu);
-	createMenuItemWithMnemonic(
-		menu, "_Objectives...", "ObjectivesEditor", "objectives16.png");
-
-	return map_menu_item;
-}
-
-GtkMenuItem* create_entity_menu()
-{
-  // Brush menu
-  GtkMenuItem* entity_menu_item = new_sub_menu_item_with_mnemonic("E_ntity");
-  GtkMenu* menu = GTK_MENU(gtk_menu_item_get_submenu(entity_menu_item));
-  if (g_Layout_enableDetachableMenus.m_value)
-    menu_tearoff (menu);
-
-  Entity_constructMenu(menu);
-
-  return entity_menu_item;
-}
-
-GtkMenuItem* create_brush_menu()
-{
-  // Brush menu
-  GtkMenuItem* brush_menu_item = new_sub_menu_item_with_mnemonic("B_rush");
-  GtkMenu* menu = GTK_MENU(gtk_menu_item_get_submenu(brush_menu_item));
-  if (g_Layout_enableDetachableMenus.m_value)
-    menu_tearoff (menu);
-
-  Brush_constructMenu(menu);
-
-  return brush_menu_item;
-}
-
-GtkMenuItem* create_patch_menu()
-{
-  // Curve menu
-  GtkMenuItem* patch_menu_item = new_sub_menu_item_with_mnemonic("_Curve");
-  GtkMenu* menu = GTK_MENU(gtk_menu_item_get_submenu(patch_menu_item));
-  if (g_Layout_enableDetachableMenus.m_value)
-  {
-    menu_tearoff(menu);
-  }
-
-  Patch_constructMenu(menu);
-
-  return patch_menu_item;
-}
-
-GtkMenuItem* create_help_menu()
-{
-  // Help menu
-  GtkMenuItem* help_menu_item = new_sub_menu_item_with_mnemonic("_Help");
-  GtkMenu* menu = GTK_MENU(gtk_menu_item_get_submenu(help_menu_item));
-  if (g_Layout_enableDetachableMenus.m_value)
-    menu_tearoff (menu);
-
-  createMenuItemWithMnemonic(menu, "Shortcuts list", "ShowCommandList");
-  createMenuItemWithMnemonic(menu, "_About", "About");
-
-  return help_menu_item;
-}
-
-GtkMenuBar* create_main_menu(MainFrame::EViewStyle style)
-{
-  GtkMenuBar* menu_bar = GTK_MENU_BAR(gtk_menu_bar_new());
-  gtk_widget_show(GTK_WIDGET(menu_bar));
-
-  gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_file_menu()));
-  gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_edit_menu()));
-  gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_view_menu(style)));
-  gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_selection_menu()));
-  gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_grid_menu()));
-  
-  gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_map_menu()));
-  gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_entity_menu()));
-  gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_brush_menu()));
-  gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_patch_menu()));
-  gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_plugins_menu()));
-  gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_help_menu()));
-
-  return menu_bar;
 }
 
 GtkWidget* create_main_statusbar(GtkWidget *pStatusLabel[c_count_status])
@@ -2266,16 +1929,23 @@ void MainFrame::Create()
     
     m_nCurrentStyle = (EViewStyle) g_Layout_viewStyle.m_value;
     
-    // Create and add main menu    
-    //GtkMenuBar *main_menu = create_main_menu(CurrentStyle());
-    //gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(main_menu), FALSE, FALSE, 0);
-    
     // Create the Filter menu entries
     ui::FiltersMenu::addItems();
     
     // Retrieve the "main" menubar from the UIManager
     GtkMenuBar* mainMenu = GTK_MENU_BAR(GlobalUIManager().getMenuManager()->get("main"));
     gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(mainMenu), false, false, 0);
+    
+    if (m_nCurrentStyle != eFloating) {
+    	// Hide the camera toggle option for non-floating views
+    	GlobalUIManager().getMenuManager()->setVisibility("main/view/cameraview", false);
+    }
+    
+	if (m_nCurrentStyle != eFloating && m_nCurrentStyle != eSplit) {
+		// Hide the console/texture browser toggles for non-floating/non-split views
+		GlobalUIManager().getMenuManager()->setVisibility("main/view/consoleView", false);
+		GlobalUIManager().getMenuManager()->setVisibility("main/view/textureBrowser", false);	
+	}
     
     // Instantiate the ToolbarCreator and retrieve the view toolbar widget 
 	ui::ToolbarCreator toolbarCreator;
@@ -2603,9 +2273,7 @@ void MainFrame::Shutdown()
 
   EntityList_destroyWindow();
 
-  g_textures_menu = 0;
-
-	// Save the camera size to the registry
+  	// Save the camera size to the registry
 	GlobalCamera().saveCamWndState();
 	
 	// Save the current XYViews to the registry
@@ -2726,11 +2394,6 @@ void Layout_constructPreferences(PrefPage* page)
       IntExportCaller(g_Layout_viewStyle.m_latched)
     );
   }
-  page->appendCheckBox(
-    "", "Detachable Menus",
-    LatchedBoolImportCaller(g_Layout_enableDetachableMenus),
-    BoolExportCaller(g_Layout_enableDetachableMenus.m_latched)
-  );
   if (!string_empty(g_pGameDescription->getKeyValue("no_patch")))
   {
     page->appendCheckBox(
@@ -2896,7 +2559,6 @@ void MainFrame_Construct()
   typedef FreeCaller1<const Selectable&, ComponentMode_SelectionChanged> ComponentModeSelectionChangedCaller;
   GlobalSelectionSystem().addSelectionChangeCallback(ComponentModeSelectionChangedCaller());
 
-  GlobalPreferenceSystem().registerPreference("DetachableMenus", BoolImportStringCaller(g_Layout_enableDetachableMenus.m_latched), BoolExportStringCaller(g_Layout_enableDetachableMenus.m_latched));
   GlobalPreferenceSystem().registerPreference("PatchToolBar", BoolImportStringCaller(g_Layout_enablePatchToolbar.m_latched), BoolExportStringCaller(g_Layout_enablePatchToolbar.m_latched));
   GlobalPreferenceSystem().registerPreference("PluginToolBar", BoolImportStringCaller(g_Layout_enablePluginToolbar.m_latched), BoolExportStringCaller(g_Layout_enablePluginToolbar.m_latched));
   GlobalPreferenceSystem().registerPreference("QE4StyleWindows", IntImportStringCaller(g_Layout_viewStyle.m_latched), IntExportStringCaller(g_Layout_viewStyle.m_latched));
@@ -2931,7 +2593,6 @@ void MainFrame_Construct()
   GlobalPreferenceSystem().registerPreference("EnginePath", CopiedStringImportStringCaller(g_strEnginePath), CopiedStringExportStringCaller(g_strEnginePath));
 
   g_Layout_viewStyle.useLatched();
-  g_Layout_enableDetachableMenus.useLatched();
   g_Layout_enablePatchToolbar.useLatched();
   g_Layout_enablePluginToolbar.useLatched();
 

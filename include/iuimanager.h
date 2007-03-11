@@ -34,6 +34,13 @@ public:
 	 */
 	virtual GtkWidget* get(const std::string& path) = 0;
 	
+	/** greebo: Shows/hides the menuitem under the given path. 
+	 * 
+	 * @path: the path to the item (e.g. "main/view/cameraview")
+	 * @visible: FALSE, if the widget should be hidden, TRUE otherwise
+	 */
+	virtual void setVisibility(const std::string& path, bool visible) = 0;
+	
 	/** greebo: Adds a new item as child under the given path.
 	 * 
 	 * @insertPath: the path where to insert the item: "main/filters"

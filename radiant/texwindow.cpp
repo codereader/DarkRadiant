@@ -59,7 +59,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "convert.h"
 
 #include "gtkutil/image.h"
-#include "gtkutil/menu.h"
 #include "gtkutil/nonmodal.h"
 #include "gtkutil/cursor.h"
 #include "gtkutil/widget.h"
@@ -84,48 +83,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/common/ToolbarCreator.h"
 #include "selection/algorithm/Shader.h"
 
-
-// globals for textures
-class TextureMenuName
-{
-  enum { c_menuNameLength = 64 };
-  char m_name[c_menuNameLength];
-public:
-  TextureMenuName(const char* name)
-  {
-    strncpy(m_name, name, c_menuNameLength - 1);
-    m_name[c_menuNameLength - 1] = '\0';
-  }
-  const char* c_str() const
-  {
-    return m_name;
-  }
-};
-
 void TextureBrowser_queueDraw(TextureBrowser& textureBrowser);
 
-bool string_equal_start(const char* string, StringRange start)
-{
-  return string_equal_n(string, start.first, start.last - start.first);
-}
-
-GtkMenuItem* MenuItem_create(const char* name)
-{
-  StringOutputStream buffer(64);
-  buffer << ConvertLocaleToUTF8(name);
-  return GTK_MENU_ITEM(gtk_menu_item_new_with_label(buffer.c_str()));
-}
-
-GtkMenuItem* Menu_addItem(GtkMenu* menu, const char* name)
-{
-  GtkMenuItem* item = MenuItem_create(name);
-  gtk_widget_show(GTK_WIDGET(item));
-  menu_add_item(menu, item);
-  return item;
-}
-
-GtkMenu* g_textures_menu = 0;
-GtkMenuItem* g_textures_menu_separator = 0;
 namespace
 {
   bool g_TexturesMenu_shaderlistOnly = false;

@@ -75,7 +75,6 @@ gtkutil_src = '\
   glwidget.cpp\
   image.cpp\
   idledraw.cpp\
-  menu.cpp\
   messagebox.cpp\
   nonmodal.cpp\
   pointer.cpp\
@@ -325,7 +324,6 @@ radiant_src = [
 'patchmanip.cpp',
 'plugin.cpp',
 'pluginapi.cpp',
-'pluginmenu.cpp',
 'points.cpp',
 'preferencedictionary.cpp',
 'preferences.cpp',

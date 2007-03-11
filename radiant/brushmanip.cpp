@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ieventmanager.h"
 
 #include "gtkutil/widget.h"
-#include "gtkutil/menu.h"
 #include "gtkmisc.h"
 #include "brush/BrushNode.h"
 #include "map.h"
@@ -1174,34 +1173,4 @@ void Brush_registerCommands()
 	GlobalEventManager().addCommand("MakeStructural", FreeCaller<Select_MakeStructural>());
 	
 	GlobalEventManager().addCommand("TextureNatural", FreeCaller<selection::algorithm::naturalTexture>());
-}
-
-void Brush_constructMenu(GtkMenu* menu)
-{
-  createMenuItemWithMnemonic(menu, "Prism...", "BrushPrism");
-  createMenuItemWithMnemonic(menu, "Cone...", "BrushCone");
-  createMenuItemWithMnemonic(menu, "Sphere...", "BrushSphere");
-  createSeparatorMenuItem (menu);
-  {
-    GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "CSG");
-    createMenuItemWithMnemonic(menu_in_menu, "Make _Hollow", "CSGHollow");
-    createMenuItemWithMnemonic(menu_in_menu, "CSG _Subtract", "CSGSubtract");
-    createMenuItemWithMnemonic(menu_in_menu, "CSG _Merge", "CSGMerge");
-  }
-  createSeparatorMenuItem(menu);
-  {
-    GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Clipper");
-
-    createMenuItemWithMnemonic(menu_in_menu, "Clip selection", "ClipSelected");
-    createMenuItemWithMnemonic(menu_in_menu, "Split selection", "SplitSelected");
-    createMenuItemWithMnemonic(menu_in_menu, "Flip Clip orientation", "FlipClip");
-  }
-  createSeparatorMenuItem(menu);
-  createMenuItemWithMnemonic(menu, "Make detail", "MakeDetail");
-  createMenuItemWithMnemonic(menu, "Make structural", "MakeStructural");
-
-  createCheckMenuItemWithMnemonic(menu, "Texture Lock", "TogTexLock");
-  createSeparatorMenuItem(menu);
-  createMenuItemWithMnemonic(menu, "Copy Face Texture", "FaceCopyTexture");
-  createMenuItemWithMnemonic(menu, "Paste Face Texture", "FacePasteTexture");
 }
