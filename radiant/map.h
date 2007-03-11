@@ -30,6 +30,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <ostream>
 #include <string>
 
+class AABB;
+
 class Map;
 extern Map g_map;
 
@@ -207,6 +209,10 @@ namespace map {
 	 */
 	void removeOriginFromChildPrimitives();
 	void addOriginToChildPrimitives();
+	
+	/** greebo: Returns the AABB enclosing all visible map objects.
+	 */
+	AABB getVisibleBounds();
 }
 
 

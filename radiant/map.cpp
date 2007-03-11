@@ -475,6 +475,31 @@ void addOriginToChildPrimitives() {
 	GlobalBrush()->setTextureLock(textureLockStatus);
 }
 
+class AABBCollectorVisible : 
+	public scene::Graph::Walker
+{
+	AABB& _targetAABB;
+public:
+	AABBCollectorVisible(AABB& targetAABB) :
+		_targetAABB(targetAABB)
+	{}
+	
+	bool pre(const scene::Path& path, scene::Instance& instance) const {
+		if (path.top().get().visible()) {
+			_targetAABB.includeAABB(instance.worldAABB());
+		}
+		return true;
+	}
+};
+
+AABB getVisibleBounds() {
+	AABB returnValue;
+	
+	GlobalSceneGraph().traverse(AABBCollectorVisible(returnValue));
+	
+	return returnValue;
+}
+
 } // namespace map
 
 bool Map_Unnamed(const Map& map)
