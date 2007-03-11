@@ -8,6 +8,15 @@
 
 typedef struct _GtkWidget GtkWidget;
 
+/** greebo: This is a representation of a general menu item/element. 
+ * 			
+ * The possible menuitem types are defined in iuimanager.h.
+ * Each menu item can have a list of sub-menuitems (this applies to the
+ * types eMenuBar and eFolder).
+ * 
+ * Use the MenuManager class to access these menuitems. 
+ */
+
 namespace ui {
 
 class MenuItem;

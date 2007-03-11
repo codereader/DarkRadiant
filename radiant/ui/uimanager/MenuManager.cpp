@@ -47,15 +47,15 @@ void MenuManager::loadFromRegistry() {
 	}
 }
 
-GtkWidget* MenuManager::getMenu(const std::string& name) {
-	MenuItemPtr foundMenu = _root->find(name);
+GtkWidget* MenuManager::get(const std::string& path) {
+	MenuItemPtr foundMenu = _root->find(path);
 	
 	if (foundMenu != NULL) {
 		// Cast the menubar onto a GtkWidget* and return
 		return *foundMenu;
 	}
 	else {
-		globalErrorStream() << "MenuManager: Warning: Menu " << name.c_str() << " not found!\n";
+		globalErrorStream() << "MenuManager: Warning: Menu " << path.c_str() << " not found!\n";
 		return NULL;
 	}
 }
