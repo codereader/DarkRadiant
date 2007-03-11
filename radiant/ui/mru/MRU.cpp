@@ -187,6 +187,8 @@ void MRU::constructMenu() {
 		
 		item.setWidget(menuItem);
 	}
+	
+	// Insert the last separator to split the MRU file list from the "Exit" command. 
 	menuManager->insert(
 		"main/file/exit", 
 		"mruseparator", 

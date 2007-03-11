@@ -113,6 +113,8 @@ public:
 				MemberCaller<filters::XMLFilter, &filters::XMLFilter::toggle>(inserted) 
 			);
 		}
+		
+		_initialised = true;
 	}
 
 	// Filter system visit function
