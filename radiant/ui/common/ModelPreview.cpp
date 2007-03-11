@@ -183,6 +183,7 @@ void ModelPreview::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelPr
 	// Premultiply with the translations
 	glLoadIdentity();
 	glTranslatef(0, 0, self->_camDist); // camera translation
+	glRotatef(90, -1, 0, 0); // axis rotation (y-up (GL) -> z-up (model))
 	glMultMatrixf(self->_rotation); // post multiply with rotations
 
 	// Render the bounding box if the toggle is active
