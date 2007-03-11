@@ -20,6 +20,9 @@ private:
 	// Text name of filter (from game.xml)
 	std::string _name;
 	
+	// The name of the toggle event
+	std::string _eventName;
+	
 	// Ordered list of rule objects
 	typedef std::vector<XMLFilterRule> RuleList;
 	RuleList _rules;
@@ -28,8 +31,7 @@ public:
 
 	/** Construct an XMLFilter with the given name.
 	 */
-	XMLFilter(const std::string n)
-	: _name(n) {}
+	XMLFilter(const std::string& name);
 	
 	/** Add a rule to this filter.
 	 * 
@@ -57,6 +59,14 @@ public:
 	 * String name of the item to test.
 	 */
 	bool isVisible(const std::string& itemClass, const std::string& texture) const;
+	
+	/** greebo: Returns the name of the toggle event associated to this filter
+	 */
+	std::string getEventName() const;
+	
+	/** greebo: Gets called when the associated Event is fired. 
+	 */
+	void toggle();
 };
 
 

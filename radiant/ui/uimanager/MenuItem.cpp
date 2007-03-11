@@ -20,14 +20,14 @@ namespace ui {
 MenuItem::MenuItem(MenuItemPtr parent) :
 	_parent(parent),
 	_widget(NULL),
-	_type(eNothing),
+	_type(menuNothing),
 	_constructed(false)
 {
 	if (_parent == NULL) {
-		_type = eRoot;
+		_type = menuRoot;
 	}
 	else if (_parent->isRoot()) {
-		_type = eMenuBar;
+		_type = menuBar;
 	}
 }
 
@@ -40,10 +40,10 @@ void MenuItem::setName(const std::string& name) {
 }
 
 bool MenuItem::isRoot() const {
-	return (_type == eRoot);
+	return (_type == menuRoot);
 }
 
-MenuItemPtr MenuItem::getParent() const {
+MenuItemPtr MenuItem::parent() const {
 	return _parent;
 }
 
@@ -64,11 +64,15 @@ void MenuItem::setIcon(const std::string& icon) {
 }
 
 bool MenuItem::isEmpty() const {
-	return (_type != eItem);
+	return (_type != menuItem);
 }
 
-MenuItem::eType MenuItem::getType() const {
+eMenuItemType MenuItem::getType() const {
 	return _type;
+}
+
+void MenuItem::setType(eMenuItemType type) {
+	_type = type;
 }
 
 int MenuItem::numChildren() const {
@@ -85,6 +89,40 @@ std::string MenuItem::getEvent() const {
 
 void MenuItem::setEvent(const std::string& eventName) {
 	_event = eventName;
+}
+
+int MenuItem::getMenuPosition(MenuItemPtr child) {
+	if (!_constructed) {
+		construct();
+	}
+	
+	// Check if this is the right item type for this operation
+	if (_type == menuFolder || _type == menuBar) {
+		// Get the list of child widgets
+		GList* gtkChildren = gtk_container_get_children(GTK_CONTAINER(_widget));
+		
+		// Cast the child onto a GtkWidget for comparison
+		GtkWidget* childWidget = *child;
+		
+		int index = 0;
+		while (gtkChildren != NULL) {
+			// Get the widget pointer from the current list item
+			GtkWidget* candidate = reinterpret_cast<GtkWidget*>(gtkChildren->data);
+			
+			// Have we found the widget?
+			if (candidate == childWidget) {
+				return index;
+			}
+			
+			index++;
+			gtkChildren = gtkChildren->next;
+		}
+		
+		return index;
+	}
+	else {
+		return -1;
+	}
 }
 
 MenuItem::operator GtkWidget* () {
@@ -142,16 +180,16 @@ void MenuItem::parseNode(xml::Node& node, MenuItemPtr thisItem) {
 	setCaption(node.getAttributeValue("caption"));
 	
 	if (nodeName == "menuItem") {
-		_type = eItem;
+		_type = menuItem;
 		// Get the EventPtr according to the event
 		setEvent(node.getAttributeValue("command"));
 		setIcon(node.getAttributeValue("icon"));
 	}
 	else if (nodeName == "menuSeparator") {
-		_type = eSeparator;
+		_type = menuSeparator;
 	}
 	else if (nodeName == "subMenu") {
-		_type = eFolder;
+		_type = menuFolder;
 		
 		xml::NodeList subNodes = node.getChildren();
 		for (unsigned int i = 0; i < subNodes.size(); i++) {
@@ -167,7 +205,7 @@ void MenuItem::parseNode(xml::Node& node, MenuItemPtr thisItem) {
 		}
 	}
 	else if (nodeName == "menu") {
-		_type = eMenuBar;
+		_type = menuBar;
 		
 		xml::NodeList subNodes = node.getChildren();
 		for (unsigned int i = 0; i < subNodes.size(); i++) {
@@ -183,26 +221,26 @@ void MenuItem::parseNode(xml::Node& node, MenuItemPtr thisItem) {
 		}
 	} 
 	else if (nodeName == "menuMRU") {
-		_type = eMRU;
+		_type = menuMRU;
 	}
 	else {
-		_type = eNothing;
+		_type = menuNothing;
 		globalErrorStream() << "MenuItem: Unknown node found: " << nodeName.c_str() << "\n"; 
 	}
 }
 
 void MenuItem::construct() {
-	if (_type == eMenuBar) {
+	if (_type == menuBar) {
 		_widget = gtk_menu_bar_new();
 		for (unsigned int i = 0; i < _children.size(); i++) {
 			// Cast each children onto GtkWidget and append it to the menu
 			gtk_menu_shell_append(GTK_MENU_SHELL(_widget), *_children[i]);
 		}
 	}
-	else if (_type == eSeparator) {
+	else if (_type == menuSeparator) {
 		_widget = gtk_separator_menu_item_new();
 	}
-	else if (_type == eFolder) {
+	else if (_type == menuFolder) {
 		// Create the menuitem
 		_widget = gtk_menu_item_new_with_mnemonic(_caption.c_str());
 		// Create the submenu
@@ -214,7 +252,7 @@ void MenuItem::construct() {
 		for (unsigned int i = 0; i < _children.size(); i++) {
 			
 			// Special case: the MRU menu (not a folder, but a series of widgets)
-			if (_children[i]->getType() == eMRU) {
+			if (_children[i]->getType() == menuMRU) {
 				WidgetList widgetList = GlobalMRU().getMenuWidgets();
 		
 				for (unsigned int w = 0; w < widgetList.size(); w++) {
@@ -227,7 +265,7 @@ void MenuItem::construct() {
 			}
 		}
 	}
-	else if (_type == eItem) {
+	else if (_type == menuItem) {
 		// Try to lookup the event name
 		IEventPtr event = GlobalEventManager().findEvent(_event);
 		
@@ -250,10 +288,10 @@ void MenuItem::construct() {
 			globalErrorStream() << "MenuItem: Cannot find associated event: " << _event.c_str() << "\n"; 
 		}
 	}
-	else if (_type == eMRU) {
+	else if (_type == menuMRU) {
 		// Do nothing.
 	}
-	else if (_type == eRoot) {
+	else if (_type == menuRoot) {
 		globalErrorStream() << "MenuItem: Cannot instantiate root MenuItem.\n"; 
 	}
 	

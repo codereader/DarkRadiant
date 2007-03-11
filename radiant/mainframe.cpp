@@ -2272,7 +2272,7 @@ void MainFrame::Create()
     gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(main_menu), FALSE, FALSE, 0);
     
     // Retrieve the "main" menubar from the UIManager
-    GtkMenuBar* mainMenu = GTK_MENU_BAR(GlobalUIManager().getMenu("main"));
+    GtkMenuBar* mainMenu = GTK_MENU_BAR(GlobalUIManager().getMenuManager()->getMenu("main"));
     gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(mainMenu), false, false, 0);
     
     // Instantiate the ToolbarCreator and retrieve the view toolbar widget 
@@ -2764,6 +2764,9 @@ void EditColourScheme() {
 
 void MainFrame_Construct()
 {
+	// Tell the FilterSystem to register its commands
+	GlobalFilterSystem().initialise();
+	
 	GlobalEventManager().addCommand("Sleep", FreeCaller<thunk_OnSleep>());
 	GlobalEventManager().addCommand("NewMap", FreeCaller<NewMap>());
 	GlobalEventManager().addCommand("OpenMap", FreeCaller<OpenMap>());

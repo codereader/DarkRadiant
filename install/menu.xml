@@ -163,15 +163,6 @@
 		<menuItem name="grid256" caption="Grid256" command="SetGrid256" />
 	</subMenu>
 
-	<subMenu name="filter" caption="Fi_lter">
-		<menuItem name="filterEntities" caption="All entities" command="Undo" icon="XXXX" />
-		<menuItem name="filterCaulk" caption="Caulk" command="Undo" icon="XXXX" />
-		<menuItem name="filterCollision" caption="Collision surfaces" command="Undo" icon="XXXX" />
-		<menuItem name="filterLights" caption="Lights" command="Undo" icon="XXXX" />
-		<menuItem name="filterPatches" caption="Patches" command="Undo" icon="XXXX" />
-		<menuItem name="filterWorld" caption="World geometry" command="Undo" icon="XXXX" />
-	</subMenu>
-
 	<subMenu name="map" caption="M_ap">
 		<menuItem name="findBrush" caption="Find brush..." command="FindBrush" />
 		<menuItem name="mapinfo" caption="Map info..." command="MapInfo" />

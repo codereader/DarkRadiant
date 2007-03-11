@@ -21,9 +21,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ifilter.h"
 #include "iscenegraph.h"
+#include "ieventmanager.h"
 #include "iregistry.h"
 #include "qerplugin.h"
 #include "XMLFilter.h"
+
+#include "generic/callback.h"
 
 #include <map>
 #include <vector>
@@ -63,7 +66,11 @@ private:
 	typedef std::map<std::string, bool> StringFlagCache;
 	StringFlagCache _visibilityCache;
 
-private:
+public:
+	// Constructor
+	BasicFilterSystem() : 
+		_initialised(false)
+	{}
 
 	// Initialise the filter system. This must be done after the main
 	// Radiant module, hence cannot be done in the constructor.
@@ -96,15 +103,17 @@ private:
 			
 			// Add this XMLFilter to the list of available filters
 			_availableFilters.insert(FilterTable::value_type(filterName, filter));
+			
+			// Get a reference 
+			filters::XMLFilter& inserted = _availableFilters.find(filterName)->second;
+			
+			// Add the according toggle command to the eventmanager
+			GlobalEventManager().addToggle(
+				filter.getEventName(),
+				MemberCaller<filters::XMLFilter, &filters::XMLFilter::toggle>(inserted) 
+			);
 		}
 	}
-	
-public:
-
-	// Constructor
-	BasicFilterSystem()
-	: _initialised(false)
-	{}
 
 	// Filter system visit function
 	void forEachFilter(IFilterVisitor& visitor) {
@@ -119,6 +128,21 @@ public:
 		{
 			visitor.visit(iter->first);
 		}
+	}
+	
+	std::string getFilterEventName(const std::string& filter) {
+		FilterTable::iterator f = _availableFilters.find(filter);
+		
+		if (f != _availableFilters.end()) {
+			return f->second.getEventName();
+		}
+		else {
+			return "";
+		}
+	}
+	
+	bool getFilterState(const std::string& filter) {
+		return (_activeFilters.find(filter) != _activeFilters.end());
 	}
 	
 	// Set the state of a filter
@@ -139,7 +163,7 @@ public:
 		// Invalidate the visibility cache to force new values to be
 		// loaded from the filters themselves
 		_visibilityCache.clear();
-		
+				
 		// Trigger an immediate scene redraw
 		GlobalSceneGraph().sceneChanged();
 	}
@@ -183,7 +207,8 @@ public:
 class FilterSystemDependencies
 : public GlobalRadiantModuleRef,
   public GlobalSceneGraphModuleRef,
-  public GlobalRegistryModuleRef
+  public GlobalRegistryModuleRef,
+  public GlobalEventManagerModuleRef
 {
 };
 
