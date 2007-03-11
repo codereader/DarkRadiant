@@ -686,6 +686,9 @@ void Radiant_Initialise()
 	g_gameModeObservers.realise();
 	g_gameNameObservers.realise();
 	
+	// Construct the MRU commands and menu structure
+	GlobalMRU().constructMenu();
+	
 	// Initialise the most recently used files list
 	GlobalMRU().loadRecentFiles();
 }
@@ -1941,10 +1944,6 @@ GtkMenuBar* create_main_menu(MainFrame::EViewStyle style)
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_selection_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_grid_menu()));
   
-  // Filters menu
-  ui::FiltersMenu filtersMenu;
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu_bar), filtersMenu);
-
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_map_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_entity_menu()));
   gtk_container_add(GTK_CONTAINER(menu_bar), GTK_WIDGET(create_brush_menu()));
@@ -2270,6 +2269,9 @@ void MainFrame::Create()
     // Create and add main menu    
     GtkMenuBar *main_menu = create_main_menu(CurrentStyle());
     gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(main_menu), FALSE, FALSE, 0);
+    
+    // Create the Filter menu entries
+    ui::FiltersMenu::addItems();
     
     // Retrieve the "main" menubar from the UIManager
     GtkMenuBar* mainMenu = GTK_MENU_BAR(GlobalUIManager().getMenuManager()->getMenu("main"));

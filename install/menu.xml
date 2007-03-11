@@ -17,8 +17,7 @@
 		<menuSeparator />
 		<menuItem name="pointfile" caption="_Pointfile" command="TogglePointfile" icon="pointfile16.png"/>
 		<menuSeparator />
-		<menuMRU />
-		<menuSeparator />
+		<!-- MRU is inserted automatically at this position -->
 		<menuItem name="exit" caption="E_xit" command="Exit" />
 	</subMenu>
 

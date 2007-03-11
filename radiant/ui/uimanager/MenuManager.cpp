@@ -8,8 +8,6 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 
-#include <iostream>
-
 namespace ui {
 
 	namespace {
@@ -22,9 +20,8 @@ namespace ui {
 MenuManager::MenuManager() :
 	_root(new MenuItem(MenuItemPtr())) // Allocate the root item (type is set automatically)
 {
-	globalOutputStream() << "MenuManager: Loading menu from registry.\n";
 	loadFromRegistry();
-	globalOutputStream() << "MenuManager: Finished loading.\n";
+	globalOutputStream() << "MenuManager: Finished loading default menu from registry.\n";
 }
 
 void MenuManager::loadFromRegistry() {
@@ -111,7 +108,6 @@ GtkWidget* MenuManager::insert(const std::string& insertPath,
 		if (found->parent() != NULL) {
 			// Get the GTK Menu position of the child widget
 			int position = found->parent()->getMenuPosition(found);
-			
 			// Allocate a new MenuItem
 			MenuItemPtr newItem = MenuItemPtr(new MenuItem(found->parent()));
 			found->parent()->addChild(newItem);
@@ -123,9 +119,18 @@ GtkWidget* MenuManager::insert(const std::string& insertPath,
 			newItem->setEvent(eventName);
 			newItem->setIcon(icon);
 			
+			GtkWidget* parentWidget = *found->parent();
+			
 			// Insert it at the given position
-			GtkWidget* parent = *found->parent();
-			gtk_menu_shell_insert(GTK_MENU_SHELL(parent), *newItem, position);
+			if (found->parent()->getType() == menuBar) {
+				// The parent is a menubar, it's a menushell in the first place
+				gtk_menu_shell_insert(GTK_MENU_SHELL(parentWidget), *newItem, position);
+			}
+			else if (found->parent()->getType() == menuFolder) {
+				// The parent is a submenu (=menuitem), try to retrieve the menushell first
+				GtkWidget* subMenu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(parentWidget));
+				gtk_menu_shell_insert(GTK_MENU_SHELL(subMenu), *newItem, position);
+			}
 			
 			return *newItem;
 		}

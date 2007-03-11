@@ -1,41 +1,20 @@
 #ifndef FILTERSMENU_H_
 #define FILTERSMENU_H_
 
-#include <gtk/gtkwidget.h>
-#include <gtk/gtkcheckmenuitem.h>
-
-#include <string>
-
-namespace ui
-{
+namespace ui {
 
 /** Utility class for generating the Filters top-level menu. This class
- * constructs the relevant widgets on instantiation, and then passes the
- * widgets up to GTK to manage.
+ * registers the relevant menuitems on demand.
+ * 
+ * This class has been stripped down to the bones after the UIManager had been 
+ * introduced, this code can probably be incorporated into something else.
  */
-
 class FiltersMenu
 {
-	// Main menu item
-	GtkMenuItem* _menu;
-	
-private:
-
-	/* GTK CALLBACKS */
-	static void _onFilterToggle(GtkCheckMenuItem* item, const std::string* name);
-		
 public:
-
-	/** Construct the Filters menu.
+	/** Adds the menuitems to the UIManager
 	 */
-	FiltersMenu();
-	
-	/** Operator cast to GtkMenuItem* for packing into the main menu
-	 * bar.
-	 */
-	operator GtkWidget* () {
-		return GTK_WIDGET(_menu);
-	}
+	static void addItems();
 };
 
 }
