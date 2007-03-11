@@ -85,10 +85,12 @@ void RegionManager::getMinMax(Vector3& regionMin, Vector3& regionMax) const {
 	}
 }
 
-void RegionManager::setRegion(const AABB& aabb) {
+void RegionManager::setRegion(const AABB& aabb, bool autoEnable) {
 	_bounds = aabb;
 	
-	enable();
+	if (autoEnable) {
+		enable();
+	}
 }
 
 void RegionManager::setRegionFromXY(Vector2 topLeft, Vector2 lowerRight) {
@@ -276,6 +278,15 @@ void RegionManager::saveRegion() {
 	if (!filename.empty()) {
 		// Filename is ok, start preparation
 		
+		// Save the old region
+		AABB oldRegionAABB = GlobalRegion().getRegion();
+		
+		// Now check for the effective bounds so that all visible items are included
+		AABB visibleBounds = map::getVisibleBounds();
+		
+		// Set the region bounds, but don't traverse the graph!
+		GlobalRegion().setRegion(visibleBounds, false);
+		
 		// Add the region brushes
 		GlobalRegion().addRegionBrushes();
 		
@@ -294,6 +305,9 @@ void RegionManager::saveRegion() {
 		
 		// Remove the region brushes
 		GlobalRegion().removeRegionBrushes();
+		
+		// Set the region AABB back to the state before saving
+		GlobalRegion().setRegion(oldRegionAABB, false);
 	}
 }
 

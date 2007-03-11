@@ -71,9 +71,12 @@ public:
 	
 	/** greebo: Sets the region bounds according to the given <aabb>
 	 * 
-	 * Note: passing an invalid AABB disables the regioning. 
+	 * Note: passing an invalid AABB disables the regioning.
+	 * 
+	 * @autoEnable: set this to false to prevent the scenegraph from being
+	 * 				traversed and its nodes being hidden (enable() is not called).
 	 */
-	void setRegion(const AABB& aabb);
+	void setRegion(const AABB& aabb, bool autoEnable = true);
 	
 	/** greebo: sets the region bounds from the given rectangle in the XY plane.
 	 * 
