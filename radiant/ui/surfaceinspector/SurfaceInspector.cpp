@@ -140,6 +140,8 @@ void SurfaceInspector::shutdown() {
 	// Tell the position tracker to save the information
 	_windowPosition.saveToNode(node);
 	
+	gtk_widget_hide(_dialog);
+	
 	GlobalSelectionSystem().removeObserver(this);
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(_dialog));
 }

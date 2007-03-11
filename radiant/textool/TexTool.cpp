@@ -172,6 +172,8 @@ void TexTool::shutdown() {
 	// Tell the position tracker to save the information
 	_windowPosition.saveToNode(node);
 	
+	gtk_widget_hide(_window);
+	
 	GlobalEventManager().disconnect(GTK_OBJECT(_glWidget));
 	GlobalEventManager().disconnect(GTK_OBJECT(_window));
 }

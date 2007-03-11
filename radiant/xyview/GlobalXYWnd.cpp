@@ -123,6 +123,7 @@ void XYWndManager::saveState() {
 		XYWnd* xyView = *i;
 		
 		xyView->saveStateToNode(rootNode);
+		gtk_widget_hide(GTK_WIDGET(xyView->getParent()));
 	}
 }
 
