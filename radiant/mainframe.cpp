@@ -2267,14 +2267,14 @@ void MainFrame::Create()
     m_nCurrentStyle = (EViewStyle) g_Layout_viewStyle.m_value;
     
     // Create and add main menu    
-    GtkMenuBar *main_menu = create_main_menu(CurrentStyle());
-    gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(main_menu), FALSE, FALSE, 0);
+    //GtkMenuBar *main_menu = create_main_menu(CurrentStyle());
+    //gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(main_menu), FALSE, FALSE, 0);
     
     // Create the Filter menu entries
     ui::FiltersMenu::addItems();
     
     // Retrieve the "main" menubar from the UIManager
-    GtkMenuBar* mainMenu = GTK_MENU_BAR(GlobalUIManager().getMenuManager()->getMenu("main"));
+    GtkMenuBar* mainMenu = GTK_MENU_BAR(GlobalUIManager().getMenuManager()->get("main"));
     gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(mainMenu), false, false, 0);
     
     // Instantiate the ToolbarCreator and retrieve the view toolbar widget 

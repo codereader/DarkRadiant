@@ -112,7 +112,7 @@
 
 		<menuSeparator />
 		<menuItem name="colours" caption="Colours..." command="EditColourScheme" icon="editcolour16.png" />
-		<menuItem name="backgroundicon" caption="Background icon..." command="OverlayDialog" icon="bgimage16.png" />
+		<menuItem name="backgroundimage" caption="Background Image..." command="OverlayDialog" icon="bgimage16.png" />
 	</subMenu>
 
 	<subMenu name="modify" caption="_Modify">

@@ -6,7 +6,12 @@
 #include <boost/algorithm/string/split.hpp>
 
 #include "gtkutil/MenuItemAccelerator.h"
-#include <gtk/gtk.h>
+#include <gtk/gtkmenushell.h>
+#include <gtk/gtkmenuitem.h>
+#include <gtk/gtkmenubar.h>
+#include <gtk/gtkmenu.h>
+#include <gtk/gtkseparatormenuitem.h>
+#include <gtk/gtkwidget.h>
 
 #include "ui/mru/MRU.h"
 

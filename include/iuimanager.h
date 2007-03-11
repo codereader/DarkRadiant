@@ -8,6 +8,9 @@
 typedef struct _GtkWidget GtkWidget;
 
 namespace ui {
+	/** greebo: The possible menu item types, one of these
+	 * 			has to be passed when creating menu items.
+	 */
 	enum eMenuItemType {
 		menuNothing,
 		menuRoot,
@@ -18,14 +21,18 @@ namespace ui {
 	};
 }
 
+/** greebo: Implementation documentation: see MenuManager.h.
+ */
 class IMenuManager
 {
 public:
-	/** greebo: Retrieves the menu with the given <name>.
+	/** greebo: Retrieves the menuitem widget specified by the path.
 	 * 
-	 * @returns: the widget, or NULL, if no <name> menu has been found.
+	 * Example: get("main/file/open") delivers the widget for the "Open..." command.
+	 * 
+	 * @returns: the widget, or NULL, if no the path hasn't been found.
 	 */
-	virtual GtkWidget* getMenu(const std::string& name) = 0;
+	virtual GtkWidget* get(const std::string& path) = 0;
 	
 	/** greebo: Adds a new item as child under the given path.
 	 * 
@@ -48,6 +55,7 @@ public:
 	 * @insertPath: the path where to insert the item: "main/filters"
 	 * @name: the name of the new menu item (no path, just the name)
 	 * @caption: the display string including mnemonic
+	 * @icon: the image file name relative to "bitmaps/", can be empty.
 	 * @eventName: the event name this item is associated with (can be empty).
 	 * 
 	 * @returns: the GtkWidget* 
