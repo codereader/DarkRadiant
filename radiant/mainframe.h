@@ -141,7 +141,6 @@ GtkWindow* MainFrame_getWindow();
 template<typename Value>
 class LatchedValue;
 typedef LatchedValue<bool> LatchedBool;
-extern LatchedBool g_Layout_enableDetachableMenus;
 
 void deleteSelection();
 

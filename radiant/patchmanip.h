@@ -23,11 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_PATCHMANIP_H
 
 #include <string>
-#include "string/stringfwd.h"
 
 void Patch_registerCommands();
-typedef struct _GtkMenu GtkMenu;
-void Patch_constructMenu(GtkMenu* menu);
 
 namespace scene
 {

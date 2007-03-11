@@ -25,11 +25,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtktextbuffer.h>
 #include <gtk/gtktextview.h>
 #include <gtk/gtkmenuitem.h>
+#include <gtk/gtkseparatormenuitem.h>
 #include <gtk/gtkscrolledwindow.h>
 
 #include "gtkutil/messagebox.h"
 #include "gtkutil/container.h"
-#include "gtkutil/menu.h"
 #include "gtkutil/nonmodal.h"
 #include "stream/stringstream.h"
 #include "convert.h"
@@ -91,7 +91,7 @@ void console_clear()
 
 void console_populate_popup(GtkTextView* textview, GtkMenu* menu, gpointer user_data)
 {
-  menu_separator(menu);
+  gtk_container_add(GTK_CONTAINER(menu), gtk_separator_menu_item_new());
 
   GtkWidget* item = gtk_menu_item_new_with_label ("Clear");
   g_signal_connect(G_OBJECT (item), "activate", G_CALLBACK(console_clear), 0);

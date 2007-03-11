@@ -47,6 +47,24 @@ void MenuManager::loadFromRegistry() {
 	}
 }
 
+void MenuManager::setVisibility(const std::string& path, bool visible) {
+	MenuItemPtr foundMenu = _root->find(path);
+	
+	if (foundMenu != NULL) {
+		// Cast the menubar onto a GtkWidget* and set the visibility
+		GtkWidget* menuitem = *foundMenu;
+		if (visible) {
+			gtk_widget_show(menuitem);
+		}
+		else {
+			gtk_widget_hide(menuitem);
+		}
+	}
+	else {
+		globalErrorStream() << "MenuManager: Warning: Menu " << path.c_str() << " not found!\n";
+	}
+}
+
 GtkWidget* MenuManager::get(const std::string& path) {
 	MenuItemPtr foundMenu = _root->find(path);
 	

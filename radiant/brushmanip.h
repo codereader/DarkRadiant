@@ -76,9 +76,6 @@ void Scene_BrushFlipTexture_Component_Selected(unsigned int flipAxis);
  */
 void ConstructRegionBrushes(scene::Node* brushes[6], const Vector3& region_mins, const Vector3& region_maxs);
 
-typedef struct _GtkMenu GtkMenu;
-void Brush_constructMenu(GtkMenu* menu);
-
 void BrushFilters_construct();
 void Brush_registerCommands();
 

@@ -291,15 +291,6 @@ NodeSmartReference Entity_createFromSelection(const char* name,
 	return node;
 }
 
-
-void Entity_constructMenu(GtkMenu* menu)
-{
-  createMenuItemWithMnemonic(menu, "_Ungroup", "UngroupSelection");
-  createMenuItemWithMnemonic(menu, "_Connect", "ConnectSelection");
-}
-
-
-
 #include "preferencesystem.h"
 #include "stringio.h"
 

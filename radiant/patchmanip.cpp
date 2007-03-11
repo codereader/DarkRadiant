@@ -31,7 +31,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/callback.h"
 
 #include "gdk/gdkkeysyms.h"
-#include "gtkutil/menu.h"
 #include "gtkutil/image.h"
 #include "gtkutil/dialog.h"
 #include "map.h"
@@ -771,56 +770,6 @@ void Patch_registerCommands()
   GlobalEventManager().addCommand("ThickenPatch", FreeCaller<patch::thickenSelectedPatches>());
   GlobalEventManager().addCommand("StitchPatchTexture", FreeCaller<patch::stitchPatchTextures>());
 }
-
-void Patch_constructMenu(GtkMenu* menu)
-{
-	createMenuItemWithMnemonic(menu, "Simple Patch Mesh...", "SimplePatchMesh");
-	menu_separator (menu);
-	createMenuItemWithMnemonic(menu, "End cap", "PatchEndCap");
-	createMenuItemWithMnemonic(menu, "Bevel", "PatchBevel");
-	menu_separator (menu);
-	createMenuItemWithMnemonic(menu, "Cone", "PatchCone");
-	createMenuItemWithMnemonic(menu, "Cylinder", "PatchCylinder");
-  {
-    GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "More Cylinders");
-    createMenuItemWithMnemonic(menu_in_menu, "Dense Cylinder", "PatchDenseCylinder");
-    createMenuItemWithMnemonic(menu_in_menu, "Very Dense Cylinder", "PatchVeryDenseCylinder");
-    createMenuItemWithMnemonic(menu_in_menu, "Square Cylinder", "PatchSquareCylinder");
-  }
-  menu_separator (menu);
-  {
-    GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Insert");
-    createMenuItemWithMnemonic(menu_in_menu, "Insert (2) Columns", "PatchInsertInsertColumn");
-    createMenuItemWithMnemonic(menu_in_menu, "Add (2) Columns", "PatchInsertAddColumn");
-    menu_separator (menu_in_menu);
-    createMenuItemWithMnemonic(menu_in_menu, "Insert (2) Rows", "PatchInsertInsertRow");
-    createMenuItemWithMnemonic(menu_in_menu, "Add (2) Rows", "PatchInsertAddRow");
-  }
-  {
-    GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Delete");
-    createMenuItemWithMnemonic(menu_in_menu, "First (2) Columns", "PatchDeleteFirstColumn");
-    createMenuItemWithMnemonic(menu_in_menu, "Last (2) Columns", "PatchDeleteLastColumn");
-    menu_separator (menu_in_menu);
-    createMenuItemWithMnemonic(menu_in_menu, "First (2) Rows", "PatchDeleteFirstRow");
-    createMenuItemWithMnemonic(menu_in_menu, "Last (2) Rows", "PatchDeleteLastRow");
-  }
-  menu_separator (menu);
-  {
-    GtkMenu* menu_in_menu = create_sub_menu_with_mnemonic (menu, "Matrix");
-    createMenuItemWithMnemonic(menu_in_menu, "Invert", "InvertCurve");
-    GtkMenu* menu_3 = create_sub_menu_with_mnemonic (menu_in_menu, "Re-disperse");
-    createMenuItemWithMnemonic(menu_3, "Rows", "RedisperseRows");
-    createMenuItemWithMnemonic(menu_3, "Columns", "RedisperseCols");
-    createMenuItemWithMnemonic(menu_in_menu, "Transpose", "MatrixTranspose");
-  }
-  menu_separator (menu);
-  createMenuItemWithMnemonic(menu, "Thicken Selected Patches", "ThickenPatch");
-  createMenuItemWithMnemonic(menu, "Cap Selection", "CapCurrentCurve");
-  createMenuItemWithMnemonic(menu, "Cycle Cap Texture", "CycleCapTexturePatch");
-  menu_separator (menu);
-  createMenuItemWithMnemonic(menu, "Stitch Patch Textures", "StitchPatchTexture");
-}
-
 
 #include <gtk/gtkbox.h>
 #include <gtk/gtktable.h>

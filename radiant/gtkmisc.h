@@ -49,28 +49,6 @@ inline void process_gui()
   }
 }
 
-typedef struct _GtkMenu GtkMenu;
-typedef struct _GtkMenuItem GtkMenuItem;
-typedef struct _GtkCheckMenuItem GtkCheckMenuItem;
-
-/**
- * Add a menu item to the given menu, with an optional icon. The given global
- * command will be called when the item is chosen.
- */
-GtkMenuItem* createMenuItemWithMnemonic(
-		GtkMenu* menu, 
-		const std::string& caption, 
-		const std::string& commandName,
-		const std::string& iconName = EMPTY_ICON);
-										
-GtkMenuItem* createCheckMenuItemWithMnemonic(
-		GtkMenu* menu, 
-		const std::string& caption, 
-		const std::string& commandName,
-		const std::string& iconName = EMPTY_ICON);
-
-GtkMenuItem* createSeparatorMenuItem(GtkMenu* menu);
-
 template<typename Element> class BasicVector3;
 typedef BasicVector3<float> Vector3;
 bool color_dialog (GtkWidget *parent, Vector3& color, const char* title = "Choose Color");
