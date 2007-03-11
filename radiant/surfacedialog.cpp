@@ -118,6 +118,13 @@ void queueDraw()
 
 #endif
 
+inline GValue GValue_default()
+{
+  GValue value;
+  value.g_type = 0;
+  return value;
+}
+
 inline void spin_button_set_step(GtkSpinButton* spin, gfloat step)
 {
 #if 1

@@ -64,7 +64,6 @@ gtkutil_env.useXML2()
 gtkutil_src = '\
   button.cpp\
   clipboard.cpp\
-  closure.cpp\
   container.cpp\
   cursor.cpp\
   dialog.cpp\

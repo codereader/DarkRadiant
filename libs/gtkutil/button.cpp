@@ -30,22 +30,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "image.h"
 #include "pointer.h"
 
-void clicked_closure_callback(GtkWidget* widget, gpointer data)
-{
-  (*reinterpret_cast<Callback*>(data))();
-}
-
-guint toggle_button_connect_callback(GtkToggleButton* button, const Callback& callback)
-{
-#if 1
-  guint handler = g_signal_connect_swapped(G_OBJECT(button), "toggled", G_CALLBACK(callback.getThunk()), callback.getEnvironment());
-#else
-  guint handler = g_signal_connect_closure(G_OBJECT(button), "toggled", create_cclosure(G_CALLBACK(clicked_closure_callback), callback), TRUE);
-#endif
-  g_object_set_data(G_OBJECT(button), "handler", gint_to_pointer(handler));
-  return handler;
-}
- 
 void button_set_icon(GtkButton* button, const char* icon)
 {
   GtkImage* image = new_local_image(icon);
