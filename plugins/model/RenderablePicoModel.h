@@ -73,17 +73,6 @@ public:
 	 */
 	void render(RenderStateFlags flags) const;
 
-	/**
-	 * Add a light to the set of lights illuminating this model. This is used
-	 * during rendering.
-	 */
-	void addLight(const RendererLight& light, const Matrix4& localToWorld);
-	
-	/**
-	 * Clear out the set of lights illuminating this model.
-	 */
-	void clearLights();
-	
 	/** 
 	 * Return the number of surfaces in this model.
 	 */

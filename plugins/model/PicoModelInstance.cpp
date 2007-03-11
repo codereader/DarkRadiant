@@ -45,7 +45,26 @@ void PicoModelInstance::submitRenderables(Renderer& renderer,
 	if (_picoModel.intersectVolume(volume, localToWorld) 
 		!= c_volumeOutside)
 	{
+		// Submit the lights
+		renderer.setLights(_lights);
+	
+		// Submit the model's geometry
 		_picoModel.submitRenderables(renderer, localToWorld);
+	}
+}
+
+// Insert a light into this Instance's light list
+void PicoModelInstance::insertLight(const RendererLight& light) {
+
+	// Calculate transform from the superclass
+	const Matrix4& localToWorld = Instance::localToWorld();
+	
+	// If the light's AABB intersects the oriented AABB of this model instance,
+	// add the light to our light list
+	if (light.testAABB(aabb_for_oriented_aabb(_picoModel.localAABB(),
+											  localToWorld)))
+	{
+		_lights.addLight(light);
 	}
 }
 
