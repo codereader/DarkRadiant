@@ -1,5 +1,6 @@
 #include "ShaderChooser.h"
 
+#include "iregistry.h"
 #include "ishaders.h"
 #include "texturelib.h"
 #include "gtkutil/TransientWindow.h"
@@ -14,6 +15,7 @@ namespace ui {
 		const std::string SHADER_PREFIXES = "textures";
 		const int DEFAULT_SIZE_X = 550;
 		const int DEFAULT_SIZE_Y = 500;
+		const std::string RKEY_WINDOW_STATE = "user/ui/textures/shaderChooser/window";
 	}
 
 // Construct the dialog
@@ -45,11 +47,30 @@ ShaderChooser::ShaderChooser(Client* client, GtkWidget* parent, GtkWidget* targe
 	gtk_box_pack_start(GTK_BOX(vbx), createButtons(), false, false, 0);
 	gtk_container_add(GTK_CONTAINER(_dialog), vbx);
 
+	// Connect the window position tracker
+	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
+	
+	if (windowStateList.size() > 0) {
+		_windowPosition.loadFromNode(windowStateList[0]);
+	}
+	
+	_windowPosition.connect(GTK_WINDOW(_dialog));
+	_windowPosition.applyPosition();
+
 	// Show all widgets
 	gtk_widget_show_all(_dialog);
 }
 
 ShaderChooser::~ShaderChooser() {
+	// Delete all the current window states from the registry
+	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
+	
+	// Create a new node
+	xml::Node node(GlobalRegistry().createKey(RKEY_WINDOW_STATE));
+	
+	// Tell the position tracker to save the information
+	_windowPosition.saveToNode(node);
+	
 	gtk_widget_destroy(_dialog);
 }
 

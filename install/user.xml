@@ -40,6 +40,9 @@
 		<scaleZStep value="1.1" />
 	</transformDialog>
 	<textures>
+		<shaderChooser>
+			<window xPosition="200" yPosition="100" width="550" height="500" />
+		</shaderChooser>
 		<hideUnused value="0" />
 		<defaultTextureScale value="0.5" />
 		<quality value="3" />
