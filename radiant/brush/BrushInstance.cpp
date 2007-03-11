@@ -288,7 +288,9 @@ void BrushInstance::testSelect(Selector& selector, SelectionTest& test) {
 
 	SelectionIntersection best;
 	for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
-		(*i).testSelect(test, best);
+		if (GlobalFilterSystem().isVisible("texture", i->getFace().GetShader())) {
+			(*i).testSelect(test, best);
+		}
 	}
 	if (best.valid()) {
 		selector.addIntersection(best);
