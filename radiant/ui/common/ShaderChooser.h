@@ -2,6 +2,7 @@
 #define SHADERCHOOSER_H_
 
 #include "ui/common/ShaderSelector.h"
+#include "gtkutil/WindowPosition.h"
 #include <string>
 #include <gtk/gtkwidget.h>
 
@@ -48,6 +49,9 @@ private:
 	
 	// The shader name at dialog startup (to allow proper behaviour on cancelling)
 	std::string _initialShader;
+	
+	// The window position tracker
+	gtkutil::WindowPosition _windowPosition;
 	
 public:
 	/** greebo: Construct the dialog window and its contents.
