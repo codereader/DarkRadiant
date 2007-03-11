@@ -5,6 +5,7 @@
 
 #include <gtk/gtklabel.h>
 #include <gtk/gtkmenuitem.h>
+#include <gtk/gtkcheckmenuitem.h>
 #include <gtk/gtkhbox.h>
 #include <gtk/gtkimage.h>
 #include <string>

@@ -2,6 +2,7 @@
 #define MENUITEM_H_
 
 #include "xmlutil/Node.h"
+#include "iuimanager.h"
 #include <vector>
 #include <boost/shared_ptr.hpp>
 
@@ -15,18 +16,6 @@ typedef std::vector<MenuItemPtr> MenuItemList;
 
 class MenuItem
 {
-public:
-	enum eType {
-		eNothing,
-		eRoot,
-		eMenuBar,
-		eFolder,
-		eItem,
-		eSeparator,
-		eMRU,
-	};
-
-private:	
 	// The parent of this MenuItem
 	MenuItemPtr _parent;
 	
@@ -48,7 +37,7 @@ private:
 	// The children of this MenuItem
 	MenuItemList _children;
 	
-	eType _type;
+	eMenuItemType _type;
 	
 	// Stays false until the widgets are actually created.
 	bool _constructed;
@@ -67,7 +56,7 @@ public:
 	bool isRoot() const;
 	
 	// Returns the pointer to the parent (is NULL for the root item)
-	MenuItemPtr getParent() const;
+	MenuItemPtr parent() const;
 	void setParent(MenuItemPtr parent);
 	
 	/** greebo: Adds the given menuitem to the list of children.
@@ -76,8 +65,13 @@ public:
 	 */
 	void addChild(MenuItemPtr newChild);
 	
+	/** greebo: Tries to find the GtkMenu position index of the given child.
+	 */
+	int getMenuPosition(MenuItemPtr child);
+	
 	// Returns the type of this item node
-	eType getType() const;
+	eMenuItemType getType() const;
+	void setType(eMenuItemType type);
 	
 	// Gets/sets the caption of this item
 	void setCaption(const std::string& caption);

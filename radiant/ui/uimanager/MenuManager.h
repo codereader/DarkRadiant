@@ -3,6 +3,7 @@
 
 #include <string>
 #include <list>
+#include "iuimanager.h"
 #include "MenuItem.h"
 
 // Forward declarations
@@ -10,7 +11,8 @@ typedef struct _GtkWidget GtkWidget;
 
 namespace ui {
 
-class MenuManager
+class MenuManager :
+	public IMenuManager
 {
 	// The root item containing the menubars as children
 	MenuItemPtr _root;	
@@ -25,9 +27,25 @@ public:
 	 */
 	GtkWidget* getMenu(const std::string& name);
 	
-	void add(const std::string& menuPath, 
-			 const std::string& caption, 
-			 const std::string& eventName);
+	GtkWidget* add(const std::string& insertPath,
+				   const std::string& name,
+			 	   eMenuItemType type, 
+				   const std::string& caption,
+				   const std::string& icon,
+				   const std::string& eventName);
+	
+	/** greebo: Inserts a new menuItem as sibling _before_ the given insertPath.
+	 * 
+	 * @name: the name of the new menu item (no path, just the name)
+	 * @caption: the display string including mnemonic
+	 * @eventName: the event name this item is associated with (can be empty). 
+	 */	 
+	GtkWidget* insert(const std::string& insertPath,
+					  const std::string& name,
+					  eMenuItemType type,
+					  const std::string& caption,
+					  const std::string& icon,
+					  const std::string& eventName);
 	
 private:
 	/** greebo: Loads all the menu items from the registry

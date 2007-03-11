@@ -43,6 +43,11 @@ public:
 	INTEGER_CONSTANT(Version, 1);
 	STRING_CONSTANT(Name, "filters");
 
+	/** greebo: Loads the filter settings from the registry
+	 * 			and adds the commands to the EventManager.
+	 */
+	virtual void initialise() = 0;
+
 	/** Visit the available filters, passing each filter's text
 	 * name to the visitor.
 	 * 
@@ -60,6 +65,17 @@ public:
 	 * true if the filter should be active, false otherwise.
 	 */
 	virtual void setFilterState(const std::string& filter, bool state) = 0;
+
+	/** greebo: Returns the state of the given filter.
+	 * 
+	 * @returns: true or false, depending on the filter state.
+	 */
+	virtual bool getFilterState(const std::string& filter) = 0;
+
+	/** greebo: Returns the event name of the given filter. This is needed
+	 * 			to create the toggle event to menus/etc.
+	 */
+	virtual std::string getFilterEventName(const std::string& filter) = 0;
 
 	/** Test if a given item should be visible or not, based on the currently-
 	 * active filters.
