@@ -30,7 +30,7 @@ private:
 	static MapFileManager& getInstance();
 
 	// Utility function to display a file chooser and return the selected path
-	std::string selectFile(bool open, const std::string& title);
+	std::string selectFile(bool open, const std::string& title, const std::string& type);
 
 public:
 
@@ -47,12 +47,15 @@ public:
 	 * The title to display on the dialog, such as "Open map" or "Export
 	 * selection".
 	 * 
+	 * @param type: the file type to be loaded ("map" or "prefab")
+	 * 
 	 * @returns
 	 * The full path of the file selected, or the empty string if no selection
 	 * was made.
 	 */
-	 static std::string getMapFilename(bool open, const std::string& title);
-	 
+	 static std::string getMapFilename(bool open, 
+	 								   const std::string& title,
+	 								   const std::string& type = "map");
 };
 
 }

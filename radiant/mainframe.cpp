@@ -2436,6 +2436,8 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("NewMap", FreeCaller<NewMap>());
 	GlobalEventManager().addCommand("OpenMap", FreeCaller<OpenMap>());
 	GlobalEventManager().addCommand("ImportMap", FreeCaller<ImportMap>());
+	GlobalEventManager().addCommand("LoadPrefab", FreeCaller<map::loadPrefab>());
+	GlobalEventManager().addCommand("SaveSelectedAsPrefab", FreeCaller<map::saveSelectedAsPrefab>());
 	GlobalEventManager().addCommand("SaveMap", FreeCaller<SaveMap>());
 	GlobalEventManager().addCommand("SaveMapAs", FreeCaller<SaveMapAs>());
 	GlobalEventManager().addCommand("SaveSelected", FreeCaller<ExportMap>());

@@ -96,6 +96,14 @@ public:
     		"map", "mapdoom3", FileTypePattern("Doom 3 region", "*.reg"));
     	GlobalFiletypes().addType(
     		"map", "mapdoom3", FileTypePattern("Doom 3 prefab", "*.pfb"));
+    	
+    	// Add the filepatterns for the prefab (different order)
+    	GlobalFiletypes().addType(
+    		"prefab", "mapdoom3", FileTypePattern("Doom 3 prefab", "*.pfb"));
+    	GlobalFiletypes().addType(
+    		"prefab", "mapdoom3", FileTypePattern("Doom 3 map", "*.map"));
+    	GlobalFiletypes().addType(
+    		"prefab", "mapdoom3", FileTypePattern("Doom 3 region", "*.reg"));
 	}
 	
 	MapFormat* getTable() {

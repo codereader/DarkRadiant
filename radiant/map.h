@@ -213,6 +213,11 @@ namespace map {
 	/** greebo: Returns the AABB enclosing all visible map objects.
 	 */
 	AABB getVisibleBounds();
+	
+	/** greebo: Asks the user for the .pfb file and imports/exports the file/selection
+	 */
+	void loadPrefab();
+	void saveSelectedAsPrefab();
 }
 
 

@@ -1988,6 +1988,33 @@ void ImportMap()
 	}
 }
 
+namespace map {
+
+void loadPrefab()
+{
+	std::string filename = map::MapFileManager::getMapFilename(true,
+															   "Load Prefab", 
+															   "prefab");
+
+	if (!filename.empty()) {
+	    UndoableCommand undo("loadPrefab");
+	    Map_ImportFile(filename);
+	}
+}
+
+void saveSelectedAsPrefab()
+{
+	std::string filename = map::MapFileManager::getMapFilename(false,
+															   "Save selected as Prefab", 
+															   "prefab");
+
+	if (!filename.empty()) {
+	    Map_SaveSelected(filename);
+  	}
+}
+
+} // namespace map
+
 bool Map_SaveAs()
 {
 	std::string filename = map::MapFileManager::getMapFilename(false,

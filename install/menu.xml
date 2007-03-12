@@ -3,12 +3,15 @@
 	<subMenu name="file" caption="_File">
 		<menuItem name="new" caption="_New Map" command="NewMap" />
 		<menuSeparator />
-		<menuItem name="open" caption="_Open" command="OpenMap" />
+		<menuItem name="open" caption="_Open..." command="OpenMap" />
 		<menuItem name="import" caption="_Import" command="ImportMap" />
 		<menuItem name="save" caption="_Save" command="SaveMap" />
 		<menuItem name="saveas" caption="Save _as..." command="SaveMapAs" />
-		<menuItem name="saveSelected" caption="_Save selected..." command="SaveSelected" />
 		<menuSeparator />
+		<menuItem name="loadprefab" caption="Load _Prefab..." command="LoadPrefab" />
+		<menuItem name="saveSelected" caption="_Save selected as Prefab..." command="SaveSelectedAsPrefab" />
+		<menuSeparator />
+		<menuItem name="saveSelected" caption="_Save selected..." command="SaveSelected" />
 		<menuItem name="saveRegion" caption="Save _Region..." command="SaveRegion" />
 		<menuSeparator />
 		<menuItem name="refreshModels" caption="_Refresh Models" command="RefreshReferences" />

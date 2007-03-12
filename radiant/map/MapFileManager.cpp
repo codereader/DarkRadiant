@@ -1,11 +1,13 @@
 #include "MapFileManager.h"
 
 #include "qerplugin.h"
+#include "ifiletypes.h"
 #include "mainframe.h"
 #include "gtkutil/filechooser.h"
 #include "os/path.h"
 
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/erase.hpp>
 
 namespace map
 {
@@ -22,27 +24,34 @@ MapFileManager& MapFileManager::getInstance() {
 }
 
 // Utility method to select a map file
-std::string MapFileManager::selectFile(bool open, const std::string& title) {
-
+std::string MapFileManager::selectFile(bool open, 
+	const std::string& title, const std::string& type) 
+{
 	// Display a file chooser dialog to get a new path
 	std::string filePath = 
 		os::standardPath(file_dialog(GTK_WIDGET(MainFrame_getWindow()), 
 								     open, 
 									 title, 
 									 _lastDir, 
-									 "map"));
+									 type.c_str()));
+
+	// Get the first extension from the list of possible patterns (e.g. *.pfb or *.map)
+	ModuleTypeListPtr typeList = GlobalFiletypes().getTypesFor(type);
+	std::string defaultExt = typeList->begin()->filePattern.pattern;
+	// remove the * from the pattern "*.pfb" >>> ".pfb"
+	boost::algorithm::erase_all(defaultExt, "*");
 
 	// If a filename was chosen, update the last path
 	if (!filePath.empty())
 		_lastDir = filePath.substr(0, filePath.rfind("/"));
 		
 	// Return the chosen file. If this is a save operation and the chosen path
-	// does not end in ".map", add it here.
+	// does not end in the default extension (".map"), add it here.
 	if (!open												// save operation 
 		&& !filePath.empty() 								// valid filename
-		&& !boost::algorithm::iends_with(filePath, ".map")) // no map extension
+		&& !boost::algorithm::iends_with(filePath, defaultExt)) // no map extension
 	{
-		return filePath + ".map";
+		return filePath + defaultExt;
 	}
 	else
 	{
@@ -54,9 +63,10 @@ std::string MapFileManager::selectFile(bool open, const std::string& title) {
 
 // Static method to get a load filename
 std::string MapFileManager::getMapFilename(bool open, 
-										   const std::string& title) 
+										   const std::string& title, 
+										   const std::string& type) 
 {
-	return getInstance().selectFile(open, title);
+	return getInstance().selectFile(open, title, type);
 }
 
 } // namespace map
