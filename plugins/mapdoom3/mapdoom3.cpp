@@ -72,28 +72,35 @@ public:
   }
 };
 
-class MapDoom3API : public TypeSystemRef, public MapFormat, public PrimitiveParser
+class MapDoom3API 
+: public TypeSystemRef, 
+  public MapFormat, 
+  public PrimitiveParser
 {
-  MapDoom3Dependencies& m_dependencies;
+  	MapDoom3Dependencies& m_dependencies;
 public:
-  typedef MapFormat Type;
-  STRING_CONSTANT(Name, "mapdoom3");
-  INTEGER_CONSTANT(MapVersion, 2);
 
-	// Construct registers file types
+	typedef MapFormat Type;
+	STRING_CONSTANT(Name, "mapdoom3");
+	INTEGER_CONSTANT(MapVersion, 2);
+
+	/**
+	 * Constructor. Register the map filetypes in the GlobalFiletypes module.
+	 */
 	MapDoom3API(MapDoom3Dependencies& dependencies) 
 	: m_dependencies(dependencies)
 	{
-    	GlobalFiletypes().addType("map", "mapdoom3", 
-			FileTypePattern("Doom 3 map", "*.map"));
-    	GlobalFiletypes().addType("map", "mapdoom3", 
-    		FileTypePattern("Doom 3 region", "*.reg"));
+    	GlobalFiletypes().addType(
+    		"map", "mapdoom3", FileTypePattern("Doom 3 map", "*.map"));
+    	GlobalFiletypes().addType(
+    		"map", "mapdoom3", FileTypePattern("Doom 3 region", "*.reg"));
+    	GlobalFiletypes().addType(
+    		"map", "mapdoom3", FileTypePattern("Doom 3 prefab", "*.pfb"));
 	}
 	
-  MapFormat* getTable()
-  {
-    return this;
-  }
+	MapFormat* getTable() {
+		return this;
+	}
 
   scene::Node& parsePrimitive(Tokeniser& tokeniser) const
   {
