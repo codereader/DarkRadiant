@@ -43,7 +43,7 @@ class NullModel :
 public Bounded,
 public Cullable
 {
-  Shader* m_state;
+  ShaderPtr m_state;
   AABB m_aabb_local;
   RenderableSolidAABB m_aabb_solid;
   RenderableWireframeAABB m_aabb_wire;

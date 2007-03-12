@@ -64,7 +64,7 @@ private:
 	// greebo: The name of the shader
 	std::string m_shader;
 	
-	Shader* m_state;
+	ShaderPtr m_state;
 
 	// Patch dimensions
 	std::size_t m_width;
@@ -97,8 +97,8 @@ private:
 	RenderablePatchFixedWireframe m_render_wireframe_fixed;
 
 	// The shader states for the control points and the lattice
-	static Shader* m_state_ctrl;
-	static Shader* m_state_lattice;
+	static ShaderPtr m_state_ctrl;
+	static ShaderPtr m_state_lattice;
 
 	// greebo: The vertex list of the control points, can be passed to the RenderableVertexBuffer
 	VertexBuffer<PointVertex> m_ctrl_vertices;	

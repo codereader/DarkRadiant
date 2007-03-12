@@ -1671,4 +1671,4 @@ void XYWnd::callbackMoveDelta(int x, int y, unsigned int state, void* data) {
 
 // =====================================================================
 
-Shader* XYWnd::m_state_selected = 0;
+ShaderPtr XYWnd::m_state_selected;

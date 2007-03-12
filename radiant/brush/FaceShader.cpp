@@ -13,7 +13,6 @@ void brush_check_shader(const std::string& name) {
 // Constructor
 FaceShader::FaceShader(const std::string& shader, const ContentsFlagsValue& flags) :
 	m_shader(shader),
-	m_state(0),
 	m_flags(flags),
 	m_instanced(false),
 	m_realised(false)
@@ -37,17 +36,15 @@ void FaceShader::instanceDetach() {
 }
 
 void FaceShader::captureShader() {
-	ASSERT_MESSAGE(m_state == 0, "shader cannot be captured");
 	brush_check_shader(m_shader);
 	m_state = GlobalShaderCache().capture(m_shader.c_str());
 	m_state->attach(*this);
 }
 
 void FaceShader::releaseShader() {
-	ASSERT_MESSAGE(m_state != 0, "shader cannot be released");
 	m_state->detach(*this);
 	GlobalShaderCache().release(m_shader.c_str());
-	m_state = 0;
+	m_state = ShaderPtr();
 }
 
 void FaceShader::realise() {
@@ -111,7 +108,7 @@ void FaceShader::setFlags(const ContentsFlagsValue& flags) {
 	// greebo: old code // ContentsFlagsValue_assignMasked(m_flags, flags);
 }
 
-Shader* FaceShader::state() const {
+ShaderPtr FaceShader::state() const {
 	return m_state;
 }
 

@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_RENDERABLE_H
 
 #include "generic/constant.h"
+#include <boost/shared_ptr.hpp>
 
 class Shader;
 class OpenGLRenderable;
@@ -65,7 +66,7 @@ public:
 
   virtual void PushState() = 0;
   virtual void PopState() = 0;
-  virtual void SetState(Shader* state, EStyle mode) = 0;
+  virtual void SetState(boost::shared_ptr<Shader> state, EStyle mode) = 0;
   virtual const EStyle getStyle() const = 0;
   virtual void Highlight(EHighlightMode mode, bool bEnable = true) = 0;
   virtual void setLights(const LightList& lights)

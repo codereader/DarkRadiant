@@ -117,7 +117,7 @@ public:
 	void lightChanged();
 	typedef MemberCaller<LightInstance, &LightInstance::lightChanged> LightChangedCaller;
 
-	Shader* getShader() const;
+	ShaderPtr getShader() const;
 	const AABB& aabb() const;
 	bool testAABB(const AABB& other) const;
 	const Matrix4& rotation() const;

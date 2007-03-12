@@ -55,7 +55,7 @@ public:
 	};
 
 	std::string m_shader;
-	Shader* m_state;
+	ShaderPtr m_state;
 	ContentsFlagsValue m_flags;
 	FaceShaderObserverPair m_observers;
 	bool m_instanced;
@@ -85,7 +85,7 @@ public:
 	const std::string& getShader() const;
 	void setShader(const std::string& name);
 	
-	Shader* state() const;
+	ShaderPtr state() const;
 	unsigned int shaderFlags() const;
 	
 	ContentsFlagsValue getFlags() const;

@@ -71,7 +71,7 @@ class PatchInstance :
 	// An internal AABB variable to calculate the bounding box of the selected components (has to be mutable) 
 	mutable AABB m_aabb_component;
 
-	static Shader* m_state_selpoint;
+	static ShaderPtr m_state_selpoint;
 
 	const LightList* m_lightList;
 

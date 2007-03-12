@@ -269,7 +269,7 @@ bool RotateManipulator::isSelected() const {
 }
 
 // Initialise the shader of the RotateManipulator class
-Shader* RotateManipulator::_stateOuter;
+ShaderPtr RotateManipulator::_stateOuter;
 
 
 // ------------ TranslateManipulator methods ------------------
@@ -499,8 +499,8 @@ bool TranslateManipulator::isSelected() const {
 }
 
 // Initialise the shaders of this class
-Shader* TranslateManipulator::_stateWire;
-Shader* TranslateManipulator::_stateFill;
+ShaderPtr TranslateManipulator::_stateWire;
+ShaderPtr TranslateManipulator::_stateFill;
 
 
 // ------------ ScaleManipulator methods ------------------

@@ -7,26 +7,26 @@ class XYRenderer :
 	public Renderer
 {
 	struct state_type {
-		state_type() :
-				m_highlight(0),
-				m_state(0) {}
+		state_type() 
+		: m_highlight(0) {}
+		
 		unsigned int m_highlight;
-		Shader* m_state;
+		ShaderPtr m_state;
 	};
 	
 	std::vector<state_type> m_state_stack;
 	RenderStateFlags m_globalstate;
-	Shader* m_state_selected;
+	ShaderPtr m_state_selected;
 
 public:
-	XYRenderer(RenderStateFlags globalstate, Shader* selected) :
+	XYRenderer(RenderStateFlags globalstate, ShaderPtr selected) :
 			m_globalstate(globalstate),
 			m_state_selected(selected) {
 		ASSERT_NOTNULL(selected);
 		m_state_stack.push_back(state_type());
 	}
 
-	void SetState(Shader* state, EStyle style) {
+	void SetState(ShaderPtr state, EStyle style) {
 		ASSERT_NOTNULL(state);
 		if (style == eWireframeOnly)
 			m_state_stack.back().m_state = state;

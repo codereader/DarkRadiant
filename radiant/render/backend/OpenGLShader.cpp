@@ -99,7 +99,7 @@ void OpenGLShader::decrementUsed() {
     }
 }
 
-void OpenGLShader::realise(const CopiedString& name) {
+void OpenGLShader::realise(const std::string& name) {
     construct(name.c_str());
 
     if(m_used != 0 && m_shader != 0)

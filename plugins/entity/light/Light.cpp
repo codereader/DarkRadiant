@@ -976,6 +976,6 @@ const Matrix4& Light::projection() const {
 	return m_doom3Projection;
 }
 
-Shader* Light::getShader() const {
+ShaderPtr Light::getShader() const {
 	return m_shader.get();
 }

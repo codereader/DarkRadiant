@@ -350,7 +350,7 @@ void LightInstance::lightChanged() {
 	GlobalShaderCache().changed(*this);
 }
 
-Shader* LightInstance::getShader() const {
+ShaderPtr LightInstance::getShader() const {
 	return _light.getShader();
 }
 

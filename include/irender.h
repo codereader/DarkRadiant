@@ -67,7 +67,7 @@ class Shader;
 class RendererLight
 {
 public:
-  virtual Shader* getShader() const = 0;
+  virtual boost::shared_ptr<Shader> getShader() const = 0;
   virtual const AABB& aabb() const = 0;
   virtual bool testAABB(const AABB& other) const = 0;
   virtual const Matrix4& rotation() const = 0;
@@ -169,6 +169,11 @@ public:
   virtual unsigned int getFlags() const = 0;
 };
 
+/**
+ * Shared pointer typedef for Shader.
+ */
+typedef boost::shared_ptr<Shader> ShaderPtr;
+
 class ShaderCache
 {
 public:
@@ -186,7 +191,7 @@ public:
 	 * Shader* object corresponding to the given material shader name.
 	 */
 	 
-	virtual Shader* capture(const std::string& name) = 0;
+	virtual ShaderPtr capture(const std::string& name) = 0;
 
 	/** Release a named shader previously captured with capture(). The
 	 * reference count is decremented.

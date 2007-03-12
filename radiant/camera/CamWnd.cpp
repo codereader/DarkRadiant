@@ -722,5 +722,5 @@ void CamWnd::cubicScaleIn() {
 
 // -------------------------------------------------------------------------------
 
-Shader* CamWnd::m_state_select1 = 0;
-Shader* CamWnd::m_state_select2 = 0;
+ShaderPtr CamWnd::m_state_select1;
+ShaderPtr CamWnd::m_state_select2;

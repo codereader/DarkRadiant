@@ -147,12 +147,12 @@ struct IEntityClass {
 	/** Get the Shader used for rendering this entity class in
 	 * wireframe mode.
 	 */
-	virtual Shader* getWireShader() const = 0;
+	virtual boost::shared_ptr<Shader> getWireShader() const = 0;
 	
 	/** Get the Shader used for rendering this entity class in
 	 * filled mode.
 	 */
-	virtual Shader* getFillShader() const = 0;
+	virtual boost::shared_ptr<Shader> getFillShader() const = 0;
 
 
 	/* ENTITY CLASS ATTRIBUTES */		

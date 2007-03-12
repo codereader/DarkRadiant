@@ -54,7 +54,7 @@ class RadiantSelectionSystem :
 	Rotation _rotation;			// This is a quaternion
 	Scale _scale;				// This is a vector3
 public:
-	static Shader* _state;
+	static ShaderPtr _state;
 private:
 	SelectionInfo _selectionInfo;
 
