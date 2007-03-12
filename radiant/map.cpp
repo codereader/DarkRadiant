@@ -438,9 +438,11 @@ public:
 };
 
 class OriginAdder :
-	public scene::Graph::Walker 
+	public scene::Graph::Walker,
+	public scene::Traversable::Walker
 {
 public:
+	// Graph::Walker implementation
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
 		Entity* entity = Node_getEntity(path.top());
 		
@@ -459,6 +461,26 @@ public:
 		
 		return true;
 	}
+	
+	// Traversable::Walker implementation
+	bool pre(scene::Node& node) const {
+		Entity* entity = Node_getEntity(node);
+		
+		// Check for an entity
+		if (entity != NULL) {
+			// greebo: Check for a Doom3Group
+			scene::GroupNode* groupNode = Node_getGroupNode(node);
+			
+			// Don't handle the worldspawn children, they're safe&sound
+			if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn") {
+				groupNode->addOriginToChildren();
+				// Don't traverse the children
+				return false;
+			}
+		}
+		return true;
+	}
+
 };
 
 void removeOriginFromChildPrimitives() {
@@ -1586,6 +1608,10 @@ bool Map_ImportFile(const std::string& filename)
 
       {
         //ScopeTimer timer("clone subgraph");
+        
+        // Add the origin to all the child brushes
+        Node_getTraversable(*resource->getNode())->traverse(map::OriginAdder());
+        
         Node_getTraversable(*resource->getNode())->traverse(CloneAll(clone));
       }
 
