@@ -235,8 +235,8 @@ class RenderablePivot : public OpenGLRenderable
   const Vector3& _pivot;
 public:
   mutable Matrix4 m_localToWorld;
-  typedef Static<Shader*> StaticShader;
-  static Shader* getShader()
+  typedef Static<ShaderPtr> StaticShader;
+  static ShaderPtr getShader()
   {
     return StaticShader::instance();
   }

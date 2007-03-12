@@ -20,7 +20,7 @@ class RenderableVertex
 	const Vector3& _localCentre;
 
 	// Shader to use for the point
-	Shader* _shader;
+	ShaderPtr _shader;
 
 protected:
 	// Origin of lightvolume in world space
@@ -48,7 +48,7 @@ public:
   	}
   	
   	// Return the Shader for rendering
-  	Shader* getShader() const {
+  	ShaderPtr getShader() const {
   		return _shader;
   	}
   

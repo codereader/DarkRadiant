@@ -71,7 +71,7 @@ class BrushInstance :
 
 	BrushClipPlane m_clipPlane;
 
-	static Shader* m_state_selpoint;
+	static ShaderPtr m_state_selpoint;
 
 	const LightList* m_lightList;
 

@@ -51,8 +51,8 @@ inline bool float_valid(float f) {
 // ====== Patch Implementation =========================================================================
 
 // Initialise the shader state variables and the patch type
-Shader* Patch::m_state_ctrl;
-Shader* Patch::m_state_lattice;
+ShaderPtr Patch::m_state_ctrl;
+ShaderPtr Patch::m_state_lattice;
 EPatchType Patch::m_type;
 
 // Initialise the cycle cap index member variable
@@ -69,7 +69,6 @@ int g_PatchSubdivideThreshold = 2; // greebo: changed this from 4 to 2 (issue #7
 Patch::Patch(scene::Node& node, const Callback& evaluateTransform, const Callback& boundsChanged) :
 	m_node(&node),
 	m_shader(texdef_name_default()),
-	m_state(0),
 	m_undoable_observer(0),
 	m_map(0),
 	m_render_solid(m_tess),
@@ -88,7 +87,6 @@ Patch::Patch(scene::Node& node, const Callback& evaluateTransform, const Callbac
 Patch::Patch(const Patch& other, scene::Node& node, const Callback& evaluateTransform, const Callback& boundsChanged) :
 	m_node(&node),
 	m_shader(texdef_name_default()),
-	m_state(0),
 	m_undoable_observer(0),
 	m_map(0),
 	m_render_solid(m_tess),
@@ -123,7 +121,6 @@ Patch::Patch(const Patch& other) :
 	Snappable(other),
 	Undoable(other),
 	Nameable(other),
-	m_state(0),
 	m_undoable_observer(0),
 	m_map(0),
 	m_render_solid(m_tess),

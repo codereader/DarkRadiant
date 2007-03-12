@@ -57,7 +57,7 @@ class CPointfile
 	// GL display list pointer for rendering the point path
 	int _displayList;
 	
-	static Shader* m_renderstate;
+	static ShaderPtr m_renderstate;
 
 private:
 
@@ -169,7 +169,8 @@ public:
   }
 };
 
-Shader* CPointfile::m_renderstate = 0;
+// Static shader
+ShaderPtr CPointfile::m_renderstate;
 
 namespace
 {

@@ -36,8 +36,8 @@ class Doom3EntityClass
 	bool _colourSpecified;
 
 	// Shader versions of the colour
-	Shader* _fillShader;
-	Shader* _wireShader;
+	ShaderPtr _fillShader;
+	ShaderPtr _wireShader;
 
 	// Does this entity have a fixed size?
 	bool _fixedSize;
@@ -179,13 +179,13 @@ public:
 
 	/** Return this entity's wireframe shader.
 	 */
-	Shader* getWireShader() const {
+	ShaderPtr getWireShader() const {
 		return _wireShader;
 	}
 
 	/** Return this entity's fill shader.
 	 */
-	Shader* getFillShader() const {
+	ShaderPtr getFillShader() const {
 		return _fillShader;
 	}
 	

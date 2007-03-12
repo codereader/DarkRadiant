@@ -28,8 +28,8 @@ class CamWnd :
 
 	guint m_freemove_handle_focusout;
 	
-	static Shader* m_state_select1;
-	static Shader* m_state_select2;
+	static ShaderPtr m_state_select1;
+	static ShaderPtr m_state_select2;
 	
 	FreezePointer m_freezePointer;
 
@@ -83,7 +83,7 @@ public:
 	Vector3 getCameraAngles() const;
 	void setCameraAngles(const Vector3& angles);
 
-	// greebo: This measures the rendering time during a 360° turn of the camera.
+	// greebo: This measures the rendering time during a 360ï¿½ turn of the camera.
 	void benchmark();
 	
 	// This tries to find brushes above/below the current camera position and moves the view upwards/downwards

@@ -86,7 +86,7 @@ private:
 	std::string _shaderName;
 	
 	// Shader object
-	Shader* _shader;
+	ShaderPtr _shader;
 
   vertices_t m_vertices;
   indices_t m_indices;
@@ -108,7 +108,7 @@ public:
 
 	// Constructor
 	Surface()
-    : _shaderName(""), _shader(NULL)
+    : _shaderName("")
 	{ }
 	
 	// Destructor. Release the shader
@@ -142,7 +142,7 @@ public:
 	/**
 	 * Get the Shader object.
 	 */
-	Shader* getState() const {
+	ShaderPtr getState() const {
 		return _shader;
 	}
 	
@@ -209,7 +209,7 @@ public:
     return m_aabb_local;
   }
 
-  void render(Renderer& renderer, const Matrix4& localToWorld, Shader* state) const
+  void render(Renderer& renderer, const Matrix4& localToWorld, ShaderPtr state) const
   {
     renderer.SetState(state, Renderer::eFullMaterials);
     renderer.addRenderable(*this, localToWorld);
@@ -350,11 +350,9 @@ class ModelInstance :
   {
   public:
     CopiedString first;
-    Shader* second;
-    Remap() : second(0)
-    {
-    }
+    ShaderPtr second;
   };
+  
   typedef Array<Remap> SurfaceRemaps;
   SurfaceRemaps m_skins;
 public:
@@ -392,7 +390,7 @@ public:
         }
         else
         {
-          (*j).second = 0;
+          (*j).second = ShaderPtr();
         }
       }
       SceneChangeNotify();
@@ -405,7 +403,7 @@ public:
       if((*i).second != 0)
       {
         GlobalShaderCache().release((*i).first.c_str());
-        (*i).second = 0;
+        (*i).second = ShaderPtr();
       }
     }
   }

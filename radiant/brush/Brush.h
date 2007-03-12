@@ -148,7 +148,7 @@ public:
 	Callback m_lightsChanged;
 	
 	// static data
-	static Shader* m_state_point;
+	static ShaderPtr m_state_point;
 	// ----
 	
 	static double m_maxWorldCoord;

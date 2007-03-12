@@ -931,7 +931,7 @@ void Brush::buildBRep() {
 // ----------------------------------------------------------------------------
 
 double Brush::m_maxWorldCoord = 0;
-Shader* Brush::m_state_point;
+ShaderPtr Brush::m_state_point;
 
 Signal0 g_brushTextureChangedCallbacks;
 

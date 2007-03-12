@@ -3,7 +3,7 @@
 #include "ifilter.h"
 
 // Initialise the shader member variable
-Shader* PatchInstance::m_state_selpoint;
+ShaderPtr PatchInstance::m_state_selpoint;
 
 // Constructor: Create an PatchInstance with the given <patch> and the scene elements <path> and <parent>
 PatchInstance::PatchInstance(const scene::Path& path, scene::Instance* parent, Patch& patch) :

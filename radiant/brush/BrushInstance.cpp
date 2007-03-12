@@ -429,6 +429,6 @@ void BrushInstance::clearLights() {
 
 // -------------------------------------------------------------------------------------------
 
-Shader* BrushInstance::m_state_selpoint;
+ShaderPtr BrushInstance::m_state_selpoint;
 Counter* BrushInstance::m_counter = 0;
-Shader* BrushClipPlane::m_state = 0;
+ShaderPtr BrushClipPlane::m_state;

@@ -17,7 +17,7 @@ class RenderLightRadiiBox : public OpenGLRenderable {
 	const Vector3& m_origin;
 public:
 	mutable Vector3 m_points[8];
-	static Shader* m_state;
+	static ShaderPtr m_state;
 
 	RenderLightRadiiBox(const Vector3& origin) : m_origin(origin) {}
 	

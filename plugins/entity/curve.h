@@ -180,8 +180,8 @@ public:
 class CurveEditType
 {
 public:
-  Shader* m_controlsShader;
-  Shader* m_selectedShader;
+  ShaderPtr m_controlsShader;
+  ShaderPtr m_selectedShader;
 };
 
 inline void ControlPoints_write(ControlPoints& controlPoints, const char* key, Entity& entity)

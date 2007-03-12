@@ -14,7 +14,7 @@ inline void Winding_DrawWireframe(const Winding& winding) {
 class BrushClipPlane : public OpenGLRenderable {
 	Plane3 m_plane;
 	Winding m_winding;
-	static Shader* m_state;
+	static ShaderPtr m_state;
 public:
 	static void constructStatic() {
 		m_state = GlobalShaderCache().capture("$CLIPPER_OVERLAY");

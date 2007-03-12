@@ -80,7 +80,7 @@ private:
   bool _circleZ_visible;
   
 public:
-  static Shader* _stateOuter;
+  static ShaderPtr _stateOuter;
 
   // Constructor
   RotateManipulator(Rotatable& rotatable, std::size_t segments, float radius);
@@ -119,8 +119,8 @@ private:
   SelectableBool _selectableScreen;
   Pivot2World _pivot;
 public:
-  static Shader* _stateWire;
-  static Shader* _stateFill;
+  static ShaderPtr _stateWire;
+  static ShaderPtr _stateFill;
 
   // Constructor
   TranslateManipulator(Translatable& translatable, std::size_t segments, float length);

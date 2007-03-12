@@ -50,7 +50,7 @@ inline void write_colour(const Vector3& colour, Entity* entity)
 class Colour
 {
   Callback m_colourChanged;
-	Shader* m_state;
+	ShaderPtr m_state;
 
 	void capture_state() {
 	  	std::string fillCol = (boost::format("(%g %g %g)") % m_colour[0] % m_colour[1] % m_colour[2]).str();
@@ -92,7 +92,7 @@ public:
     write_colour(m_colour, entity);
   }
 
-  Shader* state() const
+  ShaderPtr state() const
   {
     return m_state;
   }

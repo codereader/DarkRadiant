@@ -231,7 +231,7 @@ class RenderableTargetingEntity
   TargetingEntity& m_targets;
   mutable RenderablePointVector m_target_lines;
 public:
-  static Shader* m_state;
+  static ShaderPtr m_state;
 
   RenderableTargetingEntity(TargetingEntity& targets)
     : m_targets(targets), m_target_lines(GL_LINES)
@@ -261,7 +261,7 @@ class RenderableTargetingEntities
   const TargetingEntities& m_targets;
   mutable RenderablePointVector m_target_lines;
 public:
-  static Shader* m_state;
+  static ShaderPtr m_state;
 
   RenderableTargetingEntities(const TargetingEntities& targets)
     : m_targets(targets), m_target_lines(GL_LINES)

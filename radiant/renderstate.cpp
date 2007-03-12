@@ -221,11 +221,6 @@ void createARBProgram(const char* filename, GLenum type)
 
 #define LIGHT_SHADER_DEBUG 0
 
-#if LIGHT_SHADER_DEBUG
-typedef std::vector<Shader*> LightDebugShaders;
-LightDebugShaders g_lightDebugShaders;
-#endif
-
 class CountLights
 {
   std::size_t m_count;
@@ -327,72 +322,62 @@ public:
 
 class OpenGLShaderCache : public ShaderCache, public ModuleObserver
 {
-  class CreateOpenGLShader
-  {
-    OpenGLShaderCache* m_cache;
-  public:
-    explicit CreateOpenGLShader(OpenGLShaderCache* cache = 0)
-      : m_cache(cache)
-    {
-    }
-    OpenGLShader* construct(const CopiedString& name)
-    {
-      OpenGLShader* shader = new OpenGLShader;
-      if(m_cache->realised())
-      {
-        shader->realise(name);
-      }
-      return shader;
-    }
-    void destroy(OpenGLShader* shader)
-    {
-      if(m_cache->realised())
-      {
-        shader->unrealise();
-      }
-      delete shader;
-    }
-  };
-
-  typedef HashedCache<CopiedString, OpenGLShader, HashString, std::equal_to<CopiedString>, CreateOpenGLShader> Shaders;
-  Shaders m_shaders;
-  std::size_t m_unrealised;
+	// Map of named Shader objects
+	typedef boost::shared_ptr<OpenGLShader> OpenGLShaderPtr;
+	typedef std::map<std::string, OpenGLShaderPtr> ShaderMap;
+	ShaderMap _shaders;
+	
+	// Stupid unrealised counter
+	std::size_t m_unrealised;
 
   bool m_lightingEnabled;
   bool m_lightingSupported;
   bool m_useShaderLanguage;
 
 public:
-  OpenGLShaderCache()
-    : m_shaders(CreateOpenGLShader(this)),
-    m_unrealised(2), // wait until shaders, gl-context and textures are realised before creating any render-states
+
+	/**
+	 * Main constructor.
+	 */
+	OpenGLShaderCache()
+    : m_unrealised(2), // wait until shaders, gl-context and textures are realised before creating any render-states
     				 // greebo: I set this down to the value 2 after removing TexturesCache 
     				 // (What the heck *is* this anyway, a hardcoded egg-timer?)
-    m_lightingEnabled(true),
-    m_lightingSupported(false),
-    m_useShaderLanguage(false),
-    m_lightsChanged(true),
-    m_traverseRenderablesMutex(false)
-  {
-  }
-  ~OpenGLShaderCache()
-  {
-    for(Shaders::iterator i = m_shaders.begin(); i != m_shaders.end(); ++i)
-    {
-      globalOutputStream() << "leaked shader: " << makeQuoted((*i).key.c_str()) << "\n";
-    }
-  }
+	  m_lightingEnabled(true),
+	  m_lightingSupported(false),
+	  m_useShaderLanguage(false),
+	  m_lightsChanged(true),
+	  m_traverseRenderablesMutex(false)
+	{ }
 
 	/* Capture the given shader.
 	 */
-	Shader* capture(const std::string& name) {
-		return m_shaders.capture(name.c_str()).get();	
+	ShaderPtr capture(const std::string& name) {
+		
+		// Usual ritual, check cache and return if found, otherwise create/
+		// insert/return.
+		ShaderMap::const_iterator i = _shaders.find(name);
+		if (i != _shaders.end()) {
+			return i->second;
+		}
+		else {
+			// Create and insert the new shader
+			OpenGLShaderPtr shd(new OpenGLShader());
+			_shaders.insert(ShaderMap::value_type(name, shd));
+			
+			// Realise the shader if the cache is realised
+			if (realised())
+				shd->realise(name);
+				
+			// Return the new shader
+			return shd;
+		}
 	}
 
 	/* Release the given shader.
 	 */
 	void release(const std::string& name) {
-		m_shaders.release(name.c_str());
+		// DEPRECATED, do nothing
 	}
   
   	/*
@@ -490,32 +475,31 @@ public:
   {
     if(--m_unrealised == 0)
     {
-      if(lightingSupported() && lightingEnabled())
-      {
-		// Realise the GLPrograms
-		render::GLProgramFactory::realise();
-      }
+		if(lightingSupported() && lightingEnabled()) {
+			// Realise the GLPrograms
+			render::GLProgramFactory::realise();
+		}
 
-      for(Shaders::iterator i = m_shaders.begin(); i != m_shaders.end(); ++i)
-      {
-        if(!(*i).value.empty())
-        {
-          (*i).value->realise(i->key);
+		// Realise the OpenGLShader objects
+		for (ShaderMap::iterator i = _shaders.begin(); 
+			 i != _shaders.end(); 
+			 ++i)
+		{
+			i->second->realise(i->first);
         }
-      }
     }
   }
   void unrealise()
   {
     if(++m_unrealised == 1)
     {
-      for(Shaders::iterator i = m_shaders.begin(); i != m_shaders.end(); ++i)
-      {
-        if(!(*i).value.empty())
-        {
-          (*i).value->unrealise();
+		// Unrealise the OpenGLShader objects
+		for (ShaderMap::iterator i = _shaders.begin(); 
+			 i != _shaders.end(); 
+			 ++i)
+		{
+			i->second->unrealise();
         }
-      }
       if(GlobalOpenGL().contextValid && lightingSupported() && lightingEnabled())
       {
 		// Unrealise the GLPrograms

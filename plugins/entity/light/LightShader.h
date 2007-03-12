@@ -4,43 +4,14 @@
 #include <string>
 #include "irender.h"
 
-class ShaderRef {
-	std::string m_name;
-	Shader* m_shader;
-	
-	void capture() {
-		m_shader = GlobalShaderCache().capture(m_name.c_str());
-	}
-
-	void release() {
-		GlobalShaderCache().release(m_name.c_str());
-	}
-	
-public:
-	ShaderRef() {
-		capture();
-	}
-	
-	~ShaderRef() {
-		release();
-	}
-	
-	void setName(const std::string& name) {
-		release();
-		m_name = name;
-		capture();
-	}
-  
-	Shader* get() const {
-		return m_shader;
-	}
-};
-
 class LightShader {
-	ShaderRef m_shader;
+	
+	ShaderPtr m_shader;
+	
 	void setDefault() {
-		m_shader.setName(m_defaultShader);
+		m_shader = GlobalShaderCache().capture(m_defaultShader);
 	}
+	
 public:
 	static std::string m_defaultShader;
 
@@ -53,14 +24,14 @@ public:
 			setDefault();
 		}
 		else {
-			m_shader.setName(value);
+			m_shader = GlobalShaderCache().capture(value);
 		}
 		SceneChangeNotify();
 	}
 	typedef MemberCaller1<LightShader, const char*, &LightShader::valueChanged> ValueChangedCaller;
 
-	Shader* get() const {
-		return m_shader.get();
+	ShaderPtr get() const {
+		return m_shader;
 	}
 };
 

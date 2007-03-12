@@ -6,22 +6,22 @@
 class CamRenderer: public Renderer {
   struct state_type
   {
-    state_type() : m_highlight(0), m_state(0), m_lights(0)
+    state_type() : m_highlight(0), m_lights(0)
     {
     }  
     unsigned int m_highlight;
-    Shader* m_state;
+    ShaderPtr m_state;
     const LightList* m_lights;
   };
 
   std::vector<state_type> m_state_stack;
   RenderStateFlags m_globalstate;
-  Shader* m_state_select0;
-  Shader* m_state_select1;
+  ShaderPtr m_state_select0;
+  ShaderPtr m_state_select1;
   const Vector3& m_viewer;
 
 public:
-  CamRenderer(RenderStateFlags globalstate, Shader* select0, Shader* select1, const Vector3& viewer) :
+  CamRenderer(RenderStateFlags globalstate, ShaderPtr select0, ShaderPtr select1, const Vector3& viewer) :
     m_globalstate(globalstate),
     m_state_select0(select0),
     m_state_select1(select1),
@@ -32,7 +32,7 @@ public:
     m_state_stack.push_back(state_type());
   }
 
-  void SetState(Shader* state, EStyle style)
+  void SetState(ShaderPtr state, EStyle style)
   {
     ASSERT_NOTNULL(state);
     if(style == eFullMaterials)

@@ -32,7 +32,7 @@ class RenderablePicoSurface
 	std::string _mappedShaderName;
 	
 	// Shader object containing the material shader for this surface
-	Shader* _shader;
+	ShaderPtr _shader;
 	
 	// Vector of ArbitraryMeshVertex structures, containing the coordinates,
 	// normals, tangents and texture coordinates of the component vertices
@@ -99,7 +99,7 @@ public:
 	
 	/** Get the Shader for this surface.
 	 */
-	Shader* getShader() const {
+	ShaderPtr getShader() const {
 		return _shader;
 	}	 
 	

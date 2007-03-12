@@ -17,7 +17,7 @@
 #include "xyview/GlobalXYWnd.h"
 
 // Initialise the shader pointer
-Shader* RadiantSelectionSystem::_state = 0;
+ShaderPtr RadiantSelectionSystem::_state;
 
 // ------------ Helper Functions --------------------------------------------
 

@@ -69,10 +69,9 @@ public:
   }
 
 	/**
-	 * Realise this shader.
-	 * TODO: get rid of CopiedString.
+	 * Realise this shader, setting the name in the process.
 	 */
-	void realise(const CopiedString& name);
+	void realise(const std::string& name);
 
 	void unrealise();
 

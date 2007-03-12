@@ -292,7 +292,7 @@ public:
 
 	const Matrix4& projection() const;
 
-	Shader* getShader() const;
+	ShaderPtr getShader() const;
 }; // class Light
 
 #endif /*LIGHTCLASS_H_*/
