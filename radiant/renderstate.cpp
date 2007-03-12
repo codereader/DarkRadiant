@@ -48,7 +48,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "texturelib.h"
 #include "string/string.h"
 #include "container/hashfunc.h"
-#include "container/cache.h"
 #include "generic/reference.h"
 #include "moduleobservers.h"
 #include "stream/filestream.h"

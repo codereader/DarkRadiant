@@ -40,8 +40,8 @@ ModelModules& ReferenceAPI_getModelModules();
 #include <list>
 #include <fstream>
 
-#include "container/cache.h"
 #include "container/hashfunc.h"
+#include "container/hashtable.h"
 #include "os/path.h"
 #include "stream/textfilestream.h"
 #include "nullmodel.h"
