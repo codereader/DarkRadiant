@@ -27,18 +27,19 @@
 		<menuSeparator />
 		<menuItem name="copy" caption="_Copy" command="Copy" />
 		<menuItem name="paste" caption="_Paste" command="Paste" />
-		<menuItem name="pasteToCamera" caption="P_aste to Camera" command="PasteToCamera" />
+		<menuItem name="pasteToCamera" caption="Paste to Camera" command="PasteToCamera" />
 		<menuSeparator />
 		<menuItem name="duplicate" caption="_Duplicate" command="CloneSelection" />
 		<menuItem name="delete" caption="D_elete" command="DeleteSelection" />
 		<menuSeparator />
 		<menuItem name="parent" caption="P_arent" command="ParentSelection" />
 		<menuSeparator />
-		<menuItem name="clearSelection" caption="C_lear Selection" command="UnSelectSelection" />
-		<menuItem name="invertSelection" caption="_Invert Selection" command="InvertSelection" />
-		<menuItem name="selectInside" caption="Select I_nside" command="SelectInside" />
-		<menuItem name="selectTouching" caption="Select _touching" command="SelectTouching" />
-		<menuItem name="selectionEntities" caption="Expand selection to Whole _Entities" command="ExpandSelectionToEntities" />
+		<menuItem name="clearSelection" caption="C_lear selection" command="UnSelectSelection" />
+		<menuItem name="invertSelection" caption="_Invert selection" command="InvertSelection" />
+		<menuItem name="selectCompleteTall" caption="Select complete t_all" command="SelectCompleteTall" icon="selection_selectcompletetall.png" />
+		<menuItem name="selectInside" caption="Select i_nside" command="SelectInside" icon="selection_selectinside.png" />
+		<menuItem name="selectTouching" caption="Select _touching" command="SelectTouching" icon="selection_selecttouching.png" />
+		<menuItem name="selectionEntities" caption="Expand selection to whole _Entities" command="ExpandSelectionToEntities" />
 		<menuSeparator />
 		<menuItem name="objExport" caption="Export selected brushes to _OBJ" command="BrushExportOBJ" />
 		<menuItem name="createCM" caption="Create CollisionModel from selection..." command="BrushExportCM" />
@@ -119,10 +120,10 @@
 	<subMenu name="modify" caption="_Modify">
 
 		<subMenu name="components" caption="Components">
-			<menuItem name="edges" caption="_Edges" command="DragEdges" />
-			<menuItem name="vertices" caption="_Vertices" command="DragVertices" />
-			<menuItem name="faces" caption="_Faces" command="DragFaces" />
-			<menuItem name="entities" caption="En_tities" command="DragEntities" />
+			<menuItem name="edges" caption="_Edges" command="DragEdges" icon="modify_edges.png" />
+			<menuItem name="vertices" caption="_Vertices" command="DragVertices" icon="modify_vertices.png" />
+			<menuItem name="faces" caption="_Faces" command="DragFaces" icon="modify_faces.png" />
+			<menuItem name="entities" caption="En_tities" command="DragEntities" icon="select_entities.png" />
 		</subMenu>
 
 		<menuSeparator />
@@ -135,15 +136,15 @@
 		</subMenu>
 
 		<subMenu name="rotate" caption="Rotate">
-			<menuItem name="rotateX" caption="Rotate X" command="RotateSelectionX" />
-			<menuItem name="rotateY" caption="Rotate Y" command="RotateSelectionY" />
-			<menuItem name="rotateZ" caption="Rotate Z" command="RotateSelectionZ" />
+			<menuItem name="rotateX" caption="Rotate X" command="RotateSelectionX" icon="brush_rotatex.png" />
+			<menuItem name="rotateY" caption="Rotate Y" command="RotateSelectionY" icon="brush_rotatey.png" />
+			<menuItem name="rotateZ" caption="Rotate Z" command="RotateSelectionZ" icon="brush_rotatez.png" />
 		</subMenu>
 
 		<subMenu name="flip" caption="Flip">
-			<menuItem name="flipX" caption="Flip _X" command="MirrorSelectionX" />
-			<menuItem name="flipY" caption="Flip _Y" command="MirrorSelectionY" />
-			<menuItem name="flipZ" caption="Flip _Z" command="MirrorSelectionZ" />
+			<menuItem name="flipX" caption="Flip _X" command="MirrorSelectionX" icon="brush_flipx.png" />
+			<menuItem name="flipY" caption="Flip _Y" command="MirrorSelectionY" icon="brush_flipy.png" />
+			<menuItem name="flipZ" caption="Flip _Z" command="MirrorSelectionZ" icon="brush_flipz.png" />
 		</subMenu>
 
 	</subMenu>
@@ -171,8 +172,8 @@
 	</subMenu>
 
 	<subMenu name="entity" caption="E_ntity">
-		<menuItem name="ungroupEntity" caption="_Ungroup" command="UngroupSelection" />
-		<menuItem name="connectEntity" caption="_Connect" command="ConnectSelection" />
+		<menuItem name="ungroupEntity" caption="_Revert group to worldspawn" command="RevertToWorldspawn" icon="cmenu_revert_worldspawn.png" />
+		<menuItem name="connectEntity" caption="_Connect selected entities" command="ConnectSelection" />
 	</subMenu>
 
 	<subMenu name="brush" caption="B_rush">
@@ -182,9 +183,9 @@
 		<menuSeparator />
 
 		<subMenu name="csg" caption="CSG">
-			<menuItem name="hollow" caption="Make _Hollow" command="CSGHollow" />
-			<menuItem name="csgSubtract" caption="CSG _Subtract" command="CSGSubtract" />
-			<menuItem name="csgMerge" caption="CSG _Merge" command="CSGMerge" />
+			<menuItem name="hollow" caption="Make _Hollow" command="CSGHollow" icon="selection_makehollow.png" />
+			<menuItem name="csgSubtract" caption="CSG _Subtract" command="CSGSubtract" icon="selection_csgsubtract.png" />
+			<menuItem name="csgMerge" caption="CSG _Merge" command="CSGMerge" icon="selection_csgmerge.png" />
 		</subMenu>
 
 		<menuSeparator />
@@ -251,15 +252,14 @@
 
 		<menuSeparator />
 		<menuItem name="thickenPatches" caption="Thicken Selected Patches" command="ThickenPatch" />
-		<menuItem name="capselection" caption="Cap Selection" command="CapCurrentCurve" />
+		<menuItem name="capselection" caption="Cap Selection" command="CapCurrentCurve" icon="curve_cap.png" />
 		<menuItem name="cycleCapTexture" caption="Cycle Cap Texture" command="CycleCapTexturePatch" />
 		<menuSeparator />
 		<menuItem name="stitchTextures" caption="Stitch Patch Textures" command="StitchPatchTexture" />
 	</subMenu>
 
-
-	<subMenu name="plugins" caption="_Plugins">
-	</subMenu>
+<!--<subMenu name="plugins" caption="_Plugins">
+	</subMenu>-->
 
 	<subMenu name="help" caption="_Help">
 		<menuItem name="shortcuts" caption="Shortcuts list" command="ShowCommandList" />

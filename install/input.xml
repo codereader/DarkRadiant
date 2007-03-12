@@ -63,8 +63,6 @@
 		<shortcut command="ShowHidden" key="H" modifiers="SHIFT" />
 		<shortcut command="HideSelected" key="H" />
 		<shortcut command="MapInfo" key="M" />
-		<shortcut command="RotateSelectionX" key="V" modifiers="ALT" />
-		<shortcut command="MirrorSelectionY" key="V" modifiers="ALT" />
 		<shortcut command="CSGSubtract" key="U" modifiers="SHIFT" />
 		<shortcut command="CSGMerge" key="U" modifiers="CONTROL" />
 		<shortcut command="SnapToGrid" key="G" modifiers="CONTROL" />
