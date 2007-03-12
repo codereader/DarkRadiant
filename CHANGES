@@ -1,3 +1,7 @@
+12/03/2007
+greebo
+- Added Load/Save Prefab commands and fixed their handling of entity child brushes.
+
 09/03/2007
 greebo
 - Replaced ArbitraryRotation and ArbitraryScale dialogs with new TransformationDialog.
