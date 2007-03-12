@@ -38,10 +38,16 @@ std::string MapFileManager::selectFile(bool open, const std::string& title) {
 		
 	// Return the chosen file. If this is a save operation and the chosen path
 	// does not end in ".map", add it here.
-	if (!filePath.empty() && !boost::algorithm::iends_with(filePath, ".map"))
+	if (!open												// save operation 
+		&& !filePath.empty() 								// valid filename
+		&& !boost::algorithm::iends_with(filePath, ".map")) // no map extension
+	{
 		return filePath + ".map";
+	}
 	else
+	{
 		return filePath;
+	}
 }
 
 /* PUBLIC INTERFACE METHODS */
