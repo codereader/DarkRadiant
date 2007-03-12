@@ -658,8 +658,8 @@ void CamWnd::captureStates() {
 }
 
 void CamWnd::releaseStates() {
-	GlobalShaderCache().release("$CAM_HIGHLIGHT");
-	GlobalShaderCache().release("$CAM_OVERLAY");
+	m_state_select1 = ShaderPtr();
+	m_state_select2 = ShaderPtr();
 }
 
 void CamWnd::queueDraw() {

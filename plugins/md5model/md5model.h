@@ -100,8 +100,7 @@ private:
 	
 	// Release the named shader
 	void releaseShader() {
-		if (_shader != NULL)
-			GlobalShaderCache().release(_shaderName);
+		_shader = ShaderPtr();
 	}
 
 public:
@@ -400,10 +399,9 @@ public:
   {
     for(SurfaceRemaps::iterator i = m_skins.begin(); i != m_skins.end(); ++i)
     {
-      if((*i).second != 0)
+      if(i->second)
       {
-        GlobalShaderCache().release((*i).first.c_str());
-        (*i).second = ShaderPtr();
+        i->second = ShaderPtr();
       }
     }
   }

@@ -105,11 +105,6 @@ void RenderablePicoSurface::calculateTangents() {
 	}
 }
 
-// Destructor
-RenderablePicoSurface::~RenderablePicoSurface() {
-	GlobalShaderCache().release(_mappedShaderName);
-}
-
 // Front-end renderable submission
 void RenderablePicoSurface::submitRenderables(Renderer& rend,
 											  const Matrix4& localToWorld)
@@ -165,7 +160,6 @@ void RenderablePicoSurface::applySkin(const ModelSkin& skin) {
 	std::string remap = skin.getRemap(_originalShaderName);
 	if (remap != "" && remap != _mappedShaderName) { // change to a new shader
 		// Switch shader objects
-		GlobalShaderCache().release(_mappedShaderName);
 		_shader = GlobalShaderCache().capture(remap);
 
 		// Save the remapped shader name
@@ -173,7 +167,6 @@ void RenderablePicoSurface::applySkin(const ModelSkin& skin) {
 	}
 	else if (remap == "" && _mappedShaderName != _originalShaderName) {
 		// No remap, so reset our shader to the original unskinned shader	
-		GlobalShaderCache().release(_mappedShaderName);
 		_shader = GlobalShaderCache().capture(_originalShaderName);
 
 		// Reset the remapped shader name

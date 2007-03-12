@@ -728,13 +728,13 @@ void RadiantSelectionSystem::constructStatic() {
 }
 
 void RadiantSelectionSystem::destroyStatic() {
+	_state = ShaderPtr();
 #if defined(DEBUG_SELECTION)
-	GlobalShaderCache().release("$DEBUG_CLIPPED");
+	g_state_clipped = ShaderPtr();
 #endif
-	GlobalShaderCache().release("$WIRE_OVERLAY");
-	GlobalShaderCache().release("$FLATSHADE_OVERLAY");
-	GlobalShaderCache().release("$WIRE_OVERLAY");
-	GlobalShaderCache().release("$POINT");
+	TranslateManipulator::_stateWire = ShaderPtr();
+	TranslateManipulator::_stateFill = ShaderPtr();
+	RotateManipulator::_stateOuter = ShaderPtr();
 }
 
 void RadiantSelectionSystem::cancelMove() {

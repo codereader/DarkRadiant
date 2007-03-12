@@ -20,7 +20,7 @@ public:
 		m_state = GlobalShaderCache().capture("$CLIPPER_OVERLAY");
 	}
 	static void destroyStatic() {
-		GlobalShaderCache().release("$CLIPPER_OVERLAY");
+		m_state = ShaderPtr();
 	}
 
 	void setPlane(const Brush& brush, const Plane3& plane) {

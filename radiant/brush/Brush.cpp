@@ -307,7 +307,7 @@ void Brush::constructStatic() {
 }
 
 void Brush::destroyStatic() {
-	GlobalShaderCache().release("$POINT");
+
 }
 
 std::size_t Brush::DEBUG_size() {

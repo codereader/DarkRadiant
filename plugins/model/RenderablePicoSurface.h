@@ -63,12 +63,6 @@ public:
 	 */
 	RenderablePicoSurface(picoSurface_t* surf, const std::string& fExt);
 	
-	/** 
-	 * Destructor. Vectors will be automatically destructed, but we need to 
-	 * release the shader.
-	 */
-	~RenderablePicoSurface();
-	
 	/**
 	 * Front-end render function used by the main renderer.
 	 * 

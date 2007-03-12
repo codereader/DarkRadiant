@@ -43,7 +43,6 @@ void FaceShader::captureShader() {
 
 void FaceShader::releaseShader() {
 	m_state->detach(*this);
-	GlobalShaderCache().release(m_shader.c_str());
 	m_state = ShaderPtr();
 }
 

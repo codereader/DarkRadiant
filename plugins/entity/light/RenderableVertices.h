@@ -38,11 +38,6 @@ public:
 	  		_colour(colour)
 	{}
   
-  	// Destructor
-  	~RenderableVertex() {
-  		GlobalShaderCache().release("$BIGPOINT");
-  	}
-  	
   	Vector3 getOrigin() {
   		return _worldOrigin;
   	}

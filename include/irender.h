@@ -193,15 +193,6 @@ public:
 	 
 	virtual ShaderPtr capture(const std::string& name) = 0;
 
-	/** Release a named shader previously captured with capture(). The
-	 * reference count is decremented.
-	 * 
-	 * @param name
-	 * The name of the shader to release.
-	 */
-	 
-	virtual void release(const std::string& name) = 0;
-
   /*! Render all Shader objects. */
   virtual void render(RenderStateFlags globalstate, const Matrix4& modelview, const Matrix4& projection, const Vector3& viewer = Vector3(0, 0, 0)) = 0;
 
