@@ -353,8 +353,8 @@ public:
 
 	// Release the static member variables of this class, called from >> patchmodule.cpp
 	static void destroyStatic() {
-		GlobalShaderCache().release("$LATTICE");
-		GlobalShaderCache().release("$POINT");
+		Patch::m_state_ctrl = ShaderPtr();
+		Patch::m_state_lattice = ShaderPtr();
 	}
 
 	/** greebo: Sets/gets whether this patch is a patchDef3 (fixed tesselation)

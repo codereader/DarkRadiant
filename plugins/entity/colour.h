@@ -57,11 +57,6 @@ class Colour
 	  	m_state = GlobalShaderCache().capture(fillCol);
 	}
 
-	void release_state() {
-	  	std::string fillCol = (boost::format("(%g %g %g)") % m_colour[0] % m_colour[1] % m_colour[2]).str();
-	  	GlobalShaderCache().release(fillCol);
-	}
-
 public:
   Vector3 m_colour;
 
@@ -71,14 +66,9 @@ public:
     default_colour(m_colour);
     capture_state();
   }
-  ~Colour()
-  {
-    release_state();
-  }
 
   void colourChanged(const char* value)
   {
-    release_state();
     read_colour(m_colour, value);
     capture_state();
 

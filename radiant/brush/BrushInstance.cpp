@@ -75,7 +75,7 @@ void BrushInstance::constructStatic() {
 	m_state_selpoint = GlobalShaderCache().capture("$SELPOINT");
 }
 void BrushInstance::destroyStatic() {
-	GlobalShaderCache().release("$SELPOINT");
+	m_state_selpoint = ShaderPtr(); 
 }
 
 void BrushInstance::clear() {

@@ -62,9 +62,6 @@ void Doom3EntityClass::releaseColour() {
 	// Release fill and wire versions of the entity colour
 	std::string fillCol = (boost::format("(%g %g %g)") % _colour[0] % _colour[1] % _colour[2]).str();
 	std::string wireCol = (boost::format("<%g %g %g>") % _colour[0] % _colour[1] % _colour[2]).str();
-
-	GlobalShaderCache().release(fillCol);
-	GlobalShaderCache().release(wireCol);
 }
 
 // Enumerate entity class attributes

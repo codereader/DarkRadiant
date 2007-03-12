@@ -165,7 +165,7 @@ public:
 
   static void destroyStatic()
   {
-    GlobalShaderCache().release("$POINTFILE");
+    m_renderstate = ShaderPtr();
   }
 };
 

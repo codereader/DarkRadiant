@@ -38,8 +38,7 @@ void Doom3Group_construct() {
 }
 
 void Doom3Group_destroy() {
-	GlobalShaderCache().release("$SELPOINT");
-	GlobalShaderCache().release("$POINT");
+
 }
 
 scene::Node& New_Doom3Group(IEntityClassPtr eclass) {

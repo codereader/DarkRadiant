@@ -592,7 +592,7 @@ void Patch::captureShader() {
 }
 
 void Patch::releaseShader() {
-	GlobalShaderCache().release(m_shader.c_str());
+	m_state = ShaderPtr(); 
 }
 
 void Patch::check_shader() {

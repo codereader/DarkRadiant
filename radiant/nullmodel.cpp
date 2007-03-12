@@ -54,7 +54,7 @@ public:
   }
   ~NullModel()
   {
-    GlobalShaderCache().release("");
+    m_state = ShaderPtr();
   }
 
   VolumeIntersectionValue intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const

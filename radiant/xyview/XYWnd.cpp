@@ -179,7 +179,7 @@ void XYWnd::captureStates() {
 }
 
 void XYWnd::releaseStates() {
-	GlobalShaderCache().release("$XY_OVERLAY");
+	m_state_selected = ShaderPtr();
 }
 
 const std::string XYWnd::getViewTypeTitle(EViewType viewtype) {

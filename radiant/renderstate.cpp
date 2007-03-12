@@ -373,12 +373,6 @@ public:
 		}
 	}
 
-	/* Release the given shader.
-	 */
-	void release(const std::string& name) {
-		// DEPRECATED, do nothing
-	}
-  
   	/*
   	 * Render all states in the ShaderCache along with their renderables. This
   	 * is where the actual OpenGL rendering starts.
@@ -696,8 +690,6 @@ void ShaderCache_Construct()
 
 void ShaderCache_Destroy()
 {
-    g_ShaderCache->release("$OVERBRIGHT");
-
 	GlobalShaderSystem().detach(*g_ShaderCache);
 	delete g_ShaderCache;
 }

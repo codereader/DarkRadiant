@@ -236,8 +236,6 @@ void Entity_Destroy()
 {
   GlobalShaderCache().detachRenderable(StaticRenderableConnectionLines::instance());
 
-  GlobalShaderCache().release("$PIVOT");
-
   Doom3Group_destroy();
   Light_Destroy();
 }

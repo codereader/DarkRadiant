@@ -77,7 +77,7 @@ void PatchInstance::constructStatic() {
 }
 
 void PatchInstance::destroyStatic() {
-	GlobalShaderCache().release("$SELPOINT");
+	m_state_selpoint = ShaderPtr();
 }
   
 void PatchInstance::allocate(std::size_t size) {
