@@ -125,12 +125,12 @@ public:
     {
       return;
     }
-    std::size_t version;
-    if(!Tokeniser_getSize(tokeniser, version))
+    float version;
+    if(!Tokeniser_getFloat(tokeniser, version))
     {
       return;
     }
-    if(version != MapVersion())
+    if(static_cast<int>(version) != MapVersion())
     {
       globalErrorStream() << "Doom 3 map version " << MapVersion() << " supported, version is " << Unsigned(version) << "\n";
       return;
