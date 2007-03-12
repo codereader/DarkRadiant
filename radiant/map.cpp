@@ -833,47 +833,63 @@ public:
   }
 };
 
-class MapMergeEntities : public scene::Traversable::Walker
+class MapMergeEntities : 
+	public scene::Traversable::Walker
 {
-  mutable scene::Path m_path;
+	// The target path (usually GlobalSceneGraph().root())
+	mutable scene::Path m_path;
+
 public:
-  MapMergeEntities(const scene::Path& root)
-    : m_path(root)
-  {
-  }
-  bool pre(scene::Node& node) const
-  {
-    if(node_is_worldspawn(node))
-    {
-      scene::Node* world_node = Map_FindWorldspawn(g_map);
-      if(world_node == 0)
-      {
-        Map_SetWorldspawn(g_map, &node);
-        Node_getTraversable(m_path.top().get())->insert(node);
-        m_path.push(makeReference(node));
-        Node_getTraversable(node)->traverse(SelectChildren(m_path));
-      }
-      else
-      {
-        m_path.push(makeReference(*world_node));
-        Node_getTraversable(node)->traverse(MapMergeAll(m_path));
-      }
-    }
-    else
-    {
-      Node_getTraversable(m_path.top())->insert(node);
-      m_path.push(makeReference(node));
-      if(node_is_group(node))
-      {
-        Node_getTraversable(node)->traverse(SelectChildren(m_path));
-      }
-      else
-      {
-        selectPath(m_path, true);
-      }
-    }
-    return false;
-  }
+	MapMergeEntities(const scene::Path& root) : 
+		m_path(root) 
+	{}
+
+	bool pre(scene::Node& node) const {
+		// greebo: Check if the visited node is the worldspawn of the other map
+		if (node_is_worldspawn(node)) {
+			// Find the worldspawn of the target map
+			scene::Node* world_node = Map_FindWorldspawn(g_map);
+			
+			if (world_node == NULL) {
+				// Set the worldspawn to the new node
+				Map_SetWorldspawn(g_map, &node);
+				
+				// Insert the visited node at the target path
+				Node_getTraversable(m_path.top().get())->insert(node);
+				
+				m_path.push(makeReference(node));
+				
+				// Select all the children of the visited node (these are primitives)
+				Node_getTraversable(node)->traverse(SelectChildren(m_path));
+			}
+			else {
+				m_path.push(makeReference(*world_node));
+				Node_getTraversable(node)->traverse(MapMergeAll(m_path));
+			}
+		}
+		else {
+			// This is an ordinary entity, not worldspawn
+			
+			// Insert this node at the target path 
+			Node_getTraversable(m_path.top())->insert(node);
+			m_path.push(makeReference(node));
+			
+			// greebo: commented this out, we don't want the child brushes to be selected
+			/*if (node_is_group(node)) {
+				Node_getTraversable(node)->traverse(SelectChildren(m_path));
+			}
+			else {
+				selectPath(m_path, true);
+			}*/
+			
+			// Select the visited instance
+			selectPath(m_path, true);
+		}
+		
+		// Only traverse top-level entities, don't traverse the children
+		return false;
+	}
+
   void post(scene::Node& node) const
   {
     m_path.pop();
