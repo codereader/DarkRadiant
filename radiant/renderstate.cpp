@@ -57,6 +57,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "plugin.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/weak_ptr.hpp>
 
 /* GLOBALS */
 
@@ -323,7 +324,8 @@ class OpenGLShaderCache : public ShaderCache, public ModuleObserver
 {
 	// Map of named Shader objects
 	typedef boost::shared_ptr<OpenGLShader> OpenGLShaderPtr;
-	typedef std::map<std::string, OpenGLShaderPtr> ShaderMap;
+	typedef boost::weak_ptr<OpenGLShader> OpenGLShaderWeakPtr;
+	typedef std::map<std::string, OpenGLShaderWeakPtr> ShaderMap;
 	ShaderMap _shaders;
 	
 	// Stupid unrealised counter
@@ -357,20 +359,25 @@ public:
 		// insert/return.
 		ShaderMap::const_iterator i = _shaders.find(name);
 		if (i != _shaders.end()) {
-			return i->second;
+			// Try to lock pointer, which will fail if the object has been
+			// deleted
+			OpenGLShaderPtr sp = i->second.lock();
+			if (sp)
+				return sp;
 		}
-		else {
-			// Create and insert the new shader
-			OpenGLShaderPtr shd(new OpenGLShader());
-			_shaders.insert(ShaderMap::value_type(name, shd));
+
+		// Either the shader was not found, or the weak pointer failed to lock
+		// because the shader had been deleted. Either way, create a new shader
+		// and insert into the cache.
+		OpenGLShaderPtr shd(new OpenGLShader());
+		_shaders[name] = shd;
 			
-			// Realise the shader if the cache is realised
-			if (realised())
-				shd->realise(name);
-				
-			// Return the new shader
-			return shd;
-		}
+		// Realise the shader if the cache is realised
+		if (realised())
+			shd->realise(name);
+			
+		// Return the new shader
+		return shd;
 	}
 
   	/*
@@ -478,7 +485,9 @@ public:
 			 i != _shaders.end(); 
 			 ++i)
 		{
-			i->second->realise(i->first);
+			OpenGLShaderPtr sp = i->second.lock();
+			if (sp)
+				sp->realise(i->first);
         }
     }
   }
@@ -491,7 +500,9 @@ public:
 			 i != _shaders.end(); 
 			 ++i)
 		{
-			i->second->unrealise();
+			OpenGLShaderPtr sp = i->second.lock();
+			if (sp)
+				sp->unrealise();
         }
       if(GlobalOpenGL().contextValid && lightingSupported() && lightingEnabled())
       {
