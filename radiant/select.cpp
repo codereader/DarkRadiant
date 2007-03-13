@@ -190,7 +190,14 @@ public:
 	bool Evaluate(const AABB& box, scene::Instance& instance) const {
 		
 		// Get the AABB of the visited instance
-		const AABB& other(instance.worldAABB());
+		AABB other = instance.worldAABB();
+		
+		// greebo: Perform a special selection test for lights
+		// as the small diamond should be tested against selection only 
+		scene::LightInstance* light = Instance_getLight(instance);
+		if (light != NULL) {
+			other = light->getSelectAABB();
+		}
 		
 		// Determine the viewtype
 		EViewType viewType = GlobalXYWnd().getActiveViewType();
@@ -251,7 +258,15 @@ class SelectionPolicy_Inside
 public:
   bool Evaluate(const AABB& box, scene::Instance& instance) const
   {
-    const AABB& other(instance.worldAABB());
+    AABB other = instance.worldAABB();
+    
+    // greebo: Perform a special selection test for lights
+	// as the small diamond should be tested against selection only 
+	scene::LightInstance* light = Instance_getLight(instance);
+	if (light != NULL) {
+		other = light->getSelectAABB();
+	}
+    
     for(Unsigned i = 0; i < 3; ++i)
     {
       if(fabsf(box.origin[i] - other.origin[i]) > (box.extents[i] - other.extents[i]))

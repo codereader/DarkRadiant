@@ -152,6 +152,14 @@ const AABB& LightInstance::getSelectedComponentsBounds() const {
 	return m_aabb_component;
 }
 
+AABB LightInstance::getSelectAABB() {
+	AABB returnValue = _light.lightAABB();
+	
+	default_extents(returnValue.extents);
+	
+	return returnValue;
+}
+
 // Test the light volume for selection, this just passes the call on to the contained Light class
 void LightInstance::testSelect(Selector& selector, SelectionTest& test) {
 	_light.testSelect(selector, test, Instance::localToWorld());
