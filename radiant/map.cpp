@@ -2032,24 +2032,31 @@ void ImportMap()
 
 namespace map {
 
-void loadPrefab()
-{
-	std::string filename = map::MapFileManager::getMapFilename(true,
-															   "Load Prefab", 
-															   "prefab");
-
+void loadPrefabAt(const Vector3& targetCoords) {
+	std::string filename = map::MapFileManager::getMapFilename(true, "Load Prefab", "prefab");
+	
 	if (!filename.empty()) {
-	    UndoableCommand undo("loadPrefab");
+		UndoableCommand undo("loadPrefabAt");
+	    
+	    // Deselect everything
+	    GlobalSelectionSystem().setSelectedAll(false);
+	    
+	    // Now import the prefab (imported items get selected)
 	    Map_ImportFile(filename);
+	    
+	    // Translate the selection to the given point
+	    GlobalSelectionSystem().translateSelected(targetCoords);
 	}
 }
 
-void saveSelectedAsPrefab()
-{
-	std::string filename = map::MapFileManager::getMapFilename(false,
-															   "Save selected as Prefab", 
-															   "prefab");
+void loadPrefab() {
+	loadPrefabAt(Vector3(0,0,0));
+}
 
+void saveSelectedAsPrefab() {
+	std::string filename = 
+		map::MapFileManager::getMapFilename(false, "Save selected as Prefab", "prefab");
+	
 	if (!filename.empty()) {
 	    Map_SaveSelected(filename);
   	}
@@ -2059,8 +2066,7 @@ void saveSelectedAsPrefab()
 
 bool Map_SaveAs()
 {
-	std::string filename = map::MapFileManager::getMapFilename(false,
-															   "Save map");
+	std::string filename = map::MapFileManager::getMapFilename(false, "Save map");
   
 	if (!filename.empty()) {
 	    GlobalMRU().insert(filename);
