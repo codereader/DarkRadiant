@@ -3,6 +3,7 @@
 
 #include "math/Vector3.h"
 #include "math/matrix.h"
+#include "scenelib.h"
 #include "selectionlib.h"
 #include "dragplanes.h"
 
@@ -29,7 +30,8 @@ class LightInstance :
 	public PlaneSelectable,
 	public ComponentSelectionTestable,
 	public ComponentEditable,
-	public ComponentSnappable
+	public ComponentSnappable,
+	public scene::LightInstance
 {
 	class TypeCasts {
 		InstanceTypeCastTable m_casts;
@@ -44,6 +46,7 @@ class LightInstance :
 			InstanceStaticCast<LightInstance, PlaneSelectable>::install(m_casts);
 			InstanceStaticCast<LightInstance, ComponentSelectionTestable>::install(m_casts);
 			InstanceStaticCast<LightInstance, ComponentSnappable>::install(m_casts);
+			InstanceStaticCast<LightInstance, scene::LightInstance>::install(m_casts);
 			InstanceIdentityCast<LightInstance>::install(m_casts);
 		}
 		
@@ -85,6 +88,12 @@ public:
   
 	// Renders the components of this light instance 
 	void renderComponents(Renderer& renderer, const VolumeTest& volume) const;
+	
+	/** greebo: Returns the AABB of the small diamond representation. 
+	 *	(use this to select the light against an AABB selectiontest like CompleteTall or similar).
+	 * 
+	 */
+	AABB getSelectAABB();
 	
 	const AABB& getSelectedComponentsBounds() const;
   

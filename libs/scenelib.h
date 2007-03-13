@@ -852,6 +852,18 @@ namespace scene
       return m_parentSelected;
     }
   };
+  
+  	// This in combination with Instance_getLight can be used to 
+  	// cast an instance onto a light and identify it as such.
+	class LightInstance
+	{
+	public:
+		STRING_CONSTANT(Name, "SceneLightInstance");
+	
+		/** greebo: Get the AABB of the Light "Diamand" representation.
+		 */
+		virtual AABB getSelectAABB() = 0;
+	};
 }
 
 template<typename Type>
@@ -983,6 +995,10 @@ inline ComponentEditable* Instance_getComponentEditable(scene::Instance& instanc
 inline ComponentSnappable* Instance_getComponentSnappable(scene::Instance& instance)
 {
   return InstanceTypeCast<ComponentSnappable>::cast(instance);
+}
+
+inline scene::LightInstance* Instance_getLight(scene::Instance& instance) {
+	return InstanceTypeCast<scene::LightInstance>::cast(instance);
 }
 
 
