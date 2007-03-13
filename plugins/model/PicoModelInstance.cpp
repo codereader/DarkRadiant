@@ -15,6 +15,9 @@ PicoModelInstance::PicoModelInstance(const scene::Path& path,
   _lightList(GlobalShaderCache().attach(*this))
 { 
 	Instance::setTransformChangedCallback(LightsChangedCaller(*this));
+	
+	// Update the skin
+	skinChanged();
 }
 
 // Destructor
