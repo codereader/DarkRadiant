@@ -1,10 +1,19 @@
+13/03/2007
+OrbWeaver
+- Added axis rotation to model preview so that models are displayed front-on 
+  rather than top-down.
+- Per-instance model skinning allows instances of the same model to have a
+  different skin.
+
 12/03/2007
 greebo
-- Added Load/Save Prefab commands and fixed their handling of entity child brushes.
+- Added Load/Save Prefab commands and fixed their handling of entity child 
+  brushes.
 
 09/03/2007
 greebo
-- Replaced ArbitraryRotation and ArbitraryScale dialogs with new TransformationDialog.
+- Replaced ArbitraryRotation and ArbitraryScale dialogs with new 
+  TransformationDialog.
 
 08/03/2007
 greebo
@@ -32,8 +41,8 @@ greebo
 28/02/2007
 greebo
 - Holding down SHIFT during manipulations constrains the operation to the axes
-- Added GroupCycle commands that allow cycling through child primitives of entities 
-  like func_static.
+- Added GroupCycle commands that allow cycling through child primitives of 
+  entities like func_static.
 
 26/02/2007
 greebo
@@ -44,7 +53,8 @@ greebo
 greebo
 - Added "Normalise Texture" command that translates textures towards the origin 
   without changing their appearance.
-- Rewrote Texture Tool (supports various manipulations of patches and brush faces).
+- Rewrote Texture Tool (supports various manipulations of patches and brush 
+  faces).
 
 19/02/2007
 OrbWeaver
@@ -62,7 +72,8 @@ OrbWeaver
 - Filter system now affects static models in the camera view.
 - Static models in camera view display with their correct skins.
 greebo
-- Added "Stitch Patch Textures" feature to snap texture coords of adjacent patches.
+- Added "Stitch Patch Textures" feature to snap texture coords of adjacent 
+  patches.
 
 15/02/2007
 OrbWeaver
