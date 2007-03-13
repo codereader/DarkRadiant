@@ -180,10 +180,13 @@ public:
   }
   typedef MemberCaller1<RotationKey, const char*, &RotationKey::rotationChanged> RotationChangedCaller;
 
-  void write(Entity* entity) const
+  void write(Entity* entity, bool isModel = false) const
   {
-    Vector3 euler = matrix4_get_rotation_euler_xyz_degrees(rotation_toMatrix(m_rotation));
-    if(euler[0] == 0 && euler[1] == 0)
+  	Vector3 euler = matrix4_get_rotation_euler_xyz_degrees(rotation_toMatrix(m_rotation));
+  	// greebo: Prevent the "angle" key from being used for models, they should always
+  	// have a rotation matrix written to their spawnargs. This should fix
+  	// the models hopping around after transforms
+    if(euler[0] == 0 && euler[1] == 0 && !isModel)
     {
       entity->setKeyValue("rotation", "");
       write_angle(euler[2], entity);

@@ -234,7 +234,7 @@ void Doom3Group::freezeTransform() {
 	}
 	else {
 		rotation_assign(m_rotationKey.m_rotation, m_rotation);
-		m_rotationKey.write(&m_entity);
+		m_rotationKey.write(&m_entity, isModel());
 	}
 	m_curveNURBS.m_controlPoints = m_curveNURBS.m_controlPointsTransformed;
 	ControlPoints_write(m_curveNURBS.m_controlPoints, curve_Nurbs, m_entity);
