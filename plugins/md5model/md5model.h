@@ -348,7 +348,7 @@ class ModelInstance :
   class Remap
   {
   public:
-    CopiedString first;
+    std::string first;
     ShaderPtr second;
   };
   
@@ -376,13 +376,13 @@ public:
   void constructRemaps()
   {
     ModelSkin* skin = NodeTypeCast<ModelSkin>::cast(path().parent());
-    if(skin != 0 && skin->realised())
+    if(skin != 0)
     {
       SurfaceRemaps::iterator j = m_skins.begin();
       for(MD5Model::const_iterator i = m_model.begin(); i != m_model.end(); ++i, ++j)
       {
-        const char* remap = skin->getRemap((*i)->getShader());
-        if(!string_empty(remap))
+        std::string remap = skin->getRemap((*i)->getShader());
+        if(!remap.empty())
         {
           (*j).first = remap;
           (*j).second = GlobalShaderCache().capture(remap);

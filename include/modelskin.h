@@ -32,15 +32,20 @@ class ModuleObserver;
 class ModelSkin
 {
 public:
-  STRING_CONSTANT(Name, "ModelSkin");
-  /// \brief Attach an \p observer whose realise() and unrealise() methods will be called when the skin is loaded or unloaded.
-  virtual void attach(ModuleObserver& observer) = 0;
-  /// \brief Detach an \p observer previously-attached by calling \c attach.
-  virtual void detach(ModuleObserver& observer) = 0;
-  /// \brief Returns true if this skin is currently loaded.
-  virtual bool realised() const = 0;
-  /// \brief Returns the shader identifier that \p name remaps to, or "" if not found or not realised.
-  virtual const char* getRemap(const std::string& name) const = 0;
+	STRING_CONSTANT(Name, "ModelSkin");
+
+	/// \brief Attach an \p observer whose realise() and unrealise() methods will be called when the skin is loaded or unloaded.
+	virtual void attach(ModuleObserver& observer) = 0;
+	
+	/// \brief Detach an \p observer previously-attached by calling \c attach.
+	virtual void detach(ModuleObserver& observer) = 0;
+
+	/**
+	 * Get the mapped texture for the given query texture, using the mappings
+	 * in this skin. If there is no mapping for the given texture, return an
+	 * empty string.
+	 */
+	virtual std::string getRemap(const std::string& name) const = 0;
 };
 
 class SkinnedModel

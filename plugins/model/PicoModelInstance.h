@@ -55,6 +55,13 @@ class PicoModelInstance :
 	// with addLight() and clearLights()
 	VectorLightList _lights;
 	
+	// Cache of RenderablePicoSurfaces along with their shaders. This is 
+	// necessary to allow each Instance to have its own skin.
+	typedef std::pair< boost::shared_ptr<RenderablePicoSurface>,
+					   ShaderPtr> MappedSurface;
+	typedef std::vector<MappedSurface> MappedSurfaces;
+	MappedSurfaces _mappedSurfs;
+	
 public:
 
 	typedef LazyStatic<TypeCasts> StaticTypeCasts;
