@@ -54,6 +54,7 @@ namespace ui {
 		obsPasteTextureProjected,	// paste texture to object (projected)
 		obsPasteTextureNatural,	// paste texture to object, but do not distort it
 		obsPasteTextureCoordinates, // paste the texture coordinates only (patch>>patch)
+		obsPasteTextureToBrush, // paste texture to all brush faces of the selected brush
 	};
 } // namespace ui
 

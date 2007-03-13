@@ -3,6 +3,7 @@
 #include "gdk/gdkkeysyms.h"
 #include "ieventmanager.h"
 #include "iscenegraph.h"
+#include "selection/algorithm/Shader.h"
 #include <iostream>
 
 // mouse callback instances
@@ -46,8 +47,9 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 	ui::ObserverEvent observerEvent = GlobalEventManager().MouseEvents().getObserverEvent(event);
 	
 	// Check if the user wants to copy/paste a texture
-	if (observerEvent == ui::obsCopyTexture || observerEvent == ui::obsPasteTextureProjected 
-		|| observerEvent == ui::obsPasteTextureNatural || observerEvent == ui::obsPasteTextureCoordinates) {
+	if (observerEvent == ui::obsCopyTexture || observerEvent == ui::obsPasteTextureProjected ||
+		observerEvent == ui::obsPasteTextureNatural || observerEvent == ui::obsPasteTextureCoordinates ||
+		observerEvent == ui::obsPasteTextureToBrush) {
 		// Get the mouse position
 		DeviceVector devicePosition(device_constrained(window_to_normalised_device(position, _width, _height)));
 
@@ -64,6 +66,7 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 		// If the copy texture modifier is held
 		else if (observerEvent == ui::obsCopyTexture) {
 			Scene_copyClosestTexture(volume);
+			selection::algorithm::pickShader(volume);
 		}
 		else if (observerEvent == ui::obsPasteTextureNatural) {
 			// Apply the texture, but do not distort the (patch's) textures, hence "false"
@@ -72,6 +75,9 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 		else if (observerEvent == ui::obsPasteTextureCoordinates) {
 			// Clone the texture coordinates from the patch in the clipboard
 			Scene_pasteTextureCoordinates(volume);
+		}
+		else if (observerEvent == ui::obsPasteTextureToBrush) {
+			// Paste the texture to the clicked brush
 		}
 	}
 		

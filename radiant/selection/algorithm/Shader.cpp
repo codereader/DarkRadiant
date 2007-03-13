@@ -2,11 +2,13 @@
 
 #include "iselection.h"
 #include "iscenegraph.h"
+#include "selectable.h"
 #include "brush/FaceInstance.h"
 #include "brush/BrushVisit.h"
 #include "brush/TextureProjection.h"
 #include "patch/PatchSceneWalk.h"
 #include "selection/algorithm/Primitives.h"
+#include "selection/shaderclipboard/ShaderClipboard.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
 
 // greebo: Nasty global that contains all the selected face instances
@@ -152,6 +154,13 @@ std::string getShaderFromSelection() {
 	}
 	
 	return returnValue;
+}
+
+/** greebo: Tries to find a Texturable object from the passed SelectionTest
+ */
+void pickShader(SelectionTest& test) {
+	// Set the source texturable from the given test
+	GlobalShaderClipboard().setSource(test);
 }
 
 /** greebo: Applies the given shader to the visited patch

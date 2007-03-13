@@ -180,6 +180,9 @@ void MouseEventManager::loadObserverEventDefinitions() {
 				else if (eventName == "PasteTextureCoordinates") {
 					_observerConditions[ui::obsPasteTextureCoordinates] = getCondition(eventList[i]);
 				}
+				else if (eventName == "PasteTextureToBrush") {
+					_observerConditions[ui::obsPasteTextureToBrush] = getCondition(eventList[i]);
+				}
 				else {
 					globalOutputStream() << "MouseEventManager: Warning: Ignoring unkown event name: " << eventName.c_str() << "\n";
 				}

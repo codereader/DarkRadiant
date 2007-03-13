@@ -6,6 +6,7 @@
 
 class TextureProjection;
 class Face;
+class SelectionTest;
 
 namespace selection {
 	namespace algorithm {
@@ -20,6 +21,11 @@ namespace selection {
 	/** greebo: Applies the given shader to the current selection.
 	 */
 	void applyShaderToSelection(const std::string& shaderName);
+	
+	/** greebo: Picks the nearest shader using the given SelectionVolume
+	 * 			and stores it into the ShaderClipboard
+	 */
+	void pickShader(SelectionTest& test);
 	
 	/** greebo: Retrieves the texture projection from the current selection.
 	 * 

@@ -35,6 +35,7 @@
 		<event name="PasteTextureProjected" button="MOUSE_MIDDLE" modifiers="CONTROL" />
 		<event name="PasteTextureNatural" button="MOUSE_MIDDLE" modifiers="SHIFT" />
 		<event name="PasteTextureCoordinates" button="MOUSE_MIDDLE" modifiers="ALT" />
+		<event name="PasteTextureToBrush" button="MOUSE_MIDDLE" modifiers="ALT+CONTROL" />
 	</observer>
 	<cameraview>
 		<event name="EnableFreeLookMode" button="MOUSE_RIGHT" modifiers="" />
