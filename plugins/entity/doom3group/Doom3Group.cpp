@@ -7,6 +7,10 @@
 
 namespace entity {
 
+	namespace {
+		const std::string RKEY_FREE_MODEL_ROTATION = "user/ui/freeModelRotation";
+	}
+
 inline void PointVertexArray_testSelect(PointVertex* first, std::size_t count, 
 	SelectionTest& test, SelectionIntersection& best) 
 {
@@ -168,11 +172,14 @@ void Doom3Group::testSelect(Selector& selector, SelectionTest& test, SelectionIn
 }
 
 void Doom3Group::translate(const Vector3& translation, bool rotation) {
+	
+	bool freeModelRotation = GlobalRegistry().get(RKEY_FREE_MODEL_ROTATION) == "1";
+	
 	// greebo: If the translation does not originate from 
 	// a pivoted rotation, translate the origin as well (this is a bit hacky)
 	// This also applies for models, which should always have the 
-	// rotation-translation applied
-	if (!rotation || isModel()) {
+	// rotation-translation applied (except for freeModelRotation set to TRUE)
+	if (!rotation || (isModel() && !freeModelRotation)) {
 		m_origin = origin_translated(m_originKey.m_origin, translation);
 	}
 	

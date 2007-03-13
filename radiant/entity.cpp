@@ -49,6 +49,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <iostream>
 
+	namespace {
+		const std::string RKEY_FREE_MODEL_ROTATION = "user/ui/freeModelRotation";
+	}
+
 struct entity_globals_t
 {
   Vector3 color_entity;
@@ -298,6 +302,7 @@ void Entity_Construct()
 {
   GlobalEventManager().addCommand("ConnectSelection", FreeCaller<Entity_connectSelected>());
   GlobalEventManager().addCommand("UngroupSelection", FreeCaller<Entity_ungroupSelected>());
+  GlobalEventManager().addRegistryToggle("ToggleFreeModelRotation", RKEY_FREE_MODEL_ROTATION);
 
   GlobalPreferenceSystem().registerPreference("SI_Colors5", Vector3ImportStringCaller(g_entity_globals.color_entity), Vector3ExportStringCaller(g_entity_globals.color_entity));
   GlobalPreferenceSystem().registerPreference("LastLightIntensity", IntImportStringCaller(g_iLastLightIntensity), IntExportStringCaller(g_iLastLightIntensity));
