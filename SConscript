@@ -401,6 +401,8 @@ radiant_src = [
 'selection/algorithm/Shader.cpp',
 'selection/algorithm/Group.cpp',
 'selection/algorithm/Transformation.cpp',
+'selection/shaderclipboard/ShaderClipboard.cpp',
+'selection/shaderclipboard/Texturable.cpp',
 'patch/Patch.cpp',
 'patch/PatchBezier.cpp',
 'patch/PatchInstance.cpp',
