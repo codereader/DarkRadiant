@@ -619,12 +619,7 @@ void Light::renderSolid(Renderer& renderer, const VolumeTest& volume, const Matr
 	renderer.SetState(m_entity.getEntityClass()->getWireShader(), Renderer::eFullMaterials);
 
 	// Always draw Doom 3 light bounding boxes, if the global is set
-	if (LightSettings().showAllLightRadii() && !isProjected()) {
-		updateLightRadiiBox();
-		renderer.addRenderable(m_radii_box, localToWorld);
-	}
-
-	if (selected) {
+	if (selected || LightSettings().showAllLightRadii()) {
 		if (isProjected()) {
 			// greebo: This is not much of an performance impact as the projection gets only recalculated when it has actually changed.
 			projection();
