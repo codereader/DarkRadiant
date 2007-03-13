@@ -59,11 +59,10 @@ OrthoContextMenu::OrthoContextMenu()
 	_convertStatic = gtkutil::IconTextMenuItem(CONVERT_TO_STATIC_ICON, CONVERT_TO_STATIC_TEXT);
 	_revertWorldspawn = gtkutil::IconTextMenuItem(REVERT_TO_WORLDSPAWN_ICON, REVERT_TO_WORLDSPAWN_TEXT);
 	
-	gtk_widget_set_sensitive(addPrefab, FALSE);
-	
 	g_signal_connect(G_OBJECT(addEntity), "activate", G_CALLBACK(callbackAddEntity), this);
 	g_signal_connect(G_OBJECT(addLight), "activate", G_CALLBACK(callbackAddLight), this);
 	g_signal_connect(G_OBJECT(addModel), "activate", G_CALLBACK(callbackAddModel), this);
+	g_signal_connect(G_OBJECT(addPrefab), "activate", G_CALLBACK(callbackAddPrefab), this);
 	g_signal_connect(G_OBJECT(_convertStatic), "activate", G_CALLBACK(callbackConvertToStatic), this);
 	g_signal_connect(G_OBJECT(_revertWorldspawn), "activate", G_CALLBACK(callbackRevertToWorldspawn), this);
 
@@ -136,6 +135,11 @@ void OrthoContextMenu::callbackAddEntity(GtkMenuItem* item, OrthoContextMenu* se
 
 void OrthoContextMenu::callbackAddLight(GtkMenuItem* item, OrthoContextMenu* self) {
 	Entity_createFromSelection(LIGHT_CLASSNAME, self->_lastPoint);
+}
+
+void OrthoContextMenu::callbackAddPrefab(GtkMenuItem* item, OrthoContextMenu* self) {
+	// Pass the call to the map algorithm and give the lastPoint coordinate as argument
+	map::loadPrefabAt(self->_lastPoint);
 }
 
 void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* self) {

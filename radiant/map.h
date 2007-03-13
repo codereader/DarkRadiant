@@ -218,6 +218,10 @@ namespace map {
 	 */
 	void loadPrefab();
 	void saveSelectedAsPrefab();
+	
+	/** greebo: Loads a prefab and translates it to the given target coordinates
+	 */
+	void loadPrefabAt(const Vector3& targetCoords);
 }
 
 
