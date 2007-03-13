@@ -2,6 +2,7 @@
 
 #include "selectable.h"
 #include "iscenegraph.h"
+#include "texwindow.h"
 
 namespace selection {
 
@@ -10,7 +11,6 @@ ShaderClipboard::ShaderClipboard()
 
 void ShaderClipboard::clear() {
 	_source.clear();
-	_target.clear();
 }
 
 Texturable ShaderClipboard::getTexturable(SelectionTest& test) {
@@ -26,6 +26,13 @@ Texturable ShaderClipboard::getTexturable(SelectionTest& test) {
 
 void ShaderClipboard::setSource(SelectionTest& test) {
 	_source = getTexturable(test);
+	
+	// Set the active shader in the Texture window as well
+	TextureBrowser_SetSelectedShader(GlobalTextureBrowser(), _source.getShader());
+}
+
+Texturable& ShaderClipboard::getSource() {
+	return _source;
 }
 
 } // namespace selection

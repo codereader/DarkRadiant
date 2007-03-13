@@ -156,13 +156,6 @@ std::string getShaderFromSelection() {
 	return returnValue;
 }
 
-/** greebo: Tries to find a Texturable object from the passed SelectionTest
- */
-void pickShader(SelectionTest& test) {
-	// Set the source texturable from the given test
-	GlobalShaderClipboard().setSource(test);
-}
-
 /** greebo: Applies the given shader to the visited patch
  */
 class PatchShaderSetter
@@ -212,6 +205,80 @@ void applyShaderToSelection(const std::string& shaderName) {
 		GlobalSceneGraph(), 
 		FaceShaderSetter(shaderName)
 	);
+	
+	SceneChangeNotify();
+	// Update the Texture Tools
+	ui::SurfaceInspector::Instance().update();
+}
+
+/** greebo: Applies the shader from the clipboard to the given <target> face
+ */
+void applyClipboardShaderToFace(Face& target) {
+	// Get a reference to the source Texturable in the clipboard
+	Texturable& source = GlobalShaderClipboard().getSource();
+	
+	// Retrieve the textureprojection from the source face
+	TextureProjection projection;
+	source.face->GetTexdef(projection);	
+	
+	target.SetShader(source.face->GetShader());
+	target.SetTexdef(projection);
+	target.SetFlags(source.face->getShader().m_flags);
+}
+
+void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
+	// Construct the command string
+	std::string command("pasteShader");
+	command += (projected ? "Projected" : "Natural");
+	command += (entireBrush ? "ToBrush" : "");
+	
+	UndoableCommand undo(command.c_str());
+	
+	// Initialise an empty Texturable structure
+	Texturable target;
+	
+	// Find a suitable target Texturable
+	GlobalSceneGraph().traverse(ClosestTexturableFinder(test, target));
+	
+	// Get a reference to the source Texturable in the clipboard
+	Texturable& source = GlobalShaderClipboard().getSource();
+	
+	// Check the basic conditions
+	if (!target.empty() && !source.empty()) {
+		// Do we have a Face to copy from?
+		if (source.isFace()) {
+			if (target.isFace() && entireBrush) {
+	  			// Copy Face >> Whole Brush
+	  			for (Brush::const_iterator i = target.brush->begin(); 
+					 i != target.brush->end(); 
+					 i++) 
+				{
+					applyClipboardShaderToFace(*(*i));
+				}
+	  		}
+	  		else if (target.isFace() && !entireBrush) {
+	  			// Copy Face >> Face
+			 	applyClipboardShaderToFace(*target.face);
+			}
+			else if (target.isPatch()) {
+				// Copy Face >> Patch
+				
+				// Set the shader name first
+			 	target.patch->SetShader(source.face->GetShader());
+			 	
+			 	// Either paste the texture projected or naturally
+			 	if (projected) {
+			 		target.patch->pasteTextureProjected(source.face);
+			 	}
+			 	else {
+			 		target.patch->pasteTextureNatural(source.face);
+			 	}
+			}
+		}
+		else {
+			
+		}
+	}
 	
 	SceneChangeNotify();
 	// Update the Texture Tools
