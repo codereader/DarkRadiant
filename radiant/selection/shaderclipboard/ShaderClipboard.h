@@ -9,7 +9,6 @@ class ShaderClipboard
 {
 	// The source and target Texturables
 	Texturable _source;
-	Texturable _target;
 
 public:
 	ShaderClipboard();
@@ -18,6 +17,10 @@ public:
 	 * 			with the given SelectionTest (SelectionVolume)
 	 */
 	void setSource(SelectionTest& test);
+
+	/** greebo: Retrieves the current source Texturable
+	 */
+	Texturable& getSource();
 
 	/** greebo: Clears both the source and target texturables.
 	 * 			Call this as soon as the objects might be deleted

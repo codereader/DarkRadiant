@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/callbackfwd.h"
 #include "signal/signalfwd.h"
+#include <string>
 
 // texture browser
 
@@ -39,6 +40,7 @@ void TextureBrowser_destroyWindow();
 void TextureBrowser_ShowStartupShaders(TextureBrowser& textureBrowser);
 
 const char* TextureBrowser_GetSelectedShader(TextureBrowser& textureBrower);
+void TextureBrowser_SetSelectedShader(TextureBrowser& textureBrowser, const std::string& shader);
 
 void TextureBrowser_Construct();
 void TextureBrowser_Destroy();

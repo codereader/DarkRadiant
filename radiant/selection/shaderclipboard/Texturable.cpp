@@ -19,6 +19,31 @@ void Texturable::clear() {
 	brush = NULL;
 }
 
+// True, if all the pointers are NULL
+bool Texturable::empty() const {
+	return (patch == NULL && face == NULL && brush == NULL);
+}
+
+bool Texturable::isPatch() const {
+	return (patch != NULL);
+}
+
+bool Texturable::isFace() const {
+	return (face != NULL && brush != NULL);
+}
+
+std::string Texturable::getShader() const {
+	if (isFace()) {
+		return face->GetShader();
+	}
+	else if (isPatch()) {
+		return patch->GetShader();
+	}
+	else {
+		return "";
+	}
+}
+
 namespace algorithm {
 
 class OccludeSelector : public Selector

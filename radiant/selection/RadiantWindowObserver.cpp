@@ -4,6 +4,7 @@
 #include "ieventmanager.h"
 #include "iscenegraph.h"
 #include "selection/algorithm/Shader.h"
+#include "selection/shaderclipboard/ShaderClipboard.h"
 #include <iostream>
 
 // mouse callback instances
@@ -61,23 +62,29 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 		// If the apply texture modifier is held
 		if (observerEvent == ui::obsPasteTextureProjected) {
 			// Apply the texture, with the boolean set to true (this means "project")
-			Scene_applyClosestTexture(volume, true);
+			//Scene_applyClosestTexture(volume, true);
+			// Paste the shader projected (TRUE), but not to an entire brush (FALSE)
+			selection::algorithm::pasteShader(volume, true, false);
 		}
 		// If the copy texture modifier is held
 		else if (observerEvent == ui::obsCopyTexture) {
-			Scene_copyClosestTexture(volume);
-			selection::algorithm::pickShader(volume);
+			//Scene_copyClosestTexture(volume);
+			// Set the source texturable from the given test
+			GlobalShaderClipboard().setSource(volume);
 		}
 		else if (observerEvent == ui::obsPasteTextureNatural) {
 			// Apply the texture, but do not distort the (patch's) textures, hence "false"
-			Scene_applyClosestTexture(volume, false);
+			//Scene_applyClosestTexture(volume, false);
+			// Paste the shader naturally (FALSE), but not to an entire brush (FALSE)
+			selection::algorithm::pasteShader(volume, false, false);
 		}
 		else if (observerEvent == ui::obsPasteTextureCoordinates) {
 			// Clone the texture coordinates from the patch in the clipboard
 			Scene_pasteTextureCoordinates(volume);
 		}
 		else if (observerEvent == ui::obsPasteTextureToBrush) {
-			// Paste the texture to the clicked brush
+			// Paste the shader projected (TRUE), and to the entire brush (TRUE)
+			selection::algorithm::pasteShader(volume, true, true);
 		}
 	}
 		

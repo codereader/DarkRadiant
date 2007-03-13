@@ -1,6 +1,7 @@
 #ifndef TEXTURABLE_H_
 #define TEXTURABLE_H_
 
+#include <string>
 #include "selectable.h"
 #include "scenelib.h"
 class Face;
@@ -20,6 +21,16 @@ public:
 
 	// Constructor
 	Texturable();
+	
+	// True, if all the pointers are NULL
+	bool empty() const;
+	
+	// True according to the pointer state
+	bool isPatch() const;
+	bool isFace() const;
+	
+	// Returns the shader from the face/patch stored within 
+	std::string getShader() const;
 	
 	// Clears the pointers
 	void clear();
