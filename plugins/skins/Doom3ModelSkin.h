@@ -43,15 +43,11 @@ public:
 		_observers.detach(observer);
 	}
 	
-	bool realised() const {
-		return true;
-	}
-
 	// Get this skin's remap for the provided material name (if any).
-	const char* getRemap(const std::string& name) const {
+	std::string getRemap(const std::string& name) const {
 		StringMap::const_iterator i = _remaps.find(name);
 		if(i != _remaps.end()) {
-			return i->second.c_str();
+			return i->second;
 		}
 		else { // none found
 			return "";

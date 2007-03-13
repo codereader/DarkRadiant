@@ -18,19 +18,23 @@ class Selector;
 namespace model
 {
 
-/* Renderable class containing a model loaded via the picomodel library. A
+/**
+ * List of RenderablePicoSurfaces.
+ */
+typedef std::vector<boost::shared_ptr<RenderablePicoSurface> > SurfaceList;
+
+/**
+ * Renderable class containing a model loaded via the picomodel library. A
  * RenderablePicoModel is made up of one or more RenderablePicoSurface objects,
  * each of which contains a number of polygons with the same texture. Rendering
  * a RenderablePicoModel involves rendering all of its surfaces, each of which
  * binds its texture(s) and submits its geometry via OpenGL calls.
  */
-
 class RenderablePicoModel
 : public IModel,
   public Cullable
 {
 	// Vector of renderable surfaces for this model
-	typedef std::vector<boost::shared_ptr<RenderablePicoSurface> > SurfaceList;
 	SurfaceList _surfVec;
 	
 	// Local AABB for this model
@@ -133,6 +137,13 @@ public:
 	void testSelect(Selector& selector, 
 					SelectionTest& test, 
 					const Matrix4& localToWorld);
+	
+	/**
+	 * Return the list of RenderablePicoSurface objects.
+	 */
+	const SurfaceList& getSurfaces() const {
+		return _surfVec;	
+	}	
 	
 };
 
