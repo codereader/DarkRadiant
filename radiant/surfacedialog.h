@@ -33,13 +33,6 @@ void SurfaceInspector_constructWindow(GtkWindow* widget);
 void SurfaceInspector_destroyWindow();
 
 bool SelectedFaces_empty();
-void SelectedFaces_copyTexture();
-void SelectedFaces_pasteTexture();
-void FaceTextureClipboard_setDefault();
-
-void Scene_copyClosestTexture(SelectionTest& test);
-void Scene_applyClosestTexture(SelectionTest& test, const bool& project);
-void Scene_pasteTextureCoordinates(SelectionTest& test);
 
 // the increment we are using for the surface inspector (this is saved in the prefs)
 struct si_globals_t

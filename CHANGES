@@ -1,3 +1,8 @@
+14/03/2007
+greebo
+- Removed old TextureClipboard in favour of the new ShaderClipboard. 
+  Added Copy/Paste Shader commands to the menu / removed the old ones.
+
 13/03/2007
 OrbWeaver
 - Added axis rotation to model preview so that models are displayed front-on 

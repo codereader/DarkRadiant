@@ -302,9 +302,6 @@ public:
 	}
 };
 
-void(*TextureBrowser_textureSelected)(const char* shader);
-
-
 void TextureBrowser_updateScroll(TextureBrowser& textureBrowser);
 
 
@@ -863,7 +860,7 @@ void SelectTexture(TextureBrowser& textureBrowser, int mx, int my, bool bShift)
 	try {
   		IShaderPtr shader = Texture_At(textureBrowser, mx, my);
   		TextureBrowser_SetSelectedShader(textureBrowser, shader->getName());
-  		TextureBrowser_textureSelected(shader->getName());
+  		
 		// Apply the shader to the current selection
 		selection::algorithm::applyShaderToSelection(shader->getName());
 	}
@@ -1506,10 +1503,6 @@ void TextureBrowser_registerPreferencesPage()
 typedef ReferenceCaller1<TextureBrowser, std::size_t, TextureBrowser_setScale> TextureBrowserSetScaleCaller;
 typedef ReferenceCaller1<TextureBrowser, int, TextureBrowser_setUniformSize> TextureBrowserSetUniformSizeCaller;
 
-
-
-void TextureClipboard_textureSelected(const char* shader);
-
 void TextureBrowser_Construct()
 {
   GlobalEventManager().addRegistryToggle("ShowInUse", RKEY_TEXTURES_HIDE_UNUSED);
@@ -1544,8 +1537,6 @@ void TextureBrowser_Construct()
   TextureBrowser_registerPreferencesPage();
 
   GlobalShaderSystem().attach(g_ShadersObserver);
-
-  TextureBrowser_textureSelected = TextureClipboard_textureSelected;
 }
 void TextureBrowser_Destroy()
 {

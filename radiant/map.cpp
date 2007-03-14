@@ -589,7 +589,7 @@ void Map_Free()
 {
 	Pointfile_Clear();
 
-	FaceTextureClipboard_setDefault();
+	GlobalShaderClipboard().clear();
 
   g_map.m_resource->detach(g_map);
   GlobalReferenceCache().release(g_map.m_name.c_str());
