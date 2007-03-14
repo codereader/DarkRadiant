@@ -382,7 +382,7 @@ bool RadiantSelectionSystem::SelectManipulator(const View& view, const float dev
 			_manipulator->GetManipulatable()->Construct(device2manip, device_point[0], device_point[1]);
 			
 			_deviceStart = Vector2(device_point[0], device_point[1]);
-
+			globalOutputStream() << "Start: " << _deviceStart[0] << "," << _deviceStart[1] << "\n";
 			_undoBegun = false;
 		}
 
@@ -675,22 +675,25 @@ void RadiantSelectionSystem::MoveSelected(const View& view, const float device_p
 		Matrix4 device2manip;
 		ConstructDevice2Manip(device2manip, _pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());
 		
-		float devicePoint[2] = {
-			device_point[0],
-			device_point[1]
-		};
+		Vector2 devicePoint(device_point[0], device_point[1]);
 		
 		// Constrain the movement to the axes, if the modifier is held
 		if (GlobalEventManager().getModifierState() & GDK_SHIFT_MASK != 0) {
-			// Set the "minor" value back to the starting coordinate  
-			if (fabs(device_point[0]) > fabs(device_point[1])) {
+			// Get the movement delta relative to the start point
+			Vector2 delta = devicePoint - _deviceStart;
+			
+			// Set the "minor" value of the movement to zero
+			if (fabs(delta[0]) > fabs(delta[1])) {
 				// X axis is major, reset the y-value to the start
-				devicePoint[1] = _deviceStart[1];
+				delta[1] = 0;
 			}
 			else {
 				// Y axis is major, reset the x-value to the start
-				devicePoint[0] = _deviceStart[0];
+				delta[0] = 0;
 			}
+			
+			// Add the modified delta to the start point, constrained to one axis 
+			devicePoint = _deviceStart + delta;
 		}
 		
 		// Get the manipulatable from the currently active manipulator (done by selection test)
