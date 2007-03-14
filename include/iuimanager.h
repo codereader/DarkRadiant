@@ -93,15 +93,11 @@ public:
 
 #include "modulesystem.h"
 
-template<typename Type>
-class GlobalUIModule;
 typedef GlobalModule<IUIManager> GlobalUIManagerModule;
 
-template<typename Type>
-class GlobalModuleRef;
 typedef GlobalModuleRef<IUIManager> GlobalUIManagerModuleRef;
 
-// This is the accessor for the event manager
+// This is the accessor for the UI manager
 inline IUIManager& GlobalUIManager() {
 	return GlobalUIManagerModule::getTable();
 }
