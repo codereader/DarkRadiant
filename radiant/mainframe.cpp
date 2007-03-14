@@ -121,7 +121,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "patchdialog.h"
 #include "patchmanip.h"
 #include "plugin.h"
-#include "plugin/PluginManager.h"
 #include "points.h"
 #include "preferences.h"
 #include "qe3.h"
@@ -1920,8 +1919,6 @@ void MainFrame::Create()
 #endif
 
     g_MainWindowActive.connect(window);
-    
-    GetPlugInMgr().Init(GTK_WIDGET(window));
     
     GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
     

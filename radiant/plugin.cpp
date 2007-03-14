@@ -48,7 +48,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ipatch.h"
 #include "iimage.h"
 #include "itoolbar.h"
-#include "iplugin.h"
 #include "imap.h"
 #include "namespace.h"
 
@@ -211,8 +210,6 @@ class RadiantDependencies :
 {
   ImageModulesRef m_image_modules;
   MapModulesRef m_map_modules;
-  ToolbarModulesRef m_toolbar_modules;
-  PluginModulesRef m_plugin_modules;
 
 public:
   RadiantDependencies() :
@@ -221,9 +218,7 @@ public:
     GlobalBrushModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("brushtypes")),
     GlobalEntityClassManagerModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("entityclass")),
     m_image_modules(GlobalRadiant().getRequiredGameDescriptionKeyValue("texturetypes")),
-    m_map_modules(GlobalRadiant().getRequiredGameDescriptionKeyValue("maptypes")),
-    m_toolbar_modules("*"),
-    m_plugin_modules("*")
+    m_map_modules(GlobalRadiant().getRequiredGameDescriptionKeyValue("maptypes"))
   {
   }
 
@@ -234,14 +229,6 @@ public:
   MapModules& getMapModules()
   {
     return m_map_modules.get();
-  }
-  ToolbarModules& getToolbarModules()
-  {
-    return m_toolbar_modules.get();
-  }
-  PluginModules& getPluginModules()
-  {
-    return m_plugin_modules.get();
   }
 };
 
@@ -346,13 +333,3 @@ MapModules& Radiant_getMapModules()
 {
   return g_RadiantDependencies->getMapModules();
 }
-ToolbarModules& Radiant_getToolbarModules()
-{
-  return g_RadiantDependencies->getToolbarModules();
-}
-PluginModules& Radiant_getPluginModules()
-{
-  return g_RadiantDependencies->getPluginModules();
-}
-
-

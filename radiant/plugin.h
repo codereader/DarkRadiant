@@ -40,11 +40,5 @@ ImageModules& Radiant_getImageModules();
 class MapFormat;
 typedef Modules<MapFormat> MapModules;
 MapModules& Radiant_getMapModules();
-struct _QERPlugToolbarTable;
-typedef Modules<_QERPlugToolbarTable> ToolbarModules;
-ToolbarModules& Radiant_getToolbarModules();
-struct _QERPluginTable;
-typedef Modules<_QERPluginTable> PluginModules;
-PluginModules& Radiant_getPluginModules();
 
 #endif
