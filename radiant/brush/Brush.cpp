@@ -940,6 +940,6 @@ void Brush_addTextureChangedCallback(const SignalHandler& handler) {
 }
 
 void Brush_textureChanged() {
-	g_brushTextureChangedCallbacks();
+	//g_brushTextureChangedCallbacks();
 }
 

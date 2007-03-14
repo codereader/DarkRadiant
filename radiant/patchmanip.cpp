@@ -210,22 +210,6 @@ void Scene_PatchCapTexture_Selected(scene::Graph& graph)
   SceneChangeNotify();
 }
 
-class PatchNaturalTexture
-{
-public:
-  void operator()(Patch& patch) const
-  {
-    patch.NaturalTexture();
-  }
-};
-
-void Scene_PatchNaturalTexture_Selected(scene::Graph& graph)
-{
-  Scene_forEachVisibleSelectedPatch(PatchNaturalTexture());
-  SceneChangeNotify();
-}
-
-
 class PatchInsertRemove
 {
   bool m_insert, m_column, m_first;
@@ -310,14 +294,14 @@ void Scene_PatchSetShader_Selected(scene::Graph& graph, const std::string& name)
   SceneChangeNotify();
 }
 
-void Scene_PatchGetShader_Selected(scene::Graph& graph, std::string& name)
+/*void Scene_PatchGetShader_Selected(scene::Graph& graph, std::string& name)
 {
   Patch* patch = Scene_GetUltimateSelectedVisiblePatch();
   if(patch != 0)
   {
     name = patch->GetShader();
   }
-}
+}*/
 
 class PatchSelectByShader
 {
@@ -515,13 +499,6 @@ void Patch_CycleProjection()
   UndoableCommand undo("patchCycleUVProjectionAxis");
 
   Scene_PatchCapTexture_Selected(GlobalSceneGraph());
-}
-
-void Patch_NaturalTexture()
-{
-  UndoableCommand undo("patchNaturalTexture");
-
-  Scene_PatchNaturalTexture_Selected(GlobalSceneGraph());
 }
 
 namespace patch {

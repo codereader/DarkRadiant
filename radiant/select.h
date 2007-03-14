@@ -53,16 +53,9 @@ void DoScaleDlg();
 
 void Select_SetShader(const char* shader);
 
-class TextureProjection;
-void Select_SetTexdef(const TextureProjection& projection);
-
-class ContentsFlagsValue;
-void Select_SetFlags(const ContentsFlagsValue& flags);
-
 void Select_RotateTexture(float amt);
 void Select_ScaleTexture(float x, float y);
 void Select_ShiftTexture(float x, float y);
-void Select_FitTexture(float horizontal = 1, float vertical = 1);
 
 /* greebo: Flips the texture of the selected primitives about the given axis
  * 0 = xAxis, 1 = yAxis  

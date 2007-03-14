@@ -346,25 +346,6 @@ static void OnSelchangeComboColRow (GtkWidget *widget, gpointer data)
   g_PatchInspector.importData();
 }
 
-class PatchSetTextureRepeat
-{
-  float m_s, m_t;
-public:
-  PatchSetTextureRepeat(float s, float t) : m_s(s), m_t(t)
-  {
-  }
-  void operator()(Patch& patch) const
-  {
-    patch.SetTextureRepeat(m_s, m_t);
-  }
-};
-
-void Scene_PatchTileTexture_Selected(scene::Graph& graph, float s, float t)
-{
-  Scene_forEachVisibleSelectedPatch(PatchSetTextureRepeat(s, t));
-  SceneChangeNotify();
-}
-
 struct PatchRotateTexture
 {
   float m_angle;

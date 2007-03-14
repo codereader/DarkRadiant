@@ -278,7 +278,6 @@ public:
     GlobalXYWnd().destroy();
     GlobalCamera().destroy();
     PatchInspector_Destroy();
-    SurfaceInspector_Destroy();
     GroupDialog_Destroy();
     MainFrame_Destroy();
     EntityList_Destroy();

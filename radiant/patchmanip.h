@@ -32,12 +32,9 @@ namespace scene
 }
 
 void Scene_PatchSetShader_Selected(scene::Graph& graph, const std::string& name);
-void Scene_PatchGetShader_Selected(scene::Graph& graph, std::string& name);
 void Scene_PatchSelectByShader(scene::Graph& graph, const char* name);
 
 void Scene_PatchCapTexture_Selected(scene::Graph& graph);
-void Scene_PatchNaturalTexture_Selected(scene::Graph& graph);
-void Scene_PatchTileTexture_Selected(scene::Graph& graph, float s, float t);
 
 void PatchFilters_construct();
 

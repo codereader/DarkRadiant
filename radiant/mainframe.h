@@ -232,7 +232,6 @@ void MainFrame_Destroy();
 
 
 extern float (*GridStatus_getGridSize)();
-extern int (*GridStatus_getRotateIncrement)();
 extern int (*GridStatus_getFarClipDistance)();
 
 #endif
