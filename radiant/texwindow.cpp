@@ -76,7 +76,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkdlgs.h"
 #include "gtkmisc.h"
 #include "mainframe.h"
-#include "surfacedialog.h"
 #include "patchdialog.h"
 #include "groupdialog.h"
 #include "preferences.h"

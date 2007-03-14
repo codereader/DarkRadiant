@@ -3,6 +3,7 @@
 #include "gdk/gdkkeysyms.h"
 #include "ieventmanager.h"
 #include "iscenegraph.h"
+#include "Device.h"
 #include "selection/algorithm/Shader.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include <iostream>

@@ -3,7 +3,6 @@
 
 #include "gdk/gdkevents.h"
 #include "view.h"
-#include "surfacedialog.h" // For apply/copy texture
 
 #include "windowobserver.h"
 #include "Device.h"

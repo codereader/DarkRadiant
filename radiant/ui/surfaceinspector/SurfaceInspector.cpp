@@ -183,7 +183,7 @@ void SurfaceInspector::connectEvents() {
 	}
 }
 
-void SurfaceInspector::toggle() {
+void SurfaceInspector::toggleWindow() {
 	// Pass the call to the utility methods that save/restore the window position
 	if (GTK_WIDGET_VISIBLE(_dialog)) {
 		// Save the window position, to make sure
@@ -641,6 +641,11 @@ gboolean SurfaceInspector::onKeyPress(GtkWidget* entry, GdkEventKey* event, Surf
 void SurfaceInspector::onShaderSelect(GtkWidget* button, SurfaceInspector* self) {
 	// Construct the modal dialog, self-destructs on close
 	new ShaderChooser(self, self->_dialog, self->_shaderEntry);
+}
+
+// Static command target to toggle the window
+void SurfaceInspector::toggle() {
+	Instance().toggleWindow();
 }
 
 } // namespace ui

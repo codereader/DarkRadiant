@@ -3,6 +3,7 @@
 
 #include "math/Vector2.h"
 #include "container/container.h"
+#include "generic/callback.h"
 
 // A vector representing the mouse pointer coordinates
 typedef Vector2 DeviceVector;

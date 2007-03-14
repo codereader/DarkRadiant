@@ -65,7 +65,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "texwindow.h"
 #include "mainframe.h"
 #include "multimon.h"
-#include "surfacedialog.h"
 #include "groupdialog.h"
 #include "patchdialog.h"
 #include "camera/GlobalCamera.h"
@@ -251,7 +250,6 @@ public:
     EntityList_Construct();
     MainFrame_Construct();
     GroupDialog_Construct();
-    SurfaceInspector_Construct();
     PatchInspector_Construct();
     GlobalCamera().construct();
     GlobalXYWnd().construct();

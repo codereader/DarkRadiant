@@ -77,11 +77,6 @@ class TexTool :
 public:
 	TexTool();
 	
-	/** greebo: Toggles the visibility of this TexTool instance.
-	 * The actual static instance is owned by the Instane() method.
-	 */
-	void toggle();
-	
 	/** greebo: Some sort of "soft" destructor that de-registers
 	 * this class from the SelectionSystem, saves the window state, etc.
 	 */
@@ -128,7 +123,26 @@ public:
 	 */
 	void keyChanged();
 	
+	/** greebo: Static command targets for use in FreeCaller<> constructions
+	 */
+	static void toggle();
+	static void texToolGridUp();
+	static void texToolGridDown();
+	static void texToolSnapToGrid();
+	static void texToolMergeItems();
+	static void texToolFlipS();
+	static void texToolFlipT();
+	
+	/** greebo: Registers the commands in the EventManager
+	 */
+	static void registerCommands();
+	
 private:
+	/** greebo: Toggles the visibility of this TexTool instance.
+	 * The actual static instance is owned by the Instane() method.
+	 */
+	void toggleWindow();
+
 	/** greebo: Helper methods that start/end an undoable operation.
 	 */
 	void beginOperation();

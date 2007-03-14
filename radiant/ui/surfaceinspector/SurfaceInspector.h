@@ -103,12 +103,6 @@ public:
 	 */
 	static SurfaceInspector& Instance();
 
-	/** greebo: This toggles the visibility of the surface dialog.
-	 * The dialog is constructed only once and never destructed 
-	 * during runtime.
-	 */
-	void toggle();
-
 	/** greebo: Gets called when the default texscale registry key changes
 	 */
 	void keyChanged();
@@ -126,7 +120,16 @@ public:
 	 */
 	void shaderSelectionChanged(const std::string& shaderName);
 	
+	// Command target to toggle the dialog
+	static void toggle();
+	
 private:
+	/** greebo: This toggles the visibility of the surface dialog.
+	 * The dialog is constructed only once and never destructed 
+	 * during runtime.
+	 */
+	void toggleWindow();
+
 	/** greebo: Creates a row consisting of label, value entry,
 	 * two arrow buttons and a step entry field.
 	 * 

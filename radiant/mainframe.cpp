@@ -127,7 +127,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "qgl.h"
 #include "select.h"
 #include "server.h"
-#include "surfacedialog.h"
 #include "texwindow.h"
 #include "windowobservers.h"
 #include "renderstate.h"
@@ -138,6 +137,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/mru/MRU.h"
 #include "ui/commandlist/CommandList.h"
 #include "ui/findshader/FindShader.h"
+#include "brush/FaceInstance.h"
+
+extern FaceInstanceSet g_SelectedFaceInstances;
 
 struct layout_globals_t
 {
@@ -788,31 +790,25 @@ void Selection_Paste()
   clipboard_paste(Map_ImportSelected);
 }
 
-void Copy()
-{
-  if(SelectedFaces_empty())
-  {
-    Selection_Copy();
-  }
-  else
-  {
-    selection::algorithm::pickShaderFromSelection();
-  }
+void Copy() {
+	if (g_SelectedFaceInstances.empty()) {
+		Selection_Copy();
+	}
+	else {
+		selection::algorithm::pickShaderFromSelection();
+	}
 }
 
-void Paste()
-{
-  if(SelectedFaces_empty())
-  {
-    UndoableCommand undo("paste");
-    
-    GlobalSelectionSystem().setSelectedAll(false);
-    Selection_Paste();
-  }
-  else
-  {
-    selection::algorithm::pasteShaderToSelection();
-  }
+void Paste() {
+	if (g_SelectedFaceInstances.empty()) {
+		UndoableCommand undo("paste");
+
+		GlobalSelectionSystem().setSelectedAll(false);
+		Selection_Paste();
+	}
+	else {
+		selection::algorithm::pasteShaderToSelection();
+	}
 }
 
 void PasteToCamera()
@@ -2387,6 +2383,8 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("ToggleLightInspector",	
 							FreeCaller<ui::LightInspector::toggleInspector>());
 	
+	GlobalEventManager().addCommand("SurfaceInspector", FreeCaller<ui::SurfaceInspector::toggle>());
+	
 	// Overlay dialog
 	GlobalEventManager().addCommand("OverlayDialog",
 									FreeCaller<ui::OverlayDialog::display>());
@@ -2454,6 +2452,15 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("TexShiftDown", FreeCaller<selection::algorithm::shiftTextureDown>());
 	GlobalEventManager().addCommand("TexShiftLeft", FreeCaller<selection::algorithm::shiftTextureLeft>());
 	GlobalEventManager().addCommand("TexShiftRight", FreeCaller<selection::algorithm::shiftTextureRight>());
+
+	GlobalEventManager().addCommand("NormaliseTexture", FreeCaller<selection::algorithm::normaliseTexture>());
+
+	GlobalEventManager().addCommand("CopyShader", FreeCaller<selection::algorithm::pickShaderFromSelection>());
+	GlobalEventManager().addCommand("PasteShader", FreeCaller<selection::algorithm::pasteShaderToSelection>());
+	GlobalEventManager().addCommand("PasteShaderNatural", FreeCaller<selection::algorithm::pasteShaderNaturalToSelection>());
+  
+	GlobalEventManager().addCommand("FlipTextureX", FreeCaller<selection::algorithm::flipTextureS>());
+	GlobalEventManager().addCommand("FlipTextureY", FreeCaller<selection::algorithm::flipTextureT>());
 	
 	GlobalEventManager().addCommand("MoveSelectionDOWN", FreeCaller<Selection_MoveDown>());
 	GlobalEventManager().addCommand("MoveSelectionUP", FreeCaller<Selection_MoveUp>());
@@ -2470,7 +2477,9 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("FindReplaceTextures", FreeCaller<ui::FindAndReplaceShader::show>());
 	GlobalEventManager().addCommand("ShowCommandList", FreeCaller<ui::CommandList::show>());
 	GlobalEventManager().addCommand("About", FreeCaller<DoAbout>());
-  
+
+	ui::TexTool::registerCommands();
+
   Patch_registerCommands();
 
   typedef FreeCaller1<const Selectable&, ComponentMode_SelectionChanged> ComponentModeSelectionChangedCaller;

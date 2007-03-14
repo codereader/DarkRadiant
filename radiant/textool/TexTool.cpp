@@ -128,7 +128,7 @@ void TexTool::populateWindow() {
 	gtk_container_add(GTK_CONTAINER(_window), vbox);
 }
 
-void TexTool::toggle() {
+void TexTool::toggleWindow() {
 	// Pass the call to the utility methods that save/restore the window position
 	if (GTK_WIDGET_VISIBLE(_window)) {
 		// Save the window position, to make sure
@@ -893,6 +893,47 @@ gboolean TexTool::onMouseScroll(GtkWidget* widget, GdkEventScroll* event, TexToo
 	}
 	
 	return false;
+}
+
+// Static command targets
+void TexTool::toggle() {
+	// Call the toggle() method of the static instance
+	Instance().toggleWindow();
+}
+
+void TexTool::texToolGridUp() {
+	Instance().gridUp();
+}
+
+void TexTool::texToolGridDown() {
+	Instance().gridDown();
+}
+
+void TexTool::texToolSnapToGrid() {
+	Instance().snapToGrid();
+}
+
+void TexTool::texToolMergeItems() {
+	Instance().mergeSelectedItems();
+}
+
+void TexTool::texToolFlipS() {
+	Instance().flipSelected(0);
+}
+
+void TexTool::texToolFlipT() {
+	Instance().flipSelected(1);
+}
+
+void TexTool::registerCommands() {
+	GlobalEventManager().addCommand("TextureTool", FreeCaller<TexTool::toggle>());
+	GlobalEventManager().addCommand("TexToolGridUp", FreeCaller<TexTool::texToolGridUp>());
+	GlobalEventManager().addCommand("TexToolGridDown", FreeCaller<TexTool::texToolGridDown>());
+	GlobalEventManager().addCommand("TexToolSnapToGrid", FreeCaller<TexTool::texToolSnapToGrid>());
+	GlobalEventManager().addCommand("TexToolMergeItems", FreeCaller<TexTool::texToolMergeItems>());
+	GlobalEventManager().addCommand("TexToolFlipS", FreeCaller<TexTool::texToolFlipS>());
+	GlobalEventManager().addCommand("TexToolFlipT", FreeCaller<TexTool::texToolFlipT>());
+	GlobalEventManager().addRegistryToggle("TexToolToggleGrid", RKEY_GRID_STATE);
 }
 
 } // namespace ui
