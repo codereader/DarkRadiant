@@ -245,20 +245,7 @@ void applyClipboardPatchToFace(Face& target) {
 	target.SetFlags(ContentsFlagsValue(0, 0, 0, false));
 }
 
-void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
-	// Construct the command string
-	std::string command("pasteShader");
-	command += (projected ? "Projected" : "Natural");
-	command += (entireBrush ? "ToBrush" : "");
-	
-	UndoableCommand undo(command.c_str());
-	
-	// Initialise an empty Texturable structure
-	Texturable target;
-	
-	// Find a suitable target Texturable
-	GlobalSceneGraph().traverse(ClosestTexturableFinder(test, target));
-	
+void applyClipboardToTexturable(Texturable& target, bool projected, bool entireBrush) {
 	// Get a reference to the source Texturable in the clipboard
 	Texturable& source = GlobalShaderClipboard().getSource();
 	
@@ -293,10 +280,6 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 			 		target.patch->pasteTextureNatural(source.face);
 			 	}
 			}
-			else if (target.isPatch() && entireBrush) {
-				gtkutil::errorDialog("Can't paste shader to entire brush.\nTarget is not a brush.",
-					MainFrame_getWindow());
-			}
 		}
 		else {
 			if (target.isFace() && entireBrush) {
@@ -317,11 +300,31 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 			 	target.patch->SetShader(source.patch->GetShader());
 			 	target.patch->pasteTextureNatural(*source.patch);
 			}
-			else if (target.isPatch() && entireBrush) {
-				gtkutil::errorDialog("Can't paste shader to entire brush.\nSource and target are not a brush.",
-					MainFrame_getWindow());
-			}
 		}
+	}
+}
+
+void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
+	// Construct the command string
+	std::string command("pasteShader");
+	command += (projected ? "Projected" : "Natural");
+	command += (entireBrush ? "ToBrush" : "");
+	
+	UndoableCommand undo(command.c_str());
+	
+	// Initialise an empty Texturable structure
+	Texturable target;
+	
+	// Find a suitable target Texturable
+	GlobalSceneGraph().traverse(ClosestTexturableFinder(test, target));
+	
+	if (target.isPatch() && entireBrush) {
+		gtkutil::errorDialog("Can't paste shader to entire brush.\nTarget is not a brush.",
+			MainFrame_getWindow());
+	}
+	else {
+		// Pass the call to the algorithm function taking care of all the IFs
+		applyClipboardToTexturable(target, projected, entireBrush);
 	}
 	
 	SceneChangeNotify();
@@ -405,8 +408,93 @@ void pickShaderFromSelection() {
 	}
 }
 
-void pasteShaderToSelection() {
+/** greebo: This applies the clipboard to the visited faces/patches.
+ */
+class ClipboardShaderApplicator
+{
+	bool _natural;
+public:
+	ClipboardShaderApplicator(bool natural = false) :
+		_natural(natural)
+	{}
 	
+	void operator()(Patch& patch) const {
+		Texturable target;
+		target.patch = &patch;
+		// Apply the shader (projected, not to the entire brush)
+		applyClipboardToTexturable(target, !_natural, false);
+	}
+	
+	void operator()(Face& face) const {
+		Texturable target;
+		target.face = &face;
+		// Apply the shader (projected, not to the entire brush)
+		applyClipboardToTexturable(target, !_natural, false);
+	}
+};
+
+void pasteShaderToSelection() {
+	if (GlobalShaderClipboard().getSource().empty()) {
+		return;
+	}
+	
+	// Start a new command
+	UndoableCommand command("pasteShaderToSelection");
+	
+	// Cycle through all selected brushes
+	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
+		Scene_ForEachSelectedBrush_ForEachFace(
+			GlobalSceneGraph(), 
+			ClipboardShaderApplicator()
+		);
+	}
+	
+	// Cycle through all selected components
+	Scene_ForEachSelectedBrushFace(
+		GlobalSceneGraph(), 
+		ClipboardShaderApplicator()
+	);
+	
+	// Cycle through all the selected patches
+	Scene_forEachVisibleSelectedPatch(
+		ClipboardShaderApplicator()
+	);
+	
+	SceneChangeNotify();
+	// Update the Texture Tools
+	ui::SurfaceInspector::Instance().update();
+}
+
+void pasteShaderNaturalToSelection() {
+	if (GlobalShaderClipboard().getSource().empty()) {
+		return;
+	}
+	
+	// Start a new command
+	UndoableCommand command("pasteShaderNaturalToSelection");
+	
+	// Cycle through all selected brushes
+	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
+		Scene_ForEachSelectedBrush_ForEachFace(
+			GlobalSceneGraph(), 
+			ClipboardShaderApplicator(true)
+		);
+	}
+	
+	// Cycle through all selected components
+	Scene_ForEachSelectedBrushFace(
+		GlobalSceneGraph(), 
+		ClipboardShaderApplicator(true)
+	);
+	
+	// Cycle through all the selected patches
+	Scene_forEachVisibleSelectedPatch(
+		ClipboardShaderApplicator(true)
+	);
+	
+	SceneChangeNotify();
+	// Update the Texture Tools
+	ui::SurfaceInspector::Instance().update();
 }
 
 TextureProjection getSelectedTextureProjection() {

@@ -55,6 +55,12 @@ namespace selection {
 	 */
 	void pasteShaderToSelection();
 	
+	/** greebo: The command target of "PasteTextureNatural". This tries to get 
+	 * 			the Texturables	from the current selection and 
+	 * 			pastes the clipboard shader "naturally" (undistorted) onto them.
+	 */
+	void pasteShaderNaturalToSelection();
+	
 	/** greebo: Retrieves the texture projection from the current selection.
 	 * 
 	 * @returns: the TextureProjection of the last selected face/brush.

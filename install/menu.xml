@@ -39,6 +39,7 @@
 		<menuSeparator />
 		<menuItem name="copyShader" caption="Copy Shader" command="CopyShader" />
 		<menuItem name="pasteShader" caption="Paste Shader" command="PasteShader" />
+		<menuItem name="pasteShaderNatural" caption="Paste Shader (Natural)" command="PasteShaderNatural" />
 		<menuSeparator />
 		<menuItem name="clearSelection" caption="C_lear selection" command="UnSelectSelection" />
 		<menuItem name="invertSelection" caption="_Invert selection" command="InvertSelection" />
@@ -153,6 +154,10 @@
 			<menuItem name="flipZ" caption="Flip _Z" command="MirrorSelectionZ" icon="brush_flipz.png" />
 		</subMenu>
 
+		<menuSeparator />
+
+		<menuItem name="toggleFreeRotation" caption="Free Model Rotation" command="ToggleFreeModelRotation" />
+
 	</subMenu>
 
 	<subMenu name="grid" caption="_Grid">
@@ -206,9 +211,6 @@
 		<menuItem name="makeDetail" caption="Make detail" command="MakeDetail" />
 		<menuItem name="makeStructural" caption="Make structural" command="MakeStructural" />
 		<menuItem name="texturelock" caption="Texture lock" command="TogTexLock" />
-		<menuSeparator />
-		<menuItem name="copyFaceTexture" caption="Copy face texture" command="FaceCopyTexture" />
-		<menuItem name="pasteFaceTexture" caption="Paste face texture" command="FacePasteTexture" />
 	</subMenu>
 
 	<subMenu name="curve" caption="_Curve">
