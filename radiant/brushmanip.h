@@ -46,12 +46,6 @@ namespace scene
 void Scene_BrushConstructPrefab(scene::Graph& graph, EBrushPrefab type, std::size_t sides, const char* shader);
 class AABB;
 void Scene_BrushResize_Selected(scene::Graph& graph, const AABB& bounds, const char* shader);
-void Scene_BrushShiftTexdef_Selected(scene::Graph& graph, float s, float t);
-void Scene_BrushShiftTexdef_Component_Selected(scene::Graph& graph, float s, float t);
-void Scene_BrushScaleTexdef_Selected(scene::Graph& graph, float s, float t);
-void Scene_BrushScaleTexdef_Component_Selected(scene::Graph& graph, float s, float t);
-void Scene_BrushRotateTexdef_Selected(scene::Graph& graph, float angle);
-void Scene_BrushRotateTexdef_Component_Selected(scene::Graph& graph, float angle);
 void Scene_BrushSetShader_Selected(scene::Graph& graph, const std::string& name);
 void Scene_BrushSetShader_Component_Selected(scene::Graph& graph, const std::string& name);
 void Scene_BrushSelectByShader(scene::Graph& graph, const char* name);

@@ -7,13 +7,14 @@
 #include "math/frustum.h"
 #include "stringio.h"
 #include "xml/xmlelement.h"
-#include "signal/signal.h"
 #include "plugin.h"
 #include "texturelib.h"
 #include "brush/TextureProjection.h"
 #include "winding.h"
 #include "gtkutil/dialog.h"
 #include "mainframe.h"
+#include "ui/surfaceinspector/SurfaceInspector.h"
+#include "ui/patch/PatchInspector.h"
 
 #include "PatchSavedState.h"
 
@@ -21,16 +22,6 @@
 
 inline VertexPointer vertexpointer_arbitrarymeshvertex(const ArbitraryMeshVertex* array) {
   return VertexPointer(VertexPointer::pointer(&array->vertex), sizeof(ArbitraryMeshVertex));
-}
-
-Signal0 g_patchTextureChangedCallbacks;
-
-void Patch_addTextureChangedCallback(const SignalHandler& handler) {
-  g_patchTextureChangedCallbacks.connectLast(handler);
-}
-
-void Patch_textureChanged() {
-  g_patchTextureChangedCallbacks();
 }
 
 inline const Colour4b colour_for_index(std::size_t i, std::size_t width) {
@@ -522,7 +513,7 @@ void Patch::SetShader(const std::string& name) {
 	// Check if the shader is ok
 	check_shader();
 	// Call the callback functions
-	Patch_textureChanged();
+	textureChanged();
 }
 
 int Patch::getShaderFlags() const {
@@ -583,7 +574,7 @@ void Patch::importState(const UndoMemento* state) {
 	// end duplicate code
 
 	// Notify that this patch has changed
-	Patch_textureChanged();
+	textureChanged();
 	controlPointsChanged();
 }
 
@@ -3985,10 +3976,15 @@ void Patch::setFixedSubdivisions(bool isFixed, BasicVector2<unsigned int> divisi
 	}
 	
 	SceneChangeNotify();
-	Patch_textureChanged();
+	textureChanged();
 	controlPointsChanged();
 }
 
 bool Patch::subdivionsFixed() const {
 	return m_patchDef3;
+}
+
+void Patch::textureChanged() {
+	ui::SurfaceInspector::Instance().update(); // Triggers TexTool update
+	ui::PatchInspector::Instance().update();
 }

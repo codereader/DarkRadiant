@@ -39,7 +39,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/widget.h"
 #include "brushmanip.h"
 #include "patchmanip.h"
-#include "patchdialog.h"
 #include "texwindow.h"
 #include "gtkmisc.h"
 #include "mainframe.h"
@@ -609,38 +608,6 @@ void Select_RotateAxis (int axis, float deg)
       break;
     }
   }
-}
-
-
-void Select_ShiftTexture(float x, float y)
-{
-  if(GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
-  {
-    Scene_BrushShiftTexdef_Selected(GlobalSceneGraph(), x, y);
-    Scene_PatchTranslateTexture_Selected(GlobalSceneGraph(), x, y);
-  }
-  //globalOutputStream() << "shift selected face textures: s=" << x << " t=" << y << '\n';
-  Scene_BrushShiftTexdef_Component_Selected(GlobalSceneGraph(), x, y);
-}
-
-void Select_ScaleTexture(float x, float y)
-{
-  if(GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
-  {
-    Scene_BrushScaleTexdef_Selected(GlobalSceneGraph(), x, y);
-    Scene_PatchScaleTexture_Selected(GlobalSceneGraph(), x, y);
-  }
-  Scene_BrushScaleTexdef_Component_Selected(GlobalSceneGraph(), x, y);
-}
-
-void Select_RotateTexture(float amt)
-{
-  if(GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
-  {
-    Scene_BrushRotateTexdef_Selected(GlobalSceneGraph(), amt);
-    Scene_PatchRotateTexture_Selected(GlobalSceneGraph(), amt);
-  }
-  Scene_BrushRotateTexdef_Component_Selected(GlobalSceneGraph(), amt);
 }
 
 typedef std::vector<std::string> Classnames;

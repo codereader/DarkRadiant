@@ -37,20 +37,6 @@ void button_set_icon(GtkButton* button, const char* icon)
   gtk_container_add(GTK_CONTAINER(button), GTK_WIDGET(image));
 }
 
-void toggle_button_set_active_no_signal(GtkToggleButton* button, gboolean active)
-{
-  //globalOutputStream() << "set active: " << active << "\n";
-  guint handler_id = gpointer_to_int(g_object_get_data(G_OBJECT(button), "handler"));
-  //guint signal_id = g_signal_lookup("toggled", G_OBJECT_TYPE (button));
-  //globalOutputStream() << "signal_id: " << signal_id << "\n";
-  //guint found = g_signal_handler_find(G_OBJECT(button), G_SIGNAL_MATCH_ID, signal_id, 0, 0, 0, 0);
-  //globalOutputStream() << " handler found: " << found << "\n";
-  g_signal_handler_block(G_OBJECT(button), handler_id);
-  gtk_toggle_button_set_active(button, active);
-  g_signal_handler_unblock(G_OBJECT(button), handler_id);
-}
-
-
 void radio_button_print_state(GtkRadioButton* button)
 {
   globalOutputStream() << "toggle button: ";

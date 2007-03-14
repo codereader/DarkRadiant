@@ -117,7 +117,6 @@
 			<zCoordStep value="1.0" />
 			<sCoordStep value="0.1" />
 			<tCoordStep value="0.1" />
-			<useLegacyInspector value="0" />
 			<window xPosition="130" yPosition="100" width="225" height="391" />
 		</patchInspector>
 	</patch>

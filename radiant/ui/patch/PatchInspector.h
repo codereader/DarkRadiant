@@ -85,11 +85,8 @@ public:
 	 */
 	static PatchInspector& Instance();
 
-	/** greebo: This toggles the visibility of the patch inspector.
-	 * The dialog is constructed only once and never destructed 
-	 * during runtime.
-	 */
-	void toggle();
+	// The command target
+	static void toggle();
 
 	/** greebo: SelectionSystem::Observer implementation. Gets called by
 	 * the SelectionSystem upon selection change to allow updating of the
@@ -107,6 +104,11 @@ public:
 	void shutdown();
 
 private:
+	/** greebo: This toggles the visibility of the patch inspector.
+	 * The dialog is constructed only once and never destructed 
+	 * during runtime.
+	 */
+	void toggleWindow();
 
 	/** greebo: Saves the step values to the registry
 	 */

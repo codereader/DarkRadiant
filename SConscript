@@ -319,7 +319,6 @@ radiant_src = [
 'map.cpp',
 'nullmodel.cpp',
 'parse.cpp',
-'patchdialog.cpp',
 'patchmanip.cpp',
 'plugin.cpp',
 'pluginapi.cpp',
