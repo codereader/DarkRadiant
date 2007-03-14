@@ -796,7 +796,7 @@ void Copy()
   }
   else
   {
-    SelectedFaces_copyTexture();
+    selection::algorithm::pickShaderFromSelection();
   }
 }
 
@@ -811,7 +811,7 @@ void Paste()
   }
   else
   {
-    SelectedFaces_pasteTexture();
+    selection::algorithm::pasteShaderToSelection();
   }
 }
 
