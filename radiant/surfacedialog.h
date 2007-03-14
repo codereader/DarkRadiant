@@ -25,17 +25,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "selectable.h"
 
 void SurfaceInspector_Construct();
-void SurfaceInspector_Destroy();
+//void SurfaceInspector_Destroy();
 
-typedef struct _GtkWidget GtkWidget;
+/*typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkWindow GtkWindow;
 void SurfaceInspector_constructWindow(GtkWindow* widget);
-void SurfaceInspector_destroyWindow();
+void SurfaceInspector_destroyWindow();*/
 
 bool SelectedFaces_empty();
 
 // the increment we are using for the surface inspector (this is saved in the prefs)
-struct si_globals_t
+/*struct si_globals_t
 {
   float shift[2];
   float scale[2];
@@ -52,6 +52,6 @@ struct si_globals_t
     rotate = 45.0f;
   }
 };
-extern si_globals_t g_si_globals;
+extern si_globals_t g_si_globals;*/
 
 #endif

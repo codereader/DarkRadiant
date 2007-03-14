@@ -473,24 +473,6 @@ void Select_SetShader(const char* shader)
   Scene_BrushSetShader_Component_Selected(GlobalSceneGraph(), shader);
 }
 
-void Select_SetTexdef(const TextureProjection& projection)
-{
-  if(GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
-  {
-    Scene_BrushSetTexdef_Selected(GlobalSceneGraph(), projection);
-  }
-  Scene_BrushSetTexdef_Component_Selected(GlobalSceneGraph(), projection);
-}
-
-void Select_SetFlags(const ContentsFlagsValue& flags)
-{
-  if(GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
-  {
-    Scene_BrushSetFlags_Selected(GlobalSceneGraph(), flags);
-  }
-  Scene_BrushSetFlags_Component_Selected(GlobalSceneGraph(), flags);
-}
-
 void Select_GetBounds (Vector3& mins, Vector3& maxs)
 {
   AABB bounds;
@@ -782,17 +764,6 @@ void Select_Touching(void)
 
 void Select_Complete_Tall() {
 	SelectByBounds<SelectionPolicy_Complete_Tall>::DoSelection();
-}
-
-void Select_FitTexture(float horizontal, float vertical)
-{
-  if(GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
-  {
-    Scene_BrushFitTexture_Selected(GlobalSceneGraph(), horizontal, vertical);
-  }
-  Scene_BrushFitTexture_Component_Selected(GlobalSceneGraph(), horizontal, vertical);
-
-  SceneChangeNotify();
 }
 
 inline void hide_node(scene::Node& node, bool hide)

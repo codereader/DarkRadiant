@@ -55,7 +55,6 @@
 			<hScaleStep value="0.05" />
 			<vScaleStep value="0.05" />
 			<rotStep value="45" />
-			<useLegacyInspector value="0" />
 			<window xPosition="200" yPosition="100" width="369" height="374" />
 		</surfaceInspector>
 	</textures>

@@ -1272,82 +1272,6 @@ void ClipperMode() {
 	}
 }
 
-void Texdef_Rotate(float angle)
-{
-  StringOutputStream command;
-  command << "brushRotateTexture -angle " << angle;
-  UndoableCommand undo(command.c_str());
-  Select_RotateTexture(angle);
-}
-
-void Texdef_RotateClockwise()
-{
-  Texdef_Rotate(static_cast<float>(fabs(g_si_globals.rotate)));
-}
-
-void Texdef_RotateAntiClockwise()
-{
-  Texdef_Rotate(static_cast<float>(-fabs(g_si_globals.rotate)));
-}
-
-void Texdef_Scale(float x, float y)
-{
-  StringOutputStream command;
-  command << "brushScaleTexture -x " << x << " -y " << y;
-  UndoableCommand undo(command.c_str());
-  Select_ScaleTexture(x, y);
-}
-
-void Texdef_ScaleUp()
-{
-  Texdef_Scale(0, g_si_globals.scale[1]);
-}
-
-void Texdef_ScaleDown()
-{
-  Texdef_Scale(0, -g_si_globals.scale[1]);
-}
-
-void Texdef_ScaleLeft()
-{
-  Texdef_Scale(-g_si_globals.scale[0],0);
-}
-
-void Texdef_ScaleRight()
-{
-  Texdef_Scale(g_si_globals.scale[0],0);
-}
-
-void Texdef_Shift(float x, float y)
-{
-  StringOutputStream command;
-  command << "brushShiftTexture -x " << x << " -y " << y;
-  UndoableCommand undo(command.c_str());
-  Select_ShiftTexture(x, y);
-}
-
-void Texdef_ShiftLeft()
-{
-  Texdef_Shift(-GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/hShiftStep"), 0);
-}
-
-void Texdef_ShiftRight()
-{
-  Texdef_Shift(GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/hShiftStep"), 0);
-}
-
-void Texdef_ShiftUp()
-{
-  Texdef_Shift(0, GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vShiftStep"));
-}
-
-void Texdef_ShiftDown()
-{
-  Texdef_Shift(0, -GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vShiftStep"));
-}
-
-
-
 class SnappableSnapToGridSelected : public scene::Graph::Walker
 {
   float m_snap;
@@ -2200,7 +2124,6 @@ void MainFrame::Create()
   
   EntityList_constructWindow(window);
   PreferencesDialog_constructWindow(window);
-  SurfaceInspector_constructWindow(window);
   PatchInspector_constructWindow(window);
 
   GlobalGrid().addGridChangeCallback(SetGridStatusCaller(*this));
@@ -2287,7 +2210,6 @@ void MainFrame::Shutdown()
   m_pCamWnd = 0;
 
   PreferencesDialog_destroyWindow();
-  SurfaceInspector_destroyWindow();
   PatchInspector_destroyWindow();
 
   // destroying group-dialog last because it may contain texture-browser
@@ -2320,17 +2242,10 @@ void Sys_Status(const std::string& statusText) {
 	}
 }
 
-
-int getRotateIncrement()
-{
-  return static_cast<int>(g_si_globals.rotate);
-}
-
 int getFarClipDistance() {
 	return getCameraSettings()->cubicScale();
 }
 
-int (*GridStatus_getRotateIncrement)() = getRotateIncrement;
 int (*GridStatus_getFarClipDistance)() = getFarClipDistance;
 
 void MainFrame::SetGridStatus()
@@ -2338,7 +2253,6 @@ void MainFrame::SetGridStatus()
   StringOutputStream status(64);
   const char* lock = (GlobalBrush()->textureLockEnabled()) ? "ON" : "OFF";
   status << "G:" << GlobalGrid().getGridSize()
-    << "  R:" << GridStatus_getRotateIncrement()
     << "  C:" << GridStatus_getFarClipDistance()
     << "  L:" << lock;
   SetStatusText(m_grid_status, status.c_str());

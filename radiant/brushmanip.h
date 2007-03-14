@@ -46,15 +46,6 @@ namespace scene
 void Scene_BrushConstructPrefab(scene::Graph& graph, EBrushPrefab type, std::size_t sides, const char* shader);
 class AABB;
 void Scene_BrushResize_Selected(scene::Graph& graph, const AABB& bounds, const char* shader);
-void Scene_BrushSetTexdef_Selected(scene::Graph& graph, const TextureProjection& projection);
-void Scene_BrushSetTexdef_Component_Selected(scene::Graph& graph, const TextureProjection& projection);
-void Scene_BrushGetTexdef_Selected(scene::Graph& graph, TextureProjection& projection);
-void Scene_BrushGetTexdef_Component_Selected(scene::Graph& graph, TextureProjection& projection);
-void Scene_BrushGetShaderSize_Component_Selected(scene::Graph& graph, size_t& width, size_t& height);
-void Scene_BrushSetFlags_Selected(scene::Graph& graph, const ContentsFlagsValue& flags);
-void Scene_BrushSetFlags_Component_Selected(scene::Graph& graph, const ContentsFlagsValue& flags);
-void Scene_BrushGetFlags_Selected(scene::Graph& graph, ContentsFlagsValue& flags);
-void Scene_BrushGetFlags_Component_Selected(scene::Graph& graph, ContentsFlagsValue& flags);
 void Scene_BrushShiftTexdef_Selected(scene::Graph& graph, float s, float t);
 void Scene_BrushShiftTexdef_Component_Selected(scene::Graph& graph, float s, float t);
 void Scene_BrushScaleTexdef_Selected(scene::Graph& graph, float s, float t);
@@ -63,12 +54,8 @@ void Scene_BrushRotateTexdef_Selected(scene::Graph& graph, float angle);
 void Scene_BrushRotateTexdef_Component_Selected(scene::Graph& graph, float angle);
 void Scene_BrushSetShader_Selected(scene::Graph& graph, const std::string& name);
 void Scene_BrushSetShader_Component_Selected(scene::Graph& graph, const std::string& name);
-void Scene_BrushGetShader_Selected(scene::Graph& graph, std::string& shader);
-void Scene_BrushGetShader_Component_Selected(scene::Graph& graph, std::string& shader);
 void Scene_BrushSelectByShader(scene::Graph& graph, const char* name);
 void Scene_BrushSelectByShader_Component(scene::Graph& graph, const char* name);
-void Scene_BrushFitTexture_Selected(scene::Graph& graph, float s_repeat, float t_repeat);
-void Scene_BrushFitTexture_Component_Selected(scene::Graph& graph, float s_repeat, float t_repeat);
 void Scene_BrushFlipTexture_Selected(unsigned int flipAxis);
 void Scene_BrushFlipTexture_Component_Selected(unsigned int flipAxis);
 
