@@ -643,20 +643,6 @@ void Select_RotateTexture(float amt)
   Scene_BrushRotateTexdef_Component_Selected(GlobalSceneGraph(), amt);
 }
 
-void Select_FlipTexture(unsigned int flipAxis) {
-	UndoableCommand undo("flipTexture");
-	
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
-		// Flip the texture of all the brushes (selected as a whole)
-		Scene_BrushFlipTexture_Selected(flipAxis);
-		// Flip the texture coordinates of the selected patches
-		Scene_PatchFlipTexture_Selected(flipAxis);
-	}
-	// Now flip all the seperately selected faces
-	Scene_BrushFlipTexture_Component_Selected(flipAxis);
-	SceneChangeNotify();
-}
-
 typedef std::vector<std::string> Classnames;
 
 bool classnames_match_entity(const Classnames& classnames, Entity* entity)

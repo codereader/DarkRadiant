@@ -57,11 +57,6 @@ void Select_RotateTexture(float amt);
 void Select_ScaleTexture(float x, float y);
 void Select_ShiftTexture(float x, float y);
 
-/* greebo: Flips the texture of the selected primitives about the given axis
- * 0 = xAxis, 1 = yAxis  
- */
-void Select_FlipTexture(unsigned int flipAxis);
-
 void HideSelected();
 void Select_ShowAllHidden();
 

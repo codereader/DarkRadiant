@@ -572,6 +572,55 @@ void fitTexture(const float& repeatS, const float& repeatT) {
 	ui::SurfaceInspector::Instance().update();
 }
 
+/** greebo: Flips the visited object about the axis given to the constructor.
+ */
+class TextureFlipper
+{
+	unsigned int _flipAxis;
+public:
+	TextureFlipper(unsigned int flipAxis) : 
+		_flipAxis(flipAxis) 
+	{}
+	
+	void operator()(Face& face) const {
+		face.flipTexture(_flipAxis);
+	}
+	
+	void operator()(Patch& patch) const {
+		patch.FlipTexture(_flipAxis);
+	}
+};
+
+void flipTexture(unsigned int flipAxis) {
+	UndoableCommand undo("flipTexture");
+	
+	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
+		// Flip the texture of all the brushes (selected as a whole)
+		Scene_ForEachSelectedBrush_ForEachFace(
+			GlobalSceneGraph(), 
+			TextureFlipper(flipAxis)
+		);
+		// Flip the texture coordinates of the selected patches
+		Scene_forEachVisibleSelectedPatch(
+			TextureFlipper(flipAxis)
+		);
+	}
+	// Now flip all the seperately selected faces
+	Scene_ForEachSelectedBrushFace(
+		GlobalSceneGraph(), 
+		TextureFlipper(flipAxis)
+	);
+	SceneChangeNotify();
+}
+
+void flipTextureS() {
+	flipTexture(0);
+}
+
+void flipTextureT() {
+	flipTexture(1);
+}
+
 /** greebo: Applies the default texture projection to all
  * the visited faces.
  */

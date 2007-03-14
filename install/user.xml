@@ -57,6 +57,9 @@
 			<rotStep value="45" />
 			<window xPosition="200" yPosition="100" width="369" height="374" />
 		</surfaceInspector>
+		<texTool>
+			<gridActive value="1" />
+		</texTool>
 	</textures>
 	<grid>
 		<defaultGridPower value="3" />
