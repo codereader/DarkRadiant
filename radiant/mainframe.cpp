@@ -118,7 +118,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkmisc.h"
 #include "map.h"
 #include "multimon.h"
-#include "patchdialog.h"
 #include "patchmanip.h"
 #include "plugin.h"
 #include "points.h"
@@ -2120,8 +2119,7 @@ void MainFrame::Create()
   
   EntityList_constructWindow(window);
   PreferencesDialog_constructWindow(window);
-  PatchInspector_constructWindow(window);
-
+  
   GlobalGrid().addGridChangeCallback(SetGridStatusCaller(*this));
   GlobalGrid().addGridChangeCallback(FreeCaller<XY_UpdateAllWindows>());
 
@@ -2206,7 +2204,6 @@ void MainFrame::Shutdown()
   m_pCamWnd = 0;
 
   PreferencesDialog_destroyWindow();
-  PatchInspector_destroyWindow();
 
   // destroying group-dialog last because it may contain texture-browser
   GroupDialog_destroyWindow();
@@ -2384,6 +2381,7 @@ void MainFrame_Construct()
 							FreeCaller<ui::LightInspector::toggleInspector>());
 	
 	GlobalEventManager().addCommand("SurfaceInspector", FreeCaller<ui::SurfaceInspector::toggle>());
+	GlobalEventManager().addCommand("PatchInspector", FreeCaller<ui::PatchInspector::toggle>());
 	
 	// Overlay dialog
 	GlobalEventManager().addCommand("OverlayDialog",

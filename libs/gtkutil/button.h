@@ -31,7 +31,6 @@ typedef int gint;
 typedef gint gboolean;
 
 void button_set_icon(GtkButton* button, const char* icon);
-void toggle_button_set_active_no_signal(GtkToggleButton* item, gboolean active);
 
 void radio_button_set_active(GtkRadioButton* radio, int index);
 void radio_button_set_active_no_signal(GtkRadioButton* radio, int index);

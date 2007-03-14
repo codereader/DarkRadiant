@@ -53,10 +53,6 @@ void DoScaleDlg();
 
 void Select_SetShader(const char* shader);
 
-void Select_RotateTexture(float amt);
-void Select_ScaleTexture(float x, float y);
-void Select_ShiftTexture(float x, float y);
-
 void HideSelected();
 void Select_ShowAllHidden();
 

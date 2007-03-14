@@ -23,9 +23,6 @@
 #include "brush/FacePlane.h"
 #include "brush/Face.h"
 
-void Patch_addTextureChangedCallback(const SignalHandler& handler);
-void Patch_textureChanged();
-
 /* greebo: The patch class itself, represented by control vertices. The basic rendering of the patch 
  * is handled here (unselected control points, tesselation lines, shader). 
  * 
@@ -373,6 +370,9 @@ public:
 	void setFixedSubdivisions(bool isFixed, BasicVector2<unsigned int> divisions);
 
 private:
+	// This notifies the surfaceinspector/patchinspector about the texture change
+	static void textureChanged();
+
 	// greebo: this allocates the shader with the passed name 
 	void captureShader();
 

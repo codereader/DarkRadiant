@@ -66,7 +66,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "mainframe.h"
 #include "multimon.h"
 #include "groupdialog.h"
-#include "patchdialog.h"
 #include "camera/GlobalCamera.h"
 #include "entity.h"
 #include "select.h"
@@ -250,7 +249,6 @@ public:
     EntityList_Construct();
     MainFrame_Construct();
     GroupDialog_Construct();
-    PatchInspector_Construct();
     GlobalCamera().construct();
     GlobalXYWnd().construct();
     TextureBrowser_Construct();
@@ -275,7 +273,6 @@ public:
     TextureBrowser_Destroy();
     GlobalXYWnd().destroy();
     GlobalCamera().destroy();
-    PatchInspector_Destroy();
     GroupDialog_Destroy();
     MainFrame_Destroy();
     EntityList_Destroy();

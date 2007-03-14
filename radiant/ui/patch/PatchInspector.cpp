@@ -332,7 +332,7 @@ void PatchInspector::loadControlVertex() {
 	}
 }
 
-void PatchInspector::toggle() {
+void PatchInspector::toggleWindow() {
 	// Pass the call to the utility methods that save/restore the window position
 	if (GTK_WIDGET_VISIBLE(_dialog)) {
 		// Save the window position, to make sure
@@ -521,6 +521,11 @@ void PatchInspector::onClickSmaller(GtkWidget* button, CoordRow* row) {
 	
 	// This triggers the onCoordChange callback method
 	gtk_entry_set_text(GTK_ENTRY(row->value), floatToStr(value - step).c_str());
+}
+
+// static command target
+void PatchInspector::toggle() {
+	Instance().toggleWindow();
 }
 
 } // namespace ui

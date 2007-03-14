@@ -58,19 +58,9 @@ inline const char* GlobalTexturePrefix_get()
   return GlobalShaderSystem().getTexturePrefix();
 }
 
-inline bool shader_is_texture(const char* name)
-{
-  return shader_equal_prefix(name, GlobalTexturePrefix_get());
-}
-
 inline const char* shader_get_textureName(const char* name)
 {
   return name + string_length(GlobalTexturePrefix_get());
-}
-
-inline bool texdef_name_valid(const char* name)
-{
-  return shader_valid(name) && shader_is_texture(name);
 }
 
 inline std::string texdef_name_default() {
