@@ -1703,6 +1703,7 @@ void SurfaceInspector_registerCommands()
   
 	GlobalEventManager().addCommand("CopyShader", FreeCaller<selection::algorithm::pickShaderFromSelection>());
 	GlobalEventManager().addCommand("PasteShader", FreeCaller<selection::algorithm::pasteShaderToSelection>());
+	GlobalEventManager().addCommand("PasteShaderNatural", FreeCaller<selection::algorithm::pasteShaderNaturalToSelection>());
   
   GlobalEventManager().addCommand("FlipTextureX", FreeCaller<FlipTextureX>());
   GlobalEventManager().addCommand("FlipTextureY", FreeCaller<FlipTextureY>());

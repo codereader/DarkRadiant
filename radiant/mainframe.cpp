@@ -47,6 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "selection/algorithm/Shader.h"
 #include "selection/algorithm/Group.h"
 #include "selection/algorithm/Primitives.h"
+#include "selection/shaderclipboard/ShaderClipboard.h"
 #include "iclipper.h"
 #include "ifilesystem.h"
 #include "iundo.h"
@@ -748,6 +749,7 @@ void Undo()
   ui::SurfaceInspector::Instance().update();
   ui::PatchInspector::Instance().update();
   ui::LightInspector::Instance().update();
+  GlobalShaderClipboard().clear();
 }
 
 void Redo()
@@ -757,12 +759,14 @@ void Redo()
   ui::SurfaceInspector::Instance().update();
   ui::PatchInspector::Instance().update();
   ui::LightInspector::Instance().update();
+  GlobalShaderClipboard().clear();
 }
 
 void deleteSelection()
 {
   UndoableCommand undo("deleteSelected");
   Select_Delete();
+  GlobalShaderClipboard().clear();
 }
 
 void Map_ExportSelected(std::ostream& ostream)

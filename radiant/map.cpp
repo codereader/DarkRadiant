@@ -89,6 +89,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "map/MapFileManager.h"
 #include "map/RegionManager.h"
 #include "surfacedialog.h"
+#include "selection/shaderclipboard/ShaderClipboard.h"
 
 #include <string>
 #include <boost/lexical_cast.hpp>
@@ -1262,6 +1263,9 @@ void Map_LoadFile (const std::string& filename)
 	
 	// Disable the region to make sure
 	GlobalRegion().disable();
+	
+	// Clear the shaderclipboard, the references are most probably invalid now
+	GlobalShaderClipboard().clear();
 	
 	// Clear the modified flag
 	map::setModified(false);
