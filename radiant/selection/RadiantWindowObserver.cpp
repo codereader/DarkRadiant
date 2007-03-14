@@ -80,7 +80,9 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 		}
 		else if (observerEvent == ui::obsPasteTextureCoordinates) {
 			// Clone the texture coordinates from the patch in the clipboard
-			Scene_pasteTextureCoordinates(volume);
+			// Paste the texture coordinates
+			selection::algorithm::pasteTextureCoords(volume);
+			//Scene_pasteTextureCoordinates(volume);
 		}
 		else if (observerEvent == ui::obsPasteTextureToBrush) {
 			// Paste the shader projected (TRUE), and to the entire brush (TRUE)

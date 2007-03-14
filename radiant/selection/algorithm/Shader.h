@@ -36,6 +36,15 @@ namespace selection {
 	 */
 	void pasteShader(SelectionTest& test, bool projected, bool entireBrush = false);
 	
+	/** greebo: Copies the texture coordinates from the source patch in the
+	 * 			ShaderClipboard to the target patch defined by the SelectionTest.
+	 * 			Tests are performed to ensure that the operation is valid,
+	 * 			an error message is displayed otherwise.
+	 * 
+	 * @test: the SelectionTest needed (usually a SelectionVolume).
+	 */
+	void pasteTextureCoords(SelectionTest& test);
+	
 	/** greebo: Retrieves the texture projection from the current selection.
 	 * 
 	 * @returns: the TextureProjection of the last selected face/brush.

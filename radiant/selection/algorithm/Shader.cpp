@@ -3,6 +3,8 @@
 #include "iselection.h"
 #include "iscenegraph.h"
 #include "selectable.h"
+#include "gtkutil/dialog.h"
+#include "mainframe.h"
 #include "brush/FaceInstance.h"
 #include "brush/BrushVisit.h"
 #include "brush/TextureProjection.h"
@@ -211,9 +213,9 @@ void applyShaderToSelection(const std::string& shaderName) {
 	ui::SurfaceInspector::Instance().update();
 }
 
-/** greebo: Applies the shader from the clipboard to the given <target> face
+/** greebo: Applies the shader from the clipboard's face to the given <target> face
  */
-void applyClipboardShaderToFace(Face& target) {
+void applyClipboardFaceToFace(Face& target) {
 	// Get a reference to the source Texturable in the clipboard
 	Texturable& source = GlobalShaderClipboard().getSource();
 	
@@ -224,6 +226,22 @@ void applyClipboardShaderToFace(Face& target) {
 	target.SetShader(source.face->GetShader());
 	target.SetTexdef(projection);
 	target.SetFlags(source.face->getShader().m_flags);
+}
+
+/** greebo: Applies the shader from the clipboard's patch to the given <target> face
+ */
+void applyClipboardPatchToFace(Face& target) {
+	// Get a reference to the source Texturable in the clipboard
+	Texturable& source = GlobalShaderClipboard().getSource();
+	
+	// Retrieve the textureprojection from the source face
+	TextureProjection projection;
+	projection.constructDefault();
+	
+	// Copy just the shader name, the rest is default value
+	target.SetShader(source.patch->GetShader());
+	target.SetTexdef(projection);
+	target.SetFlags(ContentsFlagsValue(0, 0, 0, false));
 }
 
 void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
@@ -253,14 +271,14 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 					 i != target.brush->end(); 
 					 i++) 
 				{
-					applyClipboardShaderToFace(*(*i));
+					applyClipboardFaceToFace(*(*i));
 				}
 	  		}
 	  		else if (target.isFace() && !entireBrush) {
 	  			// Copy Face >> Face
-			 	applyClipboardShaderToFace(*target.face);
+			 	applyClipboardFaceToFace(*target.face);
 			}
-			else if (target.isPatch()) {
+			else if (target.isPatch() && !entireBrush) {
 				// Copy Face >> Patch
 				
 				// Set the shader name first
@@ -274,9 +292,77 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 			 		target.patch->pasteTextureNatural(source.face);
 			 	}
 			}
+			else if (target.isPatch() && entireBrush) {
+				gtkutil::errorDialog("Can't copy to entire brush.\nTarget is not a brush.",
+					MainFrame_getWindow());
+			}
 		}
 		else {
-			
+			if (target.isFace() && entireBrush) {
+				// Copy patch >> whole brush
+				for (Brush::const_iterator i = target.brush->begin(); 
+					 i != target.brush->end(); 
+					 i++) 
+				{
+					applyClipboardPatchToFace(*(*i));
+				}
+			}
+			else if (target.isFace() && !entireBrush) {
+				// Copy patch >> face
+				applyClipboardPatchToFace(*target.face);
+			}
+			else if (target.isPatch() && !entireBrush) {
+				// Copy patch >> patch
+			 	target.patch->SetShader(source.patch->GetShader());
+			 	target.patch->pasteTextureNatural(*source.patch);
+			}
+			else if (target.isPatch() && entireBrush) {
+				gtkutil::errorDialog("Can't copy to entire brush.\nSource and target are not a brush.",
+					MainFrame_getWindow());
+			}
+		}
+	}
+	
+	SceneChangeNotify();
+	// Update the Texture Tools
+	ui::SurfaceInspector::Instance().update();
+}
+
+void pasteTextureCoords(SelectionTest& test) {
+	UndoableCommand undo("pasteTextureCoordinates");
+	
+	// Initialise an empty Texturable structure
+	Texturable target;
+	
+	// Find a suitable target Texturable
+	GlobalSceneGraph().traverse(ClosestTexturableFinder(test, target));
+	
+	// Get a reference to the source Texturable in the clipboard
+	Texturable& source = GlobalShaderClipboard().getSource();
+	
+	// Check the basic conditions
+	if (target.isPatch() && source.isPatch()) {
+		// Check if the dimensions match, emit an error otherwise 
+		if (target.patch->getWidth() == source.patch->getWidth() && 
+			target.patch->getHeight() == source.patch->getHeight()) 
+		{
+	 		target.patch->pasteTextureCoordinates(source.patch);
+		}
+		else {
+			gtkutil::errorDialog("Can't paste Texture Coordinates.\nTarget patch dimensions must match.",
+					MainFrame_getWindow());
+		}
+	}
+	else {
+		if (source.isPatch()) {
+		 	// Nothing to do, this works for patches only
+		 	gtkutil::errorDialog("Can't paste Texture Coordinates from patches to faces.",
+							 MainFrame_getWindow());
+		}
+		else {
+			// Nothing to do, this works for patches only
+		 	gtkutil::errorDialog("Can't paste Texture Coordinates from faces.",
+							 MainFrame_getWindow());
 		}
 	}
 	
