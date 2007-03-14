@@ -84,6 +84,19 @@ namespace selection {
 	 */
 	void fitTexture(const float& repeatS, const float& repeatT);
 	
+	/** greebo: Flips the texture about the given <flipAxis>
+	 * 
+	 * @flipAxis: 0 = flip S, 1 = flip T
+	 */
+	void flipTexture(unsigned int flipAxis);
+	
+	/** greebo: The command Targets for flipping the textures about the
+	 * 			S and T axes respectively. 
+	 * 			Passes the call to flipTexture() method above.
+	 */
+	void flipTextureS();
+	void flipTextureT();
+	
 	/** greebo: Applies the texture "naturally" to the selected
 	 * primitives. Natural makes use of the currently active default scale. 
 	 */

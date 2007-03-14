@@ -8,8 +8,7 @@
 #include "cullable.h"
 
 #include "BrushModule.h"
-
-void Brush_textureChanged();
+#include "ui/surfaceinspector/SurfaceInspector.h"
 
 Face::Face(FaceObserver* observer) :
 	m_refcount(0),
@@ -214,7 +213,8 @@ void Face::testSelect_centroid(SelectionTest& test, SelectionIntersection& best)
 
 void Face::shaderChanged() {
 	EmitTextureCoordinates();
-	Brush_textureChanged();
+	// Update the Texture Tools
+	ui::SurfaceInspector::Instance().update();
 	m_observer->shaderChanged();
 	planeChanged();
 	SceneChangeNotify();
@@ -236,7 +236,8 @@ void Face::revertTexdef() {
 void Face::texdefChanged() {
 	revertTexdef();
 	EmitTextureCoordinates();
-	Brush_textureChanged();
+	// Update the Texture Tools
+	ui::SurfaceInspector::Instance().update();
 }
 
 void Face::GetTexdef(TextureProjection& projection) const {
