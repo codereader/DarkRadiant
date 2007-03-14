@@ -19,6 +19,10 @@
 // Initialise the shader pointer
 ShaderPtr RadiantSelectionSystem::_state;
 
+	namespace {
+		const std::string RKEY_ROTATION_PIVOT = "user/ui/rotationPivotIsOrigin";
+	}
+
 // ------------ Helper Functions --------------------------------------------
 
 inline void matrix4_assign_rotation(Matrix4& matrix, const Matrix4& other) {
@@ -62,6 +66,8 @@ RadiantSelectionSystem::RadiantSelectionSystem() :
 	pivotChanged();
 	addSelectionChangeCallback(PivotChangedSelectionCaller(*this));
 	GlobalGrid().addGridChangeCallback(PivotChangedCaller(*this));
+	
+	GlobalRegistry().addKeyObserver(this, RKEY_ROTATION_PIVOT);
 	
 	// Pass a reference to self to the global event manager 
 	GlobalEventManager().connectSelectionSystem(this);
@@ -382,7 +388,7 @@ bool RadiantSelectionSystem::SelectManipulator(const View& view, const float dev
 			_manipulator->GetManipulatable()->Construct(device2manip, device_point[0], device_point[1]);
 			
 			_deviceStart = Vector2(device_point[0], device_point[1]);
-			globalOutputStream() << "Start: " << _deviceStart[0] << "," << _deviceStart[1] << "\n";
+			
 			_undoBegun = false;
 		}
 
@@ -819,6 +825,13 @@ void RadiantSelectionSystem::endMove() {
 	}
 }
 
+void RadiantSelectionSystem::keyChanged() {
+	if (!nothingSelected()) {
+		pivotChanged();
+		ConstructPivot();
+	}
+}
+
 /* greebo: This calculates and constructs the pivot point of the selection.
  * It cycles through all selected objects and creates its AABB. The origin point of the AABB
  * is basically the pivot point. Pivot2World is therefore a translation from (0,0,0) to the calculated origin.
@@ -834,7 +847,18 @@ void RadiantSelectionSystem::ConstructPivot() const {
 	Vector3 objectPivot;
 
 	if (!nothingSelected()) {
-	    {
+		if (_selectionInfo.entityCount == 1 && _selectionInfo.totalCount == 1 &&
+			GlobalRegistry().get(RKEY_ROTATION_PIVOT) == "1") 
+		{
+			// Test, if a single entity is selected
+			scene::Instance& instance = ultimateSelected();
+			Entity* entity = Node_getEntity(instance.path().top());
+			
+			if (entity != NULL) {
+				objectPivot = entity->getKeyValue("origin");
+			}
+		}
+		else {
 	    	// Create a local variable where the aabb information is stored
 			AABB bounds;
 			

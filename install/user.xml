@@ -31,6 +31,7 @@
 	<showAllLightRadii value="0"/>
 	<alwaysShowLightVertices value="1"/>
 	<freeModelRotation value="0" />
+	<rotationPivotIsOrigin value="0" />
 	<transformDialog>
 		<window xPosition="150" yPosition="200" width="280" height="242" />
 		<rotXStep value="45" />
@@ -173,6 +174,7 @@
 		<separator/>
 			<toggletoolbutton name="texturelock" action="TogTexLock" tooltip="Texture Lock" icon="texture_lock.png"/>
 			<toggletoolbutton name="freemodelrotation" action="ToggleFreeModelRotation" tooltip="Rotate Models independently" icon="free_model_rotation.png" />
+			<toggletoolbutton name="togglerotationpivot" action="ToggleRotationPivot" tooltip="Rotate func_* Entities around origin" icon="rotation_pivot_origin.png" />
 	</toolbar>
 	<toolbar name="texture" align="horizontal">
 		<toolbutton name="flush" action="RefreshShaders" tooltip="Flush &amp; Reload Shaders" icon="texwindow_flushandreload.png"/>
