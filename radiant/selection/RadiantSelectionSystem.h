@@ -1,6 +1,7 @@
 #ifndef RADIANTSELECTIONSYSTEM_H_
 #define RADIANTSELECTIONSYSTEM_H_
 
+#include "iregistry.h"
 #include "iselection.h"
 #include "selectionlib.h"
 #include "math/matrix.h"
@@ -41,7 +42,8 @@ class RadiantSelectionSystem :
 	public Translatable,
 	public Rotatable,
 	public Scalable,
-	public Renderable
+	public Renderable,
+	public RegistryKeyObserver
 {
 	mutable Matrix4 _pivot2world;
 	Matrix4 _pivot2worldStart;
@@ -103,6 +105,9 @@ public:
 	 * entity count, etc.)
 	 */
 	const SelectionInfo& getSelectionInfo();
+
+	// RegistryKeyObserver implementation
+	void keyChanged();
 	
 	void pivotChanged() const;
 	typedef ConstMemberCaller<RadiantSelectionSystem, &RadiantSelectionSystem::pivotChanged> PivotChangedCaller;
