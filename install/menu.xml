@@ -37,6 +37,9 @@
 		<menuSeparator />
 		<menuItem name="parent" caption="P_arent" command="ParentSelection" />
 		<menuSeparator />
+		<menuItem name="copyShader" caption="Copy Shader" command="CopyShader" />
+		<menuItem name="pasteShader" caption="Paste Shader" command="PasteShader" />
+		<menuSeparator />
 		<menuItem name="clearSelection" caption="C_lear selection" command="UnSelectSelection" />
 		<menuItem name="invertSelection" caption="_Invert selection" command="InvertSelection" />
 		<menuItem name="selectCompleteTall" caption="Select complete t_all" command="SelectCompleteTall" icon="selection_selectcompletetall.png" />

@@ -29,7 +29,7 @@ bool Texturable::isPatch() const {
 }
 
 bool Texturable::isFace() const {
-	return (face != NULL && brush != NULL);
+	return (face != NULL);
 }
 
 std::string Texturable::getShader() const {

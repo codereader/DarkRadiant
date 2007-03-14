@@ -45,6 +45,16 @@ namespace selection {
 	 */
 	void pasteTextureCoords(SelectionTest& test);
 	
+	/** greebo: The command target of "CopyTexure". This tries to pick the shader
+	 * 			from the current selection and copies it to the clipboard.
+	 */
+	void pickShaderFromSelection();
+	
+	/** greebo: The command target of "PasteTexture". This tries to get the Texturables
+	 * 			from the current selection and pastes the clipboard shader onto them.
+	 */
+	void pasteShaderToSelection();
+	
 	/** greebo: Retrieves the texture projection from the current selection.
 	 * 
 	 * @returns: the TextureProjection of the last selected face/brush.

@@ -17,6 +17,14 @@ public:
 	 * 			with the given SelectionTest (SelectionVolume)
 	 */
 	void setSource(SelectionTest& test);
+	
+	/** greebo: Sets the source patch to the given <sourcePatch>
+	 */
+	void setSource(Patch& sourcePatch);
+	
+	/** greebo: Sets the source face to the given <sourceFace>
+	 */
+	void setSource(Face& sourceFace);
 
 	/** greebo: Retrieves the current source Texturable
 	 */
