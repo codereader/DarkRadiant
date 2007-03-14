@@ -31,6 +31,22 @@ void ShaderClipboard::setSource(SelectionTest& test) {
 	TextureBrowser_SetSelectedShader(GlobalTextureBrowser(), _source.getShader());
 }
 
+void ShaderClipboard::setSource(Patch& sourcePatch) {
+	_source.clear();
+	_source.patch = &sourcePatch;
+	
+	// Set the active shader in the Texture window as well
+	TextureBrowser_SetSelectedShader(GlobalTextureBrowser(), _source.getShader());
+}
+
+void ShaderClipboard::setSource(Face& sourceFace) {
+	_source.clear();
+	_source.face = &sourceFace;
+	
+	// Set the active shader in the Texture window as well
+	TextureBrowser_SetSelectedShader(GlobalTextureBrowser(), _source.getShader());
+}
+
 Texturable& ShaderClipboard::getSource() {
 	return _source;
 }

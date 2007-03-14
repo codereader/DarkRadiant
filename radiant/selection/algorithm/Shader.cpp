@@ -3,6 +3,7 @@
 #include "iselection.h"
 #include "iscenegraph.h"
 #include "selectable.h"
+#include "selectionlib.h"
 #include "gtkutil/dialog.h"
 #include "mainframe.h"
 #include "brush/FaceInstance.h"
@@ -293,7 +294,7 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 			 	}
 			}
 			else if (target.isPatch() && entireBrush) {
-				gtkutil::errorDialog("Can't copy to entire brush.\nTarget is not a brush.",
+				gtkutil::errorDialog("Can't paste shader to entire brush.\nTarget is not a brush.",
 					MainFrame_getWindow());
 			}
 		}
@@ -317,7 +318,7 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 			 	target.patch->pasteTextureNatural(*source.patch);
 			}
 			else if (target.isPatch() && entireBrush) {
-				gtkutil::errorDialog("Can't copy to entire brush.\nSource and target are not a brush.",
+				gtkutil::errorDialog("Can't paste shader to entire brush.\nSource and target are not a brush.",
 					MainFrame_getWindow());
 			}
 		}
@@ -369,6 +370,43 @@ void pasteTextureCoords(SelectionTest& test) {
 	SceneChangeNotify();
 	// Update the Texture Tools
 	ui::SurfaceInspector::Instance().update();
+}
+
+void pickShaderFromSelection() {
+	GlobalShaderClipboard().clear();
+	
+	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+	
+	// Check for a single patch
+	if (info.totalCount == 1 && info.patchCount == 1) {
+		try {
+			Patch& sourcePatch = getLastSelectedPatch();
+			GlobalShaderClipboard().setSource(sourcePatch);
+		}
+		catch (InvalidSelectionException e) {
+			gtkutil::errorDialog("Can't copy Shader. Couldn't retrieve patch.",
+		 		MainFrame_getWindow());
+		}
+	}
+	else if (selectedFaceCount() == 1) {
+		try {
+			Face& sourceFace = getLastSelectedFace();
+			GlobalShaderClipboard().setSource(sourceFace);
+		}
+		catch (InvalidSelectionException e) {
+			gtkutil::errorDialog("Can't copy Shader. Couldn't retrieve face.",
+		 		MainFrame_getWindow());
+		}
+	}
+	else {
+		// Nothing to do, this works for patches only
+		gtkutil::errorDialog("Can't copy Shader. Please select a single face or patch.",
+			 MainFrame_getWindow());
+	}
+}
+
+void pasteShaderToSelection() {
+	
 }
 
 TextureProjection getSelectedTextureProjection() {
