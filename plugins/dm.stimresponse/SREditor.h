@@ -13,7 +13,16 @@ class StimResponseEditor :
 	public SelectionSystem::Observer
 {
 	GtkWidget* _dialog;
-
+	
+	GtkWidget* _dialogVBox;
+	
+	// The combobox using a liststore model filled with stims
+	GtkWidget* _stimTypeList; 
+	
+	// The treeview with the entity's stims/responses
+	GtkWidget* _entitySRView;
+	GtkListStore * _entitySRListStore;
+	
 	// The position/size memoriser
 	gtkutil::WindowPosition _windowPosition;
 	

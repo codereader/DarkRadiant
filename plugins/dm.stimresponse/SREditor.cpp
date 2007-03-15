@@ -6,6 +6,8 @@
 #include "qerplugin.h"
 #include "ieventmanager.h"
 #include "selectionlib.h"
+#include "gtkutil/LeftAlignedLabel.h"
+#include "gtkutil/LeftAlignment.h"
 #include "gtkutil/TransientWindow.h"
 #include "gtkutil/WindowPosition.h"
 #include <gtk/gtk.h>
@@ -19,6 +21,8 @@ namespace ui {
 		
 		const std::string RKEY_ROOT = "user/ui/stimResponseEditor/";
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
+		
+		const std::string LABEL_STIMRESPONSE_LIST = "Stims/Responses";
 	}
 
 StimResponseEditor::StimResponseEditor() :
@@ -87,11 +91,40 @@ void StimResponseEditor::toggleWindow() {
 }
 
 void StimResponseEditor::populateWindow() {
+	// Create the overall vbox
+	_dialogVBox = gtk_vbox_new(false, 6);
+	gtk_container_add(GTK_CONTAINER(_dialog), _dialogVBox);
 	
+	// Create the title label (bold font)
+	GtkWidget* topLabel = gtkutil::LeftAlignedLabel(
+    	std::string("<span weight=\"bold\">") + LABEL_STIMRESPONSE_LIST + "</span>"
+    );
+    gtk_box_pack_start(GTK_BOX(_dialogVBox), topLabel, true, true, 0);
+	
+	GtkWidget* srHBox = gtk_hbox_new(false, 6);
+	
+	// Pack it into an alignment so that it is indented
+	GtkWidget* srAlignment = gtkutil::LeftAlignment(GTK_WIDGET(srHBox), 18, 1.0); 
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(srAlignment), true, true, 0);
+	
+	_entitySRView = gtk_tree_view_new();
+	gtk_box_pack_start(GTK_BOX(srHBox), _entitySRView, false, false, 0);
+	
+	// Cast the helper class onto a ListStore and create a new treeview
+	GtkListStore* stimListStore = _stimTypes;
+	_stimTypeList = gtk_combo_box_new_with_model(GTK_TREE_MODEL(stimListStore));
+	g_object_unref(stimListStore); // tree view owns the reference now
+	
+	// Add the cellrenderer for the name
+	GtkCellRenderer* nameRenderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_stimTypeList), nameRenderer, true);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_stimTypeList), nameRenderer, "text", 1);
+	
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), _stimTypeList, false, false, 0);
 }
 
 void StimResponseEditor::update() {
-	
+	gtk_widget_set_sensitive(_dialogVBox, _entity != NULL);
 }
 
 void StimResponseEditor::rescanSelection() {
