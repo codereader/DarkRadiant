@@ -271,11 +271,12 @@ CamWnd::CamWnd() :
 }
 
 void CamWnd::jumpToObject(SelectionTest& selectionTest) {
-	// Find a suitable target Texturable
+	// Find a suitable target Instance
 	scene::Instance* instance;
 	GlobalSceneGraph().traverse(ObjectFinder(selectionTest, instance));
 	
 	if (instance != NULL) {
+		// An instance has been found, get the bounding box
 		AABB found = instance->worldAABB();
 		
 		// Focuse the view at the center of the found AABB
