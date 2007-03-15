@@ -1,7 +1,9 @@
 #include "iplugin.h"
 #include "ieventmanager.h"
+#include "iscenegraph.h"
 #include "iuimanager.h"
 #include "iregistry.h"
+#include "iselection.h"
 #include "qerplugin.h"
 
 #include "generic/callback.h"
@@ -55,7 +57,10 @@ class StimResponseDependencies :
 	public GlobalRegistryModuleRef,
 	public GlobalEventManagerModuleRef,
 	public GlobalUIManagerModuleRef,
-	public GlobalRadiantModuleRef
+	public GlobalRadiantModuleRef,
+	public GlobalSelectionModuleRef,
+	public GlobalSceneGraphModuleRef,
+	public TypeSystemRef
 { };
 
 /* Required code to register the module with the ModuleServer.
