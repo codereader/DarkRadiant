@@ -1,16 +1,11 @@
 #include "iplugin.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
+#include "iregistry.h"
 #include "qerplugin.h"
 
 #include "generic/callback.h"
-#include "gtkutil/dialog.h"
-
-// Test command
-void testCmd() {
-	gtkutil::errorDialog("Stim/Response is not implemented yet.",
-						 GlobalRadiant().getMainWindow());
-}
+#include "SREditor.h" 
 
 /**
  * API module to register the menu commands for the ObjectivesEditor class.
@@ -29,16 +24,19 @@ public:
 	StimResponseAPI() {
 		
 		// Add the callback event
-		GlobalEventManager().addCommand("StimResponse", FreeCaller<testCmd>());
+		GlobalEventManager().addCommand(
+			"StimResponseEditor", 
+			FreeCaller<ui::StimResponseEditor::toggle>()
+		);
 	
 		// Add the menu item
 		IMenuManager* mm = GlobalUIManager().getMenuManager();
-		mm->add("main/entity", 
-				"StimResponse", 
-				ui::menuItem,
-				"Stim/Response...",
-				"stimresponse.png",
-				"StimResponse");
+		mm->add("main/entity", 	// menu location path
+				"StimResponse", // name
+				ui::menuItem,	// type
+				"Stim/Response...",	// caption
+				"stimresponse.png",	// icon
+				"StimResponseEditor"); // event name
 	}
 	
 	/**
@@ -53,10 +51,11 @@ public:
 /**
  * Dependencies class.
  */
-class StimResponseDependencies
-: public GlobalEventManagerModuleRef,
-  public GlobalUIManagerModuleRef,
-  public GlobalRadiantModuleRef
+class StimResponseDependencies : 
+	public GlobalRegistryModuleRef,
+	public GlobalEventManagerModuleRef,
+	public GlobalUIManagerModuleRef,
+	public GlobalRadiantModuleRef
 { };
 
 /* Required code to register the module with the ModuleServer.
