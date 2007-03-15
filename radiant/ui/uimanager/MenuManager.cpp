@@ -90,7 +90,6 @@ GtkWidget* MenuManager::add(const std::string& insertPath,
 	if (found != NULL) {
 		// Allocate a new MenuItem
 		MenuItemPtr newItem = MenuItemPtr(new MenuItem(found));
-		found->addChild(newItem);
 		
 		newItem->setName(name);
 		newItem->setCaption(caption);
@@ -104,6 +103,11 @@ GtkWidget* MenuManager::add(const std::string& insertPath,
 		GtkWidget* parent = gtk_menu_item_get_submenu(GTK_MENU_ITEM(parentItem));
 		//GtkMenu* menu = GTK_MENU(gtk_menu_item_get_submenu(_menu));
 		gtk_menu_shell_append(GTK_MENU_SHELL(parent), *newItem);
+		
+		// Add the child to the <found> parent, AFTER its GtkWidget* operator 
+		// was invoked, otherwise the parent tries to instantiate it before it's actually
+		// added.
+		found->addChild(newItem);
 		
 		return *newItem;
 	}
