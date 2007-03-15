@@ -71,63 +71,6 @@ std::string ShaderSelector::getSelection() {
 	}
 }
 
-namespace {
-
-/* Local object that walks the GtkTreeModel and obtains a GtkTreePath locating
- * the given texture. The gtk_tree_model_foreach function requires a pointer to
- * a function, which in this case is a static member of the walker object that
- * accepts a void* pointer to the instance (like other GTK callbacks).
- */
-class SelectionFinder {
-	
-	// String containing the texture to highlight
-	std::string _texture;
-	
-	// The GtkTreePath* pointing to the required texture
-	GtkTreePath* _path;
-	
-public:
-
-	// Constructor
-	SelectionFinder(const std::string& selection)
-	: _texture(selection),
-	  _path(NULL)
-	{ }
-	
-	// Retrieve the found TreePath, which may be NULL if the texture was not
-	// found
-	GtkTreePath* getPath() {
-		return _path;
-	}
-	
-	// Static callback for GTK
-	static gboolean forEach(GtkTreeModel* model,
-							GtkTreePath* path,
-							GtkTreeIter* iter,
-							gpointer vpSelf)
-	{
-		// Get the self instance from the void pointer
-		SelectionFinder* self = 
-			reinterpret_cast<SelectionFinder*>(vpSelf);
-			
-		// If the visited row matches the texture to find, set the _path
-		// variable and finish, otherwise continue to search
-		if (gtkutil::TreeModel::getString(model, iter, FULLNAME_COL) 
-			== self->_texture)
-		{
-			self->_path = gtk_tree_path_copy(path);
-			return TRUE; // finish the walk
-		}
-		else 
-		{
-			return FALSE;
-		}
-	} 
-
-};
-
-} // local namespace
-
 // Set the selection in the treeview
 void ShaderSelector::setSelection(const std::string& sel) {
 
@@ -139,9 +82,9 @@ void ShaderSelector::setSelection(const std::string& sel) {
 	}
 
 	// Use the local SelectionFinder class to walk the TreeModel
-	SelectionFinder finder(sel);
+	gtkutil::TreeModel::SelectionFinder finder(sel, FULLNAME_COL);
 	GtkTreeModel* model = gtk_tree_view_get_model(GTK_TREE_VIEW(_treeView));
-	gtk_tree_model_foreach(model, SelectionFinder::forEach, &finder);
+	gtk_tree_model_foreach(model, gtkutil::TreeModel::SelectionFinder::forEach, &finder);
 	
 	// Get the found TreePath (may be NULL)
 	GtkTreePath* path = finder.getPath();
