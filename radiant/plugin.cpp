@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "brush/TexDef.h"
 #include "qerplugin.h"
+#include "iplugin.h"
 #include "ifilesystem.h"
 #include "ishaders.h"
 #include "iclipper.h"
@@ -292,8 +293,9 @@ namespace
   Radiant* g_Radiant;
 }
 
-
-
+/**
+ * Construct the Radiant module.
+ */
 bool Radiant_Construct(ModuleServer& server)
 {
 	GlobalModuleServer::instance().set(server);
@@ -301,12 +303,17 @@ bool Radiant_Construct(ModuleServer& server)
 
 	g_RadiantDependencies = new RadiantDependencies();
 
+	// If the module server has been set up correctly, create the Radiant
+	// module
 	g_RadiantInitialised = !server.getError();
-
 	if(g_RadiantInitialised) {
 		g_Radiant = new Radiant;
 	}
 
+	// Instantiate the plugin modules.
+	PluginModulesRef plugMods("*");
+
+	// Return the status
 	return g_RadiantInitialised;
 }
 void Radiant_Destroy()
