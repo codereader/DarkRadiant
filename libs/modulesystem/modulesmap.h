@@ -58,8 +58,11 @@ public:
     module.capture();
     if(globalModuleServer().getError())
     {
-      module.release();
-      globalModuleServer().setError(false);
+    	std::cerr << "[modulesystem] Warning: ModulesMap<" 
+    			  << typename Type::Name() << "> failed to instantiate module "
+    			  << "\"" << name << "\"" << std::endl;
+		module.release();
+		globalModuleServer().setError(false);
     }
     else
     {
