@@ -35,18 +35,18 @@ public:
 	{}     
 };
 
-/** greebo: Cycles through all the Faces and throws as soon as 
+/** greebo: Cycles through all the Patches/Faces and throws as soon as 
  * at least two different non-empty shader names are found.
  * 
  * @throws: AmbiguousShaderException
  */
-class UniqueFaceShaderFinder
+class UniqueShaderFinder
 {
 	// The string containing the result
 	mutable std::string& _shader;
 	
 public:
-	UniqueFaceShaderFinder(std::string& shader) : 
+	UniqueShaderFinder(std::string& shader) : 
 		_shader(shader)
 	{}
 
@@ -62,23 +62,7 @@ public:
 		
 		_shader = foundShader;
 	}
-};
-
-/** greebo: Cycles through all the Patches and throws as soon as 
- * at least two different non-empty shader names are found.
- * 
- * @throws: AmbiguousShaderException
- */
-class UniquePatchShaderFinder
-{
-	// The string containing the result
-	mutable std::string& _shader;
 	
-public:
-	UniquePatchShaderFinder(std::string& shader) : 
-		_shader(shader)
-	{}
-
 	void operator()(PatchInstance& patch) const {
 		
 		std::string foundShader = patch.getPatch().GetShader();
@@ -108,7 +92,7 @@ std::string getShaderFromSelection() {
 			try {
 				// Go through all the selected patches
 				Scene_forEachSelectedPatch(
-					UniquePatchShaderFinder(patchShader)
+					UniqueShaderFinder(patchShader)
 				);
 			}
 			catch (AmbiguousShaderException a) {
@@ -124,7 +108,7 @@ std::string getShaderFromSelection() {
 				// Go through all the selected brushes and their faces
 				Scene_ForEachSelectedBrush_ForEachFaceInstance(
 					GlobalSceneGraph(),
-					UniqueFaceShaderFinder(faceShader)
+					UniqueShaderFinder(faceShader)
 				);
 			}
 			catch (AmbiguousShaderException a) {
@@ -134,7 +118,7 @@ std::string getShaderFromSelection() {
 		else {
 			// Try to get the unique shader from the faces
 			try {
-				g_SelectedFaceInstances.foreach(UniqueFaceShaderFinder(faceShader));
+				g_SelectedFaceInstances.foreach(UniqueShaderFinder(faceShader));
 			}
 			catch (AmbiguousShaderException a) {
 				faceShader = "";
@@ -159,30 +143,19 @@ std::string getShaderFromSelection() {
 	return returnValue;
 }
 
-/** greebo: Applies the given shader to the visited patch
+/** greebo: Applies the given shader to the visited face/patch
  */
-class PatchShaderSetter
+class ShaderApplicator
 {
 	std::string _shader;
 public:
-	PatchShaderSetter(const std::string& shader) : 
+	ShaderApplicator(const std::string& shader) : 
 		_shader(shader) 
 	{}
 	
 	void operator()(Patch& patch) const {
 		patch.SetShader(_shader);
 	}
-};
-
-/** greebo: Applies the given texture repeat to the visited face
- */
-class FaceShaderSetter
-{
-	std::string _shader;
-public:
-	FaceShaderSetter(const std::string& shader) : 
-		_shader(shader) 
-	{}
 	
 	void operator()(Face& face) const {
 		face.SetShader(_shader);
@@ -193,20 +166,20 @@ void applyShaderToSelection(const std::string& shaderName) {
 	UndoableCommand undo("setShader");
 	
 	// Patches
-	Scene_forEachVisibleSelectedPatch(PatchShaderSetter(shaderName));
+	Scene_forEachVisibleSelectedPatch(ShaderApplicator(shaderName));
 	
 	// Brushes
 	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
 		Scene_ForEachSelectedBrush_ForEachFace(
 			GlobalSceneGraph(), 
-			FaceShaderSetter(shaderName)
+			ShaderApplicator(shaderName)
 		);
 	}
 	
 	// Faces
 	Scene_ForEachSelectedBrushFace(
 		GlobalSceneGraph(), 
-		FaceShaderSetter(shaderName)
+		ShaderApplicator(shaderName)
 	);
 	
 	SceneChangeNotify();
@@ -523,33 +496,22 @@ Vector2 getSelectedFaceShaderSize() {
 	return returnValue;
 }
 
-/** greebo: Applies the given texture repeat to the visited patch
+/** greebo: Applies the given texture repeat to the visited patch/face
  */
-class PatchTextureFitter
+class TextureFitter
 {
 	float _repeatS, _repeatT;
 public:
-	PatchTextureFitter(float repeatS, float repeatT) : 
-		_repeatS(repeatS), _repeatT(repeatT) 
-	{}
-	
-	void operator()(Patch& patch) const {
-		patch.SetTextureRepeat(_repeatS, _repeatT);
-	}
-};
-
-/** greebo: Applies the given texture repeat to the visited face
- */
-class FaceTextureFitter
-{
-	float _repeatS, _repeatT;
-public:
-	FaceTextureFitter(float repeatS, float repeatT) : 
+	TextureFitter(float repeatS, float repeatT) : 
 		_repeatS(repeatS), _repeatT(repeatT) 
 	{}
 	
 	void operator()(Face& face) const {
 		face.FitTexture(_repeatS, _repeatT);
+	}
+	
+	void operator()(Patch& patch) const {
+		patch.SetTextureRepeat(_repeatS, _repeatT);
 	}
 };
 
@@ -558,14 +520,15 @@ void fitTexture(const float& repeatS, const float& repeatT) {
 	
 	// Cycle through all selected brushes
 	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
-		Scene_ForEachSelectedBrush_ForEachFace(GlobalSceneGraph(), FaceTextureFitter(repeatS, repeatT));
+		Scene_ForEachSelectedBrush_ForEachFace(
+			GlobalSceneGraph(), TextureFitter(repeatS, repeatT));
 	}
 	
 	// Cycle through all selected components
-	Scene_ForEachSelectedBrushFace(GlobalSceneGraph(), FaceTextureFitter(repeatS, repeatT));
+	Scene_ForEachSelectedBrushFace(GlobalSceneGraph(), TextureFitter(repeatS, repeatT));
 	
 	// Cycle through all the selected patches
-	Scene_forEachVisibleSelectedPatch(PatchTextureFitter(repeatS, repeatT));
+	Scene_forEachVisibleSelectedPatch(TextureFitter(repeatS, repeatT));
 	
 	SceneChangeNotify();
 	// Update the Texture Tools
@@ -693,32 +656,20 @@ void applyTextureProjectionToFaces(TextureProjection& projection) {
 	ui::SurfaceInspector::Instance().update();
 }
 
-/** greebo: Translates the texture of the visited faces
+/** greebo: Translates the texture of the visited faces/patches
  * about the specified <shift> Vector2
  */
-class FaceTextureShifter
+class TextureShifter
 {
 	const Vector2& _shift;
 public:
-	FaceTextureShifter(const Vector2& shift) : 
+	TextureShifter(const Vector2& shift) : 
 		_shift(shift) 
 	{}
 	
 	void operator()(Face& face) const {
 		face.ShiftTexdef(_shift[0], _shift[1]);
 	}
-};
-
-/** greebo: Translates the texture of the visited patches
- * about the specified <shift> Vector2
- */
-class PatchTextureShifter
-{
-	const Vector2& _shift;
-public:
-	PatchTextureShifter(const Vector2& shift) :
-		_shift(shift) 
-	{}
 	
 	void operator()(Patch& patch) const {
 		patch.TranslateTexture(_shift[0], _shift[1]);
@@ -732,13 +683,13 @@ void shiftTexture(const Vector2& shift) {
 	UndoableCommand undo(command.c_str());
 	
 	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
-		Scene_ForEachSelectedBrush_ForEachFace(GlobalSceneGraph(), FaceTextureShifter(shift));
-  		Scene_forEachVisibleSelectedPatch(PatchTextureShifter(shift));
+		Scene_ForEachSelectedBrush_ForEachFace(GlobalSceneGraph(), TextureShifter(shift));
+  		Scene_forEachVisibleSelectedPatch(TextureShifter(shift));
 	}
 	// Translate the face textures
 	Scene_ForEachSelectedBrushFace(
 		GlobalSceneGraph(), 
-		FaceTextureShifter(shift)
+		TextureShifter(shift)
 	);
 	
 	SceneChangeNotify();
@@ -746,64 +697,40 @@ void shiftTexture(const Vector2& shift) {
 	ui::SurfaceInspector::Instance().update();
 }
 
-/** greebo: Scales the texture of the visited faces
+/** greebo: Scales the texture of the visited faces/patches
  * about the specified x,y-scale values in the given Vector2
  */
-class FaceTextureScaler
+class TextureScaler
 {
 	const Vector2& _scale;
 public:
-	FaceTextureScaler(const Vector2& scale) : 
+	TextureScaler(const Vector2& scale) : 
 		_scale(scale) 
 	{}
 	
 	void operator()(Face& face) const {
 		face.ScaleTexdef(_scale[0], _scale[1]);
 	}
-};
-
-/** greebo: Scales the texture of the visited patches
- * about the specified x,y-scale values in the given Vector2
- */
-class PatchTextureScaler
-{
-	const Vector2& _scale;
-public:
-	PatchTextureScaler(const Vector2& scale) :
-		_scale(scale) 
-	{}
 	
 	void operator()(Patch& patch) const {
 		patch.ScaleTexture(_scale[0], _scale[1]);
 	}
 };
 
-/** greebo: Rotates the texture of the visited faces
+/** greebo: Rotates the texture of the visited faces/patches
  * about the specified angle
  */
-class FaceTextureRotater
+class TextureRotator
 {
 	const float& _angle;
 public:
-	FaceTextureRotater(const float& angle) : 
+	TextureRotator(const float& angle) : 
 		_angle(angle) 
 	{}
 	
 	void operator()(Face& face) const {
 		face.RotateTexdef(_angle);
 	}
-};
-
-/** greebo: Rotates the texture of the visited patches
- * about the specified angle
- */
-class PatchTextureRotater
-{
-	const float& _angle;
-public:
-	PatchTextureRotater(const float& angle) : 
-		_angle(angle) 
-	{}
 	
 	void operator()(Patch& patch) const {
 		patch.RotateTexture(_angle);
@@ -819,7 +746,7 @@ void scaleTexture(const Vector2& scale) {
 	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
 		Scene_ForEachSelectedBrush_ForEachFace(
 			GlobalSceneGraph(), 
-			FaceTextureScaler(scale)
+			TextureScaler(scale)
 		);
 		
 		// Prepare the according patch scale value
@@ -837,12 +764,12 @@ void scaleTexture(const Vector2& scale) {
 		}
 		
 		// Pass the scale to the patches as they are scaled in relative steps
-  		Scene_forEachVisibleSelectedPatch(PatchTextureScaler(patchScale));
+  		Scene_forEachVisibleSelectedPatch(TextureScaler(patchScale));
 	}
 	// Scale the face textures
 	Scene_ForEachSelectedBrushFace(
 		GlobalSceneGraph(), 
-		FaceTextureScaler(scale)
+		TextureScaler(scale)
 	);
 	
 	SceneChangeNotify();
@@ -859,15 +786,15 @@ void rotateTexture(const float& angle) {
 	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
 		Scene_ForEachSelectedBrush_ForEachFace(
 			GlobalSceneGraph(), 
-			FaceTextureRotater(angle)
+			TextureRotator(angle)
 		);
-  		Scene_forEachVisibleSelectedPatch(PatchTextureRotater(angle));
+  		Scene_forEachVisibleSelectedPatch(TextureRotator(angle));
 	}
 	
 	// Rotate the face textures
 	Scene_ForEachSelectedBrushFace(
 		GlobalSceneGraph(), 
-		FaceTextureRotater(angle)
+		TextureRotator(angle)
 	);
 
 	SceneChangeNotify();
@@ -915,21 +842,15 @@ void rotateTextureCounter() {
 	rotateTexture(-fabs(GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/rotStep")));
 }
 
-/** greebo: Normalises the texture of the visited faces.
+/** greebo: Normalises the texture of the visited faces/patches.
  */
-class FaceTextureNormaliser
+class TextureNormaliser
 {
 public:
 	void operator()(Face& face) const {
 		face.normaliseTexture();
 	}
-};
-
-/** greebo: Normalises the texture of the visited patches.
- */
-class PatchTextureNormaliser
-{
-public:
+	
 	void operator()(Patch& patch) const {
 		patch.normaliseTexture();
 	}
@@ -941,15 +862,15 @@ void normaliseTexture() {
 	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
 		Scene_ForEachSelectedBrush_ForEachFace(
 			GlobalSceneGraph(), 
-			FaceTextureNormaliser()
+			TextureNormaliser()
 		);
-  		Scene_forEachVisibleSelectedPatch(PatchTextureNormaliser());
+  		Scene_forEachVisibleSelectedPatch(TextureNormaliser());
 	}
 	
 	// Normalise the face textures (single face instances)
 	Scene_ForEachSelectedBrushFace(
 		GlobalSceneGraph(), 
-		FaceTextureNormaliser()
+		TextureNormaliser()
 	);
 
 	SceneChangeNotify();
@@ -957,16 +878,16 @@ void normaliseTexture() {
 	ui::SurfaceInspector::Instance().update();
 }
 
-/** greebo: This replaces the shader of the visited face with <replace>
+/** greebo: This replaces the shader of the visited face/patch with <replace>
  * 			if the face is textured with <find> and increases the given <counter>. 
  */
-class FaceShaderReplacer
+class ShaderReplacer
 {
 	const std::string& _find;
 	const std::string& _replace;
 	int& _counter;
 public:
-	FaceShaderReplacer(const std::string& find, const std::string& replace, int& counter) : 
+	ShaderReplacer(const std::string& find, const std::string& replace, int& counter) : 
 		_find(find), 
 		_replace(replace),
 		_counter(counter)
@@ -978,22 +899,6 @@ public:
 			_counter++;
 		}
 	}
-};
-
-/** greebo: This replaces the shader of the visited face with <replace>
- * 			if the face is textured with <find> and increases the given <counter>. 
- */
-class PatchShaderReplacer
-{
-	const std::string& _find;
-	const std::string& _replace;
-	int& _counter;
-public:
-	PatchShaderReplacer(const std::string& find, const std::string& replace, int& counter) : 
-		_find(find), 
-		_replace(replace),
-		_counter(counter)
-	{}
 	
 	void operator()(Patch& patch) const {
 		if (patch.GetShader() == _find) {
@@ -1018,27 +923,27 @@ int findAndReplaceShader(const std::string find,
 			// Find & replace all the brush shaders
 			Scene_ForEachSelectedBrush_ForEachFace(
 				GlobalSceneGraph(), 
-				FaceShaderReplacer(find, replace, counter)
+				ShaderReplacer(find, replace, counter)
 			);
 			
 			Scene_forEachVisibleSelectedPatch(
-				PatchShaderReplacer(find, replace, counter)
+				ShaderReplacer(find, replace, counter)
 			);
 		}
 		
 		// Search the single selected faces 
 		Scene_ForEachSelectedBrushFace(
 			GlobalSceneGraph(), 
-			FaceShaderReplacer(find, replace, counter)
+			ShaderReplacer(find, replace, counter)
 		);
 	}
 	else {
 		Scene_ForEachBrush_ForEachFace(
 			GlobalSceneGraph(), 
-			FaceShaderReplacer(find, replace, counter)
+			ShaderReplacer(find, replace, counter)
 		);
 		// Search all patches
-		Scene_forEachVisiblePatch(PatchShaderReplacer(find, replace, counter));
+		Scene_forEachVisiblePatch(ShaderReplacer(find, replace, counter));
 	}
 	
 	return counter;
