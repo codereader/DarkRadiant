@@ -298,6 +298,18 @@ objLib = objEnv.SharedLibrary(target='dm_objectives',
 							  no_import_lib=1)
 objEnv.Install(INSTALL + '/plugins', objLib)
 
+srEnv = module_env.Copy()
+srEnv.Append(LIBS = ['gtkutil'])
+srEnv.useGtk2()
+srEnv.useGlib2()
+srList = build_list('plugins/dm.stimresponse', 'stimresponse.cpp')
+srLib = srEnv.SharedLibrary(target='dm_stimresponse',
+							source=srList,
+							no_import_lib=1)
+srEnv.Install(INSTALL + '/plugins', srLib)
+
+# Main Radiant binary
+
 radiant_env = g_env.Copy()
 radiant_env['CPPPATH'].append('include')
 if radiant_env['PLATFORM'] == 'posix':

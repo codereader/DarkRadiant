@@ -1,45 +1,44 @@
-#include "ObjectivesEditor.h"
-
 #include "iplugin.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
 #include "qerplugin.h"
-#include "iscenegraph.h"
-#include "typesystem.h"
 
 #include "generic/callback.h"
+#include "gtkutil/dialog.h"
 
-#include <iostream>
+// Test command
+void testCmd() {
+	gtkutil::errorDialog("Stim/Response is not implemented yet.",
+						 GlobalRadiant().getMainWindow());
+}
 
 /**
  * API module to register the menu commands for the ObjectivesEditor class.
  */
-class ObjectivesEditorAPI
+class StimResponseAPI
 : public IPlugin
 {
 public:
-	STRING_CONSTANT(Name, "ObjectivesEditor");
+	STRING_CONSTANT(Name, "StimResponse");
 	typedef IPlugin Type;
 
 	/**
 	 * API constructor, registers the commands in the Event manager and UI
 	 * manager.
 	 */
-	ObjectivesEditorAPI() {
+	StimResponseAPI() {
 		
 		// Add the callback event
-		GlobalEventManager().addCommand("ObjectivesEditor",
-							FreeCaller<ui::ObjectivesEditor::displayDialog>());
-	
+		GlobalEventManager().addCommand("StimResponse", FreeCaller<testCmd>());
 	
 		// Add the menu item
 		IMenuManager* mm = GlobalUIManager().getMenuManager();
-		mm->add("main/map", 
-				"ObjectivesEditor", 
+		mm->add("main/entity", 
+				"StimResponse", 
 				ui::menuItem,
-				"Objectives...",
-				"objectives16.png",
-				"ObjectivesEditor");
+				"Stim/Response...",
+				"stimresponse.png",
+				"StimResponse");
 	}
 	
 	/**
@@ -54,12 +53,10 @@ public:
 /**
  * Dependencies class.
  */
-class ObjectivesEditorDependencies
+class StimResponseDependencies
 : public GlobalEventManagerModuleRef,
   public GlobalUIManagerModuleRef,
-  public GlobalRadiantModuleRef,
-  public GlobalSceneGraphModuleRef,
-  public TypeSystemRef
+  public GlobalRadiantModuleRef
 { };
 
 /* Required code to register the module with the ModuleServer.
@@ -67,13 +64,13 @@ class ObjectivesEditorDependencies
 
 #include "modulesystem/singletonmodule.h"
 
-typedef SingletonModule<ObjectivesEditorAPI,
-						ObjectivesEditorDependencies> ObjectivesEditorModule;
+typedef SingletonModule<StimResponseAPI,
+						StimResponseDependencies> StimResponseModule;
 
 extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
 {
 	// Static module instance
-	static ObjectivesEditorModule _instance;
+	static StimResponseModule _instance;
 	
 	// Initialise and register the module	
 	initialiseModule(server);
