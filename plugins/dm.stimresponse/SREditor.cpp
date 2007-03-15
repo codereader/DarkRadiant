@@ -33,6 +33,9 @@ StimResponseEditor::StimResponseEditor() :
 	
 	g_signal_connect(G_OBJECT(_dialog), "delete-event", G_CALLBACK(onDelete), this);
 	
+	// Create the widgets
+	populateWindow();
+	
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
 	GlobalEventManager().connectDialogWindow(GTK_WINDOW(_dialog));
 	
@@ -83,10 +86,19 @@ void StimResponseEditor::toggleWindow() {
 	}
 }
 
+void StimResponseEditor::populateWindow() {
+	
+}
+
+void StimResponseEditor::update() {
+	
+}
+
 void StimResponseEditor::rescanSelection() {
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
 	_entity = NULL;
+	
 	if (info.entityCount == 1 && info.totalCount == 1) {
 		// Get the entity instance
 		scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
@@ -96,6 +108,9 @@ void StimResponseEditor::rescanSelection() {
 			globalOutputStream() << "Entity: " << _entity->getKeyValue("classname").c_str() << "\n";
 		}
 	}
+	
+	// Update the widgets
+	update();
 }
 
 void StimResponseEditor::selectionChanged(scene::Instance& instance) {

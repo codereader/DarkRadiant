@@ -5,6 +5,8 @@
 #include "ientity.h"
 #include "gtkutil/WindowPosition.h"
 
+#include "StimTypes.h"
+
 namespace ui {
 
 class StimResponseEditor :
@@ -17,6 +19,9 @@ class StimResponseEditor :
 	
 	// The entity we're editing
 	Entity* _entity;
+	
+	// The helper class managing the stims
+	StimTypes _stimTypes;
 
 public:
 	StimResponseEditor();
@@ -38,6 +43,15 @@ public:
 	void selectionChanged(scene::Instance& instance);
 
 private:
+	/** greebo: This fills the window with widgets
+	 */
+	void populateWindow();
+	
+	/** greebo: This updates the widget sensitivity and loads
+	 * 			the data into them.
+	 */
+	void update();
+
 	/** greebo: Checks the selection for a single entity.
 	 */
 	void rescanSelection();
