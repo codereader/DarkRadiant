@@ -16,6 +16,8 @@
 const int CAMWND_MINSIZE_X = 240;
 const int CAMWND_MINSIZE_Y = 200;
 
+class SelectionTest;
+
 class CamWnd :
 	public scene::Graph::Observer
 {
@@ -96,6 +98,8 @@ public:
 	void enableFreeMove();
 	void disableFreeMove();
 	bool freeMoveEnabled() const;
+
+	void jumpToObject(SelectionTest& selectionTest);
 
 	CameraView* getCameraView();
 

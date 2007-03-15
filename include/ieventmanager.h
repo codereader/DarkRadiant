@@ -55,6 +55,7 @@ namespace ui {
 		obsPasteTextureNatural,	// paste texture to object, but do not distort it
 		obsPasteTextureCoordinates, // paste the texture coordinates only (patch>>patch)
 		obsPasteTextureToBrush, // paste texture to all brush faces of the selected brush
+		obsJumpToObject, 		// focuses the cam & xyviews to the clicked object
 	};
 } // namespace ui
 
