@@ -285,6 +285,15 @@ entity_env.Depends(entity_lib, math)
 entity_env.Depends(entity_lib, xmlutil)
 entity_env.Install(INSTALL + '/modules', entity_lib)
 
+# Optional plugins
+
+objEnv = module_env.Copy()
+objList = build_list('plugins/dm.objectives', 'objectives.cpp')
+objLib = objEnv.SharedLibrary(target='dm_objectives',
+							  source=objList,
+							  no_import_lib=1)
+objEnv.Install(INSTALL + '/plugins', objLib)
+
 radiant_env = g_env.Copy()
 radiant_env['CPPPATH'].append('include')
 if radiant_env['PLATFORM'] == 'posix':
