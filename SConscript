@@ -299,10 +299,10 @@ objLib = objEnv.SharedLibrary(target='dm_objectives',
 objEnv.Install(INSTALL + '/plugins', objLib)
 
 srEnv = module_env.Copy()
-srEnv.Append(LIBS = ['gtkutil'])
+srEnv.Append(LIBS = ['gtkutil', 'xmlutil'])
 srEnv.useGtk2()
 srEnv.useGlib2()
-srList = build_list('plugins/dm.stimresponse', 'stimresponse.cpp')
+srList = build_list('plugins/dm.stimresponse', 'stimresponse.cpp SREditor.cpp')
 srLib = srEnv.SharedLibrary(target='dm_stimresponse',
 							source=srList,
 							no_import_lib=1)
