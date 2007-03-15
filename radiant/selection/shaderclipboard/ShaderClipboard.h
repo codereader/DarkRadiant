@@ -38,6 +38,11 @@ public:
 	
 private:
 
+	/** greebo: Sets the media browser / texwindow focus to the
+	 * 			new source shader.
+	 */
+	void updateMediaBrowsers();
+
 	/** greebo: Retrieves the best texturable object from the
 	 * 			given SelectionTest.
 	 */

@@ -59,8 +59,41 @@ public:
 	 */
 	static std::string getSelectedString(GtkTreeSelection* selection,
 										 gint colNo);
+										 
+	/* Local object that walks the GtkTreeModel and obtains a GtkTreePath locating
+	 * the given name. The gtk_tree_model_foreach function requires a pointer to
+	 * a function, which in this case is a static member of the walker object that
+	 * accepts a void* pointer to the instance (like other GTK callbacks).
+	 */
+	class SelectionFinder {
+		
+		// String containing the name to highlight
+		std::string _selection;
+		
+		// The GtkTreePath* pointing to the required texture
+		GtkTreePath* _path;
+		
+		// The column index to be searched
+		int _column;
+		
+	public:
+	
+		// Constructor
+		SelectionFinder(const std::string& selection, int column);
+		
+		// Retrieve the found TreePath, which may be NULL if the texture was not
+		// found
+		GtkTreePath* getPath();
+		
+		// Static callback for GTK
+		static gboolean forEach(GtkTreeModel* model,
+								GtkTreePath* path,
+								GtkTreeIter* iter,
+								gpointer vpSelf);
+	
+	}; // class SelectionFinder
 };
 
-}
+} // namespace gtkutil
 
 #endif /*TREEMODEL_H_*/

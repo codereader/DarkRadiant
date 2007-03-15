@@ -3,6 +3,7 @@
 #include "selectable.h"
 #include "iscenegraph.h"
 #include "texwindow.h"
+#include "ui/mediabrowser/MediaBrowser.h"
 
 namespace selection {
 
@@ -24,27 +25,31 @@ Texturable ShaderClipboard::getTexturable(SelectionTest& test) {
 	return returnValue;
 }
 
+void ShaderClipboard::updateMediaBrowsers() {
+	// Set the active shader in the Texture window as well
+	TextureBrowser_SetSelectedShader(GlobalTextureBrowser(), _source.getShader());
+	std::string sourceShader = _source.getShader();
+	ui::MediaBrowser::getInstance().setSelection(sourceShader);
+}
+
 void ShaderClipboard::setSource(SelectionTest& test) {
 	_source = getTexturable(test);
 	
-	// Set the active shader in the Texture window as well
-	TextureBrowser_SetSelectedShader(GlobalTextureBrowser(), _source.getShader());
+	updateMediaBrowsers();
 }
 
 void ShaderClipboard::setSource(Patch& sourcePatch) {
 	_source.clear();
 	_source.patch = &sourcePatch;
 	
-	// Set the active shader in the Texture window as well
-	TextureBrowser_SetSelectedShader(GlobalTextureBrowser(), _source.getShader());
+	updateMediaBrowsers();
 }
 
 void ShaderClipboard::setSource(Face& sourceFace) {
 	_source.clear();
 	_source.face = &sourceFace;
 	
-	// Set the active shader in the Texture window as well
-	TextureBrowser_SetSelectedShader(GlobalTextureBrowser(), _source.getShader());
+	updateMediaBrowsers();
 }
 
 Texturable& ShaderClipboard::getSource() {

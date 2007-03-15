@@ -7,6 +7,7 @@
 #include "generic/callback.h"
 #include "gtkutil/image.h"
 #include "gtkutil/IconTextMenuItem.h"
+#include "gtkutil/TreeModel.h"
 
 #include <gtk/gtkvbox.h>
 #include <gtk/gtktreeview.h>
@@ -261,6 +262,39 @@ void MediaBrowser::updateAvailableMenuItems() {
 	else
 		gtk_widget_set_sensitive(_loadInTexturesView, FALSE);
 	
+}
+
+/** Return the singleton instance.
+ */
+MediaBrowser& MediaBrowser::getInstance() {
+	static MediaBrowser _instance;
+	return _instance;
+}
+
+// Set the selection in the treeview
+void MediaBrowser::setSelection(const std::string& selection) {
+	// If the selection string is empty, collapse the treeview and return with
+	// no selection
+	if (selection.empty()) {
+		gtk_tree_view_collapse_all(GTK_TREE_VIEW(_treeView));
+		return;
+	}
+	// Use the local SelectionFinder class to walk the TreeModel
+	gtkutil::TreeModel::SelectionFinder finder(selection, FULLNAME_COLUMN);
+	
+	GtkTreeModel* model = gtk_tree_view_get_model(GTK_TREE_VIEW(_treeView));
+	gtk_tree_model_foreach(model, gtkutil::TreeModel::SelectionFinder::forEach, &finder);
+		
+	// Get the found TreePath (may be NULL)
+	GtkTreePath* path = finder.getPath();
+	if (path) {
+		// Expand the treeview to display the target row
+		gtk_tree_view_expand_to_path(GTK_TREE_VIEW(_treeView), path);
+		// Highlight the target row
+		gtk_tree_view_set_cursor(GTK_TREE_VIEW(_treeView), path, NULL, false);
+		// Make the selected row visible 
+		gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(_treeView), path, NULL, true, 0.3f, 0.0f);
+	}
 }
 
 /* GTK CALLBACKS */

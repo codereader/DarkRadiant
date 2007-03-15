@@ -57,10 +57,7 @@ public:
 	
 	/** Return the singleton instance.
 	 */
-	static MediaBrowser& getInstance() {
-		static MediaBrowser _instance;
-		return _instance;
-	}
+	static MediaBrowser& getInstance();
 
 	/** Return the main widget for packing into
 	 * the groupdialog or other parent container.
@@ -73,6 +70,15 @@ public:
 	/** Constructor creates GTK widgets.
 	 */
 	MediaBrowser();
+	
+	/** Set the given path as the current selection, highlighting it
+	 * in the tree view.
+	 * 
+	 * @param selection
+	 * The fullname of the item to select, or the empty string if there 
+	 * should be no selection.
+	 */
+	void setSelection(const std::string& selection);
 };
 
 }
