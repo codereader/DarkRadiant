@@ -8,14 +8,55 @@
 #include "gtkutil/widget.h"
 #include "cmdlib.h"
 
+#include "selectable.h"
+#include "selectionlib.h"
 #include "windowobservers.h"
 #include "plugin.h"
 #include "mainframe.h"
 #include "renderstate.h"
 
+#include "map.h"
 #include "CamRenderer.h"
 #include "CameraSettings.h"
 #include "GlobalCamera.h"
+
+class ObjectFinder :
+	public scene::Graph::Walker
+{
+	scene::Instance*& _instance;
+	SelectionTest& _selectionTest;
+	
+	// To store the best intersection candidate
+	mutable SelectionIntersection _bestIntersection;
+public:
+	// Constructor
+	ObjectFinder(SelectionTest& test, scene::Instance*& instance) :
+		_instance(instance),
+		_selectionTest(test)
+	{
+		_instance = NULL;
+	}
+	
+	// The visitor function
+	bool pre(const scene::Path& path, scene::Instance& instance) const {
+		// Check if the node is filtered
+		if (path.top().get().visible()) {	
+			SelectionTestable* selectionTestable = Instance_getSelectionTestable(instance);
+			
+			if (selectionTestable != NULL) {
+				bool occluded;
+				OccludeSelector selector(_bestIntersection, occluded);
+				selectionTestable->testSelect(selector, _selectionTest);
+				
+				if (occluded) {
+					_instance = &instance;
+				}
+			}
+		}
+			
+		return true;
+	}
+};
 
 inline WindowVector windowvector_for_widget_centre(GtkWidget* widget) {
 	return WindowVector(static_cast<float>(widget->allocation.width / 2), static_cast<float>(widget->allocation.height / 2));
@@ -227,6 +268,19 @@ CamWnd::CamWnd() :
 	GlobalSceneGraph().addSceneObserver(this);
 
 	GlobalEventManager().connect(GTK_OBJECT(m_gl_widget));
+}
+
+void CamWnd::jumpToObject(SelectionTest& selectionTest) {
+	// Find a suitable target Texturable
+	scene::Instance* instance;
+	GlobalSceneGraph().traverse(ObjectFinder(selectionTest, instance));
+	
+	if (instance != NULL) {
+		AABB found = instance->worldAABB();
+		
+		// Focuse the view at the center of the found AABB
+		map::focusViews(found.origin, getCameraAngles());
+	}
 }
 
 void CamWnd::updateXORRectangle(Rectangle area) {

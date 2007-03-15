@@ -46,29 +46,6 @@ std::string Texturable::getShader() const {
 
 namespace algorithm {
 
-class OccludeSelector : public Selector
-{
-	SelectionIntersection& _bestIntersection;
-	bool& _occluded;
-public:
-	OccludeSelector(SelectionIntersection& bestIntersection, bool& occluded) : 
-		_bestIntersection(bestIntersection), 
-		_occluded(occluded) 
-	{
-		_occluded = false;
-	}
-	
-	void pushSelectable(Selectable& selectable) {}
-	void popSelectable() {}
-	
-	void addIntersection(const SelectionIntersection& intersection) {
-		if (SelectionIntersection_closer(intersection, _bestIntersection)) {
-			_bestIntersection = intersection;
-			_occluded = true;
-		}
-	}
-}; // class OccludeSelector
-
 ClosestTexturableFinder::ClosestTexturableFinder(SelectionTest& test, Texturable& texturable) :
 	_texturable(texturable),
 	_selectionTest(test)

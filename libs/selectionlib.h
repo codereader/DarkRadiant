@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_SELECTIONLIB_H
 
 #include "iselection.h"
+#include "selectable.h"
 #include "generic/callback.h"
 #include "scenelib.h"
 #include <stdlib.h>
@@ -239,5 +240,27 @@ public:
   }
 };
 
+class OccludeSelector : public Selector
+{
+	SelectionIntersection& _bestIntersection;
+	bool& _occluded;
+public:
+	OccludeSelector(SelectionIntersection& bestIntersection, bool& occluded) : 
+		_bestIntersection(bestIntersection), 
+		_occluded(occluded) 
+	{
+		_occluded = false;
+	}
+	
+	void pushSelectable(Selectable& selectable) {}
+	void popSelectable() {}
+	
+	void addIntersection(const SelectionIntersection& intersection) {
+		if (SelectionIntersection_closer(intersection, _bestIntersection)) {
+			_bestIntersection = intersection;
+			_occluded = true;
+		}
+	}
+}; // class OccludeSelector
 
 #endif
