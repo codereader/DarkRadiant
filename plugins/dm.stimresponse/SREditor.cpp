@@ -1,11 +1,16 @@
 #include "SREditor.h"
 
 #include "iregistry.h"
+#include "iscenegraph.h"
+#include "itextstream.h"
 #include "qerplugin.h"
 #include "ieventmanager.h"
+#include "selectionlib.h"
 #include "gtkutil/TransientWindow.h"
 #include "gtkutil/WindowPosition.h"
 #include <gtk/gtk.h>
+
+#include <iostream>
 
 namespace ui {
 
@@ -16,7 +21,8 @@ namespace ui {
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 	}
 
-StimResponseEditor::StimResponseEditor()
+StimResponseEditor::StimResponseEditor() :
+	_entity(NULL)
 {
 	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
 	_dialog = gtkutil::TransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow(), false);
@@ -29,6 +35,9 @@ StimResponseEditor::StimResponseEditor()
 	
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
 	GlobalEventManager().connectDialogWindow(GTK_WINDOW(_dialog));
+	
+	// Register self to the SelSystem to get notified upon selection changes.
+	GlobalSelectionSystem().addObserver(this);
 	
 	// Connect the window position tracker
 	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
@@ -53,6 +62,7 @@ void StimResponseEditor::shutdown() {
 	
 	gtk_widget_hide(_dialog);
 	
+	GlobalSelectionSystem().removeObserver(this);
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(_dialog));
 }
 
@@ -66,9 +76,30 @@ void StimResponseEditor::toggleWindow() {
 	else {
 		// Restore the position
 		_windowPosition.applyPosition();
+		// Scan the selection for entities
+		rescanSelection();
 		// Now show the dialog window again
 		gtk_widget_show_all(_dialog);
 	}
+}
+
+void StimResponseEditor::rescanSelection() {
+	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+
+	_entity = NULL;
+	if (info.entityCount == 1 && info.totalCount == 1) {
+		// Get the entity instance
+		scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
+		scene::Node& node = instance.path().top();
+		_entity = Node_getEntity(node);
+		if (_entity != NULL) {
+			globalOutputStream() << "Entity: " << _entity->getKeyValue("classname").c_str() << "\n";
+		}
+	}
+}
+
+void StimResponseEditor::selectionChanged(scene::Instance& instance) {
+	rescanSelection();
 }
 
 // Static GTK Callbacks
