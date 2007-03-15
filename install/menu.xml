@@ -179,8 +179,6 @@
 	<subMenu name="map" caption="M_ap">
 		<menuItem name="findBrush" caption="Find brush..." command="FindBrush" />
 		<menuItem name="mapinfo" caption="Map info..." command="MapInfo" />
-		<menuSeparator />
-		<menuItem name="objectives" caption="_Objectives" command="ObjectivesEditor" icon="objectives16.png" />
 	</subMenu>
 
 	<subMenu name="entity" caption="E_ntity">

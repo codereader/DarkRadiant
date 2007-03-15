@@ -43,7 +43,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/menu/FiltersMenu.h"
 #include "ui/transform/TransformDialog.h"
 #include "ui/overlay/OverlayDialog.h"
-#include "ui/objectives/ObjectivesEditor.h"
 #include "selection/algorithm/Shader.h"
 #include "selection/algorithm/Group.h"
 #include "selection/algorithm/Primitives.h"
@@ -2386,10 +2385,6 @@ void MainFrame_Construct()
 	// Overlay dialog
 	GlobalEventManager().addCommand("OverlayDialog",
 									FreeCaller<ui::OverlayDialog::display>());
-	
-	// Objectives editor
-	GlobalEventManager().addCommand("ObjectivesEditor",
-							FreeCaller<ui::ObjectivesEditor::displayDialog>());
 	
 	GlobalEventManager().addCommand("ShowHidden", FreeCaller<Select_ShowAllHidden>());
 	GlobalEventManager().addCommand("HideSelected", FreeCaller<HideSelected>());
