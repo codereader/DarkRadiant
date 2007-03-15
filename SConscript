@@ -288,7 +288,10 @@ entity_env.Install(INSTALL + '/modules', entity_lib)
 # Optional plugins
 
 objEnv = module_env.Copy()
-objList = build_list('plugins/dm.objectives', 'objectives.cpp')
+objEnv.Append(LIBS = ['gtkutil'])
+objEnv.useGtk2()
+objList = build_list('plugins/dm.objectives', 
+					 'objectives.cpp ObjectivesEditor.cpp')
 objLib = objEnv.SharedLibrary(target='dm_objectives',
 							  source=objList,
 							  no_import_lib=1)
@@ -364,7 +367,6 @@ radiant_src = [
 'ui/modelselector/ModelSelector.cpp',
 'ui/ortho/OrthoContextMenu.cpp',
 'ui/ortho/EntityClassChooser.cpp',
-'ui/objectives/ObjectivesEditor.cpp',
 'ui/overlay/OverlayDialog.cpp',
 'ui/overlay/Overlay.cpp',
 'ui/common/ModelPreview.cpp',

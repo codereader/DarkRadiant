@@ -3,7 +3,8 @@
 #include "ObjectiveKeyExtractor.h"
 
 #include "iscenegraph.h"
-#include "mainframe.h"
+#include "qerplugin.h"
+
 #include "scenelib.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
@@ -40,7 +41,8 @@ ObjectivesEditor::ObjectivesEditor()
   								   GDK_TYPE_PIXBUF))	// icon
 {
 	// Window properties
-	gtk_window_set_transient_for(GTK_WINDOW(_widget), MainFrame_getWindow());
+	gtk_window_set_transient_for(
+		GTK_WINDOW(_widget), GlobalRadiant().getMainWindow());
 	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
 	gtk_window_set_title(GTK_WINDOW(_widget), DIALOG_TITLE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
