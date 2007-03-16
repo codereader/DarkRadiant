@@ -6,9 +6,11 @@
 #include "qerplugin.h"
 #include "ieventmanager.h"
 #include "selectionlib.h"
+#include "gtkutil/image.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/IconTextColumn.h"
+#include "gtkutil/IconTextButton.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/TransientWindow.h"
 #include "gtkutil/WindowPosition.h"
@@ -26,6 +28,8 @@ namespace ui {
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 		
 		const std::string LABEL_STIMRESPONSE_LIST = "Stims/Responses";
+		const std::string ICON_STIM = "sr_stim.png";
+		const std::string ICON_RESPONSE = "sr_response.png";
 	}
 
 StimResponseEditor::StimResponseEditor() :
@@ -127,11 +131,12 @@ void StimResponseEditor::populateWindow() {
 		gtkutil::IconTextColumn("Type", 2, 3)
 	);
 	
+	g_signal_connect(G_OBJECT(_entitySRView), "cursor-changed", G_CALLBACK(onSelectionChange), this);
+	
 	gtk_box_pack_start(GTK_BOX(srHBox), 
 		gtkutil::ScrolledFrame(_entitySRView), true, true, 0);
 	
-	_srWidgets.vbox = gtk_vbox_new(false, 6);
-	gtk_box_pack_start(GTK_BOX(srHBox), _srWidgets.vbox, true, true, 0);
+	gtk_box_pack_start(GTK_BOX(srHBox), createSRWidgets(), true, true, 0);
 	
 	// Cast the helper class onto a ListStore and create a new treeview
 	GtkListStore* stimListStore = _stimTypes;
@@ -144,6 +149,43 @@ void StimResponseEditor::populateWindow() {
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_stimTypeList), nameRenderer, "text", 1);
 	
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), _stimTypeList, false, false, 0);
+}
+
+GtkWidget* StimResponseEditor::createSRWidgets() {
+	_srWidgets.vbox = gtk_vbox_new(false, 6);
+	
+	// Create the buttons
+	_srWidgets.stimButton = gtk_toggle_button_new();
+	_srWidgets.respButton = gtk_toggle_button_new();
+	
+	GtkWidget* stimImg = gtk_image_new_from_pixbuf(gtkutil::getLocalPixbufWithMask(ICON_STIM));
+	GtkWidget* respImg = gtk_image_new_from_pixbuf(gtkutil::getLocalPixbufWithMask(ICON_RESPONSE));
+	
+	GtkWidget* stimLabel = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(stimLabel), "<b>Stim</b>");
+	
+	GtkWidget* respLabel = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(respLabel), "<b>Response</b>");
+	
+	GtkWidget* stimBtnHbox = gtk_hbox_new(false, 3);
+	gtk_box_pack_start(GTK_BOX(stimBtnHbox), stimImg, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(stimBtnHbox), stimLabel, false, false, 0);
+	gtk_container_add(GTK_CONTAINER(_srWidgets.stimButton), stimBtnHbox);
+	
+	GtkWidget* respBtnHbox = gtk_hbox_new(false, 3);
+	gtk_box_pack_start(GTK_BOX(respBtnHbox), respImg, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(respBtnHbox), respLabel, false, false, 0);
+	gtk_container_add(GTK_CONTAINER(_srWidgets.respButton), respBtnHbox);
+	
+	// combine the buttons to a hbox
+	GtkWidget* btnHbox = gtk_hbox_new(true, 6);
+	gtk_box_pack_start(GTK_BOX(btnHbox), _srWidgets.stimButton, true, true, 0);
+	gtk_box_pack_start(GTK_BOX(btnHbox), _srWidgets.respButton, true, true, 0);
+	
+	// Pack the button Hbox to the SRWidgets
+	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), btnHbox, false, false, 0);
+	
+	return _srWidgets.vbox;
 }
 
 void StimResponseEditor::update() {
@@ -179,6 +221,10 @@ void StimResponseEditor::selectionChanged(scene::Instance& instance) {
 	rescanSelection();
 }
 
+void StimResponseEditor::updateSRWidgets() {
+	
+}
+
 // Static GTK Callbacks
 gboolean StimResponseEditor::onDelete(GtkWidget* widget, GdkEvent* event, StimResponseEditor* self) {
 	// Toggle the visibility of the window
@@ -186,6 +232,10 @@ gboolean StimResponseEditor::onDelete(GtkWidget* widget, GdkEvent* event, StimRe
 	
 	// Don't propagate the delete event
 	return true;
+}
+
+void StimResponseEditor::onSelectionChange(GtkTreeView* treeView, StimResponseEditor* self) {
+	self->updateSRWidgets();
 }
 
 // Static command target
