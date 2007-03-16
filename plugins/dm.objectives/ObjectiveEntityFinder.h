@@ -53,7 +53,8 @@ public:
 			gtk_list_store_set(_store, &iter, 
 							   0, sDisplay.c_str(),
 							   1, FALSE,
-							   2, ePtr,
+							   2, ePtr,		// pointer to Entity
+							   3, &node,	// pointer to raw Node
 							   -1); 
 		}
 		

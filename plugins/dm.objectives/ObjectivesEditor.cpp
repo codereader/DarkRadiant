@@ -34,10 +34,11 @@ namespace {
 // Constructor creates widgets
 ObjectivesEditor::ObjectivesEditor()
 : _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
-  _objectiveEntityList(gtk_list_store_new(3, 
+  _objectiveEntityList(gtk_list_store_new(4, 
   										  G_TYPE_STRING, 		// display text
   										  G_TYPE_BOOLEAN,		// start active
-  										  G_TYPE_POINTER)),		// Entity*
+  										  G_TYPE_POINTER,		// Entity*
+  										  G_TYPE_POINTER)),		// scene::Node*
   _objTreeStore(gtk_tree_store_new(3, 
   								   G_TYPE_STRING,		// display key 
   								   G_TYPE_STRING,		// display value
@@ -283,6 +284,26 @@ void ObjectivesEditor::_onAddEntity(GtkWidget* w, ObjectivesEditor* self) {
 // Delete entity button
 void ObjectivesEditor::_onDeleteEntity(GtkWidget* w, ObjectivesEditor* self) {
 	
+	// Get the tree selection
+	GtkTreeSelection* sel = 
+		gtk_tree_view_get_selection(
+			GTK_TREE_VIEW(self->_widgets["entityList"]));
+			
+	// Get the Node* from the tree model and remove it from the scenegraph
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+	if (gtk_tree_selection_get_selected(sel, &model, &iter)) {
+		
+		// Retrieve the Node*
+		scene::Node* node;
+		gtk_tree_model_get(model, &iter, 3, &node, -1);
+		
+		// Remove from scene graph
+		Node_getTraversable(GlobalSceneGraph().root())->erase(*node);
+		
+		// Update the widgets to remove the selection from the list
+		self->populateWidgets();
+	}
 }
 
 }
