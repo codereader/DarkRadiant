@@ -83,9 +83,11 @@ private:
 	 */
 	int getIdFromSelection();
 
-	/** greebo: Tries to set the current stim class to <srClass> (Stim or Response)
+	/** greebo: Tries to set the <key> of the currently selected 
+	 * 			StimResponse to <value>
+	 * 			The request is refused for inherited StimResponses.
 	 */
-	void setStimClass(StimResponse::SRClass srClass);
+	void setProperty(const std::string& key, const std::string& value);
 
 	/** greebo: Updates the SR widget group according to the list selection.
 	 */
@@ -120,6 +122,9 @@ private:
 	// Callback for Stim/Response selection changes
 	static void onSelectionChange(GtkTreeSelection* treeView, StimResponseEditor* self);
 	static void onTypeChange(GtkToggleButton* toggleButton, StimResponseEditor* self);
+	
+	// "Active" property
+	static void onActiveToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
 
 }; // class StimResponseEditor
 

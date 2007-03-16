@@ -152,13 +152,13 @@
 
 	<stimResponseSystem>
 		<stims>
-			<stim id="0" name="STIM_FROB" caption="Frob" icon="" />
+			<stim id="0" name="STIM_FROB" caption="Frob" icon="sr_icon_frob.png" />
 			<stim id="1" name="STIM_FIRE" caption="Fire" icon="sr_icon_fire.png" />
 			<stim id="2" name="STIM_WATER" caption="Water" icon="sr_icon_water.png" />
-			<stim id="3" name="STIM_DAMAGE" caption="Damage" icon="" />
-			<stim id="4" name="STIM_SHIELD" caption="Shield" icon="" />
-			<stim id="5" name="STIM_HEALING" caption="Healing" icon="" />
-			<stim id="6" name="STIM_HOLY" caption="Holy" icon="" />
+			<stim id="3" name="STIM_DAMAGE" caption="Damage" icon="sr_icon_damage.png" />
+			<stim id="4" name="STIM_SHIELD" caption="Shield" icon="sr_icon_shield.png" />
+			<stim id="5" name="STIM_HEALING" caption="Healing" icon="sr_icon_healing.png" />
+			<stim id="6" name="STIM_HOLY" caption="Holy" icon="sr_icon_holy.png" />
 			<stim id="7" name="STIM_MAGIC" caption="Magic" icon="" />
 			<stim id="8" name="STIM_TOUCH" caption="Touch" icon="" />
 			<stim id="9" name="STIM_KNOCKOUT" caption="Knockout" icon="" />
