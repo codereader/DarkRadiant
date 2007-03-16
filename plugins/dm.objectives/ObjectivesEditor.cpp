@@ -182,14 +182,12 @@ void ObjectivesEditor::populateWidgets() {
 	// Use an ObjectiveEntityFinder to walk the map and add any objective
 	// entities to the list
 	ObjectiveEntityFinder finder(_objectiveEntityList, OBJECTIVE_ENTITY_CLASS);
-	
-	scene::Traversable* root = Node_getTraversable(GlobalSceneGraph().root());
-	assert(root); // root should always be traversable
-	root->traverse(finder);
+	GlobalSceneGraph().traverse(finder);
 	
 	// Set the worldspawn entity and populate the active-at-start column
 	_worldSpawn = finder.getWorldSpawn();
-	populateActiveAtStart();
+	if (_worldSpawn != NULL)
+		populateActiveAtStart();
 }
 
 // Populate the active-at-start column.
