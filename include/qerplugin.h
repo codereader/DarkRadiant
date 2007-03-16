@@ -134,15 +134,6 @@ struct IRadiant
   void (*splitSelectedBrushes)(const Vector3 planePoints[3], const std::string& shader, EBrushSplit split);
   void (*brushSetClipPlane)(const Plane3& plane);
 
-  void (*attachGameToolsPathObserver)(ModuleObserver& observer);
-  void (*detachGameToolsPathObserver)(ModuleObserver& observer);
-  void (*attachEnginePathObserver)(ModuleObserver& observer);
-  void (*detachEnginePathObserver)(ModuleObserver& observer);
-  void (*attachGameNameObserver)(ModuleObserver& observer);
-  void (*detachGameNameObserver)(ModuleObserver& observer);
-  void (*attachGameModeObserver)(ModuleObserver& observer);
-  void (*detachGameModeObserver)(ModuleObserver& observer);
-
   EViewType (*XYWindow_getViewType)();
   Vector3 (*XYWindow_windowToWorld)(const WindowVector& position);
   
