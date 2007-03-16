@@ -135,8 +135,9 @@ public:
   void erase(const Value& value)
   {
     iterator i = find(value);
-    ASSERT_MESSAGE(i != end(), "UnsortedSet::erase: not found");
-    m_values.erase(i);
+    if (i != end()) {
+        m_values.erase(i);
+    }
   }
   iterator find(const Value& value)
   {
