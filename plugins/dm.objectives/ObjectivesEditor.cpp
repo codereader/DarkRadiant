@@ -96,6 +96,7 @@ GtkWidget* ObjectivesEditor::createEntitiesPanel() {
 	GtkTreeSelection* sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
 	g_signal_connect(G_OBJECT(sel), "changed",
 					 G_CALLBACK(_onEntitySelectionChanged), this);
+	_widgets["entityList"] = tv;
 	
 	// Active-at-start column (checkbox)
 	GtkCellRenderer* startToggle = gtk_cell_renderer_toggle_new();
@@ -170,9 +171,11 @@ void ObjectivesEditor::show() {
 // Populate widgets with map data
 void ObjectivesEditor::populateWidgets() {
 
+	// Clear the selection and then the list itself
+	gtk_list_store_clear(_objectiveEntityList);
+
 	// Use an ObjectiveEntityFinder to walk the map and add any objective
 	// entities to the list
-	gtk_list_store_clear(_objectiveEntityList);
 	ObjectiveEntityFinder finder(_objectiveEntityList, OBJECTIVE_ENTITY_CLASS);
 	
 	scene::Traversable* root = Node_getTraversable(GlobalSceneGraph().root());
@@ -231,15 +234,17 @@ void ObjectivesEditor::_onEntitySelectionChanged(GtkTreeSelection* sel,
 	// Get the selection
 	GtkTreeIter iter;
 	GtkTreeModel* model;
-	gtk_tree_selection_get_selected(sel, &model, &iter);
+	if (gtk_tree_selection_get_selected(sel, &model, &iter)) {
 	
-	// Get the Entity*
-	Entity* entity;
-	gtk_tree_model_get(model, &iter, 2, &entity, -1);
-	
-	// Populate the tree
-	assert(entity);
-	self->populateObjectiveTree(entity);
+		// Get the Entity*
+		Entity* entity;
+		gtk_tree_model_get(model, &iter, 2, &entity, -1);
+		
+		// Populate the tree
+		assert(entity);
+		self->populateObjectiveTree(entity);
+		
+	}
 }
 
 // Add a new objectives entity button
