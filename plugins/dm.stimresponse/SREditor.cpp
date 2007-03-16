@@ -30,6 +30,9 @@ namespace ui {
 		
 		const std::string LABEL_STIMRESPONSE_LIST = "Stims/Responses";
 		const std::string LABEL_ADD_STIMRESPONSE = "Add Stim/Response";
+		
+		const unsigned int TREE_VIEW_WIDTH = 280;
+		const unsigned int TREE_VIEW_HEIGHT = 240;
 	}
 
 StimResponseEditor::StimResponseEditor() :
@@ -118,16 +121,16 @@ void StimResponseEditor::populateWindow() {
 	GtkWidget* topLabel = gtkutil::LeftAlignedLabel(
     	std::string("<span weight=\"bold\">") + LABEL_STIMRESPONSE_LIST + "</span>"
     );
-    gtk_box_pack_start(GTK_BOX(_dialogVBox), topLabel, true, true, 0);
+    gtk_box_pack_start(GTK_BOX(_dialogVBox), topLabel, false, false, 0);
 	
-	GtkWidget* srHBox = gtk_hbox_new(false, 6);
+	GtkWidget* srHBox = gtk_hbox_new(false, 0);
 	
 	// Pack it into an alignment so that it is indented
 	GtkWidget* srAlignment = gtkutil::LeftAlignment(GTK_WIDGET(srHBox), 18, 1.0); 
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(srAlignment), true, true, 0);
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(srAlignment), false, false, 0);
 	
 	_entitySRView = gtk_tree_view_new();
-	gtk_widget_set_size_request(_entitySRView, 280, 240);
+	gtk_widget_set_size_request(_entitySRView, TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT);
 	
 	_entitySRSelection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_entitySRView));
 	// Connect the signal
@@ -188,30 +191,40 @@ void StimResponseEditor::populateWindow() {
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_entitySRView), typeCol);
 	
 	gtk_box_pack_start(GTK_BOX(srHBox), 
-		gtkutil::ScrolledFrame(_entitySRView), true, true, 0);
+		gtkutil::ScrolledFrame(_entitySRView), false, false, 0);
 	
-	gtk_box_pack_start(GTK_BOX(srHBox), createSRWidgets(), true, true, 0);
+	gtk_box_pack_start(GTK_BOX(srHBox), createSRWidgets(), true, true, 6);
 	
 	// Create the title label (bold font)
 	GtkWidget* addLabel = gtkutil::LeftAlignedLabel(
     	std::string("<span weight=\"bold\">") + LABEL_ADD_STIMRESPONSE + "</span>"
     );
-    gtk_box_pack_start(GTK_BOX(_dialogVBox), addLabel, true, true, 0);
+    gtk_box_pack_start(GTK_BOX(_dialogVBox), addLabel, false, false, 0);
+	
+	GtkWidget* addHBox = gtk_hbox_new(false, 0);
+	GtkWidget* addAlignment = gtkutil::LeftAlignment(GTK_WIDGET(addHBox), 18, 1.0); 
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(addAlignment), false, false, 0);
 	
 	// Cast the helper class onto a ListStore and create a new treeview
 	GtkListStore* stimListStore = _stimTypes;
-	_stimTypeList = gtk_combo_box_new_with_model(GTK_TREE_MODEL(stimListStore));
+	_addWidgets.stimTypeList = gtk_combo_box_new_with_model(GTK_TREE_MODEL(stimListStore));
+	gtk_widget_set_size_request(_addWidgets.stimTypeList, TREE_VIEW_WIDTH + 4, -1);
 	g_object_unref(stimListStore); // tree view owns the reference now
 	
 	// Add the cellrenderer for the name
 	GtkCellRenderer* nameRenderer = gtk_cell_renderer_text_new();
 	GtkCellRenderer* iconRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_stimTypeList), iconRenderer, false);
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_stimTypeList), nameRenderer, true);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_stimTypeList), nameRenderer, "text", 1);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_stimTypeList), iconRenderer, "pixbuf", 2);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_addWidgets.stimTypeList), iconRenderer, false);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_addWidgets.stimTypeList), nameRenderer, true);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_addWidgets.stimTypeList), nameRenderer, "text", 1);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_addWidgets.stimTypeList), iconRenderer, "pixbuf", 2);
 	
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), _stimTypeList, false, false, 0);
+	_addWidgets.addButton = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	_addWidgets.addScriptButton = gtk_button_new_with_label("Add Response Script");
+	
+	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.stimTypeList, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.addButton, false, false, 6);
+	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.addScriptButton, false, false, 0);
 }
 
 GtkWidget* StimResponseEditor::createSRWidgets() {

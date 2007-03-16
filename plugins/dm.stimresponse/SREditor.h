@@ -22,7 +22,11 @@ class StimResponseEditor :
 	GtkWidget* _dialogVBox;
 	
 	// The combobox using a liststore model filled with stims
-	GtkWidget* _stimTypeList; 
+	struct AddWidgets {
+		GtkWidget* stimTypeList;
+		GtkWidget* addButton;
+		GtkWidget* addScriptButton;
+	} _addWidgets; 
 	
 	// The treeview with the entity's stims/responses
 	GtkWidget* _entitySRView;
