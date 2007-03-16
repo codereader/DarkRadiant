@@ -11,8 +11,6 @@
 #include <iostream>
 
 	namespace {
-		const unsigned int NUM_MAX_STIMS = 99999;
-		
 		const std::string RKEY_STIM_PROPERTIES = 
 			"game/stimResponseSystem/properties//property";
 		
@@ -70,7 +68,7 @@ void SREntity::load(Entity* source) {
 							ID_COL, id,
 							TYPE_COL, i->second.get("class").c_str(),
 							CAPTION_COL, stimType.caption.c_str(),
-							ICON_COL, gtkutil::getLocalPixbuf(stimType.icon),
+							ICON_COL, gtkutil::getLocalPixbufWithMask(stimType.icon),
 							-1);
 	}
 }
