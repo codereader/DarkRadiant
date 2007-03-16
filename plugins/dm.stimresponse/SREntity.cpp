@@ -13,22 +13,15 @@
 	namespace {
 		const std::string RKEY_STIM_PROPERTIES = 
 			"game/stimResponseSystem/properties//property";
-		
-		enum {
-			ID_COL,
-			TYPE_COL,
-			CAPTION_COL,
-			ICON_COL,
-			NUM_COLS
-		};
 	}
 
 SREntity::SREntity(Entity* source) :
 	_listStore(gtk_list_store_new(NUM_COLS, 
 								  G_TYPE_INT,		// ID 
-								  G_TYPE_STRING, 	// Type String
+								  GDK_TYPE_PIXBUF, 	// Type String
 								  G_TYPE_STRING, 	// Caption String
-								  GDK_TYPE_PIXBUF)) // Icon
+								  GDK_TYPE_PIXBUF,	// Icon
+								  G_TYPE_BOOLEAN)) 	// Inheritance flag
 {
 	loadKeys();
 	load(source);
@@ -63,12 +56,19 @@ void SREntity::load(Entity* source) {
 		int id = i->first;
 		StimType stimType = _stimTypes.get(i->second.get("type"));
 		
+		std::string stimTypeStr = stimType.caption;
+		stimTypeStr += (i->second.inherited()) ? " (inherited) " : "";
+		
+		std::string classIcon = 
+			(i->second.get("class") == "R") ? ICON_RESPONSE : ICON_STIM; 
+		
 		gtk_list_store_append(_listStore, &iter);
 		gtk_list_store_set(_listStore, &iter, 
 							ID_COL, id,
-							TYPE_COL, i->second.get("class").c_str(),
-							CAPTION_COL, stimType.caption.c_str(),
+							CLASS_COL, gtkutil::getLocalPixbufWithMask(classIcon),
+							CAPTION_COL, stimTypeStr.c_str(),
 							ICON_COL, gtkutil::getLocalPixbufWithMask(stimType.icon),
+							INHERIT_COL, i->second.inherited(),
 							-1);
 	}
 }

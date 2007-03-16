@@ -12,6 +12,20 @@
 class Entity;
 typedef struct _GtkListStore GtkListStore;
 
+	namespace {
+		const std::string ICON_STIM = "sr_stim.png";
+		const std::string ICON_RESPONSE = "sr_response.png";
+		
+		enum {
+			ID_COL,
+			CLASS_COL,
+			CAPTION_COL,
+			ICON_COL,
+			INHERIT_COL,
+			NUM_COLS
+		};
+	}
+
 /** greebo: This is the representation of an entity holding S/R keys.
  * 			Use the load() and save() methods to load/save the spawnargs.
  * 			

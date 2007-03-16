@@ -12,6 +12,7 @@
 #include "gtkutil/IconTextColumn.h"
 #include "gtkutil/IconTextButton.h"
 #include "gtkutil/LeftAlignment.h"
+#include "gtkutil/TreeModel.h"
 #include "gtkutil/TransientWindow.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/ScrolledFrame.h"
@@ -29,8 +30,6 @@ namespace ui {
 		
 		const std::string LABEL_STIMRESPONSE_LIST = "Stims/Responses";
 		const std::string LABEL_ADD_STIMRESPONSE = "Add Stim/Response";
-		const std::string ICON_STIM = "sr_stim.png";
-		const std::string ICON_RESPONSE = "sr_response.png";
 	}
 
 StimResponseEditor::StimResponseEditor() :
@@ -98,6 +97,17 @@ void StimResponseEditor::toggleWindow() {
 	}
 }
 
+static void textCellDataFunc(GtkTreeViewColumn* treeColumn,
+							 GtkCellRenderer* cell,
+							 GtkTreeModel* treeModel,
+							 GtkTreeIter* iter, 
+							 gpointer data)
+{
+	bool inherited = gtkutil::TreeModel::getBoolean(treeModel, iter, INHERIT_COL);
+	
+	g_object_set(G_OBJECT(cell), "sensitive", !inherited, NULL);
+}
+
 void StimResponseEditor::populateWindow() {
 	// Create the overall vbox
 	_dialogVBox = gtk_vbox_new(false, 6);
@@ -117,21 +127,62 @@ void StimResponseEditor::populateWindow() {
 	
 	_entitySRView = gtk_tree_view_new();
 	gtk_widget_set_size_request(_entitySRView, 280, 240);
-	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(_entitySRView),
-		gtkutil::TextColumn("#", 0)
-	);
 	
-	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(_entitySRView),
-		gtkutil::TextColumn("S/R", 1)
-	);
+	// ID number
+	GtkTreeViewColumn* numCol = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(numCol, "#");
+	GtkCellRenderer* numRenderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(numCol, numRenderer, false);
+	gtk_tree_view_column_set_attributes(numCol, numRenderer, 
+										"text", ID_COL,
+										NULL);
+	gtk_tree_view_column_set_cell_data_func(numCol, numRenderer,
+                                            textCellDataFunc,
+                                            NULL, NULL);
 	
-	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(_entitySRView),
-		gtkutil::IconTextColumn("Type", 2, 3)
-	);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_entitySRView), numCol);
 	
+	// The S/R icon
+	GtkTreeViewColumn* classCol = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(classCol, "S/R");
+	GtkCellRenderer* pixbufRenderer = gtk_cell_renderer_pixbuf_new();
+	gtk_tree_view_column_pack_start(classCol, pixbufRenderer, false);
+	gtk_tree_view_column_set_attributes(classCol, pixbufRenderer, 
+										"pixbuf", CLASS_COL,
+										NULL);
+	gtk_tree_view_column_set_cell_data_func(classCol, pixbufRenderer,
+                                            textCellDataFunc,
+                                            NULL, NULL);
+	
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_entitySRView), classCol);
+	
+	// The Type
+	GtkTreeViewColumn* typeCol = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(typeCol, "Type");
+	
+	GtkCellRenderer* typeIconRenderer = gtk_cell_renderer_pixbuf_new();
+	gtk_tree_view_column_pack_start(typeCol, typeIconRenderer, false);
+	
+	GtkCellRenderer* typeTextRenderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(typeCol, typeTextRenderer, false);
+	
+	gtk_tree_view_column_set_attributes(typeCol, typeTextRenderer, 
+										"text", CAPTION_COL,
+										NULL);
+	gtk_tree_view_column_set_cell_data_func(typeCol, typeTextRenderer,
+                                            textCellDataFunc,
+                                            NULL, NULL);
+	
+	gtk_tree_view_column_set_attributes(typeCol, typeIconRenderer, 
+										"pixbuf", ICON_COL,
+										NULL);
+	gtk_tree_view_column_set_cell_data_func(typeCol, typeIconRenderer,
+                                            textCellDataFunc,
+                                            NULL, NULL);
+	
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_entitySRView), typeCol);
+	
+	// Connect the signal
 	g_signal_connect(G_OBJECT(_entitySRView), "cursor-changed", G_CALLBACK(onSelectionChange), this);
 	
 	gtk_box_pack_start(GTK_BOX(srHBox), 
