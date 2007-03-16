@@ -9,6 +9,7 @@
 #include "SREntity.h"
 
 typedef struct _GtkTreeView GtkTreeView;
+typedef struct _GtkToggleButton GtkToggleButton;
 
 namespace ui {
 
@@ -103,6 +104,7 @@ private:
 
 	// Callback for Stim/Response selection changes
 	static void onSelectionChange(GtkTreeView* treeView, StimResponseEditor* self);
+	static void onTypeChange(GtkToggleButton* toggleButton, StimResponseEditor* self);
 
 }; // class StimResponseEditor
 

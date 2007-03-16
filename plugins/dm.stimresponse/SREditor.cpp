@@ -164,6 +164,8 @@ GtkWidget* StimResponseEditor::createSRWidgets() {
 	// Create the buttons
 	_srWidgets.stimButton = gtk_toggle_button_new();
 	_srWidgets.respButton = gtk_toggle_button_new();
+	g_signal_connect(G_OBJECT(_srWidgets.stimButton), "toggled", G_CALLBACK(onTypeChange), this);
+	g_signal_connect(G_OBJECT(_srWidgets.respButton), "toggled", G_CALLBACK(onTypeChange), this);
 	
 	GtkWidget* stimImg = gtk_image_new_from_pixbuf(gtkutil::getLocalPixbufWithMask(ICON_STIM));
 	GtkWidget* respImg = gtk_image_new_from_pixbuf(gtkutil::getLocalPixbufWithMask(ICON_RESPONSE));
@@ -301,6 +303,25 @@ gboolean StimResponseEditor::onDelete(GtkWidget* widget, GdkEvent* event, StimRe
 }
 
 void StimResponseEditor::onSelectionChange(GtkTreeView* treeView, StimResponseEditor* self) {
+	self->updateSRWidgets();
+}
+
+void StimResponseEditor::onTypeChange(GtkToggleButton* toggleButton, StimResponseEditor* self) {
+	
+	// Invert the other button
+	if (GTK_WIDGET(toggleButton) == self->_srWidgets.stimButton) {
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(self->_srWidgets.respButton),
+			!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(self->_srWidgets.stimButton))
+		);
+	}
+	else {
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(self->_srWidgets.stimButton),
+			!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(self->_srWidgets.respButton))
+		);
+	}
+	
 	self->updateSRWidgets();
 }
 
