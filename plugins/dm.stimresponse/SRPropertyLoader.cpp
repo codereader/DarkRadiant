@@ -15,10 +15,12 @@
 // Constructor
 SRPropertyLoader::SRPropertyLoader(
 	SREntity::KeyList& keys, 
-	SREntity::SRList& srList
+	SREntity::StimResponseMap& srMap,
+	std::string& warnings
 ) :
 	_keys(keys),
-	_srList(srList)
+	_srMap(srMap),
+	_warnings(warnings)
 {}
 
 void SRPropertyLoader::visit(const std::string& key, const std::string& value) {
@@ -47,9 +49,26 @@ void SRPropertyLoader::parseAttribute(
 		
 		if (boost::regex_match(key, matches, expr)) {
 			// Retrieve the number
-			int id = strToInt(matches[1]);
+			int index = strToInt(matches[1]);
 			
 			// Insertion code here
+			SREntity::StimResponseMap::iterator found = _srMap.find(index);
+			
+			if (found == _srMap.end()) {
+				// Insert a new SR object with the given index
+				_srMap[index] = StimResponse();
+				_srMap[index].setInherited(true);
+			}
+			
+			// Check if the property already exists
+			if (!_srMap[index].get(_keys[i]).empty()) {
+				// already existing, add to the warnings
+				_warnings += "Warning on StimResponse #" + intToStr(index) + 
+							 ": property " + _keys[i] + " defined more than once.\n";
+			}
+			
+			// Set the property value on the StimResponse object
+			_srMap[index].set(_keys[i], value);
 		}
 	}
 }
