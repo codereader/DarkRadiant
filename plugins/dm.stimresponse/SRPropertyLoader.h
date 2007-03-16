@@ -35,8 +35,12 @@ private:
 	
 	/** greebo: Private helper method that does the attribute analysis
 	 * 			and adds the SR items to the target list
+	 * 
+	 * @inherited: reflects whether this key/value stems from a inheritance  
 	 */
-	void parseAttribute(const std::string& key, const std::string& value);
+	void parseAttribute(const std::string& key, 
+						const std::string& value, 
+						bool inherited);
 	
 };
 

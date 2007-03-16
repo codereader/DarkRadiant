@@ -24,18 +24,19 @@ SRPropertyLoader::SRPropertyLoader(
 {}
 
 void SRPropertyLoader::visit(const std::string& key, const std::string& value) {
-	parseAttribute(key, value);
+	parseAttribute(key, value, false);
 }
 
 void SRPropertyLoader::visit(const EntityClassAttribute& attribute) {
-	parseAttribute(attribute.name, attribute.value);
+	parseAttribute(attribute.name, attribute.value, true);
 }
 
 /** greebo: Private helper method that does the attribute analysis
  */
 void SRPropertyLoader::parseAttribute(
 	const std::string& key, 
-	const std::string& value) 
+	const std::string& value,
+	bool inherited) 
 {
 	std::string prefix = GlobalRegistry().get(RKEY_STIM_RESPONSE_PREFIX);
 	
@@ -57,7 +58,7 @@ void SRPropertyLoader::parseAttribute(
 			if (found == _srMap.end()) {
 				// Insert a new SR object with the given index
 				_srMap[index] = StimResponse();
-				_srMap[index].setInherited(true);
+				_srMap[index].setInherited(inherited);
 			}
 			
 			// Check if the property already exists
