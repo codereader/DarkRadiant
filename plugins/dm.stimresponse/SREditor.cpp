@@ -256,6 +256,8 @@ GtkWidget* StimResponseEditor::createSRWidgets() {
 	GtkWidget* activeHBox = gtk_hbox_new(false, 0);
 	GtkWidget* activeLabel = gtkutil::LeftAlignedLabel("Active");
 	_srWidgets.active = gtk_check_button_new();
+	g_signal_connect(G_OBJECT(_srWidgets.active), "toggled", G_CALLBACK(onActiveToggle), this);
+	
 	gtk_box_pack_start(GTK_BOX(activeHBox), _srWidgets.active, false, false, 0);
 	gtk_box_pack_start(GTK_BOX(activeHBox), activeLabel, false, false, 0);
 	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), activeHBox, false, false, 0);
@@ -462,12 +464,12 @@ int StimResponseEditor::getIdFromSelection() {
 	}
 }
 
-void StimResponseEditor::setStimClass(StimResponse::SRClass srClass) {
+void StimResponseEditor::setProperty(const std::string& key, const std::string& value) {
 	int id = getIdFromSelection();
 	
 	if (id > 0) {
 		if (!_srEntity->get(id).inherited()) {
-			_srEntity->setProperty(id, "class", ((srClass == StimResponse::typeStim) ? "S" : "R"));
+			_srEntity->setProperty(id, key, value);
 		}
 	}
 	
@@ -484,11 +486,22 @@ void StimResponseEditor::onTypeChange(GtkToggleButton* toggleButton, StimRespons
 	}
 	
 	if (GTK_WIDGET(toggleButton) == self->_srWidgets.stimButton) {
-		self->setStimClass(StimResponse::typeStim);
+		self->setProperty("class", "S");
 	}
 	else {
-		self->setStimClass(StimResponse::typeResponse);
+		self->setProperty("class", "R");
 	}
+}
+
+void StimResponseEditor::onActiveToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {
+	if (self->_updatesDisabled) {
+		return;
+	}
+	
+	self->setProperty(
+		"state", 
+		gtk_toggle_button_get_active(toggleButton) ? "1" : "0"
+	);
 }
 
 // Static command target
