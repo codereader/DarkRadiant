@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <gtk/gtktreemodel.h>
 #include <boost/shared_ptr.hpp>
 
 #include "StimResponse.h"
@@ -22,6 +23,7 @@ typedef struct _GtkListStore GtkListStore;
 			CAPTION_COL,
 			ICON_COL,
 			INHERIT_COL,
+			IDSTR_COL,
 			NUM_COLS
 		};
 	}
@@ -65,13 +67,27 @@ public:
 	void save(Entity* target);
 	
 	StimResponse& get(int id);
-		
+	
 	operator GtkListStore* ();
+	
+	/** greebo: Sets the <key> of the SR with the given <id> to <value>
+	 */
+	void setProperty(int id, const std::string& key, const std::string& value);
+	
+	/** greebo: Updates the ListStore according to the 
+	 * 			values of the current StimResponseMap <_list>
+	 */
+	void updateListStore();
 	
 	/** greebo: Helper to load the possible key names
 	 * 			from the registry into the _keys list.
 	 */
 	void loadKeys();
+	
+	/** greebo: Returns the treeIter pointing to the row containing the 
+	 * 			StimResponse with the given <id>
+	 */
+	GtkTreeIter getIterForId(int id);
 };
 
 typedef boost::shared_ptr<SREntity> SREntityPtr; 
