@@ -1,6 +1,7 @@
 #include "ObjectivesEditor.h"
 #include "ObjectiveEntityFinder.h"
 #include "ObjectiveKeyExtractor.h"
+#include "RandomOrigin.h"
 
 #include "iscenegraph.h"
 #include "qerplugin.h"
@@ -17,7 +18,7 @@
 
 #include <gtk/gtk.h>
 
-namespace ui
+namespace objectives
 {
 
 /* CONSTANTS */
@@ -251,10 +252,16 @@ void ObjectivesEditor::_onAddEntity(GtkWidget* w, ObjectivesEditor* self) {
 	// Construct a Node of this entity type
 	NodeSmartReference node(GlobalEntityCreator().createEntity(eclass));
 	
+	// Create a random offset
+	Node_getEntity(node)->setKeyValue("origin", RandomOrigin::generate(128));
+	
 	// Insert the node into the scene graph
 	scene::Traversable* root = Node_getTraversable(GlobalSceneGraph().root());
 	assert(root);
 	root->insert(node);
+	
+	// Refresh the widgets
+	self->populateWidgets();
 }
 
 }

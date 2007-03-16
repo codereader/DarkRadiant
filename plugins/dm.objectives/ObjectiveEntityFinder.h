@@ -6,7 +6,7 @@
 
 #include <string>
 
-namespace ui
+namespace objectives
 {
 
 /**

@@ -30,8 +30,9 @@ public:
 	ObjectivesEditorAPI() {
 		
 		// Add the callback event
-		GlobalEventManager().addCommand("ObjectivesEditor",
-							FreeCaller<ui::ObjectivesEditor::displayDialog>());
+		GlobalEventManager().addCommand(
+			"ObjectivesEditor",
+			FreeCaller<objectives::ObjectivesEditor::displayDialog>());
 	
 	
 		// Add the menu item
