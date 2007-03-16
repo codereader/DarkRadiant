@@ -131,12 +131,17 @@ void StimResponseEditor::rescanSelection() {
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
 	_entity = NULL;
+	_srEntity = SREntityPtr();
 	
 	if (info.entityCount == 1 && info.totalCount == 1) {
 		// Get the entity instance
 		scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
 		scene::Node& node = instance.path().top();
+		
 		_entity = Node_getEntity(node);
+		
+		_srEntity = SREntityPtr(new SREntity(_entity));
+		
 		if (_entity != NULL) {
 			globalOutputStream() << "Entity: " << _entity->getKeyValue("classname").c_str() << "\n";
 		}
