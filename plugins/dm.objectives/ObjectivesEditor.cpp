@@ -4,6 +4,8 @@
 
 #include "iscenegraph.h"
 #include "qerplugin.h"
+#include "ieclass.h"
+#include "ientity.h"
 
 #include "scenelib.h"
 #include "gtkutil/LeftAlignedLabel.h"
@@ -110,9 +112,12 @@ GtkWidget* ObjectivesEditor::createEntitiesPanel() {
 					   
 	// Vbox for the buttons
 	GtkWidget* buttonBox = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(buttonBox),
-					   gtk_button_new_from_stock(GTK_STOCK_ADD),
-					   TRUE, TRUE, 0);
+	
+	GtkWidget* addButton = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	g_signal_connect(
+		G_OBJECT(addButton), "clicked", G_CALLBACK(_onAddEntity), this);
+	gtk_box_pack_start(GTK_BOX(buttonBox), addButton, TRUE, TRUE, 0);
+	
 	gtk_box_pack_start(GTK_BOX(buttonBox),
 					   gtk_button_new_from_stock(GTK_STOCK_DELETE),
 					   TRUE, TRUE, 0);
@@ -234,6 +239,22 @@ void ObjectivesEditor::_onEntitySelectionChanged(GtkTreeSelection* sel,
 	// Populate the tree
 	assert(entity);
 	self->populateObjectiveTree(entity);
+}
+
+// Add a new objectives entity button
+void ObjectivesEditor::_onAddEntity(GtkWidget* w, ObjectivesEditor* self) {
+	
+	// Obtain the entity class object
+	IEntityClassPtr eclass = 
+		GlobalEntityClassManager().findOrInsert(OBJECTIVE_ENTITY_CLASS, false);
+		
+	// Construct a Node of this entity type
+	NodeSmartReference node(GlobalEntityCreator().createEntity(eclass));
+	
+	// Insert the node into the scene graph
+	scene::Traversable* root = Node_getTraversable(GlobalSceneGraph().root());
+	assert(root);
+	root->insert(node);
 }
 
 }
