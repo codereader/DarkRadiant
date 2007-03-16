@@ -14,14 +14,25 @@
 		
 		const std::string RKEY_STIM_PROPERTIES = 
 			"game/stimResponseSystem/properties//property";
+		
+		enum {
+			ID_COL,
+			CAPTION_COL,
+			NUM_COLS
+		};
 	}
 
-SREntity::SREntity(Entity* source) {
+SREntity::SREntity(Entity* source) :
+	_listStore(gtk_list_store_new(NUM_COLS, G_TYPE_INT, G_TYPE_STRING))
+{
 	loadKeys();
 	load(source);
 }
 
 void SREntity::load(Entity* source) {
+	// Clear all the items from the liststore
+	gtk_list_store_clear(_listStore);
+	
 	if (source == NULL) {
 		return;
 	}
@@ -33,8 +44,24 @@ void SREntity::load(Entity* source) {
 	
 	// Instantiate a visitor class with the list of possible keys 
 	// and the target list where all the S/Rs are stored
-	SRPropertyLoader visitor(_keys, _list);
+	// Warning messages are stored in the <_warnings> string
+	SRPropertyLoader visitor(_keys, _list, _warnings);
 	eclass->forEachClassAttribute(visitor);
+	
+	// Now populate the liststore
+	GtkTreeIter iter;
+	
+	for (StimResponseMap::iterator i = _list.begin(); i!= _list.end(); i++) {
+		int id = i->first;
+		int stimTypeId = strToInt(i->second.get("type"));
+		std::string caption = _stimTypes.get(stimTypeId).caption;
+		
+		gtk_list_store_append(_listStore, &iter);
+		gtk_list_store_set(_listStore, &iter, 
+							ID_COL, id,
+							CAPTION_COL, caption.c_str(),
+							-1);
+	}
 }
 
 void SREntity::save(Entity* target) {
@@ -44,7 +71,7 @@ void SREntity::save(Entity* target) {
 }
 
 SREntity::operator GtkListStore* () {
-	return gtk_list_store_new(2);
+	return _listStore;
 }
 
 // static key loader

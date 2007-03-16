@@ -6,6 +6,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "StimResponse.h"
+#include "StimTypes.h"
 
 // Forward declaration
 class Entity;
@@ -23,16 +24,22 @@ public:
 	// These are the possible key names
 	typedef std::vector<std::string> KeyList;
 	
-	// These are the Stims/Responses belonging to an entity
-	typedef std::vector<StimResponse> SRList;
+	// These are the int-indexed Stims/Responses belonging to an entity
+	typedef std::map<int, StimResponse> StimResponseMap;
 	
 private:
 	// The local lists of S/R and possible keys
-	SRList _list;
+	StimResponseMap _list;
 	KeyList _keys;
 	
 	// The liststore representation
 	GtkListStore* _listStore;
+	
+	// A collection of warnings regarding the parsing of the spawnargs
+	std::string _warnings;
+	
+	// The helper class managing the various stim types
+	StimTypes _stimTypes;
 
 public:
 	SREntity(Entity* source);

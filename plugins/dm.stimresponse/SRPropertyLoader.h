@@ -14,11 +14,16 @@ class SRPropertyLoader :
 	SREntity::KeyList& _keys;
 	
 	// The target list where all the StimResponse objects will be stored
-	SREntity::SRList& _srList;
+	SREntity::StimResponseMap& _srMap;
+
+	// The target string for storing the parse warnings
+	std::string& _warnings;
 
 public:
 	// Constructor
-	SRPropertyLoader(SREntity::KeyList& keys, SREntity::SRList& srList);
+	SRPropertyLoader(SREntity::KeyList& keys, 
+					 SREntity::StimResponseMap& srMap,
+					 std::string& warnings);
 	
 	// Entity::Visitor implementation
 	void visit(const std::string& key, const std::string& value);
