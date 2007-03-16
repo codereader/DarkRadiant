@@ -29,6 +29,14 @@ class StimResponseEditor :
 		GtkWidget* vbox;
 		GtkWidget* stimButton;
 		GtkWidget* respButton;
+		GtkWidget* active;
+		GtkWidget* useBounds;
+		GtkWidget* radiusToggle;
+		GtkWidget* radiusEntry;
+		GtkWidget* timeIntToggle;
+		GtkWidget* timeIntEntry;
+		GtkWidget* modelToggle;
+		GtkWidget* modelEntry;
 	} _srWidgets;
 	
 	// The list of the entity's stims/responses

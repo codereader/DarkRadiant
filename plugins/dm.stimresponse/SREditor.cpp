@@ -28,6 +28,7 @@ namespace ui {
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 		
 		const std::string LABEL_STIMRESPONSE_LIST = "Stims/Responses";
+		const std::string LABEL_ADD_STIMRESPONSE = "Add Stim/Response";
 		const std::string ICON_STIM = "sr_stim.png";
 		const std::string ICON_RESPONSE = "sr_response.png";
 	}
@@ -115,7 +116,7 @@ void StimResponseEditor::populateWindow() {
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(srAlignment), true, true, 0);
 	
 	_entitySRView = gtk_tree_view_new();
-	gtk_widget_set_size_request(_entitySRView, -1, 300);
+	gtk_widget_set_size_request(_entitySRView, 280, 240);
 	gtk_tree_view_append_column(
 		GTK_TREE_VIEW(_entitySRView),
 		gtkutil::TextColumn("#", 0)
@@ -137,6 +138,12 @@ void StimResponseEditor::populateWindow() {
 		gtkutil::ScrolledFrame(_entitySRView), true, true, 0);
 	
 	gtk_box_pack_start(GTK_BOX(srHBox), createSRWidgets(), true, true, 0);
+	
+	// Create the title label (bold font)
+	GtkWidget* addLabel = gtkutil::LeftAlignedLabel(
+    	std::string("<span weight=\"bold\">") + LABEL_ADD_STIMRESPONSE + "</span>"
+    );
+    gtk_box_pack_start(GTK_BOX(_dialogVBox), addLabel, true, true, 0);
 	
 	// Cast the helper class onto a ListStore and create a new treeview
 	GtkListStore* stimListStore = _stimTypes;
@@ -160,6 +167,8 @@ GtkWidget* StimResponseEditor::createSRWidgets() {
 	
 	GtkWidget* stimImg = gtk_image_new_from_pixbuf(gtkutil::getLocalPixbufWithMask(ICON_STIM));
 	GtkWidget* respImg = gtk_image_new_from_pixbuf(gtkutil::getLocalPixbufWithMask(ICON_RESPONSE));
+	gtk_widget_set_size_request(stimImg, 20, -1);
+	gtk_widget_set_size_request(respImg, 20, -1);
 	
 	GtkWidget* stimLabel = gtk_label_new(NULL);
 	gtk_label_set_markup(GTK_LABEL(stimLabel), "<b>Stim</b>");
@@ -185,11 +194,68 @@ GtkWidget* StimResponseEditor::createSRWidgets() {
 	// Pack the button Hbox to the SRWidgets
 	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), btnHbox, false, false, 0);
 	
+	// Active
+	GtkWidget* activeHBox = gtk_hbox_new(false, 0);
+	GtkWidget* activeLabel = gtkutil::LeftAlignedLabel("Active");
+	_srWidgets.active = gtk_check_button_new();
+	gtk_box_pack_start(GTK_BOX(activeHBox), _srWidgets.active, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(activeHBox), activeLabel, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), activeHBox, false, false, 0);
+	
+	// Use Bounds
+	GtkWidget* boundsHBox = gtk_hbox_new(false, 0);
+	GtkWidget* boundsLabel = gtkutil::LeftAlignedLabel("Use bounds");
+	_srWidgets.useBounds = gtk_check_button_new();
+	gtk_box_pack_start(GTK_BOX(boundsHBox), _srWidgets.useBounds, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(boundsHBox), boundsLabel, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), boundsHBox, false, false, 0);
+	
+	// Radius
+	GtkWidget* radiusHBox = gtk_hbox_new(false, 0);
+	_srWidgets.radiusToggle = gtk_check_button_new();
+	GtkWidget* radiusLabel = gtkutil::LeftAlignedLabel("Radius");
+	gtk_widget_set_size_request(radiusLabel, 90, -1);
+	_srWidgets.radiusEntry = gtk_entry_new();
+	
+	gtk_box_pack_start(GTK_BOX(radiusHBox), _srWidgets.radiusToggle, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(radiusHBox), radiusLabel, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(radiusHBox), _srWidgets.radiusEntry, true, true, 0);
+	
+	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), radiusHBox, false, false, 0);
+	
+	// Time Interval
+	GtkWidget* timeHBox = gtk_hbox_new(false, 0);
+	_srWidgets.timeIntToggle = gtk_check_button_new();
+	GtkWidget* timeLabel = gtkutil::LeftAlignedLabel("Time interval");
+	gtk_widget_set_size_request(timeLabel, 90, -1);
+	_srWidgets.timeIntEntry = gtk_entry_new();
+	
+	gtk_box_pack_start(GTK_BOX(timeHBox), _srWidgets.timeIntToggle, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(timeHBox), timeLabel, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(timeHBox), _srWidgets.timeIntEntry, true, true, 0);
+	
+	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), timeHBox, false, false, 0);
+	
+	// Model
+	GtkWidget* modelHBox = gtk_hbox_new(false, 0);
+	_srWidgets.modelToggle = gtk_check_button_new();
+	GtkWidget* modelLabel = gtkutil::LeftAlignedLabel("Model");
+	gtk_widget_set_size_request(modelLabel, 90, -1);
+	_srWidgets.modelEntry = gtk_entry_new();
+	
+	gtk_box_pack_start(GTK_BOX(modelHBox), _srWidgets.modelToggle, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(modelHBox), modelLabel, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(modelHBox), _srWidgets.modelEntry, true, true, 0);
+	
+	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), modelHBox, false, false, 0);
+	
 	return _srWidgets.vbox;
 }
 
 void StimResponseEditor::update() {
 	gtk_widget_set_sensitive(_dialogVBox, _entity != NULL);
+	
+	updateSRWidgets();
 }
 
 void StimResponseEditor::rescanSelection() {
