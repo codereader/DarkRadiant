@@ -6,6 +6,8 @@
 #include "qerplugin.h"
 #include "iscenegraph.h"
 #include "typesystem.h"
+#include "ieclass.h"
+#include "ientity.h"
 
 #include "generic/callback.h"
 
@@ -54,13 +56,22 @@ public:
 /**
  * Dependencies class.
  */
-class ObjectivesEditorDependencies
-: public GlobalEventManagerModuleRef,
-  public GlobalUIManagerModuleRef,
-  public GlobalRadiantModuleRef,
+struct ObjectivesEditorDependencies
+: public GlobalEntityClassManagerModuleRef,
+  public GlobalEntityModuleRef,
   public GlobalSceneGraphModuleRef,
+  public GlobalEventManagerModuleRef,
+  public GlobalRadiantModuleRef,
+  public GlobalUIManagerModuleRef,
   public TypeSystemRef
-{ };
+{ 
+	// Constructor. We must specify a game type for the eclassmanager and
+	// entity creator, since these do not match "*" lookups
+	ObjectivesEditorDependencies()
+	: GlobalEntityClassManagerModuleRef("doom3"),
+	  GlobalEntityModuleRef("doom3")
+	{ }
+};
 
 /* Required code to register the module with the ModuleServer.
  */

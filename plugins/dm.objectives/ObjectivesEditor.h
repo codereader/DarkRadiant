@@ -7,6 +7,9 @@
 #include <gtk/gtkcellrenderertoggle.h>
 #include <gtk/gtktreeselection.h>
 
+#include <map>
+#include <string>
+
 /* FORWARD DECLS */
 class Entity;
 
@@ -26,6 +29,9 @@ class ObjectivesEditor
 
 	// Tree of actual objectives associated with the selected entity
 	GtkTreeStore* _objTreeStore;
+	
+	// Table of dialog subwidgets
+	std::map<std::string, GtkWidget*> _widgets;
 
 private:
 
@@ -42,6 +48,8 @@ private:
 	static void _onStartActiveCellToggled(
 		GtkCellRendererToggle*, const gchar* path, ObjectivesEditor* self);
 	static void _onEntitySelectionChanged(GtkTreeSelection*, ObjectivesEditor*);
+	static void _onAddEntity(GtkWidget*, ObjectivesEditor*);
+	static void _onDeleteEntity(GtkWidget*, ObjectivesEditor*);
 	
 	// Show dialog widgets
 	void show();
