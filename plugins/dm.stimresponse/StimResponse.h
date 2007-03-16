@@ -23,6 +23,8 @@ private:
 	// The S/R class
 	SRClass _class;
 	
+	bool _inherited;
+	
 	// The list of named properties
 	PropertyMap _properties;
 	
@@ -31,6 +33,11 @@ public:
 	
 	// Copy constructor
 	StimResponse(const StimResponse& other);
+	
+	/** greebo: Returns / sets the "inherited" flag
+	 */
+	bool inherited() const;
+	void setInherited(bool inherited);
 	
 	/** greebo: Gets the property value string or "" if not defined/empty
 	 */
