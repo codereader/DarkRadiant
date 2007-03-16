@@ -7,6 +7,7 @@
 #include "iselection.h"
 #include "qerplugin.h"
 
+#include "gtkutil/image.h"
 #include "generic/callback.h"
 #include "SREditor.h" 
 
@@ -40,6 +41,10 @@ public:
 				"Stim/Response...",	// caption
 				"stimresponse.png",	// icon
 				"StimResponseEditor"); // event name
+				
+		std::string bitmapsPath = GlobalRadiant().getAppPath();
+		bitmapsPath += "bitmaps/";
+		BitmapsPath_set(bitmapsPath.c_str());
 	}
 	
 	/**

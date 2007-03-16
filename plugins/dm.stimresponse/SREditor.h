@@ -8,6 +8,8 @@
 #include "StimTypes.h"
 #include "SREntity.h"
 
+typedef struct _GtkTreeView GtkTreeView;
+
 namespace ui {
 
 class StimResponseEditor :
@@ -25,6 +27,8 @@ class StimResponseEditor :
 	
 	struct SRPropertyWidgets {
 		GtkWidget* vbox;
+		GtkWidget* stimButton;
+		GtkWidget* respButton;
 	} _srWidgets;
 	
 	// The list of the entity's stims/responses
@@ -59,6 +63,14 @@ public:
 	void selectionChanged(scene::Instance& instance);
 
 private:
+	/** greebo: Updates the SR widget group according to the list selection.
+	 */
+	void updateSRWidgets();
+
+	/** greebo: Creates the S/R widget group and returns its vbox
+	 */
+	GtkWidget* createSRWidgets();
+
 	/** greebo: This fills the window with widgets
 	 */
 	void populateWindow();
@@ -80,6 +92,9 @@ private:
 	
 	// The callback for the delete event (toggles the visibility)
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, StimResponseEditor* self);
+
+	// Callback for Stim/Response selection changes
+	static void onSelectionChange(GtkTreeView* treeView, StimResponseEditor* self);
 
 }; // class StimResponseEditor
 
