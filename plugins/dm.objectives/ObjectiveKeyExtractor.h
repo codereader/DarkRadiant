@@ -6,7 +6,7 @@
 #include <boost/lexical_cast.hpp>
 #include <map>
 
-namespace ui
+namespace objectives
 {
 
 /* CONSTANTS */

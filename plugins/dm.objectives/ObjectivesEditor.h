@@ -13,7 +13,7 @@
 /* FORWARD DECLS */
 class Entity;
 
-namespace ui
+namespace objectives
 {
 
 /**
