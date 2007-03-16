@@ -23,6 +23,10 @@ class StimResponseEditor :
 	// The treeview with the entity's stims/responses
 	GtkWidget* _entitySRView;
 	
+	struct SRPropertyWidgets {
+		GtkWidget* vbox;
+	} _srWidgets;
+	
 	// The list of the entity's stims/responses
 	SREntityPtr _srEntity;
 	
