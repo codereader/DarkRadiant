@@ -365,6 +365,54 @@ void StimResponseEditor::updateSRWidgets() {
 			GTK_TOGGLE_BUTTON(_srWidgets.respButton),
 			(sr.get("class") == "R")
 		);
+		
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_srWidgets.active),
+			(sr.get("state") == "1")
+		);
+		
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_srWidgets.useBounds),
+			(sr.get("use_bounds") == "1")
+		);
+		
+		bool useRadius = (sr.get("radius") != "");
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_srWidgets.radiusToggle),
+			useRadius
+		);
+		gtk_entry_set_text(
+			GTK_ENTRY(_srWidgets.timeIntEntry), 
+			sr.get("radius").c_str()
+		);
+		gtk_widget_set_sensitive(_srWidgets.timeIntEntry, useRadius);
+		
+		bool useTimeInterval = (sr.get("time_interval") != "");
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_srWidgets.timeIntToggle),
+			useTimeInterval
+		);
+		gtk_entry_set_text(
+			GTK_ENTRY(_srWidgets.timeIntEntry), 
+			sr.get("time_interval").c_str()
+		);
+		gtk_widget_set_sensitive(_srWidgets.timeIntEntry, useTimeInterval);
+		
+		bool useModel = (sr.get("model") != "");
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_srWidgets.modelToggle),
+			useModel
+		);
+		gtk_entry_set_text(
+			GTK_ENTRY(_srWidgets.modelEntry),
+			sr.get("model").c_str()
+		);
+		gtk_widget_set_sensitive(_srWidgets.timeIntEntry, useModel);
+		
+		// Disable the editing of inherited properties completely
+		if (sr.inherited()) {
+			gtk_widget_set_sensitive(_srWidgets.vbox, false);
+		}
 	}
 	else {
 		gtk_widget_set_sensitive(_srWidgets.vbox, false);
