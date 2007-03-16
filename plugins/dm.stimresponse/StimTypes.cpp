@@ -30,6 +30,7 @@ StimTypes::StimTypes() {
 		newStimType.name = stimNodes[i].getAttributeValue("name");
 		newStimType.caption = stimNodes[i].getAttributeValue("caption");
 		newStimType.description = stimNodes[i].getAttributeValue("description");
+		newStimType.icon = stimNodes[i].getAttributeValue("icon");
 		
 		// Add the stim to the map
 		_stims[id] = newStimType;
@@ -57,4 +58,14 @@ StimType StimTypes::get(int id) {
 	else {
 		return _emptyStimType;
 	}
+}
+
+StimType StimTypes::get(const std::string& name) {
+	for (StimTypeMap::iterator i = _stims.begin(); i!= _stims.end(); i++) {
+		if (i->second.name == name) {
+			return i->second;
+		}
+	}
+	// Nothing found
+	return _emptyStimType;
 }

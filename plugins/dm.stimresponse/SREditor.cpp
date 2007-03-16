@@ -7,9 +7,12 @@
 #include "ieventmanager.h"
 #include "selectionlib.h"
 #include "gtkutil/LeftAlignedLabel.h"
+#include "gtkutil/TextColumn.h"
+#include "gtkutil/IconTextColumn.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/TransientWindow.h"
 #include "gtkutil/WindowPosition.h"
+#include "gtkutil/ScrolledFrame.h"
 #include <gtk/gtk.h>
 
 #include <iostream>
@@ -108,7 +111,27 @@ void StimResponseEditor::populateWindow() {
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(srAlignment), true, true, 0);
 	
 	_entitySRView = gtk_tree_view_new();
-	gtk_box_pack_start(GTK_BOX(srHBox), _entitySRView, false, false, 0);
+	gtk_widget_set_size_request(_entitySRView, -1, 300);
+	gtk_tree_view_append_column(
+		GTK_TREE_VIEW(_entitySRView),
+		gtkutil::TextColumn("#", 0)
+	);
+	
+	gtk_tree_view_append_column(
+		GTK_TREE_VIEW(_entitySRView),
+		gtkutil::TextColumn("S/R", 1)
+	);
+	
+	gtk_tree_view_append_column(
+		GTK_TREE_VIEW(_entitySRView),
+		gtkutil::IconTextColumn("Type", 2, 3)
+	);
+	
+	gtk_box_pack_start(GTK_BOX(srHBox), 
+		gtkutil::ScrolledFrame(_entitySRView), true, true, 0);
+	
+	_srWidgets.vbox = gtk_vbox_new(false, 6);
+	gtk_box_pack_start(GTK_BOX(srHBox), _srWidgets.vbox, true, true, 0);
 	
 	// Cast the helper class onto a ListStore and create a new treeview
 	GtkListStore* stimListStore = _stimTypes;
@@ -142,9 +165,10 @@ void StimResponseEditor::rescanSelection() {
 		
 		_srEntity = SREntityPtr(new SREntity(_entity));
 		
-		if (_entity != NULL) {
-			globalOutputStream() << "Entity: " << _entity->getKeyValue("classname").c_str() << "\n";
-		}
+		// Cast the SREntity onto a liststore and pack it into the treeview
+		GtkListStore* listStore = *_srEntity;
+		gtk_tree_view_set_model(GTK_TREE_VIEW(_entitySRView), GTK_TREE_MODEL(listStore));
+		g_object_unref(listStore);
 	}
 	
 	// Update the widgets

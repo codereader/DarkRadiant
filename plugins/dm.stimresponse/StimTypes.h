@@ -13,6 +13,7 @@ struct StimType {
 	std::string name;			// The name (STIM_FIRE)
 	std::string caption;		// Nice format ("Fire")
 	std::string description;	// Unused at the moment
+	std::string icon;			// The icon to display
 };
 typedef std::map<int, StimType> StimTypeMap;
 
@@ -32,9 +33,13 @@ public:
 	 */
 	StimTypes();
 	
-	/** greebo: Returns the Stim with the given ID
+	/** greebo: Returns the StimType with the given ID
 	 */
 	StimType get(int id);
+	
+	/** greebo: Returns the StimType for the given name (STIM_FIRE)
+	 */
+	StimType get(const std::string& name);
 	
 	// operator cast onto a GtkListStore, use this to pack the liststore
 	operator GtkListStore* ();

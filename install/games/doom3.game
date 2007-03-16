@@ -152,26 +152,26 @@
 
 	<stimResponseSystem>
 		<stims>
-			<stim id="0" name="STIM_FROB" caption="Frob" />
-			<stim id="1" name="STIM_FIRE" caption="Fire" />
-			<stim id="2" name="STIM_WATER" caption="Water" />
-			<stim id="3" name="STIM_DAMAGE" caption="Damage" />
-			<stim id="4" name="STIM_SHIELD" caption="Shield" />
-			<stim id="5" name="STIM_HEALING" caption="Healing" />
-			<stim id="6" name="STIM_HOLY" caption="Holy" />
-			<stim id="7" name="STIM_MAGIC" caption="Magic" />
-			<stim id="8" name="STIM_TOUCH" caption="Touch" />
-			<stim id="9" name="STIM_KNOCKOUT" caption="Knockout" />
-			<stim id="10" name="STIM_KILL" caption="Kill" />
-			<stim id="11" name="STIM_RESTORE" caption="Restore" />
-			<stim id="12" name="STIM_LIGHT" caption="Light" />
-			<stim id="13" name="STIM_SOUND" caption="Sound" />
-			<stim id="14" name="STIM_VISUAL" caption="Visual" />
-			<stim id="15" name="STIM_INVITE" caption="Invitation" />
-			<stim id="16" name="STIM_READ" caption="Readable" />
-			<stim id="17" name="STIM_RANDOM" caption="Random" />
-			<stim id="18" name="STIM_TIMER" caption="Timer" />
-			<stim id="19" name="STIM_COMMUNICATION" caption="Communication" />
+			<stim id="0" name="STIM_FROB" caption="Frob" icon="" />
+			<stim id="1" name="STIM_FIRE" caption="Fire" icon="sr_icon_fire.png" />
+			<stim id="2" name="STIM_WATER" caption="Water" icon="" />
+			<stim id="3" name="STIM_DAMAGE" caption="Damage" icon="" />
+			<stim id="4" name="STIM_SHIELD" caption="Shield" icon="" />
+			<stim id="5" name="STIM_HEALING" caption="Healing" icon="" />
+			<stim id="6" name="STIM_HOLY" caption="Holy" icon="" />
+			<stim id="7" name="STIM_MAGIC" caption="Magic" icon="" />
+			<stim id="8" name="STIM_TOUCH" caption="Touch" icon="" />
+			<stim id="9" name="STIM_KNOCKOUT" caption="Knockout" icon="" />
+			<stim id="10" name="STIM_KILL" caption="Kill" icon="" />
+			<stim id="11" name="STIM_RESTORE" caption="Restore" icon="" />
+			<stim id="12" name="STIM_LIGHT" caption="Light" icon="" />
+			<stim id="13" name="STIM_SOUND" caption="Sound" icon="" />
+			<stim id="14" name="STIM_VISUAL" caption="Visual" icon="" />
+			<stim id="15" name="STIM_INVITE" caption="Invitation" icon="" />
+			<stim id="16" name="STIM_READ" caption="Readable" icon="" />
+			<stim id="17" name="STIM_RANDOM" caption="Random" icon="" />
+			<stim id="18" name="STIM_TIMER" caption="Timer" icon="" />
+			<stim id="19" name="STIM_COMMUNICATION" caption="Communication" icon="" />
 		</stims>
 		<properties>
 			<!-- The key root names "class" refers to "sr_class_N" -->
