@@ -128,6 +128,10 @@ void StimResponseEditor::populateWindow() {
 	_entitySRView = gtk_tree_view_new();
 	gtk_widget_set_size_request(_entitySRView, 280, 240);
 	
+	_entitySRSelection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_entitySRView));
+	// Connect the signal
+	g_signal_connect(G_OBJECT(_entitySRSelection), "changed", G_CALLBACK(onSelectionChange), this);
+	
 	// ID number
 	GtkTreeViewColumn* numCol = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(numCol, "#");
@@ -181,9 +185,6 @@ void StimResponseEditor::populateWindow() {
                                             NULL, NULL);
 	
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_entitySRView), typeCol);
-	
-	// Connect the signal
-	g_signal_connect(G_OBJECT(_entitySRView), "cursor-changed", G_CALLBACK(onSelectionChange), this);
 	
 	gtk_box_pack_start(GTK_BOX(srHBox), 
 		gtkutil::ScrolledFrame(_entitySRView), true, true, 0);
@@ -341,7 +342,33 @@ void StimResponseEditor::selectionChanged(scene::Instance& instance) {
 }
 
 void StimResponseEditor::updateSRWidgets() {
+	if (!GTK_WIDGET_VISIBLE(_dialog)) {
+		return;
+	}
 	
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+	bool anythingSelected = gtk_tree_selection_get_selected(
+		_entitySRSelection, &model, &iter
+	);
+	
+	if (anythingSelected) {
+		gtk_widget_set_sensitive(_srWidgets.vbox, true);
+		
+		// Update the widgets
+		int id = gtkutil::TreeModel::getInt(model, &iter, ID_COL);
+		
+		StimResponse& sr = _srEntity->get(id);
+		
+		// The other (stim) button is automatically changed
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_srWidgets.respButton),
+			(sr.get("class") == "R")
+		);
+	}
+	else {
+		gtk_widget_set_sensitive(_srWidgets.vbox, false);
+	}
 }
 
 // Static GTK Callbacks
@@ -353,7 +380,7 @@ gboolean StimResponseEditor::onDelete(GtkWidget* widget, GdkEvent* event, StimRe
 	return true;
 }
 
-void StimResponseEditor::onSelectionChange(GtkTreeView* treeView, StimResponseEditor* self) {
+void StimResponseEditor::onSelectionChange(GtkTreeSelection* treeView, StimResponseEditor* self) {
 	self->updateSRWidgets();
 }
 

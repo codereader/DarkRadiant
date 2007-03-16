@@ -46,6 +46,19 @@ public:
 	 */
 	static bool getBoolean(GtkTreeModel* model, GtkTreeIter* iter, gint colNo);
 
+	/** Extract an integer from the given row of the provided TreeModel.
+	 * 
+	 * @param model
+	 * The TreeModel* to examine.
+	 * 
+	 * @param iter
+	 * A GtkTreeIter pointing to the row to look up.
+	 * 
+	 * @param colNo
+	 * The column number to look up.
+	 */
+	static int getInt(GtkTreeModel* model, GtkTreeIter* iter, gint colNo);
+
 	/**
 	 * Extract the selected string from the given column in the TreeModel. The
 	 * selection object will be queried for a selection, and the string
@@ -59,7 +72,7 @@ public:
 	 */
 	static std::string getSelectedString(GtkTreeSelection* selection,
 										 gint colNo);
-										 
+						 
 	/* Local object that walks the GtkTreeModel and obtains a GtkTreePath locating
 	 * the given name. The gtk_tree_model_foreach function requires a pointer to
 	 * a function, which in this case is a static member of the walker object that

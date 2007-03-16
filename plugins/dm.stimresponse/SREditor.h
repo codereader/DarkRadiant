@@ -10,6 +10,7 @@
 
 typedef struct _GtkTreeView GtkTreeView;
 typedef struct _GtkToggleButton GtkToggleButton;
+typedef struct _GtkTreeSelection GtkTreeSelection;
 
 namespace ui {
 
@@ -25,6 +26,7 @@ class StimResponseEditor :
 	
 	// The treeview with the entity's stims/responses
 	GtkWidget* _entitySRView;
+	GtkTreeSelection* _entitySRSelection;
 	
 	struct SRPropertyWidgets {
 		GtkWidget* vbox;
@@ -103,7 +105,7 @@ private:
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, StimResponseEditor* self);
 
 	// Callback for Stim/Response selection changes
-	static void onSelectionChange(GtkTreeView* treeView, StimResponseEditor* self);
+	static void onSelectionChange(GtkTreeSelection* treeView, StimResponseEditor* self);
 	static void onTypeChange(GtkToggleButton* toggleButton, StimResponseEditor* self);
 
 }; // class StimResponseEditor

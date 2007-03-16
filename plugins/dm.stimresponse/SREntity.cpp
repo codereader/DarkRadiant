@@ -79,6 +79,17 @@ void SREntity::save(Entity* target) {
 	}
 }
 
+StimResponse& SREntity::get(int id) {
+	StimResponseMap::iterator i = _list.find(id);
+	
+	if (i != _list.end()) {
+		return i->second;
+	}
+	else {
+		return _emptyStimResponse;
+	} 
+}
+
 SREntity::operator GtkListStore* () {
 	return _listStore;
 }
