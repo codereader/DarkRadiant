@@ -120,9 +120,12 @@ GtkWidget* ObjectivesEditor::createEntitiesPanel() {
 		G_OBJECT(addButton), "clicked", G_CALLBACK(_onAddEntity), this);
 	gtk_box_pack_start(GTK_BOX(buttonBox), addButton, TRUE, TRUE, 0);
 	
-	gtk_box_pack_start(GTK_BOX(buttonBox),
-					   gtk_button_new_from_stock(GTK_STOCK_DELETE),
-					   TRUE, TRUE, 0);
+	GtkWidget* delButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	gtk_widget_set_sensitive(delButton, FALSE); // disabled at start
+	g_signal_connect(
+		G_OBJECT(delButton), "clicked", G_CALLBACK(_onDeleteEntity), this);
+	gtk_box_pack_start(GTK_BOX(buttonBox), delButton, TRUE, TRUE, 0);
+	_widgets["deleteEntity"] = delButton;
 					   
 	gtk_box_pack_start(GTK_BOX(hbx), buttonBox, FALSE, FALSE, 0);
 	return hbx;
@@ -244,7 +247,15 @@ void ObjectivesEditor::_onEntitySelectionChanged(GtkTreeSelection* sel,
 		assert(entity);
 		self->populateObjectiveTree(entity);
 		
+		// Enable the delete button
+		gtk_widget_set_sensitive(self->_widgets["deleteEntity"], TRUE); 
 	}
+	else {
+		// No selection, disable the delete button and clear the objective
+		// panel
+		gtk_widget_set_sensitive(self->_widgets["deleteEntity"], FALSE);
+	} 
+		
 }
 
 // Add a new objectives entity button
@@ -267,6 +278,11 @@ void ObjectivesEditor::_onAddEntity(GtkWidget* w, ObjectivesEditor* self) {
 	
 	// Refresh the widgets
 	self->populateWidgets();
+}
+
+// Delete entity button
+void ObjectivesEditor::_onDeleteEntity(GtkWidget* w, ObjectivesEditor* self) {
+	
 }
 
 }
