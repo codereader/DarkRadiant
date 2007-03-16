@@ -36,8 +36,8 @@ public:
 	
 	
 		// Add the menu item
-		IMenuManager* mm = GlobalUIManager().getMenuManager();
-		mm->add("main/map", 
+		IMenuManager& mm = GlobalUIManager().getMenuManager();
+		mm.add("main/map", 
 				"ObjectivesEditor", 
 				ui::menuItem,
 				"Objectives...",

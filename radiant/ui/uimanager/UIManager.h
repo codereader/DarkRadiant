@@ -12,12 +12,12 @@ class UIManager :
 {
 	// Local helper class taking care of the menu
 	MenuManager _menuManager;
+
 public:
-	UIManager();
-	
+
 	/** greebo: Retrieves the helper class to manipulate the menu.
 	 */
-	IMenuManager* getMenuManager();
+	IMenuManager& getMenuManager();
 
 }; // class UIManager
 

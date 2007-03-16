@@ -86,7 +86,7 @@ public:
 	INTEGER_CONSTANT(Version, 1);
 	STRING_CONSTANT(Name, "UIManager");
 
-	virtual IMenuManager* getMenuManager() = 0;
+	virtual IMenuManager& getMenuManager() = 0;
 };
 
 // Module definitions
