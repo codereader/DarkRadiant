@@ -134,9 +134,6 @@ struct IRadiant
   void (*splitSelectedBrushes)(const Vector3 planePoints[3], const std::string& shader, EBrushSplit split);
   void (*brushSetClipPlane)(const Plane3& plane);
 
-  EViewType (*XYWindow_getViewType)();
-  Vector3 (*XYWindow_windowToWorld)(const WindowVector& position);
-  
   const char* (*TextureBrowser_getSelectedShader)();
 
   // GTK+ functions
