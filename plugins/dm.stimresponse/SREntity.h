@@ -54,12 +54,17 @@ private:
 	
 	// The helper class managing the various stim types
 	StimTypes _stimTypes;
+	
+	// An empty stim
+	StimResponse _emptyStimResponse;
 
 public:
 	SREntity(Entity* source);
 
 	void load(Entity* source);
 	void save(Entity* target);
+	
+	StimResponse& get(int id);
 		
 	operator GtkListStore* ();
 	
