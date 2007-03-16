@@ -1852,18 +1852,18 @@ void MainFrame::Create()
     ui::FiltersMenu::addItems();
     
     // Retrieve the "main" menubar from the UIManager
-    GtkMenuBar* mainMenu = GTK_MENU_BAR(GlobalUIManager().getMenuManager()->get("main"));
+    GtkMenuBar* mainMenu = GTK_MENU_BAR(GlobalUIManager().getMenuManager().get("main"));
     gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(mainMenu), false, false, 0);
     
     if (m_nCurrentStyle != eFloating) {
     	// Hide the camera toggle option for non-floating views
-    	GlobalUIManager().getMenuManager()->setVisibility("main/view/cameraview", false);
+    	GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);
     }
     
 	if (m_nCurrentStyle != eFloating && m_nCurrentStyle != eSplit) {
 		// Hide the console/texture browser toggles for non-floating/non-split views
-		GlobalUIManager().getMenuManager()->setVisibility("main/view/consoleView", false);
-		GlobalUIManager().getMenuManager()->setVisibility("main/view/textureBrowser", false);	
+		GlobalUIManager().getMenuManager().setVisibility("main/view/consoleView", false);
+		GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", false);	
 	}
     
     // Instantiate the ToolbarCreator and retrieve the view toolbar widget 

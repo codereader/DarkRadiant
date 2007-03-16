@@ -23,22 +23,23 @@ void FiltersMenu::addItems() {
 		// Visitor function
 		void visit(const std::string& filterName) {
 			// Get the menu manager
-			IMenuManager* menuManager = GlobalUIManager().getMenuManager();
+			IMenuManager& menuManager = GlobalUIManager().getMenuManager();
 	
-			std::string eventName = GlobalFilterSystem().getFilterEventName(filterName);
+			std::string eventName = 
+				GlobalFilterSystem().getFilterEventName(filterName);
 
 			// Create the toplevel menu item
-			menuManager->add(MENU_PATH, filterName, 
+			menuManager.add(MENU_PATH, filterName, 
 							 ui::menuItem, filterName, 
 							 MENU_ICON, eventName);
 		}	
 	};
 
 	// Get the menu manager
-	IMenuManager* menuManager = GlobalUIManager().getMenuManager();
+	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
 	
 	// Create the toplevel menu item
-	menuManager->insert(MENU_INSERT_BEFORE, MENU_FILTERS_NAME, 
+	menuManager.insert(MENU_INSERT_BEFORE, MENU_FILTERS_NAME, 
 						ui::menuFolder, "_Filter", "", ""); // empty icon, empty event
 	
 	// Visit the filters in the FilterSystem to populate the menu

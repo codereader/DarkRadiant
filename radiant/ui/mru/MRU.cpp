@@ -155,10 +155,10 @@ void MRU::updateMenu() {
 
 void MRU::constructMenu() {
 	// Get the menumanager	
-	IMenuManager* menuManager = GlobalUIManager().getMenuManager();
+	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
 	
 	// Create the "empty" MRU menu item (the desensitised one)
-	GtkWidget* empty = menuManager->insert(
+	GtkWidget* empty = menuManager.insert(
 		"main/file/exit", 
 		"mruempty", 
 		ui::menuItem, 
@@ -176,7 +176,7 @@ void MRU::constructMenu() {
 		const std::string commandName = std::string("MRUOpen") + intToStr(item.getIndex());
 		
 		// Create the toplevel menu item
-		GtkWidget* menuItem = menuManager->insert(
+		GtkWidget* menuItem = menuManager.insert(
 			"main/file/exit", 
 			"MRU" + intToStr(item.getIndex()), 
 			ui::menuItem, 
@@ -189,7 +189,7 @@ void MRU::constructMenu() {
 	}
 	
 	// Insert the last separator to split the MRU file list from the "Exit" command. 
-	menuManager->insert(
+	menuManager.insert(
 		"main/file/exit", 
 		"mruseparator", 
 		ui::menuSeparator, 

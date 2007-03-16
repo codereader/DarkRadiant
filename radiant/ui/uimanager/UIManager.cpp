@@ -6,16 +6,8 @@
 
 namespace ui {
 
-	namespace {
-		
-	}
-
-UIManager::UIManager() {
-	
-}
-
-IMenuManager* UIManager::getMenuManager() {
-	return &_menuManager;
+IMenuManager& UIManager::getMenuManager() {
+	return _menuManager;
 }
 
 } // namespace ui

@@ -32,8 +32,8 @@ public:
 		);
 	
 		// Add the menu item
-		IMenuManager* mm = GlobalUIManager().getMenuManager();
-		mm->add("main/entity", 	// menu location path
+		IMenuManager& mm = GlobalUIManager().getMenuManager();
+		mm.add("main/entity", 	// menu location path
 				"StimResponse", // name
 				ui::menuItem,	// type
 				"Stim/Response...",	// caption
