@@ -109,19 +109,6 @@ scene::Node& getMapWorldEntity()
   return Map_FindOrInsertWorldspawn(g_map);
 }
 
-EViewType XYWindow_getViewType() {
-	return GlobalXYWnd().getActiveViewType();
-}
-
-Vector3 XYWindow_windowToWorld(const WindowVector& position) {
-	Vector3 result(0, 0, 0);
-	XYWnd* xyWnd = GlobalXYWnd().getActiveXY();
-	if (xyWnd != NULL) {
-		xyWnd->convertXYToWorld(static_cast<int>(position.x()), static_cast<int>(position.y()), result);
-	}
-	return result;
-}
-
 const char* TextureBrowser_getSelectedShader()
 {
   return TextureBrowser_GetSelectedShader(GlobalTextureBrowser());
@@ -158,8 +145,6 @@ public:
     m_radiantcore.splitSelectedBrushes = &Scene_BrushSplitByPlane;
     m_radiantcore.brushSetClipPlane = &Scene_BrushSetClipPlane; 
     
-    m_radiantcore.XYWindow_getViewType = XYWindow_getViewType;
-    m_radiantcore.XYWindow_windowToWorld = XYWindow_windowToWorld;
     m_radiantcore.TextureBrowser_getSelectedShader = TextureBrowser_getSelectedShader;
 
     m_radiantcore.m_pfnMessageBox = &gtk_MessageBox;
