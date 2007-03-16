@@ -204,8 +204,11 @@ void StimResponseEditor::populateWindow() {
 	
 	// Add the cellrenderer for the name
 	GtkCellRenderer* nameRenderer = gtk_cell_renderer_text_new();
+	GtkCellRenderer* iconRenderer = gtk_cell_renderer_pixbuf_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_stimTypeList), iconRenderer, false);
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_stimTypeList), nameRenderer, true);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_stimTypeList), nameRenderer, "text", 1);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_stimTypeList), iconRenderer, "pixbuf", 2);
 	
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), _stimTypeList, false, false, 0);
 }
@@ -352,7 +355,7 @@ void StimResponseEditor::updateSRWidgets() {
 		_entitySRSelection, &model, &iter
 	);
 	
-	if (anythingSelected) {
+	if (anythingSelected && _srEntity != NULL) {
 		gtk_widget_set_sensitive(_srWidgets.vbox, true);
 		
 		// Update the widgets
@@ -366,27 +369,36 @@ void StimResponseEditor::updateSRWidgets() {
 			(sr.get("class") == "R")
 		);
 		
+		// Active
 		gtk_toggle_button_set_active(
 			GTK_TOGGLE_BUTTON(_srWidgets.active),
 			(sr.get("state") == "1")
 		);
 		
+		// Use Bounds
 		gtk_toggle_button_set_active(
 			GTK_TOGGLE_BUTTON(_srWidgets.useBounds),
-			(sr.get("use_bounds") == "1")
+			sr.get("use_bounds") == "1"
 		);
+		gtk_widget_set_sensitive(_srWidgets.useBounds, sr.get("class") == "S");
 		
+		// Use Radius
 		bool useRadius = (sr.get("radius") != "");
 		gtk_toggle_button_set_active(
 			GTK_TOGGLE_BUTTON(_srWidgets.radiusToggle),
 			useRadius
 		);
 		gtk_entry_set_text(
-			GTK_ENTRY(_srWidgets.timeIntEntry), 
+			GTK_ENTRY(_srWidgets.radiusEntry), 
 			sr.get("radius").c_str()
 		);
-		gtk_widget_set_sensitive(_srWidgets.timeIntEntry, useRadius);
+		gtk_widget_set_sensitive(
+			_srWidgets.radiusEntry, 
+			useRadius && sr.get("class") == "S"
+		);
+		gtk_widget_set_sensitive(_srWidgets.radiusToggle, sr.get("class") == "S");
 		
+		// Use Time interval
 		bool useTimeInterval = (sr.get("time_interval") != "");
 		gtk_toggle_button_set_active(
 			GTK_TOGGLE_BUTTON(_srWidgets.timeIntToggle),
@@ -396,8 +408,13 @@ void StimResponseEditor::updateSRWidgets() {
 			GTK_ENTRY(_srWidgets.timeIntEntry), 
 			sr.get("time_interval").c_str()
 		);
-		gtk_widget_set_sensitive(_srWidgets.timeIntEntry, useTimeInterval);
+		gtk_widget_set_sensitive(
+			_srWidgets.timeIntEntry, 
+			useTimeInterval && sr.get("class") == "S"
+		);
+		gtk_widget_set_sensitive(_srWidgets.timeIntToggle, sr.get("class") == "S");
 		
+		// Use Model
 		bool useModel = (sr.get("model") != "");
 		gtk_toggle_button_set_active(
 			GTK_TOGGLE_BUTTON(_srWidgets.modelToggle),
@@ -407,7 +424,7 @@ void StimResponseEditor::updateSRWidgets() {
 			GTK_ENTRY(_srWidgets.modelEntry),
 			sr.get("model").c_str()
 		);
-		gtk_widget_set_sensitive(_srWidgets.timeIntEntry, useModel);
+		gtk_widget_set_sensitive(_srWidgets.modelEntry, useModel);
 		
 		// Disable the editing of inherited properties completely
 		if (sr.inherited()) {

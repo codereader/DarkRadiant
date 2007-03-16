@@ -2,9 +2,8 @@
 
 #include "iregistry.h"
 #include "string/string.h"
-#include <gtk/gtkliststore.h>
-
-#include <iostream>
+#include "gtkutil/image.h"
+#include <gtk/gtk.h>
 
 	namespace {
 		const std::string RKEY_STIM_DEFINITIONS = "game/stimResponseSystem/stims//stim";
@@ -12,13 +11,14 @@
 		enum {
 		  ID_COL,
 		  CAPTION_COL,
+		  ICON_COL,
 		  NUM_COLS
 		};
 	}
 
 StimTypes::StimTypes() {
 	// Create a new liststore
-	_listStore = gtk_list_store_new(NUM_COLS, G_TYPE_INT, G_TYPE_STRING);
+	_listStore = gtk_list_store_new(NUM_COLS, G_TYPE_INT, G_TYPE_STRING, GDK_TYPE_PIXBUF);
 	
 	// Find all the relevant nodes
 	xml::NodeList stimNodes = GlobalRegistry().findXPath(RKEY_STIM_DEFINITIONS);
@@ -41,6 +41,7 @@ StimTypes::StimTypes() {
 		gtk_list_store_set(_listStore, &iter, 
 							ID_COL, id,
 							CAPTION_COL, _stims[id].caption.c_str(),
+							ICON_COL, gtkutil::getLocalPixbufWithMask(newStimType.icon),
 							-1);
 	}
 }
