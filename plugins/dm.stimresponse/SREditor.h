@@ -6,6 +6,7 @@
 #include "gtkutil/WindowPosition.h"
 
 #include "StimTypes.h"
+#include "SREntity.h"
 
 namespace ui {
 
@@ -21,7 +22,9 @@ class StimResponseEditor :
 	
 	// The treeview with the entity's stims/responses
 	GtkWidget* _entitySRView;
-	GtkListStore * _entitySRListStore;
+	
+	// The list of the entity's stims/responses
+	SREntityPtr _srEntity;
 	
 	// The position/size memoriser
 	gtkutil::WindowPosition _windowPosition;

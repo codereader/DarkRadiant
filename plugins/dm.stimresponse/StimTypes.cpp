@@ -7,7 +7,7 @@
 #include <iostream>
 
 	namespace {
-		const std::string RKEY_STIM_DEFINITIONS = "game/stimResponseSystem//stim";
+		const std::string RKEY_STIM_DEFINITIONS = "game/stimResponseSystem/stims//stim";
 		
 		enum {
 		  ID_COL,
@@ -26,13 +26,13 @@ StimTypes::StimTypes() {
 	for (unsigned int i = 0; i < stimNodes.size(); i++) {
 		int id = strToInt(stimNodes[i].getAttributeValue("id"));
 		
-		Stim newStim;
-		newStim.name = stimNodes[i].getAttributeValue("name");
-		newStim.caption = stimNodes[i].getAttributeValue("caption");
-		newStim.description = stimNodes[i].getAttributeValue("description");
+		StimType newStimType;
+		newStimType.name = stimNodes[i].getAttributeValue("name");
+		newStimType.caption = stimNodes[i].getAttributeValue("caption");
+		newStimType.description = stimNodes[i].getAttributeValue("description");
 		
 		// Add the stim to the map
-		_stims[id] = newStim;
+		_stims[id] = newStimType;
 		
 		GtkTreeIter iter;
 		
@@ -48,13 +48,13 @@ StimTypes::operator GtkListStore* () {
 	return _listStore;
 }
 
-Stim StimTypes::get(int id) {
+StimType StimTypes::get(int id) {
 	StimTypeMap::iterator i = _stims.find(id);
 	
 	if (i != _stims.end()) {
 		return i->second;
 	}
 	else {
-		return _emptyStim;
+		return _emptyStimType;
 	}
 }

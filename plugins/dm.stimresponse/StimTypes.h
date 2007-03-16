@@ -7,14 +7,14 @@
 // Forward Declaration
 typedef struct _GtkListStore GtkListStore; 
 
-/** greebo: A simple Stim representation.
+/** greebo: A simple StimType representation.
  */
-struct Stim {
+struct StimType {
 	std::string name;			// The name (STIM_FIRE)
 	std::string caption;		// Nice format ("Fire")
 	std::string description;	// Unused at the moment
 };
-typedef std::map<int, Stim> StimTypeMap;
+typedef std::map<int, StimType> StimTypeMap;
 
 class StimTypes
 {
@@ -22,7 +22,7 @@ class StimTypes
 	StimTypeMap _stims;
 	
 	// The empty stim.
-	Stim _emptyStim;
+	StimType _emptyStimType;
 	
 	// The GTK list store for use in combo boxes
 	GtkListStore* _listStore;
@@ -34,12 +34,7 @@ public:
 	
 	/** greebo: Returns the Stim with the given ID
 	 */
-	Stim get(int id);
-	
-	/** greebo: Returns the Stim ID for the given caption.
-	 * 			(For reverse lookups of combo box values).
-	 */
-	int getIdForCaption(const std::string& caption);
+	StimType get(int id);
 	
 	// operator cast onto a GtkListStore, use this to pack the liststore
 	operator GtkListStore* ();
