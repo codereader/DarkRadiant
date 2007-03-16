@@ -31,9 +31,15 @@ public:
 	 * 
 	 * @param iconCol
 	 * TreeModel column containing the icon.
+	 * 
+	 * @param useMarkup
+	 * Whether Pango markup should be used to set the text for the column.
 	 */
-	IconTextColumn(const std::string& title, gint textCol, gint iconCol) {
-		
+	IconTextColumn(const std::string& title, 
+				   gint textCol, 
+				   gint iconCol, 
+				   bool useMarkup = false) 
+	{
 		// Create the TreeViewColumn
 		_column = gtk_tree_view_column_new();
 		gtk_tree_view_column_set_title(_column, title.c_str());
@@ -49,9 +55,10 @@ public:
 		// Add the text
 		GtkCellRenderer* textRend = gtk_cell_renderer_text_new();
 		gtk_tree_view_column_pack_start(_column, textRend, FALSE);
-		gtk_tree_view_column_set_attributes(_column, textRend, 
-											"text", textCol,
-											NULL);
+		gtk_tree_view_column_set_attributes(
+			_column, textRend, 
+			useMarkup ? "markup" : "text", textCol,
+			NULL);
 	}
 	
 	/**

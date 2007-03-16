@@ -5,6 +5,7 @@
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/IconTextColumn.h"
 
 #include "groupdialog.h"
 #include "qerplugin.h"
@@ -95,22 +96,9 @@ GtkWidget* AddPropertyDialog::createTreeView() {
 					 G_CALLBACK(_onSelectionChanged), this);
 	
 	// Display name column with icon
-	GtkTreeViewColumn* nameCol = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_spacing(nameCol, 3);
-
-	GtkCellRenderer* pixRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_column_pack_start(nameCol, pixRenderer, FALSE);
-    gtk_tree_view_column_set_attributes(nameCol, pixRenderer, "pixbuf", ICON_COLUMN, NULL);
-
-	GtkCellRenderer* textRenderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(nameCol, textRenderer, FALSE);
-    gtk_tree_view_column_set_attributes(nameCol,
-                                        textRenderer,
-                                        "markup",
-                                        DISPLAY_NAME_COLUMN,
-                                        NULL);
-
-    gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), nameCol);                                                                        
+    gtk_tree_view_append_column(
+    	GTK_TREE_VIEW(_treeView), 
+    	gtkutil::IconTextColumn("", DISPLAY_NAME_COLUMN, ICON_COLUMN, true));                                                                        
 
 	// Model owned by view
 	g_object_unref(G_OBJECT(_treeStore));
@@ -182,14 +170,21 @@ public:
 		// Only add the property if its value is empty, this indicates a 
 		// *possible* key rather than one which is already set
 		if (attr.value.empty()) {
+			
+			// Escape any Pango markup in the attribute name (e.g. "<" or ">")
+			gchar* escName = g_markup_escape_text(attr.name.c_str(), -1);
+			
 			GtkTreeIter tmp;
 			gtk_tree_store_append(_store, &tmp, _parent);
 			gtk_tree_store_set(_store, &tmp,
-				DISPLAY_NAME_COLUMN, attr.name.c_str(),
-				PROPERTY_NAME_COLUMN, attr.name.c_str(),
+				DISPLAY_NAME_COLUMN, escName,
+				PROPERTY_NAME_COLUMN, escName,
 				ICON_COLUMN, PropertyEditorFactory::getPixbufFor(attr.type),
 				DESCRIPTION_COLUMN, attr.description.c_str(),
-				-1);	
+				-1);
+				
+			// Free the escaped string
+			g_free(escName);
 		}
 	}
 	
