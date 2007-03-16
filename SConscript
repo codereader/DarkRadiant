@@ -302,12 +302,14 @@ srEnv = module_env.Copy()
 srEnv.Append(LIBS = ['gtkutil', 'xmlutil'])
 srEnv.useGtk2()
 srEnv.useGlib2()
+srEnv.useBoostRegex()
 srList = build_list('plugins/dm.stimresponse', 
 					'plugin.cpp \
 					 SREditor.cpp \
 					 StimTypes.cpp \
 					 SREntity.cpp \
-					 StimResponse.cpp')
+					 StimResponse.cpp \
+					 SRPropertyLoader.cpp')
 srLib = srEnv.SharedLibrary(target='dm_stimresponse',
 							source=srList,
 							no_import_lib=1)

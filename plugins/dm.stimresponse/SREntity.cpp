@@ -1,25 +1,19 @@
 #include "SREntity.h"
 
 #include "iregistry.h"
+#include "ieclass.h"
 #include "entitylib.h"
 #include <gtk/gtkliststore.h>
 
+#include "SRPropertyLoader.h"
+
+#include <iostream>
+
 	namespace {
 		const unsigned int NUM_MAX_STIMS = 99999;
+		
 		const std::string RKEY_STIM_PROPERTIES = 
 			"game/stimResponseSystem/properties//property";
-			
-		
-		class SRPropertyLoader :
-			public Entity::Visitor
-		{
-		public:
-			SRPropertyLoader();
-			
-			void visit(const std::string& key, const std::string& value) {
-				
-			}
-		};
 	}
 
 SREntity::SREntity(Entity* source) {
@@ -32,9 +26,15 @@ void SREntity::load(Entity* source) {
 		return;
 	}
 	
-	for (unsigned int i = 0; i < NUM_MAX_STIMS; i++) {
-		
-	}
+	// Get the entity class to scan the inherited values
+	IEntityClassPtr eclass = GlobalEntityClassManager().findOrInsert(
+		source->getKeyValue("classname"), true
+	);
+	
+	// Instantiate a visitor class with the list of possible keys 
+	// and the target list where all the S/Rs are stored
+	SRPropertyLoader visitor(_keys, _list);
+	eclass->forEachClassAttribute(visitor);
 }
 
 void SREntity::save(Entity* target) {

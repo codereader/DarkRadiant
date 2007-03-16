@@ -19,12 +19,16 @@ typedef struct _GtkListStore GtkListStore;
  */
 class SREntity
 {
+public:
+	// These are the possible key names
+	typedef std::vector<std::string> KeyList;
+	
 	// These are the Stims/Responses belonging to an entity
 	typedef std::vector<StimResponse> SRList;
-	SRList _list;
 	
-	// These are the possible key names (static)
-	typedef std::vector<std::string> KeyList;
+private:
+	// The local lists of S/R and possible keys
+	SRList _list;
 	KeyList _keys;
 	
 	// The liststore representation

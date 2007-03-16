@@ -183,5 +183,6 @@
 			<property name="state" />
 			<property name="radius" />
 		</properties>
+		<stimResponsePrefix value="sr_" />
 	</stimResponseSystem>
 </game>

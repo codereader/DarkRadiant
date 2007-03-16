@@ -1,5 +1,6 @@
 #include "iplugin.h"
 #include "ieventmanager.h"
+#include "ieclass.h"
 #include "iscenegraph.h"
 #include "iuimanager.h"
 #include "iregistry.h"
@@ -60,8 +61,14 @@ class StimResponseDependencies :
 	public GlobalRadiantModuleRef,
 	public GlobalSelectionModuleRef,
 	public GlobalSceneGraphModuleRef,
-	public TypeSystemRef
-{ };
+	public TypeSystemRef,
+	public GlobalEntityClassManagerModuleRef
+{ 
+public:
+	StimResponseDependencies() :
+		GlobalEntityClassManagerModuleRef("doom3")
+	{}
+};
 
 /* Required code to register the module with the ModuleServer.
  */

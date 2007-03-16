@@ -1,12 +1,14 @@
 #include "StimResponse.h"
 
 StimResponse::StimResponse() :
-	_class(typeStim)
+	_class(typeStim),
+	_inherited(false)
 {}
 
 // Copy constructor
 StimResponse::StimResponse(const StimResponse& other) :
 	_class(other._class),
+	_inherited(other._inherited),
 	_properties(other._properties)
 {}
 
@@ -27,4 +29,12 @@ std::string StimResponse::get(const std::string& key) {
 
 void StimResponse::set(const std::string& key, const std::string& value) {
 	_properties[key] = value;
+}
+
+void StimResponse::setInherited(bool inherited) {
+	_inherited = inherited;
+}
+
+bool StimResponse::inherited() const {
+	return _inherited;
 }
