@@ -2,6 +2,7 @@
 #include "ObjectiveEntityFinder.h"
 #include "ObjectiveKeyExtractor.h"
 #include "RandomOrigin.h"
+#include "TargetList.h"
 
 #include "iscenegraph.h"
 #include "qerplugin.h"
@@ -185,6 +186,41 @@ void ObjectivesEditor::populateWidgets() {
 	scene::Traversable* root = Node_getTraversable(GlobalSceneGraph().root());
 	assert(root); // root should always be traversable
 	root->traverse(finder);
+	
+	// Set the worldspawn entity and populate the active-at-start column
+	_worldSpawn = finder.getWorldSpawn();
+	populateActiveAtStart();
+}
+
+// Populate the active-at-start column.
+void ObjectivesEditor::populateActiveAtStart() {
+	
+	// Construct the list of entities targeted by the worldspawn
+	TargetList targets(_worldSpawn);
+	
+	// Iterate through each row in the entity list. For each Entity*, get its
+	// name and check if the worldspawn entity has a "target" key for this
+	// entity name. This indicates that the objective entity will be active at
+	// game start.
+	GtkTreeIter iter;
+	GtkTreeModel* model = GTK_TREE_MODEL(_objectiveEntityList);
+	
+	// Get the initial iter, which may return FALSE if the tree is empty
+	if (!gtk_tree_model_get_iter_first(model, &iter))
+		return;
+		
+	// Otherwise, iterate over each row, checking for the target each time
+	do {
+		// Retrieve the entity pointer
+		Entity* ent;
+		gtk_tree_model_get(model, &iter, 2, &ent, -1);
+		
+		// Test if the worldspawn is targeting this entity
+		if (targets.isTargeted(ent)) {
+			std::cout << "targeted" << std::endl;
+		}
+	}
+	while (gtk_tree_model_iter_next(model, &iter));
 }
 
 // Static method to display dialog

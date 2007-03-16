@@ -11,7 +11,9 @@ namespace objectives
 
 /**
  * Visitor class to locate and list any target_addobjectives entities in the
- * current map.
+ * current map. Also keeps a reference to the worldspawn entity so that the
+ * "activate at start" status can be determined (the worldspawn targets any
+ * objective entities that should be active at start).
  */
 class ObjectiveEntityFinder
 : public scene::Traversable::Walker
@@ -22,6 +24,9 @@ class ObjectiveEntityFinder
 	// GtkListStore to populate with results
 	GtkListStore* _store;
 	
+	// Worldspawn entity
+	mutable Entity* _worldSpawn;
+	
 public:
 
 	/**
@@ -31,6 +36,13 @@ public:
 	: _className(classname),
 	  _store(st)
 	{ }
+	
+	/**
+	 * Return a pointer to the worldspawn entity.
+	 */
+	Entity* getWorldSpawn() {
+		return _worldSpawn;
+	}
 	
 	/**
 	 * Required pre-descent function.
@@ -52,10 +64,15 @@ public:
 			gtk_list_store_append(_store, &iter);
 			gtk_list_store_set(_store, &iter, 
 							   0, sDisplay.c_str(),
-							   1, FALSE,
+							   1, FALSE,	// active at start
 							   2, ePtr,		// pointer to Entity
 							   3, &node,	// pointer to raw Node
 							   -1); 
+		}
+		else if (ePtr != NULL 
+				 && ePtr->getKeyValue("classname") == "worldspawn")
+		{
+			_worldSpawn = ePtr;	
 		}
 		
 		return false;

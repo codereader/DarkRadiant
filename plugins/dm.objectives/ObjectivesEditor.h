@@ -33,6 +33,9 @@ class ObjectivesEditor
 	// Table of dialog subwidgets
 	std::map<std::string, GtkWidget*> _widgets;
 
+	// Pointer to the worldspawn entity
+	Entity* _worldSpawn;
+
 private:
 
 	// Constructor creates widgets	
@@ -56,6 +59,7 @@ private:
 	
 	// Populate the dialog widgets with appropriate state from the map
 	void populateWidgets();
+	void populateActiveAtStart();
 	
 	// Populate the objective tree with values from the selected entity
 	void populateObjectiveTree(Entity* entity);
