@@ -33,7 +33,8 @@ namespace ui {
 	}
 
 StimResponseEditor::StimResponseEditor() :
-	_entity(NULL)
+	_entity(NULL),
+	_updatesDisabled(false)
 {
 	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
 	_dialog = gtkutil::TransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow(), false);
@@ -349,24 +350,23 @@ void StimResponseEditor::updateSRWidgets() {
 		return;
 	}
 	
-	GtkTreeIter iter;
-	GtkTreeModel* model;
-	bool anythingSelected = gtk_tree_selection_get_selected(
-		_entitySRSelection, &model, &iter
-	);
+	_updatesDisabled = true;
 	
-	if (anythingSelected && _srEntity != NULL) {
+	int id = getIdFromSelection();
+	
+	if (id > 0) {
+		// Update all the widgets
 		gtk_widget_set_sensitive(_srWidgets.vbox, true);
-		
-		// Update the widgets
-		int id = gtkutil::TreeModel::getInt(model, &iter, ID_COL);
 		
 		StimResponse& sr = _srEntity->get(id);
 		
-		// The other (stim) button is automatically changed
 		gtk_toggle_button_set_active(
 			GTK_TOGGLE_BUTTON(_srWidgets.respButton),
 			(sr.get("class") == "R")
+		);
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_srWidgets.stimButton),
+			(sr.get("class") == "S")
 		);
 		
 		// Active
@@ -434,6 +434,8 @@ void StimResponseEditor::updateSRWidgets() {
 	else {
 		gtk_widget_set_sensitive(_srWidgets.vbox, false);
 	}
+	
+	_updatesDisabled = false;
 }
 
 // Static GTK Callbacks
@@ -445,27 +447,48 @@ gboolean StimResponseEditor::onDelete(GtkWidget* widget, GdkEvent* event, StimRe
 	return true;
 }
 
+int StimResponseEditor::getIdFromSelection() {
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+	bool anythingSelected = gtk_tree_selection_get_selected(
+		_entitySRSelection, &model, &iter
+	);
+	
+	if (anythingSelected && _srEntity != NULL) {
+		return gtkutil::TreeModel::getInt(model, &iter, ID_COL);
+	}
+	else {
+		return -1;
+	}
+}
+
+void StimResponseEditor::setStimClass(StimResponse::SRClass srClass) {
+	int id = getIdFromSelection();
+	
+	if (id > 0) {
+		if (!_srEntity->get(id).inherited()) {
+			_srEntity->setProperty(id, "class", ((srClass == StimResponse::typeStim) ? "S" : "R"));
+		}
+	}
+	
+	updateSRWidgets();
+}
+
 void StimResponseEditor::onSelectionChange(GtkTreeSelection* treeView, StimResponseEditor* self) {
 	self->updateSRWidgets();
 }
 
 void StimResponseEditor::onTypeChange(GtkToggleButton* toggleButton, StimResponseEditor* self) {
+	if (self->_updatesDisabled) {
+		return;
+	}
 	
-	// Invert the other button
 	if (GTK_WIDGET(toggleButton) == self->_srWidgets.stimButton) {
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(self->_srWidgets.respButton),
-			!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(self->_srWidgets.stimButton))
-		);
+		self->setStimClass(StimResponse::typeStim);
 	}
 	else {
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(self->_srWidgets.stimButton),
-			!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(self->_srWidgets.respButton))
-		);
+		self->setStimClass(StimResponse::typeResponse);
 	}
-	
-	self->updateSRWidgets();
 }
 
 // Static command target

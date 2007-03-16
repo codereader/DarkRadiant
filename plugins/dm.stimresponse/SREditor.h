@@ -53,6 +53,9 @@ class StimResponseEditor :
 	
 	// The helper class managing the stims
 	StimTypes _stimTypes;
+	
+	// To allow updating the widgets without firing callbacks
+	bool _updatesDisabled;
 
 public:
 	StimResponseEditor();
@@ -74,6 +77,16 @@ public:
 	void selectionChanged(scene::Instance& instance);
 
 private:
+	/** greebo: Returns the ID of the currently selected stim
+	 * 		
+	 * @returns: the id (number) of the selected stim or -1 on failure 
+	 */
+	int getIdFromSelection();
+
+	/** greebo: Tries to set the current stim class to <srClass> (Stim or Response)
+	 */
+	void setStimClass(StimResponse::SRClass srClass);
+
 	/** greebo: Updates the SR widget group according to the list selection.
 	 */
 	void updateSRWidgets();
