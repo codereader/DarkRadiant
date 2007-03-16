@@ -215,7 +215,7 @@ void ObjectivesEditor::populateActiveAtStart() {
 		
 		// Test if the worldspawn is targeting this entity
 		if (targets.isTargeted(ent)) {
-			std::cout << "targeted" << std::endl;
+			gtk_list_store_set(_objectiveEntityList, &iter, 1, TRUE, -1);
 		}
 	}
 	while (gtk_tree_model_iter_next(model, &iter));
