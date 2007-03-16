@@ -158,15 +158,6 @@ public:
     m_radiantcore.splitSelectedBrushes = &Scene_BrushSplitByPlane;
     m_radiantcore.brushSetClipPlane = &Scene_BrushSetClipPlane; 
     
-    m_radiantcore.attachGameToolsPathObserver = Radiant_attachGameToolsPathObserver;
-    m_radiantcore.detachGameToolsPathObserver = Radiant_detachGameToolsPathObserver;
-    m_radiantcore.attachEnginePathObserver = Radiant_attachEnginePathObserver;
-    m_radiantcore.detachEnginePathObserver = Radiant_detachEnginePathObserver;
-    m_radiantcore.attachGameNameObserver = Radiant_attachGameNameObserver;
-    m_radiantcore.detachGameNameObserver = Radiant_detachGameNameObserver;
-    m_radiantcore.attachGameModeObserver = Radiant_attachGameModeObserver;
-    m_radiantcore.detachGameModeObserver = Radiant_detachGameModeObserver;
-
     m_radiantcore.XYWindow_getViewType = XYWindow_getViewType;
     m_radiantcore.XYWindow_windowToWorld = XYWindow_windowToWorld;
     m_radiantcore.TextureBrowser_getSelectedShader = TextureBrowser_getSelectedShader;

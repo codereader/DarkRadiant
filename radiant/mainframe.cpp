@@ -429,16 +429,6 @@ namespace
   ModuleObservers g_gameModeObservers;
 }
 
-void Radiant_attachGameNameObserver(ModuleObserver& observer)
-{
-  g_gameNameObservers.attach(observer);
-}
-
-void Radiant_detachGameNameObserver(ModuleObserver& observer)
-{
-  g_gameNameObservers.detach(observer);
-}
-
 const char* basegame_get()
 {
   return g_pGameDescription->getRequiredKeyValue("basegame");
@@ -462,16 +452,6 @@ void gamename_set(const char* gamename)
     g_gamename = gamename;
     g_gameNameObservers.realise();
   }
-}
-
-void Radiant_attachGameModeObserver(ModuleObserver& observer)
-{
-  g_gameModeObservers.attach(observer);
-}
-
-void Radiant_detachGameModeObserver(ModuleObserver& observer)
-{
-  g_gameModeObservers.detach(observer);
 }
 
 const char* gamemode_get()
@@ -591,16 +571,6 @@ WorldspawnColourEntityClassObserver g_WorldspawnColourEntityClassObserver;
 
 
 ModuleObservers g_gameToolsPathObservers;
-
-void Radiant_attachGameToolsPathObserver(ModuleObserver& observer)
-{
-  g_gameToolsPathObservers.attach(observer);
-}
-
-void Radiant_detachGameToolsPathObserver(ModuleObserver& observer)
-{
-  g_gameToolsPathObservers.detach(observer);
-}
 
 /*
  * Load XML config files into the XML registry.

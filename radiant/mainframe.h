@@ -175,9 +175,6 @@ class ModuleObserver;
 void Radiant_attachEnginePathObserver(ModuleObserver& observer);
 void Radiant_detachEnginePathObserver(ModuleObserver& observer);
 
-void Radiant_attachGameToolsPathObserver(ModuleObserver& observer);
-void Radiant_detachGameToolsPathObserver(ModuleObserver& observer);
-
 extern CopiedString g_strEnginePath;
 void EnginePath_verify();
 const char* EnginePath_get();
@@ -209,14 +206,8 @@ void DefaultMode();
 const char* basegame_get();
 const char* gamename_get();
 void gamename_set(const char* gamename);
-void Radiant_attachGameNameObserver(ModuleObserver& observer);
-void Radiant_detachGameNameObserver(ModuleObserver& observer);
 const char* gamemode_get();
 void gamemode_set(const char* gamemode);
-void Radiant_attachGameModeObserver(ModuleObserver& observer);
-void Radiant_detachGameModeObserver(ModuleObserver& observer);
-
-
 
 void VFS_Construct();
 void VFS_Destroy();
