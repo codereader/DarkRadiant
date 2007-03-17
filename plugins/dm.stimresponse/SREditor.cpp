@@ -322,14 +322,20 @@ void StimResponseEditor::populateWindow() {
 	GtkWidget* buttonHBox = gtk_hbox_new(false, 0);
 	
 	// Save button
-	GtkWidget* saveButton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
-	gtk_button_set_label(GTK_BUTTON(saveButton), LABEL_SAVE);
+	GtkWidget* saveButton = gtk_button_new_with_label(LABEL_SAVE);
+	gtk_button_set_image(
+		GTK_BUTTON(saveButton), 
+		gtk_image_new_from_stock(GTK_STOCK_SAVE, GTK_ICON_SIZE_BUTTON)
+	);
 	g_signal_connect(G_OBJECT(saveButton), "clicked", G_CALLBACK(onSave), this);
 	gtk_box_pack_end(GTK_BOX(buttonHBox), saveButton, false, false, 0);
 	
 	// Revert button
-	GtkWidget* revertButton = gtk_button_new_from_stock(GTK_STOCK_REFRESH);
-	gtk_button_set_label(GTK_BUTTON(revertButton), LABEL_REVERT);
+	GtkWidget* revertButton = gtk_button_new_with_label(LABEL_REVERT);
+	gtk_button_set_image(
+		GTK_BUTTON(revertButton), 
+		gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON)
+	);
 	g_signal_connect(G_OBJECT(revertButton), "clicked", G_CALLBACK(onRevert), this);
 	gtk_box_pack_start(GTK_BOX(buttonHBox), revertButton, false, false, 0);
 	
