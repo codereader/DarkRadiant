@@ -252,6 +252,7 @@ void StimResponseEditor::populateWindow() {
 	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.addScriptButton, false, false, 0);
 	
 	g_signal_connect(G_OBJECT(_addWidgets.addButton), "clicked", G_CALLBACK(onAdd), this);
+	g_signal_connect(G_OBJECT(_addWidgets.addScriptButton), "clicked", G_CALLBACK(onScriptAdd), this);
 	
 	// Create the script label (bold font)
 	GtkWidget* scriptLabel = gtkutil::LeftAlignedLabel(
@@ -262,7 +263,7 @@ void StimResponseEditor::populateWindow() {
 	
 	_scriptWidgets.view = gtk_tree_view_new();
 	_scriptWidgets.selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_scriptWidgets.view));
-	gtk_widget_set_size_request(_scriptWidgets.view, -1, 120);
+	gtk_widget_set_size_request(_scriptWidgets.view, -1, 200);
 	// Connect the signal
 	g_signal_connect(G_OBJECT(_scriptWidgets.view), "key-press-event", G_CALLBACK(onTreeViewKeyPress), this);
 	{
@@ -625,21 +626,31 @@ void StimResponseEditor::updateSRWidgets() {
 	_updatesDisabled = false;
 }
 
-void StimResponseEditor::addStimResponse() {
+std::string StimResponseEditor::getStimTypeName() {
 	GtkTreeIter iter;
 	GtkComboBox* stimSelector = GTK_COMBO_BOX(_addWidgets.stimTypeList);
 	
 	if (gtk_combo_box_get_active_iter(stimSelector, &iter)) {
 		GtkTreeModel* model = gtk_combo_box_get_model(stimSelector);
 		
-		std::string name = gtkutil::TreeModel::getString(model, &iter, 3); // 3 = StimTypes::NAME_COL
+		return gtkutil::TreeModel::getString(model, &iter, 3); // 3 = StimTypes::NAME_COL
+	}
+	else {
+		return "";
+	}
+}
+
+void StimResponseEditor::addStimResponse() {
+	// Get the currently selected stim type
+	std::string type = getStimTypeName();
 		
+	if (!type.empty()) {
 		// Create a new StimResponse object
 		int id = _srEntity->add();
 		// Get a reference to the newly allocated object
 		StimResponse& sr = _srEntity->get(id);
 		
-		sr.set("type", name);
+		sr.set("type", type);
 		
 		// Refresh the values in the liststore
 		_srEntity->updateListStore();
@@ -651,6 +662,23 @@ void StimResponseEditor::removeStimResponse() {
 	
 	if (id > 0) {
 		_srEntity->remove(id);
+	}
+}
+
+void StimResponseEditor::addResponseScript() {
+	// Get the currently selected stim type
+	std::string type = getStimTypeName();
+		
+	if (!type.empty()) {
+		// Create a new StimResponse object
+		int id = _srEntity->addScript();
+		// Get a reference to the newly allocated object
+		ResponseScript& script = _srEntity->getScript(id);
+		script.stimType = type;
+		script.script = "target script";
+		
+		// Refresh the values in the liststore
+		_srEntity->updateListStore();
 	}
 }
 
@@ -825,6 +853,10 @@ void StimResponseEditor::onAdd(GtkWidget* button, StimResponseEditor* self) {
 	self->addStimResponse();
 }
 
+void StimResponseEditor::onScriptAdd(GtkWidget* button, StimResponseEditor* self) {
+	self->addResponseScript();
+}
+
 void StimResponseEditor::onSave(GtkWidget* button, StimResponseEditor* self) {
 	self->save();
 }
@@ -842,8 +874,10 @@ void StimResponseEditor::onScriptEdit(GtkCellRendererText* renderer,
 	GtkTreeIter iter;
 	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(store), &iter, path);
 	
+	// Assign the script value to the ResponseScript object
 	int id = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(store), &iter, SCR_ID_COL);
-	self->_srEntity->setScript(id, new_text);
+	ResponseScript& script = self->_srEntity->getScript(id);
+	script.script = new_text;
 	
 	// Update the cell
 	gtk_list_store_set(store, &iter, SCR_SCRIPT_COL, new_text, -1);

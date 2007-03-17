@@ -99,6 +99,16 @@ private:
 	 */
 	void save();
 
+	/** greebo: Retrieves the currently selected stimType name
+	 * 
+	 * @returns: the name of the Stim type (e.g. STIM_FIRE)
+	 */
+	std::string getStimTypeName();
+
+	/** greebo: Adds an empty response script to the list.
+	 */
+	void addResponseScript();
+
 	/** greebo: Removes the currently selected script
 	 */
 	void removeScript();
@@ -175,6 +185,7 @@ private:
 	static void onAdd(GtkWidget* button, StimResponseEditor* self);
 	static void onSave(GtkWidget* button, StimResponseEditor* self);
 	static void onRevert(GtkWidget* button, StimResponseEditor* self);
+	static void onScriptAdd(GtkWidget* button, StimResponseEditor* self);
 
 	// Gets notified if a cell has been changed.
 	static void onScriptEdit(GtkCellRendererText* renderer, 

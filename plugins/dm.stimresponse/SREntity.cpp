@@ -134,8 +134,8 @@ void SREntity::removeScript(int id) {
 	}
 }
 
-void SREntity::setScript(int scriptId, const std::string& newScript) {
-	_scripts[scriptId].script = newScript;
+ResponseScript& SREntity::getScript(int scriptId) {
+	return _scripts[scriptId];
 }
 
 void SREntity::updateListStore() {
@@ -187,6 +187,17 @@ int SREntity::add() {
 	_list[id].setIndex(index);
 	_list[id].set("class", "S");
 	_list[id].setInherited(false);
+	
+	return id;
+}
+
+int SREntity::addScript() {
+	int id = _scripts.size();
+	
+	ResponseScript newScript;
+	newScript.inherited = false;
+	
+	_scripts.push_back(newScript);
 	
 	return id;
 }
