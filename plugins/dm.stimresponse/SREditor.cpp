@@ -142,6 +142,7 @@ void StimResponseEditor::populateWindow() {
 	GtkWidget* topLabel = gtkutil::LeftAlignedLabel(
     	std::string("<span weight=\"bold\">") + LABEL_STIMRESPONSE_LIST + "</span>"
     );
+    gtk_misc_set_padding(GTK_MISC(topLabel), 0, 2); // Small spacing to the top/bottom
     gtk_box_pack_start(GTK_BOX(_dialogVBox), topLabel, false, false, 0);
 	
 	GtkWidget* srHBox = gtk_hbox_new(false, 0);
@@ -221,6 +222,7 @@ void StimResponseEditor::populateWindow() {
 	GtkWidget* addLabel = gtkutil::LeftAlignedLabel(
     	std::string("<span weight=\"bold\">") + LABEL_ADD_STIMRESPONSE + "</span>"
     );
+    gtk_misc_set_padding(GTK_MISC(addLabel), 0, 2); // Small spacing to the top/bottom
     gtk_box_pack_start(GTK_BOX(_dialogVBox), addLabel, false, false, 0);
 	
 	GtkWidget* addHBox = gtk_hbox_new(false, 0);
@@ -255,6 +257,7 @@ void StimResponseEditor::populateWindow() {
 	GtkWidget* scriptLabel = gtkutil::LeftAlignedLabel(
     	std::string("<span weight=\"bold\">") + LABEL_RESPONSE_SCRIPTS + "</span>"
     );
+    gtk_misc_set_padding(GTK_MISC(scriptLabel), 0, 2); // Small spacing to the top/bottom
     gtk_box_pack_start(GTK_BOX(_dialogVBox), scriptLabel, false, false, 0);
 	
 	_scriptWidgets.view = gtk_tree_view_new();
@@ -686,7 +689,10 @@ void StimResponseEditor::setProperty(const std::string& key, const std::string& 
 }
 
 void StimResponseEditor::save() {
+	// Consistency check can go here
 	
+	// Save the working set to the entity
+	_srEntity->save(_entity);
 }
 
 void StimResponseEditor::revert() {
