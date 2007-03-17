@@ -90,6 +90,15 @@ public:
 	void selectionChanged(scene::Instance& instance);
 
 private:
+
+	/** greebo: Discards the changes and re-loads everything from the entity.
+	 */
+	void revert();
+
+	/** greebo: Saves the current working set to the entity
+	 */
+	void save();
+
 	/** greebo: Removes the currently selected script
 	 */
 	void removeScript();
@@ -164,6 +173,8 @@ private:
 
 	// "Add" Stim/Response
 	static void onAdd(GtkWidget* button, StimResponseEditor* self);
+	static void onSave(GtkWidget* button, StimResponseEditor* self);
+	static void onRevert(GtkWidget* button, StimResponseEditor* self);
 
 	// Gets notified if a cell has been changed.
 	static void onScriptEdit(GtkCellRendererText* renderer, 
