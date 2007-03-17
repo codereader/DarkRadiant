@@ -27,8 +27,8 @@ class ObjectivesEditor
 	// List of target_addobjectives entities
 	GtkListStore* _objectiveEntityList;
 
-	// Tree of actual objectives associated with the selected entity
-	GtkTreeStore* _objTreeStore;
+	// List of actual objectives associated with the selected entity
+	GtkListStore* _objectiveList;
 	
 	// Table of dialog subwidgets
 	std::map<std::string, GtkWidget*> _widgets;
