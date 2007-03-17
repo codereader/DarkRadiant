@@ -34,6 +34,10 @@ public:
 	 */
 	StimTypes();
 	
+	/** greebo: Returns the reference to the internal stim type map
+	 */
+	StimTypeMap& getStimMap();
+	
 	/** greebo: Returns the StimType with the given ID
 	 */
 	StimType get(int id);

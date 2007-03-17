@@ -8,6 +8,7 @@
 
 #include "StimResponse.h"
 #include "StimTypes.h"
+#include "ResponseScript.h"
 
 // Forward declaration
 class Entity;
@@ -25,6 +26,15 @@ typedef struct _GtkListStore GtkListStore;
 			INHERIT_COL,
 			IDSTR_COL,
 			NUM_COLS
+		};
+		
+		enum {
+			SCR_ID_COL,
+			SCR_CAPTION_COL,
+			SCR_NAME_COL,
+			SCR_ICON_COL,
+			SCR_SCRIPT_COL,
+			SCR_NUM_COLS
 		};
 	}
 
@@ -59,6 +69,10 @@ private:
 	
 	// An empty stim
 	StimResponse _emptyStimResponse;
+	
+	// Helper object managing the scripts 
+	ResponseScripts _scripts;
+	GtkListStore* _scriptStore;
 
 public:
 	SREntity(Entity* source);
@@ -110,14 +124,22 @@ private:
 	 * 			The ID stays untouched. 
 	 * 
 	 * @iter: The TreeIter pointing at the row where the data should be inserted
-	 * @sr: the actual StimResponse object containing the source data
+	 * @sr: the StimResponse object containing the source data
 	 */
 	void writeToListStore(GtkTreeIter* iter, StimResponse& sr);
+	
+	/** greebo: Write the values of the passed ResponseScript to the 
+	 * 			GtkListStore using the passed GtkTreeIter. 
+	 * 
+	 * @iter: The TreeIter pointing at the row where the data should be inserted
+	 * @script: the ResponseScript object containing the source data
+	 */
+	void writeToScriptStore(GtkTreeIter* iter, ResponseScript& script);
 
 	// Returns the highest currently assigned id
 	int getHighestId();
 	
-	// Returns the highes Stim/Response index number 
+	// Returns the highest Stim/Response index number 
 	int getHighestIndex();
 };
 

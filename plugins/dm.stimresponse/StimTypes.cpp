@@ -57,6 +57,10 @@ StimTypes::operator GtkListStore* () {
 	return _listStore;
 }
 
+StimTypeMap& StimTypes::getStimMap() {
+	return _stims;
+}
+
 GtkTreeIter StimTypes::getIterForName(const std::string& name) {
 	// Setup the selectionfinder to search for the name string
 	gtkutil::TreeModel::SelectionFinder finder(name, NAME_COL);

@@ -24,7 +24,13 @@ SREntity::SREntity(Entity* source) :
 								  G_TYPE_STRING, 	// Caption String
 								  GDK_TYPE_PIXBUF,	// Icon
 								  G_TYPE_BOOLEAN,	// Inheritance flag
-								  G_TYPE_STRING)) 	// ID in string format (unique)
+								  G_TYPE_STRING)), 	// ID in string format (unique)
+	_scriptStore(gtk_list_store_new(SCR_NUM_COLS,
+									G_TYPE_INT,
+									G_TYPE_STRING,
+									G_TYPE_STRING,
+									GDK_TYPE_PIXBUF,
+									G_TYPE_STRING))
 {
 	loadKeys();
 	load(source);
@@ -55,6 +61,7 @@ int SREntity::getHighestIndex() {
 void SREntity::load(Entity* source) {
 	// Clear all the items from the liststore
 	gtk_list_store_clear(_listStore);
+	gtk_list_store_clear(_scriptStore);
 	
 	if (source == NULL) {
 		return;
@@ -68,20 +75,20 @@ void SREntity::load(Entity* source) {
 	// Instantiate a visitor class with the list of possible keys 
 	// and the target list where all the S/Rs are stored
 	// Warning messages are stored in the <_warnings> string
-	SRPropertyLoader visitor(_keys, _list, _warnings);
+	SRPropertyLoader visitor(_keys, _list, _scripts, _warnings);
 	eclass->forEachClassAttribute(visitor);
 	
-	// Create a new map with all the stims defined directly on the entity
-	StimResponseMap _entityStims;
-	
+	// Create a new map with all the stims/scripts defined directly on the entity
+	StimResponseMap entityStims;
+		
 	// Scan the entity itself after the class has been searched
-	SRPropertyLoader entityVisitor(_keys, _entityStims, _warnings);
+	SRPropertyLoader entityVisitor(_keys, entityStims, _scripts, _warnings);
 	source->forEachKeyValue(entityVisitor);
 	
-	// Now combine the two maps, the id gets incremented, but the internal
+	// Now combine the two S/R maps, the id gets incremented, but the internal
 	// index of the StimResponse objects remains unchanged.
-	for (StimResponseMap::iterator i = _entityStims.begin(); 
-		 i != _entityStims.end(); 
+	for (StimResponseMap::iterator i = entityStims.begin(); 
+		 i != entityStims.end(); 
 		 i++) 
 	{
 		// Get the Id of the entity stim
@@ -125,6 +132,22 @@ void SREntity::updateListStore() {
 		StimResponse& sr = i->second;
 		writeToListStore(&iter, sr);
 	}
+	
+	// Clear the scripts
+	gtk_list_store_clear(_scriptStore);
+	
+	for (unsigned int i = 0; i < _scripts.size(); i++) {
+		ResponseScript& s = _scripts[i];
+		
+		gtk_list_store_append(_scriptStore, &iter);
+		// Store the ID into the liststore
+		gtk_list_store_set(_scriptStore, &iter, 
+						   SCR_ID_COL, i,
+						   -1);
+		
+		// And write the rest of the data to the row
+		writeToScriptStore(&iter, s);
+	}
 }
 
 int SREntity::add() {
@@ -158,6 +181,18 @@ GtkTreeIter SREntity::getIterForId(int id) {
 	);
 	
 	return finder.getIter();
+}
+
+void SREntity::writeToScriptStore(GtkTreeIter* iter, ResponseScript& script) {
+	StimType stim = _stimTypes.get(script.stimType);
+	
+	// Store the ID into the liststore
+	gtk_list_store_set(_scriptStore, iter, 
+					    SCR_CAPTION_COL, stim.caption.c_str(),
+						SCR_NAME_COL, stim.name.c_str(),
+						SCR_ICON_COL, gtkutil::getLocalPixbufWithMask(stim.icon),
+						SCR_SCRIPT_COL, script.script.c_str(),
+					   -1);
 }
 
 void SREntity::writeToListStore(GtkTreeIter* iter, StimResponse& sr) {

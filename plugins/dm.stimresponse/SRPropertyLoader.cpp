@@ -16,10 +16,12 @@
 SRPropertyLoader::SRPropertyLoader(
 	SREntity::KeyList& keys, 
 	SREntity::StimResponseMap& srMap,
+	ResponseScripts& scripts,
 	std::string& warnings
 ) :
 	_keys(keys),
 	_srMap(srMap),
+	_scripts(scripts),
 	_warnings(warnings)
 {}
 
@@ -71,6 +73,23 @@ void SRPropertyLoader::parseAttribute(
 			
 			// Set the property value on the StimResponse object
 			_srMap[index].set(_keys[i], value);
+		}
+	}
+	
+	// Check the key/value for script definitions
+	StimTypeMap& stimMap = _stimTypes.getStimMap();
+	for (StimTypeMap::iterator i = stimMap.begin(); i != stimMap.end(); i++) {
+		// Construct a regex with the number as match variable
+		std::string exprStr = prefix + "script_" + i->second.name;
+		
+		if (key == exprStr) {
+			ResponseScript s;
+			s.inherited = inherited;
+			s.stimType = i->second.name;
+			s.script = value;
+			
+			// Add the new ResponseScript to the list
+			_scripts.push_back(s);
 		}
 	}
 }
