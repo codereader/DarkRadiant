@@ -50,6 +50,8 @@ private:
 	// Widget construction helpers
 	GtkWidget* createEntitiesPanel();
 	GtkWidget* createObjectivesPanel();
+	GtkWidget* createObjectiveEditPanel();
+	GtkWidget* createFlagsTable();
 	GtkWidget* createButtons();
 	
 	// GTK callbacks
