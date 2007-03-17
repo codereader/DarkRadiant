@@ -7,11 +7,6 @@
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/regex.hpp>
 
-	namespace {
-		const std::string RKEY_STIM_RESPONSE_PREFIX = 
-				"game/stimResponseSystem/stimResponsePrefix";
-	}
-
 // Constructor
 SRPropertyLoader::SRPropertyLoader(
 	SREntity::KeyList& keys, 

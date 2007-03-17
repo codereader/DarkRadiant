@@ -197,7 +197,7 @@ void SREntity::cleanEntity(Entity* target) {
 	target->forEachKeyValue(remover);
 	
 	// scope ends here, SRPropertyRemover's destructor
-	// will delete the keys here
+	// will now delete the keys
 }
 
 void SREntity::save(Entity* target) {
@@ -215,6 +215,21 @@ void SREntity::save(Entity* target) {
 	SRPropertySaver saver(target, _keys);
 	for (StimResponseMap::iterator i = _list.begin(); i != _list.end(); i++) {
 		saver.visit(i->second);
+	}
+	
+	for (unsigned int i = 0; i < _scripts.size(); i++) {
+		ResponseScript& s = _scripts[i];
+		
+		// Don't save inherited scripts
+		if (s.inherited) {
+			continue;
+		}
+		
+		// Get the prefix
+		std::string prefix = GlobalRegistry().get(RKEY_STIM_RESPONSE_PREFIX);
+		
+		// Save the spawnarg 
+		target->setKeyValue(prefix + "script_" + s.stimType, s.script);
 	}
 }
 
