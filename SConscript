@@ -291,6 +291,7 @@ objEnv = module_env.Copy()
 objEnv.Append(LIBS = ['gtkutil'])
 objEnv.useGtk2()
 objEnv.useGlib2()
+objEnv.useBoostRegex()
 objList = build_list('plugins/dm.objectives', 
 					 'objectives.cpp ObjectivesEditor.cpp')
 objLib = objEnv.SharedLibrary(target='dm_objectives',

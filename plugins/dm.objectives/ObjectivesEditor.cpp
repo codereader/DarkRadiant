@@ -40,10 +40,10 @@ ObjectivesEditor::ObjectivesEditor()
   										  G_TYPE_BOOLEAN,		// start active
   										  G_TYPE_POINTER,		// Entity*
   										  G_TYPE_POINTER)),		// scene::Node*
-  _objTreeStore(gtk_tree_store_new(3, 
-  								   G_TYPE_STRING,		// display key 
-  								   G_TYPE_STRING,		// display value
-  								   GDK_TYPE_PIXBUF))	// icon
+  _objectiveList(gtk_list_store_new(3, 
+  								    G_TYPE_STRING,		// obj number 
+  								    G_TYPE_STRING,		// obj description
+  								    G_TYPE_POINTER))	// pointer to Objective
 {
 	// Window properties
 	gtk_window_set_transient_for(
@@ -137,14 +137,15 @@ GtkWidget* ObjectivesEditor::createEntitiesPanel() {
 GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 	
 	// Tree view
-	GtkWidget* tv = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_objTreeStore));
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tv), FALSE);
+	GtkWidget* tv = 
+		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_objectiveList));
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tv), TRUE);
 	
 	// Key and value text columns
 	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(tv), gtkutil::IconTextColumn("Key", 0, 2));
+		GTK_TREE_VIEW(tv), gtkutil::TextColumn("#", 0));
 	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(tv), gtkutil::TextColumn("Value", 1));
+		GTK_TREE_VIEW(tv), gtkutil::TextColumn("Description", 1));
 	
 	return gtkutil::ScrolledFrame(tv);
 }
@@ -235,11 +236,14 @@ void ObjectivesEditor::displayDialog() {
 void ObjectivesEditor::populateObjectiveTree(Entity* entity) {
 	
 	// Clear the tree store
-	gtk_tree_store_clear(_objTreeStore);
+	gtk_list_store_clear(_objectiveList);
 	
-	// Use a visitor object to populate the tree store
-	ObjectiveKeyExtractor visitor(_objTreeStore);
+	// Use a visitor object to populate the tree store. This happens in two
+	// stages, because the visitor must see all of the objective keys to build
+	// a map of Objective objects, which are then inserted into the tree.
+	ObjectiveKeyExtractor visitor;
 	entity->forEachKeyValue(visitor);
+	visitor.populateList(_objectiveList);
 }
 
 /* GTK CALLBACKS */
