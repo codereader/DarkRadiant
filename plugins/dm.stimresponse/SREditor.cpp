@@ -31,6 +31,7 @@ namespace ui {
 		
 		const std::string LABEL_STIMRESPONSE_LIST = "Stims/Responses";
 		const std::string LABEL_ADD_STIMRESPONSE = "Add Stim/Response";
+		const std::string LABEL_RESPONSE_SCRIPTS = "Response Scripts";
 		
 		const unsigned int TREE_VIEW_WIDTH = 280;
 		const unsigned int TREE_VIEW_HEIGHT = 240;
@@ -109,6 +110,17 @@ static void textCellDataFunc(GtkTreeViewColumn* treeColumn,
 							 gpointer data)
 {
 	bool inherited = gtkutil::TreeModel::getBoolean(treeModel, iter, INHERIT_COL);
+	
+	g_object_set(G_OBJECT(cell), "sensitive", !inherited, NULL);
+}
+
+static void scriptTextCellDataFunc(GtkTreeViewColumn* treeColumn,
+							 GtkCellRenderer* cell,
+							 GtkTreeModel* treeModel,
+							 GtkTreeIter* iter, 
+							 gpointer data)
+{
+	bool inherited = gtkutil::TreeModel::getBoolean(treeModel, iter, SCR_INHERIT_COL);
 	
 	g_object_set(G_OBJECT(cell), "sensitive", !inherited, NULL);
 }
@@ -229,6 +241,69 @@ void StimResponseEditor::populateWindow() {
 	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.addScriptButton, false, false, 0);
 	
 	g_signal_connect(G_OBJECT(_addWidgets.addButton), "clicked", G_CALLBACK(onAdd), this);
+	
+	// Create the script label (bold font)
+	GtkWidget* scriptLabel = gtkutil::LeftAlignedLabel(
+    	std::string("<span weight=\"bold\">") + LABEL_RESPONSE_SCRIPTS + "</span>"
+    );
+    gtk_box_pack_start(GTK_BOX(_dialogVBox), scriptLabel, false, false, 0);
+	
+	_scriptWidgets.view = gtk_tree_view_new();
+	_scriptWidgets.selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_scriptWidgets.view));
+	gtk_widget_set_size_request(_scriptWidgets.view, -1, 120);
+	// Connect the signal
+	//g_signal_connect(G_OBJECT(_scriptWidgets.view), "changed", G_CALLBACK(onScriptSelect), this);
+	{
+		// The Type
+		GtkTreeViewColumn* scriptTypeCol = gtk_tree_view_column_new();
+		gtk_tree_view_column_set_title(scriptTypeCol, "Type");
+		
+		GtkCellRenderer* typeIconRenderer = gtk_cell_renderer_pixbuf_new();
+		gtk_tree_view_column_pack_start(scriptTypeCol, typeIconRenderer, false);
+		
+		GtkCellRenderer* typeTextRenderer = gtk_cell_renderer_text_new();
+		gtk_tree_view_column_pack_start(scriptTypeCol, typeTextRenderer, false);
+		
+		gtk_tree_view_column_set_attributes(scriptTypeCol, typeTextRenderer, 
+											"text", SCR_CAPTION_COL,
+											NULL);
+		gtk_tree_view_column_set_cell_data_func(scriptTypeCol, typeTextRenderer,
+	                                            scriptTextCellDataFunc,
+	                                            NULL, NULL);
+		
+		gtk_tree_view_column_set_attributes(scriptTypeCol, typeIconRenderer, 
+											"pixbuf", SCR_ICON_COL,
+											NULL);
+		gtk_tree_view_column_set_cell_data_func(scriptTypeCol, typeIconRenderer,
+	                                            scriptTextCellDataFunc,
+	                                            NULL, NULL);
+		
+		gtk_tree_view_append_column(GTK_TREE_VIEW(_scriptWidgets.view), scriptTypeCol);
+	}
+	{
+		// The Script
+		GtkTreeViewColumn* scriptCol = gtk_tree_view_column_new();
+		gtk_tree_view_column_set_title(scriptCol, "Target Script");
+		
+		GtkCellRenderer* typeIconRenderer = gtk_cell_renderer_pixbuf_new();
+		gtk_tree_view_column_pack_start(scriptCol, typeIconRenderer, false);
+		
+		GtkCellRenderer* typeTextRenderer = gtk_cell_renderer_text_new();
+		gtk_tree_view_column_pack_start(scriptCol, typeTextRenderer, false);
+		
+		gtk_tree_view_column_set_attributes(scriptCol, typeTextRenderer, 
+											"text", SCR_SCRIPT_COL,
+											NULL);
+		gtk_tree_view_column_set_cell_data_func(scriptCol, typeTextRenderer,
+	                                            scriptTextCellDataFunc,
+	                                            NULL, NULL);
+		
+		gtk_tree_view_append_column(GTK_TREE_VIEW(_scriptWidgets.view), scriptCol);
+	}
+	
+	GtkWidget* scriptAlignment = gtkutil::LeftAlignment(
+		gtkutil::ScrolledFrame(_scriptWidgets.view), 18, 1.0);
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), scriptAlignment, true, true, 0);
 }
 
 GtkWidget* StimResponseEditor::createSRWidgets() {
@@ -366,7 +441,7 @@ GtkWidget* StimResponseEditor::createSRWidgets() {
 	g_signal_connect(G_OBJECT(_srWidgets.modelEntry), "changed", G_CALLBACK(onModelChanged), this);
 	g_signal_connect(G_OBJECT(_srWidgets.radiusEntry), "changed", G_CALLBACK(onRadiusChanged), this);
 	g_signal_connect(G_OBJECT(_srWidgets.timeIntEntry), "changed", G_CALLBACK(onTimeIntervalChanged), this);
-		
+	
 	return _srWidgets.vbox;
 }
 
@@ -391,10 +466,19 @@ void StimResponseEditor::rescanSelection() {
 		
 		_srEntity = SREntityPtr(new SREntity(_entity));
 		
-		// Cast the SREntity onto a liststore and pack it into the treeview
-		GtkListStore* listStore = *_srEntity;
+		// Get the liststores from the SREntity and pack them
+		GtkListStore* listStore = _srEntity->getStimResponseStore();
 		gtk_tree_view_set_model(GTK_TREE_VIEW(_entitySRView), GTK_TREE_MODEL(listStore));
 		g_object_unref(listStore);
+		
+		GtkListStore* scriptSTore = _srEntity->getScriptStore();
+		gtk_tree_view_set_model(GTK_TREE_VIEW(_scriptWidgets.view), GTK_TREE_MODEL(scriptSTore));
+		g_object_unref(scriptSTore);
+		
+		if (_entity != NULL) {
+			std::string title = WINDOW_TITLE + " (" + _entity->getKeyValue("name") + ")";
+			gtk_window_set_title(GTK_WINDOW(_dialog), title.c_str()); 
+		}
 	}
 	
 	// Update the widgets

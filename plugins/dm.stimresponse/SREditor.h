@@ -49,6 +49,11 @@ class StimResponseEditor :
 		GtkWidget* modelEntry;
 	} _srWidgets;
 	
+	struct ScriptWidgets {
+		GtkWidget* view;
+		GtkTreeSelection* selection;
+	} _scriptWidgets;
+	
 	// The list of the entity's stims/responses
 	SREntityPtr _srEntity;
 	
