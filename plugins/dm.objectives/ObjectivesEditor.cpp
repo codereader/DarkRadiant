@@ -173,6 +173,8 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 	gtk_box_pack_start(GTK_BOX(vbx), hbx, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), createObjectiveEditPanel(), 
 					   FALSE, FALSE, 0);
+	gtk_widget_set_sensitive(vbx, FALSE);
+	_widgets["objectivesPanel"] = vbx;
 					   
 	return vbx; 
 }
@@ -208,9 +210,10 @@ GtkWidget* ObjectivesEditor::createObjectiveEditPanel() {
 	// Pack items into a vbox and return
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbx), table, FALSE, FALSE, 0);
-	
+	gtk_widget_set_sensitive(vbx, FALSE);
 	_widgets["editPanel"] = vbx;
-	return _widgets["editPanel"];
+
+	return vbx;
 }
 
 // Create table of flag checkboxes
@@ -421,13 +424,15 @@ void ObjectivesEditor::_onEntitySelectionChanged(GtkTreeSelection* sel,
 		assert(entity);
 		self->populateObjectiveTree(entity);
 		
-		// Enable the delete button
+		// Enable the delete button and objectives panel
 		gtk_widget_set_sensitive(self->_widgets["deleteEntity"], TRUE); 
+		gtk_widget_set_sensitive(self->_widgets["objectivesPanel"], TRUE);
 	}
 	else {
 		// No selection, disable the delete button and clear the objective
 		// panel
 		gtk_widget_set_sensitive(self->_widgets["deleteEntity"], FALSE);
+		gtk_widget_set_sensitive(self->_widgets["objectivesPanel"], FALSE);
 	} 
 		
 }
