@@ -34,6 +34,7 @@ class StimResponseEditor :
 	
 	struct SRPropertyWidgets {
 		GtkWidget* vbox;
+		GtkWidget* typeList;
 		GtkWidget* stimButton;
 		GtkWidget* respButton;
 		GtkWidget* active;

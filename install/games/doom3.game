@@ -159,7 +159,7 @@
 			<stim id="4" name="STIM_SHIELD" caption="Shield" icon="sr_icon_shield.png" />
 			<stim id="5" name="STIM_HEALING" caption="Healing" icon="sr_icon_healing.png" />
 			<stim id="6" name="STIM_HOLY" caption="Holy" icon="sr_icon_holy.png" />
-			<stim id="7" name="STIM_MAGIC" caption="Magic" icon="" />
+			<stim id="7" name="STIM_MAGIC" caption="Magic" icon="sr_icon_magic.png" />
 			<stim id="8" name="STIM_TOUCH" caption="Touch" icon="" />
 			<stim id="9" name="STIM_KNOCKOUT" caption="Knockout" icon="" />
 			<stim id="10" name="STIM_KILL" caption="Kill" icon="" />

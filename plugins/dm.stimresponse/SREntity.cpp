@@ -131,20 +131,7 @@ GtkTreeIter SREntity::getIterForId(int id) {
 		&finder
 	);
 	
-	GtkTreePath* found = finder.getPath();
-	
-	// Conver the retrieved path into a GtkTreeIter
-	GtkTreeIter iter;
-	
-	if (found != NULL) {
-		gtk_tree_model_get_iter_from_string(
-			GTK_TREE_MODEL(_listStore),
-			&iter,
-			gtk_tree_path_to_string(found)
-		);
-	}
-	
-	return iter;
+	return finder.getIter();
 }
 
 void SREntity::writeToListStore(GtkTreeIter* iter, StimResponse& sr) {

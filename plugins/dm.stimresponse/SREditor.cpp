@@ -219,6 +219,7 @@ void StimResponseEditor::populateWindow() {
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_addWidgets.stimTypeList), nameRenderer, true);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_addWidgets.stimTypeList), nameRenderer, "text", 1);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_addWidgets.stimTypeList), iconRenderer, "pixbuf", 2);
+	gtk_cell_renderer_set_fixed_size(iconRenderer, 26, -1);
 	
 	_addWidgets.addButton = gtk_button_new_from_stock(GTK_STOCK_ADD);
 	_addWidgets.addScriptButton = gtk_button_new_with_label("Add Response Script");
@@ -265,6 +266,34 @@ GtkWidget* StimResponseEditor::createSRWidgets() {
 	
 	// Pack the button Hbox to the SRWidgets
 	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), btnHbox, false, false, 0);
+	
+	// Type Selector
+	GtkWidget* typeHBox = gtk_hbox_new(false, 0);
+	
+	GtkWidget* typeLabel = gtkutil::LeftAlignedLabel("Type:");
+	// Cast the helper class onto a ListStore and create a new treeview
+	GtkListStore* stimListStore = _stimTypes;
+	_srWidgets.typeList = gtk_combo_box_new_with_model(GTK_TREE_MODEL(stimListStore));
+	gtk_widget_set_size_request(_srWidgets.typeList, -1, -1);
+	g_object_unref(stimListStore); // tree view owns the reference now
+		
+	// Add the cellrenderer for the name
+	GtkCellRenderer* nameRenderer = gtk_cell_renderer_text_new();
+	GtkCellRenderer* iconRenderer = gtk_cell_renderer_pixbuf_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_srWidgets.typeList), iconRenderer, false);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_srWidgets.typeList), nameRenderer, true);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_srWidgets.typeList), nameRenderer, "text", 1);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_srWidgets.typeList), iconRenderer, "pixbuf", 2);
+	gtk_cell_renderer_set_fixed_size(iconRenderer, 26, -1);
+	
+	gtk_box_pack_start(GTK_BOX(typeHBox), typeLabel, false, false, 0);
+	gtk_box_pack_start(
+		GTK_BOX(typeHBox), 
+		gtkutil::LeftAlignment(_srWidgets.typeList, 12, 1.0f), 
+		true, true,	0
+	);
+	
+	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), typeHBox, false, false, 0);
 	
 	// Active
 	GtkWidget* activeHBox = gtk_hbox_new(false, 0);
@@ -375,6 +404,10 @@ void StimResponseEditor::updateSRWidgets() {
 		gtk_widget_set_sensitive(_srWidgets.vbox, true);
 		
 		StimResponse& sr = _srEntity->get(id);
+		
+		// Get the iter into the liststore pointing at the correct STIM_YYYY
+		GtkTreeIter typeIter = _stimTypes.getIterForName(sr.get("type"));
+		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_srWidgets.typeList), &typeIter);
 		
 		gtk_toggle_button_set_active(
 			GTK_TOGGLE_BUTTON(_srWidgets.respButton),

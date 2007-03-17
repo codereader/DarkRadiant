@@ -6,6 +6,7 @@
 
 // Forward Declaration
 typedef struct _GtkListStore GtkListStore; 
+typedef struct _GtkTreeIter GtkTreeIter;
 
 /** greebo: A simple StimType representation.
  */
@@ -40,6 +41,11 @@ public:
 	/** greebo: Returns the StimType for the given name (STIM_FIRE)
 	 */
 	StimType get(const std::string& name);
+	
+	/** greebo: Returns the GtkTreeIter pointing to the element
+	 * 			named <name> located in the member _listStore.
+	 */
+	GtkTreeIter getIterForName(const std::string& name);
 	
 	// operator cast onto a GtkListStore, use this to pack the liststore
 	operator GtkListStore* ();
