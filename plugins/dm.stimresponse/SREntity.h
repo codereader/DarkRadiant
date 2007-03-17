@@ -124,10 +124,14 @@ public:
 	 */
 	void updateListStore();
 	
-	/** greebo: Sets the "script" value of the ResponseScript object 
-	 * 			with the given <scriptId>
+	/** greebo: Adds a script to the list and returns the id.
+	 * 			The new script has "inherited" set to false.
 	 */
-	void setScript(int scriptId, const std::string& newScript);
+	int addScript();
+	
+	/** greebo: Returns the script with the given <scriptId>
+	 */
+	ResponseScript& getScript(int scriptId);
 	
 	/** greebo: Removes the script with the given <id>
 	 */

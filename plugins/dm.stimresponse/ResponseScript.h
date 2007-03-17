@@ -20,4 +20,13 @@ struct ResponseScript {
 // ResponseScripts (each ResponseScript has its own id)
 typedef std::vector<ResponseScript> ResponseScripts;
 
+struct ResponseScriptArgument {
+	// TRUE, if this is inherited from a base entity class
+	bool inherited;
+	
+	// The target entity
+	std::string entityName;
+};
+typedef std::vector<ResponseScriptArgument> ResponseScriptArgs;
+
 #endif /*RESPONSESCRIPT_H_*/
