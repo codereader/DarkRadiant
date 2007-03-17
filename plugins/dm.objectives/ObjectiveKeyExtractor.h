@@ -71,6 +71,21 @@ public:
 		if (objSubString == "desc") {
 			_objMap[iNum].description = value;			
 		}
+		else if (objSubString == "state") {
+			_objMap[iNum].startActive = (value == "1");			
+		}
+		else if (objSubString == "ongoing") {
+			_objMap[iNum].ongoing = (value == "1");			
+		}
+		else if (objSubString == "mandatory") {
+			_objMap[iNum].mandatory = (value == "1");			
+		}
+		else if (objSubString == "visible") {
+			_objMap[iNum].visible = (value == "1");			
+		}
+		else if (objSubString == "irreversible") {
+			_objMap[iNum].irreversible = (value == "1");			
+		}
 	}
 	
 };

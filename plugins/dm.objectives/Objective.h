@@ -14,6 +14,19 @@ struct Objective
 {
 	// Description of objective
 	std::string description;
+	
+	// Boolean flags
+	bool startActive;
+	bool mandatory;
+	bool visible;
+	bool ongoing;
+	bool irreversible;
+	
+	// Constructor
+	Objective()
+	: startActive(false), mandatory(false), visible(false), ongoing(false),
+	  irreversible(false)
+	{ }
 };
 
 /**
