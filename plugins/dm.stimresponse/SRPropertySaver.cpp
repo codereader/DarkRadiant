@@ -4,11 +4,6 @@
 #include "entitylib.h"
 #include "string/string.h"
 
-	namespace {
-		const std::string RKEY_STIM_RESPONSE_PREFIX = 
-				"game/stimResponseSystem/stimResponsePrefix";
-	}
-
 SRPropertySaver::SRPropertySaver(Entity* target, SREntity::KeyList& keys) :
 	_target(target),
 	_keys(keys)

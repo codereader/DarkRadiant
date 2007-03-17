@@ -732,7 +732,7 @@ void StimResponseEditor::onActiveToggle(GtkToggleButton* toggleButton, StimRespo
 void StimResponseEditor::onBoundsToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {
 	if (self->_updatesDisabled) return; // Callback loop guard
 	
-	self->setProperty("use_bounds",	gtk_toggle_button_get_active(toggleButton) ? "1" : "0");
+	self->setProperty("use_bounds",	gtk_toggle_button_get_active(toggleButton) ? "1" : "");
 }
 
 void StimResponseEditor::onRadiusToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {

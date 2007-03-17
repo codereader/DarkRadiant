@@ -4,10 +4,14 @@
 #include <map>
 #include <string>
 
+	namespace {
+		const std::string RKEY_STIM_RESPONSE_PREFIX = 
+				"game/stimResponseSystem/stimResponsePrefix";
+	}
+
 /** greebo: A simple stim/response representation structure
  * (a SREntity can hold a bunch of these)
  */
-
 class StimResponse
 {
 public:
