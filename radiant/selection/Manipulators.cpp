@@ -12,6 +12,7 @@
 
 namespace {
 	const std::string RKEY_TRANSLATE_CONSTRAINED = "user/ui/xyview/translateConstrained";
+	const std::string RKEY_TRANSIENT_COMPONENT_SELECTION = "user/ui/transientComponentSelection";
 }
 
 // ------------ Helper functions ---------------------------
@@ -679,10 +680,11 @@ void DragManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
       {
       	/** greebo: Disabled this, it caused the currently selected patch vertices being deselected.
       	 */
-        /*if(!(*i)->isSelected())
-        {
-          GlobalSelectionSystem().setSelectedAllComponents(false);
-        }*/
+      	if (GlobalRegistry().get(RKEY_TRANSIENT_COMPONENT_SELECTION) == "1") {
+      		if(!(*i)->isSelected()) {
+          		GlobalSelectionSystem().setSelectedAllComponents(false);
+      		}
+      	}
         _selected = false;
         selector.addSelectable(SelectionIntersection(0, 0), (*i));
         _dragSelectable.setSelected(true);

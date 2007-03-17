@@ -35,6 +35,7 @@
 	<alwaysShowLightVertices value="1"/>
 	<freeModelRotation value="0" />
 	<rotationPivotIsOrigin value="0" />
+	<transientComponentSelection value="0" />
 	<transformDialog>
 		<window xPosition="150" yPosition="200" width="280" height="242" />
 		<rotXStep value="45" />
