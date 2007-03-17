@@ -21,16 +21,24 @@ namespace {
 
 /**
  * Entity Visitor which extracts objective keyvalues (of the form "obj<n>_blah")
- * and populates the given GtkTreeStore with appropriate information.
+ * and populates the given ObjectiveMap with the parsed objective objects.
  */
 class ObjectiveKeyExtractor
 : public Entity::Visitor
 {
 	// Map of number->Objective objects
-	typedef std::map<std::string, Objective> ObjectiveMap;
-	ObjectiveMap _objMap;
+	ObjectiveMap& _objMap;
 
 public:
+
+	/**
+	 * Constructor. Sets the map to populate.
+	 */
+	ObjectiveKeyExtractor(ObjectiveMap& map)
+	: _objMap(map)
+	{ 
+		assert(_objMap.empty());
+	}
 
 	/**
 	 * Required visit function.
@@ -65,23 +73,6 @@ public:
 		}
 	}
 	
-	/**
-	 * Populate the given list store with values from the map, which has been
-	 * built by visiting the entity.
-	 */
-	void populateList(GtkListStore* store) {
-		for (ObjectiveMap::const_iterator i = _objMap.begin();
-			 i != _objMap.end();
-			 ++i)
-		{
-			GtkTreeIter iter;
-			gtk_list_store_append(store, &iter);
-			gtk_list_store_set(store, &iter,
-							   0, i->first.c_str(), // objective number
-							   1, i->second.description.c_str(), // description
-							   -1);	
-		}		
-	}
 };
 
 }

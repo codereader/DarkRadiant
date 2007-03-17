@@ -2,6 +2,7 @@
 #define OBJECTIVE_H_
 
 #include <string>
+#include <map>
 
 namespace objectives
 {
@@ -14,6 +15,11 @@ struct Objective
 	// Description of objective
 	std::string description;
 };
+
+/**
+ * Objective map type.
+ */
+typedef std::map<std::string, Objective> ObjectiveMap;
 
 }
 

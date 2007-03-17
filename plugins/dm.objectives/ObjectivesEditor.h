@@ -1,6 +1,8 @@
 #ifndef OBJECTIVESEDITOR_H_
 #define OBJECTIVESEDITOR_H_
 
+#include "Objective.h"
+
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkliststore.h>
 #include <gtk/gtktreestore.h>
@@ -35,6 +37,10 @@ class ObjectivesEditor
 
 	// Pointer to the worldspawn entity
 	Entity* _worldSpawn;
+	
+	// Map of numbered Objective objects for the currently-selected objective
+	// entity
+	ObjectiveMap _objectiveMap;
 
 private:
 

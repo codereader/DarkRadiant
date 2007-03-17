@@ -235,15 +235,27 @@ void ObjectivesEditor::displayDialog() {
 // Populate the objective tree
 void ObjectivesEditor::populateObjectiveTree(Entity* entity) {
 	
-	// Clear the tree store
+	// Clear the tree store and the map of Objective objects
 	gtk_list_store_clear(_objectiveList);
+	_objectiveMap.clear();
 	
-	// Use a visitor object to populate the tree store. This happens in two
-	// stages, because the visitor must see all of the objective keys to build
-	// a map of Objective objects, which are then inserted into the tree.
-	ObjectiveKeyExtractor visitor;
+	// Use a visitor object to populate the objective map from the entity's
+	// keyvalues.
+	ObjectiveKeyExtractor visitor(_objectiveMap);
 	entity->forEachKeyValue(visitor);
-	visitor.populateList(_objectiveList);
+	
+	// Use the map to add rows to the list store
+	for (ObjectiveMap::const_iterator i = _objectiveMap.begin();
+		 i != _objectiveMap.end();
+		 ++i)
+	{
+		GtkTreeIter iter;
+		gtk_list_store_append(_objectiveList, &iter);
+		gtk_list_store_set(_objectiveList, &iter,
+						   0, i->first.c_str(), // objective number
+						   1, i->second.description.c_str(), // description
+						   -1);	
+	}		
 }
 
 /* GTK CALLBACKS */
