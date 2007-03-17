@@ -41,7 +41,7 @@ ObjectivesEditor::ObjectivesEditor()
   										  G_TYPE_POINTER,		// Entity*
   										  G_TYPE_POINTER)),		// scene::Node*
   _objectiveList(gtk_list_store_new(2, 
-  								    G_TYPE_STRING,		// obj number 
+  								    G_TYPE_INT,			// obj number 
   								    G_TYPE_STRING))		// obj description
 {
 	// Window properties
@@ -77,6 +77,7 @@ ObjectivesEditor::ObjectivesEditor()
 	gtk_box_pack_start(GTK_BOX(mainVbx),
 					   gtkutil::LeftAlignment(createObjectivesPanel(), 18, 1.0),
 					   TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(mainVbx), gtk_hseparator_new(), FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(mainVbx), createButtons(), FALSE, FALSE, 0);
 					   
 	// Add vbox to dialog
@@ -139,6 +140,9 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 	GtkWidget* tv = 
 		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_objectiveList));
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tv), TRUE);
+	GtkTreeSelection* sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
+	g_signal_connect(G_OBJECT(sel), "changed", 
+					 G_CALLBACK(_onObjectiveSelectionChanged), this);
 	
 	// Key and value text columns
 	gtk_tree_view_append_column(
@@ -185,11 +189,15 @@ GtkWidget* ObjectivesEditor::createObjectiveEditPanel() {
 	gtk_table_attach(GTK_TABLE(table), 
 					 gtkutil::LeftAlignedLabel("<b>Objective</b>"),
 					 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach_defaults(GTK_TABLE(table), gtk_entry_new(), 1, 2, 0, 1);
+	_widgets["numberEntry"] = gtk_entry_new();
+	gtk_table_attach_defaults(GTK_TABLE(table), _widgets["numberEntry"], 
+							  1, 2, 0, 1);
 	gtk_table_attach(GTK_TABLE(table), 
 					 gtkutil::LeftAlignedLabel("<b>Description</b>"),
 					 0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach_defaults(GTK_TABLE(table), gtk_entry_new(), 1, 2, 1, 2);
+	_widgets["descriptionEntry"] = gtk_entry_new();
+	gtk_table_attach_defaults(GTK_TABLE(table), _widgets["descriptionEntry"], 
+							  1, 2, 1, 2);
 	
 	// Options checkboxes.
 	gtk_table_attach(GTK_TABLE(table), 
@@ -201,7 +209,8 @@ GtkWidget* ObjectivesEditor::createObjectiveEditPanel() {
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbx), table, FALSE, FALSE, 0);
 	
-	return vbx;
+	_widgets["editPanel"] = vbx;
+	return _widgets["editPanel"];
 }
 
 // Create table of flag checkboxes
@@ -334,10 +343,20 @@ void ObjectivesEditor::populateObjectiveTree(Entity* entity) {
 		GtkTreeIter iter;
 		gtk_list_store_append(_objectiveList, &iter);
 		gtk_list_store_set(_objectiveList, &iter,
-						   0, i->first.c_str(), // objective number
+						   0, i->first, // objective number
 						   1, i->second.description.c_str(), // description
 						   -1);	
 	}		
+}
+
+// Populate the edit panel widgets using the given objective number
+void ObjectivesEditor::populateEditPanel(int objNum) {
+	const Objective& obj = _objectiveMap[objNum];
+	
+	gtk_entry_set_text(GTK_ENTRY(_widgets["numberEntry"]), 
+					   boost::lexical_cast<std::string>(objNum).c_str());
+	gtk_entry_set_text(GTK_ENTRY(_widgets["descriptionEntry"]),
+					   obj.description.c_str());
 }
 
 /* GTK CALLBACKS */
@@ -389,6 +408,32 @@ void ObjectivesEditor::_onEntitySelectionChanged(GtkTreeSelection* sel,
 		gtk_widget_set_sensitive(self->_widgets["deleteEntity"], FALSE);
 	} 
 		
+}
+
+// Callback for current objective selection changed
+void ObjectivesEditor::_onObjectiveSelectionChanged(GtkTreeSelection* sel, 
+											 		ObjectivesEditor* self)
+{
+	// Get the selection
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+	if (gtk_tree_selection_get_selected(sel, &model, &iter)) {
+		
+		// Enable the edit panel
+		gtk_widget_set_sensitive(self->_widgets["editPanel"], TRUE);		
+		
+		// Get the objective number
+		int iNum;
+		gtk_tree_model_get(model, &iter, 0, &iNum, -1);
+		
+		// Populate the edit panel
+		self->populateEditPanel(iNum);				
+	}
+	else {
+		
+		// Disable the edit panel
+		gtk_widget_set_sensitive(self->_widgets["editPanel"], FALSE);		
+	}
 }
 
 // Add a new objectives entity button
