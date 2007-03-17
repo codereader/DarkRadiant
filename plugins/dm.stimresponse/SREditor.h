@@ -151,6 +151,10 @@ private:
 	 */
 	void update();
 
+	/** greebo: Updates the sensitivity of the "Add Response Script" button
+	 */
+	void updateAddScriptButton();
+
 	/** greebo: Checks the selection for a single entity.
 	 */
 	void rescanSelection();
@@ -168,6 +172,9 @@ private:
 	static void onSelectionChange(GtkTreeSelection* treeView, StimResponseEditor* self);
 	static void onClassChange(GtkToggleButton* toggleButton, StimResponseEditor* self);
 	static void onTypeSelect(GtkComboBox* widget, StimResponseEditor* self);
+	
+	// StimType selection change
+	static void onStimTypeChange(GtkComboBox* widget, StimResponseEditor* self);
 	
 	// "Active" property
 	static void onActiveToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
@@ -193,6 +200,7 @@ private:
 	
 	// The keypress handler for catching the keys when in the treeview
 	static gboolean onTreeViewKeyPress(GtkTreeView* view, GdkEventKey* event, StimResponseEditor* self);
+
 }; // class StimResponseEditor
 
 } // namespace ui

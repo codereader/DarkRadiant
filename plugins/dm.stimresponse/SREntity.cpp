@@ -202,6 +202,18 @@ int SREntity::addScript() {
 	return id;
 }
 
+bool SREntity::scriptExists(const std::string& stimType) {
+	// Cycle through all the stimtypes
+	for (unsigned int i = 0; i < _scripts.size(); i++) {
+		if (_scripts[i].stimType == stimType) {
+			// We have a match, return true
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 void SREntity::cleanEntity(Entity* target) {
 	// Clean the entity from all the S/R spawnargs
 	SRPropertyRemover remover(target, _keys);
