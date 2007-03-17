@@ -90,8 +90,6 @@ public:
 	void selectionChanged(scene::Instance& instance);
 
 private:
-	void setScript(GtkTreePath* path, const std::string& newScript);
-
 	/** greebo: Adds a new StimResponse object, the index and the internal
 	 * 			id are auto-incremented. The ListStore is refreshed. 
 	 */
@@ -159,6 +157,7 @@ private:
 	// "Add" Stim/Response
 	static void onAdd(GtkWidget* button, StimResponseEditor* self);
 
+	// Gets notified if a cell has been changed.
 	static void onScriptEdit(GtkCellRendererText* renderer, 
 							 gchar* path, gchar* new_text, StimResponseEditor* self);
 }; // class StimResponseEditor

@@ -640,22 +640,6 @@ void StimResponseEditor::setProperty(const std::string& key, const std::string& 
 	updateSRWidgets();
 }
 
-void StimResponseEditor::setScript(GtkTreePath* path, const std::string& newScript) {
-	// Find the edited cell
-	GtkTreeIter iter;
-	gtk_tree_model_get_iter_from_string(
-		GTK_TREE_MODEL(_srEntity->getScriptStore()),
-		&iter,
-		gtk_tree_path_to_string(path)
-	);
-	
-	_srEntity->setScript(
-		gtkutil::TreeModel::getInt(
-			GTK_TREE_MODEL(_srEntity->getScriptStore()), &iter, SCR_ID_COL),
-		newScript
-	);
-}
-
 // Static GTK Callbacks
 gboolean StimResponseEditor::onDelete(GtkWidget* widget, GdkEvent* event, StimResponseEditor* self) {
 	// Toggle the visibility of the window
@@ -779,7 +763,17 @@ void StimResponseEditor::onAdd(GtkWidget* button, StimResponseEditor* self) {
 void StimResponseEditor::onScriptEdit(GtkCellRendererText* renderer, 
 									  gchar* path, gchar* new_text, StimResponseEditor* self)
 {
-	self->setScript(gtk_tree_path_new_from_string(path), new_text);
+	GtkListStore* store = self->_srEntity->getScriptStore();
+	
+	// Find the edited cell
+	GtkTreeIter iter;
+	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(store), &iter, path);
+	
+	int id = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(store), &iter, SCR_ID_COL);
+	self->_srEntity->setScript(id, new_text);
+	
+	// Update the cell
+	gtk_list_store_set(store, &iter, SCR_SCRIPT_COL, new_text, -1);
 }
 
 // Static command target
