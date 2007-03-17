@@ -227,6 +227,8 @@ void StimResponseEditor::populateWindow() {
 	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.stimTypeList, false, false, 0);
 	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.addButton, false, false, 6);
 	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.addScriptButton, false, false, 0);
+	
+	g_signal_connect(G_OBJECT(_addWidgets.addButton), "clicked", G_CALLBACK(onAdd), this);
 }
 
 GtkWidget* StimResponseEditor::createSRWidgets() {
@@ -500,13 +502,25 @@ void StimResponseEditor::updateSRWidgets() {
 	_updatesDisabled = false;
 }
 
-// Static GTK Callbacks
-gboolean StimResponseEditor::onDelete(GtkWidget* widget, GdkEvent* event, StimResponseEditor* self) {
-	// Toggle the visibility of the window
-	self->toggle();
+void StimResponseEditor::addStimResponse() {
+	GtkTreeIter iter;
+	GtkComboBox* stimSelector = GTK_COMBO_BOX(_addWidgets.stimTypeList);
 	
-	// Don't propagate the delete event
-	return true;
+	if (gtk_combo_box_get_active_iter(stimSelector, &iter)) {
+		GtkTreeModel* model = gtk_combo_box_get_model(stimSelector);
+		
+		std::string name = gtkutil::TreeModel::getString(model, &iter, 3); // 3 = StimTypes::NAME_COL
+		
+		// Create a new StimResponse object
+		int id = _srEntity->add();
+		// Get a reference to the newly allocated object
+		StimResponse& sr = _srEntity->get(id);
+		
+		sr.set("type", name);
+		
+		// Refresh the values in the liststore
+		_srEntity->updateListStore();
+	}
 }
 
 int StimResponseEditor::getIdFromSelection() {
@@ -534,6 +548,15 @@ void StimResponseEditor::setProperty(const std::string& key, const std::string& 
 	}
 	
 	updateSRWidgets();
+}
+
+// Static GTK Callbacks
+gboolean StimResponseEditor::onDelete(GtkWidget* widget, GdkEvent* event, StimResponseEditor* self) {
+	// Toggle the visibility of the window
+	self->toggle();
+	
+	// Don't propagate the delete event
+	return true;
 }
 
 void StimResponseEditor::onSelectionChange(GtkTreeSelection* treeView, StimResponseEditor* self) {
@@ -643,6 +666,9 @@ void StimResponseEditor::onRadiusChanged(GtkEditable* editable, StimResponseEdit
 	}
 }
 
+void StimResponseEditor::onAdd(GtkWidget* button, StimResponseEditor* self) {
+	self->addStimResponse();
+}
 
 // Static command target
 void StimResponseEditor::toggle() {

@@ -1,6 +1,7 @@
 #include "SREntity.h"
 
 #include "iregistry.h"
+#include "itextstream.h"
 #include "ieclass.h"
 #include "entitylib.h"
 #include "gtkutil/image.h"
@@ -38,6 +39,17 @@ int SREntity::getHighestId() {
 		}
 	}
 	return id;
+}
+
+int SREntity::getHighestIndex() {
+	int index = 0;
+	
+	for (StimResponseMap::iterator i = _list.begin(); i != _list.end(); i++) {
+		if (i->second.getIndex() > index) {
+			index = i->second.getIndex();
+		}
+	}
+	return index;
 }
 
 void SREntity::load(Entity* source) {
@@ -113,6 +125,20 @@ void SREntity::updateListStore() {
 		StimResponse& sr = i->second;
 		writeToListStore(&iter, sr);
 	}
+}
+
+int SREntity::add() {
+	int id = getHighestId() + 1;
+	int index = getHighestIndex() + 1;
+	
+	// Create a new StimResponse object 
+	_list[id] = StimResponse();
+	// Set the index and the inheritance status
+	_list[id].setIndex(index);
+	_list[id].set("class", "S");
+	_list[id].setInherited(false);
+	
+	return id;
 }
 
 void SREntity::save(Entity* target) {
