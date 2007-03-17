@@ -84,6 +84,11 @@ public:
 	void selectionChanged(scene::Instance& instance);
 
 private:
+	/** greebo: Adds a new StimResponse object, the index and the internal
+	 * 			id are auto-incremented. The ListStore is refreshed. 
+	 */
+	void addStimResponse();
+
 	/** greebo: Returns the ID of the currently selected stim
 	 * 		
 	 * @returns: the id (number) of the selected stim or -1 on failure 
@@ -142,6 +147,9 @@ private:
 	static void onModelChanged(GtkEditable* editable, StimResponseEditor* self);
 	static void onTimeIntervalChanged(GtkEditable* editable, StimResponseEditor* self);
 	static void onRadiusChanged(GtkEditable* editable, StimResponseEditor* self);
+
+	// "Add" Stim/Response
+	static void onAdd(GtkWidget* button, StimResponseEditor* self);
 
 }; // class StimResponseEditor
 

@@ -66,8 +66,23 @@ public:
 	void load(Entity* source);
 	void save(Entity* target);
 	
+	/** greebo: Retrieves the reference to the StimResponse object
+	 * 			having the given integer <id>.
+	 * 
+	 * @returns: The ref to the StimResponse or an empty StimResponse object,
+	 * 			 if the id was not found.
+	 */
 	StimResponse& get(int id);
 	
+	/** greebo: Adds a new StimResponse and returns the id of the new object.
+	 * 			The ListStore is NOT updated with this call to allow setting of  
+	 * 			the properties before refreshing the treeview. 
+	 */
+	int add();
+	
+	/** greebo: Operator cast to a GtkListStore*. Use this to add the liststore
+	 * 			to a treeview or a combobox.
+	 */
 	operator GtkListStore* ();
 	
 	/** greebo: Sets the <key> of the SR with the given <id> to <value>
@@ -101,6 +116,9 @@ private:
 
 	// Returns the highest currently assigned id
 	int getHighestId();
+	
+	// Returns the highes Stim/Response index number 
+	int getHighestIndex();
 };
 
 typedef boost::shared_ptr<SREntity> SREntityPtr; 
