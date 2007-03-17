@@ -123,6 +123,10 @@ static void scriptTextCellDataFunc(GtkTreeViewColumn* treeColumn,
 	bool inherited = gtkutil::TreeModel::getBoolean(treeModel, iter, SCR_INHERIT_COL);
 	
 	g_object_set(G_OBJECT(cell), "sensitive", !inherited, NULL);
+	
+	if (GTK_IS_CELL_RENDERER_TEXT(cell)) {
+		g_object_set(G_OBJECT(cell), "editable", !inherited, NULL);
+	}
 }
 
 void StimResponseEditor::populateWindow() {
@@ -283,13 +287,15 @@ void StimResponseEditor::populateWindow() {
 	{
 		// The Script
 		GtkTreeViewColumn* scriptCol = gtk_tree_view_column_new();
-		gtk_tree_view_column_set_title(scriptCol, "Target Script");
+		gtk_tree_view_column_set_title(scriptCol, "Target Script (double-click to edit)");
 		
 		GtkCellRenderer* typeIconRenderer = gtk_cell_renderer_pixbuf_new();
 		gtk_tree_view_column_pack_start(scriptCol, typeIconRenderer, false);
 		
 		GtkCellRenderer* typeTextRenderer = gtk_cell_renderer_text_new();
 		gtk_tree_view_column_pack_start(scriptCol, typeTextRenderer, false);
+		g_object_set(G_OBJECT(typeTextRenderer), "editable", true);
+		g_signal_connect(G_OBJECT(typeTextRenderer), "edited", G_CALLBACK(onScriptEdit), this);
 		
 		gtk_tree_view_column_set_attributes(scriptCol, typeTextRenderer, 
 											"text", SCR_SCRIPT_COL,
@@ -634,6 +640,22 @@ void StimResponseEditor::setProperty(const std::string& key, const std::string& 
 	updateSRWidgets();
 }
 
+void StimResponseEditor::setScript(GtkTreePath* path, const std::string& newScript) {
+	// Find the edited cell
+	GtkTreeIter iter;
+	gtk_tree_model_get_iter_from_string(
+		GTK_TREE_MODEL(_srEntity->getScriptStore()),
+		&iter,
+		gtk_tree_path_to_string(path)
+	);
+	
+	_srEntity->setScript(
+		gtkutil::TreeModel::getInt(
+			GTK_TREE_MODEL(_srEntity->getScriptStore()), &iter, SCR_ID_COL),
+		newScript
+	);
+}
+
 // Static GTK Callbacks
 gboolean StimResponseEditor::onDelete(GtkWidget* widget, GdkEvent* event, StimResponseEditor* self) {
 	// Toggle the visibility of the window
@@ -752,6 +774,12 @@ void StimResponseEditor::onRadiusChanged(GtkEditable* editable, StimResponseEdit
 
 void StimResponseEditor::onAdd(GtkWidget* button, StimResponseEditor* self) {
 	self->addStimResponse();
+}
+
+void StimResponseEditor::onScriptEdit(GtkCellRendererText* renderer, 
+									  gchar* path, gchar* new_text, StimResponseEditor* self)
+{
+	self->setScript(gtk_tree_path_new_from_string(path), new_text);
 }
 
 // Static command target

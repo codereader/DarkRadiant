@@ -31,7 +31,8 @@ SREntity::SREntity(Entity* source) :
 									G_TYPE_STRING,		// name (STIM_FIRE)
 									GDK_TYPE_PIXBUF,	// Icon
 									G_TYPE_STRING,		// Script String
-									G_TYPE_BOOLEAN))	// Inheritance Flag
+									G_TYPE_BOOLEAN,		// Inheritance Flag
+									G_TYPE_STRING))		// ID in string format
 {
 	loadKeys();
 	load(source);
@@ -113,6 +114,26 @@ void SREntity::load(Entity* source) {
 	updateListStore();
 }
 
+void SREntity::setScript(int scriptId, const std::string& newScript) {
+	_scripts[scriptId].script = newScript;
+	
+	// Update the liststore as well
+	
+	// Search for the ID string
+	gtkutil::TreeModel::SelectionFinder finder(intToStr(scriptId), SCR_IDSTR_COL);
+	
+	gtk_tree_model_foreach(
+		GTK_TREE_MODEL(_scriptStore), 
+		gtkutil::TreeModel::SelectionFinder::forEach, 
+		&finder
+	);
+	
+	GtkTreeIter iter = finder.getIter();
+	gtk_list_store_set(_scriptStore, &iter, 
+					   SCR_SCRIPT_COL, newScript.c_str(),
+					   -1);
+}
+
 void SREntity::updateListStore() {
 	// Clear all the items from the liststore
 	gtk_list_store_clear(_listStore);
@@ -144,6 +165,7 @@ void SREntity::updateListStore() {
 		// Store the ID into the liststore
 		gtk_list_store_set(_scriptStore, &iter, 
 						   SCR_ID_COL, i,
+						   SCR_IDSTR_COL, intToStr(i).c_str(),
 						   -1);
 		
 		// And write the rest of the data to the row
