@@ -164,13 +164,13 @@
 			<stim id="9" name="STIM_KNOCKOUT" caption="Knockout" icon="sr_icon_knockout.png" />
 			<stim id="10" name="STIM_KILL" caption="Kill" icon="sr_icon_kill.png" />
 			<stim id="11" name="STIM_RESTORE" caption="Restore" icon="" />
-			<stim id="12" name="STIM_LIGHT" caption="Light" icon="" />
-			<stim id="13" name="STIM_SOUND" caption="Sound" icon="" />
-			<stim id="14" name="STIM_VISUAL" caption="Visual" icon="" />
+			<stim id="12" name="STIM_LIGHT" caption="Light" icon="sr_icon_light.png" />
+			<stim id="13" name="STIM_SOUND" caption="Sound" icon="sr_icon_sound.png" />
+			<stim id="14" name="STIM_VISUAL" caption="Visual" icon="sr_icon_visual.png" />
 			<stim id="15" name="STIM_INVITE" caption="Invitation" icon="" />
-			<stim id="16" name="STIM_READ" caption="Readable" icon="" />
-			<stim id="17" name="STIM_RANDOM" caption="Random" icon="" />
-			<stim id="18" name="STIM_TIMER" caption="Timer" icon="" />
+			<stim id="16" name="STIM_READ" caption="Readable" icon="sr_icon_readable.png" />
+			<stim id="17" name="STIM_RANDOM" caption="Random" icon="sr_icon_random.png" />
+			<stim id="18" name="STIM_TIMER" caption="Timer" icon="sr_icon_timer.png" />
 			<stim id="19" name="STIM_COMMUNICATION" caption="Communication" icon="" />
 		</stims>
 		<properties>
