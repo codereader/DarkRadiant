@@ -11,6 +11,7 @@
 
 #include "SRPropertyLoader.h"
 #include "SRPropertyRemover.h"
+#include "SRPropertySaver.h"
 
 #include <iostream>
 
@@ -209,6 +210,12 @@ void SREntity::save(Entity* target) {
 	
 	// Remove the S/R spawnargs from the entity
 	cleanEntity(target);
+	
+	// Setup the saver object
+	SRPropertySaver saver(target, _keys);
+	for (StimResponseMap::iterator i = _list.begin(); i != _list.end(); i++) {
+		saver.visit(i->second);
+	}
 }
 
 GtkTreeIter SREntity::getIterForId(int id) {
