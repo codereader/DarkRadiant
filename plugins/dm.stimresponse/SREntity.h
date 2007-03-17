@@ -35,6 +35,7 @@ typedef struct _GtkListStore GtkListStore;
 			SCR_ICON_COL,
 			SCR_SCRIPT_COL,
 			SCR_INHERIT_COL,
+			SCR_IDSTR_COL,
 			SCR_NUM_COLS
 		};
 	}
@@ -112,6 +113,11 @@ public:
 	 * 			values of the current StimResponseMap <_list>
 	 */
 	void updateListStore();
+	
+	/** greebo: Sets the "script" value of the ResponseScript object 
+	 * 			with the given <scriptId>
+	 */
+	void setScript(int scriptId, const std::string& newScript);
 	
 	/** greebo: Helper to load the possible key names
 	 * 			from the registry into the _keys list.

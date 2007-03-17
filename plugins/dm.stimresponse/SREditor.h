@@ -13,6 +13,7 @@ typedef struct _GtkToggleButton GtkToggleButton;
 typedef struct _GtkTreeSelection GtkTreeSelection;
 typedef struct _GtkComboBox GtkComboBox;
 typedef struct _GtkEditable GtkEditable;
+typedef struct _GtkCellRendererText GtkCellRendererText;
 
 namespace ui {
 
@@ -89,6 +90,8 @@ public:
 	void selectionChanged(scene::Instance& instance);
 
 private:
+	void setScript(GtkTreePath* path, const std::string& newScript);
+
 	/** greebo: Adds a new StimResponse object, the index and the internal
 	 * 			id are auto-incremented. The ListStore is refreshed. 
 	 */
@@ -156,6 +159,8 @@ private:
 	// "Add" Stim/Response
 	static void onAdd(GtkWidget* button, StimResponseEditor* self);
 
+	static void onScriptEdit(GtkCellRendererText* renderer, 
+							 gchar* path, gchar* new_text, StimResponseEditor* self);
 }; // class StimResponseEditor
 
 } // namespace ui
