@@ -146,15 +146,18 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 	
 	// Key and value text columns
 	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(tv), gtkutil::TextColumn("#", 0));
+		GTK_TREE_VIEW(tv), gtkutil::TextColumn("#", 0, false));
 	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(tv), gtkutil::TextColumn("Description", 1));
+		GTK_TREE_VIEW(tv), gtkutil::TextColumn("Description", 1, false));
 	
 	// Beside the list is an vbox containing add, delete and clear buttons
 	GtkWidget* buttonBox = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(buttonBox), 
-					   gtk_button_new_from_stock(GTK_STOCK_ADD),
-					   FALSE, FALSE, 0);
+	
+	GtkWidget* addButton = gtk_button_new_from_stock(GTK_STOCK_ADD); 
+	g_signal_connect(G_OBJECT(addButton), "clicked",
+					 G_CALLBACK(_onAddObjective), this);
+	
+	gtk_box_pack_start(GTK_BOX(buttonBox), addButton, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(buttonBox), 
 					   gtk_button_new_from_stock(GTK_STOCK_DELETE),
 					   FALSE, FALSE, 0);
@@ -343,7 +346,17 @@ void ObjectivesEditor::populateObjectiveTree(Entity* entity) {
 	// keyvalues.
 	ObjectiveKeyExtractor visitor(_objectiveMap);
 	entity->forEachKeyValue(visitor);
-	
+
+	// Transfer info from the objective map to the GTK list store
+	updateObjectiveListFromMap();	
+}
+
+// Update the objectives list from the internal map of Objective objects
+void ObjectivesEditor::updateObjectiveListFromMap() {
+
+	// Clear the list
+	gtk_list_store_clear(_objectiveList);
+
 	// Use the map to add rows to the list store
 	for (ObjectiveMap::const_iterator i = _objectiveMap.begin();
 		 i != _objectiveMap.end();
@@ -508,6 +521,23 @@ void ObjectivesEditor::_onDeleteEntity(GtkWidget* w, ObjectivesEditor* self) {
 		// Update the widgets to remove the selection from the list
 		self->populateWidgets();
 	}
+}
+
+// Add a new objective
+void ObjectivesEditor::_onAddObjective(GtkWidget* w, ObjectivesEditor* self) {
+	
+	// Find a free objective number
+	int n = 1;
+	while (self->_objectiveMap.find(n) != self->_objectiveMap.end())
+		++n;
+	
+	// Create and insert a new objective
+	Objective obj;
+	obj.description = "<New objective>";
+	self->_objectiveMap.insert(ObjectiveMap::value_type(n, obj));
+	
+	// Update the list
+	self->updateObjectiveListFromMap();
 }
 
 }
