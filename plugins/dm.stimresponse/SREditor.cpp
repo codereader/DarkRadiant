@@ -16,6 +16,7 @@
 #include "gtkutil/TransientWindow.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/ScrolledFrame.h"
+#include "string/string.h"
 #include <gtk/gtk.h>
 
 #include <iostream>
@@ -142,7 +143,7 @@ void StimResponseEditor::populateWindow() {
 	GtkCellRenderer* numRenderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(numCol, numRenderer, false);
 	gtk_tree_view_column_set_attributes(numCol, numRenderer, 
-										"text", ID_COL,
+										"text", INDEX_COL,
 										NULL);
 	gtk_tree_view_column_set_cell_data_func(numCol, numRenderer,
                                             textCellDataFunc,
@@ -470,7 +471,7 @@ int StimResponseEditor::getIdFromSelection() {
 	);
 	
 	if (anythingSelected && _srEntity != NULL) {
-		return gtkutil::TreeModel::getInt(model, &iter, ID_COL);
+		return strToInt(gtkutil::TreeModel::getString(model, &iter, IDSTR_COL));
 	}
 	else {
 		return -1;

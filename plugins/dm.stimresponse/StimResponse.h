@@ -23,10 +23,18 @@ private:
 	// The S/R class
 	SRClass _class;
 	
+	// TRUE, if this stems from an inherited eclass. Makes this object read-only	
 	bool _inherited;
 	
 	// The list of named properties
 	PropertyMap _properties;
+	
+	/** greebo: The index of this object. The StimResponse objects themselves
+	 * 			are already mapped by the SREntity class, although it's
+	 * 			useful to set an index of this object by hand to allow
+	 * 			it to override an inherited stim.
+	 */
+	int _index;
 	
 public:
 	StimResponse();
@@ -38,6 +46,11 @@ public:
 	 */
 	bool inherited() const;
 	void setInherited(bool inherited);
+	
+	/** greebo: Gets/Sets the index of this object (only for non-inherited)
+	 */
+	int getIndex() const;
+	void setIndex(int index);
 	
 	/** greebo: Gets the property value string or "" if not defined/empty
 	 */

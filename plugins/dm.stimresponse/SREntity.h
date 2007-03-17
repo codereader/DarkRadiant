@@ -18,7 +18,7 @@ typedef struct _GtkListStore GtkListStore;
 		const std::string ICON_RESPONSE = "sr_response.png";
 		
 		enum {
-			ID_COL,
+			INDEX_COL,
 			CLASS_COL,
 			CAPTION_COL,
 			ICON_COL,
@@ -88,6 +88,19 @@ public:
 	 * 			StimResponse with the given <id>
 	 */
 	GtkTreeIter getIterForId(int id);
+	
+private:
+	/** greebo: Write the values of the passed StimResponse to the 
+	 * 			GtkListStore using the passed GtkTreeIter.
+	 * 			The ID stays untouched. 
+	 * 
+	 * @iter: The TreeIter pointing at the row where the data should be inserted
+	 * @sr: the actual StimResponse object containing the source data
+	 */
+	void writeToListStore(GtkTreeIter* iter, StimResponse& sr);
+
+	// Returns the highest currently assigned id
+	int getHighestId();
 };
 
 typedef boost::shared_ptr<SREntity> SREntityPtr; 
