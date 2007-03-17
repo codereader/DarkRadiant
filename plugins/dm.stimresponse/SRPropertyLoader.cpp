@@ -49,15 +49,16 @@ void SRPropertyLoader::parseAttribute(
 		boost::smatch matches;
 		
 		if (boost::regex_match(key, matches, expr)) {
-			// Retrieve the number
+			// Retrieve the S/R index number
 			int index = strToInt(matches[1]);
 			
-			// Insertion code here
+			// Check if the S/R with this index already exists
 			SREntity::StimResponseMap::iterator found = _srMap.find(index);
 			
 			if (found == _srMap.end()) {
 				// Insert a new SR object with the given index
 				_srMap[index] = StimResponse();
+				_srMap[index].setIndex(index);
 				_srMap[index].setInherited(inherited);
 			}
 			

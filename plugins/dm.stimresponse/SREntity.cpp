@@ -18,15 +18,26 @@
 
 SREntity::SREntity(Entity* source) :
 	_listStore(gtk_list_store_new(NUM_COLS, 
-								  G_TYPE_INT,		// ID 
+								  G_TYPE_INT,		// S/R index
 								  GDK_TYPE_PIXBUF, 	// Type String
 								  G_TYPE_STRING, 	// Caption String
 								  GDK_TYPE_PIXBUF,	// Icon
 								  G_TYPE_BOOLEAN,	// Inheritance flag
-								  G_TYPE_STRING)) 	// ID in string format
+								  G_TYPE_STRING)) 	// ID in string format (unique)
 {
 	loadKeys();
 	load(source);
+}
+
+int SREntity::getHighestId() {
+	int id = 0;
+	
+	for (StimResponseMap::iterator i = _list.begin(); i != _list.end(); i++) {
+		if (i->first > id) {
+			id = i->first;
+		}
+	}
+	return id;
 }
 
 void SREntity::load(Entity* source) {
@@ -48,8 +59,35 @@ void SREntity::load(Entity* source) {
 	SRPropertyLoader visitor(_keys, _list, _warnings);
 	eclass->forEachClassAttribute(visitor);
 	
+	// Create a new map with all the stims defined directly on the entity
+	StimResponseMap _entityStims;
+	
 	// Scan the entity itself after the class has been searched
-	source->forEachKeyValue(visitor);
+	SRPropertyLoader entityVisitor(_keys, _entityStims, _warnings);
+	source->forEachKeyValue(entityVisitor);
+	
+	// Now combine the two maps, the id gets incremented, but the internal
+	// index of the StimResponse objects remains unchanged.
+	for (StimResponseMap::iterator i = _entityStims.begin(); 
+		 i != _entityStims.end(); 
+		 i++) 
+	{
+		// Get the Id of the entity stim
+		int id = i->first;
+		
+		// This will be the ID of the new object
+		int newId = id;
+		
+		// Is there already such a stim number defined in the inherited ones?
+		StimResponseMap::iterator found = _list.find(id);
+		if (found != _list.end()) {
+			// Get a new ID based on the highest available
+			newId = getHighestId() + 1;
+		}
+		
+		// Copy the StimResponse over to the member _list
+		_list[newId] = i->second;
+	}
 	
 	// Populate the liststore
 	updateListStore();
@@ -64,23 +102,16 @@ void SREntity::updateListStore() {
 	
 	for (StimResponseMap::iterator i = _list.begin(); i!= _list.end(); i++) {
 		int id = i->first;
-		StimType stimType = _stimTypes.get(i->second.get("type"));
-		
-		std::string stimTypeStr = stimType.caption;
-		stimTypeStr += (i->second.inherited()) ? " (inherited) " : "";
-		
-		std::string classIcon = 
-			(i->second.get("class") == "R") ? ICON_RESPONSE : ICON_STIM; 
 		
 		gtk_list_store_append(_listStore, &iter);
+		// Store the ID into the liststore
 		gtk_list_store_set(_listStore, &iter, 
-							ID_COL, id,
-							CLASS_COL, gtkutil::getLocalPixbufWithMask(classIcon),
-							CAPTION_COL, stimTypeStr.c_str(),
-							ICON_COL, gtkutil::getLocalPixbufWithMask(stimType.icon),
-							INHERIT_COL, i->second.inherited(),
-							IDSTR_COL, intToStr(id).c_str(),
-							-1);
+						   IDSTR_COL, intToStr(id).c_str(),
+						   -1);
+		
+		// And write the rest of the data to the row
+		StimResponse& sr = i->second;
+		writeToListStore(&iter, sr);
 	}
 }
 
@@ -102,6 +133,7 @@ GtkTreeIter SREntity::getIterForId(int id) {
 	
 	GtkTreePath* found = finder.getPath();
 	
+	// Conver the retrieved path into a GtkTreeIter
 	GtkTreeIter iter;
 	
 	if (found != NULL) {
@@ -115,13 +147,7 @@ GtkTreeIter SREntity::getIterForId(int id) {
 	return iter;
 }
 
-void SREntity::setProperty(int id, const std::string& key, const std::string& value) {
-	// First, propagate the SR set() call
-	StimResponse& sr = get(id);
-	sr.set(key, value);
-	
-	GtkTreeIter iter = getIterForId(id);
-	
+void SREntity::writeToListStore(GtkTreeIter* iter, StimResponse& sr) {
 	StimType stimType = _stimTypes.get(sr.get("type"));
 		
 	std::string stimTypeStr = stimType.caption;
@@ -129,14 +155,25 @@ void SREntity::setProperty(int id, const std::string& key, const std::string& va
 		
 	std::string classIcon = (sr.get("class") == "R") ? ICON_RESPONSE : ICON_STIM; 
 	
-	gtk_list_store_set(_listStore, &iter, 
-						ID_COL, id,
+	// The S/R index (the N in sr_class_N)
+	int index = sr.getIndex();
+	
+	gtk_list_store_set(_listStore, iter, 
+						INDEX_COL, index,
 						CLASS_COL, gtkutil::getLocalPixbufWithMask(classIcon),
 						CAPTION_COL, stimTypeStr.c_str(),
 						ICON_COL, gtkutil::getLocalPixbufWithMask(stimType.icon),
 						INHERIT_COL, sr.inherited(),
-						IDSTR_COL, intToStr(id).c_str(),
 						-1);
+}
+
+void SREntity::setProperty(int id, const std::string& key, const std::string& value) {
+	// First, propagate the SR set() call
+	StimResponse& sr = get(id);
+	sr.set(key, value);
+	
+	GtkTreeIter iter = getIterForId(id);
+	writeToListStore(&iter, sr);
 }
 
 StimResponse& SREntity::get(int id) {
