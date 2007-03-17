@@ -26,11 +26,12 @@ SREntity::SREntity(Entity* source) :
 								  G_TYPE_BOOLEAN,	// Inheritance flag
 								  G_TYPE_STRING)), 	// ID in string format (unique)
 	_scriptStore(gtk_list_store_new(SCR_NUM_COLS,
-									G_TYPE_INT,
-									G_TYPE_STRING,
-									G_TYPE_STRING,
-									GDK_TYPE_PIXBUF,
-									G_TYPE_STRING))
+									G_TYPE_INT,			// id
+									G_TYPE_STRING,		// caption
+									G_TYPE_STRING,		// name (STIM_FIRE)
+									GDK_TYPE_PIXBUF,	// Icon
+									G_TYPE_STRING,		// Script String
+									G_TYPE_BOOLEAN))	// Inheritance Flag
 {
 	loadKeys();
 	load(source);
@@ -192,6 +193,7 @@ void SREntity::writeToScriptStore(GtkTreeIter* iter, ResponseScript& script) {
 						SCR_NAME_COL, stim.name.c_str(),
 						SCR_ICON_COL, gtkutil::getLocalPixbufWithMask(stim.icon),
 						SCR_SCRIPT_COL, script.script.c_str(),
+						SCR_INHERIT_COL, script.inherited,
 					   -1);
 }
 
@@ -235,8 +237,12 @@ StimResponse& SREntity::get(int id) {
 	} 
 }
 
-SREntity::operator GtkListStore* () {
+GtkListStore* SREntity::getStimResponseStore() {
 	return _listStore;
+}
+
+GtkListStore* SREntity::getScriptStore() {
+	return _scriptStore;
 }
 
 // static key loader

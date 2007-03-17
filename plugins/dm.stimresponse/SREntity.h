@@ -34,6 +34,7 @@ typedef struct _GtkListStore GtkListStore;
 			SCR_NAME_COL,
 			SCR_ICON_COL,
 			SCR_SCRIPT_COL,
+			SCR_INHERIT_COL,
 			SCR_NUM_COLS
 		};
 	}
@@ -94,10 +95,14 @@ public:
 	 */
 	int add();
 	
-	/** greebo: Operator cast to a GtkListStore*. Use this to add the liststore
-	 * 			to a treeview or a combobox.
+	/** greebo: Returns the GtkListStore* containing the stim/response data. 
+	 * 			Use this to add the data to a treeview or a combobox.
 	 */
-	operator GtkListStore* ();
+	GtkListStore* getStimResponseStore();
+	
+	/** greebo: Returns the scriptstore object
+	 */
+	GtkListStore* getScriptStore();	
 	
 	/** greebo: Sets the <key> of the SR with the given <id> to <value>
 	 */
