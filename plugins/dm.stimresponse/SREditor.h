@@ -90,6 +90,14 @@ public:
 	void selectionChanged(scene::Instance& instance);
 
 private:
+	/** greebo: Removes the currently selected script
+	 */
+	void removeScript();
+
+	/** greebo: Removes the currently selected stim/response object
+	 */
+	void removeStimResponse();
+
 	/** greebo: Adds a new StimResponse object, the index and the internal
 	 * 			id are auto-incremented. The ListStore is refreshed. 
 	 */
@@ -160,6 +168,9 @@ private:
 	// Gets notified if a cell has been changed.
 	static void onScriptEdit(GtkCellRendererText* renderer, 
 							 gchar* path, gchar* new_text, StimResponseEditor* self);
+	
+	// The keypress handler for catching the keys when in the treeview
+	static gboolean onTreeViewKeyPress(GtkTreeView* view, GdkEventKey* event, StimResponseEditor* self);
 }; // class StimResponseEditor
 
 } // namespace ui

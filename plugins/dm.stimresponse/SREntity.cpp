@@ -114,24 +114,25 @@ void SREntity::load(Entity* source) {
 	updateListStore();
 }
 
+void SREntity::remove(int id) {
+	StimResponseMap::iterator found = _list.find(id);
+	
+	if (found != _list.end() && !found->second.inherited()) {
+		_list.erase(found);
+		updateListStore();
+	}
+}
+
+void SREntity::removeScript(int id) {
+	if (id > 0 && !_scripts[id].inherited) {
+		// Remove the item from the vector
+		_scripts.erase(_scripts.begin() + id);
+		updateListStore();
+	}
+}
+
 void SREntity::setScript(int scriptId, const std::string& newScript) {
 	_scripts[scriptId].script = newScript;
-	
-	// Update the liststore as well
-	
-	// Search for the ID string
-	gtkutil::TreeModel::SelectionFinder finder(intToStr(scriptId), SCR_IDSTR_COL);
-	
-	gtk_tree_model_foreach(
-		GTK_TREE_MODEL(_scriptStore), 
-		gtkutil::TreeModel::SelectionFinder::forEach, 
-		&finder
-	);
-	
-	GtkTreeIter iter = finder.getIter();
-	gtk_list_store_set(_scriptStore, &iter, 
-					   SCR_SCRIPT_COL, newScript.c_str(),
-					   -1);
 }
 
 void SREntity::updateListStore() {

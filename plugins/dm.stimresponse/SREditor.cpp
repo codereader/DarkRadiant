@@ -18,6 +18,7 @@
 #include "gtkutil/ScrolledFrame.h"
 #include "string/string.h"
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 
 #include <iostream>
 
@@ -152,6 +153,7 @@ void StimResponseEditor::populateWindow() {
 	_entitySRSelection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_entitySRView));
 	// Connect the signal
 	g_signal_connect(G_OBJECT(_entitySRSelection), "changed", G_CALLBACK(onSelectionChange), this);
+	g_signal_connect(G_OBJECT(_entitySRView), "key-press-event", G_CALLBACK(onTreeViewKeyPress), this);
 	
 	// ID number
 	GtkTreeViewColumn* numCol = gtk_tree_view_column_new();
@@ -256,7 +258,7 @@ void StimResponseEditor::populateWindow() {
 	_scriptWidgets.selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_scriptWidgets.view));
 	gtk_widget_set_size_request(_scriptWidgets.view, -1, 120);
 	// Connect the signal
-	//g_signal_connect(G_OBJECT(_scriptWidgets.view), "changed", G_CALLBACK(onScriptSelect), this);
+	g_signal_connect(G_OBJECT(_scriptWidgets.view), "key-press-event", G_CALLBACK(onTreeViewKeyPress), this);
 	{
 		// The Type
 		GtkTreeViewColumn* scriptTypeCol = gtk_tree_view_column_new();
@@ -613,6 +615,27 @@ void StimResponseEditor::addStimResponse() {
 	}
 }
 
+void StimResponseEditor::removeStimResponse() {
+	int id = getIdFromSelection();
+	
+	if (id > 0) {
+		_srEntity->remove(id);
+	}
+}
+
+void StimResponseEditor::removeScript() {
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+	bool anythingSelected = gtk_tree_selection_get_selected(
+		_scriptWidgets.selection, &model, &iter
+	);
+	
+	if (anythingSelected && _srEntity != NULL) {
+		int id = gtkutil::TreeModel::getInt(model, &iter, SCR_ID_COL);
+		_srEntity->removeScript(id);
+	}
+}
+
 int StimResponseEditor::getIdFromSelection() {
 	GtkTreeIter iter;
 	GtkTreeModel* model;
@@ -774,6 +797,25 @@ void StimResponseEditor::onScriptEdit(GtkCellRendererText* renderer,
 	
 	// Update the cell
 	gtk_list_store_set(store, &iter, SCR_SCRIPT_COL, new_text, -1);
+}
+
+gboolean StimResponseEditor::onTreeViewKeyPress(
+	GtkTreeView* view, GdkEventKey* event, StimResponseEditor* self)
+{
+	if (event->keyval == GDK_Delete) {
+		if (view == GTK_TREE_VIEW(self->_entitySRView)) {
+			self->removeStimResponse();
+		}
+		else if (view == GTK_TREE_VIEW(self->_scriptWidgets.view)) {
+			self->removeScript();
+		}
+		
+		// Catch this keyevent, don't propagate
+		return true;
+	}
+	
+	// Propagate further
+	return false;
 }
 
 // Static command target
