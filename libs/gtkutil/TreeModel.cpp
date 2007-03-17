@@ -61,11 +61,28 @@ std::string TreeModel::getSelectedString(GtkTreeSelection* sel, gint colNo)
 TreeModel::SelectionFinder::SelectionFinder(const std::string& selection, int column) : 
 	_selection(selection),
 	_path(NULL),
+	_model(NULL),
 	_column(column)
 {}
 
 GtkTreePath* TreeModel::SelectionFinder::getPath() {
 	return _path;
+}
+
+GtkTreeIter TreeModel::SelectionFinder::getIter() {
+	// The TreeIter structure to be returned
+	GtkTreeIter iter;
+	
+	// Convert the retrieved path into a GtkTreeIter
+	if (_path != NULL) {
+		gtk_tree_model_get_iter_from_string(
+			GTK_TREE_MODEL(_model),
+			&iter,
+			gtk_tree_path_to_string(_path)
+		);
+	}
+	
+	return iter;
 }
 
 // Static callback for GTK
@@ -75,6 +92,9 @@ gboolean TreeModel::SelectionFinder::forEach(
 	// Get the self instance from the void pointer
 	TreeModel::SelectionFinder* self = 
 		reinterpret_cast<TreeModel::SelectionFinder*>(vpSelf);
+
+	// Store the TreeModel pointer for later reference
+	self->_model = model;
 		
 	// If the visited row matches the texture to find, set the _path
 	// variable and finish, otherwise continue to search

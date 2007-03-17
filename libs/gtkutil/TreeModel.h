@@ -86,6 +86,9 @@ public:
 		// The GtkTreePath* pointing to the required texture
 		GtkTreePath* _path;
 		
+		// The GtkTreeModel that has been searched by forEach()
+		GtkTreeModel* _model;
+		
 		// The column index to be searched
 		int _column;
 		
@@ -97,6 +100,11 @@ public:
 		// Retrieve the found TreePath, which may be NULL if the texture was not
 		// found
 		GtkTreePath* getPath();
+		
+		/** greebo: Get the GtkTreeIter corresponding to the found path.
+		 * 			The returnvalue can be invalid if the internal found path is NULL.
+		 */
+		GtkTreeIter getIter();
 		
 		// Static callback for GTK
 		static gboolean forEach(GtkTreeModel* model,

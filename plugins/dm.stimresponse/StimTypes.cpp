@@ -3,6 +3,7 @@
 #include "iregistry.h"
 #include "string/string.h"
 #include "gtkutil/image.h"
+#include "gtkutil/TreeModel.h"
 #include <gtk/gtk.h>
 
 	namespace {
@@ -12,13 +13,18 @@
 		  ID_COL,
 		  CAPTION_COL,
 		  ICON_COL,
+		  NAME_COL,
 		  NUM_COLS
 		};
 	}
 
 StimTypes::StimTypes() {
 	// Create a new liststore
-	_listStore = gtk_list_store_new(NUM_COLS, G_TYPE_INT, G_TYPE_STRING, GDK_TYPE_PIXBUF);
+	_listStore = gtk_list_store_new(NUM_COLS, 
+									G_TYPE_INT, 
+									G_TYPE_STRING, 
+									GDK_TYPE_PIXBUF,
+									G_TYPE_STRING);
 	
 	// Find all the relevant nodes
 	xml::NodeList stimNodes = GlobalRegistry().findXPath(RKEY_STIM_DEFINITIONS);
@@ -42,12 +48,26 @@ StimTypes::StimTypes() {
 							ID_COL, id,
 							CAPTION_COL, _stims[id].caption.c_str(),
 							ICON_COL, gtkutil::getLocalPixbufWithMask(newStimType.icon),
+							NAME_COL, _stims[id].name.c_str(),
 							-1);
 	}
 }
 
 StimTypes::operator GtkListStore* () {
 	return _listStore;
+}
+
+GtkTreeIter StimTypes::getIterForName(const std::string& name) {
+	// Setup the selectionfinder to search for the name string
+	gtkutil::TreeModel::SelectionFinder finder(name, NAME_COL);
+	
+	gtk_tree_model_foreach(
+		GTK_TREE_MODEL(_listStore), 
+		gtkutil::TreeModel::SelectionFinder::forEach, 
+		&finder
+	);
+	
+	return finder.getIter();
 }
 
 StimType StimTypes::get(int id) {
