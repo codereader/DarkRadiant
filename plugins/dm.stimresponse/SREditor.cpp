@@ -235,6 +235,8 @@ void StimResponseEditor::populateWindow() {
 	gtk_widget_set_size_request(_addWidgets.stimTypeList, TREE_VIEW_WIDTH + 4, -1);
 	g_object_unref(stimListStore); // tree view owns the reference now
 	
+	g_signal_connect(G_OBJECT(_addWidgets.stimTypeList), "changed", G_CALLBACK(onStimTypeChange) , this);
+	
 	// Add the cellrenderer for the name
 	GtkCellRenderer* nameRenderer = gtk_cell_renderer_text_new();
 	GtkCellRenderer* iconRenderer = gtk_cell_renderer_pixbuf_new();
@@ -244,8 +246,17 @@ void StimResponseEditor::populateWindow() {
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_addWidgets.stimTypeList), iconRenderer, "pixbuf", 2);
 	gtk_cell_renderer_set_fixed_size(iconRenderer, 26, -1);
 	
-	_addWidgets.addButton = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	_addWidgets.addButton = gtk_button_new_with_label("Add S/R");
+	gtk_button_set_image(
+		GTK_BUTTON(_addWidgets.addButton), 
+		gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_BUTTON)
+	);
+	
 	_addWidgets.addScriptButton = gtk_button_new_with_label("Add Response Script");
+	gtk_button_set_image(
+		GTK_BUTTON(_addWidgets.addScriptButton), 
+		gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_BUTTON)
+	);
 	
 	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.stimTypeList, false, false, 0);
 	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.addButton, false, false, 6);
@@ -486,6 +497,7 @@ void StimResponseEditor::update() {
 	gtk_widget_set_sensitive(_dialogVBox, _entity != NULL);
 	
 	updateSRWidgets();
+	updateAddScriptButton();
 }
 
 void StimResponseEditor::rescanSelection() {
@@ -679,6 +691,9 @@ void StimResponseEditor::addResponseScript() {
 		
 		// Refresh the values in the liststore
 		_srEntity->updateListStore();
+		
+		// Update the sensitivity of the "add script" button
+		updateAddScriptButton();
 	}
 }
 
@@ -692,6 +707,9 @@ void StimResponseEditor::removeScript() {
 	if (anythingSelected && _srEntity != NULL) {
 		int id = gtkutil::TreeModel::getInt(model, &iter, SCR_ID_COL);
 		_srEntity->removeScript(id);
+		
+		// Update the sensitivity of the "add script" button
+		updateAddScriptButton();
 	}
 }
 
@@ -731,6 +749,18 @@ void StimResponseEditor::save() {
 
 void StimResponseEditor::revert() {
 	rescanSelection();
+}
+
+void StimResponseEditor::updateAddScriptButton() {
+	if (_srEntity == NULL) return;
+	
+	// Get the currently selected stim type
+	std::string type = getStimTypeName();
+	
+	gtk_widget_set_sensitive(
+		_addWidgets.addScriptButton,
+		(type != "" && !(_srEntity->scriptExists(type)))
+	);
 }
 
 // Static GTK Callbacks
@@ -900,6 +930,10 @@ gboolean StimResponseEditor::onTreeViewKeyPress(
 	
 	// Propagate further
 	return false;
+}
+
+void StimResponseEditor::onStimTypeChange(GtkComboBox* widget, StimResponseEditor* self) {
+	self->updateAddScriptButton();
 }
 
 // Static command target

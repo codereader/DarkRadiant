@@ -133,6 +133,10 @@ public:
 	 */
 	ResponseScript& getScript(int scriptId);
 	
+	/** greebo: Returns TRUE if the response script for the given stimtype exists
+	 */
+	bool scriptExists(const std::string& stimType);
+	
 	/** greebo: Removes the script with the given <id>
 	 */
 	void removeScript(int id);
