@@ -6,6 +6,7 @@
 #include "iregistry.h"
 #include "iselection.h"
 #include "qerplugin.h"
+#include "iundo.h"
 
 #include "gtkutil/image.h"
 #include "generic/callback.h"
@@ -67,7 +68,8 @@ class StimResponseDependencies :
 	public GlobalSelectionModuleRef,
 	public GlobalSceneGraphModuleRef,
 	public TypeSystemRef,
-	public GlobalEntityClassManagerModuleRef
+	public GlobalEntityClassManagerModuleRef,
+	public GlobalUndoModuleRef
 { 
 public:
 	StimResponseDependencies() :

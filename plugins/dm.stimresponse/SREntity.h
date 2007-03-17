@@ -82,6 +82,11 @@ public:
 	void load(Entity* source);
 	void save(Entity* target);
 	
+	/** greebo: Removes all the stim/response-relevant spawnargs
+	 * 			from the <target> entity.
+	 */
+	void cleanEntity(Entity* target);
+	
 	/** greebo: Retrieves the reference to the StimResponse object
 	 * 			having the given integer <id>.
 	 * 

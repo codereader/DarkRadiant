@@ -1,6 +1,7 @@
 #include "SREntity.h"
 
 #include "iregistry.h"
+#include "iundo.h"
 #include "itextstream.h"
 #include "ieclass.h"
 #include "entitylib.h"
@@ -9,6 +10,7 @@
 #include <gtk/gtk.h>
 
 #include "SRPropertyLoader.h"
+#include "SRPropertyRemover.h"
 
 #include <iostream>
 
@@ -188,10 +190,25 @@ int SREntity::add() {
 	return id;
 }
 
+void SREntity::cleanEntity(Entity* target) {
+	// Clean the entity from all the S/R spawnargs
+	SRPropertyRemover remover(target, _keys);
+	target->forEachKeyValue(remover);
+	
+	// scope ends here, SRPropertyRemover's destructor
+	// will delete the keys here
+}
+
 void SREntity::save(Entity* target) {
 	if (target == NULL) {
 		return;
 	}
+	
+	// Scoped undo object
+	UndoableCommand command("setStimResponse");
+	
+	// Remove the S/R spawnargs from the entity
+	cleanEntity(target);
 }
 
 GtkTreeIter SREntity::getIterForId(int id) {
