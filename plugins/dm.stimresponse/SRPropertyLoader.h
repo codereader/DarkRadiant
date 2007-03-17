@@ -4,6 +4,8 @@
 #include "ieclass.h"
 #include "ientity.h"
 #include "SREntity.h"
+#include "StimTypes.h"
+#include "ResponseScript.h"
 
 class SRPropertyLoader :
 	public Entity::Visitor,
@@ -16,13 +18,20 @@ class SRPropertyLoader :
 	// The target list where all the StimResponse objects will be stored
 	SREntity::StimResponseMap& _srMap;
 
+	// The target map for the response scripts
+	ResponseScripts& _scripts;
+
 	// The target string for storing the parse warnings
 	std::string& _warnings;
-
+	
+	// Local helper class containing all the stimtypes
+	StimTypes _stimTypes;
+	
 public:
 	// Constructor
 	SRPropertyLoader(SREntity::KeyList& keys, 
 					 SREntity::StimResponseMap& srMap,
+					 ResponseScripts& scripts,
 					 std::string& warnings);
 	
 	// Entity::Visitor implementation

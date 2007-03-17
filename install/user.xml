@@ -19,7 +19,7 @@
 		<queueSize value="64" />
 	</undo>
 	<stimResponseEditor>
-		<window xPosition="80" yPosition="100" width="500" height="400" />
+		<window xPosition="80" yPosition="100" width="500" height="350" />
 	</stimResponseEditor>
 	<lightInspector>
 		<window xPosition="100" yPosition="150" width="730" height="340" />

@@ -128,7 +128,7 @@ void StimResponseEditor::populateWindow() {
 	
 	// Pack it into an alignment so that it is indented
 	GtkWidget* srAlignment = gtkutil::LeftAlignment(GTK_WIDGET(srHBox), 18, 1.0); 
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(srAlignment), false, false, 0);
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(srAlignment), true, true, 0);
 	
 	_entitySRView = gtk_tree_view_new();
 	gtk_widget_set_size_request(_entitySRView, TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT);
