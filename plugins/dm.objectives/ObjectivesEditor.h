@@ -63,6 +63,7 @@ private:
 											 ObjectivesEditor*);
 	static void _onAddEntity(GtkWidget*, ObjectivesEditor*);
 	static void _onDeleteEntity(GtkWidget*, ObjectivesEditor*);
+	static void _onAddObjective(GtkWidget*, ObjectivesEditor*);
 	
 	// Show dialog widgets
 	void show();
@@ -73,6 +74,7 @@ private:
 	
 	// Populate the objective tree with values from the selected entity
 	void populateObjectiveTree(Entity* entity);
+	void updateObjectiveListFromMap();
 	
 	// Populate the edit panel from the selected objective
 	void populateEditPanel(int objNum);
