@@ -220,20 +220,26 @@ GtkWidget* ObjectivesEditor::createFlagsTable() {
 	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 6);
 
-	gtk_table_attach_defaults(GTK_TABLE(table), 
-							  gtk_check_button_new_with_label("Start active"), 
+	_widgets["startActiveFlag"] = 
+		gtk_check_button_new_with_label("Start active");
+	_widgets["mandatoryFlag"] =
+		gtk_check_button_new_with_label("Mandatory"); 
+	_widgets["irreversibleFlag"] =
+		gtk_check_button_new_with_label("Irreversible"); 
+	_widgets["ongoingFlag"] =
+		gtk_check_button_new_with_label("Ongoing"); 
+	_widgets["visibleFlag"] =
+		gtk_check_button_new_with_label("Visible"); 
+
+	gtk_table_attach_defaults(GTK_TABLE(table), _widgets["startActiveFlag"], 
 							  0, 1, 0, 1);
-	gtk_table_attach_defaults(GTK_TABLE(table), 
-							  gtk_check_button_new_with_label("Mandatory"), 
+	gtk_table_attach_defaults(GTK_TABLE(table), _widgets["mandatoryFlag"],
 							  1, 2, 0, 1);
-	gtk_table_attach_defaults(GTK_TABLE(table), 
-							  gtk_check_button_new_with_label("Irreversible"), 
+	gtk_table_attach_defaults(GTK_TABLE(table), _widgets["irreversibleFlag"],
 							  2, 3, 0, 1);
-	gtk_table_attach_defaults(GTK_TABLE(table), 
-							  gtk_check_button_new_with_label("Ongoing"), 
+	gtk_table_attach_defaults(GTK_TABLE(table), _widgets["ongoingFlag"],
 							  0, 1, 1, 2);
-	gtk_table_attach_defaults(GTK_TABLE(table), 
-							  gtk_check_button_new_with_label("Visible"), 
+	gtk_table_attach_defaults(GTK_TABLE(table), _widgets["visibleFlag"],
 							  1, 2, 1, 2);
 							  
 	return table;
@@ -357,6 +363,22 @@ void ObjectivesEditor::populateEditPanel(int objNum) {
 					   boost::lexical_cast<std::string>(objNum).c_str());
 	gtk_entry_set_text(GTK_ENTRY(_widgets["descriptionEntry"]),
 					   obj.description.c_str());
+					   
+	gtk_toggle_button_set_active(
+		GTK_TOGGLE_BUTTON(_widgets["startActiveFlag"]),
+		obj.startActive ? TRUE : FALSE);
+	gtk_toggle_button_set_active(
+		GTK_TOGGLE_BUTTON(_widgets["irreversibleFlag"]),
+		obj.irreversible ? TRUE : FALSE);
+	gtk_toggle_button_set_active(
+		GTK_TOGGLE_BUTTON(_widgets["ongoingFlag"]),
+		obj.ongoing ? TRUE : FALSE);
+	gtk_toggle_button_set_active(
+		GTK_TOGGLE_BUTTON(_widgets["mandatoryFlag"]),
+		obj.mandatory ? TRUE : FALSE);
+	gtk_toggle_button_set_active(
+		GTK_TOGGLE_BUTTON(_widgets["visibleFlag"]),
+		obj.visible ? TRUE : FALSE);
 }
 
 /* GTK CALLBACKS */
