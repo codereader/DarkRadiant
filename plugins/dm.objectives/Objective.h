@@ -19,7 +19,7 @@ struct Objective
 /**
  * Objective map type.
  */
-typedef std::map<std::string, Objective> ObjectiveMap;
+typedef std::map<int, Objective> ObjectiveMap;
 
 }
 

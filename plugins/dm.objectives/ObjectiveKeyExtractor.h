@@ -52,11 +52,11 @@ public:
 		// Extract the objective number
 		static const boost::regex reObjNum("obj(\\d+)_(.*)");
 		boost::smatch results;
-		std::string sNum;
+		int iNum;
 		
 		if (boost::regex_match(key, results, reObjNum)) {
 			// Get the objective number
-			sNum = results[1];			
+			iNum = boost::lexical_cast<int>(results[1]);			
 		}
 		else {
 			// No match, abort
@@ -69,7 +69,7 @@ public:
 		
 		// Switch on the substring
 		if (objSubString == "desc") {
-			_objMap[sNum].description = value;			
+			_objMap[iNum].description = value;			
 		}
 	}
 	

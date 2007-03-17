@@ -59,6 +59,8 @@ private:
 	static void _onStartActiveCellToggled(
 		GtkCellRendererToggle*, const gchar* path, ObjectivesEditor* self);
 	static void _onEntitySelectionChanged(GtkTreeSelection*, ObjectivesEditor*);
+	static void _onObjectiveSelectionChanged(GtkTreeSelection*, 
+											 ObjectivesEditor*);
 	static void _onAddEntity(GtkWidget*, ObjectivesEditor*);
 	static void _onDeleteEntity(GtkWidget*, ObjectivesEditor*);
 	
@@ -71,6 +73,9 @@ private:
 	
 	// Populate the objective tree with values from the selected entity
 	void populateObjectiveTree(Entity* entity);
+	
+	// Populate the edit panel from the selected objective
+	void populateEditPanel(int objNum);
 	
 public:
 	
