@@ -40,10 +40,9 @@ ObjectivesEditor::ObjectivesEditor()
   										  G_TYPE_BOOLEAN,		// start active
   										  G_TYPE_POINTER,		// Entity*
   										  G_TYPE_POINTER)),		// scene::Node*
-  _objectiveList(gtk_list_store_new(3, 
+  _objectiveList(gtk_list_store_new(2, 
   								    G_TYPE_STRING,		// obj number 
-  								    G_TYPE_STRING,		// obj description
-  								    G_TYPE_POINTER))	// pointer to Objective
+  								    G_TYPE_STRING))		// obj description
 {
 	// Window properties
 	gtk_window_set_transient_for(
@@ -147,7 +146,89 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 	gtk_tree_view_append_column(
 		GTK_TREE_VIEW(tv), gtkutil::TextColumn("Description", 1));
 	
-	return gtkutil::ScrolledFrame(tv);
+	// Beside the list is an vbox containing add, delete and clear buttons
+	GtkWidget* buttonBox = gtk_vbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(buttonBox), 
+					   gtk_button_new_from_stock(GTK_STOCK_ADD),
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonBox), 
+					   gtk_button_new_from_stock(GTK_STOCK_DELETE),
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonBox), 
+					   gtk_button_new_from_stock(GTK_STOCK_CLEAR),
+					   FALSE, FALSE, 0);
+
+	// Pack the list and the buttons into an hbox
+	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(hbx), gtkutil::ScrolledFrame(tv), TRUE, TRUE, 0); 
+	gtk_box_pack_start(GTK_BOX(hbx), buttonBox, FALSE, FALSE, 0);
+					   
+	// Finally, pack the hbox into a vbox, with the current objective edit panel
+	// underneath
+	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
+	gtk_box_pack_start(GTK_BOX(vbx), hbx, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), createObjectiveEditPanel(), 
+					   FALSE, FALSE, 0);
+					   
+	return vbx; 
+}
+
+// Create the panel for editing the currently-selected objective
+GtkWidget* ObjectivesEditor::createObjectiveEditPanel() {
+
+	// Table for entry boxes
+	GtkWidget* table = gtk_table_new(3, 2, FALSE);
+	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
+	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
+	
+	// Objective number and description
+	gtk_table_attach(GTK_TABLE(table), 
+					 gtkutil::LeftAlignedLabel("<b>Objective</b>"),
+					 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(GTK_TABLE(table), gtk_entry_new(), 1, 2, 0, 1);
+	gtk_table_attach(GTK_TABLE(table), 
+					 gtkutil::LeftAlignedLabel("<b>Description</b>"),
+					 0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(GTK_TABLE(table), gtk_entry_new(), 1, 2, 1, 2);
+	
+	// Options checkboxes.
+	gtk_table_attach(GTK_TABLE(table), 
+					 gtkutil::LeftAlignedLabel("<b>Flags</b>"),
+					 0, 1, 2, 3, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(GTK_TABLE(table), createFlagsTable(), 1, 2, 2, 3);
+	
+	// Pack items into a vbox and return
+	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(vbx), table, FALSE, FALSE, 0);
+	
+	return vbx;
+}
+
+// Create table of flag checkboxes
+GtkWidget* ObjectivesEditor::createFlagsTable() {
+	
+	GtkWidget* table = gtk_table_new(2, 3, FALSE);
+	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
+	gtk_table_set_col_spacings(GTK_TABLE(table), 6);
+
+	gtk_table_attach_defaults(GTK_TABLE(table), 
+							  gtk_check_button_new_with_label("Start active"), 
+							  0, 1, 0, 1);
+	gtk_table_attach_defaults(GTK_TABLE(table), 
+							  gtk_check_button_new_with_label("Mandatory"), 
+							  1, 2, 0, 1);
+	gtk_table_attach_defaults(GTK_TABLE(table), 
+							  gtk_check_button_new_with_label("Irreversible"), 
+							  2, 3, 0, 1);
+	gtk_table_attach_defaults(GTK_TABLE(table), 
+							  gtk_check_button_new_with_label("Ongoing"), 
+							  0, 1, 1, 2);
+	gtk_table_attach_defaults(GTK_TABLE(table), 
+							  gtk_check_button_new_with_label("Visible"), 
+							  1, 2, 1, 2);
+							  
+	return table;
+
 }
 
 // Create the buttons panel
@@ -177,8 +258,9 @@ void ObjectivesEditor::show() {
 // Populate widgets with map data
 void ObjectivesEditor::populateWidgets() {
 
-	// Clear the selection and then the list itself
+	// Clear the list boxes
 	gtk_list_store_clear(_objectiveEntityList);
+	gtk_list_store_clear(_objectiveList);
 
 	// Use an ObjectiveEntityFinder to walk the map and add any objective
 	// entities to the list
