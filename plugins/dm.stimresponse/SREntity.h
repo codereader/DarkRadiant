@@ -96,6 +96,11 @@ public:
 	 */
 	int add();
 	
+	/** greebo: Removes the StimResponse object with the given id.
+	 * 			This triggers a refresh of the liststores.
+	 */
+	void remove(int id);
+	
 	/** greebo: Returns the GtkListStore* containing the stim/response data. 
 	 * 			Use this to add the data to a treeview or a combobox.
 	 */
@@ -118,6 +123,10 @@ public:
 	 * 			with the given <scriptId>
 	 */
 	void setScript(int scriptId, const std::string& newScript);
+	
+	/** greebo: Removes the script with the given <id>
+	 */
+	void removeScript(int id);
 	
 	/** greebo: Helper to load the possible key names
 	 * 			from the registry into the _keys list.
