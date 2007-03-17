@@ -68,25 +68,6 @@ enum EMessageBoxReturn
   eIDNO,
 };
 
-// simple Message Box, see above for the 'type' flags
-
-typedef EMessageBoxReturn (* PFN_QERAPP_MESSAGEBOX) (GtkWidget *parent, const char* text, const char* caption/* = "GtkRadiant"*/, EMessageBoxType type/* = eMB_OK*/, EMessageBoxIcon icon/* = eMB_ICONDEFAULT*/);
-
-// returns a gchar* string that must be g_free'd by the user
-typedef char* (* PFN_QERAPP_DIRDIALOG) (GtkWidget *parent, const char* title/* = "Choose Directory"*/, const char* path/* = 0*/);
-
-// return true if the user closed the dialog with 'Ok'
-// 'color' is used to set the initial value and store the selected value
-typedef bool (* PFN_QERAPP_COLORDIALOG) (GtkWidget *parent, Vector3& color,
-                                               const char* title/* = "Choose Color"*/);
-
-// load a .bmp file and create a GtkImage widget from it
-// NOTE: 'filename' is relative to <radiant_path>/plugins/bitmaps/
-typedef struct _GtkImage GtkImage;
-typedef GtkImage* (* PFN_QERAPP_NEWIMAGE) (const char* filename);
-
-// ========================================
-
 // Forward declarations
 namespace scene {
   class Node;
@@ -136,10 +117,6 @@ struct IRadiant
 
   const char* (*TextureBrowser_getSelectedShader)();
 
-  // GTK+ functions
-  PFN_QERAPP_MESSAGEBOX  m_pfnMessageBox;
-  PFN_QERAPP_DIRDIALOG   m_pfnDirDialog;
-  PFN_QERAPP_COLORDIALOG m_pfnColorDialog;
 };
 
 // RadiantCoreAPI Module Definitions

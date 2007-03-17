@@ -1,5 +1,6 @@
 #include "BrushExportOBJ.h"
 #include "gtkutil/filechooser.h"
+#include "gtkutil/dialog.h"
 
 /*	This exports the current selection into a WaveFrontOBJ file
  */
@@ -20,7 +21,6 @@ void export_selected(GtkWindow* mainWindow) {
 		GlobalSelectionSystem().foreachSelected(exporter);
 	}
 	else {
-		GlobalRadiant().m_pfnMessageBox(GTK_WIDGET(mainWindow), "Unable to write to file", "Error",
-                                    	eMB_OK, eMB_ICONERROR);
+		gtkutil::errorDialog("Unable to write to file", mainWindow);
 	}
 }

@@ -51,7 +51,6 @@ inline void process_gui()
 
 template<typename Element> class BasicVector3;
 typedef BasicVector3<float> Vector3;
-bool color_dialog (GtkWidget *parent, Vector3& color, const char* title = "Choose Color");
 
 typedef struct _GtkEntry GtkEntry;
 void button_clicked_entry_browse_file(GtkWidget* widget, GtkEntry* entry);
