@@ -34,6 +34,9 @@ namespace ui {
 		const std::string LABEL_ADD_STIMRESPONSE = "Add Stim/Response";
 		const std::string LABEL_RESPONSE_SCRIPTS = "Response Scripts";
 		
+		const char* LABEL_SAVE = "Save to Entity";
+		const char* LABEL_REVERT = "Reload from Entity";
+		
 		const unsigned int TREE_VIEW_WIDTH = 280;
 		const unsigned int TREE_VIEW_HEIGHT = 240;
 	}
@@ -312,6 +315,22 @@ void StimResponseEditor::populateWindow() {
 	GtkWidget* scriptAlignment = gtkutil::LeftAlignment(
 		gtkutil::ScrolledFrame(_scriptWidgets.view), 18, 1.0);
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), scriptAlignment, true, true, 0);
+	
+	GtkWidget* buttonHBox = gtk_hbox_new(false, 0);
+	
+	// Save button
+	GtkWidget* saveButton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+	gtk_button_set_label(GTK_BUTTON(saveButton), LABEL_SAVE);
+	g_signal_connect(G_OBJECT(saveButton), "clicked", G_CALLBACK(onSave), this);
+	gtk_box_pack_end(GTK_BOX(buttonHBox), saveButton, false, false, 0);
+	
+	// Revert button
+	GtkWidget* revertButton = gtk_button_new_from_stock(GTK_STOCK_REFRESH);
+	gtk_button_set_label(GTK_BUTTON(revertButton), LABEL_REVERT);
+	g_signal_connect(G_OBJECT(revertButton), "clicked", G_CALLBACK(onRevert), this);
+	gtk_box_pack_start(GTK_BOX(buttonHBox), revertButton, false, false, 0);
+	
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), buttonHBox, false, false, 0);
 }
 
 GtkWidget* StimResponseEditor::createSRWidgets() {
@@ -482,11 +501,14 @@ void StimResponseEditor::rescanSelection() {
 		GtkListStore* scriptSTore = _srEntity->getScriptStore();
 		gtk_tree_view_set_model(GTK_TREE_VIEW(_scriptWidgets.view), GTK_TREE_MODEL(scriptSTore));
 		g_object_unref(scriptSTore);
-		
-		if (_entity != NULL) {
-			std::string title = WINDOW_TITLE + " (" + _entity->getKeyValue("name") + ")";
-			gtk_window_set_title(GTK_WINDOW(_dialog), title.c_str()); 
-		}
+	}
+	
+	if (_entity != NULL) {
+		std::string title = WINDOW_TITLE + " (" + _entity->getKeyValue("name") + ")";
+		gtk_window_set_title(GTK_WINDOW(_dialog), title.c_str()); 
+	}
+	else {
+		gtk_window_set_title(GTK_WINDOW(_dialog), WINDOW_TITLE.c_str());
 	}
 	
 	// Update the widgets
@@ -663,6 +685,14 @@ void StimResponseEditor::setProperty(const std::string& key, const std::string& 
 	updateSRWidgets();
 }
 
+void StimResponseEditor::save() {
+	
+}
+
+void StimResponseEditor::revert() {
+	rescanSelection();
+}
+
 // Static GTK Callbacks
 gboolean StimResponseEditor::onDelete(GtkWidget* widget, GdkEvent* event, StimResponseEditor* self) {
 	// Toggle the visibility of the window
@@ -781,6 +811,14 @@ void StimResponseEditor::onRadiusChanged(GtkEditable* editable, StimResponseEdit
 
 void StimResponseEditor::onAdd(GtkWidget* button, StimResponseEditor* self) {
 	self->addStimResponse();
+}
+
+void StimResponseEditor::onSave(GtkWidget* button, StimResponseEditor* self) {
+	self->save();
+}
+
+void StimResponseEditor::onRevert(GtkWidget* button, StimResponseEditor* self) {
+	self->revert();
 }
 
 void StimResponseEditor::onScriptEdit(GtkCellRendererText* renderer, 
