@@ -235,8 +235,8 @@ GtkWidget* StimResponseEditor::createSRWidgets() {
 	// Create the buttons
 	_srWidgets.stimButton = gtk_toggle_button_new();
 	_srWidgets.respButton = gtk_toggle_button_new();
-	g_signal_connect(G_OBJECT(_srWidgets.stimButton), "toggled", G_CALLBACK(onTypeChange), this);
-	g_signal_connect(G_OBJECT(_srWidgets.respButton), "toggled", G_CALLBACK(onTypeChange), this);
+	g_signal_connect(G_OBJECT(_srWidgets.stimButton), "toggled", G_CALLBACK(onClassChange), this);
+	g_signal_connect(G_OBJECT(_srWidgets.respButton), "toggled", G_CALLBACK(onClassChange), this);
 	
 	GtkWidget* stimImg = gtk_image_new_from_pixbuf(gtkutil::getLocalPixbufWithMask(ICON_STIM));
 	GtkWidget* respImg = gtk_image_new_from_pixbuf(gtkutil::getLocalPixbufWithMask(ICON_RESPONSE));
@@ -276,7 +276,9 @@ GtkWidget* StimResponseEditor::createSRWidgets() {
 	_srWidgets.typeList = gtk_combo_box_new_with_model(GTK_TREE_MODEL(stimListStore));
 	gtk_widget_set_size_request(_srWidgets.typeList, -1, -1);
 	g_object_unref(stimListStore); // tree view owns the reference now
-		
+	
+	g_signal_connect(G_OBJECT(_srWidgets.typeList), "changed", G_CALLBACK(onTypeSelect), this);
+	
 	// Add the cellrenderer for the name
 	GtkCellRenderer* nameRenderer = gtk_cell_renderer_text_new();
 	GtkCellRenderer* iconRenderer = gtk_cell_renderer_pixbuf_new();
@@ -352,6 +354,17 @@ GtkWidget* StimResponseEditor::createSRWidgets() {
 	
 	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), modelHBox, false, false, 0);
 	
+	// Connect the checkboxes
+	g_signal_connect(G_OBJECT(_srWidgets.useBounds), "toggled", G_CALLBACK(onBoundsToggle), this);
+	g_signal_connect(G_OBJECT(_srWidgets.radiusToggle), "toggled", G_CALLBACK(onRadiusToggle), this);
+	g_signal_connect(G_OBJECT(_srWidgets.timeIntToggle), "toggled", G_CALLBACK(onTimeIntervalToggle), this);
+	g_signal_connect(G_OBJECT(_srWidgets.modelToggle), "toggled", G_CALLBACK(onModelToggle), this);
+	
+	// Connect the entry fields
+	g_signal_connect(G_OBJECT(_srWidgets.modelEntry), "changed", G_CALLBACK(onModelChanged), this);
+	g_signal_connect(G_OBJECT(_srWidgets.radiusEntry), "changed", G_CALLBACK(onRadiusChanged), this);
+	g_signal_connect(G_OBJECT(_srWidgets.timeIntEntry), "changed", G_CALLBACK(onTimeIntervalChanged), this);
+		
 	return _srWidgets.vbox;
 }
 
@@ -527,10 +540,8 @@ void StimResponseEditor::onSelectionChange(GtkTreeSelection* treeView, StimRespo
 	self->updateSRWidgets();
 }
 
-void StimResponseEditor::onTypeChange(GtkToggleButton* toggleButton, StimResponseEditor* self) {
-	if (self->_updatesDisabled) {
-		return;
-	}
+void StimResponseEditor::onClassChange(GtkToggleButton* toggleButton, StimResponseEditor* self) {
+	if (self->_updatesDisabled)	return; // Callback loop guard
 	
 	if (GTK_WIDGET(toggleButton) == self->_srWidgets.stimButton) {
 		self->setProperty("class", "S");
@@ -541,15 +552,97 @@ void StimResponseEditor::onTypeChange(GtkToggleButton* toggleButton, StimRespons
 }
 
 void StimResponseEditor::onActiveToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {
-	if (self->_updatesDisabled) {
-		return;
-	}
+	if (self->_updatesDisabled) return; // Callback loop guard
 	
-	self->setProperty(
-		"state", 
-		gtk_toggle_button_get_active(toggleButton) ? "1" : "0"
-	);
+	self->setProperty("state", gtk_toggle_button_get_active(toggleButton) ? "1" : "0");
 }
+
+void StimResponseEditor::onBoundsToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {
+	if (self->_updatesDisabled) return; // Callback loop guard
+	
+	self->setProperty("use_bounds",	gtk_toggle_button_get_active(toggleButton) ? "1" : "0");
+}
+
+void StimResponseEditor::onRadiusToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {
+	if (self->_updatesDisabled) return; // Callback loop guard
+	
+	std::string entryText = gtk_entry_get_text(GTK_ENTRY(self->_srWidgets.radiusEntry));
+	
+	if (gtk_toggle_button_get_active(toggleButton)) {
+		entryText += (entryText.empty()) ? "10" : "";	
+	}
+	else {
+		entryText = "";
+	}
+	self->setProperty("radius", entryText);
+}
+
+void StimResponseEditor::onModelToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {
+	if (self->_updatesDisabled) return; // Callback loop guard
+	
+	std::string entryText = gtk_entry_get_text(GTK_ENTRY(self->_srWidgets.modelEntry));
+	
+	if (gtk_toggle_button_get_active(toggleButton)) {
+		entryText += (entryText.empty()) ? "model" : "";	
+	}
+	else {
+		entryText = "";
+	}
+	self->setProperty("model", entryText);
+}
+
+void StimResponseEditor::onTimeIntervalToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {
+	if (self->_updatesDisabled) return; // Callback loop guard
+	
+	std::string entryText = gtk_entry_get_text(GTK_ENTRY(self->_srWidgets.timeIntEntry));
+	
+	if (gtk_toggle_button_get_active(toggleButton)) {
+		entryText += (entryText.empty()) ? "1000" : "";	
+	}
+	else {
+		entryText = "";
+	}
+	self->setProperty("time_interval", entryText);
+}
+
+void StimResponseEditor::onTypeSelect(GtkComboBox* widget, StimResponseEditor* self) {
+	if (self->_updatesDisabled) return; // Callback loop guard
+	
+	GtkTreeIter iter;
+	if (gtk_combo_box_get_active_iter(widget, &iter)) {
+		GtkTreeModel* model = gtk_combo_box_get_model(widget);
+		std::string name = gtkutil::TreeModel::getString(model, &iter, 3); // 3 = StimTypes::NAME_COL
+		self->setProperty("type", name);
+	}
+}
+
+void StimResponseEditor::onModelChanged(GtkEditable* editable, StimResponseEditor* self) {
+	if (self->_updatesDisabled) return; // Callback loop guard
+
+	std::string entryText = gtk_entry_get_text(GTK_ENTRY(self->_srWidgets.modelEntry));
+	if (!entryText.empty()) {
+		self->setProperty("model", entryText);
+	}
+}
+
+void StimResponseEditor::onTimeIntervalChanged(GtkEditable* editable, StimResponseEditor* self) {
+	if (self->_updatesDisabled) return; // Callback loop guard
+
+	std::string entryText = gtk_entry_get_text(GTK_ENTRY(self->_srWidgets.timeIntEntry));
+	if (!entryText.empty()) {
+		self->setProperty("time_interval", entryText);
+	}
+}
+
+void StimResponseEditor::onRadiusChanged(GtkEditable* editable, StimResponseEditor* self) {
+	if (self->_updatesDisabled) return; // Callback loop guard
+
+	std::string entryText = gtk_entry_get_text(GTK_ENTRY(self->_srWidgets.radiusEntry));
+	if (!entryText.empty()) {
+		self->setProperty("radius", entryText);
+	}
+}
+
 
 // Static command target
 void StimResponseEditor::toggle() {

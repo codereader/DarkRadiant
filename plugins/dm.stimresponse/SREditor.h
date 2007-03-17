@@ -11,6 +11,8 @@
 typedef struct _GtkTreeView GtkTreeView;
 typedef struct _GtkToggleButton GtkToggleButton;
 typedef struct _GtkTreeSelection GtkTreeSelection;
+typedef struct _GtkComboBox GtkComboBox;
+typedef struct _GtkEditable GtkEditable;
 
 namespace ui {
 
@@ -126,10 +128,20 @@ private:
 
 	// Callback for Stim/Response selection changes
 	static void onSelectionChange(GtkTreeSelection* treeView, StimResponseEditor* self);
-	static void onTypeChange(GtkToggleButton* toggleButton, StimResponseEditor* self);
+	static void onClassChange(GtkToggleButton* toggleButton, StimResponseEditor* self);
+	static void onTypeSelect(GtkComboBox* widget, StimResponseEditor* self);
 	
 	// "Active" property
 	static void onActiveToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
+	static void onBoundsToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
+	static void onRadiusToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
+	static void onModelToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
+	static void onTimeIntervalToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
+
+	// Entry text changes
+	static void onModelChanged(GtkEditable* editable, StimResponseEditor* self);
+	static void onTimeIntervalChanged(GtkEditable* editable, StimResponseEditor* self);
+	static void onRadiusChanged(GtkEditable* editable, StimResponseEditor* self);
 
 }; // class StimResponseEditor
 
