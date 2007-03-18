@@ -24,17 +24,23 @@ class ObjectiveEntityFinder
 	// GtkListStore to populate with results
 	GtkListStore* _store;
 	
+	// ObjectiveEntityMap which we also populate
+	ObjectiveEntityMap& _map;
+	
 	// Worldspawn entity
 	mutable Entity* _worldSpawn;
 	
 public:
 
 	/**
-	 *  Construct a visitor to populate the given store.
+	 * Construct a visitor to populate the given store and ObjectiveEntity map.
 	 */
-	ObjectiveEntityFinder(GtkListStore* st, const std::string& classname)
+	ObjectiveEntityFinder(GtkListStore* st, 
+						  ObjectiveEntityMap& map,
+						  const std::string& classname)
 	: _className(classname),
 	  _store(st),
+	  _map(map),
 	  _worldSpawn(NULL)
 	{ }
 	
@@ -59,9 +65,9 @@ public:
 		if (ePtr->getKeyValue("classname") == _className) 
 		{
 			// Construct the display string
-			std::string sDisplay = 
-				"<b>" + ePtr->getKeyValue("name") + "</b> at [ " 
-				+ ePtr->getKeyValue("origin") + " ]";
+			std::string name = ePtr->getKeyValue("name");
+			std::string sDisplay = "<b>" + name + "</b> at [ "	
+								   + ePtr->getKeyValue("origin") + " ]";
 			
 			// Add the entity to the list
 			GtkTreeIter iter;
@@ -69,9 +75,12 @@ public:
 			gtk_list_store_set(_store, &iter, 
 							   0, sDisplay.c_str(),
 							   1, FALSE,				// active at start
-							   2, ePtr,					// pointer to Entity
-							   3, &path.top().get(),	// pointer to raw Node
-							   -1); 
+							   2, name.c_str(), 		// raw name
+							   -1);
+							   
+			// Construct an ObjectiveEntity with the node, and add to the map
+			ObjectiveEntityPtr oe(new ObjectiveEntity(path.top()));
+			_map.insert(ObjectiveEntityMap::value_type(name, oe));
 		}
 		else if (ePtr->getKeyValue("classname") == "worldspawn")
 		{
