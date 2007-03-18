@@ -9,6 +9,15 @@
 				"game/stimResponseSystem/stimResponsePrefix";
 	}
 
+struct SRKey {
+	// The key name
+	std::string key;
+	
+	// A string defining the classes this applies for
+	// e.g. "R" for responses only, "SR" for both
+	std::string classes;
+};
+
 /** greebo: A simple stim/response representation structure
  * (a SREntity can hold a bunch of these)
  */
