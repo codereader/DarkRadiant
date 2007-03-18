@@ -247,6 +247,15 @@ eventmanager_lib = eventmanager_env.SharedLibrary(target='eventmanager', source=
 eventmanager_env.Depends(eventmanager_lib, gtkutil_lib)
 eventmanager_env.Install(INSTALL + '/modules', eventmanager_lib)
 
+uiManagerEnv = module_env.Copy()
+uiManagerLst=build_list('plugins/uimanager', 'UIManager.cpp MenuManager.cpp MenuItem.cpp')
+uiManagerEnv.Append(LIBS = ['gtkutil', 'xmlutil'])
+uiManagerEnv.useGtk2()
+uiManagerEnv.useGlib2()
+uiManagerLib = uiManagerEnv.SharedLibrary(target='uimanager', source=uiManagerLst, no_import_lib=1, WIN32_INSERT_DEF=0)
+uiManagerEnv.Depends(uiManagerLib, gtkutil_lib)
+uiManagerEnv.Install(INSTALL + '/modules', uiManagerLib)
+
 # Entity creator module
 entity_env = module_env.Copy()
 entity_src = [
@@ -409,9 +418,6 @@ radiant_src = [
 'ui/surfaceinspector/SurfaceInspector.cpp',
 'ui/findshader/FindShader.cpp',
 'ui/transform/TransformDialog.cpp',
-'ui/uimanager/UIManager.cpp',
-'ui/uimanager/MenuManager.cpp',
-'ui/uimanager/MenuItem.cpp',
 'textool/TexTool.cpp',
 'textool/TexToolItem.cpp',
 'textool/item/PatchItem.cpp',
