@@ -2,6 +2,7 @@
 #define OBJECTIVESEDITOR_H_
 
 #include "Objective.h"
+#include "ObjectiveEntity.h"
 
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkliststore.h>
@@ -38,9 +39,9 @@ class ObjectivesEditor
 	// Pointer to the worldspawn entity
 	Entity* _worldSpawn;
 	
-	// Map of numbered Objective objects for the currently-selected objective
+	// Map of ObjectiveEntity objectives, indexed by the name of the world 
 	// entity
-	ObjectiveMap _objectiveMap;
+	ObjectiveEntityMap _entities;
 
 private:
 
@@ -71,10 +72,6 @@ private:
 	// Populate the dialog widgets with appropriate state from the map
 	void populateWidgets();
 	void populateActiveAtStart();
-	
-	// Populate the objective tree with values from the selected entity
-	void populateObjectiveTree(Entity* entity);
-	void updateObjectiveListFromMap();
 	
 	// Populate the edit panel from the selected objective
 	void populateEditPanel(int objNum);

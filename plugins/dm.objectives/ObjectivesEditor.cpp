@@ -16,6 +16,7 @@
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/IconTextColumn.h"
+#include "gtkutil/TreeModel.h"
 
 #include <gtk/gtk.h>
 #include <boost/lexical_cast.hpp>
@@ -27,8 +28,6 @@ namespace objectives
 namespace {
 
 	const char* DIALOG_TITLE = "Mission objectives"; 	
-	
-	// TODO: This should be in the .game file
 	const char* OBJECTIVE_ENTITY_CLASS = "target_tdm_addobjectives";
 	
 }
@@ -36,11 +35,10 @@ namespace {
 // Constructor creates widgets
 ObjectivesEditor::ObjectivesEditor()
 : _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
-  _objectiveEntityList(gtk_list_store_new(4, 
+  _objectiveEntityList(gtk_list_store_new(3, 
   										  G_TYPE_STRING, 		// display text
   										  G_TYPE_BOOLEAN,		// start active
-  										  G_TYPE_POINTER,		// Entity*
-  										  G_TYPE_POINTER)),		// scene::Node*
+  										  G_TYPE_STRING)),		// entity name
   _objectiveList(gtk_list_store_new(2, 
   								    G_TYPE_INT,			// obj number 
   								    G_TYPE_STRING))		// obj description
@@ -285,8 +283,10 @@ void ObjectivesEditor::populateWidgets() {
 	gtk_list_store_clear(_objectiveList);
 
 	// Use an ObjectiveEntityFinder to walk the map and add any objective
-	// entities to the list
-	ObjectiveEntityFinder finder(_objectiveEntityList, OBJECTIVE_ENTITY_CLASS);
+	// entities to the liststore and entity map
+	ObjectiveEntityFinder finder(_objectiveEntityList, 
+								 _entities, 
+								 OBJECTIVE_ENTITY_CLASS);
 	GlobalSceneGraph().traverse(finder);
 	
 	// Set the worldspawn entity and populate the active-at-start column
@@ -336,66 +336,31 @@ void ObjectivesEditor::displayDialog() {
 	_instance.show();
 }
 
-// Populate the objective tree
-void ObjectivesEditor::populateObjectiveTree(Entity* entity) {
-	
-	// Clear the tree store and the map of Objective objects
-	gtk_list_store_clear(_objectiveList);
-	_objectiveMap.clear();
-	
-	// Use a visitor object to populate the objective map from the entity's
-	// keyvalues.
-	ObjectiveKeyExtractor visitor(_objectiveMap);
-	entity->forEachKeyValue(visitor);
-
-	// Transfer info from the objective map to the GTK list store
-	updateObjectiveListFromMap();	
-}
-
-// Update the objectives list from the internal map of Objective objects
-void ObjectivesEditor::updateObjectiveListFromMap() {
-
-	// Clear the list
-	gtk_list_store_clear(_objectiveList);
-
-	// Use the map to add rows to the list store
-	for (ObjectiveMap::const_iterator i = _objectiveMap.begin();
-		 i != _objectiveMap.end();
-		 ++i)
-	{
-		GtkTreeIter iter;
-		gtk_list_store_append(_objectiveList, &iter);
-		gtk_list_store_set(_objectiveList, &iter,
-						   0, i->first, // objective number
-						   1, i->second.description.c_str(), // description
-						   -1);	
-	}		
-}
-
 // Populate the edit panel widgets using the given objective number
 void ObjectivesEditor::populateEditPanel(int objNum) {
-	const Objective& obj = _objectiveMap[objNum];
-	
-	gtk_entry_set_text(GTK_ENTRY(_widgets["numberEntry"]), 
-					   boost::lexical_cast<std::string>(objNum).c_str());
-	gtk_entry_set_text(GTK_ENTRY(_widgets["descriptionEntry"]),
-					   obj.description.c_str());
-					   
-	gtk_toggle_button_set_active(
-		GTK_TOGGLE_BUTTON(_widgets["startActiveFlag"]),
-		obj.startActive ? TRUE : FALSE);
-	gtk_toggle_button_set_active(
-		GTK_TOGGLE_BUTTON(_widgets["irreversibleFlag"]),
-		obj.irreversible ? TRUE : FALSE);
-	gtk_toggle_button_set_active(
-		GTK_TOGGLE_BUTTON(_widgets["ongoingFlag"]),
-		obj.ongoing ? TRUE : FALSE);
-	gtk_toggle_button_set_active(
-		GTK_TOGGLE_BUTTON(_widgets["mandatoryFlag"]),
-		obj.mandatory ? TRUE : FALSE);
-	gtk_toggle_button_set_active(
-		GTK_TOGGLE_BUTTON(_widgets["visibleFlag"]),
-		obj.visible ? TRUE : FALSE);
+
+//	const Objective& obj = _objectiveMap[objNum];
+//	
+//	gtk_entry_set_text(GTK_ENTRY(_widgets["numberEntry"]), 
+//					   boost::lexical_cast<std::string>(objNum).c_str());
+//	gtk_entry_set_text(GTK_ENTRY(_widgets["descriptionEntry"]),
+//					   obj.description.c_str());
+//					   
+//	gtk_toggle_button_set_active(
+//		GTK_TOGGLE_BUTTON(_widgets["startActiveFlag"]),
+//		obj.startActive ? TRUE : FALSE);
+//	gtk_toggle_button_set_active(
+//		GTK_TOGGLE_BUTTON(_widgets["irreversibleFlag"]),
+//		obj.irreversible ? TRUE : FALSE);
+//	gtk_toggle_button_set_active(
+//		GTK_TOGGLE_BUTTON(_widgets["ongoingFlag"]),
+//		obj.ongoing ? TRUE : FALSE);
+//	gtk_toggle_button_set_active(
+//		GTK_TOGGLE_BUTTON(_widgets["mandatoryFlag"]),
+//		obj.mandatory ? TRUE : FALSE);
+//	gtk_toggle_button_set_active(
+//		GTK_TOGGLE_BUTTON(_widgets["visibleFlag"]),
+//		obj.visible ? TRUE : FALSE);
 }
 
 /* GTK CALLBACKS */
@@ -430,13 +395,10 @@ void ObjectivesEditor::_onEntitySelectionChanged(GtkTreeSelection* sel,
 	GtkTreeModel* model;
 	if (gtk_tree_selection_get_selected(sel, &model, &iter)) {
 	
-		// Get the Entity*
-		Entity* entity;
-		gtk_tree_model_get(model, &iter, 2, &entity, -1);
-		
-		// Populate the tree
-		assert(entity);
-		self->populateObjectiveTree(entity);
+		// Get name of the entity and find the corresponding ObjectiveEntity in
+		// the map
+		std::string name = gtkutil::TreeModel::getString(model, &iter, 2);
+		ObjectiveEntityPtr obj = self->_entities[name];
 		
 		// Enable the delete button and objectives panel
 		gtk_widget_set_sensitive(self->_widgets["deleteEntity"], TRUE); 
@@ -512,13 +474,14 @@ void ObjectivesEditor::_onDeleteEntity(GtkWidget* w, ObjectivesEditor* self) {
 	GtkTreeModel* model;
 	if (gtk_tree_selection_get_selected(sel, &model, &iter)) {
 		
-		// Retrieve the Node*
-		scene::Node* node;
-		gtk_tree_model_get(model, &iter, 3, &node, -1);
+		// Get the name of the selected entity
+		std::string name = gtkutil::TreeModel::getString(model, &iter, 2);
 		
-		// Remove from scene graph
-		Node_getTraversable(GlobalSceneGraph().root())->erase(*node);
-		
+		// Instruct the ObjectiveEntity to delete its world node, and then
+		// remove it from the map
+		self->_entities[name]->deleteWorldNode();
+		self->_entities.erase(name);
+
 		// Update the widgets to remove the selection from the list
 		self->populateWidgets();
 	}
@@ -527,18 +490,6 @@ void ObjectivesEditor::_onDeleteEntity(GtkWidget* w, ObjectivesEditor* self) {
 // Add a new objective
 void ObjectivesEditor::_onAddObjective(GtkWidget* w, ObjectivesEditor* self) {
 	
-	// Find a free objective number
-	int n = 1;
-	while (self->_objectiveMap.find(n) != self->_objectiveMap.end())
-		++n;
-	
-	// Create and insert a new objective
-	Objective obj;
-	obj.description = "<New objective>";
-	self->_objectiveMap.insert(ObjectiveMap::value_type(n, obj));
-	
-	// Update the list
-	self->updateObjectiveListFromMap();
 }
 
 }
