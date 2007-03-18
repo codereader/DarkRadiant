@@ -3,7 +3,7 @@
 
 #include <string>
 #include "iregistry.h"
-#include "qerplugin.h"
+#include "iradiant.h"
 
 #include <iostream>
 

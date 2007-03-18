@@ -4,7 +4,7 @@
 
 #include "math/Vector2.h"
 #include "stream/stringstream.h"
-#include "qerplugin.h"
+#include "iradiant.h"
 
 ClipPoint::ClipPoint() {
 	reset();

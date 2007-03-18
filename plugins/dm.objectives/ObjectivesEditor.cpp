@@ -5,7 +5,7 @@
 #include "TargetList.h"
 
 #include "iscenegraph.h"
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "ieclass.h"
 #include "ientity.h"
 

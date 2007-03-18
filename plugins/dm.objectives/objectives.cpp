@@ -3,7 +3,7 @@
 #include "iplugin.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "iscenegraph.h"
 #include "typesystem.h"
 #include "ieclass.h"

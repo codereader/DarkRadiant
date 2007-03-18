@@ -1,7 +1,7 @@
 #ifndef DEFAULTCONSTRUCTOR_H_
 #define DEFAULTCONSTRUCTOR_H_
 
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "iimage.h"
 #include "ishaders.h"
 #include "modulesystem/modulesmap.h"

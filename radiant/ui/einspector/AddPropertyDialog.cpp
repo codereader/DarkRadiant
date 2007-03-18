@@ -8,7 +8,7 @@
 #include "gtkutil/IconTextColumn.h"
 
 #include "groupdialog.h"
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "iregistry.h"
 #include "ieclass.h"
 

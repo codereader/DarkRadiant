@@ -1,6 +1,6 @@
 #include "MapFileManager.h"
 
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "ifiletypes.h"
 #include "mainframe.h"
 #include "gtkutil/filechooser.h"

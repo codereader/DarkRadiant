@@ -1,7 +1,7 @@
 #include "ieventmanager.h"
 
 #include "iregistry.h"
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "iselection.h"
 #include <iostream>
 #include <typeinfo>

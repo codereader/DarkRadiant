@@ -1,7 +1,7 @@
 #include "igrid.h"
 
 #include <map>
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "ieventmanager.h"
 #include "iregistry.h"
 #include "preferencesystem.h"

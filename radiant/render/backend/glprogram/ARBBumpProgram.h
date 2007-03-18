@@ -5,7 +5,7 @@
 #include "renderstate.h"
 #include "iglrender.h"
 #include "iregistry.h"
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "xmlutil/Document.h"
 #include "math/matrix.h"
 

@@ -1,7 +1,7 @@
 #include "Doom3EntityClass.h"
 #include "AttributeCopyingVisitor.h"
 
-#include "qerplugin.h"
+#include "iradiant.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 

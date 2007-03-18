@@ -1,6 +1,6 @@
 #include "Light.h"
 
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "igrid.h"
 #include "Doom3LightRadius.h"
 #include "LightShader.h"

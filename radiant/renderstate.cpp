@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "igl.h"
 #include "iglrender.h"
 #include "renderable.h"
-#include "qerplugin.h"
+#include "iradiant.h"
 
 #include <set>
 #include <vector>

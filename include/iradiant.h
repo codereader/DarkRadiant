@@ -25,8 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * that these variables are pointing to the correct functions. 
  */
 
-#ifndef __QERPLUGIN_H__
-#define __QERPLUGIN_H__
+#ifndef IRADIANT_H_
+#define IRADIANT_H_
 
 #include "generic/constant.h"
 #include "iclipper.h"

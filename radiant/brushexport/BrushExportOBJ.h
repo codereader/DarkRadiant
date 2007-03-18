@@ -1,7 +1,7 @@
 #include "WaveFrontBrushVisitor.h"
 #include "Exporter.h"
 
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "ibrush.h"
 #include "iscenegraph.h"
 #include "iselection.h"

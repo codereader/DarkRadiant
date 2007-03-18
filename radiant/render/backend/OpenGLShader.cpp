@@ -4,7 +4,7 @@
 #include "OpenGLStateMap.h"
 #include "renderstate.h"
 
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "ishaders.h"
 #include "irender.h"
 #include "generic/callback.h"

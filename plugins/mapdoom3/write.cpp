@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ieclass.h"
 #include "iregistry.h"
 #include "scenelib.h"
-#include "qerplugin.h"
+#include "iradiant.h"
 
 /* CONSTANTS */
 

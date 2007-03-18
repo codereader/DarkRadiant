@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iscenegraph.h"
 #include "ieventmanager.h"
 #include "iregistry.h"
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "XMLFilter.h"
 
 #include "generic/callback.h"

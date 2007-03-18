@@ -1,7 +1,7 @@
 #ifndef FILELODER_H_
 #define FILELODER_H_
 
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "iimage.h"
 #include "ishaders.h"
 #include "modulesystem/modulesmap.h"
