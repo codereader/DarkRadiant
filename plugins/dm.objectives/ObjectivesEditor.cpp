@@ -314,12 +314,14 @@ void ObjectivesEditor::populateActiveAtStart() {
 		
 	// Otherwise, iterate over each row, checking for the target each time
 	do {
-		// Retrieve the entity pointer
-		Entity* ent;
-		gtk_tree_model_get(model, &iter, 2, &ent, -1);
 		
-		// Test if the worldspawn is targeting this entity
-		if (targets.isTargeted(ent)) {
+		// Get the entity name and find it in the map
+		std::string name = gtkutil::TreeModel::getString(model, &iter, 2);
+		ObjectiveEntityPtr obj = _entities[name];
+		
+		// Test if the worldspawn is targeting this entity by passing the
+		// target list to the objective entity.
+		if (obj->isOnTargetList(targets)) {
 			gtk_list_store_set(_objectiveEntityList, &iter, 1, TRUE, -1);
 		}
 	}

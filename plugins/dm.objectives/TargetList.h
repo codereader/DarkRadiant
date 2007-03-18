@@ -26,18 +26,16 @@ class TargetList
 	typedef std::set<std::string> StringSet; 
 	StringSet _set;
 
-	// Populate flag, for lazy evaluation
-	bool _isPopulated;
-	
 public:
 
 	/**
 	 * Constructor. Accepts a pointer to the source entity.
 	 */
 	TargetList(const Entity* src)
-	: _src(src), _isPopulated(false)
+	: _src(src)
 	{
 		assert(src);
+		_src->forEachKeyValue(*this);
 	}
 
 	/**
@@ -52,13 +50,9 @@ public:
 	/**
 	 * Query whether the supplied entity is targeted by the source entity.
 	 */
-	bool isTargeted(const Entity* qtarget) {
+	bool isTargeted(const Entity* qtarget) const {
 
 		assert(qtarget);
-
-		// If the populated flag is false, visit the entity now
-		if (!_isPopulated)
-			_src->forEachKeyValue(*this);
 
 		// Check if the queried entity's name is in the set
 		if (_set.find(qtarget->getKeyValue("name")) != _set.end())
