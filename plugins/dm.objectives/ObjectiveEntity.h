@@ -8,6 +8,9 @@
 
 #include <boost/shared_ptr.hpp>
 
+// FORWARD DECLS
+namespace objectives { class TargetList; }
+
 namespace objectives
 {
 
@@ -31,10 +34,7 @@ public:
 	/**
 	 * Construct an ObjectiveEntity wrapper around the given Node.
 	 */
-	ObjectiveEntity(scene::Node& n)
-	: _node(n),
-	  _entity(Node_getEntity(n))
-	{ }
+	ObjectiveEntity(scene::Node& n);
 	
 	/**
 	 * Delete the actual entity node from the map. This will render any further
@@ -45,6 +45,13 @@ public:
 		Node_getTraversable(GlobalSceneGraph().root())->erase(_node);
 		_entity = NULL;		
 	}
+	
+	/**
+	 * Test whether this Objective Entity is on the provided TargetList, to
+	 * determine whether the entity is a target of another entity (e.g. the
+	 * worldspawn).
+	 */
+	bool isOnTargetList(const TargetList& list) const;
 };
 
 /**

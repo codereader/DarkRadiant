@@ -304,6 +304,7 @@ objEnv.useBoostRegex()
 objList = build_list('plugins/dm.objectives', 
 					 'objectives.cpp \
 					 ObjectivesEditor.cpp \
+					 ObjectiveEntity.cpp \
 					 ObjectiveKeyExtractor.cpp')
 objLib = objEnv.SharedLibrary(target='dm_objectives',
 							  source=objList,
