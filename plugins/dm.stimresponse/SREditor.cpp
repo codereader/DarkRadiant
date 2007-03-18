@@ -16,6 +16,7 @@
 #include "gtkutil/TransientWindow.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/dialog.h"
 #include "string/string.h"
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
@@ -51,17 +52,13 @@ StimResponseEditor::StimResponseEditor() :
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 12);
 	gtk_window_set_type_hint(GTK_WINDOW(_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
+	gtk_window_set_modal(GTK_WINDOW(_dialog), TRUE);
 	
 	g_signal_connect(G_OBJECT(_dialog), "delete-event", G_CALLBACK(onDelete), this);
+	g_signal_connect(G_OBJECT(_dialog), "key-press-event", G_CALLBACK(onWindowKeyPress), this);
 	
 	// Create the widgets
 	populateWindow();
-	
-	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connectDialogWindow(GTK_WINDOW(_dialog));
-	
-	// Register self to the SelSystem to get notified upon selection changes.
-	GlobalSelectionSystem().addObserver(this);
 	
 	// Connect the window position tracker
 	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
@@ -85,9 +82,6 @@ void StimResponseEditor::shutdown() {
 	_windowPosition.saveToNode(node);
 	
 	gtk_widget_hide(_dialog);
-	
-	GlobalSelectionSystem().removeObserver(this);
-	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(_dialog));
 }
 
 void StimResponseEditor::toggleWindow() {
@@ -102,8 +96,17 @@ void StimResponseEditor::toggleWindow() {
 		_windowPosition.applyPosition();
 		// Scan the selection for entities
 		rescanSelection();
-		// Now show the dialog window again
-		gtk_widget_show_all(_dialog);
+		
+		// Has the rescan found an entity (the pointer is non-NULL then)
+		if (_entity != NULL) {
+			// Now show the dialog window again
+			gtk_widget_show_all(_dialog);
+		}
+		else {
+			gtkutil::errorDialog("Please select a single Entity.", 
+								 GlobalRadiant().getMainWindow());
+			gtk_widget_hide_all(_dialog);
+		}
 	}
 }
 
@@ -342,6 +345,11 @@ void StimResponseEditor::populateWindow() {
 	g_signal_connect(G_OBJECT(saveButton), "clicked", G_CALLBACK(onSave), this);
 	gtk_box_pack_end(GTK_BOX(buttonHBox), saveButton, FALSE, FALSE, 0);
 	
+	// Close Button
+	_closeButton = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
+	g_signal_connect(G_OBJECT(_closeButton), "clicked", G_CALLBACK(onClose), this);
+	gtk_box_pack_end(GTK_BOX(buttonHBox), _closeButton, FALSE, FALSE, 6);
+	
 	// Revert button
 	GtkWidget* revertButton = gtk_button_new_with_label(LABEL_REVERT);
 	gtk_button_set_image(
@@ -488,6 +496,7 @@ void StimResponseEditor::update() {
 	
 	updateSRWidgets();
 	updateAddButton();
+	gtk_widget_set_sensitive(_closeButton, TRUE);
 }
 
 void StimResponseEditor::rescanSelection() {
@@ -532,15 +541,11 @@ void StimResponseEditor::selectionChanged(scene::Instance& instance) {
 }
 
 void StimResponseEditor::updateSRWidgets() {
-	if (!GTK_WIDGET_VISIBLE(_dialog)) {
-		return;
-	}
-	
 	_updatesDisabled = true;
 	
 	int id = getIdFromSelection();
 	
-	if (id > 0) {
+	if (id > 0 && _srEntity != NULL) {
 		// Update all the widgets
 		gtk_widget_set_sensitive(_srWidgets.vbox, TRUE);
 		
@@ -902,6 +907,10 @@ void StimResponseEditor::onSave(GtkWidget* button, StimResponseEditor* self) {
 	self->save();
 }
 
+void StimResponseEditor::onClose(GtkWidget* button, StimResponseEditor* self) {
+	self->toggleWindow();
+}
+
 void StimResponseEditor::onRevert(GtkWidget* button, StimResponseEditor* self) {
 	self->revert();
 }
@@ -935,6 +944,19 @@ gboolean StimResponseEditor::onTreeViewKeyPress(
 			self->removeScript();
 		}
 		
+		// Catch this keyevent, don't propagate
+		return TRUE;
+	}
+	
+	// Propagate further
+	return FALSE;
+}
+
+gboolean StimResponseEditor::onWindowKeyPress(
+	GtkWidget* dialog, GdkEventKey* event, StimResponseEditor* self)
+{
+	if (event->keyval == GDK_Escape) {
+		self->toggleWindow();
 		// Catch this keyevent, don't propagate
 		return TRUE;
 	}

@@ -20,11 +20,16 @@ namespace ui {
 class StimResponseEditor :
 	public SelectionSystem::Observer
 {
+	// The window widget
 	GtkWidget* _dialog;
 	
+	// The overall dialog vbox (used to quickly disable the whole dialog)
 	GtkWidget* _dialogVBox;
 	
-	// The combobox using a liststore model filled with stims
+	// The close button to toggle the view
+	GtkWidget* _closeButton;
+	
+	// The combobox using a liststore model filled with stims plus buttons
 	struct AddWidgets {
 		GtkWidget* stimTypeList;
 		GtkWidget* addButton;
@@ -190,18 +195,20 @@ private:
 	static void onTimeIntervalChanged(GtkEditable* editable, StimResponseEditor* self);
 	static void onRadiusChanged(GtkEditable* editable, StimResponseEditor* self);
 
-	// "Add" Stim/Response
+	// Button callbacks
 	static void onAdd(GtkWidget* button, StimResponseEditor* self);
 	static void onSave(GtkWidget* button, StimResponseEditor* self);
+	static void onClose(GtkWidget* button, StimResponseEditor* self);
 	static void onRevert(GtkWidget* button, StimResponseEditor* self);
 	static void onScriptAdd(GtkWidget* button, StimResponseEditor* self);
 
-	// Gets notified if a cell has been changed.
+	// Gets notified if a script cell has been edited.
 	static void onScriptEdit(GtkCellRendererText* renderer, 
 							 gchar* path, gchar* new_text, StimResponseEditor* self);
 	
 	// The keypress handler for catching the keys when in the treeview
 	static gboolean onTreeViewKeyPress(GtkTreeView* view, GdkEventKey* event, StimResponseEditor* self);
+	static gboolean onWindowKeyPress(GtkWidget* dialog, GdkEventKey* event, StimResponseEditor* self);
 
 }; // class StimResponseEditor
 
