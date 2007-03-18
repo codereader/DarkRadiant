@@ -62,7 +62,8 @@ MediaBrowser::MediaBrowser()
   								G_TYPE_BOOLEAN)),
   _treeView(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore))),
   _selection(gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView))),
-  _popupMenu(gtk_menu_new())
+  _popupMenu(gtk_menu_new()),
+  _isPopulated(false)
 {
 	// Create the treeview
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_treeView), FALSE);
@@ -297,16 +298,24 @@ void MediaBrowser::setSelection(const std::string& selection) {
 	}
 }
 
+void MediaBrowser::reloadMedia() {
+	// Remove all items and clear the "isPopulated" flag
+	gtk_tree_store_clear(_treeStore);
+	_isPopulated = false;
+	
+	// Trigger an "expose" event
+	gtk_widget_queue_draw(_widget);
+} 
+
 /* GTK CALLBACKS */
 
 gboolean MediaBrowser::_onExpose(GtkWidget* widget, GdkEventExpose* ev, MediaBrowser* self) {
 	// Populate the tree view if it is not already populated
-	static bool _isPopulated = false;
-	if (!_isPopulated) {
+	if (!self->_isPopulated) {
 		ShaderNameFunctor functor(self->_treeStore);
 		GlobalShaderSystem().foreachShaderName(makeCallback1(functor));
 
-		_isPopulated = true;	
+		self->_isPopulated = true;	
 	}
 	return FALSE; // progapagate event
 }

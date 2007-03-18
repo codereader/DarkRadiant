@@ -34,6 +34,9 @@ class MediaBrowser
 	// Texture preview combo (GL widget and info table)
 	TexturePreviewCombo _preview;
 	
+	// false, if the tree is not yet initialised.
+	bool _isPopulated;
+	
 private:
 
 	/* GTK CALLBACKS */
@@ -79,6 +82,11 @@ public:
 	 * should be no selection.
 	 */
 	void setSelection(const std::string& selection);
+	
+	/** greebo: Rebuilds the media tree from scratch (call this after
+	 * 			a "RefreshShaders" command.
+	 */
+	void reloadMedia();
 };
 
 }
