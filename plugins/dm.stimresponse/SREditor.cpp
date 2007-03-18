@@ -487,7 +487,7 @@ void StimResponseEditor::update() {
 	gtk_widget_set_sensitive(_dialogVBox, _entity != NULL);
 	
 	updateSRWidgets();
-	updateAddScriptButton();
+	updateAddButton();
 }
 
 void StimResponseEditor::rescanSelection() {
@@ -693,7 +693,7 @@ void StimResponseEditor::addResponseScript() {
 		_srEntity->updateListStore();
 		
 		// Update the sensitivity of the "add script" button
-		updateAddScriptButton();
+		updateAddButton();
 	}
 }
 
@@ -709,7 +709,7 @@ void StimResponseEditor::removeScript() {
 		_srEntity->removeScript(id);
 		
 		// Update the sensitivity of the "add script" button
-		updateAddScriptButton();
+		updateAddButton();
 	}
 }
 
@@ -751,7 +751,7 @@ void StimResponseEditor::revert() {
 	rescanSelection();
 }
 
-void StimResponseEditor::updateAddScriptButton() {
+void StimResponseEditor::updateAddButton() {
 	if (_srEntity == NULL) return;
 	
 	// Get the currently selected stim type
@@ -759,7 +759,12 @@ void StimResponseEditor::updateAddScriptButton() {
 	
 	gtk_widget_set_sensitive(
 		_addWidgets.addScriptButton,
-		(type != "" && !(_srEntity->scriptExists(type)))
+		(!type.empty() && !(_srEntity->scriptExists(type)))
+	);
+	
+	gtk_widget_set_sensitive(
+		_addWidgets.addButton,
+		!type.empty()
 	);
 }
 
@@ -939,7 +944,7 @@ gboolean StimResponseEditor::onTreeViewKeyPress(
 }
 
 void StimResponseEditor::onStimTypeChange(GtkComboBox* widget, StimResponseEditor* self) {
-	self->updateAddScriptButton();
+	self->updateAddButton();
 }
 
 // Static command target
