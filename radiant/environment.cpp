@@ -34,6 +34,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <string>
 #include <boost/algorithm/string/predicate.hpp>
 
+int g_argc;
+char** g_argv;
+
 #if defined(POSIX)
 
 #include <stdlib.h>
@@ -104,10 +107,10 @@ void Environment::init(int argc, char* argv[]) {
   {
     char real[PATH_MAX];
     _appPath = getexename(real);
-    ASSERT_MESSAGE(!string_empty(app_path.c_str()), "failed to deduce app path");
+    ASSERT_MESSAGE(!string_empty(_appPath.c_str()), "failed to deduce app path");
   }
   	// Initialise the relative paths
-	initPaths()
+	initPaths();
 }
 
 #elif defined(WIN32)
@@ -144,9 +147,6 @@ void Environment::init(int argc, char* argv[]) {
 #else
 #error "unsupported platform"
 #endif
-
-int g_argc;
-char** g_argv;
 
 void Environment::initArgs(int argc, char* argv[]) {
 	int i, j, k;
