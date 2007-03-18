@@ -335,6 +335,12 @@ void SREntity::loadKeys() {
 	xml::NodeList propList = GlobalRegistry().findXPath(RKEY_STIM_PROPERTIES);
 	
 	for (unsigned int i = 0; i < propList.size(); i++) {
-		_keys.push_back(propList[i].getAttributeValue("name"));
+		// Create a new key and set the key name / class string
+		SRKey newKey;
+		newKey.key = propList[i].getAttributeValue("name");
+		newKey.classes = propList[i].getAttributeValue("classes");
+		
+		// Add the key to the list
+		_keys.push_back(newKey);
 	}
 }

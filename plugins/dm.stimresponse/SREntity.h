@@ -50,7 +50,7 @@ class SREntity
 {
 public:
 	// These are the possible key names
-	typedef std::vector<std::string> KeyList;
+	typedef std::vector<SRKey> KeyList;
 	
 	// These are the int-indexed Stims/Responses belonging to an entity
 	typedef std::map<int, StimResponse> StimResponseMap;

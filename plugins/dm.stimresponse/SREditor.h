@@ -48,6 +48,7 @@ class StimResponseEditor :
 		GtkWidget* timeIntEntry;
 		GtkWidget* modelToggle;
 		GtkWidget* modelEntry;
+		GtkWidget* timerTypeToggle;
 	} _srWidgets;
 	
 	struct ScriptWidgets {
@@ -182,6 +183,7 @@ private:
 	static void onRadiusToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
 	static void onModelToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
 	static void onTimeIntervalToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
+	static void onTimerTypeToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
 
 	// Entry text changes
 	static void onModelChanged(GtkEditable* editable, StimResponseEditor* self);

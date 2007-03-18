@@ -466,6 +466,14 @@ GtkWidget* StimResponseEditor::createSRWidgets() {
 	
 	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), timeHBox, false, false, 0);
 	
+	// Timer type
+	GtkWidget* timerTypeHBox = gtk_hbox_new(false, 0);
+	GtkWidget* timerTypeLabel = gtkutil::LeftAlignedLabel("Timer restarts after firing");
+	_srWidgets.timerTypeToggle = gtk_check_button_new();
+	gtk_box_pack_start(GTK_BOX(timerTypeHBox), _srWidgets.timerTypeToggle, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(timerTypeHBox), timerTypeLabel, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), timerTypeHBox, false, false, 0);
+	
 	// Model
 	GtkWidget* modelHBox = gtk_hbox_new(false, 0);
 	_srWidgets.modelToggle = gtk_check_button_new();
@@ -484,6 +492,7 @@ GtkWidget* StimResponseEditor::createSRWidgets() {
 	g_signal_connect(G_OBJECT(_srWidgets.radiusToggle), "toggled", G_CALLBACK(onRadiusToggle), this);
 	g_signal_connect(G_OBJECT(_srWidgets.timeIntToggle), "toggled", G_CALLBACK(onTimeIntervalToggle), this);
 	g_signal_connect(G_OBJECT(_srWidgets.modelToggle), "toggled", G_CALLBACK(onModelToggle), this);
+	g_signal_connect(G_OBJECT(_srWidgets.timerTypeToggle), "toggled", G_CALLBACK(onTimerTypeToggle), this);
 	
 	// Connect the entry fields
 	g_signal_connect(G_OBJECT(_srWidgets.modelEntry), "changed", G_CALLBACK(onModelChanged), this);
@@ -613,6 +622,16 @@ void StimResponseEditor::updateSRWidgets() {
 			useTimeInterval && sr.get("class") == "S"
 		);
 		gtk_widget_set_sensitive(_srWidgets.timeIntToggle, sr.get("class") == "S");
+		
+		// Timer Type
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_srWidgets.timerTypeToggle),
+			sr.get("timer_type") == "RELOAD"
+		);
+		gtk_widget_set_sensitive(
+			_srWidgets.timerTypeToggle, 
+			sr.get("class") == "S" && useTimeInterval
+		);
 		
 		// Use Model
 		bool useModel = (sr.get("model") != "");
@@ -797,6 +816,12 @@ void StimResponseEditor::onBoundsToggle(GtkToggleButton* toggleButton, StimRespo
 	if (self->_updatesDisabled) return; // Callback loop guard
 	
 	self->setProperty("use_bounds",	gtk_toggle_button_get_active(toggleButton) ? "1" : "");
+}
+
+void StimResponseEditor::onTimerTypeToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {
+	if (self->_updatesDisabled) return; // Callback loop guard
+	
+	self->setProperty("timer_type",	gtk_toggle_button_get_active(toggleButton) ? "RELOAD" : "");
 }
 
 void StimResponseEditor::onRadiusToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {

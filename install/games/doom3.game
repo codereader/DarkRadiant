@@ -175,13 +175,14 @@
 		</stims>
 		<properties>
 			<!-- The key root names "class" refers to "sr_class_N" -->
-			<property name="class" />
-			<property name="use_bounds" />
-			<property name="model" />
-			<property name="time_interval" />
-			<property name="type" />
-			<property name="state" />
-			<property name="radius" />
+			<property name="class" classes="SR" />
+			<property name="use_bounds" classes="S" />
+			<property name="model" classes="SR" />
+			<property name="time_interval" classes="S" />
+			<property name="type" classes="SR" />
+			<property name="state" classes="SR" />
+			<property name="radius" classes="S" />
+			<property name="timer_type" classes="S" />
 		</properties>
 		<stimResponsePrefix value="sr_" />
 	</stimResponseSystem>

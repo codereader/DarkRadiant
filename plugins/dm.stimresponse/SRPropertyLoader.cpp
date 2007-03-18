@@ -41,7 +41,7 @@ void SRPropertyLoader::parseAttribute(
 	for (unsigned int i = 0; i < _keys.size(); i++) {
 
 		// Construct a regex with the number as match variable
-		std::string exprStr = "^" + prefix + _keys[i] + "_([0-9])+$";
+		std::string exprStr = "^" + prefix + _keys[i].key + "_([0-9])+$";
 		boost::regex expr(exprStr);
 		boost::smatch matches;
 		
@@ -60,14 +60,14 @@ void SRPropertyLoader::parseAttribute(
 			}
 			
 			// Check if the property already exists
-			if (!_srMap[index].get(_keys[i]).empty()) {
+			if (!_srMap[index].get(_keys[i].key).empty()) {
 				// already existing, add to the warnings
 				_warnings += "Warning on StimResponse #" + intToStr(index) + 
-							 ": property " + _keys[i] + " defined more than once.\n";
+							 ": property " + _keys[i].key + " defined more than once.\n";
 			}
 			
 			// Set the property value on the StimResponse object
-			_srMap[index].set(_keys[i], value);
+			_srMap[index].set(_keys[i].key, value);
 		}
 	}
 	
