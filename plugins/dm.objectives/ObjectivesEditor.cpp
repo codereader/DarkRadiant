@@ -18,6 +18,7 @@
 #include "gtkutil/IconTextColumn.h"
 
 #include <gtk/gtk.h>
+#include <boost/lexical_cast.hpp>
 
 namespace objectives
 {

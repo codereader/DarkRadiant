@@ -302,7 +302,9 @@ objEnv.useGtk2()
 objEnv.useGlib2()
 objEnv.useBoostRegex()
 objList = build_list('plugins/dm.objectives', 
-					 'objectives.cpp ObjectivesEditor.cpp')
+					 'objectives.cpp \
+					 ObjectivesEditor.cpp \
+					 ObjectiveKeyExtractor.cpp')
 objLib = objEnv.SharedLibrary(target='dm_objectives',
 							  source=objList,
 							  no_import_lib=1)
