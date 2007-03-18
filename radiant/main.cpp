@@ -220,33 +220,6 @@ void streams_init()
   GlobalOutputStream::instance().setOutputStream(getSysPrintOutputStream());
 }
 
-void paths_init()
-{
-  const char* home = environment_get_home_path();
-  Q_mkdir(home);
-
-  {
-    StringOutputStream path(256);
-    path << home << '/';
-    g_strSettingsPath = path.c_str();
-  }
-
-  Q_mkdir(g_strSettingsPath.c_str());
-
-  g_strAppPath = environment_get_app_path();
-
-  // radiant is installed in the parent dir of "tools/"
-  // NOTE: this is not very easy for debugging
-  // maybe add options to lookup in several places?
-  // (for now I had to create symlinks)
-  {
-    StringOutputStream path(256);
-    path << g_strAppPath.c_str() << "bitmaps/";
-    BitmapsPath_set(path.c_str());
-  }
-
-}
-
 void create_global_pid()
 {
   /*!
@@ -391,9 +364,8 @@ int main (int argc, char* argv[])
 
   GlobalDebugMessageHandler::instance().setHandler(GlobalPopupDebugMessageHandler::instance());
 
-  environment_init(argc, argv);
-
-  paths_init();
+	// Retrieve the application path and such
+	Environment::Instance().init(argc, argv);
 
   show_splash();
 

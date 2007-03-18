@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "environment.h"
 
+#include "gtkutil/image.h"
+
 #include "stream/textstream.h"
 #include "string/string.h"
 #include "stream/stringstream.h"
@@ -30,49 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <iostream>
 #include <string>
-
-int g_argc;
-char** g_argv;
-
-void args_init(int argc, char* argv[])
-{
-  int i, j, k;
-
-  for (i = 1; i < argc; i++)
-  {
-    for (k = i; k < argc; k++)
-      if (argv[k] != 0)
-        break;
-
-    if (k > i)
-    {
-      k -= i;
-      for (j = i + k; j < argc; j++)
-        argv[j-k] = argv[j];
-      argc -= k;
-    }
-  }
-
-  g_argc = argc;
-  g_argv = argv;
-}
-
-namespace
-{
-  CopiedString home_path;
-  CopiedString app_path;
-}
-
-const char* environment_get_home_path()
-{
-  return home_path.c_str();
-}
-
-const char* environment_get_app_path()
-{
-  return app_path.c_str();
-}
-
+#include <boost/algorithm/string/predicate.hpp>
 
 #if defined(POSIX)
 
@@ -123,8 +83,7 @@ char* getexename(char *buf)
   return buf;
 }
 
-void environment_init(int argc, char* argv[])
-{
+void Environment::init(int argc, char* argv[]) {
   // Give away unnecessary root privileges.
   // Important: must be done before calling gtk_init().
   char *loginname;
@@ -134,55 +93,114 @@ void environment_init(int argc, char* argv[])
       (pw = getpwnam(loginname)) != 0)
     setuid(pw->pw_uid);
 
-  args_init(argc, argv);
+  initArgs(argc, argv);
 
   {
     StringOutputStream home(256);
     home << DirectoryCleaned(g_get_home_dir()) << ".darkradiant/";
     Q_mkdir(home.c_str());
-    home_path = home.c_str();
+    _homePath = home.c_str();
   }
   {
     char real[PATH_MAX];
-    app_path = getexename(real);
+    _appPath = getexename(real);
     ASSERT_MESSAGE(!string_empty(app_path.c_str()), "failed to deduce app path");
   }
+  	// Initialise the relative paths
+	initPaths()
 }
 
 #elif defined(WIN32)
 
 #include <windows.h>
-//#include <shfolder.h>
 
-void environment_init(int argc, char* argv[])
-{
-  args_init(argc, argv);
-
-  {
-  	std::string home = getenv("APPDATA");
-  	home += "\\DarkRadiant\\";
-    Q_mkdir(home.c_str());
-    home_path = home.c_str();
-  }
-  {
-    // get path to the editor
-    char filename[MAX_PATH+1];
-    GetModuleFileName(0, filename, MAX_PATH);
-    char* last_separator = strrchr(filename, '\\');
-    if(last_separator != 0)
-    {
-      *(last_separator+1) = '\0';
-    }
-    else
-    {
-      filename[0] = '\0';
-    }
-    StringOutputStream app(256);
-    app << PathCleaned(filename);
-    app_path = app.c_str();
-  }
+void Environment::init(int argc, char* argv[]) {
+	initArgs(argc, argv);
+	{
+		std::string home = getenv("APPDATA");
+		home += "\\DarkRadiant\\";
+		Q_mkdir(home.c_str());
+		_homePath = home;
+	}
+	{
+		// get path to the editor
+		char filename[MAX_PATH+1];
+		GetModuleFileName(0, filename, MAX_PATH);
+		char* last_separator = strrchr(filename, '\\');
+		if (last_separator != 0) {
+			*(last_separator+1) = '\0';
+		}
+		else {
+			filename[0] = '\0';
+		}
+		StringOutputStream app(256);
+		app << PathCleaned(filename);
+		_appPath = app.c_str();
+	}
+	// Initialise the relative paths
+	initPaths();
 }
 
 #else
 #error "unsupported platform"
 #endif
+
+int g_argc;
+char** g_argv;
+
+void Environment::initArgs(int argc, char* argv[]) {
+	int i, j, k;
+	
+	for (i = 1; i < argc; i++) {
+		for (k = i; k < argc; k++)
+			if (argv[k] != 0)
+				break;
+	
+		if (k > i) {
+			k -= i;
+			for (j = i + k; j < argc; j++)
+				argv[j-k] = argv[j];
+			argc -= k;
+		}
+	}
+	
+	g_argc = argc;
+	g_argv = argv;
+}
+
+std::string Environment::getHomePath() {
+	return _homePath;
+}
+
+std::string Environment::getAppPath() {
+	return _appPath;
+}
+
+std::string Environment::getSettingsPath() {
+	return _settingsPath;
+}
+
+std::string Environment::getBitmapsPath() {
+	return _bitmapsPath;
+}
+
+Environment& Environment::Instance() {
+	static Environment _instance;
+	return _instance;
+}
+
+void Environment::initPaths() {
+	
+	if (!boost::algorithm::ends_with(_homePath, "/")) {
+		_homePath += "/";
+	}
+	
+	// Make sure the home folder exists (attempt to create it)
+	Q_mkdir(_homePath.c_str());
+
+	_settingsPath = _homePath;
+	Q_mkdir(_settingsPath.c_str());
+
+	_bitmapsPath = _appPath + "bitmaps/";
+	BitmapsPath_set(_bitmapsPath.c_str());
+}

@@ -180,10 +180,7 @@ void EnginePath_verify();
 const char* EnginePath_get();
 const char* QERApp_GetGamePath();
 
-extern CopiedString g_strAppPath;
 const char* AppPath_get();
-
-extern CopiedString g_strSettingsPath;
 const char* SettingsPath_get();
 
 const char* const g_pluginsDir = "plugins/"; ///< name of plugins directory, always sub-directory of toolspath
