@@ -135,7 +135,7 @@ static void scriptTextCellDataFunc(GtkTreeViewColumn* treeColumn,
 
 void StimResponseEditor::populateWindow() {
 	// Create the overall vbox
-	_dialogVBox = gtk_vbox_new(false, 6);
+	_dialogVBox = gtk_vbox_new(FALSE, 6);
 	gtk_container_add(GTK_CONTAINER(_dialog), _dialogVBox);
 	
 	// Create the title label (bold font)
@@ -143,13 +143,13 @@ void StimResponseEditor::populateWindow() {
     	std::string("<span weight=\"bold\">") + LABEL_STIMRESPONSE_LIST + "</span>"
     );
     gtk_misc_set_padding(GTK_MISC(topLabel), 0, 2); // Small spacing to the top/bottom
-    gtk_box_pack_start(GTK_BOX(_dialogVBox), topLabel, false, false, 0);
+    gtk_box_pack_start(GTK_BOX(_dialogVBox), topLabel, FALSE, FALSE, 0);
 	
-	GtkWidget* srHBox = gtk_hbox_new(false, 0);
+	GtkWidget* srHBox = gtk_hbox_new(FALSE, 0);
 	
 	// Pack it into an alignment so that it is indented
 	GtkWidget* srAlignment = gtkutil::LeftAlignment(GTK_WIDGET(srHBox), 18, 1.0); 
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(srAlignment), true, true, 0);
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(srAlignment), TRUE, TRUE, 0);
 	
 	_entitySRView = gtk_tree_view_new();
 	gtk_widget_set_size_request(_entitySRView, TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT);
@@ -163,7 +163,7 @@ void StimResponseEditor::populateWindow() {
 	GtkTreeViewColumn* numCol = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(numCol, "#");
 	GtkCellRenderer* numRenderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(numCol, numRenderer, false);
+	gtk_tree_view_column_pack_start(numCol, numRenderer, FALSE);
 	gtk_tree_view_column_set_attributes(numCol, numRenderer, 
 										"text", INDEX_COL,
 										NULL);
@@ -177,7 +177,7 @@ void StimResponseEditor::populateWindow() {
 	GtkTreeViewColumn* classCol = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(classCol, "S/R");
 	GtkCellRenderer* pixbufRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_column_pack_start(classCol, pixbufRenderer, false);
+	gtk_tree_view_column_pack_start(classCol, pixbufRenderer, FALSE);
 	gtk_tree_view_column_set_attributes(classCol, pixbufRenderer, 
 										"pixbuf", CLASS_COL,
 										NULL);
@@ -192,10 +192,10 @@ void StimResponseEditor::populateWindow() {
 	gtk_tree_view_column_set_title(typeCol, "Type");
 	
 	GtkCellRenderer* typeIconRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_column_pack_start(typeCol, typeIconRenderer, false);
+	gtk_tree_view_column_pack_start(typeCol, typeIconRenderer, FALSE);
 	
 	GtkCellRenderer* typeTextRenderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(typeCol, typeTextRenderer, false);
+	gtk_tree_view_column_pack_start(typeCol, typeTextRenderer, FALSE);
 	
 	gtk_tree_view_column_set_attributes(typeCol, typeTextRenderer, 
 										"text", CAPTION_COL,
@@ -216,18 +216,18 @@ void StimResponseEditor::populateWindow() {
 	gtk_box_pack_start(GTK_BOX(srHBox), 
 		gtkutil::ScrolledFrame(_entitySRView), false, false, 0);
 	
-	gtk_box_pack_start(GTK_BOX(srHBox), createSRWidgets(), true, true, 6);
+	gtk_box_pack_start(GTK_BOX(srHBox), createSRWidgets(), TRUE, TRUE, 6);
 	
 	// Create the title label (bold font)
 	GtkWidget* addLabel = gtkutil::LeftAlignedLabel(
     	std::string("<span weight=\"bold\">") + LABEL_ADD_STIMRESPONSE + "</span>"
     );
     gtk_misc_set_padding(GTK_MISC(addLabel), 0, 2); // Small spacing to the top/bottom
-    gtk_box_pack_start(GTK_BOX(_dialogVBox), addLabel, false, false, 0);
+    gtk_box_pack_start(GTK_BOX(_dialogVBox), addLabel, FALSE, FALSE, 0);
 	
-	GtkWidget* addHBox = gtk_hbox_new(false, 0);
+	GtkWidget* addHBox = gtk_hbox_new(FALSE, 0);
 	GtkWidget* addAlignment = gtkutil::LeftAlignment(GTK_WIDGET(addHBox), 18, 1.0); 
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(addAlignment), false, false, 0);
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(addAlignment), FALSE, FALSE, 0);
 	
 	// Cast the helper class onto a ListStore and create a new treeview
 	GtkListStore* stimListStore = _stimTypes;
@@ -240,8 +240,8 @@ void StimResponseEditor::populateWindow() {
 	// Add the cellrenderer for the name
 	GtkCellRenderer* nameRenderer = gtk_cell_renderer_text_new();
 	GtkCellRenderer* iconRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_addWidgets.stimTypeList), iconRenderer, false);
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_addWidgets.stimTypeList), nameRenderer, true);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_addWidgets.stimTypeList), iconRenderer, FALSE);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_addWidgets.stimTypeList), nameRenderer, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_addWidgets.stimTypeList), nameRenderer, "text", 1);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_addWidgets.stimTypeList), iconRenderer, "pixbuf", 2);
 	gtk_cell_renderer_set_fixed_size(iconRenderer, 26, -1);
@@ -258,9 +258,9 @@ void StimResponseEditor::populateWindow() {
 		gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_BUTTON)
 	);
 	
-	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.stimTypeList, false, false, 0);
-	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.addButton, false, false, 6);
-	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.addScriptButton, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.stimTypeList, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.addButton, FALSE, FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.addScriptButton, FALSE, FALSE, 0);
 	
 	g_signal_connect(G_OBJECT(_addWidgets.addButton), "clicked", G_CALLBACK(onAdd), this);
 	g_signal_connect(G_OBJECT(_addWidgets.addScriptButton), "clicked", G_CALLBACK(onScriptAdd), this);
@@ -270,7 +270,7 @@ void StimResponseEditor::populateWindow() {
     	std::string("<span weight=\"bold\">") + LABEL_RESPONSE_SCRIPTS + "</span>"
     );
     gtk_misc_set_padding(GTK_MISC(scriptLabel), 0, 2); // Small spacing to the top/bottom
-    gtk_box_pack_start(GTK_BOX(_dialogVBox), scriptLabel, false, false, 0);
+    gtk_box_pack_start(GTK_BOX(_dialogVBox), scriptLabel, FALSE, FALSE, 0);
 	
 	_scriptWidgets.view = gtk_tree_view_new();
 	_scriptWidgets.selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_scriptWidgets.view));
@@ -283,10 +283,10 @@ void StimResponseEditor::populateWindow() {
 		gtk_tree_view_column_set_title(scriptTypeCol, "Type");
 		
 		GtkCellRenderer* typeIconRenderer = gtk_cell_renderer_pixbuf_new();
-		gtk_tree_view_column_pack_start(scriptTypeCol, typeIconRenderer, false);
+		gtk_tree_view_column_pack_start(scriptTypeCol, typeIconRenderer, FALSE);
 		
 		GtkCellRenderer* typeTextRenderer = gtk_cell_renderer_text_new();
-		gtk_tree_view_column_pack_start(scriptTypeCol, typeTextRenderer, false);
+		gtk_tree_view_column_pack_start(scriptTypeCol, typeTextRenderer, FALSE);
 		
 		gtk_tree_view_column_set_attributes(scriptTypeCol, typeTextRenderer, 
 											"text", SCR_CAPTION_COL,
@@ -310,11 +310,11 @@ void StimResponseEditor::populateWindow() {
 		gtk_tree_view_column_set_title(scriptCol, "Target Script (double-click to edit)");
 		
 		GtkCellRenderer* typeIconRenderer = gtk_cell_renderer_pixbuf_new();
-		gtk_tree_view_column_pack_start(scriptCol, typeIconRenderer, false);
+		gtk_tree_view_column_pack_start(scriptCol, typeIconRenderer, FALSE);
 		
 		GtkCellRenderer* typeTextRenderer = gtk_cell_renderer_text_new();
-		gtk_tree_view_column_pack_start(scriptCol, typeTextRenderer, false);
-		g_object_set(G_OBJECT(typeTextRenderer), "editable", true);
+		gtk_tree_view_column_pack_start(scriptCol, typeTextRenderer, FALSE);
+		g_object_set(G_OBJECT(typeTextRenderer), "editable", TRUE);
 		g_signal_connect(G_OBJECT(typeTextRenderer), "edited", G_CALLBACK(onScriptEdit), this);
 		
 		gtk_tree_view_column_set_attributes(scriptCol, typeTextRenderer, 
@@ -329,9 +329,9 @@ void StimResponseEditor::populateWindow() {
 	
 	GtkWidget* scriptAlignment = gtkutil::LeftAlignment(
 		gtkutil::ScrolledFrame(_scriptWidgets.view), 18, 1.0);
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), scriptAlignment, true, true, 0);
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), scriptAlignment, TRUE, TRUE, 0);
 	
-	GtkWidget* buttonHBox = gtk_hbox_new(false, 0);
+	GtkWidget* buttonHBox = gtk_hbox_new(FALSE, 0);
 	
 	// Save button
 	GtkWidget* saveButton = gtk_button_new_with_label(LABEL_SAVE);
@@ -340,7 +340,7 @@ void StimResponseEditor::populateWindow() {
 		gtk_image_new_from_stock(GTK_STOCK_SAVE, GTK_ICON_SIZE_BUTTON)
 	);
 	g_signal_connect(G_OBJECT(saveButton), "clicked", G_CALLBACK(onSave), this);
-	gtk_box_pack_end(GTK_BOX(buttonHBox), saveButton, false, false, 0);
+	gtk_box_pack_end(GTK_BOX(buttonHBox), saveButton, FALSE, FALSE, 0);
 	
 	// Revert button
 	GtkWidget* revertButton = gtk_button_new_with_label(LABEL_REVERT);
@@ -349,13 +349,13 @@ void StimResponseEditor::populateWindow() {
 		gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON)
 	);
 	g_signal_connect(G_OBJECT(revertButton), "clicked", G_CALLBACK(onRevert), this);
-	gtk_box_pack_start(GTK_BOX(buttonHBox), revertButton, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(buttonHBox), revertButton, FALSE, FALSE, 0);
 	
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), buttonHBox, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), buttonHBox, FALSE, FALSE, 0);
 }
 
 GtkWidget* StimResponseEditor::createSRWidgets() {
-	_srWidgets.vbox = gtk_vbox_new(false, 6);
+	_srWidgets.vbox = gtk_vbox_new(FALSE, 6);
 	
 	// Create the buttons
 	_srWidgets.stimButton = gtk_toggle_button_new();
@@ -374,26 +374,26 @@ GtkWidget* StimResponseEditor::createSRWidgets() {
 	GtkWidget* respLabel = gtk_label_new(NULL);
 	gtk_label_set_markup(GTK_LABEL(respLabel), "<b>Response</b>");
 	
-	GtkWidget* stimBtnHbox = gtk_hbox_new(false, 3);
-	gtk_box_pack_start(GTK_BOX(stimBtnHbox), stimImg, false, false, 0);
-	gtk_box_pack_start(GTK_BOX(stimBtnHbox), stimLabel, false, false, 0);
+	GtkWidget* stimBtnHbox = gtk_hbox_new(FALSE, 3);
+	gtk_box_pack_start(GTK_BOX(stimBtnHbox), stimImg, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(stimBtnHbox), stimLabel, FALSE, FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(_srWidgets.stimButton), stimBtnHbox);
 	
-	GtkWidget* respBtnHbox = gtk_hbox_new(false, 3);
-	gtk_box_pack_start(GTK_BOX(respBtnHbox), respImg, false, false, 0);
-	gtk_box_pack_start(GTK_BOX(respBtnHbox), respLabel, false, false, 0);
+	GtkWidget* respBtnHbox = gtk_hbox_new(FALSE, 3);
+	gtk_box_pack_start(GTK_BOX(respBtnHbox), respImg, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(respBtnHbox), respLabel, FALSE, FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(_srWidgets.respButton), respBtnHbox);
 	
 	// combine the buttons to a hbox
-	GtkWidget* btnHbox = gtk_hbox_new(true, 6);
-	gtk_box_pack_start(GTK_BOX(btnHbox), _srWidgets.stimButton, true, true, 0);
-	gtk_box_pack_start(GTK_BOX(btnHbox), _srWidgets.respButton, true, true, 0);
+	GtkWidget* btnHbox = gtk_hbox_new(TRUE, 6);
+	gtk_box_pack_start(GTK_BOX(btnHbox), _srWidgets.stimButton, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(btnHbox), _srWidgets.respButton, TRUE, TRUE, 0);
 	
 	// Pack the button Hbox to the SRWidgets
-	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), btnHbox, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), btnHbox, FALSE, FALSE, 0);
 	
 	// Type Selector
-	GtkWidget* typeHBox = gtk_hbox_new(false, 0);
+	GtkWidget* typeHBox = gtk_hbox_new(FALSE, 0);
 	
 	GtkWidget* typeLabel = gtkutil::LeftAlignedLabel("Type:");
 	// Cast the helper class onto a ListStore and create a new treeview
@@ -407,85 +407,66 @@ GtkWidget* StimResponseEditor::createSRWidgets() {
 	// Add the cellrenderer for the name
 	GtkCellRenderer* nameRenderer = gtk_cell_renderer_text_new();
 	GtkCellRenderer* iconRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_srWidgets.typeList), iconRenderer, false);
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_srWidgets.typeList), nameRenderer, true);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_srWidgets.typeList), iconRenderer, FALSE);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_srWidgets.typeList), nameRenderer, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_srWidgets.typeList), nameRenderer, "text", 1);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_srWidgets.typeList), iconRenderer, "pixbuf", 2);
 	gtk_cell_renderer_set_fixed_size(iconRenderer, 26, -1);
 	
-	gtk_box_pack_start(GTK_BOX(typeHBox), typeLabel, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(typeHBox), typeLabel, FALSE, FALSE, 0);
 	gtk_box_pack_start(
 		GTK_BOX(typeHBox), 
 		gtkutil::LeftAlignment(_srWidgets.typeList, 12, 1.0f), 
-		true, true,	0
+		TRUE, TRUE,	0
 	);
 	
-	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), typeHBox, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), typeHBox, FALSE, FALSE, 0);
 	
 	// Active
-	GtkWidget* activeHBox = gtk_hbox_new(false, 0);
-	GtkWidget* activeLabel = gtkutil::LeftAlignedLabel("Active");
-	_srWidgets.active = gtk_check_button_new();
+	_srWidgets.active = gtk_check_button_new_with_label("Active");
 	g_signal_connect(G_OBJECT(_srWidgets.active), "toggled", G_CALLBACK(onActiveToggle), this);
-	
-	gtk_box_pack_start(GTK_BOX(activeHBox), _srWidgets.active, false, false, 0);
-	gtk_box_pack_start(GTK_BOX(activeHBox), activeLabel, false, false, 0);
-	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), activeHBox, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), _srWidgets.active, FALSE, FALSE, 0);
 	
 	// Use Bounds
-	GtkWidget* boundsHBox = gtk_hbox_new(false, 0);
-	GtkWidget* boundsLabel = gtkutil::LeftAlignedLabel("Use bounds");
-	_srWidgets.useBounds = gtk_check_button_new();
-	gtk_box_pack_start(GTK_BOX(boundsHBox), _srWidgets.useBounds, false, false, 0);
-	gtk_box_pack_start(GTK_BOX(boundsHBox), boundsLabel, false, false, 0);
-	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), boundsHBox, false, false, 0);
+	_srWidgets.useBounds = gtk_check_button_new_with_label("Use bounds");
+	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), _srWidgets.useBounds, FALSE, FALSE, 0);
 	
 	// Radius
-	GtkWidget* radiusHBox = gtk_hbox_new(false, 0);
-	_srWidgets.radiusToggle = gtk_check_button_new();
-	GtkWidget* radiusLabel = gtkutil::LeftAlignedLabel("Radius");
-	gtk_widget_set_size_request(radiusLabel, 90, -1);
+	GtkWidget* radiusHBox = gtk_hbox_new(FALSE, 0);
+	_srWidgets.radiusToggle = gtk_check_button_new_with_label("Radius:");
+	gtk_widget_set_size_request(_srWidgets.radiusToggle, 125, -1);
 	_srWidgets.radiusEntry = gtk_entry_new();
 	
-	gtk_box_pack_start(GTK_BOX(radiusHBox), _srWidgets.radiusToggle, false, false, 0);
-	gtk_box_pack_start(GTK_BOX(radiusHBox), radiusLabel, false, false, 0);
-	gtk_box_pack_start(GTK_BOX(radiusHBox), _srWidgets.radiusEntry, true, true, 0);
+	gtk_box_pack_start(GTK_BOX(radiusHBox), _srWidgets.radiusToggle, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(radiusHBox), _srWidgets.radiusEntry, TRUE, TRUE, 0);
 	
-	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), radiusHBox, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), radiusHBox, FALSE, FALSE, 0);
 	
 	// Time Interval
-	GtkWidget* timeHBox = gtk_hbox_new(false, 0);
-	_srWidgets.timeIntToggle = gtk_check_button_new();
-	GtkWidget* timeLabel = gtkutil::LeftAlignedLabel("Time interval");
-	gtk_widget_set_size_request(timeLabel, 90, -1);
+	GtkWidget* timeHBox = gtk_hbox_new(FALSE, 0);
+	_srWidgets.timeIntToggle = gtk_check_button_new_with_label("Time interval:");
+	gtk_widget_set_size_request(_srWidgets.timeIntToggle, 125, -1);
 	_srWidgets.timeIntEntry = gtk_entry_new();
 	
-	gtk_box_pack_start(GTK_BOX(timeHBox), _srWidgets.timeIntToggle, false, false, 0);
-	gtk_box_pack_start(GTK_BOX(timeHBox), timeLabel, false, false, 0);
-	gtk_box_pack_start(GTK_BOX(timeHBox), _srWidgets.timeIntEntry, true, true, 0);
+	gtk_box_pack_start(GTK_BOX(timeHBox), _srWidgets.timeIntToggle, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(timeHBox), _srWidgets.timeIntEntry, TRUE, TRUE, 0);
 	
-	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), timeHBox, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), timeHBox, FALSE, FALSE, 0);
 	
 	// Timer type
-	GtkWidget* timerTypeHBox = gtk_hbox_new(false, 0);
-	GtkWidget* timerTypeLabel = gtkutil::LeftAlignedLabel("Timer restarts after firing");
-	_srWidgets.timerTypeToggle = gtk_check_button_new();
-	gtk_box_pack_start(GTK_BOX(timerTypeHBox), _srWidgets.timerTypeToggle, false, false, 0);
-	gtk_box_pack_start(GTK_BOX(timerTypeHBox), timerTypeLabel, false, false, 0);
-	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), timerTypeHBox, false, false, 0);
+	_srWidgets.timerTypeToggle = gtk_check_button_new_with_label("Timer restarts after firing");
+	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), _srWidgets.timerTypeToggle, FALSE, FALSE, 0);
 	
 	// Model
-	GtkWidget* modelHBox = gtk_hbox_new(false, 0);
-	_srWidgets.modelToggle = gtk_check_button_new();
-	GtkWidget* modelLabel = gtkutil::LeftAlignedLabel("Model");
-	gtk_widget_set_size_request(modelLabel, 90, -1);
+	GtkWidget* modelHBox = gtk_hbox_new(FALSE, 0);
+	_srWidgets.modelToggle = gtk_check_button_new_with_label("Model:");
+	gtk_widget_set_size_request(_srWidgets.modelToggle, 125, -1);
 	_srWidgets.modelEntry = gtk_entry_new();
 	
-	gtk_box_pack_start(GTK_BOX(modelHBox), _srWidgets.modelToggle, false, false, 0);
-	gtk_box_pack_start(GTK_BOX(modelHBox), modelLabel, false, false, 0);
-	gtk_box_pack_start(GTK_BOX(modelHBox), _srWidgets.modelEntry, true, true, 0);
+	gtk_box_pack_start(GTK_BOX(modelHBox), _srWidgets.modelToggle, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(modelHBox), _srWidgets.modelEntry, TRUE, TRUE, 0);
 	
-	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), modelHBox, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), modelHBox, FALSE, FALSE, 0);
 	
 	// Connect the checkboxes
 	g_signal_connect(G_OBJECT(_srWidgets.useBounds), "toggled", G_CALLBACK(onBoundsToggle), this);
@@ -561,7 +542,7 @@ void StimResponseEditor::updateSRWidgets() {
 	
 	if (id > 0) {
 		// Update all the widgets
-		gtk_widget_set_sensitive(_srWidgets.vbox, true);
+		gtk_widget_set_sensitive(_srWidgets.vbox, TRUE);
 		
 		StimResponse& sr = _srEntity->get(id);
 		
@@ -647,11 +628,11 @@ void StimResponseEditor::updateSRWidgets() {
 		
 		// Disable the editing of inherited properties completely
 		if (sr.inherited()) {
-			gtk_widget_set_sensitive(_srWidgets.vbox, false);
+			gtk_widget_set_sensitive(_srWidgets.vbox, FALSE);
 		}
 	}
 	else {
-		gtk_widget_set_sensitive(_srWidgets.vbox, false);
+		gtk_widget_set_sensitive(_srWidgets.vbox, FALSE);
 	}
 	
 	_updatesDisabled = false;
@@ -788,7 +769,7 @@ gboolean StimResponseEditor::onDelete(GtkWidget* widget, GdkEvent* event, StimRe
 	self->toggle();
 	
 	// Don't propagate the delete event
-	return true;
+	return TRUE;
 }
 
 void StimResponseEditor::onSelectionChange(GtkTreeSelection* treeView, StimResponseEditor* self) {
@@ -950,11 +931,11 @@ gboolean StimResponseEditor::onTreeViewKeyPress(
 		}
 		
 		// Catch this keyevent, don't propagate
-		return true;
+		return TRUE;
 	}
 	
 	// Propagate further
-	return false;
+	return FALSE;
 }
 
 void StimResponseEditor::onStimTypeChange(GtkComboBox* widget, StimResponseEditor* self) {
