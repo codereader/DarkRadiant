@@ -152,9 +152,9 @@ private:
 	 */
 	void update();
 
-	/** greebo: Updates the sensitivity of the "Add Response Script" button
+	/** greebo: Updates the sensitivity of the "Add yyy" buttons
 	 */
-	void updateAddScriptButton();
+	void updateAddButton();
 
 	/** greebo: Checks the selection for a single entity.
 	 */
