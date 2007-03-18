@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "debugging/debugging.h"
 #include "version.h"
+#include "environment.h"
 
 #include "ui/surfaceinspector/SurfaceInspector.h"
 #include "ui/patch/PatchInspector.h"
@@ -347,24 +348,15 @@ void setEnginePath(const char* path)
   }
 }
 
-
-// App Path
-
-CopiedString g_strAppPath;                 ///< holds the full path of the executable
-
-const char* AppPath_get()
-{
-  return g_strAppPath.c_str();
+const char* AppPath_get() {
+	return Environment::Instance().getAppPath().c_str();
 }
 
 /// directory for temp files
 /// NOTE: on *nix this is were we check for .pid
-CopiedString g_strSettingsPath;
-const char* SettingsPath_get()
-{
-  return g_strSettingsPath.c_str();
+const char* SettingsPath_get() {
+	return Environment::Instance().getSettingsPath().c_str();
 }
-
 
 void EnginePathImport(CopiedString& self, const char* value)
 {
