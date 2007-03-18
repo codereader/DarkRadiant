@@ -1,6 +1,6 @@
 #include "GLTextureManager.h"
 
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "texturelib.h"
 #include "igl.h"
 #include "FileLoader.h"

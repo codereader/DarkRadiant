@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_GTKUTIL_MESSAGEBOX_H)
 #define INCLUDED_GTKUTIL_MESSAGEBOX_H
 
-#include "qerplugin.h"
+#include "iradiant.h"
 
 typedef struct _GtkWidget GtkWidget;
 /// \brief Shows a modal message-box.

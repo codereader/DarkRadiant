@@ -3,7 +3,7 @@
 #include "iregistry.h"
 #include "iscenegraph.h"
 #include "itextstream.h"
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "ieventmanager.h"
 #include "selectionlib.h"
 #include "gtkutil/image.h"

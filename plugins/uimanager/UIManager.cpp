@@ -1,7 +1,7 @@
 #include "UIManager.h"
 
 #include "iregistry.h"
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "ieventmanager.h"
 #include "gtkutil/image.h"
 #include <boost/shared_ptr.hpp>

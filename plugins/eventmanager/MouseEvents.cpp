@@ -1,7 +1,7 @@
 #include "MouseEvents.h"
 
 #include "iregistry.h"
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "iselection.h"
 
 #include "gdk/gdkkeys.h"

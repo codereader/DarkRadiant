@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ipatch.h"
 #include "ieclass.h"
 #include "iscriplib.h"
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "scenelib.h"
 #include "traverselib.h"
 #include "stringio.h"

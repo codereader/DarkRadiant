@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/callback.h"
 #include "generic/arrayrange.h"
-#include "qerplugin.h"
+#include "iradiant.h"
 #include <gtk/gtkenums.h>
 
 typedef int gint;

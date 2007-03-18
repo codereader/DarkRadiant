@@ -1,5 +1,5 @@
 #include "LightInstance.h"
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "math/pi.h"
 #include "../../../radiant/ui/colourscheme/ColourSchemeManager.h"
 

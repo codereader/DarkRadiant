@@ -3,7 +3,7 @@
 
 #include "iregistry.h"
 #include "preferencesystem.h"
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "iscenegraph.h"
 #include "iselection.h"
 #include "itexdef.h"

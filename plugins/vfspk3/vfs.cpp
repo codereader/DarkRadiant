@@ -49,7 +49,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <glib/gdir.h>
 #include <glib/gstrfuncs.h>
 
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "idatastream.h"
 #include "iarchive.h"
 ArchiveModules& FileSystemQ3API_getArchiveModules();

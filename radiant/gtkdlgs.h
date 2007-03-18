@@ -31,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #if !defined(INCLUDED_GTKDLGS_H)
 #define INCLUDED_GTKDLGS_H
 
-#include "qerplugin.h"
+#include "iradiant.h"
 
 EMessageBoxReturn DoLightIntensityDlg (int *intensity);
 EMessageBoxReturn DoTextureLayout (float *fx, float *fy);

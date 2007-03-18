@@ -5,7 +5,7 @@
 #include "iuimanager.h"
 #include "iregistry.h"
 #include "iselection.h"
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "iundo.h"
 
 #include "gtkutil/image.h"

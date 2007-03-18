@@ -27,7 +27,7 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include "qerplugin.h"
+#include "iradiant.h"
 #include "RegistryTree.h"
 
 // The map of RegistryKeyObservers. The same observer can observe several keys, and
