@@ -82,8 +82,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtkimage.h>
 #include <gtk/gtktable.h>
 
-#include <boost/algorithm/string/predicate.hpp>
-
 #include "cmdlib.h"
 #include "scenelib.h"
 #include "stream/stringstream.h"
@@ -363,65 +361,6 @@ void gamemode_set(const char* gamemode)
   }
 }
 
-/** Module loader functor class. This class is used to traverse a directory and
- * load each module into the GlobalModuleServer.
- */
-class ModuleLoader
-{
-	// The path of the directory we are in
-	const std::string _path;
-	
-	// The filename extension which indicates a module (platform-specific)
-	const std::string _ext;
-	
-public:
-
-	// Constructor sets platform-specific extension to match
-	ModuleLoader(const std::string& path) 
-	: _path(path),
-
-#if defined(WIN32)
-	  _ext(".dll")
-#elif defined(POSIX)
-	  _ext(".so")
-#endif
-
-	{}
-
-	// Functor operator
-	void operator() (const std::string& fileName) const {
-		// Check for correct extension
-		if (boost::algorithm::iends_with(fileName, _ext)) {
-			std::string fullName = _path + fileName;
-			globalOutputStream() << "Loading module '" << fullName << "'\n";      
-			GlobalModuleServer_loadModule(fullName);
-		}
-	}
-};
-
-/** Load modules from a specified directory.
- * 
- * @param path
- * The directory path to load from.
- */
-void Radiant_loadModules(const std::string& path)
-{
-	ModuleLoader loader(path);
-	Directory_forEach(path, loader);
-}
-
-/** Load all of the modules in the DarkRadiant install directory. Modules
- * are loaded from modules/ and plugins/.
- * 
- * @param directory
- * The root directory to search.
- */
-void Radiant_loadModulesFromRoot(const std::string& directory)
-{
-    Radiant_loadModules(directory + g_modulesDir);
-    Radiant_loadModules(directory + g_pluginsDir);
-}
-
 //! Make COLOR_BRUSHES override worldspawn eclass colour.
 void SetWorldspawnColour(const Vector3& colour)
 {
@@ -523,8 +462,8 @@ void populateRegistry() {
 // This is called from main() to start up the Radiant stuff.
 void Radiant_Initialise() 
 {
-	// Load the Radiant modules from the modules/ dir.
-	Radiant_loadModulesFromRoot(AppPath_get());
+	// Load the Radiant modules from the modules/ and plugins/ dir.
+	ModuleLoader::loadModules(AppPath_get());
 
 	// Initialise and instantiate the registry
 	GlobalModuleServer::instance().set(GlobalModuleServer_get());
