@@ -58,8 +58,6 @@ public:
 	 */
 	std::string getHomePath();
 	std::string getAppPath();
-	std::string getSettingsPath();
-	std::string getBitmapsPath();
 	
 	// Get/set the path where the .map files are stored
 	std::string getMapsPath();

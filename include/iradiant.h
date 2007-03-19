@@ -97,7 +97,6 @@ struct IRadiant
 	void (*setStatusText)(const std::string& statusText);
 
   const char* (*getEnginePath)();
-  const char* (*getAppPath)();
   const char* (*getMapsPath)();
 
   const char* (*getGameName)();

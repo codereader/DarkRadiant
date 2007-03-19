@@ -8,7 +8,7 @@
 namespace {
 	const int MAX_TEXTURE_QUALITY = 3;
 	
-	const std::string SHADER_NOT_FOUND = "bitmaps/notex.bmp";
+	const std::string SHADER_NOT_FOUND = "notex.bmp";
 }
 
 namespace shaders {
@@ -94,7 +94,7 @@ TexturePtr GLTextureManager::getShaderNotFound() {
 
 TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
 	// Create the texture constructor
-	std::string fullpath = GlobalRadiant().getAppPath() + filename;
+	std::string fullpath = GlobalRegistry().get("user/paths/bitmapsPath") + filename;
 	TextureConstructorPtr constructor(new FileLoader(fullpath, "bmp"));
 	
 	TexturePtr returnValue(new Texture(fullpath));

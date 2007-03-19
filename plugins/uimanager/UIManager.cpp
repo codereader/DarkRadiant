@@ -39,8 +39,7 @@ public:
 		// allocate a new UIManager instance on the heap (shared_ptr) 
 		_uiManager = UIManagerPtr(new ui::UIManager);
 		
-		std::string bitmapsPath = GlobalRadiant().getAppPath();
-		bitmapsPath += "bitmaps/";
+		std::string bitmapsPath = GlobalRegistry().get("user/paths/bitmapsPath");
 		BitmapsPath_set(bitmapsPath.c_str());
 	}
 	

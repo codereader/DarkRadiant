@@ -43,8 +43,7 @@ public:
 				"stimresponse.png",	// icon
 				"StimResponseEditor"); // event name
 				
-		std::string bitmapsPath = GlobalRadiant().getAppPath();
-		bitmapsPath += "bitmaps/";
+		std::string bitmapsPath = GlobalRegistry().get("user/paths/bitmapsPath");
 		BitmapsPath_set(bitmapsPath.c_str());
 	}
 	
