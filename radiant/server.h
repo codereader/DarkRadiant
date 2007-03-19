@@ -34,7 +34,4 @@ ModuleServer& GlobalModuleServer_get();
  */
 void GlobalModuleServer_loadModule(const std::string& filename);
 
-void GlobalModuleServer_Initialise();
-void GlobalModuleServer_Shutdown();
-
 #endif

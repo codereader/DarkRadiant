@@ -35,7 +35,11 @@ class Environment
 	std::string _settingsPath;
 	std::string _bitmapsPath;
 	
+	// The path where the .map files are stored
 	std::string _mapsPath;
+	
+	// The game directory
+	std::string _enginePath;
 
 public:
 	// Call this with the arguments from main()
@@ -51,6 +55,10 @@ public:
 	// Get/set the path where the .map files are stored
 	std::string getMapsPath();
 	void setMapsPath(const std::string& path);
+	
+	// Get/set the engine path (the game path)
+	std::string getEnginePath();
+	void setEnginePath(const std::string& path);
 	
 	// Contains the static instance
 	static Environment& Instance();
