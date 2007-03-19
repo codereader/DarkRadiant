@@ -98,7 +98,6 @@ struct IRadiant
 
   const char* (*getEnginePath)();
   const char* (*getAppPath)();
-  const char* (*getSettingsPath)();
   const char* (*getMapsPath)();
 
   const char* (*getGameName)();

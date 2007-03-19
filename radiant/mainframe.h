@@ -174,10 +174,8 @@ class ModuleObserver;
 
 void EnginePath_verify();
 const char* EnginePath_get();
-const char* QERApp_GetGamePath();
 
 const char* AppPath_get();
-const char* SettingsPath_get();
 
 void Radiant_Initialise();
 void Radiant_Shutdown();

@@ -28,12 +28,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtkseparatormenuitem.h>
 #include <gtk/gtkscrolledwindow.h>
 
+#include "iregistry.h"
+
 #include "gtkutil/messagebox.h"
 #include "gtkutil/container.h"
 #include "gtkutil/nonmodal.h"
 #include "stream/stringstream.h"
 #include "convert.h"
 
+#include "environment.h"
 #include "version.h"
 #include "gtkmisc.h"
 #include "mainframe.h"
@@ -53,12 +56,12 @@ void Sys_LogFile(bool enable)
     // open a file to log the console (if user prefs say so)
     // the file handle is g_hLogFile
     // the log file is erased
-    StringOutputStream name(256);
-    name << SettingsPath_get() << "radiant.log";
-    g_hLogFile = fopen( name.c_str(), "w" );
+    std::string logFileName = GlobalRegistry().get(RKEY_SETTINGS_PATH) + "radiant.log";
+    
+    g_hLogFile = fopen(logFileName.c_str(), "w" );
     if (g_hLogFile != 0)
     {
-      globalOutputStream() << "Started logging to " << name.c_str() << "\n";
+      globalOutputStream() << "Started logging to " << logFileName.c_str() << "\n";
       time_t localtime;
       time(&localtime);
       globalOutputStream() << "Today is: " << ctime(&localtime)

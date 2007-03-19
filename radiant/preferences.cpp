@@ -57,6 +57,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "cmdlib.h"
 #include "plugin.h"
 
+#include "environment.h"
 #include "error.h"
 #include "console.h"
 #include "mainframe.h"
@@ -402,9 +403,10 @@ CGameDescription* CGameDialog::GameDescriptionForComboItem()
   return 0; // not found
 }
 
-void CGameDialog::InitGlobalPrefPath()
-{
-  g_Preferences.m_global_rc_path = g_string_new(SettingsPath_get());
+void CGameDialog::InitGlobalPrefPath() {
+	g_Preferences.m_global_rc_path = g_string_new(
+		GlobalRegistry().get(RKEY_SETTINGS_PATH).c_str()
+	);
 }
 
 void CGameDialog::Reset()

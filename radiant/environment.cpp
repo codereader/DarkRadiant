@@ -195,6 +195,7 @@ std::string Environment::getMapsPath() {
 }
 
 void Environment::setMapsPath(const std::string& path) {
+	GlobalRegistry().set(RKEY_MAP_PATH, _mapsPath);
 	_mapsPath = path;
 }
 
@@ -203,6 +204,7 @@ std::string Environment::getEnginePath() {
 }
 
 void Environment::setEnginePath(const std::string& path) {
+	GlobalRegistry().set(RKEY_ENGINE_PATH, _enginePath);
 	_enginePath = path;
 }
 
