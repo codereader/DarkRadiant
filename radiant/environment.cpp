@@ -197,6 +197,14 @@ void Environment::setMapsPath(const std::string& path) {
 	_mapsPath = path;
 }
 
+std::string Environment::getEnginePath() {
+	return _enginePath;
+}
+
+void Environment::setEnginePath(const std::string& path) {
+	_enginePath = path;
+}
+
 void Environment::initPaths() {
 	
 	if (!boost::algorithm::ends_with(_homePath, "/")) {

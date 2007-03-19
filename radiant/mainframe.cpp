@@ -165,35 +165,6 @@ struct layout_globals_t
 
 layout_globals_t g_layout_globals;
 
-// VFS
-class VFSModuleObserver : public ModuleObserver
-{
-  std::size_t m_unrealised;
-public:
-  VFSModuleObserver() : m_unrealised(1)
-  {
-  }
-  void realise()
-  {
-  	std::cout << "VFSModuleObserver::realise\n";
-    if(--m_unrealised == 0)
-    {
-      QE_InitVFS();
-      GlobalFileSystem().initialise();
-    }
-  }
-  void unrealise()
-  {
-  	std::cout << "VFSModuleObserver::unrealise\n";
-    if(++m_unrealised == 1)
-    {
-      GlobalFileSystem().shutdown();
-    }
-  }
-};
-
-VFSModuleObserver g_VFSModuleObserver;
-
 // Home Paths
 
 void HomePaths_Realise()
@@ -229,7 +200,8 @@ ModuleObservers g_enginePathObservers;
 
 void EnginePath_Realise() {
 	HomePaths_Realise();
-	g_VFSModuleObserver.realise();
+	QE_InitVFS();
+	GlobalFileSystem().initialise();
 	
 	// Rebuild the map path basing on the userGamePath (TODO: remove that global)
 	std::string newMapPath = g_qeglobals.m_userGamePath.c_str();
@@ -243,7 +215,7 @@ const char* EnginePath_get() {
 }
 
 void EnginePath_Unrealise() {
-	g_VFSModuleObserver.unrealise();
+	GlobalFileSystem().shutdown();
 	Environment::Instance().setMapsPath("");
 }
 
@@ -551,9 +523,6 @@ void populateRegistry() {
 // This is called from main() to start up the Radiant stuff.
 void Radiant_Initialise() 
 {
-	// Initialise the module server
-	GlobalModuleServer_Initialise();
-  
 	// Load the Radiant modules from the modules/ dir.
 	Radiant_loadModulesFromRoot(AppPath_get());
 
@@ -620,8 +589,6 @@ void Radiant_Shutdown() {
   }
 
   Radiant_Destroy();
-
-  GlobalModuleServer_Shutdown();
 }
 
 void Exit()

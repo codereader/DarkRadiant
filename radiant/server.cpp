@@ -279,22 +279,12 @@ public:
 
 
 Libraries g_libraries;
-RadiantModuleServer g_server;
 
-ModuleServer& GlobalModuleServer_get()
-{
-  return g_server;
+ModuleServer& GlobalModuleServer_get() {
+	static RadiantModuleServer _server;
+	return _server;
 }
 
-void GlobalModuleServer_loadModule(const std::string& filename)
-{
-	g_libraries.registerLibrary(filename, g_server);
-}
-
-void GlobalModuleServer_Initialise()
-{
-}
-
-void GlobalModuleServer_Shutdown()
-{
+void GlobalModuleServer_loadModule(const std::string& filename) {
+	g_libraries.registerLibrary(filename, GlobalModuleServer_get());
 }
