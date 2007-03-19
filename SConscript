@@ -480,7 +480,8 @@ radiant_src = [
 'render/backend/OpenGLStateBucket.cpp',
 'render/backend/OpenGLShader.cpp',
 'render/backend/GLProgramFactory.cpp',
-'settings/GameDescription.cpp'
+'settings/GameDescription.cpp',
+'settings/GameDialog.cpp'
 ]
 
 for i in range(len(radiant_src)):
