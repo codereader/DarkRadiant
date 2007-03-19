@@ -64,6 +64,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "qe3.h"
 #include "gtkdlgs.h"
 
+	namespace {
+		const std::string RKEY_GAME_TYPE = "user/game/type";
+	}
+
 void Interface_constructPreferences(PrefPage* page)
 {
 #ifdef WIN32
@@ -86,74 +90,9 @@ Games selection dialog
 
 #include <map>
 
-inline const char* xmlAttr_getName(xmlAttrPtr attr)
-{
-  return reinterpret_cast<const char*>(attr->name);
-}
-
-inline const char* xmlAttr_getValue(xmlAttrPtr attr)
-{
-  return reinterpret_cast<const char*>(attr->children->content);
-}
-
-// CGameDescription constructor. Create a CGameDescription object from a
-// libxml doc pointer and a game file location.
-
-CGameDescription::CGameDescription(xmlDocPtr pDoc,
-				   const CopiedString & gameFile)
-: _doc(pDoc) // initialise xml::Document member
-{
-
-    xmlNodePtr pNode = pDoc->children;
-
-	// Search for the "game" node. This is the toplevel node so it should be
-	// the only node found.
-    while (strcmp((const char *) pNode->name, "game") && pNode != 0) {
-		pNode = pNode->next;
-    }
-    
-    if (!pNode) {
-	Error
-	    ("Didn't find 'game' node in the game description file '%s'\n",
-	     pDoc->URL);
-    }
-
-	// Read all of the attributes for the <game> node. In vanilla GtkRadiant
-	// these are the only values stored in the .game file.
-    for (xmlAttrPtr attr = pNode->properties; attr != 0; attr = attr->next) {
-		m_gameDescription.
-		    insert(GameDescription:: // map CopiedString -> CopiedString
-			   value_type(xmlAttr_getName(attr), xmlAttr_getValue(attr)));
-    }
-
-    mGameFile = gameFile;
-
-	// Look up the game type attribute and set the appropriate member variable.
-	GameDescription::iterator i = m_gameDescription.find("type");
-	if (i == m_gameDescription.end()) {
-	    globalErrorStream() <<
-		"Warning, 'type' attribute not found in '" <<
-		reinterpret_cast < const char *>(pDoc->URL) << "'\n";
-	    // default
-	    mGameType = "doom3";
-	}
-	else {
-	    mGameType = i->second.c_str();
-	}
-}
-
-void CGameDescription::Dump()
-{
-  globalOutputStream() << "game description file: " << makeQuoted(mGameFile.c_str()) << "\n";
-  for(GameDescription::iterator i = m_gameDescription.begin(); i != m_gameDescription.end(); ++i)
-  {
-    globalOutputStream() << (*i).first.c_str() << " = " << makeQuoted((*i).second.c_str()) << "\n";
-  }
-}
-
 // Global current game settings (loaded from the chosen .game file at startup)
 
-CGameDescription *g_pGameDescription; ///< shortcut to g_GamesDialog.m_pCurrentDescription
+GameDescription* g_pGameDescription; ///< shortcut to g_GamesDialog.m_pCurrentDescription
 
 
 #include "warnings.h"
@@ -223,29 +162,24 @@ void GlobalPreferences_Init()
 
 void CGameDialog::LoadPrefs()
 {
-  // load global .pref file
-  StringOutputStream strGlobalPref(256);
-  strGlobalPref << g_Preferences.m_global_rc_path->str << "global.pref";
+	// load global .pref file
+	std::string globalPrefFile = g_Preferences._globalPrefPath + "global.pref";
+	globalOutputStream() << "loading global preferences from " << makeQuoted(globalPrefFile.c_str()) << "\n";
 
-  globalOutputStream() << "loading global preferences from " << makeQuoted(strGlobalPref.c_str()) << "\n";
-
-  if(!Preferences_Load(g_global_preferences, strGlobalPref.c_str()))
-  {
-    globalOutputStream() << "failed to load global preferences from " << strGlobalPref.c_str() << "\n";
-  }
+	if (!Preferences_Load(g_global_preferences, globalPrefFile.c_str())) {
+		globalOutputStream() << "failed to load global preferences from " << globalPrefFile.c_str() << "\n";
+	}
 }
 
 void CGameDialog::SavePrefs()
 {
-  StringOutputStream strGlobalPref(256);
-  strGlobalPref << g_Preferences.m_global_rc_path->str << "global.pref";
+	std::string globalPrefFile = g_Preferences._globalPrefPath + "global.pref";
 
-  globalOutputStream() << "saving global preferences to " << strGlobalPref.c_str() << "\n";
+	globalOutputStream() << "saving global preferences to " << globalPrefFile.c_str() << "\n";
 
-  if(!Preferences_Save_Safe(g_global_preferences, strGlobalPref.c_str()))
-  {
-    globalOutputStream() << "failed to save global preferences to " << strGlobalPref.c_str() << "\n";
-  }
+	if (!Preferences_Save_Safe(g_global_preferences, globalPrefFile.c_str())) {
+		globalOutputStream() << "failed to save global preferences to " << globalPrefFile.c_str() << "\n";
+	}
 }
 
 void CGameDialog::DoGameDialog()
@@ -257,65 +191,24 @@ void CGameDialog::DoGameDialog()
   SavePrefs();
 }
 
-void CGameDialog::GameFileImport(int value)
-{
-  m_nComboSelect = value;
-  // use value to set m_sGameFile
-  std::list<CGameDescription *>::iterator iGame = mGames.begin();
-  int i;
-  for(i=0; i<value; i++)
-  {
-    ++iGame;
-  }
-  m_sGameFile = (*iGame)->mGameFile;
-}
-
-void CGameDialog::GameFileExport(const IntImportCallback& importCallback) const
-{
-  // use m_sGameFile to set value
-  std::list<CGameDescription *>::const_iterator iGame;
-  int i = 0;
-  for(iGame=mGames.begin(); iGame!=mGames.end(); ++iGame)
-  {
-    if ((*iGame)->mGameFile == m_sGameFile)
-    {
-      m_nComboSelect = i;
-      break;
-    }
-    i++;
-  }
-  importCallback(m_nComboSelect);
-}
-
-void CGameDialog_GameFileImport(CGameDialog& self, int value)
-{
-  self.GameFileImport(value);
-}
-
-void CGameDialog_GameFileExport(CGameDialog& self, const IntImportCallback& importCallback)
-{
-  self.GameFileExport(importCallback);
+void CGameDialog::keyChanged() {
+	m_sGameFile = GlobalRegistry().get(RKEY_GAME_TYPE).c_str();
 }
 
 void CGameDialog::CreateGlobalFrame(PrefPage* page)
 {
-  std::vector<const char*> games;
-  games.reserve(mGames.size());
-  for(std::list<CGameDescription *>::iterator i = mGames.begin(); i != mGames.end(); ++i)
-  {
-    games.push_back((*i)->getRequiredKeyValue("name"));
-  }
-  page->appendCombo(
-    "Select the game",
-    StringArrayRange(&(*games.begin()), &(*games.end())),
-    ReferenceCaller1<CGameDialog, int, CGameDialog_GameFileImport>(*this),
-    ReferenceCaller1<CGameDialog, const IntImportCallback&, CGameDialog_GameFileExport>(*this)
-  );
-  page->appendCheckBox("Startup", "Show Global Preferences", m_bGamePrompt);
+	ComboBoxValueList gameList;
+
+	for (std::list<GameDescription*>::iterator i = mGames.begin(); i != mGames.end(); ++i) {
+		gameList.push_back((*i)->getRequiredKeyValue("name"));
+	}
+	page->appendCombo("Select Game", RKEY_GAME_TYPE, gameList); 
+
+	page->appendCheckBox("Startup", "Show Global Preferences", m_bGamePrompt);
 }
 
 GtkWindow* CGameDialog::BuildDialog()
-{
+{	
   GtkFrame* frame = create_dialog_frame("Game settings", GTK_SHADOW_ETCHED_IN);
 
   GtkVBox* vbox2 = create_dialog_vbox(0, 4);
@@ -335,8 +228,8 @@ GtkWindow* CGameDialog::BuildDialog()
 class GameFileLoader {
 
 	// Reference to external list of valid game descriptions. See the
-	// CGameDescription decl for more info.
-    std::list < CGameDescription * >&mGames;
+	// GameDescription decl for more info.
+    std::list < GameDescription * >&mGames;
 
 	// Path to the game file to be added
     const char *mPath;
@@ -344,7 +237,7 @@ class GameFileLoader {
   public:
 
 	// Constructor
-    GameFileLoader(std::list < CGameDescription * >&games, const char *path):
+    GameFileLoader(std::list < GameDescription * >&games, const char *path):
     	mGames(games), 
     	mPath(path) {}
 	
@@ -354,11 +247,11 @@ class GameFileLoader {
 		// Only operate on .game files
 		if (!extension_equal(path_get_extension(name), "game")) {
 		    return;
-		} 
+		}
 
 		// Debug output
-		StringOutputStream strPath(256);
-		strPath << mPath << name;
+		std::string strPath = mPath;
+		strPath += name;
 		globalOutputStream() << strPath.c_str() << '\n';
 
 		// Handle the XML file via libxml2
@@ -366,7 +259,8 @@ class GameFileLoader {
 	
 		if (pDoc) {
 			// Parse success, add to list
-		    mGames.push_front(new CGameDescription(pDoc, name));
+			std::string fileName = name;
+		    mGames.push_front(new GameDescription(xml::Document(pDoc), fileName));
 		}
 		else {
 			// Error
@@ -387,13 +281,12 @@ void CGameDialog::ScanForGames()
 	Directory_forEach(gamesPath.c_str(), GameFileLoader(mGames, gamesPath.c_str()));
 }
 
-CGameDescription* CGameDialog::GameDescriptionForComboItem()
-{
-  std::list<CGameDescription *>::iterator iGame;
+GameDescription* CGameDialog::GameDescriptionForRegistryKey() {
+  std::list<GameDescription *>::iterator iGame;
   int i=0;
   for(iGame=mGames.begin(); iGame!=mGames.end(); ++iGame,i++)
   {
-    if (i == m_nComboSelect)
+    if (i == GlobalRegistry().getInt(RKEY_GAME_TYPE))
     {
       return (*iGame);
     }
@@ -402,18 +295,16 @@ CGameDescription* CGameDialog::GameDescriptionForComboItem()
 }
 
 void CGameDialog::InitGlobalPrefPath() {
-	g_Preferences.m_global_rc_path = g_string_new(
-		GlobalRegistry().get(RKEY_SETTINGS_PATH).c_str()
-	);
+	g_Preferences._globalPrefPath = GlobalRegistry().get(RKEY_SETTINGS_PATH);
 }
 
 void CGameDialog::Reset()
 {
-  if (!g_Preferences.m_global_rc_path)
-    InitGlobalPrefPath();
-  StringOutputStream strGlobalPref(256);
-  strGlobalPref << g_Preferences.m_global_rc_path->str << "global.pref";
-  file_remove(strGlobalPref.c_str());
+	if (g_Preferences._globalPrefPath.empty()) {
+		InitGlobalPrefPath();
+	}
+	std::string globalPrefFile = g_Preferences._globalPrefPath + "global.pref";
+	file_remove(globalPrefFile.c_str());
 }
 
 // Main initialisation routine for the game selection dialog. Scanning for
@@ -421,45 +312,46 @@ void CGameDialog::Reset()
 
 void CGameDialog::Init() {
 
+	GlobalRegistry().addKeyObserver(this, RKEY_GAME_TYPE);
+
     InitGlobalPrefPath();
     LoadPrefs();
+
+	GameDescription* currentGameDescription = NULL;
 
     // Look for .game files and exit if no valid ones found
     ScanForGames();
     if (mGames.empty()) {
         Error("Didn't find any valid game file descriptions, aborting\n");
     }
-
-    CGameDescription *currentGameDescription = 0;
-
+    
+    // If the prompt is disabled, load the game type from the registry
     if (!m_bGamePrompt) {
-        // search by .game name
-        std::list < CGameDescription * >::iterator iGame;
-        for (iGame = mGames.begin(); iGame != mGames.end(); ++iGame) {
-            if ((*iGame)->mGameFile == m_sGameFile) {
-                currentGameDescription = (*iGame);
-                break;
-            }
-        }
-    }
+		GameDescriptionForRegistryKey();
+	}
 
     if (m_bGamePrompt || !currentGameDescription) {
-        Create();
-        DoGameDialog();
-        // use m_nComboSelect to identify the game to run as and set the globals
-        currentGameDescription = GameDescriptionForComboItem();
-        ASSERT_NOTNULL(currentGameDescription);
+		if (mGames.size() == 1) {
+			// greebo: There is only one game type available, take it
+			currentGameDescription = *mGames.begin();
+		}
+		else {
+			Create();
+			DoGameDialog();
+			// use m_nComboSelect to identify the game to run as and set the globals
+			currentGameDescription = GameDescriptionForRegistryKey();
+			ASSERT_NOTNULL(currentGameDescription);
+		}
     }
 
     // Set the global game description
     g_pGameDescription = currentGameDescription;
-    g_pGameDescription->Dump();
 }
 
 
 CGameDialog::~CGameDialog() {
     // free all the game descriptions
-    std::list < CGameDescription * >::iterator iGame;
+    std::list < GameDescription * >::iterator iGame;
     for (iGame = mGames.begin(); iGame != mGames.end(); ++iGame) {
         delete(*iGame);
         *iGame = 0;
@@ -469,7 +361,7 @@ CGameDialog::~CGameDialog() {
     }
 }
 
-inline const char* GameDescription_getIdentifier(const CGameDescription& gameDescription)
+inline const char* GameDescription_getIdentifier(const GameDescription& gameDescription)
 {
   const char* identifier = gameDescription.getKeyValue("index");
   if(string_empty(identifier))
@@ -483,7 +375,7 @@ void CGameDialog::AddPacksURL(StringOutputStream &URL)
 {
   // add the URLs for the list of game packs installed
   // FIXME: this is kinda hardcoded for now..
-  std::list<CGameDescription *>::iterator iGame;
+  std::list<GameDescription *>::iterator iGame;
   for(iGame=mGames.begin(); iGame!=mGames.end(); ++iGame)
   {
     URL << "&Games_dlup%5B%5D=" << GameDescription_getIdentifier(*(*iGame));
@@ -530,12 +422,11 @@ look in ~/.radiant/<version>/gamename
 
 void PrefsDlg::Init()
 {
-  // m_global_rc_path has been set above
   // m_rc_path is for game specific preferences
   // takes the form: global-pref-path/gamename/prefs-file
 
   // this is common to win32 and Linux init now
-  m_rc_path = g_string_new (m_global_rc_path->str);
+  m_rc_path = g_string_new (_globalPrefPath.c_str());
   
   // game sub-dir
   g_string_append (m_rc_path, g_pGameDescription->mGameFile.c_str());

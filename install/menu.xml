@@ -16,7 +16,7 @@
 		<menuSeparator />
 		<menuItem name="refreshModels" caption="_Refresh Models" command="RefreshReferences" />
 		<menuSeparator />
-		<menuItem name="projectSettings" caption="Pro_ject settings" command="ProjectSettings" />
+		<menuItem name="gameSelector" caption="Select _Game..." command="ProjectSettings" />
 		<menuSeparator />
 		<menuItem name="pointfile" caption="_Pointfile" command="TogglePointfile" icon="pointfile16.png"/>
 		<menuSeparator />

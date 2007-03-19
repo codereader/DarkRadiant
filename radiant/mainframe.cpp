@@ -194,7 +194,6 @@ void HomePaths_Realise()
 // Engine Path
 
 CopiedString g_strEnginePath;
-ModuleObservers g_enginePathObservers;
 
 void EnginePath_Realise() {
 	HomePaths_Realise();
@@ -423,7 +422,7 @@ void populateRegistry() {
 	
 	// Traverse the game files stored in the GamesDialog class and load them into the registry
 	// The information stored in the game files is needed to successfully instantiate the other modules
-	for (std::list<CGameDescription*>::iterator game = g_GamesDialog.mGames.begin(); 
+	for (std::list<GameDescription*>::iterator game = g_GamesDialog.mGames.begin(); 
 		 game != g_GamesDialog.mGames.end(); game++) 
 	{
 		// Construct the filename and load it into the registry
