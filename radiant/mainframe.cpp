@@ -194,17 +194,6 @@ public:
 
 VFSModuleObserver g_VFSModuleObserver;
 
-void VFS_Construct()
-{
-	std::cout << "VFS_Construct\n";
-    Radiant_attachHomePathsObserver(g_VFSModuleObserver);
-}
-void VFS_Destroy()
-{
-	std::cout << "VFS_Destroy\n";
-    Radiant_detachHomePathsObserver(g_VFSModuleObserver);
-}
-
 // Home Paths
 
 void HomePaths_Realise()
@@ -233,20 +222,6 @@ void HomePaths_Realise()
   Q_mkdir(g_qeglobals.m_userGamePath.c_str());
 }
 
-ModuleObservers g_homePathObservers;
-
-void Radiant_attachHomePathsObserver(ModuleObserver& observer)
-{
-	std::cout << "Radiant_attachHomePathsObserver\n";
-  g_homePathObservers.attach(observer);
-}
-
-void Radiant_detachHomePathsObserver(ModuleObserver& observer)
-{
-	std::cout << "Radiant_detachHomePathsObserver\n";
-  g_homePathObservers.detach(observer);
-}
-
 // Engine Path
 
 CopiedString g_strEnginePath;
@@ -254,7 +229,13 @@ ModuleObservers g_enginePathObservers;
 
 void EnginePath_Realise() {
 	HomePaths_Realise();
-	g_homePathObservers.realise();
+	g_VFSModuleObserver.realise();
+	
+	// Rebuild the map path basing on the userGamePath (TODO: remove that global)
+	std::string newMapPath = g_qeglobals.m_userGamePath.c_str();
+	newMapPath += "maps/";
+	Q_mkdir(newMapPath.c_str());
+	Environment::Instance().setMapsPath(newMapPath);
 }
 
 const char* EnginePath_get() {
@@ -262,7 +243,8 @@ const char* EnginePath_get() {
 }
 
 void EnginePath_Unrealise() {
-	g_homePathObservers.unrealise();
+	g_VFSModuleObserver.unrealise();
+	Environment::Instance().setMapsPath("");
 }
 
 void setEnginePath(const char* path)

@@ -75,6 +75,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkdlgs.h"
 #include "points.h"
 #include "qe3.h"
+#include "environment.h"
 #include "mainframe.h"
 #include "preferences.h"
 #include "referencecache.h"
@@ -1999,11 +2000,8 @@ void NewMap() {
 /* Maintain and return the path to the maps directory
  */
 
-CopiedString g_mapsPath;
-
-const char* getMapsPath()
-{
-  return g_mapsPath.c_str();
+const char* getMapsPath() {
+	return Environment::Instance().getMapsPath().c_str();
 }
 
 void OpenMap()
@@ -2376,36 +2374,6 @@ public:
 
 MapEntityClasses g_MapEntityClasses;
 
-
-class MapModuleObserver : public ModuleObserver
-{
-  std::size_t m_unrealised;
-public:
-  MapModuleObserver() : m_unrealised(1)
-  {
-  }
-  void realise()
-  {
-    if(--m_unrealised == 0)
-    {
-      ASSERT_MESSAGE(!string_empty(g_qeglobals.m_userGamePath.c_str()), "maps_directory: user-game-path is empty");
-      StringOutputStream buffer(256);
-      buffer << g_qeglobals.m_userGamePath.c_str() << "maps/";
-      Q_mkdir(buffer.c_str());
-      g_mapsPath = buffer.c_str();
-    }
-  }
-  void unrealise()
-  {
-    if(++m_unrealised == 1)
-    {
-      g_mapsPath = "";
-    }
-  }
-};
-
-MapModuleObserver g_MapModuleObserver;
-
 #include "preferencesystem.h"
 
 void Map_Construct()
@@ -2419,11 +2387,9 @@ void Map_Construct()
   GlobalPreferenceSystem().registerPreference("MapInfoDlg", WindowPositionImportStringCaller(g_posMapInfoWnd), WindowPositionExportStringCaller(g_posMapInfoWnd));
   
   GlobalEntityClassManager().attach(g_MapEntityClasses);
-  Radiant_attachHomePathsObserver(g_MapModuleObserver);
 }
 
 void Map_Destroy()
 {
-  Radiant_detachHomePathsObserver(g_MapModuleObserver);
   GlobalEntityClassManager().detach(g_MapEntityClasses);
 }

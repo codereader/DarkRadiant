@@ -205,10 +205,6 @@ void gamemode_set(const char* gamemode);
 void VFS_Construct();
 void VFS_Destroy();
 
-void Radiant_attachHomePathsObserver(ModuleObserver& observer);
-void Radiant_detachHomePathsObserver(ModuleObserver& observer);
-
-
 void MainFrame_Construct();
 void MainFrame_Destroy();
 
