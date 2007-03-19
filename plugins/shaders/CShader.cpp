@@ -10,8 +10,8 @@
 namespace {
 	
 	// Default image maps for optional material stages
-	const std::string IMAGE_FLAT = "bitmaps/_flat.bmp";
-	const std::string IMAGE_BLACK = "bitmaps/_black.bmp";
+	const std::string IMAGE_FLAT = "_flat.bmp";
+	const std::string IMAGE_BLACK = "_black.bmp";
 	
 	// Registry path for default light shader
 	const std::string DEFAULT_LIGHT_PATH = "game/defaults/lightShader";	
@@ -136,7 +136,7 @@ TexturePtr CShader::getBump() {
 			// GLTextureManager ("" would return SHADER NOT FOUND).
 			_bumpName = IMAGE_FLAT;
 			cons = TextureConstructorPtr(
-				new FileLoader(GlobalRadiant().getAppPath() + IMAGE_FLAT, "bmp")
+				new FileLoader(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_FLAT, "bmp")
 			);
 		}
 		
@@ -163,8 +163,7 @@ TexturePtr CShader::getSpecular() {
 			// Load the _black image
 			_specularName = IMAGE_BLACK;
 			cons = TextureConstructorPtr(
-				new FileLoader(GlobalRadiant().getAppPath() + IMAGE_BLACK, 
-							   "bmp")
+				new FileLoader(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_BLACK, "bmp")
 			);
 		}
 

@@ -15,14 +15,14 @@ public:
     {
       glGenProgramsARB(1, &m_vertex_program);
       glBindProgramARB(GL_VERTEX_PROGRAM_ARB, m_vertex_program);
-      std::string filename = std::string(GlobalRadiant().getAppPath())
+      std::string filename = GlobalRegistry().get("user/paths/appPath")
       						 + "gl/zfill_vp.glp";
       createARBProgram(filename.c_str(), GL_VERTEX_PROGRAM_ARB);
 
       glGenProgramsARB(1, &m_fragment_program);
       glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, m_fragment_program);
       
-      filename = std::string(GlobalRadiant().getAppPath())
+      filename = GlobalRegistry().get("user/paths/appPath")
       			 + "gl/zfill_fp.glp";
       createARBProgram(filename.c_str(), GL_FRAGMENT_PROGRAM_ARB);
     }

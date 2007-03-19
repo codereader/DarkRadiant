@@ -127,7 +127,6 @@ public:
   	m_radiantcore.setStatusText = Sys_Status;
   	
     m_radiantcore.getEnginePath = &EnginePath_get;
-    m_radiantcore.getAppPath = &AppPath_get;
     m_radiantcore.getMapsPath = &getMapsPath;
 
     m_radiantcore.getGameName = &gamename_get;

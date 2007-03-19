@@ -248,10 +248,6 @@ void setEnginePath(const char* path)
   }
 }
 
-const char* AppPath_get() {
-	return Environment::Instance().getAppPath().c_str();
-}
-
 void EnginePathImport(CopiedString& self, const char* value)
 {
   setEnginePath(value);
@@ -405,7 +401,7 @@ ModuleObservers g_gameToolsPathObservers;
 void populateRegistry() {
 	
 	// Load the XML files from the installation directory
-	std::string base = AppPath_get();
+	std::string base = GlobalRegistry().get(RKEY_APP_PATH);
 
 	try {
 		// Load all of the required XML files
@@ -431,7 +427,7 @@ void populateRegistry() {
 		 game != g_GamesDialog.mGames.end(); game++) 
 	{
 		// Construct the filename and load it into the registry
-		const std::string filename = std::string(AppPath_get()) + "games/" + (*game)->mGameFile.c_str();  	
+		const std::string filename = base + "games/" + (*game)->mGameFile.c_str();  	
 		GlobalRegistry().import(filename, "", Registry::treeUser);
 	}
   

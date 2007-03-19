@@ -177,14 +177,6 @@ std::string Environment::getAppPath() {
 	return _appPath;
 }
 
-std::string Environment::getSettingsPath() {
-	return _settingsPath;
-}
-
-std::string Environment::getBitmapsPath() {
-	return _bitmapsPath;
-}
-
 Environment& Environment::Instance() {
 	static Environment _instance;
 	return _instance;

@@ -379,14 +379,12 @@ class GameFileLoader {
 
 void CGameDialog::ScanForGames()
 {
-	StringOutputStream strGamesPath(256);
-	strGamesPath << AppPath_get() << "games/";
-	const char *path = strGamesPath.c_str();
-
-	globalOutputStream() << "Scanning for game description files: " << path << '\n';
+	std::string gamesPath = GlobalRegistry().get(RKEY_APP_PATH) + "games/";
+	
+	globalOutputStream() << "Scanning for game description files: " << gamesPath.c_str() << '\n';
 
 	// Invoke a GameFileLoader functor on every file in the games/ dir.
-	Directory_forEach(path, GameFileLoader(mGames, path));
+	Directory_forEach(gamesPath.c_str(), GameFileLoader(mGames, gamesPath.c_str()));
 }
 
 CGameDescription* CGameDialog::GameDescriptionForComboItem()
