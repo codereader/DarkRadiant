@@ -1,6 +1,6 @@
 #include "MapFileManager.h"
 
-#include "iradiant.h"
+#include "iregistry.h"
 #include "ifiletypes.h"
 #include "mainframe.h"
 #include "gtkutil/filechooser.h"
@@ -12,11 +12,6 @@
 namespace map
 {
 
-// Private constructor
-MapFileManager::MapFileManager()
-: _lastDir(GlobalRadiant().getMapsPath())
-{ }
-
 // Instance owner method
 MapFileManager& MapFileManager::getInstance() {
 	static MapFileManager _instance;
@@ -27,6 +22,12 @@ MapFileManager& MapFileManager::getInstance() {
 std::string MapFileManager::selectFile(bool open, 
 	const std::string& title, const std::string& type) 
 {
+	// Check, if the lastdir contains at least anything and load
+	// the default map path if it's empty
+	if (_lastDir.empty()) {
+		_lastDir = GlobalRegistry().get("user/paths/mapPath");
+	}
+	
 	// Display a file chooser dialog to get a new path
 	std::string filePath = 
 		os::standardPath(file_dialog(GTK_WIDGET(MainFrame_getWindow()), 
