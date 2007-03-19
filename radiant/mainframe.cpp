@@ -247,51 +247,22 @@ void Radiant_detachHomePathsObserver(ModuleObserver& observer)
   g_homePathObservers.detach(observer);
 }
 
-class HomePathsModuleObserver : public ModuleObserver
-{
-  std::size_t m_unrealised;
-public:
-  HomePathsModuleObserver() : m_unrealised(1)
-  {
-  }
-  void realise()
-  {
-  	std::cout << "HomePathsModuleObserver::realise\n";
-    if(--m_unrealised == 0)
-    {
-      HomePaths_Realise();
-      g_homePathObservers.realise();
-    }
-  }
-  void unrealise()
-  {
-  	std::cout << "HomePathsModuleObserver::unrealise\n";
-    if(++m_unrealised == 1)
-    {
-      g_homePathObservers.unrealise();
-    }
-  }
-};
-
-HomePathsModuleObserver g_HomePathsModuleObserver;
-
 // Engine Path
 
 CopiedString g_strEnginePath;
 ModuleObservers g_enginePathObservers;
 
 void EnginePath_Realise() {
-	g_HomePathsModuleObserver.realise();
+	HomePaths_Realise();
+	g_homePathObservers.realise();
 }
 
-
-const char* EnginePath_get()
-{
-  return g_strEnginePath.c_str();
+const char* EnginePath_get() {
+	return g_strEnginePath.c_str();
 }
 
 void EnginePath_Unrealise() {
-	g_HomePathsModuleObserver.unrealise();
+	g_homePathObservers.unrealise();
 }
 
 void setEnginePath(const char* path)
