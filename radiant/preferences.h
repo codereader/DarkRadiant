@@ -34,6 +34,7 @@ please contact Id Software immediately at info@idsoftware.com.
 #include "xmlutil/Document.h"
 
 #include "libxml/parser.h"
+#include "settings/GameDescription.h"
 #include "dialog.h"
 #include <list>
 #include <map>
@@ -216,73 +217,7 @@ typedef MemberCaller1<LatchedBool, bool, &LatchedBool::import> LatchedBoolImport
 typedef LatchedValue<int> LatchedInt;
 typedef MemberCaller1<LatchedInt, int, &LatchedInt::import> LatchedIntImportCaller;
 
-/*!
-holds information for a given game
-I'm a bit unclear on that still
-it holds game specific configuration stuff
-such as base names, engine names, some game specific features to activate in the various modules
-it is not strictly a prefs thing since the user is not supposed to edit that (unless he is hacking
-support for a new game)
-
-what we do now is fully generate the information for this during the setup. We might want to
-generate a piece that just says "the game pack is there", but put the rest of the config somwhere
-else (i.e. not generated, copied over during setup .. for instance in the game tools directory)
-*/
-class CGameDescription
-{
-private:
-
-	typedef std::map<CopiedString, CopiedString> GameDescription;
-
-	// xml::Document object constructed from the provided xmlDocPtr
-	xml::Document _doc;
-
-public:
-  CopiedString mGameFile; ///< the .game file that describes this game
-  GameDescription m_gameDescription;
-
-  CopiedString mGameType; ///< the type of the engine
-
-  const char* getKeyValue(const char* key) const
-  {
-    GameDescription::const_iterator i = m_gameDescription.find(key);
-    if(i != m_gameDescription.end())
-    {
-      return (*i).second.c_str();
-    }
-    return "";
-  }
-  const char* getRequiredKeyValue(const char* key) const
-  {
-    GameDescription::const_iterator i = m_gameDescription.find(key);
-    if(i != m_gameDescription.end())
-    {
-      return (*i).second.c_str();
-    }
-    ERROR_MESSAGE("game attribute " << makeQuoted(key) << " not found in " << makeQuoted(mGameFile.c_str()));
-    return "";
-  }
-
-	/** Return the xml::NodeList corresponding to the provided XPath expression, which
-	 * is evaluated against the game XML file.
-	 * 
-	 * @param path
-	 * String containing the XPath expression to evaluate
-	 * 
-	 * @returns
-	 * xml::NodeList with the matching nodes (if any).
-	 */
-	 
-	xml::NodeList getXPath(const std::string& path) {
-		return _doc.findXPath(path);
-	}
-
-  CGameDescription(xmlDocPtr pDoc, const CopiedString &GameFile);
-
-  void Dump();
-};
-
-extern CGameDescription *g_pGameDescription;
+extern GameDescription *g_pGameDescription;
 
 typedef struct _GtkWidget GtkWidget;
 class PrefsDlg;
@@ -294,14 +229,14 @@ class StringOutputStream;
 /*!
 standalone dialog for games selection, and more generally global settings
 */
-class CGameDialog : public Dialog
+class CGameDialog : 
+	public Dialog,
+	public RegistryKeyObserver
 {
-protected:
-  
-  mutable int m_nComboSelect; ///< intermediate int value for combo in dialog box
-
 public:
 
+	// Gets notified upon game type changes
+	void keyChanged();
   /*! 
   those settings are saved in the global prefs file 
   I'm too lazy to wrap behind protected access, not sure this needs to be public
@@ -322,7 +257,7 @@ public:
   /*!
   the list of game descriptions we scanned from the game/ dir
   */
-  std::list<CGameDescription*> mGames;
+  std::list<GameDescription*> mGames;
 
   CGameDialog() :
     m_sGameFile(""),
@@ -393,7 +328,7 @@ private:
   /*!
   uses m_nComboItem to find the right mGames
   */
-  CGameDescription *GameDescriptionForComboItem();
+  GameDescription *GameDescriptionForRegistryKey();
 };
 
 /*!
@@ -413,7 +348,7 @@ class PrefsDlg : public Dialog {
 	
 public:
 protected:
-	std::list<CGameDescription *> mGames;
+	std::list<GameDescription *> mGames;
 
 public:
 
@@ -424,12 +359,7 @@ public:
 		g_string_free (m_inipath, true );
 	}
 
-	/*!
-	path for global settings
-	win32: AppPath
-	linux: ~/.radiant/[version]/
-	*/
-	GString *m_global_rc_path;
+	std::string _globalPrefPath;
 
 	/*!
 	path to per-game settings

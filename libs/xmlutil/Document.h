@@ -28,6 +28,9 @@ public:
 
     // Construct a Document wrapper from the provided xmlDocPtr.
 	Document(xmlDocPtr doc);
+	
+	// Copy constructor
+	Document(const Document& other);
     
     // Evaluate the given XPath expression and return a NodeList of matching
     // nodes.

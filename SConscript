@@ -479,7 +479,8 @@ radiant_src = [
 'map/RegionManager.cpp',
 'render/backend/OpenGLStateBucket.cpp',
 'render/backend/OpenGLShader.cpp',
-'render/backend/GLProgramFactory.cpp'
+'render/backend/GLProgramFactory.cpp',
+'settings/GameDescription.cpp'
 ]
 
 for i in range(len(radiant_src)):

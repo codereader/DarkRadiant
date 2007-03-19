@@ -12,8 +12,11 @@ namespace xml
 
 Document::Document(xmlDocPtr doc):
     _xmlDoc(doc)
-{
-}
+{}
+
+Document::Document(const Document& other) :
+	_xmlDoc(other._xmlDoc) 
+{}
 
 // Evaluate an XPath expression and return matching Nodes.
 
