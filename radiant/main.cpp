@@ -255,11 +255,6 @@ void createPIDFile(const std::string& name) {
 		Preferences_Reset();
 	}
 #endif
-
-    // set without saving, the class is not in a coherent state yet
-    // just do the value change and call to start logging, CGamesDialog will pickup when relevant
-    g_GamesDialog.m_bForceLogConsole = true;
-    Sys_LogFile(true);
   }
 
 	// create a primary .pid for global init run
@@ -314,15 +309,7 @@ int main (int argc, char* argv[])
   g_GamesDialog.Init();
   g_Preferences.Init(); 
 
-  // in a very particular post-.pid startup
-  // we may have the console turned on and want to keep it that way
-  // so we use a latching system
-  if (g_GamesDialog.m_bForceLogConsole)
-  {
-    Sys_LogFile(true);
-    g_Console_enableLogging = true;
-    g_GamesDialog.m_bForceLogConsole = false;
-  }
+	Sys_LogFile(true);
 
   Radiant_Initialise();
 
