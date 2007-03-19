@@ -35,6 +35,7 @@ please contact Id Software immediately at info@idsoftware.com.
 
 #include "libxml/parser.h"
 #include "settings/GameDescription.h"
+#include "settings/GameDialog.h"
 #include "dialog.h"
 #include <list>
 #include <map>
@@ -227,114 +228,9 @@ class PrefPage;
 class StringOutputStream;
 
 /*!
-standalone dialog for games selection, and more generally global settings
-*/
-class CGameDialog : 
-	public Dialog,
-	public RegistryKeyObserver
-{
-public:
-
-	// Gets notified upon game type changes
-	void keyChanged();
-  /*! 
-  those settings are saved in the global prefs file 
-  I'm too lazy to wrap behind protected access, not sure this needs to be public
-  NOTE: those are preference settings. if you change them it is likely that you would
-  have to restart the editor for them to take effect
-  */
-  /*@{*/
-  /*!
-  what game has been selected
-  this is the name of the .game file
-  */
-  CopiedString m_sGameFile;
-  /*!
-  prompt which game to load on startup
-  */
-  bool m_bGamePrompt;
-  
-  /*!
-  the list of game descriptions we scanned from the game/ dir
-  */
-  std::list<GameDescription*> mGames;
-
-  CGameDialog() :
-    m_sGameFile(""),
-    m_bGamePrompt(false)
-  {
-  }
-  virtual ~CGameDialog(); 
-
-  void AddPacksURL(StringOutputStream &s);  
-    
-  /*!
-  intialize the game dialog, called at CPrefsDlg::Init
-  will scan for games, load prefs, and do game selection dialog if needed
-  */
-  void Init();
-
-  /*!
-  reset the global settings by removing the file
-  */
-  void Reset();
-
-  /*!
-  run the dialog UI for the list of games 
-  */
-  void DoGameDialog();
-
-  /*!
-  Dialog API
-  this is only called when the dialog is built at startup for main engine select
-  */
-  GtkWindow* BuildDialog();
-
-  void GameFileImport(int value);
-  void GameFileExport(const IntImportCallback& importCallback) const;
-
-  /*!
-  construction of the dialog frame
-  this is the part to be re-used in prefs dialog
-  for the standalone dialog, we include this in a modal box
-  for prefs, we hook the frame in the main notebook
-  build the frame on-demand (only once)
-  */
-  void CreateGlobalFrame(PrefPage* page);
-
-  /*!
-  global preferences subsystem
-  XML-based this time, hopefully this will generalize to other prefs
-  LoadPrefs has hardcoded defaults
-  NOTE: it may not be strictly 'CGameDialog' to put the global prefs here
-    could have named the class differently I guess
-  */
-  /*@{*/
-  void LoadPrefs(); ///< load from file into variables
-  void SavePrefs(); ///< save pref variables to file
-  /*@}*/
-
-private:
-  /*!
-  scan for .game files, load them
-  */
-  void ScanForGames();
-
-  /*!
-  inits g_Preferences.m_global_rc_path
-  */
-  void InitGlobalPrefPath();
-
-  /*!
-  uses m_nComboItem to find the right mGames
-  */
-  GameDescription *GameDescriptionForRegistryKey();
-};
-
-/*!
 this holds global level preferences
 */
-extern CGameDialog g_GamesDialog;
+extern GameDialog g_GamesDialog;
 
 
 class TexDef;
@@ -420,6 +316,10 @@ void Preferences_Init();
 
 void Preferences_Load();
 void Preferences_Save();
+class PreferenceDictionary;
+bool Preferences_Load(PreferenceDictionary& preferences, const char* filename);
+bool Preferences_Save(PreferenceDictionary& preferences, const char* filename);
+bool Preferences_Save_Safe(PreferenceDictionary& preferences, const char* filename);
 
 void Preferences_Reset();
 
