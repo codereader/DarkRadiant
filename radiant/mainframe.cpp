@@ -252,12 +252,6 @@ const char* AppPath_get() {
 	return Environment::Instance().getAppPath().c_str();
 }
 
-/// directory for temp files
-/// NOTE: on *nix this is were we check for .pid
-const char* SettingsPath_get() {
-	return Environment::Instance().getSettingsPath().c_str();
-}
-
 void EnginePathImport(CopiedString& self, const char* value)
 {
   setEnginePath(value);
@@ -443,17 +437,17 @@ void populateRegistry() {
   
 	// Load user preferences, these overwrite any values that have defined before
 	// The called method also checks for any upgrades that have to be performed
-	const std::string userSettingsFile = std::string(SettingsPath_get()) + "user.xml";
+	const std::string userSettingsFile = GlobalRegistry().get(RKEY_SETTINGS_PATH) + "user.xml";
 	if (file_exists(userSettingsFile.c_str())) {
 		GlobalRegistry().import(userSettingsFile, "", Registry::treeUser);
 	}
 	
-	const std::string userColoursFile = std::string(SettingsPath_get()) + "colours.xml";
+	const std::string userColoursFile = GlobalRegistry().get(RKEY_SETTINGS_PATH) + "colours.xml";
 	if (file_exists(userColoursFile.c_str())) {
 		GlobalRegistry().import(userColoursFile, "user/ui", Registry::treeUser);
 	}
 	
-	const std::string userInputFile = std::string(SettingsPath_get()) + "input.xml";
+	const std::string userInputFile = GlobalRegistry().get(RKEY_SETTINGS_PATH) + "input.xml";
 	if (file_exists(userInputFile.c_str())) {
 		GlobalRegistry().import(userInputFile, "user/ui", Registry::treeUser);
 	}
@@ -488,14 +482,14 @@ void Radiant_Shutdown() {
 	GlobalMRU().saveRecentFiles();
 	
 	// Export the colour schemes and remove them from the registry
-	GlobalRegistry().exportToFile("user/ui/colourschemes", std::string(SettingsPath_get()) + "colours.xml");
+	GlobalRegistry().exportToFile("user/ui/colourschemes", GlobalRegistry().get(RKEY_SETTINGS_PATH) + "colours.xml");
 	GlobalRegistry().deleteXPath("user/ui/colourschemes");
 	
 	// Save the current event set to the Registry and export it 
 	GlobalEventManager().saveEventListToRegistry();
 	
 	// Export the input definitions into the user's settings folder and remove them as well
-	GlobalRegistry().exportToFile("user/ui/input", std::string(SettingsPath_get()) + "input.xml");
+	GlobalRegistry().exportToFile("user/ui/input", GlobalRegistry().get(RKEY_SETTINGS_PATH) + "input.xml");
 	GlobalRegistry().deleteXPath("user/ui/input");
 	
 	// Delete all nodes marked as "transient", they are NOT exported into the user's xml file
@@ -507,7 +501,7 @@ void Radiant_Shutdown() {
 	GlobalRegistry().deleteXPath("user/ui/interface");
 	
 	// Save the remaining /darkradiant/user tree to user.xml so that the current settings are preserved
-	GlobalRegistry().exportToFile("user", std::string(SettingsPath_get()) + "user.xml");
+	GlobalRegistry().exportToFile("user", GlobalRegistry().get(RKEY_SETTINGS_PATH) + "user.xml");
 
   g_gameNameObservers.unrealise();
   g_gameModeObservers.unrealise();

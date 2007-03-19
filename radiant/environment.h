@@ -29,6 +29,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		const std::string RKEY_HOME_PATH = "user/paths/homePath";
 		const std::string RKEY_SETTINGS_PATH = "user/paths/settingsPath";
 		const std::string RKEY_BITMAPS_PATH = "user/paths/bitmapsPath";
+		const std::string RKEY_ENGINE_PATH = "user/paths/enginePath";
+		const std::string RKEY_MAP_PATH = "user/paths/mapPath";
 	}
 
 /** greebo: A base class initialised right at the startup holding 

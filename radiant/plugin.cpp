@@ -128,7 +128,6 @@ public:
   	
     m_radiantcore.getEnginePath = &EnginePath_get;
     m_radiantcore.getAppPath = &AppPath_get;
-    m_radiantcore.getSettingsPath = &SettingsPath_get;
     m_radiantcore.getMapsPath = &getMapsPath;
 
     m_radiantcore.getGameName = &gamename_get;
