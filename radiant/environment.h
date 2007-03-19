@@ -34,6 +34,8 @@ class Environment
 	std::string _homePath;
 	std::string _settingsPath;
 	std::string _bitmapsPath;
+	
+	std::string _mapsPath;
 
 public:
 	// Call this with the arguments from main()
@@ -45,6 +47,10 @@ public:
 	std::string getAppPath();
 	std::string getSettingsPath();
 	std::string getBitmapsPath();
+	
+	// Get/set the path where the .map files are stored
+	std::string getMapsPath();
+	void setMapsPath(const std::string& path);
 	
 	// Contains the static instance
 	static Environment& Instance();

@@ -189,6 +189,14 @@ Environment& Environment::Instance() {
 	return _instance;
 }
 
+std::string Environment::getMapsPath() {
+	return _mapsPath;
+}
+
+void Environment::setMapsPath(const std::string& path) {
+	_mapsPath = path;
+}
+
 void Environment::initPaths() {
 	
 	if (!boost::algorithm::ends_with(_homePath, "/")) {
