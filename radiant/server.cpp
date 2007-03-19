@@ -23,12 +23,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 #include "warnings.h"
 #include "os/path.h"
+#include "os/dir.h"
+#include "itextstream.h"
 #include "modulesystem.h"
 
 #include <vector>
 #include <map>
 #include <string>
 #include <iostream>
+#include <boost/algorithm/string/predicate.hpp>
+
+	namespace {
+		const std::string PLUGINS_DIR = "plugins/"; ///< name of plugins directory, always sub-directory of toolspath
+		const std::string MODULES_DIR = "modules/"; ///< name of modules directory, always sub-directory of toolspath
+	}
 
 class RadiantModuleServer : public ModuleServer
 {
@@ -277,14 +285,42 @@ public:
   }
 };
 
-
-Libraries g_libraries;
-
 ModuleServer& GlobalModuleServer_get() {
 	static RadiantModuleServer _server;
 	return _server;
 }
 
-void GlobalModuleServer_loadModule(const std::string& filename) {
-	g_libraries.registerLibrary(filename, GlobalModuleServer_get());
+// Constructor sets platform-specific extension to match
+ModuleLoader::ModuleLoader(const std::string& path) : 
+	_path(path),
+#if defined(WIN32)
+	  _ext(".dll")
+#elif defined(POSIX)
+	  _ext(".so")
+#endif
+{}
+
+// Functor operator
+void ModuleLoader::operator() (const std::string& fileName) const {
+	// The static instance for registering the modules
+	static Libraries _libraries;
+	
+	// Check for correct extension
+	if (boost::algorithm::iends_with(fileName, _ext)) {
+		std::string fullName = _path + fileName;
+		globalOutputStream() << "Loading module '" << fullName.c_str() << "'\n";
+		
+		// Register the library in the static Libraries class
+		_libraries.registerLibrary(fullName, GlobalModuleServer_get());      
+	}
+}
+
+/** Load all of the modules in the DarkRadiant install directory. Modules
+ * are loaded from modules/ and plugins/.
+ * 
+ * @root: The root directory to search.
+ */
+void ModuleLoader::loadModules(const std::string& root) {
+	Directory_forEach(root + MODULES_DIR, ModuleLoader(root + MODULES_DIR));
+	Directory_forEach(root + PLUGINS_DIR, ModuleLoader(root + PLUGINS_DIR));
 }

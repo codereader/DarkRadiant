@@ -179,9 +179,6 @@ const char* QERApp_GetGamePath();
 const char* AppPath_get();
 const char* SettingsPath_get();
 
-const char* const g_pluginsDir = "plugins/"; ///< name of plugins directory, always sub-directory of toolspath
-const char* const g_modulesDir = "modules/"; ///< name of modules directory, always sub-directory of toolspath
-
 void Radiant_Initialise();
 void Radiant_Shutdown();
 

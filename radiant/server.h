@@ -27,11 +27,26 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class ModuleServer;
 ModuleServer& GlobalModuleServer_get();
 
-/** Load the specified module into the ModuleServer.
- * 
- * @filename
- * Pathname of the module to load.
+/** Module loader functor class. This class is used to traverse a directory and
+ * load each module into the GlobalModuleServer.
  */
-void GlobalModuleServer_loadModule(const std::string& filename);
+class ModuleLoader
+{
+	// The path of the directory the loader is searching
+	const std::string _path;
+	
+	// The filename extension which indicates a module (platform-specific)
+	const std::string _ext;
+	
+public:
+	// Constructor, pass the path it should search for modules in
+	ModuleLoader(const std::string& path);
+	
+	// File functor, gets called with each file's name in the searched folder
+	void operator() (const std::string& fileName) const;
+	
+	// Static loader algorithm, searches plugins/ and modules/ for .dll/.so files
+	static void loadModules(const std::string& root);
+};
 
 #endif
