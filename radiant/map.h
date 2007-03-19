@@ -158,11 +158,7 @@ void Map_Destroy();
 void Map_gatherNamespaced(scene::Node& root);
 void Map_mergeClonedNames();
 
-
-const char* getMapsPath();
-
 namespace map {
-
 	/**
 	 * Return the filename of the current map, as a string.
 	 */

@@ -182,13 +182,9 @@ Environment& Environment::Instance() {
 	return _instance;
 }
 
-std::string Environment::getMapsPath() {
-	return _mapsPath;
-}
-
 void Environment::setMapsPath(const std::string& path) {
-	GlobalRegistry().set(RKEY_MAP_PATH, _mapsPath);
 	_mapsPath = path;
+	GlobalRegistry().set(RKEY_MAP_PATH, _mapsPath);
 }
 
 std::string Environment::getEnginePath() {

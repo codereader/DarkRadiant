@@ -60,7 +60,6 @@ public:
 	std::string getAppPath();
 	
 	// Get/set the path where the .map files are stored
-	std::string getMapsPath();
 	void setMapsPath(const std::string& path);
 	
 	// Get/set the engine path (the game path)

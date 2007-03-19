@@ -1997,13 +1997,6 @@ void NewMap() {
 	}
 }
 
-/* Maintain and return the path to the maps directory
- */
-
-const char* getMapsPath() {
-	return Environment::Instance().getMapsPath().c_str();
-}
-
 void OpenMap()
 {
   if (!ConfirmModified("Open Map"))

@@ -23,9 +23,6 @@ class MapFileManager
 
 private:
 
-	// Constructor
-	MapFileManager();
-
 	// Static instance owner
 	static MapFileManager& getInstance();
 
