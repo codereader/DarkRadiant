@@ -215,7 +215,6 @@ public:
     	"sound", "wav", FileTypePattern("PCM sound files", "*.wav"));
 
     Selection_construct();
-    HomePaths_Construct();
     VFS_Construct();
     MultiMon_Construct();
     Pointfile_Construct();
@@ -254,7 +253,6 @@ public:
     Pointfile_Destroy();
     MultiMon_Destroy();
     VFS_Destroy();
-    HomePaths_Destroy();
     Selection_destroy();
   }
 };

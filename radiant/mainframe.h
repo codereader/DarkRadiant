@@ -172,10 +172,6 @@ void EnginePath_Unrealise();
 
 class ModuleObserver;
 
-void Radiant_attachEnginePathObserver(ModuleObserver& observer);
-void Radiant_detachEnginePathObserver(ModuleObserver& observer);
-
-extern CopiedString g_strEnginePath;
 void EnginePath_verify();
 const char* EnginePath_get();
 const char* QERApp_GetGamePath();
@@ -209,8 +205,6 @@ void gamemode_set(const char* gamemode);
 void VFS_Construct();
 void VFS_Destroy();
 
-void HomePaths_Construct();
-void HomePaths_Destroy();
 void Radiant_attachHomePathsObserver(ModuleObserver& observer);
 void Radiant_detachHomePathsObserver(ModuleObserver& observer);
 

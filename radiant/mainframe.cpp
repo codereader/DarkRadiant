@@ -175,6 +175,7 @@ public:
   }
   void realise()
   {
+  	std::cout << "VFSModuleObserver::realise\n";
     if(--m_unrealised == 0)
     {
       QE_InitVFS();
@@ -183,6 +184,7 @@ public:
   }
   void unrealise()
   {
+  	std::cout << "VFSModuleObserver::unrealise\n";
     if(++m_unrealised == 1)
     {
       GlobalFileSystem().shutdown();
@@ -194,10 +196,12 @@ VFSModuleObserver g_VFSModuleObserver;
 
 void VFS_Construct()
 {
+	std::cout << "VFS_Construct\n";
     Radiant_attachHomePathsObserver(g_VFSModuleObserver);
 }
 void VFS_Destroy()
 {
+	std::cout << "VFS_Destroy\n";
     Radiant_detachHomePathsObserver(g_VFSModuleObserver);
 }
 
@@ -233,11 +237,13 @@ ModuleObservers g_homePathObservers;
 
 void Radiant_attachHomePathsObserver(ModuleObserver& observer)
 {
+	std::cout << "Radiant_attachHomePathsObserver\n";
   g_homePathObservers.attach(observer);
 }
 
 void Radiant_detachHomePathsObserver(ModuleObserver& observer)
 {
+	std::cout << "Radiant_detachHomePathsObserver\n";
   g_homePathObservers.detach(observer);
 }
 
@@ -250,6 +256,7 @@ public:
   }
   void realise()
   {
+  	std::cout << "HomePathsModuleObserver::realise\n";
     if(--m_unrealised == 0)
     {
       HomePaths_Realise();
@@ -258,6 +265,7 @@ public:
   }
   void unrealise()
   {
+  	std::cout << "HomePathsModuleObserver::unrealise\n";
     if(++m_unrealised == 1)
     {
       g_homePathObservers.unrealise();
@@ -267,54 +275,23 @@ public:
 
 HomePathsModuleObserver g_HomePathsModuleObserver;
 
-void HomePaths_Construct()
-{
-    Radiant_attachEnginePathObserver(g_HomePathsModuleObserver);
-}
-void HomePaths_Destroy()
-{
-    Radiant_detachEnginePathObserver(g_HomePathsModuleObserver);
-}
-
-
 // Engine Path
 
 CopiedString g_strEnginePath;
 ModuleObservers g_enginePathObservers;
-std::size_t g_enginepath_unrealised = 1;
 
-void Radiant_attachEnginePathObserver(ModuleObserver& observer)
-{
-  g_enginePathObservers.attach(observer);
-}
-
-void Radiant_detachEnginePathObserver(ModuleObserver& observer)
-{
-  g_enginePathObservers.detach(observer);
-}
-
-
-void EnginePath_Realise()
-{
-  if(--g_enginepath_unrealised == 0)
-  {
-    g_enginePathObservers.realise();
-  }
+void EnginePath_Realise() {
+	g_HomePathsModuleObserver.realise();
 }
 
 
 const char* EnginePath_get()
 {
-  ASSERT_MESSAGE(g_enginepath_unrealised == 0, "EnginePath_get: engine path not realised");
   return g_strEnginePath.c_str();
 }
 
-void EnginePath_Unrealise()
-{
-  if(++g_enginepath_unrealised == 1)
-  {
-    g_enginePathObservers.unrealise();
-  }
+void EnginePath_Unrealise() {
+	g_HomePathsModuleObserver.unrealise();
 }
 
 void setEnginePath(const char* path)
