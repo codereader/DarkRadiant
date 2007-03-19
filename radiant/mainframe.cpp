@@ -462,13 +462,6 @@ void populateRegistry() {
 // This is called from main() to start up the Radiant stuff.
 void Radiant_Initialise() 
 {
-	// Load the Radiant modules from the modules/ and plugins/ dir.
-	ModuleLoader::loadModules(AppPath_get());
-
-	// Initialise and instantiate the registry
-	GlobalModuleServer::instance().set(GlobalModuleServer_get());
-	GlobalRegistryModuleRef registryRef;
-	
 	// Try to load all the XML files into the registry
 	populateRegistry();
 	

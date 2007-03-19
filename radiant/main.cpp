@@ -67,6 +67,7 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "debugging/debugging.h"
 
 #include "iundo.h"
+#include "iregistry.h"
 
 #include <gtk/gtkmain.h>
 
@@ -86,6 +87,7 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "environment.h"
 #include "referencecache.h"
 #include "stacktrace.h"
+#include "server.h"
 #include "ui/mru/MRU.h"
 
 #include <iostream>
@@ -366,6 +368,13 @@ int main (int argc, char* argv[])
 
 	// Retrieve the application path and such
 	Environment::Instance().init(argc, argv);
+
+	// Load the Radiant modules from the modules/ and plugins/ dir.
+	ModuleLoader::loadModules(Environment::Instance().getAppPath());
+
+	// Initialise and instantiate the registry
+	GlobalModuleServer::instance().set(GlobalModuleServer_get());
+	GlobalRegistryModuleRef registryRef;
 
   show_splash();
 
