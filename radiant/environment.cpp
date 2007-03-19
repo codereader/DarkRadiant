@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 #include "os/path.h"
 #include "cmdlib.h"
+#include "iregistry.h"
 
 #include <iostream>
 #include <string>
@@ -203,6 +204,13 @@ std::string Environment::getEnginePath() {
 
 void Environment::setEnginePath(const std::string& path) {
 	_enginePath = path;
+}
+
+void Environment::savePathsToRegistry() {
+	GlobalRegistry().set(RKEY_APP_PATH, _appPath);
+	GlobalRegistry().set(RKEY_HOME_PATH, _homePath);
+	GlobalRegistry().set(RKEY_SETTINGS_PATH, _settingsPath);
+	GlobalRegistry().set(RKEY_BITMAPS_PATH, _bitmapsPath);
 }
 
 void Environment::initPaths() {

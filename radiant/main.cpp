@@ -222,8 +222,7 @@ void streams_init()
   GlobalOutputStream::instance().setOutputStream(getSysPrintOutputStream());
 }
 
-void create_global_pid()
-{
+void createPIDFile(const std::string& name) {
   /*!
   the global prefs loading / game selection dialog might fail for any reason we don't know about
   we need to catch when it happens, to cleanup the stateful prefs which might be killing it
@@ -231,39 +230,30 @@ void create_global_pid()
   this is the first part of the two step .pid system
   http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=297
   */
-  StringOutputStream g_pidFile(256); ///< the global .pid file (only for global part of the startup)
+	std::string pidFile = GlobalRegistry().get(RKEY_SETTINGS_PATH) + name;
 
-  g_pidFile << SettingsPath_get() << "radiant.pid";
+	FILE *pid;
+	pid = fopen(pidFile.c_str(), "r");
+	
+	// Check for an existing radiant.pid file
+	if (pid != NULL) {
+		fclose (pid);
 
-  FILE *pid;
-  pid = fopen (g_pidFile.c_str(), "r");
-  if (pid != 0)
-  {
-    fclose (pid);
-
-    if (remove (g_pidFile.c_str()) == -1)
-    {
-      StringOutputStream msg(256);
-      msg << "WARNING: Could not delete " << g_pidFile.c_str();
-      gtk_MessageBox (0, msg.c_str(), "Radiant", eMB_OK, eMB_ICONERROR );
-    }
+		if (remove (pidFile.c_str()) == -1) {
+			std::string msg = "WARNING: Could not delete " + pidFile;
+			gtk_MessageBox(0, msg.c_str(), "Radiant", eMB_OK, eMB_ICONERROR );
+		}
 
     // in debug, never prompt to clean registry, turn console logging auto after a failed start
 #if !defined(_DEBUG)
-    StringOutputStream msg(256);
-    msg << "Radiant failed to start properly the last time it was run.\n"
-           "The failure may be related to current global preferences.\n"
-           "Do you want to reset global preferences to defaults?";
+    std::string msg("Radiant failed to start properly the last time it was run.\n");
+    msg += "The failure may be related to current global preferences.\n";
+	msg += "Do you want to reset global preferences to defaults?";
 
-    if (gtk_MessageBox (0, msg.c_str(), "Radiant - Startup Failure", eMB_YESNO, eMB_ICONQUESTION) == eIDYES)
-    {
-      g_GamesDialog.Reset();
-    }
-
-    msg.clear();
-    msg << "Logging console output to " << SettingsPath_get() << "radiant.log\nRefer to the log if Radiant fails to start again.";
-
-    gtk_MessageBox (0, msg.c_str(), "Radiant - Console Log", eMB_OK);
+	if (gtk_MessageBox(0, msg.c_str(), "Radiant - Startup Failure", eMB_YESNO, eMB_ICONQUESTION) == eIDYES) {
+		g_GamesDialog.Reset();
+		Preferences_Reset();
+	}
 #endif
 
     // set without saving, the class is not in a coherent state yet
@@ -272,87 +262,21 @@ void create_global_pid()
     Sys_LogFile(true);
   }
 
-  // create a primary .pid for global init run
-  pid = fopen (g_pidFile.c_str(), "w");
-  if (pid)
-    fclose (pid);
+	// create a primary .pid for global init run
+	pid = fopen (pidFile.c_str(), "w");
+	if (pid) {
+		fclose (pid);
+	}
 }
 
-void remove_global_pid()
-{
-  StringOutputStream g_pidFile(256);
-  g_pidFile << SettingsPath_get() << "radiant.pid";
+void removePIDFile(const std::string& name) {
+	std::string pidFile = GlobalRegistry().get(RKEY_SETTINGS_PATH) + name;
 
-  // close the primary
-  if (remove (g_pidFile.c_str()) == -1)
-  {
-    StringOutputStream msg(256);
-    msg << "WARNING: Could not delete " << g_pidFile.c_str();
-    gtk_MessageBox (0, msg.c_str(), "Radiant", eMB_OK, eMB_ICONERROR );
-  }
-}
-
-/*!
-now the secondary game dependant .pid file
-http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=297
-*/
-void create_local_pid()
-{
-  StringOutputStream g_pidGameFile(256); ///< the game-specific .pid file
-  g_pidGameFile << SettingsPath_get() << g_pGameDescription->mGameFile.c_str() << "/radiant-game.pid";
-
-  FILE *pid = fopen (g_pidGameFile.c_str(), "r");
-  if (pid != 0)
-  {
-    fclose (pid);
-    if (remove (g_pidGameFile.c_str()) == -1)
-    {
-      StringOutputStream msg;
-      msg << "WARNING: Could not delete " << g_pidGameFile.c_str();
-      gtk_MessageBox (0, msg.c_str(), "Radiant", eMB_OK, eMB_ICONERROR );
-    }
-
-    // in debug, never prompt to clean registry, turn console logging auto after a failed start
-#if !defined(_DEBUG)
-    StringOutputStream msg;
-    msg << "Radiant failed to start properly the last time it was run.\n"
-           "The failure may be caused by current preferences.\n"
-           "Do you want to reset all preferences to defaults?";
-
-    if (gtk_MessageBox (0, msg.c_str(), "Radiant - Startup Failure", eMB_YESNO, eMB_ICONQUESTION) == eIDYES)
-    {
-      Preferences_Reset();
-    }
-
-    msg.clear();
-    msg << "Logging console output to " << SettingsPath_get() << "radiant.log\nRefer to the log if Radiant fails to start again.";
-
-    gtk_MessageBox (0, msg.c_str(), "Radiant - Console Log", eMB_OK);
-#endif
-
-    // force console logging on! (will go in prefs too)
-    g_GamesDialog.m_bForceLogConsole = true;
-    Sys_LogFile(true);
-  }
-  else
-  {
-    // create one, will remove right after entering message loop
-    pid = fopen (g_pidGameFile.c_str(), "w");
-    if (pid)
-      fclose (pid);
-  }
-}
-
-
-/*!
-now the secondary game dependant .pid file
-http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=297
-*/
-void remove_local_pid()
-{
-  StringOutputStream g_pidGameFile(256);
-  g_pidGameFile << SettingsPath_get() << g_pGameDescription->mGameFile.c_str() << "/radiant-game.pid";
-  remove(g_pidGameFile.c_str());
+	// close the primary
+	if (remove (pidFile.c_str()) == -1) {
+		std::string msg = "WARNING: Could not delete " + pidFile;
+		gtk_MessageBox (0, msg.c_str(), "Radiant", eMB_OK, eMB_ICONERROR );
+	}
 }
 
 int main (int argc, char* argv[])
@@ -372,23 +296,23 @@ int main (int argc, char* argv[])
 	// Load the Radiant modules from the modules/ and plugins/ dir.
 	ModuleLoader::loadModules(Environment::Instance().getAppPath());
 
-	// Initialise and instantiate the registry
+	// Initialise and instantiate the XMLRegistry
 	GlobalModuleServer::instance().set(GlobalModuleServer_get());
 	GlobalRegistryModuleRef registryRef;
 
+	// Tell the Environment class to store the paths into the Registry
+	Environment::Instance().savePathsToRegistry();
+
   show_splash();
 
-  create_global_pid();
+	// Create the radiant.pid file in the settings folder 
+	// (emits a warning if the file already exists (due to a previous startup failure) 
+	createPIDFile("radiant.pid");
 
   GlobalPreferences_Init();
 
   g_GamesDialog.Init();
-
-  remove_global_pid();
-
-  g_Preferences.Init(); // must occur before create_local_pid() to allow preferences to be reset
-
-  create_local_pid();
+  g_Preferences.Init(); 
 
   // in a very particular post-.pid startup
   // we may have the console turned on and want to keep it that way
@@ -399,7 +323,6 @@ int main (int argc, char* argv[])
     g_Console_enableLogging = true;
     g_GamesDialog.m_bForceLogConsole = false;
   }
-
 
   Radiant_Initialise();
 
@@ -415,7 +338,8 @@ int main (int argc, char* argv[])
 		Map_New();
 	}
 
-  remove_local_pid();
+	// Remove the radiant.pid file again after loading all the settings
+	removePIDFile("radiant.pid");
 
   gtk_main();
 

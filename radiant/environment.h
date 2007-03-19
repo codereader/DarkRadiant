@@ -24,6 +24,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <string>
 
+	namespace {
+		const std::string RKEY_APP_PATH = "user/paths/appPath";
+		const std::string RKEY_HOME_PATH = "user/paths/homePath";
+		const std::string RKEY_SETTINGS_PATH = "user/paths/settingsPath";
+		const std::string RKEY_BITMAPS_PATH = "user/paths/bitmapsPath";
+	}
+
 /** greebo: A base class initialised right at the startup holding 
  * 			information about the home and application paths. 
  */
@@ -59,6 +66,11 @@ public:
 	// Get/set the engine path (the game path)
 	std::string getEnginePath();
 	void setEnginePath(const std::string& path);
+	
+	/** greebo: Creates the runtime-keys for the 
+	 * 			paths (home path, etc.)
+	 */
+	void savePathsToRegistry();
 	
 	// Contains the static instance
 	static Environment& Instance();
