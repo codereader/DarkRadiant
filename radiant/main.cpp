@@ -252,7 +252,6 @@ void createPIDFile(const std::string& name) {
 	msg += "Do you want to reset global preferences to defaults?";
 
 	if (gtk_MessageBox(0, msg.c_str(), "Radiant - Startup Failure", eMB_YESNO, eMB_ICONQUESTION) == eIDYES) {
-		//ui::GameDialog::Instance().Reset();
 		Preferences_Reset();
 	}
 #endif
@@ -311,8 +310,7 @@ int main (int argc, char* argv[])
 	// let the user choose the game, if nothing is found in the Registry
 	game::Manager::Instance().initialise();
 
-	//ui::GameDialog::Instance().initialise();
-  g_Preferences.Init(); 
+	PrefsDlg::Instance().Init(); 
 
   Radiant_Initialise();
 
@@ -332,13 +330,6 @@ int main (int argc, char* argv[])
 	removePIDFile("radiant.pid");
 
   gtk_main();
-
-  // avoid saving prefs when the app is minimized
-  if (g_pParentWnd->IsSleeping())
-  {
-    globalOutputStream() << "Shutdown while sleeping, not saving prefs\n";
-    g_preferences_globals.disable_ini = true;
-  }
 
   Map_Free();
 

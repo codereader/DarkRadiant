@@ -217,6 +217,8 @@ typedef LatchedValue<int> LatchedInt;
 typedef MemberCaller1<LatchedInt, int, &LatchedInt::import> LatchedIntImportCaller;
 
 typedef struct _GtkWidget GtkWidget;
+typedef struct _GtkTreeStore GtkTreeStore;
+typedef struct _GtkTreeView GtkTreeView;
 class PrefsDlg;
 class PrefPage;
 class StringOutputStream;
@@ -228,7 +230,15 @@ class PrefsDlg : public Dialog {
 	// The list of all the constructors that have to be called on dialog construction
 	PreferenceConstructorList _constructors;
 	
+	GtkTreeStore* _prefTree;
+	GtkTreeView* _treeView;
+	
 public:
+	PrefsDlg();
+
+	// Retrieve a reference to the static instance of this dialog
+	static PrefsDlg& Instance();
+
 	GtkWidget *m_notebook;
 
 	virtual ~PrefsDlg() {
@@ -262,6 +272,11 @@ public:
 	// Add the given preference constructor to the internal list
 	void addConstructor(PreferenceConstructor* constructor);
 	
+	/** greebo: Looks up the page for the path and creates it
+	 * 			if necessary.
+	 */
+	PrefPage* createOrFindPage(const std::string& path);
+	
 protected:
 
 	/*! Dialog API */
@@ -272,9 +287,6 @@ private:
 	// greebo: calls the constructors to add the preference elements
 	void callConstructors(PreferenceTreeGroup& preferenceGroup);
 };
-
-
-extern PrefsDlg g_Preferences;
 
 struct preferences_globals_t
 {
