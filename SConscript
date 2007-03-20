@@ -480,8 +480,6 @@ radiant_src = [
 'render/backend/OpenGLStateBucket.cpp',
 'render/backend/OpenGLShader.cpp',
 'render/backend/GLProgramFactory.cpp',
-'settings/GameDescription.cpp',
-'settings/GameDialog.cpp',
 'settings/GameFileLoader.cpp',
 'settings/GameManager.cpp',
 'settings/Game.cpp'
