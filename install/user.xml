@@ -54,6 +54,8 @@
 			<textureScale value="2" />
 			<uniformSize value="128" />
 			<showScrollBar value="1" />
+			<mouseWheelIncrement value="64" />
+			<showFilter value="0" />
 		</browser>
 		<defaultTextureScale value="0.5" />
 		<quality value="3" />
