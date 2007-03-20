@@ -752,7 +752,6 @@ void PrefsDlg::populateWindow() {
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 12);
 	gtk_window_set_type_hint(GTK_WINDOW(_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
-	gtk_widget_set_size_request(_dialog, -1, 450);
 	
 	GtkWidget* hbox = gtk_hbox_new(FALSE, 0);
 	
@@ -765,7 +764,7 @@ void PrefsDlg::populateWindow() {
 	gtk_tree_view_set_headers_visible(_treeView, FALSE);
 	gtk_tree_view_append_column(_treeView, gtkutil::TextColumn("Category", 0)); 
 	
-	gtk_widget_set_size_request(GTK_WIDGET(_treeView), 300, -1);
+	gtk_widget_set_size_request(GTK_WIDGET(_treeView), 250, -1);
 	GtkWidget* scrolledFrame = gtkutil::ScrolledFrame(GTK_WIDGET(_treeView));
 	gtk_box_pack_start(GTK_BOX(hbox), scrolledFrame, FALSE, FALSE, 0);
 	
@@ -802,19 +801,6 @@ PrefPagePtr PrefsDlg::createOrFindPage(const std::string& path) {
 PrefsDlg& PrefsDlg::Instance() {
 	static PrefsDlg _instance;
 	return _instance;
-}
-
-void PrefsDlg::addConstructor(PreferenceConstructor* constructor) {
-	_constructors.push_back(constructor);
-}
-
-void PrefsDlg::callConstructors(PreferenceTreeGroup& preferenceGroup) {
-	for (PreferenceConstructorList::iterator i = _constructors.begin(); i != _constructors.end(); i++) {
-		PreferenceConstructor* constructor = *i;
-		if (constructor != NULL) {
-			constructor->constructPreferencePage(preferenceGroup);
-		}
-	}
 }
 
 void PrefsDlg::selectPage() {

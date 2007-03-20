@@ -21,8 +21,8 @@ MRU::MRU() :
 {
 	GlobalRegistry().addKeyObserver(this, RKEY_MRU_LENGTH);
 	
-	// greebo: Register this class in the preference system so that the constructPreferencePage() gets called.
-	GlobalPreferenceSystem().addConstructor(this);
+	// Add the preference settings
+	constructPreferences();
 	
 	// Create _numMaxFiles menu items
 	for (unsigned int i = 0; i < _numMaxFiles; i++) {
@@ -96,10 +96,10 @@ void MRU::keyChanged() {
 	_loadLastMap = (GlobalRegistry().get(RKEY_LOAD_LAST_MAP) == "1");
 }
 
-// Construct the orthoview preference page and add it to the given group
-void MRU::constructPreferencePage(PreferenceGroup& group) {
-	PreferencesPage* page(group.createPage("Map Files", "Map File Preferences"));
-	
+// Construct the MRU preference page and add it to the given group
+void MRU::constructPreferences() {
+	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Map Files");
+		
 	page->appendEntry("Number of most recently used files", RKEY_MRU_LENGTH);
 	page->appendCheckBox("", "Open last map on startup", RKEY_LOAD_LAST_MAP);
 }

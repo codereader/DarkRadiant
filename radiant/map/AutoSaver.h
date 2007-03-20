@@ -13,8 +13,7 @@
 namespace map {
 	
 class AutoMapSaver :
-	public RegistryKeyObserver,
-	public PreferenceConstructor
+	public RegistryKeyObserver
 {
 	// TRUE, if autosaving is enabled
 	bool _enabled;
@@ -49,8 +48,8 @@ public:
 	// The RegistryKeyObserver implementation - gets called upon key change
 	void keyChanged();
 	
-	// PreferenceConstructor implementation, adds the elements to the according preference page
-	void constructPreferencePage(PreferenceGroup& group);
+	// Adds the elements to the according preference page
+	void constructPreferences();
 
 private:
 	// This performs is called to check if the map is valid/changed/should be saved

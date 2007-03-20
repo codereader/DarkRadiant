@@ -60,12 +60,6 @@ class PreferenceDictionary : public PreferenceSystem
 
 public:
 
-	// greebo: Use this to add a preference constructor to the internal list. They get called when time comes.
-	void addConstructor(PreferenceConstructor* constructor) {
-		// greebo: pass the call to the global preference dialog (note the capital P, this smells like a pitfall!) 
-		PrefsDlg::Instance().addConstructor(constructor);
-	}
-	
 	// Looks up a page for the given path and returns it to the client
 	PreferencesPagePtr getPage(const std::string& path) {
 		return PrefsDlg::Instance().createOrFindPage(path);
