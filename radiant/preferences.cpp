@@ -145,25 +145,6 @@ bool Preferences_Save_Safe(PreferenceDictionary& preferences, const char* filena
 
 PreferenceDictionary g_global_preferences;
 
-// =============================================================================
-// Widget callbacks for PrefsDlg
-
-static void OnButtonClean (GtkWidget *widget, gpointer data) 
-{
-  /*// make sure this is what the user wants
-  if (gtk_MessageBox(GTK_WIDGET(PrefsDlg::Instance().GetWidget()), "This will close Radiant and clean the corresponding registry entries.\n"
-      "Next time you start Radiant it will be good as new. Do you wish to continue?",
-      "Reset Registry", eMB_YESNO, eMB_ICONASTERISK) == eIDYES)
-  {
-    PrefsDlg *dlg = (PrefsDlg*)data;
-    dlg->EndModal (eIDCANCEL);
-
-    g_preferences_globals.disable_ini = true;
-    Preferences_Reset();
-    gtk_main_quit();
-  }*/
-}
-
 std::string PrefPage::getPath() const {
 	return _path;
 }
@@ -410,29 +391,21 @@ void PrefsDlg::Init()
   // m_rc_path is for game specific preferences
   // takes the form: global-pref-path/gamename/prefs-file
   // this is common to win32 and Linux init now
+  std::cout << "1";
   m_rc_path = g_string_new (GlobalRegistry().get(RKEY_SETTINGS_PATH).c_str());
+  std::cout << "2";
   // game sub-dir
   g_string_append (m_rc_path, game::Manager::Instance().currentGame()->getType().c_str());
+  std::cout << "4";
   g_string_append (m_rc_path, ".game/");
+  std::cout << "3";
   Q_mkdir (m_rc_path->str);
+  std::cout << "5";
   // then the ini file
   m_inipath = g_string_new (m_rc_path->str);
+  std::cout << "6";
   g_string_append (m_inipath, PREFS_LOCAL_FILENAME);
-}
-
-void notebook_set_page(GtkWidget* notebook, GtkWidget* page)
-{
-  int pagenum = gtk_notebook_page_num(GTK_NOTEBOOK(notebook), page);
-  if(gtk_notebook_get_current_page(GTK_NOTEBOOK(notebook)) != pagenum)
-  {
-    gtk_notebook_set_current_page(GTK_NOTEBOOK(notebook), pagenum);
-  }
-}
-
-void PrefsDlg::showPrefPage(GtkWidget* prefpage)
-{
-  notebook_set_page(m_notebook, prefpage);
-  return;
+  std::cout << "7";
 }
 
 typedef std::list<PreferenceGroupCallback> PreferenceGroupCallbacks;
@@ -984,8 +957,6 @@ GtkWindow* PrefsDlg::BuildDialog()
       }
     }
   }
-
-  gtk_notebook_set_page(GTK_NOTEBOOK(m_notebook), 0);
 
   return dialog;*/return NULL;
 }

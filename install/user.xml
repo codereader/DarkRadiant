@@ -52,6 +52,8 @@
 		<browser>
 			<hideUnused value="0" />
 			<textureScale value="2" />
+			<uniformSize value="128" />
+			<showScrollBar value="1" />
 		</browser>
 		<defaultTextureScale value="0.5" />
 		<quality value="3" />
