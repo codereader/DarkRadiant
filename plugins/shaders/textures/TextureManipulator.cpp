@@ -34,8 +34,8 @@ TextureManipulator::TextureManipulator() :
 	
 	calculateGammaTable();
 	
-	// greebo: Register this class in the preference system so that the constructPreferencePage() gets called.
-	GlobalPreferenceSystem().addConstructor(this);
+	// greebo: Construct the preferences
+	constructPreferences();
 }
 
 // RegistryKeyObserver implementation
@@ -576,8 +576,8 @@ void TextureManipulator::mipReduce(byte *in, byte *out,
 
 /* greebo: This gets called by the preference system and is responsible for adding the
  * according pages and elements to the preference dialog.*/
-void TextureManipulator::constructPreferencePage(PreferenceGroup& group) {
-	PreferencesPage* page(group.createPage("Textures", "Texture Settings"));
+void TextureManipulator::constructPreferences() {
+	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Textures");
 	
 	// Create the string list containing the quality captions
 	std::list<std::string> percentages;

@@ -26,8 +26,7 @@ namespace {
 
 class RadiantUndoSystem : 
 	public UndoSystem,
-	public PreferenceConstructor,
-	public RegistryKeyObserver 
+	public RegistryKeyObserver
 {
 public:
 	// Radiant Module stuff
@@ -63,8 +62,8 @@ public:
 		// Add self to the key observers to get notified on change
 		GlobalRegistry().addKeyObserver(this, RKEY_UNDO_QUEUE_SIZE);
 		
-		// greebo: Register this class in the preference system so that the constructPreferencePage() gets called.
-		GlobalPreferenceSystem().addConstructor(this);
+		// add the preference settings
+		constructPreferences();
 	}
 
 	~RadiantUndoSystem() {
@@ -229,8 +228,8 @@ public:
 	}
 	
 	// Gets called by the PreferenceSystem as request to create the according settings page
-	void constructPreferencePage(PreferenceGroup& group) {
-		PreferencesPage* page(group.createPage("Undo", "Undo Queue Settings"));
+	void constructPreferences() {
+		PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Undo System");
 		page->appendSpinner("Undo Queue Size", RKEY_UNDO_QUEUE_SIZE, 0, 1024, 1);
 	}
 

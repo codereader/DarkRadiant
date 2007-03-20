@@ -20,8 +20,7 @@ const std::string RKEY_CLIPPER_USE_CAULK = "user/ui/clipper/useCaulk";
 
 class BrushClipper : 
 	public Clipper,
-	public RegistryKeyObserver,
-	public PreferenceConstructor
+	public RegistryKeyObserver
 {
 public:
 	// Radiant Module stuff
@@ -64,9 +63,7 @@ public:
 		GlobalRegistry().addKeyObserver(this, RKEY_CLIPPER_USE_CAULK);
 		GlobalRegistry().addKeyObserver(this, RKEY_CLIPPER_CAULK_SHADER);
 		
-		// greebo: Register this class in the preference system so that the 
-		// constructPreferencePage() gets called.
-		GlobalPreferenceSystem().addConstructor(this);
+		constructPreferences();
 	}
 
 	// Update the internally stored variables on registry key change
@@ -75,8 +72,8 @@ public:
 		_useCaulk = (GlobalRegistry().get(RKEY_CLIPPER_USE_CAULK) == "1");
 	}
 
-	void constructPreferencePage(PreferenceGroup& group) {
-		PreferencesPage* page(group.createPage("Clipper", "Clipper Tool Settings"));
+	void constructPreferences() {
+		PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Clipper");
 		
 		page->appendCheckBox("", "Clipper tool uses caulk texture", RKEY_CLIPPER_USE_CAULK);
 		page->appendEntry("Caulk shader name", RKEY_CLIPPER_CAULK_SHADER);
