@@ -183,7 +183,7 @@ void PrefsDlg::Init()
   // takes the form: global-pref-path/gamename/prefs-file
 
   // this is common to win32 and Linux init now
-  m_rc_path = g_string_new (_globalPrefPath.c_str());
+  m_rc_path = g_string_new (GlobalRegistry().get(RKEY_SETTINGS_PATH).c_str());
   
   // game sub-dir
   g_string_append (m_rc_path, game::Manager::Instance().currentGame()->getType().c_str());
@@ -485,19 +485,6 @@ GtkWindow* PrefsDlg::BuildDialog()
             PreferencePages_addPage(m_notebook, "Front Page");
 
             {
-              GtkWidget* global = PreferencePages_addPage(m_notebook, "Global Preferences");
-              
-              GtkTreeIter group = PreferenceTree_appendPage(store, 0, "Global", global);
-              {
-                GtkWidget* game = PreferencePages_addPage(m_notebook, "Game");
-                PrefPage preferencesPage(*this, getVBox(game));
-                //ui::GameDialog::Instance().CreateGlobalFrame(&preferencesPage);
-
-                PreferenceTree_appendPage(store, &group, "Game", game);
-              }
-            }
-
-            {
               GtkWidget* interfacePage = PreferencePages_addPage(m_notebook, "Interface Preferences");
               {
                 PrefPage preferencesPage(*this, getVBox(interfacePage));
@@ -602,7 +589,7 @@ StaticRegisterModule staticRegisterPreferenceSystem(StaticPreferenceSystemModule
 void Preferences_Load()
 {
   // load global .pref file
-	std::string globalPrefFile = g_Preferences._globalPrefPath + "global.pref";
+	std::string globalPrefFile = GlobalRegistry().get(RKEY_SETTINGS_PATH) + "global.pref";
 	globalOutputStream() << "loading global preferences from " << makeQuoted(globalPrefFile.c_str()) << "\n";
 
 	if (!Preferences_Load(g_global_preferences, globalPrefFile.c_str())) {
@@ -622,7 +609,7 @@ void Preferences_Save()
   if (g_preferences_globals.disable_ini)
     return;
 
-  std::string globalPrefFile = g_Preferences._globalPrefPath + "global.pref";
+  std::string globalPrefFile = GlobalRegistry().get(RKEY_SETTINGS_PATH) + "global.pref";
 
 	globalOutputStream() << "saving global preferences to " << globalPrefFile.c_str() << "\n";
 

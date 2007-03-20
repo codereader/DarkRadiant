@@ -34,7 +34,6 @@ please contact Id Software immediately at info@idsoftware.com.
 #include "xmlutil/Document.h"
 
 #include "libxml/parser.h"
-#include "settings/GameDescription.h"
 #include "dialog.h"
 #include <list>
 #include <map>
@@ -230,11 +229,6 @@ class PrefsDlg : public Dialog {
 	PreferenceConstructorList _constructors;
 	
 public:
-protected:
-	std::list<GameDescription *> mGames;
-
-public:
-
 	GtkWidget *m_notebook;
 
 	virtual ~PrefsDlg() {
