@@ -307,6 +307,8 @@ int main (int argc, char* argv[])
 	// (emits a warning if the file already exists (due to a previous startup failure) 
 	createPIDFile("radiant.pid");
 
+	// Load the game files from the <application>/games folder and 
+	// let the user choose the game, if nothing is found in the Registry
 	game::Manager::Instance().initialise();
 
 	ui::GameDialog::Instance().initialise();

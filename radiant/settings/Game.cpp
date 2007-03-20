@@ -43,14 +43,17 @@ Game::Game(const std::string& path, const std::string& filename) {
 #endif
 			;
 			
-			// Get the engine path
-			_enginePath = node.getAttributeValue(enginePath);
-			
 			if (!_type.empty()) {
 				// Import the game file into the registry 
 				GlobalRegistry().import(fullPath, "", Registry::treeStandard);
+				
+				// Get the engine path
+				_enginePath = getKeyValue(enginePath);
 			}
 		}
+		
+		// Free the xml document memory
+		xmlFreeDoc(pDoc);
 	}
 	else {
 		globalErrorStream() << "Could not parse XML file: " << fullPath.c_str() << "\n"; 
@@ -68,14 +71,30 @@ std::string Game::getType() const {
 
 /** greebo: Looks up the specified key
  */
-const char* getKeyValue(const std::string& key) {
+const char* Game::getKeyValue(const std::string& key) {
+	std::string gameXPath = std::string("//game[@type='") + _type + "']";
 	
+	xml::NodeList found = GlobalRegistry().findXPath(gameXPath);
+	
+	if (found.size() > 0) {
+		return found[0].getAttributeValue(key).c_str();
+	}
+	else {
+		return "";
+	}
 }
 
 /** greebo: Emits an error if the keyvalue is empty
  */
-const char* getRequiredKeyValue(const std::string& key) {
-	
+const char* Game::getRequiredKeyValue(const std::string& key) {
+	std::string returnValue = getKeyValue(key);
+	if (!returnValue.empty()) {
+		return returnValue.c_str();
+	}
+	else {
+		ERROR_MESSAGE("game attribute " << makeQuoted(key.c_str()) << " not found for game type " << makeQuoted(_type.c_str()));
+		return "";
+	}
 }
 
 } // namespace game
