@@ -4,17 +4,23 @@
 #include "environment.h"
 #include "os/dir.h"
 #include "GameFileLoader.h"
+#include "gtkutil/dialog.h"
 
 namespace game {
+
+	namespace {
+		const std::string RKEY_GAME_TYPE = "user/game/type";
+	}
 
 /** greebo: Returns the current Game.
  */
 GamePtr Manager::currentGame() {
-	if (_currentGameName.empty()) {
-		// Show up the dialog for the user to select
+	if (_currentGameType.empty()) {
+		// No game type selected, bail out, the program will crash anyway on module load
+		gtkutil::fatalErrorDialog("GameManager: No game type selected, can't continue.\n", NULL);
 	}
 	
-	return _games[_currentGameName];
+	return _games[_currentGameType];
 }
 
 /** greebo: Loads the game files and the saved settings.
@@ -24,10 +30,38 @@ GamePtr Manager::currentGame() {
 void Manager::initialise() {
 	// Scan the <applicationpath>/games folder for .game files
 	loadGameFiles();
+	
+	if (GlobalRegistry().get(RKEY_GAME_TYPE).empty()) {
+		// Check the number of available games
+		if (_games.size() == 0) {
+			// No game type selected, bail out, the program will crash anyway on module load
+			gtkutil::fatalErrorDialog("GameManager: No valid game files found, can't continue\n", NULL);
+		}
+		else if (_games.size() == 1) {
+			// We have exacty one game type available, auto-select it
+			// Store the name of the only game into the Registry 
+			GlobalRegistry().set(RKEY_GAME_TYPE, _games.begin()->first);
+		}
+		else {
+			// More than one game available, show the dialog
+		}
+	}
+	
+	// Load the value from the registry, there should be one selected at this point
+	_currentGameType = GlobalRegistry().get(RKEY_GAME_TYPE);
+	
+	// The game type should be selected now
+	if (!_currentGameType.empty()) {
+		globalOutputStream() << "GameManager: Selected game type: " << _currentGameType.c_str() << "\n";
+	}
+	else {
+		// No game type selected, bail out, the program will crash anyway on module load
+		gtkutil::fatalErrorDialog("No game type selected\n", NULL);
+	}
 }
 
-const char* Manager::getCurrentGameName() {
-	return _currentGameName.c_str();
+const char* Manager::getCurrentGameType() {
+	return _currentGameType.c_str();
 }
 
 /** greebo: Scans the "games/" subfolder for .game description foles.
@@ -35,10 +69,16 @@ const char* Manager::getCurrentGameName() {
 void Manager::loadGameFiles() {
 	std::string gamePath = GlobalRegistry().get(RKEY_APP_PATH) + "games/";
 	
-	globalOutputStream() << "Scanning for game description files: " << gamePath.c_str() << '\n';
+	globalOutputStream() << "GameManager: Scanning for game description files: " << gamePath.c_str() << '\n';
 
 	// Invoke a GameFileLoader functor on every file in the games/ dir.
 	Directory_forEach(gamePath.c_str(), GameFileLoader(_games, gamePath.c_str()));
+	
+	globalOutputStream() << "GameManager: Found game definitions: ";
+	for (GameMap::iterator i = _games.begin(); i != _games.end(); i++) {
+		globalOutputStream() << i->first.c_str() << " ";
+	}
+	globalOutputStream() << "\n";
 }
 
 // Accessor method containing the static instance

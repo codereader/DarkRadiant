@@ -59,8 +59,6 @@ void GameFileLoader::operator() (const char *name) const {
 		return;
 	}
 	
-	globalOutputStream() << "Found game description file: " << name << "\n";
-	
 	// Create a new Game object
 	GamePtr newGame(new Game(_path, name));
 	std::string gameType = newGame->getType();
