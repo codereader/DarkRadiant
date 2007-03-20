@@ -222,18 +222,8 @@ extern GameDescription *g_pGameDescription;
 
 typedef struct _GtkWidget GtkWidget;
 class PrefsDlg;
-
 class PrefPage;
-
 class StringOutputStream;
-
-/*!
-this holds global level preferences
-*/
-extern GameDialog g_GamesDialog;
-
-
-class TexDef;
 class PreferenceTreeGroup;
 
 class PrefsDlg : public Dialog {

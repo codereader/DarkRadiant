@@ -144,7 +144,7 @@ bool Preferences_Save_Safe(PreferenceDictionary& preferences, const char* filena
 
 void RegisterGlobalPreferences(PreferenceSystem& preferences)
 {
-  preferences.registerPreference("gamePrompt", BoolImportStringCaller(g_GamesDialog.m_bGamePrompt), BoolExportStringCaller(g_GamesDialog.m_bGamePrompt));
+  //preferences.registerPreference("gamePrompt", BoolImportStringCaller(g_GamesDialog.m_bGamePrompt), BoolExportStringCaller(g_GamesDialog.m_bGamePrompt));
 }
 
 
@@ -155,7 +155,6 @@ void GlobalPreferences_Init()
   RegisterGlobalPreferences(g_global_preferences);
 }
 
-GameDialog g_GamesDialog;
 // =============================================================================
 // Widget callbacks for PrefsDlg
 
@@ -507,7 +506,7 @@ GtkWindow* PrefsDlg::BuildDialog()
               {
                 GtkWidget* game = PreferencePages_addPage(m_notebook, "Game");
                 PrefPage preferencesPage(*this, getVBox(game));
-                g_GamesDialog.CreateGlobalFrame(&preferencesPage);
+                ui::GameDialog::Instance().CreateGlobalFrame(&preferencesPage);
 
                 PreferenceTree_appendPage(store, &group, "Game", game);
               }
@@ -617,7 +616,7 @@ StaticRegisterModule staticRegisterPreferenceSystem(StaticPreferenceSystemModule
 
 void Preferences_Load()
 {
-  g_GamesDialog.LoadPrefs();
+  ui::GameDialog::Instance().LoadPrefs();
 
   globalOutputStream() << "loading local preferences from " << g_Preferences.m_inipath->str << "\n";
 
@@ -632,7 +631,7 @@ void Preferences_Save()
   if (g_preferences_globals.disable_ini)
     return;
 
-  g_GamesDialog.SavePrefs();
+  ui::GameDialog::Instance().SavePrefs();
 
   globalOutputStream() << "saving local preferences to " << g_Preferences.m_inipath->str << "\n";
 

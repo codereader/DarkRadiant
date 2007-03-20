@@ -420,16 +420,6 @@ void populateRegistry() {
 								  MainFrame_getWindow());
 	}
 	
-	// Traverse the game files stored in the GamesDialog class and load them into the registry
-	// The information stored in the game files is needed to successfully instantiate the other modules
-	for (std::list<GameDescription*>::iterator game = g_GamesDialog.mGames.begin(); 
-		 game != g_GamesDialog.mGames.end(); game++) 
-	{
-		// Construct the filename and load it into the registry
-		const std::string filename = base + "games/" + (*game)->mGameFile.c_str();  	
-		GlobalRegistry().import(filename, "", Registry::treeUser);
-	}
-  
 	// Load user preferences, these overwrite any values that have defined before
 	// The called method also checks for any upgrades that have to be performed
 	const std::string userSettingsFile = GlobalRegistry().get(RKEY_SETTINGS_PATH) + "user.xml";
