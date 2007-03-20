@@ -67,7 +67,7 @@ public:
 	}
 	
 	// Looks up a page for the given path and returns it to the client
-	PreferencesPage* getPage(const std::string& path) {
+	PreferencesPagePtr getPage(const std::string& path) {
 		return PrefsDlg::Instance().createOrFindPage(path);
 	}
 

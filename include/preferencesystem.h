@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <string>
 #include <list>
+#include <boost/shared_ptr.hpp>
 
 #include "generic/constant.h"
 
@@ -75,6 +76,7 @@ public:
 									   const std::string& registryKey, 
 									   bool browseDirectories) = 0;
 };
+typedef boost::shared_ptr<PreferencesPage> PreferencesPagePtr;
 
 /* greebo: A PreferenceGroup consists of several PreferencePages and provides a method to add one of these. */
 class PreferenceGroup
@@ -118,7 +120,7 @@ public:
 	 * 
 	 * @returns: the PreferencesPage pointer.
 	 */
-	virtual PreferencesPage* getPage(const std::string& path) = 0; 
+	virtual PreferencesPagePtr getPage(const std::string& path) = 0; 
 	
 	// greebo: Deprecated, don't use this in newly written code
 	virtual void registerPreference(const char* name, const StringImportCallback& importer, const StringExportCallback& exporter) = 0;  

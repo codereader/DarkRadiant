@@ -42,6 +42,12 @@ CameraSettings::CameraSettings() :
 }
 
 void CameraSettings::constructPreferencePage(PreferenceGroup& group) {
+	PreferencesPagePtr newPage = GlobalPreferenceSystem().getPage("Settings/New Camera Settings");
+	
+	// Add the sliders for the movement and angle speed and connect them to the observer   
+    newPage->appendSlider("Movemen2t Speed (game units)", RKEY_MOVEMENT_SPEED, TRUE, 100, 50, 300, 1, 10, 10);
+    newPage->appendSlider("Rotatio2n Speed", RKEY_ROTATION_SPEED, TRUE, 3, 1, 180, 1, 10, 10);
+	
 	// Add a page to the given group
 	PreferencesPage* page(group.createPage("Camera", "Camera View Preferences"));
 	
