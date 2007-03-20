@@ -37,34 +37,30 @@ CameraSettings::CameraSettings() :
 	GlobalRegistry().addKeyObserver(this, RKEY_SOLID_SELECTION_BOXES);
 	GlobalRegistry().addKeyObserver(this, RKEY_TOGGLE_FREE_MOVE);
 	
-	// greebo: Register this class in the preference system so that the constructPreferencePage() gets called.
-	GlobalPreferenceSystem().addConstructor(this);
+	// greebo: Add the preference settings
+	constructPreferencePage();
 }
 
-void CameraSettings::constructPreferencePage(PreferenceGroup& group) {
-	PreferencesPagePtr newPage = GlobalPreferenceSystem().getPage("Settings/New Camera Settings");
-	
-	// Add the sliders for the movement and angle speed and connect them to the observer   
-    newPage->appendSlider("Movemen2t Speed (game units)", RKEY_MOVEMENT_SPEED, TRUE, 100, 50, 300, 1, 10, 10);
-    newPage->appendSlider("Rotatio2n Speed", RKEY_ROTATION_SPEED, TRUE, 3, 1, 180, 1, 10, 10);
+void CameraSettings::constructPreferencePage() {
+	PreferencesPagePtr newPage = GlobalPreferenceSystem().getPage("Settings/Camera");
 	
 	// Add a page to the given group
-	PreferencesPage* page(group.createPage("Camera", "Camera View Preferences"));
+	//PreferencesPage* page(group.createPage("Camera", "Camera View Preferences"));
 	
 	// Add the sliders for the movement and angle speed and connect them to the observer   
-    page->appendSlider("Movement Speed (game units)", RKEY_MOVEMENT_SPEED, TRUE, 100, 50, 300, 1, 10, 10);
-    page->appendSlider("Rotation Speed", RKEY_ROTATION_SPEED, TRUE, 3, 1, 180, 1, 10, 10);
+    newPage->appendSlider("Movement Speed (game units)", RKEY_MOVEMENT_SPEED, TRUE, 100, 50, 300, 1, 10, 10);
+    newPage->appendSlider("Rotation Speed", RKEY_ROTATION_SPEED, TRUE, 3, 1, 180, 1, 10, 10);
     
 	// Add the checkboxes and connect them with the registry key and the according observer 
-	page->appendCheckBox("", "Freelook mode can be toggled", RKEY_TOGGLE_FREE_MOVE);
-	page->appendCheckBox("", "Discrete movement (non-freelook mode)", RKEY_DISCRETE_MOVEMENT);
-	page->appendCheckBox("", "Enable far-clip plane (hides distant objects)", RKEY_ENABLE_FARCLIP);
+	newPage->appendCheckBox("", "Freelook mode can be toggled", RKEY_TOGGLE_FREE_MOVE);
+	newPage->appendCheckBox("", "Discrete movement (non-freelook mode)", RKEY_DISCRETE_MOVEMENT);
+	newPage->appendCheckBox("", "Enable far-clip plane (hides distant objects)", RKEY_ENABLE_FARCLIP);
 	
 	// Add the "inverse mouse vertical axis in free-look mode" preference
-	page->appendCheckBox("", "Invert mouse vertical axis (freelook mode)", RKEY_INVERT_MOUSE_VERTICAL_AXIS);
+	newPage->appendCheckBox("", "Invert mouse vertical axis (freelook mode)", RKEY_INVERT_MOUSE_VERTICAL_AXIS);
 	
 	// States whether the selection boxes are stippled or not
-	page->appendCheckBox("", "Solid selection boxes", RKEY_SOLID_SELECTION_BOXES);
+	newPage->appendCheckBox("", "Solid selection boxes", RKEY_SOLID_SELECTION_BOXES);
 
 	// Create the string list containing the render mode captions
 	std::list<std::string> renderModeDescriptions;
@@ -74,7 +70,7 @@ void CameraSettings::constructPreferencePage(PreferenceGroup& group) {
 	renderModeDescriptions.push_back("Textured");
 	renderModeDescriptions.push_back("Lighting");
 	
-	page->appendCombo("Render Mode", RKEY_DRAWMODE, renderModeDescriptions);
+	newPage->appendCombo("Render Mode", RKEY_DRAWMODE, renderModeDescriptions);
 }
 
 void CameraSettings::importDrawMode(const int mode) {
