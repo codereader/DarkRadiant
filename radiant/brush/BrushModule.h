@@ -38,8 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 class BrushModuleClass : 
 	public RegistryKeyObserver,
-	public BrushCreator,
-	public PreferenceConstructor
+	public BrushCreator
 {
 	
 	bool _textureLockEnabled;
@@ -54,8 +53,8 @@ public:
 	// The opposite of the above construct()
 	void destroy();
 	
-	// PreferenceConstructor implementation
-	void constructPreferencePage(PreferenceGroup& group);
+	// Adds the preference settings to the prefdialog
+	void constructPreferences();
 	
 	// --------------- BrushCreator methods ---------------------------------------------
 	

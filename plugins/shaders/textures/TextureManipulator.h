@@ -22,8 +22,7 @@ namespace {
 namespace shaders {
 
 class TextureManipulator :
- 	public RegistryKeyObserver,
- 	public PreferenceConstructor
+ 	public RegistryKeyObserver
 {
 	// The gamma correction table
 	byte _gammaTable[256];
@@ -46,8 +45,8 @@ public:
 	// RegistryKeyObserver implementation
 	void keyChanged();
 
-	// PreferenceConstructor implementation to construct the prefpage
-	void constructPreferencePage(PreferenceGroup& group);
+	// Constructs the prefpage
+	void constructPreferences();
 	
 	void resampleTexture(const void *indata, int inwidth, int inheight, 
 						 void *outdata, int outwidth, int outheight, int bytesperpixel);
