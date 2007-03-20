@@ -271,7 +271,7 @@ GtkWidget* PrefPage::appendEntry(const std::string& name, const std::string& reg
 	gtk_widget_show(alignment);
 
 	GtkEntry* entry = GTK_ENTRY(gtk_entry_new());
-	gtk_entry_set_width_chars(entry, GlobalRegistry().get(registryKey).size());
+	gtk_entry_set_width_chars(entry, std::max(GlobalRegistry().get(registryKey).size(), std::size_t(10)));
 	gtk_container_add(GTK_CONTAINER(alignment), GTK_WIDGET(entry));
 	
 	// Connect the registry key to the newly created input field
@@ -769,9 +769,11 @@ void PrefsDlg::populateWindow() {
 	
 	GtkWidget* saveButton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
 	gtk_box_pack_end(GTK_BOX(buttonHBox), saveButton, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(saveButton), "clicked", G_CALLBACK(onSave), this);
 	
 	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	gtk_box_pack_end(GTK_BOX(buttonHBox), cancelButton, FALSE, FALSE, 6);
+	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(onCancel), this);
 	
 	gtk_box_pack_start(GTK_BOX(vbox), buttonHBox, FALSE, FALSE, 0);
 	
@@ -825,6 +827,25 @@ void PrefsDlg::selectPage() {
 		}
 	}
 }
+
+void PrefsDlg::save() {
+	_registryConnector.exportValues();
+	toggleWindow();
+	UpdateAllWindows();
+}
+
+void PrefsDlg::cancel() {
+	toggleWindow();
+}
+
+// Static GTK Callbacks
+void PrefsDlg::onSave(GtkWidget* button, PrefsDlg* self) {
+	self->save();
+}
+
+void PrefsDlg::onCancel(GtkWidget* button, PrefsDlg* self) {
+	self->cancel();
+} 
 
 void PrefsDlg::onPrefPageSelect(GtkTreeSelection* treeselection, PrefsDlg* self) {
 	self->selectPage();
@@ -1081,16 +1102,16 @@ void PrefsDlg::toggleWindow() {
 	else {
 		// Restore the position
 		//_windowPosition.applyPosition();
+		
 		// Import the registry keys 
-		//_connector.importValues();
+		_registryConnector.importValues();
+		
 		// Rebuild the tree and expand it
 		updateTreeStore();
 		gtk_tree_view_expand_all(_treeView);
+		
 		// Now show the dialog window again
 		gtk_widget_show_all(_dialog);
-		// Unset the focus widget for this window to avoid the cursor 
-		// from jumping into the shader entry field 
-		//gtk_window_set_focus(GTK_WINDOW(_dialog), NULL);
 	}
 }
 
