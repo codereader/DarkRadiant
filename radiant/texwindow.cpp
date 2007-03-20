@@ -151,6 +151,8 @@ enum StartupShaders
 namespace {
 	const std::string RKEY_TEXTURES_HIDE_UNUSED = "user/ui/textures/browser/hideUnused";
 	const std::string RKEY_TEXTURE_SCALE = "user/ui/textures/browser/textureScale";
+	const std::string RKEY_TEXTURE_UNIFORM_SIZE = "user/ui/textures/browser/uniformSize";
+	const std::string RKEY_TEXTURE_SHOW_SCROLLBAR = "user/ui/textures/browser/showScrollBar";
 }
 
 void TextureBrowser_heightChanged(TextureBrowser& textureBrowser);
@@ -208,7 +210,18 @@ public:
   
   void keyChanged() {
   	m_hideUnused = (GlobalRegistry().get(RKEY_TEXTURES_HIDE_UNUSED) == "1");
+  	m_uniformTextureSize = GlobalRegistry().getInt(RKEY_TEXTURE_UNIFORM_SIZE);
+  	m_showTextureScrollbar = (GlobalRegistry().get(RKEY_TEXTURE_SHOW_SCROLLBAR) == "1");
+  	
+	if (m_showTextureScrollbar) {
+		gtk_widget_show(m_texture_scroll);
+	}
+	else {
+		gtk_widget_hide(m_texture_scroll);
+	}
+ 	
   	setScaleFromRegistry();
+  	
   	TextureBrowser_heightChanged(*this);
 	m_originInvalid = true;
   }
@@ -285,6 +298,8 @@ public:
 		m_hideUnused = (GlobalRegistry().get(RKEY_TEXTURES_HIDE_UNUSED) == "1");
 		GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_HIDE_UNUSED);
 		GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_SCALE);
+		GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_UNIFORM_SIZE);
+		GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_SHOW_SCROLLBAR);
 		setScaleFromRegistry();
 	}
 
@@ -590,17 +605,6 @@ void TextureBrowser_activeShadersChanged(TextureBrowser& textureBrowser)
 
   g_activeShadersChangedCallbacks();
 }
-
-void TextureBrowser_importShowScrollbar(TextureBrowser& textureBrowser, bool value)
-{
-  textureBrowser.m_showTextureScrollbar = value;
-  if(textureBrowser.m_texture_scroll != 0)
-  {
-    widget_set_visible(textureBrowser.m_texture_scroll, textureBrowser.m_showTextureScrollbar);
-    TextureBrowser_updateScroll(textureBrowser);
-  }
-}
-typedef ReferenceCaller1<TextureBrowser, bool, TextureBrowser_importShowScrollbar> TextureBrowserImportShowScrollbarCaller;
 
 void TextureBrowser_importShowFilter(TextureBrowser& textureBrowser, bool value)
 {
@@ -1090,13 +1094,6 @@ void TextureBrowser_queueDraw(TextureBrowser& textureBrowser) {
 	textureBrowser.queueDraw();
 }
 
-void TextureBrowser_setUniformSize(TextureBrowser& textureBrowser, int value)
-{
-  textureBrowser.m_uniformTextureSize = value;
-  TextureBrowser_heightChanged(textureBrowser);
-}
-
-
 void TextureBrowser_MouseWheel(TextureBrowser& textureBrowser, bool bUp)
 {
   int originy = TextureBrowser_getOriginY(textureBrowser);
@@ -1401,37 +1398,12 @@ void TextureBrowser_exportTitle(const StringImportCallback& importer)
   importer(buffer.c_str());
 }
 
-
-// Get the texture size preference from the prefs dialog
-void TextureUniformSizeImport(TextureBrowser& textureBrowser, int value) {
-  TextureBrowser_setUniformSize(textureBrowser, value);
-}
-typedef ReferenceCaller1<TextureBrowser, int, TextureUniformSizeImport> TextureUniformSizeImportCaller;
-
-// Set the value of the texture size preference widget in the prefs dialog
-void TextureUniformSizeExport(TextureBrowser& textureBrowser, const IntImportCallback& importer)
-{
-  importer(textureBrowser.m_uniformTextureSize);
-}
-typedef ReferenceCaller1<TextureBrowser, const IntImportCallback&, TextureUniformSizeExport> TextureUniformSizeExportCaller;
-
-
 void TextureBrowser_constructPreferences(PrefPage* page)
 {
   page->appendCheckBox(
     "", "Texture subsets",
     TextureBrowserImportShowFilterCaller(GlobalTextureBrowser()),
     BoolExportCaller(GlobalTextureBrowser().m_showTextureFilter)
-  );
-  page->appendCheckBox(
-    "", "Texture scrollbar",
-    TextureBrowserImportShowScrollbarCaller(GlobalTextureBrowser()),
-    BoolExportCaller(GlobalTextureBrowser().m_showTextureScrollbar)
-  );
-  
-  page->appendEntry("Uniform texture thumbnail size (pixels)",
-    IntImportCallback(TextureUniformSizeImportCaller(GlobalTextureBrowser())),
-    IntExportCallback(TextureUniformSizeExportCaller(GlobalTextureBrowser()))
   );
   
   page->appendEntry("Mousewheel Increment", GlobalTextureBrowser().m_mouseWheelScrollIncrement);
@@ -1460,6 +1432,10 @@ void TextureBrowser_registerPreferencesPage() {
 	
 	page->appendCombo("Texture Thumbnail Scale", RKEY_TEXTURE_SCALE, textureScaleList);
 	
+	page->appendEntry("Uniform texture thumbnail size (pixels)", RKEY_TEXTURE_UNIFORM_SIZE);
+	page->appendCheckBox("", "Texture scrollbar", RKEY_TEXTURE_SHOW_SCROLLBAR);
+
+
   // Legacy stuff (to be removed soon)
   PreferencesDialog_addSettingsPage(FreeCaller1<PreferenceGroup&, TextureBrowser_constructPage>());
 }
@@ -1468,26 +1444,15 @@ void TextureBrowser_registerPreferencesPage() {
 #include "preferencesystem.h"
 #include "stringio.h"
 
-typedef ReferenceCaller1<TextureBrowser, int, TextureBrowser_setUniformSize> TextureBrowserSetUniformSizeCaller;
-
 void TextureBrowser_Construct()
 {
   GlobalEventManager().addRegistryToggle("ShowInUse", RKEY_TEXTURES_HIDE_UNUSED);
   GlobalEventManager().addCommand("ShowAllTextures", FreeCaller<TextureBrowser_showAll>());
   GlobalEventManager().addCommand("ViewTextures", FreeCaller<TextureBrowser_toggleShown>());
 
-  GlobalPreferenceSystem().registerPreference("TextureUniformSize",
-    IntImportStringCaller(g_TextureBrowser.m_uniformTextureSize),
-    IntExportStringCaller(g_TextureBrowser.m_uniformTextureSize)
-  );
-  
   GlobalPreferenceSystem().registerPreference("NewTextureWindowStuff",
     makeBoolStringImportCallback(TextureBrowserImportShowFilterCaller(g_TextureBrowser)),
     BoolExportStringCaller(GlobalTextureBrowser().m_showTextureFilter)
-  );
-  GlobalPreferenceSystem().registerPreference("TextureScrollbar",
-    makeBoolStringImportCallback(TextureBrowserImportShowScrollbarCaller(g_TextureBrowser)),
-    BoolExportStringCaller(GlobalTextureBrowser().m_showTextureScrollbar)
   );
   GlobalPreferenceSystem().registerPreference("ShowShaders", BoolImportStringCaller(GlobalTextureBrowser().m_showShaders), BoolExportStringCaller(GlobalTextureBrowser().m_showShaders));
   GlobalPreferenceSystem().registerPreference("ShowShaderlistOnly", BoolImportStringCaller(g_TexturesMenu_shaderlistOnly), BoolExportStringCaller(g_TexturesMenu_shaderlistOnly));

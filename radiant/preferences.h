@@ -264,9 +264,6 @@ public:
 	// initialize the above paths
 	void Init();
 	
-	/*! Utility function for swapping notebook pages for tree list selections */
-	void showPrefPage(GtkWidget* prefpage);
-
 	/** greebo: Looks up the page for the path and creates it
 	 * 			if necessary.
 	 */
