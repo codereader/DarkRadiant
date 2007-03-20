@@ -1,5 +1,6 @@
 #include "GameDescription.h"
 
+#include "iregistry.h"
 #include "debugging/debugging.h"
 #include "stream/textstream.h"
 #include "error.h"
@@ -10,15 +11,12 @@
 GameDescription::GameDescription(const xml::Document& doc, const std::string& gameFile) : 
 	_doc(doc)
 {
-	// Check for a toplevel game node
-	xml::NodeList list = _doc.findXPath("/game");
-    if (list.size() == 0) {
-		Error("Didn't find 'game' node in the game description file '%s'\n", gameFile.c_str());
-	}
-    
+	// Temporary workaround
+	std::string type = gameFile.substr(0, gameFile.rfind(".game"));
+	
 	mGameFile = gameFile;
 
-	mGameType = getKeyValue("type");
+	mGameType = type;
 	if (mGameType.empty()) {
 	    globalErrorStream() << "Warning, 'type' attribute not found in " << mGameFile.c_str() << "\n";
 	    // Fallback to default
@@ -27,8 +25,9 @@ GameDescription::GameDescription(const xml::Document& doc, const std::string& ga
 }
 
 const char* GameDescription::getKeyValue(const std::string& key) const {
-	std::string xpath = std::string("/game[@") + key + "]";
-	xml::NodeList found = _doc.findXPath(xpath);
+	std::string gameXPath = std::string("//game[@type='") + mGameType + "']";
+	
+	xml::NodeList found = GlobalRegistry().findXPath(gameXPath);
 	
 	if (found.size() > 0) {
 		return found[0].getAttributeValue(key).c_str();

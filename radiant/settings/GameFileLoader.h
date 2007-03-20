@@ -6,7 +6,7 @@
 class GameDescription;
 
 // Functor object responsible for parsing and loading an individual .game
-// file.
+// file. (greebo: LEGACY, this is about to removed)
 
 class GameFileLoader 
 {
@@ -24,5 +24,27 @@ public:
 	// Main functor () function, gets called with the file (without path)
 	void operator() (const char *name) const;
 };
+
+#include "GameManager.h"
+
+namespace game {
+
+class GameFileLoader
+{
+	// Reference to external map of Game objects 
+	Manager::GameMap& _games;
+
+	// Path to the game file to be added
+	const std::string _path;
+
+public:
+	// Constructor
+	GameFileLoader(Manager::GameMap& games, const std::string& path);
+
+	// Main functor () function, gets called with the file (without path)
+	void operator() (const char *name) const;
+};
+
+} // namespace game
 
 #endif /*GAMEFILELOADER_H_*/

@@ -4,8 +4,10 @@
 #include "xmlutil/Document.h"
 #include "itextstream.h"
 #include "iregistry.h"
+#include <iostream>
 
 #include "GameDescription.h"
+#include <boost/algorithm/string/predicate.hpp>
 
 // Constructor
 GameFileLoader::GameFileLoader(std::list<GameDescription*>& games, const char *path) :
@@ -29,15 +31,44 @@ void GameFileLoader::operator() (const char *name) const {
 	xmlDocPtr pDoc = xmlParseFile(strPath.c_str());
 
 	if (pDoc) {
+		// Import the game file into the registry
+		//GlobalRegistry().import(strPath, "", Registry::treeUser);
+		
 		// Parse success, add to list
 		std::string fileName = name;
 		mGames.push_front(new GameDescription(xml::Document(pDoc), fileName));
-		
-		// Import the game file into the registry
-		GlobalRegistry().import(strPath, "", Registry::treeUser);
 	}
 	else {
 		// Error
 		globalErrorStream() << "XML parser failed on '" << strPath.c_str() << "'\n";
 	}
 }
+
+namespace game {
+
+// Constructor
+GameFileLoader::GameFileLoader(Manager::GameMap& games, const std::string& path) :
+	_games(games),
+	_path(path)
+{}
+
+// Main functor () function, gets called with the file (without path)
+void GameFileLoader::operator() (const char *name) const {
+	if (!boost::algorithm::ends_with(name, GAME_FILE_EXT)) {
+		// Don't process files not ending with .game
+		return;
+	}
+	
+	globalOutputStream() << "Found game description file: " << name << "\n";
+	
+	// Create a new Game object
+	GamePtr newGame(new Game(_path, name));
+	std::string gameType = newGame->getType();
+	
+	if (!gameType.empty()) {
+		// Store the game into the map
+		_games[gameType] = newGame;
+	}
+}
+
+} // namespace game
