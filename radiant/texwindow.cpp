@@ -80,6 +80,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "preferences.h"
 #include "ui/common/ToolbarCreator.h"
 #include "selection/algorithm/Shader.h"
+#include "settings/GameManager.h"
 
 void TextureBrowser_queueDraw(TextureBrowser& textureBrowser);
 
@@ -305,7 +306,7 @@ void TextureBrowser_updateScroll(TextureBrowser& textureBrowser);
 
 const char* TextureBrowser_getComonShadersName()
 {
-  const char* value = ui::GameDialog::Instance().getGameDescription()->getKeyValue("common_shaders_name");
+  const char* value = game::Manager::Instance().currentGame()->getKeyValue("common_shaders_name");
   if(!string_empty(value))
   {
     return value;
@@ -315,7 +316,7 @@ const char* TextureBrowser_getComonShadersName()
 
 const char* TextureBrowser_getComonShadersDir()
 {
-  const char* value = ui::GameDialog::Instance().getGameDescription()->getKeyValue("common_shaders_dir");
+  const char* value = game::Manager::Instance().currentGame()->getKeyValue("common_shaders_dir");
   if(!string_empty(value))
   {
     return value;

@@ -63,6 +63,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "mainframe.h"
 #include "qe3.h"
 #include "gtkdlgs.h"
+#include "settings/GameManager.h"
 
 void Interface_constructPreferences(PrefPage* page)
 {
@@ -185,8 +186,8 @@ void PrefsDlg::Init()
   m_rc_path = g_string_new (_globalPrefPath.c_str());
   
   // game sub-dir
-  g_string_append (m_rc_path, ui::GameDialog::Instance().getGameDescription()->mGameFile.c_str());
-  g_string_append (m_rc_path, "/");
+  g_string_append (m_rc_path, game::Manager::Instance().currentGame()->getType().c_str());
+  g_string_append (m_rc_path, ".game/");
   Q_mkdir (m_rc_path->str);
   
   // then the ini file
