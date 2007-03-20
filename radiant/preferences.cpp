@@ -200,16 +200,13 @@ GtkWidget* PrefPage::appendCheckBox(const char* name, const char* flag, const Bo
 /* greebo: This adds a checkbox and connects it to an XMLRegistry key.
  * @returns: the pointer to the created GtkWidget */
 GtkWidget* PrefPage::appendCheckBox(const std::string& name, const std::string& flag, const std::string& registryKey) {
-	std::cout << "appendCheckbox called\n";
-	
 	// Create a new checkbox with the given caption and display it
 	GtkWidget* check = gtk_check_button_new_with_label(flag.c_str());
 	
 	// Connect the registry key to this toggle button
 	_connector.connectGtkObject(GTK_OBJECT(check), registryKey);
 	
-	gtk_box_pack_start(GTK_BOX(_vbox), check, FALSE, FALSE, 0);
-	//DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(DialogRow_new(name.c_str(), check)));
+	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(DialogRow_new(name.c_str(), check)));
 	return check;
 }
 
@@ -217,7 +214,27 @@ GtkWidget* PrefPage::appendCheckBox(const std::string& name, const std::string& 
  * it to the given registryKey. */
 void PrefPage::appendSlider(const std::string& name, const std::string& registryKey, bool drawValue,
                             double value, double lower, double upper, double step_increment, double page_increment, double page_size) {
-	//m_dialog.addSlider(m_vbox, name, registryKey, drawValue, value, lower, upper, step_increment, page_increment, page_size);
+	// Create a new adjustment with the boundaries <lower> and <upper> and all the increments
+	GtkObject* adj = gtk_adjustment_new(value, lower, upper, step_increment, page_increment, page_size);
+	
+	// Connect the registry key to this adjustment
+	_connector.connectGtkObject(adj, registryKey);
+	
+	// scale
+	GtkWidget* alignment = gtk_alignment_new(0.0, 0.5, 1.0, 0.0);
+	gtk_widget_show(alignment);
+	
+	GtkWidget* scale = gtk_hscale_new(GTK_ADJUSTMENT(adj));
+	gtk_scale_set_value_pos(GTK_SCALE(scale), GTK_POS_LEFT);
+	gtk_widget_show(scale);
+	gtk_container_add(GTK_CONTAINER(alignment), scale);
+	
+	gtk_scale_set_draw_value(GTK_SCALE (scale), drawValue);
+	int digits = (step_increment < 1.0f) ? 2 : 0; 
+	gtk_scale_set_digits(GTK_SCALE (scale), digits);
+	
+	GtkTable* row = DialogRow_new(name.c_str(), alignment);
+	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(row));
 }
 
 /* greebo: Use this to add a dropdown selection box with the given list of strings as captions. The value
@@ -250,12 +267,45 @@ void PrefPage::appendCombo(const std::string& name, const std::string& registryK
 /* greebo: Appends an entry field with <name> as caption which is connected to the given registryKey
  */
 GtkWidget* PrefPage::appendEntry(const std::string& name, const std::string& registryKey) {
-	return NULL; //return m_dialog.addEntry(m_vbox, name, registryKey);
+	GtkWidget* alignment = gtk_alignment_new(0.0, 0.5, 0.0, 0.0);
+	gtk_widget_show(alignment);
+
+	GtkEntry* entry = GTK_ENTRY(gtk_entry_new());
+	gtk_entry_set_width_chars(entry, GlobalRegistry().get(registryKey).size());
+	gtk_container_add(GTK_CONTAINER(alignment), GTK_WIDGET(entry));
+	
+	// Connect the registry key to the newly created input field
+	_connector.connectGtkObject(GTK_OBJECT(entry), registryKey);
+
+	GtkTable* row = DialogRow_new(name.c_str(), GTK_WIDGET(alignment));
+	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(row));
+	return GTK_WIDGET(entry);
 }
 
 // greebo: Adds a PathEntry to choose files or directories (depending on the given boolean)
 GtkWidget* PrefPage::appendPathEntry(const std::string& name, const std::string& registryKey, bool browseDirectories) {
-	return NULL; //return m_dialog.addPathEntry(m_vbox, name, registryKey, browseDirectories);
+	/*PathEntry pathEntry = PathEntry_new();
+	g_signal_connect(G_OBJECT(pathEntry.m_button), "clicked", G_CALLBACK(browseDirectories ? button_clicked_entry_browse_directory : button_clicked_entry_browse_file), pathEntry.m_entry);
+
+	// Connect the registry key to the newly created input field
+	_connector.connectGtkObject(GTK_OBJECT(pathEntry.m_entry), registryKey);
+
+	GtkTable* row = DialogRow_new(name.c_str(), GTK_WIDGET(pathEntry.m_frame));
+	DialogVBox_packRow(GTK_VBOX(vbox), GTK_WIDGET(row));
+
+	return GTK_WIDGET(row);*/return NULL;
+}
+
+GtkSpinButton* Spinner_new(double value, double lower, double upper, int fraction) {
+	double step = 1.0 / double(fraction);
+	unsigned int digits = 0;
+	for (;fraction > 1; fraction /= 10) {
+		++digits;
+	}
+	GtkSpinButton* spin = GTK_SPIN_BUTTON(gtk_spin_button_new(GTK_ADJUSTMENT(gtk_adjustment_new(value, lower, upper, step, 10, 10)), step, digits));
+	gtk_widget_show(GTK_WIDGET(spin));
+	gtk_widget_set_size_request(GTK_WIDGET(spin), 64, -1);
+	return spin;
 }
 
 /* greebo: Appends an entry field with spinner buttons which retrieves its value from the given
@@ -263,7 +313,22 @@ GtkWidget* PrefPage::appendPathEntry(const std::string& name, const std::string&
  */
 GtkWidget* PrefPage::appendSpinner(const std::string& name, const std::string& registryKey,
                                    double lower, double upper, int fraction) {
-	return NULL; //return m_dialog.addSpinner(m_vbox, name, registryKey, lower, upper, fraction);
+	// Load the initial value (maybe unnecessary, as the value is loaded upon dialog show)
+	float value = GlobalRegistry().getFloat(registryKey); 
+	
+	GtkWidget* alignment = gtk_alignment_new(0.0, 0.5, 0.0, 0.0);
+	gtk_widget_show(alignment);
+	
+	GtkSpinButton* spin = Spinner_new(value, lower, upper, fraction);
+	gtk_container_add(GTK_CONTAINER(alignment), GTK_WIDGET(spin));
+	
+	GtkTable* row = DialogRow_new(name.c_str(), GTK_WIDGET(alignment));
+	
+	// Connect the registry key to the newly created input field
+	_connector.connectGtkObject(GTK_OBJECT(spin), registryKey);
+
+	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(row));
+	return GTK_WIDGET(spin);
 }
 
 void PrefPage::appendCombo(const char* name, StringArrayRange values, const IntImportCallback& importCallback, const IntExportCallback& exportCallback) {
@@ -687,7 +752,7 @@ void PrefsDlg::populateWindow() {
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 12);
 	gtk_window_set_type_hint(GTK_WINDOW(_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
-	gtk_widget_set_size_request(_dialog, 600, 450);
+	gtk_widget_set_size_request(_dialog, -1, 450);
 	
 	GtkWidget* hbox = gtk_hbox_new(FALSE, 0);
 	
@@ -1053,7 +1118,6 @@ void PreferencesDialog_restartRequired(const char* staticName)
 
 void PreferencesDialog_showDialog()
 {
-	PreferencesPagePtr newPage = GlobalPreferenceSystem().getPage("Settings/New Camera Settings");
 	PrefsDlg::toggle();
   /*if(ConfirmModified("Edit Preferences") && PrefsDlg::Instance().DoModal() == eIDOK)
   {
