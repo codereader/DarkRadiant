@@ -64,6 +64,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "qe3.h"
 #include "gtkdlgs.h"
 #include "settings/GameManager.h"
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/split.hpp>
+
+	namespace {
+		// The treestore enumeration for the preference tree
+		enum {
+			NAME_COL,		// The column with the caption (for lookups)
+			PREFPAGE_COL,	// The pointer to the preference page 
+		};
+		typedef std::vector<std::string> StringVector;
+	}
 
 void Interface_constructPreferences(PrefPage* page)
 {
@@ -146,7 +157,7 @@ PreferenceDictionary g_global_preferences;
 static void OnButtonClean (GtkWidget *widget, gpointer data) 
 {
   // make sure this is what the user wants
-  if (gtk_MessageBox(GTK_WIDGET(g_Preferences.GetWidget()), "This will close Radiant and clean the corresponding registry entries.\n"
+  if (gtk_MessageBox(GTK_WIDGET(PrefsDlg::Instance().GetWidget()), "This will close Radiant and clean the corresponding registry entries.\n"
       "Next time you start Radiant it will be good as new. Do you wish to continue?",
       "Reset Registry", eMB_YESNO, eMB_ICONASTERISK) == eIDYES)
   {
@@ -385,6 +396,40 @@ public:
   }
 };
 
+PrefsDlg::PrefsDlg() {
+	// Create a treestore with a name and a pointer
+	_prefTree = gtk_tree_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
+}
+
+PrefPage* PrefsDlg::createOrFindPage(const std::string& path) {
+	StringVector parts;
+	
+	// Split the path into parts
+	boost::algorithm::split(parts, path, boost::algorithm::is_any_of("/"));
+	
+	if (parts.size() == 1) {
+		// We have found a leaf
+		std::cout << "Leaf found: " << path << "\n";
+	}
+	else if (parts.size() > 1) {
+		// We have more parts, split off the first part
+		std::string subPath = path.substr(path.find("/"));
+		std::cout << "subPath: " << subPath << "\n";
+		
+		// Dive into the next recursion
+		return createOrFindPage(subPath);
+	}
+	else {
+		// No parts? This is an error
+		globalErrorStream() << "Could not resolve path: " << path.c_str() << "\n"; 
+	}
+}
+
+PrefsDlg& PrefsDlg::Instance() {
+	static PrefsDlg _instance;
+	return _instance;
+}
+
 void PrefsDlg::addConstructor(PreferenceConstructor* constructor) {
 	_constructors.push_back(constructor);
 }
@@ -403,8 +448,7 @@ void PrefsDlg::callConstructors(PreferenceTreeGroup& preferenceGroup) {
 GtkWindow* PrefsDlg::BuildDialog()
 {
     PreferencesDialog_addInterfacePreferences(FreeCaller1<PrefPage*, Interface_constructPreferences>());
-    //Mouse_registerPreferencesPage();
-
+    
     // Construct the main dialog window. Set a vertical default size as the
     // size_request is too small.
     GtkWindow* dialog = create_floating_window("DarkRadiant Preferences", m_parent);
@@ -541,17 +585,14 @@ GtkWindow* PrefsDlg::BuildDialog()
 
 preferences_globals_t g_preferences_globals;
 
-PrefsDlg g_Preferences;               // global prefs instance
-
-
 void PreferencesDialog_constructWindow(GtkWindow* main_window)
 {
-  g_Preferences.m_parent = main_window;
-  g_Preferences.Create();
+  PrefsDlg::Instance().m_parent = main_window;
+  PrefsDlg::Instance().Create();
 }
 void PreferencesDialog_destroyWindow()
 {
-  g_Preferences.Destroy();
+  PrefsDlg::Instance().Destroy();
 }
 
 
@@ -596,11 +637,11 @@ void Preferences_Load()
 		globalOutputStream() << "failed to load global preferences from " << globalPrefFile.c_str() << "\n";
 	}
 
-  globalOutputStream() << "loading local preferences from " << g_Preferences.m_inipath->str << "\n";
+  globalOutputStream() << "loading local preferences from " << PrefsDlg::Instance().m_inipath->str << "\n";
 
-  if(!Preferences_Load(g_preferences, g_Preferences.m_inipath->str))
+  if(!Preferences_Load(g_preferences, PrefsDlg::Instance().m_inipath->str))
   {
-    globalOutputStream() << "failed to load local preferences from " << g_Preferences.m_inipath->str << "\n";
+    globalOutputStream() << "failed to load local preferences from " << PrefsDlg::Instance().m_inipath->str << "\n";
   }
 }
 
@@ -617,17 +658,17 @@ void Preferences_Save()
 		globalOutputStream() << "failed to save global preferences to " << globalPrefFile.c_str() << "\n";
 	}
 
-  globalOutputStream() << "saving local preferences to " << g_Preferences.m_inipath->str << "\n";
+  globalOutputStream() << "saving local preferences to " << PrefsDlg::Instance().m_inipath->str << "\n";
 
-  if(!Preferences_Save_Safe(g_preferences, g_Preferences.m_inipath->str))
+  if(!Preferences_Save_Safe(g_preferences, PrefsDlg::Instance().m_inipath->str))
   {
-    globalOutputStream() << "failed to save local preferences to " << g_Preferences.m_inipath->str << "\n";
+    globalOutputStream() << "failed to save local preferences to " << PrefsDlg::Instance().m_inipath->str << "\n";
   }
 }
 
 void Preferences_Reset()
 {
-  file_remove(g_Preferences.m_inipath->str);
+  file_remove(PrefsDlg::Instance().m_inipath->str);
 }
 
 
@@ -653,7 +694,7 @@ void PreferencesDialog_restartRequired(const char* staticName)
 
 void PreferencesDialog_showDialog()
 {
-  if(ConfirmModified("Edit Preferences") && g_Preferences.DoModal() == eIDOK)
+  if(ConfirmModified("Edit Preferences") && PrefsDlg::Instance().DoModal() == eIDOK)
   {
     if(!g_restart_required.empty())
     {

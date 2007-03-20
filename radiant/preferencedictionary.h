@@ -63,7 +63,12 @@ public:
 	// greebo: Use this to add a preference constructor to the internal list. They get called when time comes.
 	void addConstructor(PreferenceConstructor* constructor) {
 		// greebo: pass the call to the global preference dialog (note the capital P, this smells like a pitfall!) 
-		g_Preferences.addConstructor(constructor);
+		PrefsDlg::Instance().addConstructor(constructor);
+	}
+	
+	// Looks up a page for the given path and returns it to the client
+	PreferencesPage* getPage(const std::string& path) {
+		return PrefsDlg::Instance().createOrFindPage(path);
 	}
 
   typedef PreferenceEntries::iterator iterator;

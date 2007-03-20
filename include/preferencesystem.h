@@ -106,6 +106,20 @@ public:
 	 * for adding all the preference elements (pages, checkboxes, etc.) to the dialog.*/
 	virtual void addConstructor(PreferenceConstructor* constructor) = 0;
 	
+	/** greebo: Retrieves the page for the given path, for example:
+	 * 
+	 * 			"Settings/Patch Settings" 
+	 * 			(spaces are ok, slashes are treated as delimiters, don't use them)
+	 *  
+	 * 			Use the PreferencesPage interface to add widgets 
+	 * 			and connect them to the registry.
+	 * 
+	 * @path: The path to lookup
+	 * 
+	 * @returns: the PreferencesPage pointer.
+	 */
+	virtual PreferencesPage* getPage(const std::string& path) = 0; 
+	
 	// greebo: Deprecated, don't use this in newly written code
 	virtual void registerPreference(const char* name, const StringImportCallback& importer, const StringExportCallback& exporter) = 0;  
 };
