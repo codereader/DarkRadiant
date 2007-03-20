@@ -32,8 +32,7 @@
 	}
 
 class XYWndManager : 
-	public RegistryKeyObserver,
-	public PreferenceConstructor
+	public RegistryKeyObserver
 {
 	// The list containing the pointers to all the allocated views
 	XYWndList _XYViews;
@@ -158,7 +157,7 @@ public:
 	Vector3 getFocusPosition();
 	
 	// Construct the orthoview preference page and add it to the given group
-	void constructPreferencePage(PreferenceGroup& group);
+	void constructPreferences();
 	
 	// Registers all the XY commands in the EventManager 
 	void registerCommands();

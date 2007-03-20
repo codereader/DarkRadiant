@@ -30,8 +30,7 @@ namespace ui {
 	}
 
 class MRU :
-	public RegistryKeyObserver,
-	public PreferenceConstructor
+	public RegistryKeyObserver
 {
 	// The list type containing the menuItem widgets
 	typedef std::list<MRUMenuItem> MenuItems;
@@ -79,7 +78,7 @@ public:
 	void constructMenu();
 	
 	// Construct the orthoview preference page and add it to the given group
-	void constructPreferencePage(PreferenceGroup& group);
+	void constructPreferences();
 
 private:
 	// Loads the current filenames into the menu widgets (called after inserts, for example) 

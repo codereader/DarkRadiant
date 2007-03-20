@@ -218,10 +218,6 @@ class PrefsDlg
 {
 	GtkWidget* _dialog;
 	
-	typedef std::list<PreferenceConstructor*> PreferenceConstructorList;
-	// The list of all the constructors that have to be called on dialog construction
-	PreferenceConstructorList _constructors;
-	
 	GtkTreeStore* _prefTree;
 	GtkTreeView* _treeView;
 	GtkTreeSelection* _selection;
@@ -271,9 +267,6 @@ public:
 	/*! Utility function for swapping notebook pages for tree list selections */
 	void showPrefPage(GtkWidget* prefpage);
 
-	// Add the given preference constructor to the internal list
-	void addConstructor(PreferenceConstructor* constructor);
-	
 	/** greebo: Looks up the page for the path and creates it
 	 * 			if necessary.
 	 */

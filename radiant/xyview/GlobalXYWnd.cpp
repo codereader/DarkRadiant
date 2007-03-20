@@ -32,8 +32,8 @@ XYWndManager::XYWndManager() :
 	// Trigger loading the values of the observed registry keys
 	keyChanged();
 	
-	// greebo: Register this class in the preference system so that the constructPreferencePage() gets called.
-	GlobalPreferenceSystem().addConstructor(this);
+	// Construct the preference settings widgets
+	constructPreferences();
 	
 	// Add the commands to the EventManager
 	registerCommands();
@@ -163,8 +163,8 @@ void XYWndManager::registerCommands() {
 	GlobalEventManager().addRegistryToggle("ShowWorkzone", RKEY_SHOW_WORKZONE);
 }
 
-void XYWndManager::constructPreferencePage(PreferenceGroup& group) {
-	PreferencesPage* page(group.createPage("Orthographic", "Orthographic View Settings"));
+void XYWndManager::constructPreferences() {
+	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Orthoview");
 	
 	page->appendCheckBox("", "View chases Mouse Cursor during Drags", RKEY_CHASE_MOUSE);
 	page->appendCheckBox("", "Update Views on Camera Movement", RKEY_CAMERA_XY_UPDATE);

@@ -69,8 +69,7 @@ void AutoMapSaver::keyChanged() {
 }
 
 void AutoMapSaver::init() {
-	// greebo: Register this class in the preference system so that the constructPreferencePage() gets called.
-	GlobalPreferenceSystem().addConstructor(this);
+	constructPreferences();
 }
 
 void AutoMapSaver::clearChanges() {
@@ -249,9 +248,9 @@ void AutoMapSaver::checkSave() {
 	startTimer();
 }
 
-void AutoMapSaver::constructPreferencePage(PreferenceGroup& group) {
+void AutoMapSaver::constructPreferences() {
 	// Add a page to the given group
-	PreferencesPage* page(group.createPage("Autosave", "Autosave Preferences"));
+	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Autosave");
 	
 	// Add the checkboxes and connect them with the registry key and the according observer 
 	page->appendCheckBox("", "Enable Autosave", RKEY_AUTOSAVE_ENABLED);

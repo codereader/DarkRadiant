@@ -85,29 +85,12 @@ public:
 	virtual PreferencesPage* createPage(const std::string& treeName, const std::string& frameName) = 0;
 };
 
-/* greebo: Derive from the PreferenceConstructor class if your module wants to add preferences
- * to the preference dialog. The method constructPreferencePage() gets invoked by the 
- * preference system when the dialog is to be constructed. */
-class PreferenceConstructor
-{
-public:
-	/* greebo: This gets called by the preference system and is responsible for adding the
-	 * according pages and elements to the preference dialog.*/
-	virtual void constructPreferencePage(PreferenceGroup& group) = 0;
-};
-
 class PreferenceSystem
 {
 public:
 	INTEGER_CONSTANT(Version, 1);
 	STRING_CONSTANT(Name, "preferences");
 
-	/* greebo: Use this to connect a preference constructor that gets invoked when the dialog is constructed.
-	 * 
-	 * @arguments: <constructor> is pointing to an implementation of the IPreferenceConstructor class that is responsible
-	 * for adding all the preference elements (pages, checkboxes, etc.) to the dialog.*/
-	virtual void addConstructor(PreferenceConstructor* constructor) = 0;
-	
 	/** greebo: Retrieves the page for the given path, for example:
 	 * 
 	 * 			"Settings/Patch Settings" 
