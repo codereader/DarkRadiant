@@ -49,7 +49,10 @@
 		<shaderChooser>
 			<window xPosition="200" yPosition="100" width="550" height="500" />
 		</shaderChooser>
-		<hideUnused value="0" />
+		<browser>
+			<hideUnused value="0" />
+			<textureScale value="2" />
+		</browser>
 		<defaultTextureScale value="0.5" />
 		<quality value="3" />
 		<mode value="5" />
