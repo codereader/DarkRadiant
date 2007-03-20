@@ -33,22 +33,40 @@ please contact Id Software immediately at info@idsoftware.com.
 
 #include "xmlutil/Document.h"
 
+#include "gtkutil/RegistryConnector.h"
 #include "libxml/parser.h"
 #include "dialog.h"
 #include <list>
 #include <map>
+#include <boost/shared_ptr.hpp>
 
 void Widget_connectToggleDependency(GtkWidget* self, GtkWidget* toggleButton);
+
+class PrefPage;
+typedef boost::shared_ptr<PrefPage> PrefPagePtr;
 
 class PrefPage : 
 	public PreferencesPage
 {
   Dialog& m_dialog;
   GtkWidget* m_vbox;
+  
+	std::vector<PrefPagePtr> _children;
+	
+	std::string _name;
+
 public:
   PrefPage(Dialog& dialog, GtkWidget* vbox) : m_dialog(dialog), m_vbox(vbox)
   {
   }
+	void setName(const std::string& name) {
+		_name = name;
+	}
+	
+	std::string getName() const {
+		return _name;
+	}
+  
   GtkWidget* appendCheckBox(const char* name, const char* flag, bool& data)
   {
     return m_dialog.addCheckBox(m_vbox, name, flag, data);
@@ -170,6 +188,13 @@ public:
   {
     return m_dialog.addSpinner(m_vbox, name, value, lower, upper, importCallback, exportCallback);
   }
+
+	/** greebo: Performs a recursive lookup of the given path
+	 * 			and creates any items that do not exist.
+	 * 
+	 * @returns: the shared_ptr to the PrefPage, can be empty on error.
+	 */
+	PrefPagePtr createOrFindPage(const std::string& path);
 };
 
 typedef Callback1<PrefPage*> PreferencesPageCallback;
@@ -224,7 +249,9 @@ class PrefPage;
 class StringOutputStream;
 class PreferenceTreeGroup;
 
-class PrefsDlg : public Dialog {
+class PrefsDlg 
+{
+	GtkWidget* _dialog;
 	
 	typedef std::list<PreferenceConstructor*> PreferenceConstructorList;
 	// The list of all the constructors that have to be called on dialog construction
@@ -232,12 +259,21 @@ class PrefsDlg : public Dialog {
 	
 	GtkTreeStore* _prefTree;
 	GtkTreeView* _treeView;
+	GtkWidget* _notebook;
+	
+	PrefPagePtr _root;
+	
+	gtkutil::RegistryConnector _registryConnector;
 	
 public:
 	PrefsDlg();
 
 	// Retrieve a reference to the static instance of this dialog
 	static PrefsDlg& Instance();
+
+	/** greebo: Toggles the window visibility
+	 */
+	static void toggle();
 
 	GtkWidget *m_notebook;
 
@@ -275,7 +311,7 @@ public:
 	/** greebo: Looks up the page for the path and creates it
 	 * 			if necessary.
 	 */
-	PrefPage* createOrFindPage(const std::string& path);
+	PrefPagePtr createOrFindPage(const std::string& path);
 	
 protected:
 
@@ -284,6 +320,14 @@ protected:
 	void PostModal (EMessageBoxReturn code);
 	
 private:
+	/** greebo: Creates the widgets of this dialog
+	 */
+	void populateWindow();
+
+	/** greebo: Toggles the visibility of this instance.
+	 */
+	void toggleWindow();
+
 	// greebo: calls the constructors to add the preference elements
 	void callConstructors(PreferenceTreeGroup& preferenceGroup);
 };

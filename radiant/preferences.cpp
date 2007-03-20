@@ -54,6 +54,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "os/dir.h"
 #include "gtkutil/filechooser.h"
 #include "gtkutil/messagebox.h"
+#include "gtkutil/TextColumn.h"
+#include "gtkutil/TransientWindow.h"
 #include "cmdlib.h"
 #include "plugin.h"
 
@@ -156,7 +158,7 @@ PreferenceDictionary g_global_preferences;
 
 static void OnButtonClean (GtkWidget *widget, gpointer data) 
 {
-  // make sure this is what the user wants
+  /*// make sure this is what the user wants
   if (gtk_MessageBox(GTK_WIDGET(PrefsDlg::Instance().GetWidget()), "This will close Radiant and clean the corresponding registry entries.\n"
       "Next time you start Radiant it will be good as new. Do you wish to continue?",
       "Reset Registry", eMB_YESNO, eMB_ICONASTERISK) == eIDYES)
@@ -167,7 +169,7 @@ static void OnButtonClean (GtkWidget *widget, gpointer data)
     g_preferences_globals.disable_ini = true;
     Preferences_Reset();
     gtk_main_quit();
-  }
+  }*/
 }
 
 // =============================================================================
@@ -396,33 +398,89 @@ public:
   }
 };
 
+PrefPagePtr PrefPage::createOrFindPage(const std::string& path) {
+	// Split the path into parts
+	StringVector parts;
+	boost::algorithm::split(parts, path, boost::algorithm::is_any_of("/"));
+	
+	if (parts.size() == 0) {
+		std::cout << "Warning: Could not resolve preference path: " << path << "\n";
+		return PrefPagePtr();
+	}
+	
+	PrefPagePtr child;
+	
+	// Try to lookup the page in the child list
+	for (unsigned int i = 0; i < _children.size(); i++) {
+		if (_children[i]->getName() == parts[0]) {
+			child = _children[i];
+			break;
+		}
+	}
+	
+	if (child == NULL) {
+		// No child found, create a new page
+		child = PrefPagePtr(new PrefPage(m_dialog, m_vbox));
+		
+		// Give the page a name and add it to the list
+		child->setName(parts[0]);
+		_children.push_back(child);
+	}
+	
+	// We now have a child with this name, do we have a leaf?
+	if (parts.size() > 1) {
+		// We have still more parts, split off the first part
+		std::string subPath("");
+		for (unsigned int i = 1; i < parts.size(); i++) {
+			subPath += (subPath.empty()) ? "" : "/";
+			subPath += parts[i];
+		}
+		std::cout << "subPath: " << subPath << "\n";
+		// Pass the call to the child
+		return child->createOrFindPage(subPath);
+	}
+	else {
+		std::cout << "leaf: " << parts[0] << "\n";
+		// We have found a leaf, return the child page		
+		return child;
+	}
+}
+
 PrefsDlg::PrefsDlg() {
 	// Create a treestore with a name and a pointer
 	_prefTree = gtk_tree_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
+	
+	populateWindow();
+	
+	//_root = PrefPagePtr(new PrefPage(*this, NULL));
+	//_root->setName("root");
 }
 
-PrefPage* PrefsDlg::createOrFindPage(const std::string& path) {
-	StringVector parts;
+void PrefsDlg::populateWindow() {
+	_dialog = gtkutil::TransientWindow("DarkRadiant Preferences", MainFrame_getWindow(), false);
 	
-	// Split the path into parts
-	boost::algorithm::split(parts, path, boost::algorithm::is_any_of("/"));
+	// Set the default border width in accordance to the HIG
+	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 12);
+	gtk_window_set_type_hint(GTK_WINDOW(_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 	
-	if (parts.size() == 1) {
-		// We have found a leaf
-		std::cout << "Leaf found: " << path << "\n";
-	}
-	else if (parts.size() > 1) {
-		// We have more parts, split off the first part
-		std::string subPath = path.substr(path.find("/"));
-		std::cout << "subPath: " << subPath << "\n";
-		
-		// Dive into the next recursion
-		return createOrFindPage(subPath);
-	}
-	else {
-		// No parts? This is an error
-		globalErrorStream() << "Could not resolve path: " << path.c_str() << "\n"; 
-	}
+	GtkWidget* hbox = gtk_hbox_new(FALSE, 0);
+	
+	_treeView = GTK_TREE_VIEW(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_prefTree)));
+	g_object_unref(G_OBJECT(_prefTree));
+	
+	gtk_tree_view_set_headers_visible(_treeView, FALSE);
+	gtk_tree_view_append_column(_treeView, gtkutil::TextColumn("Category", 0)); 
+	
+	gtk_widget_set_size_request(GTK_WIDGET(_treeView), 300, -1);
+	gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(_treeView), FALSE, FALSE, 0);
+	
+	_notebook = gtk_notebook_new();
+	gtk_box_pack_start(GTK_BOX(hbox), _notebook, TRUE, TRUE, 0);
+}
+
+PrefPagePtr PrefsDlg::createOrFindPage(const std::string& path) {
+	// Pass the call to the root page
+	return _root->createOrFindPage(path);
 }
 
 PrefsDlg& PrefsDlg::Instance() {
@@ -447,6 +505,7 @@ void PrefsDlg::callConstructors(PreferenceTreeGroup& preferenceGroup) {
 
 GtkWindow* PrefsDlg::BuildDialog()
 {
+	/*
     PreferencesDialog_addInterfacePreferences(FreeCaller1<PrefPage*, Interface_constructPreferences>());
     
     // Construct the main dialog window. Set a vertical default size as the
@@ -491,8 +550,6 @@ GtkWindow* PrefsDlg::BuildDialog()
         gtk_widget_show(sc_win);
         gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sc_win), GTK_SHADOW_IN);
 
-        // prefs pages notebook
-        m_notebook = gtk_notebook_new();
         // hide the notebook tabs since its not supposed to look like a notebook
         gtk_notebook_set_show_tabs(GTK_NOTEBOOK(m_notebook), FALSE);
         gtk_box_pack_start(GTK_BOX(hbox), m_notebook, TRUE, TRUE, 0);
@@ -520,13 +577,13 @@ GtkWindow* PrefsDlg::BuildDialog()
 
           gtk_container_add(GTK_CONTAINER (sc_win), view);
 
-          {
+          {*/
             /********************************************************************/
             /* Add preference tree options                                      */
             /********************************************************************/
             // Front page... 
             //GtkWidget* front =
-            PreferencePages_addPage(m_notebook, "Front Page");
+ /*           PreferencePages_addPage(m_notebook, "Front Page");
 
             {
               GtkWidget* interfacePage = PreferencePages_addPage(m_notebook, "Interface Preferences");
@@ -580,19 +637,19 @@ GtkWindow* PrefsDlg::BuildDialog()
 
   gtk_notebook_set_page(GTK_NOTEBOOK(m_notebook), 0);
 
-  return dialog;
+  return dialog;*/
 }
 
 preferences_globals_t g_preferences_globals;
 
 void PreferencesDialog_constructWindow(GtkWindow* main_window)
 {
-  PrefsDlg::Instance().m_parent = main_window;
-  PrefsDlg::Instance().Create();
+  //PrefsDlg::Instance().m_parent = main_window;
+  //PrefsDlg::Instance().Create();
 }
 void PreferencesDialog_destroyWindow()
 {
-  PrefsDlg::Instance().Destroy();
+  //PrefsDlg::Instance().Destroy();
 }
 
 
@@ -685,6 +742,30 @@ void PrefsDlg::PostModal (EMessageBoxReturn code)
   }
 }
 
+void PrefsDlg::toggleWindow() {
+	// Pass the call to the utility methods that save/restore the window position
+	if (GTK_WIDGET_VISIBLE(_dialog)) {
+		// Save the window position, to make sure
+		//_windowPosition.readPosition();
+		gtk_widget_hide_all(_dialog);
+	}
+	else {
+		// Restore the position
+		//_windowPosition.applyPosition();
+		// Import the registry keys 
+		//_connector.importValues();
+		// Now show the dialog window again
+		gtk_widget_show_all(_dialog);
+		// Unset the focus widget for this window to avoid the cursor 
+		// from jumping into the shader entry field 
+		//gtk_window_set_focus(GTK_WINDOW(_dialog), NULL);
+	}
+}
+
+void PrefsDlg::toggle() {
+	Instance().toggleWindow();
+}
+
 std::vector<const char*> g_restart_required;
 
 void PreferencesDialog_restartRequired(const char* staticName)
@@ -694,7 +775,8 @@ void PreferencesDialog_restartRequired(const char* staticName)
 
 void PreferencesDialog_showDialog()
 {
-  if(ConfirmModified("Edit Preferences") && PrefsDlg::Instance().DoModal() == eIDOK)
+	PrefsDlg::toggle();
+  /*if(ConfirmModified("Edit Preferences") && PrefsDlg::Instance().DoModal() == eIDOK)
   {
     if(!g_restart_required.empty())
     {
@@ -707,7 +789,7 @@ void PreferencesDialog_showDialog()
       gtk_MessageBox(GTK_WIDGET(MainFrame_getWindow()), message.c_str());
       g_restart_required.clear();
     }
-  }
+  }*/
 }
 
 
