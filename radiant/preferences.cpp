@@ -384,21 +384,19 @@ look in ~/.radiant/<version>/gamename
 ========
 */
 
-#define PREFS_LOCAL_FILENAME "local.pref"
+void PrefsDlg::Init() {
+	// m_rc_path is for game specific preferences
+	// takes the form: global-pref-path/gamename/prefs-file
+	// this is common to win32 and Linux init now
+	m_rc_path = GlobalRegistry().get(RKEY_SETTINGS_PATH);
+	// game sub-dir
+	m_rc_path += game::Manager::Instance().currentGame()->getType();
+	m_rc_path += ".game/";
+	Q_mkdir (m_rc_path.c_str());
 
-void PrefsDlg::Init()
-{
-  // m_rc_path is for game specific preferences
-  // takes the form: global-pref-path/gamename/prefs-file
-  // this is common to win32 and Linux init now
-  m_rc_path = g_string_new (GlobalRegistry().get(RKEY_SETTINGS_PATH).c_str());
-  // game sub-dir
-  g_string_append (m_rc_path, game::Manager::Instance().currentGame()->getType().c_str());
-  g_string_append (m_rc_path, ".game/");
-  Q_mkdir (m_rc_path->str);
-  // then the ini file
-  m_inipath = g_string_new (m_rc_path->str);
-  g_string_append (m_inipath, PREFS_LOCAL_FILENAME);
+	// then the ini file
+	m_inipath = m_rc_path;
+	m_inipath += "local.pref";
 }
 
 typedef std::list<PreferenceGroupCallback> PreferenceGroupCallbacks;
@@ -1008,11 +1006,11 @@ void Preferences_Load()
 		globalOutputStream() << "failed to load global preferences from " << globalPrefFile.c_str() << "\n";
 	}
 
-  globalOutputStream() << "loading local preferences from " << PrefsDlg::Instance().m_inipath->str << "\n";
+  globalOutputStream() << "loading local preferences from " << PrefsDlg::Instance().m_inipath.c_str() << "\n";
 
-  if(!Preferences_Load(g_preferences, PrefsDlg::Instance().m_inipath->str))
+  if(!Preferences_Load(g_preferences, PrefsDlg::Instance().m_inipath.c_str()))
   {
-    globalOutputStream() << "failed to load local preferences from " << PrefsDlg::Instance().m_inipath->str << "\n";
+    globalOutputStream() << "failed to load local preferences from " << PrefsDlg::Instance().m_inipath.c_str() << "\n";
   }
 }
 
@@ -1029,17 +1027,17 @@ void Preferences_Save()
 		globalOutputStream() << "failed to save global preferences to " << globalPrefFile.c_str() << "\n";
 	}
 
-  globalOutputStream() << "saving local preferences to " << PrefsDlg::Instance().m_inipath->str << "\n";
+  globalOutputStream() << "saving local preferences to " << PrefsDlg::Instance().m_inipath.c_str() << "\n";
 
-  if(!Preferences_Save_Safe(g_preferences, PrefsDlg::Instance().m_inipath->str))
+  if(!Preferences_Save_Safe(g_preferences, PrefsDlg::Instance().m_inipath.c_str()))
   {
-    globalOutputStream() << "failed to save local preferences to " << PrefsDlg::Instance().m_inipath->str << "\n";
+    globalOutputStream() << "failed to save local preferences to " << PrefsDlg::Instance().m_inipath.c_str() << "\n";
   }
 }
 
 void Preferences_Reset()
 {
-  file_remove(PrefsDlg::Instance().m_inipath->str);
+  file_remove(PrefsDlg::Instance().m_inipath.c_str());
 }
 
 
