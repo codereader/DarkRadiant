@@ -56,6 +56,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/messagebox.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/TransientWindow.h"
+#include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/VFSTreePopulator.h"
 #include "cmdlib.h"
 #include "plugin.h"
 
@@ -380,7 +382,7 @@ public:
   
   PrefPage* createPage(const std::string& treeName, const std::string& frameName)
   {
-    GtkWidget* page = PreferencePages_addPage(m_notebook, frameName.c_str());
+    /*GtkWidget* page = PreferencePages_addPage(m_notebook, frameName.c_str());
     PreferenceTree_appendPage(m_store, &m_group, treeName.c_str(), page);
     
     _prefPages.push_back(PrefPage(m_dialog, getVBox(page)));
@@ -392,7 +394,7 @@ public:
     	i--;
     	PrefPage* pagePtr = &(*i); 
     	return pagePtr; 
-    }
+    }*/
     
     return NULL;
   }
@@ -419,11 +421,8 @@ PrefPagePtr PrefPage::createOrFindPage(const std::string& path) {
 	}
 	
 	if (child == NULL) {
-		// No child found, create a new page
-		child = PrefPagePtr(new PrefPage(m_dialog, m_vbox));
-		
-		// Give the page a name and add it to the list
-		child->setName(parts[0]);
+		// No child found, create a new page and add it to the list
+		child = PrefPagePtr(new PrefPage(parts[0], _path));
 		_children.push_back(child);
 	}
 	
@@ -435,16 +434,55 @@ PrefPagePtr PrefPage::createOrFindPage(const std::string& path) {
 			subPath += (subPath.empty()) ? "" : "/";
 			subPath += parts[i];
 		}
-		std::cout << "subPath: " << subPath << "\n";
 		// Pass the call to the child
 		return child->createOrFindPage(subPath);
 	}
 	else {
-		std::cout << "leaf: " << parts[0] << "\n";
 		// We have found a leaf, return the child page		
 		return child;
 	}
 }
+
+/** greebo: A hybrid walker that is used twice:
+ * 			First time to add each PrefPage to the TreeStore using a VFSTreePopulator
+ * 			Second time as VFSTreeVisitor to store the data into the treestore 
+ * 			
+ */
+class PrefTreePopulator :
+	public PrefPage::Visitor,
+	public gtkutil::VFSTreePopulator::Visitor 
+{
+	// The helper class creating the GtkTreeIter
+	gtkutil::VFSTreePopulator& _vfsPopulator;
+	
+public:
+	PrefTreePopulator(gtkutil::VFSTreePopulator& vfsPopulator) :
+		_vfsPopulator(vfsPopulator)
+	{}
+
+	void visit(PrefPagePtr prefPage) {
+		// Check for an empty path (this would be the root item)
+		if (!prefPage->getPath().empty()) {
+			// Tell the VFSTreePopulator to add the item with this path
+			_vfsPopulator.addPath(prefPage->getPath());
+		}
+	}
+	
+	void visit(GtkTreeStore* store, GtkTreeIter* iter, 
+			   const std::string& path, bool isExplicit)
+	{
+		// Do not process add the root item
+		if (!path.empty()) {
+			// Get the leaf name (truncate the path)
+			std::string leafName = path.substr(path.rfind("/")+1);
+			
+			// Add the caption to the liststore
+			gtk_tree_store_set(store, iter, 
+							   NAME_COL, leafName.c_str(),
+							   -1);
+		}
+	}
+};
 
 PrefsDlg::PrefsDlg() {
 	// Create a treestore with a name and a pointer
@@ -452,8 +490,7 @@ PrefsDlg::PrefsDlg() {
 	
 	populateWindow();
 	
-	//_root = PrefPagePtr(new PrefPage(*this, NULL));
-	//_root->setName("root");
+	_root = PrefPagePtr(new PrefPage("", ""));
 }
 
 void PrefsDlg::populateWindow() {
@@ -472,15 +509,40 @@ void PrefsDlg::populateWindow() {
 	gtk_tree_view_append_column(_treeView, gtkutil::TextColumn("Category", 0)); 
 	
 	gtk_widget_set_size_request(GTK_WIDGET(_treeView), 300, -1);
-	gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(_treeView), FALSE, FALSE, 0);
+	GtkWidget* scrolledFrame = gtkutil::ScrolledFrame(GTK_WIDGET(_treeView));
+	gtk_box_pack_start(GTK_BOX(hbox), scrolledFrame, FALSE, FALSE, 0);
 	
 	_notebook = gtk_notebook_new();
 	gtk_box_pack_start(GTK_BOX(hbox), _notebook, TRUE, TRUE, 0);
+	
+	gtk_container_add(GTK_CONTAINER(_dialog), hbox);
+}
+
+void PrefsDlg::updateTreeStore() {
+	// Clear the tree before populating it
+	gtk_tree_store_clear(_prefTree);
+	
+	// Instantiate a new populator class
+	gtkutil::VFSTreePopulator vfsTreePopulator(_prefTree);
+	
+	PrefTreePopulator visitor(vfsTreePopulator);
+	
+	// Visit each page with the PrefTreePopulator 
+	// (which in turn is using the VFSTreePopulator helper)
+	_root->foreachPage(visitor);
+	
+	// All the GtkTreeIters are available, we should add the data now
+	// re-use the visitor, it provides both visit() methods
+	vfsTreePopulator.forEachNode(visitor);
 }
 
 PrefPagePtr PrefsDlg::createOrFindPage(const std::string& path) {
 	// Pass the call to the root page
-	return _root->createOrFindPage(path);
+	PrefPagePtr page = _root->createOrFindPage(path);
+	
+	updateTreeStore();
+	
+	return page;
 }
 
 PrefsDlg& PrefsDlg::Instance() {
@@ -775,6 +837,7 @@ void PreferencesDialog_restartRequired(const char* staticName)
 
 void PreferencesDialog_showDialog()
 {
+	PreferencesPagePtr newPage = GlobalPreferenceSystem().getPage("Settings/New Camera Settings");
 	PrefsDlg::toggle();
   /*if(ConfirmModified("Edit Preferences") && PrefsDlg::Instance().DoModal() == eIDOK)
   {

@@ -283,8 +283,8 @@ public:
     gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(vbox2));
 
     {
-      PrefPage preferencesPage(*this, GTK_WIDGET(vbox2));
-      Paths_constructPreferences(&preferencesPage);
+      //PrefPage preferencesPage(*this, GTK_WIDGET(vbox2));
+      //Paths_constructPreferences(&preferencesPage);
     }
 
     return create_simple_modal_dialog_window("Engine Path Not Found", m_modal, GTK_WIDGET(frame));
