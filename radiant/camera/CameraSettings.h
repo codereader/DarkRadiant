@@ -33,8 +33,7 @@ namespace {
 }
 
 class CameraSettings : 
-	public RegistryKeyObserver,
-	public PreferenceConstructor 
+	public RegistryKeyObserver 
 {
 	bool _callbackActive;
 	
@@ -82,8 +81,8 @@ public:
 	void toggleFarClip();
 	void setFarClip(bool farClipEnabled);
 
-	// PreferenceConstructor implementation, adds the elements to the according preference page
-	void constructPreferencePage(PreferenceGroup& group);
+	// Adds the elements to the "camera" preference page
+	void constructPreferencePage();
 
 private:
 	void importDrawMode(const int mode);

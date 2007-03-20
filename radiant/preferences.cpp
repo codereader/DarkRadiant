@@ -29,21 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "debugging/debugging.h"
 
-#include <gtk/gtkmain.h>
-#include <gtk/gtkvbox.h>
-#include <gtk/gtkhbox.h>
-#include <gtk/gtkframe.h>
-#include <gtk/gtklabel.h>
-#include <gtk/gtktogglebutton.h>
-#include <gtk/gtkspinbutton.h>
-#include <gtk/gtkscrolledwindow.h>
-#include <gtk/gtktreemodel.h>
-#include <gtk/gtktreeview.h>
-#include <gtk/gtktreestore.h>
-#include <gtk/gtktreeselection.h>
-#include <gtk/gtkcellrenderertext.h>
-#include <gtk/gtknotebook.h>
-
+#include <gtk/gtk.h>
 #include <iostream>
 
 #include "generic/callback.h"
@@ -52,6 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "os/file.h"
 #include "os/path.h"
 #include "os/dir.h"
+#include "gtkutil/dialog.h"
 #include "gtkutil/filechooser.h"
 #include "gtkutil/messagebox.h"
 #include "gtkutil/TextColumn.h"
@@ -176,6 +163,164 @@ static void OnButtonClean (GtkWidget *widget, gpointer data)
     gtk_main_quit();
   }*/
 }
+
+std::string PrefPage::getPath() const {
+	return _path;
+}
+
+std::string PrefPage::getName() const {
+	return _name;
+}
+
+/** greebo: Returns the widget that can be used to determine
+ * 			the notebook page number.
+ */
+GtkWidget* PrefPage::getWidget() {
+	return _pageWidget;
+}
+
+void PrefPage::foreachPage(Visitor& visitor) {
+	for (unsigned int i = 0; i < _children.size(); i++) {
+		// Visit this instance
+		visitor.visit(_children[i]);
+
+		// Pass the visitor recursively
+		_children[i]->foreachPage(visitor);
+	}
+}
+
+GtkWidget* PrefPage::appendCheckBox(const char* name, const char* flag, bool& data) {
+	return NULL; //return m_dialog.addCheckBox(m_vbox, name, flag, data);
+}
+
+GtkWidget* PrefPage::appendCheckBox(const char* name, const char* flag, const BoolImportCallback& importCallback, const BoolExportCallback& exportCallback) {
+	return NULL; //return m_dialog.addCheckBox(m_vbox, name, flag, importCallback, exportCallback);
+}
+
+/* greebo: This adds a checkbox and connects it to an XMLRegistry key.
+ * @returns: the pointer to the created GtkWidget */
+GtkWidget* PrefPage::appendCheckBox(const std::string& name, const std::string& flag, const std::string& registryKey) {
+	std::cout << "appendCheckbox called\n";
+	
+	// Create a new checkbox with the given caption and display it
+	GtkWidget* check = gtk_check_button_new_with_label(flag.c_str());
+	
+	// Connect the registry key to this toggle button
+	_connector.connectGtkObject(GTK_OBJECT(check), registryKey);
+	
+	gtk_box_pack_start(GTK_BOX(_vbox), check, FALSE, FALSE, 0);
+	//DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(DialogRow_new(name.c_str(), check)));
+	return check;
+}
+
+/* greebo: This adds a horizontal slider to the internally referenced VBox and connects
+ * it to the given registryKey. */
+void PrefPage::appendSlider(const std::string& name, const std::string& registryKey, bool drawValue,
+                            double value, double lower, double upper, double step_increment, double page_increment, double page_size) {
+	//m_dialog.addSlider(m_vbox, name, registryKey, drawValue, value, lower, upper, step_increment, page_increment, page_size);
+}
+
+/* greebo: Use this to add a dropdown selection box with the given list of strings as captions. The value
+ * stored in the registryKey is used to determine the currently selected combobox item */
+void PrefPage::appendCombo(const std::string& name, const std::string& registryKey, const ComboBoxValueList& valueList) {
+	GtkWidget* alignment = gtk_alignment_new(0.0, 0.5, 0.0, 0.0);
+	
+	{
+		// Create a new combo box
+		GtkWidget* combo = gtk_combo_box_new_text();
+	
+		// Add all the string values to the combo box
+		for (ComboBoxValueList::const_iterator i = valueList.begin(); i != valueList.end(); i++) {
+			// Add the current string value to the combo box  
+			gtk_combo_box_append_text(GTK_COMBO_BOX(combo), i->c_str());
+		}
+		
+		// Connect the registry key to the newly created combo box
+		_connector.connectGtkObject(GTK_OBJECT(combo), registryKey);
+		
+		// Add it to the container 
+		gtk_container_add(GTK_CONTAINER(alignment), combo);
+	}
+	
+	// Add the widget to the dialog row
+	GtkTable* row = DialogRow_new(name.c_str(), alignment);
+	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(row));
+}
+
+/* greebo: Appends an entry field with <name> as caption which is connected to the given registryKey
+ */
+GtkWidget* PrefPage::appendEntry(const std::string& name, const std::string& registryKey) {
+	return NULL; //return m_dialog.addEntry(m_vbox, name, registryKey);
+}
+
+// greebo: Adds a PathEntry to choose files or directories (depending on the given boolean)
+GtkWidget* PrefPage::appendPathEntry(const std::string& name, const std::string& registryKey, bool browseDirectories) {
+	return NULL; //return m_dialog.addPathEntry(m_vbox, name, registryKey, browseDirectories);
+}
+
+/* greebo: Appends an entry field with spinner buttons which retrieves its value from the given
+ * RegistryKey. The lower and upper values have to be passed as well.
+ */
+GtkWidget* PrefPage::appendSpinner(const std::string& name, const std::string& registryKey,
+                                   double lower, double upper, int fraction) {
+	return NULL; //return m_dialog.addSpinner(m_vbox, name, registryKey, lower, upper, fraction);
+}
+
+void PrefPage::appendCombo(const char* name, StringArrayRange values, const IntImportCallback& importCallback, const IntExportCallback& exportCallback) {
+	//m_dialog.addCombo(m_vbox, name, values, importCallback, exportCallback);
+}
+void PrefPage::appendCombo(const char* name, int& data, StringArrayRange values) {
+	//m_dialog.addCombo(m_vbox, name, data, values);
+}
+void PrefPage::appendSlider(const char* name, int& data, gboolean draw_value, const char* low, const char* high, double value, double lower, double upper, double step_increment, double page_increment, double page_size) {
+	//m_dialog.addSlider(m_vbox, name, data, draw_value, low, high, value, lower, upper, step_increment, page_increment, page_size);
+}
+void PrefPage::appendRadio(const char* name, StringArrayRange names, const IntImportCallback& importCallback, const IntExportCallback& exportCallback) {
+	// m_dialog.addRadio(m_vbox, name, names, importCallback, exportCallback);
+}
+void PrefPage::appendRadio(const char* name, int& data, StringArrayRange names) {
+	//m_dialog.addRadio(m_vbox, name, data, names);
+}
+void PrefPage::appendRadioIcons(const char* name, StringArrayRange icons, const IntImportCallback& importCallback, const IntExportCallback& exportCallback) {
+	//m_dialog.addRadioIcons(m_vbox, name, icons, importCallback, exportCallback);
+}
+void PrefPage::appendRadioIcons(const char* name, int& data, StringArrayRange icons) {
+	//m_dialog.addRadioIcons(m_vbox, name, data, icons);
+}
+GtkWidget* PrefPage::appendEntry(const char* name, const IntImportCallback& importCallback, const IntExportCallback& exportCallback) {
+	return NULL; //return m_dialog.addIntEntry(m_vbox, name, importCallback, exportCallback);
+}
+GtkWidget* PrefPage::appendEntry(const char* name, int& data) {
+	return NULL; //return m_dialog.addEntry(m_vbox, name, data);
+}
+GtkWidget* PrefPage::appendEntry(const char* name, const SizeImportCallback& importCallback, const SizeExportCallback& exportCallback) {
+	return NULL; //return m_dialog.addSizeEntry(m_vbox, name, importCallback, exportCallback);
+}
+GtkWidget* PrefPage::appendEntry(const char* name, std::size_t& data) {
+	return NULL; //return m_dialog.addEntry(m_vbox, name, data);
+}
+GtkWidget* PrefPage::appendEntry(const char* name, const FloatImportCallback& importCallback, const FloatExportCallback& exportCallback) {
+	return NULL; //return m_dialog.addFloatEntry(m_vbox, name, importCallback, exportCallback);
+}
+GtkWidget* PrefPage::appendEntry(const char* name, float& data) {
+	return NULL; //return m_dialog.addEntry(m_vbox, name, data);
+}
+GtkWidget* PrefPage::appendPathEntry(const char* name, bool browse_directory, const StringImportCallback& importCallback, const StringExportCallback& exportCallback) {
+	return NULL; //return m_dialog.addPathEntry(m_vbox, name, browse_directory, importCallback, exportCallback);
+}
+GtkWidget* PrefPage::appendPathEntry(const char* name, CopiedString& data, bool directory) {
+	return NULL; //return m_dialog.addPathEntry(m_vbox, name, data, directory);
+}
+GtkWidget* PrefPage::appendSpinner(const char* name, int& data, double value, double lower, double upper) {
+	return NULL; //return m_dialog.addSpinner(m_vbox, name, data, value, lower, upper);
+}
+GtkWidget* PrefPage::appendSpinner(const char* name, double value, double lower, double upper, const IntImportCallback& importCallback, const IntExportCallback& exportCallback) {
+	return NULL; //return m_dialog.addSpinner(m_vbox, name, value, lower, upper, importCallback, exportCallback);
+}
+GtkWidget* PrefPage::appendSpinner(const char* name, double value, double lower, double upper, const FloatImportCallback& importCallback, const FloatExportCallback& exportCallback) {
+	return NULL; //return m_dialog.addSpinner(m_vbox, name, value, lower, upper, importCallback, exportCallback);
+}
+
 
 // =============================================================================
 // PrefsDlg class
@@ -345,10 +490,12 @@ GtkTreeIter PreferenceTree_appendPage(GtkTreeStore* store, GtkTreeIter* parent, 
 PrefPage::PrefPage(
 		const std::string& name, 
 		const std::string& parentPath, 
-		GtkWidget* notebook) :
+		GtkWidget* notebook,
+		gtkutil::RegistryConnector& connector) :
 	_name(name),
 	_path(parentPath),
-	_notebook(notebook)
+	_notebook(notebook),
+	_connector(connector)
 {
 	// If this is not the root item, add a leading slash
 	_path += (!_path.empty()) ? "/" : "";
@@ -367,7 +514,7 @@ PrefPage::PrefPage(
 	
 	// Create the alignment for the client vbox and pack it
 	GtkWidget* alignment = gtkutil::LeftAlignment(_vbox, 18, 1.0);
-	gtk_box_pack_start(GTK_BOX(_pageWidget), _vbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(_pageWidget), alignment, FALSE, FALSE, 0);
 	
 	// Append the whole vbox as new page to the notebook
 	gtk_notebook_append_page(GTK_NOTEBOOK(_notebook), _pageWidget, NULL);
@@ -453,7 +600,7 @@ PrefPagePtr PrefPage::createOrFindPage(const std::string& path) {
 	
 	if (child == NULL) {
 		// No child found, create a new page and add it to the list
-		child = PrefPagePtr(new PrefPage(parts[0], _path, _notebook));
+		child = PrefPagePtr(new PrefPage(parts[0], _path, _notebook, _connector));
 		_children.push_back(child);
 	}
 	
@@ -530,8 +677,8 @@ PrefsDlg::PrefsDlg() {
 	// Create all the widgets
 	populateWindow();
 	
-	// Create the root element
-	_root = PrefPagePtr(new PrefPage("", "", _notebook));
+	// Create the root element with the Notebook and Connector references 
+	_root = PrefPagePtr(new PrefPage("", "", _notebook, _registryConnector));
 }
 
 void PrefsDlg::populateWindow() {
@@ -878,7 +1025,6 @@ void PrefsDlg::toggleWindow() {
 		gtk_widget_hide_all(_dialog);
 	}
 	else {
-		std::cout << "d";
 		// Restore the position
 		//_windowPosition.applyPosition();
 		// Import the registry keys 
