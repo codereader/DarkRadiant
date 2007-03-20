@@ -57,7 +57,7 @@ public:
 
 private:
 	// The vbox this page is adding the widgets to
-	GtkWidget* m_vbox;
+	GtkWidget* _vbox;
   
   	// The list of child pages
 	std::vector<PrefPagePtr> _children;
@@ -67,16 +67,17 @@ private:
 	
 	// The full path of this object
 	std::string _path;
+	
+	// The notebook this page is packed into
+	GtkWidget* _notebook;
+	
+	// The actual page that gets attached to the notebook
+	GtkWidget* _pageWidget;
 
 public:
-	PrefPage(const std::string& name, const std::string& parentPath) :
-		_name(name),
-		_path(parentPath)
-	{
-		// If this is not the root item, add a leading slash
-		_path += (!_path.empty()) ? "/" : "";
-		_path += _name;
-	}
+	PrefPage(const std::string& name, 
+			 const std::string& parentPath, 
+			 GtkWidget* notebook);
 	
 	std::string getPath() const {
 		return _path;
@@ -84,6 +85,13 @@ public:
 	
 	std::string getName() const {
 		return _name;
+	}
+
+	/** greebo: Returns the widget that can be used to determine
+	 * 			the notebook page number.
+	 */
+	GtkWidget* getWidget() {
+		return _pageWidget;
 	}
 	
 	void foreachPage(Visitor& visitor) {
@@ -98,17 +106,17 @@ public:
   
   GtkWidget* appendCheckBox(const char* name, const char* flag, bool& data)
   {
-    //return m_dialog.addCheckBox(m_vbox, name, flag, data);
+    return NULL; //return m_dialog.addCheckBox(m_vbox, name, flag, data);
   }
   GtkWidget* appendCheckBox(const char* name, const char* flag, const BoolImportCallback& importCallback, const BoolExportCallback& exportCallback)
   {
-    //return m_dialog.addCheckBox(m_vbox, name, flag, importCallback, exportCallback);
+    return NULL; //return m_dialog.addCheckBox(m_vbox, name, flag, importCallback, exportCallback);
   }
   
 	/* greebo: This adds a checkbox and connects it to an XMLRegistry key.
 	 * @returns: the pointer to the created GtkWidget */
 	GtkWidget* appendCheckBox(const std::string& name, const std::string& flag, const std::string& registryKey) {
-		//return m_dialog.addCheckBox(m_vbox, name, flag, registryKey);
+		return NULL; //return m_dialog.addCheckBox(m_vbox, name, flag, registryKey);
 	}
 
 	/* greebo: This adds a horizontal slider to the internally referenced VBox and connects 
@@ -129,12 +137,12 @@ public:
 	/* greebo: Appends an entry field with <name> as caption which is connected to the given registryKey
 	 */
 	GtkWidget* appendEntry(const std::string& name, const std::string& registryKey) {
-		//return m_dialog.addEntry(m_vbox, name, registryKey);
+		return NULL; //return m_dialog.addEntry(m_vbox, name, registryKey);
 	}
 	
 	// greebo: Adds a PathEntry to choose files or directories (depending on the given boolean)
 	GtkWidget* appendPathEntry(const std::string& name, const std::string& registryKey, bool browseDirectories) {
-		//return m_dialog.addPathEntry(m_vbox, name, registryKey, browseDirectories);
+		return NULL; //return m_dialog.addPathEntry(m_vbox, name, registryKey, browseDirectories);
 	}
 	
 	/* greebo: Appends an entry field with spinner buttons which retrieves its value from the given
@@ -142,7 +150,7 @@ public:
 	 */
 	GtkWidget* appendSpinner(const std::string& name, const std::string& registryKey, 
 							 double lower, double upper, int fraction) {
-		//return m_dialog.addSpinner(m_vbox, name, registryKey, lower, upper, fraction);
+		return NULL; //return m_dialog.addSpinner(m_vbox, name, registryKey, lower, upper, fraction);
 	}
   
   void appendCombo(const char* name, StringArrayRange values, const IntImportCallback& importCallback, const IntExportCallback& exportCallback)
@@ -175,47 +183,47 @@ public:
   }
   GtkWidget* appendEntry(const char* name, const IntImportCallback& importCallback, const IntExportCallback& exportCallback)
   {
-    //return m_dialog.addIntEntry(m_vbox, name, importCallback, exportCallback);
+    return NULL; //return m_dialog.addIntEntry(m_vbox, name, importCallback, exportCallback);
   }
   GtkWidget* appendEntry(const char* name, int& data)
   {
-    //return m_dialog.addEntry(m_vbox, name, data);
+    return NULL; //return m_dialog.addEntry(m_vbox, name, data);
   }
   GtkWidget* appendEntry(const char* name, const SizeImportCallback& importCallback, const SizeExportCallback& exportCallback)
   {
-    //return m_dialog.addSizeEntry(m_vbox, name, importCallback, exportCallback);
+    return NULL; //return m_dialog.addSizeEntry(m_vbox, name, importCallback, exportCallback);
   }
   GtkWidget* appendEntry(const char* name, std::size_t& data)
   {
-    //return m_dialog.addEntry(m_vbox, name, data);
+    return NULL; //return m_dialog.addEntry(m_vbox, name, data);
   }
   GtkWidget* appendEntry(const char* name, const FloatImportCallback& importCallback, const FloatExportCallback& exportCallback)
   {
-    //return m_dialog.addFloatEntry(m_vbox, name, importCallback, exportCallback);
+    return NULL; //return m_dialog.addFloatEntry(m_vbox, name, importCallback, exportCallback);
   }
   GtkWidget* appendEntry(const char* name, float& data)
   {
-    //return m_dialog.addEntry(m_vbox, name, data);
+    return NULL; //return m_dialog.addEntry(m_vbox, name, data);
   }
   GtkWidget* appendPathEntry(const char* name, bool browse_directory, const StringImportCallback& importCallback, const StringExportCallback& exportCallback)
   {
-    //return m_dialog.addPathEntry(m_vbox, name, browse_directory, importCallback, exportCallback);
+    return NULL; //return m_dialog.addPathEntry(m_vbox, name, browse_directory, importCallback, exportCallback);
   }
   GtkWidget* appendPathEntry(const char* name, CopiedString& data, bool directory)
   {
-    //return m_dialog.addPathEntry(m_vbox, name, data, directory);
+    return NULL; //return m_dialog.addPathEntry(m_vbox, name, data, directory);
   }
   GtkWidget* appendSpinner(const char* name, int& data, double value, double lower, double upper)
   {
-    //return m_dialog.addSpinner(m_vbox, name, data, value, lower, upper);
+    return NULL; //return m_dialog.addSpinner(m_vbox, name, data, value, lower, upper);
   }
   GtkWidget* appendSpinner(const char* name, double value, double lower, double upper, const IntImportCallback& importCallback, const IntExportCallback& exportCallback)
   {
-    //return m_dialog.addSpinner(m_vbox, name, value, lower, upper, importCallback, exportCallback);
+    return NULL; //return m_dialog.addSpinner(m_vbox, name, value, lower, upper, importCallback, exportCallback);
   }
   GtkWidget* appendSpinner(const char* name, double value, double lower, double upper, const FloatImportCallback& importCallback, const FloatExportCallback& exportCallback)
   {
-    //return m_dialog.addSpinner(m_vbox, name, value, lower, upper, importCallback, exportCallback);
+    return NULL; //return m_dialog.addSpinner(m_vbox, name, value, lower, upper, importCallback, exportCallback);
   }
 
 	/** greebo: Performs a recursive lookup of the given path
@@ -273,6 +281,7 @@ typedef MemberCaller1<LatchedInt, int, &LatchedInt::import> LatchedIntImportCall
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkTreeStore GtkTreeStore;
 typedef struct _GtkTreeView GtkTreeView;
+typedef struct _GtkTreeSelection GtkTreeSelection;
 class PrefsDlg;
 class PrefPage;
 class StringOutputStream;
@@ -288,6 +297,7 @@ class PrefsDlg
 	
 	GtkTreeStore* _prefTree;
 	GtkTreeView* _treeView;
+	GtkTreeSelection* _selection;
 	GtkWidget* _notebook;
 	
 	PrefPagePtr _root;
@@ -349,6 +359,11 @@ protected:
 	void PostModal (EMessageBoxReturn code);
 	
 private:
+	/** greebo: Helper function that selects the current notebook page
+	 * 			by using the GtkTreeSelection* object 
+	 */
+	void selectPage();
+
 	/** greebo: Updates the tree store according to the PrefPage structure
 	 */
 	void updateTreeStore();
@@ -363,6 +378,9 @@ private:
 
 	// greebo: calls the constructors to add the preference elements
 	void callConstructors(PreferenceTreeGroup& preferenceGroup);
+	
+	// Gets called on page selection
+	static void onPrefPageSelect(GtkTreeSelection* treeselection, PrefsDlg* self);
 };
 
 struct preferences_globals_t

@@ -57,7 +57,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/TransientWindow.h"
 #include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/VFSTreePopulator.h"
+#include "gtkutil/TreeModel.h"
+#include "gtkutil/LeftAlignment.h"
 #include "cmdlib.h"
 #include "plugin.h"
 
@@ -196,15 +199,12 @@ void PrefsDlg::Init()
 {
   // m_rc_path is for game specific preferences
   // takes the form: global-pref-path/gamename/prefs-file
-
   // this is common to win32 and Linux init now
   m_rc_path = g_string_new (GlobalRegistry().get(RKEY_SETTINGS_PATH).c_str());
-  
   // game sub-dir
   g_string_append (m_rc_path, game::Manager::Instance().currentGame()->getType().c_str());
   g_string_append (m_rc_path, ".game/");
   Q_mkdir (m_rc_path->str);
-  
   // then the ini file
   m_inipath = g_string_new (m_rc_path->str);
   g_string_append (m_inipath, PREFS_LOCAL_FILENAME);
@@ -342,6 +342,37 @@ GtkTreeIter PreferenceTree_appendPage(GtkTreeStore* store, GtkTreeIter* parent, 
   return group;
 }
 
+PrefPage::PrefPage(
+		const std::string& name, 
+		const std::string& parentPath, 
+		GtkWidget* notebook) :
+	_name(name),
+	_path(parentPath),
+	_notebook(notebook)
+{
+	// If this is not the root item, add a leading slash
+	_path += (!_path.empty()) ? "/" : "";
+	_path += _name;
+	
+	// Create the overall vbox
+	_pageWidget = gtk_vbox_new(FALSE, 6);
+	gtk_container_set_border_width(GTK_CONTAINER(_pageWidget), 12);
+	
+	// Create the label
+	GtkWidget* label = gtkutil::LeftAlignedLabel(std::string("<b>") + _name + "</b>");
+	gtk_box_pack_start(GTK_BOX(_pageWidget), label, FALSE, FALSE, 0);
+	
+	// Create the VBOX for all the client widgets
+	_vbox = gtk_vbox_new(FALSE, 6);
+	
+	// Create the alignment for the client vbox and pack it
+	GtkWidget* alignment = gtkutil::LeftAlignment(_vbox, 18, 1.0);
+	gtk_box_pack_start(GTK_BOX(_pageWidget), _vbox, FALSE, FALSE, 0);
+	
+	// Append the whole vbox as new page to the notebook
+	gtk_notebook_append_page(GTK_NOTEBOOK(_notebook), _pageWidget, NULL);
+}
+
 GtkWidget* PreferencePages_addPage(GtkWidget* notebook, const char* name)
 {
   GtkWidget* preflabel = gtk_label_new(name);
@@ -422,7 +453,7 @@ PrefPagePtr PrefPage::createOrFindPage(const std::string& path) {
 	
 	if (child == NULL) {
 		// No child found, create a new page and add it to the list
-		child = PrefPagePtr(new PrefPage(parts[0], _path));
+		child = PrefPagePtr(new PrefPage(parts[0], _path, _notebook));
 		_children.push_back(child);
 	}
 	
@@ -445,8 +476,7 @@ PrefPagePtr PrefPage::createOrFindPage(const std::string& path) {
 
 /** greebo: A hybrid walker that is used twice:
  * 			First time to add each PrefPage to the TreeStore using a VFSTreePopulator
- * 			Second time as VFSTreeVisitor to store the data into the treestore 
- * 			
+ * 			Second time as VFSTreeVisitor to store the data into the treestore	
  */
 class PrefTreePopulator :
 	public PrefPage::Visitor,
@@ -455,9 +485,12 @@ class PrefTreePopulator :
 	// The helper class creating the GtkTreeIter
 	gtkutil::VFSTreePopulator& _vfsPopulator;
 	
+	PrefsDlg* _dialog;
+	
 public:
-	PrefTreePopulator(gtkutil::VFSTreePopulator& vfsPopulator) :
-		_vfsPopulator(vfsPopulator)
+	PrefTreePopulator(gtkutil::VFSTreePopulator& vfsPopulator, PrefsDlg* dialog) :
+		_vfsPopulator(vfsPopulator),
+		_dialog(dialog)
 	{}
 
 	void visit(PrefPagePtr prefPage) {
@@ -476,10 +509,16 @@ public:
 			// Get the leaf name (truncate the path)
 			std::string leafName = path.substr(path.rfind("/")+1);
 			
-			// Add the caption to the liststore
-			gtk_tree_store_set(store, iter, 
-							   NAME_COL, leafName.c_str(),
-							   -1);
+			// Get a reference to the page defined by this path
+			PrefPagePtr page = _dialog->createOrFindPage(path);
+			
+			if (page != NULL) {
+				// Add the caption to the liststore
+				gtk_tree_store_set(store, iter, 
+								   NAME_COL, leafName.c_str(),
+								   PREFPAGE_COL, page->getWidget(), 
+								   -1);
+			}
 		}
 	}
 };
@@ -488,9 +527,11 @@ PrefsDlg::PrefsDlg() {
 	// Create a treestore with a name and a pointer
 	_prefTree = gtk_tree_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
 	
+	// Create all the widgets
 	populateWindow();
 	
-	_root = PrefPagePtr(new PrefPage("", ""));
+	// Create the root element
+	_root = PrefPagePtr(new PrefPage("", "", _notebook));
 }
 
 void PrefsDlg::populateWindow() {
@@ -499,11 +540,15 @@ void PrefsDlg::populateWindow() {
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 12);
 	gtk_window_set_type_hint(GTK_WINDOW(_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
+	gtk_widget_set_size_request(_dialog, 600, 450);
 	
 	GtkWidget* hbox = gtk_hbox_new(FALSE, 0);
 	
 	_treeView = GTK_TREE_VIEW(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_prefTree)));
 	g_object_unref(G_OBJECT(_prefTree));
+	
+	_selection = gtk_tree_view_get_selection(_treeView);
+	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(onPrefPageSelect), this);
 	
 	gtk_tree_view_set_headers_visible(_treeView, FALSE);
 	gtk_tree_view_append_column(_treeView, gtkutil::TextColumn("Category", 0)); 
@@ -513,7 +558,8 @@ void PrefsDlg::populateWindow() {
 	gtk_box_pack_start(GTK_BOX(hbox), scrolledFrame, FALSE, FALSE, 0);
 	
 	_notebook = gtk_notebook_new();
-	gtk_box_pack_start(GTK_BOX(hbox), _notebook, TRUE, TRUE, 0);
+	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(_notebook), FALSE);
+	gtk_box_pack_start(GTK_BOX(hbox), _notebook, TRUE, TRUE, 6);
 	
 	gtk_container_add(GTK_CONTAINER(_dialog), hbox);
 }
@@ -525,7 +571,7 @@ void PrefsDlg::updateTreeStore() {
 	// Instantiate a new populator class
 	gtkutil::VFSTreePopulator vfsTreePopulator(_prefTree);
 	
-	PrefTreePopulator visitor(vfsTreePopulator);
+	PrefTreePopulator visitor(vfsTreePopulator, this);
 	
 	// Visit each page with the PrefTreePopulator 
 	// (which in turn is using the VFSTreePopulator helper)
@@ -538,11 +584,7 @@ void PrefsDlg::updateTreeStore() {
 
 PrefPagePtr PrefsDlg::createOrFindPage(const std::string& path) {
 	// Pass the call to the root page
-	PrefPagePtr page = _root->createOrFindPage(path);
-	
-	updateTreeStore();
-	
-	return page;
+	return _root->createOrFindPage(path);
 }
 
 PrefsDlg& PrefsDlg::Instance() {
@@ -561,6 +603,30 @@ void PrefsDlg::callConstructors(PreferenceTreeGroup& preferenceGroup) {
 			constructor->constructPreferencePage(preferenceGroup);
 		}
 	}
+}
+
+void PrefsDlg::selectPage() {
+	// Get the widget* pointer from the current selection
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+	bool anythingSelected = gtk_tree_selection_get_selected(
+		_selection, &model, &iter
+	);
+	
+	if (anythingSelected) {
+		// Retrieve the pointer from the current row and cast it to a GtkWidget*
+		gpointer widgetPtr = gtkutil::TreeModel::getPointer(model, &iter, PREFPAGE_COL);
+		GtkWidget* page = reinterpret_cast<GtkWidget*>(widgetPtr);
+		
+		int pagenum = gtk_notebook_page_num(GTK_NOTEBOOK(_notebook), page);
+		if (gtk_notebook_get_current_page(GTK_NOTEBOOK(_notebook)) != pagenum) {
+			gtk_notebook_set_current_page(GTK_NOTEBOOK(_notebook), pagenum);
+		}
+	}
+}
+
+void PrefsDlg::onPrefPageSelect(GtkTreeSelection* treeselection, PrefsDlg* self) {
+	self->selectPage();
 }
 
 // Construct the GTK elements for the Preferences Dialog.
@@ -699,7 +765,7 @@ GtkWindow* PrefsDlg::BuildDialog()
 
   gtk_notebook_set_page(GTK_NOTEBOOK(m_notebook), 0);
 
-  return dialog;*/
+  return dialog;*/return NULL;
 }
 
 preferences_globals_t g_preferences_globals;
@@ -812,10 +878,14 @@ void PrefsDlg::toggleWindow() {
 		gtk_widget_hide_all(_dialog);
 	}
 	else {
+		std::cout << "d";
 		// Restore the position
 		//_windowPosition.applyPosition();
 		// Import the registry keys 
 		//_connector.importValues();
+		// Rebuild the tree and expand it
+		updateTreeStore();
+		gtk_tree_view_expand_all(_treeView);
 		// Now show the dialog window again
 		gtk_widget_show_all(_dialog);
 		// Unset the focus widget for this window to avoid the cursor 
