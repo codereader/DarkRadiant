@@ -391,21 +391,14 @@ void PrefsDlg::Init()
   // m_rc_path is for game specific preferences
   // takes the form: global-pref-path/gamename/prefs-file
   // this is common to win32 and Linux init now
-  std::cout << "1";
   m_rc_path = g_string_new (GlobalRegistry().get(RKEY_SETTINGS_PATH).c_str());
-  std::cout << "2";
   // game sub-dir
   g_string_append (m_rc_path, game::Manager::Instance().currentGame()->getType().c_str());
-  std::cout << "4";
   g_string_append (m_rc_path, ".game/");
-  std::cout << "3";
   Q_mkdir (m_rc_path->str);
-  std::cout << "5";
   // then the ini file
   m_inipath = g_string_new (m_rc_path->str);
-  std::cout << "6";
   g_string_append (m_inipath, PREFS_LOCAL_FILENAME);
-  std::cout << "7";
 }
 
 typedef std::list<PreferenceGroupCallback> PreferenceGroupCallbacks;
