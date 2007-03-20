@@ -149,7 +149,8 @@ enum StartupShaders
 };
 
 namespace {
-	const std::string RKEY_TEXTURES_HIDE_UNUSED = "user/ui/textures/hideUnused";
+	const std::string RKEY_TEXTURES_HIDE_UNUSED = "user/ui/textures/browser/hideUnused";
+	const std::string RKEY_TEXTURE_SCALE = "user/ui/textures/browser/textureScale";
 }
 
 void TextureBrowser_heightChanged(TextureBrowser& textureBrowser);
@@ -207,7 +208,7 @@ public:
   
   void keyChanged() {
   	m_hideUnused = (GlobalRegistry().get(RKEY_TEXTURES_HIDE_UNUSED) == "1");
-  	
+  	setScaleFromRegistry();
   	TextureBrowser_heightChanged(*this);
 	m_originInvalid = true;
   }
@@ -283,6 +284,8 @@ public:
 	void construct() {
 		m_hideUnused = (GlobalRegistry().get(RKEY_TEXTURES_HIDE_UNUSED) == "1");
 		GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_HIDE_UNUSED);
+		GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_SCALE);
+		setScaleFromRegistry();
 	}
 
   
@@ -298,6 +301,23 @@ public:
 	// greebo: This gets called as soon as the texture mode gets changed
 	void textureModeChanged() {
 		queueDraw();
+	}
+
+private:
+	void setScaleFromRegistry() {
+		int index = GlobalRegistry().getInt(RKEY_TEXTURE_SCALE);
+		
+		switch (index) {
+			case 0: m_textureScale = 10; break;
+			case 1: m_textureScale = 25; break;
+			case 2: m_textureScale = 50; break;
+			case 3: m_textureScale = 100; break;
+			case 4: m_textureScale = 200; break;
+		};
+		
+		if (m_gl_widget != NULL) {
+			gtk_widget_queue_draw(m_gl_widget);
+		}
 	}
 };
 
@@ -1070,15 +1090,6 @@ void TextureBrowser_queueDraw(TextureBrowser& textureBrowser) {
 	textureBrowser.queueDraw();
 }
 
-
-void TextureBrowser_setScale(TextureBrowser& textureBrowser, std::size_t scale)
-{
-  textureBrowser.m_textureScale = scale;
-
-  TextureBrowser_queueDraw(textureBrowser);
-}
-
-
 void TextureBrowser_setUniformSize(TextureBrowser& textureBrowser, int value)
 {
   textureBrowser.m_uniformTextureSize = value;
@@ -1391,52 +1402,6 @@ void TextureBrowser_exportTitle(const StringImportCallback& importer)
 }
 
 
-void TextureScaleImport(TextureBrowser& textureBrowser, int value)
-{
-  switch(value)
-  {
-  case 0:
-    TextureBrowser_setScale(textureBrowser, 10);
-    break;
-  case 1:
-    TextureBrowser_setScale(textureBrowser, 25);
-    break;
-  case 2:
-    TextureBrowser_setScale(textureBrowser, 50);
-    break;
-  case 3:
-    TextureBrowser_setScale(textureBrowser, 100);
-    break;
-  case 4:
-    TextureBrowser_setScale(textureBrowser, 200);
-    break;
-  }
-}
-typedef ReferenceCaller1<TextureBrowser, int, TextureScaleImport> TextureScaleImportCaller;
-
-void TextureScaleExport(TextureBrowser& textureBrowser, const IntImportCallback& importer)
-{
-  switch(textureBrowser.m_textureScale)
-  {
-  case 10:
-    importer(0);
-    break;
-  case 25:
-    importer(1);
-    break;
-  case 50:
-    importer(2);
-    break;
-  case 100:
-    importer(3);
-    break;
-  case 200:
-    importer(4);
-    break;
-  }
-}
-typedef ReferenceCaller1<TextureBrowser, const IntImportCallback&, TextureScaleExport> TextureScaleExportCaller;
-
 // Get the texture size preference from the prefs dialog
 void TextureUniformSizeImport(TextureBrowser& textureBrowser, int value) {
   TextureBrowser_setUniformSize(textureBrowser, value);
@@ -1463,15 +1428,6 @@ void TextureBrowser_constructPreferences(PrefPage* page)
     TextureBrowserImportShowScrollbarCaller(GlobalTextureBrowser()),
     BoolExportCaller(GlobalTextureBrowser().m_showTextureScrollbar)
   );
-  {
-    const char* texture_scale[] = { "10%", "25%", "50%", "100%", "200%" };
-    page->appendCombo(
-      "Texture thumbnail scale",
-      STRING_ARRAY_RANGE(texture_scale),
-      IntImportCallback(TextureScaleImportCaller(GlobalTextureBrowser())),
-      IntExportCallback(TextureScaleExportCaller(GlobalTextureBrowser()))
-    );
-  }
   
   page->appendEntry("Uniform texture thumbnail size (pixels)",
     IntImportCallback(TextureUniformSizeImportCaller(GlobalTextureBrowser())),
@@ -1485,13 +1441,26 @@ void TextureBrowser_constructPreferences(PrefPage* page)
     page->appendCombo("Load Shaders at Startup", reinterpret_cast<int&>(GlobalTextureBrowser().m_startupShaders), STRING_ARRAY_RANGE(startup_shaders));
   }
 }
-void TextureBrowser_constructPage(PreferenceGroup& group)
-{
-  PreferencesPage* page(group.createPage("Texture Browser", "Texture Browser Preferences"));
-  TextureBrowser_constructPreferences(reinterpret_cast<PrefPage*>(page));
+void TextureBrowser_constructPage(PreferenceGroup& group) {
+	PreferencesPage* page2(group.createPage("Texture Browser", "Texture Browser Preferences"));
+  TextureBrowser_constructPreferences(reinterpret_cast<PrefPage*>(page2));
 }
-void TextureBrowser_registerPreferencesPage()
-{
+void TextureBrowser_registerPreferencesPage() {
+	// Add a page to the given group
+	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Texture Browser");
+	
+	// Create the string list containing the texture scalings
+	std::list<std::string> textureScaleList;
+	
+	textureScaleList.push_back("10%");
+	textureScaleList.push_back("25%");
+	textureScaleList.push_back("50%");
+	textureScaleList.push_back("100%");
+	textureScaleList.push_back("200%");
+	
+	page->appendCombo("Texture Thumbnail Scale", RKEY_TEXTURE_SCALE, textureScaleList);
+	
+  // Legacy stuff (to be removed soon)
   PreferencesDialog_addSettingsPage(FreeCaller1<PreferenceGroup&, TextureBrowser_constructPage>());
 }
 
@@ -1499,7 +1468,6 @@ void TextureBrowser_registerPreferencesPage()
 #include "preferencesystem.h"
 #include "stringio.h"
 
-typedef ReferenceCaller1<TextureBrowser, std::size_t, TextureBrowser_setScale> TextureBrowserSetScaleCaller;
 typedef ReferenceCaller1<TextureBrowser, int, TextureBrowser_setUniformSize> TextureBrowserSetUniformSizeCaller;
 
 void TextureBrowser_Construct()
@@ -1508,11 +1476,6 @@ void TextureBrowser_Construct()
   GlobalEventManager().addCommand("ShowAllTextures", FreeCaller<TextureBrowser_showAll>());
   GlobalEventManager().addCommand("ViewTextures", FreeCaller<TextureBrowser_toggleShown>());
 
-  GlobalPreferenceSystem().registerPreference("TextureScale",
-    makeSizeStringImportCallback(TextureBrowserSetScaleCaller(g_TextureBrowser)),
-    SizeExportStringCaller(g_TextureBrowser.m_textureScale)
-  );
-  
   GlobalPreferenceSystem().registerPreference("TextureUniformSize",
     IntImportStringCaller(g_TextureBrowser.m_uniformTextureSize),
     IntExportStringCaller(g_TextureBrowser.m_uniformTextureSize)

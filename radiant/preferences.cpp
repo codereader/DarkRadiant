@@ -435,20 +435,6 @@ void PrefsDlg::showPrefPage(GtkWidget* prefpage)
   return;
 }
 
-static void treeSelection(GtkTreeSelection* selection, gpointer data)
-{
-  PrefsDlg *dlg = (PrefsDlg*)data;
-
-  GtkTreeModel* model;
-  GtkTreeIter selected;
-  if(gtk_tree_selection_get_selected(selection, &model, &selected))
-  {
-    GtkWidget* prefpage;
-    gtk_tree_model_get(model, &selected, 1, (gpointer*)&prefpage, -1);
-    dlg->showPrefPage(prefpage);
-  }
-}
-
 typedef std::list<PreferenceGroupCallback> PreferenceGroupCallbacks;
 
 inline void PreferenceGroupCallbacks_constructGroup(const PreferenceGroupCallbacks& callbacks, PreferenceGroup& group)
@@ -750,10 +736,13 @@ void PrefsDlg::populateWindow() {
 	_dialog = gtkutil::TransientWindow("DarkRadiant Preferences", MainFrame_getWindow(), false);
 	
 	// Set the default border width in accordance to the HIG
-	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 12);
+	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 8);
 	gtk_window_set_type_hint(GTK_WINDOW(_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 	
-	GtkWidget* hbox = gtk_hbox_new(FALSE, 0);
+	// The overall dialog vbox
+	GtkWidget* vbox = gtk_vbox_new(FALSE, 8);
+	
+	GtkWidget* hbox = gtk_hbox_new(FALSE, 8);
 	
 	_treeView = GTK_TREE_VIEW(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_prefTree)));
 	g_object_unref(G_OBJECT(_prefTree));
@@ -770,9 +759,23 @@ void PrefsDlg::populateWindow() {
 	
 	_notebook = gtk_notebook_new();
 	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(_notebook), FALSE);
-	gtk_box_pack_start(GTK_BOX(hbox), _notebook, TRUE, TRUE, 6);
+	gtk_box_pack_start(GTK_BOX(hbox), _notebook, TRUE, TRUE, 0);
 	
-	gtk_container_add(GTK_CONTAINER(_dialog), hbox);
+	// Pack the notebook and the treeview into the overall dialog vbox
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
+	
+	// Create the buttons
+	GtkWidget* buttonHBox = gtk_hbox_new(FALSE, 0);
+	
+	GtkWidget* saveButton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+	gtk_box_pack_end(GTK_BOX(buttonHBox), saveButton, FALSE, FALSE, 0);
+	
+	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+	gtk_box_pack_end(GTK_BOX(buttonHBox), cancelButton, FALSE, FALSE, 6);
+	
+	gtk_box_pack_start(GTK_BOX(vbox), buttonHBox, FALSE, FALSE, 0);
+	
+	gtk_container_add(GTK_CONTAINER(_dialog), vbox);
 }
 
 void PrefsDlg::updateTreeStore() {
