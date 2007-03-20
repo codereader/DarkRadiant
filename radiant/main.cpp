@@ -89,6 +89,7 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "stacktrace.h"
 #include "server.h"
 #include "ui/mru/MRU.h"
+#include "settings/GameManager.h"
 
 #include <iostream>
 
@@ -298,16 +299,18 @@ int main (int argc, char* argv[])
 	// Tell the Environment class to store the paths into the Registry
 	Environment::Instance().savePathsToRegistry();
 
+	Sys_LogFile(true);
+
   show_splash();
 
 	// Create the radiant.pid file in the settings folder 
 	// (emits a warning if the file already exists (due to a previous startup failure) 
 	createPIDFile("radiant.pid");
 
+	game::Manager::Instance().initialise();
+
 	ui::GameDialog::Instance().initialise();
   g_Preferences.Init(); 
-
-	Sys_LogFile(true);
 
   Radiant_Initialise();
 
