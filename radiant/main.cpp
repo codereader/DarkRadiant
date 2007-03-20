@@ -310,7 +310,7 @@ int main (int argc, char* argv[])
 	// let the user choose the game, if nothing is found in the Registry
 	game::Manager::Instance().initialise();
 
-	PrefsDlg::Instance().Init(); 
+	PrefsDlg::Instance().Init();
 
   Radiant_Initialise();
 

@@ -59,6 +59,19 @@ public:
 	 */
 	static int getInt(GtkTreeModel* model, GtkTreeIter* iter, gint colNo);
 
+	/** Extract a pointer from the given row of the provided TreeModel.
+	 * 
+	 * @param model
+	 * The TreeModel* to examine.
+	 * 
+	 * @param iter
+	 * A GtkTreeIter pointing to the row to look up.
+	 * 
+	 * @param colNo
+	 * The column number to look up.
+	 */
+	static gpointer getPointer(GtkTreeModel* model, GtkTreeIter* iter, gint colNo);
+
 	/**
 	 * Extract the selected string from the given column in the TreeModel. The
 	 * selection object will be queried for a selection, and the string

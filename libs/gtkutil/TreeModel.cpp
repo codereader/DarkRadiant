@@ -42,6 +42,18 @@ int TreeModel::getInt(GtkTreeModel* model, GtkTreeIter* iter, gint colNo) {
 	return retVal;
 }
 
+// Extract a boolean from a TreeModel
+gpointer TreeModel::getPointer(GtkTreeModel* model, GtkTreeIter* iter, gint colNo) {
+	// Get a GValue
+	GValue val = {0, 0};
+	gtk_tree_model_get_value(model, iter, colNo, &val);
+
+	// Create and return the string, and free the GValue
+	gpointer retVal = g_value_get_pointer(&val);
+	g_value_unset(&val);
+	return retVal;
+}
+
 // Extract a selected string
 std::string TreeModel::getSelectedString(GtkTreeSelection* sel, gint colNo)
 {
