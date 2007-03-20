@@ -33,9 +33,7 @@ void GlobalCameraManager::construct() {
 	GlobalEventManager().addCommand("LookThroughSelected", MemberCaller<GlobalCameraManager, &GlobalCameraManager::lookThroughSelected>(*this));
 	GlobalEventManager().addCommand("LookThroughCamera", MemberCaller<GlobalCameraManager, &GlobalCameraManager::lookThroughCamera>(*this));
 
-	if (g_pGameDescription->mGameType == "doom3") {
-		GlobalEventManager().addCommand("TogglePreview", MemberCaller<GlobalCameraManager, &GlobalCameraManager::toggleLightingMode>(*this));
-	}
+	GlobalEventManager().addCommand("TogglePreview", MemberCaller<GlobalCameraManager, &GlobalCameraManager::toggleLightingMode>(*this));
 	
 	// Insert movement commands
 	GlobalEventManager().addCommand("CameraForward", MemberCaller<GlobalCameraManager, &GlobalCameraManager::moveForwardDiscrete>(*this));

@@ -17,9 +17,8 @@ what we do now is fully generate the information for this during the setup. We m
 generate a piece that just says "the game pack is there", but put the rest of the config somwhere
 else (i.e. not generated, copied over during setup .. for instance in the game tools directory)
 */
-class GameDescription {
-private:
-
+class GameDescription 
+{
 	typedef std::map<std::string, std::string> DescriptionMap;
 
 	// xml::Document object constructed from the provided xmlDocPtr

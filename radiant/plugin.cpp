@@ -82,12 +82,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 const char* GameDescription_getKeyValue(const char* key)
 {
-  return g_pGameDescription->getKeyValue(key);
+  return ui::GameDialog::Instance().getGameDescription()->getKeyValue(key);
 }
 
 const char* GameDescription_getRequiredKeyValue(const char* key)
 {
-  return g_pGameDescription->getRequiredKeyValue(key);
+  return ui::GameDialog::Instance().getGameDescription()->getRequiredKeyValue(key);
 }
 
 ui::ColourSchemeManager& ColourSchemes() {

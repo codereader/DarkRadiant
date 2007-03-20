@@ -168,7 +168,7 @@ layout_globals_t g_layout_globals;
 void HomePaths_Realise()
 {
 #if defined(POSIX)
-  const char* prefix = g_pGameDescription->getKeyValue("prefix");
+  const char* prefix = GameDialog::getCurrentGameDescription->getKeyValue("prefix");
   if(!string_empty(prefix)) 
   {
     StringOutputStream path(256);
@@ -312,7 +312,7 @@ namespace
 
 const char* basegame_get()
 {
-  return g_pGameDescription->getRequiredKeyValue("basegame");
+  return ui::GameDialog::Instance().getGameDescription()->getRequiredKeyValue("basegame");
 }
 
 const char* gamename_get()
@@ -2072,14 +2072,6 @@ void Layout_constructPreferences(PrefPage* page)
       IntExportCaller(g_Layout_viewStyle.m_latched)
     );
   }
-  if (!string_empty(g_pGameDescription->getKeyValue("no_patch")))
-  {
-    page->appendCheckBox(
-      "", "Patch Toolbar",
-      LatchedBoolImportCaller(g_Layout_enablePatchToolbar),
-      BoolExportCaller(g_Layout_enablePatchToolbar.m_latched)
-    );
-  }
   page->appendCheckBox(
     "", "Plugin Toolbar",
     LatchedBoolImportCaller(g_Layout_enablePluginToolbar),
@@ -2277,14 +2269,14 @@ void MainFrame_Construct()
 #endif
     ;
     StringOutputStream path(256);
-    path << DirectoryCleaned(g_pGameDescription->getRequiredKeyValue(ENGINEPATH_ATTRIBUTE));
+    path << DirectoryCleaned(ui::GameDialog::Instance().getGameDescription()->getRequiredKeyValue(ENGINEPATH_ATTRIBUTE));
     g_strEnginePath = path.c_str();
   }
 
   GlobalPreferenceSystem().registerPreference("EnginePath", CopiedStringImportStringCaller(g_strEnginePath), CopiedStringExportStringCaller(g_strEnginePath));
 
   g_Layout_viewStyle.useLatched();
-  g_Layout_enablePatchToolbar.useLatched();
+  g_Layout_enablePatchToolbar.useLatched(); // greebo: TODO: remove this
   g_Layout_enablePluginToolbar.useLatched();
 
   Layout_registerPreferencesPage();

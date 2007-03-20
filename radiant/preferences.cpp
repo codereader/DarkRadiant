@@ -86,11 +86,6 @@ Games selection dialog
 
 #include <map>
 
-// Global current game settings (loaded from the chosen .game file at startup)
-
-GameDescription* g_pGameDescription; ///< shortcut to g_GamesDialog.m_pCurrentDescription
-
-
 #include "warnings.h"
 #include "stream/textfilestream.h"
 #include "container/array.h"
@@ -142,18 +137,7 @@ bool Preferences_Save_Safe(PreferenceDictionary& preferences, const char* filena
     && file_move(tmpName.data(), filename);
 }
 
-void RegisterGlobalPreferences(PreferenceSystem& preferences)
-{
-  //preferences.registerPreference("gamePrompt", BoolImportStringCaller(g_GamesDialog.m_bGamePrompt), BoolExportStringCaller(g_GamesDialog.m_bGamePrompt));
-}
-
-
 PreferenceDictionary g_global_preferences;
-
-void GlobalPreferences_Init()
-{
-  RegisterGlobalPreferences(g_global_preferences);
-}
 
 // =============================================================================
 // Widget callbacks for PrefsDlg
@@ -201,7 +185,7 @@ void PrefsDlg::Init()
   m_rc_path = g_string_new (_globalPrefPath.c_str());
   
   // game sub-dir
-  g_string_append (m_rc_path, g_pGameDescription->mGameFile.c_str());
+  g_string_append (m_rc_path, ui::GameDialog::Instance().getGameDescription()->mGameFile.c_str());
   g_string_append (m_rc_path, "/");
   Q_mkdir (m_rc_path->str);
   

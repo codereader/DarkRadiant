@@ -77,7 +77,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "mainframe.h"
 #include "preferences.h"
 #include "cmdlib.h"
-
+#include "settings/GameDialog.h"
 
 
 // =============================================================================
@@ -93,11 +93,11 @@ public:
   const char* custom;
 
   GameComboConfiguration() :
-    basegame_dir(g_pGameDescription->getRequiredKeyValue("basegame")),
-    basegame(g_pGameDescription->getRequiredKeyValue("basegamename")),
-    known_dir(g_pGameDescription->getKeyValue("knowngame")),
-    known(g_pGameDescription->getKeyValue("knowngamename")),
-    custom(g_pGameDescription->getRequiredKeyValue("unknowngamename"))
+    basegame_dir(ui::GameDialog::Instance().getGameDescription()->getRequiredKeyValue("basegame")),
+    basegame(ui::GameDialog::Instance().getGameDescription()->getRequiredKeyValue("basegamename")),
+    known_dir(ui::GameDialog::Instance().getGameDescription()->getKeyValue("knowngame")),
+    known(ui::GameDialog::Instance().getGameDescription()->getKeyValue("knowngamename")),
+    custom(ui::GameDialog::Instance().getGameDescription()->getRequiredKeyValue("unknowngamename"))
   {
   }
 };
@@ -200,7 +200,7 @@ public:
   const char* mp_mapping_mode;
 
   MappingMode() :
-    do_mapping_mode(!string_empty(g_pGameDescription->getKeyValue("show_gamemode"))),
+    do_mapping_mode(!string_empty(ui::GameDialog::Instance().getGameDescription()->getKeyValue("show_gamemode"))),
     sp_mapping_mode("Single Player mapping mode"),
     mp_mapping_mode("Multiplayer mapping mode")
   {
@@ -293,6 +293,7 @@ GtkWindow* ProjectSettingsDialog_construct(ProjectSettingsDialog& dialog, ModalD
           dialog.game_combo.fsgame_entry = entry;
        }
   
+  		// greebo TODO: Remove this 
         if(globalMappingMode().do_mapping_mode)
         {
           GtkLabel* label = GTK_LABEL(gtk_label_new("Mapping mode"));

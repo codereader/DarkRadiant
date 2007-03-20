@@ -218,8 +218,6 @@ typedef MemberCaller1<LatchedBool, bool, &LatchedBool::import> LatchedBoolImport
 typedef LatchedValue<int> LatchedInt;
 typedef MemberCaller1<LatchedInt, int, &LatchedInt::import> LatchedIntImportCaller;
 
-extern GameDescription *g_pGameDescription;
-
 typedef struct _GtkWidget GtkWidget;
 class PrefsDlg;
 class PrefPage;
@@ -301,7 +299,6 @@ void PreferencesDialog_destroyWindow();
 
 void PreferencesDialog_showDialog();
 
-void GlobalPreferences_Init();
 void Preferences_Init();
 
 void Preferences_Load();

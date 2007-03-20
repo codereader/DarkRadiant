@@ -305,7 +305,7 @@ void TextureBrowser_updateScroll(TextureBrowser& textureBrowser);
 
 const char* TextureBrowser_getComonShadersName()
 {
-  const char* value = g_pGameDescription->getKeyValue("common_shaders_name");
+  const char* value = ui::GameDialog::Instance().getGameDescription()->getKeyValue("common_shaders_name");
   if(!string_empty(value))
   {
     return value;
@@ -315,7 +315,7 @@ const char* TextureBrowser_getComonShadersName()
 
 const char* TextureBrowser_getComonShadersDir()
 {
-  const char* value = g_pGameDescription->getKeyValue("common_shaders_dir");
+  const char* value = ui::GameDialog::Instance().getGameDescription()->getKeyValue("common_shaders_dir");
   if(!string_empty(value))
   {
     return value;

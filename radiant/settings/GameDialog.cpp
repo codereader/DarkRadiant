@@ -21,10 +21,6 @@ extern PreferenceDictionary g_global_preferences;
 
 namespace ui {
 
-GameDialog::GameDialog() :
-	m_bGamePrompt(false)
-{}
-
 GameDialog::~GameDialog() {
     // free all the game descriptions
     std::list < GameDescription * >::iterator iGame;
@@ -69,7 +65,7 @@ void GameDialog::DoGameDialog()
 }
 
 void GameDialog::keyChanged() {
-	 g_pGameDescription = GameDescriptionForRegistryKey();
+	 _currentGameDescription = GameDescriptionForRegistryKey();
 }
 
 void GameDialog::CreateGlobalFrame(PrefPage* page)
@@ -80,8 +76,6 @@ void GameDialog::CreateGlobalFrame(PrefPage* page)
 		gameList.push_back((*i)->getRequiredKeyValue("name"));
 	}
 	page->appendCombo("Select Game", RKEY_GAME_TYPE, gameList); 
-
-	page->appendCheckBox("Startup", "Show Global Preferences", m_bGamePrompt);
 }
 
 GtkWindow* GameDialog::BuildDialog()
@@ -147,35 +141,39 @@ void GameDialog::initialise() {
     InitGlobalPrefPath();
     LoadPrefs();
 
-	GameDescription* currentGameDescription = NULL;
+	_currentGameDescription = NULL;
 
     // Look for .game files and exit if no valid ones found
     ScanForGames();
     if (mGames.empty()) {
         Error("Didn't find any valid game file descriptions, aborting\n");
     }
-    
-    // If the prompt is disabled, load the game type from the registry
-    if (!m_bGamePrompt) {
-		GameDescriptionForRegistryKey();
-	}
-
-    if (m_bGamePrompt || !currentGameDescription) {
-		if (mGames.size() == 1) {
-			// greebo: There is only one game type available, take it
-			currentGameDescription = *mGames.begin();
-		}
-		else {
-			Create();
-			DoGameDialog();
-			// use m_nComboSelect to identify the game to run as and set the globals
-			currentGameDescription = GameDescriptionForRegistryKey();
-			ASSERT_NOTNULL(currentGameDescription);
-		}
+    else {
+	    // If the prompt is disabled, load the game type from the registry
+	    _currentGameDescription = GameDescriptionForRegistryKey();
+		
+	    if (_currentGameDescription == NULL) {
+			if (mGames.size() == 1) {
+				// greebo: There is only one game type available, take it
+				_currentGameDescription = *mGames.begin();
+			}
+			else {
+				Create();
+				DoGameDialog();
+				
+				_currentGameDescription = GameDescriptionForRegistryKey();
+				ASSERT_NOTNULL(_currentGameDescription);
+			}
+	    }
     }
+}
 
-    // Set the global game description
-    g_pGameDescription = currentGameDescription;
+void GameDialog::setGameDescription(GameDescription* newGameDescription) {
+	_currentGameDescription = newGameDescription;
+}
+
+GameDescription* GameDialog::getGameDescription() {
+	return _currentGameDescription;
 }
 
 GameDialog& GameDialog::Instance() {
