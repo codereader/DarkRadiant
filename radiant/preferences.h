@@ -279,6 +279,14 @@ protected:
 	void PostModal (EMessageBoxReturn code);
 	
 private:
+	/** greebo: Saves the preferences and hides the dialog 
+	 */
+	void save();
+	
+	/** greebo: Closes the dialog without writing the settings to the Registry.
+	 */
+	void cancel();
+	
 	/** greebo: Helper function that selects the current notebook page
 	 * 			by using the GtkTreeSelection* object 
 	 */
@@ -301,6 +309,8 @@ private:
 	
 	// Gets called on page selection
 	static void onPrefPageSelect(GtkTreeSelection* treeselection, PrefsDlg* self);
+	static void onSave(GtkWidget* button, PrefsDlg* self);
+	static void onCancel(GtkWidget* button, PrefsDlg* self); 
 };
 
 struct preferences_globals_t
