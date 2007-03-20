@@ -77,7 +77,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "mainframe.h"
 #include "preferences.h"
 #include "cmdlib.h"
-#include "settings/GameDialog.h"
+#include "settings/GameManager.h"
 
 
 // =============================================================================
@@ -93,11 +93,11 @@ public:
   const char* custom;
 
   GameComboConfiguration() :
-    basegame_dir(ui::GameDialog::Instance().getGameDescription()->getRequiredKeyValue("basegame")),
-    basegame(ui::GameDialog::Instance().getGameDescription()->getRequiredKeyValue("basegamename")),
-    known_dir(ui::GameDialog::Instance().getGameDescription()->getKeyValue("knowngame")),
-    known(ui::GameDialog::Instance().getGameDescription()->getKeyValue("knowngamename")),
-    custom(ui::GameDialog::Instance().getGameDescription()->getRequiredKeyValue("unknowngamename"))
+    basegame_dir(game::Manager::Instance().currentGame()->getRequiredKeyValue("basegame")),
+    basegame(game::Manager::Instance().currentGame()->getRequiredKeyValue("basegamename")),
+    known_dir(game::Manager::Instance().currentGame()->getKeyValue("knowngame")),
+    known(game::Manager::Instance().currentGame()->getKeyValue("knowngamename")),
+    custom(game::Manager::Instance().currentGame()->getRequiredKeyValue("unknowngamename"))
   {
   }
 };
@@ -200,7 +200,7 @@ public:
   const char* mp_mapping_mode;
 
   MappingMode() :
-    do_mapping_mode(!string_empty(ui::GameDialog::Instance().getGameDescription()->getKeyValue("show_gamemode"))),
+    do_mapping_mode(!string_empty(game::Manager::Instance().currentGame()->getKeyValue("show_gamemode"))),
     sp_mapping_mode("Single Player mapping mode"),
     mp_mapping_mode("Multiplayer mapping mode")
   {

@@ -79,15 +79,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "modulesystem/singletonmodule.h"
 
 #include "generic/callback.h"
+#include "settings/GameManager.h"
 
 const char* GameDescription_getKeyValue(const char* key)
 {
-  return ui::GameDialog::Instance().getGameDescription()->getKeyValue(key);
+  return game::Manager::Instance().currentGame()->getKeyValue(key);
 }
 
 const char* GameDescription_getRequiredKeyValue(const char* key)
 {
-  return ui::GameDialog::Instance().getGameDescription()->getRequiredKeyValue(key);
+  return game::Manager::Instance().currentGame()->getRequiredKeyValue(key);
 }
 
 ui::ColourSchemeManager& ColourSchemes() {

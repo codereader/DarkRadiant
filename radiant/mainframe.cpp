@@ -135,6 +135,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/commandlist/CommandList.h"
 #include "ui/findshader/FindShader.h"
 #include "brush/FaceInstance.h"
+#include "settings/GameManager.h"
 
 extern FaceInstanceSet g_SelectedFaceInstances;
 
@@ -312,7 +313,7 @@ namespace
 
 const char* basegame_get()
 {
-  return ui::GameDialog::Instance().getGameDescription()->getRequiredKeyValue("basegame");
+  return game::Manager::Instance().currentGame()->getRequiredKeyValue("basegame");
 }
 
 const char* gamename_get()
@@ -2269,7 +2270,7 @@ void MainFrame_Construct()
 #endif
     ;
     StringOutputStream path(256);
-    path << DirectoryCleaned(ui::GameDialog::Instance().getGameDescription()->getRequiredKeyValue(ENGINEPATH_ATTRIBUTE));
+    path << DirectoryCleaned(game::Manager::Instance().currentGame()->getRequiredKeyValue(ENGINEPATH_ATTRIBUTE));
     g_strEnginePath = path.c_str();
   }
 
