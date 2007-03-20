@@ -209,7 +209,6 @@ typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkTreeStore GtkTreeStore;
 typedef struct _GtkTreeView GtkTreeView;
 typedef struct _GtkTreeSelection GtkTreeSelection;
-class PrefsDlg;
 class PrefPage;
 class StringOutputStream;
 class PreferenceTreeGroup;
@@ -239,11 +238,6 @@ public:
 
 	GtkWidget *m_notebook;
 
-	virtual ~PrefsDlg() {
-		g_string_free (m_rc_path, true );
-		g_string_free (m_inipath, true );
-	}
-
 	std::string _globalPrefPath;
 
 	/*!
@@ -252,14 +246,14 @@ public:
 	win32: GameToolsPath
 	linux: ~/.radiant/[version]/[gamename]/
 	*/
-	GString *m_rc_path;
+	std::string m_rc_path;
 
 	/*!
 	holds per-game settings
 	m_rc_path+"local.pref"
 	\todo FIXME at some point this should become XML property bag code too
 	*/
-	GString *m_inipath;
+	std::string m_inipath;
 
 	// initialize the above paths
 	void Init();
