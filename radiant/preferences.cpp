@@ -491,7 +491,7 @@ GtkWindow* PrefsDlg::BuildDialog()
               {
                 GtkWidget* game = PreferencePages_addPage(m_notebook, "Game");
                 PrefPage preferencesPage(*this, getVBox(game));
-                ui::GameDialog::Instance().CreateGlobalFrame(&preferencesPage);
+                //ui::GameDialog::Instance().CreateGlobalFrame(&preferencesPage);
 
                 PreferenceTree_appendPage(store, &group, "Game", game);
               }
@@ -601,7 +601,13 @@ StaticRegisterModule staticRegisterPreferenceSystem(StaticPreferenceSystemModule
 
 void Preferences_Load()
 {
-  ui::GameDialog::Instance().LoadPrefs();
+  // load global .pref file
+	std::string globalPrefFile = g_Preferences._globalPrefPath + "global.pref";
+	globalOutputStream() << "loading global preferences from " << makeQuoted(globalPrefFile.c_str()) << "\n";
+
+	if (!Preferences_Load(g_global_preferences, globalPrefFile.c_str())) {
+		globalOutputStream() << "failed to load global preferences from " << globalPrefFile.c_str() << "\n";
+	}
 
   globalOutputStream() << "loading local preferences from " << g_Preferences.m_inipath->str << "\n";
 
@@ -616,7 +622,13 @@ void Preferences_Save()
   if (g_preferences_globals.disable_ini)
     return;
 
-  ui::GameDialog::Instance().SavePrefs();
+  std::string globalPrefFile = g_Preferences._globalPrefPath + "global.pref";
+
+	globalOutputStream() << "saving global preferences to " << globalPrefFile.c_str() << "\n";
+
+	if (!Preferences_Save_Safe(g_global_preferences, globalPrefFile.c_str())) {
+		globalOutputStream() << "failed to save global preferences to " << globalPrefFile.c_str() << "\n";
+	}
 
   globalOutputStream() << "saving local preferences to " << g_Preferences.m_inipath->str << "\n";
 

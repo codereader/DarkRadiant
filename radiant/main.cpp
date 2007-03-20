@@ -252,7 +252,7 @@ void createPIDFile(const std::string& name) {
 	msg += "Do you want to reset global preferences to defaults?";
 
 	if (gtk_MessageBox(0, msg.c_str(), "Radiant - Startup Failure", eMB_YESNO, eMB_ICONQUESTION) == eIDYES) {
-		ui::GameDialog::Instance().Reset();
+		//ui::GameDialog::Instance().Reset();
 		Preferences_Reset();
 	}
 #endif
@@ -311,7 +311,7 @@ int main (int argc, char* argv[])
 	// let the user choose the game, if nothing is found in the Registry
 	game::Manager::Instance().initialise();
 
-	ui::GameDialog::Instance().initialise();
+	//ui::GameDialog::Instance().initialise();
   g_Preferences.Init(); 
 
   Radiant_Initialise();

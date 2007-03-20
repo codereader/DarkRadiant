@@ -169,7 +169,7 @@ layout_globals_t g_layout_globals;
 void HomePaths_Realise()
 {
 #if defined(POSIX)
-  const char* prefix = GameDialog::getCurrentGameDescription->getKeyValue("prefix");
+  const char* prefix = game::Manager::Instance().currentGame()->getKeyValue("prefix");
   if(!string_empty(prefix)) 
   {
     StringOutputStream path(256);

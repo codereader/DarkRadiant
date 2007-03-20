@@ -35,7 +35,6 @@ please contact Id Software immediately at info@idsoftware.com.
 
 #include "libxml/parser.h"
 #include "settings/GameDescription.h"
-#include "settings/GameDialog.h"
 #include "dialog.h"
 #include <list>
 #include <map>
