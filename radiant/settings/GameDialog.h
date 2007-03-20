@@ -19,26 +19,24 @@ class GameDialog :
 	public Dialog,
 	public RegistryKeyObserver
 {
+	GameDescription* _currentGameDescription;
+	
 public:
-
 	/** greebo: Holds the static instance of this dialog.
 	 */
 	static GameDialog& Instance();
 
 	// Gets notified upon game type changes
 	void keyChanged();
+	
+	void setGameDescription(GameDescription* newGameDescription);
+	GameDescription* getGameDescription();
 
-  /*!
-  prompt which game to load on startup
-  */
-  bool m_bGamePrompt;
-  
   /*!
   the list of game descriptions we scanned from the game/ dir
   */
   std::list<GameDescription*> mGames;
 
-  GameDialog();
   virtual ~GameDialog(); 
 
   /*!

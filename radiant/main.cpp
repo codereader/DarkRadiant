@@ -304,9 +304,7 @@ int main (int argc, char* argv[])
 	// (emits a warning if the file already exists (due to a previous startup failure) 
 	createPIDFile("radiant.pid");
 
-  GlobalPreferences_Init();
-
-  ui::GameDialog::Instance().initialise();
+	ui::GameDialog::Instance().initialise();
   g_Preferences.Init(); 
 
 	Sys_LogFile(true);

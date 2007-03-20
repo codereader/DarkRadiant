@@ -66,10 +66,7 @@ void CameraSettings::constructPreferencePage(PreferenceGroup& group) {
 	renderModeDescriptions.push_back("WireFrame");
 	renderModeDescriptions.push_back("Flatshade");
 	renderModeDescriptions.push_back("Textured");
-	
-	if (g_pGameDescription->mGameType == "doom3") {
-		renderModeDescriptions.push_back("Lighting");
-	}
+	renderModeDescriptions.push_back("Lighting");
 	
 	page->appendCombo("Render Mode", RKEY_DRAWMODE, renderModeDescriptions);
 }
