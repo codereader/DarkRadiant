@@ -19,6 +19,8 @@ extern PreferenceDictionary g_global_preferences;
 		const std::string RKEY_GAME_TYPE = "user/game/type";
 	}
 
+namespace ui {
+
 GameDialog::GameDialog() :
 	m_bGamePrompt(false)
 {}
@@ -138,7 +140,7 @@ void GameDialog::Reset()
 // Main initialisation routine for the game selection dialog. Scanning for
 // .game files is called from here.
 
-void GameDialog::Init() {
+void GameDialog::initialise() {
 
 	GlobalRegistry().addKeyObserver(this, RKEY_GAME_TYPE);
 
@@ -176,23 +178,9 @@ void GameDialog::Init() {
     g_pGameDescription = currentGameDescription;
 }
 
-inline const char* GameDescription_getIdentifier(const GameDescription& gameDescription)
-{
-  const char* identifier = gameDescription.getKeyValue("index");
-  if(string_empty(identifier))
-  {
-    identifier = "1";
-  }
-  return identifier;
+GameDialog& GameDialog::Instance() {
+	static GameDialog _instance;
+	return _instance;
 }
 
-void GameDialog::AddPacksURL(StringOutputStream &URL)
-{
-  // add the URLs for the list of game packs installed
-  // FIXME: this is kinda hardcoded for now..
-  std::list<GameDescription *>::iterator iGame;
-  for(iGame=mGames.begin(); iGame!=mGames.end(); ++iGame)
-  {
-    URL << "&Games_dlup%5B%5D=" << GameDescription_getIdentifier(*(*iGame));
-  }
-}
+} // namespace ui

@@ -10,6 +10,8 @@ typedef struct _GtkWindow GtkWindow;
 class PrefPage;
 class GameDescription;
 
+namespace ui {
+
 /*!
 standalone dialog for games selection, and more generally global settings
 */
@@ -18,6 +20,10 @@ class GameDialog :
 	public RegistryKeyObserver
 {
 public:
+
+	/** greebo: Holds the static instance of this dialog.
+	 */
+	static GameDialog& Instance();
 
 	// Gets notified upon game type changes
 	void keyChanged();
@@ -35,13 +41,13 @@ public:
   GameDialog();
   virtual ~GameDialog(); 
 
-  void AddPacksURL(StringOutputStream &s);  
-    
   /*!
   intialize the game dialog, called at CPrefsDlg::Init
   will scan for games, load prefs, and do game selection dialog if needed
   */
-  void Init();
+  /** greebo: At this point, the XMLRegistry must already be initialised.
+   */
+  void initialise();
 
   /*!
   reset the global settings by removing the file
@@ -99,5 +105,7 @@ private:
   */
   GameDescription *GameDescriptionForRegistryKey();
 };
+
+} // namespace ui
 
 #endif /*GAMEDIALOG_H_*/
