@@ -136,6 +136,9 @@ public:
 	 */
 	GtkWidget* appendSpinner(const std::string& name, const std::string& registryKey,
 	                         double lower, double upper, int fraction);
+	                         
+	void appendRadioIcons(const std::string& name, const std::string& registryKey, 
+						  const IconList& iconList, const IconDescriptionList& iconDescriptions);
 	
 	void appendCombo(const char* name, StringArrayRange values, const IntImportCallback& importCallback, const IntExportCallback& exportCallback);
 	void appendCombo(const char* name, int& data, StringArrayRange values);

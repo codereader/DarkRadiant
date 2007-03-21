@@ -85,6 +85,7 @@
 			<pane name="vertical1" position="250" />
 			<pane name="vertical2" position="250" />
 		</splitPane>
+		<windowLayout value="1" />
 	</mainFrame>
 	<xyview>
 		<views name="default">

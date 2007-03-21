@@ -39,6 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "os/path.h"
 #include "os/dir.h"
 #include "gtkutil/dialog.h"
+#include "gtkutil/image.h"
 #include "gtkutil/filechooser.h"
 #include "gtkutil/messagebox.h"
 #include "gtkutil/TextColumn.h"
@@ -326,6 +327,45 @@ GtkWidget* PrefPage::appendSpinner(const std::string& name, const std::string& r
 
 	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(row));
 	return GTK_WIDGET(spin);
+}
+
+void PrefPage::appendRadioIcons(const std::string& name, const std::string& registryKey, 
+		const IconList& iconList, const IconDescriptionList& iconDescriptions)
+{
+	if (iconList.size() != iconDescriptions.size()) {
+		globalErrorStream() << "PrefPage: Inconsistent Icons/IconDescription vectors!\n";
+		return;
+	}
+	
+	GtkWidget* table = gtk_table_new(3, iconList.size(), FALSE);
+	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
+	gtk_table_set_col_spacings(GTK_TABLE(table), 6);
+	
+	// The radio button group
+	GSList* group = NULL;
+	GtkWidget* radio = NULL;
+	for (unsigned int i = 0; i < iconList.size(); i++) {
+		GtkWidget* image = gtk_image_new_from_pixbuf(
+			gtkutil::getLocalPixbuf(iconList[i])
+		);
+		gtk_table_attach(GTK_TABLE(table), image, i, i+1, 0, 1, 
+						 (GtkAttachOptions) (0), (GtkAttachOptions) (0), 0, 0);
+		
+		GtkWidget* label = gtk_label_new(iconDescriptions[i].c_str());
+		gtk_misc_set_alignment(GTK_MISC(label), 0.5f, 0.5f);
+		gtk_table_attach(GTK_TABLE(table), label, i, i+1, 1, 2,
+						 (GtkAttachOptions) (0), (GtkAttachOptions) (0), 0, 0);
+		
+		radio = gtk_radio_button_new(group);
+		gtk_table_attach(GTK_TABLE(table), radio, i, i+1, 2, 3,
+						 (GtkAttachOptions) (0), (GtkAttachOptions) (0), 0, 0);
+		group = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio));
+	}
+	
+	// Connect the registry key to the newly created radio
+	_connector.connectGtkObject(GTK_OBJECT(radio), registryKey);
+	
+	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(DialogRow_new(name.c_str(), table)));
 }
 
 void PrefPage::appendCombo(const char* name, StringArrayRange values, const IntImportCallback& importCallback, const IntExportCallback& exportCallback) {
@@ -759,7 +799,7 @@ void PrefsDlg::populateWindow() {
 	gtk_tree_view_set_headers_visible(_treeView, FALSE);
 	gtk_tree_view_append_column(_treeView, gtkutil::TextColumn("Category", 0)); 
 	
-	gtk_widget_set_size_request(GTK_WIDGET(_treeView), 250, -1);
+	gtk_widget_set_size_request(GTK_WIDGET(_treeView), 170, -1);
 	GtkWidget* scrolledFrame = gtkutil::ScrolledFrame(GTK_WIDGET(_treeView));
 	gtk_box_pack_start(GTK_BOX(hbox), scrolledFrame, FALSE, FALSE, 0);
 	
