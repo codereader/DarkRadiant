@@ -67,6 +67,7 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "debugging/debugging.h"
 
 #include "iundo.h"
+#include "ifilesystem.h"
 #include "iregistry.h"
 
 #include <gtk/gtkmain.h>
@@ -298,21 +299,33 @@ int main (int argc, char* argv[])
 	// Tell the Environment class to store the paths into the Registry
 	Environment::Instance().savePathsToRegistry();
 
+	// The settings path is set, start logging now
 	Sys_LogFile(true);
-
-  show_splash();
+	
+	show_splash();
 
 	// Create the radiant.pid file in the settings folder 
 	// (emits a warning if the file already exists (due to a previous startup failure) 
 	createPIDFile("radiant.pid");
+	
+	// Load the XML files into the Registry, we need the information asap
+	populateRegistry();
 
 	// Load the game files from the <application>/games folder and 
 	// let the user choose the game, if nothing is found in the Registry
 	game::Manager::Instance().initialise();
 
+	// Set the INI path for the local.pref / global.pref
 	PrefsDlg::Instance().Init();
+	
+	// Setup the engine path, we need it for the FileSystem
+	// this triggers a VFS initialisation that searches
+	// the game paths for suitable archive files
+	GlobalFileSystemModuleRef fsRef;
+	game::Manager::Instance().initEnginePath();
 
-  Radiant_Initialise();
+	// The VFS is setup at this point, we can load the modules
+	Radiant_Initialise();
 
   g_pParentWnd = 0;
   g_pParentWnd = new MainFrame();

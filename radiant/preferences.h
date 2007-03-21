@@ -34,6 +34,7 @@ please contact Id Software immediately at info@idsoftware.com.
 #include "xmlutil/Document.h"
 
 #include "gtkutil/RegistryConnector.h"
+#include "gtkutil/WindowPosition.h"
 #include "libxml/parser.h"
 #include "dialog.h"
 #include <list>
@@ -215,7 +216,11 @@ class PreferenceTreeGroup;
 
 class PrefsDlg 
 {
+	// The dialo window
 	GtkWidget* _dialog;
+	
+	// The dialog outermost vbox
+	GtkWidget* _overallVBox;
 	
 	GtkTreeStore* _prefTree;
 	GtkTreeView* _treeView;
@@ -224,7 +229,15 @@ class PrefsDlg
 	
 	PrefPagePtr _root;
 	
+	// Helper class to pump/extract values to/from the Registry
 	gtkutil::RegistryConnector _registryConnector;
+	
+	// The helper class memorising the size/position
+	gtkutil::WindowPosition _windowPosition;
+	
+	// Stays false until the main window is created, 
+	// which happens in toggleWindow() first (the mainframe doesn't exist earlier)
+	bool _packed;
 	
 public:
 	PrefsDlg();
@@ -263,13 +276,19 @@ public:
 	 */
 	PrefPagePtr createOrFindPage(const std::string& path);
 	
-protected:
-
-	/*! Dialog API */
-	GtkWindow* BuildDialog();
-	void PostModal (EMessageBoxReturn code);
+	/** greebo: A safe shutdown request that saves the window information
+	 * 			to the registry.
+	 */
+	void shutdown();
 	
 private:
+	/** greebo: This creates the actual window widget (all the other
+	 * 			are created by populateWindow() during construction).
+	 * 			This is done at a later point, because the MainFrame
+	 * 			is usually not yet existing at construction time.
+	 */
+	void initDialog();
+
 	/** greebo: Saves the preferences and hides the dialog 
 	 */
 	void save();

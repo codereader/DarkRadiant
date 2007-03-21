@@ -223,7 +223,7 @@ static GSList* GetListInternal (const char *refdir, const char *ext, bool direct
   }
   else
   {
-    for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
+   for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
     {
       FileListVisitor visitor(files, refdir, ext);
       (*i).archive->forEachFile(Archive::VisitorFunc(visitor, Archive::eFiles, depth), refdir);
@@ -327,21 +327,21 @@ void InitDirectory(const char* directory, ArchiveModules& archiveModules)
       const char* ignore_prefix = "";
       const char* override_prefix = "";
 
-      {
+      /*{
         // See if we are in "sp" or "mp" mapping mode
         const char* gamemode = gamemode_get();
 
 		    if (strcmp (gamemode, "sp") == 0)
         {
-				  ignore_prefix = "mp_";
+				  ignore_prefix = "mp_";*/
           override_prefix = "sp_";
-        }
+        /*}
 		    else if (strcmp (gamemode, "mp") == 0)
         {
 				  ignore_prefix = "sp_";
           override_prefix = "mp_";
         }
-      }
+      }*/
 
       Archives archives;
       Archives archivesOverride;

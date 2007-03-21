@@ -201,6 +201,7 @@ void VFS_Destroy();
 void MainFrame_Construct();
 void MainFrame_Destroy();
 
+void populateRegistry();
 
 extern float (*GridStatus_getGridSize)();
 extern int (*GridStatus_getFarClipDistance)();

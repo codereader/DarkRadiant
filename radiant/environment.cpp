@@ -187,15 +187,6 @@ void Environment::setMapsPath(const std::string& path) {
 	GlobalRegistry().set(RKEY_MAP_PATH, _mapsPath);
 }
 
-std::string Environment::getEnginePath() {
-	return _enginePath;
-}
-
-void Environment::setEnginePath(const std::string& path) {
-	GlobalRegistry().set(RKEY_ENGINE_PATH, _enginePath);
-	_enginePath = path;
-}
-
 void Environment::savePathsToRegistry() {
 	GlobalRegistry().set(RKEY_APP_PATH, _appPath);
 	GlobalRegistry().set(RKEY_HOME_PATH, _homePath);

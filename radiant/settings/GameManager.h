@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 
+#include "iregistry.h"
 #include "Game.h"
 
 namespace game {
@@ -11,7 +12,8 @@ namespace game {
 /** greebo: The Manager class for keeping track
  * 			of the possible games and the current game.
  */
-class Manager
+class Manager :
+	public RegistryKeyObserver // Observes the engine path
 {
 public:
 	// The map containing the named Game objects 
@@ -22,7 +24,30 @@ private:
 	
 	std::string _currentGameType;
 	
+	// The current engine path
+	std::string _enginePath;
+	
+	bool _enginePathInitialised;
+	
 public:
+	Manager();
+
+	/** greebo: RegistryKeyObserver implementation, gets notified 
+	 * 			upon engine path changes.
+	 */
+	void keyChanged();
+	
+	/** greebo: Gets/sets the engine path.
+	 * 			setEnginePath() triggers a VFS refresh
+	 */
+	void setEnginePath(const std::string& path);
+	std::string getEnginePath() const;
+
+	/** greebo: Initialises the engine path from the settings in the registry.
+	 * 			If nothing is found, the game file is queried.
+	 */
+	void initEnginePath();
+	
 	/** greebo: Returns the current Game (shared_ptr).
 	 */
 	GamePtr currentGame();

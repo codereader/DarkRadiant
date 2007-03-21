@@ -50,6 +50,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/LeftAlignment.h"
 #include "cmdlib.h"
 #include "plugin.h"
+#include "gtkmisc.h"
 
 #include "environment.h"
 #include "error.h"
@@ -68,6 +69,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			PREFPAGE_COL,	// The pointer to the preference page 
 		};
 		typedef std::vector<std::string> StringVector;
+		
+		const std::string RKEY_WINDOW_STATE = "user/preferenceDialog/window";
 	}
 
 void Interface_constructPreferences(PrefPage* page)
@@ -265,16 +268,21 @@ GtkWidget* PrefPage::appendEntry(const std::string& name, const std::string& reg
 
 // greebo: Adds a PathEntry to choose files or directories (depending on the given boolean)
 GtkWidget* PrefPage::appendPathEntry(const std::string& name, const std::string& registryKey, bool browseDirectories) {
-	/*PathEntry pathEntry = PathEntry_new();
-	g_signal_connect(G_OBJECT(pathEntry.m_button), "clicked", G_CALLBACK(browseDirectories ? button_clicked_entry_browse_directory : button_clicked_entry_browse_file), pathEntry.m_entry);
+	PathEntry pathEntry = PathEntry_new();
+	g_signal_connect(
+		G_OBJECT(pathEntry.m_button), 
+		"clicked", 
+		G_CALLBACK(browseDirectories ? button_clicked_entry_browse_directory : button_clicked_entry_browse_file), 
+		pathEntry.m_entry
+	);
 
 	// Connect the registry key to the newly created input field
 	_connector.connectGtkObject(GTK_OBJECT(pathEntry.m_entry), registryKey);
 
 	GtkTable* row = DialogRow_new(name.c_str(), GTK_WIDGET(pathEntry.m_frame));
-	DialogVBox_packRow(GTK_VBOX(vbox), GTK_WIDGET(row));
+	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(row));
 
-	return GTK_WIDGET(row);*/return NULL;
+	return GTK_WIDGET(row);
 }
 
 GtkSpinButton* Spinner_new(double value, double lower, double upper, int fraction) {
@@ -685,7 +693,10 @@ public:
 	}
 };
 
-PrefsDlg::PrefsDlg() {
+PrefsDlg::PrefsDlg() :
+	_dialog(NULL),
+	_packed(false)
+{
 	// Create a treestore with a name and a pointer
 	_prefTree = gtk_tree_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
 	
@@ -697,14 +708,8 @@ PrefsDlg::PrefsDlg() {
 }
 
 void PrefsDlg::populateWindow() {
-	_dialog = gtkutil::TransientWindow("DarkRadiant Preferences", MainFrame_getWindow(), false);
-	
-	// Set the default border width in accordance to the HIG
-	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 8);
-	gtk_window_set_type_hint(GTK_WINDOW(_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
-	
 	// The overall dialog vbox
-	GtkWidget* vbox = gtk_vbox_new(FALSE, 8);
+	_overallVBox = gtk_vbox_new(FALSE, 8);
 	
 	GtkWidget* hbox = gtk_hbox_new(FALSE, 8);
 	
@@ -726,7 +731,7 @@ void PrefsDlg::populateWindow() {
 	gtk_box_pack_start(GTK_BOX(hbox), _notebook, TRUE, TRUE, 0);
 	
 	// Pack the notebook and the treeview into the overall dialog vbox
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(_overallVBox), hbox, TRUE, TRUE, 0);
 	
 	// Create the buttons
 	GtkWidget* buttonHBox = gtk_hbox_new(FALSE, 0);
@@ -739,9 +744,7 @@ void PrefsDlg::populateWindow() {
 	gtk_box_pack_end(GTK_BOX(buttonHBox), cancelButton, FALSE, FALSE, 6);
 	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(onCancel), this);
 	
-	gtk_box_pack_start(GTK_BOX(vbox), buttonHBox, FALSE, FALSE, 0);
-	
-	gtk_container_add(GTK_CONTAINER(_dialog), vbox);
+	gtk_box_pack_start(GTK_BOX(_overallVBox), buttonHBox, FALSE, FALSE, 0);
 }
 
 void PrefsDlg::updateTreeStore() {
@@ -765,6 +768,73 @@ void PrefsDlg::updateTreeStore() {
 PrefPagePtr PrefsDlg::createOrFindPage(const std::string& path) {
 	// Pass the call to the root page
 	return _root->createOrFindPage(path);
+}
+
+void PrefsDlg::initDialog() {
+	_dialog = gtkutil::TransientWindow("DarkRadiant Preferences", MainFrame_getWindow(), false);
+	
+	// Set the default border width in accordance to the HIG
+	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 8);
+	gtk_window_set_type_hint(GTK_WINDOW(_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
+	
+	gtk_container_add(GTK_CONTAINER(_dialog), _overallVBox);
+	
+	// Connect the window position tracker
+	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
+	
+	if (windowStateList.size() > 0) {
+		_windowPosition.loadFromNode(windowStateList[0]);
+	}
+	
+	_windowPosition.connect(GTK_WINDOW(_dialog));
+	_windowPosition.applyPosition();
+}
+
+void PrefsDlg::shutdown() {
+	// Delete all the current window states from the registry  
+	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
+	
+	// Create a new node
+	xml::Node node(GlobalRegistry().createKey(RKEY_WINDOW_STATE));
+	
+	// Tell the position tracker to save the information
+	_windowPosition.saveToNode(node);
+	
+	if (_dialog != NULL) {
+		gtk_widget_hide(_dialog);
+	}
+}
+
+void PrefsDlg::toggleWindow() {
+	// Pass the call to the utility methods that save/restore the window position
+	if (_dialog != NULL && GTK_WIDGET_VISIBLE(_dialog)) {
+		// Save the window position, to make sure
+		_windowPosition.readPosition();
+		gtk_widget_hide_all(_dialog);
+	}
+	else {
+		if (!_packed) {
+			// Window container not created yet
+			_packed = true;
+			initDialog();
+		}
+		// Restore the position
+		_windowPosition.applyPosition();
+		
+		// Import the registry keys 
+		_registryConnector.importValues();
+		
+		// Rebuild the tree and expand it
+		updateTreeStore();
+		gtk_tree_view_expand_all(_treeView);
+		
+		// Now show the dialog window again
+		gtk_widget_show_all(_dialog);
+	}
+}
+
+void PrefsDlg::toggle() {
+	Instance().toggleWindow();
 }
 
 PrefsDlg& PrefsDlg::Instance() {
@@ -817,7 +887,7 @@ void PrefsDlg::onPrefPageSelect(GtkTreeSelection* treeselection, PrefsDlg* self)
 
 // Construct the GTK elements for the Preferences Dialog.
 
-GtkWindow* PrefsDlg::BuildDialog()
+GtkWindow* BuildDialog()
 {
 	/*
     PreferencesDialog_addInterfacePreferences(FreeCaller1<PrefPage*, Interface_constructPreferences>());
@@ -1038,47 +1108,6 @@ void Preferences_Save()
 void Preferences_Reset()
 {
   file_remove(PrefsDlg::Instance().m_inipath.c_str());
-}
-
-
-void PrefsDlg::PostModal (EMessageBoxReturn code)
-{
-  if (code == eIDOK)
-  {
-    Preferences_Save();
-    
-    // Save the values back into the registry
-    _registryConnector.exportValues();
-    
-    UpdateAllWindows();
-  }
-}
-
-void PrefsDlg::toggleWindow() {
-	// Pass the call to the utility methods that save/restore the window position
-	if (GTK_WIDGET_VISIBLE(_dialog)) {
-		// Save the window position, to make sure
-		//_windowPosition.readPosition();
-		gtk_widget_hide_all(_dialog);
-	}
-	else {
-		// Restore the position
-		//_windowPosition.applyPosition();
-		
-		// Import the registry keys 
-		_registryConnector.importValues();
-		
-		// Rebuild the tree and expand it
-		updateTreeStore();
-		gtk_tree_view_expand_all(_treeView);
-		
-		// Now show the dialog window again
-		gtk_widget_show_all(_dialog);
-	}
-}
-
-void PrefsDlg::toggle() {
-	Instance().toggleWindow();
 }
 
 std::vector<const char*> g_restart_required;
