@@ -45,10 +45,13 @@ public:
 	 */
 	bool settingsValid() const;
 	
-	/** greebo: Gets/sets the engine path.
-	 * 			setEnginePath() triggers a VFS refresh
+	/** greebo: Reloads the setting from the registry and 
+	 * 			triggers a VFS refresh if the path has changed.
 	 */
-	void setEnginePath(const std::string& path);
+	void updateEnginePath();
+	
+	/** greebo: Gets the engine path (e.g. /usr/local/doom3/).
+	 */
 	std::string getEnginePath() const;
 
 	/** greebo: Accessor methods for the fs_game parameter

@@ -144,8 +144,8 @@ void Manager::initEnginePath() {
 	GlobalRegistry().addKeyObserver(this, RKEY_ENGINE_PATH);
 	GlobalRegistry().addKeyObserver(this, RKEY_FS_GAME);
 	
-	// Trigger a VFS Update
-	setEnginePath(_enginePath);
+	// Trigger an update ((re-)initialises the VFS)
+	updateEnginePath();
 }
 
 bool Manager::settingsValid() const {
@@ -164,23 +164,29 @@ bool Manager::settingsValid() const {
 }
 
 void Manager::keyChanged() {
-	setEnginePath(GlobalRegistry().get(RKEY_ENGINE_PATH));
-	setFSGame(GlobalRegistry().get(RKEY_FS_GAME));
+	// call the engine path setter, fs_game is updated there as well
+	updateEnginePath();
 }
 
 void Manager::setFSGame(const std::string& fsGame) {
 	_fsGame = fsGame;
 }
 
-void Manager::setEnginePath(const std::string& path) {
+void Manager::updateEnginePath() {
 	// Clean the new path
-	std::string newPath = os::standardPathWithSlash(path);
+	std::string newPath = os::standardPathWithSlash(
+		GlobalRegistry().get(RKEY_ENGINE_PATH)
+	);
+	std::string newFSGame = GlobalRegistry().get(RKEY_FS_GAME);
 	
-	if (newPath != _enginePath) {
+	if (newPath != _enginePath || newFSGame != _fsGame) {
 		// Disable screen updates
 		if (MainFrame_getWindow() != NULL) {
 			ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Changing Engine Path");
 		}
+		
+		// Set the new fs_game
+		_fsGame = newFSGame;
 		
 		if (_enginePathInitialised) {
 			EnginePath_Unrealise();
