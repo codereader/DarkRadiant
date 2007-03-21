@@ -197,7 +197,6 @@ void HomePaths_Realise()
 void EnginePath_Realise() {
 	HomePaths_Realise();
 	QE_InitVFS();
-	GlobalFileSystem().initialise();
 	
 	// Rebuild the map path basing on the userGamePath (TODO: remove that global)
 	std::string newMapPath = g_qeglobals.m_userGamePath.c_str();
@@ -230,7 +229,7 @@ void EnginePath_Unrealise() {
   }
 }*/
 
-class PathsDialog : public Dialog
+/*class PathsDialog : public Dialog
 {
 public:
   GtkWindow* BuildDialog()
@@ -266,22 +265,22 @@ public:
   }
 };
 
-PathsDialog g_PathsDialog;
+PathsDialog g_PathsDialog;*/
 
 void EnginePath_verify() {
-	std::string enginePath = game::Manager::Instance().getEnginePath();
+	/*std::string enginePath = game::Manager::Instance().getEnginePath();
 	
 	if (!file_exists(enginePath.c_str())) {
 		// Engine path doesn't exist, ask the user
 		g_PathsDialog.Create();
 		g_PathsDialog.DoModal();
 		g_PathsDialog.Destroy();
-	}
+	}*/
 }
 
 namespace
 {
-  CopiedString g_gamename;
+  //CopiedString g_gamename;
   CopiedString g_gamemode;
   ModuleObservers g_gameNameObservers;
   ModuleObservers g_gameModeObservers;
@@ -292,24 +291,21 @@ const char* basegame_get()
   return game::Manager::Instance().currentGame()->getRequiredKeyValue("basegame");
 }
 
-const char* gamename_get()
-{
-  const char* gamename = g_gamename.c_str();
-  if(string_empty(gamename))
-  {
-    return basegame_get();
-  }
-  return gamename;
+const char* gamename_get() {
+	std::string fsGame = game::Manager::Instance().getFSGame();
+	if (fsGame.empty()) {
+		return basegame_get();
+	}
+	return fsGame.c_str();
 }
 
-void gamename_set(const char* gamename)
-{
-  if(!string_equal(gamename, g_gamename.c_str()))
-  {
-    g_gameNameObservers.unrealise();
-    g_gamename = gamename;
-    g_gameNameObservers.realise();
-  }
+void gamename_set(const char* gamename) {
+	if (std::string(gamename) != game::Manager::Instance().getFSGame()) {
+		g_gameNameObservers.unrealise();
+		//g_gamename = gamename;
+		game::Manager::Instance().setFSGame(gamename);
+		g_gameNameObservers.realise();
+	}
 }
 
 const char* gamemode_get()

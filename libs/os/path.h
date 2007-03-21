@@ -283,7 +283,8 @@ TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const Directo
  */
  
 #include <boost/algorithm/string/replace.hpp>
- 
+#include <boost/algorithm/string/predicate.hpp>
+
 namespace os {
  
     /** Convert the slashes in a Doom 3 path to forward-slashes. Doom 3 accepts either
@@ -295,6 +296,20 @@ namespace os {
         boost::algorithm::replace_all(newStr, "\\", "/");
         return newStr;
     }
+    
+    /** greebo: OS Folder names have forward slashes and a trailing slash
+     * 			at the end by convention.
+     */
+    inline std::string standardPathWithSlash(const std::string& input) {
+		std::string output = standardPath(input);
+		
+		// Append a slash at the end, if there isn't already one
+		if (!boost::algorithm::ends_with(output, "/")) {
+			output += "/";
+		}
+		return output;
+	}
+		    
     
     
 	/** Return the extension for the given path, which is equal to the characters
