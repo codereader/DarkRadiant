@@ -380,7 +380,7 @@ void DoProjectSettings()
 {
   if(ConfirmModified("Edit Project Settings"))
   {
-    ModalDialog modal;
+    /*ModalDialog modal;
     ProjectSettingsDialog dialog;
 
     GtkWindow* window = ProjectSettingsDialog_construct(dialog, modal);
@@ -390,7 +390,9 @@ void DoProjectSettings()
       ProjectSettingsDialog_ok(dialog);
     }
 
-    gtk_widget_destroy(GTK_WIDGET(window));
+    gtk_widget_destroy(GTK_WIDGET(window));*/
+    // Show the according preference page and let the user choose
+    PrefsDlg::Instance().showModal("Game");
   }
 }
 
