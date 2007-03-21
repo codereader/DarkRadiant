@@ -144,8 +144,12 @@ void Manager::initEnginePath() {
 	GlobalRegistry().addKeyObserver(this, RKEY_ENGINE_PATH);
 	GlobalRegistry().addKeyObserver(this, RKEY_FS_GAME);
 	
-	// Trigger an update ((re-)initialises the VFS)
-	updateEnginePath();
+	// Force an update ((re-)initialises the VFS)
+	updateEnginePath(true);
+	
+	// Add the note to the preference page
+	PreferencesPagePtr page = GetPreferenceSystem().getPage("Game");
+	page->appendLabel("<b>Note</b>: You will have to restart DarkRadiant for the changes to take effect.");
 }
 
 bool Manager::settingsValid() const {
@@ -172,19 +176,14 @@ void Manager::setFSGame(const std::string& fsGame) {
 	_fsGame = fsGame;
 }
 
-void Manager::updateEnginePath() {
+void Manager::updateEnginePath(bool forced) {
 	// Clean the new path
 	std::string newPath = os::standardPathWithSlash(
 		GlobalRegistry().get(RKEY_ENGINE_PATH)
 	);
 	std::string newFSGame = GlobalRegistry().get(RKEY_FS_GAME);
 	
-	if (newPath != _enginePath || newFSGame != _fsGame) {
-		// Disable screen updates
-		if (MainFrame_getWindow() != NULL) {
-			ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Changing Engine Path");
-		}
-		
+	if (newPath != _enginePath || newFSGame != _fsGame || forced) {
 		// Set the new fs_game
 		_fsGame = newFSGame;
 		

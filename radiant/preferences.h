@@ -105,6 +105,9 @@ public:
 	
 	void foreachPage(Visitor& visitor);
 	
+	// Appends a simple static label
+	GtkWidget* appendLabel(const std::string& caption);
+	
 	GtkWidget* appendCheckBox(const char* name, const char* flag, bool& data);
 	GtkWidget* appendCheckBox(const char* name, const char* flag, const BoolImportCallback& importCallback, const BoolExportCallback& exportCallback);
 	
@@ -231,9 +234,6 @@ class PrefsDlg
 	
 	// Helper class to pump/extract values to/from the Registry
 	gtkutil::RegistryConnector _registryConnector;
-	
-	// The helper class memorising the size/position
-	gtkutil::WindowPosition _windowPosition;
 	
 	// Stays false until the main window is created, 
 	// which happens in toggleWindow() first (the mainframe doesn't exist earlier)
