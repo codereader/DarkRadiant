@@ -69,8 +69,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			PREFPAGE_COL,	// The pointer to the preference page 
 		};
 		typedef std::vector<std::string> StringVector;
-		
-		const std::string RKEY_WINDOW_STATE = "user/preferenceDialog/window";
 	}
 
 void Interface_constructPreferences(PrefPage* page)
@@ -264,6 +262,16 @@ GtkWidget* PrefPage::appendEntry(const std::string& name, const std::string& reg
 	GtkTable* row = DialogRow_new(name.c_str(), GTK_WIDGET(alignment));
 	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(row));
 	return GTK_WIDGET(entry);
+}
+
+/* greebo: Appends a label field with the given caption (static)
+ */
+GtkWidget* PrefPage::appendLabel(const std::string& caption) {
+	GtkLabel* label = GTK_LABEL(gtk_label_new(""));
+	gtk_label_set_markup(label, caption.c_str());
+		
+	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(label));
+	return GTK_WIDGET(label);
 }
 
 // greebo: Adds a PathEntry to choose files or directories (depending on the given boolean)
@@ -529,7 +537,7 @@ PrefPage::PrefPage(
 	gtk_container_set_border_width(GTK_CONTAINER(_pageWidget), 12);
 	
 	// Create the label
-	GtkWidget* label = gtkutil::LeftAlignedLabel(std::string("<b>") + _name + "</b>");
+	GtkWidget* label = gtkutil::LeftAlignedLabel(std::string("<b>") + _name + " Settings</b>");
 	gtk_box_pack_start(GTK_BOX(_pageWidget), label, FALSE, FALSE, 0);
 	
 	// Create the VBOX for all the client widgets
@@ -802,38 +810,19 @@ PrefPagePtr PrefsDlg::createOrFindPage(const std::string& path) {
 void PrefsDlg::initDialog() {
 	
 	_dialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_transient_for(GTK_WINDOW(_dialog), MainFrame_getWindow());
+	//gtk_window_set_transient_for(GTK_WINDOW(_dialog), MainFrame_getWindow());
 	gtk_window_set_title(GTK_WINDOW(_dialog), "DarkRadiant Preferences");
 	gtk_window_set_modal(GTK_WINDOW(_dialog), TRUE);
-	gtk_window_set_position(GTK_WINDOW(_dialog), GTK_WIN_POS_CENTER_ON_PARENT);
+	gtk_window_set_position(GTK_WINDOW(_dialog), GTK_WIN_POS_CENTER);
 		
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 8);
 	gtk_window_set_type_hint(GTK_WINDOW(_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 	
 	gtk_container_add(GTK_CONTAINER(_dialog), _overallVBox);
-	
-	// Connect the window position tracker
-	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
-	
-	if (windowStateList.size() > 0) {
-		_windowPosition.loadFromNode(windowStateList[0]);
-	}
-	
-	_windowPosition.connect(GTK_WINDOW(_dialog));
-	_windowPosition.applyPosition();
 }
 
 void PrefsDlg::shutdown() {
-	// Delete all the current window states from the registry  
-	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
-	
-	// Create a new node
-	xml::Node node(GlobalRegistry().createKey(RKEY_WINDOW_STATE));
-	
-	// Tell the position tracker to save the information
-	_windowPosition.saveToNode(node);
-	
 	if (_dialog != NULL) {
 		gtk_widget_hide(_dialog);
 	}
@@ -842,8 +831,6 @@ void PrefsDlg::shutdown() {
 void PrefsDlg::toggleWindow(bool isModal) {
 	// Pass the call to the utility methods that save/restore the window position
 	if (_dialog != NULL && GTK_WIDGET_VISIBLE(_dialog)) {
-		// Save the window position, to make sure
-		_windowPosition.readPosition();
 		gtk_widget_hide_all(_dialog);
 	}
 	else {
@@ -851,11 +838,6 @@ void PrefsDlg::toggleWindow(bool isModal) {
 			// Window container not created yet
 			_packed = true;
 			initDialog();
-		}
-		
-		if (!isModal) {
-			// Restore the position
-			_windowPosition.applyPosition();
 		}
 		
 		// Import the registry keys 
@@ -879,7 +861,7 @@ void PrefsDlg::toggleWindow(bool isModal) {
 			// Resize the window to fit the widgets exactly
 			gtk_widget_set_size_request(_dialog, -1, -1);
 			// Reposition the modal dialog, it has been reset by the size_request call
-			gtk_window_set_position(GTK_WINDOW(_dialog), GTK_WIN_POS_CENTER_ON_PARENT);
+			gtk_window_set_position(GTK_WINDOW(_dialog), GTK_WIN_POS_CENTER);
 			// Enter the main loop, gtk_main_quit() is called by the buttons
 			gtk_main();
 		}
@@ -934,9 +916,9 @@ void PrefsDlg::save() {
 	if (_isModal) {
 		gtk_main_quit();
 	}
+	toggleWindow();
 	_requestedPage = "";
 	_isModal = false;
-	toggleWindow();
 	UpdateAllWindows();
 }
 
@@ -944,9 +926,9 @@ void PrefsDlg::cancel() {
 	if (_isModal) {
 		gtk_main_quit();
 	}
+	toggleWindow();
 	_requestedPage = "";
 	_isModal = false;
-	toggleWindow();
 }
 
 void PrefsDlg::showModal(const std::string& path) {

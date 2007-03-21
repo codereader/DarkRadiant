@@ -21,9 +21,6 @@
 	<undo>
 		<queueSize value="64" />
 	</undo>
-	<preferenceDialog>
-		<window xPosition="80" yPosition="100" width="500" height="450" />
-	</preferenceDialog>
 	<stimResponseEditor>
 		<window xPosition="80" yPosition="100" width="500" height="450" />
 	</stimResponseEditor>

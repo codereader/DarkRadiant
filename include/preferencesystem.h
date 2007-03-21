@@ -75,6 +75,9 @@ public:
 	virtual GtkWidget* appendPathEntry(const std::string& name, 
 									   const std::string& registryKey, 
 									   bool browseDirectories) = 0;
+									   
+	// Appends a static label (to add some text to the preference page)
+	virtual GtkWidget* appendLabel(const std::string& caption) = 0;
 };
 typedef boost::shared_ptr<PreferencesPage> PreferencesPagePtr;
 
