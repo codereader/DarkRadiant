@@ -242,6 +242,8 @@ class PrefsDlg
 	// True if the dialog is in modal mode
 	bool _isModal;
 	
+	std::string _requestedPage;
+	
 public:
 	PrefsDlg();
 
@@ -255,7 +257,7 @@ public:
 	/** greebo: Makes sure that the dialog is visible.
 	 * 			(does nothing if the dialog is already on screen)
 	 */
-	static void showModal();
+	static void showModal(const std::string& path = "");
 
 	GtkWidget *m_notebook;
 
@@ -292,6 +294,12 @@ public:
 	/** greebo: Returns TRUE if the dialog is visible.
 	 */
 	bool isVisible() const;
+	
+	/** greebo: Displays the page with the specified path.
+	 * 
+	 * @path: a string like "Settings/Patches"
+	 */
+	void showPage(const std::string& path);
 	
 private:
 	/** greebo: This creates the actual window widget (all the other

@@ -545,9 +545,9 @@ const char* FindPath(const char* absolute)
 class Quake3FileSystem : public VirtualFileSystem
 {
 public:
-  void initDirectory(const char *path)
+  void initDirectory(const std::string& path)
   {
-    InitDirectory(path, FileSystemQ3API_getArchiveModules());
+    InitDirectory(path.c_str(), FileSystemQ3API_getArchiveModules());
   }
   void initialise()
   {

@@ -48,7 +48,7 @@ public:
 
   /// \brief Adds a root search \p path.
   /// Called before \c initialise.
-  virtual void initDirectory(const char *path) = 0;
+  virtual void initDirectory(const std::string& path) = 0;
   /// \brief Initialises the filesystem.
   /// Called after all root search paths have been added.
   virtual void initialise() = 0;

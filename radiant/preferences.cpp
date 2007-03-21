@@ -693,6 +693,34 @@ public:
 	}
 };
 
+/** greebo: A walker searching for a page matching the given path.
+ * 			The result is stored in the passed PrefPagePtr&
+ */
+class PrefPageFinder :
+	public PrefPage::Visitor 
+{
+	// The helper class creating the GtkTreeIter
+	PrefPagePtr& _page;
+	
+	// The path to look up
+	std::string _path;
+public:
+	PrefPageFinder(const std::string& path, PrefPagePtr& page) :
+		_page(page),
+		_path(path)
+	{
+		// Initialise the search result to "empty"
+		_page = PrefPagePtr();
+	}
+
+	void visit(PrefPagePtr prefPage) {
+		// Check for a match
+		if (prefPage->getPath() == _path) {
+			_page = prefPage;
+		}
+	}
+};
+
 PrefsDlg::PrefsDlg() :
 	_dialog(NULL),
 	_packed(false),
@@ -840,6 +868,11 @@ void PrefsDlg::toggleWindow(bool isModal) {
 		// Now show the dialog window again
 		gtk_widget_show_all(_dialog);
 		
+		// Is there a specific page display request?
+		if (!_requestedPage.empty()) {
+			showPage(_requestedPage);
+		}
+		
 		if (isModal) {
 			_isModal = true;
 			
@@ -882,13 +915,26 @@ void PrefsDlg::selectPage() {
 	}
 }
 
+void PrefsDlg::showPage(const std::string& path) {
+	PrefPagePtr page;
+	
+	PrefPageFinder finder(path, page);
+	_root->foreachPage(finder);
+	
+	if (page != NULL) {
+		GtkWidget* notebookPage = page->getWidget();
+		int pagenum = gtk_notebook_page_num(GTK_NOTEBOOK(_notebook), notebookPage);
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(_notebook), pagenum);
+	}
+}
+
 void PrefsDlg::save() {
 	_registryConnector.exportValues();
 	
 	if (_isModal) {
 		gtk_main_quit();
 	}
-	
+	_requestedPage = "";
 	_isModal = false;
 	toggleWindow();
 	UpdateAllWindows();
@@ -898,13 +944,14 @@ void PrefsDlg::cancel() {
 	if (_isModal) {
 		gtk_main_quit();
 	}
-	
+	_requestedPage = "";
 	_isModal = false;
 	toggleWindow();
 }
 
-void PrefsDlg::showModal() {
+void PrefsDlg::showModal(const std::string& path) {
 	if (!Instance().isVisible()) {
+		Instance()._requestedPage = path;
 		Instance().toggleWindow(true);
 	}
 }

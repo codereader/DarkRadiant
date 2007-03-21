@@ -227,8 +227,12 @@ public:
     MapRoot_construct();
     map::AutoSaver().init();
 
-    EnginePath_verify();
-    EnginePath_Realise();
+    //EnginePath_verify();
+    //EnginePath_Realise();
+    
+    // Call the initalise methods to trigger the realisation avalanche
+    // FileSystem > ShadersModule >> Renderstate etc.
+    GlobalFileSystem().initialise();
     
     // Load the shortcuts from the registry
  	GlobalEventManager().loadAccelerators();

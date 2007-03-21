@@ -6,7 +6,6 @@
 #include "os/file.h"
 #include "os/dir.h"
 #include "os/path.h"
-#include "stream/stringstream.h"
 #include "GameFileLoader.h"
 #include "gtkutil/dialog.h"
 #include "gtkutil/messagebox.h"
@@ -103,31 +102,34 @@ void Manager::initEnginePath() {
 #endif
     	;
 	    
-		StringOutputStream path(256);
-		path << DirectoryCleaned(game::Manager::Instance().currentGame()->getRequiredKeyValue(ENGINEPATH_ATTRIBUTE));
-		enginePath = path.c_str();
+	    enginePath = os::standardPathWithSlash(
+			game::Manager::Instance().currentGame()->getRequiredKeyValue(ENGINEPATH_ATTRIBUTE)
+		);
 	}
 	
 	// Take this path and check it
 	GlobalRegistry().set(RKEY_ENGINE_PATH, enginePath);
 	_enginePath = enginePath;
 	
+	// Load the fsGame from the registry
+	_fsGame = GlobalRegistry().get(RKEY_FS_GAME);
+	
 	// Check loop, continue, till the user specifies a valid setting
 	while (!settingsValid()) {
 		// Engine path doesn't exist, ask the user
-		PrefsDlg::showModal();
+		PrefsDlg::showModal("Game");
 		
-		_enginePath = GlobalRegistry().get(RKEY_ENGINE_PATH);
+		_enginePath = os::standardPathWithSlash(GlobalRegistry().get(RKEY_ENGINE_PATH));
 		_fsGame = GlobalRegistry().get(RKEY_FS_GAME);
 		
 		if (!settingsValid()) {
-			std::string msg("Warning:\n");
+			std::string msg("<b>Warning:</b>\n");
 			
 			if (!file_exists(_enginePath.c_str())) {
 				msg += "Engine path does not exist.\n";
 			}
 			
-			std::string fsGamePath = _enginePath + _fsGame;
+			std::string fsGamePath = os::standardPathWithSlash(_enginePath + _fsGame);
 			if (!_fsGame.empty() && !file_exists(fsGamePath.c_str())) {
 				msg += "The fs_game folder does not exist.\n";
 			}
@@ -141,6 +143,9 @@ void Manager::initEnginePath() {
 	// Register as observer, to get notified about future engine path changes
 	GlobalRegistry().addKeyObserver(this, RKEY_ENGINE_PATH);
 	GlobalRegistry().addKeyObserver(this, RKEY_FS_GAME);
+	
+	// Trigger a VFS Update
+	setEnginePath(_enginePath);
 }
 
 bool Manager::settingsValid() const {
@@ -151,7 +156,7 @@ bool Manager::settingsValid() const {
 			return true;
 		}
 		else {
-			std::string fsGamePath = _enginePath + _fsGame;
+			std::string fsGamePath = os::standardPathWithSlash(_enginePath + _fsGame);
 			return file_exists(fsGamePath.c_str());
 		} 
 	}
@@ -168,11 +173,8 @@ void Manager::setFSGame(const std::string& fsGame) {
 }
 
 void Manager::setEnginePath(const std::string& path) {
-	// Clean the new path 
-	StringOutputStream buffer(256);
-	buffer << DirectoryCleaned(path.c_str());
-	
-	std::string newPath = buffer.c_str();
+	// Clean the new path
+	std::string newPath = os::standardPathWithSlash(path);
 	
 	if (newPath != _enginePath) {
 		// Disable screen updates
