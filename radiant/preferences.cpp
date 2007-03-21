@@ -695,7 +695,8 @@ public:
 
 PrefsDlg::PrefsDlg() :
 	_dialog(NULL),
-	_packed(false)
+	_packed(false),
+	_isModal(false)
 {
 	// Create a treestore with a name and a pointer
 	_prefTree = gtk_tree_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
@@ -771,8 +772,13 @@ PrefPagePtr PrefsDlg::createOrFindPage(const std::string& path) {
 }
 
 void PrefsDlg::initDialog() {
-	_dialog = gtkutil::TransientWindow("DarkRadiant Preferences", MainFrame_getWindow(), false);
 	
+	_dialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_transient_for(GTK_WINDOW(_dialog), MainFrame_getWindow());
+	gtk_window_set_title(GTK_WINDOW(_dialog), "DarkRadiant Preferences");
+	gtk_window_set_modal(GTK_WINDOW(_dialog), TRUE);
+	gtk_window_set_position(GTK_WINDOW(_dialog), GTK_WIN_POS_CENTER_ON_PARENT);
+		
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 8);
 	gtk_window_set_type_hint(GTK_WINDOW(_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
@@ -805,7 +811,7 @@ void PrefsDlg::shutdown() {
 	}
 }
 
-void PrefsDlg::toggleWindow() {
+void PrefsDlg::toggleWindow(bool isModal) {
 	// Pass the call to the utility methods that save/restore the window position
 	if (_dialog != NULL && GTK_WIDGET_VISIBLE(_dialog)) {
 		// Save the window position, to make sure
@@ -818,8 +824,11 @@ void PrefsDlg::toggleWindow() {
 			_packed = true;
 			initDialog();
 		}
-		// Restore the position
-		_windowPosition.applyPosition();
+		
+		if (!isModal) {
+			// Restore the position
+			_windowPosition.applyPosition();
+		}
 		
 		// Import the registry keys 
 		_registryConnector.importValues();
@@ -830,6 +839,17 @@ void PrefsDlg::toggleWindow() {
 		
 		// Now show the dialog window again
 		gtk_widget_show_all(_dialog);
+		
+		if (isModal) {
+			_isModal = true;
+			
+			// Resize the window to fit the widgets exactly
+			gtk_widget_set_size_request(_dialog, -1, -1);
+			// Reposition the modal dialog, it has been reset by the size_request call
+			gtk_window_set_position(GTK_WINDOW(_dialog), GTK_WIN_POS_CENTER_ON_PARENT);
+			// Enter the main loop, gtk_main_quit() is called by the buttons
+			gtk_main();
+		}
 	}
 }
 
@@ -864,12 +884,33 @@ void PrefsDlg::selectPage() {
 
 void PrefsDlg::save() {
 	_registryConnector.exportValues();
+	
+	if (_isModal) {
+		gtk_main_quit();
+	}
+	
+	_isModal = false;
 	toggleWindow();
 	UpdateAllWindows();
 }
 
 void PrefsDlg::cancel() {
+	if (_isModal) {
+		gtk_main_quit();
+	}
+	
+	_isModal = false;
 	toggleWindow();
+}
+
+void PrefsDlg::showModal() {
+	if (!Instance().isVisible()) {
+		Instance().toggleWindow(true);
+	}
+}
+
+bool PrefsDlg::isVisible() const {
+	return (_dialog != NULL && GTK_WIDGET_VISIBLE(_dialog));
 }
 
 // Static GTK Callbacks

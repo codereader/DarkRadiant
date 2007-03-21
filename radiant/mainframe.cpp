@@ -139,6 +139,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 extern FaceInstanceSet g_SelectedFaceInstances;
 
+static GtkWindow *splash_screen = 0;
+
 struct layout_globals_t
 {
   WindowPosition m_position;
@@ -227,12 +229,6 @@ void EnginePath_Unrealise() {
     EnginePath_Realise();
   }
 }*/
-
-void Paths_registerPreferencesPage() {
-	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Game/Path");
-	page->appendPathEntry("Engine Path", RKEY_ENGINE_PATH, true);
-}
-
 
 class PathsDialog : public Dialog
 {
@@ -1396,6 +1392,10 @@ GtkWindow* MainFrame_getWindow()
 {
   if(g_pParentWnd == 0)
   {
+  	// Maybe the splash screen is visible?
+  	if (splash_screen != NULL) {
+  		return splash_screen;
+  	}
     return 0;
   }
   return g_pParentWnd->m_window;
@@ -1526,8 +1526,6 @@ GtkWindow* create_splash()
   return window;
 }
 
-static GtkWindow *splash_screen = 0;
-
 void show_splash()
 {
   splash_screen = create_splash();
@@ -1538,6 +1536,7 @@ void show_splash()
 void hide_splash()
 {
   gtk_widget_destroy(GTK_WIDGET(splash_screen));
+  splash_screen = NULL;
 }
 
 static gint mainframe_delete (GtkWidget *widget, GdkEvent *event, gpointer data)
@@ -2240,7 +2239,6 @@ void MainFrame_Construct()
   g_Layout_enablePluginToolbar.useLatched();
 
   Layout_registerPreferencesPage();
-  Paths_registerPreferencesPage();
 
   g_brushCount.setCountChangedCallback(FreeCaller<QE_brushCountChanged>());
   g_entityCount.setCountChangedCallback(FreeCaller<QE_entityCountChanged>());

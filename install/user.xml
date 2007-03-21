@@ -4,7 +4,10 @@
 
 	<!-- Load the debug.xml for debugging purposes -->
 	<debug value="0" />
-	<fs_game value="" />
+	<game>
+		<type value="" />
+		<fs_game value="" />
+	</game>
   <ui>
 	<map>
 		<numMRU value="5" />

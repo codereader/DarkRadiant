@@ -1,23 +1,32 @@
 #include "GameManager.h"
 
 #include "iregistry.h"
+#include "preferences.h"
 #include "environment.h"
+#include "os/file.h"
 #include "os/dir.h"
 #include "os/path.h"
 #include "stream/stringstream.h"
 #include "GameFileLoader.h"
 #include "gtkutil/dialog.h"
+#include "gtkutil/messagebox.h"
 #include "mainframe.h"
+#include <gtk/gtkmain.h>
 
 namespace game {
 
 	namespace {
 		const std::string RKEY_GAME_TYPE = "user/game/type";
+		const std::string RKEY_FS_GAME = "user/game/fs_game";
 	}
 
 Manager::Manager() :
 	_enginePathInitialised(false)
 {}
+
+std::string Manager::getFSGame() const {
+	return _fsGame;
+}
 
 /** greebo: Returns the current Game.
  */
@@ -30,11 +39,20 @@ GamePtr Manager::currentGame() {
 	return _games[_currentGameType];
 }
 
+void Manager::constructPreferences() {
+	PreferencesPagePtr page = GetPreferenceSystem().getPage("Game");
+	page->appendPathEntry("Engine Path", RKEY_ENGINE_PATH, true);
+	page->appendEntry("Game Mod (fs_game)", RKEY_FS_GAME);
+}
+
 /** greebo: Loads the game files and the saved settings.
  * 			If no saved game setting is found, the user
  * 			is asked to enter the relevant information in a Dialog. 
  */
 void Manager::initialise() {
+	// Add the settings widgets to the Preference Dialog, we might need it
+	constructPreferences();
+	
 	// Scan the <applicationpath>/games folder for .game files
 	loadGameFiles();
 	
@@ -90,17 +108,63 @@ void Manager::initEnginePath() {
 		enginePath = path.c_str();
 	}
 	
-	// Take this engine path
-	//_enginePath = enginePath;
+	// Take this path and check it
 	GlobalRegistry().set(RKEY_ENGINE_PATH, enginePath);
-	// Trigger a VFS Update
-	setEnginePath(enginePath);
+	_enginePath = enginePath;
 	
+	// Check loop, continue, till the user specifies a valid setting
+	while (!settingsValid()) {
+		// Engine path doesn't exist, ask the user
+		PrefsDlg::showModal();
+		
+		_enginePath = GlobalRegistry().get(RKEY_ENGINE_PATH);
+		_fsGame = GlobalRegistry().get(RKEY_FS_GAME);
+		
+		if (!settingsValid()) {
+			std::string msg("Warning:\n");
+			
+			if (!file_exists(_enginePath.c_str())) {
+				msg += "Engine path does not exist.\n";
+			}
+			
+			std::string fsGamePath = _enginePath + _fsGame;
+			if (!_fsGame.empty() && !file_exists(fsGamePath.c_str())) {
+				msg += "The fs_game folder does not exist.\n";
+			}
+			msg += "Do you want to correct these settings?";
+			if (gtk_MessageBox(0, msg.c_str(), "Invalid Settings", eMB_YESNO, eMB_ICONQUESTION) == eIDNO) {
+				break;
+			}
+		}
+	}
+	
+	// Register as observer, to get notified about future engine path changes
 	GlobalRegistry().addKeyObserver(this, RKEY_ENGINE_PATH);
+	GlobalRegistry().addKeyObserver(this, RKEY_FS_GAME);
+}
+
+bool Manager::settingsValid() const {
+	if (file_exists(_enginePath.c_str())) {
+		// Do we have a custom game mod?
+		if (_fsGame.empty()) {
+			// No, everything is ok
+			return true;
+		}
+		else {
+			std::string fsGamePath = _enginePath + _fsGame;
+			return file_exists(fsGamePath.c_str());
+		} 
+	}
+	return false;
 }
 
 void Manager::keyChanged() {
 	setEnginePath(GlobalRegistry().get(RKEY_ENGINE_PATH));
+	setFSGame(GlobalRegistry().get(RKEY_FS_GAME));
+}
+
+void Manager::setFSGame(const std::string& fsGame) {
+	_fsGame = fsGame;
 }
 
 void Manager::setEnginePath(const std::string& path) {
