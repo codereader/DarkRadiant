@@ -141,6 +141,10 @@ extern FaceInstanceSet g_SelectedFaceInstances;
 
 static GtkWindow *splash_screen = 0;
 
+	namespace {
+		const std::string RKEY_WINDOW_LAYOUT = "user/ui/mainFrame/windowLayout";
+	}
+
 struct layout_globals_t
 {
   WindowPosition m_position;
@@ -168,30 +172,28 @@ layout_globals_t g_layout_globals;
 
 // Home Paths
 
-void HomePaths_Realise()
-{
+void HomePaths_Realise() {
+	// Linux has the userengine path under the home dir
 #if defined(POSIX)
-  const char* prefix = game::Manager::Instance().currentGame()->getKeyValue("prefix");
-  if(!string_empty(prefix)) 
-  {
-    StringOutputStream path(256);
-    path << DirectoryCleaned(g_get_home_dir()) << prefix << "/";
-    g_qeglobals.m_userEnginePath = path.c_str();
-    Q_mkdir(g_qeglobals.m_userEnginePath.c_str());
-  }
-  else
+	std::string prefix = game::Manager::Instance().currentGame()->getKeyValue("prefix");
+	if (!prefix.empty()) { 
+		std::string path = os::standardPathWithSlash(g_get_home_dir()) + prefix + "/";
+		g_qeglobals.m_userEnginePath = path.c_str();
+		Q_mkdir(g_qeglobals.m_userEnginePath.c_str());
+	}
+	else
 #endif
-  {
-    g_qeglobals.m_userEnginePath = EnginePath_get();
-  }
+	{
+		g_qeglobals.m_userEnginePath = EnginePath_get();
+	}
 
-  {
-    StringOutputStream path(256);
-    path << g_qeglobals.m_userEnginePath.c_str() << gamename_get() << '/';
-    g_qeglobals.m_userGamePath = path.c_str();
-  }
-  ASSERT_MESSAGE(!string_empty(g_qeglobals.m_userGamePath.c_str()), "HomePaths_Realise: user-game-path is empty");
-  Q_mkdir(g_qeglobals.m_userGamePath.c_str());
+	{
+		std::string path = g_qeglobals.m_userEnginePath.c_str();
+		path += std::string(gamename_get()) + "/";
+		g_qeglobals.m_userGamePath = path.c_str();
+	}
+	ASSERT_MESSAGE(!string_empty(g_qeglobals.m_userGamePath.c_str()), "HomePaths_Realise: user-game-path is empty");
+	Q_mkdir(g_qeglobals.m_userGamePath.c_str());
 }
 
 void EnginePath_Realise() {
@@ -1255,7 +1257,6 @@ void ClipperChangeNotify()
 
 LatchedInt g_Layout_viewStyle(MainFrame::eFloating, "Window Layout");
 LatchedBool g_Layout_enablePatchToolbar(true, "Patch Toolbar");
-LatchedBool g_Layout_enablePluginToolbar(true, "Plugin Toolbar");
 
 GtkWidget* g_toggle_z_item = 0;
 GtkWidget* g_toggle_console_item = 0;
@@ -2046,11 +2047,6 @@ void Layout_constructPreferences(PrefPage* page)
       IntExportCaller(g_Layout_viewStyle.m_latched)
     );
   }
-  page->appendCheckBox(
-    "", "Plugin Toolbar",
-    LatchedBoolImportCaller(g_Layout_enablePluginToolbar),
-    BoolExportCaller(g_Layout_enablePluginToolbar.m_latched)
-  );
 }
 
 void Layout_constructPage(PreferenceGroup& group)
@@ -2059,9 +2055,18 @@ void Layout_constructPage(PreferenceGroup& group)
   Layout_constructPreferences(reinterpret_cast<PrefPage*>(page));
 }
 
-void Layout_registerPreferencesPage()
-{
-  PreferencesDialog_addInterfacePage(FreeCaller1<PreferenceGroup&, Layout_constructPage>());
+void Layout_registerPreferencesPage() {
+	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Interface");
+	
+	IconList icons;
+	IconDescriptionList descriptions;
+	
+	icons.push_back("window1.bmp"); descriptions.push_back("Split");
+	icons.push_back("window2.bmp"); descriptions.push_back("Floating");
+	icons.push_back("window3.bmp"); descriptions.push_back("Bla");
+	icons.push_back("window4.bmp"); descriptions.push_back("Bla2");
+	
+	page->appendRadioIcons("Window Layout", RKEY_WINDOW_LAYOUT, icons, descriptions);
 }
 
 void EditColourScheme() {
@@ -2217,7 +2222,6 @@ void MainFrame_Construct()
   GlobalSelectionSystem().addSelectionChangeCallback(ComponentModeSelectionChangedCaller());
 
   GlobalPreferenceSystem().registerPreference("PatchToolBar", BoolImportStringCaller(g_Layout_enablePatchToolbar.m_latched), BoolExportStringCaller(g_Layout_enablePatchToolbar.m_latched));
-  GlobalPreferenceSystem().registerPreference("PluginToolBar", BoolImportStringCaller(g_Layout_enablePluginToolbar.m_latched), BoolExportStringCaller(g_Layout_enablePluginToolbar.m_latched));
   GlobalPreferenceSystem().registerPreference("QE4StyleWindows", IntImportStringCaller(g_Layout_viewStyle.m_latched), IntExportStringCaller(g_Layout_viewStyle.m_latched));
   GlobalPreferenceSystem().registerPreference("XYHeight", IntImportStringCaller(g_layout_globals.nXYHeight), IntExportStringCaller(g_layout_globals.nXYHeight));
   GlobalPreferenceSystem().registerPreference("XYWidth", IntImportStringCaller(g_layout_globals.nXYWidth), IntExportStringCaller(g_layout_globals.nXYWidth));
@@ -2232,7 +2236,6 @@ void MainFrame_Construct()
 
   g_Layout_viewStyle.useLatched();
   g_Layout_enablePatchToolbar.useLatched(); // greebo: TODO: remove this
-  g_Layout_enablePluginToolbar.useLatched();
 
   Layout_registerPreferencesPage();
 

@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <string>
 #include <list>
+#include <vector>
 #include <boost/shared_ptr.hpp>
 
 #include "generic/constant.h"
@@ -42,6 +43,8 @@ typedef struct _GtkWidget GtkWidget;
 
 // A list containing possible values for a combo box widgets
 typedef std::list<std::string> ComboBoxValueList;
+typedef std::vector<std::string> IconList;
+typedef std::vector<std::string> IconDescriptionList;
 
 /* greebo: This is the interface the preference page has to provide for adding
  * elements to the dialog page. */
@@ -60,6 +63,11 @@ public:
 	/* greebo: Use this to add a dropdown selection box with the given list of strings as captions. The value
 	 * stored in the registryKey is used to determine the currently selected combobox item */		  
 	virtual void appendCombo(const std::string& name, const std::string& registryKey, const ComboBoxValueList& valueList) = 0;
+	
+	/* greebo: Use this to add a series of radio buttons with icons and descriptions.
+	 * The result will be stored under the given RegistryKey (with 0 referring to the first item) */		  
+	virtual void appendRadioIcons(const std::string& name, const std::string& registryKey, 
+								  const IconList& iconList, const IconDescriptionList& iconDescriptions) = 0;
 	
 	/* greebo: Appends an entry field with <name> as caption which is connected to the given registryKey
 	 */

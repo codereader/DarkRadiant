@@ -8,6 +8,7 @@
 #include "gtk/gtkspinbutton.h"
 #include "gtk/gtkrange.h"
 #include "gtk/gtkscale.h"
+#include "gtk/gtkradiobutton.h"
 
 namespace gtkutil {
 
@@ -35,16 +36,32 @@ void RegistryConnector::importKey(GtkObject* obj, const std::string& registryKey
 		gtk_combo_box_set_active(GTK_COMBO_BOX(obj), GlobalRegistry().getInt(registryKey));
 	}
 	else if (GTK_IS_ENTRY(obj)) {
-		// Set the content of the input field to the registryKey
+		// Set the content of the entry field to the registryKey
 		gtk_entry_set_text(GTK_ENTRY(obj), GlobalRegistry().get(registryKey).c_str());
 	}
 	else if (GTK_IS_SPIN_BUTTON(obj)) {
-		// Set the content of the input field to the registryKey
+		// Set the content of the spinbuttonto the registryKey
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(obj), GlobalRegistry().getFloat(registryKey));
 	}
 	else if (GTK_IS_SCALE(obj)) {
-		// Set the content of the input field to the registryKey
+		// Set the content of the scale to the registryKey
 		gtk_range_set_value(GTK_RANGE(obj), GlobalRegistry().getFloat(registryKey));
+	}
+	else if (GTK_IS_RADIO_BUTTON(obj)) {
+		// Set the active index of the radio group to the registryKey
+		GSList* group = gtk_radio_button_get_group(GTK_RADIO_BUTTON(obj));
+		int i = 0;
+		int activeIndex = GlobalRegistry().getInt(registryKey);
+		
+		// Cycle through the radio button group and mark the active index as TOGGLED
+		while (group != NULL) {
+			if (activeIndex == i) {
+				GtkToggleButton* radio = reinterpret_cast<GtkToggleButton*>(group->data);
+				gtk_toggle_button_set_active(radio, TRUE);
+			}
+			group = group->next;
+			i++;
+		}
 	}
 	else {
 		std::cout << "RegistryConnector::importKey failed to identify GTKObject\n";
@@ -76,6 +93,21 @@ void RegistryConnector::exportKey(GtkObject* obj, const std::string& registryKey
 	else if (GTK_IS_SCALE(obj)) {
 		// Set the content of the input field to the registryKey
 		GlobalRegistry().setFloat(registryKey, gtk_range_get_value(GTK_RANGE(obj)));
+	}
+	else if (GTK_IS_RADIO_BUTTON(obj)) {
+		// Get the active index from the radio group
+		GSList* group = gtk_radio_button_get_group(GTK_RADIO_BUTTON(obj));
+		int index = 0;
+		// Cycle through the radio button group and mark the active index as TOGGLED
+		while (group != NULL) {
+			GtkToggleButton* radio = reinterpret_cast<GtkToggleButton*>(group->data);
+			if (gtk_toggle_button_get_active(radio)) {
+				GlobalRegistry().setInt(registryKey, index);
+				break;
+			}
+			group = group->next;
+			index++;
+		}
 	}
 	else {
 		std::cout << "RegistryConnector::exportKey failed to identify GTKObject\n";
