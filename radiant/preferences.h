@@ -239,6 +239,9 @@ class PrefsDlg
 	// which happens in toggleWindow() first (the mainframe doesn't exist earlier)
 	bool _packed;
 	
+	// True if the dialog is in modal mode
+	bool _isModal;
+	
 public:
 	PrefsDlg();
 
@@ -248,6 +251,11 @@ public:
 	/** greebo: Toggles the window visibility
 	 */
 	static void toggle();
+	
+	/** greebo: Makes sure that the dialog is visible.
+	 * 			(does nothing if the dialog is already on screen)
+	 */
+	static void showModal();
 
 	GtkWidget *m_notebook;
 
@@ -281,6 +289,10 @@ public:
 	 */
 	void shutdown();
 	
+	/** greebo: Returns TRUE if the dialog is visible.
+	 */
+	bool isVisible() const;
+	
 private:
 	/** greebo: This creates the actual window widget (all the other
 	 * 			are created by populateWindow() during construction).
@@ -311,8 +323,10 @@ private:
 	void populateWindow();
 
 	/** greebo: Toggles the visibility of this instance.
+	 * 
+	 * @modal: set this to TRUE to create a modal window
 	 */
-	void toggleWindow();
+	void toggleWindow(bool modal = false);
 
 	// greebo: calls the constructors to add the preference elements
 	void callConstructors(PreferenceTreeGroup& preferenceGroup);
@@ -332,6 +346,8 @@ struct preferences_globals_t
   }
 };
 extern preferences_globals_t g_preferences_globals;
+
+PreferenceSystem& GetPreferenceSystem();
 
 typedef struct _GtkWindow GtkWindow;
 void PreferencesDialog_constructWindow(GtkWindow* main_window);

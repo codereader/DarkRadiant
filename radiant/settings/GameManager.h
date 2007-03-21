@@ -24,6 +24,9 @@ private:
 	
 	std::string _currentGameType;
 	
+	// The fs_game argument (usually "darkmod")
+	std::string _fsGame;
+	
 	// The current engine path
 	std::string _enginePath;
 	
@@ -37,11 +40,21 @@ public:
 	 */
 	void keyChanged();
 	
+	/** greebo: Returns TRUE if the engine path exists and
+	 * 			the fs_game (if it is non-empty) exists as well.
+	 */
+	bool settingsValid() const;
+	
 	/** greebo: Gets/sets the engine path.
 	 * 			setEnginePath() triggers a VFS refresh
 	 */
 	void setEnginePath(const std::string& path);
 	std::string getEnginePath() const;
+
+	/** greebo: Accessor methods for the fs_game parameter
+	 */
+	void setFSGame(const std::string& fsGame);
+	std::string getFSGame() const;
 
 	/** greebo: Initialises the engine path from the settings in the registry.
 	 * 			If nothing is found, the game file is queried.
@@ -70,6 +83,11 @@ public:
 	
 	// Accessor method containing the static instance
 	static Manager& Instance();
+
+private:
+	/** greebo: Adds the EnginePath and fs_game widgets to the Preference dialog
+	 */
+	void constructPreferences();
 };
 
 } // namespace game
