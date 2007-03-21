@@ -311,11 +311,10 @@ class EntityClassDoom3:
         m_unrealised(2) {} 
     
     void realise() {
-        
         // Count the number of times this function is called, it is activated
         // for real on the second call (why?)
-        if (--m_unrealised != 0)
-        	return;
+        /*if (--m_unrealised != 0)
+        	return;*/
 
         globalOutputStream() << "searching vfs directory " <<
             makeQuoted("def") << " for *.def\n";
@@ -361,10 +360,10 @@ class EntityClassDoom3:
 
     void unrealise()
     {
-        if (++m_unrealised == 1) {
+        //if (++m_unrealised == 1) {
             m_observers.unrealise();
            	_entityClasses.clear();
-        }
+        //}
     }
 
     void attach(ModuleObserver & observer)
@@ -402,14 +401,14 @@ public:
 
     // Constructor, attach and realise
     EntityClassDoom3API() {
-    	GlobalFileSystem().attach(g_EntityClassDoom3);
+    	//GlobalFileSystem().attach(g_EntityClassDoom3);
 		realise();
     }
     
     // Destructor. Destroy the entity class manager.
     ~EntityClassDoom3API() {
 		unrealise();
-		GlobalFileSystem().detach(g_EntityClassDoom3);
+		//GlobalFileSystem().detach(g_EntityClassDoom3);
     }
     
     // Return the EntityClassManager object.

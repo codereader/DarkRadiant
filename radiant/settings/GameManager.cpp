@@ -3,14 +3,21 @@
 #include "iregistry.h"
 #include "environment.h"
 #include "os/dir.h"
+#include "os/path.h"
+#include "stream/stringstream.h"
 #include "GameFileLoader.h"
 #include "gtkutil/dialog.h"
+#include "mainframe.h"
 
 namespace game {
 
 	namespace {
 		const std::string RKEY_GAME_TYPE = "user/game/type";
 	}
+
+Manager::Manager() :
+	_enginePathInitialised(false)
+{}
 
 /** greebo: Returns the current Game.
  */
@@ -58,6 +65,73 @@ void Manager::initialise() {
 		// No game type selected, bail out, the program will crash anyway on module load
 		gtkutil::fatalErrorDialog("No game type selected\n", NULL);
 	}
+}
+
+void Manager::initEnginePath() {
+	// Try to retrieve a saved value for the engine path
+	std::string enginePath = GlobalRegistry().get(RKEY_ENGINE_PATH);
+	
+	if (enginePath.empty()) {
+		// No engine path set so far, search the game file for default values
+		const char* ENGINEPATH_ATTRIBUTE =
+#if defined(WIN32)
+		    "enginepath_win32"
+#elif defined(__linux__) || defined (__FreeBSD__)
+		    "enginepath_linux"
+#elif defined(__APPLE__)
+		    "enginepath_macos"
+#else
+#error "unknown platform"
+#endif
+    	;
+	    
+		StringOutputStream path(256);
+		path << DirectoryCleaned(game::Manager::Instance().currentGame()->getRequiredKeyValue(ENGINEPATH_ATTRIBUTE));
+		enginePath = path.c_str();
+	}
+	
+	// Take this engine path
+	//_enginePath = enginePath;
+	GlobalRegistry().set(RKEY_ENGINE_PATH, enginePath);
+	// Trigger a VFS Update
+	setEnginePath(enginePath);
+	
+	GlobalRegistry().addKeyObserver(this, RKEY_ENGINE_PATH);
+}
+
+void Manager::keyChanged() {
+	setEnginePath(GlobalRegistry().get(RKEY_ENGINE_PATH));
+}
+
+void Manager::setEnginePath(const std::string& path) {
+	// Clean the new path 
+	StringOutputStream buffer(256);
+	buffer << DirectoryCleaned(path.c_str());
+	
+	std::string newPath = buffer.c_str();
+	
+	if (newPath != _enginePath) {
+		// Disable screen updates
+		if (MainFrame_getWindow() != NULL) {
+			ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Changing Engine Path");
+		}
+		
+		if (_enginePathInitialised) {
+			EnginePath_Unrealise();
+			_enginePathInitialised = false;
+		}
+		
+		_enginePath = newPath;
+		
+		if (!_enginePathInitialised) {
+			EnginePath_Realise();
+			_enginePathInitialised = true;
+		}
+	}
+}
+
+std::string Manager::getEnginePath() const {
+	return _enginePath;
 }
 
 const char* Manager::getCurrentGameType() {

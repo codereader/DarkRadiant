@@ -192,10 +192,6 @@ void HomePaths_Realise()
   Q_mkdir(g_qeglobals.m_userGamePath.c_str());
 }
 
-// Engine Path
-
-CopiedString g_strEnginePath;
-
 void EnginePath_Realise() {
 	HomePaths_Realise();
 	QE_InitVFS();
@@ -209,7 +205,7 @@ void EnginePath_Realise() {
 }
 
 const char* EnginePath_get() {
-	return g_strEnginePath.c_str();
+	return game::Manager::Instance().getEnginePath().c_str();
 }
 
 void EnginePath_Unrealise() {
@@ -217,27 +213,11 @@ void EnginePath_Unrealise() {
 	Environment::Instance().setMapsPath("");
 }
 
-void setEnginePath(const char* path)
-{
+/*void setEnginePath(const char* path) {
   StringOutputStream buffer(256);
   buffer << DirectoryCleaned(path);
   if(!path_equal(buffer.c_str(), g_strEnginePath.c_str()))
   {
-#if 0
-    while(!ConfirmModified("Paths Changed"))
-    {
-      if(Map_Unnamed(g_map))
-      {
-        Map_SaveAs();
-      }
-      else
-      {
-        Map_Save();
-      }
-    }
-    Map_RegionOff();
-#endif
-
     ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Changing Engine Path");
 
     EnginePath_Unrealise();
@@ -246,29 +226,11 @@ void setEnginePath(const char* path)
 
     EnginePath_Realise();
   }
-}
+}*/
 
-void EnginePathImport(CopiedString& self, const char* value)
-{
-  setEnginePath(value);
-}
-typedef ReferenceCaller1<CopiedString, const char*, EnginePathImport> EnginePathImportCaller;
-
-void Paths_constructPreferences(PrefPage* page)
-{
-  page->appendPathEntry("Engine Path", true,
-    StringImportCallback(EnginePathImportCaller(g_strEnginePath)),
-    StringExportCallback(StringExportCaller(g_strEnginePath))
-  );
-}
-void Paths_constructPage(PreferenceGroup& group)
-{
-  PreferencesPage* page(group.createPage("Paths", "Path Settings"));
-  Paths_constructPreferences(reinterpret_cast<PrefPage*>(page));
-}
-void Paths_registerPreferencesPage()
-{
-  PreferencesDialog_addSettingsPage(FreeCaller1<PreferenceGroup&, Paths_constructPage>());
+void Paths_registerPreferencesPage() {
+	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Game/Path");
+	page->appendPathEntry("Engine Path", RKEY_ENGINE_PATH, true);
 }
 
 
@@ -283,24 +245,42 @@ public:
     gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(vbox2));
 
     {
-      //PrefPage preferencesPage(*this, GTK_WIDGET(vbox2));
-      //Paths_constructPreferences(&preferencesPage);
+    	PathEntry pathEntry = PathEntry_new();
+		g_signal_connect(
+			G_OBJECT(pathEntry.m_button), 
+			"clicked", 
+			G_CALLBACK(button_clicked_entry_browse_directory), 
+			pathEntry.m_entry
+		);
+	
+		// Connect the registry key to the newly created input field
+		_registryConnector.connectGtkObject(GTK_OBJECT(pathEntry.m_entry), RKEY_ENGINE_PATH);
+	
+		GtkTable* row = DialogRow_new("Engine Path", GTK_WIDGET(pathEntry.m_frame));
+		DialogVBox_packRow(GTK_VBOX(vbox2), GTK_WIDGET(row));
     }
 
     return create_simple_modal_dialog_window("Engine Path Not Found", m_modal, GTK_WIDGET(frame));
+  }
+  
+  virtual void PostModal(EMessageBoxReturn code) { 
+  	if (code == eIDOK) {
+  		_registryConnector.exportValues();
+  	}
   }
 };
 
 PathsDialog g_PathsDialog;
 
-void EnginePath_verify()
-{
-  if(!file_exists(g_strEnginePath.c_str()))
-  {
-    g_PathsDialog.Create();
-    g_PathsDialog.DoModal();
-    g_PathsDialog.Destroy();
-  }
+void EnginePath_verify() {
+	std::string enginePath = game::Manager::Instance().getEnginePath();
+	
+	if (!file_exists(enginePath.c_str())) {
+		// Engine path doesn't exist, ask the user
+		g_PathsDialog.Create();
+		g_PathsDialog.DoModal();
+		g_PathsDialog.Destroy();
+	}
 }
 
 namespace
@@ -442,9 +422,6 @@ void populateRegistry() {
 // This is called from main() to start up the Radiant stuff.
 void Radiant_Initialise() 
 {
-	// Try to load all the XML files into the registry
-	populateRegistry();
-	
 	// Load the ColourSchemes from the registry
 	ColourSchemes().loadColourSchemes();
 
@@ -1956,6 +1933,7 @@ void MainFrame::Shutdown()
 	ui::LightInspector::Instance().shutdown();
 	ui::TexTool::Instance().shutdown();
 	ui::TransformDialog::Instance().shutdown();
+	PrefsDlg::Instance().shutdown();
 	
 	// Stop the AutoSaver class from being called
 	map::AutoSaver().stopTimer();
@@ -2256,25 +2234,6 @@ void MainFrame_Construct()
   GlobalPreferenceSystem().registerPreference("PositionY", IntImportStringCaller(g_layout_globals.m_position.y), IntExportStringCaller(g_layout_globals.m_position.y));
   GlobalPreferenceSystem().registerPreference("Width", IntImportStringCaller(g_layout_globals.m_position.w), IntExportStringCaller(g_layout_globals.m_position.w));
   GlobalPreferenceSystem().registerPreference("Height", IntImportStringCaller(g_layout_globals.m_position.h), IntExportStringCaller(g_layout_globals.m_position.h));
-
-  {
-    const char* ENGINEPATH_ATTRIBUTE =
-#if defined(WIN32)
-      "enginepath_win32"
-#elif defined(__linux__) || defined (__FreeBSD__)
-      "enginepath_linux"
-#elif defined(__APPLE__)
-      "enginepath_macos"
-#else
-#error "unknown platform"
-#endif
-    ;
-    StringOutputStream path(256);
-    path << DirectoryCleaned(game::Manager::Instance().currentGame()->getRequiredKeyValue(ENGINEPATH_ATTRIBUTE));
-    g_strEnginePath = path.c_str();
-  }
-
-  GlobalPreferenceSystem().registerPreference("EnginePath", CopiedStringImportStringCaller(g_strEnginePath), CopiedStringExportStringCaller(g_strEnginePath));
 
   g_Layout_viewStyle.useLatched();
   g_Layout_enablePatchToolbar.useLatched(); // greebo: TODO: remove this

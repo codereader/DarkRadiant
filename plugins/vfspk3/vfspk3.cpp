@@ -30,12 +30,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "vfs.h"
 
-class FileSystemDependencies : public GlobalRadiantModuleRef
+class FileSystemDependencies /*: public GlobalRadiantModuleRef*/ // greebo: disabled this
 {
   ArchiveModulesRef m_archive_modules;
 public:
   FileSystemDependencies() :
-    m_archive_modules(GlobalRadiant().getRequiredGameDescriptionKeyValue("archivetypes"))
+    m_archive_modules("pk4")
   {
   }
   ArchiveModules& getArchiveModules()

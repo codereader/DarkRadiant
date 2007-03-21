@@ -47,9 +47,6 @@ class Environment
 	// The path where the .map files are stored
 	std::string _mapsPath;
 	
-	// The game directory
-	std::string _enginePath;
-
 public:
 	// Call this with the arguments from main()
 	void init(int argc, char* argv[]);
@@ -61,10 +58,6 @@ public:
 	
 	// Get/set the path where the .map files are stored
 	void setMapsPath(const std::string& path);
-	
-	// Get/set the engine path (the game path)
-	std::string getEnginePath();
-	void setEnginePath(const std::string& path);
 	
 	/** greebo: Creates the runtime-keys for the 
 	 * 			paths (home path, etc.)
