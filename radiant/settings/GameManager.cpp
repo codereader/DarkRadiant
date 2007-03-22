@@ -229,8 +229,14 @@ void Manager::updateEnginePath(bool forced) {
 			if (!_fsGame.empty()) {
 				// We have a MOD, register this directory first
 				GlobalFileSystem().initDirectory(_modPath);
+				
+#if defined(POSIX)
+				// On Linux, the above was in ~/.doom3/, search the engine mod path as well
+				std::string baseModPath = os::standardPathWithSlash(_enginePath + _fsGame);
+				GlobalFileSystem().initDirectory(baseModPath);
+#endif
 			}
-						
+			
 #if defined(POSIX)
 			// this is the *NIX path ~/.doom3/base/
 			std::string userBasePath = os::standardPathWithSlash(
