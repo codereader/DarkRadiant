@@ -226,9 +226,6 @@ public:
     NullModel_construct();
     MapRoot_construct();
     map::AutoSaver().init();
-
-    //EnginePath_verify();
-    //EnginePath_Realise();
     
     // Call the initalise methods to trigger the realisation avalanche
     // FileSystem > ShadersModule >> Renderstate etc.
@@ -239,7 +236,7 @@ public:
   }
   ~Radiant()
   {
-    EnginePath_Unrealise();
+    GlobalFileSystem().shutdown();
 
     MapRoot_destroy();
     NullModel_destroy();

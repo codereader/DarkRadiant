@@ -166,10 +166,6 @@ public:
   }
 };
 
-
-void EnginePath_Realise();
-void EnginePath_Unrealise();
-
 class ModuleObserver;
 
 void EnginePath_verify();

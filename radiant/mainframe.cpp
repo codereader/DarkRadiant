@@ -171,7 +171,7 @@ struct layout_globals_t
 layout_globals_t g_layout_globals;
 
 // Home Paths
-
+/*
 void HomePaths_Realise() {
 	// Linux has the userengine path under the home dir
 #if defined(POSIX)
@@ -194,9 +194,9 @@ void HomePaths_Realise() {
 	}
 	ASSERT_MESSAGE(!string_empty(g_qeglobals.m_userGamePath.c_str()), "HomePaths_Realise: user-game-path is empty");
 	Q_mkdir(g_qeglobals.m_userGamePath.c_str());
-}
+}*/
 
-void EnginePath_Realise() {
+/*void EnginePath_Realise() {
 	HomePaths_Realise();
 	QE_InitVFS();
 	
@@ -205,16 +205,16 @@ void EnginePath_Realise() {
 	newMapPath += "maps/";
 	Q_mkdir(newMapPath.c_str());
 	Environment::Instance().setMapsPath(newMapPath);
-}
+}*/
 
 const char* EnginePath_get() {
 	return game::Manager::Instance().getEnginePath().c_str();
 }
 
-void EnginePath_Unrealise() {
+/*void EnginePath_Unrealise() {
 	GlobalFileSystem().shutdown();
 	Environment::Instance().setMapsPath("");
-}
+}*/
 
 /*void setEnginePath(const char* path) {
   StringOutputStream buffer(256);
