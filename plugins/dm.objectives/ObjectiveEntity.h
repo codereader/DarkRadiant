@@ -7,6 +7,7 @@
 #include "iscenegraph.h"
 
 #include <boost/shared_ptr.hpp>
+#include <gtk/gtkliststore.h>
 
 // FORWARD DECLS
 namespace objectives { class TargetList; }
@@ -52,6 +53,15 @@ public:
 	 * worldspawn).
 	 */
 	bool isOnTargetList(const TargetList& list) const;
+	
+	/**
+	 * Populate the given list store with the objectives from this entity.
+	 * 
+	 * @param store
+	 * The list store to populate. This must have 2 columns -- an integer 
+	 * column for the objective number, and a text column for the description.
+	 */
+	void populateListStore(GtkListStore* store) const;
 };
 
 /**

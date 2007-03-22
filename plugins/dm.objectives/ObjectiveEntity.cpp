@@ -24,4 +24,19 @@ bool ObjectiveEntity::isOnTargetList(const TargetList& list) const {
 	return list.isTargeted(_entity);
 }
 
+// Populate a list store with objectives
+void ObjectiveEntity::populateListStore(GtkListStore* store) const {
+	for (ObjectiveMap::const_iterator i = _objectives.begin();
+		 i != _objectives.end();
+		 ++i)
+	{
+		GtkTreeIter iter;
+		gtk_list_store_append(store, &iter);
+		gtk_list_store_set(store, &iter, 
+						   0, i->first, 
+						   1, i->second.description.c_str(),
+						   -1);	
+	}	
+}
+
 }

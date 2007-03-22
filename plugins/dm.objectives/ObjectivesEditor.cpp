@@ -1,6 +1,5 @@
 #include "ObjectivesEditor.h"
 #include "ObjectiveEntityFinder.h"
-#include "ObjectiveKeyExtractor.h"
 #include "RandomOrigin.h"
 #include "TargetList.h"
 
@@ -392,6 +391,9 @@ void ObjectivesEditor::_onStartActiveCellToggled(GtkCellRendererToggle* w,
 void ObjectivesEditor::_onEntitySelectionChanged(GtkTreeSelection* sel,
 												 ObjectivesEditor* self)
 {
+	// Clear the objectives list
+	gtk_list_store_clear(self->_objectiveList);
+	
 	// Get the selection
 	GtkTreeIter iter;
 	GtkTreeModel* model;
@@ -401,6 +403,9 @@ void ObjectivesEditor::_onEntitySelectionChanged(GtkTreeSelection* sel,
 		// the map
 		std::string name = gtkutil::TreeModel::getString(model, &iter, 2);
 		ObjectiveEntityPtr obj = self->_entities[name];
+		
+		// Populate the objective list
+		obj->populateListStore(self->_objectiveList);
 		
 		// Enable the delete button and objectives panel
 		gtk_widget_set_sensitive(self->_widgets["deleteEntity"], TRUE); 
