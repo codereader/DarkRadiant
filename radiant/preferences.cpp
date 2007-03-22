@@ -850,7 +850,6 @@ PrefPagePtr PrefsDlg::createOrFindPage(const std::string& path) {
 void PrefsDlg::initDialog() {
 	
 	_dialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	//gtk_window_set_transient_for(GTK_WINDOW(_dialog), MainFrame_getWindow());
 	gtk_window_set_title(GTK_WINDOW(_dialog), "DarkRadiant Preferences");
 	gtk_window_set_modal(GTK_WINDOW(_dialog), TRUE);
 	gtk_window_set_position(GTK_WINDOW(_dialog), GTK_WIN_POS_CENTER);
@@ -858,6 +857,8 @@ void PrefsDlg::initDialog() {
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 8);
 	gtk_window_set_type_hint(GTK_WINDOW(_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
+	
+	g_signal_connect(G_OBJECT(_dialog), "delete-event", G_CALLBACK(onDelete), this);
 	
 	gtk_container_add(GTK_CONTAINER(_dialog), _overallVBox);
 }
@@ -993,6 +994,14 @@ void PrefsDlg::onCancel(GtkWidget* button, PrefsDlg* self) {
 
 void PrefsDlg::onPrefPageSelect(GtkTreeSelection* treeselection, PrefsDlg* self) {
 	self->selectPage();
+}
+
+gboolean PrefsDlg::onDelete(GtkWidget* widget, GdkEvent* event, PrefsDlg* self) {
+	// Closing the dialog is equivalent to CANCEL
+	self->cancel();
+
+	// Don't propagate the delete event
+	return true;
 }
 
 // Construct the GTK elements for the Preferences Dialog.

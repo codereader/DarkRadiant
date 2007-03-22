@@ -302,8 +302,6 @@ int main (int argc, char* argv[])
 	// The settings path is set, start logging now
 	Sys_LogFile(true);
 	
-	show_splash();
-
 	// Create the radiant.pid file in the settings folder 
 	// (emits a warning if the file already exists (due to a previous startup failure) 
 	createPIDFile("radiant.pid");
@@ -323,6 +321,8 @@ int main (int argc, char* argv[])
 	// the game paths for suitable archive files
 	GlobalFileSystemModuleRef fsRef;
 	game::Manager::Instance().initEnginePath();
+
+	show_splash();
 
 	// The VFS is setup at this point, we can load the modules
 	Radiant_Initialise();
