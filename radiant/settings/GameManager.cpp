@@ -213,19 +213,20 @@ void Manager::updateEnginePath(bool forced) {
 	std::string newFSGame = GlobalRegistry().get(RKEY_FS_GAME);
 	
 	if (newPath != _enginePath || newFSGame != _fsGame || forced) {
-		// Set the new fs_game
-		_fsGame = newFSGame;
-		
 		if (_enginePathInitialised) {
 			GlobalFileSystem().shutdown();
 			Environment::Instance().setMapsPath("");
 			_enginePathInitialised = false;
 		}
 		
+		// Set the new fs_game and engine paths
+		_fsGame = newFSGame;
 		_enginePath = newPath;
 		
+		// Reconstruct the paths basing on these two, the _modPath may be out of date
+		constructPaths();
+		
 		if (!_enginePathInitialised) {
-			//EnginePath_Realise();
 			if (!_fsGame.empty()) {
 				// We have a MOD, register this directory first
 				GlobalFileSystem().initDirectory(_modPath);
@@ -255,7 +256,7 @@ void Manager::updateEnginePath(bool forced) {
 			// Construct the map path and make sure the folder exists
 			std::string mapPath; 
 			if (_fsGame.empty()) {
-				mapPath = _enginePath + "maps/";
+				mapPath = baseGame + "maps/";
 			}
 			else {
 				mapPath = _modPath + "maps/";

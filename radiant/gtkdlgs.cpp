@@ -342,7 +342,7 @@ GtkWindow* ProjectSettingsDialog_construct(ProjectSettingsDialog& dialog, ModalD
   return window;
 }
 
-void ProjectSettingsDialog_ok(ProjectSettingsDialog& dialog)
+/*void ProjectSettingsDialog_ok(ProjectSettingsDialog& dialog)
 {
   const char* dir = gtk_entry_get_text(dialog.game_combo.fsgame_entry);
   
@@ -374,7 +374,7 @@ void ProjectSettingsDialog_ok(ProjectSettingsDialog& dialog)
       gamemode_set("mp");
     }
   }
-}
+}*/
 
 void DoProjectSettings()
 {
