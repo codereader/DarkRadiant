@@ -1255,7 +1255,6 @@ void ClipperChangeNotify()
 }
 
 
-LatchedInt g_Layout_viewStyle(MainFrame::eFloating, "Window Layout");
 LatchedBool g_Layout_enablePatchToolbar(true, "Patch Toolbar");
 
 GtkWidget* g_toggle_z_item = 0;
@@ -1600,7 +1599,6 @@ void MainFrame::Create()
     	case 3: m_nCurrentStyle = eRegularLeft; break;
     	default: m_nCurrentStyle = eFloating; break;
     };
-    std::cout << "Viewstyle: " << viewStyle << ", m_n_bla: " << m_nCurrentStyle << "\n";
 
     // Create the Filter menu entries
     ui::FiltersMenu::addItems();
@@ -2044,26 +2042,6 @@ void GlobalGL_sharedContextDestroyed()
   QGL_sharedContextDestroyed(GlobalOpenGL());
 }
 
-
-void Layout_constructPreferences(PrefPage* page)
-{
-  {
-    const char* layouts[] = { "window1.bmp", "window2.bmp", "window3.bmp", "window4.bmp" };
-    page->appendRadioIcons(
-      "Window Layout",
-      STRING_ARRAY_RANGE(layouts),
-      LatchedIntImportCaller(g_Layout_viewStyle),
-      IntExportCaller(g_Layout_viewStyle.m_latched)
-    );
-  }
-}
-
-void Layout_constructPage(PreferenceGroup& group)
-{
-  PreferencesPage* page(group.createPage("Layout", "Layout Preferences"));
-  Layout_constructPreferences(reinterpret_cast<PrefPage*>(page));
-}
-
 void Layout_registerPreferencesPage() {
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Interface");
 	
@@ -2232,7 +2210,6 @@ void MainFrame_Construct()
   GlobalSelectionSystem().addSelectionChangeCallback(ComponentModeSelectionChangedCaller());
 
   GlobalPreferenceSystem().registerPreference("PatchToolBar", BoolImportStringCaller(g_Layout_enablePatchToolbar.m_latched), BoolExportStringCaller(g_Layout_enablePatchToolbar.m_latched));
-  GlobalPreferenceSystem().registerPreference("QE4StyleWindows", IntImportStringCaller(g_Layout_viewStyle.m_latched), IntExportStringCaller(g_Layout_viewStyle.m_latched));
   GlobalPreferenceSystem().registerPreference("XYHeight", IntImportStringCaller(g_layout_globals.nXYHeight), IntExportStringCaller(g_layout_globals.nXYHeight));
   GlobalPreferenceSystem().registerPreference("XYWidth", IntImportStringCaller(g_layout_globals.nXYWidth), IntExportStringCaller(g_layout_globals.nXYWidth));
   GlobalPreferenceSystem().registerPreference("CamWidth", IntImportStringCaller(g_layout_globals.nCamWidth), IntExportStringCaller(g_layout_globals.nCamWidth));
@@ -2244,7 +2221,6 @@ void MainFrame_Construct()
   GlobalPreferenceSystem().registerPreference("Width", IntImportStringCaller(g_layout_globals.m_position.w), IntExportStringCaller(g_layout_globals.m_position.w));
   GlobalPreferenceSystem().registerPreference("Height", IntImportStringCaller(g_layout_globals.m_position.h), IntExportStringCaller(g_layout_globals.m_position.h));
 
-  g_Layout_viewStyle.useLatched();
   g_Layout_enablePatchToolbar.useLatched(); // greebo: TODO: remove this
 
   Layout_registerPreferencesPage();
