@@ -1591,8 +1591,17 @@ void MainFrame::Create()
     GlobalEventManager().connect(GTK_OBJECT(window));
     GlobalEventManager().connectAccelGroup(GTK_WINDOW(window));
     
-    m_nCurrentStyle = (EViewStyle) g_Layout_viewStyle.m_value;
+    int viewStyle = GlobalRegistry().getInt(RKEY_WINDOW_LAYOUT);
     
+    switch (viewStyle) {
+    	case 0: m_nCurrentStyle = eRegular; break;
+    	case 1: m_nCurrentStyle = eFloating; break;
+    	case 2: m_nCurrentStyle = eSplit; break;
+    	case 3: m_nCurrentStyle = eRegularLeft; break;
+    	default: m_nCurrentStyle = eFloating; break;
+    };
+    std::cout << "Viewstyle: " << viewStyle << ", m_n_bla: " << m_nCurrentStyle << "\n";
+
     // Create the Filter menu entries
     ui::FiltersMenu::addItems();
     
@@ -2061,12 +2070,13 @@ void Layout_registerPreferencesPage() {
 	IconList icons;
 	IconDescriptionList descriptions;
 	
-	icons.push_back("window1.bmp"); descriptions.push_back("Split");
-	icons.push_back("window2.bmp"); descriptions.push_back("Floating");
-	icons.push_back("window3.bmp"); descriptions.push_back("Bla");
-	icons.push_back("window4.bmp"); descriptions.push_back("Bla2");
+	icons.push_back("window_regular.bmp"); descriptions.push_back("Regular");
+	icons.push_back("window_floating.bmp"); descriptions.push_back("Floating");
+	icons.push_back("window_split.bmp"); descriptions.push_back("Split");
+	icons.push_back("window_regular_left.bmp"); descriptions.push_back("Regular Left");
 	
 	page->appendRadioIcons("Window Layout", RKEY_WINDOW_LAYOUT, icons, descriptions);
+	page->appendLabel("<b>Note</b>: You will have to restart DarkRadiant for the changes to take effect.");
 }
 
 void EditColourScheme() {
