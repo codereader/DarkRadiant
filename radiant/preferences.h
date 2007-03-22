@@ -345,7 +345,10 @@ private:
 	// Gets called on page selection
 	static void onPrefPageSelect(GtkTreeSelection* treeselection, PrefsDlg* self);
 	static void onSave(GtkWidget* button, PrefsDlg* self);
-	static void onCancel(GtkWidget* button, PrefsDlg* self); 
+	static void onCancel(GtkWidget* button, PrefsDlg* self);
+	
+	// Delete event (fired when the "X" close button is clicked)
+	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, PrefsDlg* self);
 };
 
 struct preferences_globals_t
