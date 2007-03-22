@@ -1255,8 +1255,6 @@ void ClipperChangeNotify()
 }
 
 
-LatchedBool g_Layout_enablePatchToolbar(true, "Patch Toolbar");
-
 GtkWidget* g_toggle_z_item = 0;
 GtkWidget* g_toggle_console_item = 0;
 GtkWidget* g_toggle_entity_item = 0;
@@ -2209,7 +2207,6 @@ void MainFrame_Construct()
   typedef FreeCaller1<const Selectable&, ComponentMode_SelectionChanged> ComponentModeSelectionChangedCaller;
   GlobalSelectionSystem().addSelectionChangeCallback(ComponentModeSelectionChangedCaller());
 
-  GlobalPreferenceSystem().registerPreference("PatchToolBar", BoolImportStringCaller(g_Layout_enablePatchToolbar.m_latched), BoolExportStringCaller(g_Layout_enablePatchToolbar.m_latched));
   GlobalPreferenceSystem().registerPreference("XYHeight", IntImportStringCaller(g_layout_globals.nXYHeight), IntExportStringCaller(g_layout_globals.nXYHeight));
   GlobalPreferenceSystem().registerPreference("XYWidth", IntImportStringCaller(g_layout_globals.nXYWidth), IntExportStringCaller(g_layout_globals.nXYWidth));
   GlobalPreferenceSystem().registerPreference("CamWidth", IntImportStringCaller(g_layout_globals.nCamWidth), IntExportStringCaller(g_layout_globals.nCamWidth));
@@ -2220,8 +2217,6 @@ void MainFrame_Construct()
   GlobalPreferenceSystem().registerPreference("PositionY", IntImportStringCaller(g_layout_globals.m_position.y), IntExportStringCaller(g_layout_globals.m_position.y));
   GlobalPreferenceSystem().registerPreference("Width", IntImportStringCaller(g_layout_globals.m_position.w), IntExportStringCaller(g_layout_globals.m_position.w));
   GlobalPreferenceSystem().registerPreference("Height", IntImportStringCaller(g_layout_globals.m_position.h), IntExportStringCaller(g_layout_globals.m_position.h));
-
-  g_Layout_enablePatchToolbar.useLatched(); // greebo: TODO: remove this
 
   Layout_registerPreferencesPage();
 
