@@ -30,6 +30,10 @@ private:
 	// The current engine path
 	std::string _enginePath;
 	
+	// The "userengine" path (where the fs_game is stored)
+	// this is ~/.doom3/<fs_game> in linux, and <enginepath>/<fs_game> in Win32
+	std::string _modPath;
+	
 	bool _enginePathInitialised;
 	
 public:
@@ -90,6 +94,15 @@ public:
 	static Manager& Instance();
 
 private:
+	/** greebo: Get the user engine path (is OS-specific)
+	 */
+	std::string getUserEnginePath();
+
+	/** greebo: Builds the paths (game engine, user game engine) with
+	 * 			respect to the OS we're on.
+	 */
+	void constructPaths();
+
 	/** greebo: Adds the EnginePath and fs_game widgets to the Preference dialog
 	 */
 	void constructPreferences();

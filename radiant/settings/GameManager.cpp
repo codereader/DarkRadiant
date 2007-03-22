@@ -1,11 +1,13 @@
 #include "GameManager.h"
 
 #include "iregistry.h"
+#include "ifilesystem.h"
 #include "preferences.h"
 #include "environment.h"
 #include "os/file.h"
 #include "os/dir.h"
 #include "os/path.h"
+#include "cmdlib.h"
 #include "GameFileLoader.h"
 #include "gtkutil/dialog.h"
 #include "gtkutil/messagebox.h"
@@ -84,6 +86,40 @@ void Manager::initialise() {
 	}
 }
 
+std::string Manager::getUserEnginePath() {
+#if defined(POSIX)
+		// Get the user home folder
+		std::string homeDir = os::standardPathWithSlash(g_get_home_dir());
+		// Get the game prefix, which has to be appended (e.g. ".doom3")
+		std::string prefix = currentGame()->getKeyValue("prefix");
+		
+		// Construct the user's engine path
+		return os::standardPathWithSlash(homeDir + prefix + "/");
+#else
+		// In all other environments, we just take the engine path as base
+		return _enginePath;
+#endif
+}
+
+void Manager::constructPaths() {
+	_enginePath = GlobalRegistry().get(RKEY_ENGINE_PATH);
+	
+	// Make sure it's a well formatted path
+	_enginePath = os::standardPathWithSlash(_enginePath);
+	
+	// Load the fsGame from the registry
+	_fsGame = GlobalRegistry().get(RKEY_FS_GAME);
+	
+	if (!_fsGame.empty()) {	
+		// Create the mod path
+		_modPath = os::standardPathWithSlash(getUserEnginePath() + _fsGame);
+	}
+	else {
+		// No fs_game, no modpath
+		_modPath = "";
+	}
+}
+
 void Manager::initEnginePath() {
 	// Try to retrieve a saved value for the engine path
 	std::string enginePath = GlobalRegistry().get(RKEY_ENGINE_PATH);
@@ -103,24 +139,25 @@ void Manager::initEnginePath() {
     	;
 	    
 	    enginePath = os::standardPathWithSlash(
-			game::Manager::Instance().currentGame()->getRequiredKeyValue(ENGINEPATH_ATTRIBUTE)
+			currentGame()->getRequiredKeyValue(ENGINEPATH_ATTRIBUTE)
 		);
 	}
 	
-	// Take this path and check it
+	// Take this path and store it into the Registry, it's expected to be there
 	GlobalRegistry().set(RKEY_ENGINE_PATH, enginePath);
-	_enginePath = enginePath;
 	
-	// Load the fsGame from the registry
-	_fsGame = GlobalRegistry().get(RKEY_FS_GAME);
+	// Try to do something with the information currently in the Registry
+	// It should be enough to know the engine path and the fs_game.
+	constructPaths();
 	
 	// Check loop, continue, till the user specifies a valid setting
 	while (!settingsValid()) {
 		// Engine path doesn't exist, ask the user
 		PrefsDlg::showModal("Game");
 		
-		_enginePath = os::standardPathWithSlash(GlobalRegistry().get(RKEY_ENGINE_PATH));
-		_fsGame = GlobalRegistry().get(RKEY_FS_GAME);
+		// After the dialog, the settings are located in the registry.
+		// Construct the paths with the settings found there		
+		constructPaths();
 		
 		if (!settingsValid()) {
 			std::string msg("<b>Warning:</b>\n");
@@ -129,8 +166,7 @@ void Manager::initEnginePath() {
 				msg += "Engine path does not exist.\n";
 			}
 			
-			std::string fsGamePath = os::standardPathWithSlash(_enginePath + _fsGame);
-			if (!_fsGame.empty() && !file_exists(fsGamePath.c_str())) {
+			if (!_fsGame.empty() && !file_exists(_modPath.c_str())) {
 				msg += "The fs_game folder does not exist.\n";
 			}
 			msg += "Do you want to correct these settings?";
@@ -154,15 +190,8 @@ void Manager::initEnginePath() {
 
 bool Manager::settingsValid() const {
 	if (file_exists(_enginePath.c_str())) {
-		// Do we have a custom game mod?
-		if (_fsGame.empty()) {
-			// No, everything is ok
-			return true;
-		}
-		else {
-			std::string fsGamePath = os::standardPathWithSlash(_enginePath + _fsGame);
-			return file_exists(fsGamePath.c_str());
-		} 
+		// Return true, if the fs_game is empty OR the modPath exists
+		return (_fsGame.empty() || file_exists(_modPath.c_str())); 
 	}
 	return false;
 }
@@ -188,14 +217,48 @@ void Manager::updateEnginePath(bool forced) {
 		_fsGame = newFSGame;
 		
 		if (_enginePathInitialised) {
-			EnginePath_Unrealise();
+			GlobalFileSystem().shutdown();
+			Environment::Instance().setMapsPath("");
 			_enginePathInitialised = false;
 		}
 		
 		_enginePath = newPath;
 		
 		if (!_enginePathInitialised) {
-			EnginePath_Realise();
+			//EnginePath_Realise();
+			if (!_fsGame.empty()) {
+				// We have a MOD, register this directory first
+				GlobalFileSystem().initDirectory(_modPath);
+			}
+						
+#if defined(POSIX)
+			// this is the *NIX path ~/.doom3/base/
+			std::string userBasePath = os::standardPathWithSlash(
+				getUserEnginePath() + _enginePath + currentGame()->getRequiredKeyValue("basegame")
+			);
+			GlobalFileSystem().initDirectory(userBasePath);
+#endif
+			
+			// Register the base game folder (/usr/local/games/doom3/<basegame>) last
+			// This will always be searched, but *after* the other paths
+			std::string baseGame = os::standardPathWithSlash(
+				_enginePath + currentGame()->getRequiredKeyValue("basegame")
+			);
+			GlobalFileSystem().initDirectory(baseGame);
+			
+			// Construct the map path and make sure the folder exists
+			std::string mapPath; 
+			if (_fsGame.empty()) {
+				mapPath = _enginePath + "maps/";
+			}
+			else {
+				mapPath = _modPath + "maps/";
+			}
+			globalOutputStream() << "GameManager: Map path set to " << mapPath.c_str() << "\n";
+			Q_mkdir(mapPath.c_str());
+			// Save the map path (is stored to the registry as well)
+			Environment::Instance().setMapsPath(mapPath);
+
 			_enginePathInitialised = true;
 		}
 	}
