@@ -57,7 +57,7 @@ please contact Id Software immediately at info@idsoftware.com.
 #include "preferences.h"
 #include "convert.h"
 
-QEGlobals_t  g_qeglobals;
+//QEGlobals_t  g_qeglobals;
 
 
 /*#if defined(WIN32)

@@ -37,24 +37,6 @@ void QE_entityCountChanged();
 
 bool ConfirmModified(const char* title);
 
-
-// most of the QE globals are stored in this structure
-typedef struct
-{
-  /*!
-  win32: engine full path.
-  unix: user home full path + engine dir.
-  */
-  CopiedString         m_userEnginePath;
-  /*!
-  cache for m_userEnginePath + mod subdirectory.
-  */
-  CopiedString         m_userGamePath;
-
-} QEGlobals_t;
-
-extern QEGlobals_t   g_qeglobals;
-
 class SimpleCounter;
 extern SimpleCounter g_brushCount;
 extern SimpleCounter g_entityCount;

@@ -11,7 +11,7 @@
 #include "gtkutil/dialog.h"
 #include "mainframe.h"
 #include "ui/modelselector/ModelSelector.h"
-#include "qe3.h"
+#include "settings/GameManager.h" 
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/convenience.hpp>
@@ -180,7 +180,7 @@ void createCMFromSelection() {
 			}
 			
 			ui::ModelAndSkin modelAndSkin = ui::ModelSelector::chooseModel(); 
-			std::string basePath = g_qeglobals.m_userGamePath.c_str();
+			std::string basePath = game::Manager::Instance().getModPath();
 			
 			std::string modelPath = basePath + modelAndSkin.model;
 			
