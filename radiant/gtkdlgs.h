@@ -37,13 +37,10 @@ EMessageBoxReturn DoLightIntensityDlg (int *intensity);
 EMessageBoxReturn DoTextureLayout (float *fx, float *fy);
 void DoTextEditor (const char* filename, int cursorpos);
 
-void DoProjectSettings();
-
 void DoTextureListDlg();
 void DoFind();
 void DoSides(int type, int axis);
 void DoAbout();
-
 
 #ifdef WIN32
 extern bool g_TextEditor_useWin32Editor;

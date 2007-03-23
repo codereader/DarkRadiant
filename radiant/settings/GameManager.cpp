@@ -205,10 +205,6 @@ void Manager::keyChanged() {
 	updateEnginePath();
 }
 
-void Manager::setFSGame(const std::string& fsGame) {
-	_fsGame = fsGame;
-}
-
 void Manager::updateEnginePath(bool forced) {
 	// Clean the new path
 	std::string newPath = os::standardPathWithSlash(

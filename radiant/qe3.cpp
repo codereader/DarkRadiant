@@ -36,8 +36,6 @@ please contact Id Software immediately at info@idsoftware.com.
 
 #include "debugging/debugging.h"
 
-#include "ifilesystem.h"
-
 #include <map>
 
 #include <gtk/gtktearoffmenuitem.h>
@@ -56,59 +54,6 @@ please contact Id Software immediately at info@idsoftware.com.
 #include "mainframe.h"
 #include "preferences.h"
 #include "convert.h"
-
-//QEGlobals_t  g_qeglobals;
-
-
-/*#if defined(WIN32)
-#define PATH_MAX 260
-#endif*/
-
-
-/*void QE_InitVFS()
-{
-  // VFS initialization -----------------------
-  // we will call GlobalFileSystem().initDirectory, giving the directories to look in (for files in pk3's and for standalone files)
-  // we need to call in order, the mod ones first, then the base ones .. they will be searched in this order
-  // *nix systems have a dual filesystem in ~/.q3a, which is searched first .. so we need to add that too
-	std::string gamename = gamename_get();
-	std::string basegame = basegame_get();
-#if defined(POSIX)
-	std::string userRoot = g_qeglobals.m_userEnginePath.c_str();
-#endif
-	std::string globalRoot = EnginePath_get();
-
-	// if we have a mod dir (gamename is not equal)
-	if (gamename != basegame) {
-#if defined(POSIX)
-		{
-			// ~/.<gameprefix>/<fs_game>
-			std::string userGamePath = userRoot + gamename + "/";
-			GlobalFileSystem().initDirectory(userGamePath);
-	    }
-#endif
-
-		// <fs_basepath>/<fs_game>
-		{
-			std::string globalGamePath = globalRoot + gamename + "/";
-			GlobalFileSystem().initDirectory(globalGamePath);
-	    }
-	}
-
-#if defined(POSIX)
-	// ~/.<gameprefix>/<fs_main>
-	{
-		std::string userBasePath = userRoot + basegame + "/";
-		GlobalFileSystem().initDirectory(userBasePath);
-	}
-#endif
-
-	// <fs_basepath>/<fs_main>
-	{
-		std::string globalBasePath = globalRoot + basegame + "/";
-		GlobalFileSystem().initDirectory(globalBasePath);
-	}
-}*/
 
 int g_numbrushes = 0;
 int g_numentities = 0;

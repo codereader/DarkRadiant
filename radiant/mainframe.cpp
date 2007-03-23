@@ -170,147 +170,6 @@ struct layout_globals_t
 
 layout_globals_t g_layout_globals;
 
-// Home Paths
-/*
-void HomePaths_Realise() {
-	// Linux has the userengine path under the home dir
-#if defined(POSIX)
-	std::string prefix = game::Manager::Instance().currentGame()->getKeyValue("prefix");
-	if (!prefix.empty()) { 
-		std::string path = os::standardPathWithSlash(g_get_home_dir()) + prefix + "/";
-		g_qeglobals.m_userEnginePath = path.c_str();
-		Q_mkdir(g_qeglobals.m_userEnginePath.c_str());
-	}
-	else
-#endif
-	{
-		g_qeglobals.m_userEnginePath = EnginePath_get();
-	}
-
-	{
-		std::string path = g_qeglobals.m_userEnginePath.c_str();
-		path += std::string(gamename_get()) + "/";
-		g_qeglobals.m_userGamePath = path.c_str();
-	}
-	ASSERT_MESSAGE(!string_empty(g_qeglobals.m_userGamePath.c_str()), "HomePaths_Realise: user-game-path is empty");
-	Q_mkdir(g_qeglobals.m_userGamePath.c_str());
-}*/
-
-/*void EnginePath_Realise() {
-	HomePaths_Realise();
-	QE_InitVFS();
-	
-	// Rebuild the map path basing on the userGamePath (TODO: remove that global)
-	std::string newMapPath = g_qeglobals.m_userGamePath.c_str();
-	newMapPath += "maps/";
-	Q_mkdir(newMapPath.c_str());
-	Environment::Instance().setMapsPath(newMapPath);
-}*/
-
-/*const char* EnginePath_get() {
-	return game::Manager::Instance().getEnginePath().c_str();
-}*/
-
-/*void EnginePath_Unrealise() {
-	GlobalFileSystem().shutdown();
-	Environment::Instance().setMapsPath("");
-}*/
-
-/*void setEnginePath(const char* path) {
-  StringOutputStream buffer(256);
-  buffer << DirectoryCleaned(path);
-  if(!path_equal(buffer.c_str(), g_strEnginePath.c_str()))
-  {
-    ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Changing Engine Path");
-
-    EnginePath_Unrealise();
-
-    g_strEnginePath = buffer.c_str();
-
-    EnginePath_Realise();
-  }
-}*/
-
-/*class PathsDialog : public Dialog
-{
-public:
-  GtkWindow* BuildDialog()
-  {
-    GtkFrame* frame = create_dialog_frame("Path settings", GTK_SHADOW_ETCHED_IN);
-
-    GtkVBox* vbox2 = create_dialog_vbox(0, 4);
-    gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(vbox2));
-
-    {
-    	PathEntry pathEntry = PathEntry_new();
-		g_signal_connect(
-			G_OBJECT(pathEntry.m_button), 
-			"clicked", 
-			G_CALLBACK(button_clicked_entry_browse_directory), 
-			pathEntry.m_entry
-		);
-	
-		// Connect the registry key to the newly created input field
-		_registryConnector.connectGtkObject(GTK_OBJECT(pathEntry.m_entry), RKEY_ENGINE_PATH);
-	
-		GtkTable* row = DialogRow_new("Engine Path", GTK_WIDGET(pathEntry.m_frame));
-		DialogVBox_packRow(GTK_VBOX(vbox2), GTK_WIDGET(row));
-    }
-
-    return create_simple_modal_dialog_window("Engine Path Not Found", m_modal, GTK_WIDGET(frame));
-  }
-  
-  virtual void PostModal(EMessageBoxReturn code) { 
-  	if (code == eIDOK) {
-  		_registryConnector.exportValues();
-  	}
-  }
-};
-
-PathsDialog g_PathsDialog;*/
-
-//void EnginePath_verify() {
-	/*std::string enginePath = game::Manager::Instance().getEnginePath();
-	
-	if (!file_exists(enginePath.c_str())) {
-		// Engine path doesn't exist, ask the user
-		g_PathsDialog.Create();
-		g_PathsDialog.DoModal();
-		g_PathsDialog.Destroy();
-	}*/
-//}
-
-namespace
-{
-  //CopiedString g_gamename;
-  //CopiedString g_gamemode;
-  ModuleObservers g_gameNameObservers;
-  ModuleObservers g_gameModeObservers;
-}
-
-/*const char* gamename_get() {
-	std::string fsGame = game::Manager::Instance().getFSGame();
-	if (fsGame.empty()) {
-		return game::Manager::Instance().currentGame()->getRequiredKeyValue("basegame");
-	}
-	return fsGame.c_str();
-}*/
-
-/*const char* gamemode_get()
-{
-  return g_gamemode.c_str();
-}*/
-
-/*void gamemode_set(const char* gamemode)
-{
-  if(!string_equal(gamemode, g_gamemode.c_str()))
-  {
-    g_gameModeObservers.unrealise();
-    g_gamemode = gamemode;
-    g_gameModeObservers.realise();
-  }
-}*/
-
 //! Make COLOR_BRUSHES override worldspawn eclass colour.
 void SetWorldspawnColour(const Vector3& colour)
 {
@@ -411,8 +270,6 @@ void Radiant_Initialise()
 	Radiant_Construct(GlobalModuleServer_get());
 	
 	g_gameToolsPathObservers.realise();
-	g_gameModeObservers.realise();
-	g_gameNameObservers.realise();
 	
 	// Construct the MRU commands and menu structure
 	GlobalMRU().constructMenu();
@@ -446,8 +303,6 @@ void Radiant_Shutdown() {
 	// Save the remaining /darkradiant/user tree to user.xml so that the current settings are preserved
 	GlobalRegistry().exportToFile("user", GlobalRegistry().get(RKEY_SETTINGS_PATH) + "user.xml");
 
-  g_gameNameObservers.unrealise();
-  g_gameModeObservers.unrealise();
   g_gameToolsPathObservers.unrealise();
 
   Radiant_Destroy();
@@ -2056,7 +1911,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("SaveMapAs", FreeCaller<SaveMapAs>());
 	GlobalEventManager().addCommand("SaveSelected", FreeCaller<ExportMap>());
 	GlobalEventManager().addCommand("RefreshReferences", FreeCaller<RefreshReferences>());
-	GlobalEventManager().addCommand("ProjectSettings", FreeCaller<DoProjectSettings>());
+	GlobalEventManager().addCommand("ProjectSettings", FreeCaller<PrefsDlg::showProjectSettings>());
 	GlobalEventManager().addCommand("Exit", FreeCaller<Exit>());
 	
 	GlobalEventManager().addCommand("Undo", FreeCaller<Undo>());

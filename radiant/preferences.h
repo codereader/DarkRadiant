@@ -90,6 +90,10 @@ public:
 	 */
 	static void showModal(const std::string& path = "");
 
+	/** greebo: The command target to show the Game settings preferences.
+	 */
+	static void showProjectSettings();
+
 	GtkWidget *m_notebook;
 
 	/*!

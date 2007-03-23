@@ -64,9 +64,8 @@ public:
 	 */
 	std::string getModPath() const;
 
-	/** greebo: Accessor methods for the fs_game parameter
+	/** greebo: Accessor method for the fs_game parameter
 	 */
-	void setFSGame(const std::string& fsGame);
 	std::string getFSGame() const;
 
 	/** greebo: Initialises the engine path from the settings in the registry.
