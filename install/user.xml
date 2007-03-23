@@ -80,12 +80,17 @@
 		<defaultGridPower value="3" />
 	</grid>
 	<mainFrame>
+		<windowLayout value="1" />
+		<regular>
+			<pane name="vertical" position="650" />
+			<pane name="horizontal" position="500" />
+			<pane name="texcam" position="350" />
+		</regular>
 		<splitPane>
 			<pane name="horizontal" position="300" />
 			<pane name="vertical1" position="250" />
 			<pane name="vertical2" position="250" />
 		</splitPane>
-		<windowLayout value="1" />
 	</mainFrame>
 	<groupDialog>
 		<window xPosition="50" yPosition="530" width="350" height="200" />

@@ -88,6 +88,16 @@ private:
 		gtkutil::PanedPosition posVPane2;
 	} _splitPane;
 
+	struct RegularView {
+		GtkWidget* vertPane;
+		GtkWidget* horizPane;
+		GtkWidget* texCamPane;
+		
+		gtkutil::PanedPosition posVPane;
+		gtkutil::PanedPosition posHPane;
+		gtkutil::PanedPosition posTexCamPane;
+	} _regular;
+
   CamWnd* m_pCamWnd;
 
   bool m_bSleeping;

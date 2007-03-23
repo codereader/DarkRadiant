@@ -1518,80 +1518,82 @@ void MainFrame::Create()
     window_set_position(window, g_layout_globals.m_position);
   }
 
-  gtk_widget_show(GTK_WIDGET(window));
+	gtk_widget_show(GTK_WIDGET(window));
 
-  if (CurrentStyle() == eRegular || CurrentStyle() == eRegularLeft)
-  {
-    {
-      GtkWidget* vsplit = gtk_vpaned_new();
-      m_vSplit = vsplit;
-      gtk_box_pack_start(GTK_BOX(hbox), vsplit, TRUE, TRUE, 0);
-      gtk_widget_show (vsplit);
-
-      // console
-      GtkWidget* console_window = Console_constructWindow(window);
-      gtk_paned_pack2(GTK_PANED(vsplit), console_window, FALSE, TRUE);
-
-      {
-        GtkWidget* hsplit = gtk_hpaned_new();
-        gtk_widget_show (hsplit);
-        m_hSplit = hsplit;
-        gtk_paned_add1(GTK_PANED(vsplit), hsplit);
-
-		// Allocate a new OrthoView and set its ViewType to XY
+	if (CurrentStyle() == eRegular || CurrentStyle() == eRegularLeft) {
+    	// Allocate a new OrthoView and set its ViewType to XY
 		XYWnd* xyWnd = GlobalXYWnd().createXY();
         xyWnd->setViewType(XY);
-        
         // Create a framed window out of the view's internal widget
-        GtkWidget* xy_window = GTK_WIDGET(create_framed_widget(xyWnd->getWidget()));
+        GtkWidget* xyView = gtkutil::FramedWidget(xyWnd->getWidget());
+        
+		// Create a new camera
+		m_pCamWnd = GlobalCamera().newCamWnd();
+		GlobalCamera().setCamWnd(m_pCamWnd);
+		GlobalCamera().setParent(m_pCamWnd, window);
+		GtkWidget* camWindow = gtkutil::FramedWidget(m_pCamWnd->getWidget());
 
-        {
-          GtkWidget* vsplit2 = gtk_vpaned_new();
-          gtk_widget_show(vsplit2);
-          m_vSplit2 = vsplit2;
+        // Create the texture window
+		GtkWidget* texWindow = gtkutil::FramedWidget(
+			TextureBrowser_constructWindow(window)
+		);
 
-          if (CurrentStyle() == eRegular)
-          {
-            gtk_paned_add1(GTK_PANED(hsplit), xy_window);
-            gtk_paned_add2(GTK_PANED(hsplit), vsplit2);
-          }
-          else
-          {
-            gtk_paned_add1(GTK_PANED(hsplit), vsplit2);
-            gtk_paned_add2(GTK_PANED(hsplit), xy_window);
-          }
+        // Create the Console
+		GtkWidget* console = Console_constructWindow(window);
+        
+        // Now pack those widgets into the paned widgets
 
-
-          // camera
-          m_pCamWnd = GlobalCamera().newCamWnd();
-          GlobalCamera().setCamWnd(m_pCamWnd);
-          GlobalCamera().setParent(m_pCamWnd, window);
-          GtkFrame* camera_window = create_framed_widget(m_pCamWnd->getWidget());
-
-          gtk_paned_add1(GTK_PANED(vsplit2), GTK_WIDGET(camera_window));
-
-          // textures
-          GtkFrame* texture_window = create_framed_widget(TextureBrowser_constructWindow(window));
-
-          gtk_paned_add2(GTK_PANED(vsplit2), GTK_WIDGET(texture_window));
-         
+        // First, pack the texwindow and the camera
+        _regular.texCamPane = gtkutil::Paned(camWindow, texWindow, false);
+        
+        // Depending on the viewstyle, pack the xy left or right
+        if (CurrentStyle() == eRegularLeft) {
+        	_regular.horizPane = gtkutil::Paned(_regular.texCamPane, xyView, true);
         }
-      }
-    }
+        else {
+        	// This is "regular", put the xyview to the left
+        	_regular.horizPane = gtkutil::Paned(xyView, _regular.texCamPane, true);
+        }
+        
+        // Finally, pack the horizontal pane plus the console window into a vpane
+        _regular.vertPane = gtkutil::Paned(_regular.horizPane, console, false);
+        
+        // Add this to the mainframe hbox
+		gtk_box_pack_start(GTK_BOX(hbox), _regular.vertPane, TRUE, TRUE, 0);
+        gtk_widget_show_all(_regular.vertPane);
 
-    gtk_paned_set_position(GTK_PANED(m_vSplit), g_layout_globals.nXYHeight);
+        // Set some default values for the width and height
+        gtk_paned_set_position(GTK_PANED(_regular.vertPane), 650);
+		gtk_paned_set_position(GTK_PANED(_regular.horizPane), 500);
+		gtk_paned_set_position(GTK_PANED(_regular.texCamPane), 350);
 
-    if (CurrentStyle() == eRegular)
-    {
-      gtk_paned_set_position(GTK_PANED(m_hSplit), g_layout_globals.nXYWidth);
-    }
-    else
-    {
-      gtk_paned_set_position(GTK_PANED(m_hSplit), g_layout_globals.nCamWidth);
-    }
+		// Connect the pane position trackers
+		_regular.posVPane.connect(_regular.vertPane);
+		_regular.posHPane.connect(_regular.horizPane);
+		_regular.posTexCamPane.connect(_regular.texCamPane);
 
-    gtk_paned_set_position(GTK_PANED(m_vSplit2), g_layout_globals.nCamHeight);
-  }
+        // Now load the paned positions from the registry
+		xml::NodeList list = GlobalRegistry().findXPath("user/ui/mainFrame/regular/pane[@name='vertical']");
+	
+		if (list.size() > 0) {
+			_regular.posVPane.loadFromNode(list[0]);
+			_regular.posVPane.applyPosition();
+		}
+	
+		list = GlobalRegistry().findXPath("user/ui/mainFrame/regular/pane[@name='horizontal']");
+	
+		if (list.size() > 0) {
+			_regular.posHPane.loadFromNode(list[0]);
+			_regular.posHPane.applyPosition();
+		}
+	
+		list = GlobalRegistry().findXPath("user/ui/mainFrame/regular/pane[@name='texcam']");
+
+		if (list.size() > 0) {
+			_regular.posTexCamPane.loadFromNode(list[0]);
+			_regular.posTexCamPane.applyPosition();
+		}
+	} // end if (regular)
   else if (CurrentStyle() == eFloating)
   {
     {
@@ -1701,7 +1703,7 @@ void MainFrame::Create()
 	    );
     }
   }
-  
+
   EntityList_constructWindow(window);
   PreferencesDialog_constructWindow(window);
   
@@ -1723,18 +1725,18 @@ void MainFrame::SaveWindowInfo()
 {
   if (!FloatingGroupDialog())
   {
-    g_layout_globals.nXYHeight = gtk_paned_get_position(GTK_PANED(m_vSplit));
+    //g_layout_globals.nXYHeight = gtk_paned_get_position(GTK_PANED(m_vSplit));
 
     if(CurrentStyle() != eRegular)
     {
-      g_layout_globals.nCamWidth = gtk_paned_get_position(GTK_PANED(m_hSplit));
+      //g_layout_globals.nCamWidth = gtk_paned_get_position(GTK_PANED(m_hSplit));
     }
     else
     {
-      g_layout_globals.nXYWidth = gtk_paned_get_position(GTK_PANED(m_hSplit));
+      //g_layout_globals.nXYWidth = gtk_paned_get_position(GTK_PANED(m_hSplit));
     }
 
-    g_layout_globals.nCamHeight = gtk_paned_get_position(GTK_PANED(m_vSplit2));
+    //g_layout_globals.nCamHeight = gtk_paned_get_position(GTK_PANED(m_vSplit2));
   }
 
   g_layout_globals.m_position = m_position_tracker.getPosition();
@@ -1760,6 +1762,21 @@ void MainFrame::SaveWindowInfo()
 		node = GlobalRegistry().createKeyWithName(path, "pane", "vertical2");
 		_splitPane.posVPane2.saveToNode(node);
 	}
+	else if (CurrentStyle() == eRegular || CurrentStyle() == eRegularLeft) {
+		std::string path("user/ui/mainFrame/regular");
+		
+		// Remove all previously stored pane information 
+		GlobalRegistry().deleteXPath(path + "//pane");
+		
+		xml::Node node = GlobalRegistry().createKeyWithName(path, "pane", "vertical");
+		_regular.posVPane.saveToNode(node);
+		
+		node = GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
+		_regular.posHPane.saveToNode(node);
+		
+		node = GlobalRegistry().createKeyWithName(path, "pane", "texcam");
+		_regular.posTexCamPane.saveToNode(node);
+	} 
 }
 
 void MainFrame::Shutdown()
