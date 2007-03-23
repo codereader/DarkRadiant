@@ -81,10 +81,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "xml/xmlparser.h"
 #include "xml/xmlwriter.h"
 
-#include "preferencedictionary.h"
 #include "stringio.h"
 
-const char* const PREFERENCES_VERSION = "1.0";
+//const char* const PREFERENCES_VERSION = "1.0";
 
 /*bool Preferences_Load(PreferenceDictionary& preferences, const char* filename)
 {
@@ -124,8 +123,6 @@ bool Preferences_Save_Safe(PreferenceDictionary& preferences, const char* filena
     && (!file_exists(filename) || file_remove(filename))
     && file_move(tmpName.data(), filename);
 }*/
-
-PreferenceDictionary g_global_preferences;
 
 void resetPreferences() {
 	// Load user preferences, these overwrite any values that have defined before
@@ -478,10 +475,19 @@ gboolean PrefsDlg::onDelete(GtkWidget* widget, GdkEvent* event, PrefsDlg* self) 
 	return true;
 }
 
-PreferenceDictionary g_preferences;
+class PreferenceDictionary : 
+	public PreferenceSystem
+{
+public:
+	// Looks up a page for the given path and returns it to the client
+	PreferencesPagePtr getPage(const std::string& path) {
+		return PrefsDlg::Instance().createOrFindPage(path);
+	}
+};
 
 PreferenceSystem& GetPreferenceSystem() {
-  return g_preferences;
+	static PreferenceDictionary _preferenceSystem;
+	return _preferenceSystem;
 }
 
 class PreferenceSystemAPI
@@ -542,9 +548,4 @@ void Preferences_Save()
   {
     globalOutputStream() << "failed to save local preferences to " << PrefsDlg::Instance().m_inipath.c_str() << "\n";
   }
-}
-
-void Preferences_Reset()
-{
-  file_remove(PrefsDlg::Instance().m_inipath.c_str());
 }*/

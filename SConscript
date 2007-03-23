@@ -369,7 +369,6 @@ radiant_src = [
 'plugin.cpp',
 'pluginapi.cpp',
 'points.cpp',
-'preferencedictionary.cpp',
 'preferences.cpp',
 'qe3.cpp',
 'qgl.cpp',
