@@ -420,6 +420,8 @@ radiant_src = [
 'ui/findshader/FindShader.cpp',
 'ui/transform/TransformDialog.cpp',
 'ui/groupdialog/GroupDialog.cpp',
+'ui/prefdialog/PrefPage.cpp',
+'ui/prefdialog/PrefDialog.cpp',
 'textool/TexTool.cpp',
 'textool/TexToolItem.cpp',
 'textool/item/PatchItem.cpp',
@@ -481,8 +483,7 @@ radiant_src = [
 'render/backend/GLProgramFactory.cpp',
 'settings/GameFileLoader.cpp',
 'settings/GameManager.cpp',
-'settings/Game.cpp',
-'settings/PrefPage.cpp'
+'settings/Game.cpp'
 ]
 
 for i in range(len(radiant_src)):

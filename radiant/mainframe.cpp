@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ui/surfaceinspector/SurfaceInspector.h"
 #include "ui/groupdialog/GroupDialog.h"
+#include "ui/prefdialog/PrefDialog.h"
 #include "ui/patch/PatchInspector.h"
 #include "textool/TexTool.h"
 #include "brushexport/BrushExportOBJ.h"
@@ -1769,7 +1770,7 @@ void MainFrame::Shutdown()
 	ui::TexTool::Instance().shutdown();
 	ui::TransformDialog::Instance().shutdown();
 	ui::GroupDialog::Instance().shutdown();
-	PrefsDlg::Instance().shutdown();
+	ui::PrefDialog::Instance().shutdown();
 	
 	// Stop the AutoSaver class from being called
 	map::AutoSaver().stopTimer();
@@ -1907,7 +1908,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("SaveMapAs", FreeCaller<SaveMapAs>());
 	GlobalEventManager().addCommand("SaveSelected", FreeCaller<ExportMap>());
 	GlobalEventManager().addCommand("RefreshReferences", FreeCaller<RefreshReferences>());
-	GlobalEventManager().addCommand("ProjectSettings", FreeCaller<PrefsDlg::showProjectSettings>());
+	GlobalEventManager().addCommand("ProjectSettings", FreeCaller<ui::PrefDialog::showProjectSettings>());
 	GlobalEventManager().addCommand("Exit", FreeCaller<Exit>());
 	
 	GlobalEventManager().addCommand("Undo", FreeCaller<Undo>());
@@ -1924,7 +1925,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("SelectTouching", FreeCaller<Select_Touching>());
 	GlobalEventManager().addCommand("SelectCompleteTall", FreeCaller<Select_Complete_Tall>());
 	GlobalEventManager().addCommand("ExpandSelectionToEntities", FreeCaller<Scene_ExpandSelectionToEntities>());
-	GlobalEventManager().addCommand("Preferences", FreeCaller<PrefsDlg::toggle>());
+	GlobalEventManager().addCommand("Preferences", FreeCaller<ui::PrefDialog::toggle>());
 	
 	GlobalEventManager().addCommand("ToggleConsole", FreeCaller<Console_ToggleShow>());
 	GlobalEventManager().addCommand("EntityList", FreeCaller<EntityList_toggleShown>());

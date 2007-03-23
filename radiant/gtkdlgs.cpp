@@ -275,6 +275,9 @@ void DoAbout()
 // =============================================================================
 // Text Editor dialog 
 
+// greebo: Commented this out (03/2007)
+#if 0
+
 // master window widget
 static GtkWidget *text_editor = 0;
 static GtkWidget *text_widget; // slave, text widget from the gtk editor
@@ -363,8 +366,6 @@ static void CreateGtkTextEditor()
   text_widget = text;
 }
 
-// greebo: Commented this out (03/2007)
-#if 0
 static void DoGtkTextEditor (const char* filename, guint cursorpos)
 {
   if (!text_editor)

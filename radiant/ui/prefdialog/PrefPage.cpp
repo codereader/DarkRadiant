@@ -10,6 +10,8 @@
 #include <boost/algorithm/string/split.hpp>
 #include "gtkmisc.h"
 
+namespace ui {
+
 	namespace {
 		typedef std::vector<std::string> StringVector;
 	}
@@ -302,3 +304,5 @@ PrefPagePtr PrefPage::createOrFindPage(const std::string& path) {
 		return child;
 	}
 }
+
+} // namespace ui
