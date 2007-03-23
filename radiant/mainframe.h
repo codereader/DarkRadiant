@@ -64,11 +64,11 @@ public:
 
   GtkWindow* m_window;
 
-  CopiedString m_command_status;
-  CopiedString m_position_status;
-  CopiedString m_brushcount_status;
-  CopiedString m_texture_status;
-  CopiedString m_grid_status;
+  std::string m_command_status;
+  std::string m_position_status;
+  std::string m_brushcount_status;
+  std::string m_texture_status;
+  std::string m_grid_status;
 private:
 
   void Create();
@@ -117,7 +117,7 @@ public:
   }
   void OnSleep();
 
-  void SetStatusText(CopiedString& status_text, const char* pText);
+  void SetStatusText(std::string& status_text, const std::string& newText);
   void UpdateStatusText();
   void RedrawStatusText();
   typedef MemberCaller<MainFrame, &MainFrame::RedrawStatusText> RedrawStatusTextCaller;

@@ -20,6 +20,8 @@ namespace game {
 	namespace {
 		const std::string RKEY_GAME_TYPE = "user/game/type";
 		const std::string RKEY_FS_GAME = "user/game/fs_game";
+		// This key is only temporarily used
+		const std::string RKEY_GAME_INDEX = "user/game/typeIndex";
 	}
 
 Manager::Manager() :
@@ -47,6 +49,13 @@ GamePtr Manager::currentGame() {
 
 void Manager::constructPreferences() {
 	PreferencesPagePtr page = GetPreferenceSystem().getPage("Game");
+	
+	ComboBoxValueList gameList;
+	for (GameMap::iterator i = _games.begin(); i != _games.end(); i++) {
+		gameList.push_back(i->second->getKeyValue("name"));
+	}
+	page->appendCombo("Select a Game:", RKEY_GAME_INDEX, gameList); 
+	
 	page->appendPathEntry("Engine Path", RKEY_ENGINE_PATH, true);
 	page->appendEntry("Game Mod (fs_game)", RKEY_FS_GAME);
 }
@@ -56,11 +65,11 @@ void Manager::constructPreferences() {
  * 			is asked to enter the relevant information in a Dialog. 
  */
 void Manager::initialise() {
-	// Add the settings widgets to the Preference Dialog, we might need it
-	constructPreferences();
-	
 	// Scan the <applicationpath>/games folder for .game files
 	loadGameFiles();
+	
+	// Add the settings widgets to the Preference Dialog, we might need it
+	constructPreferences();
 	
 	if (GlobalRegistry().get(RKEY_GAME_TYPE).empty()) {
 		// Check the number of available games
@@ -68,14 +77,13 @@ void Manager::initialise() {
 			// No game type selected, bail out, the program will crash anyway on module load
 			gtkutil::fatalErrorDialog("GameManager: No valid game files found, can't continue\n", NULL);
 		}
-		else if (_games.size() == 1) {
+		else if (_games.size() >= 1) {
 			// We have exacty one game type available, auto-select it
 			// Store the name of the only game into the Registry 
 			GlobalRegistry().set(RKEY_GAME_TYPE, _games.begin()->first);
 		}
-		else {
-			// More than one game available, show the dialog
-		}
+		// If more than one game is available, the dialog 
+		// is most probably shown as soon as the engine path is initialised. 
 	}
 	
 	// Load the value from the registry, there should be one selected at this point

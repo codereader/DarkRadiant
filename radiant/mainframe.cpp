@@ -1709,9 +1709,6 @@ void MainFrame::Create()
 }
 
 void MainFrame::SaveWindowInfo() {
-  //g_layout_globals.m_position = m_position_tracker.getPosition();
- 
-  //g_layout_globals.nState = gdk_window_get_state(GTK_WIDGET(m_window)->window);
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
 	
@@ -1804,15 +1801,15 @@ void MainFrame::UpdateStatusText()
   m_idleRedrawStatusText.queueDraw();
 }
 
-void MainFrame::SetStatusText(CopiedString& status_text, const char* pText)
+void MainFrame::SetStatusText(std::string& status_text, const std::string& newText)
 {
-  status_text = pText;
+  status_text = newText;
   UpdateStatusText();
 }
 
 void Sys_Status(const std::string& statusText) {
 	if (g_pParentWnd != 0) {
-		g_pParentWnd->SetStatusText(g_pParentWnd->m_command_status, statusText.c_str());
+		g_pParentWnd->SetStatusText(g_pParentWnd->m_command_status, statusText);
 	}
 }
 
@@ -1824,12 +1821,11 @@ int (*GridStatus_getFarClipDistance)() = getFarClipDistance;
 
 void MainFrame::SetGridStatus()
 {
-  StringOutputStream status(64);
-  const char* lock = (GlobalBrush()->textureLockEnabled()) ? "ON" : "OFF";
-  status << "G:" << GlobalGrid().getGridSize()
-    << "  C:" << GridStatus_getFarClipDistance()
-    << "  L:" << lock;
-  SetStatusText(m_grid_status, status.c_str());
+	std::string lock = (GlobalBrush()->textureLockEnabled()) ? "ON" : "OFF";
+	std::string text = "G:" + floatToStr(GlobalGrid().getGridSize());
+	text += "  C:" + intToStr(GridStatus_getFarClipDistance());
+    text += "  L:" + lock;
+	SetStatusText(m_grid_status, text);
 }
 
 void GridStatus_onTextureLockEnabledChanged()
