@@ -277,6 +277,9 @@ NodeSmartReference Entity_createFromSelection(const char* name,
         Node_getEntity(node)->setKeyValue("light_radius", key.c_str());
     }
     
+    // Flag the map as unsaved after creating the entity
+    map::setModified(true);
+    
 	// Return the new node
 	return node;
 }
