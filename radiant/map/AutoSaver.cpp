@@ -11,7 +11,7 @@
 #include "cmdlib.h"
 #include "map.h"
 #include "mainframe.h"
-#include "qe3.h"
+#include "environment.h"
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/convenience.hpp>
@@ -201,9 +201,8 @@ void AutoMapSaver::checkSave() {
 		}
 		else {
 			if (Map_Unnamed(g_map)) {
-				// Generate an autosave filename
-				std::string autoSaveFilename = g_qeglobals.m_userGamePath.c_str();
-				autoSaveFilename += GlobalRegistry().get(RKEY_MAP_FOLDER);
+				// Get the maps path (within the mod path)
+				std::string autoSaveFilename = GlobalRegistry().get(RKEY_MAP_PATH);
 				
 				// Try to create the map folder, in case there doesn't exist one 
 				Q_mkdir(autoSaveFilename.c_str());

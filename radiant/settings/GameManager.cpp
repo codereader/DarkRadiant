@@ -29,6 +29,10 @@ std::string Manager::getFSGame() const {
 	return _fsGame;
 }
 
+std::string Manager::getModPath() const {
+	return _modPath;
+}
+
 /** greebo: Returns the current Game.
  */
 GamePtr Manager::currentGame() {

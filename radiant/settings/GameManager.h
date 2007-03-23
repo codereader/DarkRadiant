@@ -59,6 +59,10 @@ public:
 	/** greebo: Gets the engine path (e.g. /usr/local/doom3/).
 	 */
 	std::string getEnginePath() const;
+	
+	/** greebo: Gets the mod path (e.g. ~/.doom3/darkmod/).
+	 */
+	std::string getModPath() const;
 
 	/** greebo: Accessor methods for the fs_game parameter
 	 */

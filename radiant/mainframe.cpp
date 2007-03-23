@@ -269,7 +269,7 @@ public:
 
 PathsDialog g_PathsDialog;*/
 
-void EnginePath_verify() {
+//void EnginePath_verify() {
 	/*std::string enginePath = game::Manager::Instance().getEnginePath();
 	
 	if (!file_exists(enginePath.c_str())) {
@@ -278,7 +278,7 @@ void EnginePath_verify() {
 		g_PathsDialog.DoModal();
 		g_PathsDialog.Destroy();
 	}*/
-}
+//}
 
 namespace
 {
