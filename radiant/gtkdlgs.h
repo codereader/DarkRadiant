@@ -34,10 +34,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "iradiant.h"
 
 EMessageBoxReturn DoLightIntensityDlg (int *intensity);
-EMessageBoxReturn DoTextureLayout (float *fx, float *fy);
 void DoTextEditor (const char* filename, int cursorpos);
 
-void DoTextureListDlg();
 void DoFind();
 void DoSides(int type, int axis);
 void DoAbout();
