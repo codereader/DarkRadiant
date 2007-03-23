@@ -358,7 +358,6 @@ radiant_src = [
 'environment.cpp',
 'error.cpp',
 'filetypes.cpp',
-'groupdialog.cpp',
 'gtkdlgs.cpp',
 'gtkmisc.cpp',
 'main.cpp',
