@@ -168,9 +168,6 @@ public:
 
 class ModuleObserver;
 
-void EnginePath_verify();
-const char* EnginePath_get();
-
 void Radiant_Initialise();
 void Radiant_Shutdown();
 
