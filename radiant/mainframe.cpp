@@ -283,39 +283,25 @@ PathsDialog g_PathsDialog;*/
 namespace
 {
   //CopiedString g_gamename;
-  CopiedString g_gamemode;
+  //CopiedString g_gamemode;
   ModuleObservers g_gameNameObservers;
   ModuleObservers g_gameModeObservers;
 }
 
-const char* basegame_get()
-{
-  return game::Manager::Instance().currentGame()->getRequiredKeyValue("basegame");
-}
-
-const char* gamename_get() {
+/*const char* gamename_get() {
 	std::string fsGame = game::Manager::Instance().getFSGame();
 	if (fsGame.empty()) {
-		return basegame_get();
+		return game::Manager::Instance().currentGame()->getRequiredKeyValue("basegame");
 	}
 	return fsGame.c_str();
-}
+}*/
 
-void gamename_set(const char* gamename) {
-	if (std::string(gamename) != game::Manager::Instance().getFSGame()) {
-		g_gameNameObservers.unrealise();
-		//g_gamename = gamename;
-		game::Manager::Instance().setFSGame(gamename);
-		g_gameNameObservers.realise();
-	}
-}
-
-const char* gamemode_get()
+/*const char* gamemode_get()
 {
   return g_gamemode.c_str();
-}
+}*/
 
-void gamemode_set(const char* gamemode)
+/*void gamemode_set(const char* gamemode)
 {
   if(!string_equal(gamemode, g_gamemode.c_str()))
   {
@@ -323,7 +309,7 @@ void gamemode_set(const char* gamemode)
     g_gamemode = gamemode;
     g_gameModeObservers.realise();
   }
-}
+}*/
 
 //! Make COLOR_BRUSHES override worldspawn eclass colour.
 void SetWorldspawnColour(const Vector3& colour)

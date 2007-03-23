@@ -92,8 +92,6 @@ public:
 
 	GtkWidget *m_notebook;
 
-	std::string _globalPrefPath;
-
 	/*!
 	path to per-game settings
 	used for various game dependant storage
