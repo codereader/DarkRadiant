@@ -68,21 +68,6 @@ enum EMessageBoxReturn
   eIDNO,
 };
 
-// Forward declarations
-namespace scene {
-  class Node;
-}
-
-class ModuleObserver;
-
-#include "signal/signalfwd.h"
-#include "windowobserver.h"
-
-typedef struct _GdkEventButton GdkEventButton;
-
-typedef SignalHandler3<int, int, GdkEventButton*> MouseEventHandler;
-typedef SignalFwd<MouseEventHandler>::handler_id_type MouseEventHandlerId;
-
 // The radiant core API, formerly known as _QERFuncTable_1
 // This contains pointers to all the core functions that should be available via GlobalRadiant()
 struct IRadiant
@@ -95,14 +80,6 @@ struct IRadiant
 	GtkWindow* (*getMainWindow) ();
 	
 	void (*setStatusText)(const std::string& statusText);
-
-  const char* (*getEnginePath)();
-  
-  const char* (*getGameName)();
-  const char* (*getGameMode)();
-
-  const char* (*getMapName)();
-  scene::Node& (*getMapWorldEntity)();
 
   const char* (*getGameDescriptionKeyValue)(const char* key);
   const char* (*getRequiredGameDescriptionKeyValue)(const char* key);

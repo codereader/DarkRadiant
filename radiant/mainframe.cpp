@@ -207,9 +207,9 @@ void HomePaths_Realise() {
 	Environment::Instance().setMapsPath(newMapPath);
 }*/
 
-const char* EnginePath_get() {
+/*const char* EnginePath_get() {
 	return game::Manager::Instance().getEnginePath().c_str();
-}
+}*/
 
 /*void EnginePath_Unrealise() {
 	GlobalFileSystem().shutdown();

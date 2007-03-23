@@ -60,12 +60,12 @@ please contact Id Software immediately at info@idsoftware.com.
 QEGlobals_t  g_qeglobals;
 
 
-#if defined(WIN32)
+/*#if defined(WIN32)
 #define PATH_MAX 260
-#endif
+#endif*/
 
 
-void QE_InitVFS()
+/*void QE_InitVFS()
 {
   // VFS initialization -----------------------
   // we will call GlobalFileSystem().initDirectory, giving the directories to look in (for files in pk3's and for standalone files)
@@ -108,7 +108,7 @@ void QE_InitVFS()
 		std::string globalBasePath = globalRoot + basegame + "/";
 		GlobalFileSystem().initDirectory(globalBasePath);
 	}
-}
+}*/
 
 int g_numbrushes = 0;
 int g_numentities = 0;

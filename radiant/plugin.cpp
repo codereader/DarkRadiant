@@ -100,16 +100,6 @@ Vector3 getColour(const std::string& colourName) {
 	return ColourSchemes().getColourVector3(colourName);
 }
 
-const char* getMapName()
-{
-  return map::getFileName().c_str();
-}
-
-scene::Node& getMapWorldEntity()
-{
-  return Map_FindOrInsertWorldspawn(g_map);
-}
-
 const char* TextureBrowser_getSelectedShader()
 {
   return TextureBrowser_GetSelectedShader(GlobalTextureBrowser());
@@ -127,14 +117,6 @@ public:
   	m_radiantcore.getMainWindow = MainFrame_getWindow;
   	m_radiantcore.setStatusText = Sys_Status;
   	
-    m_radiantcore.getEnginePath = &EnginePath_get;
-    
-    m_radiantcore.getGameName = &gamename_get;
-    m_radiantcore.getGameMode = &gamemode_get;
-
-    m_radiantcore.getMapName = &getMapName;
-    m_radiantcore.getMapWorldEntity = getMapWorldEntity;
-
     m_radiantcore.getGameDescriptionKeyValue = &GameDescription_getKeyValue;
     m_radiantcore.getRequiredGameDescriptionKeyValue = &GameDescription_getRequiredKeyValue;
     

@@ -68,10 +68,6 @@ ArchiveModules& FileSystemQ3API_getArchiveModules();
 #define PATH_MAX 260
 #endif
 
-#define gamemode_get GlobalRadiant().getGameMode
-
-
-
 // =============================================================================
 // Global variables
 
