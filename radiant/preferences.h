@@ -31,20 +31,12 @@ please contact Id Software immediately at info@idsoftware.com.
 
 #include "preferencesystem.h"
 
-#include "xmlutil/Document.h"
-
-#include "dialog.h"
-#include <list>
-#include <map>
-
-
 	namespace {
 		const std::string RKEY_SKIP_REGISTRY_SAVE = "user/skipRegistrySaveOnShutdown";
 	}
 
+typedef struct _GtkWidget GtkWidget;
 void Widget_connectToggleDependency(GtkWidget* self, GtkWidget* toggleButton);
-
-
 
 PreferenceSystem& GetPreferenceSystem();
 

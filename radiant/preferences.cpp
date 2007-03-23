@@ -24,112 +24,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 // Leonardo Zide (leo@lokigames.com)
 //
-
 #include "preferences.h"
 
-#include "debugging/debugging.h"
+#include <gtk/gtktogglebutton.h>
 
-#include <gtk/gtk.h>
-#include <iostream>
-
-#include "generic/callback.h"
-#include "string/string.h"
-#include "stream/stringstream.h"
-#include "os/file.h"
-#include "os/path.h"
-#include "os/dir.h"
-#include "gtkutil/dialog.h"
-#include "gtkutil/image.h"
-#include "gtkutil/filechooser.h"
-#include "gtkutil/messagebox.h"
-#include "gtkutil/TextColumn.h"
-#include "gtkutil/TransientWindow.h"
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/VFSTreePopulator.h"
-#include "gtkutil/TreeModel.h"
-#include "gtkutil/LeftAlignment.h"
-#include "cmdlib.h"
-#include "plugin.h"
-#include "gtkmisc.h"
-
+#include "iregistry.h"
 #include "environment.h"
-#include "error.h"
-#include "console.h"
-#include "mainframe.h"
-#include "qe3.h"
-#include "gtkdlgs.h"
-#include "settings/GameManager.h"
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/split.hpp>
-
-	namespace {
-		// The treestore enumeration for the preference tree
-		enum {
-			NAME_COL,		// The column with the caption (for lookups)
-			PREFPAGE_COL,	// The pointer to the preference page 
-		};
-		typedef std::vector<std::string> StringVector;
-	}
-
-#include <map>
-
-#include "warnings.h"
-#include "stream/textfilestream.h"
-#include "container/array.h"
-#include "xml/ixml.h"
-#include "xml/xmlparser.h"
-#include "xml/xmlwriter.h"
-
-#include "stringio.h"
-
+#include "os/file.h"
 #include "ui/prefdialog/PrefDialog.h"
 
-//const char* const PREFERENCES_VERSION = "1.0";
-
-/*bool Preferences_Load(PreferenceDictionary& preferences, const char* filename)
-{
-  TextFileInputStream file(filename);
-  if(!file.failed())
-  {
-    XMLStreamParser parser(file);
-    XMLPreferenceDictionaryImporter importer(preferences, PREFERENCES_VERSION);
-    parser.exportXML(importer);
-    return true;
-  }
-  return false;
-}
-
-bool Preferences_Save(PreferenceDictionary& preferences, const char* filename)
-{
-  TextFileOutputStream file(filename);
-  if(!file.failed())
-  {
-    XMLStreamWriter writer(file);
-    XMLPreferenceDictionaryExporter exporter(preferences, PREFERENCES_VERSION);
-    exporter.exportXML(writer);
-    return true;
-  }
-  return false;
-}
-
-bool Preferences_Save_Safe(PreferenceDictionary& preferences, const char* filename)
-{
-  Array<char> tmpName(filename, filename + strlen(filename) + 1 + 3);
-  *(tmpName.end() - 4) = 'T';
-  *(tmpName.end() - 3) = 'M';
-  *(tmpName.end() - 2) = 'P';
-  *(tmpName.end() - 1) = '\0';
-
-  return Preferences_Save(preferences, tmpName.data())
-    && (!file_exists(filename) || file_remove(filename))
-    && file_move(tmpName.data(), filename);
-}*/
-
 void resetPreferences() {
-	// Load user preferences, these overwrite any values that have defined before
-	// The called method also checks for any upgrades that have to be performed
-	const std::string userSettingsFile = GlobalRegistry().get(RKEY_SETTINGS_PATH) + "user.xml";
+	// Get the filename
+	const std::string userSettingsFile = 
+		GlobalRegistry().get(RKEY_SETTINGS_PATH) + "user.xml";
+	
+	// If the file exists, remove it and tell the registry to 
+	// skip saving the user.xml file on shutdown
 	if (file_exists(userSettingsFile.c_str())) {
 		file_remove(userSettingsFile.c_str());
 		GlobalRegistry().set(RKEY_SKIP_REGISTRY_SAVE, "1");
@@ -178,19 +88,17 @@ PreferenceSystem& GetPreferenceSystem() {
 
 class PreferenceSystemAPI
 {
-  PreferenceSystem* m_preferencesystem;
+	PreferenceSystem* m_preferencesystem;
 public:
-  typedef PreferenceSystem Type;
-  STRING_CONSTANT(Name, "*");
+	typedef PreferenceSystem Type;
+	STRING_CONSTANT(Name, "*");
 
-  PreferenceSystemAPI()
-  {
-    m_preferencesystem = &GetPreferenceSystem();
-  }
-  PreferenceSystem* getTable()
-  {
-    return m_preferencesystem;
-  }
+	PreferenceSystemAPI() {
+		m_preferencesystem = &GetPreferenceSystem();
+	}
+	PreferenceSystem* getTable() {
+		return m_preferencesystem;
+	}
 };
 
 #include "modulesystem/singletonmodule.h"
@@ -199,39 +107,3 @@ public:
 typedef SingletonModule<PreferenceSystemAPI> PreferenceSystemModule;
 typedef Static<PreferenceSystemModule> StaticPreferenceSystemModule;
 StaticRegisterModule staticRegisterPreferenceSystem(StaticPreferenceSystemModule::instance());
-
-/*void Preferences_Load()
-{
-  // load global .pref file
-	std::string globalPrefFile = GlobalRegistry().get(RKEY_SETTINGS_PATH) + "global.pref";
-	globalOutputStream() << "loading global preferences from " << makeQuoted(globalPrefFile.c_str()) << "\n";
-
-	if (!Preferences_Load(g_global_preferences, globalPrefFile.c_str())) {
-		globalOutputStream() << "failed to load global preferences from " << globalPrefFile.c_str() << "\n";
-	}
-
-  globalOutputStream() << "loading local preferences from " << PrefsDlg::Instance().m_inipath.c_str() << "\n";
-
-  if(!Preferences_Load(g_preferences, PrefsDlg::Instance().m_inipath.c_str()))
-  {
-    globalOutputStream() << "failed to load local preferences from " << PrefsDlg::Instance().m_inipath.c_str() << "\n";
-  }
-}
-
-void Preferences_Save()
-{
-  std::string globalPrefFile = GlobalRegistry().get(RKEY_SETTINGS_PATH) + "global.pref";
-
-	globalOutputStream() << "saving global preferences to " << globalPrefFile.c_str() << "\n";
-
-	if (!Preferences_Save_Safe(g_global_preferences, globalPrefFile.c_str())) {
-		globalOutputStream() << "failed to save global preferences to " << globalPrefFile.c_str() << "\n";
-	}
-
-  globalOutputStream() << "saving local preferences to " << PrefsDlg::Instance().m_inipath.c_str() << "\n";
-
-  if(!Preferences_Save_Safe(g_preferences, PrefsDlg::Instance().m_inipath.c_str()))
-  {
-    globalOutputStream() << "failed to save local preferences to " << PrefsDlg::Instance().m_inipath.c_str() << "\n";
-  }
-}*/
