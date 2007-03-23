@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "environment.h"
 
 #include "ui/surfaceinspector/SurfaceInspector.h"
+#include "ui/groupdialog/GroupDialog.h"
 #include "ui/patch/PatchInspector.h"
 #include "textool/TexTool.h"
 #include "brushexport/BrushExportOBJ.h"
@@ -410,18 +411,12 @@ void thunk_OnSleep()
   g_pParentWnd->OnSleep();
 }
 
-GtkWidget* g_page_console;
-
-void Console_ToggleShow()
-{
-  GroupDialog_showPage(g_page_console);
+void Console_ToggleShow() {
+	ui::GroupDialog::Instance().setPage("console");  
 }
 
-GtkWidget* g_page_entity;
-
-void EntityInspector_ToggleShow()
-{  
-  GroupDialog_showPage(g_page_entity);
+void EntityInspector_ToggleShow() {
+	ui::GroupDialog::Instance().setPage("entity");  
 }
 
 
@@ -1214,9 +1209,9 @@ GtkWindow* MainFrame_getWindow()
   if(g_pParentWnd == 0)
   {
   	// Maybe the splash screen is visible?
-  	if (splash_screen != NULL) {
+  	/*if (splash_screen != NULL) {
   		return splash_screen;
-  	}
+  	}*/
     return 0;
   }
   return g_pParentWnd->m_window;
@@ -1376,6 +1371,7 @@ static gint mainframe_delete (GtkWidget *widget, GdkEvent *event, gpointer data)
 void MainFrame::Create()
 {
   GtkWindow* window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
+  m_window = window;
   
   // Tell the XYManager which window the xyviews should be transient for
   GlobalXYWnd().setGlobalParentWindow(window);
@@ -1472,28 +1468,36 @@ void MainFrame::Create()
 	/* Construct the Group Dialog. This is the tabbed window that contains
      * a number of pages - usually Entities, Textures and possibly Console.
      */
-
-    GroupDialog_constructWindow(window);
+	ui::GroupDialog::Instance().construct(window);
 
     // Add entity inspector widget
-    g_page_entity = GroupDialog_addPage("Entities", 
-    									"cmenu_add_entity.png", 
-    									ui::EntityInspector::getInstance().getWidget(), 
-    									RawStringExportCaller("Entities"));
+    ui::GroupDialog::Instance().addPage(
+    	"entity",	// name
+    	"Entities", // tab title
+    	"cmenu_add_entity.png", // tab icon 
+    	ui::EntityInspector::getInstance().getWidget(), // page widget
+    	"Entity Inspector"
+    );
 
 	// Add the Media Browser page
-	GroupDialog_addPage("Media", 
-						"folder16.png", 
-						ui::MediaBrowser::getInstance().getWidget(), 
-						RawStringExportCaller("Media"));
-
+	ui::GroupDialog::Instance().addPage(
+    	"mediabrowser",	// name
+    	"Media", // tab title
+    	"folder16.png", // tab icon 
+    	ui::MediaBrowser::getInstance().getWidget(), // page widget
+    	"Media Browser"
+    );
+	
     // Add the console widget if using floating window mode, otherwise the
     // console is placed in the bottom-most split pane.
     if (FloatingGroupDialog()) {
-        g_page_console = GroupDialog_addPage("Console", 
-        									 "iconConsole16.png",
-        									 Console_constructWindow(GroupDialog_getWindow()), 
-        									 RawStringExportCaller("Console"));
+    	ui::GroupDialog::Instance().addPage(
+	    	"console",	// name
+	    	"Console", // tab title
+	    	"iconConsole16.png", // tab icon 
+	    	Console_constructWindow(GroupDialog_getWindow()), // page widget
+	    	"Console"
+	    );
     }
 
 #ifdef WIN32
@@ -1514,8 +1518,6 @@ void MainFrame::Create()
   {
     window_set_position(window, g_layout_globals.m_position);
   }
-
-  m_window = window;
 
   gtk_widget_show(GTK_WIDGET(window));
 
@@ -1614,10 +1616,14 @@ void MainFrame::Create()
 
    	{
       GtkFrame* frame = create_framed_widget(TextureBrowser_constructWindow(GroupDialog_getWindow()));
-      g_page_textures = GroupDialog_addPage("Textures", 
-      										"icon_texture.png",
-      										GTK_WIDGET(frame), 
-      										TextureBrowserExportTitleCaller());
+		// Add the Media Browser page
+		ui::GroupDialog::Instance().addPage(
+	    	"textures",	// name
+	    	"Textures", // tab title
+	    	"icon_texture.png", // tab icon 
+	    	GTK_WIDGET(frame), // page widget
+	    	"Texture Browser"
+	    );
     }
 
     GroupDialog_show();
@@ -1686,10 +1692,14 @@ void MainFrame::Create()
 	
     {      
       GtkFrame* frame = create_framed_widget(TextureBrowser_constructWindow(window));
-      g_page_textures = GroupDialog_addPage("Textures", 
-      										"icon_texture.png",
-      										GTK_WIDGET(frame), 
-      										TextureBrowserExportTitleCaller());
+		// Add the Media Browser page
+		ui::GroupDialog::Instance().addPage(
+	    	"textures",	// name
+	    	"Textures", // tab title
+	    	"icon_texture.png", // tab icon 
+	    	GTK_WIDGET(frame), // page widget
+	    	"Texture Browser"
+	    );
     }
   }
   
@@ -1761,6 +1771,7 @@ void MainFrame::Shutdown()
 	ui::LightInspector::Instance().shutdown();
 	ui::TexTool::Instance().shutdown();
 	ui::TransformDialog::Instance().shutdown();
+	ui::GroupDialog::Instance().shutdown();
 	PrefsDlg::Instance().shutdown();
 	
 	// Stop the AutoSaver class from being called
