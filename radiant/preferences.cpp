@@ -217,7 +217,7 @@ GtkWidget* PreferencePages_addPage(GtkWidget* notebook, const char* name)
   return pageframe;
 }
 
-class PreferenceTreeGroup : public PreferenceGroup
+/*class PreferenceTreeGroup : public PreferenceGroup
 {
   Dialog& m_dialog;
   GtkWidget* m_notebook;
@@ -237,7 +237,7 @@ public:
   
   PrefPage* createPage(const std::string& treeName, const std::string& frameName)
   {
-    /*GtkWidget* page = PreferencePages_addPage(m_notebook, frameName.c_str());
+    GtkWidget* page = PreferencePages_addPage(m_notebook, frameName.c_str());
     PreferenceTree_appendPage(m_store, &m_group, treeName.c_str(), page);
     
     _prefPages.push_back(PrefPage(m_dialog, getVBox(page)));
@@ -249,11 +249,10 @@ public:
     	i--;
     	PrefPage* pagePtr = &(*i); 
     	return pagePtr; 
-    }*/
-    
+    }   
     return NULL;
   }
-};
+};*/
 
 /** greebo: A hybrid walker that is used twice:
  * 			First time to add each PrefPage to the TreeStore using a VFSTreePopulator
@@ -789,20 +788,4 @@ void Preferences_Save()
 void Preferences_Reset()
 {
   file_remove(PrefsDlg::Instance().m_inipath.c_str());
-}
-
-void RegisterPreferences(PreferenceSystem& preferences)
-{
-
-#ifdef WIN32
-  preferences.registerPreference("UseCustomShaderEditor", BoolImportStringCaller(g_TextEditor_useWin32Editor), BoolExportStringCaller(g_TextEditor_useWin32Editor));
-#else
-  preferences.registerPreference("UseCustomShaderEditor", BoolImportStringCaller(g_TextEditor_useCustomEditor), BoolExportStringCaller(g_TextEditor_useCustomEditor));
-  preferences.registerPreference("CustomShaderEditorCommand", CopiedStringImportStringCaller(g_TextEditor_editorCommand), CopiedStringExportStringCaller(g_TextEditor_editorCommand));
-#endif
-}
-
-void Preferences_Init()
-{
-  RegisterPreferences(GetPreferenceSystem());
 }

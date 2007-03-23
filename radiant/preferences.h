@@ -184,8 +184,6 @@ typedef struct _GtkWindow GtkWindow;
 void PreferencesDialog_constructWindow(GtkWindow* main_window);
 void PreferencesDialog_destroyWindow();
 
-void Preferences_Init();
-
 void Preferences_Load();
 void Preferences_Save();
 class PreferenceDictionary;

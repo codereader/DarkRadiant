@@ -189,9 +189,7 @@ class Radiant : public TypeSystemRef
 public:
   Radiant()
   {
-    Preferences_Init();
-
-	GlobalFiletypes().addType(
+    GlobalFiletypes().addType(
     	"sound", "wav", FileTypePattern("PCM sound files", "*.wav"));
 
     Selection_construct();

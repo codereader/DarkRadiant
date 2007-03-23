@@ -37,8 +37,6 @@ typedef Callback1<const StringImportCallback&> StringExportCallback;
 // ----- End: For deprecated methods ------------------------------------
 
 // Forward declaration
-class PreferenceGroup;
-//class PreferencesPage;
 typedef struct _GtkWidget GtkWidget;
 
 // A list containing possible values for a combo box widgets
@@ -88,13 +86,6 @@ public:
 	virtual GtkWidget* appendLabel(const std::string& caption) = 0;
 };
 typedef boost::shared_ptr<PreferencesPage> PreferencesPagePtr;
-
-/* greebo: A PreferenceGroup consists of several PreferencePages and provides a method to add one of these. */
-class PreferenceGroup
-{
-public:
-	virtual PreferencesPage* createPage(const std::string& treeName, const std::string& frameName) = 0;
-};
 
 class PreferenceSystem
 {

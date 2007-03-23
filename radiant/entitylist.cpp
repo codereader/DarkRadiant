@@ -62,8 +62,7 @@ public:
   EDirty m_dirty;
 
   IdleDraw m_idleDraw;
-  WindowPositionTracker m_positionTracker;
-
+  
   GtkWindow* m_window;
   GtkTreeView* m_tree_view;
   GraphTreeModel* m_tree_model;
@@ -346,9 +345,6 @@ void EntityList_constructWindow(GtkWindow* main_window)
   GlobalEventManager().connectAccelGroup(window);
   GlobalEventManager().connectDialogWindow(window);
 
-  getEntityList().m_positionTracker.connect(window);
-  
-
   getEntityList().m_window = window;
 
   {
@@ -443,10 +439,6 @@ void EntityList_Construct()
   graph_tree_model_insert(scene_graph_get_tree_model(), StaticNullSelectedInstance::instance());
 
   g_EntityList = new EntityList;
-
-  getEntityList().m_positionTracker.setPosition(c_default_window_pos);
-
-  GlobalPreferenceSystem().registerPreference("EntityInfoDlg", WindowPositionTrackerImportStringCaller(getEntityList().m_positionTracker), WindowPositionTrackerExportStringCaller(getEntityList().m_positionTracker));
 
   typedef FreeCaller1<const Selectable&, EntityList_SelectionChanged> EntityListSelectionChangedCaller;
   GlobalSelectionSystem().addSelectionChangeCallback(EntityListSelectionChangedCaller());
