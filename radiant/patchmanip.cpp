@@ -689,31 +689,6 @@ void stitchPatchTextures() {
 
 } // namespace patch
 
-#include "preferences.h"
-
-void Patch_constructPreferences(PrefPage* page)
-{
-  page->appendEntry("Patch Subdivide Threshold", g_PatchSubdivideThreshold);
-}
-void Patch_constructPage(PreferenceGroup& group)
-{
-  PreferencesPage* page(group.createPage("Patches", "Patch Display Preferences"));
-  Patch_constructPreferences(reinterpret_cast<PrefPage*>(page));
-}
-void Patch_registerPreferencesPage()
-{
-  PreferencesDialog_addDisplayPage(FreeCaller1<PreferenceGroup&, Patch_constructPage>());
-}
-
-
-#include "preferencesystem.h"
-
-void PatchPreferences_construct()
-{
-  GlobalPreferenceSystem().registerPreference("Subdivisions", IntImportStringCaller(g_PatchSubdivideThreshold), IntExportStringCaller(g_PatchSubdivideThreshold));
-}
-
-
 #include "generic/callback.h"
 
 void Patch_registerCommands()

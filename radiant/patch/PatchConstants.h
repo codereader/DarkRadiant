@@ -7,9 +7,6 @@ enum EPatchType {
   ePatchTypeDoom3,
 };
 
-// greebo: This should possibly be moved into the XMLRegistry 
-extern int g_PatchSubdivideThreshold;
-
 // Minimum height and width of a patch
 #define MIN_PATCH_WIDTH 3
 #define MIN_PATCH_HEIGHT 3

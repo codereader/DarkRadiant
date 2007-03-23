@@ -131,6 +131,7 @@
 		<textureLock value="1" />
 	</brush>
 	<patch>
+		<subdivideThreshold value="2" />
 		<patchInspector>
 			<xCoordStep value="1.0" />
 			<yCoordStep value="1.0" />

@@ -2046,12 +2046,12 @@ void Layout_registerPreferencesPage() {
 	IconList icons;
 	IconDescriptionList descriptions;
 	
-	icons.push_back("window_regular.bmp"); descriptions.push_back("Regular");
-	icons.push_back("window_floating.bmp"); descriptions.push_back("Floating");
-	icons.push_back("window_split.bmp"); descriptions.push_back("Split");
-	icons.push_back("window_regular_left.bmp"); descriptions.push_back("Regular Left");
+	icons.push_back("layout_regular.png"); descriptions.push_back("Regular");
+	icons.push_back("layout_floating.png"); descriptions.push_back("Floating");
+	icons.push_back("layout_splitpane.png"); descriptions.push_back("Split");
+	icons.push_back("layout_regular_left.png"); descriptions.push_back("Regular Left");
 	
-	page->appendRadioIcons("Window Layout", RKEY_WINDOW_LAYOUT, icons, descriptions);
+	page->appendRadioIcons("", RKEY_WINDOW_LAYOUT, icons, descriptions);
 	page->appendLabel("<b>Note</b>: You will have to restart DarkRadiant for the changes to take effect.");
 }
 
