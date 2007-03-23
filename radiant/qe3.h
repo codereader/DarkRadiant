@@ -22,15 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_QE3_H)
 #define INCLUDED_QE3_H
 
-#include "string/string.h"
-
 //
 // system functions
 //
 void    Sys_SetTitle (const char *text, bool modified);
-
-
-void RunBSP(const char* name);
 
 void QE_brushCountChanged();
 void QE_entityCountChanged();

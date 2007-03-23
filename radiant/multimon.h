@@ -22,21 +22,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_MULTIMON_H)
 #define INCLUDED_MULTIMON_H
 
+#include <string>
 struct WindowPosition;
 
 void PositionWindowOnPrimaryScreen(WindowPosition& position);
 
-struct multimon_globals_t
-{
-  bool m_bStartOnPrimMon;
-
-  multimon_globals_t() :
-    m_bStartOnPrimMon(false)
-  {
-  }
-};
-
-extern multimon_globals_t g_multimon_globals;
+	namespace {
+		const std::string RKEY_MULTIMON_START_PRIMARY = "user/ui/multiMonitor/startOnPrimaryMonitor";
+		const std::string RKEY_MULTIMON_DISABLE_SYS_MENU = "user/ui/multiMonitor/disableSysMenuOnPopups";
+	}
 
 #if defined(WIN32)
 void MultiMon_Construct();

@@ -45,6 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "multimon.h"
 #include "console.h"
 
+#include "iregistry.h"
 #include "ieventmanager.h"
 #include <gtk/gtkwidget.h>
 #include "gtkutil/window.h"
@@ -114,7 +115,7 @@ void GroupDlg::Create(GtkWindow* parent)
   m_window = window;
 
 #ifdef WIN32
-  if( g_multimon_globals.m_bStartOnPrimMon )
+  if (GlobalRegistry().get(RKEY_MULTIMON_START_PRIMARY) == "1")
   {
     WindowPosition pos(m_position_tracker.getPosition());
     PositionWindowOnPrimaryScreen(pos);

@@ -108,8 +108,8 @@ public:
 	// Appends a simple static label
 	GtkWidget* appendLabel(const std::string& caption);
 	
-	GtkWidget* appendCheckBox(const char* name, const char* flag, bool& data);
-	GtkWidget* appendCheckBox(const char* name, const char* flag, const BoolImportCallback& importCallback, const BoolExportCallback& exportCallback);
+/*	GtkWidget* appendCheckBox(const char* name, const char* flag, bool& data);
+	GtkWidget* appendCheckBox(const char* name, const char* flag, const BoolImportCallback& importCallback, const BoolExportCallback& exportCallback);*/
 	
 	/* greebo: This adds a checkbox and connects it to an XMLRegistry key.
 	 * @returns: the pointer to the created GtkWidget */

@@ -21,34 +21,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "multimon.h"
 
+#include "iregistry.h"
 #include "debugging/debugging.h"
 
 #include "gtkutil/window.h"
-#include "preferences.h"
-
-
-multimon_globals_t g_multimon_globals;
-
-LatchedBool g_Multimon_enableSysMenuPopups(false, "Floating windows sysmenu icons");
-
-void MultiMonitor_constructPreferences(PrefPage* page)
-{
-  GtkWidget* primary_monitor = page->appendCheckBox("Multi Monitor", "Start on Primary Monitor", g_multimon_globals.m_bStartOnPrimMon);
-  GtkWidget* popup = page->appendCheckBox(
-    "", "Disable system menu on popup windows",
-    LatchedBoolImportCaller(g_Multimon_enableSysMenuPopups),
-    BoolExportCaller(g_Multimon_enableSysMenuPopups.m_latched)
-  );
-  Widget_connectToggleDependency(popup, primary_monitor);
-}
-
-void Multimon_constructPage(PreferenceGroup& group)
-{
-  PreferencesPage* page(group.createPage("Multi Monitor", "Multi Monitor Preferences"));
-  MultiMonitor_constructPreferences(reinterpret_cast<PrefPage*>(page));
-}
-
 #include "preferencesystem.h"
+#include "preferences.h"
 #include "stringio.h"
 
 #include <gdk/gdkdisplay.h>
@@ -78,9 +56,15 @@ void PositionWindowOnPrimaryScreen(WindowPosition& position)
   }
 }
 
-void Multimon_registerPreferencesPage()
-{
-  PreferencesDialog_addSettingsPage(FreeCaller1<PreferenceGroup&, Multimon_constructPage>());
+void Multimon_registerPreferencesPage() {
+	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Interface/Multi Monitor");
+	
+	GtkWidget* primary_monitor = page->appendCheckBox("", 
+		"Start on Primary Monitor", RKEY_MULTIMON_START_PRIMARY);
+	GtkWidget* popup = page->appendCheckBox("", 
+		"Disable system menu on popup windows", RKEY_MULTIMON_DISABLE_SYS_MENU);
+	
+	Widget_connectToggleDependency(popup, primary_monitor);
 }
 
 void MultiMon_Construct()
@@ -102,15 +86,9 @@ void MultiMon_Construct()
     }
   }
 
-  if(m > 1)
-  {
-    g_multimon_globals.m_bStartOnPrimMon = true;
-  }
-
-  GlobalPreferenceSystem().registerPreference("StartOnPrimMon", BoolImportStringCaller(g_multimon_globals.m_bStartOnPrimMon), BoolExportStringCaller(g_multimon_globals.m_bStartOnPrimMon));
-  GlobalPreferenceSystem().registerPreference("NoSysMenuPopups", BoolImportStringCaller(g_Multimon_enableSysMenuPopups.m_latched), BoolExportStringCaller(g_Multimon_enableSysMenuPopups.m_latched));
-
-  g_Multimon_enableSysMenuPopups.useLatched();
+	if (m > 1) {
+		GlobalRegistry().set(RKEY_MULTIMON_START_PRIMARY, "1");
+	}
 
 	Multimon_registerPreferencesPage();
 }
