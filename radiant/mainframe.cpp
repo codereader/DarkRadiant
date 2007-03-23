@@ -464,13 +464,6 @@ void Radiant_Shutdown() {
   g_gameModeObservers.unrealise();
   g_gameToolsPathObservers.unrealise();
 
-  if (!g_preferences_globals.disable_ini)
-  {
-    globalOutputStream() << "Start writing prefs\n";
-    Preferences_Save();
-    globalOutputStream() << "Done prefs\n";
-  }
-
   Radiant_Destroy();
 }
 
@@ -2094,7 +2087,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("SelectTouching", FreeCaller<Select_Touching>());
 	GlobalEventManager().addCommand("SelectCompleteTall", FreeCaller<Select_Complete_Tall>());
 	GlobalEventManager().addCommand("ExpandSelectionToEntities", FreeCaller<Scene_ExpandSelectionToEntities>());
-	GlobalEventManager().addCommand("Preferences", FreeCaller<PreferencesDialog_showDialog>());
+	GlobalEventManager().addCommand("Preferences", FreeCaller<PrefsDlg::toggle>());
 	
 	GlobalEventManager().addCommand("ToggleConsole", FreeCaller<Console_ToggleShow>());
 	GlobalEventManager().addCommand("EntityList", FreeCaller<EntityList_toggleShown>());

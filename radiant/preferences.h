@@ -39,188 +39,14 @@ please contact Id Software immediately at info@idsoftware.com.
 #include "dialog.h"
 #include <list>
 #include <map>
-#include <boost/shared_ptr.hpp>
+#include "settings/PrefPage.h"
 
 void Widget_connectToggleDependency(GtkWidget* self, GtkWidget* toggleButton);
 
-class PrefPage;
-typedef boost::shared_ptr<PrefPage> PrefPagePtr;
-
-class PrefPage : 
-	public PreferencesPage
-{
-public:
-	class Visitor 
-	{
-	public:
-		virtual void visit(PrefPagePtr prefPage) = 0;
-	};
-
-private:
-	// The vbox this page is adding the widgets to
-	GtkWidget* _vbox;
-  
-  	// The list of child pages
-	std::vector<PrefPagePtr> _children;
-	
-	// The name (caption) of this page
-	std::string _name;
-	
-	// The full path of this object
-	std::string _path;
-	
-	// The notebook this page is packed into
-	GtkWidget* _notebook;
-	
-	// The actual page that gets attached to the notebook
-	GtkWidget* _pageWidget;
-	
-	// The reference to the dialog's connector object
-	gtkutil::RegistryConnector& _connector;
-
-public:
-	/** greebo: Constructor
-	 * 
-	 * @name: The display caption of this prefpage
-	 * @parentPath: the path to the parent of this page
-	 * @notebook: The GtkNotebook widget this page is child of.
-	 */
-	PrefPage(const std::string& name,
-	         const std::string& parentPath,
-	         GtkWidget* notebook,
-	         gtkutil::RegistryConnector& connector);
-	
-	/** greebo: Returns the full path to this PrefPage
-	 */
-	std::string getPath() const;
-	
-	/** greebo: Returns the name (caption) of this Page (e.g. "Settings")
-	 */
-	std::string getName() const;
-	
-	/** greebo: Returns the widget that can be used to determine
-	 * 			the notebook page number.
-	 */
-	GtkWidget* getWidget();
-	
-	void foreachPage(Visitor& visitor);
-	
-	// Appends a simple static label
-	GtkWidget* appendLabel(const std::string& caption);
-	
-/*	GtkWidget* appendCheckBox(const char* name, const char* flag, bool& data);
-	GtkWidget* appendCheckBox(const char* name, const char* flag, const BoolImportCallback& importCallback, const BoolExportCallback& exportCallback);*/
-	
-	/* greebo: This adds a checkbox and connects it to an XMLRegistry key.
-	 * @returns: the pointer to the created GtkWidget */
-	GtkWidget* appendCheckBox(const std::string& name, const std::string& flag, const std::string& registryKey);
-	
-	/* greebo: This adds a horizontal slider to the internally referenced VBox and connects
-	 * it to the given registryKey. */
-	void appendSlider(const std::string& name, const std::string& registryKey, bool drawValue,
-	                  double value, double lower, double upper, double step_increment, double page_increment, double page_size) ;
-	
-	/* greebo: Use this to add a dropdown selection box with the given list of strings as captions. The value
-	 * stored in the registryKey is used to determine the currently selected combobox item */
-	void appendCombo(const std::string& name, const std::string& registryKey, const ComboBoxValueList& valueList);
-	
-	/* greebo: Appends an entry field with <name> as caption which is connected to the given registryKey
-	 */
-	GtkWidget* appendEntry(const std::string& name, const std::string& registryKey);
-	
-	// greebo: Adds a PathEntry to choose files or directories (depending on the given boolean)
-	GtkWidget* appendPathEntry(const std::string& name, const std::string& registryKey, bool browseDirectories);
-	
-	/* greebo: Appends an entry field with spinner buttons which retrieves its value from the given
-	 * RegistryKey. The lower and upper values have to be passed as well.
-	 */
-	GtkWidget* appendSpinner(const std::string& name, const std::string& registryKey,
-	                         double lower, double upper, int fraction);
-
-	/* greebo: Use this to add a series of radio buttons with icons and descriptions.
-	 * The result will be stored under the given RegistryKey (with 0 referring to the first item) */               
-	void appendRadioIcons(const std::string& name, const std::string& registryKey, 
-						  const IconList& iconList, const IconDescriptionList& iconDescriptions);
-	
-	/*void appendCombo(const char* name, StringArrayRange values, const IntImportCallback& importCallback, const IntExportCallback& exportCallback);
-	void appendCombo(const char* name, int& data, StringArrayRange values);
-	void appendSlider(const char* name, int& data, gboolean draw_value, const char* low, const char* high, double value, double lower, double upper, double step_increment, double page_increment, double page_size);
-	void appendRadio(const char* name, StringArrayRange names, const IntImportCallback& importCallback, const IntExportCallback& exportCallback);
-	void appendRadio(const char* name, int& data, StringArrayRange names);
-	void appendRadioIcons(const char* name, StringArrayRange icons, const IntImportCallback& importCallback, const IntExportCallback& exportCallback);
-	void appendRadioIcons(const char* name, int& data, StringArrayRange icons);
-	GtkWidget* appendEntry(const char* name, const IntImportCallback& importCallback, const IntExportCallback& exportCallback);
-	GtkWidget* appendEntry(const char* name, int& data);
-	GtkWidget* appendEntry(const char* name, const SizeImportCallback& importCallback, const SizeExportCallback& exportCallback);
-	GtkWidget* appendEntry(const char* name, std::size_t& data);
-	GtkWidget* appendEntry(const char* name, const FloatImportCallback& importCallback, const FloatExportCallback& exportCallback);
-	GtkWidget* appendEntry(const char* name, float& data);
-	GtkWidget* appendPathEntry(const char* name, bool browse_directory, const StringImportCallback& importCallback, const StringExportCallback& exportCallback);
-	GtkWidget* appendPathEntry(const char* name, CopiedString& data, bool directory);
-	GtkWidget* appendSpinner(const char* name, int& data, double value, double lower, double upper);
-	GtkWidget* appendSpinner(const char* name, double value, double lower, double upper, const IntImportCallback& importCallback, const IntExportCallback& exportCallback);
-	GtkWidget* appendSpinner(const char* name, double value, double lower, double upper, const FloatImportCallback& importCallback, const FloatExportCallback& exportCallback);*/
-	
-	/** greebo: Performs a recursive lookup of the given path
-	 * 			and creates any items that do not exist.
-	 * 
-	 * @returns: the shared_ptr to the PrefPage, can be empty on error.
-	 */
-	PrefPagePtr createOrFindPage(const std::string& path);
-};
-
-
-typedef Callback1<PrefPage*> PreferencesPageCallback;
-
-typedef Callback1<PreferenceGroup&> PreferenceGroupCallback;
-
-void PreferencesDialog_addInterfacePreferences(const PreferencesPageCallback& callback);
-void PreferencesDialog_addInterfacePage(const PreferenceGroupCallback& callback);
-void PreferencesDialog_addDisplayPreferences(const PreferencesPageCallback& callback);
-void PreferencesDialog_addDisplayPage(const PreferenceGroupCallback& callback);
-void PreferencesDialog_addSettingsPreferences(const PreferencesPageCallback& callback);
-void PreferencesDialog_addSettingsPage(const PreferenceGroupCallback& callback);
-
-void PreferencesDialog_restartRequired(const char* staticName);
-
-template<typename Value>
-class LatchedValue
-{
-public:
-  Value m_value;
-  Value m_latched;
-  const char* m_description;
-
-  LatchedValue(Value value, const char* description) : m_latched(value), m_description(description)
-  {
-  }
-  void useLatched()
-  {
-    m_value = m_latched;
-  }
-  void import(Value value)
-  {
-    m_latched = value;
-    if(m_latched != m_value)
-    {
-      PreferencesDialog_restartRequired(m_description);
-    }
-  }
-};
-
-typedef LatchedValue<bool> LatchedBool;
-typedef MemberCaller1<LatchedBool, bool, &LatchedBool::import> LatchedBoolImportCaller;
-
-typedef LatchedValue<int> LatchedInt;
-typedef MemberCaller1<LatchedInt, int, &LatchedInt::import> LatchedIntImportCaller;
-
-typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkTreeStore GtkTreeStore;
 typedef struct _GtkTreeView GtkTreeView;
 typedef struct _GtkTreeSelection GtkTreeSelection;
-class PrefPage;
 class StringOutputStream;
-class PreferenceTreeGroup;
 
 class PrefsDlg 
 {
@@ -341,9 +167,6 @@ private:
 	 */
 	void toggleWindow(bool modal = false);
 
-	// greebo: calls the constructors to add the preference elements
-	void callConstructors(PreferenceTreeGroup& preferenceGroup);
-	
 	// Gets called on page selection
 	static void onPrefPageSelect(GtkTreeSelection* treeselection, PrefsDlg* self);
 	static void onSave(GtkWidget* button, PrefsDlg* self);
@@ -353,23 +176,11 @@ private:
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, PrefsDlg* self);
 };
 
-struct preferences_globals_t
-{
-    // disabled all INI / registry read write .. used when shutting down after registry cleanup
-  bool disable_ini;
-  preferences_globals_t() : disable_ini(false)
-  {
-  }
-};
-extern preferences_globals_t g_preferences_globals;
-
 PreferenceSystem& GetPreferenceSystem();
 
 typedef struct _GtkWindow GtkWindow;
 void PreferencesDialog_constructWindow(GtkWindow* main_window);
 void PreferencesDialog_destroyWindow();
-
-void PreferencesDialog_showDialog();
 
 void Preferences_Init();
 
