@@ -112,7 +112,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "console.h"
 #include "entity.h"
 #include "entitylist.h"
-#include "groupdialog.h"
 #include "gtkdlgs.h"
 #include "gtkmisc.h"
 #include "map.h"
@@ -1495,7 +1494,7 @@ void MainFrame::Create()
 	    	"console",	// name
 	    	"Console", // tab title
 	    	"iconConsole16.png", // tab icon 
-	    	Console_constructWindow(GroupDialog_getWindow()), // page widget
+	    	Console_constructWindow(ui::GroupDialog::Instance().getWindow()), // page widget
 	    	"Console"
 	    );
     }
@@ -1615,7 +1614,7 @@ void MainFrame::Create()
     }
 
    	{
-      GtkFrame* frame = create_framed_widget(TextureBrowser_constructWindow(GroupDialog_getWindow()));
+      GtkFrame* frame = create_framed_widget(TextureBrowser_constructWindow(ui::GroupDialog::Instance().getWindow()));
 		// Add the Media Browser page
 		ui::GroupDialog::Instance().addPage(
 	    	"textures",	// name
@@ -1626,7 +1625,7 @@ void MainFrame::Create()
 	    );
     }
 
-    GroupDialog_show();
+    ui::GroupDialog::Instance().show();
   }
   else // 4 way (aka Splitplane view)
   {
@@ -1792,9 +1791,6 @@ void MainFrame::Shutdown()
   m_pCamWnd = 0;
 
   PreferencesDialog_destroyWindow();
-
-  // destroying group-dialog last because it may contain texture-browser
-  GroupDialog_destroyWindow();
 }
 
 void MainFrame::RedrawStatusText()

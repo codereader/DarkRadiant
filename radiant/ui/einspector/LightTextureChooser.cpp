@@ -3,7 +3,7 @@
 #include "ishaders.h"
 #include "texturelib.h"
 #include "iregistry.h"
-#include "groupdialog.h"
+#include "ui/groupdialog/GroupDialog.h"
 #include <string>
 
 namespace ui {
@@ -39,7 +39,7 @@ LightTextureChooser::LightTextureChooser(GtkWidget* entry, const std::string& pr
 	_widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
 	_selector(this, getPrefixList(), true) // true >> render a light texture
 {
-	GtkWindow* gd = GroupDialog_getWindow();
+	GtkWindow* gd = ui::GroupDialog::Instance().getWindow();
 
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), gd);
     gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);

@@ -3,7 +3,6 @@
 #include <gtk/gtk.h>
 #include "iregistry.h"
 #include "ieventmanager.h"
-#include "mainframe.h"
 #include "gtkutil/TransientWindow.h"
 #include "gtkutil/image.h"
 #include <iostream>
