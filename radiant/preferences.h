@@ -35,18 +35,20 @@ please contact Id Software immediately at info@idsoftware.com.
 
 #include "gtkutil/RegistryConnector.h"
 #include "gtkutil/WindowPosition.h"
-#include "libxml/parser.h"
 #include "dialog.h"
 #include <list>
 #include <map>
 #include "settings/PrefPage.h"
+
+	namespace {
+		const std::string RKEY_SKIP_REGISTRY_SAVE = "user/skipRegistrySaveOnShutdown";
+	}
 
 void Widget_connectToggleDependency(GtkWidget* self, GtkWidget* toggleButton);
 
 typedef struct _GtkTreeStore GtkTreeStore;
 typedef struct _GtkTreeView GtkTreeView;
 typedef struct _GtkTreeSelection GtkTreeSelection;
-class StringOutputStream;
 
 class PrefsDlg 
 {
@@ -94,26 +96,6 @@ public:
 	 */
 	static void showProjectSettings();
 
-	GtkWidget *m_notebook;
-
-	/*!
-	path to per-game settings
-	used for various game dependant storage
-	win32: GameToolsPath
-	linux: ~/.radiant/[version]/[gamename]/
-	*/
-	std::string m_rc_path;
-
-	/*!
-	holds per-game settings
-	m_rc_path+"local.pref"
-	\todo FIXME at some point this should become XML property bag code too
-	*/
-	std::string m_inipath;
-
-	// initialize the above paths
-	void Init();
-	
 	/** greebo: Looks up the page for the path and creates it
 	 * 			if necessary.
 	 */
@@ -137,8 +119,6 @@ public:
 private:
 	/** greebo: This creates the actual window widget (all the other
 	 * 			are created by populateWindow() during construction).
-	 * 			This is done at a later point, because the MainFrame
-	 * 			is usually not yet existing at construction time.
 	 */
 	void initDialog();
 
@@ -180,18 +160,8 @@ private:
 
 PreferenceSystem& GetPreferenceSystem();
 
-typedef struct _GtkWindow GtkWindow;
-void PreferencesDialog_constructWindow(GtkWindow* main_window);
-void PreferencesDialog_destroyWindow();
-
-void Preferences_Load();
-void Preferences_Save();
-class PreferenceDictionary;
-bool Preferences_Load(PreferenceDictionary& preferences, const char* filename);
-bool Preferences_Save(PreferenceDictionary& preferences, const char* filename);
-bool Preferences_Save_Safe(PreferenceDictionary& preferences, const char* filename);
-
-void Preferences_Reset();
-
+/** greebo: Deletes the user.xml file from the settings folder
+ */
+void resetPreferences();
 
 #endif

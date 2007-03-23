@@ -237,8 +237,6 @@ void Radiant_Initialise()
 	// Load the ColourSchemes from the registry
 	ColourSchemes().loadColourSchemes();
 
-	Preferences_Load();
-
 	// Load the other modules
 	Radiant_Construct(GlobalModuleServer_get());
 	
@@ -252,27 +250,29 @@ void Radiant_Initialise()
 void Radiant_Shutdown() {
 	GlobalMRU().saveRecentFiles();
 	
-	// Export the colour schemes and remove them from the registry
-	GlobalRegistry().exportToFile("user/ui/colourschemes", GlobalRegistry().get(RKEY_SETTINGS_PATH) + "colours.xml");
-	GlobalRegistry().deleteXPath("user/ui/colourschemes");
-	
-	// Save the current event set to the Registry and export it 
-	GlobalEventManager().saveEventListToRegistry();
-	
-	// Export the input definitions into the user's settings folder and remove them as well
-	GlobalRegistry().exportToFile("user/ui/input", GlobalRegistry().get(RKEY_SETTINGS_PATH) + "input.xml");
-	GlobalRegistry().deleteXPath("user/ui/input");
-	
-	// Delete all nodes marked as "transient", they are NOT exported into the user's xml file
-	GlobalRegistry().deleteXPath("user/*[@transient='1']");
-	
-	// Remove any remaining upgradePaths (from older registry files)
-	GlobalRegistry().deleteXPath("user/upgradePaths");
-	// Remove legacy <interface> node
-	GlobalRegistry().deleteXPath("user/ui/interface");
-	
-	// Save the remaining /darkradiant/user tree to user.xml so that the current settings are preserved
-	GlobalRegistry().exportToFile("user", GlobalRegistry().get(RKEY_SETTINGS_PATH) + "user.xml");
+	if (GlobalRegistry().get(RKEY_SKIP_REGISTRY_SAVE).empty()) {
+		// Export the colour schemes and remove them from the registry
+		GlobalRegistry().exportToFile("user/ui/colourschemes", GlobalRegistry().get(RKEY_SETTINGS_PATH) + "colours.xml");
+		GlobalRegistry().deleteXPath("user/ui/colourschemes");
+		
+		// Save the current event set to the Registry and export it 
+		GlobalEventManager().saveEventListToRegistry();
+		
+		// Export the input definitions into the user's settings folder and remove them as well
+		GlobalRegistry().exportToFile("user/ui/input", GlobalRegistry().get(RKEY_SETTINGS_PATH) + "input.xml");
+		GlobalRegistry().deleteXPath("user/ui/input");
+		
+		// Delete all nodes marked as "transient", they are NOT exported into the user's xml file
+		GlobalRegistry().deleteXPath("user/*[@transient='1']");
+		
+		// Remove any remaining upgradePaths (from older registry files)
+		GlobalRegistry().deleteXPath("user/upgradePaths");
+		// Remove legacy <interface> node
+		GlobalRegistry().deleteXPath("user/ui/interface");
+		
+		// Save the remaining /darkradiant/user tree to user.xml so that the current settings are preserved
+		GlobalRegistry().exportToFile("user", GlobalRegistry().get(RKEY_SETTINGS_PATH) + "user.xml");
+	}
 
 	Radiant_Destroy();
 }
@@ -1692,7 +1692,6 @@ void MainFrame::Create()
   }
 
   EntityList_constructWindow(window);
-  PreferencesDialog_constructWindow(window);
   
   GlobalGrid().addGridChangeCallback(SetGridStatusCaller(*this));
   GlobalGrid().addGridChangeCallback(FreeCaller<XY_UpdateAllWindows>());
@@ -1788,8 +1787,6 @@ void MainFrame::Shutdown()
 
   GlobalCamera().deleteCamWnd(m_pCamWnd);
   m_pCamWnd = 0;
-
-  PreferencesDialog_destroyWindow();
 }
 
 void MainFrame::RedrawStatusText()

@@ -86,7 +86,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 const char* const PREFERENCES_VERSION = "1.0";
 
-bool Preferences_Load(PreferenceDictionary& preferences, const char* filename)
+/*bool Preferences_Load(PreferenceDictionary& preferences, const char* filename)
 {
   TextFileInputStream file(filename);
   if(!file.failed())
@@ -123,39 +123,18 @@ bool Preferences_Save_Safe(PreferenceDictionary& preferences, const char* filena
   return Preferences_Save(preferences, tmpName.data())
     && (!file_exists(filename) || file_remove(filename))
     && file_move(tmpName.data(), filename);
-}
+}*/
 
 PreferenceDictionary g_global_preferences;
 
-// =============================================================================
-// PrefsDlg class
-
-/*
-========
-
-very first prefs init deals with selecting the game and the game tools path
-then we can load .ini stuff
-
-using prefs / ini settings:
-those are per-game
-
-look in ~/.radiant/<version>/gamename
-========
-*/
-
-void PrefsDlg::Init() {
-	// m_rc_path is for game specific preferences
-	// takes the form: global-pref-path/gamename/prefs-file
-	// this is common to win32 and Linux init now
-	m_rc_path = GlobalRegistry().get(RKEY_SETTINGS_PATH);
-	// game sub-dir
-	m_rc_path += game::Manager::Instance().currentGame()->getType();
-	m_rc_path += ".game/";
-	Q_mkdir (m_rc_path.c_str());
-
-	// then the ini file
-	m_inipath = m_rc_path;
-	m_inipath += "local.pref";
+void resetPreferences() {
+	// Load user preferences, these overwrite any values that have defined before
+	// The called method also checks for any upgrades that have to be performed
+	const std::string userSettingsFile = GlobalRegistry().get(RKEY_SETTINGS_PATH) + "user.xml";
+	if (file_exists(userSettingsFile.c_str())) {
+		file_remove(userSettingsFile.c_str());
+		GlobalRegistry().set(RKEY_SKIP_REGISTRY_SAVE, "1");
+	}
 }
 
 void Widget_updateDependency(GtkWidget* self, GtkWidget* toggleButton)
@@ -182,77 +161,6 @@ void Widget_connectToggleDependency(GtkWidget* self, GtkWidget* toggleButton)
   g_signal_connect(G_OBJECT(toggleButton), "toggled", G_CALLBACK(ToggleButton_toggled_Widget_updateDependency), self);
   Widget_updateDependency(self, toggleButton);
 }
-
-
-inline GtkWidget* getVBox(GtkWidget* page)
-{
-  return gtk_bin_get_child(GTK_BIN(page));
-}
-
-GtkTreeIter PreferenceTree_appendPage(GtkTreeStore* store, GtkTreeIter* parent, const char* name, GtkWidget* page)
-{
-  GtkTreeIter group;
-  gtk_tree_store_append(store, &group, parent);
-  gtk_tree_store_set(store, &group, 0, name, 1, page, -1);
-  return group;
-}
-
-GtkWidget* PreferencePages_addPage(GtkWidget* notebook, const char* name)
-{
-  GtkWidget* preflabel = gtk_label_new(name);
-  gtk_widget_show(preflabel);
-
-  GtkWidget* pageframe = gtk_frame_new(name);
-  gtk_container_set_border_width(GTK_CONTAINER(pageframe), 4);
-  gtk_widget_show(pageframe);
-
-  GtkWidget* vbox = gtk_vbox_new(FALSE, 4);
-  gtk_widget_show(vbox);
-  gtk_container_set_border_width(GTK_CONTAINER(vbox), 4);
-  gtk_container_add(GTK_CONTAINER(pageframe), vbox);
-
-  // Add the page to the notebook
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), pageframe, preflabel);
-
-  return pageframe;
-}
-
-/*class PreferenceTreeGroup : public PreferenceGroup
-{
-  Dialog& m_dialog;
-  GtkWidget* m_notebook;
-  GtkTreeStore* m_store;
-  GtkTreeIter m_group;
-  
-  typedef std::list<PrefPage> PrefPageList;
-  PrefPageList _prefPages;
-public:
-  PreferenceTreeGroup(Dialog& dialog, GtkWidget* notebook, GtkTreeStore* store, GtkTreeIter group) :
-    m_dialog(dialog),
-    m_notebook(notebook),
-    m_store(store),
-    m_group(group)
-  {
-  }
-  
-  PrefPage* createPage(const std::string& treeName, const std::string& frameName)
-  {
-    GtkWidget* page = PreferencePages_addPage(m_notebook, frameName.c_str());
-    PreferenceTree_appendPage(m_store, &m_group, treeName.c_str(), page);
-    
-    _prefPages.push_back(PrefPage(m_dialog, getVBox(page)));
-    
-    PrefPageList::iterator i = _prefPages.end();
-    
-    // Return the last item in the list, except the case there is none
-    if (i != _prefPages.begin()) {
-    	i--;
-    	PrefPage* pagePtr = &(*i); 
-    	return pagePtr; 
-    }   
-    return NULL;
-  }
-};*/
 
 /** greebo: A hybrid walker that is used twice:
  * 			First time to add each PrefPage to the TreeStore using a VFSTreePopulator
@@ -570,158 +478,9 @@ gboolean PrefsDlg::onDelete(GtkWidget* widget, GdkEvent* event, PrefsDlg* self) 
 	return true;
 }
 
-// Construct the GTK elements for the Preferences Dialog.
-
-GtkWindow* BuildDialog()
-{
-	/*
-    PreferencesDialog_addInterfacePreferences(FreeCaller1<PrefPage*, Interface_constructPreferences>());
-    
-    // Construct the main dialog window. Set a vertical default size as the
-    // size_request is too small.
-    GtkWindow* dialog = create_floating_window("DarkRadiant Preferences", m_parent);
-    gtk_window_set_default_size(dialog, -1, 450);
-
-  {
-    GtkWidget* mainvbox = gtk_vbox_new(FALSE, 5);
-    gtk_container_add(GTK_CONTAINER(dialog), mainvbox);
-    gtk_container_set_border_width(GTK_CONTAINER(mainvbox), 5);
-    gtk_widget_show(mainvbox);
-  
-    {
-      GtkWidget* hbox = gtk_hbox_new(FALSE, 5);
-      gtk_widget_show(hbox);
-      gtk_box_pack_end(GTK_BOX(mainvbox), hbox, FALSE, TRUE, 0);
-
-      {
-        GtkButton* button = create_dialog_button("OK", G_CALLBACK(dialog_button_ok), &m_modal);
-        gtk_box_pack_end(GTK_BOX(hbox), GTK_WIDGET(button), FALSE, FALSE, 0);
-      }
-      {
-        GtkButton* button = create_dialog_button("Cancel", G_CALLBACK(dialog_button_cancel), &m_modal);
-        gtk_box_pack_end(GTK_BOX(hbox), GTK_WIDGET(button), FALSE, FALSE, 0);
-      }
-      {
-        GtkButton* button = create_dialog_button("Clean", G_CALLBACK(OnButtonClean), this);
-        gtk_box_pack_end(GTK_BOX(hbox), GTK_WIDGET(button), FALSE, FALSE, 0);
-      }
-    }
-  
-    {
-      GtkWidget* hbox = gtk_hbox_new(FALSE, 5);
-      gtk_box_pack_start(GTK_BOX(mainvbox), hbox, TRUE, TRUE, 0);
-      gtk_widget_show(hbox);
-  
-      {
-        GtkWidget* sc_win = gtk_scrolled_window_new(0, 0);
-        gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sc_win), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-        gtk_box_pack_start(GTK_BOX(hbox), sc_win, FALSE, FALSE, 0);
-        gtk_widget_show(sc_win);
-        gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sc_win), GTK_SHADOW_IN);
-
-        // hide the notebook tabs since its not supposed to look like a notebook
-        gtk_notebook_set_show_tabs(GTK_NOTEBOOK(m_notebook), FALSE);
-        gtk_box_pack_start(GTK_BOX(hbox), m_notebook, TRUE, TRUE, 0);
-        gtk_widget_show(m_notebook);
-
-
-        {
-          GtkTreeStore* store = gtk_tree_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
-
-          GtkWidget* view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
-          gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), FALSE);
-
-          {
-            GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
-            GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes("Preferences", renderer, "text", 0, 0);
-            gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
-          }
-
-          {
-            GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
-            g_signal_connect(G_OBJECT(selection), "changed", G_CALLBACK(treeSelection), this);
-          }
-
-          gtk_widget_show(view);
-
-          gtk_container_add(GTK_CONTAINER (sc_win), view);
-
-          {*/
-            /********************************************************************/
-            /* Add preference tree options                                      */
-            /********************************************************************/
-            // Front page... 
-            //GtkWidget* front =
- /*           PreferencePages_addPage(m_notebook, "Front Page");
-
-            {
-              GtkWidget* interfacePage = PreferencePages_addPage(m_notebook, "Interface Preferences");
-              {
-                PrefPage preferencesPage(*this, getVBox(interfacePage));
-                PreferencesPageCallbacks_constructPage(g_interfacePreferences, &preferencesPage);
-              }
-
-              GtkTreeIter group = PreferenceTree_appendPage(store, 0, "Interface", interfacePage);
-              PreferenceTreeGroup preferenceGroup(*this, m_notebook, store, group);
-
-              PreferenceGroupCallbacks_constructGroup(g_interfaceCallbacks, preferenceGroup);
-            }
-
-            {
-              GtkWidget* display = PreferencePages_addPage(m_notebook, "Display Preferences");
-              {
-                PrefPage preferencesPage(*this, getVBox(display));
-                PreferencesPageCallbacks_constructPage(g_displayPreferences, &preferencesPage);
-              }
-              GtkTreeIter group = PreferenceTree_appendPage(store, 0, "Display", display);
-              PreferenceTreeGroup preferenceGroup(*this, m_notebook, store, group);
-
-              PreferenceGroupCallbacks_constructGroup(g_displayCallbacks, preferenceGroup);
-            }
-
-            {
-              GtkWidget* settings = PreferencePages_addPage(m_notebook, "General Settings");
-              {
-                PrefPage preferencesPage(*this, getVBox(settings));
-                PreferencesPageCallbacks_constructPage(g_settingsPreferences, &preferencesPage);
-              }
-
-              GtkTreeIter group = PreferenceTree_appendPage(store, 0, "Settings", settings);
-              PreferenceTreeGroup preferenceGroup(*this, m_notebook, store, group);
-
-				// greebo: Invoke the registered constructors to do their stuff
-				callConstructors(preferenceGroup);
-				
-              PreferenceGroupCallbacks_constructGroup(g_settingsCallbacks, preferenceGroup);
-            }
-          }
-
-          gtk_tree_view_expand_all(GTK_TREE_VIEW(view));
-    
-          g_object_unref(G_OBJECT(store));
-        }
-      }
-    }
-  }
-
-  return dialog;*/return NULL;
-}
-
-void PreferencesDialog_constructWindow(GtkWindow* main_window)
-{
-  //PrefsDlg::Instance().m_parent = main_window;
-  //PrefsDlg::Instance().Create();
-}
-void PreferencesDialog_destroyWindow()
-{
-  //PrefsDlg::Instance().Destroy();
-}
-
-
 PreferenceDictionary g_preferences;
 
-PreferenceSystem& GetPreferenceSystem()
-{
+PreferenceSystem& GetPreferenceSystem() {
   return g_preferences;
 }
 
@@ -749,7 +508,7 @@ typedef SingletonModule<PreferenceSystemAPI> PreferenceSystemModule;
 typedef Static<PreferenceSystemModule> StaticPreferenceSystemModule;
 StaticRegisterModule staticRegisterPreferenceSystem(StaticPreferenceSystemModule::instance());
 
-void Preferences_Load()
+/*void Preferences_Load()
 {
   // load global .pref file
 	std::string globalPrefFile = GlobalRegistry().get(RKEY_SETTINGS_PATH) + "global.pref";
@@ -788,4 +547,4 @@ void Preferences_Save()
 void Preferences_Reset()
 {
   file_remove(PrefsDlg::Instance().m_inipath.c_str());
-}
+}*/
