@@ -49,6 +49,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ieventmanager.h"
 #include <gtk/gtkwidget.h>
 #include "gtkutil/window.h"
+#include "ui/groupdialog/GroupDialog.h"
 
 class GroupDlg 
 {
@@ -99,11 +100,12 @@ static gboolean switch_page(GtkNotebook *notebook, GtkNotebookPage *page, guint 
 
 GroupDlg::GroupDlg() : m_window(0)
 {
-  m_position_tracker.setPosition(c_default_window_pos);
+  
 }
 
 void GroupDlg::Create(GtkWindow* parent)
 {
+	return;
   ASSERT_MESSAGE(m_window == 0, "dialog already created");
 
   GtkWindow* window = create_persistent_floating_window("Entities", parent);
@@ -113,6 +115,7 @@ void GroupDlg::Create(GtkWindow* parent)
   window_connect_focus_in_clear_focus_widget(window);
 
   m_window = window;
+  gtk_widget_hide(GTK_WIDGET(window));
 
 #ifdef WIN32
   if (GlobalRegistry().get(RKEY_MULTIMON_START_PRIMARY) == "1")
@@ -138,6 +141,7 @@ void GroupDlg::Create(GtkWindow* parent)
 
 GtkWidget* GroupDialog_addPage(const char* tabLabel, const std::string& tabIcon, GtkWidget* widget, const StringExportCallback& title)
 {
+	return ui::GroupDialog::Instance().addPage(tabLabel, tabLabel, tabIcon, widget, tabLabel); 
 	// Create the icon GtkImage and tab label
 	GtkWidget* icon = gtk_image_new_from_pixbuf(gtkutil::getLocalPixbuf(tabIcon));
 	GtkWidget* label = gtk_label_new(tabLabel);
@@ -172,38 +176,45 @@ void GroupDialog_ToggleShow()
 
 void GroupDialog_constructWindow(GtkWindow* main_window)
 {
-  g_GroupDlg.Create(main_window);
+  //g_GroupDlg.Create(main_window);
 }
 void GroupDialog_destroyWindow()
 {
-  ASSERT_NOTNULL(g_GroupDlg.m_window);
-  destroy_floating_window(g_GroupDlg.m_window);
+  /*ASSERT_NOTNULL(g_GroupDlg.m_window);
+  destroy_floating_window(g_GroupDlg.m_window);*/
   g_GroupDlg.m_window = 0;
 }
 
 
 GtkWindow* GroupDialog_getWindow()
 {
-  return g_GroupDlg.m_window;
+	return ui::GroupDialog::Instance().getWindow();
+  //return g_GroupDlg.m_window;
 }
 void GroupDialog_show()
 {
-  g_GroupDlg.Show();
+	ui::GroupDialog::Instance().show();
+  //g_GroupDlg.Show();
 }
 
 GtkWidget* GroupDialog_getPage()
 {
+	return ui::GroupDialog::Instance().getPage();
   return gtk_notebook_get_nth_page(GTK_NOTEBOOK(g_GroupDlg.m_pNotebook), gint(g_current_page));
 }
 
 void GroupDialog_setPage(GtkWidget* page)
 {
+	ui::GroupDialog::Instance().setPage(page);
+	return;
   g_current_page = gtk_notebook_page_num(GTK_NOTEBOOK(g_GroupDlg.m_pNotebook), page);
   gtk_notebook_set_current_page(GTK_NOTEBOOK(g_GroupDlg.m_pNotebook), gint(g_current_page));
 }
 
 void GroupDialog_showPage(GtkWidget* page)
 {
+	ui::GroupDialog::toggle();
+	return;
   if(GroupDialog_getPage() == page)
   {
     GroupDialog_ToggleShow();
@@ -213,12 +224,6 @@ void GroupDialog_showPage(GtkWidget* page)
     gtk_widget_show(GTK_WIDGET(g_GroupDlg.m_window));
     GroupDialog_setPage(page);
   }
-}
-
-void GroupDialog_cycle()
-{
-  g_current_page = (g_current_page + 1) % g_pages.size(); 
-  gtk_notebook_set_current_page(GTK_NOTEBOOK(g_GroupDlg.m_pNotebook), gint(g_current_page));
 }
 
 void GroupDialog_updatePageTitle(GtkWidget* page)
@@ -237,7 +242,7 @@ void GroupDialog_Construct()
 
 void GroupDialog_Destroy()
 {
-	if (g_GroupDlg.m_window != NULL) {
+	/*if (g_GroupDlg.m_window != NULL) {
 		GlobalEventManager().disconnectDialogWindow(g_GroupDlg.m_window);
-	}
+	}*/
 }

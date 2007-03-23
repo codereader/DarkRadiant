@@ -76,7 +76,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkdlgs.h"
 #include "gtkmisc.h"
 #include "mainframe.h"
-#include "groupdialog.h"
+#include "ui/groupdialog/GroupDialog.h"
 #include "preferences.h"
 #include "ui/common/ToolbarCreator.h"
 #include "selection/algorithm/Shader.h"
@@ -632,20 +632,9 @@ public:
 
 //void TextureBrowser_SetHideUnused(TextureBrowser& textureBrowser, bool hideUnused);
 
-GtkWidget* g_page_textures;
-
-void TextureBrowser_toggleShown() 
-{
-  GroupDialog_showPage(g_page_textures);
+void TextureBrowser_toggleShown() {
+	ui::GroupDialog::Instance().setPage("textures");
 }
-
-
-void TextureBrowser_updateTitle()
-{
-  GroupDialog_updatePageTitle(g_page_textures);
-}
-
-
 
 class TextureCategoryLoadShader
 {
@@ -1314,22 +1303,6 @@ void TextureBrowser_showAll()
 {
   g_TextureBrowser_currentDirectory = "";
   TextureBrowser_heightChanged(g_TextureBrowser);
-  TextureBrowser_updateTitle();
-}
-
-void TextureBrowser_exportTitle(const StringImportCallback& importer)
-{
-  StringOutputStream buffer(64);
-  buffer << "Textures: ";
-  if(!string_empty(g_TextureBrowser_currentDirectory.c_str()))
-  {
-    buffer << g_TextureBrowser_currentDirectory.c_str();
-  }
-  else
-  {
-    buffer << "all";
-  }
-  importer(buffer.c_str());
 }
 
 void TextureBrowser_registerPreferencesPage() {

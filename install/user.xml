@@ -87,6 +87,9 @@
 		</splitPane>
 		<windowLayout value="1" />
 	</mainFrame>
+	<groupDialog>
+		<window xPosition="50" yPosition="530" width="350" height="200" />
+	</groupDialog>
 	<multiMonitor>
 		<startOnPrimaryMonitor value="0" />
 		<disableSysMenuOnPopups value="0" />
