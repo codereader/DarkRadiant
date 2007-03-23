@@ -4,6 +4,8 @@
 #include "preferencesystem.h"
 #include "gtkutil/RegistryConnector.h"
 
+namespace ui {
+
 class PrefPage;
 typedef boost::shared_ptr<PrefPage> PrefPagePtr;
 
@@ -110,5 +112,7 @@ public:
 	 */
 	PrefPagePtr createOrFindPage(const std::string& path);
 };
+
+} // namespace ui
 
 #endif /*PREFPAGE_H_*/

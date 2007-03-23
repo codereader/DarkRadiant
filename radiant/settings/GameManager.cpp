@@ -3,6 +3,7 @@
 #include "iregistry.h"
 #include "ifilesystem.h"
 #include "preferences.h"
+#include "ui/prefdialog/PrefDialog.h"
 #include "environment.h"
 #include "os/file.h"
 #include "os/dir.h"
@@ -157,7 +158,7 @@ void Manager::initEnginePath() {
 	// Check loop, continue, till the user specifies a valid setting
 	while (!settingsValid()) {
 		// Engine path doesn't exist, ask the user
-		PrefsDlg::showModal("Game");
+		ui::PrefDialog::showModal("Game");
 		
 		// After the dialog, the settings are located in the registry.
 		// Construct the paths with the settings found there		
