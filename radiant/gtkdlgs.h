@@ -40,6 +40,8 @@ void DoFind();
 void DoSides(int type, int axis);
 void DoAbout();
 
+// greebo: Commented this out (03/2007)
+#if 0
 #ifdef WIN32
 extern bool g_TextEditor_useWin32Editor;
 #else
@@ -47,6 +49,6 @@ extern bool g_TextEditor_useWin32Editor;
 extern bool g_TextEditor_useCustomEditor;
 extern CopiedString g_TextEditor_editorCommand;
 #endif
-
+#endif
 
 #endif

@@ -363,6 +363,8 @@ static void CreateGtkTextEditor()
   text_widget = text;
 }
 
+// greebo: Commented this out (03/2007)
+#if 0
 static void DoGtkTextEditor (const char* filename, guint cursorpos)
 {
   if (!text_editor)
@@ -422,6 +424,8 @@ static void DoGtkTextEditor (const char* filename, guint cursorpos)
     fclose (f);
   }
 }
+#endif
+
 
 // =============================================================================
 // Light Intensity dialog 
@@ -490,6 +494,8 @@ EMessageBoxReturn DoLightIntensityDlg (int *intensity)
   return ret;
 }
 
+// greebo: Commented this out, is unused 03/2007
+#if 0
 
 #ifdef WIN32
 #include <gdk/gdkwin32.h>
@@ -536,3 +542,4 @@ void DoTextEditor (const char* filename, int cursorpos)
   
   DoGtkTextEditor (filename, cursorpos);
 }
+#endif

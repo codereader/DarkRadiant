@@ -53,18 +53,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		const std::string RKEY_FREE_MODEL_ROTATION = "user/ui/freeModelRotation";
 	}
 
-struct entity_globals_t
-{
-  Vector3 color_entity;
-
-  entity_globals_t() :
-    color_entity(0.0f, 0.0f, 0.0f)
-  {
-  }
-};
-
-entity_globals_t g_entity_globals;
-
 class EntitySetKeyValueSelected : public scene::Graph::Walker
 {
   const char* m_key;
@@ -200,8 +188,6 @@ AABB Doom3Light_getBounds(AABB aabb)
 	return aabb;
 }
 
-int g_iLastLightIntensity;
-
 /** Create an instance of the given entity at the given position, and return
  * the Node containing the new entity.
  * 
@@ -298,15 +284,10 @@ NodeSmartReference Entity_createFromSelection(const char* name,
 #include "preferencesystem.h"
 #include "stringio.h"
 
-void Entity_Construct()
-{
-  GlobalEventManager().addCommand("ConnectSelection", FreeCaller<Entity_connectSelected>());
-  GlobalEventManager().addCommand("UngroupSelection", FreeCaller<Entity_ungroupSelected>());
-  GlobalEventManager().addRegistryToggle("ToggleFreeModelRotation", RKEY_FREE_MODEL_ROTATION);
-
-  GlobalPreferenceSystem().registerPreference("SI_Colors5", Vector3ImportStringCaller(g_entity_globals.color_entity), Vector3ExportStringCaller(g_entity_globals.color_entity));
-  GlobalPreferenceSystem().registerPreference("LastLightIntensity", IntImportStringCaller(g_iLastLightIntensity), IntExportStringCaller(g_iLastLightIntensity));
-
+void Entity_Construct() {
+	GlobalEventManager().addCommand("ConnectSelection", FreeCaller<Entity_connectSelected>());
+	GlobalEventManager().addCommand("UngroupSelection", FreeCaller<Entity_ungroupSelected>());
+	GlobalEventManager().addRegistryToggle("ToggleFreeModelRotation", RKEY_FREE_MODEL_ROTATION);
 }
 
 void Entity_Destroy()

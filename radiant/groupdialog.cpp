@@ -233,9 +233,7 @@ void GroupDialog_updatePageTitle(GtkWidget* page)
 #include "preferencesystem.h"
 
 void GroupDialog_Construct()
-{
-  GlobalPreferenceSystem().registerPreference("EntityWnd", WindowPositionTrackerImportStringCaller(g_GroupDlg.m_position_tracker), WindowPositionTrackerExportStringCaller(g_GroupDlg.m_position_tracker));
-}
+{}
 
 void GroupDialog_Destroy()
 {

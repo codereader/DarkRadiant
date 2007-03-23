@@ -1046,9 +1046,6 @@ void Scene_EntityBreakdown(EntityBreakdown& entitymap)
   GlobalSceneGraph().traverse(EntityBreakdownWalker(entitymap));
 }
 
-
-WindowPosition g_posMapInfoWnd(c_default_window_pos);
-
 void DoMapInfo()
 {
   ModalDialog dialog;
@@ -1057,8 +1054,7 @@ void DoMapInfo()
   GtkListStore* EntityBreakdownWalker;
 
   GtkWindow* window = create_dialog_window(MainFrame_getWindow(), "Map Info", G_CALLBACK(dialog_delete_callback), &dialog);
-
-  window_set_position(window, g_posMapInfoWnd);
+  gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
 
   {
     GtkVBox* vbox = create_dialog_vbox(4, 4);
@@ -1191,9 +1187,6 @@ void DoMapInfo()
   gtk_entry_set_text (GTK_ENTRY (entities_entry), tmp);
 
   modal_dialog_show(window, dialog);
-
-  // save before exit
-  window_get_position(window, g_posMapInfoWnd);
 
   gtk_widget_destroy(GTK_WIDGET(window));
 }
@@ -2377,8 +2370,6 @@ void Map_Construct()
 	// Add the map position commands to the EventManager
 	map::GlobalMapPosition().initialise();
 
-  GlobalPreferenceSystem().registerPreference("MapInfoDlg", WindowPositionImportStringCaller(g_posMapInfoWnd), WindowPositionExportStringCaller(g_posMapInfoWnd));
-  
   GlobalEntityClassManager().attach(g_MapEntityClasses);
 }
 
