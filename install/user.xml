@@ -6,7 +6,7 @@
 	<debug value="0" />
 	<game>
 		<type value="" />
-		<fs_game value="" />
+		<fs_game value="darkmod" />
 	</game>
   <ui>
 	<map>
