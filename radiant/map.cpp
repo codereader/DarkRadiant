@@ -77,7 +77,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "qe3.h"
 #include "environment.h"
 #include "mainframe.h"
-#include "preferences.h"
+#include "gtkutil/dialog.h"
 #include "referencecache.h"
 #include "brush/BrushNode.h"
 #include "brush/BrushModule.h"
