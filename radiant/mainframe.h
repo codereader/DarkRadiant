@@ -182,12 +182,6 @@ void ClipperChangeNotify();
 
 void DefaultMode();
 
-const char* basegame_get();
-const char* gamename_get();
-void gamename_set(const char* gamename);
-const char* gamemode_get();
-void gamemode_set(const char* gamemode);
-
 void VFS_Construct();
 void VFS_Destroy();
 

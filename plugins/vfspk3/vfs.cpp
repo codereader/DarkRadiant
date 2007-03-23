@@ -323,21 +323,10 @@ void InitDirectory(const char* directory, ArchiveModules& archiveModules)
       const char* ignore_prefix = "";
       const char* override_prefix = "";
 
-      /*{
-        // See if we are in "sp" or "mp" mapping mode
-        const char* gamemode = gamemode_get();
-
-		    if (strcmp (gamemode, "sp") == 0)
-        {
-				  ignore_prefix = "mp_";*/
-          override_prefix = "sp_";
-        /*}
-		    else if (strcmp (gamemode, "mp") == 0)
-        {
-				  ignore_prefix = "sp_";
-          override_prefix = "mp_";
-        }
-      }*/
+		// greebo: hardcoded these after removing of gamemode_get stuff
+		// can probably be removed but I haven't checked if that is safe
+      ignore_prefix = "mp_";
+      override_prefix = "sp_";
 
       Archives archives;
       Archives archivesOverride;

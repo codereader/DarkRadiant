@@ -221,7 +221,7 @@ public:
   GtkComboBox* gamemode_combo;
 };
 
-GtkWindow* ProjectSettingsDialog_construct(ProjectSettingsDialog& dialog, ModalDialog& modal)
+/*GtkWindow* ProjectSettingsDialog_construct(ProjectSettingsDialog& dialog, ModalDialog& modal)
 {
   GtkWindow* window = create_dialog_window(MainFrame_getWindow(), "Project Settings", G_CALLBACK(dialog_delete_callback), &modal);
 
@@ -340,7 +340,7 @@ GtkWindow* ProjectSettingsDialog_construct(ProjectSettingsDialog& dialog, ModalD
   }
 
   return window;
-}
+}*/
 
 /*void ProjectSettingsDialog_ok(ProjectSettingsDialog& dialog)
 {
@@ -376,6 +376,7 @@ GtkWindow* ProjectSettingsDialog_construct(ProjectSettingsDialog& dialog, ModalD
   }
 }*/
 
+// greebo: TODO: Move this to into the PrefsDlg file
 void DoProjectSettings()
 {
   if(ConfirmModified("Edit Project Settings"))

@@ -787,29 +787,6 @@ void Preferences_Reset()
   file_remove(PrefsDlg::Instance().m_inipath.c_str());
 }
 
-void GameName_importString(const char* value)
-{
-  gamename_set(value);
-}
-typedef FreeCaller1<const char*, GameName_importString> GameNameImportStringCaller;
-void GameName_exportString(const StringImportCallback& importer)
-{
-  importer(gamename_get());
-}
-typedef FreeCaller1<const StringImportCallback&, GameName_exportString> GameNameExportStringCaller;
-
-void GameMode_importString(const char* value)
-{
-  gamemode_set(value);
-}
-typedef FreeCaller1<const char*, GameMode_importString> GameModeImportStringCaller;
-void GameMode_exportString(const StringImportCallback& importer)
-{
-  importer(gamemode_get());
-}
-typedef FreeCaller1<const StringImportCallback&, GameMode_exportString> GameModeExportStringCaller;
-
-
 void RegisterPreferences(PreferenceSystem& preferences)
 {
 
@@ -819,9 +796,6 @@ void RegisterPreferences(PreferenceSystem& preferences)
   preferences.registerPreference("UseCustomShaderEditor", BoolImportStringCaller(g_TextEditor_useCustomEditor), BoolExportStringCaller(g_TextEditor_useCustomEditor));
   preferences.registerPreference("CustomShaderEditorCommand", CopiedStringImportStringCaller(g_TextEditor_editorCommand), CopiedStringExportStringCaller(g_TextEditor_editorCommand));
 #endif
-
-  preferences.registerPreference("GameName", GameNameImportStringCaller(), GameNameExportStringCaller());
-  preferences.registerPreference("GameMode", GameModeImportStringCaller(), GameModeExportStringCaller());
 }
 
 void Preferences_Init()
