@@ -81,6 +81,7 @@
 	</grid>
 	<mainFrame>
 		<windowLayout value="1" />
+		<window xPosition="0" yPosition="0" width="800" height="580" state="4" />
 		<regular>
 			<pane name="vertical" position="650" />
 			<pane name="horizontal" position="500" />

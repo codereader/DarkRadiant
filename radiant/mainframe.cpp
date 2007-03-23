@@ -143,32 +143,8 @@ static GtkWindow *splash_screen = 0;
 
 	namespace {
 		const std::string RKEY_WINDOW_LAYOUT = "user/ui/mainFrame/windowLayout";
+		const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
 	}
-
-struct layout_globals_t
-{
-  WindowPosition m_position;
-
-
-  int nXYHeight;
-  int nXYWidth;
-  int nCamWidth;
-  int nCamHeight;
-  int nState;
-
-  layout_globals_t() :
-    m_position(-1, -1, 640, 480),
-
-    nXYHeight(300),
-    nXYWidth(300),
-    nCamWidth(200),
-    nCamHeight(200),
-    nState(GDK_WINDOW_STATE_MAXIMIZED)
-  {
-  }
-};
-
-layout_globals_t g_layout_globals;
 
 //! Make COLOR_BRUSHES override worldspawn eclass colour.
 void SetWorldspawnColour(const Vector3& colour)
@@ -1499,24 +1475,35 @@ void MainFrame::Create()
 	    );
     }
 
+	int windowState = GDK_WINDOW_STATE_MAXIMIZED;
+
+	// Connect the window position tracker
+	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
+	
+	if (windowStateList.size() > 0) {
+		_windowPosition.loadFromNode(windowStateList[0]);
+		windowState = strToInt(windowStateList[0].getAttributeValue("state"));
+	}
+	
 #ifdef WIN32
-  if (GlobalRegistry().get(RKEY_MULTIMON_START_PRIMARY) == "1")
-  {
-    PositionWindowOnPrimaryScreen(g_layout_globals.m_position);
-	window_set_position(window, g_layout_globals.m_position);
-  }
-  else
+	// Do the settings say that we should start on the primary screen?
+	if (GlobalRegistry().get(RKEY_MULTIMON_START_PRIMARY) == "1") {
+		// Yes, connect the position tracker, this overrides the existing setting.
+  		_windowPosition.connect(window);
+  		// Load the correct coordinates into the position tracker
+		positionWindowOnPrimaryScreen(_windowPosition);
+		// Apply the position
+		_windowPosition.applyPosition();
+	}
+	else
 #endif
-  if(g_layout_globals.nState & GDK_WINDOW_STATE_MAXIMIZED)
-  {
-    gtk_window_maximize(window);
-    WindowPosition default_position(-1, -1, 640, 480);
-    window_set_position(window, default_position);
-  }
-  else
-  {
-    window_set_position(window, g_layout_globals.m_position);
-  }
+	if (windowState & GDK_WINDOW_STATE_MAXIMIZED) {
+		gtk_window_maximize(window);
+	}
+	else {
+		_windowPosition.connect(window);
+		_windowPosition.applyPosition();
+	}
 
 	gtk_widget_show(GTK_WIDGET(window));
 
@@ -1721,27 +1708,22 @@ void MainFrame::Create()
 	GlobalXYWnd().restoreState();
 }
 
-void MainFrame::SaveWindowInfo()
-{
-  if (!FloatingGroupDialog())
-  {
-    //g_layout_globals.nXYHeight = gtk_paned_get_position(GTK_PANED(m_vSplit));
-
-    if(CurrentStyle() != eRegular)
-    {
-      //g_layout_globals.nCamWidth = gtk_paned_get_position(GTK_PANED(m_hSplit));
-    }
-    else
-    {
-      //g_layout_globals.nXYWidth = gtk_paned_get_position(GTK_PANED(m_hSplit));
-    }
-
-    //g_layout_globals.nCamHeight = gtk_paned_get_position(GTK_PANED(m_vSplit2));
-  }
-
-  g_layout_globals.m_position = m_position_tracker.getPosition();
+void MainFrame::SaveWindowInfo() {
+  //g_layout_globals.m_position = m_position_tracker.getPosition();
  
-  g_layout_globals.nState = gdk_window_get_state(GTK_WIDGET(m_window)->window);
+  //g_layout_globals.nState = gdk_window_get_state(GTK_WIDGET(m_window)->window);
+	// Delete all the current window states from the registry  
+	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
+	
+	// Create a new node
+	xml::Node node(GlobalRegistry().createKey(RKEY_WINDOW_STATE));
+	
+	// Tell the position tracker to save the information
+	_windowPosition.saveToNode(node);
+	node.setAttributeValue(
+		"state", 
+		intToStr(gdk_window_get_state(GTK_WIDGET(m_window)->window))
+	); 
   
 	// Save the splitpane widths/heights 
 	if (CurrentStyle() == eSplit) {
@@ -2055,17 +2037,6 @@ void MainFrame_Construct()
 
   typedef FreeCaller1<const Selectable&, ComponentMode_SelectionChanged> ComponentModeSelectionChangedCaller;
   GlobalSelectionSystem().addSelectionChangeCallback(ComponentModeSelectionChangedCaller());
-
-  GlobalPreferenceSystem().registerPreference("XYHeight", IntImportStringCaller(g_layout_globals.nXYHeight), IntExportStringCaller(g_layout_globals.nXYHeight));
-  GlobalPreferenceSystem().registerPreference("XYWidth", IntImportStringCaller(g_layout_globals.nXYWidth), IntExportStringCaller(g_layout_globals.nXYWidth));
-  GlobalPreferenceSystem().registerPreference("CamWidth", IntImportStringCaller(g_layout_globals.nCamWidth), IntExportStringCaller(g_layout_globals.nCamWidth));
-  GlobalPreferenceSystem().registerPreference("CamHeight", IntImportStringCaller(g_layout_globals.nCamHeight), IntExportStringCaller(g_layout_globals.nCamHeight));
-
-  GlobalPreferenceSystem().registerPreference("State", IntImportStringCaller(g_layout_globals.nState), IntExportStringCaller(g_layout_globals.nState));
-  GlobalPreferenceSystem().registerPreference("PositionX", IntImportStringCaller(g_layout_globals.m_position.x), IntExportStringCaller(g_layout_globals.m_position.x));
-  GlobalPreferenceSystem().registerPreference("PositionY", IntImportStringCaller(g_layout_globals.m_position.y), IntExportStringCaller(g_layout_globals.m_position.y));
-  GlobalPreferenceSystem().registerPreference("Width", IntImportStringCaller(g_layout_globals.m_position.w), IntExportStringCaller(g_layout_globals.m_position.w));
-  GlobalPreferenceSystem().registerPreference("Height", IntImportStringCaller(g_layout_globals.m_position.h), IntExportStringCaller(g_layout_globals.m_position.h));
 
   Layout_registerPreferencesPage();
 

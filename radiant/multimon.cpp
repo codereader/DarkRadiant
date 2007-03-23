@@ -31,29 +31,36 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <gdk/gdkdisplay.h>
 
-namespace
-{
-	GdkRectangle primaryMonitor;
-}
+	namespace {
+		GdkRectangle primaryMonitor;
+	}
 
-void PositionWindowOnPrimaryScreen(WindowPosition& position)
-{
-  if( position.w >= primaryMonitor.width - 12 )
-  {
-    position.w = primaryMonitor.width - 12;
-  }
-  if( position.h >= primaryMonitor.height - 24 )
-  {
-    position.h = primaryMonitor.height - 48;
-  }
-  if( position.x <= primaryMonitor.x || position.x + position.w >= (primaryMonitor.x + primaryMonitor.width) - 12 )
-  {
-    position.x = primaryMonitor.x + 6;
-  }
-  if( position.y <= primaryMonitor.y || position.y + position.h >= (primaryMonitor.y + primaryMonitor.height) - 48 )
-  {
-    position.y = primaryMonitor.y + 24;
-  }
+void positionWindowOnPrimaryScreen(gtkutil::WindowPosition& position) {
+	gtkutil::PositionVector pos = position.getPosition();
+	gtkutil::SizeVector size = position.getSize();
+	
+	if (size[0] >= primaryMonitor.width - 12) {
+		size[0] = primaryMonitor.width - 12;
+	}
+	
+	if (size[1] >= primaryMonitor.height - 24) {
+		size[1] = primaryMonitor.height - 48;
+	}
+	
+	if (pos[0] <= primaryMonitor.x || 
+		pos[0] + size[0] >= (primaryMonitor.x + primaryMonitor.width) - 12) 
+	{
+		pos[0] = primaryMonitor.x + 6;
+	}
+	
+	if (pos[1] <= primaryMonitor.y || 
+		pos[1] + size[1] >= (primaryMonitor.y + primaryMonitor.height) - 48)
+	{
+		pos[1] = primaryMonitor.y + 24;
+	}
+	
+	position.setPosition(pos[0], pos[1]);
+	position.setSize(size[0], size[1]);
 }
 
 void Multimon_registerPreferencesPage() {
