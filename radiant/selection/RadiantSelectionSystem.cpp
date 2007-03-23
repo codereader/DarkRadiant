@@ -873,8 +873,8 @@ void RadiantSelectionSystem::ConstructPivot() const {
 			objectPivot = bounds.origin;
 		}
 
-		// Snap the pivot point to the grid
-		vector3_snap(objectPivot, GlobalGrid().getGridSize());
+		// Snap the pivot point to the grid (greebo: disabled this (issue #231))
+		//vector3_snap(objectPivot, GlobalGrid().getGridSize());
 		
 		// The pivot2world matrix is just a translation from the world origin (0,0,0) to the object pivot  
 		_pivot2world = Matrix4::getTranslation(objectPivot);
