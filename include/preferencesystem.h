@@ -26,15 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <list>
 #include <vector>
 #include <boost/shared_ptr.hpp>
-
 #include "generic/constant.h"
-
-// ----- Begin: For deprecated methods ----------------------------------
-#include "generic/callbackfwd.h"
-
-typedef Callback1<const char*> StringImportCallback;
-typedef Callback1<const StringImportCallback&> StringExportCallback;
-// ----- End: For deprecated methods ------------------------------------
 
 // Forward declaration
 typedef struct _GtkWidget GtkWidget;
@@ -106,9 +98,6 @@ public:
 	 * @returns: the PreferencesPage pointer.
 	 */
 	virtual PreferencesPagePtr getPage(const std::string& path) = 0; 
-	
-	// greebo: Deprecated, don't use this in newly written code
-	virtual void registerPreference(const char* name, const StringImportCallback& importer, const StringExportCallback& exporter) = 0;  
 };
 
 #include "modulesystem.h"

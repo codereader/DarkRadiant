@@ -31,9 +31,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "preferences.h"
 
-class PreferenceDictionary : public PreferenceSystem
+class PreferenceDictionary : 
+	public PreferenceSystem
 {
-  class PreferenceEntry
+  /*class PreferenceEntry
   {
     StringImportCallback m_importer;
     StringExportCallback m_exporter;
@@ -56,7 +57,7 @@ class PreferenceDictionary : public PreferenceSystem
   PreferenceEntries m_preferences;
 
   typedef std::map<CopiedString, CopiedString> PreferenceCache;
-  PreferenceCache m_cache;
+  PreferenceCache m_cache;*/
 
 public:
 
@@ -65,7 +66,7 @@ public:
 		return PrefsDlg::Instance().createOrFindPage(path);
 	}
 
-  typedef PreferenceEntries::iterator iterator;
+  /*typedef PreferenceEntries::iterator iterator;
 
   iterator begin()
   {
@@ -78,9 +79,9 @@ public:
   iterator find(const char* name)
   {
     return m_preferences.find(name);
-  }
+  }*/
 
-  void registerPreference(const char* name, const StringImportCallback& importer, const StringExportCallback& exporter)
+  /*void registerPreference(const char* name, const StringImportCallback& importer, const StringExportCallback& exporter)
   {
     m_preferences.insert(PreferenceEntries::value_type(name, PreferenceEntry(importer, exporter)));
     PreferenceCache::iterator i = m_cache.find(name);
@@ -89,9 +90,9 @@ public:
       importer(i->second.c_str());
       m_cache.erase(i);
     }
-  }
+  }*/
 
-  void importPref(const char* name, const char* value)
+  /*void importPref(const char* name, const char* value)
   {
     PreferenceEntries::iterator i = m_preferences.find(name);
     if(i != m_preferences.end())
@@ -102,10 +103,10 @@ public:
     {
       m_cache.insert(PreferenceCache::value_type(name, value));
     }
-  }
+  }*/
 };
 
-inline void XMLPreference_importString(XMLImporter& importer, const char* value)
+/*inline void XMLPreference_importString(XMLImporter& importer, const char* value)
 {
   importer.write(value, string_length(value));
 }
@@ -298,6 +299,6 @@ public:
   {
     return m_xml_stack.back().m_ostream.write(buffer, length);
   }
-};
+};*/
 
 #endif

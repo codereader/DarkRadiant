@@ -225,13 +225,6 @@ void streams_init()
 }
 
 void createPIDFile(const std::string& name) {
-  /*!
-  the global prefs loading / game selection dialog might fail for any reason we don't know about
-  we need to catch when it happens, to cleanup the stateful prefs which might be killing it
-  and to turn on console logging for lookup of the problem
-  this is the first part of the two step .pid system
-  http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=297
-  */
 	std::string pidFile = GlobalRegistry().get(RKEY_SETTINGS_PATH) + name;
 
 	FILE *pid;
@@ -246,17 +239,16 @@ void createPIDFile(const std::string& name) {
 			gtk_MessageBox(0, msg.c_str(), "Radiant", eMB_OK, eMB_ICONERROR );
 		}
 
-    // in debug, never prompt to clean registry, turn console logging auto after a failed start
-#if !defined(_DEBUG)
-    std::string msg("Radiant failed to start properly the last time it was run.\n");
-    msg += "The failure may be related to current global preferences.\n";
-	msg += "Do you want to reset global preferences to defaults?";
+	    std::string msg("Radiant failed to start properly the last time it was run.\n");
+	    msg += "The failure may be related to invalid preference settings.\n";
+		msg += "Do you want to rename your local user.xml file and restore the default settings?";
 
-	if (gtk_MessageBox(0, msg.c_str(), "Radiant - Startup Failure", eMB_YESNO, eMB_ICONQUESTION) == eIDYES) {
-		Preferences_Reset();
+		if (gtk_MessageBox(0, msg.c_str(), "Radiant - Startup Failure", 
+			   eMB_YESNO, eMB_ICONQUESTION) == eIDYES) 
+		{
+			resetPreferences();
+		}
 	}
-#endif
-  }
 
 	// create a primary .pid for global init run
 	pid = fopen (pidFile.c_str(), "w");
@@ -269,9 +261,9 @@ void removePIDFile(const std::string& name) {
 	std::string pidFile = GlobalRegistry().get(RKEY_SETTINGS_PATH) + name;
 
 	// close the primary
-	if (remove (pidFile.c_str()) == -1) {
+	if (remove(pidFile.c_str()) == -1) {
 		std::string msg = "WARNING: Could not delete " + pidFile;
-		gtk_MessageBox (0, msg.c_str(), "Radiant", eMB_OK, eMB_ICONERROR );
+		gtk_MessageBox(0, msg.c_str(), "Radiant", eMB_OK, eMB_ICONERROR );
 	}
 }
 
@@ -313,9 +305,6 @@ int main (int argc, char* argv[])
 	// let the user choose the game, if nothing is found in the Registry
 	game::Manager::Instance().initialise();
 
-	// Set the INI path for the local.pref / global.pref
-	PrefsDlg::Instance().Init();
-	
 	// Setup the engine path, we need it for the FileSystem
 	// this triggers a VFS initialisation that searches
 	// the game paths for suitable archive files
