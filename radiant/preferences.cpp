@@ -172,13 +172,13 @@ void PrefPage::foreachPage(Visitor& visitor) {
 	}
 }
 
-GtkWidget* PrefPage::appendCheckBox(const char* name, const char* flag, bool& data) {
+/*GtkWidget* PrefPage::appendCheckBox(const char* name, const char* flag, bool& data) {
 	return NULL; //return m_dialog.addCheckBox(m_vbox, name, flag, data);
 }
 
 GtkWidget* PrefPage::appendCheckBox(const char* name, const char* flag, const BoolImportCallback& importCallback, const BoolExportCallback& exportCallback) {
 	return NULL; //return m_dialog.addCheckBox(m_vbox, name, flag, importCallback, exportCallback);
-}
+}*/
 
 /* greebo: This adds a checkbox and connects it to an XMLRegistry key.
  * @returns: the pointer to the created GtkWidget */

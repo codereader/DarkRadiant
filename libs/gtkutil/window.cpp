@@ -154,11 +154,6 @@ GtkWindow* create_persistent_floating_window(const char* title, GtkWindow* main_
   connect_floating_window_delete_present(window, main_window);
   g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(persistent_floating_window_delete), 0);
 
-#if 0
-  if(g_multimon_globals.m_bStartOnPrimMon && g_multimon_globals.m_bNoSysMenuPopups)
-    g_signal_connect(G_OBJECT(window), "realize", G_CALLBACK(window_realize_remove_sysmenu), 0);
-#endif
-
   return window;
 }
 

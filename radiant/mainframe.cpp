@@ -1670,7 +1670,7 @@ void MainFrame::Create()
     }
 
 #ifdef WIN32
-  if( g_multimon_globals.m_bStartOnPrimMon )
+  if (GlobalRegistry().get(RKEY_MULTIMON_START_PRIMARY) == "1")
   {
     PositionWindowOnPrimaryScreen(g_layout_globals.m_position);
 	window_set_position(window, g_layout_globals.m_position);

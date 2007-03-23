@@ -87,6 +87,10 @@
 		</splitPane>
 		<windowLayout value="1" />
 	</mainFrame>
+	<multiMonitor>
+		<startOnPrimaryMonitor value="0" />
+		<disableSysMenuOnPopups value="0" />
+	</multiMonitor>
 	<xyview>
 		<views name="default">
 			<view type="XY" xPosition="500" yPosition="100" width="400" height="430"/>
