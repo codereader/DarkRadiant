@@ -36,6 +36,4 @@ inline void BezierCurveTreeArray_deleteAll(Array<BezierCurveTree*>& curveTrees) 
   }
 }
 
-extern int g_PatchSubdivideThreshold;
-
 #endif /*BEZIER_H_*/

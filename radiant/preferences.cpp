@@ -368,7 +368,7 @@ void PrefPage::appendRadioIcons(const std::string& name, const std::string& regi
 	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(DialogRow_new(name.c_str(), table)));
 }
 
-void PrefPage::appendCombo(const char* name, StringArrayRange values, const IntImportCallback& importCallback, const IntExportCallback& exportCallback) {
+/*void PrefPage::appendCombo(const char* name, StringArrayRange values, const IntImportCallback& importCallback, const IntExportCallback& exportCallback) {
 	//m_dialog.addCombo(m_vbox, name, values, importCallback, exportCallback);
 }
 void PrefPage::appendCombo(const char* name, int& data, StringArrayRange values) {
@@ -421,7 +421,7 @@ GtkWidget* PrefPage::appendSpinner(const char* name, double value, double lower,
 }
 GtkWidget* PrefPage::appendSpinner(const char* name, double value, double lower, double upper, const FloatImportCallback& importCallback, const FloatExportCallback& exportCallback) {
 	return NULL; //return m_dialog.addSpinner(m_vbox, name, value, lower, upper, importCallback, exportCallback);
-}
+}*/
 
 
 // =============================================================================

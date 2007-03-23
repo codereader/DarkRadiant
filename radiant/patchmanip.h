@@ -38,10 +38,6 @@ void Scene_PatchCapTexture_Selected(scene::Graph& graph);
 
 void PatchFilters_construct();
 
-void PatchPreferences_construct();
-
-void Patch_registerPreferencesPage();
-
 class PatchCreator;
 extern PatchCreator* g_patchCreator;
 

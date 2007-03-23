@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ipatch.h"
 #include "ifilter.h"
 #include "patch.h"
+#include "preferencesystem.h"
 #include "patchmanip.h"
 
 #include "PatchNode.h"
@@ -39,6 +40,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 namespace {
 	// A global to keep track of the number of patch modules registered
 	std::size_t g_patchModuleCount = 0;
+	const std::string RKEY_PATCH_SUBDIVIDE_THRESHOLD = "user/ui/patch/subdivideThreshold";
 }
 
 // Initialises the Patch classes and registers the preferences
@@ -49,8 +51,8 @@ void Patch_Construct(EPatchType type) {
 	}
 
 	// Construct and Register the patch-related preferences
-	PatchPreferences_construct();
-	Patch_registerPreferencesPage();
+	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Patch");
+	page->appendEntry("Patch Subdivide Threshold", RKEY_PATCH_SUBDIVIDE_THRESHOLD);
 
 	// Initialise the static member variables of the Patch and PatchInstance classes
 	Patch::constructStatic(type);
