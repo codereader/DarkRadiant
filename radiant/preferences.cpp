@@ -542,6 +542,10 @@ void PrefsDlg::showModal(const std::string& path) {
 	}
 }
 
+void PrefsDlg::showProjectSettings() {
+	showModal("Game");
+}
+
 bool PrefsDlg::isVisible() const {
 	return (_dialog != NULL && GTK_WIDGET_VISIBLE(_dialog));
 }
