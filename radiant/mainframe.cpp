@@ -211,9 +211,6 @@ public:
 
 WorldspawnColourEntityClassObserver g_WorldspawnColourEntityClassObserver;
 
-
-ModuleObservers g_gameToolsPathObservers;
-
 /*
  * Load XML config files into the XML registry.
  */
@@ -269,8 +266,6 @@ void Radiant_Initialise()
 	// Load the other modules
 	Radiant_Construct(GlobalModuleServer_get());
 	
-	g_gameToolsPathObservers.realise();
-	
 	// Construct the MRU commands and menu structure
 	GlobalMRU().constructMenu();
 	
@@ -303,9 +298,7 @@ void Radiant_Shutdown() {
 	// Save the remaining /darkradiant/user tree to user.xml so that the current settings are preserved
 	GlobalRegistry().exportToFile("user", GlobalRegistry().get(RKEY_SETTINGS_PATH) + "user.xml");
 
-  g_gameToolsPathObservers.unrealise();
-
-  Radiant_Destroy();
+	Radiant_Destroy();
 }
 
 void Exit()
@@ -1986,8 +1979,6 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("CSGSubtract", FreeCaller<CSG_Subtract>());
 	GlobalEventManager().addCommand("CSGMerge", FreeCaller<CSG_Merge>());
 	GlobalEventManager().addCommand("CSGHollow", FreeCaller<CSG_MakeHollow>());
-	
-	GlobalEventManager().addCommand("TextureDirectoryList", FreeCaller<DoTextureListDlg>());
 	
 	GlobalEventManager().addCommand("RefreshShaders", FreeCaller<RefreshShaders>());
 	

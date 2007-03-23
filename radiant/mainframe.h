@@ -166,8 +166,6 @@ public:
   }
 };
 
-class ModuleObserver;
-
 void Radiant_Initialise();
 void Radiant_Shutdown();
 
