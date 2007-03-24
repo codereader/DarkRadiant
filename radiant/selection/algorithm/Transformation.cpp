@@ -48,6 +48,16 @@ class SelectionCloner :
 	public scene::Graph::Walker
 {
 public:
+	typedef std::vector<scene::Node*> List;
+
+private:	
+	List& _list;
+
+public:
+	SelectionCloner(List& list) :
+		_list(list)
+	{}
+
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
 		if (path.size() == 1) {
 			return true;
@@ -71,9 +81,14 @@ public:
 		if (!path.top().get().isRoot()) {
 			if (Instance_isSelected(instance)) {
 				// Clone the current node
-				NodeSmartReference clone(Node_Clone(path.top()));
+				scene::Node& clonedNode = Node_Clone(path.top());
+				NodeSmartReference clone(clonedNode);
 				// Add this node to the list of namespaced items
 				Map_gatherNamespaced(clone);
+				
+				// Add the cloned node to the list 
+				_list.push_back(&clonedNode);
+				
 				// Insert the cloned item to the parent
 				Node_getTraversable(path.parent().get())->insert(clone);
 			}
@@ -81,13 +96,53 @@ public:
 	}
 };
 
+/** greebo: Sets the selection status of the visited Instance to <selected>
+ * 			as passed to the constructor.
+ * 
+ * 			Use this visitor to select nodes. 
+ */
+class InstanceSelector :
+	public scene::Instantiable::Visitor
+{
+	bool _selected;
+public:
+	InstanceSelector(bool selected) :
+		_selected(selected)
+	{}
+	
+	void visit(scene::Instance& instance) const {
+		Instance_setSelected(instance, _selected);
+	}
+};
+
+/** greebo: Tries to select the given node.
+ */
+void selectNode(scene::Node& node) {
+	// Try to get an instantiable out of this node
+	scene::Instantiable* instantiable = Node_getInstantiable(node);
+	if (instantiable != NULL) {
+		instantiable->forEachInstance(InstanceSelector(true));
+	}
+}
+
 void cloneSelected() {
 	// Check for the correct editing mode (don't clone components)
 	if(GlobalSelectionSystem().Mode() == SelectionSystem::ePrimitive) {
 		UndoableCommand undo("cloneSelected");
 		
-		GlobalSceneGraph().traverse(SelectionCloner());
+		// Create the list that will take the cloned instances
+		SelectionCloner::List list;
+		
+		GlobalSceneGraph().traverse(SelectionCloner(list));
 		Map_mergeClonedNames();
+		
+		// Unselect the current selection
+		GlobalSelectionSystem().setSelectedAll(false);
+		
+		// Now select the cloned nodes
+		for (unsigned int i = 0; i < list.size(); i++) {
+			selectNode(*list[i]);
+		}
 	}
 }
 
