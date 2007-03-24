@@ -13,7 +13,7 @@ namespace ui {
 		const std::string RKEY_ROOT = "user/ui/groupDialog/";
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 		
-		const std::string WINDOW_TITLE = "Entities";
+		const std::string WINDOW_TITLE = "Entity";
 	}
 
 GroupDialog::GroupDialog() :

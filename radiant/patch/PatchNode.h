@@ -27,8 +27,6 @@ class PatchNode :
 			NodeContainedCast<PatchNode, Snappable>::install(m_casts);
 			NodeContainedCast<PatchNode, TransformNode>::install(m_casts);
 			NodeContainedCast<PatchNode, Patch>::install(m_casts);
-			NodeContainedCast<PatchNode, XMLImporter>::install(m_casts);
-			NodeContainedCast<PatchNode, XMLExporter>::install(m_casts);
 			NodeContainedCast<PatchNode, MapImporter>::install(m_casts);
 			NodeContainedCast<PatchNode, MapExporter>::install(m_casts);
 			NodeContainedCast<PatchNode, Nameable>::install(m_casts);
@@ -57,14 +55,6 @@ public:
 		return m_patch;
 	}	
   
-  	// "Casts" of the patch to XMLImporter/XMLExporter 
-	XMLImporter& get(NullType<XMLImporter>) {
-		return m_patch;
-	}
-	XMLExporter& get(NullType<XMLExporter>) {
-		return m_patch;
-	}
-	
 	// "Casts" to MapImporter/MapExporter
 	MapImporter& get(NullType<MapImporter>) {
 		return m_importMap;

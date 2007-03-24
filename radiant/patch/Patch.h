@@ -3,7 +3,6 @@
 
 #include <vector>
 
-#include "xml/ixml.h"
 #include "transformlib.h"
 #include "scenelib.h"
 #include "cullable.h"
@@ -32,8 +31,6 @@
  */
 // parametric surface defined by quadratic bezier control curves
 class Patch :
-	public XMLImporter,
-	public XMLExporter,
 	public TransformNode,
 	public Bounded,
 	public Cullable,
@@ -204,11 +201,9 @@ public:
 	// Renders the normals (indicated by lines) of this patch
 	void RenderNormals(RenderStateFlags state) const;
 
-	void pushElement(const XMLElement& element);
 	void popElement(const char* name);
 	
 	std::size_t write(const char* buffer, std::size_t length);
-	void exportXML(XMLImporter& importer);
 
 	void UpdateCachedData();
 

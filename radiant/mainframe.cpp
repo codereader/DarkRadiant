@@ -1449,10 +1449,10 @@ void MainFrame::Create()
     // Add entity inspector widget
     ui::GroupDialog::Instance().addPage(
     	"entity",	// name
-    	"Entities", // tab title
+    	"Entity", // tab title
     	"cmenu_add_entity.png", // tab icon 
     	ui::EntityInspector::getInstance().getWidget(), // page widget
-    	"Entity Inspector"
+    	"Entity"
     );
 
 	// Add the Media Browser page
@@ -1461,7 +1461,7 @@ void MainFrame::Create()
     	"Media", // tab title
     	"folder16.png", // tab icon 
     	ui::MediaBrowser::getInstance().getWidget(), // page widget
-    	"Media Browser"
+    	"Media"
     );
 	
     // Add the console widget if using floating window mode, otherwise the
