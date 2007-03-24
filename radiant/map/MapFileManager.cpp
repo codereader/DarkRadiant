@@ -2,6 +2,7 @@
 
 #include "iregistry.h"
 #include "ifiletypes.h"
+#include "environment.h"
 #include "mainframe.h"
 #include "gtkutil/filechooser.h"
 #include "os/path.h"
@@ -25,7 +26,12 @@ std::string MapFileManager::selectFile(bool open,
 	// Check, if the lastdir contains at least anything and load
 	// the default map path if it's empty
 	if (_lastDir.empty()) {
-		_lastDir = GlobalRegistry().get("user/paths/mapPath");
+		_lastDir = GlobalRegistry().get(RKEY_MAP_PATH);
+	}
+	
+	// Override the settings for the prefabs
+	if (type == "prefab") {
+		_lastDir = GlobalRegistry().get(RKEY_PREFAB_PATH);
 	}
 	
 	// Display a file chooser dialog to get a new path
