@@ -1,6 +1,8 @@
 #include "PicoModelInstance.h"
 #include "RenderablePicoSurface.h"
 
+#include "ifilter.h"
+#include "ishaders.h"
 #include "math/frustum.h"
 
 namespace model
@@ -84,9 +86,15 @@ void PicoModelInstance::submitRenderables(Renderer& renderer,
 				 i != _mappedSurfs.end();
 				 ++i)
 			{
-				// Submit the surface and shader to the renderer
-				renderer.SetState(i->second, Renderer::eFullMaterials);
-				renderer.addRenderable(*(i->first), localToWorld);
+				// Submit the surface and shader to the renderer, checking first
+				// to make sure the texture is not filtered
+				IShaderPtr surfaceShader = i->second->getIShader();
+				if (GlobalFilterSystem().isVisible("texture", 
+												   surfaceShader->getName()))
+				{ 
+					renderer.SetState(i->second, Renderer::eFullMaterials);
+					renderer.addRenderable(*(i->first), localToWorld);
+				}
 			}			
 		}
 		else {
