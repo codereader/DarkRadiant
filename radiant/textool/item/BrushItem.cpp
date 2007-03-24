@@ -37,5 +37,22 @@ void BrushItem::beginTransformation() {
 	_sourceBrush.undoSave();
 }
 
+void BrushItem::selectRelated() {
+	// Call the default routine
+	TexToolItem::selectRelated();
+	
+	// Select all the faces, if one is selected
+	for (unsigned int i = 0; i < _children.size(); i++) {
+		if (_children[i]->isSelected()) {
+			// A selected child has been found, select them all
+			for (unsigned int j = 0; j < _children.size(); j++) {
+				_children[j]->setSelected(true);
+			}
+			// Stop the loop
+			break;
+		}
+	}
+}
+
 	} // namespace TexTool
 } // namespace selection

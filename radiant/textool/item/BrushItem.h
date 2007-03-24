@@ -22,6 +22,10 @@ public:
 	 */
 	virtual void beginTransformation();
 
+	/** greebo: Selects all faces if a child face is selected.
+	 */
+	virtual void selectRelated();
+
 }; // class BrushItem
 	
 	} // namespace TexTool

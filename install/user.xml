@@ -220,6 +220,7 @@
 		<toolbutton name="mergeitems" action="TexToolMergeItems" tooltip="Merge Selection" icon="textool_merge.png"/>
 		<toolbutton name="texflips" action="TexToolFlipS" tooltip="Flip Selection Horiz (S-Axis)" icon="tex_flips.png"/>
 		<toolbutton name="mergeitems" action="TexToolFlipT" tooltip="Flip Selection Vertical (T-Axis)" icon="tex_flipt.png"/>
+		<toolbutton name="selectrelated" action="TexToolSelectRelated" tooltip="Select Related Items" icon="textool_select_related.png"/>
     </toolbar>
  </ui>
 </user>

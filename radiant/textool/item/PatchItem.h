@@ -27,6 +27,10 @@ public:
 	/** greebo: Calls Patch::controlPointsChanged()
 	 */
 	virtual void update();
+	
+	/** greebo: Selects all patch vertices if on of them is selected.
+	 */
+	virtual void selectRelated();
 };
 	
 	} // namespace TexTool

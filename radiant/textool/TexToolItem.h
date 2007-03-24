@@ -96,6 +96,10 @@ public:
 	// Default endTransformation routine: propagate the call to children
 	virtual void endTransformation();
 	
+	/** greebo: Selects all siblings if a child node is selected.
+	 */
+	virtual void selectRelated();
+	
 	/** greebo: This tells the Transformable to sync up their source objects
 	 * 			(e.g. by calling Patch::controlPointsChanged()) to make
 	 * 			the changes visible in the scenegraph.

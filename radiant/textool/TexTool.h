@@ -132,12 +132,20 @@ public:
 	static void texToolMergeItems();
 	static void texToolFlipS();
 	static void texToolFlipT();
+	static void selectRelated();
 	
 	/** greebo: Registers the commands in the EventManager
 	 */
 	static void registerCommands();
 	
 private:
+	/** greebo: Selects all items that are related / connected
+	 * 			to the currently selected ones. E.g. if one patch
+	 * 			vertex is selected, all the vertices of the patch
+	 * 			get selected as well.
+	 */
+	void selectRelatedItems();
+	
 	/** greebo: Toggles the visibility of this TexTool instance.
 	 * The actual static instance is owned by the Instane() method.
 	 */
