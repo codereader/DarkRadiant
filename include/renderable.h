@@ -30,18 +30,18 @@ class OpenGLRenderable;
 class LightList;
 class Matrix4;
 
-/** This is a proxy class used in the first (sorting) stage of rendering, which 
+/** 
+ * This is a proxy class used in the first (sorting) stage of rendering, which 
  * accepts OpenGLRenderables and adds them to a suitable data structure for 
  * rendering in the second stage. Despite its name, this class does not
  * actually render anything.
  * 
- * Each Renderable in the scenegraph is passed a reference to a 
- * RenderableSortProxy, on which the Renderable sets that necessary state
- * variables and then submits its OpenGLRenderable for later rendering. A
- * single Renderable may submit more than one OpenGLRenderable, with a
- * different state each time -- for instance a Renderable model class may
- * submit each of its material surfaces separately with the respective shaders
- * set beforehand.
+ * Each Renderable in the scenegraph is passed a reference to a Renderer, on 
+ * which the Renderable sets the necessary state variables and then submits its 
+ * OpenGLRenderable(s) for later rendering. A single Renderable may submit more 
+ * than one OpenGLRenderable, with a different state each time -- for instance a 
+ * Renderable model class may submit each of its material surfaces separately 
+ * with the respective shaders set beforehand.
  * 
  * @todo
  * This class probably doesn't need to be a state machine, convert it to a 
@@ -58,21 +58,52 @@ public:
     ePrimitive = 1 << 1,
   };
 
-  enum EStyle
-  {
-    eWireframeOnly,
-    eFullMaterials,
-  };
+	/**
+	 * Enumeration containing render styles.
+	 */
+	enum EStyle {
+		eWireframeOnly,
+		eFullMaterials
+	};
 
   virtual void PushState() = 0;
   virtual void PopState() = 0;
-  virtual void SetState(boost::shared_ptr<Shader> state, EStyle mode) = 0;
+  
+	/**
+	 * Set the Shader to be used when rendering any subsequently-submitted
+	 * OpenGLRenderable object. This shader remains in effect until it is
+	 * changed with a subsequent call to SetState().
+	 * 
+	 * @param state
+	 * The Shader to be used from now on.
+	 * 
+	 * @param mode
+	 * The type of rendering (wireframe or shaded) that this shader should be
+	 * used for. Individual Renderer subclasses may ignore this method call if
+	 * it does not use the render mode they are interested in.
+	 */
+	virtual void SetState(boost::shared_ptr<Shader> state, EStyle mode) = 0;
+	
+	/**
+	 * Submit an OpenGLRenderable object for rendering when the backend render
+	 * pass is conducted. The object will be rendered using the Shader previous-
+	 * ly set with SetState().
+	 * 
+	 * @param renderable
+	 * The renderable object to submit.
+	 * 
+	 * @param world
+	 * The local to world transform that should be applied to this object when
+	 * it is rendered.
+	 */
+	virtual void addRenderable(const OpenGLRenderable& renderable, 
+							   const Matrix4& world) = 0;
+  
   virtual const EStyle getStyle() const = 0;
   virtual void Highlight(EHighlightMode mode, bool bEnable = true) = 0;
   virtual void setLights(const LightList& lights)
   {
   }
-  virtual void addRenderable(const OpenGLRenderable& renderable, const Matrix4& world) = 0;
 };
 
 class VolumeTest;

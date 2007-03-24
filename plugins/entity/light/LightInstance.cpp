@@ -73,11 +73,12 @@ void LightInstance::renderInactiveComponents(Renderer& renderer, const VolumeTes
 	}
 }
 
-/* greebo: This is the method that gets called by renderer.h. It passes the call on to the Light class render methods. 
+/* greebo: This is the method that gets called by renderer.h. It passes the call 
+ * on to the Light class render methods. 
  */
 void LightInstance::renderSolid(Renderer& renderer, const VolumeTest& volume) const {
 	const bool lightIsSelected = getSelectable().isSelected();
-	_light.renderSolid(renderer, volume, Instance::localToWorld(), lightIsSelected);
+	_light.renderSolid(renderer, volume, Instance::localToWorld());
 	
 	renderInactiveComponents(renderer, volume, lightIsSelected);
 }

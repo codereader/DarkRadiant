@@ -568,6 +568,7 @@ void Light::detach(scene::Traversable::Observer* observer) {
 	m_traverseObservers.detach(*observer);
 }
 
+// Backend render function (GL calls)
 void Light::render(RenderStateFlags state) const {
 	light_draw(m_aabb_light, state);
 }
@@ -611,25 +612,15 @@ void Light::renderProjectionPoints(Renderer& renderer, const VolumeTest& volume,
 }
 
 // greebo: Note that this function has to be const according to the abstract base class definition
-void Light::renderSolid(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const {
-	renderer.SetState(m_entity.getEntityClass()->getWireShader(), Renderer::eWireframeOnly);
+void Light::renderSolid(Renderer& renderer, 
+						const VolumeTest& volume, 
+						const Matrix4& localToWorld) const 
+{
+	// Submit the renderable light diamond
+	renderer.SetState(m_entity.getEntityClass()->getWireShader(), 
+					  Renderer::eWireframeOnly);
 	renderer.SetState(m_colour.state(), Renderer::eFullMaterials);
 	renderer.addRenderable(*this, localToWorld);
-
-	renderer.SetState(m_entity.getEntityClass()->getWireShader(), Renderer::eFullMaterials);
-
-	// Always draw Doom 3 light bounding boxes, if the global is set
-	if (selected || LightSettings().showAllLightRadii()) {
-		if (isProjected()) {
-			// greebo: This is not much of an performance impact as the projection gets only recalculated when it has actually changed.
-			projection();
-			renderer.addRenderable(m_renderProjection, localToWorld);
-		}
-		else {
-			updateLightRadiiBox();
-			renderer.addRenderable(m_radii_box, localToWorld);
-		}
-	}
 }
 
 // Adds the light centre renderable to the given renderer
@@ -642,8 +633,32 @@ void Light::renderLightCentre(Renderer& renderer, const VolumeTest& volume, cons
 	renderer.addRenderable(_rCentre, localToWorld);
 }
 
-void Light::renderWireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const {
-	renderSolid(renderer, volume, localToWorld, selected);
+void Light::renderWireframe(Renderer& renderer, 
+							const VolumeTest& volume, 
+							const Matrix4& localToWorld, 
+							bool selected) const 
+{
+	// Main render, submit the diamond that represents the light entity
+	renderSolid(renderer, volume, localToWorld);
+
+	// Render bounding box if selected or the showAllLighRadii flag is set
+	if (selected || LightSettings().showAllLightRadii()) {
+
+		renderer.SetState(m_entity.getEntityClass()->getWireShader(), 
+						  Renderer::eWireframeOnly);
+
+		if (isProjected()) {
+			// greebo: This is not much of an performance impact as the projection gets only recalculated when it has actually changed.
+			projection();
+			renderer.addRenderable(m_renderProjection, localToWorld);
+		}
+		else {
+			updateLightRadiiBox();
+			renderer.addRenderable(m_radii_box, localToWorld);
+		}
+	}
+
+	// Render the name
 	if (GlobalRegistry().get("user/ui/xyview/showEntityNames") == "1") {
 		renderer.addRenderable(m_renderName, localToWorld);
 	}
