@@ -40,7 +40,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/einspector/EntityInspector.h"
 #include "ui/lightinspector/LightInspector.h"
 #include "ui/mediabrowser/MediaBrowser.h"
-#include "ui/common/ToolbarCreator.h"
 #include "ui/colourscheme/ColourSchemeManager.h"
 #include "ui/colourscheme/ColourSchemeEditor.h"
 #include "ui/menu/FiltersMenu.h"
@@ -1340,25 +1339,28 @@ void MainFrame::Create()
     // Create the Filter menu entries
     ui::FiltersMenu::addItems();
     
+    // Get the reference to the MenuManager class
+    IMenuManager& menuManager = GlobalUIManager().getMenuManager();
+    
     // Retrieve the "main" menubar from the UIManager
-    GtkMenuBar* mainMenu = GTK_MENU_BAR(GlobalUIManager().getMenuManager().get("main"));
+    GtkMenuBar* mainMenu = GTK_MENU_BAR(menuManager.get("main"));
     gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(mainMenu), false, false, 0);
     
     if (m_nCurrentStyle != eFloating) {
     	// Hide the camera toggle option for non-floating views
-    	GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);
+    	menuManager.setVisibility("main/view/cameraview", false);
     }
     
 	if (m_nCurrentStyle != eFloating && m_nCurrentStyle != eSplit) {
 		// Hide the console/texture browser toggles for non-floating/non-split views
-		GlobalUIManager().getMenuManager().setVisibility("main/view/consoleView", false);
-		GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", false);	
+		menuManager.setVisibility("main/view/consoleView", false);
+		menuManager.setVisibility("main/view/textureBrowser", false);	
 	}
     
-    // Instantiate the ToolbarCreator and retrieve the view toolbar widget 
-	ui::ToolbarCreator toolbarCreator;
+    // Instantiate the ToolbarManager and retrieve the view toolbar widget 
+	IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
 	
-	GtkToolbar* viewToolbar = toolbarCreator.getToolbar("view");
+	GtkToolbar* viewToolbar = tbCreator.getToolbar("view");
 	if (viewToolbar != NULL) {
 		// Pack it into the main window
 		gtk_widget_show(GTK_WIDGET(viewToolbar));
@@ -1370,7 +1372,7 @@ void MainFrame::Create()
     gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
     
     // Get the edit toolbar widget 
-	GtkToolbar* editToolbar = toolbarCreator.getToolbar("edit");
+	GtkToolbar* editToolbar = tbCreator.getToolbar("edit");
 	if (editToolbar != NULL) {
 		// Pack it into the main window
 		gtk_widget_show(GTK_WIDGET(editToolbar));

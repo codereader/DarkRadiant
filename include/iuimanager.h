@@ -6,6 +6,7 @@
 
 // Forward declarations
 typedef struct _GtkWidget GtkWidget;
+typedef struct _GtkToolbar GtkToolbar;
 
 namespace ui {
 	/** greebo: The possible menu item types, one of these
@@ -19,7 +20,7 @@ namespace ui {
 		menuItem,
 		menuSeparator,
 	};
-}
+} // namespace ui
 
 /** greebo: Implementation documentation: see MenuManager.h.
  */
@@ -75,6 +76,12 @@ public:
 							  const std::string& eventName) = 0;
 };
 
+class IToolbarManager
+{
+public:
+	virtual GtkToolbar* getToolbar(const std::string& toolbarName) = 0;
+};
+
 /** greebo: The UI Manager abstract base class.
  * 
  * The UIManager provides an interface to add UI items like menu commands
@@ -87,6 +94,7 @@ public:
 	STRING_CONSTANT(Name, "UIManager");
 
 	virtual IMenuManager& getMenuManager() = 0;
+	virtual IToolbarManager& getToolbarManager() = 0;
 };
 
 // Module definitions

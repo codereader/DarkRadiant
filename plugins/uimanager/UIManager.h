@@ -4,6 +4,7 @@
 #include "iuimanager.h"
 
 #include "MenuManager.h"
+#include "ToolbarManager.h"
 
 namespace ui {
 
@@ -12,12 +13,16 @@ class UIManager :
 {
 	// Local helper class taking care of the menu
 	MenuManager _menuManager;
+	
+	ToolbarManager _toolbarManager;
 
 public:
 
 	/** greebo: Retrieves the helper class to manipulate the menu.
 	 */
 	IMenuManager& getMenuManager();
+	
+	IToolbarManager& getToolbarManager();
 
 }; // class UIManager
 

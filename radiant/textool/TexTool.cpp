@@ -4,6 +4,7 @@
 #include "iregistry.h"
 #include "igl.h"
 #include "iundo.h"
+#include "iuimanager.h"
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
@@ -19,7 +20,6 @@
 #include "patch/Patch.h"
 #include "winding.h"
 #include "camera/GlobalCamera.h"
-#include "ui/common/ToolbarCreator.h"
 
 #include "textool/Selectable.h"
 #include "textool/Transformable.h"
@@ -95,8 +95,8 @@ void TexTool::keyChanged() {
 void TexTool::populateWindow() {
 	
 	// Load the texture toolbar from the registry
-    ui::ToolbarCreator toolbarCreator;
-    GtkToolbar* textoolbar = toolbarCreator.getToolbar("textool");
+    IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
+    GtkToolbar* textoolbar = tbCreator.getToolbar("textool");
     GTK_WIDGET_UNSET_FLAGS(GTK_WIDGET(textoolbar), GTK_CAN_FOCUS);
     
 	// Create the GL widget

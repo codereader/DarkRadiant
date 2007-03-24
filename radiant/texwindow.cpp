@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "warnings.h"
 
 #include "ieventmanager.h"
+#include "iuimanager.h"
 #include "iimage.h"
 #include "ifilesystem.h"
 #include "ishaders.h"
@@ -78,7 +79,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "mainframe.h"
 #include "ui/groupdialog/GroupDialog.h"
 #include "preferences.h"
-#include "ui/common/ToolbarCreator.h"
 #include "selection/algorithm/Shader.h"
 #include "settings/GameManager.h"
 
@@ -1203,8 +1203,8 @@ GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel)
 	  gtk_box_pack_start(GTK_BOX(hbox), texbox, TRUE, TRUE, 0);
     
     // Load the texture toolbar from the registry
-    ui::ToolbarCreator toolbarCreator;
-    GtkToolbar* textureToolbar = toolbarCreator.getToolbar("texture");
+    IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
+    GtkToolbar* textureToolbar = tbCreator.getToolbar("texture");
     if (textureToolbar != NULL) {
 		gtk_widget_show(GTK_WIDGET(textureToolbar));
 		gtk_box_pack_start(GTK_BOX(texbox), GTK_WIDGET(textureToolbar), FALSE, FALSE, 0);
