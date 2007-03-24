@@ -348,7 +348,9 @@ class InvertSelectionWalker : public scene::Graph::Walker
 	mutable Selectable* m_selectable;
 public:
 	InvertSelectionWalker(SelectionSystem::EMode mode)
-			: m_mode(mode), m_selectable(0) {}
+			: m_mode(mode), m_selectable(0)
+	{}
+	
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
 		Selectable* selectable = Instance_getSelectable(instance);
 		if (selectable) {
@@ -372,11 +374,20 @@ public:
 					break;
 			}
 		}
+		
+		// Do we have a groupnode? If yes, don't traverse the children
+		Entity* entity = Node_getEntity(path.top());
+		if (entity != NULL && node_is_group(path.top()) && 
+			entity->getKeyValue("classname") != "worldspawn") 
+		{
+			// Don't traverse the children of this groupnode
+			return false;
+		}
 		return true;
 	}
+	
 	void post(const scene::Path& path, scene::Instance& instance) const {
 		if (m_selectable != 0) {
-			//m_selectable->setSelected(!m_selectable->isSelected());
 			m_selectable->invertSelected();
 			m_selectable = 0;
 		}
