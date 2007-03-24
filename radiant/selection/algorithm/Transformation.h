@@ -27,6 +27,11 @@ namespace selection {
 		 */
 		void scaleSelected(const Vector3& scaleXYZ);
 		
+		/** greebo: This duplicates the current selection (that's what happening
+		 * 			when you hit the space bar).
+		 */
+		void cloneSelected();
+		
 	} // namespace algorithm
 } // namespace selection
 
