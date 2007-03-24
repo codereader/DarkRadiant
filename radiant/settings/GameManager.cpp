@@ -22,6 +22,8 @@ namespace game {
 		const std::string RKEY_FS_GAME = "user/game/fs_game";
 		// This key is only temporarily used
 		const std::string RKEY_GAME_INDEX = "user/game/typeIndex";
+		const std::string RKEY_PREFAB_FOLDER = "game/mapFormat/prefabFolder";
+		const std::string RKEY_MAPS_FOLDER = "game/mapFormat/mapFolder";
 	}
 
 Manager::Manager() :
@@ -263,17 +265,34 @@ void Manager::updateEnginePath(bool forced) {
 			GlobalFileSystem().initDirectory(baseGame);
 			
 			// Construct the map path and make sure the folder exists
-			std::string mapPath; 
+			std::string mapPath;
+			
+			// Get the maps folder (e.g. "maps/")
+			std::string mapFolder = GlobalRegistry().get(RKEY_MAPS_FOLDER);
+			if (mapFolder.empty()) {
+				mapFolder = "maps/"; 
+			}
+			 
 			if (_fsGame.empty()) {
-				mapPath = baseGame + "maps/";
+				mapPath = baseGame + mapFolder;
 			}
 			else {
-				mapPath = _modPath + "maps/";
+				mapPath = _modPath + mapFolder;
 			}
 			globalOutputStream() << "GameManager: Map path set to " << mapPath.c_str() << "\n";
 			Q_mkdir(mapPath.c_str());
 			// Save the map path (is stored to the registry as well)
 			Environment::Instance().setMapsPath(mapPath);
+
+			// Setup the prefab path
+			std::string prefabPath = mapPath;
+			std::string pfbFolder = GlobalRegistry().get(RKEY_PREFAB_FOLDER);
+			
+			// Replace the "maps/" with "prefabs/"
+			boost::algorithm::replace_last(prefabPath, mapFolder, pfbFolder);
+			// Store the path into the registry
+			globalOutputStream() << "GameManager: Prefab path set to " << prefabPath.c_str() << "\n";
+			GlobalRegistry().set(RKEY_PREFAB_PATH, prefabPath);
 
 			_enginePathInitialised = true;
 		}

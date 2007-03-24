@@ -138,6 +138,7 @@
 	<mapFormat>
 		<fileExtension value="map" />
 		<mapFolder value="maps/" />
+		<prefabFolder value="prefabs/" />
 		<!-- Compatibility options -->
 		<compatibility>
 			<addDummyBrushes value="true" />
