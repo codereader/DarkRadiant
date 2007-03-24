@@ -127,7 +127,7 @@ void SREntity::remove(int id) {
 }
 
 void SREntity::removeScript(int id) {
-	if (id > 0 && !_scripts[id].inherited) {
+	if (id >= 0 && !_scripts[id].inherited) {
 		// Remove the item from the vector
 		_scripts.erase(_scripts.begin() + id);
 		updateListStore();
