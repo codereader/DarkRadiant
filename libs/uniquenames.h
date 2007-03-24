@@ -24,93 +24,44 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "debugging/debugging.h"
 #include <map>
+#include <iostream>
 #include "string/string.h"
 #include "generic/static.h"
 
-#if 1
 class Postfix
 {
-  unsigned int m_value;
+	// The integer value extracted from the postfix
+	unsigned int _value;
 public:
-  Postfix(const char* postfix) : m_value(atoi(postfix))
-  {
-  }
-  unsigned int number() const
-  {
-    return m_value;
-  }
-  void write(char* buffer)
-  {
-    sprintf(buffer, "%u", m_value);
-  }
-  Postfix& operator++()
-  { 
-    ++m_value;
-    return *this;
-  }
-  bool operator<(const Postfix& other) const
-  {
-    return m_value < other.m_value;
-  }
-  bool operator==(const Postfix& other) const
-  {
-    return m_value == other.m_value;
-  }
-  bool operator!=(const Postfix& other) const
-  {
-    return !operator==(other);
-  }
+	Postfix(const char* postfix) : 
+		_value(atoi(postfix)) 
+	{}
+	
+	unsigned int number() const {
+		return _value;
+	}
+	
+	void write(char* buffer) {
+		sprintf(buffer, "%u", _value);
+	}
+	
+	Postfix& operator++() {
+		_value++;
+		return *this;
+	}
+	
+	bool operator<(const Postfix& other) const {
+		return _value < other._value;
+	}
+	
+	bool operator==(const Postfix& other) const {
+		return _value == other._value;
+	}
+	
+	bool operator!=(const Postfix& other) const {
+		return !operator==(other);
+	}
 };
-
-#else
-class Postfix
-{
-  std::pair<unsigned int, unsigned int> m_value;
-public:
-  Postfix(unsigned int number, unsigned int leading_zeros)
-    : m_value(leading_zeros, number)
-  {
-  }
-  Postfix(const char* postfix)
-    : m_value(number_count_leading_zeros(postfix), atoi(postfix))
-  {
-  }
-  unsigned int number() const
-  {
-    return m_value.second;
-  }
-  unsigned int leading_zeros() const
-  {
-    return m_value.first;
-  }
-  void write(char* buffer)
-  {
-    for(unsigned int count = 0; count < m_value.first; ++count, ++buffer)
-      *buffer = '0';
-    sprintf(buffer, "%u", m_value.second);
-  }
-  Postfix& operator++()
-  { 
-    ++m_value.second;
-    if(m_value.first != 0 && m_value.second % 10 == 0)
-      --m_value.first;
-    return *this;
-  }
-  bool operator<(const Postfix& other) const
-  {
-    return m_value < other.m_value;
-  }
-  bool operator==(const Postfix& other) const
-  {
-    return m_value == other.m_value;
-  }
-  bool operator!=(const Postfix& other) const
-  {
-    return !operator==(other);
-  }
-};
-
-#endif
 
 typedef std::pair<CopiedString, Postfix> name_t;
 
@@ -205,6 +156,13 @@ class UniqueNames
   typedef std::map<CopiedString, PostFixes> names_t;
   names_t m_names;
 public:
+	/** greebo: A name_t is passed and analysed, if the nameroot
+	 * 			is already in the list. If the name is known, the postfix
+	 * 			is made "unique", i.e. a suitable postfix is returned.
+	 * 
+	 * 			If the name is not yet registered, the passed name is
+	 * 			returned without change.
+	 */
   name_t make_unique(const name_t& name) const
   {
     names_t::const_iterator i = m_names.find(name.first);
