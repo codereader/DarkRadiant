@@ -49,6 +49,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "selection/algorithm/Shader.h"
 #include "selection/algorithm/Group.h"
 #include "selection/algorithm/Primitives.h"
+#include "selection/algorithm/Transformation.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "iclipper.h"
 #include "ifilesystem.h"
@@ -512,53 +513,6 @@ void ToggleFaceMode() {
 	ModeChangeNotify();
 }
 
-
-class CloneSelected : public scene::Graph::Walker
-{
-public:
-  bool pre(const scene::Path& path, scene::Instance& instance) const
-  {
-    if(path.size() == 1)
-      return true;
-    
-    if(!path.top().get().isRoot())
-    {
-      Selectable* selectable = Instance_getSelectable(instance);
-      if(selectable != 0
-        && selectable->isSelected())
-      {
-        return false;
-      }
-    }
-
-    return true;
-  }
-  void post(const scene::Path& path, scene::Instance& instance) const
-  {
-    if(path.size() == 1)
-      return;
-
-    if(!path.top().get().isRoot())
-    {
-      Selectable* selectable = Instance_getSelectable(instance);
-      if(selectable != 0
-        && selectable->isSelected())
-      {
-        NodeSmartReference clone(Node_Clone(path.top()));
-        Map_gatherNamespaced(clone);
-        Node_getTraversable(path.parent().get())->insert(clone);
-      }
-    }
-  }
-};
-
-void Scene_Clone_Selected(scene::Graph& graph)
-{
-  graph.traverse(CloneSelected());
-
-  Map_mergeClonedNames();
-}
-
 enum ENudgeDirection
 {
   eNudgeUp = 1,
@@ -620,19 +574,6 @@ void NudgeSelection(ENudgeDirection direction, float fAmount, EViewType viewtype
   GlobalSelectionSystem().NudgeManipulator(nudge, view_direction);
 }
 
-void Selection_Clone()
-{
-  if(GlobalSelectionSystem().Mode() == SelectionSystem::ePrimitive)
-  {
-    UndoableCommand undo("cloneSelected");
-
-    Scene_Clone_Selected(GlobalSceneGraph());
-
-    //NudgeSelection(eNudgeRight, GlobalGrid().getGridSize(), GlobalXYWnd_getCurrentViewType());
-    //NudgeSelection(eNudgeDown, GlobalGrid().getGridSize(), GlobalXYWnd_getCurrentViewType());
-  }
-}
-
 // called when the escape key is used (either on the main window or on an inspector)
 void Selection_Deselect()
 {
@@ -660,7 +601,6 @@ void Selection_Deselect()
     }
   }
 }
-
 
 void Selection_NudgeUp()
 {
@@ -1912,7 +1852,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("Copy", FreeCaller<Copy>());
 	GlobalEventManager().addCommand("Paste", FreeCaller<Paste>());
 	GlobalEventManager().addCommand("PasteToCamera", FreeCaller<PasteToCamera>());
-	GlobalEventManager().addCommand("CloneSelection", FreeCaller<Selection_Clone>());
+	GlobalEventManager().addCommand("CloneSelection", FreeCaller<selection::algorithm::cloneSelected>());
 	GlobalEventManager().addCommand("DeleteSelection", FreeCaller<deleteSelection>());
 	GlobalEventManager().addCommand("ParentSelection", FreeCaller<Scene_parentSelected>());
 	GlobalEventManager().addCommand("UnSelectSelection", FreeCaller<Selection_Deselect>());
