@@ -7,6 +7,7 @@
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/IconTextColumn.h"
 #include "gtkutil/VFSTreePopulator.h"
+#include "gtkutil/GLWidgetSentry.h"
 #include "signal/isignal.h"
 #include "texturelib.h"
 #include "string/string.h"
@@ -282,64 +283,62 @@ void ShaderSelector::_onExpose(GtkWidget* widget,
 								GdkEventExpose* ev,
 								ShaderSelector* self) 
 {
-	if (glwidget_make_current(widget) != FALSE) {
-		// Get the viewport size from the GL widget
-		GtkRequisition req;
-		gtk_widget_size_request(widget, &req);
-		glViewport(0, 0, req.width, req.height);
+	// The scoped object making the GL widget the current one
+	gtkutil::GLWidgetSentry sentry(widget);
+	
+	// Get the viewport size from the GL widget
+	GtkRequisition req;
+	gtk_widget_size_request(widget, &req);
+	glViewport(0, 0, req.width, req.height);
 
-		// Initialise
-		glClearColor(0.3, 0.3, 0.3, 0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glDisable(GL_DEPTH_TEST);
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(0, req.width, 0, req.height, -100, 100);
-		glEnable (GL_TEXTURE_2D);
+	// Initialise
+	glClearColor(0.3, 0.3, 0.3, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glDisable(GL_DEPTH_TEST);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, req.width, 0, req.height, -100, 100);
+	glEnable (GL_TEXTURE_2D);
 
-		// Get the selected texture, and set up OpenGL to render it on
-		// the quad.
-		IShaderPtr shader = self->getSelectedShader();
-		
-		bool drawQuad = false;
-		
-		// Check what part of the shader we should display in the preview 
-		if (self->_isLightTexture) {
-			// This is a light, take the first layer texture
-			const ShaderLayer* first = shader->firstLayer();
-			if (first != NULL) {
-				TexturePtr tex = shader->firstLayer()->texture();
-				glBindTexture (GL_TEXTURE_2D, tex->texture_number);
-				drawQuad = true;
-			} 
+	// Get the selected texture, and set up OpenGL to render it on
+	// the quad.
+	IShaderPtr shader = self->getSelectedShader();
+	
+	bool drawQuad = false;
+	
+	// Check what part of the shader we should display in the preview 
+	if (self->_isLightTexture) {
+		// This is a light, take the first layer texture
+		const ShaderLayer* first = shader->firstLayer();
+		if (first != NULL) {
+			TexturePtr tex = shader->firstLayer()->texture();
+			glBindTexture (GL_TEXTURE_2D, tex->texture_number);
+			drawQuad = true;
+		} 
+	}
+	else {
+		// This is an "ordinary" texture, take the editor image
+		TexturePtr tex = shader->getTexture();
+		if (tex != NULL) {
+			glBindTexture (GL_TEXTURE_2D, tex->texture_number);
+			drawQuad = true;
 		}
-		else {
-			// This is an "ordinary" texture, take the editor image
-			TexturePtr tex = shader->getTexture();
-			if (tex != NULL) {
-				glBindTexture (GL_TEXTURE_2D, tex->texture_number);
-				drawQuad = true;
-			}
-		}
-		
-		if (drawQuad) {
-			// Draw a quad to put the texture on
-			glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
-			glColor3f(1, 1, 1);
-			glBegin(GL_QUADS);
-			glTexCoord2i(0, 1);
-			glVertex2i(0, 0);
-			glTexCoord2i(1, 1);
-			glVertex2i(req.height, 0);
-			glTexCoord2i(1, 0);
-			glVertex2i(req.height, req.height);
-			glTexCoord2i(0, 0);
-			glVertex2i(0, req.height);
-			glEnd();
-		}
-
-		// Update GtkGlExt buffer
-		glwidget_swap_buffers(widget);
+	}
+	
+	if (drawQuad) {
+		// Draw a quad to put the texture on
+		glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+		glColor3f(1, 1, 1);
+		glBegin(GL_QUADS);
+		glTexCoord2i(0, 1);
+		glVertex2i(0, 0);
+		glTexCoord2i(1, 1);
+		glVertex2i(req.height, 0);
+		glTexCoord2i(1, 0);
+		glVertex2i(req.height, req.height);
+		glTexCoord2i(0, 0);
+		glVertex2i(0, req.height);
+		glEnd();
 	}
 }
 

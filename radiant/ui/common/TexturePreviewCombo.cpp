@@ -112,49 +112,58 @@ void TexturePreviewCombo::_onExpose(GtkWidget* widget, GdkEventExpose* ev, Textu
 	// Grab the GLWidget with sentry
 	gtkutil::GLWidgetSentry sentry(widget);
 	
-	// Initialise viewport
+	// Get the viewport size from the GL widget
+	GtkRequisition req;
+	gtk_widget_size_request(widget, &req);
+	glViewport(0, 0, req.width, req.height);
+
+	// Initialise
 	glClearColor(0.3, 0.3, 0.3, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_TEXTURE_2D);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, req.width, 0, req.height, -100, 100);
+	glEnable (GL_TEXTURE_2D);
 
 	// If no texture is loaded, leave window blank
 	if (self->_texName == "")
 		return;
-	
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, 1, 0, 1, -1, 1);
-	
+
 	// Get a reference to the selected shader
 	IShaderPtr shader = GlobalShaderSystem().getShaderForName(self->_texName);
-	
-	// Bind the texture from the shader
-	TexturePtr tex = shader->getTexture();
-	glBindTexture(GL_TEXTURE_2D, tex->texture_number);
 
-	// Calculate the correct aspect ratio for preview
-	float aspect = float(tex->width) / float(tex->height);
-	float hfWidth, hfHeight;
-	if (aspect > 1.0) {
-		hfWidth = 0.5;
-		hfHeight = 0.5 / aspect;
+	// This is an "ordinary" texture, take the editor image
+	TexturePtr tex = shader->getTexture();
+	if (tex != NULL) {
+		glBindTexture (GL_TEXTURE_2D, tex->texture_number);
+		
+		// Calculate the correct aspect ratio for preview
+		float aspect = float(tex->width) / float(tex->height);
+		float hfWidth, hfHeight;
+		if (aspect > 1.0) {
+			hfWidth = 0.5*req.width;
+			hfHeight = 0.5*req.height / aspect;
+		}
+		else {
+			hfHeight = 0.5*req.width;
+			hfWidth = 0.5*req.height * aspect;
+		}
+		
+		// Draw a quad to put the texture on
+		glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+		glColor3f(1, 1, 1);
+		glBegin(GL_QUADS);
+		glTexCoord2i(0, 1); 
+		glVertex2f(0.5*req.width - hfWidth, 0.5*req.height - hfHeight);
+		glTexCoord2i(1, 1); 
+		glVertex2f(0.5*req.width + hfWidth, 0.5*req.height - hfHeight);
+		glTexCoord2i(1, 0); 
+		glVertex2f(0.5*req.width + hfWidth, 0.5*req.height + hfHeight);
+		glTexCoord2i(0, 0);	
+		glVertex2f(0.5*req.width - hfWidth, 0.5*req.height + hfHeight);
+		glEnd();
 	}
-	else {
-		hfHeight = 0.5;
-		hfWidth = 0.5 * aspect;
-	}
-	
-	// Draw a polygon
-	glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
-	glColor3f(1, 1, 1);
-	glBegin(GL_QUADS);
-		glTexCoord2i(0, 1); glVertex2f(0.5 - hfWidth, 0.5 - hfHeight);
-		glTexCoord2i(1, 1); glVertex2f(0.5 + hfWidth, 0.5 - hfHeight);
-		glTexCoord2i(1, 0); glVertex2f(0.5 + hfWidth, 0.5 + hfHeight);
-		glTexCoord2i(0, 0);	glVertex2f(0.5 - hfWidth, 0.5 + hfHeight);
-	glEnd();
-	
 }
 
 }
