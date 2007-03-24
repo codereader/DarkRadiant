@@ -227,8 +227,14 @@ public:
 	// Note: move this upwards
 	mutable Matrix4 m_projectionOrientation;
 
-	void renderSolid(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
-	void renderWireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
+	// Renderable submission functions
+	void renderSolid(Renderer& renderer, 
+					 const VolumeTest& volume, 
+					 const Matrix4& localToWorld) const;
+	void renderWireframe(Renderer& renderer, 
+						 const VolumeTest& volume, 
+						 const Matrix4& localToWorld, 
+						 bool selected) const;
 
 	// Adds the light centre renderable to the given renderer
 	void renderLightCentre(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
