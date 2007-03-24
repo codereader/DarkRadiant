@@ -25,21 +25,29 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "modelskin.h"
 
 #include "os/path.h"
-#include "stream/stringstream.h"
 #include "moduleobserver.h"
 #include "entitylib.h"
 #include "traverselib.h"
 
-inline void parseTextureName(CopiedString& name, const char* token)
+namespace {
+	
+/**
+ * Replace backslashes with forward slashes and strip of the file extension of
+ * the provided token, and store the result in the provided string.
+ * 
+ * @token
+ * The raw texture path.
+ */
+std::string parseTextureName(const std::string& token)
 {
-  StringOutputStream cleaned(256);
-  cleaned << PathCleaned(token);
-  name = StringRange(cleaned.c_str(), path_get_filename_base_end(cleaned.c_str())); // remove extension
+	return os::standardPath(token).substr(0, token.rfind("."));
 }
+
+} // local namespace
 
 class ModelSkinKey : public ModuleObserver
 {
-  CopiedString m_name;
+  std::string m_name;
   ModelSkin* m_skin;
   Callback m_skinChangedCallback;
 
@@ -72,7 +80,7 @@ public:
   void skinChanged(const char* value)
   {
     destroy();
-    parseTextureName(m_name, value);
+    m_name = parseTextureName(value);
     construct();
   }
   typedef MemberCaller1<ModelSkinKey, const char*, &ModelSkinKey::skinChanged> SkinChangedCaller;
