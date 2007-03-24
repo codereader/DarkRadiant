@@ -55,84 +55,84 @@ if the crash happens before the game is loaded
 
 void Error (const char *error, ...)
 {
-  va_list argptr;
-  char	text[4096];
-
-  va_start (argptr,error);
-  vsprintf (text, error,argptr);
-  va_end (argptr);
-
-  strcat( text, "\n" );
-
-#ifdef WIN32
-  if (GetLastError() != 0)
-  {
-    LPVOID lpMsgBuf;
-    FormatMessage( 
-      FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-      FORMAT_MESSAGE_FROM_SYSTEM | 
-      FORMAT_MESSAGE_IGNORE_INSERTS,
-      0,
-      GetLastError(),
-      MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-      (LPTSTR) &lpMsgBuf,
-      0,
-      0 
-      );
-    strcat( text, "GetLastError: " );
-    /*
-    Gtk will only crunch 0<=char<=127
-    this is a bit hackish, but I didn't find useful functions in win32 API for this
-    http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=516
-    */
-    TCHAR *scan, *next = (TCHAR*)lpMsgBuf;
-    do
-    {
-      scan = next;
-      text[strlen(text)+1] = '\0';
-      if ((scan[0] >= 0) && (scan[0] <= 127))
-        text[strlen(text)] = char(scan[0]);
-      else
-        text[strlen(text)] = '?';
-      next = CharNext(scan);
-    } while (next != scan);
-    strcat( text, "\n");
-    LocalFree( lpMsgBuf );
-  }
-#else
-  if (errno != 0)
-  {
-    strcat( text, "errno: " );
-    strcat( text, strerror (errno));
-    strcat( text, "\n");
-  }
-#endif
-
-
-#if 0
-  // we need to have a current context to call glError()
-  if (g_glwindow_globals.d_glBase != 0)
-  {
-    // glGetError .. can record several errors, clears after calling
-    //++timo TODO: be able to deal with several errors if necessary, for now I'm just warning about pending error messages
-    // NOTE: forget that, most boards don't seem to follow the OpenGL standard
-    GLenum iGLError = glGetError();
-    if (iGLError != GL_NO_ERROR)
-    {
-      // use our own gluErrorString
-      strcat( text, "gluErrorString: " );
-      strcat( text, (char*)gluErrorString( iGLError ) );
-      strcat( text, "\n" );
-    }
-  }
-#endif
-
-  strcat (text, "An unrecoverable error has occured.\n");
-
-  ERROR_MESSAGE(text);
-
-  // force close logging if necessary
-	Sys_LogFile(false);
-
-  _exit (1);
+//  va_list argptr;
+//  char	text[4096];
+//
+//  va_start (argptr,error);
+//  vsprintf (text, error,argptr);
+//  va_end (argptr);
+//
+//  strcat( text, "\n" );
+//
+//#ifdef WIN32
+//  if (GetLastError() != 0)
+//  {
+//    LPVOID lpMsgBuf;
+//    FormatMessage( 
+//      FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+//      FORMAT_MESSAGE_FROM_SYSTEM | 
+//      FORMAT_MESSAGE_IGNORE_INSERTS,
+//      0,
+//      GetLastError(),
+//      MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+//      (LPTSTR) &lpMsgBuf,
+//      0,
+//      0 
+//      );
+//    strcat( text, "GetLastError: " );
+//    /*
+//    Gtk will only crunch 0<=char<=127
+//    this is a bit hackish, but I didn't find useful functions in win32 API for this
+//    http://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=516
+//    */
+//    TCHAR *scan, *next = (TCHAR*)lpMsgBuf;
+//    do
+//    {
+//      scan = next;
+//      text[strlen(text)+1] = '\0';
+//      if ((scan[0] >= 0) && (scan[0] <= 127))
+//        text[strlen(text)] = char(scan[0]);
+//      else
+//        text[strlen(text)] = '?';
+//      next = CharNext(scan);
+//    } while (next != scan);
+//    strcat( text, "\n");
+//    LocalFree( lpMsgBuf );
+//  }
+//#else
+//  if (errno != 0)
+//  {
+//    strcat( text, "errno: " );
+//    strcat( text, strerror (errno));
+//    strcat( text, "\n");
+//  }
+//#endif
+//
+//
+//#if 0
+//   we need to have a current context to call glError()
+//  if (g_glwindow_globals.d_glBase != 0)
+//  {
+//     glGetError .. can record several errors, clears after calling
+//    ++timo TODO: be able to deal with several errors if necessary, for now I'm just warning about pending error messages
+//     NOTE: forget that, most boards don't seem to follow the OpenGL standard
+//    GLenum iGLError = glGetError();
+//    if (iGLError != GL_NO_ERROR)
+//    {
+//       use our own gluErrorString
+//      strcat( text, "gluErrorString: " );
+//      strcat( text, (char*)gluErrorString( iGLError ) );
+//      strcat( text, "\n" );
+//    }
+//  }
+//#endif
+//
+//  strcat (text, "An unrecoverable error has occured.\n");
+//
+//  ERROR_MESSAGE(text);
+//
+//   force close logging if necessary
+//	Sys_LogFile(false);
+//
+//  _exit (1);
 }

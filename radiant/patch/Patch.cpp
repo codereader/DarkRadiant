@@ -6,7 +6,6 @@
 #include "selectable.h"
 #include "math/frustum.h"
 #include "stringio.h"
-#include "xml/xmlelement.h"
 #include "plugin.h"
 #include "texturelib.h"
 #include "brush/TextureProjection.h"
@@ -101,8 +100,6 @@ Patch::Patch(const Patch& other, scene::Node& node, const Callback& evaluateTran
 
 // Another copy constructor
 Patch::Patch(const Patch& other) :
-	XMLImporter(other),
-	XMLExporter(other),
 	TransformNode(other),
 	Bounded(other),
 	Cullable(other),
@@ -371,110 +368,6 @@ void Patch::snapto(float snap) {
 	}
 
 	controlPointsChanged();
-}
-
-void Patch::pushElement(const XMLElement& element) {
-	switch (m_xml_state.back().state()) {
-		case XMLState::eDefault:
-			ASSERT_MESSAGE(string_equal(element.name(), "patch"), "parse error");
-			m_xml_state.push_back(XMLState::ePatch);
-			break;
-		
-		case XMLState::ePatch:
-			if (string_equal(element.name(), "matrix")) {
-				setDims(atoi(element.attribute("width")), atoi(element.attribute("height")));
-				m_xml_state.push_back(XMLState::eMatrix);
-			}
-			else if (string_equal(element.name(), "shader")) {
-				m_xml_state.push_back(XMLState::eShader);
-			}
-			break;
-    default:
-		ERROR_MESSAGE("parse error");
-    } // end switch
-}
-
-void Patch::popElement(const char* name) {
-	switch (m_xml_state.back().state()) {
-		case XMLState::eDefault:
-			ERROR_MESSAGE("parse error");
-		break;
-		case XMLState::ePatch:
-		break;
-		case XMLState::eMatrix: {
-			StringTokeniser content(m_xml_state.back().content());
-	
-			for (PatchControlIter i = m_ctrl.data(), end = m_ctrl.data() + m_ctrl.size(); i != end; ++i) {
-				(*i).m_vertex[0] = string_read_float(content.getToken());
-				(*i).m_vertex[1] = string_read_float(content.getToken());
-				(*i).m_vertex[2] = string_read_float(content.getToken());
-				(*i).m_texcoord[0] = string_read_float(content.getToken());
-				(*i).m_texcoord[1] = string_read_float(content.getToken());
-			}
-			controlPointsChanged();
-		}
-	    break;
-	    case XMLState::eShader: {
-			SetShader(m_xml_state.back().content());
-		}
-		break;
-		default:
-			ERROR_MESSAGE("parse error");
-		} // end switch
-
-	ASSERT_MESSAGE(!m_xml_state.empty(), "popping empty stack");
-	m_xml_state.pop_back();
-}
-
-std::size_t Patch::write(const char* buffer, std::size_t length) {
-	switch(m_xml_state.back().state()) {
-		case XMLState::eDefault:	
-			break;
-		case XMLState::ePatch: 
-			break;
-		case XMLState::eMatrix: // Fall through
-		case XMLState::eShader:
-			return m_xml_state.back().write(buffer, length);
-			break;
-		default:
-			ERROR_MESSAGE("parse error");
-	}
-	return length;
-}
-
-void Patch::exportXML(XMLImporter& importer) {
-	StaticElement patchElement("patch");
-	importer.pushElement(patchElement);
-
-	{
-		const StaticElement element("shader");
-		importer.pushElement(element);
-		importer.write(m_shader.c_str(), strlen(m_shader.c_str()));
-		importer.popElement(element.name());
-	}
-
-	{
-		char width[16], height[16];
-		sprintf(width, "%u", Unsigned(m_width));
-		sprintf(height, "%u", Unsigned(m_height));
-		StaticElement element("matrix");
-		element.insertAttribute("width", width);
-		element.insertAttribute("height", height);
-
-		importer.pushElement(element);
-		{
-			for (PatchControlIter i = m_ctrl.data(), end = m_ctrl.data() + m_ctrl.size(); i != end; ++i) {
-				importer << (*i).m_vertex[0]
-						 << ' ' << (*i).m_vertex[1]
-						 << ' ' << (*i).m_vertex[2]
-						 << ' ' << (*i).m_texcoord[0]
-						 << ' ' << (*i).m_texcoord[1];
-			}
-		}
-		importer.popElement(element.name());
-	}
-
-	importer.popElement(patchElement.name());
 }
 
 const std::string& Patch::GetShader() const {
