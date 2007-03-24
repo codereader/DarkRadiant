@@ -130,7 +130,7 @@ inline bool keyIsNameDoom3(const char* key)
 {
   return string_equal(key, "target")
     || (string_equal_n(key, "target", 6) && string_is_integer(key + 6))
-    || string_equal(key, "name");
+    || string_equal(key, "name") || string_equal(key, "bind");
 }
 
 inline bool keyIsNameDoom3Doom3Group(const char* key)
