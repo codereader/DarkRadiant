@@ -248,7 +248,7 @@ eventmanager_env.Depends(eventmanager_lib, gtkutil_lib)
 eventmanager_env.Install(INSTALL + '/modules', eventmanager_lib)
 
 uiManagerEnv = module_env.Copy()
-uiManagerLst=build_list('plugins/uimanager', 'UIManager.cpp MenuManager.cpp MenuItem.cpp')
+uiManagerLst=build_list('plugins/uimanager', 'UIManager.cpp MenuManager.cpp MenuItem.cpp ToolbarManager.cpp')
 uiManagerEnv.Append(LIBS = ['gtkutil', 'xmlutil'])
 uiManagerEnv.useGtk2()
 uiManagerEnv.useGlib2()
@@ -404,7 +404,6 @@ radiant_src = [
 'ui/overlay/Overlay.cpp',
 'ui/common/ModelPreview.cpp',
 'ui/common/RenderableAABB.cpp',
-'ui/common/ToolbarCreator.cpp',
 'ui/common/TexturePreviewCombo.cpp',
 'ui/common/ShaderSelector.cpp',
 'ui/common/ShaderChooser.cpp',

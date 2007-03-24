@@ -1,47 +1,40 @@
-#include "ToolbarCreator.h"
+#include "ToolbarManager.h"
 
 #include <gtk/gtk.h>
-#include <string>
-
+#include <stdexcept>
+#include "itextstream.h"
 #include "ieventmanager.h"
-
-#include "stringio.h"
-#include "stream/stringstream.h"
-#include "stream/textfilestream.h"
-
 #include "iregistry.h"
-#include "gtkutil/pointer.h"
 #include "gtkutil/image.h"
-#include "gtkutil/button.h"
-
-// This is needed to correctly connect the ToggleButton to Radiant's callbacks
-// The "handler" object data was set in createToolItem
-void toggleButtonSetActiveNoSignal(GtkToggleToolButton* button, gboolean active)
-{
-  guint handler_id = gpointer_to_int(g_object_get_data(G_OBJECT(button), "handler"));
-  g_signal_handler_block(G_OBJECT(button), handler_id);
-  gtk_toggle_tool_button_set_active(button, active);
-  g_signal_handler_unblock(G_OBJECT(button), handler_id);
-}
-
-void toggleButtonSetActiveCallback(GtkToggleToolButton& button, bool active)
-{
-  toggleButtonSetActiveNoSignal(&button, active);
-}
-typedef ReferenceCaller1<GtkToggleToolButton, bool, toggleButtonSetActiveCallback> ToggleButtonSetActiveCaller;
 
 namespace ui {
 
+/* Constructor: Load the definitions from the XMLRegistry
+ */
+ToolbarManager::ToolbarManager() {
+	globalOutputStream() << "ToolbarManager: Loading toolbar information from registry.\n";
+	
+	try {
+		// Query the registry
+		loadToolbars();
+	}
+	catch (std::runtime_error e) {
+		globalOutputStream() << "ToolbarManager: Warning: " << e.what() << "\n";
+	}
+	
+	globalOutputStream() << "ToolbarManager: Finished loading toolbar information.\n";
+}
+
 /*	Returns the toolbar that is named toolbarName
  */
-GtkToolbar* ToolbarCreator::getToolbar(const std::string& toolbarName) {
+GtkToolbar* ToolbarManager::getToolbar(const std::string& toolbarName) {
 	// Check if the toolbarName exists
 	if (toolbarExists(toolbarName)) {
 		
 		// Instantiate the toolbar with buttons, if not done yet 
 		if (_toolbars[toolbarName]==NULL) {
 			
-			globalOutputStream() << "ToolbarCreator: Instantiating toolbar: " << toolbarName.c_str() << "\n";
+			globalOutputStream() << "ToolbarManager: Instantiating toolbar: " << toolbarName.c_str() << "\n";
 						
 			// Build the path into the registry, where the toolbar should be found
 			std::string toolbarPath = std::string("//ui//toolbar") + "[@name='"+ toolbarName +"']";
@@ -51,7 +44,7 @@ GtkToolbar* ToolbarCreator::getToolbar(const std::string& toolbarName) {
 				_toolbars[toolbarName] = createToolbar(toolbarList[0]);
 			}
 			else {
-				globalOutputStream() << "ToolbarCreator: Critical: Could not instantiate " << toolbarName.c_str() << "!\n";
+				globalOutputStream() << "ToolbarManager: Critical: Could not instantiate " << toolbarName.c_str() << "!\n";
 			}
 		}		
 		
@@ -65,7 +58,7 @@ GtkToolbar* ToolbarCreator::getToolbar(const std::string& toolbarName) {
 /* Checks the passed xmlNode for a recognized item (ToolButton, ToggleToolButton, Separator)
  * Returns the widget or NULL if nothing useful is found   
  */
-GtkWidget* ToolbarCreator::createToolItem(xml::Node& node) {
+GtkWidget* ToolbarManager::createToolItem(xml::Node& node) {
 	const std::string nodeName = node.getName();
 	GtkWidget* toolItem;
 	
@@ -97,7 +90,7 @@ GtkWidget* ToolbarCreator::createToolItem(xml::Node& node) {
 			event->updateWidgets();
 		}
 		else {
-			globalErrorStream() << "ToolbarCreator: Failed to lookup command " << action.c_str() << "\n"; 
+			globalErrorStream() << "ToolbarManager: Failed to lookup command " << action.c_str() << "\n"; 
 		}
 		
 		// Set the tooltip, if not empty
@@ -123,7 +116,7 @@ GtkWidget* ToolbarCreator::createToolItem(xml::Node& node) {
 /*	Creates a toolbar based on the data found in the passed xmlNode
  * 	Returns the fully populated GtkToolbar 	
  */
-GtkToolbar* ToolbarCreator::createToolbar(xml::Node& node) {
+GtkToolbar* ToolbarManager::createToolbar(xml::Node& node) {
 	// Get all action children elements 
 	xml::NodeList toolItemList = node.getChildren();
 	GtkWidget* toolbar;
@@ -155,7 +148,7 @@ GtkToolbar* ToolbarCreator::createToolbar(xml::Node& node) {
 	return GTK_TOOLBAR(toolbar);
 }
 
-bool ToolbarCreator::toolbarExists(const std::string& toolbarName) {
+bool ToolbarManager::toolbarExists(const std::string& toolbarName) {
 	ToolbarMap::iterator it = _toolbars.find(toolbarName);
    	return (it != _toolbars.end());
 }
@@ -163,7 +156,7 @@ bool ToolbarCreator::toolbarExists(const std::string& toolbarName) {
 /* Parses the XML Document for toolbars and instantiates them
  * Returns nothing, toolbars can be obtained via GetToolbar()
  */
-void ToolbarCreator::loadToolbars() {
+void ToolbarManager::loadToolbars() {
 	xml::NodeList toolbarList = GlobalRegistry().findXPath("//ui//toolbar");
 	
 	if (toolbarList.size() > 0) {
@@ -189,22 +182,5 @@ void ToolbarCreator::loadToolbars() {
 		throw std::runtime_error("No toolbars found.");
 	}
 }
-
-
-/* Constructor: Load the definitions from the XMLRegistry
- */
-ToolbarCreator::ToolbarCreator() {
-	globalOutputStream() << "ToolbarCreator: Loading toolbar information from registry.\n";
-		
-	try {
-		// Query the registry
-		loadToolbars();
-	}
-	catch (std::runtime_error e) {
-		globalOutputStream() << "ToolbarCreator: Warning: " << e.what() << "\n";
-	}
 	
-	globalOutputStream() << "ToolbarCreator: Finished loading toolbar information.\n";
-}
-
-} // namespace toolbar
+} // namespace ui

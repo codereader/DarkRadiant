@@ -12,6 +12,10 @@ IMenuManager& UIManager::getMenuManager() {
 	return _menuManager;
 }
 
+IToolbarManager& UIManager::getToolbarManager() {
+	return _toolbarManager;
+}
+
 } // namespace ui
 
 // Module stuff
