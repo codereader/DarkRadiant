@@ -24,8 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtkimage.h>
 #include <gtk/gtkstock.h>
 
-#include "string/string.h"
-#include "stream/stringstream.h"
 #include "stream/textstream.h"
 
 #include <string>
@@ -33,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 namespace
 {
-  CopiedString g_bitmapsPath;
+	std::string g_bitmapsPath;
 }
 
 void BitmapsPath_set(const char* path)
@@ -76,10 +74,10 @@ GtkImage* image_new_missing()
   return GTK_IMAGE(gtk_image_new_from_stock(GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_SMALL_TOOLBAR));
 } 
 
-GtkImage* new_image(const char* filename)
+GtkImage* new_image(const std::string& filename)
 {
   {
-    GtkImage* image = image_new_from_file_with_mask(filename);
+    GtkImage* image = image_new_from_file_with_mask(filename.c_str());
     if(image != 0)
     {
       return image;
@@ -89,11 +87,9 @@ GtkImage* new_image(const char* filename)
   return image_new_missing();
 } 
 
-GtkImage* new_local_image(const char* filename)
+GtkImage* new_local_image(const std::string& filename)
 {
-  StringOutputStream fullPath(256);
-  fullPath << g_bitmapsPath.c_str() << filename;
-  return new_image(fullPath.c_str());
+	return new_image(g_bitmapsPath + filename);
 }
 
 namespace gtkutil {

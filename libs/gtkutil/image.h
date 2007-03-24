@@ -32,8 +32,8 @@ typedef struct _GdkPixbuf GdkPixbuf;
 GdkPixbuf* pixbuf_new_from_file_with_mask(const char* filename);
 GtkImage* image_new_from_file_with_mask(const char* filename);
 GtkImage* image_new_missing();
-GtkImage* new_image(const char* filename); // filename is full path to image file
-GtkImage* new_local_image(const char* filename); // filename is relative to local bitmaps path
+GtkImage* new_image(const std::string& filename); // filename is full path to image file
+GtkImage* new_local_image(const std::string& filename); // filename is relative to local bitmaps path
 
 namespace gtkutil {
 	
