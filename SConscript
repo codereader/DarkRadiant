@@ -318,7 +318,7 @@ srEnv.useGlib2()
 srEnv.useBoostRegex()
 srList = build_list('plugins/dm.stimresponse', 
 					'plugin.cpp \
-					 SREditor.cpp \
+					 StimResponseEditor.cpp \
 					 StimTypes.cpp \
 					 SREntity.cpp \
 					 StimResponse.cpp \
