@@ -588,6 +588,13 @@ void TexTool::doMouseDown(const Vector2& coords, GdkEventButton* event) {
 	}
 }
 
+void TexTool::selectRelatedItems() {
+	for (unsigned int i = 0; i < _items.size(); i++) {
+		_items[i]->selectRelated();
+	}
+	draw();
+}
+
 void TexTool::foreachItem(selection::textool::ItemVisitor& visitor) {
 	for (unsigned int i = 0; i < _items.size(); i++) {
 		// Visit the class
@@ -925,6 +932,10 @@ void TexTool::texToolFlipT() {
 	Instance().flipSelected(1);
 }
 
+void TexTool::selectRelated() {
+	Instance().selectRelatedItems();
+}
+
 void TexTool::registerCommands() {
 	GlobalEventManager().addCommand("TextureTool", FreeCaller<TexTool::toggle>());
 	GlobalEventManager().addCommand("TexToolGridUp", FreeCaller<TexTool::texToolGridUp>());
@@ -933,6 +944,7 @@ void TexTool::registerCommands() {
 	GlobalEventManager().addCommand("TexToolMergeItems", FreeCaller<TexTool::texToolMergeItems>());
 	GlobalEventManager().addCommand("TexToolFlipS", FreeCaller<TexTool::texToolFlipS>());
 	GlobalEventManager().addCommand("TexToolFlipT", FreeCaller<TexTool::texToolFlipT>());
+	GlobalEventManager().addCommand("TexToolSelectRelated", FreeCaller<TexTool::selectRelated>());
 	GlobalEventManager().addRegistryToggle("TexToolToggleGrid", RKEY_GRID_STATE);
 }
 

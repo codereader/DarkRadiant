@@ -131,6 +131,13 @@ void TexToolItem::endTransformation() {
 	update();
 }
 
+void TexToolItem::selectRelated() {
+	// Default: Cycle through all the children and pass the call
+	for (unsigned int i = 0; i < _children.size(); i++) {
+		_children[i]->selectRelated();
+	}
+}
+
 void TexToolItem::update() {
 	// Default: Cycle through all the children and pass the call
 	for (unsigned int i = 0; i < _children.size(); i++) {
