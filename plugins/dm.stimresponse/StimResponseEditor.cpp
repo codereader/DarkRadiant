@@ -1,4 +1,4 @@
-#include "SREditor.h"
+#include "StimResponseEditor.h"
 
 #include "iregistry.h"
 #include "iscenegraph.h"
@@ -12,6 +12,7 @@
 #include "gtkutil/IconTextColumn.h"
 #include "gtkutil/IconTextButton.h"
 #include "gtkutil/LeftAlignment.h"
+#include "gtkutil/RightAlignment.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/TransientWindow.h"
 #include "gtkutil/WindowPosition.h"
@@ -25,22 +26,25 @@
 
 namespace ui {
 
-	namespace {
-		const std::string WINDOW_TITLE = "Stim/Response Editor";
-		
-		const std::string RKEY_ROOT = "user/ui/stimResponseEditor/";
-		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
-		
-		const std::string LABEL_STIMRESPONSE_LIST = "Stims/Responses";
-		const std::string LABEL_ADD_STIMRESPONSE = "Add Stim/Response";
-		const std::string LABEL_RESPONSE_SCRIPTS = "Response Scripts";
-		
-		const char* LABEL_SAVE = "Save to Entity";
-		const char* LABEL_REVERT = "Reload from Entity";
-		
-		const unsigned int TREE_VIEW_WIDTH = 280;
-		const unsigned int TREE_VIEW_HEIGHT = 240;
-	}
+namespace {
+	const std::string WINDOW_TITLE = "Stim/Response Editor";
+	
+	const std::string RKEY_ROOT = "user/ui/stimResponseEditor/";
+	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
+	
+	const std::string LABEL_STIMRESPONSE_LIST = "<b>Stims/Responses</b>";
+	const std::string LABEL_ADD_STIMRESPONSE = "<b>Add Stim/Response</b>";
+	const std::string LABEL_RESPONSE_SCRIPTS = "<b>Response Scripts</b>";
+	
+	const char* LABEL_SAVE = "Save to Entity";
+	const char* LABEL_REVERT = "Reload from Entity";
+	
+	const char* NO_ENTITY_ERROR = "A single entity must be selected to edit "
+								  "Stim/Response properties.";
+	
+	const unsigned int TREE_VIEW_WIDTH = 280;
+	const unsigned int TREE_VIEW_HEIGHT = 240;
+}
 
 StimResponseEditor::StimResponseEditor() :
 	_entity(NULL),
@@ -103,7 +107,7 @@ void StimResponseEditor::toggleWindow() {
 			gtk_widget_show_all(_dialog);
 		}
 		else {
-			gtkutil::errorDialog("Please select a single Entity.", 
+			gtkutil::errorDialog(NO_ENTITY_ERROR, 
 								 GlobalRadiant().getMainWindow());
 			gtk_widget_hide_all(_dialog);
 		}
@@ -137,16 +141,15 @@ static void scriptTextCellDataFunc(GtkTreeViewColumn* treeColumn,
 }
 
 void StimResponseEditor::populateWindow() {
+	
 	// Create the overall vbox
-	_dialogVBox = gtk_vbox_new(FALSE, 6);
+	_dialogVBox = gtk_vbox_new(FALSE, 12);
 	gtk_container_add(GTK_CONTAINER(_dialog), _dialogVBox);
 	
-	// Create the title label (bold font)
-	GtkWidget* topLabel = gtkutil::LeftAlignedLabel(
-    	std::string("<span weight=\"bold\">") + LABEL_STIMRESPONSE_LIST + "</span>"
-    );
-    gtk_misc_set_padding(GTK_MISC(topLabel), 0, 2); // Small spacing to the top/bottom
-    gtk_box_pack_start(GTK_BOX(_dialogVBox), topLabel, FALSE, FALSE, 0);
+	// Stim/Response list section
+    gtk_box_pack_start(GTK_BOX(_dialogVBox), 
+    				   gtkutil::LeftAlignedLabel(LABEL_STIMRESPONSE_LIST), 
+    				   FALSE, FALSE, 0);
 	
 	GtkWidget* srHBox = gtk_hbox_new(FALSE, 0);
 	
@@ -158,6 +161,7 @@ void StimResponseEditor::populateWindow() {
 	gtk_widget_set_size_request(_entitySRView, TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT);
 	
 	_entitySRSelection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_entitySRView));
+
 	// Connect the signal
 	g_signal_connect(G_OBJECT(_entitySRSelection), "changed", G_CALLBACK(onSelectionChange), this);
 	g_signal_connect(G_OBJECT(_entitySRView), "key-press-event", G_CALLBACK(onTreeViewKeyPress), this);
@@ -221,14 +225,12 @@ void StimResponseEditor::populateWindow() {
 	
 	gtk_box_pack_start(GTK_BOX(srHBox), createSRWidgets(), TRUE, TRUE, 6);
 	
-	// Create the title label (bold font)
-	GtkWidget* addLabel = gtkutil::LeftAlignedLabel(
-    	std::string("<span weight=\"bold\">") + LABEL_ADD_STIMRESPONSE + "</span>"
-    );
-    gtk_misc_set_padding(GTK_MISC(addLabel), 0, 2); // Small spacing to the top/bottom
-    gtk_box_pack_start(GTK_BOX(_dialogVBox), addLabel, FALSE, FALSE, 0);
+	// Add stim/response section
+    gtk_box_pack_start(GTK_BOX(_dialogVBox), 
+    				   gtkutil::LeftAlignedLabel(LABEL_ADD_STIMRESPONSE),
+    				   FALSE, FALSE, 0);
 	
-	GtkWidget* addHBox = gtk_hbox_new(FALSE, 0);
+	GtkWidget* addHBox = gtk_hbox_new(FALSE, 6);
 	GtkWidget* addAlignment = gtkutil::LeftAlignment(GTK_WIDGET(addHBox), 18, 1.0); 
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(addAlignment), FALSE, FALSE, 0);
 	
@@ -261,23 +263,24 @@ void StimResponseEditor::populateWindow() {
 		gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_BUTTON)
 	);
 	
-	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.stimTypeList, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.addButton, FALSE, FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.addScriptButton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.stimTypeList, 
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.addButton, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.addScriptButton, 
+					   TRUE, TRUE, 0);
 	
 	g_signal_connect(G_OBJECT(_addWidgets.addButton), "clicked", G_CALLBACK(onAdd), this);
 	g_signal_connect(G_OBJECT(_addWidgets.addScriptButton), "clicked", G_CALLBACK(onScriptAdd), this);
 	
-	// Create the script label (bold font)
-	GtkWidget* scriptLabel = gtkutil::LeftAlignedLabel(
-    	std::string("<span weight=\"bold\">") + LABEL_RESPONSE_SCRIPTS + "</span>"
-    );
-    gtk_misc_set_padding(GTK_MISC(scriptLabel), 0, 2); // Small spacing to the top/bottom
-    gtk_box_pack_start(GTK_BOX(_dialogVBox), scriptLabel, FALSE, FALSE, 0);
+	// Response scripts section
+    gtk_box_pack_start(GTK_BOX(_dialogVBox),
+    				   gtkutil::LeftAlignedLabel(LABEL_RESPONSE_SCRIPTS),
+    				   FALSE, FALSE, 0);
 	
 	_scriptWidgets.view = gtk_tree_view_new();
 	_scriptWidgets.selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_scriptWidgets.view));
 	gtk_widget_set_size_request(_scriptWidgets.view, -1, 200);
+	
 	// Connect the signal
 	g_signal_connect(G_OBJECT(_scriptWidgets.view), "key-press-event", G_CALLBACK(onTreeViewKeyPress), this);
 	{
@@ -317,7 +320,7 @@ void StimResponseEditor::populateWindow() {
 		
 		GtkCellRenderer* typeTextRenderer = gtk_cell_renderer_text_new();
 		gtk_tree_view_column_pack_start(scriptCol, typeTextRenderer, FALSE);
-		g_object_set(G_OBJECT(typeTextRenderer), "editable", TRUE);
+		g_object_set(G_OBJECT(typeTextRenderer), "editable", TRUE, NULL);
 		g_signal_connect(G_OBJECT(typeTextRenderer), "edited", G_CALLBACK(onScriptEdit), this);
 		
 		gtk_tree_view_column_set_attributes(scriptCol, typeTextRenderer, 
@@ -334,32 +337,34 @@ void StimResponseEditor::populateWindow() {
 		gtkutil::ScrolledFrame(_scriptWidgets.view), 18, 1.0);
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), scriptAlignment, TRUE, TRUE, 0);
 	
-	GtkWidget* buttonHBox = gtk_hbox_new(FALSE, 0);
+	// Pack in dialog buttons
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), createButtons(), FALSE, FALSE, 0);
+}
+
+// Lower dialog buttons
+GtkWidget* StimResponseEditor::createButtons() {
+
+	GtkWidget* buttonHBox = gtk_hbox_new(TRUE, 12);
 	
 	// Save button
-	GtkWidget* saveButton = gtk_button_new_with_label(LABEL_SAVE);
-	gtk_button_set_image(
-		GTK_BUTTON(saveButton), 
-		gtk_image_new_from_stock(GTK_STOCK_SAVE, GTK_ICON_SIZE_BUTTON)
-	);
+	GtkWidget* saveButton = gtk_button_new_from_stock(GTK_STOCK_APPLY);
 	g_signal_connect(G_OBJECT(saveButton), "clicked", G_CALLBACK(onSave), this);
-	gtk_box_pack_end(GTK_BOX(buttonHBox), saveButton, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(buttonHBox), saveButton, TRUE, TRUE, 0);
 	
 	// Close Button
 	_closeButton = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
-	g_signal_connect(G_OBJECT(_closeButton), "clicked", G_CALLBACK(onClose), this);
-	gtk_box_pack_end(GTK_BOX(buttonHBox), _closeButton, FALSE, FALSE, 6);
+	g_signal_connect(
+		G_OBJECT(_closeButton), "clicked", G_CALLBACK(onClose), this);
+	gtk_box_pack_end(GTK_BOX(buttonHBox), _closeButton, TRUE, TRUE, 0);
 	
 	// Revert button
-	GtkWidget* revertButton = gtk_button_new_with_label(LABEL_REVERT);
-	gtk_button_set_image(
-		GTK_BUTTON(revertButton), 
-		gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_BUTTON)
-	);
-	g_signal_connect(G_OBJECT(revertButton), "clicked", G_CALLBACK(onRevert), this);
-	gtk_box_pack_start(GTK_BOX(buttonHBox), revertButton, FALSE, FALSE, 0);
+	GtkWidget* revertButton = 
+		gtk_button_new_from_stock(GTK_STOCK_REVERT_TO_SAVED);
+	g_signal_connect(
+		G_OBJECT(revertButton), "clicked", G_CALLBACK(onRevert), this);
+	gtk_box_pack_end(GTK_BOX(buttonHBox), revertButton, TRUE, TRUE, 0);
 	
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), buttonHBox, FALSE, FALSE, 0);
+	return gtkutil::RightAlignment(buttonHBox);	
 }
 
 GtkWidget* StimResponseEditor::createSRWidgets() {

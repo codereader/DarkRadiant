@@ -10,7 +10,7 @@
 
 #include "gtkutil/image.h"
 #include "generic/callback.h"
-#include "SREditor.h" 
+#include "StimResponseEditor.h" 
 
 /**
  * API module to register the menu commands for the ObjectivesEditor class.

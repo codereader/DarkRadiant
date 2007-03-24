@@ -144,13 +144,16 @@ private:
 	 */
 	void updateSRWidgets();
 
-	/** greebo: Creates the S/R widget group and returns its vbox
-	 */
-	GtkWidget* createSRWidgets();
+	/* WIDGET POPULATION */
 
-	/** greebo: This fills the window with widgets
-	 */
+	// Main window
 	void populateWindow();
+	
+	// Stim/Response widget group
+	GtkWidget* createSRWidgets();
+	
+	// Dialog buttons
+	GtkWidget* createButtons();
 	
 	/** greebo: This updates the widget sensitivity and loads
 	 * 			the data into them.
