@@ -1,5 +1,6 @@
 #include "Texturable.h"
 
+#include "ifilter.h"
 #include "brush/BrushInstance.h"
 #include "brush/Face.h"
 #include "patch/Patch.h"
@@ -53,7 +54,7 @@ ClosestTexturableFinder::ClosestTexturableFinder(SelectionTest& test, Texturable
 
 bool ClosestTexturableFinder::pre(const scene::Path& path, scene::Instance& instance) const {
 	// Check if the node is filtered
-	if (path.top().get().visible()) {	
+	if (path.top().get().visible()) {
 		// Test the instance for a brush
 		BrushInstance* brush = Instance_getBrush(instance);
 		
@@ -66,6 +67,11 @@ bool ClosestTexturableFinder::pre(const scene::Path& path, scene::Instance& inst
 				 i != brush->getBrush().end(); 
 				 i++) 
 			{
+				// Check for filtered faces, don't select them
+				if (!GlobalFilterSystem().isVisible("texture", (*i)->GetShader())) {
+					continue;
+				}
+				
 				// Test the face for selection
 				SelectionIntersection intersection;
 				(*i)->testSelect(_selectionTest, intersection);
@@ -94,14 +100,16 @@ bool ClosestTexturableFinder::pre(const scene::Path& path, scene::Instance& inst
 				selectionTestable->testSelect(selector, _selectionTest);
 				
 				if (occluded) {
+					_texturable = Texturable();
+					
 					Patch* patch = Node_getPatch(path.top());
 					if (patch != NULL) {
-						_texturable.brush = NULL;
-						_texturable.face = NULL;
-						_texturable.patch = patch;
-					}
-					else {
-						_texturable = Texturable();
+						// Check for filtered patches
+						if (GlobalFilterSystem().isVisible("texture", patch->GetShader())) {
+							_texturable.brush = NULL;
+							_texturable.face = NULL;
+							_texturable.patch = patch;
+						}
 					}
 				}
 			}
