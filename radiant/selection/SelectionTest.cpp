@@ -258,7 +258,25 @@ void testselect_primitive_visible::post(const scene::Path& path, scene::Instance
 bool testselect_any_visible::pre(const scene::Path& path, scene::Instance& instance) const {
     Selectable* selectable = Instance_getSelectable(instance);
     if (selectable != NULL) {
-    	_selector.pushSelectable(*selectable);
+    	// Don't test for parent if the path has only 1 element
+    	if (path.size() > 1) {
+    	  	// Get the parent entity of this object, if there is one
+    		Entity* parent = Node_getEntity(path.parent());
+    		
+    		if (parent != NULL && parent->getKeyValue("classname") != "worldspawn") {
+    			// Non-worldspawn entity found, don't add it unless specified to do so
+    			if (_selectChildPrimitives) {
+    				_selector.pushSelectable(*selectable);
+    			}			
+    		}
+    		else {
+				// This is a worldspawn child, add it
+    			_selector.pushSelectable(*selectable);
+    		}
+    	}
+    	else {
+    	   	_selector.pushSelectable(*selectable);
+    	}
     }
 
     SelectionTestable* selectionTestable = Instance_getSelectionTestable(instance);
@@ -276,18 +294,20 @@ void testselect_any_visible::post(const scene::Path& path, scene::Instance& inst
     	if (path.size() > 1) {
     	  	// Get the parent entity of this object, if there is one
     		Entity* parent = Node_getEntity(path.parent());
-    	
-	    	if (parent != NULL) {
-	    		if (parent->getKeyValue("classname") == "worldspawn" || _selectChildPrimitives) {
-	    			 _selector.popSelectable();
-	    		}
-	    	}
-	    	else {
-	    		_selector.popSelectable();
-	    	}
+    		
+    		if (parent != NULL && parent->getKeyValue("classname") != "worldspawn") {
+    			// Non-worldspawn entity found, add it if specified
+    			if (_selectChildPrimitives) {
+    				_selector.pushSelectable(*selectable);
+    			}
+	   		}
+    		else {
+    			// This is a child of worldspawn, pop it
+    			_selector.popSelectable();
+    		}
     	}
     	else {
-    		_selector.popSelectable();
+    	   	_selector.popSelectable();
     	}
     }
 }
