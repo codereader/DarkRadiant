@@ -61,6 +61,10 @@ class StimResponseEditor :
 		GtkTreeSelection* selection;
 	} _scriptWidgets;
 	
+	// Context menus for list views
+	GtkWidget* _stimListContextMenu;
+	GtkWidget* _scriptListContextMenu;
+	
 	// The list of the entity's stims/responses
 	SREntityPtr _srEntity;
 	
@@ -145,15 +149,11 @@ private:
 	void updateSRWidgets();
 
 	/* WIDGET POPULATION */
-
-	// Main window
-	void populateWindow();
-	
-	// Stim/Response widget group
-	GtkWidget* createSRWidgets();
-	
-	// Dialog buttons
-	GtkWidget* createButtons();
+	void populateWindow(); 			// Main window
+	GtkWidget* createSRWidgets(); 	// Stim/Response widget group
+	GtkWidget* createScriptWidgets(); // Response script list
+	GtkWidget* createButtons(); 	// Dialog buttons
+	void createContextMenus();		// Popup menus
 	
 	/** greebo: This updates the widget sensitivity and loads
 	 * 			the data into them.
@@ -185,7 +185,7 @@ private:
 	// StimType selection change
 	static void onStimTypeChange(GtkComboBox* widget, StimResponseEditor* self);
 	
-	// "Active" property
+	// Toggle buttons
 	static void onActiveToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
 	static void onBoundsToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
 	static void onRadiusToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
@@ -210,8 +210,14 @@ private:
 							 gchar* path, gchar* new_text, StimResponseEditor* self);
 	
 	// The keypress handler for catching the keys when in the treeview
-	static gboolean onTreeViewKeyPress(GtkTreeView* view, GdkEventKey* event, StimResponseEditor* self);
-	static gboolean onWindowKeyPress(GtkWidget* dialog, GdkEventKey* event, StimResponseEditor* self);
+	static gboolean onTreeViewKeyPress(
+		GtkTreeView* view,GdkEventKey* event, StimResponseEditor* self);
+	static gboolean onWindowKeyPress(
+		GtkWidget* dialog, GdkEventKey* event, StimResponseEditor* self);
+	
+	// Tree view button click events (for popup menus)
+	static gboolean onTreeViewButtonEvent(
+		GtkTreeView* view, GdkEventButton* ev, StimResponseEditor* self);
 
 }; // class StimResponseEditor
 
