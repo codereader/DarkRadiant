@@ -235,6 +235,12 @@ void populateRegistry() {
 // This is called from main() to start up the Radiant stuff.
 void Radiant_Initialise() 
 {
+	// Create the empty Settings node and set the title to empty.
+	ui::PrefDialog::Instance().createOrFindPage("Game");
+	ui::PrefDialog::Instance().createOrFindPage("Interface");
+	ui::PrefPagePtr settingsPage = ui::PrefDialog::Instance().createOrFindPage("Settings");
+	settingsPage->setTitle("");
+	
 	// Load the ColourSchemes from the registry
 	ColourSchemes().loadColourSchemes();
 
