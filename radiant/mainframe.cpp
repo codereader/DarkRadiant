@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "environment.h"
 
 #include "ui/surfaceinspector/SurfaceInspector.h"
+#include "ui/entitylist/EntityList.h"
 #include "ui/groupdialog/GroupDialog.h"
 #include "ui/prefdialog/PrefDialog.h"
 #include "ui/patch/PatchInspector.h"
@@ -1716,6 +1717,7 @@ void MainFrame::Shutdown()
 	ui::TransformDialog::Instance().shutdown();
 	ui::GroupDialog::Instance().shutdown();
 	ui::PrefDialog::Instance().shutdown();
+	ui::EntityList::Instance().shutdown();
 	
 	// Stop the AutoSaver class from being called
 	map::AutoSaver().stopTimer();
@@ -1873,6 +1875,7 @@ void MainFrame_Construct()
 	
 	GlobalEventManager().addCommand("ToggleConsole", FreeCaller<Console_ToggleShow>());
 	GlobalEventManager().addCommand("EntityList", FreeCaller<EntityList_toggleShown>());
+	GlobalEventManager().addCommand("EntityListNew", FreeCaller<ui::EntityList::toggle>());
 	
 	// Entity inspector (part of Group Dialog)
 	GlobalEventManager().addCommand("ToggleEntityInspector",

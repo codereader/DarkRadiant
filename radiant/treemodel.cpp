@@ -60,9 +60,6 @@ inline void gtk_tree_model_get_pointer(GtkTreeModel* model, GtkTreeIter* iter, g
   *pointer = (value_type*)g_value_get_pointer(&value);
 }
 
-
-typedef GtkTreeStore GraphTreeModel;
-
 GtkTreeStore* graph_tree_model_new(graph_type* graph)
 {
   return gtk_tree_store_new(2, G_TYPE_POINTER, G_TYPE_POINTER);
