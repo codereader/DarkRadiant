@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtktreednd.h>
 #include <gtk/gtkmain.h>
 
+#include "nameable.h"
 #include "iscenegraph.h"
 #include "nameable.h"
 
@@ -1243,7 +1244,13 @@ void graph_tree_model_row_deleted(GraphTreeModel& model, GraphTreeNode::iterator
   graph_tree_model_row_deleted(&model, i);
 }
 
-const char* node_get_name(scene::Node& node);
+const char* node_get_name(scene::Node& node)
+{
+  Nameable* nameable = Node_getNameable(node);
+  return (nameable != 0)
+    ? nameable->name()
+    : "node";
+}
 
 const char* node_get_name_safe(scene::Node& node)
 {

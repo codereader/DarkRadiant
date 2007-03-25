@@ -354,7 +354,6 @@ radiant_src = [
 'csg.cpp',
 'dialog.cpp',
 'entity.cpp',
-'entitylist.cpp',
 'environment.cpp',
 'error.cpp',
 'filetypes.cpp',

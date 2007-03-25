@@ -60,7 +60,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "error.h"
 #include "map.h"
 #include "qe3.h"
-#include "entitylist.h"
 #include "points.h"
 #include "gtkmisc.h"
 #include "texwindow.h"
@@ -195,7 +194,6 @@ public:
     MultiMon_Construct();
     Pointfile_Construct();
     Map_Construct();
-    EntityList_Construct();
     MainFrame_Construct();
     GlobalCamera().construct();
     GlobalXYWnd().construct();
@@ -223,7 +221,6 @@ public:
     GlobalXYWnd().destroy();
     GlobalCamera().destroy();
     MainFrame_Destroy();
-    EntityList_Destroy();
     Map_Destroy();
     Pointfile_Destroy();
     MultiMon_Destroy();
