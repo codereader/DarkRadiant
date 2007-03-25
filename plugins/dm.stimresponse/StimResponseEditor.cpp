@@ -533,6 +533,12 @@ void StimResponseEditor::createContextMenus() {
 	gtk_menu_shell_append(GTK_MENU_SHELL(_scriptListContextMenu), 
 						  _scriptWidgets.deleteMenuItem);
 	
+	// Connect up the signals
+	g_signal_connect(G_OBJECT(_srWidgets.deleteMenuItem), "activate",
+					 G_CALLBACK(_onContextMenuDelete), this);
+	g_signal_connect(G_OBJECT(_scriptWidgets.deleteMenuItem), "activate",
+					 G_CALLBACK(_onContextMenuDelete), this);
+	
 	// Show menus (not actually visible until popped up)
 	gtk_widget_show_all(_stimListContextMenu);
 	gtk_widget_show_all(_scriptListContextMenu);
@@ -1037,7 +1043,19 @@ gboolean StimResponseEditor::onTreeViewButtonEvent(
 	return FALSE;
 }
 
-void StimResponseEditor::onStimTypeChange(GtkComboBox* widget, StimResponseEditor* self) {
+// Delete context menu items activated
+void StimResponseEditor::_onContextMenuDelete(GtkWidget* w, 
+											  StimResponseEditor* self)
+{
+	if (w == self->_srWidgets.deleteMenuItem)
+		self->removeStimResponse();
+	else if (w == self->_scriptWidgets.deleteMenuItem)
+		self->removeScript();
+}
+
+void StimResponseEditor::onStimTypeChange(GtkComboBox* widget, 
+										  StimResponseEditor* self) 
+{
 	self->updateAddButton();
 }
 
