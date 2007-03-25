@@ -65,6 +65,11 @@ public:
 	 */
 	void savePathsToRegistry();
 	
+	/** greebo: Clears the paths from the registry to avoid
+	 * 			bogus paths from being saved and loaded at next startup.
+	 */
+	void deletePathsFromRegistry();
+	
 	// Contains the static instance
 	static Environment& Instance();
 	

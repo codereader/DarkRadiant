@@ -73,7 +73,11 @@ void Manager::initialise() {
 	// Add the settings widgets to the Preference Dialog, we might need it
 	constructPreferences();
 	
-	if (GlobalRegistry().get(RKEY_GAME_TYPE).empty()) {
+	std::string gameType = GlobalRegistry().get(RKEY_GAME_TYPE);
+	// Try to lookup the game
+	GameMap::iterator i = _games.find(gameType);
+	
+	if (gameType.empty() || i == _games.end()) {
 		// Check the number of available games
 		if (_games.size() == 0) {
 			// No game type selected, bail out, the program will crash anyway on module load
@@ -311,7 +315,7 @@ const char* Manager::getCurrentGameType() {
  */
 void Manager::loadGameFiles() {
 	std::string gamePath = GlobalRegistry().get(RKEY_APP_PATH) + "games/";
-	
+	std::cout << "AppPAth: " << gamePath << "\n";
 	globalOutputStream() << "GameManager: Scanning for game description files: " << gamePath.c_str() << '\n';
 
 	// Invoke a GameFileLoader functor on every file in the games/ dir.

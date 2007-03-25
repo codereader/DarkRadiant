@@ -300,6 +300,9 @@ int main (int argc, char* argv[])
 	
 	// Load the XML files into the Registry, we need the information asap
 	populateRegistry();
+	
+	// Save the paths *once again* into the registry, to overwrite bogus stuff in there
+	Environment::Instance().savePathsToRegistry();
 
 	// Load the game files from the <application>/games folder and 
 	// let the user choose the game, if nothing is found in the Registry
