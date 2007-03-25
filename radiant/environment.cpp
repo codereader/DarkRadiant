@@ -194,6 +194,13 @@ void Environment::savePathsToRegistry() {
 	GlobalRegistry().set(RKEY_BITMAPS_PATH, _bitmapsPath);
 }
 
+void Environment::deletePathsFromRegistry() {
+	GlobalRegistry().deleteXPath(RKEY_APP_PATH);
+	GlobalRegistry().deleteXPath(RKEY_HOME_PATH);
+	GlobalRegistry().deleteXPath(RKEY_SETTINGS_PATH);
+	GlobalRegistry().deleteXPath(RKEY_BITMAPS_PATH);
+}
+
 void Environment::initPaths() {
 	
 	if (!boost::algorithm::ends_with(_homePath, "/")) {
