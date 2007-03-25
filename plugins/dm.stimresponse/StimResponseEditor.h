@@ -210,6 +210,7 @@ private:
 	// Tree view button click events (for popup menus)
 	static gboolean onTreeViewButtonEvent(
 		GtkTreeView* view, GdkEventButton* ev, StimResponseEditor* self);
+	static void _onContextMenuDelete(GtkWidget*, StimResponseEditor*);
 
 }; // class StimResponseEditor
 
