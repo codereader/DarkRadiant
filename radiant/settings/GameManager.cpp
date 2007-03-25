@@ -315,7 +315,6 @@ const char* Manager::getCurrentGameType() {
  */
 void Manager::loadGameFiles() {
 	std::string gamePath = GlobalRegistry().get(RKEY_APP_PATH) + "games/";
-	std::cout << "AppPAth: " << gamePath << "\n";
 	globalOutputStream() << "GameManager: Scanning for game description files: " << gamePath.c_str() << '\n';
 
 	// Invoke a GameFileLoader functor on every file in the games/ dir.
