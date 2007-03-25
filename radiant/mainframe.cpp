@@ -113,7 +113,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "csg.h"
 #include "console.h"
 #include "entity.h"
-#include "entitylist.h"
 #include "gtkdlgs.h"
 #include "gtkmisc.h"
 #include "map.h"
@@ -1641,8 +1640,6 @@ void MainFrame::Create()
     }
   }
 
-  EntityList_constructWindow(window);
-  
   GlobalGrid().addGridChangeCallback(SetGridStatusCaller(*this));
   GlobalGrid().addGridChangeCallback(FreeCaller<XY_UpdateAllWindows>());
 
@@ -1721,8 +1718,6 @@ void MainFrame::Shutdown()
 	
 	// Stop the AutoSaver class from being called
 	map::AutoSaver().stopTimer();
-
-  EntityList_destroyWindow();
 
   	// Save the camera size to the registry
 	GlobalCamera().saveCamWndState();
@@ -1874,8 +1869,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("Preferences", FreeCaller<ui::PrefDialog::toggle>());
 	
 	GlobalEventManager().addCommand("ToggleConsole", FreeCaller<Console_ToggleShow>());
-	GlobalEventManager().addCommand("EntityList", FreeCaller<EntityList_toggleShown>());
-	GlobalEventManager().addCommand("EntityListNew", FreeCaller<ui::EntityList::toggle>());
+	GlobalEventManager().addCommand("EntityList", FreeCaller<ui::EntityList::toggle>());
 	
 	// Entity inspector (part of Group Dialog)
 	GlobalEventManager().addCommand("ToggleEntityInspector",

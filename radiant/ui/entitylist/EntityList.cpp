@@ -84,7 +84,6 @@ EntityList::EntityList() :
 			
 			if (node != NULL) {
 				gtk_cell_renderer_set_fixed_size(renderer, -1, -1);
-				//char* name = const_cast<char*>(node_get_name(*node));
 				std::string name = getNodeName(*node);
 				g_object_set(G_OBJECT(renderer), 
 							 "text", name.c_str(), 
