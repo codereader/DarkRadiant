@@ -141,7 +141,7 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     // Create the Property column
     GtkTreeViewColumn* nameCol = gtk_tree_view_column_new();
     gtk_tree_view_column_set_title(nameCol, "Property");
-	gtk_tree_view_column_set_resizable(nameCol, TRUE);
+	gtk_tree_view_column_set_sizing(nameCol, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
     gtk_tree_view_column_set_spacing(nameCol, 3);
 
 	GtkCellRenderer* pixRenderer = gtk_cell_renderer_pixbuf_new();
@@ -161,6 +161,7 @@ GtkWidget* EntityInspector::createTreeViewPane() {
 	// Create the value column
     GtkTreeViewColumn* valCol = gtk_tree_view_column_new();
     gtk_tree_view_column_set_title(valCol, "Value");
+	gtk_tree_view_column_set_sizing(valCol, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
 
     GtkCellRenderer* valRenderer = gtk_cell_renderer_text_new();
     gtk_tree_view_column_pack_start(valCol, valRenderer, TRUE);
@@ -243,16 +244,18 @@ void EntityInspector::callbackRedraw() {
         refreshTreeModel(); // get values, already have category tree
     }
     else {
+        
         // Remove the displayed PropertyEditor
         if (_currentPropertyEditor) {
             delete _currentPropertyEditor;
             _currentPropertyEditor = NULL;
         }
+		
 		// Disable the dialog and clear the TreeView
         gtk_widget_set_sensitive(_widget, FALSE);
         gtk_list_store_clear(_listStore);
-        
     }
+    
 }
 
 // Entity keyvalue changed callback
