@@ -96,6 +96,9 @@
 	<groupDialog>
 		<window xPosition="50" yPosition="530" width="350" height="200" />
 	</groupDialog>
+	<entityList>
+		<window xPosition="50" yPosition="530" width="250" height="400" />
+	</entityList>
 	<multiMonitor>
 		<startOnPrimaryMonitor value="0" />
 		<disableSysMenuOnPopups value="0" />

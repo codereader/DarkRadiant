@@ -421,6 +421,7 @@ radiant_src = [
 'ui/groupdialog/GroupDialog.cpp',
 'ui/prefdialog/PrefPage.cpp',
 'ui/prefdialog/PrefDialog.cpp',
+'ui/entitylist/EntityList.cpp',
 'textool/TexTool.cpp',
 'textool/TexToolItem.cpp',
 'textool/item/PatchItem.cpp',
