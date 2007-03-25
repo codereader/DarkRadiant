@@ -1,7 +1,6 @@
 #ifndef SREDITOR_H_
 #define SREDITOR_H_
 
-#include "iselection.h"
 #include "ientity.h"
 #include "gtkutil/WindowPosition.h"
 
@@ -17,8 +16,7 @@ typedef struct _GtkCellRendererText GtkCellRendererText;
 
 namespace ui {
 
-class StimResponseEditor :
-	public SelectionSystem::Observer
+class StimResponseEditor
 {
 	// The window widget
 	GtkWidget* _dialog;
@@ -54,11 +52,13 @@ class StimResponseEditor :
 		GtkWidget* modelToggle;
 		GtkWidget* modelEntry;
 		GtkWidget* timerTypeToggle;
+		GtkWidget* deleteMenuItem;
 	} _srWidgets;
 	
 	struct ScriptWidgets {
 		GtkWidget* view;
 		GtkTreeSelection* selection;
+		GtkWidget* deleteMenuItem;
 	} _scriptWidgets;
 	
 	// Context menus for list views
@@ -95,15 +95,7 @@ public:
 	 */
 	void shutdown();
 	
-	/** greebo: Gets called by the SelectionSystem
-	 */
-	void selectionChanged(scene::Instance& instance);
-
 private:
-
-	/** greebo: Discards the changes and re-loads everything from the entity.
-	 */
-	void revert();
 
 	/** greebo: Saves the current working set to the entity
 	 */
