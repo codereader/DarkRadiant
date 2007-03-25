@@ -38,6 +38,8 @@ private:
 	// The actual page that gets attached to the notebook
 	GtkWidget* _pageWidget;
 	
+	GtkWidget* _titleLabel;
+	
 	// The reference to the dialog's connector object
 	gtkutil::RegistryConnector& _connector;
 
@@ -55,6 +57,12 @@ public:
 	         const std::string& parentPath,
 	         GtkWidget* notebook,
 	         gtkutil::RegistryConnector& connector);
+	
+	/** greebo: Sets the title caption that is displayed on the right.
+	 * 			Overrides the default title that is generated 
+	 * 			on construction (the one with the " Settings" postfix).
+	 */
+	void setTitle(const std::string& title);
 	
 	/** greebo: Returns the full path to this PrefPage
 	 */

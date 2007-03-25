@@ -35,8 +35,8 @@ PrefPage::PrefPage(
 	gtk_container_set_border_width(GTK_CONTAINER(_pageWidget), 12);
 	
 	// Create the label
-	GtkWidget* label = gtkutil::LeftAlignedLabel(std::string("<b>") + _name + " Settings</b>");
-	gtk_box_pack_start(GTK_BOX(_pageWidget), label, FALSE, FALSE, 0);
+	_titleLabel = gtkutil::LeftAlignedLabel(std::string("<b>") + _name + " Settings</b>");
+	gtk_box_pack_start(GTK_BOX(_pageWidget), _titleLabel, FALSE, FALSE, 0);
 	
 	// Create the VBOX for all the client widgets
 	_vbox = gtk_vbox_new(FALSE, 6);
@@ -47,6 +47,13 @@ PrefPage::PrefPage(
 	
 	// Append the whole vbox as new page to the notebook
 	gtk_notebook_append_page(GTK_NOTEBOOK(_notebook), _pageWidget, NULL);
+}
+
+void PrefPage::setTitle(const std::string& title) {
+	gtk_label_set_markup(
+		GTK_LABEL(_titleLabel),
+		std::string("<b>" + title + "</b>").c_str()
+	);
 }
 
 std::string PrefPage::getPath() const {

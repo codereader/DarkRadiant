@@ -41,6 +41,14 @@ typedef std::vector<std::string> IconDescriptionList;
 class PreferencesPage
 {
 public:
+	/** greebo: Allows to set a custom title of this page. The default title 
+	 * 			upon construction is "guessed" by adding a " Settings" to 
+	 * 			the page name, "Settings/Patch" gets assigned 
+	 * 			a "Patch Settings" as default title.
+	 * 			Use this method to change this to fit your needs. 
+	 */
+	virtual void setTitle(const std::string& title) = 0;
+
 	// greebo: Use this to add a checkbox to the preference dialog that is connected to a registry value
 	virtual GtkWidget* appendCheckBox(const std::string& name, const std::string& flag, const std::string& registryKey) = 0;
 	
