@@ -13,6 +13,7 @@
 #include "gtkutil/IconTextButton.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/RightAlignment.h"
+#include "gtkutil/StockIconMenuItem.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/TransientWindow.h"
 #include "gtkutil/WindowPosition.h"
@@ -58,11 +59,14 @@ StimResponseEditor::StimResponseEditor() :
 	gtk_window_set_type_hint(GTK_WINDOW(_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 	gtk_window_set_modal(GTK_WINDOW(_dialog), TRUE);
 	
-	g_signal_connect(G_OBJECT(_dialog), "delete-event", G_CALLBACK(onDelete), this);
-	g_signal_connect(G_OBJECT(_dialog), "key-press-event", G_CALLBACK(onWindowKeyPress), this);
+	g_signal_connect(G_OBJECT(_dialog), "delete-event", 
+					 G_CALLBACK(onDelete), this);
+	g_signal_connect(G_OBJECT(_dialog), "key-press-event", 
+					 G_CALLBACK(onWindowKeyPress), this);
 	
 	// Create the widgets
 	populateWindow();
+	createContextMenus();
 	
 	// Connect the window position tracker
 	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
@@ -162,9 +166,13 @@ void StimResponseEditor::populateWindow() {
 	
 	_entitySRSelection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_entitySRView));
 
-	// Connect the signal
-	g_signal_connect(G_OBJECT(_entitySRSelection), "changed", G_CALLBACK(onSelectionChange), this);
-	g_signal_connect(G_OBJECT(_entitySRView), "key-press-event", G_CALLBACK(onTreeViewKeyPress), this);
+	// Connect the signals
+	g_signal_connect(G_OBJECT(_entitySRSelection), "changed", 
+					 G_CALLBACK(onSelectionChange), this);
+	g_signal_connect(G_OBJECT(_entitySRView), "key-press-event", 
+					 G_CALLBACK(onTreeViewKeyPress), this);
+	g_signal_connect(G_OBJECT(_entitySRView), "button-release-event", 
+					 G_CALLBACK(onTreeViewButtonEvent), this);
 	
 	// ID number
 	GtkTreeViewColumn* numCol = gtk_tree_view_column_new();
@@ -221,7 +229,7 @@ void StimResponseEditor::populateWindow() {
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_entitySRView), typeCol);
 	
 	gtk_box_pack_start(GTK_BOX(srHBox), 
-		gtkutil::ScrolledFrame(_entitySRView), false, false, 0);
+		gtkutil::ScrolledFrame(_entitySRView), FALSE, FALSE, 0);
 	
 	gtk_box_pack_start(GTK_BOX(srHBox), createSRWidgets(), TRUE, TRUE, 6);
 	
@@ -276,66 +284,9 @@ void StimResponseEditor::populateWindow() {
     gtk_box_pack_start(GTK_BOX(_dialogVBox),
     				   gtkutil::LeftAlignedLabel(LABEL_RESPONSE_SCRIPTS),
     				   FALSE, FALSE, 0);
-	
-	_scriptWidgets.view = gtk_tree_view_new();
-	_scriptWidgets.selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_scriptWidgets.view));
-	gtk_widget_set_size_request(_scriptWidgets.view, -1, 200);
-	
-	// Connect the signal
-	g_signal_connect(G_OBJECT(_scriptWidgets.view), "key-press-event", G_CALLBACK(onTreeViewKeyPress), this);
-	{
-		// The Type
-		GtkTreeViewColumn* scriptTypeCol = gtk_tree_view_column_new();
-		gtk_tree_view_column_set_title(scriptTypeCol, "Type");
-		
-		GtkCellRenderer* typeIconRenderer = gtk_cell_renderer_pixbuf_new();
-		gtk_tree_view_column_pack_start(scriptTypeCol, typeIconRenderer, FALSE);
-		
-		GtkCellRenderer* typeTextRenderer = gtk_cell_renderer_text_new();
-		gtk_tree_view_column_pack_start(scriptTypeCol, typeTextRenderer, FALSE);
-		
-		gtk_tree_view_column_set_attributes(scriptTypeCol, typeTextRenderer, 
-											"text", SCR_CAPTION_COL,
-											NULL);
-		gtk_tree_view_column_set_cell_data_func(scriptTypeCol, typeTextRenderer,
-	                                            scriptTextCellDataFunc,
-	                                            NULL, NULL);
-		
-		gtk_tree_view_column_set_attributes(scriptTypeCol, typeIconRenderer, 
-											"pixbuf", SCR_ICON_COL,
-											NULL);
-		gtk_tree_view_column_set_cell_data_func(scriptTypeCol, typeIconRenderer,
-	                                            scriptTextCellDataFunc,
-	                                            NULL, NULL);
-		
-		gtk_tree_view_append_column(GTK_TREE_VIEW(_scriptWidgets.view), scriptTypeCol);
-	}
-	{
-		// The Script
-		GtkTreeViewColumn* scriptCol = gtk_tree_view_column_new();
-		gtk_tree_view_column_set_title(scriptCol, "Target Script (double-click to edit)");
-		
-		GtkCellRenderer* typeIconRenderer = gtk_cell_renderer_pixbuf_new();
-		gtk_tree_view_column_pack_start(scriptCol, typeIconRenderer, FALSE);
-		
-		GtkCellRenderer* typeTextRenderer = gtk_cell_renderer_text_new();
-		gtk_tree_view_column_pack_start(scriptCol, typeTextRenderer, FALSE);
-		g_object_set(G_OBJECT(typeTextRenderer), "editable", TRUE, NULL);
-		g_signal_connect(G_OBJECT(typeTextRenderer), "edited", G_CALLBACK(onScriptEdit), this);
-		
-		gtk_tree_view_column_set_attributes(scriptCol, typeTextRenderer, 
-											"text", SCR_SCRIPT_COL,
-											NULL);
-		gtk_tree_view_column_set_cell_data_func(scriptCol, typeTextRenderer,
-	                                            scriptTextCellDataFunc,
-	                                            NULL, NULL);
-		
-		gtk_tree_view_append_column(GTK_TREE_VIEW(_scriptWidgets.view), scriptCol);
-	}
-	
-	GtkWidget* scriptAlignment = gtkutil::LeftAlignment(
-		gtkutil::ScrolledFrame(_scriptWidgets.view), 18, 1.0);
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), scriptAlignment, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), 
+					   gtkutil::LeftAlignment(createScriptWidgets(), 18, 1.0),
+					   TRUE, TRUE, 0);
 	
 	// Pack in dialog buttons
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), createButtons(), FALSE, FALSE, 0);
@@ -494,6 +445,93 @@ GtkWidget* StimResponseEditor::createSRWidgets() {
 	g_signal_connect(G_OBJECT(_srWidgets.timeIntEntry), "changed", G_CALLBACK(onTimeIntervalChanged), this);
 	
 	return _srWidgets.vbox;
+}
+
+// Create the response script list widgets
+GtkWidget* StimResponseEditor::createScriptWidgets() {
+
+	_scriptWidgets.view = gtk_tree_view_new();
+	_scriptWidgets.selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_scriptWidgets.view));
+	gtk_widget_set_size_request(_scriptWidgets.view, -1, 200);
+	
+	// Connect the signals
+	g_signal_connect(G_OBJECT(_scriptWidgets.view), "key-press-event", 
+					 G_CALLBACK(onTreeViewKeyPress), this);
+	g_signal_connect(G_OBJECT(_scriptWidgets.view), "button-release-event",
+					 G_CALLBACK(onTreeViewButtonEvent), this);
+	
+	{
+		// The Type
+		GtkTreeViewColumn* scriptTypeCol = gtk_tree_view_column_new();
+		gtk_tree_view_column_set_title(scriptTypeCol, "Type");
+		
+		GtkCellRenderer* typeIconRenderer = gtk_cell_renderer_pixbuf_new();
+		gtk_tree_view_column_pack_start(scriptTypeCol, typeIconRenderer, FALSE);
+		
+		GtkCellRenderer* typeTextRenderer = gtk_cell_renderer_text_new();
+		gtk_tree_view_column_pack_start(scriptTypeCol, typeTextRenderer, FALSE);
+		
+		gtk_tree_view_column_set_attributes(scriptTypeCol, typeTextRenderer, 
+											"text", SCR_CAPTION_COL,
+											NULL);
+		gtk_tree_view_column_set_cell_data_func(scriptTypeCol, typeTextRenderer,
+	                                            scriptTextCellDataFunc,
+	                                            NULL, NULL);
+		
+		gtk_tree_view_column_set_attributes(scriptTypeCol, typeIconRenderer, 
+											"pixbuf", SCR_ICON_COL,
+											NULL);
+		gtk_tree_view_column_set_cell_data_func(scriptTypeCol, typeIconRenderer,
+	                                            scriptTextCellDataFunc,
+	                                            NULL, NULL);
+		
+		gtk_tree_view_append_column(GTK_TREE_VIEW(_scriptWidgets.view), scriptTypeCol);
+	}
+	{
+		// The Script
+		GtkTreeViewColumn* scriptCol = gtk_tree_view_column_new();
+		gtk_tree_view_column_set_title(scriptCol, "Target Script (double-click to edit)");
+		
+		GtkCellRenderer* typeIconRenderer = gtk_cell_renderer_pixbuf_new();
+		gtk_tree_view_column_pack_start(scriptCol, typeIconRenderer, FALSE);
+		
+		GtkCellRenderer* typeTextRenderer = gtk_cell_renderer_text_new();
+		gtk_tree_view_column_pack_start(scriptCol, typeTextRenderer, FALSE);
+		g_object_set(G_OBJECT(typeTextRenderer), "editable", TRUE, NULL);
+		g_signal_connect(G_OBJECT(typeTextRenderer), "edited", G_CALLBACK(onScriptEdit), this);
+		
+		gtk_tree_view_column_set_attributes(scriptCol, typeTextRenderer, 
+											"text", SCR_SCRIPT_COL,
+											NULL);
+		gtk_tree_view_column_set_cell_data_func(scriptCol, typeTextRenderer,
+	                                            scriptTextCellDataFunc,
+	                                            NULL, NULL);
+		
+		gtk_tree_view_append_column(GTK_TREE_VIEW(_scriptWidgets.view), scriptCol);
+	}
+	
+	// Return the tree view in a frame
+	return gtkutil::ScrolledFrame(_scriptWidgets.view);
+}
+
+// Create the context menus
+void StimResponseEditor::createContextMenus() {
+	
+	// Menu widgets
+	_stimListContextMenu = gtk_menu_new();
+	_scriptListContextMenu = gtk_menu_new();
+	
+	// Each menu gets a delete item
+	GtkWidget* stimDelete = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
+													   "Delete");
+	GtkWidget* scriptDelete = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
+													   "Delete");
+	gtk_menu_shell_append(GTK_MENU_SHELL(_stimListContextMenu), stimDelete);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_scriptListContextMenu), scriptDelete);
+	
+	// Show menus (not actually visible until popped up)
+	gtk_widget_show_all(_stimListContextMenu);
+	gtk_widget_show_all(_scriptListContextMenu);
 }
 
 void StimResponseEditor::update() {
@@ -967,6 +1005,23 @@ gboolean StimResponseEditor::onWindowKeyPress(
 	}
 	
 	// Propagate further
+	return FALSE;
+}
+
+// Button click events on TreeViews
+gboolean StimResponseEditor::onTreeViewButtonEvent(
+	GtkTreeView* view, GdkEventButton* ev, StimResponseEditor* self)
+{
+	// Single click with RMB
+	if (ev->button == 3) {
+		if (view == GTK_TREE_VIEW(self->_entitySRView))
+			gtk_menu_popup(GTK_MENU(self->_stimListContextMenu), NULL, NULL, 
+						   NULL, NULL, 1, GDK_CURRENT_TIME);
+		else if (view == GTK_TREE_VIEW(self->_scriptWidgets.view))
+			gtk_menu_popup(GTK_MENU(self->_scriptListContextMenu), NULL, NULL, 
+						   NULL, NULL, 1, GDK_CURRENT_TIME);
+	}	
+	
 	return FALSE;
 }
 

@@ -347,8 +347,9 @@ void EntityInspector::_onValEntryActivate(GtkWidget* w, EntityInspector* self) {
 	gtk_widget_grab_focus(self->_keyEntry);
 }
 
-bool EntityInspector::_onPopupMenu(GtkWidget* w, GdkEventButton* ev, EntityInspector* self) {
-
+bool EntityInspector::_onPopupMenu(
+	GtkWidget* w, GdkEventButton* ev, EntityInspector* self) 
+{
 	// Popup on right-click events only
 	if (ev->button == 3) {
 
@@ -360,7 +361,8 @@ bool EntityInspector::_onPopupMenu(GtkWidget* w, GdkEventButton* ev, EntityInspe
 			gtk_widget_set_sensitive(self->_delKeyMenuItem, FALSE);
 
 		// Display the menu
-		gtk_menu_popup(GTK_MENU(self->_contextMenu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
+		gtk_menu_popup(GTK_MENU(self->_contextMenu), NULL, NULL, NULL, NULL, 
+					   1, GDK_CURRENT_TIME);
 	}
 
 	return FALSE;
