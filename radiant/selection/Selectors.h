@@ -13,9 +13,12 @@ typedef std::multimap<SelectionIntersection, Selectable*> SelectableSortedSet;
 typedef std::list<Selectable*> SelectablesList;
 
 /* greebo: The SelectionPool contains all the instances that come into question for a selection operation.
- * It can be seen as some kind of stack that can be traversed through  
+ * It can be seen as some kind of stack that can be traversed through
+ * 
+ * The addIntersection() method gets called by the tested object between
+ * pushSelectable() and popSelectable() and picks the best Intersection out of the crop.
+ * 
  */
-
 class SelectionPool : public Selector {
   SelectableSortedSet 	_pool;
   SelectionIntersection	_intersection;
@@ -23,39 +26,56 @@ class SelectionPool : public Selector {
 
 public:
 
-  void pushSelectable(Selectable& selectable) {
-    _intersection = SelectionIntersection();
-    _selectable = &selectable;
-  }
+	/** greebo: This is called before an entity/patch/brush is 
+	 * 			tested against selection to notify the SelectionPool
+	 * 			which Selectable we're talking about.	
+	 */
+	void pushSelectable(Selectable& selectable) {
+		_intersection = SelectionIntersection();
+		_selectable = &selectable;
+	}
   
-  void popSelectable() {
-    addSelectable(_intersection, _selectable);
-    _intersection = SelectionIntersection();
-  }
-  
-  void addIntersection(const SelectionIntersection& intersection) {
-    assign_if_closer(_intersection, intersection);
-  }
-  
-  void addSelectable(const SelectionIntersection& intersection, Selectable* selectable) {
-    if(intersection.valid()) {
-      _pool.insert(SelectableSortedSet::value_type(intersection, selectable));
-    }
-  }
+	/** greebo: Adds the memorised Selectable to the list using the best
+	 * 			Intersection that could be found since it has been pushed.
+	 */
+	void popSelectable() {
+		addSelectable(_intersection, _selectable);
+		_intersection = SelectionIntersection();
+	}
 
-  typedef SelectableSortedSet::iterator iterator;
-
-  iterator begin() {
-    return _pool.begin();
-  }
   
-  iterator end() {
-    return _pool.end();
-  }
+	/** greebo: This gets called by the tested items like patches and brushes
+	* 		  The brushes test each of their faces against selection and
+	* 		  call this method for each of them with the respective Intersection.
+	* 		  This method makes sure that the best Intersection of these
+	* 		  "subitems" gets added to the list.
+	*/
+	void addIntersection(const SelectionIntersection& intersection) {
+		assign_if_closer(_intersection, intersection);
+	}
 
-  bool failed() {
-    return _pool.empty();
-  }
+	/** greebo: This makes sure that only valid Intersections get added, otherwise
+	 * 			we would add Selectables that haven't passed the test.
+	 */
+	void addSelectable(const SelectionIntersection& intersection, Selectable* selectable) {
+		if (intersection.valid()) {
+			_pool.insert(SelectableSortedSet::value_type(intersection, selectable));
+		}
+	}
+
+	typedef SelectableSortedSet::iterator iterator;
+
+	iterator begin() {
+		return _pool.begin();
+	}
+	
+	iterator end() {
+		return _pool.end();
+	}
+	
+	bool failed() {
+		return _pool.empty();
+	}
 };
 
 // =======================================================================================
