@@ -100,13 +100,34 @@ public:
 };
 
 // As the name states, all visited instances have their transformations reverted
-class RevertTransforms : public scene::Graph::Walker {
+class RevertTransforms : 
+	public scene::Graph::Walker 
+{
 public:
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
 		TransformNode* transformNode = Node_getTransformNode(path.top());
 		if (transformNode != 0) {
 			Transformable* transform = Instance_getTransformable(instance);
 			if (transform != 0) {
+				transform->revertTransform(); 
+			}
+		}
+		return true;
+	}
+};
+
+// As the name states, all visited SELECTED instances have their transformations reverted
+class RevertTransformForSelected : 
+	public scene::Graph::Walker 
+{
+public:
+	bool pre(const scene::Path& path, scene::Instance& instance) const {
+		TransformNode* transformNode = Node_getTransformNode(path.top());
+		Selectable* selectable = Instance_getSelectable(instance);
+				
+		if (transformNode != NULL && selectable != NULL && selectable->isSelected()) {
+			Transformable* transform = Instance_getTransformable(instance);
+			if (transform != NULL) {
 				transform->revertTransform(); 
 			}
 		}

@@ -752,7 +752,7 @@ void RadiantSelectionSystem::cancelMove() {
 	_manipulator->setSelected(false);
 
 	// Tell all the scene objects to revert their transformations
-	GlobalSceneGraph().traverse(RevertTransforms());
+	GlobalSceneGraph().traverse(RevertTransformForSelected());
 	
 	_pivotMoving = false;
 	pivotChanged();
