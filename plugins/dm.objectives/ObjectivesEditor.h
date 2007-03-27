@@ -42,6 +42,10 @@ class ObjectivesEditor
 	// Map of ObjectiveEntity objectives, indexed by the name of the world 
 	// entity
 	ObjectiveEntityMap _entities;
+	
+	// Name of current entity and index of current objective
+	std::string _curEntity;
+	int _curObjective;
 
 private:
 
@@ -74,7 +78,7 @@ private:
 	void populateActiveAtStart();
 	
 	// Populate the edit panel from the selected objective
-	void populateEditPanel(int objNum);
+	void populateEditPanel();
 	
 public:
 	

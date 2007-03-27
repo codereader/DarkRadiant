@@ -338,30 +338,30 @@ void ObjectivesEditor::displayDialog() {
 }
 
 // Populate the edit panel widgets using the given objective number
-void ObjectivesEditor::populateEditPanel(int objNum) {
+void ObjectivesEditor::populateEditPanel() {
 
-//	const Objective& obj = _objectiveMap[objNum];
-//	
+	const Objective& obj = _entities[_curEntity]->getObjective(_curObjective);
+	
 //	gtk_entry_set_text(GTK_ENTRY(_widgets["numberEntry"]), 
 //					   boost::lexical_cast<std::string>(objNum).c_str());
-//	gtk_entry_set_text(GTK_ENTRY(_widgets["descriptionEntry"]),
-//					   obj.description.c_str());
-//					   
-//	gtk_toggle_button_set_active(
-//		GTK_TOGGLE_BUTTON(_widgets["startActiveFlag"]),
-//		obj.startActive ? TRUE : FALSE);
-//	gtk_toggle_button_set_active(
-//		GTK_TOGGLE_BUTTON(_widgets["irreversibleFlag"]),
-//		obj.irreversible ? TRUE : FALSE);
-//	gtk_toggle_button_set_active(
-//		GTK_TOGGLE_BUTTON(_widgets["ongoingFlag"]),
-//		obj.ongoing ? TRUE : FALSE);
-//	gtk_toggle_button_set_active(
-//		GTK_TOGGLE_BUTTON(_widgets["mandatoryFlag"]),
-//		obj.mandatory ? TRUE : FALSE);
-//	gtk_toggle_button_set_active(
-//		GTK_TOGGLE_BUTTON(_widgets["visibleFlag"]),
-//		obj.visible ? TRUE : FALSE);
+	gtk_entry_set_text(GTK_ENTRY(_widgets["descriptionEntry"]),
+					   obj.description.c_str());
+					   
+	gtk_toggle_button_set_active(
+		GTK_TOGGLE_BUTTON(_widgets["startActiveFlag"]),
+		obj.startActive ? TRUE : FALSE);
+	gtk_toggle_button_set_active(
+		GTK_TOGGLE_BUTTON(_widgets["irreversibleFlag"]),
+		obj.irreversible ? TRUE : FALSE);
+	gtk_toggle_button_set_active(
+		GTK_TOGGLE_BUTTON(_widgets["ongoingFlag"]),
+		obj.ongoing ? TRUE : FALSE);
+	gtk_toggle_button_set_active(
+		GTK_TOGGLE_BUTTON(_widgets["mandatoryFlag"]),
+		obj.mandatory ? TRUE : FALSE);
+	gtk_toggle_button_set_active(
+		GTK_TOGGLE_BUTTON(_widgets["visibleFlag"]),
+		obj.visible ? TRUE : FALSE);
 }
 
 /* GTK CALLBACKS */
@@ -404,6 +404,9 @@ void ObjectivesEditor::_onEntitySelectionChanged(GtkTreeSelection* sel,
 		std::string name = gtkutil::TreeModel::getString(model, &iter, 2);
 		ObjectiveEntityPtr obj = self->_entities[name];
 		
+		// Save the current selection name
+		self->_curEntity = name;
+		
 		// Populate the objective list
 		obj->populateListStore(self->_objectiveList);
 		
@@ -432,12 +435,11 @@ void ObjectivesEditor::_onObjectiveSelectionChanged(GtkTreeSelection* sel,
 		// Enable the edit panel
 		gtk_widget_set_sensitive(self->_widgets["editPanel"], TRUE);		
 		
-		// Get the objective number
-		int iNum;
-		gtk_tree_model_get(model, &iter, 0, &iNum, -1);
+		// Get the objective number and save it as the current value
+		gtk_tree_model_get(model, &iter, 0, &(self->_curObjective), -1);
 		
 		// Populate the edit panel
-		self->populateEditPanel(iNum);				
+		self->populateEditPanel();				
 	}
 	else {
 		

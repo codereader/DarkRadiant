@@ -38,6 +38,13 @@ public:
 	ObjectiveEntity(scene::Node& n);
 	
 	/**
+	 * Return an Objective reference by numeric index.
+	 */
+	Objective& getObjective(int iIndex) {
+		return _objectives[iIndex];
+	}
+	
+	/**
 	 * Delete the actual entity node from the map. This will render any further
 	 * operations on this ObjectiveEntity undefined, and it should immediately
 	 * be deleted.
