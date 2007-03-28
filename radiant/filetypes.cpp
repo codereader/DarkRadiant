@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <map>
 #include <iostream>
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
 
 /**
  * Implementation of the file type registry.
@@ -105,6 +106,9 @@ std::string findModuleName(IFileTypeRegistry* registry,
 						   const std::string& moduleType, 
 						   const std::string& extension)
 {
+	// Convert the file extension to lowercase
+	std::string ext = boost::algorithm::to_lower_copy(extension);
+	
 	// Get the list of types for the type category
 	ModuleTypeListPtr list = registry->getTypesFor(moduleType);
 	
@@ -114,7 +118,7 @@ std::string findModuleName(IFileTypeRegistry* registry,
 		 i++)
 	{
 		std::string patternExt = os::getExtension(i->filePattern.pattern);
-		if (patternExt == extension) {
+		if (patternExt == ext) {
 			// Match
 			return i->moduleName;	
 		}
