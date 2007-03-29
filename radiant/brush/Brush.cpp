@@ -46,7 +46,6 @@ Brush::Brush(const Brush& other) :
 	Snappable(other),
 	Undoable(other),
 	FaceObserver(other),
-	Nameable(other),
 	BrushDoom3(other),
 	m_node(0),
 	m_undoable_observer(0),
@@ -129,17 +128,6 @@ void Brush::instanceDetach(const scene::Path& path) {
 		m_undoable_observer = 0;
 		GlobalUndoSystem().release(this);
 	}
-}
-
-// nameable
-const char* Brush::name() const {
-	return "brush";
-}
-
-void Brush::attach(const NameCallback& callback) {
-}
-
-void Brush::detach(const NameCallback& callback) {
 }
 
 // observer

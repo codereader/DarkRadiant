@@ -15,6 +15,7 @@ BrushNode::BrushNode(const BrushNode& other) :
 	scene::Node::Symbiot(other),
 	scene::Instantiable(other),
 	scene::Cloneable(other),
+	Nameable(other),
 	m_node(this, this, StaticTypeCasts::instance().get()),
 	m_brush(other.m_brush, m_node, InstanceSetEvaluateTransform<BrushInstance>::Caller(m_instances), InstanceSet::BoundsChangedCaller(m_instances)),
 	m_mapImporter(m_brush),
@@ -40,10 +41,6 @@ MapImporter& BrushNode::get(NullType<MapImporter>)	{
 
 MapExporter& BrushNode::get(NullType<MapExporter>)	{
 	return m_mapExporter;
-}
-
-Nameable& BrushNode::get(NullType<Nameable>) {
-	return m_brush;
 }
 
 BrushDoom3& BrushNode::get(NullType<BrushDoom3>) {

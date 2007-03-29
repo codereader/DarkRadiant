@@ -33,28 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "selectionlib.h"
 #include "generic/callback.h"
 
-
-class NameableString : public Nameable
-{
-  CopiedString m_name;
-public:
-  NameableString(const char* name)
-    : m_name(name)
-  {
-  }
-
-  const char* name() const
-  {
-    return m_name.c_str();
-  }
-  void attach(const NameCallback& callback)
-  {
-  }
-  void detach(const NameCallback& callback)
-  {
-  }
-};
-
+#include <string>
 
 class UndoFileChangeTracker : public UndoTracker, public MapFile
 {
@@ -145,7 +124,11 @@ public:
 };
 
 
-class MapRoot : public scene::Node::Symbiot, public scene::Instantiable, public scene::Traversable::Observer
+class MapRoot : 
+	public scene::Node::Symbiot, 
+	public scene::Instantiable, 
+	public scene::Traversable::Observer,
+	public Nameable
 {
   class TypeCasts
   {
@@ -154,9 +137,9 @@ class MapRoot : public scene::Node::Symbiot, public scene::Instantiable, public 
     TypeCasts()
     {
       NodeStaticCast<MapRoot, scene::Instantiable>::install(m_casts);
+      NodeStaticCast<MapRoot, Nameable>::install(m_casts);
       NodeContainedCast<MapRoot, scene::Traversable>::install(m_casts);
       NodeContainedCast<MapRoot, TransformNode>::install(m_casts);
-      NodeContainedCast<MapRoot, Nameable>::install(m_casts);
       NodeContainedCast<MapRoot, MapFile>::install(m_casts);
     }
     NodeTypeCastTable& get()
@@ -170,7 +153,7 @@ class MapRoot : public scene::Node::Symbiot, public scene::Instantiable, public 
   TraversableNodeSet m_traverse;
   InstanceSet m_instances;
   typedef SelectableInstance Instance;
-  NameableString m_name;
+	std::string _name;
   UndoFileChangeTracker m_changeTracker;
 public:
   typedef LazyStatic<TypeCasts> StaticTypeCasts;
@@ -183,26 +166,31 @@ public:
   {
     return m_transform;
   }
-  Nameable& get(NullType<Nameable>)
-  {
-    return m_name;
-  }
   MapFile& get(NullType<MapFile>)
   {
     return m_changeTracker;
   }
 
-  MapRoot(const char* name) : m_node(this, this, StaticTypeCasts::instance().get()), m_name(name)
-  {
-    m_node.m_isRoot = true;
+	MapRoot(const char* name) : 
+		m_node(this, this, StaticTypeCasts::instance().get()), 
+		_name(name)
+	{
+		m_node.m_isRoot = true;
+		m_traverse.attach(this);
+	
+		GlobalUndoSystem().trackerAttach(m_changeTracker);
+	}
 
-    m_traverse.attach(this);
+	const char* name() const {
+		return _name.c_str();
+	}
+	
+	void attach(const NameCallback& callback)
+	{}
+  
+	void detach(const NameCallback& callback)
+	{}
 
-    GlobalUndoSystem().trackerAttach(m_changeTracker);
-  }
-  ~MapRoot()
-  {
-  }
   void release()
   {
     GlobalUndoSystem().trackerDetach(m_changeTracker);

@@ -24,11 +24,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "instancelib.h"
 #include "brushtokens.h"
+#include "nameable.h"
 
 class BrushNode :
 	public scene::Node::Symbiot,
 	public scene::Instantiable,
-	public scene::Cloneable
+	public scene::Cloneable,
+	public Nameable
 {
 	
 	// The typecast class (needed to cast this node onto other types)
@@ -38,12 +40,12 @@ class BrushNode :
 		TypeCasts() {
 			NodeStaticCast<BrushNode, scene::Instantiable>::install(m_casts);
 			NodeStaticCast<BrushNode, scene::Cloneable>::install(m_casts);
+			NodeStaticCast<BrushNode, Nameable>::install(m_casts);
 			NodeContainedCast<BrushNode, Snappable>::install(m_casts);
 			NodeContainedCast<BrushNode, TransformNode>::install(m_casts);
 			NodeContainedCast<BrushNode, Brush>::install(m_casts);
 			NodeContainedCast<BrushNode, MapImporter>::install(m_casts);
 			NodeContainedCast<BrushNode, MapExporter>::install(m_casts);
-			NodeContainedCast<BrushNode, Nameable>::install(m_casts);
 			NodeContainedCast<BrushNode, BrushDoom3>::install(m_casts);
 		}
 		
@@ -81,8 +83,15 @@ public:
 	Brush& get(NullType<Brush>);
 	MapImporter& get(NullType<MapImporter>);
 	MapExporter& get(NullType<MapExporter>);
-	Nameable& get(NullType<Nameable>);
 	BrushDoom3& get(NullType<BrushDoom3>);
+	
+	const char* name() const {
+		return "Brush";
+	}
+
+	// Unused attach/detach functions (needed for nameable implementation)
+	void attach(const NameCallback& callback) {}
+	void detach(const NameCallback& callback) {}
 	
 	// Returns the actual scene node
 	scene::Node& node();
