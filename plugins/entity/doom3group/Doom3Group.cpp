@@ -328,7 +328,8 @@ void Doom3Group::setIsModel(bool newValue) {
 		detachTraverse();
 		attachModel();
 
-		m_nameKeys.setKeyIsName(Static<KeyIsName>::instance().m_keyIsName);
+		// The model key is not recognised as "name"
+		m_nameKeys.setKeyIsName(keyIsNameDoom3);
 		m_model.modelChanged(m_modelKey.c_str());
 	}
 	else if (!newValue && m_isModel) {
@@ -337,6 +338,7 @@ void Doom3Group::setIsModel(bool newValue) {
 		attachTraverse();
 		m_funcStaticOrigin.enable();
 
+		// The model key should be recognised as "name" (important for "namespacing")
 		m_nameKeys.setKeyIsName(keyIsNameDoom3Doom3Group);
 	}
 	m_isModel = newValue;

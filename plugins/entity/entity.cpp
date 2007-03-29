@@ -50,8 +50,6 @@ Counter* EntityKeyValues::m_counter = 0;
 /* greebo: Constructs the entity environment according to the given game type (is Doom3 anyway)
  */
 void Entity_Construct() {
-  Static<KeyIsName>::instance().m_keyIsName = keyIsNameDoom3;
-
   Light_Construct(LIGHTTYPE_DOOM3);
   Doom3Group_construct();
 
