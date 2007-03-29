@@ -64,4 +64,24 @@ void ObjectiveEntity::populateListStore(GtkListStore* store) const {
 	}	
 }
 
+// Write out Objectives to entity keyvals
+void ObjectiveEntity::writeToEntity() const {
+	assert(_entity);
+	
+	for (ObjectiveMap::const_iterator i = _objectives.begin();
+		 i != _objectives.end();
+		 ++i) 
+	{
+		using std::string;
+		
+		// Obtain the Objective and construct the key prefix from the index
+		const Objective& o = i->second;
+		string prefix = "obj" + boost::lexical_cast<string>(i->first) + "_";
+		
+		// Set the entity keyvalues
+		_entity->setKeyValue(prefix + "desc", o.description);
+		_entity->setKeyValue(prefix + "state", o.startActive ? "1" : "0");
+	}	
+}
+
 }

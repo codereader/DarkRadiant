@@ -61,6 +61,7 @@ private:
 	
 	// GTK callbacks
 	static void _onCancel(GtkWidget* w, ObjectivesEditor* self);
+	static void _onOK(GtkWidget*, ObjectivesEditor* self);
 	static void _onStartActiveCellToggled(
 		GtkCellRendererToggle*, const gchar* path, ObjectivesEditor* self);
 	static void _onEntitySelectionChanged(GtkTreeSelection*, ObjectivesEditor*);
