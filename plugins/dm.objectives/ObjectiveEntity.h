@@ -49,6 +49,13 @@ public:
 	void addObjective();
 	
 	/**
+	 * Delete a numbered objective.
+	 */
+	void deleteObjective(int index) {
+		_objectives.erase(index);
+	}
+	
+	/**
 	 * Delete the actual entity node from the map. This will render any further
 	 * operations on this ObjectiveEntity undefined, and it should immediately
 	 * be deleted.
