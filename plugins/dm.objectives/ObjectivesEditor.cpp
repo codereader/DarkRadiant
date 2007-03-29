@@ -38,6 +38,7 @@ namespace {
 		WIDGET_DELETE_OBJECTIVE,
 		WIDGET_CLEAR_OBJECTIVES,
 		WIDGET_DESCRIPTION_ENTRY,
+		WIDGET_STATE_COMBO,
 		WIDGET_MANDATORY_FLAG,
 		WIDGET_IRREVERSIBLE_FLAG,
 		WIDGET_ONGOING_FLAG,
@@ -207,7 +208,7 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 GtkWidget* ObjectivesEditor::createObjectiveEditPanel() {
 
 	// Table for entry boxes
-	GtkWidget* table = gtk_table_new(2, 2, FALSE);
+	GtkWidget* table = gtk_table_new(3, 2, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
 	
@@ -221,6 +222,23 @@ GtkWidget* ObjectivesEditor::createObjectiveEditPanel() {
 							  1, 2, 0, 1);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_DESCRIPTION_ENTRY]), "changed",
 					 G_CALLBACK(_onDescriptionEdited), this);
+	
+	// State selection
+	gtk_table_attach(GTK_TABLE(table),
+					 gtkutil::LeftAlignedLabel("<b>Initial state</b>"),
+					 0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
+	_widgets[WIDGET_STATE_COMBO] = gtk_combo_box_new_text();
+	gtk_table_attach_defaults(GTK_TABLE(table),
+							  _widgets[WIDGET_STATE_COMBO],
+							  1, 2, 1, 2);
+
+	// Populate the list of states. This must be done in order to match the
+	// values in the enum, since the index will be used when writing to entity
+	GtkComboBox* combo = GTK_COMBO_BOX(_widgets[WIDGET_STATE_COMBO]);
+	gtk_combo_box_append_text(combo, "COMPLETE");
+	gtk_combo_box_append_text(combo, "INCOMPLETE");
+	gtk_combo_box_append_text(combo, "FAILED");
+	gtk_combo_box_append_text(combo, "INVALID");
 	
 	// Options checkboxes.
 	gtk_table_attach(GTK_TABLE(table), 
