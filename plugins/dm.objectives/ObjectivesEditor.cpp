@@ -244,6 +244,17 @@ GtkWidget* ObjectivesEditor::createFlagsTable() {
 	_widgets[WIDGET_VISIBLE_FLAG] =
 		gtk_check_button_new_with_label("Visible"); 
 
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_STARTACTIVE_FLAG]), "toggled",
+					 G_CALLBACK(_onFlagToggle), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_MANDATORY_FLAG]), "toggled",
+					 G_CALLBACK(_onFlagToggle), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_IRREVERSIBLE_FLAG]), "toggled",
+					 G_CALLBACK(_onFlagToggle), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_ONGOING_FLAG]), "toggled",
+					 G_CALLBACK(_onFlagToggle), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_VISIBLE_FLAG]), "toggled",
+					 G_CALLBACK(_onFlagToggle), this);
+
 	gtk_table_attach_defaults(
 		GTK_TABLE(table), _widgets[WIDGET_STARTACTIVE_FLAG], 0, 1, 0, 1);
 	gtk_table_attach_defaults(
@@ -285,6 +296,12 @@ void ObjectivesEditor::show() {
 
 // Populate widgets with map data
 void ObjectivesEditor::populateWidgets() {
+
+	// Clear internal data
+	_worldSpawn = NULL;
+	_entities.clear();
+	_curEntity = _entities.end();
+	_curObjective = 0;
 
 	// Clear the list boxes
 	gtk_list_store_clear(_objectiveEntityList);
@@ -515,6 +532,27 @@ void ObjectivesEditor::_onAddObjective(GtkWidget* w, ObjectivesEditor* self) {
 	// Add a new objective to the ObjectiveEntity and refresh the list store
 	self->_curEntity->second->addObjective();
 	self->refreshObjectivesList();	
+}
+
+// Callback for flag checkbox toggle
+void ObjectivesEditor::_onFlagToggle(GtkWidget* flag, ObjectivesEditor* self) {
+	
+	// Get the objective and the new status
+	Objective& o = self->_curEntity->second->getObjective(self->_curObjective);
+	bool status = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(flag));
+	
+	// Determine which checkbox is toggled, then update the appropriate flag
+	// accordingly
+	if (flag == self->_widgets[WIDGET_STARTACTIVE_FLAG])
+		o.startActive = status;
+	else if (flag == self->_widgets[WIDGET_MANDATORY_FLAG])
+		o.mandatory = status;
+	else if (flag == self->_widgets[WIDGET_VISIBLE_FLAG])
+		o.visible = status;
+	else if (flag == self->_widgets[WIDGET_ONGOING_FLAG])
+		o.ongoing = status;
+	else if (flag == self->_widgets[WIDGET_IRREVERSIBLE_FLAG])
+		o.irreversible = status;
 }
 
 }
