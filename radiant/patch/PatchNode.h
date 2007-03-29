@@ -48,7 +48,7 @@ public:
 
 	typedef LazyStatic<TypeCasts> StaticTypeCasts;
 
-	const char* name() const {
+	std::string name() const {
 		return "Patch";
 	}
 

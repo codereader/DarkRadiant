@@ -815,7 +815,7 @@ void graph_tree_model_row_changed(GraphTreeNode& node);
 
 class GraphTreeNode
 {
-  typedef std::map<std::pair<CopiedString, scene::Node*>, GraphTreeNode*> ChildNodes;
+  typedef std::map<std::pair<std::string, scene::Node*>, GraphTreeNode*> ChildNodes;
   ChildNodes m_childnodes;
 public:
   Reference<scene::Instance> m_instance;
@@ -1243,21 +1243,17 @@ void graph_tree_model_row_deleted(GraphTreeModel& model, GraphTreeNode::iterator
   graph_tree_model_row_deleted(&model, i);
 }
 
-const char* node_get_name(scene::Node& node)
-{
-  Nameable* nameable = Node_getNameable(node);
-  return (nameable != 0)
-    ? nameable->name()
-    : "node";
+std::string node_get_name(scene::Node& node) {
+	Nameable* nameable = Node_getNameable(node);
+	return (nameable != NULL) ? nameable->name() : "node";
 }
 
-const char* node_get_name_safe(scene::Node& node)
-{
-  if(&node == 0)
-  {
-    return "";
-  }
-  return node_get_name(node);
+// Checks for NULL references and returns "" if node is NULL
+std::string node_get_name_safe(scene::Node& node) {
+	if (&node == NULL) {
+		return "";
+	}
+	return node_get_name(node);
 }
 
 GraphTreeNode* graph_tree_model_find_parent(GraphTreeModel* model, const scene::Path& path)

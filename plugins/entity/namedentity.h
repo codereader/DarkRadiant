@@ -50,22 +50,22 @@ public:
   }
 };
 
-class NamedEntity : public Nameable
+class NamedEntity : 
+	public Nameable
 {
   EntityKeyValues& m_entity;
   NameCallbackSet m_changed;
-  std::string m_name;
+  std::string _name;
 public:
   NamedEntity(EntityKeyValues& entity) : m_entity(entity)
   {
   }
-  const char* name() const
+  std::string name() const
   {
-    if(m_name.empty())
-    {
-      return m_entity.getEntityClass()->getName().c_str();
+    if (_name.empty()) {
+		return m_entity.getEntityClass()->getName();
     }
-    return m_name.c_str();
+    return _name;
   }
   void attach(const NameCallback& callback)
   {
@@ -86,7 +86,7 @@ public:
     {
       m_changed.changed(value);
     }
-    m_name = value;
+    _name = value;
   }
   typedef MemberCaller1<NamedEntity, const char*, &NamedEntity::identifierChanged> IdentifierChangedCaller;
 };
@@ -103,7 +103,7 @@ public:
   void render(RenderStateFlags state) const
   {
     glRasterPos3fv(m_position);
-    GlobalOpenGL().drawString(m_named.name());
+    GlobalOpenGL().drawString(m_named.name().c_str());
   }
 };
 

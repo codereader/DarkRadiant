@@ -85,7 +85,7 @@ public:
 	MapExporter& get(NullType<MapExporter>);
 	BrushDoom3& get(NullType<BrushDoom3>);
 	
-	const char* name() const {
+	std::string name() const {
 		return "Brush";
 	}
 
