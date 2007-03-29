@@ -34,7 +34,7 @@ class ObjectivesEditor
 	GtkListStore* _objectiveList;
 	
 	// Table of dialog subwidgets
-	std::map<std::string, GtkWidget*> _widgets;
+	std::map<int, GtkWidget*> _widgets;
 
 	// Pointer to the worldspawn entity
 	Entity* _worldSpawn;

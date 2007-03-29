@@ -29,6 +29,20 @@ namespace {
 	const char* DIALOG_TITLE = "Mission objectives"; 	
 	const char* OBJECTIVE_ENTITY_CLASS = "target_tdm_addobjectives";
 	
+	/* WIDGETS ENUM */
+	enum {
+		WIDGET_OBJECTIVES_PANEL,
+		WIDGET_ENTITY_LIST,
+		WIDGET_EDIT_PANEL,
+		WIDGET_DELETE_ENTITY,
+		WIDGET_DESCRIPTION_ENTRY,
+		WIDGET_STARTACTIVE_FLAG,
+		WIDGET_MANDATORY_FLAG,
+		WIDGET_IRREVERSIBLE_FLAG,
+		WIDGET_ONGOING_FLAG,
+		WIDGET_VISIBLE_FLAG
+	};
+	
 }
 
 // Constructor creates widgets
@@ -96,7 +110,7 @@ GtkWidget* ObjectivesEditor::createEntitiesPanel() {
 	GtkTreeSelection* sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
 	g_signal_connect(G_OBJECT(sel), "changed",
 					 G_CALLBACK(_onEntitySelectionChanged), this);
-	_widgets["entityList"] = tv;
+	_widgets[WIDGET_ENTITY_LIST] = tv;
 	
 	// Active-at-start column (checkbox)
 	GtkCellRenderer* startToggle = gtk_cell_renderer_toggle_new();
@@ -125,7 +139,7 @@ GtkWidget* ObjectivesEditor::createEntitiesPanel() {
 	g_signal_connect(
 		G_OBJECT(delButton), "clicked", G_CALLBACK(_onDeleteEntity), this);
 	gtk_box_pack_start(GTK_BOX(buttonBox), delButton, TRUE, TRUE, 0);
-	_widgets["deleteEntity"] = delButton;
+	_widgets[WIDGET_DELETE_ENTITY] = delButton;
 					   
 	gtk_box_pack_start(GTK_BOX(hbx), buttonBox, FALSE, FALSE, 0);
 	return hbx;
@@ -175,7 +189,7 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 	gtk_box_pack_start(GTK_BOX(vbx), createObjectiveEditPanel(), 
 					   FALSE, FALSE, 0);
 	gtk_widget_set_sensitive(vbx, FALSE);
-	_widgets["objectivesPanel"] = vbx;
+	_widgets[WIDGET_OBJECTIVES_PANEL] = vbx;
 					   
 	return vbx; 
 }
@@ -184,23 +198,18 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 GtkWidget* ObjectivesEditor::createObjectiveEditPanel() {
 
 	// Table for entry boxes
-	GtkWidget* table = gtk_table_new(3, 2, FALSE);
+	GtkWidget* table = gtk_table_new(2, 2, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
 	
-	// Objective number and description
-	gtk_table_attach(GTK_TABLE(table), 
-					 gtkutil::LeftAlignedLabel("<b>Objective</b>"),
-					 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
-	_widgets["numberEntry"] = gtk_entry_new();
-	gtk_table_attach_defaults(GTK_TABLE(table), _widgets["numberEntry"], 
-							  1, 2, 0, 1);
+	// Objective description
 	gtk_table_attach(GTK_TABLE(table), 
 					 gtkutil::LeftAlignedLabel("<b>Description</b>"),
-					 0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
-	_widgets["descriptionEntry"] = gtk_entry_new();
-	gtk_table_attach_defaults(GTK_TABLE(table), _widgets["descriptionEntry"], 
-							  1, 2, 1, 2);
+					 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
+	_widgets[WIDGET_DESCRIPTION_ENTRY] = gtk_entry_new();
+	gtk_table_attach_defaults(GTK_TABLE(table), 
+							  _widgets[WIDGET_DESCRIPTION_ENTRY], 
+							  1, 2, 0, 1);
 	
 	// Options checkboxes.
 	gtk_table_attach(GTK_TABLE(table), 
@@ -212,7 +221,7 @@ GtkWidget* ObjectivesEditor::createObjectiveEditPanel() {
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbx), table, FALSE, FALSE, 0);
 	gtk_widget_set_sensitive(vbx, FALSE);
-	_widgets["editPanel"] = vbx;
+	_widgets[WIDGET_EDIT_PANEL] = vbx;
 
 	return vbx;
 }
@@ -224,27 +233,27 @@ GtkWidget* ObjectivesEditor::createFlagsTable() {
 	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 6);
 
-	_widgets["startActiveFlag"] = 
+	_widgets[WIDGET_STARTACTIVE_FLAG] = 
 		gtk_check_button_new_with_label("Start active");
-	_widgets["mandatoryFlag"] =
+	_widgets[WIDGET_MANDATORY_FLAG] =
 		gtk_check_button_new_with_label("Mandatory"); 
-	_widgets["irreversibleFlag"] =
+	_widgets[WIDGET_IRREVERSIBLE_FLAG] =
 		gtk_check_button_new_with_label("Irreversible"); 
-	_widgets["ongoingFlag"] =
+	_widgets[WIDGET_ONGOING_FLAG] =
 		gtk_check_button_new_with_label("Ongoing"); 
-	_widgets["visibleFlag"] =
+	_widgets[WIDGET_VISIBLE_FLAG] =
 		gtk_check_button_new_with_label("Visible"); 
 
-	gtk_table_attach_defaults(GTK_TABLE(table), _widgets["startActiveFlag"], 
-							  0, 1, 0, 1);
-	gtk_table_attach_defaults(GTK_TABLE(table), _widgets["mandatoryFlag"],
-							  1, 2, 0, 1);
-	gtk_table_attach_defaults(GTK_TABLE(table), _widgets["irreversibleFlag"],
-							  2, 3, 0, 1);
-	gtk_table_attach_defaults(GTK_TABLE(table), _widgets["ongoingFlag"],
-							  0, 1, 1, 2);
-	gtk_table_attach_defaults(GTK_TABLE(table), _widgets["visibleFlag"],
-							  1, 2, 1, 2);
+	gtk_table_attach_defaults(
+		GTK_TABLE(table), _widgets[WIDGET_STARTACTIVE_FLAG], 0, 1, 0, 1);
+	gtk_table_attach_defaults(
+		GTK_TABLE(table), _widgets[WIDGET_MANDATORY_FLAG], 1, 2, 0, 1);
+	gtk_table_attach_defaults(
+		GTK_TABLE(table), _widgets[WIDGET_IRREVERSIBLE_FLAG], 2, 3, 0, 1);
+	gtk_table_attach_defaults(
+		GTK_TABLE(table), _widgets[WIDGET_ONGOING_FLAG], 0, 1, 1, 2);
+	gtk_table_attach_defaults(
+		GTK_TABLE(table), _widgets[WIDGET_VISIBLE_FLAG], 1, 2, 1, 2);
 							  
 	return table;
 
@@ -342,25 +351,23 @@ void ObjectivesEditor::populateEditPanel() {
 
 	const Objective& obj = _curEntity->second->getObjective(_curObjective);
 	
-//	gtk_entry_set_text(GTK_ENTRY(_widgets["numberEntry"]), 
-//					   boost::lexical_cast<std::string>(objNum).c_str());
-	gtk_entry_set_text(GTK_ENTRY(_widgets["descriptionEntry"]),
+	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_DESCRIPTION_ENTRY]),
 					   obj.description.c_str());
 					   
 	gtk_toggle_button_set_active(
-		GTK_TOGGLE_BUTTON(_widgets["startActiveFlag"]),
+		GTK_TOGGLE_BUTTON(_widgets[WIDGET_STARTACTIVE_FLAG]),
 		obj.startActive ? TRUE : FALSE);
 	gtk_toggle_button_set_active(
-		GTK_TOGGLE_BUTTON(_widgets["irreversibleFlag"]),
+		GTK_TOGGLE_BUTTON(_widgets[WIDGET_IRREVERSIBLE_FLAG]),
 		obj.irreversible ? TRUE : FALSE);
 	gtk_toggle_button_set_active(
-		GTK_TOGGLE_BUTTON(_widgets["ongoingFlag"]),
+		GTK_TOGGLE_BUTTON(_widgets[WIDGET_ONGOING_FLAG]),
 		obj.ongoing ? TRUE : FALSE);
 	gtk_toggle_button_set_active(
-		GTK_TOGGLE_BUTTON(_widgets["mandatoryFlag"]),
+		GTK_TOGGLE_BUTTON(_widgets[WIDGET_MANDATORY_FLAG]),
 		obj.mandatory ? TRUE : FALSE);
 	gtk_toggle_button_set_active(
-		GTK_TOGGLE_BUTTON(_widgets["visibleFlag"]),
+		GTK_TOGGLE_BUTTON(_widgets[WIDGET_VISIBLE_FLAG]),
 		obj.visible ? TRUE : FALSE);
 }
 
@@ -415,14 +422,16 @@ void ObjectivesEditor::_onEntitySelectionChanged(GtkTreeSelection* sel,
 		self->refreshObjectivesList();
 		
 		// Enable the delete button and objectives panel
-		gtk_widget_set_sensitive(self->_widgets["deleteEntity"], TRUE); 
-		gtk_widget_set_sensitive(self->_widgets["objectivesPanel"], TRUE);
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_ENTITY], TRUE); 
+		gtk_widget_set_sensitive(
+			self->_widgets[WIDGET_OBJECTIVES_PANEL], TRUE);
 	}
 	else {
 		// No selection, disable the delete button and clear the objective
 		// panel
-		gtk_widget_set_sensitive(self->_widgets["deleteEntity"], FALSE);
-		gtk_widget_set_sensitive(self->_widgets["objectivesPanel"], FALSE);
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_ENTITY], FALSE);
+		gtk_widget_set_sensitive(
+			self->_widgets[WIDGET_OBJECTIVES_PANEL], FALSE);
 	} 
 		
 }
@@ -437,7 +446,7 @@ void ObjectivesEditor::_onObjectiveSelectionChanged(GtkTreeSelection* sel,
 	if (gtk_tree_selection_get_selected(sel, &model, &iter)) {
 		
 		// Enable the edit panel
-		gtk_widget_set_sensitive(self->_widgets["editPanel"], TRUE);		
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_PANEL], TRUE);		
 		
 		// Get the objective number and save it as the current value
 		gtk_tree_model_get(model, &iter, 0, &(self->_curObjective), -1);
@@ -448,7 +457,7 @@ void ObjectivesEditor::_onObjectiveSelectionChanged(GtkTreeSelection* sel,
 	else {
 		
 		// Disable the edit panel
-		gtk_widget_set_sensitive(self->_widgets["editPanel"], FALSE);		
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_PANEL], FALSE);		
 	}
 }
 
@@ -480,7 +489,7 @@ void ObjectivesEditor::_onDeleteEntity(GtkWidget* w, ObjectivesEditor* self) {
 	// Get the tree selection
 	GtkTreeSelection* sel = 
 		gtk_tree_view_get_selection(
-			GTK_TREE_VIEW(self->_widgets["entityList"]));
+			GTK_TREE_VIEW(self->_widgets[WIDGET_ENTITY_LIST]));
 			
 	// Get the Node* from the tree model and remove it from the scenegraph
 	GtkTreeIter iter;
