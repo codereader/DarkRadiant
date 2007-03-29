@@ -2,6 +2,11 @@
 #include "ObjectiveKeyExtractor.h"
 #include "TargetList.h"
 
+#include "ientity.h"
+#include "iscenegraph.h"
+
+#include <boost/lexical_cast.hpp>
+
 namespace objectives
 {
 
@@ -16,6 +21,26 @@ ObjectiveEntity::ObjectiveEntity(scene::Node& n)
 	// on the entity
 	ObjectiveKeyExtractor extractor(_objectives);
 	_entity->forEachKeyValue(extractor);
+}
+
+// Delete the entity's world node
+void ObjectiveEntity::deleteWorldNode() {
+	Node_getTraversable(GlobalSceneGraph().root())->erase(_node);
+	_entity = NULL;		
+}
+
+// Add a new objective
+void ObjectiveEntity::addObjective() {
+	
+	// Locate the first unused id
+	int index = 0;
+	while (_objectives.find(index) != _objectives.end())
+		++index;
+		
+	// Insert a new Objective at this ID.
+	Objective o;
+	o.description = "New objective " + boost::lexical_cast<std::string>(index);
+	_objectives.insert(ObjectiveMap::value_type(index, o));
 }
 
 // Test for targeting

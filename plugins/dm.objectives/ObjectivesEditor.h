@@ -43,8 +43,8 @@ class ObjectivesEditor
 	// entity
 	ObjectiveEntityMap _entities;
 	
-	// Name of current entity and index of current objective
-	std::string _curEntity;
+	// Current entity iter and index of current objective
+	ObjectiveEntityMap::iterator _curEntity;
 	int _curObjective;
 
 private:
@@ -77,6 +77,9 @@ private:
 	void populateWidgets();
 	void populateActiveAtStart();
 	
+	// Refresh the objectives list from the currently-selected ObjectiveEntity
+	void refreshObjectivesList();
+
 	// Populate the edit panel from the selected objective
 	void populateEditPanel();
 	
