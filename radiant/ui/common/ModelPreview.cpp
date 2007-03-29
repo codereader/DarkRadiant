@@ -74,6 +74,8 @@ void ModelPreview::initialisePreview() {
 	gtkutil::GLWidgetSentry sentry(_glWidget);
 
 	// Clear the window
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
 	glClearColor(0.0, 0.0, 0.0, 0);
 	glClearDepth(100.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -161,21 +163,21 @@ void ModelPreview::setSkin(const std::string& skin) {
 
 /* GTK CALLBACKS */
 
-void ModelPreview::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelPreview* self) {
-
+void ModelPreview::callbackGLDraw(GtkWidget* widget, 
+								  GdkEventExpose* ev, 
+								  ModelPreview* self) 
+{
 	// Create scoped sentry object to swap the GLWidget's buffers
 	gtkutil::GLWidgetSentry sentry(self->_glWidget);
 
 	// Set up the render
 	glClearColor(0.2, 0.2, 0.2, 0.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
 
 	// Get the current model if it exists, and if so get its AABB and proceed
 	// with rendering, otherwise exit.
-	model::IModel* model = self->_model.get();
-	if (model == NULL)
+	model::IModelPtr model = self->_model;
+	if (!model)
 		return;
 		
 	AABB aabb(model->localAABB());
@@ -183,11 +185,13 @@ void ModelPreview::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelPr
 	// Premultiply with the translations
 	glLoadIdentity();
 	glTranslatef(0, 0, self->_camDist); // camera translation
-	glRotatef(90, -1, 0, 0); // axis rotation (y-up (GL) -> z-up (model))
 	glMultMatrixf(self->_rotation); // post multiply with rotations
+	glRotatef(90, -1, 0, 0); // axis rotation (y-up (GL) -> z-up (model))
 
 	// Render the bounding box if the toggle is active
-	if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(self->_drawBBox)) == TRUE) {
+	if (gtk_toggle_tool_button_get_active(
+			GTK_TOGGLE_TOOL_BUTTON(self->_drawBBox)) == TRUE) 
+	{
 		// Render as fullbright wireframe
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
@@ -200,7 +204,6 @@ void ModelPreview::callbackGLDraw(GtkWidget* widget, GdkEventExpose* ev, ModelPr
 	glEnable(GL_LIGHTING);
 	glTranslatef(-aabb.origin.x(), -aabb.origin.y(), -aabb.origin.z()); // model translation
 	model->render(RENDER_TEXTURE);
-
 }
 
 void ModelPreview::callbackGLMotion(GtkWidget* widget, GdkEventMotion* ev, ModelPreview* self) {
