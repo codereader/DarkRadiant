@@ -43,7 +43,7 @@ public:
       if(bptr)
       {
         Brush& brush(bptr->getBrush());
-        m_file << "\ng " << brush.name() << exported << "\n";
+        m_file << "\ng " << "Brush" << exported << "\n";
         brush.forEachFace(*this);
         m_file << vertexbuffer.c_str() << "\n";
         m_file << texcoordbuffer.c_str();

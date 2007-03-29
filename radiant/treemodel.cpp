@@ -37,9 +37,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "string/string.h"
 #include "generic/reference.h"
 
-inline Nameable* Node_getNameable(scene::Node& node)
-{
-  return NodeTypeCast<Nameable>::cast(node);
+inline Nameable* Node_getNameable(scene::Node& node) {
+	return NodeTypeCast<Nameable>::cast(node);
 }
 
 #if 0

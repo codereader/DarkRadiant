@@ -105,7 +105,6 @@ Patch::Patch(const Patch& other) :
 	Cullable(other),
 	Snappable(other),
 	Undoable(other),
-	Nameable(other),
 	m_undoable_observer(0),
 	m_map(0),
 	m_render_solid(m_tess),

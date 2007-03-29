@@ -13,7 +13,8 @@ template<typename TokenImporter, typename TokenExporter>
 class PatchNode :
 	public scene::Node::Symbiot,
 	public scene::Instantiable,
-	public scene::Cloneable
+	public scene::Cloneable,
+	public Nameable
 {
 	typedef PatchNode<TokenImporter, TokenExporter> Self;
 
@@ -24,12 +25,12 @@ class PatchNode :
 		TypeCasts() {
 			NodeStaticCast<PatchNode, scene::Instantiable>::install(m_casts);
 			NodeStaticCast<PatchNode, scene::Cloneable>::install(m_casts);
+			NodeStaticCast<PatchNode, Nameable>::install(m_casts);
 			NodeContainedCast<PatchNode, Snappable>::install(m_casts);
 			NodeContainedCast<PatchNode, TransformNode>::install(m_casts);
 			NodeContainedCast<PatchNode, Patch>::install(m_casts);
 			NodeContainedCast<PatchNode, MapImporter>::install(m_casts);
 			NodeContainedCast<PatchNode, MapExporter>::install(m_casts);
-			NodeContainedCast<PatchNode, Nameable>::install(m_casts);
 		}
     	
     	InstanceTypeCastTable& get() {
@@ -47,6 +48,14 @@ public:
 
 	typedef LazyStatic<TypeCasts> StaticTypeCasts;
 
+	const char* name() const {
+		return "Patch";
+	}
+
+	// Unused attach/detach functions (needed for nameable implementation)
+	void attach(const NameCallback& callback) {}
+	void detach(const NameCallback& callback) {}
+
 	// Get the Snappable or TransformNode of the patch
 	Snappable& get(NullType<Snappable>) {
 		return m_patch;
@@ -63,11 +72,6 @@ public:
 		return m_exportMap;
 	}
 	
-	// Returns the patch with type <Nameable>
-	Nameable& get(NullType<Nameable>) {
-		return m_patch;
-	}
-
 	// Construct a PatchNode with no arguments
 	PatchNode(bool patchDef3 = false) :
 		m_node(this, this, StaticTypeCasts::instance().get()),
@@ -84,6 +88,7 @@ public:
 		scene::Node::Symbiot(other),
 		scene::Instantiable(other),
 		scene::Cloneable(other),
+		Nameable(other),
 		m_node(this, this, StaticTypeCasts::instance().get()),
 		m_patch(other.m_patch, m_node, InstanceSetEvaluateTransform<PatchInstance>::Caller(m_instances), 
 			    InstanceSet::BoundsChangedCaller(m_instances)), // create the patch out of the <other> one

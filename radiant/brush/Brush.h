@@ -4,7 +4,6 @@
 #include "scenelib.h"
 #include "cullable.h"
 #include "editable.h"
-#include "nameable.h"
 
 #include "container/array.h"
 
@@ -89,7 +88,6 @@ class Brush :
 	public Snappable,
 	public Undoable,
 	public FaceObserver,
-	public Nameable,
 	public BrushDoom3
 {
 private:
@@ -184,12 +182,6 @@ public:
 	
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
-	
-	// nameable
-	const char* name() const;
-	
-	void attach(const NameCallback& callback);
-	void detach(const NameCallback& callback);
 	
 	// observer
 	void planeChanged();

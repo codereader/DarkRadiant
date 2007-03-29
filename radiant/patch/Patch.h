@@ -35,8 +35,7 @@ class Patch :
 	public Bounded,
 	public Cullable,
 	public Snappable,
-	public Undoable,
-	public Nameable
+	public Undoable
 {
 	XMLStateVector m_xml_state;
 
@@ -131,19 +130,11 @@ public:
 	Patch(const Patch& other);
 	Patch(const Patch& other, scene::Node& node, const Callback& evaluateTransform, const Callback& boundsChanged);
 	
-	const char* name() const {
-		return "patch";
-	}
-
 	InstanceCounter m_instanceCounter;
 
 	void instanceAttach(const scene::Path& path);	
 	// Remove the attached instance and decrease the counters
 	void instanceDetach(const scene::Path& path);
-
-	// Unused attach/detach functions (needed for nameable implementation)
-	void attach(const NameCallback& callback) {}
-	void detach(const NameCallback& callback) {}
 
 	// Attaches an observer (doh!)
 	void attach(Observer* observer);
