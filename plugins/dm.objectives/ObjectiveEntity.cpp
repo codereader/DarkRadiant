@@ -33,7 +33,7 @@ void ObjectiveEntity::deleteWorldNode() {
 void ObjectiveEntity::addObjective() {
 	
 	// Locate the first unused id
-	int index = 0;
+	int index = 1;
 	while (_objectives.find(index) != _objectives.end())
 		++index;
 		
