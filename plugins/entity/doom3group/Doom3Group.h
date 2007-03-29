@@ -23,7 +23,7 @@ class Doom3Group :
 	public Bounded,
 	public Snappable 
 {
-	EntityKeyValues m_entity;
+	EntityKeyValues _keyValues;
 	KeyObserverMap m_keyObservers;
 	TraversableNodeSet m_traverse;
 	MatrixTransform m_transform;
