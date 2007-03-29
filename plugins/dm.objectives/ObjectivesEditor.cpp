@@ -38,7 +38,6 @@ namespace {
 		WIDGET_DELETE_OBJECTIVE,
 		WIDGET_CLEAR_OBJECTIVES,
 		WIDGET_DESCRIPTION_ENTRY,
-		WIDGET_STARTACTIVE_FLAG,
 		WIDGET_MANDATORY_FLAG,
 		WIDGET_IRREVERSIBLE_FLAG,
 		WIDGET_ONGOING_FLAG,
@@ -241,12 +240,8 @@ GtkWidget* ObjectivesEditor::createObjectiveEditPanel() {
 // Create table of flag checkboxes
 GtkWidget* ObjectivesEditor::createFlagsTable() {
 	
-	GtkWidget* table = gtk_table_new(2, 3, FALSE);
-	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
-	gtk_table_set_col_spacings(GTK_TABLE(table), 6);
+	GtkWidget* hbx = gtk_hbox_new(FALSE, 12);
 
-	_widgets[WIDGET_STARTACTIVE_FLAG] = 
-		gtk_check_button_new_with_label("Start active");
 	_widgets[WIDGET_MANDATORY_FLAG] =
 		gtk_check_button_new_with_label("Mandatory"); 
 	_widgets[WIDGET_IRREVERSIBLE_FLAG] =
@@ -256,8 +251,6 @@ GtkWidget* ObjectivesEditor::createFlagsTable() {
 	_widgets[WIDGET_VISIBLE_FLAG] =
 		gtk_check_button_new_with_label("Visible"); 
 
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_STARTACTIVE_FLAG]), "toggled",
-					 G_CALLBACK(_onFlagToggle), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_MANDATORY_FLAG]), "toggled",
 					 G_CALLBACK(_onFlagToggle), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_IRREVERSIBLE_FLAG]), "toggled",
@@ -267,18 +260,16 @@ GtkWidget* ObjectivesEditor::createFlagsTable() {
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_VISIBLE_FLAG]), "toggled",
 					 G_CALLBACK(_onFlagToggle), this);
 
-	gtk_table_attach_defaults(
-		GTK_TABLE(table), _widgets[WIDGET_STARTACTIVE_FLAG], 0, 1, 0, 1);
-	gtk_table_attach_defaults(
-		GTK_TABLE(table), _widgets[WIDGET_MANDATORY_FLAG], 1, 2, 0, 1);
-	gtk_table_attach_defaults(
-		GTK_TABLE(table), _widgets[WIDGET_IRREVERSIBLE_FLAG], 2, 3, 0, 1);
-	gtk_table_attach_defaults(
-		GTK_TABLE(table), _widgets[WIDGET_ONGOING_FLAG], 0, 1, 1, 2);
-	gtk_table_attach_defaults(
-		GTK_TABLE(table), _widgets[WIDGET_VISIBLE_FLAG], 1, 2, 1, 2);
-							  
-	return table;
+	gtk_box_pack_start(GTK_BOX(hbx), _widgets[WIDGET_MANDATORY_FLAG], 
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), _widgets[WIDGET_ONGOING_FLAG], 
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), _widgets[WIDGET_IRREVERSIBLE_FLAG], 
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), _widgets[WIDGET_VISIBLE_FLAG], 
+					   FALSE, FALSE, 0);
+
+	return hbx;
 
 }
 
@@ -383,9 +374,6 @@ void ObjectivesEditor::populateEditPanel() {
 	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_DESCRIPTION_ENTRY]),
 					   obj.description.c_str());
 					   
-	gtk_toggle_button_set_active(
-		GTK_TOGGLE_BUTTON(_widgets[WIDGET_STARTACTIVE_FLAG]),
-		obj.startActive ? TRUE : FALSE);
 	gtk_toggle_button_set_active(
 		GTK_TOGGLE_BUTTON(_widgets[WIDGET_IRREVERSIBLE_FLAG]),
 		obj.irreversible ? TRUE : FALSE);
@@ -611,9 +599,7 @@ void ObjectivesEditor::_onFlagToggle(GtkWidget* flag, ObjectivesEditor* self) {
 	
 	// Determine which checkbox is toggled, then update the appropriate flag
 	// accordingly
-	if (flag == self->_widgets[WIDGET_STARTACTIVE_FLAG])
-		o.startActive = status;
-	else if (flag == self->_widgets[WIDGET_MANDATORY_FLAG])
+	if (flag == self->_widgets[WIDGET_MANDATORY_FLAG])
 		o.mandatory = status;
 	else if (flag == self->_widgets[WIDGET_VISIBLE_FLAG])
 		o.visible = status;

@@ -80,7 +80,6 @@ void ObjectiveEntity::writeToEntity() const {
 		
 		// Set the entity keyvalues
 		_entity->setKeyValue(prefix + "desc", o.description);
-		_entity->setKeyValue(prefix + "state", o.startActive ? "1" : "0");
 		_entity->setKeyValue(prefix + "ongoing", o.ongoing ? "1" : "0");
 		_entity->setKeyValue(prefix + "visible", o.visible ? "1" : "0");
 		_entity->setKeyValue(prefix + "mandatory", o.mandatory ? "1" : "0");
