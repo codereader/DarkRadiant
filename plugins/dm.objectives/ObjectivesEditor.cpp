@@ -231,6 +231,8 @@ GtkWidget* ObjectivesEditor::createObjectiveEditPanel() {
 	gtk_table_attach_defaults(GTK_TABLE(table),
 							  _widgets[WIDGET_STATE_COMBO],
 							  1, 2, 1, 2);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_STATE_COMBO]), "changed",
+					 G_CALLBACK(_onInitialStateChanged), this);
 
 	// Populate the list of states. This must be done in order to match the
 	// values in the enum, since the index will be used when writing to entity
@@ -389,9 +391,15 @@ void ObjectivesEditor::populateEditPanel() {
 	// Get the objective
 	const Objective& obj = getCurrentObjective();
 	
+	// Set description text
 	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_DESCRIPTION_ENTRY]),
 					   obj.description.c_str());
+				
+	// Set initial state enum
+	gtk_combo_box_set_active(GTK_COMBO_BOX(_widgets[WIDGET_STATE_COMBO]),
+							 obj.state);
 					   
+	// Set flags
 	gtk_toggle_button_set_active(
 		GTK_TOGGLE_BUTTON(_widgets[WIDGET_IRREVERSIBLE_FLAG]),
 		obj.irreversible ? TRUE : FALSE);
@@ -625,6 +633,16 @@ void ObjectivesEditor::_onFlagToggle(GtkWidget* flag, ObjectivesEditor* self) {
 		o.ongoing = status;
 	else if (flag == self->_widgets[WIDGET_IRREVERSIBLE_FLAG])
 		o.irreversible = status;
+}
+
+// Initial state combo changed
+void ObjectivesEditor::_onInitialStateChanged(GtkWidget* w, 
+											  ObjectivesEditor* self)
+{
+	// Set the state enum value from the combo box index
+	self->getCurrentObjective().state = 
+		static_cast<Objective::State>(
+			gtk_combo_box_get_active(GTK_COMBO_BOX(w)));
 }
 
 // Callback when description is edited
