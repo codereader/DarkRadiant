@@ -42,49 +42,52 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "typesystem.h"
 
 #include "entity.h"
+#include "EntityCreator.h"
 
 #include "modulesystem/singletonmodule.h"
 
 class EntityDependencies :
-  public GlobalRadiantModuleRef,
-  public GlobalOpenGLModuleRef,
-  public GlobalUndoModuleRef,
-  public GlobalSceneGraphModuleRef,
-  public GlobalShaderCacheModuleRef,
-  public GlobalSelectionModuleRef,
-  public GlobalReferenceModuleRef,
-  public GlobalFilterModuleRef,
-  public GlobalPreferenceSystemModuleRef,
-  public GlobalNamespaceModuleRef,
-  public GlobalModelSkinCacheModuleRef,
-  public GlobalRegistryModuleRef,
-  public GlobalGridModuleRef
-{
-};
+	public GlobalRadiantModuleRef,
+	public GlobalOpenGLModuleRef,
+	public GlobalUndoModuleRef,
+	public GlobalSceneGraphModuleRef,
+	public GlobalShaderCacheModuleRef,
+	public GlobalSelectionModuleRef,
+	public GlobalReferenceModuleRef,
+	public GlobalFilterModuleRef,
+	public GlobalPreferenceSystemModuleRef,
+	public GlobalNamespaceModuleRef,
+	public GlobalModelSkinCacheModuleRef,
+	public GlobalRegistryModuleRef,
+	public GlobalGridModuleRef 
+{};
 
-class EntityDoom3API : public TypeSystemRef
+class EntityDoom3API : 
+	public TypeSystemRef
 {
-  EntityCreator* m_entitydoom3;
+	typedef boost::shared_ptr<entity::Doom3EntityCreator> EntityCreatorPtr;
+	EntityCreatorPtr _entitydoom3;
 public:
-  typedef EntityCreator Type;
-  STRING_CONSTANT(Name, "doom3");
+	typedef EntityCreator Type;
+	STRING_CONSTANT(Name, "doom3");
 
-  EntityDoom3API()
-  {
-    Entity_Construct();
+	EntityDoom3API() {
+		Entity_Construct();
 
-    m_entitydoom3 = &GetEntityCreator();
+		// Allocate a new entitycreator
+		_entitydoom3 = EntityCreatorPtr(new entity::Doom3EntityCreator());
 
-    GlobalReferenceCache().setEntityCreator(*m_entitydoom3);
-  }
-  ~EntityDoom3API()
-  {
-    Entity_Destroy();
-  }
-  EntityCreator* getTable()
-  {
-    return m_entitydoom3;
-  }
+		GlobalReferenceCache().setEntityCreator(*_entitydoom3);
+	}
+
+	~EntityDoom3API() {
+		Entity_Destroy();
+	}
+
+	EntityCreator* getTable() {
+		// Returned the contained pointer of the shared_ptr object
+		return _entitydoom3.get();
+	}
 };
 
 typedef SingletonModule<EntityDoom3API, EntityDependencies> EntityDoom3Module;
