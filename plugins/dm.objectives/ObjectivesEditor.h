@@ -74,6 +74,7 @@ private:
 	static void _onDeleteObjective(GtkWidget*, ObjectivesEditor*);
 	static void _onClearObjectives(GtkWidget*, ObjectivesEditor*);
 	static void _onFlagToggle(GtkWidget*, ObjectivesEditor*);
+	static void _onInitialStateChanged(GtkWidget*, ObjectivesEditor*);
 	static void _onDescriptionEdited(GtkEditable*, ObjectivesEditor*);
 	
 	// Show dialog widgets

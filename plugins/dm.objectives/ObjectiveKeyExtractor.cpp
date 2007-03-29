@@ -47,6 +47,10 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 	else if (objSubString == "irreversible") {
 		_objMap[iNum].irreversible = (value == "1");			
 	}
+	else if (objSubString == "state") {
+		_objMap[iNum].state = static_cast<Objective::State>(
+									boost::lexical_cast<int>(value));
+	}
 
 }
 	
