@@ -181,8 +181,8 @@ public:
 		GlobalUndoSystem().trackerAttach(m_changeTracker);
 	}
 
-	const char* name() const {
-		return _name.c_str();
+	std::string name() const {
+		return _name;
 	}
 	
 	void attach(const NameCallback& callback)
