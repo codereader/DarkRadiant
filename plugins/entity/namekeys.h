@@ -34,18 +34,20 @@ inline bool string_is_integer(const char* string)
   return *string == '\0';
 }
 
-typedef bool (*KeyIsNameFunc)(const char* key);
-
-class KeyIsName
+inline bool keyIsNameDoom3(const char* key)
 {
-public:
-  KeyIsNameFunc m_keyIsName;
+  return string_equal(key, "target")
+    || (string_equal_n(key, "target", 6) && string_is_integer(key + 6))
+    || string_equal(key, "name") || string_equal(key, "bind");
+}
 
-  KeyIsName()
-  {
-  }
-};
+inline bool keyIsNameDoom3Doom3Group(const char* key)
+{
+  return keyIsNameDoom3(key)
+    || string_equal(key, "model");
+}
 
+typedef bool (*KeyIsNameFunc)(const char* key);
 
 typedef MemberCaller1<EntityKeyValue, const char*, &EntityKeyValue::assign> KeyValueAssignCaller;
 typedef MemberCaller1<EntityKeyValue, const KeyObserver&, &EntityKeyValue::attach> KeyValueAttachCaller;
@@ -93,7 +95,10 @@ class NameKeys : public Entity::Observer, public Namespaced
     }
   }
 public:
-  NameKeys(EntityKeyValues& entity) : m_namespace(0), m_entity(entity), m_keyIsName(Static<KeyIsName>::instance().m_keyIsName)
+  NameKeys(EntityKeyValues& entity) : 
+  	m_namespace(0), 
+  	m_entity(entity), 
+  	m_keyIsName(keyIsNameDoom3)
   {
     m_entity.attach(*this);
   }
@@ -124,18 +129,5 @@ public:
     m_keyValues.erase(key);
   }
 };
-
-inline bool keyIsNameDoom3(const char* key)
-{
-  return string_equal(key, "target")
-    || (string_equal_n(key, "target", 6) && string_is_integer(key + 6))
-    || string_equal(key, "name") || string_equal(key, "bind");
-}
-
-inline bool keyIsNameDoom3Doom3Group(const char* key)
-{
-  return keyIsNameDoom3(key)
-    || string_equal(key, "model");
-}
 
 #endif
