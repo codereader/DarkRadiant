@@ -222,7 +222,7 @@ void Light::construct() {
 	m_aabb_light.origin = Vector3(0, 0, 0);
 	default_extents(m_aabb_light.extents);
 
-	m_keyObservers.insert(Static<KeyIsName>::instance().m_nameKey, NamedEntity::IdentifierChangedCaller(m_named));
+	m_keyObservers.insert("name", NamedEntity::IdentifierChangedCaller(m_named));
 	m_keyObservers.insert("_color", Colour::ColourChangedCaller(m_colour));
 	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
 

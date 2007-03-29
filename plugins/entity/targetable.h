@@ -43,8 +43,6 @@ public:
 
 typedef std::set<Targetable*> targetables_t;
 
-extern const char* g_targetable_nameKey;
-
 targetables_t* getTargetables(const char* targetname);
 
 class TargetedEntity
@@ -331,14 +329,14 @@ public:
 
   void insert(const char* key, EntityKeyValue& value)
   {
-    if(string_equal(key, g_targetable_nameKey))
+    if(string_equal(key, "name"))
     {
       value.attach(TargetedEntity::TargetnameChangedCaller(m_targeted));
     }
   }
   void erase(const char* key, EntityKeyValue& value)
   {
-    if(string_equal(key, g_targetable_nameKey))
+    if(string_equal(key, "name"))
     {
       value.detach(TargetedEntity::TargetnameChangedCaller(m_targeted));
     }

@@ -25,16 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class EntityCreator;
 EntityCreator & GetEntityCreator();
 
-enum EGameType {
-    eGameTypeQuake3,
-    eGameTypeRTCW,
-    eGameTypeDoom3,
-};
-
-extern EGameType g_gameType;
-
-class FilterSystem;
-void Entity_Construct(EGameType gameType = eGameTypeQuake3);
+void Entity_Construct();
 void Entity_Destroy();
 
 #endif

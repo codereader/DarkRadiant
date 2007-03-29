@@ -4,6 +4,7 @@
 #include "Doom3Group.h"
 #include "instancelib.h"
 #include "scenelib.h"
+#include "../namedentity.h"
 
 namespace entity {
 
@@ -25,9 +26,9 @@ class Doom3GroupNode :
 			NodeContainedCast<Doom3GroupNode, Snappable>::install(m_casts);
 			NodeContainedCast<Doom3GroupNode, TransformNode>::install(m_casts);
 			NodeContainedCast<Doom3GroupNode, Entity>::install(m_casts);
-			NodeContainedCast<Doom3GroupNode, Nameable>::install(m_casts);
 			NodeContainedCast<Doom3GroupNode, Namespaced>::install(m_casts);
 			NodeContainedCast<Doom3GroupNode, ModelSkin>::install(m_casts);
+			NodeContainedCast<Doom3GroupNode, Nameable>::install(m_casts);
 		}
 		NodeTypeCastTable& get() {
 			return m_casts;
@@ -57,9 +58,9 @@ public:
 	Snappable& get(NullType<Snappable>);
 	TransformNode& get(NullType<TransformNode>);
 	Entity& get(NullType<Entity>);
-	Nameable& get(NullType<Nameable>);
 	Namespaced& get(NullType<Namespaced>);
 	ModelSkin& get(NullType<ModelSkin>);
+	Nameable& get(NullType<Nameable>);
 	scene::GroupNode& get(NullType<scene::GroupNode>);
 
 	void release();

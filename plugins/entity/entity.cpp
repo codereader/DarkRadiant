@@ -43,8 +43,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <iostream>
 #include <boost/algorithm/string/replace.hpp>
 
-EGameType g_gameType;
-
 scene::Node& entity_for_eclass(IEntityClassPtr eclass)
 {
 	if(eclass->isLight()) {
@@ -216,13 +214,8 @@ EntityCreator& GetEntityCreator()
 
 /* greebo: Constructs the entity environment according to the given game type (is Doom3 anyway)
  */
-void Entity_Construct(EGameType gameType)
-{
-  g_gameType = gameType;
-  g_targetable_nameKey = "name";
-
+void Entity_Construct() {
   Static<KeyIsName>::instance().m_keyIsName = keyIsNameDoom3;
-  Static<KeyIsName>::instance().m_nameKey = "name";
 
   Light_Construct(LIGHTTYPE_DOOM3);
   Doom3Group_construct();
