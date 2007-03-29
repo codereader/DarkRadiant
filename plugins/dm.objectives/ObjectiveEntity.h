@@ -70,6 +70,11 @@ public:
 	 * column for the objective number, and a text column for the description.
 	 */
 	void populateListStore(GtkListStore* store) const;
+	
+	/**
+	 * Write all objective data to keyvals on the underlying entity.
+	 */
+	void writeToEntity() const;
 };
 
 /**

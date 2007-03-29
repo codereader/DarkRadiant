@@ -278,7 +278,7 @@ GtkWidget* ObjectivesEditor::createButtons () {
 	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	
 	g_signal_connect(
-		G_OBJECT(okButton), "clicked", G_CALLBACK(_onCancel), this);
+		G_OBJECT(okButton), "clicked", G_CALLBACK(_onOK), this);
 	g_signal_connect(
 		G_OBJECT(cancelButton), "clicked", G_CALLBACK(_onCancel), this);
 	
@@ -398,6 +398,21 @@ void ObjectivesEditor::refreshObjectivesList() {
 /* GTK CALLBACKS */
 
 void ObjectivesEditor::_onCancel(GtkWidget* w, ObjectivesEditor* self) {
+	gtk_widget_hide(self->_widget);
+}
+
+// OK button
+void ObjectivesEditor::_onOK(GtkWidget* w, ObjectivesEditor* self) {
+	
+	// Write all ObjectiveEntity data to the underlying entities
+	for (ObjectiveEntityMap::iterator i = self->_entities.begin();
+		 i != self->_entities.end();
+		 ++i)
+	{
+		i->second->writeToEntity();		
+	} 
+	
+	// Hide the dialog
 	gtk_widget_hide(self->_widget);
 }
 
