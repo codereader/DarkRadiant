@@ -9,6 +9,7 @@
 #include <gtk/gtktreestore.h>
 #include <gtk/gtkcellrenderertoggle.h>
 #include <gtk/gtktreeselection.h>
+#include <gtk/gtkeditable.h>
 
 #include <map>
 #include <string>
@@ -43,9 +44,9 @@ class ObjectivesEditor
 	// entity
 	ObjectiveEntityMap _entities;
 	
-	// Current entity iter and index of current objective
+	// Iterators for current entity and current objective
 	ObjectiveEntityMap::iterator _curEntity;
-	int _curObjective;
+	GtkTreeIter _curObjective;
 
 private:
 
@@ -71,6 +72,7 @@ private:
 	static void _onDeleteEntity(GtkWidget*, ObjectivesEditor*);
 	static void _onAddObjective(GtkWidget*, ObjectivesEditor*);
 	static void _onFlagToggle(GtkWidget*, ObjectivesEditor*);
+	static void _onDescriptionEdited(GtkEditable*, ObjectivesEditor*);
 	
 	// Show dialog widgets
 	void show();
@@ -84,6 +86,9 @@ private:
 
 	// Populate the edit panel from the selected objective
 	void populateEditPanel();
+	
+	// Return the currently-selected objective
+	Objective& getCurrentObjective();
 	
 public:
 	

@@ -210,6 +210,8 @@ GtkWidget* ObjectivesEditor::createObjectiveEditPanel() {
 	gtk_table_attach_defaults(GTK_TABLE(table), 
 							  _widgets[WIDGET_DESCRIPTION_ENTRY], 
 							  1, 2, 0, 1);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_DESCRIPTION_ENTRY]), "changed",
+					 G_CALLBACK(_onDescriptionEdited), this);
 	
 	// Options checkboxes.
 	gtk_table_attach(GTK_TABLE(table), 
@@ -301,7 +303,6 @@ void ObjectivesEditor::populateWidgets() {
 	_worldSpawn = NULL;
 	_entities.clear();
 	_curEntity = _entities.end();
-	_curObjective = 0;
 
 	// Clear the list boxes
 	gtk_list_store_clear(_objectiveEntityList);
@@ -366,7 +367,8 @@ void ObjectivesEditor::displayDialog() {
 // Populate the edit panel widgets using the given objective number
 void ObjectivesEditor::populateEditPanel() {
 
-	const Objective& obj = _curEntity->second->getObjective(_curObjective);
+	// Get the objective
+	const Objective& obj = getCurrentObjective();
 	
 	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_DESCRIPTION_ENTRY]),
 					   obj.description.c_str());
@@ -393,6 +395,18 @@ void ObjectivesEditor::refreshObjectivesList() {
 	// Clear and refresh the objective list
 	gtk_list_store_clear(_objectiveList);
 	_curEntity->second->populateListStore(_objectiveList);
+}
+
+// Get the currently selected objective
+Objective& ObjectivesEditor::getCurrentObjective() {
+	
+	// Get the objective index from the list
+	int iNum;
+	gtk_tree_model_get(
+		GTK_TREE_MODEL(_objectiveList), &_curObjective, 0, &iNum, -1);
+		
+	// Pass the index to the ObjectiveEntity to get an actual Objective
+	return _curEntity->second->getObjective(iNum);
 }
 
 /* GTK CALLBACKS */
@@ -473,15 +487,10 @@ void ObjectivesEditor::_onObjectiveSelectionChanged(GtkTreeSelection* sel,
 											 		ObjectivesEditor* self)
 {
 	// Get the selection
-	GtkTreeIter iter;
-	GtkTreeModel* model;
-	if (gtk_tree_selection_get_selected(sel, &model, &iter)) {
+	if (gtk_tree_selection_get_selected(sel, NULL, &(self->_curObjective))) {
 		
 		// Enable the edit panel
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_PANEL], TRUE);		
-		
-		// Get the objective number and save it as the current value
-		gtk_tree_model_get(model, &iter, 0, &(self->_curObjective), -1);
 		
 		// Populate the edit panel
 		self->populateEditPanel();				
@@ -553,7 +562,7 @@ void ObjectivesEditor::_onAddObjective(GtkWidget* w, ObjectivesEditor* self) {
 void ObjectivesEditor::_onFlagToggle(GtkWidget* flag, ObjectivesEditor* self) {
 	
 	// Get the objective and the new status
-	Objective& o = self->_curEntity->second->getObjective(self->_curObjective);
+	Objective& o = self->getCurrentObjective();
 	bool status = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(flag));
 	
 	// Determine which checkbox is toggled, then update the appropriate flag
@@ -568,6 +577,22 @@ void ObjectivesEditor::_onFlagToggle(GtkWidget* flag, ObjectivesEditor* self) {
 		o.ongoing = status;
 	else if (flag == self->_widgets[WIDGET_IRREVERSIBLE_FLAG])
 		o.irreversible = status;
+}
+
+// Callback when description is edited
+void ObjectivesEditor::_onDescriptionEdited(GtkEditable* e, 
+											ObjectivesEditor* self)
+{
+	// Get the string
+	std::string desc = gtk_entry_get_text(GTK_ENTRY(e));
+	
+	// Set the string on the Objective 
+	Objective& o = self->getCurrentObjective();
+	o.description = desc;
+	
+	// Update the list store
+	gtk_list_store_set(self->_objectiveList, &(self->_curObjective),
+					   1, desc.c_str(), -1);
 }
 
 }
