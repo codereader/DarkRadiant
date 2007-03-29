@@ -23,8 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 typedef std::map<std::string, targetables_t> targetnames_t;
 
-const char* g_targetable_nameKey = "targetname";
-
 targetnames_t g_targetnames;
 
 targetables_t* getTargetables(const char* targetname)

@@ -71,7 +71,7 @@ public:
 
   EntityDoom3API()
   {
-    Entity_Construct(eGameTypeDoom3);
+    Entity_Construct();
 
     m_entitydoom3 = &GetEntityCreator();
 
@@ -89,12 +89,9 @@ public:
 
 typedef SingletonModule<EntityDoom3API, EntityDependencies> EntityDoom3Module;
 
-EntityDoom3Module g_EntityDoom3Module;
-
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
-{
-  initialiseModule(server);
-
-  g_EntityDoom3Module.selfRegister();
+extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server) {
+	static EntityDoom3Module _entityDoom3Module;
+	
+	initialiseModule(server);
+	_entityDoom3Module.selfRegister();
 }

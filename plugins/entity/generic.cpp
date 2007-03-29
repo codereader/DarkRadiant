@@ -102,7 +102,7 @@ class GenericEntity :
     m_ray.direction[1] = 0;
     m_ray.direction[2] = 0;
 
-    m_keyObservers.insert(Static<KeyIsName>::instance().m_nameKey, NamedEntity::IdentifierChangedCaller(m_named));
+    m_keyObservers.insert("name", NamedEntity::IdentifierChangedCaller(m_named));
     m_keyObservers.insert("angle", AngleKey::AngleChangedCaller(m_angleKey));
     m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
   }

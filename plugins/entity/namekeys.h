@@ -40,7 +40,6 @@ class KeyIsName
 {
 public:
   KeyIsNameFunc m_keyIsName;
-  const char* m_nameKey;
 
   KeyIsName()
   {
@@ -137,12 +136,6 @@ inline bool keyIsNameDoom3Doom3Group(const char* key)
 {
   return keyIsNameDoom3(key)
     || string_equal(key, "model");
-}
-
-inline bool keyIsNameQuake3(const char* key)
-{
-  return string_equal(key, "target")
-    || string_equal(key, "targetname");
 }
 
 #endif

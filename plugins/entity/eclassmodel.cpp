@@ -81,16 +81,9 @@ class EclassModel :
   {
     default_rotation(m_rotation);
 
-    m_keyObservers.insert(Static<KeyIsName>::instance().m_nameKey, NamedEntity::IdentifierChangedCaller(m_named));
-    if(g_gameType == eGameTypeDoom3)
-    {
-      m_keyObservers.insert("angle", RotationKey::AngleChangedCaller(m_rotationKey));
-      m_keyObservers.insert("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
-    }
-    else
-    {
-      m_keyObservers.insert("angle", AngleKey::AngleChangedCaller(m_angleKey));
-    }
+    m_keyObservers.insert("name", NamedEntity::IdentifierChangedCaller(m_named));
+    m_keyObservers.insert("angle", RotationKey::AngleChangedCaller(m_rotationKey));
+    m_keyObservers.insert("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
     m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
   }
 
@@ -99,15 +92,7 @@ class EclassModel :
     m_transform.localToParent() = g_matrix4_identity;
     matrix4_translate_by_vec3(m_transform.localToParent(), m_origin);
 
-    if(g_gameType == eGameTypeDoom3)
-    {
-      matrix4_multiply_by_matrix4(m_transform.localToParent(), rotation_toMatrix(m_rotation));
-    }
-    else
-    {
-      matrix4_multiply_by_matrix4(m_transform.localToParent(), matrix4_rotation_for_z_degrees(m_angle));
-    }
-
+    matrix4_multiply_by_matrix4(m_transform.localToParent(), rotation_toMatrix(m_rotation));
     m_transformChanged();
   }
   typedef MemberCaller<EclassModel, &EclassModel::updateTransform> UpdateTransformCaller;
@@ -263,14 +248,7 @@ public:
   }
   void rotate(const Quaternion& rotation)
   {
-    if(g_gameType == eGameTypeDoom3)
-    {
-      rotation_rotate(m_rotation, rotation);
-    }
-    else
-    {
-      m_angle = angle_rotated(m_angle, rotation);
-    }
+    rotation_rotate(m_rotation, rotation);
   }
   void snapto(float snap)
   {
@@ -280,29 +258,14 @@ public:
   void revertTransform()
   {
     m_origin = m_originKey.m_origin;
-    if(g_gameType == eGameTypeDoom3)
-    {
-      rotation_assign(m_rotation, m_rotationKey.m_rotation);
-    }
-    else
-    {
-      m_angle = m_angleKey.m_angle;
-    }
+    rotation_assign(m_rotation, m_rotationKey.m_rotation);
   }
   void freezeTransform()
   {
     m_originKey.m_origin = m_origin;
     m_originKey.write(&m_entity);
-    if(g_gameType == eGameTypeDoom3)
-    {
-      rotation_assign(m_rotationKey.m_rotation, m_rotation);
-      m_rotationKey.write(&m_entity);
-    }
-    else
-    {
-      m_angleKey.m_angle = m_angle;
-      m_angleKey.write(&m_entity);
-    }
+    rotation_assign(m_rotationKey.m_rotation, m_rotation);
+    m_rotationKey.write(&m_entity);
   }
   void transformChanged()
   {

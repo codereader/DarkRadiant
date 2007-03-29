@@ -263,7 +263,7 @@ void Doom3Group::transformChanged() {
 void Doom3Group::construct() {
 	default_rotation(m_rotation);
 
-	m_keyObservers.insert(Static<KeyIsName>::instance().m_nameKey, NamedEntity::IdentifierChangedCaller(m_named));
+	m_keyObservers.insert("name", NamedEntity::IdentifierChangedCaller(m_named));
 	m_keyObservers.insert("model", Doom3Group::ModelChangedCaller(*this));
 	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
 	m_keyObservers.insert("angle", RotationKey::AngleChangedCaller(m_rotationKey));
