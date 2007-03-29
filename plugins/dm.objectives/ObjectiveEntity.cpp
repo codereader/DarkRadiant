@@ -73,10 +73,11 @@ void ObjectiveEntity::writeToEntity() const {
 		 ++i) 
 	{
 		using std::string;
+		using boost::lexical_cast;
 		
 		// Obtain the Objective and construct the key prefix from the index
 		const Objective& o = i->second;
-		string prefix = "obj" + boost::lexical_cast<string>(i->first) + "_";
+		string prefix = "obj" + lexical_cast<string>(i->first) + "_";
 		
 		// Set the entity keyvalues
 		_entity->setKeyValue(prefix + "desc", o.description);
@@ -85,6 +86,7 @@ void ObjectiveEntity::writeToEntity() const {
 		_entity->setKeyValue(prefix + "mandatory", o.mandatory ? "1" : "0");
 		_entity->setKeyValue(prefix + "irreversible", 
 							 o.irreversible ? "1" : "0");
+		_entity->setKeyValue(prefix + "state", lexical_cast<string>(o.state));
 		
 	}	
 }
