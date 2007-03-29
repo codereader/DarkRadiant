@@ -3,14 +3,13 @@
 
 #include "Objective.h"
 
-#include "ientity.h"
-#include "iscenegraph.h"
-
 #include <boost/shared_ptr.hpp>
 #include <gtk/gtkliststore.h>
 
 // FORWARD DECLS
 namespace objectives { class TargetList; }
+namespace scene { class Node; }
+class Entity;
 
 namespace objectives
 {
@@ -43,16 +42,18 @@ public:
 	Objective& getObjective(int iIndex) {
 		return _objectives[iIndex];
 	}
+
+	/**
+	 * Add a new objective, starting from the first unused objective ID.
+	 */
+	void addObjective();
 	
 	/**
 	 * Delete the actual entity node from the map. This will render any further
 	 * operations on this ObjectiveEntity undefined, and it should immediately
 	 * be deleted.
 	 */
-	void deleteWorldNode() {
-		Node_getTraversable(GlobalSceneGraph().root())->erase(_node);
-		_entity = NULL;		
-	}
+	void deleteWorldNode();
 	
 	/**
 	 * Test whether this Objective Entity is on the provided TargetList, to

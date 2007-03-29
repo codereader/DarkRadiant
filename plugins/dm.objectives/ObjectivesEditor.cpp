@@ -340,7 +340,7 @@ void ObjectivesEditor::displayDialog() {
 // Populate the edit panel widgets using the given objective number
 void ObjectivesEditor::populateEditPanel() {
 
-	const Objective& obj = _entities[_curEntity]->getObjective(_curObjective);
+	const Objective& obj = _curEntity->second->getObjective(_curObjective);
 	
 //	gtk_entry_set_text(GTK_ENTRY(_widgets["numberEntry"]), 
 //					   boost::lexical_cast<std::string>(objNum).c_str());
@@ -362,6 +362,13 @@ void ObjectivesEditor::populateEditPanel() {
 	gtk_toggle_button_set_active(
 		GTK_TOGGLE_BUTTON(_widgets["visibleFlag"]),
 		obj.visible ? TRUE : FALSE);
+}
+
+// Refresh the objectives list from the ObjectiveEntity
+void ObjectivesEditor::refreshObjectivesList() {
+	// Clear and refresh the objective list
+	gtk_list_store_clear(_objectiveList);
+	_curEntity->second->populateListStore(_objectiveList);
 }
 
 /* GTK CALLBACKS */
@@ -402,13 +409,10 @@ void ObjectivesEditor::_onEntitySelectionChanged(GtkTreeSelection* sel,
 		// Get name of the entity and find the corresponding ObjectiveEntity in
 		// the map
 		std::string name = gtkutil::TreeModel::getString(model, &iter, 2);
-		ObjectiveEntityPtr obj = self->_entities[name];
 		
-		// Save the current selection name
-		self->_curEntity = name;
-		
-		// Populate the objective list
-		obj->populateListStore(self->_objectiveList);
+		// Save the current selection and refresh the objectives list
+		self->_curEntity = self->_entities.find(name);
+		self->refreshObjectivesList();
 		
 		// Enable the delete button and objectives panel
 		gtk_widget_set_sensitive(self->_widgets["deleteEntity"], TRUE); 
@@ -499,6 +503,9 @@ void ObjectivesEditor::_onDeleteEntity(GtkWidget* w, ObjectivesEditor* self) {
 // Add a new objective
 void ObjectivesEditor::_onAddObjective(GtkWidget* w, ObjectivesEditor* self) {
 	
+	// Add a new objective to the ObjectiveEntity and refresh the list store
+	self->_curEntity->second->addObjective();
+	self->refreshObjectivesList();	
 }
 
 }
