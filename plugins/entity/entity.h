@@ -22,9 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_ENTITY_H)
 #define INCLUDED_ENTITY_H
 
-class EntityCreator;
-EntityCreator & GetEntityCreator();
-
 void Entity_Construct();
 void Entity_Destroy();
 

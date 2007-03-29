@@ -260,6 +260,7 @@ uiManagerEnv.Install(INSTALL + '/modules', uiManagerLib)
 entity_env = module_env.Copy()
 entity_src = [
 	'plugin.cpp',
+	'EntityCreator.cpp',
 	'entity.cpp',
 	'eclassmodel.cpp',
 	'generic.cpp',
