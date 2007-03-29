@@ -56,6 +56,20 @@ public:
 	}
 	
 	/**
+	 * Clear all objectives.
+	 */
+	void clearObjectives() {
+		_objectives.clear();	
+	}
+	
+	/**
+	 * Test whether this entity contains objectives or not.
+	 */
+	bool isEmpty() const {
+		return _objectives.empty();
+	}
+	
+	/**
 	 * Delete the actual entity node from the map. This will render any further
 	 * operations on this ObjectiveEntity undefined, and it should immediately
 	 * be deleted.

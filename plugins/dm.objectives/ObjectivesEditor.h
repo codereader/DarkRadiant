@@ -72,6 +72,7 @@ private:
 	static void _onDeleteEntity(GtkWidget*, ObjectivesEditor*);
 	static void _onAddObjective(GtkWidget*, ObjectivesEditor*);
 	static void _onDeleteObjective(GtkWidget*, ObjectivesEditor*);
+	static void _onClearObjectives(GtkWidget*, ObjectivesEditor*);
 	static void _onFlagToggle(GtkWidget*, ObjectivesEditor*);
 	static void _onDescriptionEdited(GtkEditable*, ObjectivesEditor*);
 	

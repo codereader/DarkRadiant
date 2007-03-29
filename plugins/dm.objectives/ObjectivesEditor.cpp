@@ -36,6 +36,7 @@ namespace {
 		WIDGET_EDIT_PANEL,
 		WIDGET_DELETE_ENTITY,
 		WIDGET_DELETE_OBJECTIVE,
+		WIDGET_CLEAR_OBJECTIVES,
 		WIDGET_DESCRIPTION_ENTRY,
 		WIDGET_STARTACTIVE_FLAG,
 		WIDGET_MANDATORY_FLAG,
@@ -176,11 +177,15 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 					 G_CALLBACK(_onDeleteObjective), this);
 	_widgets[WIDGET_DELETE_OBJECTIVE] = delButton;
 	
+	GtkWidget* clearButton = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
+	gtk_widget_set_sensitive(clearButton, FALSE); // requires >0 objectives
+	g_signal_connect(G_OBJECT(clearButton), "clicked",
+					 G_CALLBACK(_onClearObjectives), this);
+	_widgets[WIDGET_CLEAR_OBJECTIVES] = clearButton;
+	
 	gtk_box_pack_start(GTK_BOX(buttonBox), addButton, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(buttonBox), delButton, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(buttonBox), 
-					   gtk_button_new_from_stock(GTK_STOCK_CLEAR),
-					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonBox), clearButton, FALSE, FALSE, 0);
 
 	// Pack the list and the buttons into an hbox
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
@@ -397,9 +402,16 @@ void ObjectivesEditor::populateEditPanel() {
 
 // Refresh the objectives list from the ObjectiveEntity
 void ObjectivesEditor::refreshObjectivesList() {
+	
 	// Clear and refresh the objective list
 	gtk_list_store_clear(_objectiveList);
 	_curEntity->second->populateListStore(_objectiveList);
+	
+	// If there is at least one objective, make the Clear button available
+	if (_curEntity->second->isEmpty())
+		gtk_widget_set_sensitive(_widgets[WIDGET_CLEAR_OBJECTIVES], FALSE);
+	else
+		gtk_widget_set_sensitive(_widgets[WIDGET_CLEAR_OBJECTIVES], TRUE);
 }
 
 // Get the currently selected objective
@@ -578,6 +590,15 @@ void ObjectivesEditor::_onDeleteObjective(GtkWidget* w,
 	self->_curEntity->second->deleteObjective(index);
 	
 	// Repopulate the objective list
+	self->refreshObjectivesList();
+}
+
+// Clear the objectives
+void ObjectivesEditor::_onClearObjectives(GtkWidget* w, 
+										  ObjectivesEditor* self)
+{
+	// Clear the entity and refresh the list
+	self->_curEntity->second->clearObjectives();
 	self->refreshObjectivesList();
 }
 
