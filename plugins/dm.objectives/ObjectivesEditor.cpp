@@ -35,6 +35,7 @@ namespace {
 		WIDGET_ENTITY_LIST,
 		WIDGET_EDIT_PANEL,
 		WIDGET_DELETE_ENTITY,
+		WIDGET_DELETE_OBJECTIVE,
 		WIDGET_DESCRIPTION_ENTRY,
 		WIDGET_STARTACTIVE_FLAG,
 		WIDGET_MANDATORY_FLAG,
@@ -169,10 +170,14 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 	g_signal_connect(G_OBJECT(addButton), "clicked",
 					 G_CALLBACK(_onAddObjective), this);
 	
+	GtkWidget* delButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	gtk_widget_set_sensitive(delButton, FALSE); // not enabled without selection 
+	g_signal_connect(G_OBJECT(delButton), "clicked",
+					 G_CALLBACK(_onDeleteObjective), this);
+	_widgets[WIDGET_DELETE_OBJECTIVE] = delButton;
+	
 	gtk_box_pack_start(GTK_BOX(buttonBox), addButton, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(buttonBox), 
-					   gtk_button_new_from_stock(GTK_STOCK_DELETE),
-					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonBox), delButton, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(buttonBox), 
 					   gtk_button_new_from_stock(GTK_STOCK_CLEAR),
 					   FALSE, FALSE, 0);
@@ -489,16 +494,18 @@ void ObjectivesEditor::_onObjectiveSelectionChanged(GtkTreeSelection* sel,
 	// Get the selection
 	if (gtk_tree_selection_get_selected(sel, NULL, &(self->_curObjective))) {
 		
-		// Enable the edit panel
-		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_PANEL], TRUE);		
+		// Enable the edit panel and delete button
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_PANEL], TRUE);
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_OBJECTIVE], TRUE);		
 		
 		// Populate the edit panel
 		self->populateEditPanel();				
 	}
 	else {
-		
-		// Disable the edit panel
+		// Disable the edit panel and delete button
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_PANEL], FALSE);		
+		gtk_widget_set_sensitive(
+			self->_widgets[WIDGET_DELETE_OBJECTIVE], FALSE);		
 	}
 }
 
@@ -552,10 +559,26 @@ void ObjectivesEditor::_onDeleteEntity(GtkWidget* w, ObjectivesEditor* self) {
 
 // Add a new objective
 void ObjectivesEditor::_onAddObjective(GtkWidget* w, ObjectivesEditor* self) {
-	
 	// Add a new objective to the ObjectiveEntity and refresh the list store
 	self->_curEntity->second->addObjective();
 	self->refreshObjectivesList();	
+}
+
+// Delete an objective
+void ObjectivesEditor::_onDeleteObjective(GtkWidget* w, 
+										  ObjectivesEditor* self)
+{
+	// Get the index of the current objective
+	int index;
+	gtk_tree_model_get(GTK_TREE_MODEL(self->_objectiveList), 
+					   &(self->_curObjective),
+					   0, &index, -1);
+					   
+	// Tell the ObjectiveEntity to delete this objective
+	self->_curEntity->second->deleteObjective(index);
+	
+	// Repopulate the objective list
+	self->refreshObjectivesList();
 }
 
 // Callback for flag checkbox toggle
