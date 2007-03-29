@@ -35,9 +35,6 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 	if (objSubString == "desc") {
 		_objMap[iNum].description = value;			
 	}
-	else if (objSubString == "state") {
-		_objMap[iNum].startActive = (value == "1");			
-	}
 	else if (objSubString == "ongoing") {
 		_objMap[iNum].ongoing = (value == "1");			
 	}

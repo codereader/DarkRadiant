@@ -14,9 +14,16 @@ struct Objective
 {
 	// Description of objective
 	std::string description;
+
+	// Objective state enum
+	enum State {
+		COMPLETE,
+		INCOMPLETE,
+		FAILED,
+		INVALID
+	} state;
 	
 	// Boolean flags
-	bool startActive;
 	bool mandatory;
 	bool visible;
 	bool ongoing;
@@ -24,7 +31,7 @@ struct Objective
 	
 	// Constructor
 	Objective()
-	: startActive(false), mandatory(false), visible(false), ongoing(false),
+	: state(INCOMPLETE), mandatory(false), visible(false), ongoing(false),
 	  irreversible(false)
 	{ }
 };
