@@ -452,7 +452,8 @@ public:
 /// - Notifies observers when a pair is inserted or removed.
 /// - Provides undo support through the global undo system.
 /// - New keys are appended to the end of the list.
-class EntityKeyValues : public Entity
+class Doom3Entity : 
+	public Entity
 {
 public:
   typedef KeyValue Value;
@@ -566,7 +567,7 @@ private:
 public:
   bool m_isContainer;
 
-  EntityKeyValues(IEntityClassPtr eclass) :
+  Doom3Entity(IEntityClassPtr eclass) :
     m_eclass(eclass),
     m_undo(m_keyValues, UndoImportCaller(*this)),
     m_instanced(false),
@@ -574,7 +575,7 @@ public:
     m_isContainer(!eclass->isFixedSize())
   {
   }
-  EntityKeyValues(const EntityKeyValues& other) :
+  Doom3Entity(const Doom3Entity& other) :
     Entity(other),
     m_eclass(other.getEntityClass()),
     m_undo(m_keyValues, UndoImportCaller(*this)),
@@ -587,7 +588,7 @@ public:
       insert((*i).first.c_str(), (*i).second->c_str());
     }
   }
-  ~EntityKeyValues()
+  ~Doom3Entity()
   {
     for(Observers::iterator i = m_observers.begin(); i != m_observers.end();)
     {
@@ -621,7 +622,7 @@ public:
 
     m_entityKeyValueChanged();
   }
-  typedef MemberCaller1<EntityKeyValues, const KeyValues&, &EntityKeyValues::importState> UndoImportCaller;
+  typedef MemberCaller1<Doom3Entity, const KeyValues&, &Doom3Entity::importState> UndoImportCaller;
 
   void attach(Observer& observer)
   {

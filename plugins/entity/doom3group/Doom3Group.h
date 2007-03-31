@@ -23,7 +23,7 @@ class Doom3Group :
 	public Bounded,
 	public Snappable 
 {
-	EntityKeyValues _keyValues;
+	Doom3Entity _entity;
 	KeyObserverMap m_keyObservers;
 	TraversableNodeSet m_traverse;
 	MatrixTransform m_transform;
@@ -97,8 +97,8 @@ public:
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
 
-	EntityKeyValues& getEntity();
-	const EntityKeyValues& getEntity() const;
+	Doom3Entity& getEntity();
+	const Doom3Entity& getEntity() const;
 
 	scene::Traversable& getTraversable();
 	Namespaced& getNamespaced();

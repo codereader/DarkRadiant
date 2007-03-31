@@ -290,7 +290,7 @@ public Targetable,
 public Entity::Observer
 {
   mutable Vertex3f m_position;
-  EntityKeyValues& m_entity;
+  Doom3Entity& m_entity;
   TargetKeys m_targeting;
   TargetedEntity m_targeted;
   RenderableTargetingEntities m_renderable;
@@ -301,7 +301,7 @@ public:
     scene::Instance* parent,
     void* instance,
     InstanceTypeCastTable& casts,
-    EntityKeyValues& entity,
+    Doom3Entity& entity,
     Targetable& targetable
   ) :
     SelectableInstance(path, parent, instance, casts),

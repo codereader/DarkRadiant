@@ -80,11 +80,11 @@ scene::Node& Doom3EntityCreator::createEntity(IEntityClassPtr eclass) {
 }
 
 void Doom3EntityCreator::setKeyValueChangedFunc(KeyValueChangedFunc func) {
-	EntityKeyValues::setKeyValueChangedFunc(func);
+	Doom3Entity::setKeyValueChangedFunc(func);
 }
 
 void Doom3EntityCreator::setCounter(Counter* counter) {
-	EntityKeyValues::setCounter(counter);
+	Doom3Entity::setCounter(counter);
 }
 
 /* Connect two entities using a "target" key.
@@ -130,7 +130,7 @@ void Doom3EntityCreator::connectEntities(const scene::Path& path,
 }
 
 void Doom3EntityCreator::printStatistics() const {
-	StringPool_analyse(EntityKeyValues::getPool());
+	StringPool_analyse(Doom3Entity::getPool());
 }
 
 } // namespace entity
