@@ -84,7 +84,7 @@ class Light :
 	public Editable,
 	public Snappable
 {
-  EntityKeyValues m_entity;
+  Doom3Entity m_entity;
   KeyObserverMap m_keyObservers;
   TraversableNodeSet m_traverse;
   IdentityTransform m_transform;
@@ -207,8 +207,8 @@ public:
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
 
-	EntityKeyValues& getEntity();
-	const EntityKeyValues& getEntity() const;
+	Doom3Entity& getEntity();
+	const Doom3Entity& getEntity() const;
 
 	scene::Traversable& getTraversable();
 	Namespaced& getNamespaced();

@@ -53,11 +53,11 @@ public:
 class NamedEntity : 
 	public Nameable
 {
-  EntityKeyValues& m_entity;
+  Doom3Entity& m_entity;
   NameCallbackSet m_changed;
   std::string _name;
 public:
-  NamedEntity(EntityKeyValues& entity) : m_entity(entity)
+  NamedEntity(Doom3Entity& entity) : m_entity(entity)
   {
   }
   std::string name() const

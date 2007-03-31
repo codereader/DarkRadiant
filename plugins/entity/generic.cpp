@@ -71,7 +71,7 @@ class GenericEntity :
   public Bounded,
   public Snappable
 {
-  EntityKeyValues m_entity;
+  Doom3Entity m_entity;
   KeyObserverMap m_keyObservers;
   MatrixTransform m_transform;
 
@@ -182,11 +182,11 @@ public:
     }
   }
 
-  EntityKeyValues& getEntity()
+  Doom3Entity& getEntity()
   {
     return m_entity;
   }
-  const EntityKeyValues& getEntity() const
+  const Doom3Entity& getEntity() const
   {
     return m_entity;
   }

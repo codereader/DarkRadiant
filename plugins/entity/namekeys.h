@@ -56,7 +56,7 @@ typedef MemberCaller1<EntityKeyValue, const KeyObserver&, &EntityKeyValue::detac
 class NameKeys : public Entity::Observer, public Namespaced
 {
   Namespace* m_namespace;
-  EntityKeyValues& m_entity;
+  Doom3Entity& m_entity;
   KeyIsNameFunc m_keyIsName;
   NameKeys(const NameKeys& other);
   NameKeys& operator=(const NameKeys& other);
@@ -95,7 +95,7 @@ class NameKeys : public Entity::Observer, public Namespaced
     }
   }
 public:
-  NameKeys(EntityKeyValues& entity) : 
+  NameKeys(Doom3Entity& entity) : 
   	m_namespace(0), 
   	m_entity(entity), 
   	m_keyIsName(keyIsNameDoom3)

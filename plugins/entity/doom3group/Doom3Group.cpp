@@ -28,13 +28,13 @@ Doom3Group::Doom3Group(IEntityClassPtr eclass, scene::Node& node,
 		const Callback& transformChanged, 
 		const Callback& boundsChanged, 
 		const Callback& evaluateTransform) :
-	_keyValues(eclass),
+	_entity(eclass),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	m_nameOrigin(0,0,0),
 	m_rotationKey(RotationChangedCaller(*this)),
-	m_named(_keyValues),
-	m_nameKeys(_keyValues),
+	m_named(_entity),
+	m_nameKeys(_entity),
 	m_funcStaticOrigin(m_traverse, m_origin),
 	m_renderOrigin(m_nameOrigin),
 	m_renderName(m_named, m_nameOrigin),
@@ -52,13 +52,13 @@ Doom3Group::Doom3Group(const Doom3Group& other, scene::Node& node,
 		const Callback& transformChanged, 
 		const Callback& boundsChanged, 
 		const Callback& evaluateTransform) :
-	_keyValues(other._keyValues),
+	_entity(other._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	m_nameOrigin(0,0,0),
 	m_rotationKey(RotationChangedCaller(*this)),
-	m_named(_keyValues),
-	m_nameKeys(_keyValues),
+	m_named(_entity),
+	m_nameKeys(_entity),
 	m_funcStaticOrigin(m_traverse, m_origin),
 	m_renderOrigin(m_nameOrigin),
 	m_renderName(m_named, m_nameOrigin),
@@ -78,7 +78,7 @@ Doom3Group::~Doom3Group() {
 
 void Doom3Group::instanceAttach(const scene::Path& path) {
 	if (++m_instanceCounter.m_count == 1) {
-		_keyValues.instanceAttach(path_find_mapfile(path.begin(), path.end()));
+		_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
 		m_traverse.instanceAttach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
@@ -86,15 +86,15 @@ void Doom3Group::instanceAttach(const scene::Path& path) {
 void Doom3Group::instanceDetach(const scene::Path& path) {
 	if (--m_instanceCounter.m_count == 0) {
 		m_traverse.instanceDetach(path_find_mapfile(path.begin(), path.end()));
-		_keyValues.instanceDetach(path_find_mapfile(path.begin(), path.end()));
+		_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
 
-EntityKeyValues& Doom3Group::getEntity() {
-	return _keyValues;
+Doom3Entity& Doom3Group::getEntity() {
+	return _entity;
 }
-const EntityKeyValues& Doom3Group::getEntity() const {
-	return _keyValues;
+const Doom3Entity& Doom3Group::getEntity() const {
+	return _entity;
 }
 
 scene::Traversable& Doom3Group::getTraversable() {
@@ -146,8 +146,8 @@ void Doom3Group::renderSolid(Renderer& renderer, const VolumeTest& volume,
 		m_renderOrigin.render(renderer, volume, localToWorld);
 	}
 
-	renderer.SetState(_keyValues.getEntityClass()->getWireShader(), Renderer::eWireframeOnly);
-	renderer.SetState(_keyValues.getEntityClass()->getWireShader(), Renderer::eFullMaterials);
+	renderer.SetState(_entity.getEntityClass()->getWireShader(), Renderer::eWireframeOnly);
+	renderer.SetState(_entity.getEntityClass()->getWireShader(), Renderer::eFullMaterials);
 
 	if (!m_curveNURBS.m_renderCurve.m_vertices.empty()) {
 		renderer.addRenderable(m_curveNURBS.m_renderCurve, localToWorld);
@@ -204,7 +204,7 @@ void Doom3Group::rotate(const Quaternion& rotation) {
 
 void Doom3Group::snapto(float snap) {
 	m_originKey.m_origin = origin_snapped(m_originKey.m_origin, snap);
-	m_originKey.write(&_keyValues);
+	m_originKey.write(&_entity);
 }
 
 void Doom3Group::revertTransform() {
@@ -225,7 +225,7 @@ void Doom3Group::revertTransform() {
 
 void Doom3Group::freezeTransform() {
 	m_originKey.m_origin = m_origin;
-	m_originKey.write(&_keyValues);
+	m_originKey.write(&_entity);
 	
 	if (!isModel()) {
 		if (m_traversable != NULL) {
@@ -234,12 +234,12 @@ void Doom3Group::freezeTransform() {
 	}
 	else {
 		rotation_assign(m_rotationKey.m_rotation, m_rotation);
-		m_rotationKey.write(&_keyValues, isModel());
+		m_rotationKey.write(&_entity, isModel());
 	}
 	m_curveNURBS.m_controlPoints = m_curveNURBS.m_controlPointsTransformed;
-	ControlPoints_write(m_curveNURBS.m_controlPoints, curve_Nurbs, _keyValues);
+	ControlPoints_write(m_curveNURBS.m_controlPoints, curve_Nurbs, _entity);
 	m_curveCatmullRom.m_controlPoints = m_curveCatmullRom.m_controlPointsTransformed;
-	ControlPoints_write(m_curveCatmullRom.m_controlPoints, curve_CatmullRomSpline, _keyValues);
+	ControlPoints_write(m_curveCatmullRom.m_controlPoints, curve_CatmullRomSpline, _entity);
 }
 
 void Doom3Group::transformChanged() {
@@ -279,11 +279,11 @@ void Doom3Group::construct() {
 	attachTraverse();
 	m_funcStaticOrigin.enable();
 
-	_keyValues.attach(m_keyObservers);
+	_entity.attach(m_keyObservers);
 }
 
 void Doom3Group::destroy() {
-	_keyValues.detach(m_keyObservers);
+	_entity.detach(m_keyObservers);
 
 	if (isModel()) {
 		detachModel();
@@ -352,7 +352,7 @@ void Doom3Group::setIsModel(bool newValue) {
  * entity class, which is always a brush-based entity.
  */
 void Doom3Group::updateIsModel() {
-	if (m_modelKey != m_name && std::string(_keyValues.getKeyValue("classname")) != "worldspawn") {
+	if (m_modelKey != m_name && std::string(_entity.getKeyValue("classname")) != "worldspawn") {
 		setIsModel(true);
 	}
 	else {
