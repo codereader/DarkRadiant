@@ -113,7 +113,7 @@
 		<colour name="workzone" value="1 0 0" />
 		<colour name="camera_icon" value="0 0 1" />
 		<colour name="brush_size_info" value="0.65 0 0" />
-		<colour name="light_volumes" value="0 1 0" />
+		<colour name="light_volumes" value="0 0.6 0"></colour>
 		<colour name="brush_vertices" value="0 1 0" />
 		<colour name="patch_vertex_inside" value="0 1 0" />
 		<colour name="patch_vertex_corner" value="1 0 1" />
@@ -123,6 +123,37 @@
 		<colour name="light_startend_selected" value="0 0 1" />
 		<colour name="light_startend_deselected" value="0 1 1" />
 		<colour name="xyview_crosshairs" value="0.2 0.9 0.2" />
+	</scheme>
+	<scheme name="Super Mal" readonly="1">
+		<colour name="active_view_name" value="0.498039 0 0.737255"></colour>
+		<colour name="axis_x" value="1 0 0"></colour>
+		<colour name="axis_y" value="0 1 0"></colour>
+		<colour name="axis_z" value="0 0 1"></colour>
+		<colour name="brush_size_info" value="1 0.898039 0.898039"></colour>
+		<colour name="brush_vertices" value="0 1 0"></colour>
+		<colour name="camera_background" value="0.25 0.25 0.25"></colour>
+		<colour name="camera_icon" value="0 0 1"></colour>
+		<colour name="clipper" value="0 0 1"></colour>
+		<colour name="default_brush" value="0 0 0"></colour>
+		<colour name="default_entity" value="1 0.5 0"></colour>
+		<colour name="grid_background" value="0.34902 0.34902 0.34902"></colour>
+		<colour name="grid_block" value="0 0 1"></colour>
+		<colour name="grid_major" value="0.498039 0.499992 0.499992"></colour>
+		<colour name="grid_minor" value="0.388235 0.388235 0.388235"></colour>
+		<colour name="grid_text" value="0 0 0"></colour>
+		<colour name="light_startend_deselected" value="0 1 1"></colour>
+		<colour name="light_startend_selected" value="0 0 1"></colour>
+		<colour name="light_vertex_deselected" value="0 1 0"></colour>
+		<colour name="light_vertex_normal" value="1 0 0"></colour>
+		<colour name="light_vertex_selected" value="0 0 1"></colour>
+		<colour name="light_volumes" value="0 1 0"></colour>
+		<colour name="patch_vertex_corner" value="1 0 1"></colour>
+		<colour name="patch_vertex_inside" value="0 1 0"></colour>
+		<colour name="selected_brush" value="1 0.898039 0.898039"></colour>
+		<colour name="selected_brush_camera" value="1 0.898039 0.898039"></colour>
+		<colour name="texture_background" value="0 0 0"></colour>
+		<colour name="workzone" value="1 0 0"></colour>
+		<colour name="xyview_crosshairs" value="0.2 0.9 0.2"></colour>
 	</scheme>
 	<description>
 		<texture_background value="Texture Background" />
