@@ -33,6 +33,7 @@ class ObjectivesEditor
 
 	// List of actual objectives associated with the selected entity
 	GtkListStore* _objectiveList;
+	bool _objectiveListLocked; // disable updates during selection change
 	
 	// Table of dialog subwidgets
 	std::map<int, GtkWidget*> _widgets;
