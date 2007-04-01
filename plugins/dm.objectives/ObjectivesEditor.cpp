@@ -56,7 +56,8 @@ ObjectivesEditor::ObjectivesEditor()
   										  G_TYPE_STRING)),		// entity name
   _objectiveList(gtk_list_store_new(2, 
   								    G_TYPE_INT,			// obj number 
-  								    G_TYPE_STRING))		// obj description
+  								    G_TYPE_STRING)),	// obj description
+  _objectiveListLocked(false)
 {
 	// Window properties
 	gtk_window_set_transient_for(
@@ -388,6 +389,10 @@ void ObjectivesEditor::displayDialog() {
 // Populate the edit panel widgets using the given objective number
 void ObjectivesEditor::populateEditPanel() {
 
+	// Disable updates to the list store, so that setting widget values doesn't
+	// change the list data while we are in the middle of reading it.
+	_objectiveListLocked = true;
+
 	// Get the objective
 	const Objective& obj = getCurrentObjective();
 	
@@ -412,6 +417,9 @@ void ObjectivesEditor::populateEditPanel() {
 	gtk_toggle_button_set_active(
 		GTK_TOGGLE_BUTTON(_widgets[WIDGET_VISIBLE_FLAG]),
 		obj.visible ? TRUE : FALSE);
+		
+	// Re-enable updates
+	_objectiveListLocked = false;
 }
 
 // Refresh the objectives list from the ObjectiveEntity
@@ -649,9 +657,13 @@ void ObjectivesEditor::_onInitialStateChanged(GtkWidget* w,
 void ObjectivesEditor::_onDescriptionEdited(GtkEditable* e, 
 											ObjectivesEditor* self)
 {
+	// Abort if the objective liststore is locked
+	if (self->_objectiveListLocked)
+		return;
+	
 	// Get the string
 	std::string desc = gtk_entry_get_text(GTK_ENTRY(e));
-	
+
 	// Set the string on the Objective 
 	Objective& o = self->getCurrentObjective();
 	o.description = desc;
