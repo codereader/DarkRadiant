@@ -71,6 +71,47 @@ void SRPropertyLoader::parseAttribute(
 		}
 	}
 	
+	// Check the key for a Response Effect definition
+	{
+		// Construct a regex with the number as match variable
+		// This should search for something like "sr_effect_2_3_arg3" 
+		// (with the postfix "_arg3" being optional)
+		std::string exprStr = "^" + prefix + "effect" + "_([0-9])+_([0-9])+(_arg[0-9]+)*$";
+		boost::regex expr(exprStr);
+		boost::smatch matches;
+		
+		if (boost::regex_match(key, matches, expr)) {
+			// The response index
+			int index = strToInt(matches[1]);
+			// The effect index
+			int effectIndex = strToInt(matches[2]);
+			
+			// Find the Response for this index
+			SREntity::StimResponseMap::iterator found = _srMap.find(index);
+			
+			if (found != _srMap.end()) {
+				// Get the response effect (or create a new one)
+				ResponseEffect& effect = _srMap[index].getResponseEffect(effectIndex);
+				
+				std::string postfix = matches[3];
+				if (postfix.empty()) {
+					// No "_arg1" found, the value is the effect name definition
+					effect.setName(value);
+				}
+				else {
+					int argIndex = strToInt(postfix.substr(4));
+					// Load the value into argument with the index <argIndex>
+					effect.setArgument(argIndex, value);
+				}
+			}
+			else {
+				// already existing, add to the warnings
+				_warnings += "Warning on Response Effect #" + intToStr(index) + 
+							 ": could not find Response.\n";
+			}
+		}
+	}
+	
 	// Check the key/value for script definitions
 	StimTypeMap& stimMap = _stimTypes.getStimMap();
 	for (StimTypeMap::iterator i = stimMap.begin(); i != stimMap.end(); i++) {
