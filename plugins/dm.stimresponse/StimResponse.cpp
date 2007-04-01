@@ -50,3 +50,15 @@ void StimResponse::setInherited(bool inherited) {
 bool StimResponse::inherited() const {
 	return _inherited;
 }
+
+ResponseEffect& StimResponse::getResponseEffect(const unsigned int index) {
+	EffectMap::iterator found = _effects.find(index);
+	
+	if (found == _effects.end()) {
+		// ResponseEffect doesn't exist yet, create new
+		ResponseEffect effect;
+		_effects[index] = effect;
+	}
+	
+	return _effects[index];
+}

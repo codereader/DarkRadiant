@@ -2,7 +2,9 @@
 #define STIMRESPONSE_H_
 
 #include <map>
+#include <list>
 #include <string>
+#include "ResponseEffect.h"
 
 	namespace {
 		const std::string RKEY_STIM_RESPONSE_PREFIX = 
@@ -49,6 +51,11 @@ private:
 	 */
 	int _index;
 	
+	typedef std::map<unsigned int, ResponseEffect> EffectMap;
+	
+	// The list of ResponseEffects for this response (does not apply for stims)
+	EffectMap _effects;
+	
 public:
 	StimResponse();
 	
@@ -72,6 +79,11 @@ public:
 	/** greebo: Sets the given <key> to <value>
 	 */
 	void set(const std::string& key, const std::string& value);
+	
+	/** greebo: Retrieves the response effect with the given id.
+	 * 			This creates the response effect if it doesn't exist yet.
+	 */
+	ResponseEffect& getResponseEffect(const unsigned int index);
 };
 
 #endif /*STIMRESPONSE_H_*/
