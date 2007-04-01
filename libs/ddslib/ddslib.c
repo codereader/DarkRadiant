@@ -159,6 +159,8 @@ static void DDSDecodePixelFormat( ddsBuffer_t *dds, ddsPF_t *pf )
 		*pf = DDS_PF_DXT4;
 	else if( fourCC == *((unsigned int*) "DXT5") )
 		*pf = DDS_PF_DXT5;
+	else if( fourCC == *((unsigned int*) "RXGB") )
+		*pf = DDS_PF_DXT5_RXGB;
 	else
 		*pf = DDS_PF_UNKNOWN;
 }
@@ -766,6 +768,10 @@ int DDSDecompress( ddsBuffer_t *dds, unsigned char *pixels )
 		
 		case DDS_PF_DXT5:
 			r = DDSDecompressDXT5( dds, width, height, pixels );		
+			break;
+			
+		case DDS_PF_DXT5_RXGB:
+			fprintf(stderr, "[ddslib] RXGB format not yet implemented.\n");
 			break;
 		
 		default:

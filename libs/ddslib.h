@@ -66,6 +66,7 @@ typedef enum
 	DDS_PF_DXT3,
 	DDS_PF_DXT4,
 	DDS_PF_DXT5,
+	DDS_PF_DXT5_RXGB,	/* Doom 3's swizzled format */
 	DDS_PF_UNKNOWN
 }
 ddsPF_t;
