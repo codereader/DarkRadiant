@@ -9,7 +9,18 @@
 	namespace {
 		const std::string RKEY_STIM_RESPONSE_PREFIX = 
 				"game/stimResponseSystem/stimResponsePrefix";
+				
+		enum {
+			EFFECT_INDEX_COL,
+			EFFECT_CAPTION_COL,
+			EFFECT_ARGS_COL,
+			EFFECT_NUM_COLS,
+		};
 	}
+
+// Forward declaration
+typedef struct _GtkListStore GtkListStore;
+typedef struct _GtkTreeIter GtkTreeIter;
 
 struct SRKey {
 	// The key name
@@ -84,6 +95,22 @@ public:
 	 * 			This creates the response effect if it doesn't exist yet.
 	 */
 	ResponseEffect& getResponseEffect(const unsigned int index);
+	
+	/** greebo: Constructs the GtkListStore using the effects stored in this
+	 * 			response.
+	 */
+	GtkListStore* getEffectStore();
+	
+private:
+	/** greebo: Write the values of the passed ResponseEffect to the 
+	 * 			GtkListStore using the passed GtkTreeIter.
+	 * 			The ID stays untouched. 
+	 * 
+	 * @store: The ListStore
+	 * @iter: The TreeIter pointing at the row where the data should be inserted
+	 * @sr: the ResponseEffect object containing the source data
+	 */
+	void writeToListStore(GtkListStore* store, GtkTreeIter* iter, ResponseEffect& effect);
 };
 
 #endif /*STIMRESPONSE_H_*/

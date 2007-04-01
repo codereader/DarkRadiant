@@ -55,11 +55,11 @@ class StimResponseEditor
 		GtkWidget* deleteMenuItem;
 	} _srWidgets;
 	
-	struct ScriptWidgets {
+	struct EffectWidgets {
 		GtkWidget* view;
 		GtkTreeSelection* selection;
 		GtkWidget* deleteMenuItem;
-	} _scriptWidgets;
+	} _effectWidgets;
 	
 	// Context menus for list views
 	GtkWidget* _stimListContextMenu;
@@ -143,7 +143,7 @@ private:
 	/* WIDGET POPULATION */
 	void populateWindow(); 			// Main window
 	GtkWidget* createSRWidgets(); 	// Stim/Response widget group
-	GtkWidget* createScriptWidgets(); // Response script list
+	GtkWidget* createEffectWidgets(); // Response effect list
 	GtkWidget* createButtons(); 	// Dialog buttons
 	void createContextMenus();		// Popup menus
 	
