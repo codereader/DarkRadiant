@@ -35,7 +35,7 @@ namespace {
 	
 	const std::string LABEL_STIMRESPONSE_LIST = "<b>Stims/Responses</b>";
 	const std::string LABEL_ADD_STIMRESPONSE = "<b>Add Stim/Response</b>";
-	const std::string LABEL_RESPONSE_SCRIPTS = "<b>Response Scripts</b>";
+	const std::string LABEL_RESPONSE_SCRIPTS = "<b>Response Effects</b>";
 	
 	const char* LABEL_SAVE = "Save to Entity";
 	const char* LABEL_REVERT = "Reload from Entity";
@@ -285,7 +285,7 @@ void StimResponseEditor::populateWindow() {
     				   gtkutil::LeftAlignedLabel(LABEL_RESPONSE_SCRIPTS),
     				   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), 
-					   gtkutil::LeftAlignment(createScriptWidgets(), 18, 1.0),
+					   gtkutil::LeftAlignment(createEffectWidgets(), 18, 1.0),
 					   TRUE, TRUE, 0);
 	
 	// Pack in dialog buttons
@@ -448,21 +448,30 @@ GtkWidget* StimResponseEditor::createSRWidgets() {
 }
 
 // Create the response script list widgets
-GtkWidget* StimResponseEditor::createScriptWidgets() {
+GtkWidget* StimResponseEditor::createEffectWidgets() {
 
-	_scriptWidgets.view = gtk_tree_view_new();
-	_scriptWidgets.selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_scriptWidgets.view));
-	gtk_widget_set_size_request(_scriptWidgets.view, -1, 200);
+	_effectWidgets.view = gtk_tree_view_new();
+	_effectWidgets.selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_effectWidgets.view));
+	gtk_widget_set_size_request(_effectWidgets.view, -1, 200);
 	
 	// Connect the signals
-	g_signal_connect(G_OBJECT(_scriptWidgets.selection), "changed",
+	g_signal_connect(G_OBJECT(_effectWidgets.selection), "changed",
 					 G_CALLBACK(onSelectionChange), this);
-	g_signal_connect(G_OBJECT(_scriptWidgets.view), "key-press-event", 
+	g_signal_connect(G_OBJECT(_effectWidgets.view), "key-press-event", 
 					 G_CALLBACK(onTreeViewKeyPress), this);
-	g_signal_connect(G_OBJECT(_scriptWidgets.view), "button-release-event",
+	g_signal_connect(G_OBJECT(_effectWidgets.view), "button-release-event",
 					 G_CALLBACK(onTreeViewButtonEvent), this);
 	
-	{
+	gtk_tree_view_append_column(
+		GTK_TREE_VIEW(_effectWidgets.view), 
+		gtkutil::TextColumn("Effect", EFFECT_CAPTION_COL)
+	);
+	
+	gtk_tree_view_append_column(
+		GTK_TREE_VIEW(_effectWidgets.view), 
+		gtkutil::TextColumn("Description", EFFECT_ARGS_COL)
+	);
+	/*{
 		// The Type
 		GtkTreeViewColumn* scriptTypeCol = gtk_tree_view_column_new();
 		gtk_tree_view_column_set_title(scriptTypeCol, "Type");
@@ -487,7 +496,7 @@ GtkWidget* StimResponseEditor::createScriptWidgets() {
 	                                            scriptTextCellDataFunc,
 	                                            NULL, NULL);
 		
-		gtk_tree_view_append_column(GTK_TREE_VIEW(_scriptWidgets.view), scriptTypeCol);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(_effectWidgets.view), scriptTypeCol);
 	}
 	{
 		// The Script
@@ -509,11 +518,11 @@ GtkWidget* StimResponseEditor::createScriptWidgets() {
 	                                            scriptTextCellDataFunc,
 	                                            NULL, NULL);
 		
-		gtk_tree_view_append_column(GTK_TREE_VIEW(_scriptWidgets.view), scriptCol);
-	}
+		gtk_tree_view_append_column(GTK_TREE_VIEW(_effectWidgets.view), scriptCol);
+	}*/
 	
 	// Return the tree view in a frame
-	return gtkutil::ScrolledFrame(_scriptWidgets.view);
+	return gtkutil::ScrolledFrame(_effectWidgets.view);
 }
 
 // Create the context menus
@@ -526,17 +535,17 @@ void StimResponseEditor::createContextMenus() {
 	// Each menu gets a delete item
 	_srWidgets.deleteMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
 														   "Delete");
-	_scriptWidgets.deleteMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
+	_effectWidgets.deleteMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
 															   "Delete");
 	gtk_menu_shell_append(GTK_MENU_SHELL(_stimListContextMenu), 
 						  _srWidgets.deleteMenuItem);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_scriptListContextMenu), 
-						  _scriptWidgets.deleteMenuItem);
+						  _effectWidgets.deleteMenuItem);
 	
 	// Connect up the signals
 	g_signal_connect(G_OBJECT(_srWidgets.deleteMenuItem), "activate",
 					 G_CALLBACK(_onContextMenuDelete), this);
-	g_signal_connect(G_OBJECT(_scriptWidgets.deleteMenuItem), "activate",
+	g_signal_connect(G_OBJECT(_effectWidgets.deleteMenuItem), "activate",
 					 G_CALLBACK(_onContextMenuDelete), this);
 	
 	// Show menus (not actually visible until popped up)
@@ -572,9 +581,7 @@ void StimResponseEditor::rescanSelection() {
 		gtk_tree_view_set_model(GTK_TREE_VIEW(_entitySRView), GTK_TREE_MODEL(listStore));
 		g_object_unref(listStore);
 		
-		GtkListStore* scriptSTore = _srEntity->getScriptStore();
-		gtk_tree_view_set_model(GTK_TREE_VIEW(_scriptWidgets.view), GTK_TREE_MODEL(scriptSTore));
-		g_object_unref(scriptSTore);
+		gtk_tree_view_set_model(GTK_TREE_VIEW(_effectWidgets.view), NULL);
 	}
 	
 	if (_entity != NULL) {
@@ -684,9 +691,16 @@ void StimResponseEditor::updateSRWidgets() {
 		if (sr.inherited()) {
 			gtk_widget_set_sensitive(_srWidgets.vbox, FALSE);
 		}
+		
+		GtkListStore* effectStore = sr.getEffectStore();
+		gtk_tree_view_set_model(GTK_TREE_VIEW(_effectWidgets.view), GTK_TREE_MODEL(effectStore));
+		g_object_unref(effectStore);
 	}
 	else {
 		gtk_widget_set_sensitive(_srWidgets.vbox, FALSE);
+		
+		// Clear the effect tree view
+		gtk_tree_view_set_model(GTK_TREE_VIEW(_effectWidgets.view), NULL);
 	}
 	
 	_updatesDisabled = false;
@@ -755,7 +769,7 @@ void StimResponseEditor::removeScript() {
 	GtkTreeIter iter;
 	GtkTreeModel* model;
 	bool anythingSelected = gtk_tree_selection_get_selected(
-		_scriptWidgets.selection, &model, &iter
+		_effectWidgets.selection, &model, &iter
 	);
 	
 	if (anythingSelected && _srEntity != NULL) {
@@ -807,10 +821,10 @@ void StimResponseEditor::updateAddButton() {
 	// Get the currently selected stim type
 	std::string type = getStimTypeName();
 	
-	gtk_widget_set_sensitive(
+	/*gtk_widget_set_sensitive(
 		_addWidgets.addScriptButton,
 		(!type.empty() && !(_srEntity->scriptExists(type)))
-	);
+	);*/
 	
 	gtk_widget_set_sensitive(
 		_addWidgets.addButton,
@@ -831,16 +845,18 @@ gboolean StimResponseEditor::onDelete(GtkWidget* widget, GdkEvent* event, StimRe
 void StimResponseEditor::onSelectionChange(GtkTreeSelection* selection, 
 										   StimResponseEditor* self) 
 {
+	if (self->_updatesDisabled)	return; // Callback loop guard
+	
 	// Enable or disable the "Delete" context menu items based on the presence
 	// of a selection.
 	gtk_widget_set_sensitive(self->_srWidgets.deleteMenuItem, FALSE);
-	gtk_widget_set_sensitive(self->_scriptWidgets.deleteMenuItem, FALSE);
+	gtk_widget_set_sensitive(self->_effectWidgets.deleteMenuItem, FALSE);
 	
 	if (gtk_tree_selection_get_selected(selection, NULL, NULL)) {
 		if (selection == self->_entitySRSelection)
 			gtk_widget_set_sensitive(self->_srWidgets.deleteMenuItem, TRUE);
-		else if (selection == self->_scriptWidgets.selection)
-			gtk_widget_set_sensitive(self->_scriptWidgets.deleteMenuItem, TRUE);
+		else if (selection == self->_effectWidgets.selection)
+			gtk_widget_set_sensitive(self->_effectWidgets.deleteMenuItem, TRUE);
 	}
 	
 	// Update the other widgets
@@ -1001,7 +1017,7 @@ gboolean StimResponseEditor::onTreeViewKeyPress(
 		if (view == GTK_TREE_VIEW(self->_entitySRView)) {
 			self->removeStimResponse();
 		}
-		else if (view == GTK_TREE_VIEW(self->_scriptWidgets.view)) {
+		else if (view == GTK_TREE_VIEW(self->_effectWidgets.view)) {
 			self->removeScript();
 		}
 		
@@ -1035,7 +1051,7 @@ gboolean StimResponseEditor::onTreeViewButtonEvent(
 		if (view == GTK_TREE_VIEW(self->_entitySRView))
 			gtk_menu_popup(GTK_MENU(self->_stimListContextMenu), NULL, NULL, 
 						   NULL, NULL, 1, GDK_CURRENT_TIME);
-		else if (view == GTK_TREE_VIEW(self->_scriptWidgets.view))
+		else if (view == GTK_TREE_VIEW(self->_effectWidgets.view))
 			gtk_menu_popup(GTK_MENU(self->_scriptListContextMenu), NULL, NULL, 
 						   NULL, NULL, 1, GDK_CURRENT_TIME);
 	}	
@@ -1049,7 +1065,7 @@ void StimResponseEditor::_onContextMenuDelete(GtkWidget* w,
 {
 	if (w == self->_srWidgets.deleteMenuItem)
 		self->removeStimResponse();
-	else if (w == self->_scriptWidgets.deleteMenuItem)
+	else if (w == self->_effectWidgets.deleteMenuItem)
 		self->removeScript();
 }
 

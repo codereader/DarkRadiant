@@ -1,5 +1,8 @@
 #include "StimResponse.h"
 
+#include <gtk/gtk.h>
+#include "string/string.h"
+
 StimResponse::StimResponse() :
 	_class(typeStim),
 	_inherited(false),
@@ -61,4 +64,37 @@ ResponseEffect& StimResponse::getResponseEffect(const unsigned int index) {
 	}
 	
 	return _effects[index];
+}
+
+GtkListStore* StimResponse::getEffectStore() {
+	GtkListStore* store = gtk_list_store_new(EFFECT_NUM_COLS,
+											 G_TYPE_INT,	// Index
+											 G_TYPE_STRING, // Caption
+											 G_TYPE_STRING, // Arguments
+											 -1);
+	
+	for (EffectMap::iterator i = _effects.begin(); i != _effects.end(); i++) {
+		GtkTreeIter iter;
+		
+		int index = i->first;
+		
+		gtk_list_store_append(store, &iter);
+		// Store the ID into the liststore
+		gtk_list_store_set(store, &iter, 
+						   EFFECT_INDEX_COL, intToStr(index).c_str(),
+						   -1);
+		
+		// And write the rest of the data to the row
+		ResponseEffect& effect = i->second;
+		writeToListStore(store, &iter, effect);
+	}
+	
+	return store;
+}
+
+void StimResponse::writeToListStore(GtkListStore* store, GtkTreeIter* iter, ResponseEffect& effect) {
+	gtk_list_store_set(store, iter, 
+					   EFFECT_CAPTION_COL, effect.getName().c_str(),
+					   EFFECT_ARGS_COL, "Arguments",
+					   -1);
 }
