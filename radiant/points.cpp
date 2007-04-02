@@ -127,6 +127,7 @@ public:
 		else if(!show && _displayList != 0) {
 			glDeleteLists (_displayList, 1);
 			_displayList = 0;
+			_points.clear();
 		}
 		
 		// Redraw the scene
