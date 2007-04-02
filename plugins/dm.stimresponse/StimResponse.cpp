@@ -79,7 +79,7 @@ GtkListStore* StimResponse::getEffectStore() {
 		gtk_list_store_append(store, &iter);
 		// Store the ID into the liststore
 		gtk_list_store_set(store, &iter, 
-						   EFFECT_INDEX_COL, intToStr(index).c_str(),
+						   EFFECT_INDEX_COL, index,
 						   -1);
 		
 		// And write the rest of the data to the row
