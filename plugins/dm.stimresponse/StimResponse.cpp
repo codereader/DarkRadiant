@@ -4,14 +4,12 @@
 #include "string/string.h"
 
 StimResponse::StimResponse() :
-	_class(typeStim),
 	_inherited(false),
 	_index(0)
 {}
 
 // Copy constructor
 StimResponse::StimResponse(const StimResponse& other) :
-	_class(other._class),
 	_inherited(other._inherited),
 	_properties(other._properties),
 	_index(other._index)

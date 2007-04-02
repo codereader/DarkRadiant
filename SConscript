@@ -325,7 +325,8 @@ srList = build_list('plugins/dm.stimresponse',
 					 StimResponse.cpp \
 					 SRPropertyLoader.cpp \
 					 SRPropertyRemover.cpp \
-					 SRPropertySaver.cpp')
+					 SRPropertySaver.cpp \
+					 EffectEditor.cpp')
 srLib = srEnv.SharedLibrary(target='dm_stimresponse',
 							source=srList,
 							no_import_lib=1)
