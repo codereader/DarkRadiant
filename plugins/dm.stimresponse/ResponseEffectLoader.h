@@ -13,10 +13,15 @@
 class ResponseEffectLoader :
 	public EntityClassVisitor
 {
+	// The target map to populate
 	ResponseEffectTypeMap& _map;
 	
+	// The entityDef prefix (e.g. "effect_")
 	std::string _prefix;
 public:
+	/** greebo: Pass the target map where all the eclassptrs
+	 * 			should be stored into. 
+	 */
 	ResponseEffectLoader(ResponseEffectTypeMap& map) :
 		_map(map)
 	{

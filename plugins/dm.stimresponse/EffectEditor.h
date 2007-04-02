@@ -9,6 +9,7 @@
 // Forward Declarations
 typedef struct _GtkWindow GtkWindow;
 typedef struct _GtkWidget GtkWidget;
+typedef struct _GtkListStore GtkListStore;
 
 class EffectEditor :
 	public gtkutil::DialogWindow
@@ -18,6 +19,9 @@ class EffectEditor :
 	
 	// The list containing the possible effect types
 	ResponseEffectTypeMap _effectTypes;
+	
+	GtkWidget* _effectTypeCombo;
+	GtkListStore* _effectStore;
 	
 public:
 	EffectEditor(GtkWindow* parent);
