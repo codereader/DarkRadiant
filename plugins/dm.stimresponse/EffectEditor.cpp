@@ -1,6 +1,7 @@
 #include "EffectEditor.h"
 
 #include <gtk/gtk.h>
+#include "ResponseEffectLoader.h"
 
 	namespace {
 		const std::string WINDOW_TITLE = "Edit Response Effect";
@@ -11,6 +12,10 @@ EffectEditor::EffectEditor(GtkWindow* parent) :
 {
 	gtk_window_set_modal(GTK_WINDOW(_window), TRUE);
 	populateWindow();
+	
+	// Load the possible effect types
+	ResponseEffectLoader loader(_effectTypes);
+	GlobalEntityClassManager().forEach(loader);
 }
 
 void EffectEditor::populateWindow() {
