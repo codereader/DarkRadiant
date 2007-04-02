@@ -23,6 +23,8 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
+#include "EffectEditor.h"
+
 #include <iostream>
 
 namespace ui {
@@ -459,7 +461,7 @@ GtkWidget* StimResponseEditor::createEffectWidgets() {
 					 G_CALLBACK(onEffectSelectionChange), this);
 	g_signal_connect(G_OBJECT(_effectWidgets.view), "key-press-event", 
 					 G_CALLBACK(onTreeViewKeyPress), this);
-	g_signal_connect(G_OBJECT(_effectWidgets.view), "button-release-event",
+	g_signal_connect(G_OBJECT(_effectWidgets.view), "button-press-event",
 					 G_CALLBACK(onTreeViewButtonEvent), this);
 	
 	gtk_tree_view_append_column(
@@ -782,6 +784,21 @@ void StimResponseEditor::removeScript() {
 	}
 }
 
+int StimResponseEditor::getEffectIdFromSelection() {
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+	bool anythingSelected = gtk_tree_selection_get_selected(
+		_effectWidgets.selection, &model, &iter
+	);
+	
+	if (anythingSelected && _srEntity != NULL) {
+		return gtkutil::TreeModel::getInt(model, &iter, EFFECT_INDEX_COL);
+	}
+	else {
+		return -1;
+	}
+}
+
 int StimResponseEditor::getIdFromSelection() {
 	GtkTreeIter iter;
 	GtkTreeModel* model;
@@ -831,6 +848,26 @@ void StimResponseEditor::updateAddButton() {
 		_addWidgets.addButton,
 		!type.empty()
 	);
+}
+
+void StimResponseEditor::editEffect() {
+	if (_srEntity == NULL) return;
+	
+	int id = getIdFromSelection();
+	
+	if (id > 0) {
+		StimResponse& sr = _srEntity->get(id);
+		int effectIndex = getEffectIdFromSelection();
+		
+		// Make sure we have a response and anything selected
+		if (sr.get("class") == "R" && effectIndex > 0) {
+			// Create a new effect editor (self-destructs)
+			EffectEditor* editor = new EffectEditor(GTK_WINDOW(_dialog));
+			editor->editEffect(sr, effectIndex);
+			
+			// The editor is modal and will destroy itself, our work is done
+		}
+	}
 }
 
 // Static GTK Callbacks
@@ -1070,7 +1107,8 @@ gboolean StimResponseEditor::onTreeViewButtonEvent(
 						   NULL, NULL, 1, GDK_CURRENT_TIME);
 	}
 	else if (ev->type == GDK_2BUTTON_PRESS) {
-		std::cout << "Double click!" << "\n";
+		// Call the effect editor upon double click
+		self->editEffect();
 	}
 	
 	return FALSE;

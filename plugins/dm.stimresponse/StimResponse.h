@@ -36,19 +36,9 @@ struct SRKey {
  */
 class StimResponse
 {
-public:
-	enum SRClass {
-		typeStim,
-		typeResponse,
-	};
-
-private:
 	// The key/value mapping
 	typedef std::map<std::string, std::string> PropertyMap;
 
-	// The S/R class
-	SRClass _class;
-	
 	// TRUE, if this stems from an inherited eclass. Makes this object read-only	
 	bool _inherited;
 	

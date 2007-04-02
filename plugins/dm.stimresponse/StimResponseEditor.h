@@ -97,6 +97,10 @@ public:
 	
 private:
 
+	/** greebo: Edits the currently selected effect 
+	 */
+	void editEffect();
+	
 	/** greebo: Saves the current working set to the entity
 	 */
 	void save();
@@ -129,6 +133,12 @@ private:
 	 * @returns: the id (number) of the selected stim or -1 on failure 
 	 */
 	int getIdFromSelection();
+	
+	/** greebo: Returns the ID of the currently selected response effect
+	 * 		
+	 * @returns: the index of the selected effect or -1 on failure 
+	 */
+	int getEffectIdFromSelection();
 
 	/** greebo: Tries to set the <key> of the currently selected 
 	 * 			StimResponse to <value>
