@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include "ResponseEffectTypes.h"
 
 class ResponseEffect
 {
@@ -24,47 +25,35 @@ private:
 	// The list of arguments this effect needs
 	ArgumentList _args;
 
+	// The reference to the entityDef this response effect is basing on
+	IEntityClassPtr _eclass;
+
 public:
-	ResponseEffect() 
-	{}
+	// Default constructor
+	ResponseEffect();
 
 	// Copy constructor
-	ResponseEffect(const ResponseEffect& other) :
-		_effectName(other._effectName),
-		_args(other._args)
-	{}
+	ResponseEffect(const ResponseEffect& other);
 
-	std::string getName() const {
-		return _effectName;
-	}
+	// Returns the effect name ("effect_damage")
+	std::string getName() const;
 
-	void setName(const std::string& name) {
-		_effectName = name;
-	}
+	/** greebo: Updates the name of this object. This triggers
+	 * 			an update of the contained IEntityClassPtr as well.
+	 */
+	void setName(const std::string& name);
 	
-	std::string getArgument(unsigned int index) const {
-		ArgumentList::const_iterator i = _args.find(index);
-		
-		// Return "" if the argument was not found
-		return (i != _args.end()) ? i->second.value : "";
-	}
+	/** greebo: Retrieves the argument with the given index.
+	 */
+	std::string getArgument(unsigned int index) const;
 	
-	void setArgument(unsigned int index, const std::string& value) {
-		ArgumentList::const_iterator i = _args.find(index);
-		
-		if (i == _args.end()) {
-			// Argument doesn't exist, create it
-			Argument newArgument;
-			newArgument.value = value;
-			
-			// Store the argument in the map
-			_args[index] = newArgument;
-		}
-		else {
-			// Argument exists
-			_args[index].value = value;
-		}
-	}
+	/** greebo: Sets the argument with the given ID to the given value.
+	 */
+	void setArgument(unsigned int index, const std::string& value);
+	
+	/** greebo: Returns the "display name" of this effect (e.g. "Damage")
+	 */
+	std::string getCaption() const;
 };
 
 #endif /*RESPONSEEFFECT_H_*/
