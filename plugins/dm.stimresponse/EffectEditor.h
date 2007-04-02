@@ -4,6 +4,7 @@
 #include "gtkutil/DialogWindow.h"
 
 #include "StimResponse.h"
+#include "ResponseEffectTypes.h"
 
 // Forward Declarations
 typedef struct _GtkWindow GtkWindow;
@@ -14,6 +15,9 @@ class EffectEditor :
 {
 	// The overall vbox
 	GtkWidget* _dialogVBox;
+	
+	// The list containing the possible effect types
+	ResponseEffectTypeMap _effectTypes;
 	
 public:
 	EffectEditor(GtkWindow* parent);

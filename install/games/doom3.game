@@ -187,5 +187,6 @@
 			<property name="timer_type" classes="S" />
 		</properties>
 		<stimResponsePrefix value="sr_" />
+		<responseEffectPrefix value="effect_" />
 	</stimResponseSystem>
 </game>
