@@ -3,14 +3,16 @@
 #include <gtk/gtk.h>
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
-#include "ResponseEffectLoader.h"
+#include "gtkutil/TreeModel.h"
+#include <iostream>
 
 	namespace {
 		const std::string WINDOW_TITLE = "Edit Response Effect";
 		
+		// The enumeration for populating the GtkListStore 
 		enum {
-			EFFECT_TYPE_NAME_COL,
-			EFFECT_TYPE_CAPTION_COL,
+			EFFECT_TYPE_NAME_COL,		// The name ("effect_damage")
+			EFFECT_TYPE_CAPTION_COL,	// The caption ("Damage")
 			EFFECT_TYPE_NUM_COLS
 		};
 	}
@@ -22,17 +24,17 @@ EffectEditor::EffectEditor(GtkWindow* parent) :
 	gtk_container_set_border_width(GTK_CONTAINER(_window), 12);
 	gtk_window_set_type_hint(GTK_WINDOW(_window), GDK_WINDOW_TYPE_HINT_DIALOG);
 	
-	// Load the possible effect types
-	ResponseEffectLoader loader(_effectTypes);
-	GlobalEntityClassManager().forEach(loader);
-	
 	_effectStore = gtk_list_store_new(EFFECT_TYPE_NUM_COLS,
 									  G_TYPE_STRING,
 									  G_TYPE_STRING,
 									  -1);
 
-	for (ResponseEffectTypeMap::iterator i = _effectTypes.begin(); 
-		  i != _effectTypes.end(); i++) 
+	// Retrieve the map from the ResponseEffectTypes object
+	ResponseEffectTypeMap& effectTypes = 
+		ResponseEffectTypes::Instance().getMap();
+
+	for (ResponseEffectTypeMap::iterator i = effectTypes.begin(); 
+		  i != effectTypes.end(); i++)
 	{
 		std::string caption = i->second->getValueForKey("editor_caption");
 		
@@ -77,4 +79,19 @@ void EffectEditor::populateWindow() {
 
 void EffectEditor::editEffect(StimResponse& response, const unsigned int effectIndex) {
 	gtk_widget_show_all(_window);
+	
+	ResponseEffect& effect = response.getResponseEffect(effectIndex);
+	
+	// Setup the selectionfinder to search for the name string
+	gtkutil::TreeModel::SelectionFinder finder(effect.getName(), EFFECT_TYPE_NAME_COL);
+	
+	gtk_tree_model_foreach(
+		GTK_TREE_MODEL(_effectStore), 
+		gtkutil::TreeModel::SelectionFinder::forEach, 
+		&finder
+	);
+	GtkTreeIter found = finder.getIter();
+	
+	// Set the active row of the combo box to the current response effect type
+	gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_effectTypeCombo), &found);
 }
