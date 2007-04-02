@@ -35,7 +35,7 @@ namespace {
 	
 	const std::string LABEL_STIMRESPONSE_LIST = "<b>Stims/Responses</b>";
 	const std::string LABEL_ADD_STIMRESPONSE = "<b>Add Stim/Response</b>";
-	const std::string LABEL_RESPONSE_SCRIPTS = "<b>Response Effects</b>";
+	const std::string LABEL_RESPONSE_EFFECTS = "<b>Response Effects</b>";
 	
 	const char* LABEL_SAVE = "Save to Entity";
 	const char* LABEL_REVERT = "Reload from Entity";
@@ -129,7 +129,7 @@ static void textCellDataFunc(GtkTreeViewColumn* treeColumn,
 	g_object_set(G_OBJECT(cell), "sensitive", !inherited, NULL);
 }
 
-static void scriptTextCellDataFunc(GtkTreeViewColumn* treeColumn,
+/*static void scriptTextCellDataFunc(GtkTreeViewColumn* treeColumn,
 							 GtkCellRenderer* cell,
 							 GtkTreeModel* treeModel,
 							 GtkTreeIter* iter, 
@@ -142,7 +142,7 @@ static void scriptTextCellDataFunc(GtkTreeViewColumn* treeColumn,
 	if (GTK_IS_CELL_RENDERER_TEXT(cell)) {
 		g_object_set(G_OBJECT(cell), "editable", !inherited, NULL);
 	}
-}
+}*/
 
 void StimResponseEditor::populateWindow() {
 	
@@ -168,7 +168,7 @@ void StimResponseEditor::populateWindow() {
 
 	// Connect the signals
 	g_signal_connect(G_OBJECT(_entitySRSelection), "changed", 
-					 G_CALLBACK(onSelectionChange), this);
+					 G_CALLBACK(onSRSelectionChange), this);
 	g_signal_connect(G_OBJECT(_entitySRView), "key-press-event", 
 					 G_CALLBACK(onTreeViewKeyPress), this);
 	g_signal_connect(G_OBJECT(_entitySRView), "button-release-event", 
@@ -280,9 +280,9 @@ void StimResponseEditor::populateWindow() {
 	g_signal_connect(G_OBJECT(_addWidgets.addButton), "clicked", G_CALLBACK(onAdd), this);
 	g_signal_connect(G_OBJECT(_addWidgets.addScriptButton), "clicked", G_CALLBACK(onScriptAdd), this);
 	
-	// Response scripts section
+	// Response effects section
     gtk_box_pack_start(GTK_BOX(_dialogVBox),
-    				   gtkutil::LeftAlignedLabel(LABEL_RESPONSE_SCRIPTS),
+    				   gtkutil::LeftAlignedLabel(LABEL_RESPONSE_EFFECTS),
     				   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), 
 					   gtkutil::LeftAlignment(createEffectWidgets(), 18, 1.0),
@@ -456,7 +456,7 @@ GtkWidget* StimResponseEditor::createEffectWidgets() {
 	
 	// Connect the signals
 	g_signal_connect(G_OBJECT(_effectWidgets.selection), "changed",
-					 G_CALLBACK(onSelectionChange), this);
+					 G_CALLBACK(onEffectSelectionChange), this);
 	g_signal_connect(G_OBJECT(_effectWidgets.view), "key-press-event", 
 					 G_CALLBACK(onTreeViewKeyPress), this);
 	g_signal_connect(G_OBJECT(_effectWidgets.view), "button-release-event",
@@ -581,6 +581,7 @@ void StimResponseEditor::rescanSelection() {
 		gtk_tree_view_set_model(GTK_TREE_VIEW(_entitySRView), GTK_TREE_MODEL(listStore));
 		g_object_unref(listStore);
 		
+		// Clear the treeview (unset the model)
 		gtk_tree_view_set_model(GTK_TREE_VIEW(_effectWidgets.view), NULL);
 	}
 	
@@ -841,8 +842,8 @@ gboolean StimResponseEditor::onDelete(GtkWidget* widget, GdkEvent* event, StimRe
 	return TRUE;
 }
 
-// Callback for treeview selection changes
-void StimResponseEditor::onSelectionChange(GtkTreeSelection* selection, 
+// Callback for S/R treeview selection changes
+void StimResponseEditor::onSRSelectionChange(GtkTreeSelection* selection, 
 										   StimResponseEditor* self) 
 {
 	if (self->_updatesDisabled)	return; // Callback loop guard
@@ -850,17 +851,30 @@ void StimResponseEditor::onSelectionChange(GtkTreeSelection* selection,
 	// Enable or disable the "Delete" context menu items based on the presence
 	// of a selection.
 	gtk_widget_set_sensitive(self->_srWidgets.deleteMenuItem, FALSE);
-	gtk_widget_set_sensitive(self->_effectWidgets.deleteMenuItem, FALSE);
-	
-	if (gtk_tree_selection_get_selected(selection, NULL, NULL)) {
-		if (selection == self->_entitySRSelection)
-			gtk_widget_set_sensitive(self->_srWidgets.deleteMenuItem, TRUE);
-		else if (selection == self->_effectWidgets.selection)
-			gtk_widget_set_sensitive(self->_effectWidgets.deleteMenuItem, TRUE);
-	}
+		
+	gtk_widget_set_sensitive(
+		self->_srWidgets.deleteMenuItem, 
+		gtk_tree_selection_get_selected(selection, NULL, NULL)
+	);
 	
 	// Update the other widgets
 	self->updateSRWidgets();
+}
+
+// Callback for effects treeview selection changes
+void StimResponseEditor::onEffectSelectionChange(GtkTreeSelection* selection, 
+										   StimResponseEditor* self) 
+{
+	if (self->_updatesDisabled)	return; // Callback loop guard
+	
+	// Enable or disable the "Delete" context menu items based on the presence
+	// of a selection.
+	gtk_widget_set_sensitive(self->_effectWidgets.deleteMenuItem, FALSE);
+	
+	gtk_widget_set_sensitive(
+		self->_effectWidgets.deleteMenuItem, 
+		gtk_tree_selection_get_selected(selection, NULL, NULL)
+	);
 }
 
 void StimResponseEditor::onClassChange(GtkToggleButton* toggleButton, StimResponseEditor* self) {
@@ -1054,7 +1068,10 @@ gboolean StimResponseEditor::onTreeViewButtonEvent(
 		else if (view == GTK_TREE_VIEW(self->_effectWidgets.view))
 			gtk_menu_popup(GTK_MENU(self->_scriptListContextMenu), NULL, NULL, 
 						   NULL, NULL, 1, GDK_CURRENT_TIME);
-	}	
+	}
+	else if (ev->type == GDK_2BUTTON_PRESS) {
+		std::cout << "Double click!" << "\n";
+	}
 	
 	return FALSE;
 }

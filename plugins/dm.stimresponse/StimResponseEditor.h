@@ -169,8 +169,10 @@ private:
 	// The callback for the delete event (toggles the visibility)
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, StimResponseEditor* self);
 
-	// Callback for Stim/Response selection changes
-	static void onSelectionChange(GtkTreeSelection* treeView, StimResponseEditor* self);
+	// Callback for Stim/Response and effect selection changes
+	static void onSRSelectionChange(GtkTreeSelection* treeView, StimResponseEditor* self);
+	static void onEffectSelectionChange(GtkTreeSelection* treeView, StimResponseEditor* self);
+	
 	static void onClassChange(GtkToggleButton* toggleButton, StimResponseEditor* self);
 	static void onTypeSelect(GtkComboBox* widget, StimResponseEditor* self);
 	
