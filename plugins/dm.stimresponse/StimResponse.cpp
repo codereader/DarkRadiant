@@ -56,9 +56,8 @@ ResponseEffect& StimResponse::getResponseEffect(const unsigned int index) {
 	EffectMap::iterator found = _effects.find(index);
 	
 	if (found == _effects.end()) {
-		// ResponseEffect doesn't exist yet, create new
-		ResponseEffect effect;
-		_effects[index] = effect;
+		// ResponseEffect doesn't exist yet, create a new, empty one
+		 _effects[index] = ResponseEffect();
 	}
 	
 	return _effects[index];
@@ -92,7 +91,7 @@ GtkListStore* StimResponse::getEffectStore() {
 
 void StimResponse::writeToListStore(GtkListStore* store, GtkTreeIter* iter, ResponseEffect& effect) {
 	gtk_list_store_set(store, iter, 
-					   EFFECT_CAPTION_COL, effect.getName().c_str(),
+					   EFFECT_CAPTION_COL, effect.getCaption().c_str(),
 					   EFFECT_ARGS_COL, "Arguments",
 					   -1);
 }
