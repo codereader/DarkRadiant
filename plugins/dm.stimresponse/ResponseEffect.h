@@ -9,18 +9,26 @@ class ResponseEffect
 {
 public:
 	struct Argument {
-		// The type of this property (entity, vector, float, etc.)
-		int type;
+		// The type string of this property ("e" => entity)
+		std::string type;
+		
+		// TRUE, if this argument can be omitted
+		bool optional;
+		
+		// The caption of this argument
+		std::string title;
+		
+		// The description string
+		std::string desc;
 		
 		// The argument value
 		std::string value;
 	};
+	typedef std::map<int, Argument> ArgumentList;
 	
 private:
 	// The name of this effect (e.g. "effect_teleport")
 	std::string _effectName;
-	
-	typedef std::map<int, Argument> ArgumentList;
 	
 	// The list of arguments this effect needs
 	ArgumentList _args;
@@ -51,9 +59,23 @@ public:
 	 */
 	void setArgument(unsigned int index, const std::string& value);
 	
+	/** greebo: Returns a reference to the internal list
+	 */
+	ArgumentList& getArguments();
+	
 	/** greebo: Returns the "display name" of this effect (e.g. "Damage")
 	 */
 	std::string getCaption() const;
+	
+	/** greebo: Returns the entity class pointer (as the name states)
+	 */
+	IEntityClassPtr getEClass() const;
+	
+private:
+	/** greebo: Clears and rebuilds the argument list from
+	 * 			the information found in the entity class.
+	 */
+	void buildArgumentList();
 };
 
 #endif /*RESPONSEEFFECT_H_*/

@@ -75,11 +75,14 @@ void EffectEditor::populateWindow() {
 	);
 	
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), effectHBox, FALSE, FALSE, 0);
+	
+	GtkWidget* argLabel = gtkutil::LeftAlignedLabel("<b>Arguments</b>");
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), argLabel, FALSE, FALSE, 0);
+	
+	
 }
 
 void EffectEditor::editEffect(StimResponse& response, const unsigned int effectIndex) {
-	gtk_widget_show_all(_window);
-	
 	ResponseEffect& effect = response.getResponseEffect(effectIndex);
 	
 	// Setup the selectionfinder to search for the name string
@@ -94,4 +97,20 @@ void EffectEditor::editEffect(StimResponse& response, const unsigned int effectI
 	
 	// Set the active row of the combo box to the current response effect type
 	gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_effectTypeCombo), &found);
+	
+	// Parse the argument types from the effect and create the widgets
+	createArgumentWidgets(effect);
+	
+	gtk_widget_show_all(_window);
+}
+
+void EffectEditor::createArgumentWidgets(ResponseEffect& effect) {
+	ResponseEffect::ArgumentList& list = effect.getArguments();
+
+	for (ResponseEffect::ArgumentList::iterator i = list.begin(); 
+		 i != list.end(); i++)
+	{
+		GtkWidget* label = gtk_label_new(i->second.title.c_str());
+		gtk_box_pack_start(GTK_BOX(_dialogVBox), label, FALSE, FALSE, 0);
+	}
 }
