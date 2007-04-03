@@ -78,13 +78,6 @@ void EffectEditor::populateWindow() {
 	
 	GtkWidget* argLabel = gtkutil::LeftAlignedLabel("<b>Arguments</b>");
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), argLabel, FALSE, FALSE, 0);
-	
-	_argVBox = gtk_vbox_new(FALSE, 3);
-	gtk_box_pack_start(
-		GTK_BOX(_dialogVBox), 
-		gtkutil::LeftAlignment(_argVBox, 18, 1.0f), 
-		TRUE, TRUE, 0
-	); 
 }
 
 void EffectEditor::editEffect(StimResponse& response, const unsigned int effectIndex) {
@@ -112,23 +105,61 @@ void EffectEditor::editEffect(StimResponse& response, const unsigned int effectI
 void EffectEditor::createArgumentWidgets(ResponseEffect& effect) {
 	ResponseEffect::ArgumentList& list = effect.getArguments();
 
+	// Setup the table with default spacings
+	_argTable = gtk_table_new(list.size(), 3, false);
+    gtk_table_set_col_spacings(GTK_TABLE(_argTable), 12);
+    gtk_table_set_row_spacings(GTK_TABLE(_argTable), 6);
+	
+	gtk_box_pack_start(
+		GTK_BOX(_dialogVBox), 
+		gtkutil::LeftAlignment(_argTable, 18, 1.0f), 
+		TRUE, TRUE, 0
+	); 
+
 	for (ResponseEffect::ArgumentList::iterator i = list.begin(); 
 		 i != list.end(); i++)
 	{
 		int index = i->first;
 		ResponseEffect::Argument& arg = i->second;
-		
+		ArgumentItemPtr item;
+
 		if (arg.type == "s") {
 			// Create a new string argument item
-			ArgumentItemPtr itemPtr(new StringArgument(arg));
-			_argumentItems.push_back(itemPtr);
-			
-			// Cast the item onto a GtkWidget* and add it to the list
-			GtkWidget* widget = *itemPtr;
-			gtk_box_pack_start(GTK_BOX(_argVBox), widget, FALSE, FALSE, 0);
+			item = ArgumentItemPtr(new StringArgument(arg));
+		}
+		else if (arg.type == "f") {
+			// Create a new string argument item
+			item = ArgumentItemPtr(new FloatArgument(arg));
+		}
+		else if (arg.type == "v") {
+			// Create a new string argument item
+			item = ArgumentItemPtr(new VectorArgument(arg));
+		}
+		else if (arg.type == "e") {
+			// Create a new string argument item
+			item = ArgumentItemPtr(new EntityArgument(arg));
 		}
 		
-		GtkWidget* label = gtk_label_new(i->second.title.c_str());
-		gtk_box_pack_start(GTK_BOX(_dialogVBox), label, FALSE, FALSE, 0);
+		if (item != NULL) {
+			_argumentItems.push_back(item);
+			
+			// The label
+			gtk_table_attach_defaults(
+				GTK_TABLE(_argTable), item->getLabelWidget(),
+				0, 1, index-1, index // index starts with 1, hence the -1
+			);
+			
+			// The edit widgets
+			gtk_table_attach_defaults(
+				GTK_TABLE(_argTable), item->getEditWidget(),
+				1, 2, index-1, index // index starts with 1, hence the -1
+			);
+			
+			// The help widgets
+			gtk_table_attach_defaults(
+				GTK_TABLE(_argTable), item->getHelpWidget(),
+				2, 3, index-1, index // index starts with 1, hence the -1
+			);
+		}
 	}
 }
