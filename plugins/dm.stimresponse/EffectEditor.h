@@ -5,6 +5,8 @@
 
 #include "StimResponse.h"
 #include "ResponseEffectTypes.h"
+#include "EffectArgumentItem.h"
+#include <boost/shared_ptr.hpp>
 
 // Forward Declarations
 typedef struct _GtkWindow GtkWindow;
@@ -17,11 +19,19 @@ class EffectEditor :
 	// The overall vbox
 	GtkWidget* _dialogVBox;
 	
+	// The vbox containing the argument widgets
+	GtkWidget* _argVBox;
+	
 	// The list containing the possible effect types
 	ResponseEffectTypeMap _effectTypes;
 	
 	GtkWidget* _effectTypeCombo;
 	GtkListStore* _effectStore;
+	
+	// The list of argument items
+	typedef boost::shared_ptr<EffectArgumentItem> ArgumentItemPtr;
+	typedef std::vector<ArgumentItemPtr> ArgumentItemList;
+	ArgumentItemList _argumentItems;
 	
 public:
 	EffectEditor(GtkWindow* parent);
