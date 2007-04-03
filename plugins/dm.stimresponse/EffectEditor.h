@@ -21,6 +21,10 @@ class EffectEditor :
 	
 	// The vbox containing the argument widgets
 	GtkWidget* _argVBox;
+	
+	// The container holding the argument widget table
+	GtkWidget* _argAlignment;
+	
 	GtkWidget* _argTable;
 	
 	// The list containing the possible effect types
@@ -52,10 +56,17 @@ public:
 	void editEffect(StimResponse& response, const unsigned int effectIndex);
 
 private:
+	/** greebo: Saves the widget contents into the arguments.
+	 */
+	void save();
+
 	/** greebo: Parses the response effect for necessary arguments
 	 * 			and creates the according widgets.
 	 */
 	void createArgumentWidgets(ResponseEffect& effect);
+	
+	static void onSave(GtkWidget* button, EffectEditor* self);
+	static void onCancel(GtkWidget* button, EffectEditor* self);
 };
 
 #endif /*EFFECTEDITOR_H_*/

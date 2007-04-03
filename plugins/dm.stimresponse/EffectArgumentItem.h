@@ -62,7 +62,8 @@ public:
 	StringArgument(ResponseEffect::Argument& arg) :
 		EffectArgumentItem(arg)
 	{
-		_entry = gtk_entry_new(); 
+		_entry = gtk_entry_new();
+		gtk_entry_set_text(GTK_ENTRY(_entry), arg.value.c_str()); 
 	}
 	
 	virtual GtkWidget* getEditWidget() {
@@ -70,7 +71,7 @@ public:
 	}
 	
 	virtual std::string getValue() {
-		return "string";
+		return gtk_entry_get_text(GTK_ENTRY(_entry));
 	}
 };
 
@@ -111,7 +112,7 @@ public:
 	}
 	
 	virtual GtkWidget* getEditWidget() {
-		return NULL;
+		return gtk_entry_new();
 	}
 };
 
