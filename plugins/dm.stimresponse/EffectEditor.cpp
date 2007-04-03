@@ -18,7 +18,8 @@
 	}
 
 EffectEditor::EffectEditor(GtkWindow* parent) :
-	DialogWindow(WINDOW_TITLE, parent)
+	DialogWindow(WINDOW_TITLE, parent),
+	_argTable(NULL)
 {
 	gtk_window_set_modal(GTK_WINDOW(_window), TRUE);
 	gtk_container_set_border_width(GTK_CONTAINER(_window), 12);
@@ -78,6 +79,18 @@ void EffectEditor::populateWindow() {
 	
 	GtkWidget* argLabel = gtkutil::LeftAlignedLabel("<b>Arguments</b>");
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), argLabel, FALSE, FALSE, 0);
+	
+	GtkWidget* saveButton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+	g_signal_connect(G_OBJECT(saveButton), "clicked", G_CALLBACK(onSave), this);
+	
+	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(onCancel), this);
+	
+	GtkWidget* buttonHBox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(buttonHBox), saveButton, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(buttonHBox), cancelButton, FALSE, FALSE, 6);
+	
+	gtk_box_pack_end(GTK_BOX(_dialogVBox), buttonHBox, FALSE, FALSE, 0);
 }
 
 void EffectEditor::editEffect(StimResponse& response, const unsigned int effectIndex) {
@@ -96,6 +109,11 @@ void EffectEditor::editEffect(StimResponse& response, const unsigned int effectI
 	// Set the active row of the combo box to the current response effect type
 	gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_effectTypeCombo), &found);
 	
+	// Create the alignment container that hold the (exchangable) widget table
+	_argAlignment = gtk_alignment_new(0.0, 0.5, 1.0, 1.0);
+	gtk_alignment_set_padding(GTK_ALIGNMENT(_argAlignment), 0, 0, 18, 0);
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), _argAlignment, TRUE, TRUE, 0);
+	
 	// Parse the argument types from the effect and create the widgets
 	createArgumentWidgets(effect);
 	
@@ -105,16 +123,19 @@ void EffectEditor::editEffect(StimResponse& response, const unsigned int effectI
 void EffectEditor::createArgumentWidgets(ResponseEffect& effect) {
 	ResponseEffect::ArgumentList& list = effect.getArguments();
 
+	// Remove the old table if there exists one
+	if (_argTable != NULL) {
+		gtk_container_remove(GTK_CONTAINER(_argAlignment), _argTable);
+		gtk_widget_hide(_argTable);
+		gtk_widget_destroy(_argTable);
+	}
+
 	// Setup the table with default spacings
 	_argTable = gtk_table_new(list.size(), 3, false);
     gtk_table_set_col_spacings(GTK_TABLE(_argTable), 12);
     gtk_table_set_row_spacings(GTK_TABLE(_argTable), 6);
 	
-	gtk_box_pack_start(
-		GTK_BOX(_dialogVBox), 
-		gtkutil::LeftAlignment(_argTable, 18, 1.0f), 
-		TRUE, TRUE, 0
-	); 
+	gtk_container_add(GTK_CONTAINER(_argAlignment), _argTable); 
 
 	for (ResponseEffect::ArgumentList::iterator i = list.begin(); 
 		 i != list.end(); i++)
@@ -162,4 +183,25 @@ void EffectEditor::createArgumentWidgets(ResponseEffect& effect) {
 			);
 		}
 	}
+}
+
+void EffectEditor::save() {
+	// Request each argument item to save the content into the argument
+	for (unsigned int i = 0; i < _argumentItems.size(); i++) {
+		_argumentItems[i]->save();
+	}
+}
+
+// Static GTK callbacks
+void EffectEditor::onSave(GtkWidget* button, EffectEditor* self) {
+	// Save the arguments into the objects
+	self->save();
+	
+	// Call the inherited DialogWindow::destroy method 
+	self->destroy();
+}
+
+void EffectEditor::onCancel(GtkWidget* button, EffectEditor* self) {
+	// Call the inherited DialogWindow::destroy method 
+	self->destroy();
 }
