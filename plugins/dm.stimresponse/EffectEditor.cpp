@@ -79,7 +79,12 @@ void EffectEditor::populateWindow() {
 	GtkWidget* argLabel = gtkutil::LeftAlignedLabel("<b>Arguments</b>");
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), argLabel, FALSE, FALSE, 0);
 	
-	
+	_argVBox = gtk_vbox_new(FALSE, 3);
+	gtk_box_pack_start(
+		GTK_BOX(_dialogVBox), 
+		gtkutil::LeftAlignment(_argVBox, 18, 1.0f), 
+		TRUE, TRUE, 0
+	); 
 }
 
 void EffectEditor::editEffect(StimResponse& response, const unsigned int effectIndex) {
@@ -110,6 +115,19 @@ void EffectEditor::createArgumentWidgets(ResponseEffect& effect) {
 	for (ResponseEffect::ArgumentList::iterator i = list.begin(); 
 		 i != list.end(); i++)
 	{
+		int index = i->first;
+		ResponseEffect::Argument& arg = i->second;
+		
+		if (arg.type == "s") {
+			// Create a new string argument item
+			ArgumentItemPtr itemPtr(new StringArgument(arg));
+			_argumentItems.push_back(itemPtr);
+			
+			// Cast the item onto a GtkWidget* and add it to the list
+			GtkWidget* widget = *itemPtr;
+			gtk_box_pack_start(GTK_BOX(_argVBox), widget, FALSE, FALSE, 0);
+		}
+		
 		GtkWidget* label = gtk_label_new(i->second.title.c_str());
 		gtk_box_pack_start(GTK_BOX(_dialogVBox), label, FALSE, FALSE, 0);
 	}
