@@ -39,6 +39,12 @@ public:
 	 * @effectIndex: The response effect index within the given Response. 
 	 */
 	void editEffect(StimResponse& response, const unsigned int effectIndex);
+
+private:
+	/** greebo: Parses the response effect for necessary arguments
+	 * 			and creates the according widgets.
+	 */
+	void createArgumentWidgets(ResponseEffect& effect);
 };
 
 #endif /*EFFECTEDITOR_H_*/
