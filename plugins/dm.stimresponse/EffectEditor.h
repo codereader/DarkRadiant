@@ -21,6 +21,7 @@ class EffectEditor :
 	
 	// The vbox containing the argument widgets
 	GtkWidget* _argVBox;
+	GtkWidget* _argTable;
 	
 	// The list containing the possible effect types
 	ResponseEffectTypeMap _effectTypes;

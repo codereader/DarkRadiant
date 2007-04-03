@@ -11,11 +11,18 @@ class EffectArgumentItem
 protected:
 	// The argument this row is referring to
 	ResponseEffect::Argument& _arg;
+	GtkWidget* _label;
+	GtkWidget* _desc;
 
 public:
 	EffectArgumentItem(ResponseEffect::Argument& arg) :
 		_arg(arg)
-	{}
+	{
+		_label = gtkutil::LeftAlignedLabel(_arg.title + ":");
+		
+		_desc = gtk_label_new("");
+		gtk_label_set_markup(GTK_LABEL(_desc), "<b>?</b>");
+	}
 	
 	/** greebo: This retrieves the string representation of the
 	 * 			current value of this row. This has to be
@@ -23,10 +30,17 @@ public:
 	 */
 	virtual std::string getValue() = 0;
 	
-	/** greebo: Cast this item onto a GtkWidget* so that it can 
-	 * 			be packed into a parent container. 
-	 */
-	virtual operator GtkWidget*() = 0;
+	// Retrieve the label widget
+	virtual GtkWidget* getLabelWidget() {
+		return _label;
+	}
+	
+	// Retrieve the edit widgets (abstract)
+	virtual GtkWidget* getEditWidget() = 0;
+	
+	virtual GtkWidget* getHelpWidget() {
+		return _desc;
+	}
 	
 	/** greebo: This saves the value to the according response effect.
 	 */
@@ -41,30 +55,45 @@ public:
 class StringArgument :
 	public EffectArgumentItem
 {
+protected:
 	GtkWidget* _entry;
-	GtkWidget* _hbox;
+
 public:
 	StringArgument(ResponseEffect::Argument& arg) :
 		EffectArgumentItem(arg)
 	{
-		GtkWidget* label = gtkutil::LeftAlignedLabel(_arg.title);
-		_entry = gtk_entry_new();
-		
-		_hbox = gtk_hbox_new(FALSE, 0);
-		gtk_box_pack_start(GTK_BOX(_hbox), label, FALSE, FALSE, 0);
-		gtk_box_pack_start(GTK_BOX(_hbox), 
-			gtkutil::LeftAlignment(_entry, 12, 1.0f), 
-			TRUE, TRUE, 0
-		);
+		_entry = gtk_entry_new(); 
 	}
 	
-	virtual operator GtkWidget*() {
-		return _hbox;
+	virtual GtkWidget* getEditWidget() {
+		return _entry;
 	}
 	
 	virtual std::string getValue() {
 		return "string";
 	}
+};
+
+/** greebo: This is an item querying a float (derives from string)
+ */
+class FloatArgument :
+	public StringArgument
+{
+public:
+	FloatArgument(ResponseEffect::Argument& arg) :
+		StringArgument(arg)
+	{}
+};
+
+/** greebo: This is an item querying a vector (derives from string)
+ */
+class VectorArgument :
+	public StringArgument
+{
+public:
+	VectorArgument(ResponseEffect::Argument& arg) :
+		StringArgument(arg)
+	{}
 };
 
 /** greebo: This is an item querying an entity name (entry/dropdown combo)
@@ -81,7 +110,7 @@ public:
 		return "TestEntity";
 	}
 	
-	virtual operator GtkWidget*() {
+	virtual GtkWidget* getEditWidget() {
 		return NULL;
 	}
 };
