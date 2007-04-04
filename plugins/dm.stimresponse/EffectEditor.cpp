@@ -182,22 +182,36 @@ void EffectEditor::createArgumentWidgets(ResponseEffect& effect) {
 			// Create a new string argument item
 			item = ArgumentItemPtr(new EntityArgument(arg, _tooltips, _entityStore));
 		}
+		else if (arg.type == "b") {
+			// Create a new string argument item
+			item = ArgumentItemPtr(new BooleanArgument(arg, _tooltips));
+		}
 		
 		if (item != NULL) {
 			_argumentItems.push_back(item);
 			
-			// The label
-			gtk_table_attach(
-				GTK_TABLE(_argTable), item->getLabelWidget(),
-				0, 1, index-1, index, // index starts with 1, hence the -1
-				GTK_FILL, (GtkAttachOptions)0, 0, 0
-			);
-			
-			// The edit widgets
-			gtk_table_attach_defaults(
-				GTK_TABLE(_argTable), item->getEditWidget(),
-				1, 2, index-1, index // index starts with 1, hence the -1
-			);
+			if (arg.type != "b") {
+				// The label
+				gtk_table_attach(
+					GTK_TABLE(_argTable), item->getLabelWidget(),
+					0, 1, index-1, index, // index starts with 1, hence the -1
+					GTK_FILL, (GtkAttachOptions)0, 0, 0
+				);
+				
+				// The edit widgets
+				gtk_table_attach_defaults(
+					GTK_TABLE(_argTable), item->getEditWidget(),
+					1, 2, index-1, index // index starts with 1, hence the -1
+				);
+			}
+			else {
+				// This is a checkbutton - should be spanned over two columns
+				gtk_table_attach(
+					GTK_TABLE(_argTable), item->getEditWidget(),
+					0, 2, index-1, index, // index starts with 1, hence the -1
+					GTK_FILL, (GtkAttachOptions)0, 0, 0
+				);
+			}
 			
 			// The help widgets
 			gtk_table_attach(

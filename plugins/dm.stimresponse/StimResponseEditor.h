@@ -7,6 +7,7 @@
 #include "StimTypes.h"
 #include "SREntity.h"
 
+// Forward declarations
 typedef struct _GtkTreeView GtkTreeView;
 typedef struct _GtkToggleButton GtkToggleButton;
 typedef struct _GtkTreeSelection GtkTreeSelection;
@@ -63,7 +64,7 @@ class StimResponseEditor
 	
 	// Context menus for list views
 	GtkWidget* _stimListContextMenu;
-	GtkWidget* _scriptListContextMenu;
+	GtkWidget* _effectListContextMenu;
 	
 	// The list of the entity's stims/responses
 	SREntityPtr _srEntity;
@@ -213,14 +214,17 @@ private:
 	static void onScriptEdit(GtkCellRendererText* renderer, 
 							 gchar* path, gchar* new_text, StimResponseEditor* self);
 	
-	// The keypress handler for catching the keys when in the treeview
+	// The keypress handler for catching the keys in the treeview
 	static gboolean onTreeViewKeyPress(
 		GtkTreeView* view,GdkEventKey* event, StimResponseEditor* self);
 	static gboolean onWindowKeyPress(
 		GtkWidget* dialog, GdkEventKey* event, StimResponseEditor* self);
 	
+	static gboolean onTreeViewButtonPress(
+		GtkTreeView* view, GdkEventButton* ev, StimResponseEditor* self);
+	
 	// Tree view button click events (for popup menus)
-	static gboolean onTreeViewButtonEvent(
+	static gboolean onTreeViewButtonRelease(
 		GtkTreeView* view, GdkEventButton* ev, StimResponseEditor* self);
 	static void _onContextMenuDelete(GtkWidget*, StimResponseEditor*);
 

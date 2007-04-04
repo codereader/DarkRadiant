@@ -113,6 +113,6 @@ GtkListStore* StimResponse::getEffectStore() {
 void StimResponse::writeToListStore(GtkListStore* store, GtkTreeIter* iter, ResponseEffect& effect) {
 	gtk_list_store_set(store, iter, 
 					   EFFECT_CAPTION_COL, effect.getCaption().c_str(),
-					   EFFECT_ARGS_COL, "Arguments",
+					   EFFECT_ARGS_COL, effect.getArgumentStr().c_str(),
 					   -1);
 }

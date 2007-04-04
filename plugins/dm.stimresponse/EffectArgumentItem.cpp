@@ -59,6 +59,22 @@ std::string StringArgument::getValue() {
 	return gtk_entry_get_text(GTK_ENTRY(_entry));
 }
 
+// Boolean argument
+BooleanArgument::BooleanArgument(ResponseEffect::Argument& arg, GtkTooltips* tooltips) :
+	 EffectArgumentItem(arg, tooltips)
+{
+	_checkButton = gtk_check_button_new_with_label(arg.title.c_str());
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_checkButton), !arg.value.empty());
+}
+
+GtkWidget* BooleanArgument::getEditWidget() {
+	return _checkButton;
+}
+
+std::string BooleanArgument::getValue() {
+	return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_checkButton)) ? "1" : "";
+}
+
 // Entity Argument
 EntityArgument::EntityArgument(
 		ResponseEffect::Argument& arg, 
