@@ -774,42 +774,6 @@ void StimResponseEditor::moveEffect(int direction) {
 	}
 }
 
-//void StimResponseEditor::addResponseScript() {
-	/*// Get the currently selected stim type
-	std::string type = getStimTypeName();
-		
-	if (!type.empty()) {
-		// Create a new StimResponse object
-		int id = _srEntity->addScript();
-		// Get a reference to the newly allocated object
-		ResponseScript& script = _srEntity->getScript(id);
-		script.stimType = type;
-		script.script = "target script";
-		
-		// Refresh the values in the liststore
-		_srEntity->updateListStore();
-		
-		// Update the sensitivity of the "add script" button
-		updateAddButton();
-	}*/
-//}
-
-//void StimResponseEditor::removeScript() {
-	/*GtkTreeIter iter;
-	GtkTreeModel* model;
-	bool anythingSelected = gtk_tree_selection_get_selected(
-		_effectWidgets.selection, &model, &iter
-	);
-	
-	if (anythingSelected && _srEntity != NULL) {
-		int id = gtkutil::TreeModel::getInt(model, &iter, SCR_ID_COL);
-		_srEntity->removeScript(id);
-		
-		// Update the sensitivity of the "add script" button
-		updateAddButton();
-	}*/
-//}
-
 int StimResponseEditor::getEffectIdFromSelection() {
 	GtkTreeIter iter;
 	GtkTreeModel* model;
@@ -1071,24 +1035,6 @@ void StimResponseEditor::onClose(GtkWidget* button, StimResponseEditor* self) {
 
 void StimResponseEditor::onRevert(GtkWidget* button, StimResponseEditor* self) {
 	self->rescanSelection();
-}
-
-void StimResponseEditor::onScriptEdit(GtkCellRendererText* renderer, 
-									  gchar* path, gchar* new_text, StimResponseEditor* self)
-{
-	GtkListStore* store = self->_srEntity->getScriptStore();
-	
-	// Find the edited cell
-	GtkTreeIter iter;
-	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(store), &iter, path);
-	
-	// Assign the script value to the ResponseScript object
-	int id = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(store), &iter, SCR_ID_COL);
-	ResponseScript& script = self->_srEntity->getScript(id);
-	script.script = new_text;
-	
-	// Update the cell
-	gtk_list_store_set(store, &iter, SCR_SCRIPT_COL, new_text, -1);
 }
 
 gboolean StimResponseEditor::onTreeViewKeyPress(
