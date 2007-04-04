@@ -5,6 +5,7 @@
 
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkTooltips GtkTooltips;
+typedef struct _GtkListStore GtkListStore;
 
 class EffectArgumentItem
 {
@@ -80,8 +81,14 @@ public:
 class EntityArgument :
 	public EffectArgumentItem
 {
+	GtkListStore* _entityStore;
+	GtkWidget* _comboBox;	
 public:
-	EntityArgument(ResponseEffect::Argument& arg, GtkTooltips* tooltips);
+	// Pass the entity liststore to this item so that the auto-completion
+	// of the entity combo box works correctly 
+	EntityArgument(ResponseEffect::Argument& arg, 
+				   GtkTooltips* tooltips, 
+				   GtkListStore* entityStore);
 	
 	virtual GtkWidget* getEditWidget();
 	virtual std::string getValue();

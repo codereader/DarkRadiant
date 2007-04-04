@@ -3,6 +3,7 @@
 #include <gtk/gtk.h>
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
+#include "gtkutil/TreeModel.h"
 
 EffectArgumentItem::EffectArgumentItem(
 		ResponseEffect::Argument& arg, 
@@ -61,14 +62,43 @@ std::string StringArgument::getValue() {
 // Entity Argument
 EntityArgument::EntityArgument(
 		ResponseEffect::Argument& arg, 
-		GtkTooltips* tooltips) :
-	EffectArgumentItem(arg, tooltips)
-{}
+		GtkTooltips* tooltips,
+		GtkListStore* entityStore) :
+	EffectArgumentItem(arg, tooltips),
+	_entityStore(entityStore)
+{
+	// Create a combo box entry with the given entity list
+	_comboBox = gtk_combo_box_entry_new_with_model(
+    				GTK_TREE_MODEL(_entityStore),
+    				0); // number of the "text" column
+
+	// Add completion functionality to the combobox entry
+	GtkEntryCompletion* completion = gtk_entry_completion_new();
+	gtk_entry_completion_set_model(completion, GTK_TREE_MODEL(_entityStore));
+	gtk_entry_completion_set_text_column(completion, 0);
+	gtk_entry_set_completion(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(_comboBox))), 
+							 completion);
+
+	// Now select the entity passed in the argument
+	// Find the entity using a TreeModel traversor (search the column #0)
+	gtkutil::TreeModel::SelectionFinder finder(arg.value, 0);
+	gtk_tree_model_foreach(
+		GTK_TREE_MODEL(_entityStore), 
+		gtkutil::TreeModel::SelectionFinder::forEach, 
+		&finder
+	);
+	
+	// Select the found treeiter, if the name was found in the liststore
+	if (finder.getPath() != NULL) {
+		GtkTreeIter iter = finder.getIter();
+		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_comboBox), &iter);
+	}
+}
 
 std::string EntityArgument::getValue() {
-	return "TestEntity";
+	return gtk_combo_box_get_active_text(GTK_COMBO_BOX(_comboBox));
 }
 
 GtkWidget* EntityArgument::getEditWidget() {
-	return gtk_entry_new();
+	return _comboBox;
 }

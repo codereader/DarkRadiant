@@ -34,6 +34,9 @@ class EffectEditor :
 	GtkWidget* _effectTypeCombo;
 	GtkListStore* _effectStore;
 	
+	// The entity list store
+	GtkListStore* _entityStore;
+	
 	// The list of argument items
 	typedef boost::shared_ptr<EffectArgumentItem> ArgumentItemPtr;
 	typedef std::vector<ArgumentItemPtr> ArgumentItemList;
@@ -57,6 +60,12 @@ public:
 	void editEffect(StimResponse& response, const unsigned int effectIndex);
 
 private:
+	/** greebo: Populate the entity list store by traversing the 
+	 * 			scene graph searching for entities. The names of 
+	 * 			the entities are stored into the member _entityStore
+	 */
+	void populateEntityListStore();
+	
 	/** greebo: Saves the widget contents into the arguments.
 	 */
 	void save();
