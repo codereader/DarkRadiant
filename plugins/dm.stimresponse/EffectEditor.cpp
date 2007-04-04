@@ -8,6 +8,8 @@
 
 	namespace {
 		const std::string WINDOW_TITLE = "Edit Response Effect";
+		const unsigned int WINDOW_MIN_WIDTH = 300;
+		const unsigned int WINDOW_MIN_HEIGHT = 50;
 		
 		// The enumeration for populating the GtkListStore 
 		enum {
@@ -25,6 +27,8 @@ EffectEditor::EffectEditor(GtkWindow* parent) :
 	gtk_window_set_modal(GTK_WINDOW(_window), TRUE);
 	gtk_container_set_border_width(GTK_CONTAINER(_window), 12);
 	gtk_window_set_type_hint(GTK_WINDOW(_window), GDK_WINDOW_TYPE_HINT_DIALOG);
+	
+	setWindowSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT);
 	
 	_effectStore = gtk_list_store_new(EFFECT_TYPE_NUM_COLS,
 									  G_TYPE_STRING,
