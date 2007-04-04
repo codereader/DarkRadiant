@@ -491,6 +491,8 @@ void StimResponseEditor::createContextMenus() {
 					 G_CALLBACK(_onContextMenuDelete), this);
 	g_signal_connect(G_OBJECT(_effectWidgets.deleteMenuItem), "activate",
 					 G_CALLBACK(_onContextMenuDelete), this);
+	g_signal_connect(G_OBJECT(_effectWidgets.addMenuItem), "activate",
+					 G_CALLBACK(_onContextMenuAddEffect), this);
 	
 	// Show menus (not actually visible until popped up)
 	gtk_widget_show_all(_stimListContextMenu);
@@ -693,6 +695,24 @@ void StimResponseEditor::removeStimResponse() {
 	
 	if (id > 0) {
 		_srEntity->remove(id);
+	}
+}
+
+void StimResponseEditor::addEffect() {
+	if (_srEntity == NULL) return;
+	
+	int id = getIdFromSelection();
+	
+	if (id > 0) {
+		StimResponse& sr = _srEntity->get(id);
+		int effectIndex = getEffectIdFromSelection();
+		
+		// Make sure we have a response
+		if (sr.get("class") == "R") {
+			// Add a new effect and update all the widgets
+			sr.addEffect(effectIndex);
+			update();
+		}
 	}
 }
 
@@ -1082,6 +1102,12 @@ void StimResponseEditor::_onContextMenuDelete(GtkWidget* w,
 		self->removeStimResponse();
 	else if (w == self->_effectWidgets.deleteMenuItem)
 		self->removeEffect();
+}
+
+void StimResponseEditor::_onContextMenuAddEffect(GtkWidget* widget, 
+	StimResponseEditor* self)
+{
+	self->addEffect();
 }
 
 void StimResponseEditor::onStimTypeChange(GtkComboBox* widget, 

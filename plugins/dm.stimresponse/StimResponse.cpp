@@ -2,6 +2,7 @@
 
 #include <gtk/gtk.h>
 #include "string/string.h"
+#include <iostream>
 
 StimResponse::StimResponse() :
 	_inherited(false),
@@ -78,6 +79,50 @@ void StimResponse::sortEffects() {
 	
 	// Replace the old map with the sorted one
 	_effects = newMap;
+}
+
+void StimResponse::addEffect(const unsigned int index) {
+	EffectMap::iterator found = _effects.find(index);
+	
+	if (found == _effects.end()) {
+		unsigned int newIndex = _effects.size() + 1; 
+		// No item found (index could be -1), append to the end of the list
+		_effects[newIndex] = ResponseEffect();
+		_effects[newIndex].setName(
+			ResponseEffectTypes::Instance().getFirstEffectName()
+		);
+	}
+	else {
+		EffectMap newMap;
+	
+		// Traverse the current effect list from back to front and 
+		// increase all indices >= index and insert a new effect   
+		for (EffectMap::reverse_iterator i = _effects.rbegin(); 
+			 i != _effects.rend(); 
+			 i++) 
+		{
+			// Increase all indices >= index
+			if (i->first >= index) {
+				// Store the item to index + 1
+				newMap[i->first + 1] = i->second;
+			}
+			else {
+				// All smaller indices get copied
+				newMap[i->first] = i->second;
+			}
+			
+			// If we are exactly at the insert point, insert the new effect
+			if (i->first == index) {
+				newMap[i->first] = ResponseEffect();
+				newMap[i->first].setName(
+					ResponseEffectTypes::Instance().getFirstEffectName()
+				);
+			}
+		}
+		
+		// Replace the old map with the new one
+		_effects = newMap;
+	}
 }
 
 void StimResponse::deleteEffect(const unsigned int index) {

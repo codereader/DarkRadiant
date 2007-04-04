@@ -29,6 +29,10 @@ public:
 	/** greebo: Returns a reference to the internally stored EffectTypeMap
 	 */
 	ResponseEffectTypeMap& getMap();
+	
+	/** greebo: Retrieves the first available effect name (e.g. "effect_teleport")
+	 */
+	std::string getFirstEffectName();
 };
 
 #endif /*RESPONSEEFFECTTYPES_H_*/

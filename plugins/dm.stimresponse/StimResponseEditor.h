@@ -119,9 +119,9 @@ private:
 	 */
 	std::string getStimTypeName();
 
-	/** greebo: Adds an empty response script to the list.
+	/** greebo: Adds a new response effect to the list.
 	 */
-	//void addResponseScript();
+	void addEffect();
 
 	/** greebo: Removes the currently selected response effect
 	 */
@@ -228,6 +228,7 @@ private:
 	static gboolean onTreeViewButtonRelease(
 		GtkTreeView* view, GdkEventButton* ev, StimResponseEditor* self);
 	static void _onContextMenuDelete(GtkWidget*, StimResponseEditor*);
+	static void _onContextMenuAddEffect(GtkWidget*, StimResponseEditor*);
 
 }; // class StimResponseEditor
 

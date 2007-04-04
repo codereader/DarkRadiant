@@ -55,3 +55,9 @@ IEntityClassPtr ResponseEffectTypes::getEClassForName(const std::string& name) {
 ResponseEffectTypeMap& ResponseEffectTypes::getMap() {
 	return _effectTypes;
 }
+
+std::string ResponseEffectTypes::getFirstEffectName() {
+	ResponseEffectTypeMap::iterator found = _effectTypes.begin();
+	// Return the first name or nothing, if we didn't find anything
+	return (found != _effectTypes.end()) ? found->first : "";
+}
