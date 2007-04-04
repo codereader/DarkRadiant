@@ -99,6 +99,11 @@ public:
 	 */
 	void sortEffects();
 	
+	/** greebo: Removes the effect with the given index.
+	 * 			This re-sorts the items after deletion.
+	 */
+	void deleteEffect(const unsigned int index);
+	
 	/** greebo: Constructs the GtkListStore using the effects stored in this
 	 * 			response.
 	 */

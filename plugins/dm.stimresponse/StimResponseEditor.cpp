@@ -131,21 +131,6 @@ static void textCellDataFunc(GtkTreeViewColumn* treeColumn,
 	g_object_set(G_OBJECT(cell), "sensitive", !inherited, NULL);
 }
 
-/*static void scriptTextCellDataFunc(GtkTreeViewColumn* treeColumn,
-							 GtkCellRenderer* cell,
-							 GtkTreeModel* treeModel,
-							 GtkTreeIter* iter, 
-							 gpointer data)
-{
-	bool inherited = gtkutil::TreeModel::getBoolean(treeModel, iter, SCR_INHERIT_COL);
-	
-	g_object_set(G_OBJECT(cell), "sensitive", !inherited, NULL);
-	
-	if (GTK_IS_CELL_RENDERER_TEXT(cell)) {
-		g_object_set(G_OBJECT(cell), "editable", !inherited, NULL);
-	}
-}*/
-
 void StimResponseEditor::populateWindow() {
 	
 	// Create the overall vbox
@@ -261,26 +246,17 @@ void StimResponseEditor::populateWindow() {
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_addWidgets.stimTypeList), iconRenderer, "pixbuf", 2);
 	gtk_cell_renderer_set_fixed_size(iconRenderer, 26, -1);
 	
-	_addWidgets.addButton = gtk_button_new_with_label("Add S/R");
+	_addWidgets.addButton = gtk_button_new_with_label("Add new Stim/Response");
 	gtk_button_set_image(
 		GTK_BUTTON(_addWidgets.addButton), 
-		gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_BUTTON)
-	);
-	
-	_addWidgets.addScriptButton = gtk_button_new_with_label("Add Response Script");
-	gtk_button_set_image(
-		GTK_BUTTON(_addWidgets.addScriptButton), 
 		gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_BUTTON)
 	);
 	
 	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.stimTypeList, 
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.addButton, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.addScriptButton, 
-					   TRUE, TRUE, 0);
 	
 	g_signal_connect(G_OBJECT(_addWidgets.addButton), "clicked", G_CALLBACK(onAdd), this);
-	g_signal_connect(G_OBJECT(_addWidgets.addScriptButton), "clicked", G_CALLBACK(onScriptAdd), this);
 	
 	// Response effects section
     gtk_box_pack_start(GTK_BOX(_dialogVBox),
@@ -475,55 +451,6 @@ GtkWidget* StimResponseEditor::createEffectWidgets() {
 		GTK_TREE_VIEW(_effectWidgets.view), 
 		gtkutil::TextColumn("Description", EFFECT_ARGS_COL)
 	);
-	/*{
-		// The Type
-		GtkTreeViewColumn* scriptTypeCol = gtk_tree_view_column_new();
-		gtk_tree_view_column_set_title(scriptTypeCol, "Type");
-		
-		GtkCellRenderer* typeIconRenderer = gtk_cell_renderer_pixbuf_new();
-		gtk_tree_view_column_pack_start(scriptTypeCol, typeIconRenderer, FALSE);
-		
-		GtkCellRenderer* typeTextRenderer = gtk_cell_renderer_text_new();
-		gtk_tree_view_column_pack_start(scriptTypeCol, typeTextRenderer, FALSE);
-		
-		gtk_tree_view_column_set_attributes(scriptTypeCol, typeTextRenderer, 
-											"text", SCR_CAPTION_COL,
-											NULL);
-		gtk_tree_view_column_set_cell_data_func(scriptTypeCol, typeTextRenderer,
-	                                            scriptTextCellDataFunc,
-	                                            NULL, NULL);
-		
-		gtk_tree_view_column_set_attributes(scriptTypeCol, typeIconRenderer, 
-											"pixbuf", SCR_ICON_COL,
-											NULL);
-		gtk_tree_view_column_set_cell_data_func(scriptTypeCol, typeIconRenderer,
-	                                            scriptTextCellDataFunc,
-	                                            NULL, NULL);
-		
-		gtk_tree_view_append_column(GTK_TREE_VIEW(_effectWidgets.view), scriptTypeCol);
-	}
-	{
-		// The Script
-		GtkTreeViewColumn* scriptCol = gtk_tree_view_column_new();
-		gtk_tree_view_column_set_title(scriptCol, "Target Script (double-click to edit)");
-		
-		GtkCellRenderer* typeIconRenderer = gtk_cell_renderer_pixbuf_new();
-		gtk_tree_view_column_pack_start(scriptCol, typeIconRenderer, FALSE);
-		
-		GtkCellRenderer* typeTextRenderer = gtk_cell_renderer_text_new();
-		gtk_tree_view_column_pack_start(scriptCol, typeTextRenderer, FALSE);
-		g_object_set(G_OBJECT(typeTextRenderer), "editable", TRUE, NULL);
-		g_signal_connect(G_OBJECT(typeTextRenderer), "edited", G_CALLBACK(onScriptEdit), this);
-		
-		gtk_tree_view_column_set_attributes(scriptCol, typeTextRenderer, 
-											"text", SCR_SCRIPT_COL,
-											NULL);
-		gtk_tree_view_column_set_cell_data_func(scriptCol, typeTextRenderer,
-	                                            scriptTextCellDataFunc,
-	                                            NULL, NULL);
-		
-		gtk_tree_view_append_column(GTK_TREE_VIEW(_effectWidgets.view), scriptCol);
-	}*/
 	
 	// Return the tree view in a frame
 	return gtkutil::ScrolledFrame(_effectWidgets.view);
@@ -539,13 +466,26 @@ void StimResponseEditor::createContextMenus() {
 	// Each menu gets a delete item
 	_srWidgets.deleteMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
 														   "Delete");
-	_effectWidgets.deleteMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
-															   "Delete");
 	gtk_menu_shell_append(GTK_MENU_SHELL(_stimListContextMenu), 
 						  _srWidgets.deleteMenuItem);
+
+	_effectWidgets.addMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_ADD,
+															   "Add new Effect");
+	_effectWidgets.deleteMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
+															   "Delete");
+	_effectWidgets.upMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_GO_UP,
+															   "Move Up");
+	_effectWidgets.downMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_GO_DOWN,
+															   "Move Down");
+	gtk_menu_shell_append(GTK_MENU_SHELL(_effectListContextMenu), 
+						  _effectWidgets.addMenuItem);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_effectListContextMenu), 
+						  _effectWidgets.upMenuItem);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_effectListContextMenu), 
+						  _effectWidgets.downMenuItem);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_effectListContextMenu), 
 						  _effectWidgets.deleteMenuItem);
-	
+
 	// Connect up the signals
 	g_signal_connect(G_OBJECT(_srWidgets.deleteMenuItem), "activate",
 					 G_CALLBACK(_onContextMenuDelete), this);
@@ -756,7 +696,25 @@ void StimResponseEditor::removeStimResponse() {
 	}
 }
 
-void StimResponseEditor::addResponseScript() {
+void StimResponseEditor::removeEffect() {
+	if (_srEntity == NULL) return;
+	
+	int id = getIdFromSelection();
+	
+	if (id > 0) {
+		StimResponse& sr = _srEntity->get(id);
+		int effectIndex = getEffectIdFromSelection();
+		
+		// Make sure we have a response and anything selected
+		if (sr.get("class") == "R" && effectIndex > 0) {
+			// Remove the effect and update all the widgets
+			sr.deleteEffect(effectIndex);
+			update();
+		}
+	}
+}
+
+//void StimResponseEditor::addResponseScript() {
 	/*// Get the currently selected stim type
 	std::string type = getStimTypeName();
 		
@@ -774,9 +732,9 @@ void StimResponseEditor::addResponseScript() {
 		// Update the sensitivity of the "add script" button
 		updateAddButton();
 	}*/
-}
+//}
 
-void StimResponseEditor::removeScript() {
+//void StimResponseEditor::removeScript() {
 	/*GtkTreeIter iter;
 	GtkTreeModel* model;
 	bool anythingSelected = gtk_tree_selection_get_selected(
@@ -790,7 +748,7 @@ void StimResponseEditor::removeScript() {
 		// Update the sensitivity of the "add script" button
 		updateAddButton();
 	}*/
-}
+//}
 
 int StimResponseEditor::getEffectIdFromSelection() {
 	GtkTreeIter iter;
@@ -847,15 +805,7 @@ void StimResponseEditor::updateAddButton() {
 	// Get the currently selected stim type
 	std::string type = getStimTypeName();
 	
-	/*gtk_widget_set_sensitive(
-		_addWidgets.addScriptButton,
-		(!type.empty() && !(_srEntity->scriptExists(type)))
-	);*/
-	
-	gtk_widget_set_sensitive(
-		_addWidgets.addButton,
-		!type.empty()
-	);
+	gtk_widget_set_sensitive(_addWidgets.addButton,	!type.empty());
 }
 
 void StimResponseEditor::editEffect() {
@@ -870,8 +820,7 @@ void StimResponseEditor::editEffect() {
 		// Make sure we have a response and anything selected
 		if (sr.get("class") == "R" && effectIndex > 0) {
 			// Create a new effect editor (self-destructs)
-			EffectEditor* editor = 
-				new EffectEditor(GTK_WINDOW(_dialog), sr, effectIndex, *this);
+			new EffectEditor(GTK_WINDOW(_dialog), sr, effectIndex, *this);
 			
 			// The editor is modal and will destroy itself, our work is done
 		}
@@ -912,14 +861,13 @@ void StimResponseEditor::onEffectSelectionChange(GtkTreeSelection* selection,
 {
 	if (self->_updatesDisabled)	return; // Callback loop guard
 	
+	bool anythingSelected = gtk_tree_selection_get_selected(selection, NULL, NULL);
+	
 	// Enable or disable the "Delete" context menu items based on the presence
 	// of a selection.
-	gtk_widget_set_sensitive(self->_effectWidgets.deleteMenuItem, FALSE);
-	
-	gtk_widget_set_sensitive(
-		self->_effectWidgets.deleteMenuItem, 
-		gtk_tree_selection_get_selected(selection, NULL, NULL)
-	);
+	gtk_widget_set_sensitive(self->_effectWidgets.deleteMenuItem, anythingSelected);
+	gtk_widget_set_sensitive(self->_effectWidgets.upMenuItem, anythingSelected);
+	gtk_widget_set_sensitive(self->_effectWidgets.downMenuItem, anythingSelected);
 }
 
 void StimResponseEditor::onClassChange(GtkToggleButton* toggleButton, StimResponseEditor* self) {
@@ -1035,10 +983,6 @@ void StimResponseEditor::onAdd(GtkWidget* button, StimResponseEditor* self) {
 	self->addStimResponse();
 }
 
-void StimResponseEditor::onScriptAdd(GtkWidget* button, StimResponseEditor* self) {
-	self->addResponseScript();
-}
-
 void StimResponseEditor::onSave(GtkWidget* button, StimResponseEditor* self) {
 	self->save();
 }
@@ -1077,7 +1021,7 @@ gboolean StimResponseEditor::onTreeViewKeyPress(
 			self->removeStimResponse();
 		}
 		else if (view == GTK_TREE_VIEW(self->_effectWidgets.view)) {
-			self->removeScript();
+			self->removeEffect();
 		}
 		
 		// Catch this keyevent, don't propagate
@@ -1137,7 +1081,7 @@ void StimResponseEditor::_onContextMenuDelete(GtkWidget* w,
 	if (w == self->_srWidgets.deleteMenuItem)
 		self->removeStimResponse();
 	else if (w == self->_effectWidgets.deleteMenuItem)
-		self->removeScript();
+		self->removeEffect();
 }
 
 void StimResponseEditor::onStimTypeChange(GtkComboBox* widget, 
