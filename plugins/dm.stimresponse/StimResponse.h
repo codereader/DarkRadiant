@@ -36,6 +36,11 @@ struct SRKey {
  */
 class StimResponse
 {
+public:
+	// The effect map
+	typedef std::map<unsigned int, ResponseEffect> EffectMap;
+
+private:
 	// The key/value mapping
 	typedef std::map<std::string, std::string> PropertyMap;
 
@@ -51,8 +56,6 @@ class StimResponse
 	 * 			it to override an inherited stim.
 	 */
 	int _index;
-	
-	typedef std::map<unsigned int, ResponseEffect> EffectMap;
 	
 	// The list of ResponseEffects for this response (does not apply for stims)
 	EffectMap _effects;
@@ -85,6 +88,16 @@ public:
 	 * 			This creates the response effect if it doesn't exist yet.
 	 */
 	ResponseEffect& getResponseEffect(const unsigned int index);
+	
+	/** greebo: Returns the reference to the interally stored map
+	 */
+	EffectMap& getEffects();
+	
+	/** greebo: Re-indexes the effects to avoid gaps in the numbering.
+	 * 			Should be called right before saving the effects to the
+	 * 			spawnargs.
+	 */
+	void sortEffects();
 	
 	/** greebo: Constructs the GtkListStore using the effects stored in this
 	 * 			response.
