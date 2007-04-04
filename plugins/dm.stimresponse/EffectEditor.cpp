@@ -1,6 +1,8 @@
 #include "EffectEditor.h"
 
 #include <gtk/gtk.h>
+#include "iscenegraph.h"
+#include "entitylib.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/TreeModel.h"
@@ -22,7 +24,8 @@
 EffectEditor::EffectEditor(GtkWindow* parent) :
 	DialogWindow(WINDOW_TITLE, parent),
 	_argTable(NULL),
-	_tooltips(NULL)
+	_tooltips(NULL),
+	_entityStore(gtk_list_store_new(1, G_TYPE_STRING))
 {
 	gtk_window_set_modal(GTK_WINDOW(_window), TRUE);
 	gtk_container_set_border_width(GTK_CONTAINER(_window), 12);
@@ -54,6 +57,9 @@ EffectEditor::EffectEditor(GtkWindow* parent) :
 	}
 	
 	populateWindow();
+	
+	// Search the scenegraph for entities
+	populateEntityListStore();
 }
 
 void EffectEditor::populateWindow() {
@@ -170,7 +176,7 @@ void EffectEditor::createArgumentWidgets(ResponseEffect& effect) {
 		}
 		else if (arg.type == "e") {
 			// Create a new string argument item
-			item = ArgumentItemPtr(new EntityArgument(arg, _tooltips));
+			item = ArgumentItemPtr(new EntityArgument(arg, _tooltips, _entityStore));
 		}
 		
 		if (item != NULL) {
@@ -218,4 +224,42 @@ void EffectEditor::onSave(GtkWidget* button, EffectEditor* self) {
 void EffectEditor::onCancel(GtkWidget* button, EffectEditor* self) {
 	// Call the inherited DialogWindow::destroy method 
 	self->destroy();
+}
+    
+// Traverse the scenegraph to populate the tree model
+void EffectEditor::populateEntityListStore() {
+
+	// Create a scenegraph walker to traverse the graph
+	class EntityFinder : 
+		public scene::Graph::Walker
+	{    
+		// List store to add to
+		GtkListStore* _store;
+	public:
+		// Constructor
+		EntityFinder(GtkListStore* store) :
+			_store(store)
+		{}
+
+		// Visit function
+		virtual bool pre(const scene::Path& path, scene::Instance& instance) const {
+			Entity* entity = Node_getEntity(path.top());
+			if (entity != NULL) {
+				// Get the entity name
+				std::string entName = entity->getKeyValue("name");
+	
+				// Append the name to the list store
+				GtkTreeIter iter;
+				gtk_list_store_append(_store, &iter);
+				gtk_list_store_set(_store, &iter, 
+	            				   0, entName.c_str(), 
+	            				   -1);
+	
+				return false; // don't traverse children if entity found
+	        }
+	        return true; // traverse children otherwise
+		}
+	} finder(_entityStore);
+
+    GlobalSceneGraph().traverse(finder);
 }
