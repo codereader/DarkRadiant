@@ -32,7 +32,6 @@ class StimResponseEditor
 	struct AddWidgets {
 		GtkWidget* stimTypeList;
 		GtkWidget* addButton;
-		GtkWidget* addScriptButton;
 	} _addWidgets; 
 	
 	// The treeview with the entity's stims/responses
@@ -60,6 +59,9 @@ class StimResponseEditor
 		GtkWidget* view;
 		GtkTreeSelection* selection;
 		GtkWidget* deleteMenuItem;
+		GtkWidget* addMenuItem;
+		GtkWidget* upMenuItem;
+		GtkWidget* downMenuItem;
 	} _effectWidgets;
 	
 	// Context menus for list views
@@ -119,11 +121,11 @@ private:
 
 	/** greebo: Adds an empty response script to the list.
 	 */
-	void addResponseScript();
+	//void addResponseScript();
 
-	/** greebo: Removes the currently selected script
+	/** greebo: Removes the currently selected response effect
 	 */
-	void removeScript();
+	void removeEffect();
 
 	/** greebo: Removes the currently selected stim/response object
 	 */
@@ -208,7 +210,6 @@ private:
 	static void onSave(GtkWidget* button, StimResponseEditor* self);
 	static void onClose(GtkWidget* button, StimResponseEditor* self);
 	static void onRevert(GtkWidget* button, StimResponseEditor* self);
-	static void onScriptAdd(GtkWidget* button, StimResponseEditor* self);
 
 	// Gets notified if a script cell has been edited.
 	static void onScriptEdit(GtkCellRendererText* renderer, 

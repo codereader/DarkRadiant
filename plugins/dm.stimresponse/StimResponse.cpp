@@ -80,6 +80,18 @@ void StimResponse::sortEffects() {
 	_effects = newMap;
 }
 
+void StimResponse::deleteEffect(const unsigned int index) {
+	EffectMap::iterator found = _effects.find(index);
+	
+	if (found != _effects.end()) {
+		// Remove the item from the map
+		_effects.erase(found);
+	}
+	
+	// Re-index the effects in the map
+	sortEffects();
+}
+
 StimResponse::EffectMap& StimResponse::getEffects() {
 	return _effects;
 }
