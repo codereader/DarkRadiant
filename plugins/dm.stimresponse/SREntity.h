@@ -8,7 +8,6 @@
 
 #include "StimResponse.h"
 #include "StimTypes.h"
-#include "ResponseScript.h"
 
 // Forward declaration
 class Entity;
@@ -26,17 +25,6 @@ typedef struct _GtkListStore GtkListStore;
 			INHERIT_COL,
 			IDSTR_COL,
 			NUM_COLS
-		};
-		
-		enum {
-			SCR_ID_COL,
-			SCR_CAPTION_COL,
-			SCR_NAME_COL,
-			SCR_ICON_COL,
-			SCR_SCRIPT_COL,
-			SCR_INHERIT_COL,
-			SCR_IDSTR_COL,
-			SCR_NUM_COLS
 		};
 	}
 
@@ -71,10 +59,6 @@ private:
 	
 	// An empty stim
 	StimResponse _emptyStimResponse;
-	
-	// Helper object managing the scripts 
-	ResponseScripts _scripts;
-	GtkListStore* _scriptStore;
 
 public:
 	SREntity(Entity* source);
@@ -111,10 +95,6 @@ public:
 	 */
 	GtkListStore* getStimResponseStore();
 	
-	/** greebo: Returns the scriptstore object
-	 */
-	GtkListStore* getScriptStore();	
-	
 	/** greebo: Sets the <key> of the SR with the given <id> to <value>
 	 */
 	void setProperty(int id, const std::string& key, const std::string& value);
@@ -123,23 +103,6 @@ public:
 	 * 			values of the current StimResponseMap <_list>
 	 */
 	void updateListStore();
-	
-	/** greebo: Adds a script to the list and returns the id.
-	 * 			The new script has "inherited" set to false.
-	 */
-	int addScript();
-	
-	/** greebo: Returns the script with the given <scriptId>
-	 */
-	ResponseScript& getScript(int scriptId);
-	
-	/** greebo: Returns TRUE if the response script for the given stimtype exists
-	 */
-	bool scriptExists(const std::string& stimType);
-	
-	/** greebo: Removes the script with the given <id>
-	 */
-	void removeScript(int id);
 	
 	/** greebo: Helper to load the possible key names
 	 * 			from the registry into the _keys list.
@@ -161,14 +124,6 @@ private:
 	 */
 	void writeToListStore(GtkTreeIter* iter, StimResponse& sr);
 	
-	/** greebo: Write the values of the passed ResponseScript to the 
-	 * 			GtkListStore using the passed GtkTreeIter. 
-	 * 
-	 * @iter: The TreeIter pointing at the row where the data should be inserted
-	 * @script: the ResponseScript object containing the source data
-	 */
-	void writeToScriptStore(GtkTreeIter* iter, ResponseScript& script);
-
 	// Returns the highest currently assigned id
 	int getHighestId();
 	

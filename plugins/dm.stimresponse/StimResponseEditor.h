@@ -227,10 +227,6 @@ private:
 	static void onClose(GtkWidget* button, StimResponseEditor* self);
 	static void onRevert(GtkWidget* button, StimResponseEditor* self);
 
-	// Gets notified if a script cell has been edited.
-	static void onScriptEdit(GtkCellRendererText* renderer, 
-							 gchar* path, gchar* new_text, StimResponseEditor* self);
-	
 	// The keypress handler for catching the keys in the treeview
 	static gboolean onTreeViewKeyPress(
 		GtkTreeView* view,GdkEventKey* event, StimResponseEditor* self);

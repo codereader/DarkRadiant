@@ -27,15 +27,7 @@ SREntity::SREntity(Entity* source) :
 								  G_TYPE_STRING, 	// Caption String
 								  GDK_TYPE_PIXBUF,	// Icon
 								  G_TYPE_BOOLEAN,	// Inheritance flag
-								  G_TYPE_STRING)), 	// ID in string format (unique)
-	_scriptStore(gtk_list_store_new(SCR_NUM_COLS,
-									G_TYPE_INT,			// id
-									G_TYPE_STRING,		// caption
-									G_TYPE_STRING,		// name (STIM_FIRE)
-									GDK_TYPE_PIXBUF,	// Icon
-									G_TYPE_STRING,		// Script String
-									G_TYPE_BOOLEAN,		// Inheritance Flag
-									G_TYPE_STRING))		// ID in string format
+								  G_TYPE_STRING)) 	// ID in string format (unique)
 {
 	loadKeys();
 	load(source);
@@ -66,7 +58,6 @@ int SREntity::getHighestIndex() {
 void SREntity::load(Entity* source) {
 	// Clear all the items from the liststore
 	gtk_list_store_clear(_listStore);
-	gtk_list_store_clear(_scriptStore);
 	
 	if (source == NULL) {
 		return;
@@ -80,14 +71,14 @@ void SREntity::load(Entity* source) {
 	// Instantiate a visitor class with the list of possible keys 
 	// and the target list where all the S/Rs are stored
 	// Warning messages are stored in the <_warnings> string
-	SRPropertyLoader visitor(_keys, _list, _scripts, _warnings);
+	SRPropertyLoader visitor(_keys, _list, _warnings);
 	eclass->forEachClassAttribute(visitor);
 	
 	// Create a new map with all the stims/scripts defined directly on the entity
 	StimResponseMap entityStims;
 		
 	// Scan the entity itself after the class has been searched
-	SRPropertyLoader entityVisitor(_keys, entityStims, _scripts, _warnings);
+	SRPropertyLoader entityVisitor(_keys, entityStims, _warnings);
 	source->forEachKeyValue(entityVisitor);
 	
 	// Now combine the two S/R maps, the id gets incremented, but the internal
@@ -126,18 +117,6 @@ void SREntity::remove(int id) {
 	}
 }
 
-void SREntity::removeScript(int id) {
-	if (id >= 0 && !_scripts[id].inherited) {
-		// Remove the item from the vector
-		_scripts.erase(_scripts.begin() + id);
-		updateListStore();
-	}
-}
-
-ResponseScript& SREntity::getScript(int scriptId) {
-	return _scripts[scriptId];
-}
-
 void SREntity::updateListStore() {
 	// Clear all the items from the liststore
 	gtk_list_store_clear(_listStore);
@@ -158,23 +137,6 @@ void SREntity::updateListStore() {
 		StimResponse& sr = i->second;
 		writeToListStore(&iter, sr);
 	}
-	
-	// Clear the scripts
-	gtk_list_store_clear(_scriptStore);
-	
-	for (unsigned int i = 0; i < _scripts.size(); i++) {
-		ResponseScript& s = _scripts[i];
-		
-		gtk_list_store_append(_scriptStore, &iter);
-		// Store the ID into the liststore
-		gtk_list_store_set(_scriptStore, &iter, 
-						   SCR_ID_COL, i,
-						   SCR_IDSTR_COL, intToStr(i).c_str(),
-						   -1);
-		
-		// And write the rest of the data to the row
-		writeToScriptStore(&iter, s);
-	}
 }
 
 int SREntity::add() {
@@ -189,29 +151,6 @@ int SREntity::add() {
 	_list[id].setInherited(false);
 	
 	return id;
-}
-
-int SREntity::addScript() {
-	int id = _scripts.size();
-	
-	ResponseScript newScript;
-	newScript.inherited = false;
-	
-	_scripts.push_back(newScript);
-	
-	return id;
-}
-
-bool SREntity::scriptExists(const std::string& stimType) {
-	// Cycle through all the stimtypes
-	for (unsigned int i = 0; i < _scripts.size(); i++) {
-		if (_scripts[i].stimType == stimType) {
-			// We have a match, return true
-			return true;
-		}
-	}
-	
-	return false;
 }
 
 void SREntity::cleanEntity(Entity* target) {
@@ -239,21 +178,6 @@ void SREntity::save(Entity* target) {
 	for (StimResponseMap::iterator i = _list.begin(); i != _list.end(); i++) {
 		saver.visit(i->second);
 	}
-	
-	for (unsigned int i = 0; i < _scripts.size(); i++) {
-		ResponseScript& s = _scripts[i];
-		
-		// Don't save inherited scripts
-		if (s.inherited) {
-			continue;
-		}
-		
-		// Get the prefix
-		std::string prefix = GlobalRegistry().get(RKEY_STIM_RESPONSE_PREFIX);
-		
-		// Save the spawnarg 
-		target->setKeyValue(prefix + "script_" + s.stimType, s.script);
-	}
 }
 
 GtkTreeIter SREntity::getIterForId(int id) {
@@ -267,19 +191,6 @@ GtkTreeIter SREntity::getIterForId(int id) {
 	);
 	
 	return finder.getIter();
-}
-
-void SREntity::writeToScriptStore(GtkTreeIter* iter, ResponseScript& script) {
-	StimType stim = _stimTypes.get(script.stimType);
-	
-	// Store the ID into the liststore
-	gtk_list_store_set(_scriptStore, iter, 
-					    SCR_CAPTION_COL, stim.caption.c_str(),
-						SCR_NAME_COL, stim.name.c_str(),
-						SCR_ICON_COL, gtkutil::getLocalPixbufWithMask(stim.icon),
-						SCR_SCRIPT_COL, script.script.c_str(),
-						SCR_INHERIT_COL, script.inherited,
-					   -1);
 }
 
 void SREntity::writeToListStore(GtkTreeIter* iter, StimResponse& sr) {
@@ -324,10 +235,6 @@ StimResponse& SREntity::get(int id) {
 
 GtkListStore* SREntity::getStimResponseStore() {
 	return _listStore;
-}
-
-GtkListStore* SREntity::getScriptStore() {
-	return _scriptStore;
 }
 
 // static key loader

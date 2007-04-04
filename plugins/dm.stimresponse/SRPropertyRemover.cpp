@@ -26,7 +26,6 @@ void SRPropertyRemover::visit(const std::string& key, const std::string& value) 
 	
 	// Now cycle through the possible key names and see if we have a match
 	for (unsigned int i = 0; i < _keys.size(); i++) {
-		
 		// Construct a regex with the number as match variable
 		std::string exprStr = "^" + prefix + _keys[i].key + "_([0-9])+$";
 		boost::regex expr(exprStr);
@@ -46,17 +45,5 @@ void SRPropertyRemover::visit(const std::string& key, const std::string& value) 
 	
 	if (boost::regex_match(key, matches, expr)) {
 		_removeList.push_back(key);
-	}
-	
-	// Check the key/value for script definitions
-	StimTypeMap& stimMap = _stimTypes.getStimMap();
-	for (StimTypeMap::iterator i = stimMap.begin(); i != stimMap.end(); i++) {
-		// Construct a regex with the number as match variable
-		std::string exprStr = prefix + "script_" + i->second.name;
-		
-		if (key == exprStr) {
-			// We have a match, set the key on the black list
-			_removeList.push_back(key);
-		}
 	}
 }
