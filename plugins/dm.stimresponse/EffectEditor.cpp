@@ -25,17 +25,19 @@
 		};
 	}
 
-EffectEditor::EffectEditor(GtkWindow* parent) :
+EffectEditor::EffectEditor(GtkWindow* parent, 
+						   StimResponse& response, 
+						   const unsigned int effectIndex) :
 	DialogWindow(WINDOW_TITLE, parent),
 	_argTable(NULL),
 	_tooltips(NULL),
-	_entityStore(gtk_list_store_new(1, G_TYPE_STRING))
+	_entityStore(gtk_list_store_new(1, G_TYPE_STRING)),
+	_response(response),
+	_effectIndex(effectIndex)
 {
 	gtk_window_set_modal(GTK_WINDOW(_window), TRUE);
 	gtk_container_set_border_width(GTK_CONTAINER(_window), 12);
 	gtk_window_set_type_hint(GTK_WINDOW(_window), GDK_WINDOW_TYPE_HINT_DIALOG);
-	
-	setWindowSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT);
 	
 	_effectStore = gtk_list_store_new(EFFECT_TYPE_NUM_COLS,
 									  G_TYPE_STRING,
@@ -46,6 +48,7 @@ EffectEditor::EffectEditor(GtkWindow* parent) :
 	ResponseEffectTypeMap& effectTypes = 
 		ResponseEffectTypes::Instance().getMap();
 
+	// Now populate the list store with all the possible effect types
 	for (ResponseEffectTypeMap::iterator i = effectTypes.begin(); 
 		  i != effectTypes.end(); i++)
 	{
@@ -60,15 +63,45 @@ EffectEditor::EffectEditor(GtkWindow* parent) :
 						   -1);
 	}
 	
+	// Create the widgets
 	populateWindow();
 	
 	// Search the scenegraph for entities
 	populateEntityListStore();
+	
+	// Initialise the widgets with the current data
+	ResponseEffect& effect = _response.getResponseEffect(_effectIndex);
+
+	// Setup the selectionfinder to search for the name string
+	gtkutil::TreeModel::SelectionFinder finder(effect.getName(), EFFECT_TYPE_NAME_COL);
+
+	gtk_tree_model_foreach(
+		GTK_TREE_MODEL(_effectStore), 
+		gtkutil::TreeModel::SelectionFinder::forEach, 
+		&finder
+	);
+	
+	GtkTreeIter found = finder.getIter();
+	// Set the active row of the combo box to the current response effect type
+	gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_effectTypeCombo), &found);
+	
+	// Create the alignment container that hold the (exchangable) widget table
+	_argAlignment = gtk_alignment_new(0.0, 0.5, 1.0, 1.0);
+	gtk_alignment_set_padding(GTK_ALIGNMENT(_argAlignment), 0, 0, 18, 0);
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), _argAlignment, TRUE, TRUE, 0);
+
+	// Parse the argument types from the effect and create the widgets
+	createArgumentWidgets(effect);
+	
+	// Connect the signal to get notified of further changes
+	g_signal_connect(G_OBJECT(_effectTypeCombo), "changed", G_CALLBACK(onEffectTypeChange) , this);
+	
+	gtk_widget_show_all(_window);
 }
 
 void EffectEditor::populateWindow() {
 	// Create the overall vbox
-	_dialogVBox = gtk_vbox_new(FALSE, 6);
+	_dialogVBox = gtk_vbox_new(FALSE, 3);
 	gtk_container_add(GTK_CONTAINER(_window), _dialogVBox);
 	
 	GtkWidget* effectHBox = gtk_hbox_new(FALSE, 0);
@@ -90,7 +123,7 @@ void EffectEditor::populateWindow() {
 		TRUE, TRUE, 0
 	);
 	
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), effectHBox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), effectHBox, FALSE, FALSE, 3);
 	
 	GtkWidget* argLabel = gtkutil::LeftAlignedLabel("<b>Arguments</b>");
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), argLabel, FALSE, FALSE, 0);
@@ -105,50 +138,45 @@ void EffectEditor::populateWindow() {
 	gtk_box_pack_end(GTK_BOX(buttonHBox), saveButton, FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(buttonHBox), cancelButton, FALSE, FALSE, 6);
 	
-	gtk_box_pack_end(GTK_BOX(_dialogVBox), buttonHBox, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(_dialogVBox), buttonHBox, FALSE, FALSE, 3);
 }
 
-void EffectEditor::editEffect(StimResponse& response, const unsigned int effectIndex) {
-	ResponseEffect& effect = response.getResponseEffect(effectIndex);
+void EffectEditor::effectTypeChanged() {
+	std::string newEffectName("");
 	
-	// Setup the selectionfinder to search for the name string
-	gtkutil::TreeModel::SelectionFinder finder(effect.getName(), EFFECT_TYPE_NAME_COL);
+	// Get the currently selected effect name from the combo box
+	GtkTreeIter iter;
+	GtkComboBox* combo = GTK_COMBO_BOX(_effectTypeCombo);
 	
-	gtk_tree_model_foreach(
-		GTK_TREE_MODEL(_effectStore), 
-		gtkutil::TreeModel::SelectionFinder::forEach, 
-		&finder
-	);
-	GtkTreeIter found = finder.getIter();
+	if (gtk_combo_box_get_active_iter(combo, &iter)) {
+		GtkTreeModel* model = gtk_combo_box_get_model(combo);
+		
+		newEffectName = gtkutil::TreeModel::getString(model, &iter, EFFECT_TYPE_NAME_COL);
+	}
 	
-	// Set the active row of the combo box to the current response effect type
-	gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_effectTypeCombo), &found);
+	// Get the effect
+	ResponseEffect& effect = _response.getResponseEffect(_effectIndex);
 	
-	// Create the alignment container that hold the (exchangable) widget table
-	_argAlignment = gtk_alignment_new(0.0, 0.5, 1.0, 1.0);
-	gtk_alignment_set_padding(GTK_ALIGNMENT(_argAlignment), 0, 0, 18, 0);
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), _argAlignment, TRUE, TRUE, 0);
+	// Set the name of the effect (this triggers an argument list update)
+	effect.setName(newEffectName);
 	
-	// Parse the argument types from the effect and create the widgets
+	// Rebuild the argument list basing on this new effect
 	createArgumentWidgets(effect);
-	
-	gtk_widget_show_all(_window);
 }
 
 void EffectEditor::createArgumentWidgets(ResponseEffect& effect) {
 	ResponseEffect::ArgumentList& list = effect.getArguments();
 
+	// Remove all possible previous items from the list
+	_argumentItems.clear();
+
 	// Remove the old table if there exists one
 	if (_argTable != NULL) {
-		gtk_container_remove(GTK_CONTAINER(_argAlignment), _argTable);
-		gtk_widget_hide(_argTable);
+		// This removes the old table from the alignment container
 		gtk_widget_destroy(_argTable);
 	}
 	
-	if (_tooltips != NULL) {
-		g_object_unref(_tooltips);
-	}
-	
+	// Create the tooltips group for the help mouseover texts
 	_tooltips = gtk_tooltips_new();
 	gtk_tooltips_enable(_tooltips);
 	
@@ -156,7 +184,6 @@ void EffectEditor::createArgumentWidgets(ResponseEffect& effect) {
 	_argTable = gtk_table_new(list.size(), 3, false);
     gtk_table_set_col_spacings(GTK_TABLE(_argTable), 12);
     gtk_table_set_row_spacings(GTK_TABLE(_argTable), 6);
-	
 	gtk_container_add(GTK_CONTAINER(_argAlignment), _argTable); 
 
 	for (ResponseEffect::ArgumentList::iterator i = list.begin(); 
@@ -221,6 +248,12 @@ void EffectEditor::createArgumentWidgets(ResponseEffect& effect) {
 			);
 		}
 	}
+	
+	// Reset the window size, there may be fewer argument widgets than before
+	setWindowSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT);
+	
+	// Show the table and all subwidgets
+	gtk_widget_show_all(_argTable);
 }
 
 void EffectEditor::save() {
@@ -230,20 +263,6 @@ void EffectEditor::save() {
 	}
 }
 
-// Static GTK callbacks
-void EffectEditor::onSave(GtkWidget* button, EffectEditor* self) {
-	// Save the arguments into the objects
-	self->save();
-	
-	// Call the inherited DialogWindow::destroy method 
-	self->destroy();
-}
-
-void EffectEditor::onCancel(GtkWidget* button, EffectEditor* self) {
-	// Call the inherited DialogWindow::destroy method 
-	self->destroy();
-}
-    
 // Traverse the scenegraph to populate the tree model
 void EffectEditor::populateEntityListStore() {
 
@@ -289,4 +308,22 @@ void EffectEditor::populateEntityListStore() {
 	} finder(_entityStore);
 
     GlobalSceneGraph().traverse(finder);
+}
+
+// Static GTK callbacks
+void EffectEditor::onSave(GtkWidget* button, EffectEditor* self) {
+	// Save the arguments into the objects
+	self->save();
+	
+	// Call the inherited DialogWindow::destroy method 
+	self->destroy();
+}
+
+void EffectEditor::onCancel(GtkWidget* button, EffectEditor* self) {
+	// Call the inherited DialogWindow::destroy method 
+	self->destroy();
+}
+
+void EffectEditor::onEffectTypeChange(GtkWidget* combobox, EffectEditor* self) {
+	self->effectTypeChanged();
 }
