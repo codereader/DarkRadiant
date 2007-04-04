@@ -701,7 +701,11 @@ void StimResponseEditor::updateSRWidgets() {
 		gtk_tree_view_set_model(GTK_TREE_VIEW(_effectWidgets.view), GTK_TREE_MODEL(effectStore));
 		g_object_unref(effectStore);
 		
-		gtk_widget_set_sensitive(_effectWidgets.view, sr.get("class") == "R");
+		// Allow effect editing for non-inherited responses only
+		gtk_widget_set_sensitive(
+			_effectWidgets.view, 
+			(sr.get("class") == "R" && !sr.inherited())
+		);
 	}
 	else {
 		gtk_widget_set_sensitive(_srWidgets.vbox, FALSE);
@@ -867,7 +871,7 @@ void StimResponseEditor::editEffect() {
 		if (sr.get("class") == "R" && effectIndex > 0) {
 			// Create a new effect editor (self-destructs)
 			EffectEditor* editor = 
-				new EffectEditor(GTK_WINDOW(_dialog), sr, effectIndex);
+				new EffectEditor(GTK_WINDOW(_dialog), sr, effectIndex, *this);
 			
 			// The editor is modal and will destroy itself, our work is done
 		}

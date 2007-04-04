@@ -14,6 +14,10 @@ typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkListStore GtkListStore;
 typedef struct _GtkTooltips GtkTooltips;
 
+namespace ui {
+
+class StimResponseEditor;
+
 class EffectEditor :
 	public gtkutil::DialogWindow
 {
@@ -46,6 +50,9 @@ class EffectEditor :
 	StimResponse& _response;
 	unsigned int _effectIndex;
 	
+	// For calling update() when finished editing
+	StimResponseEditor& _editor;
+	
 public:
 	/** greebo: Constructor, needs information about parent and the edit target. 
 	 * 
@@ -58,7 +65,8 @@ public:
 	 */
 	EffectEditor(GtkWindow* parent, 
 				 StimResponse& response, 
-				 const unsigned int effectIndex);
+				 const unsigned int effectIndex,
+				 StimResponseEditor& editor);
 	
 	/** greebo: Creates the widgets 
 	 */
@@ -88,6 +96,9 @@ private:
 	static void onEffectTypeChange(GtkWidget* combobox, EffectEditor* self);
 	static void onSave(GtkWidget* button, EffectEditor* self);
 	static void onCancel(GtkWidget* button, EffectEditor* self);
-};
+
+}; // class EffectEditor
+
+} // namespace ui
 
 #endif /*EFFECTEDITOR_H_*/
