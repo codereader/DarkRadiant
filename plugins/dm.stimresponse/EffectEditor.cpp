@@ -19,7 +19,8 @@
 
 EffectEditor::EffectEditor(GtkWindow* parent) :
 	DialogWindow(WINDOW_TITLE, parent),
-	_argTable(NULL)
+	_argTable(NULL),
+	_tooltips(NULL)
 {
 	gtk_window_set_modal(GTK_WINDOW(_window), TRUE);
 	gtk_container_set_border_width(GTK_CONTAINER(_window), 12);
@@ -129,7 +130,14 @@ void EffectEditor::createArgumentWidgets(ResponseEffect& effect) {
 		gtk_widget_hide(_argTable);
 		gtk_widget_destroy(_argTable);
 	}
-
+	
+	if (_tooltips != NULL) {
+		g_object_unref(_tooltips);
+	}
+	
+	_tooltips = gtk_tooltips_new();
+	gtk_tooltips_enable(_tooltips);
+	
 	// Setup the table with default spacings
 	_argTable = gtk_table_new(list.size(), 3, false);
     gtk_table_set_col_spacings(GTK_TABLE(_argTable), 12);
@@ -146,19 +154,19 @@ void EffectEditor::createArgumentWidgets(ResponseEffect& effect) {
 
 		if (arg.type == "s") {
 			// Create a new string argument item
-			item = ArgumentItemPtr(new StringArgument(arg));
+			item = ArgumentItemPtr(new StringArgument(arg, _tooltips));
 		}
 		else if (arg.type == "f") {
 			// Create a new string argument item
-			item = ArgumentItemPtr(new FloatArgument(arg));
+			item = ArgumentItemPtr(new FloatArgument(arg, _tooltips));
 		}
 		else if (arg.type == "v") {
 			// Create a new string argument item
-			item = ArgumentItemPtr(new VectorArgument(arg));
+			item = ArgumentItemPtr(new VectorArgument(arg, _tooltips));
 		}
 		else if (arg.type == "e") {
 			// Create a new string argument item
-			item = ArgumentItemPtr(new EntityArgument(arg));
+			item = ArgumentItemPtr(new EntityArgument(arg, _tooltips));
 		}
 		
 		if (item != NULL) {
