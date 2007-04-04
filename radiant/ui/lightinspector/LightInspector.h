@@ -63,6 +63,9 @@ class LightInspector :
 	
 	gtkutil::WindowPosition _windowPosition;
 	
+	// Disables GTK callbacks if set to TRUE (during widget updates)
+	bool _updateActive;
+	
 private:
 
 	// Constructor creates GTK widgets

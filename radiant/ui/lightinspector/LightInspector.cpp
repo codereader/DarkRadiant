@@ -66,7 +66,8 @@ LightInspector::LightInspector() :
 	_widget(gtkutil::TransientWindow(LIGHTINSPECTOR_TITLE, MainFrame_getWindow(), false)),
 	_isProjected(false),
 	_texSelector(this, getPrefixList(), true),
-	_entity(NULL)
+	_entity(NULL),
+	_updateActive(false)
 {
 	gtk_window_set_type_hint(GTK_WINDOW(_widget), GDK_WINDOW_TYPE_HINT_DIALOG);
 	
@@ -345,6 +346,8 @@ LightInspector& LightInspector::Instance() {
 /* GTK CALLBACKS */
 
 void LightInspector::_onProjToggle(GtkWidget* b, LightInspector* self) {
+	if (self->_updateActive) return; // avoid callback loops
+	
 	// Set the projected flag
 	self->_isProjected = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(b));
 	
@@ -365,6 +368,8 @@ void LightInspector::_onProjToggle(GtkWidget* b, LightInspector* self) {
 }
 
 void LightInspector::_onPointToggle(GtkWidget* b, LightInspector* self) {
+	if (self->_updateActive) return; // avoid callback loops
+	
 	// Set the projected flag
 	self->_isProjected = !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(b));
 	
@@ -390,6 +395,8 @@ void LightInspector::_onOK(GtkWidget* w, LightInspector* self) {
 
 // Get keyvals from entity and insert into text entries
 void LightInspector::getValuesFromEntity() {
+	// Disable unwanted callbacks
+	_updateActive = true;
 
 	// Populate the value map with defaults
 	_valueMap["light_radius"] = "320 320 320";
@@ -462,6 +469,8 @@ void LightInspector::getValuesFromEntity() {
 		else
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(i->second), FALSE);
 	}
+	
+	_updateActive = false;
 }
 
 // Set the keyvalues on the entity from the dialog widgets
@@ -521,12 +530,16 @@ void LightInspector::setValuesOnEntity() {
 }
 
 void LightInspector::_onOptionsToggle(GtkToggleButton* togglebutton, LightInspector *self) {
+	if (self->_updateActive) return; // avoid callback loops
+	
 	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1") {
 		self->setValuesOnEntity();
 	}
 }
 
 void LightInspector::_onColourChange(GtkColorButton* widget, LightInspector* self) {
+	if (self->_updateActive) return; // avoid callback loops
+	
 	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1") {
 		self->setValuesOnEntity();
 	}
