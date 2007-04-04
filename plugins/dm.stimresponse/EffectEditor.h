@@ -19,9 +19,6 @@ class EffectEditor :
 	// The overall vbox
 	GtkWidget* _dialogVBox;
 	
-	// The vbox containing the argument widgets
-	GtkWidget* _argVBox;
-	
 	// The container holding the argument widget table
 	GtkWidget* _argAlignment;
 	
