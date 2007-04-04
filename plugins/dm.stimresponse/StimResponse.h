@@ -99,6 +99,10 @@ public:
 	 */
 	void sortEffects();
 	
+	/** greebo: Returns the highest used effect index.
+	 */
+	unsigned int highestEffectIndex();
+	
 	/** greebo: Removes the effect with the given index.
 	 * 			This re-sorts the items after deletion.
 	 */
