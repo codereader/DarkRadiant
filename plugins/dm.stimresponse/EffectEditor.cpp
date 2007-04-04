@@ -2,6 +2,7 @@
 
 #include <gtk/gtk.h>
 #include "iscenegraph.h"
+#include "iregistry.h"
 #include "entitylib.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
@@ -12,6 +13,9 @@
 		const std::string WINDOW_TITLE = "Edit Response Effect";
 		const unsigned int WINDOW_MIN_WIDTH = 300;
 		const unsigned int WINDOW_MIN_HEIGHT = 50;
+		
+		// The name of the _SELF entity as parsed by the response scripts
+		const std::string RKEY_ENTITY_SELF = "game/stimResponseSystem/selfEntity";
 		
 		// The enumeration for populating the GtkListStore 
 		enum {
@@ -228,6 +232,15 @@ void EffectEditor::onCancel(GtkWidget* button, EffectEditor* self) {
     
 // Traverse the scenegraph to populate the tree model
 void EffectEditor::populateEntityListStore() {
+
+	std::string selfEntity = GlobalRegistry().get(RKEY_ENTITY_SELF);
+
+	// Append the name to the list store
+	GtkTreeIter iter;
+	gtk_list_store_append(_entityStore, &iter);
+	gtk_list_store_set(_entityStore, &iter, 
+    				   0, selfEntity.c_str(), 
+    				   -1);
 
 	// Create a scenegraph walker to traverse the graph
 	class EntityFinder : 
