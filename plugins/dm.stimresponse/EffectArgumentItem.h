@@ -11,17 +11,29 @@ class EffectArgumentItem
 protected:
 	// The argument this row is referring to
 	ResponseEffect::Argument& _arg;
-	GtkWidget* _label;
-	GtkWidget* _desc;
+	GtkWidget* _labelBox;
+	GtkWidget* _descBox;
+	GtkTooltips* _tooltips;
 
 public:
-	EffectArgumentItem(ResponseEffect::Argument& arg) :
-		_arg(arg)
+	EffectArgumentItem(ResponseEffect::Argument& arg, GtkTooltips* tooltips) :
+		_arg(arg),
+		_tooltips(tooltips)
 	{
-		_label = gtkutil::LeftAlignedLabel(_arg.title + ":");
+		// Pack the label into a eventbox
+		_labelBox = gtk_event_box_new();
+		GtkWidget* label = gtkutil::LeftAlignedLabel(_arg.title + ":");
+		gtk_container_add(GTK_CONTAINER(_labelBox), label);
 		
-		_desc = gtk_label_new("");
-		gtk_label_set_markup(GTK_LABEL(_desc), "<b>?</b>");
+		gtk_tooltips_set_tip(_tooltips, _labelBox, arg.desc.c_str(), "");
+		
+		// Pack the description widget into a eventbox		
+		_descBox = gtk_event_box_new();
+		GtkWidget* descLabel = gtk_label_new("");
+		gtk_label_set_markup(GTK_LABEL(descLabel), "<b>?</b>");
+		gtk_container_add(GTK_CONTAINER(_descBox), descLabel);
+		
+		gtk_tooltips_set_tip(_tooltips, _descBox, arg.desc.c_str(), "");
 	}
 	
 	/** greebo: This retrieves the string representation of the
@@ -32,14 +44,14 @@ public:
 	
 	// Retrieve the label widget
 	virtual GtkWidget* getLabelWidget() {
-		return _label;
+		return _labelBox;
 	}
 	
 	// Retrieve the edit widgets (abstract)
 	virtual GtkWidget* getEditWidget() = 0;
 	
 	virtual GtkWidget* getHelpWidget() {
-		return _desc;
+		return _descBox;
 	}
 	
 	/** greebo: This saves the value to the according response effect.
@@ -59,8 +71,8 @@ protected:
 	GtkWidget* _entry;
 
 public:
-	StringArgument(ResponseEffect::Argument& arg) :
-		EffectArgumentItem(arg)
+	StringArgument(ResponseEffect::Argument& arg, GtkTooltips* tooltips) :
+		EffectArgumentItem(arg, tooltips)
 	{
 		_entry = gtk_entry_new();
 		gtk_entry_set_text(GTK_ENTRY(_entry), arg.value.c_str()); 
@@ -81,8 +93,8 @@ class FloatArgument :
 	public StringArgument
 {
 public:
-	FloatArgument(ResponseEffect::Argument& arg) :
-		StringArgument(arg)
+	FloatArgument(ResponseEffect::Argument& arg, GtkTooltips* tooltips) :
+		StringArgument(arg, tooltips)
 	{}
 };
 
@@ -92,8 +104,8 @@ class VectorArgument :
 	public StringArgument
 {
 public:
-	VectorArgument(ResponseEffect::Argument& arg) :
-		StringArgument(arg)
+	VectorArgument(ResponseEffect::Argument& arg, GtkTooltips* tooltips) :
+		StringArgument(arg, tooltips)
 	{}
 };
 
@@ -103,8 +115,8 @@ class EntityArgument :
 	public EffectArgumentItem
 {
 public:
-	EntityArgument(ResponseEffect::Argument& arg) :
-		EffectArgumentItem(arg)
+	EntityArgument(ResponseEffect::Argument& arg, GtkTooltips* tooltips) :
+		EffectArgumentItem(arg, tooltips)
 	{}
 	
 	std::string getValue() {

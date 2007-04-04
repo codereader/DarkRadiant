@@ -12,6 +12,7 @@
 typedef struct _GtkWindow GtkWindow;
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkListStore GtkListStore;
+typedef struct _GtkTooltips GtkTooltips;
 
 class EffectEditor :
 	public gtkutil::DialogWindow
@@ -23,6 +24,9 @@ class EffectEditor :
 	GtkWidget* _argAlignment;
 	
 	GtkWidget* _argTable;
+	
+	// The tooltips group to display the help text
+	GtkTooltips* _tooltips;
 	
 	// The list containing the possible effect types
 	ResponseEffectTypeMap _effectTypes;
