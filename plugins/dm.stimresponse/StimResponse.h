@@ -104,6 +104,14 @@ public:
 	 */
 	void deleteEffect(const unsigned int index);
 	
+	/** greebo: Adds a new effect before the given index.
+	 * 
+	 * @index: the index of the effect the new one should be 
+	 * 		   inserted before. If this is negative, the item
+	 * 		   is appended at the end of the list.
+	 */
+	void addEffect(const unsigned int index);
+	
 	/** greebo: Constructs the GtkListStore using the effects stored in this
 	 * 			response.
 	 */
