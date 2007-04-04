@@ -80,7 +80,7 @@ void EffectEditor::populateWindow() {
 	GtkWidget* argLabel = gtkutil::LeftAlignedLabel("<b>Arguments</b>");
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), argLabel, FALSE, FALSE, 0);
 	
-	GtkWidget* saveButton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+	GtkWidget* saveButton = gtk_button_new_from_stock(GTK_STOCK_APPLY);
 	g_signal_connect(G_OBJECT(saveButton), "clicked", G_CALLBACK(onSave), this);
 	
 	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
@@ -165,9 +165,10 @@ void EffectEditor::createArgumentWidgets(ResponseEffect& effect) {
 			_argumentItems.push_back(item);
 			
 			// The label
-			gtk_table_attach_defaults(
+			gtk_table_attach(
 				GTK_TABLE(_argTable), item->getLabelWidget(),
-				0, 1, index-1, index // index starts with 1, hence the -1
+				0, 1, index-1, index, // index starts with 1, hence the -1
+				GTK_FILL, (GtkAttachOptions)0, 0, 0
 			);
 			
 			// The edit widgets
@@ -177,9 +178,10 @@ void EffectEditor::createArgumentWidgets(ResponseEffect& effect) {
 			);
 			
 			// The help widgets
-			gtk_table_attach_defaults(
+			gtk_table_attach(
 				GTK_TABLE(_argTable), item->getHelpWidget(),
-				2, 3, index-1, index // index starts with 1, hence the -1
+				2, 3, index-1, index, // index starts with 1, hence the -1
+				(GtkAttachOptions)0, (GtkAttachOptions)0, 0, 0
 			);
 		}
 	}
