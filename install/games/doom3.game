@@ -188,5 +188,6 @@
 		</properties>
 		<stimResponsePrefix value="sr_" />
 		<responseEffectPrefix value="effect_" />
+		<selfEntity value="_SELF" />
 	</stimResponseSystem>
 </game>
