@@ -32,4 +32,42 @@ void SRPropertySaver::visit(StimResponse& sr) {
 			_target->setKeyValue(fullKey, value); 
 		}
 	}
+	
+	// If we have a Response, save the response effects to the spawnargs
+	if (sr.get("class") == "R") {
+		std::string responseEffectPrefix = 
+			GlobalRegistry().get(RKEY_RESPONSE_EFFECT_PREFIX);
+		
+		// Re-index the effect map before saving
+		sr.sortEffects();
+		
+		// Retrieve the effect map and save them one after the other
+		StimResponse::EffectMap& effects = sr.getEffects();
+		
+		for (StimResponse::EffectMap::iterator i = effects.begin(); 
+			 i != effects.end(); 
+			 i++) 
+		{
+			ResponseEffect& effect = i->second;
+			
+			// Save the effect declaration ("sr_effect_1_1")
+			std::string key = prefix + responseEffectPrefix + 
+							  intToStr(sr.getIndex()) + "_" + intToStr(i->first);
+			_target->setKeyValue(key, effect.getName());
+			
+			// Now save the arguments
+			ResponseEffect::ArgumentList& args = effect.getArguments();
+			
+			for (ResponseEffect::ArgumentList::iterator a = args.begin(); 
+				 a != args.end(); a++)
+			{
+				int argIndex = a->first;
+				std::string argValue = a->second.value;
+				
+				// Construct the argument key ("sr_effect_3_2_arg4")
+				std::string argKey = key + "_arg" + intToStr(argIndex);
+				_target->setKeyValue(argKey, argValue);
+			}
+		}
+	}
 }

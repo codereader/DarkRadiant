@@ -5,6 +5,11 @@
 #include <string>
 #include "ieclass.h"
 
+	namespace {
+		const std::string RKEY_RESPONSE_EFFECT_PREFIX = 
+				"game/stimResponseSystem/responseEffectPrefix";
+	}
+
 typedef std::map<std::string, IEntityClassPtr> ResponseEffectTypeMap;
 
 class ResponseEffectTypes

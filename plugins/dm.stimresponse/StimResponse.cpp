@@ -63,6 +63,27 @@ ResponseEffect& StimResponse::getResponseEffect(const unsigned int index) {
 	return _effects[index];
 }
 
+void StimResponse::sortEffects() {
+	EffectMap newMap;
+	
+	// Re-index the effects to avoid gaps in the indexing
+	int newIndex = 1;
+	for (EffectMap::iterator i = _effects.begin(); 
+		 i != _effects.end(); 
+		 i++, newIndex++) 
+	{
+		// Copy the visited ResponseEffect to the new index
+		newMap[newIndex] = i->second;
+	}
+	
+	// Replace the old map with the sorted one
+	_effects = newMap;
+}
+
+StimResponse::EffectMap& StimResponse::getEffects() {
+	return _effects;
+}
+
 GtkListStore* StimResponse::getEffectStore() {
 	GtkListStore* store = gtk_list_store_new(EFFECT_NUM_COLS,
 											 G_TYPE_INT,	// Index

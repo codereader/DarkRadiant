@@ -4,11 +4,6 @@
 #include "iregistry.h"
 #include <boost/algorithm/string/predicate.hpp>
 
-	namespace {
-		const std::string RKEY_RESPONSE_EFFECT_PREFIX = 
-				"game/stimResponseSystem/responseEffectPrefix";
-	}
-
 /** greebo: The visitor class that stores all the relevant eclassptrs
  * 			into the given target map if the prefix matches.
  */

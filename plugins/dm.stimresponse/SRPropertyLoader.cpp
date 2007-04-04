@@ -73,10 +73,13 @@ void SRPropertyLoader::parseAttribute(
 	
 	// Check the key for a Response Effect definition
 	{
-		// Construct a regex with the number as match variable
+		std::string responseEffectPrefix = 
+			GlobalRegistry().get(RKEY_RESPONSE_EFFECT_PREFIX);
+		
 		// This should search for something like "sr_effect_2_3_arg3" 
 		// (with the postfix "_arg3" being optional)
-		std::string exprStr = "^" + prefix + "effect" + "_([0-9])+_([0-9])+(_arg[0-9]+)*$";
+		std::string exprStr = 
+			"^" + prefix + responseEffectPrefix + "([0-9])+_([0-9])+(_arg[0-9]+)*$";
 		boost::regex expr(exprStr);
 		boost::smatch matches;
 		
