@@ -847,6 +847,30 @@ void StimResponseEditor::editEffect() {
 	}
 }
 
+void StimResponseEditor::updateEffectContextMenu() {
+	// Check if we have anything selected at all
+	int curEffectIndex = getEffectIdFromSelection();
+	int highestEffectIndex = 0;
+	
+	bool anythingSelected = curEffectIndex >= 0;
+	
+	int srId = getIdFromSelection();
+	if (srId > 0) {
+		StimResponse& sr = _srEntity->get(srId);
+		highestEffectIndex = sr.highestEffectIndex();
+	}
+	
+	bool upActive = anythingSelected && curEffectIndex > 1;
+	bool downActive = anythingSelected && curEffectIndex < highestEffectIndex;
+	
+	// Enable or disable the "Delete" context menu items based on the presence
+	// of a selection.
+	gtk_widget_set_sensitive(_effectWidgets.deleteMenuItem, anythingSelected);
+		
+	gtk_widget_set_sensitive(_effectWidgets.upMenuItem, upActive);
+	gtk_widget_set_sensitive(_effectWidgets.downMenuItem, downActive);
+}
+
 // Static GTK Callbacks
 gboolean StimResponseEditor::onDelete(GtkWidget* widget, GdkEvent* event, StimResponseEditor* self) {
 	// Toggle the visibility of the window
@@ -880,14 +904,8 @@ void StimResponseEditor::onEffectSelectionChange(GtkTreeSelection* selection,
 										   StimResponseEditor* self) 
 {
 	if (self->_updatesDisabled)	return; // Callback loop guard
-	
-	bool anythingSelected = gtk_tree_selection_get_selected(selection, NULL, NULL);
-	
-	// Enable or disable the "Delete" context menu items based on the presence
-	// of a selection.
-	gtk_widget_set_sensitive(self->_effectWidgets.deleteMenuItem, anythingSelected);
-	gtk_widget_set_sensitive(self->_effectWidgets.upMenuItem, anythingSelected);
-	gtk_widget_set_sensitive(self->_effectWidgets.downMenuItem, anythingSelected);
+	// Update the sensitivity
+	self->updateEffectContextMenu();
 }
 
 void StimResponseEditor::onClassChange(GtkToggleButton* toggleButton, StimResponseEditor* self) {

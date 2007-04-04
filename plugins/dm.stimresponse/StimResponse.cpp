@@ -81,11 +81,27 @@ void StimResponse::sortEffects() {
 	_effects = newMap;
 }
 
+unsigned int StimResponse::highestEffectIndex() {
+	unsigned int returnValue = 0;
+	
+	// Search for the highest index
+	for (EffectMap::iterator i = _effects.begin(); i != _effects.end(); i++) {
+		if (i->first > returnValue) {
+			returnValue = i->first;
+		}
+	}
+	
+	return returnValue;
+}
+
 void StimResponse::addEffect(const unsigned int index) {
+	// Resort the effects, it may be unsorted when loaded fresh from the entity
+	sortEffects();
+	
 	EffectMap::iterator found = _effects.find(index);
 	
 	if (found == _effects.end()) {
-		unsigned int newIndex = _effects.size() + 1; 
+		unsigned int newIndex = highestEffectIndex() + 1; 
 		// No item found (index could be -1), append to the end of the list
 		_effects[newIndex] = ResponseEffect();
 		_effects[newIndex].setName(

@@ -105,6 +105,10 @@ public:
 	
 private:
 
+	/** greebo: Updates the context menu item sensitivity
+	 */
+	void updateEffectContextMenu();
+
 	/** greebo: Edits the currently selected effect 
 	 */
 	void editEffect();
