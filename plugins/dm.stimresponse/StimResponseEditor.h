@@ -96,6 +96,11 @@ public:
 	 */
 	void shutdown();
 	
+	/** greebo: This updates the widget sensitivity and loads
+	 * 			the data into them.
+	 */
+	void update();
+	
 private:
 
 	/** greebo: Edits the currently selected effect 
@@ -158,11 +163,6 @@ private:
 	GtkWidget* createButtons(); 	// Dialog buttons
 	void createContextMenus();		// Popup menus
 	
-	/** greebo: This updates the widget sensitivity and loads
-	 * 			the data into them.
-	 */
-	void update();
-
 	/** greebo: Updates the sensitivity of the "Add yyy" buttons
 	 */
 	void updateAddButton();

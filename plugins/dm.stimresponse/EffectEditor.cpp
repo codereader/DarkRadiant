@@ -7,7 +7,10 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/TreeModel.h"
+#include "StimResponseEditor.h"
 #include <iostream>
+
+namespace ui {
 
 	namespace {
 		const std::string WINDOW_TITLE = "Edit Response Effect";
@@ -27,13 +30,15 @@
 
 EffectEditor::EffectEditor(GtkWindow* parent, 
 						   StimResponse& response, 
-						   const unsigned int effectIndex) :
+						   const unsigned int effectIndex,
+						   ui::StimResponseEditor& editor) :
 	DialogWindow(WINDOW_TITLE, parent),
 	_argTable(NULL),
 	_tooltips(NULL),
 	_entityStore(gtk_list_store_new(1, G_TYPE_STRING)),
 	_response(response),
-	_effectIndex(effectIndex)
+	_effectIndex(effectIndex),
+	_editor(editor)
 {
 	gtk_window_set_modal(GTK_WINDOW(_window), TRUE);
 	gtk_container_set_border_width(GTK_CONTAINER(_window), 12);
@@ -88,7 +93,7 @@ EffectEditor::EffectEditor(GtkWindow* parent,
 	// Create the alignment container that hold the (exchangable) widget table
 	_argAlignment = gtk_alignment_new(0.0, 0.5, 1.0, 1.0);
 	gtk_alignment_set_padding(GTK_ALIGNMENT(_argAlignment), 0, 0, 18, 0);
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), _argAlignment, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), _argAlignment, FALSE, FALSE, 3);
 
 	// Parse the argument types from the effect and create the widgets
 	createArgumentWidgets(effect);
@@ -249,9 +254,6 @@ void EffectEditor::createArgumentWidgets(ResponseEffect& effect) {
 		}
 	}
 	
-	// Reset the window size, there may be fewer argument widgets than before
-	setWindowSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT);
-	
 	// Show the table and all subwidgets
 	gtk_widget_show_all(_argTable);
 }
@@ -261,6 +263,8 @@ void EffectEditor::save() {
 	for (unsigned int i = 0; i < _argumentItems.size(); i++) {
 		_argumentItems[i]->save();
 	}
+	// Call the update routine of the parent editor
+	_editor.update();
 }
 
 // Traverse the scenegraph to populate the tree model
@@ -327,3 +331,5 @@ void EffectEditor::onCancel(GtkWidget* button, EffectEditor* self) {
 void EffectEditor::onEffectTypeChange(GtkWidget* combobox, EffectEditor* self) {
 	self->effectTypeChanged();
 }
+
+} // namespace ui
