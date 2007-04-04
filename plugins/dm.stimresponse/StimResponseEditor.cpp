@@ -174,7 +174,7 @@ void StimResponseEditor::populateWindow() {
 	g_signal_connect(G_OBJECT(_entitySRView), "key-press-event", 
 					 G_CALLBACK(onTreeViewKeyPress), this);
 	g_signal_connect(G_OBJECT(_entitySRView), "button-release-event", 
-					 G_CALLBACK(onTreeViewButtonEvent), this);
+					 G_CALLBACK(onTreeViewButtonRelease), this);
 	
 	// ID number
 	GtkTreeViewColumn* numCol = gtk_tree_view_column_new();
@@ -462,7 +462,9 @@ GtkWidget* StimResponseEditor::createEffectWidgets() {
 	g_signal_connect(G_OBJECT(_effectWidgets.view), "key-press-event", 
 					 G_CALLBACK(onTreeViewKeyPress), this);
 	g_signal_connect(G_OBJECT(_effectWidgets.view), "button-press-event",
-					 G_CALLBACK(onTreeViewButtonEvent), this);
+					 G_CALLBACK(onTreeViewButtonPress), this);
+	g_signal_connect(G_OBJECT(_effectWidgets.view), "button-release-event",
+					 G_CALLBACK(onTreeViewButtonRelease), this);
 	
 	gtk_tree_view_append_column(
 		GTK_TREE_VIEW(_effectWidgets.view), 
@@ -532,7 +534,7 @@ void StimResponseEditor::createContextMenus() {
 	
 	// Menu widgets
 	_stimListContextMenu = gtk_menu_new();
-	_scriptListContextMenu = gtk_menu_new();
+	_effectListContextMenu = gtk_menu_new();
 	
 	// Each menu gets a delete item
 	_srWidgets.deleteMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
@@ -541,7 +543,7 @@ void StimResponseEditor::createContextMenus() {
 															   "Delete");
 	gtk_menu_shell_append(GTK_MENU_SHELL(_stimListContextMenu), 
 						  _srWidgets.deleteMenuItem);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_scriptListContextMenu), 
+	gtk_menu_shell_append(GTK_MENU_SHELL(_effectListContextMenu), 
 						  _effectWidgets.deleteMenuItem);
 	
 	// Connect up the signals
@@ -552,7 +554,7 @@ void StimResponseEditor::createContextMenus() {
 	
 	// Show menus (not actually visible until popped up)
 	gtk_widget_show_all(_stimListContextMenu);
-	gtk_widget_show_all(_scriptListContextMenu);
+	gtk_widget_show_all(_effectListContextMenu);
 }
 
 void StimResponseEditor::update() {
@@ -698,6 +700,8 @@ void StimResponseEditor::updateSRWidgets() {
 		GtkListStore* effectStore = sr.getEffectStore();
 		gtk_tree_view_set_model(GTK_TREE_VIEW(_effectWidgets.view), GTK_TREE_MODEL(effectStore));
 		g_object_unref(effectStore);
+		
+		gtk_widget_set_sensitive(_effectWidgets.view, sr.get("class") == "R");
 	}
 	else {
 		gtk_widget_set_sensitive(_srWidgets.vbox, FALSE);
@@ -749,7 +753,7 @@ void StimResponseEditor::removeStimResponse() {
 }
 
 void StimResponseEditor::addResponseScript() {
-	// Get the currently selected stim type
+	/*// Get the currently selected stim type
 	std::string type = getStimTypeName();
 		
 	if (!type.empty()) {
@@ -765,11 +769,11 @@ void StimResponseEditor::addResponseScript() {
 		
 		// Update the sensitivity of the "add script" button
 		updateAddButton();
-	}
+	}*/
 }
 
 void StimResponseEditor::removeScript() {
-	GtkTreeIter iter;
+	/*GtkTreeIter iter;
 	GtkTreeModel* model;
 	bool anythingSelected = gtk_tree_selection_get_selected(
 		_effectWidgets.selection, &model, &iter
@@ -781,7 +785,7 @@ void StimResponseEditor::removeScript() {
 		
 		// Update the sensitivity of the "add script" button
 		updateAddButton();
-	}
+	}*/
 }
 
 int StimResponseEditor::getEffectIdFromSelection() {
@@ -1094,21 +1098,29 @@ gboolean StimResponseEditor::onWindowKeyPress(
 }
 
 // Button click events on TreeViews
-gboolean StimResponseEditor::onTreeViewButtonEvent(
+gboolean StimResponseEditor::onTreeViewButtonPress(
 	GtkTreeView* view, GdkEventButton* ev, StimResponseEditor* self)
 {
-	// Single click with RMB
+	if (ev->type == GDK_2BUTTON_PRESS) {
+		// Call the effect editor upon double click
+		self->editEffect();
+	}
+	
+	return FALSE;
+}
+
+// Button release event on TreeViews
+gboolean StimResponseEditor::onTreeViewButtonRelease(
+	GtkTreeView* view, GdkEventButton* ev, StimResponseEditor* self)
+{
+	// Single click with RMB (==> open context menu)
 	if (ev->button == 3) {
 		if (view == GTK_TREE_VIEW(self->_entitySRView))
 			gtk_menu_popup(GTK_MENU(self->_stimListContextMenu), NULL, NULL, 
 						   NULL, NULL, 1, GDK_CURRENT_TIME);
 		else if (view == GTK_TREE_VIEW(self->_effectWidgets.view))
-			gtk_menu_popup(GTK_MENU(self->_scriptListContextMenu), NULL, NULL, 
+			gtk_menu_popup(GTK_MENU(self->_effectListContextMenu), NULL, NULL, 
 						   NULL, NULL, 1, GDK_CURRENT_TIME);
-	}
-	else if (ev->type == GDK_2BUTTON_PRESS) {
-		// Call the effect editor upon double click
-		self->editEffect();
 	}
 	
 	return FALSE;

@@ -76,6 +76,17 @@ public:
 	{}
 };
 
+class BooleanArgument :
+	public EffectArgumentItem
+{
+	GtkWidget* _checkButton;
+public:
+	BooleanArgument(ResponseEffect::Argument& arg, GtkTooltips* tooltips);
+	
+	virtual GtkWidget* getEditWidget();
+	virtual std::string getValue();
+};
+
 /** greebo: This is an item querying an entity name (entry/dropdown combo)
  */
 class EntityArgument :

@@ -63,6 +63,11 @@ public:
 	 */
 	ArgumentList& getArguments();
 	
+	/** greebo: Returns a "fabricated" argument string
+	 * 			in human-readable format to pack into the effects list
+	 */
+	std::string getArgumentStr();
+	
 	/** greebo: Returns the "display name" of this effect (e.g. "Damage")
 	 */
 	std::string getCaption() const;
