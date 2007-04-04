@@ -42,24 +42,34 @@ class EffectEditor :
 	typedef std::vector<ArgumentItemPtr> ArgumentItemList;
 	ArgumentItemList _argumentItems;
 	
+	// The references to the object we're editing here 
+	StimResponse& _response;
+	unsigned int _effectIndex;
+	
 public:
-	EffectEditor(GtkWindow* parent);
-	
-	/** greebo: Creates the widgets 
-	 */
-	void populateWindow();
-	
-	/** greebo: Shows the window (it stays hidden till this
-	 * 			method is called).
+	/** greebo: Constructor, needs information about parent and the edit target. 
+	 * 
+	 * @parent: The parent this window is child of.
 	 * 
 	 * @response: The Stim/Response object the effect is associated with
 	 * 			  (this should be a response, although stims work as well).
 	 * 
 	 * @effectIndex: The response effect index within the given Response. 
 	 */
-	void editEffect(StimResponse& response, const unsigned int effectIndex);
-
+	EffectEditor(GtkWindow* parent, 
+				 StimResponse& response, 
+				 const unsigned int effectIndex);
+	
+	/** greebo: Creates the widgets 
+	 */
+	void populateWindow();
+	
 private:
+	/** greebo: Gets called on effect type changes to update the argument
+	 * 			widgets accordingly.
+	 */
+	void effectTypeChanged();
+
 	/** greebo: Populate the entity list store by traversing the 
 	 * 			scene graph searching for entities. The names of 
 	 * 			the entities are stored into the member _entityStore
@@ -75,6 +85,7 @@ private:
 	 */
 	void createArgumentWidgets(ResponseEffect& effect);
 	
+	static void onEffectTypeChange(GtkWidget* combobox, EffectEditor* self);
 	static void onSave(GtkWidget* button, EffectEditor* self);
 	static void onCancel(GtkWidget* button, EffectEditor* self);
 };

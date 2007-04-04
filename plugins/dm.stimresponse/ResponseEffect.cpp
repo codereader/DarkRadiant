@@ -66,6 +66,9 @@ ResponseEffect::ArgumentList& ResponseEffect::getArguments() {
 void ResponseEffect::buildArgumentList() {
 	if (_eclass == NULL) return;
 	
+	// Remove all possible previous items that may still be in memory
+	_args.clear();
+	
 	for (int i = 1; i < 1000; i++) {
 		std::string argType = _eclass->getValueForKey("editor_argType" + intToStr(i));
 		std::string argDesc = _eclass->getValueForKey("editor_argDesc" + intToStr(i));

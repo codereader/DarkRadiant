@@ -866,8 +866,8 @@ void StimResponseEditor::editEffect() {
 		// Make sure we have a response and anything selected
 		if (sr.get("class") == "R" && effectIndex > 0) {
 			// Create a new effect editor (self-destructs)
-			EffectEditor* editor = new EffectEditor(GTK_WINDOW(_dialog));
-			editor->editEffect(sr, effectIndex);
+			EffectEditor* editor = 
+				new EffectEditor(GTK_WINDOW(_dialog), sr, effectIndex);
 			
 			// The editor is modal and will destroy itself, our work is done
 		}
