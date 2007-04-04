@@ -81,6 +81,23 @@ void StimResponse::sortEffects() {
 	_effects = newMap;
 }
 
+void StimResponse::moveEffect(const unsigned int fromIndex, 
+							  const unsigned int toIndex)
+{
+	EffectMap::iterator from = _effects.find(fromIndex);
+	EffectMap::iterator to = _effects.find(toIndex);
+	
+	if (from != _effects.end() && to != _effects.end()) {
+		// Copy the ResponseEffects from the map
+		ResponseEffect fromEffect = from->second;
+		ResponseEffect toEffect = to->second;
+		
+		// Write them back at the swapped locations
+		_effects[fromIndex] = toEffect;
+		_effects[toIndex] = fromEffect;
+	}
+}
+
 unsigned int StimResponse::highestEffectIndex() {
 	unsigned int returnValue = 0;
 	
@@ -162,6 +179,7 @@ GtkListStore* StimResponse::getEffectStore() {
 											 G_TYPE_INT,	// Index
 											 G_TYPE_STRING, // Caption
 											 G_TYPE_STRING, // Arguments
+											 G_TYPE_STRING, // Index String
 											 -1);
 	
 	for (EffectMap::iterator i = _effects.begin(); i != _effects.end(); i++) {
@@ -173,6 +191,7 @@ GtkListStore* StimResponse::getEffectStore() {
 		// Store the ID into the liststore
 		gtk_list_store_set(store, &iter, 
 						   EFFECT_INDEX_COL, index,
+						   EFFECT_INDEX_STR_COL, intToStr(index).c_str(),
 						   -1);
 		
 		// And write the rest of the data to the row

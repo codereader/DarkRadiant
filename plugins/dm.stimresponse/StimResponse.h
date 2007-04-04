@@ -14,6 +14,7 @@
 			EFFECT_INDEX_COL,
 			EFFECT_CAPTION_COL,
 			EFFECT_ARGS_COL,
+			EFFECT_INDEX_STR_COL,
 			EFFECT_NUM_COLS,
 		};
 	}
@@ -102,6 +103,10 @@ public:
 	/** greebo: Returns the highest used effect index.
 	 */
 	unsigned int highestEffectIndex();
+	
+	/** greebo: Swaps the two effects with the specified indices. 
+	 */
+	void moveEffect(const unsigned int fromIndex, const unsigned int toIndex);
 	
 	/** greebo: Removes the effect with the given index.
 	 * 			This re-sorts the items after deletion.

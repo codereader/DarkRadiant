@@ -105,6 +105,10 @@ public:
 	
 private:
 
+	/** greebo: Selects the effect with the given id in the treeview
+	 */
+	void selectEffectIndex(const unsigned int index);
+
 	/** greebo: Updates the context menu item sensitivity
 	 */
 	void updateEffectContextMenu();
@@ -130,6 +134,14 @@ private:
 	/** greebo: Removes the currently selected response effect
 	 */
 	void removeEffect();
+	
+	/** greebo: Moves the selected effect up or down (i.e. increasing
+	 * 			or decreasing its index).
+	 * 
+	 * @direction: +1 for moving it down (increasing the index)
+	 * 			   -1 for moving it up (decreasing the index)
+	 */
+	void moveEffect(int direction);
 
 	/** greebo: Removes the currently selected stim/response object
 	 */
@@ -233,6 +245,8 @@ private:
 		GtkTreeView* view, GdkEventButton* ev, StimResponseEditor* self);
 	static void _onContextMenuDelete(GtkWidget*, StimResponseEditor*);
 	static void _onContextMenuAddEffect(GtkWidget*, StimResponseEditor*);
+	static void _onContextMenuEffectUp(GtkWidget*, StimResponseEditor*);
+	static void _onContextMenuEffectDown(GtkWidget*, StimResponseEditor*);
 
 }; // class StimResponseEditor
 

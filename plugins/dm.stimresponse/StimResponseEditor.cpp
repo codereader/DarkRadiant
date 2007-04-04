@@ -254,7 +254,7 @@ void StimResponseEditor::populateWindow() {
 	
 	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.stimTypeList, 
 					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.addButton, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.addButton, FALSE, FALSE, 0);
 	
 	g_signal_connect(G_OBJECT(_addWidgets.addButton), "clicked", G_CALLBACK(onAdd), this);
 	
@@ -493,7 +493,11 @@ void StimResponseEditor::createContextMenus() {
 					 G_CALLBACK(_onContextMenuDelete), this);
 	g_signal_connect(G_OBJECT(_effectWidgets.addMenuItem), "activate",
 					 G_CALLBACK(_onContextMenuAddEffect), this);
-	
+	g_signal_connect(G_OBJECT(_effectWidgets.upMenuItem), "activate",
+					 G_CALLBACK(_onContextMenuEffectUp), this);
+	g_signal_connect(G_OBJECT(_effectWidgets.downMenuItem), "activate",
+					 G_CALLBACK(_onContextMenuEffectDown), this);
+
 	// Show menus (not actually visible until popped up)
 	gtk_widget_show_all(_stimListContextMenu);
 	gtk_widget_show_all(_effectListContextMenu);
@@ -730,6 +734,42 @@ void StimResponseEditor::removeEffect() {
 			// Remove the effect and update all the widgets
 			sr.deleteEffect(effectIndex);
 			update();
+		}
+	}
+}
+
+void StimResponseEditor::selectEffectIndex(const unsigned int index) {
+	// Setup the selectionfinder to search for the index string
+	gtkutil::TreeModel::SelectionFinder finder(intToStr(index), EFFECT_INDEX_STR_COL);
+
+	gtk_tree_model_foreach(
+		gtk_tree_view_get_model(GTK_TREE_VIEW(_effectWidgets.view)),
+		gtkutil::TreeModel::SelectionFinder::forEach,
+		&finder
+	);
+	
+	if (finder.getPath() != NULL) {
+		GtkTreeIter iter = finder.getIter();
+		// Set the active row of the list to the given effect
+		gtk_tree_selection_select_iter(_effectWidgets.selection, &iter);
+	}
+}
+
+void StimResponseEditor::moveEffect(int direction) {
+	if (_srEntity == NULL) return;
+	
+	int id = getIdFromSelection();
+	
+	if (id > 0) {
+		StimResponse& sr = _srEntity->get(id);
+		int effectIndex = getEffectIdFromSelection();
+		
+		if (sr.get("class") == "R" && effectIndex > 0) {
+			// Move the index (swap the specified indices)
+			sr.moveEffect(effectIndex, effectIndex + direction);
+			update();
+			// Select the moved effect after the update
+			selectEffectIndex(effectIndex + direction);
 		}
 	}
 }
@@ -1126,6 +1166,18 @@ void StimResponseEditor::_onContextMenuAddEffect(GtkWidget* widget,
 	StimResponseEditor* self)
 {
 	self->addEffect();
+}
+
+void StimResponseEditor::_onContextMenuEffectUp(GtkWidget* widget, 
+	StimResponseEditor* self)
+{
+	self->moveEffect(-1);
+}
+
+void StimResponseEditor::_onContextMenuEffectDown(GtkWidget* widget, 
+	StimResponseEditor* self)
+{
+	self->moveEffect(+1);
 }
 
 void StimResponseEditor::onStimTypeChange(GtkComboBox* widget, 
