@@ -28,12 +28,6 @@ class StimResponseEditor
 	// The close button to toggle the view
 	GtkWidget* _closeButton;
 	
-	// The combobox using a liststore model filled with stims plus buttons
-	struct AddWidgets {
-		GtkWidget* stimTypeList;
-		GtkWidget* addButton;
-	} _addWidgets; 
-	
 	// The treeview with the entity's stims/responses
 	GtkWidget* _entitySRView;
 	GtkTreeSelection* _entitySRSelection;
@@ -52,6 +46,7 @@ class StimResponseEditor
 		GtkWidget* modelToggle;
 		GtkWidget* modelEntry;
 		GtkWidget* timerTypeToggle;
+		GtkWidget* addMenuItem;
 		GtkWidget* deleteMenuItem;
 	} _srWidgets;
 	
@@ -120,12 +115,6 @@ private:
 	/** greebo: Saves the current working set to the entity
 	 */
 	void save();
-
-	/** greebo: Retrieves the currently selected stimType name
-	 * 
-	 * @returns: the name of the Stim type (e.g. STIM_FIRE)
-	 */
-	std::string getStimTypeName();
 
 	/** greebo: Adds a new response effect to the list.
 	 */
@@ -222,7 +211,6 @@ private:
 	static void onRadiusChanged(GtkEditable* editable, StimResponseEditor* self);
 
 	// Button callbacks
-	static void onAdd(GtkWidget* button, StimResponseEditor* self);
 	static void onSave(GtkWidget* button, StimResponseEditor* self);
 	static void onClose(GtkWidget* button, StimResponseEditor* self);
 	static void onRevert(GtkWidget* button, StimResponseEditor* self);
@@ -239,8 +227,8 @@ private:
 	// Tree view button click events (for popup menus)
 	static gboolean onTreeViewButtonRelease(
 		GtkTreeView* view, GdkEventButton* ev, StimResponseEditor* self);
+	static void _onContextMenuAdd(GtkWidget*, StimResponseEditor*);
 	static void _onContextMenuDelete(GtkWidget*, StimResponseEditor*);
-	static void _onContextMenuAddEffect(GtkWidget*, StimResponseEditor*);
 	static void _onContextMenuEffectUp(GtkWidget*, StimResponseEditor*);
 	static void _onContextMenuEffectDown(GtkWidget*, StimResponseEditor*);
 
