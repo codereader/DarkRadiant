@@ -179,7 +179,8 @@
 			<!-- The key root names "class" refers to "sr_class_N" -->
 			<property name="class" classes="SR" />
 			<property name="use_bounds" classes="S" />
-			<property name="model" classes="SR" />
+			<property name="magnitude" classes="S" />
+			<property name="falloffexponent" classes="S" />
 			<property name="time_interval" classes="S" />
 			<property name="type" classes="SR" />
 			<property name="state" classes="SR" />

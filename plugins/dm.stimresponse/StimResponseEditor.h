@@ -43,8 +43,9 @@ class StimResponseEditor
 		GtkWidget* radiusEntry;
 		GtkWidget* timeIntToggle;
 		GtkWidget* timeIntEntry;
-		GtkWidget* modelToggle;
-		GtkWidget* modelEntry;
+		GtkWidget* timeUnitLabel;
+		GtkWidget* magnToggle;
+		GtkWidget* magnEntry;
 		GtkWidget* timerTypeToggle;
 		GtkWidget* addMenuItem;
 		GtkWidget* deleteMenuItem;
@@ -201,12 +202,12 @@ private:
 	static void onActiveToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
 	static void onBoundsToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
 	static void onRadiusToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
-	static void onModelToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
+	static void onMagnitudeToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
 	static void onTimeIntervalToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
 	static void onTimerTypeToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
 
 	// Entry text changes
-	static void onModelChanged(GtkEditable* editable, StimResponseEditor* self);
+	static void onMagnitudeChanged(GtkEditable* editable, StimResponseEditor* self);
 	static void onTimeIntervalChanged(GtkEditable* editable, StimResponseEditor* self);
 	static void onRadiusChanged(GtkEditable* editable, StimResponseEditor* self);
 

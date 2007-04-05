@@ -8,6 +8,7 @@
 #include "selectionlib.h"
 #include "gtkutil/image.h"
 #include "gtkutil/LeftAlignedLabel.h"
+#include "gtkutil/RightAlignedLabel.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/IconTextColumn.h"
 #include "gtkutil/IconTextButton.h"
@@ -220,42 +221,6 @@ void StimResponseEditor::populateWindow() {
 	
 	gtk_box_pack_start(GTK_BOX(srHBox), createSRWidgets(), TRUE, TRUE, 6);
 	
-	/*// Add stim/response section
-    gtk_box_pack_start(GTK_BOX(_dialogVBox), 
-    				   gtkutil::LeftAlignedLabel(LABEL_ADD_STIMRESPONSE),
-    				   FALSE, FALSE, 0);
-	
-	GtkWidget* addHBox = gtk_hbox_new(FALSE, 6);
-	GtkWidget* addAlignment = gtkutil::LeftAlignment(GTK_WIDGET(addHBox), 18, 1.0); 
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(addAlignment), FALSE, FALSE, 0);
-	
-	// Cast the helper class onto a ListStore and create a new treeview
-	GtkListStore* stimListStore = _stimTypes;
-	_addWidgets.stimTypeList = gtk_combo_box_new_with_model(GTK_TREE_MODEL(stimListStore));
-	gtk_widget_set_size_request(_addWidgets.stimTypeList, TREE_VIEW_WIDTH + 4, -1);
-	g_object_unref(stimListStore); // tree view owns the reference now
-	
-	// Add the cellrenderer for the name
-	GtkCellRenderer* nameRenderer = gtk_cell_renderer_text_new();
-	GtkCellRenderer* iconRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_addWidgets.stimTypeList), iconRenderer, FALSE);
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_addWidgets.stimTypeList), nameRenderer, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_addWidgets.stimTypeList), nameRenderer, "text", 1);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_addWidgets.stimTypeList), iconRenderer, "pixbuf", 2);
-	gtk_cell_renderer_set_fixed_size(iconRenderer, 26, -1);
-	
-	_addWidgets.addButton = gtk_button_new_with_label("Add new Stim/Response");
-	gtk_button_set_image(
-		GTK_BUTTON(_addWidgets.addButton), 
-		gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_BUTTON)
-	);
-	
-	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.stimTypeList, 
-					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.addButton, FALSE, FALSE, 0);
-	
-	g_signal_connect(G_OBJECT(_addWidgets.addButton), "clicked", G_CALLBACK(onAdd), this);*/
-	
 	// Response effects section
     gtk_box_pack_start(GTK_BOX(_dialogVBox),
     				   gtkutil::LeftAlignedLabel(LABEL_RESPONSE_EFFECTS),
@@ -382,13 +347,27 @@ GtkWidget* StimResponseEditor::createSRWidgets() {
 	
 	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), radiusHBox, FALSE, FALSE, 0);
 	
+	// Magnitude
+	GtkWidget* magnHBox = gtk_hbox_new(FALSE, 0);
+	_srWidgets.magnToggle = gtk_check_button_new_with_label("Magnitude:");
+	gtk_widget_set_size_request(_srWidgets.magnToggle, 125, -1);
+	_srWidgets.magnEntry = gtk_entry_new();
+	
+	gtk_box_pack_start(GTK_BOX(magnHBox), _srWidgets.magnToggle, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(magnHBox), _srWidgets.magnEntry, TRUE, TRUE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), magnHBox, FALSE, FALSE, 0);
+	
 	// Time Interval
 	GtkWidget* timeHBox = gtk_hbox_new(FALSE, 0);
 	_srWidgets.timeIntToggle = gtk_check_button_new_with_label("Time interval:");
 	gtk_widget_set_size_request(_srWidgets.timeIntToggle, 125, -1);
 	_srWidgets.timeIntEntry = gtk_entry_new();
+	_srWidgets.timeUnitLabel = gtkutil::RightAlignedLabel("ms");
+	gtk_widget_set_size_request(_srWidgets.timeUnitLabel, 24, -1);
 	
 	gtk_box_pack_start(GTK_BOX(timeHBox), _srWidgets.timeIntToggle, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(timeHBox), _srWidgets.timeUnitLabel, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(timeHBox), _srWidgets.timeIntEntry, TRUE, TRUE, 0);
 	
 	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), timeHBox, FALSE, FALSE, 0);
@@ -397,26 +376,15 @@ GtkWidget* StimResponseEditor::createSRWidgets() {
 	_srWidgets.timerTypeToggle = gtk_check_button_new_with_label("Timer restarts after firing");
 	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), _srWidgets.timerTypeToggle, FALSE, FALSE, 0);
 	
-	// Model
-	GtkWidget* modelHBox = gtk_hbox_new(FALSE, 0);
-	_srWidgets.modelToggle = gtk_check_button_new_with_label("Model:");
-	gtk_widget_set_size_request(_srWidgets.modelToggle, 125, -1);
-	_srWidgets.modelEntry = gtk_entry_new();
-	
-	gtk_box_pack_start(GTK_BOX(modelHBox), _srWidgets.modelToggle, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(modelHBox), _srWidgets.modelEntry, TRUE, TRUE, 0);
-	
-	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), modelHBox, FALSE, FALSE, 0);
-	
 	// Connect the checkboxes
 	g_signal_connect(G_OBJECT(_srWidgets.useBounds), "toggled", G_CALLBACK(onBoundsToggle), this);
 	g_signal_connect(G_OBJECT(_srWidgets.radiusToggle), "toggled", G_CALLBACK(onRadiusToggle), this);
 	g_signal_connect(G_OBJECT(_srWidgets.timeIntToggle), "toggled", G_CALLBACK(onTimeIntervalToggle), this);
-	g_signal_connect(G_OBJECT(_srWidgets.modelToggle), "toggled", G_CALLBACK(onModelToggle), this);
+	g_signal_connect(G_OBJECT(_srWidgets.magnToggle), "toggled", G_CALLBACK(onMagnitudeToggle), this);
 	g_signal_connect(G_OBJECT(_srWidgets.timerTypeToggle), "toggled", G_CALLBACK(onTimerTypeToggle), this);
 	
 	// Connect the entry fields
-	g_signal_connect(G_OBJECT(_srWidgets.modelEntry), "changed", G_CALLBACK(onModelChanged), this);
+	g_signal_connect(G_OBJECT(_srWidgets.magnEntry), "changed", G_CALLBACK(onMagnitudeChanged), this);
 	g_signal_connect(G_OBJECT(_srWidgets.radiusEntry), "changed", G_CALLBACK(onRadiusChanged), this);
 	g_signal_connect(G_OBJECT(_srWidgets.timeIntEntry), "changed", G_CALLBACK(onTimeIntervalChanged), this);
 	
@@ -439,6 +407,11 @@ GtkWidget* StimResponseEditor::createEffectWidgets() {
 					 G_CALLBACK(onTreeViewButtonPress), this);
 	g_signal_connect(G_OBJECT(_effectWidgets.view), "button-release-event",
 					 G_CALLBACK(onTreeViewButtonRelease), this);
+	
+	gtk_tree_view_append_column(
+		GTK_TREE_VIEW(_effectWidgets.view), 
+		gtkutil::TextColumn("#", EFFECT_INDEX_COL)
+	);
 	
 	gtk_tree_view_append_column(
 		GTK_TREE_VIEW(_effectWidgets.view), 
@@ -618,6 +591,10 @@ void StimResponseEditor::updateSRWidgets() {
 			_srWidgets.timeIntEntry, 
 			useTimeInterval && sr.get("class") == "S"
 		);
+		gtk_widget_set_sensitive(
+			_srWidgets.timeUnitLabel, 
+			useTimeInterval && sr.get("class") == "S"
+		);
 		gtk_widget_set_sensitive(_srWidgets.timeIntToggle, sr.get("class") == "S");
 		
 		// Timer Type
@@ -630,17 +607,21 @@ void StimResponseEditor::updateSRWidgets() {
 			sr.get("class") == "S" && useTimeInterval
 		);
 		
-		// Use Model
-		bool useModel = (sr.get("model") != "");
+		// Use Magnitude
+		bool useMagnitude = (sr.get("magnitude") != "");
 		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_srWidgets.modelToggle),
-			useModel
+			GTK_TOGGLE_BUTTON(_srWidgets.magnToggle),
+			useMagnitude && sr.get("class") == "S"
 		);
+		gtk_widget_set_sensitive(_srWidgets.magnToggle, sr.get("class") == "S");
 		gtk_entry_set_text(
-			GTK_ENTRY(_srWidgets.modelEntry),
-			sr.get("model").c_str()
+			GTK_ENTRY(_srWidgets.magnEntry),
+			sr.get("magnitude").c_str()
 		);
-		gtk_widget_set_sensitive(_srWidgets.modelEntry, useModel);
+		gtk_widget_set_sensitive(
+			_srWidgets.magnEntry, 
+			useMagnitude && sr.get("class") == "S"
+		);
 		
 		// Disable the editing of inherited properties completely
 		if (sr.inherited()) {
@@ -661,9 +642,15 @@ void StimResponseEditor::updateSRWidgets() {
 		// context menu sensitivity, in the case the "selection changed" 
 		// signal doesn't get called
 		updateEffectContextMenu();
+		
+		// Update the delete context menu item
+		gtk_widget_set_sensitive(_srWidgets.deleteMenuItem,	!sr.inherited());
 	}
 	else {
 		gtk_widget_set_sensitive(_srWidgets.vbox, FALSE);
+		
+		// Disable the "delete" context menu item
+		gtk_widget_set_sensitive(_srWidgets.deleteMenuItem, FALSE);
 		
 		// Clear the effect tree view
 		gtk_tree_view_set_model(GTK_TREE_VIEW(_effectWidgets.view), NULL);
@@ -938,18 +925,18 @@ void StimResponseEditor::onRadiusToggle(GtkToggleButton* toggleButton, StimRespo
 	self->setProperty("radius", entryText);
 }
 
-void StimResponseEditor::onModelToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {
+void StimResponseEditor::onMagnitudeToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {
 	if (self->_updatesDisabled) return; // Callback loop guard
 	
-	std::string entryText = gtk_entry_get_text(GTK_ENTRY(self->_srWidgets.modelEntry));
+	std::string entryText = gtk_entry_get_text(GTK_ENTRY(self->_srWidgets.magnEntry));
 	
 	if (gtk_toggle_button_get_active(toggleButton)) {
-		entryText += (entryText.empty()) ? "model" : "";	
+		entryText += (entryText.empty()) ? "10" : "";	
 	}
 	else {
 		entryText = "";
 	}
-	self->setProperty("model", entryText);
+	self->setProperty("magnitude", entryText);
 }
 
 void StimResponseEditor::onTimeIntervalToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {
@@ -977,12 +964,12 @@ void StimResponseEditor::onTypeSelect(GtkComboBox* widget, StimResponseEditor* s
 	}
 }
 
-void StimResponseEditor::onModelChanged(GtkEditable* editable, StimResponseEditor* self) {
+void StimResponseEditor::onMagnitudeChanged(GtkEditable* editable, StimResponseEditor* self) {
 	if (self->_updatesDisabled) return; // Callback loop guard
 
-	std::string entryText = gtk_entry_get_text(GTK_ENTRY(self->_srWidgets.modelEntry));
+	std::string entryText = gtk_entry_get_text(GTK_ENTRY(self->_srWidgets.magnEntry));
 	if (!entryText.empty()) {
-		self->setProperty("model", entryText);
+		self->setProperty("magnitude", entryText);
 	}
 }
 
