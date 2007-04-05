@@ -48,6 +48,7 @@ namespace {
 	
 	const unsigned int TREE_VIEW_WIDTH = 280;
 	const unsigned int TREE_VIEW_HEIGHT = 240;
+	const unsigned int OPTIONS_LABEL_WIDTH = 140; 
 }
 
 StimResponseEditor::StimResponseEditor() :
@@ -339,7 +340,7 @@ GtkWidget* StimResponseEditor::createSRWidgets() {
 	// Radius
 	GtkWidget* radiusHBox = gtk_hbox_new(FALSE, 0);
 	_srWidgets.radiusToggle = gtk_check_button_new_with_label("Radius:");
-	gtk_widget_set_size_request(_srWidgets.radiusToggle, 125, -1);
+	gtk_widget_set_size_request(_srWidgets.radiusToggle, OPTIONS_LABEL_WIDTH, -1);
 	_srWidgets.radiusEntry = gtk_entry_new();
 	
 	gtk_box_pack_start(GTK_BOX(radiusHBox), _srWidgets.radiusToggle, FALSE, FALSE, 0);
@@ -350,7 +351,7 @@ GtkWidget* StimResponseEditor::createSRWidgets() {
 	// Magnitude
 	GtkWidget* magnHBox = gtk_hbox_new(FALSE, 0);
 	_srWidgets.magnToggle = gtk_check_button_new_with_label("Magnitude:");
-	gtk_widget_set_size_request(_srWidgets.magnToggle, 125, -1);
+	gtk_widget_set_size_request(_srWidgets.magnToggle, OPTIONS_LABEL_WIDTH, -1);
 	_srWidgets.magnEntry = gtk_entry_new();
 	
 	gtk_box_pack_start(GTK_BOX(magnHBox), _srWidgets.magnToggle, FALSE, FALSE, 0);
@@ -358,10 +359,21 @@ GtkWidget* StimResponseEditor::createSRWidgets() {
 	
 	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), magnHBox, FALSE, FALSE, 0);
 	
+	// Falloff exponent
+	GtkWidget* falloffHBox = gtk_hbox_new(FALSE, 0);
+	_srWidgets.falloffToggle = gtk_check_button_new_with_label("Falloff Exponent:");
+	gtk_widget_set_size_request(_srWidgets.falloffToggle, OPTIONS_LABEL_WIDTH, -1);
+	_srWidgets.falloffEntry = gtk_entry_new();
+	
+	gtk_box_pack_start(GTK_BOX(falloffHBox), _srWidgets.falloffToggle, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(falloffHBox), _srWidgets.falloffEntry, TRUE, TRUE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), falloffHBox, FALSE, FALSE, 0);
+	
 	// Time Interval
 	GtkWidget* timeHBox = gtk_hbox_new(FALSE, 0);
 	_srWidgets.timeIntToggle = gtk_check_button_new_with_label("Time interval:");
-	gtk_widget_set_size_request(_srWidgets.timeIntToggle, 125, -1);
+	gtk_widget_set_size_request(_srWidgets.timeIntToggle, OPTIONS_LABEL_WIDTH, -1);
 	_srWidgets.timeIntEntry = gtk_entry_new();
 	_srWidgets.timeUnitLabel = gtkutil::RightAlignedLabel("ms");
 	gtk_widget_set_size_request(_srWidgets.timeUnitLabel, 24, -1);
@@ -381,10 +393,12 @@ GtkWidget* StimResponseEditor::createSRWidgets() {
 	g_signal_connect(G_OBJECT(_srWidgets.radiusToggle), "toggled", G_CALLBACK(onRadiusToggle), this);
 	g_signal_connect(G_OBJECT(_srWidgets.timeIntToggle), "toggled", G_CALLBACK(onTimeIntervalToggle), this);
 	g_signal_connect(G_OBJECT(_srWidgets.magnToggle), "toggled", G_CALLBACK(onMagnitudeToggle), this);
+	g_signal_connect(G_OBJECT(_srWidgets.falloffToggle), "toggled", G_CALLBACK(onFalloffToggle), this);
 	g_signal_connect(G_OBJECT(_srWidgets.timerTypeToggle), "toggled", G_CALLBACK(onTimerTypeToggle), this);
 	
 	// Connect the entry fields
 	g_signal_connect(G_OBJECT(_srWidgets.magnEntry), "changed", G_CALLBACK(onMagnitudeChanged), this);
+	g_signal_connect(G_OBJECT(_srWidgets.falloffEntry), "changed", G_CALLBACK(onFalloffChanged), this);
 	g_signal_connect(G_OBJECT(_srWidgets.radiusEntry), "changed", G_CALLBACK(onRadiusChanged), this);
 	g_signal_connect(G_OBJECT(_srWidgets.timeIntEntry), "changed", G_CALLBACK(onTimeIntervalChanged), this);
 	
@@ -621,6 +635,26 @@ void StimResponseEditor::updateSRWidgets() {
 		gtk_widget_set_sensitive(
 			_srWidgets.magnEntry, 
 			useMagnitude && sr.get("class") == "S"
+		);
+		
+		// Use falloff exponent widgets
+		bool useFalloff = (sr.get("falloffexponent") != "");
+		
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_srWidgets.falloffToggle),
+			useFalloff && sr.get("class") == "S"
+		);
+		gtk_entry_set_text(
+			GTK_ENTRY(_srWidgets.falloffEntry),
+			sr.get("falloffexponent").c_str()
+		);
+		gtk_widget_set_sensitive(
+			_srWidgets.falloffToggle, 
+			useMagnitude && sr.get("class") == "S"
+		);
+		gtk_widget_set_sensitive(
+			_srWidgets.falloffEntry, 
+			useMagnitude && sr.get("class") == "S" && useFalloff
 		);
 		
 		// Disable the editing of inherited properties completely
@@ -860,15 +894,6 @@ void StimResponseEditor::onSRSelectionChange(GtkTreeSelection* selection,
 {
 	if (self->_updatesDisabled)	return; // Callback loop guard
 	
-	// Enable or disable the "Delete" context menu items based on the presence
-	// of a selection.
-	gtk_widget_set_sensitive(self->_srWidgets.deleteMenuItem, FALSE);
-	// TODO
-	gtk_widget_set_sensitive(
-		self->_srWidgets.deleteMenuItem, 
-		gtk_tree_selection_get_selected(selection, NULL, NULL)
-	);
-	
 	// Update the other widgets
 	self->updateSRWidgets();
 }
@@ -939,6 +964,20 @@ void StimResponseEditor::onMagnitudeToggle(GtkToggleButton* toggleButton, StimRe
 	self->setProperty("magnitude", entryText);
 }
 
+void StimResponseEditor::onFalloffToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {
+	if (self->_updatesDisabled) return; // Callback loop guard
+	
+	std::string entryText = gtk_entry_get_text(GTK_ENTRY(self->_srWidgets.falloffEntry));
+	
+	if (gtk_toggle_button_get_active(toggleButton)) {
+		entryText += (entryText.empty()) ? "1" : "";	
+	}
+	else {
+		entryText = "";
+	}
+	self->setProperty("falloffexponent", entryText);
+}
+
 void StimResponseEditor::onTimeIntervalToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {
 	if (self->_updatesDisabled) return; // Callback loop guard
 	
@@ -970,6 +1009,15 @@ void StimResponseEditor::onMagnitudeChanged(GtkEditable* editable, StimResponseE
 	std::string entryText = gtk_entry_get_text(GTK_ENTRY(self->_srWidgets.magnEntry));
 	if (!entryText.empty()) {
 		self->setProperty("magnitude", entryText);
+	}
+}
+
+void StimResponseEditor::onFalloffChanged(GtkEditable* editable, StimResponseEditor* self) {
+	if (self->_updatesDisabled) return; // Callback loop guard
+
+	std::string entryText = gtk_entry_get_text(GTK_ENTRY(self->_srWidgets.falloffEntry));
+	if (!entryText.empty()) {
+		self->setProperty("falloffexponent", entryText);
 	}
 }
 
