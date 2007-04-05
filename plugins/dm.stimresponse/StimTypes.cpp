@@ -85,6 +85,12 @@ StimType StimTypes::get(int id) {
 	}
 }
 
+std::string StimTypes::getFirstName() {
+	StimTypeMap::iterator i = _stims.begin();
+	
+	return (i != _stims.end()) ? i->second.name : "noname";
+}
+
 StimType StimTypes::get(const std::string& name) {
 	for (StimTypeMap::iterator i = _stims.begin(); i!= _stims.end(); i++) {
 		if (i->second.name == name) {

@@ -220,7 +220,7 @@ void StimResponseEditor::populateWindow() {
 	
 	gtk_box_pack_start(GTK_BOX(srHBox), createSRWidgets(), TRUE, TRUE, 6);
 	
-	// Add stim/response section
+	/*// Add stim/response section
     gtk_box_pack_start(GTK_BOX(_dialogVBox), 
     				   gtkutil::LeftAlignedLabel(LABEL_ADD_STIMRESPONSE),
     				   FALSE, FALSE, 0);
@@ -234,8 +234,6 @@ void StimResponseEditor::populateWindow() {
 	_addWidgets.stimTypeList = gtk_combo_box_new_with_model(GTK_TREE_MODEL(stimListStore));
 	gtk_widget_set_size_request(_addWidgets.stimTypeList, TREE_VIEW_WIDTH + 4, -1);
 	g_object_unref(stimListStore); // tree view owns the reference now
-	
-	g_signal_connect(G_OBJECT(_addWidgets.stimTypeList), "changed", G_CALLBACK(onStimTypeChange) , this);
 	
 	// Add the cellrenderer for the name
 	GtkCellRenderer* nameRenderer = gtk_cell_renderer_text_new();
@@ -256,7 +254,7 @@ void StimResponseEditor::populateWindow() {
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(addHBox), _addWidgets.addButton, FALSE, FALSE, 0);
 	
-	g_signal_connect(G_OBJECT(_addWidgets.addButton), "clicked", G_CALLBACK(onAdd), this);
+	g_signal_connect(G_OBJECT(_addWidgets.addButton), "clicked", G_CALLBACK(onAdd), this);*/
 	
 	// Response effects section
     gtk_box_pack_start(GTK_BOX(_dialogVBox),
@@ -466,6 +464,10 @@ void StimResponseEditor::createContextMenus() {
 	// Each menu gets a delete item
 	_srWidgets.deleteMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
 														   "Delete");
+	_srWidgets.addMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_ADD,
+														   "Add new S/R");
+	gtk_menu_shell_append(GTK_MENU_SHELL(_stimListContextMenu), 
+						  _srWidgets.addMenuItem);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_stimListContextMenu), 
 						  _srWidgets.deleteMenuItem);
 
@@ -489,10 +491,13 @@ void StimResponseEditor::createContextMenus() {
 	// Connect up the signals
 	g_signal_connect(G_OBJECT(_srWidgets.deleteMenuItem), "activate",
 					 G_CALLBACK(_onContextMenuDelete), this);
+	g_signal_connect(G_OBJECT(_srWidgets.addMenuItem), "activate",
+					 G_CALLBACK(_onContextMenuAdd), this);
+					 
 	g_signal_connect(G_OBJECT(_effectWidgets.deleteMenuItem), "activate",
 					 G_CALLBACK(_onContextMenuDelete), this);
 	g_signal_connect(G_OBJECT(_effectWidgets.addMenuItem), "activate",
-					 G_CALLBACK(_onContextMenuAddEffect), this);
+					 G_CALLBACK(_onContextMenuAdd), this);
 	g_signal_connect(G_OBJECT(_effectWidgets.upMenuItem), "activate",
 					 G_CALLBACK(_onContextMenuEffectUp), this);
 	g_signal_connect(G_OBJECT(_effectWidgets.downMenuItem), "activate",
@@ -507,7 +512,6 @@ void StimResponseEditor::update() {
 	gtk_widget_set_sensitive(_dialogVBox, _entity != NULL);
 	
 	updateSRWidgets();
-	updateAddButton();
 	gtk_widget_set_sensitive(_closeButton, TRUE);
 }
 
@@ -668,35 +672,18 @@ void StimResponseEditor::updateSRWidgets() {
 	_updatesDisabled = false;
 }
 
-std::string StimResponseEditor::getStimTypeName() {
-	GtkTreeIter iter;
-	GtkComboBox* stimSelector = GTK_COMBO_BOX(_addWidgets.stimTypeList);
-	
-	if (gtk_combo_box_get_active_iter(stimSelector, &iter)) {
-		GtkTreeModel* model = gtk_combo_box_get_model(stimSelector);
-		
-		return gtkutil::TreeModel::getString(model, &iter, 3); // 3 = StimTypes::NAME_COL
-	}
-	else {
-		return "";
-	}
-}
-
 void StimResponseEditor::addStimResponse() {
-	// Get the currently selected stim type
-	std::string type = getStimTypeName();
-		
-	if (!type.empty()) {
-		// Create a new StimResponse object
-		int id = _srEntity->add();
-		// Get a reference to the newly allocated object
-		StimResponse& sr = _srEntity->get(id);
-		
-		sr.set("type", type);
-		
-		// Refresh the values in the liststore
-		_srEntity->updateListStore();
-	}
+	if (_srEntity == NULL) return;
+
+	// Create a new StimResponse object
+	int id = _srEntity->add();
+	
+	// Get a reference to the newly allocated object
+	StimResponse& sr = _srEntity->get(id);
+	sr.set("type", _stimTypes.getFirstName());
+
+	// Refresh the values in the liststore
+	_srEntity->updateListStore();
 }
 
 void StimResponseEditor::removeStimResponse() {
@@ -828,15 +815,6 @@ void StimResponseEditor::save() {
 	_srEntity->save(_entity);
 }
 
-void StimResponseEditor::updateAddButton() {
-	if (_srEntity == NULL) return;
-	
-	// Get the currently selected stim type
-	std::string type = getStimTypeName();
-	
-	gtk_widget_set_sensitive(_addWidgets.addButton,	!type.empty());
-}
-
 void StimResponseEditor::editEffect() {
 	if (_srEntity == NULL) return;
 	
@@ -898,7 +876,7 @@ void StimResponseEditor::onSRSelectionChange(GtkTreeSelection* selection,
 	// Enable or disable the "Delete" context menu items based on the presence
 	// of a selection.
 	gtk_widget_set_sensitive(self->_srWidgets.deleteMenuItem, FALSE);
-		
+	// TODO
 	gtk_widget_set_sensitive(
 		self->_srWidgets.deleteMenuItem, 
 		gtk_tree_selection_get_selected(selection, NULL, NULL)
@@ -1026,10 +1004,6 @@ void StimResponseEditor::onRadiusChanged(GtkEditable* editable, StimResponseEdit
 	}
 }
 
-void StimResponseEditor::onAdd(GtkWidget* button, StimResponseEditor* self) {
-	self->addStimResponse();
-}
-
 void StimResponseEditor::onSave(GtkWidget* button, StimResponseEditor* self) {
 	self->save();
 }
@@ -1113,10 +1087,16 @@ void StimResponseEditor::_onContextMenuDelete(GtkWidget* w,
 		self->removeEffect();
 }
 
-void StimResponseEditor::_onContextMenuAddEffect(GtkWidget* widget, 
-	StimResponseEditor* self)
+// Delete context menu items activated
+void StimResponseEditor::_onContextMenuAdd(GtkWidget* w, 
+										   StimResponseEditor* self)
 {
-	self->addEffect();
+	if (w == self->_srWidgets.addMenuItem) {
+		self->addStimResponse();
+	}
+	else if (w == self->_effectWidgets.addMenuItem) {
+		self->addEffect();
+	}
 }
 
 void StimResponseEditor::_onContextMenuEffectUp(GtkWidget* widget, 
@@ -1129,12 +1109,6 @@ void StimResponseEditor::_onContextMenuEffectDown(GtkWidget* widget,
 	StimResponseEditor* self)
 {
 	self->moveEffect(+1);
-}
-
-void StimResponseEditor::onStimTypeChange(GtkComboBox* widget, 
-										  StimResponseEditor* self) 
-{
-	self->updateAddButton();
 }
 
 // Static command target

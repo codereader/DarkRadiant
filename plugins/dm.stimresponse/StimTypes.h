@@ -46,6 +46,10 @@ public:
 	 */
 	StimType get(const std::string& name);
 	
+	/** greebo: Returns the name of the first available stimtype name.
+	 */
+	std::string getFirstName();
+	
 	/** greebo: Returns the GtkTreeIter pointing to the element
 	 * 			named <name> located in the member _listStore.
 	 */
