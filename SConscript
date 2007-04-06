@@ -327,6 +327,7 @@ srList = build_list('plugins/dm.stimresponse',
 					 SRPropertyLoader.cpp \
 					 SRPropertyRemover.cpp \
 					 SRPropertySaver.cpp \
+					 ClassEditor.cpp \
 					 StimEditor.cpp \
 					 ResponseEditor.cpp \
 					 EffectEditor.cpp \

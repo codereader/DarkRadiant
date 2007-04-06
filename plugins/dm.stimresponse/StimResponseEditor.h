@@ -73,7 +73,7 @@ class StimResponseEditor
 	GtkWidget* _stimListContextMenu;
 	GtkWidget* _effectListContextMenu;
 	
-	// The list of the entity's stims/responses
+	// The "extended" entity object managing the stims
 	SREntityPtr _srEntity;
 	
 	// The position/size memoriser

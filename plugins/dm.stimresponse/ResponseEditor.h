@@ -1,13 +1,14 @@
 #ifndef RESPONSEEDITOR_H_
 #define RESPONSEEDITOR_H_
 
-typedef struct _GtkWidget GtkWidget;
+#include "ClassEditor.h"
 
 namespace ui {
 
-class ResponseEditor
+class ResponseEditor :
+	public ClassEditor
 {
-	GtkWidget* _pageVBox;
+
 public:
 	/** greebo: Constructor creates all the widgets
 	 */
@@ -16,7 +17,7 @@ public:
 	/** greebo: Operator cast to widget to pack this page into
 	 * 			a notebook tab or other parent widget.
 	 */
-	operator GtkWidget*();
+	virtual operator GtkWidget*();
 
 private:
 	/** greebo: Creates all the widgets

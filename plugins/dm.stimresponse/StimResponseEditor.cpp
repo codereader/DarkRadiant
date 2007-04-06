@@ -36,7 +36,6 @@ namespace {
 	const std::string RKEY_ROOT = "user/ui/stimResponseEditor/";
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 	
-	const std::string LABEL_STIMRESPONSE_LIST = "<b>Stims/Responses</b>";
 	const std::string LABEL_ADD_STIMRESPONSE = "<b>Add Stim/Response</b>";
 	const std::string LABEL_RESPONSE_EFFECTS = "<b>Response Effects</b>";
 	
@@ -122,17 +121,6 @@ void StimResponseEditor::toggleWindow() {
 	}
 }
 
-static void textCellDataFunc(GtkTreeViewColumn* treeColumn,
-							 GtkCellRenderer* cell,
-							 GtkTreeModel* treeModel,
-							 GtkTreeIter* iter, 
-							 gpointer data)
-{
-	bool inherited = gtkutil::TreeModel::getBoolean(treeModel, iter, INHERIT_COL);
-	
-	g_object_set(G_OBJECT(cell), "sensitive", !inherited, NULL);
-}
-
 void StimResponseEditor::populateWindow() {
 	
 	// Create the overall vbox
@@ -167,97 +155,6 @@ void StimResponseEditor::populateWindow() {
 	// Cast the helper class to a widget and add it to the notebook page
 	_stimPageNum = gtk_notebook_append_page(_notebook, _stimEditor, stimLabelHBox);
 	_responsePageNum = gtk_notebook_append_page(_notebook, _responseEditor, responseLabelHBox);
-	
-	// Stim/Response list section
-    gtk_box_pack_start(GTK_BOX(_dialogVBox), 
-    				   gtkutil::LeftAlignedLabel(LABEL_STIMRESPONSE_LIST), 
-    				   FALSE, FALSE, 0);
-	
-	GtkWidget* srHBox = gtk_hbox_new(FALSE, 0);
-	
-	// Pack it into an alignment so that it is indented
-	GtkWidget* srAlignment = gtkutil::LeftAlignment(GTK_WIDGET(srHBox), 18, 1.0); 
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(srAlignment), TRUE, TRUE, 0);
-	
-	_entitySRView = gtk_tree_view_new();
-	gtk_widget_set_size_request(_entitySRView, TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT);
-	
-	_entitySRSelection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_entitySRView));
-
-	// Connect the signals
-	g_signal_connect(G_OBJECT(_entitySRSelection), "changed", 
-					 G_CALLBACK(onSRSelectionChange), this);
-	g_signal_connect(G_OBJECT(_entitySRView), "key-press-event", 
-					 G_CALLBACK(onTreeViewKeyPress), this);
-	g_signal_connect(G_OBJECT(_entitySRView), "button-release-event", 
-					 G_CALLBACK(onTreeViewButtonRelease), this);
-	
-	// ID number
-	GtkTreeViewColumn* numCol = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(numCol, "#");
-	GtkCellRenderer* numRenderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(numCol, numRenderer, FALSE);
-	gtk_tree_view_column_set_attributes(numCol, numRenderer, 
-										"text", INDEX_COL,
-										NULL);
-	gtk_tree_view_column_set_cell_data_func(numCol, numRenderer,
-                                            textCellDataFunc,
-                                            NULL, NULL);
-	
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_entitySRView), numCol);
-	
-	// The S/R icon
-	GtkTreeViewColumn* classCol = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(classCol, "S/R");
-	GtkCellRenderer* pixbufRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_column_pack_start(classCol, pixbufRenderer, FALSE);
-	gtk_tree_view_column_set_attributes(classCol, pixbufRenderer, 
-										"pixbuf", CLASS_COL,
-										NULL);
-	gtk_tree_view_column_set_cell_data_func(classCol, pixbufRenderer,
-                                            textCellDataFunc,
-                                            NULL, NULL);
-	
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_entitySRView), classCol);
-	
-	// The Type
-	GtkTreeViewColumn* typeCol = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(typeCol, "Type");
-	
-	GtkCellRenderer* typeIconRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_column_pack_start(typeCol, typeIconRenderer, FALSE);
-	
-	GtkCellRenderer* typeTextRenderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(typeCol, typeTextRenderer, FALSE);
-	
-	gtk_tree_view_column_set_attributes(typeCol, typeTextRenderer, 
-										"text", CAPTION_COL,
-										NULL);
-	gtk_tree_view_column_set_cell_data_func(typeCol, typeTextRenderer,
-                                            textCellDataFunc,
-                                            NULL, NULL);
-	
-	gtk_tree_view_column_set_attributes(typeCol, typeIconRenderer, 
-										"pixbuf", ICON_COL,
-										NULL);
-	gtk_tree_view_column_set_cell_data_func(typeCol, typeIconRenderer,
-                                            textCellDataFunc,
-                                            NULL, NULL);
-	
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_entitySRView), typeCol);
-	
-	gtk_box_pack_start(GTK_BOX(srHBox), 
-		gtkutil::ScrolledFrame(_entitySRView), FALSE, FALSE, 0);
-	
-	gtk_box_pack_start(GTK_BOX(srHBox), createSRWidgets(), TRUE, TRUE, 6);
-	
-	// Response effects section
-    gtk_box_pack_start(GTK_BOX(_dialogVBox),
-    				   gtkutil::LeftAlignedLabel(LABEL_RESPONSE_EFFECTS),
-    				   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), 
-					   gtkutil::LeftAlignment(createEffectWidgets(), 18, 1.0),
-					   TRUE, TRUE, 0);
 	
 	// Pack in dialog buttons
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), createButtons(), FALSE, FALSE, 0);
@@ -536,6 +433,8 @@ void StimResponseEditor::rescanSelection() {
 
 	_entity = NULL;
 	_srEntity = SREntityPtr();
+	_stimEditor.setEntity(_srEntity);
+	_responseEditor.setEntity(_srEntity);
 	
 	if (info.entityCount == 1 && info.totalCount == 1) {
 		// Get the entity instance
@@ -545,6 +444,8 @@ void StimResponseEditor::rescanSelection() {
 		_entity = Node_getEntity(node);
 		
 		_srEntity = SREntityPtr(new SREntity(_entity));
+		_stimEditor.setEntity(_srEntity);
+		_responseEditor.setEntity(_srEntity);
 		
 		// Get the liststores from the SREntity and pack them
 		GtkListStore* listStore = _srEntity->getStimResponseStore();
