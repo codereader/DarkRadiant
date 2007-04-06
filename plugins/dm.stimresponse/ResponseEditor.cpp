@@ -16,6 +16,14 @@ void ResponseEditor::setEntity(SREntityPtr entity) {
 	
 }
 
+void ResponseEditor::entryChanged(GtkEditable* editable) {
+	
+}
+
+void ResponseEditor::update() {
+	
+}
+
 void ResponseEditor::populatePage() {
 	// Response effects section
     /*gtk_box_pack_start(GTK_BOX(_pageVBox),

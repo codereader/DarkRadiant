@@ -207,6 +207,12 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	_propertyWidgets.timerTypeToggle = gtk_check_button_new_with_label("Timer restarts after firing");
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.timerTypeToggle, FALSE, FALSE, 0);
 	
+	// The map associating entry fields to stim property keys  
+	_entryWidgets[GTK_EDITABLE(_propertyWidgets.radiusEntry)] = "time_interval";
+	_entryWidgets[GTK_EDITABLE(_propertyWidgets.timeIntEntry)] = "radius";
+	_entryWidgets[GTK_EDITABLE(_propertyWidgets.magnEntry)] = "magnitude";
+	_entryWidgets[GTK_EDITABLE(_propertyWidgets.falloffEntry)] = "falloffexponent";
+		
 	// Connect the checkboxes
 	//g_signal_connect(G_OBJECT(_propertyWidgets.active), "toggled", G_CALLBACK(onActiveToggle), this);
 	//g_signal_connect(G_OBJECT(_propertyWidgets.useBounds), "toggled", G_CALLBACK(onBoundsToggle), this);
@@ -217,12 +223,24 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	//g_signal_connect(G_OBJECT(_propertyWidgets.timerTypeToggle), "toggled", G_CALLBACK(onTimerTypeToggle), this);
 	
 	// Connect the entry fields
-	//g_signal_connect(G_OBJECT(_propertyWidgets.magnEntry), "changed", G_CALLBACK(onMagnitudeChanged), this);
-	//g_signal_connect(G_OBJECT(_propertyWidgets.falloffEntry), "changed", G_CALLBACK(onFalloffChanged), this);
-	//g_signal_connect(G_OBJECT(_propertyWidgets.radiusEntry), "changed", G_CALLBACK(onRadiusChanged), this);
-	//g_signal_connect(G_OBJECT(_propertyWidgets.timeIntEntry), "changed", G_CALLBACK(onTimeIntervalChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.magnEntry), "changed", G_CALLBACK(onEntryChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.falloffEntry), "changed", G_CALLBACK(onEntryChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.radiusEntry), "changed", G_CALLBACK(onEntryChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.timeIntEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	
 	return gtkutil::LeftAlignment(_propertyWidgets.vbox, 6, 1.0f);
+}
+
+void StimEditor::entryChanged(GtkEditable* editable) {
+	// Try to find the key this entry widget is associated to
+	EntryMap::iterator found = _entryWidgets.find(editable);
+	
+	if (found != _entryWidgets.end()) {
+		std::string entryText = gtk_entry_get_text(GTK_ENTRY(editable));
+		if (!entryText.empty()) {
+			setProperty(found->second, entryText);
+		}
+	}
 }
 
 void StimEditor::removeItem(GtkTreeView* view) {
@@ -279,7 +297,7 @@ void StimEditor::createContextMenu() {
 	gtk_widget_show_all(_contextMenu);
 }
 
-void StimEditor::updatePropertyWidgets() {
+void StimEditor::update() {
 	_updatesDisabled = true; // avoid unwanted callbacks
 	
 	int id = getIdFromSelection();
@@ -416,7 +434,7 @@ void StimEditor::updatePropertyWidgets() {
 }
 
 void StimEditor::selectionChanged() {
-	updatePropertyWidgets();
+	update();
 }
 
 // Delete context menu items activated
