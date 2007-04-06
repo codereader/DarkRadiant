@@ -297,11 +297,6 @@ void StimResponseEditor::rescanSelection() {
 		_stimEditor.setEntity(_srEntity);
 		_responseEditor.setEntity(_srEntity);
 		
-		// Get the liststores from the SREntity and pack them
-		//GtkListStore* listStore = _srEntity->getStimStore();
-		//gtk_tree_view_set_model(GTK_TREE_VIEW(_entitySRView), GTK_TREE_MODEL(listStore));
-		//g_object_unref(listStore);
-		
 		// Clear the treeview (unset the model)
 		gtk_tree_view_set_model(GTK_TREE_VIEW(_effectWidgets.view), NULL);
 	}
@@ -329,119 +324,6 @@ void StimResponseEditor::updateSRWidgets() {
 		
 		StimResponse& sr = _srEntity->get(id);
 		
-		// Get the iter into the liststore pointing at the correct STIM_YYYY
-		GtkTreeIter typeIter = _stimTypes.getIterForName(sr.get("type"));
-		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_srWidgets.typeList), &typeIter);
-		
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_srWidgets.respButton),
-			(sr.get("class") == "R")
-		);
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_srWidgets.stimButton),
-			(sr.get("class") == "S")
-		);
-		
-		// Active
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_srWidgets.active),
-			(sr.get("state") == "1")
-		);
-		
-		// Use Bounds
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_srWidgets.useBounds),
-			sr.get("use_bounds") == "1"
-		);
-		gtk_widget_set_sensitive(_srWidgets.useBounds, sr.get("class") == "S");
-		
-		// Use Radius
-		bool useRadius = (sr.get("radius") != "");
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_srWidgets.radiusToggle),
-			useRadius
-		);
-		gtk_entry_set_text(
-			GTK_ENTRY(_srWidgets.radiusEntry), 
-			sr.get("radius").c_str()
-		);
-		gtk_widget_set_sensitive(
-			_srWidgets.radiusEntry, 
-			useRadius && sr.get("class") == "S"
-		);
-		gtk_widget_set_sensitive(_srWidgets.radiusToggle, sr.get("class") == "S");
-		
-		// Use Time interval
-		bool useTimeInterval = (sr.get("time_interval") != "");
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_srWidgets.timeIntToggle),
-			useTimeInterval
-		);
-		gtk_entry_set_text(
-			GTK_ENTRY(_srWidgets.timeIntEntry), 
-			sr.get("time_interval").c_str()
-		);
-		gtk_widget_set_sensitive(
-			_srWidgets.timeIntEntry, 
-			useTimeInterval && sr.get("class") == "S"
-		);
-		gtk_widget_set_sensitive(
-			_srWidgets.timeUnitLabel, 
-			useTimeInterval && sr.get("class") == "S"
-		);
-		gtk_widget_set_sensitive(_srWidgets.timeIntToggle, sr.get("class") == "S");
-		
-		// Timer Type
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_srWidgets.timerTypeToggle),
-			sr.get("timer_type") == "RELOAD"
-		);
-		gtk_widget_set_sensitive(
-			_srWidgets.timerTypeToggle, 
-			sr.get("class") == "S" && useTimeInterval
-		);
-		
-		// Use Magnitude
-		bool useMagnitude = (sr.get("magnitude") != "");
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_srWidgets.magnToggle),
-			useMagnitude && sr.get("class") == "S"
-		);
-		gtk_widget_set_sensitive(_srWidgets.magnToggle, sr.get("class") == "S");
-		gtk_entry_set_text(
-			GTK_ENTRY(_srWidgets.magnEntry),
-			sr.get("magnitude").c_str()
-		);
-		gtk_widget_set_sensitive(
-			_srWidgets.magnEntry, 
-			useMagnitude && sr.get("class") == "S"
-		);
-		
-		// Use falloff exponent widgets
-		bool useFalloff = (sr.get("falloffexponent") != "");
-		
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_srWidgets.falloffToggle),
-			useFalloff && sr.get("class") == "S"
-		);
-		gtk_entry_set_text(
-			GTK_ENTRY(_srWidgets.falloffEntry),
-			sr.get("falloffexponent").c_str()
-		);
-		gtk_widget_set_sensitive(
-			_srWidgets.falloffToggle, 
-			useMagnitude && sr.get("class") == "S"
-		);
-		gtk_widget_set_sensitive(
-			_srWidgets.falloffEntry, 
-			useMagnitude && sr.get("class") == "S" && useFalloff
-		);
-		
-		// Disable the editing of inherited properties completely
-		if (sr.inherited()) {
-			gtk_widget_set_sensitive(_srWidgets.vbox, FALSE);
-		}
-		
 		GtkListStore* effectStore = sr.getEffectStore();
 		gtk_tree_view_set_model(GTK_TREE_VIEW(_effectWidgets.view), GTK_TREE_MODEL(effectStore));
 		g_object_unref(effectStore);
@@ -456,43 +338,15 @@ void StimResponseEditor::updateSRWidgets() {
 		// context menu sensitivity, in the case the "selection changed" 
 		// signal doesn't get called
 		updateEffectContextMenu();
-		
-		// Update the delete context menu item
-		gtk_widget_set_sensitive(_srWidgets.deleteMenuItem,	!sr.inherited());
 	}
 	else {
 		gtk_widget_set_sensitive(_srWidgets.vbox, FALSE);
-		
-		// Disable the "delete" context menu item
-		gtk_widget_set_sensitive(_srWidgets.deleteMenuItem, FALSE);
 		
 		// Clear the effect tree view
 		gtk_tree_view_set_model(GTK_TREE_VIEW(_effectWidgets.view), NULL);
 	}
 	
 	_updatesDisabled = false;
-}
-
-void StimResponseEditor::addStimResponse() {
-	if (_srEntity == NULL) return;
-
-	// Create a new StimResponse object
-	int id = _srEntity->add();
-	
-	// Get a reference to the newly allocated object
-	StimResponse& sr = _srEntity->get(id);
-	sr.set("type", _stimTypes.getFirstName());
-
-	// Refresh the values in the liststore
-	_srEntity->updateListStores();
-}
-
-void StimResponseEditor::removeStimResponse() {
-	int id = getIdFromSelection();
-	
-	if (id > 0) {
-		_srEntity->remove(id);
-	}
 }
 
 void StimResponseEditor::addEffect() {
@@ -597,18 +451,6 @@ int StimResponseEditor::getIdFromSelection() {
 	}
 }
 
-void StimResponseEditor::setProperty(const std::string& key, const std::string& value) {
-	int id = getIdFromSelection();
-	
-	if (id > 0) {
-		if (!_srEntity->get(id).inherited()) {
-			_srEntity->setProperty(id, key, value);
-		}
-	}
-	
-	updateSRWidgets();
-}
-
 void StimResponseEditor::save() {
 	// Consistency check can go here
 	
@@ -668,16 +510,6 @@ gboolean StimResponseEditor::onDelete(GtkWidget* widget, GdkEvent* event, StimRe
 	return TRUE;
 }
 
-// Callback for S/R treeview selection changes
-void StimResponseEditor::onSRSelectionChange(GtkTreeSelection* selection, 
-										   StimResponseEditor* self) 
-{
-	if (self->_updatesDisabled)	return; // Callback loop guard
-	
-	// Update the other widgets
-	self->updateSRWidgets();
-}
-
 // Callback for effects treeview selection changes
 void StimResponseEditor::onEffectSelectionChange(GtkTreeSelection* selection, 
 										   StimResponseEditor* self) 
@@ -685,138 +517,6 @@ void StimResponseEditor::onEffectSelectionChange(GtkTreeSelection* selection,
 	if (self->_updatesDisabled)	return; // Callback loop guard
 	// Update the sensitivity
 	self->updateEffectContextMenu();
-}
-
-void StimResponseEditor::onClassChange(GtkToggleButton* toggleButton, StimResponseEditor* self) {
-	if (self->_updatesDisabled)	return; // Callback loop guard
-	
-	if (GTK_WIDGET(toggleButton) == self->_srWidgets.stimButton) {
-		self->setProperty("class", "S");
-	}
-	else {
-		self->setProperty("class", "R");
-	}
-}
-
-void StimResponseEditor::onActiveToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {
-	if (self->_updatesDisabled) return; // Callback loop guard
-	
-	self->setProperty("state", gtk_toggle_button_get_active(toggleButton) ? "1" : "0");
-}
-
-void StimResponseEditor::onBoundsToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {
-	if (self->_updatesDisabled) return; // Callback loop guard
-	
-	self->setProperty("use_bounds",	gtk_toggle_button_get_active(toggleButton) ? "1" : "");
-}
-
-void StimResponseEditor::onTimerTypeToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {
-	if (self->_updatesDisabled) return; // Callback loop guard
-	
-	self->setProperty("timer_type",	gtk_toggle_button_get_active(toggleButton) ? "RELOAD" : "");
-}
-
-void StimResponseEditor::onRadiusToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {
-	if (self->_updatesDisabled) return; // Callback loop guard
-	
-	std::string entryText = gtk_entry_get_text(GTK_ENTRY(self->_srWidgets.radiusEntry));
-	
-	if (gtk_toggle_button_get_active(toggleButton)) {
-		entryText += (entryText.empty()) ? "10" : "";	
-	}
-	else {
-		entryText = "";
-	}
-	self->setProperty("radius", entryText);
-}
-
-void StimResponseEditor::onMagnitudeToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {
-	if (self->_updatesDisabled) return; // Callback loop guard
-	
-	std::string entryText = gtk_entry_get_text(GTK_ENTRY(self->_srWidgets.magnEntry));
-	
-	if (gtk_toggle_button_get_active(toggleButton)) {
-		entryText += (entryText.empty()) ? "10" : "";	
-	}
-	else {
-		entryText = "";
-	}
-	self->setProperty("magnitude", entryText);
-}
-
-void StimResponseEditor::onFalloffToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {
-	if (self->_updatesDisabled) return; // Callback loop guard
-	
-	std::string entryText = gtk_entry_get_text(GTK_ENTRY(self->_srWidgets.falloffEntry));
-	
-	if (gtk_toggle_button_get_active(toggleButton)) {
-		entryText += (entryText.empty()) ? "1" : "";	
-	}
-	else {
-		entryText = "";
-	}
-	self->setProperty("falloffexponent", entryText);
-}
-
-void StimResponseEditor::onTimeIntervalToggle(GtkToggleButton* toggleButton, StimResponseEditor* self) {
-	if (self->_updatesDisabled) return; // Callback loop guard
-	
-	std::string entryText = gtk_entry_get_text(GTK_ENTRY(self->_srWidgets.timeIntEntry));
-	
-	if (gtk_toggle_button_get_active(toggleButton)) {
-		entryText += (entryText.empty()) ? "1000" : "";	
-	}
-	else {
-		entryText = "";
-	}
-	self->setProperty("time_interval", entryText);
-}
-
-void StimResponseEditor::onTypeSelect(GtkComboBox* widget, StimResponseEditor* self) {
-	if (self->_updatesDisabled) return; // Callback loop guard
-	
-	GtkTreeIter iter;
-	if (gtk_combo_box_get_active_iter(widget, &iter)) {
-		GtkTreeModel* model = gtk_combo_box_get_model(widget);
-		std::string name = gtkutil::TreeModel::getString(model, &iter, 3); // 3 = StimTypes::NAME_COL
-		self->setProperty("type", name);
-	}
-}
-
-void StimResponseEditor::onMagnitudeChanged(GtkEditable* editable, StimResponseEditor* self) {
-	if (self->_updatesDisabled) return; // Callback loop guard
-
-	std::string entryText = gtk_entry_get_text(GTK_ENTRY(self->_srWidgets.magnEntry));
-	if (!entryText.empty()) {
-		self->setProperty("magnitude", entryText);
-	}
-}
-
-void StimResponseEditor::onFalloffChanged(GtkEditable* editable, StimResponseEditor* self) {
-	if (self->_updatesDisabled) return; // Callback loop guard
-
-	std::string entryText = gtk_entry_get_text(GTK_ENTRY(self->_srWidgets.falloffEntry));
-	if (!entryText.empty()) {
-		self->setProperty("falloffexponent", entryText);
-	}
-}
-
-void StimResponseEditor::onTimeIntervalChanged(GtkEditable* editable, StimResponseEditor* self) {
-	if (self->_updatesDisabled) return; // Callback loop guard
-
-	std::string entryText = gtk_entry_get_text(GTK_ENTRY(self->_srWidgets.timeIntEntry));
-	if (!entryText.empty()) {
-		self->setProperty("time_interval", entryText);
-	}
-}
-
-void StimResponseEditor::onRadiusChanged(GtkEditable* editable, StimResponseEditor* self) {
-	if (self->_updatesDisabled) return; // Callback loop guard
-
-	std::string entryText = gtk_entry_get_text(GTK_ENTRY(self->_srWidgets.radiusEntry));
-	if (!entryText.empty()) {
-		self->setProperty("radius", entryText);
-	}
 }
 
 void StimResponseEditor::onSave(GtkWidget* button, StimResponseEditor* self) {
@@ -827,16 +527,12 @@ void StimResponseEditor::onClose(GtkWidget* button, StimResponseEditor* self) {
 	self->toggleWindow();
 }
 
-void StimResponseEditor::onRevert(GtkWidget* button, StimResponseEditor* self) {
-	self->rescanSelection();
-}
-
 gboolean StimResponseEditor::onTreeViewKeyPress(
 	GtkTreeView* view, GdkEventKey* event, StimResponseEditor* self)
 {
 	if (event->keyval == GDK_Delete) {
 		if (view == GTK_TREE_VIEW(self->_entitySRView)) {
-			self->removeStimResponse();
+			//self->removeStimResponse();
 		}
 		else if (view == GTK_TREE_VIEW(self->_effectWidgets.view)) {
 			self->removeEffect();
@@ -896,8 +592,9 @@ gboolean StimResponseEditor::onTreeViewButtonRelease(
 void StimResponseEditor::_onContextMenuDelete(GtkWidget* w, 
 											  StimResponseEditor* self)
 {
-	if (w == self->_srWidgets.deleteMenuItem)
-		self->removeStimResponse();
+	if (w == self->_srWidgets.deleteMenuItem) {
+		//self->removeStimResponse();
+	}
 	else if (w == self->_effectWidgets.deleteMenuItem)
 		self->removeEffect();
 }
@@ -907,7 +604,7 @@ void StimResponseEditor::_onContextMenuAdd(GtkWidget* w,
 										   StimResponseEditor* self)
 {
 	if (w == self->_srWidgets.addMenuItem) {
-		self->addStimResponse();
+		//self->addStimResponse();
 	}
 	else if (w == self->_effectWidgets.addMenuItem) {
 		self->addEffect();
