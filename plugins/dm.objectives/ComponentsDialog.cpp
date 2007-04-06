@@ -46,6 +46,7 @@ ComponentsDialog::ComponentsDialog(GtkWindow* parent, Objective& objective)
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
 	gtk_box_pack_start(GTK_BOX(vbx), createListView(), TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), createEditPanel(), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), gtk_hseparator_new(), FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
 	
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
@@ -124,16 +125,12 @@ GtkWidget* ComponentsDialog::createButtons() {
 	
 	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
 
-	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+	GtkWidget* closeButton = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
 	
-//	g_signal_connect(
-//		G_OBJECT(okButton), "clicked", G_CALLBACK(_onOK), this);
-//	g_signal_connect(
-//		G_OBJECT(cancelButton), "clicked", G_CALLBACK(_onCancel), this);
+	g_signal_connect(
+		G_OBJECT(closeButton), "clicked", G_CALLBACK(_onClose), this);
 	
-	gtk_box_pack_end(GTK_BOX(hbx), okButton, TRUE, TRUE, 0);
-	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
+	gtk_box_pack_end(GTK_BOX(hbx), closeButton, TRUE, TRUE, 0);
 
 	return gtkutil::RightAlignment(hbx);
 }
@@ -168,10 +165,22 @@ void ComponentsDialog::populateEditPanel(int index) {
 
 /* GTK CALLBACKS */
 
-void ComponentsDialog::_onDelete(GtkWidget* w, ComponentsDialog* self) {
+// Close button
+void ComponentsDialog::_onClose(GtkWidget* w, ComponentsDialog* self) {
+
+	// Hide and the widgets
+	gtk_widget_hide(self->_widget);
+	gtk_widget_destroy(self->_widget);
 	
 	// Exit recursive main loop
 	gtk_main_quit();
+}
+
+// Window deletion
+void ComponentsDialog::_onDelete(GtkWidget* w, ComponentsDialog* self) {
+
+	// Exit main loop
+	gtk_main_quit();	
 }
 
 // Selection changed
