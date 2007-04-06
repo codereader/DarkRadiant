@@ -23,7 +23,7 @@ typedef struct _GtkListStore GtkListStore;
 			CAPTION_COL,
 			ICON_COL,
 			INHERIT_COL,
-			IDSTR_COL,
+			ID_COL,
 			NUM_COLS
 		};
 	}

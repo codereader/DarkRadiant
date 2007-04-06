@@ -95,6 +95,9 @@ EntityArgument::EntityArgument(
 	gtk_entry_set_completion(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(_comboBox))), 
 							 completion);
 
+	// Sort the list alphabetically
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(_entityStore), 0, GTK_SORT_ASCENDING);
+
 	// Now select the entity passed in the argument
 	// Find the entity using a TreeModel traversor (search the column #0)
 	gtkutil::TreeModel::SelectionFinder finder(arg.value, 0);

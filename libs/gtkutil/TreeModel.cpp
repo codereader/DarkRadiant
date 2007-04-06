@@ -72,9 +72,20 @@ std::string TreeModel::getSelectedString(GtkTreeSelection* sel, gint colNo)
 
 TreeModel::SelectionFinder::SelectionFinder(const std::string& selection, int column) : 
 	_selection(selection),
+	_needle(0),
 	_path(NULL),
 	_model(NULL),
-	_column(column)
+	_column(column),
+	_searchForInt(false)
+{}
+
+TreeModel::SelectionFinder::SelectionFinder(int needle, int column) : 
+	_selection(""),
+	_needle(needle),
+	_path(NULL),
+	_model(NULL),
+	_column(column),
+	_searchForInt(true)
 {}
 
 GtkTreePath* TreeModel::SelectionFinder::getPath() {
@@ -110,12 +121,25 @@ gboolean TreeModel::SelectionFinder::forEach(
 		
 	// If the visited row matches the texture to find, set the _path
 	// variable and finish, otherwise continue to search
-	if (TreeModel::getString(model, iter, self->_column) == self->_selection) {
-		self->_path = gtk_tree_path_copy(path);
-		return TRUE; // finish the walk
+	
+	if (self->_searchForInt) {
+		if (TreeModel::getInt(model, iter, self->_column) == self->_needle) {
+			self->_path = gtk_tree_path_copy(path);
+			return TRUE; // finish the walk
+		}
+		else {
+			return FALSE;
+		}
 	}
 	else {
-		return FALSE;
+		// Search for string
+		if (TreeModel::getString(model, iter, self->_column) == self->_selection) {
+			self->_path = gtk_tree_path_copy(path);
+			return TRUE; // finish the walk
+		}
+		else {
+			return FALSE;
+		}
 	}
 }
 
