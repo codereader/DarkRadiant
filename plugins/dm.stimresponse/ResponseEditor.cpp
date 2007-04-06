@@ -16,10 +16,6 @@ void ResponseEditor::setEntity(SREntityPtr entity) {
 	
 }
 
-void ResponseEditor::entryChanged(GtkEditable* editable) {
-	
-}
-
 void ResponseEditor::update() {
 	
 }

@@ -99,4 +99,8 @@ void ClassEditor::onEntryChanged(GtkEditable* editable, ClassEditor* self) {
 	self->entryChanged(editable);
 }
 
+void ClassEditor::onCheckboxToggle(GtkToggleButton* toggleButton, ClassEditor* self) {
+	self->checkBoxToggled(toggleButton);
+}
+
 } // namespace ui

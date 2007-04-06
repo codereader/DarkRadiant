@@ -10,6 +10,7 @@ typedef struct _GtkTreeSelection GtkTreeSelection;
 typedef struct _GdkEventKey GdkEventKey;
 typedef struct _GdkEventButton GdkEventButton;
 typedef struct _GtkEditable GtkEditable;
+typedef struct _GtkToggleButton GtkToggleButton;
 
 namespace ui {
 
@@ -53,10 +54,17 @@ public:
 	virtual void update() = 0;
 
 protected:
-	/** greebo: Gets called when an entry box changes, this has to be
-	 * 			implemented by the subclasses.
+	/** greebo: Gets called when a check box is toggled, this should
+	 * 			update the contents of possible associated entry fields. 
 	 */
-	virtual void entryChanged(GtkEditable* editable) = 0;
+	virtual void checkBoxToggled(GtkToggleButton* toggleButton) {
+	}
+
+	/** greebo: Gets called when an entry box changes, this has to be
+	 * 			overriden by the subclasses, if this is needed
+	 */
+	virtual void entryChanged(GtkEditable* editable) {
+	}
 
 	/** greebo: Returns the ID of the currently selected stim/response
 	 * 		
@@ -87,6 +95,8 @@ protected:
 	
 	// Gets called if any of the entry widget contents get changed
 	static void onEntryChanged(GtkEditable* editable, ClassEditor* self);
+	// Gets called on check box toggles
+	static void onCheckboxToggle(GtkToggleButton* toggleButton, ClassEditor* self);
 };
 
 } // namespace ui

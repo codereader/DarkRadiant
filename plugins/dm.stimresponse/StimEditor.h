@@ -52,6 +52,11 @@ public:
 	void update();
 
 private:
+	/** greebo: Updates the associated text fields when a check box
+	 * 			is toggled.
+	 */
+	void checkBoxToggled(GtkToggleButton* toggleButton);
+
 	/** greebo: Updates the stim according to the given entry box 
 	 */
 	void entryChanged(GtkEditable* editable);
