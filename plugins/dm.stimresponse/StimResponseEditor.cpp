@@ -168,22 +168,15 @@ GtkWidget* StimResponseEditor::createButtons() {
 	GtkWidget* buttonHBox = gtk_hbox_new(TRUE, 12);
 	
 	// Save button
-	GtkWidget* saveButton = gtk_button_new_from_stock(GTK_STOCK_APPLY);
-	g_signal_connect(G_OBJECT(saveButton), "clicked", G_CALLBACK(onSave), this);
-	gtk_box_pack_end(GTK_BOX(buttonHBox), saveButton, TRUE, TRUE, 0);
+	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
+	g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(onSave), this);
+	gtk_box_pack_end(GTK_BOX(buttonHBox), okButton, TRUE, TRUE, 0);
 	
 	// Close Button
-	_closeButton = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
+	_closeButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	g_signal_connect(
 		G_OBJECT(_closeButton), "clicked", G_CALLBACK(onClose), this);
 	gtk_box_pack_end(GTK_BOX(buttonHBox), _closeButton, TRUE, TRUE, 0);
-	
-	// Revert button
-	GtkWidget* revertButton = 
-		gtk_button_new_from_stock(GTK_STOCK_REVERT_TO_SAVED);
-	g_signal_connect(
-		G_OBJECT(revertButton), "clicked", G_CALLBACK(onRevert), this);
-	gtk_box_pack_end(GTK_BOX(buttonHBox), revertButton, TRUE, TRUE, 0);
 	
 	return gtkutil::RightAlignment(buttonHBox);	
 }

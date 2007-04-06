@@ -29,6 +29,8 @@ class StimEditor :
 		GtkWidget* deleteMenuItem;
 	} _propertyWidgets;
 
+	GtkWidget* _contextMenu;
+
 public:
 	/** greebo: Constructor creates all the widgets
 	 */
@@ -38,7 +40,15 @@ public:
 	 */
 	virtual void setEntity(SREntityPtr entity);
 
+	/** greebo: Adds a new stim to the list
+	 */
+	void addStim();
+
 private:
+	/** greebo: As the name states, this creates the context menu widgets.
+	 */
+	void createContextMenu();
+
 	/** greebo: Updates the property widgets (e.g. after a selection change)
 	 */
 	void updatePropertyWidgets();
@@ -57,6 +67,10 @@ private:
 	/** greebo: Creates all the widgets
 	 */
 	void populatePage();
+	
+	// Context menu GTK callbacks
+	static void onContextMenuAdd(GtkWidget* w, StimEditor* self);
+	static void onContextMenuDelete(GtkWidget* w, StimEditor* self);
 };
 
 } // namespace ui
