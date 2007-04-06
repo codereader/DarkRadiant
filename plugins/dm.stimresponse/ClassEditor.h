@@ -25,6 +25,9 @@ protected:
 
 	// Helper class (owned by StimResponseEditor)
 	StimTypes& _stimTypes;
+	
+	// TRUE if the GTK callbacks should be disabled
+	bool _updatesDisabled;
 
 public:
 	/** greebo: Constructs the shared widgets, but does not pack them
@@ -41,6 +44,12 @@ public:
 	virtual void setEntity(SREntityPtr entity);
 
 protected:
+	/** greebo: Returns the ID of the currently selected stim/response
+	 * 		
+	 * @returns: the id (number) of the selected stim or -1 on failure 
+	 */
+	int getIdFromSelection();
+
 	/** greebo: Gets called when the list selection changes
 	 */
 	virtual void selectionChanged() = 0;
