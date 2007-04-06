@@ -42,7 +42,9 @@ namespace {
 		WIDGET_MANDATORY_FLAG,
 		WIDGET_IRREVERSIBLE_FLAG,
 		WIDGET_ONGOING_FLAG,
-		WIDGET_VISIBLE_FLAG
+		WIDGET_VISIBLE_FLAG,
+		WIDGET_COMPONENTS_COUNT,
+		WIDGET_COMPONENTS_BUTTON
 	};
 	
 }
@@ -68,8 +70,7 @@ ObjectivesEditor::ObjectivesEditor()
     
     // Window size
 	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
-	gtk_window_set_default_size(GTK_WINDOW(_widget), 
-								gint(gdk_screen_get_width(scr) * 0.5), 
+	gtk_window_set_default_size(GTK_WINDOW(_widget), -1, 
 								gint(gdk_screen_get_height(scr) * 0.6));
     
     // Widget must hide not destroy when closed
@@ -209,7 +210,7 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 GtkWidget* ObjectivesEditor::createObjectiveEditPanel() {
 
 	// Table for entry boxes
-	GtkWidget* table = gtk_table_new(3, 2, FALSE);
+	GtkWidget* table = gtk_table_new(4, 2, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
 	
@@ -248,6 +249,25 @@ GtkWidget* ObjectivesEditor::createObjectiveEditPanel() {
 					 gtkutil::LeftAlignedLabel("<b>Flags</b>"),
 					 0, 1, 2, 3, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(GTK_TABLE(table), createFlagsTable(), 1, 2, 2, 3);
+	
+	// Components text and button
+	GtkWidget* compButton = gtk_button_new_with_label("Edit conditions..."); 
+	gtk_button_set_image(GTK_BUTTON(compButton), 
+						 gtk_image_new_from_stock(GTK_STOCK_EDIT, 
+						 						  GTK_ICON_SIZE_BUTTON));
+	_widgets[WIDGET_COMPONENTS_BUTTON] = compButton;
+		
+	_widgets[WIDGET_COMPONENTS_COUNT] = gtk_label_new("0 condition(s)");
+	
+	GtkWidget* compBox = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(compBox), _widgets[WIDGET_COMPONENTS_COUNT],
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(compBox), compButton, TRUE, TRUE, 0);
+
+	gtk_table_attach(GTK_TABLE(table),
+					 gtkutil::LeftAlignedLabel("<b>Conditions</b>"),
+					 0, 1, 3, 4, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(GTK_TABLE(table), compBox, 1, 2, 3, 4);
 	
 	// Pack items into a vbox and return
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);

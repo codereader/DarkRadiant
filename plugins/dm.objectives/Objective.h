@@ -1,8 +1,11 @@
 #ifndef OBJECTIVE_H_
 #define OBJECTIVE_H_
 
+#include "Component.h"
+
 #include <string>
 #include <map>
+#include <list>
 
 namespace objectives
 {
@@ -28,6 +31,9 @@ struct Objective
 	bool visible;
 	bool ongoing;
 	bool irreversible;
+	
+	// List of components
+	std::list<Component> components;
 	
 	// Constructor
 	Objective()
