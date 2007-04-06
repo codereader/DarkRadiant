@@ -139,6 +139,35 @@ void StimResponseEditor::populateWindow() {
 	_dialogVBox = gtk_vbox_new(FALSE, 12);
 	gtk_container_add(GTK_CONTAINER(_dialog), _dialogVBox);
 	
+	// Create the notebook and add it to the vbox
+	_notebook = GTK_NOTEBOOK(gtk_notebook_new());
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(_notebook), TRUE, TRUE, 0);
+	
+	// The tab label items (icon + label)
+	GtkWidget* stimLabelHBox = gtk_hbox_new(FALSE, 3);
+	gtk_box_pack_start(
+    	GTK_BOX(stimLabelHBox), 
+    	gtk_image_new_from_pixbuf(gtkutil::getLocalPixbufWithMask(ICON_STIM)), 
+    	FALSE, FALSE, 3
+    );
+	gtk_box_pack_start(GTK_BOX(stimLabelHBox), gtk_label_new("Stims"), FALSE, FALSE, 3);
+	
+	GtkWidget* responseLabelHBox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(
+    	GTK_BOX(responseLabelHBox), 
+    	gtk_image_new_from_pixbuf(gtkutil::getLocalPixbufWithMask(ICON_RESPONSE)), 
+    	FALSE, FALSE, 0
+    );
+	gtk_box_pack_start(GTK_BOX(responseLabelHBox), gtk_label_new("Responses"), FALSE, FALSE, 3);
+	
+	// Show the widgets before using them as label, they won't appear otherwise
+	gtk_widget_show_all(stimLabelHBox);
+	gtk_widget_show_all(responseLabelHBox);
+	
+	// Cast the helper class to a widget and add it to the notebook page
+	_stimPageNum = gtk_notebook_append_page(_notebook, _stimEditor, stimLabelHBox);
+	_responsePageNum = gtk_notebook_append_page(_notebook, _responseEditor, responseLabelHBox);
+	
 	// Stim/Response list section
     gtk_box_pack_start(GTK_BOX(_dialogVBox), 
     				   gtkutil::LeftAlignedLabel(LABEL_STIMRESPONSE_LIST), 
