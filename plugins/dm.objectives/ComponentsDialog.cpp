@@ -19,6 +19,7 @@ namespace {
 
 	// Widget enum
 	enum {
+		WIDGET_TYPE_COMBO,
 		WIDGET_STATE_FLAG,
 		WIDGET_IRREVERSIBLE_FLAG,
 		WIDGET_INVERTED_FLAG		
@@ -37,6 +38,7 @@ ComponentsDialog::ComponentsDialog(GtkWindow* parent, Objective& objective)
 	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
 	gtk_window_set_title(GTK_WINDOW(_widget), DIALOG_TITLE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
+    gtk_window_set_type_hint(GTK_WINDOW(_widget), GDK_WINDOW_TYPE_HINT_DIALOG);
 
 	// Set up delete event
 	g_signal_connect(
@@ -95,6 +97,17 @@ GtkWidget* ComponentsDialog::createEditPanel() {
 	gtk_table_set_row_spacings(GTK_TABLE(table), 12);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
 	
+	// Component type dropdown
+	gtk_table_attach(GTK_TABLE(table), 
+					 gtkutil::LeftAlignedLabel("<b>Type</b>"),
+					 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
+
+	_widgets[WIDGET_TYPE_COMBO] = gtk_combo_box_new_text();
+	populateTypeCombo(_widgets[WIDGET_TYPE_COMBO]); // add the enum values
+	gtk_table_attach_defaults(GTK_TABLE(table),
+							  _widgets[WIDGET_TYPE_COMBO],
+							  1, 2, 0, 1);
+	
 	// Flags hbox
 	_widgets[WIDGET_STATE_FLAG] = 
 		gtk_check_button_new_with_label("Satisfied at start");
@@ -113,11 +126,27 @@ GtkWidget* ComponentsDialog::createEditPanel() {
 	
 	gtk_table_attach(GTK_TABLE(table), 
 					 gtkutil::LeftAlignedLabel("<b>Flags</b>"),
-					 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), flagsBox, 1, 2, 0, 1, 
+					 0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), flagsBox, 1, 2, 1, 2, 
 					 GTK_FILL, GTK_FILL, 0, 0);
 	
 	return table;
+}
+
+// Populate the type combo
+void ComponentsDialog::populateTypeCombo(GtkWidget* combo) {
+	GtkComboBox* c = GTK_COMBO_BOX(combo);
+	gtk_combo_box_append_text(c, "KILL");
+	gtk_combo_box_append_text(c, "KO");
+	gtk_combo_box_append_text(c, "AI_FIND_ITEM");
+	gtk_combo_box_append_text(c, "AI_FIND_BODY");
+	gtk_combo_box_append_text(c, "AI_ALERT");
+	gtk_combo_box_append_text(c, "ITEM");
+	gtk_combo_box_append_text(c, "LOCATION");
+	gtk_combo_box_append_text(c, "CUSTOM_ASYNC");
+	gtk_combo_box_append_text(c, "CUSTOM_CLOCKED");
+	gtk_combo_box_append_text(c, "INFO_LOCATION");
+	gtk_combo_box_append_text(c, "DISTANCE");
 }
 
 // Create buttons
