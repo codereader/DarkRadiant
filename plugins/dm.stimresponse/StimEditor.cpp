@@ -7,6 +7,7 @@
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/image.h"
+#include "gtkutil/StockIconMenuItem.h"
 
 #include "SREntity.h"
 
@@ -31,6 +32,9 @@ StimEditor::StimEditor(StimTypes& stimTypes) :
 	ClassEditor(stimTypes)
 {
 	populatePage();
+	
+	// Setup the context menu items and connect them to the callbacks
+	createContextMenu();
 }
 
 void StimEditor::populatePage() {
@@ -222,11 +226,57 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 }
 
 void StimEditor::removeItem(GtkTreeView* view) {
+	// The argument <view> is not needed, there is only one list
 	
+	// Get the selected stim ID
+	int id = getIdFromSelection();
+	
+	if (id > 0) {
+		_entity->remove(id);
+	}
 }
 
 void StimEditor::openContextMenu(GtkTreeView* view) {
+	gtk_menu_popup(GTK_MENU(_contextMenu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
+}
+
+void StimEditor::addStim() {
+	if (_entity == NULL) return;
+
+	// Create a new StimResponse object
+	int id = _entity->add();
 	
+	// Get a reference to the newly allocated object
+	StimResponse& sr = _entity->get(id);
+	sr.set("type", _stimTypes.getFirstName());
+
+	// Refresh the values in the liststore
+	_entity->updateListStores();
+}
+
+// Create the context menus
+void StimEditor::createContextMenu() {
+	// Menu widgets
+	_contextMenu = gtk_menu_new();
+		
+	// Each menu gets a delete item
+	_propertyWidgets.deleteMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
+														   "Delete Stim");
+	_propertyWidgets.addMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_ADD,
+														   "Add Stim");
+	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu),
+						  _propertyWidgets.addMenuItem);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu), 
+						  _propertyWidgets.deleteMenuItem);
+
+	// Connect up the signals
+	g_signal_connect(G_OBJECT(_propertyWidgets.deleteMenuItem), "activate",
+					 G_CALLBACK(onContextMenuDelete), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.addMenuItem), "activate",
+					 G_CALLBACK(onContextMenuAdd), this);
+					 
+	// Show menus (not actually visible until popped up)
+	gtk_widget_show_all(_contextMenu);
 }
 
 void StimEditor::updatePropertyWidgets() {
@@ -354,12 +404,12 @@ void StimEditor::updatePropertyWidgets() {
 		}
 		
 		// Update the delete context menu item
-		//gtk_widget_set_sensitive(_propertyWidgets.deleteMenuItem,	!sr.inherited());
+		gtk_widget_set_sensitive(_propertyWidgets.deleteMenuItem,	!sr.inherited());
 	}
 	else {
 		gtk_widget_set_sensitive(_propertyWidgets.vbox, FALSE);
 		// Disable the "delete" context menu item
-		//gtk_widget_set_sensitive(_propertyWidgets.deleteMenuItem, FALSE);
+		gtk_widget_set_sensitive(_propertyWidgets.deleteMenuItem, FALSE);
 	}
 	
 	_updatesDisabled = false;
@@ -367,6 +417,17 @@ void StimEditor::updatePropertyWidgets() {
 
 void StimEditor::selectionChanged() {
 	updatePropertyWidgets();
+}
+
+// Delete context menu items activated
+void StimEditor::onContextMenuDelete(GtkWidget* w, StimEditor* self) {
+	// Delete the selected stim from the list
+	self->removeItem(GTK_TREE_VIEW(self->_list));
+}
+
+// Delete context menu items activated
+void StimEditor::onContextMenuAdd(GtkWidget* w, StimEditor* self) {
+	self->addStim();
 }
 
 } // namespace ui
