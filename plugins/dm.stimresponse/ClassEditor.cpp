@@ -2,6 +2,7 @@
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+#include "gtkutil/TreeModel.h"
 
 namespace ui {
 	
@@ -11,7 +12,8 @@ namespace ui {
 	}
 
 ClassEditor::ClassEditor(StimTypes& stimTypes) :
-	_stimTypes(stimTypes) 
+	_stimTypes(stimTypes),
+	_updatesDisabled(false)
 {
 	_pageVBox = gtk_vbox_new(FALSE, 6);
 	gtk_container_set_border_width(GTK_CONTAINER(_pageVBox), 6);
@@ -36,6 +38,19 @@ ClassEditor::operator GtkWidget*() {
 
 void ClassEditor::setEntity(SREntityPtr entity) {
 	_entity = entity; 
+}
+
+int ClassEditor::getIdFromSelection() {
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+	bool anythingSelected = gtk_tree_selection_get_selected(_selection, &model, &iter);
+	
+	if (anythingSelected && _entity != NULL) {
+		return gtkutil::TreeModel::getInt(model, &iter, ID_COL);
+	}
+	else {
+		return -1;
+	}
 }
 
 // Static callbacks

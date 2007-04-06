@@ -229,8 +229,144 @@ void StimEditor::openContextMenu(GtkTreeView* view) {
 	
 }
 
-void StimEditor::selectionChanged() {
+void StimEditor::updatePropertyWidgets() {
+	_updatesDisabled = true; // avoid unwanted callbacks
 	
+	int id = getIdFromSelection();
+	
+	if (id > 0) {
+		// Update all the widgets
+		gtk_widget_set_sensitive(_propertyWidgets.vbox, TRUE);
+		
+		StimResponse& sr = _entity->get(id);
+		
+		// Get the iter into the liststore pointing at the correct STIM_YYYY type
+		GtkTreeIter typeIter = _stimTypes.getIterForName(sr.get("type"));
+		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_propertyWidgets.typeList), &typeIter);
+		
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.respButton),
+			(sr.get("class") == "R")
+		);
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.stimButton),
+			(sr.get("class") == "S")
+		);
+		
+		// Active
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.active),
+			(sr.get("state") == "1")
+		);
+		
+		// Use Bounds
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.useBounds),
+			sr.get("use_bounds") == "1"
+		);
+		gtk_widget_set_sensitive(_propertyWidgets.useBounds, sr.get("class") == "S");
+		
+		// Use Radius
+		bool useRadius = (sr.get("radius") != "");
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.radiusToggle),
+			useRadius
+		);
+		gtk_entry_set_text(
+			GTK_ENTRY(_propertyWidgets.radiusEntry), 
+			sr.get("radius").c_str()
+		);
+		gtk_widget_set_sensitive(
+			_propertyWidgets.radiusEntry, 
+			useRadius && sr.get("class") == "S"
+		);
+		gtk_widget_set_sensitive(_propertyWidgets.radiusToggle, sr.get("class") == "S");
+		
+		// Use Time interval
+		bool useTimeInterval = (sr.get("time_interval") != "");
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.timeIntToggle),
+			useTimeInterval
+		);
+		gtk_entry_set_text(
+			GTK_ENTRY(_propertyWidgets.timeIntEntry), 
+			sr.get("time_interval").c_str()
+		);
+		gtk_widget_set_sensitive(
+			_propertyWidgets.timeIntEntry, 
+			useTimeInterval && sr.get("class") == "S"
+		);
+		gtk_widget_set_sensitive(
+			_propertyWidgets.timeUnitLabel, 
+			useTimeInterval && sr.get("class") == "S"
+		);
+		gtk_widget_set_sensitive(_propertyWidgets.timeIntToggle, sr.get("class") == "S");
+		
+		// Timer Type
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.timerTypeToggle),
+			sr.get("timer_type") == "RELOAD"
+		);
+		gtk_widget_set_sensitive(
+			_propertyWidgets.timerTypeToggle, 
+			sr.get("class") == "S" && useTimeInterval
+		);
+		
+		// Use Magnitude
+		bool useMagnitude = (sr.get("magnitude") != "");
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.magnToggle),
+			useMagnitude && sr.get("class") == "S"
+		);
+		gtk_widget_set_sensitive(_propertyWidgets.magnToggle, sr.get("class") == "S");
+		gtk_entry_set_text(
+			GTK_ENTRY(_propertyWidgets.magnEntry),
+			sr.get("magnitude").c_str()
+		);
+		gtk_widget_set_sensitive(
+			_propertyWidgets.magnEntry, 
+			useMagnitude && sr.get("class") == "S"
+		);
+		
+		// Use falloff exponent widgets
+		bool useFalloff = (sr.get("falloffexponent") != "");
+		
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.falloffToggle),
+			useFalloff && sr.get("class") == "S"
+		);
+		gtk_entry_set_text(
+			GTK_ENTRY(_propertyWidgets.falloffEntry),
+			sr.get("falloffexponent").c_str()
+		);
+		gtk_widget_set_sensitive(
+			_propertyWidgets.falloffToggle, 
+			useMagnitude && sr.get("class") == "S"
+		);
+		gtk_widget_set_sensitive(
+			_propertyWidgets.falloffEntry, 
+			useMagnitude && sr.get("class") == "S" && useFalloff
+		);
+		
+		// Disable the editing of inherited properties completely
+		if (sr.inherited()) {
+			gtk_widget_set_sensitive(_propertyWidgets.vbox, FALSE);
+		}
+		
+		// Update the delete context menu item
+		//gtk_widget_set_sensitive(_propertyWidgets.deleteMenuItem,	!sr.inherited());
+	}
+	else {
+		gtk_widget_set_sensitive(_propertyWidgets.vbox, FALSE);
+		// Disable the "delete" context menu item
+		//gtk_widget_set_sensitive(_propertyWidgets.deleteMenuItem, FALSE);
+	}
+	
+	_updatesDisabled = false;
+}
+
+void StimEditor::selectionChanged() {
+	updatePropertyWidgets();
 }
 
 } // namespace ui

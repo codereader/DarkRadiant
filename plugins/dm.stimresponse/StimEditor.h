@@ -39,6 +39,10 @@ public:
 	virtual void setEntity(SREntityPtr entity);
 
 private:
+	/** greebo: Updates the property widgets (e.g. after a selection change)
+	 */
+	void updatePropertyWidgets();
+
 	/** greebo: Creates the option checkboxes and entry widgets
 	 */
 	GtkWidget* createPropertyWidgets();
