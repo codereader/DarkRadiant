@@ -21,7 +21,14 @@
 	}
 
 SREntity::SREntity(Entity* source) :
-	_listStore(gtk_list_store_new(NUM_COLS, 
+	_stimStore(gtk_list_store_new(NUM_COLS, 
+								  G_TYPE_INT,		// S/R index
+								  GDK_TYPE_PIXBUF, 	// Type String
+								  G_TYPE_STRING, 	// Caption String
+								  GDK_TYPE_PIXBUF,	// Icon
+								  G_TYPE_BOOLEAN,	// Inheritance flag
+								  G_TYPE_INT)), 	// ID (unique)
+	_responseStore(gtk_list_store_new(NUM_COLS, 
 								  G_TYPE_INT,		// S/R index
 								  GDK_TYPE_PIXBUF, 	// Type String
 								  G_TYPE_STRING, 	// Caption String
@@ -57,7 +64,8 @@ int SREntity::getHighestIndex() {
 
 void SREntity::load(Entity* source) {
 	// Clear all the items from the liststore
-	gtk_list_store_clear(_listStore);
+	gtk_list_store_clear(_stimStore);
+	gtk_list_store_clear(_responseStore);
 	
 	if (source == NULL) {
 		return;
@@ -105,7 +113,7 @@ void SREntity::load(Entity* source) {
 	}
 	
 	// Populate the liststore
-	updateListStore();
+	updateListStores();
 }
 
 void SREntity::remove(int id) {
@@ -113,13 +121,14 @@ void SREntity::remove(int id) {
 	
 	if (found != _list.end() && !found->second.inherited()) {
 		_list.erase(found);
-		updateListStore();
+		updateListStores();
 	}
 }
 
-void SREntity::updateListStore() {
+void SREntity::updateListStores() {
 	// Clear all the items from the liststore
-	gtk_list_store_clear(_listStore);
+	gtk_list_store_clear(_stimStore);
+	gtk_list_store_clear(_responseStore);
 	
 	// Now populate the liststore
 	GtkTreeIter iter;
@@ -127,15 +136,19 @@ void SREntity::updateListStore() {
 	for (StimResponseMap::iterator i = _list.begin(); i!= _list.end(); i++) {
 		int id = i->first;
 		
-		gtk_list_store_append(_listStore, &iter);
-		// Store the ID into the liststore
-		gtk_list_store_set(_listStore, &iter, 
-						   ID_COL, id,
-						   -1);
+		GtkListStore* targetListStore;
 		
 		// And write the rest of the data to the row
 		StimResponse& sr = i->second;
-		writeToListStore(&iter, sr);
+		targetListStore = (sr.get("class") == "S") ? _stimStore : _responseStore;
+		
+		gtk_list_store_append(targetListStore, &iter);
+		// Store the ID into the liststore
+		gtk_list_store_set(targetListStore, &iter, 
+						   ID_COL, id,
+						   -1);
+		
+		writeToListStore(targetListStore, &iter, sr);
 	}
 }
 
@@ -180,12 +193,12 @@ void SREntity::save(Entity* target) {
 	}
 }
 
-GtkTreeIter SREntity::getIterForId(int id) {
+GtkTreeIter SREntity::getIterForId(GtkListStore* targetStore, int id) {
 	// Setup the selectionfinder to search for the id string
 	gtkutil::TreeModel::SelectionFinder finder(id, ID_COL);
 	
 	gtk_tree_model_foreach(
-		GTK_TREE_MODEL(_listStore), 
+		GTK_TREE_MODEL(targetStore), 
 		gtkutil::TreeModel::SelectionFinder::forEach, 
 		&finder
 	);
@@ -193,7 +206,7 @@ GtkTreeIter SREntity::getIterForId(int id) {
 	return finder.getIter();
 }
 
-void SREntity::writeToListStore(GtkTreeIter* iter, StimResponse& sr) {
+void SREntity::writeToListStore(GtkListStore* targetListStore, GtkTreeIter* iter, StimResponse& sr) {
 	StimType stimType = _stimTypes.get(sr.get("type"));
 		
 	std::string stimTypeStr = stimType.caption;
@@ -204,7 +217,7 @@ void SREntity::writeToListStore(GtkTreeIter* iter, StimResponse& sr) {
 	// The S/R index (the N in sr_class_N)
 	int index = sr.getIndex();
 	
-	gtk_list_store_set(_listStore, iter, 
+	gtk_list_store_set(targetListStore, iter, 
 						INDEX_COL, index,
 						CLASS_COL, gtkutil::getLocalPixbufWithMask(classIcon),
 						CAPTION_COL, stimTypeStr.c_str(),
@@ -218,8 +231,10 @@ void SREntity::setProperty(int id, const std::string& key, const std::string& va
 	StimResponse& sr = get(id);
 	sr.set(key, value);
 	
-	GtkTreeIter iter = getIterForId(id);
-	writeToListStore(&iter, sr);
+	GtkListStore* targetStore = (sr.get("class") == "S") ? _stimStore : _responseStore;
+	
+	GtkTreeIter iter = getIterForId(targetStore, id);
+	writeToListStore(targetStore, &iter, sr);
 }
 
 StimResponse& SREntity::get(int id) {
@@ -233,8 +248,12 @@ StimResponse& SREntity::get(int id) {
 	} 
 }
 
-GtkListStore* SREntity::getStimResponseStore() {
-	return _listStore;
+GtkListStore* SREntity::getStimStore() {
+	return _stimStore;
+}
+
+GtkListStore* SREntity::getResponseStore() {
+	return _responseStore;
 }
 
 // static key loader
