@@ -9,6 +9,7 @@ typedef struct _GtkTreeView GtkTreeView;
 typedef struct _GtkTreeSelection GtkTreeSelection;
 typedef struct _GdkEventKey GdkEventKey;
 typedef struct _GdkEventButton GdkEventButton;
+typedef struct _GtkEditable GtkEditable;
 
 namespace ui {
 
@@ -43,7 +44,20 @@ public:
 	 */
 	virtual void setEntity(SREntityPtr entity);
 
+	/** greebo: Sets the given <key> of the current entity to <value>
+	 */
+	virtual void setProperty(const std::string& key, const std::string& value);
+	
+	/** greebo: Updates the widgets (must be implemented by the child classes) 
+	 */
+	virtual void update() = 0;
+
 protected:
+	/** greebo: Gets called when an entry box changes, this has to be
+	 * 			implemented by the subclasses.
+	 */
+	virtual void entryChanged(GtkEditable* editable) = 0;
+
 	/** greebo: Returns the ID of the currently selected stim/response
 	 * 		
 	 * @returns: the id (number) of the selected stim or -1 on failure 
@@ -70,6 +84,9 @@ protected:
 	static gboolean onTreeViewKeyPress(GtkTreeView* view,GdkEventKey* event, ClassEditor* self);
 	// Release-event opens the context menu for right clicks
 	static gboolean onTreeViewButtonRelease(GtkTreeView* view, GdkEventButton* ev, ClassEditor* self);
+	
+	// Gets called if any of the entry widget contents get changed
+	static void onEntryChanged(GtkEditable* editable, ClassEditor* self);
 };
 
 } // namespace ui

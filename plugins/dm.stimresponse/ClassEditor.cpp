@@ -53,6 +53,20 @@ int ClassEditor::getIdFromSelection() {
 	}
 }
 
+void ClassEditor::setProperty(const std::string& key, const std::string& value) {
+	int id = getIdFromSelection();
+	
+	if (id > 0) {
+		// Don't edit inherited stims/responses
+		if (!_entity->get(id).inherited()) {
+			_entity->setProperty(id, key, value);
+		}
+	}
+
+	// Call the method of the child class to update the widgets
+	update();
+}
+
 // Static callbacks
 void ClassEditor::onSRSelectionChange(GtkTreeSelection* treeView, ClassEditor* self) {
 	self->selectionChanged();
@@ -77,6 +91,12 @@ gboolean ClassEditor::onTreeViewButtonRelease(GtkTreeView* view, GdkEventButton*
 	}
 	
 	return FALSE;
+}
+
+void ClassEditor::onEntryChanged(GtkEditable* editable, ClassEditor* self) {
+	if (self->_updatesDisabled) return; // Callback loop guard
+	
+	self->entryChanged(editable);
 }
 
 } // namespace ui

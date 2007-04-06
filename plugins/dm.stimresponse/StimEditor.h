@@ -8,6 +8,9 @@ namespace ui {
 class StimEditor :
 	public ClassEditor
 {
+	typedef std::map<GtkEditable*, std::string> EntryMap;
+	EntryMap _entryWidgets; 
+	
 	struct PropertyWidgets {
 		GtkWidget* vbox;
 		GtkWidget* typeList;
@@ -44,14 +47,18 @@ public:
 	 */
 	void addStim();
 
+	/** greebo: Updates the widgets (e.g. after a selection change) 
+	 */
+	void update();
+
 private:
+	/** greebo: Updates the stim according to the given entry box 
+	 */
+	void entryChanged(GtkEditable* editable);
+
 	/** greebo: As the name states, this creates the context menu widgets.
 	 */
 	void createContextMenu();
-
-	/** greebo: Updates the property widgets (e.g. after a selection change)
-	 */
-	void updatePropertyWidgets();
 
 	/** greebo: Creates the option checkboxes and entry widgets
 	 */

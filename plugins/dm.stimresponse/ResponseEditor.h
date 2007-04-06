@@ -18,7 +18,15 @@ public:
 	 */
 	virtual void setEntity(SREntityPtr entity);
 
+	/** greebo: Updates the widgets (e.g. after a selection change) 
+	 */
+	void update();
+
 private:
+	/** greebo: Updates the stim according to the given entry box 
+	 */
+	void entryChanged(GtkEditable* editable);
+
 	/** greebo: Gets called when the response selection gets changed 
 	 */
 	virtual void selectionChanged();
