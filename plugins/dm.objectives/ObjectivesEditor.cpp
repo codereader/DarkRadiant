@@ -706,7 +706,8 @@ void ObjectivesEditor::_onDescriptionEdited(GtkEditable* e,
 void ObjectivesEditor::_onEditComponents(GtkWidget* w, ObjectivesEditor* self) {
 	
 	// Display the ComponentsDialog
-	ComponentsDialog compDialog(GTK_WINDOW(self->_widget));
+	ComponentsDialog compDialog(GTK_WINDOW(self->_widget),
+								self->getCurrentObjective());
 	compDialog.showAndBlock();
 }
 
