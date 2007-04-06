@@ -2,6 +2,7 @@
 #include "Objective.h"
 
 #include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/TextColumn.h"
 
@@ -15,13 +16,13 @@ namespace objectives
 namespace {
 
 	const char* DIALOG_TITLE = "Edit conditions";
-	
-	// Names of component types (matches the ComponentType enum)
-	const char* COMPONENT_TYPE_NAMES[] = {
-		"Kill", "Knockout", "AI finds item", "AI finds body", "AI alert",
-		"Inventory item", "Item in location", "Custom script", "Custom clocked",
-		"Item in info_location", "Item distance from origin"
+
+	// Widget enum
+	enum {
+		WIDGET_STATE_FLAG,
+		WIDGET_IRREVERSIBLE_FLAG		
 	};
+	
 }
 
 // Main constructor
@@ -43,6 +44,7 @@ ComponentsDialog::ComponentsDialog(GtkWindow* parent, Objective& objective)
 	// Dialog contains list view, edit panel and buttons
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
 	gtk_box_pack_start(GTK_BOX(vbx), createListView(), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), createEditPanel(), FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
 	
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
@@ -51,9 +53,13 @@ ComponentsDialog::ComponentsDialog(GtkWindow* parent, Objective& objective)
 
 // Create list view
 GtkWidget* ComponentsDialog::createListView() {
-	
+
+	// Create tree view and connect selection changed callback	
 	GtkWidget* tv = 
 		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_componentList));
+	_componentSel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
+	g_signal_connect(G_OBJECT(_componentSel), "changed",
+					 G_CALLBACK(_onSelectionChanged), this);
 
 	// Number column
 	gtk_tree_view_append_column(
@@ -77,6 +83,35 @@ GtkWidget* ComponentsDialog::createListView() {
 	
 
 	return gtkutil::ScrolledFrame(tv);	
+}
+
+// Create edit panel
+GtkWidget* ComponentsDialog::createEditPanel() {
+	
+	// Table
+	GtkWidget* table = gtk_table_new(2, 2, FALSE);
+	gtk_table_set_row_spacings(GTK_TABLE(table), 12);
+	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
+	
+	// Flags hbox
+	_widgets[WIDGET_STATE_FLAG] = 
+		gtk_check_button_new_with_label("Satisfied at start");
+	_widgets[WIDGET_IRREVERSIBLE_FLAG] = 
+		gtk_check_button_new_with_label("Irreversible");  
+	
+	GtkWidget* flagsBox = gtk_hbox_new(FALSE, 12);
+	gtk_box_pack_start(GTK_BOX(flagsBox), _widgets[WIDGET_STATE_FLAG],
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(flagsBox), _widgets[WIDGET_IRREVERSIBLE_FLAG],
+					   FALSE, FALSE, 0);
+	
+	gtk_table_attach(GTK_TABLE(table), 
+					 gtkutil::LeftAlignedLabel("<b>Flags</b>"),
+					 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), flagsBox, 1, 2, 0, 1, 
+					 GTK_FILL, GTK_FILL, 0, 0);
+	
+	return table;
 }
 
 // Create buttons
@@ -104,12 +139,49 @@ void ComponentsDialog::showAndBlock() {
 	gtk_main(); // recursive main loop	
 }
 
+// Populate the edit panel
+void ComponentsDialog::populateEditPanel(int index) {
+	
+	// Get the component
+	Component& comp = _objective.components[index];
+	
+	// Set the flags
+	if (comp.state) {
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_widgets[WIDGET_STATE_FLAG]), TRUE
+		);
+	}
+	else if (comp.irreversible) {
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_widgets[WIDGET_IRREVERSIBLE_FLAG]), TRUE
+		);
+	}
+	
+}
+
 /* GTK CALLBACKS */
 
 void ComponentsDialog::_onDelete(GtkWidget* w, ComponentsDialog* self) {
 	
 	// Exit recursive main loop
 	gtk_main_quit();
+}
+
+// Selection changed
+void ComponentsDialog::_onSelectionChanged(GtkTreeSelection* sel,
+										   ComponentsDialog* self)
+{
+	// Get the selection if valid
+	GtkTreeModel* model;
+	GtkTreeIter iter;
+	if (!gtk_tree_selection_get_selected(sel, &model, &iter))
+		return;
+	
+	// Otherwise populate edit panel with the current component index
+	int component;
+	gtk_tree_model_get(model, &iter, 0, &component, -1); 
+	
+	self->populateEditPanel(component);
 }
 
 }

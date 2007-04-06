@@ -3,6 +3,9 @@
 
 #include <gtk/gtkwindow.h>
 #include <gtk/gtkliststore.h>
+#include <gtk/gtktreeselection.h>
+
+#include <map>
 
 namespace objectives
 {
@@ -19,20 +22,29 @@ class ComponentsDialog
 	// Main dialog widget
 	GtkWidget* _widget;
 
+	// Widgets map
+	std::map<int, GtkWidget*> _widgets;
+
 	// The objective we are editing
 	Objective& _objective;
 	
 	// List store for the components
 	GtkListStore* _componentList;
+	GtkTreeSelection* _componentSel;
 	
 private:
 
 	// Construction helpers
 	GtkWidget* createListView();
+	GtkWidget* createEditPanel();
 	GtkWidget* createButtons();
+
+	// Populate the edit panel widgets with the specified component number
+	void populateEditPanel(int index);
 
 	/* GTK CALLBACKS */
 	static void _onDelete(GtkWidget*, ComponentsDialog*);
+	static void _onSelectionChanged(GtkTreeSelection*, ComponentsDialog*);
 	
 public:
 	

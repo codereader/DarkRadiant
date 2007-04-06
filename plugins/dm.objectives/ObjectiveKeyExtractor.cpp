@@ -75,6 +75,15 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 			if (componentStr == "type") {
 				comp.type = boost::algorithm::to_upper_copy(value); 
 			}
+			else if (componentStr == "state") {
+				comp.state = (value == "1");
+			}
+			else if (componentStr == "not") {
+				comp.inverted = (value == "1");
+			}
+			else if (componentStr == "irreversible") {
+				comp.irreversible = (value == "1");
+			}
 		}
 			
 		
