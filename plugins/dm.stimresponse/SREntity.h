@@ -49,7 +49,9 @@ private:
 	KeyList _keys;
 	
 	// The liststore representation
-	GtkListStore* _listStore;
+	//GtkListStore* _listStore;
+	GtkListStore* _stimStore;
+	GtkListStore* _responseStore;
 	
 	// A collection of warnings regarding the parsing of the spawnargs
 	std::string _warnings;
@@ -93,7 +95,8 @@ public:
 	/** greebo: Returns the GtkListStore* containing the stim/response data. 
 	 * 			Use this to add the data to a treeview or a combobox.
 	 */
-	GtkListStore* getStimResponseStore();
+	GtkListStore* getStimStore();
+	GtkListStore* getResponseStore();
 	
 	/** greebo: Sets the <key> of the SR with the given <id> to <value>
 	 */
@@ -102,7 +105,7 @@ public:
 	/** greebo: Updates the ListStore according to the 
 	 * 			values of the current StimResponseMap <_list>
 	 */
-	void updateListStore();
+	void updateListStores();
 	
 	/** greebo: Helper to load the possible key names
 	 * 			from the registry into the _keys list.
@@ -111,18 +114,21 @@ public:
 	
 	/** greebo: Returns the treeIter pointing to the row containing the 
 	 * 			StimResponse with the given <id>
+	 * 
+	 * @targetStore: The liststore where the iter should be searched
 	 */
-	GtkTreeIter getIterForId(int id);
+	GtkTreeIter getIterForId(GtkListStore* targetStore, int id);
 	
 private:
 	/** greebo: Write the values of the passed StimResponse to the 
 	 * 			GtkListStore using the passed GtkTreeIter.
 	 * 			The ID stays untouched. 
 	 * 
+	 * @targetListStore: the list the data should be written to 
 	 * @iter: The TreeIter pointing at the row where the data should be inserted
 	 * @sr: the StimResponse object containing the source data
 	 */
-	void writeToListStore(GtkTreeIter* iter, StimResponse& sr);
+	void writeToListStore(GtkListStore* targetListStore, GtkTreeIter* iter, StimResponse& sr);
 	
 	// Returns the highest currently assigned id
 	int getHighestId();

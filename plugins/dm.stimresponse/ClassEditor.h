@@ -36,7 +36,7 @@ public:
 	 */
 	virtual operator GtkWidget*();
 	
-	/** greebo: Sets the new entity (is called by the StimResponseEditor class)
+	/** greebo: Sets the new entity (is called by the subclasses)
 	 */
 	virtual void setEntity(SREntityPtr entity);
 

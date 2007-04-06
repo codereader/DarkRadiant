@@ -10,6 +10,12 @@ ResponseEditor::ResponseEditor(StimTypes& stimTypes) :
 	populatePage();
 }
 
+void ResponseEditor::setEntity(SREntityPtr entity) {
+	// Pass the call to the base class
+	ClassEditor::setEntity(entity);
+	
+}
+
 void ResponseEditor::populatePage() {
 	// Response effects section
     /*gtk_box_pack_start(GTK_BOX(_pageVBox),

@@ -34,6 +34,10 @@ public:
 	 */
 	StimEditor(StimTypes& stimTypes);
 
+	/** greebo: Sets the new entity (is called by the StimResponseEditor class)
+	 */
+	virtual void setEntity(SREntityPtr entity);
+
 private:
 	/** greebo: Creates the option checkboxes and entry widgets
 	 */

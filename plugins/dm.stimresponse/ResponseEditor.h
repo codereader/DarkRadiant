@@ -14,6 +14,10 @@ public:
 	 */
 	ResponseEditor(StimTypes& stimTypes);
 
+	/** greebo: Sets the new entity (updates the treeviews)
+	 */
+	virtual void setEntity(SREntityPtr entity);
+
 private:
 	/** greebo: Gets called when the response selection gets changed 
 	 */

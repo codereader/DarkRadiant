@@ -100,6 +100,17 @@ void StimEditor::populatePage() {
 	gtk_box_pack_start(GTK_BOX(srHBox), createPropertyWidgets(), TRUE, TRUE, 6);
 }
 
+void StimEditor::setEntity(SREntityPtr entity) {
+	// Pass the call to the base class
+	ClassEditor::setEntity(entity);
+	
+	if (entity != NULL) {
+		GtkListStore* listStore = _entity->getStimStore();
+		gtk_tree_view_set_model(GTK_TREE_VIEW(_list), GTK_TREE_MODEL(listStore));
+		g_object_unref(listStore); // treeview owns reference now
+	}
+}
+
 GtkWidget* StimEditor::createPropertyWidgets() {
 	_propertyWidgets.vbox = gtk_vbox_new(FALSE, 6);
 	

@@ -305,9 +305,9 @@ void StimResponseEditor::rescanSelection() {
 		_responseEditor.setEntity(_srEntity);
 		
 		// Get the liststores from the SREntity and pack them
-		GtkListStore* listStore = _srEntity->getStimResponseStore();
-		gtk_tree_view_set_model(GTK_TREE_VIEW(_entitySRView), GTK_TREE_MODEL(listStore));
-		g_object_unref(listStore);
+		//GtkListStore* listStore = _srEntity->getStimStore();
+		//gtk_tree_view_set_model(GTK_TREE_VIEW(_entitySRView), GTK_TREE_MODEL(listStore));
+		//g_object_unref(listStore);
 		
 		// Clear the treeview (unset the model)
 		gtk_tree_view_set_model(GTK_TREE_VIEW(_effectWidgets.view), NULL);
@@ -491,7 +491,7 @@ void StimResponseEditor::addStimResponse() {
 	sr.set("type", _stimTypes.getFirstName());
 
 	// Refresh the values in the liststore
-	_srEntity->updateListStore();
+	_srEntity->updateListStores();
 }
 
 void StimResponseEditor::removeStimResponse() {
