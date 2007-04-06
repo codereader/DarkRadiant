@@ -11,10 +11,6 @@
 namespace ui {
 
 	namespace {
-		const std::string LABEL_STIM_LIST = "<b>Stims</b>";
-		const unsigned int TREE_VIEW_WIDTH = 220;
-		const unsigned int TREE_VIEW_HEIGHT = 200;
-		
 		static void textCellDataFunc(GtkTreeViewColumn* treeColumn,
 							 GtkCellRenderer* cell,
 							 GtkTreeModel* treeModel,
@@ -36,31 +32,10 @@ StimEditor::operator GtkWidget*() {
 }
 
 void StimEditor::populatePage() {
-	_pageVBox = gtk_vbox_new(FALSE, 6);
-	
-	// Stim/Response list section
-    gtk_box_pack_start(GTK_BOX(_pageVBox), 
-    				   gtkutil::LeftAlignedLabel(LABEL_STIM_LIST), 
-    				   FALSE, FALSE, 0);
-	
 	GtkWidget* srHBox = gtk_hbox_new(FALSE, 0);
 	
 	// Pack it into an alignment so that it is indented
-	GtkWidget* srAlignment = gtkutil::LeftAlignment(GTK_WIDGET(srHBox), 18, 1.0); 
-	gtk_box_pack_start(GTK_BOX(_pageVBox), GTK_WIDGET(srAlignment), TRUE, TRUE, 0);
-	
-	_list = gtk_tree_view_new();
-	gtk_widget_set_size_request(_list, TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT);
-	
-	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_list));
-
-	// Connect the signals
-	/*g_signal_connect(G_OBJECT(_selection), "changed", 
-					 G_CALLBACK(onSRSelectionChange), this);
-	g_signal_connect(G_OBJECT(_list), "key-press-event", 
-					 G_CALLBACK(onTreeViewKeyPress), this);
-	g_signal_connect(G_OBJECT(_list), "button-release-event", 
-					 G_CALLBACK(onTreeViewButtonRelease), this);*/
+	gtk_box_pack_start(GTK_BOX(_pageVBox), GTK_WIDGET(srHBox), TRUE, TRUE, 0);
 	
 	// ID number
 	GtkTreeViewColumn* numCol = gtk_tree_view_column_new();
@@ -128,6 +103,18 @@ void StimEditor::populatePage() {
 	gtk_box_pack_start(GTK_BOX(_pageVBox), 
 					   gtkutil::LeftAlignment(createEffectWidgets(), 18, 1.0),
 					   TRUE, TRUE, 0);*/
+}
+
+void StimEditor::removeItem(GtkTreeView* view) {
+	
+}
+
+void StimEditor::openContextMenu(GtkTreeView* view) {
+	
+}
+
+void StimEditor::selectionChanged() {
+	
 }
 
 } // namespace ui
