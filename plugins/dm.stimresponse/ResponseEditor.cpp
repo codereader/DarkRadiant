@@ -4,16 +4,20 @@
 
 namespace ui {
 
-ResponseEditor::ResponseEditor() {
+ResponseEditor::ResponseEditor(StimTypes& stimTypes) :
+	ClassEditor(stimTypes)
+{
 	populatePage();
 }
 
-ResponseEditor::operator GtkWidget*() {
-	return _pageVBox;
-}
-
 void ResponseEditor::populatePage() {
-	_pageVBox = gtk_vbox_new(FALSE, 6);
+	// Response effects section
+    /*gtk_box_pack_start(GTK_BOX(_pageVBox),
+    				   gtkutil::LeftAlignedLabel(LABEL_RESPONSE_EFFECTS),
+    				   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(_pageVBox), 
+					   gtkutil::LeftAlignment(createEffectWidgets(), 18, 1.0),
+					   TRUE, TRUE, 0);*/
 }
 
 void ResponseEditor::openContextMenu(GtkTreeView* view) {

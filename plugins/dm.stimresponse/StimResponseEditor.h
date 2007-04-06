@@ -179,7 +179,6 @@ private:
 
 	/* WIDGET POPULATION */
 	void populateWindow(); 			// Main window
-	GtkWidget* createSRWidgets(); 	// Stim/Response widget group
 	GtkWidget* createEffectWidgets(); // Response effect list
 	GtkWidget* createButtons(); 	// Dialog buttons
 	void createContextMenus();		// Popup menus
