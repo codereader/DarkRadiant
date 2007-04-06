@@ -27,7 +27,7 @@ SREntity::SREntity(Entity* source) :
 								  G_TYPE_STRING, 	// Caption String
 								  GDK_TYPE_PIXBUF,	// Icon
 								  G_TYPE_BOOLEAN,	// Inheritance flag
-								  G_TYPE_STRING)) 	// ID in string format (unique)
+								  G_TYPE_INT)) 	// ID (unique)
 {
 	loadKeys();
 	load(source);
@@ -130,7 +130,7 @@ void SREntity::updateListStore() {
 		gtk_list_store_append(_listStore, &iter);
 		// Store the ID into the liststore
 		gtk_list_store_set(_listStore, &iter, 
-						   IDSTR_COL, intToStr(id).c_str(),
+						   ID_COL, id,
 						   -1);
 		
 		// And write the rest of the data to the row
@@ -182,7 +182,7 @@ void SREntity::save(Entity* target) {
 
 GtkTreeIter SREntity::getIterForId(int id) {
 	// Setup the selectionfinder to search for the id string
-	gtkutil::TreeModel::SelectionFinder finder(intToStr(id), IDSTR_COL);
+	gtkutil::TreeModel::SelectionFinder finder(id, ID_COL);
 	
 	gtk_tree_model_foreach(
 		GTK_TREE_MODEL(_listStore), 

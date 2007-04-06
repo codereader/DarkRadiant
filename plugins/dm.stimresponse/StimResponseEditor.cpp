@@ -753,7 +753,7 @@ void StimResponseEditor::removeEffect() {
 
 void StimResponseEditor::selectEffectIndex(const unsigned int index) {
 	// Setup the selectionfinder to search for the index string
-	gtkutil::TreeModel::SelectionFinder finder(intToStr(index), EFFECT_INDEX_STR_COL);
+	gtkutil::TreeModel::SelectionFinder finder(index, EFFECT_INDEX_COL);
 
 	gtk_tree_model_foreach(
 		gtk_tree_view_get_model(GTK_TREE_VIEW(_effectWidgets.view)),
@@ -810,7 +810,7 @@ int StimResponseEditor::getIdFromSelection() {
 	);
 	
 	if (anythingSelected && _srEntity != NULL) {
-		return strToInt(gtkutil::TreeModel::getString(model, &iter, IDSTR_COL));
+		return gtkutil::TreeModel::getInt(model, &iter, ID_COL);
 	}
 	else {
 		return -1;

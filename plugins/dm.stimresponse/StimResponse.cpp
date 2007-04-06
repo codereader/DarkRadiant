@@ -179,7 +179,6 @@ GtkListStore* StimResponse::getEffectStore() {
 											 G_TYPE_INT,	// Index
 											 G_TYPE_STRING, // Caption
 											 G_TYPE_STRING, // Arguments
-											 G_TYPE_STRING, // Index String
 											 -1);
 	
 	for (EffectMap::iterator i = _effects.begin(); i != _effects.end(); i++) {
@@ -191,7 +190,6 @@ GtkListStore* StimResponse::getEffectStore() {
 		// Store the ID into the liststore
 		gtk_list_store_set(store, &iter, 
 						   EFFECT_INDEX_COL, index,
-						   EFFECT_INDEX_STR_COL, intToStr(index).c_str(),
 						   -1);
 		
 		// And write the rest of the data to the row

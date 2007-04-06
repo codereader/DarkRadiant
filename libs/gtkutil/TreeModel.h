@@ -96,6 +96,9 @@ public:
 		// String containing the name to highlight
 		std::string _selection;
 		
+		// An integer to search for (alternative to the string above) 
+		int _needle;
+		
 		// The GtkTreePath* pointing to the required texture
 		GtkTreePath* _path;
 		
@@ -105,10 +108,16 @@ public:
 		// The column index to be searched
 		int _column;
 		
+		// TRUE, if this should search for an integer instead of a string
+		bool _searchForInt;
+		
 	public:
 	
-		// Constructor
+		// Constructor to search for strings
 		SelectionFinder(const std::string& selection, int column);
+		
+		// Constructor to search for integers
+		SelectionFinder(int needle, int column);
 		
 		// Retrieve the found TreePath, which may be NULL if the texture was not
 		// found
