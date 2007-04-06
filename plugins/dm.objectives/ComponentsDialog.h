@@ -43,6 +43,7 @@ private:
 	void populateEditPanel(int index);
 
 	/* GTK CALLBACKS */
+	static void _onClose(GtkWidget*, ComponentsDialog*);
 	static void _onDelete(GtkWidget*, ComponentsDialog*);
 	static void _onSelectionChanged(GtkTreeSelection*, ComponentsDialog*);
 	
