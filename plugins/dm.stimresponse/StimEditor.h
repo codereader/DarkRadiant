@@ -20,6 +20,13 @@ public:
 	virtual operator GtkWidget*();
 
 private:
+	/** greebo: Gets called when the stim selection gets changed 
+	 */
+	virtual void selectionChanged();
+
+	void openContextMenu(GtkTreeView* view);
+	void removeItem(GtkTreeView* view);
+
 	/** greebo: Creates all the widgets
 	 */
 	void populatePage();
