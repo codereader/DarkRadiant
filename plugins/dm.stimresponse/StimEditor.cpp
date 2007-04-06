@@ -212,15 +212,15 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.timeIntEntry)] = "radius";
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.magnEntry)] = "magnitude";
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.falloffEntry)] = "falloffexponent";
-		
+	
 	// Connect the checkboxes
-	//g_signal_connect(G_OBJECT(_propertyWidgets.active), "toggled", G_CALLBACK(onActiveToggle), this);
-	//g_signal_connect(G_OBJECT(_propertyWidgets.useBounds), "toggled", G_CALLBACK(onBoundsToggle), this);
-	//g_signal_connect(G_OBJECT(_propertyWidgets.radiusToggle), "toggled", G_CALLBACK(onRadiusToggle), this);
-	//g_signal_connect(G_OBJECT(_propertyWidgets.timeIntToggle), "toggled", G_CALLBACK(onTimeIntervalToggle), this);
-	//g_signal_connect(G_OBJECT(_propertyWidgets.magnToggle), "toggled", G_CALLBACK(onMagnitudeToggle), this);
-	//g_signal_connect(G_OBJECT(_propertyWidgets.falloffToggle), "toggled", G_CALLBACK(onFalloffToggle), this);
-	//g_signal_connect(G_OBJECT(_propertyWidgets.timerTypeToggle), "toggled", G_CALLBACK(onTimerTypeToggle), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.active), "toggled", G_CALLBACK(onCheckboxToggle), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.useBounds), "toggled", G_CALLBACK(onCheckboxToggle), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.radiusToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.timeIntToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.magnToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.falloffToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.timerTypeToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	
 	// Connect the entry fields
 	g_signal_connect(G_OBJECT(_propertyWidgets.magnEntry), "changed", G_CALLBACK(onEntryChanged), this);
@@ -229,6 +229,73 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	g_signal_connect(G_OBJECT(_propertyWidgets.timeIntEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	
 	return gtkutil::LeftAlignment(_propertyWidgets.vbox, 6, 1.0f);
+}
+
+void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
+	GtkWidget* toggleWidget = GTK_WIDGET(toggleButton);
+	bool active = gtk_toggle_button_get_active(toggleButton);
+	
+	if (toggleWidget == _propertyWidgets.active) {
+		setProperty("state", active ? "1" : "0");
+	}
+	else if (toggleWidget == _propertyWidgets.useBounds) {
+		setProperty("use_bounds", active ? "1" : "");
+	}
+	else if (toggleWidget == _propertyWidgets.timerTypeToggle) {
+		setProperty("timer_type", active ? "RELOAD" : "");
+	}
+	else if (toggleWidget == _propertyWidgets.radiusToggle) {
+		std::string entryText = 
+			gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.radiusEntry));
+	
+		// Enter a default value for the entry text, if it's empty up till now.
+		if (active) {
+			entryText += (entryText.empty()) ? "10" : "";	
+		}
+		else {
+			entryText = "";
+		}
+		setProperty("radius", entryText);
+	}
+	else if (toggleWidget == _propertyWidgets.magnToggle) {
+		std::string entryText = 
+			gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.magnEntry));
+	
+		// Enter a default value for the entry text, if it's empty up till now.
+		if (active) {
+			entryText += (entryText.empty()) ? "10" : "";	
+		}
+		else {
+			entryText = "";
+		}
+		setProperty("magnitude", entryText);
+	}
+	else if (toggleWidget == _propertyWidgets.falloffToggle) {
+		std::string entryText = 
+			gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.falloffEntry));
+	
+		// Enter a default value for the entry text, if it's empty up till now.
+		if (active) {
+			entryText += (entryText.empty()) ? "1" : "";	
+		}
+		else {
+			entryText = "";
+		}
+		setProperty("falloffexponent", entryText);
+	}
+	else if (toggleWidget == _propertyWidgets.timeIntToggle) {
+		std::string entryText = 
+			gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.timeIntEntry));
+	
+		// Enter a default value for the entry text, if it's empty up till now.
+		if (active) {
+			entryText += (entryText.empty()) ? "1000" : "";	
+		}
+		else {
+			entryText = "";
+		}
+		setProperty("time_interval", entryText);
+	}
 }
 
 void StimEditor::entryChanged(GtkEditable* editable) {
