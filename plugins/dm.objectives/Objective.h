@@ -32,8 +32,9 @@ struct Objective
 	bool ongoing;
 	bool irreversible;
 	
-	// List of components
-	std::list<Component> components;
+	// Map of indexed components
+	typedef std::map<int, Component> ComponentMap;
+	ComponentMap components;
 	
 	// Constructor
 	Objective()

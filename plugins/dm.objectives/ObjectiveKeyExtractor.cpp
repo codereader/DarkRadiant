@@ -51,6 +51,25 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 		_objMap[iNum].state = static_cast<Objective::State>(
 									boost::lexical_cast<int>(value));
 	}
+	else {
+	
+		// Use another regex to check for components (obj1_1_blah)
+		static const boost::regex reComponent("(\\d+)_(.*)");
+		boost::smatch results;
+		
+		if (!boost::regex_match(objSubString, results, reComponent)) {
+			return;
+		}
+		else {
+			
+			// Get the component number and add an entry in the Objective's
+			// component map
+			int componentNum = boost::lexical_cast<int>(results[1]);
+			_objMap[iNum].components[componentNum];			
+		}
+			
+		
+	}
 
 }
 	
