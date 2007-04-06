@@ -2,6 +2,7 @@
 #include "ObjectiveEntityFinder.h"
 #include "RandomOrigin.h"
 #include "TargetList.h"
+#include "ComponentsDialog.h"
 
 #include "iscenegraph.h"
 #include "iradiant.h"
@@ -211,7 +212,7 @@ GtkWidget* ObjectivesEditor::createObjectiveEditPanel() {
 
 	// Table for entry boxes
 	GtkWidget* table = gtk_table_new(4, 2, FALSE);
-	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
+	gtk_table_set_row_spacings(GTK_TABLE(table), 12);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
 	
 	// Objective description
@@ -256,6 +257,8 @@ GtkWidget* ObjectivesEditor::createObjectiveEditPanel() {
 						 gtk_image_new_from_stock(GTK_STOCK_EDIT, 
 						 						  GTK_ICON_SIZE_BUTTON));
 	_widgets[WIDGET_COMPONENTS_BUTTON] = compButton;
+	g_signal_connect(G_OBJECT(compButton), "clicked", 
+					 G_CALLBACK(_onEditComponents), this);
 		
 	_widgets[WIDGET_COMPONENTS_COUNT] = gtk_label_new("0 condition(s)");
 	
@@ -437,6 +440,12 @@ void ObjectivesEditor::populateEditPanel() {
 	gtk_toggle_button_set_active(
 		GTK_TOGGLE_BUTTON(_widgets[WIDGET_VISIBLE_FLAG]),
 		obj.visible ? TRUE : FALSE);
+		
+	// Set component count
+	std::string sCount = boost::lexical_cast<std::string>(obj.components.size()) 
+						 + " condition(s)"; 
+	gtk_label_set_text(GTK_LABEL(_widgets[WIDGET_COMPONENTS_COUNT]),
+					   sCount.c_str());
 		
 	// Re-enable updates
 	_objectiveListLocked = false;
@@ -691,6 +700,14 @@ void ObjectivesEditor::_onDescriptionEdited(GtkEditable* e,
 	// Update the list store
 	gtk_list_store_set(self->_objectiveList, &(self->_curObjective),
 					   1, desc.c_str(), -1);
+}
+
+// Callback for Edit Components button
+void ObjectivesEditor::_onEditComponents(GtkWidget* w, ObjectivesEditor* self) {
+	
+	// Display the ComponentsDialog
+	ComponentsDialog compDialog(GTK_WINDOW(self->_widget));
+	compDialog.showAndBlock();
 }
 
 }
