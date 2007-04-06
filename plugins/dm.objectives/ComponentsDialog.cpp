@@ -20,7 +20,8 @@ namespace {
 	// Widget enum
 	enum {
 		WIDGET_STATE_FLAG,
-		WIDGET_IRREVERSIBLE_FLAG		
+		WIDGET_IRREVERSIBLE_FLAG,
+		WIDGET_INVERTED_FLAG		
 	};
 	
 }
@@ -98,11 +99,15 @@ GtkWidget* ComponentsDialog::createEditPanel() {
 		gtk_check_button_new_with_label("Satisfied at start");
 	_widgets[WIDGET_IRREVERSIBLE_FLAG] = 
 		gtk_check_button_new_with_label("Irreversible");  
+	_widgets[WIDGET_INVERTED_FLAG] =
+		gtk_check_button_new_with_label("Boolean NOT");  
 	
 	GtkWidget* flagsBox = gtk_hbox_new(FALSE, 12);
 	gtk_box_pack_start(GTK_BOX(flagsBox), _widgets[WIDGET_STATE_FLAG],
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(flagsBox), _widgets[WIDGET_IRREVERSIBLE_FLAG],
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(flagsBox), _widgets[WIDGET_INVERTED_FLAG],
 					   FALSE, FALSE, 0);
 	
 	gtk_table_attach(GTK_TABLE(table), 
@@ -146,16 +151,18 @@ void ComponentsDialog::populateEditPanel(int index) {
 	Component& comp = _objective.components[index];
 	
 	// Set the flags
-	if (comp.state) {
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_widgets[WIDGET_STATE_FLAG]), TRUE
-		);
-	}
-	else if (comp.irreversible) {
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_widgets[WIDGET_IRREVERSIBLE_FLAG]), TRUE
-		);
-	}
+	gtk_toggle_button_set_active(
+		GTK_TOGGLE_BUTTON(_widgets[WIDGET_STATE_FLAG]), 
+		comp.state ? TRUE : FALSE
+	);
+	gtk_toggle_button_set_active(
+		GTK_TOGGLE_BUTTON(_widgets[WIDGET_IRREVERSIBLE_FLAG]), 
+		comp.irreversible ? TRUE : FALSE
+	);
+	gtk_toggle_button_set_active(
+		GTK_TOGGLE_BUTTON(_widgets[WIDGET_INVERTED_FLAG]), 
+		comp.inverted ? TRUE : FALSE
+	);
 	
 }
 
