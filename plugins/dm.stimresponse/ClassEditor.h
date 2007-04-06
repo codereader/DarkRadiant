@@ -11,6 +11,7 @@ typedef struct _GdkEventKey GdkEventKey;
 typedef struct _GdkEventButton GdkEventButton;
 typedef struct _GtkEditable GtkEditable;
 typedef struct _GtkToggleButton GtkToggleButton;
+typedef struct _GtkComboBox GtkComboBox;
 
 namespace ui {
 
@@ -97,6 +98,9 @@ protected:
 	static void onEntryChanged(GtkEditable* editable, ClassEditor* self);
 	// Gets called on check box toggles
 	static void onCheckboxToggle(GtkToggleButton* toggleButton, ClassEditor* self);
+	
+	// Gets called on stim type selection change
+	static void onStimTypeSelect(GtkComboBox* widget, ClassEditor* self);
 };
 
 } // namespace ui

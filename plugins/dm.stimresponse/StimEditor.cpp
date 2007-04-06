@@ -128,7 +128,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	gtk_widget_set_size_request(_propertyWidgets.typeList, -1, -1);
 	g_object_unref(stimListStore); // tree view owns the reference now
 	
-	//g_signal_connect(G_OBJECT(_propertyWidgets.typeList), "changed", G_CALLBACK(onTypeSelect), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.typeList), "changed", G_CALLBACK(onStimTypeSelect), this);
 	
 	// Add the cellrenderer for the name
 	GtkCellRenderer* nameRenderer = gtk_cell_renderer_text_new();
