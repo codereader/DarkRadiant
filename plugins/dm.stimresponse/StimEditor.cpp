@@ -2,15 +2,19 @@
 
 #include <gtk/gtk.h>
 #include "gtkutil/LeftAlignment.h"
+#include "gtkutil/RightAlignedLabel.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TreeModel.h"
+#include "gtkutil/image.h"
 
 #include "SREntity.h"
 
 namespace ui {
 
 	namespace {
+		const unsigned int OPTIONS_LABEL_WIDTH = 140;
+		
 		static void textCellDataFunc(GtkTreeViewColumn* treeColumn,
 							 GtkCellRenderer* cell,
 							 GtkTreeModel* treeModel,
@@ -23,12 +27,10 @@ namespace ui {
 		}
 	}
 
-StimEditor::StimEditor() {
+StimEditor::StimEditor(StimTypes& stimTypes) :
+	ClassEditor(stimTypes)
+{
 	populatePage();
-}
-
-StimEditor::operator GtkWidget*() {
-	return _pageVBox;
 }
 
 void StimEditor::populatePage() {
@@ -94,15 +96,118 @@ void StimEditor::populatePage() {
 	gtk_box_pack_start(GTK_BOX(srHBox), 
 		gtkutil::ScrolledFrame(_list), FALSE, FALSE, 0);
 	
-	//gtk_box_pack_start(GTK_BOX(srHBox), createSRWidgets(), TRUE, TRUE, 6);
+	// The property pane
+	gtk_box_pack_start(GTK_BOX(srHBox), createPropertyWidgets(), TRUE, TRUE, 6);
+}
+
+GtkWidget* StimEditor::createPropertyWidgets() {
+	_propertyWidgets.vbox = gtk_vbox_new(FALSE, 6);
 	
-	// Response effects section
-    /*gtk_box_pack_start(GTK_BOX(_pageVBox),
-    				   gtkutil::LeftAlignedLabel(LABEL_RESPONSE_EFFECTS),
-    				   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(_pageVBox), 
-					   gtkutil::LeftAlignment(createEffectWidgets(), 18, 1.0),
-					   TRUE, TRUE, 0);*/
+	// Type Selector
+	GtkWidget* typeHBox = gtk_hbox_new(FALSE, 0);
+	
+	GtkWidget* typeLabel = gtkutil::LeftAlignedLabel("Type:");
+	// Cast the helper class onto a ListStore and create a new treeview
+	GtkListStore* stimListStore = _stimTypes;
+	_propertyWidgets.typeList = gtk_combo_box_new_with_model(GTK_TREE_MODEL(stimListStore));
+	gtk_widget_set_size_request(_propertyWidgets.typeList, -1, -1);
+	g_object_unref(stimListStore); // tree view owns the reference now
+	
+	//g_signal_connect(G_OBJECT(_propertyWidgets.typeList), "changed", G_CALLBACK(onTypeSelect), this);
+	
+	// Add the cellrenderer for the name
+	GtkCellRenderer* nameRenderer = gtk_cell_renderer_text_new();
+	GtkCellRenderer* iconRenderer = gtk_cell_renderer_pixbuf_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_propertyWidgets.typeList), iconRenderer, FALSE);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_propertyWidgets.typeList), nameRenderer, TRUE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_propertyWidgets.typeList), nameRenderer, "text", 1);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_propertyWidgets.typeList), iconRenderer, "pixbuf", 2);
+	gtk_cell_renderer_set_fixed_size(iconRenderer, 26, -1);
+	
+	gtk_box_pack_start(GTK_BOX(typeHBox), typeLabel, FALSE, FALSE, 0);
+	gtk_box_pack_start(
+		GTK_BOX(typeHBox), 
+		gtkutil::LeftAlignment(_propertyWidgets.typeList, 12, 1.0f), 
+		TRUE, TRUE,	0
+	);
+	
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), typeHBox, FALSE, FALSE, 0);
+	
+	// Active
+	_propertyWidgets.active = gtk_check_button_new_with_label("Active");
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.active, FALSE, FALSE, 0);
+	
+	// Use Bounds
+	_propertyWidgets.useBounds = gtk_check_button_new_with_label("Use bounds");
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.useBounds, FALSE, FALSE, 0);
+	
+	// Radius
+	GtkWidget* radiusHBox = gtk_hbox_new(FALSE, 0);
+	_propertyWidgets.radiusToggle = gtk_check_button_new_with_label("Radius:");
+	gtk_widget_set_size_request(_propertyWidgets.radiusToggle, OPTIONS_LABEL_WIDTH, -1);
+	_propertyWidgets.radiusEntry = gtk_entry_new();
+	
+	gtk_box_pack_start(GTK_BOX(radiusHBox), _propertyWidgets.radiusToggle, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(radiusHBox), _propertyWidgets.radiusEntry, TRUE, TRUE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), radiusHBox, FALSE, FALSE, 0);
+	
+	// Magnitude
+	GtkWidget* magnHBox = gtk_hbox_new(FALSE, 0);
+	_propertyWidgets.magnToggle = gtk_check_button_new_with_label("Magnitude:");
+	gtk_widget_set_size_request(_propertyWidgets.magnToggle, OPTIONS_LABEL_WIDTH, -1);
+	_propertyWidgets.magnEntry = gtk_entry_new();
+	
+	gtk_box_pack_start(GTK_BOX(magnHBox), _propertyWidgets.magnToggle, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(magnHBox), _propertyWidgets.magnEntry, TRUE, TRUE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), magnHBox, FALSE, FALSE, 0);
+	
+	// Falloff exponent
+	GtkWidget* falloffHBox = gtk_hbox_new(FALSE, 0);
+	_propertyWidgets.falloffToggle = gtk_check_button_new_with_label("Falloff Exponent:");
+	gtk_widget_set_size_request(_propertyWidgets.falloffToggle, OPTIONS_LABEL_WIDTH, -1);
+	_propertyWidgets.falloffEntry = gtk_entry_new();
+	
+	gtk_box_pack_start(GTK_BOX(falloffHBox), _propertyWidgets.falloffToggle, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(falloffHBox), _propertyWidgets.falloffEntry, TRUE, TRUE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), falloffHBox, FALSE, FALSE, 0);
+	
+	// Time Interval
+	GtkWidget* timeHBox = gtk_hbox_new(FALSE, 0);
+	_propertyWidgets.timeIntToggle = gtk_check_button_new_with_label("Time interval:");
+	gtk_widget_set_size_request(_propertyWidgets.timeIntToggle, OPTIONS_LABEL_WIDTH, -1);
+	_propertyWidgets.timeIntEntry = gtk_entry_new();
+	_propertyWidgets.timeUnitLabel = gtkutil::RightAlignedLabel("ms");
+	gtk_widget_set_size_request(_propertyWidgets.timeUnitLabel, 24, -1);
+	
+	gtk_box_pack_start(GTK_BOX(timeHBox), _propertyWidgets.timeIntToggle, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(timeHBox), _propertyWidgets.timeUnitLabel, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(timeHBox), _propertyWidgets.timeIntEntry, TRUE, TRUE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), timeHBox, FALSE, FALSE, 0);
+	
+	// Timer type
+	_propertyWidgets.timerTypeToggle = gtk_check_button_new_with_label("Timer restarts after firing");
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.timerTypeToggle, FALSE, FALSE, 0);
+	
+	// Connect the checkboxes
+	//g_signal_connect(G_OBJECT(_propertyWidgets.active), "toggled", G_CALLBACK(onActiveToggle), this);
+	//g_signal_connect(G_OBJECT(_propertyWidgets.useBounds), "toggled", G_CALLBACK(onBoundsToggle), this);
+	//g_signal_connect(G_OBJECT(_propertyWidgets.radiusToggle), "toggled", G_CALLBACK(onRadiusToggle), this);
+	//g_signal_connect(G_OBJECT(_propertyWidgets.timeIntToggle), "toggled", G_CALLBACK(onTimeIntervalToggle), this);
+	//g_signal_connect(G_OBJECT(_propertyWidgets.magnToggle), "toggled", G_CALLBACK(onMagnitudeToggle), this);
+	//g_signal_connect(G_OBJECT(_propertyWidgets.falloffToggle), "toggled", G_CALLBACK(onFalloffToggle), this);
+	//g_signal_connect(G_OBJECT(_propertyWidgets.timerTypeToggle), "toggled", G_CALLBACK(onTimerTypeToggle), this);
+	
+	// Connect the entry fields
+	//g_signal_connect(G_OBJECT(_propertyWidgets.magnEntry), "changed", G_CALLBACK(onMagnitudeChanged), this);
+	//g_signal_connect(G_OBJECT(_propertyWidgets.falloffEntry), "changed", G_CALLBACK(onFalloffChanged), this);
+	//g_signal_connect(G_OBJECT(_propertyWidgets.radiusEntry), "changed", G_CALLBACK(onRadiusChanged), this);
+	//g_signal_connect(G_OBJECT(_propertyWidgets.timeIntEntry), "changed", G_CALLBACK(onTimeIntervalChanged), this);
+	
+	return gtkutil::LeftAlignment(_propertyWidgets.vbox, 6, 1.0f);
 }
 
 void StimEditor::removeItem(GtkTreeView* view) {

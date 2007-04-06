@@ -8,18 +8,37 @@ namespace ui {
 class StimEditor :
 	public ClassEditor
 {
+	struct PropertyWidgets {
+		GtkWidget* vbox;
+		GtkWidget* typeList;
+		GtkWidget* stimButton;
+		GtkWidget* respButton;
+		GtkWidget* active;
+		GtkWidget* useBounds;
+		GtkWidget* radiusToggle;
+		GtkWidget* radiusEntry;
+		GtkWidget* timeIntToggle;
+		GtkWidget* timeIntEntry;
+		GtkWidget* timeUnitLabel;
+		GtkWidget* magnToggle;
+		GtkWidget* magnEntry;
+		GtkWidget* falloffToggle;
+		GtkWidget* falloffEntry;
+		GtkWidget* timerTypeToggle;
+		GtkWidget* addMenuItem;
+		GtkWidget* deleteMenuItem;
+	} _propertyWidgets;
 
 public:
 	/** greebo: Constructor creates all the widgets
 	 */
-	StimEditor();
-	
-	/** greebo: Operator cast to widget to pack this page into
-	 * 			a notebook tab or other parent widget.
-	 */
-	virtual operator GtkWidget*();
+	StimEditor(StimTypes& stimTypes);
 
 private:
+	/** greebo: Creates the option checkboxes and entry widgets
+	 */
+	GtkWidget* createPropertyWidgets();
+
 	/** greebo: Gets called when the stim selection gets changed 
 	 */
 	virtual void selectionChanged();

@@ -52,7 +52,9 @@ namespace {
 
 StimResponseEditor::StimResponseEditor() :
 	_entity(NULL),
-	_updatesDisabled(false)
+	_updatesDisabled(false),
+	_stimEditor(_stimTypes),
+	_responseEditor(_stimTypes)
 {
 	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
 	_dialog = gtkutil::TransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow(), false);
@@ -184,151 +186,6 @@ GtkWidget* StimResponseEditor::createButtons() {
 	gtk_box_pack_end(GTK_BOX(buttonHBox), revertButton, TRUE, TRUE, 0);
 	
 	return gtkutil::RightAlignment(buttonHBox);	
-}
-
-GtkWidget* StimResponseEditor::createSRWidgets() {
-	_srWidgets.vbox = gtk_vbox_new(FALSE, 6);
-	
-	// Create the buttons
-	_srWidgets.stimButton = gtk_toggle_button_new();
-	_srWidgets.respButton = gtk_toggle_button_new();
-	g_signal_connect(G_OBJECT(_srWidgets.stimButton), "toggled", G_CALLBACK(onClassChange), this);
-	g_signal_connect(G_OBJECT(_srWidgets.respButton), "toggled", G_CALLBACK(onClassChange), this);
-	
-	GtkWidget* stimImg = gtk_image_new_from_pixbuf(gtkutil::getLocalPixbufWithMask(ICON_STIM));
-	GtkWidget* respImg = gtk_image_new_from_pixbuf(gtkutil::getLocalPixbufWithMask(ICON_RESPONSE));
-	gtk_widget_set_size_request(stimImg, 20, -1);
-	gtk_widget_set_size_request(respImg, 20, -1);
-	
-	GtkWidget* stimLabel = gtk_label_new(NULL);
-	gtk_label_set_markup(GTK_LABEL(stimLabel), "<b>Stim</b>");
-	
-	GtkWidget* respLabel = gtk_label_new(NULL);
-	gtk_label_set_markup(GTK_LABEL(respLabel), "<b>Response</b>");
-	
-	GtkWidget* stimBtnHbox = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(stimBtnHbox), stimImg, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(stimBtnHbox), stimLabel, FALSE, FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(_srWidgets.stimButton), stimBtnHbox);
-	
-	GtkWidget* respBtnHbox = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(respBtnHbox), respImg, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(respBtnHbox), respLabel, FALSE, FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(_srWidgets.respButton), respBtnHbox);
-	
-	// combine the buttons to a hbox
-	GtkWidget* btnHbox = gtk_hbox_new(TRUE, 6);
-	gtk_box_pack_start(GTK_BOX(btnHbox), _srWidgets.stimButton, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(btnHbox), _srWidgets.respButton, TRUE, TRUE, 0);
-	
-	// Pack the button Hbox to the SRWidgets
-	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), btnHbox, FALSE, FALSE, 0);
-	
-	// Type Selector
-	GtkWidget* typeHBox = gtk_hbox_new(FALSE, 0);
-	
-	GtkWidget* typeLabel = gtkutil::LeftAlignedLabel("Type:");
-	// Cast the helper class onto a ListStore and create a new treeview
-	GtkListStore* stimListStore = _stimTypes;
-	_srWidgets.typeList = gtk_combo_box_new_with_model(GTK_TREE_MODEL(stimListStore));
-	gtk_widget_set_size_request(_srWidgets.typeList, -1, -1);
-	g_object_unref(stimListStore); // tree view owns the reference now
-	
-	g_signal_connect(G_OBJECT(_srWidgets.typeList), "changed", G_CALLBACK(onTypeSelect), this);
-	
-	// Add the cellrenderer for the name
-	GtkCellRenderer* nameRenderer = gtk_cell_renderer_text_new();
-	GtkCellRenderer* iconRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_srWidgets.typeList), iconRenderer, FALSE);
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_srWidgets.typeList), nameRenderer, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_srWidgets.typeList), nameRenderer, "text", 1);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_srWidgets.typeList), iconRenderer, "pixbuf", 2);
-	gtk_cell_renderer_set_fixed_size(iconRenderer, 26, -1);
-	
-	gtk_box_pack_start(GTK_BOX(typeHBox), typeLabel, FALSE, FALSE, 0);
-	gtk_box_pack_start(
-		GTK_BOX(typeHBox), 
-		gtkutil::LeftAlignment(_srWidgets.typeList, 12, 1.0f), 
-		TRUE, TRUE,	0
-	);
-	
-	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), typeHBox, FALSE, FALSE, 0);
-	
-	// Active
-	_srWidgets.active = gtk_check_button_new_with_label("Active");
-	g_signal_connect(G_OBJECT(_srWidgets.active), "toggled", G_CALLBACK(onActiveToggle), this);
-	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), _srWidgets.active, FALSE, FALSE, 0);
-	
-	// Use Bounds
-	_srWidgets.useBounds = gtk_check_button_new_with_label("Use bounds");
-	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), _srWidgets.useBounds, FALSE, FALSE, 0);
-	
-	// Radius
-	GtkWidget* radiusHBox = gtk_hbox_new(FALSE, 0);
-	_srWidgets.radiusToggle = gtk_check_button_new_with_label("Radius:");
-	gtk_widget_set_size_request(_srWidgets.radiusToggle, OPTIONS_LABEL_WIDTH, -1);
-	_srWidgets.radiusEntry = gtk_entry_new();
-	
-	gtk_box_pack_start(GTK_BOX(radiusHBox), _srWidgets.radiusToggle, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(radiusHBox), _srWidgets.radiusEntry, TRUE, TRUE, 0);
-	
-	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), radiusHBox, FALSE, FALSE, 0);
-	
-	// Magnitude
-	GtkWidget* magnHBox = gtk_hbox_new(FALSE, 0);
-	_srWidgets.magnToggle = gtk_check_button_new_with_label("Magnitude:");
-	gtk_widget_set_size_request(_srWidgets.magnToggle, OPTIONS_LABEL_WIDTH, -1);
-	_srWidgets.magnEntry = gtk_entry_new();
-	
-	gtk_box_pack_start(GTK_BOX(magnHBox), _srWidgets.magnToggle, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(magnHBox), _srWidgets.magnEntry, TRUE, TRUE, 0);
-	
-	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), magnHBox, FALSE, FALSE, 0);
-	
-	// Falloff exponent
-	GtkWidget* falloffHBox = gtk_hbox_new(FALSE, 0);
-	_srWidgets.falloffToggle = gtk_check_button_new_with_label("Falloff Exponent:");
-	gtk_widget_set_size_request(_srWidgets.falloffToggle, OPTIONS_LABEL_WIDTH, -1);
-	_srWidgets.falloffEntry = gtk_entry_new();
-	
-	gtk_box_pack_start(GTK_BOX(falloffHBox), _srWidgets.falloffToggle, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(falloffHBox), _srWidgets.falloffEntry, TRUE, TRUE, 0);
-	
-	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), falloffHBox, FALSE, FALSE, 0);
-	
-	// Time Interval
-	GtkWidget* timeHBox = gtk_hbox_new(FALSE, 0);
-	_srWidgets.timeIntToggle = gtk_check_button_new_with_label("Time interval:");
-	gtk_widget_set_size_request(_srWidgets.timeIntToggle, OPTIONS_LABEL_WIDTH, -1);
-	_srWidgets.timeIntEntry = gtk_entry_new();
-	_srWidgets.timeUnitLabel = gtkutil::RightAlignedLabel("ms");
-	gtk_widget_set_size_request(_srWidgets.timeUnitLabel, 24, -1);
-	
-	gtk_box_pack_start(GTK_BOX(timeHBox), _srWidgets.timeIntToggle, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(timeHBox), _srWidgets.timeUnitLabel, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(timeHBox), _srWidgets.timeIntEntry, TRUE, TRUE, 0);
-	
-	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), timeHBox, FALSE, FALSE, 0);
-	
-	// Timer type
-	_srWidgets.timerTypeToggle = gtk_check_button_new_with_label("Timer restarts after firing");
-	gtk_box_pack_start(GTK_BOX(_srWidgets.vbox), _srWidgets.timerTypeToggle, FALSE, FALSE, 0);
-	
-	// Connect the checkboxes
-	g_signal_connect(G_OBJECT(_srWidgets.useBounds), "toggled", G_CALLBACK(onBoundsToggle), this);
-	g_signal_connect(G_OBJECT(_srWidgets.radiusToggle), "toggled", G_CALLBACK(onRadiusToggle), this);
-	g_signal_connect(G_OBJECT(_srWidgets.timeIntToggle), "toggled", G_CALLBACK(onTimeIntervalToggle), this);
-	g_signal_connect(G_OBJECT(_srWidgets.magnToggle), "toggled", G_CALLBACK(onMagnitudeToggle), this);
-	g_signal_connect(G_OBJECT(_srWidgets.falloffToggle), "toggled", G_CALLBACK(onFalloffToggle), this);
-	g_signal_connect(G_OBJECT(_srWidgets.timerTypeToggle), "toggled", G_CALLBACK(onTimerTypeToggle), this);
-	
-	// Connect the entry fields
-	g_signal_connect(G_OBJECT(_srWidgets.magnEntry), "changed", G_CALLBACK(onMagnitudeChanged), this);
-	g_signal_connect(G_OBJECT(_srWidgets.falloffEntry), "changed", G_CALLBACK(onFalloffChanged), this);
-	g_signal_connect(G_OBJECT(_srWidgets.radiusEntry), "changed", G_CALLBACK(onRadiusChanged), this);
-	g_signal_connect(G_OBJECT(_srWidgets.timeIntEntry), "changed", G_CALLBACK(onTimeIntervalChanged), this);
-	
-	return _srWidgets.vbox;
 }
 
 // Create the response script list widgets

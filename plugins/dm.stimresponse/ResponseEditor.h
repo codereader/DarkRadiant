@@ -12,12 +12,7 @@ class ResponseEditor :
 public:
 	/** greebo: Constructor creates all the widgets
 	 */
-	ResponseEditor();
-	
-	/** greebo: Operator cast to widget to pack this page into
-	 * 			a notebook tab or other parent widget.
-	 */
-	virtual operator GtkWidget*();
+	ResponseEditor(StimTypes& stimTypes);
 
 private:
 	/** greebo: Gets called when the response selection gets changed 

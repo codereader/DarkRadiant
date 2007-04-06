@@ -10,7 +10,9 @@ namespace ui {
 		const unsigned int TREE_VIEW_HEIGHT = 200;
 	}
 
-ClassEditor::ClassEditor() {
+ClassEditor::ClassEditor(StimTypes& stimTypes) :
+	_stimTypes(stimTypes) 
+{
 	_pageVBox = gtk_vbox_new(FALSE, 6);
 	gtk_container_set_border_width(GTK_CONTAINER(_pageVBox), 6);
 	
@@ -26,6 +28,10 @@ ClassEditor::ClassEditor() {
 					 G_CALLBACK(onTreeViewKeyPress), this);
 	g_signal_connect(G_OBJECT(_list), "button-release-event", 
 					 G_CALLBACK(onTreeViewButtonRelease), this);
+}
+
+ClassEditor::operator GtkWidget*() {
+	return _pageVBox;
 }
 
 void ClassEditor::setEntity(SREntityPtr entity) {

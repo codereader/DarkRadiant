@@ -2,6 +2,7 @@
 #define CLASSEDITOR_H_
 
 #include "SREntity.h"
+#include "StimTypes.h"
 
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkTreeView GtkTreeView;
@@ -22,15 +23,18 @@ protected:
 	// The entity object we're editing
 	SREntityPtr _entity;
 
+	// Helper class (owned by StimResponseEditor)
+	StimTypes& _stimTypes;
+
 public:
 	/** greebo: Constructs the shared widgets, but does not pack them
 	 */
-	ClassEditor();
+	ClassEditor(StimTypes& stimTypes);
 	
 	/** greebo: Operator cast to widget to pack this page into
 	 * 			a notebook tab or other parent widget.
 	 */
-	virtual operator GtkWidget*() = 0;
+	virtual operator GtkWidget*();
 	
 	/** greebo: Sets the new entity (is called by the StimResponseEditor class)
 	 */
