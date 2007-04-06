@@ -2,6 +2,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/regex.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
 
 namespace objectives {
 	
@@ -9,6 +10,8 @@ namespace objectives {
 void ObjectiveKeyExtractor::visit(const std::string& key, 
 								  const std::string& value)
 {
+	using boost::lexical_cast;
+	
 	// Quick discard of any non-objective keys
 	if (key.substr(0, 3) != "obj")
 		return;
@@ -20,7 +23,7 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 	
 	if (boost::regex_match(key, results, reObjNum)) {
 		// Get the objective number
-		iNum = boost::lexical_cast<int>(results[1]);			
+		iNum = lexical_cast<int>(results[1]);			
 	}
 	else {
 		// No match, abort
@@ -48,8 +51,8 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 		_objMap[iNum].irreversible = (value == "1");			
 	}
 	else if (objSubString == "state") {
-		_objMap[iNum].state = static_cast<Objective::State>(
-									boost::lexical_cast<int>(value));
+		_objMap[iNum].state = 
+			static_cast<Objective::State>(lexical_cast<int>(value));
 	}
 	else {
 	
@@ -62,10 +65,16 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 		}
 		else {
 			
-			// Get the component number and add an entry in the Objective's
-			// component map
+			// Get the component number and key string
 			int componentNum = boost::lexical_cast<int>(results[1]);
-			_objMap[iNum].components[componentNum];			
+			std::string componentStr = results[2];
+			
+			Component& comp = _objMap[iNum].components[componentNum];
+			
+			// Switch on the key string
+			if (componentStr == "type") {
+				comp.type = boost::algorithm::to_upper_copy(value); 
+			}
 		}
 			
 		
