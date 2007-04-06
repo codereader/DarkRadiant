@@ -146,15 +146,6 @@ private:
 	 */
 	void moveEffect(int direction);
 
-	/** greebo: Removes the currently selected stim/response object
-	 */
-	void removeStimResponse();
-
-	/** greebo: Adds a new StimResponse object, the index and the internal
-	 * 			id are auto-incremented. The ListStore is refreshed. 
-	 */
-	void addStimResponse();
-
 	/** greebo: Returns the ID of the currently selected stim
 	 * 		
 	 * @returns: the id (number) of the selected stim or -1 on failure 
@@ -166,12 +157,6 @@ private:
 	 * @returns: the index of the selected effect or -1 on failure 
 	 */
 	int getEffectIdFromSelection();
-
-	/** greebo: Tries to set the <key> of the currently selected 
-	 * 			StimResponse to <value>
-	 * 			The request is refused for inherited StimResponses.
-	 */
-	void setProperty(const std::string& key, const std::string& value);
 
 	/** greebo: Updates the SR widget group according to the list selection.
 	 */
@@ -201,34 +186,11 @@ private:
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, StimResponseEditor* self);
 
 	// Callback for Stim/Response and effect selection changes
-	static void onSRSelectionChange(GtkTreeSelection* treeView, StimResponseEditor* self);
 	static void onEffectSelectionChange(GtkTreeSelection* treeView, StimResponseEditor* self);
 	
-	static void onClassChange(GtkToggleButton* toggleButton, StimResponseEditor* self);
-	static void onTypeSelect(GtkComboBox* widget, StimResponseEditor* self);
-	
-	// StimType selection change
-	static void onStimTypeChange(GtkComboBox* widget, StimResponseEditor* self);
-	
-	// Toggle buttons
-	static void onActiveToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
-	static void onBoundsToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
-	static void onRadiusToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
-	static void onMagnitudeToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
-	static void onFalloffToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
-	static void onTimeIntervalToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
-	static void onTimerTypeToggle(GtkToggleButton* toggleButton, StimResponseEditor* self);
-
-	// Entry text changes
-	static void onMagnitudeChanged(GtkEditable* editable, StimResponseEditor* self);
-	static void onFalloffChanged(GtkEditable* editable, StimResponseEditor* self);
-	static void onTimeIntervalChanged(GtkEditable* editable, StimResponseEditor* self);
-	static void onRadiusChanged(GtkEditable* editable, StimResponseEditor* self);
-
 	// Button callbacks
 	static void onSave(GtkWidget* button, StimResponseEditor* self);
 	static void onClose(GtkWidget* button, StimResponseEditor* self);
-	static void onRevert(GtkWidget* button, StimResponseEditor* self);
 
 	// The keypress handler for catching the keys in the treeview
 	static gboolean onTreeViewKeyPress(
