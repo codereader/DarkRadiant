@@ -41,6 +41,9 @@ private:
 
 	// Populate the edit panel widgets with the specified component number
 	void populateEditPanel(int index);
+	
+	// Add the enum values to the type combobox
+	void populateTypeCombo(GtkWidget* combo);
 
 	/* GTK CALLBACKS */
 	static void _onClose(GtkWidget*, ComponentsDialog*);
