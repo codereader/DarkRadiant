@@ -77,6 +77,7 @@ private:
 	static void _onFlagToggle(GtkWidget*, ObjectivesEditor*);
 	static void _onInitialStateChanged(GtkWidget*, ObjectivesEditor*);
 	static void _onDescriptionEdited(GtkEditable*, ObjectivesEditor*);
+	static void _onEditComponents(GtkWidget*, ObjectivesEditor*);
 	
 	// Show dialog widgets
 	void show();
