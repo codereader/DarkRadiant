@@ -6,6 +6,8 @@
 
 #include "StimTypes.h"
 #include "SREntity.h"
+#include "StimEditor.h"
+#include "ResponseEditor.h"
 
 // Forward declarations
 typedef struct _GtkTreeView GtkTreeView;
@@ -13,6 +15,7 @@ typedef struct _GtkToggleButton GtkToggleButton;
 typedef struct _GtkTreeSelection GtkTreeSelection;
 typedef struct _GtkComboBox GtkComboBox;
 typedef struct _GtkEditable GtkEditable;
+typedef struct _GtkNotebook GtkNotebook;
 typedef struct _GtkCellRendererText GtkCellRendererText;
 
 namespace ui {
@@ -24,6 +27,10 @@ class StimResponseEditor
 	
 	// The overall dialog vbox (used to quickly disable the whole dialog)
 	GtkWidget* _dialogVBox;
+	
+	GtkNotebook* _notebook;
+	int _stimPageNum;
+	int _responsePageNum;
 	
 	// The close button to toggle the view
 	GtkWidget* _closeButton;
@@ -80,6 +87,10 @@ class StimResponseEditor
 	
 	// To allow updating the widgets without firing callbacks
 	bool _updatesDisabled;
+	
+	// The helper classes for editing the stims/responses
+	StimEditor _stimEditor;
+	ResponseEditor _responseEditor;
 
 public:
 	StimResponseEditor();
