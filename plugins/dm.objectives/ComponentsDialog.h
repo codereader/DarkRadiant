@@ -6,6 +6,8 @@
 #include <gtk/gtktreeselection.h>
 
 #include <map>
+#include <vector>
+#include <string>
 
 namespace objectives
 {
@@ -39,12 +41,13 @@ private:
 	GtkWidget* createEditPanel();
 	GtkWidget* createButtons();
 
+	// Static list of component type strings, in order
+	typedef std::vector<std::string> StringList;
+	static const StringList& getTypeStrings();
+
 	// Populate the edit panel widgets with the specified component number
 	void populateEditPanel(int index);
 	
-	// Add the enum values to the type combobox
-	void populateTypeCombo(GtkWidget* combo);
-
 	/* GTK CALLBACKS */
 	static void _onClose(GtkWidget*, ComponentsDialog*);
 	static void _onDelete(GtkWidget*, ComponentsDialog*);

@@ -7,6 +7,7 @@
 #include "gtkutil/TextColumn.h"
 
 #include <gtk/gtk.h>
+#include <boost/algorithm/string/predicate.hpp>
 
 namespace objectives
 {
@@ -19,6 +20,7 @@ namespace {
 
 	// Widget enum
 	enum {
+		WIDGET_EDIT_PANEL,
 		WIDGET_TYPE_COMBO,
 		WIDGET_STATE_FLAG,
 		WIDGET_IRREVERSIBLE_FLAG,
@@ -108,6 +110,7 @@ GtkWidget* ComponentsDialog::createEditPanel() {
 	GtkWidget* table = gtk_table_new(2, 2, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 12);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
+	gtk_widget_set_sensitive(table, FALSE); // disabled until selection
 	
 	// Component type dropdown
 	gtk_table_attach(GTK_TABLE(table), 
@@ -115,10 +118,19 @@ GtkWidget* ComponentsDialog::createEditPanel() {
 					 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
 
 	_widgets[WIDGET_TYPE_COMBO] = gtk_combo_box_new_text();
-	populateTypeCombo(_widgets[WIDGET_TYPE_COMBO]); // add the enum values
 	gtk_table_attach_defaults(GTK_TABLE(table),
 							  _widgets[WIDGET_TYPE_COMBO],
 							  1, 2, 0, 1);
+							  
+	// Populate the combo box from the static list of type strings
+	const StringList& list = getTypeStrings();
+	for (StringList::const_iterator i = list.begin();
+		 i != list.end();
+		 ++i)
+	{
+		gtk_combo_box_append_text(GTK_COMBO_BOX(_widgets[WIDGET_TYPE_COMBO]),
+								  i->c_str());		
+	}
 	
 	// Flags hbox
 	_widgets[WIDGET_STATE_FLAG] = 
@@ -142,23 +154,9 @@ GtkWidget* ComponentsDialog::createEditPanel() {
 	gtk_table_attach(GTK_TABLE(table), flagsBox, 1, 2, 1, 2, 
 					 GTK_FILL, GTK_FILL, 0, 0);
 	
+	// Save and return the panel table
+	_widgets[WIDGET_EDIT_PANEL] = table;
 	return table;
-}
-
-// Populate the type combo
-void ComponentsDialog::populateTypeCombo(GtkWidget* combo) {
-	GtkComboBox* c = GTK_COMBO_BOX(combo);
-	gtk_combo_box_append_text(c, "KILL");
-	gtk_combo_box_append_text(c, "KO");
-	gtk_combo_box_append_text(c, "AI_FIND_ITEM");
-	gtk_combo_box_append_text(c, "AI_FIND_BODY");
-	gtk_combo_box_append_text(c, "AI_ALERT");
-	gtk_combo_box_append_text(c, "ITEM");
-	gtk_combo_box_append_text(c, "LOCATION");
-	gtk_combo_box_append_text(c, "CUSTOM_ASYNC");
-	gtk_combo_box_append_text(c, "CUSTOM_CLOCKED");
-	gtk_combo_box_append_text(c, "INFO_LOCATION");
-	gtk_combo_box_append_text(c, "DISTANCE");
 }
 
 // Create buttons
@@ -202,6 +200,47 @@ void ComponentsDialog::populateEditPanel(int index) {
 		comp.inverted ? TRUE : FALSE
 	);
 	
+	// Set the type combo. We need to find the item in the type string list
+	// which matches the type string on the component, and pass its index to the
+	// GtkComboBox.
+	const StringList& list = getTypeStrings();
+	int listIdx = 0;
+	for (StringList::const_iterator i = list.begin(); i != list.end(); ++i) {
+		
+		// If there is a match, set the combo box		
+		if (boost::algorithm::iequals(comp.type, *i)) {
+			gtk_combo_box_set_active(GTK_COMBO_BOX(_widgets[WIDGET_TYPE_COMBO]),
+									 listIdx);
+		}
+		
+		listIdx++;
+	}
+	
+	
+}
+
+// Static list of component strings
+const ComponentsDialog::StringList& ComponentsDialog::getTypeStrings() {
+	
+	// The static stringlist
+	static StringList _list;
+	
+	if (_list.empty()) {
+		_list.push_back("KILL");
+		_list.push_back("KO");
+		_list.push_back("AI_FIND_ITEM");
+		_list.push_back("AI_FIND_BODY");
+		_list.push_back("AI_ALERT");
+		_list.push_back("ITEM");
+		_list.push_back("LOCATION");
+		_list.push_back("CUSTOM");
+		_list.push_back("CUSTOM_CLOCKED");
+		_list.push_back("INFO_LOCATION");
+		_list.push_back("DISTANCE");
+	}
+	
+	return _list;
+			
 }
 
 /* GTK CALLBACKS */
@@ -231,14 +270,20 @@ void ComponentsDialog::_onSelectionChanged(GtkTreeSelection* sel,
 	// Get the selection if valid
 	GtkTreeModel* model;
 	GtkTreeIter iter;
-	if (!gtk_tree_selection_get_selected(sel, &model, &iter))
-		return;
-	
-	// Otherwise populate edit panel with the current component index
-	int component;
-	gtk_tree_model_get(model, &iter, 0, &component, -1); 
-	
-	self->populateEditPanel(component);
+	if (!gtk_tree_selection_get_selected(sel, &model, &iter)) {
+		// Disable the edit panel
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_PANEL], FALSE);
+	}
+	else {
+		// Otherwise populate edit panel with the current component index
+		int component;
+		gtk_tree_model_get(model, &iter, 0, &component, -1); 
+		
+		self->populateEditPanel(component);
+
+		// Enable the edit panel
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_PANEL], TRUE);
+	}
 }
 
 }
