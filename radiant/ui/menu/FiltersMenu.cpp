@@ -40,7 +40,7 @@ void FiltersMenu::addItems() {
 	
 	// Create the toplevel menu item
 	menuManager.insert(MENU_INSERT_BEFORE, MENU_FILTERS_NAME, 
-						ui::menuFolder, "_Filter", "", ""); // empty icon, empty event
+						ui::menuFolder, "Fi_lter", "", ""); // empty icon, empty event
 	
 	// Visit the filters in the FilterSystem to populate the menu
 	MenuPopulatingVisitor visitor;
