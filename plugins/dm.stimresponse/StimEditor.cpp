@@ -97,8 +97,12 @@ void StimEditor::populatePage() {
 	
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_list), typeCol);
 	
-	gtk_box_pack_start(GTK_BOX(srHBox), 
-		gtkutil::ScrolledFrame(_list), FALSE, FALSE, 0);
+	GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), 
+		gtkutil::ScrolledFrame(_list), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), createListButtons(), FALSE, FALSE, 6);
+	
+	gtk_box_pack_start(GTK_BOX(srHBox),	vbox, FALSE, FALSE, 0);
 	
 	// The property pane
 	gtk_box_pack_start(GTK_BOX(srHBox), createPropertyWidgets(), TRUE, TRUE, 6);
@@ -113,6 +117,30 @@ void StimEditor::setEntity(SREntityPtr entity) {
 		gtk_tree_view_set_model(GTK_TREE_VIEW(_list), GTK_TREE_MODEL(listStore));
 		g_object_unref(listStore); // treeview owns reference now
 	}
+}
+
+GtkWidget* StimEditor::createListButtons() {
+	GtkWidget* hbox = gtk_hbox_new(TRUE, 6);
+	
+	_listButtons.add = gtk_button_new_with_label("Add new Stim");
+	gtk_button_set_image(
+		GTK_BUTTON(_listButtons.add), 
+		gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_BUTTON)
+	);
+	
+	_listButtons.remove = gtk_button_new_with_label("Remove Stim");
+	gtk_button_set_image(
+		GTK_BUTTON(_listButtons.remove), 
+		gtk_image_new_from_stock(GTK_STOCK_DELETE, GTK_ICON_SIZE_BUTTON)
+	);
+	
+	gtk_box_pack_start(GTK_BOX(hbox), _listButtons.add, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), _listButtons.remove, TRUE, TRUE, 0);
+	
+	g_signal_connect(G_OBJECT(_listButtons.add), "clicked", G_CALLBACK(onAddStim), this);
+	g_signal_connect(G_OBJECT(_listButtons.remove), "clicked", G_CALLBACK(onRemoveStim), this);
+	
+	return hbox; 
 }
 
 GtkWidget* StimEditor::createPropertyWidgets() {
@@ -513,6 +541,15 @@ void StimEditor::onContextMenuDelete(GtkWidget* w, StimEditor* self) {
 // Delete context menu items activated
 void StimEditor::onContextMenuAdd(GtkWidget* w, StimEditor* self) {
 	self->addStim();
+}
+
+void StimEditor::onAddStim(GtkWidget* button, StimEditor* self) {
+	self->addStim();
+}
+
+void StimEditor::onRemoveStim(GtkWidget* button, StimEditor* self) {
+	// Delete the selected stim from the list
+	self->removeItem(GTK_TREE_VIEW(self->_list));
 }
 
 } // namespace ui

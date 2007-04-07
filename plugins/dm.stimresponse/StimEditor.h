@@ -32,6 +32,11 @@ class StimEditor :
 		GtkWidget* deleteMenuItem;
 	} _propertyWidgets;
 
+	struct ListButtons {
+		GtkWidget* add;
+		GtkWidget* remove;
+	} _listButtons;
+
 	GtkWidget* _contextMenu;
 
 public:
@@ -65,9 +70,10 @@ private:
 	 */
 	void createContextMenu();
 
-	/** greebo: Creates the option checkboxes and entry widgets
+	/** greebo: Widget creation helper methods
 	 */
 	GtkWidget* createPropertyWidgets();
+	GtkWidget* createListButtons();
 
 	/** greebo: Gets called when the stim selection gets changed 
 	 */
@@ -83,6 +89,9 @@ private:
 	// Context menu GTK callbacks
 	static void onContextMenuAdd(GtkWidget* w, StimEditor* self);
 	static void onContextMenuDelete(GtkWidget* w, StimEditor* self);
+	
+	static void onAddStim(GtkWidget* button, StimEditor* self);
+	static void onRemoveStim(GtkWidget* button, StimEditor* self);
 };
 
 } // namespace ui
