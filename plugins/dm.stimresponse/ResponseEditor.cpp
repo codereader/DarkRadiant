@@ -48,9 +48,18 @@ void ResponseEditor::update() {
 		
 		StimResponse& sr = _entity->get(id);
 		
+		// Get the iter into the liststore pointing at the correct STIM_YYYY type
+		GtkTreeIter typeIter = _stimTypes.getIterForName(sr.get("type"));
+		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_typeList), &typeIter);
+		
 		GtkListStore* effectStore = sr.getEffectStore();
 		gtk_tree_view_set_model(GTK_TREE_VIEW(_effectWidgets.view), GTK_TREE_MODEL(effectStore));
 		g_object_unref(effectStore);
+		
+		// Disable the editing of inherited properties completely
+		if (sr.inherited()) {
+			gtk_widget_set_sensitive(_responseVBox, FALSE);
+		}
 		
 		// The response effect list may be empty, so force an update of the
 		// context menu sensitivity, in the case the "selection changed" 
@@ -357,7 +366,7 @@ void ResponseEditor::removeItem(GtkTreeView* view) {
 }
 
 void ResponseEditor::selectionChanged() {
-	
+	update();
 }
 
 void ResponseEditor::addResponse() {
@@ -382,7 +391,7 @@ gboolean ResponseEditor::onTreeViewButtonPress(
 {
 	if (ev->type == GDK_2BUTTON_PRESS) {
 		// Call the effect editor upon double click
-		//self->editEffect();
+		self->editEffect();
 	}
 	
 	return FALSE;

@@ -313,15 +313,6 @@ void StimEditor::update() {
 		GtkTreeIter typeIter = _stimTypes.getIterForName(sr.get("type"));
 		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_typeList), &typeIter);
 		
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.respButton),
-			(sr.get("class") == "R")
-		);
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.stimButton),
-			(sr.get("class") == "S")
-		);
-		
 		// Active
 		gtk_toggle_button_set_active(
 			GTK_TOGGLE_BUTTON(_propertyWidgets.active),
