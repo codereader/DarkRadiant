@@ -13,6 +13,12 @@ class ResponseEditor :
 		GtkWidget* remove;
 	} _listButtons;
 	
+	struct ListContextMenu {
+		GtkWidget* menu;
+		GtkWidget* remove;
+		GtkWidget* add;
+	} _contextMenu;
+	
 public:
 	/** greebo: Constructor creates all the widgets
 	 */
@@ -33,6 +39,7 @@ private:
 
 	// Widget creator helper
 	GtkWidget* createListButtons();
+	void createContextMenu();
 
 	/** greebo: Gets called when the response selection gets changed 
 	 */
@@ -44,6 +51,10 @@ private:
 	/** greebo: Creates all the widgets
 	 */
 	void populatePage();
+	
+	// Context menu GTK callbacks
+	static void onListContextMenuAdd(GtkWidget* w, ResponseEditor* self);
+	static void onListContextMenuDelete(GtkWidget* w, ResponseEditor* self);
 	
 	static void onAddResponse(GtkWidget* button, ResponseEditor* self);
 	static void onRemoveResponse(GtkWidget* button, ResponseEditor* self);

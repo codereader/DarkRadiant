@@ -2,6 +2,7 @@
 
 #include <gtk/gtk.h>
 #include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/StockIconMenuItem.h"
 
 namespace ui {
 
@@ -9,6 +10,7 @@ ResponseEditor::ResponseEditor(StimTypes& stimTypes) :
 	ClassEditor(stimTypes)
 {
 	populatePage();
+	createContextMenu();
 }
 
 void ResponseEditor::setEntity(SREntityPtr entity) {
@@ -71,8 +73,33 @@ GtkWidget* ResponseEditor::createListButtons() {
 	return hbox; 
 }
 
+// Create the context menus
+void ResponseEditor::createContextMenu() {
+	// Menu widgets
+	_contextMenu.menu = gtk_menu_new();
+		
+	// Each menu gets a delete item
+	_contextMenu.remove = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Delete Response");
+	_contextMenu.add = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Add Response");
+	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), _contextMenu.add);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), _contextMenu.remove);
+
+	// Connect up the signals
+	g_signal_connect(G_OBJECT(_contextMenu.remove), "activate",
+					 G_CALLBACK(onListContextMenuDelete), this);
+	g_signal_connect(G_OBJECT(_contextMenu.add), "activate",
+					 G_CALLBACK(onListContextMenuAdd), this);
+					 
+	// Show menus (not actually visible until popped up)
+	gtk_widget_show_all(_contextMenu.menu);
+}
+
 void ResponseEditor::openContextMenu(GtkTreeView* view) {
-	
+	// Check the treeview this remove call is targeting
+	if (view == GTK_TREE_VIEW(_list)) {
+		gtk_menu_popup(GTK_MENU(_contextMenu.menu), NULL, NULL, 
+					   NULL, NULL, 1, GDK_CURRENT_TIME);	
+	}
 }
 
 void ResponseEditor::removeItem(GtkTreeView* view) {
@@ -104,6 +131,19 @@ void ResponseEditor::addResponse() {
 
 	// Refresh the values in the liststore
 	_entity->updateListStores();
+}
+
+// Static GTK Callbacks
+
+// Delete context menu items activated
+void ResponseEditor::onListContextMenuDelete(GtkWidget* w, ResponseEditor* self) {
+	// Delete the selected stim from the list
+	self->removeItem(GTK_TREE_VIEW(self->_list));
+}
+
+// Delete context menu items activated
+void ResponseEditor::onListContextMenuAdd(GtkWidget* w, ResponseEditor* self) {
+	self->addResponse();
 }
 
 void ResponseEditor::onAddResponse(GtkWidget* button, ResponseEditor* self) {
