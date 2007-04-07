@@ -31,6 +31,9 @@ protected:
 	
 	// TRUE if the GTK callbacks should be disabled
 	bool _updatesDisabled;
+	
+	// The combo box to select the stim/response type
+	GtkWidget* _typeList;
 
 public:
 	/** greebo: Constructs the shared widgets, but does not pack them
@@ -55,6 +58,8 @@ public:
 	virtual void update() = 0;
 
 protected:
+	GtkWidget* createStimTypeSelector();
+
 	/** greebo: Gets called when a check box is toggled, this should
 	 * 			update the contents of possible associated entry fields. 
 	 */

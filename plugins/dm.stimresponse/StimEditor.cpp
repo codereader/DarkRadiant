@@ -55,7 +55,7 @@ void StimEditor::setEntity(SREntityPtr entity) {
 GtkWidget* StimEditor::createListButtons() {
 	GtkWidget* hbox = gtk_hbox_new(TRUE, 6);
 	
-	_listButtons.add = gtk_button_new_with_label("Add new Stim");
+	_listButtons.add = gtk_button_new_with_label("Add Stim");
 	gtk_button_set_image(
 		GTK_BUTTON(_listButtons.add), 
 		gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_BUTTON)
@@ -80,34 +80,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	_propertyWidgets.vbox = gtk_vbox_new(FALSE, 6);
 	
 	// Type Selector
-	GtkWidget* typeHBox = gtk_hbox_new(FALSE, 0);
-	
-	GtkWidget* typeLabel = gtkutil::LeftAlignedLabel("Type:");
-	// Cast the helper class onto a ListStore and create a new treeview
-	GtkListStore* stimListStore = _stimTypes;
-	_propertyWidgets.typeList = gtk_combo_box_new_with_model(GTK_TREE_MODEL(stimListStore));
-	gtk_widget_set_size_request(_propertyWidgets.typeList, -1, -1);
-	g_object_unref(stimListStore); // tree view owns the reference now
-	
-	g_signal_connect(G_OBJECT(_propertyWidgets.typeList), "changed", G_CALLBACK(onStimTypeSelect), this);
-	
-	// Add the cellrenderer for the name
-	GtkCellRenderer* nameRenderer = gtk_cell_renderer_text_new();
-	GtkCellRenderer* iconRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_propertyWidgets.typeList), iconRenderer, FALSE);
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_propertyWidgets.typeList), nameRenderer, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_propertyWidgets.typeList), nameRenderer, "text", 1);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_propertyWidgets.typeList), iconRenderer, "pixbuf", 2);
-	gtk_cell_renderer_set_fixed_size(iconRenderer, 26, -1);
-	
-	gtk_box_pack_start(GTK_BOX(typeHBox), typeLabel, FALSE, FALSE, 0);
-	gtk_box_pack_start(
-		GTK_BOX(typeHBox), 
-		gtkutil::LeftAlignment(_propertyWidgets.typeList, 12, 1.0f), 
-		TRUE, TRUE,	0
-	);
-	
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), typeHBox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), createStimTypeSelector(), FALSE, FALSE, 0);
 	
 	// Active
 	_propertyWidgets.active = gtk_check_button_new_with_label("Active");
@@ -338,7 +311,7 @@ void StimEditor::update() {
 		
 		// Get the iter into the liststore pointing at the correct STIM_YYYY type
 		GtkTreeIter typeIter = _stimTypes.getIterForName(sr.get("type"));
-		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_propertyWidgets.typeList), &typeIter);
+		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_typeList), &typeIter);
 		
 		gtk_toggle_button_set_active(
 			GTK_TOGGLE_BUTTON(_propertyWidgets.respButton),

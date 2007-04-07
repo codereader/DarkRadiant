@@ -19,10 +19,24 @@ class ResponseEditor :
 		GtkWidget* add;
 	} _contextMenu;
 	
+	struct EffectWidgets {
+		GtkWidget* view;
+		GtkTreeSelection* selection;
+		GtkWidget* contextMenu;
+		GtkWidget* deleteMenuItem;
+		GtkWidget* addMenuItem;
+		GtkWidget* upMenuItem;
+		GtkWidget* downMenuItem;
+	} _effectWidgets;
+	
+	GtkWidget* _responseVBox;
+	
+	GtkWidget* _parent;
+	
 public:
 	/** greebo: Constructor creates all the widgets
 	 */
-	ResponseEditor(StimTypes& stimTypes);
+	ResponseEditor(GtkWidget* parent, StimTypes& stimTypes);
 
 	/** greebo: Sets the new entity (updates the treeviews)
 	 */
@@ -33,13 +47,48 @@ public:
 	void update();
 
 private:
+	/** greebo: Adds a new response effect to the list.
+	 */
+	void addEffect();
+
+	/** greebo: Removes the currently selected response effect
+	 */
+	void removeEffect();
+	
+	/** greebo: Edits the currently selected effect 
+	 */
+	void editEffect();
+	
+	/** greebo: Moves the selected effect up or down (i.e. increasing
+	 * 			or decreasing its index).
+	 * 
+	 * @direction: +1 for moving it down (increasing the index)
+	 * 			   -1 for moving it up (decreasing the index)
+	 */
+	void moveEffect(int direction);
+
+	/** greebo: Updates the sensitivity of the effects context menu
+	 */
+	void updateEffectContextMenu();
+
+	/** greebo: Selects the effect with the given index in the treeview.
+	 */
+	void selectEffectIndex(const unsigned int index);
+
+	/** greebo: Returns the ID of the currently selected response effect
+	 * 		
+	 * @returns: the index of the selected effect or -1 on failure 
+	 */
+	int getEffectIdFromSelection();
+
 	/** greebo: Adds a new default response to the entity
 	 */
 	void addResponse();
 
-	// Widget creator helper
+	// Widget creator helpers
 	GtkWidget* createListButtons();
 	void createContextMenu();
+	GtkWidget* createEffectWidgets(); // Response effect list 
 
 	/** greebo: Gets called when the response selection gets changed 
 	 */
@@ -53,11 +102,19 @@ private:
 	void populatePage();
 	
 	// Context menu GTK callbacks
-	static void onListContextMenuAdd(GtkWidget* w, ResponseEditor* self);
-	static void onListContextMenuDelete(GtkWidget* w, ResponseEditor* self);
+	static void onContextMenuAdd(GtkWidget* w, ResponseEditor* self);
+	static void onContextMenuDelete(GtkWidget* w, ResponseEditor* self);
+	static void onContextMenuEffectUp(GtkWidget* widget, ResponseEditor* self);
+	static void onContextMenuEffectDown(GtkWidget* widget, ResponseEditor* self);
 	
-	static void onAddResponse(GtkWidget* button, ResponseEditor* self);
-	static void onRemoveResponse(GtkWidget* button, ResponseEditor* self);
+	static void onAddResponse(GtkWidget*, ResponseEditor* self);
+	static void onRemoveResponse(GtkWidget*, ResponseEditor* self);
+	
+	// To catch double-clicks in the response effect list 
+	static gboolean onTreeViewButtonPress(GtkTreeView*, GdkEventButton*, ResponseEditor* self);
+	
+	// Callback for Stim/Response and effect selection changes
+	static void onEffectSelectionChange(GtkTreeSelection* selection, ResponseEditor* self); 
 };
 
 } // namespace ui
