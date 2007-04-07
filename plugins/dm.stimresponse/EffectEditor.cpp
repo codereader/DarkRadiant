@@ -7,7 +7,7 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/TreeModel.h"
-#include "StimResponseEditor.h"
+#include "ResponseEditor.h"
 #include <iostream>
 
 namespace ui {
@@ -31,7 +31,7 @@ namespace ui {
 EffectEditor::EffectEditor(GtkWindow* parent, 
 						   StimResponse& response, 
 						   const unsigned int effectIndex,
-						   ui::StimResponseEditor& editor) :
+						   ui::ResponseEditor& editor) :
 	DialogWindow(WINDOW_TITLE, parent),
 	_argTable(NULL),
 	_tooltips(NULL),

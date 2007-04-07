@@ -3,6 +3,8 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include "gtkutil/TreeModel.h"
+#include "gtkutil/LeftAlignment.h"
+#include "gtkutil/LeftAlignedLabel.h"
 
 namespace ui {
 	
@@ -131,6 +133,38 @@ void ClassEditor::setProperty(const std::string& key, const std::string& value) 
 
 	// Call the method of the child class to update the widgets
 	update();
+}
+
+GtkWidget* ClassEditor::createStimTypeSelector() {
+	// Type Selector
+	GtkWidget* typeHBox = gtk_hbox_new(FALSE, 0);
+	
+	GtkWidget* typeLabel = gtkutil::LeftAlignedLabel("Type:");
+	// Cast the helper class onto a ListStore and create a new treeview
+	GtkListStore* stimListStore = _stimTypes;
+	_typeList = gtk_combo_box_new_with_model(GTK_TREE_MODEL(stimListStore));
+	gtk_widget_set_size_request(_typeList, -1, -1);
+	g_object_unref(stimListStore); // tree view owns the reference now
+	
+	g_signal_connect(G_OBJECT(_typeList), "changed", G_CALLBACK(onStimTypeSelect), this);
+	
+	// Add the cellrenderer for the name
+	GtkCellRenderer* nameRenderer = gtk_cell_renderer_text_new();
+	GtkCellRenderer* iconRenderer = gtk_cell_renderer_pixbuf_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_typeList), iconRenderer, FALSE);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_typeList), nameRenderer, TRUE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_typeList), nameRenderer, "text", 1);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_typeList), iconRenderer, "pixbuf", 2);
+	gtk_cell_renderer_set_fixed_size(iconRenderer, 26, -1);
+
+	gtk_box_pack_start(GTK_BOX(typeHBox), typeLabel, FALSE, FALSE, 0);
+	gtk_box_pack_start(
+		GTK_BOX(typeHBox), 
+		gtkutil::LeftAlignment(_typeList, 12, 1.0f), 
+		TRUE, TRUE,	0
+	);
+
+	return typeHBox;
 }
 
 // Static callbacks

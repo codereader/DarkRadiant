@@ -16,7 +16,7 @@ typedef struct _GtkTooltips GtkTooltips;
 
 namespace ui {
 
-class StimResponseEditor;
+class ResponseEditor;
 
 class EffectEditor :
 	public gtkutil::DialogWindow
@@ -51,7 +51,7 @@ class EffectEditor :
 	unsigned int _effectIndex;
 	
 	// For calling update() when finished editing
-	StimResponseEditor& _editor;
+	ResponseEditor& _editor;
 	
 public:
 	/** greebo: Constructor, needs information about parent and the edit target. 
@@ -66,7 +66,7 @@ public:
 	EffectEditor(GtkWindow* parent, 
 				 StimResponse& response, 
 				 const unsigned int effectIndex,
-				 StimResponseEditor& editor);
+				 ResponseEditor& editor);
 	
 	/** greebo: Creates the widgets 
 	 */
