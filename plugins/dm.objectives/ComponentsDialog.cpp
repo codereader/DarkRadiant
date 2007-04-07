@@ -85,8 +85,20 @@ GtkWidget* ComponentsDialog::createListView() {
 						   -1);	
 	}
 	
+	// Create Add and Delete buttons for components
+	GtkWidget* addButton = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	GtkWidget* delButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	
+	GtkWidget* buttonsBox = gtk_vbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(buttonsBox), addButton, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonsBox), delButton, TRUE, TRUE, 0);
+	
+	// Put the buttons box next to the list view
+	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(hbx), gtkutil::ScrolledFrame(tv), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbx), buttonsBox, FALSE, FALSE, 0);
 
-	return gtkutil::ScrolledFrame(tv);	
+	return hbx;	
 }
 
 // Create edit panel
