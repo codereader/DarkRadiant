@@ -8,7 +8,11 @@ namespace ui {
 class ResponseEditor :
 	public ClassEditor
 {
-
+	struct ListButtons {
+		GtkWidget* add;
+		GtkWidget* remove;
+	} _listButtons;
+	
 public:
 	/** greebo: Constructor creates all the widgets
 	 */
@@ -23,6 +27,13 @@ public:
 	void update();
 
 private:
+	/** greebo: Adds a new default response to the entity
+	 */
+	void addResponse();
+
+	// Widget creator helper
+	GtkWidget* createListButtons();
+
 	/** greebo: Gets called when the response selection gets changed 
 	 */
 	virtual void selectionChanged();
@@ -33,6 +44,9 @@ private:
 	/** greebo: Creates all the widgets
 	 */
 	void populatePage();
+	
+	static void onAddResponse(GtkWidget* button, ResponseEditor* self);
+	static void onRemoveResponse(GtkWidget* button, ResponseEditor* self);
 };
 
 } // namespace ui
