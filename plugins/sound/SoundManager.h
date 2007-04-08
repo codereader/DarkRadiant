@@ -8,6 +8,9 @@
 #include <map>
 #include <string>
 
+/* FORWARD DECLS */
+namespace parser { class DefTokeniser; }
+
 namespace sound
 {
 
@@ -20,6 +23,11 @@ class SoundManager
 	// Map of named sound shaders
 	typedef std::map<std::string, ShaderPtr> ShaderMap;
 	ShaderMap _shaders;
+	
+private:
+
+	// Parse a single sound shader from the given token stream
+	void parseSoundShader(parser::DefTokeniser& tok);
 	
 public:
 
@@ -43,6 +51,12 @@ public:
 	 * Enumerate sound shaders.
 	 */
 	void forEachShader(SoundShaderVisitor visitor) const;
+	
+	/**
+	 * Parse the contents of the given string as a .sndshd file, adding all
+	 * contained shaders to the shader map.
+	 */
+	void parseShadersFrom(const std::string& contents);
 };
 
 }
