@@ -3,6 +3,7 @@
 
 #include <gtk/gtkwidget.h>
 #include <gtk/gtktreestore.h>
+#include <gtk/gtktreeselection.h>
 
 #include <string>
 
@@ -17,16 +18,23 @@ class SoundChooser
 	// Main dialog widget
 	GtkWidget* _widget;
 
-	// Tree store for shaders
+	// Tree store for shaders, and the tree selection
 	GtkTreeStore* _treeStore;
+	GtkTreeSelection* _treeSelection;
+	
+	// Last selected shader
+	std::string _selectedShader;
 	
 private:
 
 	// Widget construction
 	GtkWidget* createTreeView();
+	GtkWidget* createButtons();
 
 	/* GTK CALLBACKS */
 	static void _onDelete(GtkWidget*, SoundChooser*);
+	static void _onOK(GtkWidget*, SoundChooser*);
+	static void _onCancel(GtkWidget*, SoundChooser*);
 	
 public:
 	

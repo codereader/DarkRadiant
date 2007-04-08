@@ -4,6 +4,8 @@
 #include "mainframe.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/RightAlignment.h"
+#include "gtkutil/TreeModel.h"
 
 #include <gtk/gtk.h>
 
@@ -47,6 +49,7 @@ SoundChooser::SoundChooser()
     // Main vbox
     GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
     gtk_box_pack_start(GTK_BOX(vbx), createTreeView(), TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
     
     gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
     gtk_container_add(GTK_CONTAINER(_widget), vbx);
@@ -75,6 +78,7 @@ public:
 		gtk_tree_store_append(_store, &iter, NULL);
 		gtk_tree_store_set(_store, &iter, 
 						   DISPLAYNAME_COLUMN, shader.getName().c_str(),
+						   SHADERNAME_COLUMN, shader.getName().c_str(),
 						   -1);	
 	}	
 	
@@ -93,6 +97,8 @@ GtkWidget* SoundChooser::createTreeView() {
 		gtkutil::TextColumn("", DISPLAYNAME_COLUMN, false)
 	);
 
+	_treeSelection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
+
 	// Populate the tree store with sound shaders
 	SoundShaderFinder finder(_treeStore);
 	GlobalSoundManager().forEachShader(finder);
@@ -100,17 +106,55 @@ GtkWidget* SoundChooser::createTreeView() {
 	return gtkutil::ScrolledFrame(tv);	
 }
 
+// Create buttons panel
+GtkWidget* SoundChooser::createButtons() {
+	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
+	
+	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
+	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+
+	g_signal_connect(G_OBJECT(okButton), "clicked", 
+					 G_CALLBACK(_onOK), this);
+	g_signal_connect(G_OBJECT(cancelButton), "clicked", 
+					 G_CALLBACK(_onCancel), this);
+	
+	gtk_box_pack_end(GTK_BOX(hbx), okButton, TRUE, TRUE, 0);	
+	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
+					   
+	return gtkutil::RightAlignment(hbx);	
+}
+
 // Show and block
 std::string SoundChooser::chooseSound() {
 	gtk_widget_show_all(_widget);
 	gtk_main();
-	return "Blah";	
+	return _selectedShader;	
 }
 
 /* GTK CALLBACKS */
 
 // Delete dialog
 void SoundChooser::_onDelete(GtkWidget* w, SoundChooser* self) {
+	self->_selectedShader = "";
+	gtk_main_quit();	
+}
+
+// OK button
+void SoundChooser::_onOK(GtkWidget* w, SoundChooser* self) {
+	
+	// Get the selection if valid, otherwise ""
+	self->_selectedShader = 
+		gtkutil::TreeModel::getSelectedString(self->_treeSelection,
+											  SHADERNAME_COLUMN);
+	
+	gtk_widget_destroy(self->_widget);
+	gtk_main_quit();	
+}
+
+// Cancel button
+void SoundChooser::_onCancel(GtkWidget* w, SoundChooser* self) {
+	self->_selectedShader = "";
+	gtk_widget_destroy(self->_widget);
 	gtk_main_quit();	
 }
 
