@@ -36,7 +36,7 @@ struct ISoundManager {
 	/**
 	 * Enumerate each of the sound shaders.
 	 */
-	void forEachShader(SoundShaderVisitor visitor);
+	virtual void forEachShader(SoundShaderVisitor visitor) const = 0;
 	
 };
 

@@ -39,10 +39,10 @@ public:
 		return this;
 	}
 	
-	// Enumerate sound shaders
-	void forEachShader(SoundShaderVisitor visitor) {
-				
-	}	
+	/**
+	 * Enumerate sound shaders.
+	 */
+	void forEachShader(SoundShaderVisitor visitor) const;
 };
 
 }
