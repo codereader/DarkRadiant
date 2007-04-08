@@ -7,7 +7,9 @@ namespace sound
 
 SoundManager::SoundManager()
 {
-	std::cout << "SoundManager constructed" << std::endl;
+	_shaders["first"] = ShaderPtr(new SoundShader("first"));
+	_shaders["second"] = ShaderPtr(new SoundShader("second"));
+	_shaders["third"] = ShaderPtr(new SoundShader("third"));
 }
 
 }
