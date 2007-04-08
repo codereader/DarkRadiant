@@ -178,7 +178,7 @@ public:
 			gtk_tree_store_append(_store, &tmp, _parent);
 			gtk_tree_store_set(_store, &tmp,
 				DISPLAY_NAME_COLUMN, escName,
-				PROPERTY_NAME_COLUMN, escName,
+				PROPERTY_NAME_COLUMN, attr.name.c_str(),
 				ICON_COLUMN, PropertyEditorFactory::getPixbufFor(attr.type),
 				DESCRIPTION_COLUMN, attr.description.c_str(),
 				-1);
