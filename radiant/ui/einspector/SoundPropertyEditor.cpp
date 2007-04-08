@@ -56,7 +56,9 @@ void SoundPropertyEditor::_onBrowseButton(GtkWidget* w,
 {
 	// Use a SoundChooser dialog to get a selection from the user
 	SoundChooser chooser;
-	self->_shader = chooser.chooseSound();
+	std::string selection = chooser.chooseSound(); 
+	if (!selection.empty())
+		self->_shader = selection; 
 }
 
 } // namespace ui
