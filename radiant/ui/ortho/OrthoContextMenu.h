@@ -43,6 +43,7 @@ private:
 	static void callbackAddLight(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddModel(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddPrefab(GtkMenuItem* item, OrthoContextMenu* self);
+	static void _onAddSpeaker(GtkMenuItem*, OrthoContextMenu*);
 	
 	static void callbackConvertToStatic(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackRevertToWorldspawn(GtkMenuItem* item, OrthoContextMenu* self);
