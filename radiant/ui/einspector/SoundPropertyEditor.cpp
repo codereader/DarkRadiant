@@ -1,5 +1,6 @@
 #include "SoundPropertyEditor.h"
 #include "PropertyEditorFactory.h"
+#include "SoundChooser.h"
 
 #include <gtk/gtk.h>
 
@@ -53,7 +54,9 @@ const std::string SoundPropertyEditor::getValue() {
 void SoundPropertyEditor::_onBrowseButton(GtkWidget* w, 
 										  SoundPropertyEditor* self)
 {
-	
+	// Use a SoundChooser dialog to get a selection from the user
+	SoundChooser chooser;
+	self->_shader = chooser.chooseSound();
 }
 
 } // namespace ui
