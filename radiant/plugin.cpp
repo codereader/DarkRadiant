@@ -39,6 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iselection.h"
 #include "ifilter.h"
 #include "iscriplib.h"
+#include "isound.h"
 #include "igl.h"
 #include "iundo.h"
 #include "ireference.h"
@@ -156,7 +157,8 @@ class RadiantDependencies :
   public GlobalScripLibModuleRef,
   public GlobalNamespaceModuleRef,
   public GlobalClipperModuleRef,
-  public GlobalGridModuleRef
+  public GlobalGridModuleRef,
+  public GlobalSoundManagerModuleRef
 {
   ImageModulesRef m_image_modules;
   MapModulesRef m_map_modules;

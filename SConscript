@@ -147,6 +147,12 @@ eclassLib = eclassEnv.SharedLibrary(target='eclassmgr', source=eclassSrc, no_imp
 eclassEnv.Depends(eclassLib, math)
 eclassEnv.Install(INSTALL + '/modules', eclassLib)
 
+# Sound manager module
+sndSrc = build_list('plugins/sound', 'sound.cpp SoundManager.cpp')
+sndEnv = module_env.Copy()
+sndLib = sndEnv.SharedLibrary(target='sound', source=sndSrc, no_import_lib=1)
+sndEnv.Install(INSTALL + '/modules', sndLib)
+
 vfspk3_env = module_env.Copy()
 vfspk3_lst = build_list('plugins/vfspk3', 'vfspk3.cpp vfs.cpp archive.cpp')
 vfspk3_env.useGlib2()
