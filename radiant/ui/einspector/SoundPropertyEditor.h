@@ -12,6 +12,14 @@ namespace ui
 class SoundPropertyEditor
 : public PropertyEditor
 {
+	// Selected shader name
+	std::string _shader;
+	
+private:
+
+	/* GTK CALLBACKS */
+	static void _onBrowseButton(GtkWidget*, SoundPropertyEditor*);
+	
 public:
 
 	// Default constructor for the map
