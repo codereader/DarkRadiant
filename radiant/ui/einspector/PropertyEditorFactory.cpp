@@ -6,6 +6,7 @@
 #include "ColourPropertyEditor.h"
 #include "TexturePropertyEditor.h"
 #include "SkinPropertyEditor.h"
+#include "SoundPropertyEditor.h"
 
 #include "gtkutil/image.h"
 
@@ -13,11 +14,9 @@ namespace ui
 {
 
 // Initialisation
-
 PropertyEditorFactory::PropertyEditorMap PropertyEditorFactory::_peMap;
 
 // Register the classes
-
 void PropertyEditorFactory::registerClasses() {
     _peMap["vector3"] = new Vector3PropertyEditor();
     _peMap["boolean"] = new BooleanPropertyEditor();
@@ -25,6 +24,7 @@ void PropertyEditorFactory::registerClasses() {
 	_peMap["colour"] = new ColourPropertyEditor();
 	_peMap["texture"] = new TexturePropertyEditor();
 	_peMap["skin"] = new SkinPropertyEditor();
+	_peMap["sound"] = new SoundPropertyEditor();
 }
 
 // Create a PropertyEditor from the given name.

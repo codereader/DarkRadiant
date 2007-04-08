@@ -1,7 +1,12 @@
 #ifndef SOUNDMANAGER_H_
 #define SOUNDMANAGER_H_
 
+#include "SoundShader.h"
+
 #include "isound.h"
+
+#include <map>
+#include <string>
 
 namespace sound
 {
@@ -12,6 +17,10 @@ namespace sound
 class SoundManager
 : public ISoundManager
 {
+	// Map of named sound shaders
+	typedef std::map<std::string, ShaderPtr> ShaderMap;
+	ShaderMap _shaders;
+	
 public:
 
 	/* Module typedefs */
