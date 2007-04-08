@@ -2,6 +2,8 @@
 #define SOUNDCHOOSER_H_
 
 #include <gtk/gtkwidget.h>
+#include <gtk/gtktreestore.h>
+
 #include <string>
 
 namespace ui
@@ -14,8 +16,14 @@ class SoundChooser
 {
 	// Main dialog widget
 	GtkWidget* _widget;
+
+	// Tree store for shaders
+	GtkTreeStore* _treeStore;
 	
 private:
+
+	// Widget construction
+	GtkWidget* createTreeView();
 
 	/* GTK CALLBACKS */
 	static void _onDelete(GtkWidget*, SoundChooser*);
