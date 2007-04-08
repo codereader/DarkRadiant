@@ -23,6 +23,7 @@ namespace ui
 		
 		const char* LIGHT_CLASSNAME = "light";
 		const char* MODEL_CLASSNAME = "func_static";
+		const char* SPEAKER_CLASSNAME = "speaker";
 	
 		const char* ADD_MODEL_TEXT = "Create model...";
 		const char* ADD_MODEL_ICON = "cmenu_add_model.png";
@@ -32,6 +33,8 @@ namespace ui
 		const char* ADD_ENTITY_ICON = "cmenu_add_entity.png";
 		const char* ADD_PREFAB_TEXT = "Insert prefab...";
 		const char* ADD_PREFAB_ICON = "cmenu_add_prefab.png";
+		const char* ADD_SPEAKER_TEXT = "Create speaker...";
+		const char* ADD_SPEAKER_ICON = "icon_sound.png";
 		
 		const char* CONVERT_TO_STATIC_TEXT = "Convert to func_static";
 		const char* CONVERT_TO_STATIC_ICON = "cmenu_convert_static.png";
@@ -52,23 +55,34 @@ void OrthoContextMenu::displayInstance(const Vector3& point) {
 OrthoContextMenu::OrthoContextMenu()
 : _widget(gtk_menu_new())
 {
-	GtkWidget* addModel = gtkutil::IconTextMenuItem(ADD_MODEL_ICON, ADD_MODEL_TEXT);
-	GtkWidget* addLight = gtkutil::IconTextMenuItem(ADD_LIGHT_ICON, ADD_LIGHT_TEXT);
-	GtkWidget* addEntity = gtkutil::IconTextMenuItem(ADD_ENTITY_ICON, ADD_ENTITY_TEXT);
-	GtkWidget* addPrefab = gtkutil::IconTextMenuItem(ADD_PREFAB_ICON, ADD_PREFAB_TEXT);
-	_convertStatic = gtkutil::IconTextMenuItem(CONVERT_TO_STATIC_ICON, CONVERT_TO_STATIC_TEXT);
-	_revertWorldspawn = gtkutil::IconTextMenuItem(REVERT_TO_WORLDSPAWN_ICON, REVERT_TO_WORLDSPAWN_TEXT);
+	GtkWidget* addModel = gtkutil::IconTextMenuItem(ADD_MODEL_ICON, 
+													ADD_MODEL_TEXT);
+	GtkWidget* addLight = gtkutil::IconTextMenuItem(ADD_LIGHT_ICON, 
+													ADD_LIGHT_TEXT);
+	GtkWidget* addEntity = gtkutil::IconTextMenuItem(ADD_ENTITY_ICON, 
+													 ADD_ENTITY_TEXT);
+	GtkWidget* addPrefab = gtkutil::IconTextMenuItem(ADD_PREFAB_ICON, 
+													 ADD_PREFAB_TEXT);
+	GtkWidget* addSpkr = gtkutil::IconTextMenuItem(ADD_SPEAKER_ICON, 
+												   ADD_SPEAKER_TEXT);
+	_convertStatic = gtkutil::IconTextMenuItem(CONVERT_TO_STATIC_ICON, 
+											   CONVERT_TO_STATIC_TEXT);
+	_revertWorldspawn = gtkutil::IconTextMenuItem(REVERT_TO_WORLDSPAWN_ICON, 
+												  REVERT_TO_WORLDSPAWN_TEXT);
 	
 	g_signal_connect(G_OBJECT(addEntity), "activate", G_CALLBACK(callbackAddEntity), this);
 	g_signal_connect(G_OBJECT(addLight), "activate", G_CALLBACK(callbackAddLight), this);
 	g_signal_connect(G_OBJECT(addModel), "activate", G_CALLBACK(callbackAddModel), this);
 	g_signal_connect(G_OBJECT(addPrefab), "activate", G_CALLBACK(callbackAddPrefab), this);
+	g_signal_connect(
+		G_OBJECT(addSpkr), "activate", G_CALLBACK(_onAddSpeaker), this);
 	g_signal_connect(G_OBJECT(_convertStatic), "activate", G_CALLBACK(callbackConvertToStatic), this);
 	g_signal_connect(G_OBJECT(_revertWorldspawn), "activate", G_CALLBACK(callbackRevertToWorldspawn), this);
 
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), addEntity);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), addModel);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), addLight);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), addEntity);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), addSpkr);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), addPrefab);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new());
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _convertStatic);
@@ -140,6 +154,11 @@ void OrthoContextMenu::callbackAddLight(GtkMenuItem* item, OrthoContextMenu* sel
 void OrthoContextMenu::callbackAddPrefab(GtkMenuItem* item, OrthoContextMenu* self) {
 	// Pass the call to the map algorithm and give the lastPoint coordinate as argument
 	map::loadPrefabAt(self->_lastPoint);
+}
+
+void OrthoContextMenu::_onAddSpeaker(GtkMenuItem* item, OrthoContextMenu* self)
+{
+	Entity_createFromSelection(SPEAKER_CLASSNAME, self->_lastPoint);	
 }
 
 void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* self) {
