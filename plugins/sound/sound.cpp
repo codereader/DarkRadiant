@@ -1,13 +1,20 @@
 #include "SoundManager.h"
 
+#include "ifilesystem.h"
 #include "modulesystem/singletonmodule.h"
 
-#include <iostream>
+/*
+ * Dependencies class.
+ */
+class SoundManagerDependencies
+: public GlobalFileSystemModuleRef
+{ };
 
 
 /* Register with module server */
 
-typedef SingletonModule<sound::SoundManager> SoundManagerModule;
+typedef SingletonModule<sound::SoundManager, 
+						SoundManagerDependencies> SoundManagerModule;
 
 extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
 {
