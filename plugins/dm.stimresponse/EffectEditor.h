@@ -53,6 +53,9 @@ class EffectEditor :
 	StimResponse& _response;
 	unsigned int _effectIndex;
 	
+	// The saved StimResponse to revert the changes on cancel
+	ResponseEffect _backup;
+	
 	// For calling update() when finished editing
 	ResponseEditor& _editor;
 	
@@ -76,6 +79,11 @@ public:
 	void populateWindow();
 	
 private:
+	/** greebo: Reverts the changes and loads the values from the 
+	 * 			backup effect object into the edited one.
+	 */
+	void revert();
+
 	/** greebo: Gets called on effect type changes to update the argument
 	 * 			widgets accordingly.
 	 */

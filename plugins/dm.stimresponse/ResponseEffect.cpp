@@ -5,7 +5,8 @@
 
 ResponseEffect::ResponseEffect() :
 	_state(true),
-	_eclass(IEntityClassPtr())
+	_eclass(IEntityClassPtr()),
+	_argumentListBuilt(false)
 {}
 
 // Copy constructor
@@ -13,7 +14,8 @@ ResponseEffect::ResponseEffect(const ResponseEffect& other) :
 	_effectName(other._effectName),
 	_state(other._state),
 	_args(other._args),
-	_eclass(other._eclass) 
+	_eclass(other._eclass),
+	_argumentListBuilt(other._argumentListBuilt)
 {}
 
 std::string ResponseEffect::getName() const {
@@ -33,8 +35,9 @@ void ResponseEffect::setName(const std::string& name) {
 	// Update the entityclass pointer
 	_eclass = ResponseEffectTypes::Instance().getEClassForName(name);
 	
-	// Build the argument list, if there are still zero arguments
-	if (_args.size() == 0) {
+	// Build the argument list, if it hasn't been built up till now
+	if (!_argumentListBuilt) {
+		_argumentListBuilt = true;
 		buildArgumentList();
 	}
 }

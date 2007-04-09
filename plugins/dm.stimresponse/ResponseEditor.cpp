@@ -52,6 +52,12 @@ void ResponseEditor::update() {
 		GtkTreeIter typeIter = _stimTypes.getIterForName(sr.get("type"));
 		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_typeList), &typeIter);
 		
+		// Active
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.active),
+			(sr.get("state") == "1")
+		);
+		
 		GtkListStore* effectStore = sr.getEffectStore();
 		gtk_tree_view_set_model(GTK_TREE_VIEW(_effectWidgets.view), GTK_TREE_MODEL(effectStore));
 		g_object_unref(effectStore);
