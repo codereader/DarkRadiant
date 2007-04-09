@@ -34,6 +34,8 @@ class ResponseEditor :
 		GtkWidget* active;
 		GtkWidget* chanceToggle;
 		GtkWidget* chanceEntry;
+		GtkWidget* randomEffectsToggle;
+		GtkWidget* randomEffectsEntry;
 	} _propertyWidgets;
 	
 	GtkWidget* _parent;

@@ -18,6 +18,9 @@ namespace ui {
 class ClassEditor
 {
 protected:
+	typedef std::map<GtkEditable*, std::string> EntryMap;
+	EntryMap _entryWidgets; 
+
 	GtkWidget* _pageVBox;
 	
 	GtkWidget* _list;
@@ -66,11 +69,10 @@ protected:
 	virtual void checkBoxToggled(GtkToggleButton* toggleButton) {
 	}
 
-	/** greebo: Gets called when an entry box changes, this has to be
+	/** greebo: Gets called when an entry box changes, this can be
 	 * 			overriden by the subclasses, if this is needed
 	 */
-	virtual void entryChanged(GtkEditable* editable) {
-	}
+	virtual void entryChanged(GtkEditable* editable);
 
 	/** greebo: Returns the ID of the currently selected stim/response
 	 * 		
