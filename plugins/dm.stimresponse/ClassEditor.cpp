@@ -9,7 +9,7 @@
 namespace ui {
 	
 	namespace {
-		const unsigned int TREE_VIEW_WIDTH = 220;
+		const unsigned int TREE_VIEW_WIDTH = 250;
 		const unsigned int TREE_VIEW_HEIGHT = 200;
 		
 		static void textCellDataFunc(GtkTreeViewColumn* treeColumn,
@@ -133,6 +133,18 @@ void ClassEditor::setProperty(const std::string& key, const std::string& value) 
 
 	// Call the method of the child class to update the widgets
 	update();
+}
+
+void ClassEditor::entryChanged(GtkEditable* editable) {
+	// Try to find the key this entry widget is associated to
+	EntryMap::iterator found = _entryWidgets.find(editable);
+	
+	if (found != _entryWidgets.end()) {
+		std::string entryText = gtk_entry_get_text(GTK_ENTRY(editable));
+		if (!entryText.empty()) {
+			setProperty(found->second, entryText);
+		}
+	}
 }
 
 GtkWidget* ClassEditor::createStimTypeSelector() {

@@ -259,18 +259,6 @@ void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 	}
 }
 
-void StimEditor::entryChanged(GtkEditable* editable) {
-	// Try to find the key this entry widget is associated to
-	EntryMap::iterator found = _entryWidgets.find(editable);
-	
-	if (found != _entryWidgets.end()) {
-		std::string entryText = gtk_entry_get_text(GTK_ENTRY(editable));
-		if (!entryText.empty()) {
-			setProperty(found->second, entryText);
-		}
-	}
-}
-
 void StimEditor::removeItem(GtkTreeView* view) {
 	// The argument <view> is not needed, there is only one list
 	

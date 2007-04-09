@@ -8,9 +8,6 @@ namespace ui {
 class StimEditor :
 	public ClassEditor
 {
-	typedef std::map<GtkEditable*, std::string> EntryMap;
-	EntryMap _entryWidgets; 
-	
 	struct PropertyWidgets {
 		GtkWidget* vbox;
 		GtkWidget* active;
@@ -60,10 +57,6 @@ private:
 	 * 			is toggled.
 	 */
 	void checkBoxToggled(GtkToggleButton* toggleButton);
-
-	/** greebo: Updates the stim according to the given entry box 
-	 */
-	void entryChanged(GtkEditable* editable);
 
 	/** greebo: As the name states, this creates the context menu widgets.
 	 */

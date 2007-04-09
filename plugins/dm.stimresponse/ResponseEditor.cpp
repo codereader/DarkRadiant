@@ -14,6 +14,7 @@ namespace ui {
 	
 	namespace {
 		const std::string LABEL_RESPONSE_EFFECTS = "<b>Response Effects</b>";
+		const unsigned int OPTIONS_LABEL_WIDTH = 140;
 	}
 
 ResponseEditor::ResponseEditor(GtkWidget* parent, StimTypes& stimTypes) :
@@ -56,6 +57,25 @@ void ResponseEditor::update() {
 		gtk_toggle_button_set_active(
 			GTK_TOGGLE_BUTTON(_propertyWidgets.active),
 			(sr.get("state") == "1")
+		);
+		
+		// Use Radius
+		bool useRandomEffects = (sr.get("random_effects") != "");
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.randomEffectsToggle),
+			useRandomEffects
+		);
+		gtk_entry_set_text(
+			GTK_ENTRY(_propertyWidgets.randomEffectsEntry), 
+			sr.get("random_effects").c_str()
+		);
+		gtk_widget_set_sensitive(
+			_propertyWidgets.randomEffectsEntry, 
+			useRandomEffects && sr.get("class") == "R"
+		);
+		gtk_widget_set_sensitive(
+			_propertyWidgets.randomEffectsToggle, 
+			sr.get("class") == "R"
 		);
 		
 		GtkListStore* effectStore = sr.getEffectStore();
@@ -104,6 +124,23 @@ void ResponseEditor::populatePage() {
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.active, FALSE, FALSE, 6);
 	g_signal_connect(G_OBJECT(_propertyWidgets.active), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	
+	// Random Effects Toggle
+	GtkWidget* randomEffectsHBox = gtk_hbox_new(FALSE, 0);
+	_propertyWidgets.randomEffectsToggle = gtk_check_button_new_with_label("Random Effects");
+	gtk_widget_set_size_request(_propertyWidgets.randomEffectsToggle, OPTIONS_LABEL_WIDTH, -1);
+	_propertyWidgets.randomEffectsEntry = gtk_entry_new();
+	
+	gtk_box_pack_start(GTK_BOX(randomEffectsHBox), _propertyWidgets.randomEffectsToggle, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(randomEffectsHBox), _propertyWidgets.randomEffectsEntry, TRUE, TRUE, 0);
+	
+	g_signal_connect(G_OBJECT(_propertyWidgets.randomEffectsToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.randomEffectsEntry), "changed", G_CALLBACK(onEntryChanged), this);
+	
+	// The map associating entry fields to response property keys
+	_entryWidgets[GTK_EDITABLE(_propertyWidgets.randomEffectsEntry)] = "random_effects";
+	
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), randomEffectsHBox, FALSE, FALSE, 0);
+	
     gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox),
     				   gtkutil::LeftAlignedLabel(LABEL_RESPONSE_EFFECTS),
     				   FALSE, FALSE, 6);
@@ -118,7 +155,7 @@ GtkWidget* ResponseEditor::createEffectWidgets() {
 	_effectWidgets.view = gtk_tree_view_new();
 	_effectWidgets.selection = 
 		gtk_tree_view_get_selection(GTK_TREE_VIEW(_effectWidgets.view));
-	gtk_widget_set_size_request(_effectWidgets.view, -1, 200);
+	gtk_widget_set_size_request(_effectWidgets.view, -1, 150);
 	
 	// Connect the signals
 	g_signal_connect(G_OBJECT(_effectWidgets.selection), "changed",
@@ -179,6 +216,19 @@ void ResponseEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 	
 	if (toggleWidget == _propertyWidgets.active) {
 		setProperty("state", active ? "1" : "0");
+	}
+	else if (toggleWidget == _propertyWidgets.randomEffectsToggle) {
+		std::string entryText = 
+			gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.randomEffectsEntry));
+	
+		// Enter a default value for the entry text, if it's empty up till now.
+		if (active) {
+			entryText += (entryText.empty()) ? "1" : "";	
+		}
+		else {
+			entryText = "";
+		}
+		setProperty("random_effects", entryText);
 	}
 }
 

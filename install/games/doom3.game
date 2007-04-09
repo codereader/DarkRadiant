@@ -195,6 +195,7 @@
 			<property name="radius" classes="S" />
 			<property name="timer_type" classes="S" />
 			<property name="chance" classes="SR" />
+			<property name="random_effects" classes="R" />
 		</properties>
 		<stimResponsePrefix value="sr_" />
 		<responseEffectPrefix value="effect_" />
