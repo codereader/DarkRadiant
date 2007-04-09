@@ -16,10 +16,6 @@ namespace ui {
 class LightTextureChooser :
 	public ShaderSelector::Client
 {
-	// The text entry in the PropertyEditor to write the chosen texture
-	// into
-	GtkWidget* _entry;
-	
 	// Main dialog widget
 	GtkWidget* _widget;	
 	
@@ -27,27 +23,40 @@ class LightTextureChooser :
 	// tools (treeview etc.)
 	ShaderSelector _selector;
 	
-public:
-	// Construct the dialog window and its contents.
-	LightTextureChooser(GtkWidget* combo, const std::string& prefixes);
+	// The user's texture selection
+	std::string _selectedTexture;
 	
-	// Constructor, delete widgets
-	~LightTextureChooser() {
-		gtk_widget_destroy(_widget);
-	}
-	
-	/** greebo: Gets called upon selection change, updates the infostore
-	 * 			of the contained ShaderSelector helper class accordingly.
-	 */
-	void shaderSelectionChanged(const std::string& shaderName, GtkListStore* listStore);
-
 private:
+
 	// Widget construction helpers
 	GtkWidget* createButtons();
 	
 	/* GTK CALLBACKS */
 	static void callbackCancel(GtkWidget*, LightTextureChooser*);
 	static void callbackOK(GtkWidget*, LightTextureChooser*);
+
+public:
+	
+	/**
+	 * Construct the dialog window and its contents.
+	 */
+	LightTextureChooser();
+	
+	/**
+	 * Display the dialog and block for a selection from the user.
+	 *
+	 * @returns
+	 * The selected shader name, or "" if there was no selection or the dialog
+	 * was cancelled.
+	 */
+	std::string chooseTexture();
+	
+	/** greebo: Gets called upon selection change, updates the infostore
+	 * 			of the contained ShaderSelector helper class accordingly.
+	 */
+	void shaderSelectionChanged(const std::string& shaderName, 
+								GtkListStore* listStore);
+
 };
 
 } // namespace ui

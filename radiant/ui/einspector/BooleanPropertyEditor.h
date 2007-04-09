@@ -14,10 +14,14 @@ namespace ui
 class BooleanPropertyEditor:
     public PropertyEditor
 {
-private:
+	// Main widget
+	GtkWidget* _widget;
 
 	// The checkbox
 	GtkWidget* _checkBox;
+	
+	// Entity to edit
+	Entity* _entity;
 
 public:
 
@@ -27,15 +31,25 @@ public:
 	// Construct a blank BooleanPropertyEditor for use in the PropertyEditorFactory
 	BooleanPropertyEditor();
 
-	virtual ~BooleanPropertyEditor();
+	// Destructor
+	virtual ~BooleanPropertyEditor() {
+		gtk_widget_destroy(_widget);
+	}
 
 	// Create a new BooleanPropertyEditor
-    virtual PropertyEditor* createNew(Entity* entity, const std::string& name, const std::string& options) {
-    	return new BooleanPropertyEditor(entity, name);
+    virtual PropertyEditorPtr createNew(Entity* entity, 
+    									const std::string& name, 
+    									const std::string& options) 
+	{
+    	return PropertyEditorPtr(new BooleanPropertyEditor(entity, name));
     }
-    
-    virtual void setValue(const std::string&);
-    virtual const std::string getValue();
+  
+  	/**
+  	 * Get the main widget.
+  	 */
+	GtkWidget* getWidget() {
+		return _widget;
+	}
     
 };
 

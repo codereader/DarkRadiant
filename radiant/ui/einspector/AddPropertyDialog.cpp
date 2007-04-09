@@ -11,6 +11,7 @@
 #include "iradiant.h"
 #include "iregistry.h"
 #include "ieclass.h"
+#include "ientity.h"
 
 #include <gtk/gtk.h>
 

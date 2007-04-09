@@ -12,8 +12,14 @@ namespace ui
 class SoundPropertyEditor
 : public PropertyEditor
 {
-	// Selected shader name
-	std::string _shader;
+	// Main widget
+	GtkWidget* _widget;
+	
+	// Entity to edit
+	Entity* _entity;
+	
+	// Keyvalue to set
+	std::string _key;
 	
 private:
 
@@ -31,18 +37,30 @@ public:
 					    const std::string& options);
 					   
 	// Clone method for virtual construction
-	SoundPropertyEditor* createNew(Entity* entity,
-							  	   const std::string& name,
-							  	   const std::string& options)
+	PropertyEditorPtr createNew(Entity* entity,
+								const std::string& name,
+							  	const std::string& options)
 	{
-		return new SoundPropertyEditor(entity, name, options);
+		return PropertyEditorPtr(
+			new SoundPropertyEditor(entity, name, options)
+		);
 	}
 	
-	// Set the value to be displayed in the widgets
-	void setValue(const std::string&);
+	/**
+	 * Virtual destructor.
+	 */
+	virtual ~SoundPropertyEditor() {
+		gtk_widget_destroy(_widget);
+	}
 	
-	// Return the value set in the widgets
-	const std::string getValue();
+	/**
+	 * Return the main widget.
+	 */
+	GtkWidget* getWidget() {
+		gtk_widget_show_all(_widget);
+		return _widget;
+	}
+	
 };
 
 }

@@ -16,10 +16,28 @@ namespace ui
 class ColourPropertyEditor
 : public PropertyEditor
 {
-private:
+	// Main widget
+	GtkWidget* _widget;
 
 	// The GtkColorButton
 	GtkWidget* _colorButton;
+	
+	// Entity to edit
+	Entity* _entity;
+	
+	// Name of keyval
+	std::string _key;
+	
+private:
+
+	// Set the colour button from the given string
+	void setColourButton(const std::string& value);
+	
+	// Return the string representation of the selected colour
+	std::string getSelectedColour();
+	
+	/* GTK CALLBACKS */
+	static void _onColorSet(GtkWidget*, ColourPropertyEditor* self);
 	
 public:
 
@@ -29,16 +47,29 @@ public:
 	/// Blank constructor for the PropertyEditorFactory
 	ColourPropertyEditor();
 	
+	/**
+	 * Virtual destructor.
+	 */
+	virtual ~ColourPropertyEditor() {
+		gtk_widget_destroy(_widget);
+	}
+	
 	/// Create a new ColourPropertyEditor
-    virtual PropertyEditor* createNew(Entity* entity, const std::string& name, const std::string& options) {
-    	return new ColourPropertyEditor(entity, name);
+    virtual PropertyEditorPtr createNew(Entity* entity, 
+    									const std::string& name, 
+    									const std::string& options) 
+	{
+    	return PropertyEditorPtr(new ColourPropertyEditor(entity, name));
     }
-
-	/// Set the displayed value to the given keyval		
-    virtual void setValue(const std::string&);
     
-    /// Return the currently-selected value to the parent
-    virtual const std::string getValue();
+    /**
+     * Return the main widget.
+     */
+	GtkWidget* getWidget() {
+		gtk_widget_show_all(_widget);
+		return _widget;
+	}
+
 };
 
 }

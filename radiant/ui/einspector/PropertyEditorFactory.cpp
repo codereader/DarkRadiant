@@ -18,42 +18,43 @@ PropertyEditorFactory::PropertyEditorMap PropertyEditorFactory::_peMap;
 
 // Register the classes
 void PropertyEditorFactory::registerClasses() {
-    _peMap["vector3"] = new Vector3PropertyEditor();
-    _peMap["boolean"] = new BooleanPropertyEditor();
-    _peMap["entity"] = new EntityPropertyEditor();
-	_peMap["colour"] = new ColourPropertyEditor();
-	_peMap["texture"] = new TexturePropertyEditor();
-	_peMap["skin"] = new SkinPropertyEditor();
-	_peMap["sound"] = new SoundPropertyEditor();
+    _peMap["vector3"] = PropertyEditorPtr(new Vector3PropertyEditor());
+    _peMap["boolean"] = PropertyEditorPtr(new BooleanPropertyEditor());
+    _peMap["entity"] = PropertyEditorPtr(new EntityPropertyEditor());
+	_peMap["colour"] = PropertyEditorPtr(new ColourPropertyEditor());
+	_peMap["texture"] = PropertyEditorPtr(new TexturePropertyEditor());
+	_peMap["skin"] = PropertyEditorPtr(new SkinPropertyEditor());
+	_peMap["sound"] = PropertyEditorPtr(new SoundPropertyEditor());
 }
 
 // Create a PropertyEditor from the given name.
 
-PropertyEditor* PropertyEditorFactory::create(const std::string& className,
-											  Entity* entity,
-											  const std::string& key,
-											  const std::string& options) 
+PropertyEditorPtr PropertyEditorFactory::create(const std::string& className,
+											  	Entity* entity,
+											  	const std::string& key,
+											  	const std::string& options) 
 {
     // Register the PropertyEditors if the map is empty
     if (_peMap.empty()) {
         registerClasses();
     }
 
+	// Search for the named property editor type
 	PropertyEditorMap::iterator iter(_peMap.find(className));
 
+	// If the type is not found, return NULL otherwise create a new instance of
+	// the associated derived type.
 	if (iter == _peMap.end()) {
-		return NULL;
+		return PropertyEditorPtr();
 	} else {
-        PropertyEditor* pe = iter->second->createNew(entity, key, options);
-        pe->refresh();
-		return pe;
+		return iter->second->createNew(entity, key, options);
 	}
 }
 
 // Return a GdkPixbuf containing the icon for the given property type
 
-GdkPixbuf* PropertyEditorFactory::getPixbufFor(std::string type) {
-	std::string iconName(std::string("icon_") + type + ".png");
+GdkPixbuf* PropertyEditorFactory::getPixbufFor(const std::string& type) {
+	std::string iconName = "icon_" + type + ".png";
 	return gtkutil::getLocalPixbuf(iconName);	
 }
 

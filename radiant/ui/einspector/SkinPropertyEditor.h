@@ -15,8 +15,14 @@ namespace ui
 class SkinPropertyEditor
 : public PropertyEditor
 {
+	// Main widget
+	GtkWidget* _widget;
+	
 	// Main text entry
 	GtkWidget* _textEntry;
+	
+	// Entity to edit
+	Entity* _entity;
 	
 private:
 
@@ -34,19 +40,20 @@ public:
 					   const std::string& options);
 					   
 	// Clone method for virtual construction
-	PropertyEditor* createNew(Entity* entity,
-							  const std::string& name,
-							  const std::string& options)
+	PropertyEditorPtr createNew(Entity* entity,
+								const std::string& name,
+								const std::string& options)
 	{
-		return new SkinPropertyEditor(entity, name, options);
+		return PropertyEditorPtr(new SkinPropertyEditor(entity, name, options));
 	}
-	
-	// Set the value to be displayed in the widgets
-	void setValue(const std::string&);
-	
-	// Return the value set in the widgets
-	const std::string getValue();
-	
+
+	/**
+	 * Return the main widget.
+	 */
+	GtkWidget* getWidget() {
+		return _widget;
+	}
+		
 };
 
 }

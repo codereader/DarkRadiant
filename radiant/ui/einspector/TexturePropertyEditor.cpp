@@ -1,7 +1,8 @@
 #include "TexturePropertyEditor.h"
 #include "LightTextureChooser.h"
+#include "PropertyEditorFactory.h"
 
-#include "ishaders.h"
+#include "ientity.h"
 #include "generic/callback.h"
 
 #include <boost/algorithm/string/predicate.hpp>
@@ -12,46 +13,51 @@ namespace ui
 {
 
 // Main constructor
-
-TexturePropertyEditor::TexturePropertyEditor(Entity* entity, const std::string& name, const std::string& options)
-: PropertyEditor(entity, name),
-  _prefixes(options)
+TexturePropertyEditor::TexturePropertyEditor(Entity* entity, 
+											 const std::string& name, 
+											 const std::string& options)
+: _widget(gtk_vbox_new(FALSE, 6)),
+  _prefixes(options),
+  _entity(entity),
+  _key(name)
 {
 	GtkWidget* outer = gtk_vbox_new(FALSE, 0);
-
 	GtkWidget* editBox = gtk_hbox_new(FALSE, 3);
-	gtk_container_set_border_width(GTK_CONTAINER(editBox), 3);
-	_textEntry = gtk_entry_new();
-	
-	std::string caption = getKey();
-	caption.append(": ");
-	gtk_box_pack_start(GTK_BOX(editBox), gtk_label_new(caption.c_str()), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(editBox), _textEntry, TRUE, TRUE, 0);
 
-	GtkWidget* browseButton = gtk_button_new_with_label("...");
-	gtk_box_pack_start(GTK_BOX(editBox), browseButton, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(browseButton), "clicked", G_CALLBACK(callbackBrowse), this);
+	// Create the browse button	
+	GtkWidget* browseButton = gtk_button_new_with_label("Choose texture...");
+	gtk_button_set_image(
+		GTK_BUTTON(browseButton),
+		gtk_image_new_from_pixbuf(
+			PropertyEditorFactory::getPixbufFor("texture")
+		)
+	);
+	g_signal_connect(
+		G_OBJECT(browseButton), "clicked", G_CALLBACK(callbackBrowse), this
+	);
 	
+	gtk_box_pack_start(GTK_BOX(editBox), browseButton, TRUE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(outer), editBox, TRUE, FALSE, 0);
 	
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(getEditWindow()),
-										  outer);
+	gtk_box_pack_start(GTK_BOX(_widget), outer, TRUE, TRUE, 0);
 }
 
-// Browse button callback, with local functor object
-
-void TexturePropertyEditor::callbackBrowse(GtkWidget* widget, TexturePropertyEditor* self) {
-	new LightTextureChooser(self->_textEntry, self->_prefixes); // self-destructs on close
+// Destructor
+TexturePropertyEditor::~TexturePropertyEditor() {
+	gtk_widget_destroy(_widget);
 }
 
-// Get and set functions
-
-void TexturePropertyEditor::setValue(const std::string& val) {
-	gtk_entry_set_text(GTK_ENTRY(_textEntry), val.c_str());
-}
-
-const std::string TexturePropertyEditor::getValue() {
-	return std::string(gtk_entry_get_text(GTK_ENTRY(_textEntry)));
+// Browse button callback
+void TexturePropertyEditor::callbackBrowse(GtkWidget* widget, 
+										   TexturePropertyEditor* self) 
+{
+	// Light texture chooser (self-destructs on close)
+	LightTextureChooser chooser;
+	std::string texture = chooser.chooseTexture();
+	if (!texture.empty()) {
+		// Apply the keyvalue immediately
+		self->_entity->setKeyValue(self->_key, texture);
+	}
 }
 
 } // namespace ui
