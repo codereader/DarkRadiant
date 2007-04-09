@@ -29,7 +29,12 @@ class ResponseEditor :
 		GtkWidget* downMenuItem;
 	} _effectWidgets;
 	
-	GtkWidget* _responseVBox;
+	struct PropertyWidgets {
+		GtkWidget* vbox;
+		GtkWidget* active;
+		GtkWidget* chanceToggle;
+		GtkWidget* chanceEntry;
+	} _propertyWidgets;
 	
 	GtkWidget* _parent;
 	
@@ -47,6 +52,11 @@ public:
 	void update();
 
 private:
+	/** greebo: Updates the associated text fields when a check box
+	 * 			is toggled.
+	 */
+	void checkBoxToggled(GtkToggleButton* toggleButton);
+
 	/** greebo: Adds a new response effect to the list.
 	 */
 	void addEffect();

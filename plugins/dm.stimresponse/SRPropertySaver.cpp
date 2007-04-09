@@ -68,6 +68,10 @@ void SRPropertySaver::visit(StimResponse& sr) {
 				std::string argKey = key + "_arg" + intToStr(argIndex);
 				_target->setKeyValue(argKey, argValue);
 			}
+			
+			if (!effect.isActive()) {
+				_target->setKeyValue(key + "_state", "0");
+			}
 		}
 	}
 }

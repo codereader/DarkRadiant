@@ -4,12 +4,14 @@
 #include <boost/algorithm/string/replace.hpp>
 
 ResponseEffect::ResponseEffect() :
+	_state(true),
 	_eclass(IEntityClassPtr())
 {}
 
 // Copy constructor
 ResponseEffect::ResponseEffect(const ResponseEffect& other) :
 	_effectName(other._effectName),
+	_state(other._state),
 	_args(other._args),
 	_eclass(other._eclass) 
 {}
@@ -18,13 +20,23 @@ std::string ResponseEffect::getName() const {
 	return _effectName;
 }
 
+bool ResponseEffect::isActive() const {
+	return _state;
+}
+
+void ResponseEffect::setActive(bool active) {
+	_state = active;
+}
+
 void ResponseEffect::setName(const std::string& name) {
 	_effectName = name;
 	// Update the entityclass pointer
 	_eclass = ResponseEffectTypes::Instance().getEClassForName(name);
 	
-	// Clear and rebuild the argument list 
-	buildArgumentList();
+	// Build the argument list, if there are still zero arguments
+	if (_args.size() == 0) {
+		buildArgumentList();
+	}
 }
 
 std::string ResponseEffect::getArgument(unsigned int index) const {
@@ -66,9 +78,6 @@ ResponseEffect::ArgumentList& ResponseEffect::getArguments() {
 void ResponseEffect::buildArgumentList() {
 	if (_eclass == NULL) return;
 	
-	// Remove all possible previous items that may still be in memory
-	_args.clear();
-	
 	for (int i = 1; i < 1000; i++) {
 		std::string argType = _eclass->getValueForKey("editor_argType" + intToStr(i));
 		std::string argDesc = _eclass->getValueForKey("editor_argDesc" + intToStr(i));
@@ -94,6 +103,10 @@ void ResponseEffect::buildArgumentList() {
 			break;
 		}
 	}
+}
+
+void ResponseEffect::clearArgumentList() {
+	_args.clear();
 }
 
 std::string ResponseEffect::getArgumentStr() {

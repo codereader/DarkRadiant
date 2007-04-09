@@ -89,6 +89,8 @@ EffectEditor::EffectEditor(GtkWindow* parent,
 	GtkTreeIter found = finder.getIter();
 	// Set the active row of the combo box to the current response effect type
 	gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_effectTypeCombo), &found);
+
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_stateToggle), effect.isActive());
 	
 	// Create the alignment container that hold the (exchangable) widget table
 	_argAlignment = gtk_alignment_new(0.0, 0.5, 1.0, 1.0);
@@ -130,6 +132,10 @@ void EffectEditor::populateWindow() {
 	
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), effectHBox, FALSE, FALSE, 3);
 	
+	_stateToggle = gtk_check_button_new_with_label("Active");
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), _stateToggle, FALSE, FALSE, 3);
+	g_signal_connect(G_OBJECT(_stateToggle), "toggled", G_CALLBACK(onStateToggle), this);
+	
 	GtkWidget* argLabel = gtkutil::LeftAlignedLabel("<b>Arguments</b>");
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), argLabel, FALSE, FALSE, 0);
 	
@@ -162,8 +168,10 @@ void EffectEditor::effectTypeChanged() {
 	// Get the effect
 	ResponseEffect& effect = _response.getResponseEffect(_effectIndex);
 	
-	// Set the name of the effect (this triggers an argument list update)
+	// Set the name of the effect and trigger an argument list update
 	effect.setName(newEffectName);
+	effect.clearArgumentList();
+	effect.buildArgumentList();
 	
 	// Rebuild the argument list basing on this new effect
 	createArgumentWidgets(effect);
@@ -326,6 +334,12 @@ void EffectEditor::onSave(GtkWidget* button, EffectEditor* self) {
 void EffectEditor::onCancel(GtkWidget* button, EffectEditor* self) {
 	// Call the inherited DialogWindow::destroy method 
 	self->destroy();
+}
+
+void EffectEditor::onStateToggle(GtkToggleButton* toggleButton, EffectEditor* self) {
+	self->_response.getResponseEffect(self->_effectIndex).setActive(
+		gtk_toggle_button_get_active(toggleButton)
+	);
 }
 
 void EffectEditor::onEffectTypeChange(GtkWidget* combobox, EffectEditor* self) {

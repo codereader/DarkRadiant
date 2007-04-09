@@ -13,8 +13,6 @@ class StimEditor :
 	
 	struct PropertyWidgets {
 		GtkWidget* vbox;
-		GtkWidget* stimButton;
-		GtkWidget* respButton;
 		GtkWidget* active;
 		GtkWidget* useBounds;
 		GtkWidget* radiusToggle;
