@@ -3,14 +3,14 @@
 
 #include "PropertyEditor.h"
 
+#include "iselection.h"
+#include "gtkutil/idledraw.h"
+
 #include <gtk/gtkliststore.h>
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkmenuitem.h>
 #include <gtk/gtktogglebutton.h>
-
-#include "iselection.h"
-
-#include "gtkutil/idledraw.h"
+#include <map>
 
 /* FORWARD DECLS */
 
@@ -67,7 +67,7 @@ private:
 	GtkWidget* _delKeyMenuItem;
 	
 	// Currently displayed PropertyEditor
-	PropertyEditor* _currentPropertyEditor;
+	PropertyEditorPtr _currentPropertyEditor;
 
     // GtkUtil IdleDraw class. This allows redraw calls to be scheduled for
     // when GTK is idle.

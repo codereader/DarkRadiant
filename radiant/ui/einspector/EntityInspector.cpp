@@ -199,6 +199,7 @@ GtkWidget* EntityInspector::createTreeViewPane() {
 	
 	gtk_box_pack_start(GTK_BOX(vbx), _keyEntry, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), setButtonBox, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(vbx), gtk_hseparator_new(), FALSE, FALSE, 3);
     
     // Signals for entry boxes
     g_signal_connect(G_OBJECT(setButton), "clicked", G_CALLBACK(_onSetProperty), this);
@@ -247,8 +248,7 @@ void EntityInspector::callbackRedraw() {
         
         // Remove the displayed PropertyEditor
         if (_currentPropertyEditor) {
-            delete _currentPropertyEditor;
-            _currentPropertyEditor = NULL;
+            _currentPropertyEditor = PropertyEditorPtr();
         }
 		
 		// Disable the dialog and clear the TreeView
@@ -410,8 +410,7 @@ void EntityInspector::treeSelectionChanged() {
 
     // Delete current property editor
     if (_currentPropertyEditor) {
-        delete _currentPropertyEditor; // destructor takes care of GTK widgets
-        _currentPropertyEditor = NULL;
+        _currentPropertyEditor = PropertyEditorPtr();
     }
 
     // Get the selected key and value in the tree view
@@ -439,7 +438,7 @@ void EntityInspector::treeSelectionChanged() {
                                                            _selectedEntity,
                                                            key,
                                                            options);
-    if (_currentPropertyEditor != NULL) {
+    if (_currentPropertyEditor) {
         gtk_container_add(GTK_CONTAINER(_editorFrame), 
         				  _currentPropertyEditor->getWidget());
     }

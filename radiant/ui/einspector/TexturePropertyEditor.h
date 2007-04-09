@@ -14,33 +14,56 @@ namespace ui
 class TexturePropertyEditor
 : public PropertyEditor
 {
-private:
+	// Main widget
+	GtkWidget* _widget;
 
-	// The text entry field
-	GtkWidget* _textEntry;
-	
 	// Texture prefixes we are interested in
 	const std::string _prefixes;
 	
-	/* GTK CALLBACKS */
+	// Entity to edit
+	Entity* _entity;
 	
+	// Keyval to set
+	std::string _key;
+	
+private:
+	
+	/* GTK CALLBACKS */
 	static void callbackBrowse(GtkWidget*, TexturePropertyEditor*);
 
 public:
 
 	// Construct a TexturePropertyEditor with an entity and key to edit
-	TexturePropertyEditor(Entity* entity, const std::string& name, const std::string& options);
+	TexturePropertyEditor(Entity* entity, 
+						  const std::string& name, 
+						  const std::string& options);
 	
-	// Construct a blank TexturePropertyEditor for use in the PropertyEditorFactory
+	// Construct a blank TexturePropertyEditor for use in the 
+	// PropertyEditorFactory
 	TexturePropertyEditor() {}
 
+	/**
+	 * Virtual destructor.
+	 */
+	virtual ~TexturePropertyEditor();
+
 	// Create a new TexturePropertyEditor
-    virtual PropertyEditor* createNew(Entity* entity, const std::string& name, const std::string& options) {
-    	return new TexturePropertyEditor(entity, name, options);
+    virtual PropertyEditorPtr createNew(Entity* entity, 
+    									const std::string& name, 
+    									const std::string& options) 
+	{
+    	return PropertyEditorPtr(
+    		new TexturePropertyEditor(entity, name, options)
+    	);
     }
     
-    virtual void setValue(const std::string&);
-    virtual const std::string getValue();
+    /**
+     * Return main widget.
+     */
+	GtkWidget* getWidget() {
+		gtk_widget_show_all(_widget);
+		return _widget;
+	}
     
 };
 

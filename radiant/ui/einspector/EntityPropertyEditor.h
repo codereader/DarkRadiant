@@ -14,7 +14,8 @@ namespace ui
 class EntityPropertyEditor:
     public PropertyEditor
 {
-private:
+	// Main widget
+	GtkWidget* _widget;
 
     // The combo box
     GtkWidget* _comboBox;
@@ -29,16 +30,25 @@ public:
     // Construct a EntityPropertyEditor with an entity and key to edit
     EntityPropertyEditor(Entity* entity, const std::string& name);
     
-    // Construct a blank EntityPropertyEditor for use in the PropertyEditorFactory
+    // Construct a blank EntityPropertyEditor for use in the 
+    // PropertyEditorFactory
     EntityPropertyEditor();
 
     // Create a new EntityPropertyEditor
-    virtual PropertyEditor* createNew(Entity* entity, const std::string& name, const std::string& options) {
-        return new EntityPropertyEditor(entity, name);
+    virtual PropertyEditorPtr createNew(Entity* entity, 
+    									const std::string& name, 
+    									const std::string& options) 
+	{
+        return PropertyEditorPtr(new EntityPropertyEditor(entity, name));
     }
+  
+  	/**
+  	 * Return the main widget.
+  	 */
+	GtkWidget* getWidget() {
+		return _widget;
+	}
     
-    virtual void setValue(const std::string&);
-    virtual const std::string getValue();
 };
 
 }

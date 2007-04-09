@@ -2,6 +2,8 @@
 #include "PropertyEditorFactory.h"
 #include "SoundChooser.h"
 
+#include "ientity.h"
+
 #include <gtk/gtk.h>
 
 namespace ui
@@ -11,7 +13,9 @@ namespace ui
 SoundPropertyEditor::SoundPropertyEditor(Entity* entity,
 									     const std::string& name,
 									     const std::string& options)
-: PropertyEditor(entity, name)
+: _widget(gtk_vbox_new(FALSE, 6)),
+  _entity(entity),
+  _key(name)
 {
 	// Horizontal box contains the browse button
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
@@ -35,18 +39,7 @@ SoundPropertyEditor::SoundPropertyEditor(Entity* entity,
 	// Pack hbox into vbox (to limit vertical size), then edit frame
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), hbx, TRUE, FALSE, 0);
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(getEditWindow()),
-										  vbx);
-}
-
-// Set the value in the widgets
-void SoundPropertyEditor::setValue(const std::string& val) {
-	_shader = val;
-}
-
-// Return the value in the widgets
-const std::string SoundPropertyEditor::getValue() {
-	return _shader;
+	gtk_box_pack_start(GTK_BOX(_widget), vbx, TRUE, TRUE, 0);
 }
 
 /* GTK CALLBACKS */
@@ -57,8 +50,10 @@ void SoundPropertyEditor::_onBrowseButton(GtkWidget* w,
 	// Use a SoundChooser dialog to get a selection from the user
 	SoundChooser chooser;
 	std::string selection = chooser.chooseSound(); 
-	if (!selection.empty())
-		self->_shader = selection; 
+	if (!selection.empty()) {
+		// Apply the change to the entity
+		self->_entity->setKeyValue(self->_key, selection);
+	}
 }
 
 } // namespace ui
