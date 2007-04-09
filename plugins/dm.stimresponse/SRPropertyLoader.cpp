@@ -90,26 +90,51 @@ void SRPropertyLoader::parseAttribute(
 			// Find the Response for this index
 			SREntity::StimResponseMap::iterator found = _srMap.find(index);
 			
-			if (found != _srMap.end()) {
-				// Get the response effect (or create a new one)
-				ResponseEffect& effect = _srMap[index].getResponseEffect(effectIndex);
-				
-				std::string postfix = matches[3];
-				if (postfix.empty()) {
-					// No "_arg1" found, the value is the effect name definition
-					effect.setName(value);
-				}
-				else {
-					int argIndex = strToInt(postfix.substr(4));
-					// Load the value into argument with the index <argIndex>
-					effect.setArgument(argIndex, value);
-				}
+			if (found == _srMap.end()) {
+				// Insert a new SR object with the given index
+				_srMap[index] = StimResponse();
+				_srMap[index].setIndex(index);
+				_srMap[index].setInherited(inherited);
+			}
+			
+			// Get the response effect (or create a new one)
+			ResponseEffect& effect = _srMap[index].getResponseEffect(effectIndex);
+			
+			std::string postfix = matches[3];
+			if (postfix.empty()) {
+				// No "_arg1" found, the value is the effect name definition
+				effect.setName(value);
 			}
 			else {
-				// already existing, add to the warnings
-				_warnings += "Warning on Response Effect #" + intToStr(index) + 
-							 ": could not find Response.\n";
+				int argIndex = strToInt(postfix.substr(4));
+				// Load the value into argument with the index <argIndex>
+				effect.setArgument(argIndex, value);
 			}
+		}
+		
+		// Check for the "sr_effect_x_y_state" spawnarg
+		boost::regex stateExpr(
+			"^" + prefix + responseEffectPrefix + "([0-9])+_([0-9])+(_state)$"
+		);
+		if (boost::regex_match(key, matches, stateExpr))	{
+			// The response index
+			int index = strToInt(matches[1]);
+			// The effect index
+			int effectIndex = strToInt(matches[2]);
+			
+			// Find the Response for this index
+			SREntity::StimResponseMap::iterator found = _srMap.find(index);
+			
+			if (found == _srMap.end()) {
+				// Insert a new SR object with the given index
+				_srMap[index] = StimResponse();
+				_srMap[index].setIndex(index);
+				_srMap[index].setInherited(inherited);
+			}
+			
+			// Get the response effect (or create a new one)
+			ResponseEffect& effect = _srMap[index].getResponseEffect(effectIndex);
+			effect.setActive(value != "0");
 		}
 	}
 }

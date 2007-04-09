@@ -44,7 +44,7 @@ void ResponseEditor::update() {
 	int id = getIdFromSelection();
 	
 	if (id > 0 && _entity != NULL) {
-		gtk_widget_set_sensitive(_responseVBox, TRUE);
+		gtk_widget_set_sensitive(_propertyWidgets.vbox, TRUE);
 		
 		StimResponse& sr = _entity->get(id);
 		
@@ -58,7 +58,7 @@ void ResponseEditor::update() {
 		
 		// Disable the editing of inherited properties completely
 		if (sr.inherited()) {
-			gtk_widget_set_sensitive(_responseVBox, FALSE);
+			gtk_widget_set_sensitive(_propertyWidgets.vbox, FALSE);
 		}
 		
 		// The response effect list may be empty, so force an update of the
@@ -67,7 +67,7 @@ void ResponseEditor::update() {
 		updateEffectContextMenu();
 	}
 	else {
-		gtk_widget_set_sensitive(_responseVBox, FALSE);
+		gtk_widget_set_sensitive(_propertyWidgets.vbox, FALSE);
 		// Clear the effect tree view
 		gtk_tree_view_set_model(GTK_TREE_VIEW(_effectWidgets.view), NULL);
 	}
@@ -88,15 +88,20 @@ void ResponseEditor::populatePage() {
 	gtk_box_pack_start(GTK_BOX(srHBox),	vbox, FALSE, FALSE, 0);
 	
 	// Response property section
-	_responseVBox = gtk_vbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(srHBox), _responseVBox, TRUE, TRUE, 12);
+	_propertyWidgets.vbox = gtk_vbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(srHBox), _propertyWidgets.vbox, TRUE, TRUE, 12);
 	
-	gtk_box_pack_start(GTK_BOX(_responseVBox), createStimTypeSelector(), FALSE, FALSE, 0);	
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), createStimTypeSelector(), FALSE, FALSE, 0);	
 	
-    gtk_box_pack_start(GTK_BOX(_responseVBox),
+	// Active
+	_propertyWidgets.active = gtk_check_button_new_with_label("Active");
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.active, FALSE, FALSE, 6);
+	g_signal_connect(G_OBJECT(_propertyWidgets.active), "toggled", G_CALLBACK(onCheckboxToggle), this);
+	
+    gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox),
     				   gtkutil::LeftAlignedLabel(LABEL_RESPONSE_EFFECTS),
     				   FALSE, FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(_responseVBox), 
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), 
 					   gtkutil::LeftAlignment(createEffectWidgets(), 18, 1.0),
 					   TRUE, TRUE, 0);
 }
@@ -160,6 +165,15 @@ GtkWidget* ResponseEditor::createListButtons() {
 	g_signal_connect(G_OBJECT(_listButtons.remove), "clicked", G_CALLBACK(onRemoveResponse), this);
 	
 	return hbox; 
+}
+
+void ResponseEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
+	GtkWidget* toggleWidget = GTK_WIDGET(toggleButton);
+	bool active = gtk_toggle_button_get_active(toggleButton);
+	
+	if (toggleWidget == _propertyWidgets.active) {
+		setProperty("state", active ? "1" : "0");
+	}
 }
 
 void ResponseEditor::addEffect() {

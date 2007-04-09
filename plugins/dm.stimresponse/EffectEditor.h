@@ -13,6 +13,7 @@ typedef struct _GtkWindow GtkWindow;
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkListStore GtkListStore;
 typedef struct _GtkTooltips GtkTooltips;
+typedef struct _GtkToggleButton GtkToggleButton;
 
 namespace ui {
 
@@ -45,6 +46,8 @@ class EffectEditor :
 	typedef boost::shared_ptr<EffectArgumentItem> ArgumentItemPtr;
 	typedef std::vector<ArgumentItemPtr> ArgumentItemList;
 	ArgumentItemList _argumentItems;
+	
+	GtkWidget* _stateToggle;
 	
 	// The references to the object we're editing here 
 	StimResponse& _response;
@@ -94,6 +97,7 @@ private:
 	void createArgumentWidgets(ResponseEffect& effect);
 	
 	static void onEffectTypeChange(GtkWidget* combobox, EffectEditor* self);
+	static void onStateToggle(GtkToggleButton* toggleButton, EffectEditor* self);
 	static void onSave(GtkWidget* button, EffectEditor* self);
 	static void onCancel(GtkWidget* button, EffectEditor* self);
 

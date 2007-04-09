@@ -37,9 +37,8 @@ void SRPropertyRemover::visit(const std::string& key, const std::string& value) 
 		}
 	}
 	
-	// This should search for something like "sr_effect_2_3_arg3" 
-	// (with the postfix "_arg3" being optional)
-	std::string exprStr = "^" + prefix + "effect" + "_([0-9])+_([0-9])+(_arg[0-9]+)*$";
+	// This should search for something like "sr_effect_2_3*" 
+	std::string exprStr = "^" + prefix + "effect" + "_([0-9])+_([0-9])+";
 	boost::regex expr(exprStr);
 	boost::smatch matches;
 	

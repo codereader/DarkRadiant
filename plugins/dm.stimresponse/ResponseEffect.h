@@ -30,6 +30,9 @@ private:
 	// The name of this effect (e.g. "effect_teleport")
 	std::string _effectName;
 	
+	// The state of this response effect
+	bool _state;
+	
 	// The list of arguments this effect needs
 	ArgumentList _args;
 
@@ -50,6 +53,9 @@ public:
 	 * 			an update of the contained IEntityClassPtr as well.
 	 */
 	void setName(const std::string& name);
+	
+	bool isActive() const;
+	void setActive(bool active);
 	
 	/** greebo: Retrieves the argument with the given index.
 	 */
@@ -76,11 +82,14 @@ public:
 	 */
 	IEntityClassPtr getEClass() const;
 	
-private:
 	/** greebo: Clears and rebuilds the argument list from
 	 * 			the information found in the entity class.
 	 */
 	void buildArgumentList();
+	
+	/** greebo: Clears the argument list (removes all map entries)
+	 */
+	void clearArgumentList();
 };
 
 #endif /*RESPONSEEFFECT_H_*/
