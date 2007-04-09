@@ -38,6 +38,7 @@ EffectEditor::EffectEditor(GtkWindow* parent,
 	_entityStore(gtk_list_store_new(1, G_TYPE_STRING)),
 	_response(response),
 	_effectIndex(effectIndex),
+	_backup(_response.getResponseEffect(_effectIndex)),
 	_editor(editor)
 {
 	gtk_window_set_modal(GTK_WINDOW(_window), TRUE);
@@ -322,6 +323,10 @@ void EffectEditor::populateEntityListStore() {
     GlobalSceneGraph().traverse(finder);
 }
 
+void EffectEditor::revert() {
+	_response.getResponseEffect(_effectIndex) = _backup;
+}
+
 // Static GTK callbacks
 void EffectEditor::onSave(GtkWidget* button, EffectEditor* self) {
 	// Save the arguments into the objects
@@ -332,6 +337,8 @@ void EffectEditor::onSave(GtkWidget* button, EffectEditor* self) {
 }
 
 void EffectEditor::onCancel(GtkWidget* button, EffectEditor* self) {
+	self->revert();
+	
 	// Call the inherited DialogWindow::destroy method 
 	self->destroy();
 }

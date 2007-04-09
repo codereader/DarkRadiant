@@ -38,6 +38,9 @@ private:
 
 	// The reference to the entityDef this response effect is basing on
 	IEntityClassPtr _eclass;
+	
+	// Stays false until the eclass has been parsed for effect argument types
+	bool _argumentListBuilt;
 
 public:
 	// Default constructor
