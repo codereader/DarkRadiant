@@ -194,6 +194,7 @@
 			<property name="state" classes="SR" />
 			<property name="radius" classes="S" />
 			<property name="timer_type" classes="S" />
+			<property name="chance" classes="SR" />
 		</properties>
 		<stimResponsePrefix value="sr_" />
 		<responseEffectPrefix value="effect_" />
