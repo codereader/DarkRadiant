@@ -142,8 +142,8 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.timerTypeToggle, FALSE, FALSE, 0);
 	
 	// The map associating entry fields to stim property keys  
-	_entryWidgets[GTK_EDITABLE(_propertyWidgets.radiusEntry)] = "time_interval";
-	_entryWidgets[GTK_EDITABLE(_propertyWidgets.timeIntEntry)] = "radius";
+	_entryWidgets[GTK_EDITABLE(_propertyWidgets.radiusEntry)] = "radius";
+	_entryWidgets[GTK_EDITABLE(_propertyWidgets.timeIntEntry)] = "time_interval";
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.magnEntry)] = "magnitude";
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.falloffEntry)] = "falloffexponent";
 	
