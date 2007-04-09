@@ -141,11 +141,23 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	_propertyWidgets.timerTypeToggle = gtk_check_button_new_with_label("Timer restarts after firing");
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.timerTypeToggle, FALSE, FALSE, 0);
 	
+	// Chance variable
+	GtkWidget* chanceHBox = gtk_hbox_new(FALSE, 0);
+	_propertyWidgets.chanceToggle = gtk_check_button_new_with_label("Chance:");
+	gtk_widget_set_size_request(_propertyWidgets.chanceToggle, OPTIONS_LABEL_WIDTH, -1);
+	_propertyWidgets.chanceEntry = gtk_entry_new();
+	
+	gtk_box_pack_start(GTK_BOX(chanceHBox), _propertyWidgets.chanceToggle, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(chanceHBox), _propertyWidgets.chanceEntry, TRUE, TRUE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), chanceHBox, FALSE, FALSE, 0);
+	
 	// The map associating entry fields to stim property keys  
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.radiusEntry)] = "radius";
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.timeIntEntry)] = "time_interval";
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.magnEntry)] = "magnitude";
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.falloffEntry)] = "falloffexponent";
+	_entryWidgets[GTK_EDITABLE(_propertyWidgets.chanceEntry)] = "chance";
 	
 	// Connect the checkboxes
 	g_signal_connect(G_OBJECT(_propertyWidgets.active), "toggled", G_CALLBACK(onCheckboxToggle), this);
@@ -155,12 +167,14 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	g_signal_connect(G_OBJECT(_propertyWidgets.magnToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.falloffToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.timerTypeToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.chanceToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	
 	// Connect the entry fields
 	g_signal_connect(G_OBJECT(_propertyWidgets.magnEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.falloffEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.radiusEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.timeIntEntry), "changed", G_CALLBACK(onEntryChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.chanceEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	
 	return gtkutil::LeftAlignment(_propertyWidgets.vbox, 6, 1.0f);
 }
@@ -229,6 +243,19 @@ void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 			entryText = "";
 		}
 		setProperty("time_interval", entryText);
+	}
+	else if (toggleWidget == _propertyWidgets.chanceToggle) {
+		std::string entryText = 
+			gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.chanceEntry));
+	
+		// Enter a default value for the entry text, if it's empty up till now.
+		if (active) {
+			entryText += (entryText.empty()) ? "1.0" : "";	
+		}
+		else {
+			entryText = "";
+		}
+		setProperty("chance", entryText);
 	}
 }
 
@@ -406,6 +433,21 @@ void StimEditor::update() {
 		gtk_widget_set_sensitive(
 			_propertyWidgets.falloffEntry, 
 			useMagnitude && sr.get("class") == "S" && useFalloff
+		);
+		
+		// Use Chance
+		bool useChance = (sr.get("chance") != "");
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.chanceToggle),
+			useChance
+		);
+		gtk_entry_set_text(
+			GTK_ENTRY(_propertyWidgets.chanceEntry),
+			sr.get("chance").c_str()
+		);
+		gtk_widget_set_sensitive(
+			_propertyWidgets.chanceEntry, 
+			useChance
 		);
 		
 		// Disable the editing of inherited properties completely

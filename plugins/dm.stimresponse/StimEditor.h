@@ -26,6 +26,8 @@ class StimEditor :
 		GtkWidget* magnEntry;
 		GtkWidget* falloffToggle;
 		GtkWidget* falloffEntry;
+		GtkWidget* chanceToggle;
+		GtkWidget* chanceEntry;
 		GtkWidget* timerTypeToggle;
 		GtkWidget* addMenuItem;
 		GtkWidget* deleteMenuItem;
