@@ -71,11 +71,22 @@ void ResponseEditor::update() {
 		);
 		gtk_widget_set_sensitive(
 			_propertyWidgets.randomEffectsEntry, 
-			useRandomEffects && sr.get("class") == "R"
+			useRandomEffects
+		);
+		
+		// Use Chance
+		bool useChance = (sr.get("chance") != "");
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.chanceToggle),
+			useChance
+		);
+		gtk_entry_set_text(
+			GTK_ENTRY(_propertyWidgets.chanceEntry),
+			sr.get("chance").c_str()
 		);
 		gtk_widget_set_sensitive(
-			_propertyWidgets.randomEffectsToggle, 
-			sr.get("class") == "R"
+			_propertyWidgets.chanceEntry, 
+			useChance
 		);
 		
 		GtkListStore* effectStore = sr.getEffectStore();
@@ -114,16 +125,15 @@ void ResponseEditor::populatePage() {
 	gtk_box_pack_start(GTK_BOX(srHBox),	vbox, FALSE, FALSE, 0);
 	
 	// Response property section
-	_propertyWidgets.vbox = gtk_vbox_new(FALSE, 0);
+	_propertyWidgets.vbox = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(srHBox), _propertyWidgets.vbox, TRUE, TRUE, 12);
 	
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), createStimTypeSelector(), FALSE, FALSE, 0);	
 	
 	// Active
 	_propertyWidgets.active = gtk_check_button_new_with_label("Active");
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.active, FALSE, FALSE, 6);
-	g_signal_connect(G_OBJECT(_propertyWidgets.active), "toggled", G_CALLBACK(onCheckboxToggle), this);
-	
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.active, FALSE, FALSE, 0);
+		
 	// Random Effects Toggle
 	GtkWidget* randomEffectsHBox = gtk_hbox_new(FALSE, 0);
 	_propertyWidgets.randomEffectsToggle = gtk_check_button_new_with_label("Random Effects");
@@ -133,13 +143,30 @@ void ResponseEditor::populatePage() {
 	gtk_box_pack_start(GTK_BOX(randomEffectsHBox), _propertyWidgets.randomEffectsToggle, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(randomEffectsHBox), _propertyWidgets.randomEffectsEntry, TRUE, TRUE, 0);
 	
+	// Chance variable
+	GtkWidget* chanceHBox = gtk_hbox_new(FALSE, 0);
+	_propertyWidgets.chanceToggle = gtk_check_button_new_with_label("Chance:");
+	gtk_widget_set_size_request(_propertyWidgets.chanceToggle, OPTIONS_LABEL_WIDTH, -1);
+	_propertyWidgets.chanceEntry = gtk_entry_new();
+	
+	gtk_box_pack_start(GTK_BOX(chanceHBox), _propertyWidgets.chanceToggle, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(chanceHBox), _propertyWidgets.chanceEntry, TRUE, TRUE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), chanceHBox, FALSE, FALSE, 0);
+	
+	// Connect the signals
+	g_signal_connect(G_OBJECT(_propertyWidgets.active), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.randomEffectsToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.chanceToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
+	
 	g_signal_connect(G_OBJECT(_propertyWidgets.randomEffectsEntry), "changed", G_CALLBACK(onEntryChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.chanceEntry), "changed", G_CALLBACK(onEntryChanged), this);
+		
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), randomEffectsHBox, FALSE, FALSE, 0);
 	
 	// The map associating entry fields to response property keys
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.randomEffectsEntry)] = "random_effects";
-	
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), randomEffectsHBox, FALSE, FALSE, 0);
+	_entryWidgets[GTK_EDITABLE(_propertyWidgets.chanceEntry)] = "chance";
 	
     gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox),
     				   gtkutil::LeftAlignedLabel(LABEL_RESPONSE_EFFECTS),
@@ -229,6 +256,19 @@ void ResponseEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 			entryText = "";
 		}
 		setProperty("random_effects", entryText);
+	}
+	else if (toggleWidget == _propertyWidgets.chanceToggle) {
+		std::string entryText = 
+			gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.chanceEntry));
+	
+		// Enter a default value for the entry text, if it's empty up till now.
+		if (active) {
+			entryText += (entryText.empty()) ? "1.0" : "";	
+		}
+		else {
+			entryText = "";
+		}
+		setProperty("chance", entryText);
 	}
 }
 

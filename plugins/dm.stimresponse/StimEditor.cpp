@@ -339,8 +339,7 @@ void StimEditor::update() {
 			GTK_TOGGLE_BUTTON(_propertyWidgets.useBounds),
 			sr.get("use_bounds") == "1"
 		);
-		gtk_widget_set_sensitive(_propertyWidgets.useBounds, sr.get("class") == "S");
-		
+				
 		// Use Radius
 		bool useRadius = (sr.get("radius") != "");
 		gtk_toggle_button_set_active(
@@ -353,10 +352,9 @@ void StimEditor::update() {
 		);
 		gtk_widget_set_sensitive(
 			_propertyWidgets.radiusEntry, 
-			useRadius && sr.get("class") == "S"
+			useRadius
 		);
-		gtk_widget_set_sensitive(_propertyWidgets.radiusToggle, sr.get("class") == "S");
-		
+				
 		// Use Time interval
 		bool useTimeInterval = (sr.get("time_interval") != "");
 		gtk_toggle_button_set_active(
@@ -369,13 +367,12 @@ void StimEditor::update() {
 		);
 		gtk_widget_set_sensitive(
 			_propertyWidgets.timeIntEntry, 
-			useTimeInterval && sr.get("class") == "S"
+			useTimeInterval
 		);
 		gtk_widget_set_sensitive(
 			_propertyWidgets.timeUnitLabel, 
-			useTimeInterval && sr.get("class") == "S"
+			useTimeInterval
 		);
-		gtk_widget_set_sensitive(_propertyWidgets.timeIntToggle, sr.get("class") == "S");
 		
 		// Timer Type
 		gtk_toggle_button_set_active(
@@ -384,23 +381,22 @@ void StimEditor::update() {
 		);
 		gtk_widget_set_sensitive(
 			_propertyWidgets.timerTypeToggle, 
-			sr.get("class") == "S" && useTimeInterval
+			useTimeInterval
 		);
 		
 		// Use Magnitude
 		bool useMagnitude = (sr.get("magnitude") != "");
 		gtk_toggle_button_set_active(
 			GTK_TOGGLE_BUTTON(_propertyWidgets.magnToggle),
-			useMagnitude && sr.get("class") == "S"
+			useMagnitude
 		);
-		gtk_widget_set_sensitive(_propertyWidgets.magnToggle, sr.get("class") == "S");
 		gtk_entry_set_text(
 			GTK_ENTRY(_propertyWidgets.magnEntry),
 			sr.get("magnitude").c_str()
 		);
 		gtk_widget_set_sensitive(
 			_propertyWidgets.magnEntry, 
-			useMagnitude && sr.get("class") == "S"
+			useMagnitude
 		);
 		
 		// Use falloff exponent widgets
@@ -408,7 +404,7 @@ void StimEditor::update() {
 		
 		gtk_toggle_button_set_active(
 			GTK_TOGGLE_BUTTON(_propertyWidgets.falloffToggle),
-			useFalloff && sr.get("class") == "S"
+			useFalloff
 		);
 		gtk_entry_set_text(
 			GTK_ENTRY(_propertyWidgets.falloffEntry),
@@ -416,11 +412,11 @@ void StimEditor::update() {
 		);
 		gtk_widget_set_sensitive(
 			_propertyWidgets.falloffToggle, 
-			useMagnitude && sr.get("class") == "S"
+			useMagnitude
 		);
 		gtk_widget_set_sensitive(
 			_propertyWidgets.falloffEntry, 
-			useMagnitude && sr.get("class") == "S" && useFalloff
+			useMagnitude && useFalloff
 		);
 		
 		// Use Chance
