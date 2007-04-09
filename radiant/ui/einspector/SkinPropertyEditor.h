@@ -18,11 +18,11 @@ class SkinPropertyEditor
 	// Main widget
 	GtkWidget* _widget;
 	
-	// Main text entry
-	GtkWidget* _textEntry;
-	
 	// Entity to edit
 	Entity* _entity;
+
+	// Keyvalue to set
+	std::string _key;
 	
 private:
 
@@ -48,9 +48,17 @@ public:
 	}
 
 	/**
+	 * Virtual destructor.
+	 */
+	~SkinPropertyEditor() {
+		gtk_widget_destroy(_widget);
+	}
+
+	/**
 	 * Return the main widget.
 	 */
 	GtkWidget* getWidget() {
+		gtk_widget_show_all(_widget);
 		return _widget;
 	}
 		
