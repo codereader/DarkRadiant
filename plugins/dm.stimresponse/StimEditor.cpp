@@ -298,8 +298,12 @@ void StimEditor::createContextMenu() {
 														   "Delete Stim");
 	_propertyWidgets.addMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_ADD,
 														   "Add Stim");
+	_propertyWidgets.disableMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_STOP,
+														   "Inactivate inherited Stim");
 	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu),
 						  _propertyWidgets.addMenuItem);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu), 
+						  _propertyWidgets.disableMenuItem);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu), 
 						  _propertyWidgets.deleteMenuItem);
 
