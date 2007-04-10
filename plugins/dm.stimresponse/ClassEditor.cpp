@@ -11,17 +11,6 @@ namespace ui {
 	namespace {
 		const unsigned int TREE_VIEW_WIDTH = 250;
 		const unsigned int TREE_VIEW_HEIGHT = 200;
-		
-		static void textCellDataFunc(GtkTreeViewColumn* treeColumn,
-							 GtkCellRenderer* cell,
-							 GtkTreeModel* treeModel,
-							 GtkTreeIter* iter, 
-							 gpointer data)
-		{
-			bool inherited = gtkutil::TreeModel::getBoolean(treeModel, iter, INHERIT_COL);
-			
-			g_object_set(G_OBJECT(cell), "sensitive", !inherited, NULL);
-		}
 	}
 
 ClassEditor::ClassEditor(StimTypes& stimTypes) :
@@ -52,11 +41,8 @@ ClassEditor::ClassEditor(StimTypes& stimTypes) :
 	gtk_tree_view_column_pack_start(numCol, numRenderer, FALSE);
 	gtk_tree_view_column_set_attributes(numCol, numRenderer, 
 										"text", INDEX_COL,
+										"foreground", COLOUR_COLUMN,
 										NULL);
-	gtk_tree_view_column_set_cell_data_func(numCol, numRenderer,
-                                            textCellDataFunc,
-                                            NULL, NULL);
-	
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_list), numCol);
 	
 	// The S/R icon
@@ -67,10 +53,6 @@ ClassEditor::ClassEditor(StimTypes& stimTypes) :
 	gtk_tree_view_column_set_attributes(classCol, pixbufRenderer, 
 										"pixbuf", CLASS_COL,
 										NULL);
-	gtk_tree_view_column_set_cell_data_func(classCol, pixbufRenderer,
-                                            textCellDataFunc,
-                                            NULL, NULL);
-	
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_list), classCol);
 	
 	// The Type
@@ -85,18 +67,12 @@ ClassEditor::ClassEditor(StimTypes& stimTypes) :
 	
 	gtk_tree_view_column_set_attributes(typeCol, typeTextRenderer, 
 										"text", CAPTION_COL,
+										"foreground", COLOUR_COLUMN,
 										NULL);
-	gtk_tree_view_column_set_cell_data_func(typeCol, typeTextRenderer,
-                                            textCellDataFunc,
-                                            NULL, NULL);
-	
 	gtk_tree_view_column_set_attributes(typeCol, typeIconRenderer, 
 										"pixbuf", ICON_COL,
 										NULL);
-	gtk_tree_view_column_set_cell_data_func(typeCol, typeIconRenderer,
-                                            textCellDataFunc,
-                                            NULL, NULL);
-	
+
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_list), typeCol);
 }
 

@@ -26,6 +26,7 @@ class StimEditor :
 		GtkWidget* timerTypeToggle;
 		GtkWidget* addMenuItem;
 		GtkWidget* deleteMenuItem;
+		GtkWidget* disableMenuItem;
 	} _propertyWidgets;
 
 	struct ListButtons {

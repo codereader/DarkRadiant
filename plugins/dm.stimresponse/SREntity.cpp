@@ -27,14 +27,16 @@ SREntity::SREntity(Entity* source) :
 								  G_TYPE_STRING, 	// Caption String
 								  GDK_TYPE_PIXBUF,	// Icon
 								  G_TYPE_BOOLEAN,	// Inheritance flag
-								  G_TYPE_INT)), 	// ID (unique)
+								  G_TYPE_INT,		// ID (unique)
+								  G_TYPE_STRING)), 	// Text colour
 	_responseStore(gtk_list_store_new(NUM_COLS, 
 								  G_TYPE_INT,		// S/R index
 								  GDK_TYPE_PIXBUF, 	// Type String
 								  G_TYPE_STRING, 	// Caption String
 								  GDK_TYPE_PIXBUF,	// Icon
 								  G_TYPE_BOOLEAN,	// Inheritance flag
-								  G_TYPE_INT)) 	// ID (unique)
+								  G_TYPE_INT,		// ID (unique)
+								  G_TYPE_STRING)) 	// Text colour
 {
 	loadKeys();
 	load(source);
@@ -211,8 +213,15 @@ void SREntity::writeToListStore(GtkListStore* targetListStore, GtkTreeIter* iter
 		
 	std::string stimTypeStr = stimType.caption;
 	stimTypeStr += (sr.inherited()) ? " (inherited) " : "";
-		
-	std::string classIcon = (sr.get("class") == "R") ? ICON_RESPONSE : ICON_STIM; 
+	
+	std::string classIcon;
+	
+	if (sr.inherited()) {
+		classIcon = (sr.get("class") == "R") ? ICON_RESPONSE_INACTIVE : ICON_STIM_INACTIVE;
+	}
+	else {
+		classIcon = (sr.get("class") == "R") ? ICON_RESPONSE : ICON_STIM;
+	} 
 	
 	// The S/R index (the N in sr_class_N)
 	int index = sr.getIndex();
@@ -223,6 +232,7 @@ void SREntity::writeToListStore(GtkListStore* targetListStore, GtkTreeIter* iter
 						CAPTION_COL, stimTypeStr.c_str(),
 						ICON_COL, gtkutil::getLocalPixbufWithMask(stimType.icon),
 						INHERIT_COL, sr.inherited(),
+						COLOUR_COLUMN, (sr.inherited() ? "#707070" : "#000000"),
 						-1);
 }
 
