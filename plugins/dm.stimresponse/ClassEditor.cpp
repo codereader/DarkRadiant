@@ -46,17 +46,6 @@ ClassEditor::ClassEditor(StimTypes& stimTypes) :
 										NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_list), numCol);
 	
-	// State (0 or 1)
-	GtkTreeViewColumn* stateCol = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(stateCol, "state");
-	GtkCellRenderer* stateRenderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(stateCol, stateRenderer, FALSE);
-	gtk_tree_view_column_set_attributes(stateCol, stateRenderer, 
-										"text", STATE_COLUMN,
-										"foreground", COLOUR_COLUMN,
-										NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_list), stateCol);
-	
 	// The S/R icon
 	GtkTreeViewColumn* classCol = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(classCol, "S/R");
