@@ -284,8 +284,11 @@ void StimEditor::addStim() {
 	StimResponse& sr = _entity->get(id);
 	sr.set("type", _stimTypes.getFirstName());
 
-	// Refresh the values in the liststore
+	// Update the list stores AFTER the type has been set
 	_entity->updateListStores();
+
+	// Select the newly created stim
+	selectId(id);
 }
 
 // Create the context menus

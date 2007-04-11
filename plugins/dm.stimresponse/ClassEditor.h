@@ -86,6 +86,10 @@ protected:
 	 */
 	int getIdFromSelection();
 
+	/** greebo: Selects the given ID in the S/R list
+	 */
+	void selectId(int id);
+
 	/** greebo: Gets called when the list selection changes
 	 */
 	virtual void selectionChanged() = 0;

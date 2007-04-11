@@ -519,9 +519,12 @@ void ResponseEditor::addResponse() {
 	StimResponse& sr = _entity->get(id);
 	sr.set("class", "R");
 	sr.set("type", _stimTypes.getFirstName());
-
-	// Refresh the values in the liststore
+	
+	// Update the list stores AFTER the type has been set
 	_entity->updateListStores();
+	
+	// Select the newly created response
+	selectId(id);
 }
 
 // Static GTK Callbacks

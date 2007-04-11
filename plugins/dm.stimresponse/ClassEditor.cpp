@@ -156,11 +156,30 @@ GtkWidget* ClassEditor::createStimTypeSelector() {
 	return typeHBox;
 }
 
+void ClassEditor::selectId(int id) {
+	// Setup the selectionfinder to search for the id
+	gtkutil::TreeModel::SelectionFinder finder(id, ID_COL);
+
+	gtk_tree_model_foreach(
+		gtk_tree_view_get_model(GTK_TREE_VIEW(_list)),
+		gtkutil::TreeModel::SelectionFinder::forEach,
+		&finder
+	);
+	
+	if (finder.getPath() != NULL) {
+		GtkTreeIter iter = finder.getIter();
+		// Set the active row of the list to the given effect
+		gtk_tree_selection_select_iter(_selection, &iter);
+	}
+}
+
 void ClassEditor::duplicateStimResponse() {
 	int id = getIdFromSelection();
 	
 	if (id > 0) {
-		_entity->duplicate(id);
+		int newId = _entity->duplicate(id);
+		// Select the newly created stim
+		selectId(newId);
 	}
 
 	// Call the method of the child class to update the widgets
