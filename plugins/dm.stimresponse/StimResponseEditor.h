@@ -25,6 +25,7 @@ class StimResponseEditor
 	GtkNotebook* _notebook;
 	int _stimPageNum;
 	int _responsePageNum;
+	int _lastShownPage;
 	
 	// The close button to toggle the view
 	GtkWidget* _closeButton;

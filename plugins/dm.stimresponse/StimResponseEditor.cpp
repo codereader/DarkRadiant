@@ -85,6 +85,7 @@ void StimResponseEditor::shutdown() {
 void StimResponseEditor::toggleWindow() {
 	// Pass the call to the utility methods that save/restore the window position
 	if (GTK_WIDGET_VISIBLE(_dialog)) {
+		_lastShownPage = gtk_notebook_get_current_page(_notebook);
 		// Save the window position, to make sure
 		_windowPosition.readPosition();
 		gtk_widget_hide_all(_dialog);
@@ -99,6 +100,8 @@ void StimResponseEditor::toggleWindow() {
 		if (_entity != NULL) {
 			// Now show the dialog window again
 			gtk_widget_show_all(_dialog);
+			// Show the last shown page
+			gtk_notebook_set_current_page(_notebook, _lastShownPage);
 		}
 		else {
 			gtkutil::errorDialog(NO_ENTITY_ERROR, 
@@ -121,7 +124,7 @@ void StimResponseEditor::populateWindow() {
 	GtkWidget* stimLabelHBox = gtk_hbox_new(FALSE, 3);
 	gtk_box_pack_start(
     	GTK_BOX(stimLabelHBox), 
-    	gtk_image_new_from_pixbuf(gtkutil::getLocalPixbufWithMask(ICON_STIM)), 
+    	gtk_image_new_from_pixbuf(gtkutil::getLocalPixbufWithMask(ICON_STIM + SUFFIX_EXTENSION)), 
     	FALSE, FALSE, 3
     );
 	gtk_box_pack_start(GTK_BOX(stimLabelHBox), gtk_label_new("Stims"), FALSE, FALSE, 3);
@@ -129,7 +132,7 @@ void StimResponseEditor::populateWindow() {
 	GtkWidget* responseLabelHBox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(
     	GTK_BOX(responseLabelHBox), 
-    	gtk_image_new_from_pixbuf(gtkutil::getLocalPixbufWithMask(ICON_RESPONSE)), 
+    	gtk_image_new_from_pixbuf(gtkutil::getLocalPixbufWithMask(ICON_RESPONSE + SUFFIX_EXTENSION)), 
     	FALSE, FALSE, 0
     );
 	gtk_box_pack_start(GTK_BOX(responseLabelHBox), gtk_label_new("Responses"), FALSE, FALSE, 3);
@@ -141,6 +144,7 @@ void StimResponseEditor::populateWindow() {
 	// Cast the helper class to a widget and add it to the notebook page
 	_stimPageNum = gtk_notebook_append_page(_notebook, _stimEditor, stimLabelHBox);
 	_responsePageNum = gtk_notebook_append_page(_notebook, _responseEditor, responseLabelHBox);
+	_lastShownPage = _stimPageNum;
 	
 	// Pack in dialog buttons
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), createButtons(), FALSE, FALSE, 0);
