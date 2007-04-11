@@ -15,10 +15,12 @@ class Entity;
 typedef struct _GtkListStore GtkListStore;
 
 	namespace {
-		const std::string ICON_STIM = "sr_stim.png";
-		const std::string ICON_STIM_INACTIVE = "sr_stim_inactive.png";
-		const std::string ICON_RESPONSE = "sr_response.png";
-		const std::string ICON_RESPONSE_INACTIVE = "sr_response_inactive.png";
+		const std::string ICON_STIM = "sr_stim";
+		const std::string ICON_RESPONSE = "sr_response";
+			
+		const std::string SUFFIX_INHERITED = "_inherited";
+		const std::string SUFFIX_INACTIVE = "_inactive";
+		const std::string SUFFIX_EXTENSION = ".png"; 
 		
 		enum {
 			INDEX_COL,
@@ -28,7 +30,6 @@ typedef struct _GtkListStore GtkListStore;
 			INHERIT_COL,
 			ID_COL,
 			COLOUR_COLUMN,
-			STATE_COLUMN,
 			NUM_COLS
 		};
 	}
