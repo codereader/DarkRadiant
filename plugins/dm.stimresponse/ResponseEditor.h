@@ -17,6 +17,8 @@ class ResponseEditor :
 		GtkWidget* menu;
 		GtkWidget* remove;
 		GtkWidget* add;
+		GtkWidget* enable;
+		GtkWidget* disable;
 	} _contextMenu;
 	
 	struct EffectWidgets {
