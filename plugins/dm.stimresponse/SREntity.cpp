@@ -188,22 +188,12 @@ void SREntity::writeToListStore(GtkListStore* targetListStore, GtkTreeIter* iter
 	stimTypeStr += (sr.inherited()) ? " (inherited) " : "";
 	
 	std::string classIcon = (sr.get("class") == "R") ? ICON_RESPONSE : ICON_STIM;
-	
-	if (sr.inherited()) {
-		classIcon += SUFFIX_INHERITED;
-	}
-	
-	if (sr.get("state") != "1") {
-		classIcon += SUFFIX_INACTIVE;
-	}
-	
+	classIcon += (sr.inherited()) ? SUFFIX_INHERITED : "";
+	classIcon += (sr.get("state") != "1") ? SUFFIX_INACTIVE : "";
 	classIcon += SUFFIX_EXTENSION;
 	
-	// The S/R index (the N in sr_class_N)
-	int index = sr.getIndex();
-	
 	gtk_list_store_set(targetListStore, iter, 
-						INDEX_COL, index,
+						INDEX_COL, sr.getIndex(),
 						CLASS_COL, gtkutil::getLocalPixbufWithMask(classIcon),
 						CAPTION_COL, stimTypeStr.c_str(),
 						ICON_COL, gtkutil::getLocalPixbufWithMask(stimType.icon),

@@ -23,15 +23,23 @@ public:
 		
 		// The argument value
 		std::string value;
+		
+		// The "original" value (a backup) to compare
+		// if an inherited value has been overridden 
+		std::string origValue;
 	};
 	typedef std::map<int, Argument> ArgumentList;
 	
 private:
 	// The name of this effect (e.g. "effect_teleport")
 	std::string _effectName;
+	// The (inherited) original name (for comparison during saving)
+	std::string _origName;
 	
 	// The state of this response effect
 	bool _state;
+	// The (inherited) original state (for comparison during saving)
+	bool _origState;
 	
 	// The list of arguments this effect needs
 	ArgumentList _args;
@@ -42,6 +50,9 @@ private:
 	// Stays false until the eclass has been parsed for effect argument types
 	bool _argumentListBuilt;
 
+	// TRUE if this response effect is inherited from the eclass tree
+	bool _inherited;
+
 public:
 	// Default constructor
 	ResponseEffect();
@@ -49,24 +60,51 @@ public:
 	// Copy constructor
 	ResponseEffect(const ResponseEffect& other);
 
+	/** greebo: Sets the internal "inherited" flag
+	 */
+	void setInherited(bool inherited);
+	bool isInherited() const;
+
 	// Returns the effect name ("effect_damage")
 	std::string getName() const;
 
+	/** greebo: Returns TRUE, if the name has been overridden by
+	 * 			a non-inherited spawnarg (needed to know during saving).
+	 */
+	bool nameIsOverridden();
+
 	/** greebo: Updates the name of this object. This triggers
 	 * 			an update of the contained IEntityClassPtr as well.
+	 * 
+	 * @inherited: This indicates the origin of this "set" operation.
+	 * 			   It can be used to determine whether this is an
+	 * 			   "overrule" of inherited values.
 	 */
-	void setName(const std::string& name);
+	void setName(const std::string& name, bool inherited = false);
 	
 	bool isActive() const;
-	void setActive(bool active);
+	void setActive(bool active, bool inherited = false);
+	
+	/** greebo: Returns TRUE, if the active state is overridden
+	 * 			by a non-inherited key on the entity
+	 */
+	bool activeIsOverridden();
 	
 	/** greebo: Retrieves the argument with the given index.
 	 */
 	std::string getArgument(unsigned int index) const;
 	
-	/** greebo: Sets the argument with the given ID to the given value.
+	/** greebo: Returns TRUE if the argument with the given index is overridden
 	 */
-	void setArgument(unsigned int index, const std::string& value);
+	bool argIsOverridden(unsigned int index);
+	
+	/** greebo: Sets the argument with the given ID to the given value.
+	 * 
+	 * @inherited: This indicates the origin of this "set" operation.
+	 * 			   It can be used to determine whether this is an
+	 * 			   "overrule" of inherited values.
+	 */
+	void setArgument(unsigned int index, const std::string& value, bool inherited = false);
 	
 	/** greebo: Returns a reference to the internal list
 	 */

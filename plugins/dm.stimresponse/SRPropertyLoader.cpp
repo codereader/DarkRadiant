@@ -104,17 +104,17 @@ void SRPropertyLoader::parseAttribute(
 			std::string postfix = matches[3];
 			if (postfix.empty()) {
 				// No "_arg1" found, the value is the effect name definition
-				effect.setName(value);
+				effect.setName(value, inherited);
 			}
 			else if (postfix == "_state") {
 				// This is a state variable
-				effect.setActive(value != "0");
+				effect.setActive(value != "0", inherited);
 			}
 			else {
 				// Get the argument index from the tail
 				int argIndex = strToInt(postfix.substr(4));
 				// Load the value into argument with the index <argIndex>
-				effect.setArgument(argIndex, value);
+				effect.setArgument(argIndex, value, inherited);
 			}
 		}
 	}
