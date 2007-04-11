@@ -2,6 +2,7 @@
 #define SRENTITY_H_
 
 #include <vector>
+#include <list>
 #include <string>
 #include <gtk/gtktreemodel.h>
 #include <boost/shared_ptr.hpp>
@@ -27,6 +28,7 @@ typedef struct _GtkListStore GtkListStore;
 			INHERIT_COL,
 			ID_COL,
 			COLOUR_COLUMN,
+			STATE_COLUMN,
 			NUM_COLS
 		};
 	}
@@ -94,6 +96,18 @@ public:
 	 * 			This triggers a refresh of the liststores.
 	 */
 	void remove(int id);
+	
+	/** greebo: Overrides the "state" property of an inherited stim.
+	 * 			As inherited spawnargs can't be altered, a sr_state_N
+	 * 			key/value pair is added to the entity, overriding 
+	 * 			the inherited one. 	 
+	 */
+	void setInheritedState(int id, bool enabled);
+	
+	/** greebo: Returns TRUE if the inherited stim/response is enabled,
+	 * 			FALSE, if the inherited item is overridden.
+	 */
+	bool getInheritedState(int id);
 	
 	/** greebo: Returns the GtkListStore* containing the stim/response data. 
 	 * 			Use this to add the data to a treeview or a combobox.

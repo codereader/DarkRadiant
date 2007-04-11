@@ -298,10 +298,14 @@ void StimEditor::createContextMenu() {
 														   "Delete Stim");
 	_propertyWidgets.addMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_ADD,
 														   "Add Stim");
-	_propertyWidgets.disableMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_STOP,
+	_propertyWidgets.disableMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_NO,
 														   "Inactivate inherited Stim");
+	_propertyWidgets.enableMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_YES,
+														   "Activate inherited Stim");
 	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu),
 						  _propertyWidgets.addMenuItem);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu), 
+						  _propertyWidgets.enableMenuItem);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu), 
 						  _propertyWidgets.disableMenuItem);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu), 
@@ -312,7 +316,11 @@ void StimEditor::createContextMenu() {
 					 G_CALLBACK(onContextMenuDelete), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.addMenuItem), "activate",
 					 G_CALLBACK(onContextMenuAdd), this);
-					 
+	g_signal_connect(G_OBJECT(_propertyWidgets.enableMenuItem), "activate",
+					 G_CALLBACK(onContextMenuEnable), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.disableMenuItem), "activate",
+					 G_CALLBACK(onContextMenuDisable), this);
+	
 	// Show menus (not actually visible until popped up)
 	gtk_widget_show_all(_contextMenu);
 }
@@ -444,12 +452,19 @@ void StimEditor::update() {
 		}
 		
 		// Update the delete context menu item
-		gtk_widget_set_sensitive(_propertyWidgets.deleteMenuItem,	!sr.inherited());
+		gtk_widget_set_sensitive(_propertyWidgets.deleteMenuItem, !sr.inherited());
+		
+		// Update the "enable/disable" menu items
+		bool state = sr.get("state") == "1";
+		gtk_widget_set_sensitive(_propertyWidgets.enableMenuItem, !state);
+		gtk_widget_set_sensitive(_propertyWidgets.disableMenuItem, state);
 	}
 	else {
 		gtk_widget_set_sensitive(_propertyWidgets.vbox, FALSE);
-		// Disable the "delete" context menu item
+		// Disable the "non-Add" context menu items
 		gtk_widget_set_sensitive(_propertyWidgets.deleteMenuItem, FALSE);
+		gtk_widget_set_sensitive(_propertyWidgets.enableMenuItem, FALSE);
+		gtk_widget_set_sensitive(_propertyWidgets.disableMenuItem, FALSE);
 	}
 	
 	_updatesDisabled = false;

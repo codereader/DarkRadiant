@@ -5,6 +5,7 @@
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/LeftAlignedLabel.h"
+#include <iostream>
 
 namespace ui {
 	
@@ -44,6 +45,17 @@ ClassEditor::ClassEditor(StimTypes& stimTypes) :
 										"foreground", COLOUR_COLUMN,
 										NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_list), numCol);
+	
+	// State (0 or 1)
+	GtkTreeViewColumn* stateCol = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(stateCol, "state");
+	GtkCellRenderer* stateRenderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(stateCol, stateRenderer, FALSE);
+	gtk_tree_view_column_set_attributes(stateCol, stateRenderer, 
+										"text", STATE_COLUMN,
+										"foreground", COLOUR_COLUMN,
+										NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_list), stateCol);
 	
 	// The S/R icon
 	GtkTreeViewColumn* classCol = gtk_tree_view_column_new();
@@ -101,8 +113,8 @@ void ClassEditor::setProperty(const std::string& key, const std::string& value) 
 	int id = getIdFromSelection();
 	
 	if (id > 0) {
-		// Don't edit inherited stims/responses
-		if (!_entity->get(id).inherited()) {
+		// Don't edit inherited stims/responses, with the exception of "state"
+		if (!_entity->get(id).inherited() || key == "state") {
 			_entity->setProperty(id, key, value);
 		}
 	}
@@ -205,6 +217,16 @@ void ClassEditor::onStimTypeSelect(GtkComboBox* widget, ClassEditor* self) {
 		// Write it to the entity
 		self->setProperty("type", name);
 	}
+}
+
+// "Disable" context menu item
+void ClassEditor::onContextMenuDisable(GtkWidget* w, ClassEditor* self) {
+	self->setProperty("state", "0");
+}
+
+// "Enable" context menu item
+void ClassEditor::onContextMenuEnable(GtkWidget* w, ClassEditor* self) {
+	self->setProperty("state", "1");
 }
 
 } // namespace ui
