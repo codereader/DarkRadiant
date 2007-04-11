@@ -29,7 +29,7 @@ ui::ColourSchemeManager& ColourSchemes();
 class ModuleServer;
 bool Radiant_Construct(ModuleServer& server);
 void Radiant_Destroy();
-
+void Radiant_shutDownPlugins();
 
 template<typename Type>
 class Modules;

@@ -80,6 +80,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/callback.h"
 #include "settings/GameManager.h"
 
+#include <boost/shared_ptr.hpp>
+
 const char* GameDescription_getKeyValue(const char* key)
 {
   return game::Manager::Instance().currentGame()->getKeyValue(key);
@@ -184,8 +186,11 @@ public:
   }
 };
 
-class Radiant : public TypeSystemRef
+class Radiant : 
+	public TypeSystemRef
 {
+	typedef boost::shared_ptr<PluginModulesRef> PluginModulesRefPtr;
+	PluginModulesRefPtr _plugins; 
 public:
   Radiant()
   {
@@ -205,6 +210,9 @@ public:
     MapRoot_construct();
     map::AutoSaver().init();
     
+    // Instantiate the plugin modules.
+	_plugins = PluginModulesRefPtr(new PluginModulesRef("*"));
+    
     // Call the initalise methods to trigger the realisation avalanche
     // FileSystem > ShadersModule >> Renderstate etc.
     GlobalFileSystem().initialise();
@@ -212,6 +220,23 @@ public:
     // Load the shortcuts from the registry
  	GlobalEventManager().loadAccelerators();
   }
+  
+	void shutDownPlugins() {
+		// Broadcast the "shutdown" command to the plugins
+		ModulesMap<IPlugin> pluginMap = _plugins->get();
+		
+		for (ModulesMap<IPlugin>::iterator i = pluginMap.begin(); 
+			 i != pluginMap.end(); i++)
+		{
+			globalOutputStream() << "Shutting down plugin: " << i->first.c_str() << "\n";
+			
+			// Get the plugin pointer
+			IPlugin* plugin = pluginMap.find(i->first);
+			// Issue the command
+			plugin->shutdown();
+		}
+	}
+  
   ~Radiant()
   {
     GlobalFileSystem().shutdown();
@@ -251,21 +276,26 @@ bool Radiant_Construct(ModuleServer& server)
 	// module
 	g_RadiantInitialised = !server.getError();
 	if(g_RadiantInitialised) {
+		// greebo: Allocate a new Radiant object on the heap 
+		// (this instantiates the plugins as well)
 		g_Radiant = new Radiant;
 	}
-
-	// Instantiate the plugin modules.
-	PluginModulesRef plugMods("*");
 
 	// Return the status
 	return g_RadiantInitialised;
 }
+
+void Radiant_shutDownPlugins() {
+	if (g_RadiantInitialised) {
+		g_Radiant->shutDownPlugins();
+	}
+}
+
 void Radiant_Destroy()
 {
-  if(g_RadiantInitialised)
-  {
-    delete g_Radiant;
-  }
+	if (g_RadiantInitialised) {
+		delete g_Radiant;
+	}
 
   delete g_RadiantDependencies;
 }

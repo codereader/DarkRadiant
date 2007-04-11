@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_MODULESYSTEM_H)
 #define INCLUDED_MODULESYSTEM_H
 
+#include <string>
 #include "generic/static.h"
 #include "debugging/debugging.h"
 
@@ -115,7 +116,7 @@ public:
     virtual void visit(const char* name, const Type& table) = 0;
   };
 
-  virtual Type* findModule(const char* name) = 0;
+  virtual Type* findModule(const std::string& name) = 0;
   virtual void foreachModule(Visitor& visitor) = 0;
 };
 

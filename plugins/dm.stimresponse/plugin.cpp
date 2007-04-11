@@ -47,13 +47,18 @@ public:
 		BitmapsPath_set(bitmapsPath.c_str());
 	}
 	
+	virtual void shutdown() {
+		// Pass the call to the SR editor instance
+		ui::StimResponseEditor::Instance().shutdown();
+	}
+	
 	/**
-	 * SingletonModule requires a getTable() method, although for plugins it is
-	 * unused.
+	 * This has to be implemented so that the ModulesMap can find and deliver 
+	 * this module on request.
 	 */
 	IPlugin* getTable() {
-		assert(false);
-	}	
+		return this;
+	}
 };
 
 /**

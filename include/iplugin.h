@@ -14,6 +14,13 @@ class IPlugin
 public:
 	STRING_CONSTANT(Name, "IPlugin");
 	INTEGER_CONSTANT(Version, 1);
+	
+	/** greebo: Issue this command when DarkRadiant is shut down to
+	 * 			give the plugins a chance to save their stuff to the XMLRegistry.
+	 */
+	virtual void shutdown() {
+		// Empty default implementation
+	} 
 };
 
 /**
