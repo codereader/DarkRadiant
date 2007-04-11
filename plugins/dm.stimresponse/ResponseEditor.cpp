@@ -101,15 +101,25 @@ void ResponseEditor::update() {
 		// Update the delete context menu item
 		gtk_widget_set_sensitive(_contextMenu.remove, !sr.inherited());
 		
+		// Update the "enable/disable" menu items
+		bool state = sr.get("state") == "1";
+		gtk_widget_set_sensitive(_contextMenu.enable, !state);
+		gtk_widget_set_sensitive(_contextMenu.disable, state);
+		
 		// The response effect list may be empty, so force an update of the
 		// context menu sensitivity, in the case the "selection changed" 
 		// signal doesn't get called
 		updateEffectContextMenu();
 	}
 	else {
+		// Nothing selected
 		gtk_widget_set_sensitive(_propertyWidgets.vbox, FALSE);
 		// Clear the effect tree view
 		gtk_tree_view_set_model(GTK_TREE_VIEW(_effectWidgets.view), NULL);
+		
+		gtk_widget_set_sensitive(_contextMenu.enable, FALSE);
+		gtk_widget_set_sensitive(_contextMenu.disable, FALSE);
+		gtk_widget_set_sensitive(_contextMenu.remove, FALSE);
 	}
 	
 	_updatesDisabled = false;
@@ -382,7 +392,12 @@ void ResponseEditor::createContextMenu() {
 	// Each menu gets a delete item
 	_contextMenu.remove = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Delete Response");
 	_contextMenu.add = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Add Response");
+	_contextMenu.enable = gtkutil::StockIconMenuItem(GTK_STOCK_YES, "Activate Response");
+	_contextMenu.disable = gtkutil::StockIconMenuItem(GTK_STOCK_NO, "Deactivate Response");
+	
 	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), _contextMenu.add);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), _contextMenu.enable);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), _contextMenu.disable);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), _contextMenu.remove);
 
 	_effectWidgets.addMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_ADD,
@@ -407,6 +422,10 @@ void ResponseEditor::createContextMenu() {
 					 G_CALLBACK(onContextMenuDelete), this);
 	g_signal_connect(G_OBJECT(_contextMenu.add), "activate",
 					 G_CALLBACK(onContextMenuAdd), this);
+	g_signal_connect(G_OBJECT(_contextMenu.enable), "activate",
+					 G_CALLBACK(onContextMenuEnable), this);
+	g_signal_connect(G_OBJECT(_contextMenu.disable), "activate",
+					 G_CALLBACK(onContextMenuDisable), this);
 					 
 	g_signal_connect(G_OBJECT(_effectWidgets.deleteMenuItem), "activate",
 					 G_CALLBACK(onContextMenuDelete), this);
