@@ -50,6 +50,7 @@ void SRPropertyLoader::parseAttribute(
 			// Check if the S/R with this index already exists
 			SREntity::StimResponseMap::iterator found = _srMap.find(index);
 			
+			// Create the S/R object, if it doesn't exist yet			
 			if (found == _srMap.end()) {
 				// Insert a new SR object with the given index
 				_srMap[index] = StimResponse();
@@ -65,7 +66,7 @@ void SRPropertyLoader::parseAttribute(
 			}
 			
 			// Set the property value on the StimResponse object
-			_srMap[index].set(_keys[i].key, value);
+			_srMap[index].set(_keys[i].key, value, inherited);
 		}
 	}
 	
@@ -75,9 +76,9 @@ void SRPropertyLoader::parseAttribute(
 			GlobalRegistry().get(RKEY_RESPONSE_EFFECT_PREFIX);
 		
 		// This should search for something like "sr_effect_2_3_arg3" 
-		// (with the postfix "_arg3" being optional)
+		// (with the optional postfix "_argN" or "_state")
 		std::string exprStr = 
-			"^" + prefix + responseEffectPrefix + "([0-9])+_([0-9])+(_arg[0-9]+)*$";
+			"^" + prefix + responseEffectPrefix + "([0-9])+_([0-9])+(_arg[0-9]+|_state)*$";
 		boost::regex expr(exprStr);
 		boost::smatch matches;
 		
@@ -105,36 +106,16 @@ void SRPropertyLoader::parseAttribute(
 				// No "_arg1" found, the value is the effect name definition
 				effect.setName(value);
 			}
+			else if (postfix == "_state") {
+				// This is a state variable
+				effect.setActive(value != "0");
+			}
 			else {
+				// Get the argument index from the tail
 				int argIndex = strToInt(postfix.substr(4));
 				// Load the value into argument with the index <argIndex>
 				effect.setArgument(argIndex, value);
 			}
-		}
-		
-		// Check for the "sr_effect_x_y_state" spawnarg
-		boost::regex stateExpr(
-			"^" + prefix + responseEffectPrefix + "([0-9])+_([0-9])+(_state)$"
-		);
-		if (boost::regex_match(key, matches, stateExpr))	{
-			// The response index
-			int index = strToInt(matches[1]);
-			// The effect index
-			int effectIndex = strToInt(matches[2]);
-			
-			// Find the Response for this index
-			SREntity::StimResponseMap::iterator found = _srMap.find(index);
-			
-			if (found == _srMap.end()) {
-				// Insert a new SR object with the given index
-				_srMap[index] = StimResponse();
-				_srMap[index].setIndex(index);
-				_srMap[index].setInherited(inherited);
-			}
-			
-			// Get the response effect (or create a new one)
-			ResponseEffect& effect = _srMap[index].getResponseEffect(effectIndex);
-			effect.setActive(value != "0");
 		}
 	}
 }

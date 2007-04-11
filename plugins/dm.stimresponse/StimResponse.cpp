@@ -23,7 +23,7 @@ std::string StimResponse::get(const std::string& key) {
 	PropertyMap::iterator i = _properties.find(key);
 	
 	if (i != _properties.end()) {
-		return _properties[key];
+		return _properties[key].value;
 	}
 	else {
 		// Not found, return an empty string
@@ -41,9 +41,39 @@ void StimResponse::setIndex(int index) {
 	}
 }
 
-void StimResponse::set(const std::string& key, const std::string& value) {
-	_properties[key] = value;
+void StimResponse::set(const std::string& key, const std::string& value, bool inherited) {
+	if (_inherited && !inherited) {
+		// This is an override operation
+		if (_properties.find(key) != _properties.end()) {
+			// Value exists, write to the <value> member
+			_properties[key].value = value;
+		}
+		else {
+			// Value doesn't exist yet, initialise and write an empty "backup" value
+			// This indicates that the value was not set in the inheritance tree
+			Property p;
+			p.value = value;
+			p.origValue = "";
+			_properties[key] = p;
+		}
+	}
+	else {
+		// Ordinary behaviour (just write the value)
+		Property p;
+		p.value = value;
+		p.origValue = value;
+		_properties[key] = p;
+	}
 }
+
+bool StimResponse::isOverridden(const std::string& key) {
+	if (_properties.find(key) != _properties.end()) {
+		// Key exists, compare origValue and value
+		// If these are not equal, the key has been overridden
+		return (_properties[key].value != _properties[key].origValue);
+	}
+	return false;
+} 
 
 void StimResponse::setInherited(bool inherited) {
 	_inherited = inherited;

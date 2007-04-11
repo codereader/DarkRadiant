@@ -41,8 +41,18 @@ public:
 	typedef std::map<unsigned int, ResponseEffect> EffectMap;
 
 private:
+	struct Property {
+		// The actual value (this is used for write-accesses)
+		std::string value;
+		
+		// The "original" value (this is considered read-only)
+		// Is used for inherited values to check if they were
+		// "overruled" by non-inherited values (on the target entity)
+		std::string origValue;
+	};
+
 	// The key/value mapping
-	typedef std::map<std::string, std::string> PropertyMap;
+	typedef std::map<std::string, Property> PropertyMap;
 
 	// TRUE, if this stems from an inherited eclass. Makes this object read-only	
 	bool _inherited;
@@ -80,9 +90,17 @@ public:
 	 */
 	std::string get(const std::string& key);
 	
-	/** greebo: Sets the given <key> to <value>
+	/** greebo: Sets the given <key> to <value>.
+	 * 
+	 * @load: This is indicating the origin of this value and can be used
+	 * 		  to determine whether this is an "override" operation or just
+	 * 		  an ordinary property population (during parsing the entityclass).
 	 */
-	void set(const std::string& key, const std::string& value);
+	void set(const std::string& key, const std::string& value, bool inherited = false);
+	
+	/** greebo: Returns TRUE, if the given key has been overridden.
+	 */
+	bool isOverridden(const std::string& key);
 	
 	/** greebo: Retrieves the response effect with the given id.
 	 * 			This creates the response effect if it doesn't exist yet.

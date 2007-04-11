@@ -3,6 +3,7 @@
 #include "iregistry.h"
 #include "entitylib.h"
 #include "string/string.h"
+#include <iostream>
 
 SRPropertySaver::SRPropertySaver(Entity* target, SREntity::KeyList& keys) :
 	_target(target),
@@ -10,11 +11,6 @@ SRPropertySaver::SRPropertySaver(Entity* target, SREntity::KeyList& keys) :
 {}
 
 void SRPropertySaver::visit(StimResponse& sr) {
-	if (sr.inherited()) {
-		// Don't save inherited properties
-		return;
-	}
-	
 	std::string prefix = GlobalRegistry().get(RKEY_STIM_RESPONSE_PREFIX);
 	std::string suffix = "_" + intToStr(sr.getIndex());
 	
@@ -29,8 +25,21 @@ void SRPropertySaver::visit(StimResponse& sr) {
 		// Check if the property matches for the class type
 		if (!value.empty() && _keys[i].classes.find(srClass, 0) != std::string::npos) {
 			std::string fullKey = prefix + _keys[i].key + suffix;
-			_target->setKeyValue(fullKey, value); 
+			
+			if (sr.inherited() && sr.isOverridden(_keys[i].key)) {
+				// Save the key
+				_target->setKeyValue(fullKey, value);
+			}
+			else if (!sr.inherited()) {
+				// Save the key, if it hasn't been inherited and not overridden
+				_target->setKeyValue(fullKey, value);
+			}
 		}
+	}
+	
+	if (sr.inherited()) {
+		// Don't save the rest of the properties (TODO)
+		return;
 	}
 	
 	// If we have a Response, save the response effects to the spawnargs

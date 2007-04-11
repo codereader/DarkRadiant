@@ -61,6 +61,8 @@ public:
 	virtual void update() = 0;
 
 protected:
+	/** greebo: Returns the fabricated Stim Selector combo box 
+	 */
 	GtkWidget* createStimTypeSelector();
 
 	/** greebo: Gets called when a check box is toggled, this should
@@ -108,6 +110,10 @@ protected:
 	
 	// Gets called on stim type selection change
 	static void onStimTypeSelect(GtkComboBox* widget, ClassEditor* self);
+	
+	// Override/disable override menu items
+	static void onContextMenuEnable(GtkWidget* w, ClassEditor* self);
+	static void onContextMenuDisable(GtkWidget* w, ClassEditor* self);
 };
 
 } // namespace ui

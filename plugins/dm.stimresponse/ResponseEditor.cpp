@@ -98,6 +98,9 @@ void ResponseEditor::update() {
 			gtk_widget_set_sensitive(_propertyWidgets.vbox, FALSE);
 		}
 		
+		// Update the delete context menu item
+		gtk_widget_set_sensitive(_contextMenu.remove, !sr.inherited());
+		
 		// The response effect list may be empty, so force an update of the
 		// context menu sensitivity, in the case the "selection changed" 
 		// signal doesn't get called

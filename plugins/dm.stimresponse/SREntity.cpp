@@ -28,7 +28,8 @@ SREntity::SREntity(Entity* source) :
 								  GDK_TYPE_PIXBUF,	// Icon
 								  G_TYPE_BOOLEAN,	// Inheritance flag
 								  G_TYPE_INT,		// ID (unique)
-								  G_TYPE_STRING)), 	// Text colour
+								  G_TYPE_STRING,	// Text colour
+								  G_TYPE_BOOLEAN)), // Override flag
 	_responseStore(gtk_list_store_new(NUM_COLS, 
 								  G_TYPE_INT,		// S/R index
 								  GDK_TYPE_PIXBUF, 	// Type String
@@ -36,7 +37,8 @@ SREntity::SREntity(Entity* source) :
 								  GDK_TYPE_PIXBUF,	// Icon
 								  G_TYPE_BOOLEAN,	// Inheritance flag
 								  G_TYPE_INT,		// ID (unique)
-								  G_TYPE_STRING)) 	// Text colour
+								  G_TYPE_STRING,	// Text colour
+								  G_TYPE_BOOLEAN)) 	// Override flag
 {
 	loadKeys();
 	load(source);
@@ -85,13 +87,13 @@ void SREntity::load(Entity* source) {
 	eclass->forEachClassAttribute(visitor);
 	
 	// Create a new map with all the stims/scripts defined directly on the entity
-	StimResponseMap entityStims;
+	//StimResponseMap entityStims;
 		
 	// Scan the entity itself after the class has been searched
-	SRPropertyLoader entityVisitor(_keys, entityStims, _warnings);
-	source->forEachKeyValue(entityVisitor);
+	//SRPropertyLoader entityVisitor(_keys, _list, _warnings);
+	source->forEachKeyValue(visitor);
 	
-	// Now combine the two S/R maps, the id gets incremented, but the internal
+	/*// Now combine the two S/R maps, the id gets incremented, but the internal
 	// index of the StimResponse objects remains unchanged.
 	for (StimResponseMap::iterator i = entityStims.begin(); 
 		 i != entityStims.end(); 
@@ -112,7 +114,7 @@ void SREntity::load(Entity* source) {
 		
 		// Copy the StimResponse over to the member _list
 		_list[newId] = i->second;
-	}
+	}*/
 	
 	// Populate the liststore
 	updateListStores();
@@ -226,6 +228,8 @@ void SREntity::writeToListStore(GtkListStore* targetListStore, GtkTreeIter* iter
 	// The S/R index (the N in sr_class_N)
 	int index = sr.getIndex();
 	
+	bool state = sr.get("state") == "1";
+	
 	gtk_list_store_set(targetListStore, iter, 
 						INDEX_COL, index,
 						CLASS_COL, gtkutil::getLocalPixbufWithMask(classIcon),
@@ -233,6 +237,7 @@ void SREntity::writeToListStore(GtkListStore* targetListStore, GtkTreeIter* iter
 						ICON_COL, gtkutil::getLocalPixbufWithMask(stimType.icon),
 						INHERIT_COL, sr.inherited(),
 						COLOUR_COLUMN, (sr.inherited() ? "#707070" : "#000000"),
+						STATE_COLUMN, state,
 						-1);
 }
 
