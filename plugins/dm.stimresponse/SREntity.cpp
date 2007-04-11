@@ -100,6 +100,28 @@ void SREntity::remove(int id) {
 	}
 }
 
+int SREntity::duplicate(int fromId) {
+	StimResponseMap::iterator found = _list.find(fromId);
+	
+	if (found != _list.end()) {
+		int id = getHighestId() + 1;
+		int index = getHighestIndex() + 1;
+		
+		// Copy the object to the new id
+		_list[id] = found->second;
+		// Set the index and the inheritance status
+		_list[id].setInherited(false);
+		_list[id].setIndex(index);
+		
+		// Rebuild the liststores
+		updateListStores();
+		
+		return id;
+	}
+	
+	return -1;
+}
+
 void SREntity::updateListStores() {
 	// Clear all the items from the liststore
 	gtk_list_store_clear(_stimStore);
@@ -134,9 +156,9 @@ int SREntity::add() {
 	// Create a new StimResponse object 
 	_list[id] = StimResponse();
 	// Set the index and the inheritance status
+	_list[id].setInherited(false);
 	_list[id].setIndex(index);
 	_list[id].set("class", "S");
-	_list[id].setInherited(false);
 	
 	return id;
 }

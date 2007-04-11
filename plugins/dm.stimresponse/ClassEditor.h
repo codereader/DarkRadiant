@@ -61,6 +61,10 @@ public:
 	virtual void update() = 0;
 
 protected:
+	/** greebo: Duplicates the currently selected S/R object
+	 */
+	void duplicateStimResponse();
+
 	/** greebo: Returns the fabricated Stim Selector combo box 
 	 */
 	GtkWidget* createStimTypeSelector();
@@ -114,6 +118,7 @@ protected:
 	// Override/disable override menu items
 	static void onContextMenuEnable(GtkWidget* w, ClassEditor* self);
 	static void onContextMenuDisable(GtkWidget* w, ClassEditor* self);
+	static void onContextMenuDuplicate(GtkWidget* w, ClassEditor* self);
 };
 
 } // namespace ui
