@@ -256,6 +256,10 @@ void Radiant_Initialise()
 
 void Radiant_Shutdown() {
 	
+	// Broadcast the shutdown command to all the plugins 
+	// to let them save their stuff into the Registry
+	Radiant_shutDownPlugins();
+	
 	// Remove the paths, but extract the settings path beforehand
 	std::string settingsPath = GlobalRegistry().get(RKEY_SETTINGS_PATH);
 	Environment::Instance().deletePathsFromRegistry();

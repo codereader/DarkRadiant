@@ -46,11 +46,11 @@ public:
 	}
 	
 	/**
-	 * SingletonModule requires a getTable() method, although for plugins it is
-	 * unused.
+	 * This has to be implemented so that the ModulesMap can find and deliver 
+	 * this module on request.
 	 */
 	IPlugin* getTable() {
-		assert(false);
+		return this;
 	}	
 };
 

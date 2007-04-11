@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 template<typename Type>
 class ModulesMap : public Modules<Type>
 {
-  typedef std::map<CopiedString, Module*> modules_t;
+  typedef std::map<std::string, Module*> modules_t;
   modules_t m_modules;
 public:
   ~ModulesMap()
@@ -70,7 +70,7 @@ public:
     }
   }
 
-  Type* find(const char* name)
+  Type* find(const std::string& name)
   {
     modules_t::iterator i = m_modules.find(name);
     if(i != m_modules.end())
@@ -80,7 +80,7 @@ public:
     return 0;
   }
 
-  Type* findModule(const char* name)
+  Type* findModule(const std::string& name)
   {
     return find(name);
   }
