@@ -101,6 +101,9 @@ void ResponseEditor::update() {
 		// Update the delete context menu item
 		gtk_widget_set_sensitive(_contextMenu.remove, !sr.inherited());
 		
+		// If there is anything selected, the duplicate item is always active
+		gtk_widget_set_sensitive(_contextMenu.duplicate, TRUE);
+		
 		// Update the "enable/disable" menu items
 		bool state = sr.get("state") == "1";
 		gtk_widget_set_sensitive(_contextMenu.enable, !state);
@@ -120,6 +123,7 @@ void ResponseEditor::update() {
 		gtk_widget_set_sensitive(_contextMenu.enable, FALSE);
 		gtk_widget_set_sensitive(_contextMenu.disable, FALSE);
 		gtk_widget_set_sensitive(_contextMenu.remove, FALSE);
+		gtk_widget_set_sensitive(_contextMenu.duplicate, FALSE);
 	}
 	
 	_updatesDisabled = false;
@@ -394,12 +398,14 @@ void ResponseEditor::createContextMenu() {
 	_contextMenu.add = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Add Response");
 	_contextMenu.enable = gtkutil::StockIconMenuItem(GTK_STOCK_YES, "Activate Response");
 	_contextMenu.disable = gtkutil::StockIconMenuItem(GTK_STOCK_NO, "Deactivate Response");
+	_contextMenu.duplicate = gtkutil::StockIconMenuItem(GTK_STOCK_COPY, "Duplicate Response");
 	
 	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), _contextMenu.add);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), _contextMenu.enable);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), _contextMenu.disable);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), _contextMenu.duplicate);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), _contextMenu.remove);
-
+	
 	_effectWidgets.addMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_ADD,
 															   "Add new Effect");
 	_effectWidgets.deleteMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
@@ -426,7 +432,9 @@ void ResponseEditor::createContextMenu() {
 					 G_CALLBACK(onContextMenuEnable), this);
 	g_signal_connect(G_OBJECT(_contextMenu.disable), "activate",
 					 G_CALLBACK(onContextMenuDisable), this);
-					 
+	g_signal_connect(G_OBJECT(_contextMenu.duplicate), "activate",
+					 G_CALLBACK(onContextMenuDuplicate), this);
+	
 	g_signal_connect(G_OBJECT(_effectWidgets.deleteMenuItem), "activate",
 					 G_CALLBACK(onContextMenuDelete), this);
 	g_signal_connect(G_OBJECT(_effectWidgets.addMenuItem), "activate",

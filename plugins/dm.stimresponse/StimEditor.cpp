@@ -271,7 +271,7 @@ void StimEditor::removeItem(GtkTreeView* view) {
 }
 
 void StimEditor::openContextMenu(GtkTreeView* view) {
-	gtk_menu_popup(GTK_MENU(_contextMenu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
+	gtk_menu_popup(GTK_MENU(_contextMenu.menu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
 }
 
 void StimEditor::addStim() {
@@ -291,38 +291,45 @@ void StimEditor::addStim() {
 // Create the context menus
 void StimEditor::createContextMenu() {
 	// Menu widgets
-	_contextMenu = gtk_menu_new();
+	_contextMenu.menu = gtk_menu_new();
 		
 	// Each menu gets a delete item
-	_propertyWidgets.deleteMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
+	_contextMenu.remove = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
 														   "Delete Stim");
-	_propertyWidgets.addMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_ADD,
+	_contextMenu.add = gtkutil::StockIconMenuItem(GTK_STOCK_ADD,
 														   "Add Stim");
-	_propertyWidgets.disableMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_NO,
+	_contextMenu.disable = gtkutil::StockIconMenuItem(GTK_STOCK_NO,
 														   "Deactivate Stim");
-	_propertyWidgets.enableMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_YES,
+	_contextMenu.enable = gtkutil::StockIconMenuItem(GTK_STOCK_YES,
 														   "Activate Stim");
-	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu),
-						  _propertyWidgets.addMenuItem);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu), 
-						  _propertyWidgets.enableMenuItem);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu), 
-						  _propertyWidgets.disableMenuItem);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu), 
-						  _propertyWidgets.deleteMenuItem);
+	_contextMenu.duplicate = gtkutil::StockIconMenuItem(GTK_STOCK_COPY,
+														   "Duplicate Stim");
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu),
+						  _contextMenu.add);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), 
+						  _contextMenu.enable);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), 
+						  _contextMenu.disable);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), 
+						  _contextMenu.duplicate);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), 
+						  _contextMenu.remove);
 
 	// Connect up the signals
-	g_signal_connect(G_OBJECT(_propertyWidgets.deleteMenuItem), "activate",
+	g_signal_connect(G_OBJECT(_contextMenu.remove), "activate",
 					 G_CALLBACK(onContextMenuDelete), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.addMenuItem), "activate",
+	g_signal_connect(G_OBJECT(_contextMenu.add), "activate",
 					 G_CALLBACK(onContextMenuAdd), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.enableMenuItem), "activate",
+	g_signal_connect(G_OBJECT(_contextMenu.enable), "activate",
 					 G_CALLBACK(onContextMenuEnable), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.disableMenuItem), "activate",
+	g_signal_connect(G_OBJECT(_contextMenu.disable), "activate",
 					 G_CALLBACK(onContextMenuDisable), this);
+	g_signal_connect(G_OBJECT(_contextMenu.duplicate), "activate",
+					 G_CALLBACK(onContextMenuDuplicate), this);
 	
 	// Show menus (not actually visible until popped up)
-	gtk_widget_show_all(_contextMenu);
+	gtk_widget_show_all(_contextMenu.menu);
 }
 
 void StimEditor::update() {
@@ -451,20 +458,24 @@ void StimEditor::update() {
 			gtk_widget_set_sensitive(_propertyWidgets.vbox, FALSE);
 		}
 		
-		// Update the delete context menu item
-		gtk_widget_set_sensitive(_propertyWidgets.deleteMenuItem, !sr.inherited());
+		// If there is anything selected, the duplicate item is always active
+		gtk_widget_set_sensitive(_contextMenu.duplicate, TRUE);
 		
+		// Update the delete context menu item
+		gtk_widget_set_sensitive(_contextMenu.remove, !sr.inherited());
+				
 		// Update the "enable/disable" menu items
 		bool state = sr.get("state") == "1";
-		gtk_widget_set_sensitive(_propertyWidgets.enableMenuItem, !state);
-		gtk_widget_set_sensitive(_propertyWidgets.disableMenuItem, state);
+		gtk_widget_set_sensitive(_contextMenu.enable, !state);
+		gtk_widget_set_sensitive(_contextMenu.disable, state);
 	}
 	else {
 		gtk_widget_set_sensitive(_propertyWidgets.vbox, FALSE);
 		// Disable the "non-Add" context menu items
-		gtk_widget_set_sensitive(_propertyWidgets.deleteMenuItem, FALSE);
-		gtk_widget_set_sensitive(_propertyWidgets.enableMenuItem, FALSE);
-		gtk_widget_set_sensitive(_propertyWidgets.disableMenuItem, FALSE);
+		gtk_widget_set_sensitive(_contextMenu.remove, FALSE);
+		gtk_widget_set_sensitive(_contextMenu.enable, FALSE);
+		gtk_widget_set_sensitive(_contextMenu.disable, FALSE);
+		gtk_widget_set_sensitive(_contextMenu.duplicate, FALSE);
 	}
 	
 	_updatesDisabled = false;

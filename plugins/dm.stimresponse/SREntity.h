@@ -100,6 +100,13 @@ public:
 	 */
 	void remove(int id);
 	
+	/** greebo: Duplicates the stim/response with the given id.
+	 * 
+	 * @fromId: The ID of the SR to copy from.
+	 * @returns: the ID of the new duplicate.
+	 */
+	int duplicate(int fromId);
+	
 	/** greebo: Overrides the "state" property of an inherited stim.
 	 * 			As inherited spawnargs can't be altered, a sr_state_N
 	 * 			key/value pair is added to the entity, overriding 

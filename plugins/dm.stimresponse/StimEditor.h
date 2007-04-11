@@ -24,18 +24,21 @@ class StimEditor :
 		GtkWidget* chanceToggle;
 		GtkWidget* chanceEntry;
 		GtkWidget* timerTypeToggle;
-		GtkWidget* addMenuItem;
-		GtkWidget* deleteMenuItem;
-		GtkWidget* enableMenuItem;
-		GtkWidget* disableMenuItem;
 	} _propertyWidgets;
+	
+	struct ListContextMenu {
+		GtkWidget* menu;
+		GtkWidget* remove;
+		GtkWidget* add;
+		GtkWidget* enable;
+		GtkWidget* disable;
+		GtkWidget* duplicate;
+	} _contextMenu;
 
 	struct ListButtons {
 		GtkWidget* add;
 		GtkWidget* remove;
 	} _listButtons;
-
-	GtkWidget* _contextMenu;
 
 public:
 	/** greebo: Constructor creates all the widgets

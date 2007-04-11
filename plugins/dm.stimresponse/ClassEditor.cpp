@@ -102,8 +102,8 @@ void ClassEditor::setProperty(const std::string& key, const std::string& value) 
 	int id = getIdFromSelection();
 	
 	if (id > 0) {
-		// Don't edit inherited stims/responses, with the exception of "state"
-		if (!_entity->get(id).inherited() || key == "state") {
+		// Don't edit inherited stims/responses
+		if (!_entity->get(id).inherited()) {
 			_entity->setProperty(id, key, value);
 		}
 	}
@@ -154,6 +154,17 @@ GtkWidget* ClassEditor::createStimTypeSelector() {
 	);
 
 	return typeHBox;
+}
+
+void ClassEditor::duplicateStimResponse() {
+	int id = getIdFromSelection();
+	
+	if (id > 0) {
+		_entity->duplicate(id);
+	}
+
+	// Call the method of the child class to update the widgets
+	update();
 }
 
 // Static callbacks
@@ -216,6 +227,10 @@ void ClassEditor::onContextMenuDisable(GtkWidget* w, ClassEditor* self) {
 // "Enable" context menu item
 void ClassEditor::onContextMenuEnable(GtkWidget* w, ClassEditor* self) {
 	self->setProperty("state", "1");
+}
+
+void ClassEditor::onContextMenuDuplicate(GtkWidget* w, ClassEditor* self) {
+	self->duplicateStimResponse();
 }
 
 } // namespace ui
