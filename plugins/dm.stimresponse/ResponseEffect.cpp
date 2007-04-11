@@ -5,35 +5,73 @@
 
 ResponseEffect::ResponseEffect() :
 	_state(true),
+	_origState(_state),
 	_eclass(IEntityClassPtr()),
-	_argumentListBuilt(false)
+	_argumentListBuilt(false),
+	_inherited(false)
 {}
 
 // Copy constructor
 ResponseEffect::ResponseEffect(const ResponseEffect& other) :
 	_effectName(other._effectName),
+	_origName(other._origName),
 	_state(other._state),
+	_origState(other._origState),
 	_args(other._args),
 	_eclass(other._eclass),
-	_argumentListBuilt(other._argumentListBuilt)
+	_argumentListBuilt(other._argumentListBuilt),
+	_inherited(other._inherited)
 {}
 
 std::string ResponseEffect::getName() const {
 	return _effectName;
 }
 
+bool ResponseEffect::nameIsOverridden() {
+	return (_inherited && _effectName != _origName);
+}
+
+void ResponseEffect::setInherited(bool inherited) {
+	_inherited = inherited;
+}
+
+bool ResponseEffect::isInherited() const {
+	return _inherited;
+}
+
 bool ResponseEffect::isActive() const {
 	return _state;
 }
 
-void ResponseEffect::setActive(bool active) {
-	_state = active;
+void ResponseEffect::setActive(bool active, bool inherited) {
+	if (_inherited && !inherited) {
+		// This is an override action, just set the _state, not _origState
+		_state = active;
+	}
+	else {
+		// Ordinary write operation, set both state and origState
+		_state = active;
+		_origState = _state;
+	}
 }
 
-void ResponseEffect::setName(const std::string& name) {
-	_effectName = name;
+bool ResponseEffect::activeIsOverridden() {
+	return (_inherited && _state != _origState);
+}
+
+void ResponseEffect::setName(const std::string& name, bool inherited) {
+	if (_inherited && !inherited) {
+		// This is an override action
+		_effectName = name;
+	}
+	else {
+		// Ordinary write operation, save both values
+		_effectName = name;
+		_origName = name;
+	}
+	
 	// Update the entityclass pointer
-	_eclass = ResponseEffectTypes::Instance().getEClassForName(name);
+	_eclass = ResponseEffectTypes::Instance().getEClassForName(_effectName);
 	
 	// Build the argument list, if it hasn't been built up till now
 	if (!_argumentListBuilt) {
@@ -49,20 +87,50 @@ std::string ResponseEffect::getArgument(unsigned int index) const {
 	return (i != _args.end()) ? i->second.value : "";
 }
 
-void ResponseEffect::setArgument(unsigned int index, const std::string& value) {
+bool ResponseEffect::argIsOverridden(unsigned int index) {
 	ArgumentList::const_iterator i = _args.find(index);
 	
-	if (i == _args.end()) {
-		// Argument doesn't exist, create it
-		Argument newArgument;
-		newArgument.value = value;
-		
-		// Store the argument in the map
-		_args[index] = newArgument;
+	if (i != _args.end()) {
+		return (i->second.value != i->second.origValue);
+	}
+	return false;
+}
+
+void ResponseEffect::setArgument(unsigned int index, const std::string& value, bool inherited) {
+	ArgumentList::const_iterator i = _args.find(index);
+	
+	if (_inherited && !inherited) {
+		// This is an override operation
+		if (i != _args.end()) {
+			// Value exists, write to the <value> member
+			_args[index].value = value;
+		}
+		else {
+			// Value doesn't exist yet, initialise and write an empty "backup" value
+			// This indicates that the value was not set in the inheritance tree
+			Argument newArgument;
+			newArgument.value = value;
+			newArgument.origValue = "";
+			
+			// Store the argument in the map
+			_args[index] = newArgument;
+		}
 	}
 	else {
-		// Argument exists
-		_args[index].value = value;
+		if (i != _args.end()) {
+			// Argument exists
+			_args[index].value = value;
+			_args[index].origValue = value;
+		}
+		else {
+			// Argument doesn't exist, create it
+			Argument newArgument;
+			newArgument.value = value;
+			newArgument.origValue = value;
+			
+			// Store the argument in the map
+			_args[index] = newArgument;
+		}
 	}
 }
 

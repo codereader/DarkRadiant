@@ -89,6 +89,7 @@ ResponseEffect& StimResponse::getResponseEffect(const unsigned int index) {
 	if (found == _effects.end()) {
 		// ResponseEffect doesn't exist yet, create a new, empty one
 		 _effects[index] = ResponseEffect();
+		 _effects[index].setInherited(_inherited);
 	}
 	
 	return _effects[index];
@@ -151,6 +152,7 @@ void StimResponse::addEffect(const unsigned int index) {
 		unsigned int newIndex = highestEffectIndex() + 1; 
 		// No item found (index could be -1), append to the end of the list
 		_effects[newIndex] = ResponseEffect();
+		_effects[newIndex].setInherited(_inherited);
 		_effects[newIndex].setName(
 			ResponseEffectTypes::Instance().getFirstEffectName()
 		);
@@ -177,6 +179,7 @@ void StimResponse::addEffect(const unsigned int index) {
 			// If we are exactly at the insert point, insert the new effect
 			if (i->first == index) {
 				newMap[i->first] = ResponseEffect();
+				newMap[i->first].setInherited(_inherited);
 				newMap[i->first].setName(
 					ResponseEffectTypes::Instance().getFirstEffectName()
 				);

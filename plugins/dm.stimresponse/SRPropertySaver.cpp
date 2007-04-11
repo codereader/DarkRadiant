@@ -37,11 +37,6 @@ void SRPropertySaver::visit(StimResponse& sr) {
 		}
 	}
 	
-	if (sr.inherited()) {
-		// Don't save the rest of the properties (TODO)
-		return;
-	}
-	
 	// If we have a Response, save the response effects to the spawnargs
 	if (sr.get("class") == "R") {
 		std::string responseEffectPrefix = 
@@ -62,7 +57,15 @@ void SRPropertySaver::visit(StimResponse& sr) {
 			// Save the effect declaration ("sr_effect_1_1")
 			std::string key = prefix + responseEffectPrefix + 
 							  intToStr(sr.getIndex()) + "_" + intToStr(i->first);
-			_target->setKeyValue(key, effect.getName());
+						
+			if (effect.isInherited() && effect.nameIsOverridden()) {
+				// Overridden name, save it
+				_target->setKeyValue(key, effect.getName());
+			}
+			else if (!effect.isInherited()) {
+				// Non-inherited name, save it
+				_target->setKeyValue(key, effect.getName());
+			}
 			
 			// Now save the arguments
 			ResponseEffect::ArgumentList& args = effect.getArguments();
@@ -75,11 +78,27 @@ void SRPropertySaver::visit(StimResponse& sr) {
 				
 				// Construct the argument key ("sr_effect_3_2_arg4")
 				std::string argKey = key + "_arg" + intToStr(argIndex);
-				_target->setKeyValue(argKey, argValue);
+				
+				if (effect.isInherited() && effect.argIsOverridden(argIndex)) {
+					// This is an overridden argument, save it
+					_target->setKeyValue(argKey, argValue);
+				}
+				else if (!effect.isInherited()) {
+					// A non-inherited argument, save it
+					_target->setKeyValue(argKey, argValue);
+				}
 			}
 			
-			if (!effect.isActive()) {
-				_target->setKeyValue(key + "_state", "0");
+			if (effect.isInherited() && effect.activeIsOverridden()) {
+				std::cout << "Overridden state found: " << (key + "_state") << "\n";
+				// An overridden state, save the spawnarg in every case
+				_target->setKeyValue(key + "_state", effect.isActive() ? "1" : "0");
+			}
+			else if (!effect.isInherited()) {
+				// A non-inherited state, save it only if necessary (inactive)
+				if (!effect.isActive()) {
+					_target->setKeyValue(key + "_state", "0");
+				}
 			}
 		}
 	}

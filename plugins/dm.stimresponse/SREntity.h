@@ -37,8 +37,10 @@ typedef struct _GtkListStore GtkListStore;
 /** greebo: This is the representation of an entity holding S/R keys.
  * 			Use the load() and save() methods to load/save the spawnargs.
  * 			
- * 			The operator cast to GtkListStore* is available to pack
- * 			the data into a GtkTreeView.
+ * 			The getStimStore() and getResponseStore() methods are available
+ * 			to retrieve the GtkListStores to pack the data into a GtkTreeView.
+ * 			The liststore is maintained automatically when the set() method is
+ * 			used to manipulate the data.
  */
 class SREntity
 {
