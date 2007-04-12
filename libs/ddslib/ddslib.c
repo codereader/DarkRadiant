@@ -201,126 +201,6 @@ int DDSGetInfo( ddsBuffer_t *dds, int *width, int *height, ddsPF_t *pf ) {
 	return 0;
 }
 
-/** greebo: Extracts RXGB encoded colours from the given ddsColorBlock
- */
-static void DDSGetRXGBColorBlockColors( ddsColorBlock_t *block, ddsColor_t colors[ 4 ] ) {
-	unsigned short		word;
-
-	typedef struct Color565Struc {
-		unsigned short blue  : 5;		// 5 bits for blue
-		unsigned short green : 6;		// 6 bits for green
-		unsigned short red   : 5;		// 5 bits for red
-		// total size: 16 bits = word
-	}
-	Color565;
-
-	Color565* col565;
-
-	/* color 0 */
-	word = DDSLittleShort( block->colors[ 0 ] );
-
-	// Lay the 565 structure over the word
-	col565 = (Color565*)(&word);
-
-	// Now map the bitfields to the output pixel <colors>
-	// and fill the lower three bits with data from the top bits
-	colors[0].r = col565->red << 3;
-	colors[0].r |= (colors[0].r >> 5);
-
-	colors[0].g = col565->green << 2;
-	colors[0].g |= (colors[0].g >> 6);
-
-	colors[0].b = col565->blue << 3;
-	colors[0].b |= (colors[0].b >> 5);
-
-	colors[0].a = 0xFF;
-
-	/* extract rgb bits
-	// greebo: Blue: take the first 8 bits from the 16 bit word
-	colors[ 0 ].b = (unsigned char) word;
-	// Left-shift it 3 bits, this discards the 3 topmost bits.
-	colors[ 0 ].b <<= 3;
-	// Copy the 3 topmost bits to the three lowest bits 
-	// (as they are 0 after the above left-shift) 
-	colors[ 0 ].b |= (colors[ 0 ].b >> 5);
-	// Right-shift the source word 5 bits, this pops the green bits 
-	word >>= 5;
-
-	// Green: This takes 6 bits, so we need to left-shift it by 2 bits 
-	colors[ 0 ].g = (unsigned char) word;
-	colors[ 0 ].g <<= 2;
-	// Fill the two empty bits with two from the top
-	// greebo: this was ">> 5" before, I'm pretty sure this should be << 6 (copy&paste error?)
-	colors[ 0 ].g |= (colors[ 0 ].g >> 6);
-
-	// Get the red values by shifting the green bits out of the word 
-	word >>= 6;
-	colors[ 0 ].r = (unsigned char) word;
-	colors[ 0 ].r <<= 3;
-	// Again, fill the 3 empty bits with three taken from the top.
-	colors[ 0 ].r |= (colors[ 0 ].r >> 5);*/
-
-	/* same for color 1 */
-	word = DDSLittleShort( block->colors[ 1 ] );
-
-	// Lay the 565 structure over the word (redundant, but I want to make sure)
-	col565 = (Color565*)(&word);
-
-	// Now map the bitfields to the output pixel <colors>
-	// and fill the lower three bits with data from the top bits
-	colors[1].r = col565->red << 3;
-	colors[1].r |= (colors[1].r >> 5);
-
-	colors[1].g = col565->green << 2;
-	colors[1].g |= (colors[1].g >> 6);
-
-	colors[1].b = col565->blue << 3;
-	colors[1].b |= (colors[1].b >> 5);
-
-	colors[1].a = 0xFF;
-
-	/*colors[ 1 ].a = 0xff;
-
-	// extract rgb bits 
-	colors[ 1 ].b = (unsigned char) word;
-	colors[ 1 ].b <<= 3;
-	colors[ 1 ].b |= (colors[ 1 ].b >> 5);
-	word >>= 5;
-	colors[ 1 ].g = (unsigned char) word;
-	colors[ 1 ].g <<= 2;
-	colors[ 1 ].g |= (colors[ 1 ].g >> 6); // greebo: changed this to ">> 6" instead of ">> 5"
-	word >>= 6;
-	colors[ 1 ].r = (unsigned char) word;
-	colors[ 1 ].r <<= 3;
-	colors[ 1 ].r |= (colors[ 1 ].r >> 5);*/
-
-	// greebo: At this point, the colors[0] and colors[1] hold the bit-decoded
-	// colour values (encoded from the 5:6:5 word, so we can now proceed
-	// to derive the other two colours)
-
-	/* four-color block: derive the other two colors.
-	   00 = color 0, 01 = color 1, 10 = color 2, 11 = color 3
-	   these two bit codes correspond to the 2-bit fields 
-	   stored in the 64-bit block. */
-	word = ((unsigned short) colors[ 0 ].r * 2 + (unsigned short) colors[ 1 ].r ) / 3;
-	/* no +1 for rounding */
-	/* as bits have been shifted to 888 */
-	colors[ 2 ].r = (unsigned char) word;
-	word = ((unsigned short) colors[ 0 ].g * 2 + (unsigned short) colors[ 1 ].g) / 3;
-	colors[ 2 ].g = (unsigned char) word;
-	word = ((unsigned short) colors[ 0 ].b * 2 + (unsigned short) colors[ 1 ].b) / 3;
-	colors[ 2 ].b = (unsigned char) word;
-	colors[ 2 ].a = 0xff;
-
-	word = ((unsigned short) colors[ 0 ].r + (unsigned short) colors[ 1 ].r * 2) / 3;
-	colors[ 3 ].r = (unsigned char) word;
-	word = ((unsigned short) colors[ 0 ].g + (unsigned short) colors[ 1 ].g * 2) / 3;
-	colors[ 3 ].g = (unsigned char) word;
-	word = ((unsigned short) colors[ 0 ].b + (unsigned short) colors[ 1 ].b * 2) / 3;
-	colors[ 3 ].b = (unsigned char) word;
-	colors[ 3 ].a = 0xff;
-}
-
 /*
 DDSGetColorBlockColors()
 extracts colors from a dds color block
@@ -341,7 +221,7 @@ static void DDSGetColorBlockColors( ddsColorBlock_t *block, ddsColor_t colors[ 4
 	word >>= 5;
 	colors[ 0 ].g = (unsigned char) word;
 	colors[ 0 ].g <<= 2;
-	colors[ 0 ].g |= (colors[ 0 ].g >> 5);
+	colors[ 0 ].g |= (colors[ 0 ].g >> 6);
 	word >>= 6;
 	colors[ 0 ].r = (unsigned char) word;
 	colors[ 0 ].r <<= 3;
@@ -358,7 +238,7 @@ static void DDSGetColorBlockColors( ddsColorBlock_t *block, ddsColor_t colors[ 4
 	word >>= 5;
 	colors[ 1 ].g = (unsigned char) word;
 	colors[ 1 ].g <<= 2;
-	colors[ 1 ].g |= (colors[ 1 ].g >> 5);
+	colors[ 1 ].g |= (colors[ 1 ].g >> 6);
 	word >>= 6;
 	colors[ 1 ].r = (unsigned char) word;
 	colors[ 1 ].r <<= 3;
@@ -426,24 +306,6 @@ static void DDSDecodeColorBlock( unsigned int *pixel, ddsColorBlock_t *block, in
 	unsigned int	masks[] = { 3, 12, 3 << 4, 3 << 6 };	/* bit masks = 00000011, 00001100, 00110000, 11000000 */
 	int				shift[] = { 0, 2, 4, 6 };
 
-	/*DevIL code:
-	  
-	k = 0;
-	for (j = 0; j < 4; j++) {
-		for (i = 0; i < 4; i++, k++) {
-			Select = (bitmask & (0x03 << k*2)) >> k*2;
-			col = &colours[Select];
-
-			// only put pixels out < width or height
-			if (((x + i) < Width) && ((y + j) < Height)) {
-				Offset = z * Image->SizeOfPlane + (y + j) * Image->Bps + (x + i) * Image->Bpp;
-				Image->Data[Offset + 0] = col->r;
-				Image->Data[Offset + 1] = col->g;
-				Image->Data[Offset + 2] = col->b;
-			}
-		}
-}
-	 */
 	/* r steps through lines in y */
 	for( r = 0; r < 4; r++, pixel += (width - 4) )	/* no width * 4 as unsigned int ptr inc will * 4 */
 	{
@@ -455,34 +317,6 @@ static void DDSDecodeColorBlock( unsigned int *pixel, ddsColorBlock_t *block, in
 			bits >>= shift[ n ];
 			*pixel = colors[bits];
 			pixel++;
-			/* greebo: Disabled this switch code and replaced it with the two lines above
-			 * switch( bits )
-		{
-				case 0:
-					*pixel = colors[ 0 ];
-					pixel++;
-					break;
-
-				case 1:
-					*pixel = colors[ 1 ];
-					pixel++;
-					break;
-
-				case 2:
-					*pixel = colors[ 2 ];
-					pixel++;
-					break;
-
-				case 3:
-					*pixel = colors[ 3 ];
-					pixel++;
-					break;
-
-				default:
-					//invalid
-					pixel++;
-					break;
-		}*/
 		}
 	}
 }
@@ -969,7 +803,7 @@ static int DDSDecompressRXGB( ddsBuffer_t *dds, int width, int height, unsigned 
 			block++;
 			// Decode the colour values from the 5:6:5 word and derive the c2 and c3 colours
 			// The result is stored in the <colors> variable
-			DDSGetRXGBColorBlockColors( block, colors );
+			DDSGetColorBlockColors( block, colors );
 
 			/* decode color block */
 			pixel = (unsigned int*) (pixels + x * 16 + (y * 4) * width * 4);
@@ -1027,7 +861,6 @@ int DDSDecompress( ddsBuffer_t *dds, unsigned char *pixels ) {
 			break;
 
 		case DDS_PF_DXT5_RXGB:
-			fprintf(stderr, "[ddslib] RXGB format encountered.\n");
 			r = DDSDecompressRXGB( dds, width, height, pixels );
 			break;
 
