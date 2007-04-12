@@ -204,14 +204,15 @@ typedef struct ddsBuffer_s
 }
 ddsBuffer_t;
 
-
+/** greebo: This represents a 64 bit DDS block containing
+ * 			either the alpha or the colour data. 
+ */
 typedef struct ddsColorBlock_s
 {
-	unsigned short		colors[ 2 ];
-	unsigned char		row[ 4 ];
+	unsigned short		colors[ 2 ];// 32 bit (2 x 16 bit)
+	unsigned char		row[ 4 ];	// 32 bit (4 x 8 bit)
 }
 ddsColorBlock_t;
-
 
 typedef struct ddsAlphaBlockExplicit_s
 {
