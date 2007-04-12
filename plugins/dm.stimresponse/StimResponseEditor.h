@@ -47,6 +47,8 @@ class StimResponseEditor
 	ResponseEditor _responseEditor;
 
 public:
+	static bool instantiated;
+
 	StimResponseEditor();
 	
 	/** greebo: Contains the static instance of this dialog.

@@ -27,7 +27,6 @@ public:
 	 * manager.
 	 */
 	StimResponseAPI() {
-		
 		// Add the callback event
 		GlobalEventManager().addCommand(
 			"StimResponseEditor", 
@@ -48,8 +47,10 @@ public:
 	}
 	
 	virtual void shutdown() {
-		// Pass the call to the SR editor instance
-		ui::StimResponseEditor::Instance().shutdown();
+		if (ui::StimResponseEditor::instantiated) {
+			// Pass the call to the SR editor instance
+			ui::StimResponseEditor::Instance().shutdown();
+		}
 	}
 	
 	/**
