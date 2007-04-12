@@ -22,6 +22,8 @@
 #include <iostream>
 #include <ext/hash_map>
 
+#include "selection/algorithm/Shader.h"
+
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/functional/hash/hash.hpp>
 
@@ -345,7 +347,7 @@ void MediaBrowser::_onActivateLoadContained(GtkMenuItem* item,
 
 void MediaBrowser::_onActivateApplyTexture(GtkMenuItem* item, MediaBrowser* self) {
 	// Pass shader name to the selection system
-	Select_SetShader(self->getSelectedName().c_str());
+	selection::algorithm::applyShaderToSelection(self->getSelectedName());
 }
 
 void MediaBrowser::_onSelectionChanged(GtkWidget* widget, MediaBrowser* self) {
