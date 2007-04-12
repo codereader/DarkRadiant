@@ -67,6 +67,8 @@ StimResponseEditor::StimResponseEditor() :
 	
 	_windowPosition.connect(GTK_WINDOW(_dialog));
 	_windowPosition.applyPosition();
+	
+	instantiated = true;
 }
 
 void StimResponseEditor::shutdown() {
@@ -248,5 +250,8 @@ StimResponseEditor& StimResponseEditor::Instance() {
 	static StimResponseEditor _instance;
 	return _instance;
 }
+
+// Initialise the static boolean
+bool ui::StimResponseEditor::instantiated = false;
 
 } // namespace ui
