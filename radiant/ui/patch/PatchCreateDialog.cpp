@@ -35,7 +35,7 @@ PatchCreateDialog::PatchCreateDialog() :
     // Set the dialog properties
     gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(_dialog)->vbox), 6);
     gtk_container_set_border_width(GTK_CONTAINER(_dialog), 6);
-    gtk_dialog_set_has_separator(GTK_DIALOG(_dialog), false);
+    gtk_dialog_set_has_separator(GTK_DIALOG(_dialog), FALSE);
     
     // Create the title label (bold font)
     GtkWidget* topLabel = gtk_label_new(NULL);
@@ -44,7 +44,7 @@ PatchCreateDialog::PatchCreateDialog() :
     gtk_misc_set_alignment(GTK_MISC(topLabel), 0.0f, 0.5f);
     gtk_misc_set_padding(GTK_MISC(topLabel), 6, 2);
     
-    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(_dialog)->vbox), topLabel, true, true, 0);
+    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(_dialog)->vbox), topLabel, TRUE, TRUE, 0);
     
     // Create the labels for the combo boxes
 	GtkWidget* labelWidth = gtk_label_new(LABEL_WIDTH_COMBO);
@@ -70,7 +70,7 @@ PatchCreateDialog::PatchCreateDialog() :
 	GtkWidget* alignment = gtk_alignment_new(0.0f, 0.0f, 1.0f, 1.0f);
 	
 	// Setup the table with default spacings
-	GtkTable* table = GTK_TABLE(gtk_table_new(2, 5, false));
+	GtkTable* table = GTK_TABLE(gtk_table_new(2, 5, FALSE));
     gtk_table_set_col_spacings(table, 12);
     gtk_table_set_row_spacings(table, 6);
     
@@ -90,7 +90,7 @@ PatchCreateDialog::PatchCreateDialog() :
 	gtk_table_attach_defaults(table, _removeBrushCheckbox, 0, 2, 2, 3);
 	
 	// Pack the table into the dialog
-	gtk_box_pack_end(GTK_BOX(GTK_DIALOG(_dialog)->vbox), GTK_WIDGET(alignment), true, true, 0);
+	gtk_box_pack_end(GTK_BOX(GTK_DIALOG(_dialog)->vbox), GTK_WIDGET(alignment), TRUE, TRUE, 0);
 	
 	// Make the OK button to the default response 
 	gtk_dialog_set_default_response(GTK_DIALOG(_dialog), GTK_RESPONSE_OK);
@@ -106,11 +106,12 @@ bool PatchCreateDialog::queryPatchDimensions(int& width, int& height,
 	
 	// Activate/Inactivate the check box depending on the selected brush count
 	if (selBrushCount == 1) {
-		gtk_widget_set_sensitive(_removeBrushCheckbox, true);
+		gtk_widget_set_sensitive(_removeBrushCheckbox, TRUE);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_removeBrushCheckbox), TRUE);
 	}
 	else {
-		gtk_widget_set_sensitive(_removeBrushCheckbox, false);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_removeBrushCheckbox), false);
+		gtk_widget_set_sensitive(_removeBrushCheckbox, FALSE);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_removeBrushCheckbox), FALSE);
 	}
 	
 	gtk_widget_show_all(_dialog);

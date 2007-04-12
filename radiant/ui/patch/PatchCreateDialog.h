@@ -22,13 +22,13 @@ public:
 	// The dialog widget (is public so that onKeyPress can access it)
 	GtkWidget* _dialog;
 
-	// Constructor, instantiate this class by specifying the parent window 
+	// Constructor 
 	PatchCreateDialog();
 	
 	/** greebo: Launches the dialog to query the user for the 
 	 * desired patch thickness and "addSeams" bool
 	 * 
-	 * @selBrushCount: The number of selected brushes (used to gray out the
+	 * @selBrushCount: The number of selected brushes (used to grey out the
 	 * 				   "Remove selected Brushes" checkbox if this is not 1).
 	 * 
 	 * @returns: TRUE, if the user pressed ok, FALSE if cancelled 
