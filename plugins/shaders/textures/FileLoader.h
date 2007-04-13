@@ -6,10 +6,14 @@
 #include "ishaders.h"
 #include "modulesystem/modulesmap.h"
 
+#include "ImageLoaderManager.h"
+
+namespace shaders {
+
 /* greebo: This is another simple imageconstructor that loads a given file 
  * from the disk and creates the according Image object (on demand).
  * 
- * It uses ABSOLUTE paths and does not care about altering the give filename,
+ * It uses ABSOLUTE paths and does not care about altering the given filename,
  * so use this to load images directly from a specified path.
  * 
  * Optional: pass the imageloader module names in the constructor (e.g. "bmp jpg")
@@ -20,21 +24,20 @@ class FileLoader :
 	public ImageConstructor,
 	public TextureConstructor
 {
-	// The reference to the ImageLoader modules 
-	ImageLoaderModulesRef _imageLoaders;
+	// The list of ImageLoader modules 
+	ImageLoaderList _imageLoaders;
 	
 	// The filename of the image to load
 	std::string _filename;
 
 public:
 	// The default FileLoader constructor (uses the GDK image loader)
-	FileLoader(const std::string& filename);
-	
-	// A specialised constructor that allows to specify the file extensions (= moduleName)
-	FileLoader(const std::string& filename, const std::string& moduleNames);
+	FileLoader(const std::string& filename, const std::string moduleNames = "GDK");
 	
 	// The actual construct() method as needed by the TexturesCache
 	Image* construct();
 };
+
+} // namespace shaders
 
 #endif /*FILELODER_H_*/

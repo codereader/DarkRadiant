@@ -6,6 +6,10 @@
 #include "ishaders.h"
 #include "modulesystem/modulesmap.h"
 
+#include "ImageLoaderManager.h"
+
+namespace shaders {
+
 /* greebo: This is the default imageconstructor that loads a given file 
  * from the disk and creates the according Image object (on demand).
  * 
@@ -16,8 +20,8 @@ class DefaultConstructor :
 	public ImageConstructor,
 	public TextureConstructor
 {
-	// The reference to the ImageLoader modules 
-	ImageLoaderModulesRef _imageLoaders;
+	// The ImageLoader references 
+	ImageLoaderList _imageLoaders;
 	
 	// The filename of the image to load
 	std::string _filename;
@@ -30,5 +34,7 @@ public:
 	Image* construct();
 
 }; // class DefaultConstructor
+
+} // namespace shaders
 
 #endif /*DEFAULTCONSTRUCTOR_H_*/
