@@ -11,18 +11,20 @@ namespace selection {
 Texturable::Texturable() :
 	face(NULL),
 	brush(NULL),
-	patch(NULL)
+	patch(NULL),
+	shader("")
 {}
 
 void Texturable::clear() {
 	face = NULL;
 	patch = NULL;
 	brush = NULL;
+	shader = "";
 }
 
 // True, if all the pointers are NULL
 bool Texturable::empty() const {
-	return (patch == NULL && face == NULL && brush == NULL);
+	return (patch == NULL && face == NULL && brush == NULL && shader.empty());
 }
 
 bool Texturable::isPatch() const {
@@ -33,6 +35,10 @@ bool Texturable::isFace() const {
 	return (face != NULL);
 }
 
+bool Texturable::isShader() const {
+	return !shader.empty();
+}
+
 std::string Texturable::getShader() const {
 	if (isFace()) {
 		return face->GetShader();
@@ -41,7 +47,8 @@ std::string Texturable::getShader() const {
 		return patch->GetShader();
 	}
 	else {
-		return "";
+		// Shader might be empty as well
+		return shader;
 	}
 }
 

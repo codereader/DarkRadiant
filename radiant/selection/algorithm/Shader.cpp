@@ -254,7 +254,8 @@ void applyClipboardToTexturable(Texturable& target, bool projected, bool entireB
 			 	}
 			}
 		}
-		else {
+		else if (source.isPatch()) {
+			// Source holds a patch
 			if (target.isFace() && entireBrush) {
 				// Copy patch >> whole brush
 				for (Brush::const_iterator i = target.brush->begin(); 
@@ -272,6 +273,23 @@ void applyClipboardToTexturable(Texturable& target, bool projected, bool entireB
 				// Copy patch >> patch
 			 	target.patch->SetShader(source.patch->GetShader());
 			 	target.patch->pasteTextureNatural(*source.patch);
+			}
+		}
+		else if (source.isShader()) {
+			if (target.isFace() && entireBrush) {
+				// Copy patch >> whole brush
+				for (Brush::const_iterator i = target.brush->begin(); 
+					 i != target.brush->end(); 
+					 i++) 
+				{
+					(*i)->SetShader(source.getShader());
+				}
+			}
+			else if (target.isFace() && !entireBrush) {
+				target.face->SetShader(source.getShader());
+			}
+			else if (target.isPatch() && !entireBrush) {
+				target.patch->SetShader(source.getShader());
 			}
 		}
 	}
