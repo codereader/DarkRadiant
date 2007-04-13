@@ -2,6 +2,7 @@
 #define MAPFILEMANAGER_H_
 
 #include <string>
+#include <map>
 
 namespace map
 {
@@ -17,9 +18,11 @@ namespace map
  */
 class MapFileManager
 {
-	// Last directory used to load/save a file. This will be the default in 
-	// future dialogs
-	std::string _lastDir;
+	// The mapping between type and last viewed path
+	// like "map" => "/usr/local/game/doom3/maps/"
+	// and "prefab" => "~/.doom3/darkmod/prefabs/"
+	typedef std::map<std::string, std::string> PathMap;
+	PathMap _lastDirs;
 
 private:
 
@@ -30,6 +33,8 @@ private:
 	std::string selectFile(bool open, const std::string& title, const std::string& type);
 
 public:
+	// Constructor, loads the default map and prefab paths
+	MapFileManager();
 
 	/* STATIC INTERFACE */
 

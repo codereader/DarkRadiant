@@ -12,6 +12,12 @@
 
 namespace map
 {
+	
+MapFileManager::MapFileManager() {
+	// Load the default values
+	_lastDirs["map"] = GlobalRegistry().get(RKEY_MAP_PATH);
+	_lastDirs["prefab"] = GlobalRegistry().get(RKEY_PREFAB_PATH);
+}
 
 // Instance owner method
 MapFileManager& MapFileManager::getInstance() {
@@ -25,13 +31,9 @@ std::string MapFileManager::selectFile(bool open,
 {
 	// Check, if the lastdir contains at least anything and load
 	// the default map path if it's empty
-	if (_lastDir.empty()) {
-		_lastDir = GlobalRegistry().get(RKEY_MAP_PATH);
-	}
-	
-	// Override the settings for the prefabs
-	if (type == "prefab") {
-		_lastDir = GlobalRegistry().get(RKEY_PREFAB_PATH);
+	if (_lastDirs.find(type) == _lastDirs.end()) {
+		// Default to the map path, if the type is not yet associated
+		_lastDirs[type] = GlobalRegistry().get(RKEY_MAP_PATH);
 	}
 	
 	// Display a file chooser dialog to get a new path
@@ -39,7 +41,7 @@ std::string MapFileManager::selectFile(bool open,
 		os::standardPath(file_dialog(GTK_WIDGET(MainFrame_getWindow()), 
 								     open, 
 									 title, 
-									 _lastDir, 
+									 _lastDirs[type], 
 									 type.c_str()));
 
 	// Get the first extension from the list of possible patterns (e.g. *.pfb or *.map)
@@ -49,8 +51,9 @@ std::string MapFileManager::selectFile(bool open,
 	boost::algorithm::erase_all(defaultExt, "*");
 
 	// If a filename was chosen, update the last path
-	if (!filePath.empty())
-		_lastDir = filePath.substr(0, filePath.rfind("/"));
+	if (!filePath.empty()) {
+		_lastDirs[type] = filePath.substr(0, filePath.rfind("/"));
+	}
 		
 	// Return the chosen file. If this is a save operation and the chosen path
 	// does not end in the default extension (".map"), add it here.
@@ -60,8 +63,7 @@ std::string MapFileManager::selectFile(bool open,
 	{
 		return filePath + defaultExt;
 	}
-	else
-	{
+	else {
 		return filePath;
 	}
 }
