@@ -76,6 +76,13 @@ const char* file_dialog_show(GtkWidget* parent,
 	gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
 	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER_ON_PARENT);
 
+	// Set the default size of the window
+	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(dialog));
+	gint w = gdk_screen_get_width(scr);
+	gint h = gdk_screen_get_height(scr);
+	
+	gtk_window_set_default_size(GTK_WINDOW(dialog), w/2, 2*h/3);
+
 	// Convert path to standard and set the folder in the dialog
 	std::string sPath = os::standardPath(path);
     gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), 
