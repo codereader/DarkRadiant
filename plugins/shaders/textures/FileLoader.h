@@ -21,7 +21,6 @@ namespace shaders {
  * covers a wide range of file formats.
  */
 class FileLoader : 
-	public ImageConstructor,
 	public TextureConstructor
 {
 	// The list of ImageLoader modules 
@@ -34,7 +33,7 @@ public:
 	// The default FileLoader constructor (uses the GDK image loader)
 	FileLoader(const std::string& filename, const std::string moduleNames = "GDK");
 	
-	// The actual construct() method as needed by the TexturesCache
+	// The actual construct() method as needed by the GLTextureManager
 	Image* construct();
 };
 

@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "igl.h"
 
 #include "iimage.h"
-#include <boost/shared_ptr.hpp>
+#include "ishaders.h"
 
 typedef Vector3 Colour3;
 typedef unsigned int GLuint;
@@ -40,8 +40,6 @@ enum ProjectionAxis {
 	eProjectionAxisZ = 2,
 };
 
-typedef boost::shared_ptr<ImageConstructor> ImageConstructorPtr;
-
 // describes a GL texture
 class Texture
 {
@@ -50,7 +48,7 @@ public:
 	const std::string name;
 	
 	// The constructor object to retrieve the pixel data for this texture
-	ImageConstructorPtr constructor;
+	TextureConstructorPtr constructor;
 	
 	// Texture Dimensions
 	std::size_t width, height;
