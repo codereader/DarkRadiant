@@ -62,6 +62,8 @@ BlendFunc evaluateBlendFunc(const BlendFuncExpression& blendFunc) {
 	return BlendFunc(BLEND_ONE, BLEND_ZERO);
 }
 
+namespace shaders {
+
 /* Constructor. Sets the name and the ShaderDefinition to use.
  */
 CShader::CShader(const std::string& name, const ShaderDefinition& definition) : 
@@ -371,3 +373,5 @@ bool CShader::isFogLight() const {
 }
 
 bool CShader::m_lightingEnabled = false;
+
+} // namespace shaders

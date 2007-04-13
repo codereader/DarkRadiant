@@ -5,6 +5,8 @@
 #include "generic/callback.h"
 #include <boost/shared_ptr.hpp>
 
+namespace shaders {
+
 class CShader : 
 	public IShader 
 {
@@ -158,5 +160,7 @@ public:
 }; // class CShader
 
 typedef boost::shared_ptr<CShader> ShaderPtr;
+
+} // namespace shaders
 
 #endif /*CSHADER_H_*/

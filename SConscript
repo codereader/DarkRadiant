@@ -181,7 +181,8 @@ shaders_lst = build_list('plugins/shaders',
 						 textures/GLTextureManager.cpp \
 						 textures/TextureManipulator.cpp \
 						 textures/DefaultConstructor.cpp \
-						 textures/FileLoader.cpp')
+						 textures/FileLoader.cpp \
+						 textures/ImageLoaderManager.cpp')
 shaders_env.useGlib2()
 shaders_env.Append(LIBS = ['cmdlib', 'xmlutil'])
 shaders_env.Append(LIBPATH = ['libs'])
