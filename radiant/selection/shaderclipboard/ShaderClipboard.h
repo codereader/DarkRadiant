@@ -25,6 +25,10 @@ public:
 	/** greebo: Sets the source face to the given <sourceFace>
 	 */
 	void setSource(Face& sourceFace);
+	
+	/** greebo: Sets the source face to the given <shader>
+	 */
+	void setSource(std::string shader);
 
 	/** greebo: Retrieves the current source Texturable
 	 */

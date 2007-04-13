@@ -23,6 +23,7 @@
 #include <ext/hash_map>
 
 #include "selection/algorithm/Shader.h"
+#include "selection/shaderclipboard/ShaderClipboard.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/functional/hash/hash.hpp>
@@ -354,6 +355,11 @@ void MediaBrowser::_onSelectionChanged(GtkWidget* widget, MediaBrowser* self) {
 	// Update the preview if a texture is selected
 	if (!self->isDirectorySelected()) {
 		self->_preview.setTexture(self->getSelectedName());
+		GlobalShaderClipboard().setSource(self->getSelectedName());
+	}
+	else {
+		// Nothing selected, clear the clipboard
+		GlobalShaderClipboard().clear();
 	}
 }
 
