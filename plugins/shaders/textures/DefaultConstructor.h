@@ -17,7 +17,6 @@ namespace shaders {
  * and searches for the file formats defined in doom3.game. 
  */
 class DefaultConstructor : 
-	public ImageConstructor,
 	public TextureConstructor
 {
 	// The ImageLoader references 
@@ -30,7 +29,7 @@ public:
 	// Constructor
 	DefaultConstructor(const std::string& filename);
 	
-	// The actual construct() command as needed by the TexturesCache
+	// The actual construct() command as needed by the GLTextureManager
 	Image* construct();
 
 }; // class DefaultConstructor
