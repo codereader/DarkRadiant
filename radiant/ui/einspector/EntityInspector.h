@@ -92,8 +92,7 @@ private:
 
     static void callbackTreeSelectionChanged(GtkWidget* widget, EntityInspector* self);
 
-	static void _onKeyEntryActivate(GtkWidget*, EntityInspector*);
-	static void _onValEntryActivate(GtkWidget*, EntityInspector*);
+	static void _onEntryActivate(GtkWidget*, EntityInspector*);
 	static void _onSetProperty(GtkWidget*, EntityInspector*);    
 
 	static bool _onPopupMenu(GtkWidget*, GdkEventButton*, EntityInspector*);

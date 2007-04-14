@@ -191,8 +191,10 @@ GtkWidget* EntityInspector::createTreeViewPane() {
 	_valEntry = gtk_entry_new();
 
 	GtkWidget* setButton = gtk_button_new();
-	gtk_container_add(GTK_CONTAINER(setButton), 
-					  gtk_image_new_from_stock(GTK_STOCK_APPLY, GTK_ICON_SIZE_MENU));
+	gtk_container_add(
+		GTK_CONTAINER(setButton), 
+		gtk_image_new_from_stock(GTK_STOCK_APPLY, GTK_ICON_SIZE_MENU)
+	);
 	GtkWidget* setButtonBox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(setButtonBox), _valEntry, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(setButtonBox), setButton, FALSE, FALSE, 0);
@@ -202,9 +204,12 @@ GtkWidget* EntityInspector::createTreeViewPane() {
     gtk_box_pack_start(GTK_BOX(vbx), gtk_hseparator_new(), FALSE, FALSE, 3);
     
     // Signals for entry boxes
-    g_signal_connect(G_OBJECT(setButton), "clicked", G_CALLBACK(_onSetProperty), this);
-    g_signal_connect(G_OBJECT(_keyEntry), "activate", G_CALLBACK(_onKeyEntryActivate), this);
-    g_signal_connect(G_OBJECT(_valEntry), "activate", G_CALLBACK(_onValEntryActivate), this);
+    g_signal_connect(
+    	G_OBJECT(setButton), "clicked", G_CALLBACK(_onSetProperty), this);
+    g_signal_connect(
+    	G_OBJECT(_keyEntry), "activate", G_CALLBACK(_onEntryActivate), this);
+    g_signal_connect(
+    	G_OBJECT(_valEntry), "activate", G_CALLBACK(_onEntryActivate), this);
     
     return vbx;    
 }
@@ -336,12 +341,8 @@ void EntityInspector::_onSetProperty(GtkWidget* button, EntityInspector* self) {
 	self->setPropertyFromEntries();
 }
 
-void EntityInspector::_onKeyEntryActivate(GtkWidget* w, EntityInspector* self) {
-	// Move to value entry
-	gtk_widget_grab_focus(self->_valEntry);	
-}
-
-void EntityInspector::_onValEntryActivate(GtkWidget* w, EntityInspector* self) {
+// ENTER key in entry boxes
+void EntityInspector::_onEntryActivate(GtkWidget* w, EntityInspector* self) {
 	// Set property and move back to key entry
 	self->setPropertyFromEntries();
 	gtk_widget_grab_focus(self->_keyEntry);
