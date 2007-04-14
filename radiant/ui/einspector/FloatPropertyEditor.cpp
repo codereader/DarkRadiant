@@ -1,6 +1,7 @@
 #include "FloatPropertyEditor.h"
 
 #include "ientity.h"
+#include "gtkutil/RightAlignment.h"
 
 #include <iostream>
 #include <vector>
@@ -22,6 +23,8 @@ FloatPropertyEditor::FloatPropertyEditor(Entity* entity,
   _entity(entity),
   _key(key)
 {
+	gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
+
 	// Split the options string to get min and max values
 	std::vector<std::string> values;
 	boost::algorithm::split(values, options, boost::algorithm::is_any_of(","));
@@ -53,6 +56,24 @@ FloatPropertyEditor::FloatPropertyEditor(Entity* entity,
 	catch (boost::bad_lexical_cast e) { }
 	
 	gtk_range_set_value(GTK_RANGE(_scale), value);
+	
+	// Create and pack in the Apply button
+	GtkWidget* applyButton = gtk_button_new_from_stock(GTK_STOCK_APPLY);
+	g_signal_connect(
+		G_OBJECT(applyButton), "clicked", G_CALLBACK(_onApply), this
+	);
+	gtk_box_pack_end(GTK_BOX(_widget), gtkutil::RightAlignment(applyButton),
+					   FALSE, FALSE, 0);
+}
+
+/* GTK CALLBACKS */
+
+void FloatPropertyEditor::_onApply(GtkWidget* w, FloatPropertyEditor* self) {
+	float value = gtk_range_get_value(GTK_RANGE(self->_scale));
+	self->_entity->setKeyValue(
+		self->_key, 
+		boost::lexical_cast<std::string>(value)
+	);
 }
 
 }

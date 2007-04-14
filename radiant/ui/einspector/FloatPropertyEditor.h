@@ -28,6 +28,11 @@ class FloatPropertyEditor
 	// Name of key
 	std::string _key;
 	
+private:
+
+	/* GTK CALLBACKS */
+	static void _onApply(GtkWidget*, FloatPropertyEditor*);
+	
 public:
 
 	/**
