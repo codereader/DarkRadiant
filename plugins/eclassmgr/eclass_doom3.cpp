@@ -278,7 +278,10 @@ IEntityClassPtr EntityClassDoom3_findOrInsert(const std::string& name,
     }
 
     // Otherwise insert the new EntityClass
-    IEntityClassPtr e = eclass::Doom3EntityClass::create(lName, has_brushes);
+    //IEntityClassPtr e = eclass::Doom3EntityClass::create(lName, has_brushes);
+    // greebo: Changed fallback behaviour when unknown entites are encountered to TRUE
+    // so that brushes of unknown entites don't get lost (issue #240)
+    IEntityClassPtr e = eclass::Doom3EntityClass::create(lName, true);
     IEntityClassPtr inserted = EntityClassDoom3_insertUnique(e);
 
     return inserted;
