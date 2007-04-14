@@ -104,13 +104,23 @@
 		<property name="nodiffuse" category="Light" type="boolean" />
 		<property name="noshadows" category="Light" type="boolean" />
 		<property name="nospecular" category="Light" type="boolean" />
-		<property name="texture" category="Light" type="texture" options="lights,fogs" />
+		<property 
+			name="texture" 
+			category="Light" 
+			type="texture" 
+			options="lights,fogs" 
+		/>
 		<property name="extinguished" category="Light" type="boolean" />
 		<property name="model" category="Model" type="text" />
 		<property name="skin" category="Model" type="skin" />
 		<property name="noshadows" category="Model" type="boolean" />
 		<property name="solid" category="Model" type="boolean" />
-		<property name="angle" category="AI" type="text" />
+		<property 
+			name="angle" 
+			category="AI" 
+			type="float" 
+			options="0,360"
+		/>
 		<property name="anim" category="AI" type="text" />
 		<property name="neverDormant" category="AI" type="boolean" />
 		<property name="patrol" category="AI" type="boolean" />
