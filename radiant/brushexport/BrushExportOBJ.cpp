@@ -9,7 +9,9 @@ void export_selected(GtkWindow* mainWindow) {
 	// Obtain the path from a File Dialog Window
 	std::string path = file_dialog(GTK_WIDGET(mainWindow), 
 								   false, 
-								   "Save as Obj");
+								   "Save as Obj",
+								   "",
+								   ".obj");
 	
 	// Open the file
 	TextFileOutputStream file(path.c_str());

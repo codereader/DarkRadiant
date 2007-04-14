@@ -36,36 +36,27 @@ std::string MapFileManager::selectFile(bool open,
 		_lastDirs[type] = GlobalRegistry().get(RKEY_MAP_PATH);
 	}
 	
-	// Display a file chooser dialog to get a new path
-	std::string filePath = 
-		os::standardPath(file_dialog(GTK_WIDGET(MainFrame_getWindow()), 
-								     open, 
-									 title, 
-									 _lastDirs[type], 
-									 type.c_str()));
-
 	// Get the first extension from the list of possible patterns (e.g. *.pfb or *.map)
 	ModuleTypeListPtr typeList = GlobalFiletypes().getTypesFor(type);
 	std::string defaultExt = typeList->begin()->filePattern.pattern;
 	// remove the * from the pattern "*.pfb" >>> ".pfb"
 	boost::algorithm::erase_all(defaultExt, "*");
+	
+	// Display a file chooser dialog to get a new path
+	std::string filePath = 
+		file_dialog(GTK_WIDGET(MainFrame_getWindow()), 
+				     open, 
+					 title, 
+					 _lastDirs[type], 
+					 type,
+					 defaultExt);
 
 	// If a filename was chosen, update the last path
 	if (!filePath.empty()) {
 		_lastDirs[type] = filePath.substr(0, filePath.rfind("/"));
 	}
-		
-	// Return the chosen file. If this is a save operation and the chosen path
-	// does not end in the default extension (".map"), add it here.
-	if (!open												// save operation 
-		&& !filePath.empty() 								// valid filename
-		&& !boost::algorithm::iends_with(filePath, defaultExt)) // no map extension
-	{
-		return filePath + defaultExt;
-	}
-	else {
-		return filePath;
-	}
+	
+	return filePath;
 }
 
 /* PUBLIC INTERFACE METHODS */
