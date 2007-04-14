@@ -1,5 +1,7 @@
 #include "FloatPropertyEditor.h"
 
+#include "ientity.h"
+
 #include <iostream>
 #include <vector>
 
@@ -40,9 +42,17 @@ FloatPropertyEditor::FloatPropertyEditor(Entity* entity,
 	}
 	
 	// Create the HScale and pack into widget
-	GtkWidget* scale = gtk_hscale_new_with_range(min, max, 1.0);
-	gtk_box_pack_start(GTK_BOX(_widget), scale, FALSE, FALSE, 0);
+	_scale = gtk_hscale_new_with_range(min, max, 1.0);
+	gtk_box_pack_start(GTK_BOX(_widget), _scale, FALSE, FALSE, 0);
 	
+	// Set the initial value if the entity has one
+	float value = 0;
+	try {
+		value = boost::lexical_cast<float>(_entity->getKeyValue(_key));
+	}
+	catch (boost::bad_lexical_cast e) { }
+	
+	gtk_range_set_value(GTK_RANGE(_scale), value);
 }
 
 }

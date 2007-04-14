@@ -19,6 +19,9 @@ class FloatPropertyEditor
 	// Main widget
 	GtkWidget* _widget;
 	
+	// Slider widget
+	GtkWidget* _scale;
+	
 	// Entity to edit
 	Entity* _entity;
 	
