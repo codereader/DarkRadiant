@@ -23,17 +23,25 @@ FloatPropertyEditor::FloatPropertyEditor(Entity* entity,
 	// Split the options string to get min and max values
 	std::vector<std::string> values;
 	boost::algorithm::split(values, options, boost::algorithm::is_any_of(","));
-	
-	if (values.size() == 2) {
+	if (values.size() != 2)
+		return;
 		
-		// Attempt to cast to min and max floats
-		float min = boost::lexical_cast<float>(values[0]);
-		float max = boost::lexical_cast<float>(values[1]);
-		
-		// Create the HScale and pack into widget
-		GtkWidget* scale = gtk_hscale_new_with_range(min, max, 1.0);
-		gtk_box_pack_start(GTK_BOX(_widget), scale, FALSE, FALSE, 0);
+	// Attempt to cast to min and max floats
+	float min, max;
+	try {
+		min = boost::lexical_cast<float>(values[0]);
+		max = boost::lexical_cast<float>(values[1]);
 	}
+	catch (boost::bad_lexical_cast e) {
+		std::cerr 
+			<< "[radiant] FloatPropertyEditor failed to parse options string "
+			<< "\"" << options << "\"" << std::endl;
+		return;		
+	}
+	
+	// Create the HScale and pack into widget
+	GtkWidget* scale = gtk_hscale_new_with_range(min, max, 1.0);
+	gtk_box_pack_start(GTK_BOX(_widget), scale, FALSE, FALSE, 0);
 	
 }
 
