@@ -1,6 +1,8 @@
 #include "BrushExportOBJ.h"
 #include "gtkutil/filechooser.h"
 #include "gtkutil/dialog.h"
+#include "iregistry.h"
+#include "environment.h"
 
 /*	This exports the current selection into a WaveFrontOBJ file
  */
@@ -9,9 +11,10 @@ void export_selected(GtkWindow* mainWindow) {
 	// Obtain the path from a File Dialog Window
 	std::string path = file_dialog(GTK_WIDGET(mainWindow), 
 								   false, 
-								   "Save as Obj",
-								   "",
-								   ".obj");
+								   "Save as Obj",	// title
+								   GlobalRegistry().get(RKEY_MAP_PATH),		// path
+								   "", 		// pattern
+								   ".obj"); // default extension
 	
 	// Open the file
 	TextFileOutputStream file(path.c_str());
