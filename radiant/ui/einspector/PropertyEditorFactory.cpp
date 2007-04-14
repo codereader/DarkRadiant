@@ -7,6 +7,7 @@
 #include "TexturePropertyEditor.h"
 #include "SkinPropertyEditor.h"
 #include "SoundPropertyEditor.h"
+#include "FloatPropertyEditor.h"
 
 #include "gtkutil/image.h"
 
@@ -25,10 +26,10 @@ void PropertyEditorFactory::registerClasses() {
 	_peMap["texture"] = PropertyEditorPtr(new TexturePropertyEditor());
 	_peMap["skin"] = PropertyEditorPtr(new SkinPropertyEditor());
 	_peMap["sound"] = PropertyEditorPtr(new SoundPropertyEditor());
+	_peMap["float"] = PropertyEditorPtr(new FloatPropertyEditor());
 }
 
 // Create a PropertyEditor from the given name.
-
 PropertyEditorPtr PropertyEditorFactory::create(const std::string& className,
 											  	Entity* entity,
 											  	const std::string& key,
