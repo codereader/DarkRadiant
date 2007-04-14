@@ -287,6 +287,8 @@ void RegistryTree::importFromFile(const std::string& importFilePath,
 /*	Saves a specified path to the file <filename>. Use "-" if you want to write to std::out
  */
 void RegistryTree::exportToFile(const std::string& key, const std::string& filename) {
+	if (key.empty()) return;
+	
 	// Add the toplevel node to the key if required
 	std::string fullKey = prepareKey(key);
 	
@@ -297,9 +299,23 @@ void RegistryTree::exportToFile(const std::string& key, const std::string& filen
 		// Create a new XML document
 		xmlDocPtr targetDoc = xmlNewDoc(xmlCharStrdup("1.0"));
 		
-		// Copy the node from the XMLRegistry and set it as root node of the newly created document
-		xmlNodePtr exportNode = xmlCopyNode(result[0].getNodePtr(), 1);
-		xmlDocSetRootElement(targetDoc, exportNode);
+		std::string keyName = fullKey.substr(fullKey.rfind("/") + 1);
+		
+		// Add an empty toplevel node with the given key (leaf) name
+		targetDoc->children = xmlNewDocNode(targetDoc, NULL, 
+  											xmlCharStrdup(keyName.c_str()), 
+  											xmlCharStrdup(""));
+		
+		// Select all the child nodes of the export key
+		xml::NodeList children = _tree.findXPath(fullKey + "/*");
+		
+		// Copy the child nodes one by one
+		for (unsigned int i = 0; i < children.size(); i++) {
+			// Copy the child node
+			xmlNodePtr exportNode = xmlCopyNode(children[i].getNodePtr(), 1);
+			// Add this node to the parent node
+			xmlAddChild(targetDoc->children, exportNode);
+		}
 		
 		// Save the whole document to the specified filename
 		xmlSaveFormatFile(filename.c_str(), targetDoc, 1);
