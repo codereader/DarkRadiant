@@ -36,7 +36,8 @@ std::string file_dialog(GtkWidget *parent,
 						bool open, 
 						const std::string& title, 
 						const std::string& path = "", 
-						const std::string& pattern = "");
+						const std::string& pattern = "",
+						const std::string& defaultExt = "");
 
 
 /// \brief Prompts the user to browse for a directory.
