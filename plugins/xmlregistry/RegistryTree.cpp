@@ -104,7 +104,7 @@ xml::Node RegistryTree::createKeyWithName(const std::string& path,
 	if (createdNode != NULL) {
 		// Create an xml::Node out of the xmlNodePtr createdNode and set the name attribute
 		xml::Node node(createdNode);
-		node.addText("\n");
+		//node.addText("createKeyWithName\n");
 		node.setAttributeValue("name", name);
 		
 		// Return the newly created node
@@ -157,7 +157,7 @@ xml::Node RegistryTree::createKey(const std::string& key) {
 				// Node not found, insert it and store the newly created node as new insertPoint
 				createdNode = xmlNewChild(insertPoint, NULL, xmlCharStrdup(parts[i].c_str()), xmlCharStrdup(""));
 				insertPoint = createdNode;
-				xml::Node(createdNode).addText("\n");
+				xml::Node(createdNode).addText(" ");
 			}
 		}
 		
