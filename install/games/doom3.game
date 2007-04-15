@@ -213,7 +213,9 @@
 			<property name="random_effects" classes="R" />
 		</properties>
 		<customStimStorageEClass value="worldspawn" />
+		<customStimKeyPrefix value="editor_dr_stim_" />
 		<stimResponsePrefix value="sr_" />
+		<lowestCustomStimId value="1000" />
 		<responseEffectPrefix value="effect_" />
 		<selfEntity value="_SELF" />
 	</stimResponseSystem>
