@@ -808,4 +808,41 @@ namespace std
   }
 }
 
+/** Walker to locate an Entity in the scenegraph with a specific classname.
+ */
+class EntityFindByClassnameWalker : 
+	public scene::Graph::Walker
+{
+	// Name to search for
+	std::string _name;
+	
+	// Reference to a pointer to modify with the result 
+	mutable Entity* _entity;
+	
+public:
+	// Constructor
+	EntityFindByClassnameWalker(const std::string& name) : 
+		_name(name),
+		_entity(NULL)
+	{}
+	
+	Entity* getEntity() {
+		return _entity;
+	}
+	
+	// Pre-descent callback
+	bool pre(const scene::Path& path, scene::Instance& instance) const {
+		if (_entity == NULL) {
+			// Entity not found yet
+			
+			Entity* entity = Node_getEntity(path.top());
+			
+			if(entity != NULL  && _name == entity->getKeyValue("classname")) {
+				_entity = entity;
+			}
+		}
+		return true;
+	}
+};
+
 #endif
