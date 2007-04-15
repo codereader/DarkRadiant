@@ -109,12 +109,12 @@ private:
 	
 public:
 
-	/** Display the Model Selector instance, constructing it on first use, and return
-	 * the VFS path of the model selected by the user. When the ModelSelector is displayed
-	 * it will enter a recursive gtk_main loop, blocking execution of the calling
-	 * function until destroyed.
+	/** 
+	 * Display the Model Selector instance, constructing it on first use, and 
+	 * return the VFS path of the model selected by the user. When the 
+	 * ModelSelector is displayed it will enter a recursive gtk_main loop, 
+	 * blocking execution of the calling function until destroyed.
 	 */
-	 
 	static ModelAndSkin chooseModel();
 	
 };
