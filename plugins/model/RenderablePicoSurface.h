@@ -65,10 +65,16 @@ private:
 
 public:
 
-	/** Constructor. Accepts a picoSurface_t struct and the file extension to determine
+	/** 
+	 * Constructor. Accepts a picoSurface_t struct and the file extension to determine
 	 * how to assign materials.
 	 */
 	RenderablePicoSurface(picoSurface_t* surf, const std::string& fExt);
+	
+	/**
+	 * Destructor.
+	 */
+	~RenderablePicoSurface();
 	
 	/**
 	 * Front-end render function used by the main renderer.

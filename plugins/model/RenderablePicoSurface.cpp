@@ -82,6 +82,12 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 	createDisplayLists();
 }
 
+// Destructor. Release the GL display lists.
+RenderablePicoSurface::~RenderablePicoSurface() {
+	glDeleteLists(_normalList, 1);
+	glDeleteLists(_lightingList, 1);	
+}
+
 // Tangent calculation
 void RenderablePicoSurface::calculateTangents() {
 	
