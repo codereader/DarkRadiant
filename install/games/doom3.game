@@ -111,7 +111,11 @@
 			options="lights,fogs" 
 		/>
 		<property name="extinguished" category="Light" type="boolean" />
-		<property name="model" category="Model" type="text" />
+		<property 
+			name="model" 
+			category="Model" 
+			type="model" 
+		/>
 		<property name="skin" category="Model" type="skin" />
 		<property name="noshadows" category="Model" type="boolean" />
 		<property name="solid" category="Model" type="boolean" />
