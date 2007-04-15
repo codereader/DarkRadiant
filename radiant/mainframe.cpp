@@ -267,6 +267,10 @@ void Radiant_Shutdown() {
 	GlobalMRU().saveRecentFiles();
 	
 	if (GlobalRegistry().get(RKEY_SKIP_REGISTRY_SAVE).empty()) {
+		// Replace the version tag and set it to the current DarkRadiant version
+		GlobalRegistry().deleteXPath("user//version");
+		GlobalRegistry().set("user/version", RADIANT_VERSION);
+		
 		// Export the colour schemes and remove them from the registry
 		GlobalRegistry().exportToFile("user/ui/colourschemes", settingsPath + "colours.xml");
 		GlobalRegistry().deleteXPath("user/ui/colourschemes");
