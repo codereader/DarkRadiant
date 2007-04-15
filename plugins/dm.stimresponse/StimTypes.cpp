@@ -58,7 +58,8 @@ StimTypes::StimTypes() {
 			stimNodes[i].getAttributeValue("name"),
 			stimNodes[i].getAttributeValue("caption"),
 			stimNodes[i].getAttributeValue("description"),
-			stimNodes[i].getAttributeValue("icon")
+			stimNodes[i].getAttributeValue("icon"),
+			false	// non-custom stim
 		);
 	}
 	
@@ -76,13 +77,15 @@ void StimTypes::add(int id,
 					const std::string& name,
 					const std::string& caption,
 					const std::string& description,
-					const std::string& icon)
+					const std::string& icon,
+					bool custom)
 {
 	StimType newStimType;
 	newStimType.name = name;
 	newStimType.caption = caption;
 	newStimType.description = description;
 	newStimType.icon = icon;
+	newStimType.custom = custom;
 	
 	// Add the stim to the map
 	_stims[id] = newStimType;
@@ -104,7 +107,8 @@ void StimTypes::visit(const std::string& key, const std::string& value) {
 	
 	if (boost::algorithm::starts_with(key, prefix)) {
 		// Extract the stim name from the key (the part after the prefix) 
-		int id = strToInt(key.substr(prefix.size()));
+		std::string idStr = key.substr(prefix.size());
+		int id = strToInt(idStr);
 		std::string stimName= value;
 		
 		if (id < lowestCustomId) {
@@ -114,10 +118,11 @@ void StimTypes::visit(const std::string& key, const std::string& value) {
 		
 		// Add this as new stim type
 		add(id,
-			stimName,
+			idStr,	// The name is something the id in string format: e.g. "1002"
 			stimName,
 			"Custom Stim",
-			ICON_CUSTOM_STIM
+			ICON_CUSTOM_STIM,
+			true	// custom stim
 		);
 	}
 }

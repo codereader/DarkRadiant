@@ -16,6 +16,7 @@ struct StimType {
 	std::string caption;		// Nice format ("Fire")
 	std::string description;	// Unused at the moment
 	std::string icon;			// The icon to display
+	bool custom;				// is TRUE for custom stims
 };
 typedef std::map<int, StimType> StimTypeMap;
 
@@ -73,7 +74,8 @@ private:
 						const std::string& name,
 						const std::string& caption,
 						const std::string& description,
-						const std::string& icon);
+						const std::string& icon,
+						bool custom);
 };
 
 
