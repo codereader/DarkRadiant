@@ -13,7 +13,9 @@ namespace model {
 RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf, 
 											 const std::string& fExt)
 : _originalShaderName(""),
-  _mappedShaderName("")
+  _mappedShaderName(""),
+  _normalList(0),
+  _lightingList(0)
 {
 	// Get the shader from the picomodel struct. If this is a LWO model, use
 	// the material name to select the shader, while for an ASE model the
@@ -76,6 +78,8 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 	// Calculate the tangent and bitangent vectors
 	calculateTangents();
 	
+	// Construct the DLs
+	createDisplayLists();
 }
 
 // Tangent calculation
@@ -117,40 +121,60 @@ void RenderablePicoSurface::submitRenderables(Renderer& rend,
 // Back-end render function
 void RenderablePicoSurface::render(RenderStateFlags flags) const {
 
-	// Use Vertex Arrays to submit data to the GL. We will assume that it is
-	// acceptable to perform pointer arithmetic over the elements of a 
-	// std::vector, starting from the address of element 0.
-	
-    if(flags & RENDER_BUMP) {
-		// Bump mode, we are using an ARB shader so set the correct parameters
-        glVertexAttribPointerARB(
-        	ATTR_TEXCOORD, 2, GL_FLOAT, 0, 
-        	sizeof(ArbitraryMeshVertex), &_vertices[0].texcoord);
-        glVertexAttribPointerARB(
-        	ATTR_TANGENT, 3, GL_FLOAT, 0, 
-        	sizeof(ArbitraryMeshVertex), &_vertices[0].tangent);
-        glVertexAttribPointerARB(
-        	ATTR_BITANGENT, 3, GL_FLOAT, 0, 
-        	sizeof(ArbitraryMeshVertex), &_vertices[0].bitangent);
-		glVertexAttribPointerARB(
-        	ATTR_NORMAL, 3, GL_FLOAT, 0, 
-        	sizeof(ArbitraryMeshVertex), &_vertices[0].normal);
-    }
-    else {
-    	// Standard GL calls
-		glNormalPointer(
-			GL_FLOAT, sizeof(ArbitraryMeshVertex), &_vertices[0].normal);
-		glTexCoordPointer(
-			2, GL_FLOAT, sizeof(ArbitraryMeshVertex), &_vertices[0].texcoord);
+	// Invoke appropriate display list
+	if (flags & RENDER_BUMP) {
+		glCallList(_lightingList);
 	}
+	else {
+		glCallList(_normalList);
+	}
+}
 
-	// Vertex pointer is invariant over bump/nobump render modes
-	glVertexPointer(
-		3, GL_FLOAT, sizeof(ArbitraryMeshVertex), &_vertices[0].vertex);
+// Construct the two display lists
+void RenderablePicoSurface::createDisplayLists() {
+
+	// Generate the list for lighting mode
+	_lightingList = glGenLists(1);
+	glNewList(_lightingList, GL_COMPILE);
+
+	glBegin(GL_TRIANGLES);
+	for (Indices::const_iterator i = _indices.begin();
+		 i != _indices.end();
+		 ++i)
+	{
+		// Get the vertex for this index
+		ArbitraryMeshVertex& v = _vertices[*i];
+
+		// Submit the vertex attributes and coordinate
+		glVertexAttrib2fvARB(ATTR_TEXCOORD, v.texcoord);
+		glVertexAttrib3fvARB(ATTR_TANGENT, v.tangent);
+		glVertexAttrib3fvARB(ATTR_BITANGENT, v.bitangent);
+		glVertexAttrib3fvARB(ATTR_NORMAL, v.normal);		
+		glVertex3fv(v.vertex);	
+	}
+	glEnd();
+	glEndList();
+
+	// Generate the list for flat-shaded (unlit) mode
+	_normalList = glGenLists(1);
+	glNewList(_normalList, GL_COMPILE);
 	
-	// Draw the elements
-	glDrawElements(GL_TRIANGLES, _nIndices, GL_UNSIGNED_INT, &_indices[0]);
-
+	glBegin(GL_TRIANGLES);
+	for (Indices::const_iterator i = _indices.begin();
+		 i != _indices.end();
+		 ++i)
+	{
+		// Get the vertex for this index
+		ArbitraryMeshVertex& v = _vertices[*i];
+		
+		// Submit attributes
+		glNormal3fv(v.normal);
+		glTexCoord2fv(v.texcoord);
+		glVertex3fv(v.vertex);	
+	}
+	glEnd();
+	
+	glEndList();
 }
 
 // Apply a skin to this surface

@@ -61,10 +61,6 @@ void RenderablePicoModel::submitRenderables(Renderer& rend,
 // OpenGL (back-end) render function
 void RenderablePicoModel::render(RenderStateFlags flags) const {
 	
-	glEnable(GL_VERTEX_ARRAY);
-	glEnable(GL_NORMAL_ARRAY);
-	glEnable(GL_TEXTURE_COORD_ARRAY);
-	
 	// Render options
 	if (flags & RENDER_TEXTURE)
 		glEnable(GL_TEXTURE_2D);

@@ -26,8 +26,8 @@ class RenderablePicoSurface
 : public OpenGLRenderable,
   public Cullable
 {
-	// Name of the material this surface is using, both originally and after a skin
-	// remap.
+	// Name of the material this surface is using, both originally and after a 
+	// skin remap.
 	std::string _originalShaderName;
 	std::string _mappedShaderName;
 	
@@ -50,11 +50,18 @@ class RenderablePicoSurface
 
 	// The AABB containing this surface, in local object space.
 	AABB _localAABB;
+
+	// The GL display lists for this surface's geometry
+	GLuint _normalList;
+	GLuint _lightingList;
 	
 private:
 
 	// Calculate tangent and bitangent vectors for all vertices.
 	void calculateTangents();
+	
+	// Create the display lists
+	void createDisplayLists();
 
 public:
 
