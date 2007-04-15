@@ -1523,7 +1523,7 @@ void XYWnd::saveStateToNode(xml::Node& rootNode) {
 			_windowPosition.readPosition();
 			_windowPosition.saveToNode(viewNode);
 			
-			viewNode.addText("\n\t");
+			viewNode.addText(" ");
 		}
 	}
 }
