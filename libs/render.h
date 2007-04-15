@@ -527,9 +527,10 @@ inline Vector3& normal3f_to_vector3(Normal3f& normal)
 /// \brief A 2-float texture-coordinate set.
 struct TexCoord2f : public Vector2
 {
-  TexCoord2f()
-  {
-  }
+	/**
+	 * Default constructor.
+	 */
+	TexCoord2f() { }
 
 	/** Construct a TexCoord2f from 2 float values.
 	 */
@@ -547,7 +548,7 @@ struct TexCoord2f : public Vector2
 	TexCoord2f(const TexCoord2f& other) 
 		: Vector2(other.x(), other.y())
 	{}
-
+	
   float& s()
   {
     return x();
