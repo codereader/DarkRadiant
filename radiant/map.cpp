@@ -59,6 +59,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "instancelib.h"
 #include "traverselib.h"
 #include "maplib.h"
+#include "entitylib.h"
 #include "cmdlib.h"
 #include "stream/textfilestream.h"
 #include "os/path.h"
@@ -601,47 +602,16 @@ void Map_Free()
 
 }
 
-/** Walker to locate an Entity in the scenegraph with a specific classname.
- */
-class EntityFindByClassname
-: public scene::Graph::Walker
-{
-	// Name to search for
-	std::string _name;
-	
-	// Reference to a pointer to modify with the result (TODO: fix this)
-	Entity*& m_entity;
-	
-public:
-
-	// Constructor
-	EntityFindByClassname(const std::string& name, Entity*& entity) 
-	: _name(name), m_entity(entity)
-	{
-		m_entity = 0;
-	}
-	
-	// Pre-descent callback
-	bool pre(const scene::Path& path, scene::Instance& instance) const
-	{
-		if(m_entity == 0) {
-			Entity* entity = Node_getEntity(path.top());
-			if(entity != 0
-			   && _name == entity->getKeyValue("classname"))
-			{
-				m_entity = entity;
-			}
-		}
-		return true;
-	}
-};
-
 /* greebo: Finds an entity with the given classname
  */
 Entity* Scene_FindEntityByClass(const std::string& className) {
-	Entity* entity;
-	GlobalSceneGraph().traverse(EntityFindByClassname(className, entity));
-	return entity;
+	// Instantiate a walker to find the entity
+	EntityFindByClassnameWalker walker(className);
+	
+	// Walk the scenegraph
+	GlobalSceneGraph().traverse(walker);
+	
+	return walker.getEntity();
 }
 
 void Map_RemoveSavedPosition() {

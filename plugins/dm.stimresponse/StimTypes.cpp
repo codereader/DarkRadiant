@@ -4,10 +4,14 @@
 #include "string/string.h"
 #include "gtkutil/image.h"
 #include "gtkutil/TreeModel.h"
+#include "entitylib.h"
 #include <gtk/gtk.h>
 
 	namespace {
-		const std::string RKEY_STIM_DEFINITIONS = "game/stimResponseSystem/stims//stim";
+		const std::string RKEY_STIM_DEFINITIONS = 
+			"game/stimResponseSystem/stims//stim";
+		const std::string RKEY_STORAGE_ECLASS = 
+			"game/stimResponseSystem/customStimStorageEClass";
 		
 		enum {
 		  ID_COL,
@@ -16,6 +20,18 @@
 		  NAME_COL,
 		  NUM_COLS
 		};
+		
+		/* greebo: Finds an entity with the given classname
+		 */
+		Entity* findEntityByClass(const std::string& className) {
+			// Instantiate a walker to find the entity
+			EntityFindByClassnameWalker walker(className);
+			
+			// Walk the scenegraph
+			GlobalSceneGraph().traverse(walker);
+			
+			return walker.getEntity();
+		}
 	}
 
 StimTypes::StimTypes() {
@@ -50,6 +66,14 @@ StimTypes::StimTypes() {
 							ICON_COL, gtkutil::getLocalPixbufWithMask(newStimType.icon),
 							NAME_COL, _stims[id].name.c_str(),
 							-1);
+	}
+	
+	// Load the custom stims from the storage entity
+	std::string storageEClass = GlobalRegistry().get(RKEY_STORAGE_ECLASS);
+	Entity* storageEntity = findEntityByClass(storageEClass);
+	
+	if (storageEntity != NULL) {
+		
 	}
 }
 

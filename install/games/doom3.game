@@ -208,6 +208,7 @@
 			<property name="chance" classes="SR" />
 			<property name="random_effects" classes="R" />
 		</properties>
+		<customStimStorageEClass value="worldspawn" />
 		<stimResponsePrefix value="sr_" />
 		<responseEffectPrefix value="effect_" />
 		<selfEntity value="_SELF" />
