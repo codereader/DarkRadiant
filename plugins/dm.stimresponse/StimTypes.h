@@ -3,6 +3,7 @@
 
 #include <map>
 #include <string>
+#include "ientity.h"
 
 // Forward Declaration
 typedef struct _GtkListStore GtkListStore; 
@@ -18,7 +19,8 @@ struct StimType {
 };
 typedef std::map<int, StimType> StimTypeMap;
 
-class StimTypes
+class StimTypes :
+	public Entity::Visitor // for parsing custom stim keyvalues from entities
 {
 	// The list of available stims 
 	StimTypeMap _stims;
@@ -57,6 +59,21 @@ public:
 	
 	// operator cast onto a GtkListStore, use this to pack the liststore
 	operator GtkListStore* ();
+	
+	/** greebo: Entity::Visitor implementation. This parses the keyvalues
+	 * 			for custom stim definitions.
+	 */
+	void visit(const std::string& key, const std::string& value);
+
+private:
+	/** greebo: Adds a new stim type to the list and updates the liststore.
+	 * 			Pass the relevant string properties like "name" as arguments.
+	 */
+	void StimTypes::add(int id, 
+						const std::string& name,
+						const std::string& caption,
+						const std::string& description,
+						const std::string& icon);
 };
 
 
