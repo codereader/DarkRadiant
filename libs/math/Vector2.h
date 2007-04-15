@@ -55,12 +55,20 @@ public:
     	return _v[1];
   	}
 
-  	Element& operator[] (std::size_t i) {
-    	return _v[i];
-  	}
-  	const Element& operator[] (std::size_t i) const {
-    	return _v[i];
-  	}
+	/**
+	 * Operator cast to Element*. Also provides operator[] due to the inbuilt
+	 * operation on a pointer type.
+	 */
+	operator Element* () {
+		return _v;
+	}
+	
+	/**
+	 * Operator cast to const Element*.
+	 */
+	operator const Element* () const {
+		return _v;
+	}
 
   	Element* data() {
     	return _v;
