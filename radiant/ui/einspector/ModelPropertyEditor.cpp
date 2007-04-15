@@ -1,6 +1,9 @@
 #include "ModelPropertyEditor.h"
 #include "PropertyEditorFactory.h"
 
+#include "ui/modelselector/ModelSelector.h"
+#include "ientity.h"
+
 #include <gtk/gtk.h>
 
 namespace ui
@@ -44,7 +47,10 @@ ModelPropertyEditor::ModelPropertyEditor(Entity* entity,
 void ModelPropertyEditor::_onBrowseButton(GtkWidget* w, 
 										  ModelPropertyEditor* self)
 {
-
+	// Use the ModelSelector to choose a model
+	ModelAndSkin model = ModelSelector::chooseModel();
+	if (!model.model.empty())
+		self->_entity->setKeyValue(self->_key, model.model);
 }
 
 
