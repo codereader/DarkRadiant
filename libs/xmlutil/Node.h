@@ -64,7 +64,7 @@ public:
      
 	std::string getContent() const;
 
-	Node addText(const std::string& text);
+	void addText(const std::string& text);
 
 	// Unlink and delete the node and all its children
 	void erase();

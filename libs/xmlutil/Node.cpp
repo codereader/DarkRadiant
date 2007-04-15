@@ -100,9 +100,9 @@ std::string Node::getContent() const {
 	}
 }
 
-Node Node::addText(const std::string& text) {
+void Node::addText(const std::string& text) {
 	// Allocate a new text node
-	xmlNodePtr whitespace = xmlNewText(xmlCharStrdup("\n\t"));
+	xmlNodePtr whitespace = xmlNewText(xmlCharStrdup(text.c_str()));
 	
 	// Add the newly allocated text as sibling of this node
 	xmlAddSibling(_xmlNode, whitespace);
