@@ -21,10 +21,14 @@ class CustomStimEditor
 		GtkWidget* remove;
 	} _listButtons;
 	
+	// The overall hbox of this page
 	GtkWidget* _pageHBox;
+	
+	// The treeview and its selection
 	GtkWidget* _list;
 	GtkTreeSelection* _selection;
 	
+	// Reference to the helper object (owned by StimResponseEditor)
 	StimTypes& _stimTypes;
 
 public:
@@ -35,13 +39,27 @@ public:
 	operator GtkWidget*();
 	
 private:
-	/** greebo: As the name states, this creates the context menu widgets.
+	/** greebo: Selects the given ID in the stim type list
+	 */
+	void selectId(int id);
+
+	/** greebo: Adds/removes a (selected) stim type
+	 */
+	void addStimType();
+	void removeStimType();
+
+	/** greebo: Widget creators
 	 */
 	void createContextMenu();
+	GtkWidget* createListButtons();
 
 	/** greebo: Creates all the widgets
 	 */
 	void populatePage();
+
+	// GTK Callbacks
+	static void onAddStimType(GtkWidget* button, CustomStimEditor* self);
+	static void onRemoveStimType(GtkWidget* button, CustomStimEditor* self);
 };
 
 } // namespace ui
