@@ -137,6 +137,20 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), timeHBox, FALSE, FALSE, 0);
 	
+	// Duration
+	GtkWidget* durationHBox = gtk_hbox_new(FALSE, 0);
+	_propertyWidgets.durationToggle = gtk_check_button_new_with_label("Duration:");
+	gtk_widget_set_size_request(_propertyWidgets.durationToggle, OPTIONS_LABEL_WIDTH, -1);
+	_propertyWidgets.durationEntry = gtk_entry_new();
+	_propertyWidgets.durationUnitLabel = gtkutil::RightAlignedLabel("ms");
+	gtk_widget_set_size_request(_propertyWidgets.durationUnitLabel, 24, -1);
+	
+	gtk_box_pack_start(GTK_BOX(durationHBox), _propertyWidgets.durationToggle, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(durationHBox), _propertyWidgets.durationUnitLabel, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(durationHBox), _propertyWidgets.durationEntry, TRUE, TRUE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), durationHBox, FALSE, FALSE, 0);
+	
 	// Timer type
 	_propertyWidgets.timerTypeToggle = gtk_check_button_new_with_label("Timer restarts after firing");
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.timerTypeToggle, FALSE, FALSE, 0);
@@ -158,6 +172,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.magnEntry)] = "magnitude";
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.falloffEntry)] = "falloffexponent";
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.chanceEntry)] = "chance";
+	_entryWidgets[GTK_EDITABLE(_propertyWidgets.durationEntry)] = "duration";
 	
 	// Connect the checkboxes
 	g_signal_connect(G_OBJECT(_propertyWidgets.active), "toggled", G_CALLBACK(onCheckboxToggle), this);
@@ -168,6 +183,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	g_signal_connect(G_OBJECT(_propertyWidgets.falloffToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.timerTypeToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.chanceToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.durationToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	
 	// Connect the entry fields
 	g_signal_connect(G_OBJECT(_propertyWidgets.magnEntry), "changed", G_CALLBACK(onEntryChanged), this);
@@ -175,6 +191,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	g_signal_connect(G_OBJECT(_propertyWidgets.radiusEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.timeIntEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.chanceEntry), "changed", G_CALLBACK(onEntryChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.durationEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	
 	return _propertyWidgets.vbox;
 }
@@ -257,6 +274,19 @@ void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 		}
 		setProperty("chance", entryText);
 	}
+	else if (toggleWidget == _propertyWidgets.durationToggle) {
+		std::string entryText = 
+			gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.durationEntry));
+	
+		// Enter a default value for the entry text, if it's empty up till now.
+		if (active) {
+			entryText += (entryText.empty()) ? "1000" : "";	
+		}
+		else {
+			entryText = "";
+		}
+		setProperty("duration", entryText);
+	}
 }
 
 void StimEditor::removeItem(GtkTreeView* view) {
@@ -282,7 +312,9 @@ void StimEditor::addStim() {
 	
 	// Get a reference to the newly allocated object
 	StimResponse& sr = _entity->get(id);
+	sr.set("class", "S");
 	sr.set("type", _stimTypes.getFirstName());
+	sr.set("state", "1");
 
 	// Update the list stores AFTER the type has been set
 	_entity->updateListStores();
@@ -374,10 +406,29 @@ void StimEditor::update() {
 		// Use Bounds
 		gtk_toggle_button_set_active(
 			GTK_TOGGLE_BUTTON(_propertyWidgets.useBounds),
-			sr.get("use_bounds") == "1"
+			sr.get("use_bounds") == "1" && useRadius
 		);
 		gtk_widget_set_sensitive(_propertyWidgets.useBounds, useRadius);
-				
+		
+		// Use Time interval
+		bool useDuration = (sr.get("duration") != "");
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.durationToggle),
+			useDuration
+		);
+		gtk_entry_set_text(
+			GTK_ENTRY(_propertyWidgets.durationEntry), 
+			sr.get("duration").c_str()
+		);
+		gtk_widget_set_sensitive(
+			_propertyWidgets.durationEntry, 
+			useDuration
+		);
+		gtk_widget_set_sensitive(
+			_propertyWidgets.durationUnitLabel, 
+			useDuration
+		);
+			
 		// Use Time interval
 		bool useTimeInterval = (sr.get("time_interval") != "");
 		gtk_toggle_button_set_active(
