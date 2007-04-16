@@ -5,6 +5,7 @@
 
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkTreeSelection GtkTreeSelection;
+typedef struct _GtkTreeModel GtkTreeModel;
 
 namespace ui {
 
@@ -24,6 +25,9 @@ class CustomStimEditor
 	// The overall hbox of this page
 	GtkWidget* _pageHBox;
 	
+	// The filtered liststore (a GtkTreeModelFilter)
+	GtkTreeModel* _customStimStore;
+	
 	// The treeview and its selection
 	GtkWidget* _list;
 	GtkTreeSelection* _selection;
@@ -39,6 +43,12 @@ public:
 	operator GtkWidget*();
 	
 private:
+	/** greebo: Returns the ID of the currently selected stim type
+	 * 		
+	 * @returns: the id (number) of the selected stim or -1 on failure 
+	 */
+	int getIdFromSelection();
+
 	/** greebo: Selects the given ID in the stim type list
 	 */
 	void selectId(int id);
