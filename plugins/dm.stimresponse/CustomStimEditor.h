@@ -5,9 +5,11 @@
 #include "SREntity.h"
 
 typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkTreeSelection GtkTreeSelection;
 typedef struct _GtkTreeModel GtkTreeModel;
+typedef struct _GtkTreeSelection GtkTreeSelection;
+typedef struct _GtkTreeView GtkTreeView;
 typedef struct _GtkEditable GtkEditable;
+typedef struct _GdkEventButton GdkEventButton;
 
 namespace ui {
 	
@@ -99,6 +101,12 @@ private:
 	static void onRemoveStimType(GtkWidget* button, CustomStimEditor* self);
 	static void onEntryChanged(GtkEditable* editable, CustomStimEditor* self);
 	static void onSelectionChange(GtkTreeSelection* selection, CustomStimEditor* self);
+	
+	// Context menu
+	// Release-event opens the context menu for right clicks
+	static gboolean onTreeViewButtonRelease(GtkTreeView* view, GdkEventButton* ev, CustomStimEditor* self);
+	static void onContextMenuAdd(GtkWidget* w, CustomStimEditor* self);
+	static void onContextMenuDelete(GtkWidget* w, CustomStimEditor* self);
 };
 
 } // namespace ui

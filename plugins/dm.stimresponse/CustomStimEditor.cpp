@@ -3,6 +3,7 @@
 #include <gtk/gtk.h>
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TreeModel.h"
+#include "gtkutil/StockIconMenuItem.h"
 
 namespace ui {
 
@@ -18,6 +19,9 @@ CustomStimEditor::CustomStimEditor(StimTypes& stimTypes) :
 	_updatesDisabled(false)
 {
 	populatePage();
+	
+	// Setup the context menu items and connect them to the callbacks
+	createContextMenu();
 }
 
 CustomStimEditor::operator GtkWidget*() {
@@ -32,7 +36,28 @@ void CustomStimEditor::setEntity(SREntityPtr entity) {
 /** greebo: As the name states, this creates the context menu widgets.
  */
 void CustomStimEditor::createContextMenu() {
+	// Menu widgets
+	_contextMenu.menu = gtk_menu_new();
+		
+	// Each menu gets a delete item
+	_contextMenu.remove = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
+														   "Delete Stim Type");
+	_contextMenu.add = gtkutil::StockIconMenuItem(GTK_STOCK_ADD,
+														   "Add Stim Type");
 	
+	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu),
+						  _contextMenu.add);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), 
+						  _contextMenu.remove);
+
+	// Connect up the signals
+	g_signal_connect(G_OBJECT(_contextMenu.remove), "activate",
+					 G_CALLBACK(onContextMenuDelete), this);
+	g_signal_connect(G_OBJECT(_contextMenu.add), "activate",
+					 G_CALLBACK(onContextMenuAdd), this);
+	
+	// Show menus (not actually visible until popped up)
+	gtk_widget_show_all(_contextMenu.menu);
 }
 
 /** greebo: Creates all the widgets
@@ -59,9 +84,9 @@ void CustomStimEditor::populatePage() {
 	g_signal_connect(G_OBJECT(_selection), "changed", 
 					 G_CALLBACK(onSelectionChange), this);
 	/*g_signal_connect(G_OBJECT(_list), "key-press-event", 
-					 G_CALLBACK(onTreeViewKeyPress), this);
+					 G_CALLBACK(onTreeViewKeyPress), this);*/
 	g_signal_connect(G_OBJECT(_list), "button-release-event", 
-					 G_CALLBACK(onTreeViewButtonRelease), this);*/
+					 G_CALLBACK(onTreeViewButtonRelease), this);
 					 
 	// Add the columns to the treeview
 	// ID number
@@ -165,9 +190,12 @@ void CustomStimEditor::update() {
 			GTK_ENTRY(_propertyWidgets.nameEntry), 
 			stimType.caption.c_str()
 		);
+		
+		gtk_widget_set_sensitive(_contextMenu.remove, TRUE);
 	}
 	else {
 		gtk_widget_set_sensitive(_propertyWidgets.vbox, FALSE);
+		gtk_widget_set_sensitive(_contextMenu.remove, FALSE);
 	}
 	
 	_updatesDisabled = false;
@@ -233,6 +261,29 @@ void CustomStimEditor::onEntryChanged(GtkEditable* editable, CustomStimEditor* s
 
 void CustomStimEditor::onSelectionChange(GtkTreeSelection* selection, CustomStimEditor* self) {
 	self->update();
+}
+
+// Delete context menu items activated
+void CustomStimEditor::onContextMenuDelete(GtkWidget* w, CustomStimEditor* self) {
+	// Delete the selected stim from the list
+	self->removeStimType();
+}
+
+// Delete context menu items activated
+void CustomStimEditor::onContextMenuAdd(GtkWidget* w, CustomStimEditor* self) {
+	self->addStimType();
+}
+
+gboolean CustomStimEditor::onTreeViewButtonRelease(
+	GtkTreeView* view, GdkEventButton* ev, CustomStimEditor* self)
+{
+	// Single click with RMB (==> open context menu)
+	if (ev->button == 3) {
+		gtk_menu_popup(GTK_MENU(self->_contextMenu.menu), 
+					   NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
+	}
+	
+	return FALSE;
 }
 	
 } // namespace ui
