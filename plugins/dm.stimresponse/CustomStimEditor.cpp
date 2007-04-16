@@ -4,6 +4,7 @@
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/StockIconMenuItem.h"
+#include "string/string.h"
 
 namespace ui {
 
@@ -223,7 +224,7 @@ void CustomStimEditor::addStimType() {
 	int id = _stimTypes.getFreeCustomStimId();
 	
 	_stimTypes.add(id,
-				   "Custom",
+				   intToStr(id),
 				   "CustomStimType",
 				   "Custom Stim",
 				   ICON_CUSTOM_STIM,
