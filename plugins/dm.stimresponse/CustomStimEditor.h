@@ -4,6 +4,7 @@
 #include "StimTypes.h"
 
 typedef struct _GtkWidget GtkWidget;
+typedef struct _GtkTreeSelection GtkTreeSelection;
 
 namespace ui {
 
@@ -20,6 +21,10 @@ class CustomStimEditor
 		GtkWidget* remove;
 	} _listButtons;
 	
+	GtkWidget* _pageHBox;
+	GtkWidget* _list;
+	GtkTreeSelection* _selection;
+	
 	StimTypes& _stimTypes;
 
 public:
@@ -28,7 +33,7 @@ public:
 	CustomStimEditor(StimTypes& stimTypes);
 
 	operator GtkWidget*();
-
+	
 private:
 	/** greebo: As the name states, this creates the context menu widgets.
 	 */

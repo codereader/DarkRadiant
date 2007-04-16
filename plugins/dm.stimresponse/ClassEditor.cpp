@@ -142,8 +142,8 @@ GtkWidget* ClassEditor::createStimTypeSelector() {
 	GtkCellRenderer* iconRenderer = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_typeList), iconRenderer, FALSE);
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_typeList), nameRenderer, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_typeList), nameRenderer, "text", 1);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_typeList), iconRenderer, "pixbuf", 2);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_typeList), iconRenderer, "pixbuf", ST_ICON_COL);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_typeList), nameRenderer, "text", ST_CAPTION_PLUS_ID_COL);
 	gtk_cell_renderer_set_fixed_size(iconRenderer, 26, -1);
 
 	gtk_box_pack_start(GTK_BOX(typeHBox), typeLabel, FALSE, FALSE, 0);
