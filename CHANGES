@@ -1,3 +1,25 @@
+16/04/2007
+greebo
+- Added Stim/Response Editor plugin (The Dark Mod-specific)
+
+12/04/2007
+greebo
+- Added support for DXT5 RxGB DDS files.
+
+08/04/2007
+OrbWeaver
+- Added SoundSelector to choose sound shaders via the Entity Inspector
+
+23/03/2007
+greebo
+- Removed old preference system completely in favour of the XMLRegistry.
+- Game Selection at startup is hopefully handled more userfriendly.
+
+15/03/2007
+greebo
+- Added "Jump to Object" mouse command (Alt-RMB) to jump to 
+  the clicked object in the camview.
+
 14/03/2007
 greebo
 - Removed old TextureClipboard in favour of the new ShaderClipboard. 

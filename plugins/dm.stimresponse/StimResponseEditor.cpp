@@ -1,6 +1,7 @@
 #include "StimResponseEditor.h"
 
 #include "iregistry.h"
+#include "iundo.h"
 #include "iscenegraph.h"
 #include "itextstream.h"
 #include "iradiant.h"
@@ -219,8 +220,14 @@ void StimResponseEditor::rescanSelection() {
 void StimResponseEditor::save() {
 	// Consistency check can go here
 	
+	// Scoped undo object
+	UndoableCommand command("editStimResponse");
+	
 	// Save the working set to the entity
 	_srEntity->save(_entity);
+	
+	// Save the custom stim types to the storage entity
+	_stimTypes.save();
 }
 
 // Static GTK Callbacks

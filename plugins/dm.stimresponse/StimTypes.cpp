@@ -30,6 +30,42 @@
 			
 			return walker.getEntity();
 		}
+		
+		// Helper visitor class to remove custom stim definitions from 
+		// the storage entity. First, all the keys are gathered and
+		// on destruction the keys are deleted. The deletion may not
+		// happen during the visit process (due to iterators becoming invalid).
+		class CustomStimRemover :
+			public Entity::Visitor
+		{
+			// This list will be populated with all the keys that 
+			// should be removed.
+			typedef std::vector<std::string> RemoveList;
+			RemoveList _removeList;
+			
+			Entity* _entity;
+			
+		public:
+			CustomStimRemover(Entity* entity) :
+				_entity(entity)
+			{}
+		
+			~CustomStimRemover() {
+				// Delete all the keys that are tagged for deletion
+				for (unsigned int i = 0; i < _removeList.size(); i++) {
+					_entity->setKeyValue(_removeList[i], "");
+				}
+			}
+		
+			void visit(const std::string& key, const std::string& value) {
+				std::string prefix = GlobalRegistry().get(RKEY_STORAGE_PREFIX);
+				
+				if (boost::algorithm::starts_with(key, prefix)) {
+					// We have a match, add the key to the removal list
+					_removeList.push_back(key);
+				}
+			}
+		};
 	}
 
 StimTypes::StimTypes() {
@@ -63,6 +99,37 @@ StimTypes::StimTypes() {
 	if (storageEntity != NULL) {
 		// Visit each keyvalue with the <self> class as visitor 
 		storageEntity->forEachKeyValue(*this);
+	}
+}
+
+void StimTypes::save() {
+	// Find the storage entity
+	std::string storageEClass = GlobalRegistry().get(RKEY_STORAGE_ECLASS);
+	Entity* storageEntity = findEntityByClass(storageEClass);
+	
+	if (storageEntity != NULL) {
+		std::string prefix = GlobalRegistry().get(RKEY_STORAGE_PREFIX);
+		
+		// Clean the storage entity from any previous definitions
+		{
+			// Instantiate a visitor to gather the keys to delete
+			CustomStimRemover remover(storageEntity);	
+			// Visit each keyvalue with the <self> class as visitor 
+			storageEntity->forEachKeyValue(remover);
+			// Scope ends here, the keys are deleted now
+			// as the CustomStimRemover gets destructed
+		}
+		
+		// Now store all custom stim types to the storage entity
+		for (StimTypeMap::iterator i = _stims.begin(); i != _stims.end(); i++) {
+			StimType& s = i->second;
+			std::string idStr = intToStr(i->first);
+			
+			if (s.custom) {
+				// spawnarg is something like "editor_dr_stim_1002" => "MyStim" 
+				storageEntity->setKeyValue(prefix + idStr, s.caption);
+			}
+		}
 	}
 }
 
@@ -157,7 +224,7 @@ void StimTypes::visit(const std::string& key, const std::string& value) {
 		// Extract the stim name from the key (the part after the prefix) 
 		std::string idStr = key.substr(prefix.size());
 		int id = strToInt(idStr);
-		std::string stimName= value;
+		std::string stimCaption= value;
 		
 		if (id < lowestCustomId) {
 			globalErrorStream() << "Warning: custom stim Id " << id << " is lower than " 
@@ -167,7 +234,7 @@ void StimTypes::visit(const std::string& key, const std::string& value) {
 		// Add this as new stim type
 		add(id,
 			idStr,	// The name is the id in string format: e.g. "1002"
-			stimName,
+			stimCaption,	// The caption
 			"Custom Stim",
 			ICON_CUSTOM_STIM,
 			true	// custom stim
