@@ -519,6 +519,7 @@ void ResponseEditor::addResponse() {
 	StimResponse& sr = _entity->get(id);
 	sr.set("class", "R");
 	sr.set("type", _stimTypes.getFirstName());
+	sr.set("state", "1");
 	
 	// Update the list stores AFTER the type has been set
 	_entity->updateListStores();

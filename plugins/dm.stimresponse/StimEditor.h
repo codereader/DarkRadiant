@@ -17,6 +17,9 @@ class StimEditor :
 		GtkWidget* timeIntToggle;
 		GtkWidget* timeIntEntry;
 		GtkWidget* timeUnitLabel;
+		GtkWidget* durationToggle;
+		GtkWidget* durationEntry;
+		GtkWidget* durationUnitLabel;		
 		GtkWidget* magnToggle;
 		GtkWidget* magnEntry;
 		GtkWidget* falloffToggle;
