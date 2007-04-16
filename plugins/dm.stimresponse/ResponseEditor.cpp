@@ -130,20 +130,20 @@ void ResponseEditor::update() {
 }
 
 void ResponseEditor::populatePage() {
-	GtkWidget* srHBox = gtk_hbox_new(FALSE, 0);
+	GtkWidget* srHBox = gtk_hbox_new(FALSE, 12);
 	gtk_box_pack_start(GTK_BOX(_pageVBox), GTK_WIDGET(srHBox), TRUE, TRUE, 0);
 	
 	// List and buttons below
-	GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
+	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbox), 
 		gtkutil::ScrolledFrame(_list), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), createListButtons(), FALSE, FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(vbox), createListButtons(), FALSE, FALSE, 0);
 	
 	gtk_box_pack_start(GTK_BOX(srHBox),	vbox, FALSE, FALSE, 0);
 	
 	// Response property section
 	_propertyWidgets.vbox = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(srHBox), _propertyWidgets.vbox, TRUE, TRUE, 12);
+	gtk_box_pack_start(GTK_BOX(srHBox), _propertyWidgets.vbox, TRUE, TRUE, 0);
 	
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), createStimTypeSelector(), FALSE, FALSE, 0);	
 	
@@ -188,12 +188,12 @@ void ResponseEditor::populatePage() {
     gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox),
     				   gtkutil::LeftAlignedLabel(LABEL_RESPONSE_EFFECTS),
     				   FALSE, FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), 
-					   gtkutil::LeftAlignment(createEffectWidgets(), 18, 1.0),
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox),
+					   createEffectWidgets(),
 					   TRUE, TRUE, 0);
 }
 
-// Create the response script list widgets
+// Create the response effect list widgets
 GtkWidget* ResponseEditor::createEffectWidgets() {
 
 	_effectWidgets.view = gtk_tree_view_new();
