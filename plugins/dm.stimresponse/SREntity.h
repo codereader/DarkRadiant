@@ -17,7 +17,8 @@ typedef struct _GtkListStore GtkListStore;
 	namespace {
 		const std::string ICON_STIM = "sr_stim";
 		const std::string ICON_RESPONSE = "sr_response";
-			
+		const std::string ICON_CUSTOM_STIM = "sr_icon_custom.png";
+		
 		const std::string SUFFIX_INHERITED = "_inherited";
 		const std::string SUFFIX_INACTIVE = "_inactive";
 		const std::string SUFFIX_EXTENSION = ".png"; 
