@@ -49,6 +49,10 @@ public:
 	 */
 	StimTypes();
 	
+	/** greebo: Saves the custom stim types to the storage entity
+	 */
+	void save();
+	
 	/** greebo: Returns the reference to the internal stim type map
 	 */
 	StimTypeMap& getStimMap();

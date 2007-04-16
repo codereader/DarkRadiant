@@ -1,7 +1,6 @@
 #include "SREntity.h"
 
 #include "iregistry.h"
-#include "iundo.h"
 #include "itextstream.h"
 #include "ieclass.h"
 #include "entitylib.h"
@@ -177,9 +176,6 @@ void SREntity::save(Entity* target) {
 	if (target == NULL) {
 		return;
 	}
-	
-	// Scoped undo object
-	UndoableCommand command("setStimResponse");
 	
 	// Remove the S/R spawnargs from the entity
 	cleanEntity(target);
