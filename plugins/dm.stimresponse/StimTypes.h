@@ -9,6 +9,18 @@
 typedef struct _GtkListStore GtkListStore; 
 typedef struct _GtkTreeIter GtkTreeIter;
 
+	namespace {
+		enum {
+		  ST_ID_COL,
+		  ST_CAPTION_COL,
+		  ST_ICON_COL,
+		  ST_NAME_COL,
+		  ST_CAPTION_PLUS_ID_COL,	// The caption plus ID in brackets
+		  ST_CUSTOM_COL,	// TRUE if the row is a custom stim type
+		  ST_NUM_COLS
+		};
+	}
+
 /** greebo: A simple StimType representation.
  */
 struct StimType {

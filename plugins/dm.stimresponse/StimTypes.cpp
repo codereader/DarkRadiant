@@ -19,14 +19,6 @@
 		const std::string RKEY_LOWEST_CUSTOM_STIM_ID = 
 			"game/stimResponseSystem/lowestCustomStimId";
 		
-		enum {
-		  ST_ID_COL,
-		  ST_CAPTION_COL,
-		  ST_ICON_COL,
-		  ST_NAME_COL,
-		  ST_NUM_COLS
-		};
-		
 		/* greebo: Finds an entity with the given classname
 		 */
 		Entity* findEntityByClass(const std::string& className) {
@@ -46,7 +38,9 @@ StimTypes::StimTypes() {
 									G_TYPE_INT, 
 									G_TYPE_STRING, 
 									GDK_TYPE_PIXBUF,
-									G_TYPE_STRING);
+									G_TYPE_STRING,
+									G_TYPE_STRING,
+									G_TYPE_BOOLEAN);
 	
 	// Find all the relevant nodes
 	xml::NodeList stimNodes = GlobalRegistry().findXPath(RKEY_STIM_DEFINITIONS);
@@ -91,12 +85,17 @@ void StimTypes::add(int id,
 	
 	GtkTreeIter iter;
 	
+	// Combine the ID and the caption
+	std::string captionPlusId = _stims[id].caption + " (" + intToStr(id) + ")";
+	
 	gtk_list_store_append(_listStore, &iter);
 	gtk_list_store_set(_listStore, &iter, 
 						ST_ID_COL, id,
 						ST_CAPTION_COL, _stims[id].caption.c_str(),
+						ST_CAPTION_PLUS_ID_COL, captionPlusId.c_str(),
 						ST_ICON_COL, gtkutil::getLocalPixbufWithMask(newStimType.icon),
 						ST_NAME_COL, _stims[id].name.c_str(),
+						ST_CUSTOM_COL, custom,
 						-1);
 }
 
