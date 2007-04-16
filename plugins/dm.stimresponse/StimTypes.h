@@ -66,7 +66,12 @@ public:
 	 */
 	void visit(const std::string& key, const std::string& value);
 
+	/** greebo: Retrieves the lowest available custom stim id.
+	 */
+	int getFreeCustomStimId();
+
 private:
+
 	/** greebo: Adds a new stim type to the list and updates the liststore.
 	 * 			Pass the relevant string properties like "name" as arguments.
 	 */

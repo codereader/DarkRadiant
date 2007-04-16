@@ -8,6 +8,7 @@
 #include "SREntity.h"
 #include "StimEditor.h"
 #include "ResponseEditor.h"
+#include "CustomStimEditor.h"
 
 // Forward declarations
 typedef struct _GtkNotebook GtkNotebook;
@@ -25,6 +26,7 @@ class StimResponseEditor
 	GtkNotebook* _notebook;
 	int _stimPageNum;
 	int _responsePageNum;
+	int _customStimPageNum;
 	int _lastShownPage;
 	
 	// The close button to toggle the view
@@ -45,6 +47,7 @@ class StimResponseEditor
 	// The helper classes for editing the stims/responses
 	StimEditor _stimEditor;
 	ResponseEditor _responseEditor;
+	CustomStimEditor _customStimEditor;
 
 public:
 	static bool instantiated;

@@ -43,7 +43,8 @@ StimResponseEditor::StimResponseEditor() :
 	_dialog(gtkutil::TransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow(), false)),
 	_entity(NULL),
 	_stimEditor(_stimTypes),
-	_responseEditor(_dialog, _stimTypes)
+	_responseEditor(_dialog, _stimTypes),
+	_customStimEditor(_stimTypes)
 {
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 12);
@@ -139,13 +140,23 @@ void StimResponseEditor::populateWindow() {
     );
 	gtk_box_pack_start(GTK_BOX(responseLabelHBox), gtk_label_new("Responses"), FALSE, FALSE, 3);
 	
+	GtkWidget* customLabelHBox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(
+    	GTK_BOX(customLabelHBox), 
+    	gtk_image_new_from_pixbuf(gtkutil::getLocalPixbufWithMask(ICON_CUSTOM_STIM)), 
+    	FALSE, FALSE, 0
+    );
+	gtk_box_pack_start(GTK_BOX(customLabelHBox), gtk_label_new("Custom Stims"), FALSE, FALSE, 3);
+	
 	// Show the widgets before using them as label, they won't appear otherwise
 	gtk_widget_show_all(stimLabelHBox);
 	gtk_widget_show_all(responseLabelHBox);
+	gtk_widget_show_all(customLabelHBox);
 	
 	// Cast the helper class to a widget and add it to the notebook page
 	_stimPageNum = gtk_notebook_append_page(_notebook, _stimEditor, stimLabelHBox);
 	_responsePageNum = gtk_notebook_append_page(_notebook, _responseEditor, responseLabelHBox);
+	_customStimPageNum = gtk_notebook_append_page(_notebook, _customStimEditor, customLabelHBox);
 	_lastShownPage = _stimPageNum;
 	
 	// Pack in dialog buttons

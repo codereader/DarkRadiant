@@ -5,6 +5,7 @@
 #include "gtkutil/image.h"
 #include "gtkutil/TreeModel.h"
 #include "entitylib.h"
+#include "SREntity.h"
 #include <gtk/gtk.h>
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -18,14 +19,12 @@
 		const std::string RKEY_LOWEST_CUSTOM_STIM_ID = 
 			"game/stimResponseSystem/lowestCustomStimId";
 		
-		const std::string ICON_CUSTOM_STIM = "sr_icon_custom.png";
-		
 		enum {
-		  ID_COL,
-		  CAPTION_COL,
-		  ICON_COL,
-		  NAME_COL,
-		  NUM_COLS
+		  ST_ID_COL,
+		  ST_CAPTION_COL,
+		  ST_ICON_COL,
+		  ST_NAME_COL,
+		  ST_NUM_COLS
 		};
 		
 		/* greebo: Finds an entity with the given classname
@@ -43,7 +42,7 @@
 
 StimTypes::StimTypes() {
 	// Create a new liststore
-	_listStore = gtk_list_store_new(NUM_COLS, 
+	_listStore = gtk_list_store_new(ST_NUM_COLS, 
 									G_TYPE_INT, 
 									G_TYPE_STRING, 
 									GDK_TYPE_PIXBUF,
@@ -94,10 +93,10 @@ void StimTypes::add(int id,
 	
 	gtk_list_store_append(_listStore, &iter);
 	gtk_list_store_set(_listStore, &iter, 
-						ID_COL, id,
-						CAPTION_COL, _stims[id].caption.c_str(),
-						ICON_COL, gtkutil::getLocalPixbufWithMask(newStimType.icon),
-						NAME_COL, _stims[id].name.c_str(),
+						ST_ID_COL, id,
+						ST_CAPTION_COL, _stims[id].caption.c_str(),
+						ST_ICON_COL, gtkutil::getLocalPixbufWithMask(newStimType.icon),
+						ST_NAME_COL, _stims[id].name.c_str(),
 						-1);
 }
 
@@ -118,7 +117,7 @@ void StimTypes::visit(const std::string& key, const std::string& value) {
 		
 		// Add this as new stim type
 		add(id,
-			idStr,	// The name is something the id in string format: e.g. "1002"
+			idStr,	// The name is the id in string format: e.g. "1002"
 			stimName,
 			"Custom Stim",
 			ICON_CUSTOM_STIM,
@@ -135,9 +134,21 @@ StimTypeMap& StimTypes::getStimMap() {
 	return _stims;
 }
 
+int StimTypes::getFreeCustomStimId() {
+	int freeId = GlobalRegistry().getInt(RKEY_LOWEST_CUSTOM_STIM_ID);
+	
+	StimTypeMap::iterator found = _stims.find(freeId);
+	while (found != _stims.end()) {
+		freeId++;
+		found = _stims.find(freeId);
+	}
+	
+	return freeId;
+}
+
 GtkTreeIter StimTypes::getIterForName(const std::string& name) {
 	// Setup the selectionfinder to search for the name string
-	gtkutil::TreeModel::SelectionFinder finder(name, NAME_COL);
+	gtkutil::TreeModel::SelectionFinder finder(name, ST_NAME_COL);
 	
 	gtk_tree_model_foreach(
 		GTK_TREE_MODEL(_listStore), 
