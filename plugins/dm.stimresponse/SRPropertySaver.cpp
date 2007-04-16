@@ -90,7 +90,6 @@ void SRPropertySaver::visit(StimResponse& sr) {
 			}
 			
 			if (effect.isInherited() && effect.activeIsOverridden()) {
-				std::cout << "Overridden state found: " << (key + "_state") << "\n";
 				// An overridden state, save the spawnarg in every case
 				_target->setKeyValue(key + "_state", effect.isActive() ? "1" : "0");
 			}
