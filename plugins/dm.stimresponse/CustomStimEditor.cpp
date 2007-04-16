@@ -46,11 +46,11 @@ void CustomStimEditor::populatePage() {
 	GtkListStore* listStore = _stimTypes;
 	
 	// Setup a treemodel filter to display the custom stims only
-	GtkTreeModel* filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(listStore), NULL);
-	gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(filter), ST_CUSTOM_COL);
+	_customStimStore = gtk_tree_model_filter_new(GTK_TREE_MODEL(listStore), NULL);
+	gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(_customStimStore), ST_CUSTOM_COL);
 	
-	gtk_tree_view_set_model(GTK_TREE_VIEW(_list), GTK_TREE_MODEL(filter));
-	g_object_unref(filter); // treeview owns reference now
+	gtk_tree_view_set_model(GTK_TREE_VIEW(_list), _customStimStore);
+	g_object_unref(_customStimStore); // treeview owns reference now
 
 	// Connect the signals to the callbacks
 	/*g_signal_connect(G_OBJECT(_selection), "changed", 
@@ -126,7 +126,7 @@ void CustomStimEditor::selectId(int id) {
 	gtkutil::TreeModel::SelectionFinder finder(id, ST_ID_COL);
 
 	gtk_tree_model_foreach(
-		gtk_tree_view_get_model(GTK_TREE_VIEW(_list)),
+		_customStimStore,
 		gtkutil::TreeModel::SelectionFinder::forEach,
 		&finder
 	);
@@ -152,8 +152,16 @@ void CustomStimEditor::addStimType() {
 	selectId(id);
 }
 
-void CustomStimEditor::removeStimType() {
+int CustomStimEditor::getIdFromSelection() {
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+	bool anythingSelected = gtk_tree_selection_get_selected(_selection, &model, &iter);
 	
+	return (anythingSelected) ? gtkutil::TreeModel::getInt(model, &iter, ST_ID_COL) : -1;
+}
+
+void CustomStimEditor::removeStimType() {
+	_stimTypes.remove(getIdFromSelection());
 }
 
 void CustomStimEditor::onAddStimType(GtkWidget* button, CustomStimEditor* self) {

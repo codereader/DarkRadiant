@@ -91,6 +91,16 @@ public:
 			 const std::string& description,
 			 const std::string& icon,
 			 bool custom);
+	
+	/** greebo: Removes the stim type with the given id. 
+	 * 			This works for custom stims only.
+	 */		 
+	void remove(int id);
+	
+	/** greebo: Retrieves the GtkTreeIter pointing at the row with the
+	 * 			stim type with the given ID
+	 */
+	GtkTreeIter getIterForId(int id);
 };
 
 

@@ -66,6 +66,38 @@ StimTypes::StimTypes() {
 	}
 }
 
+void StimTypes::remove(int id) {
+	StimTypeMap::iterator found = _stims.find(id);
+	
+	if (found != _stims.end()) {
+		// Erase the item from the map
+		_stims.erase(found);
+		
+		// Erase the row in the liststore
+		GtkTreeIter iter = getIterForId(id);
+		gtk_list_store_remove(_listStore, &iter);
+	}
+}
+
+GtkTreeIter StimTypes::getIterForId(int id) {
+	// Setup the selectionfinder to search for the id
+	gtkutil::TreeModel::SelectionFinder finder(id, ST_ID_COL);
+
+	gtk_tree_model_foreach(
+		GTK_TREE_MODEL(_listStore),
+		gtkutil::TreeModel::SelectionFinder::forEach,
+		&finder
+	);
+	
+	GtkTreeIter iter;
+	
+	if (finder.getPath() != NULL) {
+		iter = finder.getIter();
+	}
+	
+	return iter;
+}
+
 void StimTypes::add(int id, 
 					const std::string& name,
 					const std::string& caption,
