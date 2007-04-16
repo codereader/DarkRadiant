@@ -82,17 +82,15 @@ public:
 	 */
 	int getFreeCustomStimId();
 
-private:
-
 	/** greebo: Adds a new stim type to the list and updates the liststore.
 	 * 			Pass the relevant string properties like "name" as arguments.
 	 */
-	void StimTypes::add(int id, 
-						const std::string& name,
-						const std::string& caption,
-						const std::string& description,
-						const std::string& icon,
-						bool custom);
+	void add(int id, 
+		 	 const std::string& name,
+			 const std::string& caption,
+			 const std::string& description,
+			 const std::string& icon,
+			 bool custom);
 };
 
 
