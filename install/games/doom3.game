@@ -208,9 +208,13 @@
 			<property name="type" classes="SR" />
 			<property name="state" classes="SR" />
 			<property name="radius" classes="S" />
+			<property name="duration" classes="S" />
 			<property name="timer_type" classes="S" />
+			<property name="timer_reload" classes="S" />
+			<property name="timer_time" classes="S" />
 			<property name="chance" classes="SR" />
 			<property name="random_effects" classes="R" />
+			<property name="max_fire_count" classes="S" />
 		</properties>
 		<customStimStorageEClass value="worldspawn" />
 		<customStimKeyPrefix value="editor_dr_stim_" />

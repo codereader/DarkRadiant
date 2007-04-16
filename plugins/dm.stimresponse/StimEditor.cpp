@@ -27,18 +27,18 @@ StimEditor::StimEditor(StimTypes& stimTypes) :
 }
 
 void StimEditor::populatePage() {
-	GtkWidget* srHBox = gtk_hbox_new(FALSE, 0);
+	GtkWidget* srHBox = gtk_hbox_new(FALSE, 12);
 	gtk_box_pack_start(GTK_BOX(_pageVBox), GTK_WIDGET(srHBox), TRUE, TRUE, 0);
 	
-	GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
+	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbox), 
 		gtkutil::ScrolledFrame(_list), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), createListButtons(), FALSE, FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(vbox), createListButtons(), FALSE, FALSE, 0);
 	
 	gtk_box_pack_start(GTK_BOX(srHBox),	vbox, FALSE, FALSE, 0);
 	
 	// The property pane
-	gtk_box_pack_start(GTK_BOX(srHBox), createPropertyWidgets(), TRUE, TRUE, 6);
+	gtk_box_pack_start(GTK_BOX(srHBox), createPropertyWidgets(), TRUE, TRUE, 0);
 }
 
 void StimEditor::setEntity(SREntityPtr entity) {
@@ -86,10 +86,6 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	_propertyWidgets.active = gtk_check_button_new_with_label("Active");
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.active, FALSE, FALSE, 0);
 	
-	// Use Bounds
-	_propertyWidgets.useBounds = gtk_check_button_new_with_label("Use bounds");
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.useBounds, FALSE, FALSE, 0);
-	
 	// Radius
 	GtkWidget* radiusHBox = gtk_hbox_new(FALSE, 0);
 	_propertyWidgets.radiusToggle = gtk_check_button_new_with_label("Radius:");
@@ -100,6 +96,10 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	gtk_box_pack_start(GTK_BOX(radiusHBox), _propertyWidgets.radiusEntry, TRUE, TRUE, 0);
 	
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), radiusHBox, FALSE, FALSE, 0);
+	
+	// Use Bounds
+	_propertyWidgets.useBounds = gtk_check_button_new_with_label("Use bounds");
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.useBounds, FALSE, FALSE, 0);
 	
 	// Magnitude
 	GtkWidget* magnHBox = gtk_hbox_new(FALSE, 0);
@@ -176,7 +176,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	g_signal_connect(G_OBJECT(_propertyWidgets.timeIntEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.chanceEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	
-	return gtkutil::LeftAlignment(_propertyWidgets.vbox, 6, 1.0f);
+	return _propertyWidgets.vbox;
 }
 
 void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
@@ -356,12 +356,6 @@ void StimEditor::update() {
 			(sr.get("state") == "1")
 		);
 		
-		// Use Bounds
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.useBounds),
-			sr.get("use_bounds") == "1"
-		);
-				
 		// Use Radius
 		bool useRadius = (sr.get("radius") != "");
 		gtk_toggle_button_set_active(
@@ -376,6 +370,13 @@ void StimEditor::update() {
 			_propertyWidgets.radiusEntry, 
 			useRadius
 		);
+		
+		// Use Bounds
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.useBounds),
+			sr.get("use_bounds") == "1"
+		);
+		gtk_widget_set_sensitive(_propertyWidgets.useBounds, useRadius);
 				
 		// Use Time interval
 		bool useTimeInterval = (sr.get("time_interval") != "");

@@ -63,7 +63,7 @@ void CustomStimEditor::createContextMenu() {
 /** greebo: Creates all the widgets
  */
 void CustomStimEditor::populatePage() {
-	_pageHBox = gtk_hbox_new(FALSE, 6);
+	_pageHBox = gtk_hbox_new(FALSE, 12);
 	gtk_container_set_border_width(GTK_CONTAINER(_pageHBox), 6);
 	
 	_list = gtk_tree_view_new();
