@@ -2,15 +2,23 @@
 #define CUSTOMSTIMEDITOR_H_
 
 #include "StimTypes.h"
+#include "SREntity.h"
 
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkTreeSelection GtkTreeSelection;
 typedef struct _GtkTreeModel GtkTreeModel;
+typedef struct _GtkEditable GtkEditable;
 
 namespace ui {
-
+	
 class CustomStimEditor
 {
+	struct PropertyWidget {
+		GtkWidget* vbox;
+		GtkWidget* nameLabel;
+		GtkWidget* nameEntry;
+	} _propertyWidgets;
+	
 	struct ListContextMenu {
 		GtkWidget* menu;
 		GtkWidget* remove;
@@ -34,6 +42,12 @@ class CustomStimEditor
 	
 	// Reference to the helper object (owned by StimResponseEditor)
 	StimTypes& _stimTypes;
+	
+	// To avoid GTK callback loops
+	bool _updatesDisabled;
+	
+	// The entity we're working on
+	SREntityPtr _entity;
 
 public:
 	/** greebo: Constructor creates all the widgets
@@ -42,7 +56,20 @@ public:
 
 	operator GtkWidget*();
 	
+	/** greebo: Sets the new entity (is called by the subclasses)
+	 */
+	void setEntity(SREntityPtr entity);
+	
 private:
+	/** greebo: Updates the property widgets on selection change
+	 */
+	void update();
+
+	/** greebo: Gets called when an entry box changes, this can be
+	 * 			overriden by the subclasses, if this is needed
+	 */
+	void entryChanged(GtkEditable* editable);
+
 	/** greebo: Returns the ID of the currently selected stim type
 	 * 		
 	 * @returns: the id (number) of the selected stim or -1 on failure 
@@ -70,6 +97,8 @@ private:
 	// GTK Callbacks
 	static void onAddStimType(GtkWidget* button, CustomStimEditor* self);
 	static void onRemoveStimType(GtkWidget* button, CustomStimEditor* self);
+	static void onEntryChanged(GtkEditable* editable, CustomStimEditor* self);
+	static void onSelectionChange(GtkTreeSelection* selection, CustomStimEditor* self);
 };
 
 } // namespace ui

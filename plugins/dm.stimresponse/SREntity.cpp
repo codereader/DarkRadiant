@@ -20,7 +20,7 @@
 			"game/stimResponseSystem/properties//property";
 	}
 
-SREntity::SREntity(Entity* source) :
+SREntity::SREntity(Entity* source, StimTypes& stimTypes) :
 	_stimStore(gtk_list_store_new(NUM_COLS, 
 								  G_TYPE_INT,		// S/R index
 								  GDK_TYPE_PIXBUF, 	// Type String
@@ -36,7 +36,8 @@ SREntity::SREntity(Entity* source) :
 								  GDK_TYPE_PIXBUF,	// Icon
 								  G_TYPE_BOOLEAN,	// Inheritance flag
 								  G_TYPE_INT,		// ID (unique)
-								  G_TYPE_STRING))	// Text colour
+								  G_TYPE_STRING)),	// Text colour
+	_stimTypes(stimTypes)
 {
 	loadKeys();
 	load(source);

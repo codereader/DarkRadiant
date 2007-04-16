@@ -92,6 +92,11 @@ public:
 			 const std::string& icon,
 			 bool custom);
 	
+	/** greebo: Updates the caption of the stimtype with the given id 
+	 * 			to <caption> and updates the internal list store.
+	 */
+	void setStimTypeCaption(int id, const std::string& caption);
+	
 	/** greebo: Removes the stim type with the given id. 
 	 * 			This works for custom stims only.
 	 */		 
