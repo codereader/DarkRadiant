@@ -4,8 +4,6 @@
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TreeModel.h"
 
-#include "SREntity.h"
-
 namespace ui {
 
 	namespace {
@@ -16,7 +14,8 @@ namespace ui {
 /** greebo: Constructor creates all the widgets
  */
 CustomStimEditor::CustomStimEditor(StimTypes& stimTypes) :
-	_stimTypes(stimTypes)
+	_stimTypes(stimTypes),
+	_updatesDisabled(false)
 {
 	populatePage();
 }
@@ -24,6 +23,10 @@ CustomStimEditor::CustomStimEditor(StimTypes& stimTypes) :
 CustomStimEditor::operator GtkWidget*() {
 	gtk_widget_show_all(_pageHBox);
 	return _pageHBox;
+}
+
+void CustomStimEditor::setEntity(SREntityPtr entity) {
+	_entity = entity;
 }
 
 /** greebo: As the name states, this creates the context menu widgets.
@@ -53,9 +56,9 @@ void CustomStimEditor::populatePage() {
 	g_object_unref(_customStimStore); // treeview owns reference now
 
 	// Connect the signals to the callbacks
-	/*g_signal_connect(G_OBJECT(_selection), "changed", 
-					 G_CALLBACK(onSRSelectionChange), this);
-	g_signal_connect(G_OBJECT(_list), "key-press-event", 
+	g_signal_connect(G_OBJECT(_selection), "changed", 
+					 G_CALLBACK(onSelectionChange), this);
+	/*g_signal_connect(G_OBJECT(_list), "key-press-event", 
 					 G_CALLBACK(onTreeViewKeyPress), this);
 	g_signal_connect(G_OBJECT(_list), "button-release-event", 
 					 G_CALLBACK(onTreeViewButtonRelease), this);*/
@@ -90,11 +93,26 @@ void CustomStimEditor::populatePage() {
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_list), typeCol);
 	
-	GtkWidget* listVBox = gtk_vbox_new(FALSE, 3);
+	GtkWidget* listVBox = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(listVBox), gtkutil::ScrolledFrame(_list), TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(listVBox), createListButtons(), FALSE, FALSE, 0);
 	
 	gtk_box_pack_start(GTK_BOX(_pageHBox), listVBox, FALSE, FALSE, 0);
+	
+	_propertyWidgets.vbox = gtk_vbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(_pageHBox), _propertyWidgets.vbox, TRUE, TRUE, 0);
+	
+	// The name widgets
+	GtkWidget* nameHBox = gtk_hbox_new(FALSE, 6);
+	_propertyWidgets.nameLabel = gtk_label_new("Name:");
+	_propertyWidgets.nameEntry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(nameHBox), _propertyWidgets.nameLabel, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(nameHBox), _propertyWidgets.nameEntry, TRUE, TRUE, 0);
+	
+	// Connect the entry field
+	g_signal_connect(G_OBJECT(_propertyWidgets.nameEntry), "changed", G_CALLBACK(onEntryChanged), this);
+	
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), nameHBox, FALSE, FALSE, 0);
 }
 
 GtkWidget* CustomStimEditor::createListButtons() {
@@ -119,6 +137,40 @@ GtkWidget* CustomStimEditor::createListButtons() {
 	g_signal_connect(G_OBJECT(_listButtons.remove), "clicked", G_CALLBACK(onRemoveStimType), this);
 	
 	return hbox; 
+}
+
+void CustomStimEditor::entryChanged(GtkEditable* editable) {
+	if (editable = GTK_EDITABLE(_propertyWidgets.nameEntry)) {
+		// Set the caption of the curently selected stim type
+		std::string caption = gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.nameEntry));
+		// Pass the call to the helper class 
+		_stimTypes.setStimTypeCaption(getIdFromSelection(), caption);
+		
+		if (_entity != NULL) {
+			_entity->updateListStores();
+		}
+	}
+}
+
+void CustomStimEditor::update() {
+	_updatesDisabled = true;
+	
+	int id = getIdFromSelection();
+	
+	if (id > 0) {
+		gtk_widget_set_sensitive(_propertyWidgets.vbox, TRUE);
+		
+		StimType stimType = _stimTypes.get(id);
+		gtk_entry_set_text(
+			GTK_ENTRY(_propertyWidgets.nameEntry), 
+			stimType.caption.c_str()
+		);
+	}
+	else {
+		gtk_widget_set_sensitive(_propertyWidgets.vbox, FALSE);
+	}
+	
+	_updatesDisabled = false;
 }
 
 void CustomStimEditor::selectId(int id) {
@@ -171,6 +223,16 @@ void CustomStimEditor::onAddStimType(GtkWidget* button, CustomStimEditor* self) 
 void CustomStimEditor::onRemoveStimType(GtkWidget* button, CustomStimEditor* self) {
 	// Delete the selected stim type from the list
 	self->removeStimType();
+}
+
+void CustomStimEditor::onEntryChanged(GtkEditable* editable, CustomStimEditor* self) {
+	if (self->_updatesDisabled) return; // Callback loop guard
+	
+	self->entryChanged(editable);
+}
+
+void CustomStimEditor::onSelectionChange(GtkTreeSelection* selection, CustomStimEditor* self) {
+	self->update();
 }
 	
 } // namespace ui

@@ -98,6 +98,24 @@ GtkTreeIter StimTypes::getIterForId(int id) {
 	return iter;
 }
 
+void StimTypes::setStimTypeCaption(int id, const std::string& caption) {
+	StimTypeMap::iterator found = _stims.find(id);
+	
+	if (found != _stims.end()) {
+		_stims[id].caption = caption;
+		
+		// Combine the ID and the caption
+		std::string captionPlusId = caption + " (" + intToStr(id) + ")";
+	
+		// Update the list store
+		GtkTreeIter iter = getIterForId(id);
+		gtk_list_store_set(_listStore, &iter, 
+							ST_CAPTION_COL, caption.c_str(),
+							ST_CAPTION_PLUS_ID_COL, captionPlusId.c_str(),
+							-1);
+	}
+}
+
 void StimTypes::add(int id, 
 					const std::string& name,
 					const std::string& caption,

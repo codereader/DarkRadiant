@@ -189,6 +189,7 @@ void StimResponseEditor::rescanSelection() {
 	_srEntity = SREntityPtr();
 	_stimEditor.setEntity(_srEntity);
 	_responseEditor.setEntity(_srEntity);
+	_customStimEditor.setEntity(_srEntity);
 	
 	if (info.entityCount == 1 && info.totalCount == 1) {
 		// Get the entity instance
@@ -197,9 +198,10 @@ void StimResponseEditor::rescanSelection() {
 		
 		_entity = Node_getEntity(node);
 		
-		_srEntity = SREntityPtr(new SREntity(_entity));
+		_srEntity = SREntityPtr(new SREntity(_entity, _stimTypes));
 		_stimEditor.setEntity(_srEntity);
 		_responseEditor.setEntity(_srEntity);
+		_customStimEditor.setEntity(_srEntity);
 	}
 	
 	if (_entity != NULL) {
