@@ -31,6 +31,7 @@ namespace ui {
 EffectEditor::EffectEditor(GtkWindow* parent, 
 						   StimResponse& response, 
 						   const unsigned int effectIndex,
+						   StimTypes& stimTypes,
 						   ui::ResponseEditor& editor) :
 	DialogWindow(WINDOW_TITLE, parent),
 	_argTable(NULL),
@@ -39,7 +40,8 @@ EffectEditor::EffectEditor(GtkWindow* parent,
 	_response(response),
 	_effectIndex(effectIndex),
 	_backup(_response.getResponseEffect(_effectIndex)),
-	_editor(editor)
+	_editor(editor),
+	_stimTypes(stimTypes)
 {
 	gtk_window_set_modal(GTK_WINDOW(_window), TRUE);
 	gtk_container_set_border_width(GTK_CONTAINER(_window), 12);
@@ -216,7 +218,7 @@ void EffectEditor::createArgumentWidgets(ResponseEffect& effect) {
 			item = ArgumentItemPtr(new FloatArgument(arg, _tooltips));
 		}
 		else if (arg.type == "v") {
-			// Create a new string argument item
+			// Create a new vector argument item
 			item = ArgumentItemPtr(new VectorArgument(arg, _tooltips));
 		}
 		else if (arg.type == "e") {
@@ -224,8 +226,12 @@ void EffectEditor::createArgumentWidgets(ResponseEffect& effect) {
 			item = ArgumentItemPtr(new EntityArgument(arg, _tooltips, _entityStore));
 		}
 		else if (arg.type == "b") {
-			// Create a new string argument item
+			// Create a new bool item
 			item = ArgumentItemPtr(new BooleanArgument(arg, _tooltips));
+		}
+		else if (arg.type == "t") {
+			// Create a new stim type item
+			item = ArgumentItemPtr(new StimTypeArgument(arg, _tooltips, _stimTypes));
 		}
 		
 		if (item != NULL) {

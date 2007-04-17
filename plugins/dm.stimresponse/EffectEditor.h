@@ -59,6 +59,8 @@ class EffectEditor :
 	// For calling update() when finished editing
 	ResponseEditor& _editor;
 	
+	StimTypes& _stimTypes;
+	
 public:
 	/** greebo: Constructor, needs information about parent and the edit target. 
 	 * 
@@ -67,11 +69,16 @@ public:
 	 * @response: The Stim/Response object the effect is associated with
 	 * 			  (this should be a response, although stims work as well).
 	 * 
-	 * @effectIndex: The response effect index within the given Response. 
+	 * @effectIndex: The response effect index within the given Response.
+	 * 
+	 * @stimTypes: The StimTypes helper class
+	 * 
+	 * @editor: The ResponseEditor for calling update() on exit. 
 	 */
 	EffectEditor(GtkWindow* parent, 
 				 StimResponse& response, 
 				 const unsigned int effectIndex,
+				 StimTypes& stimTypes,
 				 ResponseEditor& editor);
 	
 	/** greebo: Creates the widgets 

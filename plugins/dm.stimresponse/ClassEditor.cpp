@@ -231,7 +231,7 @@ void ClassEditor::onStimTypeSelect(GtkComboBox* widget, ClassEditor* self) {
 	if (gtk_combo_box_get_active_iter(widget, &iter)) {
 		// Load the stim name (e.g. "STIM_FIRE") directly from the liststore
 		GtkTreeModel* model = gtk_combo_box_get_model(widget);
-		std::string name = gtkutil::TreeModel::getString(model, &iter, 3); // 3 = StimTypes::NAME_COL
+		std::string name = gtkutil::TreeModel::getString(model, &iter, ST_NAME_COL);
 		
 		// Write it to the entity
 		self->setProperty("type", name);

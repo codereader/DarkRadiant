@@ -1,6 +1,7 @@
 #ifndef EFFECTARGUMENTITEM_H_
 #define EFFECTARGUMENTITEM_H_
 
+#include "StimTypes.h"
 #include "ResponseEffect.h"
 
 typedef struct _GtkWidget GtkWidget;
@@ -100,6 +101,23 @@ public:
 	EntityArgument(ResponseEffect::Argument& arg, 
 				   GtkTooltips* tooltips, 
 				   GtkListStore* entityStore);
+	
+	virtual GtkWidget* getEditWidget();
+	virtual std::string getValue();
+};
+
+/** greebo: This is an item querying an stimtype (dropdown combo)
+ */
+class StimTypeArgument :
+	public EffectArgumentItem
+{
+	GtkListStore* _stimTypeStore;
+	GtkWidget* _comboBox;
+public:
+	// Pass the reference to the StimType helper class  
+	StimTypeArgument(ResponseEffect::Argument& arg, 
+				   GtkTooltips* tooltips,
+				   GtkListStore* stimTypeStore);
 	
 	virtual GtkWidget* getEditWidget();
 	virtual std::string getValue();
