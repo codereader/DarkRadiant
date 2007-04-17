@@ -25,6 +25,15 @@ class StimEditor :
 			GtkWidget* minute;
 			GtkWidget* second;
 			GtkWidget* millisecond;
+			
+			GtkWidget* typeToggle;
+			
+			GtkWidget* reloadHBox;
+			GtkWidget* reloadToggle;
+			GtkWidget* reloadEntry;
+			GtkWidget* reloadLabel;
+			
+			GtkWidget* waitToggle;
 		} timer;
 		
 		GtkWidget* durationToggle;
@@ -36,7 +45,6 @@ class StimEditor :
 		GtkWidget* falloffEntry;
 		GtkWidget* chanceToggle;
 		GtkWidget* chanceEntry;
-		GtkWidget* timerTypeToggle;
 	} _propertyWidgets;
 	
 	struct ListContextMenu {
