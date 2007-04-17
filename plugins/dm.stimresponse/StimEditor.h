@@ -17,6 +17,16 @@ class StimEditor :
 		GtkWidget* timeIntToggle;
 		GtkWidget* timeIntEntry;
 		GtkWidget* timeUnitLabel;
+		
+		struct TimerWidgets {
+			GtkWidget* toggle;
+			GtkWidget* entryHBox;
+			GtkWidget* hour;
+			GtkWidget* minute;
+			GtkWidget* second;
+			GtkWidget* millisecond;
+		} timer;
+		
 		GtkWidget* durationToggle;
 		GtkWidget* durationEntry;
 		GtkWidget* durationUnitLabel;		
@@ -61,6 +71,11 @@ public:
 	void update();
 
 private:
+	/** greebo: Gets called when an entry box changes, overrides the 
+	 * 			method from the base class.
+	 */
+	void entryChanged(GtkEditable* editable);
+
 	/** greebo: Updates the associated text fields when a check box
 	 * 			is toggled.
 	 */

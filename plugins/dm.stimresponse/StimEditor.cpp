@@ -8,6 +8,9 @@
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/image.h"
 #include "gtkutil/StockIconMenuItem.h"
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/classification.hpp>
 
 #include "SREntity.h"
 
@@ -15,6 +18,9 @@ namespace ui {
 
 	namespace {
 		const unsigned int OPTIONS_LABEL_WIDTH = 140;
+		
+		// Needed for boost::algorithm::split
+		typedef std::vector<std::string> StringParts;
 	}
 
 StimEditor::StimEditor(StimTypes& stimTypes) :
@@ -151,6 +157,36 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), durationHBox, FALSE, FALSE, 0);
 	
+	// Timer Time
+	GtkWidget* timerHBox = gtk_hbox_new(FALSE, 0);
+	_propertyWidgets.timer.toggle = gtk_check_button_new_with_label("Activation Timer:");
+	gtk_widget_set_size_request(_propertyWidgets.timer.toggle, OPTIONS_LABEL_WIDTH, -1);
+	_propertyWidgets.timer.hour = gtk_entry_new();
+	_propertyWidgets.timer.minute = gtk_entry_new();
+	_propertyWidgets.timer.second = gtk_entry_new();
+	_propertyWidgets.timer.millisecond = gtk_entry_new();
+	gtk_widget_set_size_request(_propertyWidgets.timer.hour, 30, -1);
+	gtk_widget_set_size_request(_propertyWidgets.timer.minute, 30, -1);
+	gtk_widget_set_size_request(_propertyWidgets.timer.second, 30, -1);
+	gtk_widget_set_size_request(_propertyWidgets.timer.millisecond, 30, -1);
+	
+	_propertyWidgets.timer.entryHBox = gtk_hbox_new(FALSE, 3);
+	GtkBox* entryHBox = GTK_BOX(_propertyWidgets.timer.entryHBox); // shortcut cast
+	gtk_box_pack_start(entryHBox, _propertyWidgets.timer.hour, FALSE, FALSE, 0);
+	gtk_box_pack_start(entryHBox, gtk_label_new("h"), FALSE, FALSE, 0);
+	gtk_box_pack_start(entryHBox, _propertyWidgets.timer.minute, FALSE, FALSE, 0);
+	gtk_box_pack_start(entryHBox, gtk_label_new("m"), FALSE, FALSE, 0);
+	gtk_box_pack_start(entryHBox, _propertyWidgets.timer.second, FALSE, FALSE, 0);
+	gtk_box_pack_start(entryHBox, gtk_label_new("s"), FALSE, FALSE, 0);
+	gtk_box_pack_start(entryHBox, _propertyWidgets.timer.millisecond, FALSE, FALSE, 0);
+	gtk_box_pack_start(entryHBox, gtk_label_new("ms"), FALSE, FALSE, 0);
+	gtk_box_pack_start(entryHBox, gtkutil::RightAlignedLabel("(enables stim on elapse)"), TRUE, TRUE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(timerHBox), _propertyWidgets.timer.toggle, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(timerHBox), _propertyWidgets.timer.entryHBox, TRUE, TRUE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), timerHBox, FALSE, FALSE, 0);
+	
 	// Timer type
 	_propertyWidgets.timerTypeToggle = gtk_check_button_new_with_label("Timer restarts after firing");
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.timerTypeToggle, FALSE, FALSE, 0);
@@ -184,6 +220,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	g_signal_connect(G_OBJECT(_propertyWidgets.timerTypeToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.chanceToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.durationToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.timer.toggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	
 	// Connect the entry fields
 	g_signal_connect(G_OBJECT(_propertyWidgets.magnEntry), "changed", G_CALLBACK(onEntryChanged), this);
@@ -192,8 +229,31 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	g_signal_connect(G_OBJECT(_propertyWidgets.timeIntEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.chanceEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.durationEntry), "changed", G_CALLBACK(onEntryChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.timer.hour), "changed", G_CALLBACK(onEntryChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.timer.minute), "changed", G_CALLBACK(onEntryChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.timer.second), "changed", G_CALLBACK(onEntryChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.timer.millisecond), "changed", G_CALLBACK(onEntryChanged), this);
+	
 	
 	return _propertyWidgets.vbox;
+}
+
+void StimEditor::entryChanged(GtkEditable* editable) {
+	// Pass the call to the base class
+	ClassEditor::entryChanged(editable);
+	
+	if (editable == GTK_EDITABLE(_propertyWidgets.timer.hour) || 
+		editable == GTK_EDITABLE(_propertyWidgets.timer.minute) || 
+		editable == GTK_EDITABLE(_propertyWidgets.timer.second) ||
+		editable == GTK_EDITABLE(_propertyWidgets.timer.millisecond))
+	{
+		std::string hour = gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.timer.hour));
+		std::string minute = gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.timer.minute));
+		std::string second = gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.timer.second));
+		std::string ms = gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.timer.millisecond));
+		
+		setProperty("timer_time", hour + ":" + minute + ":" + second + ":" + ms);
+	}
 }
 
 void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
@@ -286,6 +346,25 @@ void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 			entryText = "";
 		}
 		setProperty("duration", entryText);
+	}
+	else if (toggleWidget == _propertyWidgets.timer.toggle) {
+		std::string hour = gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.timer.hour));
+		std::string minute = gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.timer.minute));
+		std::string second = gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.timer.second));
+		std::string ms = gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.timer.millisecond));
+	
+		// Enter a default value for the entry text, if it's empty up till now.
+		hour = (active && hour.empty()) ? "0" : hour;
+		minute = (active && minute.empty()) ? "0" : minute;
+		second = (active && second.empty()) ? "0" : second;
+		ms = (active && ms.empty()) ? "0" : ms;
+
+		if (active) {
+			setProperty("timer_time", hour + ":" + minute + ":" + second + ":" + ms);
+		}
+		else {
+			setProperty("timer_time", "");
+		}
 	}
 }
 
@@ -447,6 +526,29 @@ void StimEditor::update() {
 			_propertyWidgets.timeUnitLabel, 
 			useTimeInterval
 		);
+		
+		// Timer time
+		bool useTimerTime = !sr.get("timer_time").empty();
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.timer.toggle),
+			useTimerTime
+		);
+		gtk_widget_set_sensitive(_propertyWidgets.timer.toggle,	TRUE);
+		gtk_widget_set_sensitive(_propertyWidgets.timer.entryHBox, useTimerTime);
+		
+		// Split the property string and distribute the parts into the entry fields
+		StringParts parts;
+		std::string timerTime = sr.get("timer_time");
+		boost::algorithm::split(parts, timerTime, boost::algorithm::is_any_of(":"));
+		std::string hour = (parts.size() > 0) ? parts[0] : "";
+		std::string minute = (parts.size() > 1) ? parts[1] : "";
+		std::string second = (parts.size() > 2) ? parts[2] : "";
+		std::string ms = (parts.size() > 3) ? parts[3] : "";
+		
+		gtk_entry_set_text(GTK_ENTRY(_propertyWidgets.timer.hour), hour.c_str());
+		gtk_entry_set_text(GTK_ENTRY(_propertyWidgets.timer.minute), minute.c_str());
+		gtk_entry_set_text(GTK_ENTRY(_propertyWidgets.timer.second), second.c_str());
+		gtk_entry_set_text(GTK_ENTRY(_propertyWidgets.timer.millisecond), ms.c_str());
 		
 		// Timer Type
 		gtk_toggle_button_set_active(
