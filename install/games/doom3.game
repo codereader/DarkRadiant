@@ -212,6 +212,7 @@
 			<property name="timer_type" classes="S" />
 			<property name="timer_reload" classes="S" />
 			<property name="timer_time" classes="S" />
+			<property name="timer_waitforstart" classes="S" />
 			<property name="chance" classes="SR" />
 			<property name="random_effects" classes="R" />
 			<property name="max_fire_count" classes="S" />

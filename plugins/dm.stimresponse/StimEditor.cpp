@@ -92,21 +92,71 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	_propertyWidgets.active = gtk_check_button_new_with_label("Active");
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.active, FALSE, FALSE, 0);
 	
-	// Radius
+	// Timer Time
+	GtkWidget* timerHBox = gtk_hbox_new(FALSE, 0);
+	_propertyWidgets.timer.toggle = gtk_check_button_new_with_label("Activation Timer:");
+	gtk_widget_set_size_request(_propertyWidgets.timer.toggle, OPTIONS_LABEL_WIDTH, -1);
+	_propertyWidgets.timer.hour = gtk_entry_new();
+	_propertyWidgets.timer.minute = gtk_entry_new();
+	_propertyWidgets.timer.second = gtk_entry_new();
+	_propertyWidgets.timer.millisecond = gtk_entry_new();
+	gtk_widget_set_size_request(_propertyWidgets.timer.hour, 30, -1);
+	gtk_widget_set_size_request(_propertyWidgets.timer.minute, 30, -1);
+	gtk_widget_set_size_request(_propertyWidgets.timer.second, 30, -1);
+	gtk_widget_set_size_request(_propertyWidgets.timer.millisecond, 30, -1);
+	
+	_propertyWidgets.timer.entryHBox = gtk_hbox_new(FALSE, 3);
+	GtkBox* entryHBox = GTK_BOX(_propertyWidgets.timer.entryHBox); // shortcut cast
+	gtk_box_pack_start(entryHBox, _propertyWidgets.timer.hour, FALSE, FALSE, 0);
+	gtk_box_pack_start(entryHBox, gtk_label_new("h"), FALSE, FALSE, 0);
+	gtk_box_pack_start(entryHBox, _propertyWidgets.timer.minute, FALSE, FALSE, 0);
+	gtk_box_pack_start(entryHBox, gtk_label_new("m"), FALSE, FALSE, 0);
+	gtk_box_pack_start(entryHBox, _propertyWidgets.timer.second, FALSE, FALSE, 0);
+	gtk_box_pack_start(entryHBox, gtk_label_new("s"), FALSE, FALSE, 0);
+	gtk_box_pack_start(entryHBox, _propertyWidgets.timer.millisecond, FALSE, FALSE, 0);
+	gtk_box_pack_start(entryHBox, gtk_label_new("ms"), FALSE, FALSE, 0);
+		
+	gtk_box_pack_start(GTK_BOX(timerHBox), _propertyWidgets.timer.toggle, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(timerHBox), _propertyWidgets.timer.entryHBox, TRUE, TRUE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), timerHBox, FALSE, FALSE, 0);
+	
+	// Timer type
+	GtkWidget* timerTypeHBox = gtk_hbox_new(FALSE, 12); 
+	_propertyWidgets.timer.typeToggle = gtk_check_button_new_with_label("Timer restarts after firing");
+	_propertyWidgets.timer.waitToggle = 
+		gtk_check_button_new_with_label("Timer waits for start (when disabled: will start at spawn time)");
+	
+	_propertyWidgets.timer.reloadHBox = gtk_hbox_new(FALSE, 3);
+	_propertyWidgets.timer.reloadEntry = gtk_entry_new();
+	gtk_widget_set_size_request(_propertyWidgets.timer.reloadEntry, 50, -1);
+	_propertyWidgets.timer.reloadToggle = gtk_check_button_new_with_label("Timer reloads ");
+	_propertyWidgets.timer.reloadLabel = gtkutil::LeftAlignedLabel(" times");
+	GtkBox* reloadHBox = GTK_BOX(_propertyWidgets.timer.reloadHBox); // shortcut
+	gtk_box_pack_start(reloadHBox, _propertyWidgets.timer.reloadEntry, FALSE, FALSE, 0);
+	gtk_box_pack_start(reloadHBox, _propertyWidgets.timer.reloadLabel, TRUE, TRUE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(timerTypeHBox), _propertyWidgets.timer.typeToggle, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(timerTypeHBox), _propertyWidgets.timer.reloadToggle, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(timerTypeHBox), GTK_WIDGET(reloadHBox), TRUE, TRUE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), timerTypeHBox, FALSE, FALSE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.timer.waitToggle, FALSE, FALSE, 0);
+	
+	// Radius / Use Bounds
 	GtkWidget* radiusHBox = gtk_hbox_new(FALSE, 0);
 	_propertyWidgets.radiusToggle = gtk_check_button_new_with_label("Radius:");
 	gtk_widget_set_size_request(_propertyWidgets.radiusToggle, OPTIONS_LABEL_WIDTH, -1);
 	_propertyWidgets.radiusEntry = gtk_entry_new();
+	_propertyWidgets.useBounds = gtk_check_button_new_with_label("Use bounds");
 	
 	gtk_box_pack_start(GTK_BOX(radiusHBox), _propertyWidgets.radiusToggle, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(radiusHBox), _propertyWidgets.radiusEntry, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(radiusHBox), _propertyWidgets.useBounds, FALSE, FALSE, 6);
 	
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), radiusHBox, FALSE, FALSE, 0);
-	
-	// Use Bounds
-	_propertyWidgets.useBounds = gtk_check_button_new_with_label("Use bounds");
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.useBounds, FALSE, FALSE, 0);
-	
+		
 	// Magnitude
 	GtkWidget* magnHBox = gtk_hbox_new(FALSE, 0);
 	_propertyWidgets.magnToggle = gtk_check_button_new_with_label("Magnitude:");
@@ -116,18 +166,17 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	gtk_box_pack_start(GTK_BOX(magnHBox), _propertyWidgets.magnToggle, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(magnHBox), _propertyWidgets.magnEntry, TRUE, TRUE, 0);
 	
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), magnHBox, FALSE, FALSE, 0);
-	
 	// Falloff exponent
 	GtkWidget* falloffHBox = gtk_hbox_new(FALSE, 0);
 	_propertyWidgets.falloffToggle = gtk_check_button_new_with_label("Falloff Exponent:");
-	gtk_widget_set_size_request(_propertyWidgets.falloffToggle, OPTIONS_LABEL_WIDTH, -1);
+	//gtk_widget_set_size_request(_propertyWidgets.falloffToggle, OPTIONS_LABEL_WIDTH, -1);
 	_propertyWidgets.falloffEntry = gtk_entry_new();
 	
 	gtk_box_pack_start(GTK_BOX(falloffHBox), _propertyWidgets.falloffToggle, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(falloffHBox), _propertyWidgets.falloffEntry, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(magnHBox), gtkutil::LeftAlignment(falloffHBox, 12, 1.0f), FALSE, FALSE, 0);
 	
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), falloffHBox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), magnHBox, FALSE, FALSE, 0);
 	
 	// Time Interval
 	GtkWidget* timeHBox = gtk_hbox_new(FALSE, 0);
@@ -157,40 +206,6 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), durationHBox, FALSE, FALSE, 0);
 	
-	// Timer Time
-	GtkWidget* timerHBox = gtk_hbox_new(FALSE, 0);
-	_propertyWidgets.timer.toggle = gtk_check_button_new_with_label("Activation Timer:");
-	gtk_widget_set_size_request(_propertyWidgets.timer.toggle, OPTIONS_LABEL_WIDTH, -1);
-	_propertyWidgets.timer.hour = gtk_entry_new();
-	_propertyWidgets.timer.minute = gtk_entry_new();
-	_propertyWidgets.timer.second = gtk_entry_new();
-	_propertyWidgets.timer.millisecond = gtk_entry_new();
-	gtk_widget_set_size_request(_propertyWidgets.timer.hour, 30, -1);
-	gtk_widget_set_size_request(_propertyWidgets.timer.minute, 30, -1);
-	gtk_widget_set_size_request(_propertyWidgets.timer.second, 30, -1);
-	gtk_widget_set_size_request(_propertyWidgets.timer.millisecond, 30, -1);
-	
-	_propertyWidgets.timer.entryHBox = gtk_hbox_new(FALSE, 3);
-	GtkBox* entryHBox = GTK_BOX(_propertyWidgets.timer.entryHBox); // shortcut cast
-	gtk_box_pack_start(entryHBox, _propertyWidgets.timer.hour, FALSE, FALSE, 0);
-	gtk_box_pack_start(entryHBox, gtk_label_new("h"), FALSE, FALSE, 0);
-	gtk_box_pack_start(entryHBox, _propertyWidgets.timer.minute, FALSE, FALSE, 0);
-	gtk_box_pack_start(entryHBox, gtk_label_new("m"), FALSE, FALSE, 0);
-	gtk_box_pack_start(entryHBox, _propertyWidgets.timer.second, FALSE, FALSE, 0);
-	gtk_box_pack_start(entryHBox, gtk_label_new("s"), FALSE, FALSE, 0);
-	gtk_box_pack_start(entryHBox, _propertyWidgets.timer.millisecond, FALSE, FALSE, 0);
-	gtk_box_pack_start(entryHBox, gtk_label_new("ms"), FALSE, FALSE, 0);
-	gtk_box_pack_start(entryHBox, gtkutil::RightAlignedLabel("(enables stim on elapse)"), TRUE, TRUE, 0);
-	
-	gtk_box_pack_start(GTK_BOX(timerHBox), _propertyWidgets.timer.toggle, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(timerHBox), _propertyWidgets.timer.entryHBox, TRUE, TRUE, 0);
-	
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), timerHBox, FALSE, FALSE, 0);
-	
-	// Timer type
-	_propertyWidgets.timerTypeToggle = gtk_check_button_new_with_label("Timer restarts after firing");
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.timerTypeToggle, FALSE, FALSE, 0);
-	
 	// Chance variable
 	GtkWidget* chanceHBox = gtk_hbox_new(FALSE, 0);
 	_propertyWidgets.chanceToggle = gtk_check_button_new_with_label("Chance:");
@@ -209,6 +224,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.falloffEntry)] = "falloffexponent";
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.chanceEntry)] = "chance";
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.durationEntry)] = "duration";
+	_entryWidgets[GTK_EDITABLE(_propertyWidgets.timer.reloadEntry)] = "timer_reload";
 	
 	// Connect the checkboxes
 	g_signal_connect(G_OBJECT(_propertyWidgets.active), "toggled", G_CALLBACK(onCheckboxToggle), this);
@@ -217,10 +233,12 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	g_signal_connect(G_OBJECT(_propertyWidgets.timeIntToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.magnToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.falloffToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.timerTypeToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.timer.typeToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.chanceToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.durationToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.timer.toggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.timer.reloadToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.timer.waitToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	
 	// Connect the entry fields
 	g_signal_connect(G_OBJECT(_propertyWidgets.magnEntry), "changed", G_CALLBACK(onEntryChanged), this);
@@ -233,7 +251,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	g_signal_connect(G_OBJECT(_propertyWidgets.timer.minute), "changed", G_CALLBACK(onEntryChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.timer.second), "changed", G_CALLBACK(onEntryChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.timer.millisecond), "changed", G_CALLBACK(onEntryChanged), this);
-	
+	g_signal_connect(G_OBJECT(_propertyWidgets.timer.reloadEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	
 	return _propertyWidgets.vbox;
 }
@@ -266,7 +284,7 @@ void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 	else if (toggleWidget == _propertyWidgets.useBounds) {
 		setProperty("use_bounds", active ? "1" : "");
 	}
-	else if (toggleWidget == _propertyWidgets.timerTypeToggle) {
+	else if (toggleWidget == _propertyWidgets.timer.typeToggle) {
 		setProperty("timer_type", active ? "RELOAD" : "");
 	}
 	else if (toggleWidget == _propertyWidgets.radiusToggle) {
@@ -365,6 +383,22 @@ void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 		else {
 			setProperty("timer_time", "");
 		}
+	}
+	else if (toggleWidget == _propertyWidgets.timer.reloadToggle) {
+		std::string entryText = 
+			gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.timer.reloadEntry));
+		
+		// Enter a default value for the entry text, if it's empty up till now.
+		if (active) {
+			entryText += (entryText.empty()) ? "1" : "";	
+		}
+		else {
+			entryText = "";
+		}
+		setProperty("timer_reload", entryText);
+	}
+	else if (toggleWidget == _propertyWidgets.timer.waitToggle) {
+		setProperty("timer_waitforstart", active ? "1" : "");
 	}
 }
 
@@ -550,15 +584,37 @@ void StimEditor::update() {
 		gtk_entry_set_text(GTK_ENTRY(_propertyWidgets.timer.second), second.c_str());
 		gtk_entry_set_text(GTK_ENTRY(_propertyWidgets.timer.millisecond), ms.c_str());
 		
-		// Timer Type
 		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.timerTypeToggle),
-			sr.get("timer_type") == "RELOAD"
+			GTK_TOGGLE_BUTTON(_propertyWidgets.timer.waitToggle),
+			useTimerTime && sr.get("timer_waitforstart") == "1"
+		);
+		gtk_widget_set_sensitive(_propertyWidgets.timer.waitToggle, useTimerTime);
+		
+		// Timer Type
+		bool useTimerType = sr.get("timer_type") == "RELOAD" && useTimerTime;
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.timer.typeToggle),
+			useTimerType
 		);
 		gtk_widget_set_sensitive(
-			_propertyWidgets.timerTypeToggle, 
-			useTimeInterval
+			_propertyWidgets.timer.typeToggle, 
+			useTimerTime
 		);
+		
+		bool userTimerReload = useTimerType && !sr.get("timer_reload").empty(); 
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.timer.reloadToggle),
+			userTimerReload
+		);
+		gtk_widget_set_sensitive(
+			_propertyWidgets.timer.reloadToggle, 
+			useTimerType
+		);
+		gtk_entry_set_text(
+			GTK_ENTRY(_propertyWidgets.timer.reloadEntry),
+			sr.get("timer_reload").c_str()
+		);
+		gtk_widget_set_sensitive(_propertyWidgets.timer.reloadHBox, userTimerReload);
 		
 		// Use Magnitude
 		bool useMagnitude = (sr.get("magnitude") != "");
