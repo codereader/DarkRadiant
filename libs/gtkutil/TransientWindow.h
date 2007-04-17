@@ -58,6 +58,10 @@ public:
 	static void minimise(GtkWidget* window);
 
 private:
+	/** greebo: This shows the parent again, so that it doesn't disappear behind other applications
+	 */
+	static gboolean showParentOnDelete(GtkWidget* widget, GdkEvent* event, GtkWindow* parent);
+
 	/* greebo: This disconnects the onResize handler from the _parent window
 	 */	
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, GtkWindow* parent);
