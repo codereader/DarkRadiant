@@ -337,7 +337,8 @@ void ResponseEditor::editEffect() {
 		// Make sure we have a response and anything selected
 		if (sr.get("class") == "R" && effectIndex > 0) {
 			// Create a new effect editor (self-destructs)
-			new EffectEditor(GTK_WINDOW(_parent), sr, effectIndex, *this);
+			new EffectEditor(GTK_WINDOW(_parent), sr, 
+							 effectIndex, _stimTypes, *this);
 			
 			// The editor is modal and will destroy itself, our work is done
 		}

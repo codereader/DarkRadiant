@@ -4,6 +4,7 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/TreeModel.h"
+#include "string/string.h"
 
 EffectArgumentItem::EffectArgumentItem(
 		ResponseEffect::Argument& arg, 
@@ -119,5 +120,56 @@ std::string EntityArgument::getValue() {
 }
 
 GtkWidget* EntityArgument::getEditWidget() {
+	return _comboBox;
+}
+
+// StimType Argument
+StimTypeArgument::StimTypeArgument(
+		ResponseEffect::Argument& arg, 
+		GtkTooltips* tooltips,
+		GtkListStore* stimTypeStore) :
+	EffectArgumentItem(arg, tooltips),
+	_stimTypeStore(stimTypeStore)
+{
+	// Cast the helper class onto a ListStore and create a new treeview
+	_comboBox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(_stimTypeStore));
+	g_object_unref(_stimTypeStore); // tree view owns the reference now
+	
+	// Add the cellrenderer for the name
+	GtkCellRenderer* nameRenderer = gtk_cell_renderer_text_new();
+	GtkCellRenderer* iconRenderer = gtk_cell_renderer_pixbuf_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_comboBox), iconRenderer, FALSE);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_comboBox), nameRenderer, TRUE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_comboBox), iconRenderer, "pixbuf", ST_ICON_COL);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_comboBox), nameRenderer, "text", ST_CAPTION_PLUS_ID_COL);
+	gtk_cell_renderer_set_fixed_size(iconRenderer, 26, -1);
+
+	// Now select the stimtype passed in the argument
+	// Find the entity using a TreeModel traversor (search the column #0)
+	gtkutil::TreeModel::SelectionFinder finder(strToInt(arg.value), ST_ID_COL);
+	gtk_tree_model_foreach(
+		GTK_TREE_MODEL(_stimTypeStore), 
+		gtkutil::TreeModel::SelectionFinder::forEach, 
+		&finder
+	);
+	
+	// Select the found treeiter, if the name was found in the liststore
+	if (finder.getPath() != NULL) {
+		GtkTreeIter iter = finder.getIter();
+		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_comboBox), &iter);
+	}
+}
+
+std::string StimTypeArgument::getValue() {
+	GtkTreeIter iter;
+	if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(_comboBox), &iter)) {
+		GtkTreeModel* model = gtk_combo_box_get_model(GTK_COMBO_BOX(_comboBox));
+		std::string id = intToStr(gtkutil::TreeModel::getInt(model, &iter, ST_ID_COL));
+		return id;
+	}
+	return "";
+}
+
+GtkWidget* StimTypeArgument::getEditWidget() {
 	return _comboBox;
 }
