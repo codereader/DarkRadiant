@@ -162,6 +162,8 @@
 	</subMenu>
 
 	<subMenu name="grid" caption="_Grid">
+		<menuItem name="snapToGrid" caption="Snap selected to grid" command="SnapToGrid" />
+		<menuSeparator />
 		<menuItem name="grid0.125" caption="Grid0.125" command="SetGrid0.125" />
 		<menuItem name="grid0.25" caption="Grid0.25" command="SetGrid0.25" />
 		<menuItem name="grid0.5" caption="Grid0.5" command="SetGrid0.5" />
