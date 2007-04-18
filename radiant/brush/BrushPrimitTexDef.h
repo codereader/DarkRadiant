@@ -5,7 +5,7 @@
 #include "TexDef.h"
 
 struct BrushPrimitTexDef {
-	float coords[2][3];	
+	double coords[2][3];	
 	
 	// Constructor
 	BrushPrimitTexDef();
@@ -18,13 +18,13 @@ struct BrushPrimitTexDef {
 	BrushPrimitTexDef(const TexDef& texdef);
 	
 	// shift a texture (texture adjustments) along it's current texture axes
-	void shift(float s, float t);
+	void shift(double s, double t);
 	
 	// apply same scale as the spinner button of the surface inspector
-	void scale(float s, float t);
+	void scale(double s, double t);
 	
 	// apply same rotation as the spinner button of the surface inspector
-	void rotate(float angle);
+	void rotate(double angle);
 	
 	/* greebo: This removes the texture scaling from the
 	 * coordinates. The resulting coordinates are absolute
@@ -48,7 +48,7 @@ struct BrushPrimitTexDef {
 	
 	// All texture-projection translation (shift) values are congruent modulo the dimensions of the texture.
 	// This function normalises shift values to the smallest positive congruent values.
-	void normalise(float width, float height);
+	void normalise(double width, double height);
 
 	/* greebo: This returns the transformation matrix.
 	 * As the member variables already ARE the matrix

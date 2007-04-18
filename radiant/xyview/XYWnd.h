@@ -39,8 +39,8 @@ class XYWnd :
 	DeferredMotion m_deferred_motion;
 
 	// The maximum/minimum values of a coordinate
-	float _minWorldCoord;
-	float _maxWorldCoord;
+	double _minWorldCoord;
+	double _maxWorldCoord;
 
 	// The timer used for chase mouse xyview movements
 	Timer _chaseMouseTimer;
@@ -52,7 +52,7 @@ class XYWnd :
 	
 	guint _chaseMouseHandler;
 
-	float	m_fScale;
+	double	m_fScale;
 	Vector3 m_vOrigin;
 	
 	View m_view;

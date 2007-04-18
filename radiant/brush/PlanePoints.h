@@ -3,12 +3,12 @@
 
 #include "math/Vector3.h"
 
-/* greebo: Three points in space (Vector3 with double precision) define a plane, hence PlanePoints
+/* greebo: Three points in space (Vector3) define a plane, hence PlanePoints
  * 
  * Note: should probably be moved into libs/math/ 
  */
 
-typedef DoubleVector3 PlanePoints[3];
+typedef Vector3 PlanePoints[3];
 
 inline bool planepts_equal(const PlanePoints planepts, const PlanePoints other) {
 	return planepts[0] == other[0] && planepts[1] == other[1] && planepts[2] == other[2];
@@ -27,7 +27,7 @@ inline void planepts_quantise(PlanePoints planepts, double snap) {
 }
 
 inline void edge_snap(Vector3& edge, double snap) {
-	float scale = static_cast<float>(ceil(fabs(snap / edge.max())));
+	double scale = ceil(fabs(snap / edge.max()));
 	
 	if (scale > 0.0f) {
 		edge *= scale;

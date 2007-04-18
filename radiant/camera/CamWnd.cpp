@@ -405,11 +405,11 @@ void CamWnd::Cam_Draw() {
 
 	glMatrixMode(GL_PROJECTION);
 
-	glLoadMatrixf(reinterpret_cast<const float*>(&m_Camera.projection));
+	glLoadMatrixd(m_Camera.projection);
 
 	glMatrixMode(GL_MODELVIEW);
 
-	glLoadMatrixf(reinterpret_cast<const float*>(&m_Camera.modelview));
+	glLoadMatrixd(m_Camera.modelview);
 
 
 	// one directional light source directly behind the viewer
@@ -587,7 +587,7 @@ void CamWnd::benchmark() {
 		Vector3 angles;
 		angles[CAMERA_ROLL] = 0;
 		angles[CAMERA_PITCH] = 0;
-		angles[CAMERA_YAW] = static_cast<float>(i * (360.0 / 100.0));
+		angles[CAMERA_YAW] = static_cast<double>(i * (360.0 / 100.0));
 		setCameraAngles(angles);
 	}
 

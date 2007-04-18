@@ -31,19 +31,19 @@ public:
   rectangle_t()
     : x(0), y(0), w(0), h(0)
   {}
-  rectangle_t(float _x, float _y, float _w, float _h)
+  rectangle_t(double _x, double _y, double _w, double _h)
     : x(_x), y(_y), w(_w), h(_h)
   {}
-  float x;
-  float y;
-  float w;
-  float h;
+  double x;
+  double y;
+  double w;
+  double h;
 };
 
 struct Coord2D
 {
   float x, y;
-  Coord2D(float _x, float _y)
+  Coord2D(double _x, double _y)
     : x(_x), y(_y)
   {
   }
@@ -54,7 +54,7 @@ inline Coord2D coord2d_device2screen(const Coord2D& coord, unsigned int width, u
   return Coord2D(((coord.x + 1.0f) * 0.5f) * width, ((coord.y + 1.0f) * 0.5f) * height);
 }
 
-inline rectangle_t rectangle_from_area(const float min[2], const float max[2], unsigned int width, unsigned int height)
+inline rectangle_t rectangle_from_area(const double min[2], const double max[2], unsigned int width, unsigned int height)
 {
   Coord2D botleft(coord2d_device2screen(Coord2D(min[0], min[1]), width, height));
   Coord2D topright(coord2d_device2screen(Coord2D(max[0], max[1]), width, height));

@@ -34,7 +34,7 @@ inline const Colour4b colour_for_index(std::size_t i, std::size_t width) {
   return (i%2 || (i/width)%2) ? colour_inside : colour_corner;
 }
 
-inline bool float_valid(float f) {
+inline bool double_valid(double f) {
   return f == f;
 }
 
@@ -502,11 +502,11 @@ bool Patch::isValid() const
 
   for(PatchControlConstIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i)
   {
-    if(!float_valid((*i).m_vertex.x())
-      || !float_valid((*i).m_vertex.y())
-      || !float_valid((*i).m_vertex.z())
-      || !float_valid((*i).m_texcoord.x())
-      || !float_valid((*i).m_texcoord.y()))
+    if(!double_valid((*i).m_vertex.x())
+      || !double_valid((*i).m_vertex.y())
+      || !double_valid((*i).m_vertex.z())
+      || !double_valid((*i).m_texcoord.x())
+      || !double_valid((*i).m_texcoord.y()))
     {
       globalErrorStream() << "patch has invalid control points\n";
       return false;
@@ -2129,9 +2129,9 @@ void Patch::RenderDebug(RenderStateFlags state) const
     glBegin(GL_QUAD_STRIP);
     for (std::size_t j = 0; j<m_tess.m_lenStrips; j++)
     {
-      glNormal3fv(normal3f_to_array((m_tess.m_vertices.data() + m_tess.m_indices[i*m_tess.m_lenStrips+j])->normal));
-      glTexCoord2fv(texcoord2f_to_array((m_tess.m_vertices.data() + m_tess.m_indices[i*m_tess.m_lenStrips+j])->texcoord));
-      glVertex3fv(vertex3f_to_array((m_tess.m_vertices.data() + m_tess.m_indices[i*m_tess.m_lenStrips+j])->vertex));
+      glNormal3dv((m_tess.m_vertices.data() + m_tess.m_indices[i*m_tess.m_lenStrips+j])->normal);
+      glTexCoord2dv((m_tess.m_vertices.data() + m_tess.m_indices[i*m_tess.m_lenStrips+j])->texcoord);
+      glVertex3dv((m_tess.m_vertices.data() + m_tess.m_indices[i*m_tess.m_lenStrips+j])->vertex);
     }
     glEnd();
   }
@@ -2148,27 +2148,27 @@ void RenderablePatchSolid::RenderNormals() const
     {
       {
         Vector3 vNormal(
-            vertex3f_to_vector3((m_tess.m_vertices.data() + (j*width+i))->vertex) +
-            normal3f_to_vector3((m_tess.m_vertices.data() + (j*width+i))->normal) * 8
+            ((m_tess.m_vertices.data() + (j*width+i))->vertex) +
+            ((m_tess.m_vertices.data() + (j*width+i))->normal) * 8
         );
-        glVertex3fv(vertex3f_to_array((m_tess.m_vertices.data() + (j*width+i))->vertex));
-        glVertex3fv(&vNormal[0]);
+        glVertex3dv((m_tess.m_vertices.data() + (j*width+i))->vertex);
+        glVertex3dv(vNormal);
       }
       {
         Vector3 vNormal(          
-            vertex3f_to_vector3((m_tess.m_vertices.data() + (j*width+i))->vertex) +
-            normal3f_to_vector3((m_tess.m_vertices.data() + (j*width+i))->tangent) * 8
+            ((m_tess.m_vertices.data() + (j*width+i))->vertex) +
+            ((m_tess.m_vertices.data() + (j*width+i))->tangent) * 8
         );
-        glVertex3fv(vertex3f_to_array((m_tess.m_vertices.data() + (j*width+i))->vertex));
-        glVertex3fv(&vNormal[0]);
+        glVertex3dv((m_tess.m_vertices.data() + (j*width+i))->vertex);
+        glVertex3dv(vNormal);
       }
       {
         Vector3 vNormal(
-            vertex3f_to_vector3((m_tess.m_vertices.data() + (j*width+i))->vertex) +
-            normal3f_to_vector3((m_tess.m_vertices.data() + (j*width+i))->bitangent) * 8
+            ((m_tess.m_vertices.data() + (j*width+i))->vertex) +
+            ((m_tess.m_vertices.data() + (j*width+i))->bitangent) * 8
         );
-        glVertex3fv(vertex3f_to_array((m_tess.m_vertices.data() + (j*width+i))->vertex));
-        glVertex3fv(&vNormal[0]);
+        glVertex3dv((m_tess.m_vertices.data() + (j*width+i))->vertex);
+        glVertex3dv(vNormal);
       }
     }
   }
@@ -2398,39 +2398,39 @@ void Patch::TesselateSubMatrixFixed(ArbitraryMeshVertex* vertices, std::size_t s
         PatchControl down;
         QuadraticBezier_evaluate(pointY[0], pointY[1], pointY[2], tU, point, up, down);
 
-        vertex3f_to_vector3(p->vertex) = point.m_vertex;
-        texcoord2f_to_vector2(p->texcoord) = point.m_texcoord;
+        p->vertex = Vertex3f(point.m_vertex);
+        p->texcoord = point.m_texcoord;
 
         ArbitraryMeshVertex a, b, c;
 
-        a.vertex = vertex3f_for_vector3(left.m_vertex);
-        a.texcoord = texcoord2f_for_vector2(left.m_texcoord);
-        b.vertex = vertex3f_for_vector3(right.m_vertex);
-        b.texcoord = texcoord2f_for_vector2(right.m_texcoord);
+        a.vertex = Vertex3f(left.m_vertex);
+        a.texcoord = left.m_texcoord;
+        b.vertex = Vertex3f(right.m_vertex);
+        b.texcoord = right.m_texcoord;
 
         if(i != 0)
         {
-          c.vertex = vertex3f_for_vector3(up.m_vertex);
-          c.texcoord = texcoord2f_for_vector2(up.m_texcoord);
+          c.vertex = Vertex3f(up.m_vertex);
+          c.texcoord = up.m_texcoord;
         }
         else
         {
-          c.vertex = vertex3f_for_vector3(down.m_vertex);
-          c.texcoord = texcoord2f_for_vector2(down.m_texcoord);
+          c.vertex = Vertex3f(down.m_vertex);
+          c.texcoord = down.m_texcoord;
         }
 
         Vector3 normal = (right.m_vertex - left.m_vertex).crossProduct(up.m_vertex - down.m_vertex).getNormalised();
 
         Vector3 tangent, bitangent;
         ArbitraryMeshTriangle_calcTangents(a, b, c, tangent, bitangent);
-        vector3_normalise(tangent);
-        vector3_normalise(bitangent);
+        tangent = tangent.getNormalised();
+        bitangent = bitangent.getNormalised();
        
         if(((nFlagsX & AVERAGE) != 0 && i == 0) || ((nFlagsY & AVERAGE) != 0  && j == 0))
         {
-          p->normal = Normal3f(normal3f_to_vector3(p->normal) + normal.getNormalised());
-          p->tangent = Normal3f(normal3f_to_vector3(p->tangent) + tangent.getNormalised());
-          p->bitangent = Normal3f((normal3f_to_vector3(p->bitangent) + bitangent).getNormalised());
+          p->normal = Normal3f(p->normal + normal.getNormalised());
+          p->tangent = Normal3f(p->tangent + tangent.getNormalised());
+          p->bitangent = Normal3f((p->bitangent + bitangent).getNormalised());
         }
         else
         {
@@ -2573,26 +2573,26 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
       if(!(nFlagsX & DEGEN_0a) || !(nFlagsX & DEGEN_0b))
       {
         tangentU = vertex_0_1 - vertex_0_0;
-        a.vertex = vertex3f_for_vector3(vertex_0_0);
-        a.texcoord = texcoord2f_for_vector2(texcoord_0_0);
-        c.vertex = vertex3f_for_vector3(vertex_0_1);
-        c.texcoord = texcoord2f_for_vector2(texcoord_0_1);
+        a.vertex = Vertex3f(vertex_0_0);
+        a.texcoord = texcoord_0_0;
+        c.vertex = Vertex3f(vertex_0_1);
+        c.texcoord = texcoord_0_1;
       }
       else if(!(nFlagsX & DEGEN_1a) || !(nFlagsX & DEGEN_1b))
       {
         tangentU = vertex_1_1 - vertex_1_0;
-        a.vertex = vertex3f_for_vector3(vertex_1_0);
-        a.texcoord = texcoord2f_for_vector2(texcoord_1_0);
-        c.vertex = vertex3f_for_vector3(vertex_1_1);
-        c.texcoord = texcoord2f_for_vector2(texcoord_1_1);
+        a.vertex = Vertex3f(vertex_1_0);
+        a.texcoord = texcoord_1_0;
+        c.vertex = Vertex3f(vertex_1_1);
+        c.texcoord = texcoord_1_1;
       }
       else
       {
         tangentU = vertex_2_1 - vertex_2_0;
-        a.vertex = vertex3f_for_vector3(vertex_2_0);
-        a.texcoord = texcoord2f_for_vector2(texcoord_2_0);
-        c.vertex = vertex3f_for_vector3(vertex_2_1);
-        c.texcoord = texcoord2f_for_vector2(texcoord_2_1);
+        a.vertex = Vertex3f(vertex_2_0);
+        a.texcoord = texcoord_2_0;
+        c.vertex = Vertex3f(vertex_2_1);
+        c.texcoord = texcoord_2_1;
       }
 
       Vector3 tangentV;
@@ -2600,22 +2600,22 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
       if((nFlagsY & DEGEN_0a) && (nFlagsY & DEGEN_1a) && (nFlagsY & DEGEN_2a))
       {
         tangentV = vertex_for_index(m_tess.m_vertices, BX->index + offEndY) - tmp;
-        b.vertex = vertex3f_for_vector3(tmp);//m_tess.m_vertices[BX->index + offEndY].vertex;
-        b.texcoord = texcoord2f_for_vector2(texTmp);//m_tess.m_vertices[BX->index + offEndY].texcoord;
+        b.vertex = Vertex3f(tmp);//m_tess.m_vertices[BX->index + offEndY].vertex;
+        b.texcoord = texTmp;//m_tess.m_vertices[BX->index + offEndY].texcoord;
       }
       else
       {
         tangentV = tmp - vertex_for_index(m_tess.m_vertices, BX->index + offStartY);
-        b.vertex = vertex3f_for_vector3(tmp);//m_tess.m_vertices[BX->index + offStartY].vertex;
-        b.texcoord = texcoord2f_for_vector2(texTmp); //m_tess.m_vertices[BX->index + offStartY].texcoord;
+        b.vertex = Vertex3f(tmp);//m_tess.m_vertices[BX->index + offStartY].vertex;
+        b.texcoord = texTmp; //m_tess.m_vertices[BX->index + offStartY].texcoord;
       }
   
 
       Vector3 normal, s, t;
       ArbitraryMeshVertex& v = m_tess.m_vertices[offStartY + BX->index];
-      Vector3& p = normal3f_to_vector3(v.normal);
-      Vector3& ps = normal3f_to_vector3(v.tangent);
-      Vector3& pt = normal3f_to_vector3(v.bitangent);
+      Vector3& p = v.normal;
+      Vector3& ps = v.tangent;
+      Vector3& pt = v.bitangent;
 
       if(bTranspose)
       {
@@ -2652,26 +2652,26 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
       if(!(nFlagsX & DEGEN_2a) || !(nFlagsX & DEGEN_2b))
       {
         tangentU = vertex_2_1 - vertex_2_0;
-        a.vertex = vertex3f_for_vector3(vertex_2_0);
-        a.texcoord = texcoord2f_for_vector2(texcoord_2_0);
-        c.vertex = vertex3f_for_vector3(vertex_2_1);
-        c.texcoord = texcoord2f_for_vector2(texcoord_2_1);
+        a.vertex = Vertex3f(vertex_2_0);
+        a.texcoord = texcoord_2_0;
+        c.vertex = Vertex3f(vertex_2_1);
+        c.texcoord = texcoord_2_1;
       }
       else if(!(nFlagsX & DEGEN_1a) || !(nFlagsX & DEGEN_1b))
       {
         tangentU = vertex_1_1 - vertex_1_0;
-        a.vertex = vertex3f_for_vector3(vertex_1_0);
-        a.texcoord = texcoord2f_for_vector2(texcoord_1_0);
-        c.vertex = vertex3f_for_vector3(vertex_1_1);
-        c.texcoord = texcoord2f_for_vector2(texcoord_1_1);
+        a.vertex = Vertex3f(vertex_1_0);
+        a.texcoord = texcoord_1_0;
+        c.vertex = Vertex3f(vertex_1_1);
+        c.texcoord = texcoord_1_1;
       }
       else
       {
         tangentU = vertex_0_1 - vertex_0_0;
-        a.vertex = vertex3f_for_vector3(vertex_0_0);
-        a.texcoord = texcoord2f_for_vector2(texcoord_0_0);
-        c.vertex = vertex3f_for_vector3(vertex_0_1);
-        c.texcoord = texcoord2f_for_vector2(texcoord_0_1);
+        a.vertex = Vertex3f(vertex_0_0);
+        a.texcoord = texcoord_0_0;
+        c.vertex = Vertex3f(vertex_0_1);
+        c.texcoord = texcoord_0_1;
       }
 
       Vector3 tangentV;
@@ -2679,20 +2679,20 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
       if((nFlagsY & DEGEN_0b) && (nFlagsY & DEGEN_1b) && (nFlagsY & DEGEN_2b))
       {
         tangentV = tmp - vertex_for_index(m_tess.m_vertices, BX->index + offStartY);
-        b.vertex = vertex3f_for_vector3(tmp);//m_tess.m_vertices[BX->index + offStartY].vertex;
-        b.texcoord = texcoord2f_for_vector2(texTmp);//m_tess.m_vertices[BX->index + offStartY].texcoord;
+        b.vertex = Vertex3f(tmp);//m_tess.m_vertices[BX->index + offStartY].vertex;
+        b.texcoord = texTmp;//m_tess.m_vertices[BX->index + offStartY].texcoord;
       }
       else
       {
         tangentV = vertex_for_index(m_tess.m_vertices, BX->index + offEndY) - tmp;
-        b.vertex = vertex3f_for_vector3(tmp);//m_tess.m_vertices[BX->index + offEndY].vertex;
-        b.texcoord = texcoord2f_for_vector2(texTmp);//m_tess.m_vertices[BX->index + offEndY].texcoord;
+        b.vertex = Vertex3f(tmp);//m_tess.m_vertices[BX->index + offEndY].vertex;
+        b.texcoord = texTmp;//m_tess.m_vertices[BX->index + offEndY].texcoord;
       }
 
       ArbitraryMeshVertex& v = m_tess.m_vertices[offEndY+BX->index];
-      Vector3& p = normal3f_to_vector3(v.normal);
-      Vector3& ps = normal3f_to_vector3(v.tangent);
-      Vector3& pt = normal3f_to_vector3(v.bitangent);
+      Vector3& p = v.normal;
+      Vector3& ps = v.tangent;
+      Vector3& pt = v.bitangent;
 
       if(bTranspose)
       {
@@ -2951,8 +2951,8 @@ void Patch::BuildTesselationCurves(EMatrixMajor major)
 
 inline void vertex_assign_ctrl(ArbitraryMeshVertex& vertex, const PatchControl& ctrl)
 {
-  vertex.vertex = vertex3f_for_vector3(ctrl.m_vertex);
-  vertex.texcoord = texcoord2f_for_vector2(ctrl.m_texcoord);
+  vertex.vertex = Vertex3f(ctrl.m_vertex);
+  vertex.texcoord = ctrl.m_texcoord;
 }
 
 inline void vertex_clear_normal(ArbitraryMeshVertex& vertex)
@@ -3180,10 +3180,10 @@ void Patch::accumulateVertexTangentSpace(std::size_t index, Vector3 tangentX[6],
     ArbitraryMeshVertex a, b, c;
     a.vertex = Vertex3f(0, 0, 0);
     a.texcoord = TexCoord2f(0, 0);
-    b.vertex = vertex3f_for_vector3(tangentX[index0]);
-    b.texcoord = texcoord2f_for_vector2(tangentS[index0]);
-    c.vertex = vertex3f_for_vector3(tangentY[index1]);
-    c.texcoord = texcoord2f_for_vector2(tangentT[index1]);
+    b.vertex = Vertex3f(tangentX[index0]);
+    b.texcoord = tangentS[index0];
+    c.vertex = Vertex3f(tangentY[index1]);
+    c.texcoord = tangentT[index1];
 
     Vector3 s, t;
     ArbitraryMeshTriangle_calcTangents(a, b, c, s, t);

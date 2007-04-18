@@ -44,7 +44,7 @@ inline void normalise_angles(Vector3& angles)
 }
 inline void read_angle(Vector3& angles, const char* value)
 {
-  if(!string_parse_float(value, angles[2]))
+  if(!string_parse_double(value, angles[2]))
   {
     default_angles(angles);
   }

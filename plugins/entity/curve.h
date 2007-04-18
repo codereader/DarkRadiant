@@ -88,9 +88,9 @@ inline bool ControlPoints_parse(ControlPoints& controlPoints, const char* value)
   }
   for(ControlPoints::iterator i = controlPoints.begin(); i != controlPoints.end(); ++i)
   {
-    if(!string_parse_float(tokeniser.getToken(), (*i).x())
-      || !string_parse_float(tokeniser.getToken(), (*i).y())
-      || !string_parse_float(tokeniser.getToken(), (*i).z()))
+    if(!string_parse_double(tokeniser.getToken(), (*i).x())
+      || !string_parse_double(tokeniser.getToken(), (*i).y())
+      || !string_parse_double(tokeniser.getToken(), (*i).z()))
     {
       return false;
     }
@@ -160,7 +160,7 @@ public:
   }
   void operator()(const Vector3& point) const
   {
-    m_points.push_back(PointVertex(vertex3f_for_vector3(point), colour_vertex));
+    m_points.push_back(PointVertex(Vertex3f(point), colour_vertex));
   }
 };
 
@@ -173,7 +173,7 @@ public:
   }
   void operator()(const Vector3& point) const
   {
-    m_points.push_back(PointVertex(vertex3f_for_vector3(point), colour_selected));
+    m_points.push_back(PointVertex(Vertex3f(point), colour_selected));
   }
 };
 
@@ -374,12 +374,12 @@ public:
     {
       const std::size_t numSegments = (m_controlPointsTransformed.size() - 1) * 16;
       m_renderCurve.m_vertices.resize(numSegments + 1);
-      m_renderCurve.m_vertices[0].vertex = vertex3f_for_vector3(m_controlPointsTransformed[0]);
+      m_renderCurve.m_vertices[0].vertex = Vertex3f(m_controlPointsTransformed[0]);
       for(std::size_t i = 1; i < numSegments; ++i)
       {
-        m_renderCurve.m_vertices[i].vertex = vertex3f_for_vector3(NURBS_evaluate(m_controlPointsTransformed, m_weights, m_knots, NURBS_degree, (1.0 / double(numSegments)) * double(i)));
+        m_renderCurve.m_vertices[i].vertex = Vertex3f(NURBS_evaluate(m_controlPointsTransformed, m_weights, m_knots, NURBS_degree, (1.0 / double(numSegments)) * double(i)));
       }
-      m_renderCurve.m_vertices[numSegments].vertex = vertex3f_for_vector3(m_controlPointsTransformed[m_controlPointsTransformed.size() - 1]);
+      m_renderCurve.m_vertices[numSegments].vertex = Vertex3f(m_controlPointsTransformed[m_controlPointsTransformed.size() - 1]);
     }
     else
     {
@@ -469,12 +469,12 @@ public:
     {
       const std::size_t numSegments = (m_controlPointsTransformed.size() - 1) * 16;
       m_renderCurve.m_vertices.resize(numSegments + 1);
-      m_renderCurve.m_vertices[0].vertex = vertex3f_for_vector3(m_controlPointsTransformed[0]);
+      m_renderCurve.m_vertices[0].vertex = Vertex3f(m_controlPointsTransformed[0]);
       for(std::size_t i = 1; i < numSegments; ++i)
       {
-        m_renderCurve.m_vertices[i].vertex = vertex3f_for_vector3(CatmullRom_evaluate(m_controlPointsTransformed, (1.0 / double(numSegments)) * double(i)));
+        m_renderCurve.m_vertices[i].vertex = Vertex3f(CatmullRom_evaluate(m_controlPointsTransformed, (1.0 / double(numSegments)) * double(i)));
       }
-      m_renderCurve.m_vertices[numSegments].vertex = vertex3f_for_vector3(m_controlPointsTransformed[m_controlPointsTransformed.size() - 1]);
+      m_renderCurve.m_vertices[numSegments].vertex = Vertex3f(m_controlPointsTransformed[m_controlPointsTransformed.size() - 1]);
     }
     else
     {

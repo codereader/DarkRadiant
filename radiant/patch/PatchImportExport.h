@@ -106,11 +106,11 @@ inline bool Patch_importMatrix(Patch& patch, Tokeniser& tokeniser)
       {
         RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
     
-        RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, patch.ctrlAt(r,c).m_vertex[0]));
-        RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, patch.ctrlAt(r,c).m_vertex[1]));
-        RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, patch.ctrlAt(r,c).m_vertex[2]));
-        RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, patch.ctrlAt(r,c).m_texcoord[0]));
-        RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, patch.ctrlAt(r,c).m_texcoord[1]));
+        RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, patch.ctrlAt(r,c).m_vertex[0]));
+        RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, patch.ctrlAt(r,c).m_vertex[1]));
+        RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, patch.ctrlAt(r,c).m_vertex[2]));
+        RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, patch.ctrlAt(r,c).m_texcoord[0]));
+        RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, patch.ctrlAt(r,c).m_texcoord[1]));
 
         RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
       }

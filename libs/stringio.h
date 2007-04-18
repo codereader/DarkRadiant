@@ -277,12 +277,12 @@ inline void Tokeniser_unexpectedError(Tokeniser& tokeniser, const char* token, c
  * 			If -1.#INF is found, the result will be -65535, no error is thrown
  * 			
  */
-inline bool Tokeniser_getFloat(Tokeniser& tokeniser, float& f) {
+inline bool Tokeniser_getDouble(Tokeniser& tokeniser, double& f) {
 	const char* token = tokeniser.getToken();
 
 	if (token != NULL) {
 		// Try to parse the string
-		if (string_parse_float(token, f)) {
+		if (string_parse_double(token, f)) {
 			return true;
 		}
 		else {
@@ -305,7 +305,7 @@ inline bool Tokeniser_getFloat(Tokeniser& tokeniser, float& f) {
 	}
 }
 
-inline bool Tokeniser_getDouble(Tokeniser& tokeniser, double& f)
+/*inline bool Tokeniser_getDouble(Tokeniser& tokeniser, double& f)
 {
   const char* token = tokeniser.getToken();
   if(token != 0 && string_parse_double(token, f))
@@ -314,7 +314,7 @@ inline bool Tokeniser_getDouble(Tokeniser& tokeniser, double& f)
   }
   Tokeniser_unexpectedError(tokeniser, token, "#number");
   return false;
-}
+}*/
 
 inline bool Tokeniser_getInteger(Tokeniser& tokeniser, int& i)
 {

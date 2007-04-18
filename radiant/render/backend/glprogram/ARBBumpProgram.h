@@ -137,7 +137,7 @@ public:
     glClientActiveTexture(GL_TEXTURE3);
 
     glMatrixMode(GL_TEXTURE);
-    glLoadMatrixf(reinterpret_cast<const float*>(&local2light));
+    glLoadMatrixd(local2light);
     glMatrixMode(GL_MODELVIEW);
 
     GlobalOpenGL_debugAssertNoErrors();

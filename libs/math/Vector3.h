@@ -7,7 +7,7 @@
  * 
  * The BasicVector3 is equipped with the most important operators like *, *= and so on.
  * 
- * Note: The most commonly used Vector3 is a BasicVector3<float>, this is also defined in this file 
+ * Note: The most commonly used Vector3 is a BasicVector3<double>, this is also defined in this file 
  *  
  * Note: that the multiplication of a Vector3 with another one (Vector3*Vector3) does NOT
  * result in an inner product but in a component-wise scaling. Use the .dot() method to
@@ -380,7 +380,7 @@ public:
 
 	/** Implicit cast to C-style array. This allows a Vector3 to be
 	 * passed directly to GL functions that expect an array (e.g.
-	 * glFloat3fv()). These functions implicitly provide operator[]
+	 * glFloat3dv()). These functions implicitly provide operator[]
 	 * as well, since the C-style array provides this function.
 	 */
 	 
@@ -404,7 +404,8 @@ public:
 
 	template<typename OtherT>
 	bool isParallel(const BasicVector3<OtherT>& other) const {
-		return (float_equal_epsilon(angle(other), 0.0f, 0.001f) || float_equal_epsilon(angle(other), c_pi, 0.001f)); 
+		return (float_equal_epsilon(angle(other), double(0.0f), double(0.001f)) 
+			 || float_equal_epsilon(angle(other), c_pi, double(0.001f))); 
 	}
 };
 
@@ -419,11 +420,8 @@ std::ostream& operator<<(std::ostream& st, BasicVector3<T> vec) {
 
 // ==========================================================================================
 
-// A 3-element vector stored in single-precision floating-point.
-typedef BasicVector3<float> Vector3;
-
-// Same as above, but with its components stored in double precision
-typedef BasicVector3<double> DoubleVector3;
+// A 3-element vector stored in double-precision floating-point.
+typedef BasicVector3<double> Vector3;
 
 // =============== Common Vector3 Methods ==================================================
 
@@ -493,9 +491,9 @@ inline void vector3_snap(BasicVector3<Element>& self, const OtherElement& snap) 
 
 inline Vector3 vector3_for_spherical(double theta, double phi) {
   return Vector3(
-    static_cast<float>(cos(theta) * cos(phi)),
-    static_cast<float>(sin(theta) * cos(phi)),
-    static_cast<float>(sin(phi))
+    cos(theta) * cos(phi),
+    sin(theta) * cos(phi),
+    sin(phi)
   );
 }
 

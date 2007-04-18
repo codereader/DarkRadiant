@@ -53,7 +53,7 @@ inline CameraModel* Instance_getCameraModel(scene::Instance& instance) {
 }
 
 template<typename Element> class BasicVector3;
-typedef BasicVector3<float> Vector3;
+typedef BasicVector3<double> Vector3;
 
 typedef void		(* PFN_GETCAMERA)		( Vector3& origin, Vector3& angles );
 typedef void		(* PFN_SETCAMERA)		( const Vector3& origin, const Vector3& angles );

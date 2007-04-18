@@ -181,6 +181,8 @@ int 			_pico_parse_int( picoParser_t *p, int *out );
 int 			_pico_parse_int_def( picoParser_t *p, int *out, int def );
 int 			_pico_parse_float( picoParser_t *p, float *out );
 int 			_pico_parse_float_def( picoParser_t *p, float *out, float def );
+int 			_pico_parse_double( picoParser_t *p, double *out );
+int 			_pico_parse_double_def( picoParser_t *p, double *out, double def );
 int 			_pico_parse_vec( picoParser_t *p, picoVec3_t out);
 int 			_pico_parse_vec_def( picoParser_t *p, picoVec3_t out, picoVec3_t def);
 int 			_pico_parse_vec2( picoParser_t *p, picoVec2_t out );

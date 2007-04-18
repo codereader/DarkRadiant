@@ -7,7 +7,7 @@
 #include "winding.h"
 
 inline void Winding_DrawWireframe(const Winding& winding) {
-	glVertexPointer(3, GL_FLOAT, sizeof(WindingVertex), &winding.points.data()->vertex);
+	glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &winding.points.data()->vertex);
 	glDrawArrays(GL_LINE_LOOP, 0, GLsizei(winding.numpoints));
 }
 

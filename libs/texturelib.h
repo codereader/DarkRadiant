@@ -121,21 +121,21 @@ inline Matrix4 matrix4_swap_axes(const Vector3& from, const Vector3& to) {
 
 inline Matrix4 matrix4_reflection_for_plane(const Plane3& plane) {
 	return Matrix4(
-		static_cast<float>(1 - (2 * plane.a * plane.a)),
-		static_cast<float>(-2 * plane.a * plane.b),
-		static_cast<float>(-2 * plane.a * plane.c),
+		1 - (2 * plane.a * plane.a),
+		-2 * plane.a * plane.b,
+		-2 * plane.a * plane.c,
 		0,
-		static_cast<float>(-2 * plane.b * plane.a),
-		static_cast<float>(1 - (2 * plane.b * plane.b)),
-		static_cast<float>(-2 * plane.b * plane.c),
+		-2 * plane.b * plane.a,
+		1 - (2 * plane.b * plane.b),
+		-2 * plane.b * plane.c,
 		0,
-		static_cast<float>(-2 * plane.c * plane.a),
-		static_cast<float>(-2 * plane.c * plane.b),
-		static_cast<float>(1 - (2 * plane.c * plane.c)),
+		-2 * plane.c * plane.a,
+		-2 * plane.c * plane.b,
+		1 - (2 * plane.c * plane.c),
 		0,
-		static_cast<float>(-2 * plane.d * plane.a),
-		static_cast<float>(-2 * plane.d * plane.b),
-		static_cast<float>(-2 * plane.d * plane.c),
+		-2 * plane.d * plane.a,
+		-2 * plane.d * plane.b,
+		-2 * plane.d * plane.c,
 		1
 	);
 }
@@ -164,9 +164,9 @@ inline Matrix4 matrix4_reflection_for_plane45(const Plane3& plane, const Vector3
 	
 	Matrix4 tmp = matrix4_reflection_for_plane(plane);
 	
-	swap.tx() = -static_cast<float>(-2 * plane.a * plane.d);
-	swap.ty() = -static_cast<float>(-2 * plane.b * plane.d);
-	swap.tz() = -static_cast<float>(-2 * plane.c * plane.d);
+	swap.tx() = -(-2 * plane.a * plane.d);
+	swap.ty() = -(-2 * plane.b * plane.d);
+	swap.tz() = -(-2 * plane.c * plane.d);
 	
 	return swap;
 }
@@ -257,11 +257,11 @@ inline void ComputeAxisBase(const Vector3& normal, Vector3& texS, Vector3& texT)
 	const Vector3 up(0, 0, 1);
 	const Vector3 down(0, 0, -1);
 
-	if(vector3_equal_epsilon(normal, up, float(1e-6))) {
+	if(vector3_equal_epsilon(normal, up, double(1e-6))) {
 		texS = Vector3(0, 1, 0);
 		texT = Vector3(1, 0, 0);
 	}
-	else if(vector3_equal_epsilon(normal, down, float(1e-6))) {
+	else if(vector3_equal_epsilon(normal, down, double(1e-6))) {
 		texS = Vector3(0, 1, 0);
 		texT = Vector3(-1, 0, 0);
 	}

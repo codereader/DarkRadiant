@@ -156,6 +156,7 @@
 
 	<!-- Information about the map format, for loading and saving -->		
 	<mapFormat>
+		<floatPrecision value="16" />
 		<fileExtension value="map" />
 		<mapFolder value="maps/" />
 		<prefabFolder value="prefabs/" />

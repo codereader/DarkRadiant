@@ -48,7 +48,7 @@ const ModifierFlags c_modifierAlt(ModifierEnumeration::ALT);
 
 template<typename Element>
 class BasicVector2;
-typedef BasicVector2<float> Vector2;
+typedef BasicVector2<double> Vector2;
 typedef Vector2 WindowVector;
 typedef struct _GdkEventButton GdkEventButton;
 

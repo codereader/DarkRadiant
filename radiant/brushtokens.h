@@ -41,11 +41,11 @@ inline bool FaceShader_importContentsFlagsValue(FaceShader& faceShader, Tokenise
 inline bool FaceTexdef_importTokens(FaceTexdef& texdef, Tokeniser& tokeniser)
 {
   // parse texdef
-  RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_texdef._shift[0]));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_texdef._shift[1]));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_texdef._rotate));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_texdef._scale[0]));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_texdef._scale[1]));
+  RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_texdef._shift[0]));
+  RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_texdef._shift[1]));
+  RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_texdef._rotate));
+  RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_texdef._scale[0]));
+  RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_texdef._scale[1]));
 
   ASSERT_MESSAGE(texdef.m_projection.m_texdef.isSane(), "FaceTexdef_importTokens: bad texdef");
   return true;
@@ -57,16 +57,16 @@ inline bool FaceTexdef_BP_importTokens(FaceTexdef& texdef, Tokeniser& tokeniser)
   RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
   {
     RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
-    RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_brushprimit_texdef.coords[0][0]));
-    RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_brushprimit_texdef.coords[0][1]));
-    RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_brushprimit_texdef.coords[0][2]));
+    RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_brushprimit_texdef.coords[0][0]));
+    RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_brushprimit_texdef.coords[0][1]));
+    RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_brushprimit_texdef.coords[0][2]));
     RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
   }
   {
     RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
-    RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_brushprimit_texdef.coords[1][0]));
-    RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_brushprimit_texdef.coords[1][1]));
-    RETURN_FALSE_IF_FAIL(Tokeniser_getFloat(tokeniser, texdef.m_projection.m_brushprimit_texdef.coords[1][2]));
+    RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_brushprimit_texdef.coords[1][0]));
+    RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_brushprimit_texdef.coords[1][1]));
+    RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_brushprimit_texdef.coords[1][2]));
     RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
   }
   RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));

@@ -38,6 +38,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "parse.h"
 #include "write.h"
 
+	namespace {
+		const std::string RKEY_PRECISION = "game/mapFormat/floatPrecision";
+	}
 
 class MapDoom3Dependencies :
   public GlobalRadiantModuleRef,
@@ -140,8 +143,8 @@ public:
     {
       return;
     }
-    float version;
-    if(!Tokeniser_getFloat(tokeniser, version))
+    double version;
+    if(!Tokeniser_getDouble(tokeniser, version))
     {
       return;
     }
@@ -157,6 +160,8 @@ public:
 
 	// Write scene graph to an ostream
 	void writeGraph(scene::Node& root, GraphTraversalFunc traverse, std::ostream& os) const {
+		int precision = GlobalRegistry().getInt(RKEY_PRECISION);  
+		os.precision(precision);
 	    os << "Version " << MapVersion() << std::endl;
 		Map_Write(root, traverse, os);
 	}

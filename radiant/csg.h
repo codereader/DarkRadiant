@@ -34,7 +34,7 @@ namespace scene
   class Graph;
 }
 template<typename Element> class BasicVector3;
-typedef BasicVector3<float> Vector3;
+typedef BasicVector3<double> Vector3;
 class Plane3;
 
 void Scene_BrushSetClipPlane(const Plane3& plane);

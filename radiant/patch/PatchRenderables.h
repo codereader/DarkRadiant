@@ -19,12 +19,12 @@ public:
   {
     {
   #if NV_DRIVER_BUG
-      glVertexPointer(3, GL_FLOAT, 0, 0);
+      glVertexPointer(3, GL_DOUBLE, 0, 0);
       glDrawArrays(GL_TRIANGLE_FAN, 0, 0);
   #endif
 
       std::size_t n = 0;
-      glVertexPointer(3, GL_FLOAT, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->vertex);
+      glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->vertex);
       for(std::size_t i = 0; i <= m_tess.m_curveTreeV.size(); ++i)
       {
         glDrawArrays(GL_LINE_STRIP, GLint(n), GLsizei(m_tess.m_nArrayWidth));
@@ -44,14 +44,14 @@ public:
       std::size_t n = m_tess.m_nArrayWidth * sizeof(ArbitraryMeshVertex);
       for(std::size_t i = 0; i <= m_tess.m_curveTreeU.size(); ++i)
       {
-        glVertexPointer(3, GL_FLOAT, GLsizei(n), &p->vertex);
+        glVertexPointer(3, GL_DOUBLE, GLsizei(n), &p->vertex);
         glDrawArrays(GL_LINE_STRIP, 0, GLsizei(m_tess.m_nArrayHeight));
 
         if(i == m_tess.m_curveTreeU.size()) break;
 
         if(!BezierCurveTree_isLeaf(m_tess.m_curveTreeU[i]))
         {
-          glVertexPointer(3, GL_FLOAT, GLsizei(n), &(m_tess.m_vertices.data() + (m_tess.m_curveTreeU[i]->index))->vertex);
+          glVertexPointer(3, GL_DOUBLE, GLsizei(n), &(m_tess.m_vertices.data() + (m_tess.m_curveTreeU[i]->index))->vertex);
           glDrawArrays(GL_LINE_STRIP, 0, GLsizei(m_tess.m_nArrayHeight));
         }
 
@@ -70,7 +70,7 @@ public:
   }
   void render(RenderStateFlags state) const
   {
-    glVertexPointer(3, GL_FLOAT, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->vertex);
+    glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->vertex);
     const RenderIndex* strip_indices = m_tess.m_indices.data();
     for(std::size_t i = 0; i<m_tess.m_numStrips; i++, strip_indices += m_tess.m_lenStrips)
     {
@@ -101,25 +101,25 @@ public:
       {
         if(GlobalShaderCache().useShaderLanguage())
         {
-          glNormalPointer(GL_FLOAT, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->normal);
-          glVertexAttribPointerARB(c_attr_TexCoord0, 2, GL_FLOAT, 0, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->texcoord);
-          glVertexAttribPointerARB(c_attr_Tangent, 3, GL_FLOAT, 0, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->tangent);
-          glVertexAttribPointerARB(c_attr_Binormal, 3, GL_FLOAT, 0, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->bitangent);
+          glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->normal);
+          glVertexAttribPointerARB(c_attr_TexCoord0, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->texcoord);
+          glVertexAttribPointerARB(c_attr_Tangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->tangent);
+          glVertexAttribPointerARB(c_attr_Binormal, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->bitangent);
         }
         else
         {
-          glVertexAttribPointerARB(11, 3, GL_FLOAT, 0, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->normal);
-          glVertexAttribPointerARB(8, 2, GL_FLOAT, 0, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->texcoord);
-          glVertexAttribPointerARB(9, 3, GL_FLOAT, 0, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->tangent);
-          glVertexAttribPointerARB(10, 3, GL_FLOAT, 0, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->bitangent);
+          glVertexAttribPointerARB(11, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->normal);
+          glVertexAttribPointerARB(8, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->texcoord);
+          glVertexAttribPointerARB(9, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->tangent);
+          glVertexAttribPointerARB(10, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->bitangent);
         }
       }
       else
       {
-        glNormalPointer(GL_FLOAT, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->normal);
-        glTexCoordPointer(2, GL_FLOAT, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->texcoord);
+        glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->normal);
+        glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->texcoord);
       }
-      glVertexPointer(3, GL_FLOAT, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->vertex);
+      glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->vertex);
       const RenderIndex* strip_indices = m_tess.m_indices.data();
       for(std::size_t i = 0; i<m_tess.m_numStrips; i++, strip_indices += m_tess.m_lenStrips)
       {

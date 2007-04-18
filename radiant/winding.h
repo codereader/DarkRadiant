@@ -153,18 +153,18 @@ struct Winding
 class DoubleLine
 {
 public:
-  DoubleVector3 origin;
-  DoubleVector3 direction;
+  Vector3 origin;
+  Vector3 direction;
 };
 
 class FixedWindingVertex
 {
 public:
-  DoubleVector3 vertex;
+  Vector3 vertex;
   DoubleLine edge;
   std::size_t adjacent;
 
-  FixedWindingVertex(const DoubleVector3& vertex_, const DoubleLine& edge_, std::size_t adjacent_)
+  FixedWindingVertex(const Vector3& vertex_, const DoubleLine& edge_, std::size_t adjacent_)
     : vertex(vertex_), edge(edge_), adjacent(adjacent_)
   {
   }
@@ -231,9 +231,9 @@ inline void Winding_forFixedWinding(Winding& winding, const FixedWinding& fixed)
   winding.numpoints = fixed.size();
   for(std::size_t i = 0; i < fixed.size(); ++i)
   {
-    winding[i].vertex[0] = static_cast<float>(fixed[i].vertex[0]);
-    winding[i].vertex[1] = static_cast<float>(fixed[i].vertex[1]);
-    winding[i].vertex[2] = static_cast<float>(fixed[i].vertex[2]);
+    winding[i].vertex[0] = fixed[i].vertex[0];
+    winding[i].vertex[1] = fixed[i].vertex[1];
+    winding[i].vertex[2] = fixed[i].vertex[2];
     winding[i].adjacent = fixed[i].adjacent;
   }
 }
@@ -288,7 +288,7 @@ inline void Winding_printConnectivity(Winding& winding)
 
 inline void Winding_Draw(const Winding& winding, const Vector3& normal, RenderStateFlags state)
 {
-  glVertexPointer(3, GL_FLOAT, sizeof(WindingVertex), &winding.points.data()->vertex);
+  glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &winding.points.data()->vertex);
 
   if((state & RENDER_BUMP) != 0)
   {
@@ -300,17 +300,17 @@ inline void Winding_Draw(const Winding& winding, const Vector3& normal, RenderSt
     }
     if(GlobalShaderCache().useShaderLanguage())
     {
-      glNormalPointer(GL_FLOAT, sizeof(Vector3), normals);
-      glVertexAttribPointerARB(c_attr_TexCoord0, 2, GL_FLOAT, 0, sizeof(WindingVertex), &winding.points.data()->texcoord);
-      glVertexAttribPointerARB(c_attr_Tangent, 3, GL_FLOAT, 0, sizeof(WindingVertex), &winding.points.data()->tangent);
-      glVertexAttribPointerARB(c_attr_Binormal, 3, GL_FLOAT, 0, sizeof(WindingVertex), &winding.points.data()->bitangent);
+      glNormalPointer(GL_DOUBLE, sizeof(Vector3), normals);
+      glVertexAttribPointerARB(c_attr_TexCoord0, 2, GL_DOUBLE, 0, sizeof(WindingVertex), &winding.points.data()->texcoord);
+      glVertexAttribPointerARB(c_attr_Tangent, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &winding.points.data()->tangent);
+      glVertexAttribPointerARB(c_attr_Binormal, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &winding.points.data()->bitangent);
     }
     else
     {
-      glVertexAttribPointerARB(11, 3, GL_FLOAT, 0, sizeof(Vector3), normals);
-      glVertexAttribPointerARB(8, 2, GL_FLOAT, 0, sizeof(WindingVertex), &winding.points.data()->texcoord);
-      glVertexAttribPointerARB(9, 3, GL_FLOAT, 0, sizeof(WindingVertex), &winding.points.data()->tangent);
-      glVertexAttribPointerARB(10, 3, GL_FLOAT, 0, sizeof(WindingVertex), &winding.points.data()->bitangent);
+      glVertexAttribPointerARB(11, 3, GL_DOUBLE, 0, sizeof(Vector3), normals);
+      glVertexAttribPointerARB(8, 2, GL_DOUBLE, 0, sizeof(WindingVertex), &winding.points.data()->texcoord);
+      glVertexAttribPointerARB(9, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &winding.points.data()->tangent);
+      glVertexAttribPointerARB(10, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &winding.points.data()->bitangent);
     }
   }
   else
@@ -323,12 +323,12 @@ inline void Winding_Draw(const Winding& winding, const Vector3& normal, RenderSt
       {
         *i = normal;
       }
-      glNormalPointer(GL_FLOAT, sizeof(Vector3), normals);
+      glNormalPointer(GL_DOUBLE, sizeof(Vector3), normals);
     }
 
     if (state & RENDER_TEXTURE)
     {
-      glTexCoordPointer(2, GL_FLOAT, sizeof(WindingVertex), &winding.points.data()->texcoord);
+      glTexCoordPointer(2, GL_DOUBLE, sizeof(WindingVertex), &winding.points.data()->texcoord);
     }
   }
 /*#if 0
