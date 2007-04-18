@@ -101,6 +101,7 @@
 		<property name="light_right" category="Light" type="vector3" />
 		<property name="light_start" category="Light" type="vector3" />
 		<property name="light_end" category="Light" type="vector3" />
+		<property name="parallel" category="Light" type="boolean" />
 		<property name="nodiffuse" category="Light" type="boolean" />
 		<property name="noshadows" category="Light" type="boolean" />
 		<property name="nospecular" category="Light" type="boolean" />

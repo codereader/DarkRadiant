@@ -29,6 +29,7 @@ namespace {
 	
 	const char* LIGHTINSPECTOR_TITLE = "Light properties";
 	
+	const char* PARALLEL_TEXT = "Parallel";
 	const char* NOSHADOW_TEXT = "Do not cast shadows (fast)";
 	const char* NOSPECULAR_TEXT = "Skip specular lighting";
 	const char* NODIFFUSE_TEXT = "Skip diffuse lighting";
@@ -234,16 +235,19 @@ GtkWidget* LightInspector::createProjectedPanel() {
 GtkWidget* LightInspector::createOptionsPanel() {
 
 	// Add options boxes to map
+	_options["parallel"] = gtk_check_button_new_with_label(PARALLEL_TEXT);
 	_options["noshadows"] = gtk_check_button_new_with_label(NOSHADOW_TEXT);
 	_options["nospecular"] = gtk_check_button_new_with_label(NOSPECULAR_TEXT);
 	_options["nodiffuse"] = gtk_check_button_new_with_label(NODIFFUSE_TEXT);
 
+	g_signal_connect(G_OBJECT(_options["parallel"]), "toggled", G_CALLBACK(_onOptionsToggle), this);
 	g_signal_connect(G_OBJECT(_options["noshadows"]), "toggled", G_CALLBACK(_onOptionsToggle), this);
 	g_signal_connect(G_OBJECT(_options["nospecular"]), "toggled", G_CALLBACK(_onOptionsToggle), this);
 	g_signal_connect(G_OBJECT(_options["nodiffuse"]), "toggled", G_CALLBACK(_onOptionsToggle), this);
 
 	// Pack checkboxes into a VBox
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(vbx), _options["parallel"], FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), _options["noshadows"], FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), _options["nospecular"], FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), _options["nodiffuse"], FALSE, FALSE, 0);
