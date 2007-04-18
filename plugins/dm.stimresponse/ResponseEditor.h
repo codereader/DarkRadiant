@@ -28,6 +28,7 @@ class ResponseEditor :
 		GtkWidget* contextMenu;
 		GtkWidget* deleteMenuItem;
 		GtkWidget* addMenuItem;
+		GtkWidget* editMenuItem;
 		GtkWidget* upMenuItem;
 		GtkWidget* downMenuItem;
 	} _effectWidgets;
@@ -121,6 +122,7 @@ private:
 	static void onContextMenuDelete(GtkWidget* w, ResponseEditor* self);
 	static void onContextMenuEffectUp(GtkWidget* widget, ResponseEditor* self);
 	static void onContextMenuEffectDown(GtkWidget* widget, ResponseEditor* self);
+	static void onContextMenuEdit(GtkWidget* widget, ResponseEditor* self);
 	
 	static void onAddResponse(GtkWidget*, ResponseEditor* self);
 	static void onRemoveResponse(GtkWidget*, ResponseEditor* self);

@@ -384,6 +384,7 @@ void ResponseEditor::updateEffectContextMenu() {
 	// Enable or disable the "Delete" context menu items based on the presence
 	// of a selection.
 	gtk_widget_set_sensitive(_effectWidgets.deleteMenuItem, anythingSelected);
+	gtk_widget_set_sensitive(_effectWidgets.editMenuItem, anythingSelected);
 		
 	gtk_widget_set_sensitive(_effectWidgets.upMenuItem, upActive);
 	gtk_widget_set_sensitive(_effectWidgets.downMenuItem, downActive);
@@ -410,6 +411,8 @@ void ResponseEditor::createContextMenu() {
 	
 	_effectWidgets.addMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_ADD,
 															   "Add new Effect");
+	_effectWidgets.editMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_EDIT,
+															   "Edit");
 	_effectWidgets.deleteMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
 															   "Delete");
 	_effectWidgets.upMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_GO_UP,
@@ -418,6 +421,8 @@ void ResponseEditor::createContextMenu() {
 															   "Move Down");
 	gtk_menu_shell_append(GTK_MENU_SHELL(_effectWidgets.contextMenu), 
 						  _effectWidgets.addMenuItem);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_effectWidgets.contextMenu), 
+						  _effectWidgets.editMenuItem);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_effectWidgets.contextMenu), 
 						  _effectWidgets.upMenuItem);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_effectWidgets.contextMenu), 
@@ -439,6 +444,8 @@ void ResponseEditor::createContextMenu() {
 	
 	g_signal_connect(G_OBJECT(_effectWidgets.deleteMenuItem), "activate",
 					 G_CALLBACK(onContextMenuDelete), this);
+	g_signal_connect(G_OBJECT(_effectWidgets.editMenuItem), "activate",
+					 G_CALLBACK(onContextMenuEdit), this);			 
 	g_signal_connect(G_OBJECT(_effectWidgets.addMenuItem), "activate",
 					 G_CALLBACK(onContextMenuAdd), this);
 	g_signal_connect(G_OBJECT(_effectWidgets.upMenuItem), "activate",
@@ -589,6 +596,10 @@ void ResponseEditor::onContextMenuEffectUp(GtkWidget* widget, ResponseEditor* se
 
 void ResponseEditor::onContextMenuEffectDown(GtkWidget* widget, ResponseEditor* self) {
 	self->moveEffect(+1);
+}
+
+void ResponseEditor::onContextMenuEdit(GtkWidget* widget, ResponseEditor* self) {
+	self->editEffect();
 }
 
 } // namespace ui
