@@ -153,7 +153,7 @@ void ResponseEditor::populatePage() {
 		
 	// Random Effects Toggle
 	GtkWidget* randomEffectsHBox = gtk_hbox_new(FALSE, 0);
-	_propertyWidgets.randomEffectsToggle = gtk_check_button_new_with_label("Random Effects");
+	_propertyWidgets.randomEffectsToggle = gtk_check_button_new_with_label("Random Effects:");
 	gtk_widget_set_size_request(_propertyWidgets.randomEffectsToggle, OPTIONS_LABEL_WIDTH, -1);
 	_propertyWidgets.randomEffectsEntry = gtk_entry_new();
 	

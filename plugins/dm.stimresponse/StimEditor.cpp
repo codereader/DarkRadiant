@@ -17,8 +17,6 @@
 namespace ui {
 
 	namespace {
-		const unsigned int OPTIONS_LABEL_WIDTH = 140;
-		
 		// Needed for boost::algorithm::split
 		typedef std::vector<std::string> StringParts;
 	}
@@ -88,22 +86,33 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	// Type Selector
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), createStimTypeSelector(), FALSE, FALSE, 0);
 	
+	// Create the table for the widget alignment
+	GtkTable* table = GTK_TABLE(gtk_table_new(8, 2, FALSE));
+	gtk_table_set_row_spacings(table, 6);
+	gtk_table_set_col_spacings(table, 6);
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), GTK_WIDGET(table), FALSE, FALSE, 0);
+	
 	// Active
 	_propertyWidgets.active = gtk_check_button_new_with_label("Active");
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.active, FALSE, FALSE, 0);
+	 gtk_table_attach_defaults(table, _propertyWidgets.active, 0, 2, 0, 1);
 	
 	// Timer Time
-	GtkWidget* timerHBox = gtk_hbox_new(FALSE, 0);
 	_propertyWidgets.timer.toggle = gtk_check_button_new_with_label("Activation Timer:");
-	gtk_widget_set_size_request(_propertyWidgets.timer.toggle, OPTIONS_LABEL_WIDTH, -1);
+	
 	_propertyWidgets.timer.hour = gtk_entry_new();
 	_propertyWidgets.timer.minute = gtk_entry_new();
 	_propertyWidgets.timer.second = gtk_entry_new();
 	_propertyWidgets.timer.millisecond = gtk_entry_new();
-	gtk_widget_set_size_request(_propertyWidgets.timer.hour, 30, -1);
-	gtk_widget_set_size_request(_propertyWidgets.timer.minute, 30, -1);
-	gtk_widget_set_size_request(_propertyWidgets.timer.second, 30, -1);
-	gtk_widget_set_size_request(_propertyWidgets.timer.millisecond, 30, -1);
+	
+	gtk_entry_set_width_chars(GTK_ENTRY(_propertyWidgets.timer.hour), 3);
+	gtk_entry_set_width_chars(GTK_ENTRY(_propertyWidgets.timer.minute), 3);
+	gtk_entry_set_width_chars(GTK_ENTRY(_propertyWidgets.timer.second), 3);
+	gtk_entry_set_width_chars(GTK_ENTRY(_propertyWidgets.timer.millisecond), 5);
+	
+	gtk_entry_set_alignment(GTK_ENTRY(_propertyWidgets.timer.hour), 1.0f);
+	gtk_entry_set_alignment(GTK_ENTRY(_propertyWidgets.timer.minute), 1.0f);
+	gtk_entry_set_alignment(GTK_ENTRY(_propertyWidgets.timer.second), 1.0f);
+	gtk_entry_set_alignment(GTK_ENTRY(_propertyWidgets.timer.millisecond), 1.0f);
 	
 	_propertyWidgets.timer.entryHBox = gtk_hbox_new(FALSE, 3);
 	GtkBox* entryHBox = GTK_BOX(_propertyWidgets.timer.entryHBox); // shortcut cast
@@ -114,24 +123,20 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	gtk_box_pack_start(entryHBox, _propertyWidgets.timer.second, FALSE, FALSE, 0);
 	gtk_box_pack_start(entryHBox, gtk_label_new("s"), FALSE, FALSE, 0);
 	gtk_box_pack_start(entryHBox, _propertyWidgets.timer.millisecond, FALSE, FALSE, 0);
-	gtk_box_pack_start(entryHBox, gtk_label_new("ms"), FALSE, FALSE, 0);
+	gtk_box_pack_start(entryHBox, gtkutil::LeftAlignedLabel("ms"), FALSE, FALSE, 0);
 		
-	gtk_box_pack_start(GTK_BOX(timerHBox), _propertyWidgets.timer.toggle, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(timerHBox), _propertyWidgets.timer.entryHBox, TRUE, TRUE, 0);
-	
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), timerHBox, FALSE, FALSE, 0);
+	gtk_table_attach(table, _propertyWidgets.timer.toggle, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(table, _propertyWidgets.timer.entryHBox, 1, 2, 1, 2);
 	
 	// Timer type
 	GtkWidget* timerTypeHBox = gtk_hbox_new(FALSE, 12); 
 	_propertyWidgets.timer.typeToggle = gtk_check_button_new_with_label("Timer restarts after firing");
-	_propertyWidgets.timer.waitToggle = 
-		gtk_check_button_new_with_label("Timer waits for start (when disabled: will start at spawn time)");
-	
+			
 	_propertyWidgets.timer.reloadHBox = gtk_hbox_new(FALSE, 3);
 	_propertyWidgets.timer.reloadEntry = gtk_entry_new();
 	gtk_widget_set_size_request(_propertyWidgets.timer.reloadEntry, 50, -1);
-	_propertyWidgets.timer.reloadToggle = gtk_check_button_new_with_label("Timer reloads ");
-	_propertyWidgets.timer.reloadLabel = gtkutil::LeftAlignedLabel(" times");
+	_propertyWidgets.timer.reloadToggle = gtk_check_button_new_with_label("Timer reloads");
+	_propertyWidgets.timer.reloadLabel = gtkutil::LeftAlignedLabel("times");
 	GtkBox* reloadHBox = GTK_BOX(_propertyWidgets.timer.reloadHBox); // shortcut
 	gtk_box_pack_start(reloadHBox, _propertyWidgets.timer.reloadEntry, FALSE, FALSE, 0);
 	gtk_box_pack_start(reloadHBox, _propertyWidgets.timer.reloadLabel, TRUE, TRUE, 0);
@@ -140,82 +145,74 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	gtk_box_pack_start(GTK_BOX(timerTypeHBox), _propertyWidgets.timer.reloadToggle, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(timerTypeHBox), GTK_WIDGET(reloadHBox), TRUE, TRUE, 0);
 	
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), timerTypeHBox, FALSE, FALSE, 0);
+	gtk_table_attach_defaults(table, timerTypeHBox, 0, 2, 2, 3);
 	
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.timer.waitToggle, FALSE, FALSE, 0);
+	_propertyWidgets.timer.waitToggle = 
+		gtk_check_button_new_with_label("Timer waits for start (when disabled: will start at spawn time)");
+	gtk_table_attach_defaults(table, _propertyWidgets.timer.waitToggle, 0, 2, 3, 4);
 	
 	// Radius / Use Bounds
 	GtkWidget* radiusHBox = gtk_hbox_new(FALSE, 0);
 	_propertyWidgets.radiusToggle = gtk_check_button_new_with_label("Radius:");
-	gtk_widget_set_size_request(_propertyWidgets.radiusToggle, OPTIONS_LABEL_WIDTH, -1);
+	
 	_propertyWidgets.radiusEntry = gtk_entry_new();
 	_propertyWidgets.useBounds = gtk_check_button_new_with_label("Use bounds");
-	
-	gtk_box_pack_start(GTK_BOX(radiusHBox), _propertyWidgets.radiusToggle, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(radiusHBox), _propertyWidgets.radiusEntry, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(radiusHBox), _propertyWidgets.useBounds, FALSE, FALSE, 6);
 	
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), radiusHBox, FALSE, FALSE, 0);
-		
-	// Magnitude
-	GtkWidget* magnHBox = gtk_hbox_new(FALSE, 0);
-	_propertyWidgets.magnToggle = gtk_check_button_new_with_label("Magnitude:");
-	gtk_widget_set_size_request(_propertyWidgets.magnToggle, OPTIONS_LABEL_WIDTH, -1);
-	_propertyWidgets.magnEntry = gtk_entry_new();
+	gtk_table_attach(table, _propertyWidgets.radiusToggle, 0, 1, 4, 5, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(table, radiusHBox, 1, 2, 4, 5);
 	
-	gtk_box_pack_start(GTK_BOX(magnHBox), _propertyWidgets.magnToggle, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(magnHBox), _propertyWidgets.magnEntry, TRUE, TRUE, 0);
+	// Magnitude
+	_propertyWidgets.magnToggle = gtk_check_button_new_with_label("Magnitude:");
+	
+	GtkWidget* magnHBox = gtk_hbox_new(FALSE, 6);
+	_propertyWidgets.magnEntry = gtk_entry_new();
+	gtk_entry_set_width_chars(GTK_ENTRY(_propertyWidgets.magnEntry), 7);
 	
 	// Falloff exponent
-	GtkWidget* falloffHBox = gtk_hbox_new(FALSE, 0);
 	_propertyWidgets.falloffToggle = gtk_check_button_new_with_label("Falloff Exponent:");
-	//gtk_widget_set_size_request(_propertyWidgets.falloffToggle, OPTIONS_LABEL_WIDTH, -1);
 	_propertyWidgets.falloffEntry = gtk_entry_new();
+	gtk_entry_set_width_chars(GTK_ENTRY(_propertyWidgets.falloffEntry), 7);
 	
-	gtk_box_pack_start(GTK_BOX(falloffHBox), _propertyWidgets.falloffToggle, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(falloffHBox), _propertyWidgets.falloffEntry, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(magnHBox), gtkutil::LeftAlignment(falloffHBox, 12, 1.0f), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(magnHBox), _propertyWidgets.magnEntry, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(magnHBox), _propertyWidgets.falloffToggle, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(magnHBox), _propertyWidgets.falloffEntry, TRUE, TRUE, 0);
 	
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), magnHBox, FALSE, FALSE, 0);
+	gtk_table_attach(table, _propertyWidgets.magnToggle, 0, 1, 5, 6, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(table, magnHBox, 1, 2, 5, 6);
 	
 	// Time Interval
-	GtkWidget* timeHBox = gtk_hbox_new(FALSE, 0);
+	GtkWidget* timeHBox = gtk_hbox_new(FALSE, 6);
 	_propertyWidgets.timeIntToggle = gtk_check_button_new_with_label("Time interval:");
-	gtk_widget_set_size_request(_propertyWidgets.timeIntToggle, OPTIONS_LABEL_WIDTH, -1);
 	_propertyWidgets.timeIntEntry = gtk_entry_new();
+	gtk_entry_set_width_chars(GTK_ENTRY(_propertyWidgets.timeIntEntry), 10);
 	_propertyWidgets.timeUnitLabel = gtkutil::RightAlignedLabel("ms");
-	gtk_widget_set_size_request(_propertyWidgets.timeUnitLabel, 24, -1);
-	
-	gtk_box_pack_start(GTK_BOX(timeHBox), _propertyWidgets.timeIntToggle, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(timeHBox), _propertyWidgets.timeUnitLabel, FALSE, FALSE, 0);
+		
 	gtk_box_pack_start(GTK_BOX(timeHBox), _propertyWidgets.timeIntEntry, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(timeHBox), _propertyWidgets.timeUnitLabel, FALSE, FALSE, 0);
 	
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), timeHBox, FALSE, FALSE, 0);
+	gtk_table_attach(table, _propertyWidgets.timeIntToggle, 0, 1, 6, 7, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(table, timeHBox, 1, 2, 6, 7);
 	
 	// Duration
-	GtkWidget* durationHBox = gtk_hbox_new(FALSE, 0);
+	GtkWidget* durationHBox = gtk_hbox_new(FALSE, 6);
 	_propertyWidgets.durationToggle = gtk_check_button_new_with_label("Duration:");
-	gtk_widget_set_size_request(_propertyWidgets.durationToggle, OPTIONS_LABEL_WIDTH, -1);
 	_propertyWidgets.durationEntry = gtk_entry_new();
 	_propertyWidgets.durationUnitLabel = gtkutil::RightAlignedLabel("ms");
-	gtk_widget_set_size_request(_propertyWidgets.durationUnitLabel, 24, -1);
 	
-	gtk_box_pack_start(GTK_BOX(durationHBox), _propertyWidgets.durationToggle, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(durationHBox), _propertyWidgets.durationUnitLabel, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(durationHBox), _propertyWidgets.durationEntry, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(durationHBox), _propertyWidgets.durationUnitLabel, FALSE, FALSE, 0);
 	
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), durationHBox, FALSE, FALSE, 0);
+	gtk_table_attach(table, _propertyWidgets.durationToggle, 0, 1, 7, 8, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(table, durationHBox, 1, 2, 7, 8);
 	
 	// Chance variable
-	GtkWidget* chanceHBox = gtk_hbox_new(FALSE, 0);
 	_propertyWidgets.chanceToggle = gtk_check_button_new_with_label("Chance:");
-	gtk_widget_set_size_request(_propertyWidgets.chanceToggle, OPTIONS_LABEL_WIDTH, -1);
 	_propertyWidgets.chanceEntry = gtk_entry_new();
 	
-	gtk_box_pack_start(GTK_BOX(chanceHBox), _propertyWidgets.chanceToggle, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(chanceHBox), _propertyWidgets.chanceEntry, TRUE, TRUE, 0);
-	
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), chanceHBox, FALSE, FALSE, 0);
+	gtk_table_attach(table, _propertyWidgets.chanceToggle, 0, 1, 8, 9, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(table, _propertyWidgets.chanceEntry, 1, 2, 8, 9);
 	
 	// The map associating entry fields to stim property keys  
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.radiusEntry)] = "radius";
