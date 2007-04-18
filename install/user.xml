@@ -193,6 +193,8 @@
 			<toolbutton name="zflip" action="MirrorSelectionZ" tooltip="z-axis Flip" icon="brush_flipz.png"/>
 			<toolbutton name="zrotate" action="RotateSelectionZ" tooltip="z-axis Rotate" icon="brush_rotatez.png"/>
 		<separator/>
+			<toolbutton name="snaptogrid" action="SnapToGrid" tooltip="Snap selection to grid" icon="grid_snap.png"/>
+		<separator/>
 			<toolbutton name="csgsubstract" action="CSGSubtract" tooltip="CSG Subtract" icon="selection_csgsubtract.png"/>
 			<toolbutton name="csgmerge" action="CSGMerge" tooltip="CSG Merge" icon="selection_csgmerge.png"/>
 			<toolbutton name="csghollow" action="CSGHollow" tooltip="Hollow" icon="selection_makehollow.png"/>
