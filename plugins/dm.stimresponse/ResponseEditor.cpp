@@ -14,7 +14,6 @@ namespace ui {
 	
 	namespace {
 		const std::string LABEL_RESPONSE_EFFECTS = "<b>Response Effects</b>";
-		const unsigned int OPTIONS_LABEL_WIDTH = 140;
 	}
 
 ResponseEditor::ResponseEditor(GtkWidget* parent, StimTypes& stimTypes) :
@@ -145,31 +144,31 @@ void ResponseEditor::populatePage() {
 	_propertyWidgets.vbox = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(srHBox), _propertyWidgets.vbox, TRUE, TRUE, 0);
 	
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), createStimTypeSelector(), FALSE, FALSE, 0);	
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), createStimTypeSelector(), FALSE, FALSE, 0);
+	
+	// Create the table for the widget alignment
+	GtkTable* table = GTK_TABLE(gtk_table_new(3, 2, FALSE));
+	gtk_table_set_row_spacings(table, 6);
+	gtk_table_set_col_spacings(table, 6);
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), GTK_WIDGET(table), FALSE, FALSE, 0);	
 	
 	// Active
 	_propertyWidgets.active = gtk_check_button_new_with_label("Active");
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _propertyWidgets.active, FALSE, FALSE, 0);
+	gtk_table_attach_defaults(table, _propertyWidgets.active, 0, 2, 0, 1);
 		
 	// Random Effects Toggle
-	GtkWidget* randomEffectsHBox = gtk_hbox_new(FALSE, 0);
 	_propertyWidgets.randomEffectsToggle = gtk_check_button_new_with_label("Random Effects:");
-	gtk_widget_set_size_request(_propertyWidgets.randomEffectsToggle, OPTIONS_LABEL_WIDTH, -1);
 	_propertyWidgets.randomEffectsEntry = gtk_entry_new();
 	
-	gtk_box_pack_start(GTK_BOX(randomEffectsHBox), _propertyWidgets.randomEffectsToggle, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(randomEffectsHBox), _propertyWidgets.randomEffectsEntry, TRUE, TRUE, 0);
+	gtk_table_attach(table, _propertyWidgets.randomEffectsToggle, 0, 1, 2, 3, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(table, _propertyWidgets.randomEffectsEntry, 1, 2, 2, 3);
 	
 	// Chance variable
-	GtkWidget* chanceHBox = gtk_hbox_new(FALSE, 0);
 	_propertyWidgets.chanceToggle = gtk_check_button_new_with_label("Chance:");
-	gtk_widget_set_size_request(_propertyWidgets.chanceToggle, OPTIONS_LABEL_WIDTH, -1);
 	_propertyWidgets.chanceEntry = gtk_entry_new();
 	
-	gtk_box_pack_start(GTK_BOX(chanceHBox), _propertyWidgets.chanceToggle, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(chanceHBox), _propertyWidgets.chanceEntry, TRUE, TRUE, 0);
-	
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), chanceHBox, FALSE, FALSE, 0);
+	gtk_table_attach(table, _propertyWidgets.chanceToggle, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(table, _propertyWidgets.chanceEntry, 1, 2, 1, 2);
 	
 	// Connect the signals
 	g_signal_connect(G_OBJECT(_propertyWidgets.active), "toggled", G_CALLBACK(onCheckboxToggle), this);
@@ -179,18 +178,20 @@ void ResponseEditor::populatePage() {
 	g_signal_connect(G_OBJECT(_propertyWidgets.randomEffectsEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.chanceEntry), "changed", G_CALLBACK(onEntryChanged), this);
 		
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), randomEffectsHBox, FALSE, FALSE, 0);
-	
 	// The map associating entry fields to response property keys
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.randomEffectsEntry)] = "random_effects";
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.chanceEntry)] = "chance";
 	
-    gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox),
-    				   gtkutil::LeftAlignedLabel(LABEL_RESPONSE_EFFECTS),
-    				   FALSE, FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox),
-					   createEffectWidgets(),
-					   TRUE, TRUE, 0);
+	gtk_box_pack_start(
+		GTK_BOX(_propertyWidgets.vbox), 
+		gtkutil::LeftAlignedLabel(LABEL_RESPONSE_EFFECTS),
+		FALSE, FALSE, 0
+	);
+	gtk_box_pack_start(
+		GTK_BOX(_propertyWidgets.vbox), 
+		createEffectWidgets(),
+		TRUE, TRUE, 0
+	);
 }
 
 // Create the response effect list widgets
