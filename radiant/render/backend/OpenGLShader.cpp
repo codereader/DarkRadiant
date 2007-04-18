@@ -148,21 +148,21 @@ void OpenGLShader::construct(const char* name)
   switch(name[0])
   {
   case '(':
-    sscanf(name, "(%g %g %g)", &state.m_colour[0], &state.m_colour[1], &state.m_colour[2]);
+    sscanf(name, "(%lf %lf %lf)", &state.m_colour[0], &state.m_colour[1], &state.m_colour[2]);
     state.m_colour[3] = 1.0f;
     state.m_state = RENDER_FILL|RENDER_LIGHTING|RENDER_DEPTHTEST|RENDER_CULLFACE|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
     state.m_sort = OpenGLState::eSortFullbright;
     break;
 
   case '[':
-    sscanf(name, "[%g %g %g]", &state.m_colour[0], &state.m_colour[1], &state.m_colour[2]);
+    sscanf(name, "[%lf %lf %lf]", &state.m_colour[0], &state.m_colour[1], &state.m_colour[2]);
     state.m_colour[3] = 0.5f;
     state.m_state = RENDER_FILL|RENDER_LIGHTING|RENDER_DEPTHTEST|RENDER_CULLFACE|RENDER_COLOURWRITE|RENDER_DEPTHWRITE|RENDER_BLEND;
     state.m_sort = OpenGLState::eSortTranslucent;
     break;
 
   case '<':
-    sscanf(name, "<%g %g %g>", &state.m_colour[0], &state.m_colour[1], &state.m_colour[2]);
+    sscanf(name, "<%lf %lf %lf>", &state.m_colour[0], &state.m_colour[1], &state.m_colour[2]);
     state.m_colour[3] = 1;
     state.m_state = RENDER_DEPTHTEST|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
     state.m_sort = OpenGLState::eSortFullbright;

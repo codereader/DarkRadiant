@@ -255,10 +255,10 @@ const Vector3 aabb_normals[6] = {
   Vector3( 0, 0,-1 ),
 };
 
-const float aabb_texcoord_topleft[2] = { 0, 0 };
-const float aabb_texcoord_topright[2] = { 1, 0 };
-const float aabb_texcoord_botleft[2] = { 0, 1 };
-const float aabb_texcoord_botright[2] = { 1, 1 };
+const double aabb_texcoord_topleft[2] = { 0, 0 };
+const double aabb_texcoord_topright[2] = { 1, 0 };
+const double aabb_texcoord_botleft[2] = { 0, 1 };
+const double aabb_texcoord_botright[2] = { 1, 1 };
 
 
 inline AABB aabb_for_oriented_aabb(const AABB& aabb, const Matrix4& transform)
@@ -266,15 +266,15 @@ inline AABB aabb_for_oriented_aabb(const AABB& aabb, const Matrix4& transform)
   return AABB(
     matrix4_transformed_point(transform, aabb.origin),
     Vector3(
-      static_cast<float>(fabs(transform[0]  * aabb.extents[0])
-                          + fabs(transform[4]  * aabb.extents[1])
-                          + fabs(transform[8]  * aabb.extents[2])),
-      static_cast<float>(fabs(transform[1]  * aabb.extents[0])
-                          + fabs(transform[5]  * aabb.extents[1])
-                          + fabs(transform[9]  * aabb.extents[2])),
-      static_cast<float>(fabs(transform[2]  * aabb.extents[0])
-                          + fabs(transform[6]  * aabb.extents[1])
-                          + fabs(transform[10] * aabb.extents[2]))
+      fabs(transform[0]  * aabb.extents[0]) + 
+      	fabs(transform[4]  * aabb.extents[1]) + 
+      	fabs(transform[8]  * aabb.extents[2]),
+      fabs(transform[1]  * aabb.extents[0]) + 
+      	fabs(transform[5]  * aabb.extents[1]) + 
+      	fabs(transform[9]  * aabb.extents[2]),
+      fabs(transform[2]  * aabb.extents[0]) + 
+      	fabs(transform[6]  * aabb.extents[1]) + 
+      	fabs(transform[10] * aabb.extents[2])
     )
   );
 }
@@ -290,7 +290,7 @@ inline AABB aabb_for_oriented_aabb_safe(const AABB& aabb, const Matrix4& transfo
 
 inline AABB aabb_infinite()
 {
-  return AABB(Vector3(0, 0, 0), Vector3(FLT_MAX, FLT_MAX, FLT_MAX));
+  return AABB(Vector3(0, 0, 0), Vector3(DBL_MAX, DBL_MAX, DBL_MAX));
 }
 
 #endif

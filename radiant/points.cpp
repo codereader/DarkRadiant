@@ -192,7 +192,7 @@ void CPointfile::GenerateDisplayList()
 		 i != _points.end();
 		 ++i)
 	{
-		glVertex3fv(*i);
+		glVertex3dv(*i);
 	}
 	glEnd();
 	glLineWidth (1);
@@ -250,8 +250,8 @@ void Pointfile_Prev (void)
   {
 	  Vector3 dir((*(++i) - camwnd.getCameraOrigin()).getNormalised());
     Vector3 angles(camwnd.getCameraAngles());
-	  angles[CAMERA_YAW] = static_cast<float>(radians_to_degrees(atan2(dir[1], dir[0])));
-	  angles[CAMERA_PITCH] = static_cast<float>(radians_to_degrees(asin(dir[2])));
+	  angles[CAMERA_YAW] = static_cast<double>(radians_to_degrees(atan2(dir[1], dir[0])));
+	  angles[CAMERA_PITCH] = static_cast<double>(radians_to_degrees(asin(dir[2])));
     camwnd.setCameraAngles(angles);
   }
 }

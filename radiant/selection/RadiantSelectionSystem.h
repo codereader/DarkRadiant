@@ -149,12 +149,12 @@ public:
 	
 	void startMove();
 	
-	bool SelectManipulator(const View& view, const float device_point[2], const float device_epsilon[2]);
+	bool SelectManipulator(const View& view, const double device_point[2], const double device_epsilon[2]);
 	
 	void deselectAll();
 	
-	void SelectPoint(const View& view, const float device_point[2], const float device_epsilon[2], EModifier modifier, bool face);
-	void SelectArea(const View& view, const float device_point[2], const float device_delta[2], EModifier modifier, bool face);
+	void SelectPoint(const View& view, const double device_point[2], const double device_epsilon[2], EModifier modifier, bool face);
+	void SelectArea(const View& view, const double device_point[2], const double device_delta[2], EModifier modifier, bool face);
 	
 	// These are the "callbacks" that are used by the Manipulatables
 	void translate(const Vector3& translation);  
@@ -169,7 +169,7 @@ public:
 	void translateSelected(const Vector3& translation);
 	void scaleSelected(const Vector3& scaling);
 	
-	void MoveSelected(const View& view, const float device_point[2]);
+	void MoveSelected(const View& view, const double device_point[2]);
 	
 	/// \todo Support view-dependent nudge.
 	void NudgeManipulator(const Vector3& nudge, const Vector3& view);

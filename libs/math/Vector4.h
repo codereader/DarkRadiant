@@ -7,7 +7,7 @@
  * 
  * The BasicVector4 is equipped with the most important operators like *, *= and so on.
  * 
- * Note: The most commonly used Vector4 is a BasicVector4<float>, this is also defined in this file 
+ * Note: The most commonly used Vector4 is a BasicVector4<double>, this is also defined in this file 
  *  
  * Note: that the multiplication of a Vector4 with another one (Vector4*Vector4) does NOT
  * result in an inner product but in a component-wise scaling. Use the .dot() method to
@@ -269,7 +269,7 @@ public:
 
 	/** Implicit cast to C-style array. This allows a Vector4 to be
 	 * passed directly to GL functions that expect an array (e.g.
-	 * glFloat4fv()). These functions implicitly provide operator[]
+	 * glFloat4dv()). These functions implicitly provide operator[]
 	 * as well, since the C-style array provides this function.
 	 */
 	 
@@ -306,8 +306,8 @@ inline std::ostream& operator<<(std::ostream& st, BasicVector4<T> vec) {
 
 // ==========================================================================================
 
-// A 4-element vector stored in single-precision floating-point.
-typedef BasicVector4<float> Vector4;
+// A 4-element vector stored in double-precision floating-point.
+typedef BasicVector4<double> Vector4;
 
 // =============== Common Vector4 Methods ==================================================
 

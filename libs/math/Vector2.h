@@ -1,13 +1,13 @@
 #ifndef VECTOR2_H_
 #define VECTOR2_H_
 
-/* greebo: This file contains the templated class definition of the three-component vector
+/* greebo: This file contains the templated class definition of the two-component vector
  * 
- * BasicVector2: A vector with three components of type <Element>
+ * BasicVector2: A vector with two components of type <Element>
  * 
  * The BasicVector2 is equipped with the most important operators like *, *= and so on.
  * 
- * Note: The most commonly used Vector2 is a BasicVector2<float>, this is also defined in this file 
+ * Note: The most commonly used Vector2 is a BasicVector2<double>, this is also defined in this file 
  *  
  * Note: that the multiplication of a Vector2 with another one (Vector2*Vector2) does NOT
  * result in an inner product but in a component-wise scaling. Use the .dot() method to
@@ -15,6 +15,7 @@
  */
  
 #include "lrint.h"
+#include <sstream>
 #include <cmath>
 #include <boost/format.hpp>
 
@@ -30,6 +31,45 @@ public:
   		_v[0] = 0;
   		_v[1] = 0;
   	}
+  	
+  	// Templated copy constructor
+	template<typename OtherElement>
+	BasicVector2(const BasicVector2<OtherElement>& other) {
+		x() = static_cast<Element>(other.x());
+		y() = static_cast<Element>(other.y());
+	}
+  	
+  	/** Construct a BasicVector2 with the 2 provided components.
+     */
+    BasicVector2(const Element& x_, const Element& y_) {
+        _v[0] = x_;
+        _v[1] = y_;
+    }
+
+	/** Construct a BasicVector2 from a 2-element array. The array must be
+	 * valid as no bounds checking is done.
+	 */
+	BasicVector2(const Element* array) {
+		for (int i = 0; i < 2; ++i)
+			_v[i] = array[i];
+	}
+	 
+    /** Construct a BasicVector2 by parsing the supplied string. The string
+     * must contain 2 numeric values separated by whitespace.
+     *
+     * @param str
+     * The string from which component values are extracted.
+     */
+     
+    BasicVector2(const std::string& str) {
+    	// Initialise the vector with 0, in case the string parse fails
+    	_v[0] = _v[1] = 0;
+    	// Use a stringstream to parse the string
+        std::stringstream strm(str);
+        strm << std::skipws;
+        strm >> x();
+        strm >> y();
+    }
   	
     /** Construct a BasicVector2 out of 2 elements of type OtherType
      */
@@ -80,8 +120,7 @@ public:
   	/** Compare this BasicVector2 against another for equality.
 	 */
 	bool operator== (const BasicVector2& other) const {
-		return (other.x() == x() 
-				&& other.y() == y());
+		return (other.x() == x() && other.y() == y());
 	}
 	
 	/** Compare this BasicVector2 against another for inequality.
@@ -268,8 +307,8 @@ public:
 
 // ==========================================================================================
 
-// A 2-element vector stored in single-precision floating-point.
-typedef BasicVector2<float> Vector2;
+// A 2-element vector stored in double-precision floating-point.
+typedef BasicVector2<double> Vector2;
 
 // Stream insertion operator for a BasicVector2
 template<typename T>

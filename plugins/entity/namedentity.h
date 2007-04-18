@@ -102,7 +102,7 @@ public:
   }
   void render(RenderStateFlags state) const
   {
-    glRasterPos3fv(m_position);
+    glRasterPos3dv(m_position);
     GlobalOpenGL().drawString(m_named.name().c_str());
   }
 };

@@ -88,7 +88,7 @@ enum
 };
 
 template<typename Element> class BasicVector3;
-typedef BasicVector3<float> Vector3;
+typedef BasicVector3<double> Vector3;
 typedef Vector3 Colour3;
 
 enum BlendFactor {

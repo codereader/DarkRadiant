@@ -741,30 +741,30 @@ Vector4 XYWnd::getWindowCoordinates() {
 	int nDim1 = (m_viewType == YZ) ? 1 : 0;
 	int nDim2 = (m_viewType == XY) ? 1 : 2;
 	
-	float w = (_width / 2 / m_fScale);
-	float h = (_height / 2 / m_fScale);
+	double w = (_width / 2 / m_fScale);
+	double h = (_height / 2 / m_fScale);
 
 	// Query the region minimum/maximum vectors
 	Vector3 regionMin;
 	Vector3 regionMax;
 	GlobalRegion().getMinMax(regionMin, regionMax);
 
-	float xb = m_vOrigin[nDim1] - w;
+	double xb = m_vOrigin[nDim1] - w;
 	// Constrain this value to the region minimum
 	if (xb < regionMin[nDim1])
 		xb = regionMin[nDim1];
 
-	float xe = m_vOrigin[nDim1] + w;
+	double xe = m_vOrigin[nDim1] + w;
 	// Constrain this value to the region maximum
 	if (xe > regionMax[nDim1])
 		xe = regionMax[nDim1];
 
-	float yb = m_vOrigin[nDim2] - h;
+	double yb = m_vOrigin[nDim2] - h;
 	// Constrain this value to the region minimum
 	if (yb < regionMin[nDim2])
 		yb = regionMin[nDim2];
 
-	float ye = m_vOrigin[nDim2] + h;
+	double ye = m_vOrigin[nDim2] + h;
 	// Constrain this value to the region maximum
 	if (ye > regionMax[nDim2])
 		ye = regionMax[nDim2];
@@ -773,10 +773,10 @@ Vector4 XYWnd::getWindowCoordinates() {
 }
 
 void XYWnd::drawGrid() {
-	float	x, y, xb, xe, yb, ye;
-	float	w, h;
+	double	x, y, xb, xe, yb, ye;
+	double	w, h;
 	char	text[32];
-	float	step, minor_step, stepx, stepy;
+	double	step, minor_step, stepx, stepy;
 
 	step = minor_step = stepx = stepy = GlobalGrid().getGridSize();
 
@@ -792,7 +792,7 @@ void XYWnd::drawGrid() {
 	while ((power % 3) != 0 || (step * m_fScale) <= 32.0f) // make sure major grid spacing is at least 32 pixels on the screen
 	{
 		++power;
-		step = float(two_to_the_power(power));
+		step = double(two_to_the_power(power));
 	}
 	mask = (1 << (power - minor_power)) - 1;
 	while ((stepx * m_fScale) <= 32.0f) // text step x must be at least 32
@@ -824,21 +824,21 @@ void XYWnd::drawGrid() {
 		
 		// draw minor blocks
 		if (colourGridMinor != colourGridBack) {
-			glColor3fv(colourGridMinor);
+			glColor3dv(colourGridMinor);
 
 			glBegin (GL_LINES);
 			int i = 0;
 			for (x = xb ; x < xe ; x += minor_step, ++i) {
 				if ((i & mask) != 0) {
-					glVertex2f (x, yb);
-					glVertex2f (x, ye);
+					glVertex2d (x, yb);
+					glVertex2d (x, ye);
 				}
 			}
 			i = 0;
 			for (y = yb ; y < ye ; y += minor_step, ++i) {
 				if ((i & mask) != 0) {
-					glVertex2f (xb, y);
-					glVertex2f (xe, y);
+					glVertex2d (xb, y);
+					glVertex2d (xe, y);
 				}
 			}
 			glEnd();
@@ -846,16 +846,16 @@ void XYWnd::drawGrid() {
 
 		// draw major blocks
 		if (colourGridMajor != colourGridBack) {
-			glColor3fv(colourGridMajor);
+			glColor3dv(colourGridMajor);
 
 			glBegin (GL_LINES);
 			for (x=xb ; x<=xe ; x+=step) {
-				glVertex2f (x, yb);
-				glVertex2f (x, ye);
+				glVertex2d (x, yb);
+				glVertex2d (x, ye);
 			}
 			for (y=yb ; y<=ye ; y+=step) {
-				glVertex2f (xb, y);
-				glVertex2f (xe, y);
+				glVertex2d (xb, y);
+				glVertex2d (xe, y);
 			}
 			glEnd();
 		}
@@ -866,10 +866,10 @@ void XYWnd::drawGrid() {
 
 	// draw coordinate text if needed
 	if (GlobalXYWnd().showCoordinates()) {
-		glColor3fv(ColourSchemes().getColourVector3("grid_text"));
-		float offx = m_vOrigin[nDim2] + h - 6 / m_fScale, offy = m_vOrigin[nDim1] - w + 1 / m_fScale;
+		glColor3dv(ColourSchemes().getColourVector3("grid_text"));
+		double offx = m_vOrigin[nDim2] + h - 6 / m_fScale, offy = m_vOrigin[nDim1] - w + 1 / m_fScale;
 		for (x = xb - fmod(xb, stepx); x <= xe ; x += stepx) {
-			glRasterPos2f (x, offx);
+			glRasterPos2d (x, offx);
 			sprintf (text, "%g", x);
 			GlobalOpenGL().drawString(text);
 		}
@@ -880,12 +880,12 @@ void XYWnd::drawGrid() {
 		}
 
 		if (isActive()) {
-			glColor3fv(ColourSchemes().getColourVector3("active_view_name"));
+			glColor3dv(ColourSchemes().getColourVector3("active_view_name"));
 		}
 
 		// we do this part (the old way) only if show_axis is disabled
 		if (!GlobalXYWnd().showAxes()) {
-			glRasterPos2f ( m_vOrigin[nDim1] - w + 35 / m_fScale, m_vOrigin[nDim2] + h - 20 / m_fScale );
+			glRasterPos2d ( m_vOrigin[nDim1] - w + 35 / m_fScale, m_vOrigin[nDim2] + h - 20 / m_fScale );
 
 			GlobalOpenGL().drawString(getViewTypeTitle(m_viewType).c_str());
 		}
@@ -904,12 +904,12 @@ void XYWnd::drawGrid() {
 		// horizontal line: nDim1 color
 		glLineWidth(2);
 		glBegin( GL_LINES );
-		glColor3fv (colourX);
+		glColor3dv (colourX);
 		glVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
 		glVertex2f( m_vOrigin[nDim1] - w + 65 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
 		glVertex2f( 0, 0 );
 		glVertex2f( 32 / m_fScale, 0 );
-		glColor3fv (colourY);
+		glColor3dv (colourY);
 		glVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 45 / m_fScale );
 		glVertex2f( m_vOrigin[nDim1] - w + 40 / m_fScale, m_vOrigin[nDim2] + h - 20 / m_fScale );
 		glVertex2f( 0, 0 );
@@ -917,12 +917,12 @@ void XYWnd::drawGrid() {
 		glEnd();
 		glLineWidth(1);
 		// now print axis symbols
-		glColor3fv (colourX);
+		glColor3dv (colourX);
 		glRasterPos2f ( m_vOrigin[nDim1] - w + 55 / m_fScale, m_vOrigin[nDim2] + h - 55 / m_fScale );
 		GlobalOpenGL().drawChar(g_AxisName[nDim1]);
 		glRasterPos2f (28 / m_fScale, -10 / m_fScale );
 		GlobalOpenGL().drawChar(g_AxisName[nDim1]);
-		glColor3fv (colourY);
+		glColor3dv (colourY);
 		glRasterPos2f ( m_vOrigin[nDim1] - w + 25 / m_fScale, m_vOrigin[nDim2] + h - 30 / m_fScale );
 		GlobalOpenGL().drawChar(g_AxisName[nDim2]);
 		glRasterPos2f ( -10 / m_fScale, 28 / m_fScale );
@@ -933,7 +933,7 @@ void XYWnd::drawGrid() {
 	// show current work zone?
 	// the work zone is used to place dropped points and brushes
 	if (GlobalXYWnd().showWorkzone()) {
-		glColor3fv( ColourSchemes().getColourVector3("workzone") );
+		glColor3dv( ColourSchemes().getColourVector3("workzone") );
 		glBegin( GL_LINES );
 		glVertex2f( xb, Select_getWorkZone().d_work_min[nDim2] );
 		glVertex2f( xe, Select_getWorkZone().d_work_min[nDim2] );
@@ -990,7 +990,7 @@ void XYWnd::drawBlockGrid() {
 
 	// draw major blocks
 
-	glColor3fv(ColourSchemes().getColourVector3("grid_block"));
+	glColor3dv(ColourSchemes().getColourVector3("grid_block"));
 	glLineWidth (2);
 
 	glBegin (GL_LINES);
@@ -1048,7 +1048,7 @@ void XYWnd::drawCameraIcon(const Vector3& origin, const Vector3& angles)
 		a = degrees_to_radians(angles[CAMERA_PITCH]);
 	}
 
-	glColor3fv ( ColourSchemes().getColourVector3("camera_icon") );
+	glColor3dv(ColourSchemes().getColourVector3("camera_icon"));
 	glBegin(GL_LINE_STRIP);
 	glVertex3f (x-box,y,0);
 	glVertex3f (x,y+(box/2),0);
@@ -1078,7 +1078,7 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vMa
 
   Vector3 vSize(vMaxBounds - vMinBounds);
 
-  glColor3fv(ColourSchemes().getColourVector3("brush_size_info"));
+  glColor3dv(ColourSchemes().getColourVector3("brush_size_info"));
 
   StringOutputStream dimensions(16);
 
@@ -1086,24 +1086,24 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vMa
   {
     glBegin (GL_LINES);
 
-    glVertex3f(vMinBounds[nDim1], vMinBounds[nDim2] - 6.0f  / m_fScale, 0.0f);
-    glVertex3f(vMinBounds[nDim1], vMinBounds[nDim2] - 10.0f / m_fScale, 0.0f);
+    glVertex3d(vMinBounds[nDim1], vMinBounds[nDim2] - 6.0f  / m_fScale, 0.0f);
+    glVertex3d(vMinBounds[nDim1], vMinBounds[nDim2] - 10.0f / m_fScale, 0.0f);
 
-    glVertex3f(vMinBounds[nDim1], vMinBounds[nDim2] - 10.0f  / m_fScale, 0.0f);
-    glVertex3f(vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f  / m_fScale, 0.0f);
+    glVertex3d(vMinBounds[nDim1], vMinBounds[nDim2] - 10.0f  / m_fScale, 0.0f);
+    glVertex3d(vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f  / m_fScale, 0.0f);
 
-    glVertex3f(vMaxBounds[nDim1], vMinBounds[nDim2] - 6.0f  / m_fScale, 0.0f);
-    glVertex3f(vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f / m_fScale, 0.0f);
+    glVertex3d(vMaxBounds[nDim1], vMinBounds[nDim2] - 6.0f  / m_fScale, 0.0f);
+    glVertex3d(vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f / m_fScale, 0.0f);
   
 
-    glVertex3f(vMaxBounds[nDim1] + 6.0f  / m_fScale, vMinBounds[nDim2], 0.0f);
-    glVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2], 0.0f);
+    glVertex3d(vMaxBounds[nDim1] + 6.0f  / m_fScale, vMinBounds[nDim2], 0.0f);
+    glVertex3d(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2], 0.0f);
 
-    glVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2], 0.0f);
-    glVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2], 0.0f);
+    glVertex3d(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2], 0.0f);
+    glVertex3d(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2], 0.0f);
   
-    glVertex3f(vMaxBounds[nDim1] + 6.0f  / m_fScale, vMaxBounds[nDim2], 0.0f);
-    glVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2], 0.0f);
+    glVertex3d(vMaxBounds[nDim1] + 6.0f  / m_fScale, vMaxBounds[nDim2], 0.0f);
+    glVertex3d(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2], 0.0f);
 
     glEnd();
 
@@ -1293,14 +1293,14 @@ void XYWnd::draw() {
 	//
 
 	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(reinterpret_cast<const float*>(&m_projection));
+	glLoadMatrixd(m_projection);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glScalef(m_fScale, m_fScale, 1);
 	int nDim1 = (m_viewType == YZ) ? 1 : 0;
 	int nDim2 = (m_viewType == XY) ? 1 : 2;
-	glTranslatef(-m_vOrigin[nDim1], -m_vOrigin[nDim2], 0);
+	glTranslated(-m_vOrigin[nDim1], -m_vOrigin[nDim2], 0);
 
 	// Call the image overlay draw method with the window coordinates
 	Vector4 windowCoords = getWindowCoordinates();
@@ -1322,7 +1322,7 @@ void XYWnd::draw() {
 	if (GlobalXYWnd().showBlocks())
 		drawBlockGrid();
 
-	glLoadMatrixf(reinterpret_cast<const float*>(&m_modelview));
+	glLoadMatrixd(m_modelview);
 
 	unsigned int globalstate = RENDER_COLOURARRAY | RENDER_COLOURWRITE | RENDER_POLYGONSMOOTH | RENDER_LINESMOOTH;
 	if (!getCameraSettings()->solidSelectionBoxes()) {
@@ -1343,7 +1343,7 @@ void XYWnd::draw() {
 
 	GlobalOpenGL_debugAssertNoErrors();
 
-	glLoadMatrixf(reinterpret_cast<const float*>(&m_modelview));
+	glLoadMatrixd(m_modelview);
 
 	GlobalOpenGL_debugAssertNoErrors();
 	glDisable(GL_LINE_STIPPLE);
@@ -1379,7 +1379,7 @@ void XYWnd::draw() {
 
 	if (GlobalXYWnd().showCrossHairs()) {
 		Vector3 colour = ColourSchemes().getColourVector3("xyview_crosshairs");
-		glColor4f(colour[0], colour[1], colour[2], 0.8f);
+		glColor4d(colour[0], colour[1], colour[2], 0.8f);
 		glBegin (GL_LINES);
 		if (m_viewType == XY) {
 			glVertex2f(2.0f * _minWorldCoord, m_mousePosition[1]);
@@ -1426,18 +1426,18 @@ void XYWnd::draw() {
 
 			// four view mode doesn't colorize
 			if (g_pParentWnd->CurrentStyle() == MainFrame::eSplit) {
-				glColor3fv(ColourSchemes().getColourVector3("active_view_name"));
+				glColor3dv(ColourSchemes().getColourVector3("active_view_name"));
 			}
 			else {
 				switch (m_viewType) {
 					case YZ:
-						glColor3fv(ColourSchemes().getColourVector3("axis_x"));
+						glColor3dv(ColourSchemes().getColourVector3("axis_x"));
 						break;
 					case XZ:
-						glColor3fv(ColourSchemes().getColourVector3("axis_y"));
+						glColor3dv(ColourSchemes().getColourVector3("axis_y"));
 						break;
 					case XY:
-						glColor3fv(ColourSchemes().getColourVector3("axis_z"));
+						glColor3dv(ColourSchemes().getColourVector3("axis_z"));
 						break;
 				}
 			}

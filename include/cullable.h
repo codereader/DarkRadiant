@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/constant.h"
 
 template<typename Element> class BasicVector3;
-typedef BasicVector3<float> Vector3;
+typedef BasicVector3<double> Vector3;
 class Plane3;
 class Matrix4;
 class AABB;

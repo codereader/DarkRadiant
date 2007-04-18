@@ -64,10 +64,10 @@ extern "C"
 
 /* types */
 typedef unsigned char			picoByte_t;
-typedef float					picoVec_t;
-typedef float					picoVec2_t[ 2 ];
-typedef float					picoVec3_t[ 3 ];
-typedef float					picoVec4_t[ 4 ];
+typedef double					picoVec_t;
+typedef double					picoVec2_t[ 2 ];
+typedef double					picoVec3_t[ 3 ];
+typedef double					picoVec4_t[ 4 ];
 typedef picoByte_t   			picoColor_t[ 4 ];
 typedef int						picoIndex_t;
 

@@ -42,9 +42,9 @@ Vector3 parseVector3(parser::DefTokeniser& tok)
 	
 	tok.assertNextToken("(");
 
-	float x = lexical_cast<float>(tok.nextToken());
-	float y = lexical_cast<float>(tok.nextToken());
-	float z = lexical_cast<float>(tok.nextToken());
+	double x = lexical_cast<double>(tok.nextToken());
+	double y = lexical_cast<double>(tok.nextToken());
+	double z = lexical_cast<double>(tok.nextToken());
 
 	tok.assertNextToken(")");
 	
@@ -409,7 +409,7 @@ bool MD5Model_parse(MD5Model& model, parser::DefTokeniser& tok)
         skinned += (rotatedPoint + joint.position) * weight.t;
       }
       
-		surface.vertices().push_back(ArbitraryMeshVertex(vertex3f_for_vector3(skinned), Normal3f(0, 0, 0), TexCoord2f(vert.u, vert.v)));
+		surface.vertices().push_back(ArbitraryMeshVertex(Vertex3f(skinned), Normal3f(0, 0, 0), TexCoord2f(vert.u, vert.v)));
     }
 
     for(MD5Tris::iterator j = tris.begin(); j != tris.end(); ++j)
@@ -422,21 +422,19 @@ bool MD5Model_parse(MD5Model& model, parser::DefTokeniser& tok)
 
     for(Surface::indices_t::iterator j = surface.indices().begin(); j != surface.indices().end(); j += 3)
     {
-			ArbitraryMeshVertex& a = surface.vertices()[*(j + 0)];
-			ArbitraryMeshVertex& b = surface.vertices()[*(j + 1)];
-			ArbitraryMeshVertex& c = surface.vertices()[*(j + 2)];
-			Vector3 weightedNormal(
-        (reinterpret_cast<const Vector3&>(c.vertex) - reinterpret_cast<const Vector3&>(a.vertex)).crossProduct(
-             reinterpret_cast<const Vector3&>(b.vertex) - reinterpret_cast<const Vector3&>(a.vertex))
-      );
-      reinterpret_cast<Vector3&>(a.normal) += weightedNormal;
-      reinterpret_cast<Vector3&>(b.normal) += weightedNormal;
-      reinterpret_cast<Vector3&>(c.normal) += weightedNormal;
+		ArbitraryMeshVertex& a = surface.vertices()[*(j + 0)];
+		ArbitraryMeshVertex& b = surface.vertices()[*(j + 1)];
+		ArbitraryMeshVertex& c = surface.vertices()[*(j + 2)];
+		Vector3 weightedNormal( (c.vertex - a.vertex).crossProduct(b.vertex - a.vertex) );
+		a.normal += weightedNormal;
+		b.normal += weightedNormal;
+		c.normal += weightedNormal;
     }
 
     for(Surface::vertices_t::iterator j = surface.vertices().begin(); j != surface.vertices().end(); ++j)
     {
-      vector3_normalise(reinterpret_cast<Vector3&>((*j).normal));
+    	j->normal = Normal3f(j->normal.getNormalised());
+      //vector3_normalise(reinterpret_cast<Vector3&>((*j).normal));
     }
 
     surface.updateAABB();

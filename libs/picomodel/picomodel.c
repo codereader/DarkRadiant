@@ -1419,9 +1419,9 @@ unsigned int PicoVertexCoordGenerateHash( picoVec3_t xyz )
 	picoVec3_t xyz_epsilonspace;
 
 	_pico_scale_vec( xyz, HASH_XYZ_EPSILONSPACE_MULTIPLIER, xyz_epsilonspace );
-	xyz_epsilonspace[ 0 ] = (float)floor(xyz_epsilonspace[ 0 ]);
-	xyz_epsilonspace[ 1 ] = (float)floor(xyz_epsilonspace[ 1 ]);
-	xyz_epsilonspace[ 2 ] = (float)floor(xyz_epsilonspace[ 2 ]);
+	xyz_epsilonspace[ 0 ] = (double)floor(xyz_epsilonspace[ 0 ]);
+	xyz_epsilonspace[ 1 ] = (double)floor(xyz_epsilonspace[ 1 ]);
+	xyz_epsilonspace[ 2 ] = (double)floor(xyz_epsilonspace[ 2 ]);
 
 	hash += ~(*((unsigned int*) &xyz_epsilonspace[ 0 ]) << 15);
 	hash ^= (*((unsigned int*) &xyz_epsilonspace[ 0 ]) >> 10);
@@ -1831,7 +1831,7 @@ void _pico_vertices_combine_shared_normals(picoVec3_t* xyz, picoIndex_t* smoothi
 			picoIndex_t index = UniqueIndices_insert(&vertices, i);
 			if((size_t)index != size)
 			{
-				float* normal = normals[vertices.indices.data[index]];
+				double* normal = normals[vertices.indices.data[index]];
 				_pico_add_vec(normal, normals[i], normal);
 			}
 			indexarray_push_back(&indices, index);
@@ -1870,9 +1870,9 @@ void _pico_triangles_generate_weighted_normals(picoIndexIter_t first, picoIndexI
 #if (THE_CROSSPRODUCTS_OF_ANY_PAIR_OF_EDGES_OF_A_GIVEN_TRIANGLE_ARE_EQUAL)
 		picoVec3_t weightedNormal;
 		{
-			float* a = xyz[*(first + 0)];
-			float* b = xyz[*(first + 1)];
-			float* c = xyz[*(first + 2)];
+			double* a = xyz[*(first + 0)];
+			double* b = xyz[*(first + 1)];
+			double* c = xyz[*(first + 2)];
 			picoVec3_t ba, ca;
 			_pico_subtract_vec( b, a, ba );
 			_pico_subtract_vec( c, a, ca );
@@ -1883,13 +1883,13 @@ void _pico_triangles_generate_weighted_normals(picoIndexIter_t first, picoIndexI
 			int j = 0;
 			for(; j < 3; ++j)
 			{
-				float* normal = normals[*(first + j)];
+				double* normal = normals[*(first + j)];
 #if (!THE_CROSSPRODUCTS_OF_ANY_PAIR_OF_EDGES_OF_A_GIVEN_TRIANGLE_ARE_EQUAL)
 				picoVec3_t weightedNormal;
 				{
-					float* a = xyz[*(first + ((j + 0) % 3))];
-					float* b = xyz[*(first + ((j + 1) % 3))];
-					float* c = xyz[*(first + ((j + 2) % 3))];
+					double* a = xyz[*(first + ((j + 0) % 3))];
+					double* b = xyz[*(first + ((j + 1) % 3))];
+					double* c = xyz[*(first + ((j + 2) % 3))];
 					picoVec3_t ba, ca;
 					_pico_subtract_vec( b, a, ba );
 					_pico_subtract_vec( c, a, ca );

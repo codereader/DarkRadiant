@@ -25,19 +25,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "math/line.h"
 
-
-inline double plane3_distance_to_point(const Plane3& plane, const DoubleVector3& point)
-{
-  return point.dot(plane.normal()) - plane.dist();
-}
-
 inline double plane3_distance_to_point(const Plane3& plane, const Vector3& point)
 {
   return point.dot(plane.normal()) - plane.dist();
 }
 
 /// \brief Returns the point at which \p line intersects \p plane, or an undefined value if there is no intersection.
-inline DoubleVector3 line_intersect_plane(const DoubleLine& line, const Plane3& plane)
+inline Vector3 line_intersect_plane(const DoubleLine& line, const Plane3& plane)
 {
   return line.origin + 
     line.direction * (-plane3_distance_to_point(plane, line.origin) / line.direction.dot(plane.normal()));
@@ -49,7 +43,7 @@ inline bool float_is_largest_absolute(double axis, double other)
 }
 
 /// \brief Returns the index of the component of \p v that has the largest absolute value.
-inline int vector3_largest_absolute_component_index(const DoubleVector3& v)
+inline int vector3_largest_absolute_component_index(const Vector3& v)
 {
   return (float_is_largest_absolute(v[1], v[0]))
     ? (float_is_largest_absolute(v[1], v[2]))
@@ -110,7 +104,7 @@ void Winding_createInfinite(FixedWinding& winding, const Plane3& plane, double i
     return;
   }
     
-  DoubleVector3 vup = g_vector3_identity;  
+  Vector3 vup = g_vector3_identity;  
   switch (x)
   {
   case 0:
@@ -126,9 +120,9 @@ void Winding_createInfinite(FixedWinding& winding, const Plane3& plane, double i
   vup += plane.normal() * (-vup.dot(plane.normal()));
   vector3_normalise(vup);
     
-  DoubleVector3 org = plane.normal() * plane.dist();
+  Vector3 org = plane.normal() * plane.dist();
   
-  DoubleVector3 vright = vup.crossProduct(plane.normal());
+  Vector3 vright = vup.crossProduct(plane.normal());
   
   vup *= infinity;
   vright *= infinity;
@@ -257,7 +251,7 @@ void Winding_Clip(const FixedWinding& winding, const Plane3& plane, const Plane3
     else
     {
       // append intersection point of line and plane to output winding
-      DoubleVector3 mid(line_intersect_plane(vertex.edge, clipPlane));
+      Vector3 mid(line_intersect_plane(vertex.edge, clipPlane));
 
       if(classification == ePlaneFront)
       {
@@ -331,13 +325,13 @@ void Winding_Centroid(const Winding& winding, const Plane3& plane, Vector3& cent
     y_sum += (winding[j].vertex[remap.y] + winding[i].vertex[remap.y]) * ai;
   }
 
-  centroid[remap.x] = static_cast<float>(x_sum / (3 * area2));
-  centroid[remap.y] = static_cast<float>(y_sum / (3 * area2));
+  centroid[remap.x] = x_sum / (3 * area2);
+  centroid[remap.y] = y_sum / (3 * area2);
   {
     Ray ray(Vector3(0, 0, 0), Vector3(0, 0, 0));
     ray.origin[remap.x] = centroid[remap.x];
     ray.origin[remap.y] = centroid[remap.y];
     ray.direction[remap.z] = 1;
-    centroid[remap.z] = static_cast<float>(ray_distance_to_plane(ray, plane));
+    centroid[remap.z] = ray_distance_to_plane(ray, plane);
   }
 }

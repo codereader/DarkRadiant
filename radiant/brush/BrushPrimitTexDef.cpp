@@ -31,16 +31,16 @@ BrushPrimitTexDef::BrushPrimitTexDef(const TexDef& texdef) {
 	double s = sin(r);
 	double x = 1.0f / texdef._scale[0];
 	double y = 1.0f / texdef._scale[1];
-	coords[0][0] = static_cast<float>(x * c);
-	coords[1][0] = static_cast<float>(x * s);
-	coords[0][1] = static_cast<float>(y * -s);
-	coords[1][1] = static_cast<float>(y * c);
+	coords[0][0] = x * c;
+	coords[1][0] = x * s;
+	coords[0][1] = y * -s;
+	coords[1][1] = y * c;
 	coords[0][2] = -texdef._shift[0];
 	coords[1][2] = texdef._shift[1];
 }
 
 // shift a texture (texture adjustments) along it's current texture axes
-void BrushPrimitTexDef::shift(float s, float t) {
+void BrushPrimitTexDef::shift(double s, double t) {
 	// x and y are geometric values, which we must compute as ST increments
 	// this depends on the texture size and the pixel/texel ratio
 	// as a ratio against texture size
@@ -50,16 +50,16 @@ void BrushPrimitTexDef::shift(float s, float t) {
 }
 
 // apply same scale as the spinner button of the surface inspector
-void BrushPrimitTexDef::scale(float s, float t) {
+void BrushPrimitTexDef::scale(double s, double t) {
 	// compute fake shift scale rot
 	TexDef texdef = getFakeTexCoords();
 	
-	float newXScale = texdef._scale[0] + s;
-	float newYScale = texdef._scale[1] + t;
+	double newXScale = texdef._scale[0] + s;
+	double newYScale = texdef._scale[1] + t;
 	
 	// Don't allow zero (or almost zero) scale values
-	if (float_equal_epsilon(newXScale, 0.0f, 0.00001f) || 
-		float_equal_epsilon(newYScale, 0.0f, 0.00001f)) 
+	if (float_equal_epsilon(newXScale, 0, 1e-5) || 
+		float_equal_epsilon(newYScale, 0, 1e-5)) 
 	{
 		return;
 	}
@@ -80,7 +80,7 @@ void BrushPrimitTexDef::scale(float s, float t) {
 }
 
 // apply same rotation as the spinner button of the surface inspector
-void BrushPrimitTexDef::rotate(float angle) {
+void BrushPrimitTexDef::rotate(double angle) {
 	// compute fake shift scale rot
 	TexDef texdef = getFakeTexCoords();
 	
@@ -126,10 +126,10 @@ void BrushPrimitTexDef::addScale(std::size_t width, std::size_t height) {
 TexDef BrushPrimitTexDef::getFakeTexCoords() const {
 	TexDef texdef;
 
-	texdef._scale[0] = static_cast<float>(1.0 / Vector2(coords[0][0], coords[1][0]).getLength());
-	texdef._scale[1] = static_cast<float>(1.0 / Vector2(coords[0][1], coords[1][1]).getLength());
+	texdef._scale[0] = static_cast<double>(1.0 / Vector2(coords[0][0], coords[1][0]).getLength());
+	texdef._scale[1] = static_cast<double>(1.0 / Vector2(coords[0][1], coords[1][1]).getLength());
 	
-	texdef._rotate = -static_cast<float>(radians_to_degrees(arctangent_yx(coords[1][0], coords[0][0])));
+	texdef._rotate = -static_cast<double>(radians_to_degrees(arctangent_yx(coords[1][0], coords[0][0])));
 	
 	texdef._shift[0] = -coords[0][2];
 	texdef._shift[1] = coords[1][2];
@@ -156,7 +156,7 @@ TexDef BrushPrimitTexDef::getFakeTexCoords() const {
 
 // All texture-projection translation (shift) values are congruent modulo the dimensions of the texture.
 // This function normalises shift values to the smallest positive congruent values.
-void BrushPrimitTexDef::normalise(float width, float height) {
+void BrushPrimitTexDef::normalise(double width, double height) {
 	coords[0][2] = float_mod(coords[0][2], width);
 	coords[1][2] = float_mod(coords[1][2], height);
 }

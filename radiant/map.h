@@ -106,7 +106,7 @@ scene::Node* Map_FindWorldspawn(Map& map);
 scene::Node& Map_FindOrInsertWorldspawn(Map& map);
 
 template<typename Element> class BasicVector3;
-typedef BasicVector3<float> Vector3;
+typedef BasicVector3<double> Vector3;
 
 void Map_LoadFile(const std::string& filename);
 bool Map_SaveFile(const char* filename);

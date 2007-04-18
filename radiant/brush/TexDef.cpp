@@ -14,11 +14,11 @@ TexDef::TexDef() {
 }
 
 // Constructs a TexDef out of the given transformation matrix plus width/height
-TexDef::TexDef(float width, float height, const Matrix4& transform) {
-	_scale[0] = static_cast<float>((1.0 / Vector2(transform[0], transform[4]).getLength()) / width);
-	_scale[1] = static_cast<float>((1.0 / Vector2(transform[1], transform[5]).getLength()) / height);
+TexDef::TexDef(double width, double height, const Matrix4& transform) {
+	_scale[0] = static_cast<double>((1.0 / Vector2(transform[0], transform[4]).getLength()) / width);
+	_scale[1] = static_cast<double>((1.0 / Vector2(transform[1], transform[5]).getLength()) / height);
 
-	_rotate = static_cast<float>(-radians_to_degrees(arctangent_yx(-transform[4], transform[0])));
+	_rotate = static_cast<double>(-radians_to_degrees(arctangent_yx(-transform[4], transform[0])));
 
 	if (_rotate == -180.0f) {
 		_rotate = 180.0f;
@@ -39,19 +39,19 @@ TexDef::TexDef(float width, float height, const Matrix4& transform) {
 	}
 }
 
-void TexDef::shift(float s, float t) {
+void TexDef::shift(double s, double t) {
 	_shift[0] += s;
 	_shift[1] += t;
 }
 
-void TexDef::scale(float s, float t) {
+void TexDef::scale(double s, double t) {
 	_scale[0] += s;
 	_scale[1] += t;
 }
 
-void TexDef::rotate(float angle) {
+void TexDef::rotate(double angle) {
 	_rotate += angle;
-	_rotate = static_cast<float>(float_to_integer(_rotate) % 360);
+	_rotate = static_cast<double>(float_to_integer(_rotate) % 360);
 }
 
 // Checks the TexDef for insanely large values
@@ -62,7 +62,7 @@ bool TexDef::isSane() const {
 
 // All texture-projection translation (shift) values are congruent modulo the dimensions of the texture.
 // This function normalises shift values to the smallest positive congruent values.
-void TexDef::normalise(float width, float height) {
+void TexDef::normalise(double width, double height) {
 	// it may be useful to also normalise the rotation here, if this function is used elsewhere.
 	_shift[0] = float_mod(_shift[0], width);
 	_shift[1] = float_mod(_shift[1], height);
@@ -72,7 +72,7 @@ void TexDef::normalise(float width, float height) {
  * Transforms constructed from quake's texdef format 
  * are (-shift)*(1/scale)*(-rotate) with x translation sign flipped.
  * This would really make more sense if it was inverseof(shift*rotate*scale).. oh well.*/
-Matrix4 TexDef::getTransform(float width, float height) const {
+Matrix4 TexDef::getTransform(double width, double height) const {
 	Matrix4 transform;
 	double inverse_scale[2];
   
@@ -85,10 +85,10 @@ Matrix4 TexDef::getTransform(float width, float height) const {
 	double c = cos(degrees_to_radians(-_rotate));
 	double s = sin(degrees_to_radians(-_rotate));
 	
-	transform[0] = static_cast<float>(c * inverse_scale[0]);
-	transform[1] = static_cast<float>(s * inverse_scale[1]);
-	transform[4] = static_cast<float>(-s * inverse_scale[0]);
-	transform[5] = static_cast<float>(c * inverse_scale[1]);
+	transform[0] = c * inverse_scale[0];
+	transform[1] = s * inverse_scale[1];
+	transform[4] = -s * inverse_scale[0];
+	transform[5] = c * inverse_scale[1];
 	transform[2] = transform[3] = transform[6] = transform[7] = transform[8] = transform[9] = transform[11] = transform[14] = 0;
 	transform[10] = transform[15] = 1;
 	

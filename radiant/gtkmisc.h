@@ -50,7 +50,7 @@ inline void process_gui()
 }
 
 template<typename Element> class BasicVector3;
-typedef BasicVector3<float> Vector3;
+typedef BasicVector3<double> Vector3;
 
 typedef struct _GtkEntry GtkEntry;
 void button_clicked_entry_browse_file(GtkWidget* widget, GtkEntry* entry);

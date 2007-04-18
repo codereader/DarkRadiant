@@ -352,7 +352,7 @@ void RadiantSelectionSystem::startMove() {
 /* greebo: This is called by the ManipulateObserver class on the mouseDown event. It checks, if a manipulator
  * can be selected where the mouse is pointing to.
  */
-bool RadiantSelectionSystem::SelectManipulator(const View& view, const float device_point[2], const float device_epsilon[2]) {
+bool RadiantSelectionSystem::SelectManipulator(const View& view, const double device_point[2], const double device_epsilon[2]) {
 	if (!nothingSelected() || (ManipulatorMode() == eDrag && Mode() == eComponent)) {
 #if defined (DEBUG_SELECTION)
 		g_render_clipped.destroy();
@@ -413,8 +413,8 @@ void RadiantSelectionSystem::deselectAll() {
  * to the modifiers that are held down (Alt-Shift, etc.)
  */
 void RadiantSelectionSystem::SelectPoint(const View& view, 
-										 const float device_point[2], 
-										 const float device_epsilon[2], 
+										 const double device_point[2], 
+										 const double device_epsilon[2], 
 										 SelectionSystem::EModifier modifier, 
 										 bool face) 
 {
@@ -513,8 +513,8 @@ void RadiantSelectionSystem::SelectPoint(const View& view,
  * any of the selection modifiers. Possible selection candidates are determined and selected/deselected
  */
 void RadiantSelectionSystem::SelectArea(const View& view, 
-										const float device_point[2], 
-										const float device_delta[2], 
+										const double device_point[2], 
+										const double device_delta[2], 
 										SelectionSystem::EModifier modifier, bool face) 
 {
 	// If we are in replace mode, deselect all the components or previous selections
@@ -669,7 +669,7 @@ void RadiantSelectionSystem::scaleSelected(const Vector3& scaling) {
 /* greebo: This "moves" the current selection. It calculates the device manipulation matrix
  * and passes it to the currently active Manipulator.
  */
-void RadiantSelectionSystem::MoveSelected(const View& view, const float device_point[2]) {
+void RadiantSelectionSystem::MoveSelected(const View& view, const double device_point[2]) {
 	// Check, if the active manipulator is selected in the first place
 	if (_manipulator->isSelected()) {
 		// Initalise the undo system, if not yet done

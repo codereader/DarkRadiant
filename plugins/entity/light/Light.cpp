@@ -63,60 +63,60 @@ void light_draw(const AABB& aabb_light, RenderStateFlags state) {
 #else
     glBegin(GL_TRIANGLE_FAN);
 #endif
-    glVertex3fv(points[0]);
-    glVertex3fv(points[2]);
-    glNormal3fv(normals[0]);
-    glVertex3fv(points[3]);
+    glVertex3dv(points[0]);
+    glVertex3dv(points[2]);
+    glNormal3dv(normals[0]);
+    glVertex3dv(points[3]);
 
 #if !defined(USE_TRIANGLE_FAN)
-    glVertex3fv(points[0]);
-    glVertex3fv(points[3]);
+    glVertex3dv(points[0]);
+    glVertex3dv(points[3]);
 #endif
-    glNormal3fv(normals[1]);
-    glVertex3fv(points[4]);
+    glNormal3dv(normals[1]);
+    glVertex3dv(points[4]);
 
 #if !defined(USE_TRIANGLE_FAN)
-    glVertex3fv(points[0]);
-    glVertex3fv(points[4]);
+    glVertex3dv(points[0]);
+    glVertex3dv(points[4]);
 #endif
-    glNormal3fv(normals[2]);
-    glVertex3fv(points[5]);
+    glNormal3dv(normals[2]);
+    glVertex3dv(points[5]);
 #if !defined(USE_TRIANGLE_FAN)
-    glVertex3fv(points[0]);
-    glVertex3fv(points[5]);
+    glVertex3dv(points[0]);
+    glVertex3dv(points[5]);
 #endif
-    glNormal3fv(normals[3]);
-    glVertex3fv(points[2]);
+    glNormal3dv(normals[3]);
+    glVertex3dv(points[2]);
 #if defined(USE_TRIANGLE_FAN)
     glEnd();
     glBegin(GL_TRIANGLE_FAN);
 #endif
 
-    glVertex3fv(points[1]);
-    glVertex3fv(points[2]);
-    glNormal3fv(normals[7]);
-    glVertex3fv(points[5]);
+    glVertex3dv(points[1]);
+    glVertex3dv(points[2]);
+    glNormal3dv(normals[7]);
+    glVertex3dv(points[5]);
 
 #if !defined(USE_TRIANGLE_FAN)
-    glVertex3fv(points[1]);
-    glVertex3fv(points[5]);
+    glVertex3dv(points[1]);
+    glVertex3dv(points[5]);
 #endif
-    glNormal3fv(normals[6]);
-    glVertex3fv(points[4]);
+    glNormal3dv(normals[6]);
+    glVertex3dv(points[4]);
 
 #if !defined(USE_TRIANGLE_FAN)
-    glVertex3fv(points[1]);
-    glVertex3fv(points[4]);
+    glVertex3dv(points[1]);
+    glVertex3dv(points[4]);
 #endif
-    glNormal3fv(normals[5]);
-    glVertex3fv(points[3]);
+    glNormal3dv(normals[5]);
+    glVertex3dv(points[3]);
 
 #if !defined(USE_TRIANGLE_FAN)
-    glVertex3fv(points[1]);
-    glVertex3fv(points[3]);
+    glVertex3dv(points[1]);
+    glVertex3dv(points[3]);
 #endif
-    glNormal3fv(normals[4]);
-    glVertex3fv(points[2]);
+    glNormal3dv(normals[4]);
+    glVertex3dv(points[2]);
 
     glEnd();
   }
@@ -135,13 +135,13 @@ void light_draw(const AABB& aabb_light, RenderStateFlags state) {
       1, 3, 2
     };
 #if 1
-    glVertexPointer(3, GL_FLOAT, 0, points);
+    glVertexPointer(3, GL_DOUBLE, 0, points);
     glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(index_t), RenderIndexTypeID, indices);
 #else
     glBegin(GL_TRIANGLES);
     for(unsigned int i = 0; i < sizeof(indices)/sizeof(index_t); ++i)
     {
-      glVertex3fv(points[indices[i]]);
+      glVertex3dv(points[indices[i]]);
     }
     glEnd();
 #endif

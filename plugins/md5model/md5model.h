@@ -175,25 +175,25 @@ public:
     {
       if(GlobalShaderCache().useShaderLanguage())
       {
-        glNormalPointer(GL_FLOAT, sizeof(ArbitraryMeshVertex), &m_vertices.data()->normal);
-        glVertexAttribPointerARB(c_attr_TexCoord0, 2, GL_FLOAT, 0, sizeof(ArbitraryMeshVertex), &m_vertices.data()->texcoord);
-        glVertexAttribPointerARB(c_attr_Tangent, 3, GL_FLOAT, 0, sizeof(ArbitraryMeshVertex), &m_vertices.data()->tangent);
-        glVertexAttribPointerARB(c_attr_Binormal, 3, GL_FLOAT, 0, sizeof(ArbitraryMeshVertex), &m_vertices.data()->bitangent);
+        glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_vertices.data()->normal);
+        glVertexAttribPointerARB(c_attr_TexCoord0, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_vertices.data()->texcoord);
+        glVertexAttribPointerARB(c_attr_Tangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_vertices.data()->tangent);
+        glVertexAttribPointerARB(c_attr_Binormal, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_vertices.data()->bitangent);
       }
       else
       {
-        glVertexAttribPointerARB(11, 3, GL_FLOAT, 0, sizeof(ArbitraryMeshVertex), &m_vertices.data()->normal);
-        glVertexAttribPointerARB(8, 2, GL_FLOAT, 0, sizeof(ArbitraryMeshVertex), &m_vertices.data()->texcoord);
-        glVertexAttribPointerARB(9, 3, GL_FLOAT, 0, sizeof(ArbitraryMeshVertex), &m_vertices.data()->tangent);
-        glVertexAttribPointerARB(10, 3, GL_FLOAT, 0, sizeof(ArbitraryMeshVertex), &m_vertices.data()->bitangent);
+        glVertexAttribPointerARB(11, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_vertices.data()->normal);
+        glVertexAttribPointerARB(8, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_vertices.data()->texcoord);
+        glVertexAttribPointerARB(9, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_vertices.data()->tangent);
+        glVertexAttribPointerARB(10, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_vertices.data()->bitangent);
       }
     }
     else
     {
-      glNormalPointer(GL_FLOAT, sizeof(ArbitraryMeshVertex), &m_vertices.data()->normal);
-      glTexCoordPointer(2, GL_FLOAT, sizeof(ArbitraryMeshVertex), &m_vertices.data()->texcoord);
+      glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_vertices.data()->normal);
+      glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_vertices.data()->texcoord);
     }
-    glVertexPointer(3, GL_FLOAT, sizeof(ArbitraryMeshVertex), &m_vertices.data()->vertex);
+    glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_vertices.data()->vertex);
     glDrawElements(GL_TRIANGLES, GLsizei(m_indices.size()), RenderIndexTypeID, m_indices.data());
 
   }
@@ -552,30 +552,30 @@ inline void Surface_constructQuad(Surface& surface, const Vector3& a, const Vect
 {
   surface.vertices().push_back(
     ArbitraryMeshVertex(
-      vertex3f_for_vector3(a),
-      normal3f_for_vector3(normal),
-      texcoord2f_from_array(aabb_texcoord_topleft)
+      Vertex3f(a),
+      Normal3f(normal),
+      TexCoord2f(aabb_texcoord_topleft)
     )
   );
   surface.vertices().push_back(
     ArbitraryMeshVertex(
-      vertex3f_for_vector3(b),
-      normal3f_for_vector3(normal),
-      texcoord2f_from_array(aabb_texcoord_topright)
+      Vertex3f(b),
+      Normal3f(normal),
+      TexCoord2f(aabb_texcoord_topright)
     )
   );
   surface.vertices().push_back(
     ArbitraryMeshVertex(
-      vertex3f_for_vector3(c),
-      normal3f_for_vector3(normal),
-      texcoord2f_from_array(aabb_texcoord_botright)
+      Vertex3f(c),
+      Normal3f(normal),
+      TexCoord2f(aabb_texcoord_botright)
     )
   );
   surface.vertices().push_back(
     ArbitraryMeshVertex(
-      vertex3f_for_vector3(d),
-      normal3f_for_vector3(normal),
-      texcoord2f_from_array(aabb_texcoord_botleft)
+      Vertex3f(d),
+      Normal3f(normal),
+      TexCoord2f(aabb_texcoord_botleft)
     )
   );
 }

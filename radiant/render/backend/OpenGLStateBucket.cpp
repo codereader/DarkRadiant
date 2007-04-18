@@ -81,7 +81,7 @@ void OpenGLStateBucket::applyState(OpenGLState& current,
     if(current.m_program != 0)
     {
       current.m_program->disable();
-      glColor4fv(current.m_colour);
+      glColor4dv(current.m_colour);
     }
 
     current.m_program = program;
@@ -136,7 +136,7 @@ void OpenGLStateBucket::applyState(OpenGLState& current,
 
     glEnable(GL_TEXTURE_2D);
 
-    glColor4f(1,1,1,_state.m_colour[3]);
+    glColor4d(1,1,1,_state.m_colour[3]);
 
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     GlobalOpenGL_debugAssertNoErrors();
@@ -234,13 +234,13 @@ void OpenGLStateBucket::applyState(OpenGLState& current,
   else if(stateDelta & ~requiredState & RENDER_COLOURARRAY)
   {
     glDisableClientState(GL_COLOR_ARRAY);
-    glColor4fv(_state.m_colour);
+    glColor4dv(_state.m_colour);
     GlobalOpenGL_debugAssertNoErrors();
   }
 
   if(stateDelta & ~requiredState & RENDER_COLOURCHANGE)
   {
-    glColor4fv(_state.m_colour);
+    glColor4dv(_state.m_colour);
     GlobalOpenGL_debugAssertNoErrors();
   }
 
@@ -321,7 +321,7 @@ void OpenGLStateBucket::applyState(OpenGLState& current,
 
   if(requiredState & RENDER_TEXTURE && _state.m_colour[3] != current.m_colour[3])
   {
-    glColor4f(1,1,1,_state.m_colour[3]);
+    glColor4d(1,1,1,_state.m_colour[3]);
     GlobalOpenGL_debugAssertNoErrors();
   }
 
@@ -331,7 +331,7 @@ void OpenGLStateBucket::applyState(OpenGLState& current,
     || _state.m_colour[2] != current.m_colour[2]
     || _state.m_colour[3] != current.m_colour[3]))
   {
-    glColor4fv(_state.m_colour);
+    glColor4dv(_state.m_colour);
     GlobalOpenGL_debugAssertNoErrors();
   }
   current.m_colour = _state.m_colour;
@@ -399,11 +399,11 @@ void OpenGLStateBucket::render(OpenGLState& current,
   {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
-    glLoadMatrixf(g_matrix4_identity);
+    glLoadMatrixd(g_matrix4_identity);
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
-    glLoadMatrixf(g_matrix4_identity);
+    glLoadMatrixd(g_matrix4_identity);
 
     glBegin(GL_QUADS);
     glVertex3f(-1, -1, 0);
@@ -447,7 +447,7 @@ void OpenGLStateBucket::flushRenderables(OpenGLState& current,
 			transform = i->transform;
       		glPopMatrix();
       		glPushMatrix();
-      		glMultMatrixf(*transform);
+      		glMultMatrixd(*transform);
       		
       		// Determine the face direction
       		if ((current.m_state & RENDER_CULLFACE) != 0

@@ -60,7 +60,7 @@ class AABB;
 class Matrix4;
 
 template<typename Element> class BasicVector3;
-typedef BasicVector3<float> Vector3;
+typedef BasicVector3<double> Vector3;
 
 class Shader;
 
