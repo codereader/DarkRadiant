@@ -11,7 +11,7 @@ namespace ui {
 	
 	namespace {
 		const unsigned int TREE_VIEW_WIDTH = 250;
-		const unsigned int TREE_VIEW_HEIGHT = 200;
+		const unsigned int TREE_VIEW_HEIGHT = 160;
 	}
 
 ClassEditor::ClassEditor(StimTypes& stimTypes) :
@@ -238,15 +238,23 @@ void ClassEditor::onCheckboxToggle(GtkToggleButton* toggleButton, ClassEditor* s
 	self->checkBoxToggled(toggleButton);
 }
 
-void ClassEditor::onStimTypeSelect(GtkComboBox* widget, ClassEditor* self) {
-	if (self->_updatesDisabled) return; // Callback loop guard
-	
+std::string ClassEditor::getStimTypeIdFromSelector(GtkComboBox* widget) {
 	GtkTreeIter iter;
 	if (gtk_combo_box_get_active_iter(widget, &iter)) {
 		// Load the stim name (e.g. "STIM_FIRE") directly from the liststore
 		GtkTreeModel* model = gtk_combo_box_get_model(widget);
 		std::string name = gtkutil::TreeModel::getString(model, &iter, ST_NAME_COL);
 		
+		return name;
+	}
+	return "";
+}
+
+void ClassEditor::onStimTypeSelect(GtkComboBox* widget, ClassEditor* self) {
+	if (self->_updatesDisabled) return; // Callback loop guard
+	
+	std::string name = self->getStimTypeIdFromSelector(widget);
+	if (!name.empty()) {
 		// Write it to the entity
 		self->setProperty("type", name);
 	}
