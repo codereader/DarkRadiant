@@ -58,7 +58,9 @@ G_BEGIN_DECLS
 typedef enum
 {
   GTK_IN_DESTRUCTION	= 1 << 0, /* Used internally during dispose */
+#if !defined (GTK_DISABLE_DEPRECATED) || defined (GTK_COMPILATION)
   GTK_FLOATING		= 1 << 1,
+#endif
   GTK_RESERVED_1	= 1 << 2,
   GTK_RESERVED_2	= 1 << 3
 } GtkObjectFlags;
@@ -66,7 +68,9 @@ typedef enum
 /* Macros for extracting the object_flags from GtkObject.
  */
 #define GTK_OBJECT_FLAGS(obj)		  (GTK_OBJECT (obj)->flags)
-#define GTK_OBJECT_FLOATING(obj)	  ((GTK_OBJECT_FLAGS (obj) & GTK_FLOATING) != 0)
+#ifndef GTK_DISABLE_DEPRECATED
+#define GTK_OBJECT_FLOATING(obj)	  (g_object_is_floating (obj))
+#endif
 
 /* Macros for setting and clearing bits in the object_flags field of GtkObject.
  */
@@ -78,7 +82,7 @@ typedef struct _GtkObjectClass	GtkObjectClass;
 
 struct _GtkObject
 {
-  GObject parent_instance;
+  GInitiallyUnowned parent_instance;
   
   /* 32 bits of flags. GtkObject only uses 4 of these bits and
    *  GtkWidget uses the rest. This is done because structs are
@@ -90,7 +94,7 @@ struct _GtkObject
 
 struct _GtkObjectClass
 {
-  GObjectClass parent_class;
+  GInitiallyUnownedClass parent_class;
   
   /* Non overridable class methods to set and get per class arguments */
   void (*set_arg) (GtkObject *object,
@@ -117,7 +121,9 @@ struct _GtkObjectClass
 
 GtkType	gtk_object_get_type		(void) G_GNUC_CONST;
 
+#ifndef GTK_DISABLE_DEPRECATED
 void gtk_object_sink	  (GtkObject *object);
+#endif
 void gtk_object_destroy	  (GtkObject *object);
 
 /****************************************************************/
@@ -204,10 +210,10 @@ typedef enum
 #define	GTK_ARG_READWRITE	(GTK_ARG_READABLE | GTK_ARG_WRITABLE)
 void	gtk_object_get		(GtkObject	*object,
 				 const gchar	*first_property_name,
-				 ...);
+				 ...) G_GNUC_NULL_TERMINATED;
 void	gtk_object_set		(GtkObject	*object,
 				 const gchar	*first_property_name,
-				 ...);
+				 ...) G_GNUC_NULL_TERMINATED;
 void	gtk_object_add_arg_type		(const gchar	*arg_name,
 					 GtkType	 arg_type,
 					 guint		 arg_flags,

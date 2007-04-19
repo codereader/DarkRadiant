@@ -114,7 +114,7 @@ struct _AtkComponentIface
    */
   void                     (* bounds_changed)   (AtkComponent   *component,
                                                  AtkRectangle   *bounds);
-  AtkFunction              pad2;
+  gdouble                  (* get_alpha)        (AtkComponent   *component);
 };
 
 GType atk_component_get_type (void);
@@ -162,7 +162,7 @@ gboolean              atk_component_set_position           (AtkComponent    *com
 gboolean              atk_component_set_size               (AtkComponent    *component,
                                                             gint            width,
                                                             gint            height);
-
+gdouble               atk_component_get_alpha              (AtkComponent    *component);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

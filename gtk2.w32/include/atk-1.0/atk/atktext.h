@@ -30,32 +30,6 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * AtkAttributeSet:
- *
- * This is a singly-linked list (a #GSList) of #AtkAttribute. It is
- * used by atk_text_get_run_attributes(), atk_text_get_default_attributes()
- * and atk_editable_text_set_run_attributes()
- **/
-typedef GSList AtkAttributeSet;
-
-/**
- * AtkAttribute:
- * @name: The attribute name. Call atk_text_attr_get_name()
- * @value: the value of the attribute, represented as a string. 
- * Call atk_text_attr_get_value() for those which are strings.
- * For values which are numbers, the string representation of the number 
- * is in value.
- *
- * A string name/value pair representing a text attribute. 
- **/
-typedef struct _AtkAttribute AtkAttribute;
-
-struct _AtkAttribute {
-  gchar* name;
-  gchar* value;
-};
-
-/**
  *AtkTextAttribute
  *@ATK_TEXT_ATTR_INVALID: Invalid attribute
  *@ATK_TEXT_ATTR_LEFT_MARGIN: The pixel width of the left margin
@@ -138,13 +112,17 @@ typedef struct _AtkTextIface AtkTextIface;
 
 /**
  *AtkTextBoundary:
- *@ATK_TEXT_BOUNDARY_CHAR:
- *@ATK_TEXT_BOUNDARY_WORD_START:
- *@ATK_TEXT_BOUNDARY_WORD_END:
- *@ATK_TEXT_BOUNDARY_SENTENCE_START:
- *@ATK_TEXT_BOUNDARY_SENTENCE_END:
- *@ATK_TEXT_BOUNDARY_LINE_START:
- *@ATK_TEXT_BOUNDARY_LINE_END:
+ *@ATK_TEXT_BOUNDARY_CHAR: Boundary is the boundary between characters 
+ * (including non-printing characters)
+ *@ATK_TEXT_BOUNDARY_WORD_START: Boundary is the start (i.e. first character) of a word. 
+ *@ATK_TEXT_BOUNDARY_WORD_END: Boundary is the end (i.e. last character) of a word.
+ *@ATK_TEXT_BOUNDARY_SENTENCE_START: Boundary is the first character in a sentence.
+ *@ATK_TEXT_BOUNDARY_SENTENCE_END: Boundary is the last (terminal) character in a sentence; 
+ * in languages which use "sentence stop" punctuation such as English, the boundary is thus the
+ * '.', '?', or similar terminal punctuation character.
+ *@ATK_TEXT_BOUNDARY_LINE_START: Boundary is the initial character of the content or a 
+ * character immediately following a newline, linefeed, or return character.
+ *@ATK_TEXT_BOUNDARY_LINE_END: Boundary is the linefeed, or return character.
  *
  *Text boundary types used for specifying boundaries for regions of text
  **/

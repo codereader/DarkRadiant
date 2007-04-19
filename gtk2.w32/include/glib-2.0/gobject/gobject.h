@@ -44,10 +44,21 @@ G_BEGIN_DECLS
 #define G_OBJECT_CLASS_NAME(class)  (g_type_name (G_OBJECT_CLASS_TYPE (class)))
 #define G_VALUE_HOLDS_OBJECT(value) (G_TYPE_CHECK_VALUE_TYPE ((value), G_TYPE_OBJECT))
 
+/* --- type macros --- */
+#define G_TYPE_INITIALLY_UNOWNED	      (g_initially_unowned_get_type())
+#define G_INITIALLY_UNOWNED(object)           (G_TYPE_CHECK_INSTANCE_CAST ((object), G_TYPE_INITIALLY_UNOWNED, GInitiallyUnowned))
+#define G_INITIALLY_UNOWNED_CLASS(class)      (G_TYPE_CHECK_CLASS_CAST ((class), G_TYPE_INITIALLY_UNOWNED, GInitiallyUnownedClass))
+#define G_IS_INITIALLY_UNOWNED(object)        (G_TYPE_CHECK_INSTANCE_TYPE ((object), G_TYPE_INITIALLY_UNOWNED))
+#define G_IS_INITIALLY_UNOWNED_CLASS(class)   (G_TYPE_CHECK_CLASS_TYPE ((class), G_TYPE_INITIALLY_UNOWNED))
+#define G_INITIALLY_UNOWNED_GET_CLASS(object) (G_TYPE_INSTANCE_GET_CLASS ((object), G_TYPE_INITIALLY_UNOWNED, GInitiallyUnownedClass))
+/* GInitiallyUnowned ia a GObject with initially floating reference count */
+
 
 /* --- typedefs & structures --- */
 typedef struct _GObject                  GObject;
 typedef struct _GObjectClass             GObjectClass;
+typedef struct _GObject                  GInitiallyUnowned;
+typedef struct _GObjectClass             GInitiallyUnownedClass;
 typedef struct _GObjectConstructParam    GObjectConstructParam;
 typedef void (*GObjectGetPropertyFunc)  (GObject      *object,
                                          guint         property_id,
@@ -62,11 +73,11 @@ typedef void (*GWeakNotify)		(gpointer      data,
 					 GObject      *where_the_object_was);
 struct  _GObject
 {
-  GTypeInstance g_type_instance;
+  GTypeInstance  g_type_instance;
   
   /*< private >*/
-  guint         ref_count;
-  GData        *qdata;
+  volatile guint ref_count;
+  GData         *qdata;
 };
 struct  _GObjectClass
 {
@@ -111,6 +122,7 @@ struct _GObjectConstructParam
 
 
 /* --- prototypes --- */
+GType       g_initially_unowned_get_type      (void);
 void        g_object_class_install_property   (GObjectClass   *oclass,
 					       guint           property_id,
 					       GParamSpec     *pspec);
@@ -140,16 +152,16 @@ GObject*    g_object_new_valist               (GType           object_type,
 					       va_list         var_args);
 void	    g_object_set                      (gpointer	       object,
 					       const gchar    *first_property_name,
-					       ...);
+					       ...) G_GNUC_NULL_TERMINATED;
 void        g_object_get                      (gpointer        object,
 					       const gchar    *first_property_name,
-					       ...);
+					       ...) G_GNUC_NULL_TERMINATED;
 gpointer    g_object_connect                  (gpointer	       object,
 					       const gchar    *signal_spec,
-					       ...);
+					       ...) G_GNUC_NULL_TERMINATED;
 void	    g_object_disconnect               (gpointer	       object,
 					       const gchar    *signal_spec,
-					       ...);
+					       ...) G_GNUC_NULL_TERMINATED;
 void        g_object_set_valist               (GObject        *object,
 					       const gchar    *first_property_name,
 					       va_list         var_args);
@@ -166,6 +178,8 @@ void        g_object_freeze_notify            (GObject        *object);
 void        g_object_notify                   (GObject        *object,
 					       const gchar    *property_name);
 void        g_object_thaw_notify              (GObject        *object);
+gboolean    g_object_is_floating    	      (gpointer        object);
+gpointer    g_object_ref_sink       	      (gpointer	       object);
 gpointer    g_object_ref                      (gpointer        object);
 void        g_object_unref                    (gpointer        object);
 void	    g_object_weak_ref		      (GObject	      *object,
@@ -178,6 +192,18 @@ void        g_object_add_weak_pointer         (GObject        *object,
                                                gpointer       *weak_pointer_location);
 void        g_object_remove_weak_pointer      (GObject        *object, 
                                                gpointer       *weak_pointer_location);
+
+typedef void (*GToggleNotify) (gpointer      data,
+			       GObject      *object,
+			       gboolean      is_last_ref);
+
+void g_object_add_toggle_ref    (GObject       *object,
+				 GToggleNotify  notify,
+				 gpointer       data);
+void g_object_remove_toggle_ref (GObject       *object,
+				 GToggleNotify  notify,
+				 gpointer       data);
+
 gpointer    g_object_get_qdata                (GObject        *object,
 					       GQuark          quark);
 void        g_object_set_qdata                (GObject        *object,
@@ -218,8 +244,8 @@ gulong	    g_signal_connect_object           (gpointer	       instance,
 					       gpointer	       gobject,
 					       GConnectFlags   connect_flags);
 
-
 /*< protected >*/
+void        g_object_force_floating           (GObject        *object);
 void        g_object_run_dispose	      (GObject	      *object);
 
 
@@ -228,6 +254,11 @@ void        g_value_take_object               (GValue         *value,
 #ifndef G_DISABLE_DEPRECATED
 void        g_value_set_object_take_ownership (GValue         *value,
 					       gpointer        v_object);
+#endif
+
+#if !defined(G_DISABLE_DEPRECATED) || defined(GTK_COMPILATION)
+gsize	    g_object_compat_control	      (gsize	       what,
+					       gpointer	       data);
 #endif
 
 /* --- implementation macros --- */

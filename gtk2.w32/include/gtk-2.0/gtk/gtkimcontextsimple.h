@@ -22,9 +22,8 @@
 
 #include <gtk/gtkimcontext.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+
+G_BEGIN_DECLS
 
 
 #define GTK_TYPE_IM_CONTEXT_SIMPLE              (gtk_im_context_simple_get_type ())
@@ -51,6 +50,7 @@ struct _GtkIMContextSimple
   gint tentative_match_len;
 
   guint in_hex_sequence : 1;
+  guint modifiers_dropped : 1;
 };
 
 struct _GtkIMContextSimpleClass
@@ -65,9 +65,9 @@ void          gtk_im_context_simple_add_table (GtkIMContextSimple *context_simpl
 					       guint16            *data,
 					       gint                max_seq_len,
 					       gint                n_seqs);
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+
+
+G_END_DECLS
 
 
 #endif /* __GTK_IM_CONTEXT_SIMPLE_H__ */

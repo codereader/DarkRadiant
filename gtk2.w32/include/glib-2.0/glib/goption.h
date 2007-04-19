@@ -32,9 +32,13 @@ typedef struct _GOptionEntry   GOptionEntry;
 
 typedef enum
 {
-  G_OPTION_FLAG_HIDDEN       = 1 << 0,
-  G_OPTION_FLAG_IN_MAIN      = 1 << 1,
-  G_OPTION_FLAG_REVERSE	     = 1 << 2
+  G_OPTION_FLAG_HIDDEN		= 1 << 0,
+  G_OPTION_FLAG_IN_MAIN		= 1 << 1,
+  G_OPTION_FLAG_REVERSE		= 1 << 2,
+  G_OPTION_FLAG_NO_ARG		= 1 << 3,
+  G_OPTION_FLAG_FILENAME	= 1 << 4,
+  G_OPTION_FLAG_OPTIONAL_ARG    = 1 << 5,
+  G_OPTION_FLAG_NOALIAS	        = 1 << 6
 } GOptionFlags;
 
 typedef enum
@@ -45,7 +49,9 @@ typedef enum
   G_OPTION_ARG_CALLBACK,
   G_OPTION_ARG_FILENAME,
   G_OPTION_ARG_STRING_ARRAY,
-  G_OPTION_ARG_FILENAME_ARRAY
+  G_OPTION_ARG_FILENAME_ARRAY,
+  G_OPTION_ARG_DOUBLE,
+  G_OPTION_ARG_INT64
 } GOptionArg;
 
 typedef gboolean (*GOptionArgFunc) (const gchar    *option_name,
@@ -91,6 +97,12 @@ struct _GOptionEntry
 #define G_OPTION_REMAINING ""
 
 GOptionContext *g_option_context_new              (const gchar         *parameter_string);
+void            g_option_context_set_summary      (GOptionContext      *context,
+                                                   const gchar         *summary);
+G_CONST_RETURN gchar *g_option_context_get_summary (GOptionContext     *context);
+void            g_option_context_set_description  (GOptionContext      *context,
+                                                   const gchar         *description);
+G_CONST_RETURN gchar *g_option_context_get_description (GOptionContext     *context);
 void            g_option_context_free             (GOptionContext      *context);
 void		g_option_context_set_help_enabled (GOptionContext      *context,
 						   gboolean		help_enabled);
@@ -106,13 +118,22 @@ gboolean        g_option_context_parse            (GOptionContext      *context,
 						   gint                *argc,
 						   gchar             ***argv,
 						   GError             **error);
+void            g_option_context_set_translate_func (GOptionContext     *context,
+						     GTranslateFunc      func,
+						     gpointer            data,
+						     GDestroyNotify      destroy_notify);
+void            g_option_context_set_translation_domain (GOptionContext  *context,
+							 const gchar     *domain);
 
-void          g_option_context_add_group      (GOptionContext *context,
-					       GOptionGroup   *group);
+void            g_option_context_add_group      (GOptionContext *context,
+						 GOptionGroup   *group);
 void          g_option_context_set_main_group (GOptionContext *context,
 					       GOptionGroup   *group);
 GOptionGroup *g_option_context_get_main_group (GOptionContext *context);
 
+void          g_option_context_set_input_is_utf8 (GOptionContext *context,
+						  gboolean is_utf8);
+gboolean      g_option_context_get_input_is_utf8 (GOptionContext *context);
 
 GOptionGroup *g_option_group_new                    (const gchar        *name,
 						     const gchar        *description,

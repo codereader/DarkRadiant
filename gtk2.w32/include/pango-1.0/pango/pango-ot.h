@@ -43,7 +43,11 @@ typedef enum
   PANGO_OT_TABLE_GPOS
 } PangoOTTableType;
 
-/* Note that this much match OTLGlyphItem */
+
+#define PANGO_OT_ALL_GLYPHS		((guint)0xFFFF)
+#define PANGO_OT_DEFAULT_LANGUAGE	((guint)0xFFFF)
+
+/* Note that this must match HB_GlyphItem */
 struct _PangoOTGlyph
 {
   guint    glyph;
@@ -91,7 +95,7 @@ void           pango_ot_buffer_clear      (PangoOTBuffer     *buffer);
 void           pango_ot_buffer_set_rtl    (PangoOTBuffer     *buffer,
 					   gboolean           rtl);
 void           pango_ot_buffer_add_glyph  (PangoOTBuffer     *buffer,
-					   guint              glyph_index,
+					   guint              glyph,
 					   guint              properties,
 					   guint              cluster);
 void           pango_ot_buffer_get_glyphs (PangoOTBuffer     *buffer,

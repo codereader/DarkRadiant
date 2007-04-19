@@ -1,3 +1,4 @@
+/* -*- Mode: C; c-file-style: "gnu"; tab-width: 8 -*- */
 /* GTK - The GIMP Toolkit
  * Copyright (C) 1995-1997 Peter Mattis, Spencer Kimball and Josh MacDonald
  *
@@ -87,6 +88,10 @@ void           gtk_drag_dest_add_text_targets  (GtkWidget    *widget);
 void           gtk_drag_dest_add_image_targets (GtkWidget    *widget);
 void           gtk_drag_dest_add_uri_targets   (GtkWidget    *widget);
 
+void           gtk_drag_dest_set_track_motion  (GtkWidget *widget,
+						gboolean   track_motion);
+gboolean       gtk_drag_dest_get_track_motion  (GtkWidget *widget);
+
 /* Source side */
 
 void gtk_drag_source_set  (GtkWidget            *widget,
@@ -112,6 +117,8 @@ void gtk_drag_source_set_icon_pixbuf (GtkWidget   *widget,
 				      GdkPixbuf   *pixbuf);
 void gtk_drag_source_set_icon_stock  (GtkWidget   *widget,
 				      const gchar *stock_id);
+void gtk_drag_source_set_icon_name   (GtkWidget   *widget,
+				      const gchar *icon_name);
 
 /* There probably should be functions for setting the targets
  * as a GtkTargetList
@@ -141,6 +148,10 @@ void gtk_drag_set_icon_pixbuf (GdkDragContext *context,
 			       gint            hot_y);
 void gtk_drag_set_icon_stock  (GdkDragContext *context,
 			       const gchar    *stock_id,
+			       gint            hot_x,
+			       gint            hot_y);
+void gtk_drag_set_icon_name   (GdkDragContext *context,
+			       const gchar    *icon_name,
 			       gint            hot_x,
 			       gint            hot_y);
 

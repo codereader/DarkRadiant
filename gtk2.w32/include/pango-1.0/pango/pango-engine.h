@@ -141,7 +141,7 @@ typedef struct _PangoEngineShapeClass PangoEngineShapeClass;
  * A #PangoEngineShape implementation is then specific to both
  * a particular rendering system or group of rendering systems
  * and to a particular script. For instance, there is one
- * #PangoEngineShape implementation to handling shaping Arabic
+ * #PangoEngineShape implementation to handle shaping Arabic
  * for Fontconfig-based backends.
  **/
 struct _PangoEngineShape
@@ -162,8 +162,11 @@ struct _PangoEngineShape
  *   using the @log_clusters array. Each input character must occur in one
  *   of the output logical clusters;
  *   if no rendering is desired for a character, this may involve
- *   inserting glyphs with the #PangoGlyph ID 0, which is guaranteed never
- *   to render.
+ *   inserting glyphs with the #PangoGlyph ID #PANGO_GLYPH_EMPTY, which
+ *   is guaranteed never to render. If the shaping fails for any reason,
+ *   the shaper should return with an empty (zero-size) glyph string.
+ *   If the shaper has not set the size on the glyph string yet, simply
+ *   returning signals the failure too.
  * @covers: Returns the characters that this engine can cover
  *   with a given font for a given language. If not overridden, the default
  *   implementation simply returns the coverage information for the
@@ -181,7 +184,7 @@ struct _PangoEngineShapeClass
 			PangoFont        *font,
 			const char       *text,
 			int               length,
-			PangoAnalysis    *analysis,
+			const PangoAnalysis *analysis,
 			PangoGlyphString *glyphs);
   PangoCoverageLevel (*covers)   (PangoEngineShape *engine,
 				  PangoFont        *font,
@@ -197,14 +200,14 @@ typedef struct _PangoEngineScriptInfo PangoEngineScriptInfo;
 struct _PangoEngineScriptInfo 
 {
   PangoScript script;
-  gchar *langs;
+  const gchar *langs;
 };
 
 struct _PangoEngineInfo
 {
-  gchar *id;
-  gchar *engine_type;
-  gchar *render_type;
+  const gchar *id;
+  const gchar *engine_type;
+  const gchar *render_type;
   PangoEngineScriptInfo *scripts;
   gint n_scripts;
 };
@@ -274,10 +277,11 @@ prefix ## _register_type (GTypeModule *module)				  \
       (GBaseFinalizeFunc) NULL,						  \
       (GClassInitFunc) class_init,					  \
       (GClassFinalizeFunc) NULL,					  \
-      NULL,           /* class_data */					  \
+      NULL,          /* class_data */					  \
       sizeof (name),					  		  \
       0,             /* n_prelocs */					  \
       (GInstanceInitFunc) instance_init,				  \
+      NULL           /* value_table */					  \
     };									  \
 									  \
   prefix ## _type =  g_type_module_register_type (module, parent_type,	  \

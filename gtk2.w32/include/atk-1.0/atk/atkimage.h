@@ -57,9 +57,10 @@ struct _AtkImageIface
                                                    gint                  *height);
   gboolean              ( *set_image_description) (AtkImage              *image,
                                                    const gchar           *description);
+  G_CONST_RETURN gchar* ( *get_image_locale)      (AtkImage              *image);
 
   AtkFunction           pad1;
-  AtkFunction           pad2;
+	
 };
 
 GType  atk_image_get_type             (void);
@@ -76,6 +77,8 @@ void     atk_image_get_image_position    (AtkImage	     *image,
                                           gint               *x,
 					  gint	             *y,
     					  AtkCoordType	     coord_type);
+
+G_CONST_RETURN gchar* atk_image_get_image_locale (AtkImage   *image);
 
 #ifdef __cplusplus
 }

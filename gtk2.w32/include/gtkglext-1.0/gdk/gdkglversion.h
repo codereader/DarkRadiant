@@ -1,5 +1,5 @@
 /* GdkGLExt - OpenGL Extension to GDK
- * Copyright (C) 2002-2004  Naofumi Yasufuku
+ * Copyright (C) 2002-2003  Naofumi Yasufuku
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,9 +30,9 @@ G_BEGIN_DECLS
  */
 #define GDKGLEXT_MAJOR_VERSION (1)
 #define GDKGLEXT_MINOR_VERSION (0)
-#define GDKGLEXT_MICRO_VERSION (6)
-#define GDKGLEXT_INTERFACE_AGE (4)
-#define GDKGLEXT_BINARY_AGE    (6)
+#define GDKGLEXT_MICRO_VERSION (5)
+#define GDKGLEXT_INTERFACE_AGE (3)
+#define GDKGLEXT_BINARY_AGE    (5)
 
 /*
  * Check whether a GdkGLExt version equal to or greater than

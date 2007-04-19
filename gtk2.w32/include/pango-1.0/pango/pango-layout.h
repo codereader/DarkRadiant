@@ -163,6 +163,11 @@ void     pango_layout_get_log_attrs (PangoLayout    *layout,
 void     pango_layout_index_to_pos         (PangoLayout    *layout,
 					    int             index_,
 					    PangoRectangle *pos);
+void     pango_layout_index_to_line_x      (PangoLayout    *layout,
+			                    int             index_,
+			                    gboolean        trailing,
+			                    int            *line,
+			                    int            *x_pos);
 void     pango_layout_get_cursor_pos       (PangoLayout    *layout,
 					    int             index_,
 					    PangoRectangle *strong_pos,
@@ -197,8 +202,13 @@ PangoLayoutLine *pango_layout_get_line             (PangoLayout    *layout,
 						    int             line);
 GSList *         pango_layout_get_lines            (PangoLayout    *layout);
 
-void     pango_layout_line_ref          (PangoLayoutLine  *line);
-void     pango_layout_line_unref        (PangoLayoutLine  *line);
+#define PANGO_TYPE_LAYOUT_LINE (pango_layout_line_get_type ())
+
+GType    pango_layout_line_get_type     (void) G_GNUC_CONST;
+
+PangoLayoutLine *pango_layout_line_ref   (PangoLayoutLine *line);
+void             pango_layout_line_unref (PangoLayoutLine *line);
+
 gboolean pango_layout_line_x_to_index   (PangoLayoutLine  *line,
 					 int               x_pos,
 					 int              *index_,

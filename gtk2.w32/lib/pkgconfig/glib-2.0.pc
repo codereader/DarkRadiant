@@ -1,4 +1,4 @@
-prefix=/devel/target/glib-2.6.6
+prefix=/target
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
@@ -9,7 +9,7 @@ glib_mkenums=glib-mkenums
 
 Name: GLib
 Description: C Utility Library
-Version: 2.6.6
+Version: 2.12.4
 Libs: -L${libdir} -lglib-2.0 -lintl  -liconv
 Cflags: -I${includedir}/glib-2.0 -I${libdir}/glib-2.0/include 
 

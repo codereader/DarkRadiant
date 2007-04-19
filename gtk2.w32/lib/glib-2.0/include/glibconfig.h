@@ -8,6 +8,7 @@
 #define __G_LIBCONFIG_H__
 
 #include <glib/gmacros.h>
+
 #include <limits.h>
 #include <float.h>
 
@@ -51,8 +52,10 @@ typedef unsigned __int64 guint64;
 
 #ifndef _MSC_VER
 #define G_GINT64_CONSTANT(val)	(G_GNUC_EXTENSION (val##LL))
+#define G_GUINT64_CONSTANT(val)	(G_GNUC_EXTENSION (val##ULL))
 #else /* _MSC_VER */
 #define G_GINT64_CONSTANT(val)	(val##i64)
+#define G_GUINT64_CONSTANT(val)	(val##Ui64)
 #endif /* _MSC_VER */
 #define G_GINT64_MODIFIER "I64"
 #define G_GINT64_FORMAT "I64i"
@@ -82,11 +85,11 @@ typedef unsigned int gsize;
 # define g_ATEXIT(proc)	(atexit (proc))
 #endif
 
-#define g_memmove(d,s,n) G_STMT_START { memmove ((d), (s), (n)); } G_STMT_END
+#define g_memmove(dest,src,len) G_STMT_START { memmove ((dest), (src), (len)); } G_STMT_END
 
 #define GLIB_MAJOR_VERSION 2
-#define GLIB_MINOR_VERSION 6
-#define GLIB_MICRO_VERSION 6
+#define GLIB_MINOR_VERSION 12
+#define GLIB_MICRO_VERSION 4
 
 #define G_OS_WIN32
 #define G_PLATFORM_WIN32
@@ -100,14 +103,20 @@ typedef unsigned int gsize;
 #else	/* !__cplusplus */
 #ifndef _MSC_VER
 #define G_HAVE_INLINE 1
-#else /* _MSC_VER */
-
 #endif /* _MSC_VER */
 #define G_HAVE___INLINE 1
 #ifndef _MSC_VER
 #define G_HAVE___INLINE__ 1
 #endif /* not _MSC_VER */
 #endif	/* !__cplusplus */
+
+#ifdef	__cplusplus
+#define G_CAN_INLINE	1
+#else	/* !__cplusplus */
+#ifndef _MSC_VER
+#define G_CAN_INLINE	1
+#endif
+#endif
 
 #ifndef _MSC_VER
 #ifndef __cplusplus
@@ -128,7 +137,6 @@ typedef unsigned int gsize;
 #define G_HAVE_GNUC_VARARGS 1
 #endif /* not _MSC_VER */
 #define G_HAVE_GROWING_STACK 0
-
 
 #define G_GNUC_INTERNAL
 

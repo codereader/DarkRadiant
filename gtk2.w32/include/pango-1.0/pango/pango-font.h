@@ -304,6 +304,7 @@ struct _PangoFontFaceClass
 GType                 pango_font_get_type          (void) G_GNUC_CONST;
 
 PangoFontDescription *pango_font_describe          (PangoFont        *font);
+PangoFontDescription *pango_font_describe_with_absolute_size (PangoFont        *font);
 PangoCoverage *       pango_font_get_coverage      (PangoFont        *font,
 						    PangoLanguage    *language);
 PangoEngineShape *    pango_font_find_shaper       (PangoFont        *font,
@@ -315,6 +316,7 @@ void                  pango_font_get_glyph_extents (PangoFont        *font,
 						    PangoGlyph        glyph,
 						    PangoRectangle   *ink_rect,
 						    PangoRectangle   *logical_rect);
+PangoFontMap         *pango_font_get_font_map      (PangoFont        *font);
 
 #ifdef PANGO_ENABLE_BACKEND
 
@@ -347,16 +349,29 @@ struct _PangoFontClass
 					       PangoRectangle *logical_rect);
   PangoFontMetrics *    (*get_metrics)        (PangoFont      *font,
 					       PangoLanguage  *language);
+  PangoFontMap *        (*get_font_map)       (PangoFont      *font);
+  PangoFontDescription *(*describe_absolute)  (PangoFont      *font);
   /*< private >*/
 
   /* Padding for future expansion */
   void (*_pango_reserved1) (void);
   void (*_pango_reserved2) (void);
-  void (*_pango_reserved3) (void);
-  void (*_pango_reserved4) (void);
 };
 
+/* used for very rare and miserable situtations that we cannot even
+ * draw a hexbox
+ */
+#define PANGO_UNKNOWN_GLYPH_WIDTH  10
+#define PANGO_UNKNOWN_GLYPH_HEIGHT 14
+
 #endif /* PANGO_ENABLE_BACKEND */
+
+#if defined(PANGO_ENABLE_ENGINE) || defined(PANGO_ENABLE_BACKEND)
+#define PANGO_GLYPH_EMPTY           ((PangoGlyph)0x0FFFFFFF)
+#define PANGO_GLYPH_UNKNOWN_FLAG    ((PangoGlyph)0x10000000)
+#define PANGO_GET_UNKNOWN_GLYPH(wc) ((PangoGlyph)(wc)|PANGO_GLYPH_UNKNOWN_FLAG)
+#endif
+
 
 G_END_DECLS
 

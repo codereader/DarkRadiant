@@ -57,9 +57,9 @@ struct _AtkValueIface
                                   GValue       *value);
   gboolean (* set_current_value) (AtkValue     *obj,
                                   const GValue *value);
-
+  void     (* get_minimum_increment) (AtkValue   *obj,
+				      GValue     *value);
   AtkFunction pad1;
-  AtkFunction pad2;
 };
 
 GType            atk_value_get_type (void);
@@ -76,6 +76,9 @@ void     atk_value_get_minimum_value  (AtkValue     *obj,
 
 gboolean atk_value_set_current_value  (AtkValue     *obj,
                                        const GValue *value);
+
+void     atk_value_get_minimum_increment  (AtkValue     *obj,
+					   GValue       *value);
 
 /*
  * Additional GObject properties exported by GaccessibleValue:

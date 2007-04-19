@@ -59,7 +59,8 @@ typedef enum
   GTK_ARROW_UP,
   GTK_ARROW_DOWN,
   GTK_ARROW_LEFT,
-  GTK_ARROW_RIGHT
+  GTK_ARROW_RIGHT,
+  GTK_ARROW_NONE
 } GtkArrowType;
 
 /* Attach options (for tables) */
@@ -132,6 +133,14 @@ typedef enum
   GTK_ICON_SIZE_DND,
   GTK_ICON_SIZE_DIALOG
 } GtkIconSize;
+
+/* automatic sensitivity */
+typedef enum
+{
+  GTK_SENSITIVITY_AUTO,
+  GTK_SENSITIVITY_ON,
+  GTK_SENSITIVITY_OFF
+} GtkSensitivityType;
 
 #ifndef GTK_DISABLE_DEPRECATED
 /* side types */
@@ -450,7 +459,61 @@ typedef enum
   GTK_IM_STATUS_NONE
 } GtkIMStatusStyle;
 
-G_END_DECLS
+typedef enum
+{
+  GTK_PACK_DIRECTION_LTR,
+  GTK_PACK_DIRECTION_RTL,
+  GTK_PACK_DIRECTION_TTB,
+  GTK_PACK_DIRECTION_BTT
+} GtkPackDirection;
 
+typedef enum {
+  GTK_PRINT_PAGES_ALL,
+  GTK_PRINT_PAGES_CURRENT,
+  GTK_PRINT_PAGES_RANGES
+} GtkPrintPages;
+
+typedef enum {
+  GTK_PAGE_SET_ALL,
+  GTK_PAGE_SET_EVEN,
+  GTK_PAGE_SET_ODD
+} GtkPageSet;
+
+typedef enum {
+  GTK_PAGE_ORIENTATION_PORTRAIT,
+  GTK_PAGE_ORIENTATION_LANDSCAPE,
+  GTK_PAGE_ORIENTATION_REVERSE_PORTRAIT,
+  GTK_PAGE_ORIENTATION_REVERSE_LANDSCAPE
+} GtkPageOrientation;
+
+typedef enum {
+  GTK_PRINT_QUALITY_LOW,
+  GTK_PRINT_QUALITY_NORMAL,
+  GTK_PRINT_QUALITY_HIGH,
+  GTK_PRINT_QUALITY_DRAFT
+} GtkPrintQuality;
+
+typedef enum {
+  GTK_PRINT_DUPLEX_SIMPLEX,
+  GTK_PRINT_DUPLEX_HORIZONTAL,
+  GTK_PRINT_DUPLEX_VERTICAL
+} GtkPrintDuplex;
+
+
+typedef enum {
+  GTK_UNIT_PIXEL,
+  GTK_UNIT_POINTS,
+  GTK_UNIT_INCH,
+  GTK_UNIT_MM
+} GtkUnit;
+
+typedef enum {
+  GTK_TREE_VIEW_GRID_LINES_NONE,
+  GTK_TREE_VIEW_GRID_LINES_HORIZONTAL,
+  GTK_TREE_VIEW_GRID_LINES_VERTICAL,
+  GTK_TREE_VIEW_GRID_LINES_BOTH
+} GtkTreeViewGridLines;
+
+G_END_DECLS
 
 #endif /* __GTK_ENUMS_H__ */

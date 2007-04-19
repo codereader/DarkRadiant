@@ -236,7 +236,7 @@ extern __typeof (gdk_threads_set_lock_functions) IA__gdk_threads_set_lock_functi
 #endif
 #endif
 #if IN_HEADER(__GDK_H__)
-#if IN_FILE(__GDK_INPUT_C__)
+#if IN_FILE(__GDK_EVENTS_C__)
 #ifndef GDK_DISABLE_DEPRECATED
 extern __typeof (gdk_input_add) IA__gdk_input_add __attribute((visibility("hidden")));
 #define gdk_input_add IA__gdk_input_add
@@ -244,11 +244,6 @@ extern __typeof (gdk_input_add) IA__gdk_input_add __attribute((visibility("hidde
 extern __typeof (gdk_input_remove) IA__gdk_input_remove __attribute((visibility("hidden")));
 #define gdk_input_remove IA__gdk_input_remove
 
-extern __typeof (gdk_input_add_full) IA__gdk_input_add_full __attribute((visibility("hidden")));
-#define gdk_input_add_full IA__gdk_input_add_full
-
-#endif
-#ifdef GTK_COMPILATION
 extern __typeof (gdk_input_add_full) IA__gdk_input_add_full __attribute((visibility("hidden")));
 #define gdk_input_add_full IA__gdk_input_add_full
 
@@ -291,6 +286,9 @@ extern __typeof (gdk_utf8_to_compound_text) IA__gdk_utf8_to_compound_text __attr
 #if IN_FILE(__GDK_PROPERTY_X11_C__)
 extern __typeof (gdk_atom_intern) IA__gdk_atom_intern __attribute((visibility("hidden")));
 #define gdk_atom_intern IA__gdk_atom_intern
+
+extern __typeof (gdk_atom_intern_static_string) IA__gdk_atom_intern_static_string __attribute((visibility("hidden")));
+#define gdk_atom_intern_static_string IA__gdk_atom_intern_static_string
 
 extern __typeof (gdk_atom_name) IA__gdk_atom_name __attribute((visibility("hidden")));
 #define gdk_atom_name IA__gdk_atom_name
@@ -572,6 +570,28 @@ extern __typeof (gdk_fontset_load_for_display) IA__gdk_fontset_load_for_display 
 
 #endif
 #endif
+#if IN_HEADER(__GDK_CAIRO_H__)
+#if IN_FILE(__GDK_CAIRO_C__)
+extern __typeof (gdk_cairo_create) IA__gdk_cairo_create __attribute((visibility("hidden")));
+#define gdk_cairo_create IA__gdk_cairo_create
+
+extern __typeof (gdk_cairo_set_source_color) IA__gdk_cairo_set_source_color __attribute((visibility("hidden")));
+#define gdk_cairo_set_source_color IA__gdk_cairo_set_source_color
+
+extern __typeof (gdk_cairo_set_source_pixbuf) IA__gdk_cairo_set_source_pixbuf __attribute((visibility("hidden")));
+#define gdk_cairo_set_source_pixbuf IA__gdk_cairo_set_source_pixbuf
+
+extern __typeof (gdk_cairo_set_source_pixmap) IA__gdk_cairo_set_source_pixmap __attribute((visibility("hidden")));
+#define gdk_cairo_set_source_pixmap IA__gdk_cairo_set_source_pixmap
+
+extern __typeof (gdk_cairo_rectangle) IA__gdk_cairo_rectangle __attribute((visibility("hidden")));
+#define gdk_cairo_rectangle IA__gdk_cairo_rectangle
+
+extern __typeof (gdk_cairo_region) IA__gdk_cairo_region __attribute((visibility("hidden")));
+#define gdk_cairo_region IA__gdk_cairo_region
+
+#endif
+#endif
 #if IN_HEADER(__GDK_COLOR_H__)
 #if IN_FILE(__GDK_COLOR_C__)
 #ifndef GDK_DISABLE_DEPRECATED
@@ -633,6 +653,7 @@ extern __typeof (gdk_colormap_new) IA__gdk_colormap_new __attribute((visibility(
 extern __typeof (gdk_colormap_get_type) IA__gdk_colormap_get_type __attribute((visibility("hidden"))) G_GNUC_CONST;
 #define gdk_colormap_get_type IA__gdk_colormap_get_type
 
+#ifndef GDK_DISABLE_DEPRECATED
 extern __typeof (gdk_colormap_change) IA__gdk_colormap_change __attribute((visibility("hidden")));
 #define gdk_colormap_change IA__gdk_colormap_change
 
@@ -642,7 +663,6 @@ extern __typeof (gdk_colors_alloc) IA__gdk_colors_alloc __attribute((visibility(
 extern __typeof (gdk_colors_free) IA__gdk_colors_free __attribute((visibility("hidden")));
 #define gdk_colors_free IA__gdk_colors_free
 
-#ifndef GDK_DISABLE_DEPRECATED
 extern __typeof (gdk_colormap_get_system_size) IA__gdk_colormap_get_system_size __attribute((visibility("hidden")));
 #define gdk_colormap_get_system_size IA__gdk_colormap_get_system_size
 
@@ -693,6 +713,12 @@ extern __typeof (gdk_cursor_new_from_pixbuf) IA__gdk_cursor_new_from_pixbuf __at
 
 extern __typeof (gdk_cursor_new_from_pixmap) IA__gdk_cursor_new_from_pixmap __attribute((visibility("hidden")));
 #define gdk_cursor_new_from_pixmap IA__gdk_cursor_new_from_pixmap
+
+extern __typeof (gdk_cursor_new_from_name) IA__gdk_cursor_new_from_name __attribute((visibility("hidden")));
+#define gdk_cursor_new_from_name IA__gdk_cursor_new_from_name
+
+extern __typeof (gdk_cursor_get_image) IA__gdk_cursor_get_image __attribute((visibility("hidden")));
+#define gdk_cursor_get_image IA__gdk_cursor_get_image
 
 #endif
 #endif
@@ -797,6 +823,13 @@ extern __typeof (gdk_display_set_pointer_hooks) IA__gdk_display_set_pointer_hook
 #endif
 #endif
 #if IN_HEADER(__GDK_DISPLAY_H__)
+#if IN_FILE(__GDK_WINDOW_X11_C__)
+extern __typeof (gdk_display_warp_pointer) IA__gdk_display_warp_pointer __attribute((visibility("hidden")));
+#define gdk_display_warp_pointer IA__gdk_display_warp_pointer
+
+#endif
+#endif
+#if IN_HEADER(__GDK_DISPLAY_H__)
 #if IN_FILE(__GDK_DISPLAY_MANAGER_C__)
 extern __typeof (gdk_display_get_default) IA__gdk_display_get_default __attribute((visibility("hidden")));
 #define gdk_display_get_default IA__gdk_display_get_default
@@ -868,6 +901,12 @@ extern __typeof (gdk_display_supports_clipboard_persistence) IA__gdk_display_sup
 
 extern __typeof (gdk_display_supports_selection_notification) IA__gdk_display_supports_selection_notification __attribute((visibility("hidden")));
 #define gdk_display_supports_selection_notification IA__gdk_display_supports_selection_notification
+
+extern __typeof (gdk_display_supports_shapes) IA__gdk_display_supports_shapes __attribute((visibility("hidden")));
+#define gdk_display_supports_shapes IA__gdk_display_supports_shapes
+
+extern __typeof (gdk_display_supports_input_shapes) IA__gdk_display_supports_input_shapes __attribute((visibility("hidden")));
+#define gdk_display_supports_input_shapes IA__gdk_display_supports_input_shapes
 
 #endif
 #endif
@@ -1002,6 +1041,12 @@ extern __typeof (gdk_drawable_unref) IA__gdk_drawable_unref __attribute((visibil
 extern __typeof (gdk_draw_string) IA__gdk_draw_string __attribute((visibility("hidden")));
 #define gdk_draw_string IA__gdk_draw_string
 
+extern __typeof (gdk_draw_text) IA__gdk_draw_text __attribute((visibility("hidden")));
+#define gdk_draw_text IA__gdk_draw_text
+
+extern __typeof (gdk_draw_text_wc) IA__gdk_draw_text_wc __attribute((visibility("hidden")));
+#define gdk_draw_text_wc IA__gdk_draw_text_wc
+
 #endif
 extern __typeof (gdk_drawable_get_depth) IA__gdk_drawable_get_depth __attribute((visibility("hidden")));
 #define gdk_drawable_get_depth IA__gdk_drawable_get_depth
@@ -1069,21 +1114,8 @@ extern __typeof (gdk_draw_rectangle) IA__gdk_draw_rectangle __attribute((visibil
 extern __typeof (gdk_draw_segments) IA__gdk_draw_segments __attribute((visibility("hidden")));
 #define gdk_draw_segments IA__gdk_draw_segments
 
-extern __typeof (gdk_draw_text) IA__gdk_draw_text __attribute((visibility("hidden")));
-#define gdk_draw_text IA__gdk_draw_text
-
-extern __typeof (gdk_draw_text_wc) IA__gdk_draw_text_wc __attribute((visibility("hidden")));
-#define gdk_draw_text_wc IA__gdk_draw_text_wc
-
 extern __typeof (gdk_draw_trapezoids) IA__gdk_draw_trapezoids __attribute((visibility("hidden")));
 #define gdk_draw_trapezoids IA__gdk_draw_trapezoids
-
-#endif
-#endif
-#if IN_HEADER(__GDK_DRAWABLE_H__)
-#if IN_FILE(__GDK_DRAWABLE_X11_C__)
-extern __typeof (gdk_draw_rectangle_alpha_libgtk_only) IA__gdk_draw_rectangle_alpha_libgtk_only __attribute((visibility("hidden")));
-#define gdk_draw_rectangle_alpha_libgtk_only IA__gdk_draw_rectangle_alpha_libgtk_only
 
 #endif
 #endif
@@ -1158,6 +1190,12 @@ extern __typeof (gdk_gc_set_clip_origin) IA__gdk_gc_set_clip_origin __attribute(
 extern __typeof (gdk_gc_set_clip_mask) IA__gdk_gc_set_clip_mask __attribute((visibility("hidden")));
 #define gdk_gc_set_clip_mask IA__gdk_gc_set_clip_mask
 
+extern __typeof (gdk_gc_set_clip_rectangle) IA__gdk_gc_set_clip_rectangle __attribute((visibility("hidden")));
+#define gdk_gc_set_clip_rectangle IA__gdk_gc_set_clip_rectangle
+
+extern __typeof (gdk_gc_set_clip_region) IA__gdk_gc_set_clip_region __attribute((visibility("hidden")));
+#define gdk_gc_set_clip_region IA__gdk_gc_set_clip_region
+
 extern __typeof (gdk_gc_set_subwindow) IA__gdk_gc_set_subwindow __attribute((visibility("hidden")));
 #define gdk_gc_set_subwindow IA__gdk_gc_set_subwindow
 
@@ -1172,6 +1210,9 @@ extern __typeof (gdk_gc_set_dashes) IA__gdk_gc_set_dashes __attribute((visibilit
 
 extern __typeof (gdk_gc_offset) IA__gdk_gc_offset __attribute((visibility("hidden")));
 #define gdk_gc_offset IA__gdk_gc_offset
+
+extern __typeof (gdk_gc_copy) IA__gdk_gc_copy __attribute((visibility("hidden")));
+#define gdk_gc_copy IA__gdk_gc_copy
 
 extern __typeof (gdk_gc_get_colormap) IA__gdk_gc_get_colormap __attribute((visibility("hidden")));
 #define gdk_gc_get_colormap IA__gdk_gc_get_colormap
@@ -1189,18 +1230,18 @@ extern __typeof (gdk_gc_set_rgb_fg_color) IA__gdk_gc_set_rgb_fg_color __attribut
 #endif
 #if IN_HEADER(__GDK_GC_H__)
 #if IN_FILE(__GDK_GC_X11_C__)
-extern __typeof (gdk_gc_copy) IA__gdk_gc_copy __attribute((visibility("hidden")));
-#define gdk_gc_copy IA__gdk_gc_copy
-
 extern __typeof (gdk_gc_get_screen) IA__gdk_gc_get_screen __attribute((visibility("hidden")));
 #define gdk_gc_get_screen IA__gdk_gc_get_screen
 
-extern __typeof (gdk_gc_set_clip_rectangle) IA__gdk_gc_set_clip_rectangle __attribute((visibility("hidden")));
-#define gdk_gc_set_clip_rectangle IA__gdk_gc_set_clip_rectangle
+#endif
+#endif
+#if IN_HEADER(__GDK_PIXMAP_X11_H__)
+#if IN_FILE(__GDK_PIXMAP_X11_C__)
+#ifdef GDK_WINDOWING_X11
+extern __typeof (gdk_pixmap_impl_x11_get_type) IA__gdk_pixmap_impl_x11_get_type __attribute((visibility("hidden"))) G_GNUC_CONST;
+#define gdk_pixmap_impl_x11_get_type IA__gdk_pixmap_impl_x11_get_type
 
-extern __typeof (gdk_gc_set_clip_region) IA__gdk_gc_set_clip_region __attribute((visibility("hidden")));
-#define gdk_gc_set_clip_region IA__gdk_gc_set_clip_region
-
+#endif
 #endif
 #endif
 #if IN_HEADER(__GDK_WINDOW_X11_H__)
@@ -1244,11 +1285,6 @@ extern __typeof (gdk_window_constrain_size) IA__gdk_window_constrain_size __attr
 extern __typeof (gdk_window_destroy) IA__gdk_window_destroy __attribute((visibility("hidden")));
 #define gdk_window_destroy IA__gdk_window_destroy
 
-#ifndef GDK_DISABLE_DEPRECATED
-extern __typeof (gdk_window_destroy_notify) IA__gdk_window_destroy_notify __attribute((visibility("hidden")));
-#define gdk_window_destroy_notify IA__gdk_window_destroy_notify
-
-#endif
 extern __typeof (gdk_window_end_paint) IA__gdk_window_end_paint __attribute((visibility("hidden")));
 #define gdk_window_end_paint IA__gdk_window_end_paint
 
@@ -1344,6 +1380,9 @@ extern __typeof (gdk_window_register_dnd) IA__gdk_window_register_dnd __attribut
 extern __typeof (gdk_window_scroll) IA__gdk_window_scroll __attribute((visibility("hidden")));
 #define gdk_window_scroll IA__gdk_window_scroll
 
+extern __typeof (gdk_window_move_region) IA__gdk_window_move_region __attribute((visibility("hidden")));
+#define gdk_window_move_region IA__gdk_window_move_region
+
 #endif
 #endif
 #if IN_HEADER(__GDK_WINDOW_H__)
@@ -1401,6 +1440,9 @@ extern __typeof (gdk_window_get_deskrelative_origin) IA__gdk_window_get_deskrela
 #define gdk_window_get_deskrelative_origin IA__gdk_window_get_deskrelative_origin
 
 #endif
+extern __typeof (gdk_window_get_type_hint) IA__gdk_window_get_type_hint __attribute((visibility("hidden")));
+#define gdk_window_get_type_hint IA__gdk_window_get_type_hint
+
 extern __typeof (gdk_window_set_type_hint) IA__gdk_window_set_type_hint __attribute((visibility("hidden")));
 #define gdk_window_set_type_hint IA__gdk_window_set_type_hint
 
@@ -1412,6 +1454,9 @@ extern __typeof (gdk_window_set_skip_taskbar_hint) IA__gdk_window_set_skip_taskb
 
 extern __typeof (gdk_window_set_skip_pager_hint) IA__gdk_window_set_skip_pager_hint __attribute((visibility("hidden")));
 #define gdk_window_set_skip_pager_hint IA__gdk_window_set_skip_pager_hint
+
+extern __typeof (gdk_window_set_urgency_hint) IA__gdk_window_set_urgency_hint __attribute((visibility("hidden")));
+#define gdk_window_set_urgency_hint IA__gdk_window_set_urgency_hint
 
 extern __typeof (gdk_window_set_geometry_hints) IA__gdk_window_set_geometry_hints __attribute((visibility("hidden")));
 #define gdk_window_set_geometry_hints IA__gdk_window_set_geometry_hints
@@ -1457,6 +1502,12 @@ extern __typeof (gdk_window_shape_combine_mask) IA__gdk_window_shape_combine_mas
 
 extern __typeof (gdk_window_shape_combine_region) IA__gdk_window_shape_combine_region __attribute((visibility("hidden")));
 #define gdk_window_shape_combine_region IA__gdk_window_shape_combine_region
+
+extern __typeof (gdk_window_input_shape_combine_mask) IA__gdk_window_input_shape_combine_mask __attribute((visibility("hidden")));
+#define gdk_window_input_shape_combine_mask IA__gdk_window_input_shape_combine_mask
+
+extern __typeof (gdk_window_input_shape_combine_region) IA__gdk_window_input_shape_combine_region __attribute((visibility("hidden")));
+#define gdk_window_input_shape_combine_region IA__gdk_window_input_shape_combine_region
 
 extern __typeof (gdk_window_set_override_redirect) IA__gdk_window_set_override_redirect __attribute((visibility("hidden")));
 #define gdk_window_set_override_redirect IA__gdk_window_set_override_redirect
@@ -1526,6 +1577,12 @@ extern __typeof (gdk_window_set_child_shapes) IA__gdk_window_set_child_shapes __
 
 extern __typeof (gdk_window_merge_child_shapes) IA__gdk_window_merge_child_shapes __attribute((visibility("hidden")));
 #define gdk_window_merge_child_shapes IA__gdk_window_merge_child_shapes
+
+extern __typeof (gdk_window_set_child_input_shapes) IA__gdk_window_set_child_input_shapes __attribute((visibility("hidden")));
+#define gdk_window_set_child_input_shapes IA__gdk_window_set_child_input_shapes
+
+extern __typeof (gdk_window_merge_child_input_shapes) IA__gdk_window_merge_child_input_shapes __attribute((visibility("hidden")));
+#define gdk_window_merge_child_input_shapes IA__gdk_window_merge_child_input_shapes
 
 extern __typeof (gdk_window_set_static_gravities) IA__gdk_window_set_static_gravities __attribute((visibility("hidden")));
 #define gdk_window_set_static_gravities IA__gdk_window_set_static_gravities
@@ -1649,6 +1706,34 @@ extern __typeof (gdk_keyval_name) IA__gdk_keyval_name __attribute((visibility("h
 
 #endif
 #endif
+#if IN_HEADER(__GDK_KEYS_H__)
+#if IN_FILE(__GDK_KEYS_DIRECTFB_C__)
+extern __typeof (gdk_keymap_get_direction) IA__gdk_keymap_get_direction __attribute((visibility("hidden")));
+#define gdk_keymap_get_direction IA__gdk_keymap_get_direction
+
+extern __typeof (gdk_keymap_get_entries_for_keycode) IA__gdk_keymap_get_entries_for_keycode __attribute((visibility("hidden")));
+#define gdk_keymap_get_entries_for_keycode IA__gdk_keymap_get_entries_for_keycode
+
+extern __typeof (gdk_keymap_get_entries_for_keyval) IA__gdk_keymap_get_entries_for_keyval __attribute((visibility("hidden")));
+#define gdk_keymap_get_entries_for_keyval IA__gdk_keymap_get_entries_for_keyval
+
+extern __typeof (gdk_keymap_get_for_display) IA__gdk_keymap_get_for_display __attribute((visibility("hidden")));
+#define gdk_keymap_get_for_display IA__gdk_keymap_get_for_display
+
+extern __typeof (gdk_keymap_lookup_key) IA__gdk_keymap_lookup_key __attribute((visibility("hidden")));
+#define gdk_keymap_lookup_key IA__gdk_keymap_lookup_key
+
+extern __typeof (gdk_keymap_translate_keyboard_state) IA__gdk_keymap_translate_keyboard_state __attribute((visibility("hidden")));
+#define gdk_keymap_translate_keyboard_state IA__gdk_keymap_translate_keyboard_state
+
+extern __typeof (gdk_keyval_from_name) IA__gdk_keyval_from_name __attribute((visibility("hidden")));
+#define gdk_keyval_from_name IA__gdk_keyval_from_name
+
+extern __typeof (gdk_keyval_name) IA__gdk_keyval_name __attribute((visibility("hidden"))) G_GNUC_CONST;
+#define gdk_keyval_name IA__gdk_keyval_name
+
+#endif
+#endif
 #if IN_HEADER(__GDK_VISUAL_H__)
 #if IN_FILE(__GDK_VISUAL_C__)
 extern __typeof (gdk_list_visuals) IA__gdk_list_visuals __attribute((visibility("hidden")));
@@ -1711,6 +1796,9 @@ extern __typeof (gdk_pango_attr_stipple_new) IA__gdk_pango_attr_stipple_new __at
 extern __typeof (gdk_pango_context_get) IA__gdk_pango_context_get __attribute((visibility("hidden")));
 #define gdk_pango_context_get IA__gdk_pango_context_get
 
+extern __typeof (gdk_pango_context_get_for_screen) IA__gdk_pango_context_get_for_screen __attribute((visibility("hidden")));
+#define gdk_pango_context_get_for_screen IA__gdk_pango_context_get_for_screen
+
 #ifndef GDK_DISABLE_DEPRECATED
 extern __typeof (gdk_pango_context_set_colormap) IA__gdk_pango_context_set_colormap __attribute((visibility("hidden")));
 #define gdk_pango_context_set_colormap IA__gdk_pango_context_set_colormap
@@ -1742,13 +1830,6 @@ extern __typeof (gdk_pango_renderer_set_override_color) IA__gdk_pango_renderer_s
 
 extern __typeof (gdk_pango_renderer_set_stipple) IA__gdk_pango_renderer_set_stipple __attribute((visibility("hidden")));
 #define gdk_pango_renderer_set_stipple IA__gdk_pango_renderer_set_stipple
-
-#endif
-#endif
-#if IN_HEADER(__GDK_PANGO_H__)
-#if IN_FILE(__GDK_PANGO_X11_C__)
-extern __typeof (gdk_pango_context_get_for_screen) IA__gdk_pango_context_get_for_screen __attribute((visibility("hidden")));
-#define gdk_pango_context_get_for_screen IA__gdk_pango_context_get_for_screen
 
 #endif
 #endif
@@ -1812,6 +1893,9 @@ extern __typeof (gdk_pixmap_foreign_new) IA__gdk_pixmap_foreign_new __attribute(
 
 extern __typeof (gdk_pixmap_foreign_new_for_display) IA__gdk_pixmap_foreign_new_for_display __attribute((visibility("hidden")));
 #define gdk_pixmap_foreign_new_for_display IA__gdk_pixmap_foreign_new_for_display
+
+extern __typeof (gdk_pixmap_foreign_new_for_screen) IA__gdk_pixmap_foreign_new_for_screen __attribute((visibility("hidden")));
+#define gdk_pixmap_foreign_new_for_screen IA__gdk_pixmap_foreign_new_for_screen
 
 extern __typeof (gdk_pixmap_lookup) IA__gdk_pixmap_lookup __attribute((visibility("hidden")));
 #define gdk_pixmap_lookup IA__gdk_pixmap_lookup
@@ -1966,6 +2050,18 @@ extern __typeof (gdk_screen_get_monitor_at_point) IA__gdk_screen_get_monitor_at_
 extern __typeof (gdk_screen_get_monitor_at_window) IA__gdk_screen_get_monitor_at_window __attribute((visibility("hidden")));
 #define gdk_screen_get_monitor_at_window IA__gdk_screen_get_monitor_at_window
 
+extern __typeof (gdk_screen_set_font_options) IA__gdk_screen_set_font_options __attribute((visibility("hidden")));
+#define gdk_screen_set_font_options IA__gdk_screen_set_font_options
+
+extern __typeof (gdk_screen_get_font_options) IA__gdk_screen_get_font_options __attribute((visibility("hidden")));
+#define gdk_screen_get_font_options IA__gdk_screen_get_font_options
+
+extern __typeof (gdk_screen_set_resolution) IA__gdk_screen_set_resolution __attribute((visibility("hidden")));
+#define gdk_screen_set_resolution IA__gdk_screen_set_resolution
+
+extern __typeof (gdk_screen_get_resolution) IA__gdk_screen_get_resolution __attribute((visibility("hidden")));
+#define gdk_screen_get_resolution IA__gdk_screen_get_resolution
+
 #endif
 #endif
 #if IN_HEADER(__GDK_SCREEN_H__)
@@ -2047,6 +2143,21 @@ extern __typeof (gdk_screen_get_n_monitors) IA__gdk_screen_get_n_monitors __attr
 extern __typeof (gdk_screen_get_monitor_geometry) IA__gdk_screen_get_monitor_geometry __attribute((visibility("hidden")));
 #define gdk_screen_get_monitor_geometry IA__gdk_screen_get_monitor_geometry
 
+extern __typeof (gdk_screen_get_rgba_colormap) IA__gdk_screen_get_rgba_colormap __attribute((visibility("hidden")));
+#define gdk_screen_get_rgba_colormap IA__gdk_screen_get_rgba_colormap
+
+extern __typeof (gdk_screen_get_rgba_visual) IA__gdk_screen_get_rgba_visual __attribute((visibility("hidden")));
+#define gdk_screen_get_rgba_visual IA__gdk_screen_get_rgba_visual
+
+extern __typeof (gdk_screen_get_active_window) IA__gdk_screen_get_active_window __attribute((visibility("hidden")));
+#define gdk_screen_get_active_window IA__gdk_screen_get_active_window
+
+extern __typeof (gdk_screen_get_window_stack) IA__gdk_screen_get_window_stack __attribute((visibility("hidden")));
+#define gdk_screen_get_window_stack IA__gdk_screen_get_window_stack
+
+extern __typeof (gdk_screen_is_composited) IA__gdk_screen_is_composited __attribute((visibility("hidden")));
+#define gdk_screen_is_composited IA__gdk_screen_is_composited
+
 extern __typeof (gdk_screen_make_display_name) IA__gdk_screen_make_display_name __attribute((visibility("hidden")));
 #define gdk_screen_make_display_name IA__gdk_screen_make_display_name
 
@@ -2118,6 +2229,13 @@ extern __typeof (gdk_synthesize_window_state) IA__gdk_synthesize_window_state __
 
 #endif
 #endif
+#if IN_HEADER(__GDK_PRIVATE_H__)
+#if IN_FILE(__GDK_WINDOW_X11_C__)
+extern __typeof (gdk_window_destroy_notify) IA__gdk_window_destroy_notify __attribute((visibility("hidden")));
+#define gdk_window_destroy_notify IA__gdk_window_destroy_notify
+
+#endif
+#endif
 #ifdef GDK_WINDOWING_WIN32
 #if IN_HEADER(__GDK_WIN32_H__)
 #if IN_FILE(__GDK_WIN32ID_C__)
@@ -2127,9 +2245,26 @@ extern __typeof (gdk_win32_handle_table_lookup) IA__gdk_win32_handle_table_looku
 #endif
 #endif
 #if IN_HEADER(__GDK_WIN32_H__)
+#if IN_FILE(__GDK_CURSOR_WIN32_C__)
+extern __typeof (gdk_win32_icon_to_pixbuf_libgtk_only) IA__gdk_win32_icon_to_pixbuf_libgtk_only __attribute((visibility("hidden")));
+#define gdk_win32_icon_to_pixbuf_libgtk_only IA__gdk_win32_icon_to_pixbuf_libgtk_only
+
+extern __typeof (gdk_win32_pixbuf_to_hicon_libgtk_only) IA__gdk_win32_pixbuf_to_hicon_libgtk_only __attribute((visibility("hidden")));
+#define gdk_win32_pixbuf_to_hicon_libgtk_only IA__gdk_win32_pixbuf_to_hicon_libgtk_only
+
+#endif
+#endif
+#if IN_HEADER(__GDK_WIN32_H__)
 #if IN_FILE(__GDK_DRAWABLE_WIN32_C__)
 extern __typeof (gdk_win32_drawable_get_handle) IA__gdk_win32_drawable_get_handle __attribute((visibility("hidden")));
 #define gdk_win32_drawable_get_handle IA__gdk_win32_drawable_get_handle
+
+#endif
+#endif
+#if IN_HEADER(__GDK_WIN32_H__)
+#if IN_FILE(__GDK_EVENTS_WIN32_C__)
+extern __typeof (gdk_win32_set_modal_dialog_libgtk_only) IA__gdk_win32_set_modal_dialog_libgtk_only __attribute((visibility("hidden")));
+#define gdk_win32_set_modal_dialog_libgtk_only IA__gdk_win32_set_modal_dialog_libgtk_only
 
 #endif
 #endif
@@ -2202,10 +2337,13 @@ extern __typeof (gdk_x11_cursor_get_xcursor) IA__gdk_x11_cursor_get_xcursor __at
 extern __typeof (gdk_x11_cursor_get_xdisplay) IA__gdk_x11_cursor_get_xdisplay __attribute((visibility("hidden")));
 #define gdk_x11_cursor_get_xdisplay IA__gdk_x11_cursor_get_xdisplay
 
+extern __typeof (gdk_x11_display_set_cursor_theme) IA__gdk_x11_display_set_cursor_theme __attribute((visibility("hidden")));
+#define gdk_x11_display_set_cursor_theme IA__gdk_x11_display_set_cursor_theme
+
 #endif
 #if IN_FILE(__GDK_DISPLAY_X11_C__)
-extern __typeof (gdk_x11_display_get_user_time_libgtk_only) IA__gdk_x11_display_get_user_time_libgtk_only __attribute((visibility("hidden")));
-#define gdk_x11_display_get_user_time_libgtk_only IA__gdk_x11_display_get_user_time_libgtk_only
+extern __typeof (gdk_x11_display_get_user_time) IA__gdk_x11_display_get_user_time __attribute((visibility("hidden")));
+#define gdk_x11_display_get_user_time IA__gdk_x11_display_get_user_time
 
 extern __typeof (gdk_x11_display_get_xdisplay) IA__gdk_x11_display_get_xdisplay __attribute((visibility("hidden")));
 #define gdk_x11_display_get_xdisplay IA__gdk_x11_display_get_xdisplay
@@ -2311,6 +2449,9 @@ extern __typeof (gdkx_visual_get) IA__gdkx_visual_get __attribute((visibility("h
 extern __typeof (gdk_x11_window_set_user_time) IA__gdk_x11_window_set_user_time __attribute((visibility("hidden")));
 #define gdk_x11_window_set_user_time IA__gdk_x11_window_set_user_time
 
+extern __typeof (gdk_x11_window_move_to_current_desktop) IA__gdk_x11_window_move_to_current_desktop __attribute((visibility("hidden")));
+#define gdk_x11_window_move_to_current_desktop IA__gdk_x11_window_move_to_current_desktop
+
 #endif
 #if IN_FILE(__GDK_XID_C__)
 extern __typeof (gdk_xid_table_lookup) IA__gdk_xid_table_lookup __attribute((visibility("hidden")));
@@ -2321,6 +2462,8 @@ extern __typeof (gdk_xid_table_lookup_for_display) IA__gdk_xid_table_lookup_for_
 
 #endif
 #endif
+#endif
+#ifdef GDK_WINDOWING_X11
 #endif
 
 #endif /* G_HAVE_GNUC_VISIBILITY */
