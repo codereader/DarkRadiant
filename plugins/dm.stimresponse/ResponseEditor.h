@@ -8,11 +8,6 @@ namespace ui {
 class ResponseEditor :
 	public ClassEditor
 {
-	struct ListButtons {
-		GtkWidget* add;
-		GtkWidget* remove;
-	} _listButtons;
-	
 	struct ListContextMenu {
 		GtkWidget* menu;
 		GtkWidget* remove;
@@ -102,7 +97,6 @@ private:
 	void addSR();
 
 	// Widget creator helpers
-	GtkWidget* createListButtons();
 	void createContextMenu();
 	GtkWidget* createEffectWidgets(); // Response effect list 
 
