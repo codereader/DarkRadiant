@@ -199,7 +199,7 @@ void populateRegistry() {
 	try {
 		// Load all of the required XML files
 		GlobalRegistry().import(base + "user.xml", "", Registry::treeStandard);
-		GlobalRegistry().import(base + "upgradepaths.xml", "user", Registry::treeStandard);
+		//GlobalRegistry().import(base + "upgradepaths.xml", "user", Registry::treeStandard);
 		GlobalRegistry().import(base + "colours.xml", "user/ui", Registry::treeStandard);
 		GlobalRegistry().import(base + "input.xml", "user/ui", Registry::treeStandard);
 		GlobalRegistry().import(base + "menu.xml", "user/ui", Registry::treeStandard);
