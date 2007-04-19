@@ -401,11 +401,6 @@ void Restart() {
 	Radiant_Initialise();
 }
 
-void thunk_OnSleep()
-{
-  g_pParentWnd->OnSleep();
-}
-
 void Console_ToggleShow() {
 	ui::GroupDialog::Instance().setPage("console");  
 }
@@ -1162,8 +1157,6 @@ MainFrame::MainFrame() : m_window(0), m_idleRedrawStatusText(RedrawStatusTextCal
     m_pStatusLabel[n] = 0;
   }
 
-  m_bSleeping = false;
-
   Create();
 }
 
@@ -1181,75 +1174,6 @@ MainFrame::~MainFrame()
   }  
 
   gtk_widget_destroy(GTK_WIDGET(m_window));
-}
-
-void MainFrame::ReleaseContexts()
-{
-
-}
-
-void MainFrame::CreateContexts()
-{
-
-}
-
-#ifdef _DEBUG
-//#define DBG_SLEEP
-#endif
-
-void MainFrame::OnSleep()
-{
-#if 0
-  m_bSleeping ^= 1;
-  if (m_bSleeping)
-  {
-    // useful when trying to debug crashes in the sleep code
-    globalOutputStream() << "Going into sleep mode..\n";
-
-    globalOutputStream() << "Dispatching sleep msg...";
-    DispatchRadiantMsg (RADIANT_SLEEP);
-    globalOutputStream() << "Done.\n";
-
-    gtk_window_iconify(m_window);
-    GlobalSelectionSystem().setSelectedAll(false);
-
-    GlobalShaderCache().unrealise();
-    Shaders_Free();
-    GlobalOpenGL_debugAssertNoErrors();
-    ScreenUpdates_Disable();
-
-    // release contexts
-    globalOutputStream() << "Releasing contexts...";
-    ReleaseContexts();
-    globalOutputStream() << "Done.\n";
-  }
-  else
-  {
-    globalOutputStream() << "Waking up\n";
-
-    gtk_window_deiconify(m_window);
-
-    // create contexts
-    globalOutputStream() << "Creating contexts...";
-    CreateContexts();
-    globalOutputStream() << "Done.\n";
-
-    globalOutputStream() << "Making current on camera...";
-    m_pCamWnd->MakeCurrent();
-    globalOutputStream() << "Done.\n";
-
-    globalOutputStream() << "Reloading shaders...";
-    Shaders_Load();
-    GlobalShaderCache().realise();
-    globalOutputStream() << "Done.\n";
-
-    ScreenUpdates_Enable();
-
-    globalOutputStream() << "Dispatching wake msg...";
-    DispatchRadiantMsg (RADIANT_WAKEUP);
-    globalOutputStream() << "Done\n";
-  }
-#endif
 }
 
 // Create and show the splash screen.
@@ -1327,8 +1251,6 @@ void MainFrame::Create()
 
   gtk_widget_add_events(GTK_WIDGET(window), GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK | GDK_FOCUS_CHANGE_MASK);
   g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(mainframe_delete), this);
-
-  m_position_tracker.connect(window);
 
 #if 0
   g_mainframeWidgetFocusPrinter.connect(window);
@@ -1852,7 +1774,6 @@ void MainFrame_Construct()
 	// Tell the FilterSystem to register its commands
 	GlobalFilterSystem().initialise();
 	
-	GlobalEventManager().addCommand("Sleep", FreeCaller<thunk_OnSleep>());
 	GlobalEventManager().addCommand("NewMap", FreeCaller<NewMap>());
 	GlobalEventManager().addCommand("OpenMap", FreeCaller<OpenMap>());
 	GlobalEventManager().addCommand("ImportMap", FreeCaller<ImportMap>());

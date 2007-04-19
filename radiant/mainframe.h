@@ -34,7 +34,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class IPlugin;
 class IToolbarButton;
 
-class XYWnd;
 class CamWnd;
 class ZWnd;
 
@@ -99,23 +98,13 @@ private:
 
   CamWnd* m_pCamWnd;
 
-  bool m_bSleeping;
-
   GtkWidget *m_pStatusLabel[c_count_status];
 
-
   EViewStyle m_nCurrentStyle;
-  WindowPositionTracker m_position_tracker;
 
   IdleDraw m_idleRedrawStatusText;
 
 public:
-
-  bool IsSleeping()
-  {
-    return m_bSleeping;
-  }
-  void OnSleep();
 
   void SetStatusText(std::string& status_text, const std::string& newText);
   void UpdateStatusText();
@@ -129,9 +118,6 @@ public:
   {
     return m_pCamWnd;
   }
-
-  void ReleaseContexts();
-  void CreateContexts();
 
   EViewStyle CurrentStyle()
   {
