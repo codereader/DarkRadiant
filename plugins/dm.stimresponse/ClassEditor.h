@@ -36,7 +36,14 @@ protected:
 	bool _updatesDisabled;
 	
 	// The combo box to select the stim/response type
-	GtkWidget* _typeList;
+	typedef struct TypeSelectorWidgets {
+		GtkWidget* list;
+		GtkWidget* hbox;
+		GtkWidget* label;
+	} TypeSelectorWidgets;
+	
+	TypeSelectorWidgets _type;
+	TypeSelectorWidgets _addType;
 
 public:
 	/** greebo: Constructs the shared widgets, but does not pack them
@@ -61,13 +68,18 @@ public:
 	virtual void update() = 0;
 
 protected:
+	/** greebo: Adds/removes a S/R from the main list
+	 */
+	virtual void addSR() = 0; 
+	virtual void removeSR(GtkTreeView* view);
+
 	/** greebo: Duplicates the currently selected S/R object
 	 */
 	void duplicateStimResponse();
 
-	/** greebo: Returns the fabricated Stim Selector combo box 
+	/** greebo: Returns the fabricated Stim Selector widget structure 
 	 */
-	GtkWidget* createStimTypeSelector();
+	TypeSelectorWidgets createStimTypeSelector();
 
 	/** greebo: Gets called when a check box is toggled, this should
 	 * 			update the contents of possible associated entry fields. 
@@ -99,10 +111,6 @@ protected:
 	 * 			menu can be displayed (in the case of multiple possible treeviews).
 	 */
 	virtual void openContextMenu(GtkTreeView* view) = 0;
-	
-	/** greebo: Attempts to delete the item from the passed treeview.
-	 */
-	virtual void removeItem(GtkTreeView* view) = 0;
 
 	// GTK Callback for Stim/Response selection changes
 	static void onSRSelectionChange(GtkTreeSelection* treeView, ClassEditor* self);
@@ -118,6 +126,9 @@ protected:
 	
 	// Gets called on stim type selection change
 	static void onStimTypeSelect(GtkComboBox* widget, ClassEditor* self);
+	
+	static void onAddSR(GtkWidget* button, ClassEditor* self);
+	static void onRemoveSR(GtkWidget* button, ClassEditor* self);
 	
 	// Override/disable override menu items
 	static void onContextMenuEnable(GtkWidget* w, ClassEditor* self);

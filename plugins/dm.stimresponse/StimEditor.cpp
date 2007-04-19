@@ -59,6 +59,8 @@ void StimEditor::setEntity(SREntityPtr entity) {
 GtkWidget* StimEditor::createListButtons() {
 	GtkWidget* hbox = gtk_hbox_new(TRUE, 6);
 	
+	_addType = createStimTypeSelector();
+	
 	_listButtons.add = gtk_button_new_with_label("Add Stim");
 	gtk_button_set_image(
 		GTK_BUTTON(_listButtons.add), 
@@ -74,8 +76,8 @@ GtkWidget* StimEditor::createListButtons() {
 	gtk_box_pack_start(GTK_BOX(hbox), _listButtons.add, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), _listButtons.remove, TRUE, TRUE, 0);
 	
-	g_signal_connect(G_OBJECT(_listButtons.add), "clicked", G_CALLBACK(onAddStim), this);
-	g_signal_connect(G_OBJECT(_listButtons.remove), "clicked", G_CALLBACK(onRemoveStim), this);
+	g_signal_connect(G_OBJECT(_listButtons.add), "clicked", G_CALLBACK(onAddSR), this);
+	g_signal_connect(G_OBJECT(_listButtons.remove), "clicked", G_CALLBACK(onRemoveSR), this);
 	
 	return hbox; 
 }
@@ -84,7 +86,9 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	_propertyWidgets.vbox = gtk_vbox_new(FALSE, 6);
 	
 	// Type Selector
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), createStimTypeSelector(), FALSE, FALSE, 0);
+	_type = createStimTypeSelector();
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _type.hbox, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(_type.list), "changed", G_CALLBACK(onStimTypeSelect), this);
 	
 	// Create the table for the widget alignment
 	GtkTable* table = GTK_TABLE(gtk_table_new(8, 2, FALSE));
@@ -99,10 +103,10 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	// Timer Time
 	_propertyWidgets.timer.toggle = gtk_check_button_new_with_label("Activation Timer:");
 	
-	_propertyWidgets.timer.hour = gtk_entry_new();
-	_propertyWidgets.timer.minute = gtk_entry_new();
-	_propertyWidgets.timer.second = gtk_entry_new();
-	_propertyWidgets.timer.millisecond = gtk_entry_new();
+	_propertyWidgets.timer.hour =  gtk_entry_new_with_max_length(5);
+	_propertyWidgets.timer.minute = gtk_entry_new_with_max_length(2);
+	_propertyWidgets.timer.second = gtk_entry_new_with_max_length(2);
+	_propertyWidgets.timer.millisecond = gtk_entry_new_with_max_length(3);
 	
 	gtk_entry_set_width_chars(GTK_ENTRY(_propertyWidgets.timer.hour), 3);
 	gtk_entry_set_width_chars(GTK_ENTRY(_propertyWidgets.timer.minute), 3);
@@ -399,22 +403,11 @@ void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 	}
 }
 
-void StimEditor::removeItem(GtkTreeView* view) {
-	// The argument <view> is not needed, there is only one list
-	
-	// Get the selected stim ID
-	int id = getIdFromSelection();
-	
-	if (id > 0) {
-		_entity->remove(id);
-	}
-}
-
 void StimEditor::openContextMenu(GtkTreeView* view) {
 	gtk_menu_popup(GTK_MENU(_contextMenu.menu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
 }
 
-void StimEditor::addStim() {
+void StimEditor::addSR() {
 	if (_entity == NULL) return;
 
 	// Create a new StimResponse object
@@ -490,7 +483,7 @@ void StimEditor::update() {
 		
 		// Get the iter into the liststore pointing at the correct STIM_YYYY type
 		GtkTreeIter typeIter = _stimTypes.getIterForName(sr.get("type"));
-		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_typeList), &typeIter);
+		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_type.list), &typeIter);
 		
 		// Active
 		gtk_toggle_button_set_active(
@@ -698,21 +691,12 @@ void StimEditor::selectionChanged() {
 // Delete context menu items activated
 void StimEditor::onContextMenuDelete(GtkWidget* w, StimEditor* self) {
 	// Delete the selected stim from the list
-	self->removeItem(GTK_TREE_VIEW(self->_list));
+	self->removeSR(GTK_TREE_VIEW(self->_list));
 }
 
 // Delete context menu items activated
 void StimEditor::onContextMenuAdd(GtkWidget* w, StimEditor* self) {
-	self->addStim();
-}
-
-void StimEditor::onAddStim(GtkWidget* button, StimEditor* self) {
-	self->addStim();
-}
-
-void StimEditor::onRemoveStim(GtkWidget* button, StimEditor* self) {
-	// Delete the selected stim from the list
-	self->removeItem(GTK_TREE_VIEW(self->_list));
+	self->addSR();
 }
 
 } // namespace ui

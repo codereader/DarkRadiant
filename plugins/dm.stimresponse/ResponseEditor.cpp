@@ -50,7 +50,7 @@ void ResponseEditor::update() {
 		
 		// Get the iter into the liststore pointing at the correct STIM_YYYY type
 		GtkTreeIter typeIter = _stimTypes.getIterForName(sr.get("type"));
-		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_typeList), &typeIter);
+		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_type.list), &typeIter);
 		
 		// Active
 		gtk_toggle_button_set_active(
@@ -144,7 +144,9 @@ void ResponseEditor::populatePage() {
 	_propertyWidgets.vbox = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(srHBox), _propertyWidgets.vbox, TRUE, TRUE, 0);
 	
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), createStimTypeSelector(), FALSE, FALSE, 0);
+	_type = createStimTypeSelector();
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _type.hbox, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(_type.list), "changed", G_CALLBACK(onStimTypeSelect), this);
 	
 	// Create the table for the widget alignment
 	GtkTable* table = GTK_TABLE(gtk_table_new(3, 2, FALSE));
@@ -224,7 +226,7 @@ GtkWidget* ResponseEditor::createEffectWidgets() {
 	
 	gtk_tree_view_append_column(
 		GTK_TREE_VIEW(_effectWidgets.view), 
-		gtkutil::TextColumn("Description", EFFECT_ARGS_COL)
+		gtkutil::TextColumn("Details (double-click to edit)", EFFECT_ARGS_COL)
 	);
 	
 	// Return the tree view in a frame
@@ -249,8 +251,8 @@ GtkWidget* ResponseEditor::createListButtons() {
 	gtk_box_pack_start(GTK_BOX(hbox), _listButtons.add, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), _listButtons.remove, TRUE, TRUE, 0);
 	
-	g_signal_connect(G_OBJECT(_listButtons.add), "clicked", G_CALLBACK(onAddResponse), this);
-	g_signal_connect(G_OBJECT(_listButtons.remove), "clicked", G_CALLBACK(onRemoveResponse), this);
+	g_signal_connect(G_OBJECT(_listButtons.add), "clicked", G_CALLBACK(onAddSR), this);
+	g_signal_connect(G_OBJECT(_listButtons.remove), "clicked", G_CALLBACK(onRemoveSR), this);
 	
 	return hbox; 
 }
@@ -502,23 +504,11 @@ void ResponseEditor::openContextMenu(GtkTreeView* view) {
 	}
 }
 
-void ResponseEditor::removeItem(GtkTreeView* view) {
-	// Check the treeview this remove call is targeting
-	if (view == GTK_TREE_VIEW(_list)) {	
-		// Get the selected stim ID
-		int id = getIdFromSelection();
-		
-		if (id > 0) {
-			_entity->remove(id);
-		}
-	}
-}
-
 void ResponseEditor::selectionChanged() {
 	update();
 }
 
-void ResponseEditor::addResponse() {
+void ResponseEditor::addSR() {
 	if (_entity == NULL) return;
 
 	// Create a new StimResponse object
@@ -554,7 +544,7 @@ gboolean ResponseEditor::onTreeViewButtonPress(
 void ResponseEditor::onContextMenuDelete(GtkWidget* w, ResponseEditor* self) {
 	if (w == self->_contextMenu.remove) {
 		// Delete the selected stim from the list
-		self->removeItem(GTK_TREE_VIEW(self->_list));
+		self->removeSR(GTK_TREE_VIEW(self->_list));
 	}
 	else if (w == self->_effectWidgets.deleteMenuItem) {
 		self->removeEffect();
@@ -564,20 +554,11 @@ void ResponseEditor::onContextMenuDelete(GtkWidget* w, ResponseEditor* self) {
 // Delete context menu items activated
 void ResponseEditor::onContextMenuAdd(GtkWidget* w, ResponseEditor* self) {
 	if (w == self->_contextMenu.add) {
-		self->addResponse();
+		self->addSR();
 	}
 	else if (w == self->_effectWidgets.addMenuItem) {
 		self->addEffect();
 	}
-}
-
-void ResponseEditor::onAddResponse(GtkWidget* button, ResponseEditor* self) {
-	self->addResponse();
-}
-
-void ResponseEditor::onRemoveResponse(GtkWidget* button, ResponseEditor* self) {
-	// Delete the selected stim from the list
-	self->removeItem(GTK_TREE_VIEW(self->_list));
 }
 
 // Callback for effects treeview selection changes
