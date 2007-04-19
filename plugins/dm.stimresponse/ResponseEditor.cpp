@@ -139,6 +139,7 @@ void ResponseEditor::populatePage() {
 	
 	// Create the type selector and pack it
 	_addType = createStimTypeSelector();
+	gtk_combo_box_set_active(GTK_COMBO_BOX(_addType.list), 0);
 	gtk_box_pack_start(GTK_BOX(vbox), _addType.hbox, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), createListButtons(), FALSE, FALSE, 0);
 	
@@ -149,6 +150,7 @@ void ResponseEditor::populatePage() {
 	gtk_box_pack_start(GTK_BOX(srHBox), _propertyWidgets.vbox, TRUE, TRUE, 0);
 	
 	_type = createStimTypeSelector();
+	gtk_combo_box_set_wrap_width(GTK_COMBO_BOX(_type.list), 2);
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _type.hbox, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(_type.list), "changed", G_CALLBACK(onStimTypeSelect), this);
 	

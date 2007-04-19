@@ -40,6 +40,7 @@ void StimEditor::populatePage() {
 	
 	// Create the type selector and pack it
 	_addType = createStimTypeSelector();
+	gtk_combo_box_set_active(GTK_COMBO_BOX(_addType.list), 0);
 	gtk_box_pack_start(GTK_BOX(vbox), _addType.hbox, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), createListButtons(), FALSE, FALSE, 0);
 	
@@ -89,6 +90,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	
 	// Type Selector
 	_type = createStimTypeSelector();
+	gtk_combo_box_set_wrap_width(GTK_COMBO_BOX(_type.list), 2);
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _type.hbox, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(_type.list), "changed", G_CALLBACK(onStimTypeSelect), this);
 	
@@ -154,7 +156,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	gtk_table_attach_defaults(table, timerTypeHBox, 0, 2, 2, 3);
 	
 	_propertyWidgets.timer.waitToggle = 
-		gtk_check_button_new_with_label("Timer waits for start (when disabled: will start at spawn time)");
+		gtk_check_button_new_with_label("Timer waits for start (when disabled: starts at spawn time)");
 	gtk_table_attach_defaults(table, _propertyWidgets.timer.waitToggle, 0, 2, 3, 4);
 	
 	// Radius / Use Bounds
