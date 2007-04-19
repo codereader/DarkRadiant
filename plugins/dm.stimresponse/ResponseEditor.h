@@ -99,7 +99,7 @@ private:
 
 	/** greebo: Adds a new default response to the entity
 	 */
-	void addResponse();
+	void addSR();
 
 	// Widget creator helpers
 	GtkWidget* createListButtons();
@@ -111,7 +111,6 @@ private:
 	virtual void selectionChanged();
 	
 	void openContextMenu(GtkTreeView* view);
-	void removeItem(GtkTreeView* view);
 
 	/** greebo: Creates all the widgets
 	 */
@@ -123,9 +122,6 @@ private:
 	static void onContextMenuEffectUp(GtkWidget* widget, ResponseEditor* self);
 	static void onContextMenuEffectDown(GtkWidget* widget, ResponseEditor* self);
 	static void onContextMenuEdit(GtkWidget* widget, ResponseEditor* self);
-	
-	static void onAddResponse(GtkWidget*, ResponseEditor* self);
-	static void onRemoveResponse(GtkWidget*, ResponseEditor* self);
 	
 	// To catch double-clicks in the response effect list 
 	static gboolean onTreeViewButtonPress(GtkTreeView*, GdkEventButton*, ResponseEditor* self);

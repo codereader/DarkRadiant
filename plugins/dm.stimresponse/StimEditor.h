@@ -70,15 +70,15 @@ public:
 	 */
 	virtual void setEntity(SREntityPtr entity);
 
-	/** greebo: Adds a new stim to the list
-	 */
-	void addStim();
-
 	/** greebo: Updates the widgets (e.g. after a selection change) 
 	 */
 	void update();
 
 private:
+	/** greebo: Adds a new stim to the list
+	 */
+	void addSR();
+
 	/** greebo: Gets called when an entry box changes, overrides the 
 	 * 			method from the base class.
 	 */
@@ -103,7 +103,6 @@ private:
 	virtual void selectionChanged();
 
 	void openContextMenu(GtkTreeView* view);
-	void removeItem(GtkTreeView* view);
 
 	/** greebo: Creates all the widgets
 	 */
@@ -112,9 +111,6 @@ private:
 	// Context menu GTK callbacks
 	static void onContextMenuAdd(GtkWidget* w, StimEditor* self);
 	static void onContextMenuDelete(GtkWidget* w, StimEditor* self);
-	
-	static void onAddStim(GtkWidget* button, StimEditor* self);
-	static void onRemoveStim(GtkWidget* button, StimEditor* self);
 };
 
 } // namespace ui

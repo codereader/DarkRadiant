@@ -75,6 +75,8 @@ ClassEditor::ClassEditor(StimTypes& stimTypes) :
 										NULL);
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_list), typeCol);
+	
+	
 }
 
 ClassEditor::operator GtkWidget*() {
@@ -124,36 +126,48 @@ void ClassEditor::entryChanged(GtkEditable* editable) {
 	}
 }
 
-GtkWidget* ClassEditor::createStimTypeSelector() {
-	// Type Selector
-	GtkWidget* typeHBox = gtk_hbox_new(FALSE, 0);
+ClassEditor::TypeSelectorWidgets ClassEditor::createStimTypeSelector() {
+	TypeSelectorWidgets widgets;
 	
-	GtkWidget* typeLabel = gtkutil::LeftAlignedLabel("Type:");
+	// Type Selector
+	widgets.hbox = gtk_hbox_new(FALSE, 0);
+	
+	widgets.label = gtkutil::LeftAlignedLabel("Type:");
 	// Cast the helper class onto a ListStore and create a new treeview
 	GtkListStore* stimListStore = _stimTypes;
-	_typeList = gtk_combo_box_new_with_model(GTK_TREE_MODEL(stimListStore));
-	gtk_widget_set_size_request(_typeList, -1, -1);
+	widgets.list = gtk_combo_box_new_with_model(GTK_TREE_MODEL(stimListStore));
+	gtk_widget_set_size_request(widgets.list, -1, -1);
 	g_object_unref(stimListStore); // tree view owns the reference now
-	
-	g_signal_connect(G_OBJECT(_typeList), "changed", G_CALLBACK(onStimTypeSelect), this);
 	
 	// Add the cellrenderer for the name
 	GtkCellRenderer* nameRenderer = gtk_cell_renderer_text_new();
 	GtkCellRenderer* iconRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_typeList), iconRenderer, FALSE);
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_typeList), nameRenderer, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_typeList), iconRenderer, "pixbuf", ST_ICON_COL);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_typeList), nameRenderer, "text", ST_CAPTION_PLUS_ID_COL);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(widgets.list), iconRenderer, FALSE);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(widgets.list), nameRenderer, TRUE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(widgets.list), iconRenderer, "pixbuf", ST_ICON_COL);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(widgets.list), nameRenderer, "text", ST_CAPTION_PLUS_ID_COL);
 	gtk_cell_renderer_set_fixed_size(iconRenderer, 26, -1);
 
-	gtk_box_pack_start(GTK_BOX(typeHBox), typeLabel, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(widgets.hbox), widgets.label, FALSE, FALSE, 0);
 	gtk_box_pack_start(
-		GTK_BOX(typeHBox), 
-		gtkutil::LeftAlignment(_typeList, 12, 1.0f), 
+		GTK_BOX(widgets.hbox), 
+		gtkutil::LeftAlignment(widgets.list, 12, 1.0f), 
 		TRUE, TRUE,	0
 	);
 
-	return typeHBox;
+	return widgets;
+}
+
+void ClassEditor::removeSR(GtkTreeView* view) {
+	// Check the treeview this remove call is targeting
+	if (view == GTK_TREE_VIEW(_list)) {	
+		// Get the selected stim ID
+		int id = getIdFromSelection();
+		
+		if (id > 0) {
+			_entity->remove(id);
+		}
+	}
 }
 
 void ClassEditor::selectId(int id) {
@@ -193,7 +207,7 @@ void ClassEditor::onSRSelectionChange(GtkTreeSelection* treeView, ClassEditor* s
 
 gboolean ClassEditor::onTreeViewKeyPress(GtkTreeView* view, GdkEventKey* event, ClassEditor* self) {
 	if (event->keyval == GDK_Delete) {
-		self->removeItem(view);
+		self->removeSR(view);
 		
 		// Catch this keyevent, don't propagate
 		return TRUE;
@@ -250,6 +264,16 @@ void ClassEditor::onContextMenuEnable(GtkWidget* w, ClassEditor* self) {
 
 void ClassEditor::onContextMenuDuplicate(GtkWidget* w, ClassEditor* self) {
 	self->duplicateStimResponse();
+}
+
+void ClassEditor::onAddSR(GtkWidget* button, ClassEditor* self) {
+	// Add a S/R
+	self->addSR();
+}
+
+void ClassEditor::onRemoveSR(GtkWidget* button, ClassEditor* self) {
+	// Delete the selected S/R from the list
+	self->removeSR(GTK_TREE_VIEW(self->_list));
 }
 
 } // namespace ui
