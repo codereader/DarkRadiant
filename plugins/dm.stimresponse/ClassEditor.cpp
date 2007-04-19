@@ -10,7 +10,7 @@
 namespace ui {
 	
 	namespace {
-		const unsigned int TREE_VIEW_WIDTH = 250;
+		const unsigned int TREE_VIEW_WIDTH = 320;
 		const unsigned int TREE_VIEW_HEIGHT = 160;
 	}
 
@@ -154,8 +154,41 @@ ClassEditor::TypeSelectorWidgets ClassEditor::createStimTypeSelector() {
 		gtkutil::LeftAlignment(widgets.list, 12, 1.0f), 
 		TRUE, TRUE,	0
 	);
+	
+	// Set the combo box to use two-column
+	gtk_combo_box_set_wrap_width(GTK_COMBO_BOX(widgets.list), 2);
 
 	return widgets;
+}
+
+GtkWidget* ClassEditor::createListButtons() {
+	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
+	
+	// Create the type selector and pack it
+	_addType = createStimTypeSelector();
+	gtk_combo_box_set_active(GTK_COMBO_BOX(_addType.list), 0);
+	gtk_box_pack_start(GTK_BOX(hbox), _addType.hbox, TRUE, TRUE, 0);
+	
+	_listButtons.add = gtk_button_new_with_label("Add");
+	gtk_button_set_image(
+		GTK_BUTTON(_listButtons.add), 
+		gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_BUTTON)
+	);
+	
+	_listButtons.remove = gtk_button_new_with_label("Remove");
+	gtk_button_set_image(
+		GTK_BUTTON(_listButtons.remove), 
+		gtk_image_new_from_stock(GTK_STOCK_DELETE, GTK_ICON_SIZE_BUTTON)
+	);
+	
+	gtk_box_pack_start(GTK_BOX(hbox), _listButtons.add, FALSE, FALSE, 0);
+	//gtk_box_pack_start(GTK_BOX(hbox), _listButtons.remove, TRUE, TRUE, 0);
+	
+	g_signal_connect(G_OBJECT(_addType.list), "changed", G_CALLBACK(onAddTypeSelect), this);
+	g_signal_connect(G_OBJECT(_listButtons.add), "clicked", G_CALLBACK(onAddSR), this);
+	g_signal_connect(G_OBJECT(_listButtons.remove), "clicked", G_CALLBACK(onRemoveSR), this);
+	
+	return hbox; 
 }
 
 void ClassEditor::removeSR(GtkTreeView* view) {
@@ -257,6 +290,15 @@ void ClassEditor::onStimTypeSelect(GtkComboBox* widget, ClassEditor* self) {
 	if (!name.empty()) {
 		// Write it to the entity
 		self->setProperty("type", name);
+	}
+}
+
+void ClassEditor::onAddTypeSelect(GtkComboBox* widget, ClassEditor* self) {
+	if (self->_updatesDisabled) return; // Callback loop guard
+	
+	std::string name = self->getStimTypeIdFromSelector(widget);
+	if (!name.empty()) {
+		self->addSR();
 	}
 }
 

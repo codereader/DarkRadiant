@@ -35,6 +35,11 @@ protected:
 	// TRUE if the GTK callbacks should be disabled
 	bool _updatesDisabled;
 	
+	struct ListButtons {
+		GtkWidget* add;
+		GtkWidget* remove;
+	} _listButtons;
+	
 	// The combo box to select the stim/response type
 	typedef struct TypeSelectorWidgets {
 		GtkWidget* hbox;	// The
@@ -68,6 +73,10 @@ public:
 	virtual void update() = 0;
 
 protected:
+	/** greebo: Creates the StimType Selector and buttons below the main list.
+	 */
+	virtual GtkWidget* createListButtons();
+
 	/** greebo: Returns the name of the selected stim in the given combo box.
 	 * 			The model behind that combo box has to be according to the
 	 * 			one created by the StimTypes helper class.
@@ -132,6 +141,7 @@ protected:
 	
 	// Gets called on stim type selection change
 	static void onStimTypeSelect(GtkComboBox* widget, ClassEditor* self);
+	static void onAddTypeSelect(GtkComboBox* widget, ClassEditor* self);
 	
 	static void onAddSR(GtkWidget* button, ClassEditor* self);
 	static void onRemoveSR(GtkWidget* button, ClassEditor* self);

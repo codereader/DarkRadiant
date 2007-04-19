@@ -56,11 +56,6 @@ class StimEditor :
 		GtkWidget* duplicate;
 	} _contextMenu;
 
-	struct ListButtons {
-		GtkWidget* add;
-		GtkWidget* remove;
-	} _listButtons;
-
 public:
 	/** greebo: Constructor creates all the widgets
 	 */
@@ -96,8 +91,7 @@ private:
 	/** greebo: Widget creation helper methods
 	 */
 	GtkWidget* createPropertyWidgets();
-	GtkWidget* createListButtons();
-
+	
 	/** greebo: Gets called when the stim selection gets changed 
 	 */
 	virtual void selectionChanged();

@@ -38,10 +38,7 @@ void StimEditor::populatePage() {
 	gtk_box_pack_start(GTK_BOX(vbox), 
 		gtkutil::ScrolledFrame(_list), TRUE, TRUE, 0);
 	
-	// Create the type selector and pack it
-	_addType = createStimTypeSelector();
-	gtk_combo_box_set_active(GTK_COMBO_BOX(_addType.list), 0);
-	gtk_box_pack_start(GTK_BOX(vbox), _addType.hbox, FALSE, FALSE, 0);
+	// Create the type selector plus buttons and pack them
 	gtk_box_pack_start(GTK_BOX(vbox), createListButtons(), FALSE, FALSE, 0);
 	
 	gtk_box_pack_start(GTK_BOX(srHBox),	vbox, FALSE, FALSE, 0);
@@ -61,36 +58,11 @@ void StimEditor::setEntity(SREntityPtr entity) {
 	}
 }
 
-GtkWidget* StimEditor::createListButtons() {
-	GtkWidget* hbox = gtk_hbox_new(TRUE, 6);
-	
-	_listButtons.add = gtk_button_new_with_label("Add Stim");
-	gtk_button_set_image(
-		GTK_BUTTON(_listButtons.add), 
-		gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_BUTTON)
-	);
-	
-	_listButtons.remove = gtk_button_new_with_label("Remove Stim");
-	gtk_button_set_image(
-		GTK_BUTTON(_listButtons.remove), 
-		gtk_image_new_from_stock(GTK_STOCK_DELETE, GTK_ICON_SIZE_BUTTON)
-	);
-	
-	gtk_box_pack_start(GTK_BOX(hbox), _listButtons.add, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), _listButtons.remove, TRUE, TRUE, 0);
-	
-	g_signal_connect(G_OBJECT(_listButtons.add), "clicked", G_CALLBACK(onAddSR), this);
-	g_signal_connect(G_OBJECT(_listButtons.remove), "clicked", G_CALLBACK(onRemoveSR), this);
-	
-	return hbox; 
-}
-
 GtkWidget* StimEditor::createPropertyWidgets() {
 	_propertyWidgets.vbox = gtk_vbox_new(FALSE, 6);
 	
 	// Type Selector
 	_type = createStimTypeSelector();
-	gtk_combo_box_set_wrap_width(GTK_COMBO_BOX(_type.list), 2);
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _type.hbox, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(_type.list), "changed", G_CALLBACK(onStimTypeSelect), this);
 	
