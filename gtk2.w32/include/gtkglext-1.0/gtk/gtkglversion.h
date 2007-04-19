@@ -1,5 +1,5 @@
 /* GtkGLExt - OpenGL Extension to GTK+
- * Copyright (C) 2002-2004  Naofumi Yasufuku
+ * Copyright (C) 2002-2003  Naofumi Yasufuku
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,9 +30,9 @@ G_BEGIN_DECLS
  */
 #define GTKGLEXT_MAJOR_VERSION (1)
 #define GTKGLEXT_MINOR_VERSION (0)
-#define GTKGLEXT_MICRO_VERSION (6)
-#define GTKGLEXT_INTERFACE_AGE (4)
-#define GTKGLEXT_BINARY_AGE    (6)
+#define GTKGLEXT_MICRO_VERSION (5)
+#define GTKGLEXT_INTERFACE_AGE (3)
+#define GTKGLEXT_BINARY_AGE    (5)
 
 /*
  * Check whether a GtkGLExt version equal to or greater than

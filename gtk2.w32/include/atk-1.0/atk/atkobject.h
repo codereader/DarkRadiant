@@ -42,7 +42,7 @@ extern "C" {
  *AtkRole:
  *@ATK_ROLE_INVALID: Invalid role
  *@ATK_ROLE_ACCEL_LABEL: A label which represents an accelerator
- *@ATK_ROLE_ALERT: An object which is an alert to the user
+ *@ATK_ROLE_ALERT: An object which is an alert to the user. Assistive Technologies typically respond to ATK_ROLE_ALERT by reading the entire onscreen contents of containers advertising this role.  Should be used for warning dialogs, etc.
  *@ATK_ROLE_ANIMATION: An object which is an animated image
  *@ATK_ROLE_ARROW: An arrow in one of the four cardinal directions
  *@ATK_ROLE_CALENDAR:  An object that displays a calendar and allows the user to select a date
@@ -113,11 +113,31 @@ extern "C" {
  *@ATK_ROLE_FOOTER: An object that serves as a document footer.
  *@ATK_ROLE_PARAGRAPH: An object which is contains a paragraph of text content.
  *@ATK_ROLE_RULER: An object which describes margins and tab stops, etc. for text objects which it controls (should have CONTROLLER_FOR relation to such).
- *@ATK_ROLE_APPLICATION: The object is an application object, which may contain @ATK_ROLE_FRAME objects or other types of accessibles.
+ *@ATK_ROLE_APPLICATION: The object is an application object, which may contain @ATK_ROLE_FRAME objects or other types of accessibles.  The root accessible of any application's ATK hierarchy should have ATK_ROLE_APPLICATION.
  *@ATK_ROLE_AUTOCOMPLETE: The object is a dialog or list containing items for insertion into an entry widget, for instance a list of words for completion of a text entry.
  *@ATK_ROLE_EDITBAR: The object is an editable text object in a toolbar
  *@ATK_ROLE_EMBEDDED: The object is an embedded container within a document or panel.  This role is a grouping "hint" indicating that the contained objects share a context.
- *@ATK_ROLE_LAST_DEFINED: not a valid role, used for finding end of enumeration
+ *@ATK_ROLE_ENTRY: The object is a component whose textual content may be entered or modified by the user, provided @ATK_STATE_EDITABLE is present.
+ *@ATK_ROLE_CHART: The object is a graphical depiction of quantitative data. It may contain multiple subelements whose attributes and/or description may be queried to obtain both the quantitative data and information about how the data is being presented. The LABELLED_BY relation is particularly important in interpreting objects of this type, as is the accessible-description property.
+ *@ATK_ROLE_CAPTION: The object contains descriptive information, usually textual, about another user interface element such as a table, chart, or image.
+ *@ATK_ROLE_DOCUMENT_FRAME: The object is a visual frame or container which contains a view of document content. Document frames may occur within another Document instance, in which case the second document may be said to be embedded in the containing instance. HTML frames are often ROLE_DOCUMENT_FRAME. Either this object, or a singleton descendant, should implement the Document interface.
+ *@ATK_ROLE_HEADING: The object serves as a heading for content which follows it in a document. The 'heading level' of the heading, if availabe, may be obtained by querying the object's attributes.
+ *@ATK_ROLE_PAGE: The object is a containing instance which encapsulates a page of information. @ATK_ROLE_PAGE is used in documents and content which support a paginated navigation model.
+ *@ATK_ROLE_SECTION: The object is a containing instance of document content which constitutes a particular 'logical' section of the document. The type of content within a section, and the nature of the section division itself, may be obtained by querying the object's attributes. Sections may be nested.
+ *@ATK_ROLE_REDUNDANT_OBJECT: The object is redundant with another object in the hierarchy, and is exposed for purely technical reasons.  Objects of this role should normally be ignored by clients. 
+ *@ATK_ROLE_FORM: The object is a container for form controls, for instance as part of a 
+ * web form or user-input form within a document.  This role is primarily a tag/convenience for 
+ * clients when navigating complex documents, it is not expected that ordinary GUI containers will 
+ * always have ATK_ROLE_FORM.
+ *@ATK_ROLE_LINK: The object is a hypertext anchor, i.e. a "link" in a
+ * hypertext document.  Such objects are distinct from 'inline'
+ * content which may also use the Hypertext/Hyperlink interfaces
+ * to indicate the range/location within a text object where
+ * an inline or embedded object lies.
+ *@ATK_ROLE_INPUT_METHOD_WINDOW: The object is a window or similar viewport 
+ * which is used to allow composition or input of a 'complex character',
+ * in other words it is an "input method window."
+ *@ATK_ROLE_LAST_DEFINED: not a valid role, used for finding end of the enumeration
  * 
  * Describes the role of an object
  *
@@ -204,6 +224,17 @@ typedef enum
   ATK_ROLE_AUTOCOMPLETE,
   ATK_ROLE_EDITBAR,
   ATK_ROLE_EMBEDDED,
+  ATK_ROLE_ENTRY,
+  ATK_ROLE_CHART,
+  ATK_ROLE_CAPTION,
+  ATK_ROLE_DOCUMENT_FRAME,
+  ATK_ROLE_HEADING,
+  ATK_ROLE_PAGE,
+  ATK_ROLE_SECTION,
+  ATK_ROLE_REDUNDANT_OBJECT,
+  ATK_ROLE_FORM,
+  ATK_ROLE_LINK,
+  ATK_ROLE_INPUT_METHOD_WINDOW,
   ATK_ROLE_LAST_DEFINED
 } AtkRole;
 
@@ -238,6 +269,32 @@ typedef enum
   ATK_LAYER_WINDOW
 } AtkLayer;
 
+/**
+ * AtkAttributeSet:
+ *
+ * This is a singly-linked list (a #GSList) of #AtkAttribute. It is
+ * used by atk_text_get_run_attributes(), atk_text_get_default_attributes()
+ * and atk_editable_text_set_run_attributes()
+ **/
+typedef GSList AtkAttributeSet;
+
+/**
+ * AtkAttribute:
+ * @name: The attribute name. Call atk_text_attr_get_name()
+ * @value: the value of the attribute, represented as a string. 
+ * Call atk_text_attr_get_value() for those which are strings.
+ * For values which are numbers, the string representation of the number 
+ * is in value.
+ *
+ * A string name/value pair representing a text attribute. 
+ **/
+typedef struct _AtkAttribute AtkAttribute;
+
+struct _AtkAttribute {
+  gchar* name;
+  gchar* value;
+};
+
 #define ATK_TYPE_OBJECT                           (atk_object_get_type ())
 #define ATK_OBJECT(obj)                           (G_TYPE_CHECK_INSTANCE_CAST ((obj), ATK_TYPE_OBJECT, AtkObject))
 #define ATK_OBJECT_CLASS(klass)                   (G_TYPE_CHECK_CLASS_CAST ((klass), ATK_TYPE_OBJECT, AtkObjectClass))
@@ -260,6 +317,24 @@ typedef struct _AtkObjectClass            AtkObjectClass;
 typedef struct _AtkRelationSet            AtkRelationSet;
 typedef struct _AtkStateSet               AtkStateSet;
 
+/**
+ * AtkPropertyValues:
+ * @property_name: The name of the ATK property which is being presented or which has been changed.
+ * @old_value: The old property value, NULL; in some contexts this value is undefined (see note below).
+ * @new_value: The new value of the named property.
+ *
+ * @note: For most properties the old_value field of AtkPropertyValues will
+ * not contain a valid value.
+ *
+ * Currently, the only property for which old_value is used is
+ * accessible-state; for instance if there is a focus state the
+ * property change handler will be called for the object which lost the focus
+ * with the old_value containing an AtkState value corresponding to focused
+ * and the property change handler will be called for the object which
+ * received the focus with the new_value containing an AtkState value
+ * corresponding to focused.
+ *
+ **/
 struct _AtkPropertyValues
 {
   const gchar  *property_name;
@@ -421,10 +496,13 @@ void                      (* initialize)                         (AtkObject     
   void                    (*active_descendant_changed) (AtkObject                  *accessible,
                                                         gpointer                   *child);
 
+  /*    	
+   * Gets a list of properties applied to this object as a whole, as an #AtkAttributeSet consisting of name-value pairs. 
+   * Since ATK 1.12
+   */
+  AtkAttributeSet* 	  (*get_attributes)            (AtkObject                  *accessible);
   AtkFunction             pad1;
   AtkFunction             pad2;
-  AtkFunction             pad3;
-
 };
 
 GType            atk_object_get_type   (void);
@@ -465,6 +543,7 @@ AtkRelationSet*         atk_object_ref_relation_set               (AtkObject *ac
 AtkRole                 atk_object_get_role                       (AtkObject *accessible);
 AtkLayer                atk_object_get_layer                      (AtkObject *accessible);
 gint                    atk_object_get_mdi_zorder                 (AtkObject *accessible);
+AtkAttributeSet*        atk_object_get_attributes                 (AtkObject *accessible);
 AtkStateSet*            atk_object_ref_state_set                  (AtkObject *accessible);
 gint                    atk_object_get_index_in_parent            (AtkObject *accessible);
 void                    atk_object_set_name                       (AtkObject *accessible,
@@ -500,6 +579,8 @@ gboolean              atk_object_remove_relationship           (AtkObject      *
 								AtkRelationType relationship,
 								AtkObject      *target);
 G_CONST_RETURN gchar* atk_role_get_localized_name              (AtkRole     role);
+
+/* */
 
 
 /*

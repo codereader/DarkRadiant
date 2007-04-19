@@ -27,6 +27,7 @@
 #include <atk/atkeditabletext.h>
 #include <atk/atkgobjectaccessible.h>
 #include <atk/atkhyperlink.h>
+#include <atk/atkhyperlinkimpl.h>
 #include <atk/atkhypertext.h>
 #include <atk/atkimage.h>
 #include <atk/atknoopobject.h>

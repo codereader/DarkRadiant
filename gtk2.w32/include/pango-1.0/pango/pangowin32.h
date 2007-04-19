@@ -69,14 +69,21 @@ void           pango_win32_render_transformed (HDC         hdc,
 /* For shape engines
  */
 
+#ifndef PANGO_DISABLE_DEPRECATED
 PangoGlyph     pango_win32_get_unknown_glyph  (PangoFont        *font,
 					       gunichar          wc);
+#endif /* PANGO_DISABLE_DEPRECATED */
 gint	      pango_win32_font_get_glyph_index(PangoFont        *font,
 					       gunichar          wc);
 
 HDC            pango_win32_get_dc             (void);
 
 gboolean       pango_win32_get_debug_flag     (void);
+
+gboolean pango_win32_font_select_font        (PangoFont *font,
+					      HDC        hdc);
+void     pango_win32_font_done_font          (PangoFont *font);
+double   pango_win32_font_get_metrics_factor (PangoFont *font);
 
 #endif
 
@@ -98,6 +105,8 @@ void                 pango_win32_shutdown_display        (void);
 PangoWin32FontCache *pango_win32_font_map_get_font_cache (PangoFontMap       *font_map);
 
 LOGFONT             *pango_win32_font_logfont            (PangoFont          *font);
+
+PangoFontDescription *pango_win32_font_description_from_logfont (const LOGFONT *lfp);
 
 G_END_DECLS
 

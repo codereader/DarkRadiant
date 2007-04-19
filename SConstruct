@@ -243,7 +243,7 @@ class idEnvironment(Environment):
 	# On Win32 we need to add the local paths, since there is no
 	# global include/lib path.
 		if (self['PLATFORM'] == 'win32'):
-			self.Append(CPPPATH = ['#/gtk2.w32/include/glib-2.0', '#/gtk2.w32/lib/glib-2.0/include'])
+			self.Append(CPPPATH = ['#/gtk2.w32/include/glib-2.0', '#/gtk2.w32/lib/glib-2.0/include', '#/gtk2.w32/include/cairo'])
 			self.Append(LIBPATH = ['#/gtk2.w32/lib'])
 			self.Append(LIBS = ['glib-2.0', 'gobject-2.0'])
 		else: # Assume Linux

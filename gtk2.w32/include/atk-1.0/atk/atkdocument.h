@@ -28,9 +28,9 @@ extern "C" {
 #endif /* __cplusplus */
 
 /*
- * The AtkDocument interface should be supported by any object that has an 
- * associated document object model (DOM). This interface provides the
- * standard mechanism allowing an assistive technology access to the DOM.
+ * The AtkDocument interface should be supported by any object that is a container
+ * for 'document content' as opposed to a collection of user interface elements.
+ *
  */
 
 #define ATK_TYPE_DOCUMENT                   (atk_document_get_type ())
@@ -50,21 +50,31 @@ struct _AtkDocumentIface
   G_CONST_RETURN gchar* ( *get_document_type) (AtkDocument              *document);
   gpointer              ( *get_document)      (AtkDocument              *document);
 
+  G_CONST_RETURN gchar* ( *get_document_locale) (AtkDocument              *document);
+  AtkAttributeSet *     ( *get_document_attributes) (AtkDocument        *document);
+  G_CONST_RETURN gchar* ( *get_document_attribute_value) (AtkDocument   *document,
+                                                          const gchar   *attribute_name);
+  gboolean              ( *set_document_attribute) (AtkDocument         *document,
+                                                    const gchar         *attribute_name,
+                                                    const gchar         *attribute_value);
+  
   AtkFunction pad1;
   AtkFunction pad2;
   AtkFunction pad3;
   AtkFunction pad4;
-  AtkFunction pad5;
-  AtkFunction pad6;
-  AtkFunction pad7;
-  AtkFunction pad8;
 };
 
 GType  atk_document_get_type             (void);
 
 G_CONST_RETURN gchar* atk_document_get_document_type (AtkDocument   *document);
 gpointer atk_document_get_document (AtkDocument   *document);
-
+G_CONST_RETURN gchar* atk_document_get_locale (AtkDocument *document);
+AtkAttributeSet*      atk_document_get_attributes (AtkDocument *document);
+G_CONST_RETURN gchar* atk_document_get_attribute_value (AtkDocument *document, 
+                                                        const gchar *attribute_name);
+gboolean              atk_document_set_attribute_value (AtkDocument *document,
+                                                        const gchar *attribute_name,
+                                                        const gchar *attribute_value);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

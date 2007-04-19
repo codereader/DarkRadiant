@@ -1,7 +1,7 @@
 /* gunicode.h - Unicode manipulation functions
  *
  *  Copyright (C) 1999, 2000 Tom Tromey
- *  Copyright 2000 Red Hat, Inc.
+ *  Copyright 2000, 2005 Red Hat, Inc.
  *
  * The Gnome Library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License as
@@ -31,7 +31,7 @@ typedef guint32 gunichar;
 typedef guint16 gunichar2;
 
 /* These are the possible character classifications.
- * See http://www.unicode.org/Public/UNIDATA/UnicodeData.html
+ * See http://www.unicode.org/Public/UNIDATA/UCD.html#General_Category_Values
  */
 typedef enum
 {
@@ -68,6 +68,8 @@ typedef enum
 } GUnicodeType;
 
 /* These are the possible line break classifications.
+ * Note that new types may be added in the future.
+ * Implementations may regard unknown values like G_UNICODE_BREAK_UNKNOWN
  * See http://www.unicode.org/unicode/reports/tr14/
  */
 typedef enum
@@ -102,7 +104,12 @@ typedef enum
   G_UNICODE_BREAK_AMBIGUOUS,
   G_UNICODE_BREAK_UNKNOWN,
   G_UNICODE_BREAK_NEXT_LINE,
-  G_UNICODE_BREAK_WORD_JOINER
+  G_UNICODE_BREAK_WORD_JOINER,
+  G_UNICODE_BREAK_HANGUL_L_JAMO,
+  G_UNICODE_BREAK_HANGUL_V_JAMO,
+  G_UNICODE_BREAK_HANGUL_T_JAMO,
+  G_UNICODE_BREAK_HANGUL_LV_SYLLABLE,
+  G_UNICODE_BREAK_HANGUL_LVT_SYLLABLE
 } GUnicodeBreakType;
 
 /* Returns TRUE if current locale uses UTF-8 charset.  If CHARSET is
@@ -129,6 +136,7 @@ gboolean g_unichar_isxdigit  (gunichar c) G_GNUC_CONST;
 gboolean g_unichar_istitle   (gunichar c) G_GNUC_CONST;
 gboolean g_unichar_isdefined (gunichar c) G_GNUC_CONST;
 gboolean g_unichar_iswide    (gunichar c) G_GNUC_CONST;
+gboolean g_unichar_iswide_cjk(gunichar c) G_GNUC_CONST;
 
 /* More <ctype.h> functions.  These convert between the three cases.
  * See the Unicode book to understand title case.  */
@@ -278,9 +286,16 @@ gint   g_utf8_collate     (const gchar *str1,
 			   const gchar *str2);
 gchar *g_utf8_collate_key (const gchar *str,
 			   gssize       len) G_GNUC_MALLOC;
+gchar *g_utf8_collate_key_for_filename (const gchar *str,
+			                gssize       len) G_GNUC_MALLOC;
 
 gboolean g_unichar_get_mirror_char (gunichar ch,
                                     gunichar *mirrored_ch);
+
+/* private */
+
+gchar *_g_utf8_make_valid (const gchar *name);
+
 
 G_END_DECLS
 

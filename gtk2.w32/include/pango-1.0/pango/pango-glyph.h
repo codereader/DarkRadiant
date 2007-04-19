@@ -91,6 +91,7 @@ void              pango_glyph_string_extents  (PangoGlyphString *glyphs,
 					       PangoFont        *font,
 					       PangoRectangle   *ink_rect,
 					       PangoRectangle   *logical_rect);
+int               pango_glyph_string_get_width(PangoGlyphString *glyphs);
 
 void              pango_glyph_string_extents_range  (PangoGlyphString *glyphs,
                                                      int               start,
@@ -124,7 +125,7 @@ void pango_glyph_string_x_to_index (PangoGlyphString *glyphs,
  */
 void pango_shape (const gchar      *text,
 		  gint              length,
-		  PangoAnalysis    *analysis,
+		  const PangoAnalysis *analysis,
 		  PangoGlyphString *glyphs);
 
 GList *pango_reorder_items (GList *logical_items);

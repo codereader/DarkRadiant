@@ -71,26 +71,21 @@ struct _GtkEntry
   gint         selection_bound;
   
   PangoLayout *cached_layout;
+
   guint        cache_includes_preedit : 1;
+  guint        need_im_reset          : 1;
+  guint        has_frame              : 1;
+  guint        activates_default      : 1;
+  guint        cursor_visible         : 1;
+  guint        in_click               : 1;	/* Flag so we don't select all when clicking in entry to focus in */
+  guint        is_cell_renderer       : 1;
+  guint        editing_canceled       : 1; /* Only used by GtkCellRendererText */
+  guint        mouse_cursor_obscured  : 1;
+  guint        select_words           : 1;
+  guint        select_lines           : 1;
+  guint        resolved_dir           : 4; /* PangoDirection */
+  guint        truncate_multiline     : 1;
 
-  guint        need_im_reset : 1;
-
-  guint        has_frame : 1;
-
-  guint        activates_default : 1;
-
-  guint        cursor_visible : 1;
-
-  guint        in_click : 1;	/* Flag so we don't select all when clicking in entry to focus in */
-
-  guint        is_cell_renderer : 1;
-  guint        editing_canceled : 1; /* Only used by GtkCellRendererText */
-
-  guint        mouse_cursor_obscured : 1;
-  
-  guint        select_words : 1;
-  guint        select_lines : 1;
-  guint        resolved_dir : 4; /* PangoDirection */
   guint   button;
   guint   blink_timeout;
   guint   recompute_idle;
@@ -157,6 +152,9 @@ gunichar   gtk_entry_get_invisible_char         (GtkEntry      *entry);
 void       gtk_entry_set_has_frame              (GtkEntry      *entry,
                                                  gboolean       setting);
 gboolean   gtk_entry_get_has_frame              (GtkEntry      *entry);
+void       gtk_entry_set_inner_border                (GtkEntry        *entry,
+                                                      const GtkBorder *border);
+G_CONST_RETURN GtkBorder* gtk_entry_get_inner_border (GtkEntry        *entry);
 /* text is truncated if needed */
 void       gtk_entry_set_max_length 		(GtkEntry      *entry,
 						 gint           max);
@@ -211,12 +209,6 @@ void       gtk_entry_select_region  		(GtkEntry      *entry,
 void       gtk_entry_set_editable   		(GtkEntry      *entry,
 						 gboolean       editable);
 #endif /* GTK_DISABLE_DEPRECATED */
-
-/* private */
-void      _gtk_entry_get_borders                (GtkEntry *entry,
-						 gint     *xborder,
-						 gint     *yborder);
-
 
 G_END_DECLS
 

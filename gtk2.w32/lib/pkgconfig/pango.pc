@@ -1,14 +1,14 @@
-prefix=c:/devel/target/pango-1.8.2
+prefix=/target
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
 
-pango_module_version=1.4.0
+pango_module_version=1.5.0
 
 Name: Pango
 Description: Internationalized text handling
-Version: 1.8.2
+Version: 1.14.7
 Requires: glib-2.0,gobject-2.0,gmodule-no-export-2.0
-Libs: -L${libdir} -lpango-1.0 
+Libs: -L${libdir} -lpango-1.0 -lm
 Cflags: -I${includedir}/pango-1.0
 

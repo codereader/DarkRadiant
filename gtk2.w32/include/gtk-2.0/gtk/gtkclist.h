@@ -39,9 +39,9 @@
 #include <gtk/gtkvscrollbar.h>
 #include <gtk/gtkenums.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+
+G_BEGIN_DECLS
+
 
 /* clist flags */
 enum {
@@ -151,9 +151,8 @@ struct _GtkCList
   
   guint16 flags;
   
-  /* mem chunks */
-  GMemChunk *row_mem_chunk;
-  GMemChunk *cell_mem_chunk;
+  gpointer reserved1;
+  gpointer reserved2;
 
   guint freeze_count;
   
@@ -785,9 +784,9 @@ PangoLayout *_gtk_clist_create_cell_layout (GtkCList       *clist,
 					    GtkCListRow    *clist_row,
 					    gint            column);
 
-#ifdef __cplusplus
-}
-#endif				/* __cplusplus */
+
+G_END_DECLS
+
 
 #endif				/* __GTK_CLIST_H__ */
 

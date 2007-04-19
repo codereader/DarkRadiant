@@ -86,15 +86,23 @@ G_CONST_RETURN char *   pango_get_lib_subdirectory (void);
 
 #endif /* PANGO_ENABLE_BACKEND */
 
-/* A couple of routines from fribidi that we either wrap or
- * provide ourselves.
+/* A routine from fribidi that we either wrap or provide ourselves.
  */
-gboolean pango_log2vis_get_embedding_levels (gunichar       *str,
-					     int             len,
-					     PangoDirection *pbase_dir,
-					     guint8         *embedding_level_list);
+guint8 * pango_log2vis_get_embedding_levels (const gchar    *text,
+					     int             length,
+					     PangoDirection *pbase_dir);
 
 G_CONST_RETURN char *pango_language_get_sample_string (PangoLanguage *language);
+
+/* Unicode characters that are zero-width and should not be rendered
+ * normally.
+ */
+gboolean pango_is_zero_width (gunichar ch) G_GNUC_CONST;
+
+/* Hint line position and thickness.
+ */
+void pango_quantize_line_geometry (int *thickness,
+				   int *position);
 
 G_END_DECLS
 

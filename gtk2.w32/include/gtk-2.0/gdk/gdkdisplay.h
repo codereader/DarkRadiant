@@ -149,6 +149,10 @@ void             gdk_display_get_pointer           (GdkDisplay             *disp
 GdkWindow *      gdk_display_get_window_at_pointer (GdkDisplay             *display,
 						    gint                   *win_x,
 						    gint                   *win_y);
+void             gdk_display_warp_pointer          (GdkDisplay             *display,
+						    GdkScreen              *screen,
+						    gint                   x,
+						    gint                   y);
 
 GdkDisplayPointerHooks *gdk_display_set_pointer_hooks (GdkDisplay                   *display,
 						       const GdkDisplayPointerHooks *new_hooks);
@@ -174,6 +178,9 @@ void     gdk_display_store_clipboard                (GdkDisplay *display,
 						     guint32     time_,
 						     GdkAtom    *targets,
 						     gint        n_targets);
+
+gboolean gdk_display_supports_shapes           (GdkDisplay    *display);
+gboolean gdk_display_supports_input_shapes     (GdkDisplay    *display);
 
 G_END_DECLS
 

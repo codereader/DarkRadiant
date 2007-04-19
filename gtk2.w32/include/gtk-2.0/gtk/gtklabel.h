@@ -53,11 +53,15 @@ struct _GtkLabel
 
   /*< private >*/
   gchar  *label;
-  guint   jtype : 2;
-  guint   wrap : 1;
-  guint   use_underline : 1;
-  guint   use_markup : 1;
-  guint   ellipsize : 3;
+  guint   jtype            : 2;
+  guint   wrap             : 1;
+  guint   use_underline    : 1;
+  guint   use_markup       : 1;
+  guint   ellipsize        : 3;
+  guint   single_line_mode : 1;
+  guint   have_transform   : 1;
+  guint   in_click         : 1;
+  guint   wrap_mode        : 3;
 
   guint   mnemonic_keyval;
   
@@ -95,10 +99,10 @@ struct _GtkLabelClass
 };
 
 GType                 gtk_label_get_type          (void) G_GNUC_CONST;
-GtkWidget*            gtk_label_new               (const char    *str);
-GtkWidget*            gtk_label_new_with_mnemonic (const char    *str);
+GtkWidget*            gtk_label_new               (const gchar   *str);
+GtkWidget*            gtk_label_new_with_mnemonic (const gchar   *str);
 void                  gtk_label_set_text          (GtkLabel      *label,
-						   const char    *str);
+						   const gchar   *str);
 G_CONST_RETURN gchar* gtk_label_get_text          (GtkLabel      *label);
 void                  gtk_label_set_attributes    (GtkLabel      *label,
 						   PangoAttrList *attrs);
@@ -140,6 +144,9 @@ void     gtk_label_set_pattern                    (GtkLabel         *label,
 void     gtk_label_set_line_wrap                  (GtkLabel         *label,
 						   gboolean          wrap);
 gboolean gtk_label_get_line_wrap                  (GtkLabel         *label);
+void     gtk_label_set_line_wrap_mode             (GtkLabel         *label,
+						   PangoWrapMode     wrap_mode);
+PangoWrapMode gtk_label_get_line_wrap_mode        (GtkLabel         *label);
 void     gtk_label_set_selectable                 (GtkLabel         *label,
 						   gboolean          setting);
 gboolean gtk_label_get_selectable                 (GtkLabel         *label);
@@ -166,7 +173,7 @@ gboolean     gtk_label_get_single_line_mode  (GtkLabel *label);
 
 #define  gtk_label_set           gtk_label_set_text
 void       gtk_label_get           (GtkLabel          *label,
-                                    char             **str);
+                                    gchar            **str);
 
 /* Convenience function to set the name and pattern by parsing
  * a string with embedded underscores, and return the appropriate

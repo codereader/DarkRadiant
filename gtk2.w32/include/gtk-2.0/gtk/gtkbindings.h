@@ -36,9 +36,7 @@
 #include <gtk/gtkenums.h>
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 
 /* Binding sets
@@ -76,14 +74,6 @@ struct _GtkBindingEntry
   GtkBindingSignal	*signals;
 };
 
-struct _GtkBindingSignal
-{
-  GtkBindingSignal	*next;
-  gchar			*signal_name;
-  guint			 n_args;
-  GtkBindingArg		*args;
-};
-
 struct _GtkBindingArg
 {
   GType		 arg_type;
@@ -94,6 +84,13 @@ struct _GtkBindingArg
   } d;
 };
 
+struct _GtkBindingSignal
+{
+  GtkBindingSignal	*next;
+  gchar 		*signal_name;
+  guint			 n_args;
+  GtkBindingArg		*args;
+};
 
 /* Application-level methods */
 
@@ -153,9 +150,8 @@ guint _gtk_binding_signal_new (const gchar       *signal_name,
 			       GType		  return_type,
 			       guint		  n_params,
 			       ...);
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+
+G_END_DECLS
 
 
 #endif /* __GTK_BINDINGS_H__ */

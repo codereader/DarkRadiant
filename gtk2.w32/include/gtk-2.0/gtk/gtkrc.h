@@ -126,7 +126,14 @@ struct _GtkRcStyleClass
 #define gtk_rc_parse gtk_rc_parse_utf8
 #endif
 
-void	  _gtk_rc_init			(void);
+void	  _gtk_rc_init			 (void);
+GSList*   _gtk_rc_parse_widget_class_path (const gchar *pattern);
+void      _gtk_rc_free_widget_class_path (GSList       *list);
+gboolean  _gtk_rc_match_widget_class     (GSList       *list,
+                                          gint          length,
+                                          gchar        *path,
+                                          gchar        *path_reversed);
+
 void      gtk_rc_add_default_file	(const gchar *filename);
 void      gtk_rc_set_default_files      (gchar **filenames);
 gchar**   gtk_rc_get_default_files      (void);
@@ -209,6 +216,7 @@ typedef enum {
   GTK_RC_TOKEN_STOCK,
   GTK_RC_TOKEN_LTR,
   GTK_RC_TOKEN_RTL,
+  GTK_RC_TOKEN_COLOR,
   GTK_RC_TOKEN_LAST
 } GtkRcTokenType;
 
@@ -237,7 +245,10 @@ const GtkRcProperty* _gtk_rc_style_lookup_rc_property (GtkRcStyle *rc_style,
 						       GQuark      type_name,
 						       GQuark      property_name);
 
+GSList     * _gtk_rc_style_get_color_hashes        (GtkRcStyle *rc_style);
+
 const gchar* _gtk_rc_context_get_default_font_name (GtkSettings *settings);
+void         _gtk_rc_context_destroy               (GtkSettings *settings);
 
 G_END_DECLS
 

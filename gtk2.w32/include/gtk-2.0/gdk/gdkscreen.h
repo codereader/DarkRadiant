@@ -24,6 +24,7 @@
 #ifndef __GDK_SCREEN_H__
 #define __GDK_SCREEN_H__
 
+#include <cairo.h>
 #include "gdk/gdktypes.h"
 #include "gdk/gdkdisplay.h"
 
@@ -46,6 +47,9 @@ struct _GdkScreen
 
   GdkGC *normal_gcs[32];
   GdkGC *exposure_gcs[32];
+
+  cairo_font_options_t *font_options;
+  double resolution;		/* pixels/points scale factor for fonts */
 };
 
 struct _GdkScreenClass
@@ -53,6 +57,7 @@ struct _GdkScreenClass
   GObjectClass parent_class;
 
   void (*size_changed) (GdkScreen *screen);
+  void (*composited_changed) (GdkScreen *screen);
 };
 
 GType        gdk_screen_get_type              (void) G_GNUC_CONST;
@@ -63,6 +68,9 @@ GdkColormap* gdk_screen_get_system_colormap   (GdkScreen   *screen);
 GdkVisual*   gdk_screen_get_system_visual     (GdkScreen   *screen);
 GdkColormap *gdk_screen_get_rgb_colormap      (GdkScreen   *screen);
 GdkVisual *  gdk_screen_get_rgb_visual        (GdkScreen   *screen);
+GdkColormap *gdk_screen_get_rgba_colormap     (GdkScreen   *screen);
+GdkVisual *  gdk_screen_get_rgba_visual       (GdkScreen   *screen);
+gboolean     gdk_screen_is_composited	      (GdkScreen   *screen);
 
 GdkWindow *  gdk_screen_get_root_window       (GdkScreen   *screen);
 GdkDisplay * gdk_screen_get_display           (GdkScreen   *screen);
@@ -94,6 +102,17 @@ GdkScreen *gdk_screen_get_default (void);
 gboolean   gdk_screen_get_setting (GdkScreen   *screen,
 				   const gchar *name,
 				   GValue      *value);
+
+void                        gdk_screen_set_font_options (GdkScreen                  *screen,
+							 const cairo_font_options_t *options);
+const cairo_font_options_t *gdk_screen_get_font_options (GdkScreen                  *screen);
+
+void    gdk_screen_set_resolution (GdkScreen *screen,
+				   gdouble    dpi);
+gdouble gdk_screen_get_resolution (GdkScreen *screen);
+
+GdkWindow *gdk_screen_get_active_window (GdkScreen *screen);
+GList     *gdk_screen_get_window_stack  (GdkScreen *screen);
 
 G_END_DECLS
 

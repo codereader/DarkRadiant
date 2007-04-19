@@ -24,10 +24,11 @@
 #include <gtk/gtktreemodel.h>
 #include <gtk/gtktreeviewcolumn.h>
 #include <gtk/gtkdnd.h>
+#include <gtk/gtkentry.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+
+G_BEGIN_DECLS
+
 
 typedef enum
 {
@@ -127,6 +128,9 @@ typedef gboolean (*GtkTreeViewSearchEqualFunc) (GtkTreeModel            *model,
 typedef gboolean (*GtkTreeViewRowSeparatorFunc) (GtkTreeModel      *model,
 						 GtkTreeIter       *iter,
 						 gpointer           data);
+typedef void     (*GtkTreeViewSearchPositionFunc) (GtkTreeView  *tree_view,
+						   GtkWidget    *search_dialog,
+						   gpointer      user_data);
 
 
 /* Creators */
@@ -149,6 +153,7 @@ gboolean               gtk_tree_view_get_headers_visible           (GtkTreeView 
 void                   gtk_tree_view_set_headers_visible           (GtkTreeView               *tree_view,
 								    gboolean                   headers_visible);
 void                   gtk_tree_view_columns_autosize              (GtkTreeView               *tree_view);
+gboolean               gtk_tree_view_get_headers_clickable         (GtkTreeView *tree_view);
 void                   gtk_tree_view_set_headers_clickable         (GtkTreeView               *tree_view,
 								    gboolean                   setting);
 void                   gtk_tree_view_set_rules_hint                (GtkTreeView               *tree_view,
@@ -167,7 +172,7 @@ gint                   gtk_tree_view_insert_column_with_attributes (GtkTreeView 
 								    gint                       position,
 								    const gchar               *title,
 								    GtkCellRenderer           *cell,
-								    ...);
+								    ...) G_GNUC_NULL_TERMINATED;
 gint                   gtk_tree_view_insert_column_with_data_func  (GtkTreeView               *tree_view,
 								    gint                       position,
 								    const gchar               *title,
@@ -262,6 +267,9 @@ void                   gtk_tree_view_tree_to_widget_coords         (GtkTreeView 
 								    gint                       ty,
 								    gint                      *wx,
 								    gint                      *wy);
+gboolean               gtk_tree_view_get_visible_range             (GtkTreeView               *tree_view,
+								    GtkTreePath              **start_path,
+								    GtkTreePath              **end_path);
 
 /* Drag-and-Drop support */
 void                   gtk_tree_view_enable_model_drag_source      (GtkTreeView               *tree_view,
@@ -305,6 +313,15 @@ void                       gtk_tree_view_set_search_equal_func (GtkTreeView     
 								gpointer                    search_user_data,
 								GtkDestroyNotify            search_destroy);
 
+GtkEntry                     *gtk_tree_view_get_search_entry         (GtkTreeView                   *tree_view);
+void                          gtk_tree_view_set_search_entry         (GtkTreeView                   *tree_view,
+								      GtkEntry                      *entry);
+GtkTreeViewSearchPositionFunc gtk_tree_view_get_search_position_func (GtkTreeView                   *tree_view);
+void                          gtk_tree_view_set_search_position_func (GtkTreeView                   *tree_view,
+								      GtkTreeViewSearchPositionFunc  func,
+								      gpointer                       data,
+								      GDestroyNotify                 destroy);
+
 /* This function should really never be used.  It is just for use by ATK.
  */
 typedef void (* GtkTreeDestroyCountFunc)  (GtkTreeView             *tree_view,
@@ -325,6 +342,9 @@ gboolean gtk_tree_view_get_hover_selection   (GtkTreeView          *tree_view);
 void     gtk_tree_view_set_hover_expand      (GtkTreeView          *tree_view,
 					      gboolean              expand);
 gboolean gtk_tree_view_get_hover_expand      (GtkTreeView          *tree_view);
+void     gtk_tree_view_set_rubber_banding    (GtkTreeView          *tree_view,
+					      gboolean              enable);
+gboolean gtk_tree_view_get_rubber_banding    (GtkTreeView          *tree_view);
 
 GtkTreeViewRowSeparatorFunc gtk_tree_view_get_row_separator_func (GtkTreeView               *tree_view);
 void                        gtk_tree_view_set_row_separator_func (GtkTreeView                *tree_view,
@@ -332,9 +352,14 @@ void                        gtk_tree_view_set_row_separator_func (GtkTreeView   
 								  gpointer                    data,
 								  GtkDestroyNotify            destroy);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+GtkTreeViewGridLines        gtk_tree_view_get_grid_lines         (GtkTreeView                *tree_view);
+void                        gtk_tree_view_set_grid_lines         (GtkTreeView                *tree_view,
+								  GtkTreeViewGridLines        grid_lines);
+gboolean                    gtk_tree_view_get_enable_tree_lines  (GtkTreeView                *tree_view);
+void                        gtk_tree_view_set_enable_tree_lines  (GtkTreeView                *tree_view,
+								  gboolean                    enabled);
+
+G_END_DECLS
 
 
 #endif /* __GTK_TREE_VIEW_H__ */

@@ -130,6 +130,9 @@ gdouble	              g_ascii_strtod   (const gchar  *nptr,
 guint64		      g_ascii_strtoull (const gchar *nptr,
 					gchar      **endptr,
 					guint        base);
+gint64		      g_ascii_strtoll  (const gchar *nptr,
+					gchar      **endptr,
+					guint        base);
 /* 29 bytes should enough for all possible values that
  * g_ascii_dtostr can produce.
  * Then add 10 for good measure */
@@ -189,9 +192,10 @@ gchar*	              g_strndup	       (const gchar *str,
 gchar*	              g_strnfill       (gsize        length,  
 					gchar        fill_char) G_GNUC_MALLOC;
 gchar*	              g_strconcat      (const gchar *string1,
-					...) G_GNUC_MALLOC; /* NULL terminated */
+					...) G_GNUC_MALLOC G_GNUC_NULL_TERMINATED;
 gchar*                g_strjoin	       (const gchar  *separator,
-					...) G_GNUC_MALLOC; /* NULL terminated */
+					...) G_GNUC_MALLOC G_GNUC_NULL_TERMINATED;
+
 /* Make a copy of a string interpreting C string -style escape
  * sequences. Inverse of g_strescape. The recognized sequences are \b
  * \f \n \r \t \\ \" and the octal format.

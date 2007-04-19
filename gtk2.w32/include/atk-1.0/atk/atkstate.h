@@ -30,8 +30,8 @@ extern "C" {
  *AtkStateType:
  *@ATK_STATE_INVALID: Indicates an invalid state
  *@ATK_STATE_ACTIVE: Indicates a window is currently the active window
- *@ATK_STATE_ARMED: Indicates that the object is armed
- *@ATK_STATE_BUSY: Indicates the current object is busy
+ *@ATK_STATE_ARMED: Indicates that the object is armed.
+ *@ATK_STATE_BUSY: Indicates the current object is busy.  This state may be used by implementors of Document to indicate that content loading is in process.
  *@ATK_STATE_CHECKED: Indicates this object is currently checked
  *@ATK_STATE_DEFUNCT: Indicates the user interface object corresponding to this object no longer exists
  *@ATK_STATE_EDITABLE: Indicates the user can change the contents of this object
@@ -45,7 +45,7 @@ extern "C" {
  *@ATK_STATE_MODAL: Indicates something must be done with this object before the user can interact with an object in a different window
  *@ATK_STATE_MULTI_LINE: Indicates this (text) object can contain multiple lines of text
  *@ATK_STATE_MULTISELECTABLE: Indicates this object allows more than one of its children to be selected at the same time
- *@ATK_STATE_OPAQUE: Indicates this object paints every pixel within its rectangular region
+ *@ATK_STATE_OPAQUE: Indicates this object paints every pixel within its rectangular region.
  *@ATK_STATE_PRESSED: Indicates this object is currently pressed
  *@ATK_STATE_RESIZABLE: Indicates the size of this object is not fixed
  *@ATK_STATE_SELECTABLE: Indicates this object is the child of an object that allows its children to be selected and that this child is one of those children that can be selected
@@ -62,6 +62,13 @@ extern "C" {
  * Used to prevent need to enumerate all children in very large containers, like tables.
  *@ATK_STATE_INDETERMINATE: Indicates that a check box is in a state other than checked or not checked.
  *@ATK_STATE_TRUNCATED: Indicates that an object is truncated, e.g. a text value in a speradsheet cell.
+ *@ATK_STATE_REQUIRED: Indicates that explicit user interaction with an object is required by the user interface, e.g. a required field in a "web-form" interface.
+ *@ATK_STATE_INVALID_ENTRY: Indicates that the object has encountered an error condition due to failure of input validation. For instance, a form control may acquire this state in response to invalid or malformed user input.
+ *@ATK_STATE_SUPPORTS_AUTOCOMPLETION: Indicates that the object may exhibit "typeahead" behavior in response to user keystrokes, e.g. one keystroke may result in the insertion of several characters into an entry, or result in the auto-selection of an item in a list.  This state supplants @ATK_ROLE_AUTOCOMPLETE.
+ *@ATK_STATE_SELECTABLE_TEXT:Indicates that the object in question supports text selection. It should only be exposed on objects which implement the Text interface, in order to distinguish this state from @ATK_STATE_SELECTABLE, which infers that the object in question is a selectable child of an object which implements Selection. While similar, text selection and subelement selection are distinct operations.
+ *@ATK_STATE_DEFAULT: Indicates that the object is the "default" active component, i.e. the object which is activated by an end-user press of the "Enter" or "Return" key.  Typically a "close" or "submit" button.
+ *@ATK_STATE_ANIMATED: Indicates that the object changes its appearance dynamically as an inherent part of its presentation.  This state may come and go if an object is only temporarily animated on the way to a 'final' onscreen presentation.
+ *@ATK_STATE_VISITED: Indicates that the object (typically a hyperlink) has already been 'activated', and/or its backing data has already been downloaded, rendered, or otherwise "visited".
  *@ATK_STATE_LAST_DEFINED: Not a valid state, used for finding end of enumeration
  *
  *The possible types of states of an object
@@ -100,6 +107,14 @@ typedef enum
   ATK_STATE_MANAGES_DESCENDANTS,
   ATK_STATE_INDETERMINATE,
   ATK_STATE_TRUNCATED,
+  ATK_STATE_REQUIRED,
+  ATK_STATE_INVALID_ENTRY,
+  ATK_STATE_SUPPORTS_AUTOCOMPLETION,
+  ATK_STATE_SELECTABLE_TEXT,
+  ATK_STATE_DEFAULT,
+  ATK_STATE_ANIMATED,
+  ATK_STATE_VISITED,
+	
   ATK_STATE_LAST_DEFINED
 } AtkStateType;
 

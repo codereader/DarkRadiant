@@ -1,4 +1,4 @@
-prefix=/devel/target/glib-2.6.6
+prefix=/target
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
@@ -8,6 +8,6 @@ gmodule_supported=true
 Name: GModule
 Description: Dynamic module loader for GLib
 Requires: glib-2.0
-Version: 2.6.6
+Version: 2.12.4
 Libs: -L${libdir}  -lgmodule-2.0 
 Cflags:

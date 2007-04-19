@@ -26,7 +26,7 @@ extern "C" {
 
 /**
  *AtkRelationType:
- *@ATK_RELATION_NULL:
+ *@ATK_RELATION_NULL: Not used, represens "no relationship" or an error condition.
  *@ATK_RELATION_CONTROLLED_BY: Indicates an object controlled by one or more target objects.
  *@ATK_RELATION_CONTROLLER_FOR: Indicates an object is an controller for one or more target objects.
  *@ATK_RELATION_LABEL_FOR: Indicates an object is a label for one or more target objects.
@@ -37,7 +37,7 @@ extern "C" {
  *  AtkObject in a sequential way, (for instance text-flow).
  *@ATK_RELATION_FLOWS_FROM: Indicates that the object has content that flows logically from
  *  another AtkObject in a sequential way, (for instance text-flow).
- *@ATK_RELATION_SUBWINDOW_OF: [not sure about this one, ask Peter]
+ *@ATK_RELATION_SUBWINDOW_OF: Indicates a subwindow attached to a component but otherwise has no connection in  the UI heirarchy to that component.
  *@ATK_RELATION_EMBEDS: Indicates that the object visually embeds 
  *  another object's content, i.e. this object's content flows around 
  *  another's content.
@@ -45,7 +45,9 @@ extern "C" {
  *  this object's content is visualy embedded in another object.
  *@ATK_RELATION_POPUP_FOR: Indicates that an object is a popup for another object.
  *@ATK_RELATION_PARENT_WINDOW_OF: Indicates that an object is a parent window of another object.
- *@ATK_RELATION_LAST_DEFINED:
+ *@ATK_RELATION_DESCRIBED_BY: Indicates that another object provides descriptive information about this object; more verbose than ATK_RELATION_LABELLED_BY.
+ *@ATK_RELATION_DESCRIPTION_FOR: Indicates that an object provides descriptive information about another object; more verbose than ATK_RELATION_LABEL_FOR.
+ *@ATK_RELATION_LAST_DEFINED: Not used, this value indicates the end of the enumeration.
  * 
  *Describes the type of the relation
  **/
@@ -65,6 +67,8 @@ typedef enum
   ATK_RELATION_EMBEDDED_BY, 
   ATK_RELATION_POPUP_FOR, 
   ATK_RELATION_PARENT_WINDOW_OF, 
+  ATK_RELATION_DESCRIBED_BY,
+  ATK_RELATION_DESCRIPTION_FOR,
   ATK_RELATION_LAST_DEFINED
 } AtkRelationType;
 
