@@ -167,15 +167,16 @@ void DoAbout()
 
       {
 		// RADIANT_VERSION set from makeversion.py during build
-        GtkLabel* label = GTK_LABEL(gtk_label_new("DarkRadiant " RADIANT_VERSION "\n"
-          __DATE__ "\n\n"
-          "The Dark Mod (www.thedarkmod.com)\n\n"
+        GtkLabel* label = GTK_LABEL(gtk_label_new(""));
+        gtk_label_set_markup(label, "<b>DarkRadiant " RADIANT_VERSION "</b>\n"
+          __DATE__ " " __TIME__ "\n\n"
+          "<b>The Dark Mod</b> (www.thedarkmod.com)\n\n"
           "This product contains software technology\n"
           "from id Software, Inc. ('id Technology').\n"
           "id Technology 2000 id Software,Inc.\n\n"
           "DarkRadiant is based on the GPL version\n"
           "of GtkRadiant (www.qeradiant.com)\n"
-        ));
+        );
                        
         gtk_widget_show(GTK_WIDGET(label));
         gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(label), FALSE, FALSE, 0);
