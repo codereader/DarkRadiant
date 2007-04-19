@@ -136,6 +136,10 @@ void ResponseEditor::populatePage() {
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbox), 
 		gtkutil::ScrolledFrame(_list), TRUE, TRUE, 0);
+	
+	// Create the type selector and pack it
+	_addType = createStimTypeSelector();
+	gtk_box_pack_start(GTK_BOX(vbox), _addType.hbox, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), createListButtons(), FALSE, FALSE, 0);
 	
 	gtk_box_pack_start(GTK_BOX(srHBox),	vbox, FALSE, FALSE, 0);
@@ -517,7 +521,11 @@ void ResponseEditor::addSR() {
 	// Get a reference to the newly allocated object
 	StimResponse& sr = _entity->get(id);
 	sr.set("class", "R");
-	sr.set("type", _stimTypes.getFirstName());
+	
+	// Get the selected stim type name from the combo box
+	std::string name = getStimTypeIdFromSelector(GTK_COMBO_BOX(_addType.list));
+	sr.set("type", (!name.empty()) ? name : _stimTypes.getFirstName());
+
 	sr.set("state", "1");
 	
 	// Update the list stores AFTER the type has been set

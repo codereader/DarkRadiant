@@ -37,9 +37,9 @@ protected:
 	
 	// The combo box to select the stim/response type
 	typedef struct TypeSelectorWidgets {
-		GtkWidget* list;
-		GtkWidget* hbox;
-		GtkWidget* label;
+		GtkWidget* hbox;	// The
+		GtkWidget* list;	// the combo box
+		GtkWidget* label;	// The "Type:" label
 	} TypeSelectorWidgets;
 	
 	TypeSelectorWidgets _type;
@@ -68,6 +68,12 @@ public:
 	virtual void update() = 0;
 
 protected:
+	/** greebo: Returns the name of the selected stim in the given combo box.
+	 * 			The model behind that combo box has to be according to the
+	 * 			one created by the StimTypes helper class.
+	 */
+	virtual std::string getStimTypeIdFromSelector(GtkComboBox* widget);
+
 	/** greebo: Adds/removes a S/R from the main list
 	 */
 	virtual void addSR() = 0; 
