@@ -16,9 +16,6 @@ namespace ui
 class ColourPropertyEditor
 : public PropertyEditor
 {
-	// Main widget
-	GtkWidget* _widget;
-
 	// The GtkColorButton
 	GtkWidget* _colorButton;
 	
@@ -47,13 +44,6 @@ public:
 	/// Blank constructor for the PropertyEditorFactory
 	ColourPropertyEditor();
 	
-	/**
-	 * Virtual destructor.
-	 */
-	virtual ~ColourPropertyEditor() {
-		gtk_widget_destroy(_widget);
-	}
-	
 	/// Create a new ColourPropertyEditor
     virtual PropertyEditorPtr createNew(Entity* entity, 
     									const std::string& name, 
@@ -61,15 +51,6 @@ public:
 	{
     	return PropertyEditorPtr(new ColourPropertyEditor(entity, name));
     }
-    
-    /**
-     * Return the main widget.
-     */
-	GtkWidget* getWidget() {
-		gtk_widget_show_all(_widget);
-		return _widget;
-	}
-
 };
 
 }

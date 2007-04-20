@@ -22,13 +22,29 @@ typedef boost::shared_ptr<PropertyEditor> PropertyEditorPtr;
  */
 class PropertyEditor
 {
+protected:
+	// The variable that should hold the main widget 
+	GtkWidget* _widget;
+	
 public:
+
+	/** greebo: Default destructor, checks for a valid widget
+	 * 			and destroys it if not yet done.
+	 */
+	virtual ~PropertyEditor() {
+		if (GTK_IS_WIDGET(_widget)) {
+			gtk_widget_destroy(_widget);
+		}
+	}
 
 	/**
 	 * Return the GtkWidget which is packed into the EntityInspector to display
 	 * the PropertyEditor.
 	 */
-	virtual GtkWidget* getWidget() = 0;
+	virtual GtkWidget* getWidget() {
+		gtk_widget_show_all(_widget);
+		return _widget;
+	}
     
 	/**
 	 * Clone method for virtual construction. This method must create a new

@@ -15,9 +15,6 @@ namespace ui
 class SkinPropertyEditor
 : public PropertyEditor
 {
-	// Main widget
-	GtkWidget* _widget;
-	
 	// Entity to edit
 	Entity* _entity;
 
@@ -47,21 +44,6 @@ public:
 		return PropertyEditorPtr(new SkinPropertyEditor(entity, name, options));
 	}
 
-	/**
-	 * Virtual destructor.
-	 */
-	~SkinPropertyEditor() {
-		gtk_widget_destroy(_widget);
-	}
-
-	/**
-	 * Return the main widget.
-	 */
-	GtkWidget* getWidget() {
-		gtk_widget_show_all(_widget);
-		return _widget;
-	}
-		
 };
 
 }

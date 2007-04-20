@@ -19,10 +19,10 @@ namespace ui
 FloatPropertyEditor::FloatPropertyEditor(Entity* entity,
 										 const std::string& key,
 										 const std::string& options)
-: _widget(gtk_vbox_new(FALSE, 6)),
-  _entity(entity),
+: _entity(entity),
   _key(key)
 {
+	_widget = gtk_vbox_new(FALSE, 6);
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
 
 	// Split the options string to get min and max values

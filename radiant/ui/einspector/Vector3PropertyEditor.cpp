@@ -18,10 +18,10 @@ Vector3PropertyEditor::Vector3PropertyEditor() {}
 // Constructor. Create the GTK widgets here
 Vector3PropertyEditor::Vector3PropertyEditor(Entity* entity, 
 											 const std::string& name)
-: _widget(gtk_vbox_new(FALSE, 6)),
-  _entity(entity),
+: _entity(entity),
   _key(name)
 {
+	_widget = gtk_vbox_new(FALSE, 6);
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
 	GtkWidget* editBox = gtk_hbox_new(FALSE, 6);
 

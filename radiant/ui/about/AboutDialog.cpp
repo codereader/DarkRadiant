@@ -33,7 +33,7 @@ AboutDialog::AboutDialog() :
 void AboutDialog::populateWindow() {
 	GtkWidget* dialogVBox = gtk_vbox_new(FALSE, 6); 
 	
-	GtkWidget* topHBox = gtk_hbox_new(FALSE, 6);
+	GtkWidget* topHBox = gtk_hbox_new(FALSE, 12);
 	
 	GtkWidget* image = gtk_image_new_from_pixbuf(
 		gtkutil::getLocalPixbuf("logo.png")

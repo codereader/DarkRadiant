@@ -16,11 +16,12 @@ namespace ui
 TexturePropertyEditor::TexturePropertyEditor(Entity* entity, 
 											 const std::string& name, 
 											 const std::string& options)
-: _widget(gtk_vbox_new(FALSE, 6)),
-  _prefixes(options),
+: _prefixes(options),
   _entity(entity),
   _key(name)
 {
+	_widget = gtk_vbox_new(FALSE, 6);
+	
 	GtkWidget* outer = gtk_vbox_new(FALSE, 0);
 	GtkWidget* editBox = gtk_hbox_new(FALSE, 3);
 
@@ -40,11 +41,6 @@ TexturePropertyEditor::TexturePropertyEditor(Entity* entity,
 	gtk_box_pack_start(GTK_BOX(outer), editBox, TRUE, FALSE, 0);
 	
 	gtk_box_pack_start(GTK_BOX(_widget), outer, TRUE, TRUE, 0);
-}
-
-// Destructor
-TexturePropertyEditor::~TexturePropertyEditor() {
-	gtk_widget_destroy(_widget);
 }
 
 // Browse button callback

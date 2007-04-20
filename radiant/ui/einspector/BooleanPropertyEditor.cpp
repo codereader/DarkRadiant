@@ -13,9 +13,10 @@ BooleanPropertyEditor::BooleanPropertyEditor() {}
 
 BooleanPropertyEditor::BooleanPropertyEditor(Entity* entity, 
 											 const std::string& name)
-: _widget(gtk_vbox_new(FALSE, 6)),
-  _entity(entity)
+: _entity(entity)
 {
+	_widget = gtk_vbox_new(FALSE, 6);
+	
 	GtkWidget* editBox = gtk_hbox_new(FALSE, 3);
 	gtk_container_set_border_width(GTK_CONTAINER(editBox), 3);
 

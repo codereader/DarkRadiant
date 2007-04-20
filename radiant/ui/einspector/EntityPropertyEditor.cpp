@@ -17,8 +17,9 @@ EntityPropertyEditor::EntityPropertyEditor() {}
 
 EntityPropertyEditor::EntityPropertyEditor(Entity* entity, 
 										   const std::string& name)
-: _widget(gtk_vbox_new(FALSE, 6))
 {
+	_widget = gtk_vbox_new(FALSE, 6);
+	
     GtkWidget* editBox = gtk_hbox_new(FALSE, 3);
     gtk_container_set_border_width(GTK_CONTAINER(editBox), 3);
 
