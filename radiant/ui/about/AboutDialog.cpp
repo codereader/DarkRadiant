@@ -103,7 +103,7 @@ void AboutDialog::populateWindow() {
 	
 	gtk_box_pack_start(GTK_BOX(dialogVBox), gtkutil::LeftAlignment(
 		gtkutil::ScrolledFrame(textView), 18, 1.0f), 
-		FALSE, FALSE, 0
+		TRUE, TRUE, 0
 	);
 	
 	// Create the close button
