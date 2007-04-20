@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "version.h"
 #include "environment.h"
 
+#include "ui/about/AboutDialog.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
 #include "ui/entitylist/EntityList.h"
 #include "ui/groupdialog/GroupDialog.h"
@@ -1902,7 +1903,7 @@ void MainFrame_Construct()
 
 	GlobalEventManager().addCommand("FindReplaceTextures", FreeCaller<ui::FindAndReplaceShader::show>());
 	GlobalEventManager().addCommand("ShowCommandList", FreeCaller<ui::CommandList::show>());
-	GlobalEventManager().addCommand("About", FreeCaller<DoAbout>());
+	GlobalEventManager().addCommand("About", FreeCaller<ui::AboutDialog::show>());
 
 	ui::TexTool::registerCommands();
 

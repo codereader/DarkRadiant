@@ -38,7 +38,6 @@ void DoTextEditor (const char* filename, int cursorpos);
 
 void DoFind();
 void DoSides(int type, int axis);
-void DoAbout();
 
 // greebo: Commented this out (03/2007)
 #if 0
