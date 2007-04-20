@@ -3,6 +3,7 @@
 #include <gtk/gtk.h>
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TreeModel.h"
+#include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/StockIconMenuItem.h"
 #include "string/string.h"
 
@@ -139,6 +140,14 @@ void CustomStimEditor::populatePage() {
 	g_signal_connect(G_OBJECT(_propertyWidgets.nameEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), nameHBox, FALSE, FALSE, 0);
+	
+	GtkWidget* infoText = gtkutil::LeftAlignedLabel(
+		"<b>Note:</b> Please beware that deleting custom stims may\n"
+		"affect other entities as well. So check before you delete." 
+	);
+	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), infoText, FALSE, FALSE, 0);
+	
+	update();
 }
 
 GtkWidget* CustomStimEditor::createListButtons() {
