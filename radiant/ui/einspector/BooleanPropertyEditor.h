@@ -14,9 +14,6 @@ namespace ui
 class BooleanPropertyEditor:
     public PropertyEditor
 {
-	// Main widget
-	GtkWidget* _widget;
-
 	// The checkbox
 	GtkWidget* _checkBox;
 	
@@ -31,11 +28,6 @@ public:
 	// Construct a blank BooleanPropertyEditor for use in the PropertyEditorFactory
 	BooleanPropertyEditor();
 
-	// Destructor
-	virtual ~BooleanPropertyEditor() {
-		gtk_widget_destroy(_widget);
-	}
-
 	// Create a new BooleanPropertyEditor
     virtual PropertyEditorPtr createNew(Entity* entity, 
     									const std::string& name, 
@@ -43,14 +35,6 @@ public:
 	{
     	return PropertyEditorPtr(new BooleanPropertyEditor(entity, name));
     }
-  
-  	/**
-  	 * Get the main widget.
-  	 */
-	GtkWidget* getWidget() {
-		return _widget;
-	}
-    
 };
 
 }

@@ -12,10 +12,11 @@ namespace ui
 SkinPropertyEditor::SkinPropertyEditor(Entity* entity,
 									   const std::string& name,
 									   const std::string& options)
-: _widget(gtk_vbox_new(FALSE, 6)),
-  _entity(entity),
+: _entity(entity),
   _key(name)
 {
+	_widget = gtk_vbox_new(FALSE, 6);
+	
 	// Horizontal box contains keyname, text entry and browse button
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
 	gtk_container_set_border_width(GTK_CONTAINER(hbx), 3);

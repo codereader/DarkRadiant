@@ -13,8 +13,7 @@ namespace ui
 SoundPropertyEditor::SoundPropertyEditor(Entity* entity,
 									     const std::string& name,
 									     const std::string& options)
-: _widget(gtk_vbox_new(FALSE, 6)),
-  _entity(entity),
+: _entity(entity),
   _key(name)
 {
 	// Horizontal box contains the browse button

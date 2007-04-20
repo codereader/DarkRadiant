@@ -15,9 +15,6 @@ namespace ui
 class Vector3PropertyEditor:
     public PropertyEditor
 {
-	// Main widget
-	GtkWidget* _widget;
-
 	// The 3 component fields.
 	GtkWidget* _xValue;
     GtkWidget* _yValue;
@@ -45,13 +42,6 @@ public:
 	// Construct a blank TextPropertyEditor for use in the PropertyEditorFactory
 	Vector3PropertyEditor();
 	
-	/**
-	 * Destructor.
-	 */
-	virtual ~Vector3PropertyEditor() {
-		gtk_widget_destroy(_widget);
-	}
-
 	// Create a new TextPropertyEditor
     virtual PropertyEditorPtr createNew(Entity* entity, 
     									const std::string& name, 
@@ -59,15 +49,7 @@ public:
 	{
     	return PropertyEditorPtr(new Vector3PropertyEditor(entity, name));
     }
-    
-    /**
-     * Get the main widget.
-     */
-	GtkWidget* getWidget() {
-		gtk_widget_show_all(_widget);
-		return _widget;
-	}
-    
+
 };
 
 }

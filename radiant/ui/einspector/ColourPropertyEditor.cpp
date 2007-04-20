@@ -15,10 +15,11 @@ ColourPropertyEditor::ColourPropertyEditor() {}
 // Main ctor
 ColourPropertyEditor::ColourPropertyEditor(Entity* entity, 
 										   const std::string& name)
-: _widget(gtk_vbox_new(FALSE, 6)),
-  _entity(entity),
+: _entity(entity),
   _key(name)
 {
+	_widget = gtk_vbox_new(FALSE, 6);
+	
 	// Create the colour button
 	_colorButton = gtk_color_button_new();
 	gtk_box_pack_start(GTK_BOX(_widget), _colorButton, TRUE, TRUE, 0);

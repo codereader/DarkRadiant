@@ -14,10 +14,7 @@ namespace ui
 class EntityPropertyEditor:
     public PropertyEditor
 {
-	// Main widget
-	GtkWidget* _widget;
-
-    // The combo box
+	// The combo box
     GtkWidget* _comboBox;
     
 private:
@@ -42,13 +39,6 @@ public:
         return PropertyEditorPtr(new EntityPropertyEditor(entity, name));
     }
   
-  	/**
-  	 * Return the main widget.
-  	 */
-	GtkWidget* getWidget() {
-		return _widget;
-	}
-    
 };
 
 }

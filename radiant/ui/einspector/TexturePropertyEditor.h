@@ -14,9 +14,6 @@ namespace ui
 class TexturePropertyEditor
 : public PropertyEditor
 {
-	// Main widget
-	GtkWidget* _widget;
-
 	// Texture prefixes we are interested in
 	const std::string _prefixes;
 	
@@ -42,11 +39,6 @@ public:
 	// PropertyEditorFactory
 	TexturePropertyEditor() {}
 
-	/**
-	 * Virtual destructor.
-	 */
-	virtual ~TexturePropertyEditor();
-
 	// Create a new TexturePropertyEditor
     virtual PropertyEditorPtr createNew(Entity* entity, 
     									const std::string& name, 
@@ -56,14 +48,6 @@ public:
     		new TexturePropertyEditor(entity, name, options)
     	);
     }
-    
-    /**
-     * Return main widget.
-     */
-	GtkWidget* getWidget() {
-		gtk_widget_show_all(_widget);
-		return _widget;
-	}
     
 };
 

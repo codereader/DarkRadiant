@@ -16,9 +16,6 @@ namespace ui
 class FloatPropertyEditor
 : public PropertyEditor
 {
-	// Main widget
-	GtkWidget* _widget;
-	
 	// Slider widget
 	GtkWidget* _scale;
 	
@@ -46,13 +43,6 @@ public:
 	FloatPropertyEditor(Entity*, const std::string&, const std::string&);
 	
 	/**
-	 * Destructor.
-	 */
-	virtual ~FloatPropertyEditor() {
-		gtk_widget_destroy(_widget);
-	}
-	
-	/**
 	 * Virtual PropertyEditor clone method.
 	 */
 	PropertyEditorPtr createNew(Entity* entity, 
@@ -64,13 +54,6 @@ public:
 		);
 	}
 	
-	/**
-	 * Return the widget to the Entity Inspector.
-	 */
-	GtkWidget* getWidget() {
-		gtk_widget_show_all(_widget);
-		return _widget;
-	}
 };
 
 }
