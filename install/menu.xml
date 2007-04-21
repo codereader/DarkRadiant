@@ -158,6 +158,9 @@
 		<menuSeparator />
 
 		<menuItem name="toggleFreeRotation" caption="Free Model Rotation" command="ToggleFreeModelRotation" />
+		
+		<menuSeparator />
+		<menuItem name="transformDialog" caption="Transformation Dialog" command="TransformDialog" />
 
 	</subMenu>
 
