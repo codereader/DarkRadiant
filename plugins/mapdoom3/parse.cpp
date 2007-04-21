@@ -34,11 +34,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "scenelib.h"
 #include "traverselib.h"
 #include "stringio.h"
+#include "string/string.h"
 
 #include "gtkutil/ModalProgressDialog.h"
 #include "gtkutil/dialog.h"
-
-#include <boost/lexical_cast.hpp>
 
 inline MapImporter* Node_getMapImporter(scene::Node& node)
 {
@@ -61,11 +60,20 @@ NodeSmartReference Entity_create(EntityCreator& entityTable, IEntityClassPtr ent
   return NodeSmartReference(entity);
 }
 
-NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entityTable, const PrimitiveParser& parser, int index)
+NodeSmartReference Entity_parseTokens(
+	Tokeniser& tokeniser, 
+	EntityCreator& entityTable, 
+	const PrimitiveParser& parser, 
+	int index,
+	gtkutil::ModalProgressDialog& dialog)
 {
   NodeSmartReference entity(g_nullNode);
   KeyValues keyValues;
 	std::string classname = "";
+	
+	std::string dlgEntityText = 
+		"Loading entity " + intToStr(index);
+	std::string dlgBrushText = "";
 
   int count_primitives = 0;
 	while(1) {
@@ -83,6 +91,14 @@ NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entit
     {
       if(entity == g_nullNode)
       {
+      	// Update the dialog text. This will throw an exception if the cancel
+		// button is clicked, which we must catch and handle.
+		try {
+			dialog.setText(dlgEntityText + dlgBrushText);
+		}
+		catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
+			throw std::runtime_error("Map loading cancelled.");
+		}
         // entity does not have brushes
         entity = Entity_create(entityTable, GlobalEntityClassManager().findOrInsert(classname, false), keyValues);
       }
@@ -90,6 +106,15 @@ NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entit
     }
     else if(token == "{") // begin primitive
     {
+    	// Update the dialog text. This will throw an exception if the cancel
+		// button is clicked, which we must catch and handle.
+		try {
+			dialog.setText(dlgEntityText + dlgBrushText);
+		}
+		catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
+			throw std::runtime_error("Map loading cancelled.");	
+		}
+    	
       if(entity == g_nullNode)
       {
         // entity has brushes
@@ -104,9 +129,11 @@ NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entit
 			|| !Node_getMapImporter(primitive)->importTokens(tokeniser))
 		{
         	throw std::runtime_error("Primitive #" 
-				+ boost::lexical_cast<std::string>(count_primitives) 
+				+ intToStr(count_primitives) 
 				+ ": parse error\n");
 		}
+
+		dlgBrushText = "\nLoading Primitive " + intToStr(count_primitives); 
 
 		scene::Traversable* traversable = Node_getTraversable(entity);
 		if(Node_getEntity(entity)->isContainer() 
@@ -121,6 +148,15 @@ NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entit
 	        	// Warn, but just ignore the brush
 	        	globalErrorStream() << "[mapdoom3] Entity " << index << " failed to accept brush, discarding\n";
 	        }
+	        
+	        // Update the dialog text. This will throw an exception if the cancel
+			// button is clicked, which we must catch and handle.
+			try {
+				dialog.setText(dlgEntityText + dlgBrushText);
+			}
+			catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
+				throw std::runtime_error("Map loading cancelled.");
+			}
 		}
 		else {
 			globalErrorStream() << "entity " << index << ": type " << classname << ": discarding brush " << count_primitives << "\n";
@@ -148,6 +184,10 @@ NodeSmartReference Entity_parseTokens(Tokeniser& tokeniser, EntityCreator& entit
 		keyValues.push_back(KeyValues::value_type(token, value));
 		if(token == "classname") {
 			classname = value;
+			// Generate the new entity text
+			dlgEntityText = "Loading entity " 
+						+ intToStr(index)
+						+ " (" + classname + ")";
 		}
     }
   }
@@ -236,8 +276,7 @@ void Map_Read(scene::Node& root,
 		// Update the dialog text. This will throw an exception if the cancel
 		// button is clicked, which we must catch and handle.
 		try {
-			dialog.setText("Loading entity " 
-						   + boost::lexical_cast<std::string>(entCount));
+			dialog.setText("Loading entity " + intToStr(entCount));
 		}
 		catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
 			gtkutil::errorDialog("Map loading cancelled", 
@@ -257,7 +296,8 @@ void Map_Read(scene::Node& root,
 			NodeSmartReference entity(Entity_parseTokens(tokeniser, 
 														 entityTable, 
 														 parser, 
-														 entCount));
+														 entCount,
+														 dialog));
 			// Insert the entity
 			checkInsert(entity, root, entCount);
 		}
