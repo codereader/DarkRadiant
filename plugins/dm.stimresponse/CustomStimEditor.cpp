@@ -26,6 +26,9 @@ CustomStimEditor::CustomStimEditor(GtkWidget* parentWindow, StimTypes& stimTypes
 	
 	// Setup the context menu items and connect them to the callbacks
 	createContextMenu();
+	
+	// The list may be empty, update the sensitivity 
+	update();
 }
 
 CustomStimEditor::operator GtkWidget*() {
@@ -148,8 +151,6 @@ void CustomStimEditor::populatePage() {
 		"affect other entities as well. So check before you delete." 
 	);
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), infoText, FALSE, FALSE, 0);
-	
-	update();
 }
 
 GtkWidget* CustomStimEditor::createListButtons() {
