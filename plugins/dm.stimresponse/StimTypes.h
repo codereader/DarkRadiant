@@ -36,7 +36,7 @@ class StimTypes :
 	public Entity::Visitor // for parsing custom stim keyvalues from entities
 {
 	// The list of available stims 
-	StimTypeMap _stims;
+	StimTypeMap _stimTypes;
 	
 	// The empty stim.
 	StimType _emptyStimType;
@@ -52,6 +52,10 @@ public:
 	/** greebo: Saves the custom stim types to the storage entity
 	 */
 	void save();
+	
+	/** greebo: Reloads the custom stim types from the map entities.
+	 */
+	void reload();
 	
 	/** greebo: Returns the reference to the internal stim type map
 	 */

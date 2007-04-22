@@ -76,7 +76,12 @@ StimTypes::StimTypes() {
 									GDK_TYPE_PIXBUF,
 									G_TYPE_STRING,
 									G_TYPE_STRING,
-									G_TYPE_BOOLEAN);
+									G_TYPE_BOOLEAN);	
+}
+
+void StimTypes::reload() {
+	_stimTypes.clear();
+	gtk_list_store_clear(_listStore);
 	
 	// Find all the relevant nodes
 	xml::NodeList stimNodes = GlobalRegistry().findXPath(RKEY_STIM_DEFINITIONS);
@@ -121,7 +126,7 @@ void StimTypes::save() {
 		}
 		
 		// Now store all custom stim types to the storage entity
-		for (StimTypeMap::iterator i = _stims.begin(); i != _stims.end(); i++) {
+		for (StimTypeMap::iterator i = _stimTypes.begin(); i != _stimTypes.end(); i++) {
 			StimType& s = i->second;
 			std::string idStr = intToStr(i->first);
 			
@@ -134,11 +139,11 @@ void StimTypes::save() {
 }
 
 void StimTypes::remove(int id) {
-	StimTypeMap::iterator found = _stims.find(id);
+	StimTypeMap::iterator found = _stimTypes.find(id);
 	
-	if (found != _stims.end()) {
+	if (found != _stimTypes.end()) {
 		// Erase the item from the map
-		_stims.erase(found);
+		_stimTypes.erase(found);
 		
 		// Erase the row in the liststore
 		GtkTreeIter iter = getIterForId(id);
@@ -166,10 +171,10 @@ GtkTreeIter StimTypes::getIterForId(int id) {
 }
 
 void StimTypes::setStimTypeCaption(int id, const std::string& caption) {
-	StimTypeMap::iterator found = _stims.find(id);
+	StimTypeMap::iterator found = _stimTypes.find(id);
 	
-	if (found != _stims.end()) {
-		_stims[id].caption = caption;
+	if (found != _stimTypes.end()) {
+		_stimTypes[id].caption = caption;
 		
 		// Combine the ID and the caption
 		std::string captionPlusId = caption + " (" + intToStr(id) + ")";
@@ -198,20 +203,20 @@ void StimTypes::add(int id,
 	newStimType.custom = custom;
 	
 	// Add the stim to the map
-	_stims[id] = newStimType;
+	_stimTypes[id] = newStimType;
 	
 	GtkTreeIter iter;
 	
 	// Combine the ID and the caption
-	std::string captionPlusId = _stims[id].caption + " (" + intToStr(id) + ")";
+	std::string captionPlusId = _stimTypes[id].caption + " (" + intToStr(id) + ")";
 	
 	gtk_list_store_append(_listStore, &iter);
 	gtk_list_store_set(_listStore, &iter, 
 						ST_ID_COL, id,
-						ST_CAPTION_COL, _stims[id].caption.c_str(),
+						ST_CAPTION_COL, _stimTypes[id].caption.c_str(),
 						ST_CAPTION_PLUS_ID_COL, captionPlusId.c_str(),
 						ST_ICON_COL, gtkutil::getLocalPixbufWithMask(newStimType.icon),
-						ST_NAME_COL, _stims[id].name.c_str(),
+						ST_NAME_COL, _stimTypes[id].name.c_str(),
 						ST_CUSTOM_COL, custom,
 						-1);
 }
@@ -247,16 +252,16 @@ StimTypes::operator GtkListStore* () {
 }
 
 StimTypeMap& StimTypes::getStimMap() {
-	return _stims;
+	return _stimTypes;
 }
 
 int StimTypes::getFreeCustomStimId() {
 	int freeId = GlobalRegistry().getInt(RKEY_LOWEST_CUSTOM_STIM_ID);
 	
-	StimTypeMap::iterator found = _stims.find(freeId);
-	while (found != _stims.end()) {
+	StimTypeMap::iterator found = _stimTypes.find(freeId);
+	while (found != _stimTypes.end()) {
 		freeId++;
-		found = _stims.find(freeId);
+		found = _stimTypes.find(freeId);
 	}
 	
 	return freeId;
@@ -276,9 +281,9 @@ GtkTreeIter StimTypes::getIterForName(const std::string& name) {
 }
 
 StimType StimTypes::get(int id) {
-	StimTypeMap::iterator i = _stims.find(id);
+	StimTypeMap::iterator i = _stimTypes.find(id);
 	
-	if (i != _stims.end()) {
+	if (i != _stimTypes.end()) {
 		return i->second;
 	}
 	else {
@@ -287,13 +292,13 @@ StimType StimTypes::get(int id) {
 }
 
 std::string StimTypes::getFirstName() {
-	StimTypeMap::iterator i = _stims.begin();
+	StimTypeMap::iterator i = _stimTypes.begin();
 	
-	return (i != _stims.end()) ? i->second.name : "noname";
+	return (i != _stimTypes.end()) ? i->second.name : "noname";
 }
 
 StimType StimTypes::get(const std::string& name) {
-	for (StimTypeMap::iterator i = _stims.begin(); i!= _stims.end(); i++) {
+	for (StimTypeMap::iterator i = _stimTypes.begin(); i!= _stimTypes.end(); i++) {
 		if (i->second.name == name) {
 			return i->second;
 		}
