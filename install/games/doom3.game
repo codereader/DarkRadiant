@@ -3,7 +3,7 @@
   type="doom3"
   index="99"
   name="Doom 3"
-  enginepath_win32="C:/Program Files/Doom 3/"
+  enginepath_win32="C:/games/doom3/"
   enginepath_linux="/usr/local/games/doom3/"
   enginepath_macos="/usr/local/games/doom3/"
   engine_win32="Doom3.exe"
