@@ -67,9 +67,9 @@ void AboutDialog::populateWindow() {
 	
 	GtkWidget* gtkVersion = gtkutil::LeftAlignedLabel(
 		"Version: " +
-		intToStr(GTK_MAJOR_VERSION) + "." + 
-		intToStr(GTK_MINOR_VERSION) + "." + 
-		intToStr(GTK_MICRO_VERSION)  
+		intToStr(gtk_major_version) + "." + 
+		intToStr(gtk_minor_version) + "." + 
+		intToStr(gtk_micro_version)  
 	);
 	gtk_box_pack_start(GTK_BOX(dialogVBox), gtkutil::LeftAlignment(gtkVersion, 18), FALSE, FALSE, 0);
 
