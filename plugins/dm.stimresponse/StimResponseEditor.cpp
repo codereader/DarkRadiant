@@ -45,7 +45,7 @@ StimResponseEditor::StimResponseEditor() :
 	_entity(NULL),
 	_stimEditor(_stimTypes),
 	_responseEditor(_dialog, _stimTypes),
-	_customStimEditor(_stimTypes)
+	_customStimEditor(_dialog, _stimTypes)
 {
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 12);
