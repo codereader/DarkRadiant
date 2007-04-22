@@ -22,12 +22,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "console.h"
 
 #include <time.h>
+
 #include <gtk/gtktextbuffer.h>
 #include <gtk/gtktextview.h>
 #include <gtk/gtkmenuitem.h>
 #include <gtk/gtkseparatormenuitem.h>
 #include <gtk/gtkscrolledwindow.h>
-
+#include <gtk/gtkversion.h>
 #include "iregistry.h"
 
 #include "gtkutil/messagebox.h"
@@ -66,6 +67,12 @@ void Sys_LogFile(bool enable)
       time(&localtime);
       globalOutputStream() << "Today is: " << ctime(&localtime)
         << "This is DarkRadiant " RADIANT_VERSION "\n";
+        
+        // Output the GTK+ version to the logfile
+        std::string gtkVersion = intToStr(GTK_MAJOR_VERSION) + "."; 
+		gtkVersion += intToStr(GTK_MINOR_VERSION) + "."; 
+		gtkVersion += intToStr(GTK_MICRO_VERSION);
+        globalOutputStream() << "GTK+ Version: " << gtkVersion.c_str() << "\n";
     }
     else
       gtk_MessageBox (0, "Failed to create log file, check write permissions in Radiant directory.\n",
