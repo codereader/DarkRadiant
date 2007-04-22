@@ -22,6 +22,8 @@
   entities="doom3"
   brushtypes="doom3"
   patchtypes="doom3 def2doom3"
+  registryKey="SOFTWARE\id\Doom 3"
+  registryValue="InstallPath"
 >
 	<filtersystem>
 		<filter name="World geometry">

@@ -13,6 +13,7 @@
 #include "gtkutil/dialog.h"
 #include "gtkutil/messagebox.h"
 #include "mainframe.h"
+#include "Win32Registry.h"
 #include <gtk/gtkmain.h>
 
 namespace game {
@@ -142,7 +143,25 @@ void Manager::constructPaths() {
 void Manager::initEnginePath() {
 	// Try to retrieve a saved value for the engine path
 	std::string enginePath = GlobalRegistry().get(RKEY_ENGINE_PATH);
+	xml::NodeList gameNodeList = GlobalRegistry().findXPath("game");
 	
+	if (enginePath.empty() && gameNodeList.size() > 0) {
+		std::string regKey = gameNodeList[0].getAttributeValue("registryKey");
+		std::string regValue = gameNodeList[0].getAttributeValue("registryValue");
+		
+		globalOutputStream() << "GameManager: Querying Windows Registry for game path: "
+							 << "HKEY_LOCAL_MACHINE\\"
+							 << regKey.c_str() << "\\" << regValue.c_str() << "\n";
+		  
+		// Query the Windows Registry for a default installation path
+		// This will return "" for non-Windows environments
+		enginePath = Win32Registry::getKeyValue("SOFTWARE\\id\\Doom 3","InstallPath");
+		
+		globalOutputStream() << "GameManager: Windows Registry returned result: "
+							 << enginePath.c_str() << "\n";  	
+	}
+	
+	// If the engine path is still empty, consult the .game file for a fallback value
 	if (enginePath.empty()) {
 		// No engine path set so far, search the game file for default values
 		const char* ENGINEPATH_ATTRIBUTE =
