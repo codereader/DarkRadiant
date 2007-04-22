@@ -99,7 +99,9 @@ void StimResponseEditor::toggleWindow() {
 		_windowPosition.applyPosition();
 		// Scan the selection for entities
 		rescanSelection();
-		
+		// Reload all the stim types, the map might have changed 
+		_stimTypes.reload();
+			
 		// Has the rescan found an entity (the pointer is non-NULL then)
 		if (_entity != NULL) {
 			// Now show the dialog window again
