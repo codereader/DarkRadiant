@@ -69,9 +69,9 @@ void Sys_LogFile(bool enable)
         << "This is DarkRadiant " RADIANT_VERSION "\n";
         
         // Output the GTK+ version to the logfile
-        std::string gtkVersion = intToStr(GTK_MAJOR_VERSION) + "."; 
-		gtkVersion += intToStr(GTK_MINOR_VERSION) + "."; 
-		gtkVersion += intToStr(GTK_MICRO_VERSION);
+        std::string gtkVersion = intToStr(gtk_major_version) + "."; 
+		gtkVersion += intToStr(gtk_minor_version) + "."; 
+		gtkVersion += intToStr(gtk_micro_version);
         globalOutputStream() << "GTK+ Version: " << gtkVersion.c_str() << "\n";
     }
     else
