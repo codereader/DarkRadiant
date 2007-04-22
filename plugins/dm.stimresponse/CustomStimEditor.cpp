@@ -1,6 +1,7 @@
 #include "CustomStimEditor.h"
 
 #include <gtk/gtk.h>
+#include "gtkutil/messagebox.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/LeftAlignedLabel.h"
@@ -16,9 +17,10 @@ namespace ui {
 
 /** greebo: Constructor creates all the widgets
  */
-CustomStimEditor::CustomStimEditor(StimTypes& stimTypes) :
+CustomStimEditor::CustomStimEditor(GtkWidget* parentWindow, StimTypes& stimTypes) :
 	_stimTypes(stimTypes),
-	_updatesDisabled(false)
+	_updatesDisabled(false),
+	_parentWindow(parentWindow)
 {
 	populatePage();
 	
@@ -251,7 +253,16 @@ int CustomStimEditor::getIdFromSelection() {
 }
 
 void CustomStimEditor::removeStimType() {
-	_stimTypes.remove(getIdFromSelection());
+	EMessageBoxReturn returnValue = gtk_MessageBox(
+		_parentWindow, 
+		"Beware that other entities <i>might</i> still be using this stim type.\n"
+		"Do you really want to delete this custom stim?", 
+		"Delete Custom Stim", eMB_YESNO, eMB_ICONQUESTION
+	);
+	
+	if (returnValue == eIDYES) {
+		_stimTypes.remove(getIdFromSelection());
+	}
 }
 
 void CustomStimEditor::onAddStimType(GtkWidget* button, CustomStimEditor* self) {
