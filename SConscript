@@ -415,6 +415,7 @@ radiant_src = [
 'ui/einspector/LightTextureChooser.cpp',
 'ui/einspector/FloatPropertyEditor.cpp',
 'ui/einspector/ModelPropertyEditor.cpp',
+'ui/einspector/PropertyEditor.cpp',
 'ui/lightinspector/LightInspector.cpp',
 'ui/modelselector/ModelSelector.cpp',
 'ui/ortho/OrthoContextMenu.cpp',

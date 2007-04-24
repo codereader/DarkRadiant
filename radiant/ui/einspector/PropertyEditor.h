@@ -22,29 +22,30 @@ typedef boost::shared_ptr<PropertyEditor> PropertyEditorPtr;
  */
 class PropertyEditor
 {
+	// The quit callback handle
+	guint _quitHandle;
+
 protected:
 	// The variable that should hold the main widget 
 	GtkWidget* _widget;
 	
 public:
+	/** greebo: The constructor sets up the GTK quit callback
+	 * 			that should be called right before the main
+	 * 			loop exits to invalidate the widget pointer. 
+	 */
+	PropertyEditor();
 
 	/** greebo: Default destructor, checks for a valid widget
 	 * 			and destroys it if not yet done.
 	 */
-	virtual ~PropertyEditor() {
-		if (GTK_IS_WIDGET(_widget)) {
-			gtk_widget_destroy(_widget);
-		}
-	}
+	virtual ~PropertyEditor();
 
 	/**
 	 * Return the GtkWidget which is packed into the EntityInspector to display
 	 * the PropertyEditor.
 	 */
-	virtual GtkWidget* getWidget() {
-		gtk_widget_show_all(_widget);
-		return _widget;
-	}
+	virtual GtkWidget* getWidget();
     
 	/**
 	 * Clone method for virtual construction. This method must create a new
@@ -63,7 +64,12 @@ public:
     virtual PropertyEditorPtr createNew(Entity* entity, 
 										const std::string& key,
 										const std::string& options) = 0;
-    
+  
+	/** greebo: This function gets called right before the main loop
+	 * 			quits and gives this class a chance to invalidate their
+	 * 			widget pointers so that they don't get destroyed twice.  			
+	 */
+	static gboolean onGTKQuit(gpointer data);  
 };
 
 }
