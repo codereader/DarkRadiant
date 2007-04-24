@@ -329,24 +329,6 @@ struct RawStringHash
   }
 };
 
-struct HashString
-{
-  typedef hash_t hash_type;
-  hash_type operator()(const CopiedString& string) const
-  {
-    return string_hash(string.c_str());
-  }
-};
-
-struct HashStringNoCase
-{
-  typedef hash_t hash_type;
-  hash_type operator()(const CopiedString& string) const
-  {
-    return string_hash_nocase(string.c_str());
-  }
-};
-
 /// \brief Length of a string in ub4.
 /// "wibble" (6) gives 2,
 /// "and" (3) gives 1,
