@@ -367,20 +367,6 @@ inline TextOutputStreamType& ostream_write(TextOutputStreamType& outputStream, c
   return outputStream << '(' << v.x() << ' ' << v.y() << ' ' << v.z() << ')';
 }
 
-
-
-
-inline void CopiedString_importString(CopiedString& self, const char* string)
-{
-  self = string;
-}
-typedef ReferenceCaller1<CopiedString, const char*, CopiedString_importString> CopiedStringImportStringCaller;
-inline void CopiedString_exportString(const CopiedString& self, const StringImportCallback& importer)
-{
-  importer(self.c_str());
-}
-typedef ConstReferenceCaller1<CopiedString, const StringImportCallback&, CopiedString_exportString> CopiedStringExportStringCaller;
-
 inline void Bool_importString(bool& self, const char* string)
 {
   self = string_equal(string, "true");
