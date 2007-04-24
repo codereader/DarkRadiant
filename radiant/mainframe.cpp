@@ -1469,22 +1469,26 @@ void MainFrame::Create()
   else if (CurrentStyle() == eFloating)
   {
     {
-      GtkWindow* window = create_persistent_floating_window("Camera", m_window);
-	  GlobalEventManager().connectAccelGroup(window);
-      GlobalCamera().restoreCamWndState(window);
+     	GtkWidget* camWindow = gtkutil::TransientWindow("Camera", m_window, false);
+     	// Catch the delete event
+    	g_signal_connect(G_OBJECT(camWindow), "delete-event", 
+    					 G_CALLBACK(gtkutil::TransientWindow::toggleOnDelete), m_window);
+		
+		GtkWindow* window = GTK_WINDOW(camWindow);
+		GlobalEventManager().connectAccelGroup(window);
+		GlobalCamera().restoreCamWndState(window);
       
-      gtk_widget_show(GTK_WIDGET(window));
+		gtk_widget_show(GTK_WIDGET(window));
 
-      m_pCamWnd = GlobalCamera().newCamWnd();
-      GlobalCamera().setCamWnd(m_pCamWnd);
+		m_pCamWnd = GlobalCamera().newCamWnd();
+		GlobalCamera().setCamWnd(m_pCamWnd);
 
-      {
-        GtkFrame* frame = create_framed_widget(m_pCamWnd->getWidget());
-        gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(frame));
-      }
-      GlobalCamera().setParent(m_pCamWnd, window);
-
-      g_floating_windows.push_back(GTK_WIDGET(window));
+		gtk_container_add(
+			GTK_CONTAINER(window), 
+			gtkutil::FramedWidget(m_pCamWnd->getWidget())
+		);
+		GlobalCamera().setParent(m_pCamWnd, window);
+		g_floating_windows.push_back(GTK_WIDGET(window));
     }
 
    	{

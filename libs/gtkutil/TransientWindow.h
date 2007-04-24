@@ -57,6 +57,10 @@ public:
 	// order to allow it to be restored correctly.
 	static void minimise(GtkWidget* window);
 
+	/** greebo: Just toggles the visibility of this window and blocks the delete event propagation.
+	 */
+	static gboolean toggleOnDelete(GtkWidget* widget, GdkEvent* event, GtkWindow* parent);
+
 private:
 	/** greebo: This shows the parent again, so that it doesn't disappear behind other applications
 	 */
