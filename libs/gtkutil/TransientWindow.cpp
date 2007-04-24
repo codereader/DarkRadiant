@@ -92,7 +92,7 @@ gboolean TransientWindow::showParentOnDelete(GtkWidget* widget, GdkEvent* event,
 		gtk_window_present(parent);
 	}
 
-	return false;
+	return FALSE;
 }
 
 gboolean TransientWindow::onDelete(GtkWidget* widget, GdkEvent* event, GtkWindow* parent) {
@@ -102,7 +102,25 @@ gboolean TransientWindow::onDelete(GtkWidget* widget, GdkEvent* event, GtkWindow
 	// Disconnect the parent
 	g_signal_handler_disconnect(G_OBJECT(parent), handlerID);
 
-	return false;
+	return FALSE;
+}
+
+gboolean TransientWindow::toggleOnDelete(GtkWidget* widget, GdkEvent* event, GtkWindow* parent) {
+	// Toggle the visibility
+	if (GTK_WIDGET_VISIBLE(widget)) {
+		gtk_widget_hide(widget);
+		
+		// Show the parent again, so that it doesn't disappear behind other applications
+		if (gtk_window_is_active(GTK_WINDOW(widget))) {
+			gtk_window_present(parent);
+		}
+	}
+	else {
+		gtk_widget_show(widget);
+	}
+	
+	// Don't propagate the call
+	return TRUE;
 }
 
 } // namespace gtkutil

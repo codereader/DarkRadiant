@@ -139,13 +139,7 @@ gint window_realize_remove_sysmenu(GtkWidget* widget, gpointer data)
   return FALSE;
 }
 
-gboolean persistent_floating_window_delete(GtkWindow* floating, GdkEvent *event, GtkWindow* main_window)
-{
-  gtk_widget_hide(GTK_WIDGET(floating));
-  return TRUE;
-}
-
-GtkWindow* create_persistent_floating_window(const char* title, GtkWindow* main_window)
+/*GtkWindow* create_persistent_floating_window(const char* title, GtkWindow* main_window)
 {
   GtkWindow* window = GTK_WINDOW(create_floating_window(title, main_window));
 
@@ -155,7 +149,7 @@ GtkWindow* create_persistent_floating_window(const char* title, GtkWindow* main_
   g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(persistent_floating_window_delete), 0);
 
   return window;
-}
+}*/
 
 gint window_realize_remove_minmax(GtkWidget* widget, gpointer data)
 {
