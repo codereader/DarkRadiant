@@ -718,49 +718,6 @@ public:
 const TestBleh testbleh;
 #endif
 
-
-#if 0
-class TestRefcountedString
-{
-public:
-  TestRefcountedString()
-  {
-    {
-      // copy construct
-      SmartString string1("string1");
-      SmartString string2(string1);
-      SmartString string3(string2);
-    }
-    {
-      // refcounted assignment
-      SmartString string1("string1");
-      SmartString string2("string2");
-      string1 = string2;
-    }
-    {
-      // copy assignment
-      SmartString string1("string1");
-      SmartString string2("string2");
-      string1 = string2.c_str();
-    }
-    {
-      // self-assignment
-      SmartString string1("string1");
-      string1 = string1;
-    }
-    {
-      // self-assignment via another reference
-      SmartString string1("string1");
-      SmartString string2(string1);
-      string1 = string2;
-    }
-  }
-};
-
-const TestRefcountedString g_testRefcountedString;
-
-#endif
-
 void Select_MakeDetail()
 {
   UndoableCommand undo("brushSetDetail");

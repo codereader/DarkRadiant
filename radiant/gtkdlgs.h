@@ -44,7 +44,6 @@ void DoSides(int type, int axis);
 #ifdef WIN32
 extern bool g_TextEditor_useWin32Editor;
 #else
-#include "string/stringfwd.h"
 extern bool g_TextEditor_useCustomEditor;
 extern std::string g_TextEditor_editorCommand;
 #endif
