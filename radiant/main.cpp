@@ -39,7 +39,6 @@ StringOutputStream - similar to std::stringstream \n
 \link os/path.h os/path.h \endlink - Path manipulation for radiant's standard path format \n
 \link os/file.h os/file.h \endlink - OS file-system access. \n
 
-::CopiedString - automatic string memory management \n
 Array - automatic array memory management \n
 HashTable - generic hashtable, similar to std::hash_map \n
 

@@ -104,7 +104,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class NameObserver
 {
   UniqueNames& m_names;
-  CopiedString m_name;
+  std::string m_name;
 
   void construct()
   {
@@ -190,7 +190,7 @@ public:
   void mergeNames(const BasicNamespace& other) const
   {
     typedef std::list<NameCallback> SetNameCallbacks;
-    typedef std::map<CopiedString, SetNameCallbacks> NameGroups;
+    typedef std::map<std::string, SetNameCallbacks> NameGroups;
     NameGroups groups;
 
     UniqueNames uniqueNames(other.m_uniqueNames);
