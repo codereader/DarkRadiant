@@ -40,8 +40,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 class RadiantModuleServer : public ModuleServer
 {
-  typedef std::pair<CopiedString, int> ModuleType;
-  typedef std::pair<ModuleType, CopiedString> ModuleKey;
+  typedef std::pair<std::string, int> ModuleType;
+  typedef std::pair<ModuleType, std::string> ModuleKey;
   typedef std::map<ModuleKey, Module*> Modules_;
   Modules_ m_modules;
   bool m_error;
