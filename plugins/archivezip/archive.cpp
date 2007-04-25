@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 class DeflatedArchiveFile : public ArchiveFile
 {
-  CopiedString m_name;
+  std::string m_name;
   FileInputStream m_istream;
   SubFileInputStream m_substream;
   DeflatedInputStream m_zipstream;
@@ -68,7 +68,7 @@ public:
 
 class DeflatedArchiveTextFile : public ArchiveTextFile
 {
-  CopiedString m_name;
+  std::string m_name;
   FileInputStream m_istream;
   SubFileInputStream m_substream;
   DeflatedInputStream m_zipstream;
@@ -121,7 +121,7 @@ class ZipArchive : public Archive
 
   typedef GenericFileSystem<ZipRecord> ZipFileSystem;
   ZipFileSystem m_filesystem;
-  CopiedString m_name;
+  std::string m_name;
   FileInputStream m_istream;
 
   bool read_record()

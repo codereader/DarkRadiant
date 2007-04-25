@@ -42,7 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 class DirectoryArchive : public Archive
 {
-  CopiedString m_root;
+  std::string m_root;
 public:
   DirectoryArchive(const char* root) : m_root(root)
   {
