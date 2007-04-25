@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "os/path.h"
 
 #include <map>
+#include <iostream>
 
 inline unsigned int path_get_depth(const char* path)
 {
@@ -50,17 +51,21 @@ class GenericFileSystem
 {
   class Path
   {
-    CopiedString m_path;
+    std::string m_path;
     unsigned int m_depth;
   public:
     Path(const char* path)
       : m_path(path), m_depth(path_get_depth(c_str()))
-    {
+    {}
+    
+    Path(StringRange range) {
+    	// Take the full string range
+    	std::string temp = range.first;
+    	// And truncate it at the given length
+    	m_path = temp.substr(0, range.last - range.first); 
+    	m_depth = path_get_depth(c_str());
     }
-    Path(StringRange range)
-      : m_path(range), m_depth(path_get_depth(c_str()))
-    {
-    }
+    
     bool operator<(const Path& other) const
     {
       return string_less_nocase(c_str(), other.c_str());
