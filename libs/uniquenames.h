@@ -28,13 +28,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "string/string.h"
 #include "generic/static.h"
 
+#include <boost/algorithm/string/trim.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+
 class Postfix
 {
 	// The integer value extracted from the postfix
 	unsigned int _value;
 public:
-	Postfix(const char* postfix) : 
-		_value(atoi(postfix)) 
+	Postfix(const std::string& postfix) : 
+		_value(atoi(postfix.c_str())) 
 	{}
 	
 	unsigned int number() const {
@@ -63,7 +66,7 @@ public:
 	}
 };
 
-typedef std::pair<CopiedString, Postfix> name_t;
+typedef std::pair<std::string, Postfix> name_t;
 
 inline void name_write(char* buffer, name_t name)
 {
@@ -71,17 +74,18 @@ inline void name_write(char* buffer, name_t name)
   name.second.write(buffer + strlen(name.first.c_str()));
 }
 
-inline name_t name_read(const char* name)
-{
-  const char* end = name + strlen(name);
-  for(const char* p = end; end != name; --p)
-  {
-    if(strrchr("1234567890", *p) == NULL)
-      break;
-    end = p;
-  }
+/** greebo: This splits the given string into a name and a postfix.
+ * 			The postfix is any trailing (multi-digit) number.
+ */
+inline name_t name_read(const std::string& input) {
+	// Retrieve the name by cutting of the trailing number
+	std::string prefix = boost::algorithm::trim_right_copy_if(
+		input, boost::algorithm::is_any_of("1234567890")
+	);
+	// Get the trimmed part and take it as postfix 
+	std::string postfix = input.substr(prefix.size());
 
-  return name_t(CopiedString(StringRange(name, end)), Postfix(end));
+	return name_t(prefix, Postfix(postfix));
 }
 
 
@@ -153,7 +157,7 @@ public:
 
 class UniqueNames
 {
-  typedef std::map<CopiedString, PostFixes> names_t;
+  typedef std::map<std::string, PostFixes> names_t;
   names_t m_names;
 public:
 	/** greebo: A name_t is passed and analysed, if the nameroot
