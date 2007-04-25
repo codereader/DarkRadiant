@@ -265,7 +265,7 @@ inline hash_t path_hash(const char* path, hash_t previous = 0)
 
 struct PathEqual
 {
-  bool operator()(const CopiedString& path, const CopiedString& other) const
+  bool operator()(const std::string& path, const std::string& other) const
   {
     return path_equal(path.c_str(), other.c_str());
   }
@@ -274,13 +274,13 @@ struct PathEqual
 struct PathHash
 {
   typedef hash_t hash_type;
-  hash_type operator()(const CopiedString& path) const
+  hash_type operator()(const std::string& path) const
   {
     return path_hash(path.c_str());
   }
 };
 
-typedef std::pair<CopiedString, CopiedString> ModelKey;
+typedef std::pair<std::string, std::string> ModelKey;
 
 struct ModelKeyEqual
 {
