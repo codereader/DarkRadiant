@@ -902,7 +902,7 @@ bool MainFrame_isActiveApp()
   return false;
 }
 
-typedef std::list<CopiedString> StringStack;
+typedef std::list<std::string> StringStack;
 StringStack g_wait_stack;
 WaitDialog g_wait;
 

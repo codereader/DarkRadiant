@@ -369,7 +369,7 @@ bool g_TextEditor_useWin32Editor = true;
 #else
   // custom shader editor
 bool g_TextEditor_useCustomEditor = false;
-CopiedString g_TextEditor_editorCommand("");
+std::string g_TextEditor_editorCommand("");
 #endif
 
 void DoTextEditor (const char* filename, int cursorpos)

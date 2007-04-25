@@ -46,7 +46,7 @@ extern bool g_TextEditor_useWin32Editor;
 #else
 #include "string/stringfwd.h"
 extern bool g_TextEditor_useCustomEditor;
-extern CopiedString g_TextEditor_editorCommand;
+extern std::string g_TextEditor_editorCommand;
 #endif
 #endif
 
