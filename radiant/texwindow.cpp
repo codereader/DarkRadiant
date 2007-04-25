@@ -167,7 +167,7 @@ public:
 	int originy;
 	int m_nTotalHeight;
 
-  CopiedString shader;
+  std::string shader;
 
   GtkEntry* m_filter;
   NonModalEntry m_filterEntry;
@@ -391,7 +391,7 @@ void TextureBrowser_SetSelectedShader(TextureBrowser& textureBrowser, const std:
 }
 
 
-CopiedString g_TextureBrowser_currentDirectory;
+std::string g_TextureBrowser_currentDirectory;
 
 /*
 ============================================================================
@@ -620,15 +620,6 @@ bool texture_name_ignore(const char* name)
     strstr(strTemp.c_str(), ".blend") != 0 ||
 	  strstr(strTemp.c_str(), ".alpha") != 0;
 }
-
-class LoadShaderVisitor : public Archive::Visitor
-{
-public:
-  void visit(const char* name)
-  {
-    IShaderPtr shader = QERApp_Shader_ForName(CopiedString(StringRange(name, path_get_filename_base_end(name))).c_str());
-  }
-};
 
 //void TextureBrowser_SetHideUnused(TextureBrowser& textureBrowser, bool hideUnused);
 
