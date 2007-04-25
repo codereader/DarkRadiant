@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iscenegraph.h"
 #include "generic/callback.h"
 #include "signal/signalfwd.h"
-#include "string/stringfwd.h"
 
 #include <ostream>
 #include <string>
