@@ -364,6 +364,7 @@ radiant_env.useGtk2()
 radiant_env.useGtkGLExt()
 radiant_env.useOpenGL()
 radiant_env.useBoostFilesystem()
+radiant_env.buildIconResource()
 
 radiant_src = [
 'brushmanip.cpp',
@@ -520,7 +521,11 @@ if radiant_env['PLATFORM'] == 'win32':
     radiant_env.Append(LIBS = ['ws2_32', 'comdlg32'])
     radiant_src.append('radiant/multimon.cpp')
 
-radiant_prog = radiant_env.Program(target='darkradiant', source=radiant_src)
+if radiant_env['PLATFORM'] == 'win32':
+	radiant_prog = radiant_env.Program(target='darkradiant', source=radiant_src + ['radiant/darkradiant.o'])
+else:
+	radiant_prog = radiant_env.Program(target='darkradiant', source=radiant_src)
+
 radiant_env.Depends(radiant_prog, mathlib_lib)
 radiant_env.Depends(radiant_prog, cmdlib_lib)
 radiant_env.Depends(radiant_prog, profile_lib)

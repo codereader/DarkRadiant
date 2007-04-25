@@ -324,6 +324,11 @@ class idEnvironment(Environment):
 			self['LINKFLAGS'] += '-lpthread -Wl,-stack_size,0x400000 '
 		else:
 			self['LINKFLAGS'] += '-lpthread '
+	
+	def buildIconResource(self):
+		# build the windows icon resource file
+		if sys.platform == 'win32':
+			self.RES(['radiant/darkradiant.rc'])
 
 g_env = idEnvironment()
 g_env.useBoost()
