@@ -111,7 +111,7 @@ class NameObserver
     if(!empty())
     {
       //globalOutputStream() << "construct " << makeQuoted(c_str()) << "\n";
-      m_names.insert(name_read(c_str()));
+      m_names.insert(name_read(m_name));
     }
   }
   void destroy()
@@ -119,7 +119,7 @@ class NameObserver
     if(!empty())
     {
       //globalOutputStream() << "destroy " << makeQuoted(c_str()) << "\n";
-      m_names.erase(name_read(c_str()));
+      m_names.erase(name_read(m_name));
     }
   }
 
@@ -139,7 +139,7 @@ public:
   }
   bool empty() const
   {
-    return string_empty(c_str()); 
+    return m_name.empty(); 
   }
   const char* c_str() const
   {
@@ -202,7 +202,7 @@ public:
 
     for(NameGroups::iterator i = groups.begin(); i != groups.end(); ++i)
     {
-      name_t uniqueName(uniqueNames.make_unique(name_read((*i).first.c_str())));
+      name_t uniqueName(uniqueNames.make_unique(name_read(i->first)));
       uniqueNames.insert(uniqueName);
 
       char buffer[1024];
@@ -210,7 +210,7 @@ public:
 
       //globalOutputStream() << "renaming " << makeQuoted((*i).first.c_str()) << " to " << makeQuoted(buffer) << "\n";
 
-      SetNameCallbacks& setNameCallbacks = (*i).second;
+      SetNameCallbacks& setNameCallbacks = i->second;
 
       for(SetNameCallbacks::const_iterator j = setNameCallbacks.begin(); j != setNameCallbacks.end(); ++j)
       {
