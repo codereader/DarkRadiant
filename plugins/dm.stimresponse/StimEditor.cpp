@@ -67,7 +67,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	g_signal_connect(G_OBJECT(_type.list), "changed", G_CALLBACK(onStimTypeSelect), this);
 	
 	// Create the table for the widget alignment
-	GtkTable* table = GTK_TABLE(gtk_table_new(9, 2, FALSE));
+	GtkTable* table = GTK_TABLE(gtk_table_new(10, 2, FALSE));
 	gtk_table_set_row_spacings(table, 6);
 	gtk_table_set_col_spacings(table, 6);
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), GTK_WIDGET(table), FALSE, FALSE, 0);
@@ -201,6 +201,22 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	gtk_table_attach(table, _propertyWidgets.velocityToggle, 0, 1, 9, 10, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(table, _propertyWidgets.velocityEntry, 1, 2, 9, 10);
 	
+	// Bounds mins and maxs
+	_propertyWidgets.bounds.hbox = gtk_hbox_new(FALSE, 6);
+	_propertyWidgets.bounds.toggle = gtk_check_button_new_with_label("Bounds ");
+	_propertyWidgets.bounds.minLabel = gtk_label_new("Min:");
+	_propertyWidgets.bounds.maxLabel = gtk_label_new("Max:");
+	_propertyWidgets.bounds.minEntry = gtk_entry_new();
+	_propertyWidgets.bounds.maxEntry = gtk_entry_new();
+	GtkBox* boundsHBox = GTK_BOX(_propertyWidgets.bounds.hbox); // shortcut cast
+	gtk_box_pack_start(boundsHBox, _propertyWidgets.bounds.minLabel, FALSE, FALSE, 0);
+	gtk_box_pack_start(boundsHBox, _propertyWidgets.bounds.minEntry, TRUE, TRUE, 0);
+	gtk_box_pack_start(boundsHBox, _propertyWidgets.bounds.maxLabel, FALSE, FALSE, 0);
+	gtk_box_pack_start(boundsHBox, _propertyWidgets.bounds.maxEntry, TRUE, TRUE, 0);
+	
+	gtk_table_attach(table, _propertyWidgets.bounds.toggle, 0, 1, 10, 11, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(table, _propertyWidgets.bounds.hbox, 1, 2, 10, 11);
+	
 	// The map associating entry fields to stim property keys  
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.radiusEntry)] = "radius";
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.timeIntEntry)] = "time_interval";
@@ -210,6 +226,8 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.durationEntry)] = "duration";
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.timer.reloadEntry)] = "timer_reload";
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.velocityEntry)] = "velocity";
+	_entryWidgets[GTK_EDITABLE(_propertyWidgets.bounds.minEntry)] = "bounds_mins";
+	_entryWidgets[GTK_EDITABLE(_propertyWidgets.bounds.maxEntry)] = "bounds_maxs";
 	
 	// Connect the checkboxes
 	g_signal_connect(G_OBJECT(_propertyWidgets.active), "toggled", G_CALLBACK(onCheckboxToggle), this);
@@ -225,6 +243,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	g_signal_connect(G_OBJECT(_propertyWidgets.timer.reloadToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.timer.waitToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.velocityToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.bounds.toggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	
 	// Connect the entry fields
 	g_signal_connect(G_OBJECT(_propertyWidgets.magnEntry), "changed", G_CALLBACK(onEntryChanged), this);
@@ -239,6 +258,8 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	g_signal_connect(G_OBJECT(_propertyWidgets.timer.millisecond), "changed", G_CALLBACK(onEntryChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.timer.reloadEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.velocityEntry), "changed", G_CALLBACK(onEntryChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.bounds.minEntry), "changed", G_CALLBACK(onEntryChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.bounds.maxEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	
 	return _propertyWidgets.vbox;
 }
@@ -351,6 +372,29 @@ void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 			entryText = "";
 		}
 		setProperty("velocity", entryText);
+	}
+	else if (toggleWidget == _propertyWidgets.bounds.toggle) {
+		std::string entryText = 
+			gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.bounds.minEntry));
+	
+		// Enter a default value for the entry text, if it's empty up till now.
+		if (active) {
+			entryText += (entryText.empty()) ? "-10 -10 -10" : "";	
+		}
+		else {
+			entryText = "";
+		}
+		setProperty("bounds_mins", entryText);
+		
+		entryText = gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.bounds.maxEntry));
+		// Enter a default value for the entry text, if it's empty up till now.
+		if (active) {
+			entryText += (entryText.empty()) ? "10 10 10" : "";	
+		}
+		else {
+			entryText = "";
+		}
+		setProperty("bounds_maxs", entryText);
 	}
 	else if (toggleWidget == _propertyWidgets.durationToggle) {
 		std::string entryText = 
@@ -672,6 +716,25 @@ void StimEditor::update() {
 		gtk_widget_set_sensitive(
 			_propertyWidgets.velocityEntry, 
 			useVelocity
+		);
+		
+		// Use Velocity
+		bool useBoundsMinMax = (sr.get("bounds_mins") != "");
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.bounds.toggle),
+			useBoundsMinMax
+		);
+		gtk_entry_set_text(
+			GTK_ENTRY(_propertyWidgets.bounds.minEntry),
+			sr.get("bounds_mins").c_str()
+		);
+		gtk_entry_set_text(
+			GTK_ENTRY(_propertyWidgets.bounds.maxEntry),
+			sr.get("bounds_maxs").c_str()
+		);
+		gtk_widget_set_sensitive(
+			_propertyWidgets.bounds.hbox, 
+			useBoundsMinMax
 		);
 		
 		// Disable the editing of inherited properties completely
