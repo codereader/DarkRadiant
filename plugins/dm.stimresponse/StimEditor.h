@@ -81,6 +81,10 @@ public:
 	void update();
 
 private:
+	/** greebo: Retrieves the formatted timer string h:m:s:ms
+	 */
+	std::string getTimerString();
+
 	/** greebo: Adds a new stim to the list
 	 */
 	void addSR();
