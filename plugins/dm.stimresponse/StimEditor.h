@@ -47,6 +47,15 @@ class StimEditor :
 		GtkWidget* chanceEntry;
 		GtkWidget* velocityToggle;
 		GtkWidget* velocityEntry;
+		
+		struct BoundsWidgets {
+			GtkWidget* toggle;
+			GtkWidget* hbox;
+			GtkWidget* minLabel;
+			GtkWidget* minEntry;
+			GtkWidget* maxLabel;
+			GtkWidget* maxEntry;
+		} bounds;
 	} _propertyWidgets;
 	
 	struct ListContextMenu {
