@@ -48,9 +48,9 @@ void CustomStimEditor::createContextMenu() {
 		
 	// Each menu gets a delete item
 	_contextMenu.remove = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
-														   "Delete Stim Type");
+														   "Delete");
 	_contextMenu.add = gtkutil::StockIconMenuItem(GTK_STOCK_ADD,
-														   "Add Stim Type");
+														   "Add");
 	
 	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu),
 						  _contextMenu.add);

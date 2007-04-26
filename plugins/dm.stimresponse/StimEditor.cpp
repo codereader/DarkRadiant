@@ -480,18 +480,16 @@ void StimEditor::createContextMenu() {
 		
 	// Each menu gets a delete item
 	_contextMenu.remove = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
-														   "Delete Stim");
-	_contextMenu.add = gtkutil::StockIconMenuItem(GTK_STOCK_ADD,
-														   "Add Stim");
+														   "Delete");
+	//_contextMenu.add = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Add Stim");
 	_contextMenu.disable = gtkutil::StockIconMenuItem(GTK_STOCK_NO,
-														   "Deactivate Stim");
+														   "Deactivate");
 	_contextMenu.enable = gtkutil::StockIconMenuItem(GTK_STOCK_YES,
-														   "Activate Stim");
+														   "Activate");
 	_contextMenu.duplicate = gtkutil::StockIconMenuItem(GTK_STOCK_COPY,
-														   "Duplicate Stim");
+														   "Duplicate");
 
-	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu),
-						  _contextMenu.add);
+	//gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), _contextMenu.add);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), 
 						  _contextMenu.enable);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), 
@@ -504,8 +502,8 @@ void StimEditor::createContextMenu() {
 	// Connect up the signals
 	g_signal_connect(G_OBJECT(_contextMenu.remove), "activate",
 					 G_CALLBACK(onContextMenuDelete), this);
-	g_signal_connect(G_OBJECT(_contextMenu.add), "activate",
-					 G_CALLBACK(onContextMenuAdd), this);
+	/*g_signal_connect(G_OBJECT(_contextMenu.add), "activate",
+					 G_CALLBACK(onContextMenuAdd), this);*/
 	g_signal_connect(G_OBJECT(_contextMenu.enable), "activate",
 					 G_CALLBACK(onContextMenuEnable), this);
 	g_signal_connect(G_OBJECT(_contextMenu.disable), "activate",
