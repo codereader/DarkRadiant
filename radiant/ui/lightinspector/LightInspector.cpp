@@ -442,19 +442,11 @@ void LightInspector::getValuesFromEntity() {
 	
 	// Determine whether this is a projected light, and set the toggles
 	// appropriately
-	if (!_entity->getKeyValue("light_target").empty()
-		&& !_entity->getKeyValue("light_right").empty()
-		&& !_entity->getKeyValue("light_up").empty())
-	{
-		// Is a projected light
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_projLightToggle),
-									 TRUE);
-	}
-	else {
-		// Is a point light
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_pointLightToggle),
-									 TRUE);
-	}
+	_isProjected = (!_entity->getKeyValue("light_target").empty() && 
+					!_entity->getKeyValue("light_right").empty() && 
+					!_entity->getKeyValue("light_up").empty());
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_projLightToggle), _isProjected);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_pointLightToggle), !_isProjected);
 	
 	// If this entity has light_start and light_end keys, set the checkbox
 	if (!_entity->getKeyValue("light_start").empty()
