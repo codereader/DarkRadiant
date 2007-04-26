@@ -67,7 +67,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	g_signal_connect(G_OBJECT(_type.list), "changed", G_CALLBACK(onStimTypeSelect), this);
 	
 	// Create the table for the widget alignment
-	GtkTable* table = GTK_TABLE(gtk_table_new(8, 2, FALSE));
+	GtkTable* table = GTK_TABLE(gtk_table_new(9, 2, FALSE));
 	gtk_table_set_row_spacings(table, 6);
 	gtk_table_set_col_spacings(table, 6);
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), GTK_WIDGET(table), FALSE, FALSE, 0);
@@ -194,6 +194,13 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	gtk_table_attach(table, _propertyWidgets.chanceToggle, 0, 1, 8, 9, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(table, _propertyWidgets.chanceEntry, 1, 2, 8, 9);
 	
+	// Velocity variable
+	_propertyWidgets.velocityToggle = gtk_check_button_new_with_label("Velocity:");
+	_propertyWidgets.velocityEntry = gtk_entry_new();
+	
+	gtk_table_attach(table, _propertyWidgets.velocityToggle, 0, 1, 9, 10, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(table, _propertyWidgets.velocityEntry, 1, 2, 9, 10);
+	
 	// The map associating entry fields to stim property keys  
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.radiusEntry)] = "radius";
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.timeIntEntry)] = "time_interval";
@@ -202,6 +209,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.chanceEntry)] = "chance";
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.durationEntry)] = "duration";
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.timer.reloadEntry)] = "timer_reload";
+	_entryWidgets[GTK_EDITABLE(_propertyWidgets.velocityEntry)] = "velocity";
 	
 	// Connect the checkboxes
 	g_signal_connect(G_OBJECT(_propertyWidgets.active), "toggled", G_CALLBACK(onCheckboxToggle), this);
@@ -216,6 +224,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	g_signal_connect(G_OBJECT(_propertyWidgets.timer.toggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.timer.reloadToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.timer.waitToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.velocityToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	
 	// Connect the entry fields
 	g_signal_connect(G_OBJECT(_propertyWidgets.magnEntry), "changed", G_CALLBACK(onEntryChanged), this);
@@ -229,6 +238,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	g_signal_connect(G_OBJECT(_propertyWidgets.timer.second), "changed", G_CALLBACK(onEntryChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.timer.millisecond), "changed", G_CALLBACK(onEntryChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.timer.reloadEntry), "changed", G_CALLBACK(onEntryChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.velocityEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	
 	return _propertyWidgets.vbox;
 }
@@ -328,6 +338,19 @@ void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 			entryText = "";
 		}
 		setProperty("chance", entryText);
+	}
+	else if (toggleWidget == _propertyWidgets.velocityToggle) {
+		std::string entryText = 
+			gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.velocityEntry));
+	
+		// Enter a default value for the entry text, if it's empty up till now.
+		if (active) {
+			entryText += (entryText.empty()) ? "0 0 100" : "";	
+		}
+		else {
+			entryText = "";
+		}
+		setProperty("velocity", entryText);
 	}
 	else if (toggleWidget == _propertyWidgets.durationToggle) {
 		std::string entryText = 
@@ -634,6 +657,21 @@ void StimEditor::update() {
 		gtk_widget_set_sensitive(
 			_propertyWidgets.chanceEntry, 
 			useChance
+		);
+		
+		// Use Velocity
+		bool useVelocity = (sr.get("velocity") != "");
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.velocityToggle),
+			useVelocity
+		);
+		gtk_entry_set_text(
+			GTK_ENTRY(_propertyWidgets.velocityEntry),
+			sr.get("velocity").c_str()
+		);
+		gtk_widget_set_sensitive(
+			_propertyWidgets.velocityEntry, 
+			useVelocity
 		);
 		
 		// Disable the editing of inherited properties completely

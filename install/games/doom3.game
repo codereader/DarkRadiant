@@ -220,6 +220,9 @@
 			<property name="chance" classes="SR" />
 			<property name="random_effects" classes="R" />
 			<property name="max_fire_count" classes="S" />
+			<property name="bounds_mins" classes="S" />
+			<property name="bounds_maxs" classes="S" />
+			<property name="velocity" classes="S" />
 		</properties>
 		<customStimStorageEClass value="worldspawn" />
 		<customStimKeyPrefix value="editor_dr_stim_" />
