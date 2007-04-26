@@ -11,6 +11,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/classification.hpp>
+#include "string/string.h" 
 
 #include "SREntity.h"
 
@@ -189,7 +190,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	
 	// Chance variable
 	_propertyWidgets.chanceToggle = gtk_check_button_new_with_label("Chance:");
-	_propertyWidgets.chanceEntry = gtk_entry_new();
+	_propertyWidgets.chanceEntry = gtk_spin_button_new_with_range(0.0f, 1.0f, 0.1f);
 	
 	gtk_table_attach(table, _propertyWidgets.chanceToggle, 0, 1, 8, 9, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(table, _propertyWidgets.chanceEntry, 1, 2, 8, 9);
@@ -348,17 +349,11 @@ void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 		setProperty("time_interval", entryText);
 	}
 	else if (toggleWidget == _propertyWidgets.chanceToggle) {
-		std::string entryText = 
-			gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.chanceEntry));
-	
-		// Enter a default value for the entry text, if it's empty up till now.
-		if (active) {
-			entryText += (entryText.empty()) ? "1.0" : "";	
-		}
-		else {
-			entryText = "";
-		}
-		setProperty("chance", entryText);
+		std::string entryText = floatToStr(gtk_spin_button_get_value_as_float(
+			GTK_SPIN_BUTTON(_propertyWidgets.chanceEntry)
+		));
+
+		setProperty("chance", active ? entryText : "");
 	}
 	else if (toggleWidget == _propertyWidgets.velocityToggle) {
 		std::string entryText = 
@@ -692,9 +687,9 @@ void StimEditor::update() {
 			GTK_TOGGLE_BUTTON(_propertyWidgets.chanceToggle),
 			useChance
 		);
-		gtk_entry_set_text(
-			GTK_ENTRY(_propertyWidgets.chanceEntry),
-			sr.get("chance").c_str()
+		gtk_spin_button_set_value(
+			GTK_SPIN_BUTTON(_propertyWidgets.chanceEntry),
+			strToFloat(sr.get("chance"))
 		);
 		gtk_widget_set_sensitive(
 			_propertyWidgets.chanceEntry, 
