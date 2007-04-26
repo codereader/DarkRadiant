@@ -45,6 +45,8 @@ class StimEditor :
 		GtkWidget* falloffEntry;
 		GtkWidget* chanceToggle;
 		GtkWidget* chanceEntry;
+		GtkWidget* velocityToggle;
+		GtkWidget* velocityEntry;
 	} _propertyWidgets;
 	
 	struct ListContextMenu {
