@@ -27,7 +27,7 @@ void GroupDialog::construct(GtkWindow* parent) {
 	
 	// Set the default border width in accordance to the HIG
 	//gtk_container_set_border_width(GTK_CONTAINER(_dialog), 12);
-	gtk_window_set_type_hint(GTK_WINDOW(_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
+	//gtk_window_set_type_hint(GTK_WINDOW(_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 	
 	g_signal_connect(G_OBJECT(_dialog), "delete-event", G_CALLBACK(onDelete), this);
 	
