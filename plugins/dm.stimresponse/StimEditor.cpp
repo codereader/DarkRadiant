@@ -108,7 +108,8 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	_propertyWidgets.timer.typeToggle = gtk_check_button_new_with_label("Timer restarts after firing");
 			
 	_propertyWidgets.timer.reloadHBox = gtk_hbox_new(FALSE, 3);
-	_propertyWidgets.timer.reloadEntry = gtk_entry_new();
+	_propertyWidgets.timer.reloadEntry = gtk_spin_button_new_with_range(0, 1000, 1);
+	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.timer.reloadEntry), 0);
 	gtk_widget_set_size_request(_propertyWidgets.timer.reloadEntry, 50, -1);
 	_propertyWidgets.timer.reloadToggle = gtk_check_button_new_with_label("Timer reloads");
 	_propertyWidgets.timer.reloadLabel = gtkutil::LeftAlignedLabel("times");
@@ -411,17 +412,10 @@ void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 		setProperty("timer_time", active ? timerStr : "");
 	}
 	else if (toggleWidget == _propertyWidgets.timer.reloadToggle) {
-		std::string entryText = 
-			gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.timer.reloadEntry));
-		
-		// Enter a default value for the entry text, if it's empty up till now.
-		if (active) {
-			entryText += (entryText.empty()) ? "1" : "";	
-		}
-		else {
-			entryText = "";
-		}
-		setProperty("timer_reload", entryText);
+		std::string entryText = intToStr(gtk_spin_button_get_value_as_int(
+			GTK_SPIN_BUTTON(_propertyWidgets.timer.reloadEntry)
+		));
+		setProperty("timer_reload", active ? entryText : "");
 	}
 	else if (toggleWidget == _propertyWidgets.timer.waitToggle) {
 		setProperty("timer_waitforstart", active ? "1" : "");
@@ -627,9 +621,9 @@ void StimEditor::update() {
 			_propertyWidgets.timer.reloadToggle, 
 			useTimerType
 		);
-		gtk_entry_set_text(
-			GTK_ENTRY(_propertyWidgets.timer.reloadEntry),
-			sr.get("timer_reload").c_str()
+		gtk_spin_button_set_value(
+			GTK_SPIN_BUTTON(_propertyWidgets.timer.reloadEntry),
+			strToInt(sr.get("timer_reload"))
 		);
 		gtk_widget_set_sensitive(_propertyWidgets.timer.reloadHBox, userTimerReload);
 		
