@@ -131,7 +131,8 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	GtkWidget* radiusHBox = gtk_hbox_new(FALSE, 0);
 	_propertyWidgets.radiusToggle = gtk_check_button_new_with_label("Radius:");
 	
-	_propertyWidgets.radiusEntry = gtk_entry_new();
+	_propertyWidgets.radiusEntry = gtk_spin_button_new_with_range(0, 99999, 1);
+	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.radiusEntry), 1);
 	_propertyWidgets.useBounds = gtk_check_button_new_with_label("Use bounds");
 	gtk_box_pack_start(GTK_BOX(radiusHBox), _propertyWidgets.radiusEntry, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(radiusHBox), _propertyWidgets.useBounds, FALSE, FALSE, 6);
@@ -143,12 +144,14 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	_propertyWidgets.magnToggle = gtk_check_button_new_with_label("Magnitude:");
 	
 	GtkWidget* magnHBox = gtk_hbox_new(FALSE, 6);
-	_propertyWidgets.magnEntry = gtk_entry_new();
+	_propertyWidgets.magnEntry = gtk_spin_button_new_with_range(0, 10000, 1);
+	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.magnEntry), 2);
 	gtk_entry_set_width_chars(GTK_ENTRY(_propertyWidgets.magnEntry), 7);
 	
 	// Falloff exponent
 	_propertyWidgets.falloffToggle = gtk_check_button_new_with_label("Falloff Exponent:");
-	_propertyWidgets.falloffEntry = gtk_entry_new();
+	_propertyWidgets.falloffEntry = gtk_spin_button_new_with_range(-10, 10, 0.1f);
+	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.falloffEntry), 2);
 	gtk_entry_set_width_chars(GTK_ENTRY(_propertyWidgets.falloffEntry), 7);
 	
 	gtk_box_pack_start(GTK_BOX(magnHBox), _propertyWidgets.magnEntry, FALSE, FALSE, 0);
@@ -161,8 +164,8 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	// Time Interval
 	GtkWidget* timeHBox = gtk_hbox_new(FALSE, 6);
 	_propertyWidgets.timeIntToggle = gtk_check_button_new_with_label("Time interval:");
-	_propertyWidgets.timeIntEntry = gtk_entry_new();
-	gtk_entry_set_width_chars(GTK_ENTRY(_propertyWidgets.timeIntEntry), 10);
+	_propertyWidgets.timeIntEntry = gtk_spin_button_new_with_range(0, 9999999, 10);
+	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.timeIntEntry), 0);
 	_propertyWidgets.timeUnitLabel = gtkutil::RightAlignedLabel("ms");
 		
 	gtk_box_pack_start(GTK_BOX(timeHBox), _propertyWidgets.timeIntEntry, TRUE, TRUE, 0);
@@ -174,7 +177,8 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	// Duration
 	GtkWidget* durationHBox = gtk_hbox_new(FALSE, 6);
 	_propertyWidgets.durationToggle = gtk_check_button_new_with_label("Duration:");
-	_propertyWidgets.durationEntry = gtk_entry_new();
+	_propertyWidgets.durationEntry = gtk_spin_button_new_with_range(0, 9999999, 10);
+	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.durationEntry), 0);
 	_propertyWidgets.durationUnitLabel = gtkutil::RightAlignedLabel("ms");
 	
 	gtk_box_pack_start(GTK_BOX(durationHBox), _propertyWidgets.durationEntry, TRUE, TRUE, 0);
@@ -185,7 +189,8 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	
 	// Chance variable
 	_propertyWidgets.chanceToggle = gtk_check_button_new_with_label("Chance:");
-	_propertyWidgets.chanceEntry = gtk_spin_button_new_with_range(0.0f, 1.0f, 0.1f);
+	_propertyWidgets.chanceEntry = gtk_spin_button_new_with_range(0.0f, 1.0f, 0.01f);
+	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.chanceEntry), 2);
 	
 	gtk_table_attach(table, _propertyWidgets.chanceToggle, 0, 1, 8, 9, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(table, _propertyWidgets.chanceEntry, 1, 2, 8, 9);
@@ -300,56 +305,16 @@ void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 		setProperty("timer_type", active ? "RELOAD" : "");
 	}
 	else if (toggleWidget == _propertyWidgets.radiusToggle) {
-		std::string entryText = 
-			gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.radiusEntry));
-	
-		// Enter a default value for the entry text, if it's empty up till now.
-		if (active) {
-			entryText += (entryText.empty()) ? "10" : "";	
-		}
-		else {
-			entryText = "";
-		}
-		setProperty("radius", entryText);
+		setProperty("radius", active ? "10" : "");
 	}
 	else if (toggleWidget == _propertyWidgets.magnToggle) {
-		std::string entryText = 
-			gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.magnEntry));
-	
-		// Enter a default value for the entry text, if it's empty up till now.
-		if (active) {
-			entryText += (entryText.empty()) ? "10" : "";	
-		}
-		else {
-			entryText = "";
-		}
-		setProperty("magnitude", entryText);
+		setProperty("magnitude", active ? "10" : "");
 	}
 	else if (toggleWidget == _propertyWidgets.falloffToggle) {
-		std::string entryText = 
-			gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.falloffEntry));
-	
-		// Enter a default value for the entry text, if it's empty up till now.
-		if (active) {
-			entryText += (entryText.empty()) ? "1" : "";	
-		}
-		else {
-			entryText = "";
-		}
-		setProperty("falloffexponent", entryText);
+		setProperty("falloffexponent", active ? "1" : "");
 	}
 	else if (toggleWidget == _propertyWidgets.timeIntToggle) {
-		std::string entryText = 
-			gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.timeIntEntry));
-	
-		// Enter a default value for the entry text, if it's empty up till now.
-		if (active) {
-			entryText += (entryText.empty()) ? "1000" : "";	
-		}
-		else {
-			entryText = "";
-		}
-		setProperty("time_interval", entryText);
+		setProperty("time_interval", active ? "1000" : "");
 	}
 	else if (toggleWidget == _propertyWidgets.chanceToggle) {
 		std::string entryText = floatToStr(gtk_spin_button_get_value_as_float(
@@ -395,27 +360,14 @@ void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 		setProperty("bounds_maxs", entryText);
 	}
 	else if (toggleWidget == _propertyWidgets.durationToggle) {
-		std::string entryText = 
-			gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.durationEntry));
-	
-		// Enter a default value for the entry text, if it's empty up till now.
-		if (active) {
-			entryText += (entryText.empty()) ? "1000" : "";	
-		}
-		else {
-			entryText = "";
-		}
-		setProperty("duration", entryText);
+		setProperty("duration", active ? "1000" : "");
 	}
 	else if (toggleWidget == _propertyWidgets.timer.toggle) {
 		std::string timerStr = getTimerString();
 		setProperty("timer_time", active ? timerStr : "");
 	}
 	else if (toggleWidget == _propertyWidgets.timer.reloadToggle) {
-		std::string entryText = intToStr(gtk_spin_button_get_value_as_int(
-			GTK_SPIN_BUTTON(_propertyWidgets.timer.reloadEntry)
-		));
-		setProperty("timer_reload", active ? entryText : "");
+		setProperty("timer_reload", active ? "1" : "");
 	}
 	else if (toggleWidget == _propertyWidgets.timer.waitToggle) {
 		setProperty("timer_waitforstart", active ? "1" : "");
@@ -518,9 +470,9 @@ void StimEditor::update() {
 			GTK_TOGGLE_BUTTON(_propertyWidgets.radiusToggle),
 			useRadius
 		);
-		gtk_entry_set_text(
-			GTK_ENTRY(_propertyWidgets.radiusEntry), 
-			sr.get("radius").c_str()
+		gtk_spin_button_set_value(
+			GTK_SPIN_BUTTON(_propertyWidgets.radiusEntry), 
+			strToFloat(sr.get("radius"))
 		);
 		gtk_widget_set_sensitive(
 			_propertyWidgets.radiusEntry, 
@@ -540,9 +492,9 @@ void StimEditor::update() {
 			GTK_TOGGLE_BUTTON(_propertyWidgets.durationToggle),
 			useDuration
 		);
-		gtk_entry_set_text(
-			GTK_ENTRY(_propertyWidgets.durationEntry), 
-			sr.get("duration").c_str()
+		gtk_spin_button_set_value(
+			GTK_SPIN_BUTTON(_propertyWidgets.durationEntry), 
+			strToInt(sr.get("duration"))
 		);
 		gtk_widget_set_sensitive(
 			_propertyWidgets.durationEntry, 
@@ -559,9 +511,9 @@ void StimEditor::update() {
 			GTK_TOGGLE_BUTTON(_propertyWidgets.timeIntToggle),
 			useTimeInterval
 		);
-		gtk_entry_set_text(
-			GTK_ENTRY(_propertyWidgets.timeIntEntry), 
-			sr.get("time_interval").c_str()
+		gtk_spin_button_set_value(
+			GTK_SPIN_BUTTON(_propertyWidgets.timeIntEntry), 
+			strToInt(sr.get("time_interval"))
 		);
 		gtk_widget_set_sensitive(
 			_propertyWidgets.timeIntEntry, 
@@ -633,9 +585,9 @@ void StimEditor::update() {
 			GTK_TOGGLE_BUTTON(_propertyWidgets.magnToggle),
 			useMagnitude
 		);
-		gtk_entry_set_text(
-			GTK_ENTRY(_propertyWidgets.magnEntry),
-			sr.get("magnitude").c_str()
+		gtk_spin_button_set_value(
+			GTK_SPIN_BUTTON(_propertyWidgets.magnEntry),
+			strToFloat(sr.get("magnitude"))
 		);
 		gtk_widget_set_sensitive(
 			_propertyWidgets.magnEntry, 
@@ -649,9 +601,9 @@ void StimEditor::update() {
 			GTK_TOGGLE_BUTTON(_propertyWidgets.falloffToggle),
 			useFalloff
 		);
-		gtk_entry_set_text(
-			GTK_ENTRY(_propertyWidgets.falloffEntry),
-			sr.get("falloffexponent").c_str()
+		gtk_spin_button_set_value(
+			GTK_SPIN_BUTTON(_propertyWidgets.falloffEntry),
+			strToFloat(sr.get("falloffexponent"))
 		);
 		gtk_widget_set_sensitive(
 			_propertyWidgets.falloffToggle, 
