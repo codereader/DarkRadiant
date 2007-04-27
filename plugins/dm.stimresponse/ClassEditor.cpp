@@ -5,6 +5,7 @@
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/LeftAlignedLabel.h"
+#include "string/string.h"
 #include <iostream>
 
 namespace ui {
@@ -119,7 +120,15 @@ void ClassEditor::entryChanged(GtkEditable* editable) {
 	EntryMap::iterator found = _entryWidgets.find(editable);
 	
 	if (found != _entryWidgets.end()) {
-		std::string entryText = gtk_entry_get_text(GTK_ENTRY(editable));
+		std::string entryText;
+		
+		if (GTK_IS_SPIN_BUTTON(editable)) {
+			entryText = floatToStr(gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(editable)));
+		}
+		else {
+			entryText = gtk_entry_get_text(GTK_ENTRY(editable));
+		}
+		
 		if (!entryText.empty()) {
 			setProperty(found->second, entryText);
 		}
