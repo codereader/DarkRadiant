@@ -264,8 +264,6 @@ void ResponseEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 
 		setProperty("chance", active ? entryText : "");
 	}
-	
-	update();
 }
 
 void ResponseEditor::addEffect() {

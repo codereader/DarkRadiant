@@ -112,7 +112,7 @@ void ClassEditor::setProperty(const std::string& key, const std::string& value) 
 	}
 
 	// Call the method of the child class to update the widgets
-	//update();
+	update();
 }
 
 void ClassEditor::entryChanged(GtkEditable* editable) {

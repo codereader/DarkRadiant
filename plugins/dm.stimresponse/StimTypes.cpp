@@ -177,7 +177,8 @@ void StimTypes::setStimTypeCaption(int id, const std::string& caption) {
 		_stimTypes[id].caption = caption;
 		
 		// Combine the ID and the caption
-		std::string captionPlusId = caption + " (" + intToStr(id) + ")";
+		std::string captionPlusId = caption;
+		captionPlusId += _stimTypes[id].custom ? " (" + intToStr(id) + ")" : "";
 	
 		// Update the list store
 		GtkTreeIter iter = getIterForId(id);
@@ -208,7 +209,8 @@ void StimTypes::add(int id,
 	GtkTreeIter iter;
 	
 	// Combine the ID and the caption
-	std::string captionPlusId = _stimTypes[id].caption + " (" + intToStr(id) + ")";
+	std::string captionPlusId = caption;
+	captionPlusId += _stimTypes[id].custom ? " (" + intToStr(id) + ")" : "";
 	
 	gtk_list_store_append(_listStore, &iter);
 	gtk_list_store_set(_listStore, &iter, 
