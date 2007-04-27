@@ -89,10 +89,10 @@ private:
 	 */
 	void addSR();
 
-	/** greebo: Gets called when an entry box changes, overrides the 
+	/** greebo: Gets called when a spinbutton changes, overrides the 
 	 * 			method from the base class.
 	 */
-	void entryChanged(GtkEditable* editable);
+	void spinButtonChanged(GtkSpinButton* spinButton);
 
 	/** greebo: Updates the associated text fields when a check box
 	 * 			is toggled.

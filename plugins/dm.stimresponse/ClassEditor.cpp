@@ -112,7 +112,7 @@ void ClassEditor::setProperty(const std::string& key, const std::string& value) 
 	}
 
 	// Call the method of the child class to update the widgets
-	update();
+	//update();
 }
 
 void ClassEditor::entryChanged(GtkEditable* editable) {
@@ -120,14 +120,22 @@ void ClassEditor::entryChanged(GtkEditable* editable) {
 	EntryMap::iterator found = _entryWidgets.find(editable);
 	
 	if (found != _entryWidgets.end()) {
-		std::string entryText;
+		std::string entryText = gtk_entry_get_text(GTK_ENTRY(editable));
 		
-		if (GTK_IS_SPIN_BUTTON(editable)) {
-			entryText = floatToStr(gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(editable)));
+		if (!entryText.empty()) {
+			setProperty(found->second, entryText);
 		}
-		else {
-			entryText = gtk_entry_get_text(GTK_ENTRY(editable));
-		}
+	}
+}
+
+void ClassEditor::spinButtonChanged(GtkSpinButton* spinButton) {
+	// Try to find the key this spinbutton widget is associated to
+	SpinButtonMap::iterator found = _spinWidgets.find(spinButton);
+	
+	if (found != _spinWidgets.end()) {
+		std::string entryText = floatToStr(
+			gtk_spin_button_get_value_as_float(spinButton)
+		);
 		
 		if (!entryText.empty()) {
 			setProperty(found->second, entryText);
@@ -267,6 +275,12 @@ gboolean ClassEditor::onTreeViewButtonRelease(GtkTreeView* view, GdkEventButton*
 	}
 	
 	return FALSE;
+}
+
+void ClassEditor::onSpinButtonChanged(GtkSpinButton* spinButton, ClassEditor* self) {
+	if (self->_updatesDisabled) return; // Callback loop guard
+	
+	self->spinButtonChanged(spinButton);
 }
 
 void ClassEditor::onEntryChanged(GtkEditable* editable, ClassEditor* self) {
