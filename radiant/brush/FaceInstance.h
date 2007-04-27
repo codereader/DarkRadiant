@@ -30,7 +30,7 @@ public:
 	FaceInstance(Face& face, const SelectionChangeCallback& observer);
 	FaceInstance(const FaceInstance& other);
 
-	FaceInstance& FaceInstance::operator=(const FaceInstance& other);
+	FaceInstance& operator=(const FaceInstance& other);
 	
 	Face& getFace();
 	
