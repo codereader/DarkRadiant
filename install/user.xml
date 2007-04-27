@@ -23,6 +23,7 @@
 	</undo>
 	<stimResponseEditor>
 		<window xPosition="80" yPosition="100" width="740" height="480" />
+		<showStimTypeIDs value="0" />
 	</stimResponseEditor>
 	<lightInspector>
 		<window xPosition="100" yPosition="150" width="730" height="340" />

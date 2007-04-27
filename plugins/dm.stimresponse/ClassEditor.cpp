@@ -175,7 +175,7 @@ ClassEditor::TypeSelectorWidgets ClassEditor::createStimTypeSelector() {
 	// Set the combo box to use two-column
 	gtk_combo_box_set_wrap_width(GTK_COMBO_BOX(widgets.list), 2);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(widgets.list), 0);
-
+	
 	return widgets;
 }
 

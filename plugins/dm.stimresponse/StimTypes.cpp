@@ -18,6 +18,8 @@
 			"game/stimResponseSystem/customStimKeyPrefix";
 		const std::string RKEY_LOWEST_CUSTOM_STIM_ID = 
 			"game/stimResponseSystem/lowestCustomStimId";
+		const std::string RKEY_SHOW_STIM_TYPE_IDS = 
+			"user/ui/stimResponseEditor/showStimTypeIDs";
 		
 		/* greebo: Finds an entity with the given classname
 		 */
@@ -178,7 +180,8 @@ void StimTypes::setStimTypeCaption(int id, const std::string& caption) {
 		
 		// Combine the ID and the caption
 		std::string captionPlusId = caption;
-		captionPlusId += _stimTypes[id].custom ? " (" + intToStr(id) + ")" : "";
+		bool showStimTypeIds = GlobalRegistry().get(RKEY_SHOW_STIM_TYPE_IDS) == "1";
+		captionPlusId += showStimTypeIds ? " (" + intToStr(id) + ")" : "";
 	
 		// Update the list store
 		GtkTreeIter iter = getIterForId(id);
@@ -210,7 +213,8 @@ void StimTypes::add(int id,
 	
 	// Combine the ID and the caption
 	std::string captionPlusId = caption;
-	captionPlusId += _stimTypes[id].custom ? " (" + intToStr(id) + ")" : "";
+	bool showStimTypeIds = GlobalRegistry().get(RKEY_SHOW_STIM_TYPE_IDS) == "1";
+	captionPlusId += showStimTypeIds ? " (" + intToStr(id) + ")" : "";
 	
 	gtk_list_store_append(_listStore, &iter);
 	gtk_list_store_set(_listStore, &iter, 
