@@ -12,6 +12,7 @@ typedef struct _GdkEventButton GdkEventButton;
 typedef struct _GtkEditable GtkEditable;
 typedef struct _GtkToggleButton GtkToggleButton;
 typedef struct _GtkComboBox GtkComboBox;
+typedef struct _GtkSpinButton GtkSpinButton;
 
 namespace ui {
 
@@ -20,6 +21,9 @@ class ClassEditor
 protected:
 	typedef std::map<GtkEditable*, std::string> EntryMap;
 	EntryMap _entryWidgets; 
+	
+	typedef std::map<GtkSpinButton*, std::string> SpinButtonMap;
+	SpinButtonMap _spinWidgets;
 
 	GtkWidget* _pageVBox;
 	
@@ -107,6 +111,11 @@ protected:
 	 */
 	virtual void entryChanged(GtkEditable* editable);
 
+	/** greebo: Gets called when a spin button changes, this can be
+	 * 			overriden by the subclasses, if this is needed
+	 */
+	virtual void spinButtonChanged(GtkSpinButton* spinButton);
+
 	/** greebo: Returns the ID of the currently selected stim/response
 	 * 		
 	 * @returns: the id (number) of the selected stim or -1 on failure 
@@ -136,6 +145,7 @@ protected:
 	
 	// Gets called if any of the entry widget contents get changed
 	static void onEntryChanged(GtkEditable* editable, ClassEditor* self);
+	static void onSpinButtonChanged(GtkSpinButton* spinButton, ClassEditor* self);
 	// Gets called on check box toggles
 	static void onCheckboxToggle(GtkToggleButton* toggleButton, ClassEditor* self);
 	

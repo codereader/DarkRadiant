@@ -171,6 +171,7 @@ void ResponseEditor::populatePage() {
 	// Chance variable
 	_propertyWidgets.chanceToggle = gtk_check_button_new_with_label("Chance:");
 	_propertyWidgets.chanceEntry = gtk_spin_button_new_with_range(0.0f, 1.0f, 0.1f);
+	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.chanceEntry), 2);
 	
 	gtk_table_attach(table, _propertyWidgets.chanceToggle, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(table, _propertyWidgets.chanceEntry, 1, 2, 1, 2);
@@ -181,11 +182,11 @@ void ResponseEditor::populatePage() {
 	g_signal_connect(G_OBJECT(_propertyWidgets.chanceToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	
 	g_signal_connect(G_OBJECT(_propertyWidgets.randomEffectsEntry), "changed", G_CALLBACK(onEntryChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.chanceEntry), "changed", G_CALLBACK(onEntryChanged), this);
-		
+	g_signal_connect(G_OBJECT(_propertyWidgets.chanceEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
+	
 	// The map associating entry fields to response property keys
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.randomEffectsEntry)] = "random_effects";
-	_entryWidgets[GTK_EDITABLE(_propertyWidgets.chanceEntry)] = "chance";
+	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.chanceEntry)] = "chance";
 	
 	gtk_box_pack_start(
 		GTK_BOX(_propertyWidgets.vbox), 
@@ -263,6 +264,8 @@ void ResponseEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 
 		setProperty("chance", active ? entryText : "");
 	}
+	
+	update();
 }
 
 void ResponseEditor::addEffect() {

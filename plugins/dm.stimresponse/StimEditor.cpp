@@ -219,13 +219,14 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	gtk_table_attach_defaults(table, _propertyWidgets.bounds.hbox, 1, 2, 10, 11);
 	
 	// The map associating entry fields to stim property keys  
-	_entryWidgets[GTK_EDITABLE(_propertyWidgets.radiusEntry)] = "radius";
-	_entryWidgets[GTK_EDITABLE(_propertyWidgets.timeIntEntry)] = "time_interval";
-	_entryWidgets[GTK_EDITABLE(_propertyWidgets.magnEntry)] = "magnitude";
-	_entryWidgets[GTK_EDITABLE(_propertyWidgets.falloffEntry)] = "falloffexponent";
-	_entryWidgets[GTK_EDITABLE(_propertyWidgets.chanceEntry)] = "chance";
-	_entryWidgets[GTK_EDITABLE(_propertyWidgets.durationEntry)] = "duration";
-	_entryWidgets[GTK_EDITABLE(_propertyWidgets.timer.reloadEntry)] = "timer_reload";
+	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.radiusEntry)] = "radius";
+	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.timeIntEntry)] = "time_interval";
+	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.magnEntry)] = "magnitude";
+	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.falloffEntry)] = "falloffexponent";
+	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.chanceEntry)] = "chance";
+	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.durationEntry)] = "duration";
+	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.timer.reloadEntry)] = "timer_reload";
+	
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.velocityEntry)] = "velocity";
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.bounds.minEntry)] = "bounds_mins";
 	_entryWidgets[GTK_EDITABLE(_propertyWidgets.bounds.maxEntry)] = "bounds_maxs";
@@ -247,20 +248,22 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	g_signal_connect(G_OBJECT(_propertyWidgets.bounds.toggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	
 	// Connect the entry fields
-	g_signal_connect(G_OBJECT(_propertyWidgets.magnEntry), "changed", G_CALLBACK(onEntryChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.falloffEntry), "changed", G_CALLBACK(onEntryChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.radiusEntry), "changed", G_CALLBACK(onEntryChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.timeIntEntry), "changed", G_CALLBACK(onEntryChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.chanceEntry), "changed", G_CALLBACK(onEntryChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.durationEntry), "changed", G_CALLBACK(onEntryChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.timer.hour), "changed", G_CALLBACK(onEntryChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.timer.minute), "changed", G_CALLBACK(onEntryChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.timer.second), "changed", G_CALLBACK(onEntryChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.timer.millisecond), "changed", G_CALLBACK(onEntryChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.timer.reloadEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.velocityEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.bounds.minEntry), "changed", G_CALLBACK(onEntryChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.bounds.maxEntry), "changed", G_CALLBACK(onEntryChanged), this);
+	
+	// Connect the spin button fields
+	g_signal_connect(G_OBJECT(_propertyWidgets.magnEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.falloffEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.radiusEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.timeIntEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.chanceEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.durationEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.timer.hour), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.timer.minute), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.timer.second), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.timer.millisecond), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.timer.reloadEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
 	
 	return _propertyWidgets.vbox;
 }
@@ -278,14 +281,14 @@ std::string StimEditor::getTimerString() {
 	return hour + ":" + minute + ":" + second + ":" + ms;
 }
 
-void StimEditor::entryChanged(GtkEditable* editable) {
+void StimEditor::spinButtonChanged(GtkSpinButton* spinButton) {
 	// Pass the call to the base class
-	ClassEditor::entryChanged(editable);
+	ClassEditor::spinButtonChanged(spinButton);
 	
-	if (editable == GTK_EDITABLE(_propertyWidgets.timer.hour) || 
-		editable == GTK_EDITABLE(_propertyWidgets.timer.minute) || 
-		editable == GTK_EDITABLE(_propertyWidgets.timer.second) ||
-		editable == GTK_EDITABLE(_propertyWidgets.timer.millisecond))
+	if (spinButton == GTK_SPIN_BUTTON(_propertyWidgets.timer.hour) || 
+		spinButton == GTK_SPIN_BUTTON(_propertyWidgets.timer.minute) || 
+		spinButton == GTK_SPIN_BUTTON(_propertyWidgets.timer.second) ||
+		spinButton == GTK_SPIN_BUTTON(_propertyWidgets.timer.millisecond))
 	{
 		setProperty("timer_time", getTimerString());
 	}
@@ -372,6 +375,8 @@ void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 	else if (toggleWidget == _propertyWidgets.timer.waitToggle) {
 		setProperty("timer_waitforstart", active ? "1" : "");
 	}
+	
+	update();
 }
 
 void StimEditor::openContextMenu(GtkTreeView* view) {
