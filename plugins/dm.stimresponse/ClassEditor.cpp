@@ -106,9 +106,7 @@ void ClassEditor::setProperty(const std::string& key, const std::string& value) 
 	
 	if (id > 0) {
 		// Don't edit inherited stims/responses
-		if (!_entity->get(id).inherited()) {
-			_entity->setProperty(id, key, value);
-		}
+		_entity->setProperty(id, key, value);
 	}
 
 	// Call the method of the child class to update the widgets
