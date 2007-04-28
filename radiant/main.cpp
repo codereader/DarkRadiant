@@ -266,6 +266,9 @@ void removePIDFile(const std::string& name) {
 	}
 }
 
+/**
+ * Main entry point for the application.
+ */
 int main (int argc, char* argv[])
 {
   crt_init();
@@ -333,9 +336,13 @@ int main (int argc, char* argv[])
 	// Remove the radiant.pid file again after loading all the settings
 	removePIDFile("radiant.pid");
 
-  gtk_main();
+	// Start the GTK main loop. This will run until a quit command is given by
+	// the user
+	gtk_main();
+	
+	/* EXIT */
 
-  Map_Free();
+  	Map_Free();
 
   delete g_pParentWnd;
 

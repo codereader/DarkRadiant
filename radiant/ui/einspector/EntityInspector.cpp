@@ -410,6 +410,11 @@ void EntityInspector::_onToggleShowInherited(GtkToggleButton* b, EntityInspector
 // and making sure it refers to the currently-selected Entity.
 void EntityInspector::treeSelectionChanged() {
 
+	// Abort if called without a valid entity selection (may happen during 
+	// various cleanup operations).
+	if (_selectedEntity == NULL)
+		return;
+
     // Get the selected key and value in the tree view
     std::string key = getListSelection(PROPERTY_NAME_COLUMN);
     std::string value = getListSelection(PROPERTY_VALUE_COLUMN);
@@ -593,6 +598,8 @@ void EntityInspector::appendClassProperties() {
 // Update the selected Entity pointer
 
 bool EntityInspector::updateSelectedEntity() {
+
+	_selectedEntity = NULL;
 
 	// A single entity must be selected
 	if (GlobalSelectionSystem().countSelected() != 1)
