@@ -16,6 +16,8 @@ SoundPropertyEditor::SoundPropertyEditor(Entity* entity,
 : _entity(entity),
   _key(name)
 {
+	_widget = gtk_vbox_new(FALSE, 0);
+
 	// Horizontal box contains the browse button
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
 	gtk_container_set_border_width(GTK_CONTAINER(hbx), 3);
