@@ -90,10 +90,6 @@ public:
     : APIConstructor(constructor), m_dependencies(0), m_api(0), m_refcount(0), m_dependencyCheck(false), m_cycleCheck(false)
   {
   }
-  ~SingletonModule()
-  {
-    ASSERT_MESSAGE(m_refcount == 0, "module still referenced at shutdown");
-  }
 
   void selfRegister()
   {
