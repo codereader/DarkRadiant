@@ -30,16 +30,6 @@ protected:
 	GtkWidget* _widget;
 	
 public:
-	/** greebo: The constructor sets up the GTK quit callback
-	 * 			that should be called right before the main
-	 * 			loop exits to invalidate the widget pointer. 
-	 */
-	PropertyEditor();
-
-	/** greebo: Default destructor, checks for a valid widget
-	 * 			and destroys it if not yet done.
-	 */
-	virtual ~PropertyEditor();
 
 	/**
 	 * Return the GtkWidget which is packed into the EntityInspector to display
@@ -65,11 +55,6 @@ public:
 										const std::string& key,
 										const std::string& options) = 0;
   
-	/** greebo: This function gets called right before the main loop
-	 * 			quits and gives this class a chance to invalidate their
-	 * 			widget pointers so that they don't get destroyed twice.  			
-	 */
-	static gboolean onGTKQuit(gpointer data);  
 };
 
 }

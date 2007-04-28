@@ -409,19 +409,18 @@ void EntityInspector::_onToggleShowInherited(GtkToggleButton* b, EntityInspector
 // and making sure it refers to the currently-selected Entity.
 void EntityInspector::treeSelectionChanged() {
 
-    // Delete current property editor
-    if (_currentPropertyEditor) {
-        _currentPropertyEditor = PropertyEditorPtr();
-    }
-
     // Get the selected key and value in the tree view
     std::string key = getListSelection(PROPERTY_NAME_COLUMN);
     std::string value = getListSelection(PROPERTY_VALUE_COLUMN);
     
     // Get the type for this key if it exists, and the options
     PropertyParmMap::const_iterator tIter = getPropertyMap().find(key);
-    std::string type = (tIter != getPropertyMap().end() ? tIter->second.type : "");
-    std::string options = (tIter != getPropertyMap().end() ? tIter->second.options : "");
+    std::string type = (tIter != getPropertyMap().end() 
+    					? tIter->second.type 
+    					: "");
+    std::string options = (tIter != getPropertyMap().end() 
+    					   ? tIter->second.options 
+    					   : "");
     
     // If the type was not found, also try looking on the entity class
     if (type.empty()) {
@@ -433,12 +432,20 @@ void EntityInspector::treeSelectionChanged() {
 			type = "";
 		}
     }
-    
+
+	// Remove the existing PropertyEditor widget, if there is one
+	GtkWidget* existingWidget = gtk_bin_get_child(GTK_BIN(_editorFrame));    
+   	if (existingWidget != NULL)
+   		gtk_widget_destroy(existingWidget);
+
     // Construct and add a new PropertyEditor
     _currentPropertyEditor = PropertyEditorFactory::create(type,
                                                            _selectedEntity,
                                                            key,
                                                            options);
+                                                           
+	// If the creation was successful (because the PropertyEditor type exists),
+	// add its widget to the editor pane
     if (_currentPropertyEditor) {
         gtk_container_add(GTK_CONTAINER(_editorFrame), 
         				  _currentPropertyEditor->getWidget());
