@@ -62,7 +62,7 @@ GtkWindow* GroupDialog::getWindow() {
 void GroupDialog::populateWindow() {
 	_notebook = gtk_notebook_new();
 	gtk_container_add(GTK_CONTAINER(_dialog), _notebook);
-	gtk_notebook_set_tab_pos(GTK_NOTEBOOK(_notebook), GTK_POS_BOTTOM);
+	gtk_notebook_set_tab_pos(GTK_NOTEBOOK(_notebook), GTK_POS_TOP);
 
 	g_signal_connect(G_OBJECT(_notebook), "switch-page", G_CALLBACK(onPageSwitch), this);
 }
