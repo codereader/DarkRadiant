@@ -123,7 +123,8 @@ GtkWidget* EntityInspector::createDialogPane() {
 // Create the TreeView pane
 
 GtkWidget* EntityInspector::createTreeViewPane() {
-    GtkWidget* vbx = gtk_vbox_new(FALSE, 0);
+    
+    GtkWidget* vbx = gtk_vbox_new(FALSE, 3);
 
     // Initialise the instance TreeStore
     _listStore = gtk_list_store_new(N_COLUMNS, 
@@ -201,7 +202,7 @@ GtkWidget* EntityInspector::createTreeViewPane() {
 	
 	gtk_box_pack_start(GTK_BOX(vbx), _keyEntry, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), setButtonBox, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(vbx), gtk_hseparator_new(), FALSE, FALSE, 3);
+    gtk_box_pack_start(GTK_BOX(vbx), gtk_hseparator_new(), FALSE, FALSE, 0);
     
     // Signals for entry boxes
     g_signal_connect(
