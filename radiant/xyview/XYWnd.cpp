@@ -797,9 +797,9 @@ void XYWnd::drawGrid() {
 	mask = (1 << (power - minor_power)) - 1;
 	while ((stepx * m_fScale) <= 32.0f) // text step x must be at least 32
 		stepx *= 2;
+	
 	while ((stepy * m_fScale) <= 32.0f) // text step y must be at least 32
 		stepy *= 2;
-
 
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_TEXTURE_1D);
@@ -867,7 +867,9 @@ void XYWnd::drawGrid() {
 	// draw coordinate text if needed
 	if (GlobalXYWnd().showCoordinates()) {
 		glColor3dv(ColourSchemes().getColourVector3("grid_text"));
-		double offx = m_vOrigin[nDim2] + h - 6 / m_fScale, offy = m_vOrigin[nDim1] - w + 1 / m_fScale;
+		double offx = m_vOrigin[nDim2] + h - 12 / m_fScale;
+		double offy = m_vOrigin[nDim1] - w + 1 / m_fScale;
+		
 		for (x = xb - fmod(xb, stepx); x <= xe ; x += stepx) {
 			glRasterPos2d (x, offx);
 			sprintf (text, "%g", x);
