@@ -1,3 +1,11 @@
+** RELEASE 0.9.0
+
+29/04/2007
+OrbWeaver
+- Property editors for Sound, Model, Skin and Texture selection no longer 
+  require explicit Apply button.
+- Static models use GL Display Lists for improved rendering performance.
+
 16/04/2007
 greebo
 - Added Stim/Response Editor plugin (The Dark Mod-specific)
