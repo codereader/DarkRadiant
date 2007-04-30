@@ -258,6 +258,11 @@ public:
  	 * 			Throws an GenericPatchException if an error occurs.
  	 */
  	void insertColumns(std::size_t colIndex);
+ 	
+ 	/** greebo: Inserts two rows before and after the row with index <rowIndex>.
+ 	 * 			Throws an GenericPatchException if an error occurs.
+ 	 */
+ 	void insertRows(std::size_t rowIndex);
  
 	void ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std::size_t width = 3, std::size_t height = 3);
 	void constructPlane(const AABB& aabb, int axis, std::size_t width, std::size_t height);
