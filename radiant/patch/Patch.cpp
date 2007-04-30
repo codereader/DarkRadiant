@@ -1024,10 +1024,6 @@ void Patch::NaturalTexture() {
 	controlPointsChanged();
 }
 
-
-
-// private:
-
 void Patch::AccumulateBBox()
 {
   m_aabb_local = AABB();
@@ -1041,8 +1037,81 @@ void Patch::AccumulateBBox()
   m_lightsChanged();
 }
 
+// Inserts two columns before and after the column having the index <colIndex>
+void Patch::insertColumns(std::size_t colIndex) {
+	if (colIndex == 0 || colIndex == m_width) {
+		throw GenericPatchException("Patch::insertColumns: can't insert at this index."); 
+	}
+	
+	if (m_width + 2 > MAX_PATCH_WIDTH) {
+		throw GenericPatchException("Patch::insertColumns: patch has too many columns.");
+	}
+	
+	// Create a backup of the old control vertices
+	PatchControlArray oldCtrl = m_ctrl;
+	std::size_t oldHeight = m_height;
+	std::size_t oldWidth = m_width;
+	
+	// Resize this patch
+	setDims(oldWidth + 2, oldHeight);
+	
+	// Now fill in the control vertex values and interpolate
+	// before and after the insert point.
+	for (std::size_t row = 0; row < m_height; row++) {
+		
+		for (std::size_t newCol = 0, oldCol = 0; 
+			 newCol < m_width && oldCol < oldWidth; 
+			 newCol++, oldCol++)
+		{
+			// Is this the insert point?
+			if (oldCol == colIndex) {
+				// Left column (to be interpolated)
+				ctrlAt(row, newCol).m_vertex = float_mid(
+					oldCtrl[row*oldWidth + oldCol - 1].m_vertex,
+					oldCtrl[row*oldWidth + oldCol].m_vertex
+				);
+				ctrlAt(row, newCol).m_texcoord = float_mid(
+					oldCtrl[row*oldWidth + oldCol - 1].m_texcoord,
+					oldCtrl[row*oldWidth + oldCol].m_texcoord
+				);
+				
+				// Set the newCol counter to the middle column
+				newCol++;
+				ctrlAt(row, newCol).m_vertex = oldCtrl[row*oldWidth + oldCol].m_vertex;		
+				ctrlAt(row, newCol).m_texcoord = oldCtrl[row*oldWidth + oldCol].m_texcoord;
+				
+				// Set newCol to the right column (to be interpolated)
+				newCol++;
+				ctrlAt(row, newCol).m_vertex = float_mid(
+					oldCtrl[row*oldWidth + oldCol].m_vertex,
+					oldCtrl[row*oldWidth + oldCol + 1].m_vertex
+				);
+				ctrlAt(row, newCol).m_texcoord = float_mid(
+					oldCtrl[row*oldWidth + oldCol].m_texcoord,
+					oldCtrl[row*oldWidth + oldCol + 1].m_texcoord
+				);
+			}
+			else {
+				// No special column, just copy the control vertex
+				ctrlAt(row, newCol).m_vertex = oldCtrl[row*oldWidth + oldCol].m_vertex;		
+				ctrlAt(row, newCol).m_texcoord = oldCtrl[row*oldWidth + oldCol].m_texcoord;
+			}
+		}
+	} 
+}
+
 void Patch::InsertPoints(EMatrixMajor mt, bool bFirst)
 {
+	try {
+		// The insert point is 1 for "beginning" and width-2 for "end"
+		insertColumns(bFirst ? 1 : m_width-2);
+	}
+	catch (GenericPatchException g) {
+		std::cout << "Error inserting patch vertices: " << g.what() << "\n";
+	}
+	
+	return;
+	
   std::size_t width, height, row_stride, col_stride; 
 
   switch(mt)
