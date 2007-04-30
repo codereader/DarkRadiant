@@ -391,7 +391,6 @@ private:
 	void check_shader();
 
 	// Insert or remove control points. bFirst tells the methods where to insert the points
-	void InsertPoints(EMatrixMajor mt, bool bFirst);
 	void RemovePoints(EMatrixMajor mt, bool bFirst);
   
 	void AccumulateBBox();

@@ -401,30 +401,30 @@ void Patch_Cone()
   Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), TextureBrowser_GetSelectedShader(GlobalTextureBrowser()), eCone, GlobalXYWnd().getActiveViewType());
 }
 
-void Patch_InsertInsertColumn()
+void Patch_InsertColumnsEnd()
 {
-  UndoableCommand undo("patchInsertColumns");
+  UndoableCommand undo("patchInsertColumnsAtEnd");
 
   Scene_PatchInsertRemove_Selected(GlobalSceneGraph(), true, true, false);
 }
 
-void Patch_InsertAddColumn()
+void Patch_InsertColumnsBeginning()
 {
-  UndoableCommand undo("patchAddColumns");
+  UndoableCommand undo("patchInsertColumnsAtBeginning");
 
   Scene_PatchInsertRemove_Selected(GlobalSceneGraph(), true, true, true);
 }
 
-void Patch_InsertInsertRow()
+void Patch_InsertRowsEnd()
 {
-  UndoableCommand undo("patchInsertRows");
+  UndoableCommand undo("patchInsertRowsAtEnd");
 
   Scene_PatchInsertRemove_Selected(GlobalSceneGraph(), true, false, false);
 }
 
-void Patch_InsertAddRow()
+void Patch_InsertRowsBeginning()
 {
-  UndoableCommand undo("patchAddRows");
+  UndoableCommand undo("patchInsertRowsAtBeginning");
 
   Scene_PatchInsertRemove_Selected(GlobalSceneGraph(), true, false, true);
 }
@@ -693,8 +693,6 @@ void stitchPatchTextures() {
 
 void Patch_registerCommands()
 {
-  GlobalEventManager().addCommand("IncPatchColumn", FreeCaller<Patch_InsertInsertColumn>());
-  GlobalEventManager().addCommand("IncPatchRow", FreeCaller<Patch_InsertInsertRow>());
   GlobalEventManager().addCommand("DecPatchColumn", FreeCaller<Patch_DeleteLastColumn>());
   GlobalEventManager().addCommand("DecPatchRow", FreeCaller<Patch_DeleteLastRow>());
   GlobalEventManager().addCommand("PatchCylinder", FreeCaller<Patch_Cylinder>());
@@ -705,10 +703,10 @@ void Patch_registerCommands()
   GlobalEventManager().addCommand("PatchBevel", FreeCaller<Patch_Bevel>());
   GlobalEventManager().addCommand("PatchCone", FreeCaller<Patch_Cone>());
   GlobalEventManager().addCommand("SimplePatchMesh", FreeCaller<patch::createSimplePatch>());
-  GlobalEventManager().addCommand("PatchInsertInsertColumn", FreeCaller<Patch_InsertInsertColumn>());
-  GlobalEventManager().addCommand("PatchInsertAddColumn", FreeCaller<Patch_InsertAddColumn>());
-  GlobalEventManager().addCommand("PatchInsertInsertRow", FreeCaller<Patch_InsertInsertRow>());
-  GlobalEventManager().addCommand("PatchInsertAddRow", FreeCaller<Patch_InsertAddRow>());
+  GlobalEventManager().addCommand("PatchInsertColumnEnd", FreeCaller<Patch_InsertColumnsEnd>());
+  GlobalEventManager().addCommand("PatchInsertColumnBeginning", FreeCaller<Patch_InsertColumnsBeginning>());
+  GlobalEventManager().addCommand("PatchInsertRowEnd", FreeCaller<Patch_InsertRowsEnd>());
+  GlobalEventManager().addCommand("PatchInsertRowBeginning", FreeCaller<Patch_InsertRowsBeginning>());
   GlobalEventManager().addCommand("PatchDeleteFirstColumn", FreeCaller<Patch_DeleteFirstColumn>());
   GlobalEventManager().addCommand("PatchDeleteLastColumn", FreeCaller<Patch_DeleteLastColumn>());
   GlobalEventManager().addCommand("PatchDeleteFirstRow", FreeCaller<Patch_DeleteFirstRow>());

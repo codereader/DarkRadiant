@@ -673,16 +673,34 @@ void Patch::Redisperse(EMatrixMajor mt)
   controlPointsChanged();
 }
 
-void Patch::InsertRemove(bool bInsert, bool bColumn, bool bFirst)
-{
-  undoSave();
+void Patch::InsertRemove(bool bInsert, bool bColumn, bool bFirst) {
+	undoSave();
 
-  if(bInsert)
-  {
-    if(bColumn && (m_width + 2 <= MAX_PATCH_WIDTH))
+	try {
+		if (bInsert) {
+			// Decide whether we should insert rows or columns
+			if (bColumn) {
+				// The insert point is 1 for "beginning" and width-2 for "end"
+				insertColumns(bFirst ? 1 : m_width-2);
+			}
+			else {
+				// The insert point is 1 for "beginning" and height-2 for "end"
+				insertRows(bFirst ? 1 : m_height-2);
+			}
+		}
+	}
+	catch (GenericPatchException g) {
+		gtkutil::errorDialog(
+			std::string("Error inserting patch vertices: \n") + g.what(),
+			MainFrame_getWindow()
+		);
+	}
+
+  if (bInsert) {
+    /*if(bColumn && (m_width + 2 <= MAX_PATCH_WIDTH))
       InsertPoints(COL, bFirst);
     else if(m_height + 2 <= MAX_PATCH_HEIGHT)
-      InsertPoints(ROW, bFirst);
+      InsertPoints(ROW, bFirst);*/
   }
   else
   {
@@ -1161,173 +1179,6 @@ void Patch::insertRows(std::size_t rowIndex) {
 			}
 		}
 	} 
-}
-
-void Patch::InsertPoints(EMatrixMajor mt, bool bFirst)
-{
-	try {
-		// Decide whether we should insert rows or columns
-		switch (mt) {
-			case ROW:
-				// The insert point is 1 for "beginning" and height-2 for "end"
-				insertRows(bFirst ? 1 : m_height-2);
-				break;
-			case COL:
-				// The insert point is 1 for "beginning" and width-2 for "end"
-				insertColumns(bFirst ? 1 : m_width-2);
-				break;
-			default:;
-		}
-	}
-	catch (GenericPatchException g) {
-		std::cout << "Error inserting patch vertices: " << g.what() << "\n";
-	}
-	
-	return;
-	
-  std::size_t width, height, row_stride, col_stride; 
-
-  switch(mt)
-  {
-  case ROW:
-    col_stride = 1;
-    row_stride = m_width;
-    width = m_width;
-    height = m_height;
-    break;
-  case COL:
-    col_stride = m_width;
-    row_stride = 1;
-    width = m_height;
-    height = m_width;
-    break;
-  default:
-    ERROR_MESSAGE("neither row-major nor column-major");
-    return;
-  }
-
-  std::size_t pos = 0;
-  {
-    PatchControl* p1 = m_ctrl.data();
-    for(std::size_t w = 0; w != width; ++w, p1 += col_stride)
-    {
-      {
-        PatchControl* p2 = p1;
-        for(std::size_t h = 1; h < height; h += 2, p2 += 2 * row_stride)
-        {
-          if(0)//p2->m_selectable.isSelected())
-          {
-            pos = h;
-            break;
-          }
-        }
-        if(pos != 0)
-        {
-          break;
-        }
-      }
-  
-      {
-        PatchControl* p2 = p1;
-        for(std::size_t h = 0; h < height; h += 2, p2 += 2 * row_stride)
-        {
-          if(0)//p2->m_selectable.isSelected())
-          {
-            pos = h;
-            break;
-          }
-        }
-        if(pos != 0)
-        {
-          break;
-        }
-      }
-    }
-  }
-
-  Array<PatchControl> tmp(m_ctrl);
-
-  std::size_t row_stride2, col_stride2;
-  switch(mt)
-  {
-  case ROW:
-    setDims(m_width, m_height+2);
-    col_stride2 = 1;
-    row_stride2 = m_width;
-    break;
-  case COL:
-    setDims(m_width+2, m_height);
-    col_stride2 = m_width;
-    row_stride2 = 1;
-    break;
-  default:
-    ERROR_MESSAGE("neither row-major nor column-major");
-    return;
-  }
-
-  if(pos >= height)
-  {
-    if(bFirst)
-    {
-      pos = height - 1;
-    }
-    else
-    {
-      pos = 2;
-    }
-  }
-  else if(pos == 0)
-  {
-    pos = 2;
-  }
-  else if(pos % 2)
-  {
-    ++pos;
-  }
-
-
-  for(std::size_t w = 0; w != width; ++w)
-  {
-    PatchControl* p1 = tmp.data() + (w*col_stride);
-    PatchControl* p2 = m_ctrl.data() + (w*col_stride2);
-    for(std::size_t h = 0; h != height; ++h, p2 += row_stride2, p1 += row_stride)
-    {
-      if(h == pos)
-      {
-        p2 += 2 * row_stride2;
-      }
-      *p2 = *p1;
-    }
-
-    p1 = tmp.data() + (w*col_stride+pos*row_stride);
-    p2 = m_ctrl.data() + (w*col_stride2+pos*row_stride2);
-    
-    PatchControl* r2a = (p2+row_stride2);
-    PatchControl* r2b = (p2-row_stride2);
-    PatchControl* c2a = (p1-2*row_stride);
-    PatchControl* c2b = (p1-row_stride);
-
-    // set two new row points
-    *(p2+2*row_stride2) = *p1;
-    *r2a = *c2b;
-    
-    for(std::size_t i = 0; i != 3; ++i)
-    {
-      r2a->m_vertex[i] = float_mid(c2b->m_vertex[i], p1->m_vertex[i]);
-
-      r2b->m_vertex[i] = float_mid(c2a->m_vertex[i], c2b->m_vertex[i]);
-
-      p2->m_vertex[i] = float_mid(r2a->m_vertex[i], r2b->m_vertex[i]);
-    }
-    for(std::size_t i = 0; i != 2; ++i)
-    {
-      r2a->m_texcoord[i] = float_mid(c2b->m_texcoord[i], p1->m_texcoord[i]);
-
-      r2b->m_texcoord[i] = float_mid(c2a->m_texcoord[i], c2b->m_texcoord[i]);
-
-      p2->m_texcoord[i] = float_mid(r2a->m_texcoord[i], r2b->m_texcoord[i]);
-    }
-  }
 }
 
 void Patch::RemovePoints(EMatrixMajor mt, bool bFirst)
