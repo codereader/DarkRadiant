@@ -235,11 +235,11 @@
 		<menuSeparator />
 
 		<subMenu name="insertSubdivisions" caption="Insert">
-			<menuItem name="insertcolumns" caption="Insert (2) Columns" command="PatchInsertInsertColumn" />
-			<menuItem name="addcolumns" caption="Add (2) Columns" command="PatchInsertAddColumn" />
+			<menuItem name="insertColsBegin" caption="Insert 2 Columns at the beginning" command="PatchInsertColumnBeginning" />
+			<menuItem name="insertColsEnd" caption="Insert 2 Columns at the end" command="PatchInsertColumnEnd" />
 			<menuSeparator />
-			<menuItem name="insertrows" caption="Insert (2) Rows" command="PatchInsertInsertRow" />
-			<menuItem name="addrows" caption="Add (2) Rows" command="PatchInsertAddRow" />
+			<menuItem name="insertRowsBegin" caption="Insert 2 Rows at the beginning" command="PatchInsertRowBeginning" />
+			<menuItem name="insertRowsEnd" caption="Insert 2 Rows at the end" command="PatchInsertRowEnd" />
 		</subMenu>
 
 		<subMenu name="deleteSubdivisions" caption="Delete">
