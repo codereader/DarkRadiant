@@ -22,6 +22,17 @@
 #include "brush/FacePlane.h"
 #include "brush/Face.h"
 
+// This is thrown by the internal patch routines
+class GenericPatchException :
+	public std::runtime_error
+{
+public:
+	// Constructor
+	GenericPatchException(const std::string& what):
+		std::runtime_error(what) 
+	{}
+};
+
 /* greebo: The patch class itself, represented by control vertices. The basic rendering of the patch 
  * is handled here (unselected control points, tesselation lines, shader). 
  * 
@@ -40,7 +51,8 @@ class Patch :
 	XMLStateVector m_xml_state;
 
 public:
-	// A Patch observer
+	// A Patch observer, this is implemented by PatchInstance
+	// to re-allocate the patch control instances.
 	class Observer {
 		public:
 			virtual void allocate(std::size_t size) = 0;
@@ -241,6 +253,11 @@ public:
 	PatchControl& ctrlAt(std::size_t row, std::size_t col);
 	// The same as above just for const 
 	const PatchControl& ctrlAt(std::size_t row, std::size_t col) const;
+ 
+ 	/** greebo: Inserts two columns before and after the column with index <colIndex>.
+ 	 * 			Throws an GenericPatchException if an error occurs.
+ 	 */
+ 	void insertColumns(std::size_t colIndex);
  
 	void ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std::size_t width = 3, std::size_t height = 3);
 	void constructPlane(const AABB& aabb, int axis, std::size_t width, std::size_t height);
