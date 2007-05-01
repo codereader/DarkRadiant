@@ -57,32 +57,31 @@ OrthoContextMenu::OrthoContextMenu()
 {
 	GtkWidget* addModel = gtkutil::IconTextMenuItem(ADD_MODEL_ICON, 
 													ADD_MODEL_TEXT);
-	GtkWidget* addLight = gtkutil::IconTextMenuItem(ADD_LIGHT_ICON, 
+	_addLight = gtkutil::IconTextMenuItem(ADD_LIGHT_ICON, 
 													ADD_LIGHT_TEXT);
-	GtkWidget* addEntity = gtkutil::IconTextMenuItem(ADD_ENTITY_ICON, 
+	_addEntity = gtkutil::IconTextMenuItem(ADD_ENTITY_ICON, 
 													 ADD_ENTITY_TEXT);
 	GtkWidget* addPrefab = gtkutil::IconTextMenuItem(ADD_PREFAB_ICON, 
 													 ADD_PREFAB_TEXT);
-	GtkWidget* addSpkr = gtkutil::IconTextMenuItem(ADD_SPEAKER_ICON, 
+	_addSpkr = gtkutil::IconTextMenuItem(ADD_SPEAKER_ICON, 
 												   ADD_SPEAKER_TEXT);
 	_convertStatic = gtkutil::IconTextMenuItem(CONVERT_TO_STATIC_ICON, 
 											   CONVERT_TO_STATIC_TEXT);
 	_revertWorldspawn = gtkutil::IconTextMenuItem(REVERT_TO_WORLDSPAWN_ICON, 
 												  REVERT_TO_WORLDSPAWN_TEXT);
 	
-	g_signal_connect(G_OBJECT(addEntity), "activate", G_CALLBACK(callbackAddEntity), this);
-	g_signal_connect(G_OBJECT(addLight), "activate", G_CALLBACK(callbackAddLight), this);
+	g_signal_connect(G_OBJECT(_addEntity), "activate", G_CALLBACK(callbackAddEntity), this);
+	g_signal_connect(G_OBJECT(_addLight), "activate", G_CALLBACK(callbackAddLight), this);
 	g_signal_connect(G_OBJECT(addModel), "activate", G_CALLBACK(callbackAddModel), this);
 	g_signal_connect(G_OBJECT(addPrefab), "activate", G_CALLBACK(callbackAddPrefab), this);
-	g_signal_connect(
-		G_OBJECT(addSpkr), "activate", G_CALLBACK(_onAddSpeaker), this);
+	g_signal_connect(G_OBJECT(_addSpkr), "activate", G_CALLBACK(_onAddSpeaker), this);
 	g_signal_connect(G_OBJECT(_convertStatic), "activate", G_CALLBACK(callbackConvertToStatic), this);
 	g_signal_connect(G_OBJECT(_revertWorldspawn), "activate", G_CALLBACK(callbackRevertToWorldspawn), this);
 
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), addEntity);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addEntity);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), addModel);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), addLight);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), addSpkr);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addLight);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addSpkr);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), addPrefab);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new());
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _convertStatic);
@@ -97,6 +96,7 @@ void OrthoContextMenu::show(const Vector3& point) {
 	_lastPoint = point;
 	checkConvertStatic(); // enable or disable the convert-to-static command
 	checkRevertToWorldspawn();
+	checkAddOptions(); // disable the "Add entity" command if an entity is already selected
 	gtk_menu_popup(GTK_MENU(_widget), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
 }
 
@@ -115,6 +115,17 @@ void OrthoContextMenu::checkConvertStatic() {
 	else {
 		gtk_widget_set_sensitive(_convertStatic, FALSE);
 	}
+}
+
+void OrthoContextMenu::checkAddOptions() {
+	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+	
+	// Add entity command is disabled if an entity is already selected
+	gtk_widget_set_sensitive(_addEntity, (info.entityCount == 0));
+	
+	// Add light/speaker is disabled if anything is selected
+	gtk_widget_set_sensitive(_addLight, (info.totalCount == 0));
+	gtk_widget_set_sensitive(_addSpkr, (info.totalCount == 0));
 }
 
 void OrthoContextMenu::checkRevertToWorldspawn() {
