@@ -242,6 +242,14 @@
 			<menuItem name="insertRowsEnd" caption="Insert 2 Rows at the end" command="PatchInsertRowEnd" />
 		</subMenu>
 
+		<subMenu name="appendSubdivisions" caption="Append">
+			<menuItem name="appendFirstcolumns" caption="Append 2 columns at the beginning" command="PatchAppendColumnBeginning" />
+			<menuItem name="appendLastcolumns" caption="Append 2 columns at the end" command="PatchAppendColumnEnd" />
+			<menuSeparator />
+			<menuItem name="appendFirstrows" caption="Append 2 rows at the beginning" command="PatchAppendRowBeginning" />
+			<menuItem name="appendLastrows" caption="Append 2 rows at the end" command="PatchAppendRowEnd" />
+		</subMenu>
+
 		<subMenu name="deleteSubdivisions" caption="Delete">
 			<menuItem name="deleteFirstcolumns" caption="Delete 2 columns from the beginning" command="PatchDeleteColumnBeginning" />
 			<menuItem name="deleteLastcolumns" caption="Delete 2 columns from the end" command="PatchDeleteColumnEnd" />

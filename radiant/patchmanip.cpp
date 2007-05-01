@@ -457,6 +457,24 @@ public:
 	}
 };
 
+/** greebo: This appends rows or columns at the end or the beginning
+ * 			of the visited patches.
+ */
+class PatchRowColumnAppender
+{
+	bool _columns;
+	bool _atBeginning;
+public:
+	PatchRowColumnAppender(bool columns, bool atBeginning) : 
+		_columns(columns), 
+		_atBeginning(atBeginning)
+	{}
+	
+	void operator()(Patch& patch) const {
+		patch.appendPoints(_columns, _atBeginning);
+	}
+};
+
 /** greebo: The command targets
  */
 void insertColumnsAtEnd() {
@@ -501,6 +519,30 @@ void deleteRowsFromBeginning() {
 void deleteRowsFromEnd() {
 	UndoableCommand undo("patchDeleteRowsFromEnd");
 	Scene_forEachVisibleSelectedPatch(PatchRowColumnRemover(false, false));
+}
+
+void appendColumnsAtBeginning() {
+	UndoableCommand undo("patchAppendColumnsAtBeginning");
+	// true = columns, true = at the beginning
+	Scene_forEachVisibleSelectedPatch(PatchRowColumnAppender(true, true));
+}
+
+void appendColumnsAtEnd() {
+	UndoableCommand undo("patchAppendColumnsAtEnd");
+	// true = columns, false = at the end
+	Scene_forEachVisibleSelectedPatch(PatchRowColumnAppender(true, false));
+}
+
+void appendRowsAtBeginning() {
+	UndoableCommand undo("patchAppendRowsAtBeginning");
+	// false = rows, true = at the beginning
+	Scene_forEachVisibleSelectedPatch(PatchRowColumnAppender(false, true));
+}
+
+void appendRowsAtEnd() {
+	UndoableCommand undo("patchAppendRowsAtEnd");
+	// false = rows, false = at the end
+	Scene_forEachVisibleSelectedPatch(PatchRowColumnAppender(false, false));
 }
 
 void thickenPatches(PatchPtrVector patchList, 
@@ -686,6 +728,11 @@ void Patch_registerCommands()
   GlobalEventManager().addCommand("PatchDeleteColumnEnd", FreeCaller<patch::deleteColumnsFromEnd>());
   GlobalEventManager().addCommand("PatchDeleteRowBeginning", FreeCaller<patch::deleteRowsFromBeginning>());
   GlobalEventManager().addCommand("PatchDeleteRowEnd", FreeCaller<patch::deleteRowsFromEnd>());
+  
+  GlobalEventManager().addCommand("PatchAppendColumnBeginning", FreeCaller<patch::appendColumnsAtBeginning>());
+  GlobalEventManager().addCommand("PatchAppendColumnEnd", FreeCaller<patch::appendColumnsAtEnd>());
+  GlobalEventManager().addCommand("PatchAppendRowBeginning", FreeCaller<patch::appendRowsAtBeginning>());
+  GlobalEventManager().addCommand("PatchAppendRowEnd", FreeCaller<patch::appendRowsAtEnd>());
   
   GlobalEventManager().addCommand("InvertCurve", FreeCaller<Patch_Invert>());
   GlobalEventManager().addCommand("RedisperseRows", FreeCaller<Patch_RedisperseRows>());
