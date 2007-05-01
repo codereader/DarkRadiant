@@ -126,8 +126,8 @@
 		<shortcut command="InvertCurveTextureY" key="I" modifiers="SHIFT" />
 		<shortcut command="PatchInsertColumnEnd" key="KP_Add" modifiers="SHIFT+CONTROL" />
 		<shortcut command="PatchInsertRowEnd" key="KP_Add" modifiers="CONTROL" />
-		<shortcut command="DecPatchColumn" key="KP_Subtract" modifiers="SHIFT+CONTROL" />
-		<shortcut command="DecPatchRow" key="KP_Subtract" modifiers="CONTROL" />
+		<shortcut command="PatchDeleteLastColumn" key="KP_Subtract" modifiers="SHIFT+CONTROL" />
+		<shortcut command="PatchDeleteLastRow" key="KP_Subtract" modifiers="CONTROL" />
 		<shortcut command="TextureNatural" key="N" modifiers="CONTROL" />
 		<shortcut command="SimplePatchMesh" key="P" modifiers="SHIFT" />
 		<shortcut command="InvertCurve" key="I" modifiers="CONTROL" />

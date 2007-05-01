@@ -211,24 +211,6 @@ void Scene_PatchCapTexture_Selected(scene::Graph& graph)
   SceneChangeNotify();
 }
 
-class PatchInsertRemove
-{
-  bool m_insert, m_column, m_first;
-public:
-  PatchInsertRemove(bool insert, bool column, bool first) : m_insert(insert), m_column(column), m_first(first)
-  {
-  }
-  void operator()(Patch& patch) const
-  {
-    patch.InsertRemove(m_insert, m_column, m_first);
-  }
-};
-
-void Scene_PatchInsertRemove_Selected(scene::Graph& graph, bool bInsert, bool bColumn, bool bFirst)
-{
-  Scene_forEachVisibleSelectedPatch(PatchInsertRemove(bInsert, bColumn, bFirst));
-}
-
 class PatchInvertMatrix
 {
 public:
@@ -294,15 +276,6 @@ void Scene_PatchSetShader_Selected(scene::Graph& graph, const std::string& name)
   Scene_forEachVisibleSelectedPatch(PatchSetShader(name));
   SceneChangeNotify();
 }
-
-/*void Scene_PatchGetShader_Selected(scene::Graph& graph, std::string& name)
-{
-  Patch* patch = Scene_GetUltimateSelectedVisiblePatch();
-  if(patch != 0)
-  {
-    name = patch->GetShader();
-  }
-}*/
 
 class PatchSelectByShader
 {
@@ -402,62 +375,6 @@ void Patch_Cone()
   Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), TextureBrowser_GetSelectedShader(GlobalTextureBrowser()), eCone, GlobalXYWnd().getActiveViewType());
 }
 
-void Patch_InsertColumnsEnd()
-{
-  UndoableCommand undo("patchInsertColumnsAtEnd");
-
-  Scene_PatchInsertRemove_Selected(GlobalSceneGraph(), true, true, false);
-}
-
-void Patch_InsertColumnsBeginning()
-{
-  UndoableCommand undo("patchInsertColumnsAtBeginning");
-
-  Scene_PatchInsertRemove_Selected(GlobalSceneGraph(), true, true, true);
-}
-
-void Patch_InsertRowsEnd()
-{
-  UndoableCommand undo("patchInsertRowsAtEnd");
-
-  Scene_PatchInsertRemove_Selected(GlobalSceneGraph(), true, false, false);
-}
-
-void Patch_InsertRowsBeginning()
-{
-  UndoableCommand undo("patchInsertRowsAtBeginning");
-
-  Scene_PatchInsertRemove_Selected(GlobalSceneGraph(), true, false, true);
-}
-
-void Patch_DeleteFirstColumn()
-{
-  UndoableCommand undo("patchDeleteFirstColumns");
-
-  Scene_PatchInsertRemove_Selected(GlobalSceneGraph(), false, true, true);
-}
-
-void Patch_DeleteLastColumn()
-{
-  UndoableCommand undo("patchDeleteLastColumns");
-
-  Scene_PatchInsertRemove_Selected(GlobalSceneGraph(), false, true, false);
-}
-
-void Patch_DeleteFirstRow()
-{
-  UndoableCommand undo("patchDeleteFirstRows");
-
-  Scene_PatchInsertRemove_Selected(GlobalSceneGraph(), false, false, true);
-}
-
-void Patch_DeleteLastRow()
-{
-  UndoableCommand undo("patchDeleteLastRows");
-
-  Scene_PatchInsertRemove_Selected(GlobalSceneGraph(), false, false, false);
-}
-
 void Patch_Invert()
 {
   UndoableCommand undo("patchInvert");
@@ -503,6 +420,73 @@ void Patch_CycleProjection()
 }
 
 namespace patch {
+
+/** greebo: This inserts rows or columns at the end or the beginning
+ * 			of the visited patches.
+ */
+class PatchRowColumnInserter
+{
+	bool _insert;
+	bool _columns;
+	bool _atBeginning;
+public:
+	PatchRowColumnInserter(bool insert, bool columns, bool atBeginning) : 
+		_insert(insert), 
+		_columns(columns), 
+		_atBeginning(atBeginning)
+	{}
+	
+	void operator()(Patch& patch) const {
+		patch.InsertRemove(_insert, _columns, _atBeginning);
+	}
+};
+
+/** greebo: The command targets
+ */
+void insertColumnsAtEnd() {
+	UndoableCommand undo("patchInsertColumnsAtEnd");
+	
+	// true = insert, true = columns, false = end
+	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(true, true, false));
+}
+
+void insertColumnsAtBeginning() {
+	UndoableCommand undo("patchInsertColumnsAtBeginning");
+	// true = insert, true = columns, true = at beginning
+	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(true, true, true));
+}
+
+void insertRowsAtEnd() {
+	UndoableCommand undo("patchInsertRowsAtEnd");
+	// true = insert, false = rows, false = at end
+	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(true, false, false));
+}
+
+void insertRowsAtBeginning() {
+	UndoableCommand undo("patchInsertRowsAtBeginning");
+	// true = insert, false = rows, true = at beginning
+	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(true, false, true));
+}
+
+void Patch_DeleteFirstColumn() {
+	UndoableCommand undo("patchDeleteFirstColumns");
+	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(false, true, true));
+}
+
+void Patch_DeleteLastColumn() {
+	UndoableCommand undo("patchDeleteLastColumns");
+	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(false, true, false));
+}
+
+void Patch_DeleteFirstRow() {
+	UndoableCommand undo("patchDeleteFirstRows");
+	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(false, false, true));
+}
+
+void Patch_DeleteLastRow() {
+	UndoableCommand undo("patchDeleteLastRows");
+	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(false, false, false));
+}
 
 void thickenPatches(PatchPtrVector patchList, 
 					const float& thickness, 
@@ -669,8 +653,6 @@ void stitchPatchTextures() {
 
 void Patch_registerCommands()
 {
-  GlobalEventManager().addCommand("DecPatchColumn", FreeCaller<Patch_DeleteLastColumn>());
-  GlobalEventManager().addCommand("DecPatchRow", FreeCaller<Patch_DeleteLastRow>());
   GlobalEventManager().addCommand("PatchCylinder", FreeCaller<Patch_Cylinder>());
   GlobalEventManager().addCommand("PatchDenseCylinder", FreeCaller<Patch_DenseCylinder>());
   GlobalEventManager().addCommand("PatchVeryDenseCylinder", FreeCaller<Patch_VeryDenseCylinder>());
@@ -679,14 +661,17 @@ void Patch_registerCommands()
   GlobalEventManager().addCommand("PatchBevel", FreeCaller<Patch_Bevel>());
   GlobalEventManager().addCommand("PatchCone", FreeCaller<Patch_Cone>());
   GlobalEventManager().addCommand("SimplePatchMesh", FreeCaller<patch::createSimplePatch>());
-  GlobalEventManager().addCommand("PatchInsertColumnEnd", FreeCaller<Patch_InsertColumnsEnd>());
-  GlobalEventManager().addCommand("PatchInsertColumnBeginning", FreeCaller<Patch_InsertColumnsBeginning>());
-  GlobalEventManager().addCommand("PatchInsertRowEnd", FreeCaller<Patch_InsertRowsEnd>());
-  GlobalEventManager().addCommand("PatchInsertRowBeginning", FreeCaller<Patch_InsertRowsBeginning>());
-  GlobalEventManager().addCommand("PatchDeleteFirstColumn", FreeCaller<Patch_DeleteFirstColumn>());
-  GlobalEventManager().addCommand("PatchDeleteLastColumn", FreeCaller<Patch_DeleteLastColumn>());
-  GlobalEventManager().addCommand("PatchDeleteFirstRow", FreeCaller<Patch_DeleteFirstRow>());
-  GlobalEventManager().addCommand("PatchDeleteLastRow", FreeCaller<Patch_DeleteLastRow>());
+  
+  GlobalEventManager().addCommand("PatchInsertColumnEnd", FreeCaller<patch::insertColumnsAtEnd>());
+  GlobalEventManager().addCommand("PatchInsertColumnBeginning", FreeCaller<patch::insertColumnsAtBeginning>());
+  GlobalEventManager().addCommand("PatchInsertRowEnd", FreeCaller<patch::insertRowsAtEnd>());
+  GlobalEventManager().addCommand("PatchInsertRowBeginning", FreeCaller<patch::insertRowsAtBeginning>());
+  
+  GlobalEventManager().addCommand("PatchDeleteFirstColumn", FreeCaller<patch::Patch_DeleteFirstColumn>());
+  GlobalEventManager().addCommand("PatchDeleteLastColumn", FreeCaller<patch::Patch_DeleteLastColumn>());
+  GlobalEventManager().addCommand("PatchDeleteFirstRow", FreeCaller<patch::Patch_DeleteFirstRow>());
+  GlobalEventManager().addCommand("PatchDeleteLastRow", FreeCaller<patch::Patch_DeleteLastRow>());
+  
   GlobalEventManager().addCommand("InvertCurve", FreeCaller<Patch_Invert>());
   GlobalEventManager().addCommand("RedisperseRows", FreeCaller<Patch_RedisperseRows>());
   GlobalEventManager().addCommand("RedisperseCols", FreeCaller<Patch_RedisperseCols>());
