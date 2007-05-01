@@ -688,29 +688,23 @@ void Patch::InsertRemove(bool bInsert, bool bColumn, bool bFirst) {
 				insertRows(bFirst ? 1 : m_height-2);
 			}
 		}
+		else {
+			// Col/Row Removal
+			if (bColumn) {
+				// Column removal, pass TRUE
+				removePoints(true, bFirst ? 2 : m_width - 3);					
+			}
+			else {
+				// Row removal, pass FALSE
+				removePoints(false, bFirst ? 2 : m_height - 3);
+			}
+		}
 	}
 	catch (GenericPatchException g) {
-		gtkutil::errorDialog(
-			std::string("Error inserting patch vertices: \n") + g.what(),
-			MainFrame_getWindow()
-		);
+		globalErrorStream() << "Error manipulating patch dimensions: " << g.what() << "\n";
 	}
 
-  if (bInsert) {
-    /*if(bColumn && (m_width + 2 <= MAX_PATCH_WIDTH))
-      InsertPoints(COL, bFirst);
-    else if(m_height + 2 <= MAX_PATCH_HEIGHT)
-      InsertPoints(ROW, bFirst);*/
-  }
-  else
-  {
-    if(bColumn && (m_width - 2 >= MIN_PATCH_WIDTH))
-      RemovePoints(COL, bFirst);
-    else if(m_height - 2 >= MIN_PATCH_HEIGHT)
-      RemovePoints(ROW, bFirst);
-  }
-
-  controlPointsChanged();
+	controlPointsChanged();
 }
 
 Patch* Patch::MakeCap(Patch* patch, EPatchCap eType, EMatrixMajor mt, bool bFirst)
@@ -1181,141 +1175,59 @@ void Patch::insertRows(std::size_t rowIndex) {
 	} 
 }
 
-void Patch::RemovePoints(EMatrixMajor mt, bool bFirst)
-{
-  std::size_t width, height, row_stride, col_stride; 
-
-  switch(mt)
-  {
-  case ROW:
-    col_stride = 1;
-    row_stride = m_width;
-    width = m_width;
-    height = m_height;
-    break;
-  case COL:
-    col_stride = m_width;
-    row_stride = 1;
-    width = m_height;
-    height = m_width;
-    break;
-  default:
-    ERROR_MESSAGE("neither row-major nor column-major");
-    return;
-  }
-
-  std::size_t pos = 0;
-  {
-    PatchControl* p1 = m_ctrl.data();
-    for(std::size_t w = 0; w != width; ++w, p1 += col_stride)
-    {
-      {
-        PatchControl* p2 = p1;
-        for(std::size_t h=1; h < height; h += 2, p2 += 2 * row_stride)
-        {
-          if(0)//p2->m_selectable.isSelected())
-          {
-            pos = h;
-            break;
-          }
-        }
-        if(pos != 0)
-        {
-          break;
-        }
-      }
-  
-      {
-        PatchControl* p2 = p1;
-        for(std::size_t h=0; h < height; h += 2, p2 += 2 * row_stride)
-        {
-          if(0)//p2->m_selectable.isSelected())
-          {
-            pos = h;
-            break;
-          }
-        }
-        if(pos != 0)
-        {
-          break;
-        }
-      }
-    }
-  }
-
-  Array<PatchControl> tmp(m_ctrl);
-
-  std::size_t row_stride2, col_stride2;
-  switch(mt)
-  {
-  case ROW:
-    setDims(m_width, m_height-2);
-    col_stride2 = 1;
-    row_stride2 = m_width;
-    break;
-  case COL:
-    setDims(m_width-2, m_height);
-    col_stride2 = m_width;
-    row_stride2 = 1;
-    break;
-  default:
-    ERROR_MESSAGE("neither row-major nor column-major");
-    return;
-  }
-
-  if(pos >= height)
-  {
-    if(bFirst)
-    {
-      pos=height-3;
-    }
-    else
-    {
-      pos=2;
-    }
-  }
-  else if(pos == 0)
-  {
-    pos=2;
-  }
-  else if(pos > height - 3)
-  {
-    pos = height - 3;
-  }
-  else if(pos % 2)
-  {
-    ++pos;
-  }
-
-  for(std::size_t w = 0; w != width; w++)
-  {
-    PatchControl* p1 = tmp.data() + (w*col_stride);
-    PatchControl* p2 = m_ctrl.data() + (w*col_stride2);
-    for(std::size_t h = 0; h != height; ++h, p2 += row_stride2, p1 += row_stride)
-    {
-      if(h == pos)
-      {
-        p1 += 2 * row_stride2; h += 2;
-      }
-      *p2 = *p1;
-    }
-
-    p1 = tmp.data() + (w*col_stride+pos*row_stride);
-    p2 = m_ctrl.data() + (w*col_stride2+pos*row_stride2);
-    
-    for(std::size_t i=0; i<3; i++)
-    {
-      (p2-row_stride2)->m_vertex[i] = ((p1+2*row_stride)->m_vertex[i]+(p1-2*row_stride)->m_vertex[i]) * 0.5f;
-
-      (p2-row_stride2)->m_vertex[i] = (p2-row_stride2)->m_vertex[i]+(2.0f * ((p1)->m_vertex[i]-(p2-row_stride2)->m_vertex[i]));
-    }
-    for(std::size_t i=0; i<2; i++)
-    {
-      (p2-row_stride2)->m_texcoord[i] = ((p1+2*row_stride)->m_texcoord[i]+(p1-2*row_stride)->m_texcoord[i]) * 0.5f;
-
-      (p2-row_stride2)->m_texcoord[i] = (p2-row_stride2)->m_texcoord[i]+(2.0f * ((p1)->m_texcoord[i]-(p2-row_stride2)->m_texcoord[i]));
-    }
-  }
+// Removes the two rows before and after the column/row having the index <index>
+void Patch::removePoints(bool columns, std::size_t index) {
+	bool rows = !columns; // readability shortcut ;)
+	
+	if (columns && m_width<5 || !columns && m_height < 5) {
+		throw GenericPatchException("Patch::removePoints: can't remove any more rows/columns.");
+	}
+	
+	// Check column index bounds
+	if (columns && (index < 2 || index > m_width - 3)) {
+		throw GenericPatchException("Patch::removePoints: can't remove columns at this index.");
+	}
+	
+	// Check row index bounds
+	if (rows && (index < 2 || index > m_height - 3)) {
+		throw GenericPatchException("Patch::removePoints: can't remove rows at this index.");
+	} 
+	
+	// Create a backup of the old control vertices
+	PatchControlArray oldCtrl = m_ctrl;
+	std::size_t oldHeight = m_height;
+	std::size_t oldWidth = m_width;
+	
+	// Resize this patch
+	setDims(columns ? oldWidth - 2 : oldWidth, rows ? oldHeight - 2 : oldHeight);
+	
+	// Now fill in the control vertex values and skip
+	// the rows/cols before and after the remove point.
+	for (std::size_t newRow = 0, oldRow = 0; 
+		 newRow < m_height && oldRow < oldHeight; 
+		 newRow++, oldRow++)
+	{
+		// Skip the row before and after the removal point
+		if (rows && (oldRow == index - 1 || oldRow == index + 1)) {
+			// Increase the old row pointer by 1
+			oldRow++;
+		}
+		
+		for (std::size_t oldCol = 0, newCol = 0; 
+			 oldCol < oldWidth && newCol < m_width; 
+			 oldCol++, newCol++) 
+		{
+			// Skip the column before and after the removal point
+			if (columns && (oldCol == index - 1 || oldCol == index + 1)) {
+				// Increase the old row pointer by 1
+				oldCol++;
+			}
+			
+			// Copy the control vertex from the old patch to the new patch
+			ctrlAt(newRow, newCol).m_vertex = oldCtrl[oldRow*oldWidth + oldCol].m_vertex;		
+			ctrlAt(newRow, newCol).m_texcoord = oldCtrl[oldRow*oldWidth + oldCol].m_texcoord;
+		}
+	}
 }
 
 void Patch::ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width)

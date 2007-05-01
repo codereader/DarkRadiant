@@ -243,10 +243,11 @@
 		</subMenu>
 
 		<subMenu name="deleteSubdivisions" caption="Delete">
-			<menuItem name="deleteFirstcolumns" caption="First (2) Columns" command="PatchDeleteFirstColumn" />
-			<menuItem name="deleteLastcolumns" caption="Last (2) Columns" command="PatchDeleteLastColumn" />
-			<menuItem name="deleteFirstrows" caption="First (2) Rows" command="PatchDeleteFirstRow" />
-			<menuItem name="deleteLastrows" caption="Last (2) Rows" command="PatchDeleteLastRow" />
+			<menuItem name="deleteFirstcolumns" caption="Delete 2 columns from the beginning" command="PatchDeleteFirstColumn" />
+			<menuItem name="deleteLastcolumns" caption="Delete 2 columns from the end" command="PatchDeleteLastColumn" />
+			<menuSeparator />
+			<menuItem name="deleteFirstrows" caption="Delete 2 rows from the beginning" command="PatchDeleteFirstRow" />
+			<menuItem name="deleteLastrows" caption="Delete 2 rows from the end" command="PatchDeleteLastRow" />
 		</subMenu>
 
 		<menuSeparator />
