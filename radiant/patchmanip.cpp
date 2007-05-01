@@ -483,23 +483,23 @@ void insertRowsAtBeginning() {
 	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(false, true));
 }
 
-void Patch_DeleteFirstColumn() {
-	UndoableCommand undo("patchDeleteFirstColumns");
+void deleteColumnsFromBeginning() {
+	UndoableCommand undo("patchDeleteColumnsFromBeginning");
 	Scene_forEachVisibleSelectedPatch(PatchRowColumnRemover(true, true));
 }
 
-void Patch_DeleteLastColumn() {
-	UndoableCommand undo("patchDeleteLastColumns");
+void deleteColumnsFromEnd() {
+	UndoableCommand undo("patchDeleteColumnsFromEnd");
 	Scene_forEachVisibleSelectedPatch(PatchRowColumnRemover(true, false));
 }
 
-void Patch_DeleteFirstRow() {
-	UndoableCommand undo("patchDeleteFirstRows");
+void deleteRowsFromBeginning() {
+	UndoableCommand undo("patchDeleteRowsFromBeginning");
 	Scene_forEachVisibleSelectedPatch(PatchRowColumnRemover(false, true));
 }
 
-void Patch_DeleteLastRow() {
-	UndoableCommand undo("patchDeleteLastRows");
+void deleteRowsFromEnd() {
+	UndoableCommand undo("patchDeleteRowsFromEnd");
 	Scene_forEachVisibleSelectedPatch(PatchRowColumnRemover(false, false));
 }
 
@@ -682,10 +682,10 @@ void Patch_registerCommands()
   GlobalEventManager().addCommand("PatchInsertRowEnd", FreeCaller<patch::insertRowsAtEnd>());
   GlobalEventManager().addCommand("PatchInsertRowBeginning", FreeCaller<patch::insertRowsAtBeginning>());
   
-  GlobalEventManager().addCommand("PatchDeleteFirstColumn", FreeCaller<patch::Patch_DeleteFirstColumn>());
-  GlobalEventManager().addCommand("PatchDeleteLastColumn", FreeCaller<patch::Patch_DeleteLastColumn>());
-  GlobalEventManager().addCommand("PatchDeleteFirstRow", FreeCaller<patch::Patch_DeleteFirstRow>());
-  GlobalEventManager().addCommand("PatchDeleteLastRow", FreeCaller<patch::Patch_DeleteLastRow>());
+  GlobalEventManager().addCommand("PatchDeleteColumnBeginning", FreeCaller<patch::deleteColumnsFromBeginning>());
+  GlobalEventManager().addCommand("PatchDeleteColumnEnd", FreeCaller<patch::deleteColumnsFromEnd>());
+  GlobalEventManager().addCommand("PatchDeleteRowBeginning", FreeCaller<patch::deleteRowsFromBeginning>());
+  GlobalEventManager().addCommand("PatchDeleteRowEnd", FreeCaller<patch::deleteRowsFromEnd>());
   
   GlobalEventManager().addCommand("InvertCurve", FreeCaller<Patch_Invert>());
   GlobalEventManager().addCommand("RedisperseRows", FreeCaller<Patch_RedisperseRows>());
