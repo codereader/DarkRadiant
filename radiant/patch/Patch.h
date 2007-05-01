@@ -263,6 +263,11 @@ public:
  	 * 			Throws an GenericPatchException if an error occurs.
  	 */
  	void insertRows(std::size_t rowIndex);
+ 	
+ 	/** greebo: Removes columns or rows right before and after the col/row 
+ 	 * 			with the given index, reducing the according dimension by 2.
+ 	 */
+ 	void removePoints(bool columns, std::size_t index);
  
 	void ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std::size_t width = 3, std::size_t height = 3);
 	void constructPlane(const AABB& aabb, int axis, std::size_t width, std::size_t height);
@@ -390,9 +395,6 @@ private:
 	// greebo: checks, if the shader name is valid
 	void check_shader();
 
-	// Insert or remove control points. bFirst tells the methods where to insert the points
-	void RemovePoints(EMatrixMajor mt, bool bFirst);
-  
 	void AccumulateBBox();
   
 	void TesselateSubMatrixFixed(ArbitraryMeshVertex* vertices, std::size_t strideX, std::size_t strideY, unsigned int nFlagsX, unsigned int nFlagsY, PatchControl* subMatrix[3][3]);

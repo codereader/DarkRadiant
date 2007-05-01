@@ -426,18 +426,34 @@ namespace patch {
  */
 class PatchRowColumnInserter
 {
-	bool _insert;
 	bool _columns;
 	bool _atBeginning;
 public:
-	PatchRowColumnInserter(bool insert, bool columns, bool atBeginning) : 
-		_insert(insert), 
+	PatchRowColumnInserter(bool columns, bool atBeginning) : 
 		_columns(columns), 
 		_atBeginning(atBeginning)
 	{}
 	
 	void operator()(Patch& patch) const {
-		patch.InsertRemove(_insert, _columns, _atBeginning);
+		patch.InsertRemove(true, _columns, _atBeginning);
+	}
+};
+
+/** greebo: This removes rows or columns from the end or the beginning
+ * 			of the visited patches.
+ */
+class PatchRowColumnRemover
+{
+	bool _columns;
+	bool _fromBeginning;
+public:
+	PatchRowColumnRemover(bool columns, bool fromBeginning) : 
+		_columns(columns), 
+		_fromBeginning(fromBeginning)
+	{}
+	
+	void operator()(Patch& patch) const {
+		patch.InsertRemove(false, _columns, _fromBeginning);
 	}
 };
 
@@ -445,47 +461,46 @@ public:
  */
 void insertColumnsAtEnd() {
 	UndoableCommand undo("patchInsertColumnsAtEnd");
-	
 	// true = insert, true = columns, false = end
-	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(true, true, false));
+	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(true, false));
 }
 
 void insertColumnsAtBeginning() {
 	UndoableCommand undo("patchInsertColumnsAtBeginning");
 	// true = insert, true = columns, true = at beginning
-	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(true, true, true));
+	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(true, true));
 }
 
 void insertRowsAtEnd() {
 	UndoableCommand undo("patchInsertRowsAtEnd");
 	// true = insert, false = rows, false = at end
-	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(true, false, false));
+	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(false, false));
 }
 
 void insertRowsAtBeginning() {
 	UndoableCommand undo("patchInsertRowsAtBeginning");
 	// true = insert, false = rows, true = at beginning
-	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(true, false, true));
+	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(false, true));
 }
 
 void Patch_DeleteFirstColumn() {
 	UndoableCommand undo("patchDeleteFirstColumns");
-	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(false, true, true));
+	Scene_forEachVisibleSelectedPatch(PatchRowColumnRemover(true, true));
 }
 
 void Patch_DeleteLastColumn() {
 	UndoableCommand undo("patchDeleteLastColumns");
-	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(false, true, false));
+	Scene_forEachVisibleSelectedPatch(PatchRowColumnRemover(true, false));
 }
 
 void Patch_DeleteFirstRow() {
 	UndoableCommand undo("patchDeleteFirstRows");
-	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(false, false, true));
+	Scene_forEachVisibleSelectedPatch(PatchRowColumnRemover(false, true));
 }
 
 void Patch_DeleteLastRow() {
 	UndoableCommand undo("patchDeleteLastRows");
-	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(false, false, false));
+	Scene_forEachVisibleSelectedPatch(PatchRowColumnRemover(false, false));
 }
 
 void thickenPatches(PatchPtrVector patchList, 
