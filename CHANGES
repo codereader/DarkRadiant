@@ -1,3 +1,8 @@
+01/05/2007
+greebo
+- Fixed insert/delete patch rows and columns command and added 
+  "Append rows/columns" feature (extrapolation).
+
 ** RELEASE 0.9.0
 
 29/04/2007
