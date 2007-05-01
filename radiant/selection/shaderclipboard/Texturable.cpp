@@ -1,6 +1,7 @@
 #include "Texturable.h"
 
 #include "ifilter.h"
+#include "nameable.h"
 #include "brush/BrushInstance.h"
 #include "brush/Face.h"
 #include "patch/Patch.h"
@@ -60,8 +61,12 @@ ClosestTexturableFinder::ClosestTexturableFinder(SelectionTest& test, Texturable
 {}
 
 bool ClosestTexturableFinder::pre(const scene::Path& path, scene::Instance& instance) const {
-	// Check if the node is filtered
-	if (path.top().get().visible()) {
+
+	// Check if this node is an entity	
+	bool isEntity = Node_isEntity(path.top());
+	
+	// Check if the node is filtered or an entity
+	if (path.top().get().visible() && !isEntity) {
 		// Test the instance for a brush
 		BrushInstance* brush = Instance_getBrush(instance);
 		
@@ -122,7 +127,13 @@ bool ClosestTexturableFinder::pre(const scene::Path& path, scene::Instance& inst
 			}
 		}
 	}
-		
+	
+	if (isEntity) {
+		// Don't traverse this entity, if it isn't a group node
+		return node_is_group(path.top());
+	}
+	
+	// Return TRUE, traverse this subgraph
 	return true;
 }
 		
