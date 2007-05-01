@@ -26,6 +26,9 @@ private:
 	// GTK MENU ITEMS
 	GtkWidget* _convertStatic;
 	GtkWidget* _revertWorldspawn;
+	GtkWidget* _addEntity;
+	GtkWidget* _addLight;
+	GtkWidget* _addSpkr;
 	
 private:
 
@@ -33,9 +36,13 @@ private:
 	// of selected brushes.
 	void checkConvertStatic();
 	
-	/** greebo: Enable or disable 
+	/** greebo: Enable or disables the "revert to worldspawn" option 
 	 */
 	void checkRevertToWorldspawn();
+	
+	/** greebo: Disables the "entity/light/speaker" options according to the selection.
+	 */
+	void checkAddOptions();
 
 	/* Gtk Callbacks */
 	
