@@ -374,6 +374,8 @@ const char* TextureBrowser_GetSelectedShader(TextureBrowser& textureBrowser)
 
 void TextureBrowser_SetStatus(TextureBrowser& textureBrowser, const char* name)
 {
+	// greebo: Disabled this, the status bar reflects the shaderclipboard now
+	return;
   IShaderPtr shader = QERApp_Shader_ForName( name);
   TexturePtr q = shader->getTexture();
   StringOutputStream strTex(256);

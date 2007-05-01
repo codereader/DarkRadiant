@@ -39,8 +39,12 @@ public:
 	 * 			or the map is changed.
 	 */
 	void clear();
-	
+
 private:
+
+	/** greebo: Updates the shader information in the status bar.
+	 */
+	void updateStatusText();
 
 	/** greebo: Sets the media browser / texwindow focus to the
 	 * 			new source shader.

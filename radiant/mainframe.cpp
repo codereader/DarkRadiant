@@ -1592,6 +1592,9 @@ void MainFrame::Create()
   
 	// Restore any floating XYViews that were active before, this applies to all view layouts
 	GlobalXYWnd().restoreState();
+	
+	// Initialise the shaderclipboard
+	GlobalShaderClipboard().clear();
 }
 
 void MainFrame::SaveWindowInfo() {

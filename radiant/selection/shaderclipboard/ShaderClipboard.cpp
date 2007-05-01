@@ -3,6 +3,7 @@
 #include "selectable.h"
 #include "iscenegraph.h"
 #include "texwindow.h"
+#include "mainframe.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 
 namespace selection {
@@ -12,6 +13,9 @@ ShaderClipboard::ShaderClipboard()
 
 void ShaderClipboard::clear() {
 	_source.clear();
+	
+	// Update the status bar information
+	updateStatusText();
 }
 
 Texturable ShaderClipboard::getTexturable(SelectionTest& test) {
@@ -30,6 +34,30 @@ void ShaderClipboard::updateMediaBrowsers() {
 	TextureBrowser_SetSelectedShader(GlobalTextureBrowser(), _source.getShader());
 	std::string sourceShader = _source.getShader();
 	ui::MediaBrowser::getInstance().setSelection(sourceShader);
+	
+	updateStatusText();
+}
+
+void ShaderClipboard::updateStatusText() {
+	std::string statusText = "ShaderClipboard is empty.";
+		
+	if (!_source.empty()) {
+		statusText = "ShaderClipboard: " + _source.getShader();
+	
+		if (_source.isFace()) {
+			statusText += " (Face)";
+		}
+		else if (_source.isPatch()) {
+			statusText += " (Patch)";
+		}
+		else if (_source.isShader()) {
+			statusText += " (Shader)";
+		}
+	}
+	
+	if (g_pParentWnd != NULL) {
+		g_pParentWnd->SetStatusText(g_pParentWnd->m_texture_status, statusText);
+	}
 }
 
 void ShaderClipboard::setSource(SelectionTest& test) {
