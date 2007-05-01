@@ -708,9 +708,105 @@ void Patch::InsertRemove(bool bInsert, bool bColumn, bool bFirst) {
 }
 
 void Patch::appendPoints(bool columns, bool beginning) {
+	bool rows = !columns; // Shortcut for readability
+	
+	if ((columns && m_width + 2 > MAX_PATCH_WIDTH) ||
+		(rows && m_height + 2 > MAX_PATCH_HEIGHT))
+	{
+		globalErrorStream() << "Patch::appendPoints() error: " << 
+							   "Cannot make patch any larger.\n";
+		return;
+	}
+	
+	// Sanity check passed, now start the action
 	undoSave();
 	
+	// Create a backup of the old control vertices
+	PatchControlArray oldCtrl = m_ctrl;
+	std::size_t oldHeight = m_height;
+	std::size_t oldWidth = m_width;
 	
+	// Resize this patch
+	setDims(columns ? oldWidth+2 : oldWidth, rows ? oldHeight+2 : oldHeight);
+	
+	// Specify the target row to copy the values to
+	std::size_t targetColStart = (columns && beginning) ? 2 : 0;
+	std::size_t targetRowStart = (rows && beginning) ? 2 : 0;
+	
+	// We're copying the old patch matrix into a sub-matrix of the new patch
+	// Fill in the control vertex values into the target area using this loop
+	for (std::size_t newRow = targetRowStart, oldRow = 0; 
+		 newRow < m_height && oldRow < oldHeight; 
+		 newRow++, oldRow++)
+	{
+		for (std::size_t newCol = targetColStart, oldCol = 0; 
+			 oldCol < oldWidth && newCol < m_width; 
+			 oldCol++, newCol++) 
+		{
+			// Copy the control vertex from the old patch to the new patch
+			ctrlAt(newRow, newCol).m_vertex = oldCtrl[oldRow*oldWidth + oldCol].m_vertex;		
+			ctrlAt(newRow, newCol).m_texcoord = oldCtrl[oldRow*oldWidth + oldCol].m_texcoord;
+		}
+	}
+	
+	if (columns) {
+		// Extrapolate the vertex attributes of the columns
+		
+		// These are the indices of the new columns
+		std::size_t newCol1 = beginning ? 0 : m_width - 1; // The outermost column
+		std::size_t newCol2 = beginning ? 1 : m_width - 2; // The nearest column
+		
+		// This indicates the direction we are taking the base values from
+		// If we start at the beginning, we have to take the values on 
+		// the "right", hence the +1 index
+		int neighbour = beginning ? +1 : -1;
+		
+		for (std::size_t row = 0; row < m_height; row++) {
+			// The distance of the two neighbouring columns, 
+			// this is taken as extrapolation value
+			Vector3 vertexDiff = ctrlAt(row, newCol2 + neighbour).m_vertex - 
+								 ctrlAt(row, newCol2 + 2*neighbour).m_vertex;
+			Vector2 texDiff = ctrlAt(row, newCol2 + neighbour).m_texcoord -
+							  ctrlAt(row, newCol2 + 2*neighbour).m_texcoord;
+			
+			// Extrapolate the values of the nearest column
+			ctrlAt(row, newCol2).m_vertex = ctrlAt(row, newCol2 + neighbour).m_vertex + vertexDiff;
+			ctrlAt(row, newCol2).m_texcoord = ctrlAt(row, newCol2 + neighbour).m_texcoord + texDiff;
+			
+			// Extrapolate once again linearly from the nearest column to the outermost column
+			ctrlAt(row, newCol1).m_vertex = ctrlAt(row, newCol2).m_vertex + vertexDiff;
+			ctrlAt(row, newCol1).m_texcoord = ctrlAt(row, newCol2).m_texcoord + texDiff;
+		}
+	}
+	else {
+		// Extrapolate the vertex attributes of the rows
+		
+		// These are the indices of the new rows
+		std::size_t newRow1 = beginning ? 0 : m_height - 1; // The outermost row
+		std::size_t newRow2 = beginning ? 1 : m_height - 2; // The nearest row
+		
+		// This indicates the direction we are taking the base values from
+		// If we start at the beginning, we have to take the values on 
+		// the "right", hence the +1 index
+		int neighbour = beginning ? +1 : -1;
+		
+		for (std::size_t col = 0; col < m_width; col++) {
+			// The distance of the two neighbouring rows, 
+			// this is taken as extrapolation value
+			Vector3 vertexDiff = ctrlAt(newRow2 + neighbour, col).m_vertex - 
+								 ctrlAt(newRow2 + 2*neighbour, col).m_vertex;
+			Vector2 texDiff = ctrlAt(newRow2 + neighbour, col).m_texcoord -
+							  ctrlAt(newRow2 + 2*neighbour, col).m_texcoord;
+			
+			// Extrapolate the values of the nearest row
+			ctrlAt(newRow2, col).m_vertex = ctrlAt(newRow2 + neighbour, col).m_vertex + vertexDiff;
+			ctrlAt(newRow2, col).m_texcoord = ctrlAt(newRow2 + neighbour, col).m_texcoord + texDiff;
+			
+			// Extrapolate once again linearly from the nearest row to the outermost row
+			ctrlAt(newRow1, col).m_vertex = ctrlAt(newRow2, col).m_vertex + vertexDiff;
+			ctrlAt(newRow1, col).m_texcoord = ctrlAt(newRow2, col).m_texcoord + texDiff;
+		}
+	}
 	
 	controlPointsChanged();
 }
