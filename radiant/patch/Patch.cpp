@@ -707,6 +707,14 @@ void Patch::InsertRemove(bool bInsert, bool bColumn, bool bFirst) {
 	controlPointsChanged();
 }
 
+void Patch::appendPoints(bool columns, bool beginning) {
+	undoSave();
+	
+	
+	
+	controlPointsChanged();
+}
+
 Patch* Patch::MakeCap(Patch* patch, EPatchCap eType, EMatrixMajor mt, bool bFirst)
 {
   std::size_t i, width, height;
