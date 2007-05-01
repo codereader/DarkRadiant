@@ -44,6 +44,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "xyview/GlobalXYWnd.h"
 #include "ui/patch/PatchThickenDialog.h"
 #include "ui/patch/PatchCreateDialog.h"
+#include "selection/algorithm/Primitives.h"
 
 PatchCreator* g_patchCreator = 0;
 
@@ -503,37 +504,15 @@ void Patch_CycleProjection()
 
 namespace patch {
 
-/** greebo: This populates the given list with patchinstance references
- */
-class PatchFinder
-{
-public:
-	typedef std::list<PatchInstance*> PatchList;
-
-	// The list that is going to be populated
-	mutable PatchList& _list;
-	
-	PatchFinder(PatchList& list) : 
-		_list(list) 
-	{}
-
-	void operator()(PatchInstance& patch) const {
-		_list.push_back(&patch);
-	}
-};
-
-void thickenPatches(PatchFinder::PatchList list, 
+void thickenPatches(PatchPtrVector patchList, 
 					const float& thickness, 
 					const bool& createSeams, 
 					const int& axis) 
 {
 	// Go through the list and thicken all the found ones
-	for (PatchFinder::PatchList::iterator i = list.begin();
-		 i != list.end();
-		 i++)
-	{
+	for (unsigned int i = 0; i < patchList.size(); i++) {
 		// Retrieve the reference from the pointer
-		PatchInstance& sourcePatch = *(*i); 
+		Patch& sourcePatch = *patchList[i]; 
 		
 		// Create a new patch node
 		NodeSmartReference node(g_patchCreator->createPatch());
@@ -544,7 +523,7 @@ void thickenPatches(PatchFinder::PatchList list,
 		Patch* targetPatch = Node_getPatch(node);
 	
 		// Create the opposite patch with the given thickness = distance
-		targetPatch->createThickenedOpposite(sourcePatch.getPatch(), thickness, axis);
+		targetPatch->createThickenedOpposite(sourcePatch, thickness, axis);
 	
 		// Now select the newly created patches
 		{
@@ -572,7 +551,7 @@ void thickenPatches(PatchFinder::PatchList list,
 				Patch* wallPatch = Node_getPatch(nodes[i]);
 				
 				// Create the wall patch by passing i as wallIndex
-				wallPatch->createThickenedWall(sourcePatch.getPatch(), *targetPatch, i);
+				wallPatch->createThickenedWall(sourcePatch, *targetPatch, i);
 				
 				// Now select the newly created patches
 				{
@@ -597,15 +576,11 @@ void thickenPatches(PatchFinder::PatchList list,
  * and they are thickened as well, and again and again).  
  */
 void thickenSelectedPatches() {
-	// The list of all the selected patches
-	PatchFinder::PatchList list;
 	
-	// Now populate the list
-	Scene_forEachVisibleSelectedPatchInstance(
-		PatchFinder(list)
-	);
+	// Get all the selected patches
+	PatchPtrVector patchList = selection::algorithm::getSelectedPatches();
 	
-	if (list.size() > 0) {
+	if (patchList.size() > 0) {
 		UndoableCommand undo("patchThicken");
 		
 		ui::PatchThickenDialog dialog;
@@ -617,7 +592,7 @@ void thickenSelectedPatches() {
 		
 		if (dialog.queryPatchThickness(thickness, createSeams, axis)) {
 			// Thicken all the patches in the list
-			thickenPatches(list, thickness, createSeams, axis);
+			thickenPatches(patchList, thickness, createSeams, axis);
 		}
 	}
 	else {
@@ -656,15 +631,10 @@ void createSimplePatch() {
 }
 
 void stitchPatchTextures() {
-	// The list of all the selected patches
-	PatchFinder::PatchList list;
+	// Get all the selected patches
+	PatchPtrVector patchList = selection::algorithm::getSelectedPatches();
 	
-	// Now populate the list
-	Scene_forEachVisibleSelectedPatchInstance(
-		PatchFinder(list)
-	);
-	
-	if (list.size() == 2) {
+	if (patchList.size() == 2) {
 		UndoableCommand undo("patchStitchTexture");
 
 		// Fetch the instances from the selectionsystem		
@@ -673,13 +643,19 @@ void stitchPatchTextures() {
 			
 		scene::Instance& sourceInstance =
 			GlobalSelectionSystem().penultimateSelected();
-			
-		// Cast the instances onto a patch
-		PatchInstance& source = *(Instance_getPatch(sourceInstance));
-		PatchInstance& target = *(Instance_getPatch(targetInstance));
 		
-		// Stitch the texture leaving the source patch intact 
-		target.getPatch().stitchTextureFrom(source.getPatch());
+		// Cast the instances onto a patch
+		Patch* source = Node_getPatch(sourceInstance.path().top());
+		Patch* target = Node_getPatch(targetInstance.path().top());
+		
+		if (source != NULL && target != NULL) {		
+			// Stitch the texture leaving the source patch intact 
+			target->stitchTextureFrom(*source);
+		}
+		else {
+			gtkutil::errorDialog("Cannot stitch textures. \nCould not cast nodes to patches.",
+							 MainFrame_getWindow());
+		}
 	}
 	else {
 		gtkutil::errorDialog("Cannot stitch patch textures. \nExactly 2 patches must be selected.",
