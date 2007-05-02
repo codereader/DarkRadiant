@@ -464,6 +464,7 @@ radiant_src = [
 'selection/algorithm/Primitives.cpp',
 'selection/algorithm/Shader.cpp',
 'selection/algorithm/Group.cpp',
+'selection/algorithm/GroupCycle.cpp',
 'selection/algorithm/Transformation.cpp',
 'selection/shaderclipboard/ShaderClipboard.cpp',
 'selection/shaderclipboard/Texturable.cpp',
