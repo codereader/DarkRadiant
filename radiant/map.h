@@ -131,8 +131,6 @@ void DoMapInfo();
 
 void Scene_parentSelectedPrimitivesToEntity(scene::Graph& graph, scene::Node& parent);
 
-void Scene_parentSelected();
-
 void OnUndoSizeChanged();
 
 void NewMap();
