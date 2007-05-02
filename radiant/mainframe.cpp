@@ -49,6 +49,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/overlay/OverlayDialog.h"
 #include "selection/algorithm/Shader.h"
 #include "selection/algorithm/Group.h"
+#include "selection/algorithm/GroupCycle.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Transformation.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
