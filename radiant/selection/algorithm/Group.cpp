@@ -75,9 +75,6 @@ void revertGroupToWorldSpawn() {
 				// Deselect all, the children get selected after reparenting
 				GlobalSelectionSystem().setSelectedAll(false);
 				
-				// Load the old origin, it has to be added to the brushes after reparenting
-				Vector3 parentOrigin(parent->getKeyValue("origin"));
-				
 				// Get the worldspawn node
 	    		scene::Node& worldspawnNode = Map_FindOrInsertWorldspawn(g_map);
 	    	
@@ -107,6 +104,68 @@ void revertGroupToWorldSpawn() {
 	}
 }
 
+// Some helper methods
+bool contains_entity(scene::Node& node) {
+	return Node_getTraversable(node) != NULL && !Node_isBrush(node) && 
+		   !Node_isPatch(node) && !Node_isEntity(node);
+}
+
+bool contains_primitive(scene::Node& node) {
+	return Node_isEntity(node) && Node_getTraversable(node) != NULL 
+		   && Node_getEntity(node)->isContainer();
+}
+
+ENodeType node_get_contains(scene::Node& node) {
+	if (contains_entity(node)) {
+		return eNodeEntity;
+	}
+	if (contains_primitive(node)) {
+		return eNodePrimitive;
+	}
+	return eNodeUnknown;
+}
+
+class ParentSelectedBrushesToEntityWalker : 
+	public SelectionSystem::Visitor
+{
+	const scene::Path& _parent;
+public:
+	ParentSelectedBrushesToEntityWalker(const scene::Path& parent) : 
+		_parent(parent)
+	{}
+	
+	void visit(scene::Instance& instance) const {
+		
+		const scene::Path& child = instance.path();
+		
+		// Don't reparent instances to themselves
+		if (&_parent != &child) {
+			// The type of the contained items
+			ENodeType contains = node_get_contains(_parent.top());
+			// The type of the 
+			ENodeType type = node_get_nodetype(child.top());
+			
+			if (contains != eNodeUnknown && contains == type) {
+				// Retrieve the child node
+				NodeSmartReference node(child.top().get());
+				// Remove this path from the scenegraph
+				Path_deleteTop(child);
+				// Insert the child node into the parent node 
+				Node_getTraversable(_parent.top())->insert(node);
+				// Update the scene
+				SceneChangeNotify();
+			}
+			else {
+				gtkutil::errorDialog(
+					"failed - " + nodetype_get_name(type) + " cannot be parented to " + 
+					nodetype_get_name(contains) + " container.\n", 
+					GlobalRadiant().getMainWindow()
+				);
+			}
+		}
+	}
+};
+
 // re-parents the selected brushes/patches
 void parentSelection() {
 	// Retrieve the selection information structure
@@ -115,22 +174,17 @@ void parentSelection() {
 	if (info.totalCount > 1 && info.entityCount == 1) {
 		UndoableCommand undo("parentSelectedPrimitives");
 		
-		/*class ParentSelectedBrushesToEntityWalker : public SelectionSystem::Visitor {
-			const scene::Path& m_parent;
-		public:
-			ParentSelectedBrushesToEntityWalker(const scene::Path& parent) : m_parent(parent) {}
-			void visit(scene::Instance& instance) const {
-				if(&m_parent != &instance.path()) {
-					Path_parent(m_parent, instance.path());
-				}
-			}
-		};
-	
-		ParentSelectedBrushesToEntityWalker visitor(GlobalSelectionSystem().ultimateSelected().path());
-		GlobalSelectionSystem().foreachSelected(visitor);*/
+		// Take the last selected item (this should be an entity)
+		ParentSelectedBrushesToEntityWalker visitor(
+			GlobalSelectionSystem().ultimateSelected().path()
+		);
+		GlobalSelectionSystem().foreachSelected(visitor);
 	}
 	else {
-		
+		gtkutil::errorDialog("Cannot reparent primitives to entity. "
+							 "Please select at least one brush/patch and exactly one entity."
+							 "(The entity has to be selected last.)", 
+							 GlobalRadiant().getMainWindow());
 	}
 }
 

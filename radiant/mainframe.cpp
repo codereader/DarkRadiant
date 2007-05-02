@@ -1802,7 +1802,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("PasteToCamera", FreeCaller<PasteToCamera>());
 	GlobalEventManager().addCommand("CloneSelection", FreeCaller<selection::algorithm::cloneSelected>());
 	GlobalEventManager().addCommand("DeleteSelection", FreeCaller<deleteSelection>());
-	GlobalEventManager().addCommand("ParentSelection", FreeCaller<Scene_parentSelected>());
+	GlobalEventManager().addCommand("ParentSelection", FreeCaller<selection::algorithm::parentSelection>());
 	GlobalEventManager().addCommand("UnSelectSelection", FreeCaller<Selection_Deselect>());
 	GlobalEventManager().addCommand("InvertSelection", FreeCaller<Select_Invert>());
 	GlobalEventManager().addCommand("SelectInside", FreeCaller<Select_Inside>());
