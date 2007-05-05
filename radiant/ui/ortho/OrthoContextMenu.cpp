@@ -120,12 +120,12 @@ void OrthoContextMenu::checkConvertStatic() {
 void OrthoContextMenu::checkAddOptions() {
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 	
-	// Add entity command is disabled if an entity is already selected
-	gtk_widget_set_sensitive(_addEntity, (info.entityCount == 0));
+	// Add entity and light commands are disabled if an entity is selected
+	gtk_widget_set_sensitive(_addEntity, info.entityCount == 0 ? TRUE : FALSE);
+	gtk_widget_set_sensitive(_addLight, info.entityCount == 0 ? TRUE : FALSE);
 	
-	// Add light/speaker is disabled if anything is selected
-	gtk_widget_set_sensitive(_addLight, (info.totalCount == 0));
-	gtk_widget_set_sensitive(_addSpkr, (info.totalCount == 0));
+	// Add speaker is disabled if anything is selected
+	gtk_widget_set_sensitive(_addSpkr, info.totalCount == 0 ? TRUE : FALSE);
 }
 
 void OrthoContextMenu::checkRevertToWorldspawn() {
