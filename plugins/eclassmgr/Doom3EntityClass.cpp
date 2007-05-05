@@ -65,13 +65,16 @@ void Doom3EntityClass::releaseColour() {
 }
 
 // Enumerate entity class attributes
-void Doom3EntityClass::forEachClassAttribute(EntityClassAttributeVisitor& visitor) const {
+void Doom3EntityClass::forEachClassAttribute(
+	EntityClassAttributeVisitor& visitor,
+	bool editorKeys) const 
+{
 	for (EntityAttributeMap::const_iterator i = _attributes.begin();
 		 i != _attributes.end();
 		 ++i)
 	{
-		// Visit only if it is not an "editor_" key
-		if (!boost::algorithm::istarts_with(i->first, "editor_"))
+		// Visit if it is a non-editor key or we are visiting all keys
+		if (editorKeys || !boost::algorithm::istarts_with(i->first, "editor_"))
 			visitor.visit(i->second);
 	}
 }
@@ -101,9 +104,9 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 		// Recursively resolve inheritance of parent
 		par->resolveInheritance(classmap);
 
-		// Copy attributes from the parent to the child
+		// Copy attributes from the parent to the child, including editor keys
 		AttributeCopyingVisitor visitor(*this);
-		par->forEachClassAttribute(visitor);
+		par->forEachClassAttribute(visitor, true);
 	}
 	else {
 		std::cout << "[eclassmgr] Warning: Entity class "
