@@ -181,14 +181,18 @@ struct IEntityClass {
 	 */
 	virtual std::string getValueForKey(const std::string& key) const = 0;
 
-	/** Enumerate the EntityClassAttibutes in turn. Only the non-editor
-	 * keys will be enumerated; any key beginning with "editor_" will not
-	 * be passed to the visitor.
+	/** 
+	 * Enumerate the EntityClassAttibutes in turn.
 	 * 
 	 * @param visitor
 	 * An EntityClassAttributeVisitor instance.
+	 * 
+	 * @param editorKeys
+	 * true if editor keys (those which start with "editor_") should be passed
+	 * to the visitor, false if they should be skipped.
 	 */
-	virtual void forEachClassAttribute(EntityClassAttributeVisitor&) const = 0;
+	virtual void forEachClassAttribute(EntityClassAttributeVisitor& visitor, 
+									   bool editorKeys = false) const = 0;
 
 
 	/* MODEL AND SKIN */

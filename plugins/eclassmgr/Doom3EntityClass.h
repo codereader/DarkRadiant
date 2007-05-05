@@ -225,7 +225,8 @@ public:
 
 	/** Enumerate the EntityClassAttributes.
 	 */
-	void forEachClassAttribute(EntityClassAttributeVisitor& visitor) const;
+	void forEachClassAttribute(EntityClassAttributeVisitor& visitor,
+							   bool editorKeys) const;
 	
 	/** Set a model on this entity class.
 	 * 
