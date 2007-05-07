@@ -388,8 +388,14 @@ void EntityInspector::_onAddProperty(GtkMenuItem* item,
 	
 	// Choose a property, and add to entity with a default value
 	std::string property = AddPropertyDialog::chooseProperty(ec);
-	if (!property.empty())
+    if (!property.empty()) {
+        
+        // Save last key, so that it will be automatically selected
+        self->_lastKey = property;
+        
+        // Add the keyvalue on the entity (triggering the refresh)
 		self->_selectedEntity->setKeyValue(property, "-");
+    }
 }
 
 void EntityInspector::_onToggleShowInherited(GtkToggleButton* b, EntityInspector* self) {
@@ -418,6 +424,8 @@ void EntityInspector::treeSelectionChanged() {
     // Get the selected key and value in the tree view
     std::string key = getListSelection(PROPERTY_NAME_COLUMN);
     std::string value = getListSelection(PROPERTY_VALUE_COLUMN);
+    if (!key.empty())
+        _lastKey = key; // save last key
     
     // Get the type for this key if it exists, and the options
     PropertyParmMap::const_iterator tIter = getPropertyMap().find(key);
@@ -487,15 +495,24 @@ void EntityInspector::refreshTreeModel() {
 		
 		// Entity class to check for types
 		IEntityClassConstPtr _eclass;
+        
+        // Last selected key to highlight
+        std::string _lastKey;
+        
+        // TreeIter to select, if we find the last-selected key
+        GtkTreeIter* _lastIter;
 	
 	public:
 	
 		// Constructor
 		ListPopulateVisitor(GtkListStore* store, 
 							const PropertyParmMap& map,
-							IEntityClassConstPtr cls)
-		: _store(store), _map(map), _eclass(cls)
-		{}
+							IEntityClassConstPtr cls,
+                            std::string lastKey)
+        : _store(store), _map(map), _eclass(cls), _lastKey(lastKey),
+          _lastIter(NULL)
+		{
+        }
 		
 		// Required visit function
 		virtual void visit(const std::string& key, const std::string& value) {
@@ -528,15 +545,27 @@ void EntityInspector::refreshTreeModel() {
 				PROPERTY_ICON_COLUMN, PropertyEditorFactory::getPixbufFor(type),
 				INHERITED_FLAG_COLUMN, "", // not inherited
 				-1);
+            
+            // If this was the last selected key, save the Iter so we can
+            // select it again
+            if (key == _lastKey) {
+                _lastIter = gtk_tree_iter_copy(&iter);
+            }
 							   	
 		}
+        
+        // Get the iter pointing to the last-selected key
+        GtkTreeIter* getLastIter() {
+            return _lastIter;
+        }
 			
 	};
 	
 	// Populate the list view
 	ListPopulateVisitor visitor(_listStore, 
 								getPropertyMap(),
-								_selectedEntity->getEntityClass());
+								_selectedEntity->getEntityClass(),
+                                _lastKey);
 	_selectedEntity->forEachKeyValue(visitor);
 
 	// Add the inherited properties if the toggle is set
@@ -544,6 +573,15 @@ void EntityInspector::refreshTreeModel() {
 		appendClassProperties();
 	}
 
+    // If we found the last-selected key, select it
+    GtkTreeIter* lastIter = visitor.getLastIter();
+    if (lastIter != NULL) {
+        gtk_tree_selection_select_iter(
+            gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView)),
+            lastIter
+        );
+    }
+                                   
 	// Force an update of widgets
 	treeSelectionChanged();
 

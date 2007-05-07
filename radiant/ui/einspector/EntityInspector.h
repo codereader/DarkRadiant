@@ -75,6 +75,9 @@ private:
     
     // Whether to show inherited properties or not
     bool _showInherited;
+    
+    // The last selected key
+    std::string _lastKey;
 
 private:
 
