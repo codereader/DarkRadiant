@@ -33,8 +33,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "scenelib.h"
 #include "os/path.h"
 #include "os/file.h"
-#include "stream/stringstream.h"
-#include "stringio.h"
 
 #include "gtkutil/filechooser.h"
 #include "gtkmisc.h"
@@ -45,6 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "mainframe.h"
 #include "qe3.h"
 
+#include "selection/algorithm/Shader.h"
 #include "ui/modelselector/ModelSelector.h"
 
 #include <iostream>
@@ -247,17 +246,19 @@ NodeSmartReference Entity_createFromSelection(const char* name,
     	
     	// Add selected brushes as children of non-fixed entity
 		entity->setKeyValue("model", Node_getEntity(node)->getKeyValue("name"));
-		// Add the "origin" key. Doom 3 treats the coordinates of an entity's brushes as
-	    // relative to its origin key. 
 		entity->setKeyValue("origin", std::string(workzone.getOrigin()));
 		
+        // If there is an "editor_material" class attribute, apply this shader
+        // to all of the selected primitives before parenting them
+        std::string material =
+            entity->getEntityClass()->getValueForKey("editor_material");
+        if (!material.empty()) {
+            selection::algorithm::applyShaderToSelection(material);
+        }
+                
+        // Parent the selected primitives
 	    Scene_parentSelectedPrimitivesToEntity(GlobalSceneGraph(), node);
 	    Scene_forEachChildSelectable(SelectableSetSelected(true), instance.path());
-	    
-	    // We just need to set the origin key and then
-	    // subtract this vector from each brush's coordinates.
-	    // greebo: Disabled, handled by the Doom3Group itself
-	    // map::selectedPrimitivesSubtractOrigin(workzone.getOrigin());
 	    
 	    // De-select the children and select the newly created parent entity
 	    GlobalSelectionSystem().setSelectedAll(false);
@@ -267,14 +268,9 @@ NodeSmartReference Entity_createFromSelection(const char* name,
     // Set the light radius and origin
 
     if (entityClass->isLight() && primitivesSelected) {
-        AABB bounds(Doom3Light_getBounds(workzone));    // If workzone is not valid the Doom3Light_getBounds function will return a default
-        StringOutputStream key(64);
-
-        key << bounds.origin[0] << " " << bounds.origin[1] << " " << bounds.origin[2];
-        Node_getEntity(node)->setKeyValue("origin", key.c_str());
-        key.clear();
-        key << bounds.extents[0] << " " << bounds.extents[1] << " " << bounds.extents[2];
-        Node_getEntity(node)->setKeyValue("light_radius", key.c_str());
+        AABB bounds(Doom3Light_getBounds(workzone));    
+        Node_getEntity(node)->setKeyValue("origin", bounds.getOrigin());
+        Node_getEntity(node)->setKeyValue("light_radius", bounds.getExtents());
     }
     
     // Flag the map as unsaved after creating the entity
@@ -285,7 +281,6 @@ NodeSmartReference Entity_createFromSelection(const char* name,
 }
 
 #include "preferencesystem.h"
-#include "stringio.h"
 
 void Entity_Construct() {
 	GlobalEventManager().addCommand("ConnectSelection", FreeCaller<Entity_connectSelected>());
