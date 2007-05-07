@@ -476,6 +476,8 @@ void ToggleEntityMode() {
 
 void ToggleEdgeMode() {
 	if (EdgeMode()) {
+		// De-select all the selected edges before switching back
+		GlobalSelectionSystem().setSelectedAllComponents(false);
 		SelectionSystem_DefaultMode();
 	}
 	else if (GlobalSelectionSystem().countSelected() != 0) {
@@ -494,6 +496,8 @@ void ToggleEdgeMode() {
 
 void ToggleVertexMode() {
 	if (VertexMode()) {
+		// De-select all the selected vertices before switching back
+		GlobalSelectionSystem().setSelectedAllComponents(false);
 		SelectionSystem_DefaultMode();
 	}
 	else if(GlobalSelectionSystem().countSelected() != 0) {
@@ -512,6 +516,8 @@ void ToggleVertexMode() {
 
 void ToggleFaceMode() {
 	if (FaceMode()) {
+		// De-select all the selected faces before switching back
+		GlobalSelectionSystem().setSelectedAllComponents(false);
 		SelectionSystem_DefaultMode();
 	}
 	else if (GlobalSelectionSystem().countSelected() != 0) {
