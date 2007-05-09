@@ -103,7 +103,7 @@ Vector3 getColour(const std::string& colourName) {
 
 const char* TextureBrowser_getSelectedShader()
 {
-  return TextureBrowser_GetSelectedShader(GlobalTextureBrowser());
+  return GlobalTextureBrowser().getSelectedShader().c_str();
 }
 
 class RadiantCoreAPI

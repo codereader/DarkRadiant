@@ -487,7 +487,7 @@ void XYWnd::NewBrushDrag(int x, int y) {
 
 	Scene_BrushResize_Selected(GlobalSceneGraph(),
 	                           AABB::createFromMinMax(mins, maxs),
-	                           TextureBrowser_GetSelectedShader(GlobalTextureBrowser()));
+	                           GlobalTextureBrowser().getSelectedShader());
 }
 
 void XYWnd::onContextMenu() {

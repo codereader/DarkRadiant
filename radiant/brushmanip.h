@@ -42,13 +42,13 @@ namespace scene
   class Graph;
   class Node;
 }
-void Scene_BrushConstructPrefab(scene::Graph& graph, EBrushPrefab type, std::size_t sides, const char* shader);
+void Scene_BrushConstructPrefab(scene::Graph& graph, EBrushPrefab type, std::size_t sides, const std::string& shader);
 class AABB;
-void Scene_BrushResize_Selected(scene::Graph& graph, const AABB& bounds, const char* shader);
+void Scene_BrushResize_Selected(scene::Graph& graph, const AABB& bounds, const std::string& shader);
 void Scene_BrushSetShader_Selected(scene::Graph& graph, const std::string& name);
 void Scene_BrushSetShader_Component_Selected(scene::Graph& graph, const std::string& name);
-void Scene_BrushSelectByShader(scene::Graph& graph, const char* name);
-void Scene_BrushSelectByShader_Component(scene::Graph& graph, const char* name);
+void Scene_BrushSelectByShader(scene::Graph& graph, const std::string& name);
+void Scene_BrushSelectByShader_Component(scene::Graph& graph, const std::string& name);
 void Scene_BrushFlipTexture_Selected(unsigned int flipAxis);
 void Scene_BrushFlipTexture_Component_Selected(unsigned int flipAxis);
 
