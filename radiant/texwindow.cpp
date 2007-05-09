@@ -259,35 +259,17 @@ std::string TextureBrowser::getSelectedShader() {
 	return shader;
 }
 
-const char* TextureBrowser_getFilter(TextureBrowser& textureBrowser)
-{
-  if(textureBrowser.m_showTextureFilter)
-  {
-    return gtk_entry_get_text(textureBrowser.m_filter);
-  }
-  return 0;
+std::string TextureBrowser::getFilter() {
+	if (m_showTextureFilter) {
+		return gtk_entry_get_text(m_filter);
+	}
+	return "";
 }
 
-void TextureBrowser_SetStatus(TextureBrowser& textureBrowser, const char* name)
-{
-	// greebo: Disabled this, the status bar reflects the shaderclipboard now
-	return;
-  IShaderPtr shader = QERApp_Shader_ForName( name);
-  TexturePtr q = shader->getTexture();
-  StringOutputStream strTex(256);
-  strTex << name << " W: " << Unsigned(q->width) << " H: " << Unsigned(q->height);
-  g_pParentWnd->SetStatusText(g_pParentWnd->m_texture_status, strTex.c_str());
+void TextureBrowser::setSelectedShader(const std::string& newShader) {
+	shader = newShader;
+	focus(shader);
 }
-
-void TextureBrowser_Focus(TextureBrowser& textureBrowser, const char* name);
-
-void TextureBrowser_SetSelectedShader(TextureBrowser& textureBrowser, const std::string& shader)
-{
-  textureBrowser.shader = shader.c_str();
-  TextureBrowser_SetStatus(textureBrowser, shader.c_str());
-  TextureBrowser_Focus(textureBrowser, shader.c_str());
-}
-
 
 std::string g_TextureBrowser_currentDirectory;
 
@@ -345,7 +327,7 @@ void Texture_NextPos(TextureBrowser& textureBrowser, TextureLayout& layout, Text
 }
 
 // if texture_showinuse jump over non in-use textures
-bool Texture_IsShown(IShaderPtr shader, bool show_shaders, bool hideUnused, const char* filter)
+bool Texture_IsShown(IShaderPtr shader, bool show_shaders, bool hideUnused, const std::string& filter)
 {
   if(!shader_equal_prefix(shader->getName(), "textures/"))
     return false;
@@ -364,12 +346,11 @@ bool Texture_IsShown(IShaderPtr shader, bool show_shaders, bool hideUnused, cons
     }
   }
 
-  if (filter != 0)
-  {
-    // some basic filtering
-    if (strstr( shader_get_textureName(shader->getName()), filter ) == 0)
-      return false;
-  }
+	if (!filter.empty()) {
+		// some basic filtering
+		if (strstr( shader_get_textureName(shader->getName()), filter.c_str() ) == 0)
+			return false;
+	}
 
   return true;
 }
@@ -395,7 +376,7 @@ void TextureBrowser_evaluateHeight(TextureBrowser& textureBrowser)
     {
       IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 
-      if(!Texture_IsShown(shader, textureBrowser.m_showShaders, textureBrowser.m_hideUnused, TextureBrowser_getFilter(textureBrowser)))
+      if(!Texture_IsShown(shader, textureBrowser.m_showShaders, textureBrowser.m_hideUnused, textureBrowser.getFilter()))
         continue;
 
       int   x, y;
@@ -615,8 +596,7 @@ TexturesMenu g_TexturesMenu;
 // it might need to be split in parts or moved out .. dunno
 // scroll origin so the specified texture is completely on screen
 // if current texture is not displayed, nothing is changed
-void TextureBrowser_Focus(TextureBrowser& textureBrowser, const char* name)
-{
+void TextureBrowser::focus(const std::string& name) {
   TextureLayout layout;
   // scroll origin so the texture is completely on screen
   Texture_StartPos(layout);
@@ -625,11 +605,11 @@ void TextureBrowser_Focus(TextureBrowser& textureBrowser, const char* name)
   {
     IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 
-    if(!Texture_IsShown(shader, textureBrowser.m_showShaders, textureBrowser.m_hideUnused, TextureBrowser_getFilter(textureBrowser)))
+    if(!Texture_IsShown(shader, m_showShaders, m_hideUnused, getFilter()))
       continue;
 
     int x, y;
-    Texture_NextPos(textureBrowser, layout, shader->getTexture(), &x, &y);
+    Texture_NextPos(*this, layout, shader->getTexture(), &x, &y);
     TexturePtr q = shader->getTexture();
     if (!q)
       break;
@@ -638,21 +618,20 @@ void TextureBrowser_Focus(TextureBrowser& textureBrowser, const char* name)
     // NOTE: as everywhere else for our comparisons, we are not case sensitive
     if (shader_equal(name, shader->getName()))
     {
-      int textureHeight = textureBrowser.getTextureHeight(q)
-        + 2 * textureBrowser.getFontHeight();
+      int textureHeight = getTextureHeight(q) + 2 * getFontHeight();
 
-      int originy = TextureBrowser_getOriginY(textureBrowser);
+      int originy = TextureBrowser_getOriginY(*this);
       if (y > originy)
       {
         originy = y;
       }
 
-      if (y - textureHeight < originy - textureBrowser.height)
+      if (y - textureHeight < originy - height)
       {
-        originy = (y - textureHeight) + textureBrowser.height;
+        originy = (y - textureHeight) + height;
       }
 
-      TextureBrowser_setOriginY(textureBrowser, originy);
+      TextureBrowser_setOriginY(*this, originy);
       return;
     }
   }
@@ -678,7 +657,7 @@ IShaderPtr Texture_At(TextureBrowser& textureBrowser, int mx, int my)
   {
     IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 
-    if(!Texture_IsShown(shader, textureBrowser.m_showShaders, textureBrowser.m_hideUnused, TextureBrowser_getFilter(textureBrowser)))
+    if(!Texture_IsShown(shader, textureBrowser.m_showShaders, textureBrowser.m_hideUnused, textureBrowser.getFilter()))
       continue;
 
     int   x, y;
@@ -710,7 +689,7 @@ void SelectTexture(TextureBrowser& textureBrowser, int mx, int my, bool bShift)
 {
 	try {
   		IShaderPtr shader = Texture_At(textureBrowser, mx, my);
-  		TextureBrowser_SetSelectedShader(textureBrowser, shader->getName());
+  		textureBrowser.setSelectedShader(shader->getName());
   		
 		// Apply the shader to the current selection
 		selection::algorithm::applyShaderToSelection(shader->getName());
@@ -801,7 +780,7 @@ void Texture_Draw(TextureBrowser& textureBrowser)
   {
     IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 
-    if(!Texture_IsShown(shader, textureBrowser.m_showShaders, textureBrowser.m_hideUnused, TextureBrowser_getFilter(textureBrowser)))
+    if(!Texture_IsShown(shader, textureBrowser.m_showShaders, textureBrowser.m_hideUnused, textureBrowser.getFilter()))
       continue;
 
     int x, y;

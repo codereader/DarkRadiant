@@ -31,7 +31,7 @@ Texturable ShaderClipboard::getTexturable(SelectionTest& test) {
 
 void ShaderClipboard::updateMediaBrowsers() {
 	// Set the active shader in the Texture window as well
-	TextureBrowser_SetSelectedShader(GlobalTextureBrowser(), _source.getShader());
+	GlobalTextureBrowser().setSelectedShader(_source.getShader());
 	std::string sourceShader = _source.getShader();
 	ui::MediaBrowser::getInstance().setSelection(sourceShader);
 	

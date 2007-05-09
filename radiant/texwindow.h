@@ -43,8 +43,6 @@ void TextureBrowser_destroyWindow();
 
 void TextureBrowser_ShowStartupShaders(TextureBrowser& textureBrowser);
 
-void TextureBrowser_SetSelectedShader(TextureBrowser& textureBrowser, const std::string& shader);
-
 void TextureBrowser_Construct();
 void TextureBrowser_Destroy();
 
@@ -165,7 +163,24 @@ public:
 	// Returns the font height of the text in the opengl rendered window
 	int getFontHeight();
 	
+	/** greebo: Returns the currently selected shader
+	 */
 	std::string getSelectedShader();
+	
+	/** greebo: Sets the currently selected shader to <newShader> and
+	 * 			refocuses the texturebrowser to that shader.
+	 */
+	void setSelectedShader(const std::string& newShader);
+	
+	/** greebo: Returns the currently active filter string or "" if 
+	 * 			the filter is not active.
+	 */
+	std::string getFilter();
+	
+	/** greebo: Sets the focus of the texture browser to the shader 
+	 * 			with the given name.
+	 */
+	void focus(const std::string& name);
 };
 
 #endif
