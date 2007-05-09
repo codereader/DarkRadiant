@@ -208,8 +208,6 @@ public:
 	 * Test if lighting mode is ENABLED.
 	 */
 	virtual bool lightingEnabled() const = 0;
-	
-	virtual bool useShaderLanguage() const = 0;
 
   virtual const LightList& attach(LightCullable& cullable) = 0;
   virtual void detach(LightCullable& cullable) = 0;
