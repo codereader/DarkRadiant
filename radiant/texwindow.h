@@ -81,6 +81,19 @@ private:
 	static gboolean deferred_value_changed(gpointer data);
 };
 
+class TextureLayout {
+public:
+	TextureLayout() :
+		current_x(8),
+		current_y(-8),
+		current_row(0)
+	{}
+		
+	int current_x;
+	int current_y;
+	int current_row;
+};
+
 class TextureBrowser :
 	public RegistryKeyObserver
 {
@@ -113,7 +126,6 @@ public:
   std::size_t m_textureScale;
   bool m_showTextureFilter;
   // make the texture increments match the grid changes
-  bool m_showShaders;
   bool m_showTextureScrollbar;
   StartupShaders m_startupShaders;
   // if true, the texture window will only display in-use shaders
@@ -181,6 +193,8 @@ public:
 	 * 			with the given name.
 	 */
 	void focus(const std::string& name);
+	
+	void evaluateHeight();
 };
 
 #endif

@@ -91,8 +91,6 @@ namespace {
 	const std::string RKEY_TEXTURE_SHOW_SCROLLBAR = "user/ui/textures/browser/showScrollBar";
 	const std::string RKEY_TEXTURE_MOUSE_WHEEL_INCR = "user/ui/textures/browser/mouseWheelIncrement";
 	const std::string RKEY_TEXTURE_SHOW_FILTER = "user/ui/textures/browser/showFilter";
-	
-	bool g_TexturesMenu_shaderlistOnly = false;
 }
 
 DeferredAdjustment::DeferredAdjustment(ValueChangedFunction function, void* data) : 
@@ -142,7 +140,6 @@ TextureBrowser::TextureBrowser() :
 	m_mouseWheelScrollIncrement(64),
 	m_textureScale(50),
 	m_showTextureFilter(false),
-	m_showShaders(true),
 	m_showTextureScrollbar(true),
 	m_hideUnused(false),
 	m_resizeTextures(true),
@@ -271,34 +268,6 @@ void TextureBrowser::setSelectedShader(const std::string& newShader) {
 	focus(shader);
 }
 
-std::string g_TextureBrowser_currentDirectory;
-
-/*
-============================================================================
-
-TEXTURE LAYOUT
-
-TTimo: now based on a rundown through all the shaders
-NOTE: we expect the Active shaders count doesn't change during a Texture_StartPos .. Texture_NextPos cycle
-  otherwise we may need to rely on a list instead of an array storage
-============================================================================
-*/
-
-class TextureLayout
-{
-public:
-  // texture layout functions
-  // TTimo: now based on shaders
-  int current_x, current_y, current_row;
-};
-
-void Texture_StartPos(TextureLayout& layout)
-{
-  layout.current_x = 8;
-  layout.current_y = -8;
-  layout.current_row = 0;
-}
-
 void Texture_NextPos(TextureBrowser& textureBrowser, TextureLayout& layout, TexturePtr current_texture, int *x, int *y)
 {
   TexturePtr q = current_texture;
@@ -327,26 +296,15 @@ void Texture_NextPos(TextureBrowser& textureBrowser, TextureLayout& layout, Text
 }
 
 // if texture_showinuse jump over non in-use textures
-bool Texture_IsShown(IShaderPtr shader, bool show_shaders, bool hideUnused, const std::string& filter)
+bool Texture_IsShown(IShaderPtr shader, bool hideUnused, const std::string& filter)
 {
   if(!shader_equal_prefix(shader->getName(), "textures/"))
-    return false;
-
-  if (!show_shaders && !shader->IsDefault())
     return false;
 
   if(hideUnused && !shader->IsInUse())
     return false;
 
-  if(!string_empty(g_TextureBrowser_currentDirectory.c_str()))
-  {
-    if(!shader_equal_prefix(shader_get_textureName(shader->getName()), g_TextureBrowser_currentDirectory.c_str()))
-    {
-      return false;
-    }
-  }
-
-	if (!filter.empty()) {
+  	if (!filter.empty()) {
 		// some basic filtering
 		if (strstr( shader_get_textureName(shader->getName()), filter.c_str() ) == 0)
 			return false;
@@ -362,34 +320,32 @@ void TextureBrowser::heightChanged() {
 	TextureBrowser_queueDraw(*this);
 }
 
-void TextureBrowser_evaluateHeight(TextureBrowser& textureBrowser)
-{
-  if(textureBrowser.m_heightChanged)
-  {
-    textureBrowser.m_heightChanged = false;
+void TextureBrowser::evaluateHeight() {
+	if (m_heightChanged) {
+		m_heightChanged = false;
 
-    textureBrowser.m_nTotalHeight = 0;
+		m_nTotalHeight = 0;
 
-    TextureLayout layout;
-    Texture_StartPos(layout);
-    for(QERApp_ActiveShaders_IteratorBegin(); !QERApp_ActiveShaders_IteratorAtEnd(); QERApp_ActiveShaders_IteratorIncrement())
-    {
-      IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
-
-      if(!Texture_IsShown(shader, textureBrowser.m_showShaders, textureBrowser.m_hideUnused, textureBrowser.getFilter()))
-        continue;
-
-      int   x, y;
-      Texture_NextPos(textureBrowser, layout, shader->getTexture(), &x, &y);
-      textureBrowser.m_nTotalHeight = std::max(textureBrowser.m_nTotalHeight, abs(layout.current_y) + textureBrowser.getFontHeight() + textureBrowser.getTextureHeight(shader->getTexture()) + 4);
-    }
-  }
+		TextureLayout layout;
+		
+	    for(QERApp_ActiveShaders_IteratorBegin(); !QERApp_ActiveShaders_IteratorAtEnd(); QERApp_ActiveShaders_IteratorIncrement())
+	    {
+	      IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
+	
+	      if(!Texture_IsShown(shader, m_hideUnused, getFilter()))
+	        continue;
+	
+	      int   x, y;
+	      Texture_NextPos(*this, layout, shader->getTexture(), &x, &y);
+	      m_nTotalHeight = std::max(m_nTotalHeight, abs(layout.current_y) + getFontHeight() + getTextureHeight(shader->getTexture()) + 4);
+	    }
+	}
 }
 
 int TextureBrowser_TotalHeight(TextureBrowser& textureBrowser)
 {
-  TextureBrowser_evaluateHeight(textureBrowser);
-  return textureBrowser.m_nTotalHeight;
+	textureBrowser.evaluateHeight();
+	return textureBrowser.m_nTotalHeight;
 }
 
 inline const int& min_int(const int& left, const int& right)
@@ -565,47 +521,19 @@ public:
   }
 };
 
-void TextureBrowser_showShadersExport(const BoolImportCallback& importer)
-{
-  importer(GlobalTextureBrowser().m_showShaders);
-}
-typedef FreeCaller1<const BoolImportCallback&, TextureBrowser_showShadersExport> TextureBrowserShowShadersExport;
-
-void TextureBrowser_showShaderlistOnly(const BoolImportCallback& importer)
-{
-  importer(g_TexturesMenu_shaderlistOnly);
-}
-typedef FreeCaller1<const BoolImportCallback&, TextureBrowser_showShaderlistOnly> TextureBrowserShowShaderlistOnlyExport;
-
-class TexturesMenu
-{
-public:
-  ToggleItem m_showshaders_item;
-  ToggleItem m_showshaderlistonly_item;
-
-  TexturesMenu() :
-    m_showshaders_item(TextureBrowserShowShadersExport()),
-    m_showshaderlistonly_item(TextureBrowserShowShaderlistOnlyExport())
-  {
-  }
-};
-
-TexturesMenu g_TexturesMenu;
-
 //++timo NOTE: this is a mix of Shader module stuff and texture explorer
 // it might need to be split in parts or moved out .. dunno
 // scroll origin so the specified texture is completely on screen
 // if current texture is not displayed, nothing is changed
 void TextureBrowser::focus(const std::string& name) {
-  TextureLayout layout;
   // scroll origin so the texture is completely on screen
-  Texture_StartPos(layout);
+  TextureLayout layout;
   
   for(QERApp_ActiveShaders_IteratorBegin(); !QERApp_ActiveShaders_IteratorAtEnd(); QERApp_ActiveShaders_IteratorIncrement())
   {
     IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 
-    if(!Texture_IsShown(shader, m_showShaders, m_hideUnused, getFilter()))
+    if(!Texture_IsShown(shader, m_hideUnused, getFilter()))
       continue;
 
     int x, y;
@@ -652,12 +580,11 @@ IShaderPtr Texture_At(TextureBrowser& textureBrowser, int mx, int my)
   my += TextureBrowser_getOriginY(textureBrowser) - textureBrowser.height;
 
   TextureLayout layout;
-  Texture_StartPos(layout);
   for(QERApp_ActiveShaders_IteratorBegin(); !QERApp_ActiveShaders_IteratorAtEnd(); QERApp_ActiveShaders_IteratorIncrement())
   {
     IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 
-    if(!Texture_IsShown(shader, textureBrowser.m_showShaders, textureBrowser.m_hideUnused, textureBrowser.getFilter()))
+    if(!Texture_IsShown(shader, textureBrowser.m_hideUnused, textureBrowser.getFilter()))
       continue;
 
     int   x, y;
@@ -775,12 +702,11 @@ void Texture_Draw(TextureBrowser& textureBrowser)
   int last_y = 0, last_height = 0;
 
   TextureLayout layout;
-  Texture_StartPos(layout);
   for(QERApp_ActiveShaders_IteratorBegin(); !QERApp_ActiveShaders_IteratorAtEnd(); QERApp_ActiveShaders_IteratorIncrement())
   {
     IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 
-    if(!Texture_IsShown(shader, textureBrowser.m_showShaders, textureBrowser.m_hideUnused, textureBrowser.getFilter()))
+    if(!Texture_IsShown(shader, textureBrowser.m_hideUnused, textureBrowser.getFilter()))
       continue;
 
     int x, y;
@@ -1025,7 +951,7 @@ gboolean TextureBrowser_expose(GtkWidget* widget, GdkEventExpose* event, Texture
   if(glwidget_make_current(textureBrowser->m_gl_widget) != FALSE)
   {
     GlobalOpenGL_debugAssertNoErrors();
-    TextureBrowser_evaluateHeight(*textureBrowser);
+    textureBrowser->evaluateHeight();
     Texture_Draw(*textureBrowser);
     GlobalOpenGL_debugAssertNoErrors();
     glwidget_swap_buffers(textureBrowser->m_gl_widget);
@@ -1151,22 +1077,8 @@ void TextureBrowser_destroyWindow()
   gtk_widget_unref(g_TextureBrowser.m_gl_widget);
 }
 
-void TextureBrowser_ToggleShowShaders() 
-{
-  g_TextureBrowser.m_showShaders ^= 1;
-  g_TexturesMenu.m_showshaders_item.update();
-  TextureBrowser_queueDraw(g_TextureBrowser);
-}
-
-void TextureBrowser_ToggleShowShaderListOnly() 
-{
-  g_TexturesMenu_shaderlistOnly ^= 1;
-  g_TexturesMenu.m_showshaderlistonly_item.update();
-}
-
 void TextureBrowser_showAll()
 {
-  g_TextureBrowser_currentDirectory = "";
   g_TextureBrowser.heightChanged();
 }
 
