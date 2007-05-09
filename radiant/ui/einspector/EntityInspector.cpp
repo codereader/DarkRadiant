@@ -291,8 +291,18 @@ void EntityInspector::selectionChanged(scene::Instance& instance) {
 void EntityInspector::setPropertyFromEntries() {
 	std::string key = gtk_entry_get_text(GTK_ENTRY(_keyEntry));
 	if (key.size() > 0) {
+		std::string name = _selectedEntity->getKeyValue("name");
+		std::string model = _selectedEntity->getKeyValue("model");
+		bool isFuncType = (!name.empty() && name == model);
+		
 		std::string val = gtk_entry_get_text(GTK_ENTRY(_valEntry));
 		_selectedEntity->setKeyValue(key, val);
+		
+		// Check for name key changes of func_statics
+		if (isFuncType && key == "name") {
+			// Adapt the model key along with the name
+			_selectedEntity->setKeyValue("model", val);
+		}
 	}
 }
 
