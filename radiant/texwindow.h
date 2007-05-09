@@ -43,7 +43,6 @@ void TextureBrowser_destroyWindow();
 
 void TextureBrowser_ShowStartupShaders(TextureBrowser& textureBrowser);
 
-const char* TextureBrowser_GetSelectedShader(TextureBrowser& textureBrower);
 void TextureBrowser_SetSelectedShader(TextureBrowser& textureBrowser, const std::string& shader);
 
 void TextureBrowser_Construct();
@@ -160,6 +159,13 @@ private:
 
 public:
 	void heightChanged();
+	
+	void updateScroll();
+	
+	// Returns the font height of the text in the opengl rendered window
+	int getFontHeight();
+	
+	std::string getSelectedShader();
 };
 
 #endif

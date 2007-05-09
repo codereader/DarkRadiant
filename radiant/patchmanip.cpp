@@ -48,7 +48,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 PatchCreator* g_patchCreator = 0;
 
-void Scene_PatchConstructPrefab(scene::Graph& graph, const AABB& aabb, const char* shader, EPatchPrefab eType, int axis, std::size_t width = 3, std::size_t height = 3)
+void Scene_PatchConstructPrefab(scene::Graph& graph, const AABB& aabb, const std::string& shader, EPatchPrefab eType, int axis, std::size_t width = 3, std::size_t height = 3)
 {
   GlobalSelectionSystem().setSelectedAll(false);
 
@@ -70,7 +70,7 @@ void Scene_PatchConstructPrefab(scene::Graph& graph, const AABB& aabb, const cha
 }
 
 
-void Patch_makeCaps(Patch& patch, scene::Instance& instance, EPatchCap type, const char* shader)
+void Patch_makeCaps(Patch& patch, scene::Instance& instance, EPatchCap type, const std::string& shader)
 {
   if((type == eCapEndCap || type == eCapIEndCap)
     && patch.getWidth() != 5)
@@ -143,7 +143,7 @@ enum ECapDialog {
 
 EMessageBoxReturn DoCapDlg(ECapDialog *type);
 
-void Scene_PatchDoCap_Selected(scene::Graph& graph, const char* shader)
+void Scene_PatchDoCap_Selected(scene::Graph& graph, const std::string& shader)
 {
   ECapDialog nType;
 
@@ -279,9 +279,9 @@ void Scene_PatchSetShader_Selected(scene::Graph& graph, const std::string& name)
 
 class PatchSelectByShader
 {
-  const char* m_name;
+  std::string m_name;
 public:
-  inline PatchSelectByShader(const char* name)
+  inline PatchSelectByShader(const std::string& name)
     : m_name(name)
   {
   }
@@ -294,7 +294,7 @@ public:
   }
 };
 
-void Scene_PatchSelectByShader(scene::Graph& graph, const char* name)
+void Scene_PatchSelectByShader(scene::Graph& graph, const std::string& name)
 {
   Scene_forEachVisiblePatchInstance(PatchSelectByShader(name));
 }
@@ -330,49 +330,49 @@ void Patch_Cylinder()
 {
   UndoableCommand undo("patchCreateCylinder");
 
-  Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), TextureBrowser_GetSelectedShader(GlobalTextureBrowser()), eCylinder, GlobalXYWnd().getActiveViewType());
+  Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eCylinder, GlobalXYWnd().getActiveViewType());
 }
 
 void Patch_DenseCylinder()
 {
   UndoableCommand undo("patchCreateDenseCylinder");
 
-  Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), TextureBrowser_GetSelectedShader(GlobalTextureBrowser()), eDenseCylinder, GlobalXYWnd().getActiveViewType());
+  Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eDenseCylinder, GlobalXYWnd().getActiveViewType());
 }
 
 void Patch_VeryDenseCylinder()
 {
   UndoableCommand undo("patchCreateVeryDenseCylinder");
 
-  Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), TextureBrowser_GetSelectedShader(GlobalTextureBrowser()), eVeryDenseCylinder, GlobalXYWnd().getActiveViewType());
+  Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eVeryDenseCylinder, GlobalXYWnd().getActiveViewType());
 }
 
 void Patch_SquareCylinder()
 {
   UndoableCommand undo("patchCreateSquareCylinder");
 
-  Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), TextureBrowser_GetSelectedShader(GlobalTextureBrowser()), eSqCylinder, GlobalXYWnd().getActiveViewType());
+  Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eSqCylinder, GlobalXYWnd().getActiveViewType());
 }
 
 void Patch_Endcap()
 {
   UndoableCommand undo("patchCreateCaps");
 
-  Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), TextureBrowser_GetSelectedShader(GlobalTextureBrowser()), eEndCap, GlobalXYWnd().getActiveViewType());
+  Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eEndCap, GlobalXYWnd().getActiveViewType());
 }
 
 void Patch_Bevel()
 {
   UndoableCommand undo("patchCreateBevel");
 
-  Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), TextureBrowser_GetSelectedShader(GlobalTextureBrowser()), eBevel, GlobalXYWnd().getActiveViewType());
+  Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eBevel, GlobalXYWnd().getActiveViewType());
 }
 
 void Patch_Cone()
 {
   UndoableCommand undo("patchCreateCone");
 
-  Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), TextureBrowser_GetSelectedShader(GlobalTextureBrowser()), eCone, GlobalXYWnd().getActiveViewType());
+  Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eCone, GlobalXYWnd().getActiveViewType());
 }
 
 void Patch_Invert()
@@ -409,7 +409,7 @@ void Patch_Cap()
   // Patch_CapCurrent();
   UndoableCommand undo("patchCreateCaps");
 
-  Scene_PatchDoCap_Selected(GlobalSceneGraph(), TextureBrowser_GetSelectedShader(GlobalTextureBrowser()));
+  Scene_PatchDoCap_Selected(GlobalSceneGraph(), GlobalTextureBrowser().getSelectedShader());
 }
 
 void Patch_CycleProjection()
@@ -665,7 +665,7 @@ void createSimplePatch() {
 		
 		// Call the PatchConstruct routine (GtkRadiant legacy)
 		Scene_PatchConstructPrefab(GlobalSceneGraph(), bounds, 
-								   TextureBrowser_GetSelectedShader(GlobalTextureBrowser()), 
+								   GlobalTextureBrowser().getSelectedShader(), 
 								   ePlane, GlobalXYWnd().getActiveViewType(), 
 								   width, height);
 	}

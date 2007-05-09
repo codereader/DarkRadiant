@@ -127,7 +127,7 @@ void DoSides (int type, int axis)
   {
     const char *str = gtk_entry_get_text(sides_entry);
 
-    Scene_BrushConstructPrefab(GlobalSceneGraph(), (EBrushPrefab)type, atoi(str), TextureBrowser_GetSelectedShader(GlobalTextureBrowser()));
+    Scene_BrushConstructPrefab(GlobalSceneGraph(), (EBrushPrefab)type, atoi(str), GlobalTextureBrowser().getSelectedShader());
   }
 
   gtk_widget_destroy(GTK_WIDGET(window));
