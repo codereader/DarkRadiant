@@ -395,7 +395,7 @@ void PasteToCamera()
 }
 
 void updateTextureBrowser() {
-	TextureBrowser_queueDraw(GlobalTextureBrowser());
+	GlobalTextureBrowser().queueDraw();
 }
 
 void Restart() {

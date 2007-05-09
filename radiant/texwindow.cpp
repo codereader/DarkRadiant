@@ -64,6 +64,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/cursor.h"
 #include "gtkutil/widget.h"
 #include "gtkutil/glwidget.h"
+#include "gtkutil/GLWidgetSentry.h"
 
 #include "error.h"
 #include "map.h"
@@ -81,8 +82,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "preferences.h"
 #include "selection/algorithm/Shader.h"
 #include "settings/GameManager.h"
-
-void TextureBrowser_queueDraw(TextureBrowser& textureBrowser);
 
 namespace {
 	const std::string RKEY_TEXTURES_HIDE_UNUSED = "user/ui/textures/browser/hideUnused";
@@ -192,7 +191,7 @@ void TextureBrowser::setScaleFromRegistry() {
 
 void TextureBrowser::clearFilter() {
 	gtk_entry_set_text(m_filter, "");
-	TextureBrowser_queueDraw(*this);
+	queueDraw();
 }
 
 void TextureBrowser::keyChanged() {
@@ -317,7 +316,7 @@ void TextureBrowser::heightChanged() {
 	m_heightChanged = true;
 
 	updateScroll();
-	TextureBrowser_queueDraw(*this);
+	queueDraw();
 }
 
 void TextureBrowser::evaluateHeight() {
@@ -342,55 +341,37 @@ void TextureBrowser::evaluateHeight() {
 	}
 }
 
-int TextureBrowser_TotalHeight(TextureBrowser& textureBrowser)
-{
-	textureBrowser.evaluateHeight();
-	return textureBrowser.m_nTotalHeight;
+int TextureBrowser::getTotalHeight() {
+	evaluateHeight();
+	return m_nTotalHeight;
 }
 
-inline const int& min_int(const int& left, const int& right)
-{
-  return std::min(left, right);
+void TextureBrowser::clampOriginY() {
+	if (originy > 0) {
+		originy = 0;
+	}
+	
+	int lower = std::min(height - getTotalHeight(), 0);
+	
+	if (originy < lower) {
+		originy = lower;
+	}
 }
 
-void TextureBrowser_clampOriginY(TextureBrowser& textureBrowser)
-{
-  if(textureBrowser.originy > 0)
-  {
-    textureBrowser.originy = 0;
-  }
-  int lower = min_int(textureBrowser.height - TextureBrowser_TotalHeight(textureBrowser), 0);
-  if(textureBrowser.originy < lower)
-  {
-    textureBrowser.originy = lower;
-  }
+int TextureBrowser::getOriginY() {
+	if (m_originInvalid) {
+		m_originInvalid = false;
+		clampOriginY();
+		updateScroll();
+	}
+	return originy;
 }
 
-int TextureBrowser_getOriginY(TextureBrowser& textureBrowser)
-{
-  if(textureBrowser.m_originInvalid)
-  {
-    textureBrowser.m_originInvalid = false;
-    TextureBrowser_clampOriginY(textureBrowser);
-    textureBrowser.updateScroll();
-  }
-  return textureBrowser.originy;
-}
-
-void TextureBrowser_setOriginY(TextureBrowser& textureBrowser, int originy)
-{
-  textureBrowser.originy = originy;
-  TextureBrowser_clampOriginY(textureBrowser);
-  textureBrowser.updateScroll();
-  TextureBrowser_queueDraw(textureBrowser);
-}
-
-
-Signal0 g_activeShadersChangedCallbacks;
-
-void TextureBrowser_addActiveShadersChangedCallback(const SignalHandler& handler)
-{
-  g_activeShadersChangedCallbacks.connectLast(handler);
+void TextureBrowser::setOriginY(int newOriginY) {
+	originy = newOriginY;
+	clampOriginY();
+	updateScroll();
+	queueDraw();
 }
 
 class ShadersObserver : public ModuleObserver
@@ -424,8 +405,6 @@ void TextureBrowser_activeShadersChanged(TextureBrowser& textureBrowser)
 {
   textureBrowser.heightChanged();
   textureBrowser.m_originInvalid = true;
-
-  g_activeShadersChangedCallbacks();
 }
 
 /*
@@ -548,7 +527,7 @@ void TextureBrowser::focus(const std::string& name) {
     {
       int textureHeight = getTextureHeight(q) + 2 * getFontHeight();
 
-      int originy = TextureBrowser_getOriginY(*this);
+      int originy = getOriginY();
       if (y > originy)
       {
         originy = y;
@@ -559,7 +538,7 @@ void TextureBrowser::focus(const std::string& name) {
         originy = (y - textureHeight) + height;
       }
 
-      TextureBrowser_setOriginY(*this, originy);
+      setOriginY(originy);
       return;
     }
   }
@@ -577,7 +556,7 @@ public:
 
 IShaderPtr Texture_At(TextureBrowser& textureBrowser, int mx, int my)
 {
-  my += TextureBrowser_getOriginY(textureBrowser) - textureBrowser.height;
+  my += textureBrowser.getOriginY() - textureBrowser.height;
 
   TextureLayout layout;
   for(QERApp_ActiveShaders_IteratorBegin(); !QERApp_ActiveShaders_IteratorAtEnd(); QERApp_ActiveShaders_IteratorIncrement())
@@ -644,9 +623,9 @@ void TextureBrowser_trackingDelta(int x, int y, unsigned int state, void* data)
     if(state & GDK_SHIFT_MASK)
       scale = 4;
 
-    int originy = TextureBrowser_getOriginY(textureBrowser);
+    int originy = textureBrowser.getOriginY();
     originy += y * scale;
-    TextureBrowser_setOriginY(textureBrowser, originy);
+    textureBrowser.setOriginY(originy);
   }
 }
 
@@ -683,7 +662,7 @@ this allows a plugin to completely override the texture system
 */
 void Texture_Draw(TextureBrowser& textureBrowser)
 {
-  int originy = TextureBrowser_getOriginY(textureBrowser);
+  int originy = textureBrowser.getOriginY();
 
   Vector3 colorBackground = ColourSchemes().getColourVector3("texture_background");
   glClearColor(colorBackground[0], colorBackground[1], colorBackground[2], 0);
@@ -823,13 +802,9 @@ void Texture_Draw(TextureBrowser& textureBrowser)
   //qglFinish();
 }
 
-void TextureBrowser_queueDraw(TextureBrowser& textureBrowser) {
-	textureBrowser.queueDraw();
-}
-
 void TextureBrowser_MouseWheel(TextureBrowser& textureBrowser, bool bUp)
 {
-  int originy = TextureBrowser_getOriginY(textureBrowser);
+  int originy = textureBrowser.getOriginY();
 
   if (bUp)
   {
@@ -840,7 +815,7 @@ void TextureBrowser_MouseWheel(TextureBrowser& textureBrowser, bool bUp)
     originy -= int(textureBrowser.m_mouseWheelScrollIncrement);
   }
 
-  TextureBrowser_setOriginY(textureBrowser, originy);
+  textureBrowser.setOriginY(originy);
 }
 
 
@@ -908,7 +883,7 @@ gboolean TextureBrowser_scroll(GtkWidget* widget, GdkEventScroll* event, Texture
 
 void TextureBrowser::scrollChanged(void* data, gdouble value) {
 	//globalOutputStream() << "vertical scroll\n";
-	TextureBrowser_setOriginY(*reinterpret_cast<TextureBrowser*>(data), -(int)value);
+	reinterpret_cast<TextureBrowser*>(data)->setOriginY(-(int)value);
 }
 
 static void TextureBrowser_verticalScroll(GtkAdjustment *adjustment, TextureBrowser* textureBrowser)
@@ -919,13 +894,13 @@ static void TextureBrowser_verticalScroll(GtkAdjustment *adjustment, TextureBrow
 void TextureBrowser::updateScroll() {
   if(m_showTextureScrollbar)
   {
-    int totalHeight = TextureBrowser_TotalHeight(*this);
+    int totalHeight = getTotalHeight();
 
     totalHeight = std::max(totalHeight, height);
 
     GtkAdjustment *vadjustment = gtk_range_get_adjustment(GTK_RANGE(m_texture_scroll));
 
-    vadjustment->value = -TextureBrowser_getOriginY(*this);
+    vadjustment->value = -getOriginY();
     vadjustment->page_size = height;
     vadjustment->page_increment = height/2;
     vadjustment->step_increment = 20;
@@ -942,21 +917,21 @@ gboolean TextureBrowser_size_allocate(GtkWidget* widget, GtkAllocation* allocati
   textureBrowser->height = allocation->height;
   textureBrowser->heightChanged();
   textureBrowser->m_originInvalid = true;
-  TextureBrowser_queueDraw(*textureBrowser);
+  textureBrowser->queueDraw();
   return FALSE;
 }
 
 gboolean TextureBrowser_expose(GtkWidget* widget, GdkEventExpose* event, TextureBrowser* textureBrowser)
 {
-  if(glwidget_make_current(textureBrowser->m_gl_widget) != FALSE)
-  {
+	// This calls glwidget_make_current() for us and swap_buffers at the end of scope
+	gtkutil::GLWidgetSentry sentry(textureBrowser->m_gl_widget);
+	
     GlobalOpenGL_debugAssertNoErrors();
     textureBrowser->evaluateHeight();
     Texture_Draw(*textureBrowser);
     GlobalOpenGL_debugAssertNoErrors();
-    glwidget_swap_buffers(textureBrowser->m_gl_widget);
-  }
-  return FALSE;
+
+	return FALSE;
 }
 
 
