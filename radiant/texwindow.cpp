@@ -374,131 +374,15 @@ void TextureBrowser::setOriginY(int newOriginY) {
 	queueDraw();
 }
 
-class ShadersObserver : public ModuleObserver
-{
-  Signal0 m_realiseCallbacks;
-public:
-  void realise()
-  {
-    m_realiseCallbacks();
-  }
-  void unrealise()
-  {
-  }
-  void insert(const SignalHandler& handler)
-  {
-    m_realiseCallbacks.connectLast(handler);
-  }
-};
-
-namespace
-{
-  ShadersObserver g_ShadersObserver;
+void TextureBrowser::activeShadersChanged() {
+	heightChanged();
+	m_originInvalid = true;
 }
 
-void TextureBrowser_addShadersRealiseCallback(const SignalHandler& handler)
-{
-  g_ShadersObserver.insert(handler);
-}
-
-void TextureBrowser_activeShadersChanged(TextureBrowser& textureBrowser)
-{
-  textureBrowser.heightChanged();
-  textureBrowser.m_originInvalid = true;
-}
-
-/*
-==============
-TextureBrowser_ShowDirectory
-relies on texture_directory global for the directory to use
-1) Load the shaders for the given directory
-2) Scan the remaining texture, load them and assign them a default shader (the "noshader" shader)
-NOTE: when writing a texture plugin, or some texture extensions, this function may need to be overriden, and made
-  available through the IShaders interface
-NOTE: for texture window layout:
-  all shaders are stored with alphabetical order after load
-  previously loaded and displayed stuff is hidden, only in-use and newly loaded is shown
-  ( the GL textures are not flushed though)
-==============
-*/
-bool texture_name_ignore(const char* name)
-{
-  StringOutputStream strTemp(string_length(name));
-  strTemp << LowerCase(name);
-
-  return strstr(strTemp.c_str(), ".specular") != 0 ||
-    strstr(strTemp.c_str(), ".glow") != 0 ||
-    strstr(strTemp.c_str(), ".bump") != 0 ||
-    strstr(strTemp.c_str(), ".diffuse") != 0 ||
-    strstr(strTemp.c_str(), ".blend") != 0 ||
-	  strstr(strTemp.c_str(), ".alpha") != 0;
-}
-
-//void TextureBrowser_SetHideUnused(TextureBrowser& textureBrowser, bool hideUnused);
-
-void TextureBrowser_toggleShown() {
+// Static command target
+void TextureBrowser::toggle() {
 	ui::GroupDialog::Instance().setPage("textures");
 }
-
-class TextureCategoryLoadShader
-{
-  const char* m_directory;
-  std::size_t& m_count;
-public:
-  typedef const char* first_argument_type;
-
-  TextureCategoryLoadShader(const char* directory, std::size_t& count)
-    : m_directory(directory), m_count(count)
-  {
-    m_count = 0;
-  }
-  void operator()(const char* name) const
-  {
-    if(shader_equal_prefix(name, "textures/")
-      && shader_equal_prefix(name + string_length("textures/"), m_directory))
-    {
-      ++m_count;
-      // request the shader, this will load the texture if needed
-      // this Shader_ForName call is a kind of hack
-      IShaderPtr pFoo = QERApp_Shader_ForName(name);
-    }
-  }
-};
-
-void TextureDirectory_loadTexture(const char* directory, const char* texture)
-{
-  StringOutputStream name(256);
-  name << directory << StringRange(texture, path_get_filename_base_end(texture));
-
-  if(texture_name_ignore(name.c_str()))
-  {
-    return;
-  }
-
-  if (!shader_valid(name.c_str()))
-  {
-    globalOutputStream() << "Skipping invalid texture name: [" << name.c_str() << "]\n";
-    return;
-  }
-
-  // if a texture is already in use to represent a shader, ignore it
-  IShaderPtr shader = QERApp_Shader_ForName(name.c_str());
-}
-typedef ConstPointerCaller1<char, const char*, TextureDirectory_loadTexture> TextureDirectoryLoadTextureCaller;
-
-class LoadTexturesByTypeVisitor : public ImageModules::Visitor
-{
-  const char* m_dirstring;
-public:
-  LoadTexturesByTypeVisitor(const char* dirstring)
-    : m_dirstring(dirstring)
-  {
-  }
-  void visit(const char* minor, const _QERPlugImageTable& table)
-  {
-    GlobalFileSystem().forEachFile(m_dirstring, minor, TextureDirectoryLoadTextureCaller(m_dirstring));
-  }
-};
 
 //++timo NOTE: this is a mix of Shader module stuff and texture explorer
 // it might need to be split in parts or moved out .. dunno
@@ -544,44 +428,33 @@ void TextureBrowser::focus(const std::string& name) {
   }
 }
 
-// greebo: Workaround for being unable to return NULL (Texture_At function)
-class NoTextureSelectedException
-: public std::runtime_error
-{
-public:
-	// Constructor
-	NoTextureSelectedException(const std::string& what)
-	: std::runtime_error(what) {}
-};
+IShaderPtr TextureBrowser::getShaderAtCoords(int mx, int my) {
+	my += getOriginY() - height;
 
-IShaderPtr Texture_At(TextureBrowser& textureBrowser, int mx, int my)
-{
-  my += textureBrowser.getOriginY() - textureBrowser.height;
+	TextureLayout layout;
+	for(QERApp_ActiveShaders_IteratorBegin(); 
+		!QERApp_ActiveShaders_IteratorAtEnd(); 
+		QERApp_ActiveShaders_IteratorIncrement())
+	{
+		IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 
-  TextureLayout layout;
-  for(QERApp_ActiveShaders_IteratorBegin(); !QERApp_ActiveShaders_IteratorAtEnd(); QERApp_ActiveShaders_IteratorIncrement())
-  {
-    IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
+		if(!Texture_IsShown(shader, m_hideUnused, getFilter()))
+			continue;
 
-    if(!Texture_IsShown(shader, textureBrowser.m_hideUnused, textureBrowser.getFilter()))
-      continue;
+		int x, y;
+		Texture_NextPos(*this, layout, shader->getTexture(), &x, &y);
+		TexturePtr q = shader->getTexture();
+		if (!q)
+			break;
 
-    int   x, y;
-    Texture_NextPos(textureBrowser, layout, shader->getTexture(), &x, &y);
-    TexturePtr q = shader->getTexture();
-    if (!q)
-      break;
+		int nWidth = getTextureWidth(q);
+		int nHeight = getTextureHeight(q);
+		if (mx > x && mx - x < nWidth && my < y && y - my < nHeight + getFontHeight()) {
+			return shader;
+		}
+	}
 
-    int nWidth = textureBrowser.getTextureWidth(q);
-    int nHeight = textureBrowser.getTextureHeight(q);
-    if (mx > x && mx - x < nWidth
-      && my < y && y - my < nHeight + textureBrowser.getFontHeight())
-    {
-      return shader;
-    }
-  }
-
-  throw NoTextureSelectedException("no texture selected");
+	return IShaderPtr();
 }
 
 /*
@@ -593,15 +466,13 @@ SelectTexture
 */
 void SelectTexture(TextureBrowser& textureBrowser, int mx, int my, bool bShift)
 {
-	try {
-  		IShaderPtr shader = Texture_At(textureBrowser, mx, my);
+	IShaderPtr shader = textureBrowser.getShaderAtCoords(mx, my);
+	
+	if (shader != NULL) {
   		textureBrowser.setSelectedShader(shader->getName());
   		
 		// Apply the shader to the current selection
 		selection::algorithm::applyShaderToSelection(shader->getName());
-	}
-	catch (NoTextureSelectedException n) {
-		
 	}
 }
 
@@ -946,7 +817,7 @@ GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel)
 {
 	g_TextureBrowser.construct();
 	
-  GlobalShaderSystem().setActiveShadersChangedNotify(ReferenceCaller<TextureBrowser, TextureBrowser_activeShadersChanged>(g_TextureBrowser));
+  GlobalShaderSystem().setActiveShadersChangedNotify(MemberCaller<TextureBrowser, &TextureBrowser::activeShadersChanged>(g_TextureBrowser));
 
   GtkWidget* hbox = gtk_hbox_new (FALSE, 0);
 
@@ -1079,6 +950,26 @@ void TextureBrowser_registerPreferencesPage() {
 	page->appendCheckBox("", "Show Texture Filter", RKEY_TEXTURE_SHOW_FILTER);
 }
 
+class ShadersObserver : 
+	public ModuleObserver
+{
+	Signal0 m_realiseCallbacks;
+public:
+	void realise() {
+		m_realiseCallbacks();
+	}
+	
+	void unrealise() {
+	}
+
+	void insert(const SignalHandler& handler) {
+		m_realiseCallbacks.connectLast(handler);
+	}
+};
+
+namespace {
+	ShadersObserver g_ShadersObserver;
+}
 
 #include "preferencesystem.h"
 #include "stringio.h"
@@ -1086,7 +977,7 @@ void TextureBrowser_registerPreferencesPage() {
 void TextureBrowser_Construct() {
 	GlobalEventManager().addRegistryToggle("ShowInUse", RKEY_TEXTURES_HIDE_UNUSED);
 	GlobalEventManager().addCommand("ShowAllTextures", FreeCaller<TextureBrowser_showAll>());
-	GlobalEventManager().addCommand("ViewTextures", FreeCaller<TextureBrowser_toggleShown>());
+	GlobalEventManager().addCommand("ViewTextures", FreeCaller<TextureBrowser::toggle>());
 
 	g_TextureBrowser.shader = texdef_name_default().c_str();
 
