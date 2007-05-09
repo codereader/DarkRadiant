@@ -298,7 +298,7 @@ inline void Winding_Draw(const Winding& winding, const Vector3& normal, RenderSt
     {
       *i = normal;
     }
-    if(GlobalShaderCache().useShaderLanguage())
+    /*if(GlobalShaderCache().useShaderLanguage())
     {
       glNormalPointer(GL_DOUBLE, sizeof(Vector3), normals);
       glVertexAttribPointerARB(c_attr_TexCoord0, 2, GL_DOUBLE, 0, sizeof(WindingVertex), &winding.points.data()->texcoord);
@@ -306,12 +306,12 @@ inline void Winding_Draw(const Winding& winding, const Vector3& normal, RenderSt
       glVertexAttribPointerARB(c_attr_Binormal, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &winding.points.data()->bitangent);
     }
     else
-    {
+    {*/
       glVertexAttribPointerARB(11, 3, GL_DOUBLE, 0, sizeof(Vector3), normals);
       glVertexAttribPointerARB(8, 2, GL_DOUBLE, 0, sizeof(WindingVertex), &winding.points.data()->texcoord);
       glVertexAttribPointerARB(9, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &winding.points.data()->tangent);
       glVertexAttribPointerARB(10, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &winding.points.data()->bitangent);
-    }
+    /*}*/
   }
   else
   {

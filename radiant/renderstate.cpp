@@ -333,7 +333,6 @@ class OpenGLShaderCache : public ShaderCache, public ModuleObserver
 
   bool m_lightingEnabled;
   bool m_lightingSupported;
-  bool m_useShaderLanguage;
 
 public:
 
@@ -346,7 +345,6 @@ public:
     				 // (What the heck *is* this anyway, a hardcoded egg-timer?)
 	  m_lightingEnabled(true),
 	  m_lightingSupported(false),
-	  m_useShaderLanguage(false),
 	  m_lightsChanged(true),
 	  m_traverseRenderablesMutex(false)
 	{ }
@@ -524,10 +522,6 @@ public:
   bool lightingSupported() const
   {
     return m_lightingSupported;
-  }
-  bool useShaderLanguage() const
-  {
-    return m_useShaderLanguage;
   }
   void setLighting(bool supported, bool enabled)
   {

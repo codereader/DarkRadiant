@@ -99,7 +99,7 @@ public:
     {
       if((state & RENDER_BUMP) != 0)
       {
-        if(GlobalShaderCache().useShaderLanguage())
+        /*if(GlobalShaderCache().useShaderLanguage())
         {
           glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->normal);
           glVertexAttribPointerARB(c_attr_TexCoord0, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->texcoord);
@@ -107,12 +107,12 @@ public:
           glVertexAttribPointerARB(c_attr_Binormal, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->bitangent);
         }
         else
-        {
+        {*/
           glVertexAttribPointerARB(11, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->normal);
           glVertexAttribPointerARB(8, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->texcoord);
           glVertexAttribPointerARB(9, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->tangent);
           glVertexAttribPointerARB(10, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->bitangent);
-        }
+        /*}*/
       }
       else
       {
