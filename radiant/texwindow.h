@@ -46,10 +46,7 @@ void TextureBrowser_ShowStartupShaders(TextureBrowser& textureBrowser);
 void TextureBrowser_Construct();
 void TextureBrowser_Destroy();
 
-void TextureBrowser_addActiveShadersChangedCallback(const SignalHandler& handler);
 void TextureBrowser_addShadersRealiseCallback(const SignalHandler& handler);
-
-void TextureBrowser_queueDraw(TextureBrowser& textureBrowser);
 
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkEntry GtkEntry;
@@ -195,6 +192,15 @@ public:
 	void focus(const std::string& name);
 	
 	void evaluateHeight();
+	
+	/** greebo: Returns the total height of the GL content
+	 */
+	int getTotalHeight();
+	
+	void clampOriginY();
+	
+	int getOriginY();
+	void setOriginY(int newOriginY);
 };
 
 #endif
