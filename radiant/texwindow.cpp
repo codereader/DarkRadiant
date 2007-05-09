@@ -84,70 +84,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 void TextureBrowser_queueDraw(TextureBrowser& textureBrowser);
 
-namespace
-{
-  bool g_TexturesMenu_shaderlistOnly = false;
-}
-class DeferredAdjustment
-{
-  gdouble m_value;
-  guint m_handler;
-  typedef void (*ValueChangedFunction)(void* data, gdouble value);
-  ValueChangedFunction m_function;
-  void* m_data;
-
-  static gboolean deferred_value_changed(gpointer data)
-  {
-    reinterpret_cast<DeferredAdjustment*>(data)->m_function(
-      reinterpret_cast<DeferredAdjustment*>(data)->m_data,
-      reinterpret_cast<DeferredAdjustment*>(data)->m_value
-    );
-    reinterpret_cast<DeferredAdjustment*>(data)->m_handler = 0;
-    reinterpret_cast<DeferredAdjustment*>(data)->m_value = 0;
-    return FALSE;
-  }
-public:
-  DeferredAdjustment(ValueChangedFunction function, void* data) : m_value(0), m_handler(0), m_function(function), m_data(data)
-  {
-  }
-  void flush()
-  {
-    if(m_handler != 0)
-    {
-      g_source_remove(m_handler);
-      deferred_value_changed(this);
-    }
-  }
-  void value_changed(gdouble value)
-  {
-    m_value = value;
-    if(m_handler == 0)
-    {
-      m_handler = g_idle_add(deferred_value_changed, this);
-    }
-  }
-  static void adjustment_value_changed(GtkAdjustment *adjustment, DeferredAdjustment* self)
-  {
-    self->value_changed(adjustment->value);
-  }
-};
-
-
-
-class TextureBrowser;
-
-typedef ReferenceCaller<TextureBrowser, TextureBrowser_queueDraw> TextureBrowserQueueDrawCaller;
-
-void TextureBrowser_scrollChanged(void* data, gdouble value);
-
-
-enum StartupShaders
-{
-  STARTUPSHADERS_NONE = 0,
-  STARTUPSHADERS_COMMON,
-  STARTUPSHADERS_ALL,
-};
-
 namespace {
 	const std::string RKEY_TEXTURES_HIDE_UNUSED = "user/ui/textures/browser/hideUnused";
 	const std::string RKEY_TEXTURE_SCALE = "user/ui/textures/browser/textureScale";
@@ -155,191 +91,165 @@ namespace {
 	const std::string RKEY_TEXTURE_SHOW_SCROLLBAR = "user/ui/textures/browser/showScrollBar";
 	const std::string RKEY_TEXTURE_MOUSE_WHEEL_INCR = "user/ui/textures/browser/mouseWheelIncrement";
 	const std::string RKEY_TEXTURE_SHOW_FILTER = "user/ui/textures/browser/showFilter";
+	
+	bool g_TexturesMenu_shaderlistOnly = false;
 }
 
-void TextureBrowser_heightChanged(TextureBrowser& textureBrowser);
+DeferredAdjustment::DeferredAdjustment(ValueChangedFunction function, void* data) : 
+	m_value(0), 
+	m_handler(0), 
+	m_function(function), 
+	m_data(data)
+{}
 
-class TextureBrowser :
-	public RegistryKeyObserver
-{
-public:
-	int width, height;
-	int originy;
-	int m_nTotalHeight;
+void DeferredAdjustment::flush() {
+	if (m_handler != 0) {
+		g_source_remove(m_handler);
+		deferred_value_changed(this);
+	}
+}
 
-  std::string shader;
+void DeferredAdjustment::value_changed(gdouble value) {
+	m_value = value;
+	if (m_handler == 0) {
+		m_handler = g_idle_add(deferred_value_changed, this);
+	}
+}
 
-  GtkEntry* m_filter;
-  NonModalEntry m_filterEntry;
+void DeferredAdjustment::adjustment_value_changed(GtkAdjustment *adjustment, DeferredAdjustment* self) {
+	self->value_changed(adjustment->value);
+}
 
-  GtkWindow* m_parent;
-  GtkWidget* m_gl_widget;
+gboolean DeferredAdjustment::deferred_value_changed(gpointer data) {
+	DeferredAdjustment* self = reinterpret_cast<DeferredAdjustment*>(data);
+	
+	self->m_function(self->m_data, self->m_value);
+	self->m_handler = 0;
+	self->m_value = 0;
 
-  guint m_sizeHandler;
-  guint m_exposeHandler;
+	return FALSE;
+}
 
-  GtkWidget* m_texture_scroll;
+// ---- TextureBrowser implementation ------------------------------------------
 
-  bool m_heightChanged;
-  bool m_originInvalid;
+TextureBrowser::TextureBrowser() :
+	m_filter(0),
+	m_filterEntry(TextureBrowserQueueDrawCaller(*this), ClearFilterCaller(*this)),
+	m_texture_scroll(0),
+	m_heightChanged(true),
+	m_originInvalid(true),
+	m_scrollAdjustment(scrollChanged, this),
+	m_mouseWheelScrollIncrement(64),
+	m_textureScale(50),
+	m_showTextureFilter(false),
+	m_showShaders(true),
+	m_showTextureScrollbar(true),
+	m_hideUnused(false),
+	m_resizeTextures(true),
+	m_uniformTextureSize(128)
+{}
 
-  DeferredAdjustment m_scrollAdjustment;
-  FreezePointer m_freezePointer;
+void TextureBrowser::construct() {
+	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_HIDE_UNUSED);
+	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_SCALE);
+	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_UNIFORM_SIZE);
+	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_SHOW_SCROLLBAR);
+	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_MOUSE_WHEEL_INCR);
+	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_SHOW_FILTER);
+			
+	m_hideUnused = (GlobalRegistry().get(RKEY_TEXTURES_HIDE_UNUSED) == "1");
+	m_showTextureFilter = (GlobalRegistry().get(RKEY_TEXTURE_SHOW_FILTER) == "1");
+	m_uniformTextureSize = GlobalRegistry().getInt(RKEY_TEXTURE_UNIFORM_SIZE);
+	m_showTextureScrollbar = (GlobalRegistry().get(RKEY_TEXTURE_SHOW_SCROLLBAR) == "1");
+	m_mouseWheelScrollIncrement = GlobalRegistry().getInt(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
+	
+	setScaleFromRegistry();
+}
 
-  // the increment step we use against the wheel mouse
-  std::size_t m_mouseWheelScrollIncrement;
-  std::size_t m_textureScale;
-  bool m_showTextureFilter;
-  // make the texture increments match the grid changes
-  bool m_showShaders;
-  bool m_showTextureScrollbar;
-  StartupShaders m_startupShaders;
-  // if true, the texture window will only display in-use shaders
-  // if false, all the shaders in memory are displayed
-  bool m_hideUnused;
-  
-  // If true, textures are resized to a uniform size when displayed in the texture browser.
-  // If false, textures are displayed in proportion to their pixel size.
-  bool m_resizeTextures;
-  // The uniform size (in pixels) that textures are resized to when m_resizeTextures is true.
-  int m_uniformTextureSize;
-  
-  void clearFilter()
-  {
-    gtk_entry_set_text(m_filter, "");
-    TextureBrowser_queueDraw(*this);
-  }
-  
-  void keyChanged() {
-  	m_hideUnused = (GlobalRegistry().get(RKEY_TEXTURES_HIDE_UNUSED) == "1");
-  	m_showTextureFilter = (GlobalRegistry().get(RKEY_TEXTURE_SHOW_FILTER) == "1");
-  	m_uniformTextureSize = GlobalRegistry().getInt(RKEY_TEXTURE_UNIFORM_SIZE);
-  	m_showTextureScrollbar = (GlobalRegistry().get(RKEY_TEXTURE_SHOW_SCROLLBAR) == "1");
-  	m_mouseWheelScrollIncrement = GlobalRegistry().getInt(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
+void TextureBrowser::destroy() {
+}
+
+void TextureBrowser::queueDraw() {
+	if (m_gl_widget != NULL) {
+		gtk_widget_queue_draw(m_gl_widget);
+	}
+}
+
+void TextureBrowser::textureModeChanged() {
+	queueDraw();
+}
+
+void TextureBrowser::setScaleFromRegistry() {
+	int index = GlobalRegistry().getInt(RKEY_TEXTURE_SCALE);
+	
+	switch (index) {
+		case 0: m_textureScale = 10; break;
+		case 1: m_textureScale = 25; break;
+		case 2: m_textureScale = 50; break;
+		case 3: m_textureScale = 100; break;
+		case 4: m_textureScale = 200; break;
+	};
+	
+	queueDraw();
+}
+
+void TextureBrowser::clearFilter() {
+	gtk_entry_set_text(m_filter, "");
+	TextureBrowser_queueDraw(*this);
+}
+
+void TextureBrowser::keyChanged() {
+	m_hideUnused = (GlobalRegistry().get(RKEY_TEXTURES_HIDE_UNUSED) == "1");
+	m_showTextureFilter = (GlobalRegistry().get(RKEY_TEXTURE_SHOW_FILTER) == "1");
+	m_uniformTextureSize = GlobalRegistry().getInt(RKEY_TEXTURE_UNIFORM_SIZE);
+	m_showTextureScrollbar = (GlobalRegistry().get(RKEY_TEXTURE_SHOW_SCROLLBAR) == "1");
+	m_mouseWheelScrollIncrement = GlobalRegistry().getInt(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
   	
-  	widget_set_visible(m_texture_scroll, m_showTextureScrollbar);
-  	widget_set_visible(GTK_WIDGET(m_filter), m_showTextureFilter);
+	widget_set_visible(m_texture_scroll, m_showTextureScrollbar);
+	widget_set_visible(GTK_WIDGET(m_filter), m_showTextureFilter);
   	
 	setScaleFromRegistry();
   	
-  	TextureBrowser_heightChanged(*this);
+	heightChanged();
 	m_originInvalid = true;
-  }
-  
-  // Return the display width of a texture in the texture browser
-  int getTextureWidth(TexturePtr tex)
-  {
+}
+
+// Return the display width of a texture in the texture browser
+int TextureBrowser::getTextureWidth(TexturePtr tex) {
     int width;
-    if (!m_resizeTextures)
-    {
-      // Don't use uniform size
-      width = (int)(tex->width * ((float)m_textureScale / 100));
-    }
-    else if (tex->width >= tex->height)
-    {
-      // Texture is square, or wider than it is tall
-      width = m_uniformTextureSize;
-    }
-    else
-    {
-      // Otherwise, preserve the texture's aspect ratio
-      width = (int)(m_uniformTextureSize * ((float)tex->width / tex->height));
-    }
+    if (!m_resizeTextures) {
+		// Don't use uniform size
+		width = (int)(tex->width * ((float)m_textureScale / 100));
+	}
+	else if (tex->width >= tex->height) {
+		// Texture is square, or wider than it is tall
+		width = m_uniformTextureSize;
+	}
+	else {
+		// Otherwise, preserve the texture's aspect ratio
+		width = (int)(m_uniformTextureSize * ((float)tex->width / tex->height));
+	}
     
     return width;
-  }
-  
-  
-  // Return the display height of a texture in the texture browser
-  int getTextureHeight(TexturePtr tex)
-  {
-    int height;
-    if (!m_resizeTextures)
-    {
-      // Don't use uniform size
-      height = (int)(tex->height * ((float)m_textureScale / 100));
-    }
-    else if (tex->height >= tex->width)
-    {
-      // Texture is square, or taller than it is wide
-      height = m_uniformTextureSize;
-    }
-    else
-    {
-      // Otherwise, preserve the texture's aspect ratio
-      height = (int)(m_uniformTextureSize * ((float)tex->height / tex->width));
-    }
+}
+
+int TextureBrowser::getTextureHeight(TexturePtr tex) {
+	int height;
+	if (!m_resizeTextures) {
+		// Don't use uniform size
+		height = (int)(tex->height * ((float)m_textureScale / 100));
+	}
+    else if (tex->height >= tex->width) {
+		// Texture is square, or taller than it is wide
+		height = m_uniformTextureSize;
+	}
+	else {
+		// Otherwise, preserve the texture's aspect ratio
+		height = (int)(m_uniformTextureSize * ((float)tex->height / tex->width));
+	}
     
-    return height;
-  }
-  
-  
-  typedef MemberCaller<TextureBrowser, &TextureBrowser::clearFilter> ClearFilterCaller;
-
-  TextureBrowser() :
-    m_filter(0),
-    m_filterEntry(TextureBrowserQueueDrawCaller(*this), ClearFilterCaller(*this)),
-    m_texture_scroll(0),
-    m_heightChanged(true),
-    m_originInvalid(true),
-    m_scrollAdjustment(TextureBrowser_scrollChanged, this),
-    m_mouseWheelScrollIncrement(64),
-    m_textureScale(50),
-    m_showTextureFilter(false),
-    m_showShaders(true),
-    m_showTextureScrollbar(true),
-    m_hideUnused(false),
-    m_resizeTextures(true),
-    m_uniformTextureSize(128)
-  {}
-  
-	void construct() {
-		GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_HIDE_UNUSED);
-		GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_SCALE);
-		GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_UNIFORM_SIZE);
-		GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_SHOW_SCROLLBAR);
-		GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_MOUSE_WHEEL_INCR);
-		GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_SHOW_FILTER);
-				
-		m_hideUnused = (GlobalRegistry().get(RKEY_TEXTURES_HIDE_UNUSED) == "1");
-		m_showTextureFilter = (GlobalRegistry().get(RKEY_TEXTURE_SHOW_FILTER) == "1");
-  		m_uniformTextureSize = GlobalRegistry().getInt(RKEY_TEXTURE_UNIFORM_SIZE);
-  		m_showTextureScrollbar = (GlobalRegistry().get(RKEY_TEXTURE_SHOW_SCROLLBAR) == "1");
-  		m_mouseWheelScrollIncrement = GlobalRegistry().getInt(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
-  		
-  		setScaleFromRegistry();
-	}
-
-  
-	void destroy() 
-	{}
-  
-	void queueDraw() {
-		if (m_gl_widget != NULL) {
-			gtk_widget_queue_draw(m_gl_widget);
-		}
-	} 
-  
-	// greebo: This gets called as soon as the texture mode gets changed
-	void textureModeChanged() {
-		queueDraw();
-	}
-
-private:
-	void setScaleFromRegistry() {
-		int index = GlobalRegistry().getInt(RKEY_TEXTURE_SCALE);
-		
-		switch (index) {
-			case 0: m_textureScale = 10; break;
-			case 1: m_textureScale = 25; break;
-			case 2: m_textureScale = 50; break;
-			case 3: m_textureScale = 100; break;
-			case 4: m_textureScale = 200; break;
-		};
-		
-		queueDraw();
-	}
-};
+	return height;
+}
 
 void TextureBrowser_updateScroll(TextureBrowser& textureBrowser);
 
@@ -478,12 +388,11 @@ bool Texture_IsShown(IShaderPtr shader, bool show_shaders, bool hideUnused, cons
   return true;
 }
 
-void TextureBrowser_heightChanged(TextureBrowser& textureBrowser)
-{
-  textureBrowser.m_heightChanged = true;
+void TextureBrowser::heightChanged() {
+	m_heightChanged = true;
 
-  TextureBrowser_updateScroll(textureBrowser);
-  TextureBrowser_queueDraw(textureBrowser);
+	TextureBrowser_updateScroll(*this);
+	TextureBrowser_queueDraw(*this);
 }
 
 void TextureBrowser_evaluateHeight(TextureBrowser& textureBrowser)
@@ -590,7 +499,7 @@ void TextureBrowser_addShadersRealiseCallback(const SignalHandler& handler)
 
 void TextureBrowser_activeShadersChanged(TextureBrowser& textureBrowser)
 {
-  TextureBrowser_heightChanged(textureBrowser);
+  textureBrowser.heightChanged();
   textureBrowser.m_originInvalid = true;
 
   g_activeShadersChangedCallbacks();
@@ -1056,7 +965,7 @@ void TextureBrowser_toggleResizeTextures(GtkToggleToolButton* button, TextureBro
   }
   
   // Update texture browser
-  TextureBrowser_heightChanged(*textureBrowser);
+  textureBrowser->heightChanged();
 }
 
 
@@ -1106,10 +1015,9 @@ gboolean TextureBrowser_scroll(GtkWidget* widget, GdkEventScroll* event, Texture
   return FALSE;
 }
 
-void TextureBrowser_scrollChanged(void* data, gdouble value)
-{
-  //globalOutputStream() << "vertical scroll\n";
-  TextureBrowser_setOriginY(*reinterpret_cast<TextureBrowser*>(data), -(int)value);
+void TextureBrowser::scrollChanged(void* data, gdouble value) {
+	//globalOutputStream() << "vertical scroll\n";
+	TextureBrowser_setOriginY(*reinterpret_cast<TextureBrowser*>(data), -(int)value);
 }
 
 static void TextureBrowser_verticalScroll(GtkAdjustment *adjustment, TextureBrowser* textureBrowser)
@@ -1142,7 +1050,7 @@ gboolean TextureBrowser_size_allocate(GtkWidget* widget, GtkAllocation* allocati
 {
   textureBrowser->width = allocation->width;
   textureBrowser->height = allocation->height;
-  TextureBrowser_heightChanged(*textureBrowser);
+  textureBrowser->heightChanged();
   textureBrowser->m_originInvalid = true;
   TextureBrowser_queueDraw(*textureBrowser);
   return FALSE;
@@ -1295,7 +1203,7 @@ void TextureBrowser_ToggleShowShaderListOnly()
 void TextureBrowser_showAll()
 {
   g_TextureBrowser_currentDirectory = "";
-  TextureBrowser_heightChanged(g_TextureBrowser);
+  g_TextureBrowser.heightChanged();
 }
 
 void TextureBrowser_registerPreferencesPage() {

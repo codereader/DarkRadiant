@@ -22,8 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_TEXWINDOW_H)
 #define INCLUDED_TEXWINDOW_H
 
+#include "iregistry.h"
 #include "generic/callbackfwd.h"
 #include "signal/signalfwd.h"
+#include "gtkutil/nonmodal.h"
+#include "gtkutil/cursor.h"
+#include "texturelib.h"
 #include <string>
 
 // texture browser
@@ -49,5 +53,113 @@ void TextureBrowser_addActiveShadersChangedCallback(const SignalHandler& handler
 void TextureBrowser_addShadersRealiseCallback(const SignalHandler& handler);
 
 void TextureBrowser_queueDraw(TextureBrowser& textureBrowser);
+
+typedef struct _GtkWidget GtkWidget;
+typedef struct _GtkEntry GtkEntry;
+typedef struct _GtkAdjustment GtkAdjustment;
+
+enum StartupShaders {
+	STARTUPSHADERS_NONE = 0,
+	STARTUPSHADERS_COMMON,
+	STARTUPSHADERS_ALL,
+};
+
+class DeferredAdjustment
+{
+	gdouble m_value;
+	guint m_handler;
+	typedef void (*ValueChangedFunction)(void* data, gdouble value);
+	ValueChangedFunction m_function;
+	void* m_data;
+
+public:
+	DeferredAdjustment(ValueChangedFunction function, void* data);
+	
+	void flush();
+	void value_changed(gdouble value);
+
+	static void adjustment_value_changed(GtkAdjustment *adjustment, DeferredAdjustment* self);
+
+private:
+	static gboolean deferred_value_changed(gpointer data);
+};
+
+class TextureBrowser :
+	public RegistryKeyObserver
+{
+public:
+	int width, height;
+	int originy;
+	int m_nTotalHeight;
+
+	std::string shader;
+
+  GtkEntry* m_filter;
+  NonModalEntry m_filterEntry;
+
+  GtkWindow* m_parent;
+  GtkWidget* m_gl_widget;
+
+  guint m_sizeHandler;
+  guint m_exposeHandler;
+
+  GtkWidget* m_texture_scroll;
+
+  bool m_heightChanged;
+  bool m_originInvalid;
+
+  DeferredAdjustment m_scrollAdjustment;
+  FreezePointer m_freezePointer;
+
+  // the increment step we use against the wheel mouse
+  std::size_t m_mouseWheelScrollIncrement;
+  std::size_t m_textureScale;
+  bool m_showTextureFilter;
+  // make the texture increments match the grid changes
+  bool m_showShaders;
+  bool m_showTextureScrollbar;
+  StartupShaders m_startupShaders;
+  // if true, the texture window will only display in-use shaders
+  // if false, all the shaders in memory are displayed
+  bool m_hideUnused;
+  
+  // If true, textures are resized to a uniform size when displayed in the texture browser.
+  // If false, textures are displayed in proportion to their pixel size.
+  bool m_resizeTextures;
+  // The uniform size (in pixels) that textures are resized to when m_resizeTextures is true.
+  int m_uniformTextureSize;
+  
+	void clearFilter();
+	typedef MemberCaller<TextureBrowser, &TextureBrowser::clearFilter> ClearFilterCaller;
+
+	// RegistryKeyObserver implementation
+	void keyChanged();
+  
+	// Return the display width of a texture in the texture browser
+	int getTextureWidth(TexturePtr tex);
+	// Return the display height of a texture in the texture browser
+	int getTextureHeight(TexturePtr tex);
+
+	// Constructor
+	TextureBrowser();
+  
+	void construct();
+	void destroy();
+  
+	void queueDraw();
+	typedef MemberCaller<TextureBrowser, &TextureBrowser::queueDraw> TextureBrowserQueueDrawCaller;
+  
+	// greebo: This gets called as soon as the texture mode gets changed
+	void textureModeChanged();
+	
+	// Legacy function needed for DeferredAdjustment (TODO!) 
+	static void scrollChanged(void* data, gdouble value);
+
+private:
+	void setScaleFromRegistry();
+
+public:
+	void heightChanged();
+};
 
 #endif
