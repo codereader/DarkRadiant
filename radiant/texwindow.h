@@ -46,8 +46,6 @@ void TextureBrowser_ShowStartupShaders(TextureBrowser& textureBrowser);
 void TextureBrowser_Construct();
 void TextureBrowser_Destroy();
 
-void TextureBrowser_addShadersRealiseCallback(const SignalHandler& handler);
-
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkEntry GtkEntry;
 typedef struct _GtkAdjustment GtkAdjustment;
@@ -169,6 +167,14 @@ public:
 	
 	void updateScroll();
 	
+	/** greebo: This toggles the display of the TextureBrowser,
+	 * 			basically passes the call to the GroupDialog instance,
+	 * 			which takes care of the details.
+	 * 
+	 * Note: This is a command target, hence the static 
+	 */
+	static void toggle();
+	
 	// Returns the font height of the text in the opengl rendered window
 	int getFontHeight();
 	
@@ -201,6 +207,15 @@ public:
 	
 	int getOriginY();
 	void setOriginY(int newOriginY);
+	
+	// This gets called by the ShaderSystem
+	void activeShadersChanged();
+	
+	/** greebo: Returns the shader at the given coords.
+	 * 
+	 * @returns: the IShaderPtr, which may be empty.
+	 */
+	IShaderPtr getShaderAtCoords(int mx, int my);
 };
 
 #endif
