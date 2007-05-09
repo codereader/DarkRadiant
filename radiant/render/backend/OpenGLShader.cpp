@@ -49,11 +49,8 @@ inline GLenum convertBlendFactor(BlendFactor factor)
 } // namespace
 
 void OpenGLShader::destroy() {
-    /*if(m_shader)
-    {
-      m_shader->DecRef();
-    }
-    m_shader = 0;*/
+	// Clear the shaderptr, so that the shared_ptr reference count is decreased 
+    m_shader = IShaderPtr();
 
     for(Passes::iterator i = m_passes.begin(); i != m_passes.end(); ++i)
     {

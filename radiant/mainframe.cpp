@@ -1022,7 +1022,16 @@ GtkWidget* g_toggle_entitylist_item = 0;
 // The "Flush & Reload Shaders" command target 
 void RefreshShaders() {
 	ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Loading Shaders");
+	
+	// Destroy all the OpenGLShader objects
+	GlobalShaderCache().unrealise();
+	
+	// Reload the Shadersystem
 	GlobalShaderSystem().refresh();
+	
+	// Now realise the OpenGLShader objects again
+	GlobalShaderCache().realise();
+	
 	ui::MediaBrowser::getInstance().reloadMedia();
 	UpdateAllWindows();
 }
