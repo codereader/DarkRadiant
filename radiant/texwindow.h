@@ -49,6 +49,7 @@ void TextureBrowser_Destroy();
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkEntry GtkEntry;
 typedef struct _GtkAdjustment GtkAdjustment;
+typedef struct _GdkEventExpose GdkEventExpose;
 
 enum StartupShaders {
 	STARTUPSHADERS_NONE = 0,
@@ -159,10 +160,21 @@ public:
 	// Legacy function needed for DeferredAdjustment (TODO!) 
 	static void scrollChanged(void* data, gdouble value);
 
+	// Another legacy function needed for FreezePointer (TODO)
+	static void trackingDelta(int x, int y, unsigned int state, void* data);
+
 private:
 	void setScaleFromRegistry();
 
+	/** greebo: The actual drawing method invoking the GL calls.
+	 */
+	void draw();
+	
 public:
+	/** greebo: Performs the actual window movement after a mouse scroll.
+	 */
+	void doMouseWheel(bool wheelUp);
+
 	void heightChanged();
 	
 	void updateScroll();
@@ -216,6 +228,15 @@ public:
 	 * @returns: the IShaderPtr, which may be empty.
 	 */
 	IShaderPtr getShaderAtCoords(int mx, int my);
+	
+	/** greebo: Tries to select the shader at the given coords.
+	 * 			When successful, this applies the shader to the 
+	 * 			current selection.
+	 */
+	void selectTextureAt(int mx, int my);
+	
+	// Static GTK Callbacks
+	static gboolean onExpose(GtkWidget* widget, GdkEventExpose* event, TextureBrowser* self);
 };
 
 #endif
