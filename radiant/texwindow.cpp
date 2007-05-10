@@ -143,9 +143,7 @@ TextureBrowser::TextureBrowser() :
 	m_hideUnused(false),
 	m_resizeTextures(true),
 	m_uniformTextureSize(128)
-{}
-
-void TextureBrowser::construct() {
+{
 	// TODO: Move this stuff into the constructor
 	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_HIDE_UNUSED);
 	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_SCALE);
@@ -160,10 +158,9 @@ void TextureBrowser::construct() {
 	m_showTextureScrollbar = (GlobalRegistry().get(RKEY_TEXTURE_SHOW_SCROLLBAR) == "1");
 	m_mouseWheelScrollIncrement = GlobalRegistry().getInt(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
 	
+	shader = texdef_name_default();
+	
 	setScaleFromRegistry();
-}
-
-void TextureBrowser::destroy() {
 }
 
 void TextureBrowser::queueDraw() {
@@ -268,16 +265,14 @@ void TextureBrowser::setSelectedShader(const std::string& newShader) {
 	focus(shader);
 }
 
-void Texture_NextPos(TextureBrowser& textureBrowser, TextureLayout& layout, TexturePtr current_texture, int *x, int *y)
-{
-  TexturePtr q = current_texture;
-
-  int nWidth = textureBrowser.getTextureWidth(q);
-  int nHeight = textureBrowser.getTextureHeight(q);
-  if (layout.current_x + nWidth > textureBrowser.width-8 && layout.current_row)
+void TextureBrowser::nextTexturePos(TextureLayout& layout, TexturePtr tex, int *x, int *y) {
+  int nWidth = getTextureWidth(tex);
+  int nHeight = getTextureHeight(tex);
+  
+  if (layout.current_x + nWidth > width-8 && layout.current_row)
   { // go to the next row unless the texture is the first on the row
     layout.current_x = 8;
-    layout.current_y -= layout.current_row + textureBrowser.getFontHeight() + 4;
+    layout.current_y -= layout.current_row + getFontHeight() + 4;
     layout.current_row = 0;
   }
 
@@ -296,21 +291,26 @@ void Texture_NextPos(TextureBrowser& textureBrowser, TextureLayout& layout, Text
 }
 
 // if texture_showinuse jump over non in-use textures
-bool Texture_IsShown(IShaderPtr shader, bool hideUnused, const std::string& filter)
-{
-  if(!shader_equal_prefix(shader->getName(), "textures/"))
-    return false;
+bool TextureBrowser::shaderIsVisible(IShaderPtr shader) {
+	if (shader == NULL) {
+		return false;
+	}
+	
+	if (!shader_equal_prefix(shader->getName(), "textures/")) {
+		return false;
+	}
 
-  if(hideUnused && !shader->IsInUse())
-    return false;
+	if (m_hideUnused && !shader->IsInUse()) {
+		return false;
+	}
 
-  	if (!filter.empty()) {
+  	if (!getFilter().empty()) {
 		// some basic filtering
-		if (strstr( shader_get_textureName(shader->getName()), filter.c_str() ) == 0)
+		if (strstr( shader_get_textureName(shader->getName()), getFilter().c_str() ) == 0)
 			return false;
 	}
 
-  return true;
+	return true;
 }
 
 void TextureBrowser::heightChanged() {
@@ -332,11 +332,11 @@ void TextureBrowser::evaluateHeight() {
 	    {
 	      IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 	
-	      if(!Texture_IsShown(shader, m_hideUnused, getFilter()))
+	      if (!shaderIsVisible(shader))
 	        continue;
 	
 	      int   x, y;
-	      Texture_NextPos(*this, layout, shader->getTexture(), &x, &y);
+	      nextTexturePos(layout, shader->getTexture(), &x, &y);
 	      m_nTotalHeight = std::max(m_nTotalHeight, abs(layout.current_y) + getFontHeight() + getTextureHeight(shader->getTexture()) + 4);
 	    }
 	}
@@ -397,11 +397,11 @@ void TextureBrowser::focus(const std::string& name) {
   {
     IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 
-    if(!Texture_IsShown(shader, m_hideUnused, getFilter()))
+    if (!shaderIsVisible(shader))
       continue;
 
     int x, y;
-    Texture_NextPos(*this, layout, shader->getTexture(), &x, &y);
+    nextTexturePos(layout, shader->getTexture(), &x, &y);
     TexturePtr q = shader->getTexture();
     if (!q)
       break;
@@ -439,11 +439,11 @@ IShaderPtr TextureBrowser::getShaderAtCoords(int mx, int my) {
 	{
 		IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 
-		if(!Texture_IsShown(shader, m_hideUnused, getFilter()))
+		if (!shaderIsVisible(shader))
 			continue;
 
 		int x, y;
-		Texture_NextPos(*this, layout, shader->getTexture(), &x, &y);
+		nextTexturePos(layout, shader->getTexture(), &x, &y);
 		TexturePtr q = shader->getTexture();
 		if (!q)
 			break;
@@ -523,11 +523,11 @@ void TextureBrowser::draw() {
   {
     IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 
-    if(!Texture_IsShown(shader, m_hideUnused, getFilter()))
+    if (!shaderIsVisible(shader))
       continue;
 
     int x, y;
-    Texture_NextPos(*this, layout, shader->getTexture(), &x, &y);
+    nextTexturePos(layout, shader->getTexture(), &x, &y);
     TexturePtr q = shader->getTexture();
     if (!q)
       break;
@@ -653,8 +653,9 @@ void TextureBrowser::doMouseWheel(bool wheelUp) {
 }
 
 // GTK callback for toggling uniform texture sizing
-void TextureBrowser::onResizeToggle(GtkToggleToolButton* button, TextureBrowser* self) {
-	self->m_resizeTextures = gtk_toggle_tool_button_get_active(button);
+void TextureBrowser::onResizeToggle(GtkWidget* button, TextureBrowser* self) {
+	self->m_resizeTextures = 
+		gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(button));
 
 	// Update texture browser
 	self->heightChanged();
@@ -750,15 +751,7 @@ gboolean TextureBrowser::onExpose(GtkWidget* widget, GdkEventExpose* event, Text
 	return FALSE;
 }
 
-TextureBrowser g_TextureBrowser;
-
-TextureBrowser& GlobalTextureBrowser() {
-	return g_TextureBrowser;
-}
-
 GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
-	
-	construct();
 	
 	m_parent = parent;
 	
@@ -851,7 +844,6 @@ GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
 }
 
 void TextureBrowser::destroyWindow() {
-	destroy();
 	GlobalShaderSystem().setActiveShadersChangedNotify(Callback());
 
 	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_sizeHandler);
@@ -860,7 +852,7 @@ void TextureBrowser::destroyWindow() {
 	gtk_widget_unref(m_gl_widget);
 }
 
-void TextureBrowser_registerPreferencesPage() {
+void TextureBrowser::registerPreferencesPage() {
 	// Add a page to the given group
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Texture Browser");
 	
@@ -882,41 +874,17 @@ void TextureBrowser_registerPreferencesPage() {
 	page->appendCheckBox("", "Show Texture Filter", RKEY_TEXTURE_SHOW_FILTER);
 }
 
-class ShadersObserver : 
-	public ModuleObserver
-{
-	Signal0 m_realiseCallbacks;
-public:
-	void realise() {
-		m_realiseCallbacks();
-	}
-	
-	void unrealise() {
-	}
-
-	void insert(const SignalHandler& handler) {
-		m_realiseCallbacks.connectLast(handler);
-	}
-};
-
-namespace {
-	ShadersObserver g_ShadersObserver;
-}
-
 #include "preferencesystem.h"
 #include "stringio.h"
 
-void TextureBrowser_Construct() {
+void TextureBrowser::construct() {
 	GlobalEventManager().addRegistryToggle("ShowInUse", RKEY_TEXTURES_HIDE_UNUSED);
 	GlobalEventManager().addCommand("ViewTextures", FreeCaller<TextureBrowser::toggle>());
 
-	g_TextureBrowser.shader = texdef_name_default().c_str();
-
-	TextureBrowser_registerPreferencesPage();
-
-	GlobalShaderSystem().attach(g_ShadersObserver);
+	TextureBrowser::registerPreferencesPage();
 }
 
-void TextureBrowser_Destroy() {
-	GlobalShaderSystem().detach(g_ShadersObserver);
+TextureBrowser& GlobalTextureBrowser() {
+	static TextureBrowser _instance;
+	return _instance;
 }

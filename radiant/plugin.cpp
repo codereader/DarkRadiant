@@ -204,7 +204,7 @@ public:
     MainFrame_Construct();
     GlobalCamera().construct();
     GlobalXYWnd().construct();
-    TextureBrowser_Construct();
+    GlobalTextureBrowser().construct();
     Entity_Construct();
     NullModel_construct();
     MapRoot_construct();
@@ -244,7 +244,6 @@ public:
     MapRoot_destroy();
     NullModel_destroy();
     Entity_Destroy();
-    TextureBrowser_Destroy();
     GlobalXYWnd().destroy();
     GlobalCamera().destroy();
     MainFrame_Destroy();
