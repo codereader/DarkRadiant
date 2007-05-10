@@ -66,6 +66,7 @@ gtkutil_src = '\
   clipboard.cpp\
   container.cpp\
   cursor.cpp\
+  DeferredAdjustment.cpp\
   dialog.cpp\
   entry.cpp\
   frame.cpp\

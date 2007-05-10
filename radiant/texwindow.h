@@ -27,27 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "signal/signalfwd.h"
 #include "gtkutil/nonmodal.h"
 #include "gtkutil/cursor.h"
+#include "gtkutil/DeferredAdjustment.h"
 #include "texturelib.h"
-
-class DeferredAdjustment
-{
-	gdouble m_value;
-	guint m_handler;
-	typedef void (*ValueChangedFunction)(void* data, gdouble value);
-	ValueChangedFunction m_function;
-	void* m_data;
-
-public:
-	DeferredAdjustment(ValueChangedFunction function, void* data);
-	
-	void flush();
-	void value_changed(gdouble value);
-
-	static void adjustment_value_changed(GtkAdjustment *adjustment, DeferredAdjustment* self);
-
-private:
-	static gboolean deferred_value_changed(gpointer data);
-};
 
 class TextureLayout {
 public:
@@ -85,7 +66,7 @@ class TextureBrowser :
   bool m_heightChanged;
   bool m_originInvalid;
 
-  DeferredAdjustment m_scrollAdjustment;
+  gtkutil::DeferredAdjustment m_scrollAdjustment;
   FreezePointer m_freezePointer;
 
   // the increment step we use against the wheel mouse
