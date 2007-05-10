@@ -457,19 +457,11 @@ IShaderPtr TextureBrowser::getShaderAtCoords(int mx, int my) {
 	return IShaderPtr();
 }
 
-/*
-==============
-SelectTexture
-
-  By mouse click
-==============
-*/
-void SelectTexture(TextureBrowser& textureBrowser, int mx, int my, bool bShift)
-{
-	IShaderPtr shader = textureBrowser.getShaderAtCoords(mx, my);
+void TextureBrowser::selectTextureAt(int mx, int my) {
+	IShaderPtr shader = getShaderAtCoords(mx, my);
 	
 	if (shader != NULL) {
-  		textureBrowser.setSelectedShader(shader->getName());
+  		setSelectedShader(shader->getName());
   		
 		// Apply the shader to the current selection
 		selection::algorithm::applyShaderToSelection(shader->getName());
@@ -483,45 +475,20 @@ void SelectTexture(TextureBrowser& textureBrowser, int mx, int my, bool bShift)
 
 ============================================================================
 */
+void TextureBrowser::trackingDelta(int x, int y, unsigned int state, void* data) {
+	TextureBrowser& self = *reinterpret_cast<TextureBrowser*>(data);
+	
+	if (y != 0) {
+		int scale = 1;
 
-void TextureBrowser_trackingDelta(int x, int y, unsigned int state, void* data)
-{
-  TextureBrowser& textureBrowser = *reinterpret_cast<TextureBrowser*>(data);
-  if(y != 0)
-  {
-    int scale = 1;
+		if (state & GDK_SHIFT_MASK)
+			scale = 4;
 
-    if(state & GDK_SHIFT_MASK)
-      scale = 4;
-
-    int originy = textureBrowser.getOriginY();
-    originy += y * scale;
-    textureBrowser.setOriginY(originy);
-  }
+		int originy = self.getOriginY();
+		originy += y * scale;
+		self.setOriginY(originy);
+	}
 }
-
-void TextureBrowser_Tracking_MouseDown(TextureBrowser& textureBrowser)
-{
-  textureBrowser.m_freezePointer.freeze_pointer(textureBrowser.m_parent, TextureBrowser_trackingDelta, &textureBrowser);
-}
-
-void TextureBrowser_Tracking_MouseUp(TextureBrowser& textureBrowser)
-{
-  textureBrowser.m_freezePointer.unfreeze_pointer(textureBrowser.m_parent);
-}
-
-void TextureBrowser_Selection_MouseDown(TextureBrowser& textureBrowser, guint32 flags, int pointx, int pointy)
-{
-  SelectTexture(textureBrowser, pointx, textureBrowser.height - 1 - pointy, (flags & GDK_SHIFT_MASK) != 0);
-}
-
-/*
-============================================================================
-
-DRAWING
-
-============================================================================
-*/
 
 /*
 ============
@@ -531,20 +498,19 @@ we must query all Texture* to manage and display through the IShaders interface
 this allows a plugin to completely override the texture system
 ============
 */
-void Texture_Draw(TextureBrowser& textureBrowser)
-{
-  int originy = textureBrowser.getOriginY();
+void TextureBrowser::draw() {
+  int originy = getOriginY();
 
   Vector3 colorBackground = ColourSchemes().getColourVector3("texture_background");
   glClearColor(colorBackground[0], colorBackground[1], colorBackground[2], 0);
-  glViewport(0, 0, textureBrowser.width, textureBrowser.height);
+  glViewport(0, 0, width, height);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
 
   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glDisable (GL_DEPTH_TEST);
   glDisable(GL_BLEND);
-  glOrtho (0, textureBrowser.width, originy-textureBrowser.height, originy, -100, 100);
+  glOrtho (0, width, originy-height, originy, -100, 100);
   glEnable (GL_TEXTURE_2D);
 
   glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
@@ -556,17 +522,17 @@ void Texture_Draw(TextureBrowser& textureBrowser)
   {
     IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 
-    if(!Texture_IsShown(shader, textureBrowser.m_hideUnused, textureBrowser.getFilter()))
+    if(!Texture_IsShown(shader, m_hideUnused, getFilter()))
       continue;
 
     int x, y;
-    Texture_NextPos(textureBrowser, layout, shader->getTexture(), &x, &y);
+    Texture_NextPos(*this, layout, shader->getTexture(), &x, &y);
     TexturePtr q = shader->getTexture();
     if (!q)
       break;
 
-    int nWidth = textureBrowser.getTextureWidth(q);
-    int nHeight = textureBrowser.getTextureHeight(q);
+    int nWidth = getTextureWidth(q);
+    int nHeight = getTextureHeight(q);
 
     if (y != last_y)
     {
@@ -576,25 +542,25 @@ void Texture_Draw(TextureBrowser& textureBrowser)
     last_height = std::max (nHeight, last_height);
 
     // Is this texture visible?
-    if ((y - nHeight - textureBrowser.getFontHeight() < originy)
-        && (y > originy - textureBrowser.height))
+    if ((y - nHeight - getFontHeight() < originy)
+        && (y > originy - height))
     {
       // borders rules:
       // if it's the current texture, draw a thick red line, else:
       // shaders have a white border, simple textures don't
       // if !texture_showinuse: (some textures displayed may not be in use)
       // draw an additional square around with 0.5 1 0.5 color
-      if (shader_equal(textureBrowser.getSelectedShader(), shader->getName()))
+      if (shader_equal(getSelectedShader(), shader->getName()))
       {
 	      glLineWidth (3);
 	      glColor3f (1,0,0);
 	      glDisable (GL_TEXTURE_2D);
 
 	      glBegin (GL_LINE_LOOP);
-	      glVertex2i (x-4,y-textureBrowser.getFontHeight()+4);
-	      glVertex2i (x-4,y-textureBrowser.getFontHeight()-nHeight-4);
-	      glVertex2i (x+4+nWidth,y-textureBrowser.getFontHeight()-nHeight-4);
-	      glVertex2i (x+4+nWidth,y-textureBrowser.getFontHeight()+4);
+	      glVertex2i (x-4,y-getFontHeight()+4);
+	      glVertex2i (x-4,y-getFontHeight()-nHeight-4);
+	      glVertex2i (x+4+nWidth,y-getFontHeight()-nHeight-4);
+	      glVertex2i (x+4+nWidth,y-getFontHeight()+4);
 	      glEnd();
 
 	      glEnable (GL_TEXTURE_2D);
@@ -610,24 +576,24 @@ void Texture_Draw(TextureBrowser& textureBrowser)
 	        glDisable (GL_TEXTURE_2D);
 
 	        glBegin (GL_LINE_LOOP);
-	        glVertex2i (x-1,y+1-textureBrowser.getFontHeight());
-	        glVertex2i (x-1,y-nHeight-1-textureBrowser.getFontHeight());
-	        glVertex2i (x+1+nWidth,y-nHeight-1-textureBrowser.getFontHeight());
-	        glVertex2i (x+1+nWidth,y+1-textureBrowser.getFontHeight());
+	        glVertex2i (x-1,y+1-getFontHeight());
+	        glVertex2i (x-1,y-nHeight-1-getFontHeight());
+	        glVertex2i (x+1+nWidth,y-nHeight-1-getFontHeight());
+	        glVertex2i (x+1+nWidth,y+1-getFontHeight());
 	        glEnd();
 	        glEnable (GL_TEXTURE_2D);
 	      }
 
 	      // highlight in-use textures
-	      if (!textureBrowser.m_hideUnused && shader->IsInUse())
+	      if (!m_hideUnused && shader->IsInUse())
 	      {
 	        glColor3f (0.5,1,0.5);
 	        glDisable (GL_TEXTURE_2D);
 	        glBegin (GL_LINE_LOOP);
-	        glVertex2i (x-3,y+3-textureBrowser.getFontHeight());
-	        glVertex2i (x-3,y-nHeight-3-textureBrowser.getFontHeight());
-	        glVertex2i (x+3+nWidth,y-nHeight-3-textureBrowser.getFontHeight());
-	        glVertex2i (x+3+nWidth,y+3-textureBrowser.getFontHeight());
+	        glVertex2i (x-3,y+3-getFontHeight());
+	        glVertex2i (x-3,y-nHeight-3-getFontHeight());
+	        glVertex2i (x+3+nWidth,y-nHeight-3-getFontHeight());
+	        glVertex2i (x+3+nWidth,y+3-getFontHeight());
 	        glEnd();
 	        glEnable (GL_TEXTURE_2D);
 	      }
@@ -639,20 +605,20 @@ void Texture_Draw(TextureBrowser& textureBrowser)
       glColor3f (1,1,1);
       glBegin (GL_QUADS);
       glTexCoord2i (0,0);
-      glVertex2i (x,y-textureBrowser.getFontHeight());
+      glVertex2i (x,y-getFontHeight());
       glTexCoord2i (1,0);
-      glVertex2i (x+nWidth,y-textureBrowser.getFontHeight());
+      glVertex2i (x+nWidth,y-getFontHeight());
       glTexCoord2i (1,1);
-      glVertex2i (x+nWidth,y-textureBrowser.getFontHeight()-nHeight);
+      glVertex2i (x+nWidth,y-getFontHeight()-nHeight);
       glTexCoord2i (0,1);
-      glVertex2i (x,y-textureBrowser.getFontHeight()-nHeight);
+      glVertex2i (x,y-getFontHeight()-nHeight);
       glEnd();
 
       // draw the texture name
       glDisable (GL_TEXTURE_2D);
       glColor3f (1,1,1);
 
-      glRasterPos2i (x, y-textureBrowser.getFontHeight()+5);
+      glRasterPos2i (x, y-getFontHeight()+5);
 
       // don't draw the directory name
       const char* name = shader->getName();
@@ -667,28 +633,23 @@ void Texture_Draw(TextureBrowser& textureBrowser)
     //int totalHeight = abs(y) + last_height + textureBrowser.getFontHeight() + 4;
   }
 
-
   // reset the current texture
   glBindTexture(GL_TEXTURE_2D, 0);
   //qglFinish();
 }
 
-void TextureBrowser_MouseWheel(TextureBrowser& textureBrowser, bool bUp)
-{
-  int originy = textureBrowser.getOriginY();
+void TextureBrowser::doMouseWheel(bool wheelUp) {
+	int originy = getOriginY();
 
-  if (bUp)
-  {
-    originy += int(textureBrowser.m_mouseWheelScrollIncrement);
-  }
-  else
-  {
-    originy -= int(textureBrowser.m_mouseWheelScrollIncrement);
-  }
+	if (wheelUp) {
+		originy += int(m_mouseWheelScrollIncrement);
+	}
+	else {
+		originy -= int(m_mouseWheelScrollIncrement);
+	}
 
-  textureBrowser.setOriginY(originy);
+	setOriginY(originy);
 }
-
 
 // GTK callback for toggling uniform texture sizing
 void TextureBrowser_toggleResizeTextures(GtkToggleToolButton* button, TextureBrowser* textureBrowser) {
@@ -706,20 +667,20 @@ void TextureBrowser_toggleResizeTextures(GtkToggleToolButton* button, TextureBro
 }
 
 
-gboolean TextureBrowser_button_press(GtkWidget* widget, GdkEventButton* event, TextureBrowser* textureBrowser)
-{
-  if(event->type == GDK_BUTTON_PRESS)
-  {
-    if(event->button == 3)
-    {
-      TextureBrowser_Tracking_MouseDown(*textureBrowser);
-    }
-    else if(event->button == 1)
-    {
-      TextureBrowser_Selection_MouseDown(*textureBrowser, event->state, static_cast<int>(event->x), static_cast<int>(event->y));
-    }
-  }
-  return FALSE;
+gboolean TextureBrowser_button_press(GtkWidget* widget, GdkEventButton* event, TextureBrowser* textureBrowser) {
+	if (event->type == GDK_BUTTON_PRESS) {
+		if (event->button == 3) {
+			textureBrowser->m_freezePointer.freeze_pointer(textureBrowser->m_parent, TextureBrowser::trackingDelta, textureBrowser);
+		}
+		else if(event->button == 1) {
+			textureBrowser->selectTextureAt(
+    			static_cast<int>(event->x), 
+    			textureBrowser->height - 1 - static_cast<int>(event->y)
+    		);
+    	}
+	}
+
+	return FALSE;
 }
 
 gboolean TextureBrowser_button_release(GtkWidget* widget, GdkEventButton* event, TextureBrowser* textureBrowser)
@@ -728,7 +689,7 @@ gboolean TextureBrowser_button_release(GtkWidget* widget, GdkEventButton* event,
   {
     if(event->button == 3)
     {
-      TextureBrowser_Tracking_MouseUp(*textureBrowser);
+    	textureBrowser->m_freezePointer.unfreeze_pointer(textureBrowser->m_parent);
     }
   }
   return FALSE;
@@ -739,17 +700,14 @@ gboolean TextureBrowser_motion(GtkWidget *widget, GdkEventMotion *event, Texture
   return FALSE;
 }
 
-gboolean TextureBrowser_scroll(GtkWidget* widget, GdkEventScroll* event, TextureBrowser* textureBrowser)
-{
-  if(event->direction == GDK_SCROLL_UP)
-  {
-    TextureBrowser_MouseWheel(*textureBrowser, true);
-  }
-  else if(event->direction == GDK_SCROLL_DOWN)
-  {
-    TextureBrowser_MouseWheel(*textureBrowser, false);
-  }
-  return FALSE;
+gboolean TextureBrowser_scroll(GtkWidget* widget, GdkEventScroll* event, TextureBrowser* textureBrowser) {
+	if (event->direction == GDK_SCROLL_UP) {
+		textureBrowser->doMouseWheel(true);
+	}
+	else if(event->direction == GDK_SCROLL_DOWN) {
+		textureBrowser->doMouseWheel(false);
+	}
+	return FALSE;
 }
 
 void TextureBrowser::scrollChanged(void* data, gdouble value) {
@@ -792,14 +750,13 @@ gboolean TextureBrowser_size_allocate(GtkWidget* widget, GtkAllocation* allocati
   return FALSE;
 }
 
-gboolean TextureBrowser_expose(GtkWidget* widget, GdkEventExpose* event, TextureBrowser* textureBrowser)
-{
+gboolean TextureBrowser::onExpose(GtkWidget* widget, GdkEventExpose* event, TextureBrowser* self) {
 	// This calls glwidget_make_current() for us and swap_buffers at the end of scope
-	gtkutil::GLWidgetSentry sentry(textureBrowser->m_gl_widget);
+	gtkutil::GLWidgetSentry sentry(self->m_gl_widget);
 	
     GlobalOpenGL_debugAssertNoErrors();
-    textureBrowser->evaluateHeight();
-    Texture_Draw(*textureBrowser);
+    self->evaluateHeight();
+    self->draw();
     GlobalOpenGL_debugAssertNoErrors();
 
 	return FALSE;
@@ -897,7 +854,7 @@ GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel)
 		  gtk_widget_show(g_TextureBrowser.m_gl_widget);
 
       g_TextureBrowser.m_sizeHandler = g_signal_connect(G_OBJECT(g_TextureBrowser.m_gl_widget), "size_allocate", G_CALLBACK(TextureBrowser_size_allocate), &g_TextureBrowser);
-      g_TextureBrowser.m_exposeHandler = g_signal_connect(G_OBJECT(g_TextureBrowser.m_gl_widget), "expose_event", G_CALLBACK(TextureBrowser_expose), &g_TextureBrowser);
+      g_TextureBrowser.m_exposeHandler = g_signal_connect(G_OBJECT(g_TextureBrowser.m_gl_widget), "expose_event", G_CALLBACK(TextureBrowser::onExpose), &g_TextureBrowser);
 
       g_signal_connect(G_OBJECT(g_TextureBrowser.m_gl_widget), "button_press_event", G_CALLBACK(TextureBrowser_button_press), &g_TextureBrowser);
       g_signal_connect(G_OBJECT(g_TextureBrowser.m_gl_widget), "button_release_event", G_CALLBACK(TextureBrowser_button_release), &g_TextureBrowser);
