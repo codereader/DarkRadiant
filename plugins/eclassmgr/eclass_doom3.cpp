@@ -363,6 +363,15 @@ class EntityClassDoom3:
 
     } // end func
 
+    // Find an entity class
+    IEntityClassPtr findClass(const std::string& className) const {
+        EntityClasses::const_iterator i = _entityClasses.find(className);
+        if (i != _entityClasses.end())
+            return i->second;
+        else
+            return IEntityClassPtr();
+    }
+    
     void unrealise()
     {
         if (++m_unrealised == 1) {
@@ -430,6 +439,11 @@ public:
 		return EntityClassDoom3_findOrInsert(name, has_brushes);
 	}
 	
+    // Look up an existing entity class
+    virtual IEntityClassPtr findClass(const std::string& className) const {
+        return g_EntityClassDoom3.findClass(className);
+    }
+
 	// Visit each entity class
 	virtual void forEach(EntityClassVisitor& visitor) {
 		for(EntityClasses::iterator i = _entityClasses.begin(); 

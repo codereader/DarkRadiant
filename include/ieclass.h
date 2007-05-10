@@ -250,6 +250,15 @@ struct IEntityClassManager
 	virtual IEntityClassPtr findOrInsert(const std::string& name, 
 										 bool has_brushes) = 0;
 	
+    /**
+     * Lookup an entity class by name. If the class is not found, a null pointer
+     * is returned.
+     *
+     * @param name
+     * Name of the entity class to look up.
+     */
+    virtual IEntityClassPtr findClass(const std::string& name) const = 0;
+    
  	virtual void forEach(EntityClassVisitor& visitor) = 0;
 	virtual void attach(ModuleObserver& observer) = 0;
 	virtual void detach(ModuleObserver& observer) = 0;
