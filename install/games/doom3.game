@@ -47,10 +47,6 @@
 				type="texture" 
 				match="tdm_collision_.*" 
 				action="hide" />
-			<filterCriterion 
-				type="texture" 
-				match="textures/common/monster_clip" 
-				action="hide" />
 		</filter>
 		<filter name="Lights">
 			<filterCriterion type="entityclass" match="light" action="hide" />
@@ -63,6 +59,32 @@
 		<filter name="Visportals">
 			<filterCriterion type="texture" match="textures/editor/visportal" action="hide" />
 			<filterCriterion type="texture" match="textures/common/nodraw" action="hide" />
+		</filter>
+		<filter name="Clip Textures">
+			<filterCriterion 
+				type="texture" 
+				match="textures/common/(.*)_clip$" 
+				action="hide" />
+			<filterCriterion type="texture" match="textures/common/clip(_plusmovables)*$" action="hide" />
+			<filterCriterion type="texture" match="textures/common/moveableclipmodel" action="hide" />
+		</filter>
+		<filter name="Trigger Textures">
+			<filterCriterion 
+				type="texture" 
+				match="textures/common/trig(.*)" 
+				action="hide" />
+		</filter>
+		<filter name="Nodraw Textures">
+			<filterCriterion 
+				type="texture" 
+				match="textures/common/nodraw(.*)" 
+				action="hide" />
+		</filter>
+		<filter name="Shadow Textures">
+			<filterCriterion 
+				type="texture" 
+				match="textures/common/shadow(.*)" 
+				action="hide" />
 		</filter>
 		<filter name="Patches">
 			<filterCriterion type="object" match="patch" action="hide" />
