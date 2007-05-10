@@ -1,87 +1,18 @@
-/*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-//
-// Texture Window
-//
-// Leonardo Zide (leo@lokigames.com)
-//
-
 #include "texwindow.h"
-
-#include "debugging/debugging.h"
-#include "warnings.h"
 
 #include "ieventmanager.h"
 #include "iuimanager.h"
-#include "iimage.h"
-#include "ifilesystem.h"
-#include "ishaders.h"
-#include "iscriplib.h"
-#include "iselection.h"
-#include "iscenegraph.h"
-#include "irender.h"
-#include "iundo.h"
-#include "igl.h"
-#include "iarchive.h"
-#include "moduleobserver.h"
-
-#include <set>
+#include "preferencesystem.h"
 
 #include <gtk/gtk.h>
-
-#include "signal/signal.h"
-#include "texturelib.h"
-#include "string/string.h"
-#include "shaderlib.h"
-#include "os/path.h"
-#include "stream/memstream.h"
-#include "stream/textfilestream.h"
-#include "stream/stringstream.h"
-#include "cmdlib.h"
-#include "convert.h"
-
-#include "gtkutil/image.h"
-#include "gtkutil/nonmodal.h"
-#include "gtkutil/cursor.h"
 #include "gtkutil/widget.h"
-#include "gtkutil/glwidget.h"
+#include "gtkutil/image.h"
 #include "gtkutil/GLWidgetSentry.h"
 
-#include "error.h"
-#include "map.h"
-#include "qgl.h"
-#include "select.h"
-#include "brush/TextureProjection.h"
-#include "brushmanip.h"
-#include "patchmanip.h"
 #include "plugin.h"
-#include "qe3.h"
-#include "gtkdlgs.h"
-#include "gtkmisc.h"
-#include "mainframe.h"
-#include "ui/groupdialog/GroupDialog.h"
-#include "preferences.h"
+#include "shaderlib.h"
 #include "selection/algorithm/Shader.h"
-#include "settings/GameManager.h"
+#include "ui/groupdialog/GroupDialog.h"
 
 namespace {
 	const std::string RKEY_TEXTURES_HIDE_UNUSED = "user/ui/textures/browser/hideUnused";
@@ -91,43 +22,6 @@ namespace {
 	const std::string RKEY_TEXTURE_MOUSE_WHEEL_INCR = "user/ui/textures/browser/mouseWheelIncrement";
 	const std::string RKEY_TEXTURE_SHOW_FILTER = "user/ui/textures/browser/showFilter";
 }
-
-DeferredAdjustment::DeferredAdjustment(ValueChangedFunction function, void* data) : 
-	m_value(0), 
-	m_handler(0), 
-	m_function(function), 
-	m_data(data)
-{}
-
-void DeferredAdjustment::flush() {
-	if (m_handler != 0) {
-		g_source_remove(m_handler);
-		deferred_value_changed(this);
-	}
-}
-
-void DeferredAdjustment::value_changed(gdouble value) {
-	m_value = value;
-	if (m_handler == 0) {
-		m_handler = g_idle_add(deferred_value_changed, this);
-	}
-}
-
-void DeferredAdjustment::adjustment_value_changed(GtkAdjustment *adjustment, DeferredAdjustment* self) {
-	self->value_changed(adjustment->value);
-}
-
-gboolean DeferredAdjustment::deferred_value_changed(gpointer data) {
-	DeferredAdjustment* self = reinterpret_cast<DeferredAdjustment*>(data);
-	
-	self->m_function(self->m_data, self->m_value);
-	self->m_handler = 0;
-	self->m_value = 0;
-
-	return FALSE;
-}
-
-// ---- TextureBrowser implementation ------------------------------------------
 
 TextureBrowser::TextureBrowser() :
 	m_filter(0),
@@ -874,9 +768,6 @@ void TextureBrowser::registerPreferencesPage() {
 	page->appendCheckBox("", "Show Texture Filter", RKEY_TEXTURE_SHOW_FILTER);
 }
 
-#include "preferencesystem.h"
-#include "stringio.h"
-
 void TextureBrowser::construct() {
 	GlobalEventManager().addRegistryToggle("ShowInUse", RKEY_TEXTURES_HIDE_UNUSED);
 	GlobalEventManager().addCommand("ViewTextures", FreeCaller<TextureBrowser::toggle>());
@@ -884,6 +775,8 @@ void TextureBrowser::construct() {
 	TextureBrowser::registerPreferencesPage();
 }
 
+/** greebo: The accessor method, use this to call non-static TextureBrowser methods
+ */
 TextureBrowser& GlobalTextureBrowser() {
 	static TextureBrowser _instance;
 	return _instance;
