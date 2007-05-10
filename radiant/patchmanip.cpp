@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "mainframe.h"
 #include "gtkmisc.h"
 #include "gtkdlgs.h"
-#include "texwindow.h"
+#include "ui/texturebrowser/TextureBrowser.h"
 #include "select.h"
 #include "patch.h"
 #include "igrid.h"

@@ -2,7 +2,6 @@
 #include "TextureDirectoryLoader.h"
 
 #include "ishaders.h"
-#include "texwindow.h"
 #include "select.h"
 #include "generic/callback.h"
 #include "gtkutil/image.h"

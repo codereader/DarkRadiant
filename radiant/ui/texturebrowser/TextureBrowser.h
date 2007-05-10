@@ -30,6 +30,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/DeferredAdjustment.h"
 #include "texturelib.h"
 
+namespace ui {
+
 class TextureLayout {
 public:
 	TextureLayout() :
@@ -222,7 +224,9 @@ private:
 	static gboolean onMouseScroll(GtkWidget* widget, GdkEventScroll* event, TextureBrowser* self);
 };
 
+} // namespace ui
+
 // Accessor method to the singleton instance
-TextureBrowser& GlobalTextureBrowser();
+ui::TextureBrowser& GlobalTextureBrowser();
 
 #endif
