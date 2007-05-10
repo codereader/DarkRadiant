@@ -1423,7 +1423,7 @@ void MainFrame::Create()
 
         // Create the texture window
 		GtkWidget* texWindow = gtkutil::FramedWidget(
-			TextureBrowser_constructWindow(window)
+			GlobalTextureBrowser().constructWindow(window)
 		);
 
         // Create the Console
@@ -1508,7 +1508,9 @@ void MainFrame::Create()
     }
 
    	{
-      GtkFrame* frame = create_framed_widget(TextureBrowser_constructWindow(ui::GroupDialog::Instance().getWindow()));
+		GtkFrame* frame = create_framed_widget(
+			GlobalTextureBrowser().constructWindow(ui::GroupDialog::Instance().getWindow())
+		);
 		// Add the Media Browser page
 		ui::GroupDialog::Instance().addPage(
 	    	"textures",	// name
@@ -1584,7 +1586,7 @@ void MainFrame::Create()
 	}
 	
     {      
-      GtkFrame* frame = create_framed_widget(TextureBrowser_constructWindow(window));
+      GtkFrame* frame = create_framed_widget(GlobalTextureBrowser().constructWindow(window));
 		// Add the Media Browser page
 		ui::GroupDialog::Instance().addPage(
 	    	"textures",	// name
@@ -1685,7 +1687,7 @@ void MainFrame::Shutdown()
 	GlobalXYWnd().saveState();
 	GlobalXYWnd().destroyViews();
 
-  TextureBrowser_destroyWindow();
+	GlobalTextureBrowser().destroyWindow();
 
   GlobalCamera().deleteCamWnd(m_pCamWnd);
   m_pCamWnd = 0;

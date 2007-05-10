@@ -141,7 +141,6 @@
 		<shortcut command="PrevLeakSpot" key="L" modifiers="SHIFT+CONTROL" />
 		<shortcut command="FitTexture" key="B" modifiers="SHIFT" />
 		<shortcut command="SurfaceInspector" key="S" />
-		<shortcut command="ShowAllTextures" key="A" modifiers="CONTROL" />
 		<shortcut command="ViewTextures" key="T" />
 		<shortcut command="ToggleCrosshairs" key="X" modifiers="SHIFT" />
 		<shortcut command="ToggleGrid" key="0" />
