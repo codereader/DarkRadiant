@@ -15,7 +15,6 @@
 #include "plugin.h"
 #include "brushmanip.h"
 #include "mainframe.h"
-#include "texwindow.h"
 #include "select.h"
 #include "entity.h"
 #include "renderer.h"
@@ -24,6 +23,7 @@
 #include "camera/CameraSettings.h"
 #include "ui/ortho/OrthoContextMenu.h"
 #include "ui/overlay/Overlay.h"
+#include "ui/texturebrowser/TextureBrowser.h"
 #include "map/RegionManager.h"
 
 #include "GlobalXYWnd.h"

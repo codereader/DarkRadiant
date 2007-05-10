@@ -39,7 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/widget.h"
 #include "brushmanip.h"
 #include "patchmanip.h"
-#include "texwindow.h"
+#include "ui/texturebrowser/TextureBrowser.h"
 #include "gtkmisc.h"
 #include "mainframe.h"
 #include "igrid.h"

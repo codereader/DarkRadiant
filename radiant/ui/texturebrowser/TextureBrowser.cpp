@@ -1,4 +1,4 @@
-#include "texwindow.h"
+#include "TextureBrowser.h"
 
 #include "ieventmanager.h"
 #include "iuimanager.h"
@@ -13,6 +13,8 @@
 #include "shaderlib.h"
 #include "selection/algorithm/Shader.h"
 #include "ui/groupdialog/GroupDialog.h"
+
+namespace ui {
 
 namespace {
 	const std::string RKEY_TEXTURES_HIDE_UNUSED = "user/ui/textures/browser/hideUnused";
@@ -775,9 +777,11 @@ void TextureBrowser::construct() {
 	TextureBrowser::registerPreferencesPage();
 }
 
+} // namespace ui
+
 /** greebo: The accessor method, use this to call non-static TextureBrowser methods
  */
-TextureBrowser& GlobalTextureBrowser() {
-	static TextureBrowser _instance;
+ui::TextureBrowser& GlobalTextureBrowser() {
+	static ui::TextureBrowser _instance;
 	return _instance;
 }

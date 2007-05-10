@@ -2,9 +2,9 @@
 
 #include "selectable.h"
 #include "iscenegraph.h"
-#include "texwindow.h"
 #include "mainframe.h"
 #include "ui/mediabrowser/MediaBrowser.h"
+#include "ui/texturebrowser/TextureBrowser.h"
 
 namespace selection {
 
