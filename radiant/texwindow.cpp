@@ -146,6 +146,7 @@ TextureBrowser::TextureBrowser() :
 {}
 
 void TextureBrowser::construct() {
+	// TODO: Move this stuff into the constructor
 	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_HIDE_UNUSED);
 	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_SCALE);
 	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_UNIFORM_SIZE);
@@ -652,30 +653,22 @@ void TextureBrowser::doMouseWheel(bool wheelUp) {
 }
 
 // GTK callback for toggling uniform texture sizing
-void TextureBrowser_toggleResizeTextures(GtkToggleToolButton* button, TextureBrowser* textureBrowser) {
-  if (gtk_toggle_tool_button_get_active(button) == TRUE)
-  {
-    textureBrowser->m_resizeTextures = true;
-  }
-  else
-  {
-    textureBrowser->m_resizeTextures = false;
-  }
-  
-  // Update texture browser
-  textureBrowser->heightChanged();
+void TextureBrowser::onResizeToggle(GtkToggleToolButton* button, TextureBrowser* self) {
+	self->m_resizeTextures = gtk_toggle_tool_button_get_active(button);
+
+	// Update texture browser
+	self->heightChanged();
 }
 
-
-gboolean TextureBrowser_button_press(GtkWidget* widget, GdkEventButton* event, TextureBrowser* textureBrowser) {
+gboolean TextureBrowser::onButtonPress(GtkWidget* widget, GdkEventButton* event, TextureBrowser* self) {
 	if (event->type == GDK_BUTTON_PRESS) {
 		if (event->button == 3) {
-			textureBrowser->m_freezePointer.freeze_pointer(textureBrowser->m_parent, TextureBrowser::trackingDelta, textureBrowser);
+			self->m_freezePointer.freeze_pointer(self->m_parent, trackingDelta, self);
 		}
-		else if(event->button == 1) {
-			textureBrowser->selectTextureAt(
+		else if (event->button == 1) {
+			self->selectTextureAt(
     			static_cast<int>(event->x), 
-    			textureBrowser->height - 1 - static_cast<int>(event->y)
+    			self->height - 1 - static_cast<int>(event->y)
     		);
     	}
 	}
@@ -683,41 +676,36 @@ gboolean TextureBrowser_button_press(GtkWidget* widget, GdkEventButton* event, T
 	return FALSE;
 }
 
-gboolean TextureBrowser_button_release(GtkWidget* widget, GdkEventButton* event, TextureBrowser* textureBrowser)
-{
-  if(event->type == GDK_BUTTON_RELEASE)
-  {
-    if(event->button == 3)
-    {
-    	textureBrowser->m_freezePointer.unfreeze_pointer(textureBrowser->m_parent);
-    }
-  }
-  return FALSE;
+gboolean TextureBrowser::onButtonRelease(GtkWidget* widget, GdkEventButton* event, TextureBrowser* self) {
+	if (event->type == GDK_BUTTON_RELEASE) {
+		if (event->button == 3) {
+			self->m_freezePointer.unfreeze_pointer(self->m_parent);
+		}
+	}
+
+	return FALSE;
 }
 
-gboolean TextureBrowser_motion(GtkWidget *widget, GdkEventMotion *event, TextureBrowser* textureBrowser)
-{
-  return FALSE;
+gboolean TextureBrowser::onMouseMotion(GtkWidget *widget, GdkEventMotion *event, TextureBrowser* self) {
+	return FALSE;
 }
 
-gboolean TextureBrowser_scroll(GtkWidget* widget, GdkEventScroll* event, TextureBrowser* textureBrowser) {
+gboolean TextureBrowser::onMouseScroll(GtkWidget* widget, GdkEventScroll* event, TextureBrowser* self) {
 	if (event->direction == GDK_SCROLL_UP) {
-		textureBrowser->doMouseWheel(true);
+		self->doMouseWheel(true);
 	}
 	else if(event->direction == GDK_SCROLL_DOWN) {
-		textureBrowser->doMouseWheel(false);
+		self->doMouseWheel(false);
 	}
 	return FALSE;
 }
 
 void TextureBrowser::scrollChanged(void* data, gdouble value) {
-	//globalOutputStream() << "vertical scroll\n";
 	reinterpret_cast<TextureBrowser*>(data)->setOriginY(-(int)value);
 }
 
-static void TextureBrowser_verticalScroll(GtkAdjustment *adjustment, TextureBrowser* textureBrowser)
-{
-  textureBrowser->m_scrollAdjustment.value_changed(adjustment->value);
+void TextureBrowser::onVerticalScroll(GtkAdjustment *adjustment, TextureBrowser* self) {
+	self->m_scrollAdjustment.value_changed(adjustment->value);
 }
 
 void TextureBrowser::updateScroll() {
@@ -740,14 +728,14 @@ void TextureBrowser::updateScroll() {
   }
 }
 
-gboolean TextureBrowser_size_allocate(GtkWidget* widget, GtkAllocation* allocation, TextureBrowser* textureBrowser)
-{
-  textureBrowser->width = allocation->width;
-  textureBrowser->height = allocation->height;
-  textureBrowser->heightChanged();
-  textureBrowser->m_originInvalid = true;
-  textureBrowser->queueDraw();
-  return FALSE;
+gboolean TextureBrowser::onSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, TextureBrowser* self) {
+	self->width = allocation->width;
+	self->height = allocation->height;
+	self->heightChanged();
+	self->m_originInvalid = true;
+	self->queueDraw();
+
+	return FALSE;
 }
 
 gboolean TextureBrowser::onExpose(GtkWidget* widget, GdkEventExpose* event, TextureBrowser* self) {
@@ -762,127 +750,114 @@ gboolean TextureBrowser::onExpose(GtkWidget* widget, GdkEventExpose* event, Text
 	return FALSE;
 }
 
-
 TextureBrowser g_TextureBrowser;
 
-TextureBrowser& GlobalTextureBrowser()
-{
-  return g_TextureBrowser;
+TextureBrowser& GlobalTextureBrowser() {
+	return g_TextureBrowser;
 }
 
-GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel)
-{
-	g_TextureBrowser.construct();
+GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
 	
-  GlobalShaderSystem().setActiveShadersChangedNotify(MemberCaller<TextureBrowser, &TextureBrowser::activeShadersChanged>(g_TextureBrowser));
+	construct();
+	
+	m_parent = parent;
+	
+	GlobalShaderSystem().setActiveShadersChangedNotify(
+		MemberCaller<TextureBrowser, &TextureBrowser::activeShadersChanged>(*this)
+	);
 
-  GtkWidget* hbox = gtk_hbox_new (FALSE, 0);
+	GtkWidget* hbox = gtk_hbox_new(FALSE, 0);
 
-  g_TextureBrowser.m_parent = toplevel;
+	{
+		m_texture_scroll = gtk_vscrollbar_new(GTK_ADJUSTMENT(gtk_adjustment_new (0,0,0,1,1,1)));
+		gtk_widget_show(m_texture_scroll);
+		gtk_box_pack_end(GTK_BOX (hbox), m_texture_scroll, FALSE, TRUE, 0);
+	  
+		GtkAdjustment *vadjustment = gtk_range_get_adjustment(GTK_RANGE(m_texture_scroll));
+		g_signal_connect(G_OBJECT(vadjustment), "value-changed", G_CALLBACK(onVerticalScroll), this);
 
-  {
-	  GtkWidget* w = gtk_vscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0,0,0,1,1,1)));
-	  gtk_widget_show (w);
-	  gtk_box_pack_end (GTK_BOX (hbox), w, FALSE, TRUE, 0);
-	  g_TextureBrowser.m_texture_scroll = w;
-
-    GtkAdjustment *vadjustment = gtk_range_get_adjustment (GTK_RANGE (g_TextureBrowser.m_texture_scroll));
-    g_signal_connect(G_OBJECT(vadjustment), "value_changed", G_CALLBACK(TextureBrowser_verticalScroll), &g_TextureBrowser);
-
-    widget_set_visible(g_TextureBrowser.m_texture_scroll, g_TextureBrowser.m_showTextureScrollbar);
-  }
-  {
-	  GtkWidget* texbox = gtk_vbox_new (FALSE, 0);
-	  gtk_widget_show(texbox);
-	  gtk_box_pack_start(GTK_BOX(hbox), texbox, TRUE, TRUE, 0);
-    
-    // Load the texture toolbar from the registry
-    IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
-    GtkToolbar* textureToolbar = tbCreator.getToolbar("texture");
-    if (textureToolbar != NULL) {
-		gtk_widget_show(GTK_WIDGET(textureToolbar));
-		gtk_box_pack_start(GTK_BOX(texbox), GTK_WIDGET(textureToolbar), FALSE, FALSE, 0);
-		
-		// Button for toggling the resizing of textures
-		
-		GtkToolItem* sizeToggle = gtk_toggle_tool_button_new();
-		
-    	GdkPixbuf* pixBuf = gtkutil::getLocalPixbuf("texwindow_uniformsize.png");    	
-    	GtkWidget* toggle_image = GTK_WIDGET(gtk_image_new_from_pixbuf(pixBuf));
-    	
-    	GtkTooltips* barTips = gtk_tooltips_new();
-    	gtk_tool_item_set_tooltip(sizeToggle, barTips, "Clamp texture thumbnails to constant size", "");
-    
-    	gtk_tool_button_set_label(GTK_TOOL_BUTTON(sizeToggle), "Constant size");
-    	gtk_tool_button_set_icon_widget(GTK_TOOL_BUTTON(sizeToggle), toggle_image);
-    	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(sizeToggle), TRUE);
-    	
-    	// Insert button and connect callback
-    	gtk_toolbar_insert(GTK_TOOLBAR(textureToolbar), sizeToggle, 0);
-    	g_signal_connect(G_OBJECT(sizeToggle), 
-    						 "toggled",
-    						 G_CALLBACK(TextureBrowser_toggleResizeTextures), 
-    				 		&g_TextureBrowser);
-    
-    	gdk_pixbuf_unref(pixBuf);
-    	
-    	gtk_widget_show_all(GTK_WIDGET(textureToolbar));
-    }
-
-        	
-	  {
-		  GtkEntry* entry = GTK_ENTRY(gtk_entry_new());
-		  gtk_box_pack_start(GTK_BOX(texbox), GTK_WIDGET(entry), FALSE, FALSE, 0);
-
-		  g_TextureBrowser.m_filter = entry;
-      if(g_TextureBrowser.m_showTextureFilter)
-      {
-        gtk_widget_show(GTK_WIDGET(g_TextureBrowser.m_filter));
-      }
-
-      g_TextureBrowser.m_filterEntry.connect(entry);
-	  }
-
-	  {
-      g_TextureBrowser.m_gl_widget = glwidget_new(FALSE);
-      gtk_widget_ref(g_TextureBrowser.m_gl_widget);
-
-      gtk_widget_set_events(g_TextureBrowser.m_gl_widget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
-      GTK_WIDGET_SET_FLAGS(g_TextureBrowser.m_gl_widget, GTK_CAN_FOCUS);
-
-		  gtk_box_pack_start(GTK_BOX(texbox), g_TextureBrowser.m_gl_widget, TRUE, TRUE, 0);
-		  gtk_widget_show(g_TextureBrowser.m_gl_widget);
-
-      g_TextureBrowser.m_sizeHandler = g_signal_connect(G_OBJECT(g_TextureBrowser.m_gl_widget), "size_allocate", G_CALLBACK(TextureBrowser_size_allocate), &g_TextureBrowser);
-      g_TextureBrowser.m_exposeHandler = g_signal_connect(G_OBJECT(g_TextureBrowser.m_gl_widget), "expose_event", G_CALLBACK(TextureBrowser::onExpose), &g_TextureBrowser);
-
-      g_signal_connect(G_OBJECT(g_TextureBrowser.m_gl_widget), "button_press_event", G_CALLBACK(TextureBrowser_button_press), &g_TextureBrowser);
-      g_signal_connect(G_OBJECT(g_TextureBrowser.m_gl_widget), "button_release_event", G_CALLBACK(TextureBrowser_button_release), &g_TextureBrowser);
-      g_signal_connect(G_OBJECT(g_TextureBrowser.m_gl_widget), "motion_notify_event", G_CALLBACK(TextureBrowser_motion), &g_TextureBrowser);
-      g_signal_connect(G_OBJECT(g_TextureBrowser.m_gl_widget), "scroll_event", G_CALLBACK(TextureBrowser_scroll), &g_TextureBrowser);
-	  }
+		widget_set_visible(m_texture_scroll, m_showTextureScrollbar);
 	}
-  g_TextureBrowser.updateScroll();
+	
+	{
+		GtkWidget* texbox = gtk_vbox_new(FALSE, 0);
+		gtk_widget_show(texbox);
+		gtk_box_pack_start(GTK_BOX(hbox), texbox, TRUE, TRUE, 0);
+    
+	    // Load the texture toolbar from the registry
+	    IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
+	    GtkToolbar* textureToolbar = tbCreator.getToolbar("texture");
+	    if (textureToolbar != NULL) {
+			gtk_widget_show(GTK_WIDGET(textureToolbar));
+			gtk_box_pack_start(GTK_BOX(texbox), GTK_WIDGET(textureToolbar), FALSE, FALSE, 0);
+			
+			// Button for toggling the resizing of textures
+			
+			GtkToolItem* sizeToggle = gtk_toggle_tool_button_new();
+			
+	    	GdkPixbuf* pixBuf = gtkutil::getLocalPixbuf("texwindow_uniformsize.png");    	
+	    	GtkWidget* toggle_image = GTK_WIDGET(gtk_image_new_from_pixbuf(pixBuf));
+	    	
+	    	GtkTooltips* barTips = gtk_tooltips_new();
+	    	gtk_tool_item_set_tooltip(sizeToggle, barTips, "Clamp texture thumbnails to constant size", "");
+	    
+	    	gtk_tool_button_set_label(GTK_TOOL_BUTTON(sizeToggle), "Constant size");
+	    	gtk_tool_button_set_icon_widget(GTK_TOOL_BUTTON(sizeToggle), toggle_image);
+	    	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(sizeToggle), TRUE);
+	    	
+	    	// Insert button and connect callback
+	    	gtk_toolbar_insert(GTK_TOOLBAR(textureToolbar), sizeToggle, 0);
+	    	g_signal_connect(G_OBJECT(sizeToggle), "toggled", G_CALLBACK(onResizeToggle), this);
 
-  gtk_container_set_focus_chain(GTK_CONTAINER(hbox), NULL);
+	    	gdk_pixbuf_unref(pixBuf);
+	    	gtk_widget_show_all(GTK_WIDGET(textureToolbar));
+		}
 
-  return hbox;
+		{
+			m_filter = GTK_ENTRY(gtk_entry_new());
+			gtk_box_pack_start(GTK_BOX(texbox), GTK_WIDGET(m_filter), FALSE, FALSE, 0);
+
+			if (m_showTextureFilter) {
+				gtk_widget_show(GTK_WIDGET(m_filter));
+			}
+
+			m_filterEntry.connect(m_filter);
+		}
+
+		{
+			m_gl_widget = glwidget_new(FALSE);
+			gtk_widget_ref(m_gl_widget);
+
+			gtk_widget_set_events(m_gl_widget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
+			GTK_WIDGET_SET_FLAGS(m_gl_widget, GTK_CAN_FOCUS);
+
+			gtk_box_pack_start(GTK_BOX(texbox), m_gl_widget, TRUE, TRUE, 0);
+			gtk_widget_show(m_gl_widget);
+
+			m_sizeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "size-allocate", G_CALLBACK(onSizeAllocate), this);
+			m_exposeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "expose-event", G_CALLBACK(onExpose), this);
+
+			g_signal_connect(G_OBJECT(m_gl_widget), "button-press-event", G_CALLBACK(onButtonPress), this);
+			g_signal_connect(G_OBJECT(m_gl_widget), "button-release-event", G_CALLBACK(onButtonRelease), this);
+			g_signal_connect(G_OBJECT(m_gl_widget), "motion-notify-event", G_CALLBACK(onMouseMotion), this);
+			g_signal_connect(G_OBJECT(m_gl_widget), "scroll-event", G_CALLBACK(onMouseScroll), this);
+		}
+	}
+	
+	updateScroll();
+	gtk_container_set_focus_chain(GTK_CONTAINER(hbox), NULL);
+
+	return hbox;
 }
 
-void TextureBrowser_destroyWindow()
-{
-	g_TextureBrowser.destroy();
-  GlobalShaderSystem().setActiveShadersChangedNotify(Callback());
+void TextureBrowser::destroyWindow() {
+	destroy();
+	GlobalShaderSystem().setActiveShadersChangedNotify(Callback());
 
-  g_signal_handler_disconnect(G_OBJECT(g_TextureBrowser.m_gl_widget), g_TextureBrowser.m_sizeHandler);
-  g_signal_handler_disconnect(G_OBJECT(g_TextureBrowser.m_gl_widget), g_TextureBrowser.m_exposeHandler);
+	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_sizeHandler);
+	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_exposeHandler);
 
-  gtk_widget_unref(g_TextureBrowser.m_gl_widget);
-}
-
-void TextureBrowser_showAll()
-{
-  g_TextureBrowser.heightChanged();
+	gtk_widget_unref(m_gl_widget);
 }
 
 void TextureBrowser_registerPreferencesPage() {
@@ -933,7 +908,6 @@ namespace {
 
 void TextureBrowser_Construct() {
 	GlobalEventManager().addRegistryToggle("ShowInUse", RKEY_TEXTURES_HIDE_UNUSED);
-	GlobalEventManager().addCommand("ShowAllTextures", FreeCaller<TextureBrowser_showAll>());
 	GlobalEventManager().addCommand("ViewTextures", FreeCaller<TextureBrowser::toggle>());
 
 	g_TextureBrowser.shader = texdef_name_default().c_str();

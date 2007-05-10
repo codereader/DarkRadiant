@@ -35,21 +35,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class TextureBrowser;
 TextureBrowser& GlobalTextureBrowser();
 
-typedef struct _GtkWindow GtkWindow;
-typedef struct _GtkWidget GtkWidget;
-GtkWidget* TextureBrowser_constructWindow(GtkWindow* toplevel);
-void TextureBrowser_destroyWindow();
-
-
 void TextureBrowser_ShowStartupShaders(TextureBrowser& textureBrowser);
 
 void TextureBrowser_Construct();
 void TextureBrowser_Destroy();
 
+typedef struct _GtkWindow GtkWindow;
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkEntry GtkEntry;
 typedef struct _GtkAdjustment GtkAdjustment;
 typedef struct _GdkEventExpose GdkEventExpose;
+typedef struct _GtkToggleToolButton GtkToggleToolButton;
+typedef struct _GdkEventButton GdkEventButton;
+typedef struct _GdkEventMotion GdkEventMotion;
+typedef struct _GdkEventScroll GdkEventScroll;
 
 enum StartupShaders {
 	STARTUPSHADERS_NONE = 0,
@@ -150,6 +149,12 @@ public:
   
 	void construct();
 	void destroy();
+	
+	/** greebo: Constructs the TextureBrowser window and retrieves the 
+	 * 			widget for packing into the GroupDialog for instance.
+	 */
+	GtkWidget* constructWindow(GtkWindow* parent);
+	void destroyWindow();
   
 	void queueDraw();
 	typedef MemberCaller<TextureBrowser, &TextureBrowser::queueDraw> TextureBrowserQueueDrawCaller;
@@ -237,6 +242,17 @@ public:
 	
 	// Static GTK Callbacks
 	static gboolean onExpose(GtkWidget* widget, GdkEventExpose* event, TextureBrowser* self);
+	static gboolean onSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, TextureBrowser* self);
+	static void onResizeToggle(GtkToggleToolButton* button, TextureBrowser* self);
+	
+	// Called on scrollbar change
+	static void onVerticalScroll(GtkAdjustment *adjustment, TextureBrowser* self);
+	
+	// Static GTK Mouse Event Callbacks
+	static gboolean onButtonPress(GtkWidget* widget, GdkEventButton* event, TextureBrowser* self);
+	static gboolean onButtonRelease(GtkWidget* widget, GdkEventButton* event, TextureBrowser* self);
+	static gboolean onMouseMotion(GtkWidget *widget, GdkEventMotion *event, TextureBrowser* self);
+	static gboolean onMouseScroll(GtkWidget* widget, GdkEventScroll* event, TextureBrowser* self);
 };
 
 #endif
