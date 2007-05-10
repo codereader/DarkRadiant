@@ -28,33 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/nonmodal.h"
 #include "gtkutil/cursor.h"
 #include "texturelib.h"
-#include <string>
-
-// texture browser
-
-class TextureBrowser;
-TextureBrowser& GlobalTextureBrowser();
-
-void TextureBrowser_ShowStartupShaders(TextureBrowser& textureBrowser);
-
-void TextureBrowser_Construct();
-void TextureBrowser_Destroy();
-
-typedef struct _GtkWindow GtkWindow;
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkEntry GtkEntry;
-typedef struct _GtkAdjustment GtkAdjustment;
-typedef struct _GdkEventExpose GdkEventExpose;
-typedef struct _GtkToggleToolButton GtkToggleToolButton;
-typedef struct _GdkEventButton GdkEventButton;
-typedef struct _GdkEventMotion GdkEventMotion;
-typedef struct _GdkEventScroll GdkEventScroll;
-
-enum StartupShaders {
-	STARTUPSHADERS_NONE = 0,
-	STARTUPSHADERS_COMMON,
-	STARTUPSHADERS_ALL,
-};
 
 class DeferredAdjustment
 {
@@ -92,7 +65,6 @@ public:
 class TextureBrowser :
 	public RegistryKeyObserver
 {
-public:
 	int width, height;
 	int originy;
 	int m_nTotalHeight;
@@ -122,7 +94,6 @@ public:
   bool m_showTextureFilter;
   // make the texture increments match the grid changes
   bool m_showTextureScrollbar;
-  StartupShaders m_startupShaders;
   // if true, the texture window will only display in-use shaders
   // if false, all the shaders in memory are displayed
   bool m_hideUnused;
@@ -132,24 +103,27 @@ public:
   bool m_resizeTextures;
   // The uniform size (in pixels) that textures are resized to when m_resizeTextures is true.
   int m_uniformTextureSize;
+
+public:
+  	// Constructor
+	TextureBrowser();
+	
+	/** greebo: This registeres the commands to the EventManager and
+	 * 			adds the options to the preferences dialog (called by plugin.cpp).
+	 */
+	void construct();
   
 	void clearFilter();
 	typedef MemberCaller<TextureBrowser, &TextureBrowser::clearFilter> ClearFilterCaller;
 
 	// RegistryKeyObserver implementation
 	void keyChanged();
-  
+
 	// Return the display width of a texture in the texture browser
 	int getTextureWidth(TexturePtr tex);
 	// Return the display height of a texture in the texture browser
 	int getTextureHeight(TexturePtr tex);
 
-	// Constructor
-	TextureBrowser();
-  
-	void construct();
-	void destroy();
-	
 	/** greebo: Constructs the TextureBrowser window and retrieves the 
 	 * 			widget for packing into the GroupDialog for instance.
 	 */
@@ -159,42 +133,12 @@ public:
 	void queueDraw();
 	typedef MemberCaller<TextureBrowser, &TextureBrowser::queueDraw> TextureBrowserQueueDrawCaller;
   
-	// greebo: This gets called as soon as the texture mode gets changed
-	void textureModeChanged();
-	
 	// Legacy function needed for DeferredAdjustment (TODO!) 
 	static void scrollChanged(void* data, gdouble value);
 
 	// Another legacy function needed for FreezePointer (TODO)
 	static void trackingDelta(int x, int y, unsigned int state, void* data);
 
-private:
-	void setScaleFromRegistry();
-
-	/** greebo: The actual drawing method invoking the GL calls.
-	 */
-	void draw();
-	
-public:
-	/** greebo: Performs the actual window movement after a mouse scroll.
-	 */
-	void doMouseWheel(bool wheelUp);
-
-	void heightChanged();
-	
-	void updateScroll();
-	
-	/** greebo: This toggles the display of the TextureBrowser,
-	 * 			basically passes the call to the GroupDialog instance,
-	 * 			which takes care of the details.
-	 * 
-	 * Note: This is a command target, hence the static 
-	 */
-	static void toggle();
-	
-	// Returns the font height of the text in the opengl rendered window
-	int getFontHeight();
-	
 	/** greebo: Returns the currently selected shader
 	 */
 	std::string getSelectedShader();
@@ -203,6 +147,43 @@ public:
 	 * 			refocuses the texturebrowser to that shader.
 	 */
 	void setSelectedShader(const std::string& newShader);
+
+	/** greebo: This toggles the display of the TextureBrowser,
+	 * 			basically passes the call to the GroupDialog instance,
+	 * 			which takes care of the details.
+	 * 
+	 * Note: This is a command target, hence the static 
+	 */
+	static void toggle();
+
+	/** greebo: Adds the according options to the Preferences dialog.
+	 */
+	static void registerPreferencesPage();
+
+private:
+	// greebo: This gets called as soon as the texture mode gets changed
+	void textureModeChanged();
+
+	void setScaleFromRegistry();
+
+	/** greebo: The actual drawing method invoking the GL calls.
+	 */
+	void draw();
+	
+	/** greebo: Adjusts the values in <layout> to point at the next position.
+	 */
+	void nextTexturePos(TextureLayout& layout, TexturePtr current_texture, int *x, int *y);
+	
+	/** greebo: Performs the actual window movement after a mouse scroll.
+	 */
+	void doMouseWheel(bool wheelUp);
+
+	void heightChanged();
+	
+	void updateScroll();
+	
+	// Returns the font height of the text in the opengl rendered window
+	int getFontHeight();
 	
 	/** greebo: Returns the currently active filter string or "" if 
 	 * 			the filter is not active.
@@ -240,10 +221,15 @@ public:
 	 */
 	void selectTextureAt(int mx, int my);
 	
+	/** greebo: Returns true if the given <shader> is visible,
+	 * 			taking filter and showUnused into account. 
+	 */ 
+	bool shaderIsVisible(IShaderPtr shader);
+	
 	// Static GTK Callbacks
 	static gboolean onExpose(GtkWidget* widget, GdkEventExpose* event, TextureBrowser* self);
 	static gboolean onSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, TextureBrowser* self);
-	static void onResizeToggle(GtkToggleToolButton* button, TextureBrowser* self);
+	static void onResizeToggle(GtkWidget* button, TextureBrowser* self);
 	
 	// Called on scrollbar change
 	static void onVerticalScroll(GtkAdjustment *adjustment, TextureBrowser* self);
@@ -254,5 +240,8 @@ public:
 	static gboolean onMouseMotion(GtkWidget *widget, GdkEventMotion *event, TextureBrowser* self);
 	static gboolean onMouseScroll(GtkWidget* widget, GdkEventScroll* event, TextureBrowser* self);
 };
+
+// Accessor method to the singleton instance
+TextureBrowser& GlobalTextureBrowser();
 
 #endif
