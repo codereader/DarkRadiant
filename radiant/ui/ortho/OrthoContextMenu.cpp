@@ -17,31 +17,31 @@
 namespace ui
 {
 	
-	namespace {
-	
-		/* CONSTANTS */
-		
-		const char* LIGHT_CLASSNAME = "light";
-		const char* MODEL_CLASSNAME = "func_static";
-		const char* SPEAKER_CLASSNAME = "speaker";
-	
-		const char* ADD_MODEL_TEXT = "Create model...";
-		const char* ADD_MODEL_ICON = "cmenu_add_model.png";
-		const char* ADD_LIGHT_TEXT = "Create light...";
-		const char* ADD_LIGHT_ICON = "cmenu_add_light.png";
-		const char* ADD_ENTITY_TEXT = "Create entity...";
-		const char* ADD_ENTITY_ICON = "cmenu_add_entity.png";
-		const char* ADD_PREFAB_TEXT = "Insert prefab...";
-		const char* ADD_PREFAB_ICON = "cmenu_add_prefab.png";
-		const char* ADD_SPEAKER_TEXT = "Create speaker...";
-		const char* ADD_SPEAKER_ICON = "icon_sound.png";
-		
-		const char* CONVERT_TO_STATIC_TEXT = "Convert to func_static";
-		const char* CONVERT_TO_STATIC_ICON = "cmenu_convert_static.png";
-		
-		const char* REVERT_TO_WORLDSPAWN_TEXT = "Revert to worldspawn";
-		const char* REVERT_TO_WORLDSPAWN_ICON = "cmenu_revert_worldspawn.png";
-	}
+namespace {
+
+    /* CONSTANTS */
+    
+    const char* LIGHT_CLASSNAME = "light";
+    const char* MODEL_CLASSNAME = "func_static";
+    const char* SPEAKER_CLASSNAME = "speaker";
+
+    const char* ADD_MODEL_TEXT = "Create model...";
+    const char* ADD_MODEL_ICON = "cmenu_add_model.png";
+    const char* ADD_LIGHT_TEXT = "Create light...";
+    const char* ADD_LIGHT_ICON = "cmenu_add_light.png";
+    const char* ADD_ENTITY_TEXT = "Create entity...";
+    const char* ADD_ENTITY_ICON = "cmenu_add_entity.png";
+    const char* ADD_PREFAB_TEXT = "Insert prefab...";
+    const char* ADD_PREFAB_ICON = "cmenu_add_prefab.png";
+    const char* ADD_SPEAKER_TEXT = "Create speaker...";
+    const char* ADD_SPEAKER_ICON = "icon_sound.png";
+    
+    const char* CONVERT_TO_STATIC_TEXT = "Convert to func_static";
+    const char* CONVERT_TO_STATIC_ICON = "cmenu_convert_static.png";
+    
+    const char* REVERT_TO_WORLDSPAWN_TEXT = "Revert to worldspawn";
+    const char* REVERT_TO_WORLDSPAWN_ICON = "cmenu_revert_worldspawn.png";
+}
 
 // Static class function to display the singleton instance.
 
@@ -159,7 +159,13 @@ void OrthoContextMenu::callbackAddEntity(GtkMenuItem* item, OrthoContextMenu* se
 }
 
 void OrthoContextMenu::callbackAddLight(GtkMenuItem* item, OrthoContextMenu* self) {
-	Entity_createFromSelection(LIGHT_CLASSNAME, self->_lastPoint);
+    try {
+    	Entity_createFromSelection(LIGHT_CLASSNAME, self->_lastPoint);
+    }
+    catch (EntityCreationException e) {
+        gtkutil::errorDialog("Unable to create light, classname not found.",
+                             MainFrame_getWindow());
+    }
 }
 
 void OrthoContextMenu::callbackAddPrefab(GtkMenuItem* item, OrthoContextMenu* self) {
@@ -169,7 +175,13 @@ void OrthoContextMenu::callbackAddPrefab(GtkMenuItem* item, OrthoContextMenu* se
 
 void OrthoContextMenu::_onAddSpeaker(GtkMenuItem* item, OrthoContextMenu* self)
 {
-	Entity_createFromSelection(SPEAKER_CLASSNAME, self->_lastPoint);	
+    try {
+        Entity_createFromSelection(SPEAKER_CLASSNAME, self->_lastPoint);	
+    }
+    catch (EntityCreationException e) {
+        gtkutil::errorDialog("Unable to create speaker, classname not found.",
+                             MainFrame_getWindow());
+    }
 }
 
 void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* self) {
@@ -183,15 +195,24 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
 		
 		// If a model was selected, create the entity and set its model key
 		if (!ms.model.empty()) {
-			NodeSmartReference node = Entity_createFromSelection(MODEL_CLASSNAME, self->_lastPoint);
+            try { 
+			NodeSmartReference node = Entity_createFromSelection(MODEL_CLASSNAME, 
+                                                                 self->_lastPoint);
 			Node_getEntity(node)->setKeyValue("model", ms.model);
 			Node_getEntity(node)->setKeyValue("skin", ms.skin);
+            }
+            catch (EntityCreationException e) {
+                gtkutil::errorDialog("Unable to create model, classname not found.",
+                                     MainFrame_getWindow());
+            }
 		}
 		
 	}
 	else {
-		gtkutil::errorDialog("Either nothing or exactly one brush must be selected for model creation",
-							 MainFrame_getWindow());
+		gtkutil::errorDialog(
+                "Either nothing or exactly one brush must be selected for model creation",
+				 MainFrame_getWindow()
+        );
 	}
 
 }
