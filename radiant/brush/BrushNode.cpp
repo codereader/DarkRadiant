@@ -59,10 +59,6 @@ scene::Instance* BrushNode::create(const scene::Path& path, scene::Instance* par
 	return new BrushInstance(path, parent, m_brush);
 }
 
-void BrushNode::release() {
-	delete this;
-}
-
 void BrushNode::forEachInstance(const scene::Instantiable::Visitor& visitor) {
 	m_instances.forEachInstance(visitor);
 }

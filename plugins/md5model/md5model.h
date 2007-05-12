@@ -520,10 +520,6 @@ public:
     return m_model;
   }
 
-  void release()
-  {
-    delete this;
-  }
   scene::Node& node()
   {
     return m_node;

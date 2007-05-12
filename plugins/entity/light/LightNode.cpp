@@ -42,10 +42,6 @@ Namespaced& LightNode::get(NullType<Namespaced>) {
 	return m_contained.getNamespaced();
 }
 
-void LightNode::release() {
-	delete this;
-}
-
 scene::Node& LightNode::node() {
 	return m_node;
 }

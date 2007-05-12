@@ -58,10 +58,6 @@ Doom3GroupNode::~Doom3GroupNode() {
 	destroy();
 }
 
-void Doom3GroupNode::release() {
-	delete this;
-}
-
 scene::Node& Doom3GroupNode::node() {
 	return m_node;
 }

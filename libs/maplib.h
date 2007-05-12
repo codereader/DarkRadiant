@@ -191,12 +191,15 @@ public:
 	void detach(const NameCallback& callback)
 	{}
 
-  void release()
+  virtual void release()
   {
+  	// Override the default release() method
     GlobalUndoSystem().trackerDetach(m_changeTracker);
 
     m_traverse.detach(this);
-    delete this;
+    
+    // Pass the call to the base method
+    Symbiot::release();
   }
   scene::Node& node()
   {
