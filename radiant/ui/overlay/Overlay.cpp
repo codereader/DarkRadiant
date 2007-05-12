@@ -92,7 +92,7 @@ void Overlay::draw(float xbegin, float xend, float ybegin, float yend,
 	windowLowerRight -= windowOrigin;
 	
 	// The translation vector
-	Vector3 translation(_translationX * (xend - xbegin), _translationY * (yend - ybegin), 0);
+	Vector3 translation(_translationX * (xend - xbegin) * xyviewscale, _translationY * (yend - ybegin) * xyviewscale, 0);
 	
 	// Create a translation matrix
 	Matrix4 scaleTranslation = Matrix4::getTranslation(translation);
