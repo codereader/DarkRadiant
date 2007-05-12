@@ -96,9 +96,6 @@ public:
 	// Returns the actual scene node
 	scene::Node& node();
 
-	// Deletes this node from the heap
-	void release();
-	
 	// Allocates a new node on the heap (via copy construction)
 	scene::Node& clone() const;
 	

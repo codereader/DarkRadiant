@@ -867,7 +867,8 @@ public:
   }
 };
 
-class BasicContainer : public scene::Node::Symbiot
+class BasicContainer : 
+	public scene::Node::Symbiot
 {
   class TypeCasts
   {
@@ -896,10 +897,6 @@ public:
 
   BasicContainer() : m_node(this, this, StaticTypeCasts::instance().get())
   {
-  }
-  void release()
-  {
-    delete this;
   }
   scene::Node& node()
   {

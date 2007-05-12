@@ -97,10 +97,6 @@ public:
 	{
 	}
 	
-	void release() {
-		delete this;
-	}
-	
 	// Get the actual scene::Node of this class 
 	scene::Node& node() {
 		return m_node;

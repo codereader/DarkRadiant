@@ -144,7 +144,9 @@ public:
   }
 };
 
-class NullModelNode : public scene::Node::Symbiot, public scene::Instantiable
+class NullModelNode : 
+	public scene::Node::Symbiot, 
+	public scene::Instantiable
 {
   class TypeCasts
   {
@@ -173,10 +175,6 @@ public:
     m_node.m_isRoot = true;
   }
 
-  void release()
-  {
-    delete this;
-  }
   scene::Node& node()
   {
     return m_node;

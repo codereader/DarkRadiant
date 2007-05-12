@@ -63,8 +63,6 @@ public:
 	Nameable& get(NullType<Nameable>);
 	scene::GroupNode& get(NullType<scene::GroupNode>);
 
-	void release();
-	
 	scene::Node& node();
 
 	scene::Node& clone() const;

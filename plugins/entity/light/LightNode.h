@@ -77,8 +77,6 @@ public:
 		destroy();
 	}
 
-	void release();
-	
 	scene::Node& node();
 
 	scene::Node& clone() const;
