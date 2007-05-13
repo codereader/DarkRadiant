@@ -212,7 +212,8 @@ public:
 
 	scene::Traversable& getTraversable();
 	Namespaced& getNamespaced();
-	Nameable& getNameable();
+	NamedEntity& getNameable();
+	const NamedEntity& getNameable() const;
 	TransformNode& getTransformNode();
 
 	void attach(scene::Traversable::Observer* observer);

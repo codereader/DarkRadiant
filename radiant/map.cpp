@@ -868,7 +868,7 @@ public:
 };
 
 class BasicContainer : 
-	public scene::Node::Symbiot
+	public scene::Node
 {
   class TypeCasts
   {
@@ -884,7 +884,6 @@ class BasicContainer :
     }
   };
 
-  scene::Node m_node;
   TraversableNodeSet m_traverse;
 public:
 
@@ -895,12 +894,13 @@ public:
     return m_traverse;
   }
 
-  BasicContainer() : m_node(this, this, StaticTypeCasts::instance().get())
-  {
-  }
+  BasicContainer() : 
+  	scene::Node(this, StaticTypeCasts::instance().get())
+  {}
+  
   scene::Node& node()
   {
-    return m_node;
+    return *this;
   }
 };
 
@@ -920,14 +920,13 @@ void Map_ImportSelected(TextInputStream& in, const MapFormat& format)
 
 inline scene::Cloneable* Node_getCloneable(scene::Node& node)
 {
-  return NodeTypeCast<scene::Cloneable>::cast(node);
+  return dynamic_cast<scene::Cloneable*>(&node);
 }
 
 inline scene::Node& node_clone(scene::Node& node)
 {
   scene::Cloneable* cloneable = Node_getCloneable(node);
-  if(cloneable != 0)
-  {
+  if(cloneable != NULL) {
     return cloneable->clone();
   }
   

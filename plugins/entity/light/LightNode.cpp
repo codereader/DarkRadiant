@@ -34,16 +34,12 @@ Entity& LightNode::get(NullType<Entity>) {
 	return m_contained.getEntity();
 }
 
-Nameable& LightNode::get(NullType<Nameable>) {
-	return m_contained.getNameable();
-}
-
 Namespaced& LightNode::get(NullType<Namespaced>) {
 	return m_contained.getNamespaced();
 }
 
 scene::Node& LightNode::node() {
-	return m_node;
+	return *this;
 }
 
 scene::Node& LightNode::clone() const {
@@ -72,4 +68,17 @@ void LightNode::insert(scene::Instantiable::Observer* observer, const scene::Pat
 
 scene::Instance* LightNode::erase(scene::Instantiable::Observer* observer, const scene::Path& path) {
 	return m_instances.erase(observer, path);
+}
+
+// Nameable implementation
+std::string LightNode::name() const {
+	return m_contained.getNameable().name();
+}
+
+void LightNode::attach(const NameCallback& callback) {
+	m_contained.getNameable().attach(callback);
+}
+
+void LightNode::detach(const NameCallback& callback) {
+	m_contained.getNameable().detach(callback);
 }

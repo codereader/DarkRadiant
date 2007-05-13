@@ -43,16 +43,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <string>
 
-class PicoModelNode : public scene::Node::Symbiot, public scene::Instantiable
+class PicoModelNode : 
+	public scene::Node, 
+	public scene::Instantiable
 {
   class TypeCasts
   {
     NodeTypeCastTable m_casts;
   public:
     TypeCasts()
-    {
-      NodeStaticCast<PicoModelNode, scene::Instantiable>::install(m_casts);
-    }
+    {}
     NodeTypeCastTable& get()
     {
       return m_casts;
@@ -60,7 +60,6 @@ class PicoModelNode : public scene::Node::Symbiot, public scene::Instantiable
   };
 
 
-  scene::Node m_node;
   InstanceSet m_instances;
 
 	// The actual model
@@ -73,14 +72,14 @@ public:
    * provided file extension.
    */
   PicoModelNode(picoModel_t* model, const std::string& ext)
-  : m_node(this, this, StaticTypeCasts::instance().get()), 
+  : scene::Node(this, StaticTypeCasts::instance().get()), 
     _picoModel(model, ext) // pass extension down to the PicoModel
   {
   }
 
   scene::Node& node()
   {
-    return m_node;
+    return *this;
   }
 
   scene::Instance* create(const scene::Path& path, scene::Instance* parent)

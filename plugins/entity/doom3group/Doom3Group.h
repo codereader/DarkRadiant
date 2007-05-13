@@ -102,7 +102,8 @@ public:
 
 	scene::Traversable& getTraversable();
 	Namespaced& getNamespaced();
-	Nameable& getNameable();
+	NamedEntity& getNameable();
+	const NamedEntity& getNameable() const;
 	TransformNode& getTransformNode();
 	ModelSkin& getModelSkin();
 

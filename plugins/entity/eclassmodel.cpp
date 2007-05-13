@@ -202,7 +202,11 @@ public:
   {
     return m_nameKeys;
   }
-  Nameable& getNameable()
+  NamedEntity& getNameable()
+  {
+    return m_named;
+  }
+  const NamedEntity& getNameable() const
   {
     return m_named;
   }
@@ -343,10 +347,11 @@ public:
 };
 
 class EclassModelNode :
-  public scene::Node::Symbiot,
+  public scene::Node,
   public scene::Instantiable,
   public scene::Cloneable,
-  public scene::Traversable::Observer
+  public scene::Traversable::Observer,
+  public Nameable
 {
   class TypeCasts
   {
@@ -354,13 +359,10 @@ class EclassModelNode :
   public:
     TypeCasts()
     {
-      NodeStaticCast<EclassModelNode, scene::Instantiable>::install(m_casts);
-      NodeStaticCast<EclassModelNode, scene::Cloneable>::install(m_casts);
       NodeContainedCast<EclassModelNode, scene::Traversable>::install(m_casts);
       NodeContainedCast<EclassModelNode, Snappable>::install(m_casts);
       NodeContainedCast<EclassModelNode, TransformNode>::install(m_casts);
       NodeContainedCast<EclassModelNode, Entity>::install(m_casts);
-      NodeContainedCast<EclassModelNode, Nameable>::install(m_casts);
       NodeContainedCast<EclassModelNode, Namespaced>::install(m_casts);
       NodeContainedCast<EclassModelNode, ModelSkin>::install(m_casts);
     }
@@ -371,7 +373,6 @@ class EclassModelNode :
   };
 
 
-  scene::Node m_node;
   InstanceSet m_instances;
   EclassModel m_contained;
 
@@ -403,10 +404,6 @@ public:
   {
     return m_contained.getEntity();
   }
-  Nameable& get(NullType<Nameable>)
-  {
-    return m_contained.getNameable();
-  }
   Namespaced& get(NullType<Namespaced>)
   {
     return m_contained.getNamespaced();
@@ -417,18 +414,19 @@ public:
   }
 
   EclassModelNode(IEntityClassPtr eclass) :
-    m_node(this, this, StaticTypeCasts::instance().get()),
-    m_contained(eclass, m_node, InstanceSet::TransformChangedCaller(m_instances), InstanceSetEvaluateTransform<EclassModelInstance>::Caller(m_instances))
+    scene::Node(this, StaticTypeCasts::instance().get()),
+    m_contained(eclass, *this, InstanceSet::TransformChangedCaller(m_instances), InstanceSetEvaluateTransform<EclassModelInstance>::Caller(m_instances))
   {
     construct();
   }
+  
   EclassModelNode(const EclassModelNode& other) :
-    scene::Node::Symbiot(other),
+    scene::Node(this, StaticTypeCasts::instance().get()),
     scene::Instantiable(other),
     scene::Cloneable(other),
     scene::Traversable::Observer(other),
-    m_node(this, this, StaticTypeCasts::instance().get()),
-    m_contained(other.m_contained, m_node, InstanceSet::TransformChangedCaller(m_instances), InstanceSetEvaluateTransform<EclassModelInstance>::Caller(m_instances))
+    Nameable(other),
+    m_contained(other.m_contained, *this, InstanceSet::TransformChangedCaller(m_instances), InstanceSetEvaluateTransform<EclassModelInstance>::Caller(m_instances))
   {
     construct();
   }
@@ -439,7 +437,7 @@ public:
 
   scene::Node& node()
   {
-    return m_node;
+    return *this;
   }
 
   void insert(scene::Node& child)
@@ -472,6 +470,17 @@ public:
   {
     return m_instances.erase(observer, path);
   }
+  
+	// Nameable implementation
+	virtual std::string name() const {
+		return m_contained.getNameable().name();
+	}
+	virtual void attach(const NameCallback& callback) {
+		m_contained.getNameable().attach(callback);
+	}
+	virtual void detach(const NameCallback& callback) {
+		m_contained.getNameable().detach(callback);
+	}
 };
 
 scene::Node& New_EclassModel(IEntityClassPtr eclass)

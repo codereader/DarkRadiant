@@ -487,16 +487,16 @@ public:
   }
 };
 
-class ModelNode : public scene::Node::Symbiot, public scene::Instantiable
+class ModelNode : 
+	public scene::Node, 
+	public scene::Instantiable
 {
   class TypeCasts
   {
     NodeTypeCastTable m_casts;
   public:
     TypeCasts()
-    {
-      NodeStaticCast<ModelNode, scene::Instantiable>::install(m_casts);
-    }
+    {}
     NodeTypeCastTable& get()
     {
       return m_casts;
@@ -504,16 +504,15 @@ class ModelNode : public scene::Node::Symbiot, public scene::Instantiable
   };
 
 
-  scene::Node m_node;
   InstanceSet m_instances;
   MD5Model m_model;
 public:
 
   typedef LazyStatic<TypeCasts> StaticTypeCasts;
 
-  ModelNode() : m_node(this, this, StaticTypeCasts::instance().get())
-  {
-  }
+  ModelNode() : 
+  	scene::Node(this, StaticTypeCasts::instance().get())
+  {}
 
   MD5Model& model()
   {
@@ -522,7 +521,7 @@ public:
 
   scene::Node& node()
   {
-    return m_node;
+    return *this;
   }
 
   scene::Instance* create(const scene::Path& path, scene::Instance* parent)

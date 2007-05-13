@@ -2,6 +2,7 @@
 #define DOOM3GROUPNODE_H_
 
 #include "Doom3Group.h"
+#include "nameable.h"
 #include "instancelib.h"
 #include "scenelib.h"
 #include "../namedentity.h"
@@ -9,35 +10,29 @@
 namespace entity {
 
 class Doom3GroupNode :
-	public scene::Node::Symbiot,
+	public scene::Node,
 	public scene::Instantiable,
 	public scene::Cloneable,
 	public scene::Traversable::Observer,
-	public scene::GroupNode
+	public scene::GroupNode,
+	public Nameable
 {
 	class TypeCasts {
 		NodeTypeCastTable m_casts;
 	public:
 		TypeCasts() {
-			NodeStaticCast<Doom3GroupNode, scene::Instantiable>::install(m_casts);
-			NodeStaticCast<Doom3GroupNode, scene::Cloneable>::install(m_casts);
-			NodeStaticCast<Doom3GroupNode, scene::GroupNode>::install(m_casts);
 			NodeContainedCast<Doom3GroupNode, scene::Traversable>::install(m_casts);
 			NodeContainedCast<Doom3GroupNode, Snappable>::install(m_casts);
 			NodeContainedCast<Doom3GroupNode, TransformNode>::install(m_casts);
 			NodeContainedCast<Doom3GroupNode, Entity>::install(m_casts);
 			NodeContainedCast<Doom3GroupNode, Namespaced>::install(m_casts);
 			NodeContainedCast<Doom3GroupNode, ModelSkin>::install(m_casts);
-			NodeContainedCast<Doom3GroupNode, Nameable>::install(m_casts);
 		}
 		NodeTypeCastTable& get() {
 			return m_casts;
 		}
 	};
 
-	// The actual node
-	scene::Node m_node;
-	
 	// The Child instances of this node
 	InstanceSet m_instances;
 	
@@ -60,8 +55,11 @@ public:
 	Entity& get(NullType<Entity>);
 	Namespaced& get(NullType<Namespaced>);
 	ModelSkin& get(NullType<ModelSkin>);
-	Nameable& get(NullType<Nameable>);
-	scene::GroupNode& get(NullType<scene::GroupNode>);
+
+	// Nameable implementation
+	virtual std::string name() const;
+	virtual void attach(const NameCallback& callback);
+	virtual void detach(const NameCallback& callback);
 
 	scene::Node& node();
 
