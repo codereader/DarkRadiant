@@ -105,7 +105,11 @@ Namespaced& Doom3Group::getNamespaced() {
 	return m_nameKeys;
 }
 
-Nameable& Doom3Group::getNameable() {
+NamedEntity& Doom3Group::getNameable() {
+	return m_named;
+}
+
+const NamedEntity& Doom3Group::getNameable() const {
 	return m_named;
 }
 

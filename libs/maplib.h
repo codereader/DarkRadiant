@@ -125,7 +125,7 @@ public:
 
 
 class MapRoot : 
-	public scene::Node::Symbiot, 
+	public scene::Node, 
 	public scene::Instantiable, 
 	public scene::Traversable::Observer,
 	public Nameable
@@ -136,8 +136,6 @@ class MapRoot :
   public:
     TypeCasts()
     {
-      NodeStaticCast<MapRoot, scene::Instantiable>::install(m_casts);
-      NodeStaticCast<MapRoot, Nameable>::install(m_casts);
       NodeContainedCast<MapRoot, scene::Traversable>::install(m_casts);
       NodeContainedCast<MapRoot, TransformNode>::install(m_casts);
       NodeContainedCast<MapRoot, MapFile>::install(m_casts);
@@ -148,7 +146,6 @@ class MapRoot :
     }
   };
 
-  scene::Node m_node;
   IdentityTransform m_transform;
   TraversableNodeSet m_traverse;
   InstanceSet m_instances;
@@ -172,10 +169,10 @@ public:
   }
 
 	MapRoot(const char* name) : 
-		m_node(this, this, StaticTypeCasts::instance().get()), 
+		scene::Node(this, StaticTypeCasts::instance().get()), 
 		_name(name)
 	{
-		m_node.m_isRoot = true;
+		m_isRoot = true;
 		m_traverse.attach(this);
 	
 		GlobalUndoSystem().trackerAttach(m_changeTracker);
@@ -198,12 +195,12 @@ public:
 
     m_traverse.detach(this);
     
-    // Pass the call to the base method
-    Symbiot::release();
+    // Pass the call to the base method in scene::Node
+    Node::release();
   }
   scene::Node& node()
   {
-    return m_node;
+    return *this;
   }
 
   InstanceCounter m_instanceCounter;

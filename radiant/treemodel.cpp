@@ -38,7 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/reference.h"
 
 inline Nameable* Node_getNameable(scene::Node& node) {
-	return NodeTypeCast<Nameable>::cast(node);
+	return dynamic_cast<Nameable*>(&node);
 }
 
 #if 0
@@ -691,26 +691,6 @@ void graph_tree_model_delete(GraphTreeModel* model)
   delete model->graph;
   g_object_unref(G_OBJECT(model));
 }
-
-
-class TempNameable : public Nameable
-{
-  const char* m_name;
-public:
-  TempNameable(const char* name) : m_name(name)
-  {
-  }
-  const char* name() const
-  {
-    return m_name;
-  }
-  void attach(const NameCallback& callback)
-  {
-  }
-  void detach(const NameCallback& callback)
-  {
-  }
-};
 
 void node_attach_name_changed_callback(scene::Node& node, const NameCallback& callback)
 {

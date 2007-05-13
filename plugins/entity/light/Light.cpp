@@ -554,7 +554,10 @@ scene::Traversable& Light::getTraversable() {
 Namespaced& Light::getNamespaced() {
 	return m_nameKeys;
 }
-Nameable& Light::getNameable() {
+const NamedEntity& Light::getNameable() const {
+	return m_named;
+}
+NamedEntity& Light::getNameable() {
 	return m_named;
 }
 TransformNode& Light::getTransformNode() {

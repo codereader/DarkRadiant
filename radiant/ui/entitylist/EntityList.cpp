@@ -64,7 +64,7 @@ EntityList::EntityList() :
 
 	namespace {
 		inline Nameable* Node_getNameable(scene::Node& node) {
-			return NodeTypeCast<Nameable>::cast(node);
+			return dynamic_cast<Nameable*>(&node);
 		}
 		
 		std::string getNodeName(scene::Node& node) {

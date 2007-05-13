@@ -50,8 +50,7 @@ public:
   }
 };
 
-class NamedEntity : 
-	public Nameable
+class NamedEntity
 {
   Doom3Entity& m_entity;
   NameCallbackSet m_changed;

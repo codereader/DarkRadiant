@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "nameable.h"
 
 class BrushNode :
-	public scene::Node::Symbiot,
+	public scene::Node,
 	public scene::Instantiable,
 	public scene::Cloneable,
 	public Nameable
@@ -38,9 +38,6 @@ class BrushNode :
 		NodeTypeCastTable m_casts;
 	public:
 		TypeCasts() {
-			NodeStaticCast<BrushNode, scene::Instantiable>::install(m_casts);
-			NodeStaticCast<BrushNode, scene::Cloneable>::install(m_casts);
-			NodeStaticCast<BrushNode, Nameable>::install(m_casts);
 			NodeContainedCast<BrushNode, Snappable>::install(m_casts);
 			NodeContainedCast<BrushNode, TransformNode>::install(m_casts);
 			NodeContainedCast<BrushNode, Brush>::install(m_casts);
@@ -54,9 +51,6 @@ class BrushNode :
 		}
 	};
 
-	// The contained node
-	scene::Node m_node;
-	
 	// The instances of this node
 	InstanceSet m_instances;
 	
@@ -89,10 +83,6 @@ public:
 		return "Brush";
 	}
 
-	// Unused attach/detach functions (needed for nameable implementation)
-	void attach(const NameCallback& callback) {}
-	void detach(const NameCallback& callback) {}
-	
 	// Returns the actual scene node
 	scene::Node& node();
 

@@ -8,18 +8,16 @@
 #include "LightInstance.h"
 
 class LightNode :
-	public scene::Node::Symbiot,
+	public scene::Node,
 	public scene::Instantiable,
 	public scene::Cloneable,
-	public scene::Traversable::Observer
+	public scene::Traversable::Observer,
+	public Nameable
 {
 	class TypeCasts {
 		NodeTypeCastTable m_casts;
 	public:
     	TypeCasts() {
-			NodeStaticCast<LightNode, scene::Instantiable>::install(m_casts);
-			NodeStaticCast<LightNode, scene::Cloneable>::install(m_casts);
-			
 			if(g_lightType == LIGHTTYPE_DOOM3) {
 				NodeContainedCast<LightNode, scene::Traversable>::install(m_casts);
       		}
@@ -28,7 +26,6 @@ class LightNode :
 			NodeContainedCast<LightNode, Snappable>::install(m_casts);
 			NodeContainedCast<LightNode, TransformNode>::install(m_casts);
 			NodeContainedCast<LightNode, Entity>::install(m_casts);
-			NodeContainedCast<LightNode, Nameable>::install(m_casts);
 			NodeContainedCast<LightNode, Namespaced>::install(m_casts);
 		}
 		
@@ -37,7 +34,6 @@ class LightNode :
 		}
 	}; // class TypeCasts
 
-	scene::Node m_node;
 	InstanceSet m_instances;
 	Light m_contained;
 
@@ -56,19 +52,19 @@ public:
 	Namespaced& get(NullType<Namespaced>);
 
 	LightNode(IEntityClassPtr eclass) :
-		m_node(this, this, StaticTypeCasts::instance().get()),
-		m_contained(eclass, m_node, InstanceSet::TransformChangedCaller(m_instances), InstanceSet::BoundsChangedCaller(m_instances), InstanceSetEvaluateTransform<LightInstance>::Caller(m_instances))
+		scene::Node(this, StaticTypeCasts::instance().get()),
+		m_contained(eclass, *this, InstanceSet::TransformChangedCaller(m_instances), InstanceSet::BoundsChangedCaller(m_instances), InstanceSetEvaluateTransform<LightInstance>::Caller(m_instances))
 	{
 		construct();
 	}
 	
 	LightNode(const LightNode& other) :
-		scene::Node::Symbiot(other),
+		scene::Node(this, StaticTypeCasts::instance().get()),
 		scene::Instantiable(other),
 		scene::Cloneable(other),
 		scene::Traversable::Observer(other),
-		m_node(this, this, StaticTypeCasts::instance().get()),
-		m_contained(other.m_contained, m_node, InstanceSet::TransformChangedCaller(m_instances), InstanceSet::BoundsChangedCaller(m_instances), InstanceSetEvaluateTransform<LightInstance>::Caller(m_instances))
+		Nameable(other),
+		m_contained(other.m_contained, *this, InstanceSet::TransformChangedCaller(m_instances), InstanceSet::BoundsChangedCaller(m_instances), InstanceSetEvaluateTransform<LightInstance>::Caller(m_instances))
 	{
 		construct();
 	}
@@ -88,6 +84,11 @@ public:
 	void forEachInstance(const scene::Instantiable::Visitor& visitor);
 	void insert(scene::Instantiable::Observer* observer, const scene::Path& path, scene::Instance* instance);
 	scene::Instance* erase(scene::Instantiable::Observer* observer, const scene::Path& path);
+	
+	// Nameable implementation
+	virtual std::string name() const;
+	virtual void attach(const NameCallback& callback);
+	virtual void detach(const NameCallback& callback);
 }; // class LightNode
 
 #endif /*LIGHTNODE_H_*/

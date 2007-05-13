@@ -127,14 +127,6 @@ public:
 	}
 };
 
-template<typename Type, typename Base>
-class NodeStaticCast :
-	public CastInstaller<
-		StaticNodeType<Base>,
-		StaticCast<Type, Base>
-	> 
-{};
-
 template<typename Type, typename Contained>
 class NodeContainedCast :
 	public CastInstaller<
@@ -180,19 +172,9 @@ public:
 		eExcluded = 1 << 2
 	};
 
-	class Symbiot
-	{
-	public:
-		virtual void release() {
-			// Default implementation: remove this node
-			delete this;
-		}
-	};
-
 private:
 	unsigned int m_state;
 	std::size_t m_refcount;
-	Symbiot* m_symbiot;
 	void* m_node;
 	NodeTypeCastTable& m_casts;
 
@@ -203,16 +185,20 @@ public:
 		return m_isRoot;
 	}
 
-	Node(Symbiot* symbiot, void* node, NodeTypeCastTable& casts) :
+	Node(void* node, NodeTypeCastTable& casts) :
 		m_state(eVisible),
 		m_refcount(0),
-		m_symbiot(symbiot),
 		m_node(node),
 		m_casts(casts),
 		m_isRoot(false)
 	{}
 	
-	~Node() {}
+	virtual ~Node() {}
+	
+	virtual void release() {
+		// Default implementation: remove this node
+		delete this;
+	}
 
 	void IncRef() {
 		ASSERT_MESSAGE(m_refcount < (1 << 24), "Node::decref: uninitialised refcount");
@@ -222,7 +208,7 @@ public:
 	void DecRef() {
 		ASSERT_MESSAGE(m_refcount < (1 << 24), "Node::decref: uninitialised refcount");
 		if(--m_refcount == 0) {
-			m_symbiot->release();
+			release();
 		}
 	}
 	
@@ -252,17 +238,16 @@ public:
 };
 
 class NullNode : 
-	public Node::Symbiot
+	public Node
 {
 	NodeTypeCastTable m_casts;
-	Node m_node;
 public:
 	NullNode() : 
-		m_node(this, 0, m_casts)
+		scene::Node(NULL, m_casts)
 	{}
 	
 	scene::Node& node() {
-		return m_node;
+		return *this;
 	}
 };
 
@@ -281,7 +266,7 @@ public:
 
 
 inline scene::Instantiable* Node_getInstantiable(scene::Node& node) {
-	return NodeTypeCast<scene::Instantiable>::cast(node);
+	return dynamic_cast<scene::Instantiable*>(&node);
 }
 
 inline scene::Traversable* Node_getTraversable(scene::Node& node) {
@@ -997,12 +982,12 @@ inline BrushDoom3* Node_getBrushDoom3(scene::Node& node) {
 	return NodeTypeCast<BrushDoom3>::cast(node);
 }
 
-/** greebo: Cast a node onto a BrushDoom3 pointer
+/** greebo: Cast a node onto a GroupNode pointer
  * 
  * @returns: NULL, if failed, the pointer to the class otherwise.
  */
 inline scene::GroupNode* Node_getGroupNode(scene::Node& node) {
-	return NodeTypeCast<scene::GroupNode>::cast(node);
+	return dynamic_cast<scene::GroupNode*>(&node);
 }
 
 // Helper class

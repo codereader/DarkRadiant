@@ -195,7 +195,11 @@ public:
   {
     return m_nameKeys;
   }
-  Nameable& getNameable()
+  NamedEntity& getNameable()
+  {
+    return m_named;
+  }
+  const NamedEntity& getNameable() const
   {
     return m_named;
   }
@@ -375,9 +379,10 @@ public:
 };
 
 class GenericEntityNode :
-  public scene::Node::Symbiot,
+  public scene::Node,
   public scene::Instantiable,
-  public scene::Cloneable
+  public scene::Cloneable,
+  public Nameable
 {
   class TypeCasts
   {
@@ -385,12 +390,9 @@ class GenericEntityNode :
   public:
     TypeCasts()
     {
-      NodeStaticCast<GenericEntityNode, scene::Instantiable>::install(m_casts);
-      NodeStaticCast<GenericEntityNode, scene::Cloneable>::install(m_casts);
       NodeContainedCast<GenericEntityNode, Snappable>::install(m_casts);
       NodeContainedCast<GenericEntityNode, TransformNode>::install(m_casts);
       NodeContainedCast<GenericEntityNode, Entity>::install(m_casts);
-      NodeContainedCast<GenericEntityNode, Nameable>::install(m_casts);
       NodeContainedCast<GenericEntityNode, Namespaced>::install(m_casts);
     }
     NodeTypeCastTable& get()
@@ -402,7 +404,6 @@ class GenericEntityNode :
 
   InstanceSet m_instances;
 
-  scene::Node m_node;
   GenericEntity m_contained;
 
 public:
@@ -420,32 +421,28 @@ public:
   {
     return m_contained.getEntity();
   }
-  Nameable& get(NullType<Nameable>)
-  {
-    return m_contained.getNameable();
-  }
   Namespaced& get(NullType<Namespaced>)
   {
     return m_contained.getNamespaced();
   }
 
   GenericEntityNode(IEntityClassPtr eclass) :
-    m_node(this, this, StaticTypeCasts::instance().get()),
-    m_contained(eclass, m_node, InstanceSet::TransformChangedCaller(m_instances), InstanceSetEvaluateTransform<GenericEntityInstance>::Caller(m_instances))
+    scene::Node(this, StaticTypeCasts::instance().get()),
+    m_contained(eclass, *this, InstanceSet::TransformChangedCaller(m_instances), InstanceSetEvaluateTransform<GenericEntityInstance>::Caller(m_instances))
   {
   }
   GenericEntityNode(const GenericEntityNode& other) :
-    scene::Node::Symbiot(other),
+    scene::Node(this, StaticTypeCasts::instance().get()),
     scene::Instantiable(other),
     scene::Cloneable(other),
-    m_node(this, this, StaticTypeCasts::instance().get()),
-    m_contained(other.m_contained, m_node, InstanceSet::TransformChangedCaller(m_instances), InstanceSetEvaluateTransform<GenericEntityInstance>::Caller(m_instances))
+    Nameable(other),
+    m_contained(other.m_contained, *this, InstanceSet::TransformChangedCaller(m_instances), InstanceSetEvaluateTransform<GenericEntityInstance>::Caller(m_instances))
   {
   }
 
   scene::Node& node()
   {
-    return m_node;
+    return *this;
   }
 
   scene::Node& clone() const
@@ -469,6 +466,17 @@ public:
   {
     return m_instances.erase(observer, path);
   }
+  
+	// Nameable implementation
+	virtual std::string name() const {
+		return m_contained.getNameable().name();
+	}
+	virtual void attach(const NameCallback& callback) {
+		m_contained.getNameable().attach(callback);
+	}
+	virtual void detach(const NameCallback& callback) {
+		m_contained.getNameable().detach(callback);
+	}
 };
 
 scene::Node& New_GenericEntity(IEntityClassPtr eclass)

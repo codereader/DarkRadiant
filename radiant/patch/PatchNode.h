@@ -11,7 +11,7 @@
 
 template<typename TokenImporter, typename TokenExporter>
 class PatchNode :
-	public scene::Node::Symbiot,
+	public scene::Node,
 	public scene::Instantiable,
 	public scene::Cloneable,
 	public Nameable
@@ -23,9 +23,6 @@ class PatchNode :
 	public:
 		// Constructor
 		TypeCasts() {
-			NodeStaticCast<PatchNode, scene::Instantiable>::install(m_casts);
-			NodeStaticCast<PatchNode, scene::Cloneable>::install(m_casts);
-			NodeStaticCast<PatchNode, Nameable>::install(m_casts);
 			NodeContainedCast<PatchNode, Snappable>::install(m_casts);
 			NodeContainedCast<PatchNode, TransformNode>::install(m_casts);
 			NodeContainedCast<PatchNode, Patch>::install(m_casts);
@@ -38,7 +35,6 @@ class PatchNode :
 		}
 	}; // class Typecasts
 
-	scene::Node m_node;
 	InstanceSet m_instances;
 	Patch m_patch;
 	TokenImporter m_importMap;
@@ -51,10 +47,6 @@ public:
 	std::string name() const {
 		return "Patch";
 	}
-
-	// Unused attach/detach functions (needed for nameable implementation)
-	void attach(const NameCallback& callback) {}
-	void detach(const NameCallback& callback) {}
 
 	// Get the Snappable or TransformNode of the patch
 	Snappable& get(NullType<Snappable>) {
@@ -74,8 +66,8 @@ public:
 	
 	// Construct a PatchNode with no arguments
 	PatchNode(bool patchDef3 = false) :
-		m_node(this, this, StaticTypeCasts::instance().get()),
-		m_patch(m_node, InstanceSetEvaluateTransform<PatchInstance>::Caller(m_instances), 
+		scene::Node(this, StaticTypeCasts::instance().get()),
+		m_patch(*this, InstanceSetEvaluateTransform<PatchInstance>::Caller(m_instances), 
 				InstanceSet::BoundsChangedCaller(m_instances)), // create the m_patch member with the node parameters
 		m_importMap(m_patch),
 		m_exportMap(m_patch)
@@ -85,12 +77,11 @@ public:
   
 	// Copy Constructor
 	PatchNode(const PatchNode& other) :
-		scene::Node::Symbiot(other),
+		scene::Node(this, StaticTypeCasts::instance().get()),
 		scene::Instantiable(other),
 		scene::Cloneable(other),
 		Nameable(other),
-		m_node(this, this, StaticTypeCasts::instance().get()),
-		m_patch(other.m_patch, m_node, InstanceSetEvaluateTransform<PatchInstance>::Caller(m_instances), 
+		m_patch(other.m_patch, *this, InstanceSetEvaluateTransform<PatchInstance>::Caller(m_instances), 
 			    InstanceSet::BoundsChangedCaller(m_instances)), // create the patch out of the <other> one
 		m_importMap(m_patch),
 		m_exportMap(m_patch)
@@ -99,7 +90,7 @@ public:
 	
 	// Get the actual scene::Node of this class 
 	scene::Node& node() {
-		return m_node;
+		return *this;
 	}
 	
 	// returns the Patch

@@ -5,10 +5,10 @@
 namespace entity {
 
 Doom3GroupNode::Doom3GroupNode(IEntityClassPtr eclass) :
-	m_node(this, this, StaticTypeCasts::instance().get()),
+	scene::Node(this, StaticTypeCasts::instance().get()),
 	m_contained(
 		eclass,
-		m_node,
+		*this,
 		InstanceSet::TransformChangedCaller(m_instances),
 		InstanceSet::BoundsChangedCaller(m_instances),
 		InstanceSetEvaluateTransform<Doom3GroupInstance>::Caller(m_instances)
@@ -18,14 +18,15 @@ Doom3GroupNode::Doom3GroupNode(IEntityClassPtr eclass) :
 }
 
 Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
-	scene::Node::Symbiot(other),
+	scene::Node(this, StaticTypeCasts::instance().get()),
 	scene::Instantiable(other),
 	scene::Cloneable(other),
 	scene::Traversable::Observer(other),
-	m_node(this, this, StaticTypeCasts::instance().get()),
+	scene::GroupNode(other),
+	Nameable(other),
 	m_contained(
 		other.m_contained,
-		m_node,
+		*this,
 		InstanceSet::TransformChangedCaller(m_instances),
 		InstanceSet::BoundsChangedCaller(m_instances),
 		InstanceSetEvaluateTransform<Doom3GroupInstance>::Caller(m_instances)
@@ -41,6 +42,18 @@ void Doom3GroupNode::addOriginToChildren() {
 
 void Doom3GroupNode::removeOriginFromChildren() {
 	m_contained.removeOriginFromChildren();
+}
+
+std::string Doom3GroupNode::name() const {
+	return m_contained.getNameable().name();
+}
+
+void Doom3GroupNode::attach(const NameCallback& callback) {
+	m_contained.getNameable().attach(callback);
+}
+
+void Doom3GroupNode::detach(const NameCallback& callback) {
+	m_contained.getNameable().detach(callback);
 }
 
 void Doom3GroupNode::construct() {
@@ -59,7 +72,7 @@ Doom3GroupNode::~Doom3GroupNode() {
 }
 
 scene::Node& Doom3GroupNode::node() {
-	return m_node;
+	return *this;
 }
 
 scene::Node& Doom3GroupNode::clone() const {
@@ -103,10 +116,6 @@ TransformNode& Doom3GroupNode::get(NullType<TransformNode>) {
 
 Entity& Doom3GroupNode::get(NullType<Entity>) {
 	return m_contained.getEntity();
-}
-
-Nameable& Doom3GroupNode::get(NullType<Nameable>) {
-	return m_contained.getNameable();
 }
 
 Namespaced& Doom3GroupNode::get(NullType<Namespaced>) {
