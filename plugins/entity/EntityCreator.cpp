@@ -10,10 +10,11 @@
 
 #include "light.h"
 #include "eclassmodel.h"
-#include "generic.h"
 #include "doom3group.h"
 #include <boost/algorithm/string/replace.hpp>
 #include <iostream>
+
+#include "generic/GenericEntityNode.h"
 
 namespace entity {
 	
@@ -42,7 +43,7 @@ scene::Node& Doom3EntityCreator::getEntityForEClass(IEntityClassPtr eclass) {
 	}
 	else {
 		// Fixed size, no model path
-		return New_GenericEntity(eclass);
+		return (new GenericEntityNode(eclass))->node();
 	}
 }
 

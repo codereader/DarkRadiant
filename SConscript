@@ -271,7 +271,6 @@ entity_src = [
 	'EntityCreator.cpp',
 	'entity.cpp',
 	'eclassmodel.cpp',
-	'generic.cpp',
 	'light.cpp',
 	'doom3group.cpp',
 	'angle.cpp',
