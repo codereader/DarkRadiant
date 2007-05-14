@@ -24,6 +24,7 @@ namespace {
     const char* LIGHT_CLASSNAME = "light";
     const char* MODEL_CLASSNAME = "func_static";
     const char* SPEAKER_CLASSNAME = "speaker";
+    const char* PLAYERSTART_CLASSNAME = "info_player_start";
 
     const char* ADD_MODEL_TEXT = "Create model...";
     const char* ADD_MODEL_ICON = "cmenu_add_model.png";
@@ -35,6 +36,8 @@ namespace {
     const char* ADD_PREFAB_ICON = "cmenu_add_prefab.png";
     const char* ADD_SPEAKER_TEXT = "Create speaker...";
     const char* ADD_SPEAKER_ICON = "icon_sound.png";
+    const char* ADD_PLAYERSTART_TEXT = "Create player start...";
+    const char* ADD_PLAYERSTART_ICON = "cmenu_add_entity.png";
     
     const char* CONVERT_TO_STATIC_TEXT = "Convert to func_static";
     const char* CONVERT_TO_STATIC_ICON = "cmenu_convert_static.png";
@@ -55,22 +58,17 @@ void OrthoContextMenu::displayInstance(const Vector3& point) {
 OrthoContextMenu::OrthoContextMenu()
 : _widget(gtk_menu_new())
 {
-	GtkWidget* addModel = gtkutil::IconTextMenuItem(ADD_MODEL_ICON, 
-													ADD_MODEL_TEXT);
-	_addLight = gtkutil::IconTextMenuItem(ADD_LIGHT_ICON, 
-													ADD_LIGHT_TEXT);
-	_addEntity = gtkutil::IconTextMenuItem(ADD_ENTITY_ICON, 
-													 ADD_ENTITY_TEXT);
-	GtkWidget* addPrefab = gtkutil::IconTextMenuItem(ADD_PREFAB_ICON, 
-													 ADD_PREFAB_TEXT);
-	_addSpkr = gtkutil::IconTextMenuItem(ADD_SPEAKER_ICON, 
-												   ADD_SPEAKER_TEXT);
-	_convertStatic = gtkutil::IconTextMenuItem(CONVERT_TO_STATIC_ICON, 
-											   CONVERT_TO_STATIC_TEXT);
-	_revertWorldspawn = gtkutil::IconTextMenuItem(REVERT_TO_WORLDSPAWN_ICON, 
-												  REVERT_TO_WORLDSPAWN_TEXT);
+	GtkWidget* addModel = gtkutil::IconTextMenuItem(ADD_MODEL_ICON, ADD_MODEL_TEXT);
+	_addLight = gtkutil::IconTextMenuItem(ADD_LIGHT_ICON, ADD_LIGHT_TEXT);
+	_addEntity = gtkutil::IconTextMenuItem(ADD_ENTITY_ICON, ADD_ENTITY_TEXT);
+        _addPlayerStart = gtkutil::IconTextMenuItem(ADD_PLAYERSTART_ICON, ADD_PLAYERSTART_TEXT);
+	GtkWidget* addPrefab = gtkutil::IconTextMenuItem(ADD_PREFAB_ICON, ADD_PREFAB_TEXT);
+	_addSpkr = gtkutil::IconTextMenuItem(ADD_SPEAKER_ICON, ADD_SPEAKER_TEXT);
+	_convertStatic = gtkutil::IconTextMenuItem(CONVERT_TO_STATIC_ICON, CONVERT_TO_STATIC_TEXT);
+	_revertWorldspawn = gtkutil::IconTextMenuItem(REVERT_TO_WORLDSPAWN_ICON, REVERT_TO_WORLDSPAWN_TEXT);
 	
 	g_signal_connect(G_OBJECT(_addEntity), "activate", G_CALLBACK(callbackAddEntity), this);
+	g_signal_connect(G_OBJECT(_addPlayerStart), "activate", G_CALLBACK(callbackAddPlayerStart), this);
 	g_signal_connect(G_OBJECT(_addLight), "activate", G_CALLBACK(callbackAddLight), this);
 	g_signal_connect(G_OBJECT(addModel), "activate", G_CALLBACK(callbackAddModel), this);
 	g_signal_connect(G_OBJECT(addPrefab), "activate", G_CALLBACK(callbackAddPrefab), this);
@@ -79,6 +77,7 @@ OrthoContextMenu::OrthoContextMenu()
 	g_signal_connect(G_OBJECT(_revertWorldspawn), "activate", G_CALLBACK(callbackRevertToWorldspawn), this);
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addEntity);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addPlayerStart);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), addModel);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addLight);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addSpkr);
@@ -122,6 +121,7 @@ void OrthoContextMenu::checkAddOptions() {
 	
 	// Add entity and light commands are disabled if an entity is selected
 	gtk_widget_set_sensitive(_addEntity, info.entityCount == 0 ? TRUE : FALSE);
+	gtk_widget_set_sensitive(_addPlayerStart, info.entityCount == 0 ? TRUE : FALSE);
 	gtk_widget_set_sensitive(_addLight, info.entityCount == 0 ? TRUE : FALSE);
 	
 	// Add speaker is disabled if anything is selected
@@ -156,6 +156,15 @@ void OrthoContextMenu::checkRevertToWorldspawn() {
 
 void OrthoContextMenu::callbackAddEntity(GtkMenuItem* item, OrthoContextMenu* self) {
 	EntityClassChooser::displayInstance(self->_lastPoint);
+}
+
+void OrthoContextMenu::callbackAddPlayerStart(GtkMenuItem* item, OrthoContextMenu* self) {
+        try {
+        	Entity_createFromSelection(PLAYERSTART_CLASSNAME, self->_lastPoint);
+        }
+	catch (EntityCreationException e) {
+          gtkutil::errorDialog(e.what(), MainFrame_getWindow());
+        }
 }
 
 void OrthoContextMenu::callbackAddLight(GtkMenuItem* item, OrthoContextMenu* self) {
