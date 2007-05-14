@@ -270,7 +270,6 @@ entity_src = [
 	'plugin.cpp',
 	'EntityCreator.cpp',
 	'entity.cpp',
-	'eclassmodel.cpp',
 	'angle.cpp',
 	'angles.cpp',
 	'colour.cpp',
@@ -292,7 +291,10 @@ entity_src = [
 	'doom3group/Doom3GroupOrigin.cpp',
 	'generic/GenericEntity.cpp',
 	'generic/GenericEntityInstance.cpp',
-	'generic/GenericEntityNode.cpp'
+	'generic/GenericEntityNode.cpp',
+	'eclassmodel/EclassModel.cpp',
+	'eclassmodel/EclassModelInstance.cpp',
+	'eclassmodel/EclassModelNode.cpp'
 ]
 entity_lst = build_list('plugins/entity', entity_src)
 entity_env.Append(LIBS = ['math', 'xmlutil'])
