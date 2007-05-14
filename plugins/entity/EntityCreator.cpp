@@ -8,13 +8,13 @@
 
 #include "entitylib.h"
 
-#include "eclassmodel.h"
 #include <boost/algorithm/string/replace.hpp>
 #include <iostream>
 
 #include "light/LightNode.h"
 #include "doom3group/Doom3GroupNode.h"
 #include "generic/GenericEntityNode.h"
+#include "eclassmodel/EclassModelNode.h"
 
 namespace entity {
 	
@@ -39,7 +39,7 @@ scene::Node& Doom3EntityCreator::getEntityForEClass(IEntityClassPtr eclass) {
 	}
 	else if (eclass->getModelPath().size() > 0) {
 		// Fixed size, has model path
-		return New_EclassModel(eclass);
+		return (new EclassModelNode(eclass))->node();
 	}
 	else {
 		// Fixed size, no model path
