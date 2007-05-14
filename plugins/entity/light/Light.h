@@ -19,7 +19,6 @@
 #include "../namekeys.h"
 #include "../entity.h"
 
-#include "LightTypes.h"
 #include "Renderables.h"
 #include "LightShader.h"
 #include "RenderableVertices.h"

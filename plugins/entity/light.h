@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_LIGHT_H)
 #define INCLUDED_LIGHT_H
 
-#include "light/LightTypes.h"
 #include <boost/shared_ptr.hpp>
 
 namespace scene {
@@ -31,7 +30,7 @@ namespace scene {
 class IEntityClass;
 
 scene::Node& New_Light(boost::shared_ptr<IEntityClass>);
-void Light_Construct(LightType lightType);
+void Light_Construct();
 void Light_Destroy();
 
 #endif

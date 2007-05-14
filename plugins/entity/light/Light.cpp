@@ -6,8 +6,6 @@
 #include "LightShader.h"
 #include "LightSettings.h"
 
-LightType g_lightType = LIGHTTYPE_DEFAULT;
-
 // Initialise the static default shader string
 std::string LightShader::m_defaultShader = "";
 
@@ -250,9 +248,7 @@ void Light::construct() {
 }
 
 void Light::destroy() {
-	if(g_lightType == LIGHTTYPE_DOOM3) {
-		m_traverse.detach(&m_traverseObservers);
-	}
+	m_traverse.detach(&m_traverseObservers);
 }
 
 void Light::updateOrigin() {
@@ -410,9 +406,7 @@ void Light::updateLightRadiiBox() const {
 void Light::instanceAttach(const scene::Path& path) {
 	if(++m_instanceCounter.m_count == 1) {
 		m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
-		if(g_lightType == LIGHTTYPE_DOOM3) {
-			m_traverse.instanceAttach(path_find_mapfile(path.begin(), path.end()));
-		}
+		m_traverse.instanceAttach(path_find_mapfile(path.begin(), path.end()));
 		m_entity.attach(m_keyObservers);
 	}
 }
@@ -420,11 +414,7 @@ void Light::instanceAttach(const scene::Path& path) {
 void Light::instanceDetach(const scene::Path& path) {
 	if(--m_instanceCounter.m_count == 0) {
 		m_entity.detach(m_keyObservers);
-		
-		if(g_lightType == LIGHTTYPE_DOOM3) {
-			m_traverse.instanceDetach(path_find_mapfile(path.begin(), path.end()));
-		}
-		
+		m_traverse.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 		m_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
@@ -434,7 +424,7 @@ void Light::instanceDetach(const scene::Path& path) {
  * Note: This gets called when the light as a whole is selected, NOT in vertex editing mode
  */
 void Light::snapto(float snap) {
-	if(g_lightType == LIGHTTYPE_DOOM3 && !m_useLightOrigin && !m_traverse.empty()) {
+	if(!m_useLightOrigin && !m_traverse.empty()) {
 		m_useLightOrigin = true;
 		m_lightOrigin = m_originKey.m_origin;
 	}
@@ -473,7 +463,7 @@ void Light::revertTransform() {
 }
 
 void Light::freezeTransform() {
-	if (g_lightType == LIGHTTYPE_DOOM3 && !m_useLightOrigin && !m_traverse.empty()) {
+	if (!m_useLightOrigin && !m_traverse.empty()) {
 		m_useLightOrigin = true;
 	}
 
@@ -521,23 +511,21 @@ void Light::freezeTransform() {
 		m_entity.setKeyValue("light_center", m_doom3Radius.m_center);
     }
 	
-	if (g_lightType == LIGHTTYPE_DOOM3) {
-		if(!m_useLightRotation && !m_traverse.empty()) {
-			m_useLightRotation = true;
-		}
+	if(!m_useLightRotation && !m_traverse.empty()) {
+		m_useLightRotation = true;
+	}
 
-		if(m_useLightRotation) {
-			rotation_assign(m_lightRotation, m_rotation);
-			write_rotation(m_lightRotation, &m_entity, "light_rotation");
-		}
+	if(m_useLightRotation) {
+		rotation_assign(m_lightRotation, m_rotation);
+		write_rotation(m_lightRotation, &m_entity, "light_rotation");
+	}
 
-		rotation_assign(m_rotationKey.m_rotation, m_rotation);
-		write_rotation(m_rotationKey.m_rotation, &m_entity);
+	rotation_assign(m_rotationKey.m_rotation, m_rotation);
+	write_rotation(m_rotationKey.m_rotation, &m_entity);
 
-		if (!isProjected()) {
-			m_doom3Radius.m_radius = m_doom3Radius.m_radiusTransformed;
-			write_origin(m_doom3Radius.m_radius, &m_entity, "light_radius");
-		}
+	if (!isProjected()) {
+		m_doom3Radius.m_radius = m_doom3Radius.m_radiusTransformed;
+		write_origin(m_doom3Radius.m_radius, &m_entity, "light_radius");
 	}
 }
 

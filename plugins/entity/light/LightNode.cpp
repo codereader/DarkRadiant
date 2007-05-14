@@ -30,15 +30,11 @@ LightNode::~LightNode() {
 }
 
 void LightNode::construct() {
-	if(g_lightType == LIGHTTYPE_DOOM3) {
-		m_contained.attach(this);
-	}
+	m_contained.attach(this);
 }
 
 void LightNode::destroy() {
-	if(g_lightType == LIGHTTYPE_DOOM3) {
-		m_contained.detach(this);
-	}
+	m_contained.detach(this);
 }
 
 void LightNode::insert(Node& node) {
