@@ -35,9 +35,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "namekeys.h"
 #include "stream/stringstream.h"
 
-#include "light.h"
 #include "eclassmodel.h"
 #include "doom3group/Doom3GroupNode.h"
+#include "light/LightShader.h"
 
 // Initialise the static variables of the entitylibraries (we're in a module here)
 EntityCreator::KeyValueChangedFunc Doom3Entity::m_entityKeyValueChanged = 0;
@@ -49,7 +49,7 @@ Counter* Doom3Entity::m_counter = 0;
 /* greebo: Constructs the entity environment
  */
 void Entity_Construct() {
-  Light_Construct();
+	LightShader::m_defaultShader = "lights/defaultpointlight";
 
 	// Construct Doom3Group stuff
 	CurveEdit::Type::instance().m_controlsShader = GlobalShaderCache().capture("$POINT");
@@ -61,7 +61,5 @@ void Entity_Construct() {
 }
 
 void Entity_Destroy() {
-  GlobalShaderCache().detachRenderable(StaticRenderableConnectionLines::instance());
-
-  Light_Destroy();
+	GlobalShaderCache().detachRenderable(StaticRenderableConnectionLines::instance());
 }

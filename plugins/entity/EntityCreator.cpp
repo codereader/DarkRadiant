@@ -8,11 +8,11 @@
 
 #include "entitylib.h"
 
-#include "light.h"
 #include "eclassmodel.h"
 #include <boost/algorithm/string/replace.hpp>
 #include <iostream>
 
+#include "light/LightNode.h"
 #include "doom3group/Doom3GroupNode.h"
 #include "generic/GenericEntityNode.h"
 
@@ -31,7 +31,7 @@ namespace entity {
 
 scene::Node& Doom3EntityCreator::getEntityForEClass(IEntityClassPtr eclass) {
 	if (eclass->isLight()) {
-		return New_Light(eclass);
+		return (new LightNode(eclass))->node();
 	}
 	else if (!eclass->isFixedSize()) {
 		// Variable size entity
