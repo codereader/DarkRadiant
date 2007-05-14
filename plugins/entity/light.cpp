@@ -42,8 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "light/LightInstance.h"
 #include "light/LightNode.h"
 
-void Light_Construct(LightType lightType) {
-	g_lightType = lightType;
+void Light_Construct() {
 	LightShader::m_defaultShader = "lights/defaultpointlight";  
 }
 

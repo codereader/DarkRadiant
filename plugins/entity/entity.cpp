@@ -47,10 +47,10 @@ Counter* Doom3Entity::m_counter = 0;
 
 #include "preferencesystem.h"
 
-/* greebo: Constructs the entity environment according to the given game type (is Doom3 anyway)
+/* greebo: Constructs the entity environment
  */
 void Entity_Construct() {
-  Light_Construct(LIGHTTYPE_DOOM3);
+  Light_Construct();
   Doom3Group_construct();
 
   RenderablePivot::StaticShader::instance() = GlobalShaderCache().capture("$PIVOT");

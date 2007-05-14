@@ -20,11 +20,9 @@ LightInstance::LightInstance(const scene::Path& path, scene::Instance* parent, L
 {
 	_light.instanceAttach(Instance::path());    
 
-	if (g_lightType == LIGHTTYPE_DOOM3) {
-		GlobalShaderCache().attach(*this);
-		// greebo: Connect the lightChanged() member method to the "light changed" callback
-		_light.setLightChangedCallback(LightChangedCaller(*this));
-	}
+	GlobalShaderCache().attach(*this);
+	// greebo: Connect the lightChanged() member method to the "light changed" callback
+	_light.setLightChangedCallback(LightChangedCaller(*this));
 
 	StaticRenderableConnectionLines::instance().attach(*this);
 }
@@ -33,11 +31,9 @@ LightInstance::LightInstance(const scene::Path& path, scene::Instance* parent, L
 LightInstance::~LightInstance() {
 	StaticRenderableConnectionLines::instance().detach(*this);
 
-	if (g_lightType == LIGHTTYPE_DOOM3) {
-		_light.setLightChangedCallback(Callback());
-		GlobalShaderCache().detach(*this);
-	}
-
+	_light.setLightChangedCallback(Callback());
+	GlobalShaderCache().detach(*this);
+	
 	_light.instanceDetach(Instance::path());
 }
 
