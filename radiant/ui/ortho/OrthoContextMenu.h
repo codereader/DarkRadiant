@@ -27,6 +27,7 @@ private:
 	GtkWidget* _convertStatic;
 	GtkWidget* _revertWorldspawn;
 	GtkWidget* _addEntity;
+	GtkWidget* _addPlayerStart;
 	GtkWidget* _addLight;
 	GtkWidget* _addSpkr;
 	
@@ -47,6 +48,7 @@ private:
 	/* Gtk Callbacks */
 	
 	static void callbackAddEntity(GtkMenuItem* item, OrthoContextMenu* self);
+	static void callbackAddPlayerStart(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddLight(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddModel(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddPrefab(GtkMenuItem* item, OrthoContextMenu* self);
