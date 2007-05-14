@@ -101,6 +101,10 @@ scene::Traversable& Doom3Group::getTraversable() {
 	return *m_traversable;
 }
 
+const scene::Traversable& Doom3Group::getTraversable() const {
+	return *m_traversable;
+}
+
 Namespaced& Doom3Group::getNamespaced() {
 	return m_nameKeys;
 }
@@ -117,7 +121,15 @@ TransformNode& Doom3Group::getTransformNode() {
 	return m_transform;
 }
 
+const TransformNode& Doom3Group::getTransformNode() const {
+	return m_transform;
+}
+
 ModelSkin& Doom3Group::getModelSkin() {
+	return m_skin.get();
+}
+
+const ModelSkin& Doom3Group::getModelSkin() const {
 	return m_skin.get();
 }
 

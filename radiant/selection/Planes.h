@@ -7,7 +7,7 @@
 #include "scenelib.h"
 
 inline PlaneSelectable* Instance_getPlaneSelectable(scene::Instance& instance) {
-  return InstanceTypeCast<PlaneSelectable>::cast(instance);
+  return dynamic_cast<PlaneSelectable*>(&instance);
 }
 
 class PlaneSelectableSelectPlanes : public scene::Graph::Walker {

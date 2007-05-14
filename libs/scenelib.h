@@ -25,6 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "Bounded.h"
 #include "iscenegraph.h"
 #include "iselection.h"
+#include "ientity.h"
+#include "ipatch.h"
+#include "ibrush.h"
 
 #include "warnings.h"
 #include <cstddef>
@@ -35,7 +38,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/callback.h"
 #include "generic/reference.h"
 #include "container/stack.h"
-#include "typesystem.h"
 
 class Selector;
 class SelectionTest;
@@ -84,65 +86,6 @@ public:
 	virtual void translateDoom3Brush(const Vector3& translation) = 0;
 };
 
-class EntityUndefined {
-public:
-	STRING_CONSTANT(Name, "Entity");
-};
-
-typedef TypeCastTable<NODETYPEID_MAX> NodeTypeCastTable;
-
-template<typename Type>
-class NodeType : 
-	public StaticTypeSystemInitialiser
-{
-	TypeId m_typeId;
-public:
-	typedef typename Type::Name Name;
-	NodeType() : m_typeId(NODETYPEID_NONE) {
-		StaticTypeSystemInitialiser::instance().addInitialiser(InitialiseCaller(*this));
-	}
-	
-	void initialise() {
-		m_typeId = GlobalSceneGraph().getNodeTypeId(Name());
-	}
-	
-	typedef MemberCaller<NodeType<Type>, &NodeType<Type>::initialise> InitialiseCaller;
-
-	TypeId getTypeId() {
-	
-#if defined(_DEBUG)
-		ASSERT_MESSAGE(m_typeId != NODETYPEID_NONE, "node-type " << makeQuoted(Name()) << " used before being initialised");
-#endif
-
-		return m_typeId;
-	}
-};
-
-template<typename Type>
-class StaticNodeType {
-public:
-	enum unnamed0 { SIZE = NODETYPEID_MAX };
-	static TypeId getTypeId() {
-		return Static< NodeType<Type> >::instance().getTypeId();
-	}
-};
-
-template<typename Type, typename Contained>
-class NodeContainedCast :
-	public CastInstaller<
-		StaticNodeType<Contained>,
-		ContainedCast<Type, Contained>
-	>
-{};
-
-template<typename Type>
-class NodeIdentityCast :
-	public CastInstaller<
-		StaticNodeType<Type>,
-		IdentityCast<Type>
-	> 
-{};
-
 namespace scene {
 
 /** greebo: This is used to identify group entities right before
@@ -175,8 +118,6 @@ public:
 private:
 	unsigned int m_state;
 	std::size_t m_refcount;
-	void* m_node;
-	NodeTypeCastTable& m_casts;
 
 public:
 	bool m_isRoot;
@@ -185,11 +126,9 @@ public:
 		return m_isRoot;
 	}
 
-	Node(void* node, NodeTypeCastTable& casts) :
+	Node() :
 		m_state(eVisible),
 		m_refcount(0),
-		m_node(node),
-		m_casts(casts),
 		m_isRoot(false)
 	{}
 	
@@ -216,10 +155,6 @@ public:
 		return m_refcount;
 	}
 
-	void* cast(TypeId typeId) const {
-		return m_casts.cast(typeId, m_node);
-	}
-
 	void enable(unsigned int state) {
 		m_state |= state;
 	}
@@ -240,10 +175,8 @@ public:
 class NullNode : 
 	public Node
 {
-	NodeTypeCastTable m_casts;
 public:
-	NullNode() : 
-		scene::Node(NULL, m_casts)
+	NullNode()
 	{}
 	
 	scene::Node& node() {
@@ -253,24 +186,12 @@ public:
 
 } // namespace scene
 
-template<typename Type>
-class NodeTypeCast {
-public:
-	static Type* cast(scene::Node& node) {
-		return static_cast<Type*>(node.cast(StaticNodeType<Type>::getTypeId()));
-	}
-	static const Type* cast(const scene::Node& node) {
-		return static_cast<const Type*>(node.cast(StaticNodeType<Type>::getTypeId()));
-	}
-};
-
-
 inline scene::Instantiable* Node_getInstantiable(scene::Node& node) {
 	return dynamic_cast<scene::Instantiable*>(&node);
 }
 
 inline scene::Traversable* Node_getTraversable(scene::Node& node) {
-	return NodeTypeCast<scene::Traversable>::cast(node);
+	return dynamic_cast<scene::Traversable*>(&node);
 }
 
 inline void Node_traverseSubgraph(scene::Node& node, const scene::Traversable::Walker& walker) {
@@ -284,7 +205,7 @@ inline void Node_traverseSubgraph(scene::Node& node, const scene::Traversable::W
 }
 
 inline TransformNode* Node_getTransformNode(scene::Node& node) {
-	return NodeTypeCast<TransformNode>::cast(node);
+	return dynamic_cast<TransformNode*>(&node);
 }
 
 inline bool operator<(scene::Node& node, scene::Node& other) {
@@ -325,8 +246,16 @@ inline void DeleteSubgraph(scene::Node& subgraph) {
 	Node_getTraversable(subgraph)->traverse(delete_all(subgraph));
 }
 
+inline Entity* Node_getEntity(scene::Node& node) {
+	EntityNode* entityNode = dynamic_cast<EntityNode*>(&node);
+	if (entityNode != NULL) {
+		return &entityNode->getEntity();
+	}
+	return NULL;
+}
+
 inline bool Node_isEntity(scene::Node& node) {
-	return NodeTypeCast<EntityUndefined>::cast(node) != 0;
+	return dynamic_cast<EntityNode*>(&node) != NULL;
 }
 
 template<typename Functor>
@@ -349,22 +278,12 @@ inline const Functor& Scene_forEachEntity(const Functor& functor) {
 	return functor;
 }
 
-class BrushUndefined {
-public:
-	STRING_CONSTANT(Name, "Brush");
-};
-
 inline bool Node_isBrush(scene::Node& node) {
-	return NodeTypeCast<BrushUndefined>::cast(node) != 0;
+	return dynamic_cast<IBrushNode*>(&node) != NULL;
 }
 
-class PatchUndefined {
-public:
-	STRING_CONSTANT(Name, "Patch");
-};
-
 inline bool Node_isPatch(scene::Node& node) {
-	return NodeTypeCast<PatchUndefined>::cast(node) != 0;
+	return dynamic_cast<IPatchNode*>(&node) != NULL;
 }
 
 inline bool Node_isPrimitive(scene::Node& node) {
@@ -428,70 +347,6 @@ inline bool node_is_group(scene::Node& node) {
 	}
 	return false;
 }
-
-typedef TypeCastTable<INSTANCETYPEID_MAX> InstanceTypeCastTable;
-
-template<typename Type>
-class InstanceType : 
-	public StaticTypeSystemInitialiser
-{
-	TypeId m_typeId;
-public:
-	typedef typename Type::Name Name;
-	
-	InstanceType() : 
-		m_typeId(INSTANCETYPEID_NONE)
-	{
-		StaticTypeSystemInitialiser::instance().addInitialiser(InitialiseCaller(*this));
-	}
-	
-	void initialise() {
-		m_typeId = GlobalSceneGraph().getInstanceTypeId(Name());
-	}
-	
-	typedef MemberCaller<InstanceType<Type>, &InstanceType<Type>::initialise> InitialiseCaller;
-	
-	TypeId getTypeId() {
-#if defined(_DEBUG)
-		ASSERT_MESSAGE(m_typeId != INSTANCETYPEID_NONE, "instance-type " << makeQuoted(Name()) << " used before being initialised");
-#endif
-
-		return m_typeId;
-	}
-};
-
-template<typename Type>
-class StaticInstanceType {
-public:
-	enum unnamed0 { SIZE = INSTANCETYPEID_MAX };
-	static TypeId getTypeId() {
-		return Static< InstanceType<Type> >::instance().getTypeId();
-	}
-};
-
-template<typename Type, typename Base>
-class InstanceStaticCast :
-	public CastInstaller<
-		StaticInstanceType<Base>,
-		StaticCast<Type, Base>
-	>
-{};
-
-template<typename Type, typename Contained>
-class InstanceContainedCast :
-	public CastInstaller<
-		StaticInstanceType<Contained>,
-		ContainedCast<Type, Contained>
-	>
-{};
-
-template<typename Type>
-class InstanceIdentityCast :
-	public CastInstaller<
-		StaticInstanceType<Type>,
-		IdentityCast<Type>
-	>
-{};
 
 inline Selectable* Instance_getSelectable(scene::Instance& instance);
 inline const Selectable* Instance_getSelectable(const scene::Instance& instance);
@@ -569,8 +424,6 @@ class Instance
 
 	Path m_path;
 	Instance* m_parent;
-	void* m_instance;
-	InstanceTypeCastTable& m_casts;
 
 	mutable Matrix4 m_local2world;
 	mutable AABB m_bounds;
@@ -642,11 +495,9 @@ class Instance
 	Instance& operator=(const scene::Instance& other);
 public:
 
-	Instance(const scene::Path& path, Instance* parent, void* instance, InstanceTypeCastTable& casts) :
+	Instance(const scene::Path& path, Instance* parent) :
 		m_path(path),
 		m_parent(parent),
-		m_instance(instance),
-		m_casts(casts),
 		m_local2world(g_matrix4_identity),
 		m_transformChanged(true),
 		m_transformMutex(false),
@@ -665,10 +516,6 @@ public:
 
 	const scene::Path& path() const {
 		return m_path;
-	}
-
-	void* cast(TypeId typeId) const {
-		return m_casts.cast(typeId, m_instance);
 	}
 
 	const Matrix4& localToWorld() const {
@@ -775,17 +622,6 @@ public:
 
 } // namespace scene
 
-template<typename Type>
-class InstanceTypeCast {
-public:
-	static Type* cast(scene::Instance& instance) {
-		return static_cast<Type*>(instance.cast(StaticInstanceType<Type>::getTypeId()));
-	}
-	static const Type* cast(const scene::Instance& instance) {
-		return static_cast<const Type*>(instance.cast(StaticInstanceType<Type>::getTypeId()));
-	}
-};
-
 template<typename Functor>
 class InstanceWalker : public scene::Graph::Walker {
 	const Functor& m_functor;
@@ -815,22 +651,27 @@ public:
 };
 
 template<typename Type, typename Functor>
-class InstanceApply : public Functor {
+class InstanceApply : 
+	public Functor
+{
 public:
-	InstanceApply(const Functor& functor) : Functor(functor) {}
+	InstanceApply(const Functor& functor) : 
+		Functor(functor)
+	{}
+	
 	void operator()(scene::Instance& instance) const {
-		Type* result = InstanceTypeCast<Type>::cast(instance);
-		if(result != 0) {
+		Type* result = dynamic_cast<Type*>(&instance);
+		if (result != NULL) {
 			Functor::operator()(*result);
 		}
 	}
 };
 
 inline Selectable* Instance_getSelectable(scene::Instance& instance) {
-	return InstanceTypeCast<Selectable>::cast(instance);
+	return dynamic_cast<Selectable*>(&instance);
 }
 inline const Selectable* Instance_getSelectable(const scene::Instance& instance) {
-	return InstanceTypeCast<Selectable>::cast(instance);
+	return dynamic_cast<const Selectable*>(&instance);
 }
 
 template<typename Functor>
@@ -848,34 +689,33 @@ public:
 };
 
 inline Bounded* Instance_getBounded(scene::Instance& instance) {
-	return InstanceTypeCast<Bounded>::cast(instance);
+	return dynamic_cast<Bounded*>(&instance);
 }
 inline const Bounded* Instance_getBounded(const scene::Instance& instance) {
-	return InstanceTypeCast<Bounded>::cast(instance);
+	return dynamic_cast<const Bounded*>(&instance);
 }
 
 inline Transformable* Instance_getTransformable(scene::Instance& instance) {
-	return InstanceTypeCast<Transformable>::cast(instance);
+	return dynamic_cast<Transformable*>(&instance);
 }
 inline const Transformable* Instance_getTransformable(const scene::Instance& instance) {
-	return InstanceTypeCast<Transformable>::cast(instance);
+	return dynamic_cast<const Transformable*>(&instance);
 }
 
-
 inline ComponentSelectionTestable* Instance_getComponentSelectionTestable(scene::Instance& instance) {
-	return InstanceTypeCast<ComponentSelectionTestable>::cast(instance);
+	return dynamic_cast<ComponentSelectionTestable*>(&instance);
 }
 
 inline ComponentEditable* Instance_getComponentEditable(scene::Instance& instance) {
-	return InstanceTypeCast<ComponentEditable>::cast(instance);
+	return dynamic_cast<ComponentEditable*>(&instance);
 }
 
 inline ComponentSnappable* Instance_getComponentSnappable(scene::Instance& instance) {
-	return InstanceTypeCast<ComponentSnappable>::cast(instance);
+	return dynamic_cast<ComponentSnappable*>(&instance);
 }
 
 inline scene::LightInstance* Instance_getLight(scene::Instance& instance) {
-	return InstanceTypeCast<scene::LightInstance>::cast(instance);
+	return dynamic_cast<scene::LightInstance*>(&instance);
 }
 
 
@@ -979,7 +819,7 @@ public:
  * @returns: NULL, if failed, the pointer to the class otherwise.
  */
 inline BrushDoom3* Node_getBrushDoom3(scene::Node& node) {
-	return NodeTypeCast<BrushDoom3>::cast(node);
+	return dynamic_cast<BrushDoom3*>(&node);
 }
 
 /** greebo: Cast a node onto a GroupNode pointer

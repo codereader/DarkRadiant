@@ -18,7 +18,7 @@ public:
 Doom3GroupInstance::Doom3GroupInstance(const scene::Path& path, 
 									   scene::Instance* parent, 
 									   Doom3Group& contained) :
-	TargetableInstance(path, parent, this, StaticTypeCasts::instance().get(), contained.getEntity(), *this),
+	TargetableInstance(path, parent, contained.getEntity(), *this),
 	TransformModifier(entity::Doom3Group::TransformChangedCaller(contained), ApplyTransformCaller(*this)),
 	m_contained(contained),
 	m_curveNURBS(m_contained.m_curveNURBS.m_controlPointsTransformed, SelectionChangedComponentCaller(*this)),
@@ -141,8 +141,8 @@ void Doom3GroupInstance::selectionChangedComponent(const Selectable& selectable)
 	GlobalSelectionSystem().onComponentSelection(*this, selectable);
 }
 
-Bounded& Doom3GroupInstance::get(NullType<Bounded>) {
-	return m_contained;
+const AABB& Doom3GroupInstance::localAABB() const {
+	return m_contained.localAABB();
 }
 
 } // namespace entity

@@ -82,22 +82,7 @@ public:
 
 class TexDef;
 
-class _QERFaceData
-{
-public:
-  _QERFaceData() : m_shader(""), contents(0), flags(0), value(0)
-  {
-  }
-  Vector3 m_p0;
-  Vector3 m_p1;
-  Vector3 m_p2;
-  TexDef m_texdef;
-  std::string m_shader;
-  int contents;
-  int flags;
-  int value;
-};
-
+class _QERFaceData;
 typedef Callback1<const _QERFaceData&> BrushFaceDataCallback;
 
 class BrushCreator
@@ -108,6 +93,15 @@ public:
   virtual scene::Node& createBrush() = 0;
   virtual void Brush_forEachFace(scene::Node& brush, const BrushFaceDataCallback& callback) = 0;
   virtual bool Brush_addFace(scene::Node& brush, const _QERFaceData& faceData) = 0;
+};
+
+class Brush;
+class IBrushNode
+{
+public:
+	/** greebo: Retrieves the contained Brush from the BrushNode
+	 */
+	virtual Brush& getBrush() = 0;
 };
 
 #include "modulesystem.h"

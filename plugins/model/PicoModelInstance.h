@@ -4,6 +4,7 @@
 #include "RenderablePicoModel.h"
 #include "VectorLightList.h"
 
+#include "math/frustum.h"
 #include "scenelib.h"
 #include "selectable.h"
 #include "renderable.h"
@@ -25,26 +26,10 @@ class PicoModelInstance :
   public Renderable,
   public SelectionTestable,
   public LightCullable,
-  public SkinnedModel
+  public SkinnedModel,
+  public Bounded,
+  public Cullable
 {
-  class TypeCasts
-  {
-    InstanceTypeCastTable m_casts;
-  public:
-    TypeCasts()
-    {
-      InstanceContainedCast<PicoModelInstance, Bounded>::install(m_casts);
-      InstanceContainedCast<PicoModelInstance, Cullable>::install(m_casts);
-      InstanceStaticCast<PicoModelInstance, Renderable>::install(m_casts);
-      InstanceStaticCast<PicoModelInstance, SelectionTestable>::install(m_casts);
-      InstanceStaticCast<PicoModelInstance, SkinnedModel>::install(m_casts);
-    }
-    InstanceTypeCastTable& get()
-    {
-      return m_casts;
-    }
-  };
-
 	// Reference to the actual model
 	model::RenderablePicoModel& _picoModel;
 
@@ -63,9 +48,6 @@ class PicoModelInstance :
 	MappedSurfaces _mappedSurfs;
 	
 public:
-
-	typedef LazyStatic<TypeCasts> StaticTypeCasts;
-
 	/* Main constructor */
 	PicoModelInstance(const scene::Path& path, 
 					  scene::Instance* parent, 
@@ -74,20 +56,18 @@ public:
 	/* Destructor */	
 	~PicoModelInstance();
 
-	/**
-	 * InstanceTypeCast to Bounded.
-	 */
-	Bounded& get(NullType<Bounded>) {
-		return _picoModel;
+	// Bounded implementation
+	virtual const AABB& localAABB() const {
+		return _picoModel.localAABB();
 	}
 	
-	/**
-	 * InstanceTypeCast to Cullable.
-	 */
-	Cullable& get(NullType<Cullable>) {
-		return _picoModel;
+	// Cullable implementation
+	virtual VolumeIntersectionValue intersectVolume(
+		const VolumeTest& test, const Matrix4& localToWorld) const
+	{
+		return _picoModel.intersectVolume(test, localToWorld);
 	}
-
+	
 	// Lights changed function
 	void lightsChanged() {
 		_lightList.lightsChanged();

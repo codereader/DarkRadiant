@@ -198,6 +198,10 @@ public:
   {
     return m_model.getTraversable();
   }
+  const scene::Traversable& getTraversable() const
+  {
+    return m_model.getTraversable();
+  }
   Namespaced& getNamespaced()
   {
     return m_nameKeys;
@@ -214,7 +218,15 @@ public:
   {
     return m_transform;
   }
+  const TransformNode& getTransformNode() const
+  {
+    return m_transform;
+  } 
   ModelSkin& getModelSkin()
+  {
+    return m_skin.get();
+  }
+  const ModelSkin& getModelSkin() const
   {
     return m_skin.get();
   }
@@ -280,33 +292,17 @@ public:
   typedef MemberCaller<EclassModel, &EclassModel::transformChanged> TransformChangedCaller;
 };
 
-class EclassModelInstance : public TargetableInstance, public TransformModifier, public Renderable
+class EclassModelInstance : 
+	public TargetableInstance, 
+	public TransformModifier, 
+	public Renderable
 {
-  class TypeCasts
-  {
-    InstanceTypeCastTable m_casts;
-  public:
-    TypeCasts()
-    {
-      m_casts = TargetableInstance::StaticTypeCasts::instance().get();
-      InstanceStaticCast<EclassModelInstance, Renderable>::install(m_casts);
-      InstanceStaticCast<EclassModelInstance, Transformable>::install(m_casts);
-      InstanceIdentityCast<EclassModelInstance>::install(m_casts);
-    }
-    InstanceTypeCastTable& get()
-    {
-      return m_casts;
-    }
-  };
-
   EclassModel& m_contained;
 public:
-  typedef LazyStatic<TypeCasts> StaticTypeCasts;
-
   STRING_CONSTANT(Name, "EclassModelInstance");
 
   EclassModelInstance(const scene::Path& path, scene::Instance* parent, EclassModel& contained) :
-    TargetableInstance(path, parent, this, StaticTypeCasts::instance().get(), contained.getEntity(), *this),
+    TargetableInstance(path, parent, contained.getEntity(), *this),
     TransformModifier(EclassModel::TransformChangedCaller(contained), ApplyTransformCaller(*this)),
     m_contained(contained)
   {
@@ -351,28 +347,14 @@ class EclassModelNode :
   public scene::Instantiable,
   public scene::Cloneable,
   public scene::Traversable::Observer,
-  public Nameable
+  public Nameable,
+  public Snappable,
+  public TransformNode,
+  public scene::Traversable,
+  public EntityNode,
+  public Namespaced,
+  public ModelSkin
 {
-  class TypeCasts
-  {
-    NodeTypeCastTable m_casts;
-  public:
-    TypeCasts()
-    {
-      NodeContainedCast<EclassModelNode, scene::Traversable>::install(m_casts);
-      NodeContainedCast<EclassModelNode, Snappable>::install(m_casts);
-      NodeContainedCast<EclassModelNode, TransformNode>::install(m_casts);
-      NodeContainedCast<EclassModelNode, Entity>::install(m_casts);
-      NodeContainedCast<EclassModelNode, Namespaced>::install(m_casts);
-      NodeContainedCast<EclassModelNode, ModelSkin>::install(m_casts);
-    }
-    NodeTypeCastTable& get()
-    {
-      return m_casts;
-    }
-  };
-
-
   InstanceSet m_instances;
   EclassModel m_contained;
 
@@ -386,46 +368,70 @@ class EclassModelNode :
   }
 
 public:
-  typedef LazyStatic<TypeCasts> StaticTypeCasts;
+	// scene::Traversable Implementation
+	virtual void insert(Node& node) {
+		m_contained.getTraversable().insert(node);
+	}
+    virtual void erase(Node& node) {
+    	m_contained.getTraversable().erase(node);	
+    }
+    virtual void traverse(const Walker& walker) {
+    	m_contained.getTraversable().traverse(walker);
+    }
+    virtual bool empty() const {
+    	return m_contained.getTraversable().empty();
+    }
+  
+	// Snappable implementation
+	virtual void snapto(float snap) {
+		m_contained.snapto(snap);
+	}
 
-  scene::Traversable& get(NullType<scene::Traversable>)
-  {
-    return m_contained.getTraversable();
-  }
-  Snappable& get(NullType<Snappable>)
-  {
-    return m_contained;
-  }
-  TransformNode& get(NullType<TransformNode>)
-  {
-    return m_contained.getTransformNode();
-  }
-  Entity& get(NullType<Entity>)
-  {
-    return m_contained.getEntity();
-  }
-  Namespaced& get(NullType<Namespaced>)
-  {
-    return m_contained.getNamespaced();
-  }
-  ModelSkin& get(NullType<ModelSkin>)
-  {
-    return m_contained.getModelSkin();
-  }
+	// TransformNode implementation
+	virtual const Matrix4& localToParent() const {
+		return m_contained.getTransformNode().localToParent();
+	}
+
+	// EntityNode implementation
+	virtual Entity& getEntity() {
+		return m_contained.getEntity();
+	}
+
+	// Namespaced implementation
+	virtual void setNamespace(Namespace& space) {
+		m_contained.getNamespaced().setNamespace(space);
+	}
+
+	virtual void attach(ModuleObserver& observer) {
+		m_contained.getModelSkin().attach(observer);
+	}
+	
+	virtual void detach(ModuleObserver& observer) {
+		m_contained.getModelSkin().detach(observer);
+	}
+	
+	virtual std::string getRemap(const std::string& name) const {
+		return m_contained.getModelSkin().getRemap(name);
+	}
 
   EclassModelNode(IEntityClassPtr eclass) :
-    scene::Node(this, StaticTypeCasts::instance().get()),
     m_contained(eclass, *this, InstanceSet::TransformChangedCaller(m_instances), InstanceSetEvaluateTransform<EclassModelInstance>::Caller(m_instances))
   {
     construct();
   }
   
   EclassModelNode(const EclassModelNode& other) :
-    scene::Node(this, StaticTypeCasts::instance().get()),
+    scene::Node(other),
     scene::Instantiable(other),
     scene::Cloneable(other),
     scene::Traversable::Observer(other),
     Nameable(other),
+    Snappable(other),
+    TransformNode(other),
+    scene::Traversable(other),
+    EntityNode(other),
+    Namespaced(other),
+    ModelSkin(other),
     m_contained(other.m_contained, *this, InstanceSet::TransformChangedCaller(m_instances), InstanceSetEvaluateTransform<EclassModelInstance>::Caller(m_instances))
   {
     construct();
@@ -440,13 +446,14 @@ public:
     return *this;
   }
 
-  void insert(scene::Node& child)
+	// scene::Traversable::Observer implementation
+  void insertChild(scene::Node& child)
   {
-    m_instances.insert(child);
+    m_instances.insertChild(child);
   }
-  void erase(scene::Node& child)
+  void eraseChild(scene::Node& child)
   {
-    m_instances.erase(child);
+    m_instances.eraseChild(child);
   }
 
   scene::Node& clone() const

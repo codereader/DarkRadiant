@@ -283,6 +283,15 @@ public:
 	virtual void Patch_setShader(scene::Node& patch, const std::string& shader) const = 0;
 };
 
+class Patch;
+class IPatchNode
+{
+public:
+	/** greebo: Retrieves the actual patch from a PatchNode
+	 */
+	virtual Patch& getPatch() = 0;
+};
+
 // Module-related stuff
 
 #include "modulesystem.h"

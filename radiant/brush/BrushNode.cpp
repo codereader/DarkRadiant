@@ -4,7 +4,6 @@
 
 // Constructor
 BrushNode::BrushNode() :
-	scene::Node(this, StaticTypeCasts::instance().get()),
 	m_brush(*this, InstanceSetEvaluateTransform<BrushInstance>::Caller(m_instances), InstanceSet::BoundsChangedCaller(m_instances)),
 	m_mapImporter(m_brush),
 	m_mapExporter(m_brush)
@@ -12,38 +11,47 @@ BrushNode::BrushNode() :
 
 // Copy Constructor
 BrushNode::BrushNode(const BrushNode& other) :
-	scene::Node(this, StaticTypeCasts::instance().get()),
+	scene::Node(other),
 	scene::Instantiable(other),
 	scene::Cloneable(other),
 	Nameable(other),
+	Snappable(other),
+	TransformNode(other),
+	BrushDoom3(other),
+	MapImporter(other),
+	MapExporter(other),
+	IBrushNode(other),
 	m_brush(other.m_brush, *this, InstanceSetEvaluateTransform<BrushInstance>::Caller(m_instances), InstanceSet::BoundsChangedCaller(m_instances)),
 	m_mapImporter(m_brush),
 	m_mapExporter(m_brush)
 {}
 
-// Typecast functions
-Snappable& BrushNode::get(NullType<Snappable>)	{
+// MapImporter implementation
+bool BrushNode::importTokens(Tokeniser& tokeniser) {
+	return m_mapImporter.importTokens(tokeniser);
+}
+
+void BrushNode::exportTokens(std::ostream& os) const {
+	m_mapExporter.exportTokens(os);
+}
+
+// Snappable implementation
+void BrushNode::snapto(float snap) {
+	m_brush.snapto(snap);
+}
+
+// TransformNode implementation
+const Matrix4& BrushNode::localToParent() const {
+	return m_brush.localToParent();
+}
+
+// IBrushNode implementation
+Brush& BrushNode::getBrush() {
 	return m_brush;
 }
 
-TransformNode& BrushNode::get(NullType<TransformNode>) {
-	return m_brush;
-}
-
-Brush& BrushNode::get(NullType<Brush>)	{
-	return m_brush;
-}
-
-MapImporter& BrushNode::get(NullType<MapImporter>)	{
-	return m_mapImporter;
-}
-
-MapExporter& BrushNode::get(NullType<MapExporter>)	{
-	return m_mapExporter;
-}
-
-BrushDoom3& BrushNode::get(NullType<BrushDoom3>) {
-	return m_brush;
+void BrushNode::translateDoom3Brush(const Vector3& translation) {
+	m_brush.translateDoom3Brush(translation);
 }
 
 scene::Node& BrushNode::node() {

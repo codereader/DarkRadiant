@@ -100,7 +100,7 @@ public:
   void visit(scene::Instance& instance) const
   {
     //\todo don't do this for instances that are not children of the entity setting the skin
-    SkinnedModel* skinned = InstanceTypeCast<SkinnedModel>::cast(instance);
+    SkinnedModel* skinned = dynamic_cast<SkinnedModel*>(&instance);
     if(skinned != 0)
     {
       skinned->skinChanged();

@@ -99,7 +99,8 @@ class PatchDependencies :
 {
 };
 
-class PatchDoom3API : public TypeSystemRef {
+class PatchDoom3API
+{
 	PatchCreator* m_patchdoom3;
 public:
 	typedef PatchCreator Type;
@@ -125,7 +126,8 @@ typedef SingletonModule<PatchDoom3API, PatchDependencies> PatchDoom3Module;
 typedef Static<PatchDoom3Module> StaticPatchDoom3Module;
 StaticRegisterModule staticRegisterPatchDoom3(StaticPatchDoom3Module::instance());
 
-class PatchDef2Doom3API : public TypeSystemRef {
+class PatchDef2Doom3API
+{
 	PatchCreator* m_patchdef2doom3;
 public:
 	typedef PatchCreator Type;

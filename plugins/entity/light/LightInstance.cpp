@@ -7,7 +7,7 @@
 
 // Constructor
 LightInstance::LightInstance(const scene::Path& path, scene::Instance* parent, Light& contained) :
-	TargetableInstance(path, parent, this, StaticTypeCasts::instance().get(), contained.getEntity(), *this),
+	TargetableInstance(path, parent, contained.getEntity(), *this),
 	TransformModifier(Light::TransformChangedCaller(contained), ApplyTransformCaller(*this)),
 	_light(contained),
 	_lightCenterInstance(VertexInstance(_light.getDoom3Radius().m_centerTransformed, SelectedChangedComponentCaller(*this))),
@@ -41,8 +41,8 @@ LightInstance::~LightInstance() {
 	_light.instanceDetach(Instance::path());
 }
 
-Bounded& LightInstance::get(NullType<Bounded>) {
-	return _light;
+const AABB& LightInstance::localAABB() const {
+	return _light.localAABB();
 }
 
 void LightInstance::renderInactiveComponents(Renderer& renderer, const VolumeTest& volume, const bool selected) const {

@@ -5,7 +5,6 @@
 namespace entity {
 
 Doom3GroupNode::Doom3GroupNode(IEntityClassPtr eclass) :
-	scene::Node(this, StaticTypeCasts::instance().get()),
 	m_contained(
 		eclass,
 		*this,
@@ -18,12 +17,18 @@ Doom3GroupNode::Doom3GroupNode(IEntityClassPtr eclass) :
 }
 
 Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
-	scene::Node(this, StaticTypeCasts::instance().get()),
+	scene::Node(other),
 	scene::Instantiable(other),
 	scene::Cloneable(other),
 	scene::Traversable::Observer(other),
 	scene::GroupNode(other),
 	Nameable(other),
+	Snappable(other),
+	TransformNode(other),
+	scene::Traversable(other),
+	EntityNode(other),
+	Namespaced(other),
+	ModelSkin(other),
 	m_contained(
 		other.m_contained,
 		*this,
@@ -79,11 +84,11 @@ scene::Node& Doom3GroupNode::clone() const {
 	return (new Doom3GroupNode(*this))->node();
 }
 
-void Doom3GroupNode::insert(scene::Node& child) {
-	m_instances.insert(child);
+void Doom3GroupNode::insertChild(scene::Node& child) {
+	m_instances.insertChild(child);
 }
-void Doom3GroupNode::erase(scene::Node& child) {
-	m_instances.erase(child);
+void Doom3GroupNode::eraseChild(scene::Node& child) {
+	m_instances.eraseChild(child);
 }
 
 scene::Instance* Doom3GroupNode::create(const scene::Path& path, scene::Instance* parent) {
@@ -102,28 +107,50 @@ scene::Instance* Doom3GroupNode::erase(scene::Instantiable::Observer* observer, 
 	return m_instances.erase(observer, path);
 }
 
-scene::Traversable& Doom3GroupNode::get(NullType<scene::Traversable>) {
-	return m_contained.getTraversable();
+void Doom3GroupNode::insert(Node& node) {
+	m_contained.getTraversable().insert(node);
 }
 
-Snappable& Doom3GroupNode::get(NullType<Snappable>) {
-	return m_contained;
+void Doom3GroupNode::erase(Node& node) {
+	m_contained.getTraversable().erase(node);
 }
 
-TransformNode& Doom3GroupNode::get(NullType<TransformNode>) {
-	return m_contained.getTransformNode();
+void Doom3GroupNode::traverse(const Walker& walker) {
+	m_contained.getTraversable().traverse(walker);
 }
 
-Entity& Doom3GroupNode::get(NullType<Entity>) {
+bool Doom3GroupNode::empty() const {
+	return m_contained.getTraversable().empty();
+}
+
+// Snappable implementation
+void Doom3GroupNode::snapto(float snap) {
+	m_contained.snapto(snap);
+}
+
+// TransformNode implementation
+const Matrix4& Doom3GroupNode::localToParent() const {
+	return m_contained.getTransformNode().localToParent();
+}
+
+Entity& Doom3GroupNode::getEntity() {
 	return m_contained.getEntity();
 }
 
-Namespaced& Doom3GroupNode::get(NullType<Namespaced>) {
-	return m_contained.getNamespaced();
+void Doom3GroupNode::setNamespace(Namespace& space) {
+	m_contained.getNamespaced().setNamespace(space);
 }
 
-ModelSkin& Doom3GroupNode::get(NullType<ModelSkin>) {
-	return m_contained.getModelSkin();
+void Doom3GroupNode::attach(ModuleObserver& observer) {
+	m_contained.getModelSkin().attach(observer);
+}
+
+void Doom3GroupNode::detach(ModuleObserver& observer) {
+	m_contained.getModelSkin().detach(observer);
+}
+
+std::string Doom3GroupNode::getRemap(const std::string& name) const {
+	return m_contained.getModelSkin().getRemap(name);
 }
 
 } // namespace entity

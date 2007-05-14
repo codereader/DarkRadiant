@@ -16,7 +16,7 @@ void Doom3GroupOrigin::disable() {
 	m_enabled = false;
 }
 
-void Doom3GroupOrigin::insert(scene::Node& node) {
+void Doom3GroupOrigin::insertChild(scene::Node& node) {
 	if (m_enabled) {
 		// Substract the origin from the newly inserted brush
 		//translateDoom3Brush(node, -m_origin);
@@ -35,7 +35,7 @@ void Doom3GroupOrigin::removeOriginFromChildren() {
 	}
 }
 
-void Doom3GroupOrigin::erase(scene::Node& node) {
+void Doom3GroupOrigin::eraseChild(scene::Node& node) {
 	if (m_enabled) {
 		// Add the origin to the newly inserted brush
 		//translateDoom3Brush(node, m_origin);6

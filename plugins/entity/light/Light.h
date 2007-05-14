@@ -211,10 +211,12 @@ public:
 	const Doom3Entity& getEntity() const;
 
 	scene::Traversable& getTraversable();
+	const scene::Traversable& getTraversable() const;
 	Namespaced& getNamespaced();
 	NamedEntity& getNameable();
 	const NamedEntity& getNameable() const;
 	TransformNode& getTransformNode();
+	const TransformNode& getTransformNode() const;
 
 	void attach(scene::Traversable::Observer* observer);
 	void detach(scene::Traversable::Observer* observer);

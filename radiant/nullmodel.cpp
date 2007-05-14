@@ -90,41 +90,29 @@ public:
   }
 };
 
-class NullModelInstance : public scene::Instance, public Renderable, public SelectionTestable
+class NullModelInstance : 
+	public scene::Instance, 
+	public Renderable, 
+	public SelectionTestable,
+	public Bounded,
+	public Cullable
 {
-  class TypeCasts
-  {
-    InstanceTypeCastTable m_casts;
-  public:
-    TypeCasts()
-    {
-      InstanceContainedCast<NullModelInstance, Bounded>::install(m_casts);
-      InstanceContainedCast<NullModelInstance, Cullable>::install(m_casts);
-      InstanceStaticCast<NullModelInstance, Renderable>::install(m_casts);
-      InstanceStaticCast<NullModelInstance, SelectionTestable>::install(m_casts);
-    }
-    InstanceTypeCastTable& get()
-    {
-      return m_casts;
-    }
-  };
-
   NullModel& m_nullmodel;
 public:
-
-  typedef LazyStatic<TypeCasts> StaticTypeCasts;
-
-  Bounded& get(NullType<Bounded>)
-  {
-    return m_nullmodel;
-  }
-  Cullable& get(NullType<Cullable>)
-  {
-    return m_nullmodel;
-  }
+	// Bounded implementation
+	virtual const AABB& localAABB() const {
+		return m_nullmodel.localAABB();
+	}
+  
+  	// Cullable implementation
+	virtual VolumeIntersectionValue intersectVolume(
+		const VolumeTest& test, const Matrix4& localToWorld) const
+	{
+		return m_nullmodel.intersectVolume(test, localToWorld);
+	}
 
   NullModelInstance(const scene::Path& path, scene::Instance* parent, NullModel& nullmodel) :
-    Instance(path, parent, this, StaticTypeCasts::instance().get()),
+    Instance(path, parent),
     m_nullmodel(nullmodel)
   {
   }
@@ -148,28 +136,10 @@ class NullModelNode :
 	public scene::Node, 
 	public scene::Instantiable
 {
-  class TypeCasts
-  {
-    NodeTypeCastTable m_casts;
-  public:
-    TypeCasts()
-    {}
-    NodeTypeCastTable& get()
-    {
-      return m_casts;
-    }
-  };
-
-
   InstanceSet m_instances;
   NullModel m_nullmodel;
 public:
-
-  typedef LazyStatic<TypeCasts> StaticTypeCasts;
-
-  NullModelNode() : 
-  	scene::Node(this, StaticTypeCasts::instance().get())
-  {
+  NullModelNode() {
     m_isRoot = true;
   }
 

@@ -245,7 +245,8 @@ public:
 	}
 };
 
-class BrushTokenImporter : public MapImporter
+class BrushTokenImporter : 
+	public MapImporter
 {
   Brush& m_brush;
 

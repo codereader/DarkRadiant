@@ -136,6 +136,7 @@ public:
     m_type(TRANSFORM_PRIMITIVE)
   {
   }
+    
   void setType(TransformModifierType type)
   {
     m_type = type;

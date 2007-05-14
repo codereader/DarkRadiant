@@ -186,8 +186,7 @@ public:
   }
 };
 
-class Radiant : 
-	public TypeSystemRef
+class Radiant
 {
 	typedef boost::shared_ptr<PluginModulesRef> PluginModulesRefPtr;
 	PluginModulesRefPtr _plugins; 

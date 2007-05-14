@@ -47,35 +47,18 @@ class PicoModelNode :
 	public scene::Node, 
 	public scene::Instantiable
 {
-  class TypeCasts
-  {
-    NodeTypeCastTable m_casts;
-  public:
-    TypeCasts()
-    {}
-    NodeTypeCastTable& get()
-    {
-      return m_casts;
-    }
-  };
-
-
   InstanceSet m_instances;
 
 	// The actual model
 	model::RenderablePicoModel _picoModel;
 
 public:
-  typedef LazyStatic<TypeCasts> StaticTypeCasts;
-
   /** Construct a PicoModelNode with the parsed picoModel_t struct and the
    * provided file extension.
    */
-  PicoModelNode(picoModel_t* model, const std::string& ext)
-  : scene::Node(this, StaticTypeCasts::instance().get()), 
-    _picoModel(model, ext) // pass extension down to the PicoModel
-  {
-  }
+  PicoModelNode(picoModel_t* model, const std::string& ext) :  
+	_picoModel(model, ext) // pass extension down to the PicoModel
+  {}
 
   scene::Node& node()
   {

@@ -767,26 +767,23 @@ void ClipperMode() {
 	}
 }
 
-class SnappableSnapToGridSelected : public scene::Graph::Walker
+class SnappableSnapToGridSelected : 
+	public scene::Graph::Walker
 {
   float m_snap;
 public:
   SnappableSnapToGridSelected(float snap)
     : m_snap(snap)
-  {
-  }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
-  {
-    if(path.top().get().visible())
-    {
-      Snappable* snappable = Node_getSnappable(path.top());
-      if(snappable != 0
-        && Instance_getSelectable(instance)->isSelected())
-      {
-        snappable->snapto(m_snap);
-      }
-    }
-    return true;
+  {}
+  
+  bool pre(const scene::Path& path, scene::Instance& instance) const {
+	if(path.top().get().visible()) {
+		Snappable* snappable = Node_getSnappable(path.top());
+		if (snappable != NULL && Instance_getSelectable(instance)->isSelected()) {
+			snappable->snapto(m_snap);
+		}
+	}
+	return true;
   }
 };
 

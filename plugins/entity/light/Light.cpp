@@ -551,6 +551,9 @@ const Doom3Entity& Light::getEntity() const {
 scene::Traversable& Light::getTraversable() {
 	return m_traverse;
 }
+const scene::Traversable& Light::getTraversable() const {
+	return m_traverse;
+}
 Namespaced& Light::getNamespaced() {
 	return m_nameKeys;
 }
@@ -561,6 +564,9 @@ NamedEntity& Light::getNameable() {
 	return m_named;
 }
 TransformNode& Light::getTransformNode() {
+	return m_transform;
+}
+const TransformNode& Light::getTransformNode() const {
 	return m_transform;
 }
 

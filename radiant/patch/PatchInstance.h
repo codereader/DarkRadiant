@@ -29,30 +29,11 @@ class PatchInstance :
 	public ComponentEditable,
 	public ComponentSnappable,
 	public PlaneSelectable,
-	public LightCullable
+	public LightCullable,
+	public TransformModifier,
+	public Bounded,
+	public Cullable
 {
-	class TypeCasts {
-		InstanceTypeCastTable m_casts;
-	public:
-		TypeCasts() {
-			InstanceStaticCast<PatchInstance, Selectable>::install(m_casts);
-			InstanceContainedCast<PatchInstance, Bounded>::install(m_casts);
-			InstanceContainedCast<PatchInstance, Cullable>::install(m_casts);
-			InstanceStaticCast<PatchInstance, Renderable>::install(m_casts);
-			InstanceStaticCast<PatchInstance, SelectionTestable>::install(m_casts);
-			InstanceStaticCast<PatchInstance, ComponentSelectionTestable>::install(m_casts);
-			InstanceStaticCast<PatchInstance, ComponentEditable>::install(m_casts);
-			InstanceStaticCast<PatchInstance, ComponentSnappable>::install(m_casts);
-			InstanceStaticCast<PatchInstance, PlaneSelectable>::install(m_casts);
-			InstanceIdentityCast<PatchInstance>::install(m_casts);
-			InstanceContainedCast<PatchInstance, Transformable>::install(m_casts);
-		}
-		
-		InstanceTypeCastTable& get() {
-			return m_casts;
-		}
-	};
-
 	// The reference to the patch of this instance, the actual patch is "stored" in the PatchNode class
 	Patch& m_patch;
 	
@@ -74,12 +55,7 @@ class PatchInstance :
 	static ShaderPtr m_state_selpoint;
 
 	const LightList* m_lightList;
-
-	TransformModifier m_transform;
 public:
-
-	typedef LazyStatic<TypeCasts> StaticTypeCasts;
-
 	STRING_CONSTANT(Name, "PatchInstance");
 
 	// Constructor and Destructor
@@ -101,10 +77,11 @@ public:
 	// Return the contained patch of this instance
 	Patch& getPatch();
 	
-	// Casts the contained patch onto Bounded, Cullable and Transformable 
-	Bounded& get(NullType<Bounded>);	
-  	Cullable& get(NullType<Cullable>);
-  	Transformable& get(NullType<Transformable>);
+	// Cullable implementation
+	virtual VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const;
+	
+	// Bounded implementation
+	virtual const AABB& localAABB() const;
 
 	// Initialise/release the static member variables
 	static void constructStatic();

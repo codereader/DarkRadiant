@@ -119,37 +119,16 @@ public:
   }
 };
 
-class SelectableInstance : public scene::Instance
+class SelectableInstance : 
+	public scene::Instance,
+	public Selectable
 {
-  class TypeCasts
-  {
-    InstanceTypeCastTable m_casts;
-  public:
-    TypeCasts()
-    {
-      InstanceContainedCast<SelectableInstance, Selectable>::install(m_casts);
-    }
-    InstanceTypeCastTable& get()
-    {
-      return m_casts;
-    }
-  };
-
   ObservedSelectable m_selectable;
 public:
-
-  typedef LazyStatic<TypeCasts> StaticTypeCasts;
-
-  SelectableInstance(const scene::Path& path, scene::Instance* parent, void* instance = 0, InstanceTypeCastTable& casts = StaticTypeCasts::instance().get()) :
-  Instance(path, parent, instance != 0 ? instance : this, casts),
-    m_selectable(SelectedChangedCaller(*this))
-  {
-  }
-
-  Selectable& get(NullType<Selectable>)
-  {
-    return m_selectable;
-  }
+  SelectableInstance(const scene::Path& path, scene::Instance* parent) :
+	  Instance(path, parent),
+	  m_selectable(SelectedChangedCaller(*this))
+  {}
 
   Selectable& getSelectable()
   {
@@ -168,6 +147,20 @@ public:
     Instance::selectedChanged();
   }
   typedef MemberCaller1<SelectableInstance, const Selectable&, &SelectableInstance::selectedChanged> SelectedChangedCaller;
+  
+	/** greebo: Selectable implementation
+	 */
+	virtual void setSelected(bool select) {
+		m_selectable.setSelected(select);
+	}
+	
+	virtual bool isSelected() const {
+		return m_selectable.isSelected();
+	}
+	
+	virtual void invertSelected() {
+		m_selectable.invertSelected();
+	}
 };
 
 

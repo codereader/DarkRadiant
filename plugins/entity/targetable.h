@@ -299,12 +299,10 @@ public:
   TargetableInstance(
     const scene::Path& path,
     scene::Instance* parent,
-    void* instance,
-    InstanceTypeCastTable& casts,
     Doom3Entity& entity,
     Targetable& targetable
   ) :
-    SelectableInstance(path, parent, instance, casts),
+    SelectableInstance(path, parent),
     m_entity(entity),
     m_targeted(targetable),
     m_renderable(m_targeting.get())
@@ -366,7 +364,8 @@ public:
 };
 
 
-class RenderableConnectionLines : public Renderable
+class RenderableConnectionLines : 
+	public Renderable
 {
   typedef std::set<TargetableInstance*> TargetableInstances;
   TargetableInstances m_instances;

@@ -1,8 +1,7 @@
 #ifndef OBJECTIVEENTITYFINDER_H_
 #define OBJECTIVEENTITYFINDER_H_
 
-#include "iscenegraph.h"
-#include "ientity.h"
+#include "scenelib.h"
 
 #include <string>
 

@@ -102,6 +102,10 @@ public:
   {
     return m_traverse;
   }
+  const scene::Traversable& getTraversable() const
+  {
+    return m_traverse;
+  }
 
   void modelChanged(const char* value)
   {

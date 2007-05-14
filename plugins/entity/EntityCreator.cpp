@@ -19,7 +19,7 @@ namespace entity {
 	
 	namespace {
 		inline Namespaced* Node_getNamespaced(scene::Node& node) {
-			return NodeTypeCast<Namespaced>::cast(node);
+			return dynamic_cast<Namespaced*>(&node);
 		}
 		
 		void Entity_setName(Entity& entity, const char* name) {
