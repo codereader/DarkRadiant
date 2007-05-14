@@ -37,7 +37,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "light.h"
 #include "eclassmodel.h"
-#include "generic.h"
 #include "doom3group.h"
 
 // Initialise the static variables of the entitylibraries (we're in a module here)
