@@ -39,9 +39,8 @@ public:
   virtual const Matrix4& getLocalPivot() const = 0;
 };
 
-inline Editable* Node_getEditable(scene::Node& node)
-{
-  return NodeTypeCast<Editable>::cast(node);
+inline Editable* Node_getEditable(scene::Node& node) {
+	return dynamic_cast<Editable*>(&node);
 }
 
 class Snappable
@@ -52,9 +51,8 @@ public:
   virtual void snapto(float snap) = 0;
 };
 
-inline Snappable* Node_getSnappable(scene::Node& node)
-{
-  return NodeTypeCast<Snappable>::cast(node);
+inline Snappable* Node_getSnappable(scene::Node& node) {
+	return dynamic_cast<Snappable*>(&node);
 }
 
 #endif

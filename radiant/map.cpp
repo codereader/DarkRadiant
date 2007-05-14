@@ -247,9 +247,8 @@ StaticRegisterModule staticRegisterDefaultNamespace(StaticNamespaceModule::insta
 
 std::list<Namespaced*> g_cloned;
 
-inline Namespaced* Node_getNamespaced(scene::Node& node)
-{
-  return NodeTypeCast<Namespaced>::cast(node);
+inline Namespaced* Node_getNamespaced(scene::Node& node) {
+	return dynamic_cast<Namespaced*>(&node);
 }
 
 void Node_gatherNamespaced(scene::Node& node)
@@ -868,35 +867,27 @@ public:
 };
 
 class BasicContainer : 
-	public scene::Node
+	public scene::Node,
+	public scene::Traversable
 {
-  class TypeCasts
-  {
-    NodeTypeCastTable m_casts;
-  public:
-    TypeCasts()
-    {
-      NodeContainedCast<BasicContainer, scene::Traversable>::install(m_casts);
-    }
-    NodeTypeCastTable& get()
-    {
-      return m_casts;
-    }
-  };
-
-  TraversableNodeSet m_traverse;
+	TraversableNodeSet m_traverse;
 public:
+	// scene::Traversable Implementation
+	virtual void insert(Node& node) {
+		m_traverse.insert(node);
+	}
+    virtual void erase(Node& node) {
+    	m_traverse.erase(node);	
+    }
+    virtual void traverse(const Walker& walker) {
+    	m_traverse.traverse(walker);
+    }
+    virtual bool empty() const {
+    	return m_traverse.empty();
+    }
 
-  typedef LazyStatic<TypeCasts> StaticTypeCasts;
-
-  scene::Traversable& get(NullType<scene::Traversable>)
-  {
-    return m_traverse;
-  }
-
-  BasicContainer() : 
-  	scene::Node(this, StaticTypeCasts::instance().get())
-  {}
+	BasicContainer()
+	{}
   
   scene::Node& node()
   {

@@ -43,7 +43,6 @@ typedef unsigned char byte;
 #include "stream/textstream.h"
 #include "string/string.h"
 #include "stream/stringstream.h"
-#include "typesystem.h"
 
 #include "model.h"
 
@@ -135,7 +134,7 @@ class ModelPicoDependencies :
 {
 };
 
-class ModelPicoAPI : public TypeSystemRef
+class ModelPicoAPI
 {
   PicoModelLoader m_modelLoader;
 public:

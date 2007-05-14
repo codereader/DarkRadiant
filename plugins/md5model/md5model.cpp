@@ -33,7 +33,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iscriplib.h"
 
 #include "modulesystem/singletonmodule.h"
-#include "typesystem.h"
 
 #include "md5.h"
 
@@ -64,7 +63,7 @@ class ModelMD5Dependencies : public ModelDependencies, public GlobalScripLibModu
 {
 };
 
-class ModelMD5API : public TypeSystemRef
+class ModelMD5API
 {
   MD5ModelLoader m_modelmd5;
 public:

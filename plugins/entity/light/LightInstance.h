@@ -31,30 +31,9 @@ class LightInstance :
 	public ComponentSelectionTestable,
 	public ComponentEditable,
 	public ComponentSnappable,
-	public scene::LightInstance
+	public scene::LightInstance,
+	public Bounded
 {
-	class TypeCasts {
-		InstanceTypeCastTable m_casts;
-	public:
-		TypeCasts() {
-			m_casts = TargetableInstance::StaticTypeCasts::instance().get();
-			InstanceContainedCast<LightInstance, Bounded>::install(m_casts);
-			//InstanceContainedCast<LightInstance, Cullable>::install(m_casts);
-			InstanceStaticCast<LightInstance, Renderable>::install(m_casts);
-			InstanceStaticCast<LightInstance, SelectionTestable>::install(m_casts);
-			InstanceStaticCast<LightInstance, Transformable>::install(m_casts);
-			InstanceStaticCast<LightInstance, PlaneSelectable>::install(m_casts);
-			InstanceStaticCast<LightInstance, ComponentSelectionTestable>::install(m_casts);
-			InstanceStaticCast<LightInstance, ComponentSnappable>::install(m_casts);
-			InstanceStaticCast<LightInstance, scene::LightInstance>::install(m_casts);
-			InstanceIdentityCast<LightInstance>::install(m_casts);
-		}
-		
-		InstanceTypeCastTable& get() {
-			return m_casts;
-		}
-	};
-
 	// The reference to the light class (owned by LightNode)
 	Light& _light;
 	
@@ -75,9 +54,8 @@ class LightInstance :
 public:
 	STRING_CONSTANT(Name, "LightInstance");
 	
-	typedef LazyStatic<TypeCasts> StaticTypeCasts;
-
-	Bounded& get(NullType<Bounded>);
+	// Bounded implementation
+	virtual const AABB& localAABB() const;
 
 	LightInstance(const scene::Path& path, scene::Instance* parent, Light& contained);	
 	~LightInstance();

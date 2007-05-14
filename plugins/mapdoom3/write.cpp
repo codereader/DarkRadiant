@@ -43,9 +43,8 @@ brushDef3\n\
 }\n\
 }\n";
 
-inline MapExporter* Node_getMapExporter(scene::Node& node)
-{
-  return NodeTypeCast<MapExporter>::cast(node);
+inline MapExporter* Node_getMapExporter(scene::Node& node) {
+	return dynamic_cast<MapExporter*>(&node);
 }
 
 /* Export all of the keyvalues from the given entity, and write them

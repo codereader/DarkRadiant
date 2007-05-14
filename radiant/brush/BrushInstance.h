@@ -18,39 +18,20 @@ public:
 };
 
 class BrushInstance :
-		public BrushObserver,
-		public scene::Instance,
-		public Selectable,
-		public Renderable,
-		public SelectionTestable,
-		public ComponentSelectionTestable,
-		public ComponentEditable,
-		public ComponentSnappable,
-		public PlaneSelectable,
-		public LightCullable
+	public BrushObserver,
+	public scene::Instance,
+	public Selectable,
+	public Renderable,
+	public SelectionTestable,
+	public ComponentSelectionTestable,
+	public ComponentEditable,
+	public ComponentSnappable,
+	public PlaneSelectable,
+	public LightCullable,
+	public TransformModifier,	// inherits from Transformable
+	public Bounded,
+	public Cullable
 {
-	class TypeCasts {
-		InstanceTypeCastTable m_casts;
-	public:
-		TypeCasts() {
-			InstanceStaticCast<BrushInstance, Selectable>::install(m_casts);
-			InstanceContainedCast<BrushInstance, Bounded>::install(m_casts);
-			InstanceContainedCast<BrushInstance, Cullable>::install(m_casts);
-			InstanceStaticCast<BrushInstance, Renderable>::install(m_casts);
-			InstanceStaticCast<BrushInstance, SelectionTestable>::install(m_casts);
-			InstanceStaticCast<BrushInstance, ComponentSelectionTestable>::install(m_casts);
-			InstanceStaticCast<BrushInstance, ComponentEditable>::install(m_casts);
-			InstanceStaticCast<BrushInstance, ComponentSnappable>::install(m_casts);
-			InstanceStaticCast<BrushInstance, PlaneSelectable>::install(m_casts);
-			InstanceIdentityCast<BrushInstance>::install(m_casts);
-			InstanceContainedCast<BrushInstance, Transformable>::install(m_casts);
-		}
-		InstanceTypeCastTable& get() {
-			return m_casts;
-		}
-	};
-
-
 	Brush& m_brush;
 
 	FaceInstances m_faceInstances;
@@ -75,14 +56,10 @@ class BrushInstance :
 
 	const LightList* m_lightList;
 
-	TransformModifier m_transform;
-
 	BrushInstance(const BrushInstance& other); // NOT COPYABLE
 	BrushInstance& operator=(const BrushInstance& other); // NOT ASSIGNABLE
 public:
 	static Counter* m_counter;
-
-	typedef LazyStatic<TypeCasts> StaticTypeCasts;
 
 	void lightsChanged();
 	typedef MemberCaller<BrushInstance, &BrushInstance::lightsChanged> LightsChangedCaller;
@@ -95,9 +72,11 @@ public:
 	Brush& getBrush();
 	const Brush& getBrush() const;
 
-	Bounded& get(NullType<Bounded>);
-	Cullable& get(NullType<Cullable>);
-	Transformable& get(NullType<Transformable>);
+	// Bounded implementation
+	virtual const AABB& localAABB() const;
+
+	// Cullable implementation
+	virtual VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const;
 
 	void selectedChanged(const Selectable& selectable);
 	typedef MemberCaller1<BrushInstance, const Selectable&, &BrushInstance::selectedChanged> SelectedChangedCaller;
@@ -174,7 +153,7 @@ public:
 };
 
 inline BrushInstance* Instance_getBrush(scene::Instance& instance) {
-	return InstanceTypeCast<BrushInstance>::cast(instance);
+	return dynamic_cast<BrushInstance*>(&instance);
 }
 
 #endif /*BRUSHINSTANCE_H_*/

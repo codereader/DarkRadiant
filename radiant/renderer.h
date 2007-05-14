@@ -32,9 +32,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "scenelib.h"
 #include "math/frustum.h"
 
-inline Renderable* Instance_getRenderable(scene::Instance& instance)
-{
-  return InstanceTypeCast<Renderable>::cast(instance);
+inline Renderable* Instance_getRenderable(scene::Instance& instance) {
+	return dynamic_cast<Renderable*>(&instance);
 }
 
 /**
@@ -53,8 +52,8 @@ VolumeIntersectionValue Cullable_testVisible(scene::Instance& instance,
 		
 		// Parent has partial visibility, so test this Instance and return
 		// its result
-		Cullable* cullable = InstanceTypeCast<Cullable>::cast(instance);
-		if(cullable != 0) {
+		Cullable* cullable = dynamic_cast<Cullable*>(&instance);
+		if (cullable != NULL) {
 			return cullable->intersectVolume(volume, instance.localToWorld());
 		}
 	}

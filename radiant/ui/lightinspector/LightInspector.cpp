@@ -7,6 +7,7 @@
 #include "iregistry.h"
 #include "iundo.h"
 
+#include "scenelib.h"
 #include "mainframe.h"
 #include "gtkutil/TransientWindow.h"
 #include "gtkutil/IconTextButton.h"
@@ -296,7 +297,7 @@ void LightInspector::update() {
 	
 	if (s.countSelected() == 1) {
 		// Check the EntityClass to ensure it is a light
-		Entity* e = NodeTypeCast<Entity>::cast(s.ultimateSelected().path().top());
+		Entity* e = Node_getEntity(s.ultimateSelected().path().top());
 		
 		if (e != NULL && e->getEntityClass()->isLight()) {
 			// Exactly one light found, set the entity pointer

@@ -14,26 +14,14 @@ class PatchNode :
 	public scene::Node,
 	public scene::Instantiable,
 	public scene::Cloneable,
-	public Nameable
+	public Nameable,
+	public Snappable,
+	public TransformNode,
+	public MapImporter,
+	public MapExporter,
+	public IPatchNode
 {
 	typedef PatchNode<TokenImporter, TokenExporter> Self;
-
-	class TypeCasts	{
-		InstanceTypeCastTable m_casts;
-	public:
-		// Constructor
-		TypeCasts() {
-			NodeContainedCast<PatchNode, Snappable>::install(m_casts);
-			NodeContainedCast<PatchNode, TransformNode>::install(m_casts);
-			NodeContainedCast<PatchNode, Patch>::install(m_casts);
-			NodeContainedCast<PatchNode, MapImporter>::install(m_casts);
-			NodeContainedCast<PatchNode, MapExporter>::install(m_casts);
-		}
-    	
-    	InstanceTypeCastTable& get() {
-			return m_casts;
-		}
-	}; // class Typecasts
 
 	InstanceSet m_instances;
 	Patch m_patch;
@@ -41,32 +29,36 @@ class PatchNode :
 	TokenExporter m_exportMap;
 
 public:
-
-	typedef LazyStatic<TypeCasts> StaticTypeCasts;
-
 	std::string name() const {
 		return "Patch";
 	}
 
-	// Get the Snappable or TransformNode of the patch
-	Snappable& get(NullType<Snappable>) {
+	virtual Patch& getPatch() {
 		return m_patch;
-	}	
-	TransformNode& get(NullType<TransformNode>) {
-		return m_patch;
+	}
+
+	// Snappable implementation
+	virtual void snapto(float snap) {
+		m_patch.snapto(snap);
+	}
+
+	// TransformNode implementation
+	virtual const Matrix4& localToParent() const {
+		return m_patch.localToParent();
 	}	
   
-	// "Casts" to MapImporter/MapExporter
-	MapImporter& get(NullType<MapImporter>) {
-		return m_importMap;
+  	// MapImporter implementation
+	virtual bool importTokens(Tokeniser& tokeniser) {
+		return m_importMap.importTokens(tokeniser);
 	}
-	MapExporter& get(NullType<MapExporter>) {
-		return m_exportMap;
+	
+	// MapExporter implementation
+	virtual void exportTokens(std::ostream& os) const {
+		m_exportMap.exportTokens(os);
 	}
 	
 	// Construct a PatchNode with no arguments
 	PatchNode(bool patchDef3 = false) :
-		scene::Node(this, StaticTypeCasts::instance().get()),
 		m_patch(*this, InstanceSetEvaluateTransform<PatchInstance>::Caller(m_instances), 
 				InstanceSet::BoundsChangedCaller(m_instances)), // create the m_patch member with the node parameters
 		m_importMap(m_patch),
@@ -77,10 +69,15 @@ public:
   
 	// Copy Constructor
 	PatchNode(const PatchNode& other) :
-		scene::Node(this, StaticTypeCasts::instance().get()),
+		scene::Node(other),
 		scene::Instantiable(other),
 		scene::Cloneable(other),
 		Nameable(other),
+		Snappable(other),
+		TransformNode(other),
+		MapImporter(other),
+		MapExporter(other),
+		IPatchNode(other),
 		m_patch(other.m_patch, *this, InstanceSetEvaluateTransform<PatchInstance>::Caller(m_instances), 
 			    InstanceSet::BoundsChangedCaller(m_instances)), // create the patch out of the <other> one
 		m_importMap(m_patch),
@@ -98,10 +95,6 @@ public:
 		return m_patch;
 	}
 	const Patch& get() const {
-		return m_patch;
-	}
-	// "Casts" the Patch
-	Patch& get(NullType<Patch>) {
 		return m_patch;
 	}
 

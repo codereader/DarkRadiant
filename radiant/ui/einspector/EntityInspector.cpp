@@ -7,6 +7,7 @@
 #include "iselection.h"
 #include "iregistry.h"
 
+#include "scenelib.h"
 #include "gtkutil/image.h"
 #include "gtkutil/dialog.h"
 #include "gtkutil/StockIconMenuItem.h"

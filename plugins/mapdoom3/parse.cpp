@@ -39,9 +39,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/ModalProgressDialog.h"
 #include "gtkutil/dialog.h"
 
-inline MapImporter* Node_getMapImporter(scene::Node& node)
-{
-  return NodeTypeCast<MapImporter>::cast(node);
+inline MapImporter* Node_getMapImporter(scene::Node& node) {
+	return dynamic_cast<MapImporter*>(&node);
 }
 
 

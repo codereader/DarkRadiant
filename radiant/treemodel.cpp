@@ -1076,7 +1076,7 @@ namespace
 class NullInstance : public scene::Instance
 {
 public:
-  NullInstance() : scene::Instance(scene::Path(makeReference(*g_null_node)), 0, 0, Static<InstanceTypeCastTable>::instance())
+  NullInstance() : scene::Instance(scene::Path(makeReference(*g_null_node)), 0)
   {
   }
 };

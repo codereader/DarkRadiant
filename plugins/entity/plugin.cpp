@@ -39,8 +39,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "namespace.h"
 #include "modelskin.h"
 
-#include "typesystem.h"
-
 #include "entity.h"
 #include "EntityCreator.h"
 
@@ -62,8 +60,7 @@ class EntityDependencies :
 	public GlobalGridModuleRef 
 {};
 
-class EntityDoom3API : 
-	public TypeSystemRef
+class EntityDoom3API
 {
 	typedef boost::shared_ptr<entity::Doom3EntityCreator> EntityCreatorPtr;
 	EntityCreatorPtr _entitydoom3;

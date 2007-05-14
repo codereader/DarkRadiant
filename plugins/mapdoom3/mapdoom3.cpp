@@ -76,8 +76,7 @@ public:
 };
 
 class MapDoom3API 
-: public TypeSystemRef, 
-  public MapFormat, 
+: public MapFormat, 
   public PrimitiveParser
 {
   	MapDoom3Dependencies& m_dependencies;

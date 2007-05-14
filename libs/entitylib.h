@@ -808,6 +808,17 @@ namespace std
   }
 }
 
+/**
+ * Stream insertion for Entity objects.
+ */
+inline std::ostream& operator<< (std::ostream& os, const Entity& entity) {
+	os << "Entity { name=\"" << entity.getKeyValue("name") << "\", "
+	   << "classname=\"" << entity.getKeyValue("classname") << "\", "
+	   << "origin=\"" << entity.getKeyValue("origin") << "\" }";
+	
+	return os;	
+}
+
 /** Walker to locate an Entity in the scenegraph with a specific classname.
  */
 class EntityFindByClassnameWalker : 

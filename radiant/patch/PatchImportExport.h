@@ -134,7 +134,8 @@ inline bool Patch_importFooter(Patch& patch, Tokeniser& tokeniser)
   return true;
 }
 
-class PatchTokenImporter : public MapImporter
+class PatchTokenImporter : 
+	public MapImporter
 {
   Patch& m_patch;
 public:

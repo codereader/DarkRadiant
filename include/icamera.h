@@ -49,7 +49,7 @@ public:
 };
 
 inline CameraModel* Instance_getCameraModel(scene::Instance& instance) {
-	return InstanceTypeCast<CameraModel>::cast(instance);
+	return dynamic_cast<CameraModel*>(&instance);
 }
 
 template<typename Element> class BasicVector3;

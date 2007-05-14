@@ -2,8 +2,7 @@
 #include "ObjectiveKeyExtractor.h"
 #include "TargetList.h"
 
-#include "ientity.h"
-#include "iscenegraph.h"
+#include "scenelib.h"
 
 #include <boost/lexical_cast.hpp>
 

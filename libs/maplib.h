@@ -128,24 +128,11 @@ class MapRoot :
 	public scene::Node, 
 	public scene::Instantiable, 
 	public scene::Traversable::Observer,
-	public Nameable
+	public Nameable,
+	public TransformNode,
+	public MapFile,
+	public scene::Traversable
 {
-  class TypeCasts
-  {
-    NodeTypeCastTable m_casts;
-  public:
-    TypeCasts()
-    {
-      NodeContainedCast<MapRoot, scene::Traversable>::install(m_casts);
-      NodeContainedCast<MapRoot, TransformNode>::install(m_casts);
-      NodeContainedCast<MapRoot, MapFile>::install(m_casts);
-    }
-    NodeTypeCastTable& get()
-    {
-      return m_casts;
-    }
-  };
-
   IdentityTransform m_transform;
   TraversableNodeSet m_traverse;
   InstanceSet m_instances;
@@ -153,23 +140,43 @@ class MapRoot :
 	std::string _name;
   UndoFileChangeTracker m_changeTracker;
 public:
-  typedef LazyStatic<TypeCasts> StaticTypeCasts;
-
-  scene::Traversable& get(NullType<scene::Traversable>)
-  {
-    return m_traverse;
-  }
-  TransformNode& get(NullType<TransformNode>)
-  {
-    return m_transform;
-  }
-  MapFile& get(NullType<MapFile>)
-  {
-    return m_changeTracker;
-  }
+  	// scene::Traversable Implementation
+	virtual void insert(Node& node) {
+		m_traverse.insert(node);
+	}
+    virtual void erase(Node& node) {
+    	m_traverse.erase(node);	
+    }
+    virtual void traverse(const Walker& walker) {
+    	m_traverse.traverse(walker);
+    }
+    virtual bool empty() const {
+    	return m_traverse.empty();
+    }
+	
+	// TransformNode implementation
+	virtual const Matrix4& localToParent() const {
+		return m_transform.localToParent();
+	}
+  
+	// MapFile implementation
+	virtual void save() {
+		m_changeTracker.save();
+	}
+	virtual bool saved() const {
+		return m_changeTracker.saved();
+	}
+	virtual void changed() {
+		m_changeTracker.changed();
+	}
+	virtual void setChangedCallback(const Callback& changed) {
+		m_changeTracker.setChangedCallback(changed);
+	}
+	virtual std::size_t changes() const {
+		return m_changeTracker.changes();
+	}
 
 	MapRoot(const char* name) : 
-		scene::Node(this, StaticTypeCasts::instance().get()), 
 		_name(name)
 	{
 		m_isRoot = true;
@@ -219,13 +226,14 @@ public:
     }
   }
 
-  void insert(scene::Node& child)
+	// scene::Traversable::Observer implementation
+  void insertChild(scene::Node& child)
   {
-    m_instances.insert(child);
+    m_instances.insertChild(child);
   }
-  void erase(scene::Node& child)
+  void eraseChild(scene::Node& child)
   {
-    m_instances.erase(child);
+    m_instances.eraseChild(child);
   }
 
   scene::Node& clone() const

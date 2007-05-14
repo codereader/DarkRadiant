@@ -8,6 +8,7 @@
 #include "iradiant.h"
 #include "iundo.h"
 
+#include "scenelib.h"
 #include "gtkutil/image.h"
 #include "generic/callback.h"
 #include "StimResponseEditor.h" 
@@ -72,7 +73,6 @@ class StimResponseDependencies :
 	public GlobalRadiantModuleRef,
 	public GlobalSelectionModuleRef,
 	public GlobalSceneGraphModuleRef,
-	public TypeSystemRef,
 	public GlobalEntityClassManagerModuleRef,
 	public GlobalUndoModuleRef
 { 

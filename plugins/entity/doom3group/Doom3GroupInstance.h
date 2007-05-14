@@ -13,42 +13,22 @@ class Doom3GroupInstance :
 	public SelectionTestable,
 	public ComponentSelectionTestable,
 	public ComponentEditable,
-	public ComponentSnappable
+	public ComponentSnappable,
+	public Bounded
 {
-	class TypeCasts {
-		InstanceTypeCastTable m_casts;
-	public:
-		TypeCasts() {
-			m_casts = TargetableInstance::StaticTypeCasts::instance().get();
-			InstanceContainedCast<Doom3GroupInstance, Bounded>::install(m_casts);
-			InstanceStaticCast<Doom3GroupInstance, Renderable>::install(m_casts);
-			InstanceStaticCast<Doom3GroupInstance, SelectionTestable>::install(m_casts);
-			InstanceStaticCast<Doom3GroupInstance, ComponentSelectionTestable>::install(m_casts);
-			InstanceStaticCast<Doom3GroupInstance, ComponentEditable>::install(m_casts);
-			InstanceStaticCast<Doom3GroupInstance, ComponentSnappable>::install(m_casts);
-			InstanceStaticCast<Doom3GroupInstance, Transformable>::install(m_casts);
-			InstanceIdentityCast<Doom3GroupInstance>::install(m_casts);
-		}
-		InstanceTypeCastTable& get() {
-			return m_casts;
-		}
-	};
-
 	Doom3Group& m_contained;
 	CurveEdit m_curveNURBS;
 	CurveEdit m_curveCatmullRom;
 	mutable AABB m_aabb_component;
 
 public:
-
-	typedef LazyStatic<TypeCasts> StaticTypeCasts;
-
 	STRING_CONSTANT(Name, "Doom3GroupInstance");
 
 	Doom3GroupInstance(const scene::Path& path, scene::Instance* parent, Doom3Group& contained);
 	~Doom3GroupInstance();
 
-	Bounded& get(NullType<Bounded>);
+	// Bounded implementation
+	virtual const AABB& localAABB() const;
 	
 	void renderSolid(Renderer& renderer, const VolumeTest& volume) const;
 	void renderWireframe(Renderer& renderer, const VolumeTest& volume) const;

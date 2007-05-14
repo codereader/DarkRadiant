@@ -1,15 +1,17 @@
 #include "BrushInstance.h"
 
 #include "ifilter.h"
+#include "math/frustum.h"
 
 BrushInstance::BrushInstance(const scene::Path& path, scene::Instance* parent, Brush& brush) :
-		Instance(path, parent, this, StaticTypeCasts::instance().get()),
-		m_brush(brush),
-		m_selectable(SelectedChangedCaller(*this)),
-		m_render_selected(GL_POINTS),
-		m_render_faces_wireframe(m_faceCentroidPointsCulled, GL_POINTS),
-		m_viewChanged(false),
-		m_transform(Brush::TransformChangedCaller(m_brush), ApplyTransformCaller(*this)) {
+	Instance(path, parent),
+	TransformModifier(Brush::TransformChangedCaller(brush), ApplyTransformCaller(*this)),
+	m_brush(brush),
+	m_selectable(SelectedChangedCaller(*this)),
+	m_render_selected(GL_POINTS),
+	m_render_faces_wireframe(m_faceCentroidPointsCulled, GL_POINTS),
+	m_viewChanged(false)
+{
 	m_brush.instanceAttach(Instance::path());
 	m_brush.attach(*this);
 	m_counter->increment();
@@ -42,14 +44,14 @@ const Brush& BrushInstance::getBrush() const {
 	return m_brush;
 }
 
-Bounded& BrushInstance::get(NullType<Bounded>) {
-	return m_brush;
+const AABB& BrushInstance::localAABB() const {
+	return m_brush.localAABB();
 }
-Cullable& BrushInstance::get(NullType<Cullable>) {
-	return m_brush;
-}
-Transformable& BrushInstance::get(NullType<Transformable>) {
-	return m_transform;
+
+VolumeIntersectionValue BrushInstance::intersectVolume(
+	const VolumeTest& test, const Matrix4& localToWorld) const
+{
+	return m_brush.intersectVolume(test, localToWorld);
 }
 
 void BrushInstance::selectedChanged(const Selectable& selectable) {
@@ -390,10 +392,10 @@ void BrushInstance::snapComponents(float snap) {
 }
 
 void BrushInstance::evaluateTransform() {
-	Matrix4 matrix(m_transform.calculateTransform());
+	Matrix4 matrix(calculateTransform());
 	//globalOutputStream() << "matrix: " << matrix << "\n";
 
-	if (m_transform.getType() == TRANSFORM_PRIMITIVE) {
+	if (getType() == TRANSFORM_PRIMITIVE) {
 		m_brush.transform(matrix);
 	}
 	else {

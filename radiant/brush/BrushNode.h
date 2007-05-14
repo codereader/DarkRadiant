@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_BRUSHNODE_H
 
 #include "instancelib.h"
+#include "TexDef.h"
+#include "ibrush.h"
 #include "brushtokens.h"
 #include "nameable.h"
 
@@ -30,27 +32,14 @@ class BrushNode :
 	public scene::Node,
 	public scene::Instantiable,
 	public scene::Cloneable,
-	public Nameable
+	public Nameable,
+	public Snappable,
+	public TransformNode,
+	public BrushDoom3,
+	public MapImporter,
+	public MapExporter,
+	public IBrushNode
 {
-	
-	// The typecast class (needed to cast this node onto other types)
-	class TypeCasts {
-		NodeTypeCastTable m_casts;
-	public:
-		TypeCasts() {
-			NodeContainedCast<BrushNode, Snappable>::install(m_casts);
-			NodeContainedCast<BrushNode, TransformNode>::install(m_casts);
-			NodeContainedCast<BrushNode, Brush>::install(m_casts);
-			NodeContainedCast<BrushNode, MapImporter>::install(m_casts);
-			NodeContainedCast<BrushNode, MapExporter>::install(m_casts);
-			NodeContainedCast<BrushNode, BrushDoom3>::install(m_casts);
-		}
-		
-		NodeTypeCastTable& get() {
-			return m_casts;
-		}
-	};
-
 	// The instances of this node
 	InstanceSet m_instances;
 	
@@ -69,19 +58,26 @@ public:
 	// Copy Constructor
 	BrushNode(const BrushNode& other);
 
-	typedef LazyStatic<TypeCasts> StaticTypeCasts;
-	
-	// greebo: Returns the casted types of this node
-	Snappable& get(NullType<Snappable>);
-	TransformNode& get(NullType<TransformNode>);
-	Brush& get(NullType<Brush>);
-	MapImporter& get(NullType<MapImporter>);
-	MapExporter& get(NullType<MapExporter>);
-	BrushDoom3& get(NullType<BrushDoom3>);
+	// IBrushNode implementtation
+	virtual Brush& getBrush();
 	
 	std::string name() const {
 		return "Brush";
 	}
+	
+	// MapImporter implementation
+	virtual bool importTokens(Tokeniser& tokeniser);
+	// MapExporter implementation
+	virtual void exportTokens(std::ostream& os) const;
+	
+	// TransformNode implementation
+	virtual const Matrix4& localToParent() const;
+
+	// Snappable implementation
+	virtual void snapto(float snap);
+
+	// BrushDoom3 implementation
+	virtual void translateDoom3Brush(const Vector3& translation);
 
 	// Returns the actual scene node
 	scene::Node& node();
@@ -100,9 +96,13 @@ public:
 	
 }; // class BrushNode
 
-// Casts the node onto a Brush and returns the pointer to it
+// Casts the node onto a BrushNode and returns the Brush pointer
 inline Brush* Node_getBrush(scene::Node& node) {
-	return NodeTypeCast<Brush>::cast(node);
+	IBrushNode* brushNode = dynamic_cast<IBrushNode*>(&node);
+	if (brushNode != NULL) {
+		return &brushNode->getBrush();
+	}
+	return NULL;
 }
 
 #endif

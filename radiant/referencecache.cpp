@@ -870,7 +870,7 @@ public:
   }
 };
 
-class ReferenceAPI : public TypeSystemRef
+class ReferenceAPI
 {
   ReferenceCache* m_reference;
 public:

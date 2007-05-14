@@ -5,7 +5,6 @@
 #include "iuimanager.h"
 #include "iradiant.h"
 #include "iscenegraph.h"
-#include "typesystem.h"
 #include "ieclass.h"
 #include "ientity.h"
 
@@ -63,8 +62,7 @@ struct ObjectivesEditorDependencies
   public GlobalSceneGraphModuleRef,
   public GlobalEventManagerModuleRef,
   public GlobalRadiantModuleRef,
-  public GlobalUIManagerModuleRef,
-  public TypeSystemRef
+  public GlobalUIManagerModuleRef
 { 
 	// Constructor. We must specify a game type for the eclassmanager and
 	// entity creator, since these do not match "*" lookups

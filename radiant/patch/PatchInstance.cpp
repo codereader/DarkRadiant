@@ -1,18 +1,19 @@
 #include "PatchInstance.h"
 
 #include "ifilter.h"
+#include "math/frustum.h"
 
 // Initialise the shader member variable
 ShaderPtr PatchInstance::m_state_selpoint;
 
 // Constructor: Create an PatchInstance with the given <patch> and the scene elements <path> and <parent>
 PatchInstance::PatchInstance(const scene::Path& path, scene::Instance* parent, Patch& patch) :
-	Instance(path, parent, this, StaticTypeCasts::instance().get()),
+	Instance(path, parent),
+	TransformModifier(Patch::TransformChangedCaller(patch), ApplyTransformCaller(*this)),
 	m_patch(patch),
 	m_selectable(SelectedChangedCaller(*this)),	// Connect the onChange callback and pass self as the observed Selectable
 	m_dragPlanes(SelectedChangedComponentCaller(*this)),
-	m_render_selected(GL_POINTS),
-	m_transform(Patch::TransformChangedCaller(m_patch), ApplyTransformCaller(*this))
+	m_render_selected(GL_POINTS)
 {
 	// Attach the path and self to the contained patch
 	m_patch.instanceAttach(Instance::path());
@@ -60,16 +61,14 @@ Patch& PatchInstance::getPatch() {
 	return m_patch;
 }
 
-Bounded& PatchInstance::get(NullType<Bounded>) {
-	return m_patch;
+const AABB& PatchInstance::localAABB() const {
+	return m_patch.localAABB();
 }
 
-Cullable& PatchInstance::get(NullType<Cullable>) {
-	return m_patch;
-}
-
-Transformable& PatchInstance::get(NullType<Transformable>) {
-	return m_transform;
+VolumeIntersectionValue PatchInstance::intersectVolume(
+	const VolumeTest& test, const Matrix4& localToWorld) const
+{
+	return m_patch.intersectVolume(test, localToWorld);
 }
 
 void PatchInstance::constructStatic() {
@@ -334,9 +333,9 @@ void PatchInstance::snapComponents(float snap) {
 }
 
 void PatchInstance::evaluateTransform() {
-	Matrix4 matrix(m_transform.calculateTransform());
+	Matrix4 matrix(calculateTransform());
 
-	if (m_transform.getType() == TRANSFORM_PRIMITIVE) {
+	if (getType() == TRANSFORM_PRIMITIVE) {
 		m_patch.transform(matrix);
 	}
 	else {

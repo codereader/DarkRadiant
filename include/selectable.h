@@ -276,9 +276,8 @@ public:
   virtual void testSelect(Selector& selector, SelectionTest& test) = 0;
 };
 
-inline SelectionTestable* Instance_getSelectionTestable(scene::Instance& instance)
-{
-  return InstanceTypeCast<SelectionTestable>::cast(instance);
+inline SelectionTestable* Instance_getSelectionTestable(scene::Instance& instance) {
+	return dynamic_cast<SelectionTestable*>(&instance);
 }
 
 

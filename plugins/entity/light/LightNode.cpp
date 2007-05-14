@@ -2,6 +2,33 @@
 
 // --------- LightNode implementation ------------------------------------
 
+LightNode::LightNode(IEntityClassPtr eclass) :
+	m_contained(eclass, *this, InstanceSet::TransformChangedCaller(m_instances), InstanceSet::BoundsChangedCaller(m_instances), InstanceSetEvaluateTransform<LightInstance>::Caller(m_instances))
+{
+	construct();
+}
+
+LightNode::LightNode(const LightNode& other) :
+	scene::Node(other),
+	scene::Instantiable(other),
+	scene::Cloneable(other),
+	scene::Traversable::Observer(other),
+	Nameable(other),
+	Snappable(other),
+	Editable(other),
+	TransformNode(other),
+	scene::Traversable(other),
+	EntityNode(other),
+	Namespaced(other),
+	m_contained(other.m_contained, *this, InstanceSet::TransformChangedCaller(m_instances), InstanceSet::BoundsChangedCaller(m_instances), InstanceSetEvaluateTransform<LightInstance>::Caller(m_instances))
+{
+	construct();
+}
+
+LightNode::~LightNode() {
+	destroy();
+}
+
 void LightNode::construct() {
 	if(g_lightType == LIGHTTYPE_DOOM3) {
 		m_contained.attach(this);
@@ -14,28 +41,42 @@ void LightNode::destroy() {
 	}
 }
 
-scene::Traversable& LightNode::get(NullType<scene::Traversable>) {
-	return m_contained.getTraversable();
+void LightNode::insert(Node& node) {
+	m_contained.getTraversable().insert(node);
 }
 
-Editable& LightNode::get(NullType<Editable>) {
-	return m_contained;
+void LightNode::erase(Node& node) {
+	m_contained.getTraversable().erase(node);
 }
 
-Snappable& LightNode::get(NullType<Snappable>) {
-	return m_contained;
+void LightNode::traverse(const Walker& walker) {
+	m_contained.getTraversable().traverse(walker);
 }
 
-TransformNode& LightNode::get(NullType<TransformNode>) {
-	return m_contained.getTransformNode();
+bool LightNode::empty() const {
+	return m_contained.getTraversable().empty();
 }
 
-Entity& LightNode::get(NullType<Entity>) {
+const Matrix4& LightNode::getLocalPivot() const {
+	return m_contained.getLocalPivot();
+}
+
+// Snappable implementation
+void LightNode::snapto(float snap) {
+	m_contained.snapto(snap);
+}
+
+// TransformNode implementation
+const Matrix4& LightNode::localToParent() const {
+	return m_contained.getTransformNode().localToParent();
+}
+
+Entity& LightNode::getEntity() {
 	return m_contained.getEntity();
 }
 
-Namespaced& LightNode::get(NullType<Namespaced>) {
-	return m_contained.getNamespaced();
+void LightNode::setNamespace(Namespace& space) {
+	m_contained.getNamespaced().setNamespace(space);
 }
 
 scene::Node& LightNode::node() {
@@ -46,12 +87,12 @@ scene::Node& LightNode::clone() const {
 	return (new LightNode(*this))->node();
 }
 
-void LightNode::insert(scene::Node& child) {
-	m_instances.insert(child);
+void LightNode::insertChild(scene::Node& child) {
+	m_instances.insertChild(child);
 }
 
-void LightNode::erase(scene::Node& child) {
-	m_instances.erase(child);
+void LightNode::eraseChild(scene::Node& child) {
+	m_instances.eraseChild(child);
 }
 
 scene::Instance* LightNode::create(const scene::Path& path, scene::Instance* parent) {

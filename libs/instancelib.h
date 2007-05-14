@@ -111,14 +111,14 @@ public:
 	// traverse observer
 	// greebo: This inserts the given node as child of this instance set.
 	// The call arriving at Doom3GroupNode::insert() is passed here, for example.
-	void insert(scene::Node& child) {
+	void insertChild(scene::Node& child) {
 		for (iterator i = begin(); i != end(); ++i) {
 			Node_traverseSubgraph(child, InstanceSubgraphWalker((*i).first.first, (*i).first.second, (*i).second));
 			(*i).second->boundsChanged();
 		}
 	}
 	
-	void erase(scene::Node& child) {
+	void eraseChild(scene::Node& child) {
 		for (iterator i = begin(); i != end(); ++i) {
 			Node_traverseSubgraph(child, UninstanceSubgraphWalker((*i).first.first, (*i).first.second));
 			(*i).second->boundsChanged();
@@ -180,7 +180,10 @@ class InstanceEvaluateTransform
 public:
   inline void operator()(scene::Instance& instance) const
   {
-    InstanceTypeCast<Type>::cast(instance)->evaluateTransform();
+  	Type* t = dynamic_cast<Type*>(&instance);
+  	if (t != NULL) {
+  		t->evaluateTransform();
+  	}
   }
 };
 

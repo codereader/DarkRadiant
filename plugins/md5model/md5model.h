@@ -319,26 +319,10 @@ class ModelInstance :
   public Renderable,
   public SelectionTestable,
   public LightCullable,
-  public SkinnedModel
+  public SkinnedModel,
+  public Bounded,
+  public Cullable
 {
-  class TypeCasts
-  {
-    InstanceTypeCastTable m_casts;
-  public:
-    TypeCasts()
-    {
-      InstanceContainedCast<ModelInstance, Bounded>::install(m_casts);
-      InstanceContainedCast<ModelInstance, Cullable>::install(m_casts);
-      InstanceStaticCast<ModelInstance, Renderable>::install(m_casts);
-      InstanceStaticCast<ModelInstance, SelectionTestable>::install(m_casts);
-      InstanceStaticCast<ModelInstance, SkinnedModel>::install(m_casts);
-    }
-    InstanceTypeCastTable& get()
-    {
-      return m_casts;
-    }
-  };
-
   MD5Model& m_model;
 
   const LightList* m_lightList;
@@ -355,17 +339,17 @@ class ModelInstance :
   typedef Array<Remap> SurfaceRemaps;
   SurfaceRemaps m_skins;
 public:
-
-  typedef LazyStatic<TypeCasts> StaticTypeCasts;
-
-  Bounded& get(NullType<Bounded>)
-  {
-    return m_model;
-  }
-  Cullable& get(NullType<Cullable>)
-  {
-    return m_model;
-  }
+	// Bounded implementation
+	virtual const AABB& localAABB() const {
+		return m_model.localAABB();
+	}
+	
+	// Cullable implementation
+	virtual VolumeIntersectionValue intersectVolume(
+		const VolumeTest& test, const Matrix4& localToWorld) const
+	{
+		return m_model.intersectVolume(test, localToWorld);
+	}
 
   void lightsChanged()
   {
@@ -375,7 +359,7 @@ public:
 
   void constructRemaps()
   {
-    ModelSkin* skin = NodeTypeCast<ModelSkin>::cast(path().parent());
+    ModelSkin* skin = dynamic_cast<ModelSkin*>(&path().parent().get());
     if(skin != 0)
     {
       SurfaceRemaps::iterator j = m_skins.begin();
@@ -413,7 +397,7 @@ public:
   }
 
   ModelInstance(const scene::Path& path, scene::Instance* parent, MD5Model& model) :
-    Instance(path, parent, this, StaticTypeCasts::instance().get()), 
+    Instance(path, parent), 
     m_model(model),
     m_surfaceLightLists(m_model.size()),
     m_skins(m_model.size())
@@ -491,27 +475,10 @@ class ModelNode :
 	public scene::Node, 
 	public scene::Instantiable
 {
-  class TypeCasts
-  {
-    NodeTypeCastTable m_casts;
-  public:
-    TypeCasts()
-    {}
-    NodeTypeCastTable& get()
-    {
-      return m_casts;
-    }
-  };
-
-
   InstanceSet m_instances;
   MD5Model m_model;
 public:
-
-  typedef LazyStatic<TypeCasts> StaticTypeCasts;
-
-  ModelNode() : 
-  	scene::Node(this, StaticTypeCasts::instance().get())
+  ModelNode()
   {}
 
   MD5Model& model()

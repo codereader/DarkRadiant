@@ -23,8 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_IENTITY_H
 
 #include "generic/constant.h"
-#include "scenelib.h"
-
+#include "generic/callbackfwd.h"
+#include <string>
 #include <boost/shared_ptr.hpp>
 
 class IEntityClass;
@@ -103,16 +103,15 @@ public:
   virtual void detach(Observer& observer) = 0;
 };
 
-/**
- * Stream insertion for Entity objects.
- */
-inline std::ostream& operator<< (std::ostream& os, const Entity& entity) {
-	os << "Entity { name=\"" << entity.getKeyValue("name") << "\", "
-	   << "classname=\"" << entity.getKeyValue("classname") << "\", "
-	   << "origin=\"" << entity.getKeyValue("origin") << "\" }";
-	
-	return os;	
-}
+class EntityNode
+{
+public:
+	/** greebo: Temporary workaround for entity-containing nodes.
+	 * 			This is only used by Node_getEntity to retrieve the 
+	 * 			contained entity from a node.
+	 */
+	virtual Entity& getEntity() = 0;
+};
 
 class EntityCopyingVisitor : public Entity::Visitor
 {
@@ -131,12 +130,6 @@ public:
 		}
 	}
 };
-
-inline Entity* Node_getEntity(scene::Node& node)
-{
-  return NodeTypeCast<Entity>::cast(node);
-}
-
 
 template<typename value_type>
 class Stack;

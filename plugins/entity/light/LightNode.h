@@ -12,28 +12,14 @@ class LightNode :
 	public scene::Instantiable,
 	public scene::Cloneable,
 	public scene::Traversable::Observer,
-	public Nameable
+	public Nameable,
+	public Snappable,
+	public Editable,
+	public TransformNode,
+	public scene::Traversable,
+	public EntityNode,
+	public Namespaced
 {
-	class TypeCasts {
-		NodeTypeCastTable m_casts;
-	public:
-    	TypeCasts() {
-			if(g_lightType == LIGHTTYPE_DOOM3) {
-				NodeContainedCast<LightNode, scene::Traversable>::install(m_casts);
-      		}
-      		
-			NodeContainedCast<LightNode, Editable>::install(m_casts);
-			NodeContainedCast<LightNode, Snappable>::install(m_casts);
-			NodeContainedCast<LightNode, TransformNode>::install(m_casts);
-			NodeContainedCast<LightNode, Entity>::install(m_casts);
-			NodeContainedCast<LightNode, Namespaced>::install(m_casts);
-		}
-		
-		NodeTypeCastTable& get() {
-			return m_casts;
-		}
-	}; // class TypeCasts
-
 	InstanceSet m_instances;
 	Light m_contained;
 
@@ -41,44 +27,38 @@ class LightNode :
 	void destroy();
 	
 public:
-	typedef LazyStatic<TypeCasts> StaticTypeCasts;
-
-	scene::Traversable& get(NullType<scene::Traversable>);
-	Editable& get(NullType<Editable>);
-	Snappable& get(NullType<Snappable>);
-	TransformNode& get(NullType<TransformNode>);
-	Entity& get(NullType<Entity>);
-	Nameable& get(NullType<Nameable>);
-	Namespaced& get(NullType<Namespaced>);
-
-	LightNode(IEntityClassPtr eclass) :
-		scene::Node(this, StaticTypeCasts::instance().get()),
-		m_contained(eclass, *this, InstanceSet::TransformChangedCaller(m_instances), InstanceSet::BoundsChangedCaller(m_instances), InstanceSetEvaluateTransform<LightInstance>::Caller(m_instances))
-	{
-		construct();
-	}
+	LightNode(IEntityClassPtr eclass);
+	LightNode(const LightNode& other);
 	
-	LightNode(const LightNode& other) :
-		scene::Node(this, StaticTypeCasts::instance().get()),
-		scene::Instantiable(other),
-		scene::Cloneable(other),
-		scene::Traversable::Observer(other),
-		Nameable(other),
-		m_contained(other.m_contained, *this, InstanceSet::TransformChangedCaller(m_instances), InstanceSet::BoundsChangedCaller(m_instances), InstanceSetEvaluateTransform<LightInstance>::Caller(m_instances))
-	{
-		construct();
-	}
+	~LightNode();
+
+	// EntityNode implementation
+	virtual Entity& getEntity();
 	
-	~LightNode() {
-		destroy();
-	}
+	// Namespaced implementation
+	virtual void setNamespace(Namespace& space);
+
+	// scene::Traversable Implementation
+	virtual void insert(Node& node);
+    virtual void erase(Node& node);
+    virtual void traverse(const Walker& walker);
+    virtual bool empty() const;
+
+	// TransformNode implementation
+	virtual const Matrix4& localToParent() const;
+
+	// Editable implementation
+	virtual const Matrix4& getLocalPivot() const;
+
+	// Snappable implementation
+	virtual void snapto(float snap);
 
 	scene::Node& node();
 
 	scene::Node& clone() const;
 
-	void insert(scene::Node& child);
-	void erase(scene::Node& child);
+	void insertChild(scene::Node& child);
+	void eraseChild(scene::Node& child);
 
 	scene::Instance* create(const scene::Path& path, scene::Instance* parent);
 	void forEachInstance(const scene::Instantiable::Visitor& visitor);

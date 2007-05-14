@@ -165,7 +165,8 @@ class BrushDependencies :
 	public GlobalFilterModuleRef 
 {};
 
-class BrushDoom3API : public TypeSystemRef {
+class BrushDoom3API
+{
 	BrushCreator* m_brushdoom3;
 public:
 	typedef BrushCreator Type;

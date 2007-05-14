@@ -30,8 +30,9 @@ public:
 	void addOriginToChildren();
 	void removeOriginFromChildren();
 
-	void insert(scene::Node& node);
-	void erase(scene::Node& node);
+	// scene::Traversable::Observer implementation
+	void insertChild(scene::Node& node);
+	void eraseChild(scene::Node& node);
 };
 
 } // namespace entity

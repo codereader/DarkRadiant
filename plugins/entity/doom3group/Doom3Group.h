@@ -101,11 +101,14 @@ public:
 	const Doom3Entity& getEntity() const;
 
 	scene::Traversable& getTraversable();
+	const scene::Traversable& getTraversable() const;
 	Namespaced& getNamespaced();
 	NamedEntity& getNameable();
 	const NamedEntity& getNameable() const;
 	TransformNode& getTransformNode();
+	const TransformNode& getTransformNode() const;
 	ModelSkin& getModelSkin();
+	const ModelSkin& getModelSkin() const;
 
 	// This gets called by the Doom3GroupNode constructor and attaches the
 	// Node class as observer of this Doom3Group

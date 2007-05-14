@@ -79,7 +79,7 @@ public:
 	void changeFloorDown();
 
 	/* greebo: Tries to get a CameraModel from the most recently selected instance
-	 * Note: Currently NO instances are supporting the InstanceTypeCast onto a
+	 * Note: Currently NO instances are supporting the dynamic_cast<> onto a
 	 * CameraModel, so actually these functions don't do anything. I'll leave them
 	 * where they are, they should work in principle... */
 	void lookThroughSelected();

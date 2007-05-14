@@ -12,7 +12,7 @@ namespace model
 PicoModelInstance::PicoModelInstance(const scene::Path& path, 
 									 scene::Instance* parent, 
 									 RenderablePicoModel& picomodel)
-: Instance(path, parent, this, StaticTypeCasts::instance().get()),
+: Instance(path, parent),
   _picoModel(picomodel),
   _lightList(GlobalShaderCache().attach(*this))
 { 
@@ -33,7 +33,7 @@ void PicoModelInstance::skinChanged() {
 
 	// Get the model skin object from the parent entity and clear out our list
 	// of mapped surfaces
-	ModelSkin* skin = NodeTypeCast<ModelSkin>::cast(path().parent());
+	ModelSkin* skin = dynamic_cast<ModelSkin*>(&path().parent().get());
 	_mappedSurfs.clear();
 	
 	// If skin is null, return

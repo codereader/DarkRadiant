@@ -15,24 +15,14 @@ class Doom3GroupNode :
 	public scene::Cloneable,
 	public scene::Traversable::Observer,
 	public scene::GroupNode,
-	public Nameable
+	public Nameable,
+	public Snappable,
+	public TransformNode,
+	public scene::Traversable,
+	public EntityNode,
+	public Namespaced,
+	public ModelSkin
 {
-	class TypeCasts {
-		NodeTypeCastTable m_casts;
-	public:
-		TypeCasts() {
-			NodeContainedCast<Doom3GroupNode, scene::Traversable>::install(m_casts);
-			NodeContainedCast<Doom3GroupNode, Snappable>::install(m_casts);
-			NodeContainedCast<Doom3GroupNode, TransformNode>::install(m_casts);
-			NodeContainedCast<Doom3GroupNode, Entity>::install(m_casts);
-			NodeContainedCast<Doom3GroupNode, Namespaced>::install(m_casts);
-			NodeContainedCast<Doom3GroupNode, ModelSkin>::install(m_casts);
-		}
-		NodeTypeCastTable& get() {
-			return m_casts;
-		}
-	};
-
 	// The Child instances of this node
 	InstanceSet m_instances;
 	
@@ -40,34 +30,46 @@ class Doom3GroupNode :
 	Doom3Group m_contained;
 
 public:
-
-	typedef LazyStatic<TypeCasts> StaticTypeCasts;
-
 	Doom3GroupNode(IEntityClassPtr eclass);
 	Doom3GroupNode(const Doom3GroupNode& other);
 	
 	~Doom3GroupNode();
 
-	// Casts
-	scene::Traversable& get(NullType<scene::Traversable>);
-	Snappable& get(NullType<Snappable>);
-	TransformNode& get(NullType<TransformNode>);
-	Entity& get(NullType<Entity>);
-	Namespaced& get(NullType<Namespaced>);
-	ModelSkin& get(NullType<ModelSkin>);
+	// ModelSkin implementation
+	virtual void attach(ModuleObserver& observer);	
+	virtual void detach(ModuleObserver& observer);
+	virtual std::string getRemap(const std::string& name) const;
+
+	// EntityNode implementation
+	virtual Entity& getEntity();
+
+	// Namespaced implementation
+	virtual void setNamespace(Namespace& space);
+
+	// scene::Traversable Implementation
+	virtual void insert(Node& node);
+    virtual void erase(Node& node);
+    virtual void traverse(const Walker& walker);
+    virtual bool empty() const;
+
+	// TransformNode implementation
+	virtual const Matrix4& localToParent() const;
 
 	// Nameable implementation
 	virtual std::string name() const;
 	virtual void attach(const NameCallback& callback);
 	virtual void detach(const NameCallback& callback);
 
+	// Snappable implementation
+	virtual void snapto(float snap);
+
 	scene::Node& node();
 
 	scene::Node& clone() const;
 
-	void insert(scene::Node& child);
-	
-	void erase(scene::Node& child);
+	// scene::Traversable::Observer implementation
+	void insertChild(scene::Node& child);
+	void eraseChild(scene::Node& child);
 
 	scene::Instance* create(const scene::Path& path, scene::Instance* parent);
 	
