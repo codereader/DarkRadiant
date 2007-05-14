@@ -10,10 +10,10 @@
 
 #include "light.h"
 #include "eclassmodel.h"
-#include "doom3group.h"
 #include <boost/algorithm/string/replace.hpp>
 #include <iostream>
 
+#include "doom3group/Doom3GroupNode.h"
 #include "generic/GenericEntityNode.h"
 
 namespace entity {
@@ -35,7 +35,7 @@ scene::Node& Doom3EntityCreator::getEntityForEClass(IEntityClassPtr eclass) {
 	}
 	else if (!eclass->isFixedSize()) {
 		// Variable size entity
-		return New_Doom3Group(eclass);
+		return (new entity::Doom3GroupNode(eclass))->node();
 	}
 	else if (eclass->getModelPath().size() > 0) {
 		// Fixed size, has model path

@@ -272,7 +272,6 @@ entity_src = [
 	'entity.cpp',
 	'eclassmodel.cpp',
 	'light.cpp',
-	'doom3group.cpp',
 	'angle.cpp',
 	'angles.cpp',
 	'colour.cpp',

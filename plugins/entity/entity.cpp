@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "light.h"
 #include "eclassmodel.h"
-#include "doom3group.h"
+#include "doom3group/Doom3GroupNode.h"
 
 // Initialise the static variables of the entitylibraries (we're in a module here)
 EntityCreator::KeyValueChangedFunc Doom3Entity::m_entityKeyValueChanged = 0;
@@ -50,7 +50,10 @@ Counter* Doom3Entity::m_counter = 0;
  */
 void Entity_Construct() {
   Light_Construct();
-  Doom3Group_construct();
+
+	// Construct Doom3Group stuff
+	CurveEdit::Type::instance().m_controlsShader = GlobalShaderCache().capture("$POINT");
+	CurveEdit::Type::instance().m_selectedShader = GlobalShaderCache().capture("$SELPOINT");
 
   RenderablePivot::StaticShader::instance() = GlobalShaderCache().capture("$PIVOT");
 
@@ -60,6 +63,5 @@ void Entity_Construct() {
 void Entity_Destroy() {
   GlobalShaderCache().detachRenderable(StaticRenderableConnectionLines::instance());
 
-  Doom3Group_destroy();
   Light_Destroy();
 }
