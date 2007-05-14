@@ -2,7 +2,6 @@
 
 #include "mainframe.h"
 #include "ieclass.h"
-#include "ieclass.h"
 #include "iregistry.h"
 #include "gtkutil/dialog.h"
 #include "gtkutil/image.h"
@@ -219,6 +218,7 @@ GtkWidget* EntityClassChooser::createUsagePanel() {
 	// Create a GtkTextView
 	_usageTextView = gtk_text_view_new();
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(_usageTextView), GTK_WRAP_WORD);
+	gtk_text_view_set_editable(GTK_TEXT_VIEW(_usageTextView), FALSE);
 
 	return gtkutil::ScrolledFrame(_usageTextView);	
 }
