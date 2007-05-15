@@ -159,12 +159,12 @@ void OrthoContextMenu::callbackAddEntity(GtkMenuItem* item, OrthoContextMenu* se
 }
 
 void OrthoContextMenu::callbackAddPlayerStart(GtkMenuItem* item, OrthoContextMenu* self) {
-        try {
-        	Entity_createFromSelection(PLAYERSTART_CLASSNAME, self->_lastPoint);
-        }
+	try {
+		Entity_createFromSelection(PLAYERSTART_CLASSNAME, self->_lastPoint);
+	}
 	catch (EntityCreationException e) {
-          gtkutil::errorDialog(e.what(), MainFrame_getWindow());
-        }
+		gtkutil::errorDialog(e.what(), MainFrame_getWindow());
+	}
 }
 
 void OrthoContextMenu::callbackAddLight(GtkMenuItem* item, OrthoContextMenu* self) {

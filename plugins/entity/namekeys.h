@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/static.h"
 #include "entitylib.h"
 #include "namespace.h"
+#include "Doom3Entity.h"
 
 inline bool string_is_integer(const char* string)
 {
@@ -56,7 +57,7 @@ typedef MemberCaller1<EntityKeyValue, const KeyObserver&, &EntityKeyValue::detac
 class NameKeys : public Entity::Observer, public Namespaced
 {
   Namespace* m_namespace;
-  Doom3Entity& m_entity;
+  entity::Doom3Entity& m_entity;
   KeyIsNameFunc m_keyIsName;
   NameKeys(const NameKeys& other);
   NameKeys& operator=(const NameKeys& other);
@@ -95,7 +96,7 @@ class NameKeys : public Entity::Observer, public Namespaced
     }
   }
 public:
-  NameKeys(Doom3Entity& entity) : 
+  NameKeys(entity::Doom3Entity& entity) : 
   	m_namespace(0), 
   	m_entity(entity), 
   	m_keyIsName(keyIsNameDoom3)

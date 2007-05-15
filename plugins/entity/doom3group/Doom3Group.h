@@ -16,6 +16,7 @@
 #include "../namekeys.h"
 #include "../curve.h"
 #include "../modelskinkey.h"
+#include "../Doom3Entity.h"
 
 namespace entity {
 

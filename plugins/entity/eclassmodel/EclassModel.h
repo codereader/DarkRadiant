@@ -16,6 +16,7 @@
 #include "../namedentity.h"
 #include "../namekeys.h"
 #include "../modelskinkey.h"
+#include "../Doom3Entity.h"
 
 namespace entity {
 

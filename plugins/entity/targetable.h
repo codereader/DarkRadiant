@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "selectionlib.h"
 #include "entitylib.h"
 #include "stringio.h"
+#include "Doom3Entity.h"
 
 class Targetable
 {
@@ -290,7 +291,7 @@ public Targetable,
 public Entity::Observer
 {
   mutable Vertex3f m_position;
-  Doom3Entity& m_entity;
+  entity::Doom3Entity& m_entity;
   TargetKeys m_targeting;
   TargetedEntity m_targeted;
   RenderableTargetingEntities m_renderable;
@@ -299,7 +300,7 @@ public:
   TargetableInstance(
     const scene::Path& path,
     scene::Instance* parent,
-    Doom3Entity& entity,
+    entity::Doom3Entity& entity,
     Targetable& targetable
   ) :
     SelectableInstance(path, parent),

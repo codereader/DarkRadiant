@@ -15,6 +15,7 @@
 #include "doom3group/Doom3GroupNode.h"
 #include "generic/GenericEntityNode.h"
 #include "eclassmodel/EclassModelNode.h"
+#include "Doom3Entity.h"
 
 namespace entity {
 	
