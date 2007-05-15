@@ -3,6 +3,7 @@
 
 #include "string/pooledstring.h"
 #include "KeyValue.h"
+#include <boost/shared_ptr.hpp>
 
 /** greebo: This is the implementation of the class Entity.
  * 
@@ -25,20 +26,25 @@ namespace entity {
 class Doom3Entity :
 	public Entity
 {
-public:
-	static StringPool& getPool();
-
-private:
 	static EntityCreator::KeyValueChangedFunc m_entityKeyValueChanged;
 	static Counter* m_counter;
 
 	IEntityClassConstPtr m_eclass;
 
-	class KeyContext {};
+	// Begin deprecated
+	/*class KeyContext {};
 	typedef Static<StringPool, KeyContext> KeyPool;
 	typedef PooledString<KeyPool> Key;
 	typedef SmartPointer<KeyValue> KeyValuePtr;
-	typedef UnsortedMap<Key, KeyValuePtr> KeyValues;
+	typedef UnsortedMap<Key, KeyValuePtr> KeyValues;*/
+	// End deprecated
+	
+	typedef boost::shared_ptr<KeyValue> KeyValuePtr;
+	typedef std::pair<std::string, KeyValuePtr> KeyValuePair;
+	
+	// The unsorted list of KeyValue Pairs
+	typedef std::vector<KeyValuePair> KeyValues;
+	
 	KeyValues m_keyValues;
 
 	typedef UnsortedSet<Observer*> Observers;
@@ -92,18 +98,34 @@ public:
 	bool isContainer() const;
 
 private:
-	void notifyInsert(const char* key, KeyValue& value);
-	void notifyErase(const char* key, KeyValue& value);
+	/** greebo: Notifies the attached observers about key/value
+	 * 			insertions and deletions.
+	 */
+	void notifyInsert(const std::string& key, KeyValue& value);
+	void notifyErase(const std::string& key, KeyValue& value);
+	
 	void forEachKeyValue_notifyInsert();
 	void forEachKeyValue_notifyErase();
 
-	void insert(const char* key, const KeyValuePtr& keyValue);
+	/** greebo: This checks whether the key already exists and
+	 * 			acts accordingly (creates key if it's non-existent)
+	 */
+	void insert(const std::string& key, const std::string& value);
 
-	void insert(const char* key, const char* value);
+	/** greebo: This is called by the above and actually inserts
+	 * 			the key/value pair into the map.
+	 * 
+	 * Note: This does NOT check for existing keys, it justs inserts the value 
+	 */
+	void insert(const std::string& key, const KeyValuePtr& keyValue);
+	
+	/** greebo: Tries to lookup the given key in the list.
+	 */
+	KeyValues::const_iterator find(const std::string& key) const;
+	KeyValues::iterator find(const std::string& key);
 
 	void erase(KeyValues::iterator i);
-
-	void erase(const char* key);
+	void erase(const std::string& key);
 };
 
 } // namespace entity
