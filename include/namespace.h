@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/constant.h"
 #include "generic/callbackfwd.h"
 
-typedef Callback1<const char*> NameCallback;
+typedef Callback1<const std::string&> NameCallback;
 typedef Callback1<const NameCallback&> NameCallbackCallback;
 
 class Namespace

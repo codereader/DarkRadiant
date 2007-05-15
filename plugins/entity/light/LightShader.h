@@ -19,8 +19,8 @@ public:
 		setDefault();
 	}
 	
-	void valueChanged(const char* value) {
-		if (std::string(value) == "") {
+	void valueChanged(const std::string& value) {
+		if (value.empty()) {
 			setDefault();
 		}
 		else {
@@ -28,7 +28,7 @@ public:
 		}
 		SceneChangeNotify();
 	}
-	typedef MemberCaller1<LightShader, const char*, &LightShader::valueChanged> ValueChangedCaller;
+	typedef MemberCaller1<LightShader, const std::string&, &LightShader::valueChanged> ValueChangedCaller;
 
 	ShaderPtr get() const {
 		return m_shader;

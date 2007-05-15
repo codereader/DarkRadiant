@@ -264,16 +264,16 @@ void Light::originChanged() {
 	updateOrigin();
 }
 
-void Light::lightOriginChanged(const char* value) {
-	m_useLightOrigin = (std::string(value) != "");
+void Light::lightOriginChanged(const std::string& value) {
+	m_useLightOrigin = (!value.empty());
 	if (m_useLightOrigin) {
 		read_origin(m_lightOrigin, value);
 	}
 	originChanged();
 }
 
-void Light::lightTargetChanged(const char* value) {
-	m_useLightTarget = (std::string(value) != "");
+void Light::lightTargetChanged(const std::string& value) {
+	m_useLightTarget = (!value.empty());
 	if (m_useLightTarget) {
 		read_origin(_lightTarget, value);
 	}
@@ -281,8 +281,8 @@ void Light::lightTargetChanged(const char* value) {
 	projectionChanged();
 }
 
-void Light::lightUpChanged(const char* value) {
-	m_useLightUp = (std::string(value) != "");
+void Light::lightUpChanged(const std::string& value) {
+	m_useLightUp = (!value.empty());
 	if (m_useLightUp) {
 		read_origin(_lightUp, value);
 	}
@@ -290,8 +290,8 @@ void Light::lightUpChanged(const char* value) {
 	projectionChanged();
 }
 
-void Light::lightRightChanged(const char* value) {
-	m_useLightRight = (std::string(value) != "");
+void Light::lightRightChanged(const std::string& value) {
+	m_useLightRight = (!value.empty());
 	if (m_useLightRight) {
 		read_origin(_lightRight, value);
 	}
@@ -299,8 +299,8 @@ void Light::lightRightChanged(const char* value) {
 	projectionChanged();
 }
 
-void Light::lightStartChanged(const char* value) {
-	m_useLightStart = (std::string(value) != "");
+void Light::lightStartChanged(const std::string& value) {
+	m_useLightStart = (!value.empty());
 	if (m_useLightStart) {
 		read_origin(_lightStart, value);
 	}
@@ -314,8 +314,8 @@ void Light::lightStartChanged(const char* value) {
 	projectionChanged();
 }
 
-void Light::lightEndChanged(const char* value) {
-	m_useLightEnd = (std::string(value) != "");
+void Light::lightEndChanged(const std::string& value) {
+	m_useLightEnd = (!value.empty());
 	if (m_useLightEnd) {
 		read_origin(_lightEnd, value);
 	}
@@ -365,8 +365,8 @@ void Light::rotationChanged() {
 	GlobalSelectionSystem().pivotChanged();
 }
 
-void Light::lightRotationChanged(const char* value) {
-	m_useLightRotation = (std::string(value) != "");
+void Light::lightRotationChanged(const std::string& value) {
+	m_useLightRotation = (!value.empty());
 	if(m_useLightRotation) {
 		read_rotation(m_lightRotation, value);
 	}

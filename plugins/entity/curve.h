@@ -421,9 +421,9 @@ public:
     return true;
   }
 
-  void curveChanged(const char* value)
+  void curveChanged(const std::string& value)
   {
-    if(string_empty(value) || !parseCurve(value))
+    if(value.empty() || !parseCurve(value.c_str()))
     {
       m_controlPoints.resize(0);
       m_knots.resize(0);
@@ -432,7 +432,7 @@ public:
     m_controlPointsTransformed = m_controlPoints;
     curveChanged();
   }
-  typedef MemberCaller1<NURBSCurve, const char*, &NURBSCurve::curveChanged> CurveChangedCaller;
+  typedef MemberCaller1<NURBSCurve, const std::string&, &NURBSCurve::curveChanged> CurveChangedCaller;
 };
 
 class CatmullRomSpline
@@ -501,16 +501,16 @@ public:
     notify();
   }
 
-  void curveChanged(const char* value)
+  void curveChanged(const std::string& value)
   {
-    if(string_empty(value) || !parseCurve(value))
+    if(value.empty() || !parseCurve(value.c_str()))
     {
       m_controlPoints.resize(0);
     }
     m_controlPointsTransformed = m_controlPoints;
     curveChanged();
   }
-  typedef MemberCaller1<CatmullRomSpline, const char*, &CatmullRomSpline::curveChanged> CurveChangedCaller;
+  typedef MemberCaller1<CatmullRomSpline, const std::string&, &CatmullRomSpline::curveChanged> CurveChangedCaller;
 };
 
 const char* const curve_Nurbs = "curve_Nurbs";

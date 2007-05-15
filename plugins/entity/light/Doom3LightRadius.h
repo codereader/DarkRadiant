@@ -40,7 +40,7 @@ public:
 		_centerColour = colour;
 	}
 
-	void lightRadiusChanged(const char* value) {
+	void lightRadiusChanged(const std::string& value) {
 		// Try to parse the string value for a Vector3
 		Vector3 candidate(value);
 		
@@ -62,12 +62,12 @@ public:
 		SceneChangeNotify();
 	}
 	
-	typedef MemberCaller1<Doom3LightRadius, const char*, &Doom3LightRadius::lightRadiusChanged> LightRadiusChangedCaller;
+	typedef MemberCaller1<Doom3LightRadius, const std::string&, &Doom3LightRadius::lightRadiusChanged> LightRadiusChangedCaller;
 
 	/* greebo: This gets called by the keyObserver when the light center value is changed.
 	 * Note: this gets immediately after a new light is constructed as well.
 	 */
-	void lightCenterChanged(const char* value) {
+	void lightCenterChanged(const std::string& value) {
 		// Try to parse the string value for a Vector3
 		Vector3 candidate(value);
 		
@@ -87,7 +87,7 @@ public:
 		SceneChangeNotify();
 	}
 	
-	typedef MemberCaller1<Doom3LightRadius, const char*, &Doom3LightRadius::lightCenterChanged> LightCenterChangedCaller;
+	typedef MemberCaller1<Doom3LightRadius, const std::string&, &Doom3LightRadius::lightCenterChanged> LightCenterChangedCaller;
 }; // class Doom3LightRadius
 
 #endif /*DOOM3LIGHTRADIUS_H_*/

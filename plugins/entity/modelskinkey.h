@@ -77,13 +77,13 @@ public:
   {
     return *m_skin;
   }
-  void skinChanged(const char* value)
+  void skinChanged(const std::string& value)
   {
     destroy();
     m_name = parseTextureName(value);
     construct();
   }
-  typedef MemberCaller1<ModelSkinKey, const char*, &ModelSkinKey::skinChanged> SkinChangedCaller;
+  typedef MemberCaller1<ModelSkinKey, const std::string&, &ModelSkinKey::skinChanged> SkinChangedCaller;
 
   void realise()
   {

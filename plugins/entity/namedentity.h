@@ -42,7 +42,7 @@ public:
   {
     m_callbacks.erase(callback);
   }
-  void changed(const char* name) const
+  void changed(const std::string& name) const
   {
     for(NameCallbacks::const_iterator i = m_callbacks.begin(); i != m_callbacks.end(); ++i)
     {
@@ -76,11 +76,11 @@ public:
     m_changed.erase(callback);
   }
 
-  void identifierChanged(const char* value)
+  void identifierChanged(const std::string& value)
   {
-    if(string_empty(value))
+    if(value.empty())
     {
-      m_changed.changed(m_entity.getEntityClass()->getName().c_str());
+      m_changed.changed(m_entity.getEntityClass()->getName());
     }
     else
     {
@@ -88,7 +88,7 @@ public:
     }
     _name = value;
   }
-  typedef MemberCaller1<NamedEntity, const char*, &NamedEntity::identifierChanged> IdentifierChangedCaller;
+  typedef MemberCaller1<NamedEntity, const std::string&, &NamedEntity::identifierChanged> IdentifierChangedCaller;
 };
 
 class RenderableNamedEntity : public OpenGLRenderable

@@ -145,13 +145,13 @@ public:
   {
     return m_name.c_str();
   }
-  void nameChanged(const char* name)
+  void nameChanged(const std::string& name)
   {
     destroy();
     m_name = name;
     construct();
   }
-  typedef MemberCaller1<NameObserver, const char*, &NameObserver::nameChanged> NameChangedCaller;
+  typedef MemberCaller1<NameObserver, const std::string&, &NameObserver::nameChanged> NameChangedCaller;
 };
 
 class BasicNamespace : public Namespace

@@ -32,9 +32,9 @@ inline void default_colour(Vector3& colour)
 {
   colour = Vector3(1, 1, 1);
 }
-inline void read_colour(Vector3& colour, const char* value)
+inline void read_colour(Vector3& colour, const std::string& value)
 {
-  if(!string_parse_vector3(value, colour))
+  if(!string_parse_vector3(value.c_str(), colour))
   {
     default_colour(colour);
   }
@@ -67,14 +67,14 @@ public:
     capture_state();
   }
 
-  void colourChanged(const char* value)
+  void colourChanged(const std::string& value)
   {
     read_colour(m_colour, value);
     capture_state();
 
     m_colourChanged();
   }
-  typedef MemberCaller1<Colour, const char*, &Colour::colourChanged> ColourChangedCaller;
+  typedef MemberCaller1<Colour, const std::string&, &Colour::colourChanged> ColourChangedCaller;
 
 
   void write(Entity* entity) const

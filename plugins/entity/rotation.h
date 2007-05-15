@@ -74,9 +74,9 @@ inline void write_rotation(const Float9 rotation, Entity* entity, const char* ke
     entity->setKeyValue(key, value.c_str());
   }
 }
-inline void read_rotation(Float9 rotation, const char* value)
+inline void read_rotation(Float9 rotation, const std::string& value)
 {
-  if(!string_parse_vector(value, rotation, rotation + 9))
+  if(!string_parse_vector(value.c_str(), rotation, rotation + 9))
   {
     default_rotation(rotation);
   }
@@ -140,10 +140,10 @@ inline void rotation_rotate(Float9 rotation, const Quaternion& rotate)
   );
 }
 
-inline void read_angle(Float9 rotation, const char* value)
+inline void read_angle(Float9 rotation, const std::string& value)
 {
   float angle;
-  if(!string_parse_float(value, angle))
+  if(!string_parse_float(value.c_str(), angle))
   {
     default_rotation(rotation);
   }
@@ -166,19 +166,19 @@ public:
     default_rotation(m_rotation);
   }
 
-  void angleChanged(const char* value)
+  void angleChanged(const std::string& value)
   {
     read_angle(m_rotation, value);
     m_rotationChanged();
   }
-  typedef MemberCaller1<RotationKey, const char*, &RotationKey::angleChanged> AngleChangedCaller;
+  typedef MemberCaller1<RotationKey, const std::string&, &RotationKey::angleChanged> AngleChangedCaller;
 
-  void rotationChanged(const char* value)
+  void rotationChanged(const std::string& value)
   {
     read_rotation(m_rotation, value);
     m_rotationChanged();
   }
-  typedef MemberCaller1<RotationKey, const char*, &RotationKey::rotationChanged> RotationChangedCaller;
+  typedef MemberCaller1<RotationKey, const std::string&, &RotationKey::rotationChanged> RotationChangedCaller;
 
   void write(Entity* entity, bool isModel = false) const
   {

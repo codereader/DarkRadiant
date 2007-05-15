@@ -169,19 +169,19 @@ class Light :
 	void originChanged();
 	typedef MemberCaller<Light, &Light::originChanged> OriginChangedCaller;
 
-	void lightOriginChanged(const char* value);
-	typedef MemberCaller1<Light, const char*, &Light::lightOriginChanged> LightOriginChangedCaller;
+	void lightOriginChanged(const std::string& value);
+	typedef MemberCaller1<Light, const std::string&, &Light::lightOriginChanged> LightOriginChangedCaller;
 
-	void lightTargetChanged(const char* value);
-	typedef MemberCaller1<Light, const char*, &Light::lightTargetChanged> LightTargetChangedCaller;
-	void lightUpChanged(const char* value);
-	typedef MemberCaller1<Light, const char*, &Light::lightUpChanged> LightUpChangedCaller;
-	void lightRightChanged(const char* value);
-	typedef MemberCaller1<Light, const char*, &Light::lightRightChanged> LightRightChangedCaller;
-	void lightStartChanged(const char* value);
-	typedef MemberCaller1<Light, const char*, &Light::lightStartChanged> LightStartChangedCaller;
-	void lightEndChanged(const char* value);
-	typedef MemberCaller1<Light, const char*, &Light::lightEndChanged> LightEndChangedCaller;
+	void lightTargetChanged(const std::string& value);
+	typedef MemberCaller1<Light, const std::string&, &Light::lightTargetChanged> LightTargetChangedCaller;
+	void lightUpChanged(const std::string& value);
+	typedef MemberCaller1<Light, const std::string&, &Light::lightUpChanged> LightUpChangedCaller;
+	void lightRightChanged(const std::string& value);
+	typedef MemberCaller1<Light, const std::string&, &Light::lightRightChanged> LightRightChangedCaller;
+	void lightStartChanged(const std::string& value);
+	typedef MemberCaller1<Light, const std::string&, &Light::lightStartChanged> LightStartChangedCaller;
+	void lightEndChanged(const std::string& value);
+	typedef MemberCaller1<Light, const std::string&, &Light::lightEndChanged> LightEndChangedCaller;
 
 	void writeLightOrigin();
 
@@ -190,8 +190,8 @@ class Light :
 	void rotationChanged();
 	typedef MemberCaller<Light, &Light::rotationChanged> RotationChangedCaller;
 
-	void lightRotationChanged(const char* value);
-	typedef MemberCaller1<Light, const char*, &Light::lightRotationChanged> LightRotationChangedCaller;
+	void lightRotationChanged(const std::string& value);
+	typedef MemberCaller1<Light, const std::string&, &Light::lightRotationChanged> LightRotationChangedCaller;
 
 public:
 	// Constructor

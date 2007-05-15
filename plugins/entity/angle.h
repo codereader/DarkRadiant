@@ -38,9 +38,9 @@ inline void normalise_angle(float& angle)
 {
   angle = static_cast<float>(float_mod(angle, 360.0));
 }
-inline void read_angle(float& angle, const char* value)
+inline void read_angle(float& angle, const std::string& value)
 {
-  if(!string_parse_float(value, angle))
+  if(!string_parse_float(value.c_str(), angle))
   {
     angle = 0;
   }
@@ -75,12 +75,12 @@ public:
   {
   }
 
-  void angleChanged(const char* value)
+  void angleChanged(const std::string& value)
   {
     read_angle(m_angle, value);
     m_angleChanged();
   }
-  typedef MemberCaller1<AngleKey, const char*, &AngleKey::angleChanged> AngleChangedCaller;
+  typedef MemberCaller1<AngleKey, const std::string&, &AngleKey::angleChanged> AngleChangedCaller;
 
   void write(Entity* entity) const
   {
