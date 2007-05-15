@@ -14,6 +14,10 @@ public:
 	 */
 	scene::Node& createEntity(IEntityClassPtr eclass);
 	
+	/** greebo: Sets the function to call when any keyvalue gets changed.
+	 * 	
+	 * Note: this currently points to the EntityInspector in the radiant core.
+	 */
 	void setKeyValueChangedFunc(KeyValueChangedFunc func);
 	
 	void setCounter(Counter* counter);

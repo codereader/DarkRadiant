@@ -3,6 +3,8 @@
 
 #include "ientity.h"
 #include "undolib.h"
+#include "string/string.h"
+#include "container/container.h"
 
 namespace entity {
 
