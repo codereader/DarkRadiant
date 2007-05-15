@@ -24,10 +24,10 @@ namespace entity {
 			return dynamic_cast<Namespaced*>(&node);
 		}
 		
-		void Entity_setName(Entity& entity, const char* name) {
+		void Entity_setName(Entity& entity, const std::string& name) {
 			entity.setKeyValue("name", name);
 		}
-		typedef ReferenceCaller1<Entity, const char*, Entity_setName> EntitySetNameCaller;
+		typedef ReferenceCaller1<Entity, const std::string&, Entity_setName> EntitySetNameCaller;
 	}
 
 scene::Node& Doom3EntityCreator::getEntityForEClass(IEntityClassPtr eclass) {

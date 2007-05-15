@@ -34,14 +34,14 @@ inline void default_origin(Vector3& origin)
 {
   origin = ORIGINKEY_IDENTITY;
 }
-inline void read_origin(Vector3& origin, const char* value)
+inline void read_origin(Vector3& origin, const std::string& value)
 {
-  if(!string_parse_vector3(value, origin))
+  if(!string_parse_vector3(value.c_str(), origin))
   {
     default_origin(origin);
   }
 }
-inline void write_origin(const Vector3& origin, Entity* entity, const char* key)
+inline void write_origin(const Vector3& origin, Entity* entity, const std::string& key)
 {
   char value[64];
   sprintf(value, "%g %g %g", origin[0], origin[1], origin[2]);
@@ -75,12 +75,12 @@ public:
   {
   }
 
-  void originChanged(const char* value)
+  void originChanged(const std::string& value)
   {
     read_origin(m_origin, value);
     m_originChanged();
   }
-  typedef MemberCaller1<OriginKey, const char*, &OriginKey::originChanged> OriginChangedCaller;
+  typedef MemberCaller1<OriginKey, const std::string&, &OriginKey::originChanged> OriginChangedCaller;
 
 
   void write(Entity* entity) const

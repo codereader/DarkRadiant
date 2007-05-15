@@ -31,13 +31,13 @@ class IEntityClass;
 typedef boost::shared_ptr<IEntityClass> IEntityClassPtr;
 typedef boost::shared_ptr<const IEntityClass> IEntityClassConstPtr;
 
-typedef Callback1<const char*> KeyObserver;
+typedef Callback1<const std::string&> KeyObserver;
 
 class EntityKeyValue
 {
 public:
   virtual const char* c_str() const = 0;
-  virtual void assign(const char* other) = 0;
+  virtual void assign(const std::string& other) = 0;
   virtual void attach(const KeyObserver& observer) = 0;
   virtual void detach(const KeyObserver& observer) = 0;
 };

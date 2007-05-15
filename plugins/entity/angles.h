@@ -42,9 +42,9 @@ inline void normalise_angles(Vector3& angles)
   angles[1] = static_cast<float>(float_mod(angles[1], 360));
   angles[2] = static_cast<float>(float_mod(angles[2], 360));
 }
-inline void read_angle(Vector3& angles, const char* value)
+inline void read_angle(Vector3& angles, const std::string& value)
 {
-  if(!string_parse_double(value, angles[2]))
+  if(!string_parse_double(value.c_str(), angles[2]))
   {
     default_angles(angles);
   }
@@ -55,9 +55,9 @@ inline void read_angle(Vector3& angles, const char* value)
     normalise_angles(angles);
   }
 }
-inline void read_angles(Vector3& angles, const char* value)
+inline void read_angles(Vector3& angles, const std::string& value)
 {
-  if(!string_parse_vector3(value, angles))
+  if(!string_parse_vector3(value.c_str(), angles))
   {
     default_angles(angles);
   }
@@ -116,19 +116,19 @@ public:
   {
   }
 
-  void angleChanged(const char* value)
+  void angleChanged(const std::string& value)
   {
     read_angle(m_angles, value);
     m_anglesChanged();
   }
-  typedef MemberCaller1<AnglesKey, const char*, &AnglesKey::angleChanged> AngleChangedCaller;
+  typedef MemberCaller1<AnglesKey, const std::string&, &AnglesKey::angleChanged> AngleChangedCaller;
 
-  void anglesChanged(const char* value)
+  void anglesChanged(const std::string& value)
   {
     read_angles(m_angles, value);
     m_anglesChanged();
   }
-  typedef MemberCaller1<AnglesKey, const char*, &AnglesKey::anglesChanged> AnglesChangedCaller;
+  typedef MemberCaller1<AnglesKey, const std::string&, &AnglesKey::anglesChanged> AnglesChangedCaller;
 
   void write(Entity* entity) const
   {

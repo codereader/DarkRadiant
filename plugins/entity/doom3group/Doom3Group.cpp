@@ -376,12 +376,12 @@ void Doom3Group::updateIsModel() {
 	}
 }
 
-void Doom3Group::nameChanged(const char* value) {
+void Doom3Group::nameChanged(const std::string& value) {
 	m_name = value;
 	updateIsModel();
 }
 
-void Doom3Group::modelChanged(const char* value) {
+void Doom3Group::modelChanged(const std::string& value) {
 	m_modelKey = value;
 	updateIsModel();
 	if (isModel()) {

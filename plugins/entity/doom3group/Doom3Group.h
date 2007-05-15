@@ -162,11 +162,11 @@ private:
 	 */
 	void updateIsModel();
 
-	void nameChanged(const char* value);
-	typedef MemberCaller1<Doom3Group, const char*, &Doom3Group::nameChanged> NameChangedCaller;
+	void nameChanged(const std::string& value);
+	typedef MemberCaller1<Doom3Group, const std::string&, &Doom3Group::nameChanged> NameChangedCaller;
 
-	void modelChanged(const char* value);
-	typedef MemberCaller1<Doom3Group, const char*, &Doom3Group::modelChanged> ModelChangedCaller;
+	void modelChanged(const std::string& value);
+	typedef MemberCaller1<Doom3Group, const std::string&, &Doom3Group::modelChanged> ModelChangedCaller;
 
 	void updateTransform();
 	typedef MemberCaller<Doom3Group, &Doom3Group::updateTransform> UpdateTransformCaller;

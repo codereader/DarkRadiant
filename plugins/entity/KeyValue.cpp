@@ -53,7 +53,7 @@ const char* KeyValue::c_str() const {
 	return m_string.c_str();
 }
 
-void KeyValue::assign(const char* other) {
+void KeyValue::assign(const std::string& other) {
 	if (m_string != other) {
 		m_undo.save();
 		m_string = other;

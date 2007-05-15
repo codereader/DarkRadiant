@@ -25,9 +25,9 @@ typedef std::map<std::string, targetables_t> targetnames_t;
 
 targetnames_t g_targetnames;
 
-targetables_t* getTargetables(const char* targetname)
+targetables_t* getTargetables(const std::string& targetname)
 {
-  if(targetname[0] == '\0')
+  if (targetname.empty())
     return 0;
   return &g_targetnames[targetname];
 }

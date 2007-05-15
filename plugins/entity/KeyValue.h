@@ -41,7 +41,7 @@ public:
 	void detach(const KeyObserver& observer);
 	
 	const char* c_str() const;
-	void assign(const char* other);
+	void assign(const std::string& other);
 
 	void notify();
 
