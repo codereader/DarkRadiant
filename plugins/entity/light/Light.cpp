@@ -529,10 +529,10 @@ void Light::freezeTransform() {
 	}
 }
 
-Doom3Entity& Light::getEntity() {
+entity::Doom3Entity& Light::getEntity() {
 	return m_entity;
 }
-const Doom3Entity& Light::getEntity() const {
+const entity::Doom3Entity& Light::getEntity() const {
 	return m_entity;
 }
 

@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "entitylib.h"
 #include "generic/callback.h"
 #include "nameable.h"
+#include "Doom3Entity.h"
 
 #include <set>
 
@@ -52,11 +53,11 @@ public:
 
 class NamedEntity
 {
-  Doom3Entity& m_entity;
+  entity::Doom3Entity& m_entity;
   NameCallbackSet m_changed;
   std::string _name;
 public:
-  NamedEntity(Doom3Entity& entity) : m_entity(entity)
+  NamedEntity(entity::Doom3Entity& entity) : m_entity(entity)
   {
   }
   std::string name() const

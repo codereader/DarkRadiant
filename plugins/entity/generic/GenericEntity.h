@@ -14,6 +14,7 @@
 #include "../namedentity.h"
 #include "../namekeys.h"
 #include "../keyobservers.h"
+#include "../Doom3Entity.h"
 #include "RenderableArrow.h"
 
 namespace entity {

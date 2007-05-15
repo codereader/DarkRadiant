@@ -18,6 +18,7 @@
 #include "../namedentity.h"
 #include "../namekeys.h"
 #include "../entity.h"
+#include "../Doom3Entity.h"
 
 #include "Renderables.h"
 #include "LightShader.h"
@@ -83,7 +84,7 @@ class Light :
 	public Editable,
 	public Snappable
 {
-  Doom3Entity m_entity;
+  entity::Doom3Entity m_entity;
   KeyObserverMap m_keyObservers;
   TraversableNodeSet m_traverse;
   IdentityTransform m_transform;
@@ -206,8 +207,8 @@ public:
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
 
-	Doom3Entity& getEntity();
-	const Doom3Entity& getEntity() const;
+	entity::Doom3Entity& getEntity();
+	const entity::Doom3Entity& getEntity() const;
 
 	scene::Traversable& getTraversable();
 	const scene::Traversable& getTraversable() const;
