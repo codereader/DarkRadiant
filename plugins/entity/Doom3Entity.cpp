@@ -193,7 +193,7 @@ void Doom3Entity::insert(const char* key, const char* value) {
 	}
 	else {
 		m_undo.save();
-		insert(key, KeyValuePtr(new KeyValue(value, m_eclass->getValueForKey(key).c_str())));
+		insert(key, KeyValuePtr(new KeyValue(value, m_eclass->getValueForKey(key))));
 	}
 }
 
