@@ -25,7 +25,7 @@ class KeyValue :
 	static EntityCreator::KeyValueChangedFunc m_entityKeyValueChanged;
 public:
 
-	KeyValue(const char* string, const char* empty);
+	KeyValue(const std::string& string, const std::string& empty);
 	
 	~KeyValue();
 

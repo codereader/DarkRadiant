@@ -2,10 +2,10 @@
 
 namespace entity {
 
-KeyValue::KeyValue(const char* string, const char* empty) : 
+KeyValue::KeyValue(const std::string& string, const std::string& empty) : 
 	m_refcount(0), 
 	m_string(string), 
-	m_empty(empty), 
+	m_empty(empty),
 	m_undo(m_string, UndoImportCaller(*this))
 {
 	notify();
@@ -54,7 +54,7 @@ const char* KeyValue::c_str() const {
 }
 
 void KeyValue::assign(const char* other) {
-	if (!string_equal(m_string.c_str(), other)) {
+	if (m_string != other) {
 		m_undo.save();
 		m_string = other;
 		notify();
@@ -71,7 +71,6 @@ void KeyValue::notify() {
 
 void KeyValue::importState(const std::string& string) {
 	m_string = string;
-
 	notify();
 }
 
