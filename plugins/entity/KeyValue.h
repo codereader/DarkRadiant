@@ -20,73 +20,32 @@ class KeyValue :
 	std::size_t m_refcount;
 	KeyObservers m_observers;
 	std::string m_string;
-	const char* m_empty;
+	std::string m_empty;
 	ObservedUndoableObject<std::string> m_undo;
 	static EntityCreator::KeyValueChangedFunc m_entityKeyValueChanged;
 public:
 
-	KeyValue(const char* string, const char* empty)
-			: m_refcount(0), m_string(string), m_empty(empty), m_undo(m_string, UndoImportCaller(*this)) {
-		notify();
-	}
-	~KeyValue() {
-		ASSERT_MESSAGE(m_observers.empty(), "KeyValue::~KeyValue: observers still attached");
-	}
+	KeyValue(const char* string, const char* empty);
+	
+	~KeyValue();
 
-	static void setKeyValueChangedFunc(EntityCreator::KeyValueChangedFunc func) {
-		m_entityKeyValueChanged = func;
-	}
+	static void setKeyValueChangedFunc(EntityCreator::KeyValueChangedFunc func);
 
-	void IncRef() {
-		++m_refcount;
-	}
-	void DecRef() {
-		if(--m_refcount == 0) {
-			delete this;
-		}
-	}
+	void IncRef();
+	void DecRef();
 
-	void instanceAttach(MapFile* map) {
-		m_undo.instanceAttach(map);
-	}
-	void instanceDetach(MapFile* map) {
-		m_undo.instanceDetach(map);
-	}
+	void instanceAttach(MapFile* map);
+	void instanceDetach(MapFile* map);
 
-	void attach(const KeyObserver& observer) {
-		(*m_observers.insert(observer))(c_str());
-	}
-	void detach(const KeyObserver& observer) {
-		observer(m_empty);
-		m_observers.erase(observer);
-	}
-	const char* c_str() const {
-		if(string_empty(m_string.c_str())) {
-			return m_empty;
-		}
-		return m_string.c_str();
-	}
-	void assign(const char* other) {
-		if(!string_equal(m_string.c_str(), other)) {
-			m_undo.save();
-			m_string = other;
-			notify();
-		}
-	}
+	void attach(const KeyObserver& observer);
+	void detach(const KeyObserver& observer);
+	
+	const char* c_str() const;
+	void assign(const char* other);
 
-	void notify() {
-		m_entityKeyValueChanged();
-		KeyObservers::reverse_iterator i = m_observers.rbegin();
-		while(i != m_observers.rend()) {
-			(*i++)(c_str());
-		}
-	}
+	void notify();
 
-	void importState(const std::string& string) {
-		m_string = string;
-
-		notify();
-	}
+	void importState(const std::string& string);
 	typedef MemberCaller1<KeyValue, const std::string&, &KeyValue::importState> UndoImportCaller;
 };
 

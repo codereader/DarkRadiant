@@ -281,6 +281,7 @@ entity_src = [
 	'rotation.cpp',
 	'modelskinkey.cpp',
 	'Doom3Entity.cpp',
+	'KeyValue.cpp',
 	'light/Light.cpp',
 	'light/Renderables.cpp',
 	'light/LightInstance.cpp',
