@@ -132,7 +132,7 @@ void Doom3EntityCreator::connectEntities(const scene::Path& path,
 }
 
 void Doom3EntityCreator::printStatistics() const {
-	//StringPool_analyse(Doom3Entity::getPool());
+	StringPool_analyse(Doom3Entity::getPool());
 }
 
 } // namespace entity

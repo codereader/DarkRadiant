@@ -17,6 +17,7 @@ class KeyValue :
 {
 	typedef UnsortedSet<KeyObserver> KeyObservers;
 
+	std::size_t m_refcount;
 	KeyObservers m_observers;
 	std::string m_string;
 	std::string m_empty;
@@ -30,18 +31,16 @@ public:
 
 	static void setKeyValueChangedFunc(EntityCreator::KeyValueChangedFunc func);
 
+	void IncRef();
+	void DecRef();
+
 	void instanceAttach(MapFile* map);
 	void instanceDetach(MapFile* map);
 
 	void attach(const KeyObserver& observer);
 	void detach(const KeyObserver& observer);
 	
-	// Accessor method, retrieve the actual value
-	std::string get() const;
-	
-	// Deprecated: this is legacy
 	const char* c_str() const;
-	
 	void assign(const std::string& other);
 
 	void notify();
