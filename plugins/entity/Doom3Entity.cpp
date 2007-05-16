@@ -9,7 +9,7 @@ Doom3Entity::Doom3Entity(IEntityClassPtr eclass) :
 	m_undo(m_keyValues, UndoImportCaller(*this)),
 	m_instanced(false),
 	m_observerMutex(false),
-	m_isContainer(!eclass->isFixedSize())
+	_isContainer(!eclass->isFixedSize())
 {}
 
 Doom3Entity::Doom3Entity(const Doom3Entity& other) :
@@ -18,7 +18,7 @@ Doom3Entity::Doom3Entity(const Doom3Entity& other) :
 	m_undo(m_keyValues, UndoImportCaller(*this)),
 	m_instanced(false),
 	m_observerMutex(false),
-	m_isContainer(other.m_isContainer)
+	_isContainer(other._isContainer)
 {
 	// Copy the key/values from the <other> entity
 	for (KeyValues::const_iterator i = other.m_keyValues.begin(); 
@@ -169,7 +169,11 @@ std::string Doom3Entity::getKeyValue(const std::string& key) const {
 }
 
 bool Doom3Entity::isContainer() const {
-	return m_isContainer;
+	return _isContainer;
+}
+
+void Doom3Entity::setIsContainer(bool isContainer) {
+	_isContainer = isContainer;
 }
 
 void Doom3Entity::notifyInsert(const std::string& key, KeyValue& value) {
