@@ -3,6 +3,7 @@
 namespace entity {
 
 KeyValue::KeyValue(const std::string& string, const std::string& empty) : 
+	m_refcount(0), 
 	m_string(string), 
 	m_empty(empty),
 	m_undo(m_string, UndoImportCaller(*this))
@@ -16,6 +17,16 @@ KeyValue::~KeyValue() {
 
 void KeyValue::setKeyValueChangedFunc(EntityCreator::KeyValueChangedFunc func) {
 	m_entityKeyValueChanged = func;
+}
+
+void KeyValue::IncRef() {
+	++m_refcount;
+}
+
+void KeyValue::DecRef() {
+	if(--m_refcount == 0) {
+		delete this;
+	}
 }
 
 void KeyValue::instanceAttach(MapFile* map) {
@@ -33,11 +44,6 @@ void KeyValue::attach(const KeyObserver& observer) {
 void KeyValue::detach(const KeyObserver& observer) {
 	observer(m_empty.c_str());
 	m_observers.erase(observer);
-}
-
-std::string KeyValue::get() const {
-	// Return the <empty> string if the actual value is ""
-	return (m_string.empty()) ? m_empty : m_string;
 }
 
 const char* KeyValue::c_str() const {
