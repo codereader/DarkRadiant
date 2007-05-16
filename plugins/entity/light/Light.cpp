@@ -244,7 +244,7 @@ void Light::construct() {
 
 	m_traverse.attach(&m_traverseObservers);
 
-	m_entity.m_isContainer = true;
+	m_entity.setIsContainer(true);
 }
 
 void Light::destroy() {

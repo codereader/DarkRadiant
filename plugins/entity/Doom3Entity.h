@@ -55,9 +55,9 @@ class Doom3Entity :
 
 	bool m_observerMutex;
 
-public:
-	bool m_isContainer;
+	bool _isContainer;
 
+public:
 	// Constructor, pass the according entity class
 	Doom3Entity(IEntityClassPtr eclass);
 	
@@ -96,6 +96,7 @@ public:
 	std::string getKeyValue(const std::string& key) const;
 
 	bool isContainer() const;
+	void setIsContainer(bool isContainer);
 
 private:
 	/** greebo: Notifies the attached observers about key/value
