@@ -46,8 +46,7 @@ void ColourSchemeManager::setActive(const std::string& name) {
 /*	Dumps the current in-memory content of the colourschemes to globalOutputStream() 
  */
 void ColourSchemeManager::dump() {
-	globalOutputStream() << "Dump: Number of schemes: " << _colourSchemes.size();
-	globalOutputStream() << "\n";
+	globalOutputStream() << "Dump: Number of schemes: " << static_cast<int>(_colourSchemes.size()) << "\n";
 	
 	for (ColourSchemeMap::iterator it = _colourSchemes.begin(); it != _colourSchemes.end(); it++) {
 		globalOutputStream() << "Dump: Schemename: " << it->first.c_str() << "\n";
@@ -55,8 +54,8 @@ void ColourSchemeManager::dump() {
 		// Retrieve the list with all the ColourItems of this scheme
 		ColourItemMap& colourMap = _colourSchemes[it->first].getColourMap();
 	
-		globalOutputStream() << "Dump: Number of ColourItems: " << colourMap.size();
-		globalOutputStream() << "\n";
+		globalOutputStream() << "Dump: Number of ColourItems: " << 
+								static_cast<int>(colourMap.size()) << "\n";
 	
 		// Cycle through all the ColourItems and save them into the registry	
 		for (ColourItemMap::iterator c = colourMap.begin(); c != colourMap.end(); c++) {

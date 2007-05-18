@@ -178,7 +178,7 @@ GtkWidget* CustomStimEditor::createListButtons() {
 }
 
 void CustomStimEditor::entryChanged(GtkEditable* editable) {
-	if (editable = GTK_EDITABLE(_propertyWidgets.nameEntry)) {
+	if (editable == GTK_EDITABLE(_propertyWidgets.nameEntry)) {
 		// Set the caption of the curently selected stim type
 		std::string caption = gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.nameEntry));
 		// Pass the call to the helper class 

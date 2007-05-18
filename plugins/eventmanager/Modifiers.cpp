@@ -23,7 +23,8 @@ void Modifiers::loadModifierDefinitions() {
 		xml::NodeList modifierList = modifiers[0].getNamedChildren("modifier");
 		
 		if (modifierList.size() > 0) {
-			globalOutputStream() << "EventManager: Modifiers found: " << modifierList.size() << "\n";
+			globalOutputStream() << "EventManager: Modifiers found: " 
+								 << static_cast<int>(modifierList.size()) << "\n";
 			for (unsigned int i = 0; i < modifierList.size(); i++) {
 				const std::string name = modifierList[i].getAttributeValue("name");
 				

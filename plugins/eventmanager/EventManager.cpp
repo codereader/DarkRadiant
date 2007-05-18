@@ -429,7 +429,8 @@ public:
 		xml::NodeList shortcutList = GlobalRegistry().findXPath("user/ui/input/shortcuts//shortcut");
 		
 		if (shortcutList.size() > 0) {
-			globalOutputStream() << "EventManager: Shortcuts found in Registry: " << shortcutList.size() << "\n";
+			globalOutputStream() << "EventManager: Shortcuts found in Registry: " << 
+									static_cast<int>(shortcutList.size()) << "\n";
 			for (unsigned int i = 0; i < shortcutList.size(); i++) {
 				const std::string key = shortcutList[i].getAttributeValue("key");
 				
