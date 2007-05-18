@@ -107,7 +107,8 @@ void MouseEventManager::loadCameraEventDefinitions() {
 		xml::NodeList eventList = camviews[0].getNamedChildren("event");
 		
 		if (eventList.size() > 0) {
-			globalOutputStream() << "MouseEventManager: Camera Definitions found: " << eventList.size() << "\n";
+			globalOutputStream() << "MouseEventManager: Camera Definitions found: " 
+								 << static_cast<int>(eventList.size()) << "\n";
 			for (unsigned int i = 0; i < eventList.size(); i++) {
 				// Get the event name
 				const std::string eventName = eventList[i].getAttributeValue("name");
@@ -144,7 +145,8 @@ void MouseEventManager::loadObserverEventDefinitions() {
 		xml::NodeList eventList = observers[0].getNamedChildren("event");
 		
 		if (eventList.size() > 0) {
-			globalOutputStream() << "MouseEventManager: Observer Definitions found: " << eventList.size() << "\n";
+			globalOutputStream() << "MouseEventManager: Observer Definitions found: " 
+								 << static_cast<int>(eventList.size()) << "\n";
 			for (unsigned int i = 0; i < eventList.size(); i++) {
 				// Get the event name
 				const std::string eventName = eventList[i].getAttributeValue("name");
@@ -212,7 +214,8 @@ void MouseEventManager::loadXYViewEventDefinitions() {
 		xml::NodeList eventList = xyviews[0].getNamedChildren("event");
 	
 		if (eventList.size() > 0) {
-			globalOutputStream() << "MouseEventManager: XYView Definitions found: " << eventList.size() << "\n";
+			globalOutputStream() << "MouseEventManager: XYView Definitions found: " 
+								 << static_cast<int>(eventList.size()) << "\n";
 			for (unsigned int i = 0; i < eventList.size(); i++) {
 				// Get the event name
 				const std::string eventName = eventList[i].getAttributeValue("name");
@@ -261,7 +264,8 @@ void MouseEventManager::loadButtonDefinitions() {
 		xml::NodeList buttonList = buttons[0].getNamedChildren("button");
 	
 		if (buttonList.size() > 0) {
-			globalOutputStream() << "MouseEventManager: Buttons found: " << buttonList.size() << "\n";
+			globalOutputStream() << "MouseEventManager: Buttons found: " 
+								 << static_cast<int>(buttonList.size()) << "\n";
 			for (unsigned int i = 0; i < buttonList.size(); i++) {
 				const std::string name = buttonList[i].getAttributeValue("name");
 				

@@ -99,6 +99,7 @@ gtkutil_lib = gtkutil_env.StaticLibrary(target='libs/gtkutil', source=build_list
 # radiant, modules and plugins ----------------------------------------------------
 
 module_env = g_env.Copy()
+module_env.Dir('libs/string')
 module_env['CPPPATH'].append('include')
 if (module_env['PLATFORM'] == 'posix'):
     module_env['LINKFLAGS'] += '-ldl ' # do we need this library?

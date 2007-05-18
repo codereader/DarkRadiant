@@ -177,11 +177,11 @@ CCFLAGS = POSIXFLAGS + warningFlags
 CXXFLAGS = '-pipe ' + POSIXFLAGS + warningFlags + warningFlagsCXX
 CPPPATH = ['radiant', 'include', 'libs']
 if (BUILD == 'debug'):
-	CXXFLAGS += '-g -D_DEBUG '
-	CCFLAGS += '-g -D_DEBUG '
+	CXXFLAGS += '-g -D_DEBUG -fPIC '
+	CCFLAGS += '-g -D_DEBUG -fPIC '
 elif (BUILD == 'release' or BUILD == 'final'):
-	CXXFLAGS += '-O2 '
-	CCFLAGS += '-O2 '
+	CXXFLAGS += '-O2 -fPIC '
+	CCFLAGS += '-O2 -fPIC '
 	# TEMPORARY HACK: Disable inlining on Windows due to problems with NaNs and certain
 	# maths functions causing infinite loops
 	#if getOS() == 'win32':

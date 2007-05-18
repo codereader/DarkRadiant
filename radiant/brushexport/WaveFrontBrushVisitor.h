@@ -43,7 +43,7 @@ public:
       if(bptr)
       {
         Brush& brush(bptr->getBrush());
-        m_file << "\ng " << "Brush" << exported << "\n";
+        m_file << "\ng " << "Brush" << static_cast<int>(exported) << "\n";
         brush.forEachFace(*this);
         m_file << vertexbuffer.c_str() << "\n";
         m_file << texcoordbuffer.c_str();
@@ -74,7 +74,7 @@ public:
       
       facebuffer << "\nf";
       for(size_t i = v_start; i < vertices; ++i)
-        facebuffer << " " << i+1 << "/" << i+1;
+        facebuffer << " " << static_cast<int>(i+1) << "/" << static_cast<int>(i+1);
     }
 }; // class CExportFormatWavefront
 
