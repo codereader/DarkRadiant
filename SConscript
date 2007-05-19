@@ -18,8 +18,6 @@ xmlutilEnv.useXML2()
 xmlutilSource = 'Document.cpp Node.cpp'
 xmlutil = xmlutilEnv.StaticLibrary(target='libs/xmlutil', source=build_list('libs/xmlutil', xmlutilSource))
 
-cmdlib_lib = g_env.StaticLibrary(target='libs/cmdlib', source='libs/cmdlib/cmdlib.cpp')
-
 mathlib_src = 'mathlib.c bbox.c line.c m4x4.c ray.c'
 mathlib_lib = g_env.StaticLibrary(target='libs/mathlib', source=build_list('libs/mathlib', mathlib_src))
 
@@ -167,7 +165,6 @@ archivezip_env.useZLib()
 archivezip_env.Append(LIBPATH = ['libs'])
 archivezip_env.Append(LIBS = ['cmdlib'])
 archivezip_lib = archivezip_env.SharedLibrary(target='archivezip', source=archivezip_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
-archivezip_env.Depends(archivezip_lib, cmdlib_lib)
 archivezip_env.Install(INSTALL + '/modules', archivezip_lib)
 
 # Shaders module
@@ -189,7 +186,6 @@ shaders_env.useGlib2()
 shaders_env.Append(LIBS = ['cmdlib', 'xmlutil'])
 shaders_env.Append(LIBPATH = ['libs'])
 shaders_lib = shaders_env.SharedLibrary(target='shaders', source=shaders_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
-shaders_env.Depends(shaders_lib, cmdlib_lib)
 shaders_env.Depends(shaders_lib, xmlutil)
 shaders_env.Install(INSTALL + '/modules', shaders_lib)
 
@@ -216,7 +212,6 @@ mapdoom3_env.Append(LIBS = ['cmdlib', 'xmlutil', 'gtkutil'])
 mapdoom3_env.useGtk2()
 mapdoom3_env.useGlib2()
 mapdoom3_lib = mapdoom3_env.SharedLibrary(target='mapdoom3', source=mapdoom3_lst)
-mapdoom3_env.Depends(mapdoom3_lib, cmdlib_lib)
 mapdoom3_env.Depends(mapdoom3_lib, xmlutil)
 mapdoom3_env.Depends(mapdoom3_lib, gtkutil_lib)
 mapdoom3_env.Install(INSTALL + '/modules', mapdoom3_lib)
@@ -534,7 +529,6 @@ else:
 	radiant_prog = radiant_env.Program(target='darkradiant', source=radiant_src)
 
 radiant_env.Depends(radiant_prog, mathlib_lib)
-radiant_env.Depends(radiant_prog, cmdlib_lib)
 radiant_env.Depends(radiant_prog, profile_lib)
 radiant_env.Depends(radiant_prog, gtkutil_lib)
 radiant_env.Depends(radiant_prog, xmlutil)
