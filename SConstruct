@@ -298,33 +298,14 @@ class idEnvironment(Environment):
 			self.Append(LIBPATH = ['#/w32/glew/lib'])
 			self.Append(LIBS = ['glew32', 'glu32', 'opengl32', 'gdi32' ]) # MinGW libs
 		else:
-			self.Append(LIBS = ['GL', 'GLEW'])
+			self.Append(LIBS = ['GLEW', 'GL'])
 
-	def usePNG(self):
-		self.useZLib() # libPNG requires ZLib
-		if (self['PLATFORM'] == 'win32'):
-			self.Append(CPPPATH = ['#/libpng.w32/include'])
-			self.Append(LIBPATH = ['#/libpng.w32/lib'])
-		else: # Linux
-			self.Append(CXXFLAGS = '`libpng-config --cflags` ')
-			self.Append(CFLAGS = '`libpng-config --cflags` ')
-		self.Append(LIBS = ['png'])
-    
-	def useMHash(self):
-		self['LINKFLAGS'] += '-lmhash '
-  
 	def useZLib(self):
 		if (self['PLATFORM'] == 'win32'):
 			self.Append(CPPPATH = ['#/zlib.w32/include'])
 			self.Append(LIBPATH = ['#/zlib.w32/lib'])
 		self.Append(LIBS = ['z'])
     
-	def usePThread(self):
-		if ( getOS() == 'Darwin' ):
-			self['LINKFLAGS'] += '-lpthread -Wl,-stack_size,0x400000 '
-		else:
-			self['LINKFLAGS'] += '-lpthread '
-	
 	def buildIconResource(self):
 		# build the windows icon resource file
 		if sys.platform == 'win32':
