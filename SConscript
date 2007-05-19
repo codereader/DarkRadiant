@@ -158,7 +158,6 @@ archivezip_env = module_env.Copy()
 archivezip_lst = build_list('plugins/archivezip', 'plugin.cpp archive.cpp pkzip.cpp zlibstream.cpp')
 archivezip_env.useZLib()
 archivezip_env.Append(LIBPATH = ['libs'])
-archivezip_env.Append(LIBS = ['cmdlib'])
 archivezip_lib = archivezip_env.SharedLibrary(target='archivezip', source=archivezip_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
 archivezip_env.Install(INSTALL + '/modules', archivezip_lib)
 
@@ -178,7 +177,7 @@ shaders_lst = build_list('plugins/shaders',
 						 textures/FileLoader.cpp \
 						 textures/ImageLoaderManager.cpp')
 shaders_env.useGlib2()
-shaders_env.Append(LIBS = ['cmdlib', 'xmlutil'])
+shaders_env.Append(LIBS = ['xmlutil'])
 shaders_env.Append(LIBPATH = ['libs'])
 shaders_lib = shaders_env.SharedLibrary(target='shaders', source=shaders_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
 shaders_env.Depends(shaders_lib, xmlutil)
@@ -203,7 +202,7 @@ image_env.Install(INSTALL + '/modules', image_lib)
 
 mapdoom3_env = module_env.Copy()
 mapdoom3_lst=build_list('plugins/mapdoom3', 'mapdoom3.cpp parse.cpp write.cpp')
-mapdoom3_env.Append(LIBS = ['cmdlib', 'xmlutil', 'gtkutil'])
+mapdoom3_env.Append(LIBS = ['xmlutil', 'gtkutil'])
 mapdoom3_env.useGtk2()
 mapdoom3_env.useGlib2()
 mapdoom3_lib = mapdoom3_env.SharedLibrary(target='mapdoom3', source=mapdoom3_lst)
@@ -509,7 +508,7 @@ radiant_src = [
 for i in range(len(radiant_src)):
   radiant_src[i] = 'radiant/' + radiant_src[i]
 
-radiant_env.Prepend(LIBS = ['mathlib', 'math', 'cmdlib', 'gtkutil', 'xmlutil'])
+radiant_env.Prepend(LIBS = ['mathlib', 'math', 'gtkutil', 'xmlutil'])
 radiant_env.Prepend(LIBPATH = ['libs'])
 
 # Win32 libs
