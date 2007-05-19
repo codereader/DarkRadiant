@@ -46,11 +46,6 @@ picomodel_lib = g_env.StaticLibrary(target='libs/picomodel', source=build_list('
 #splines_env['CPPPATH'].append('include')
 #splines_lib = splines_env.StaticLibrary(target='libs/splines', source=splines_src)
 
-profile_env = g_env.Copy();
-profile_env['CPPPATH'].append('include')
-profile_src = 'profile.cpp file.cpp'
-profile_lib = profile_env.StaticLibrary(target='libs/profile', source=build_list('libs/profile', profile_src))
-
 gtkutil_env = g_env.Copy();
 gtkutil_env['CPPPATH'].append('include')
 gtkutil_env.useOpenGL()
@@ -514,7 +509,7 @@ radiant_src = [
 for i in range(len(radiant_src)):
   radiant_src[i] = 'radiant/' + radiant_src[i]
 
-radiant_env.Prepend(LIBS = ['mathlib', 'math', 'cmdlib', 'profile', 'gtkutil', 'xmlutil'])
+radiant_env.Prepend(LIBS = ['mathlib', 'math', 'cmdlib', 'gtkutil', 'xmlutil'])
 radiant_env.Prepend(LIBPATH = ['libs'])
 
 # Win32 libs
@@ -529,7 +524,6 @@ else:
 	radiant_prog = radiant_env.Program(target='darkradiant', source=radiant_src)
 
 radiant_env.Depends(radiant_prog, mathlib_lib)
-radiant_env.Depends(radiant_prog, profile_lib)
 radiant_env.Depends(radiant_prog, gtkutil_lib)
 radiant_env.Depends(radiant_prog, xmlutil)
 radiant_env.Depends(radiant_prog, math)
