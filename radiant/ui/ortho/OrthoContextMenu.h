@@ -15,8 +15,6 @@ namespace ui
 
 class OrthoContextMenu
 {
-private:
-	
 	// The GtkWidget representing the menu
 	GtkWidget* _widget;
 	
@@ -24,14 +22,15 @@ private:
 	Vector3 _lastPoint;
 	
 	// GTK MENU ITEMS
+	GtkWidget* _addModel;
 	GtkWidget* _convertStatic;
 	GtkWidget* _revertWorldspawn;
 	GtkWidget* _addEntity;
 	GtkWidget* _addPlayerStart;
+	GtkWidget* _movePlayerStart;
 	GtkWidget* _addLight;
 	GtkWidget* _addSpkr;
-	
-private:
+	GtkWidget* _addPrefab;
 
 	// Enable or disable the "convert to static" option based on the number
 	// of selected brushes.
@@ -41,18 +40,23 @@ private:
 	 */
 	void checkRevertToWorldspawn();
 	
-	/** greebo: Disables the "entity/light/speaker" options according to the selection.
+	/** greebo: Disables the "entity/light/speaker/playerStart" options according to the selection,
+	 *			and change "playerStart" if another playerStart is found.
 	 */
 	void checkAddOptions();
+
+	// mohij: changes the "Add PlayerStart" entry if an info_player_start already exists
+	void checkPlayerStart();
 
 	/* Gtk Callbacks */
 	
 	static void callbackAddEntity(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddPlayerStart(GtkMenuItem* item, OrthoContextMenu* self);
+	static void callbackMovePlayerStart(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddLight(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddModel(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddPrefab(GtkMenuItem* item, OrthoContextMenu* self);
-	static void _onAddSpeaker(GtkMenuItem*, OrthoContextMenu*);
+	static void callbackAddSpeaker(GtkMenuItem*, OrthoContextMenu*);
 	
 	static void callbackConvertToStatic(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackRevertToWorldspawn(GtkMenuItem* item, OrthoContextMenu* self);
