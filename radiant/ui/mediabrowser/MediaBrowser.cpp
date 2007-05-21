@@ -161,7 +161,7 @@ namespace {
 			}
 			
 			// Split the path into "this directory" and the parent path
-			unsigned int slashPos = pathName.rfind("/");
+			std::size_t slashPos = pathName.rfind("/");
 			const std::string parentPath = pathName.substr(0, slashPos);
 			const std::string thisDir = pathName.substr(slashPos + 1);
 
@@ -195,7 +195,7 @@ namespace {
 			// If the name starts with "textures/", add it to the treestore.
 			if (boost::algorithm::istarts_with(rawName, "textures/")) {
 				// Separate path into the directory path and texture name
-				unsigned int slashPos = rawName.rfind("/");
+				std::size_t slashPos = rawName.rfind("/");
 				const std::string dirPath = rawName.substr(0, slashPos);
 				const std::string texName = rawName.substr(slashPos + 1);
 
