@@ -45,7 +45,7 @@ GtkTreeIter* VFSTreePopulator::addRecursive(const std::string& path) {
 	 */
 	 
 	// Find rightmost slash
-	unsigned int slashPos = path.rfind("/");
+	std::size_t slashPos = path.rfind("/");
 	
 	// Call recursively to get parent iter, leaving it at the toplevel if
 	// there is no slash
