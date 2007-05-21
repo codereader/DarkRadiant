@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 namespace
 {
-	std::string g_bitmapsPath;
+	static std::string g_bitmapsPath;
 }
 
 void BitmapsPath_set(const char* path)

@@ -282,6 +282,8 @@ int main (int argc, char* argv[])
 	// Retrieve the application path and such
 	Environment::Instance().init(argc, argv);
 
+	show_splash();
+
 	// Load the Radiant modules from the modules/ and plugins/ dir.
 	ModuleLoader::loadModules(Environment::Instance().getAppPath());
 
@@ -296,7 +298,7 @@ int main (int argc, char* argv[])
 	Sys_LogFile(true);
 	
 	// Create the radiant.pid file in the settings folder 
-	// (emits a warning if the file already exists (due to a previous startup failure) 
+	// (emits a warning if the file already exists (due to a previous startup failure)) 
 	createPIDFile("radiant.pid");
 	
 	// Load the XML files into the Registry, we need the information asap
@@ -314,8 +316,6 @@ int main (int argc, char* argv[])
 	// the game paths for suitable archive files
 	GlobalFileSystemModuleRef fsRef;
 	game::Manager::Instance().initEnginePath();
-
-	show_splash();
 
 	// The VFS is setup at this point, we can load the modules
 	Radiant_Initialise();
