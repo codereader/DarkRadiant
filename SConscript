@@ -29,7 +29,7 @@ math = mathEnv.StaticLibrary(target='libs/math',
 
 md5lib_lib = g_env.StaticLibrary(target='libs/md5lib', source='libs/md5lib/md5lib.c')
 
-ddslib_lib = g_env.StaticLibrary(target='libs/ddslib', source='libs/ddslib/ddslib.c')
+ddslib_lib = g_env.StaticLibrary(target='libs/ddslib', source='libs/ddslib/ddslib.cpp')
 
 jpeg_env = g_env.Copy()
 jpeg_env.Prepend(CPPPATH = 'libs/jpeg6')

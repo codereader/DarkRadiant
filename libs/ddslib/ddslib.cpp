@@ -4,7 +4,7 @@ DDS Library
  
 Based on code from Nvidia's DDS example:
 http://www.nvidia.com/object/dxtc_decompression_code.html
- 
+
 Copyright (c) 2003 Randy Reddig
 All rights reserved.
  
@@ -44,7 +44,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /* dependencies */
 #include "ddslib.h"
-
+#include <stdint.h>
 
 
 /* endian tomfoolery */
@@ -141,7 +141,7 @@ determines which pixel format the dds texture is in
 */
 
 static void DDSDecodePixelFormat( ddsBuffer_t *dds, ddsPF_t *pf ) {
-	unsigned int	fourCC;
+	unsigned char	fourCC[4];
 
 
 	/* dummy check */
@@ -149,22 +149,25 @@ static void DDSDecodePixelFormat( ddsBuffer_t *dds, ddsPF_t *pf ) {
 		return;
 
 	/* extract fourCC */
-	fourCC = dds->pixelFormat.fourCC;
+	fourCC[0] = dds->pixelFormat.fourCC[0];
+	fourCC[1] = dds->pixelFormat.fourCC[1];
+	fourCC[2] = dds->pixelFormat.fourCC[2];
+	fourCC[3] = dds->pixelFormat.fourCC[3];
 
 	/* test it */
-	if( fourCC == 0 )
+	if (fourCC[0] == 0 && fourCC[1] == 0 && fourCC[2] == 0 && fourCC[3] == 0)
 		*pf = DDS_PF_ARGB8888;
-	else if( fourCC == *((unsigned int*) "DXT1") )
+	else if (fourCC[0] == 'D' && fourCC[1] == 'X' && fourCC[2] == 'T' && fourCC[3] == '1')
 		*pf = DDS_PF_DXT1;
-	else if( fourCC == *((unsigned int*) "DXT2") )
+	else if (fourCC[0] == 'D' && fourCC[1] == 'X' && fourCC[2] == 'T' && fourCC[3] == '2')
 		*pf = DDS_PF_DXT2;
-	else if( fourCC == *((unsigned int*) "DXT3") )
+	else if (fourCC[0] == 'D' && fourCC[1] == 'X' && fourCC[2] == 'T' && fourCC[3] == '3')
 		*pf = DDS_PF_DXT3;
-	else if( fourCC == *((unsigned int*) "DXT4") )
+	else if (fourCC[0] == 'D' && fourCC[1] == 'X' && fourCC[2] == 'T' && fourCC[3] == '4')
 		*pf = DDS_PF_DXT4;
-	else if( fourCC == *((unsigned int*) "DXT5") )
+	else if (fourCC[0] == 'D' && fourCC[1] == 'X' && fourCC[2] == 'T' && fourCC[3] == '5')
 		*pf = DDS_PF_DXT5;
-	else if( fourCC == *((unsigned int*) "RXGB") )
+	else if (fourCC[0] == 'R' && fourCC[1] == 'X' && fourCC[2] == 'G' && fourCC[3] == 'B')
 		*pf = DDS_PF_DXT5_RXGB;
 	else
 		*pf = DDS_PF_UNKNOWN;
@@ -582,7 +585,7 @@ static int DDSDecompressDXT1( ddsBuffer_t *dds, int width, int height, unsigned 
 	/* walk y */
 	for( y = 0; y < yBlocks; y++ ) {
 		/* 8 bytes per block */
-		block = (ddsColorBlock_t*) ((unsigned int) dds->data + y * xBlocks * 8);
+		block = (ddsColorBlock_t*) ((uintptr_t) dds->data + y * xBlocks * 8);
 
 		/* walk x */
 		for( x = 0; x < xBlocks; x++, block++ ) {
@@ -625,7 +628,7 @@ static int DDSDecompressDXT3( ddsBuffer_t *dds, int width, int height, unsigned 
 	/* walk y */
 	for( y = 0; y < yBlocks; y++ ) {
 		/* 8 bytes per block, 1 block for alpha, 1 block for color */
-		block = (ddsColorBlock_t*) ((unsigned int) dds->data + y * xBlocks * 16);
+		block = (ddsColorBlock_t*) ((uintptr_t) dds->data + y * xBlocks * 16);
 
 		/* walk x */
 		for( x = 0; x < xBlocks; x++, block++ ) {
@@ -678,7 +681,7 @@ static int DDSDecompressDXT5( ddsBuffer_t *dds, int width, int height, unsigned 
 	/* walk y */
 	for( y = 0; y < yBlocks; y++ ) {
 		/* 8 bytes per block, 1 block for alpha, 1 block for color */
-		block = (ddsColorBlock_t*) ((unsigned int) dds->data + y * xBlocks * 16);
+		block = (ddsColorBlock_t*) ((uintptr_t) dds->data + y * xBlocks * 16);
 
 		/* walk x */
 		for( x = 0; x < xBlocks; x++, block++ ) {
@@ -792,7 +795,7 @@ static int DDSDecompressRXGB( ddsBuffer_t *dds, int width, int height, unsigned 
 	/* walk y */
 	for( y = 0; y < yBlocks; y++ ) {
 		/* 8 bytes (64 bit) per block, 1 block for alpha, 1 block for color */
-		block = (ddsColorBlock_t*) ((unsigned int) dds->data + y * xBlocks * 16);
+		block = (ddsColorBlock_t*) ((uintptr_t) dds->data + y * xBlocks * 16);
 
 		/* walk x */
 		for( x = 0; x < xBlocks; x++, block++ ) {
