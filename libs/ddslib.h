@@ -111,7 +111,7 @@ typedef struct ddsPixelFormat_s
 {
 	unsigned int		size;
 	unsigned int		flags;
-	unsigned int		fourCC;
+	unsigned char		fourCC[4];
 	union
 	{
 		unsigned int	rgbBitCount;
@@ -182,7 +182,7 @@ typedef struct ddsBuffer_s
 	};
 	unsigned int		alphaBitDepth;
 	unsigned int		reserved;
-	void				*surface;
+	unsigned int		surface;	// greebo: Changed this to unsigned int for 64-bit compatibility (should be 32 bits wide)
 	union
 	{
 		ddsColorKey_t	ckDestOverlay;   
@@ -191,11 +191,7 @@ typedef struct ddsBuffer_s
 	ddsColorKey_t		ckDestBlt;
 	ddsColorKey_t		ckSrcOverlay;    
 	ddsColorKey_t		ckSrcBlt;     
-	union
-	{
-		ddsPixelFormat_t	pixelFormat;
-		unsigned int	fvf;
-	};
+	ddsPixelFormat_t	pixelFormat;
 	ddsCaps_t			ddsCaps;
 	unsigned int		textureStage;
 	
