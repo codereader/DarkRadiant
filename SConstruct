@@ -193,7 +193,7 @@ else:
 
 LINKFLAGS = ''
 if ( getOS() == 'posix' ):
-  LINKFLAGS += '-Wl,-fini,fini_stub -L. -static-libgcc '
+  LINKFLAGS += '-Wl,-fini,fini_stub -L. -static-libgcc -Wl,--export-dynamic '
 
 # Configure the toolchain. On Win32 we want to force MinGW as the default
 # is to prefer MSVC which breaks the build.
