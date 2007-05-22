@@ -69,7 +69,7 @@ public:
 	STRING_CONSTANT(Name, "doom3");
 
 	EntityDoom3API() {
-		Entity_Construct();
+		entity::constructStatic();
 
 		// Allocate a new entitycreator
 		_entitydoom3 = EntityCreatorPtr(new entity::Doom3EntityCreator());
@@ -78,7 +78,7 @@ public:
 	}
 
 	~EntityDoom3API() {
-		Entity_Destroy();
+		entity::destroyStatic();
 	}
 
 	EntityCreator* getTable() {
