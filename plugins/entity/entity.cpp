@@ -45,20 +45,24 @@ Counter* entity::Doom3Entity::m_counter = 0;
 
 #include "preferencesystem.h"
 
+namespace entity {
+
 /* greebo: Constructs the entity environment
  */
-void Entity_Construct() {
+void constructStatic() {
 	LightShader::m_defaultShader = "lights/defaultpointlight";
 
 	// Construct Doom3Group stuff
 	CurveEdit::Type::instance().m_controlsShader = GlobalShaderCache().capture("$POINT");
 	CurveEdit::Type::instance().m_selectedShader = GlobalShaderCache().capture("$SELPOINT");
 
-  RenderablePivot::StaticShader::instance() = GlobalShaderCache().capture("$PIVOT");
+	RenderablePivot::StaticShader::instance() = GlobalShaderCache().capture("$PIVOT");
 
-  GlobalShaderCache().attachRenderable(StaticRenderableConnectionLines::instance());
+	GlobalShaderCache().attachRenderable(StaticRenderableConnectionLines::instance());
 }
 
-void Entity_Destroy() {
+void destroyStatic() {
 	GlobalShaderCache().detachRenderable(StaticRenderableConnectionLines::instance());
 }
+
+} // namespace entity
