@@ -12,11 +12,11 @@ namespace gtkutil
 
 TextMenuItemAccelerator::TextMenuItemAccelerator(const std::string& label, 
 	const std::string& accelLabel,
-	const std::string& iconName,
+	GdkPixbuf* icon,
 	bool isToggle) 
 :	_label(label),
 	_accelLabel(accelLabel),
-	_iconName(iconName),
+	_icon(icon),
 	_isToggle(isToggle)
 {}
 
@@ -34,10 +34,10 @@ TextMenuItemAccelerator::operator GtkWidget* () {
 	// aligned) and the accelerator string (right-aligned).
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 4);
 	
-	// Pack in icon ONLY if it is not blank
-	if (!_iconName.empty()) {
+	// Try to pack in icon ONLY if it is valid
+	if (_icon != NULL) {
 		gtk_box_pack_start(GTK_BOX(hbx), 
-			gtk_image_new_from_pixbuf(gtkutil::getLocalPixbuf(_iconName)),
+			gtk_image_new_from_pixbuf(_icon),
 			FALSE, FALSE, 0);
 	}
 	

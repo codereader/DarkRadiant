@@ -103,8 +103,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/image.h"
 #include "gtkutil/Paned.h"
 #include "gtkutil/widget.h"
-#include "gtkutil/IconTextMenuToggle.h"
-#include "gtkutil/TextMenuItem.h"
 #include "gtkutil/FramedWidget.h"
 #include "gtkutil/messagebox.h"
 #include "gtkutil/dialog.h"

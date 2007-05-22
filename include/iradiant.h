@@ -41,6 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // this API does not depend on gtk+ or glib
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkWindow GtkWindow;
+typedef struct _GdkPixbuf GdkPixbuf;
 
 enum EMessageBoxType
 {
@@ -80,6 +81,11 @@ public:
 	/** Return the main application GtkWindow.
 	 */
 	virtual GtkWindow* getMainWindow() = 0;
+	
+	// Convenience functions to load a local image (from the bitmaps directory)
+	// and return a GdkPixBuf for use by certain GTK widgets (e.g. TreeView).
+	virtual GdkPixbuf* getLocalPixbuf(const std::string& fileName) = 0;
+	virtual GdkPixbuf* getLocalPixbufWithMask(const std::string& fileName) = 0;
 	
 	/** greebo: Set the status text of the main window
 	 */

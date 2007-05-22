@@ -1,5 +1,6 @@
 #include "PropertyEditorFactory.h"
 
+#include "iradiant.h"
 #include "Vector3PropertyEditor.h"
 #include "BooleanPropertyEditor.h"
 #include "EntityPropertyEditor.h"
@@ -9,8 +10,6 @@
 #include "SoundPropertyEditor.h"
 #include "FloatPropertyEditor.h"
 #include "ModelPropertyEditor.h"
-
-#include "gtkutil/image.h"
 
 namespace ui
 {
@@ -58,7 +57,7 @@ PropertyEditorPtr PropertyEditorFactory::create(const std::string& className,
 
 GdkPixbuf* PropertyEditorFactory::getPixbufFor(const std::string& type) {
 	std::string iconName = "icon_" + type + ".png";
-	return gtkutil::getLocalPixbuf(iconName);	
+	return GlobalRadiant().getLocalPixbuf(iconName);	
 }
 
 }

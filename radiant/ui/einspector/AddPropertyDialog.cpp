@@ -207,7 +207,7 @@ void AddPropertyDialog::populateTreeView() {
 	gtk_tree_store_set(_treeStore, &cnIter, 
 					   DISPLAY_NAME_COLUMN, cName.c_str(),
 					   PROPERTY_NAME_COLUMN, "",
-					   ICON_COLUMN, gtkutil::getLocalPixbuf(FOLDER_ICON),
+					   ICON_COLUMN, GlobalRadiant().getLocalPixbuf(FOLDER_ICON),
 					   DESCRIPTION_COLUMN, CUSTOM_PROPERTY_TEXT,
 					   -1);
 					   
@@ -246,7 +246,7 @@ void AddPropertyDialog::populateTreeView() {
 				gtk_tree_store_set(_treeStore, &tIter,
 					DISPLAY_NAME_COLUMN, category.c_str(),
 					PROPERTY_NAME_COLUMN, "",
-					ICON_COLUMN, gtkutil::getLocalPixbuf(FOLDER_ICON),
+					ICON_COLUMN, GlobalRadiant().getLocalPixbuf(FOLDER_ICON),
 					DESCRIPTION_COLUMN, "",
 					-1);
 					

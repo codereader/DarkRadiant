@@ -101,8 +101,14 @@ MediaBrowser::MediaBrowser()
 	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(_onSelectionChanged), this);
 	
 	// Construct the popup context menu
-	_loadInTexturesView = gtkutil::IconTextMenuItem(LOAD_TEXTURE_ICON, LOAD_TEXTURE_TEXT);
-	_applyToSelection = gtkutil::IconTextMenuItem(APPLY_TEXTURE_ICON, APPLY_TEXTURE_TEXT);
+	_loadInTexturesView = gtkutil::IconTextMenuItem(
+		GlobalRadiant().getLocalPixbuf(LOAD_TEXTURE_ICON), 
+		LOAD_TEXTURE_TEXT
+	);
+	_applyToSelection = gtkutil::IconTextMenuItem(
+		GlobalRadiant().getLocalPixbuf(APPLY_TEXTURE_ICON), 
+		APPLY_TEXTURE_TEXT
+	);
 
 	g_signal_connect(G_OBJECT(_loadInTexturesView), "activate", G_CALLBACK(_onActivateLoadContained), this);
 	g_signal_connect(G_OBJECT(_applyToSelection), "activate", G_CALLBACK(_onActivateApplyTexture), this);
@@ -177,7 +183,7 @@ namespace {
 			gtk_tree_store_set(_store, &iter, 
 							   DISPLAYNAME_COLUMN, thisDir.c_str(), 
 							   FULLNAME_COLUMN, pathName.c_str(),
-							   ICON_COLUMN, gtkutil::getLocalPixbuf(FOLDER_ICON),
+							   ICON_COLUMN, GlobalRadiant().getLocalPixbuf(FOLDER_ICON),
 							   DIR_FLAG_COLUMN, TRUE,
 							   -1);
 			GtkTreeIter* dynIter = gtk_tree_iter_copy(&iter); // get a heap-allocated iter
@@ -207,7 +213,7 @@ namespace {
 				gtk_tree_store_set(_store, &iter, 
 								   DISPLAYNAME_COLUMN, texName.c_str(), 
 								   FULLNAME_COLUMN, name,
-								   ICON_COLUMN, gtkutil::getLocalPixbuf(TEXTURE_ICON),
+								   ICON_COLUMN, GlobalRadiant().getLocalPixbuf(TEXTURE_ICON),
 								   DIR_FLAG_COLUMN, FALSE,
 								   -1);
 			}

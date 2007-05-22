@@ -36,8 +36,8 @@ class ControlButton
 
 public:
 
-	ControlButton(const std::string& iconPath) :
-		_iconPixBuf(gtkutil::getLocalPixbuf(iconPath)),
+	ControlButton(GdkPixbuf* iconPixbuf) :
+		_iconPixBuf(iconPixbuf),
 		_button(gtk_button_new()),
 		_timer(DELAY_INITIAL, onTimeOut, this)
 	{

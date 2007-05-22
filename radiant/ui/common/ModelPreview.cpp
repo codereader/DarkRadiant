@@ -2,7 +2,7 @@
 #include "RenderableAABB.h"
 
 #include "gtkutil/GLWidgetSentry.h"
-#include "gtkutil/image.h"
+#include "iradiant.h"
 #include "os/path.h"
 #include "referencecache.h"
 #include "math/aabb.h"
@@ -53,7 +53,7 @@ ModelPreview::ModelPreview()
     gtk_tool_button_set_icon_widget(
     	GTK_TOOL_BUTTON(_drawBBox), 
 		gtk_image_new_from_pixbuf(
-			gtkutil::getLocalPixbuf("iconDrawBBox.png")));
+			GlobalRadiant().getLocalPixbuf("iconDrawBBox.png")));
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), _drawBBox, 0);
 		
 	// Pack into a frame and return

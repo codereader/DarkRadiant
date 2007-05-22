@@ -2,6 +2,7 @@
 
 #include <gtk/gtk.h>
 #include "iregistry.h"
+#include "iradiant.h"
 #include "ieventmanager.h"
 #include "gtkutil/TransientWindow.h"
 #include "gtkutil/image.h"
@@ -158,7 +159,7 @@ GtkWidget* GroupDialog::addPage(const std::string& name,
 								GtkWidget* page, const std::string& windowLabel) 
 {
 	// Create the icon GtkImage and tab label
-	GtkWidget* icon = gtk_image_new_from_pixbuf(gtkutil::getLocalPixbuf(tabIcon));
+	GtkWidget* icon = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf(tabIcon));
 	GtkWidget* label = gtk_label_new(tabLabel.c_str());
 
 	// Pack into an hbox to create the title widget	

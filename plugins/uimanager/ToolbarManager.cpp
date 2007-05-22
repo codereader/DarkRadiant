@@ -5,7 +5,7 @@
 #include "itextstream.h"
 #include "ieventmanager.h"
 #include "iregistry.h"
-#include "gtkutil/image.h"
+#include "iradiant.h"
 
 namespace ui {
 
@@ -100,7 +100,7 @@ GtkWidget* ToolbarManager::createToolItem(xml::Node& node) {
 		
 		// Load and assign the icon, if specified
 		if (icon != "") {
-			GtkWidget* image = gtk_image_new_from_pixbuf(gtkutil::getLocalPixbufWithMask(icon.c_str()));
+			GtkWidget* image = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbufWithMask(icon));
 			gtk_widget_show(image);
 			gtk_tool_button_set_icon_widget(GTK_TOOL_BUTTON(toolItem), image);
 		}

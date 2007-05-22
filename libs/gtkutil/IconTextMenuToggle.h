@@ -26,9 +26,9 @@ private:
 
 public:
 	
-	// Constructor takes the icon name and the label text.
-	IconTextMenuToggle(const std::string& icon, const std::string& text)
-	: _icon(gtkutil::getLocalPixbuf(icon)),
+	// Constructor takes the icon pixbuf and the label text.
+	IconTextMenuToggle(GdkPixbuf* icon, const std::string& text)
+	: _icon(icon),
 	  _label(gtk_label_new(text.c_str())) {}
 	  
 	// Operator cast to GtkWidget* packs the widgets into an hbox which
