@@ -132,7 +132,7 @@ GtkWidget* EntityClassChooser::createTreeView() {
 			}
 			
 			// Split the path into "this directory" and the parent path
-			unsigned int slashPos = pathName.rfind("/");
+			std::size_t slashPos = pathName.rfind("/");
 			const std::string parentPath = pathName.substr(0, slashPos);
 			const std::string thisDir = pathName.substr(slashPos + 1);
 
