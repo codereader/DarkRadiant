@@ -3,7 +3,11 @@
 
 #include "FaceInstance.h"
 
-class VertexInstance : public Selectable {
+namespace brush {
+
+class VertexInstance : 
+	public Selectable
+{
 	FaceInstances& m_faceInstances;
 	SelectableVertex* m_vertex;
 
@@ -57,5 +61,7 @@ public:
 		}
 	}
 };
+
+} // namespace brush
 
 #endif /*VERTEXINSTANCE_H_*/
