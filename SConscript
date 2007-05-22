@@ -18,9 +18,6 @@ xmlutilEnv.useXML2()
 xmlutilSource = 'Document.cpp Node.cpp'
 xmlutil = xmlutilEnv.StaticLibrary(target='libs/xmlutil', source=build_list('libs/xmlutil', xmlutilSource))
 
-mathlib_src = 'mathlib.c bbox.c line.c m4x4.c ray.c'
-mathlib_lib = g_env.StaticLibrary(target='libs/mathlib', source=build_list('libs/mathlib', mathlib_src))
-
 # libs/math library
 mathEnv = g_env.Copy()
 mathSrc = 'aabb.cpp matrix.cpp'
@@ -215,9 +212,8 @@ model_lst = build_list('plugins/model',
 					   'plugin.cpp model.cpp \
 					   RenderablePicoModel.cpp RenderablePicoSurface.cpp \
 					   PicoModelInstance.cpp')
-model_env.Append(LIBS = ['mathlib', 'picomodel', 'math'])
+model_env.Append(LIBS = ['picomodel', 'math'])
 model_lib = model_env.SharedLibrary(target='model', source=model_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
-model_env.Depends(model_lib, mathlib_lib)
 model_env.Depends(model_lib, picomodel_lib)
 model_env.Depends(model_lib, math)
 model_env.Install(INSTALL + '/modules', model_lib)
@@ -503,7 +499,7 @@ radiant_src = \
          ]
     ]
 
-radiant_env.Prepend(LIBS = ['mathlib', 'math', 'gtkutil', 'xmlutil'])
+radiant_env.Prepend(LIBS = ['math', 'gtkutil', 'xmlutil'])
 radiant_env.Prepend(LIBPATH = ['libs'])
 
 # Win32 libs
@@ -519,7 +515,6 @@ if radiant_env['PLATFORM'] == 'win32':
 radiant_prog = radiant_env.Program(target='darkradiant', 
 								   source=radiant_src)
 
-radiant_env.Depends(radiant_prog, mathlib_lib)
 radiant_env.Depends(radiant_prog, gtkutil_lib)
 radiant_env.Depends(radiant_prog, xmlutil)
 radiant_env.Depends(radiant_prog, math)
