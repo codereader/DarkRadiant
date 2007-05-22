@@ -47,7 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * points[1] to points[4] is the base rectangle
  */
 inline void drawPyramid(const Vector3 points[5]) {
-  typedef std::size_t index_t;
+  typedef unsigned int index_t;
   index_t indices[16] = {
     0, 1, // top to first
     0, 2, // top to second
@@ -67,7 +67,7 @@ inline void drawPyramid(const Vector3 points[5]) {
  * points[4] to points[7] define the base rectangle (clockwise starting from the "upper right" corner)
  */
 inline void drawFrustum(const Vector3 points[8]) {
-  typedef std::size_t index_t;
+  typedef unsigned int index_t;
   index_t indices[24] = {
   	0, 4, // top up right to bottom up right
   	1, 5, // top down right to bottom down right
@@ -152,7 +152,7 @@ inline void aabb_testselect(const AABB& aabb, SelectionTest& test, SelectionInte
 
 inline void aabb_draw_wire(const Vector3 points[8])
 {
-  typedef std::size_t index_t;
+  typedef unsigned int index_t;
   index_t indices[24] = {
     0, 1, 1, 2, 2, 3, 3, 0,
     4, 5, 5, 6, 6, 7, 7, 4,
