@@ -82,57 +82,63 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <boost/shared_ptr.hpp>
 
-const char* GameDescription_getKeyValue(const char* key)
-{
-  return game::Manager::Instance().currentGame()->getKeyValue(key);
-}
-
-const char* GameDescription_getRequiredKeyValue(const char* key)
-{
-  return game::Manager::Instance().currentGame()->getRequiredKeyValue(key);
-}
-
+// TODO: Move this elsewhere
 ui::ColourSchemeManager& ColourSchemes() {
 	static ui::ColourSchemeManager _manager;
 	return _manager;
 }
 
-Vector3 getColour(const std::string& colourName) {
-	return ColourSchemes().getColourVector3(colourName);
-}
-
-const char* TextureBrowser_getSelectedShader()
+class RadiantCoreAPI :
+	public IRadiant
 {
-  return GlobalTextureBrowser().getSelectedShader().c_str();
-}
-
-class RadiantCoreAPI
-{
-  IRadiant m_radiantcore;
 public:
-  typedef IRadiant Type;
-  STRING_CONSTANT(Name, "*");
+	typedef IRadiant Type;
+	STRING_CONSTANT(Name, "*");
+	
+	RadiantCoreAPI() {
+		globalOutputStream() << "RadiantCore initialised.\n";
+	}
+	
+	virtual GtkWindow* getMainWindow() {
+		return MainFrame_getWindow();
+	}
+	
+	virtual void setStatusText(const std::string& statusText) {
+		Sys_Status(statusText);
+	}
+	
+	virtual const char* getGameDescriptionKeyValue(const char* key) {
+		return game::Manager::Instance().currentGame()->getKeyValue(key);
+	}
+	
+	virtual const char* getRequiredGameDescriptionKeyValue(const char* key) {
+		return game::Manager::Instance().currentGame()->getRequiredKeyValue(key);
+	}
+	
+	virtual Vector3 getColour(const std::string& colourName) {
+		return ColourSchemes().getColourVector3(colourName);
+	}
+  
+	virtual void updateAllWindows() {
+		UpdateAllWindows();
+	}
+	
+	// Functions needed for the clipper, this should be moved back into the core app
+	void splitSelectedBrushes(const Vector3 planePoints[3], const std::string& shader, EBrushSplit split) {
+		Scene_BrushSplitByPlane(planePoints, shader, split);
+	}
+	
+	void brushSetClipPlane(const Plane3& plane) {
+		Scene_BrushSetClipPlane(plane);
+	}
 
-  RadiantCoreAPI()
-  {
-  	m_radiantcore.getMainWindow = MainFrame_getWindow;
-  	m_radiantcore.setStatusText = Sys_Status;
-  	
-    m_radiantcore.getGameDescriptionKeyValue = &GameDescription_getKeyValue;
-    m_radiantcore.getRequiredGameDescriptionKeyValue = &GameDescription_getRequiredKeyValue;
-    
-    m_radiantcore.getColour = &getColour;
-    m_radiantcore.updateAllWindows = &UpdateAllWindows;
-    m_radiantcore.splitSelectedBrushes = &Scene_BrushSplitByPlane;
-    m_radiantcore.brushSetClipPlane = &Scene_BrushSetClipPlane; 
-    
-    m_radiantcore.TextureBrowser_getSelectedShader = TextureBrowser_getSelectedShader;
+	virtual const char* TextureBrowser_getSelectedShader() {
+		return GlobalTextureBrowser().getSelectedShader().c_str();
+	}
 
-  }
-  IRadiant* getTable()
-  {
-    return &m_radiantcore;
-  }
+	IRadiant* getTable() {
+		return this;
+	}
 };
 
 typedef SingletonModule<RadiantCoreAPI> RadiantCoreModule;
