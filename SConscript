@@ -510,7 +510,7 @@ if radiant_env['PLATFORM'] == 'win32':
 
 # Add the icon on Windows
 if radiant_env['PLATFORM'] == 'win32':
-	radiant_src += ' darkradiant.o'
+	radiant_src += ['radiant/darkradiant.o']
 
 radiant_prog = radiant_env.Program(target='darkradiant', 
 								   source=radiant_src)
