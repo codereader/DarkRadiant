@@ -68,29 +68,35 @@ enum EMessageBoxReturn
   eIDNO,
 };
 
-// The radiant core API, formerly known as _QERFuncTable_1
-// This contains pointers to all the core functions that should be available via GlobalRadiant()
-struct IRadiant
+/** greebo: This abstract class defines the interface to the core application.
+ * 			Use this to access methods from the main codebase in radiant/
+ */
+class IRadiant
 {
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "radiant");
+public:
+	INTEGER_CONSTANT(Version, 1);
+	STRING_CONSTANT(Name, "radiant");
 
 	/** Return the main application GtkWindow.
 	 */
-	GtkWindow* (*getMainWindow) ();
+	virtual GtkWindow* getMainWindow() = 0;
 	
-	void (*setStatusText)(const std::string& statusText);
-
-  const char* (*getGameDescriptionKeyValue)(const char* key);
-  const char* (*getRequiredGameDescriptionKeyValue)(const char* key);
-  Vector3 (*getColour)(const std::string& colourName);
+	/** greebo: Set the status text of the main window
+	 */
+	virtual void setStatusText(const std::string& statusText) = 0;
+	
+	virtual const char* getGameDescriptionKeyValue(const char* key) = 0;
+	virtual const char* getRequiredGameDescriptionKeyValue(const char* key) = 0;
+	
+	virtual Vector3 getColour(const std::string& colourName) = 0;
   
-  void (*updateAllWindows)();
-  void (*splitSelectedBrushes)(const Vector3 planePoints[3], const std::string& shader, EBrushSplit split);
-  void (*brushSetClipPlane)(const Plane3& plane);
+	virtual void updateAllWindows() = 0;
+	
+	// Functions needed for the clipper, this should be moved back into the core app
+	virtual void splitSelectedBrushes(const Vector3 planePoints[3], const std::string& shader, EBrushSplit split) = 0;
+	virtual void brushSetClipPlane(const Plane3& plane) = 0;
 
-  const char* (*TextureBrowser_getSelectedShader)();
-
+	virtual const char* TextureBrowser_getSelectedShader() = 0;
 };
 
 // RadiantCoreAPI Module Definitions
