@@ -54,8 +54,9 @@ public:
 	
 	/** greebo: Get the application/home paths
 	 */
-	std::string getHomePath();
-	std::string getAppPath();
+	std::string getHomePath() const;
+	std::string getAppPath() const;
+	std::string getBitmapsPath() const;
 	
 	// Get/set the path where the .map files are stored
 	void setMapsPath(const std::string& path);

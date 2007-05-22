@@ -21,8 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "environment.h"
 
-#include "gtkutil/image.h"
-
 #include "stream/textstream.h"
 #include "string/string.h"
 #include "stream/stringstream.h"
@@ -169,11 +167,15 @@ void Environment::initArgs(int argc, char* argv[]) {
 	g_argv = argv;
 }
 
-std::string Environment::getHomePath() {
+std::string Environment::getHomePath() const {
 	return _homePath;
 }
 
-std::string Environment::getAppPath() {
+std::string Environment::getBitmapsPath() const {
+	return _bitmapsPath;
+}
+
+std::string Environment::getAppPath() const {
 	return _appPath;
 }
 
@@ -214,5 +216,4 @@ void Environment::initPaths() {
 	Q_mkdir(_settingsPath.c_str());
 
 	_bitmapsPath = _appPath + "bitmaps/";
-	BitmapsPath_set(_bitmapsPath.c_str());
 }

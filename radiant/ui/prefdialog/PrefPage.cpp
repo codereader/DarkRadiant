@@ -4,11 +4,11 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/dialog.h"
-#include "gtkutil/image.h"
 #include <iostream>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include "gtkmisc.h"
+#include "environment.h"
 
 namespace ui {
 
@@ -178,7 +178,7 @@ GtkWidget* PrefPage::appendLabel(const std::string& caption) {
 
 // greebo: Adds a PathEntry to choose files or directories (depending on the given boolean)
 GtkWidget* PrefPage::appendPathEntry(const std::string& name, const std::string& registryKey, bool browseDirectories) {
-	PathEntry pathEntry = PathEntry_new();
+	PathEntry pathEntry = PathEntry_new(GlobalRegistry().get(RKEY_BITMAPS_PATH));
 	g_signal_connect(
 		G_OBJECT(pathEntry.m_button), 
 		"clicked", 

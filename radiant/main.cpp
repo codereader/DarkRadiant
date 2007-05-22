@@ -78,7 +78,6 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "stream/textfilestream.h"
 
 #include "gtkutil/messagebox.h"
-#include "gtkutil/image.h"
 #include "console.h"
 #include "map.h"
 #include "mainframe.h"

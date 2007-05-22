@@ -5,7 +5,6 @@
 #include "iradiant.h"
 #include "ieventmanager.h"
 #include "gtkutil/TransientWindow.h"
-#include "gtkutil/image.h"
 #include <iostream>
 
 namespace ui {

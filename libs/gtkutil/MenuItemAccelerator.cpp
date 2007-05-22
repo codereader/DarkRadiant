@@ -5,8 +5,6 @@
 #include <gtk/gtklabel.h>
 #include <gtk/gtkimage.h>
 
-#include "image.h"
-
 namespace gtkutil
 {
 

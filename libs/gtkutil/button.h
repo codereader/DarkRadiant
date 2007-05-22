@@ -30,8 +30,6 @@ typedef struct _GtkRadioButton GtkRadioButton;
 typedef int gint;
 typedef gint gboolean;
 
-void button_set_icon(GtkButton* button, const char* icon);
-
 void radio_button_set_active(GtkRadioButton* radio, int index);
 void radio_button_set_active_no_signal(GtkRadioButton* radio, int index);
 int radio_button_get_active(GtkRadioButton* radio);

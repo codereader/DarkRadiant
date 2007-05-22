@@ -7,7 +7,6 @@
 #include "iradiant.h"
 #include "ieventmanager.h"
 #include "selectionlib.h"
-#include "gtkutil/image.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/RightAlignedLabel.h"
 #include "gtkutil/TextColumn.h"

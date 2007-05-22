@@ -4,7 +4,6 @@
 #include "igl.h"
 #include "iregistry.h"
 #include "version.h"
-#include "gtkutil/image.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/ScrolledFrame.h"

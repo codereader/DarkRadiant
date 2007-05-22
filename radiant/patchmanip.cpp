@@ -31,7 +31,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/callback.h"
 
 #include "gdk/gdkkeysyms.h"
-#include "gtkutil/image.h"
 #include "gtkutil/dialog.h"
 #include "map.h"
 #include "mainframe.h"
@@ -786,37 +785,37 @@ EMessageBoxReturn DoCapDlg(ECapDialog* type)
         gtk_table_set_col_spacings(table, 5);
  
         {
-          GtkImage* image = new_local_image("cap_bevel.bmp");
-          gtk_widget_show(GTK_WIDGET(image));
-          gtk_table_attach(table, GTK_WIDGET(image), 0, 1, 0, 1,
+          GtkWidget* image = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf("cap_bevel.bmp"));
+          gtk_widget_show(image);
+          gtk_table_attach(table, image, 0, 1, 0, 1,
                             (GtkAttachOptions) (GTK_FILL),
                             (GtkAttachOptions) (0), 0, 0);
         }
         {
-          GtkImage* image = new_local_image("cap_endcap.bmp");
-          gtk_widget_show(GTK_WIDGET(image));
-          gtk_table_attach(table, GTK_WIDGET(image), 0, 1, 1, 2,
+          GtkWidget* image = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf("cap_endcap.bmp"));
+          gtk_widget_show(image);
+          gtk_table_attach(table, image, 0, 1, 1, 2,
                             (GtkAttachOptions) (GTK_FILL),
                             (GtkAttachOptions) (0), 0, 0);
         }
         {
-          GtkImage* image = new_local_image("cap_ibevel.bmp");
-          gtk_widget_show(GTK_WIDGET(image));
-          gtk_table_attach(table, GTK_WIDGET(image), 0, 1, 2, 3,
+          GtkWidget* image = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf("cap_ibevel.bmp"));
+          gtk_widget_show(image);
+          gtk_table_attach(table, image, 0, 1, 2, 3,
                             (GtkAttachOptions) (GTK_FILL),
                             (GtkAttachOptions) (0), 0, 0);
         }
         {
-          GtkImage* image = new_local_image("cap_iendcap.bmp");
-          gtk_widget_show(GTK_WIDGET(image));
-          gtk_table_attach(table, GTK_WIDGET(image), 0, 1, 3, 4,
+          GtkWidget* image = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf("cap_iendcap.bmp"));
+          gtk_widget_show(image);
+          gtk_table_attach(table, image, 0, 1, 3, 4,
                             (GtkAttachOptions) (GTK_FILL),
                             (GtkAttachOptions) (0), 0, 0);
         }
         {
-          GtkImage* image = new_local_image("cap_cylinder.bmp");
-          gtk_widget_show(GTK_WIDGET(image));
-          gtk_table_attach(table, GTK_WIDGET(image), 0, 1, 4, 5,
+          GtkWidget* image = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf("cap_cylinder.bmp"));
+          gtk_widget_show(image);
+          gtk_table_attach(table, image, 0, 1, 4, 5,
                             (GtkAttachOptions) (GTK_FILL),
                             (GtkAttachOptions) (0), 0, 0);
         }

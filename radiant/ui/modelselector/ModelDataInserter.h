@@ -1,8 +1,6 @@
 #ifndef MODELDATAINSERTER_H_
 #define MODELDATAINSERTER_H_
 
-#include "gtkutil/image.h"
-
 namespace ui
 {
 

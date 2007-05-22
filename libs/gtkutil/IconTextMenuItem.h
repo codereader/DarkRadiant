@@ -1,8 +1,6 @@
 #ifndef ICONMENULABEL_H_
 #define ICONMENULABEL_H_
 
-#include "gtkutil/image.h"
-
 #include <gtk/gtklabel.h>
 #include <gtk/gtkmenuitem.h>
 #include <gtk/gtkhbox.h>

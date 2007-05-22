@@ -100,7 +100,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/frame.h"
 #include "gtkutil/glfont.h"
 #include "gtkutil/glwidget.h"
-#include "gtkutil/image.h"
 #include "gtkutil/Paned.h"
 #include "gtkutil/widget.h"
 #include "gtkutil/FramedWidget.h"
@@ -1202,9 +1201,13 @@ GtkWindow* create_splash()
   gtk_window_set_position(window, GTK_WIN_POS_CENTER);
   gtk_container_set_border_width(GTK_CONTAINER(window), 0);
 
-  GtkImage* image = new_local_image(SPLASH_FILENAME);
-  gtk_widget_show(GTK_WIDGET(image));
-  gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(image));
+	// Don't use GlobalRadiant().getLocalPixbuf() here, it's not up yet
+	std::string fullFileName(Environment().Instance().getBitmapsPath() + SPLASH_FILENAME);
+	GtkWidget* image = gtk_image_new_from_pixbuf(
+		gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL)
+	);
+	gtk_widget_show(image);
+	gtk_container_add(GTK_CONTAINER(window), image);
 
   gtk_widget_set_size_request(GTK_WIDGET(window), -1, -1);
   gtk_widget_show(GTK_WIDGET(window));

@@ -27,15 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stream/stringstream.h"
 #include "generic/callback.h"
 
-#include "image.h"
 #include "pointer.h"
-
-void button_set_icon(GtkButton* button, const char* icon)
-{
-  GtkImage* image = new_local_image(icon);
-  gtk_widget_show(GTK_WIDGET(image));
-  gtk_container_add(GTK_CONTAINER(button), GTK_WIDGET(image));
-}
 
 void radio_button_print_state(GtkRadioButton* button)
 {

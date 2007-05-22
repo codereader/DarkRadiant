@@ -1,7 +1,6 @@
 #include "AddPropertyDialog.h"
 #include "PropertyEditorFactory.h"
 
-#include "gtkutil/image.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"

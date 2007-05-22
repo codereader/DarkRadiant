@@ -1,8 +1,6 @@
 #ifndef ICONTEXTBUTTON_H_
 #define ICONTEXTBUTTON_H_
 
-#include "image.h"
-
 #include <gtk/gtklabel.h>
 #include <gtk/gtkvbox.h>
 #include <gtk/gtkbutton.h>

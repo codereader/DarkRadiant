@@ -1,7 +1,6 @@
 #ifndef CONTROLBUTTON_H_
 #define CONTROLBUTTON_H_
 
-#include "image.h"
 #include "Timer.h"
 
 #include <gtk/gtkbutton.h>
@@ -10,9 +9,6 @@
 /** greebo: A ControlButton is a button containing a single icon
  * that keeps periodically calling the "clicked" event as long as the user
  * keeps the mouse button pressed. (Used for Surface Inspector controls, for ex.)
- * 
- * Specify the filename of the icon to be used in the constructor (must be located 
- * in DarkRadiant's "bitmaps/" folder.
  */
 namespace gtkutil {
 	

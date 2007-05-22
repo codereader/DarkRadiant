@@ -4,7 +4,6 @@
 #include "ieclass.h"
 #include "iregistry.h"
 #include "gtkutil/dialog.h"
-#include "gtkutil/image.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/RightAlignment.h"

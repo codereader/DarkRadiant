@@ -9,7 +9,6 @@
 #include "iundo.h"
 
 #include "scenelib.h"
-#include "gtkutil/image.h"
 #include "generic/callback.h"
 #include "StimResponseEditor.h" 
 
@@ -42,9 +41,6 @@ public:
 				"Stim/Response...",	// caption
 				"stimresponse.png",	// icon
 				"StimResponseEditor"); // event name
-				
-		std::string bitmapsPath = GlobalRegistry().get("user/paths/bitmapsPath");
-		BitmapsPath_set(bitmapsPath.c_str());
 	}
 	
 	virtual void shutdown() {
