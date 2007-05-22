@@ -115,7 +115,7 @@ void BrushInstance::vertex_clear() {
 	m_vertexInstances.clear();
 }
 void BrushInstance::vertex_push_back(SelectableVertex& vertex) {
-	m_vertexInstances.push_back(VertexInstance(m_faceInstances, vertex));
+	m_vertexInstances.push_back(brush::VertexInstance(m_faceInstances, vertex));
 }
 
 void BrushInstance::DEBUG_verify() const {

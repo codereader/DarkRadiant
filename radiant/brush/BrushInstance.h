@@ -38,7 +38,7 @@ class BrushInstance :
 
 	typedef std::vector<EdgeInstance> EdgeInstances;
 	EdgeInstances m_edgeInstances;
-	typedef std::vector<VertexInstance> VertexInstances;
+	typedef std::vector<brush::VertexInstance> VertexInstances;
 	VertexInstances m_vertexInstances;
 
 	ObservedSelectable m_selectable;
