@@ -4,7 +4,6 @@
 #include "ishaders.h"
 #include "select.h"
 #include "generic/callback.h"
-#include "gtkutil/image.h"
 #include "gtkutil/IconTextMenuItem.h"
 #include "gtkutil/TreeModel.h"
 

@@ -6,7 +6,6 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TreeModel.h"
-#include "gtkutil/image.h"
 #include "gtkutil/StockIconMenuItem.h"
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/predicate.hpp>

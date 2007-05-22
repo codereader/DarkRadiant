@@ -53,8 +53,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/dialog.h"
 #include "gtkutil/button.h"
 #include "gtkutil/entry.h"
-#include "gtkutil/image.h"
 
+#include "environment.h"
 #include "gtkmisc.h"
 
 
@@ -724,7 +724,7 @@ void Dialog::addRadioIcons(GtkWidget* vbox, const char* name, StringArrayRange i
   for(StringArrayRange::Iterator icon = icons.first; icon != icons.last; ++icon)
   {
     guint pos = static_cast<guint>(icon - icons.first);
-    GtkImage* image = new_local_image(*icon);
+    GtkImage* image = GTK_IMAGE(gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf(*icon)));
     gtk_widget_show(GTK_WIDGET(image));
     gtk_table_attach(GTK_TABLE(table), GTK_WIDGET(image), pos, pos+1, 0, 1,
                       (GtkAttachOptions) (0),
@@ -775,7 +775,7 @@ GtkWidget* Dialog::addFloatEntry(GtkWidget* vbox, const char* name, const FloatI
 
 GtkWidget* Dialog::addPathEntry(GtkWidget* vbox, const char* name, bool browse_directory, const StringImportCallback& importViewer, const StringExportCallback& exportViewer)
 {
-  PathEntry pathEntry = PathEntry_new();
+  PathEntry pathEntry = PathEntry_new(GlobalRegistry().get(RKEY_BITMAPS_PATH));
   g_signal_connect(G_OBJECT(pathEntry.m_button), "clicked", G_CALLBACK(browse_directory ? button_clicked_entry_browse_directory : button_clicked_entry_browse_file), pathEntry.m_entry);
 
   AddTextEntryData(*GTK_ENTRY(pathEntry.m_entry), importViewer, exportViewer);
@@ -794,7 +794,7 @@ GtkWidget* Dialog::addPathEntry(GtkWidget* vbox, const char* name, std::string& 
 // greebo: Adds a PathEntry to choose files or directories (depending on the given boolean)
 GtkWidget* Dialog::addPathEntry(GtkWidget* vbox, const std::string& name, const std::string& registryKey, bool browseDirectories) {
 	
-	PathEntry pathEntry = PathEntry_new();
+	PathEntry pathEntry = PathEntry_new(GlobalRegistry().get(RKEY_BITMAPS_PATH));
 	g_signal_connect(G_OBJECT(pathEntry.m_button), "clicked", G_CALLBACK(browseDirectories ? button_clicked_entry_browse_directory : button_clicked_entry_browse_file), pathEntry.m_entry);
 
 	// Connect the registry key to the newly created input field

@@ -122,19 +122,7 @@ public:
   }
 };
 
-PathEntry PathEntry_new();
-
-class BrowsedPathEntry
-{
-public:
-  typedef Callback1<const char*> SetPathCallback;
-  typedef Callback1<const SetPathCallback&> BrowseCallback;
-
-  PathEntry m_entry;
-  BrowseCallback m_browse;
-
-  BrowsedPathEntry(const BrowseCallback& browse);
-};
+PathEntry PathEntry_new(const std::string& bitmapsPath);
 
 GtkLabel* DialogLabel_new(const char* name);
 GtkTable* DialogRow_new(const char* name, GtkWidget* widget);

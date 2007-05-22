@@ -226,7 +226,7 @@ RadioHBox RadioHBox_new(StringArrayRange names)
 }
 
 
-PathEntry PathEntry_new()
+PathEntry PathEntry_new(const std::string& bitmapsPath)
 {
   GtkFrame* frame = GTK_FRAME(gtk_frame_new(NULL));
   gtk_widget_show(GTK_WIDGET(frame));
@@ -243,7 +243,12 @@ PathEntry PathEntry_new()
 
   // browse button
   GtkButton* button = GTK_BUTTON(gtk_button_new());
-  button_set_icon(button, "ellipsis.bmp");
+  
+  std::string fullFileName = bitmapsPath + "ellipsis.bmp";
+  GtkWidget* image = gtk_image_new_from_pixbuf(
+  	gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL)
+  );
+  gtk_container_add(GTK_CONTAINER(button), image);
   gtk_widget_show(GTK_WIDGET(button));
   gtk_box_pack_end(GTK_BOX(hbox), GTK_WIDGET(button), FALSE, FALSE, 0);
 
@@ -257,19 +262,6 @@ void PathEntry_setPath(PathEntry& self, const char* path)
   gtk_entry_set_text(self.m_entry, path);
 }
 typedef ReferenceCaller1<PathEntry, const char*, PathEntry_setPath> PathEntrySetPathCaller;
-
-void BrowsedPathEntry_clicked(GtkWidget* widget, BrowsedPathEntry* self)
-{
-  self->m_browse(PathEntrySetPathCaller(self->m_entry));
-}
-
-BrowsedPathEntry::BrowsedPathEntry(const BrowseCallback& browse) :
-  m_entry(PathEntry_new()),
-  m_browse(browse)
-{
-  g_signal_connect(G_OBJECT(m_entry.m_button), "clicked", G_CALLBACK(BrowsedPathEntry_clicked), this);
-}
-
 
 GtkLabel* DialogLabel_new(const char* name)
 {

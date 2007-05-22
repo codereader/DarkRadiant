@@ -1,8 +1,6 @@
 #ifndef ICONTEXTMENUTOGGLE_H_
 #define ICONTEXTMENUTOGGLE_H_
 
-#include "gtkutil/image.h"
-
 #include <gtk/gtklabel.h>
 #include <gtk/gtkmenuitem.h>
 #include <gtk/gtkcheckmenuitem.h>

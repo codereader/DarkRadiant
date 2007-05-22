@@ -68,7 +68,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "stream/stringstream.h"
 #include "convert.h"
 #include "gtkutil/messagebox.h"
-#include "gtkutil/image.h"
 
 #include "gtkmisc.h"
 #include "brushmanip.h"

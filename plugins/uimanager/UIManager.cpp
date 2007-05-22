@@ -3,7 +3,6 @@
 #include "iregistry.h"
 #include "iradiant.h"
 #include "ieventmanager.h"
-#include "gtkutil/image.h"
 #include <boost/shared_ptr.hpp>
 
 namespace ui {
@@ -42,9 +41,6 @@ public:
 	UIManagerAPI() {
 		// allocate a new UIManager instance on the heap (shared_ptr) 
 		_uiManager = UIManagerPtr(new ui::UIManager);
-		
-		std::string bitmapsPath = GlobalRegistry().get("user/paths/bitmapsPath");
-		BitmapsPath_set(bitmapsPath.c_str());
 	}
 	
 	IUIManager* getTable() {
@@ -60,7 +56,7 @@ public:
 typedef SingletonModule<UIManagerAPI, UIManagerDependencies> UIManagerModule;
 
 extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server) {
-	// Static instance of the BrushClipperModule
+	// Static instance of the UIManagerModule
 	static UIManagerModule _instance;
 	initialiseModule(server);
 	_instance.selfRegister();

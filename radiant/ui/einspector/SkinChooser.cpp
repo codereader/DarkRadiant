@@ -7,7 +7,6 @@
 #include "gtkutil/IconTextColumn.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/VFSTreePopulator.h"
-#include "gtkutil/image.h"
 
 #include <gtk/gtk.h>
 
