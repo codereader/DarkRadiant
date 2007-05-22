@@ -80,11 +80,11 @@ void FindAndReplaceShader::populateWindow() {
 	gtk_box_pack_start(GTK_BOX(replaceHBox), _replaceEntry, true, true, 6);
 		
 	// Create the icon buttons to open the ShaderChooser and override the size request
-	_findSelectButton = gtkutil::IconTextButton("", FOLDER_ICON, false);
+	_findSelectButton = gtkutil::IconTextButton("", GlobalRadiant().getLocalPixbuf(FOLDER_ICON), false);
 	gtk_widget_set_size_request(_findSelectButton, -1, -1); 
 	g_signal_connect(G_OBJECT(_findSelectButton), "clicked", G_CALLBACK(onChooseFind), this);
 	
-	_replaceSelectButton = gtkutil::IconTextButton("", FOLDER_ICON, false);
+	_replaceSelectButton = gtkutil::IconTextButton("", GlobalRadiant().getLocalPixbuf(FOLDER_ICON), false);
 	gtk_widget_set_size_request(_replaceSelectButton, -1, -1); 
 	g_signal_connect(G_OBJECT(_replaceSelectButton), "clicked", G_CALLBACK(onChooseReplace), this);
 	

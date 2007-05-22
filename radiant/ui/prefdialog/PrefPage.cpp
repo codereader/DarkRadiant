@@ -247,7 +247,7 @@ void PrefPage::appendRadioIcons(const std::string& name, const std::string& regi
 	GtkWidget* radio = NULL;
 	for (unsigned int i = 0; i < iconList.size(); i++) {
 		GtkWidget* image = gtk_image_new_from_pixbuf(
-			gtkutil::getLocalPixbuf(iconList[i])
+			GlobalRadiant().getLocalPixbuf(iconList[i])
 		);
 		gtk_table_attach(GTK_TABLE(table), image, i, i+1, 0, 1, 
 						 (GtkAttachOptions) (0), (GtkAttachOptions) (0), 0, 0);

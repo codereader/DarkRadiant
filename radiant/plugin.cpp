@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include <iostream>
+#include <gtk/gtkimage.h>
 #include "plugin.h"
 
 #include "debugging/debugging.h"
@@ -60,6 +61,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "csg.h"
 #include "error.h"
 #include "map.h"
+#include "environment.h"
 #include "qe3.h"
 #include "points.h"
 #include "gtkmisc.h"
@@ -101,6 +103,28 @@ public:
 	
 	virtual GtkWindow* getMainWindow() {
 		return MainFrame_getWindow();
+	}
+	
+	virtual GdkPixbuf* getLocalPixbuf(const std::string& fileName) {
+		// Construct the full filename using the Bitmaps path
+		std::string fullFileName(GlobalRegistry().get(RKEY_BITMAPS_PATH) + fileName);
+		return gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL);
+	}
+	
+	virtual GdkPixbuf* getLocalPixbufWithMask(const std::string& fileName) {
+		std::string fullFileName(GlobalRegistry().get(RKEY_BITMAPS_PATH) + fileName);
+		
+		GdkPixbuf* rgb = gdk_pixbuf_new_from_file(fullFileName.c_str(), 0);
+		if (rgb != NULL) {
+			// File load successful, add alpha channel
+			GdkPixbuf* rgba = gdk_pixbuf_add_alpha(rgb, TRUE, 255, 0, 255);
+			gdk_pixbuf_unref(rgb);
+			return rgba;
+		}
+		else {
+			// File load failed
+			return NULL;
+		}
 	}
 	
 	virtual void setStatusText(const std::string& statusText) {

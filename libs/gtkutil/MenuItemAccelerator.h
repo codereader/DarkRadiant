@@ -16,8 +16,8 @@ class TextMenuItemAccelerator
 	// Label of the accelerator
 	std::string _accelLabel;
 	
-	// Name of the icon image, if set
-	std::string _iconName;	
+	// The icon pixbuf
+	GdkPixbuf* _icon;	
 	
 	// Flag to indicate this is a toggle menu item
 	bool _isToggle;
@@ -30,7 +30,7 @@ public:
 	 */
 	TextMenuItemAccelerator(const std::string& label, 
 							const std::string& accelLabel,
-							const std::string& iconName,
+							GdkPixbuf* icon,
 							bool isToggle);
 	
 	// Operator cast to GtkWidget* for packing into a menu

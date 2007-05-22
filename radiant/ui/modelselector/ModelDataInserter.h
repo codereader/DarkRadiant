@@ -35,8 +35,8 @@ class ModelDataInserter
 					   
 		// Pixbuf depends on model type
 		GdkPixbuf* pixBuf = isExplicit 
-							? gtkutil::getLocalPixbuf(MODEL_ICON)
-							: gtkutil::getLocalPixbuf(FOLDER_ICON);
+							? GlobalRadiant().getLocalPixbuf(MODEL_ICON)
+							: GlobalRadiant().getLocalPixbuf(FOLDER_ICON);
 
 		// Fill in the column values
 		gtk_tree_store_set(store, iter, 
@@ -61,7 +61,7 @@ class ModelDataInserter
 							   NAME_COLUMN, i->c_str(),
 							   FULLNAME_COLUMN, fullPath.c_str(),
 							   SKIN_COLUMN, i->c_str(),
-							   IMAGE_COLUMN, gtkutil::getLocalPixbuf(SKIN_ICON),
+							   IMAGE_COLUMN, GlobalRadiant().getLocalPixbuf(SKIN_ICON),
 							   -1);
 		}
 	} 	

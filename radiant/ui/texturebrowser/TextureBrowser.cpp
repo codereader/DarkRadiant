@@ -2,11 +2,11 @@
 
 #include "ieventmanager.h"
 #include "iuimanager.h"
+#include "iradiant.h"
 #include "preferencesystem.h"
 
 #include <gtk/gtk.h>
 #include "gtkutil/widget.h"
-#include "gtkutil/image.h"
 #include "gtkutil/GLWidgetSentry.h"
 
 #include "plugin.h"
@@ -684,7 +684,7 @@ GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
 			
 			GtkToolItem* sizeToggle = gtk_toggle_tool_button_new();
 			
-	    	GdkPixbuf* pixBuf = gtkutil::getLocalPixbuf("texwindow_uniformsize.png");    	
+	    	GdkPixbuf* pixBuf = GlobalRadiant().getLocalPixbuf("texwindow_uniformsize.png");    	
 	    	GtkWidget* toggle_image = GTK_WIDGET(gtk_image_new_from_pixbuf(pixBuf));
 	    	
 	    	GtkTooltips* barTips = gtk_tooltips_new();

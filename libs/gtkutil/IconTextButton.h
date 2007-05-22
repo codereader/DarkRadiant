@@ -40,9 +40,9 @@ public:
 	 * true if the button should be a toggle button, false for a normal button.
 	 */
 	IconTextButton(const std::string& name, 
-				   const std::string& iconPath,
+				   GdkPixbuf* icon,
 				   bool isToggle)
-	: _icon(gtkutil::getLocalPixbuf(iconPath)),
+	: _icon(icon),
 	  _label(NULL),
 	  _isToggle(isToggle)
 	{ 

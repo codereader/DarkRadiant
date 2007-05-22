@@ -194,8 +194,9 @@ GtkWidget* LightInspector::createPointLightPanel() {
 
 	// Create the point light togglebutton
 	_pointLightToggle = gtkutil::IconTextButton("Omni", 
-					   						   "pointLight32.png",
-					   						   true);
+		GlobalRadiant().getLocalPixbuf("pointLight32.png"),
+		true
+	);
 	g_signal_connect(G_OBJECT(_pointLightToggle), 
 					 "toggled",
 					 G_CALLBACK(_onPointToggle),
@@ -212,8 +213,9 @@ GtkWidget* LightInspector::createPointLightPanel() {
 GtkWidget* LightInspector::createProjectedPanel() {
 	// Create the projected light togglebutton
 	_projLightToggle = gtkutil::IconTextButton("Projected", 
-					   						   "projLight32.png",
-					   						   true);
+		GlobalRadiant().getLocalPixbuf("projLight32.png"),
+		true
+	);
 	g_signal_connect(G_OBJECT(_projLightToggle), 
 					 "toggled",
 					 G_CALLBACK(_onProjToggle),

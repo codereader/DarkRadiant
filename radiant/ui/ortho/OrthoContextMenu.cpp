@@ -61,15 +61,15 @@ void OrthoContextMenu::displayInstance(const Vector3& point) {
 OrthoContextMenu::OrthoContextMenu()
 : _widget(gtk_menu_new())
 {
-	_addModel = gtkutil::IconTextMenuItem(ADD_MODEL_ICON, ADD_MODEL_TEXT);
-	_addLight = gtkutil::IconTextMenuItem(ADD_LIGHT_ICON, ADD_LIGHT_TEXT);
-	_addEntity = gtkutil::IconTextMenuItem(ADD_ENTITY_ICON, ADD_ENTITY_TEXT);
-	_addPlayerStart = gtkutil::IconTextMenuItem(ADD_PLAYERSTART_ICON, ADD_PLAYERSTART_TEXT);
-	_movePlayerStart = gtkutil::IconTextMenuItem(MOVE_PLAYERSTART_ICON, MOVE_PLAYERSTART_TEXT);
-	_addPrefab = gtkutil::IconTextMenuItem(ADD_PREFAB_ICON, ADD_PREFAB_TEXT);
-	_addSpkr = gtkutil::IconTextMenuItem(ADD_SPEAKER_ICON, ADD_SPEAKER_TEXT);
-	_convertStatic = gtkutil::IconTextMenuItem(CONVERT_TO_STATIC_ICON, CONVERT_TO_STATIC_TEXT);
-	_revertWorldspawn = gtkutil::IconTextMenuItem(REVERT_TO_WORLDSPAWN_ICON, REVERT_TO_WORLDSPAWN_TEXT);
+	_addModel = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_MODEL_ICON), ADD_MODEL_TEXT);
+	_addLight = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_LIGHT_ICON), ADD_LIGHT_TEXT);
+	_addEntity = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_ENTITY_ICON), ADD_ENTITY_TEXT);
+	_addPlayerStart = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_PLAYERSTART_ICON), ADD_PLAYERSTART_TEXT);
+	_movePlayerStart = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(MOVE_PLAYERSTART_ICON), MOVE_PLAYERSTART_TEXT);
+	_addPrefab = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_PREFAB_ICON), ADD_PREFAB_TEXT);
+	_addSpkr = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_SPEAKER_ICON), ADD_SPEAKER_TEXT);
+	_convertStatic = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(CONVERT_TO_STATIC_ICON), CONVERT_TO_STATIC_TEXT);
+	_revertWorldspawn = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), REVERT_TO_WORLDSPAWN_TEXT);
 	
 	g_signal_connect(G_OBJECT(_addEntity), "activate", G_CALLBACK(callbackAddEntity), this);
 	g_signal_connect(G_OBJECT(_addPlayerStart), "activate", G_CALLBACK(callbackAddPlayerStart), this);

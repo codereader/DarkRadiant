@@ -1,5 +1,6 @@
 #include "MenuItem.h"
 
+#include "iradiant.h"
 #include "ieventmanager.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -267,14 +268,14 @@ void MenuItem::construct() {
 			IEventPtr event = GlobalEventManager().findEvent(_event);
 		
 			if (!event->empty()) {
-				// Retrieve an acclerator string formatted for a menu
+				// Retrieve an accelerator string formatted for a menu
 				const std::string accelText = 
 					GlobalEventManager().getAcceleratorStr(event, true);
 			 
 				// Create a new menuitem
 				_widget = gtkutil::TextMenuItemAccelerator(_caption,
 															accelText, 
-															_icon,
+															GlobalRadiant().getLocalPixbuf(_icon),
 															event->isToggle());
 
 				gtk_widget_show_all(_widget);
@@ -287,7 +288,7 @@ void MenuItem::construct() {
 		}
 		else {
 			// Create an empty, desensitised menuitem
-			_widget = gtkutil::TextMenuItemAccelerator(_caption, "", "", false);
+			_widget = gtkutil::TextMenuItemAccelerator(_caption, "", NULL, false);
 			gtk_widget_set_sensitive(_widget, false);
 		}
 	}

@@ -250,11 +250,15 @@ PatchInspector::CoordRow PatchInspector::createCoordRow(
 	{
 		GtkWidget* hbox = gtk_hbox_new(true, 0);
 		
-		coordRow.smaller = ControlButtonPtr(new gtkutil::ControlButton("arrow_left.png"));
+		coordRow.smaller = ControlButtonPtr(
+			new gtkutil::ControlButton(GlobalRadiant().getLocalPixbuf("arrow_left.png"))
+		);
 		gtk_widget_set_size_request(*coordRow.smaller, 15, 24);
 		gtk_box_pack_start(GTK_BOX(hbox), *coordRow.smaller, false, false, 0);
 		
-		coordRow.larger = ControlButtonPtr(new gtkutil::ControlButton("arrow_right.png"));
+		coordRow.larger = ControlButtonPtr(
+			new gtkutil::ControlButton(GlobalRadiant().getLocalPixbuf("arrow_right.png"))
+		);
 		gtk_widget_set_size_request(*coordRow.larger, 15, 24);
 		gtk_box_pack_start(GTK_BOX(hbox), *coordRow.larger, false, false, 0); 
 		

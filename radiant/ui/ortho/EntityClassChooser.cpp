@@ -147,7 +147,7 @@ GtkWidget* EntityClassChooser::createTreeView() {
 			gtk_tree_store_append(_store, &iter, parIter);
 			gtk_tree_store_set(_store, &iter, 
 							   NAME_COLUMN, thisDir.c_str(),
-							   ICON_COLUMN, gtkutil::getLocalPixbuf(FOLDER_ICON),
+							   ICON_COLUMN, GlobalRadiant().getLocalPixbuf(FOLDER_ICON),
 							   DIR_FLAG_COLUMN, TRUE,
 							   -1);
 			GtkTreeIter* dynIter = gtk_tree_iter_copy(&iter); // get a heap-allocated iter
@@ -185,7 +185,7 @@ GtkWidget* EntityClassChooser::createTreeView() {
 			gtk_tree_store_append(_store, &iter, parIter);
 			gtk_tree_store_set(_store, &iter, 
 							   NAME_COLUMN, e->getName().c_str(), 
-							   ICON_COLUMN, gtkutil::getLocalPixbuf(ENTITY_ICON),
+							   ICON_COLUMN, GlobalRadiant().getLocalPixbuf(ENTITY_ICON),
 							   DIR_FLAG_COLUMN, FALSE,
 							   -1);
 		}
