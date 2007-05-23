@@ -1254,14 +1254,13 @@ void MainFrame::Create()
   gtk_window_set_transient_for(splash_screen, window);
 
 #if !defined(WIN32)
-  {
-    GdkPixbuf* pixbuf = GlobalRadiant().getLocalPixbufWithMask("icon.bmp");
-    if(pixbuf != 0)
-    {
-      gtk_window_set_icon(window, pixbuf);
-      gdk_pixbuf_unref(pixbuf);
-    }
-  }
+	{
+		// Set the default icon for POSIX-systems 
+		// (Win32 builds use the one embedded in the exe)
+		std::string icon = GlobalRegistry().get(RKEY_BITMAPS_PATH) + 
+  						   "darkradiant_icon_64x64.png";
+		gtk_window_set_default_icon_from_file(icon.c_str(),	NULL);
+	}
 #endif
 
   gtk_widget_add_events(GTK_WIDGET(window), GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK | GDK_FOCUS_CHANGE_MASK);
