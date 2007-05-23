@@ -5,7 +5,11 @@
 #include "modulesystem.h"
 
 #include <string>
+#include <vector>
 #include <boost/function.hpp>
+
+// A list of sound files associated to a shader
+typedef std::vector<std::string> SoundFileList;
 
 /**
  * Representation of a single sound or sound shader.
@@ -17,6 +21,10 @@ struct ISoundShader {
 	 */
 	virtual std::string getName() const = 0;
 	
+	/** greebo: Get the list of sound files associated to 
+	 * 			this shader.
+	 */
+	virtual SoundFileList getSoundFileList() const = 0;
 };
 
 /**
@@ -37,6 +45,11 @@ struct ISoundManager {
 	 * Enumerate each of the sound shaders.
 	 */
 	virtual void forEachShader(SoundShaderVisitor visitor) const = 0;
+	
+	/** greebo: Tries to lookup the SoundShader with the given name,
+	 * 			returns a soundshader with an empty name, if the lookup failed.
+	 */
+	virtual const ISoundShader& getSoundShader(const std::string& shaderName) = 0;
 	
 	/** greebo: Plays the given sound shader.
 	 */

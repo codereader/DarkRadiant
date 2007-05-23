@@ -1,5 +1,6 @@
 #include "SoundShaderPreview.h"
 
+#include "isound.h"
 #include "gtkutil/ScrolledFrame.h"
 #include <gtk/gtk.h>
 #include <iostream>
@@ -33,7 +34,27 @@ void SoundShaderPreview::update() {
 	// Clear the current treeview model
 	gtk_tree_view_set_model(GTK_TREE_VIEW(_treeView), NULL);
 	
-	gtk_widget_set_sensitive(_widget, !_soundShader.empty()); 
+	// If the soundshader string is empty, desensitise the widgets
+	gtk_widget_set_sensitive(_widget, !_soundShader.empty());
+	
+	if (!_soundShader.empty()) {
+		// We have a sound shader, update the liststore
+		
+		// Get the list of sound files associated to this shader
+		const ISoundShader& shader = GlobalSoundManager().getSoundShader(_soundShader);
+		
+		if (!shader.getName().empty()) {
+			// Create a new liststore and pack it into the treeview
+			_listStore = gtk_list_store_new(1, G_TYPE_STRING);
+			gtk_tree_view_set_model(GTK_TREE_VIEW(_treeView), GTK_TREE_MODEL(_listStore));
+			
+			//SoundFileList list = getSoundFileList
+		}
+		else {
+			// Not a valid soundshader, switch to inactive
+			gtk_widget_set_sensitive(_widget, FALSE);
+		}
+	}
 }
 
 SoundShaderPreview::operator GtkWidget*() {
