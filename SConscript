@@ -415,6 +415,7 @@ radiant_src = \
          'ui/common/TexturePreviewCombo.cpp',
          'ui/common/ShaderSelector.cpp',
          'ui/common/ShaderChooser.cpp',
+         'ui/common/SoundShaderPreview.cpp',
          'ui/mediabrowser/MediaBrowser.cpp',
          'ui/menu/FiltersMenu.cpp',
          'ui/colourscheme/ColourScheme.cpp',
