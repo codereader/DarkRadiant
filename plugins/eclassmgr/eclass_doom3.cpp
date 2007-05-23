@@ -168,16 +168,6 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
         else if (key == "editor_color") {
             entityClass->setColour(value);
         }
-        else if (key == "editor_mins") {
-            if (value != "?") { // what does this mean?
-				entityClass->setMins(value);
-            }
-        }
-        else if (key == "editor_maxs") {
-            if (value != "?") { // what does this mean?
-				entityClass->setMaxs(value);
-            }
-        }
         else if (key == "editor_light") {
             if (value == "1") {
                 entityClass->setIsLight(true);

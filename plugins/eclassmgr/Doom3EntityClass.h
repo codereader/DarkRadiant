@@ -51,10 +51,6 @@ class Doom3EntityClass
 	std::string _model;
 	std::string _skin;
 	
-	// Minimum and maximum sizes, used for calculating the display AABB
-	Vector3	_mins;
-	Vector3 _maxs;
-
 	// Flag to indicate inheritance resolved. An EntityClass resolves its
 	// inheritance by copying all values from the parent onto the child,
 	// after recursively instructing the parent to resolve its own inheritance.
@@ -110,27 +106,27 @@ public:
 	/** Query whether this entity has a fixed size.
 	 */
 	bool isFixedSize() const {
-		return _fixedSize;
-	}
-    
-    /** Set minimum size.
-     */
-	void setMins(const Vector3& mins) {
-		_mins = mins;
-		_fixedSize = true;
-	}
-		
-    /** Set maximum size.
-     */
-	void setMaxs(const Vector3& maxs) {
-		_maxs = maxs;
-		_fixedSize = true;
+        if (_fixedSize) {
+            return true;
+        }
+        else {
+            // Check for the existence of editor_mins/maxs attributes, and that
+            // they do not contain only a question mark
+    		return (getValueForKey("editor_mins").size() > 1
+                    && getValueForKey("editor_maxs").size() > 1);
+        }
 	}
     
 	/* Return the bounding AABB.
 	 */
 	AABB getBounds() const {
-		return AABB::createFromMinMax(_mins, _maxs);
+        if (isFixedSize()) {
+            return AABB::createFromMinMax(getValueForKey("editor_mins"), 
+                                          getValueForKey("editor_maxs"));
+        }
+        else {
+            return AABB(); // null AABB
+        }
 	}
 
     /** Get whether this entity type is a light entity
