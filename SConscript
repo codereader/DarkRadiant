@@ -356,7 +356,6 @@ radiant_env.useGtk2()
 radiant_env.useGtkGLExt()
 radiant_env.useOpenGL()
 radiant_env.useBoostFilesystem()
-radiant_env.useOpenAL()
 radiant_env.buildIconResource()
 
 radiant_src = \
