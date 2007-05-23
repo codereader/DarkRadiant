@@ -39,6 +39,7 @@ private:
 	static void _onDelete(GtkWidget*, SoundChooser*);
 	static void _onOK(GtkWidget*, SoundChooser*);
 	static void _onCancel(GtkWidget*, SoundChooser*);
+	static void _onSelectionChange(GtkTreeSelection*, SoundChooser*);
 	
 public:
 	

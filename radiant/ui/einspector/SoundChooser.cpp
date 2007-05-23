@@ -99,6 +99,8 @@ GtkWidget* SoundChooser::createTreeView() {
 	);
 
 	_treeSelection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
+	g_signal_connect(G_OBJECT(_treeSelection), "changed", 
+					 G_CALLBACK(_onSelectionChange), this);
 
 	// Populate the tree store with sound shaders
 	SoundShaderFinder finder(_treeStore);
@@ -157,6 +159,17 @@ void SoundChooser::_onCancel(GtkWidget* w, SoundChooser* self) {
 	self->_selectedShader = "";
 	gtk_widget_destroy(self->_widget);
 	gtk_main_quit();	
+}
+
+// Tree Selection Change
+void SoundChooser::_onSelectionChange(GtkTreeSelection* selection, SoundChooser* self) {
+	std::string selectedShader = gtkutil::TreeModel::getSelectedString(
+		self->_treeSelection,
+		SHADERNAME_COLUMN
+	);
+	
+	// Notify the preview widget about the change 
+	self->_preview.setSoundShader(selectedShader);
 }
 
 }
