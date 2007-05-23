@@ -4,6 +4,8 @@
 #include <string>
 #include <AL/alut.h>
 
+class ArchiveFile;
+
 namespace sound {
 
 class SoundPlayer
@@ -22,9 +24,10 @@ public:
 	 */
 	~SoundPlayer();
 
-	/** greebo: Call this with a VFS file to actually play the sound.
+	/** greebo: Call this with the ArchiveFile object containing
+	 * 			the file to be played.
 	 */
-	virtual void play(const std::string& vfsFile);
+	virtual void play(ArchiveFile& file);
 
 }; // class AudioManager
 

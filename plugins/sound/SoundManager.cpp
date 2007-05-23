@@ -46,6 +46,7 @@ void SoundManager::playSound(const std::string& fileName) {
 	if (file != NULL) {
 		// File found, play it
 		std::cout << "Found file: " << name << "\n";
+		_soundPlayer.play(*file);
 		file->release();
 		return;
 	}
@@ -62,6 +63,7 @@ void SoundManager::playSound(const std::string& fileName) {
 	file = GlobalFileSystem().openFile(name.c_str());
 	if (file != NULL) {
 		std::cout << "Found file: " << name << "\n";
+		_soundPlayer.play(*file);
 		file->release();
 		return;
 	}
@@ -72,6 +74,7 @@ void SoundManager::playSound(const std::string& fileName) {
 	file = GlobalFileSystem().openFile(name.c_str());
 	if (file != NULL) {
 		std::cout << "Found file: " << name << "\n";
+		_soundPlayer.play(*file);
 		file->release();
 		return;
 	}
