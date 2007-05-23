@@ -39,7 +39,7 @@ SoundChooser::SoundChooser()
 	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
 	gint w = gdk_screen_get_width(scr);
 	gint h = gdk_screen_get_height(scr);
-	gtk_window_set_default_size(GTK_WINDOW(_widget), w / 3, h / 2);
+	gtk_window_set_default_size(GTK_WINDOW(_widget), w / 2, h / 2);
 
     // Delete event
     g_signal_connect(
