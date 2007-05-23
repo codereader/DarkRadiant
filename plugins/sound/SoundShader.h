@@ -17,6 +17,8 @@ class SoundShader
 	// Name of the shader
 	std::string _name;
 	
+	SoundFileList _soundFiles;
+	
 public:
 
 	/**
@@ -31,6 +33,19 @@ public:
 	 */
 	std::string getName() const {
 		return _name;
+	}
+	
+	/** greebo: Adds a sound file (VFS path) to this shader
+	 * 			(used by the tokeniser to populate this class)
+	 */
+	void addSoundFile(const std::string& file) {
+		_soundFiles.push_back(file);
+	}
+	
+	/** greebo: Returns the list of soundfiles
+	 */
+	virtual SoundFileList getSoundFileList() const {
+		return _soundFiles;
 	}
 };
 

@@ -25,8 +25,8 @@ class SoundManager
 	typedef std::map<std::string, ShaderPtr> ShaderMap;
 	ShaderMap _shaders;
 	
-private:
-
+	SoundShader _emptyShader;
+	
 	// Parse a single sound shader from the given token stream
 	void parseSoundShader(parser::DefTokeniser& tok);
 	
@@ -55,6 +55,10 @@ public:
 	 * Enumerate sound shaders.
 	 */
 	void forEachShader(SoundShaderVisitor visitor) const;
+	
+	/** greebo: Returns the soundshader with the name <shaderName>   
+	 */
+	const ISoundShader& getSoundShader(const std::string& shaderName); 
 	
 	/** greebo: Plays the sound shader. If the sound shader has multiple
 	 * 			possible sounds, a random one is chosen.

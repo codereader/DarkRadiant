@@ -11,7 +11,8 @@ namespace sound
 {
 
 // Constructor
-SoundManager::SoundManager()
+SoundManager::SoundManager() :
+	_emptyShader("")
 {
 	// Pass a SoundFileLoader to the filesystem
 	SoundFileLoader loader(*this);
@@ -44,6 +45,13 @@ void SoundManager::parseShadersFrom(const std::string& contents) {
 	parser::DefTokeniser tok(contents);
 	while (tok.hasMoreTokens())
 		parseSoundShader(tok);
+}
+
+const ISoundShader& SoundManager::getSoundShader(const std::string& shaderName) {
+	ShaderMap::const_iterator found = _shaders.find(shaderName);
+	
+	// If the name was found, return it, otherwise return an empty shader object
+	return (found != _shaders.end()) ? *found->second : _emptyShader;    
 }
 
 // Parse a single sound shader from a token stream
