@@ -1,5 +1,7 @@
 #include "SoundPlayer.h"
 
+#include "stream/textstream.h"
+#include "stream/textfilestream.h"
 #include <iostream>
 
 namespace sound {
@@ -9,16 +11,16 @@ SoundPlayer::SoundPlayer() :
 	_buffer(0),
 	_source(0)
 {
-	// Initialise the ALUT library with two NULL pointers 
+	// Initialise the ALUT library with two NULL pointers instead of &argc, argv 
 	// (yes, this is allowed)
 	alutInit(NULL, NULL);
 	alGenSources(1, &_source);
 	
 	if (alGetError() != AL_FALSE) {
-		std::cout << "SoundPlayer: Error while initialising.\n";
+		globalErrorStream() << "SoundPlayer: Error while initialising.\n";
 	}
 	else {
-		std::cout << "SoundPlayer initialised.\n";
+		globalOutputStream() << "SoundPlayer initialised.\n";
 	}
 }
 
@@ -27,8 +29,7 @@ SoundPlayer::~SoundPlayer() {
 }
 
 void SoundPlayer::play(const std::string& vfsFile) {
-	std::cout << "Playing sound.\n";
-	
+
 	// Code for decoding possible OGG files goes here
 	
 	_buffer = alutCreateBufferFromFile(vfsFile.c_str());
