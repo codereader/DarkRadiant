@@ -243,7 +243,9 @@ class idEnvironment(Environment):
 	def useOpenAL(self):
 		if (self['PLATFORM'] == 'win32'):
 			# to be written
-			self.Append(LIBS = ['openal'])
+			self.Append(CPPPATH = ['#/w32/openal/include'])
+			self.Append(LIBPATH = ['#/w32/openal/lib'])
+			self.Append(LIBS = ['OpenAL32', 'alut'])
 		else:
 			self.Append(LIBS = ['openal', 'alut'])
 	
