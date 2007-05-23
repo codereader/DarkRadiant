@@ -5,6 +5,7 @@
 #include <gtk/gtktreestore.h>
 #include <gtk/gtktreeselection.h>
 
+#include "ui/common/SoundShaderPreview.h"
 #include <string>
 
 namespace ui
@@ -21,6 +22,9 @@ class SoundChooser
 	// Tree store for shaders, and the tree selection
 	GtkTreeStore* _treeStore;
 	GtkTreeSelection* _treeSelection;
+	
+	// The preview widget group
+	SoundShaderPreview _preview;
 	
 	// Last selected shader
 	std::string _selectedShader;

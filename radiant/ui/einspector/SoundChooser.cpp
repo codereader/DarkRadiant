@@ -49,6 +49,7 @@ SoundChooser::SoundChooser()
     // Main vbox
     GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
     gtk_box_pack_start(GTK_BOX(vbx), createTreeView(), TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(vbx), _preview, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
     
     gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
