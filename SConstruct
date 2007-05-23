@@ -239,6 +239,14 @@ class idEnvironment(Environment):
 		else:
 			self.Append(LIBS = ['boost_filesystem'])
 	
+	# Link with the OpenAL library
+	def useOpenAL(self):
+		if (self['PLATFORM'] == 'win32'):
+			# to be written
+			self.Append(LIBS = ['openal'])
+		else:
+			self.Append(LIBS = ['openal', 'alut'])
+	
 	def useGlib2(self):
 	# On Win32 we need to add the local paths, since there is no
 	# global include/lib path.

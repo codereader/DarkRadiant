@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ientity.h"
 #include "ieclass.h"
 #include "irender.h"
+#include "iaudio.h"
 #include "iscenegraph.h"
 #include "iselection.h"
 #include "ifilter.h"
@@ -186,6 +187,7 @@ class RadiantDependencies :
   public GlobalOpenGLModuleRef,
   public GlobalEntityClassManagerModuleRef,
   public GlobalUndoModuleRef,
+  public GlobalAudioManagerModuleRef,
   public GlobalScripLibModuleRef,
   public GlobalNamespaceModuleRef,
   public GlobalClipperModuleRef,
@@ -308,7 +310,7 @@ bool Radiant_Construct(ModuleServer& server)
 		// (this instantiates the plugins as well)
 		g_Radiant = new Radiant;
 	}
-
+	
 	// Return the status
 	return g_RadiantInitialised;
 }
