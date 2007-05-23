@@ -60,10 +60,10 @@ public:
 	 */
 	const ISoundShader& getSoundShader(const std::string& shaderName); 
 	
-	/** greebo: Plays the sound shader. If the sound shader has multiple
-	 * 			possible sounds, a random one is chosen.
+	/** greebo: Plays the sound file. Tries to resolve the filename's
+	 * 			extension by appending .ogg or .wav and such.
 	 */
-	virtual void playSoundShader(const ISoundShader& soundShader);
+	virtual void playSound(const std::string& fileName);
 	
 	/**
 	 * Parse the contents of the given string as a .sndshd file, adding all

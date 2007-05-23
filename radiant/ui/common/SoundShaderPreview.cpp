@@ -126,8 +126,8 @@ void SoundShaderPreview::onPlay(GtkButton* button, SoundShaderPreview* self) {
 	std::string selectedFile = self->getSelectedSoundFile();
 	
 	if (!selectedFile.empty()) {
-		// Play the file
-		//std::cout << "playing file: " << selectedFile << "\n";
+		// Pass the call to the sound manager
+		GlobalSoundManager().playSound(selectedFile);
 	}
 }
 

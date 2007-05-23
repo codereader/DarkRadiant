@@ -2,6 +2,7 @@
 #include "SoundFileLoader.h"
 
 #include "ifilesystem.h"
+#include "archivelib.h"
 #include "generic/callback.h"
 #include "parser/DefTokeniser.h"
 
@@ -35,8 +36,45 @@ void SoundManager::forEachShader(SoundShaderVisitor visitor) const {
 	}
 }
 
-void SoundManager::playSoundShader(const ISoundShader& soundShader) {
-	// Sound Shader resolving code goes here
+void SoundManager::playSound(const std::string& fileName) {
+	// Make a copy of the filename
+	std::string name = fileName; 
+	
+	// Try to open the file as it is
+	ArchiveFile* file = GlobalFileSystem().openFile(name.c_str());
+	std::cout << "Trying: " << name << "\n";
+	if (file != NULL) {
+		// File found, play it
+		std::cout << "Found file: " << name << "\n";
+		file->release();
+		return;
+	}
+	
+	std::string root = name;
+	// File not found, try to strip the extension
+	if (name.rfind(".") != std::string::npos) {
+		root = name.substr(0, name.rfind("."));
+	}
+	
+	// Try to open the .ogg variant
+	name = root + ".ogg";
+	std::cout << "Trying: " << name << "\n";
+	file = GlobalFileSystem().openFile(name.c_str());
+	if (file != NULL) {
+		std::cout << "Found file: " << name << "\n";
+		file->release();
+		return;
+	}
+	
+	// Try to open the file with .wav extension
+	name = root + ".wav";
+	std::cout << "Trying: " << name << "\n";
+	file = GlobalFileSystem().openFile(name.c_str());
+	if (file != NULL) {
+		std::cout << "Found file: " << name << "\n";
+		file->release();
+		return;
+	}
 }
 
 // Accept a string of shaders to parse
