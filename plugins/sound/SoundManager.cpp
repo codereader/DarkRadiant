@@ -6,6 +6,7 @@
 #include "parser/DefTokeniser.h"
 
 #include <iostream>
+#include <boost/algorithm/string/predicate.hpp>
 
 namespace sound
 {
@@ -41,7 +42,7 @@ void SoundManager::playSoundShader(const ISoundShader& soundShader) {
 // Accept a string of shaders to parse
 void SoundManager::parseShadersFrom(const std::string& contents) {
 	
-	// Construct a DefTokeniser to tokeniser the string into sound shader decls
+	// Construct a DefTokeniser to tokenise the string into sound shader decls
 	parser::DefTokeniser tok(contents);
 	while (tok.hasMoreTokens())
 		parseSoundShader(tok);
@@ -59,17 +60,23 @@ void SoundManager::parseSoundShader(parser::DefTokeniser& tok) {
 	
 	// Get the shader name
 	std::string name = tok.nextToken();
+	
+	// Create a new shader with this name
+	_shaders[name] = ShaderPtr(new SoundShader(name));
+	
+	// A definition block must start here
 	tok.assertNextToken("{");
 	
-	while (tok.nextToken() != "}");	
-	
-	// Add the shader to the map
-	_shaders.insert(
-		ShaderMap::value_type(
-			name, 
-			ShaderPtr(new SoundShader(name))
-		)
-	);
+	std::string nextToken = tok.nextToken();
+	while (nextToken != "}") {
+		// Watch out for sound file definitions
+		if (boost::algorithm::starts_with(nextToken, "sound/")) {
+			// Add this to the list
+			_shaders[name]->addSoundFile(nextToken);
+		}
+		
+		nextToken = tok.nextToken();
+	}
 }
 
 }
