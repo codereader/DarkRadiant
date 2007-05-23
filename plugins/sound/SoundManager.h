@@ -2,6 +2,7 @@
 #define SOUNDMANAGER_H_
 
 #include "SoundShader.h"
+#include "SoundPlayer.h"
 
 #include "isound.h"
 
@@ -29,6 +30,9 @@ private:
 	// Parse a single sound shader from the given token stream
 	void parseSoundShader(parser::DefTokeniser& tok);
 	
+	// The helper class for playing the sounds
+	SoundPlayer _soundPlayer;
+	
 public:
 
 	/* Module typedefs */
@@ -51,6 +55,11 @@ public:
 	 * Enumerate sound shaders.
 	 */
 	void forEachShader(SoundShaderVisitor visitor) const;
+	
+	/** greebo: Plays the sound shader. If the sound shader has multiple
+	 * 			possible sounds, a random one is chosen.
+	 */
+	virtual void playSoundShader(const ISoundShader& soundShader);
 	
 	/**
 	 * Parse the contents of the given string as a .sndshd file, adding all

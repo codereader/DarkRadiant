@@ -139,8 +139,9 @@ eclassEnv.Depends(eclassLib, math)
 eclassEnv.Install(INSTALL + '/modules', eclassLib)
 
 # Sound manager module
-sndSrc = build_list('plugins/sound', 'sound.cpp SoundManager.cpp')
+sndSrc = build_list('plugins/sound', 'sound.cpp SoundManager.cpp SoundPlayer.cpp')
 sndEnv = module_env.Copy()
+sndEnv.useOpenAL()
 sndLib = sndEnv.SharedLibrary(target='sound', source=sndSrc, no_import_lib=1)
 sndEnv.Install(INSTALL + '/modules', sndLib)
 
@@ -230,12 +231,6 @@ clipper_env.Append(LIBS = ['math'])
 clipper_lib = clipper_env.SharedLibrary(target='clipper', source=clipper_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
 clipper_env.Depends(clipper_lib, math)
 clipper_env.Install(INSTALL + '/modules', clipper_lib)
-
-audio_env = module_env.Copy()
-audio_env.useOpenAL()
-audio_lst=build_list('plugins/audio', 'AudioManager.cpp')
-audio_lib = audio_env.SharedLibrary(target='audio', source=audio_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
-audio_env.Install(INSTALL + '/modules', audio_lib)
 
 eventmanager_env = module_env.Copy()
 eventmanager_lst=build_list('plugins/eventmanager', 'EventManager.cpp Accelerator.cpp Command.cpp Toggle.cpp WidgetToggle.cpp Modifiers.cpp MouseEvents.cpp')

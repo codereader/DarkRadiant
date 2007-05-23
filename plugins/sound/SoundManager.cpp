@@ -30,7 +30,11 @@ void SoundManager::forEachShader(SoundShaderVisitor visitor) const {
 		 ++i)
 	{
 		visitor(*(i->second));	
-	}	
+	}
+}
+
+void SoundManager::playSoundShader(const ISoundShader& soundShader) {
+	// Sound Shader resolving code goes here
 }
 
 // Accept a string of shaders to parse
