@@ -3,6 +3,7 @@
 #include "isound.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"
+#include "gtkutil/TreeModel.h"
 #include <gtk/gtk.h>
 #include <iostream>
 
@@ -30,12 +31,27 @@ SoundShaderPreview::SoundShaderPreview() :
 	
 	// Point the TreeSelection to this treeview
 	_treeSelection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
+	g_signal_connect(G_OBJECT(_treeSelection), "changed", 
+					 G_CALLBACK(onSelectionChange), this);
 	
 	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::ScrolledFrame(_treeView), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(_widget), gtk_label_new("Test"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(_widget), createControlPanel(), FALSE, FALSE, 0);
 	
 	// Trigger the initial update of the widgets
 	update();
+}
+
+GtkWidget* SoundShaderPreview::createControlPanel() {
+	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
+	gtk_widget_set_size_request(vbox, 200, -1);
+	
+	// Create the playback button
+	_playButton = gtk_button_new_from_stock(GTK_STOCK_MEDIA_PLAY);
+	g_signal_connect(G_OBJECT(_playButton), "clicked", G_CALLBACK(onPlay), this);
+	
+	gtk_box_pack_end(GTK_BOX(vbox), _playButton, FALSE, FALSE, 0);
+	
+	return vbox; 
 }
 
 void SoundShaderPreview::setSoundShader(const std::string& soundShader) {
@@ -82,5 +98,37 @@ void SoundShaderPreview::update() {
 SoundShaderPreview::operator GtkWidget*() {
 	return _widget;
 }
+
+std::string SoundShaderPreview::getSelectedSoundFile() {
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+	bool anythingSelected = 
+		gtk_tree_selection_get_selected(_treeSelection, &model, &iter);
 	
+	if (anythingSelected) {
+		return gtkutil::TreeModel::getString(model, &iter, FILENAME_COL);
+	}
+	else {
+		return "";
+	}
+}
+
+void SoundShaderPreview::onSelectionChange(
+	GtkTreeSelection* ts, SoundShaderPreview* self)
+{
+	std::string selectedFile = self->getSelectedSoundFile();
+	
+	// Set the sensitivity of the playbutton accordingly
+	gtk_widget_set_sensitive(self->_playButton, !selectedFile.empty());
+}
+
+void SoundShaderPreview::onPlay(GtkButton* button, SoundShaderPreview* self) {
+	std::string selectedFile = self->getSelectedSoundFile();
+	
+	if (!selectedFile.empty()) {
+		// Play the file
+		//std::cout << "playing file: " << selectedFile << "\n";
+	}
+}
+
 } // namespace ui
