@@ -38,6 +38,9 @@ struct ISoundManager {
 	 */
 	virtual void forEachShader(SoundShaderVisitor visitor) const = 0;
 	
+	/** greebo: Plays the given sound shader.
+	 */
+	virtual void playSoundShader(const ISoundShader& soundShader) = 0; 
 };
 
 /* Module types */
