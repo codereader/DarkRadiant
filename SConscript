@@ -142,6 +142,8 @@ eclassEnv.Install(INSTALL + '/modules', eclassLib)
 sndSrc = build_list('plugins/sound', 'sound.cpp SoundManager.cpp SoundPlayer.cpp')
 sndEnv = module_env.Copy()
 sndEnv.useOpenAL()
+sndEnv.useGlib2()
+sndEnv.useGtk2()
 sndLib = sndEnv.SharedLibrary(target='sound', source=sndSrc, no_import_lib=1)
 sndEnv.Install(INSTALL + '/modules', sndLib)
 

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <AL/alut.h>
+#include "gtkutil/Timer.h"
 
 class ArchiveFile;
 
@@ -15,6 +16,10 @@ class SoundPlayer
 	
 	// The source playing the buffer
 	ALuint _source;
+	
+	// The timer object to check whether the sound is done playing
+	// to destroy the buffer afterwards
+	gtkutil::Timer _timer;
 	
 public:
 	// Constructor, initialises the AL utitilites
@@ -29,6 +34,12 @@ public:
 	 */
 	virtual void play(ArchiveFile& file);
 
+private:
+	// Clears the buffer, stops playing
+	void clearBuffer();
+
+	// This is called periodically to check whether the buffer can be cleared
+	static gboolean checkBuffer(gpointer data);
 }; // class AudioManager
 
 } // namespace sound
