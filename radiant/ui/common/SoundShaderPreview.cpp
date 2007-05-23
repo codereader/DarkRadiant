@@ -2,10 +2,18 @@
 
 #include "isound.h"
 #include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/TextColumn.h"
 #include <gtk/gtk.h>
 #include <iostream>
 
 namespace ui {
+
+	namespace {
+		enum FileListCols {
+			FILENAME_COL,	// The filename (VFS path)
+			NUM_COLS
+		};
+	}
 
 SoundShaderPreview::SoundShaderPreview() :
 	_soundShader("")
@@ -14,6 +22,11 @@ SoundShaderPreview::SoundShaderPreview() :
 	
 	_treeView = gtk_tree_view_new();
 	gtk_widget_set_size_request(_treeView, -1, 200);
+	
+	gtk_tree_view_append_column(
+		GTK_TREE_VIEW(_treeView),
+		gtkutil::TextColumn("Sound Files", FILENAME_COL)
+	);
 	
 	// Point the TreeSelection to this treeview
 	_treeSelection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
@@ -45,10 +58,19 @@ void SoundShaderPreview::update() {
 		
 		if (!shader.getName().empty()) {
 			// Create a new liststore and pack it into the treeview
-			_listStore = gtk_list_store_new(1, G_TYPE_STRING);
+			_listStore = gtk_list_store_new(NUM_COLS, G_TYPE_STRING);
 			gtk_tree_view_set_model(GTK_TREE_VIEW(_treeView), GTK_TREE_MODEL(_listStore));
 			
-			//SoundFileList list = getSoundFileList
+			// Retrieve the list of associated filenames (VFS paths)
+			SoundFileList list = shader.getSoundFileList();
+			
+			for (unsigned int i = 0; i < list.size(); i++) {
+				GtkTreeIter iter;
+				gtk_list_store_append(_listStore, &iter);
+				gtk_list_store_set(_listStore, &iter, 
+								   FILENAME_COL, list[i].c_str(),
+								   -1);
+			}
 		}
 		else {
 			// Not a valid soundshader, switch to inactive
