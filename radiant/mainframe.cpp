@@ -1267,11 +1267,6 @@ void MainFrame::Create()
   gtk_widget_add_events(GTK_WIDGET(window), GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK | GDK_FOCUS_CHANGE_MASK);
   g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(mainframe_delete), this);
 
-#if 0
-  g_mainframeWidgetFocusPrinter.connect(window);
-  g_mainframeFocusPrinter.connect(window);
-#endif
-
     g_MainWindowActive.connect(window);
     
     GtkWidget *vbox = gtk_vbox_new(FALSE, 0);

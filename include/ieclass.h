@@ -95,10 +95,6 @@ struct IEntityClass {
 	 */
 	virtual const std::string& getName() const = 0;
 
-	/** Query whether this entity has a fixed size.
-	 */
-	virtual bool isFixedSize() const = 0;
-
 	/** Query whether this entity class represents a light.
 	 */
 	virtual bool isLight() const = 0;
@@ -107,17 +103,12 @@ struct IEntityClass {
 	 */
 	virtual void setIsLight(bool isLight) = 0;
 
-
 	/* ENTITY CLASS SIZE */
 
-	/** Set the minimum display size.
+	/** Query whether this entity has a fixed size.
 	 */
-	virtual void setMins(const Vector3& mins) = 0;
-	
-	/** Set the maximum display size.
-	 */
-	virtual void setMaxs(const Vector3& maxs) = 0;
-	
+	virtual bool isFixedSize() const = 0;
+
 	/** Return an AABB representing the declared size of this entity. This is
 	 * only valid for fixed size entities.
 	 * 
