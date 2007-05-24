@@ -32,19 +32,19 @@ namespace entity {
 
 scene::Node& Doom3EntityCreator::getEntityForEClass(IEntityClassPtr eclass) {
 	if (eclass->isLight()) {
-		return (new LightNode(eclass))->node();
+		return *(new LightNode(eclass));
 	}
 	else if (!eclass->isFixedSize()) {
 		// Variable size entity
-		return (new entity::Doom3GroupNode(eclass))->node();
+		return *(new entity::Doom3GroupNode(eclass));
 	}
 	else if (eclass->getModelPath().size() > 0) {
 		// Fixed size, has model path
-		return (new EclassModelNode(eclass))->node();
+		return *(new EclassModelNode(eclass));
 	}
 	else {
 		// Fixed size, no model path
-		return (new GenericEntityNode(eclass))->node();
+		return *(new GenericEntityNode(eclass));
 	}
 }
 

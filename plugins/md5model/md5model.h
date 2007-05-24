@@ -486,11 +486,6 @@ public:
     return m_model;
   }
 
-  scene::Node& node()
-  {
-    return *this;
-  }
-
   scene::Instance* create(const scene::Path& path, scene::Instance* parent)
   {
     return new ModelInstance(path, parent, m_model);

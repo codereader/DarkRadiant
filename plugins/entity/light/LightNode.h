@@ -53,8 +53,6 @@ public:
 	// Snappable implementation
 	virtual void snapto(float snap);
 
-	scene::Node& node();
-
 	scene::Node& clone() const;
 
 	void insertChild(scene::Node& child);

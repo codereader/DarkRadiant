@@ -127,7 +127,7 @@ typedef ConstReferenceCaller1<BrushFaceDataCallback, Face&, BrushFaceData_fromFa
 typedef Callback1<Face&> FaceCallback;
 
 scene::Node& BrushModuleClass::createBrush() {
-	return (new BrushNode)->node();
+	return *(new BrushNode);
 }
 
 void BrushModuleClass::Brush_forEachFace(scene::Node& brush, const BrushFaceDataCallback& callback) {

@@ -79,9 +79,6 @@ public:
 	// BrushDoom3 implementation
 	virtual void translateDoom3Brush(const Vector3& translation);
 
-	// Returns the actual scene node
-	scene::Node& node();
-
 	// Allocates a new node on the heap (via copy construction)
 	scene::Node& clone() const;
 	

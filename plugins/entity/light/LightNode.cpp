@@ -75,12 +75,8 @@ void LightNode::setNamespace(Namespace& space) {
 	m_contained.getNamespaced().setNamespace(space);
 }
 
-scene::Node& LightNode::node() {
-	return *this;
-}
-
 scene::Node& LightNode::clone() const {
-	return (new LightNode(*this))->node();
+	return *(new LightNode(*this));
 }
 
 void LightNode::insertChild(scene::Node& child) {

@@ -61,8 +61,6 @@ public:
 
 	virtual std::string getRemap(const std::string& name) const;
 
-	scene::Node& node();
-
 	// scene::Traversable::Observer implementation
 	void insertChild(scene::Node& child);
 	void eraseChild(scene::Node& child);

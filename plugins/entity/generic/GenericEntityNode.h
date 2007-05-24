@@ -43,8 +43,6 @@ public:
 	// Namespaced implementation
 	virtual void setNamespace(Namespace& space);
 
-	scene::Node& node();
-
 	scene::Node& clone() const;
 
 	scene::Instance* create(const scene::Path& path, scene::Instance* parent);
