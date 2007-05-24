@@ -50,13 +50,6 @@ namespace scene
 
 typedef Reference<scene::Node> NodeReference;
 
-typedef std::size_t TypeId;
-
-const TypeId NODETYPEID_MAX = 64;
-//const TypeId NODETYPEID_NONE = NODETYPEID_MAX;
-
-const TypeId INSTANCETYPEID_MAX = 64;
-
 namespace scene
 {
   /// \brief A unique key to an instance of a node in the scene-graph.
@@ -122,9 +115,6 @@ namespace scene
     virtual SignalHandlerId addBoundsChangedCallback(const SignalHandler& boundsChanged) = 0;
     /// \brief Remove a \p callback to be invoked when the bounds of any instance in the scene change.
     virtual void removeBoundsChangedCallback(SignalHandlerId id) = 0;
-
-    virtual TypeId getNodeTypeId(const char* name) = 0;
-    virtual TypeId getInstanceTypeId(const char* name) = 0;
   };
 
   class Traversable

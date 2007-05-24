@@ -34,52 +34,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "instancelib.h"
 #include "treemodel.h"
 
-class StringEqualPredicate
-{
-  const char* m_string;
-public:
-  StringEqualPredicate(const char* string) : m_string(string)
-  {
-  }
-  bool operator()(const char* other) const
-  {
-    return string_equal(m_string, other);
-  }
-};
-
-template<std::size_t SIZE>
-class TypeIdMap
-{
-  typedef const char* TypeName;
-  typedef TypeName TypeNames[SIZE];
-  TypeNames m_typeNames;
-  TypeName* m_typeNamesEnd;
-
-public:
-  TypeIdMap() : m_typeNamesEnd(m_typeNames)
-  {
-  }
-  TypeId getTypeId(const char* name)
-  {
-    TypeName* i = std::find_if(m_typeNames, m_typeNamesEnd, StringEqualPredicate(name));
-    if(i == m_typeNamesEnd)
-    {
-      ASSERT_MESSAGE(m_typeNamesEnd != m_typeNames + SIZE, "reached maximum number of type names supported (" << Unsigned(SIZE) << ")");
-      *m_typeNamesEnd++ = name;
-    }
-    return i - m_typeNames;
-  }
-};
-
 /** greebo: This is the actual implementation of the scene::Graph
  * 			defined in iscenegraph.h. This keeps track of all
- * 			the instances and such.
- * 
- * 			There is an observer attached to this class, getting
- * 			notified upon each insertion or deletion of an instance,
- * 			the m_observer points to the SceneGraphObserver below,
- * 			which in turn notifies the graph_tree_model about the 
- * 			changes.
+ * 			the instances.
  */
 class CompiledGraph : 
 	public scene::Graph, 
@@ -96,9 +53,6 @@ class CompiledGraph :
 	
   Signal0 m_boundsChanged;
   scene::Path m_rootpath;
-
-  TypeIdMap<NODETYPEID_MAX> m_nodeTypeIds;
-  TypeIdMap<INSTANCETYPEID_MAX> m_instanceTypeIds;
 
 public:
 
@@ -223,16 +177,6 @@ public:
   void removeBoundsChangedCallback(SignalHandlerId id)
   {
     m_boundsChanged.disconnect(id);
-  }
-
-  TypeId getNodeTypeId(const char* name)
-  {
-    return m_nodeTypeIds.getTypeId(name);
-  }
-
-  TypeId getInstanceTypeId(const char* name)
-  {
-    return m_instanceTypeIds.getTypeId(name);
   }
 
 private:
