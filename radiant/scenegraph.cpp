@@ -22,97 +22,66 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "scenegraph.h"
 
 #include "debugging/debugging.h"
-
-#include <map>
-#include <list>
-#include <set>
-#include <vector>
-
-#include "string/string.h"
-#include "signal/signal.h"
 #include "scenelib.h"
 #include "instancelib.h"
 #include "treemodel.h"
 
-/** greebo: This is the actual implementation of the scene::Graph
- * 			defined in iscenegraph.h. This keeps track of all
- * 			the instances.
- */
-class CompiledGraph : 
-	public scene::Graph, 
-	public scene::Instantiable::Observer
-{
-  typedef std::map<PathConstReference, scene::Instance*> InstanceMap;
-	typedef std::list<scene::Graph::Observer*> ObserverList;
+CompiledGraph::CompiledGraph() :
+	_treeModel(graph_tree_model_new())
+{}
 
-	ObserverList _sceneObservers;
-  InstanceMap m_instances;
+CompiledGraph::~CompiledGraph() {
+	graph_tree_model_delete(_treeModel);
+}
+
+GraphTreeModel* CompiledGraph::getTreeModel() {
+	return _treeModel;
+}
   
-	// This is the associated graph tree model (used for the EntityList)
-	GraphTreeModel* _treeModel;
-	
-  Signal0 m_boundsChanged;
-  scene::Path m_rootpath;
-
-public:
-
-	CompiledGraph() :
-		_treeModel(graph_tree_model_new())
-	{}
-	
-	~CompiledGraph() {
-		graph_tree_model_delete(_treeModel);
+void CompiledGraph::addSceneObserver(scene::Graph::Observer* observer) {
+	if (observer != NULL) {
+		// Add the passed observer to the list
+		_sceneObservers.push_back(observer);
 	}
-	
-	GraphTreeModel* getTreeModel() {
-		return _treeModel;
+}
+
+void CompiledGraph::removeSceneObserver(scene::Graph::Observer* observer) {
+	// Cycle through the list of observers and call the moved method
+	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); i++) {
+		scene::Graph::Observer* registered = *i;
+		
+		if (registered == observer) {
+			_sceneObservers.erase(i++);
+			return; // Don't continue the loop, the iterator is obsolete 
+		}
 	}
+}
+
+void CompiledGraph::sceneChanged() {
+	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); i++) {
+		scene::Graph::Observer* observer = *i;
+		observer->sceneChanged();
+	}
+}
+
+scene::Node& CompiledGraph::root() {
+	ASSERT_MESSAGE(!m_rootpath.empty(), "scenegraph root does not exist");
+	return m_rootpath.top();
+}
   
-	void addSceneObserver(scene::Graph::Observer* observer) {
-		if (observer != NULL) {
-			// Add the passed observer to the list
-			_sceneObservers.push_back(observer);
-		}
-	}
-
-	void removeSceneObserver(scene::Graph::Observer* observer) {
-		// Cycle through the list of observers and call the moved method
-		for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); i++) {
-			scene::Graph::Observer* registered = *i;
-			
-			if (registered == observer) {
-				_sceneObservers.erase(i++);
-				return; // Don't continue the loop, the iterator is obsolete 
-			}
-		}
-	}
-
-	void sceneChanged() {
-		for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); i++) {
-			scene::Graph::Observer* observer = *i;
-			observer->sceneChanged();
-		}
-	}
-
-  scene::Node& root()
-  {
-    ASSERT_MESSAGE(!m_rootpath.empty(), "scenegraph root does not exist");
-    return m_rootpath.top();
-  }
-  void insert_root(scene::Node& root)
-  {
+void CompiledGraph::insert_root(scene::Node& root) {
     //globalOutputStream() << "insert_root\n";
 
-    ASSERT_MESSAGE(m_rootpath.empty(), "scenegraph root already exists");
+	ASSERT_MESSAGE(m_rootpath.empty(), "scenegraph root already exists");
 
     root.IncRef();
 
     Node_traverseSubgraph(root, InstanceSubgraphWalker(this, scene::Path(), 0));
 
     m_rootpath.push(makeReference(root));
-  }
-  void erase_root()
-  {
+}
+  
+void CompiledGraph::erase_root() {
     //globalOutputStream() << "erase_root\n";
 
     ASSERT_MESSAGE(!m_rootpath.empty(), "scenegraph root does not exist");
@@ -124,75 +93,63 @@ public:
     Node_traverseSubgraph(root, UninstanceSubgraphWalker(this, scene::Path()));
 
     root.DecRef();
-  }
-  void boundsChanged()
-  {
+}
+
+void CompiledGraph::boundsChanged() {
     m_boundsChanged();
-  }
+}
 
-  void traverse(const Walker& walker)
-  {
+void CompiledGraph::traverse(const Walker& walker) {
     traverse_subgraph(walker, m_instances.begin());
-  }
+}
 
-  void traverse_subgraph(const Walker& walker, const scene::Path& start)
-  {
-    if(!m_instances.empty())
-    {
+void CompiledGraph::traverse_subgraph(const Walker& walker, const scene::Path& start) {
+    if(!m_instances.empty()) {
       traverse_subgraph(walker, m_instances.find(PathConstReference(start)));
     }
-  }
+}
 
-  scene::Instance* find(const scene::Path& path)
-  {
+scene::Instance* CompiledGraph::find(const scene::Path& path) {
     InstanceMap::iterator i = m_instances.find(PathConstReference(path));
-    if(i == m_instances.end())
-    {
+    if(i == m_instances.end()) {
       return 0;
     }
     return (*i).second;
-  }
+}
 
-  void insert(scene::Instance* instance)
-  {
+void CompiledGraph::insert(scene::Instance* instance) {
     m_instances.insert(InstanceMap::value_type(PathConstReference(instance->path()), instance));
 
-		// Notify the graph tree model about the change
-		sceneChanged();
-		graph_tree_model_insert(scene_graph_get_tree_model(), *instance);
-  }
-  void erase(scene::Instance* instance)
-  {
-  		// Notify the graph tree model about the change
-		sceneChanged();
-		graph_tree_model_erase(scene_graph_get_tree_model(), *instance);
+	// Notify the graph tree model about the change
+	sceneChanged();
+	graph_tree_model_insert(scene_graph_get_tree_model(), *instance);
+}
+
+void CompiledGraph::erase(scene::Instance* instance) {
+  	// Notify the graph tree model about the change
+	sceneChanged();
+	graph_tree_model_erase(scene_graph_get_tree_model(), *instance);
 
     m_instances.erase(PathConstReference(instance->path()));
-  }
+}
 
-  SignalHandlerId addBoundsChangedCallback(const SignalHandler& boundsChanged)
-  {
+SignalHandlerId CompiledGraph::addBoundsChangedCallback(const SignalHandler& boundsChanged) {
     return m_boundsChanged.connectLast(boundsChanged);
-  }
-  void removeBoundsChangedCallback(SignalHandlerId id)
-  {
+}
+
+void CompiledGraph::removeBoundsChangedCallback(SignalHandlerId id) {
     m_boundsChanged.disconnect(id);
-  }
+}
 
-private:
-
-  bool pre(const Walker& walker, const InstanceMap::iterator& i)
-  {
+bool CompiledGraph::pre(const Walker& walker, const InstanceMap::iterator& i) {
     return walker.pre(i->first, *i->second);
-  }
+}
 
-  void post(const Walker& walker, const InstanceMap::iterator& i)
-  {
+void CompiledGraph::post(const Walker& walker, const InstanceMap::iterator& i) {
     walker.post(i->first, *i->second);
-  }
+}
 
-  void traverse_subgraph(const Walker& walker, InstanceMap::iterator i)
-  {
+void CompiledGraph::traverse_subgraph(const Walker& walker, InstanceMap::iterator i) {
     Stack<InstanceMap::iterator> stack;
     if(i != m_instances.end())
     {
@@ -222,8 +179,8 @@ private:
       }
       while(!stack.empty());
     }
-  }
-};
+}
+
 
 #include "modulesystem/singletonmodule.h"
 #include "modulesystem/moduleregistry.h"
