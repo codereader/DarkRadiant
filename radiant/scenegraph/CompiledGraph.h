@@ -19,7 +19,7 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDEDE_SCENEGRAPH_H)
+#if !defined(INCLUDED_SCENEGRAPH_H)
 #define INCLUDED_SCENEGRAPH_H
 
 #include <map>
@@ -27,8 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "signal/signal.h"
 #include "scenelib.h"
 
+// Forward declaration
 struct GraphTreeModel;
-GraphTreeModel* scene_graph_get_tree_model();
 
 /** greebo: This is the actual implementation of the scene::Graph
  * 			defined in iscenegraph.h. This keeps track of all

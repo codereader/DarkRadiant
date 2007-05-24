@@ -501,7 +501,8 @@ radiant_src = \
          'settings/GameManager.cpp',
          'settings/Game.cpp',
          'settings/Win32Registry.cpp',
-         'scenegraph/CompiledGraph.cpp'
+         'scenegraph/CompiledGraph.cpp',
+         'scenegraph/SceneGraphModule.cpp'
          ]
     ]
 
