@@ -6,6 +6,9 @@
 /** greebo: A wrapper class for use with the ov_open_callbacks() method
  * 			in vorbsfile.h. This provides the four callback
  * 			functions required by the OGG libs.
+ * 
+ * 			Parts of this code has been written after 
+ * 			http://www.devmaster.net/articles/openal-ogg-file/
  */
 namespace sound {
 
@@ -13,30 +16,35 @@ class OggFileStream
 {
 	ScopedArchiveBuffer& _source;
 	
-	unsigned char* curPtr;
+	unsigned char* _curPtr;
 public:
 	OggFileStream(ScopedArchiveBuffer& source) :
 		_source(source)
 	{
 		// Set the pointer to the beginning of the buffer
-		curPtr = _source.buffer;
+		_curPtr = _source.buffer;
 	}
 	
-	static std::size_t oggReadFunc(void* ptr, std::size_t size, 
-								   std::size_t nmemb, void* datasource)
+	static std::size_t oggReadFunc(void* ptr, std::size_t byteSize, 
+								   std::size_t sizeToRead, void* datasource)
 	{
-		//std::cout << "ReadFunc: Ptr: " << ptr << ", Size: " << size << ", Datasource: " << datasource << "\n";
 		OggFileStream* self = reinterpret_cast<OggFileStream*>(datasource);
-		unsigned char* out = reinterpret_cast<unsigned char*>(ptr);
 		
-		for (std::size_t counter = 0; counter < size; counter++) {
-			// Write the byte to the output buffer
-			*out++ = *self->curPtr++;
+		// Calculate how much we need to read.  
+		// This can be sizeToRead*byteSize or less depending on how near the EOF marker we are
+		std::size_t spaceToEOF = self->_source.buffer + self->_source.length - self->_curPtr;
+		std::size_t	actualSizeToRead = 
+			((sizeToRead*byteSize) < spaceToEOF) ? (sizeToRead*byteSize) : spaceToEOF;
+		
+		if (actualSizeToRead > 0) {
+			// Copy the data
+			memcpy(ptr, self->_curPtr, actualSizeToRead);
+			// Increase the local pointer
+			self->_curPtr += actualSizeToRead;
 		}
 		
-		// Are we at the end of the file, if yes, return 0 (EOF), 
-		// otherwise return the number of read bytes
-		return (self->curPtr >= self->_source.buffer + self->_source.length) ? 0 : size;
+		// Return how much we read (in the same way fread would)
+		return actualSizeToRead;
 	}
 	
 	static int oggSeekFunc(void* datasource, ogg_int64_t offset, int whence) {
