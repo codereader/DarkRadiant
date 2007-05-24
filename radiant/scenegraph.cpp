@@ -90,7 +90,10 @@ class CompiledGraph :
 
 	ObserverList _sceneObservers;
   InstanceMap m_instances;
-  //scene::Instantiable::Observer* m_observer;
+  
+	// This is the associated graph tree model (used for the EntityList)
+	GraphTreeModel* _treeModel;
+	
   Signal0 m_boundsChanged;
   scene::Path m_rootpath;
 
@@ -99,8 +102,17 @@ class CompiledGraph :
 
 public:
 
-	CompiledGraph()
+	CompiledGraph() :
+		_treeModel(graph_tree_model_new())
 	{}
+	
+	~CompiledGraph() {
+		graph_tree_model_delete(_treeModel);
+	}
+	
+	GraphTreeModel* getTreeModel() {
+		return _treeModel;
+	}
   
 	void addSceneObserver(scene::Graph::Observer* observer) {
 		if (observer != NULL) {
@@ -269,17 +281,6 @@ private:
   }
 };
 
-namespace
-{
-  //CompiledGraph* g_sceneGraph;
-  GraphTreeModel* g_tree_model;
-}
-
-GraphTreeModel* scene_graph_get_tree_model()
-{
-  return g_tree_model;
-}
-
 #include "modulesystem/singletonmodule.h"
 #include "modulesystem/moduleregistry.h"
 
@@ -292,14 +293,9 @@ public:
   STRING_CONSTANT(Name, "*");
 
 	SceneGraphAPI() {
-		g_tree_model = graph_tree_model_new();
 		_sceneGraph = CompiledGraphPtr(new CompiledGraph());
 	}
 
-	~SceneGraphAPI() {
-		graph_tree_model_delete(g_tree_model);
-	}
-	
 	scene::Graph* getTable() {
 		// Return the contained pointer to the CompiledGraph
 		return _sceneGraph.get();
@@ -310,3 +306,9 @@ typedef SingletonModule<SceneGraphAPI> SceneGraphModule;
 typedef Static<SceneGraphModule> StaticSceneGraphModule;
 StaticRegisterModule staticRegisterSceneGraph(StaticSceneGraphModule::instance());
 
+GraphTreeModel* scene_graph_get_tree_model() {
+	CompiledGraph* sceneGraph = static_cast<CompiledGraph*>(
+		StaticSceneGraphModule::instance().getTable()
+	);
+	return sceneGraph->getTreeModel();
+}
