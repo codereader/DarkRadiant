@@ -384,7 +384,6 @@ radiant_src = \
          'qgl.cpp',
          'referencecache.cpp',
          'renderstate.cpp',
-         'scenegraph.cpp',
          'select.cpp',
          'selection.cpp',
          'server.cpp',
@@ -501,7 +500,8 @@ radiant_src = \
          'settings/GameFileLoader.cpp',
          'settings/GameManager.cpp',
          'settings/Game.cpp',
-         'settings/Win32Registry.cpp'
+         'settings/Win32Registry.cpp',
+         'scenegraph/CompiledGraph.cpp'
          ]
     ]
 
