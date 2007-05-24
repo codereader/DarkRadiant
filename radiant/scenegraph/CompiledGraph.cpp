@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "scenelib.h"
 #include "instancelib.h"
 #include "treemodel.h"
+#include "SceneGraphModule.h"
 
 CompiledGraph::CompiledGraph() :
 	_treeModel(graph_tree_model_new())
@@ -179,37 +180,4 @@ void CompiledGraph::traverse_subgraph(const Walker& walker, InstanceMap::iterato
       }
       while(!stack.empty());
     }
-}
-
-
-#include "modulesystem/singletonmodule.h"
-#include "modulesystem/moduleregistry.h"
-
-class SceneGraphAPI
-{
-	typedef boost::shared_ptr<CompiledGraph> CompiledGraphPtr;
-	CompiledGraphPtr _sceneGraph;
-public:
-  typedef scene::Graph Type;
-  STRING_CONSTANT(Name, "*");
-
-	SceneGraphAPI() {
-		_sceneGraph = CompiledGraphPtr(new CompiledGraph());
-	}
-
-	scene::Graph* getTable() {
-		// Return the contained pointer to the CompiledGraph
-		return _sceneGraph.get();
-	}
-};
-
-typedef SingletonModule<SceneGraphAPI> SceneGraphModule;
-typedef Static<SceneGraphModule> StaticSceneGraphModule;
-StaticRegisterModule staticRegisterSceneGraph(StaticSceneGraphModule::instance());
-
-GraphTreeModel* scene_graph_get_tree_model() {
-	CompiledGraph* sceneGraph = static_cast<CompiledGraph*>(
-		StaticSceneGraphModule::instance().getTable()
-	);
-	return sceneGraph->getTreeModel();
 }
