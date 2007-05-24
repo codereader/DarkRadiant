@@ -12,7 +12,7 @@
 #include "mainframe.h"
 #include "map.h"
 #include "scenelib.h"
-#include "scenegraph.h"
+#include "scenegraph/CompiledGraph.h"
 #include "camera/Camera.h"
 #include "treemodel.h"
 
