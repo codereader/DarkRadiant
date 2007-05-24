@@ -1,11 +1,9 @@
 #ifndef OGGFILESTREAM_H_
 #define OGGFILESTREAM_H_
 
-#include <iostream>
-
 /** greebo: A wrapper class for use with the ov_open_callbacks() method
  * 			in vorbsfile.h. This provides the four callback
- * 			functions required by the OGG libs.
+ * 			functions required by the OGG libs, simulating a file stream.
  * 
  * 			Parts of this code has been written after 
  * 			http://www.devmaster.net/articles/openal-ogg-file/
@@ -32,9 +30,11 @@ public:
 		
 		// Calculate how much we need to read.  
 		// This can be sizeToRead*byteSize or less depending on how near the EOF marker we are
-		std::size_t spaceToEOF = self->_source.buffer + self->_source.length - self->_curPtr;
-		std::size_t	actualSizeToRead = 
-			((sizeToRead*byteSize) < spaceToEOF) ? (sizeToRead*byteSize) : spaceToEOF;
+		std::size_t bytesRequested = sizeToRead*byteSize; 
+		std::size_t bytesLeft = self->_source.buffer + self->_source.length - self->_curPtr;
+		
+		// Clamp the number of bytes to read to the number of bytes left
+		std::size_t	actualSizeToRead = (bytesRequested < bytesLeft) ? bytesRequested : bytesLeft;
 		
 		if (actualSizeToRead > 0) {
 			// Copy the data
@@ -48,15 +48,42 @@ public:
 	}
 	
 	static int oggSeekFunc(void* datasource, ogg_int64_t offset, int whence) {
-		return -1; // not seekable
+		OggFileStream* self = reinterpret_cast<OggFileStream*>(datasource);
+		
+		// Goto where we wish to seek to
+		switch (whence)	{
+			case SEEK_SET: 
+				// Seek to the start of the data file
+				self->_curPtr = self->_source.buffer + offset;
+				break;
+			case SEEK_CUR: 
+				// Seek relatively to the current position
+				self->_curPtr += offset;
+				break;
+			case SEEK_END: 
+				// Seek the end of the file
+				self->_curPtr = self->_source.buffer + self->_source.length;
+				break;
+			default:
+				// Unknown SEEK case
+				break;
+		};
+		
+		// Clamp the curPtr to allowed values
+		if (self->_curPtr > self->_source.buffer + self->_source.length) {
+			self->_curPtr = self->_source.buffer + self->_source.length;
+		}
+		
+		return 0;
 	}
 	
 	static int oggCloseFunc(void* datasource) {
-		return 0;
+		return 1;
 	}
 	
 	static long oggTellFunc(void* datasource) {
-		return 0;
+		OggFileStream* self = reinterpret_cast<OggFileStream*>(datasource);
+		return static_cast<long>(self->_curPtr - self->_source.buffer);
 	}
 };
 
