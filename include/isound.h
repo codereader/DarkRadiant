@@ -52,6 +52,9 @@ struct ISoundManager {
 	virtual const ISoundShader& getSoundShader(const std::string& shaderName) = 0;
 	
 	/** greebo: Plays the given sound file (defined by its VFS path).
+	 * 
+	 * @returns: TRUE, if the sound file was found at the given VFS path, 
+	 * 			 FALSE otherwise
 	 */
 	virtual bool playSound(const std::string& fileName) = 0; 
 	

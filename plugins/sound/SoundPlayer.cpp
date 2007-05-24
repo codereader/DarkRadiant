@@ -133,7 +133,7 @@ void SoundPlayer::play(ArchiveFile& file) {
 			
 			// Get the sample Rate			
 			ALsizei freq = (vorbisInfo->rate);
-			std::cout << "Sample rate is " << freq << "\n";
+			//std::cout << "Sample rate is " << freq << "\n";
 			
 			long bytes;
 			char smallBuffer[4096];
@@ -145,10 +145,10 @@ void SoundPlayer::play(ArchiveFile& file) {
 								0, 2, 1, &bitStream);
 				
 				if (bytes == OV_HOLE) {
-					std::cout << "Error decoding OGG: OV_HOLE.\n"; 
+					globalErrorStream() << "SoundPlayer: Error decoding OGG: OV_HOLE.\n"; 
 				}
 				else if (bytes == OV_EBADLINK) {
-					std::cout << "Error decoding OGG: OV_EBADLINK.\n";
+					globalErrorStream() << "SoundPlayer: Error decoding OGG: OV_EBADLINK.\n";
 				}
 				else {
 					// Stuff this into the variable-sized buffer
@@ -172,7 +172,7 @@ void SoundPlayer::play(ArchiveFile& file) {
   			ov_clear(&oggFile);
   		}
   		else {
-  			std::cout << "Error on opening.\n";
+  			globalErrorStream() << "SoundPlayer: Error opening OGG file.\n";
   		}
 	}
 	else {
