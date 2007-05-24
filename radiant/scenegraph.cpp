@@ -71,14 +71,26 @@ public:
   }
 };
 
-class CompiledGraph : public scene::Graph, public scene::Instantiable::Observer
+/** greebo: This is the actual implementation of the scene::Graph
+ * 			defined in iscenegraph.h. This keeps track of all
+ * 			the instances and such.
+ * 
+ * 			There is an observer attached to this class, getting
+ * 			notified upon each insertion or deletion of an instance,
+ * 			the m_observer points to the SceneGraphObserver below,
+ * 			which in turn notifies the graph_tree_model about the 
+ * 			changes.
+ */
+class CompiledGraph : 
+	public scene::Graph, 
+	public scene::Instantiable::Observer
 {
   typedef std::map<PathConstReference, scene::Instance*> InstanceMap;
 	typedef std::list<scene::Graph::Observer*> ObserverList;
 
 	ObserverList _sceneObservers;
   InstanceMap m_instances;
-  scene::Instantiable::Observer* m_observer;
+  //scene::Instantiable::Observer* m_observer;
   Signal0 m_boundsChanged;
   scene::Path m_rootpath;
 
@@ -87,10 +99,8 @@ class CompiledGraph : public scene::Graph, public scene::Instantiable::Observer
 
 public:
 
-  CompiledGraph(scene::Instantiable::Observer* observer)
-    : m_observer(observer)
-  {
-  }
+	CompiledGraph()
+	{}
   
 	void addSceneObserver(scene::Graph::Observer* observer) {
 		if (observer != NULL) {
@@ -181,11 +191,15 @@ public:
   {
     m_instances.insert(InstanceMap::value_type(PathConstReference(instance->path()), instance));
 
-    m_observer->insert(instance);
+		// Notify the graph tree model about the change
+		sceneChanged();
+		graph_tree_model_insert(scene_graph_get_tree_model(), *instance);
   }
   void erase(scene::Instance* instance)
   {
-    m_observer->erase(instance);
+  		// Notify the graph tree model about the change
+		sceneChanged();
+		graph_tree_model_erase(scene_graph_get_tree_model(), *instance);
 
     m_instances.erase(PathConstReference(instance->path()));
   }
@@ -257,7 +271,7 @@ private:
 
 namespace
 {
-  CompiledGraph* g_sceneGraph;
+  //CompiledGraph* g_sceneGraph;
   GraphTreeModel* g_tree_model;
 }
 
@@ -266,63 +280,30 @@ GraphTreeModel* scene_graph_get_tree_model()
   return g_tree_model;
 }
 
-
-class SceneGraphObserver : public scene::Instantiable::Observer
-{
-public:
-  void insert(scene::Instance* instance)
-  {
-    g_sceneGraph->sceneChanged();
-    graph_tree_model_insert(g_tree_model, *instance);
-  }
-  void erase(scene::Instance* instance)
-  {
-    g_sceneGraph->sceneChanged();
-    graph_tree_model_erase(g_tree_model, *instance);
-  }
-};
-
-SceneGraphObserver g_SceneGraphObserver;
-
-void SceneGraph_Construct()
-{
-  g_tree_model = graph_tree_model_new();
-
-  g_sceneGraph = new CompiledGraph(&g_SceneGraphObserver);
-}
-
-void SceneGraph_Destroy()
-{
-  delete g_sceneGraph;
-
-  graph_tree_model_delete(g_tree_model);
-}
-
-
 #include "modulesystem/singletonmodule.h"
 #include "modulesystem/moduleregistry.h"
 
 class SceneGraphAPI
 {
-  scene::Graph* m_scenegraph;
+	typedef boost::shared_ptr<CompiledGraph> CompiledGraphPtr;
+	CompiledGraphPtr _sceneGraph;
 public:
   typedef scene::Graph Type;
   STRING_CONSTANT(Name, "*");
 
-  SceneGraphAPI()
-  {
-    SceneGraph_Construct();
+	SceneGraphAPI() {
+		g_tree_model = graph_tree_model_new();
+		_sceneGraph = CompiledGraphPtr(new CompiledGraph());
+	}
 
-    m_scenegraph = g_sceneGraph;
-  }
-  ~SceneGraphAPI()
-  {
-    SceneGraph_Destroy();
-  }
-  scene::Graph* getTable()
-  {
-    return m_scenegraph;
-  }
+	~SceneGraphAPI() {
+		graph_tree_model_delete(g_tree_model);
+	}
+	
+	scene::Graph* getTable() {
+		// Return the contained pointer to the CompiledGraph
+		return _sceneGraph.get();
+	}
 };
 
 typedef SingletonModule<SceneGraphAPI> SceneGraphModule;
