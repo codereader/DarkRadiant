@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ifilter.h"
 #include "preferencesystem.h"
 #include "iradiant.h"
-#include "namespace.h"
+#include "inamespace.h"
 #include "modelskin.h"
 
 #include "entity.h"

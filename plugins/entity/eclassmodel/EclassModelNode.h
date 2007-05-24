@@ -2,7 +2,7 @@
 #define ECLASSMODELNODE_H_
 
 #include "nameable.h"
-#include "namespace.h"
+#include "inamespace.h"
 #include "modelskin.h"
 #include "ientity.h"
 

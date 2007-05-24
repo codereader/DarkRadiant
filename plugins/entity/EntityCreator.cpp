@@ -3,7 +3,7 @@
 #include "itextstream.h"
 #include "iundo.h"
 #include "iscenegraph.h"
-#include "namespace.h"
+#include "inamespace.h"
 #include "string/pooledstring.h"
 
 #include "entitylib.h"
