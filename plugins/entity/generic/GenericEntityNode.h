@@ -3,7 +3,7 @@
 
 #include "nameable.h"
 #include "editable.h"
-#include "namespace.h"
+#include "inamespace.h"
 
 #include "scenelib.h"
 #include "instancelib.h"

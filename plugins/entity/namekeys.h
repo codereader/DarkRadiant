@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <map>
 #include "generic/static.h"
 #include "entitylib.h"
-#include "namespace.h"
+#include "inamespace.h"
 #include "Doom3Entity.h"
 
 inline bool string_is_integer(const char* string)
