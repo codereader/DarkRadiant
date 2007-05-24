@@ -1,10 +1,17 @@
 #include "SoundPlayer.h"
 
+#include <vorbis/vorbisfile.h>
+#include <iostream>
+#include <vector>
+#include <boost/algorithm/string/case_conv.hpp>
+
 #include "stream/textstream.h"
 #include "stream/textfilestream.h"
 #include "archivelib.h"
+#include "os/path.h"
 #include "imagelib.h" // for ScopedArchiveBuffer
-#include <iostream>
+
+#include "OggFileStream.h"
 
 namespace sound {
 
@@ -45,16 +52,12 @@ gboolean SoundPlayer::checkBuffer(gpointer data) {
 		// Query the state of the source
 		alGetSourcei(self->_source, AL_SOURCE_STATE, &state);
 		if (state == AL_STOPPED) {
-			std::cout << "Playback has stopped.\n";
 			// Erase the buffer
 			self->clearBuffer();
 			
 			// Disable the timer to stop calling this function
 			self->_timer.disable();
 			return false;
-		}
-		else {
-			std::cout << "Still playing.\n";
 		}
 	}
 	
@@ -64,7 +67,9 @@ gboolean SoundPlayer::checkBuffer(gpointer data) {
 
 void SoundPlayer::clearBuffer() {
 	// Check if there is an active buffer
-	if (_buffer != 0) {
+	if (_source != 0 && _buffer != 0) {
+		// Stop playing
+		alSourceStop(_source);
 		// Free the buffer, this stops the playback automatically
 		alDeleteBuffers(1, &_buffer);
 		_buffer = 0;
@@ -76,25 +81,91 @@ void SoundPlayer::play(ArchiveFile& file) {
 	// Stop any previous playback operations, that might be still active 
 	clearBuffer();
 	
-	std::cout << "File size: " << file.size() << "\n";
-	// Convert the file into a buffer
+	// Convert the file into a buffer, self-destructs at end of scope
 	ScopedArchiveBuffer buffer(file);
 	
-	// Allocate a new buffer
-	alGenBuffers(1, &_buffer); 
+	// Retrieve the extension
+	std::string ext = os::getExtension(file.getName());
 	
-	// Create an AL sound buffer from the memory
-	_buffer = alutCreateBufferFromFileImage(buffer.buffer, static_cast<ALsizei>(buffer.length));
+	if (boost::algorithm::to_lower_copy(ext) == "ogg") {
+		// This is an OGG Vorbis file, decode it
+		vorbis_info* vorbisInfo;
+  		OggVorbis_File oggFile;
+  		
+  		// Initialise the wrapper class
+  		OggFileStream stream(buffer);
+  		
+  		// Setup the callbacks and point them to the helper class
+  		ov_callbacks callbacks;
+  		callbacks.read_func = OggFileStream::oggReadFunc;
+  		callbacks.seek_func = OggFileStream::oggSeekFunc;
+  		callbacks.close_func = OggFileStream::oggCloseFunc;
+  		callbacks.tell_func = OggFileStream::oggTellFunc;
+  		
+  		// Open the OGG data stream using the custom callbacks
+  		int res = ov_open_callbacks(static_cast<void*>(&stream), &oggFile, 
+									NULL, 0, callbacks);
+  		
+  		if (res == 0) {
+  			// Open successful
+  			
+  			// Get some information about the OGG file
+			vorbisInfo = ov_info(&oggFile, -1);
+
+			// Check the number of channels
+			ALenum format = (vorbisInfo->channels == 1) ? AL_FORMAT_MONO16 
+														: AL_FORMAT_STEREO16;
+			
+			// Get the sample Rate			
+			ALsizei freq = (vorbisInfo->rate);
+			std::cout << "Sample rate is " << freq << "\n";
+			
+			long bytes;
+			char smallBuffer[16384];
+			std::vector<char> largeBuffer;
+			do {
+				int bitStream;
+				// Read a chunk of decoded data from the vorbis file
+				bytes = ov_read(&oggFile, smallBuffer, 16384, 0, 2, 1, &bitStream);
+				// Stuff this into the variable-sized buffer
+				largeBuffer.insert(largeBuffer.end(), smallBuffer, smallBuffer + bytes);
+			} while (bytes > 0);
+			
+			// Allocate a new buffer
+			alGenBuffers(1, &_buffer);
+			
+			// Upload sound data to buffer
+			alBufferData(_buffer, 
+						 format, 
+						 &largeBuffer[0], 
+						 static_cast<ALsizei>(largeBuffer.size()), 
+						 freq);
+
+			// Clean up the OGG routines
+  			ov_clear(&oggFile);
+  		}
+  		else {
+  			std::cout << "Error on opening.\n";
+  		}
+	}
+	else {
+		// Must be a wave file
+		// Create an AL sound buffer directly from the buffer in memory
+		_buffer = alutCreateBufferFromFileImage(
+			buffer.buffer,	// The pointer to the buffer data 
+			static_cast<ALsizei>(buffer.length) // The length
+		);
+	}
 	
-	// Code for decoding possible OGG files goes here
+	if (_buffer != 0) {
+		// Assign the buffer to the source and play it
+		alSourcei(_source, AL_BUFFER, _buffer);
+		alSourcePlay(_source);
 		
-	// Assign the buffer to the source and play it
-	alSourcei(_source, AL_BUFFER, _buffer);
-	alSourcePlay(_source);
-	
-	// Enable the periodic buffer check, this destructs the buffer
-	// as soon as the playback has finished
-	_timer.enable();
+		// Enable the periodic buffer check, this destructs the buffer
+		// as soon as the playback has finished
+		_timer.enable();	
+	}
 }
 
 } // namespace sound

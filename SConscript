@@ -144,6 +144,7 @@ sndEnv = module_env.Copy()
 sndEnv.useOpenAL()
 sndEnv.useGlib2()
 sndEnv.useGtk2()
+sndEnv.useBoost()
 sndLib = sndEnv.SharedLibrary(target='sound', source=sndSrc, no_import_lib=1)
 sndEnv.Install(INSTALL + '/modules', sndLib)
 
