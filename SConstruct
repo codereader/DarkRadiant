@@ -247,7 +247,7 @@ class idEnvironment(Environment):
 			self.Append(LIBPATH = ['#/w32/openal/lib'])
 			self.Append(LIBS = ['OpenAL32', 'alut'])
 		else:
-			self.Append(LIBS = ['openal', 'alut'])
+			self.Append(LIBS = ['openal', 'alut', 'vorbisfile'])
 	
 	def useGlib2(self):
 	# On Win32 we need to add the local paths, since there is no
