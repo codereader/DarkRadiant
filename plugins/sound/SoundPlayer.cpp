@@ -130,14 +130,24 @@ void SoundPlayer::play(ArchiveFile& file) {
 			std::cout << "Sample rate is " << freq << "\n";
 			
 			long bytes;
-			char smallBuffer[16384];
+			char smallBuffer[4096];
 			std::vector<char> largeBuffer;
 			do {
 				int bitStream;
 				// Read a chunk of decoded data from the vorbis file
-				bytes = ov_read(&oggFile, smallBuffer, 16384, 0, 2, 1, &bitStream);
-				// Stuff this into the variable-sized buffer
-				largeBuffer.insert(largeBuffer.end(), smallBuffer, smallBuffer + bytes);
+				bytes = ov_read(&oggFile, smallBuffer, sizeof(smallBuffer), 
+								0, 2, 1, &bitStream);
+				
+				if (bytes == OV_HOLE) {
+					std::cout << "Error decoding OGG: OV_HOLE.\n"; 
+				}
+				else if (bytes == OV_EBADLINK) {
+					std::cout << "Error decoding OGG: OV_EBADLINK.\n";
+				}
+				else {
+					// Stuff this into the variable-sized buffer
+					largeBuffer.insert(largeBuffer.end(), smallBuffer, smallBuffer + bytes);
+				}
 			} while (bytes > 0);
 			
 			// Allocate a new buffer
