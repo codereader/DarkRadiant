@@ -27,7 +27,6 @@ SoundPlayer::SoundPlayer() :
 	// Initialise the ALUT library with two NULL pointers instead of &argc, argv 
 	// (yes, this is allowed)
 	alutInit(NULL, NULL);
-	alGenSources(1, &_source);
 	
 	if (alGetError() != AL_FALSE) {
 		globalErrorStream() << "SoundPlayer: Error while initialising.\n";
@@ -38,7 +37,7 @@ SoundPlayer::SoundPlayer() :
 }
 
 SoundPlayer::~SoundPlayer() {
-	_timer.disable();
+	clearBuffer();
 	alutExit();
 }
 
@@ -67,14 +66,24 @@ gboolean SoundPlayer::checkBuffer(gpointer data) {
 
 void SoundPlayer::clearBuffer() {
 	// Check if there is an active buffer
-	if (_source != 0 && _buffer != 0) {
+	if (_source != 0) {
 		// Stop playing
 		alSourceStop(_source);
-		// Free the buffer, this stops the playback automatically
-		alDeleteBuffers(1, &_buffer);
-		_buffer = 0;
-		_timer.disable();
+		alDeleteSources(1, &_source);
+		_source = 0;
+				
+		if (_buffer != 0) {
+			// Free the buffer
+			alDeleteBuffers(1, &_buffer);
+			_buffer = 0;
+		}
 	}
+
+	_timer.disable();
+}
+
+void SoundPlayer::stop() {
+	clearBuffer();
 }
 
 void SoundPlayer::play(ArchiveFile& file) {
@@ -158,6 +167,7 @@ void SoundPlayer::play(ArchiveFile& file) {
 	}
 	
 	if (_buffer != 0) {
+		alGenSources(1, &_source);
 		// Assign the buffer to the source and play it
 		alSourcei(_source, AL_BUFFER, _buffer);
 		alSourcePlay(_source);

@@ -53,7 +53,11 @@ struct ISoundManager {
 	
 	/** greebo: Plays the given sound file (defined by its VFS path).
 	 */
-	virtual void playSound(const std::string& fileName) = 0; 
+	virtual bool playSound(const std::string& fileName) = 0; 
+	
+	/** greebo: Stops the currently played sound.
+	 */
+	virtual void stopSound() = 0;
 };
 
 /* Module types */

@@ -28,6 +28,8 @@ class SoundShaderPreview
 	GtkTreeSelection* _treeSelection;
 	
 	GtkWidget* _playButton;
+	GtkWidget* _stopButton;
+	GtkWidget* _statusLabel;
 	
 	// The currently "previewed" soundshader
 	std::string _soundShader;
@@ -62,6 +64,7 @@ private:
 	
 	// GTK Callbacks
 	static void onPlay(GtkButton* button, SoundShaderPreview* self);
+	static void onStop(GtkButton* button, SoundShaderPreview* self);
 	static void onSelectionChange(GtkTreeSelection* ts, SoundShaderPreview* self);
 };
 

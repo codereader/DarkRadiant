@@ -33,6 +33,10 @@ public:
 	 * 			the file to be played.
 	 */
 	virtual void play(ArchiveFile& file);
+	
+	/** greebo: Stops the playback immediately.
+	 */
+	virtual void stop();
 
 private:
 	// Clears the buffer, stops playing

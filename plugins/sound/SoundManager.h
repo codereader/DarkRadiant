@@ -63,7 +63,11 @@ public:
 	/** greebo: Plays the sound file. Tries to resolve the filename's
 	 * 			extension by appending .ogg or .wav and such.
 	 */
-	virtual void playSound(const std::string& fileName);
+	virtual bool playSound(const std::string& fileName);
+	
+	/** greebo: Stops the playback immediately.
+	 */
+	virtual void stopSound();
 	
 	/**
 	 * Parse the contents of the given string as a .sndshd file, adding all
