@@ -466,7 +466,7 @@ scene::Node& MD5Model_new(TextInputStream& inputStream)
 {
   ModelNode* modelNode = new ModelNode();
   MD5Model_construct(modelNode->model(), inputStream);
-  return modelNode->node();
+  return *modelNode;
 }
 
 scene::Node& loadMD5Model(ArchiveFile& file)

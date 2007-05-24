@@ -94,10 +94,6 @@ std::string EclassModelNode::getRemap(const std::string& name) const {
 	return m_contained.getModelSkin().getRemap(name);
 }
 
-scene::Node& EclassModelNode::node() {
-	return *this;
-}
-
 // scene::Traversable::Observer implementation
 void EclassModelNode::insertChild(scene::Node& child) {
 	m_instances.insertChild(child);
@@ -108,7 +104,7 @@ void EclassModelNode::eraseChild(scene::Node& child) {
 }
 
 scene::Node& EclassModelNode::clone() const {
-	return (new EclassModelNode(*this))->node();
+	return *(new EclassModelNode(*this));
 }
 
 scene::Instance* EclassModelNode::create(const scene::Path& path, scene::Instance* parent) {

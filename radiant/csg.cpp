@@ -90,7 +90,7 @@ public:
         for(BrushVector::const_iterator i = out.begin(); i != out.end(); ++i)
         {
           (*i)->removeEmptyFaces();
-          NodeSmartReference node((new BrushNode())->node());
+          NodeSmartReference node(*(new BrushNode()));
           Node_getBrush(node)->copy(*(*i));
           delete (*i);
           Node_getTraversable(path.parent())->insert(node);
@@ -399,7 +399,7 @@ public:
           for(BrushVector::const_iterator i = out.begin(); i != out.end(); ++i)
           {
             ++m_after;
-            NodeSmartReference node((new BrushNode())->node());
+            NodeSmartReference node(*(new BrushNode()));
             (*i)->removeEmptyFaces();
             ASSERT_MESSAGE(!(*i)->empty(), "brush left with no faces after subtract");
             Node_getBrush(node)->copy(*(*i));
@@ -474,7 +474,7 @@ public:
             // the plane intersects this brush
             if(m_split == eFrontAndBack)
             {
-              NodeSmartReference node((new BrushNode())->node());
+              NodeSmartReference node(*(new BrushNode()));
               Brush* fragment = Node_getBrush(node);
               fragment->copy(*brush);
               Face* newFace = fragment->addPlane(m_p0, m_p1, m_p2, m_shader, m_projection);
@@ -666,7 +666,7 @@ void CSG_Merge(void)
 
   scene::Path merged_path = GlobalSelectionSystem().ultimateSelected().path();
 
-  NodeSmartReference node((new BrushNode())->node());
+  NodeSmartReference node(*(new BrushNode()));
   Brush* brush = Node_getBrush(node);
   // if the new brush would not be convex
   if(!Brush_merge(*brush, selected_brushes, true))

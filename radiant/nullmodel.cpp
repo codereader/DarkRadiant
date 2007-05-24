@@ -143,11 +143,6 @@ public:
     m_isRoot = true;
   }
 
-  scene::Node& node()
-  {
-    return *this;
-  }
-
   scene::Instance* create(const scene::Path& path, scene::Instance* parent)
   {
     return new NullModelInstance(path, parent, m_nullmodel);
@@ -168,7 +163,7 @@ public:
 
 NodeSmartReference NewNullModel()
 {
-  return NodeSmartReference((new NullModelNode)->node());
+  return NodeSmartReference(*(new NullModelNode));
 }
 
 void NullModel_construct()

@@ -46,12 +46,8 @@ void GenericEntityNode::setNamespace(Namespace& space) {
 	m_contained.getNamespaced().setNamespace(space);
 }
 
-scene::Node& GenericEntityNode::node() {
-	return *this;
-}
-
 scene::Node& GenericEntityNode::clone() const {
-	return (new GenericEntityNode(*this))->node();
+	return *(new GenericEntityNode(*this));
 }
 
 scene::Instance* GenericEntityNode::create(const scene::Path& path, scene::Instance* parent) {

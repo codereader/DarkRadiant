@@ -63,8 +63,6 @@ public:
 	// Snappable implementation
 	virtual void snapto(float snap);
 
-	scene::Node& node();
-
 	scene::Node& clone() const;
 
 	// scene::Traversable::Observer implementation

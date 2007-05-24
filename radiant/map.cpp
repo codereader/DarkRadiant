@@ -888,11 +888,6 @@ public:
 
 	BasicContainer()
 	{}
-  
-  scene::Node& node()
-  {
-    return *this;
-  }
 };
 
 /// Merges the map graph rooted at \p node into the global scene-graph.
@@ -902,7 +897,7 @@ void MergeMap(scene::Node& node)
 }
 void Map_ImportSelected(TextInputStream& in, const MapFormat& format)
 {
-  NodeSmartReference node((new BasicContainer)->node());
+  NodeSmartReference node(*(new BasicContainer));
   format.readGraph(node, in, GlobalEntityCreator());
   Map_gatherNamespaced(node);
   Map_mergeClonedNames();
@@ -921,7 +916,7 @@ inline scene::Node& node_clone(scene::Node& node)
     return cloneable->clone();
   }
   
-  return (new scene::NullNode)->node();
+  return *(new scene::Node);
 }
 
 class CloneAll : public scene::Traversable::Walker

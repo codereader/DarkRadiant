@@ -76,12 +76,8 @@ Doom3GroupNode::~Doom3GroupNode() {
 	destroy();
 }
 
-scene::Node& Doom3GroupNode::node() {
-	return *this;
-}
-
 scene::Node& Doom3GroupNode::clone() const {
-	return (new Doom3GroupNode(*this))->node();
+	return *(new Doom3GroupNode(*this));
 }
 
 void Doom3GroupNode::insertChild(scene::Node& child) {
