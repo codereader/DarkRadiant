@@ -3,6 +3,7 @@
 #include "isound.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"
+#include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/TreeModel.h"
 #include <gtk/gtk.h>
 #include <iostream>
@@ -22,7 +23,7 @@ SoundShaderPreview::SoundShaderPreview() :
 	_widget = gtk_hbox_new(FALSE, 12);
 	
 	_treeView = gtk_tree_view_new();
-	gtk_widget_set_size_request(_treeView, -1, 200);
+	gtk_widget_set_size_request(_treeView, -1, 130);
 	
 	gtk_tree_view_append_column(
 		GTK_TREE_VIEW(_treeView),
@@ -47,9 +48,18 @@ GtkWidget* SoundShaderPreview::createControlPanel() {
 	
 	// Create the playback button
 	_playButton = gtk_button_new_from_stock(GTK_STOCK_MEDIA_PLAY);
+	_stopButton = gtk_button_new_from_stock(GTK_STOCK_MEDIA_STOP);
 	g_signal_connect(G_OBJECT(_playButton), "clicked", G_CALLBACK(onPlay), this);
+	g_signal_connect(G_OBJECT(_stopButton), "clicked", G_CALLBACK(onStop), this);
 	
-	gtk_box_pack_end(GTK_BOX(vbox), _playButton, FALSE, FALSE, 0);
+	GtkWidget* btnHBox = gtk_hbox_new(TRUE, 6);
+	gtk_box_pack_start(GTK_BOX(btnHBox), _playButton, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(btnHBox), _stopButton, TRUE, TRUE, 0);
+	
+	gtk_box_pack_end(GTK_BOX(vbox), btnHBox, FALSE, FALSE, 0);
+	
+	_statusLabel = gtkutil::LeftAlignedLabel("");
+	gtk_box_pack_end(GTK_BOX(vbox), _statusLabel, FALSE, FALSE, 0);
 	
 	return vbox; 
 }
@@ -123,12 +133,24 @@ void SoundShaderPreview::onSelectionChange(
 }
 
 void SoundShaderPreview::onPlay(GtkButton* button, SoundShaderPreview* self) {
+	gtk_label_set_markup(GTK_LABEL(self->_statusLabel), "");
 	std::string selectedFile = self->getSelectedSoundFile();
 	
 	if (!selectedFile.empty()) {
 		// Pass the call to the sound manager
-		GlobalSoundManager().playSound(selectedFile);
+		if (!GlobalSoundManager().playSound(selectedFile)) {
+			gtk_label_set_markup(
+				GTK_LABEL(self->_statusLabel), 
+				"<b>Error:</b> File not found."
+			);
+		}
 	}
+}
+
+void SoundShaderPreview::onStop(GtkButton* button, SoundShaderPreview* self) {
+	// Pass the call to the sound manager
+	GlobalSoundManager().stopSound();
+	gtk_label_set_markup(GTK_LABEL(self->_statusLabel), "");
 }
 
 } // namespace ui

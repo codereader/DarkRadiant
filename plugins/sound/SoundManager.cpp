@@ -36,7 +36,7 @@ void SoundManager::forEachShader(SoundShaderVisitor visitor) const {
 	}
 }
 
-void SoundManager::playSound(const std::string& fileName) {
+bool SoundManager::playSound(const std::string& fileName) {
 	// Make a copy of the filename
 	std::string name = fileName; 
 	
@@ -48,7 +48,7 @@ void SoundManager::playSound(const std::string& fileName) {
 		std::cout << "Found file: " << name << "\n";
 		_soundPlayer.play(*file);
 		file->release();
-		return;
+		return true;
 	}
 	
 	std::string root = name;
@@ -65,7 +65,7 @@ void SoundManager::playSound(const std::string& fileName) {
 		std::cout << "Found file: " << name << "\n";
 		_soundPlayer.play(*file);
 		file->release();
-		return;
+		return true;
 	}
 	
 	// Try to open the file with .wav extension
@@ -76,8 +76,15 @@ void SoundManager::playSound(const std::string& fileName) {
 		std::cout << "Found file: " << name << "\n";
 		_soundPlayer.play(*file);
 		file->release();
-		return;
+		return true;
 	}
+	
+	// File not found
+	return false;
+}
+
+void SoundManager::stopSound() {
+	_soundPlayer.stop();
 }
 
 // Accept a string of shaders to parse
