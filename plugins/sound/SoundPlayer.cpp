@@ -10,10 +10,16 @@
 #include "archivelib.h"
 #include "os/path.h"
 #include "imagelib.h" // for ScopedArchiveBuffer
+#include <boost/shared_ptr.hpp>
 
 #include "OggFileStream.h"
 
 namespace sound {
+
+	namespace {
+		typedef std::vector<char> DecodeBuffer;
+		typedef boost::shared_ptr<DecodeBuffer> DecodeBufferPtr;
+	}
 
 // Constructor
 SoundPlayer::SoundPlayer() :
@@ -131,7 +137,7 @@ void SoundPlayer::play(ArchiveFile& file) {
 			
 			long bytes;
 			char smallBuffer[4096];
-			std::vector<char> largeBuffer;
+			DecodeBufferPtr largeBuffer(new DecodeBuffer());
 			do {
 				int bitStream;
 				// Read a chunk of decoded data from the vorbis file
@@ -146,18 +152,20 @@ void SoundPlayer::play(ArchiveFile& file) {
 				}
 				else {
 					// Stuff this into the variable-sized buffer
-					largeBuffer.insert(largeBuffer.end(), smallBuffer, smallBuffer + bytes);
+					largeBuffer->insert(largeBuffer->end(), smallBuffer, smallBuffer + bytes);
 				}
 			} while (bytes > 0);
 			
 			// Allocate a new buffer
 			alGenBuffers(1, &_buffer);
 			
+			DecodeBuffer& bufferRef = *largeBuffer;
+			
 			// Upload sound data to buffer
 			alBufferData(_buffer, 
 						 format, 
-						 &largeBuffer[0], 
-						 static_cast<ALsizei>(largeBuffer.size()), 
+						 &bufferRef[0], 
+						 static_cast<ALsizei>(bufferRef.size()), 
 						 freq);
 
 			// Clean up the OGG routines
