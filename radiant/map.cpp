@@ -101,7 +101,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		const std::string RKEY_PLAYER_START_ECLASS = "game/mapFormat/playerStartPoint";
 	}
 
-std::list<Namespaced*> g_cloned;
+/*std::list<Namespaced*> g_cloned;
 
 inline Namespaced* Node_getNamespaced(scene::Node& node) {
 	return dynamic_cast<Namespaced*>(&node);
@@ -144,7 +144,7 @@ void Map_mergeClonedNames()
   }
 
   g_cloned.clear();
-}
+}*/
 
 class WorldNode
 {
@@ -755,8 +755,8 @@ void Map_ImportSelected(TextInputStream& in, const MapFormat& format)
 {
   NodeSmartReference node(*(new BasicContainer));
   format.readGraph(node, in, GlobalEntityCreator());
-  Map_gatherNamespaced(node);
-  Map_mergeClonedNames();
+	GlobalNamespace().gatherNamespaced(node);
+	GlobalNamespace().mergeClonedNames();
   MergeMap(node);
 }
 
@@ -1436,8 +1436,8 @@ bool Map_ImportFile(const std::string& filename)
         Node_getTraversable(*resource->getNode())->traverse(CloneAll(clone));
       }
 
-      Map_gatherNamespaced(clone);
-      Map_mergeClonedNames();
+      GlobalNamespace().gatherNamespaced(clone);
+      GlobalNamespace().mergeClonedNames();
       MergeMap(clone);
       success = true;
     }

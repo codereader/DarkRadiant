@@ -3,6 +3,7 @@
 #include <string>
 #include "math/quaternion.h"
 #include "iundo.h"
+#include "inamespace.h"
 #include "iselection.h"
 #include "scenelib.h"
 #include "gtkutil/dialog.h"
@@ -84,7 +85,7 @@ public:
 				scene::Node& clonedNode = Node_Clone(path.top());
 				NodeSmartReference clone(clonedNode);
 				// Add this node to the list of namespaced items
-				Map_gatherNamespaced(clone);
+				GlobalNamespace().gatherNamespaced(clone);
 				
 				// Add the cloned node to the list 
 				_list.push_back(&clonedNode);
@@ -134,7 +135,7 @@ void cloneSelected() {
 		SelectionCloner::List list;
 		
 		GlobalSceneGraph().traverse(SelectionCloner(list));
-		Map_mergeClonedNames();
+		GlobalNamespace().mergeClonedNames();
 		
 		// Unselect the current selection
 		GlobalSelectionSystem().setSelectedAll(false);
