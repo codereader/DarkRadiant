@@ -496,6 +496,7 @@ radiant_src = \
          'map/RegionManager.cpp',
          'namespace/Namespace.cpp',
          'namespace/NameObserver.cpp',
+         'namespace/NamespaceModule.cpp',
          'render/backend/OpenGLStateBucket.cpp',
          'render/backend/OpenGLShader.cpp',
          'render/backend/GLProgramFactory.cpp',
