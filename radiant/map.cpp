@@ -64,8 +64,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stream/textfilestream.h"
 #include "os/path.h"
 #include "uniquenames.h"
-#include "modulesystem/singletonmodule.h"
-#include "modulesystem/moduleregistry.h"
 #include "stream/stringstream.h"
 #include "signal/signal.h"
 
@@ -92,6 +90,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "map/RegionManager.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "namespace/Namespace.h"
+#include "namespace/NamespaceModule.h"
 
 #include <string>
 #include <boost/lexical_cast.hpp>
@@ -101,31 +100,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		const std::string RKEY_LAST_CAM_ANGLE = "game/mapFormat/lastCameraAngleKey";
 		const std::string RKEY_PLAYER_START_ECLASS = "game/mapFormat/playerStartPoint";
 	}
-
-Namespace g_defaultNamespace;
-Namespace g_cloneNamespace;
-
-class NamespaceAPI
-{
-  INamespace* m_namespace;
-public:
-  typedef INamespace Type;
-  STRING_CONSTANT(Name, "*");
-
-  NamespaceAPI()
-  {
-    m_namespace = &g_defaultNamespace;
-  }
-  INamespace* getTable()
-  {
-    return m_namespace;
-  }
-};
-
-typedef SingletonModule<NamespaceAPI> NamespaceModule;
-typedef Static<NamespaceModule> StaticNamespaceModule;
-StaticRegisterModule staticRegisterDefaultNamespace(StaticNamespaceModule::instance());
-
 
 std::list<Namespaced*> g_cloned;
 
@@ -161,12 +135,12 @@ void Map_mergeClonedNames()
 {
   for(std::list<Namespaced*>::const_iterator i = g_cloned.begin(); i != g_cloned.end(); ++i)
   {
-    (*i)->setNamespace(g_cloneNamespace);
+    (*i)->setNamespace(getClonedNamespace());
   }
-  g_cloneNamespace.mergeNames(g_defaultNamespace);
+  getClonedNamespace().mergeNames(getDefaultNamespace());
   for(std::list<Namespaced*>::const_iterator i = g_cloned.begin(); i != g_cloned.end(); ++i)
   {
-    (*i)->setNamespace(g_defaultNamespace);
+    (*i)->setNamespace(getDefaultNamespace());
   }
 
   g_cloned.clear();
