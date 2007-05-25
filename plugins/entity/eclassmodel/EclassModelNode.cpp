@@ -78,7 +78,7 @@ Entity& EclassModelNode::getEntity() {
 }
 
 // Namespaced implementation
-void EclassModelNode::setNamespace(Namespace& space) {
+void EclassModelNode::setNamespace(INamespace& space) {
 	m_contained.getNamespaced().setNamespace(space);
 }
 

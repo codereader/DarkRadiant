@@ -56,7 +56,7 @@ typedef MemberCaller1<EntityKeyValue, const KeyObserver&, &EntityKeyValue::detac
 
 class NameKeys : public Entity::Observer, public Namespaced
 {
-  Namespace* m_namespace;
+  INamespace* m_namespace;
   entity::Doom3Entity& m_entity;
   KeyIsNameFunc m_keyIsName;
   NameKeys(const NameKeys& other);
@@ -107,7 +107,7 @@ public:
   {
     m_entity.detach(*this);
   }
-  void setNamespace(Namespace& space)
+  void setNamespace(INamespace& space)
   {
     eraseAll();
     m_namespace = &space;
