@@ -1,3 +1,12 @@
+24/05/2007
+greebo
+- Added sound playback ability to SoundManager module,
+  sounds can be previewed via the SoundChooser GUI.
+
+12/05/2007
+greebo
+- Removed templated TypeCast system in favour of dynamic_cast<>.
+
 01/05/2007
 greebo
 - Fixed insert/delete patch rows and columns command and added 

@@ -151,10 +151,6 @@ void SelectBrush (int entitynum, int brushnum);
 void Map_Construct();
 void Map_Destroy();
 
-
-void Map_gatherNamespaced(scene::Node& root);
-void Map_mergeClonedNames();
-
 namespace map {
 	/**
 	 * Return the filename of the current map, as a string.

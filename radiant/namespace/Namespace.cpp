@@ -1,6 +1,13 @@
 #include "Namespace.h"
 
+#include "scenelib.h"
 #include <list>
+
+namespace {
+	inline Namespaced* Node_getNamespaced(scene::Node& node) {
+		return dynamic_cast<Namespaced*>(&node);
+	}		
+}
 
 void Namespace::attach(const NameCallback& setName, 
 						const NameCallbackCallback& attachObserver)
@@ -55,4 +62,48 @@ void Namespace::mergeNames(const Namespace& other) const {
 			(*j)(buffer);
 		}
 	}
+}
+
+void Namespace::gatherNamespaced(scene::Node& root) {
+	// Local helper class
+	class GatherNamespacedWalker : 
+		public scene::Traversable::Walker
+	{
+		NamespacedList& _list;
+	public:
+		GatherNamespacedWalker(NamespacedList& list) :
+			_list(list)
+		{}
+	
+		bool pre(scene::Node& node) const {
+			Namespaced* namespaced = Node_getNamespaced(node);
+			if (namespaced != NULL) {
+				_list.push_back(namespaced);
+			}
+			return true;
+		}
+	};
+	
+	Node_traverseSubgraph(root, GatherNamespacedWalker(_cloned));
+}
+
+void Namespace::mergeClonedNames() {
+	// Temporarily allocate a new Namespace ("cloned")
+	Namespace _clonedNamespace;
+	
+	// First, move them into the "cloned" Namespace
+	for (unsigned int i = 0; i < _cloned.size(); i++) { 
+		_cloned[i]->setNamespace(_clonedNamespace);
+	}
+	
+	// Merge them in
+	_clonedNamespace.mergeNames(*this);
+	
+	// Now, move them (back) into this namespace (*this)
+	for (unsigned int i = 0; i < _cloned.size(); i++) {
+		_cloned[i]->setNamespace(*this);
+	}
+
+	// Remove the items from the list, we're done.
+	_cloned.clear();
 }

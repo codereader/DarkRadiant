@@ -28,6 +28,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 typedef Callback1<const std::string&> NameCallback;
 typedef Callback1<const NameCallback&> NameCallbackCallback;
 
+namespace scene { class Node; }
+
 class INamespace
 {
 public:
@@ -36,6 +38,20 @@ public:
   virtual void attach(const NameCallback& setName, const NameCallbackCallback& attachObserver) = 0;
   virtual void detach(const NameCallback& setName, const NameCallbackCallback& detachObserver) = 0;
   virtual void makeUnique(const char* name, const NameCallback& setName) const = 0;
+
+	/** greebo: Collects all Namespaced nodes in the subgraph,
+	 * 			whose starting point is defined by <root>.
+	 * 			This stores all the Namespaced* objects into 
+	 * 			a local list, which can subsequently be used 
+	 * 			by mergeClonedNames().
+	 */
+	virtual void gatherNamespaced(scene::Node& root) = 0;
+	
+	/** greebo: This moves all gathered Namespaced nodes into this
+	 * 			Namespace, making sure that all names are properly
+	 * 			made unique.
+	 */
+	virtual void mergeClonedNames() = 0;
 };
 
 class Namespaced
