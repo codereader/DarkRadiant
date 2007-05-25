@@ -90,7 +90,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "map/RegionManager.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "namespace/Namespace.h"
-#include "namespace/NamespaceModule.h"
 
 #include <string>
 #include <boost/lexical_cast.hpp>
@@ -100,51 +99,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		const std::string RKEY_LAST_CAM_ANGLE = "game/mapFormat/lastCameraAngleKey";
 		const std::string RKEY_PLAYER_START_ECLASS = "game/mapFormat/playerStartPoint";
 	}
-
-/*std::list<Namespaced*> g_cloned;
-
-inline Namespaced* Node_getNamespaced(scene::Node& node) {
-	return dynamic_cast<Namespaced*>(&node);
-}
-
-void Node_gatherNamespaced(scene::Node& node)
-{
-  Namespaced* namespaced = Node_getNamespaced(node);
-  if(namespaced != 0)
-  {
-    g_cloned.push_back(namespaced);
-  }
-}
-
-class GatherNamespaced : public scene::Traversable::Walker
-{
-public:
-  bool pre(scene::Node& node) const
-  {
-    Node_gatherNamespaced(node);
-    return true;
-  }
-};
-
-void Map_gatherNamespaced(scene::Node& root)
-{
-  Node_traverseSubgraph(root, GatherNamespaced());
-}
-
-void Map_mergeClonedNames()
-{
-  for(std::list<Namespaced*>::const_iterator i = g_cloned.begin(); i != g_cloned.end(); ++i)
-  {
-    (*i)->setNamespace(getClonedNamespace());
-  }
-  getClonedNamespace().mergeNames(getDefaultNamespace());
-  for(std::list<Namespaced*>::const_iterator i = g_cloned.begin(); i != g_cloned.end(); ++i)
-  {
-    (*i)->setNamespace(getDefaultNamespace());
-  }
-
-  g_cloned.clear();
-}*/
 
 class WorldNode
 {

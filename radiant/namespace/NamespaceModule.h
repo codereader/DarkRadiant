@@ -7,7 +7,7 @@
 class NamespaceAPI
 {
 	typedef boost::shared_ptr<Namespace> NamespacePtr;
-	NamespacePtr _defaultNamespace;
+	NamespacePtr _namespace;
 public:
 	typedef INamespace Type;
 	STRING_CONSTANT(Name, "*");
@@ -16,8 +16,5 @@ public:
 	
 	INamespace* getTable();
 };
-
-Namespace& getDefaultNamespace();
-Namespace& getClonedNamespace();
 
 #endif /*NAMESPACEMODULE_H_*/
