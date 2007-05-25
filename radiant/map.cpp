@@ -91,6 +91,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "map/MapFileManager.h"
 #include "map/RegionManager.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
+#include "namespace/Namespace.h"
 
 #include <string>
 #include <boost/lexical_cast.hpp>
@@ -100,125 +101,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		const std::string RKEY_LAST_CAM_ANGLE = "game/mapFormat/lastCameraAngleKey";
 		const std::string RKEY_PLAYER_START_ECLASS = "game/mapFormat/playerStartPoint";
 	}
-
-class NameObserver
-{
-  UniqueNames& m_names;
-  std::string m_name;
-
-  void construct()
-  {
-    if(!empty())
-    {
-      //globalOutputStream() << "construct " << makeQuoted(c_str()) << "\n";
-      m_names.insert(name_read(m_name));
-    }
-  }
-  void destroy()
-  {
-    if(!empty())
-    {
-      //globalOutputStream() << "destroy " << makeQuoted(c_str()) << "\n";
-      m_names.erase(name_read(m_name));
-    }
-  }
-
-  NameObserver& operator=(const NameObserver& other);
-public:
-  NameObserver(UniqueNames& names) : m_names(names)
-  {
-    construct();
-  }
-  NameObserver(const NameObserver& other) : m_names(other.m_names), m_name(other.m_name)
-  {
-    construct();
-  }
-  ~NameObserver()
-  {
-    destroy();
-  }
-  bool empty() const
-  {
-    return m_name.empty(); 
-  }
-  const char* c_str() const
-  {
-    return m_name.c_str();
-  }
-  void nameChanged(const std::string& name)
-  {
-    destroy();
-    m_name = name;
-    construct();
-  }
-  typedef MemberCaller1<NameObserver, const std::string&, &NameObserver::nameChanged> NameChangedCaller;
-};
-
-class BasicNamespace : public Namespace
-{
-  typedef std::map<NameCallback, NameObserver> Names;
-  Names m_names;
-  UniqueNames m_uniqueNames;
-public:
-  ~BasicNamespace()
-  {
-    ASSERT_MESSAGE(m_names.empty(), "namespace: names still registered at shutdown");
-  }
-  void attach(const NameCallback& setName, const NameCallbackCallback& attachObserver)
-  {
-    std::pair<Names::iterator, bool> result = m_names.insert(Names::value_type(setName, m_uniqueNames));
-    ASSERT_MESSAGE(result.second, "cannot attach name");
-    attachObserver(NameObserver::NameChangedCaller((*result.first).second));
-    //globalOutputStream() << "attach: " << reinterpret_cast<const unsigned int&>(setName) << "\n";
-  }
-  void detach(const NameCallback& setName, const NameCallbackCallback& detachObserver)
-  {
-    Names::iterator i = m_names.find(setName);
-    ASSERT_MESSAGE(i != m_names.end(), "cannot detach name");
-    //globalOutputStream() << "detach: " << reinterpret_cast<const unsigned int&>(setName) << "\n";
-    detachObserver(NameObserver::NameChangedCaller((*i).second));
-    m_names.erase(i);
-  }
-
-  void makeUnique(const char* name, const NameCallback& setName) const
-  {
-    char buffer[1024];
-    name_write(buffer, m_uniqueNames.make_unique(name_read(name)));
-    setName(buffer);
-  }
-
-  void mergeNames(const BasicNamespace& other) const
-  {
-    typedef std::list<NameCallback> SetNameCallbacks;
-    typedef std::map<std::string, SetNameCallbacks> NameGroups;
-    NameGroups groups;
-
-    UniqueNames uniqueNames(other.m_uniqueNames);
-
-    for(Names::const_iterator i = m_names.begin(); i != m_names.end(); ++i)
-    {
-      groups[(*i).second.c_str()].push_back((*i).first);
-    }
-
-    for(NameGroups::iterator i = groups.begin(); i != groups.end(); ++i)
-    {
-      name_t uniqueName(uniqueNames.make_unique(name_read(i->first)));
-      uniqueNames.insert(uniqueName);
-
-      char buffer[1024];
-      name_write(buffer, uniqueName);
-
-      //globalOutputStream() << "renaming " << makeQuoted((*i).first.c_str()) << " to " << makeQuoted(buffer) << "\n";
-
-      SetNameCallbacks& setNameCallbacks = i->second;
-
-      for(SetNameCallbacks::const_iterator j = setNameCallbacks.begin(); j != setNameCallbacks.end(); ++j)
-      {
-        (*j)(buffer);
-      }
-    }
-  }
-};
 
 BasicNamespace g_defaultNamespace;
 BasicNamespace g_cloneNamespace;
