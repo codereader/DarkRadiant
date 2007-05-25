@@ -494,6 +494,8 @@ radiant_src = \
          'map/MapPosition.cpp',
          'map/MapPositionManager.cpp',
          'map/RegionManager.cpp',
+         'namespace/Namespace.cpp',
+         'namespace/NameObserver.cpp',
          'render/backend/OpenGLStateBucket.cpp',
          'render/backend/OpenGLShader.cpp',
          'render/backend/GLProgramFactory.cpp',
