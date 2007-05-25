@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_SCENELIB_H
 
 #include "Bounded.h"
+#include "inode.h"
 #include "iscenegraph.h"
 #include "iselection.h"
 #include "ientity.h"
@@ -106,7 +107,9 @@ public:
 	virtual void removeOriginFromChildren() = 0;
 };
 
-class Node {
+class Node :
+	public INode
+{
 public:
 	enum { 
 		eVisible = 0,
@@ -122,7 +125,7 @@ private:
 public:
 	bool m_isRoot;
 
-	bool isRoot() {
+	bool isRoot() const {
 		return m_isRoot;
 	}
 
@@ -163,11 +166,11 @@ public:
 		m_state &= ~state;
 	}
 
-	bool visible() {
+	bool visible() const {
 		return m_state == eVisible;
 	}
 
-	bool excluded() {
+	bool excluded() const {
 		return (m_state & eExcluded) != 0;
 	}
 };
