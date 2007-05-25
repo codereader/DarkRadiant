@@ -236,7 +236,6 @@ public:
     GlobalTextureBrowser().construct();
     Entity_Construct();
     NullModel_construct();
-    MapRoot_construct();
     map::AutoSaver().init();
     
     // Instantiate the plugin modules.
@@ -270,7 +269,6 @@ public:
   {
     GlobalFileSystem().shutdown();
 
-    MapRoot_destroy();
     NullModel_destroy();
     Entity_Destroy();
     GlobalXYWnd().destroy();

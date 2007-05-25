@@ -176,7 +176,7 @@ public:
 		return m_changeTracker.changes();
 	}
 
-	MapRoot(const char* name) : 
+	MapRoot(const std::string& name) : 
 		_name(name)
 	{
 		m_isRoot = true;
@@ -205,11 +205,7 @@ public:
     // Pass the call to the base method in scene::Node
     Node::release();
   }
-  scene::Node& node()
-  {
-    return *this;
-  }
-
+  
   InstanceCounter m_instanceCounter;
   void instanceAttach(const scene::Path& path)
   {
@@ -238,7 +234,7 @@ public:
 
   scene::Node& clone() const
   {
-    return (new MapRoot(*this))->node();
+    return *(new MapRoot(*this));
   }
 
   scene::Instance* create(const scene::Path& path, scene::Instance* parent)
@@ -261,17 +257,8 @@ public:
   }
 };
 
-inline void MapRoot_construct()
-{
-}
-
-inline void MapRoot_destroy()
-{
-}
-
-inline NodeSmartReference NewMapRoot(const char* name)
-{
-  return NodeSmartReference((new MapRoot(name))->node());
+inline NodeSmartReference NewMapRoot(const std::string& name) {
+	return NodeSmartReference(*(new MapRoot(name)));
 }
 
 
