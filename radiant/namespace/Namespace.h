@@ -6,23 +6,20 @@
 #include "uniquenames.h"
 #include "NameObserver.h"
 
-class BasicNamespace : 
-	public Namespace
+class Namespace : 
+	public INamespace
 {
 	typedef std::map<NameCallback, NameObserver> Names;
 	Names m_names;
 	UniqueNames m_uniqueNames;
 
 public:
-	// Destructor
-	~BasicNamespace();
-	
 	void attach(const NameCallback& setName, const NameCallbackCallback& attachObserver);
 	void detach(const NameCallback& setName, const NameCallbackCallback& detachObserver);
 
 	void makeUnique(const char* name, const NameCallback& setName) const;
 
-	void mergeNames(const BasicNamespace& other) const;
+	void mergeNames(const Namespace& other) const;
 }; // class BasicNamespace
 
 #endif /*NAMESPACE_H_*/

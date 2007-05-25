@@ -102,21 +102,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		const std::string RKEY_PLAYER_START_ECLASS = "game/mapFormat/playerStartPoint";
 	}
 
-BasicNamespace g_defaultNamespace;
-BasicNamespace g_cloneNamespace;
+Namespace g_defaultNamespace;
+Namespace g_cloneNamespace;
 
 class NamespaceAPI
 {
-  Namespace* m_namespace;
+  INamespace* m_namespace;
 public:
-  typedef Namespace Type;
+  typedef INamespace Type;
   STRING_CONSTANT(Name, "*");
 
   NamespaceAPI()
   {
     m_namespace = &g_defaultNamespace;
   }
-  Namespace* getTable()
+  INamespace* getTable()
   {
     return m_namespace;
   }

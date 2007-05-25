@@ -133,7 +133,7 @@ Entity& Doom3GroupNode::getEntity() {
 	return m_contained.getEntity();
 }
 
-void Doom3GroupNode::setNamespace(Namespace& space) {
+void Doom3GroupNode::setNamespace(INamespace& space) {
 	m_contained.getNamespaced().setNamespace(space);
 }
 

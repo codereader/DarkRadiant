@@ -71,7 +71,7 @@ Entity& LightNode::getEntity() {
 	return m_contained.getEntity();
 }
 
-void LightNode::setNamespace(Namespace& space) {
+void LightNode::setNamespace(INamespace& space) {
 	m_contained.getNamespaced().setNamespace(space);
 }
 

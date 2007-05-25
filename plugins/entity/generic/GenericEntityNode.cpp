@@ -42,7 +42,7 @@ Entity& GenericEntityNode::getEntity() {
 }
 
 // Namespaced implementation
-void GenericEntityNode::setNamespace(Namespace& space) {
+void GenericEntityNode::setNamespace(INamespace& space) {
 	m_contained.getNamespaced().setNamespace(space);
 }
 

@@ -41,7 +41,7 @@ public:
 	virtual Entity& getEntity();
 
 	// Namespaced implementation
-	virtual void setNamespace(Namespace& space);
+	virtual void setNamespace(INamespace& space);
 
 	scene::Node& clone() const;
 
