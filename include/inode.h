@@ -1,6 +1,8 @@
 #ifndef INODE_H_
 #define INODE_H_
 
+#include <boost/shared_ptr.hpp>
+
 namespace scene {
 
 /** greebo: Abstract definition of a Node, a basic element
@@ -36,6 +38,8 @@ public:
 	 */
 	virtual bool excluded() const = 0;
 };
+
+typedef boost::shared_ptr<INode> INodePtr;
 
 } // namespace scene
 
