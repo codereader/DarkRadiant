@@ -39,8 +39,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/aabb.h"
 #include "transformlib.h"
 #include "generic/callback.h"
-#include "generic/reference.h"
-#include "container/stack.h"
 #include <boost/shared_ptr.hpp>
 
 class Selector;
@@ -877,11 +875,6 @@ public:
 template<typename Contained>
 class ConstReference;
 typedef ConstReference<scene::Path> PathConstReference;
-
-#include "generic/referencecounted.h"
-//typedef SmartReference<scene::Node, IncRefDecRefCounter<scene::Node> > NodeSmartReference;
-// greebo: Redirect the NodeSmartReference to boost::shared_ptr
-//typedef scene::INodePtr NodeSmartReference;
 
 // greebo: These tool methods have been moved from map.cpp, they might come in handy
 enum ENodeType {
