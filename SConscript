@@ -465,6 +465,7 @@ radiant_src = \
          'patch/PatchBezier.cpp',
          'patch/PatchInstance.cpp',
          'patch/PatchModule.cpp',
+         'patch/PatchNode.cpp',
          'brushexport/BrushExportOBJ.cpp',
          'brush/BrushNode.cpp',
          'brush/BrushPrimitTexDef.cpp',
