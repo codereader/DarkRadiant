@@ -33,7 +33,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <map>
 #include <stack>
 
-class InstanceSubgraphWalker : public scene::Traversable::Walker
+class InstanceSubgraphWalker : 
+	public scene::Traversable::Walker
 {
 	scene::Instantiable::Observer* m_observer;
 	mutable scene::Path m_path;
@@ -84,33 +85,54 @@ public:
 	}
 };
 
-class UninstanceSubgraphWalker : public scene::Traversable::Walker
+/** greebo: This Walker un-instantiates the visited nodes (the ones
+ * 			that are Instantiable, that is). The whole subgraph is
+ * 			traversed and erase() is called on the according nodes.
+ * 
+ * 			Additionally, the observer is invoked after erase() and
+ * 			the scene::Instance is actually deleted from the heap. 
+ */
+class UninstanceSubgraphWalker : 
+	public scene::Traversable::Walker
 {
-  scene::Instantiable::Observer* m_observer;
-  mutable scene::Path m_path;
+	scene::Instantiable::Observer* m_observer;
+	mutable scene::Path m_path;
 public:
-  UninstanceSubgraphWalker(scene::Instantiable::Observer* observer, const scene::Path& parent)
-    : m_observer(observer), m_path(parent)
-  {
-  }
-  bool pre(scene::INodePtr node) const
-  {
-    m_path.push(node);
-    return true;
-  }
-  void post(scene::INodePtr node) const
-  {
-    scene::Instance* instance = Node_getInstantiable(node)->erase(m_observer, m_path);
-    m_observer->erase(instance);
-    delete instance;
-    m_path.pop();
-  }
+	UninstanceSubgraphWalker(scene::Instantiable::Observer* observer, 
+							 const scene::Path& parent) : 
+		m_observer(observer), 
+		m_path(parent) // Initialise the path with the given parent path
+	{}
+	
+	bool pre(scene::INodePtr node) const {
+		// Just remember what path we're going: push the node
+		m_path.push(node);
+		return true;
+	}
+	
+	void post(scene::INodePtr node) const {
+		// Call erase() on the Instantiable.
+		scene::Instance* instance = Node_getInstantiable(node)->erase(m_observer, m_path);
+		// Notify the observers
+		m_observer->erase(instance);
+		
+		// Actually delete the instance
+		delete instance;
+		
+		// We're done with this node, pop the path stack
+		m_path.pop();
+	}
 };
 
 /** greebo: An InstanceSet is part of a BrushNode, PatchNode, Doom3GroupNode, etc. and
  * contains all the child instances of a those nodes. When the actual Brush gets changed
  * (transformed, bounds changed, etc.), the Brush/Doom3Group/Patch/whatever emits a call
- * to this InstanceSet using the transformChangedCaller() and similar stuff. 
+ * to this InstanceSet using the transformChangedCaller() and similar stuff.
+ * 
+ * Additionally, this InstanceSet functions as Traversable::Observer, i.e. it gets
+ * notified as soon as any child node is added to its "owner node". The insertChild()
+ * call triggers an InstanceSubGraphWalk, so basically this makes sure that every
+ * newly inserted Node gets automatically instantiated.   
  */
 class InstanceSet : 
 	public scene::Traversable::Observer
