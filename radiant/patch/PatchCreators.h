@@ -58,7 +58,7 @@ class Doom3PatchCreator : public CommonPatchCreator {
 public:
 	scene::INodePtr createPatch() {
 		// Note the true as function argument: this means that patchDef3 = true in the PatchNode constructor.  
-		return scene::INodePtr(new PatchNodeDoom3(true));
+		return scene::INodePtr(new PatchNode(true));
 	}
 };
 
@@ -69,7 +69,7 @@ public:
 	scene::INodePtr createPatch() {
 		// The PatchNodeDoom3 constructor normally expects a bool, which defaults to false.
 		// this means that the patch is node def3, but def2
-		return scene::INodePtr(new PatchNodeDoom3());
+		return scene::INodePtr(new PatchNode());
 	}
 };
 
