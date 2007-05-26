@@ -22,20 +22,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined (INCLUDED_MAPLIB_H)
 #define INCLUDED_MAPLIB_H
 
-#include "nameable.h"
 #include "mapfile.h"
 
-#include "traverselib.h"
-#include "transformlib.h"
-#include "scenelib.h"
-#include "string/string.h"
-#include "instancelib.h"
-#include "selectionlib.h"
-#include "generic/callback.h"
-
-#include <string>
-
-class UndoFileChangeTracker : public UndoTracker, public MapFile
+class UndoFileChangeTracker : 
+	public UndoTracker, 
+	public MapFile
 {
   std::size_t m_size;
   std::size_t m_saved;
@@ -122,139 +113,5 @@ public:
     return m_size;
   }
 };
-
-/** greebo: This is the root node of the map, it gets inserted as
- * 			the top node into the scenegraph. Each entity node is 
- * 			inserted as child node to this.
- * 
- * Note:	Inserting a child node to this MapRoot automatically
- * 			triggers an instantiation of this child node.
- * 
- * 			The contained InstanceSet functions as Traversable::Observer
- * 			and instantiates the node as soon as it gets notified about it.
- */
-class MapRoot : 
-	public scene::Node, 
-	public scene::Instantiable, 
-	public Nameable,
-	public TransformNode,
-	public MapFile,
-	public scene::Traversable
-{
-	IdentityTransform m_transform;
-	TraversableNodeSet m_traverse;
-	InstanceSet m_instances;
-	typedef SelectableInstance Instance;
-	
-	// The actual name of the map
-	std::string _name;
-	
-	UndoFileChangeTracker m_changeTracker;
-public:
-	MapRoot(const std::string& name) : 
-		_name(name)
-	{
-		// Apply root status to this node
-		setIsRoot(true);
-		// Attach the InstanceSet as scene::Traversable::Observer 
-		// to the TraversableNodeset >> triggers instancing.
-		m_traverse.attach(&m_instances);
-	
-		GlobalUndoSystem().trackerAttach(m_changeTracker);
-	}
-	
-	virtual ~MapRoot() {
-		// Override the default release() method
-		GlobalUndoSystem().trackerDetach(m_changeTracker);
-		
-		// Remove the observer InstanceSet from the TraversableNodeSet
-		m_traverse.detach(&m_instances);
-	}
-
-  	// scene::Traversable Implementation
-	virtual void insert(scene::INodePtr node) {
-		m_traverse.insert(node);
-	}
-    virtual void erase(scene::INodePtr node) {
-    	m_traverse.erase(node);	
-    }
-    virtual void traverse(const Walker& walker) {
-    	m_traverse.traverse(walker);
-    }
-    virtual bool empty() const {
-    	return m_traverse.empty();
-    }
-	
-	// TransformNode implementation
-	virtual const Matrix4& localToParent() const {
-		return m_transform.localToParent();
-	}
-  
-	// MapFile implementation
-	virtual void save() {
-		m_changeTracker.save();
-	}
-	virtual bool saved() const {
-		return m_changeTracker.saved();
-	}
-	virtual void changed() {
-		m_changeTracker.changed();
-	}
-	virtual void setChangedCallback(const Callback& changed) {
-		m_changeTracker.setChangedCallback(changed);
-	}
-	virtual std::size_t changes() const {
-		return m_changeTracker.changes();
-	}
-
-	std::string name() const {
-		return _name;
-	}
-  
-  InstanceCounter m_instanceCounter;
-  void instanceAttach(const scene::Path& path)
-  {
-    if(++m_instanceCounter.m_count == 1)
-    {
-      m_traverse.instanceAttach(path_find_mapfile(path.begin(), path.end()));
-    }
-  }
-  void instanceDetach(const scene::Path& path)
-  {
-    if(--m_instanceCounter.m_count == 0)
-    {
-      m_traverse.instanceDetach(path_find_mapfile(path.begin(), path.end()));
-    }
-  }
-
-  scene::INodePtr clone() const
-  {
-    return scene::INodePtr(new MapRoot(*this));
-  }
-
-  scene::Instance* create(const scene::Path& path, scene::Instance* parent)
-  {
-    return new Instance(path, parent);
-  }
-  void forEachInstance(const scene::Instantiable::Visitor& visitor)
-  {
-    m_instances.forEachInstance(visitor);
-  }
-  void insert(scene::Instantiable::Observer* observer, const scene::Path& path, scene::Instance* instance)
-  {
-    m_instances.insert(observer, path, instance);
-    instanceAttach(path);
-  }
-  scene::Instance* erase(scene::Instantiable::Observer* observer, const scene::Path& path)
-  {
-    instanceDetach(path);
-    return m_instances.erase(observer, path);
-  }
-};
-
-inline scene::INodePtr NewMapRoot(const std::string& name) {
-	return scene::INodePtr(new MapRoot(name));
-}
-
 
 #endif

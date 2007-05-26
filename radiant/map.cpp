@@ -89,6 +89,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "map/AutoSaver.h"
 #include "map/MapFileManager.h"
 #include "map/RegionManager.h"
+#include "map/RootNode.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "namespace/Namespace.h"
 

@@ -51,6 +51,7 @@ ModelModules& ReferenceAPI_getModelModules();
 #include "moduleobserver.h"
 #include "moduleobservers.h"
 
+#include "map/RootNode.h"
 #include "mainframe.h"
 #include "map.h"
 #include "filetypes.h"

@@ -495,6 +495,7 @@ radiant_src = \
          'map/MapPosition.cpp',
          'map/MapPositionManager.cpp',
          'map/RegionManager.cpp',
+         'map/RootNode.cpp',
          'namespace/Namespace.cpp',
          'namespace/NameObserver.cpp',
          'namespace/NamespaceModule.cpp',
