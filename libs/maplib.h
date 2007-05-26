@@ -123,23 +123,54 @@ public:
   }
 };
 
-
+/** greebo: This is the root node of the map, it gets inserted as
+ * 			the top node into the scenegraph. Each entity node is 
+ * 			inserted as child node to this.
+ * 
+ * Note:	Inserting a child node to this MapRoot automatically
+ * 			triggers an instantiation of this child node.
+ * 
+ * 			The contained InstanceSet functions as Traversable::Observer
+ * 			and instantiates the node as soon as it gets notified about it.
+ */
 class MapRoot : 
 	public scene::Node, 
 	public scene::Instantiable, 
-	public scene::Traversable::Observer,
 	public Nameable,
 	public TransformNode,
 	public MapFile,
 	public scene::Traversable
 {
-  IdentityTransform m_transform;
-  TraversableNodeSet m_traverse;
-  InstanceSet m_instances;
-  typedef SelectableInstance Instance;
+	IdentityTransform m_transform;
+	TraversableNodeSet m_traverse;
+	InstanceSet m_instances;
+	typedef SelectableInstance Instance;
+	
+	// The actual name of the map
 	std::string _name;
-  UndoFileChangeTracker m_changeTracker;
+	
+	UndoFileChangeTracker m_changeTracker;
 public:
+	MapRoot(const std::string& name) : 
+		_name(name)
+	{
+		// Apply root status to this node
+		setIsRoot(true);
+		// Attach the InstanceSet as scene::Traversable::Observer 
+		// to the TraversableNodeset >> triggers instancing.
+		m_traverse.attach(&m_instances);
+	
+		GlobalUndoSystem().trackerAttach(m_changeTracker);
+	}
+	
+	virtual ~MapRoot() {
+		// Override the default release() method
+		GlobalUndoSystem().trackerDetach(m_changeTracker);
+		
+		// Remove the observer InstanceSet from the TraversableNodeSet
+		m_traverse.detach(&m_instances);
+	}
+
   	// scene::Traversable Implementation
 	virtual void insert(scene::INodePtr node) {
 		m_traverse.insert(node);
@@ -176,35 +207,9 @@ public:
 		return m_changeTracker.changes();
 	}
 
-	MapRoot(const std::string& name) : 
-		_name(name)
-	{
-		// Set this node to root status
-		setIsRoot(true);
-		m_traverse.attach(this);
-	
-		GlobalUndoSystem().trackerAttach(m_changeTracker);
-	}
-
 	std::string name() const {
 		return _name;
 	}
-	
-	void attach(const NameCallback& callback)
-	{}
-  
-	void detach(const NameCallback& callback)
-	{}
-
-  virtual ~MapRoot() {
-  	// Override the default release() method
-    GlobalUndoSystem().trackerDetach(m_changeTracker);
-
-    m_traverse.detach(this);
-    
-    // Pass the call to the base method in scene::Node
-    //Node::release(); // greebo: no double deletes, please
-  }
   
   InstanceCounter m_instanceCounter;
   void instanceAttach(const scene::Path& path)
@@ -220,16 +225,6 @@ public:
     {
       m_traverse.instanceDetach(path_find_mapfile(path.begin(), path.end()));
     }
-  }
-
-	// scene::Traversable::Observer implementation
-  void insertChild(scene::INodePtr child)
-  {
-    m_instances.insertChild(child);
-  }
-  void eraseChild(scene::INodePtr child)
-  {
-    m_instances.eraseChild(child);
   }
 
   scene::INodePtr clone() const
