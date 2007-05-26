@@ -599,7 +599,7 @@ public:
   bool pre(scene::INodePtr node) const
   {
     Node_getTraversable(m_path.top())->insert(node);
-    m_path.push(makeReference(node));
+    m_path.push(node);
     selectPath(m_path, true);
     return false;
   }
@@ -699,7 +699,7 @@ public:
 /// Merges the map graph rooted at \p node into the global scene-graph.
 void MergeMap(scene::INodePtr node)
 {
-  Node_getTraversable(node)->traverse(MapMergeEntities(scene::Path(makeReference(GlobalSceneGraph().root()))));
+  Node_getTraversable(node)->traverse(MapMergeEntities(scene::Path(GlobalSceneGraph().root())));
 }
 void Map_ImportSelected(TextInputStream& in, const MapFormat& format)
 {
@@ -731,7 +731,7 @@ class CloneAll :
 	mutable scene::Path m_path;
 public:
 	CloneAll(scene::INodePtr root) : 
-		m_path(makeReference(root))
+		m_path(root)
 	{}
 	
   bool pre(scene::INodePtr node) const
@@ -1714,7 +1714,7 @@ public:
   {
     if(Node_isPrimitive(node) && m_index-- == 0)
     {
-      m_path.push(makeReference(node));
+      m_path.push(node);
     }
     return false;
   }
@@ -1733,7 +1733,7 @@ public:
   {
     if(Node_isEntity(node) && m_index-- == 0)
     {
-      m_path.push(makeReference(node));
+      m_path.push(node);
     }
     return false;
   }
