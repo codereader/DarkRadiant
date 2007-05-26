@@ -25,16 +25,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/constant.h"
 #include "Bounded.h"
 #include "irender.h"
+#include "inode.h"
 
 #include <boost/shared_ptr.hpp>
 
 /* Forward decls */
-
-namespace scene
-{
-  class Node;
-}
-
 class ArchiveFile;
 class AABB;
 class ModelSkin;
@@ -103,7 +98,7 @@ public:
 	 * it.
 	 */
 	
-	virtual scene::Node& loadModel(ArchiveFile& file) = 0;
+	virtual scene::INodePtr loadModel(ArchiveFile& file) = 0;
 	
 	/** Load a model from the VFS, and return the IModel
 	 * subclass for it.

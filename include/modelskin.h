@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <vector>
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 class ModuleObserver;
 
@@ -47,6 +48,7 @@ public:
 	 */
 	virtual std::string getRemap(const std::string& name) const = 0;
 };
+typedef boost::shared_ptr<ModelSkin> ModelSkinPtr;
 
 class SkinnedModel
 {

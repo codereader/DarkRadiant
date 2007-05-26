@@ -22,13 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_NAMESPACE_H)
 #define INCLUDED_NAMESPACE_H
 
+#include "inode.h"
 #include "generic/constant.h"
 #include "generic/callbackfwd.h"
 
 typedef Callback1<const std::string&> NameCallback;
 typedef Callback1<const NameCallback&> NameCallbackCallback;
-
-namespace scene { class Node; }
 
 class INamespace
 {
@@ -45,7 +44,7 @@ public:
 	 * 			a local list, which can subsequently be used 
 	 * 			by mergeClonedNames().
 	 */
-	virtual void gatherNamespaced(scene::Node& root) = 0;
+	virtual void gatherNamespaced(scene::INodePtr root) = 0;
 	
 	/** greebo: This moves all gathered Namespaced nodes into this
 	 * 			Namespace, making sure that all names are properly
@@ -61,6 +60,7 @@ public:
 
   virtual void setNamespace(INamespace& space) = 0;
 };
+typedef boost::shared_ptr<Namespaced> NamespacedPtr;
 
 #include "modulesystem.h"
 

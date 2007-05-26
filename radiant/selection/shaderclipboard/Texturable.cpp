@@ -66,7 +66,7 @@ bool ClosestTexturableFinder::pre(const scene::Path& path, scene::Instance& inst
 	bool isEntity = Node_isEntity(path.top());
 	
 	// Check if the node is filtered or an entity
-	if (path.top().get().visible() && !isEntity) {
+	if (path.top()->visible() && !isEntity) {
 		// Test the instance for a brush
 		BrushInstance* brush = Instance_getBrush(instance);
 		

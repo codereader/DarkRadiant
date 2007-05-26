@@ -655,7 +655,7 @@ bool EntityInspector::updateSelectedEntity() {
 
 	// The root node must not be selected (this can happen if Invert Selection is activated
 	// with an empty scene, or by direct selection in the entity list).
-	if (GlobalSelectionSystem().ultimateSelected().path().top().get().isRoot())
+	if (GlobalSelectionSystem().ultimateSelected().path().top()->isRoot())
 		return false;
 	
 	// Try both the selected node (if an entity is selected) or the parent node (if a brush is 

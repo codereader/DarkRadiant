@@ -22,15 +22,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_IBRUSH_H)
 #define INCLUDED_IBRUSH_H
 
+#include "inode.h"
 #include "generic/constant.h"
 #include "generic/callback.h"
 #include "math/Vector3.h"
 //#include "itexdef.h"
-
-namespace scene
-{
-  class Node;
-}
 
 #if 0
 class IBrushFace
@@ -90,9 +86,9 @@ class BrushCreator
 public:
   INTEGER_CONSTANT(Version, 1);
   STRING_CONSTANT(Name, "brush");
-  virtual scene::Node& createBrush() = 0;
-  virtual void Brush_forEachFace(scene::Node& brush, const BrushFaceDataCallback& callback) = 0;
-  virtual bool Brush_addFace(scene::Node& brush, const _QERFaceData& faceData) = 0;
+  virtual scene::INodePtr createBrush() = 0;
+  virtual void Brush_forEachFace(scene::INodePtr brush, const BrushFaceDataCallback& callback) = 0;
+  virtual bool Brush_addFace(scene::INodePtr brush, const _QERFaceData& faceData) = 0;
 };
 
 class Brush;
@@ -103,6 +99,11 @@ public:
 	 */
 	virtual Brush& getBrush() = 0;
 };
+typedef boost::shared_ptr<IBrushNode> IBrushNodePtr;
+
+inline bool Node_isBrush(scene::INodePtr node) {
+	return boost::dynamic_pointer_cast<IBrushNode>(node) != NULL;
+}
 
 #include "modulesystem.h"
 

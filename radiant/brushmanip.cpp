@@ -336,7 +336,7 @@ void Brush_ConstructPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, 
 }
 
 
-void ConstructRegionBrushes(scene::Node* brushes[6], const Vector3& region_mins, const Vector3& region_maxs)
+void ConstructRegionBrushes(scene::INodePtr brushes[6], const Vector3& region_mins, const Vector3& region_maxs)
 {
 	const float THICKNESS = 10;
   {
@@ -348,7 +348,7 @@ void ConstructRegionBrushes(scene::Node* brushes[6], const Vector3& region_mins,
     {
       Vector3 maxs(region_maxs[0]+THICKNESS, region_maxs[1]+THICKNESS, region_maxs[2]+THICKNESS);
       maxs[i] = region_mins[i];
-      Brush_ConstructCuboid(*Node_getBrush(*brushes[i]), 
+      Brush_ConstructCuboid(*Node_getBrush(brushes[i]), 
       						AABB::createFromMinMax(mins, maxs),
       						texdef_name_default(), 
       						TextureProjection());
@@ -364,7 +364,7 @@ void ConstructRegionBrushes(scene::Node* brushes[6], const Vector3& region_mins,
     {
       Vector3 mins(region_mins[0]-THICKNESS, region_mins[1]-THICKNESS, region_mins[2]-THICKNESS);
       mins[i] = region_maxs[i];
-      Brush_ConstructCuboid(*Node_getBrush(*brushes[i+3]), 
+      Brush_ConstructCuboid(*Node_getBrush(brushes[i+3]), 
       						AABB::createFromMinMax(mins, maxs),
       						texdef_name_default(),
       						TextureProjection());
@@ -475,7 +475,7 @@ public:
   }
   bool pre(const scene::Path& path, scene::Instance& instance) const
   {
-    if(path.top().get().visible())
+    if(path.top()->visible())
     {
       Brush* brush = Node_getBrush(path.top());
       if(brush != 0 && Brush_hasShader(*brush, m_name))

@@ -43,8 +43,8 @@ brushDef3\n\
 }\n\
 }\n";
 
-inline MapExporter* Node_getMapExporter(scene::Node& node) {
-	return dynamic_cast<MapExporter*>(&node);
+inline MapExporterPtr Node_getMapExporter(scene::INodePtr node) {
+	return boost::dynamic_pointer_cast<MapExporter>(node);
 }
 
 /* Export all of the keyvalues from the given entity, and write them
@@ -116,7 +116,7 @@ public:
 	}
 	
 	// Pre-descent callback
-  bool pre(scene::Node& node) const
+  bool pre(scene::INodePtr node) const
   {
 	// Check whether we are have a brush or an entity. We might get 
 	// called at either level.
@@ -146,7 +146,7 @@ public:
 		_entityStack.push_back(NULL);
 
     	// Get the brush token exporter
-		MapExporter* exporter = Node_getMapExporter(node);
+		MapExporterPtr exporter = Node_getMapExporter(node);
 		if(exporter != 0) {
 
 			// Brush count comment
@@ -161,7 +161,7 @@ public:
   }
   
 	// Post-descent callback
-	void post(scene::Node& node) const {
+	void post(scene::INodePtr node) const {
 
 		// Check if we are popping an entity
 		Entity* ent = _entityStack.back();
@@ -188,7 +188,7 @@ public:
 	}
 };
 
-void Map_Write(scene::Node& root, GraphTraversalFunc traverse, std::ostream& os)
+void Map_Write(scene::INodePtr root, GraphTraversalFunc traverse, std::ostream& os)
 {
 	traverse(root, WriteTokensWalker(os));
 }

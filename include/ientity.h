@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_IENTITY_H)
 #define INCLUDED_IENTITY_H
 
+#include "inode.h"
+#include "ipath.h"
 #include "generic/constant.h"
 #include "generic/callbackfwd.h"
 #include <string>
@@ -112,6 +114,19 @@ public:
 	 */
 	virtual Entity& getEntity() = 0;
 };
+typedef boost::shared_ptr<EntityNode> EntityNodePtr; 
+
+inline Entity* Node_getEntity(scene::INodePtr node) {
+	EntityNodePtr entityNode = boost::dynamic_pointer_cast<EntityNode>(node);
+	if (entityNode != NULL) {
+		return &(entityNode->getEntity());
+	}
+	return NULL;
+}
+
+inline bool Node_isEntity(scene::INodePtr node) {
+	return boost::dynamic_pointer_cast<EntityNode>(node) != NULL;
+}
 
 class EntityCopyingVisitor : public Entity::Visitor
 {
@@ -131,23 +146,6 @@ public:
 	}
 };
 
-template<typename value_type>
-class Stack;
-template<typename Contained>
-class Reference;
-
-namespace scene
-{
-  class Node;
-}
-
-typedef Reference<scene::Node> NodeReference;
-
-namespace scene
-{
-  typedef Stack<NodeReference> Path;
-}
-
 class Counter;
 
 class EntityCreator
@@ -156,7 +154,7 @@ public:
   INTEGER_CONSTANT(Version, 2);
   STRING_CONSTANT(Name, "entity");
 
-  virtual scene::Node& createEntity(IEntityClassPtr eclass) = 0;
+  virtual scene::INodePtr createEntity(IEntityClassPtr eclass) = 0;
 
   typedef void (*KeyValueChangedFunc)();
   virtual void setKeyValueChangedFunc(KeyValueChangedFunc func) = 0;

@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ieventmanager.h"
 #include "imap.h"
 #include "iselection.h"
+#include "igroupnode.h"
 #include "iundo.h"
 #include "brush/TexDef.h"
 #include "ibrush.h"
@@ -100,32 +101,30 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		const std::string RKEY_PLAYER_START_ECLASS = "game/mapFormat/playerStartPoint";
 	}
 
-class WorldNode
+/*class WorldNode
 {
-  scene::Node* m_node;
+  scene::INodePtr m_node;
 public:
   WorldNode()
-    : m_node(0)
+  {}
+  void set(scene::INodePtr node)
   {
-  }
-  void set(scene::Node* node)
-  {
-    if(m_node != 0)
-      m_node->DecRef();
+    //if(m_node != 0)
+    //  m_node->DecRef();
     m_node = node;
-    if(m_node != 0)
-      m_node->IncRef();
+    //if(m_node != 0)
+    //  m_node->IncRef();
   }
-  scene::Node* get() const
+  scene::INodePtr get() const
   {
     return m_node;
   }
-};
+};*/
 
 class Map;
 void Map_SetValid(Map& map, bool valid);
 void Map_UpdateTitle(const Map& map);
-void Map_SetWorldspawn(Map& map, scene::Node* node);
+void Map_SetWorldspawn(Map& map, scene::INodePtr node);
 
 
 class Map : public ModuleObserver
@@ -143,7 +142,7 @@ public:
 
   Signal0 m_mapValidCallbacks;
 
-  WorldNode m_world_node; // "classname" "worldspawn" !
+	scene::INodePtr m_world_node; // "classname" "worldspawn" !
 
 	Map() 
 	: m_valid(false), 
@@ -156,8 +155,8 @@ public:
     {
       if(Map_Unnamed(*this))
       {
-        g_map.m_resource->setNode(NewMapRoot("").get_pointer());
-        MapFile* map = Node_getMapFile(*g_map.m_resource->getNode());
+        g_map.m_resource->setNode(NewMapRoot(""));
+        MapFilePtr map = Node_getMapFile(g_map.m_resource->getNode());
         if(map != 0)
         {
           map->save();
@@ -168,7 +167,7 @@ public:
         m_resource->load();
       }
 
-      GlobalSceneGraph().insert_root(*m_resource->getNode());
+      GlobalSceneGraph().insert_root(m_resource->getNode());
 
       map::AutoSaver().clearChanges();
 
@@ -180,7 +179,7 @@ public:
     if(m_resource != 0)
     {
       Map_SetValid(g_map, false);
-      Map_SetWorldspawn(g_map, 0);
+      Map_SetWorldspawn(g_map, scene::INodePtr());
 
 
       GlobalUndoSystem().clear();
@@ -234,7 +233,7 @@ public:
 		// Check for an entity
 		if (entity != NULL) {
 			// greebo: Check for a Doom3Group
-			scene::GroupNode* groupNode = Node_getGroupNode(path.top());
+			scene::GroupNodePtr groupNode = Node_getGroupNode(path.top());
 			
 			// Don't handle the worldspawn children, they're safe&sound
 			if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn") {
@@ -260,7 +259,7 @@ public:
 		// Check for an entity
 		if (entity != NULL) {
 			// greebo: Check for a Doom3Group
-			scene::GroupNode* groupNode = Node_getGroupNode(path.top());
+			scene::GroupNodePtr groupNode = Node_getGroupNode(path.top());
 			
 			// Don't handle the worldspawn children, they're safe&sound
 			if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn") {
@@ -274,13 +273,13 @@ public:
 	}
 	
 	// Traversable::Walker implementation
-	bool pre(scene::Node& node) const {
+	bool pre(scene::INodePtr node) const {
 		Entity* entity = Node_getEntity(node);
 		
 		// Check for an entity
 		if (entity != NULL) {
 			// greebo: Check for a Doom3Group
-			scene::GroupNode* groupNode = Node_getGroupNode(node);
+			scene::GroupNodePtr groupNode = Node_getGroupNode(node);
 			
 			// Don't handle the worldspawn children, they're safe&sound
 			if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn") {
@@ -318,7 +317,7 @@ public:
 	{}
 	
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		if (path.top().get().visible()) {
+		if (path.top()->visible()) {
 			_targetAABB.includeAABB(instance.worldAABB());
 		}
 		return true;
@@ -379,14 +378,12 @@ void Map_UpdateTitle(const Map& map)
 
 
 
-scene::Node* Map_GetWorldspawn(const Map& map)
-{
-  return map.m_world_node.get();
+scene::INodePtr Map_GetWorldspawn(const Map& map) {
+	return map.m_world_node;
 }
 
-void Map_SetWorldspawn(Map& map, scene::Node* node)
-{
-  map.m_world_node.set(node);
+void Map_SetWorldspawn(Map& map, scene::INodePtr node) {
+	map.m_world_node = node;
 }
 
 /*
@@ -507,34 +504,31 @@ void Map_StartPosition()
 
 /* Check if a node is the worldspawn.
  */
-inline bool node_is_worldspawn(scene::Node& node)
-{
+inline bool node_is_worldspawn(scene::INodePtr node) {
 	Entity* entity = Node_getEntity(node);
-	return entity != 0 
-		   && entity->getKeyValue("classname") == "worldspawn";
+	return entity != 0 && entity->getKeyValue("classname") == "worldspawn";
 }
-
 
 // use first worldspawn
 class entity_updateworldspawn : public scene::Traversable::Walker
 {
 public:
-  bool pre(scene::Node& node) const
+  bool pre(scene::INodePtr node) const
   {
     if(node_is_worldspawn(node))
     {
       if(Map_GetWorldspawn(g_map) == 0)
       {
-        Map_SetWorldspawn(g_map, &node);
+        Map_SetWorldspawn(g_map, node);
       }
     }
     return false;
   }
 };
 
-scene::Node* Map_FindWorldspawn(Map& map)
+scene::INodePtr Map_FindWorldspawn(Map& map)
 {
-  Map_SetWorldspawn(map, 0);
+  Map_SetWorldspawn(map, scene::INodePtr());
 
   Node_getTraversable(GlobalSceneGraph().root())->traverse(entity_updateworldspawn());
 
@@ -542,23 +536,25 @@ scene::Node* Map_FindWorldspawn(Map& map)
 }
 
 
-class CollectAllWalker : public scene::Traversable::Walker
+class CollectAllWalker : 
+	public scene::Traversable::Walker
 {
-  scene::Node& m_root;
+  scene::INodePtr m_root;
   UnsortedNodeSet& m_nodes;
 public:
-  CollectAllWalker(scene::Node& root, UnsortedNodeSet& nodes) : m_root(root), m_nodes(nodes)
-  {
-  }
-  bool pre(scene::Node& node) const
-  {
-    m_nodes.insert(NodeSmartReference(node));
+  CollectAllWalker(scene::INodePtr root, UnsortedNodeSet& nodes) : 
+  	m_root(root), 
+  	m_nodes(nodes)
+  {}
+  
+  bool pre(scene::INodePtr node) const {
+    m_nodes.insert(node);
     Node_getTraversable(m_root)->erase(node);
     return false;
   }
 };
 
-void Node_insertChildFirst(scene::Node& parent, scene::Node& child)
+void Node_insertChildFirst(scene::INodePtr parent, scene::INodePtr child)
 {
   UnsortedNodeSet nodes;
   Node_getTraversable(parent)->traverse(CollectAllWalker(parent, nodes));
@@ -570,9 +566,9 @@ void Node_insertChildFirst(scene::Node& parent, scene::Node& child)
   }
 }
 
-scene::Node& createWorldspawn()
+scene::INodePtr createWorldspawn()
 {
-  NodeSmartReference worldspawn(GlobalEntityCreator().createEntity(GlobalEntityClassManager().findOrInsert("worldspawn", true)));
+  scene::INodePtr worldspawn(GlobalEntityCreator().createEntity(GlobalEntityClassManager().findOrInsert("worldspawn", true)));
   Node_insertChildFirst(GlobalSceneGraph().root(), worldspawn);
   return worldspawn;
 }
@@ -581,14 +577,14 @@ void Map_UpdateWorldspawn(Map& map)
 {
   if(Map_FindWorldspawn(map) == 0)
   {
-    Map_SetWorldspawn(map, &createWorldspawn());
+    Map_SetWorldspawn(map, createWorldspawn());
   }
 }
 
-scene::Node& Map_FindOrInsertWorldspawn(Map& map)
+scene::INodePtr Map_FindOrInsertWorldspawn(Map& map)
 {
   Map_UpdateWorldspawn(map);
-  return *Map_GetWorldspawn(map);
+  return Map_GetWorldspawn(map);
 }
 
 
@@ -600,14 +596,14 @@ public:
     : m_path(root)
   {
   }
-  bool pre(scene::Node& node) const
+  bool pre(scene::INodePtr node) const
   {
     Node_getTraversable(m_path.top())->insert(node);
     m_path.push(makeReference(node));
     selectPath(m_path, true);
     return false;
   }
-  void post(scene::Node& node) const
+  void post(scene::INodePtr node) const
   {
     m_path.pop();
   }
@@ -624,26 +620,26 @@ public:
 		m_path(root) 
 	{}
 
-	bool pre(scene::Node& node) const {
+	bool pre(scene::INodePtr node) const {
 		// greebo: Check if the visited node is the worldspawn of the other map
 		if (node_is_worldspawn(node)) {
 			// Find the worldspawn of the target map
-			scene::Node* world_node = Map_FindWorldspawn(g_map);
+			scene::INodePtr world_node = Map_FindWorldspawn(g_map);
 			
 			if (world_node == NULL) {
 				// Set the worldspawn to the new node
-				Map_SetWorldspawn(g_map, &node);
+				Map_SetWorldspawn(g_map, node);
 				
 				// Insert the visited node at the target path
-				Node_getTraversable(m_path.top().get())->insert(node);
+				Node_getTraversable(m_path.top())->insert(node);
 				
-				m_path.push(makeReference(node));
+				m_path.push(node);
 				
 				// Select all the children of the visited node (these are primitives)
 				Node_getTraversable(node)->traverse(SelectChildren(m_path));
 			}
 			else {
-				m_path.push(makeReference(*world_node));
+				m_path.push(world_node);
 				Node_getTraversable(node)->traverse(MapMergeAll(m_path));
 			}
 		}
@@ -652,7 +648,7 @@ public:
 			
 			// Insert this node at the target path 
 			Node_getTraversable(m_path.top())->insert(node);
-			m_path.push(makeReference(node));
+			m_path.push(node);
 			
 			// greebo: commented this out, we don't want the child brushes to be selected
 			/*if (node_is_group(node)) {
@@ -670,7 +666,7 @@ public:
 		return false;
 	}
 
-  void post(scene::Node& node) const
+  void post(scene::INodePtr node) const
   {
     m_path.pop();
   }
@@ -683,10 +679,10 @@ class BasicContainer :
 	TraversableNodeSet m_traverse;
 public:
 	// scene::Traversable Implementation
-	virtual void insert(Node& node) {
+	virtual void insert(scene::INodePtr node) {
 		m_traverse.insert(node);
 	}
-    virtual void erase(Node& node) {
+    virtual void erase(scene::INodePtr node) {
     	m_traverse.erase(node);	
     }
     virtual void traverse(const Walker& walker) {
@@ -701,73 +697,72 @@ public:
 };
 
 /// Merges the map graph rooted at \p node into the global scene-graph.
-void MergeMap(scene::Node& node)
+void MergeMap(scene::INodePtr node)
 {
   Node_getTraversable(node)->traverse(MapMergeEntities(scene::Path(makeReference(GlobalSceneGraph().root()))));
 }
 void Map_ImportSelected(TextInputStream& in, const MapFormat& format)
 {
-  NodeSmartReference node(*(new BasicContainer));
-  format.readGraph(node, in, GlobalEntityCreator());
+	scene::INodePtr node(new BasicContainer);
+	format.readGraph(node, in, GlobalEntityCreator());
 	GlobalNamespace().gatherNamespaced(node);
 	GlobalNamespace().mergeClonedNames();
-  MergeMap(node);
+	MergeMap(node);
 }
 
-inline scene::Cloneable* Node_getCloneable(scene::Node& node)
-{
-  return dynamic_cast<scene::Cloneable*>(&node);
+inline scene::CloneablePtr Node_getCloneable(scene::INodePtr node) {
+	return boost::dynamic_pointer_cast<scene::Cloneable>(node);
 }
 
-inline scene::Node& node_clone(scene::Node& node)
+inline scene::INodePtr node_clone(scene::INodePtr node)
 {
-  scene::Cloneable* cloneable = Node_getCloneable(node);
-  if(cloneable != NULL) {
-    return cloneable->clone();
-  }
+	scene::CloneablePtr cloneable = Node_getCloneable(node);
+	if (cloneable != NULL) {
+		return cloneable->clone();
+	}
   
-  return *(new scene::Node);
+	// Return an empty node
+	return scene::INodePtr(new scene::Node);
 }
 
-class CloneAll : public scene::Traversable::Walker
+class CloneAll : 
+	public scene::Traversable::Walker
 {
-  mutable scene::Path m_path;
+	mutable scene::Path m_path;
 public:
-  CloneAll(scene::Node& root)
-    : m_path(makeReference(root))
+	CloneAll(scene::INodePtr root) : 
+		m_path(makeReference(root))
+	{}
+	
+  bool pre(scene::INodePtr node) const
   {
-  }
-  bool pre(scene::Node& node) const
-  {
-    if(node.isRoot())
-    {
+    if (node->isRoot()) {
       return false;
     }
     
-    m_path.push(makeReference(node_clone(node)));
-    m_path.top().get().IncRef();
+    m_path.push(node_clone(node));
+    //m_path.top().get().IncRef();
 
     return true;
   }
-  void post(scene::Node& node) const
+  void post(scene::INodePtr node) const
   {
-    if(node.isRoot())
-    {
+    if(node->isRoot()) {
       return;
     }
 
     Node_getTraversable(m_path.parent())->insert(m_path.top());
 
-    m_path.top().get().DecRef();
+    //m_path.top().get().DecRef();
     m_path.pop();
   }
 };
 
-scene::Node& Node_Clone(scene::Node& node)
+scene::INodePtr Node_Clone(scene::INodePtr node)
 {
-  scene::Node& clone = node_clone(node);
-  scene::Traversable* traversable = Node_getTraversable(node);
-  if(traversable != 0)
+  scene::INodePtr clone = node_clone(node);
+  scene::TraversablePtr traversable = Node_getTraversable(node);
+  if(traversable != NULL)
   {
     traversable->traverse(CloneAll(clone));
   }
@@ -992,7 +987,7 @@ void Map_LoadFile (const std::string& filename)
     g_map.m_resource->attach(g_map);
 
 	// Get the traversable root
-	scene::Traversable* rt = Node_getTraversable(GlobalSceneGraph().root());
+	scene::TraversablePtr rt = Node_getTraversable(GlobalSceneGraph().root());
 	assert(rt != NULL);
 	
 	// Traverse the scenegraph and find the worldspawn 
@@ -1029,7 +1024,7 @@ void Map_LoadFile (const std::string& filename)
 class Excluder
 {
 public:
-  virtual bool excluded(scene::Node& node) const = 0;
+  virtual bool excluded(scene::INodePtr node) const = 0;
 };
 
 class ExcludeWalker : public scene::Traversable::Walker
@@ -1042,9 +1037,9 @@ public:
     : m_walker(walker), m_exclude(&exclude), m_skip(false)
   {
   }
-  bool pre(scene::Node& node) const
+  bool pre(scene::INodePtr node) const
   {
-    if(m_exclude->excluded(node) || node.isRoot())
+    if(m_exclude->excluded(node) || node->isRoot())
     {
       m_skip = true;
       return false;
@@ -1055,7 +1050,7 @@ public:
     }
     return true;
   }
-  void post(scene::Node& node) const
+  void post(scene::INodePtr node) const
   {
     if(m_skip)
     {
@@ -1087,9 +1082,9 @@ public:
   }
 };
 
-bool Node_instanceSelected(scene::Node& node)
+bool Node_instanceSelected(scene::INodePtr node)
 {
-  scene::Instantiable* instantiable = Node_getInstantiable(node);
+  scene::InstantiablePtr instantiable = Node_getInstantiable(node);
   ASSERT_NOTNULL(instantiable);
   bool selected;
   instantiable->forEachInstance(AnyInstanceSelected(selected));
@@ -1105,9 +1100,9 @@ public:
     m_selected = false;
   }
 
-  bool pre(scene::Node& node) const
+  bool pre(scene::INodePtr node) const
   {
-    if(node.isRoot())
+    if(node->isRoot())
     {
       return false;
     }
@@ -1121,7 +1116,7 @@ public:
   }
 };
 
-bool Node_selectedDescendant(scene::Node& node)
+bool Node_selectedDescendant(scene::INodePtr node)
 {
   bool selected;
   Node_traverseSubgraph(node, SelectedDescendantWalker(selected));
@@ -1131,7 +1126,7 @@ bool Node_selectedDescendant(scene::Node& node)
 class SelectionExcluder : public Excluder
 {
 public:
-  bool excluded(scene::Node& node) const
+  bool excluded(scene::INodePtr node) const
   {
     return !Node_selectedDescendant(node);
   }
@@ -1152,11 +1147,11 @@ public:
     : m_walker(walker), m_selected(0), m_skip(false)
   {
   }
-  bool pre(scene::Node& node) const
+  bool pre(scene::INodePtr node) const
   {
     // include node if:
     // node is not a 'root' AND ( node is selected OR any child of node is selected OR any parent of node is selected )
-    if(!node.isRoot() && (Node_selectedDescendant(node) || selectedParent()))
+    if(!node->isRoot() && (Node_selectedDescendant(node) || selectedParent()))
     {
       if(Node_instanceSelected(node))
       {
@@ -1171,7 +1166,7 @@ public:
       return false;
     }
   }
-  void post(scene::Node& node) const
+  void post(scene::INodePtr node) const
   {
     if(m_skip)
     {
@@ -1188,11 +1183,10 @@ public:
   }
 };
 
-void Map_Traverse_Selected(scene::Node& root, const scene::Traversable::Walker& walker)
+void Map_Traverse_Selected(scene::INodePtr root, const scene::Traversable::Walker& walker)
 {
-  scene::Traversable* traversable = Node_getTraversable(root);
-  if(traversable != 0)
-  {
+  scene::TraversablePtr traversable = Node_getTraversable(root);
+  if(traversable != NULL) {
 #if 0
     traversable->traverse(ExcludeWalker(walker, SelectionExcluder()));
 #else
@@ -1206,11 +1200,10 @@ void Map_ExportSelected(std::ostream& out, const MapFormat& format)
 	format.writeGraph(GlobalSceneGraph().root(), Map_Traverse_Selected, out);
 }
 
-void Map_Traverse(scene::Node& root, const scene::Traversable::Walker& walker)
+void Map_Traverse(scene::INodePtr root, const scene::Traversable::Walker& walker)
 {
-  scene::Traversable* traversable = Node_getTraversable(root);
-  if(traversable != 0)
-  {
+  scene::TraversablePtr traversable = Node_getTraversable(root);
+  if(traversable != NULL) {
     traversable->traverse(walker);
   }
 }
@@ -1220,8 +1213,8 @@ void Map_RenameAbsolute(const char* absolute)
 	ReferenceCache::ResourcePtr resource = 
 		GlobalReferenceCache().capture(absolute);
 		
-  NodeSmartReference clone(NewMapRoot(path_make_relative(absolute, GlobalFileSystem().findRoot(absolute))));
-  resource->setNode(clone.get_pointer());
+  scene::INodePtr clone(NewMapRoot(path_make_relative(absolute, GlobalFileSystem().findRoot(absolute))));
+  resource->setNode(clone);
 
   {
     //ScopeTimer timer("clone subgraph");
@@ -1310,11 +1303,11 @@ void Map_New()
 
 }
 
-inline void exclude_node(scene::Node& node, bool exclude)
+inline void exclude_node(scene::INodePtr node, bool exclude)
 {
   exclude
-    ? node.enable(scene::Node::eExcluded)
-    : node.disable(scene::Node::eExcluded);
+    ? node->enable(scene::Node::eExcluded)
+    : node->disable(scene::Node::eExcluded);
 }
 
 class ExcludeAllWalker : public scene::Graph::Walker
@@ -1379,15 +1372,15 @@ bool Map_ImportFile(const std::string& filename)
     resource->refresh(); // avoid loading old version if map has changed on disk since last import
     if(resource->load())
     {
-      NodeSmartReference clone(NewMapRoot(""));
+      scene::INodePtr clone(NewMapRoot(""));
 
       {
         //ScopeTimer timer("clone subgraph");
         
         // Add the origin to all the child brushes
-        Node_getTraversable(*resource->getNode())->traverse(map::OriginAdder());
+        Node_getTraversable(resource->getNode())->traverse(map::OriginAdder());
         
-        Node_getTraversable(*resource->getNode())->traverse(CloneAll(clone));
+        Node_getTraversable(resource->getNode())->traverse(CloneAll(clone));
       }
 
       GlobalNamespace().gatherNamespaced(clone);
@@ -1438,7 +1431,7 @@ bool Map_SaveSelected(const std::string& filename) {
 
 #include "map/ParentSelectedPrimitivesToEntityWalker.h"
 
-void Scene_parentSelectedPrimitivesToEntity(scene::Graph& graph, scene::Node& parent)
+void Scene_parentSelectedPrimitivesToEntity(scene::Graph& graph, scene::INodePtr parent)
 {
   graph.traverse(ParentSelectedPrimitivesToEntityWalker(parent));
 }
@@ -1510,7 +1503,7 @@ namespace map {
 		  }
 		  bool pre(const scene::Path& path, scene::Instance& instance) const
 		  {
-		    if(++m_depth != 1 && path.top().get().isRoot())
+		    if(++m_depth != 1 && path.top()->isRoot())
 		    {
 		      return false;
 		    }
@@ -1545,7 +1538,7 @@ namespace map {
 			
 			bool pre(const scene::Path& path, scene::Instance& instance) const {
 				
-				if (++_depth != 1 && path.top().get().isRoot()) {
+				if (++_depth != 1 && path.top()->isRoot()) {
 					return false;
 				}
 				
@@ -1717,7 +1710,7 @@ public:
     : m_index(index), m_path(path)
   {
   }
-  bool pre(scene::Node& node) const
+  bool pre(scene::INodePtr node) const
   {
     if(Node_isPrimitive(node) && m_index-- == 0)
     {
@@ -1736,7 +1729,7 @@ public:
     : m_index(index), m_path(path)
   {
   }
-  bool pre(scene::Node& node) const
+  bool pre(scene::INodePtr node) const
   {
     if(Node_isEntity(node) && m_index-- == 0)
     {
@@ -1748,13 +1741,13 @@ public:
 
 void Scene_FindEntityBrush(std::size_t entity, std::size_t brush, scene::Path& path)
 {
-  path.push(makeReference(GlobalSceneGraph().root()));
+  path.push(GlobalSceneGraph().root());
   {
     Node_getTraversable(path.top())->traverse(EntityFindByIndexWalker(entity, path));
   }
   if(path.size() == 2)
   {
-    scene::Traversable* traversable = Node_getTraversable(path.top());
+    scene::TraversablePtr traversable = Node_getTraversable(path.top());
     if(traversable != 0)
     {
       traversable->traverse(BrushFindByIndexWalker(brush, path));
@@ -1762,10 +1755,10 @@ void Scene_FindEntityBrush(std::size_t entity, std::size_t brush, scene::Path& p
   }
 }
 
-inline bool Node_hasChildren(scene::Node& node)
+inline bool Node_hasChildren(scene::INodePtr node)
 {
-  scene::Traversable* traversable = Node_getTraversable(node);
-  return traversable != 0 && !traversable->empty();
+  scene::TraversablePtr traversable = Node_getTraversable(node);
+  return traversable != NULL && !traversable->empty();
 }
 
 void SelectBrush (int entitynum, int brushnum)
@@ -1791,20 +1784,19 @@ void SelectBrush (int entitynum, int brushnum)
 
 class BrushFindIndexWalker : public scene::Graph::Walker
 {
-  mutable const scene::Node* m_node;
+  mutable scene::INodePtr m_node;
   std::size_t& m_count;
 public:
-  BrushFindIndexWalker(const scene::Node& node, std::size_t& count)
-    : m_node(&node), m_count(count)
+  BrushFindIndexWalker(const scene::INodePtr node, std::size_t& count)
+    : m_node(node), m_count(count)
   {
   }
   bool pre(const scene::Path& path, scene::Instance& instance) const
   {
     if(Node_isPrimitive(path.top()))
     {
-      if(m_node == path.top().get_pointer())
-      {
-        m_node = 0;
+      if(m_node == path.top()) {
+        m_node = scene::INodePtr();
       }
       if(m_node)
       {
@@ -1817,20 +1809,20 @@ public:
 
 class EntityFindIndexWalker : public scene::Graph::Walker
 {
-  mutable const scene::Node* m_node;
+  mutable scene::INodePtr m_node;
   std::size_t& m_count;
 public:
-  EntityFindIndexWalker(const scene::Node& node, std::size_t& count)
-    : m_node(&node), m_count(count)
+  EntityFindIndexWalker(const scene::INodePtr node, std::size_t& count)
+    : m_node(node), m_count(count)
   {
   }
   bool pre(const scene::Path& path, scene::Instance& instance) const
   {
     if(Node_isEntity(path.top()))
     {
-      if(m_node == path.top().get_pointer())
+      if(m_node == path.top())
       {
-        m_node = 0;
+        m_node = scene::INodePtr();
       }
       if(m_node)
       {

@@ -20,8 +20,8 @@
 namespace entity {
 	
 	namespace {
-		inline Namespaced* Node_getNamespaced(scene::Node& node) {
-			return dynamic_cast<Namespaced*>(&node);
+		inline NamespacedPtr Node_getNamespaced(scene::INodePtr node) {
+			return boost::dynamic_pointer_cast<Namespaced>(node);
 		}
 		
 		void Entity_setName(Entity& entity, const std::string& name) {
@@ -30,26 +30,26 @@ namespace entity {
 		typedef ReferenceCaller1<Entity, const std::string&, Entity_setName> EntitySetNameCaller;
 	}
 
-scene::Node& Doom3EntityCreator::getEntityForEClass(IEntityClassPtr eclass) {
+scene::INodePtr Doom3EntityCreator::getEntityForEClass(IEntityClassPtr eclass) {
 	if (eclass->isLight()) {
-		return *(new LightNode(eclass));
+		return scene::INodePtr(new LightNode(eclass));
 	}
 	else if (!eclass->isFixedSize()) {
 		// Variable size entity
-		return *(new entity::Doom3GroupNode(eclass));
+		return scene::INodePtr(new entity::Doom3GroupNode(eclass));
 	}
 	else if (eclass->getModelPath().size() > 0) {
 		// Fixed size, has model path
-		return *(new EclassModelNode(eclass));
+		return scene::INodePtr(new EclassModelNode(eclass));
 	}
 	else {
 		// Fixed size, no model path
-		return *(new GenericEntityNode(eclass));
+		return scene::INodePtr(new GenericEntityNode(eclass));
 	}
 }
 
-scene::Node& Doom3EntityCreator::createEntity(IEntityClassPtr eclass) {
-	scene::Node& node = getEntityForEClass(eclass);
+scene::INodePtr Doom3EntityCreator::createEntity(IEntityClassPtr eclass) {
+	scene::INodePtr node = getEntityForEClass(eclass);
 	Node_getEntity(node)->setKeyValue("classname", eclass->getName());
 	
 	// If this is not a worldspawn or unrecognised entity, generate a unique
@@ -72,7 +72,7 @@ scene::Node& Doom3EntityCreator::createEntity(IEntityClassPtr eclass) {
 	}
 
 	// Move the new entity into the global namespace
-	Namespaced* namespaced = Node_getNamespaced(node);
+	NamespacedPtr namespaced = Node_getNamespaced(node);
 	if (namespaced != NULL) {
 		namespaced->setNamespace(GlobalNamespace());
 	}

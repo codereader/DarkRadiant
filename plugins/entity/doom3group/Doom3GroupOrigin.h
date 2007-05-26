@@ -31,8 +31,8 @@ public:
 	void removeOriginFromChildren();
 
 	// scene::Traversable::Observer implementation
-	void insertChild(scene::Node& node);
-	void eraseChild(scene::Node& node);
+	void insertChild(scene::INodePtr node);
+	void eraseChild(scene::INodePtr node);
 };
 
 } // namespace entity

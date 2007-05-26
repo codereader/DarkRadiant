@@ -32,14 +32,13 @@ namespace map {
 	}
 
 RegionManager::RegionManager() :
-	_active(false),
-	_playerStart(NULL)
+	_active(false)
 {
 	_worldMin = GlobalRegistry().getFloat("game/defaults/minWorldCoord");
 	_worldMax = GlobalRegistry().getFloat("game/defaults/maxWorldCoord");
 	
 	for (int i = 0; i < 6; i++) {
-		_brushes[i] = NULL;
+		_brushes[i] = scene::INodePtr();
 	}
 }
 
@@ -115,9 +114,9 @@ void RegionManager::addRegionBrushes() {
 	
 	for (int i = 0; i < 6; i++) {
 		// Create a new brush
-		_brushes[i] = &GlobalBrushCreator().createBrush();
+		_brushes[i] = GlobalBrushCreator().createBrush();
 		// Insert it into worldspawn
-		Node_getTraversable(Map_FindOrInsertWorldspawn(g_map))->insert(NodeSmartReference(*_brushes[i]));
+		Node_getTraversable(Map_FindOrInsertWorldspawn(g_map))->insert(_brushes[i]);
 	}
 	
 	// Obtain the size of the region (the corners)
@@ -133,7 +132,7 @@ void RegionManager::addRegionBrushes() {
 	IEntityClassPtr playerStart = GlobalEntityClassManager().findOrInsert(eClassPlayerStart, false);
 	
 	// Create the info_player_start entity
-	_playerStart = &GlobalEntityCreator().createEntity(playerStart);
+	_playerStart = GlobalEntityCreator().createEntity(playerStart);
 	
 	CamWnd* camWnd = GlobalCamera().getCamWnd();
 	if (camWnd != NULL) { 
@@ -145,8 +144,8 @@ void RegionManager::addRegionBrushes() {
 		// Check if the camera origin is within the region
 		if (aabb_intersects_point(_bounds, camOrigin)) {
 			// Set the origin key of the playerStart entity
-			Node_getEntity(*_playerStart)->setKeyValue("origin", camOrigin);
-			Node_getEntity(*_playerStart)->setKeyValue("angle", floatToStr(angle));
+			Node_getEntity(_playerStart)->setKeyValue("origin", camOrigin);
+			Node_getEntity(_playerStart)->setKeyValue("angle", floatToStr(angle));
 		}
 		else {
 			gtkutil::errorDialog(
@@ -157,20 +156,20 @@ void RegionManager::addRegionBrushes() {
 	}
 
   	// Insert the info_player_start into the scenegraph root
-	Node_getTraversable(GlobalSceneGraph().root())->insert(NodeSmartReference(*_playerStart));
+	Node_getTraversable(GlobalSceneGraph().root())->insert(_playerStart);
 }
 
 void RegionManager::removeRegionBrushes() {
 	for (int i = 0; i < 6; i++) {
 		// Remove the brushes from the scene
 		if (_brushes[i] != NULL) {
-			Node_getTraversable(*Map_GetWorldspawn(g_map))->erase(*_brushes[i]);
-			_brushes[i] = NULL;
+			Node_getTraversable(Map_GetWorldspawn(g_map))->erase(_brushes[i]);
+			_brushes[i] = scene::INodePtr();
 		}
 	}
 	
 	if (_playerStart != NULL) {
-		Node_getTraversable(GlobalSceneGraph().root())->erase(*_playerStart);
+		Node_getTraversable(GlobalSceneGraph().root())->erase(_playerStart);
 	}
 }
 
@@ -261,8 +260,8 @@ void RegionManager::setRegionFromSelection() {
 	}
 }
 
-void RegionManager::traverseRegion(scene::Node& root, const scene::Traversable::Walker& walker) {
-	scene::Traversable* traversable = Node_getTraversable(root);
+void RegionManager::traverseRegion(scene::INodePtr root, const scene::Traversable::Walker& walker) {
+	scene::TraversablePtr traversable = Node_getTraversable(root);
 	
 	if (traversable != NULL) {
 		// Pass the given Walker on to the ExcludeWalker, 

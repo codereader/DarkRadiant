@@ -123,7 +123,7 @@ public:
     }
     
     if( (path.size() > 1) &&
-        (!path.top().get().isRoot()) &&
+        (!path.top()->isRoot()) &&
         (selectable != 0)
        )
     {
@@ -292,7 +292,7 @@ public:
     if(selectable != 0
       && selectable->isSelected()
       && path.size() > 1
-      && !path.top().get().isRoot())
+      && !path.top()->isRoot())
     {
       m_remove = true;
 
@@ -310,7 +310,7 @@ public:
       // delete empty entities
       Entity* entity = Node_getEntity(path.top());
       if(entity != 0
-        && path.top().get_pointer() != Map_FindWorldspawn(g_map)
+        && path.top() != Map_FindWorldspawn(g_map)
         && Node_getTraversable(path.top())->empty())
       {
         Path_deleteTop(path);
@@ -357,11 +357,11 @@ public:
 			switch (m_mode) {
 				case SelectionSystem::eEntity:
 					if (Node_isEntity(path.top()) != 0) {
-						m_selectable = path.top().get().visible() ? selectable : 0;
+						m_selectable = path.top()->visible() ? selectable : 0;
 					}
 					break;
 				case SelectionSystem::ePrimitive:
-					m_selectable = path.top().get().visible() ? selectable : 0;
+					m_selectable = path.top()->visible() ? selectable : 0;
 					break;
 				case SelectionSystem::eComponent:
 					// Check if we have a componentselectiontestable instance
@@ -369,7 +369,7 @@ public:
 
 					// Only add it to the list if the instance has components and is already selected
 					if (compSelTestable && selectable->isSelected()) {
-						m_selectable = path.top().get().visible() ? selectable : 0;
+						m_selectable = path.top()->visible() ? selectable : 0;
 					}
 					break;
 			}
@@ -730,11 +730,10 @@ void Select_Complete_Tall() {
 	SelectByBounds<SelectionPolicy_Complete_Tall>::DoSelection();
 }
 
-inline void hide_node(scene::Node& node, bool hide)
-{
+inline void hide_node(scene::INodePtr node, bool hide) {
   hide
-    ? node.enable(scene::Node::eHidden)
-    : node.disable(scene::Node::eHidden);
+    ? node->enable(scene::Node::eHidden)
+    : node->disable(scene::Node::eHidden);
 }
 
 class HideSelectedWalker : public scene::Graph::Walker

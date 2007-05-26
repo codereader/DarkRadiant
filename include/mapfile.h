@@ -40,11 +40,12 @@ public:
   virtual void setChangedCallback(const Callback& changed) = 0;
   virtual std::size_t changes() const = 0;
 };
+typedef boost::shared_ptr<MapFile> MapFilePtr;
 
 #include "scenelib.h"
 
-inline MapFile* Node_getMapFile(scene::Node& node) {
-	return dynamic_cast<MapFile*>(&node);
+inline MapFilePtr Node_getMapFile(scene::INodePtr node) {
+	return boost::dynamic_pointer_cast<MapFile>(node);
 }
 
 template<typename Iterator>
@@ -55,10 +56,9 @@ inline MapFile* path_find_mapfile(Iterator first, Iterator last)
   {
     --i;
 
-    MapFile* map = Node_getMapFile(*i);
-    if(map != 0)
-    {
-      return map;
+    MapFilePtr map = Node_getMapFile(*i);
+    if (map != NULL) {
+      return map.get();
     }
 
     if(i == first)

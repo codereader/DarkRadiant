@@ -30,19 +30,11 @@ class PatchCreator;
 class PrimitiveParser
 {
 public:
-  virtual scene::Node& parsePrimitive(Tokeniser& tokeniser) const = 0;
+  virtual scene::INodePtr parsePrimitive(Tokeniser& tokeniser) const = 0;
 };
 
-void Map_Read(scene::Node& root, Tokeniser& tokeniser, EntityCreator& entityTable, const PrimitiveParser& parser);
+void Map_Read(scene::INodePtr root, Tokeniser& tokeniser, EntityCreator& entityTable, const PrimitiveParser& parser);
 
-namespace scene
-{
-  class Node;
-}
-
-#include "generic/referencecounted.h"
-typedef SmartReference<scene::Node, IncRefDecRefCounter<scene::Node> > NodeSmartReference;
-
-extern NodeSmartReference g_nullNode;
+extern scene::INodePtr g_nullNode;
 
 #endif

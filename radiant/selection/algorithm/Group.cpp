@@ -14,15 +14,15 @@ namespace algorithm {
 class ReparentToEntityWalker : 
 	public scene::Graph::Walker
 {
-	// The old parent
-	scene::Node& _newParent;
+	// The new parent
+	scene::INodePtr _newParent;
 public:
-	ReparentToEntityWalker(scene::Node& parent) : 
+	ReparentToEntityWalker(scene::INodePtr parent) : 
 		_newParent(parent) 
 	{}
 	
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		if (path.top().get_pointer() != &_newParent && 
+		if (path.top() != _newParent && 
 			Node_isPrimitive(path.top()) && 
 			path.size() > 1) 
 		{
@@ -34,16 +34,16 @@ public:
 	}
 	
 	void post(const scene::Path& path, scene::Instance& instance) const {
-		if (path.top().get_pointer() != &_newParent &&
+		if (path.top() != _newParent &&
 			Node_isPrimitive(path.top()) &&
 			path.size() > 1)
 		{
 			// Retrieve the current parent of the visited instance
-			scene::Node& parent = path.parent();
+			scene::INodePtr parent = path.parent();
 			// Check, if there is work to do in the first place 
-			if (&parent != &_newParent) {
+			if (parent != _newParent) {
 				// Extract the node to this instance
-				NodeSmartReference node(path.top().get());
+				scene::INodePtr node(path.top());
 				
 				// Delete the node from the old parent
 				Node_getTraversable(parent)->erase(node);
@@ -76,7 +76,7 @@ void revertGroupToWorldSpawn() {
 				GlobalSelectionSystem().setSelectedAll(false);
 				
 				// Get the worldspawn node
-	    		scene::Node& worldspawnNode = Map_FindOrInsertWorldspawn(g_map);
+	    		scene::INodePtr worldspawnNode = Map_FindOrInsertWorldspawn(g_map);
 	    	
 	    		Entity* worldspawn = Node_getEntity(worldspawnNode);
 	    		if (worldspawn != NULL) {
@@ -105,17 +105,17 @@ void revertGroupToWorldSpawn() {
 }
 
 // Some helper methods
-bool contains_entity(scene::Node& node) {
+bool contains_entity(scene::INodePtr node) {
 	return Node_getTraversable(node) != NULL && !Node_isBrush(node) && 
 		   !Node_isPatch(node) && !Node_isEntity(node);
 }
 
-bool contains_primitive(scene::Node& node) {
+bool contains_primitive(scene::INodePtr node) {
 	return Node_isEntity(node) && Node_getTraversable(node) != NULL 
 		   && Node_getEntity(node)->isContainer();
 }
 
-ENodeType node_get_contains(scene::Node& node) {
+ENodeType node_get_contains(scene::INodePtr node) {
 	if (contains_entity(node)) {
 		return eNodeEntity;
 	}
@@ -147,7 +147,7 @@ public:
 			
 			if (contains != eNodeUnknown && contains == type) {
 				// Retrieve the child node
-				NodeSmartReference node(child.top().get());
+				scene::INodePtr node(child.top());
 				// Remove this path from the scenegraph
 				Path_deleteTop(child);
 				// Insert the child node into the parent node 

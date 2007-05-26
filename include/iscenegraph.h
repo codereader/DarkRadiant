@@ -24,14 +24,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <cstddef>
 #include "inode.h"
+#include "ipath.h"
 #include "itraversable.h"
+#include "iinstantiable.h"
 #include "generic/constant.h"
 #include "signal/signalfwd.h"
-
-template<typename value_type>
-class Stack;
-template<typename Contained>
-class Reference;
 
 namespace scene
 {
@@ -50,13 +47,8 @@ namespace scene
   }
 }
 
-typedef Reference<scene::Node> NodeReference;
-
 namespace scene
 {
-  /// \brief A unique key to an instance of a node in the scene-graph.
-  typedef Stack<NodeReference> Path;
-
   /// \brief A scene-graph - a Directed Acyclic Graph (DAG).
   ///
   /// - Each node may refer to zero or more 'child' nodes (directed).
@@ -89,9 +81,9 @@ namespace scene
     };
 
     /// \brief Returns the root-node of the graph.
-    virtual Node& root() = 0;
+    virtual INodePtr root() = 0;
     /// \brief Sets the root-node of the graph to be 'node'.
-    virtual void insert_root(Node& root) = 0;
+    virtual void insert_root(INodePtr root) = 0;
     /// \brief Clears the root-node of the graph.
     virtual void erase_root() = 0;
     /// \brief Traverses all nodes in the graph depth-first, starting from the root node.
@@ -119,44 +111,15 @@ namespace scene
     virtual void removeBoundsChangedCallback(SignalHandlerId id) = 0;
   };
 
-  class Instantiable
-  {
-  public:
-    STRING_CONSTANT(Name, "scene::Instantiable");
-
-    class Observer
-    {
-    public:
-      /// \brief Called when an instance is added to the container.
-      virtual void insert(scene::Instance* instance) = 0;
-      /// \brief Called when an instance is removed from the container.
-      virtual void erase(scene::Instance* instance) = 0;
-    };
-
-    class Visitor
-    {
-    public:
-      virtual void visit(Instance& instance) const = 0;
-    };
-
-    /// \brief Returns a new instance uniquely identified by 'path'.
-    virtual scene::Instance* create(const scene::Path& path, scene::Instance* parent) = 0;
-    /// \brief Calls Visitor::visit(instance) for each instance in the container.
-    virtual void forEachInstance(const Visitor& visitor) = 0;
-    /// \brief Adds an instance to the container.
-    virtual void insert(Observer* observer, const Path& path, scene::Instance* instance) = 0;
-    /// \brief Returns an instance removed from the container.
-    virtual scene::Instance* erase(Observer* observer, const Path& path) = 0;
-  };
-
   class Cloneable
   {
   public:
     STRING_CONSTANT(Name, "scene::Cloneable");
 
     /// \brief Returns a copy of itself.
-    virtual scene::Node& clone() const = 0;
+    virtual scene::INodePtr clone() const = 0;
   };
+  typedef boost::shared_ptr<Cloneable> CloneablePtr;
 }
 
 #include "modulesystem.h"

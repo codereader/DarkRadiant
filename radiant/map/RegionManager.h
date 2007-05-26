@@ -38,10 +38,10 @@ class RegionManager
 	
 	// The brushes around the region boundaries 
 	// (legacy array to stay compatible with the ConstructRegionBrushes() function)
-	scene::Node* _brushes[6];
+	scene::INodePtr _brushes[6];
 	
 	// The pointer to the info_player_start entity
-	scene::Node* _playerStart;
+	scene::INodePtr _playerStart;
 	
 public:
 	RegionManager();
@@ -93,8 +93,6 @@ public:
 	 */
 	void removeRegionBrushes();
 	
-	// Static command targets for use in EventManager
-	
 	/** greebo: The traversal function that is used to save the map to a file.
 	 * 			This ensures that only regioned items are saved.
 	 * 
@@ -102,7 +100,9 @@ public:
 	 * 		 whether the walker.pre() and walker.post() methods are invoked. This allows
 	 * 		 filtering of the non-regioned nodes.
 	 */
-	static void traverseRegion(scene::Node& root, const scene::Traversable::Walker& walker);
+	static void traverseRegion(scene::INodePtr root, const scene::Traversable::Walker& walker);
+	
+	// Static command targets for use in EventManager
 	
 	/** greebo: Saves the current selection as Region to the queried file.
 	 */

@@ -386,7 +386,7 @@ public:
   {
     for(TargetableInstances::const_iterator i = m_instances.begin(); i != m_instances.end(); ++i)
     {
-      if((*i)->path().top().get().visible())
+      if((*i)->path().top()->visible())
       {
         (*i)->render(renderer, volume);
       }

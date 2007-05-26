@@ -112,7 +112,7 @@ public:
 		return this;
 	}
 
-  scene::Node& parsePrimitive(Tokeniser& tokeniser) const
+  scene::INodePtr parsePrimitive(Tokeniser& tokeniser) const
   {
     const char* primitive = tokeniser.getToken();
     if(primitive != 0)
@@ -134,7 +134,7 @@ public:
     Tokeniser_unexpectedError(tokeniser, primitive, "#doom3-primitive");
     return g_nullNode;
   }
-  void readGraph(scene::Node& root, TextInputStream& inputStream, EntityCreator& entityTable) const
+  void readGraph(scene::INodePtr root, TextInputStream& inputStream, EntityCreator& entityTable) const
   {
     Tokeniser& tokeniser = GlobalScripLibModule::getTable().m_pfnNewSimpleTokeniser(inputStream);
     tokeniser.nextLine();
@@ -158,7 +158,7 @@ public:
   }
 
 	// Write scene graph to an ostream
-	void writeGraph(scene::Node& root, GraphTraversalFunc traverse, std::ostream& os) const {
+	void writeGraph(scene::INodePtr root, GraphTraversalFunc traverse, std::ostream& os) const {
 		int precision = GlobalRegistry().getInt(RKEY_PRECISION);  
 		os.precision(precision);
 	    os << "Version " << MapVersion() << std::endl;

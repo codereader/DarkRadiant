@@ -78,7 +78,7 @@ public:
   }
   bool pre(const scene::Path& path, scene::Instance& instance) const
   {
-    if(path.top().get().visible())
+    if(path.top()->visible())
     {
       Brush* brush = Node_getBrush(path.top());
       if(brush != 0
@@ -90,7 +90,7 @@ public:
         for(BrushVector::const_iterator i = out.begin(); i != out.end(); ++i)
         {
           (*i)->removeEmptyFaces();
-          NodeSmartReference node(*(new BrushNode()));
+          scene::INodePtr node(new BrushNode());
           Node_getBrush(node)->copy(*(*i));
           delete (*i);
           Node_getTraversable(path.parent())->insert(node);
@@ -113,7 +113,7 @@ public:
   }
   bool pre(const scene::Path& path, scene::Instance& instance) const
   {
-    if(path.top().get().visible())
+    if(path.top()->visible())
     {
       Brush* brush = Node_getBrush(path.top());
       if(brush != 0
@@ -135,7 +135,7 @@ public:
   }
   void post(const scene::Path& path, scene::Instance& instance) const
   {
-    if(path.top().get().visible())
+    if(path.top()->visible())
     {
       Brush* brush = Node_getBrush(path.top());
       if(brush != 0
@@ -357,7 +357,7 @@ public:
   }
   void post(const scene::Path& path, scene::Instance& instance) const
   {
-    if(path.top().get().visible())
+    if(path.top()->visible())
     {
       Brush* brush = Node_getBrush(path.top());
       if(brush != 0
@@ -399,7 +399,7 @@ public:
           for(BrushVector::const_iterator i = out.begin(); i != out.end(); ++i)
           {
             ++m_after;
-            NodeSmartReference node(*(new BrushNode()));
+            scene::INodePtr node(new BrushNode());
             (*i)->removeEmptyFaces();
             ASSERT_MESSAGE(!(*i)->empty(), "brush left with no faces after subtract");
             Node_getBrush(node)->copy(*(*i));
@@ -459,7 +459,7 @@ public:
   }
   void post(const scene::Path& path, scene::Instance& instance) const
   {
-    if(path.top().get().visible())
+    if(path.top()->visible())
     {
       Brush* brush = Node_getBrush(path.top());
       if(brush != 0
@@ -474,7 +474,7 @@ public:
             // the plane intersects this brush
             if(m_split == eFrontAndBack)
             {
-              NodeSmartReference node(*(new BrushNode()));
+              scene::INodePtr node(new BrushNode());
               Brush* fragment = Node_getBrush(node);
               fragment->copy(*brush);
               Face* newFace = fragment->addPlane(m_p0, m_p1, m_p2, m_shader, m_projection);
@@ -488,7 +488,7 @@ public:
               Node_getTraversable(path.parent())->insert(node);
               {
                 scene::Path fragmentPath = path;
-                fragmentPath.top() = makeReference(node.get());
+                fragmentPath.top() = node;
                 selectPath(fragmentPath, true);
               }
             }
@@ -534,7 +534,7 @@ public:
   {
     BrushInstance* brush = Instance_getBrush(instance);
     if(brush != 0
-      && path.top().get().visible()
+      && path.top()->visible()
       && brush->isSelected())
     {
       BrushInstance& brushInstance = *brush;
@@ -666,7 +666,7 @@ void CSG_Merge(void)
 
   scene::Path merged_path = GlobalSelectionSystem().ultimateSelected().path();
 
-  NodeSmartReference node(*(new BrushNode()));
+  scene::INodePtr node(new BrushNode());
   Brush* brush = Node_getBrush(node);
   // if the new brush would not be convex
   if(!Brush_merge(*brush, selected_brushes, true))
@@ -682,7 +682,7 @@ void CSG_Merge(void)
 
     merged_path.pop();
     Node_getTraversable(merged_path.top())->insert(node);
-    merged_path.push(makeReference(node.get()));
+    merged_path.push(node);
 
     selectPath(merged_path, true);
 

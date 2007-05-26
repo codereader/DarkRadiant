@@ -88,7 +88,7 @@ size_t picoInputStreamReam(void* inputStream, unsigned char* buffer, size_t leng
  * and return a Node containing the model.
  */
 
-scene::Node& loadPicoModel(const picoModule_t* module, ArchiveFile& file) {
+scene::INodePtr loadPicoModel(const picoModule_t* module, ArchiveFile& file) {
 
 	// Determine the file extension (ASE or LWO) to pass down to the PicoModel
 	std::string fName = file.getName();
@@ -96,9 +96,9 @@ scene::Node& loadPicoModel(const picoModule_t* module, ArchiveFile& file) {
 	std::string fExt = fName.substr(fName.size() - 3, 3);
 
 	picoModel_t* model = PicoModuleLoadModelStream(module, &file.getInputStream(), picoInputStreamReam, file.size(), 0);
-	PicoModelNode* modelNode = new PicoModelNode(model, fExt);
+	scene::INodePtr modelNode(new PicoModelNode(model, fExt));
 	PicoFreeModel(model);
-	return *modelNode;
+	return modelNode;
 }
 
 /* Load the provided file as a model object and return as an IModel

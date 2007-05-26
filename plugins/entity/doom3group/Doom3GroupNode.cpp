@@ -76,14 +76,14 @@ Doom3GroupNode::~Doom3GroupNode() {
 	destroy();
 }
 
-scene::Node& Doom3GroupNode::clone() const {
-	return *(new Doom3GroupNode(*this));
+scene::INodePtr Doom3GroupNode::clone() const {
+	return scene::INodePtr(new Doom3GroupNode(*this));
 }
 
-void Doom3GroupNode::insertChild(scene::Node& child) {
+void Doom3GroupNode::insertChild(scene::INodePtr child) {
 	m_instances.insertChild(child);
 }
-void Doom3GroupNode::eraseChild(scene::Node& child) {
+void Doom3GroupNode::eraseChild(scene::INodePtr child) {
 	m_instances.eraseChild(child);
 }
 
@@ -103,11 +103,11 @@ scene::Instance* Doom3GroupNode::erase(scene::Instantiable::Observer* observer, 
 	return m_instances.erase(observer, path);
 }
 
-void Doom3GroupNode::insert(Node& node) {
+void Doom3GroupNode::insert(scene::INodePtr node) {
 	m_contained.getTraversable().insert(node);
 }
 
-void Doom3GroupNode::erase(Node& node) {
+void Doom3GroupNode::erase(scene::INodePtr node) {
 	m_contained.getTraversable().erase(node);
 }
 

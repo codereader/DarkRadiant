@@ -94,14 +94,14 @@ public:
     if(entity != 0
       && (instance.childSelected() || Instance_getSelectable(instance)->isSelected()))
     { 
-      NodeSmartReference node(GlobalEntityCreator().createEntity(GlobalEntityClassManager().findOrInsert(m_classname, node_is_group(path.top()))));
+      scene::INodePtr node(GlobalEntityCreator().createEntity(GlobalEntityClassManager().findOrInsert(m_classname, node_is_group(path.top()))));
 
       EntityCopyingVisitor visitor(*Node_getEntity(node));
 
       entity->forEachKeyValue(visitor);
 
-      NodeSmartReference child(path.top().get());
-      NodeSmartReference parent(path.parent().get());
+      scene::INodePtr child(path.top());
+      scene::INodePtr parent(path.parent());
       Node_getTraversable(parent)->erase(child);
       if(Node_getTraversable(child) != 0
         && Node_getTraversable(node) != 0
@@ -137,7 +137,7 @@ public:
     if(Node_getEntity(instance.path().top()) != 0
       && node_is_group(instance.path().top()))
     {
-      if(m_parent.top().get_pointer() != instance.path().top().get_pointer())
+      if(m_parent.top().get() != instance.path().top().get())
       {
         parentBrushes(instance.path().top(), m_parent.top());
         Path_deleteTop(instance.path());
@@ -150,8 +150,8 @@ void Entity_ungroupSelected()
 {
   UndoableCommand undo("ungroupSelectedEntities");
 
-  scene::Path world_path(makeReference(GlobalSceneGraph().root()));
-  world_path.push(makeReference(Map_FindOrInsertWorldspawn(g_map)));
+  scene::Path world_path(GlobalSceneGraph().root());
+  world_path.push(Map_FindOrInsertWorldspawn(g_map));
 
   GlobalSelectionSystem().foreachSelected(EntityUngroupVisitor(world_path));
 }
@@ -194,8 +194,8 @@ AABB Doom3Light_getBounds(AABB aabb)
  * A NodeSmartReference containing the new entity.
  */
 
-NodeSmartReference Entity_createFromSelection(const char* name, 
-											  const Vector3& origin) 
+scene::INodePtr Entity_createFromSelection(const char* name, 
+				 						  const Vector3& origin) 
 {
 
     IEntityClassPtr entityClass = GlobalEntityClassManager().findOrInsert(name, 
@@ -217,12 +217,12 @@ NodeSmartReference Entity_createFromSelection(const char* name,
     AABB workzone(AABB::createFromMinMax(Select_getWorkZone().d_work_min, 
     									 Select_getWorkZone().d_work_max));
     
-    NodeSmartReference node(GlobalEntityCreator().createEntity(entityClass));
+    scene::INodePtr node(GlobalEntityCreator().createEntity(entityClass));
     
     Node_getTraversable(GlobalSceneGraph().root())->insert(node);
     
     scene::Path entitypath(makeReference(GlobalSceneGraph().root()));
-    entitypath.push(makeReference(node.get()));
+    entitypath.push(node);
     scene::Instance & instance = findInstance(entitypath);
 
     if (entityClass->isFixedSize() || (isModel && !primitivesSelected)) {

@@ -35,9 +35,9 @@ namespace scene
   class Node;
 }
 class MapFormat;
-typedef void(*GraphTraversalFunc)(scene::Node& root, const scene::Traversable::Walker& walker);
+typedef void(*GraphTraversalFunc)(scene::INodePtr root, const scene::Traversable::Walker& walker);
 
-bool MapResource_saveFile(const MapFormat& format, scene::Node& root, GraphTraversalFunc traverse, const char* filename);
+bool MapResource_saveFile(const MapFormat& format, scene::INodePtr root, GraphTraversalFunc traverse, const char* filename);
 
 // Get the ModelLoader class for the given model type
 

@@ -33,7 +33,7 @@ void PicoModelInstance::skinChanged() {
 
 	// Get the model skin object from the parent entity and clear out our list
 	// of mapped surfaces
-	ModelSkin* skin = dynamic_cast<ModelSkin*>(&path().parent().get());
+	ModelSkinPtr skin = boost::dynamic_pointer_cast<ModelSkin>(path().parent());
 	_mappedSurfs.clear();
 	
 	// If skin is null, return

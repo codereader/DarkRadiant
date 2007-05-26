@@ -9,12 +9,12 @@ namespace map {
  * 
  * @exclude: set to TRUE if you want to exclude the node.
  */
-inline void excludeNode(scene::Node& node, bool exclude) {
+inline void excludeNode(scene::INodePtr node, bool exclude) {
 	if (exclude) {
-		node.enable(scene::Node::eExcluded);
+		node->enable(scene::Node::eExcluded);
 	}
 	else {
-		node.disable(scene::Node::eExcluded);
+		node->disable(scene::Node::eExcluded);
 	}
 }
 
@@ -96,9 +96,9 @@ public:
 		_skip(false) 
 	{}
 	
-	bool pre(scene::Node& node) const {
+	bool pre(scene::INodePtr node) const {
 		// Don't save excluded nodes or the Scenegraph root
-		if (node.excluded() || node.isRoot()) {
+		if (node->excluded() || node->isRoot()) {
 			_skip = true;
 			return false;
 		}
@@ -109,7 +109,7 @@ public:
 		return true;
 	}
 
-	void post(scene::Node& node) const {
+	void post(scene::INodePtr node) const {
 		if (_skip) {
 			// The node failed to pass the check in pre()
 			_skip = false;

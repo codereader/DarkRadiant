@@ -31,7 +31,7 @@ typedef struct picoModule_s picoModule_t;
 /** Load a model and return a Node for insertion into a scene graph
  */
  
-scene::Node& loadPicoModel(const picoModule_t* module, ArchiveFile& file);
+scene::INodePtr loadPicoModel(const picoModule_t* module, ArchiveFile& file);
 
 /** Load a model and return an OpenGLRenderable shared pointer for immediate
  * rendering.

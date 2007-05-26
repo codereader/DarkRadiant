@@ -1,7 +1,7 @@
 #include "Planes.h"
 
 bool PlaneSelectableSelectPlanes::pre(const scene::Path& path, scene::Instance& instance) const {
-    if(path.top().get().visible())
+    if(path.top()->visible())
     {
       Selectable* selectable = Instance_getSelectable(instance);
       if(selectable != 0 && selectable->isSelected())
@@ -17,7 +17,7 @@ bool PlaneSelectableSelectPlanes::pre(const scene::Path& path, scene::Instance& 
 }
 
 bool PlaneSelectableSelectReversedPlanes::pre(const scene::Path& path, scene::Instance& instance) const {
-    if(path.top().get().visible())
+    if(path.top()->visible())
     {
       Selectable* selectable = Instance_getSelectable(instance);
       if(selectable != 0 && selectable->isSelected())

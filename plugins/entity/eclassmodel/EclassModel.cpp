@@ -79,9 +79,9 @@ void EclassModel::rotationChanged() {
 }
 
 void EclassModel::skinChanged() {
-	scene::Node* node = m_model.getNode();
-	if(node != 0) {
-		Node_modelSkinChanged(*node);
+	scene::INodePtr node = m_model.getNode();
+	if(node != NULL) {
+		Node_modelSkinChanged(node);
 	}
 }
 

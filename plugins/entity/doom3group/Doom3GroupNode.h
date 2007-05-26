@@ -1,6 +1,7 @@
 #ifndef DOOM3GROUPNODE_H_
 #define DOOM3GROUPNODE_H_
 
+#include "igroupnode.h"
 #include "Doom3Group.h"
 #include "nameable.h"
 #include "instancelib.h"
@@ -47,8 +48,8 @@ public:
 	virtual void setNamespace(INamespace& space);
 
 	// scene::Traversable Implementation
-	virtual void insert(Node& node);
-    virtual void erase(Node& node);
+	virtual void insert(scene::INodePtr node);
+    virtual void erase(scene::INodePtr node);
     virtual void traverse(const Walker& walker);
     virtual bool empty() const;
 
@@ -63,11 +64,11 @@ public:
 	// Snappable implementation
 	virtual void snapto(float snap);
 
-	scene::Node& clone() const;
+	scene::INodePtr clone() const;
 
 	// scene::Traversable::Observer implementation
-	void insertChild(scene::Node& child);
-	void eraseChild(scene::Node& child);
+	void insertChild(scene::INodePtr child);
+	void eraseChild(scene::INodePtr child);
 
 	scene::Instance* create(const scene::Path& path, scene::Instance* parent);
 	

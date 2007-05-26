@@ -40,7 +40,7 @@ public:
 	// Pre-descent walker function
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
 		
-		VolumeIntersectionValue visible = (path.top().get().visible()) 
+		VolumeIntersectionValue visible = (path.top()->visible()) 
 										   ? _visStack.back() 
 										   : c_volumeOutside;
 

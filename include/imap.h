@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_IMAP_H)
 #define INCLUDED_IMAP_H
 
+#include "inode.h"
 #include "generic/constant.h"
 
 #include <ostream>
@@ -37,6 +38,7 @@ public:
 
   virtual bool importTokens(Tokeniser& tokeniser) = 0;
 };
+typedef boost::shared_ptr<MapImporter> MapImporterPtr;
 
 /** A type of Node whose state can be written to an output stream.
  */
@@ -49,6 +51,7 @@ public:
 	 */
 	virtual void exportTokens(std::ostream& os) const = 0;
 };
+typedef boost::shared_ptr<MapExporter> MapExporterPtr;
 
 #include "iscenegraph.h"
 
@@ -59,7 +62,7 @@ class TextInputStream;
 /** Callback function to control how the Walker traverses the scene graph. This function
  * will be provided to the map export module by the Radiant map code.
  */
-typedef void (*GraphTraversalFunc) (scene::Node& root, const scene::Traversable::Walker& walker);
+typedef void (*GraphTraversalFunc) (scene::INodePtr root, const scene::Traversable::Walker& walker);
 
 /** Map Format interface. Each map format is able to traverse the scene graph and write
  * the contents into a mapfile, or to load a mapfile and populate a scene graph.
@@ -71,7 +74,7 @@ public:
 	STRING_CONSTANT(Name, "map");
 
 	/// \brief Read a map graph into \p root from \p outputStream, using \p entityTable to create entities.
-	virtual void readGraph(scene::Node& root, TextInputStream& inputStream, EntityCreator& entityTable) const = 0;
+	virtual void readGraph(scene::INodePtr root, TextInputStream& inputStream, EntityCreator& entityTable) const = 0;
 
 	/** Traverse the scene graph and write contents into the provided output stream.
 	 * 
@@ -85,7 +88,7 @@ public:
 	 * @param oStream
 	 * The output stream to write contents to.
 	 */
-	virtual void writeGraph(scene::Node& root, GraphTraversalFunc traverse, std::ostream& oStream) const = 0;
+	virtual void writeGraph(scene::INodePtr root, GraphTraversalFunc traverse, std::ostream& oStream) const = 0;
 };
 
 

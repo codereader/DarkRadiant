@@ -65,21 +65,21 @@ void CompiledGraph::sceneChanged() {
 	}
 }
 
-scene::Node& CompiledGraph::root() {
+scene::INodePtr CompiledGraph::root() {
 	ASSERT_MESSAGE(!m_rootpath.empty(), "scenegraph root does not exist");
 	return m_rootpath.top();
 }
   
-void CompiledGraph::insert_root(scene::Node& root) {
+void CompiledGraph::insert_root(scene::INodePtr root) {
     //globalOutputStream() << "insert_root\n";
 
 	ASSERT_MESSAGE(m_rootpath.empty(), "scenegraph root already exists");
 
-    root.IncRef();
+    //root.IncRef();
 
     Node_traverseSubgraph(root, InstanceSubgraphWalker(this, scene::Path(), 0));
 
-    m_rootpath.push(makeReference(root));
+    m_rootpath.push(root);
 }
   
 void CompiledGraph::erase_root() {
@@ -87,13 +87,13 @@ void CompiledGraph::erase_root() {
 
     ASSERT_MESSAGE(!m_rootpath.empty(), "scenegraph root does not exist");
 
-    scene::Node& root = m_rootpath.top();
+    scene::INodePtr root = m_rootpath.top();
 
     m_rootpath.pop();
 
     Node_traverseSubgraph(root, UninstanceSubgraphWalker(this, scene::Path()));
 
-    root.DecRef();
+    //root.DecRef();
 }
 
 void CompiledGraph::boundsChanged() {

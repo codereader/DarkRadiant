@@ -2,6 +2,7 @@
 
 #include <fstream>
 
+#include "igroupnode.h"
 #include "ientity.h"
 #include "brush/FaceInstance.h"
 #include "brush/BrushVisit.h"
@@ -152,10 +153,10 @@ void createCMFromSelection() {
 	if (info.totalCount == info.entityCount && info.totalCount == 1) {
 		// Retrieve the node, instance and entity
 		scene::Instance& entityInstance = GlobalSelectionSystem().ultimateSelected();
-		scene::Node& entityNode = entityInstance.path().top();
+		scene::INodePtr entityNode = entityInstance.path().top();
 		
 		// Try to retrieve the group node
-		scene::GroupNode* groupNode = Node_getGroupNode(entityNode);
+		scene::GroupNodePtr groupNode = Node_getGroupNode(entityNode);
 		
 		// Remove the entity origin from the brushes
 		if (groupNode != NULL) {

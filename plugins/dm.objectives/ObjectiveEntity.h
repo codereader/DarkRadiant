@@ -3,12 +3,12 @@
 
 #include "Objective.h"
 
+#include "inode.h"
 #include <boost/shared_ptr.hpp>
 #include <gtk/gtkliststore.h>
 
 // FORWARD DECLS
 namespace objectives { class TargetList; }
-namespace scene { class Node; }
 class Entity;
 
 namespace objectives
@@ -23,7 +23,7 @@ namespace objectives
 class ObjectiveEntity
 {
 	// The actual entity's world node and entity pointer
-	scene::Node& _node;
+	scene::INodePtr _node;
 	Entity* _entity;
 	
 	// Map of numbered Objective objects
@@ -34,7 +34,7 @@ public:
 	/**
 	 * Construct an ObjectiveEntity wrapper around the given Node.
 	 */
-	ObjectiveEntity(scene::Node& n);
+	ObjectiveEntity(scene::INodePtr n);
 	
 	/**
 	 * Return an Objective reference by numeric index.

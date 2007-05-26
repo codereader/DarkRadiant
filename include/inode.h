@@ -16,6 +16,10 @@ public:
 	 */
 	virtual bool isRoot() const = 0;
 	
+	/** greebo: Sets the "isRoot" flag of this node.  
+	 */
+	virtual void setIsRoot(bool isRoot) = 0;
+	
 	/** greebo: Currently empty implementations of the layer
 	 * 			accessor methods.
 	 */
@@ -38,7 +42,6 @@ public:
 	 */
 	virtual bool excluded() const = 0;
 };
-
 typedef boost::shared_ptr<INode> INodePtr;
 
 } // namespace scene

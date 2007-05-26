@@ -12,7 +12,7 @@ class Doom3EntityCreator :
 public:
 	/** greebo: Creates an entity for the given EntityClass
 	 */
-	scene::Node& createEntity(IEntityClassPtr eclass);
+	scene::INodePtr createEntity(IEntityClassPtr eclass);
 	
 	/** greebo: Sets the function to call when any keyvalue gets changed.
 	 * 	
@@ -31,7 +31,7 @@ public:
 private:
 	/** greebo: Creates the right entity for the entityclass.
 	 */
-	scene::Node& getEntityForEClass(IEntityClassPtr eclass);
+	scene::INodePtr getEntityForEClass(IEntityClassPtr eclass);
 };
 
 } // namespace entity

@@ -16,8 +16,8 @@ inline AABB Instance_getPivotBounds(scene::Instance& instance) {
 		&& (entity->getEntityClass()->isFixedSize() 
 			|| !node_is_group(instance.path().top())))
 	{
-		Editable* editable = Node_getEditable(instance.path().top());
-		if (editable != 0) {
+		EditablePtr editable = Node_getEditable(instance.path().top());
+		if (editable != NULL) {
 			return AABB(matrix4_multiplied_by_matrix4(instance.localToWorld(), editable->getLocalPivot()).t().getVector3(), Vector3(0, 0, 0));
 		}
 		else {
@@ -68,7 +68,7 @@ class RemoveDegenerateBrushWalker :
 {
 public:
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		TransformNode* transformNode = Node_getTransformNode(path.top());
+		TransformNodePtr transformNode = Node_getTransformNode(path.top());
 		if (transformNode != 0) {
 			Brush* brush = Node_getBrush(path.top());
 			if (brush != NULL) {
@@ -88,7 +88,7 @@ public:
 class FreezeTransforms : public scene::Graph::Walker {
 public:
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		TransformNode* transformNode = Node_getTransformNode(path.top());
+		TransformNodePtr transformNode = Node_getTransformNode(path.top());
 		if (transformNode != 0) {
 			Transformable* transform = Instance_getTransformable(instance);
 			if (transform != 0) {
@@ -105,7 +105,7 @@ class RevertTransforms :
 {
 public:
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		TransformNode* transformNode = Node_getTransformNode(path.top());
+		TransformNodePtr transformNode = Node_getTransformNode(path.top());
 		if (transformNode != 0) {
 			Transformable* transform = Instance_getTransformable(instance);
 			if (transform != 0) {
@@ -122,7 +122,7 @@ class RevertTransformForSelected :
 {
 public:
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		TransformNode* transformNode = Node_getTransformNode(path.top());
+		TransformNodePtr transformNode = Node_getTransformNode(path.top());
 		Selectable* selectable = Instance_getSelectable(instance);
 				
 		if (transformNode != NULL && selectable != NULL && selectable->isSelected()) {

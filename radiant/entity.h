@@ -57,7 +57,7 @@ public:
  * A NodeSmartReference containing the new entity.
  */
 
-NodeSmartReference Entity_createFromSelection(const char* name, const Vector3& origin);
+scene::INodePtr Entity_createFromSelection(const char* name, const Vector3& origin);
 
 
 void Scene_EntitySetKeyValue_Selected(const char* key, const char* value);

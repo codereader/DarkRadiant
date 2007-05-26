@@ -49,7 +49,7 @@ class SelectionCloner :
 	public scene::Graph::Walker
 {
 public:
-	typedef std::vector<scene::Node*> List;
+	typedef std::vector<scene::INodePtr> List;
 
 private:	
 	List& _list;
@@ -65,7 +65,7 @@ public:
 		}
 
 		// Don't clone the root item
-		if (!path.top().get().isRoot()) {
+		if (!path.top()->isRoot()) {
 			if (Instance_isSelected(instance)) {
 				return false;
 			}
@@ -79,19 +79,19 @@ public:
 			return;
 		}
 
-		if (!path.top().get().isRoot()) {
+		if (!path.top()->isRoot()) {
 			if (Instance_isSelected(instance)) {
 				// Clone the current node
-				scene::Node& clonedNode = Node_Clone(path.top());
-				NodeSmartReference clone(clonedNode);
+				scene::INodePtr clone = Node_Clone(path.top());
+				//NodeSmartReference clone(clonedNode);
 				// Add this node to the list of namespaced items
 				GlobalNamespace().gatherNamespaced(clone);
 				
 				// Add the cloned node to the list 
-				_list.push_back(&clonedNode);
+				_list.push_back(clone);
 				
 				// Insert the cloned item to the parent
-				Node_getTraversable(path.parent().get())->insert(clone);
+				Node_getTraversable(path.parent())->insert(clone);
 			}
 		}
 	}
@@ -118,9 +118,9 @@ public:
 
 /** greebo: Tries to select the given node.
  */
-void selectNode(scene::Node& node) {
+void selectNode(scene::INodePtr node) {
 	// Try to get an instantiable out of this node
-	scene::Instantiable* instantiable = Node_getInstantiable(node);
+	scene::InstantiablePtr instantiable = Node_getInstantiable(node);
 	if (instantiable != NULL) {
 		instantiable->forEachInstance(InstanceSelector(true));
 	}
@@ -142,7 +142,7 @@ void cloneSelected() {
 		
 		// Now select the cloned nodes
 		for (unsigned int i = 0; i < list.size(); i++) {
-			selectNode(*list[i]);
+			selectNode(list[i]);
 		}
 	}
 }

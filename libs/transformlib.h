@@ -22,19 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined (INCLUDED_TRANSFORMLIB_H)
 #define INCLUDED_TRANSFORMLIB_H
 
+#include "itransformnode.h"
 #include "generic/constant.h"
 #include "math/matrix.h"
 #include "math/quaternion.h"
-
-
-/// \brief A transform node.
-class TransformNode
-{
-public:
-  STRING_CONSTANT(Name, "TransformNode");
-  /// \brief Returns the transform which maps the node's local-space into the local-space of its parent node.
-  virtual const Matrix4& localToParent() const  = 0;
-};
 
 /// \brief A transform node which has no effect.
 class IdentityTransform : public TransformNode

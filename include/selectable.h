@@ -280,6 +280,19 @@ inline SelectionTestable* Instance_getSelectionTestable(scene::Instance& instanc
 	return dynamic_cast<SelectionTestable*>(&instance);
 }
 
+class ComponentSelectionTestable {
+public:
+	STRING_CONSTANT(Name, "ComponentSelectionTestable");
+
+	virtual bool isSelectedComponents() const = 0;
+	virtual void setSelectedComponents(bool select, SelectionSystem::EComponentMode mode) = 0;
+	virtual void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) = 0;
+};
+typedef boost::shared_ptr<ComponentSelectionTestable> ComponentSelectionTestablePtr;
+
+inline ComponentSelectionTestable* Instance_getComponentSelectionTestable(scene::Instance& instance) {
+	return dynamic_cast<ComponentSelectionTestable*>(&instance);
+}
 
 class Plane3;
 typedef Callback1<const Plane3&> PlaneCallback;

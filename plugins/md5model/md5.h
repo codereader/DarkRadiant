@@ -22,8 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_MD5_H)
 #define INCLUDED_MD5_H
 
-namespace scene { class Node; }
+#include "inode.h"
+
 class ArchiveFile;
-scene::Node& loadMD5Model(ArchiveFile& file);
+scene::INodePtr loadMD5Model(ArchiveFile& file);
 
 #endif

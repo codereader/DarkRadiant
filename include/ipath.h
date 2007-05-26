@@ -1,0 +1,72 @@
+#ifndef IPATH_H_
+#define IPATH_H_
+
+#include "inode.h"
+#include <vector>
+
+namespace scene {
+
+/** greebo: This is the base structure used as unique to scenegraph elements.
+ * 
+ * 			It extends the functionality of std::vector to mimick
+ * 			the interface of a std::stack (push(), top(), pop()) and
+ * 			provides an additional parent() method that allows
+ * 			to retrieve the element right below the top() element.
+ * 
+ * 			The parent() method is a convenience method helping to insert 
+ * 			scenegraph elements at the right place without complicated
+ * 			popping() and pushing().
+ */
+class Path :
+	public std::vector<INodePtr>
+{
+public:
+	// Default constructor
+	Path() 
+	{}
+
+	// Constructor taking an initial element. 
+	// The stack is starting with one top element. 
+	Path(const INodePtr& initialElement) {
+		push(initialElement);
+	}
+
+	// Accessor method to retrieve the last element inserted.
+	INodePtr& top() {
+		assert(std::vector<INodePtr>::size() > 0);
+		return *(std::vector<INodePtr>::end()-1);
+	}
+	
+	// Accessor method to retrieve the last element inserted.
+	const INodePtr& top() const {
+		assert(std::vector<INodePtr>::size() > 0);
+		return *(std::vector<INodePtr>::end()-1);
+	}
+	
+	// Accessor method to retrieve the element below the last inserted.
+	INodePtr& parent() {
+		assert(std::vector<INodePtr>::size() > 1);
+		return *(std::vector<INodePtr>::end()-2);
+	}
+	
+	// Accessor method to retrieve the element below the last inserted.
+	const INodePtr& parent() const {
+		assert(std::vector<INodePtr>::size() > 1);
+		return *(std::vector<INodePtr>::end()-2);
+	}
+	
+	// Add an element to the stack, this becomes the top() element
+	void push(const INodePtr& newElement) {
+		push_back(newElement);
+	}
+	
+	// Remove the topmost element, the size of the stack is reduced by 1.
+	void pop() {
+		assert(std::vector<INodePtr>::size() > 0);
+		erase(std::vector<INodePtr>::end()-1);
+	}
+}; // class Path
+
+} // namespace scene
+
+#endif /*IPATH_H_*/

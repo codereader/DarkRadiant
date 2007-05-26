@@ -237,7 +237,7 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
 		// If a model was selected, create the entity and set its model key
 		if (!ms.model.empty()) {
             try { 
-			NodeSmartReference node = Entity_createFromSelection(MODEL_CLASSNAME, 
+			scene::INodePtr node = Entity_createFromSelection(MODEL_CLASSNAME, 
                                                                  self->_lastPoint);
 			Node_getEntity(node)->setKeyValue("model", ms.model);
 			Node_getEntity(node)->setKeyValue("skin", ms.skin);

@@ -37,11 +37,11 @@ void LightNode::destroy() {
 	m_contained.detach(this);
 }
 
-void LightNode::insert(Node& node) {
+void LightNode::insert(scene::INodePtr node) {
 	m_contained.getTraversable().insert(node);
 }
 
-void LightNode::erase(Node& node) {
+void LightNode::erase(scene::INodePtr node) {
 	m_contained.getTraversable().erase(node);
 }
 
@@ -75,15 +75,15 @@ void LightNode::setNamespace(INamespace& space) {
 	m_contained.getNamespaced().setNamespace(space);
 }
 
-scene::Node& LightNode::clone() const {
-	return *(new LightNode(*this));
+scene::INodePtr LightNode::clone() const {
+	return scene::INodePtr(new LightNode(*this));
 }
 
-void LightNode::insertChild(scene::Node& child) {
+void LightNode::insertChild(scene::INodePtr child) {
 	m_instances.insertChild(child);
 }
 
-void LightNode::eraseChild(scene::Node& child) {
+void LightNode::eraseChild(scene::INodePtr child) {
 	m_instances.eraseChild(child);
 }
 

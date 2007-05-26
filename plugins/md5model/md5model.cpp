@@ -50,13 +50,15 @@ class ModelDependencies :
 class MD5ModelLoader : public ModelLoader
 {
 public:
-  scene::Node& loadModel(ArchiveFile& file)
+  scene::INodePtr loadModel(ArchiveFile& file)
   {
     return loadMD5Model(file);
   }
   
 	// Not implemented
-	model::IModelPtr loadModelFromPath(const std::string& name) {}
+	model::IModelPtr loadModelFromPath(const std::string& name) {
+		return model::IModelPtr();
+	}
 };
 
 class ModelMD5Dependencies : public ModelDependencies, public GlobalScripLibModuleRef

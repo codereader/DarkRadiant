@@ -93,16 +93,9 @@ typedef ReferenceCaller<DeferredDraw, DeferredDraw_onMapValidChanged> DeferredDr
 const MapFormat& Map_getFormat(const Map& map);
 bool Map_Unnamed(const Map& map);
 
-
-namespace scene
-{
-  class Node;
-  class Graph;
-}
-
-scene::Node* Map_GetWorldspawn(const Map& map);
-scene::Node* Map_FindWorldspawn(Map& map);
-scene::Node& Map_FindOrInsertWorldspawn(Map& map);
+scene::INodePtr Map_GetWorldspawn(const Map& map);
+scene::INodePtr Map_FindWorldspawn(Map& map);
+scene::INodePtr Map_FindOrInsertWorldspawn(Map& map);
 
 template<typename Element> class BasicVector3;
 typedef BasicVector3<double> Vector3;
@@ -125,11 +118,11 @@ bool Map_Modified(const Map& map);
 void Map_Save();
 bool Map_SaveAs();
 
-scene::Node& Node_Clone(scene::Node& node);
+scene::INodePtr Node_Clone(scene::INodePtr node);
 
 void DoMapInfo();
 
-void Scene_parentSelectedPrimitivesToEntity(scene::Graph& graph, scene::Node& parent);
+void Scene_parentSelectedPrimitivesToEntity(scene::Graph& graph, scene::INodePtr parent);
 
 void OnUndoSizeChanged();
 
@@ -143,7 +136,7 @@ void ExportMap();
 class Entity;
 Entity* Scene_FindEntityByClass(const std::string& className);
 
-void Map_Traverse(scene::Node& root, const scene::Traversable::Walker& walker);
+void Map_Traverse(scene::INodePtr root, const scene::Traversable::Walker& walker);
 
 
 void SelectBrush (int entitynum, int brushnum);

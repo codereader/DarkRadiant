@@ -24,14 +24,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <string>
 
+#include "inode.h"
 #include "generic/constant.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
-
-// Forward declaration of scene::Node to avoid including the whole scene lib
-namespace scene {
-	class Node;
-}
 
 template<typename Element>
 class ArrayReference
@@ -264,23 +260,23 @@ public:
 	STRING_CONSTANT(Name, "patch");
 	
 	// Create a patch and return the sceneNode 
-	virtual scene::Node& createPatch() = 0;
+	virtual scene::INodePtr createPatch() = 0;
 	
 	// Save the state of the patch to an UndoMemento for eventual reverting.
-	virtual void Patch_undoSave(scene::Node& patch) const = 0;
+	virtual void Patch_undoSave(scene::INodePtr patch) const = 0;
 	
 	// Resize the patch to the specified number rows and columns
-	virtual void Patch_resize(scene::Node& patch, std::size_t width, std::size_t height) const = 0;
+	virtual void Patch_resize(scene::INodePtr patch, std::size_t width, std::size_t height) const = 0;
 	
 	// Returns the control points and the dimensions of the patch
-	virtual PatchControlMatrix Patch_getControlPoints(scene::Node& patch) const = 0;
+	virtual PatchControlMatrix Patch_getControlPoints(scene::INodePtr patch) const = 0;
 	
 	// Notify the patch that the control points have changed
-	virtual void Patch_controlPointsChanged(scene::Node& patch) const = 0;
+	virtual void Patch_controlPointsChanged(scene::INodePtr patch) const = 0;
 	
 	// Get/Set the shader name of the patch
-	virtual const std::string& Patch_getShader(scene::Node& patch) const = 0;
-	virtual void Patch_setShader(scene::Node& patch, const std::string& shader) const = 0;
+	virtual const std::string& Patch_getShader(scene::INodePtr patch) const = 0;
+	virtual void Patch_setShader(scene::INodePtr patch, const std::string& shader) const = 0;
 };
 
 class Patch;
@@ -291,6 +287,11 @@ public:
 	 */
 	virtual Patch& getPatch() = 0;
 };
+typedef boost::shared_ptr<IPatchNode> IPatchNodePtr;
+
+inline bool Node_isPatch(scene::INodePtr node) {
+	return boost::dynamic_pointer_cast<IPatchNode>(node) != NULL;
+}
 
 // Module-related stuff
 

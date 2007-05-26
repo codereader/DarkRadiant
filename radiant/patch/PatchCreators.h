@@ -12,20 +12,20 @@
 class CommonPatchCreator : public PatchCreator {
 public:
 	// Save the current state of the patch.
-	void Patch_undoSave(scene::Node& patch) const {
+	void Patch_undoSave(scene::INodePtr patch) const {
 		// greebo: Get the patch member variable from the node and call its undoSave() function
 		// This creates an UndoMemento class where all the state-relevant variables of the patch are saved.  
 		Node_getPatch(patch)->undoSave();
 	}
 	
 	// Resize the patch (width and height of the control instances, e.g. 3x3 patch)
-	void Patch_resize(scene::Node& patch, std::size_t width, std::size_t height) const {
+	void Patch_resize(scene::INodePtr patch, std::size_t width, std::size_t height) const {
 		// Pass this call to the patch member variable of this node
 		Node_getPatch(patch)->setDims(width, height);
 	}
 	
 	// returns a PatchControlMatrix with width, height and the control vertices itself.
-	PatchControlMatrix Patch_getControlPoints(scene::Node& node) const {
+	PatchControlMatrix Patch_getControlPoints(scene::INodePtr node) const {
 		// Retrieve a reference to the patch member variable of this node
 		Patch& patch = *Node_getPatch(node);
 		// Create a PatchControlMatrix with <height> and <width> and the list of control points.
@@ -33,17 +33,17 @@ public:
 	}
 	
 	// Notify the patch, that the control points have changed, so that the patch class can update itself accordingly
-	void Patch_controlPointsChanged(scene::Node& patch) const {
+	void Patch_controlPointsChanged(scene::INodePtr patch) const {
 		return Node_getPatch(patch)->controlPointsChanged();
 	}
 	
 	// Get the shadername of the patch stored in this node 
-	const std::string& Patch_getShader(scene::Node& patch) const {
+	const std::string& Patch_getShader(scene::INodePtr patch) const {
 		return Node_getPatch(patch)->GetShader();
 	}
   	
   	// Set the shadername of the patch in this node
-	void Patch_setShader(scene::Node& patch, const std::string& shader) const {
+	void Patch_setShader(scene::INodePtr patch, const std::string& shader) const {
 		Node_getPatch(patch)->SetShader(shader);
 	}
 }; // class CommonPatchCreator
@@ -56,9 +56,9 @@ public:
  */
 class Doom3PatchCreator : public CommonPatchCreator {
 public:
-	scene::Node& createPatch() {
+	scene::INodePtr createPatch() {
 		// Note the true as function argument: this means that patchDef3 = true in the PatchNode constructor.  
-		return *(new PatchNodeDoom3(true));
+		return scene::INodePtr(new PatchNodeDoom3(true));
 	}
 };
 
@@ -66,10 +66,10 @@ public:
  */
 class Doom3PatchDef2Creator : public CommonPatchCreator {
 public:
-	scene::Node& createPatch() {
+	scene::INodePtr createPatch() {
 		// The PatchNodeDoom3 constructor normally expects a bool, which defaults to false.
 		// this means that the patch is node def3, but def2
-		return *(new PatchNodeDoom3());
+		return scene::INodePtr(new PatchNodeDoom3());
 	}
 };
 

@@ -22,8 +22,73 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_CONTAINER_STACK_H)
 #define INCLUDED_CONTAINER_STACK_H
 
+#if 0
+/** greebo: This is the base structure used for the scene::Path.
+ * 			It extends the functionality of std::vector to mimick
+ * 			the interface of a std::stack (push(), top(), pop()) and
+ * 			provides an additional parent() method that allows
+ * 			to retrieve the element right below the top() element.
+ * 
+ * 			The parent() method is a convenience method helping to insert 
+ * 			scenegraph elements at the right place without complicated
+ * 			popping() and pushing().
+ */
+template<typename Type>
+class Stack :
+	public std::vector<Type>
+{
+public:
+	// Default constructor
+	Stack() 
+	{}
+
+	// Constructor taking an initial element. 
+	// The stack is starting with one top element. 
+	Stack(const Type& initialElement) {
+		push(initialElement);
+	}
+
+	// Accessor method to retrieve the last element inserted.
+	Type& top() {
+		assert(std::vector<Type>::size() > 0);
+		return *(std::vector<Type>::end()-1);
+	}
+	
+	// Accessor method to retrieve the last element inserted.
+	const Type& top() const {
+		assert(std::vector<Type>::size() > 0);
+		return *(std::vector<Type>::end()-1);
+	}
+	
+	// Accessor method to retrieve the element below the last inserted.
+	Type& parent() {
+		assert(std::vector<Type>::size() > 1);
+		return *(std::vector<Type>::end()-2);
+	}
+	
+	// Accessor method to retrieve the element below the last inserted.
+	const Type& parent() const {
+		assert(std::vector<Type>::size() > 1);
+		return *(std::vector<Type>::end()-2);
+	}
+	
+	// Add an element to the stack, this becomes the top() element
+	void push(const Type& newElement) {
+		push_back(newElement);
+	}
+	
+	// Remove the topmost element, the size of the stack is reduced by 1.
+	void pop() {
+		assert(std::vector<Type>::size() > 0);
+		erase(std::vector<Type>::end()-1);
+	}
+};
+#endif
+
+#if 1
 #include "memory/allocator.h"
 #include <algorithm>
+
 
 /// \brief A stack whose storage capacity is variable at run-time. Similar to std::vector.
 ///
@@ -235,5 +300,6 @@ namespace std
     self.swap(other);
   }
 }
+#endif
 
 #endif

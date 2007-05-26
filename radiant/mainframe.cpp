@@ -774,8 +774,8 @@ public:
   {}
   
   bool pre(const scene::Path& path, scene::Instance& instance) const {
-	if(path.top().get().visible()) {
-		Snappable* snappable = Node_getSnappable(path.top());
+	if(path.top()->visible()) {
+		SnappablePtr snappable = Node_getSnappable(path.top());
 		if (snappable != NULL && Instance_getSelectable(instance)->isSelected()) {
 			snappable->snapto(m_snap);
 		}
@@ -799,7 +799,7 @@ public:
 	ComponentSnappableSnapToGridSelected(float snap): m_snap(snap) {}
   
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
-	    if (path.top().get().visible()) {
+	    if (path.top()->visible()) {
 	    	// Check if the visited instance is componentSnappable
 			ComponentSnappable* componentSnappable = Instance_getComponentSnappable(instance);
 			

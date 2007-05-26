@@ -359,8 +359,8 @@ public:
 
   void constructRemaps()
   {
-    ModelSkin* skin = dynamic_cast<ModelSkin*>(&path().parent().get());
-    if(skin != 0)
+    ModelSkinPtr skin = boost::dynamic_pointer_cast<ModelSkin>(path().parent());
+    if(skin != NULL)
     {
       SurfaceRemaps::iterator j = m_skins.begin();
       for(MD5Model::const_iterator i = m_model.begin(); i != m_model.end(); ++i, ++j)

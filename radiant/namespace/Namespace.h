@@ -16,7 +16,7 @@ class Namespace :
 	UniqueNames m_uniqueNames;
 	
 	// This is the list populated by gatherNamespaced(), see below
-	typedef std::vector<Namespaced*> NamespacedList;
+	typedef std::vector<NamespacedPtr> NamespacedList;
 	NamespacedList _cloned;
 
 public:
@@ -33,7 +33,7 @@ public:
 	 * 			a local list, which can subsequently be used 
 	 * 			by mergeClonedNames().
 	 */
-	void gatherNamespaced(scene::Node& root);
+	void gatherNamespaced(scene::INodePtr root);
 	
 	/** greebo: This moves all gathered Namespaced nodes into this
 	 * 			Namespace, making sure that all names are properly

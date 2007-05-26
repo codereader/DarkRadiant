@@ -462,14 +462,15 @@ void MD5Model_construct(MD5Model& model, TextInputStream& inputStream)
 	}
 }
 
-scene::Node& MD5Model_new(TextInputStream& inputStream)
+scene::INodePtr MD5Model_new(TextInputStream& inputStream)
 {
-  ModelNode* modelNode = new ModelNode();
-  MD5Model_construct(modelNode->model(), inputStream);
-  return *modelNode;
+	scene::INodePtr node(new ModelNode());
+	ModelNode* modelNode = static_cast<ModelNode*>(node.get());
+	MD5Model_construct(modelNode->model(), inputStream);
+	return node;
 }
 
-scene::Node& loadMD5Model(ArchiveFile& file)
+scene::INodePtr loadMD5Model(ArchiveFile& file)
 {
   BinaryToTextInputStream<InputStream> inputStream(file.getInputStream());
   return MD5Model_new(inputStream);

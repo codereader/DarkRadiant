@@ -69,8 +69,8 @@ public:
 	void sceneChanged();
 
 	// Root node accessor methods
-	scene::Node& root();
-	void insert_root(scene::Node& root);
+	scene::INodePtr root();
+	void insert_root(scene::INodePtr root);
 	void erase_root();
 
 	// greebo: Emits the "bounds changed" signal to all connected observers
