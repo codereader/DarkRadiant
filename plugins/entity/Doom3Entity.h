@@ -2,6 +2,7 @@
 #define DOOM3ENTITY_H_
 
 #include "string/pooledstring.h"
+#include "generic/referencecounted.h"
 #include "KeyValue.h"
 
 /** greebo: This is the implementation of the class Entity.
