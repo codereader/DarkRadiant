@@ -45,7 +45,6 @@ ModelModules& ReferenceAPI_getModelModules();
 #include "os/path.h"
 #include "stream/textfilestream.h"
 #include "nullmodel.h"
-#include "maplib.h"
 #include "stream/stringstream.h"
 #include "os/file.h"
 #include "moduleobserver.h"
