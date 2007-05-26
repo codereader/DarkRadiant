@@ -59,7 +59,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "selectionlib.h"
 #include "instancelib.h"
 #include "traverselib.h"
-#include "maplib.h"
 #include "entitylib.h"
 #include "cmdlib.h"
 #include "stream/textfilestream.h"

@@ -4,7 +4,7 @@
 #include "nameable.h"
 #include "traverselib.h"
 #include "selectionlib.h"
-#include "maplib.h"
+#include "UndoFileChangeTracker.h"
 #include "scenelib.h"
 #include "instancelib.h"
 
