@@ -151,33 +151,30 @@ void CompiledGraph::post(const Walker& walker, const InstanceMap::iterator& i) {
 }
 
 void CompiledGraph::traverse_subgraph(const Walker& walker, InstanceMap::iterator i) {
-    Stack<InstanceMap::iterator> stack;
-    if(i != m_instances.end())
-    {
-      const std::size_t startSize = (*i).first.get().size();
-      do
-      {
-        if(i != m_instances.end()
-          && stack.size() < ((*i).first.get().size() - startSize + 1))
-        {
-          stack.push(i);
-          ++i;
-          if(!pre(walker, stack.top()))
-          {
-            // skip subgraph
-            while(i != m_instances.end()
-              && stack.size() < ((*i).first.get().size() - startSize + 1))
-            {
-              ++i;
-            }
-          }
-        }
-        else
-        {
-          post(walker, stack.top());
-          stack.pop();
-        }
-      }
-      while(!stack.empty());
-    }
+	std::stack<InstanceMap::iterator> stack;
+	if (i != m_instances.end()) {
+		// Initialise the start size using the path depth of the given iterator
+		const std::size_t startSize = i->first.get().size();
+		
+		do {
+			if (i != m_instances.end() && 
+				stack.size() < (i->first.get().size() - startSize + 1))
+			{
+				stack.push(i);
+				++i;
+				if (!pre(walker, stack.top())) {
+					// Walker's pre() return false, skip subgraph
+					while (i != m_instances.end() && 
+						   stack.size() < (i->first.get().size() - startSize + 1))
+					{
+						++i;
+					}
+				}
+			}
+			else {
+				post(walker, stack.top());
+				stack.pop();
+			}
+		} while (!stack.empty());
+	}
 }
