@@ -31,17 +31,23 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/reference.h"
 #include "generic/callback.h"
 #include <map>
+#include <stack>
 
 class InstanceSubgraphWalker : public scene::Traversable::Walker
 {
-  scene::Instantiable::Observer* m_observer;
-  mutable scene::Path m_path;
-  mutable Stack<scene::Instance*> m_parent;
+	scene::Instantiable::Observer* m_observer;
+	mutable scene::Path m_path;
+	mutable std::stack<scene::Instance*> m_parent;
 public:
-  InstanceSubgraphWalker(scene::Instantiable::Observer* observer, const scene::Path& path, scene::Instance* parent)
-    : m_observer(observer), m_path(path), m_parent(parent)
-  {
-  }
+	InstanceSubgraphWalker(scene::Instantiable::Observer* observer, 
+  						   const scene::Path& path, 
+  						   scene::Instance* parent) : 
+		m_observer(observer), 
+		m_path(path)
+	{
+		// Initialise the stack with the first element
+		m_parent.push(parent);
+	}
 
 	bool pre(scene::INodePtr node) const {
 		m_path.push(node);
@@ -49,9 +55,14 @@ public:
 		// greebo: Check for an instantiable node (every node should be)
 		scene::InstantiablePtr instantiable = Node_getInstantiable(node); 
 		if (instantiable != NULL) {
+			// Instantiate this node with the reference to the current parent instance
 			scene::Instance* instance = instantiable->create(m_path, m_parent.top());
 			m_observer->insert(instance);
 			instantiable->insert(m_observer, m_path, instance);
+			
+			// Make this instance the new parent as long as we're 
+			// traversing this subgraph. The parent is removed from the stack
+			// in the post() method again.
 			m_parent.push(instance);		
 		}
 		else {
@@ -66,11 +77,11 @@ public:
 		return true;
 	}
 
-  void post(scene::INodePtr node) const
-  {
-    m_path.pop();
-    m_parent.pop();
-  }
+	void post(scene::INodePtr node) const {
+		// The subgraph has been traversed, remove the top stack elements
+		m_path.pop();
+		m_parent.pop();
+	}
 };
 
 class UninstanceSubgraphWalker : public scene::Traversable::Walker
