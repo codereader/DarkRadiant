@@ -62,11 +62,11 @@ bool operator==(const Reference<Type>& self, const Reference<Type>& other)
 }
 
 /// \brief construct a reference to a mutable object.
-template<typename Type>
+/*template<typename Type>
 inline Reference<Type> makeReference(Type& value)
 {
   return Reference<Type>(value);
-}
+}*/
 
 /// \brief A reference to a non-mutable object.
 /// Has 'reference' semantics, except for \c 'operator==' and \c 'operator.'.
@@ -105,11 +105,11 @@ bool operator==(const ConstReference<Type>& self, const ConstReference<Type>& ot
 }
 
 /// \brief construct a reference to a non-mutable object.
-template<typename Type>
+/*template<typename Type>
 inline ConstReference<Type> makeReference(const Type& value)
 {
   return ConstReference<Type>(value);
-}
+}*/
 
 
 #endif

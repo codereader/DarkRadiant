@@ -221,7 +221,7 @@ scene::INodePtr Entity_createFromSelection(const char* name,
     
     Node_getTraversable(GlobalSceneGraph().root())->insert(node);
     
-    scene::Path entitypath(makeReference(GlobalSceneGraph().root()));
+    scene::Path entitypath(GlobalSceneGraph().root());
     entitypath.push(node);
     scene::Instance & instance = findInstance(entitypath);
 
