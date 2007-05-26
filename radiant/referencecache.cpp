@@ -68,7 +68,7 @@ void MapChanged()
 
 EntityCreator* g_entityCreator = 0;
 
-bool MapResource_loadFile(const MapFormat& format, scene::Node& root, const char* filename)
+bool MapResource_loadFile(const MapFormat& format, scene::INodePtr root, const char* filename)
 {
   globalOutputStream() << "Open file " << filename << " for read...";
   TextFileInputStream file(filename);
@@ -86,9 +86,9 @@ bool MapResource_loadFile(const MapFormat& format, scene::Node& root, const char
   }
 }
 
-NodeSmartReference MapResource_load(const MapFormat& format, const char* path, const char* name)
+scene::INodePtr MapResource_load(const MapFormat& format, const char* path, const char* name)
 {
-  NodeSmartReference root(NewMapRoot(name));
+  scene::INodePtr root(NewMapRoot(name));
 
   StringOutputStream fullpath(256);
   fullpath << path << name;
@@ -107,7 +107,7 @@ NodeSmartReference MapResource_load(const MapFormat& format, const char* path, c
 
 /** Save the map contents to the given filename using the given MapFormat export module
  */
-bool MapResource_saveFile(const MapFormat& format, scene::Node& root, GraphTraversalFunc traverse, const char* filename)
+bool MapResource_saveFile(const MapFormat& format, scene::INodePtr root, GraphTraversalFunc traverse, const char* filename)
 {
 	globalOutputStream() << "Open file " << filename << " for write...";
 	
@@ -153,7 +153,7 @@ bool file_saveBackup(const char* path)
  */
 
 bool MapResource_save(const MapFormat& format, 
-					  scene::Node& root, 
+					  scene::INodePtr root, 
 					  const std::string& path, const std::string& name)
 {
 	std::string fullpath = path + name;
@@ -181,14 +181,14 @@ bool MapResource_save(const MapFormat& format,
 
 namespace
 {
-  NodeSmartReference g_nullNode(NewNullNode());
-  NodeSmartReference g_nullModel(g_nullNode);
+  scene::INodePtr g_nullNode(NewNullNode());
+  scene::INodePtr g_nullModel(g_nullNode);
 }
 
 class NullModelLoader : public ModelLoader
 {
 public:
-  scene::Node& loadModel(ArchiveFile& file)
+  scene::INodePtr loadModel(ArchiveFile& file)
   {
     return g_nullModel;
   }
@@ -229,9 +229,9 @@ ModelLoader* ModelLoader_forType(const char* type)
   return 0;
 }
 
-NodeSmartReference ModelResource_load(ModelLoader* loader, const char* name)
+scene::INodePtr ModelResource_load(ModelLoader* loader, const char* name)
 {
-  NodeSmartReference model(g_nullModel);
+  scene::INodePtr model(g_nullModel);
 
   {
     ArchiveFile* file = GlobalFileSystem().openFile(name);
@@ -248,7 +248,7 @@ NodeSmartReference ModelResource_load(ModelLoader* loader, const char* name)
     }
   }
 
-  model.get().m_isRoot = true;
+  model->setIsRoot(true);
 
   return model;
 }
@@ -299,7 +299,7 @@ struct ModelKeyHash
   }
 };
 
-typedef HashTable<ModelKey, NodeSmartReference, ModelKeyHash, ModelKeyEqual> ModelCache;
+typedef HashTable<ModelKey, scene::INodePtr, ModelKeyHash, ModelKeyEqual> ModelCache;
 ModelCache g_modelCache;
 bool g_modelCache_enabled = true;
 
@@ -312,11 +312,11 @@ ModelCache::iterator ModelCache_find(const char* path, const char* name)
   return g_modelCache.end();
 }
 
-ModelCache::iterator ModelCache_insert(const char* path, const char* name, scene::Node& node)
+ModelCache::iterator ModelCache_insert(const char* path, const char* name, scene::INodePtr node)
 {
   if(g_modelCache_enabled)
   {
-    return g_modelCache.insert(ModelKey(path, name), NodeSmartReference(node));
+    return g_modelCache.insert(ModelKey(path, name), node);
   }
   return g_modelCache.insert(ModelKey("", ""), g_nullModel);
 }
@@ -338,7 +338,7 @@ void ModelCache_clear()
   g_modelCache_enabled = true;
 }
 
-NodeSmartReference Model_load(ModelLoader* loader, const char* path, const char* name, const char* type)
+scene::INodePtr Model_load(ModelLoader* loader, const char* path, const char* name, const char* type)
 {
 	// Model types should have a loader, so use this to load. Map types do not
 	// have a loader		  
@@ -406,7 +406,7 @@ struct ModelResource
 : public Resource,
   public boost::noncopyable
 {
-  NodeSmartReference m_model;
+  scene::INodePtr m_model;
   
 	// Name given during construction
 	const std::string m_originalName;
@@ -452,7 +452,7 @@ struct ModelResource
     ASSERT_MESSAGE(!realised(), "ModelResource::~ModelResource: resource reference still realised: " << makeQuoted(m_name.c_str()));
   }
 
-  void setModel(const NodeSmartReference& model)
+  void setModel(scene::INodePtr model)
   {
     m_model = model;
   }
@@ -476,7 +476,7 @@ struct ModelResource
         );
       }
 
-      setModel((*i).value);
+      setModel(i->value);
     }
     else
     {
@@ -517,8 +517,7 @@ struct ModelResource
 			const MapFormat* format = 
 				ReferenceAPI_getMapModules().findModule(moduleName.c_str());
     
-    		if (format != 0 
-    			&& MapResource_save(*format, m_model.get(), m_path, m_name))
+    		if (format != 0 && MapResource_save(*format, m_model, m_path, m_name))
 			{
       			mapSave();
       			return true;
@@ -535,22 +534,22 @@ struct ModelResource
       ModelCache_flush(m_path.c_str(), m_name.c_str());
     }
   }
-  scene::Node* getNode()
+  scene::INodePtr getNode()
   {
     //if(m_model != g_nullModel)
     {
-      return m_model.get_pointer();
+      return m_model;
     }
     //return 0;
   }
-  void setNode(scene::Node* node)
+  void setNode(scene::INodePtr node)
   {
     ModelCache::iterator i = ModelCache_find(m_path.c_str(), m_name.c_str());
     if(i != g_modelCache.end())
     {
-      (*i).value = NodeSmartReference(*node);
+      i->value = node;
     }
-    setModel(NodeSmartReference(*node));
+    setModel(node);
 
     connectMap();
   }
@@ -603,8 +602,8 @@ struct ModelResource
   }
   void connectMap()
   {
-    MapFile* map = Node_getMapFile(m_model);
-    if(map != 0)
+    MapFilePtr map = Node_getMapFile(m_model);
+    if(map != NULL)
     {
       map->setChangedCallback(FreeCaller<MapChanged>());
     }
@@ -618,8 +617,8 @@ struct ModelResource
   void mapSave()
   {
     m_modified = modified();
-    MapFile* map = Node_getMapFile(m_model);
-    if(map != 0)
+    MapFilePtr map = Node_getMapFile(m_model);
+    if(map != NULL)
     {
       map->save();
     }
@@ -805,16 +804,15 @@ bool References_Saved()
 {
   for(HashtableReferenceCache::iterator i = g_referenceCache.begin(); i != g_referenceCache.end(); ++i)
   {
-    scene::Node* node = NULL;
+    scene::INodePtr node;
     
     boost::shared_ptr<ModelResource> res = i->second.lock();
     if (res)
     	node = res->getNode();
     	
-    if(node != 0)
-    {
-      MapFile* map = Node_getMapFile(*node);
-      if(map != 0 && !map->saved())
+    if (node != NULL) {
+      MapFilePtr map = Node_getMapFile(node);
+      if(map != NULL && !map->saved())
       {
         return false;
       }

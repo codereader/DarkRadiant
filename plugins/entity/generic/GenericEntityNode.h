@@ -43,7 +43,7 @@ public:
 	// Namespaced implementation
 	virtual void setNamespace(INamespace& space);
 
-	scene::Node& clone() const;
+	scene::INodePtr clone() const;
 
 	scene::Instance* create(const scene::Path& path, scene::Instance* parent);
 	void forEachInstance(const scene::Instantiable::Visitor& visitor);

@@ -62,7 +62,7 @@ void TranslateSelected::visit(scene::Instance& instance) const {
 // ===================================================================================
 
 void RotateSelected::visit(scene::Instance& instance) const {
-	TransformNode* transformNode = Node_getTransformNode(instance.path().top());
+	TransformNodePtr transformNode = Node_getTransformNode(instance.path().top());
 	if (transformNode != 0) {
 	  // Upcast the instance onto a Transformable
 	  Transformable* transform = Instance_getTransformable(instance);
@@ -83,7 +83,7 @@ void RotateSelected::visit(scene::Instance& instance) const {
 		 * not around the common center point.
 		 */
 	    {
-	      Editable* editable = Node_getEditable(instance.path().top());
+	      EditablePtr editable = Node_getEditable(instance.path().top());
 	      const Matrix4& localPivot = editable != 0 ? editable->getLocalPivot() : g_matrix4_identity;
 	
 	      Vector3 parent_translation;
@@ -104,7 +104,7 @@ void RotateSelected::visit(scene::Instance& instance) const {
 // ===================================================================================
 
 void ScaleSelected::visit(scene::Instance& instance) const {
-    TransformNode* transformNode = Node_getTransformNode(instance.path().top());
+    TransformNodePtr transformNode = Node_getTransformNode(instance.path().top());
     if(transformNode != 0)
     {
       Transformable* transform = Instance_getTransformable(instance);
@@ -117,7 +117,7 @@ void ScaleSelected::visit(scene::Instance& instance) const {
         transform->setType(TRANSFORM_PRIMITIVE);
         transform->setScale(m_scale);
         {
-          Editable* editable = Node_getEditable(instance.path().top());
+          EditablePtr editable = Node_getEditable(instance.path().top());
           const Matrix4& localPivot = editable != 0 ? editable->getLocalPivot() : g_matrix4_identity;
     
           Vector3 parent_translation;

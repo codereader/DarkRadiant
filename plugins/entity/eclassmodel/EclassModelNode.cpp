@@ -46,11 +46,11 @@ void EclassModelNode::destroy() {
 }
 
 // scene::Traversable Implementation
-void EclassModelNode::insert(Node& node) {
+void EclassModelNode::insert(scene::INodePtr node) {
 	m_contained.getTraversable().insert(node);
 }
 
-void EclassModelNode::erase(Node& node) {
+void EclassModelNode::erase(scene::INodePtr node) {
 	m_contained.getTraversable().erase(node);
 }
 
@@ -95,16 +95,16 @@ std::string EclassModelNode::getRemap(const std::string& name) const {
 }
 
 // scene::Traversable::Observer implementation
-void EclassModelNode::insertChild(scene::Node& child) {
+void EclassModelNode::insertChild(scene::INodePtr child) {
 	m_instances.insertChild(child);
 }
 
-void EclassModelNode::eraseChild(scene::Node& child) {
+void EclassModelNode::eraseChild(scene::INodePtr child) {
 	m_instances.eraseChild(child);
 }
 
-scene::Node& EclassModelNode::clone() const {
-	return *(new EclassModelNode(*this));
+scene::INodePtr EclassModelNode::clone() const {
+	return scene::INodePtr(new EclassModelNode(*this));
 }
 
 scene::Instance* EclassModelNode::create(const scene::Path& path, scene::Instance* parent) {

@@ -10,7 +10,7 @@ namespace objectives
 {
 
 // Constructor
-ObjectiveEntity::ObjectiveEntity(scene::Node& n)
+ObjectiveEntity::ObjectiveEntity(scene::INodePtr n)
 : _node(n),
   _entity(Node_getEntity(n))
 { 

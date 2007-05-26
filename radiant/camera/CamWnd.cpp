@@ -40,7 +40,7 @@ public:
 	// The visitor function
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
 		// Check if the node is filtered
-		if (path.top().get().visible()) {	
+		if (path.top()->visible()) {	
 			SelectionTestable* selectionTestable = Instance_getSelectionTestable(instance);
 			
 			if (selectionTestable != NULL) {
@@ -76,7 +76,7 @@ public:
 	}
 
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		if (path.top().get().visible() && Node_isBrush(path.top())) // this node is a floor
+		if (path.top()->visible() && Node_isBrush(path.top())) // this node is a floor
 		{
 
 			const AABB& aabb = instance.worldAABB();

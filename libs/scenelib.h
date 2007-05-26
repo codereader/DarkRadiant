@@ -26,6 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "inode.h"
 #include "iscenegraph.h"
 #include "iselection.h"
+#include "itraversable.h"
+#include "itransformnode.h"
 #include "ientity.h"
 #include "ipatch.h"
 #include "ibrush.h"
@@ -39,6 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/callback.h"
 #include "generic/reference.h"
 #include "container/stack.h"
+#include <boost/shared_ptr.hpp>
 
 class Selector;
 class SelectionTest;
@@ -53,29 +56,6 @@ class Matrix4;
 typedef Vector4 Quaternion;
 class AABB;
 
-class ComponentSelectionTestable {
-public:
-	STRING_CONSTANT(Name, "ComponentSelectionTestable");
-
-	virtual bool isSelectedComponents() const = 0;
-	virtual void setSelectedComponents(bool select, SelectionSystem::EComponentMode mode) = 0;
-	virtual void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) = 0;
-};
-
-class ComponentEditable {
-public:
-	STRING_CONSTANT(Name, "ComponentEditable");
-
-	virtual const AABB& getSelectedComponentsBounds() const = 0;
-};
-
-class ComponentSnappable {
-public:
-	STRING_CONSTANT(Name, "ComponentSnappable");
-
-	virtual void snapComponents(float snap) = 0;
-};
-
 /** greebo: This is used to identify child brushes of entities.
  */
 class BrushDoom3 {
@@ -86,26 +66,12 @@ public:
 	 */
 	virtual void translateDoom3Brush(const Vector3& translation) = 0;
 };
+typedef boost::shared_ptr<BrushDoom3> BrushDoom3Ptr;
 
 namespace scene {
 
-/** greebo: This is used to identify group entities right before
- * and after map save/load.
- * 
- * It provides methods to add/substract the origin to/from 
- * their child primitives.
- */
-class GroupNode {
-public:
-	STRING_CONSTANT(Name, "GroupNode");
-
-	/** greebo: This is called right before saving
-	 * to move the child brushes of the Doom3Group
-	 * according to its origin.
-	 */
-	virtual void addOriginToChildren() = 0;
-	virtual void removeOriginFromChildren() = 0;
-};
+// Auto-incrementing ID (contains the largest ID in use)
+static unsigned long _maxNodeId;
 
 class Node :
 	public INode
@@ -119,134 +85,112 @@ public:
 	};
 
 private:
-	unsigned int m_state;
-	std::size_t m_refcount;
-
+	unsigned int _state;
+	bool _isRoot;
+	unsigned long _id;
+	
 public:
-	bool m_isRoot;
-
-	bool isRoot() const {
-		return m_isRoot;
-	}
-
 	Node() :
-		m_state(eVisible),
-		m_refcount(0),
-		m_isRoot(false)
-	{}
-	
-	virtual ~Node() {}
-	
-	virtual void release() {
-		// Default implementation: remove this node
-		delete this;
-	}
-
-	void IncRef() {
-		ASSERT_MESSAGE(m_refcount < (1 << 24), "Node::decref: uninitialised refcount");
-		++m_refcount;
-	}
-
-	void DecRef() {
-		ASSERT_MESSAGE(m_refcount < (1 << 24), "Node::decref: uninitialised refcount");
-		if(--m_refcount == 0) {
-			release();
-		}
+		_state(eVisible),
+		_isRoot(false),
+		_id(getNewId()) // Get new auto-incremented ID
+	{
+		//std::cout << "Node #" << _id << " constructed.\n";
 	}
 	
-	std::size_t getReferenceCount() const {
-		return m_refcount;
+	Node(const Node& other) :
+		INode(other),
+		_state(other._state),
+		_isRoot(other._isRoot),
+		_id(getNewId())	// ID is incremented on copy
+	{
+		//std::cout << "Node #" << _id << " constructed by copying.\n";
 	}
-
+	
+	virtual ~Node() {
+		//std::cout << "Node #" << _id << " destructed.\n";
+	}
+	
+	static void resetIds() {
+		_maxNodeId = 0;
+	}
+	
+	static unsigned long getNewId() {
+		return ++_maxNodeId;
+	}
+	
+	bool isRoot() const {
+		return _isRoot;
+	}
+	
+	void setIsRoot(bool isRoot) {
+		_isRoot = isRoot;
+	}
+	
 	void enable(unsigned int state) {
-		m_state |= state;
+		_state |= state;
 	}
 
 	void disable(unsigned int state) {
-		m_state &= ~state;
+		_state &= ~state;
 	}
 
 	bool visible() const {
-		return m_state == eVisible;
+		return _state == eVisible;
 	}
 
 	bool excluded() const {
-		return (m_state & eExcluded) != 0;
+		return (_state & eExcluded) != 0;
 	}
 };
 
 } // namespace scene
 
-inline scene::Instantiable* Node_getInstantiable(scene::Node& node) {
-	return dynamic_cast<scene::Instantiable*>(&node);
+inline scene::InstantiablePtr Node_getInstantiable(scene::INodePtr node) {
+	return boost::dynamic_pointer_cast<scene::Instantiable>(node);
 }
 
-inline scene::Traversable* Node_getTraversable(scene::Node& node) {
-	return dynamic_cast<scene::Traversable*>(&node);
-}
-
-inline void Node_traverseSubgraph(scene::Node& node, const scene::Traversable::Walker& walker) {
-	if(walker.pre(node)) {
-		scene::Traversable* traversable = Node_getTraversable(node);
-		if(traversable != 0) {
+inline void Node_traverseSubgraph(scene::INodePtr node, const scene::Traversable::Walker& walker) {
+	// First, visit the node itself
+	if (walker.pre(node)) {
+		// The walker requested to descend the children of this node as well,
+		// check if this node has any children (i.e. is Traversable)  
+		scene::TraversablePtr traversable = Node_getTraversable(node);
+		if (traversable != NULL) {
 			traversable->traverse(walker);
 		}
 	}
 	walker.post(node);
 }
 
-inline TransformNode* Node_getTransformNode(scene::Node& node) {
-	return dynamic_cast<TransformNode*>(&node);
-}
-
-inline bool operator<(scene::Node& node, scene::Node& other) {
-	return &node < &other;
-}
-inline bool operator==(scene::Node& node, scene::Node& other) {
-	return &node == &other;
-}
-inline bool operator!=(scene::Node& node, scene::Node& other) {
-	return !::operator==(node, other);
-}
-
-
-inline scene::Node& NewNullNode() {
-	return *(new scene::Node);
+inline scene::INodePtr NewNullNode() {
+	return scene::INodePtr(new scene::Node);
 }
 
 inline void Path_deleteTop(const scene::Path& path) {
-	Node_getTraversable(path.parent())->erase(path.top());
+	scene::TraversablePtr traversable = Node_getTraversable(path.parent());
+	if (traversable != NULL) {
+		traversable->erase(path.top());
+	}
 }
 
 
 class delete_all : 
 	public scene::Traversable::Walker
 {
-	scene::Node& m_parent;
+	scene::INodePtr m_parent;
 public:
-	delete_all(scene::Node& parent) : m_parent(parent) {}
-	bool pre(scene::Node& node) const {
+	delete_all(scene::INodePtr parent) : m_parent(parent) {}
+	bool pre(scene::INodePtr node) const {
 		return false;
 	}
-	void post(scene::Node& node) const {
+	void post(scene::INodePtr node) const {
 		Node_getTraversable(m_parent)->erase(node);
 	}
 };
 
-inline void DeleteSubgraph(scene::Node& subgraph) {
+inline void DeleteSubgraph(scene::INodePtr subgraph) {
 	Node_getTraversable(subgraph)->traverse(delete_all(subgraph));
-}
-
-inline Entity* Node_getEntity(scene::Node& node) {
-	EntityNode* entityNode = dynamic_cast<EntityNode*>(&node);
-	if (entityNode != NULL) {
-		return &entityNode->getEntity();
-	}
-	return NULL;
-}
-
-inline bool Node_isEntity(scene::Node& node) {
-	return dynamic_cast<EntityNode*>(&node) != NULL;
 }
 
 template<typename Functor>
@@ -269,15 +213,7 @@ inline const Functor& Scene_forEachEntity(const Functor& functor) {
 	return functor;
 }
 
-inline bool Node_isBrush(scene::Node& node) {
-	return dynamic_cast<IBrushNode*>(&node) != NULL;
-}
-
-inline bool Node_isPatch(scene::Node& node) {
-	return dynamic_cast<IPatchNode*>(&node) != NULL;
-}
-
-inline bool Node_isPrimitive(scene::Node& node) {
+inline bool Node_isPrimitive(scene::INodePtr node) {
 #if 1
 	return Node_isBrush(node) || Node_isPatch(node);
 #else
@@ -289,24 +225,24 @@ inline bool Node_isPrimitive(scene::Node& node) {
 class ParentBrushes : 
 	public scene::Traversable::Walker
 {
-	scene::Node& m_parent;
+	scene::INodePtr m_parent;
 public:
-	ParentBrushes(scene::Node& parent) : 
+	ParentBrushes(scene::INodePtr parent) : 
 		m_parent(parent)
 	{}
 	
-	bool pre(scene::Node& node) const {
+	bool pre(scene::INodePtr node) const {
 		return false;
 	}
 	
-	void post(scene::Node& node) const {
+	void post(scene::INodePtr node) const {
 		if(Node_isPrimitive(node)) {
 			Node_getTraversable(m_parent)->insert(node);
 		}
 	}
 };
 
-inline void parentBrushes(scene::Node& subgraph, scene::Node& parent) {
+inline void parentBrushes(scene::INodePtr subgraph, scene::INodePtr parent) {
 	Node_getTraversable(subgraph)->traverse(ParentBrushes(parent));
 }
 
@@ -321,7 +257,7 @@ public:
 		m_hasBrushes = true;
 	}
 	
-	bool pre(scene::Node& node) const {
+	bool pre(scene::INodePtr node) const {
 		if(!Node_isPrimitive(node)) {
 			m_hasBrushes = false;
 		}
@@ -329,9 +265,9 @@ public:
 	}
 };
 
-inline bool node_is_group(scene::Node& node) {
-	scene::Traversable* traversable = Node_getTraversable(node);
-	if(traversable != 0) {
+inline bool node_is_group(scene::INodePtr node) {
+	scene::TraversablePtr traversable = Node_getTraversable(node);
+	if (traversable != NULL) {
 		bool hasBrushes = false;
 		traversable->traverse(HasBrushes(hasBrushes));
 		return hasBrushes;
@@ -441,8 +377,8 @@ class Instance
 			m_transformMutex = true;
 
 			m_local2world = (m_parent != 0) ? m_parent->localToWorld() : g_matrix4_identity;
-			TransformNode* transformNode = Node_getTransformNode(m_path.top());
-			if(transformNode != 0) {
+			TransformNodePtr transformNode = Node_getTransformNode(m_path.top());
+			if (transformNode != NULL) {
 				matrix4_multiply_by_matrix4(m_local2world, transformNode->localToParent());
 			}
 
@@ -693,22 +629,9 @@ inline const Transformable* Instance_getTransformable(const scene::Instance& ins
 	return dynamic_cast<const Transformable*>(&instance);
 }
 
-inline ComponentSelectionTestable* Instance_getComponentSelectionTestable(scene::Instance& instance) {
-	return dynamic_cast<ComponentSelectionTestable*>(&instance);
-}
-
-inline ComponentEditable* Instance_getComponentEditable(scene::Instance& instance) {
-	return dynamic_cast<ComponentEditable*>(&instance);
-}
-
-inline ComponentSnappable* Instance_getComponentSnappable(scene::Instance& instance) {
-	return dynamic_cast<ComponentSnappable*>(&instance);
-}
-
 inline scene::LightInstance* Instance_getLight(scene::Instance& instance) {
 	return dynamic_cast<scene::LightInstance*>(&instance);
 }
-
 
 inline void Instance_setSelected(scene::Instance& instance, bool selected) {
 	Selectable* selectable = Instance_getSelectable(instance);
@@ -740,18 +663,18 @@ class SelectChildren : public scene::Traversable::Walker {
 public:
 	SelectChildren(const scene::Path& root)
 			: m_path(root) {}
-	bool pre(scene::Node& node) const {
-		m_path.push(makeReference(node));
+	bool pre(scene::INodePtr node) const {
+		m_path.push(node);
 		selectPath(m_path, true);
 		return false;
 	}
-	void post(scene::Node& node) const {
+	void post(scene::INodePtr node) const {
 		m_path.pop();
 	}
 };
 
 inline void Entity_setSelected(scene::Instance& entity, bool selected) {
-	scene::Node& node = entity.path().top();
+	scene::INodePtr node = entity.path().top();
 	if(node_is_group(node)) {
 		Node_getTraversable(node)->traverse(SelectChildren(entity.path()));
 	}
@@ -809,16 +732,8 @@ public:
  * 
  * @returns: NULL, if failed, the pointer to the class otherwise.
  */
-inline BrushDoom3* Node_getBrushDoom3(scene::Node& node) {
-	return dynamic_cast<BrushDoom3*>(&node);
-}
-
-/** greebo: Cast a node onto a GroupNode pointer
- * 
- * @returns: NULL, if failed, the pointer to the class otherwise.
- */
-inline scene::GroupNode* Node_getGroupNode(scene::Node& node) {
-	return dynamic_cast<scene::GroupNode*>(&node);
+inline BrushDoom3Ptr Node_getBrushDoom3(scene::INodePtr node) {
+	return boost::dynamic_pointer_cast<BrushDoom3>(node);
 }
 
 // Helper class
@@ -850,8 +765,8 @@ public:
 	ChildRotator(const Quaternion& rotation) :
 	_rotation(rotation) {}
 
-	bool pre(scene::Node& node) const {
-		scene::Instantiable* instantiable = Node_getInstantiable(node);
+	bool pre(scene::INodePtr node) const {
+		scene::InstantiablePtr instantiable = Node_getInstantiable(node);
 
 		if (instantiable != NULL) {
 			instantiable->forEachInstance(InstanceVisitor(*this));
@@ -872,8 +787,8 @@ class ChildTransformReverter :
 			public scene::Traversable::Walker,
 	public InstanceFunctor {
 public:
-	bool pre(scene::Node& node) const {
-		scene::Instantiable* instantiable = Node_getInstantiable(node);
+	bool pre(scene::INodePtr node) const {
+		scene::InstantiablePtr instantiable = Node_getInstantiable(node);
 
 		if (instantiable != NULL) {
 			instantiable->forEachInstance(InstanceVisitor(*this));
@@ -894,8 +809,8 @@ class ChildTransformFreezer :
 			public scene::Traversable::Walker,
 	public InstanceFunctor {
 public:
-	bool pre(scene::Node& node) const {
-		scene::Instantiable* instantiable = Node_getInstantiable(node);
+	bool pre(scene::INodePtr node) const {
+		scene::InstantiablePtr instantiable = Node_getInstantiable(node);
 
 		if (instantiable != NULL) {
 			instantiable->forEachInstance(InstanceVisitor(*this));
@@ -920,8 +835,8 @@ public:
 	ChildTranslator(const Vector3& translation) :
 	_translation(translation) {}
 
-	bool pre(scene::Node& node) const {
-		scene::Instantiable* instantiable = Node_getInstantiable(node);
+	bool pre(scene::INodePtr node) const {
+		scene::InstantiablePtr instantiable = Node_getInstantiable(node);
 
 		if (instantiable != NULL) {
 			instantiable->forEachInstance(InstanceVisitor(*this));
@@ -938,9 +853,9 @@ public:
 	}
 };
 
-inline void translateDoom3Brush(scene::Node& node, const Vector3& translation) {
+inline void translateDoom3Brush(scene::INodePtr node, const Vector3& translation) {
 	// Check for BrushDoom3
-	BrushDoom3* brush = Node_getBrushDoom3(node);
+	BrushDoom3Ptr brush = Node_getBrushDoom3(node);
 	if (brush != NULL) {
 		brush->translateDoom3Brush(translation);
 	}
@@ -953,7 +868,7 @@ public:
 	Doom3BrushTranslator(const Vector3& origin) :
 	m_origin(origin) {}
 
-	bool pre(scene::Node& node) const {
+	bool pre(scene::INodePtr node) const {
 		translateDoom3Brush(node, m_origin);
 		return true;
 	}
@@ -964,7 +879,9 @@ class ConstReference;
 typedef ConstReference<scene::Path> PathConstReference;
 
 #include "generic/referencecounted.h"
-typedef SmartReference<scene::Node, IncRefDecRefCounter<scene::Node> > NodeSmartReference;
+//typedef SmartReference<scene::Node, IncRefDecRefCounter<scene::Node> > NodeSmartReference;
+// greebo: Redirect the NodeSmartReference to boost::shared_ptr
+//typedef scene::INodePtr NodeSmartReference;
 
 // greebo: These tool methods have been moved from map.cpp, they might come in handy
 enum ENodeType {
@@ -984,7 +901,7 @@ inline std::string nodetype_get_name(ENodeType type) {
 	return "unknown";
 }
 
-inline ENodeType node_get_nodetype(scene::Node& node) {
+inline ENodeType node_get_nodetype(scene::INodePtr node) {
 	if (Node_isEntity(node)) {
 		return eNodeEntity;
 	}

@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <cstddef>
 #include <string>
+#include "inode.h"
 #include "generic/callbackfwd.h"
 #include "math/Vector3.h"
 
@@ -54,7 +55,7 @@ void Scene_BrushFlipTexture_Component_Selected(unsigned int flipAxis);
 
 /** greebo: Constructs the region boundary brushes
  */
-void ConstructRegionBrushes(scene::Node* brushes[6], const Vector3& region_mins, const Vector3& region_maxs);
+void ConstructRegionBrushes(scene::INodePtr brushes[6], const Vector3& region_mins, const Vector3& region_maxs);
 
 void BrushFilters_construct();
 void Brush_registerCommands();

@@ -223,6 +223,9 @@ class Radiant
 public:
   Radiant()
   {
+  	// Reset the node id count
+  	scene::Node::resetIds();
+  	
     GlobalFiletypes().addType(
     	"sound", "wav", FileTypePattern("PCM sound files", "*.wav"));
 
@@ -235,7 +238,6 @@ public:
     GlobalXYWnd().construct();
     GlobalTextureBrowser().construct();
     Entity_Construct();
-    NullModel_construct();
     map::AutoSaver().init();
     
     // Instantiate the plugin modules.
@@ -269,7 +271,6 @@ public:
   {
     GlobalFileSystem().shutdown();
 
-    NullModel_destroy();
     Entity_Destroy();
     GlobalXYWnd().destroy();
     GlobalCamera().destroy();

@@ -22,16 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined (INCLUDED_NULLMODEL_H)
 #define INCLUDED_NULLMODEL_H
 
-namespace scene
-{
-  class Node;
-}
+#include "inode.h"
 
-#include "generic/referencecounted.h"
-typedef SmartReference<scene::Node, IncRefDecRefCounter<scene::Node> > NodeSmartReference;
-NodeSmartReference NewNullModel();
-
-void NullModel_construct();
-void NullModel_destroy();
+scene::INodePtr NewNullModel();
 
 #endif

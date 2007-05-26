@@ -47,7 +47,7 @@ public:
     : m_observer(observer)
   {
   }
-  TraversableObserverInsertOutputIterator& operator=(const NodeReference& node)
+  TraversableObserverInsertOutputIterator& operator=(const scene::INodePtr node)
   { 
     m_observer->insertChild(node);
     return *this;
@@ -72,7 +72,7 @@ public:
     : m_observer(observer)
   {
   }
-  TraversableObserverEraseOutputIterator& operator=(const NodeReference& node)
+  TraversableObserverEraseOutputIterator& operator=(const scene::INodePtr node)
   { 
     m_observer->eraseChild(node);
     return *this;
@@ -82,13 +82,13 @@ public:
   TraversableObserverEraseOutputIterator& operator++(int) { return *this; }
 };
 
-typedef UnsortedSet<NodeSmartReference> UnsortedNodeSet;
+typedef UnsortedSet<scene::INodePtr> UnsortedNodeSet;
 
 /// \brief Calls \p observer->\c insert for each node that exists only in \p other and \p observer->\c erase for each node that exists only in \p self
 inline void nodeset_diff(const UnsortedNodeSet& self, const UnsortedNodeSet& other, scene::Traversable::Observer* observer)
 {
-  std::vector<NodeReference> sorted(self.begin(), self.end());
-  std::vector<NodeReference> other_sorted(other.begin(), other.end());
+  std::vector<scene::INodePtr> sorted(self.begin(), self.end());
+  std::vector<scene::INodePtr> other_sorted(other.begin(), other.end());
 
   std::sort(sorted.begin(), sorted.end());
   std::sort(other_sorted.begin(), other_sorted.end());
@@ -98,7 +98,8 @@ inline void nodeset_diff(const UnsortedNodeSet& self, const UnsortedNodeSet& oth
 }
 
 /// \brief A sequence of node references which notifies an observer of inserts and deletions, and uses the global undo system to provide undo for modifications.
-class TraversableNodeSet : public scene::Traversable
+class TraversableNodeSet : 
+	public scene::Traversable
 {
   UnsortedNodeSet m_children;
   UndoableObject<TraversableNodeSet> m_undo;
@@ -141,6 +142,7 @@ public:
   }
   ~TraversableNodeSet()
   {
+  	//std::cout << "TraversableNodeSet destructed.\n";
     notifyEraseAll();
   }
   TraversableNodeSet& operator=(const TraversableNodeSet& other)
@@ -176,14 +178,15 @@ public:
     m_observer = 0;
   }
   /// \brief \copydoc scene::Traversable::insert()
-  void insert(scene::Node& node)
+  void insert(scene::INodePtr node)
   {
-    ASSERT_MESSAGE(&node != 0, "TraversableNodeSet::insert: sanity check failed");
+  	//std::cout << "TraversableNodeSet: Inserting child: " << node.get() << "\n";
+    //ASSERT_MESSAGE(&node != 0, "TraversableNodeSet::insert: sanity check failed");
     m_undo.save();
 
-    ASSERT_MESSAGE(m_children.find(NodeSmartReference(node)) == m_children.end(), "TraversableNodeSet::insert - element already exists");
+    //ASSERT_MESSAGE(m_children.find(node) == m_children.end(), "TraversableNodeSet::insert - element already exists");
 
-    m_children.insert(NodeSmartReference(node));
+    m_children.insert(node);
 
     if(m_observer)
     {
@@ -191,19 +194,20 @@ public:
     }
   }
   /// \brief \copydoc scene::Traversable::erase()
-  void erase(scene::Node& node)
+  void erase(scene::INodePtr node)
   {
+  	//std::cout << "TraversableNodeSet: Erasing child: " << node.get() << "\n";
     ASSERT_MESSAGE(&node != 0, "TraversableNodeSet::erase: sanity check failed");
     m_undo.save();
 
-    ASSERT_MESSAGE(m_children.find(NodeSmartReference(node)) != m_children.end(), "TraversableNodeSet::erase - failed to find element");
+    //ASSERT_MESSAGE(m_children.find(node) != m_children.end(), "TraversableNodeSet::erase - failed to find element");
 
     if(m_observer)
     {
       m_observer->eraseChild(node);
     }
 
-    m_children.erase(NodeSmartReference(node));
+    m_children.erase(node);
   }
   /// \brief \copydoc scene::Traversable::traverse()
   void traverse(const Walker& walker)
@@ -248,7 +252,7 @@ namespace std
 class TraversableNode : public scene::Traversable
 {
 public:
-  TraversableNode() : m_node(0), m_observer(0)
+  TraversableNode() : m_node(scene::INodePtr()), m_observer(0)
   {
   }
 
@@ -259,7 +263,7 @@ public:
     m_observer = observer;
     if(m_node != 0)
     {
-      m_observer->insertChild(*m_node);
+      m_observer->insertChild(m_node);
     }
   }
   void detach(Observer* observer)
@@ -267,84 +271,84 @@ public:
     ASSERT_MESSAGE(m_observer == observer, "TraversableNode::detach - cannot detach observer");
     if(m_node != 0)
     {
-      m_observer->eraseChild(*m_node);
+      m_observer->eraseChild(m_node);
     }
     m_observer = 0;
   }
 
 	/** Insert a contained node.
 	 */
-	void insert(scene::Node& node) {
+	void insert(scene::INodePtr node) {
 	    // Throw an exception if there is already a contained node
 	    if (m_node != 0) {
 	    	throw std::runtime_error("TraversableNode::insert() : already a contained node.");
 	    }
     
-    	m_node = &node;
-		node.IncRef();
+    	m_node = node;
+		//node.IncRef();
 
 		if(m_observer != 0) {
 			m_observer->insertChild(node);
 		}
 	}
 	
-  void erase(scene::Node& node)
+  void erase(scene::INodePtr node)
   {
-    assert(m_node == &node);
+    assert(m_node == node);
 
     if(m_observer != 0)
     {
       m_observer->eraseChild(node);
     }
 
-    m_node = 0;
-    node.DecRef();
+    m_node = scene::INodePtr();
+    //node.DecRef();
   }
   void traverse(const scene::Traversable::Walker& walker)
   {
     if(m_node != 0)
     {
-      Node_traverseSubgraph(*m_node, walker);
+      Node_traverseSubgraph(m_node, walker);
     }
   }
   bool empty() const
   {
-    return m_node != 0;
+    return m_node != 0;	// greebo: Is this truly intentional? Shouldn't this be == 0?
   }
 
-  scene::Node& get()
+  scene::INodePtr get()
   {
-    return *m_node;
+    return m_node;
   }
 
 private:
-  scene::Node* m_node;
+  scene::INodePtr m_node;
   Observer* m_observer;
 };
 
 class TraversableObserverInsert
 {
-  scene::Node& node;
+  scene::INodePtr _node;
 public:
-  TraversableObserverInsert(scene::Node& node) : node(node)
+  TraversableObserverInsert(scene::INodePtr node) : _node(node)
   {
   }
   void operator()(scene::Traversable::Observer& observer) const
   {
-    observer.insertChild(node);
+    observer.insertChild(_node);
   }
 };
 
 class TraversableObserverErase
 {
-  scene::Node& node;
+  scene::INodePtr _node;
 public:
-  TraversableObserverErase(scene::Node& node) : node(node)
+  TraversableObserverErase(scene::INodePtr node) : _node(node)
   {
   }
   void operator()(scene::Traversable::Observer& observer) const
   {
-    observer.eraseChild(node);
+    observer.eraseChild(_node);
   }
 };
 
@@ -353,11 +357,11 @@ class TraversableObserverPairRelay :
 	public scene::Traversable::Observer
 {
 public:
-  void insertChild(scene::Node& node)
+  void insertChild(scene::INodePtr node)
   {
     forEach(TraversableObserverInsert(node));
   }
-  void eraseChild(scene::Node& node)
+  void eraseChild(scene::INodePtr node)
   {
     forEach(TraversableObserverErase(node));
   }
@@ -390,11 +394,11 @@ public:
 class TraversableObserverRelay : public ReferenceSet<scene::Traversable::Observer>, public scene::Traversable::Observer
 {
 public:
-  void insert(scene::Node& node)
+  void insert(scene::INodePtr node)
   {
     forEach(TraversableObserverInsert(node));
   }
-  void erase(scene::Node& node)
+  void erase(scene::INodePtr node)
   {
     forEach(TraversableObserverErase(node));
   }

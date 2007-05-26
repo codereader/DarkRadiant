@@ -102,7 +102,7 @@ public:
   PicoModelLoader(const picoModule_t* module) : m_module(module)
   {
   }
-  scene::Node& loadModel(ArchiveFile& file)
+  scene::INodePtr loadModel(ArchiveFile& file)
   {
     return loadPicoModel(m_module, file);
   }

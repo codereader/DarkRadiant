@@ -38,9 +38,10 @@ public:
 
   virtual const Matrix4& getLocalPivot() const = 0;
 };
+typedef boost::shared_ptr<Editable> EditablePtr;
 
-inline Editable* Node_getEditable(scene::Node& node) {
-	return dynamic_cast<Editable*>(&node);
+inline EditablePtr Node_getEditable(scene::INodePtr node) {
+	return boost::dynamic_pointer_cast<Editable>(node);
 }
 
 class Snappable
@@ -50,9 +51,35 @@ public:
 
   virtual void snapto(float snap) = 0;
 };
+typedef boost::shared_ptr<Snappable> SnappablePtr;
 
-inline Snappable* Node_getSnappable(scene::Node& node) {
-	return dynamic_cast<Snappable*>(&node);
+inline SnappablePtr Node_getSnappable(scene::INodePtr node) {
+	return boost::dynamic_pointer_cast<Snappable>(node);
 }
+
+class ComponentEditable {
+public:
+	STRING_CONSTANT(Name, "ComponentEditable");
+
+	virtual const AABB& getSelectedComponentsBounds() const = 0;
+};
+typedef boost::shared_ptr<ComponentEditable> ComponentEditablePtr;
+
+inline ComponentEditable* Instance_getComponentEditable(scene::Instance& instance) {
+	return dynamic_cast<ComponentEditable*>(&instance);
+}
+
+class ComponentSnappable {
+public:
+	STRING_CONSTANT(Name, "ComponentSnappable");
+
+	virtual void snapComponents(float snap) = 0;
+};
+typedef boost::shared_ptr<ComponentSnappable> ComponentSnappablePtr;
+
+inline ComponentSnappable* Instance_getComponentSnappable(scene::Instance& instance) {
+	return dynamic_cast<ComponentSnappable*>(&instance);
+}
+
 
 #endif

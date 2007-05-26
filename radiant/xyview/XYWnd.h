@@ -64,7 +64,7 @@ class XYWnd :
 	
 	int m_nNewBrushPressx;
 	int m_nNewBrushPressy;
-	scene::Node* m_NewBrushDrag;
+	scene::INodePtr m_NewBrushDrag;
 	bool m_bNewBrushDrag;
 	
 	Vector3 m_mousePosition;

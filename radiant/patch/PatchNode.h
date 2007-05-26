@@ -94,8 +94,8 @@ public:
 	}
 
 	// Clones this node, allocates a new Node on the heap and passes itself to the constructor of the new node
-	scene::Node& clone() const {
-		return *(new PatchNode(*this));
+	scene::INodePtr clone() const {
+		return scene::INodePtr(new PatchNode(*this));
 	}
 
 	// This creates a new PatchInstance at the given scenepath and the given parent 

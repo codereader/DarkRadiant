@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_IREFERENCE_H)
 #define INCLUDED_IREFERENCE_H
 
+#include "inode.h"
 #include "generic/constant.h"
 
 #include <string>
@@ -41,8 +42,8 @@ public:
   virtual bool save() = 0;
   virtual void flush() = 0;
   virtual void refresh() = 0;
-  virtual scene::Node* getNode() = 0;
-  virtual void setNode(scene::Node* node) = 0;
+  virtual scene::INodePtr getNode() = 0;
+  virtual void setNode(scene::INodePtr node) = 0;
   virtual void attach(ModuleObserver& observer) = 0;
   virtual void detach(ModuleObserver& observer) = 0;
   virtual void realise() = 0;

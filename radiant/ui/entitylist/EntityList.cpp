@@ -267,9 +267,11 @@ gboolean EntityList::onSelection(GtkTreeSelection *selection,
 		selectable->setSelected(path_currently_selected == FALSE);
 
 		// greebo: Grab the origin keyvalue from the entity and focus the view on it
-		Entity* entity = Node_getEntity(*node);
-		if (entity != NULL) {
-			Vector3 entityOrigin(entity->getKeyValue("origin"));
+		EntityNode* entityNode = dynamic_cast<EntityNode*>(node);
+		if (entityNode != NULL) {
+			Entity& entity = entityNode->getEntity();
+			
+			Vector3 entityOrigin(entity.getKeyValue("origin"));
 
 			// Move the camera a bit off the entity origin
 			entityOrigin += Vector3(-50, 0, 50);

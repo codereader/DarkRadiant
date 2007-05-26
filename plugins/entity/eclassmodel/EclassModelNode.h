@@ -39,8 +39,8 @@ public:
 	~EclassModelNode();
 
 	// scene::Traversable Implementation
-	virtual void insert(Node& node);
-	virtual void erase(Node& node);
+	virtual void insert(scene::INodePtr node);
+	virtual void erase(scene::INodePtr node);
 	virtual void traverse(const Walker& walker);
 	virtual bool empty() const;
 
@@ -62,10 +62,10 @@ public:
 	virtual std::string getRemap(const std::string& name) const;
 
 	// scene::Traversable::Observer implementation
-	void insertChild(scene::Node& child);
-	void eraseChild(scene::Node& child);
+	void insertChild(scene::INodePtr child);
+	void eraseChild(scene::INodePtr child);
 
-	scene::Node& clone() const;
+	scene::INodePtr clone() const;
 
 	scene::Instance* create(const scene::Path& path, scene::Instance* parent);
 	void forEachInstance(const scene::Instantiable::Visitor& visitor);

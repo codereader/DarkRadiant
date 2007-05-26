@@ -126,16 +126,16 @@ void BrushFaceData_fromFace(const BrushFaceDataCallback& callback, Face& face) {
 typedef ConstReferenceCaller1<BrushFaceDataCallback, Face&, BrushFaceData_fromFace> BrushFaceDataFromFaceCaller;
 typedef Callback1<Face&> FaceCallback;
 
-scene::Node& BrushModuleClass::createBrush() {
-	return *(new BrushNode);
+scene::INodePtr BrushModuleClass::createBrush() {
+	return scene::INodePtr(new BrushNode);
 }
 
-void BrushModuleClass::Brush_forEachFace(scene::Node& brush, const BrushFaceDataCallback& callback) {
+void BrushModuleClass::Brush_forEachFace(scene::INodePtr brush, const BrushFaceDataCallback& callback) {
 	::Brush_forEachFace(*Node_getBrush(brush), FaceCallback(BrushFaceDataFromFaceCaller(callback)));
 }
 
 // Adds a face plan to the given brush
-bool BrushModuleClass::Brush_addFace(scene::Node& brush, const _QERFaceData& faceData) {
+bool BrushModuleClass::Brush_addFace(scene::INodePtr brush, const _QERFaceData& faceData) {
 	Node_getBrush(brush)->undoSave();
 	return Node_getBrush(brush)->addPlane(faceData.m_p0, faceData.m_p1, faceData.m_p2, faceData.m_shader, TextureProjection(faceData.m_texdef, BrushPrimitTexDef(), Vector3(0, 0, 0), Vector3(0, 0, 0))) != 0;
 }

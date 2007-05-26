@@ -141,10 +141,10 @@ class MapRoot :
   UndoFileChangeTracker m_changeTracker;
 public:
   	// scene::Traversable Implementation
-	virtual void insert(Node& node) {
+	virtual void insert(scene::INodePtr node) {
 		m_traverse.insert(node);
 	}
-    virtual void erase(Node& node) {
+    virtual void erase(scene::INodePtr node) {
     	m_traverse.erase(node);	
     }
     virtual void traverse(const Walker& walker) {
@@ -179,7 +179,8 @@ public:
 	MapRoot(const std::string& name) : 
 		_name(name)
 	{
-		m_isRoot = true;
+		// Set this node to root status
+		setIsRoot(true);
 		m_traverse.attach(this);
 	
 		GlobalUndoSystem().trackerAttach(m_changeTracker);
@@ -195,15 +196,14 @@ public:
 	void detach(const NameCallback& callback)
 	{}
 
-  virtual void release()
-  {
+  virtual ~MapRoot() {
   	// Override the default release() method
     GlobalUndoSystem().trackerDetach(m_changeTracker);
 
     m_traverse.detach(this);
     
     // Pass the call to the base method in scene::Node
-    Node::release();
+    //Node::release(); // greebo: no double deletes, please
   }
   
   InstanceCounter m_instanceCounter;
@@ -223,18 +223,18 @@ public:
   }
 
 	// scene::Traversable::Observer implementation
-  void insertChild(scene::Node& child)
+  void insertChild(scene::INodePtr child)
   {
     m_instances.insertChild(child);
   }
-  void eraseChild(scene::Node& child)
+  void eraseChild(scene::INodePtr child)
   {
     m_instances.eraseChild(child);
   }
 
-  scene::Node& clone() const
+  scene::INodePtr clone() const
   {
-    return *(new MapRoot(*this));
+    return scene::INodePtr(new MapRoot(*this));
   }
 
   scene::Instance* create(const scene::Path& path, scene::Instance* parent)
@@ -257,8 +257,8 @@ public:
   }
 };
 
-inline NodeSmartReference NewMapRoot(const std::string& name) {
-	return NodeSmartReference(*(new MapRoot(name)));
+inline scene::INodePtr NewMapRoot(const std::string& name) {
+	return scene::INodePtr(new MapRoot(name));
 }
 
 

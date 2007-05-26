@@ -51,7 +51,7 @@ void Scene_PatchConstructPrefab(scene::Graph& graph, const AABB& aabb, const std
 {
   GlobalSelectionSystem().setSelectedAll(false);
 
-  NodeSmartReference node(g_patchCreator->createPatch());
+  scene::INodePtr node(g_patchCreator->createPatch());
   Node_getTraversable(Map_FindOrInsertWorldspawn(g_map))->insert(node);
 
   Patch* patch = Node_getPatch(node);
@@ -61,9 +61,9 @@ void Scene_PatchConstructPrefab(scene::Graph& graph, const AABB& aabb, const std
   patch->controlPointsChanged();
 
   {
-    scene::Path patchpath(makeReference(GlobalSceneGraph().root()));
-    patchpath.push(makeReference(*Map_GetWorldspawn(g_map)));
-    patchpath.push(makeReference(node.get()));
+    scene::Path patchpath(GlobalSceneGraph().root());
+    patchpath.push(Map_GetWorldspawn(g_map));
+    patchpath.push(node);
     Instance_getSelectable(*graph.find(patchpath))->setSelected(true);
   }
 }
@@ -91,7 +91,7 @@ void Patch_makeCaps(Patch& patch, scene::Instance& instance, EPatchCap type, con
   }
 
   {
-    NodeSmartReference cap(g_patchCreator->createPatch());
+    scene::INodePtr cap(g_patchCreator->createPatch());
     Node_getTraversable(instance.path().parent())->insert(cap);
 
     patch.MakeCap(Node_getPatch(cap), type, ROW, true);
@@ -99,12 +99,12 @@ void Patch_makeCaps(Patch& patch, scene::Instance& instance, EPatchCap type, con
 
     scene::Path path(instance.path());
     path.pop();
-    path.push(makeReference(cap.get()));
+    path.push(cap);
     selectPath(path, true);
   }
 
   {
-    NodeSmartReference cap(g_patchCreator->createPatch());
+    scene::INodePtr cap(g_patchCreator->createPatch());
     Node_getTraversable(instance.path().parent())->insert(cap);
 
     patch.MakeCap(Node_getPatch(cap), type, ROW, false);
@@ -112,7 +112,7 @@ void Patch_makeCaps(Patch& patch, scene::Instance& instance, EPatchCap type, con
 
     scene::Path path(instance.path());
     path.pop();
-    path.push(makeReference(cap.get()));
+    path.push(cap);
     selectPath(path, true);
   }
 }
@@ -184,9 +184,8 @@ Patch* Scene_GetUltimateSelectedVisiblePatch()
 {
   if(GlobalSelectionSystem().countSelected() != 0)
   {
-    scene::Node& node = GlobalSelectionSystem().ultimateSelected().path().top();
-    if(node.visible())
-    {
+    scene::INodePtr node = GlobalSelectionSystem().ultimateSelected().path().top();
+    if(node->visible()) {
       return Node_getPatch(node);
     }
   }
@@ -555,7 +554,7 @@ void thickenPatches(PatchPtrVector patchList,
 		Patch& sourcePatch = *patchList[i]; 
 		
 		// Create a new patch node
-		NodeSmartReference node(g_patchCreator->createPatch());
+		scene::INodePtr node(g_patchCreator->createPatch());
 		// Insert the node into worldspawn
 		Node_getTraversable(Map_FindOrInsertWorldspawn(g_map))->insert(node);
 	
@@ -567,19 +566,19 @@ void thickenPatches(PatchPtrVector patchList,
 	
 		// Now select the newly created patches
 		{
-			scene::Path patchpath(makeReference(GlobalSceneGraph().root()));
-			patchpath.push(makeReference(*Map_GetWorldspawn(g_map)));
-			patchpath.push(makeReference(node.get()));
+			scene::Path patchpath(GlobalSceneGraph().root());
+			patchpath.push(Map_GetWorldspawn(g_map));
+			patchpath.push(node);
 			Instance_getSelectable(*GlobalSceneGraph().find(patchpath))->setSelected(true);
 		}
 		
 		if (createSeams && thickness > 0.0f) {
 			// Allocate four new patches
-			NodeSmartReference nodes[4] = {
-				NodeSmartReference(g_patchCreator->createPatch()),
-				NodeSmartReference(g_patchCreator->createPatch()),
-				NodeSmartReference(g_patchCreator->createPatch()),
-				NodeSmartReference(g_patchCreator->createPatch())
+			scene::INodePtr nodes[4] = {
+				scene::INodePtr(g_patchCreator->createPatch()),
+				scene::INodePtr(g_patchCreator->createPatch()),
+				scene::INodePtr(g_patchCreator->createPatch()),
+				scene::INodePtr(g_patchCreator->createPatch())
 			};
 			
 			// Now create the four walls
@@ -595,9 +594,9 @@ void thickenPatches(PatchPtrVector patchList,
 				
 				// Now select the newly created patches
 				{
-					scene::Path patchpath(makeReference(GlobalSceneGraph().root()));
-					patchpath.push(makeReference(*Map_GetWorldspawn(g_map)));
-					patchpath.push(makeReference(nodes[i].get()));
+					scene::Path patchpath(GlobalSceneGraph().root());
+					patchpath.push(Map_GetWorldspawn(g_map));
+					patchpath.push(nodes[i]);
 					Instance_getSelectable(*GlobalSceneGraph().find(patchpath))->setSelected(true);
 				}
 			}

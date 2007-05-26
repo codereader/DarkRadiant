@@ -4,8 +4,8 @@
 #include <list>
 
 namespace {
-	inline Namespaced* Node_getNamespaced(scene::Node& node) {
-		return dynamic_cast<Namespaced*>(&node);
+	inline NamespacedPtr Node_getNamespaced(scene::INodePtr node) {
+		return boost::dynamic_pointer_cast<Namespaced>(node);
 	}		
 }
 
@@ -64,7 +64,7 @@ void Namespace::mergeNames(const Namespace& other) const {
 	}
 }
 
-void Namespace::gatherNamespaced(scene::Node& root) {
+void Namespace::gatherNamespaced(scene::INodePtr root) {
 	// Local helper class
 	class GatherNamespacedWalker : 
 		public scene::Traversable::Walker
@@ -75,8 +75,8 @@ void Namespace::gatherNamespaced(scene::Node& root) {
 			_list(list)
 		{}
 	
-		bool pre(scene::Node& node) const {
-			Namespaced* namespaced = Node_getNamespaced(node);
+		bool pre(scene::INodePtr node) const {
+			NamespacedPtr namespaced = Node_getNamespaced(node);
 			if (namespaced != NULL) {
 				_list.push_back(namespaced);
 			}

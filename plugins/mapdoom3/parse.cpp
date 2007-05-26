@@ -39,34 +39,34 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/ModalProgressDialog.h"
 #include "gtkutil/dialog.h"
 
-inline MapImporter* Node_getMapImporter(scene::Node& node) {
-	return dynamic_cast<MapImporter*>(&node);
+inline MapImporterPtr Node_getMapImporter(scene::INodePtr node) {
+	return boost::dynamic_pointer_cast<MapImporter>(node);
 }
 
 
 typedef std::list< std::pair<std::string, std::string> > KeyValues;
 
-NodeSmartReference g_nullNode(NewNullNode());
+scene::INodePtr g_nullNode(NewNullNode());
 
 
-NodeSmartReference Entity_create(EntityCreator& entityTable, IEntityClassPtr entityClass, const KeyValues& keyValues)
+scene::INodePtr Entity_create(EntityCreator& entityTable, IEntityClassPtr entityClass, const KeyValues& keyValues)
 {
-  scene::Node& entity(entityTable.createEntity(entityClass));
+  scene::INodePtr entity(entityTable.createEntity(entityClass));
   for(KeyValues::const_iterator i = keyValues.begin(); i != keyValues.end(); ++i)
   {
     Node_getEntity(entity)->setKeyValue((*i).first.c_str(), (*i).second.c_str());
   }
-  return NodeSmartReference(entity);
+  return entity;
 }
 
-NodeSmartReference Entity_parseTokens(
+scene::INodePtr Entity_parseTokens(
 	Tokeniser& tokeniser, 
 	EntityCreator& entityTable, 
 	const PrimitiveParser& parser, 
 	int index,
 	gtkutil::ModalProgressDialog& dialog)
 {
-  NodeSmartReference entity(g_nullNode);
+  scene::INodePtr entity(g_nullNode);
   KeyValues keyValues;
 	std::string classname = "";
 	
@@ -123,7 +123,7 @@ NodeSmartReference Entity_parseTokens(
       tokeniser.nextLine();
 
 		// Try to import the primitive, throwing exception if failed
-		NodeSmartReference primitive(parser.parsePrimitive(tokeniser));
+		scene::INodePtr primitive(parser.parsePrimitive(tokeniser));
 		if (primitive == g_nullNode 
 			|| !Node_getMapImporter(primitive)->importTokens(tokeniser))
 		{
@@ -134,7 +134,7 @@ NodeSmartReference Entity_parseTokens(
 
 		dlgBrushText = "\nLoading Primitive " + intToStr(count_primitives); 
 
-		scene::Traversable* traversable = Node_getTraversable(entity);
+		scene::TraversablePtr traversable = Node_getTraversable(entity);
 		if(Node_getEntity(entity)->isContainer() 
 		   && traversable != 0) 
 		{
@@ -194,7 +194,7 @@ NodeSmartReference Entity_parseTokens(
 
 // Check if the given node is excluded based on entity class (debug code). 
 // Return true if not excluded, false otherwise
-bool checkEntityClass(NodeSmartReference node) {
+bool checkEntityClass(scene::INodePtr node) {
 	// Obtain list of entityclasses to skip
 	static xml::NodeList skipLst = 
 		GlobalRegistry().findXPath("debug/mapdoom3//discardEntityClass");
@@ -244,7 +244,7 @@ bool checkEntityNum(int num) {
 
 // Insert an entity node into the scenegraph, checking if any of the debug flags
 // exclude this node
-void checkInsert(NodeSmartReference node, scene::Node& root, int count) {
+void checkInsert(scene::INodePtr node, scene::INodePtr root, int count) {
 
 	// Static "debug" flag obtained from the registry
 	static bool _debug = GlobalRegistry().get("user/debug") == "1";
@@ -257,10 +257,7 @@ void checkInsert(NodeSmartReference node, scene::Node& root, int count) {
 	Node_getTraversable(root)->insert(node);
 }
 		
-	
-	
-
-void Map_Read(scene::Node& root, 
+void Map_Read(scene::INodePtr root, 
 			  Tokeniser& tokeniser, 
 			  EntityCreator& entityTable, 
 			  const PrimitiveParser& parser)
@@ -292,7 +289,7 @@ void Map_Read(scene::Node& root,
 		// exception, display it and return
 		try {
 			// Get a node reference to the new entity
-			NodeSmartReference entity(Entity_parseTokens(tokeniser, 
+			scene::INodePtr entity(Entity_parseTokens(tokeniser, 
 														 entityTable, 
 														 parser, 
 														 entCount,

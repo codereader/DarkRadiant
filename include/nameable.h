@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <string>
 #include "generic/constant.h"
 #include "generic/callbackfwd.h"
+#include <boost/shared_ptr.hpp>
 
 typedef Callback1<const std::string&> NameCallback;
 
@@ -43,6 +44,7 @@ public:
 		// Empty default implementation
 	}
 };
+typedef boost::shared_ptr<Nameable> NameablePtr;
 
 
 

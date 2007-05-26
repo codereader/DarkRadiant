@@ -75,12 +75,12 @@ public:
 	// --------------- BrushCreator methods ---------------------------------------------
 	
 	// Creates a new brush node on the heap and returns it 
-	scene::Node& createBrush();
+	scene::INodePtr createBrush();
 	
-	void Brush_forEachFace(scene::Node& brush, const BrushFaceDataCallback& callback);
+	void Brush_forEachFace(scene::INodePtr brush, const BrushFaceDataCallback& callback);
 	
 	// Adds a face plan to the given brush
-	bool Brush_addFace(scene::Node& brush, const _QERFaceData& faceData);
+	bool Brush_addFace(scene::INodePtr brush, const _QERFaceData& faceData);
 	
 	// ----------------------------------------------------------------------------------
 	

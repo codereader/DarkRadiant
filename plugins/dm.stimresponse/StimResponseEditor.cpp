@@ -196,7 +196,7 @@ void StimResponseEditor::rescanSelection() {
 	if (info.entityCount == 1 && info.totalCount == 1) {
 		// Get the entity instance
 		scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
-		scene::Node& node = instance.path().top();
+		scene::INodePtr node = instance.path().top();
 		
 		_entity = Node_getEntity(node);
 		

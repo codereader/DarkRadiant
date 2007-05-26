@@ -581,13 +581,13 @@ void ObjectivesEditor::_onAddEntity(GtkWidget* w, ObjectivesEditor* self) {
 		GlobalEntityClassManager().findOrInsert(OBJECTIVE_ENTITY_CLASS, false);
 		
 	// Construct a Node of this entity type
-	NodeSmartReference node(GlobalEntityCreator().createEntity(eclass));
+	scene::INodePtr node(GlobalEntityCreator().createEntity(eclass));
 	
 	// Create a random offset
 	Node_getEntity(node)->setKeyValue("origin", RandomOrigin::generate(128));
 	
 	// Insert the node into the scene graph
-	scene::Traversable* root = Node_getTraversable(GlobalSceneGraph().root());
+	scene::TraversablePtr root = Node_getTraversable(GlobalSceneGraph().root());
 	assert(root);
 	root->insert(node);
 	

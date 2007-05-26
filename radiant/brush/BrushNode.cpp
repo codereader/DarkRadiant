@@ -54,8 +54,8 @@ void BrushNode::translateDoom3Brush(const Vector3& translation) {
 	m_brush.translateDoom3Brush(translation);
 }
 
-scene::Node& BrushNode::clone() const {
-	return *(new BrushNode(*this));
+scene::INodePtr BrushNode::clone() const {
+	return scene::INodePtr(new BrushNode(*this));
 }
 
 scene::Instance* BrushNode::create(const scene::Path& path, scene::Instance* parent) {

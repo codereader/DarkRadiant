@@ -108,9 +108,9 @@ public:
   }
 };
 
-inline void Node_modelSkinChanged(scene::Node& node)
+inline void Node_modelSkinChanged(scene::INodePtr node)
 {
-  scene::Instantiable* instantiable = Node_getInstantiable(node);
+  scene::InstantiablePtr instantiable = Node_getInstantiable(node);
   ASSERT_NOTNULL(instantiable);
   instantiable->forEachInstance(InstanceSkinChanged());
 }

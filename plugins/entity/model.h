@@ -33,12 +33,12 @@ class Model : public ModuleObserver
 {
   ResourceReference m_resource;
   scene::Traversable& m_traverse;
-  scene::Node* m_node;
+  scene::INodePtr m_node;
   Callback m_modelChanged;
 
 public:
   Model(scene::Traversable& traversable, const Callback& modelChanged)
-    : m_resource(""), m_traverse(traversable), m_node(0), m_modelChanged(modelChanged)
+    : m_resource(""), m_traverse(traversable), m_modelChanged(modelChanged)
   {
     m_resource.attach(*this);
   }
@@ -53,14 +53,14 @@ public:
     m_node = m_resource.get()->getNode();
     if(m_node != 0)
     {
-      m_traverse.insert(*m_node);
+      m_traverse.insert(m_node);
     }
   }
   void unrealise()
   {
     if(m_node != 0)
     {
-      m_traverse.erase(*m_node);
+      m_traverse.erase(m_node);
     }
   }
   
@@ -73,7 +73,7 @@ public:
   {
     return m_resource.getName();
   }
-  scene::Node* getNode() const
+  scene::INodePtr getNode() const
   {
     return m_node;
   }
@@ -113,7 +113,7 @@ public:
   }
   typedef MemberCaller1<SingletonModel, const std::string&, &SingletonModel::modelChanged> ModelChangedCaller;
 
-  scene::Node* getNode() const
+  scene::INodePtr getNode() const
   {
     return m_model.getNode();
   }

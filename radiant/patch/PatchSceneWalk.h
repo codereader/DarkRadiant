@@ -7,8 +7,8 @@
 #include "PatchInstance.h"
 
 // Casts a node onto a patch
-inline Patch* Node_getPatch(scene::Node& node) {
-	IPatchNode* patchNode = dynamic_cast<IPatchNode*>(&node);
+inline Patch* Node_getPatch(scene::INodePtr node) {
+	IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(node);
 	if (patchNode != NULL) {
 		return &patchNode->getPatch();;
 	}
@@ -31,9 +31,9 @@ public:
 	}
 	
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		if(path.top().get().visible()) {
+		if(path.top()->visible()) {
 			Patch* patch = Node_getPatch(path.top());
-			if(patch != 0) {
+			if(patch != NULL) {
 				m_functor(*patch);
 			}
 		}
@@ -51,7 +51,7 @@ public:
 	}
 	
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		if(path.top().get().visible()) {
+		if(path.top()->visible()) {
 			Patch* patch = Node_getPatch(path.top());
 			if(patch != 0 && Instance_getSelectable(instance)->isSelected()) {
 				m_functor(*patch);
@@ -71,7 +71,7 @@ public:
 	}
 
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		if(path.top().get().visible()) {
+		if(path.top()->visible()) {
 			PatchInstance* patch = Instance_getPatch(instance);
 			if(patch != 0) {
 				m_functor(*patch);
@@ -110,7 +110,7 @@ public:
 
 	void visit(scene::Instance& instance) const {
 		PatchInstance* patch = Instance_getPatch(instance);
-		if(patch != 0 && instance.path().top().get().visible()) {
+		if(patch != 0 && instance.path().top()->visible()) {
 			m_functor(*patch);
 		}
 	}

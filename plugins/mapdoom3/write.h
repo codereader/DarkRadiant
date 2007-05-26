@@ -24,6 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "imap.h"
 
-void Map_Write(scene::Node& root, GraphTraversalFunc traverse, std::ostream& os);
+void Map_Write(scene::INodePtr root, GraphTraversalFunc traverse, std::ostream& os);
 
 #endif

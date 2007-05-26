@@ -140,7 +140,7 @@ class NullModelNode :
   NullModel m_nullmodel;
 public:
   NullModelNode() {
-    m_isRoot = true;
+    setIsRoot(true);
   }
 
   scene::Instance* create(const scene::Path& path, scene::Instance* parent)
@@ -161,15 +161,6 @@ public:
   }
 };
 
-NodeSmartReference NewNullModel()
-{
-  return NodeSmartReference(*(new NullModelNode));
+scene::INodePtr NewNullModel() {
+	return scene::INodePtr(new NullModelNode);
 }
-
-void NullModel_construct()
-{
-}
-void NullModel_destroy()
-{
-}
-

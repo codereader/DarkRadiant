@@ -434,7 +434,7 @@ NewBrushDrag
 ==============
 */
 void XYWnd::NewBrushDrag_Begin(int x, int y) {
-	m_NewBrushDrag = 0;
+	m_NewBrushDrag = scene::INodePtr();
 	m_nNewBrushPressx = x;
 	m_nNewBrushPressy = y;
 
@@ -473,16 +473,16 @@ void XYWnd::NewBrushDrag(int x, int y) {
 		}
 	}
 
-	if (m_NewBrushDrag == 0) {
-		NodeSmartReference node(GlobalBrushCreator().createBrush());
+	if (m_NewBrushDrag == NULL) {
+		scene::INodePtr node(GlobalBrushCreator().createBrush());
 		Node_getTraversable(Map_FindOrInsertWorldspawn(g_map))->insert(node);
 
-		scene::Path brushpath(makeReference(GlobalSceneGraph().root()));
-		brushpath.push(makeReference(*Map_GetWorldspawn(g_map)));
-		brushpath.push(makeReference(node.get()));
+		scene::Path brushpath(GlobalSceneGraph().root());
+		brushpath.push(Map_GetWorldspawn(g_map));
+		brushpath.push(node);
 		selectPath(brushpath, true);
 
-		m_NewBrushDrag = node.get_pointer();
+		m_NewBrushDrag = node;
 	}
 
 	Scene_BrushResize_Selected(GlobalSceneGraph(),
@@ -957,7 +957,7 @@ void XYWnd::drawBlockGrid() {
 	int blockSize = GlobalXYWnd().defaultBlockSize(); 
 
 	// Check the worldspawn for a custom blocksize
-	Entity* worldSpawn = Node_getEntity(*Map_GetWorldspawn(g_map));
+	Entity* worldSpawn = Node_getEntity(Map_GetWorldspawn(g_map));
 	assert(worldSpawn);
 	std::string sizeVal = worldSpawn->getKeyValue("_blocksize");
 

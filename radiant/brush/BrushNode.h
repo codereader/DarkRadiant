@@ -55,6 +55,10 @@ public:
 	// Constructor
 	BrushNode();
 	
+	~BrushNode() {
+		//std::cout << "BrushNode destructed.";
+	}
+	
 	// Copy Constructor
 	BrushNode(const BrushNode& other);
 
@@ -80,7 +84,7 @@ public:
 	virtual void translateDoom3Brush(const Vector3& translation);
 
 	// Allocates a new node on the heap (via copy construction)
-	scene::Node& clone() const;
+	scene::INodePtr clone() const;
 	
 	// Creates a new instance on the heap
 	scene::Instance* create(const scene::Path& path, scene::Instance* parent);
@@ -94,8 +98,8 @@ public:
 }; // class BrushNode
 
 // Casts the node onto a BrushNode and returns the Brush pointer
-inline Brush* Node_getBrush(scene::Node& node) {
-	IBrushNode* brushNode = dynamic_cast<IBrushNode*>(&node);
+inline Brush* Node_getBrush(scene::INodePtr node) {
+	IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(node);
 	if (brushNode != NULL) {
 		return &brushNode->getBrush();
 	}

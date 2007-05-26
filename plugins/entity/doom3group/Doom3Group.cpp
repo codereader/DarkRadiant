@@ -430,9 +430,9 @@ void Doom3Group::rotationChanged() {
 
 void Doom3Group::skinChanged() {
 	if (isModel()) {
-		scene::Node* node = m_model.getNode();
-		if (node != 0) {
-			Node_modelSkinChanged(*node);
+		scene::INodePtr node = m_model.getNode();
+		if (node != NULL) {
+			Node_modelSkinChanged(node);
 		}
 	}
 }

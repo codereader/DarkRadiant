@@ -34,7 +34,7 @@ public:
 	void visit(scene::Instance& instance) const {
 		BrushInstance* brush = Instance_getBrush(instance);
 		if (brush != 0
-			&& instance.path().top().get().visible()) {
+			&& instance.path().top()->visible()) {
 			m_functor(*brush);
 		}
 	}
@@ -123,7 +123,7 @@ class InstanceIfVisible : public Functor {
 public:
 	InstanceIfVisible(const Functor& functor) : Functor(functor) {}
 	void operator()(scene::Instance& instance) {
-		if (instance.path().top().get().visible()) {
+		if (instance.path().top()->visible()) {
 			Functor::operator()(instance);
 		}
 	}
@@ -135,7 +135,7 @@ class BrushVisibleWalker : public scene::Graph::Walker {
 public:
 	BrushVisibleWalker(const Functor& functor) : m_functor(functor) {}
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		if (path.top().get().visible()) {
+		if (path.top()->visible()) {
 			BrushInstance* brush = Instance_getBrush(instance);
 			if (brush != 0) {
 				m_functor(*brush);

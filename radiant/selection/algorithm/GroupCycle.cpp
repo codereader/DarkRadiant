@@ -31,9 +31,9 @@ namespace algorithm {
 			
 			Selectable* selectable = Instance_getSelectable(instance);
 			
-			// If a selectable was found and it's not the parent itself, add it to the list
+			// If a selectable was found and the path depth is appropriate, add it
 			if (selectable != NULL && 
-				!(path == _parentPath) && 
+				//!(path == _parentPath) && 
 				path.size() >= _minPathDepth) 
 			{
 				_targetList.push_back(&instance);

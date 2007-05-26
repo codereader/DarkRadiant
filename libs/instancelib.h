@@ -43,11 +43,11 @@ public:
   {
   }
 
-	bool pre(scene::Node& node) const {
-		m_path.push(makeReference(node));
+	bool pre(scene::INodePtr node) const {
+		m_path.push(node);
 		
 		// greebo: Check for an instantiable node (every node should be)
-		scene::Instantiable* instantiable = Node_getInstantiable(node); 
+		scene::InstantiablePtr instantiable = Node_getInstantiable(node); 
 		if (instantiable != NULL) {
 			scene::Instance* instance = instantiable->create(m_path, m_parent.top());
 			m_observer->insert(instance);
@@ -57,7 +57,7 @@ public:
 		else {
 			// Could not find instantiable, something bad has happened
 			std::cout << "InstanceSubgraphWalker::pre Node Type: " << nodetype_get_name(node_get_nodetype(node)) << "\n";
-			Nameable* nameable = dynamic_cast<Nameable*>(&node);
+			NameablePtr nameable = boost::dynamic_pointer_cast<Nameable>(node);
 			if (nameable != NULL) {
 				std::cout << "Could not cast node on instantiable: " << nameable->name() << "\n";
 			}
@@ -66,7 +66,7 @@ public:
 		return true;
 	}
 
-  void post(scene::Node& node) const
+  void post(scene::INodePtr node) const
   {
     m_path.pop();
     m_parent.pop();
@@ -82,12 +82,12 @@ public:
     : m_observer(observer), m_path(parent)
   {
   }
-  bool pre(scene::Node& node) const
+  bool pre(scene::INodePtr node) const
   {
-    m_path.push(makeReference(node));
+    m_path.push(node);
     return true;
   }
-  void post(scene::Node& node) const
+  void post(scene::INodePtr node) const
   {
     scene::Instance* instance = Node_getInstantiable(node)->erase(m_observer, m_path);
     m_observer->erase(instance);
@@ -127,14 +127,14 @@ public:
 	// traverse observer
 	// greebo: This inserts the given node as child of this instance set.
 	// The call arriving at Doom3GroupNode::insert() is passed here, for example.
-	void insertChild(scene::Node& child) {
+	void insertChild(scene::INodePtr child) {
 		for (iterator i = begin(); i != end(); ++i) {
 			Node_traverseSubgraph(child, InstanceSubgraphWalker((*i).first.first, (*i).first.second, (*i).second));
 			(*i).second->boundsChanged();
 		}
 	}
 	
-	void eraseChild(scene::Node& child) {
+	void eraseChild(scene::INodePtr child) {
 		for (iterator i = begin(); i != end(); ++i) {
 			Node_traverseSubgraph(child, UninstanceSubgraphWalker((*i).first.first, (*i).first.second));
 			(*i).second->boundsChanged();
