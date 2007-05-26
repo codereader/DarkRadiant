@@ -6,12 +6,23 @@
 namespace gtkutil {
 
 TransientWindow::TransientWindow(const std::string& title, GtkWindow* parent, bool deletable) :
-		_title(title),
-		_parent(parent),
-		_window(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
-_deletable(deletable) {
+    _title(title),
+    _parent(parent),
+    _window(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
+    _deletable(deletable) 
+{
 	gtk_window_set_transient_for(GTK_WINDOW(_window), _parent);
 	gtk_window_set_title(GTK_WINDOW(_window), _title.c_str());
+
+#ifdef POSIX
+    
+    // This stops the child windows from appearing in the task bar. Not used on
+    // Windows because it possibly causes the windows not to have maximise
+    // buttons, which is a user-requested feature
+    gtk_window_set_type_hint(GTK_WINDOW(_window), GDK_WINDOW_TYPE_HINT_UTILITY);
+
+#endif
+    
 }
 
 // Operator cast to GtkWindow* (use this to create and retrieve the GtkWidget* pointer)
