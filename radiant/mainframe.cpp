@@ -118,7 +118,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "multimon.h"
 #include "patchmanip.h"
 #include "plugin.h"
-#include "points.h"
 #include "preferences.h"
 #include "qe3.h"
 #include "qgl.h"
