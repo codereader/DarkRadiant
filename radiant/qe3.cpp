@@ -49,7 +49,6 @@ please contact Id Software immediately at info@idsoftware.com.
 #include "gtkutil/messagebox.h"
 #include "error.h"
 #include "map.h"
-#include "points.h"
 #include "camera/CamWnd.h"
 #include "mainframe.h"
 #include "preferences.h"
