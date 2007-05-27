@@ -155,72 +155,59 @@ namespace
 
 static PointFile::const_iterator s_check_point;
 
-// old (but still relevant) pointfile code -------------------------------------
-
-// advance camera to next point
-void Pointfile_Next (void)
-{
-	// Return if pointfile is not visible
-	if(!PointFile::Instance().isVisible())
-    return;
-
-	if (s_check_point+2 == PointFile::Instance().end())
-	{
-		globalOutputStream() << "End of pointfile\n";
-		return;
-	}
-
-  PointFile::const_iterator i = ++s_check_point;
-
-
-  CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
-	camwnd.setCameraOrigin(*i);
-	GlobalXYWnd().getActiveXY()->setOrigin(*i);
-  {
-	  Vector3 dir((*(++i) - camwnd.getCameraOrigin()).getNormalised());
-    Vector3 angles(camwnd.getCameraAngles());
-	  angles[CAMERA_YAW] = static_cast<float>(radians_to_degrees(atan2(dir[1], dir[0])));
-	  angles[CAMERA_PITCH] = static_cast<float>(radians_to_degrees(asin(dir[2])));
-    camwnd.setCameraAngles(angles);
-  }
-}
-
 // advance camera to previous point
-void Pointfile_Prev (void)
-{
-  if(!PointFile::Instance().isVisible())
-    return;
-
-	if (s_check_point == PointFile::Instance().begin())
-	{
-		globalOutputStream() << "Start of pointfile\n";
+void PointFile::advance(bool forward) {
+	if (!isVisible()) {
 		return;
 	}
 
-	PointFile::const_iterator i = --s_check_point;
+	const_iterator i;
 
-  CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
+	if (forward) {
+		if (s_check_point+2 == PointFile::Instance().end())	{
+			globalOutputStream() << "End of pointfile\n";
+			return;
+		}
+
+		i = ++s_check_point;
+	}
+	else {
+		// Backward movement
+		if (s_check_point == _points.begin()) {
+			globalOutputStream() << "Start of pointfile\n";
+			return;
+		}
+	
+		i = --s_check_point;
+	}
+
+	CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
 	camwnd.setCameraOrigin(*i);
 	GlobalXYWnd().getActiveXY()->setOrigin(*i);
-  {
-	  Vector3 dir((*(++i) - camwnd.getCameraOrigin()).getNormalised());
-    Vector3 angles(camwnd.getCameraAngles());
-	  angles[CAMERA_YAW] = static_cast<double>(radians_to_degrees(atan2(dir[1], dir[0])));
-	  angles[CAMERA_PITCH] = static_cast<double>(radians_to_degrees(asin(dir[2])));
-    camwnd.setCameraAngles(angles);
-  }
+	{
+		Vector3 dir((*(++i) - camwnd.getCameraOrigin()).getNormalised());
+		Vector3 angles(camwnd.getCameraAngles());
+		angles[CAMERA_YAW] = static_cast<double>(radians_to_degrees(atan2(dir[1], dir[0])));
+		angles[CAMERA_PITCH] = static_cast<double>(radians_to_degrees(asin(dir[2])));
+		camwnd.setCameraAngles(angles);
+	}
 }
 
-void Pointfile_Clear()
-{
-  PointFile::Instance().show(false);
+void PointFile::nextLeakSpot() {
+	Instance().advance(true);
 }
 
-void Pointfile_Toggle()
-{
-	PointFile::Instance().show(!PointFile::Instance().isVisible());
+void PointFile::prevLeakSpot() {
+	Instance().advance(false);
+}
 
-	s_check_point = PointFile::Instance().begin();
+void PointFile::clear() {
+	show(false);
+}
+
+void PointFile::toggle() {
+	Instance().show(!Instance().isVisible());
+	s_check_point = Instance().begin();
 }
 
 void Pointfile_Construct()
@@ -229,9 +216,9 @@ void Pointfile_Construct()
 
   GlobalShaderCache().attachRenderable(PointFile::Instance());
 
-  GlobalEventManager().addCommand("TogglePointfile", FreeCaller<Pointfile_Toggle>());
-  GlobalEventManager().addCommand("NextLeakSpot", FreeCaller<Pointfile_Next>());
-  GlobalEventManager().addCommand("PrevLeakSpot", FreeCaller<Pointfile_Prev>());
+  GlobalEventManager().addCommand("TogglePointfile", FreeCaller<PointFile::toggle>());
+  GlobalEventManager().addCommand("NextLeakSpot", FreeCaller<PointFile::nextLeakSpot>());
+  GlobalEventManager().addCommand("PrevLeakSpot", FreeCaller<PointFile::prevLeakSpot>());
 }
 
 void Pointfile_Destroy()
