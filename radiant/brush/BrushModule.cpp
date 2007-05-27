@@ -71,7 +71,7 @@ void BrushModuleClass::construct() {
 	Brush::constructStatic();
 	
 	Brush::m_maxWorldCoord = GlobalRegistry().getFloat("game/defaults/maxWorldCoord");
-	BrushInstance::m_counter = &g_brushCount;
+	BrushInstance::m_counter = &GlobalRadiant().getCounter(counterBrushes);
 }
 
 void BrushModuleClass::destroy() {

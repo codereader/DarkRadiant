@@ -918,9 +918,9 @@ void DoMapInfo()
   g_object_unref(G_OBJECT(EntityBreakdownWalker));
 
   char tmp[16];
-  sprintf (tmp, "%u", Unsigned(g_brushCount.get()));
+  sprintf (tmp, "%u", Unsigned(GlobalRadiant().getCounter(counterBrushes).get()));
   gtk_entry_set_text (GTK_ENTRY (brushes_entry), tmp);
-  sprintf (tmp, "%u", Unsigned(g_entityCount.get()));
+  sprintf (tmp, "%u", Unsigned(GlobalRadiant().getCounter(counterEntities).get()));
   gtk_entry_set_text (GTK_ENTRY (entities_entry), tmp);
 
   modal_dialog_show(window, dialog);
@@ -977,8 +977,8 @@ void Map_LoadFile (const std::string& filename)
   globalOutputStream() << "--- LoadMapFile ---\n";
   globalOutputStream() << g_map.m_name.c_str() << "\n";
   
-  globalOutputStream() << makeLeftJustified(Unsigned(g_brushCount.get()), 5) << " primitive\n";
-  globalOutputStream() << makeLeftJustified(Unsigned(g_entityCount.get()), 5) << " entities\n";
+  globalOutputStream() << makeLeftJustified(Unsigned(GlobalRadiant().getCounter(counterBrushes).get()), 5) << " primitive\n";
+  globalOutputStream() << makeLeftJustified(Unsigned(GlobalRadiant().getCounter(counterEntities).get()), 5) << " entities\n";
 
 	// Add the origin to all the children of func_static, etc.
 	map::addOriginToChildPrimitives();

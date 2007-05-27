@@ -58,7 +58,7 @@ void QE_UpdateStatusBar() {
 	g_pParentWnd->SetStatusText(g_pParentWnd->m_brushcount_status, text);
 }
 
-SimpleCounter g_brushCount;
+/*SimpleCounter g_brushCount;
 
 void QE_brushCountChanged()
 {
@@ -72,7 +72,7 @@ void QE_entityCountChanged()
 {
   g_numentities = int(g_entityCount.get());
   QE_UpdateStatusBar();
-}
+}*/
 
 bool ConfirmModified(const char* title)
 {
