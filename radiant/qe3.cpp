@@ -38,30 +38,24 @@ please contact Id Software immediately at info@idsoftware.com.
 
 #include <map>
 
-#include <gtk/gtktearoffmenuitem.h>
-
 #include "stream/textfilestream.h"
-#include "cmdlib.h"
 #include "stream/stringstream.h"
-#include "os/path.h"
+#include "string/string.h"
 #include "scenelib.h"
 
 #include "gtkutil/messagebox.h"
 #include "error.h"
 #include "map.h"
-#include "camera/CamWnd.h"
 #include "mainframe.h"
-#include "preferences.h"
 #include "convert.h"
 
 int g_numbrushes = 0;
 int g_numentities = 0;
 
-void QE_UpdateStatusBar()
-{
-  char buffer[128];
-  sprintf(buffer, "Brushes: %d Entities: %d", g_numbrushes, g_numentities);
-  g_pParentWnd->SetStatusText(g_pParentWnd->m_brushcount_status, buffer);
+void QE_UpdateStatusBar() {
+	std::string text = "Brushes: " + intToStr(g_numbrushes);
+	text += " Entities: " + intToStr(g_numentities);
+	g_pParentWnd->SetStatusText(g_pParentWnd->m_brushcount_status, text);
 }
 
 SimpleCounter g_brushCount;
@@ -104,19 +98,6 @@ bool ConfirmModified(const char* title)
   return true;
 }
 
-
-const char* const EXECUTABLE_TYPE = 
-#if defined(__linux__) || defined (__FreeBSD__)
-"x86"
-#elif defined(__APPLE__)
-"ppc"
-#elif defined(WIN32)
-"exe"
-#else
-#error "unknown platform"
-#endif
-;
-
 // =============================================================================
 // Sys_ functions
 
@@ -131,28 +112,5 @@ void Sys_SetTitle(const char *text, bool modified)
   }
 
   gtk_window_set_title(MainFrame_getWindow(), title.c_str());
-}
-
-bool g_bWaitCursor = false;
-
-void Sys_BeginWait (void)
-{
-  ScreenUpdates_Disable("Processing...", "Please Wait");
-  GdkCursor *cursor = gdk_cursor_new (GDK_WATCH);
-  gdk_window_set_cursor(GTK_WIDGET(MainFrame_getWindow())->window, cursor);
-  gdk_cursor_unref (cursor);
-  g_bWaitCursor = true;
-}
-
-void Sys_EndWait (void)
-{
-  ScreenUpdates_Enable();
-  gdk_window_set_cursor(GTK_WIDGET(MainFrame_getWindow())->window, 0);
-  g_bWaitCursor = false;
-}
-
-void Sys_Beep (void)
-{
-  gdk_beep();
 }
 
