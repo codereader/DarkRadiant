@@ -74,6 +74,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "xyview/GlobalXYWnd.h"
 #include "map/AutoSaver.h"
 #include "map/PointFile.h"
+#include "map/CounterManager.h"
 
 #include "modulesystem/modulesmap.h"
 #include "modulesystem/singletonmodule.h"
@@ -92,6 +93,7 @@ ui::ColourSchemeManager& ColourSchemes() {
 class RadiantCoreAPI :
 	public IRadiant
 {
+	map::CounterManager _counters;
 public:
 	typedef IRadiant Type;
 	STRING_CONSTANT(Name, "*");
@@ -124,6 +126,11 @@ public:
 			// File load failed
 			return NULL;
 		}
+	}
+	
+	virtual Counter& getCounter(CounterType counter) {
+		// Pass the call to the helper class
+		return _counters.get(counter);
 	}
 	
 	virtual void setStatusText(const std::string& statusText) {

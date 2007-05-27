@@ -69,6 +69,14 @@ enum EMessageBoxReturn
   eIDNO,
 };
 
+enum CounterType {
+	counterBrushes,
+	counterPatches,
+	counterEntities
+};
+
+class Counter;
+
 /** greebo: This abstract class defines the interface to the core application.
  * 			Use this to access methods from the main codebase in radiant/
  */
@@ -86,6 +94,9 @@ public:
 	// and return a GdkPixBuf for use by certain GTK widgets (e.g. TreeView).
 	virtual GdkPixbuf* getLocalPixbuf(const std::string& fileName) = 0;
 	virtual GdkPixbuf* getLocalPixbufWithMask(const std::string& fileName) = 0;
+	
+	// Returns the Counter object of the given type
+	virtual Counter& getCounter(CounterType counter) = 0;
 	
 	/** greebo: Set the status text of the main window
 	 */

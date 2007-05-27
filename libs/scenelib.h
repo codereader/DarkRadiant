@@ -700,30 +700,7 @@ class Counter {
 public:
 	virtual void increment() = 0;
 	virtual void decrement() = 0;
-};
-
-#include "generic/callback.h"
-
-class SimpleCounter : 
-	public Counter
-{
-	Callback m_countChanged;
-	std::size_t m_count;
-public:
-	void setCountChangedCallback(const Callback& countChanged) {
-		m_countChanged = countChanged;
-	}
-	void increment() {
-		++m_count;
-		m_countChanged();
-	}
-	void decrement() {
-		--m_count;
-		m_countChanged();
-	}
-	std::size_t get() const {
-		return m_count;
-	}
+	virtual std::size_t get() const = 0;
 };
 
 /** greebo: Cast a node onto a BrushDoom3 pointer

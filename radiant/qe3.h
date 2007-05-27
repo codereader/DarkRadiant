@@ -27,14 +27,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 void    Sys_SetTitle (const char *text, bool modified);
 
-void QE_brushCountChanged();
-void QE_entityCountChanged();
+/*void QE_brushCountChanged();
+void QE_entityCountChanged();*/
 
 bool ConfirmModified(const char* title);
 
-class SimpleCounter;
+/*class SimpleCounter;
 extern SimpleCounter g_brushCount;
-extern SimpleCounter g_entityCount;
+extern SimpleCounter g_entityCount;*/
 
 
 #endif
