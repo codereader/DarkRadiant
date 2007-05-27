@@ -8,7 +8,6 @@
 
 namespace map {
 
-void Pointfile_Clear();
 void Pointfile_Construct();
 
 class PointFile : 
@@ -64,8 +63,25 @@ public:
 	 */
 	void renderWireframe(Renderer& renderer, const VolumeTest& volume) const;
 
+	/** greebo: This sets the camera position to the next/prev leak spot.
+	 * 	
+	 * @forward: pass true to set to the next leak spot, false for the previous
+	 */
+	void advance(bool forward);
+
+	/** greebo: Clears the point file vector and hides it, if applicable.
+	 */
+	void clear();
+
 	static void constructStatic();
 	static void destroyStatic();
+	
+	// Static command targets, these re-route the call to the static instance
+	static void nextLeakSpot();
+	static void prevLeakSpot();
+	
+	// Toggles visibility of the point file line
+	static void toggle();
 
 private:
 	// Parse the current pointfile and read the vectors into the point list

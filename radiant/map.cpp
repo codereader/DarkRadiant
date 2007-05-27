@@ -374,8 +374,7 @@ free all map elements, reinitialize the structures that depend on them
 */
 void Map_Free()
 {
-	//map::PointFile::Instance().clear();
-	map::Pointfile_Clear();
+	map::PointFile::Instance().clear();
 
 	GlobalShaderClipboard().clear();
 
@@ -1235,8 +1234,7 @@ void Map_Save()
 	// Store the map positions into the worldspawn spawnargs
 	map::GlobalMapPosition().savePositions();
 	
-	//map::PointFile::Instance().clear();
-	map::Pointfile_Clear();
+	map::PointFile::Instance().clear();
 
 	ScopeTimer timer("map save");
 	
