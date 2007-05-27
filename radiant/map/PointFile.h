@@ -22,12 +22,16 @@ class PointFile :
 	// GL display list pointer for rendering the point path
 	int _displayList;
 	
-	static ShaderPtr m_renderstate;
+	static ShaderPtr _renderstate;
 
 public:
 
 	// Constructor
 	PointFile();
+
+	/** greebo: Accessor method containing the singleton instance.
+	 */
+	static PointFile& Instance();
 
 	// Query whether the point path is currently visible
 	bool isVisible() const;
