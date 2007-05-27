@@ -52,21 +52,4 @@ inline CameraModel* Instance_getCameraModel(scene::Instance& instance) {
 	return dynamic_cast<CameraModel*>(&instance);
 }
 
-template<typename Element> class BasicVector3;
-typedef BasicVector3<double> Vector3;
-
-typedef void		(* PFN_GETCAMERA)		( Vector3& origin, Vector3& angles );
-typedef void		(* PFN_SETCAMERA)		( const Vector3& origin, const Vector3& angles );
-typedef void		(* PFN_GETCAMWINDOWEXTENTS)	( int *x, int *y, int *width, int *height );
-
-struct _QERCameraTable
-{
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "camera");
-
-	PFN_GETCAMERA		m_pfnGetCamera;
-	PFN_SETCAMERA		m_pfnSetCamera;
-	PFN_GETCAMWINDOWEXTENTS	m_pfnGetCamWindowExtents;
-};
-
 #endif
