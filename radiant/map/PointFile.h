@@ -8,8 +8,6 @@
 
 namespace map {
 
-void Pointfile_Construct();
-
 class PointFile : 
 	public Renderable, 
 	public OpenGLRenderable
@@ -71,8 +69,8 @@ public:
 	 */
 	void clear();
 
-	static void constructStatic();
-	static void destroyStatic();
+	// Registers the events to the EventManager
+	static void registerCommands();
 	
 	// Static command targets, these re-route the call to the static instance
 	static void nextLeakSpot();

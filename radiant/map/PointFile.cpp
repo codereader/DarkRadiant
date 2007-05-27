@@ -22,11 +22,13 @@ PointFile::PointFile() :
 	_curPos(_points.begin()), 
 	_displayList(0)
 {
+	_renderstate = GlobalShaderCache().capture("$POINTFILE");
 	GlobalShaderCache().attachRenderable(*this);
 }
 
 PointFile::~PointFile() {
 	GlobalShaderCache().detachRenderable(*this);
+	_renderstate = ShaderPtr();
 }
 
 // Static accessor method
@@ -136,14 +138,6 @@ void PointFile::generateDisplayList() {
 	glEndList();
 }
 
-void PointFile::constructStatic() {
-	_renderstate = GlobalShaderCache().capture("$POINTFILE");
-}
-
-void PointFile::destroyStatic() {
-	_renderstate = ShaderPtr();
-}
-
 // Static shader
 ShaderPtr PointFile::_renderstate;
 
@@ -202,17 +196,10 @@ void PointFile::toggle() {
 	Instance().show(!Instance().isVisible());
 }
 
-void Pointfile_Construct() {
-	PointFile::constructStatic();
-
-  GlobalEventManager().addCommand("TogglePointfile", FreeCaller<PointFile::toggle>());
-  GlobalEventManager().addCommand("NextLeakSpot", FreeCaller<PointFile::nextLeakSpot>());
-  GlobalEventManager().addCommand("PrevLeakSpot", FreeCaller<PointFile::prevLeakSpot>());
-}
-
-void Pointfile_Destroy()
-{
-  PointFile::destroyStatic();
+void PointFile::registerCommands() {
+	GlobalEventManager().addCommand("TogglePointfile", FreeCaller<PointFile::toggle>());
+	GlobalEventManager().addCommand("NextLeakSpot", FreeCaller<PointFile::nextLeakSpot>());
+	GlobalEventManager().addCommand("PrevLeakSpot", FreeCaller<PointFile::prevLeakSpot>());
 }
 
 } // namespace map
