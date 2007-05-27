@@ -230,7 +230,7 @@ public:
 
     Selection_construct();
     MultiMon_Construct();
-    map::Pointfile_Construct();
+    map::PointFile::registerCommands();
     Map_Construct();
     MainFrame_Construct();
     GlobalCamera().construct();
