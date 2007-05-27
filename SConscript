@@ -377,7 +377,6 @@ radiant_src = \
          'parse.cpp',
          'patchmanip.cpp',
          'plugin.cpp',
-         'pluginapi.cpp',
          'points.cpp',
          'preferences.cpp',
          'qe3.cpp',
