@@ -18,9 +18,16 @@
 namespace map {
 
 // Constructor
-PointFile::PointFile()
-: _displayList(0)
-{}
+PointFile::PointFile() :
+	_curPos(_points.begin()), 
+	_displayList(0)
+{
+	GlobalShaderCache().attachRenderable(*this);
+}
+
+PointFile::~PointFile() {
+	GlobalShaderCache().detachRenderable(*this);
+}
 
 // Static accessor method
 PointFile& PointFile::Instance() {
@@ -33,16 +40,7 @@ bool PointFile::isVisible() const {
 	return _displayList != 0;
 }
 
-  PointFile::const_iterator PointFile::begin() const
-  {
-    return _points.begin();
-  }
-  PointFile::const_iterator PointFile::end() const
-  {
-    return _points.end();
-  }
-
-	/*
+/*
  * Toggle the status of the pointfile rendering. If the pointfile must be
  * shown, the file is parsed automatically.
  */
@@ -61,6 +59,9 @@ void PointFile::show(bool show) {
 		_displayList = 0;
 		_points.clear();
 	}
+	
+	// Regardless whether hide or show, we reset the current position
+	_curPos = _points.begin();
 	
 	// Redraw the scene
 	SceneChangeNotify();
@@ -135,25 +136,16 @@ void PointFile::generateDisplayList() {
 	glEndList();
 }
 
-  void PointFile::constructStatic()
-  {
-    _renderstate = GlobalShaderCache().capture("$POINTFILE");
-  }
+void PointFile::constructStatic() {
+	_renderstate = GlobalShaderCache().capture("$POINTFILE");
+}
 
-  void PointFile::destroyStatic()
-  {
-    _renderstate = ShaderPtr();
-  }
+void PointFile::destroyStatic() {
+	_renderstate = ShaderPtr();
+}
 
 // Static shader
 ShaderPtr PointFile::_renderstate;
-
-namespace
-{
-  //PointFile PointFile::Instance();
-}
-
-static PointFile::const_iterator s_check_point;
 
 // advance camera to previous point
 void PointFile::advance(bool forward) {
@@ -161,36 +153,37 @@ void PointFile::advance(bool forward) {
 		return;
 	}
 
-	const_iterator i;
-
 	if (forward) {
-		if (s_check_point+2 == PointFile::Instance().end())	{
+		if (_curPos+2 == _points.end())	{
 			globalOutputStream() << "End of pointfile\n";
 			return;
 		}
 
-		i = ++s_check_point;
+		_curPos++;
 	}
 	else {
 		// Backward movement
-		if (s_check_point == _points.begin()) {
+		if (_curPos == _points.begin()) {
 			globalOutputStream() << "Start of pointfile\n";
 			return;
 		}
 	
-		i = --s_check_point;
+		_curPos--;
 	}
 
 	CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
-	camwnd.setCameraOrigin(*i);
-	GlobalXYWnd().getActiveXY()->setOrigin(*i);
+	camwnd.setCameraOrigin(*_curPos);
+	GlobalXYWnd().getActiveXY()->setOrigin(*_curPos);
 	{
-		Vector3 dir((*(++i) - camwnd.getCameraOrigin()).getNormalised());
+		Vector3 dir((*(_curPos+1) - camwnd.getCameraOrigin()).getNormalised());
 		Vector3 angles(camwnd.getCameraAngles());
 		angles[CAMERA_YAW] = static_cast<double>(radians_to_degrees(atan2(dir[1], dir[0])));
 		angles[CAMERA_PITCH] = static_cast<double>(radians_to_degrees(asin(dir[2])));
 		camwnd.setCameraAngles(angles);
 	}
+	
+	// Redraw the scene
+	SceneChangeNotify();
 }
 
 void PointFile::nextLeakSpot() {
@@ -207,14 +200,10 @@ void PointFile::clear() {
 
 void PointFile::toggle() {
 	Instance().show(!Instance().isVisible());
-	s_check_point = Instance().begin();
 }
 
-void Pointfile_Construct()
-{
-  PointFile::constructStatic();
-
-  GlobalShaderCache().attachRenderable(PointFile::Instance());
+void Pointfile_Construct() {
+	PointFile::constructStatic();
 
   GlobalEventManager().addCommand("TogglePointfile", FreeCaller<PointFile::toggle>());
   GlobalEventManager().addCommand("NextLeakSpot", FreeCaller<PointFile::nextLeakSpot>());
@@ -223,8 +212,6 @@ void Pointfile_Construct()
 
 void Pointfile_Destroy()
 {
-  GlobalShaderCache().detachRenderable(PointFile::Instance());
-
   PointFile::destroyStatic();
 }
 
