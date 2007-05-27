@@ -1,5 +1,6 @@
 #include "PatchInstance.h"
 
+#include "iradiant.h"
 #include "ifilter.h"
 #include "math/frustum.h"
 
@@ -18,6 +19,7 @@ PatchInstance::PatchInstance(const scene::Path& path, scene::Instance* parent, P
 	// Attach the path and self to the contained patch
 	m_patch.instanceAttach(Instance::path());
 	m_patch.attach(this);
+	GlobalRadiant().getCounter(counterPatches).increment();
 
 	m_lightList = &GlobalShaderCache().attach(*this);
 	m_patch.m_lightsChanged = LightsChangedCaller(*this);
@@ -28,6 +30,7 @@ PatchInstance::PatchInstance(const scene::Path& path, scene::Instance* parent, P
 // Destructor
 PatchInstance::~PatchInstance() {
 	Instance::setTransformChangedCallback(Callback());
+	GlobalRadiant().getCounter(counterPatches).decrement();
 
 	m_patch.m_lightsChanged = Callback();
 	GlobalShaderCache().detach(*this);

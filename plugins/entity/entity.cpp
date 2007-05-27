@@ -41,7 +41,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // Initialise the static variables of the entitylibraries (we're in a module here)
 EntityCreator::KeyValueChangedFunc entity::Doom3Entity::m_entityKeyValueChanged = 0;
 EntityCreator::KeyValueChangedFunc entity::KeyValue::m_entityKeyValueChanged = 0;
-Counter* entity::Doom3Entity::m_counter = 0;
 
 #include "preferencesystem.h"
 

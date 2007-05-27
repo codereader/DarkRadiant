@@ -1930,10 +1930,6 @@ void MainFrame_Construct()
 
   Layout_registerPreferencesPage();
 
-  //g_brushCount.setCountChangedCallback(FreeCaller<QE_brushCountChanged>());
-  //g_entityCount.setCountChangedCallback(FreeCaller<QE_entityCountChanged>());
-  GlobalEntityCreator().setCounter(&GlobalRadiant().getCounter(counterEntities));
-
   GLWidget_sharedContextCreated = GlobalGL_sharedContextCreated;
   GLWidget_sharedContextDestroyed = GlobalGL_sharedContextDestroyed;
 
@@ -1943,8 +1939,4 @@ void MainFrame_Construct()
 void MainFrame_Destroy()
 {
   GlobalEntityClassManager().detach(g_WorldspawnColourEntityClassObserver);
-
-  GlobalEntityCreator().setCounter(0);
-  //g_entityCount.setCountChangedCallback(Callback());
-  //g_brushCount.setCountChangedCallback(Callback());
 }

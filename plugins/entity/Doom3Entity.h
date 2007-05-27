@@ -31,7 +31,6 @@ public:
 
 private:
 	static EntityCreator::KeyValueChangedFunc m_entityKeyValueChanged;
-	static Counter* m_counter;
 
 	IEntityClassConstPtr m_eclass;
 
@@ -62,7 +61,6 @@ public:
 	~Doom3Entity();
 
 	static void setKeyValueChangedFunc(EntityCreator::KeyValueChangedFunc func);
-	static void setCounter(Counter* counter);
 
 	void importState(const KeyValues& keyValues);
 	typedef MemberCaller1<Doom3Entity, const KeyValues&, &Doom3Entity::importState> UndoImportCaller;

@@ -36,43 +36,14 @@ please contact Id Software immediately at info@idsoftware.com.
 
 #include "debugging/debugging.h"
 
-#include <map>
-
 #include "stream/textfilestream.h"
 #include "stream/stringstream.h"
-#include "string/string.h"
-#include "scenelib.h"
 
 #include "gtkutil/messagebox.h"
 #include "error.h"
 #include "map.h"
 #include "mainframe.h"
 #include "convert.h"
-
-int g_numbrushes = 0;
-int g_numentities = 0;
-
-void QE_UpdateStatusBar() {
-	std::string text = "Brushes: " + intToStr(g_numbrushes);
-	text += " Entities: " + intToStr(g_numentities);
-	g_pParentWnd->SetStatusText(g_pParentWnd->m_brushcount_status, text);
-}
-
-/*SimpleCounter g_brushCount;
-
-void QE_brushCountChanged()
-{
-  g_numbrushes = int(g_brushCount.get());
-  QE_UpdateStatusBar();
-}
-
-SimpleCounter g_entityCount;
-
-void QE_entityCountChanged()
-{
-  g_numentities = int(g_entityCount.get());
-  QE_UpdateStatusBar();
-}*/
 
 bool ConfirmModified(const char* title)
 {

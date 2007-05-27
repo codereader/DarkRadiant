@@ -1,5 +1,6 @@
 #include "Doom3Entity.h"
 
+#include "iradiant.h"
 #include "ieclass.h"
 
 namespace entity {
@@ -37,11 +38,6 @@ Doom3Entity::~Doom3Entity() {
 void Doom3Entity::setKeyValueChangedFunc(EntityCreator::KeyValueChangedFunc func) {
 	m_entityKeyValueChanged = func;
 	KeyValue::setKeyValueChangedFunc(func);
-}
-
-// Static
-void Doom3Entity::setCounter(Counter* counter) {
-	m_counter = counter;
 }
 
 void Doom3Entity::importState(const KeyValues& keyValues) {
@@ -85,19 +81,16 @@ void Doom3Entity::forEachKeyValue_instanceDetach(MapFile* map) {
 }
 
 void Doom3Entity::instanceAttach(MapFile* map) {
-	if(m_counter != 0) {
-		m_counter->increment();
-	}
-
+	
+	GlobalRadiant().getCounter(counterEntities).increment();
+	
 	m_instanced = true;
 	forEachKeyValue_instanceAttach(map);
 	m_undo.instanceAttach(map);
 }
 
 void Doom3Entity::instanceDetach(MapFile* map) {
-	if(m_counter != 0) {
-		m_counter->decrement();
-	}
+	GlobalRadiant().getCounter(counterEntities).decrement();
 
 	m_undo.instanceDetach(map);
 	forEachKeyValue_instanceDetach(map);

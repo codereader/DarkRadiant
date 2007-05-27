@@ -1,5 +1,6 @@
 #include "BrushInstance.h"
 
+#include "iradiant.h"
 #include "ifilter.h"
 #include "math/frustum.h"
 
@@ -14,7 +15,7 @@ BrushInstance::BrushInstance(const scene::Path& path, scene::Instance* parent, B
 {
 	m_brush.instanceAttach(Instance::path());
 	m_brush.attach(*this);
-	m_counter->increment();
+	GlobalRadiant().getCounter(counterBrushes).increment();
 
 	m_lightList = &GlobalShaderCache().attach(*this);
 	m_brush.m_lightsChanged = LightsChangedCaller(*this); ///\todo Make this work with instancing.
@@ -28,7 +29,7 @@ BrushInstance::~BrushInstance() {
 	m_brush.m_lightsChanged = Callback();
 	GlobalShaderCache().detach(*this);
 
-	m_counter->decrement();
+	GlobalRadiant().getCounter(counterBrushes).decrement();
 	m_brush.detach(*this);
 	m_brush.instanceDetach(Instance::path());
 }
@@ -432,5 +433,4 @@ void BrushInstance::clearLights() {
 // -------------------------------------------------------------------------------------------
 
 ShaderPtr BrushInstance::m_state_selpoint;
-Counter* BrushInstance::m_counter = 0;
 ShaderPtr BrushClipPlane::m_state;

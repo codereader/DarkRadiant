@@ -59,8 +59,6 @@ class BrushInstance :
 	BrushInstance(const BrushInstance& other); // NOT COPYABLE
 	BrushInstance& operator=(const BrushInstance& other); // NOT ASSIGNABLE
 public:
-	static Counter* m_counter;
-
 	void lightsChanged();
 	typedef MemberCaller<BrushInstance, &BrushInstance::lightsChanged> LightsChangedCaller;
 
