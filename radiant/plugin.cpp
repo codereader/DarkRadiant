@@ -62,7 +62,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "map.h"
 #include "environment.h"
 #include "qe3.h"
-#include "points.h"
 #include "gtkmisc.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "mainframe.h"
@@ -74,6 +73,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "nullmodel.h"
 #include "xyview/GlobalXYWnd.h"
 #include "map/AutoSaver.h"
+#include "map/PointFile.h"
 
 #include "modulesystem/modulesmap.h"
 #include "modulesystem/singletonmodule.h"
@@ -230,7 +230,7 @@ public:
 
     Selection_construct();
     MultiMon_Construct();
-    Pointfile_Construct();
+    map::Pointfile_Construct();
     Map_Construct();
     MainFrame_Construct();
     GlobalCamera().construct();
@@ -275,7 +275,6 @@ public:
     GlobalCamera().destroy();
     MainFrame_Destroy();
     Map_Destroy();
-    Pointfile_Destroy();
     MultiMon_Destroy();
     Selection_destroy();
   }

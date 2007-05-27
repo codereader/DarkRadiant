@@ -72,7 +72,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "plugin.h"
 #include "filetypes.h"
 #include "gtkdlgs.h"
-#include "points.h"
 #include "qe3.h"
 #include "environment.h"
 #include "mainframe.h"
@@ -89,6 +88,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "map/MapFileManager.h"
 #include "map/RegionManager.h"
 #include "map/RootNode.h"
+#include "map/PointFile.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "namespace/Namespace.h"
 
@@ -100,26 +100,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		const std::string RKEY_LAST_CAM_ANGLE = "game/mapFormat/lastCameraAngleKey";
 		const std::string RKEY_PLAYER_START_ECLASS = "game/mapFormat/playerStartPoint";
 	}
-
-/*class WorldNode
-{
-  scene::INodePtr m_node;
-public:
-  WorldNode()
-  {}
-  void set(scene::INodePtr node)
-  {
-    //if(m_node != 0)
-    //  m_node->DecRef();
-    m_node = node;
-    //if(m_node != 0)
-    //  m_node->IncRef();
-  }
-  scene::INodePtr get() const
-  {
-    return m_node;
-  }
-};*/
 
 class Map;
 void Map_SetValid(Map& map, bool valid);
@@ -394,7 +374,8 @@ free all map elements, reinitialize the structures that depend on them
 */
 void Map_Free()
 {
-	Pointfile_Clear();
+	//map::PointFile::Instance().clear();
+	map::Pointfile_Clear();
 
 	GlobalShaderClipboard().clear();
 
@@ -1254,7 +1235,8 @@ void Map_Save()
 	// Store the map positions into the worldspawn spawnargs
 	map::GlobalMapPosition().savePositions();
 	
-	Pointfile_Clear();
+	//map::PointFile::Instance().clear();
+	map::Pointfile_Clear();
 
 	ScopeTimer timer("map save");
 	
