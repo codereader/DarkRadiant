@@ -18,15 +18,20 @@ class PointFile :
 	typedef std::vector<Vector3> VectorList;
 	VectorList _points;
 	
+	// Holds the current position in the point file chain
+	VectorList::iterator _curPos;
+	
 	// GL display list pointer for rendering the point path
 	int _displayList;
 	
 	static ShaderPtr _renderstate;
 
 public:
-
 	// Constructor
 	PointFile();
+	
+	// Destructor
+	~PointFile();
 
 	/** greebo: Accessor method containing the singleton instance.
 	 */
@@ -35,14 +40,7 @@ public:
 	// Query whether the point path is currently visible
 	bool isVisible() const;
 
-  void generateDisplayList();
-
-  typedef VectorList::const_iterator const_iterator;
-
-  const_iterator begin() const;
-  const_iterator end() const;
-
-	/*
+  	/*
 	 * Toggle the status of the pointfile rendering. If the pointfile must be
 	 * shown, the file is parsed automatically.
 	 */
@@ -86,6 +84,9 @@ public:
 private:
 	// Parse the current pointfile and read the vectors into the point list
 	void parse();
+	
+	// Generates the OpenGL displaylist from the point vector
+	void generateDisplayList();
 };
 
 } // namespace map
