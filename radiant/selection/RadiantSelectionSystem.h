@@ -112,7 +112,7 @@ public:
 	void pivotChanged() const;
 	typedef ConstMemberCaller<RadiantSelectionSystem, &RadiantSelectionSystem::pivotChanged> PivotChangedCaller;
   
-	void pivotChangedSelection(const Selectable& selectable);
+  	void pivotChangedSelection(const Selectable& selectable);
 	typedef MemberCaller1<RadiantSelectionSystem, const Selectable&, &RadiantSelectionSystem::pivotChangedSelection> PivotChangedSelectionCaller;
 
 	void addObserver(Observer* observer);
