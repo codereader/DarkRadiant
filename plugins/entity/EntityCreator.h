@@ -20,14 +20,10 @@ public:
 	 */
 	void setKeyValueChangedFunc(KeyValueChangedFunc func);
 	
-	void setCounter(Counter* counter);
-
 	/* Connect two entities using a "target" key.
 	 */
 	void connectEntities(const scene::Path& path, const scene::Path& targetPath);
 
-	void printStatistics() const;
-	
 private:
 	/** greebo: Creates the right entity for the entityclass.
 	 */

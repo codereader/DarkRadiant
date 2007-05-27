@@ -4,7 +4,6 @@
 #include "iradiant.h"
 #include "scenelib.h"
 #include "generic/callback.h"
-#include "qe3.h"
 #include <boost/shared_ptr.hpp>
 
 namespace map {
@@ -45,18 +44,17 @@ class CounterManager
 	CounterMap _counters;
 public:
 	CounterManager() {
-		_counters[counterBrushes] = CounterPtr(new SimpleCounter);
-		_counters[counterPatches] = CounterPtr(new SimpleCounter);
-		_counters[counterEntities] = CounterPtr(new SimpleCounter);
-		
-		_counters[counterBrushes]->setCountChangedCallback(
-			MemberCaller<CounterManager, &CounterManager::brushCountChanged>(*this)
-		);
-		_counters[counterPatches]->setCountChangedCallback(
-			MemberCaller<CounterManager, &CounterManager::patchCountChanged>(*this)
-		);
-		_counters[counterEntities]->setCountChangedCallback(
-			MemberCaller<CounterManager, &CounterManager::entityCountChanged>(*this)
+		createCounter(counterBrushes);
+		createCounter(counterPatches);
+		createCounter(counterEntities);		
+	}
+	
+	void createCounter(CounterType counter) {
+		// Create the counter object
+		_counters[counter] = CounterPtr(new SimpleCounter);
+		// And connect the changed signal to this class
+		_counters[counter]->setCountChangedCallback(
+			MemberCaller<CounterManager, &CounterManager::updateStatusBar>(*this)
 		);
 	}
 
@@ -67,27 +65,11 @@ public:
 		return *_counters[counter];
 	}
 	
-	void brushCountChanged() {
-		std::cout << "Brush count changed.\n";
-		//g_numbrushes = ;
-		updateStatusBar();
-	}
-	
-	void patchCountChanged() {
-		std::cout << "Patch count changed.\n";
-		//g_numbrushes = int(_counters[counterPatches]->get());
-		updateStatusBar();
-	}
-	
-	void entityCountChanged() {
-		std::cout << "Entity count changed.\n";
-		updateStatusBar();
-	}
-	
 	void updateStatusBar() {
 		int brushCount(_counters[counterBrushes]->get());
 		int patchCount(_counters[counterPatches]->get());
 		int entityCount(_counters[counterEntities]->get());
+		
 		std::string text = "Brushes: " + intToStr(brushCount);
 		text += " Patches: " + intToStr(patchCount);
 		text += " Entities: " + intToStr(entityCount);
