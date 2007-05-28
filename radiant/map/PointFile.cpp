@@ -26,7 +26,7 @@ PointFile::PointFile() :
 	GlobalShaderCache().attachRenderable(*this);
 }
 
-PointFile::~PointFile() {
+void PointFile::destroy() {
 	GlobalShaderCache().detachRenderable(*this);
 	_renderstate = ShaderPtr();
 }
