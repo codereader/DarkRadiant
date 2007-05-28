@@ -101,7 +101,7 @@ XYWnd::XYWnd() :
 
 	g_signal_connect(G_OBJECT(m_gl_widget), "scroll_event", G_CALLBACK(callbackMouseWheelScroll), this);
 
-	Map_addValidCallback(g_map, DeferredDrawOnMapValidChangedCaller(m_deferredDraw));
+	g_map.addValidCallback(DeferredDrawOnMapValidChangedCaller(m_deferredDraw));
 
 	updateProjection();
 	updateModelview();
@@ -1615,7 +1615,7 @@ gboolean XYWnd::callbackSizeAllocate(GtkWidget* widget, GtkAllocation* allocatio
 gboolean XYWnd::callbackExpose(GtkWidget* widget, GdkEventExpose* event, XYWnd* self) {
 
 	if (glwidget_make_current(self->getWidget()) != FALSE) {
-		if (Map_Valid(g_map) && ScreenUpdates_Enabled()) {
+		if (g_map.isValid() && ScreenUpdates_Enabled()) {
 			GlobalOpenGL_debugAssertNoErrors();
 			self->draw();
 			GlobalOpenGL_debugAssertNoErrors();

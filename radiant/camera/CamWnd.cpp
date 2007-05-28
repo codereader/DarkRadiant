@@ -253,7 +253,7 @@ CamWnd::CamWnd() :
 	m_sizeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "size_allocate", G_CALLBACK(camera_size_allocate), this);
 	m_exposeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "expose_event", G_CALLBACK(camera_expose), this);
 
-	Map_addValidCallback(g_map, DeferredDrawOnMapValidChangedCaller(m_deferredDraw));
+	g_map.addValidCallback(DeferredDrawOnMapValidChangedCaller(m_deferredDraw));
 
 	// Deactivate all commands, just to make sure
 	disableDiscreteMoveEvents();
@@ -565,7 +565,7 @@ void CamWnd::draw() {
 	//globalOutputStream() << "draw...\n";
 
 	if (glwidget_make_current(m_gl_widget) != FALSE) {
-		if (Map_Valid(g_map) && ScreenUpdates_Enabled()) {
+		if (g_map.isValid() && ScreenUpdates_Enabled()) {
 			GlobalOpenGL_debugAssertNoErrors();
 			Cam_Draw();
 			GlobalOpenGL_debugAssertNoErrors();

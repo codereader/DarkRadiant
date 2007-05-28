@@ -158,24 +158,12 @@ bool Map::isValid() const {
 	return m_valid;
 }
 
+void Map::addValidCallback(const SignalHandler& handler) {
+	m_mapValidCallbacks.connectLast(handler);
+}
+
 // Legacy global
 Map g_map;
-
-void Map_addValidCallback(Map& map, const SignalHandler& handler)
-{
-  map.m_mapValidCallbacks.connectLast(handler);
-}
-
-bool Map_Valid(const Map& map)
-{
-  return map.m_valid;
-}
-
-/*void Map_SetValid(Map& map, bool valid)
-{
-  map.m_valid = valid;
-  map.m_mapValidCallbacks();
-}*/
 
 namespace map {
 
