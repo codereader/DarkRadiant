@@ -54,6 +54,15 @@ public:
 public:
 	Map();
 	
+	/** greebo: Returns true if the map has not been named yet.
+	 */
+	bool isUnnamed() const;
+	
+	/** greebo: Updates the name of the map (and triggers an update
+	 * 			of the mainframe window title)
+	 */
+	void setName(const std::string& newName);
+	
 	void realise();
 	void unrealise();
   
@@ -127,9 +136,7 @@ typedef ReferenceCaller<DeferredDraw, DeferredDraw_onMapValidChanged> DeferredDr
 bool ConfirmModified(const char* title);
 
 const MapFormat& Map_getFormat(const Map& map);
-bool Map_Unnamed(const Map& map);
 
-//scene::INodePtr Map_GetWorldspawn(const Map& map);
 scene::INodePtr Map_FindWorldspawn(Map& map);
 scene::INodePtr Map_FindOrInsertWorldspawn(Map& map);
 
