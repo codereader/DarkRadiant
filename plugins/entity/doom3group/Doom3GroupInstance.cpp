@@ -137,7 +137,6 @@ void Doom3GroupInstance::applyTransform() {
 }
 
 void Doom3GroupInstance::selectionChangedComponent(const Selectable& selectable) {
-	GlobalSelectionSystem().getObserver(SelectionSystem::eComponent)(selectable);
 	GlobalSelectionSystem().onComponentSelection(*this, selectable);
 }
 

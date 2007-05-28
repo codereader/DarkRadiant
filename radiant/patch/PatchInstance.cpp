@@ -45,16 +45,12 @@ void PatchInstance::lightsChanged() {
 }
 
 void PatchInstance::selectedChanged(const Selectable& selectable) {
-	GlobalSelectionSystem().getObserver(SelectionSystem::ePrimitive)(selectable);
 	GlobalSelectionSystem().onSelectedChanged(*this, selectable);
 
 	Instance::selectedChanged();
 }
 
 void PatchInstance::selectedChangedComponent(const Selectable& selectable) {
-	// greebo: This line calls the observer function provided by the SelectionSystem (usually a CountSelected class
-	// that keeps track of the selected instances)
-	GlobalSelectionSystem().getObserver(SelectionSystem::eComponent)(selectable);
 	// Notify the selection system that this PatchInstance was selected. The RadiantSelectionSystem adds
 	// this to its internal list of selected instances. 
 	// The pointer _ *this _ is therefore passed as a scene::instance pointer 

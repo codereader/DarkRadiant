@@ -141,7 +141,6 @@ public:
 
   void selectedChanged(const Selectable& selectable)
   {
-    GlobalSelectionSystem().getObserver(SelectionSystem::ePrimitive)(selectable);
     GlobalSelectionSystem().onSelectedChanged(*this, selectable);
 
     Instance::selectedChanged();

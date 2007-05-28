@@ -222,8 +222,6 @@ void LightInstance::testSelectComponents(Selector& selector, SelectionTest& test
 }
 
 void LightInstance::selectedChangedComponent(const Selectable& selectable) {
-	// Call the selection observer for components. This triggers the selectionChangeCallback of the selection system
-	GlobalSelectionSystem().getObserver(SelectionSystem::eComponent)(selectable);
 	// add the selectable to the list of selected components (see RadiantSelectionSystem::onComponentSelection)
 	GlobalSelectionSystem().onComponentSelection(*this, selectable);
 }
