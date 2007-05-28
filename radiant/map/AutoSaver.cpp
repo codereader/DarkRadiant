@@ -175,7 +175,7 @@ void AutoMapSaver::checkSave() {
 		return;
 	}
 
-	if (!Map_Valid(g_map) || !ScreenUpdates_Enabled()) {
+	if (!g_map.isValid() || !ScreenUpdates_Enabled()) {
 		return;
 	}
 

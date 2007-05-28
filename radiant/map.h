@@ -61,15 +61,14 @@ public:
 	// Accessor methods for the "valid" flag
 	void setValid(bool valid);
 	bool isValid() const;
+	
+	void addValidCallback(const SignalHandler& handler);
 };
 
 extern Map g_map;
 
 class MapFormat;
 const MapFormat& MapFormat_forFile(const std::string& filename);
-
-void Map_addValidCallback(Map& map, const SignalHandler& handler);
-bool Map_Valid(const Map& map);
 
 class DeferredDraw
 {
@@ -108,7 +107,7 @@ public:
 
 inline void DeferredDraw_onMapValidChanged(DeferredDraw& self)
 {
-  if(Map_Valid(g_map))
+  if(g_map.isValid())
   {
     self.flush();
   }
