@@ -191,7 +191,7 @@ void AutoMapSaver::checkSave() {
 
 	if (_enabled) {
 		// only snapshot if not working on an unnamed map
-		if (_snapshotsEnabled && !Map_Unnamed(g_map)) {
+		if (_snapshotsEnabled && !g_map.isUnnamed()) {
 			try {
 				saveSnapshot();
 			}
@@ -200,7 +200,7 @@ void AutoMapSaver::checkSave() {
 			}
 		}
 		else {
-			if (Map_Unnamed(g_map)) {
+			if (g_map.isUnnamed()) {
 				// Get the maps path (within the mod path)
 				std::string autoSaveFilename = GlobalRegistry().get(RKEY_MAP_PATH);
 				

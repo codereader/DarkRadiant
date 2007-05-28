@@ -96,6 +96,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <boost/lexical_cast.hpp>
 
 	namespace {
+		const std::string MAP_UNNAMED_STRING = "unnamed.map";
+		
 		const std::string RKEY_LAST_CAM_POSITION = "game/mapFormat/lastCameraPositionKey";
 		const std::string RKEY_LAST_CAM_ANGLE = "game/mapFormat/lastCameraAngleKey";
 		const std::string RKEY_PLAYER_START_ECLASS = "game/mapFormat/playerStartPoint";
@@ -108,7 +110,7 @@ Map::Map() :
 void Map::realise() {
     if(m_resource != 0)
     {
-      if(Map_Unnamed(*this))
+      if (isUnnamed())
       {
         g_map.m_resource->setNode(NewMapRoot(""));
         MapFilePtr map = Node_getMapFile(g_map.m_resource->getNode());
@@ -166,6 +168,15 @@ void Map::updateTitle() {
 
 	gtk_window_set_title(MainFrame_getWindow(), title.c_str());
 
+}
+
+void Map::setName(const std::string& newName) {
+	m_name = newName;
+	updateTitle();
+}
+
+bool Map::isUnnamed() const {
+	return m_name == MAP_UNNAMED_STRING;
 }
 
 void Map::setWorldspawn(scene::INodePtr node) {
@@ -305,11 +316,6 @@ AABB getVisibleBounds() {
 }
 
 } // namespace map
-
-bool Map_Unnamed(const Map& map)
-{
-	return map::getFileName() == "unnamed.map";
-}
 
 const MapFormat& MapFormat_forFile(const std::string& filename) {
 	// Look up the module name which loads the given extension
@@ -917,8 +923,7 @@ void Map_LoadFile (const std::string& filename)
 {
   globalOutputStream() << "Loading map from " << filename << "\n";
 
-  g_map.m_name = filename;
-	g_map.updateTitle();
+	g_map.setName(filename);
 
   {
     ScopeTimer timer("map load");
@@ -1166,8 +1171,7 @@ void Map_RenameAbsolute(const char* absolute)
 
 	g_map.m_resource = resource;
 
-  g_map.m_name = absolute;
-	g_map.updateTitle();
+	g_map.setName(absolute);
 
   g_map.m_resource->attach(g_map);
 }
@@ -1228,8 +1232,7 @@ void Map_New()
 {
 	//globalOutputStream() << "Map_New\n";
 
-	g_map.m_name = "unnamed.map";
-	g_map.updateTitle();
+	g_map.setName(MAP_UNNAMED_STRING);
 
   {
     g_map.m_resource = GlobalReferenceCache().capture(g_map.m_name.c_str());
@@ -1540,7 +1543,7 @@ bool ConfirmModified(const char* title) {
   }
   if(result == eIDYES)
   {
-    if(Map_Unnamed(g_map))
+    if(g_map.isUnnamed())
     {
       return Map_SaveAs();
     }
@@ -1645,7 +1648,7 @@ void SaveMapAs()
 
 void SaveMap()
 {
-  if(Map_Unnamed(g_map))
+  if(g_map.isUnnamed())
   {
     SaveMapAs();
   }
