@@ -1,6 +1,7 @@
 #include "BrushInstance.h"
 
 #include "iradiant.h"
+#include "icounter.h"
 #include "ifilter.h"
 #include "math/frustum.h"
 

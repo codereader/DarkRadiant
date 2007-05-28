@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "imap.h"
 #include "iselection.h"
 #include "igroupnode.h"
+#include "icounter.h"
 #include "iundo.h"
 #include "brush/TexDef.h"
 #include "ibrush.h"

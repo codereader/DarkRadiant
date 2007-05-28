@@ -128,7 +128,7 @@ public:
 		}
 	}
 	
-	virtual Counter& getCounter(CounterType counter) {
+	virtual ICounter& getCounter(CounterType counter) {
 		// Pass the call to the helper class
 		return _counters.get(counter);
 	}

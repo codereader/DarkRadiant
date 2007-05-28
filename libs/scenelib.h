@@ -696,13 +696,6 @@ public:
 	{}
 };
 
-class Counter {
-public:
-	virtual void increment() = 0;
-	virtual void decrement() = 0;
-	virtual std::size_t get() const = 0;
-};
-
 /** greebo: Cast a node onto a BrushDoom3 pointer
  * 
  * @returns: NULL, if failed, the pointer to the class otherwise.

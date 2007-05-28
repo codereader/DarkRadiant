@@ -75,7 +75,7 @@ enum CounterType {
 	counterEntities
 };
 
-class Counter;
+class ICounter;
 
 /** greebo: This abstract class defines the interface to the core application.
  * 			Use this to access methods from the main codebase in radiant/
@@ -96,7 +96,7 @@ public:
 	virtual GdkPixbuf* getLocalPixbufWithMask(const std::string& fileName) = 0;
 	
 	// Returns the Counter object of the given type
-	virtual Counter& getCounter(CounterType counter) = 0;
+	virtual ICounter& getCounter(CounterType counter) = 0;
 	
 	/** greebo: Set the status text of the main window
 	 */

@@ -1,71 +1,67 @@
 #ifndef COUNTERMANAGER_H_
 #define COUNTERMANAGER_H_
 
+#include "icounter.h"
 #include "iradiant.h"
-#include "scenelib.h"
-#include "generic/callback.h"
 #include <boost/shared_ptr.hpp>
 
 namespace map {
 
-class SimpleCounter : 
-	public Counter
+class Counter : 
+	public ICounter
 {
-	Callback m_countChanged;
-	std::size_t m_count;
+	Observer* _observer;
+	std::size_t _count;
 public:
-	SimpleCounter() : 
-		m_count(0)
+	Counter(Observer* observer = NULL) :
+		_observer(observer), 
+		_count(0)
 	{}
 	
-	void setCountChangedCallback(const Callback& countChanged) {
-		m_countChanged = countChanged;
-	}
-	
 	void increment() {
-		++m_count;
-		m_countChanged();
+		++_count;
+		
+		if (_observer != NULL) {
+			_observer->countChanged();
+		}
 	}
 	
 	void decrement() {
-		--m_count;
-		m_countChanged();
+		--_count;
+		
+		if (_observer != NULL) {
+			_observer->countChanged();
+		}
 	}
 	
 	std::size_t get() const {
-		return m_count;
+		return _count;
 	}
 };
 
-class CounterManager
+class CounterManager :
+	public ICounter::Observer
 {
-	typedef boost::shared_ptr<SimpleCounter> CounterPtr;
+	typedef boost::shared_ptr<Counter> CounterPtr;
 	typedef std::map<CounterType, CounterPtr> CounterMap;
 	CounterMap _counters;
 public:
 	CounterManager() {
-		createCounter(counterBrushes);
-		createCounter(counterPatches);
-		createCounter(counterEntities);		
+		// Create the counter object
+		_counters[counterBrushes] = CounterPtr(new Counter(this));
+		_counters[counterPatches] = CounterPtr(new Counter(this));
+		_counters[counterEntities] = CounterPtr(new Counter(this));		
 	}
 	
-	void createCounter(CounterType counter) {
-		// Create the counter object
-		_counters[counter] = CounterPtr(new SimpleCounter);
-		// And connect the changed signal to this class
-		_counters[counter]->setCountChangedCallback(
-			MemberCaller<CounterManager, &CounterManager::updateStatusBar>(*this)
-		);
-	}
-
-	Counter& get(CounterType counter) {
+	ICounter& get(CounterType counter) {
 		if (_counters.find(counter) == _counters.end()) {
 			throw std::runtime_error("Counter ID not found.");
 		}
 		return *_counters[counter];
 	}
 	
-	void updateStatusBar() {
+	// ICounter::Observer implementation
+	void countChanged() {
 		int brushCount(_counters[counterBrushes]->get());
 		int patchCount(_counters[counterPatches]->get());
 		int entityCount(_counters[counterEntities]->get());
