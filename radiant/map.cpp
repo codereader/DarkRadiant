@@ -670,24 +670,9 @@ public:
 
 class BasicContainer : 
 	public scene::Node,
-	public scene::Traversable
+	public TraversableNodeSet // implements scene::Traversable
 {
-	TraversableNodeSet m_traverse;
 public:
-	// scene::Traversable Implementation
-	virtual void insert(scene::INodePtr node) {
-		m_traverse.insert(node);
-	}
-    virtual void erase(scene::INodePtr node) {
-    	m_traverse.erase(node);	
-    }
-    virtual void traverse(const Walker& walker) {
-    	m_traverse.traverse(walker);
-    }
-    virtual bool empty() const {
-    	return m_traverse.empty();
-    }
-
 	BasicContainer()
 	{}
 };
