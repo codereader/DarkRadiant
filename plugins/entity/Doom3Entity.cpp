@@ -1,6 +1,7 @@
 #include "Doom3Entity.h"
 
 #include "iradiant.h"
+#include "icounter.h"
 #include "ieclass.h"
 
 namespace entity {
