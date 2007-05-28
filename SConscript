@@ -378,7 +378,6 @@ radiant_src = \
          'patchmanip.cpp',
          'plugin.cpp',
          'preferences.cpp',
-         'qe3.cpp',
          'qgl.cpp',
          'referencecache.cpp',
          'renderstate.cpp',

@@ -8,7 +8,6 @@
 #include "generic/callback.h"
 #include "os/file.h"
 
-#include "qe3.h"
 #include "map.h"
 
 namespace ui { 

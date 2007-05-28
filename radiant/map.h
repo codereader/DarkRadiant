@@ -88,7 +88,7 @@ inline void DeferredDraw_onMapValidChanged(DeferredDraw& self)
 }
 typedef ReferenceCaller<DeferredDraw, DeferredDraw_onMapValidChanged> DeferredDrawOnMapValidChangedCaller;
 
-
+bool ConfirmModified(const char* title);
 
 const MapFormat& Map_getFormat(const Map& map);
 bool Map_Unnamed(const Map& map);
