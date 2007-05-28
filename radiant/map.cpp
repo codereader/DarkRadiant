@@ -104,32 +104,35 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	}
 
 class Map;
-void Map_SetValid(Map& map, bool valid);
+//void Map_SetValid(Map& map, bool valid);
 void Map_UpdateTitle(const Map& map);
 void Map_SetWorldspawn(Map& map, scene::INodePtr node);
 
 
-class Map : public ModuleObserver
+class Map : 
+	public ModuleObserver
 {
 public:
-  std::string m_name;
+	// The map name
+	std::string m_name;
 	
 	// Pointer to the Model Resource for this map
 	ReferenceCache::ResourcePtr m_resource;
 	
-  bool m_valid;
+	bool m_valid;
 
-  bool m_modified;
-  void (*m_modified_changed)(const Map&);
+	bool m_modified;
+	void (*m_modified_changed)(const Map&);
 
-  Signal0 m_mapValidCallbacks;
+	Signal0 m_mapValidCallbacks;
 
 	scene::INodePtr m_world_node; // "classname" "worldspawn" !
 
-	Map() 
-	: m_valid(false), 
-	  m_modified_changed(Map_UpdateTitle)
-	{ }
+public:
+	Map() : 
+		m_valid(false), 
+		m_modified_changed(Map_UpdateTitle)
+	{}
 
   void realise()
   {
@@ -153,14 +156,14 @@ public:
 
       map::AutoSaver().clearChanges();
 
-      Map_SetValid(g_map, true);
+      g_map.setValid(true);
     }
   }
   void unrealise()
   {
     if(m_resource != 0)
     {
-      Map_SetValid(g_map, false);
+      g_map.setValid(false);
       Map_SetWorldspawn(g_map, scene::INodePtr());
 
 
@@ -169,6 +172,15 @@ public:
       GlobalSceneGraph().erase_root();
     }
   }
+  
+	void setValid(bool valid) {
+		m_valid = valid;
+		m_mapValidCallbacks();
+	}
+	
+	bool isValid() const {
+		return m_valid;
+	}
 };
 
 Map g_map;
@@ -183,11 +195,11 @@ bool Map_Valid(const Map& map)
   return map.m_valid;
 }
 
-void Map_SetValid(Map& map, bool valid)
+/*void Map_SetValid(Map& map, bool valid)
 {
   map.m_valid = valid;
   map.m_mapValidCallbacks();
-}
+}*/
 
 namespace map {
 
