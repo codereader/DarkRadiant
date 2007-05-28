@@ -40,7 +40,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "editable.h"
 #include "ifilesystem.h"
 #include "inamespace.h"
-#include "moduleobserver.h"
 
 #include <set>
 
@@ -67,7 +66,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "uniquenames.h"
 #include "stream/stringstream.h"
 #include "gtkutil/messagebox.h"
-#include "signal/signal.h"
 #include "convert.h"
 
 #include "timer.h"
@@ -103,39 +101,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		const std::string RKEY_PLAYER_START_ECLASS = "game/mapFormat/playerStartPoint";
 	}
 
-class Map;
 //void Map_SetValid(Map& map, bool valid);
 void Map_UpdateTitle(const Map& map);
 void Map_SetWorldspawn(Map& map, scene::INodePtr node);
 
 
-class Map : 
-	public ModuleObserver
-{
-public:
-	// The map name
-	std::string m_name;
-	
-	// Pointer to the Model Resource for this map
-	ReferenceCache::ResourcePtr m_resource;
-	
-	bool m_valid;
+Map::Map() : 
+	m_valid(false), 
+	m_modified_changed(Map_UpdateTitle)
+{}
 
-	bool m_modified;
-	void (*m_modified_changed)(const Map&);
-
-	Signal0 m_mapValidCallbacks;
-
-	scene::INodePtr m_world_node; // "classname" "worldspawn" !
-
-public:
-	Map() : 
-		m_valid(false), 
-		m_modified_changed(Map_UpdateTitle)
-	{}
-
-  void realise()
-  {
+void Map::realise() {
     if(m_resource != 0)
     {
       if(Map_Unnamed(*this))
@@ -158,9 +134,9 @@ public:
 
       g_map.setValid(true);
     }
-  }
-  void unrealise()
-  {
+}
+
+void Map::unrealise() {
     if(m_resource != 0)
     {
       g_map.setValid(false);
@@ -171,18 +147,18 @@ public:
 
       GlobalSceneGraph().erase_root();
     }
-  }
+}
   
-	void setValid(bool valid) {
-		m_valid = valid;
-		m_mapValidCallbacks();
-	}
-	
-	bool isValid() const {
-		return m_valid;
-	}
-};
+void Map::setValid(bool valid) {
+	m_valid = valid;
+	m_mapValidCallbacks();
+}
 
+bool Map::isValid() const {
+	return m_valid;
+}
+
+// Legacy global
 Map g_map;
 
 void Map_addValidCallback(Map& map, const SignalHandler& handler)

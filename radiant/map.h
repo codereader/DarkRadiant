@@ -23,15 +23,46 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_MAP_H
 
 #include "iscenegraph.h"
+#include "ireference.h"
 #include "generic/callback.h"
-#include "signal/signalfwd.h"
+#include "signal/signal.h"
+#include "moduleobserver.h"
 
 #include <ostream>
 #include <string>
 
 class AABB;
 
-class Map;
+class Map : 
+	public ModuleObserver
+{
+public:
+	// The map name
+	std::string m_name;
+	
+	// Pointer to the Model Resource for this map
+	ReferenceCache::ResourcePtr m_resource;
+	
+	bool m_valid;
+
+	bool m_modified;
+	void (*m_modified_changed)(const Map&);
+
+	Signal0 m_mapValidCallbacks;
+
+	scene::INodePtr m_world_node; // "classname" "worldspawn" !
+
+public:
+	Map();
+	
+	void realise();
+	void unrealise();
+  
+	// Accessor methods for the "valid" flag
+	void setValid(bool valid);
+	bool isValid() const;
+};
+
 extern Map g_map;
 
 class MapFormat;
