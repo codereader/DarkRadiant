@@ -101,14 +101,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		const std::string RKEY_PLAYER_START_ECLASS = "game/mapFormat/playerStartPoint";
 	}
 
-//void Map_SetValid(Map& map, bool valid);
-void Map_UpdateTitle(const Map& map);
-void Map_SetWorldspawn(Map& map, scene::INodePtr node);
-
-
 Map::Map() : 
-	m_valid(false), 
-	m_modified_changed(Map_UpdateTitle)
+	m_valid(false)
 {}
 
 void Map::realise() {
@@ -140,7 +134,7 @@ void Map::unrealise() {
     if(m_resource != 0)
     {
       g_map.setValid(false);
-      Map_SetWorldspawn(g_map, scene::INodePtr());
+      g_map.setWorldspawn(scene::INodePtr());
 
 
       GlobalUndoSystem().clear();
@@ -160,6 +154,26 @@ bool Map::isValid() const {
 
 void Map::addValidCallback(const SignalHandler& handler) {
 	m_mapValidCallbacks.connectLast(handler);
+}
+
+void Map::updateTitle() {
+	StringOutputStream title;
+	title << ConvertLocaleToUTF8(m_name.c_str());
+
+	if (m_modified) {
+		title << " *";
+	}
+
+	gtk_window_set_title(MainFrame_getWindow(), title.c_str());
+
+}
+
+void Map::setWorldspawn(scene::INodePtr node) {
+	m_world_node = node;
+}
+
+scene::INodePtr Map::getWorldspawn() {
+	return m_world_node;
 }
 
 // Legacy global
@@ -324,38 +338,9 @@ namespace map {
 	// Set the modified flag
 	void setModified(bool modifiedFlag) {
 		g_map.m_modified = modifiedFlag;
-	    g_map.m_modified_changed(g_map);
+	    g_map.updateTitle();
 	}
 	
-}
-
-// Moved from qe3.cpp to here
-void Sys_SetTitle(const char *text, bool modified)
-{
-  StringOutputStream title;
-  title << ConvertLocaleToUTF8(text);
-
-  if(modified)
-  {
-    title << " *";
-  }
-
-  gtk_window_set_title(MainFrame_getWindow(), title.c_str());
-}
-
-void Map_UpdateTitle(const Map& map)
-{
-  Sys_SetTitle(map.m_name.c_str(), Map_Modified(map));
-}
-
-
-
-scene::INodePtr Map_GetWorldspawn(const Map& map) {
-	return map.m_world_node;
-}
-
-void Map_SetWorldspawn(Map& map, scene::INodePtr node) {
-	map.m_world_node = node;
 }
 
 /*
@@ -487,11 +472,9 @@ class entity_updateworldspawn : public scene::Traversable::Walker
 public:
   bool pre(scene::INodePtr node) const
   {
-    if(node_is_worldspawn(node))
-    {
-      if(Map_GetWorldspawn(g_map) == 0)
-      {
-        Map_SetWorldspawn(g_map, node);
+    if(node_is_worldspawn(node)) {
+      if (g_map.getWorldspawn() == NULL) {
+        g_map.setWorldspawn(node);
       }
     }
     return false;
@@ -500,11 +483,11 @@ public:
 
 scene::INodePtr Map_FindWorldspawn(Map& map)
 {
-  Map_SetWorldspawn(map, scene::INodePtr());
+  map.setWorldspawn(scene::INodePtr());
 
   Node_getTraversable(GlobalSceneGraph().root())->traverse(entity_updateworldspawn());
 
-  return Map_GetWorldspawn(map);
+  return map.getWorldspawn();
 }
 
 
@@ -549,14 +532,14 @@ void Map_UpdateWorldspawn(Map& map)
 {
   if(Map_FindWorldspawn(map) == 0)
   {
-    Map_SetWorldspawn(map, createWorldspawn());
+    map.setWorldspawn(createWorldspawn());
   }
 }
 
 scene::INodePtr Map_FindOrInsertWorldspawn(Map& map)
 {
   Map_UpdateWorldspawn(map);
-  return Map_GetWorldspawn(map);
+  return map.getWorldspawn();
 }
 
 
@@ -600,7 +583,7 @@ public:
 			
 			if (world_node == NULL) {
 				// Set the worldspawn to the new node
-				Map_SetWorldspawn(g_map, node);
+				g_map.setWorldspawn(node);
 				
 				// Insert the visited node at the target path
 				Node_getTraversable(m_path.top())->insert(node);
@@ -935,7 +918,7 @@ void Map_LoadFile (const std::string& filename)
   globalOutputStream() << "Loading map from " << filename << "\n";
 
   g_map.m_name = filename;
-  Map_UpdateTitle(g_map);
+	g_map.updateTitle();
 
   {
     ScopeTimer timer("map load");
@@ -1184,7 +1167,7 @@ void Map_RenameAbsolute(const char* absolute)
 	g_map.m_resource = resource;
 
   g_map.m_name = absolute;
-  Map_UpdateTitle(g_map);
+	g_map.updateTitle();
 
   g_map.m_resource->attach(g_map);
 }
@@ -1246,7 +1229,7 @@ void Map_New()
 	//globalOutputStream() << "Map_New\n";
 
 	g_map.m_name = "unnamed.map";
-  Map_UpdateTitle(g_map);
+	g_map.updateTitle();
 
   {
     g_map.m_resource = GlobalReferenceCache().capture(g_map.m_name.c_str());

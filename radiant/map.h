@@ -46,7 +46,6 @@ public:
 	bool m_valid;
 
 	bool m_modified;
-	void (*m_modified_changed)(const Map&);
 
 	Signal0 m_mapValidCallbacks;
 
@@ -63,6 +62,13 @@ public:
 	bool isValid() const;
 	
 	void addValidCallback(const SignalHandler& handler);
+	
+	// Updates the window title of the mainframe
+	void updateTitle();
+	
+	// Accessor methods for the worldspawn node
+	void setWorldspawn(scene::INodePtr node);
+	scene::INodePtr getWorldspawn();
 };
 
 extern Map g_map;
@@ -123,7 +129,7 @@ bool ConfirmModified(const char* title);
 const MapFormat& Map_getFormat(const Map& map);
 bool Map_Unnamed(const Map& map);
 
-scene::INodePtr Map_GetWorldspawn(const Map& map);
+//scene::INodePtr Map_GetWorldspawn(const Map& map);
 scene::INodePtr Map_FindWorldspawn(Map& map);
 scene::INodePtr Map_FindOrInsertWorldspawn(Map& map);
 

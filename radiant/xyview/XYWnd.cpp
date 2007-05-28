@@ -478,7 +478,7 @@ void XYWnd::NewBrushDrag(int x, int y) {
 		Node_getTraversable(Map_FindOrInsertWorldspawn(g_map))->insert(node);
 
 		scene::Path brushpath(GlobalSceneGraph().root());
-		brushpath.push(Map_GetWorldspawn(g_map));
+		brushpath.push(g_map.getWorldspawn());
 		brushpath.push(node);
 		selectPath(brushpath, true);
 
@@ -957,7 +957,7 @@ void XYWnd::drawBlockGrid() {
 	int blockSize = GlobalXYWnd().defaultBlockSize(); 
 
 	// Check the worldspawn for a custom blocksize
-	Entity* worldSpawn = Node_getEntity(Map_GetWorldspawn(g_map));
+	Entity* worldSpawn = Node_getEntity(g_map.getWorldspawn());
 	assert(worldSpawn);
 	std::string sizeVal = worldSpawn->getKeyValue("_blocksize");
 

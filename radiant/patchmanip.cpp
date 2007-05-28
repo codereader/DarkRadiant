@@ -64,7 +64,7 @@ void Scene_PatchConstructPrefab(scene::Graph& graph, const AABB& aabb, const std
 
   {
     scene::Path patchpath(GlobalSceneGraph().root());
-    patchpath.push(Map_GetWorldspawn(g_map));
+    patchpath.push(g_map.getWorldspawn());
     patchpath.push(node);
     Instance_getSelectable(*graph.find(patchpath))->setSelected(true);
   }
@@ -569,7 +569,7 @@ void thickenPatches(PatchPtrVector patchList,
 		// Now select the newly created patches
 		{
 			scene::Path patchpath(GlobalSceneGraph().root());
-			patchpath.push(Map_GetWorldspawn(g_map));
+			patchpath.push(g_map.getWorldspawn());
 			patchpath.push(node);
 			Instance_getSelectable(*GlobalSceneGraph().find(patchpath))->setSelected(true);
 		}
@@ -597,7 +597,7 @@ void thickenPatches(PatchPtrVector patchList,
 				// Now select the newly created patches
 				{
 					scene::Path patchpath(GlobalSceneGraph().root());
-					patchpath.push(Map_GetWorldspawn(g_map));
+					patchpath.push(g_map.getWorldspawn());
 					patchpath.push(nodes[i]);
 					Instance_getSelectable(*GlobalSceneGraph().find(patchpath))->setSelected(true);
 				}

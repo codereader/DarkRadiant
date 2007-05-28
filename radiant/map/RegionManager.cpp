@@ -163,7 +163,7 @@ void RegionManager::removeRegionBrushes() {
 	for (int i = 0; i < 6; i++) {
 		// Remove the brushes from the scene
 		if (_brushes[i] != NULL) {
-			Node_getTraversable(Map_GetWorldspawn(g_map))->erase(_brushes[i]);
+			Node_getTraversable(g_map.getWorldspawn())->erase(_brushes[i]);
 			_brushes[i] = scene::INodePtr();
 		}
 	}
