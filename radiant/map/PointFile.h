@@ -28,12 +28,14 @@ public:
 	// Constructor
 	PointFile();
 	
-	// Destructor
-	~PointFile();
-
 	/** greebo: Accessor method containing the singleton instance.
 	 */
 	static PointFile& Instance();
+
+	/** greebo: This releases the shader and detaches this class from
+	 * 			the shadercache.
+	 */
+	void destroy();
 
 	// Query whether the point path is currently visible
 	bool isVisible() const;

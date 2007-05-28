@@ -236,7 +236,7 @@ public:
 
     Selection_construct();
     MultiMon_Construct();
-    map::PointFile::registerCommands();
+    map::PointFile::Instance().registerCommands();
     Map_Construct();
     MainFrame_Construct();
     GlobalCamera().construct();
@@ -276,6 +276,7 @@ public:
   {
     GlobalFileSystem().shutdown();
 
+	map::PointFile::Instance().destroy();
     Entity_Destroy();
     GlobalXYWnd().destroy();
     GlobalCamera().destroy();
