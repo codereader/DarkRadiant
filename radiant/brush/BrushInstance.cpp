@@ -57,14 +57,12 @@ VolumeIntersectionValue BrushInstance::intersectVolume(
 }
 
 void BrushInstance::selectedChanged(const Selectable& selectable) {
-	GlobalSelectionSystem().getObserver(SelectionSystem::ePrimitive)(selectable);
 	GlobalSelectionSystem().onSelectedChanged(*this, selectable);
 
 	Instance::selectedChanged();
 }
 
 void BrushInstance::selectedChangedComponent(const Selectable& selectable) {
-	GlobalSelectionSystem().getObserver(SelectionSystem::eComponent)(selectable);
 	GlobalSelectionSystem().onComponentSelection(*this, selectable);
 }
 

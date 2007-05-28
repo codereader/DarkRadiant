@@ -121,7 +121,6 @@ public:
   virtual void SetManipulatorMode(EManipulatorMode mode) = 0;
   virtual EManipulatorMode ManipulatorMode() const = 0;
 
-  virtual SelectionChangeCallback getObserver(EMode mode) = 0;
   virtual std::size_t countSelected() const = 0;
   virtual std::size_t countSelectedComponents() const = 0;
   virtual void onSelectedChanged(scene::Instance& instance, const Selectable& selectable) = 0;

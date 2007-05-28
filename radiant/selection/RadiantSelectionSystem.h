@@ -6,7 +6,6 @@
 #include "selectionlib.h"
 #include "math/matrix.h"
 #include "signal/signal.h"
-#include "SelectionCounter.h"
 #include "Manipulators.h"
 #include "Selectors.h"
 
@@ -69,8 +68,8 @@ private:
 	EMode _mode;
 	EComponentMode _componentMode;
 
-	SelectionCounter _countPrimitive;
-	SelectionCounter _countComponent;
+	std::size_t _countPrimitive;
+	std::size_t _countComponent;
 
 	// The possible manipulators
 	TranslateManipulator _translateManipulator;
@@ -127,7 +126,6 @@ public:
 	void SetManipulatorMode(EManipulatorMode mode);
 	EManipulatorMode ManipulatorMode() const;
 	
-	SelectionChangeCallback getObserver(EMode mode);
 	std::size_t countSelected() const;
 	std::size_t countSelectedComponents() const;
 	  
@@ -144,8 +142,6 @@ public:
 	void foreachSelectedComponent(const Visitor& visitor) const;
 	
 	void addSelectionChangeCallback(const SelectionChangeHandler& handler);
-	void selectionChanged(const Selectable& selectable);
-	typedef MemberCaller1<RadiantSelectionSystem, const Selectable&, &RadiantSelectionSystem::selectionChanged> SelectionChangedCaller;
 	
 	void startMove();
 	
