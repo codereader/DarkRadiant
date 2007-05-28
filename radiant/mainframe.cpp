@@ -119,7 +119,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "patchmanip.h"
 #include "plugin.h"
 #include "preferences.h"
-#include "qe3.h"
 #include "qgl.h"
 #include "select.h"
 #include "server.h"

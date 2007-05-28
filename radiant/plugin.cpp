@@ -61,7 +61,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "error.h"
 #include "map.h"
 #include "environment.h"
-#include "qe3.h"
 #include "gtkmisc.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "mainframe.h"

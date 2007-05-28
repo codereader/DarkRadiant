@@ -66,14 +66,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "os/path.h"
 #include "uniquenames.h"
 #include "stream/stringstream.h"
+#include "gtkutil/messagebox.h"
 #include "signal/signal.h"
+#include "convert.h"
 
 #include "timer.h"
 #include "select.h"
 #include "plugin.h"
 #include "filetypes.h"
 #include "gtkdlgs.h"
-#include "qe3.h"
 #include "environment.h"
 #include "mainframe.h"
 #include "gtkutil/dialog.h"
@@ -350,6 +351,20 @@ namespace map {
 	    g_map.m_modified_changed(g_map);
 	}
 	
+}
+
+// Moved from qe3.cpp to here
+void Sys_SetTitle(const char *text, bool modified)
+{
+  StringOutputStream title;
+  title << ConvertLocaleToUTF8(text);
+
+  if(modified)
+  {
+    title << " *";
+  }
+
+  gtk_window_set_title(MainFrame_getWindow(), title.c_str());
 }
 
 void Map_UpdateTitle(const Map& map)
@@ -1568,6 +1583,30 @@ namespace map {
 	}
 
 } // namespace map
+
+// Moved from qe3.cpp to here
+bool ConfirmModified(const char* title) {
+  if (!Map_Modified(g_map))
+    return true;
+
+  EMessageBoxReturn result = gtk_MessageBox(GTK_WIDGET(MainFrame_getWindow()), "The current map has changed since it was last saved.\nDo you want to save the current map before continuing?", title, eMB_YESNOCANCEL, eMB_ICONQUESTION);
+  if(result == eIDCANCEL)
+  {
+    return false;
+  }
+  if(result == eIDYES)
+  {
+    if(Map_Unnamed(g_map))
+    {
+      return Map_SaveAs();
+    }
+    else
+    {
+      Map_Save();
+    }
+  }
+  return true;
+}
 
 void NewMap() {
 	if (ConfirmModified("New Map")) {

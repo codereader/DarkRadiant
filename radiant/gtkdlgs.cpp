@@ -71,7 +71,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "gtkmisc.h"
 #include "brushmanip.h"
-#include "qe3.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "mainframe.h"
 #include "gtkutil/dialog.h"
