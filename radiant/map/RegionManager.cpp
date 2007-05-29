@@ -116,7 +116,7 @@ void RegionManager::addRegionBrushes() {
 		// Create a new brush
 		_brushes[i] = GlobalBrushCreator().createBrush();
 		// Insert it into worldspawn
-		Node_getTraversable(Map_FindOrInsertWorldspawn(g_map))->insert(_brushes[i]);
+		Node_getTraversable(Map_FindOrInsertWorldspawn(GlobalMap()))->insert(_brushes[i]);
 	}
 	
 	// Obtain the size of the region (the corners)
@@ -163,7 +163,7 @@ void RegionManager::removeRegionBrushes() {
 	for (int i = 0; i < 6; i++) {
 		// Remove the brushes from the scene
 		if (_brushes[i] != NULL) {
-			Node_getTraversable(g_map.getWorldspawn())->erase(_brushes[i]);
+			Node_getTraversable(GlobalMap().getWorldspawn())->erase(_brushes[i]);
 			_brushes[i] = scene::INodePtr();
 		}
 	}

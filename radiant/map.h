@@ -80,7 +80,8 @@ public:
 	scene::INodePtr getWorldspawn();
 };
 
-extern Map g_map;
+// Accessor function for the map
+Map& GlobalMap();
 
 class MapFormat;
 const MapFormat& MapFormat_forFile(const std::string& filename);
@@ -122,7 +123,7 @@ public:
 
 inline void DeferredDraw_onMapValidChanged(DeferredDraw& self)
 {
-  if(g_map.isValid())
+  if(GlobalMap().isValid())
   {
     self.flush();
   }

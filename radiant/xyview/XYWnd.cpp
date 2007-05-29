@@ -101,7 +101,7 @@ XYWnd::XYWnd() :
 
 	g_signal_connect(G_OBJECT(m_gl_widget), "scroll_event", G_CALLBACK(callbackMouseWheelScroll), this);
 
-	g_map.addValidCallback(DeferredDrawOnMapValidChangedCaller(m_deferredDraw));
+	GlobalMap().addValidCallback(DeferredDrawOnMapValidChangedCaller(m_deferredDraw));
 
 	updateProjection();
 	updateModelview();
@@ -475,10 +475,10 @@ void XYWnd::NewBrushDrag(int x, int y) {
 
 	if (m_NewBrushDrag == NULL) {
 		scene::INodePtr node(GlobalBrushCreator().createBrush());
-		Node_getTraversable(Map_FindOrInsertWorldspawn(g_map))->insert(node);
+		Node_getTraversable(Map_FindOrInsertWorldspawn(GlobalMap()))->insert(node);
 
 		scene::Path brushpath(GlobalSceneGraph().root());
-		brushpath.push(g_map.getWorldspawn());
+		brushpath.push(GlobalMap().getWorldspawn());
 		brushpath.push(node);
 		selectPath(brushpath, true);
 
@@ -950,14 +950,14 @@ void XYWnd::drawGrid() {
 }
 
 void XYWnd::drawBlockGrid() {
-	if (Map_FindWorldspawn(g_map) == 0) {
+	if (Map_FindWorldspawn(GlobalMap()) == 0) {
 		return;
 	}
 	// Set a default blocksize of 1024
 	int blockSize = GlobalXYWnd().defaultBlockSize(); 
 
 	// Check the worldspawn for a custom blocksize
-	Entity* worldSpawn = Node_getEntity(g_map.getWorldspawn());
+	Entity* worldSpawn = Node_getEntity(GlobalMap().getWorldspawn());
 	assert(worldSpawn);
 	std::string sizeVal = worldSpawn->getKeyValue("_blocksize");
 
@@ -1615,7 +1615,7 @@ gboolean XYWnd::callbackSizeAllocate(GtkWidget* widget, GtkAllocation* allocatio
 gboolean XYWnd::callbackExpose(GtkWidget* widget, GdkEventExpose* event, XYWnd* self) {
 
 	if (glwidget_make_current(self->getWidget()) != FALSE) {
-		if (g_map.isValid() && ScreenUpdates_Enabled()) {
+		if (GlobalMap().isValid() && ScreenUpdates_Enabled()) {
 			GlobalOpenGL_debugAssertNoErrors();
 			self->draw();
 			GlobalOpenGL_debugAssertNoErrors();

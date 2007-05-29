@@ -76,7 +76,7 @@ void revertGroupToWorldSpawn() {
 				GlobalSelectionSystem().setSelectedAll(false);
 				
 				// Get the worldspawn node
-	    		scene::INodePtr worldspawnNode = Map_FindOrInsertWorldspawn(g_map);
+	    		scene::INodePtr worldspawnNode = Map_FindOrInsertWorldspawn(GlobalMap());
 	    	
 	    		Entity* worldspawn = Node_getEntity(worldspawnNode);
 	    		if (worldspawn != NULL) {

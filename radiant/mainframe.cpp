@@ -332,12 +332,12 @@ void deleteSelection()
 
 void Map_ExportSelected(std::ostream& ostream)
 {
-	Map_ExportSelected(ostream, Map_getFormat(g_map));
+	Map_ExportSelected(ostream, Map_getFormat(GlobalMap()));
 }
 
 void Map_ImportSelected(TextInputStream& istream)
 {
-  Map_ImportSelected(istream, Map_getFormat(g_map));
+  Map_ImportSelected(istream, Map_getFormat(GlobalMap()));
 }
 
 void Selection_Copy()

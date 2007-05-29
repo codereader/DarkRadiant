@@ -175,7 +175,7 @@ void AutoMapSaver::checkSave() {
 		return;
 	}
 
-	if (!g_map.isValid() || !ScreenUpdates_Enabled()) {
+	if (!GlobalMap().isValid() || !ScreenUpdates_Enabled()) {
 		return;
 	}
 
@@ -191,7 +191,7 @@ void AutoMapSaver::checkSave() {
 
 	if (_enabled) {
 		// only snapshot if not working on an unnamed map
-		if (_snapshotsEnabled && !g_map.isUnnamed()) {
+		if (_snapshotsEnabled && !GlobalMap().isUnnamed()) {
 			try {
 				saveSnapshot();
 			}
@@ -200,7 +200,7 @@ void AutoMapSaver::checkSave() {
 			}
 		}
 		else {
-			if (g_map.isUnnamed()) {
+			if (GlobalMap().isUnnamed()) {
 				// Get the maps path (within the mod path)
 				std::string autoSaveFilename = GlobalRegistry().get(RKEY_MAP_PATH);
 				

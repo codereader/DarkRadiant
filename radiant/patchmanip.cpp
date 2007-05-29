@@ -54,7 +54,7 @@ void Scene_PatchConstructPrefab(scene::Graph& graph, const AABB& aabb, const std
   GlobalSelectionSystem().setSelectedAll(false);
 
   scene::INodePtr node(g_patchCreator->createPatch());
-  Node_getTraversable(Map_FindOrInsertWorldspawn(g_map))->insert(node);
+  Node_getTraversable(Map_FindOrInsertWorldspawn(GlobalMap()))->insert(node);
 
   Patch* patch = Node_getPatch(node);
   patch->SetShader(shader);
@@ -64,7 +64,7 @@ void Scene_PatchConstructPrefab(scene::Graph& graph, const AABB& aabb, const std
 
   {
     scene::Path patchpath(GlobalSceneGraph().root());
-    patchpath.push(g_map.getWorldspawn());
+    patchpath.push(GlobalMap().getWorldspawn());
     patchpath.push(node);
     Instance_getSelectable(*graph.find(patchpath))->setSelected(true);
   }
@@ -558,7 +558,7 @@ void thickenPatches(PatchPtrVector patchList,
 		// Create a new patch node
 		scene::INodePtr node(g_patchCreator->createPatch());
 		// Insert the node into worldspawn
-		Node_getTraversable(Map_FindOrInsertWorldspawn(g_map))->insert(node);
+		Node_getTraversable(Map_FindOrInsertWorldspawn(GlobalMap()))->insert(node);
 	
 		// Retrieve the contained patch from the node
 		Patch* targetPatch = Node_getPatch(node);
@@ -569,7 +569,7 @@ void thickenPatches(PatchPtrVector patchList,
 		// Now select the newly created patches
 		{
 			scene::Path patchpath(GlobalSceneGraph().root());
-			patchpath.push(g_map.getWorldspawn());
+			patchpath.push(GlobalMap().getWorldspawn());
 			patchpath.push(node);
 			Instance_getSelectable(*GlobalSceneGraph().find(patchpath))->setSelected(true);
 		}
@@ -586,7 +586,7 @@ void thickenPatches(PatchPtrVector patchList,
 			// Now create the four walls
 			for (int i = 0; i < 4; i++) {
 				// Insert each node into worldspawn 
-				Node_getTraversable(Map_FindOrInsertWorldspawn(g_map))->insert(nodes[i]);
+				Node_getTraversable(Map_FindOrInsertWorldspawn(GlobalMap()))->insert(nodes[i]);
 				
 				// Retrieve the contained patch from the node
 				Patch* wallPatch = Node_getPatch(nodes[i]);
@@ -597,7 +597,7 @@ void thickenPatches(PatchPtrVector patchList,
 				// Now select the newly created patches
 				{
 					scene::Path patchpath(GlobalSceneGraph().root());
-					patchpath.push(g_map.getWorldspawn());
+					patchpath.push(GlobalMap().getWorldspawn());
 					patchpath.push(nodes[i]);
 					Instance_getSelectable(*GlobalSceneGraph().find(patchpath))->setSelected(true);
 				}
