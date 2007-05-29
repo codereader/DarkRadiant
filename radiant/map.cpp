@@ -112,8 +112,8 @@ void Map::realise() {
     {
       if (isUnnamed())
       {
-        g_map.m_resource->setNode(NewMapRoot(""));
-        MapFilePtr map = Node_getMapFile(g_map.m_resource->getNode());
+        GlobalMap().m_resource->setNode(NewMapRoot(""));
+        MapFilePtr map = Node_getMapFile(GlobalMap().m_resource->getNode());
         if(map != 0)
         {
           map->save();
@@ -128,15 +128,15 @@ void Map::realise() {
 
       map::AutoSaver().clearChanges();
 
-      g_map.setValid(true);
+      GlobalMap().setValid(true);
     }
 }
 
 void Map::unrealise() {
     if(m_resource != 0)
     {
-      g_map.setValid(false);
-      g_map.setWorldspawn(scene::INodePtr());
+      GlobalMap().setValid(false);
+      GlobalMap().setWorldspawn(scene::INodePtr());
 
 
       GlobalUndoSystem().clear();
@@ -187,15 +187,18 @@ scene::INodePtr Map::getWorldspawn() {
 	return m_world_node;
 }
 
-// Legacy global
-Map g_map;
+// Accessor method containing the singleton Map instance
+Map& GlobalMap() {
+	static Map _mapInstance;
+	return _mapInstance;
+}
 
 namespace map {
 
 /* Return the name of the current map.
  */
 std::string getFileName() {
-	return g_map.m_name;
+	return GlobalMap().m_name;
 }	
 
 // move the view to a start position
@@ -343,8 +346,8 @@ namespace map {
 
 	// Set the modified flag
 	void setModified(bool modifiedFlag) {
-		g_map.m_modified = modifiedFlag;
-	    g_map.updateTitle();
+		GlobalMap().m_modified = modifiedFlag;
+	    GlobalMap().updateTitle();
 	}
 	
 }
@@ -361,11 +364,11 @@ void Map_Free()
 
 	GlobalShaderClipboard().clear();
 
-  g_map.m_resource->detach(g_map);
-  GlobalReferenceCache().release(g_map.m_name.c_str());
+  GlobalMap().m_resource->detach(GlobalMap());
+  GlobalReferenceCache().release(GlobalMap().m_name.c_str());
 
 	// Reset the resource pointer
-	g_map.m_resource = ReferenceCache::ResourcePtr();
+	GlobalMap().m_resource = ReferenceCache::ResourcePtr();
 
   FlushReferences();
 
@@ -479,8 +482,8 @@ public:
   bool pre(scene::INodePtr node) const
   {
     if(node_is_worldspawn(node)) {
-      if (g_map.getWorldspawn() == NULL) {
-        g_map.setWorldspawn(node);
+      if (GlobalMap().getWorldspawn() == NULL) {
+        GlobalMap().setWorldspawn(node);
       }
     }
     return false;
@@ -585,11 +588,11 @@ public:
 		// greebo: Check if the visited node is the worldspawn of the other map
 		if (node_is_worldspawn(node)) {
 			// Find the worldspawn of the target map
-			scene::INodePtr world_node = Map_FindWorldspawn(g_map);
+			scene::INodePtr world_node = Map_FindWorldspawn(GlobalMap());
 			
 			if (world_node == NULL) {
 				// Set the worldspawn to the new node
-				g_map.setWorldspawn(node);
+				GlobalMap().setWorldspawn(node);
 				
 				// Insert the visited node at the target path
 				Node_getTraversable(m_path.top())->insert(node);
@@ -923,13 +926,13 @@ void Map_LoadFile (const std::string& filename)
 {
   globalOutputStream() << "Loading map from " << filename << "\n";
 
-	g_map.setName(filename);
+	GlobalMap().setName(filename);
 
   {
     ScopeTimer timer("map load");
 
-    g_map.m_resource = GlobalReferenceCache().capture(g_map.m_name);
-    g_map.m_resource->attach(g_map);
+    GlobalMap().m_resource = GlobalReferenceCache().capture(GlobalMap().m_name);
+    GlobalMap().m_resource->attach(GlobalMap());
 
 	// Get the traversable root
 	scene::TraversablePtr rt = Node_getTraversable(GlobalSceneGraph().root());
@@ -940,7 +943,7 @@ void Map_LoadFile (const std::string& filename)
   }
 
   globalOutputStream() << "--- LoadMapFile ---\n";
-  globalOutputStream() << g_map.m_name.c_str() << "\n";
+  globalOutputStream() << GlobalMap().m_name.c_str() << "\n";
   
   globalOutputStream() << makeLeftJustified(Unsigned(GlobalRadiant().getCounter(counterBrushes).get()), 5) << " primitive\n";
   globalOutputStream() << makeLeftJustified(Unsigned(GlobalRadiant().getCounter(counterEntities).get()), 5) << " entities\n";
@@ -1166,19 +1169,19 @@ void Map_RenameAbsolute(const char* absolute)
     Node_getTraversable(GlobalSceneGraph().root())->traverse(CloneAll(clone));
   }
 
-  g_map.m_resource->detach(g_map);
-  GlobalReferenceCache().release(g_map.m_name.c_str());
+  GlobalMap().m_resource->detach(GlobalMap());
+  GlobalReferenceCache().release(GlobalMap().m_name.c_str());
 
-	g_map.m_resource = resource;
+	GlobalMap().m_resource = resource;
 
-	g_map.setName(absolute);
+	GlobalMap().setName(absolute);
 
-  g_map.m_resource->attach(g_map);
+  GlobalMap().m_resource->attach(GlobalMap());
 }
 
 void Map_Rename(const std::string& filename)
 {
-	if(g_map.m_name != filename) {
+	if(GlobalMap().m_name != filename) {
     	ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Saving Map");
 
     	Map_RenameAbsolute(filename.c_str());
@@ -1232,12 +1235,12 @@ void Map_New()
 {
 	//globalOutputStream() << "Map_New\n";
 
-	g_map.setName(MAP_UNNAMED_STRING);
+	GlobalMap().setName(MAP_UNNAMED_STRING);
 
   {
-    g_map.m_resource = GlobalReferenceCache().capture(g_map.m_name.c_str());
-//    ASSERT_MESSAGE(g_map.m_resource->getNode() == 0, "bleh");
-    g_map.m_resource->attach(g_map);
+    GlobalMap().m_resource = GlobalReferenceCache().capture(GlobalMap().m_name.c_str());
+//    ASSERT_MESSAGE(GlobalMap().m_resource->getNode() == 0, "bleh");
+    GlobalMap().m_resource->attach(GlobalMap());
 
     SceneChangeNotify();
   }
@@ -1533,7 +1536,7 @@ namespace map {
 
 // Moved from qe3.cpp to here
 bool ConfirmModified(const char* title) {
-  if (!Map_Modified(g_map))
+  if (!Map_Modified(GlobalMap()))
     return true;
 
   EMessageBoxReturn result = gtk_MessageBox(GTK_WIDGET(MainFrame_getWindow()), "The current map has changed since it was last saved.\nDo you want to save the current map before continuing?", title, eMB_YESNOCANCEL, eMB_ICONQUESTION);
@@ -1543,7 +1546,7 @@ bool ConfirmModified(const char* title) {
   }
   if(result == eIDYES)
   {
-    if(g_map.isUnnamed())
+    if(GlobalMap().isUnnamed())
     {
       return Map_SaveAs();
     }
@@ -1648,11 +1651,11 @@ void SaveMapAs()
 
 void SaveMap()
 {
-  if(g_map.isUnnamed())
+  if(GlobalMap().isUnnamed())
   {
     SaveMapAs();
   }
-  else if(Map_Modified(g_map))
+  else if(Map_Modified(GlobalMap()))
   {
     Map_Save();
   }
@@ -1913,9 +1916,9 @@ public:
   {
     if(--m_unrealised == 0)
     {
-      if(g_map.m_resource != 0)
+      if(GlobalMap().m_resource != 0)
       {
-	      g_map.m_resource->realise();
+	      GlobalMap().m_resource->realise();
       }
     }
   }
@@ -1923,10 +1926,10 @@ public:
   {
     if(++m_unrealised == 1)
     {
-      if(g_map.m_resource != 0)
+      if(GlobalMap().m_resource != 0)
       {
-        g_map.m_resource->flush();
-	      g_map.m_resource->unrealise();
+        GlobalMap().m_resource->flush();
+	      GlobalMap().m_resource->unrealise();
       }
     }
   }

@@ -310,7 +310,7 @@ public:
       // delete empty entities
       Entity* entity = Node_getEntity(path.top());
       if(entity != 0
-        && path.top() != Map_FindWorldspawn(g_map)
+        && path.top() != Map_FindWorldspawn(GlobalMap())
         && Node_getTraversable(path.top())->empty())
       {
         Path_deleteTop(path);
