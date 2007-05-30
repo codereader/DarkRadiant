@@ -77,7 +77,7 @@ void MRU::loadMap(const std::string& fileName) {
 	if (ConfirmModified("Open Map")) {
 		if (file_readable(fileName.c_str())) {
 			// Shut down the current map
-			Map_Free();
+			GlobalMap().free();
 			
 			// Load the file
 			Map_LoadFile(fileName.c_str());

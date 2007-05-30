@@ -272,7 +272,7 @@ void EntityInspector::keyValueChanged() {
     
     // Set the map modified flag
     if (getInstance()._selectedEntity != NULL)
-    	map::setModified(true);
+    	GlobalMap().setModified(true);
 }
 
 // Pass on a queueDraw request to the contained IdleDraw object.

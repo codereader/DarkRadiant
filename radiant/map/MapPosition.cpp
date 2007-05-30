@@ -77,7 +77,7 @@ void MapPosition::store() {
 		_angle = camwnd->getCameraAngles();
 		
 		// Tag the map as modified
-		map::setModified(true);
+		GlobalMap().setModified(true);
 	}
 	else {
 		globalErrorStream() << "MapPosition: Warning: Couldn't find Camera.\n";

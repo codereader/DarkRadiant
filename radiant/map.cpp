@@ -203,6 +203,31 @@ const MapFormat& Map::getFormat() {
 	return getFormatForFile(m_name);
 }
 
+// free all map elements, reinitialize the structures that depend on them
+void Map::free() {
+	map::PointFile::Instance().clear();
+
+	GlobalShaderClipboard().clear();
+
+	m_resource->detach(*this);
+	GlobalReferenceCache().release(m_name.c_str());
+
+	// Reset the resource pointer
+	m_resource = ReferenceCache::ResourcePtr();
+
+	FlushReferences();
+}
+
+bool Map::isModified() const {
+	return m_modified;
+}
+
+// Set the modified flag
+void Map::setModified(bool modifiedFlag) {
+	m_modified = modifiedFlag;
+    updateTitle();
+}
+
 // Accessor method containing the singleton Map instance
 Map& GlobalMap() {
 	static Map _mapInstance;
@@ -329,43 +354,6 @@ AABB getVisibleBounds() {
 }
 
 } // namespace map
-
-bool Map_Modified(const Map& map)
-{
-  return map.m_modified;
-}
-
-namespace map {
-
-	// Set the modified flag
-	void setModified(bool modifiedFlag) {
-		GlobalMap().m_modified = modifiedFlag;
-	    GlobalMap().updateTitle();
-	}
-	
-}
-
-/*
-================
-Map_Free
-free all map elements, reinitialize the structures that depend on them
-================
-*/
-void Map_Free()
-{
-	map::PointFile::Instance().clear();
-
-	GlobalShaderClipboard().clear();
-
-  GlobalMap().m_resource->detach(GlobalMap());
-  GlobalReferenceCache().release(GlobalMap().m_name.c_str());
-
-	// Reset the resource pointer
-	GlobalMap().m_resource = ReferenceCache::ResourcePtr();
-
-  FlushReferences();
-
-}
 
 /* greebo: Finds an entity with the given classname
  */
@@ -959,7 +947,7 @@ void Map_LoadFile (const std::string& filename)
 	GlobalShaderClipboard().clear();
 	
 	// Clear the modified flag
-	map::setModified(false);
+	GlobalMap().setModified(false);
 }
 
 class Excluder
@@ -1215,7 +1203,7 @@ void Map_Save()
 	map::GlobalMapPosition().removePositions();
 	
 	// Clear the modified flag
-	map::setModified(false);
+	GlobalMap().setModified(false);
 }
 
 /*
@@ -1529,7 +1517,7 @@ namespace map {
 
 // Moved from qe3.cpp to here
 bool ConfirmModified(const char* title) {
-  if (!Map_Modified(GlobalMap()))
+  if (!GlobalMap().isModified())
     return true;
 
   EMessageBoxReturn result = gtk_MessageBox(GTK_WIDGET(MainFrame_getWindow()), "The current map has changed since it was last saved.\nDo you want to save the current map before continuing?", title, eMB_YESNOCANCEL, eMB_ICONQUESTION);
@@ -1556,7 +1544,7 @@ void NewMap() {
 		// Turn regioning off when starting a new map
 		GlobalRegion().disable();
 
-		Map_Free();
+		GlobalMap().free();
 		Map_New();
 	}
 }
@@ -1572,7 +1560,7 @@ void OpenMap()
 
 	if (!filename.empty()) {
 	    GlobalMRU().insert(filename);
-	    Map_Free();
+	    GlobalMap().free();
 	    Map_LoadFile(filename);
 	}
 }
@@ -1648,7 +1636,7 @@ void SaveMap()
   {
     SaveMapAs();
   }
-  else if(Map_Modified(GlobalMap()))
+  else if(GlobalMap().isModified())
   {
     Map_Save();
   }

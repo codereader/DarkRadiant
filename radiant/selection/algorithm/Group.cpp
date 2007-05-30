@@ -97,7 +97,7 @@ void revertGroupToWorldSpawn() {
 			    	}
 			     	
 			     	// Flag the map as changed
-			     	map::setModified(true);
+			     	GlobalMap().setModified(true);
 				}
 			}
 		} // node_is_group
