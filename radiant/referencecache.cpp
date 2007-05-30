@@ -62,7 +62,7 @@ bool References_Saved();
 
 void MapChanged()
 {
-	map::setModified(!References_Saved());
+	GlobalMap().setModified(!References_Saved());
 }
 
 

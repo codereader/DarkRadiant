@@ -68,12 +68,22 @@ public:
 	 */
 	std::string getName() const;
 	
+	// free all map elements, reinitialize the structures that depend on them
+	void free();
+	
 	void realise();
 	void unrealise();
   
 	// Accessor methods for the "valid" flag
 	void setValid(bool valid);
 	bool isValid() const;
+	
+	/** greebo: Returns true if the map has unsaved changes.
+	 */
+	bool isModified() const;
+	
+	// Sets the modified status of this map
+	void setModified(bool modifiedFlag);
 	
 	void addValidCallback(const SignalHandler& handler);
 	
@@ -156,7 +166,6 @@ void Map_LoadFile(const std::string& filename);
 bool Map_SaveFile(const char* filename);
 
 void Map_New();
-void Map_Free();
 
 class TextInputStream;
 class TextOutputStream;
@@ -164,8 +173,6 @@ class TextOutputStream;
 // Map import and export functions
 void Map_ImportSelected(TextInputStream& in, const MapFormat& format);
 void Map_ExportSelected(std::ostream& out, const MapFormat& format);
-
-bool Map_Modified(const Map& map);
 
 void Map_Save();
 bool Map_SaveAs();
@@ -223,11 +230,6 @@ namespace map {
 	 */
 	 
 	int countSelectedBrushes();
-	
-	/**
-	 * Set the "modified" flag on the current map, to allow saving.
-	 */
-	void setModified(bool modifiedFlag);
 	
 	/** greebo: Focus the XYViews and the Camera to the given point/angle.
 	 */

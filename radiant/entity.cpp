@@ -273,7 +273,7 @@ scene::INodePtr Entity_createFromSelection(const char* name,
     }
     
     // Flag the map as unsaved after creating the entity
-    map::setModified(true);
+    GlobalMap().setModified(true);
     
 	// Return the new node
 	return node;

@@ -340,7 +340,7 @@ int main (int argc, char* argv[])
 	
 	/* EXIT */
 
-  	Map_Free();
+  	GlobalMap().free();
 
   delete g_pParentWnd;
 
