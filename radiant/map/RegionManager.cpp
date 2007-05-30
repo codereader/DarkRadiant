@@ -294,7 +294,7 @@ void RegionManager::saveRegion() {
 		
 		// Save the map and pass the RegionManager::traverseRegion functor 
 		// that assures that only regioned items are traversed
-		MapResource_saveFile(MapFormat_forFile(filename),
+		MapResource_saveFile(Map::getFormatForFile(filename),
 							 GlobalSceneGraph().root(),
   							 RegionManager::traverseRegion,
   							 filename.c_str());

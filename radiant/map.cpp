@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 
 #include "ieventmanager.h"
-#include "imap.h"
 #include "iselection.h"
 #include "igroupnode.h"
 #include "icounter.h"
@@ -104,18 +103,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	}
 
 Map::Map() : 
+	m_resource(ReferenceCache::ResourcePtr()),
 	m_valid(false)
 {}
 
 void Map::realise() {
     if(m_resource != 0)
     {
-      if (isUnnamed())
-      {
-        GlobalMap().m_resource->setNode(NewMapRoot(""));
-        MapFilePtr map = Node_getMapFile(GlobalMap().m_resource->getNode());
-        if(map != 0)
-        {
+      if (isUnnamed()) {
+        m_resource->setNode(NewMapRoot(""));
+        MapFilePtr map = Node_getMapFile(m_resource->getNode());
+        if(map != NULL) {
           map->save();
         }
       }
@@ -128,15 +126,15 @@ void Map::realise() {
 
       map::AutoSaver().clearChanges();
 
-      GlobalMap().setValid(true);
+      setValid(true);
     }
 }
 
 void Map::unrealise() {
     if(m_resource != 0)
     {
-      GlobalMap().setValid(false);
-      GlobalMap().setWorldspawn(scene::INodePtr());
+      setValid(false);
+      setWorldspawn(scene::INodePtr());
 
 
       GlobalUndoSystem().clear();
@@ -167,12 +165,15 @@ void Map::updateTitle() {
 	}
 
 	gtk_window_set_title(MainFrame_getWindow(), title.c_str());
-
 }
 
 void Map::setName(const std::string& newName) {
 	m_name = newName;
 	updateTitle();
+}
+
+std::string Map::getName() const {
+	return m_name;
 }
 
 bool Map::isUnnamed() const {
@@ -187,6 +188,21 @@ scene::INodePtr Map::getWorldspawn() {
 	return m_world_node;
 }
 
+const MapFormat& Map::getFormatForFile(const std::string& filename) {
+	// Look up the module name which loads the given extension
+	std::string moduleName = findModuleName(GetFileTypeRegistry(), 
+											std::string(MapFormat::Name()), 
+											path_get_extension(filename.c_str()));
+											
+	MapFormat* format = Radiant_getMapModules().findModule(moduleName.c_str());
+	ASSERT_MESSAGE(format != 0, "map format not found for file " << makeQuoted(filename.c_str()));
+	return *format;
+}
+
+const MapFormat& Map::getFormat() {
+	return getFormatForFile(m_name);
+}
+
 // Accessor method containing the singleton Map instance
 Map& GlobalMap() {
 	static Map _mapInstance;
@@ -194,12 +210,6 @@ Map& GlobalMap() {
 }
 
 namespace map {
-
-/* Return the name of the current map.
- */
-std::string getFileName() {
-	return GlobalMap().m_name;
-}	
 
 // move the view to a start position
 //
@@ -319,23 +329,6 @@ AABB getVisibleBounds() {
 }
 
 } // namespace map
-
-const MapFormat& MapFormat_forFile(const std::string& filename) {
-	// Look up the module name which loads the given extension
-	std::string moduleName = findModuleName(GetFileTypeRegistry(), 
-											std::string(MapFormat::Name()), 
-											path_get_extension(filename.c_str()));
-											
-	MapFormat* format = Radiant_getMapModules().findModule(moduleName.c_str());
-	ASSERT_MESSAGE(format != 0, "map format not found for file " << makeQuoted(filename.c_str()));
-	return *format;
-}
-
-const MapFormat& Map_getFormat(const Map& map)
-{
-  return MapFormat_forFile(map::getFileName());
-}
-
 
 bool Map_Modified(const Map& map)
 {
@@ -1350,7 +1343,7 @@ Map_SaveFile
 bool Map_SaveFile(const char* filename)
 {
   ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Saving Map");
-  return MapResource_saveFile(MapFormat_forFile(filename), GlobalSceneGraph().root(), Map_Traverse, filename); 
+  return MapResource_saveFile(Map::getFormatForFile(filename), GlobalSceneGraph().root(), Map_Traverse, filename); 
 }
 
 //
@@ -1364,7 +1357,7 @@ bool Map_SaveSelected(const std::string& filename) {
 	// Substract the origin from child primitives (of entities like func_static)
 	map::removeOriginFromChildPrimitives();
 	
-	bool success = MapResource_saveFile(MapFormat_forFile(filename), 
+	bool success = MapResource_saveFile(Map::getFormatForFile(filename), 
   							  GlobalSceneGraph().root(), 
   							  Map_Traverse_Selected, 
   							  filename.c_str());
