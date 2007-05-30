@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "iscenegraph.h"
 #include "ireference.h"
+#include "imap.h"
 #include "generic/callback.h"
 #include "signal/signal.h"
 #include "moduleobserver.h"
@@ -63,6 +64,10 @@ public:
 	 */
 	void setName(const std::string& newName);
 	
+	/** greebo: Returns the name of this class
+	 */
+	std::string getName() const;
+	
 	void realise();
 	void unrealise();
   
@@ -78,13 +83,18 @@ public:
 	// Accessor methods for the worldspawn node
 	void setWorldspawn(scene::INodePtr node);
 	scene::INodePtr getWorldspawn();
+	
+	/** greebo: Returns the map format for this map
+	 */
+	const MapFormat& getFormat();
+	
+	/** greebo: Returns the map format for the given filename
+	 */
+	static const MapFormat& getFormatForFile(const std::string& filename);
 };
 
 // Accessor function for the map
 Map& GlobalMap();
-
-class MapFormat;
-const MapFormat& MapFormat_forFile(const std::string& filename);
 
 class DeferredDraw
 {
@@ -135,8 +145,6 @@ inline void DeferredDraw_onMapValidChanged(DeferredDraw& self)
 typedef ReferenceCaller<DeferredDraw, DeferredDraw_onMapValidChanged> DeferredDrawOnMapValidChangedCaller;
 
 bool ConfirmModified(const char* title);
-
-const MapFormat& Map_getFormat(const Map& map);
 
 scene::INodePtr Map_FindWorldspawn(Map& map);
 scene::INodePtr Map_FindOrInsertWorldspawn(Map& map);
@@ -189,10 +197,6 @@ void Map_Construct();
 void Map_Destroy();
 
 namespace map {
-	/**
-	 * Return the filename of the current map, as a string.
-	 */
-	std::string getFileName();
 
 	/** Subtract the provided origin vector from all selected brushes. This is 
 	 * necessary when reparenting worldspawn brushes to an entity, since the entity's

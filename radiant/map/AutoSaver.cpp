@@ -100,7 +100,7 @@ void AutoMapSaver::saveSnapshot() {
 	}
 	
 	// Construct the boost::path class out of the full map path (throws on fail)
-	Path fullPath = Path(map::getFileName(), boost::filesystem::native);
+	Path fullPath = Path(GlobalMap().getName(), boost::filesystem::native);
 	
 	// Append the the snapshot folder to the path
 	std::string snapshotPath = fullPath.branch_path().string() + "/";
@@ -224,7 +224,7 @@ void AutoMapSaver::checkSave() {
 				try {
 					// create the new autosave filename by changing the extension
 					Path autoSaveFilename = boost::filesystem::change_extension(
-							Path(map::getFileName(), boost::filesystem::native), 
+							Path(GlobalMap().getName(), boost::filesystem::native), 
 							newExtension
 						);
 					

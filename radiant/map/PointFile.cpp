@@ -99,7 +99,7 @@ void PointFile::parse() {
 
 	// Pointfile is the same as the map file but with a .lin extension
 	// instead of .map
-	std::string mapName = map::getFileName();
+	std::string mapName = GlobalMap().getName();
 	std::string pfName = mapName.substr(0, mapName.rfind(".")) + ".lin";
 	
 	// Open the pointfile and get its input stream if possible
