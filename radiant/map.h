@@ -94,6 +94,16 @@ public:
 	void setWorldspawn(scene::INodePtr node);
 	scene::INodePtr getWorldspawn();
 	
+	/** greebo: This retrieves the worldspawn node of this map.
+	 *			If no worldspawn can be found, this creates one.
+	 */
+	scene::INodePtr Map::findOrInsertWorldspawn();
+
+	/** greebo: Tries to locate the worldspawn in the global scenegraph
+	 *			Returns NULL (empty shared_ptr) if nothing is found. 
+	 */
+	scene::INodePtr findWorldspawn();
+	
 	/** greebo: Returns the map format for this map
 	 */
 	const MapFormat& getFormat();
@@ -101,6 +111,10 @@ public:
 	/** greebo: Returns the map format for the given filename
 	 */
 	static const MapFormat& getFormatForFile(const std::string& filename);
+
+private:
+	// If no worldspawn can be found in the scenegraph, this creates one
+	void updateWorldspawn();
 };
 
 // Accessor function for the map
@@ -155,9 +169,6 @@ inline void DeferredDraw_onMapValidChanged(DeferredDraw& self)
 typedef ReferenceCaller<DeferredDraw, DeferredDraw_onMapValidChanged> DeferredDrawOnMapValidChangedCaller;
 
 bool ConfirmModified(const char* title);
-
-scene::INodePtr Map_FindWorldspawn(Map& map);
-scene::INodePtr Map_FindOrInsertWorldspawn(Map& map);
 
 template<typename Element> class BasicVector3;
 typedef BasicVector3<double> Vector3;

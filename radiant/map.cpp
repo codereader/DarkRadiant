@@ -471,13 +471,14 @@ public:
   }
 };
 
-scene::INodePtr Map_FindWorldspawn(Map& map)
-{
-  map.setWorldspawn(scene::INodePtr());
+scene::INodePtr Map::findWorldspawn() {
+	// Clear the current worldspawn node
+	setWorldspawn(scene::INodePtr());
 
-  Node_getTraversable(GlobalSceneGraph().root())->traverse(entity_updateworldspawn());
+	// Traverse the scenegraph and search for the worldspawn
+	Node_getTraversable(GlobalSceneGraph().root())->traverse(entity_updateworldspawn());
 
-  return map.getWorldspawn();
+	return getWorldspawn();
 }
 
 
@@ -518,18 +519,15 @@ scene::INodePtr createWorldspawn()
   return worldspawn;
 }
 
-void Map_UpdateWorldspawn(Map& map)
-{
-  if(Map_FindWorldspawn(map) == 0)
-  {
-    map.setWorldspawn(createWorldspawn());
-  }
+void Map::updateWorldspawn() {
+	if (findWorldspawn() == NULL) {
+		setWorldspawn(createWorldspawn());
+	}
 }
 
-scene::INodePtr Map_FindOrInsertWorldspawn(Map& map)
-{
-  Map_UpdateWorldspawn(map);
-  return map.getWorldspawn();
+scene::INodePtr Map::findOrInsertWorldspawn() {
+	updateWorldspawn();
+	return getWorldspawn();
 }
 
 
@@ -569,7 +567,7 @@ public:
 		// greebo: Check if the visited node is the worldspawn of the other map
 		if (node_is_worldspawn(node)) {
 			// Find the worldspawn of the target map
-			scene::INodePtr world_node = Map_FindWorldspawn(GlobalMap());
+			scene::INodePtr world_node = GlobalMap().findWorldspawn();
 			
 			if (world_node == NULL) {
 				// Set the worldspawn to the new node

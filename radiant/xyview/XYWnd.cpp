@@ -475,7 +475,7 @@ void XYWnd::NewBrushDrag(int x, int y) {
 
 	if (m_NewBrushDrag == NULL) {
 		scene::INodePtr node(GlobalBrushCreator().createBrush());
-		Node_getTraversable(Map_FindOrInsertWorldspawn(GlobalMap()))->insert(node);
+		Node_getTraversable(GlobalMap().findOrInsertWorldspawn())->insert(node);
 
 		scene::Path brushpath(GlobalSceneGraph().root());
 		brushpath.push(GlobalMap().getWorldspawn());
@@ -950,7 +950,7 @@ void XYWnd::drawGrid() {
 }
 
 void XYWnd::drawBlockGrid() {
-	if (Map_FindWorldspawn(GlobalMap()) == 0) {
+	if (GlobalMap().findWorldspawn() == NULL) {
 		return;
 	}
 	// Set a default blocksize of 1024

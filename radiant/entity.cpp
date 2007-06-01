@@ -150,7 +150,7 @@ void Entity_ungroupSelected()
   UndoableCommand undo("ungroupSelectedEntities");
 
   scene::Path world_path(GlobalSceneGraph().root());
-  world_path.push(Map_FindOrInsertWorldspawn(GlobalMap()));
+  world_path.push(GlobalMap().findOrInsertWorldspawn());
 
   GlobalSelectionSystem().foreachSelected(EntityUngroupVisitor(world_path));
 }
