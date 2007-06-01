@@ -116,7 +116,7 @@ void RegionManager::addRegionBrushes() {
 		// Create a new brush
 		_brushes[i] = GlobalBrushCreator().createBrush();
 		// Insert it into worldspawn
-		Node_getTraversable(Map_FindOrInsertWorldspawn(GlobalMap()))->insert(_brushes[i]);
+		Node_getTraversable(GlobalMap().findOrInsertWorldspawn())->insert(_brushes[i]);
 	}
 	
 	// Obtain the size of the region (the corners)

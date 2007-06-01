@@ -54,7 +54,7 @@ void Scene_PatchConstructPrefab(scene::Graph& graph, const AABB& aabb, const std
   GlobalSelectionSystem().setSelectedAll(false);
 
   scene::INodePtr node(g_patchCreator->createPatch());
-  Node_getTraversable(Map_FindOrInsertWorldspawn(GlobalMap()))->insert(node);
+  Node_getTraversable(GlobalMap().findOrInsertWorldspawn())->insert(node);
 
   Patch* patch = Node_getPatch(node);
   patch->SetShader(shader);
@@ -558,7 +558,7 @@ void thickenPatches(PatchPtrVector patchList,
 		// Create a new patch node
 		scene::INodePtr node(g_patchCreator->createPatch());
 		// Insert the node into worldspawn
-		Node_getTraversable(Map_FindOrInsertWorldspawn(GlobalMap()))->insert(node);
+		Node_getTraversable(GlobalMap().findOrInsertWorldspawn())->insert(node);
 	
 		// Retrieve the contained patch from the node
 		Patch* targetPatch = Node_getPatch(node);
@@ -586,7 +586,7 @@ void thickenPatches(PatchPtrVector patchList,
 			// Now create the four walls
 			for (int i = 0; i < 4; i++) {
 				// Insert each node into worldspawn 
-				Node_getTraversable(Map_FindOrInsertWorldspawn(GlobalMap()))->insert(nodes[i]);
+				Node_getTraversable(GlobalMap().findOrInsertWorldspawn())->insert(nodes[i]);
 				
 				// Retrieve the contained patch from the node
 				Patch* wallPatch = Node_getPatch(nodes[i]);
