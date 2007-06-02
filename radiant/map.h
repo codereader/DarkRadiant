@@ -202,8 +202,6 @@ bool Map_SaveAs();
 
 scene::INodePtr Node_Clone(scene::INodePtr node);
 
-void DoMapInfo();
-
 void Scene_parentSelectedPrimitivesToEntity(scene::Graph& graph, scene::INodePtr parent);
 
 void OnUndoSizeChanged();
