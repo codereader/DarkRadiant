@@ -399,10 +399,9 @@ void Map::saveCameraPosition() {
 	}
 }
 
-/* Find the start position in the map and focus the viewport on it.
+/** Find the start position in the map and focus the viewport on it.
  */
-void Map_StartPosition()
-{
+void Map::gotoStartPosition() {
 	const std::string keyLastCamPos = GlobalRegistry().get(RKEY_LAST_CAM_POSITION);
 	const std::string keyLastCamAngle = GlobalRegistry().get(RKEY_LAST_CAM_ANGLE); 
 	const std::string eClassPlayerStart = GlobalRegistry().get(RKEY_PLAYER_START_ECLASS);
@@ -410,9 +409,11 @@ void Map_StartPosition()
 	Vector3 angles(0,0,0);
 	Vector3 origin(0,0,0);
 	
-	Entity* worldspawn = Scene_FindEntityByClass("worldspawn");
-	
-	if (worldspawn != NULL) {
+	if (m_world_node != NULL) {
+		// Retrieve the entity from the worldspawn node
+		Entity* worldspawn = Node_getEntity(m_world_node);
+		assert(worldspawn != NULL);	// This must succeed
+		
 		// Try to find a saved "last camera position"
 		const std::string savedOrigin = worldspawn->getKeyValue(keyLastCamPos);
 		
@@ -426,7 +427,7 @@ void Map_StartPosition()
 			map::focusViews(origin, angles);
 			
 			// Remove the saved entity key value so it doesn't appear during map edit
-			GlobalMap().removeCameraPosition();
+			removeCameraPosition();
 			
 			return;
 		}
@@ -935,7 +936,7 @@ void Map_LoadFile (const std::string& filename)
 	map::addOriginToChildPrimitives();
 
 	// Move the view to a start position
-	Map_StartPosition();
+	GlobalMap().gotoStartPosition();
 
 	// Load the stored map positions from the worldspawn entity
 	map::GlobalMapPosition().loadPositions();

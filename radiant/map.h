@@ -116,6 +116,13 @@ public:
 	 */
 	void removeCameraPosition();
 	void saveCameraPosition();
+	
+	/** greebo: Sets the camera to the start position. This uses
+	 * 			the information stored in the worlspawn or
+	 * 			the location of the info_player_start entity.
+	 * 			If neither of these two exist, 0,0,0 is used. 
+	 */
+	void gotoStartPosition();
 
 private:
 	// If no worldspawn can be found in the scenegraph, this creates one
