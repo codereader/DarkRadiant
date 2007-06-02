@@ -1310,32 +1310,44 @@ namespace map {
 
 } // namespace map
 
-// Moved from qe3.cpp to here
-bool ConfirmModified(const char* title) {
-  if (!GlobalMap().isModified())
-    return true;
+bool Map::askForSave(const std::string& title) {
+	if (!isModified()) {
+		// Map is not modified, return positive
+		return true;
+	}
 
-  EMessageBoxReturn result = gtk_MessageBox(GTK_WIDGET(MainFrame_getWindow()), "The current map has changed since it was last saved.\nDo you want to save the current map before continuing?", title, eMB_YESNOCANCEL, eMB_ICONQUESTION);
-  if(result == eIDCANCEL)
-  {
-    return false;
-  }
-  if(result == eIDYES)
-  {
-    if(GlobalMap().isUnnamed())
-    {
-      return Map_SaveAs();
-    }
-    else
-    {
-      GlobalMap().save();
-    }
-  }
-  return true;
+	// Ask the user
+	EMessageBoxReturn result = gtk_MessageBox(
+		GTK_WIDGET(GlobalRadiant().getMainWindow()), 
+		"The current map has changed since it was last saved."
+		"\nDo you want to save the current map before continuing?", 
+		title.c_str(), 
+		eMB_YESNOCANCEL, eMB_ICONQUESTION
+	);
+	
+	if (result == eIDCANCEL) {
+		return false;
+	}
+	
+	if (result == eIDYES) {
+		// The user wants to save the map
+	    if (isUnnamed()) {
+	    	// Map still unnamed, try to save the map with a new name
+	    	// and take the return value from the other routine.
+			return saveAs();
+	    }
+	    else {
+	    	// Map is named, save it
+			save();
+	    }
+	}
+
+	// Default behaviour: allow the save
+	return true;
 }
 
 void NewMap() {
-	if (ConfirmModified("New Map")) {
+	if (GlobalMap().askForSave("New Map")) {
 		// Turn regioning off when starting a new map
 		GlobalRegion().disable();
 
@@ -1346,8 +1358,8 @@ void NewMap() {
 
 void OpenMap()
 {
-  if (!ConfirmModified("Open Map"))
-    return;
+	if (!GlobalMap().askForSave("Open Map"))
+		return;
 
 	// Get the map file name to load
 	std::string filename = map::MapFileManager::getMapFilename(true, 
@@ -1406,24 +1418,23 @@ void saveSelectedAsPrefab() {
 
 } // namespace map
 
-bool Map_SaveAs()
-{
-	std::string filename = map::MapFileManager::getMapFilename(false, "Save map");
+bool Map::saveAs() {
+	std::string filename = map::MapFileManager::getMapFilename(false, "Save Map");
   
 	if (!filename.empty()) {
 	    GlobalMRU().insert(filename);
 	    Map_Rename(filename);
-	    GlobalMap().save();
+	    save();
 	    return true;
 	}
 	else {
+		// Invalid filename entered, return false
 		return false;
 	}
 }
 
-void SaveMapAs()
-{
-  Map_SaveAs();
+void SaveMapAs() {
+	GlobalMap().saveAs();
 }
 
 void SaveMap()
