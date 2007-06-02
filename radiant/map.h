@@ -216,8 +216,6 @@ void Map_ExportSelected(std::ostream& out, const MapFormat& format);
 
 scene::INodePtr Node_Clone(scene::INodePtr node);
 
-void Scene_parentSelectedPrimitivesToEntity(scene::Graph& graph, scene::INodePtr parent);
-
 void Map_Traverse(scene::INodePtr root, const scene::Traversable::Walker& walker);
 
 void SelectBrush (int entitynum, int brushnum);
