@@ -21,6 +21,7 @@
 #include "MapFileManager.h"
 #include "xyview/GlobalXYWnd.h"
 #include "camera/GlobalCamera.h"
+#include "selection/algorithm/Primitives.h"
 
 #include <boost/shared_ptr.hpp>
 
@@ -290,7 +291,7 @@ void RegionManager::saveRegion() {
 		GlobalRegion().addRegionBrushes();
 		
 		// Substract the origin from child primitives (of entities like func_static)
-		removeOriginFromChildPrimitives();
+		selection::algorithm::removeOriginFromChildPrimitives();
 		
 		// Save the map and pass the RegionManager::traverseRegion functor 
 		// that assures that only regioned items are traversed
@@ -300,7 +301,7 @@ void RegionManager::saveRegion() {
   							 filename.c_str());
 		
 		// Add the origin to all the children of func_static, etc.
-		addOriginToChildPrimitives();
+		selection::algorithm::addOriginToChildPrimitives();
 		
 		// Remove the region brushes
 		GlobalRegion().removeRegionBrushes();

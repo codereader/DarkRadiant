@@ -7,8 +7,8 @@
 #include "entitylib.h" // EntityFindByClassnameWalker
 #include "entity.h" // Entity_createFromSelection()
 #include "ientity.h" // Node_getEntity()
-#include "map.h" // Scene_countSelectedBrushes()
 #include "mainframe.h"
+#include "map.h"
 
 #include "gtkutil/dialog.h"
 
@@ -108,18 +108,14 @@ void OrthoContextMenu::show(const Vector3& point) {
 
 // Check if the convert to static command should be enabled
 void OrthoContextMenu::checkConvertStatic() {
-
+	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+	
 	// Command should be enabled if there is at least one selected
 	// primitive and no non-primitive selections.
-	int numSelections = GlobalSelectionSystem().countSelected();
-	if (numSelections > 0 
-		&& map::countSelectedPrimitives() == numSelections) 
-	{
-		gtk_widget_set_sensitive(_convertStatic, TRUE);
-	}
-	else {
-		gtk_widget_set_sensitive(_convertStatic, FALSE);
-	}
+	gtk_widget_set_sensitive(
+		_convertStatic, 
+		(info.totalCount > 0 && info.entityCount == 0)
+	);
 }
 
 void OrthoContextMenu::checkAddOptions() {
@@ -226,11 +222,10 @@ void OrthoContextMenu::callbackAddSpeaker(GtkMenuItem* item, OrthoContextMenu* s
 }
 
 void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* self) {
+	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 	
 	// To create a model we need EITHER nothing selected OR exactly one brush selected.
-	if (GlobalSelectionSystem().countSelected() == 0
-		|| map::countSelectedBrushes() == 1) {
-	
+	if (info.totalCount == 0 || info.brushCount == 1) {
 		// Display the model selector and block waiting for a selection (may be empty)
 		ModelAndSkin ms = ui::ModelSelector::chooseModel();
 		

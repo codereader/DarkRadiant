@@ -649,8 +649,10 @@ void createSimplePatch() {
 	int height = 3;
 	bool removeSelectedBrush = false;
 	
+	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+	
 	if (dialog.queryPatchDimensions(width, height, 
-									map::countSelectedBrushes(), 
+									info.brushCount, 
 									removeSelectedBrush)) 
 	{
 		UndoableCommand undo("patchCreatePlane");

@@ -4,7 +4,8 @@
 
 #include "igroupnode.h"
 #include "ientity.h"
-#include "brush/FaceInstance.h"
+#include "brush/BrushModule.h"
+#include "brush/BrushInstance.h"
 #include "brush/BrushVisit.h"
 #include "patch/PatchSceneWalk.h"
 #include "string/string.h"
@@ -230,6 +231,175 @@ void createCMFromSelection() {
 	else {
 		gtkutil::errorDialog(ERRSTR_WRONG_SELECTION, MainFrame_getWindow());
 	}
+}
+
+namespace {
+
+	/** Walker class to count the number of selected brushes in the current
+	 * scene.
+	 */
+
+	class CountSelectedPrimitives : public scene::Graph::Walker
+	{
+	  int& m_count;
+	  mutable std::size_t m_depth;
+	public:
+	  CountSelectedPrimitives(int& count) : m_count(count), m_depth(0)
+	  {
+	    m_count = 0;
+	  }
+	  bool pre(const scene::Path& path, scene::Instance& instance) const
+	  {
+	    if(++m_depth != 1 && path.top()->isRoot())
+	    {
+	      return false;
+	    }
+	    Selectable* selectable = Instance_getSelectable(instance);
+	    if(selectable != 0
+	      && selectable->isSelected()
+	      && Node_isPrimitive(path.top()))
+	    {
+	      ++m_count;
+	    }
+	    return true;
+	  }
+	  void post(const scene::Path& path, scene::Instance& instance) const
+	  {
+	    --m_depth;
+	  }
+	};
+	
+	/** greebo: Counts the selected brushes in the scenegraph
+	 */
+	class BrushCounter : public scene::Graph::Walker
+	{
+		int& _count;
+		mutable std::size_t _depth;
+	public:
+		BrushCounter(int& count) : 
+			_count(count), 
+			_depth(0) 
+		{
+			_count = 0;
+		}
+		
+		bool pre(const scene::Path& path, scene::Instance& instance) const {
+			
+			if (++_depth != 1 && path.top()->isRoot()) {
+				return false;
+			}
+			
+			Selectable* selectable = Instance_getSelectable(instance);
+			if (selectable != NULL && selectable->isSelected()
+			        && Node_isBrush(path.top())) 
+			{
+				++_count;
+			}
+			
+			return true;
+		}
+		
+		void post(const scene::Path& path, scene::Instance& instance) const {
+			--_depth;
+		}
+	};
+
+} // namespace
+
+/* Return the number of selected primitives in the map, using the
+ * CountSelectedPrimitives walker.
+ */
+int countSelectedPrimitives() {
+	int count;
+	GlobalSceneGraph().traverse(CountSelectedPrimitives(count));
+	return count;
+}
+
+/* Return the number of selected brushes in the map, using the
+ * CountSelectedBrushes walker.
+ */
+int countSelectedBrushes() {
+	int count;
+	GlobalSceneGraph().traverse(BrushCounter(count));
+	return count;
+}
+
+class OriginRemover :
+	public scene::Graph::Walker 
+{
+public:
+	bool pre(const scene::Path& path, scene::Instance& instance) const {
+		Entity* entity = Node_getEntity(path.top());
+		
+		// Check for an entity
+		if (entity != NULL) {
+			// greebo: Check for a Doom3Group
+			scene::GroupNodePtr groupNode = Node_getGroupNode(path.top());
+			
+			// Don't handle the worldspawn children, they're safe&sound
+			if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn") {
+				groupNode->removeOriginFromChildren();
+				// Don't traverse the children
+				return false;
+			}
+		}
+		
+		return true;
+	}
+};
+
+// Graph::Walker implementation
+bool OriginAdder::pre(const scene::Path& path, scene::Instance& instance) const {
+	Entity* entity = Node_getEntity(path.top());
+	
+	// Check for an entity
+	if (entity != NULL) {
+		// greebo: Check for a Doom3Group
+		scene::GroupNodePtr groupNode = Node_getGroupNode(path.top());
+		
+		// Don't handle the worldspawn children, they're safe&sound
+		if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn") {
+			groupNode->addOriginToChildren();
+			// Don't traverse the children
+			return false;
+		}
+	}
+	
+	return true;
+}
+	
+// Traversable::Walker implementation
+bool OriginAdder::pre(scene::INodePtr node) const {
+	Entity* entity = Node_getEntity(node);
+	
+	// Check for an entity
+	if (entity != NULL) {
+		// greebo: Check for a Doom3Group
+		scene::GroupNodePtr groupNode = Node_getGroupNode(node);
+		
+		// Don't handle the worldspawn children, they're safe&sound
+		if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn") {
+			groupNode->addOriginToChildren();
+			// Don't traverse the children
+			return false;
+		}
+	}
+	return true;
+}
+
+
+void removeOriginFromChildPrimitives() {
+	bool textureLockStatus = GlobalBrush()->textureLockEnabled();
+	GlobalBrush()->setTextureLock(false);
+	GlobalSceneGraph().traverse(OriginRemover());
+	GlobalBrush()->setTextureLock(textureLockStatus);
+}
+
+void addOriginToChildPrimitives() {
+	bool textureLockStatus = GlobalBrush()->textureLockEnabled();
+	GlobalBrush()->setTextureLock(false);
+	GlobalSceneGraph().traverse(OriginAdder());
+	GlobalBrush()->setTextureLock(textureLockStatus);
 }
 
 	} // namespace algorithm
