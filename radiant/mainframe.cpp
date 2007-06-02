@@ -132,6 +132,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/mru/MRU.h"
 #include "ui/commandlist/CommandList.h"
 #include "ui/findshader/FindShader.h"
+#include "ui/mapinfo/MapInfoDialog.h"
 #include "brush/FaceInstance.h"
 #include "settings/GameManager.h"
 
@@ -1859,7 +1860,7 @@ void MainFrame_Construct()
 	
 	GlobalEventManager().addCommand("FindBrush", FreeCaller<DoFind>());
 	GlobalEventManager().addCommand("RevertToWorldspawn", FreeCaller<selection::algorithm::revertGroupToWorldSpawn>());
-	GlobalEventManager().addCommand("MapInfo", FreeCaller<DoMapInfo>());
+	GlobalEventManager().addCommand("MapInfo", FreeCaller<ui::MapInfoDialog::show>());
 	
 	GlobalEventManager().addRegistryToggle("ToggleShowSizeInfo", RKEY_SHOW_SIZE_INFO);
 	GlobalEventManager().addRegistryToggle("ToggleShowAllLightRadii", "user/ui/showAllLightRadii");
