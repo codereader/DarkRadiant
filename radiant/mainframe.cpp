@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "version.h"
 #include "environment.h"
 
+#include "map/FindMapElements.h"
 #include "ui/about/AboutDialog.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
 #include "ui/entitylist/EntityList.h"
