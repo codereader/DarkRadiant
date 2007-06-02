@@ -33,6 +33,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <string>
 
 class AABB;
+template<typename Element> class BasicVector3;
+typedef BasicVector3<double> Vector3;
 
 class Map : 
 	public ModuleObserver
@@ -80,6 +82,12 @@ public:
 	 * 			 saved correctly. Returns FALSE if no valid filename was entered.
 	 */
 	bool saveAs();
+	
+	/** greebo: Saves the current selection to the target <filename>.
+	 * 
+	 * @returns: true on success.
+	 */
+	bool saveSelected(const std::string& filename);
 	
 	/** greebo: Loads the map from the given filename
 	 */
@@ -166,6 +174,10 @@ public:
 	 */
 	bool askForSave(const std::string& title);
 
+	/** greebo: Loads a prefab and translates it to the given target coordinates
+	 */
+	void loadPrefabAt(const Vector3& targetCoords);
+
 	/** greebo: Registers the commands with the EventManager.
 	 */
 	static void registerCommands();
@@ -177,6 +189,11 @@ public:
 	static void importMap();
 	static void saveMap();
 	static void saveMapAs();
+	
+	/** greebo: Asks the user for the .pfb file and imports/exports the file/selection
+	 */
+	static void loadPrefab();
+	static void saveSelectedAsPrefab(); 
 
 private:
 	// If no worldspawn can be found in the scenegraph, this creates one
@@ -233,9 +250,6 @@ inline void DeferredDraw_onMapValidChanged(DeferredDraw& self)
   }
 }
 typedef ReferenceCaller<DeferredDraw, DeferredDraw_onMapValidChanged> DeferredDrawOnMapValidChangedCaller;
-
-template<typename Element> class BasicVector3;
-typedef BasicVector3<double> Vector3;
 
 class TextInputStream;
 class TextOutputStream;
@@ -302,15 +316,6 @@ namespace map {
 	/** greebo: Returns the AABB enclosing all visible map objects.
 	 */
 	AABB getVisibleBounds();
-	
-	/** greebo: Asks the user for the .pfb file and imports/exports the file/selection
-	 */
-	void loadPrefab();
-	void saveSelectedAsPrefab();
-	
-	/** greebo: Loads a prefab and translates it to the given target coordinates
-	 */
-	void loadPrefabAt(const Vector3& targetCoords);
 }
 
 

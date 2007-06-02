@@ -36,7 +36,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 EMessageBoxReturn DoLightIntensityDlg (int *intensity);
 void DoTextEditor (const char* filename, int cursorpos);
 
-void DoFind();
 void DoSides(int type, int axis);
 
 // greebo: Commented this out (03/2007)

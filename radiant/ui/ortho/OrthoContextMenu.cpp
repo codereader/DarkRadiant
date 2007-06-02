@@ -212,7 +212,7 @@ void OrthoContextMenu::callbackAddLight(GtkMenuItem* item, OrthoContextMenu* sel
 
 void OrthoContextMenu::callbackAddPrefab(GtkMenuItem* item, OrthoContextMenu* self) {
 	// Pass the call to the map algorithm and give the lastPoint coordinate as argument
-	map::loadPrefabAt(self->_lastPoint);
+	GlobalMap().loadPrefabAt(self->_lastPoint);
 }
 
 void OrthoContextMenu::callbackAddSpeaker(GtkMenuItem* item, OrthoContextMenu* self) {
