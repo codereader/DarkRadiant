@@ -57,15 +57,14 @@ void MapInfoDialog::populateWindow() {
 	_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore));
 	gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(_treeView), TRUE);
 
-	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(_treeView), 
-		gtkutil::TextColumn("Entity Class", ECLASS_COL)
-	);
+	GtkTreeViewColumn* eclassCol = gtkutil::TextColumn("Entity Class", ECLASS_COL);
+	gtk_tree_view_column_set_sort_column_id(eclassCol, ECLASS_COL);
 	
-	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(_treeView), 
-		gtkutil::TextColumn("Count", COUNT_COL)
-	);
+	GtkTreeViewColumn* countCol = gtkutil::TextColumn("Count", COUNT_COL);
+	gtk_tree_view_column_set_sort_column_id(countCol, COUNT_COL);
+
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), eclassCol);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), countCol);
 	
     gtk_box_pack_start(GTK_BOX(dialogVBox), gtkutil::ScrolledFrame(_treeView), TRUE, TRUE, 0);
     
