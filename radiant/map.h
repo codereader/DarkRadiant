@@ -111,6 +111,11 @@ public:
 	/** greebo: Returns the map format for the given filename
 	 */
 	static const MapFormat& getFormatForFile(const std::string& filename);
+	
+	/** greebo: Removes or saves the camera position (into worldspawn)
+	 */
+	void removeCameraPosition();
+	void saveCameraPosition();
 
 private:
 	// If no worldspawn can be found in the scenegraph, this creates one
