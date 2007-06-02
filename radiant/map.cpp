@@ -1052,13 +1052,6 @@ bool Map::saveSelected(const std::string& filename) {
 	return success;
 }
 
-#include "map/ParentSelectedPrimitivesToEntityWalker.h"
-
-void Scene_parentSelectedPrimitivesToEntity(scene::Graph& graph, scene::INodePtr parent)
-{
-  graph.traverse(ParentSelectedPrimitivesToEntityWalker(parent));
-}
-
 bool Map::askForSave(const std::string& title) {
 	if (!isModified()) {
 		// Map is not modified, return positive

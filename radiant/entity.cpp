@@ -187,6 +187,13 @@ AABB Doom3Light_getBounds(AABB aabb)
 	return aabb;
 }
 
+#include "map/ParentSelectedPrimitivesToEntityWalker.h"
+
+void Scene_parentSelectedPrimitivesToEntity(scene::Graph& graph, scene::INodePtr parent)
+{
+  graph.traverse(ParentSelectedPrimitivesToEntityWalker(parent));
+}
+
 /** Create an instance of the given entity at the given position, and return
  * the Node containing the new entity.
  * 
