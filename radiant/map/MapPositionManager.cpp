@@ -3,6 +3,7 @@
 #include "ieventmanager.h"
 #include "iregistry.h"
 #include "map.h"
+#include "entitylib.h"
 #include "string/string.h"
 #include "generic/callback.h"
 

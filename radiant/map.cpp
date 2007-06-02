@@ -229,6 +229,13 @@ void Map::setModified(bool modifiedFlag) {
     updateTitle();
 }
 
+// move the view to a certain position
+void Map::focusViews(const Vector3& point, const Vector3& angles) {
+	// Set the camera and the views to the given point
+	GlobalCamera().focusCamera(point, angles);
+	GlobalXYWnd().setOrigin(point);
+}
+
 // Accessor method containing the singleton Map instance
 Map& GlobalMap() {
 	static Map _mapInstance;
@@ -236,14 +243,6 @@ Map& GlobalMap() {
 }
 
 namespace map {
-
-// move the view to a start position
-//
-void focusViews(const Vector3& point, const Vector3& angles) {
-	// Set the camera and the views to the given point
-	GlobalCamera().focusCamera(point, angles);
-	GlobalXYWnd().setOrigin(point);
-}
 
 class AABBCollectorVisible : 
 	public scene::Graph::Walker
@@ -271,18 +270,6 @@ AABB getVisibleBounds() {
 }
 
 } // namespace map
-
-/* greebo: Finds an entity with the given classname
- */
-Entity* Scene_FindEntityByClass(const std::string& className) {
-	// Instantiate a walker to find the entity
-	EntityFindByClassnameWalker walker(className);
-	
-	// Walk the scenegraph
-	GlobalSceneGraph().traverse(walker);
-	
-	return walker.getEntity();
-}
 
 void Map::removeCameraPosition() {
 	const std::string keyLastCamPos = GlobalRegistry().get(RKEY_LAST_CAM_POSITION);
@@ -341,7 +328,7 @@ void Map::gotoStartPosition() {
 			Vector3 angles = worldspawn->getKeyValue(keyLastCamAngle);
 			
 			// Focus the view with the default angle
-			map::focusViews(origin, angles);
+			focusViews(origin, angles);
 			
 			// Remove the saved entity key value so it doesn't appear during map edit
 			removeCameraPosition();
@@ -368,7 +355,7 @@ void Map::gotoStartPosition() {
 	}
 	
 	// Focus the view with the given parameters
-	map::focusViews(origin, angles);
+	focusViews(origin, angles);
 }
 
 /* Check if a node is the worldspawn.
@@ -946,7 +933,7 @@ void Map::createNew() {
 	
 	SceneChangeNotify();
 	
-	map::focusViews(Vector3(0,0,0), Vector3(0,0,0));
+	focusViews(Vector3(0,0,0), Vector3(0,0,0));
 }
 
 inline void exclude_node(scene::INodePtr node, bool exclude)

@@ -279,8 +279,8 @@ void CamWnd::jumpToObject(SelectionTest& selectionTest) {
 		// An instance has been found, get the bounding box
 		AABB found = instance->worldAABB();
 		
-		// Focuse the view at the center of the found AABB
-		map::focusViews(found.origin, getCameraAngles());
+		// Focus the view at the center of the found AABB
+		Map::focusViews(found.origin, getCameraAngles());
 	}
 }
 

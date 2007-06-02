@@ -178,6 +178,10 @@ public:
 	 */
 	void loadPrefabAt(const Vector3& targetCoords);
 
+	/** greebo: Focus the XYViews and the Camera to the given point/angle.
+	 */
+	static void focusViews(const Vector3& point, const Vector3& angles);
+
 	/** greebo: Registers the commands with the EventManager.
 	 */
 	static void registerCommands();
@@ -214,11 +218,6 @@ scene::INodePtr Node_Clone(scene::INodePtr node);
 
 void Scene_parentSelectedPrimitivesToEntity(scene::Graph& graph, scene::INodePtr parent);
 
-void OnUndoSizeChanged();
-
-class Entity;
-Entity* Scene_FindEntityByClass(const std::string& className);
-
 void Map_Traverse(scene::INodePtr root, const scene::Traversable::Walker& walker);
 
 void SelectBrush (int entitynum, int brushnum);
@@ -228,10 +227,6 @@ void Map_Destroy();
 
 namespace map {
 
-	/** greebo: Focus the XYViews and the Camera to the given point/angle.
-	 */
-	void focusViews(const Vector3& point, const Vector3& angles);
-	
 	/** greebo: Returns the AABB enclosing all visible map objects.
 	 */
 	AABB getVisibleBounds();
