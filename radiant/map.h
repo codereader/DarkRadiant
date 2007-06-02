@@ -68,6 +68,17 @@ public:
 	 */
 	std::string getName() const;
 	
+	/** greebo: Saves the current map, doesn't ask for any filenames, 
+	 * 			so this has to be done before this step.
+	 */
+	void save();
+	
+	/** greebo: Creates a new map file.
+	 * 
+	 * Note: Can't be called "new" as this is a reserved word...
+	 */
+	void createNew();
+	
 	// free all map elements, reinitialize the structures that depend on them
 	void free();
 	
@@ -188,8 +199,6 @@ typedef BasicVector3<double> Vector3;
 void Map_LoadFile(const std::string& filename);
 bool Map_SaveFile(const char* filename);
 
-void Map_New();
-
 class TextInputStream;
 class TextOutputStream;
 
@@ -197,7 +206,6 @@ class TextOutputStream;
 void Map_ImportSelected(TextInputStream& in, const MapFormat& format);
 void Map_ExportSelected(std::ostream& out, const MapFormat& format);
 
-void Map_Save();
 bool Map_SaveAs();
 
 scene::INodePtr Node_Clone(scene::INodePtr node);
