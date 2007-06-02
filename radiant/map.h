@@ -73,6 +73,14 @@ public:
 	 */
 	void save();
 	
+	/** greebo: Asks the user for a new filename and saves the map
+	 * 			if a valid filename was specified.
+	 * 
+	 * @returns: TRUE, if the user entered a valid filename and the map was 
+	 * 			 saved correctly. Returns FALSE if no valid filename was entered.
+	 */
+	bool saveAs();
+	
 	/** greebo: Loads the map from the given filename
 	 */
 	void load(const std::string& filename);
@@ -144,6 +152,13 @@ public:
 	 * 			If neither of these two exist, 0,0,0 is used. 
 	 */
 	void gotoStartPosition();
+	
+	/** greebo: Asks the user if the current changes should be saved.
+	 * 
+	 * @returns: true, if the user gave clearance (map was saved, had no
+	 * 			 changes to be saved, etc.), false, if the user hit "cancel".
+	 */
+	bool askForSave(const std::string& title);
 
 private:
 	// If no worldspawn can be found in the scenegraph, this creates one
@@ -201,8 +216,6 @@ inline void DeferredDraw_onMapValidChanged(DeferredDraw& self)
 }
 typedef ReferenceCaller<DeferredDraw, DeferredDraw_onMapValidChanged> DeferredDrawOnMapValidChangedCaller;
 
-bool ConfirmModified(const char* title);
-
 template<typename Element> class BasicVector3;
 typedef BasicVector3<double> Vector3;
 
@@ -212,8 +225,6 @@ class TextOutputStream;
 // Map import and export functions
 void Map_ImportSelected(TextInputStream& in, const MapFormat& format);
 void Map_ExportSelected(std::ostream& out, const MapFormat& format);
-
-bool Map_SaveAs();
 
 scene::INodePtr Node_Clone(scene::INodePtr node);
 

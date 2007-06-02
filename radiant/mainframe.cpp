@@ -295,14 +295,11 @@ void Radiant_Shutdown() {
 	Radiant_Destroy();
 }
 
-void Exit()
-{
-  if(ConfirmModified("Exit Radiant"))
-  {
-    gtk_main_quit();
-  }
+void Exit() {
+	if (GlobalMap().askForSave("Exit Radiant")) {
+		gtk_main_quit();
+	}
 }
-
 
 void Undo()
 {
@@ -1227,14 +1224,12 @@ void hide_splash()
   splash_screen = NULL;
 }
 
-static gint mainframe_delete (GtkWidget *widget, GdkEvent *event, gpointer data)
-{
-  if(ConfirmModified("Exit Radiant"))
-  {
-    gtk_main_quit();
-  }
+static gint mainframe_delete (GtkWidget *widget, GdkEvent *event, gpointer data) {
+	if (GlobalMap().askForSave("Exit Radiant")) {
+		gtk_main_quit();
+	}
 
-  return TRUE;
+	return TRUE;
 }
 
 /* Construct the main Radiant window
