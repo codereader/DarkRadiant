@@ -8,7 +8,7 @@
 #include "selection/RadiantWindowObserver.h"
 
 #include "view.h"
-#include "map.h"
+#include "map/DeferredDraw.h"
 
 #include "RadiantCameraView.h"
 #include "Camera.h"
