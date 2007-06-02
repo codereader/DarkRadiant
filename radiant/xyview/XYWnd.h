@@ -17,7 +17,7 @@
 #include "xmlutil/Node.h"
 #include "timer.h"
 
-#include "map.h"
+#include "map/DeferredDraw.h"
 #include "camera/CameraObserver.h"
 #include "camera/CamWnd.h"
 #include "selection/RadiantWindowObserver.h"
