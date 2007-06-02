@@ -73,6 +73,12 @@ public:
 	 */
 	void save();
 	
+	/** greebo: Exports the current map directly to the given filename.
+	 * 			This skips any "modified" or "unnamed" checks, it just dumps
+	 * 			the current scenegraph content to the file.
+	 */
+	void saveDirect(const std::string& filename);
+	
 	/** greebo: Creates a new map file.
 	 * 
 	 * Note: Can't be called "new" as this is a reserved word...
@@ -197,7 +203,6 @@ template<typename Element> class BasicVector3;
 typedef BasicVector3<double> Vector3;
 
 void Map_LoadFile(const std::string& filename);
-bool Map_SaveFile(const char* filename);
 
 class TextInputStream;
 class TextOutputStream;

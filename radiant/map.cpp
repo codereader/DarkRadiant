@@ -1131,15 +1131,8 @@ bool Map_ImportFile(const std::string& filename)
   return success;
 }
 
-/*
-===========
-Map_SaveFile
-===========
-*/
-bool Map_SaveFile(const char* filename)
-{
-  ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Saving Map");
-  return MapResource_saveFile(Map::getFormatForFile(filename), GlobalSceneGraph().root(), Map_Traverse, filename); 
+void Map::saveDirect(const std::string& filename) {
+	MapResource_saveFile(getFormatForFile(filename), GlobalSceneGraph().root(), Map_Traverse, filename.c_str()); 
 }
 
 //
