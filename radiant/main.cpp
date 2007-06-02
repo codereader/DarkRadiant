@@ -325,7 +325,7 @@ int main (int argc, char* argv[])
   hide_splash();
 
 	if (GlobalMRU().loadLastMap() && GlobalMRU().getLastMapName() != "") {
-		Map_LoadFile(GlobalMRU().getLastMapName().c_str());
+		GlobalMap().load(GlobalMRU().getLastMapName());
 	}
 	else {
 		GlobalMap().createNew();
