@@ -142,8 +142,8 @@ void AutoMapSaver::saveSnapshot() {
 
 		globalOutputStream() << "Autosaving snapshot to " << filename.c_str() << "\n"; 
 		
-		// save in the next available slot
-		Map_SaveFile(filename.c_str());
+		// Dump to map to the next available filename
+		GlobalMap().saveDirect(filename);
 
 		// Display a warning, if the folder size exceeds the limit 
 		if (folderSize > maxSnapshotFolderSize*1024*1024) {
@@ -214,7 +214,7 @@ void AutoMapSaver::checkSave() {
 				globalOutputStream() << "Autosaving unnamed map to " << autoSaveFilename.c_str() << "\n";
 				
 				// Invoke the save call
-				Map_SaveFile(autoSaveFilename.c_str());
+				GlobalMap().saveDirect(autoSaveFilename);
 			}
 			else {
 				// Construct the new extension (e.g. ".autosave.map")
@@ -231,7 +231,7 @@ void AutoMapSaver::checkSave() {
 					globalOutputStream() << "Autosaving map to " << autoSaveFilename.string().c_str() << "\n";
 				
 					// Invoke the save call
-					Map_SaveFile(autoSaveFilename.string().c_str());
+					GlobalMap().saveDirect(autoSaveFilename.string());
 				}
 				catch (boost::filesystem::filesystem_error f) {
 					globalErrorStream() << "AutoSaver: " << f.what() << "\n";
