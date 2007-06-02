@@ -80,7 +80,7 @@ void MRU::loadMap(const std::string& fileName) {
 			GlobalMap().free();
 			
 			// Load the file
-			Map_LoadFile(fileName.c_str());
+			GlobalMap().load(fileName);
 			
 			// Update the MRU list with this file
 			insert(fileName);

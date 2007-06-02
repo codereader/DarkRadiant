@@ -719,43 +719,37 @@ public:
   }
 };
 
-/*
-================
-Map_LoadFile
-================
-*/
+void Map::load(const std::string& filename) {
+	globalOutputStream() << "Loading map from " << filename << "\n";
 
-void Map_LoadFile (const std::string& filename)
-{
-  globalOutputStream() << "Loading map from " << filename << "\n";
+	setName(filename);
 
-	GlobalMap().setName(filename);
+	{
+		ScopeTimer timer("map load");
 
-  {
-    ScopeTimer timer("map load");
+		m_resource = GlobalReferenceCache().capture(m_name);
+		m_resource->attach(*this);
 
-    GlobalMap().m_resource = GlobalReferenceCache().capture(GlobalMap().m_name);
-    GlobalMap().m_resource->attach(GlobalMap());
-
-	// Get the traversable root
-	scene::TraversablePtr rt = Node_getTraversable(GlobalSceneGraph().root());
-	assert(rt != NULL);
+		// Get the traversable root
+		scene::TraversablePtr rt = Node_getTraversable(GlobalSceneGraph().root());
+		assert(rt != NULL);
 	
-	// Traverse the scenegraph and find the worldspawn 
-    rt->traverse(MapWorldspawnFinder());
-  }
+		// Traverse the scenegraph and find the worldspawn 
+		rt->traverse(MapWorldspawnFinder());
+	}
 
-  globalOutputStream() << "--- LoadMapFile ---\n";
-  globalOutputStream() << GlobalMap().m_name.c_str() << "\n";
+	globalOutputStream() << "--- LoadMapFile ---\n";
+	globalOutputStream() << m_name.c_str() << "\n";
   
-  globalOutputStream() << makeLeftJustified(Unsigned(GlobalRadiant().getCounter(counterBrushes).get()), 5) << " primitive\n";
-  globalOutputStream() << makeLeftJustified(Unsigned(GlobalRadiant().getCounter(counterEntities).get()), 5) << " entities\n";
+	globalOutputStream() << makeLeftJustified(Unsigned(GlobalRadiant().getCounter(counterBrushes).get()), 5) << " brushes\n";
+	globalOutputStream() << makeLeftJustified(Unsigned(GlobalRadiant().getCounter(counterPatches).get()), 5) << " patches\n";
+	globalOutputStream() << makeLeftJustified(Unsigned(GlobalRadiant().getCounter(counterEntities).get()), 5) << " entities\n";
 
 	// Add the origin to all the children of func_static, etc.
 	map::addOriginToChildPrimitives();
 
 	// Move the view to a start position
-	GlobalMap().gotoStartPosition();
+	gotoStartPosition();
 
 	// Load the stored map positions from the worldspawn entity
 	map::GlobalMapPosition().loadPositions();
@@ -769,7 +763,7 @@ void Map_LoadFile (const std::string& filename)
 	GlobalShaderClipboard().clear();
 	
 	// Clear the modified flag
-	GlobalMap().setModified(false);
+	setModified(false);
 }
 
 class Excluder
@@ -1361,8 +1355,9 @@ void OpenMap()
 
 	if (!filename.empty()) {
 	    GlobalMRU().insert(filename);
+	    
 	    GlobalMap().free();
-	    Map_LoadFile(filename);
+	    GlobalMap().load(filename);
 	}
 }
 
