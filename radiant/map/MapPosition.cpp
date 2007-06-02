@@ -88,7 +88,7 @@ void MapPosition::recall() {
 	if (!empty()) {
 		globalOutputStream() << "Restoring map position #" << _index << "\n";
 		// Focus the view with the default angle
-		map::focusViews(_position, _angle);
+		Map::focusViews(_position, _angle);
 	}
 }
 

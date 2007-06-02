@@ -475,4 +475,16 @@ public:
 	}
 };
 
+/* greebo: Finds an entity with the given classname
+ */
+inline Entity* Scene_FindEntityByClass(const std::string& className) {
+	// Instantiate a walker to find the entity
+	EntityFindByClassnameWalker walker(className);
+	
+	// Walk the scenegraph
+	GlobalSceneGraph().traverse(walker);
+	
+	return walker.getEntity();
+}
+
 #endif

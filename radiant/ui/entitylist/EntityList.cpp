@@ -280,7 +280,7 @@ gboolean EntityList::onSelection(GtkTreeSelection *selection,
 			Vector3 angles(0, 0, 0);
 			angles[CAMERA_PITCH] = -30;
 
-			map::focusViews(entityOrigin, angles);
+			Map::focusViews(entityOrigin, angles);
 		}
 
 		// Now reactivate the callbacks

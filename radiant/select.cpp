@@ -635,11 +635,11 @@ bool classnames_match_entity(const Classnames& classnames, Entity* entity)
   return false;
 }
 
-class EntityFindByClassnameWalker : public scene::Graph::Walker
+class EntitySelectByClassnameWalker : public scene::Graph::Walker
 {
   const Classnames& m_classnames;
 public:
-  EntityFindByClassnameWalker(const Classnames& classnames)
+  EntitySelectByClassnameWalker(const Classnames& classnames)
     : m_classnames(classnames)
   {
   }
@@ -657,7 +657,7 @@ public:
 
 void Scene_EntitySelectByClassnames(scene::Graph& graph, const Classnames& classnames)
 {
-  graph.traverse(EntityFindByClassnameWalker(classnames));
+  graph.traverse(EntitySelectByClassnameWalker(classnames));
 }
 
 class EntityGetSelectedClassnamesWalker : public scene::Graph::Walker
