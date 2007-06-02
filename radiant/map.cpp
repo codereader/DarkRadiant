@@ -367,13 +367,15 @@ Entity* Scene_FindEntityByClass(const std::string& className) {
 	return walker.getEntity();
 }
 
-void Map_RemoveSavedPosition() {
+void Map::removeCameraPosition() {
 	const std::string keyLastCamPos = GlobalRegistry().get(RKEY_LAST_CAM_POSITION);
 	const std::string keyLastCamAngle = GlobalRegistry().get(RKEY_LAST_CAM_ANGLE);
 	
-	Entity* worldspawn = Scene_FindEntityByClass("worldspawn");
-	
-	if (worldspawn != NULL) {
+	if (m_world_node != NULL) {
+		// Retrieve the entity from the worldspawn node
+		Entity* worldspawn = Node_getEntity(m_world_node);
+		assert(worldspawn != NULL);	// This must succeed
+		
 		worldspawn->setKeyValue(keyLastCamPos, "");
 		worldspawn->setKeyValue(keyLastCamAngle, "");
 	}
@@ -381,15 +383,17 @@ void Map_RemoveSavedPosition() {
 
 /* greebo: Saves the current camera position/angles to worldspawn
  */
-void Map_SavePosition() {
+void Map::saveCameraPosition() {
 	const std::string keyLastCamPos = GlobalRegistry().get(RKEY_LAST_CAM_POSITION);
 	const std::string keyLastCamAngle = GlobalRegistry().get(RKEY_LAST_CAM_ANGLE); 
 	
-	Entity* worldspawn = Scene_FindEntityByClass("worldspawn");
-	
-	if (worldspawn != NULL) {
+	if (m_world_node != NULL) {
+		// Retrieve the entity from the worldspawn node
+		Entity* worldspawn = Node_getEntity(m_world_node);
+		assert(worldspawn != NULL);	// This must succeed
+		
 		CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
-				
+		
 		worldspawn->setKeyValue(keyLastCamPos, camwnd.getCameraOrigin());
 		worldspawn->setKeyValue(keyLastCamAngle, camwnd.getCameraAngles());
 	}
@@ -422,7 +426,7 @@ void Map_StartPosition()
 			map::focusViews(origin, angles);
 			
 			// Remove the saved entity key value so it doesn't appear during map edit
-			Map_RemoveSavedPosition();
+			GlobalMap().removeCameraPosition();
 			
 			return;
 		}
@@ -456,19 +460,19 @@ inline bool node_is_worldspawn(scene::INodePtr node) {
 	return entity != 0 && entity->getKeyValue("classname") == "worldspawn";
 }
 
-// use first worldspawn
-class entity_updateworldspawn : public scene::Traversable::Walker
+// Traverse all entities and store the first worldspawn into the map
+class MapWorldspawnFinder : 
+	public scene::Traversable::Walker
 {
 public:
-  bool pre(scene::INodePtr node) const
-  {
-    if(node_is_worldspawn(node)) {
-      if (GlobalMap().getWorldspawn() == NULL) {
-        GlobalMap().setWorldspawn(node);
-      }
-    }
-    return false;
-  }
+	bool pre(scene::INodePtr node) const {
+		if (node_is_worldspawn(node)) {
+			if (GlobalMap().getWorldspawn() == NULL) {
+				GlobalMap().setWorldspawn(node);
+			}
+		}
+		return false;
+	}
 };
 
 scene::INodePtr Map::findWorldspawn() {
@@ -476,7 +480,7 @@ scene::INodePtr Map::findWorldspawn() {
 	setWorldspawn(scene::INodePtr());
 
 	// Traverse the scenegraph and search for the worldspawn
-	Node_getTraversable(GlobalSceneGraph().root())->traverse(entity_updateworldspawn());
+	Node_getTraversable(GlobalSceneGraph().root())->traverse(MapWorldspawnFinder());
 
 	return getWorldspawn();
 }
@@ -918,7 +922,7 @@ void Map_LoadFile (const std::string& filename)
 	assert(rt != NULL);
 	
 	// Traverse the scenegraph and find the worldspawn 
-    rt->traverse(entity_updateworldspawn());
+    rt->traverse(MapWorldspawnFinder());
   }
 
   globalOutputStream() << "--- LoadMapFile ---\n";
@@ -1175,7 +1179,7 @@ void Map_Rename(const std::string& filename)
 void Map_Save()
 {
 	// Store the camview position into worldspawn
-	Map_SavePosition();
+	GlobalMap().saveCameraPosition();
 	
 	// Store the map positions into the worldspawn spawnargs
 	map::GlobalMapPosition().savePositions();
@@ -1195,7 +1199,7 @@ void Map_Save()
 	map::addOriginToChildPrimitives();
   
 	// Remove the saved camera position
-	Map_RemoveSavedPosition();
+	GlobalMap().removeCameraPosition();
 	
 	// Remove the map positions again after saving
 	map::GlobalMapPosition().removePositions();
