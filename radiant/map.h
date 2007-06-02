@@ -85,6 +85,12 @@ public:
 	 */
 	void load(const std::string& filename);
 	
+	/** greebo: Imports the contents from the given filename.
+	 * 
+	 * @returns: true on success.
+	 */
+	bool import(const std::string& filename);
+	
 	/** greebo: Exports the current map directly to the given filename.
 	 * 			This skips any "modified" or "unnamed" checks, it just dumps
 	 * 			the current scenegraph content to the file.
@@ -126,7 +132,7 @@ public:
 	/** greebo: This retrieves the worldspawn node of this map.
 	 *			If no worldspawn can be found, this creates one.
 	 */
-	scene::INodePtr Map::findOrInsertWorldspawn();
+	scene::INodePtr findOrInsertWorldspawn();
 
 	/** greebo: Tries to locate the worldspawn in the global scenegraph
 	 *			Returns NULL (empty shared_ptr) if nothing is found. 

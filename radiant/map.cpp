@@ -1086,43 +1086,42 @@ void Scene_Exclude_Selected(bool exclude)
   GlobalSceneGraph().traverse(ExcludeSelectedWalker(exclude));
 }
 
-//
-//================
-//Map_ImportFile
-//================
-//
-bool Map_ImportFile(const std::string& filename)
-{
-  bool success = false;
-  {
-	ReferenceCache::ResourcePtr resource = 
-		GlobalReferenceCache().capture(filename);
+bool Map::import(const std::string& filename) {
+	bool success = false;
+	
+	{
+		ReferenceCache::ResourcePtr resource = 
+			GlobalReferenceCache().capture(filename);
 		
-    resource->refresh(); // avoid loading old version if map has changed on disk since last import
-    if(resource->load())
-    {
-      scene::INodePtr clone(NewMapRoot(""));
+		// avoid loading old version if map has changed on disk since last import
+		resource->refresh(); 
+		
+		if (resource->load()) {
+			scene::INodePtr clone(NewMapRoot(""));
 
-      {
-        //ScopeTimer timer("clone subgraph");
+			{
+				// Add the origin to all the child brushes
+				Node_getTraversable(resource->getNode())->traverse(
+					map::OriginAdder()
+				);
         
-        // Add the origin to all the child brushes
-        Node_getTraversable(resource->getNode())->traverse(map::OriginAdder());
-        
-        Node_getTraversable(resource->getNode())->traverse(CloneAll(clone));
-      }
+				Node_getTraversable(resource->getNode())->traverse(
+					CloneAll(clone)
+				);
+			}
 
-      GlobalNamespace().gatherNamespaced(clone);
-      GlobalNamespace().mergeClonedNames();
-      MergeMap(clone);
-      success = true;
-    }
-    GlobalReferenceCache().release(filename);
-  }
+			GlobalNamespace().gatherNamespaced(clone);
+			GlobalNamespace().mergeClonedNames();
+			MergeMap(clone);
+			success = true;
+		}
+		
+		GlobalReferenceCache().release(filename);
+	}
 
 	SceneChangeNotify();
 
-  return success;
+	return success;
 }
 
 void Map::saveDirect(const std::string& filename) {
@@ -1405,7 +1404,7 @@ void Map::importMap() {
 
 	if (!filename.empty()) {
 	    UndoableCommand undo("mapImport");
-	    Map_ImportFile(filename);
+	    GlobalMap().import(filename);
 	}
 }
 
@@ -1443,7 +1442,7 @@ void loadPrefabAt(const Vector3& targetCoords) {
 	    GlobalSelectionSystem().setSelectedAll(false);
 	    
 	    // Now import the prefab (imported items get selected)
-	    Map_ImportFile(filename);
+	    GlobalMap().import(filename);
 	    
 	    // Translate the selection to the given point
 	    GlobalSelectionSystem().translateSelected(targetCoords);
