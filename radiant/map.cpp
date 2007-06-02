@@ -996,10 +996,9 @@ void Map_Rename(const std::string& filename)
   	}
 }
 
-void Map_Save()
-{
+void Map::save() {
 	// Store the camview position into worldspawn
-	GlobalMap().saveCameraPosition();
+	saveCameraPosition();
 	
 	// Store the map positions into the worldspawn spawnargs
 	map::GlobalMapPosition().savePositions();
@@ -1019,37 +1018,24 @@ void Map_Save()
 	map::addOriginToChildPrimitives();
   
 	// Remove the saved camera position
-	GlobalMap().removeCameraPosition();
+	removeCameraPosition();
 	
 	// Remove the map positions again after saving
 	map::GlobalMapPosition().removePositions();
 	
 	// Clear the modified flag
-	GlobalMap().setModified(false);
+	setModified(false);
 }
 
-/*
-===========
-Map_New
+void Map::createNew() {
+	setName(MAP_UNNAMED_STRING);
 
-===========
-*/
-void Map_New()
-{
-	//globalOutputStream() << "Map_New\n";
-
-	GlobalMap().setName(MAP_UNNAMED_STRING);
-
-  {
-    GlobalMap().m_resource = GlobalReferenceCache().capture(GlobalMap().m_name.c_str());
-//    ASSERT_MESSAGE(GlobalMap().m_resource->getNode() == 0, "bleh");
-    GlobalMap().m_resource->attach(GlobalMap());
-
-    SceneChangeNotify();
-  }
-
-  map::focusViews(g_vector3_identity, Vector3(0,0,0));
-
+	m_resource = GlobalReferenceCache().capture(m_name.c_str());
+	m_resource->attach(*this);
+	
+	SceneChangeNotify();
+	
+	map::focusViews(Vector3(0,0,0), Vector3(0,0,0));
 }
 
 inline void exclude_node(scene::INodePtr node, bool exclude)
@@ -1355,7 +1341,7 @@ bool ConfirmModified(const char* title) {
     }
     else
     {
-      Map_Save();
+      GlobalMap().save();
     }
   }
   return true;
@@ -1367,7 +1353,7 @@ void NewMap() {
 		GlobalRegion().disable();
 
 		GlobalMap().free();
-		Map_New();
+		GlobalMap().createNew();
 	}
 }
 
@@ -1439,7 +1425,7 @@ bool Map_SaveAs()
 	if (!filename.empty()) {
 	    GlobalMRU().insert(filename);
 	    Map_Rename(filename);
-	    Map_Save();
+	    GlobalMap().save();
 	    return true;
 	}
 	else {
@@ -1460,7 +1446,7 @@ void SaveMap()
   }
   else if(GlobalMap().isModified())
   {
-    Map_Save();
+    GlobalMap().save();
   }
 }
 

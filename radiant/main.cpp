@@ -328,7 +328,7 @@ int main (int argc, char* argv[])
 		Map_LoadFile(GlobalMRU().getLastMapName().c_str());
 	}
 	else {
-		Map_New();
+		GlobalMap().createNew();
 	}
 
 	// Remove the radiant.pid file again after loading all the settings
