@@ -1346,7 +1346,34 @@ bool Map::askForSave(const std::string& title) {
 	return true;
 }
 
-void NewMap() {
+bool Map::saveAs() {
+	std::string filename = map::MapFileManager::getMapFilename(false, "Save Map");
+  
+	if (!filename.empty()) {
+	    GlobalMRU().insert(filename);
+	    Map_Rename(filename);
+	    save();
+	    return true;
+	}
+	else {
+		// Invalid filename entered, return false
+		return false;
+	}
+}
+
+void Map::registerCommands() {
+	GlobalEventManager().addCommand("NewMap", FreeCaller<Map::newMap>());
+	GlobalEventManager().addCommand("OpenMap", FreeCaller<Map::openMap>());
+	GlobalEventManager().addCommand("ImportMap", FreeCaller<Map::importMap>());
+	GlobalEventManager().addCommand("LoadPrefab", FreeCaller<map::loadPrefab>());
+	GlobalEventManager().addCommand("SaveSelectedAsPrefab", FreeCaller<map::saveSelectedAsPrefab>());
+	GlobalEventManager().addCommand("SaveMap", FreeCaller<Map::saveMap>());
+	GlobalEventManager().addCommand("SaveMapAs", FreeCaller<Map::saveMapAs>());
+	GlobalEventManager().addCommand("SaveSelected", FreeCaller<Map::exportMap>());
+}
+
+// Static command targets
+void Map::newMap() {
 	if (GlobalMap().askForSave("New Map")) {
 		// Turn regioning off when starting a new map
 		GlobalRegion().disable();
@@ -1356,8 +1383,7 @@ void NewMap() {
 	}
 }
 
-void OpenMap()
-{
+void Map::openMap() {
 	if (!GlobalMap().askForSave("Open Map"))
 		return;
 
@@ -1373,8 +1399,7 @@ void OpenMap()
 	}
 }
 
-void ImportMap()
-{
+void Map::importMap() {
 	std::string filename = map::MapFileManager::getMapFilename(true,
 															   "Import map");
 
@@ -1382,6 +1407,28 @@ void ImportMap()
 	    UndoableCommand undo("mapImport");
 	    Map_ImportFile(filename);
 	}
+}
+
+void Map::saveMapAs() {
+	GlobalMap().saveAs();
+}
+
+void Map::saveMap() {
+	if (GlobalMap().isUnnamed()) {
+		GlobalMap().saveAs();
+	}
+	else if(GlobalMap().isModified()) {
+		GlobalMap().save();
+	}
+}
+
+void Map::exportMap() {
+	std::string filename = map::MapFileManager::getMapFilename(
+								false, "Export selection");
+
+	if (!filename.empty()) {
+	    Map_SaveSelected(filename);
+  	}
 }
 
 namespace map {
@@ -1417,47 +1464,6 @@ void saveSelectedAsPrefab() {
 }
 
 } // namespace map
-
-bool Map::saveAs() {
-	std::string filename = map::MapFileManager::getMapFilename(false, "Save Map");
-  
-	if (!filename.empty()) {
-	    GlobalMRU().insert(filename);
-	    Map_Rename(filename);
-	    save();
-	    return true;
-	}
-	else {
-		// Invalid filename entered, return false
-		return false;
-	}
-}
-
-void SaveMapAs() {
-	GlobalMap().saveAs();
-}
-
-void SaveMap()
-{
-  if(GlobalMap().isUnnamed())
-  {
-    SaveMapAs();
-  }
-  else if(GlobalMap().isModified())
-  {
-    GlobalMap().save();
-  }
-}
-
-void ExportMap()
-{
-	std::string filename = map::MapFileManager::getMapFilename(
-								false, "Export selection");
-
-	if (!filename.empty()) {
-	    Map_SaveSelected(filename);
-  	}
-}
 
 class BrushFindByIndexWalker : public scene::Traversable::Walker
 {
@@ -1727,15 +1733,17 @@ MapEntityClasses g_MapEntityClasses;
 
 #include "preferencesystem.h"
 
-void Map_Construct()
-{
+void Map_Construct() {
+	// Add the Map-related commands to the EventManager
+	Map::registerCommands();
+	
 	// Add the region-related commands to the EventManager
 	map::RegionManager::initialiseCommands();
 
 	// Add the map position commands to the EventManager
 	map::GlobalMapPosition().initialise();
 
-  GlobalEntityClassManager().attach(g_MapEntityClasses);
+	GlobalEntityClassManager().attach(g_MapEntityClasses);
 }
 
 void Map_Destroy()

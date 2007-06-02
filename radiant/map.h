@@ -160,6 +160,18 @@ public:
 	 */
 	bool askForSave(const std::string& title);
 
+	/** greebo: Registers the commands with the EventManager.
+	 */
+	static void registerCommands();
+	
+	// Static command targets for connection to the EventManager
+	static void exportMap();
+	static void newMap();
+	static void openMap();
+	static void importMap();
+	static void saveMap();
+	static void saveMapAs();
+
 private:
 	// If no worldspawn can be found in the scenegraph, this creates one
 	void updateWorldspawn();
@@ -232,18 +244,10 @@ void Scene_parentSelectedPrimitivesToEntity(scene::Graph& graph, scene::INodePtr
 
 void OnUndoSizeChanged();
 
-void NewMap();
-void OpenMap();
-void ImportMap();
-void SaveMapAs();
-void SaveMap();
-void ExportMap();
-
 class Entity;
 Entity* Scene_FindEntityByClass(const std::string& className);
 
 void Map_Traverse(scene::INodePtr root, const scene::Traversable::Walker& walker);
-
 
 void SelectBrush (int entitynum, int brushnum);
 
