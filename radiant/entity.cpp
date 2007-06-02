@@ -35,6 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "os/file.h"
 
 #include "gtkutil/filechooser.h"
+#include "selectionlib.h"
 #include "gtkmisc.h"
 #include "select.h"
 #include "map.h"
@@ -196,16 +197,17 @@ AABB Doom3Light_getBounds(AABB aabb)
 scene::INodePtr Entity_createFromSelection(const char* name, 
 				 						  const Vector3& origin) 
 {
+	// Obtain the structure containing the selection counts
+	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
-    IEntityClassPtr entityClass = GlobalEntityClassManager().findOrInsert(name, 
-    																	  true);
+    IEntityClassPtr entityClass = GlobalEntityClassManager().findOrInsert(name, true);
 
     // TODO: to be replaced by inheritance-based class detection
-    bool isModel = (GlobalSelectionSystem().countSelected() == 0 
+    bool isModel = (info.totalCount == 0 
                     && string_equal_nocase(name, "func_static"));
     
     // Some entities are based on the size of the currently-selected primitive(s)
-    bool primitivesSelected = map::countSelectedPrimitives() != 0;
+    bool primitivesSelected = info.brushCount > 0 || info.patchCount > 0;
 
     if (!(entityClass->isFixedSize() || isModel) && !primitivesSelected) {
 		throw EntityCreationException(std::string("Unable to create entity \"") 

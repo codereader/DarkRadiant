@@ -276,42 +276,9 @@ void Map_Destroy();
 
 namespace map {
 
-	/** Subtract the provided origin vector from all selected brushes. This is 
-	 * necessary when reparenting worldspawn brushes to an entity, since the entity's
-	 * "origin" key will be added to all child brushes.
-	 * 
-	 * @param origin
-	 * Vector3 containing the new origin for the selected brushes.
-	 */
-	 
-	void selectedPrimitivesSubtractOrigin(const Vector3& origin);
-	
-	/** Count the number of selected primitives in the current map.
-	 * 
-	 * @returns
-	 * The number of selected primitives.
-	 */
-	 
-	int countSelectedPrimitives();
-	
-	/** Count the number of selected brushes in the current map.
-	 * 
-	 * @returns
-	 * The number of selected brushes.
-	 */
-	 
-	int countSelectedBrushes();
-	
 	/** greebo: Focus the XYViews and the Camera to the given point/angle.
 	 */
 	void focusViews(const Vector3& point, const Vector3& angles);
-	
-	/** greebo: This adds/removes the origin from all the child primitivies
-	 * 			of container entities like func_static. This has to be called
-	 * 			right after/before a map save and load process.
-	 */
-	void removeOriginFromChildPrimitives();
-	void addOriginToChildPrimitives();
 	
 	/** greebo: Returns the AABB enclosing all visible map objects.
 	 */

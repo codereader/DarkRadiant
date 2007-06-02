@@ -4,6 +4,9 @@
 #include <string>
 #include <stdexcept>
 #include <vector>
+#include "iscenegraph.h"
+#include "itraversable.h"
+#include "math/Vector3.h"
 
 class Face;
 class Patch;
@@ -75,6 +78,43 @@ namespace selection {
 	 * 			func_clipmodel is done here and the CM object is created.
 	 */
 	void createCMFromSelection();
+	
+	/** Count the number of selected primitives in the current map.
+	 * 
+	 * @returns
+	 * The number of selected primitives.
+	 */
+	 
+	int countSelectedPrimitives();
+	
+	/** Count the number of selected brushes in the current map.
+	 * 
+	 * @returns
+	 * The number of selected brushes.
+	 */
+	 
+	int countSelectedBrushes();
+	
+	/** greebo: Class used to add the origin to the selected brushes
+	 */
+	class OriginAdder :
+		public scene::Graph::Walker,
+		public scene::Traversable::Walker
+	{
+	public:
+		// Graph::Walker implementation
+		bool pre(const scene::Path& path, scene::Instance& instance) const;
+	
+		// Traversable::Walker implementation
+		bool pre(scene::INodePtr node) const;
+	};
+	
+	/** greebo: This adds/removes the origin from all the child primitivies
+	 * 			of container entities like func_static. This has to be called
+	 * 			right after/before a map save and load process.
+	 */
+	void removeOriginFromChildPrimitives();
+	void addOriginToChildPrimitives();
 
 	} // namespace algorithm
 } // namespace selection

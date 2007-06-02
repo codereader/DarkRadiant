@@ -89,6 +89,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "map/RootNode.h"
 #include "map/PointFile.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
+#include "selection/algorithm/Primitives.h"
 #include "namespace/Namespace.h"
 
 #include <string>
@@ -242,90 +243,6 @@ void focusViews(const Vector3& point, const Vector3& angles) {
 	// Set the camera and the views to the given point
 	GlobalCamera().focusCamera(point, angles);
 	GlobalXYWnd().setOrigin(point);
-}
-
-class OriginRemover :
-	public scene::Graph::Walker 
-{
-public:
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		Entity* entity = Node_getEntity(path.top());
-		
-		// Check for an entity
-		if (entity != NULL) {
-			// greebo: Check for a Doom3Group
-			scene::GroupNodePtr groupNode = Node_getGroupNode(path.top());
-			
-			// Don't handle the worldspawn children, they're safe&sound
-			if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn") {
-				groupNode->removeOriginFromChildren();
-				// Don't traverse the children
-				return false;
-			}
-		}
-		
-		return true;
-	}
-};
-
-class OriginAdder :
-	public scene::Graph::Walker,
-	public scene::Traversable::Walker
-{
-public:
-	// Graph::Walker implementation
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		Entity* entity = Node_getEntity(path.top());
-		
-		// Check for an entity
-		if (entity != NULL) {
-			// greebo: Check for a Doom3Group
-			scene::GroupNodePtr groupNode = Node_getGroupNode(path.top());
-			
-			// Don't handle the worldspawn children, they're safe&sound
-			if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn") {
-				groupNode->addOriginToChildren();
-				// Don't traverse the children
-				return false;
-			}
-		}
-		
-		return true;
-	}
-	
-	// Traversable::Walker implementation
-	bool pre(scene::INodePtr node) const {
-		Entity* entity = Node_getEntity(node);
-		
-		// Check for an entity
-		if (entity != NULL) {
-			// greebo: Check for a Doom3Group
-			scene::GroupNodePtr groupNode = Node_getGroupNode(node);
-			
-			// Don't handle the worldspawn children, they're safe&sound
-			if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn") {
-				groupNode->addOriginToChildren();
-				// Don't traverse the children
-				return false;
-			}
-		}
-		return true;
-	}
-
-};
-
-void removeOriginFromChildPrimitives() {
-	bool textureLockStatus = GlobalBrush()->textureLockEnabled();
-	GlobalBrush()->setTextureLock(false);
-	GlobalSceneGraph().traverse(OriginRemover());
-	GlobalBrush()->setTextureLock(textureLockStatus);
-}
-
-void addOriginToChildPrimitives() {
-	bool textureLockStatus = GlobalBrush()->textureLockEnabled();
-	GlobalBrush()->setTextureLock(false);
-	GlobalSceneGraph().traverse(OriginAdder());
-	GlobalBrush()->setTextureLock(textureLockStatus);
 }
 
 class AABBCollectorVisible : 
@@ -746,7 +663,7 @@ void Map::load(const std::string& filename) {
 	globalOutputStream() << makeLeftJustified(Unsigned(GlobalRadiant().getCounter(counterEntities).get()), 5) << " entities\n";
 
 	// Add the origin to all the children of func_static, etc.
-	map::addOriginToChildPrimitives();
+	selection::algorithm::addOriginToChildPrimitives();
 
 	// Move the view to a start position
 	gotoStartPosition();
@@ -1002,14 +919,14 @@ void Map::save() {
 	ScopeTimer timer("map save");
 	
 	// Substract the origin from child primitives (of entities like func_static)
-	map::removeOriginFromChildPrimitives();
+	selection::algorithm::removeOriginFromChildPrimitives();
 	
 	// Save the actual map, by iterating through the reference cache and saving
 	// each ModelResource.
 	SaveReferences();
 	
 	// Re-add the origins to the child primitives (of entities like func_static)
-	map::addOriginToChildPrimitives();
+	selection::algorithm::addOriginToChildPrimitives();
   
 	// Remove the saved camera position
 	removeCameraPosition();
@@ -1100,14 +1017,19 @@ bool Map::import(const std::string& filename) {
 			scene::INodePtr clone(NewMapRoot(""));
 
 			{
+				bool textureLockStatus = GlobalBrush()->textureLockEnabled();
+				GlobalBrush()->setTextureLock(false);
+				
 				// Add the origin to all the child brushes
 				Node_getTraversable(resource->getNode())->traverse(
-					map::OriginAdder()
+					selection::algorithm::OriginAdder()
 				);
         
 				Node_getTraversable(resource->getNode())->traverse(
 					CloneAll(clone)
 				);
+				
+				GlobalBrush()->setTextureLock(textureLockStatus);
 			}
 
 			GlobalNamespace().gatherNamespaced(clone);
@@ -1130,7 +1052,7 @@ void Map::saveDirect(const std::string& filename) {
 
 bool Map::saveSelected(const std::string& filename) {
 	// Substract the origin from child primitives (of entities like func_static)
-	map::removeOriginFromChildPrimitives();
+	selection::algorithm::removeOriginFromChildPrimitives();
 	
 	bool success = MapResource_saveFile(Map::getFormatForFile(filename), 
   							  GlobalSceneGraph().root(), 
@@ -1138,7 +1060,7 @@ bool Map::saveSelected(const std::string& filename) {
   							  filename.c_str());
 
 	// Add the origin to all the children of func_static, etc.
-	map::addOriginToChildPrimitives();
+	selection::algorithm::addOriginToChildPrimitives();
 
 	return success;
 }
@@ -1149,158 +1071,6 @@ void Scene_parentSelectedPrimitivesToEntity(scene::Graph& graph, scene::INodePtr
 {
   graph.traverse(ParentSelectedPrimitivesToEntityWalker(parent));
 }
-
-
-
-namespace map {
-
-	namespace {
-
-		/* Walker class to subtract a Vector3 origin from each selected brush
-		 * that it visits.
-		 */
-	
-		class PrimitiveOriginSubtractor
-		: public scene::Graph::Walker
-		{
-			// The translation matrix from the vector3
-			Matrix4 _transMat;
-			
-		public:
-		
-			// Constructor
-			PrimitiveOriginSubtractor(const Vector3& origin)
-			: _transMat(Matrix4::getTranslation( origin*(-1) )) {}
-			
-			// Pre visit function
-			bool pre(const scene::Path& path, scene::Instance& instance) const {
-				if (Node_isPrimitive(path.top())) {
-					Selectable* selectable = Instance_getSelectable(instance);
-      				if(selectable != 0 && selectable->isSelected() && path.size() > 1) {
-						return false;
-					}
-      			}
-    			return true;
-  			}
-				
-			// Post visit function
-			void post(const scene::Path& path, scene::Instance& instance) const {
-				if (Node_isPrimitive(path.top())) {
-					Selectable* selectable = Instance_getSelectable(instance);
-					if(selectable != 0 && selectable->isSelected() && path.size() > 1) {
-						// Node is selected, check if it is a brush.
-						Brush* brush = Node_getBrush(path.top());
-						if (brush != 0) {
-							// We have a brush, apply the transformation
-							brush->transform(_transMat);
-							brush->freezeTransform();
-						}	
-					}
-				}	
-			} // post()
-
-		}; // BrushOriginSubtractor
-		 
-
-		/** Walker class to count the number of selected brushes in the current
-		 * scene.
-		 */
-	
-		class CountSelectedPrimitives : public scene::Graph::Walker
-		{
-		  int& m_count;
-		  mutable std::size_t m_depth;
-		public:
-		  CountSelectedPrimitives(int& count) : m_count(count), m_depth(0)
-		  {
-		    m_count = 0;
-		  }
-		  bool pre(const scene::Path& path, scene::Instance& instance) const
-		  {
-		    if(++m_depth != 1 && path.top()->isRoot())
-		    {
-		      return false;
-		    }
-		    Selectable* selectable = Instance_getSelectable(instance);
-		    if(selectable != 0
-		      && selectable->isSelected()
-		      && Node_isPrimitive(path.top()))
-		    {
-		      ++m_count;
-		    }
-		    return true;
-		  }
-		  void post(const scene::Path& path, scene::Instance& instance) const
-		  {
-		    --m_depth;
-		  }
-		};
-		
-		/** greebo: Counts the selected brushes in the scenegraph
-		 */
-		class BrushCounter : public scene::Graph::Walker
-		{
-			int& _count;
-			mutable std::size_t _depth;
-		public:
-			BrushCounter(int& count) : 
-				_count(count), 
-				_depth(0) 
-			{
-				_count = 0;
-			}
-			
-			bool pre(const scene::Path& path, scene::Instance& instance) const {
-				
-				if (++_depth != 1 && path.top()->isRoot()) {
-					return false;
-				}
-				
-				Selectable* selectable = Instance_getSelectable(instance);
-				if (selectable != NULL && selectable->isSelected()
-				        && Node_isBrush(path.top())) 
-				{
-					++_count;
-				}
-				
-				return true;
-			}
-			
-			void post(const scene::Path& path, scene::Instance& instance) const {
-				--_depth;
-			}
-		};
-
-	} // namespace
-
-	/* Subtract the given origin from all selected primitives in the map. Uses
-	 * a PrimitiveOriginSubtractor walker class to subtract the origin from
-	 * each selected primitive in the scene.
-	 */
-	 
-	void selectedPrimitivesSubtractOrigin(const Vector3& origin) {
-		GlobalSceneGraph().traverse(PrimitiveOriginSubtractor(origin));
-	}	
-	
-	/* Return the number of selected primitives in the map, using the
-	 * CountSelectedPrimitives walker.
-	 */
-	int countSelectedPrimitives() {
-		int count;
-		GlobalSceneGraph().traverse(CountSelectedPrimitives(count));
-		return count;
-	}
-	
-	/* Return the number of selected brushes in the map, using the
-	 * CountSelectedBrushes walker.
-	 */
-	int countSelectedBrushes() {
-		int count;
-		GlobalSceneGraph().traverse(BrushCounter(count));
-		return count;
-	}
-
-} // namespace map
 
 bool Map::askForSave(const std::string& title) {
 	if (!isModified()) {
