@@ -298,7 +298,7 @@ void testselect_any_visible::post(const scene::Path& path, scene::Instance& inst
     		if (parent != NULL && parent->getKeyValue("classname") != "worldspawn") {
     			// Non-worldspawn entity found, add it if specified
     			if (_selectChildPrimitives) {
-    				_selector.pushSelectable(*selectable);
+    				_selector.popSelectable();
     			}
 	   		}
     		else {
