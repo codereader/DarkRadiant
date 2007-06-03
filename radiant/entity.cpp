@@ -38,7 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "selectionlib.h"
 #include "gtkmisc.h"
 #include "select.h"
-#include "map.h"
+#include "map/Map.h"
 #include "preferences.h"
 #include "gtkdlgs.h"
 #include "mainframe.h"

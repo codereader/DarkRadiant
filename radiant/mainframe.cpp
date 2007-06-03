@@ -329,14 +329,12 @@ void deleteSelection()
   GlobalShaderClipboard().clear();
 }
 
-void Map_ExportSelected(std::ostream& ostream)
-{
-	Map_ExportSelected(ostream, GlobalMap().getFormat());
+void Map_ExportSelected(std::ostream& ostream) {
+	GlobalMap().exportSelected(ostream);
 }
 
-void Map_ImportSelected(TextInputStream& istream)
-{
-  Map_ImportSelected(istream, GlobalMap().getFormat());
+void Map_ImportSelected(TextInputStream& istream) {
+	GlobalMap().importSelected(istream);
 }
 
 void Selection_Copy()

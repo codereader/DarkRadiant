@@ -12,7 +12,7 @@
 #include "gtkutil/StockIconMenuItem.h"
 #include "xmlutil/Document.h"
 #include "signal/signal.h"
-#include "map.h"
+#include "map/Map.h"
 
 #include <map>
 #include <string>

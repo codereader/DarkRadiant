@@ -30,6 +30,31 @@ namespace map {
 	namespace {
 		typedef boost::shared_ptr<RegionManager> RegionManagerPtr;
 		const std::string RKEY_PLAYER_START_ECLASS = "game/mapFormat/playerStartPoint";
+		
+		class AABBCollectorVisible : 
+			public scene::Graph::Walker
+		{
+			AABB& _targetAABB;
+		public:
+			AABBCollectorVisible(AABB& targetAABB) :
+				_targetAABB(targetAABB)
+			{}
+			
+			bool pre(const scene::Path& path, scene::Instance& instance) const {
+				if (path.top()->visible()) {
+					_targetAABB.includeAABB(instance.worldAABB());
+				}
+				return true;
+			}
+		};
+		
+		AABB getVisibleBounds() {
+			AABB returnValue;
+			
+			GlobalSceneGraph().traverse(AABBCollectorVisible(returnValue));
+			
+			return returnValue;
+		}
 	}
 
 RegionManager::RegionManager() :
@@ -282,7 +307,7 @@ void RegionManager::saveRegion() {
 		AABB oldRegionAABB = GlobalRegion().getRegion();
 		
 		// Now check for the effective bounds so that all visible items are included
-		AABB visibleBounds = map::getVisibleBounds();
+		AABB visibleBounds = getVisibleBounds();
 		
 		// Set the region bounds, but don't traverse the graph!
 		GlobalRegion().setRegion(visibleBounds, false);
