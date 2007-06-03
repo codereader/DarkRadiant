@@ -746,6 +746,7 @@ public:
 		Transformable* transformable = Instance_getTransformable(instance);
 
 		if (transformable != NULL) {
+			transformable->setType(TRANSFORM_PRIMITIVE);
 			transformable->setRotation(_rotation);
 		}
 	}
@@ -816,6 +817,7 @@ public:
 		Transformable* transformable = Instance_getTransformable(instance);
 
 		if (transformable != NULL) {
+			transformable->setType(TRANSFORM_PRIMITIVE);
 			transformable->setTranslation(_translation);
 		}
 	}
