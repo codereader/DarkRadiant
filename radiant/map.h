@@ -22,23 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_MAP_H)
 #define INCLUDED_MAP_H
 
-#include "iscenegraph.h"
-
-#include <string>
-
-void SelectBrush (int entitynum, int brushnum);
-
 void Map_Construct();
 void Map_Destroy();
-
-class AABB;
-
-namespace map {
-
-	/** greebo: Returns the AABB enclosing all visible map objects.
-	 */
-	AABB getVisibleBounds();
-}
-
 
 #endif
