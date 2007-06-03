@@ -8,7 +8,7 @@
 #include "scenelib.h"
 #include "gtkutil/dialog.h"
 #include "mainframe.h"
-#include "map.h"
+#include "map/algorithm/Clone.h"
 
 namespace selection {
 	namespace algorithm {
@@ -82,7 +82,7 @@ public:
 		if (!path.top()->isRoot()) {
 			if (Instance_isSelected(instance)) {
 				// Clone the current node
-				scene::INodePtr clone = Node_Clone(path.top());
+				scene::INodePtr clone = map::Node_Clone(path.top());
 				//NodeSmartReference clone(clonedNode);
 				// Add this node to the list of namespaced items
 				GlobalNamespace().gatherNamespaced(clone);

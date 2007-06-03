@@ -10,7 +10,7 @@
 #include "gtkutil/TreeModel.h"
 #include "entitylib.h"
 #include "mainframe.h"
-#include "map.h"
+#include "map/Map.h"
 #include "scenelib.h"
 #include "scenegraph/SceneGraphModule.h"
 #include "camera/Camera.h"
@@ -280,7 +280,7 @@ gboolean EntityList::onSelection(GtkTreeSelection *selection,
 			Vector3 angles(0, 0, 0);
 			angles[CAMERA_PITCH] = -30;
 
-			Map::focusViews(entityOrigin, angles);
+			map::Map::focusViews(entityOrigin, angles);
 		}
 
 		// Now reactivate the callbacks

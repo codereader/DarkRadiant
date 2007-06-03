@@ -8,7 +8,7 @@
 #include "entity.h" // Entity_createFromSelection()
 #include "ientity.h" // Node_getEntity()
 #include "mainframe.h"
-#include "map.h"
+#include "map/Map.h"
 
 #include "gtkutil/dialog.h"
 

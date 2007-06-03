@@ -22,6 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined (INCLUDED_TIMER_H)
 #define INCLUDED_TIMER_H
 
+#include "itextstream.h"
+#include "stream/textstream.h"
+
 #if 1
 
 const int msec_per_sec = 1000;
@@ -97,6 +100,23 @@ public:
   unsigned int elapsed_msec()
   {
     return MillisecondTime::current().milliseconds_since(m_start);
+  }
+};
+
+class ScopeTimer
+{
+  Timer m_timer;
+  const char* m_message;
+public:
+  ScopeTimer(const char* message)
+    : m_message(message)
+  {
+    m_timer.start();
+  }
+  ~ScopeTimer()
+  {
+    double elapsed_time = m_timer.elapsed_msec() / 1000.f;
+    globalOutputStream() << m_message << " timer: " << FloatFormat(elapsed_time, 5, 2) << " second(s) elapsed\n";
   }
 };
 

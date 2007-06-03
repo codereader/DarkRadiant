@@ -52,8 +52,9 @@ ModelModules& ReferenceAPI_getModelModules();
 
 #include "map/RootNode.h"
 #include "mainframe.h"
-#include "map.h"
+#include "map/Map.h"
 #include "filetypes.h"
+#include "map/algorithm/Traverse.h"
 
 #include <boost/utility.hpp>
 #include <boost/weak_ptr.hpp>
@@ -171,7 +172,7 @@ bool MapResource_save(const MapFormat& format,
 		}
 	
 		// Save the actual file
-		return MapResource_saveFile(format, root, Map_Traverse, fullpath.c_str());
+		return MapResource_saveFile(format, root, map::traverse, fullpath.c_str());
 	}
 	else {
 		globalErrorStream() << "map path is not fully qualified: " << makeQuoted(fullpath.c_str()) << "\n";

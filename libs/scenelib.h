@@ -874,4 +874,61 @@ inline ENodeType node_get_nodetype(scene::INodePtr node) {
 	return eNodeUnknown;
 }
 
+class AnyInstanceSelected : 
+	public scene::Instantiable::Visitor
+{
+	bool& m_selected;
+public:
+	AnyInstanceSelected(bool& selected) : 
+		m_selected(selected)
+	{
+		m_selected = false;
+	}
+	void visit(scene::Instance& instance) const {
+		Selectable* selectable = Instance_getSelectable(instance);
+		if(selectable != 0
+		        && selectable->isSelected()) {
+			m_selected = true;
+		}
+	}
+};
+
+inline bool Node_instanceSelected(scene::INodePtr node) {
+	scene::InstantiablePtr instantiable = Node_getInstantiable(node);
+	ASSERT_NOTNULL(instantiable);
+	bool selected;
+	instantiable->forEachInstance(AnyInstanceSelected(selected));
+	return selected;
+}
+
+class SelectedDescendantWalker : 
+	public scene::Traversable::Walker
+{
+	bool& m_selected;
+public:
+	SelectedDescendantWalker(bool& selected) :
+		m_selected(selected)
+	{
+		m_selected = false;
+	}
+
+	bool pre(scene::INodePtr node) const {
+		if (node->isRoot()) {
+			return false;
+		}
+
+		if (Node_instanceSelected(node)) {
+			m_selected = true;
+		}
+
+		return true;
+	}
+};
+
+inline bool Node_selectedDescendant(scene::INodePtr node) {
+	bool selected;
+	Node_traverseSubgraph(node, SelectedDescendantWalker(selected));
+	return selected;
+}
+
 #endif

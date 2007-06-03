@@ -15,7 +15,7 @@
 #include "mainframe.h"
 #include "renderstate.h"
 
-#include "map.h"
+#include "map/Map.h"
 #include "CamRenderer.h"
 #include "CameraSettings.h"
 #include "GlobalCamera.h"
@@ -280,7 +280,7 @@ void CamWnd::jumpToObject(SelectionTest& selectionTest) {
 		AABB found = instance->worldAABB();
 		
 		// Focus the view at the center of the found AABB
-		Map::focusViews(found.origin, getCameraAngles());
+		map::Map::focusViews(found.origin, getCameraAngles());
 	}
 }
 
