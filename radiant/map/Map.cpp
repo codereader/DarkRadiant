@@ -105,6 +105,19 @@ Map::Map() :
 	m_valid(false)
 {}
 
+void Map::realiseResource() {
+	if (m_resource != NULL) {
+		m_resource->realise();
+	}
+}
+
+void Map::unrealiseResource() {
+	if (m_resource != NULL) {
+		m_resource->flush();
+		m_resource->unrealise();
+	}
+}
+
 void Map::realise() {
     if(m_resource != 0)
     {
@@ -161,7 +174,7 @@ void Map::updateTitle() {
 		title << " *";
 	}
 
-	gtk_window_set_title(MainFrame_getWindow(), title.c_str());
+	gtk_window_set_title(GlobalRadiant().getMainWindow(), title.c_str());
 }
 
 void Map::setName(const std::string& newName) {

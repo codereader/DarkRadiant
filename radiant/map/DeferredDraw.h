@@ -2,7 +2,7 @@
 #define DEFERREDDRAW_H_
 
 #include "generic/callbackfwd.h"
-#include "map.h"
+#include "map/Map.h"
 
 class DeferredDraw
 {

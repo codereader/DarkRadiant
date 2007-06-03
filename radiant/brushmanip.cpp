@@ -27,7 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/widget.h"
 #include "gtkmisc.h"
 #include "brush/BrushNode.h"
-#include "map.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "gtkdlgs.h"
 #include "mainframe.h"

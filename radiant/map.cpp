@@ -29,32 +29,23 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class MapEntityClasses : 
 	public ModuleObserver
 {
-  std::size_t m_unrealised;
+	std::size_t m_unrealised;
 public:
-  MapEntityClasses() : m_unrealised(1)
-  {
-  }
-  void realise()
-  {
-    if(--m_unrealised == 0)
-    {
-      if(GlobalMap().m_resource != 0)
-      {
-	      GlobalMap().m_resource->realise();
-      }
-    }
-  }
-  void unrealise()
-  {
-    if(++m_unrealised == 1)
-    {
-      if(GlobalMap().m_resource != 0)
-      {
-        GlobalMap().m_resource->flush();
-	      GlobalMap().m_resource->unrealise();
-      }
-    }
-  }
+	MapEntityClasses() : 
+		m_unrealised(1)
+	{}
+	
+	void realise() {
+		if (--m_unrealised == 0) {
+			GlobalMap().realiseResource();
+		}
+	}
+	
+	void unrealise() {
+		if (++m_unrealised == 1) {
+			GlobalMap().unrealiseResource();
+		}
+	}
 };
 
 MapEntityClasses g_MapEntityClasses;

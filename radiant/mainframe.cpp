@@ -115,7 +115,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "entity.h"
 #include "gtkdlgs.h"
 #include "gtkmisc.h"
-#include "map.h"
 #include "multimon.h"
 #include "patchmanip.h"
 #include "plugin.h"

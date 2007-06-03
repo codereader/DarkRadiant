@@ -43,7 +43,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkmisc.h"
 #include "mainframe.h"
 #include "igrid.h"
-#include "map.h"
 #include "selection/SceneWalkers.h"
 #include "brush/BrushInstance.h"
 #include "xyview/GlobalXYWnd.h"

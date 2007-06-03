@@ -15,7 +15,6 @@ namespace map {
 class Map : 
 	public ModuleObserver
 {
-public:
 	// The map name
 	std::string m_name;
 	
@@ -32,6 +31,9 @@ public:
 
 public:
 	Map();
+	
+	void realiseResource();
+	void unrealiseResource();
 	
 	/** greebo: Returns true if the map has not been named yet.
 	 */

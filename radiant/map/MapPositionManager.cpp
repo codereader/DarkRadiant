@@ -2,7 +2,7 @@
 
 #include "ieventmanager.h"
 #include "iregistry.h"
-#include "map.h"
+#include "map/Map.h"
 #include "entitylib.h"
 #include "string/string.h"
 #include "generic/callback.h"

@@ -32,7 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "gdk/gdkkeysyms.h"
 #include "gtkutil/dialog.h"
-#include "map.h"
 #include "mainframe.h"
 #include "gtkmisc.h"
 #include "gtkdlgs.h"
