@@ -4,7 +4,7 @@
 #include "ientity.h"
 #include "itextstream.h"
 #include "string/string.h"
-#include "map.h"
+#include "map/Map.h"
 
 namespace map {
 

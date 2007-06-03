@@ -9,7 +9,7 @@
 #include "os/file.h"
 #include "string/string.h"
 #include "cmdlib.h"
-#include "map.h"
+#include "map/Map.h"
 #include "mainframe.h"
 #include "environment.h"
 
