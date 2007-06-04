@@ -41,6 +41,10 @@ public:
 	void detach(const KeyObserver& observer);
 	
 	const char* c_str() const;
+	
+	// Accessor method, retrieve the actual value
+	std::string get() const;
+	
 	void assign(const std::string& other);
 
 	void notify();
