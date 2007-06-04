@@ -8,7 +8,7 @@
 #include "dragplanes.h"
 
 #include "Light.h"
-#include "VertexInstance.h"
+#include "../VertexInstance.h"
 #include "../targetable.h"
 
 /* greebo: The LightInstance class is some kind of manager for the Light class, and this is the
