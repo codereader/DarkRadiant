@@ -3,6 +3,7 @@
 #include "iselection.h"
 #include "iscenegraph.h"
 #include "selectable.h"
+#include "igroupnode.h"
 #include "selectionlib.h"
 #include "gtkutil/dialog.h"
 #include "mainframe.h"
@@ -145,16 +146,62 @@ std::string getShaderFromSelection() {
 
 /** greebo: Applies the given shader to the visited face/patch
  */
-class ShaderApplicator
+class ShaderApplicator :
+	public SelectionSystem::Visitor,
+	public scene::Graph::Walker
 {
 	std::string _shader;
+	mutable scene::INodePtr _ignoreNode;
 public:
 	ShaderApplicator(const std::string& shader) : 
-		_shader(shader) 
+		_shader(shader)
 	{}
 	
-	void operator()(Patch& patch) const {
-		patch.SetShader(_shader);
+	void visit(scene::Instance& instance) const {
+		if (!instance.path().top()->visible()) {
+			return;
+		}
+		
+		if (Instance_isSelected(instance)) {
+			processInstance(instance);
+		}
+	}
+	
+	bool pre(const scene::Path& path, scene::Instance& instance) const {
+		// Don't process starting point node or invisible nodes
+		if (instance.path().top()->visible() && path.top() != _ignoreNode) {
+			processInstance(instance);
+		}
+		
+		return true;
+	}
+	
+	void processInstance(scene::Instance& instance) const {
+		// Is this a brush?
+		BrushInstance* brush = Instance_getBrush(instance);
+		if (brush != NULL) {
+			// Visit each face with the operator(Face&) method below
+			Brush_forEachFace(brush->getBrush(), *this);
+			return;
+		}
+		
+		// Is this a patch?
+		PatchInstance* patch = Instance_getPatch(instance);
+		if (patch != NULL) {
+			patch->getPatch().SetShader(_shader);
+			return;
+		}
+		
+		scene::INodePtr node = instance.path().top();
+		
+		// Is this a groupnode?
+		scene::GroupNodePtr groupNode =	Node_getGroupNode(node);
+		if (groupNode != NULL) {
+			_ignoreNode = node;
+			// Traverse the groupnode using self as visitor
+			GlobalSceneGraph().traverse_subgraph(*this, instance.path());
+			_ignoreNode = scene::INodePtr();
+		}
 	}
 	
 	void operator()(Face& face) const {
@@ -165,16 +212,8 @@ public:
 void applyShaderToSelection(const std::string& shaderName) {
 	UndoableCommand undo("setShader");
 	
-	// Patches
-	Scene_forEachVisibleSelectedPatch(ShaderApplicator(shaderName));
-	
-	// Brushes
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
-		Scene_ForEachSelectedBrush_ForEachFace(
-			GlobalSceneGraph(), 
-			ShaderApplicator(shaderName)
-		);
-	}
+	// Apply the shader to each primitive/group entity
+	GlobalSelectionSystem().foreachSelected(ShaderApplicator(shaderName));
 	
 	// Faces
 	Scene_ForEachSelectedBrushFace(
