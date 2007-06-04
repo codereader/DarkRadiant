@@ -265,9 +265,9 @@ bool Brush::isDetail() {
 }
 
 /// \brief Appends a copy of \p face to the end of the face list.
-Face* Brush::addFace(const Face& face) {
+FaceSmartPointer Brush::addFace(const Face& face) {
 	if (m_faces.size() == c_brush_maxFaces) {
-		return 0;
+		return FaceSmartPointer();
 	}
 	undoSave();
 	push_back(FaceSmartPointer(new Face(face, this)));
@@ -277,9 +277,9 @@ Face* Brush::addFace(const Face& face) {
 }
 
 /// \brief Appends a new face constructed from the parameters to the end of the face list.
-Face* Brush::addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2, const std::string& shader, const TextureProjection& projection) {
+FaceSmartPointer Brush::addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2, const std::string& shader, const TextureProjection& projection) {
 	if(m_faces.size() == c_brush_maxFaces) {
-		return 0;
+		return FaceSmartPointer();
 	}
 	undoSave();
 	push_back(FaceSmartPointer(new Face(p0, p1, p2, shader, projection, this)));
@@ -309,10 +309,10 @@ Brush::const_iterator Brush::end() const {
 	return m_faces.end();
 }
 
-Face* Brush::back() {
+FaceSmartPointer Brush::back() {
 	return m_faces.back();
 }
-const Face* Brush::back() const {
+const FaceSmartPointer Brush::back() const {
 	return m_faces.back();
 }
 

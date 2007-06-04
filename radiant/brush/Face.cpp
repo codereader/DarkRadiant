@@ -119,15 +119,6 @@ void Face::importState(const UndoMemento* data) {
 	m_observer->shaderChanged();
 }
 
-void Face::IncRef() {
-	++m_refcount;
-}
-
-void Face::DecRef() {
-	if (--m_refcount == 0)
-		delete this;
-}
-
 void Face::flipWinding() {
 	m_plane.reverse();
 	planeChanged();

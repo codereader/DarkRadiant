@@ -14,13 +14,14 @@
 #include "FaceShader.h"
 #include "PlanePoints.h"
 #include "FacePlane.h"
+#include <boost/shared_ptr.hpp>
 
 const double GRID_MIN = 0.125;
 
 typedef double (*QuantiseFunc)(double f);
 
 class Face;
-typedef SmartPointer<Face> FaceSmartPointer;
+typedef boost::shared_ptr<Face> FaceSmartPointer;
 typedef std::vector<FaceSmartPointer> Faces;
 
 class FaceObserver {
@@ -110,9 +111,6 @@ public:
 	// undoable
 	UndoMemento* exportState() const;
 	void importState(const UndoMemento* data);
-
-	void IncRef();
-	void DecRef();
 
 	void flipWinding();
 
