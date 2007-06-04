@@ -107,7 +107,6 @@ void Doom3GroupInstance::transformComponents(const Matrix4& matrix) {
 		m_curveCatmullRom.transform(matrix);
 	}
 	if (_originInstance.isSelected()) {
-		// Origin transform code here
 		m_contained.translateOrigin(getTranslation()); 
 	}
 }
@@ -132,7 +131,7 @@ void Doom3GroupInstance::snapComponents(float snap) {
 		m_curveCatmullRom.write(curve_CatmullRomSpline, m_contained.getEntity());
 	}
 	if (_originInstance.isSelected()) {
-		// Snap origin code here
+		m_contained.snapOrigin(snap);
 	}
 }
 

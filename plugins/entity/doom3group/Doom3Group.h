@@ -142,6 +142,8 @@ public:
 	
 	// Translates the origin only (without the children)
 	void translateOrigin(const Vector3& translation);
+	// Snaps the origin to the grid
+	void snapOrigin(float snap);
 	
 	void translateChildren(const Vector3& childTranslation);
 	
