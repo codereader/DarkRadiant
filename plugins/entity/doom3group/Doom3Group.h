@@ -63,7 +63,7 @@ class Doom3Group :
 	bool m_isModel;
 
 	scene::Traversable* m_traversable;
-
+	
 public:
 	NURBSCurve m_curveNURBS;
 	SignalHandlerId m_curveNURBSChanged;
@@ -117,6 +117,8 @@ public:
 	void detach(scene::Traversable::Observer* observer);
 
 	const AABB& localAABB() const;
+	
+	Vector3& getOrigin();
 
 	void renderSolid(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
 	void renderWireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
@@ -137,6 +139,9 @@ public:
 	void freezeTransform();
 	void transformChanged();
 	typedef MemberCaller<Doom3Group, &Doom3Group::transformChanged> TransformChangedCaller;
+	
+	// Translates the origin only (without the children)
+	void translateOrigin(const Vector3& translation);
 	
 	void translateChildren(const Vector3& childTranslation);
 	

@@ -22,7 +22,9 @@ Doom3GroupInstance::Doom3GroupInstance(const scene::Path& path,
 	TransformModifier(entity::Doom3Group::TransformChangedCaller(contained), ApplyTransformCaller(*this)),
 	m_contained(contained),
 	m_curveNURBS(m_contained.m_curveNURBS.m_controlPointsTransformed, SelectionChangedComponentCaller(*this)),
-	m_curveCatmullRom(m_contained.m_curveCatmullRom.m_controlPointsTransformed, SelectionChangedComponentCaller(*this)) {
+	m_curveCatmullRom(m_contained.m_curveCatmullRom.m_controlPointsTransformed, SelectionChangedComponentCaller(*this)),
+	_originInstance(VertexInstance(m_contained.getOrigin(), SelectionChangedComponentCaller(*this)))
+{
 	m_contained.instanceAttach(Instance::path());
 	m_contained.m_curveNURBSChanged = m_contained.m_curveNURBS.connect(CurveEdit::CurveChangedCaller(m_curveNURBS));
 	m_contained.m_curveCatmullRomChanged = m_contained.m_curveCatmullRom.connect(CurveEdit::CurveChangedCaller(m_curveCatmullRom));
@@ -56,6 +58,9 @@ void Doom3GroupInstance::renderComponents(Renderer& renderer, const VolumeTest& 
 	if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex) {
 		m_curveNURBS.renderComponents(renderer, volume, localToWorld());
 		m_curveCatmullRom.renderComponents(renderer, volume, localToWorld());
+		
+		// Register the renderable with OpenGL
+		_originInstance.render(renderer, volume, Instance::localToWorld());
 	}
 }
 
@@ -73,13 +78,14 @@ void Doom3GroupInstance::testSelect(Selector& selector, SelectionTest& test) {
 }
 
 bool Doom3GroupInstance::isSelectedComponents() const {
-	return m_curveNURBS.isSelected() || m_curveCatmullRom.isSelected();
+	return m_curveNURBS.isSelected() || m_curveCatmullRom.isSelected() || _originInstance.isSelected();
 }
 
 void Doom3GroupInstance::setSelectedComponents(bool selected, SelectionSystem::EComponentMode mode) {
 	if (mode == SelectionSystem::eVertex) {
 		m_curveNURBS.setSelected(selected);
 		m_curveCatmullRom.setSelected(selected);
+		_originInstance.setSelected(selected);
 	}
 }
 
@@ -88,6 +94,8 @@ void Doom3GroupInstance::testSelectComponents(Selector& selector, SelectionTest&
 		test.BeginMesh(localToWorld());
 		m_curveNURBS.testSelect(selector, test);
 		m_curveCatmullRom.testSelect(selector, test);
+		
+		_originInstance.testSelect(selector, test);
 	}
 }
 
@@ -98,12 +106,19 @@ void Doom3GroupInstance::transformComponents(const Matrix4& matrix) {
 	if (m_curveCatmullRom.isSelected()) {
 		m_curveCatmullRom.transform(matrix);
 	}
+	if (_originInstance.isSelected()) {
+		// Origin transform code here
+		m_contained.translateOrigin(getTranslation()); 
+	}
 }
 
 const AABB& Doom3GroupInstance::getSelectedComponentsBounds() const {
 	m_aabb_component = AABB();
 	m_curveNURBS.forEachSelected(ControlPointAddBounds(m_aabb_component));
 	m_curveCatmullRom.forEachSelected(ControlPointAddBounds(m_aabb_component));
+	if (_originInstance.isSelected()) {
+		m_aabb_component.includePoint(_originInstance.getVertex());
+	}
 	return m_aabb_component;
 }
 
@@ -115,6 +130,9 @@ void Doom3GroupInstance::snapComponents(float snap) {
 	if (m_curveCatmullRom.isSelected()) {
 		m_curveCatmullRom.snapto(snap);
 		m_curveCatmullRom.write(curve_CatmullRomSpline, m_contained.getEntity());
+	}
+	if (_originInstance.isSelected()) {
+		// Snap origin code here
 	}
 }
 

@@ -76,6 +76,10 @@ Doom3Group::~Doom3Group() {
 	destroy();
 }
 
+Vector3& Doom3Group::getOrigin() {
+	return m_origin;
+}
+
 void Doom3Group::instanceAttach(const scene::Path& path) {
 	if (++m_instanceCounter.m_count == 1) {
 		_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
@@ -144,6 +148,10 @@ void Doom3Group::detach(scene::Traversable::Observer* observer) {
 const AABB& Doom3Group::localAABB() const {
 	m_curveBounds = m_curveNURBS.m_bounds;
 	m_curveBounds.includeAABB(m_curveCatmullRom.m_bounds);
+	
+	// Include the origin as well, it might be offset
+	m_curveBounds.includePoint(m_origin);
+	
 	return m_curveBounds;
 }
 
@@ -185,6 +193,15 @@ void Doom3Group::renderWireframe(Renderer& renderer, const VolumeTest& volume,
 void Doom3Group::testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best) {
 	PointVertexArray_testSelect(&m_curveNURBS.m_renderCurve.m_vertices[0], m_curveNURBS.m_renderCurve.m_vertices.size(), test, best);
 	PointVertexArray_testSelect(&m_curveCatmullRom.m_renderCurve.m_vertices[0], m_curveCatmullRom.m_renderCurve.m_vertices.size(), test, best);
+}
+
+void Doom3Group::translateOrigin(const Vector3& translation) {
+	m_origin = origin_translated(m_originKey.m_origin, translation);
+	// Only non-models should have their rendered origin different than <0,0,0>
+	if (!isModel()) {
+		m_nameOrigin = m_origin;
+	}
+	m_renderOrigin.updatePivot();
 }
 
 void Doom3Group::translate(const Vector3& translation, bool rotation) {

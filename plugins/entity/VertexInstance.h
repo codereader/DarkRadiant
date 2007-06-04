@@ -1,17 +1,32 @@
 #ifndef VERTEXINSTANCE_H_
 #define VERTEXINSTANCE_H_
 
-class VertexInstance {
+#include "irender.h"
+#include "iradiant.h"
+#include "iregistry.h"
+#include "math/Vector3.h"
+
+class VertexInstance :
+	public OpenGLRenderable
+{
 protected:
 	Vector3& _vertex;
 
 	// The Selectable
 	ObservedSelectable _selectable;
+	
+	Vector3 _colour;
+
+	// Shader to use for the point
+	ShaderPtr _shader;
 
 public:
 	// Construct the instance with the given <vertex> coordinates and connect the selectionChangeCallback 
-	VertexInstance(Vector3& vertex, const SelectionChangeCallback& observer)
-		: _vertex(vertex), _selectable(observer)
+	VertexInstance(Vector3& vertex, const SelectionChangeCallback& observer) : 
+		_vertex(vertex), 
+		_selectable(observer),
+		_colour(GlobalRadiant().getColour("light_vertex_deselected")),
+		_shader(GlobalShaderCache().capture("$BIGPOINT"))
 	{}
   
 	void setVertex(const Vector3& vertex) {
@@ -21,9 +36,18 @@ public:
 	virtual const Vector3 getVertex() const {
 		return _vertex;
 	} 
+	
+	// Return the Shader for rendering
+  	ShaderPtr getShader() const {
+  		return _shader;
+  	}
   
 	void setSelected(const bool select) {
 		_selectable.setSelected(select);
+		// Change the colour according to the selection
+		_colour = (select) ? 
+			GlobalRadiant().getColour("light_vertex_selected") : 
+			GlobalRadiant().getColour("light_vertex_deselected");
 	}
   
 	bool isSelected() const {
@@ -38,6 +62,25 @@ public:
 			// Add the selectable to the given selector > this should trigger the callbacks
 			Selector_add(selector, _selectable, best);
 		}
+	}
+	
+	// Front-end render function
+	void render(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const {
+		renderer.Highlight(Renderer::ePrimitive, false);
+		renderer.Highlight(Renderer::eFace, false);
+		renderer.SetState(_shader, Renderer::eFullMaterials);
+		renderer.SetState(_shader, Renderer::eWireframeOnly);
+
+		renderer.addRenderable(*this, localToWorld);
+	}
+	
+	// GL render function (backend)
+  	virtual void render(RenderStateFlags state) const {
+		// Draw the center point
+	    glBegin(GL_POINTS);
+	    glColor3dv(_colour);
+	    glVertex3dv(_vertex);
+	    glEnd();
 	}
 }; // class VertexInstance
 
