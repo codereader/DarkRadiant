@@ -320,15 +320,6 @@ inline hash_t string_hash_nocase(const char* string, hash_t previous = 0)
   return hash_ub1_nocase(reinterpret_cast<const ub1*>(string), string_length(string), previous);
 }
 
-struct RawStringHash
-{
-  typedef hash_t hash_type;
-  hash_type operator()(const char* string) const
-  {
-    return string_hash(string);
-  }
-};
-
 /// \brief Length of a string in ub4.
 /// "wibble" (6) gives 2,
 /// "and" (3) gives 1,

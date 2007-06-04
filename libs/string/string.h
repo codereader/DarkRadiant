@@ -480,14 +480,6 @@ namespace std
   }
 }
 
-struct RawStringEqual
-{
-  bool operator()(const char* x, const char* y) const
-  {
-    return string_equal(x, y);
-  }
-};
-
 struct RawStringLess
 {
   bool operator()(const char* x, const char* y) const
