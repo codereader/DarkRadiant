@@ -4,6 +4,7 @@
 #include "string/pooledstring.h"
 #include "generic/referencecounted.h"
 #include "KeyValue.h"
+#include <boost/shared_ptr.hpp>
 
 /** greebo: This is the implementation of the class Entity.
  * 
@@ -33,7 +34,8 @@ class Doom3Entity :
 	class KeyContext {};
 	typedef Static<StringPool, KeyContext> KeyPool;
 	typedef PooledString<KeyPool> Key;
-	typedef SmartPointer<KeyValue> KeyValuePtr;
+	
+	typedef boost::shared_ptr<KeyValue> KeyValuePtr;
 	typedef UnsortedMap<Key, KeyValuePtr> KeyValues;
 	KeyValues m_keyValues;
 
@@ -45,9 +47,9 @@ class Doom3Entity :
 
 	bool m_observerMutex;
 
-public:
 	bool m_isContainer;
 
+public:
 	// Constructor, pass the according entity class
 	Doom3Entity(IEntityClassPtr eclass);
 	

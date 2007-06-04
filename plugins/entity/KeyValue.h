@@ -17,22 +17,17 @@ class KeyValue :
 {
 	typedef UnsortedSet<KeyObserver> KeyObservers;
 
-	std::size_t m_refcount;
 	KeyObservers m_observers;
 	std::string m_string;
 	std::string m_empty;
 	ObservedUndoableObject<std::string> m_undo;
 	static EntityCreator::KeyValueChangedFunc m_entityKeyValueChanged;
 public:
-
 	KeyValue(const std::string& string, const std::string& empty);
 	
 	~KeyValue();
 
 	static void setKeyValueChangedFunc(EntityCreator::KeyValueChangedFunc func);
-
-	void IncRef();
-	void DecRef();
 
 	void instanceAttach(MapFile* map);
 	void instanceDetach(MapFile* map);
