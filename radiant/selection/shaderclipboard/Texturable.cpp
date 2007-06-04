@@ -96,7 +96,7 @@ bool ClosestTexturableFinder::pre(const scene::Path& path, scene::Instance& inst
 					_bestIntersection = intersection;
 					
 					// Save the face and the parent brush
-					_texturable.face = (*i);
+					_texturable.face = (*i).get();
 					_texturable.brush = &brush->getBrush();
 					_texturable.patch = NULL;
 				}

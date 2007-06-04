@@ -223,10 +223,10 @@ public:
 	bool isDetail();
 	
 	/// \brief Appends a copy of \p face to the end of the face list.
-	Face* addFace(const Face& face);
+	FaceSmartPointer addFace(const Face& face);
 
 	/// \brief Appends a new face constructed from the parameters to the end of the face list.
-	Face* addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2, const std::string& shader, const TextureProjection& projection);
+	FaceSmartPointer addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2, const std::string& shader, const TextureProjection& projection);
 	
 	static void constructStatic();
 	static void destroyStatic();
@@ -238,8 +238,8 @@ public:
 	const_iterator begin() const;
 	const_iterator end() const;
 
-	Face* back();
-	const Face* back() const;
+	FaceSmartPointer back();
+	const FaceSmartPointer back() const;
 	
 	void reserve(std::size_t count);
 	

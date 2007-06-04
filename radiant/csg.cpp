@@ -36,7 +36,7 @@ void Face_makeBrush(Face& face, const Brush& brush, BrushVector& out, float offs
   if(face.contributes())
   {
     out.push_back(new Brush(brush));
-    Face* newFace = out.back()->addFace(face);
+    FaceSmartPointer newFace = out.back()->addFace(face);
     if(newFace != 0)
     {
       newFace->flipWinding();
@@ -317,7 +317,7 @@ bool Brush_subtract(const Brush& brush, const Brush& other, BrushVector& ret_fra
           && split.counts[ePlaneBack] != 0)
         {
           fragments.push_back(new Brush(back));
-          Face* newFace = fragments.back()->addFace(*(*i));
+          FaceSmartPointer newFace = fragments.back()->addFace(*(*i));
           if(newFace != 0)
           {
             newFace->flipWinding();
@@ -476,7 +476,7 @@ public:
               scene::INodePtr node(new BrushNode());
               Brush* fragment = Node_getBrush(node);
               fragment->copy(*brush);
-              Face* newFace = fragment->addPlane(m_p0, m_p1, m_p2, m_shader, m_projection);
+              FaceSmartPointer newFace = fragment->addPlane(m_p0, m_p1, m_p2, m_shader, m_projection);
               if(newFace != 0 && m_split != eFront)
               {
                 newFace->flipWinding();
@@ -492,7 +492,7 @@ public:
               }
             }
 
-            Face* newFace = brush->addPlane(m_p0, m_p1, m_p2, m_shader, m_projection);
+            FaceSmartPointer newFace = brush->addPlane(m_p0, m_p1, m_p2, m_shader, m_projection);
             if(newFace != 0 && m_split == eFront)
             {
               newFace->flipWinding();
