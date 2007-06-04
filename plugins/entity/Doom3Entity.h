@@ -26,10 +26,6 @@ namespace entity {
 class Doom3Entity :
 	public Entity
 {
-public:
-	static StringPool& getPool();
-
-private:
 	static EntityCreator::KeyValueChangedFunc m_entityKeyValueChanged;
 
 	IEntityClassConstPtr m_eclass;
@@ -89,6 +85,7 @@ public:
 	std::string getKeyValue(const std::string& key) const;
 
 	bool isContainer() const;
+	void setIsContainer(bool isContainer);
 
 private:
 	void notifyInsert(const char* key, KeyValue& value);

@@ -46,6 +46,11 @@ void KeyValue::detach(const KeyObserver& observer) {
 	m_observers.erase(observer);
 }
 
+std::string KeyValue::get() const {
+	// Return the <empty> string if the actual value is ""
+	return (m_string.empty()) ? m_empty : m_string;
+}
+
 const char* KeyValue::c_str() const {
 	if (m_string.empty()) {
 		return m_empty.c_str();

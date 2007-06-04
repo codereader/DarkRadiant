@@ -143,6 +143,10 @@ bool Doom3Entity::isContainer() const {
 	return m_isContainer;
 }
 
+void Doom3Entity::setIsContainer(bool isContainer) {
+	m_isContainer = isContainer;
+}
+
 void Doom3Entity::notifyInsert(const char* key, KeyValue& value) {
 	m_observerMutex = true;
 	for(Observers::iterator i = m_observers.begin(); i != m_observers.end(); ++i) {
@@ -208,10 +212,6 @@ void Doom3Entity::erase(const char* key) {
 		m_undo.save();
 		erase(i);
 	}
-}
-
-StringPool& Doom3Entity::getPool() {
-	return Static<StringPool, KeyContext>::instance();
 }
 
 } // namespace entity
