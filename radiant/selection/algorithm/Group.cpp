@@ -1,5 +1,6 @@
 #include "Group.h"
 
+#include "igroupnode.h"
 #include "selectionlib.h"
 #include "scenelib.h"
 #include "entitylib.h"
@@ -186,6 +187,50 @@ void parentSelection() {
 							 "(The entity has to be selected last.)", 
 							 GlobalRadiant().getMainWindow());
 	}
+}
+
+class GroupNodeChildSelector :
+	public SelectionSystem::Visitor,
+	public scene::Graph::Walker
+{
+	mutable scene::INodePtr _ignoreNode;
+public:
+	// SelectionSystem::Visitor implementation
+	void visit(scene::Instance& instance) const {
+		// Don't traverse hidden elements, just to be sure
+		if (!instance.path().top()->visible()) {
+			return;
+		}
+		
+		// Is this a selected groupnode?
+		if (Instance_isSelected(instance) && 
+			Node_getGroupNode(instance.path().top()) != NULL)
+		{
+			// De-select the groupnode
+			Instance_setSelected(instance, false);
+			
+			_ignoreNode = instance.path().top();
+			// Traverse the groupnode using self as visitor
+			GlobalSceneGraph().traverse_subgraph(*this, instance.path());
+			_ignoreNode = scene::INodePtr();
+		}
+	}
+	
+	bool pre(const scene::Path& path, scene::Instance& instance) const {
+		// Don't process starting point node or invisible nodes
+		if (instance.path().top()->visible() && path.top() != _ignoreNode) {
+			Instance_setSelected(instance, true);
+		}
+		
+		return true;
+	}
+};
+
+void selectChildren() {
+	// Traverse the selection and identify the groupnodes
+	GlobalSelectionSystem().foreachSelected(
+		GroupNodeChildSelector()
+	);
 }
 
 } // namespace algorithm

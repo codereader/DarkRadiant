@@ -13,7 +13,13 @@ namespace selection {
 	 * 			be selected last. Emits an error message if the selection doesn't meet
 	 * 			the requirements
 	 */
-	void parentSelection(); 
+	void parentSelection();
+	
+	/** greebo: Selects the children of the currently selected groupnodes.
+	 * 			This deselects the groupnodes entities, so that ONLY the children 
+	 * 			are highlighted.
+	 */
+	void selectChildren(); 
 
 	} // namespace algorithm
 } // namespace selection

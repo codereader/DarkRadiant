@@ -46,6 +46,7 @@
 		<menuItem name="selectCompleteTall" caption="Select complete t_all" command="SelectCompleteTall" icon="selection_selectcompletetall.png" />
 		<menuItem name="selectInside" caption="Select i_nside" command="SelectInside" icon="selection_selectinside.png" />
 		<menuItem name="selectTouching" caption="Select _touching" command="SelectTouching" icon="selection_selecttouching.png" />
+		<menuItem name="selectionChildren" caption="Select Children" command="SelectChildren" />
 		<menuItem name="selectionEntities" caption="Expand selection to whole _Entities" command="ExpandSelectionToEntities" />
 		<menuSeparator />
 		<menuItem name="objExport" caption="Export selected brushes to _OBJ" command="BrushExportOBJ" />
