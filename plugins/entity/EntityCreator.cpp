@@ -4,7 +4,6 @@
 #include "iundo.h"
 #include "iscenegraph.h"
 #include "inamespace.h"
-#include "string/pooledstring.h"
 
 #include "entitylib.h"
 
