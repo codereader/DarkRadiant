@@ -270,7 +270,7 @@ public:
 
       tokeniser.ungetToken();
 
-      m_brush.push_back(FaceSmartPointer(new Face(&m_brush)));
+      m_brush.push_back(FacePtr(new Face(&m_brush)));
 
       //!todo BP support
       tokeniser.nextLine();

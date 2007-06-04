@@ -8,7 +8,6 @@
 
 #include "math/Vector3.h"
 #include "math/matrix.h"
-#include "generic/referencecounted.h"
 
 #include "FaceTexDef.h"
 #include "FaceShader.h"
@@ -21,8 +20,8 @@ const double GRID_MIN = 0.125;
 typedef double (*QuantiseFunc)(double f);
 
 class Face;
-typedef boost::shared_ptr<Face> FaceSmartPointer;
-typedef std::vector<FaceSmartPointer> Faces;
+typedef boost::shared_ptr<Face> FacePtr;
+typedef std::vector<FacePtr> Faces;
 
 class FaceObserver {
 public:
