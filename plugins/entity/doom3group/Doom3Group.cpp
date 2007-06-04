@@ -195,6 +195,12 @@ void Doom3Group::testSelect(Selector& selector, SelectionTest& test, SelectionIn
 	PointVertexArray_testSelect(&m_curveCatmullRom.m_renderCurve.m_vertices[0], m_curveCatmullRom.m_renderCurve.m_vertices.size(), test, best);
 }
 
+void Doom3Group::snapOrigin(float snap) {
+	m_originKey.m_origin = origin_snapped(m_originKey.m_origin, snap);
+	m_originKey.write(&_entity);
+	m_renderOrigin.updatePivot();
+}
+
 void Doom3Group::translateOrigin(const Vector3& translation) {
 	m_origin = origin_translated(m_originKey.m_origin, translation);
 	// Only non-models should have their rendered origin different than <0,0,0>
