@@ -28,7 +28,7 @@ class Doom3Entity :
 {
 	static EntityCreator::KeyValueChangedFunc m_entityKeyValueChanged;
 
-	IEntityClassConstPtr m_eclass;
+	IEntityClassConstPtr _eclass;
 
 	typedef boost::shared_ptr<KeyValue> KeyValuePtr;
 	
@@ -37,17 +37,17 @@ class Doom3Entity :
 	
 	// The unsorted list of KeyValue pairs
 	typedef std::vector<KeyValuePair> KeyValues;
-	KeyValues m_keyValues;
+	KeyValues _keyValues;
 
 	typedef UnsortedSet<Observer*> Observers;
-	Observers m_observers;
+	Observers _observers;
 
-	ObservedUndoableObject<KeyValues> m_undo;
-	bool m_instanced;
+	ObservedUndoableObject<KeyValues> _undo;
+	bool _instanced;
 
-	bool m_observerMutex;
+	bool _observerMutex;
 
-	bool m_isContainer;
+	bool _isContainer;
 
 public:
 	// Constructor, pass the according entity class
@@ -65,9 +65,6 @@ public:
 
 	void attach(Observer& observer);
 	void detach(Observer& observer);
-
-	void forEachKeyValue_instanceAttach(MapFile* map);
-	void forEachKeyValue_instanceDetach(MapFile* map);
 
 	void instanceAttach(MapFile* map);
 	void instanceDetach(MapFile* map);
@@ -105,6 +102,9 @@ private:
 	
 	KeyValues::iterator find(const std::string& key);
 	KeyValues::const_iterator find(const std::string& key) const;
+	
+	void forEachKeyValue_instanceAttach(MapFile* map);
+	void forEachKeyValue_instanceDetach(MapFile* map);
 };
 
 } // namespace entity
