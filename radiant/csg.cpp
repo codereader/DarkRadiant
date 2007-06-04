@@ -207,12 +207,12 @@ inline Dereference<Functor> makeDereference(const Functor& functor)
 typedef Face* FacePointer;
 const FacePointer c_nullFacePointer = 0;
 
-template<typename Predicate>
+/*template<typename Predicate>
 Face* Brush_findIf(const Brush& brush, const Predicate& predicate)
 {
   Brush::const_iterator i = std::find_if(brush.begin(), brush.end(), makeDereference(predicate));
   return i == brush.end() ? c_nullFacePointer : *i; // uses c_nullFacePointer instead of 0 because otherwise gcc 4.1 attempts conversion to int
-}
+}*/
 
 template<typename Caller>
 class BindArguments1
@@ -282,7 +282,7 @@ bool Brush_testPlane(const Brush& brush, const Plane3& plane, bool flipped)
   }
   return true;
 #else
-  return Brush_findIf(brush, bindArguments(FaceTestPlane(), makeReference(plane), flipped)) == 0;
+  //return Brush_findIf(brush, bindArguments(FaceTestPlane(), makeReference(plane), flipped)) == 0;
 #endif
 }
 
