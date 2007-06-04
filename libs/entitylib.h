@@ -35,7 +35,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/aabb.h"
 #include "undolib.h"
 #include "string/pooledstring.h"
-#include "generic/referencecounted.h"
 #include "scenelib.h"
 #include "container/container.h"
 

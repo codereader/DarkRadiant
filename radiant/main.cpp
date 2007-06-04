@@ -48,7 +48,6 @@ HashTable - generic hashtable, similar to std::hash_map \n
 \link math/aabb.h math/aabb.h \endlink - AABBs \n
 
 Callback MemberCaller FunctionCaller - callbacks similar to using boost::function with boost::bind \n
-SmartPointer SmartReference - smart-pointer and smart-reference similar to Loki's SmartPtr \n
 
 \link generic/bitfield.h generic/bitfield.h \endlink - Type-safe bitfield \n
 \link generic/enumeration.h generic/enumeration.h \endlink - Type-safe enumeration \n

@@ -6,7 +6,6 @@
 
 #include "BrushModule.h"
 #include "Face.h"
-#include "generic/referencecounted.h"
 #include "plugin.h"
 
 Brush::Brush(scene::Node& node, const Callback& evaluateTransform, const Callback& boundsChanged) :
@@ -265,24 +264,24 @@ bool Brush::isDetail() {
 }
 
 /// \brief Appends a copy of \p face to the end of the face list.
-FaceSmartPointer Brush::addFace(const Face& face) {
+FacePtr Brush::addFace(const Face& face) {
 	if (m_faces.size() == c_brush_maxFaces) {
-		return FaceSmartPointer();
+		return FacePtr();
 	}
 	undoSave();
-	push_back(FaceSmartPointer(new Face(face, this)));
+	push_back(FacePtr(new Face(face, this)));
 	m_faces.back()->setDetail(isDetail());
 	planeChanged();
 	return m_faces.back();
 }
 
 /// \brief Appends a new face constructed from the parameters to the end of the face list.
-FaceSmartPointer Brush::addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2, const std::string& shader, const TextureProjection& projection) {
+FacePtr Brush::addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2, const std::string& shader, const TextureProjection& projection) {
 	if(m_faces.size() == c_brush_maxFaces) {
-		return FaceSmartPointer();
+		return FacePtr();
 	}
 	undoSave();
-	push_back(FaceSmartPointer(new Face(p0, p1, p2, shader, projection, this)));
+	push_back(FacePtr(new Face(p0, p1, p2, shader, projection, this)));
 	m_faces.back()->setDetail(isDetail());
 	planeChanged();
 	return m_faces.back();
@@ -309,10 +308,10 @@ Brush::const_iterator Brush::end() const {
 	return m_faces.end();
 }
 
-FaceSmartPointer Brush::back() {
+FacePtr Brush::back() {
 	return m_faces.back();
 }
-const FaceSmartPointer Brush::back() const {
+const FacePtr Brush::back() const {
 	return m_faces.back();
 }
 
