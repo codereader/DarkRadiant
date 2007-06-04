@@ -1,8 +1,7 @@
 #ifndef DOOM3ENTITY_H_
 #define DOOM3ENTITY_H_
 
-#include "string/pooledstring.h"
-#include "generic/referencecounted.h"
+#include <vector>
 #include "KeyValue.h"
 #include <boost/shared_ptr.hpp>
 
@@ -31,12 +30,13 @@ class Doom3Entity :
 
 	IEntityClassConstPtr m_eclass;
 
-	class KeyContext {};
-	typedef Static<StringPool, KeyContext> KeyPool;
-	typedef PooledString<KeyPool> Key;
-	
 	typedef boost::shared_ptr<KeyValue> KeyValuePtr;
-	typedef UnsortedMap<Key, KeyValuePtr> KeyValues;
+	
+	// A key value pair using a dynamically allocated value
+	typedef std::pair<std::string, KeyValuePtr> KeyValuePair;
+	
+	// The unsorted list of KeyValue pairs
+	typedef std::vector<KeyValuePair> KeyValues;
 	KeyValues m_keyValues;
 
 	typedef UnsortedSet<Observer*> Observers;
@@ -90,18 +90,21 @@ public:
 	void setIsContainer(bool isContainer);
 
 private:
-	void notifyInsert(const char* key, KeyValue& value);
-	void notifyErase(const char* key, KeyValue& value);
+	void notifyInsert(const std::string& key, KeyValue& value);
+	void notifyErase(const std::string& key, KeyValue& value);
 	void forEachKeyValue_notifyInsert();
 	void forEachKeyValue_notifyErase();
 
-	void insert(const char* key, const KeyValuePtr& keyValue);
+	void insert(const std::string& key, const KeyValuePtr& keyValue);
 
-	void insert(const char* key, const char* value);
+	void insert(const std::string& key, const std::string& value);
 
 	void erase(KeyValues::iterator i);
 
-	void erase(const char* key);
+	void erase(const std::string& key);
+	
+	KeyValues::iterator find(const std::string& key);
+	KeyValues::const_iterator find(const std::string& key) const;
 };
 
 } // namespace entity
