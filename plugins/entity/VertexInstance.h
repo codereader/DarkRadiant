@@ -4,10 +4,12 @@
 #include "irender.h"
 #include "iradiant.h"
 #include "iregistry.h"
+#include "iselection.h"
 #include "math/Vector3.h"
 
 class VertexInstance :
-	public OpenGLRenderable
+	public OpenGLRenderable,
+	public Selectable
 {
 protected:
 	Vector3& _vertex;
@@ -53,6 +55,10 @@ public:
 	bool isSelected() const {
 		return _selectable.isSelected();
 	}
+	
+	void invertSelected() {
+		setSelected(!isSelected());
+	}
 
 	virtual void testSelect(Selector& selector, SelectionTest& test) {
 		SelectionIntersection best;
@@ -60,7 +66,7 @@ public:
     
 		if (best.valid()) {
 			// Add the selectable to the given selector > this should trigger the callbacks
-			Selector_add(selector, _selectable, best);
+			Selector_add(selector, *this, best);
 		}
 	}
 	
@@ -70,7 +76,7 @@ public:
 		renderer.Highlight(Renderer::eFace, false);
 		renderer.SetState(_shader, Renderer::eFullMaterials);
 		renderer.SetState(_shader, Renderer::eWireframeOnly);
-
+		
 		renderer.addRenderable(*this, localToWorld);
 	}
 	
@@ -107,7 +113,7 @@ public:
     
 		if (best.valid()) {
 			// Add the selectable to the given selector > this should trigger the callbacks
-			Selector_add(selector, _selectable, best);
+			Selector_add(selector, *this, best);
 		}
 	}
 }; // class VertexInstanceRelative
