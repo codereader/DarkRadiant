@@ -2,6 +2,7 @@
 #define DOOM3GROUPINSTANCE_H_
 
 #include "Doom3Group.h"
+#include "../VertexInstance.h"
 #include "../targetable.h"
 
 namespace entity {
@@ -20,6 +21,8 @@ class Doom3GroupInstance :
 	CurveEdit m_curveNURBS;
 	CurveEdit m_curveCatmullRom;
 	mutable AABB m_aabb_component;
+	
+	VertexInstance _originInstance;
 
 public:
 	STRING_CONSTANT(Name, "Doom3GroupInstance");
