@@ -1802,6 +1802,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("SelectTouching", FreeCaller<Select_Touching>());
 	GlobalEventManager().addCommand("SelectCompleteTall", FreeCaller<Select_Complete_Tall>());
 	GlobalEventManager().addCommand("ExpandSelectionToEntities", FreeCaller<Scene_ExpandSelectionToEntities>());
+	GlobalEventManager().addCommand("SelectChildren", FreeCaller<selection::algorithm::selectChildren>());
 	GlobalEventManager().addCommand("Preferences", FreeCaller<ui::PrefDialog::toggle>());
 	
 	GlobalEventManager().addCommand("ToggleConsole", FreeCaller<Console_ToggleShow>());
