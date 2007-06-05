@@ -22,7 +22,7 @@ public:
 	
 	bool empty() const;
 	
-	const char* c_str() const;
+	std::string getName() const;
 	
 	void nameChanged(const std::string& name);
 	typedef MemberCaller1<NameObserver, const std::string&, &NameObserver::nameChanged> NameChangedCaller;

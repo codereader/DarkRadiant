@@ -44,7 +44,7 @@ void Namespace::mergeNames(const Namespace& other) const {
 	UniqueNames uniqueNames(other.m_uniqueNames);
 
 	for(Names::const_iterator i = m_names.begin(); i != m_names.end(); ++i) {
-		groups[(*i).second.c_str()].push_back((*i).first);
+		groups[i->second.getName()].push_back(i->first);
 	}
 
 	for(NameGroups::iterator i = groups.begin(); i != groups.end(); ++i) {
