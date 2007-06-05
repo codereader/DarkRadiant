@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brush/BrushNode.h"
 #include "igrid.h"
 
-void Face_makeBrush(Face& face, const Brush& brush, BrushVector& out, float offset)
+void Face_makeBrush(Face& face, const Brush& brush, BrushVector& out, float offset, bool makeRoom)
 {
   if(face.contributes())
   {
@@ -42,6 +42,14 @@ void Face_makeBrush(Face& face, const Brush& brush, BrushVector& out, float offs
       newFace->flipWinding();
       newFace->getPlane().offset(offset);
       newFace->planeChanged();
+      
+		if (makeRoom) {
+			// Retrieve the normal vector of the "source" face
+			out.back()->transform(
+				Matrix4::getTranslation(face.getPlane().plane3().normal()*offset)
+			);
+			out.back()->freezeTransform();
+		}
     }
   }
 }
@@ -51,28 +59,36 @@ class FaceMakeBrush
   const Brush& brush;
   BrushVector& out;
   float offset;
+  bool _makeRoom;
 public:
-  FaceMakeBrush(const Brush& brush, BrushVector& out, float offset)
-    : brush(brush), out(out), offset(offset)
+  FaceMakeBrush(const Brush& brush, BrushVector& out, float offset, bool makeRoom = false)
+    : brush(brush), out(out), offset(offset), _makeRoom(makeRoom)
   {
   }
   void operator()(Face& face) const
   {
-    Face_makeBrush(face, brush, out, offset);
+    Face_makeBrush(face, brush, out, offset, _makeRoom);
   }
 };
 
-void Brush_makeHollow(const Brush& brush, BrushVector& out, float offset)
+void Brush_makeHollow(const Brush& brush, BrushVector& out, float offset, bool makeRoom)
 {
-  Brush_forEachFace(brush, FaceMakeBrush(brush, out, offset));
+  Brush_forEachFace(brush, FaceMakeBrush(brush, out, offset, makeRoom));
 }
 
 class BrushHollowSelectedWalker : public scene::Graph::Walker
 {
   float m_offset;
+  bool _makeRoom;
 public:
-  BrushHollowSelectedWalker(float offset)
-    : m_offset(offset)
+	/** greebo: Hollows each visited selected brush
+	 * 
+	 * @makeRoom: set this to true if the brushes should be moved towards the outside
+	 * 			  so that the overlapping corners are resolved (works only for 4sided brushes). 
+	 */
+  BrushHollowSelectedWalker(float offset, bool makeRoom = false)
+    : m_offset(offset),
+    	_makeRoom(makeRoom)
   {
   }
   bool pre(const scene::Path& path, scene::Instance& instance) const
@@ -85,7 +101,7 @@ public:
         && path.size() > 1)
       {
         BrushVector out;
-        Brush_makeHollow(*brush, out, m_offset);
+        Brush_makeHollow(*brush, out, m_offset, _makeRoom);
         for(BrushVector::const_iterator i = out.begin(); i != out.end(); ++i)
         {
           (*i)->removeEmptyFaces();
@@ -166,6 +182,15 @@ void CSG_MakeHollow (void)
   Scene_BrushMakeHollow_Selected(GlobalSceneGraph());
 
   SceneChangeNotify();
+}
+
+void CSG_MakeRoom() {
+	UndoableCommand undo("brushRoom");
+
+	GlobalSceneGraph().traverse(BrushHollowSelectedWalker(GlobalGrid().getGridSize(), true));
+	GlobalSceneGraph().traverse(BrushDeleteSelected());
+
+	SceneChangeNotify();
 }
 
 template<typename Type>

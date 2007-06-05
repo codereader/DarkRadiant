@@ -26,6 +26,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iclipper.h"
 
 void CSG_MakeHollow (void);
+
+/** greebo: This tries to move the newly created brushes towards the outside
+ * 			so that the corners don't overlap (works only for rectangular prisms). 
+ */
+void CSG_MakeRoom();
+
 void CSG_Subtract (void);
 void CSG_Merge (void);
 
