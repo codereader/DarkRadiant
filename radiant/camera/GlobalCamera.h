@@ -4,7 +4,6 @@
 #include <list>
 #include "icamera.h"
 
-#include "preferences.h"
 #include "CamWnd.h"
 #include "CameraObserver.h"
 

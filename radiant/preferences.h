@@ -35,12 +35,9 @@ please contact Id Software immediately at info@idsoftware.com.
 		const std::string RKEY_SKIP_REGISTRY_SAVE = "user/skipRegistrySaveOnShutdown";
 	}
 
-typedef struct _GtkWidget GtkWidget;
-void Widget_connectToggleDependency(GtkWidget* self, GtkWidget* toggleButton);
-
 PreferenceSystem& GetPreferenceSystem();
 
-/** greebo: Deletes the user.xml file from the settings folder
+/** greebo: Renames the user.xml in the settings folder.
  */
 void resetPreferences();
 

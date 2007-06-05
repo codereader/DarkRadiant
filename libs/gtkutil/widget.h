@@ -187,4 +187,6 @@ public:
   }
 };
 
+void Widget_connectToggleDependency(GtkWidget* self, GtkWidget* toggleButton);
+
 #endif
