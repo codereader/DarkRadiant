@@ -35,8 +35,8 @@ bool NameObserver::empty() const {
 	return m_name.empty(); 
 }
 
-const char* NameObserver::c_str() const {
-	return m_name.c_str();
+std::string NameObserver::getName() const {
+	return m_name;
 }
 
 void NameObserver::nameChanged(const std::string& name) {
