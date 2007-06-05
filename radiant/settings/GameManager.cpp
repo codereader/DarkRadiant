@@ -2,7 +2,7 @@
 
 #include "iregistry.h"
 #include "ifilesystem.h"
-#include "preferences.h"
+#include "settings/PreferenceSystem.h"
 #include "ui/prefdialog/PrefDialog.h"
 #include "environment.h"
 #include "os/file.h"
