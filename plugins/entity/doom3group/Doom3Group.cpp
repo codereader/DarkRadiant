@@ -391,7 +391,7 @@ void Doom3Group::setIsModel(bool newValue) {
  * entity class, which is always a brush-based entity.
  */
 void Doom3Group::updateIsModel() {
-	if (m_modelKey != m_name && std::string(_entity.getKeyValue("classname")) != "worldspawn") {
+	if (m_modelKey != m_name && _entity.getKeyValue("classname") != "worldspawn") {
 		setIsModel(true);
 	}
 	else {
@@ -409,10 +409,13 @@ void Doom3Group::modelChanged(const std::string& value) {
 	updateIsModel();
 	if (isModel()) {
 		m_model.modelChanged(value);
+		m_nameOrigin = Vector3(0,0,0);
 	}
 	else {
 		m_model.modelChanged("");
+		m_nameOrigin = m_origin;
 	}
+	m_renderOrigin.updatePivot();
 }
 
 void Doom3Group::updateTransform() {
