@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 #include "version.h"
 #include "environment.h"
-#include "preferences.h"
+#include "settings/PreferenceSystem.h"
 
 #include "map/FindMapElements.h"
 #include "ui/about/AboutDialog.h"
