@@ -3,7 +3,6 @@
 
 #include <string>
 #include "iregistry.h"
-#include "preferencesystem.h"
 
 /* greebo: This is the home of all the camera settings. As this class derives
  * from a RegistryKeyObserver, it can be connected to the according registry keys

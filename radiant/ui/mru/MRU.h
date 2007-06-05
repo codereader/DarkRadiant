@@ -1,9 +1,8 @@
 #ifndef MRU_H_
 #define MRU_H_
 
-#include <vector>
+#include <list>
 #include "iregistry.h"
-#include "preferencesystem.h"
 
 #include "MRUMenuItem.h"
 #include "MRUList.h"

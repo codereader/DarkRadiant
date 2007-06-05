@@ -42,8 +42,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 EntityCreator::KeyValueChangedFunc entity::Doom3Entity::m_entityKeyValueChanged = 0;
 EntityCreator::KeyValueChangedFunc entity::KeyValue::m_entityKeyValueChanged = 0;
 
-#include "preferencesystem.h"
-
 namespace entity {
 
 /* greebo: Constructs the entity environment

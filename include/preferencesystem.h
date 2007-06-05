@@ -87,7 +87,7 @@ public:
 };
 typedef boost::shared_ptr<PreferencesPage> PreferencesPagePtr;
 
-class PreferenceSystem
+class IPreferenceSystem
 {
 public:
 	INTEGER_CONSTANT(Version, 1);
@@ -112,13 +112,13 @@ public:
 
 template<typename Type>
 class GlobalModule;
-typedef GlobalModule<PreferenceSystem> GlobalPreferenceSystemModule;
+typedef GlobalModule<IPreferenceSystem> GlobalPreferenceSystemModule;
 
 template<typename Type>
 class GlobalModuleRef;
-typedef GlobalModuleRef<PreferenceSystem> GlobalPreferenceSystemModuleRef;
+typedef GlobalModuleRef<IPreferenceSystem> GlobalPreferenceSystemModuleRef;
 
-inline PreferenceSystem& GlobalPreferenceSystem() {
+inline IPreferenceSystem& GlobalPreferenceSystem() {
 	return GlobalPreferenceSystemModule::getTable();
 }
 
