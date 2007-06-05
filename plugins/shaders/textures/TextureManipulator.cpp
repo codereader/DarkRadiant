@@ -1,6 +1,7 @@
 #include "TextureManipulator.h"
 
 #include "igl.h"
+#include "ipreferencesystem.h"
 #include <stdlib.h>
 #include "imagelib.h"
 #include "stream/textstream.h"

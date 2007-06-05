@@ -4,7 +4,6 @@
 #include "iimage.h"
 #include "ishaders.h"
 #include "iregistry.h"
-#include "preferencesystem.h"
 typedef unsigned char byte;
 
 namespace {

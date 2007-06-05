@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iradiant.h"
 #include "ipatch.h"
 #include "ifilter.h"
-#include "preferencesystem.h"
+#include "ipreferencesystem.h"
 #include "patchmanip.h"
 
 #include "PatchNode.h"

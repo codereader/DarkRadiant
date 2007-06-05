@@ -8,7 +8,7 @@
  */
 
 #include "iregistry.h"
-#include "preferencesystem.h"
+#include "ipreferencesystem.h"
 
 #include <map>
 #include <set>

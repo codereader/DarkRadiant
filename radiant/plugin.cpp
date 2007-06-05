@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iundo.h"
 #include "ireference.h"
 #include "ifiletypes.h"
-#include "preferencesystem.h"
+#include "ipreferencesystem.h"
 #include "ibrush.h"
 #include "iuimanager.h"
 #include "ipatch.h"
