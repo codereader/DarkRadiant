@@ -29,7 +29,7 @@ please contact Id Software immediately at info@idsoftware.com.
 #if !defined(INCLUDED_PREFERENCES_H)
 #define INCLUDED_PREFERENCES_H
 
-#include "preferencesystem.h"
+#include "ipreferencesystem.h"
 
 	namespace {
 		const std::string RKEY_SKIP_REGISTRY_SAVE = "user/skipRegistrySaveOnShutdown";

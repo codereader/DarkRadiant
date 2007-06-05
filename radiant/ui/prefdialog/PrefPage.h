@@ -1,7 +1,7 @@
 #ifndef PREFPAGE_H_
 #define PREFPAGE_H_
 
-#include "preferencesystem.h"
+#include "ipreferencesystem.h"
 #include "gtkutil/RegistryConnector.h"
 
 namespace ui {

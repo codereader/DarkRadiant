@@ -1,7 +1,7 @@
 #include "CameraSettings.h"
 
 #include "ieventmanager.h"
-#include "preferencesystem.h"
+#include "ipreferencesystem.h"
 
 #include "GlobalCamera.h"
 #include "renderstate.h"

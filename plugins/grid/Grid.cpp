@@ -4,7 +4,7 @@
 #include "iradiant.h"
 #include "ieventmanager.h"
 #include "iregistry.h"
-#include "preferencesystem.h"
+#include "ipreferencesystem.h"
 #include "signal/signal.h"
 
 #include "GridItem.h"

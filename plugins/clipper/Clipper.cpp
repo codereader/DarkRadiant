@@ -2,7 +2,7 @@
 #include "iclipper.h"		// The Abstract Base Class
 
 #include "iregistry.h"
-#include "preferencesystem.h"
+#include "ipreferencesystem.h"
 #include "iradiant.h"
 #include "iscenegraph.h"
 #include "iselection.h"

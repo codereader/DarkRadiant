@@ -3,7 +3,7 @@
 #include "ieventmanager.h"
 #include "iuimanager.h"
 #include "iradiant.h"
-#include "preferencesystem.h"
+#include "ipreferencesystem.h"
 
 #include <gtk/gtk.h>
 #include "gtkutil/widget.h"
