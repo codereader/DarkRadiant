@@ -50,8 +50,6 @@ public:
 
 MapEntityClasses g_MapEntityClasses;
 
-#include "preferencesystem.h"
-
 void Map_Construct() {
 	// Add the Map-related commands to the EventManager
 	map::Map::registerCommands();

@@ -3,6 +3,7 @@
 #include <iostream>
 #include "mapfile.h"
 #include "iscenegraph.h"
+#include "preferencesystem.h"
 
 #include "gdk/gdkwindow.h"
 

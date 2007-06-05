@@ -1,6 +1,7 @@
 #include "GlobalXYWnd.h"
 
 #include "ieventmanager.h"
+#include "preferencesystem.h"
 
 #include "gtkutil/TransientWindow.h"
 #include "gtkutil/FramedWidget.h"

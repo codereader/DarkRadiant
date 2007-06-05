@@ -1,6 +1,7 @@
 #include "MRU.h"
 
 #include "ieventmanager.h"
+#include "preferencesystem.h"
 #include "iuimanager.h"
 #include "gtk/gtkmenu.h"
 #include "gtk/gtkcontainer.h"

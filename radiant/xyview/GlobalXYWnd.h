@@ -5,7 +5,6 @@
 
 #include "iclipper.h"
 #include "iregistry.h"
-#include "preferencesystem.h"
 
 #include "XYWnd.h"
 

@@ -64,7 +64,7 @@ void resetPreferences() {
 }
 
 class PreferenceDictionary : 
-	public PreferenceSystem
+	public IPreferenceSystem
 {
 public:
 	// Looks up a page for the given path and returns it to the client
@@ -73,22 +73,22 @@ public:
 	}
 };
 
-PreferenceSystem& GetPreferenceSystem() {
+IPreferenceSystem& GetPreferenceSystem() {
 	static PreferenceDictionary _preferenceSystem;
 	return _preferenceSystem;
 }
 
 class PreferenceSystemAPI
 {
-	PreferenceSystem* m_preferencesystem;
+	IPreferenceSystem* m_preferencesystem;
 public:
-	typedef PreferenceSystem Type;
+	typedef IPreferenceSystem Type;
 	STRING_CONSTANT(Name, "*");
 
 	PreferenceSystemAPI() {
 		m_preferencesystem = &GetPreferenceSystem();
 	}
-	PreferenceSystem* getTable() {
+	IPreferenceSystem* getTable() {
 		return m_preferencesystem;
 	}
 };

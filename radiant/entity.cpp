@@ -287,8 +287,6 @@ scene::INodePtr Entity_createFromSelection(const char* name,
 	return node;
 }
 
-#include "preferencesystem.h"
-
 void Entity_Construct() {
 	GlobalEventManager().addCommand("ConnectSelection", FreeCaller<Entity_connectSelected>());
 	GlobalEventManager().addCommand("UngroupSelection", FreeCaller<Entity_ungroupSelected>());

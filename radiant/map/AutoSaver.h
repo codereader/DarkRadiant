@@ -2,7 +2,6 @@
 #define AUTOSAVER_H_
 
 #include "iregistry.h"
-#include "preferencesystem.h"
 
 #include "gtkutil/Timer.h"
 

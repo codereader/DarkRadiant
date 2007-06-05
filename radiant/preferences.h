@@ -35,7 +35,7 @@ please contact Id Software immediately at info@idsoftware.com.
 		const std::string RKEY_SKIP_REGISTRY_SAVE = "user/skipRegistrySaveOnShutdown";
 	}
 
-PreferenceSystem& GetPreferenceSystem();
+IPreferenceSystem& GetPreferenceSystem();
 
 /** greebo: Renames the user.xml in the settings folder.
  */

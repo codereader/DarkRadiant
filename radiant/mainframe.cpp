@@ -1776,7 +1776,6 @@ void EditColourScheme() {
 	new ui::ColourSchemeEditor(); // self-destructs in GTK callback
 }
 
-#include "preferencesystem.h"
 #include "stringio.h"
 
 void MainFrame_Construct()
