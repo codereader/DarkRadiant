@@ -1860,6 +1860,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("CSGSubtract", FreeCaller<CSG_Subtract>());
 	GlobalEventManager().addCommand("CSGMerge", FreeCaller<CSG_Merge>());
 	GlobalEventManager().addCommand("CSGHollow", FreeCaller<CSG_MakeHollow>());
+	GlobalEventManager().addCommand("CSGRoom", FreeCaller<CSG_MakeRoom>());
 	
 	GlobalEventManager().addCommand("RefreshShaders", FreeCaller<RefreshShaders>());
 	
