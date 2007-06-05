@@ -68,7 +68,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "camera/GlobalCamera.h"
 #include "entity.h"
 #include "select.h"
-#include "preferences.h"
 #include "nullmodel.h"
 #include "xyview/GlobalXYWnd.h"
 #include "map/AutoSaver.h"

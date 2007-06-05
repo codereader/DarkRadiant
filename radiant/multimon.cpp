@@ -25,8 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 
 #include "gtkutil/window.h"
+#include "gtkutil/widget.h"
 #include "preferencesystem.h"
-#include "preferences.h"
 #include "stringio.h"
 
 #include <gdk/gdkdisplay.h>

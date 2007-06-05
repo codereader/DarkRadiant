@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 #include "version.h"
 #include "environment.h"
+#include "preferences.h"
 
 #include "map/FindMapElements.h"
 #include "ui/about/AboutDialog.h"
@@ -118,7 +119,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "multimon.h"
 #include "patchmanip.h"
 #include "plugin.h"
-#include "preferences.h"
 #include "qgl.h"
 #include "select.h"
 #include "server.h"
