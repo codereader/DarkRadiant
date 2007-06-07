@@ -363,7 +363,6 @@ radiant_src = \
 		['brushmanip.cpp',
 		 'console.cpp',
 		 'csg.cpp',
-		 'dialog.cpp',
 		 'entity.cpp',
 		 'environment.cpp',
 		 'error.cpp',
