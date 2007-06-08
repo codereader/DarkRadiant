@@ -87,11 +87,9 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "server.h"
 #include "ui/mru/MRU.h"
 #include "settings/GameManager.h"
+#include "ui/splash/Splash.h"
 
 #include <iostream>
-
-void show_splash();
-void hide_splash();
 
 #if defined (_DEBUG) && defined (WIN32) && defined (_MSC_VER)
 #include "crtdbg.h"
@@ -280,7 +278,7 @@ int main (int argc, char* argv[])
 	// Retrieve the application path and such
 	Environment::Instance().init(argc, argv);
 
-	show_splash();
+	ui::Splash::Instance().show();
 
 	// Load the Radiant modules from the modules/ and plugins/ dir.
 	ModuleLoader::loadModules(Environment::Instance().getAppPath());
@@ -321,7 +319,7 @@ int main (int argc, char* argv[])
   g_pParentWnd = 0;
   g_pParentWnd = new MainFrame();
 
-  hide_splash();
+	ui::Splash::Instance().hide();
 
 	if (GlobalMRU().loadLastMap() && GlobalMRU().getLastMapName() != "") {
 		GlobalMap().load(GlobalMRU().getLastMapName());

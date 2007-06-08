@@ -432,6 +432,7 @@ radiant_src = \
          'ui/about/AboutDialog.cpp',
          'ui/texturebrowser/TextureBrowser.cpp',
          'ui/mapinfo/MapInfoDialog.cpp',
+         'ui/splash/Splash.cpp',
          'textool/TexTool.cpp',
          'textool/TexToolItem.cpp',
          'textool/item/PatchItem.cpp',

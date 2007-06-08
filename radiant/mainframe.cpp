@@ -133,12 +133,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/commandlist/CommandList.h"
 #include "ui/findshader/FindShader.h"
 #include "ui/mapinfo/MapInfoDialog.h"
+#include "ui/splash/Splash.h"
 #include "brush/FaceInstance.h"
 #include "settings/GameManager.h"
 
 extern FaceInstanceSet g_SelectedFaceInstances;
-
-static GtkWindow *splash_screen = 0;
 
 	namespace {
 		const std::string RKEY_WINDOW_LAYOUT = "user/ui/mainFrame/windowLayout";
@@ -1142,11 +1141,7 @@ GtkWindow* MainFrame_getWindow()
 {
   if(g_pParentWnd == 0)
   {
-  	// Maybe the splash screen is visible?
-  	/*if (splash_screen != NULL) {
-  		return splash_screen;
-  	}*/
-    return 0;
+  	return 0;
   }
   return g_pParentWnd->m_window;
 }
@@ -1181,47 +1176,6 @@ MainFrame::~MainFrame()
   gtk_widget_destroy(GTK_WIDGET(m_window));
 }
 
-// Create and show the splash screen.
-
-static const char *SPLASH_FILENAME = "darksplash.png";
-
-GtkWindow* create_splash()
-{
-  GtkWindow* window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
-  gtk_window_set_decorated(window, FALSE);
-  gtk_window_set_resizable(window, FALSE);
-  gtk_window_set_modal(window, TRUE);
-  gtk_window_set_default_size(window, -1, -1);
-  gtk_window_set_position(window, GTK_WIN_POS_CENTER);
-  gtk_container_set_border_width(GTK_CONTAINER(window), 0);
-
-	// Don't use GlobalRadiant().getLocalPixbuf() here, it's not up yet
-	std::string fullFileName(Environment().Instance().getBitmapsPath() + SPLASH_FILENAME);
-	GtkWidget* image = gtk_image_new_from_pixbuf(
-		gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL)
-	);
-	gtk_widget_show(image);
-	gtk_container_add(GTK_CONTAINER(window), image);
-
-  gtk_widget_set_size_request(GTK_WIDGET(window), -1, -1);
-  gtk_widget_show(GTK_WIDGET(window));
-
-  return window;
-}
-
-void show_splash()
-{
-  splash_screen = create_splash();
-
-  process_gui();
-}
-
-void hide_splash()
-{
-  gtk_widget_destroy(GTK_WIDGET(splash_screen));
-  splash_screen = NULL;
-}
-
 static gint mainframe_delete (GtkWidget *widget, GdkEvent *event, gpointer data) {
 	if (GlobalMap().askForSave("Exit Radiant")) {
 		gtk_main_quit();
@@ -1243,7 +1197,7 @@ void MainFrame::Create()
 
   GlobalWindowObservers_connectTopLevel(window);
 
-  gtk_window_set_transient_for(splash_screen, window);
+	gtk_window_set_transient_for(ui::Splash::Instance().getWindow(), window);
 
 #if !defined(WIN32)
 	{
