@@ -238,8 +238,12 @@ void Radiant_Initialise()
 	ui::PrefPagePtr settingsPage = ui::PrefDialog::Instance().createOrFindPage("Settings");
 	settingsPage->setTitle("");
 	
+	ui::Splash::Instance().setProgressAndText("Loading Colour Schemes", 0.6f);
+	
 	// Load the ColourSchemes from the registry
 	ColourSchemes().loadColourSchemes();
+	
+	ui::Splash::Instance().setProgressAndText("Loading Modules", 0.7f);
 
 	// Load the other modules
 	Radiant_Construct(GlobalModuleServer_get());

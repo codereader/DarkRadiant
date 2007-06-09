@@ -39,25 +39,49 @@ GtkWindow* Splash::getWindow() {
 	return _window;
 }
 
+void Splash::createProgressBar() {
+	_progressBar = gtk_progress_bar_new();
+	gtk_box_pack_start(GTK_BOX(_vbox), _progressBar, FALSE, FALSE, 0);
+	gtk_widget_set_size_request(GTK_WIDGET(_window), -1, -1);
+	gtk_widget_show_all(_progressBar);
+}
+
 void Splash::setText(const std::string& text) {
 	if (_progressBar == NULL) {
-		_progressBar = gtk_progress_bar_new();
-		gtk_box_pack_start(GTK_BOX(_vbox), _progressBar, FALSE, FALSE, 0);
+		createProgressBar();
 	}
 	
 	gtk_progress_bar_set_text(GTK_PROGRESS_BAR(_progressBar), text.c_str());
+	queueDraw();
+}
+
+void Splash::setProgress(float fraction) {
+	if (_progressBar == NULL) {
+		createProgressBar();
+	}
+	
+	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(_progressBar), fraction);
+	queueDraw();
+}
+
+void Splash::setProgressAndText(const std::string& text, float fraction) {
+	setText(text);
+	setProgress(fraction);
 }
 
 void Splash::show() {
 	gtk_widget_show_all(GTK_WIDGET(_window));
-	
-	// Trigger a (re)draw, just to make sure that it gets displayed
-	gtk_widget_queue_draw(GTK_WIDGET(_window));
-	process_gui();
+	queueDraw();		
 }
 
 void Splash::hide() {
 	gtk_widget_hide(GTK_WIDGET(_window));
+}
+
+void Splash::queueDraw() {
+	// Trigger a (re)draw, just to make sure that it gets displayed
+	gtk_widget_queue_draw(GTK_WIDGET(_window));
+	process_gui();
 }
 
 Splash& Splash::Instance() {
