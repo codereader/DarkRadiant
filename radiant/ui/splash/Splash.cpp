@@ -1,7 +1,7 @@
 #include "Splash.h"
 
-#include <string>
 #include <gtk/gtk.h>
+#include "gtkutil/LeftAlignedLabel.h"
 
 #include "environment.h"
 #include "gtkmisc.h" // for process_gui()
@@ -13,7 +13,8 @@ namespace ui {
 	}
 
 Splash::Splash() :
-	_window(GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL)))
+	_window(GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL))),
+	_progressBar(NULL)
 {
 	gtk_window_set_decorated(_window, FALSE);
 	gtk_window_set_resizable(_window, FALSE);
@@ -26,9 +27,11 @@ Splash::Splash() :
 	GtkWidget* image = gtk_image_new_from_pixbuf(
 		gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL)
 	);
-	gtk_widget_show(image);
-	gtk_container_add(GTK_CONTAINER(_window), image);
-
+	
+	_vbox = gtk_vbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(_vbox), image, TRUE, TRUE, 0);
+	
+	gtk_container_add(GTK_CONTAINER(_window), _vbox);
 	gtk_widget_set_size_request(GTK_WIDGET(_window), -1, -1);
 }
 
@@ -36,8 +39,17 @@ GtkWindow* Splash::getWindow() {
 	return _window;
 }
 
+void Splash::setText(const std::string& text) {
+	if (_progressBar == NULL) {
+		_progressBar = gtk_progress_bar_new();
+		gtk_box_pack_start(GTK_BOX(_vbox), _progressBar, FALSE, FALSE, 0);
+	}
+	
+	gtk_progress_bar_set_text(GTK_PROGRESS_BAR(_progressBar), text.c_str());
+}
+
 void Splash::show() {
-	gtk_widget_show(GTK_WIDGET(_window));
+	gtk_widget_show_all(GTK_WIDGET(_window));
 	
 	// Trigger a (re)draw, just to make sure that it gets displayed
 	gtk_widget_queue_draw(GTK_WIDGET(_window));
