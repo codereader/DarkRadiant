@@ -25,12 +25,21 @@ public:
 	// Returns the widget, used to set other windows transient for the splash
 	GtkWindow* getWindow();
 	
-	/** greebo: Sets the text of the progress bar. 
+	/** greebo: Sets the text and/or progress of the progress bar. 
 	 */
 	void setText(const std::string& text);
+	void setProgress(float fraction);
+	void setProgressAndText(const std::string& text, float fraction);
 	
 	// Accessor method
 	static Splash& Instance();
+
+private:
+	void createProgressBar();
+	
+	/** greebo: Triggers a redraw of the splash screen
+	 */
+	void queueDraw();
 };
 
 } // namespace ui

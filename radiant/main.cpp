@@ -279,9 +279,13 @@ int main (int argc, char* argv[])
 	Environment::Instance().init(argc, argv);
 
 	ui::Splash::Instance().show();
-
+	
+	ui::Splash::Instance().setProgressAndText("Searching for Modules", 0.0f);
+	
 	// Load the Radiant modules from the modules/ and plugins/ dir.
 	ModuleLoader::loadModules(Environment::Instance().getAppPath());
+	
+	ui::Splash::Instance().setProgressAndText("Instantiating Registry", 0.1f);
 
 	// Initialise and instantiate the XMLRegistry
 	GlobalModuleServer::instance().set(GlobalModuleServer_get());
@@ -289,6 +293,8 @@ int main (int argc, char* argv[])
 
 	// Tell the Environment class to store the paths into the Registry
 	Environment::Instance().savePathsToRegistry();
+	
+	ui::Splash::Instance().setProgressAndText("Creating Logfile", 0.2f);
 
 	// The settings path is set, start logging now
 	Sys_LogFile(true);
@@ -297,15 +303,21 @@ int main (int argc, char* argv[])
 	// (emits a warning if the file already exists (due to a previous startup failure)) 
 	createPIDFile("radiant.pid");
 	
+	ui::Splash::Instance().setProgressAndText("Populating Registry", 0.3f);
+	
 	// Load the XML files into the Registry, we need the information asap
 	populateRegistry();
 	
 	// Save the paths *once again* into the registry, to overwrite bogus stuff in there
 	Environment::Instance().savePathsToRegistry();
 
+	ui::Splash::Instance().setProgressAndText("Initialising GameManager", 0.4f);
+
 	// Load the game files from the <application>/games folder and 
 	// let the user choose the game, if nothing is found in the Registry
 	game::Manager::Instance().initialise();
+
+	ui::Splash::Instance().setProgressAndText("Instantiating Virtual File System", 0.5f);
 
 	// Setup the engine path, we need it for the FileSystem
 	// this triggers a VFS initialisation that searches
@@ -316,8 +328,12 @@ int main (int argc, char* argv[])
 	// The VFS is setup at this point, we can load the modules
 	Radiant_Initialise();
 
+	ui::Splash::Instance().setProgressAndText("Starting MainFrame", 0.9f);
+
   g_pParentWnd = 0;
   g_pParentWnd = new MainFrame();
+  
+	ui::Splash::Instance().setProgressAndText("Complete", 1.0f);  
 
 	ui::Splash::Instance().hide();
 
