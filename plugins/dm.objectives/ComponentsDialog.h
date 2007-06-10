@@ -45,6 +45,9 @@ private:
 	typedef std::vector<std::string> StringList;
 	static const StringList& getTypeStrings();
 
+	// Populate the list of components from the Objective's component map
+	void populateComponents();
+	
 	// Populate the edit panel widgets with the specified component number
 	void populateEditPanel(int index);
 	
@@ -52,6 +55,8 @@ private:
 	static void _onClose(GtkWidget*, ComponentsDialog*);
 	static void _onDelete(GtkWidget*, ComponentsDialog*);
 	static void _onSelectionChanged(GtkTreeSelection*, ComponentsDialog*);
+	static void _onAddComponent(GtkWidget*, ComponentsDialog*);
+	static void _onDeleteComponent(GtkWidget*, ComponentsDialog*);
 	
 public:
 	
