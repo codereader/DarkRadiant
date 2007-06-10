@@ -53,6 +53,9 @@ ComponentsDialog::ComponentsDialog(GtkWindow* parent, Objective& objective)
 	gtk_box_pack_start(GTK_BOX(vbx), gtk_hseparator_new(), FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
 	
+	// Populate the list of components
+	populateComponents();
+	
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
 }
@@ -73,23 +76,13 @@ GtkWidget* ComponentsDialog::createListView() {
 	gtk_tree_view_append_column(
 		GTK_TREE_VIEW(tv), gtkutil::TextColumn("Type", 1, false));
 
-	// Populate the list store with components from the objective
-	Objective::ComponentMap& components = _objective.components;
-	for (Objective::ComponentMap::const_iterator i = components.begin();
-		 i != components.end();
-		 ++i)
-	{
-		GtkTreeIter iter;
-		gtk_list_store_append(_componentList, &iter);
-		gtk_list_store_set(_componentList, &iter, 
-						   0, i->first, 
-						   1, i->second.type.c_str(),
-						   -1);	
-	}
-	
 	// Create Add and Delete buttons for components
 	GtkWidget* addButton = gtk_button_new_from_stock(GTK_STOCK_ADD);
 	GtkWidget* delButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	g_signal_connect(G_OBJECT(addButton), "clicked", 
+					 G_CALLBACK(_onAddComponent), this);
+	g_signal_connect(G_OBJECT(delButton), "clicked", 
+					 G_CALLBACK(_onDeleteComponent), this);
 	
 	GtkWidget* buttonsBox = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(buttonsBox), addButton, TRUE, TRUE, 0);
@@ -178,6 +171,28 @@ GtkWidget* ComponentsDialog::createButtons() {
 void ComponentsDialog::showAndBlock() {
 	gtk_widget_show_all(_widget);
 	gtk_main(); // recursive main loop	
+}
+
+// Populate the component list
+void ComponentsDialog::populateComponents() {
+	
+	// Clear the list store
+	gtk_list_store_clear(_componentList);
+	
+	// Add components from the Objective to the list store
+	Objective::ComponentMap& components = _objective.components;
+	for (Objective::ComponentMap::const_iterator i = components.begin();
+		 i != components.end();
+		 ++i)
+	{
+		GtkTreeIter iter;
+		gtk_list_store_append(_componentList, &iter);
+		gtk_list_store_set(_componentList, &iter, 
+						   0, i->first, 
+						   1, i->second.type.c_str(),
+						   -1);	
+	}
+	
 }
 
 // Populate the edit panel
@@ -286,4 +301,29 @@ void ComponentsDialog::_onSelectionChanged(GtkTreeSelection* sel,
 	}
 }
 
+// Add a new component
+void ComponentsDialog::_onAddComponent(GtkWidget* w, ComponentsDialog* self) 
+{
+	Objective::ComponentMap& components = self->_objective.components;
+	
+	// Find an unused component number
+	for (int idx = 0; idx < 65535; ++idx) {
+		if (components.find(idx) == components.end()) {
+			// Unused, add a new component here
+			Component comp;
+			components.insert(std::make_pair(idx, comp));
+			break;
+		}
+	}
+	
+	// Refresh the component list
+	self->populateComponents();
 }
+
+// Remove a component
+void ComponentsDialog::_onDeleteComponent(GtkWidget* w, ComponentsDialog* self) 
+{
+	
+}
+
+} // namespace objectives
