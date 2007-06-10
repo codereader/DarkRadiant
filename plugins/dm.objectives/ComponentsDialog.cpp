@@ -9,6 +9,8 @@
 #include <gtk/gtk.h>
 #include <boost/algorithm/string/predicate.hpp>
 
+#include <iostream>
+
 namespace objectives
 {
 
@@ -111,6 +113,8 @@ GtkWidget* ComponentsDialog::createEditPanel() {
 					 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
 
 	_widgets[WIDGET_TYPE_COMBO] = gtk_combo_box_new_text();
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_TYPE_COMBO]), "changed",
+					 G_CALLBACK(_onTypeChanged), this);
 	gtk_table_attach_defaults(GTK_TABLE(table),
 							  _widgets[WIDGET_TYPE_COMBO],
 							  1, 2, 0, 1);
@@ -258,6 +262,26 @@ const ComponentsDialog::StringList& ComponentsDialog::getTypeStrings() {
 			
 }
 
+// Get selected component index
+int ComponentsDialog::getSelectedIndex() {
+	
+	// Get the selection if valid
+	GtkTreeModel* model;
+	GtkTreeIter iter;
+	if (gtk_tree_selection_get_selected(_componentSel, &model, &iter)) {
+
+		// Valid selection, return the contents of the index column
+		int idx;
+		gtk_tree_model_get(model, &iter, 0, &idx, -1);
+		
+		return idx;
+	}
+	else {
+		return -1;
+	}
+
+}
+
 /* GTK CALLBACKS */
 
 // Close button
@@ -323,6 +347,26 @@ void ComponentsDialog::_onAddComponent(GtkWidget* w, ComponentsDialog* self)
 // Remove a component
 void ComponentsDialog::_onDeleteComponent(GtkWidget* w, ComponentsDialog* self) 
 {
+	
+}
+
+// Type combo changed
+void ComponentsDialog::_onTypeChanged(GtkWidget* w, ComponentsDialog* self) {
+
+	gchar* selectedText = 
+		gtk_combo_box_get_active_text(GTK_COMBO_BOX(w));
+	
+	if (selectedText != NULL) {
+		
+		// Identify the selected component, and update it
+		int idx = self->getSelectedIndex();
+		if (idx != -1) {
+			self->_objective.components[idx].type = selectedText;
+		}
+	}
+
+	// Refresh the components
+	self->populateComponents();
 	
 }
 
