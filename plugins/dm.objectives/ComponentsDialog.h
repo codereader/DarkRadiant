@@ -51,12 +51,17 @@ private:
 	// Populate the edit panel widgets with the specified component number
 	void populateEditPanel(int index);
 	
+	// Get the index of the selected Component, or -1 if there is no selection
+	int getSelectedIndex();
+	
 	/* GTK CALLBACKS */
 	static void _onClose(GtkWidget*, ComponentsDialog*);
 	static void _onDelete(GtkWidget*, ComponentsDialog*);
 	static void _onSelectionChanged(GtkTreeSelection*, ComponentsDialog*);
 	static void _onAddComponent(GtkWidget*, ComponentsDialog*);
 	static void _onDeleteComponent(GtkWidget*, ComponentsDialog*);
+	
+	static void _onTypeChanged(GtkWidget*, ComponentsDialog*);
 	
 public:
 	
