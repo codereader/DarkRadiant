@@ -347,7 +347,14 @@ void ComponentsDialog::_onAddComponent(GtkWidget* w, ComponentsDialog* self)
 // Remove a component
 void ComponentsDialog::_onDeleteComponent(GtkWidget* w, ComponentsDialog* self) 
 {
+	// Delete the selected component
+	int idx = self->getSelectedIndex();
+	if (idx != -1) {
+		self->_objective.components.erase(idx);
+	}
 	
+	// Refresh the list
+	self->populateComponents();		
 }
 
 // Type combo changed
