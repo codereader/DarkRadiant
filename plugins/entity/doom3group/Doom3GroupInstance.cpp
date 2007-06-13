@@ -31,6 +31,15 @@ Doom3GroupInstance::~Doom3GroupInstance() {
 	m_contained.instanceDetach(Instance::path());
 }
 
+bool Doom3GroupInstance::hasEmptyCurve() {
+	return !(m_contained.m_curveNURBS.m_controlPoints.size() > 0 || 
+			 m_contained.m_curveCatmullRom.m_controlPoints.size() > 0);
+}
+
+void Doom3GroupInstance::appendControlPoints(unsigned int numPoints) {
+	std::cout << "Appending " << numPoints << " points.\n";
+}
+
 void Doom3GroupInstance::renderSolid(Renderer& renderer, const VolumeTest& volume) const {
 	m_contained.renderSolid(renderer, volume, Instance::localToWorld(), getSelectable().isSelected());
 

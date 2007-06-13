@@ -452,6 +452,7 @@ radiant_src = \
          'selection/RadiantSelectionSystem.cpp',
          'selection/SelectionSystemModule.cpp',
          'selection/algorithm/Primitives.cpp',
+         'selection/algorithm/Curves.cpp',
          'selection/algorithm/Shader.cpp',
          'selection/algorithm/Group.cpp',
          'selection/algorithm/GroupCycle.cpp',
