@@ -3,7 +3,7 @@
 #include "icurve.h"
 #include "iundo.h"
 #include "iradiant.h"
-#include "gtkutil/Dialog.h"
+#include "gtkutil/dialog.h"
 #include "selectionlib.h"
 
 namespace selection {
