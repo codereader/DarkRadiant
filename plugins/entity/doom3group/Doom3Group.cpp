@@ -294,9 +294,9 @@ void Doom3Group::transformChanged() {
 		revertTransform();
 		m_evaluateTransform();
 		updateTransform();
-		m_curveNURBS.curveChanged();
-		m_curveCatmullRom.curveChanged();
 	}
+	m_curveNURBS.curveChanged();
+	m_curveCatmullRom.curveChanged();
 }
 
 void Doom3Group::construct() {

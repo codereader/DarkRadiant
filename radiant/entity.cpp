@@ -43,6 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkdlgs.h"
 #include "mainframe.h"
 
+#include "xyview/GlobalXYWnd.h"
 #include "selection/algorithm/Shader.h"
 #include "ui/modelselector/ModelSelector.h"
 
@@ -320,7 +321,9 @@ void createCurveNURBS() {
     // Select this new curve node (construct the path and select it)
     scene::Path entityPath(GlobalSceneGraph().root());
     entityPath.push(curve);
-    selectPath(entityPath, true);
+    scene::Instance& instance = findInstance(entityPath);
+    
+    Instance_setSelected(instance, true);
     
 	Entity* entity = Node_getEntity(curve);
 	assert(entity); // this must be true
@@ -333,6 +336,13 @@ void createCurveNURBS() {
 		GlobalRegistry().get(RKEY_CURVE_NURBS_KEY), 
 		"3 ( 0 0 0  50 50 0  50 100 0 )"
 	);
+	
+	Transformable* transformable = Instance_getTransformable(instance);
+	if (transformable != NULL) {
+		// Translate the entity to the center of the current workzone
+		transformable->setTranslation(GlobalXYWnd().getActiveXY()->getOrigin());
+		transformable->freezeTransform();
+	}
 }
 
 } // namespace entity

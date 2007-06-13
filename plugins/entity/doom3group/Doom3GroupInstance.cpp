@@ -133,13 +133,20 @@ void Doom3GroupInstance::evaluateTransform() {
 			getRotation() != c_quaternion_identity // FALSE for identity rotations 
 		);
 		m_contained.rotate(getRotation());
+		
+		// Transform all curves also in primitive mode
+		// pass FALSE to force the transformation of non-selected points
+		Matrix4 transformation = calculateTransform();
+		m_curveNURBS.transform(transformation, false);
+		m_curveCatmullRom.transform(transformation, false);
 	}
 	else {
+		// Transform the components only
 		transformComponents(calculateTransform());
-		// Trigger a recalculation of the curve's controlpoints
-		m_contained.m_curveNURBS.curveChanged();
-		m_contained.m_curveCatmullRom.curveChanged();
 	}
+	// Trigger a recalculation of the curve's controlpoints
+	m_contained.m_curveNURBS.curveChanged();
+	m_contained.m_curveCatmullRom.curveChanged();
 }
 void Doom3GroupInstance::applyTransform() {
 	m_contained.revertTransform();
