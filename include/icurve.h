@@ -13,6 +13,11 @@ public:
 	/** greebo: Appends a control point at the end of the chain.
 	 */
 	virtual void appendControlPoints(unsigned int numPoints) = 0;
+	
+	/** greebo: As the name states, this removes the selected 
+	 * 			control points from the curve.
+	 */
+	virtual void removeSelectedControlPoints() = 0;
 };
 
 inline CurveInstance* Instance_getCurveInstance(scene::Instance& instance) {
