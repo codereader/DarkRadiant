@@ -119,7 +119,10 @@ public:
 	const AABB& localAABB() const;
 	
 	Vector3& getOrigin();
-
+	
+	// Curve-related methods
+	void appendControlPoints(unsigned int numPoints);
+	
 	void renderSolid(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
 	void renderWireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
 

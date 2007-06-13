@@ -299,6 +299,15 @@ void Doom3Group::transformChanged() {
 	m_curveCatmullRom.curveChanged();
 }
 
+void Doom3Group::appendControlPoints(unsigned int numPoints) {
+	if (m_curveNURBS.m_controlPoints.size() > 0) {
+		m_curveNURBS.appendControlPoints(numPoints);
+	}
+	if (m_curveCatmullRom.m_controlPoints.size() > 0) {
+		m_curveCatmullRom.appendControlPoints(numPoints);
+	}
+}
+
 void Doom3Group::construct() {
 	default_rotation(m_rotation);
 

@@ -38,6 +38,7 @@ bool Doom3GroupInstance::hasEmptyCurve() {
 
 void Doom3GroupInstance::appendControlPoints(unsigned int numPoints) {
 	std::cout << "Appending " << numPoints << " points.\n";
+	m_contained.appendControlPoints(numPoints);
 }
 
 void Doom3GroupInstance::renderSolid(Renderer& renderer, const VolumeTest& volume) const {

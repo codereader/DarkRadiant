@@ -446,6 +446,58 @@ public:
     notify();
   }
 
+	void appendControlPoints(unsigned int numPoints) {
+		std::size_t size = m_controlPoints.size();
+		
+		if (size < 1) {
+			return;
+		}
+		
+		// The coordinates of the penultimate point (can be 0,0,0)
+		Vector3 penultimate = (size > 1) ? m_controlPoints[size - 2] : Vector3(0,0,0);
+		Vector3 ultimate = m_controlPoints[size - 1];
+		
+		// Calculate the extrapolation vector
+		Vector3 extrapolation = ultimate - penultimate;
+		
+		// greebo: TODO: Use std::vector for this instead of that crappy Array
+		ControlPoints newPoints;
+		newPoints.resize(size+1);
+		
+		// Copy the points from the source set
+		ControlPoints::iterator target = newPoints.begin();
+		for(ControlPoints::iterator source = m_controlPoints.begin(); 
+			source != m_controlPoints.end(); 
+			++source, ++target)
+		{
+			*target = *source; 
+		}
+		
+		// The iterator points now to the last element, fill it
+		*target = ultimate + extrapolation;
+		
+		// Replace the old control points with the larger set
+		m_controlPoints = newPoints;
+		
+		// Update the transformation working set
+		m_controlPointsTransformed = m_controlPoints;
+		
+		// Do the maths
+		doWeighting();
+		curveChanged();
+	}
+	
+	void doWeighting() {
+		// Re-adjust the weights
+		m_weights.resize(m_controlPoints.size());
+		for(NURBSWeights::iterator i = m_weights.begin(); i != m_weights.end(); ++i) {
+			(*i) = 1;
+		}
+		
+		// greebo: Recalculate the knots (?)
+		KnotVector_openUniform(m_knots, m_controlPoints.size(), NURBS_degree);
+	}
+
   bool parseCurve(const char* value)
   {
     if(!ControlPoints_parse(m_controlPoints, value))
@@ -453,13 +505,7 @@ public:
       return false;
     }
 
-    m_weights.resize(m_controlPoints.size());
-    for(NURBSWeights::iterator i = m_weights.begin(); i != m_weights.end(); ++i)
-    {
-      (*i) = 1;
-    }
-
-    KnotVector_openUniform(m_knots, m_controlPoints.size(), NURBS_degree);
+	doWeighting();
 
     //plotBasisFunction(8, 0, NURBS_degree);
 
@@ -507,6 +553,46 @@ public:
   {
     m_curveChanged();
   }
+  
+	void appendControlPoints(unsigned int numPoints) {
+		std::size_t size = m_controlPoints.size();
+		
+		if (size < 1) {
+			return;
+		}
+		
+		// The coordinates of the penultimate point (can be 0,0,0)
+		Vector3 penultimate = (size > 1) ? m_controlPoints[size - 2] : Vector3(0,0,0);
+		Vector3 ultimate = m_controlPoints[size - 1];
+		
+		// Calculate the extrapolation vector
+		Vector3 extrapolation = ultimate - penultimate;
+		
+		// greebo: TODO: Use std::vector for this instead of that crappy Array
+		ControlPoints newPoints;
+		newPoints.resize(size+1);
+		
+		// Copy the points from the source set
+		ControlPoints::iterator target = newPoints.begin();
+		for(ControlPoints::iterator source = m_controlPoints.begin(); 
+			source != m_controlPoints.end(); 
+			++source, ++target)
+		{
+			*target = *source; 
+		}
+		
+		// The iterator points now to the last element, fill it
+		*target = ultimate + extrapolation;
+		
+		// Replace the old control points with the larger set
+		m_controlPoints = newPoints;
+		
+		// Update the transformation working set
+		m_controlPointsTransformed = m_controlPoints;
+		
+		// Do the maths
+		curveChanged();
+	}
 
   void tesselate()
   {
