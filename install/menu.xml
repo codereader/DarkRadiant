@@ -218,7 +218,7 @@
 		<menuItem name="texturelock" caption="Texture lock" command="TogTexLock" />
 	</subMenu>
 
-	<subMenu name="curve" caption="_Curve">
+	<subMenu name="patch" caption="_Patch">
 		<menuItem name="simplePatch" caption="Simple patch mesh" command="SimplePatchMesh" />
 		<menuSeparator />
 		<menuItem name="endcap" caption="End cap" command="PatchEndCap" />
@@ -279,9 +279,6 @@
 		<menuSeparator />
 		<menuItem name="stitchTextures" caption="Stitch Patch Textures" command="StitchPatchTexture" />
 	</subMenu>
-
-<!--<subMenu name="plugins" caption="_Plugins">
-	</subMenu>-->
 
 	<subMenu name="help" caption="_Help">
 		<menuItem name="shortcuts" caption="Shortcuts list" command="ShowCommandList" />
