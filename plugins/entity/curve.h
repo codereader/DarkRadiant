@@ -172,7 +172,7 @@ public:
   ControlPointAdd(RenderablePointVector& points) : m_points(points)
   {
   }
-  void operator()(const Vector3& point) const
+  void operator()(const Vector3& point, const Vector3& original) const
   {
     m_points.push_back(PointVertex(Vertex3f(point), colour_vertex));
   }
@@ -268,11 +268,27 @@ public:
 	}
 	
   template<typename Functor>
+  const Functor& forEach(const Functor& functor)
+  {
+  	ControlPoints::const_iterator original = m_controlPoints.begin();
+    for(ControlPoints::iterator i = m_controlPointsTransformed.begin(); 
+    	i != m_controlPointsTransformed.end(); 
+    	++i, ++original)
+    {
+      functor(*i, *original);
+    }
+    return functor;
+  }
+	
+  template<typename Functor>
   const Functor& forEach(const Functor& functor) const
   {
-    for(ControlPoints::const_iterator i = m_controlPointsTransformed.begin(); i != m_controlPointsTransformed.end(); ++i)
+  	ControlPoints::const_iterator original = m_controlPoints.begin();
+    for(ControlPoints::const_iterator i = m_controlPointsTransformed.begin(); 
+    	i != m_controlPointsTransformed.end(); 
+    	++i, ++original)
     {
-      functor(*i);
+      functor(*i, *original);
     }
     return functor;
   }
@@ -311,9 +327,14 @@ public:
     ControlPoints_write(m_controlPointsTransformed, key, entity);
   }
 
-  void transform(const Matrix4& matrix)
+  void transform(const Matrix4& matrix, bool selectedOnly = true)
   {
-    forEachSelected(ControlPointTransform(matrix));
+  	if (selectedOnly) {
+    	forEachSelected(ControlPointTransform(matrix));
+  	}
+  	else {
+  		forEach(ControlPointTransform(matrix));
+  	}
   }
   void snapto(float snap)
   {
