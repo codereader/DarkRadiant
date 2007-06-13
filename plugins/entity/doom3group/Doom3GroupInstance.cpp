@@ -40,6 +40,10 @@ void Doom3GroupInstance::appendControlPoints(unsigned int numPoints) {
 	m_contained.appendControlPoints(numPoints);
 }
 
+void Doom3GroupInstance::removeSelectedControlPoints() {
+	m_contained.removeSelectedControlPoints();
+}
+
 void Doom3GroupInstance::renderSolid(Renderer& renderer, const VolumeTest& volume) const {
 	m_contained.renderSolid(renderer, volume, Instance::localToWorld(), getSelectable().isSelected());
 

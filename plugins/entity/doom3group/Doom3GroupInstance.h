@@ -35,6 +35,7 @@ public:
 	// CurveInstance implementation
 	virtual bool hasEmptyCurve();
 	virtual void appendControlPoints(unsigned int numPoints);
+	virtual void removeSelectedControlPoints();
 
 	// Bounded implementation
 	virtual const AABB& localAABB() const;

@@ -302,10 +302,16 @@ void Doom3Group::transformChanged() {
 void Doom3Group::appendControlPoints(unsigned int numPoints) {
 	if (m_curveNURBS.m_controlPoints.size() > 0) {
 		m_curveNURBS.appendControlPoints(numPoints);
+		ControlPoints_write(m_curveNURBS.m_controlPoints, curve_Nurbs, _entity);
 	}
 	if (m_curveCatmullRom.m_controlPoints.size() > 0) {
 		m_curveCatmullRom.appendControlPoints(numPoints);
+		ControlPoints_write(m_curveCatmullRom.m_controlPoints, curve_CatmullRomSpline, _entity);
 	}
+}
+
+void Doom3Group::removeSelectedControlPoints() {
+	std::cout << "Removing control points...\n";
 }
 
 void Doom3Group::construct() {
