@@ -105,6 +105,8 @@
 		<defaultTexture value="_default" />
 		<collisionTexture value="textures/common/collision" />
 		<collisionModelExt value="cm" />
+		<defaultCurveEntity value="func_static" />
+		<curveNurbsKey value="curve_Nurbs" />
 	</defaults>
 	<entityChooser>
 		<displayFolderKey value="editor_displayFolder" />
