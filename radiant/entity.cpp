@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ieventmanager.h"
 #include "ientity.h"
+#include "iregistry.h"
 #include "ieclass.h"
 #include "iselection.h"
 #include "imodel.h"
@@ -49,6 +50,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 	namespace {
 		const std::string RKEY_FREE_MODEL_ROTATION = "user/ui/freeModelRotation";
+		const std::string RKEY_DEFAULT_CURVE_ENTITY = "game/defaults/defaultCurveEntity";
+		const std::string RKEY_CURVE_NURBS_KEY = "game/defaults/curveNurbsKey";
 	}
 
 class EntitySetKeyValueSelected : public scene::Graph::Walker
@@ -287,10 +290,58 @@ scene::INodePtr Entity_createFromSelection(const char* name,
 	return node;
 }
 
+namespace entity {
+
+void createCurveNURBS() {
+	UndoableCommand undo("createCurveNURBS");
+	
+	// De-select everything before we proceed
+	GlobalSelectionSystem().setSelectedAll(false);
+	GlobalSelectionSystem().setSelectedAllComponents(false);
+	
+	std::string curveEClass = GlobalRegistry().get(RKEY_DEFAULT_CURVE_ENTITY);
+	// Fallback to func_static, if nothing defined in the registry
+	if (curveEClass.empty()) {
+		curveEClass = "func_static"; 
+	}
+	
+	// Find the default curve entity
+	IEntityClassPtr entityClass = GlobalEntityClassManager().findOrInsert(
+		curveEClass, 
+		true
+	);
+	
+	// Create a new entity node deriving from this entityclass
+	scene::INodePtr curve(GlobalEntityCreator().createEntity(entityClass));
+    
+    // Insert this new node into the scenegraph root 
+    Node_getTraversable(GlobalSceneGraph().root())->insert(curve);
+    
+    // Select this new curve node (construct the path and select it)
+    scene::Path entityPath(GlobalSceneGraph().root());
+    entityPath.push(curve);
+    selectPath(entityPath, true);
+    
+	Entity* entity = Node_getEntity(curve);
+	assert(entity); // this must be true
+	
+	// Set the model key to be the same as the name
+	entity->setKeyValue("model", entity->getKeyValue("name"));
+	
+	// Initialise the curve using three pre-defined points
+	entity->setKeyValue(
+		GlobalRegistry().get(RKEY_CURVE_NURBS_KEY), 
+		"3 ( 0 0 0  50 50 0  50 100 0 )"
+	);
+}
+
+} // namespace entity
+
 void Entity_Construct() {
 	GlobalEventManager().addCommand("ConnectSelection", FreeCaller<Entity_connectSelected>());
 	GlobalEventManager().addCommand("UngroupSelection", FreeCaller<Entity_ungroupSelected>());
 	GlobalEventManager().addRegistryToggle("ToggleFreeModelRotation", RKEY_FREE_MODEL_ROTATION);
+	GlobalEventManager().addCommand("CreateCurveNURBS", FreeCaller<entity::createCurveNURBS>());
 }
 
 void Entity_Destroy()
