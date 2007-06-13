@@ -1,6 +1,7 @@
 #ifndef DOOM3GROUPINSTANCE_H_
 #define DOOM3GROUPINSTANCE_H_
 
+#include "icurve.h"
 #include "Doom3Group.h"
 #include "../VertexInstance.h"
 #include "../targetable.h"
@@ -15,7 +16,8 @@ class Doom3GroupInstance :
 	public ComponentSelectionTestable,
 	public ComponentEditable,
 	public ComponentSnappable,
-	public Bounded
+	public Bounded,
+	public CurveInstance
 {
 	Doom3Group& m_contained;
 	CurveEdit m_curveNURBS;
@@ -29,6 +31,10 @@ public:
 
 	Doom3GroupInstance(const scene::Path& path, scene::Instance* parent, Doom3Group& contained);
 	~Doom3GroupInstance();
+
+	// CurveInstance implementation
+	virtual bool hasEmptyCurve();
+	virtual void appendControlPoints(unsigned int numPoints);
 
 	// Bounded implementation
 	virtual const AABB& localAABB() const;

@@ -54,6 +54,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "selection/algorithm/GroupCycle.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Transformation.h"
+#include "selection/algorithm/Curves.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "iclipper.h"
 #include "ifilesystem.h"
@@ -1856,6 +1857,11 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("SelectNudgeUp", FreeCaller<Selection_NudgeUp>());
 	GlobalEventManager().addCommand("SelectNudgeDown", FreeCaller<Selection_NudgeDown>());
 	GlobalEventManager().addRegistryToggle("ToggleRotationPivot", "user/ui/rotationPivotIsOrigin");
+	
+	GlobalEventManager().addCommand(
+		"CurveAppendControlPoint", 
+		FreeCaller<selection::algorithm::appendCurveControlPoint>()
+	);
 	
 	GlobalEventManager().addCommand("EditColourScheme", FreeCaller<EditColourScheme>());
 	GlobalEventManager().addCommand("BrushExportOBJ", FreeCaller<CallBrushExportOBJ>());
