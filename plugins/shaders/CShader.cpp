@@ -3,8 +3,10 @@
 #include "textures/DefaultConstructor.h"
 #include "textures/FileLoader.h"
 
+#include "iregistry.h"
 #include "ishaders.h"
 #include "texturelib.h"
+#include "parser/DefTokeniser.h"
 
 /* CONSTANTS */
 namespace {
@@ -73,13 +75,6 @@ CShader::CShader(const std::string& name, const ShaderDefinition& definition) :
 	m_blendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA),
 	m_bInUse(false) 
 {
-	// Obtain texture names from the template
-	_editorTexName = _template._texture->getTextureName();
-	_diffuseName = _template._diffuse->getTextureName();
-	_bumpName = _template._bump->getTextureName();
-	_specularName = _template._specular->getTextureName();
-	_falloffName = _template._lightFallOff->getTextureName();
-
 	// Realise the shader
 	realise();
 }
@@ -94,12 +89,8 @@ TexturePtr CShader::getTexture() {
 
 	// Check if the boost::shared_ptr is still uninitialised
 	if (!_editorTexture) {
-		
-		// Create constructor
-		TextureConstructorPtr cons(new DefaultConstructor(_editorTexName));
-		
 		// Pass the call to the GLTextureManager to realise this image 
-		_editorTexture = GetTextureManager().getBinding(_editorTexName,	cons);
+		_editorTexture = GetTextureManager().getBinding(_template._texture);
 	}
 	
 	return _editorTexture;
@@ -110,11 +101,11 @@ TexturePtr CShader::getDiffuse() {
 	// Check if the boost::shared_ptr is still uninitialised
 	if (!_diffuse) {
 		
-		// Create constructor
-		TextureConstructorPtr cons(new DefaultConstructor(_diffuseName));
+		// Create image
+//		Image img = _template._diffuse.getImage();
 		
 		// Pass the call to the GLTextureManager to realise this image 
-		_diffuse = GetTextureManager().getBinding(_diffuseName, cons); 
+		_diffuse = GetTextureManager().getBinding(_template._diffuse); 
 	}
 
 	return _diffuse;
@@ -126,26 +117,16 @@ TexturePtr CShader::getBump() {
 	// Check if the boost::shared_ptr is still uninitialised
 	if (!_bump) {
 	
-		// Create constructor. If the bump map is not set, we need to use the
+		// Create image. If the bump map is not set, we need to use the
 		// flat image here
-		TextureConstructorPtr cons;
-		if (!_bumpName.empty()) {
-			cons = TextureConstructorPtr(new DefaultConstructor(_bumpName));
+		shaders::MapExpressionPtr mapExp;
+		if (_template._bump) {
+			_bump = GetTextureManager().getBinding(_template._bump);
 		}
 		else {
-			// Create a FileLoader for the _flat.bmp local image. We also set
-			// the bump name so that the correct caching key is passed to the
-			// GLTextureManager ("" would return SHADER NOT FOUND).
-			_bumpName = IMAGE_FLAT;
-			cons = TextureConstructorPtr(
-				new FileLoader(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_FLAT, "bmp")
-			);
+			_bump = GetTextureManager().getBinding(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_FLAT);
 		}
-		
-		// Pass the call to the GLTextureManager to realise this image 
-		_bump = GetTextureManager().getBinding(_bumpName, cons);
 	}
-	
 	return _bump;
 }
 
@@ -155,30 +136,23 @@ TexturePtr CShader::getSpecular() {
 	// Check if the boost::shared_ptr is still uninitialised
 	if (!_specular) {
 		
-		// Create constructor. If the specular map is not set, we need to use 
+		// Create image. If the specular map is not set, we need to use 
 		// the _black image here
-		TextureConstructorPtr cons;
-		if (!_specularName.empty()) {
-			cons = TextureConstructorPtr(new DefaultConstructor(_specularName));
+		shaders::MapExpressionPtr mapExp;
+		if (_template._specular) {
+			_specular = GetTextureManager().getBinding(_template._specular);
 		}
 		else {
-			// Load the _black image
-			_specularName = IMAGE_BLACK;
-			cons = TextureConstructorPtr(
-				new FileLoader(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_BLACK, "bmp")
-			);
+			// Create a Black MapExpression
+			_specular = GetTextureManager().getBinding(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_BLACK);
 		}
-
-		// Pass the call to the GLTextureManager to realise this image 
-		_specular = GetTextureManager().getBinding(_specularName, cons); 
 	}
-
 	return _specular;
 }
 
 // Return the falloff texture name
 std::string CShader::getFalloffName() const {
-	return _falloffName;
+	return _template._lightFalloff->getIdentifier();
 }
 
 /*
@@ -189,31 +163,26 @@ TexturePtr CShader::lightFalloffImage() {
 	// Construct the texture if necessary
 	if (!_texLightFalloff) {
 
-		// Create constructor. If there is no falloff image defined, use the
+		// Create image. If there is no falloff image defined, use the
 		// default.
-		if (_falloffName.empty()) {
-			
+		if (_template._lightFalloff) {
+			// create the image
+			_texLightFalloff = GetTextureManager().getBinding(_template._lightFalloff);
+		}
+		else {
 			// Find the default light shader in the ShaderSystem and query its
 			// falloff texture name.
 			std::string defLight = GlobalRegistry().get(DEFAULT_LIGHT_PATH);
-			IShaderPtr defLightShader = GetShaderSystem().getShaderForName(
-											defLight);
-			
-			// Cast to a CShader so we can call getFalloffName().
-			boost::shared_ptr<CShader> cshaderPtr = 
-				boost::static_pointer_cast<CShader>(defLightShader);
-				
-			// Set the falloff name
-			_falloffName = cshaderPtr->getFalloffName();
-		}
-		
-		// Create texture constructor
-		TextureConstructorPtr cons(new DefaultConstructor(_falloffName));
+			IShaderPtr defLightShader = GetShaderSystem().getShaderForName(defLight);
 
-		// Pass the call to the GLTextureManager to realise this image 
-		_texLightFalloff = GetTextureManager().getBinding(_falloffName, cons); 
-	}
+			// Cast to a CShader so we can call getFalloffName().
+			boost::shared_ptr<CShader> cshaderPtr = boost::static_pointer_cast<CShader>(defLightShader);
+			
+			// create the image
+			_texLightFalloff = GetTextureManager().getBinding(cshaderPtr->_template._lightFalloff);
+		}
 	
+	}
 	// Return the texture
 	return _texLightFalloff;
 }
@@ -329,16 +298,8 @@ void CShader::setName(const std::string& name) {
 
 CShader::MapLayer CShader::evaluateLayer(const LayerTemplate& layerTemplate) {
 	
-	// Allocate a default TextureConstructor with this name
-	TextureConstructorPtr constructor(
-	    new DefaultConstructor(layerTemplate.mapExpr->getTextureName())
-	);
-
 	return MapLayer(
-		GetTextureManager().getBinding(
-			layerTemplate.mapExpr->getTextureName(),
-        	constructor
-        ),
+		GetTextureManager().getBinding(layerTemplate.mapExpr),
 		evaluateBlendFunc(layerTemplate.m_blendFunc),
 		layerTemplate.m_clampToBorder,
 		boost::lexical_cast<float>(layerTemplate.m_alphaTest)

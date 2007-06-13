@@ -11,6 +11,8 @@
 
 typedef std::pair<std::string, std::string> BlendFuncExpression;
 
+namespace shaders { class IMapExpression; }
+
 enum LayerTypeId
 {
   LAYER_NONE,
@@ -36,7 +38,7 @@ struct LayerTemplate
 
 	// Constructor
 	LayerTemplate() 
-	: mapExpr(shaders::MapExpression::constructNull()),
+	: mapExpr(shaders::MapExpressionPtr()),
 	  m_type(LAYER_NONE), 
 	  m_blendFunc("GL_ONE", "GL_ZERO"), 
   	  m_clampToBorder(false), 
@@ -69,7 +71,7 @@ public:
 	shaders::MapExpressionPtr _diffuse;
 	shaders::MapExpressionPtr _bump;
 	shaders::MapExpressionPtr _specular;
-	shaders::MapExpressionPtr _lightFallOff;
+	shaders::MapExpressionPtr _lightFalloff;
 
 	/* Light type booleans */	
 	bool fogLight;
@@ -90,11 +92,6 @@ public:
 	 */
 	ShaderTemplate(const std::string& name) 
 	: _name(name),
-	  _texture(shaders::MapExpression::constructNull()),
-	  _diffuse(shaders::MapExpression::constructNull()),
-	  _bump(shaders::MapExpression::constructNull()),
-	  _specular(shaders::MapExpression::constructNull()),
-	  _lightFallOff(shaders::MapExpression::constructNull()),
       fogLight(false),
       ambientLight(false),
       blendLight(false)

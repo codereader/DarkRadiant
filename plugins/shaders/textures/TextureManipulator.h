@@ -37,19 +37,29 @@ class TextureManipulator :
 	
 	// The image reduction indicator (3 = no reduction, 0 = 12.5%)
 	int _textureQuality;
-	
-public:
+
+protected:
+	// this is a singleton
 	TextureManipulator();
-	
+
+	// prevent copy-construction
+	TextureManipulator(const TextureManipulator&);
+
+	// prevent construction by assignment
+	TextureManipulator& operator= (const TextureManipulator&);
+public:
+	// the accessor function creates a static instance of the class
+	static TextureManipulator& instance();
+
 	// RegistryKeyObserver implementation
 	void keyChanged();
 
 	// Constructs the prefpage
 	void constructPreferences();
-	
+
 	void resampleTexture(const void *indata, int inwidth, int inheight, 
 						 void *outdata, int outwidth, int outheight, int bytesperpixel);
-	
+
 	void mipReduce(byte *in, byte *out, 
 				   int width, int height, 
 				   int destwidth, int destheight);

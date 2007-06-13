@@ -1,3 +1,9 @@
+13/06/2007
+mohij
+- Improved support for MapExpressions. All Doom3-related
+  keywords like addnormals(), makeIntensity(), etc.
+  are correctly recognised and processed (recursively).
+
 24/05/2007
 greebo
 - Added sound playback ability to SoundManager module,

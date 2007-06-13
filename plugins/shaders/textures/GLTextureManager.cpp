@@ -4,6 +4,9 @@
 #include "texturelib.h"
 #include "igl.h"
 #include "FileLoader.h"
+#include "../MapExpression.h"
+#include "TextureManipulator.h"
+#include "parser/DefTokeniser.h"
 
 namespace {
 	const int MAX_TEXTURE_QUALITY = 3;
@@ -32,83 +35,100 @@ void GLTextureManager::checkBindings() {
 	}
 }
 
-TexturePtr GLTextureManager::getBinding(const std::string& textureKey, 
-										TextureConstructorPtr constructor) 
-{
-	assert(constructor);
+TexturePtr GLTextureManager::getBinding(MapExpressionPtr mapExp) {
+	// check if we got an empty MapExpression
+	if (mapExp != NULL) {
+		// check if the texture has to be loaded
+		std::string identifier = mapExp->getIdentifier();
+		TextureMap::iterator i = _textures.find(identifier);
+		if (i == _textures.end()) {
+			// This may produce a NULL image if a file can't be found, for example.
+			Image* img = mapExp->getImage();
 
-	TextureMap::iterator i = _textures.find(textureKey);
-	
-	// Check if the texture has to be loaded
-	if (i == _textures.end()) {
-
-		// Retrieve the fabricated image from the TextureConstructor
-		Image* image = constructor->construct();
-		
-		if (image != NULL) {
-
-			// Constructor returned a valid image, now create the texture object
-			_textures[textureKey] = TexturePtr(new Texture(textureKey));
+			// see if the MapExpression returned a valid image
+			if (img != NULL) {
+				// Constructor returned a valid image, now create the texture object
+				_textures[identifier] = TexturePtr(new Texture(identifier));
 			
-			// Tell the manipulator to do the standard operations 
-			// This might return a different image than the passed one
-			
-			// Do not touch overlay images (no gamma or scaling)
-//				if (textureType != texOverlay) {
-//					image = _manipulator.getProcessedImage(image);
-//				}
-			
-			// Bind the texture and get the OpenGL id
-			load(_textures[textureKey], image);
+				// Bind the texture and get the OpenGL id
+				load(_textures[identifier], img);
 
-			// We don't need the image pixel data anymore
-			image->release();
+				// We don't need the image pixel data anymore
+				img->release();
 
-			globalOutputStream() << "[shaders] Loaded texture: " 
-								 << textureKey.c_str() << "\n";
+				globalOutputStream() << "[shaders] Loaded texture: " << identifier.c_str() << "\n";
+			}
+			else {
+			    // invalid image produced, return shader not found
+			    return getShaderNotFound();
+			}
 		}
-		else {
-			// No image has been loaded, assign it to the "image missing texture"
-			globalErrorStream() << "[shaders] Unable to load shader texture: " 
-					  			<< textureKey.c_str() << "\n";			
-			
-			_textures[textureKey] = getShaderNotFound();
-		}
+		return _textures[identifier];
 	}
+	// We got an empty MapExpression, so we'll return the "image missing texture"
+	globalErrorStream() << "[shaders] Unable to load shader texture";
+	return getShaderNotFound();
+}
 
-	return _textures[textureKey];
+TexturePtr GLTextureManager::getBinding(const std::string& fullPath, const std::string& moduleNames) {
+    // check if the texture has to be loaded
+    TextureMap::iterator i = _textures.find(fullPath);
+
+	if (i == _textures.end()) {
+	    TextureConstructorPtr constructor(new FileLoader(fullPath, moduleNames));
+	    Image* img = constructor->construct();
+
+	    // see if the MapExpression returned a valid image
+	    if (img != NULL) {
+			// Constructor returned a valid image, now create the texture object
+			_textures[fullPath] = TexturePtr(new Texture(fullPath));
+	
+			// Bind the texture and get the OpenGL id
+			load(_textures[fullPath], img);
+	
+			// We don't need the image pixel data anymore
+			img->release();
+	
+			globalOutputStream() << "[shaders] Loaded texture: " << fullPath.c_str() << "\n";
+	    }
+	    else {
+	    	globalErrorStream() << "[shaders] Unable to load texture: " << fullPath.c_str() << "\n";
+			// invalid image produced, return shader not found
+			return getShaderNotFound();
+	    }
+	}
+    return _textures[fullPath];
 }
 
 // Return the shader-not-found texture, loading if necessary
 TexturePtr GLTextureManager::getShaderNotFound() {
-	
+
 	// Construct the texture if necessary
 	if (!_shaderNotFound) {
 		_shaderNotFound = loadStandardTexture(SHADER_NOT_FOUND);
 	}
-	
+
 	// Return the texture
 	return _shaderNotFound;				  
-	
 }
 
 TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
-	// Create the texture constructor
+	// Create the texture path
 	std::string fullpath = GlobalRegistry().get("user/paths/bitmapsPath") + filename;
-	TextureConstructorPtr constructor(new FileLoader(fullpath, "bmp"));
 	
 	TexturePtr returnValue(new Texture(fullpath));
 	
-	// Retrieve the fabricated image from the TextureConstructor
-	Image* image = constructor->construct();
+	// load the image with the FileLoader (which can handle .bmp in contrast to the DefaultConstructor)
+	TextureConstructorPtr constructor(new FileLoader(fullpath, "bmp"));
+	Image* img = constructor->construct();
 	
-	if (image != NULL) {
+	if (img != NULL) {
 		// Bind the (processed) texture and get the OpenGL id
 		// The getProcessed() call may substitute the passed image by another
-		load(returnValue, image);
+		load(returnValue, img);
 		
 		// We don't need the (substituted) image pixel data anymore
-		image->release();
+		img->release();
 	}
 	else {
 		globalErrorStream() << "[shaders] Couldn't load Standard Texture texture: " 
@@ -129,14 +149,14 @@ void GLTextureManager::load(TexturePtr texture, Image* image) {
 	texture->value = image->getValue();
 	
 	// Calculate an average, representative colour for flatshade rendering 
-	texture->color = _manipulator.getFlatshadeColour(image);
+	texture->color = TextureManipulator::instance().getFlatshadeColour(image);
 	
 	// Allocate a new texture number and store it into the Texture structure
 	glGenTextures(1, &texture->texture_number);
 	glBindTexture(GL_TEXTURE_2D, texture->texture_number);
 
 	// Tell OpenGL how to use the mip maps we will be creating here
-	_manipulator.setTextureParameters();
+	TextureManipulator::instance().setTextureParameters();
 	
 	// Now create the mipmaps; conveniently, there exists an openGL method for this 
 	gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, image->getWidth(), image->getHeight(), 

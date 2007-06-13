@@ -32,15 +32,14 @@ TextureBrowser::TextureBrowser() :
 	m_heightChanged(true),
 	m_originInvalid(true),
 	m_scrollAdjustment(scrollChanged, this),
-	m_mouseWheelScrollIncrement(64),
+	m_mouseWheelScrollIncrement(GlobalRegistry().getInt(RKEY_TEXTURE_MOUSE_WHEEL_INCR)),
 	m_textureScale(50),
-	m_showTextureFilter(false),
-	m_showTextureScrollbar(true),
-	m_hideUnused(false),
+	m_showTextureFilter(GlobalRegistry().get(RKEY_TEXTURE_SHOW_FILTER) == "1"),
+	m_showTextureScrollbar(GlobalRegistry().get(RKEY_TEXTURE_SHOW_SCROLLBAR) == "1"),
+	m_hideUnused(GlobalRegistry().get(RKEY_TEXTURES_HIDE_UNUSED) == "1"),
 	m_resizeTextures(true),
-	m_uniformTextureSize(128)
+	m_uniformTextureSize(GlobalRegistry().getInt(RKEY_TEXTURE_UNIFORM_SIZE))
 {
-	// TODO: Move this stuff into the constructor
 	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_HIDE_UNUSED);
 	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_SCALE);
 	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_UNIFORM_SIZE);
@@ -48,12 +47,6 @@ TextureBrowser::TextureBrowser() :
 	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_MOUSE_WHEEL_INCR);
 	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_SHOW_FILTER);
 			
-	m_hideUnused = (GlobalRegistry().get(RKEY_TEXTURES_HIDE_UNUSED) == "1");
-	m_showTextureFilter = (GlobalRegistry().get(RKEY_TEXTURE_SHOW_FILTER) == "1");
-	m_uniformTextureSize = GlobalRegistry().getInt(RKEY_TEXTURE_UNIFORM_SIZE);
-	m_showTextureScrollbar = (GlobalRegistry().get(RKEY_TEXTURE_SHOW_SCROLLBAR) == "1");
-	m_mouseWheelScrollIncrement = GlobalRegistry().getInt(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
-	
 	shader = texdef_name_default();
 	
 	setScaleFromRegistry();
@@ -162,28 +155,29 @@ void TextureBrowser::setSelectedShader(const std::string& newShader) {
 }
 
 void TextureBrowser::nextTexturePos(TextureLayout& layout, TexturePtr tex, int *x, int *y) {
-  int nWidth = getTextureWidth(tex);
-  int nHeight = getTextureHeight(tex);
+	int nWidth = getTextureWidth(tex);
+	int nHeight = getTextureHeight(tex);
   
-  if (layout.current_x + nWidth > width-8 && layout.current_row)
-  { // go to the next row unless the texture is the first on the row
-    layout.current_x = 8;
-    layout.current_y -= layout.current_row + getFontHeight() + 4;
-    layout.current_row = 0;
-  }
+	// go to the next row unless the texture is the first on the row
+	if (layout.current_x + nWidth > width-8 && layout.current_row) { 
+		layout.current_x = 8;
+		layout.current_y -= layout.current_row + getFontHeight() + 4;
+		layout.current_row = 0;
+	}
 
-  *x = layout.current_x;
-  *y = layout.current_y;
+	// Emit the new coordinates
+	*x = layout.current_x;
+	*y = layout.current_y;
 
-  // Is our texture larger than the row? If so, grow the
-  // row height to match it
+	// Is our texture larger than the row? If so, grow the
+	// row height to match it
 
-  if (layout.current_row < nHeight)
-    layout.current_row = nHeight;
+	if (layout.current_row < nHeight) {
+		layout.current_row = nHeight;
+	}
 
-  // never go less than 96, or the names get all crunched up
-  layout.current_x += nWidth < 96 ? 96 : nWidth;
-  layout.current_x += 8;
+	// never go less than 96, or the names get all crunched up, plus spacing
+	layout.current_x += std::max(96, nWidth) + 8;
 }
 
 // if texture_showinuse jump over non in-use textures
@@ -340,12 +334,14 @@ IShaderPtr TextureBrowser::getShaderAtCoords(int mx, int my) {
 
 		int x, y;
 		nextTexturePos(layout, shader->getTexture(), &x, &y);
-		TexturePtr q = shader->getTexture();
-		if (!q)
+		
+		TexturePtr tex = shader->getTexture();
+		if (tex == NULL) {
 			break;
+		}
 
-		int nWidth = getTextureWidth(q);
-		int nHeight = getTextureHeight(q);
+		int nWidth = getTextureWidth(tex);
+		int nHeight = getTextureHeight(tex);
 		if (mx > x && mx - x < nWidth && my < y && y - my < nHeight + getFontHeight()) {
 			return shader;
 		}

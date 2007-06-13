@@ -3,7 +3,7 @@
 
 #include "ishaders.h"
 #include <map>
-#include "TextureManipulator.h"
+#include "../MapExpression.h"
 
 namespace shaders {
 
@@ -13,8 +13,6 @@ class GLTextureManager :
 	// The mapping between texturekeys and Texture instances
 	typedef std::map<std::string, TexturePtr> TextureMap;
 	TextureMap _textures;
-	
-	TextureManipulator _manipulator;
 	
 	// The fallback textures in case a texture is empty or broken
 	TexturePtr _shaderNotFound;
@@ -40,8 +38,17 @@ public:
 	 * according to the given <textureType> (flat image for normalmaps,
 	 * black for specular), if the texture is empty or can't be loaded.  
 	 */
-	TexturePtr getBinding(const std::string& textureKey, 
-						  TextureConstructorPtr constructor);
+	TexturePtr getBinding(MapExpressionPtr mapExp);
+	
+	/** greebo: This loads a texture directly from the disk using the
+	 * 			specified <fullPath>.
+	 * 
+	 * @fullPath: The path to the file (no VFS paths).
+	 * @moduleNames: The module names used to invoke the correct imageloader.
+	 * 				 This defaults to "BMP".
+	 */
+	TexturePtr getBinding(const std::string& fullPath,
+				 		const std::string& moduleNames = "bmp");
 
 	/* greebo: This is some sort of "cleanup" call, which causes
 	 * the TextureManager to go through the list of textures and 
