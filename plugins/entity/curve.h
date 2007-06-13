@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <set>
 
+#include "math/aabb.h"
 #include "math/curve.h"
 #include "stream/stringstream.h"
 #include "signal/signal.h"
@@ -122,6 +123,19 @@ inline void ControlPoint_testSelect(const Vector3& point, ObservedSelectable& se
   }
 }
 
+class ControlPointAddBounds 
+{
+	AABB& m_bounds;
+public:
+	ControlPointAddBounds(AABB& bounds) : 
+		m_bounds(bounds) 
+	{}
+	
+	void operator()(const Vector3& point, const Vector3& original) const {
+		m_bounds.includePoint(point);
+	}
+};
+
 class ControlPointTransform
 {
   const Matrix4& m_matrix;
@@ -129,10 +143,10 @@ public:
   ControlPointTransform(const Matrix4& matrix) : m_matrix(matrix)
   {
   }
-  void operator()(Vector3& point) const
-  {
-    matrix4_transform_point(m_matrix, point);
-  }
+	void operator()(Vector3& point, const Vector3& original) const {
+		// Take the original (untransformed) point and use this as basis
+		point = m_matrix.transform(original).getProjected();
+	}
 };
 
 class ControlPointSnap
@@ -142,7 +156,7 @@ public:
   ControlPointSnap(float snap) : m_snap(snap)
   {
   }
-  void operator()(Vector3& point) const
+  void operator()(Vector3& point, const Vector3& original) const
   {
     vector3_snap(point, m_snap);
   }
@@ -171,7 +185,7 @@ public:
   ControlPointAddSelected(RenderablePointVector& points) : m_points(points)
   {
   }
-  void operator()(const Vector3& point) const
+  void operator()(const Vector3& point, const Vector3& original) const
   {
     m_points.push_back(PointVertex(Vertex3f(point), colour_selected));
   }
@@ -197,7 +211,8 @@ inline void ControlPoints_write(ControlPoints& controlPoints, const char* key, E
 class CurveEdit
 {
   SelectionChangeCallback m_selectionChanged;
-  ControlPoints& m_controlPoints;
+  ControlPoints& m_controlPointsTransformed;
+  const ControlPoints& m_controlPoints;
   typedef Array<ObservedSelectable> Selectables;
   Selectables m_selectables;
 
@@ -207,46 +222,55 @@ class CurveEdit
 public:
   typedef Static<CurveEditType> Type;
 
-  CurveEdit(ControlPoints& controlPoints, const SelectionChangeCallback& selectionChanged) :
+  CurveEdit(ControlPoints& controlPointsTransformed, //  The working set
+  			const ControlPoints& controlPoints,	// the unchanged reference control points 
+  			const SelectionChangeCallback& selectionChanged) :
     m_selectionChanged(selectionChanged),
+    m_controlPointsTransformed(controlPointsTransformed),
     m_controlPoints(controlPoints),
     m_controlsRender(GL_POINTS),
     m_selectedRender(GL_POINTS)
   {
   }
 
-  template<typename Functor>
-  const Functor& forEachSelected(const Functor& functor)
-  {
-    ASSERT_MESSAGE(m_controlPoints.size() == m_selectables.size(), "curve instance mismatch");
-    ControlPoints::iterator p = m_controlPoints.begin();
-    for(Selectables::iterator i = m_selectables.begin(); i != m_selectables.end(); ++i, ++p)
-    {
-      if((*i).isSelected())
-      {
-        functor(*p);
-      }
-    }
-    return functor;
-  }
-  template<typename Functor>
-  const Functor& forEachSelected(const Functor& functor) const
-  {
-    ASSERT_MESSAGE(m_controlPoints.size() == m_selectables.size(), "curve instance mismatch");
-    ControlPoints::const_iterator p = m_controlPoints.begin();
-    for(Selectables::const_iterator i = m_selectables.begin(); i != m_selectables.end(); ++i, ++p)
-    {
-      if((*i).isSelected())
-      {
-        functor(*p);
-      }
-    }
-    return functor;
-  }
+	template<typename Functor>
+	const Functor& forEachSelected(const Functor& functor) {
+		ASSERT_MESSAGE(m_controlPointsTransformed.size() == m_selectables.size(), "curve instance mismatch");
+		ControlPoints::iterator transformed = m_controlPointsTransformed.begin();
+		ControlPoints::const_iterator original = m_controlPoints.begin();
+    
+		for (Selectables::iterator i = m_selectables.begin(); 
+			 i != m_selectables.end(); 
+			 ++i, ++transformed, ++original)
+		{
+			if (i->isSelected()) {
+        		functor(*transformed, *original);
+      		}
+		}
+		return functor;
+	}
+
+	template<typename Functor>
+	const Functor& forEachSelected(const Functor& functor) const {
+		ASSERT_MESSAGE(m_controlPointsTransformed.size() == m_selectables.size(), "curve instance mismatch");
+		ControlPoints::const_iterator transformed = m_controlPointsTransformed.begin();
+		ControlPoints::const_iterator original = m_controlPoints.begin();
+    
+		for (Selectables::const_iterator i = m_selectables.begin(); 
+			 i != m_selectables.end(); 
+			 ++i, ++transformed, ++original)
+		{
+			if (i->isSelected()) {
+        		functor(*transformed, *original);
+      		}
+		}
+		return functor;
+	}
+	
   template<typename Functor>
   const Functor& forEach(const Functor& functor) const
   {
-    for(ControlPoints::const_iterator i = m_controlPoints.begin(); i != m_controlPoints.end(); ++i)
+    for(ControlPoints::const_iterator i = m_controlPointsTransformed.begin(); i != m_controlPointsTransformed.end(); ++i)
     {
       functor(*i);
     }
@@ -255,8 +279,8 @@ public:
 
   void testSelect(Selector& selector, SelectionTest& test)
   {
-    ASSERT_MESSAGE(m_controlPoints.size() == m_selectables.size(), "curve instance mismatch");
-    ControlPoints::const_iterator p = m_controlPoints.begin();
+    ASSERT_MESSAGE(m_controlPointsTransformed.size() == m_selectables.size(), "curve instance mismatch");
+    ControlPoints::const_iterator p = m_controlPointsTransformed.begin();
     for(Selectables::iterator i = m_selectables.begin(); i != m_selectables.end(); ++i, ++p)
     {
       ControlPoint_testSelect(*p, *i, selector, test);
@@ -284,7 +308,7 @@ public:
 
   void write(const char* key, Entity& entity)
   {
-    ControlPoints_write(m_controlPoints, key, entity);
+    ControlPoints_write(m_controlPointsTransformed, key, entity);
   }
 
   void transform(const Matrix4& matrix)
@@ -323,13 +347,13 @@ public:
 
   void curveChanged()
   {
-    m_selectables.resize(m_controlPoints.size(), m_selectionChanged);
+    m_selectables.resize(m_controlPointsTransformed.size(), m_selectionChanged);
 
     m_controlsRender.clear();
-    m_controlsRender.reserve(m_controlPoints.size());
+    m_controlsRender.reserve(m_controlPointsTransformed.size());
     forEach(ControlPointAdd(m_controlsRender));
 
-    m_selectedRender.reserve(m_controlPoints.size());
+    m_selectedRender.reserve(m_controlPointsTransformed.size());
   }
   typedef MemberCaller<CurveEdit, &CurveEdit::curveChanged> CurveChangedCaller;
 };

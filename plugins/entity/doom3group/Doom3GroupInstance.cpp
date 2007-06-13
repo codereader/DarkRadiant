@@ -2,27 +2,18 @@
 
 namespace entity {
 
-class ControlPointAddBounds 
-{
-	AABB& m_bounds;
-public:
-	ControlPointAddBounds(AABB& bounds) : 
-		m_bounds(bounds) 
-	{}
-	
-	void operator()(const Vector3& point) const {
-		m_bounds.includePoint(point);
-	}
-};
-
 Doom3GroupInstance::Doom3GroupInstance(const scene::Path& path, 
 									   scene::Instance* parent, 
 									   Doom3Group& contained) :
 	TargetableInstance(path, parent, contained.getEntity(), *this),
 	TransformModifier(entity::Doom3Group::TransformChangedCaller(contained), ApplyTransformCaller(*this)),
 	m_contained(contained),
-	m_curveNURBS(m_contained.m_curveNURBS.m_controlPointsTransformed, SelectionChangedComponentCaller(*this)),
-	m_curveCatmullRom(m_contained.m_curveCatmullRom.m_controlPointsTransformed, SelectionChangedComponentCaller(*this)),
+	m_curveNURBS(m_contained.m_curveNURBS.m_controlPointsTransformed, 
+				 m_contained.m_curveNURBS.m_controlPoints,
+				 SelectionChangedComponentCaller(*this)),
+	m_curveCatmullRom(m_contained.m_curveCatmullRom.m_controlPointsTransformed,
+					  m_contained.m_curveCatmullRom.m_controlPoints, 
+					  SelectionChangedComponentCaller(*this)),
 	_originInstance(VertexInstance(m_contained.getOrigin(), SelectionChangedComponentCaller(*this)))
 {
 	m_contained.instanceAttach(Instance::path());
@@ -145,6 +136,9 @@ void Doom3GroupInstance::evaluateTransform() {
 	}
 	else {
 		transformComponents(calculateTransform());
+		// Trigger a recalculation of the curve's controlpoints
+		m_contained.m_curveNURBS.curveChanged();
+		m_contained.m_curveCatmullRom.curveChanged();
 	}
 }
 void Doom3GroupInstance::applyTransform() {
