@@ -68,7 +68,7 @@ bool ShaderTemplate::parseLightFlags(parser::DefTokeniser& tokeniser, const std:
         fogLight = true;
     }
     else if (!fogLight && token == "lightfalloffimage") {
-    	_lightFallOff = shaders::MapExpression::construct(tokeniser);
+    	_lightFalloff = shaders::IMapExpression::createForToken(tokeniser);
     }
 	else {
 		// No light-specific keywords found, return false
@@ -82,16 +82,16 @@ bool ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser,
 										 const std::string& token) 
 {
 	if (token == "qer_editorimage") {
-		_texture = shaders::MapExpression::construct(tokeniser);
+		_texture = shaders::IMapExpression::createForToken(tokeniser);
 	}
 	else if (token == "diffusemap") {
-		_diffuse = shaders::MapExpression::construct(tokeniser);
+		_diffuse = shaders::IMapExpression::createForToken(tokeniser);
 	}
 	else if (token == "specularmap") {
-		_specular = shaders::MapExpression::construct(tokeniser);
+		_specular = shaders::IMapExpression::createForToken(tokeniser);
 	}
 	else if (token == "bumpmap") {
-		_bump = shaders::MapExpression::construct(tokeniser);
+		_bump = shaders::IMapExpression::createForToken(tokeniser);
 	}
 	else {
 		// No shortcuts found, return false
@@ -157,7 +157,7 @@ bool ShaderTemplate::parseClamp(parser::DefTokeniser& tokeniser, const std::stri
 bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::string& token) 
 {	
 	if (token == "map") {
-		m_currentLayer.mapExpr = shaders::MapExpression::construct(tokeniser);		
+		m_currentLayer.mapExpr = shaders::IMapExpression::createForToken(tokeniser);		
 	}
 	else {
 		return false;
@@ -188,7 +188,7 @@ bool ShaderTemplate::saveLayer()
 	
 	// Clear the currentLayer structure for possible future layers
 	m_currentLayer.m_type = LAYER_NONE;
-	m_currentLayer.mapExpr = shaders::MapExpression::constructNull();
+	m_currentLayer.mapExpr = shaders::MapExpressionPtr();
 	return true;
 }
 
@@ -211,7 +211,7 @@ void ShaderTemplate::parseDoom3(parser::DefTokeniser& tokeniser)
 			
 			// If the texture is missing (i.e. no editorimage provided), 
 			// substitute this with the diffusemap
-			if (_texture->getTextureName() == "") {		
+			if (!_texture) {		
 				_texture = _diffuse;
 			}
 		} 

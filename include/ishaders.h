@@ -47,6 +47,12 @@ public:
 };
 typedef boost::shared_ptr<TextureConstructor> TextureConstructorPtr;
 
+// Forward declaration
+namespace shaders {
+	
+class IMapExpression;
+typedef boost::shared_ptr<IMapExpression> MapExpressionPtr;
+
 /* greebo: The TextureManager keeps track of all the Textures that are
  * bound in OpenGL. It is responsible for loading/unloading the textures
  * on demand and/or retrieving the pointers to these textures.
@@ -67,9 +73,20 @@ public:
 	 * TextureConstructor object which will be used to populate and bind this
 	 * texture if it is not found in the cache. 
 	 */
-	virtual TexturePtr getBinding(const std::string& textureKey, 
-								  TextureConstructorPtr constructor) = 0;
+	virtual TexturePtr getBinding(MapExpressionPtr mapExp) = 0;
+	
+	/** greebo: This loads a texture directly from the disk using the
+	 * 			specified <fullPath>.
+	 * 
+	 * @fullPath: The absolute path to the file (no VFS paths).
+	 * @moduleNames: The module names used to invoke the correct imageloader.
+	 * 				 This usually defaults to "BMP".
+	 */
+	virtual TexturePtr getBinding(const std::string& fullPath,
+								  const std::string& moduleNames) = 0;
 };
+
+} // namespace shaders
 
 enum
 {

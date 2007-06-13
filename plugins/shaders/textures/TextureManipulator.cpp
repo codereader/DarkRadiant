@@ -1,11 +1,11 @@
 #include "TextureManipulator.h"
 
 #include "igl.h"
-#include "ipreferencesystem.h"
 #include <stdlib.h>
 #include "imagelib.h"
 #include "stream/textstream.h"
 #include "math/Vector3.h"
+#include "ipreferencesystem.h"
 #include "../Doom3ShaderSystem.h"
 
 namespace {
@@ -37,6 +37,12 @@ TextureManipulator::TextureManipulator() :
 	
 	// greebo: Construct the preferences
 	constructPreferences();
+}
+
+// the accessor function
+TextureManipulator& TextureManipulator::instance() {
+    static TextureManipulator _instance;
+    return _instance;
 }
 
 // RegistryKeyObserver implementation

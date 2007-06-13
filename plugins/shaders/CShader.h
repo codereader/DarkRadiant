@@ -18,13 +18,6 @@ class CShader :
 	// Name of shader
 	std::string _name;
 
-	// String names of textures for this shader
-	std::string _editorTexName;
-	std::string _diffuseName;
-	std::string _bumpName;
-	std::string _specularName;
-	std::string _falloffName;
-
 	// Textures for this shader
 	TexturePtr _editorTexture;
 	TexturePtr _diffuse;
