@@ -164,31 +164,22 @@ void Curve::appendControlPoints(unsigned int numPoints) {
 		return;
 	}
 	
-	// The coordinates of the penultimate point (can be 0,0,0)
+	// The coordinates of the penultimate point (can theoretically be 0,0,0)
 	Vector3 penultimate = (size > 1) ? _controlPoints[size - 2] : Vector3(0,0,0);
 	Vector3 ultimate = _controlPoints[size - 1];
 	
 	// Calculate the extrapolation vector
 	Vector3 extrapolation = ultimate - penultimate;
 	
-	// greebo: TODO: Use std::vector for this instead of that crappy Array
-	ControlPoints newPoints;
-	newPoints.resize(size+1);
-	
-	// Copy the points from the source set
-	ControlPoints::iterator target = newPoints.begin();
-	for(ControlPoints::iterator source = _controlPoints.begin(); 
-		source != _controlPoints.end(); 
-		++source, ++target)
-	{
-		*target = *source; 
+	// Don't use a 0,0,0 extrapolation vector, this is impractical
+	if (extrapolation.getLengthSquared() == 0) {
+		extrapolation = Vector3(10,10,0);
 	}
 	
-	// The iterator points now to the last element, fill it
-	*target = ultimate + extrapolation;
-	
-	// Replace the old control points with the larger set
-	_controlPoints = newPoints;
+	// Add as many points as requested to the end of the list
+	for (unsigned int i = 1; i <= numPoints; i++) {
+		_controlPoints.push_back(ultimate + extrapolation);
+	}
 	
 	// Update the transformation working set
 	_controlPointsTransformed = _controlPoints;
