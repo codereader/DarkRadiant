@@ -26,8 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// \brief Curve data types and related operations.
 
 #include "debugging/debugging.h"
-#include "container/array.h"
-#include <math/matrix.h>
+#include <vector>
+#include "math/matrix.h"
 
 
 template<typename I, typename Degree>
@@ -135,7 +135,7 @@ struct BernsteinPolynomial<Three, Three>
   }
 };
 
-typedef Array<Vector3> ControlPoints;
+typedef std::vector<Vector3> ControlPoints;
 
 inline Vector3 CubicBezier_evaluate(const Vector3* firstPoint, double t)
 {
@@ -202,7 +202,7 @@ inline Vector3 CatmullRom_evaluate(const ControlPoints& controlPoints, double t)
   return CubicBezier_evaluate(bezierPoints, t);
 }
 
-typedef Array<float> Knots;
+typedef std::vector<float> Knots;
 
 inline double BSpline_basis(const Knots& knots, std::size_t i, std::size_t degree, double t)
 {
@@ -233,7 +233,7 @@ inline Vector3 BSpline_evaluate(const ControlPoints& controlPoints, const Knots&
   return result;
 }
 
-typedef Array<float> NURBSWeights;
+typedef std::vector<float> NURBSWeights;
 
 inline Vector3 NURBS_evaluate(const ControlPoints& controlPoints, const NURBSWeights& weights, const Knots& knots, std::size_t degree, double t)
 {
