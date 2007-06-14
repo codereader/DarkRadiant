@@ -208,8 +208,6 @@ void Curve::removeControlPoints(IteratorList iterators) {
 void Curve::insertControlPointsAt(IteratorList iterators) {
 	ControlPoints newSet;
 	
-	std::cout << "Inserting new points...\n";
-	
 	// Copy all the control points from the existing set into the
 	// new set, inserting new points at the given locations
 	for (ControlPoints::iterator i = _controlPointsTransformed.begin();
@@ -219,7 +217,6 @@ void Curve::insertControlPointsAt(IteratorList iterators) {
 		IteratorList::iterator found = std::find(iterators.begin(), iterators.end(), i);
 		// Try to lookup the iterator in the given list
 		if (found != iterators.end()) {
-			std::cout << "Inserting point at " << *i << "\n";
 			// This point is an insert point, add a new control vertex
 			
 			// Check if this is the first vertex, this would be illegal
@@ -234,10 +231,7 @@ void Curve::insertControlPointsAt(IteratorList iterators) {
 		newSet.push_back(*i);
 	}
 	
-	std::cout << "Size before: " << _controlPoints.size() << "\n";
-	
 	_controlPoints = newSet;
-	std::cout << "Size after: " << _controlPoints.size() << "\n";
 	_controlPointsTransformed = _controlPoints;
 }
 

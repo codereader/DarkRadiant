@@ -67,6 +67,10 @@ void Doom3GroupInstance::insertControlPointsAtSelected() {
 	}
 }
 
+void Doom3GroupInstance::convertCurveType() {
+	m_contained.convertCurveType();
+}
+
 void Doom3GroupInstance::renderSolid(Renderer& renderer, const VolumeTest& volume) const {
 	m_contained.renderSolid(renderer, volume, Instance::localToWorld(), getSelectable().isSelected());
 

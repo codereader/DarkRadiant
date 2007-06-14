@@ -22,6 +22,11 @@ namespace selection {
 	 */
 	void insertCurveControlPoints();
 	
+	/** greebo: Converts the curves of the selected entities from 
+	 * 			CatmullRom to NURBS and vice versa.
+	 */
+	void convertCurveTypes();
+	
 	} // namespace algorithm
 } // namespace selection
 

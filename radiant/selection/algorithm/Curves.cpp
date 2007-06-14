@@ -52,6 +52,18 @@ public:
 	}
 };
 
+// Removes the selected control points from the visited curve
+class CurveConverter :
+	public CurveInstanceProcessor
+{
+public:
+	virtual void operator() (CurveInstance& curve) {
+		if (!curve.hasEmptyCurve()) {
+			curve.convertCurveType();
+		}
+	}
+};
+
 /** greebo: This visits all selected curves and	calls 
  * 			the nominated Processor class using the 
  * 			CurveInstance as argument.  
@@ -156,6 +168,28 @@ void insertCurveControlPoints() {
 	else {
 		gtkutil::errorDialog(
 			"Can't insert curve points - no entities with curves selected.", 
+			GlobalRadiant().getMainWindow()
+		);
+	}
+}
+
+void convertCurveTypes() {
+	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+	
+	if (info.entityCount > 0) {
+		UndoableCommand command("curveConvertType");
+		
+		// The functor object 
+		CurveConverter converter;
+		
+		// Traverse the selection applying the functor
+		GlobalSelectionSystem().foreachSelected(
+			SelectedCurveVisitor(converter)
+		);
+	}
+	else {
+		gtkutil::errorDialog(
+			"Can't convert curves - no entities with curves selected.", 
 			GlobalRadiant().getMainWindow()
 		);
 	}

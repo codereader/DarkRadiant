@@ -1870,6 +1870,10 @@ void MainFrame_Construct()
 		"CurveInsertControlPoint", 
 		FreeCaller<selection::algorithm::insertCurveControlPoints>()
 	);
+	GlobalEventManager().addCommand(
+		"CurveConvertType", 
+		FreeCaller<selection::algorithm::convertCurveTypes>()
+	);
 	
 	GlobalEventManager().addCommand("EditColourScheme", FreeCaller<EditColourScheme>());
 	GlobalEventManager().addCommand("BrushExportOBJ", FreeCaller<CallBrushExportOBJ>());

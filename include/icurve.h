@@ -25,6 +25,11 @@ public:
 	 * 			is selected.
 	 */
 	virtual void insertControlPointsAtSelected() = 0;
+	
+	/** greebo: Converts the type of the curve from CatmullRom
+	 * 			to NURBS and vice versa.
+	 */
+	virtual void convertCurveType() = 0;
 };
 
 inline CurveInstance* Instance_getCurveInstance(scene::Instance& instance) {
