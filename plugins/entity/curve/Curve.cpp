@@ -63,10 +63,10 @@ Curve::Curve(const Callback& boundsChanged) :
 std::string Curve::getEntityKeyValue() {
 	std::string value;
 	
-	if (!_controlPoints.empty()) {
-		value = intToStr(_controlPoints.size()) + " (";
-		for (ControlPoints::const_iterator i = _controlPoints.begin(); 
-			 i != _controlPoints.end(); 
+	if (!_controlPointsTransformed.empty()) {
+		value = intToStr(_controlPointsTransformed.size()) + " (";
+		for (ControlPoints::const_iterator i = _controlPointsTransformed.begin(); 
+			 i != _controlPointsTransformed.end(); 
 			 ++i)
 		{
 			value += " " + floatToStr(i->x()) + " " + 

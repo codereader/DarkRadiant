@@ -5,7 +5,6 @@
 #include "selectable.h"
 #include "math/curve.h"
 #include "math/aabb.h"
-#include "string/string.h"
 #include "RenderableCurve.h"
 
 namespace entity {

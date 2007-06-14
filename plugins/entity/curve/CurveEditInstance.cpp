@@ -1,15 +1,15 @@
 #include "CurveEditInstance.h"
 
 #include "CurveControlPointFunctors.h"
+#include "string/string.h"
 
 namespace entity {
 
-CurveEditInstance::CurveEditInstance(ControlPoints& controlPointsTransformed, //  The working set
-  			const ControlPoints& controlPoints,	// the unchanged reference control points 
-  			const SelectionChangeCallback& selectionChanged) :
+CurveEditInstance::CurveEditInstance(Curve& curve, const SelectionChangeCallback& selectionChanged) :
+	_curve(curve),
     _selectionChanged(selectionChanged),
-    _controlPointsTransformed(controlPointsTransformed),
-    _controlPoints(controlPoints),
+    _controlPointsTransformed(_curve.getTransformedControlPoints()),
+    _controlPoints(_curve.getControlPoints()),
     m_controlsRender(GL_POINTS),
     m_selectedRender(GL_POINTS)
   {
@@ -46,21 +46,9 @@ void CurveEditInstance::setSelected(bool selected) {
     }
 }
 
-	// Local helper, TODO!
-	inline void ControlPoints_write(ControlPoints& controlPoints, const std::string& key, Entity& entity) {
-		std::string value;
-		if (!controlPoints.empty()) {
-			value = intToStr(controlPoints.size()) + " (";
-			for (ControlPoints::const_iterator i = controlPoints.begin(); i != controlPoints.end(); ++i) {
-				value += " " + floatToStr(i->x()) + " " + floatToStr(i->y()) + " " + floatToStr(i->z()) + " ";
-			}
-			value += ")";
-		}
-		entity.setKeyValue(key, value);
-	}
-
 void CurveEditInstance::write(const char* key, Entity& entity) {
-	ControlPoints_write(_controlPointsTransformed, key, entity);
+	std::string value = _curve.getEntityKeyValue();
+	entity.setKeyValue(key, value);
 }
 
 void CurveEditInstance::transform(const Matrix4& matrix, bool selectedOnly) {

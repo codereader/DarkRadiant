@@ -33,6 +33,9 @@ public:
 	};
 	
 private:
+	// The associated curve
+	Curve& _curve;
+
 	SelectionChangeCallback _selectionChanged;
 	ControlPoints& _controlPointsTransformed;
 	const ControlPoints& _controlPoints;
@@ -45,9 +48,8 @@ private:
 public:
 	typedef Static<CurveShaders> StaticShaders;
 
-	CurveEditInstance(ControlPoints& controlPointsTransformed, //  The working set
-  			const ControlPoints& controlPoints,	// the unchanged reference control points 
-  			const SelectionChangeCallback& selectionChanged);
+	// Constructor
+	CurveEditInstance(Curve& curve, const SelectionChangeCallback& selectionChanged);
 
 	// Traversal functions, these cycle through all (selected) control points
 	void forEach(ControlPointFunctor& functor);
