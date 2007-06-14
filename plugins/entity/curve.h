@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "render.h"
 #include "stringio.h"
 
-class RenderableCurve : public OpenGLRenderable
+class RenderableCurve : public OpenGLRenderable // migrated
 {
 public:
   std::vector<PointVertex> m_vertices;
@@ -67,7 +67,7 @@ inline void plotBasisFunction(std::size_t numSegments, int point, int degree)
   globalOutputStream() << "t=1 basis=" << BSpline_basis(knots, point, degree, 1.0) << "\n";  
 }
 
-inline bool ControlPoints_parse(ControlPoints& controlPoints, const char* value)
+inline bool ControlPoints_parse(ControlPoints& controlPoints, const char* value) // migrated
 {
   StringTokeniser tokeniser(value, " ");
 
@@ -385,35 +385,35 @@ const int NURBS_degree = 3;
 
 class NURBSCurve
 {
-  Signal0 m_curveChanged;
-  Callback m_boundsChanged;
+  Signal0 m_curveChanged;	// migrated
+  Callback m_boundsChanged;	// migrated
 public:
-  ControlPoints m_controlPoints;
-  ControlPoints m_controlPointsTransformed;
-  NURBSWeights m_weights;
-  Knots m_knots;
-  RenderableCurve m_renderCurve;
-  AABB m_bounds;
+  ControlPoints m_controlPoints;	// migrated
+  ControlPoints m_controlPointsTransformed;	// migrated
+  NURBSWeights m_weights;	// migrated
+  Knots m_knots;	// migrated
+  RenderableCurve m_renderCurve;	// migrated
+  AABB m_bounds;	// migrated
 
-  NURBSCurve(const Callback& boundsChanged) : m_boundsChanged(boundsChanged)
+  NURBSCurve(const Callback& boundsChanged) : m_boundsChanged(boundsChanged) // migrated
   {
   }
 
-  SignalHandlerId connect(const SignalHandler& curveChanged)
+  SignalHandlerId connect(const SignalHandler& curveChanged) // migrated
   {
     curveChanged();
     return m_curveChanged.connectLast(curveChanged);
   }
-  void disconnect(SignalHandlerId id)
+  void disconnect(SignalHandlerId id) // migrated
   {
     m_curveChanged.disconnect(id);
   }
-  void notify()
+  void notify() // migrated
   {
     m_curveChanged();
   }
 
-  void tesselate()
+  void tesselate() // migrated
   {
     if(!m_controlPointsTransformed.empty())
     {
@@ -432,7 +432,7 @@ public:
     }
   }
 
-  void curveChanged()
+  void curveChanged()	// migrated
   {
     tesselate();
 
@@ -446,7 +446,7 @@ public:
     notify();
   }
 
-	void appendControlPoints(unsigned int numPoints) {
+	void appendControlPoints(unsigned int numPoints) {	// migrated
 		std::size_t size = m_controlPoints.size();
 		
 		if (size < 1) {
@@ -487,7 +487,7 @@ public:
 		curveChanged();
 	}
 	
-	void doWeighting() {
+	void doWeighting() {	// migrated
 		// Re-adjust the weights
 		m_weights.resize(m_controlPoints.size());
 		for(NURBSWeights::iterator i = m_weights.begin(); i != m_weights.end(); ++i) {
@@ -498,7 +498,7 @@ public:
 		KnotVector_openUniform(m_knots, m_controlPoints.size(), NURBS_degree);
 	}
 
-  bool parseCurve(const char* value)
+  bool parseCurve(const char* value)	// migrated
   {
     if(!ControlPoints_parse(m_controlPoints, value))
     {
@@ -512,7 +512,7 @@ public:
     return true;
   }
 
-  void curveChanged(const std::string& value)
+  void curveChanged(const std::string& value) // migrated
   {
     if(value.empty() || !parseCurve(value.c_str()))
     {
@@ -528,33 +528,33 @@ public:
 
 class CatmullRomSpline
 {
-  Signal0 m_curveChanged;
-  Callback m_boundsChanged;
+  Signal0 m_curveChanged;	// migrated
+  Callback m_boundsChanged; // migrated
 public:
-  ControlPoints m_controlPoints;
-  ControlPoints m_controlPointsTransformed;
-  RenderableCurve m_renderCurve;
-  AABB m_bounds;
+  ControlPoints m_controlPoints; // migrated
+  ControlPoints m_controlPointsTransformed; // migrated
+  RenderableCurve m_renderCurve; // migrated
+  AABB m_bounds; // migrated
 
-  CatmullRomSpline(const Callback& boundsChanged) : m_boundsChanged(boundsChanged)
+  CatmullRomSpline(const Callback& boundsChanged) : m_boundsChanged(boundsChanged)// migrated
   {
   }
 
-  SignalHandlerId connect(const SignalHandler& curveChanged)
+  SignalHandlerId connect(const SignalHandler& curveChanged)// migrated
   {
     curveChanged();
     return m_curveChanged.connectLast(curveChanged);
   }
-  void disconnect(SignalHandlerId id)
+  void disconnect(SignalHandlerId id)// migrated
   {
     m_curveChanged.disconnect(id);
   }
-  void notify()
+  void notify()// migrated
   {
     m_curveChanged();
   }
   
-	void appendControlPoints(unsigned int numPoints) {
+	void appendControlPoints(unsigned int numPoints) { // migrated
 		std::size_t size = m_controlPoints.size();
 		
 		if (size < 1) {
@@ -594,7 +594,7 @@ public:
 		curveChanged();
 	}
 
-  void tesselate()
+  void tesselate() // migrated
   {
     if(!m_controlPointsTransformed.empty())
     {
@@ -613,12 +613,12 @@ public:
     }
   }
 
-  bool parseCurve(const char* value)
+  bool parseCurve(const char* value) // migrated
   {
     return ControlPoints_parse(m_controlPoints, value);
   }
 
-  void curveChanged()
+  void curveChanged() // migrated
   {
     tesselate();
 
@@ -632,7 +632,7 @@ public:
     notify();
   }
 
-  void curveChanged(const std::string& value)
+  void curveChanged(const std::string& value) // migrated
   {
     if(value.empty() || !parseCurve(value.c_str()))
     {
