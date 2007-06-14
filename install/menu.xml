@@ -280,6 +280,17 @@
 		<menuItem name="stitchTextures" caption="Stitch Patch Textures" command="StitchPatchTexture" />
 	</subMenu>
 
+	<subMenu name="curve" caption="_Curve">
+		<menuItem name="createCurveNURBS" caption="Create NURBS Curve" command="CreateCurveNURBS" icon="curve_create.png" />
+		<menuItem name="createCurveCatmullRom" caption="Create CatmullRom Curve" command="CreateCurveCatmullRom" icon="curve_create.png" />
+		<menuSeparator />
+		<menuItem name="curveConvertType" caption="Convert NURBS &lt;-&gt; CatmullRom" command="CurveConvertType" icon="curve_convert.png" />
+		<menuSeparator />
+		<menuItem name="curveAppendPoint" caption="Append Curve Control Point" command="CurveAppendControlPoint" icon="curve_append_point.png" />
+		<menuItem name="curveInsertPoint" caption="Insert Curve Control Points" command="CurveInsertControlPoint" icon="curve_insert_points.png" />
+		<menuItem name="curveRemovePoint" caption="Remove Curve Control Points" command="CurveRemoveControlPoint" icon="curve_remove_points.png" />
+	</subMenu>
+
 	<subMenu name="help" caption="_Help">
 		<menuItem name="shortcuts" caption="Shortcuts list" command="ShowCommandList" />
 		<menuItem name="about" caption="_About" command="About" />
