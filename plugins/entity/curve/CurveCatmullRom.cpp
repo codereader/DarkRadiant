@@ -18,6 +18,14 @@ void CurveCatmullRom::appendControlPoints(unsigned int numPoints) {
 	curveChanged();
 }
 
+void CurveCatmullRom::removeControlPoints(IteratorList iterators) {
+	// Pass the call to the base class first
+	Curve::removeControlPoints(iterators);
+	
+	// Recalculate the tesselation and emit the signals
+	curveChanged();
+}
+
 void CurveCatmullRom::tesselate() {
 	if (!_controlPointsTransformed.empty()) {
 		const std::size_t numSegments = (_controlPointsTransformed.size() - 1) * 16;

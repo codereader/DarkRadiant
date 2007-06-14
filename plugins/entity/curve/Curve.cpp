@@ -185,4 +185,24 @@ void Curve::appendControlPoints(unsigned int numPoints) {
 	_controlPointsTransformed = _controlPoints;
 }
 
+void Curve::removeControlPoints(IteratorList iterators) {
+	ControlPoints newSet;
+	
+	// Copy all the control points from the existing set into the
+	// new set, skipping all points that are marked as deleted.
+	for (ControlPoints::iterator i = _controlPointsTransformed.begin();
+		 i != _controlPointsTransformed.end();
+		 i++)
+	{
+		// Try to lookup the iterator in the given list
+		if (std::find(iterators.begin(), iterators.end(), i) == iterators.end()) {
+			// This point is not to be deleted, save it into the new set
+			newSet.push_back(*i);
+		}
+	}
+	
+	_controlPoints = newSet;
+	_controlPointsTransformed = _controlPoints;
+}
+
 } // namespace entity
