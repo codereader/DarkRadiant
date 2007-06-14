@@ -46,8 +46,21 @@ void CurveEditInstance::setSelected(bool selected) {
     }
 }
 
+	// Local helper, TODO!
+	inline void ControlPoints_write(ControlPoints& controlPoints, const std::string& key, Entity& entity) {
+		std::string value;
+		if (!controlPoints.empty()) {
+			value = intToStr(controlPoints.size()) + " (";
+			for (ControlPoints::const_iterator i = controlPoints.begin(); i != controlPoints.end(); ++i) {
+				value += " " + floatToStr(i->x()) + " " + floatToStr(i->y()) + " " + floatToStr(i->z()) + " ";
+			}
+			value += ")";
+		}
+		entity.setKeyValue(key, value);
+	}
+
 void CurveEditInstance::write(const char* key, Entity& entity) {
-    ControlPoints_write(_controlPointsTransformed, key, entity);
+	ControlPoints_write(_controlPointsTransformed, key, entity);
 }
 
 void CurveEditInstance::transform(const Matrix4& matrix, bool selectedOnly) {
