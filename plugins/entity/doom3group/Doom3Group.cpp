@@ -146,7 +146,7 @@ void Doom3Group::detach(scene::Traversable::Observer* observer) {
 }
 
 const AABB& Doom3Group::localAABB() const {
-	m_curveBounds = m_curveNURBS.m_bounds;
+	m_curveBounds = m_curveNURBS.getBounds();
 	m_curveBounds.includeAABB(m_curveCatmullRom.getBounds());
 	
 	// Include the origin as well, it might be offset
@@ -173,9 +173,10 @@ void Doom3Group::renderSolid(Renderer& renderer, const VolumeTest& volume,
 	renderer.SetState(_entity.getEntityClass()->getWireShader(), Renderer::eWireframeOnly);
 	renderer.SetState(_entity.getEntityClass()->getWireShader(), Renderer::eFullMaterials);
 
-	if (!m_curveNURBS.m_renderCurve.m_vertices.empty()) {
-		renderer.addRenderable(m_curveNURBS.m_renderCurve, localToWorld);
+	if (!m_curveNURBS.isEmpty()) {
+		m_curveNURBS.renderSolid(renderer, volume, localToWorld);
 	}
+	
 	if (!m_curveCatmullRom.isEmpty()) {
 		m_curveCatmullRom.renderSolid(renderer, volume, localToWorld);
 	}
@@ -191,7 +192,7 @@ void Doom3Group::renderWireframe(Renderer& renderer, const VolumeTest& volume,
 }
 
 void Doom3Group::testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best) {
-	PointVertexArray_testSelect(&m_curveNURBS.m_renderCurve.m_vertices[0], m_curveNURBS.m_renderCurve.m_vertices.size(), test, best);
+	m_curveNURBS.testSelect(selector, test, best);
 	m_curveCatmullRom.testSelect(selector, test, best);
 }
 
@@ -258,7 +259,7 @@ void Doom3Group::revertTransform() {
 	}
 	
 	m_renderOrigin.updatePivot();
-	m_curveNURBS.m_controlPointsTransformed = m_curveNURBS.m_controlPoints;
+	m_curveNURBS.revertTransform();
 	m_curveCatmullRom.revertTransform();
 }
 
@@ -275,8 +276,9 @@ void Doom3Group::freezeTransform() {
 		rotation_assign(m_rotationKey.m_rotation, m_rotation);
 		m_rotationKey.write(&_entity, isModel());
 	}
-	m_curveNURBS.m_controlPoints = m_curveNURBS.m_controlPointsTransformed;
-	ControlPoints_write(m_curveNURBS.m_controlPoints, curve_Nurbs, _entity);
+	m_curveNURBS.freezeTransform();
+	m_curveNURBS.saveToEntity(_entity);
+	
 	m_curveCatmullRom.freezeTransform();
 	m_curveCatmullRom.saveToEntity(_entity);
 }
@@ -300,9 +302,9 @@ void Doom3Group::transformChanged() {
 }
 
 void Doom3Group::appendControlPoints(unsigned int numPoints) {
-	if (m_curveNURBS.m_controlPoints.size() > 0) {
+	if (!m_curveNURBS.isEmpty()) {
 		m_curveNURBS.appendControlPoints(numPoints);
-		ControlPoints_write(m_curveNURBS.m_controlPoints, curve_Nurbs, _entity);
+		m_curveNURBS.saveToEntity(_entity);
 	}
 	if (!m_curveCatmullRom.isEmpty()) {
 		m_curveCatmullRom.appendControlPoints(numPoints);
@@ -323,7 +325,7 @@ void Doom3Group::construct() {
 	m_keyObservers.insert("angle", RotationKey::AngleChangedCaller(m_rotationKey));
 	m_keyObservers.insert("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
 	m_keyObservers.insert("name", NameChangedCaller(*this));
-	m_keyObservers.insert(curve_Nurbs, NURBSCurve::CurveChangedCaller(m_curveNURBS));
+	m_keyObservers.insert(curve_Nurbs.c_str(), CurveNURBS::CurveChangedCaller(m_curveNURBS));
 	m_keyObservers.insert(curve_CatmullRomSpline.c_str(), CurveCatmullRom::CurveChangedCaller(m_curveCatmullRom));
 	m_keyObservers.insert("skin", ModelSkinKey::SkinChangedCaller(m_skin));
 
