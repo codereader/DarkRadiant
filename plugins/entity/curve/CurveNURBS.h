@@ -19,6 +19,9 @@ public:
 	// Extends the algorithm of the base class by a few commands
 	virtual void appendControlPoints(unsigned int numPoints);
 
+	// Writes the control point coords to the entity
+	virtual void saveToEntity(Entity& target);
+
 private:
 	// Clears the control points, weights and knots
 	virtual void clearCurve();

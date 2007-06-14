@@ -526,7 +526,7 @@ public:
   typedef MemberCaller1<NURBSCurve, const std::string&, &NURBSCurve::curveChanged> CurveChangedCaller;
 };
 
-class CatmullRomSpline
+/*class CatmullRomSpline
 {
   Signal0 m_curveChanged;	// migrated
   Callback m_boundsChanged; // migrated
@@ -642,10 +642,10 @@ public:
     curveChanged();
   }
   typedef MemberCaller1<CatmullRomSpline, const std::string&, &CatmullRomSpline::curveChanged> CurveChangedCaller;
-};
+};*/
 
 const char* const curve_Nurbs = "curve_Nurbs";
-const char* const curve_CatmullRomSpline = "curve_CatmullRomSpline";
+//const char* const curve_CatmullRomSpline = "curve_CatmullRomSpline";
 
 
 #endif

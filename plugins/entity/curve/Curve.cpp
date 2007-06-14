@@ -6,6 +6,19 @@ namespace entity {
 
 	namespace {
 		
+		inline void PointVertexArray_testSelect(PointVertex* first, std::size_t count, 
+			SelectionTest& test, SelectionIntersection& best) 
+		{
+			test.TestLineStrip(
+			    VertexPointer(
+			        reinterpret_cast<VertexPointer::pointer>(&first->vertex),
+			        sizeof(PointVertex)
+			    ),
+			    IndexPointer::index_type(count),
+			    best
+			);
+		}
+		
 		inline bool ControlPoints_parse(ControlPoints& controlPoints, const char* value) {
 			StringTokeniser tokeniser(value, " ");
 
@@ -56,8 +69,43 @@ void Curve::disconnect(SignalHandlerId id) {
 	_curveChanged.disconnect(id);
 }
 
+void Curve::testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best) {
+	PointVertexArray_testSelect(
+		&_renderCurve.m_vertices[0], 
+		_renderCurve.m_vertices.size(), 
+		test, 
+		best
+	);
+}
+
+void Curve::revertTransform() {
+	_controlPointsTransformed = _controlPoints;
+}
+
+void Curve::freezeTransform() {
+	_controlPoints = _controlPointsTransformed;
+}
+
+ControlPoints& Curve::getTransformedControlPoints() {
+	return _controlPointsTransformed;
+}
+
+ControlPoints& Curve::getControlPoints() {
+	return _controlPoints;
+}
+
+void Curve::renderSolid(Renderer& renderer, const VolumeTest& volume, 
+	const Matrix4& localToWorld) const
+{
+	renderer.addRenderable(_renderCurve, localToWorld);
+}
+
+const AABB& Curve::getBounds() const {
+	return _bounds;
+}
+
 bool Curve::isEmpty() const {
-	return true;
+	return _renderCurve.m_vertices.size() == 0;
 }
 
 bool Curve::parseCurve(const std::string& value) {
