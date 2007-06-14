@@ -14,7 +14,6 @@
 #include "../rotation.h"
 #include "../namedentity.h"
 #include "../namekeys.h"
-#include "../curve.h"
 #include "../modelskinkey.h"
 #include "../Doom3Entity.h"
 #include "../curve/CurveCatmullRom.h"
