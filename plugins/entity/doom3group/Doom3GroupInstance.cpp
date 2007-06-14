@@ -136,11 +136,11 @@ const AABB& Doom3GroupInstance::getSelectedComponentsBounds() const {
 void Doom3GroupInstance::snapComponents(float snap) {
 	if (m_curveNURBS.isSelected()) {
 		m_curveNURBS.snapto(snap);
-		m_curveNURBS.write(curve_Nurbs.c_str(), m_contained.getEntity());
+		m_curveNURBS.write(curve_Nurbs, m_contained.getEntity());
 	}
 	if (m_curveCatmullRom.isSelected()) {
 		m_curveCatmullRom.snapto(snap);
-		m_curveCatmullRom.write(curve_CatmullRomSpline.c_str(), m_contained.getEntity());
+		m_curveCatmullRom.write(curve_CatmullRomSpline, m_contained.getEntity());
 	}
 	if (_originInstance.isSelected()) {
 		m_contained.snapOrigin(snap);
