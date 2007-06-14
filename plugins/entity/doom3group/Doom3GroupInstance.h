@@ -38,6 +38,7 @@ public:
 	virtual void appendControlPoints(unsigned int numPoints);
 	virtual void removeSelectedControlPoints();
 	virtual void insertControlPointsAtSelected();
+	virtual void convertCurveType();
 
 	// Bounded implementation
 	virtual const AABB& localAABB() const;

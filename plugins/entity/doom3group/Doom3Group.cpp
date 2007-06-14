@@ -312,6 +312,19 @@ void Doom3Group::appendControlPoints(unsigned int numPoints) {
 	}
 }
 
+void Doom3Group::convertCurveType() {
+	if (!m_curveNURBS.isEmpty() && m_curveCatmullRom.isEmpty()) {
+		std::string keyValue = _entity.getKeyValue(curve_Nurbs);
+		_entity.setKeyValue(curve_Nurbs, "");
+		_entity.setKeyValue(curve_CatmullRomSpline, keyValue);
+	}
+	else if (!m_curveCatmullRom.isEmpty() && m_curveNURBS.isEmpty()) {
+		std::string keyValue = _entity.getKeyValue(curve_CatmullRomSpline);
+		_entity.setKeyValue(curve_CatmullRomSpline, "");
+		_entity.setKeyValue(curve_Nurbs, keyValue);
+	}
+}
+
 void Doom3Group::construct() {
 	default_rotation(m_rotation);
 
