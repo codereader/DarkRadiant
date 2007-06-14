@@ -1,7 +1,6 @@
 #include "CurveEditInstance.h"
 
 #include "CurveControlPointFunctors.h"
-#include "string/string.h"
 
 namespace entity {
 
@@ -46,7 +45,7 @@ void CurveEditInstance::setSelected(bool selected) {
     }
 }
 
-void CurveEditInstance::write(const char* key, Entity& entity) {
+void CurveEditInstance::write(const std::string& key, Entity& entity) {
 	std::string value = _curve.getEntityKeyValue();
 	entity.setKeyValue(key, value);
 }

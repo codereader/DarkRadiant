@@ -1,5 +1,6 @@
 #include "Curve.h"
 
+#include "parser/Tokeniser.h"
 #include "stringio.h"
 
 namespace entity {
@@ -17,41 +18,6 @@ namespace entity {
 			    IndexPointer::index_type(count),
 			    best
 			);
-		}
-		
-		inline bool ControlPoints_parse(ControlPoints& controlPoints, const char* value) {
-			StringTokeniser tokeniser(value, " ");
-
-			std::size_t size;
-			if (!string_parse_size(tokeniser.getToken(), size)) {
-				return false;
-			}
-
-			if (size < 3) {
-				return false;
-			}
-			controlPoints.resize(size);
-
-			if (!string_equal(tokeniser.getToken(), "(")) {
-				return false;
-			}
-			
-			for (ControlPoints::iterator i = controlPoints.begin(); 
-				 i != controlPoints.end(); 
-				 ++i)
-			{
-				if (!string_parse_double(tokeniser.getToken(), (*i).x()) || 
-					!string_parse_double(tokeniser.getToken(), (*i).y()) || 
-					!string_parse_double(tokeniser.getToken(), (*i).z()))
-				{
-					return false;
-				}
-			}
-			
-			if (!string_equal(tokeniser.getToken(), ")")) {
-				return false;
-			}
-			return true;
 		}
 		
 	} // namespace
@@ -127,7 +93,35 @@ bool Curve::isEmpty() const {
 }
 
 bool Curve::parseCurve(const std::string& value) {
-	return ControlPoints_parse(_controlPoints, value.c_str());
+	parser::StringTokeniser tokeniser(value, " ");
+	
+	try {
+		// First token is the number of control points
+		std::size_t size = strToInt(tokeniser.nextToken());
+		if (size < 3) {
+			throw parser::ParseException("Curve size < 3.");
+		}
+		_controlPoints.resize(size);
+
+		tokeniser.assertNextToken("(");
+		
+		for (ControlPoints::iterator i = _controlPoints.begin(); 
+			 i != _controlPoints.end(); 
+			 ++i)
+		{
+			i->x() = strToFloat(tokeniser.nextToken());
+			i->y() = strToFloat(tokeniser.nextToken());
+			i->z() = strToFloat(tokeniser.nextToken());
+		}
+		
+		tokeniser.assertNextToken(")");
+	}
+	catch (parser::ParseException p) {
+		globalErrorStream() << "Curve::parseCurve: " << p.what() << "\n";
+		return false;
+	}
+	
+	return true;
 }
 
 void Curve::curveChanged() {

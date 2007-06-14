@@ -61,7 +61,7 @@ public:
 	bool isSelected() const;
 	void setSelected(bool selected);
 
-	void write(const char* key, Entity& entity);
+	void write(const std::string& key, Entity& entity);
 
 	// Transforms the (selected) control points
 	void transform(const Matrix4& matrix, bool selectedOnly = true);
