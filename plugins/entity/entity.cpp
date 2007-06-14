@@ -37,6 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "doom3group/Doom3GroupNode.h"
 #include "light/LightShader.h"
+#include "curve/CurveEditInstance.h"
 
 // Initialise the static variables of the entitylibraries (we're in a module here)
 EntityCreator::KeyValueChangedFunc entity::Doom3Entity::m_entityKeyValueChanged = 0;
@@ -50,8 +51,8 @@ void constructStatic() {
 	LightShader::m_defaultShader = "lights/defaultpointlight";
 
 	// Construct Doom3Group stuff
-	CurveEdit::Type::instance().m_controlsShader = GlobalShaderCache().capture("$POINT");
-	CurveEdit::Type::instance().m_selectedShader = GlobalShaderCache().capture("$SELPOINT");
+	CurveEditInstance::StaticShaders::instance().controlsShader = GlobalShaderCache().capture("$POINT");
+	CurveEditInstance::StaticShaders::instance().selectedShader = GlobalShaderCache().capture("$SELPOINT");
 
 	RenderablePivot::StaticShader::instance() = GlobalShaderCache().capture("$PIVOT");
 

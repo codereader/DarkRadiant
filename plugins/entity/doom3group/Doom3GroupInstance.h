@@ -3,6 +3,7 @@
 
 #include "icurve.h"
 #include "Doom3Group.h"
+#include "../curve/CurveEditInstance.h"
 #include "../VertexInstance.h"
 #include "../targetable.h"
 
@@ -20,8 +21,8 @@ class Doom3GroupInstance :
 	public CurveInstance
 {
 	Doom3Group& m_contained;
-	CurveEdit m_curveNURBS;
-	CurveEdit m_curveCatmullRom;
+	CurveEditInstance m_curveNURBS;
+	CurveEditInstance m_curveCatmullRom;
 	mutable AABB m_aabb_component;
 	
 	VertexInstance _originInstance;
