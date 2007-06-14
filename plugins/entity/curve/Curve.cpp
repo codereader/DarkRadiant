@@ -205,4 +205,40 @@ void Curve::removeControlPoints(IteratorList iterators) {
 	_controlPointsTransformed = _controlPoints;
 }
 
+void Curve::insertControlPointsAt(IteratorList iterators) {
+	ControlPoints newSet;
+	
+	std::cout << "Inserting new points...\n";
+	
+	// Copy all the control points from the existing set into the
+	// new set, inserting new points at the given locations
+	for (ControlPoints::iterator i = _controlPointsTransformed.begin();
+		 i != _controlPointsTransformed.end();
+		 i++)
+	{
+		IteratorList::iterator found = std::find(iterators.begin(), iterators.end(), i);
+		// Try to lookup the iterator in the given list
+		if (found != iterators.end()) {
+			std::cout << "Inserting point at " << *i << "\n";
+			// This point is an insert point, add a new control vertex
+			
+			// Check if this is the first vertex, this would be illegal
+			if (i != _controlPointsTransformed.begin()) {
+				// Iterator is valid, now add the point in the 
+				// middle of the previous point and the current one
+				Vector3 intermediate = (*(i-1) + *i) * 0.5;
+				newSet.push_back(intermediate);
+			}
+		}
+		// Add the original point to the target list as well.
+		newSet.push_back(*i);
+	}
+	
+	std::cout << "Size before: " << _controlPoints.size() << "\n";
+	
+	_controlPoints = newSet;
+	std::cout << "Size after: " << _controlPoints.size() << "\n";
+	_controlPointsTransformed = _controlPoints;
+}
+
 } // namespace entity

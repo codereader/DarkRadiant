@@ -52,9 +52,13 @@ public:
 	virtual void appendControlPoints(unsigned int numPoints);
 	
 	/** greebo: Removes the control points specified by the passed list of iterators.
-	 * 			Doesn't do any sanity checking, this has to be done by the calling class
+	 * 			Doesn't do any sanity checking, this has to be done by the calling class.
 	 */  
 	virtual void removeControlPoints(IteratorList iterators);
+	
+	/** greebo: Inserts control points before the specified list of iterators.
+	 */  
+	virtual void insertControlPointsAt(IteratorList iterators);
 	
 	// Gets called after the control points have changed
 	void curveChanged();
