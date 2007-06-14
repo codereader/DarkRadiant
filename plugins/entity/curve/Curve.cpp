@@ -60,6 +60,24 @@ Curve::Curve(const Callback& boundsChanged) :
 	_boundsChanged(boundsChanged)
 {}
 
+std::string Curve::getEntityKeyValue() {
+	std::string value;
+	
+	if (!_controlPoints.empty()) {
+		value = intToStr(_controlPoints.size()) + " (";
+		for (ControlPoints::const_iterator i = _controlPoints.begin(); 
+			 i != _controlPoints.end(); 
+			 ++i)
+		{
+			value += " " + floatToStr(i->x()) + " " + 
+					 floatToStr(i->y()) + " " + floatToStr(i->z()) + " ";
+		}
+		value += ")";
+	}
+	
+	return value;
+}
+
 SignalHandlerId Curve::connect(const SignalHandler& curveChanged) {
 	curveChanged();
 	return _curveChanged.connectLast(curveChanged);

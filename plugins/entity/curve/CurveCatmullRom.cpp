@@ -41,7 +41,8 @@ void CurveCatmullRom::tesselate() {
 }
 
 void CurveCatmullRom::saveToEntity(Entity& target) {
-	ControlPoints_write(_controlPoints, curve_CatmullRomSpline, target);
+	std::string value = getEntityKeyValue();
+	target.setKeyValue(curve_CatmullRomSpline, value);
 }
 
 } // namespace entity

@@ -44,7 +44,8 @@ void CurveNURBS::clearCurve() {
 }
 
 void CurveNURBS::saveToEntity(Entity& target) {
-	ControlPoints_write(_controlPoints, curve_Nurbs, target);
+	std::string value = getEntityKeyValue();
+	target.setKeyValue(curve_Nurbs, value);
 }
 
 bool CurveNURBS::parseCurve(const std::string& value) {
