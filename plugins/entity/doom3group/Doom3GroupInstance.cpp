@@ -11,11 +11,9 @@ Doom3GroupInstance::Doom3GroupInstance(const scene::Path& path,
 	TargetableInstance(path, parent, contained.getEntity(), *this),
 	TransformModifier(Doom3Group::TransformChangedCaller(contained), ApplyTransformCaller(*this)),
 	m_contained(contained),
-	m_curveNURBS(m_contained.m_curveNURBS.getTransformedControlPoints(), 
-				 m_contained.m_curveNURBS.getControlPoints(),
+	m_curveNURBS(m_contained.m_curveNURBS,
 				 SelectionChangedComponentCaller(*this)),
-	m_curveCatmullRom(m_contained.m_curveCatmullRom.getTransformedControlPoints(),
-					  m_contained.m_curveCatmullRom.getControlPoints(), 
+	m_curveCatmullRom(m_contained.m_curveCatmullRom, 
 					  SelectionChangedComponentCaller(*this)),
 	_originInstance(VertexInstance(m_contained.getOrigin(), SelectionChangedComponentCaller(*this)))
 {
