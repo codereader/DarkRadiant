@@ -17,6 +17,7 @@
 #include "../curve.h"
 #include "../modelskinkey.h"
 #include "../Doom3Entity.h"
+#include "../curve/CurveCatmullRom.h"
 
 namespace entity {
 
@@ -67,7 +68,7 @@ class Doom3Group :
 public:
 	NURBSCurve m_curveNURBS;
 	SignalHandlerId m_curveNURBSChanged;
-	CatmullRomSpline m_curveCatmullRom;
+	CurveCatmullRom m_curveCatmullRom;
 	SignalHandlerId m_curveCatmullRomChanged;
 	InstanceCounter m_instanceCounter;
 

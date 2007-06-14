@@ -4,6 +4,7 @@ namespace entity {
 
 	namespace {
 		const int NURBS_degree = 3;
+		const std::string curve_Nurbs = "curve_Nurbs";
 	}
 
 CurveNURBS::CurveNURBS(const Callback& callback) :
@@ -41,6 +42,10 @@ void CurveNURBS::clearCurve() {
 	_controlPoints.resize(0);
 	_knots.resize(0);
 	_weights.resize(0);
+}
+
+void CurveNURBS::saveToEntity(Entity& target) {
+	ControlPoints_write(_controlPoints, curve_Nurbs, target);
 }
 
 bool CurveNURBS::parseCurve(const std::string& value) {

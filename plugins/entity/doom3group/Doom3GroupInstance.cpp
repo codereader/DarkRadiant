@@ -1,18 +1,20 @@
 #include "Doom3GroupInstance.h"
 
+#include "../curve/CurveCatmullRom.h"
+
 namespace entity {
 
 Doom3GroupInstance::Doom3GroupInstance(const scene::Path& path, 
 									   scene::Instance* parent, 
 									   Doom3Group& contained) :
 	TargetableInstance(path, parent, contained.getEntity(), *this),
-	TransformModifier(entity::Doom3Group::TransformChangedCaller(contained), ApplyTransformCaller(*this)),
+	TransformModifier(Doom3Group::TransformChangedCaller(contained), ApplyTransformCaller(*this)),
 	m_contained(contained),
 	m_curveNURBS(m_contained.m_curveNURBS.m_controlPointsTransformed, 
 				 m_contained.m_curveNURBS.m_controlPoints,
 				 SelectionChangedComponentCaller(*this)),
-	m_curveCatmullRom(m_contained.m_curveCatmullRom.m_controlPointsTransformed,
-					  m_contained.m_curveCatmullRom.m_controlPoints, 
+	m_curveCatmullRom(m_contained.m_curveCatmullRom.getTransformedControlPoints(),
+					  m_contained.m_curveCatmullRom.getControlPoints(), 
 					  SelectionChangedComponentCaller(*this)),
 	_originInstance(VertexInstance(m_contained.getOrigin(), SelectionChangedComponentCaller(*this)))
 {
@@ -32,8 +34,8 @@ Doom3GroupInstance::~Doom3GroupInstance() {
 }
 
 bool Doom3GroupInstance::hasEmptyCurve() {
-	return !(m_contained.m_curveNURBS.m_controlPoints.size() > 0 || 
-			 m_contained.m_curveCatmullRom.m_controlPoints.size() > 0);
+	return m_contained.m_curveNURBS.m_controlPoints.size() == 0 && 
+		   m_contained.m_curveCatmullRom.isEmpty();
 }
 
 void Doom3GroupInstance::appendControlPoints(unsigned int numPoints) {
@@ -132,7 +134,7 @@ void Doom3GroupInstance::snapComponents(float snap) {
 	}
 	if (m_curveCatmullRom.isSelected()) {
 		m_curveCatmullRom.snapto(snap);
-		m_curveCatmullRom.write(curve_CatmullRomSpline, m_contained.getEntity());
+		m_curveCatmullRom.write(curve_CatmullRomSpline.c_str(), m_contained.getEntity());
 	}
 	if (_originInstance.isSelected()) {
 		m_contained.snapOrigin(snap);
