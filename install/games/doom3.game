@@ -107,6 +107,7 @@
 		<collisionModelExt value="cm" />
 		<defaultCurveEntity value="func_static" />
 		<curveNurbsKey value="curve_Nurbs" />
+		<curveCatmullRomKey value="curve_CatmullRomSpline" />
 	</defaults>
 	<entityChooser>
 		<displayFolderKey value="editor_displayFolder" />

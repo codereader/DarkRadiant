@@ -53,6 +53,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		const std::string RKEY_FREE_MODEL_ROTATION = "user/ui/freeModelRotation";
 		const std::string RKEY_DEFAULT_CURVE_ENTITY = "game/defaults/defaultCurveEntity";
 		const std::string RKEY_CURVE_NURBS_KEY = "game/defaults/curveNurbsKey";
+		const std::string RKEY_CURVE_CATMULLROM_KEY = "game/defaults/curveCatmullRomKey";
 	}
 
 class EntitySetKeyValueSelected : public scene::Graph::Walker
@@ -293,8 +294,12 @@ scene::INodePtr Entity_createFromSelection(const char* name,
 
 namespace entity {
 
-void createCurveNURBS() {
-	UndoableCommand undo("createCurveNURBS");
+/** greebo: Creates a new entity with an attached curve
+ * 
+ * @key: The curve type: pass either "curve_CatmullRomSpline" or "curve_Nurbs".
+ */
+void createCurve(const std::string& key) {
+	UndoableCommand undo(std::string("createCurve: ") + key);
 	
 	// De-select everything before we proceed
 	GlobalSelectionSystem().setSelectedAll(false);
@@ -333,7 +338,7 @@ void createCurveNURBS() {
 	
 	// Initialise the curve using three pre-defined points
 	entity->setKeyValue(
-		GlobalRegistry().get(RKEY_CURVE_NURBS_KEY), 
+		key, 
 		"3 ( 0 0 0  50 50 0  50 100 0 )"
 	);
 	
@@ -345,6 +350,14 @@ void createCurveNURBS() {
 	}
 }
 
+void createCurveNURBS() {
+	createCurve(GlobalRegistry().get(RKEY_CURVE_NURBS_KEY));
+}
+
+void createCurveCatmullRom() {
+	createCurve(GlobalRegistry().get(RKEY_CURVE_CATMULLROM_KEY));
+}
+
 } // namespace entity
 
 void Entity_Construct() {
@@ -352,6 +365,7 @@ void Entity_Construct() {
 	GlobalEventManager().addCommand("UngroupSelection", FreeCaller<Entity_ungroupSelected>());
 	GlobalEventManager().addRegistryToggle("ToggleFreeModelRotation", RKEY_FREE_MODEL_ROTATION);
 	GlobalEventManager().addCommand("CreateCurveNURBS", FreeCaller<entity::createCurveNURBS>());
+	GlobalEventManager().addCommand("CreateCurveCatmullRom", FreeCaller<entity::createCurveCatmullRom>());
 }
 
 void Entity_Destroy()

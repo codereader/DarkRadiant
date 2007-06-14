@@ -1,3 +1,7 @@
+14/06/2007
+greebo
+- Added vertex editing support for curves (NURBS, CatmullRom).
+
 13/06/2007
 mohij
 - Improved support for MapExpressions. All Doom3-related
