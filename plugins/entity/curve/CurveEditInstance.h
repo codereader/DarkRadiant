@@ -81,6 +81,18 @@ public:
 	
 	// As the name states, removes the selected control points
 	void removeSelectedControlPoints();
+	
+	/** greebo: This inserts a control point BEFORE each
+	 * 			selected control point of the curve.
+	 * 			Naturally, this doesn't work if the first vertex
+	 * 			is selected.
+	 */
+	void insertControlPointsAtSelected();
+	
+private:
+	// Returns a list with the iterators to the selected control points.
+	// This is based on the "transformed" working set.
+	Curve::IteratorList getSelected();
 };
 
 } // namespace entity

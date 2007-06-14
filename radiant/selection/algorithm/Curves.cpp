@@ -40,6 +40,18 @@ public:
 	}
 };
 
+// Removes the selected control points from the visited curve
+class CurveControlPointInserter :
+	public CurveInstanceProcessor
+{
+public:
+	virtual void operator() (CurveInstance& curve) {
+		if (!curve.hasEmptyCurve()) {
+			curve.insertControlPointsAtSelected();
+		}
+	}
+};
+
 /** greebo: This visits all selected curves and	calls 
  * 			the nominated Processor class using the 
  * 			CurveInstance as argument.  
@@ -85,7 +97,7 @@ void appendCurveControlPoint() {
 	}
 }
 
-void removeCurveControlPoint() {
+void removeCurveControlPoints() {
 	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent ||
 		GlobalSelectionSystem().ComponentMode() != SelectionSystem::eVertex)
 	{
@@ -99,7 +111,7 @@ void removeCurveControlPoint() {
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 	
 	if (info.entityCount > 0) {
-		UndoableCommand command("curveRemoveControlPoint");
+		UndoableCommand command("curveRemoveControlPoints");
 		
 		// The functor object 
 		CurveControlPointRemover remover;
@@ -111,7 +123,39 @@ void removeCurveControlPoint() {
 	}
 	else {
 		gtkutil::errorDialog(
-			"Can't remove curve points - no entities with curve selected.", 
+			"Can't remove curve points - no entities with curves selected.", 
+			GlobalRadiant().getMainWindow()
+		);
+	}
+}
+
+void insertCurveControlPoints() {
+	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent ||
+		GlobalSelectionSystem().ComponentMode() != SelectionSystem::eVertex)
+	{
+		gtkutil::errorDialog(
+			"Can't insert curve points - must be in vertex editing mode.", 
+			GlobalRadiant().getMainWindow()
+		);
+		return;
+	}
+	
+	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+	
+	if (info.entityCount > 0) {
+		UndoableCommand command("curveInsertControlPoints");
+		
+		// The functor object 
+		CurveControlPointInserter inserter;
+		
+		// Traverse the selection applying the functor
+		GlobalSelectionSystem().foreachSelected(
+			SelectedCurveVisitor(inserter)
+		);
+	}
+	else {
+		gtkutil::errorDialog(
+			"Can't insert curve points - no entities with curves selected.", 
 			GlobalRadiant().getMainWindow()
 		);
 	}

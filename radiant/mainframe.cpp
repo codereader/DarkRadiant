@@ -1864,7 +1864,11 @@ void MainFrame_Construct()
 	);
 	GlobalEventManager().addCommand(
 		"CurveRemoveControlPoint", 
-		FreeCaller<selection::algorithm::removeCurveControlPoint>()
+		FreeCaller<selection::algorithm::removeCurveControlPoints>()
+	);
+	GlobalEventManager().addCommand(
+		"CurveInsertControlPoint", 
+		FreeCaller<selection::algorithm::insertCurveControlPoints>()
 	);
 	
 	GlobalEventManager().addCommand("EditColourScheme", FreeCaller<EditColourScheme>());

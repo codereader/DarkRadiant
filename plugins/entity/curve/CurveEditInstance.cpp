@@ -55,6 +55,22 @@ unsigned int CurveEditInstance::numSelected() const {
     return returnValue;
 }
 
+Curve::IteratorList CurveEditInstance::getSelected() {
+	// This is the list of iterators to be removed
+	Curve::IteratorList iterators;
+	
+	ControlPoints::iterator p = _controlPointsTransformed.begin();
+    for (Selectables::const_iterator i = _selectables.begin(); i != _selectables.end(); ++i, ++p)
+    {
+    	if (i->isSelected()) {
+    		// This control vertex should be removed, add it to the list
+    		iterators.push_back(p);
+    	}
+    }
+    
+    return iterators;
+}
+
 void CurveEditInstance::removeSelectedControlPoints() {
 	unsigned int numPointsToRemove = numSelected();
 	
@@ -70,22 +86,31 @@ void CurveEditInstance::removeSelectedControlPoints() {
 	}
 	
 	// This is the list of iterators to be removed
-	Curve::IteratorList iterators;
+	Curve::IteratorList iterators = getSelected();
 	
-	ControlPoints::iterator p = _controlPointsTransformed.begin();
-    for (Selectables::iterator i = _selectables.begin(); i != _selectables.end(); ++i, ++p)
-    {
-    	if (i->isSelected()) {
-    		// This control vertex should be removed, add it to the list
-    		iterators.push_back(p);
-    	}
-    }
+	// De-select everything before removal
+    setSelected(false);
+    
+    // Now remove the points
+    _curve.removeControlPoints(iterators);
+}
+
+void CurveEditInstance::insertControlPointsAtSelected() {
+	unsigned int numPointsToRemove = numSelected();
+	
+	if (numPointsToRemove == 0) {
+		globalErrorStream() << "Can't insert any points, no control vertices selected.\n";
+		return;
+	}
+	
+	// This is the list of insert points
+	Curve::IteratorList iterators = getSelected();
     
     // De-select everything before removal
     setSelected(false);
     
     // Now remove the points
-    _curve.removeControlPoints(iterators);
+    _curve.insertControlPointsAt(iterators);
 }
 
 void CurveEditInstance::write(const std::string& key, Entity& entity) {

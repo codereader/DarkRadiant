@@ -18,6 +18,13 @@ public:
 	 * 			control points from the curve.
 	 */
 	virtual void removeSelectedControlPoints() = 0;
+	
+	/** greebo: This inserts a control point BEFORE each
+	 * 			selected control point of the curve.
+	 * 			Naturally, this doesn't work if the first vertex
+	 * 			is selected.
+	 */
+	virtual void insertControlPointsAtSelected() = 0;
 };
 
 inline CurveInstance* Instance_getCurveInstance(scene::Instance& instance) {

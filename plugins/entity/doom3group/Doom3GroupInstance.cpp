@@ -56,6 +56,17 @@ void Doom3GroupInstance::removeSelectedControlPoints() {
 	}
 }
 
+void Doom3GroupInstance::insertControlPointsAtSelected() {
+	if (m_curveCatmullRom.isSelected()) {
+		m_curveCatmullRom.insertControlPointsAtSelected();
+		m_curveCatmullRom.write(curve_CatmullRomSpline, m_contained.getEntity());
+	}
+	if (m_curveNURBS.isSelected()) {
+		m_curveNURBS.insertControlPointsAtSelected();
+		m_curveNURBS.write(curve_Nurbs, m_contained.getEntity());
+	}
+}
+
 void Doom3GroupInstance::renderSolid(Renderer& renderer, const VolumeTest& volume) const {
 	m_contained.renderSolid(renderer, volume, Instance::localToWorld(), getSelectable().isSelected());
 

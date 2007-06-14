@@ -14,7 +14,13 @@ namespace selection {
 	 * 			This works in ComponentSelection mode and for Doom3Group 
 	 * 			entities only that have	a non-zero curve attached.
 	 */
-	void removeCurveControlPoint();
+	void removeCurveControlPoints();
+	
+	/** greebo: Inserts a new control points BEFORE the selected control points 
+	 * 			of the selected curves.	This works in ComponentSelection mode 
+	 * 			and for Doom3Group entities only that have a non-zero curve attached.
+	 */
+	void insertCurveControlPoints();
 	
 	} // namespace algorithm
 } // namespace selection

@@ -28,6 +28,9 @@ public:
 
 	// Removes the given list of control points
 	virtual void removeControlPoints(IteratorList iterators);
+	
+	// Inserts control points before the specified list of iterators.  
+	virtual void insertControlPointsAt(IteratorList iterators);
 
 private:
 	// Clears the control points, weights and knots

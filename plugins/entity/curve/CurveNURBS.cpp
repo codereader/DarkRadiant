@@ -78,6 +78,15 @@ void CurveNURBS::removeControlPoints(IteratorList iterators) {
 	curveChanged();
 }
 
+void CurveNURBS::insertControlPointsAt(IteratorList iterators) {
+	// Pass the call to the base class first
+	Curve::insertControlPointsAt(iterators);
+	
+	// Do the weighting calculations and recalculate tesselation
+	doWeighting();
+	curveChanged();
+}
+
 void CurveNURBS::doWeighting() {
 	// Re-adjust the weights
 	_weights.resize(_controlPoints.size());
