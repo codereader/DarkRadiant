@@ -17,6 +17,10 @@ namespace entity {
  */
 class Curve
 {
+public:
+	// A list of iterators, used for communication with the CurveEditInstance
+	typedef std::vector<ControlPoints::iterator> IteratorList;
+
 protected:
 	ControlPoints _controlPoints;
 	ControlPoints _controlPointsTransformed;
@@ -46,6 +50,11 @@ public:
 	
 	// Appens <numPoints> elements at the end of the control point list
 	virtual void appendControlPoints(unsigned int numPoints);
+	
+	/** greebo: Removes the control points specified by the passed list of iterators.
+	 * 			Doesn't do any sanity checking, this has to be done by the calling class
+	 */  
+	virtual void removeControlPoints(IteratorList iterators);
 	
 	// Gets called after the control points have changed
 	void curveChanged();

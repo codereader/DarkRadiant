@@ -26,6 +26,9 @@ public:
 	// Writes the control point coords to the entity
 	virtual void saveToEntity(Entity& target);
 
+	// Removes the given list of control points
+	virtual void removeControlPoints(IteratorList iterators);
+
 private:
 	// Clears the control points, weights and knots
 	virtual void clearCurve();

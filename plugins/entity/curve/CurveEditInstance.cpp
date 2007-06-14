@@ -30,8 +30,7 @@ void CurveEditInstance::testSelect(Selector& selector, SelectionTest& test) {
 bool CurveEditInstance::isSelected() const {
     for(Selectables::const_iterator i = _selectables.begin(); i != _selectables.end(); ++i)
     {
-      if((*i).isSelected())
-      {
+      if (i->isSelected()) {
         return true;
       }
     }
@@ -39,10 +38,54 @@ bool CurveEditInstance::isSelected() const {
 }
 
 void CurveEditInstance::setSelected(bool selected) {
-    for(Selectables::iterator i = _selectables.begin(); i != _selectables.end(); ++i)
+	for(Selectables::iterator i = _selectables.begin(); i != _selectables.end(); ++i) {
+		i->setSelected(selected);
+	}
+}
+
+unsigned int CurveEditInstance::numSelected() const {
+	unsigned int returnValue = 0;
+	
+	for (Selectables::const_iterator i = _selectables.begin(); i != _selectables.end(); ++i) {
+		if (i->isSelected()) {
+			returnValue++;
+		}
+	}
+	
+    return returnValue;
+}
+
+void CurveEditInstance::removeSelectedControlPoints() {
+	unsigned int numPointsToRemove = numSelected();
+	
+	if (numPointsToRemove == 0) {
+		globalErrorStream() << "Can't remove any points, no control vertices selected.\n";
+		return;
+	}
+	
+	if (_controlPoints.size() - numPointsToRemove < 3) {
+		// Can't remove so many points
+		globalErrorStream() << "Can't remove so many points, curve would end up with less than 3 points.\n";
+		return;
+	}
+	
+	// This is the list of iterators to be removed
+	Curve::IteratorList iterators;
+	
+	ControlPoints::iterator p = _controlPointsTransformed.begin();
+    for (Selectables::iterator i = _selectables.begin(); i != _selectables.end(); ++i, ++p)
     {
-      (*i).setSelected(selected);
+    	if (i->isSelected()) {
+    		// This control vertex should be removed, add it to the list
+    		iterators.push_back(p);
+    	}
     }
+    
+    // De-select everything before removal
+    setSelected(false);
+    
+    // Now remove the points
+    _curve.removeControlPoints(iterators);
 }
 
 void CurveEditInstance::write(const std::string& key, Entity& entity) {

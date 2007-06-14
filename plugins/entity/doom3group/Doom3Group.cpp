@@ -312,10 +312,6 @@ void Doom3Group::appendControlPoints(unsigned int numPoints) {
 	}
 }
 
-void Doom3Group::removeSelectedControlPoints() {
-	std::cout << "Removing control points...\n";
-}
-
 void Doom3Group::construct() {
 	default_rotation(m_rotation);
 

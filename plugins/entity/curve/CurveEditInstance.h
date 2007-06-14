@@ -60,6 +60,7 @@ public:
 
 	bool isSelected() const;
 	void setSelected(bool selected);
+	unsigned int numSelected() const;
 
 	void write(const std::string& key, Entity& entity);
 
@@ -77,6 +78,9 @@ public:
 
 	void curveChanged();
 	typedef MemberCaller<CurveEditInstance, &CurveEditInstance::curveChanged> CurveChangedCaller;
+	
+	// As the name states, removes the selected control points
+	void removeSelectedControlPoints();
 };
 
 } // namespace entity
