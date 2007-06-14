@@ -211,6 +211,12 @@
 			<toggletoolbutton name="clipper" action="ToggleClipper" tooltip="Clipper" icon="view_clipper.png"/>
 		<separator/>
 			<toolbutton name="capcurrentcurve" action="CapCurrentCurve" tooltip="Put caps on the current patch" icon="curve_cap.png"/>
+		<separator/>
+			<toolbutton name="curvecreate" action="CreateCurveNURBS" tooltip="Creates a NURBS curve" icon="curve_create.png"/>
+			<toolbutton name="curveconvert" action="CurveConvertType" tooltip="Convert the selected curve (NURBS &lt;-&gt; CatmullRom)" icon="curve_convert.png"/>
+			<toolbutton name="curveappendpoint" action="CurveAppendControlPoint" tooltip="Appends a control point to the selected curves" icon="curve_append_point.png"/>
+			<toolbutton name="curveinsertpoint" action="CurveInsertControlPoint" tooltip="Inserts a curve control point before the selected ones" icon="curve_insert_points.png"/>
+			<toolbutton name="curveremovepoint" action="CurveRemoveControlPoint" tooltip="Removes the selected curve control points" icon="curve_remove_points.png"/>
 	</toolbar>
 	<toolbar name="texture" align="horizontal">
 		<toolbutton name="flush" action="RefreshShaders" tooltip="Flush &amp; Reload Shaders" icon="texwindow_flushandreload.png"/>
