@@ -1,0 +1,82 @@
+#ifndef CURVEEDITINSTANCE_H_
+#define CURVEEDITINSTANCE_H_
+
+#include "Curve.h"
+#include "selectionlib.h"
+
+namespace entity {
+	
+	const Colour4b colour_vertex(0, 255, 0, 255);
+	const Colour4b colour_selected(0, 0, 255, 255);
+	
+	struct CurveShaders {
+		ShaderPtr controlsShader;
+		ShaderPtr selectedShader;
+	};
+
+/** greebo: This class is wrapped around a Curve class to manage 
+ * 			all the selection and transformation operations. 
+ */
+class CurveEditInstance
+{
+public:
+	class ControlPointFunctor
+	{
+	public:
+		virtual void operator()(Vector3& point, const Vector3& original) = 0;
+	};
+	
+	class ControlPointConstFunctor
+	{
+	public:
+		virtual void operator()(const Vector3& point, const Vector3& original) = 0;
+	};
+	
+private:
+	SelectionChangeCallback _selectionChanged;
+	ControlPoints& _controlPointsTransformed;
+	const ControlPoints& _controlPoints;
+	typedef std::vector<ObservedSelectable> Selectables;
+	Selectables _selectables;
+
+	RenderablePointVector m_controlsRender;
+	mutable RenderablePointVector m_selectedRender;
+
+public:
+	typedef Static<CurveShaders> StaticShaders;
+
+	CurveEditInstance(ControlPoints& controlPointsTransformed, //  The working set
+  			const ControlPoints& controlPoints,	// the unchanged reference control points 
+  			const SelectionChangeCallback& selectionChanged);
+
+	// Traversal functions, these cycle through all (selected) control points
+	void forEach(ControlPointFunctor& functor);
+	void forEachSelected(ControlPointFunctor& functor);
+	void forEachSelected(ControlPointConstFunctor& functor) const;
+	
+	void testSelect(Selector& selector, SelectionTest& test);
+
+	bool isSelected() const;
+	void setSelected(bool selected);
+
+	void write(const char* key, Entity& entity);
+
+	// Transforms the (selected) control points
+	void transform(const Matrix4& matrix, bool selectedOnly = true);
+	
+	// Snaps the selected control points to the grid
+	void snapto(float snap);
+
+	void updateSelected() const;
+  
+	void renderComponents(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
+
+	void renderComponentsSelected(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
+
+	void curveChanged();
+	typedef MemberCaller<CurveEditInstance, &CurveEditInstance::curveChanged> CurveChangedCaller;
+};
+
+} // namespace entity
+
+#endif /*CURVEEDITINSTANCE_H_*/

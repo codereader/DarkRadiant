@@ -276,6 +276,7 @@ entity_src = [
 	'curve/Curve.cpp',
 	'curve/CurveNURBS.cpp',
 	'curve/CurveCatmullRom.cpp',
+	'curve/CurveEditInstance.cpp',
 	'light/Light.cpp',
 	'light/Renderables.cpp',
 	'light/LightInstance.cpp',

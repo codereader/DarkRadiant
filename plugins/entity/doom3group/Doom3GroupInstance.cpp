@@ -1,6 +1,7 @@
 #include "Doom3GroupInstance.h"
 
 #include "../curve/CurveCatmullRom.h"
+#include "../curve/CurveControlPointFunctors.h"
 
 namespace entity {
 
@@ -19,8 +20,12 @@ Doom3GroupInstance::Doom3GroupInstance(const scene::Path& path,
 	_originInstance(VertexInstance(m_contained.getOrigin(), SelectionChangedComponentCaller(*this)))
 {
 	m_contained.instanceAttach(Instance::path());
-	m_contained.m_curveNURBSChanged = m_contained.m_curveNURBS.connect(CurveEdit::CurveChangedCaller(m_curveNURBS));
-	m_contained.m_curveCatmullRomChanged = m_contained.m_curveCatmullRom.connect(CurveEdit::CurveChangedCaller(m_curveCatmullRom));
+	m_contained.m_curveNURBSChanged = m_contained.m_curveNURBS.connect(
+		CurveEditInstance::CurveChangedCaller(m_curveNURBS)
+	);
+	m_contained.m_curveCatmullRomChanged = m_contained.m_curveCatmullRom.connect(
+		CurveEditInstance::CurveChangedCaller(m_curveCatmullRom)
+	);
 
 	StaticRenderableConnectionLines::instance().attach(*this);
 }
@@ -119,8 +124,11 @@ void Doom3GroupInstance::transformComponents(const Matrix4& matrix) {
 
 const AABB& Doom3GroupInstance::getSelectedComponentsBounds() const {
 	m_aabb_component = AABB();
-	m_curveNURBS.forEachSelected(ControlPointAddBounds(m_aabb_component));
-	m_curveCatmullRom.forEachSelected(ControlPointAddBounds(m_aabb_component));
+	
+	ControlPointBoundsAdder boundsAdder(m_aabb_component);
+	m_curveNURBS.forEachSelected(boundsAdder);
+	m_curveCatmullRom.forEachSelected(boundsAdder);
+	
 	if (_originInstance.isSelected()) {
 		m_aabb_component.includePoint(_originInstance.getVertex());
 	}
