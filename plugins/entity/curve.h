@@ -381,7 +381,7 @@ public:
 
 
 
-const int NURBS_degree = 3;
+/*const int NURBS_degree = 3;
 
 class NURBSCurve
 {
@@ -524,7 +524,7 @@ public:
     curveChanged();
   }
   typedef MemberCaller1<NURBSCurve, const std::string&, &NURBSCurve::curveChanged> CurveChangedCaller;
-};
+};*/
 
 /*class CatmullRomSpline
 {
@@ -644,7 +644,7 @@ public:
   typedef MemberCaller1<CatmullRomSpline, const std::string&, &CatmullRomSpline::curveChanged> CurveChangedCaller;
 };*/
 
-const char* const curve_Nurbs = "curve_Nurbs";
+//const char* const curve_Nurbs = "curve_Nurbs";
 //const char* const curve_CatmullRomSpline = "curve_CatmullRomSpline";
 
 

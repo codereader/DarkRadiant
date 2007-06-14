@@ -4,7 +4,6 @@ namespace entity {
 
 	namespace {
 		const int NURBS_degree = 3;
-		const std::string curve_Nurbs = "curve_Nurbs";
 	}
 
 CurveNURBS::CurveNURBS(const Callback& callback) :

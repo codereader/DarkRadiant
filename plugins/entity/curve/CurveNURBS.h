@@ -4,6 +4,10 @@
 #include "Curve.h"
 
 namespace entity {
+	
+	namespace {
+		const std::string curve_Nurbs = "curve_Nurbs";
+	}
 
 class CurveNURBS :
 	public Curve

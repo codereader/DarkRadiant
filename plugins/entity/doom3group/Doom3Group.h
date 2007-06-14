@@ -18,6 +18,7 @@
 #include "../modelskinkey.h"
 #include "../Doom3Entity.h"
 #include "../curve/CurveCatmullRom.h"
+#include "../curve/CurveNURBS.h"
 
 namespace entity {
 
@@ -66,7 +67,7 @@ class Doom3Group :
 	scene::Traversable* m_traversable;
 	
 public:
-	NURBSCurve m_curveNURBS;
+	CurveNURBS m_curveNURBS;
 	SignalHandlerId m_curveNURBSChanged;
 	CurveCatmullRom m_curveCatmullRom;
 	SignalHandlerId m_curveCatmullRomChanged;

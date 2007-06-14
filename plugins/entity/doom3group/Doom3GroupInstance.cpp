@@ -10,8 +10,8 @@ Doom3GroupInstance::Doom3GroupInstance(const scene::Path& path,
 	TargetableInstance(path, parent, contained.getEntity(), *this),
 	TransformModifier(Doom3Group::TransformChangedCaller(contained), ApplyTransformCaller(*this)),
 	m_contained(contained),
-	m_curveNURBS(m_contained.m_curveNURBS.m_controlPointsTransformed, 
-				 m_contained.m_curveNURBS.m_controlPoints,
+	m_curveNURBS(m_contained.m_curveNURBS.getTransformedControlPoints(), 
+				 m_contained.m_curveNURBS.getControlPoints(),
 				 SelectionChangedComponentCaller(*this)),
 	m_curveCatmullRom(m_contained.m_curveCatmullRom.getTransformedControlPoints(),
 					  m_contained.m_curveCatmullRom.getControlPoints(), 
@@ -34,7 +34,7 @@ Doom3GroupInstance::~Doom3GroupInstance() {
 }
 
 bool Doom3GroupInstance::hasEmptyCurve() {
-	return m_contained.m_curveNURBS.m_controlPoints.size() == 0 && 
+	return m_contained.m_curveNURBS.isEmpty() && 
 		   m_contained.m_curveCatmullRom.isEmpty();
 }
 
@@ -130,7 +130,7 @@ const AABB& Doom3GroupInstance::getSelectedComponentsBounds() const {
 void Doom3GroupInstance::snapComponents(float snap) {
 	if (m_curveNURBS.isSelected()) {
 		m_curveNURBS.snapto(snap);
-		m_curveNURBS.write(curve_Nurbs, m_contained.getEntity());
+		m_curveNURBS.write(curve_Nurbs.c_str(), m_contained.getEntity());
 	}
 	if (m_curveCatmullRom.isSelected()) {
 		m_curveCatmullRom.snapto(snap);
