@@ -80,7 +80,7 @@ EntityClassChooser::EntityClassChooser()
 	gtk_box_pack_start(GTK_BOX(vbx), createTreeView(), TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), createUsagePanel(), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), createButtonPanel(), FALSE, FALSE, 0);
-	gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
+	gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
 
 	// Signals
@@ -197,15 +197,18 @@ GtkWidget* EntityClassChooser::createTreeView() {
 	// Construct the tree view widget with the now-populated model
 
 	_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_treeView), FALSE);
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_treeView), TRUE);
 
 	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
 	gtk_tree_selection_set_mode(_selection, GTK_SELECTION_BROWSE);
 	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(callbackSelectionChanged), this);
 
 	// Single column with icon and name
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), 
-		gtkutil::IconTextColumn("Entity", NAME_COLUMN, ICON_COLUMN));				
+	GtkTreeViewColumn* col = 
+		gtkutil::IconTextColumn("Classname", NAME_COLUMN, ICON_COLUMN);
+	gtk_tree_view_column_set_sort_column_id(col, NAME_COLUMN);
+	
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), col);				
 
 	// Pack treeview into a scrolled frame and return
 	return gtkutil::ScrolledFrame(_treeView);
