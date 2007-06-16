@@ -106,7 +106,12 @@ public:
 	class Observer 
 	{
 	public:
-		virtual void selectionChanged(scene::Instance& instance) = 0;
+		/** greebo: This gets called upon selection change.
+		 * 	
+		 * @instance: The instance that got affected (this may also be the parent brush of a FaceInstance).
+		 * @isComponent: is TRUE if the changed selectable is a component (like a FaceInstance, VertexInstance).
+		 */
+		virtual void selectionChanged(scene::Instance& instance, bool isComponent) = 0;
 	};
 	
 	virtual void addObserver(Observer* observer) = 0;

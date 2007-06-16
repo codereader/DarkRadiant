@@ -243,7 +243,7 @@ void TexTool::rescanSelection() {
 	recalculateVisibleTexSpace();
 }
 
-void TexTool::selectionChanged(scene::Instance& instance) {
+void TexTool::selectionChanged(scene::Instance& instance, bool isComponent) {
 	rescanSelection();
 	draw();
 }

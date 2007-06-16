@@ -53,8 +53,12 @@ GroupCycle::GroupCycle() :
 	rescanSelection();
 }
 
-void GroupCycle::selectionChanged(scene::Instance& instance) {
-	rescanSelection();		
+void GroupCycle::selectionChanged(scene::Instance& instance, bool isComponent) {
+	// greebo: Only rescan the selection for non-component changes, otherwise the list
+	// will get cleared as soon as the face dragresize manipulator gets active
+	if (!isComponent) {
+		rescanSelection();
+	}		
 }
 
 void GroupCycle::rescanSelection() {

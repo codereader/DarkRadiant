@@ -184,7 +184,7 @@ public:
 	static void destroyStatic();
 	
 private:
-	void notifyObservers(scene::Instance& instance);
+	void notifyObservers(scene::Instance& instance, bool isComponent);
 };
 
 #endif /*RADIANTSELECTIONSYSTEM_H_*/
