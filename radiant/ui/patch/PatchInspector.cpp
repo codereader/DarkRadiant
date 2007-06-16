@@ -353,7 +353,7 @@ void PatchInspector::toggleWindow() {
 	}
 }
 
-void PatchInspector::selectionChanged(scene::Instance& instance) {
+void PatchInspector::selectionChanged(scene::Instance& instance, bool isComponent) {
 	rescanSelection();
 }
 

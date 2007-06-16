@@ -282,7 +282,7 @@ inline void EntityInspector::queueDraw() {
 }
 
 // Selection changed callback
-void EntityInspector::selectionChanged(scene::Instance& instance) {
+void EntityInspector::selectionChanged(scene::Instance& instance, bool isComponent) {
 	getInstance().queueDraw();
 }
 

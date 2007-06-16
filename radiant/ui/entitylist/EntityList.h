@@ -58,7 +58,7 @@ private:
 	/** greebo: SelectionSystem::Observer implementation.
 	 * 			Gets notified as soon as the selection is changed.
 	 */
-	void selectionChanged(scene::Instance& instance);
+	void selectionChanged(scene::Instance& instance, bool isComponent);
 
 	/** greebo: Toggles the visibility of this dialog
 	 */

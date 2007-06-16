@@ -335,7 +335,7 @@ void LightInspector::toggle() {
 	}
 }
 
-void LightInspector::selectionChanged(scene::Instance& instance) {
+void LightInspector::selectionChanged(scene::Instance& instance, bool isComponent) {
 	update();
 }
 

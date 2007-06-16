@@ -250,7 +250,7 @@ void TransformDialog::update() {
 	gtk_widget_set_sensitive(GTK_WIDGET(_scaleTable), scaleSensitive);
 }
 
-void TransformDialog::selectionChanged(scene::Instance& instance) {
+void TransformDialog::selectionChanged(scene::Instance& instance, bool isComponent) {
 	update();
 }
 

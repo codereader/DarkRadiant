@@ -96,14 +96,14 @@ void RadiantSelectionSystem::removeObserver(Observer* observer) {
 	}
 }
 
-void RadiantSelectionSystem::notifyObservers(scene::Instance& instance) {
+void RadiantSelectionSystem::notifyObservers(scene::Instance& instance, bool isComponent) {
 	
 	// Cycle through the list of observers and call the moved method
 	for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); i++) {
 		Observer* observer = *i;
 		
 		if (observer != NULL) {
-			observer->selectionChanged(instance);
+			observer->selectionChanged(instance, isComponent);
 		}
 	}
 }
@@ -260,7 +260,8 @@ void RadiantSelectionSystem::onSelectedChanged(scene::Instance& instance, const 
 		_selection.erase(instance);
 	}
 
-	notifyObservers(instance);
+	// Notify observers, FALSE = primitive selection change
+	notifyObservers(instance, false);
 
 	// Check if the number of selected primitives in the list matches the value of the selection counter
 	ASSERT_MESSAGE(_selection.size() == _countPrimitive, "selection-tracking error");
@@ -283,7 +284,8 @@ void RadiantSelectionSystem::onComponentSelection(scene::Instance& instance, con
 		_componentSelection.erase(instance);
 	}
 
-	notifyObservers(instance);
+	// Notify observers, TRUE => this is a component selection change
+	notifyObservers(instance, true);
 
 	// Check if the number of selected components in the list matches the value of the selection counter 
 	ASSERT_MESSAGE(_componentSelection.size() == _countComponent, "selection-tracking error");

@@ -554,7 +554,7 @@ void SurfaceInspector::update() {
 }
 
 // Gets notified upon selection change
-void SurfaceInspector::selectionChanged(scene::Instance& instance) {
+void SurfaceInspector::selectionChanged(scene::Instance& instance, bool isComponent) {
 	update();
 }
 

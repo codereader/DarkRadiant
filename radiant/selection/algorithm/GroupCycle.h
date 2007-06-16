@@ -29,7 +29,7 @@ public:
 	/** greebo: The callback that gets invoked upon selectionChange
 	 * by the RadiantSelectionSystem
 	 */
-	void selectionChanged(scene::Instance& instance);
+	void selectionChanged(scene::Instance& instance, bool isComponent);
 	
 	/** greebo: Rescans the current selection and populates the Vector of candidates
 	 */

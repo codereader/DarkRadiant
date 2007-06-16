@@ -103,7 +103,7 @@ private:
 public:
 
 	// Gets called by the SelectionSystem when the selection is changed
-	void selectionChanged(scene::Instance& instance);
+	void selectionChanged(scene::Instance& instance, bool isComponent);
 
 	/** Toggle the visibility of the dialog instance, constructing it if necessary.
 	 * 

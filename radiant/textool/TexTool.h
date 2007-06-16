@@ -91,7 +91,7 @@ public:
 	/** greebo: SelectionSystem::Observer implementation. Gets called by
 	 * the SelectionSystem upon selection change to allow updating.
 	 */
-	void selectionChanged(scene::Instance& instance);
+	void selectionChanged(scene::Instance& instance, bool isComponent);
 	
 	/** greebo: Updates the GL window
 	 */
