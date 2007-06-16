@@ -69,8 +69,10 @@ void ShaderClipboard::setSource(SelectionTest& test) {
 void ShaderClipboard::setSource(std::string shader) {
 	_source.clear();
 	_source.shader = shader;
+	
 	// Don't update the media browser without loopback guards 
-	// if this is desired, one will have to implement them 
+	// if this is desired, one will have to implement them
+	updateStatusText(); 
 }
 
 void ShaderClipboard::setSource(Patch& sourcePatch) {
