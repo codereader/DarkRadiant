@@ -72,7 +72,7 @@ inline VertexPointer vertexpointer_arbitrarymeshvertex(const ArbitraryMeshVertex
 }
 
 // generic renderable triangle surface
-class Surface : 
+class MD5Surface : 
 public OpenGLRenderable
 {
 public:
@@ -106,12 +106,12 @@ private:
 public:
 
 	// Constructor
-	Surface()
+	MD5Surface()
     : _shaderName("")
 	{ }
 	
 	// Destructor. Release the shader
-	~Surface() {
+	~MD5Surface() {
 		releaseShader();
 	}
 
@@ -153,7 +153,7 @@ public:
 
 
 
-    for(Surface::indices_t::iterator i = m_indices.begin(); i != m_indices.end(); i += 3)
+    for(MD5Surface::indices_t::iterator i = m_indices.begin(); i != m_indices.end(); i += 3)
     {
 			ArbitraryMeshVertex& a = m_vertices[*(i + 0)];
 			ArbitraryMeshVertex& b = m_vertices[*(i + 1)];
@@ -162,7 +162,7 @@ public:
       ArbitraryMeshTriangle_sumTangents(a, b, c);
     }
 
-    for(Surface::vertices_t::iterator i = m_vertices.begin(); i != m_vertices.end(); ++i)
+    for(MD5Surface::vertices_t::iterator i = m_vertices.begin(); i != m_vertices.end(); ++i)
     {
       vector3_normalise(reinterpret_cast<Vector3&>((*i).tangent));
       vector3_normalise(reinterpret_cast<Vector3&>((*i).bitangent));
@@ -240,7 +240,7 @@ class MD5Model :
 public Cullable,
 public Bounded
 {
-  typedef std::vector<Surface*> surfaces_t;
+  typedef std::vector<MD5Surface*> surfaces_t;
   surfaces_t m_surfaces;
 
   AABB m_aabb_local;
@@ -270,9 +270,9 @@ public:
     return m_surfaces.size();
   }
 
-  Surface& newSurface()
+  MD5Surface& newSurface()
   {
-    m_surfaces.push_back(new Surface);
+    m_surfaces.push_back(new MD5Surface);
     return *m_surfaces.back();
   }
   void updateAABB()
@@ -306,7 +306,7 @@ public:
   }
 };
 
-inline void Surface_addLight(const Surface& surface, VectorLightList& lights, const Matrix4& localToWorld, const RendererLight& light)
+inline void Surface_addLight(const MD5Surface& surface, VectorLightList& lights, const Matrix4& localToWorld, const RendererLight& light)
 {
   if(light.testAABB(aabb_for_oriented_aabb(surface.localAABB(), localToWorld)))
   {
@@ -505,7 +505,7 @@ public:
 };
 
 
-inline void Surface_constructQuad(Surface& surface, const Vector3& a, const Vector3& b, const Vector3& c, const Vector3& d, const Vector3& normal)
+inline void Surface_constructQuad(MD5Surface& surface, const Vector3& a, const Vector3& b, const Vector3& c, const Vector3& d, const Vector3& normal)
 {
   surface.vertices().push_back(
     ArbitraryMeshVertex(
@@ -539,7 +539,7 @@ inline void Surface_constructQuad(Surface& surface, const Vector3& a, const Vect
 
 inline void Model_constructNull(MD5Model& model)
 {
-  Surface& surface = model.newSurface();
+  MD5Surface& surface = model.newSurface();
 
   AABB aabb(Vector3(0, 0, 0), Vector3(8, 8, 8));
 
