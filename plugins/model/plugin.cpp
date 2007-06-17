@@ -28,6 +28,7 @@ typedef unsigned char byte;
 #include <algorithm>
 #include <list>
 
+#include "iarchive.h"
 #include "iscenegraph.h"
 #include "irender.h"
 #include "iselection.h"
@@ -113,15 +114,19 @@ public:
 		// Open an ArchiveFile to load
 		ArchiveFile* file = GlobalFileSystem().openFile(name.c_str());
 
+		model::IModelPtr rv;
 		if (file != NULL) {
-			// Load the model and return the RenderablePtr
-			return loadIModel(m_module, *file);
+			rv = loadIModel(m_module, *file);
 		}
 		else {
 			globalErrorStream() << "Failed to load model " << name.c_str() 
 								<< "\n";
-			return model::IModelPtr();
+			rv = model::IModelPtr();
 		}
+		
+		// Release the ArchiveFile and return the IModelPtr
+		file->release();
+		return rv;
 	}
   
 };
