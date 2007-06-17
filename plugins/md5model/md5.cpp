@@ -307,7 +307,7 @@ bool MD5Model_parse(MD5Model& model, parser::DefTokeniser& tok)
 		tok.assertNextToken("{");
 		
 		// Construct the surface for this mesh
-		Surface& surface = model.newSurface();
+		MD5Surface& surface = model.newSurface();
 
 		// Get the shader name
 		tok.assertNextToken("shader");
@@ -420,7 +420,7 @@ bool MD5Model_parse(MD5Model& model, parser::DefTokeniser& tok)
       surface.indices().insert(RenderIndex(tri.c));
     }
 
-    for(Surface::indices_t::iterator j = surface.indices().begin(); j != surface.indices().end(); j += 3)
+    for(MD5Surface::indices_t::iterator j = surface.indices().begin(); j != surface.indices().end(); j += 3)
     {
 		ArbitraryMeshVertex& a = surface.vertices()[*(j + 0)];
 		ArbitraryMeshVertex& b = surface.vertices()[*(j + 1)];
@@ -431,7 +431,7 @@ bool MD5Model_parse(MD5Model& model, parser::DefTokeniser& tok)
 		c.normal += weightedNormal;
     }
 
-    for(Surface::vertices_t::iterator j = surface.vertices().begin(); j != surface.vertices().end(); ++j)
+    for(MD5Surface::vertices_t::iterator j = surface.vertices().begin(); j != surface.vertices().end(); ++j)
     {
     	j->normal = Normal3f(j->normal.getNormalised());
       //vector3_normalise(reinterpret_cast<Vector3&>((*j).normal));
