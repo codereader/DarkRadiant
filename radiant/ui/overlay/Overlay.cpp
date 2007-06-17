@@ -27,8 +27,7 @@ Overlay::Overlay()
 	_panWithXYView(GlobalRegistry().get(RKEY_OVERLAY_PAN_WITH_XY) == "1"),
 	_keepProportions(GlobalRegistry().get(RKEY_OVERLAY_PROPORTIONAL) == "1"),
 	_translationX(GlobalRegistry().getFloat(RKEY_OVERLAY_TRANSLATIONX)),
-	_translationY(GlobalRegistry().getFloat(RKEY_OVERLAY_TRANSLATIONY)),
-	_imageGDKModule("GDK")
+	_translationY(GlobalRegistry().getFloat(RKEY_OVERLAY_TRANSLATIONY))
 {
 	// Watch the relevant registry keys		
 	GlobalRegistry().addKeyObserver(this, RKEY_OVERLAY_VISIBLE);
@@ -46,6 +45,45 @@ Overlay::Overlay()
 Overlay& Overlay::getInstance() {
 	static Overlay _instance;
 	return _instance;		
+}
+
+void Overlay::show(bool shown) {
+	_visible = shown;
+}
+
+void Overlay::setTransparency(const float& transparency) {
+	_transparency = transparency;
+	
+	// Check for valid bounds (0.0f ... 1.0f)
+	if (_transparency > 1.0f) {
+		_transparency = 1.0f;
+	}
+	else if (_transparency < 0.0f) {
+		_transparency = 0.0f;
+	}
+}
+
+void Overlay::setImage(const std::string& imageName) {
+	// Do nothing, if the current image is the same
+	if (imageName == _imageName) {
+		return;
+	}
+	
+	_imageName = imageName;
+	
+	// Set the visibility flag to zero, if no imageName is specified
+	if (_imageName == "") {
+		_visible = false;
+	}
+	
+	captureTexture();
+}
+
+void Overlay::captureTexture() {
+	if (_imageName != "") {
+		// Load the image using the GDK image module
+		_texture = GlobalShaderSystem().loadTextureFromFile(_imageName, "GDK");
+	}
 }
 
 // Main draw function

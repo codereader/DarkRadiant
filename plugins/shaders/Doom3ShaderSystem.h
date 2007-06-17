@@ -78,7 +78,8 @@ public:
 	/* greebo: Loads an image from disk and creates a basic shader
 	 * object out of it (i.e. only diffuse and editor image are non-empty).
 	 */
-	TexturePtr loadTextureFromFile(const std::string& filename);
+	TexturePtr loadTextureFromFile(const std::string& filename,
+								   const std::string& moduleNames = "GDK");
 
 	ShaderLibrary& getLibrary();
 	GLTextureManager& getTextureManager();

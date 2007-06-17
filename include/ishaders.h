@@ -277,8 +277,12 @@ public:
 	/* greebo: This is a substitution for the "old" TexturesCache method
 	 * used to load an image from a file to graphics memory for arbitrary
 	 * use (e.g. the Overlay module).
+	 * 
+	 * @filename: The absolute filename.
+	 * @moduleNames: The space-separated list of image modules (default is "GDK")
 	 */
-	virtual TexturePtr loadTextureFromFile(const std::string& filename) = 0;
+	virtual TexturePtr loadTextureFromFile(const std::string& filename,
+											const std::string& moduleNames) = 0;
 };
 
 #include "modulesystem.h"

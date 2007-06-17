@@ -46,9 +46,6 @@ private:
 
 	// The loaded texture
 	TexturePtr _texture;
-	
-	// The instance of the GDKModule loader
-	ImageLoaderModuleRef _imageGDKModule;
 
 private:
 
@@ -56,16 +53,10 @@ private:
 	Overlay();
 
 	// Capture the texture	
-	void captureTexture() {
-		if (_imageName != "") {
-			_texture = GlobalShaderSystem().loadTextureFromFile(_imageName);
-		}
-	}
+	void captureTexture();
 
 	// Toggle image visibility
-	void show(bool shown) {
-		_visible = shown;
-	}
+	void show(bool shown);
 	
 public:
 	
@@ -75,33 +66,9 @@ public:
 	static Overlay& getInstance();
 	
 	// Sets the name of the image that should be loaded
-	void setImage(const std::string& imageName) {
-		// Do nothing, if the current image is the same
-		if (imageName == _imageName) {
-			return;
-		}
-		
-		_imageName = imageName;
-		
-		// Set the visibility flag to zero, if no imageName is specified
-		if (_imageName == "") {
-			_visible = false;
-		}
-		
-		captureTexture();
-	}
+	void setImage(const std::string& imageName);
 	
-	void setTransparency(const float& transparency) {
-		_transparency = transparency;
-		
-		// Check for valid bounds (0.0f ... 1.0f)
-		if (_transparency > 1.0f) {
-			_transparency = 1.0f;
-		}
-		else if (_transparency < 0.0f) {
-			_transparency = 0.0f;
-		}
-	}
+	void setTransparency(const float& transparency);
 	
 	// Sets the image scale to the given float (1.0f is no scaling)
 	void setImageScale(float scale);
