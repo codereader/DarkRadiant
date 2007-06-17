@@ -102,7 +102,8 @@ void ShaderFileLoader::parseShaderFile(const std::string& inStr,
 ShaderTemplatePtr ShaderFileLoader::parseShaderName(std::string& rawName) 
 {
 	boost::algorithm::replace_all(rawName, "\\", "/"); // use forward slashes
-	boost::algorithm::to_lower(rawName); // use lowercase
+	// greebo: Don't use lowercase as this might screw the shader lookup
+	//boost::algorithm::to_lower(rawName); // use lowercase
 
 	// Remove the extension if present
 	size_t dotPos = rawName.rfind(".");
