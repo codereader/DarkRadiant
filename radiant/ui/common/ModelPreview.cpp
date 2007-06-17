@@ -132,7 +132,7 @@ void ModelPreview::setModel(const std::string& model) {
 	}
 
 	// Reset camera if the model has changed
-	if (model != _lastModel) {
+	if (_model && model != _lastModel) {
 		// Reset the rotation
 		_rotation = Matrix4::getIdentity();
 		
