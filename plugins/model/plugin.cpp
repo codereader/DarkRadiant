@@ -108,7 +108,6 @@ public:
   }
   
   	// Load the given model from the VFS path
-  	
 	model::IModelPtr loadModelFromPath(const std::string& name) {
 		
 		// Open an ArchiveFile to load
@@ -117,6 +116,11 @@ public:
 		if (file != NULL) {
 			// Load the model and return the RenderablePtr
 			return loadIModel(m_module, *file);
+		}
+		else {
+			globalErrorStream() << "Failed to load model " << name.c_str() 
+								<< "\n";
+			return model::IModelPtr();
 		}
 	}
   
