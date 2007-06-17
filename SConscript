@@ -224,7 +224,8 @@ model_env.Depends(model_lib, math)
 model_env.Install(INSTALL + '/modules', model_lib)
 
 md5model_env = module_env.Copy()
-md5model_lst=build_list('plugins/md5model', 'md5model.cpp md5.cpp')
+md5model_lst=build_list('plugins/md5model', 
+						'md5model.cpp md5.cpp MD5Surface.cpp')
 md5model_env.Append(LIBS = ['math'])
 md5model_lib = md5model_env.SharedLibrary(target='md5model', source=md5model_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
 md5model_env.Depends(md5model_lib, math)

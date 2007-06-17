@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_MODEL_H)
 #define INCLUDED_MODEL_H
 
+#include "MD5Surface.h"
+
 #include "cullable.h"
 #include "renderable.h"
 #include "selectable.h"
@@ -66,181 +68,12 @@ public:
   }
 };
 
-inline VertexPointer vertexpointer_arbitrarymeshvertex(const ArbitraryMeshVertex* array)
-{
-  return VertexPointer(VertexPointer::pointer(&array->vertex), sizeof(ArbitraryMeshVertex));
-}
-
-// generic renderable triangle surface
-class MD5Surface : 
-public OpenGLRenderable
-{
-public:
-  typedef VertexBuffer<ArbitraryMeshVertex> vertices_t;
-  typedef IndexBuffer indices_t;
-private:
-
-  AABB m_aabb_local;
-  
-	// Shader name
-	std::string _shaderName;
-	
-	// Shader object
-	ShaderPtr _shader;
-
-  vertices_t m_vertices;
-  indices_t m_indices;
-
-private:
-
-	// Capture the named shader
-	void captureShader() {
-		_shader = GlobalShaderCache().capture(_shaderName);
-	}
-	
-	// Release the named shader
-	void releaseShader() {
-		_shader = ShaderPtr();
-	}
-
-public:
-
-	// Constructor
-	MD5Surface()
-    : _shaderName("")
-	{ }
-	
-	// Destructor. Release the shader
-	~MD5Surface() {
-		releaseShader();
-	}
-
-  vertices_t& vertices()
-  {
-    return m_vertices;
-  }
-  indices_t& indices()
-  {
-    return m_indices;
-  }
-
-	// Set the shader name
-	void setShader(const std::string& name) {
-		releaseShader();
-		_shaderName = name;
-		captureShader();
-	}
-
-	/**
-	 * Get the shader name.
-	 */
-	std::string getShader() const {
-		return _shaderName;
-	}
-	
-	/**
-	 * Get the Shader object.
-	 */
-	ShaderPtr getState() const {
-		return _shader;
-	}
-	
-  void updateAABB()
-  {
-    m_aabb_local = AABB();
-    for(vertices_t::iterator i = m_vertices.begin(); i != m_vertices.end(); ++i)
-      m_aabb_local.includePoint(reinterpret_cast<const Vector3&>(i->vertex));
-
-
-
-    for(MD5Surface::indices_t::iterator i = m_indices.begin(); i != m_indices.end(); i += 3)
-    {
-			ArbitraryMeshVertex& a = m_vertices[*(i + 0)];
-			ArbitraryMeshVertex& b = m_vertices[*(i + 1)];
-			ArbitraryMeshVertex& c = m_vertices[*(i + 2)];
-
-      ArbitraryMeshTriangle_sumTangents(a, b, c);
-    }
-
-    for(MD5Surface::vertices_t::iterator i = m_vertices.begin(); i != m_vertices.end(); ++i)
-    {
-      vector3_normalise(reinterpret_cast<Vector3&>((*i).tangent));
-      vector3_normalise(reinterpret_cast<Vector3&>((*i).bitangent));
-    }
-  }
-
-  void render(RenderStateFlags state) const
-  {
-    if((state & RENDER_BUMP) != 0)
-    {
-      /*if(GlobalShaderCache().useShaderLanguage())
-      {
-        glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_vertices.data()->normal);
-        glVertexAttribPointerARB(c_attr_TexCoord0, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_vertices.data()->texcoord);
-        glVertexAttribPointerARB(c_attr_Tangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_vertices.data()->tangent);
-        glVertexAttribPointerARB(c_attr_Binormal, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_vertices.data()->bitangent);
-      }
-      else
-      {*/
-        glVertexAttribPointerARB(11, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_vertices.data()->normal);
-        glVertexAttribPointerARB(8, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_vertices.data()->texcoord);
-        glVertexAttribPointerARB(9, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_vertices.data()->tangent);
-        glVertexAttribPointerARB(10, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_vertices.data()->bitangent);
-      /*}*/
-    }
-    else
-    {
-      glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_vertices.data()->normal);
-      glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_vertices.data()->texcoord);
-    }
-    glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_vertices.data()->vertex);
-    glDrawElements(GL_TRIANGLES, GLsizei(m_indices.size()), RenderIndexTypeID, m_indices.data());
-
-  }
-
-  VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const
-  {
-    return test.TestAABB(m_aabb_local, localToWorld);
-  }
-
-  const AABB& localAABB() const
-  {
-    return m_aabb_local;
-  }
-
-  void render(Renderer& renderer, const Matrix4& localToWorld, ShaderPtr state) const
-  {
-    renderer.SetState(state, Renderer::eFullMaterials);
-    renderer.addRenderable(*this, localToWorld);
-  }
-
-	void render(Renderer& renderer, const Matrix4& localToWorld) const {
-		render(renderer, localToWorld, _shader);
-	}
-
-  void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld)
-  {
-    test.BeginMesh(localToWorld);
-
-    SelectionIntersection best;
-    test.TestTriangles(
-      vertexpointer_arbitrarymeshvertex(m_vertices.data()),
-      IndexPointer(m_indices.data(), IndexPointer::index_type(m_indices.size())),
-      best
-    );
-    if(best.valid())
-    {
-      selector.addIntersection(best);
-    }
-  }
-};
-
 // generic model node
 class MD5Model :
 public Cullable,
 public Bounded
 {
-  typedef std::vector<MD5Surface*> surfaces_t;
+  typedef std::vector<md5::MD5Surface*> surfaces_t;
   surfaces_t m_surfaces;
 
   AABB m_aabb_local;
@@ -270,9 +103,9 @@ public:
     return m_surfaces.size();
   }
 
-  MD5Surface& newSurface()
+  md5::MD5Surface& newSurface()
   {
-    m_surfaces.push_back(new MD5Surface);
+    m_surfaces.push_back(new md5::MD5Surface);
     return *m_surfaces.back();
   }
   void updateAABB()
@@ -306,7 +139,7 @@ public:
   }
 };
 
-inline void Surface_addLight(const MD5Surface& surface, VectorLightList& lights, const Matrix4& localToWorld, const RendererLight& light)
+inline void Surface_addLight(const md5::MD5Surface& surface, VectorLightList& lights, const Matrix4& localToWorld, const RendererLight& light)
 {
   if(light.testAABB(aabb_for_oriented_aabb(surface.localAABB(), localToWorld)))
   {
@@ -505,7 +338,7 @@ public:
 };
 
 
-inline void Surface_constructQuad(MD5Surface& surface, const Vector3& a, const Vector3& b, const Vector3& c, const Vector3& d, const Vector3& normal)
+inline void Surface_constructQuad(md5::MD5Surface& surface, const Vector3& a, const Vector3& b, const Vector3& c, const Vector3& d, const Vector3& normal)
 {
   surface.vertices().push_back(
     ArbitraryMeshVertex(
@@ -539,7 +372,7 @@ inline void Surface_constructQuad(MD5Surface& surface, const Vector3& a, const V
 
 inline void Model_constructNull(MD5Model& model)
 {
-  MD5Surface& surface = model.newSurface();
+  md5::MD5Surface& surface = model.newSurface();
 
   AABB aabb(Vector3(0, 0, 0), Vector3(8, 8, 8));
 
