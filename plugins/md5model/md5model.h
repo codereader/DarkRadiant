@@ -406,7 +406,7 @@ inline void Model_constructNull(MD5Model& model)
 
   surface.setShader("");
 
-  surface.updateAABB();
+  surface.updateGeometry();
 
   model.updateAABB();
 }

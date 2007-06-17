@@ -28,8 +28,12 @@ private:
 	// Shader object
 	ShaderPtr _shader;
 
-  vertices_t m_vertices;
-  indices_t m_indices;
+	vertices_t _vertices;
+	indices_t _indices;
+
+	// The GL display lists for this surface's geometry
+	GLuint _normalList;
+	GLuint _lightingList;
 
 private:
 
@@ -38,21 +42,28 @@ private:
 		_shader = GlobalShaderCache().capture(_shaderName);
 	}
 	
+	// Create the display lists
+	void createDisplayLists();
+
 public:
 
-	// Constructor
-	MD5Surface()
-    : _shaderName("")
-	{ }
+	/**
+	 * Constructor.
+	 */
+	MD5Surface();
 	
-  vertices_t& vertices()
-  {
-    return m_vertices;
-  }
-  indices_t& indices()
-  {
-    return m_indices;
-  }
+	/**
+	 * Destructor.
+	 */
+	~MD5Surface();
+	
+	vertices_t& vertices() {
+		return _vertices;
+	}
+	
+	indices_t& indices() {
+		return _indices;
+	}
 
 	// Set the shader name
 	void setShader(const std::string& name) {
@@ -74,8 +85,10 @@ public:
 		return _shader;
 	}
 	
-	// Refresh the AABB
-	void updateAABB();
+	/**
+	 * Calculate the AABB and build the display lists for rendering.
+	 */ 
+	void updateGeometry();
 
     // Back-end render function
     void render(RenderStateFlags state) const;

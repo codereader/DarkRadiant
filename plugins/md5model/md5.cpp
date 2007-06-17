@@ -312,7 +312,7 @@ bool MD5Model_parse(MD5Model& model, parser::DefTokeniser& tok)
 
 		// Get the shader name
 		tok.assertNextToken("shader");
-		surface.setShader(tok.nextToken().c_str());
+		surface.setShader(tok.nextToken());
 
 		/* VERTICES */
 
@@ -438,7 +438,7 @@ bool MD5Model_parse(MD5Model& model, parser::DefTokeniser& tok)
       //vector3_normalise(reinterpret_cast<Vector3&>((*j).normal));
     }
 
-    surface.updateAABB();
+    surface.updateGeometry();
 
 	} // for each mesh
 
