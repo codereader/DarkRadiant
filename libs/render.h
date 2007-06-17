@@ -672,8 +672,20 @@ struct ArbitraryMeshVertex {
 	ArbitraryMeshVertex() : tangent(0, 0, 0), bitangent(0, 0, 0) {}
 	ArbitraryMeshVertex(Vertex3f _vertex, Normal3f _normal, TexCoord2f _texcoord)
 			: texcoord(_texcoord), normal(_normal), vertex(_vertex), tangent(0, 0, 0), bitangent(0, 0, 0) {}
+};
+
+/**
+ * String output for ArbitraryMeshVertex.
+ */
+inline std::ostream& operator<< (std::ostream& os, const ArbitraryMeshVertex& v)
+{
+	os << "ArbitraryMeshVertex { "
+	   << " vertex = " << v.vertex << ", normal = " << v.normal
+	   << ", texcoord = " << v.texcoord
+	   << " }";
+	
+	return os;
 }
-;
 
 inline bool operator<(const ArbitraryMeshVertex& self, const ArbitraryMeshVertex& other) {
 	if(self.texcoord != other.texcoord) {
