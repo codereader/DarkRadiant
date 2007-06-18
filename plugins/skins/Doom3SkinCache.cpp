@@ -70,7 +70,7 @@ void Doom3SkinCache::realise() {
 									   makeCallback1(ldr));
 	}
 	catch (parser::ParseException e) {
-		globalErrorStream() << e.what() << "\n";		
+		std::cout << "[skins]: " << e.what() << "\n";
 	} 
 	
 	// Set the realised flag
@@ -113,6 +113,11 @@ void Doom3SkinCache::parseSkin(parser::DefTokeniser& tok) {
 		
 		// Read the value
 		std::string value = tok.nextToken();
+		
+		if (value == "}") {
+			std::cout << "[skins] Warning: '}' found where shader name expected in skin: " 
+					  << skinName << "\n";
+		}
 		
 		// If this is a model key, add to the model->skin map, otherwise assume
 		// this is a remap declaration
