@@ -486,12 +486,18 @@ bool Map::import(const std::string& filename) {
 }
 
 void Map::saveDirect(const std::string& filename) {
+	// Substract the origin from child primitives (of entities like func_static)
+	selection::algorithm::removeOriginFromChildPrimitives();
+	
 	MapResource_saveFile(
 		getFormatForFile(filename), 
 		GlobalSceneGraph().root(), 
 		map::traverse, // TraversalFunc 
 		filename.c_str()
-	); 
+	);
+	
+	// Re-add the origins to the child primitives (of entities like func_static)
+	selection::algorithm::addOriginToChildPrimitives(); 
 }
 
 bool Map::saveSelected(const std::string& filename) {
