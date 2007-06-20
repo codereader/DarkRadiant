@@ -108,12 +108,6 @@ public:
 	virtual Vector3 getColour(const std::string& colourName) = 0;
   
 	virtual void updateAllWindows() = 0;
-	
-	// Functions needed for the clipper, this should be moved back into the core app
-	virtual void splitSelectedBrushes(const Vector3 planePoints[3], const std::string& shader, EBrushSplit split) = 0;
-	virtual void brushSetClipPlane(const Plane3& plane) = 0;
-
-	virtual const char* TextureBrowser_getSelectedShader() = 0;
 };
 
 // RadiantCoreAPI Module Definitions

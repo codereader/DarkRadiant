@@ -231,13 +231,6 @@ md5model_lib = md5model_env.SharedLibrary(target='md5model', source=md5model_lst
 md5model_env.Depends(md5model_lib, math)
 md5model_env.Install(INSTALL + '/modules', md5model_lib)
 
-clipper_env = module_env.Copy()
-clipper_lst=build_list('plugins/clipper', 'Clipper.cpp ClipPoint.cpp')
-clipper_env.Append(LIBS = ['math'])
-clipper_lib = clipper_env.SharedLibrary(target='clipper', source=clipper_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
-clipper_env.Depends(clipper_lib, math)
-clipper_env.Install(INSTALL + '/modules', clipper_lib)
-
 eventmanager_env = module_env.Copy()
 eventmanager_lst=build_list('plugins/eventmanager', 'EventManager.cpp Accelerator.cpp Command.cpp Toggle.cpp WidgetToggle.cpp Modifiers.cpp MouseEvents.cpp')
 eventmanager_env.Append(LIBS = ['gtkutil', 'xmlutil'])
@@ -515,7 +508,9 @@ radiant_src = \
          'settings/Win32Registry.cpp',
          'settings/PreferenceSystem.cpp',
          'scenegraph/CompiledGraph.cpp',
-         'scenegraph/SceneGraphModule.cpp'
+         'scenegraph/SceneGraphModule.cpp',
+         'clipper/Clipper.cpp',
+         'clipper/ClipPoint.cpp'
          ]
     ]
 
