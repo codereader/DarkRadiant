@@ -3,7 +3,6 @@
 
 #include "iregistry.h"
 #include "ipreferencesystem.h"
-#include "iradiant.h"
 #include "iscenegraph.h"
 #include "iselection.h"
 #include "itexdef.h"
@@ -12,6 +11,8 @@
 #include "math/aabb.h"
 
 #include "ClipPoint.h"
+#include "csg.h"
+#include "ui/texturebrowser/TextureBrowser.h"
 
 const unsigned int NUM_CLIP_POINTS = 3;
 		
@@ -106,7 +107,7 @@ public:
 	}
 	
 	const std::string getShader() const {
-		return (_useCaulk) ? _caulkShader : GlobalRadiant().TextureBrowser_getSelectedShader();
+		return (_useCaulk) ? _caulkShader : GlobalTextureBrowser().getSelectedShader();
 	}
 	
 	// greebo: Cycles through the three possible clip points and returns the nearest to point (for selectiontest)
@@ -171,12 +172,12 @@ public:
 	void splitBrushes(const Vector3& p0, const Vector3& p1, const Vector3& p2, const std::string& shader, EBrushSplit split) {
 		Vector3 planePoints[3] = {p0, p1, p2};
 		
-		GlobalRadiant().splitSelectedBrushes(planePoints, shader, split);
+		Scene_BrushSplitByPlane(planePoints, shader, split);
 		GlobalRadiant().updateAllWindows();
 	}
 	
 	void setClipPlane(const Plane3& plane) {
-		GlobalRadiant().brushSetClipPlane(plane);
+		Scene_BrushSetClipPlane(plane);
 	}
 	
 	void update() {
@@ -300,12 +301,5 @@ class BrushClipperDependencies :
 #include "modulesystem/singletonmodule.h"
 
 typedef SingletonModule<BrushClipper, BrushClipperDependencies> BrushClipperModule;
-
-// Static instance of the BrushClipperModule
-BrushClipperModule _theBrushClipperModule;
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
-{
-  initialiseModule(server);
-  _theBrushClipperModule.selfRegister();
-}
+typedef Static<BrushClipperModule> StaticBrushClipperModule;
+StaticRegisterModule staticRegisterDefaultClipper(StaticBrushClipperModule::instance());

@@ -57,7 +57,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/messagebox.h"
 #include "gtkutil/filechooser.h"
 
-#include "csg.h"
 #include "error.h"
 #include "map.h"
 #include "environment.h"
@@ -151,19 +150,6 @@ public:
 		UpdateAllWindows();
 	}
 	
-	// Functions needed for the clipper, this should be moved back into the core app
-	void splitSelectedBrushes(const Vector3 planePoints[3], const std::string& shader, EBrushSplit split) {
-		Scene_BrushSplitByPlane(planePoints, shader, split);
-	}
-	
-	void brushSetClipPlane(const Plane3& plane) {
-		Scene_BrushSetClipPlane(plane);
-	}
-
-	virtual const char* TextureBrowser_getSelectedShader() {
-		return GlobalTextureBrowser().getSelectedShader().c_str();
-	}
-
 	IRadiant* getTable() {
 		return this;
 	}
