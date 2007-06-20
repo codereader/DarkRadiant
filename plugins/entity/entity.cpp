@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "entity.h"
 
+#include "iregistry.h"
 #include "ieclass.h"
 #include "ifilter.h"
 #include "selectable.h"
@@ -48,7 +49,7 @@ namespace entity {
 /* greebo: Constructs the entity environment
  */
 void constructStatic() {
-	LightShader::m_defaultShader = "lights/defaultpointlight";
+	LightShader::m_defaultShader = GlobalRegistry().get("game/defaults/lightShader");
 
 	// Construct Doom3Group stuff
 	CurveEditInstance::StaticShaders::instance().controlsShader = GlobalShaderCache().capture("$POINT");
