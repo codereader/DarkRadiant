@@ -72,18 +72,18 @@ public:
 	
 	void populateGridItems() {
 		// Populate the GridItem map
-		_gridItems["0.125"] = GridItem(GRID_0125, this);
-		_gridItems["0.25"] = GridItem(GRID_025, this);
-		_gridItems["0.5"] = GridItem(GRID_05, this);
-		_gridItems["1"] = GridItem(GRID_1, this);
-		_gridItems["2"] = GridItem(GRID_2, this);
-		_gridItems["4"] = GridItem(GRID_4, this);
-		_gridItems["8"] = GridItem(GRID_8, this);
-		_gridItems["16"] = GridItem(GRID_16, this);
-		_gridItems["32"] = GridItem(GRID_32, this);
-		_gridItems["64"] = GridItem(GRID_64, this);
-		_gridItems["128"] = GridItem(GRID_128, this);
-		_gridItems["256"] = GridItem(GRID_256, this);
+		_gridItems.insert(GridItemMap::value_type("0.125", GridItem(GRID_0125, *this)));
+		_gridItems.insert(GridItemMap::value_type("0.25", GridItem(GRID_025, *this)));
+		_gridItems.insert(GridItemMap::value_type("0.5", GridItem(GRID_05, *this)));
+		_gridItems.insert(GridItemMap::value_type("1", GridItem(GRID_1, *this)));
+		_gridItems.insert(GridItemMap::value_type("2", GridItem(GRID_2, *this)));
+		_gridItems.insert(GridItemMap::value_type("4", GridItem(GRID_4, *this)));
+		_gridItems.insert(GridItemMap::value_type("8", GridItem(GRID_8, *this)));
+		_gridItems.insert(GridItemMap::value_type("16", GridItem(GRID_16, *this)));
+		_gridItems.insert(GridItemMap::value_type("32", GridItem(GRID_32, *this)));
+		_gridItems.insert(GridItemMap::value_type("64", GridItem(GRID_64, *this)));
+		_gridItems.insert(GridItemMap::value_type("128", GridItem(GRID_128, *this)));
+		_gridItems.insert(GridItemMap::value_type("256", GridItem(GRID_256, *this)));
 	}
 	
 	void registerCommands() {
