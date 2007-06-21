@@ -6,6 +6,7 @@
 
 #include <string>
 #include <map>
+#include <boost/shared_ptr.hpp>
 
 namespace skins
 {
@@ -25,7 +26,25 @@ class Doom3ModelSkin
 	// List of observers
 	ModuleObservers _observers;
 	
+	std::string _name;
+	std::string _skinFileName;
+	
 public:
+	Doom3ModelSkin(const std::string& name) :	
+		_name(name)
+	{}
+
+	std::string getName() const {
+		return _name;
+	}
+
+	void setSkinFileName(const std::string& fileName) {
+		_skinFileName = fileName;
+	}
+	
+	std::string getSkinFileName() const {
+		return _skinFileName;
+	}
 
 	/**
 	 * Attach a ModuleObserver.
@@ -60,6 +79,7 @@ public:
 	}
   
 };
+typedef boost::shared_ptr<Doom3ModelSkin> Doom3ModelSkinPtr;
 
 
 }

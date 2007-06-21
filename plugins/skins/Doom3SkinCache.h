@@ -9,7 +9,6 @@
 #include <map>
 #include <string>
 #include <vector>
-#include <boost/shared_ptr.hpp>
 
 namespace skins
 {
@@ -21,8 +20,7 @@ class Doom3SkinCache
 : public ModelSkinCache
 {
 	// Table of named skin objects
-	typedef std::map<std::string, 
-					 boost::shared_ptr<Doom3ModelSkin> > NamedSkinMap;
+	typedef std::map<std::string, Doom3ModelSkinPtr> NamedSkinMap;
 	NamedSkinMap _namedSkins;
 
 	// List of all skins
@@ -48,8 +46,8 @@ private:
 	// realised.
 	void realise();
 	
-	// Parse an individual skin declaration and add it to the maps
-	void parseSkin(parser::DefTokeniser& tokeniser);
+	// Parse an individual skin declaration and add return the skin object
+	Doom3ModelSkinPtr parseSkin(parser::DefTokeniser& tokeniser);
 
 public:
 
@@ -58,8 +56,9 @@ public:
 
 	/* Constructor.
 	 */
-	Doom3SkinCache()
-	: _realised(false)
+	Doom3SkinCache() : 
+		_realised(false),
+		_nullSkin("")
 	{}
 
 	/* Return pointer to implementation (this).
@@ -96,8 +95,10 @@ public:
 	
 	/* Parse the provided string as a .skin file, and add all skins found within
 	 * to the internal data structures.
+	 * 
+	 * @filename: This is for informational purposes only (error message display).
 	 */
-	void parseFile(const std::string& contents);	
+	void parseFile(const std::string& contents, const std::string& filename);	
   
 };
 
