@@ -30,7 +30,7 @@ public:
 	DefaultConstructor(const std::string& filename);
 	
 	// The actual construct() command as needed by the GLTextureManager
-	Image* construct();
+	ImagePtr construct();
 
 }; // class DefaultConstructor
 

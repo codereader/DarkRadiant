@@ -3,9 +3,10 @@
 
 #include "ifilesystem.h"
 #include "iimage.h"
+#include "imagelib.h" // for RGBAImagePtr
 #include "modulesystem/singletonmodule.h"
 
-Image* LoadImageGDK(ArchiveFile& file);
+ImagePtr LoadImageGDK(ArchiveFile& file);
 
 /* greebo: A GDKLoader is capable of loading any image files that can be
  * handled by GDK.
@@ -37,7 +38,7 @@ public:
 	/* greebo: This loads the file and returns the pointer to 
 	 * the allocated Image object (or NULL, if the load failed). 
 	 */
-	Image* load(ArchiveFile& file) const {
+	ImagePtr load(ArchiveFile& file) const {
 		// Pass the call to the according load function
 		return LoadImageGDK(file);
 	}

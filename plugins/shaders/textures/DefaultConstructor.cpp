@@ -16,9 +16,9 @@ DefaultConstructor::DefaultConstructor(const std::string& filename) :
 {}
 
 // Load the actual image on demand
-Image* DefaultConstructor::construct() {
+ImagePtr DefaultConstructor::construct() {
 
-	Image* returnValue = NULL;
+	ImagePtr returnValue;
 
 	for (unsigned int i = 0; i < _imageLoaders.size(); i++) {
 		ImageLoader& loader = *_imageLoaders[i];

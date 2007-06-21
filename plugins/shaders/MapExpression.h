@@ -25,7 +25,7 @@ public:
 	static MapExpressionPtr createForString(std::string str);
 	
 	// These have to be implemented by the subclasses
-	virtual Image* getImage() = 0;
+	virtual ImagePtr getImage() = 0;
 	virtual std::string getIdentifier() = 0;
 	
 protected:
@@ -39,7 +39,7 @@ protected:
 	 *  
 	 * @returns: the resampled image, this might as well be input.  
 	 */
-	virtual Image* getResampled(Image* input, unsigned int width, unsigned int height);
+	virtual ImagePtr getResampled(ImagePtr input, unsigned int width, unsigned int height);
 };
 
 // the specific MapExpressions
@@ -48,7 +48,7 @@ class HeightMapExpression : public IMapExpression {
 	float scale;
 public:
 	HeightMapExpression (DefTokeniser& token);
-	Image* getImage();
+	ImagePtr getImage();
 	std::string getIdentifier();
 };
 
@@ -57,7 +57,7 @@ class AddNormalsExpression : public IMapExpression {
 	MapExpressionPtr mapExpTwo;
 public:
 	AddNormalsExpression (DefTokeniser& token);
-	Image* getImage();
+	ImagePtr getImage();
 	std::string getIdentifier();
 };
 
@@ -65,7 +65,7 @@ class SmoothNormalsExpression : public IMapExpression {
 	MapExpressionPtr mapExp;
 public:
 	SmoothNormalsExpression (DefTokeniser& token);
-	Image* getImage();
+	ImagePtr getImage();
 	std::string getIdentifier();
 };
 
@@ -74,7 +74,7 @@ class AddExpression : public IMapExpression {
 	MapExpressionPtr mapExpTwo;
 public:
 	AddExpression (DefTokeniser& token);
-	Image* getImage();
+	ImagePtr getImage();
 	std::string getIdentifier();
 };
 
@@ -86,7 +86,7 @@ class ScaleExpression : public IMapExpression {
 	float scaleAlpha;
 public:
 	ScaleExpression (DefTokeniser& token);
-	Image* getImage();
+	ImagePtr getImage();
 	std::string getIdentifier();
 };
 
@@ -94,7 +94,7 @@ class InvertAlphaExpression : public IMapExpression {
 	MapExpressionPtr mapExp;
 public:
 	InvertAlphaExpression (DefTokeniser& token);
-	Image* getImage();
+	ImagePtr getImage();
 	std::string getIdentifier();
 };
 
@@ -102,7 +102,7 @@ class InvertColorExpression : public IMapExpression {
 	MapExpressionPtr mapExp;
 public:
 	InvertColorExpression (DefTokeniser& token);
-	Image* getImage();
+	ImagePtr getImage();
 	std::string getIdentifier();
 };
 
@@ -110,7 +110,7 @@ class MakeIntensityExpression : public IMapExpression {
 	MapExpressionPtr mapExp;
 public:
 	MakeIntensityExpression (DefTokeniser& token);
-	Image* getImage();
+	ImagePtr getImage();
 	std::string getIdentifier();
 };
 
@@ -118,7 +118,7 @@ class MakeAlphaExpression : public IMapExpression {
 	MapExpressionPtr mapExp;
 public:
 	MakeAlphaExpression (DefTokeniser& token);
-	Image* getImage();
+	ImagePtr getImage();
 	std::string getIdentifier();
 };
 
@@ -127,7 +127,7 @@ class ImageExpression : public IMapExpression {
 	ImageLoaderList _imageLoaders;
 public:
 	ImageExpression (std::string path);
-	Image* getImage();
+	ImagePtr getImage();
 	std::string getIdentifier();
 };
 

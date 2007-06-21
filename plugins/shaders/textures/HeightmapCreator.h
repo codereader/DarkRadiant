@@ -16,13 +16,13 @@ inline byte* getPixel(byte* pixels, int width, int height, int x, int y) {
  * Note: The source image is NOT released from memory, this is the
  * 		 responsibility of the calling method.
  */
-Image* createNormalmapFromHeightmap(Image* heightMap, float scale) {
+ImagePtr createNormalmapFromHeightmap(ImagePtr heightMap, float scale) {
 	assert(heightMap);
 	 
 	int width = heightMap->getWidth();
 	int height = heightMap->getHeight();
 	 
-	Image* normalMap = new RGBAImage(width, height);
+	ImagePtr normalMap (new RGBAImage(width, height));
  
 	byte* in = heightMap->getRGBAPixels();
 	byte* out = normalMap->getRGBAPixels();

@@ -1,7 +1,5 @@
 #include "CShader.h"
 #include "Doom3ShaderSystem.h"
-#include "textures/DefaultConstructor.h"
-#include "textures/FileLoader.h"
 
 #include "iregistry.h"
 #include "ishaders.h"
@@ -119,7 +117,6 @@ TexturePtr CShader::getBump() {
 	
 		// Create image. If the bump map is not set, we need to use the
 		// flat image here
-		shaders::MapExpressionPtr mapExp;
 		if (_template._bump) {
 			_bump = GetTextureManager().getBinding(_template._bump);
 		}
@@ -138,7 +135,6 @@ TexturePtr CShader::getSpecular() {
 		
 		// Create image. If the specular map is not set, we need to use 
 		// the _black image here
-		shaders::MapExpressionPtr mapExp;
 		if (_template._specular) {
 			_specular = GetTextureManager().getBinding(_template._specular);
 		}

@@ -354,7 +354,7 @@ static void j_putGrayScanlineToRGB (unsigned char* jpegline, int widthPix, unsig
   }
 }
 
-static Image* LoadJPGBuff_(const void *src_buffer, int src_size) 
+static RGBAImagePtr LoadJPGBuff_(const void *src_buffer, int src_size) 
 {
   struct jpeg_decompress_struct cinfo;
   struct my_jpeg_error_mgr jerr;
@@ -366,7 +366,7 @@ static Image* LoadJPGBuff_(const void *src_buffer, int src_size)
   {
     globalErrorStream() << "WARNING: JPEG library error: " << errormsg << "\n";
     jpeg_destroy_decompress (&cinfo);
-    return 0;
+    return RGBAImagePtr();
   }
 
   jpeg_create_decompress (&cinfo);
@@ -376,7 +376,7 @@ static Image* LoadJPGBuff_(const void *src_buffer, int src_size)
 
   int row_stride = cinfo.output_width * cinfo.output_components;
 
-  RGBAImage* image = new RGBAImage(cinfo.output_width, cinfo.output_height);
+  RGBAImagePtr image (new RGBAImage(cinfo.output_width, cinfo.output_height));
 
   JSAMPARRAY buffer = (*cinfo.mem->alloc_sarray) ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
 
@@ -398,7 +398,7 @@ static Image* LoadJPGBuff_(const void *src_buffer, int src_size)
   return image;
 }
 
-Image* LoadJPG(ArchiveFile& file)
+ImagePtr LoadJPG(ArchiveFile& file)
 {
   ScopedArchiveBuffer buffer(file);
   return LoadJPGBuff_(buffer.buffer, static_cast<int>(buffer.length));

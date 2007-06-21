@@ -33,9 +33,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "ifilesystem.h"
 #include "iimage.h"
+#include "imagelib.h" // for RGBAImagePtr
 #include "modulesystem/singletonmodule.h"
 
-Image* LoadJPG(ArchiveFile& file);
+ImagePtr LoadJPG(ArchiveFile& file);
 
 /* greebo: A JPGLoader is capable of loading JPEG files.
  *  
@@ -66,7 +67,7 @@ public:
 	/* greebo: This loads the file and returns the pointer to 
 	 * the allocated Image object (or NULL, if the load failed). 
 	 */
-	Image* load(ArchiveFile& file) const {
+	ImagePtr load(ArchiveFile& file) const {
 		// Pass the call to the according load function
 		return LoadJPG(file);
 	}

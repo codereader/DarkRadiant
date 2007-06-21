@@ -13,8 +13,8 @@ FileLoader::FileLoader(const std::string& filename, const std::string moduleName
 	_filename(filename)
 {}
 
-Image* FileLoader::construct() {
-	Image* image = NULL;
+ImagePtr FileLoader::construct() {
+	ImagePtr image;
 
 	for (unsigned int i = 0; i < _imageLoaders.size(); i++) {
 		// Construct a DirectoryArchiveFile out of the filename		

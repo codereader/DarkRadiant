@@ -43,7 +43,7 @@ TexturePtr GLTextureManager::getBinding(MapExpressionPtr mapExp) {
 		TextureMap::iterator i = _textures.find(identifier);
 		if (i == _textures.end()) {
 			// This may produce a NULL image if a file can't be found, for example.
-			Image* img = mapExp->getImage();
+			ImagePtr img = mapExp->getImage();
 
 			// see if the MapExpression returned a valid image
 			if (img != NULL) {
@@ -52,9 +52,6 @@ TexturePtr GLTextureManager::getBinding(MapExpressionPtr mapExp) {
 			
 				// Bind the texture and get the OpenGL id
 				load(_textures[identifier], img);
-
-				// We don't need the image pixel data anymore
-				img->release();
 
 				globalOutputStream() << "[shaders] Loaded texture: " << identifier.c_str() << "\n";
 			}
@@ -76,18 +73,15 @@ TexturePtr GLTextureManager::getBinding(const std::string& fullPath, const std::
 
 	if (i == _textures.end()) {
 	    TextureConstructorPtr constructor(new FileLoader(fullPath, moduleNames));
-	    Image* img = constructor->construct();
+	    ImagePtr img = constructor->construct();
 
 	    // see if the MapExpression returned a valid image
-	    if (img != NULL) {
+	    if (img != ImagePtr()) {
 			// Constructor returned a valid image, now create the texture object
 			_textures[fullPath] = TexturePtr(new Texture(fullPath));
 	
 			// Bind the texture and get the OpenGL id
 			load(_textures[fullPath], img);
-	
-			// We don't need the image pixel data anymore
-			img->release();
 	
 			globalOutputStream() << "[shaders] Loaded texture: " << fullPath.c_str() << "\n";
 	    }
@@ -120,15 +114,12 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
 	
 	// load the image with the FileLoader (which can handle .bmp in contrast to the DefaultConstructor)
 	TextureConstructorPtr constructor(new FileLoader(fullpath, "bmp"));
-	Image* img = constructor->construct();
+	ImagePtr img = constructor->construct();
 	
-	if (img != NULL) {
+	if (img != ImagePtr()) {
 		// Bind the (processed) texture and get the OpenGL id
 		// The getProcessed() call may substitute the passed image by another
 		load(returnValue, img);
-		
-		// We don't need the (substituted) image pixel data anymore
-		img->release();
 	}
 	else {
 		globalErrorStream() << "[shaders] Couldn't load Standard Texture texture: " 
@@ -138,7 +129,7 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
 	return returnValue;
 }
 
-void GLTextureManager::load(TexturePtr texture, Image* image) {
+void GLTextureManager::load(TexturePtr texture, ImagePtr image) {
 	
 	// Fill the Texture structure with the metadata
 	texture->width = image->getWidth();

@@ -182,7 +182,7 @@ void LoadPCXBuff(byte* buffer, std::size_t len, byte **pic, byte **palette, int 
 LoadPCX32
 ==============
 */
-Image* LoadPCX32Buff(byte* buffer, std::size_t length)
+RGBAImagePtr LoadPCX32Buff(byte* buffer, std::size_t length)
 {
   byte *palette;
   byte *pic8;
@@ -192,10 +192,10 @@ Image* LoadPCX32Buff(byte* buffer, std::size_t length)
   LoadPCXBuff(buffer, length, &pic8, &palette, &width, &height);
   if (!pic8)
   {
-    return 0;
+    return RGBAImagePtr();
   }
 
-  RGBAImage* image = new RGBAImage(width, height);
+  RGBAImagePtr image (new RGBAImage(width, height));
   c = (width) * (height);
   pic32 = image->getRGBAPixels();
   for (i = 0; i < c; i++)
@@ -214,7 +214,7 @@ Image* LoadPCX32Buff(byte* buffer, std::size_t length)
   return image;
 }
 
-Image* LoadPCX32(ArchiveFile& file)
+ImagePtr LoadPCX32(ArchiveFile& file)
 {
   ScopedArchiveBuffer buffer(file);
   return LoadPCX32Buff(buffer.buffer, buffer.length);

@@ -25,13 +25,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/constant.h"
 
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 typedef unsigned char byte;
 
 class Image
 {
 public:
-  virtual void release() = 0;
   virtual byte* getRGBAPixels() const = 0;
   virtual unsigned int getWidth() const = 0;
   virtual unsigned int getHeight() const = 0;
@@ -49,6 +49,7 @@ public:
     return 0;
   }
 };
+typedef boost::shared_ptr<Image> ImagePtr;
 
 class ArchiveFile;
 class ImageLoader
@@ -61,7 +62,7 @@ public:
 	 * 
 	 * @returns: NULL, if the load failed, the pointer to the image otherwise
 	 */
-	virtual Image* load(ArchiveFile& file) const = 0;
+	virtual ImagePtr load(ArchiveFile& file) const = 0;
 	
 	/* greebo: Gets the file extension of the supported image file type
 	 * 
@@ -101,7 +102,7 @@ struct _QERPlugImageTable
 
   /// Read an image from the file.
   /// Returns 0 if the image could not be read.
-  Image* (*loadImage)(ArchiveFile& file);
+  ImagePtr (*loadImage)(ArchiveFile& file);
   
   /// The prefix to use for locating images of this type (e.g. "dds/" for DDS images)
 	std::string prefix;

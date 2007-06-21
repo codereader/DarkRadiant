@@ -24,9 +24,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ifilesystem.h"
 #include "iimage.h"
+#include "imagelib.h" // for RGBAImagePtr
 #include "modulesystem/singletonmodule.h"
 
-Image* LoadBMP(ArchiveFile& file);
+ImagePtr LoadBMP(ArchiveFile& file);
 
 /* greebo: A BMPLoader is capable of loading Bitmap files.
  *  
@@ -55,9 +56,9 @@ public:
 	BMPLoader() {}
 	
 	/* greebo: This loads the file and returns the pointer to 
-	 * the allocated Image object (or NULL, if the load failed). 
+	 * the allocated Image object (or an empty pointer, if the load failed). 
 	 */
-	Image* load(ArchiveFile& file) const {
+	ImagePtr load(ArchiveFile& file) const {
 		// Pass the call to the according load function
 		return LoadBMP(file);
 	}

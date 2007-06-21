@@ -30,26 +30,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ddslib.h"
 #include "imagelib.h"
 
-Image* LoadDDSBuff(const byte* buffer)
+RGBAImagePtr LoadDDSBuff(const byte* buffer)
 {
   int width, height;
   ddsPF_t pixelFormat;
   if(DDSGetInfo(reinterpret_cast<ddsBuffer_t*>(const_cast<byte*>(buffer)), &width, &height, &pixelFormat) == -1)
   {
-    return 0;
+    return RGBAImagePtr();
   }
 
-  RGBAImage* image = new RGBAImage(width, height);
+  RGBAImagePtr image (new RGBAImage(width, height));
 
   if(DDSDecompress(reinterpret_cast<ddsBuffer_t*>(const_cast<byte*>(buffer)), image->getRGBAPixels()) == -1)
   {
-    image->release();
-    return 0;
+    return RGBAImagePtr();
   }
   return image;
 }
 
-Image* LoadDDS(ArchiveFile& file)
+ImagePtr LoadDDS(ArchiveFile& file)
 {
   ScopedArchiveBuffer buffer(file);
   return LoadDDSBuff(buffer.buffer);

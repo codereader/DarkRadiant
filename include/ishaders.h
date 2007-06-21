@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/constant.h"
 #include "generic/callbackfwd.h"
+#include "iimage.h"
 
 #include <string>
 #include <ostream>
@@ -43,7 +44,7 @@ class Image;
 class TextureConstructor
 {
 public:
-	virtual Image* construct() = 0;
+	virtual ImagePtr construct() = 0;
 };
 typedef boost::shared_ptr<TextureConstructor> TextureConstructorPtr;
 
