@@ -67,12 +67,12 @@ public:
 	/* greebo: Returns the readily fabricated pixel data, that passed
 	 * a bunch of stages (gamma calculation, mip reduction, stretching) 
 	 */
-	Image* getProcessedImage(Image* input);
+	ImagePtr getProcessedImage(ImagePtr input);
 
 	/* greebo: Performs a fast scan over the pixel data, taking every
 	 * 20th pixel to determine the representative flat shade colour 
 	 */
-	Colour3 getFlatshadeColour(Image* input);
+	Colour3 getFlatshadeColour(ImagePtr input);
 
 	/* greebo: Sends the openGL texturemode commands according to the internal
 	 * texture mode member variable. (e.g. MIPMAP_LINEAR)
@@ -83,7 +83,7 @@ private:
 
 	// Returns the gamma corrected image taken from <input>
 	// (Does not allocate new memory)
-	Image* processGamma(Image* input);
+	ImagePtr processGamma(ImagePtr input);
 	
 	/* greebo: This ensures that the image has dimensions that 
 	 * match a power of two. If it does not, the according length is
@@ -92,7 +92,7 @@ private:
 	 * Additionally, this ensures that the image is not larger
 	 * than the maximum texture size openGL can handle.
 	 */
-	Image* getResized(Image* input);
+	ImagePtr getResized(ImagePtr input);
 	
 	// Recalculates the gamma table according to the given gamma value
 	// This is called on first startup or if the user changes the value

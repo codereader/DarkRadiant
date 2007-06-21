@@ -12,7 +12,7 @@
  * Note: returns NULL if the file could not be loaded.
  */
 
-Image* LoadImageGDK(ArchiveFile& file) {
+ImagePtr LoadImageGDK(ArchiveFile& file) {
 	
 	// Allocate a new GdkPixBuf and create an alpha-channel with alpha=1.0
 	GdkPixbuf* rawPixbuf = gdk_pixbuf_new_from_file(file.getName(), NULL);
@@ -22,7 +22,7 @@ Image* LoadImageGDK(ArchiveFile& file) {
 	
 	if (img != NULL) {
 		// Allocate a new image
-		RGBAImage* image = new RGBAImage(gdk_pixbuf_get_width(img), gdk_pixbuf_get_height(img));
+		RGBAImagePtr image (new RGBAImage(gdk_pixbuf_get_width(img), gdk_pixbuf_get_height(img)));
 		
 		// Initialise the source buffer pointers
 		guchar* gdkStart = gdk_pixbuf_get_pixels(img);
@@ -56,5 +56,5 @@ Image* LoadImageGDK(ArchiveFile& file) {
 	}
 	
 	// No image could be loaded, return NULL	
-	return NULL;
+	return ImagePtr();
 }

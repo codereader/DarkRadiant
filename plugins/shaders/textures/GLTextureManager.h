@@ -21,7 +21,7 @@ private:
 
 	/* greebo: Binds the specified texture to openGL and populates the texture object 
 	 */
-	void load(TexturePtr texture, Image* image);
+	void load(TexturePtr texture, ImagePtr image);
 	
 	// Constructs the fallback textures like "Shader Image Missing"
 	TexturePtr loadStandardTexture(const std::string& filename);

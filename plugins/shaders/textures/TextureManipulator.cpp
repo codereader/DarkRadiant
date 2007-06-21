@@ -103,7 +103,7 @@ ETexturesMode TextureManipulator::readTextureMode(const unsigned int& mode) {
 	}
 }
 
-Colour3 TextureManipulator::getFlatshadeColour(Image* input) {
+Colour3 TextureManipulator::getFlatshadeColour(ImagePtr input) {
 	// Calculate the number of pixels in this image
 	int numPixels = input->getWidth() * input->getHeight();
 	
@@ -135,9 +135,9 @@ Colour3 TextureManipulator::getFlatshadeColour(Image* input) {
 	return returnValue;
 }
 
-Image* TextureManipulator::getProcessedImage(Image* input) {
+ImagePtr TextureManipulator::getProcessedImage(ImagePtr input) {
 	
-	Image* output;
+	ImagePtr output;
 	
 	// Make the image dimensions match powers of two
 	output = getResized(input);
@@ -148,13 +148,13 @@ Image* TextureManipulator::getProcessedImage(Image* input) {
 	return output;
 }
 
-Image* TextureManipulator::getResized(Image* input) {
+ImagePtr TextureManipulator::getResized(ImagePtr input) {
 	
 	int width = input->getWidth();
 	int height = input->getHeight();
 	unsigned char* sourcePixels = input->getRGBAPixels();
 	
-	Image* output;
+	ImagePtr output;
 	
 	// Determine the next larger power of two
 	int gl_width = 1;
@@ -169,14 +169,11 @@ Image* TextureManipulator::getResized(Image* input) {
 	if (!(gl_width == width && gl_height == height)) {
 		
 		// Create a new Image that hold the resampled texture
-		output = new RGBAImage(gl_width, gl_height);
+		output.reset(new RGBAImage(gl_width, gl_height));
 		
 		// Resample the texture into the allocated image
 		resampleTexture(sourcePixels, width, height, 
 						output->getRGBAPixels(), gl_width, gl_height, 4);
-						
-		// Remove the source image from the heap
-		input->release();
 	}
 	else {
 		// Nothing to do, return the source image
@@ -214,7 +211,7 @@ Image* TextureManipulator::getResized(Image* input) {
 }
 
 // resample texture gamma according to user settings
-Image* TextureManipulator::processGamma(Image* input) {
+ImagePtr TextureManipulator::processGamma(ImagePtr input) {
 	
 	// Don't do unnecessary work here...
 	if (_gamma == 1.0f) {

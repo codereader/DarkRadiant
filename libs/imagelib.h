@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iarchive.h"
 #include "idatastream.h"
 #include <stdlib.h>
+#include <boost/shared_ptr.hpp>
 
 struct RGBAPixel
 {
@@ -49,10 +50,6 @@ public:
     delete pixels;
   }
 
-  void release()
-  {
-    delete this;
-  }
   byte* getRGBAPixels() const
   {
     return reinterpret_cast<byte*>(pixels);
@@ -66,6 +63,7 @@ public:
     return height;
   }
 };
+typedef boost::shared_ptr<RGBAImage> RGBAImagePtr;
 
 class RGBAImageFlags : public RGBAImage
 {

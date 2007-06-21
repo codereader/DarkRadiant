@@ -124,7 +124,7 @@ void ReadBMP(PointerInputStream& inputStream, byte* bmpRGBA, int rows, int colum
   }
 }
 
-Image* LoadBMPBuff(PointerInputStream& inputStream, std::size_t length)
+RGBAImagePtr LoadBMPBuff(PointerInputStream& inputStream, std::size_t length)
 {
   BMPHeader_t bmpHeader;
   inputStream.read(reinterpret_cast<byte*>(bmpHeader.id), 2);
@@ -152,22 +152,22 @@ Image* LoadBMPBuff(PointerInputStream& inputStream, std::size_t length)
   if (bmpHeader.id[0] != 'B' && bmpHeader.id[1] != 'M')
   {
     globalErrorStream() << "LoadBMP: only Windows-style BMP files supported\n";
-    return 0;
+    return RGBAImagePtr();
   }
   if (bmpHeader.fileSize != length)
   {
     globalErrorStream() << "LoadBMP: header size does not match file size (" << Unsigned(bmpHeader.fileSize) << " vs. " << Unsigned(length) << ")\n";
-    return 0;
+    return RGBAImagePtr();
   }
   if (bmpHeader.compression != 0)
   {
     globalErrorStream() << "LoadBMP: only uncompressed BMP files supported\n";
-    return 0;
+    return RGBAImagePtr();
   }
   if (bmpHeader.bitsPerPixel < 8)
   {
     globalErrorStream() << "LoadBMP: monochrome and 4-bit BMP files not supported\n";
-    return 0;
+    return RGBAImagePtr();
   }
 
   int columns = bmpHeader.width;
@@ -175,7 +175,7 @@ Image* LoadBMPBuff(PointerInputStream& inputStream, std::size_t length)
   if (rows < 0)
     rows = -rows;
 
-  RGBAImage* image = new RGBAImage(columns, rows);
+  RGBAImagePtr image (new RGBAImage(columns, rows));
 
   switch(bmpHeader.bitsPerPixel)
   {
@@ -193,13 +193,12 @@ Image* LoadBMPBuff(PointerInputStream& inputStream, std::size_t length)
     break;
   default:
     globalErrorStream() << "LoadBMP: illegal pixel_size '" << bmpHeader.bitsPerPixel << "'\n";
-    image->release();
-    return 0;
+    return RGBAImagePtr();
   }
   return image;
 }
 
-Image* LoadBMP(ArchiveFile& file)
+ImagePtr LoadBMP(ArchiveFile& file)
 {
   ScopedArchiveBuffer buffer(file);
   PointerInputStream inputStream(buffer.buffer);

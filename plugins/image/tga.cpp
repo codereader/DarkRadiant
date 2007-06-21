@@ -315,9 +315,9 @@ public:
 };
 
 template<typename Flip>
-Image* Targa_decodeImageData(const TargaHeader& targa_header, PointerInputStream& istream, const Flip& flip)
+RGBAImagePtr Targa_decodeImageData(const TargaHeader& targa_header, PointerInputStream& istream, const Flip& flip)
 {
-  RGBAImage* image = new RGBAImage(targa_header.width, targa_header.height);
+  RGBAImagePtr image (new RGBAImage(targa_header.width, targa_header.height));
 
   if (targa_header.image_type == 2 || targa_header.image_type == 3)
   {
@@ -334,8 +334,7 @@ Image* Targa_decodeImageData(const TargaHeader& targa_header, PointerInputStream
       break;
     default:
       globalErrorStream() << "LoadTGA: illegal pixel_size '" << targa_header.pixel_size << "'\n";
-      image->release();
-      return 0;
+      return RGBAImagePtr();
     }
   }
   else if (targa_header.image_type == 10)
@@ -350,8 +349,7 @@ Image* Targa_decodeImageData(const TargaHeader& targa_header, PointerInputStream
       break;
     default:
       globalErrorStream() << "LoadTGA: illegal pixel_size '" << targa_header.pixel_size << "'\n";
-      image->release();
-      return 0;
+      return RGBAImagePtr();
     }
   }
 
@@ -361,7 +359,7 @@ Image* Targa_decodeImageData(const TargaHeader& targa_header, PointerInputStream
 const unsigned int TGA_FLIP_HORIZONTAL = 0x10;
 const unsigned int TGA_FLIP_VERTICAL = 0x20;
 
-Image* LoadTGABuff(const byte* buffer)
+RGBAImagePtr LoadTGABuff(const byte* buffer)
 {
   PointerInputStream istream(buffer);
   TargaHeader targa_header;
@@ -372,20 +370,20 @@ Image* LoadTGABuff(const byte* buffer)
   {
     globalErrorStream() << "LoadTGA: TGA type " << targa_header.image_type << " not supported\n";
     globalErrorStream() << "LoadTGA: Only type 2 (RGB), 3 (gray), and 10 (RGB) TGA images supported\n";
-    return 0;
+    return RGBAImagePtr();
   }
 
   if (targa_header.colormap_type != 0)
   {
     globalErrorStream() << "LoadTGA: colormaps not supported\n";
-    return 0;
+    return RGBAImagePtr();
   }
 
   if ((targa_header.pixel_size != 32 && targa_header.pixel_size != 24)
       && targa_header.image_type != 3)
   {
     globalErrorStream() << "LoadTGA: Only 32 or 24 bit images supported\n";
-    return 0;
+    return RGBAImagePtr();
   }
 
   if(!bitfield_enabled(targa_header.attributes, TGA_FLIP_HORIZONTAL)
@@ -410,10 +408,10 @@ Image* LoadTGABuff(const byte* buffer)
   }
 
   // unreachable
-  return 0;
+  return RGBAImagePtr();
 }
 
-Image* LoadTGA(ArchiveFile& file)
+ImagePtr LoadTGA(ArchiveFile& file)
 {
   ScopedArchiveBuffer buffer(file);
   return LoadTGABuff(buffer.buffer);

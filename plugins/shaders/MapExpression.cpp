@@ -58,11 +58,11 @@ MapExpressionPtr IMapExpression::createForString(std::string str) {
 	return createForToken(token);
 }
 
-Image* IMapExpression::getResampled(Image* input, unsigned int width, unsigned int height) {
+ImagePtr IMapExpression::getResampled(ImagePtr input, unsigned int width, unsigned int height) {
 	// Check if the dimensions differ from the desired ones
 	if (width != input->getWidth() || height != input->getHeight()) {
 		// Allocate a new image buffer
-		Image* resampled = new RGBAImage(width, height);
+		ImagePtr resampled (new RGBAImage(width, height));
 	
 		// Resample the texture to match the dimensions of the first image
 		TextureManipulator::instance().resampleTexture(
@@ -71,10 +71,6 @@ Image* IMapExpression::getResampled(Image* input, unsigned int width, unsigned i
 			resampled->getRGBAPixels(), 
 			width, height, 4
 		);
-	
-		// Release the original (unresampled) texture
-		input->release();
-	
 		return resampled;
 	}
 	else {
@@ -91,16 +87,12 @@ HeightMapExpression::HeightMapExpression (DefTokeniser& token) {
 	token.assertNextToken(")");
 }
 
-Image* HeightMapExpression::getImage() {
+ImagePtr HeightMapExpression::getImage() {
 	// Get the heightmap from the contained expression
-	Image* heightMap = heightMapExp->getImage();
+	ImagePtr heightMap = heightMapExp->getImage();
 	
 	// Convert the heightmap into a normalmap
-	Image* normalMap = createNormalmapFromHeightmap(heightMap, scale);
-	
-	// Remove the heightmap from the heap, we don't need it any longer
-	heightMap->release();
-	
+	ImagePtr normalMap = createNormalmapFromHeightmap(heightMap, scale);
 	return normalMap;
 }
 
@@ -118,18 +110,18 @@ AddNormalsExpression::AddNormalsExpression (DefTokeniser& token) {
 	token.assertNextToken(")");
 }
 
-Image* AddNormalsExpression::getImage() {
-    Image* imgOne = mapExpOne->getImage();
+ImagePtr AddNormalsExpression::getImage() {
+    ImagePtr imgOne = mapExpOne->getImage();
 
     unsigned int width = imgOne->getWidth();
     unsigned int height = imgOne->getHeight();
 
-    Image* imgTwo = mapExpTwo->getImage();
+    ImagePtr imgTwo = mapExpTwo->getImage();
 
 	// The image must match the dimensions of the first 
 	imgTwo = getResampled(imgTwo, width, height);
 
-    Image* result = new RGBAImage(width, height);
+    ImagePtr result (new RGBAImage(width, height));
 
     byte* pixOne = imgOne->getRGBAPixels();
     byte* pixTwo = imgTwo->getRGBAPixels();
@@ -163,10 +155,6 @@ Image* AddNormalsExpression::getImage() {
 	    pixOut += 4;
 	}
     }
-    
-    imgOne->release();
-    imgTwo->release();
-    
     return result;
 }
 
@@ -182,14 +170,14 @@ SmoothNormalsExpression::SmoothNormalsExpression (DefTokeniser& token) {
 	token.assertNextToken(")");
 }
 
-Image* SmoothNormalsExpression::getImage() {
+ImagePtr SmoothNormalsExpression::getImage() {
 
-	Image* normalMap = mapExp->getImage();
+	ImagePtr normalMap = mapExp->getImage();
 	 
 	unsigned int width = normalMap->getWidth();
 	unsigned int height = normalMap->getHeight();
 	 
-	Image* result = new RGBAImage(width, height);
+	ImagePtr result (new RGBAImage(width, height));
  
 	byte* in = normalMap->getRGBAPixels();
 	byte* out = result->getRGBAPixels();
@@ -241,10 +229,6 @@ Image* SmoothNormalsExpression::getImage() {
 			out += 4;
 	    }
 	}
-	
-	// Free the source image
-	normalMap->release();
-	
     return result;
 }
 
@@ -262,18 +246,18 @@ AddExpression::AddExpression (DefTokeniser& token) {
 	token.assertNextToken(")");
 }
 
-Image* AddExpression::getImage() {
-    Image* imgOne = mapExpOne->getImage();
+ImagePtr AddExpression::getImage() {
+    ImagePtr imgOne = mapExpOne->getImage();
 
     unsigned int width = imgOne->getWidth();
     unsigned int height = imgOne->getHeight();
 
-	Image* imgTwo = mapExpTwo->getImage();
+	ImagePtr imgTwo = mapExpTwo->getImage();
 	
 	// Resize the image to match the dimensions of the first
     imgTwo = getResampled(imgTwo, width, height);
 
-    Image* result = new RGBAImage(width, height);
+    ImagePtr result (new RGBAImage(width, height));
 
     byte* pixOne = imgOne->getRGBAPixels();
     byte* pixTwo = imgTwo->getRGBAPixels();
@@ -294,11 +278,6 @@ Image* AddExpression::getImage() {
 			pixOut += 4;
 		}
     }
-    
-	// Delete the two source images from the heap
-	imgOne->release();
-	imgTwo->release();
-    
 	return result;
 }
 
@@ -328,8 +307,8 @@ ScaleExpression::ScaleExpression (DefTokeniser& token) : scaleGreen(0),scaleBlue
 	token.assertNextToken(")");
 }
 
-Image* ScaleExpression::getImage() {
-    Image* img = mapExp->getImage();
+ImagePtr ScaleExpression::getImage() {
+    ImagePtr img = mapExp->getImage();
 
     unsigned int width = img->getWidth();
     unsigned int height = img->getHeight();
@@ -339,7 +318,7 @@ Image* ScaleExpression::getImage() {
 		return img; 
 	}
 	 
-    Image* result = new RGBAImage(width, height);
+    ImagePtr result (new RGBAImage(width, height));
  
     byte* in = img->getRGBAPixels();
     byte* out = result->getRGBAPixels();
@@ -365,10 +344,6 @@ Image* ScaleExpression::getImage() {
 			out += 4;
 		}
     }
-    
-	// Free the memory occupied by the source image
-	img->release();
-
 	return result;
 }
 
@@ -384,13 +359,13 @@ InvertAlphaExpression::InvertAlphaExpression (DefTokeniser& token) {
 	token.assertNextToken(")");
 }
 
-Image* InvertAlphaExpression::getImage() {
-	Image* img = mapExp->getImage();
+ImagePtr InvertAlphaExpression::getImage() {
+	ImagePtr img = mapExp->getImage();
 
 	unsigned int width = img->getWidth();
 	unsigned int height = img->getHeight();
 
-	Image* result = new RGBAImage(width, height);
+	ImagePtr result (new RGBAImage(width, height));
 
 	byte* in = img->getRGBAPixels();
 	byte* out = result->getRGBAPixels();
@@ -408,10 +383,6 @@ Image* InvertAlphaExpression::getImage() {
 			out += 4;
 		}
 	}
-
-	// Free the memory occupied by the source image
-	img->release();
-
 	return result;
 }
 
@@ -427,13 +398,13 @@ InvertColorExpression::InvertColorExpression (DefTokeniser& token) {
 	token.assertNextToken(")");
 }
 
-Image* InvertColorExpression::getImage() {
-	Image* img = mapExp->getImage();
+ImagePtr InvertColorExpression::getImage() {
+	ImagePtr img = mapExp->getImage();
 
 	unsigned int width = img->getWidth();
 	unsigned int height = img->getHeight();
 
-	Image* result = new RGBAImage(width, height);
+	ImagePtr result (new RGBAImage(width, height));
  
 	byte* in = img->getRGBAPixels();
 	byte* out = result->getRGBAPixels();
@@ -451,10 +422,6 @@ Image* InvertColorExpression::getImage() {
 			out += 4;
 		}
 	}
-
-	// Free the memory occupied by the source image
-	img->release();
-
 	return result;
 }
 
@@ -470,13 +437,13 @@ MakeIntensityExpression::MakeIntensityExpression (DefTokeniser& token) {
 	token.assertNextToken(")");
 }
 
-Image* MakeIntensityExpression::getImage() {
-	Image* img = mapExp->getImage();
+ImagePtr MakeIntensityExpression::getImage() {
+	ImagePtr img = mapExp->getImage();
 
 	unsigned int width = img->getWidth();
 	unsigned int height = img->getHeight();
 
-	Image* result = new RGBAImage(width, height);
+	ImagePtr result (new RGBAImage(width, height));
  
 	byte* in = img->getRGBAPixels();
 	byte* out = result->getRGBAPixels();
@@ -494,10 +461,6 @@ Image* MakeIntensityExpression::getImage() {
 			out += 4;
 		}
 	}
-
-	// Free the memory occupied by the source image
-	img->release();
-    
 	return result;
 }
 
@@ -513,13 +476,13 @@ MakeAlphaExpression::MakeAlphaExpression (DefTokeniser& token) {
 	token.assertNextToken(")");
 }
 
-Image* MakeAlphaExpression::getImage() {
-	Image* img = mapExp->getImage();
+ImagePtr MakeAlphaExpression::getImage() {
+	ImagePtr img = mapExp->getImage();
 
 	unsigned int width = img->getWidth();
 	unsigned int height = img->getHeight();
 
-	Image* result = new RGBAImage(width, height);
+	ImagePtr result (new RGBAImage(width, height));
 
 	byte* in = img->getRGBAPixels();
 	byte* out = result->getRGBAPixels();
@@ -537,10 +500,6 @@ Image* MakeAlphaExpression::getImage() {
 			out += 4;
 		}
 	}
-
-	// Free the memory occupied by the source image
-	img->release();
-
 	return result;
 }
 
@@ -557,7 +516,7 @@ ImageExpression::ImageExpression (std::string path) {
 	_path = os::standardPath(path).substr(0, path.rfind("."));
 }
 
-Image* ImageExpression::getImage() {
+ImagePtr ImageExpression::getImage() {
 	DefaultConstructor d(_path);
 	return d.construct();
 }

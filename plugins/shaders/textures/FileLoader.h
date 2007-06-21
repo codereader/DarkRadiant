@@ -34,7 +34,7 @@ public:
 	FileLoader(const std::string& filename, const std::string moduleNames = "GDK");
 	
 	// The actual construct() method as needed by the GLTextureManager
-	Image* construct();
+	ImagePtr construct();
 };
 
 } // namespace shaders
