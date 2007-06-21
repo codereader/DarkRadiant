@@ -45,8 +45,13 @@ public:
 		std::string contents = file->getInputStream().getAsString();
 		file->release();
 	
-		// Pass the contents back to the SkinCache module for parsing
-		_cache.parseFile(contents);				
+		try {
+			// Pass the contents back to the SkinCache module for parsing
+			_cache.parseFile(contents);
+		}
+		catch (parser::ParseException e) {
+			std::cout << "[skins]: in " << fileName << ": " << e.what() << "\n";
+		}
 	}
 }; 
 
@@ -71,7 +76,7 @@ void Doom3SkinCache::realise() {
 	}
 	catch (parser::ParseException e) {
 		std::cout << "[skins]: " << e.what() << "\n";
-	} 
+	}
 	
 	// Set the realised flag
 	_realised = true;
