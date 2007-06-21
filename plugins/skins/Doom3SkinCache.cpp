@@ -47,7 +47,7 @@ public:
 	
 		try {
 			// Pass the contents back to the SkinCache module for parsing
-			_cache.parseFile(contents);
+			_cache.parseFile(contents, fileName);
 		}
 		catch (parser::ParseException e) {
 			std::cout << "[skins]: in " << fileName << ": " << e.what() << "\n";
@@ -83,18 +83,44 @@ void Doom3SkinCache::realise() {
 }
 
 // Parse the contents of a .skin file
-void Doom3SkinCache::parseFile(const std::string& contents) {
+void Doom3SkinCache::parseFile(const std::string& contents, const std::string& filename) {
 	
 	// Construct a DefTokeniser to parse the file
 	parser::DefTokeniser tok(contents);
 	
 	// Call the parseSkin() function for each skin decl
-	while (tok.hasMoreTokens())
-		parseSkin(tok);
+	while (tok.hasMoreTokens()) {
+		try {
+			// Try to parse the skin
+			Doom3ModelSkinPtr modelSkin = parseSkin(tok);
+			std::string skinName = modelSkin->getName();
+			
+			modelSkin->setSkinFileName(filename);
+			
+			NamedSkinMap::iterator found = _namedSkins.find(skinName);
+			
+			// Is this already defined?
+			if (found != _namedSkins.end()) {
+				std::cout << "[skins] in " << filename << ": skin " + skinName + 
+						     " previously defined in " +
+							 found->second->getSkinFileName() + "!\n";
+				// Don't insert the skin into the list
+			}
+			else {
+				// Add the populated Doom3ModelSkin to the hashtable and the name to the
+				// list of all skins
+				_namedSkins.insert(NamedSkinMap::value_type(skinName, modelSkin));
+				_allSkins.push_back(skinName);
+			}
+		}
+		catch (parser::ParseException e) {
+			std::cout << "[skins]: in " << filename << ": " << e.what() << "\n";
+		}
+	}
 }
 
 // Parse an individual skin declaration
-void Doom3SkinCache::parseSkin(parser::DefTokeniser& tok) {
+Doom3ModelSkinPtr Doom3SkinCache::parseSkin(parser::DefTokeniser& tok) {
 	
 	// [ "skin" ] <name> "{" 
 	//			[ "model" <modelname> ] 
@@ -110,7 +136,7 @@ void Doom3SkinCache::parseSkin(parser::DefTokeniser& tok) {
 	tok.assertNextToken("{");
 
 	// Create the skin object
-	boost::shared_ptr<Doom3ModelSkin> skin(new Doom3ModelSkin());
+	Doom3ModelSkinPtr skin(new Doom3ModelSkin(skinName));
 	
 	// Read key/value pairs until end of decl
 	std::string key = tok.nextToken();
@@ -136,11 +162,8 @@ void Doom3SkinCache::parseSkin(parser::DefTokeniser& tok) {
 		// Get next key
 		key = tok.nextToken();
 	}
-
-	// Add the populated Doom3ModelSkin to the hashtable and the name to the
-	// list of all skins
-	_namedSkins[skinName] = skin;
-	_allSkins.push_back(skinName);
+	
+	return skin;
 }
 	
 } // namespace skins
