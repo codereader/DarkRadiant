@@ -70,7 +70,7 @@ TextureBrowser::TextureBrowser() :
 	);
 	g_signal_connect(G_OBJECT(_seekInMediaBrowser), "activate", G_CALLBACK(onSeekInMediaBrowser), this);
 	
-	_shaderLabel = gtkutil::LeftAlignedLabel("No shader");
+	_shaderLabel = gtk_menu_item_new_with_label("No shader");
 	gtk_widget_set_sensitive(_shaderLabel, FALSE);
 	
 	gtk_menu_shell_append(GTK_MENU_SHELL(_popupMenu), _shaderLabel);
@@ -576,9 +576,9 @@ void TextureBrowser::openContextMenu() {
 	if (_popupX > 0 && _popupY > 0) {
 		IShaderPtr shader = getShaderAtCoords(_popupX, _popupY);
 		shaderText = shader->getName();
-		shaderText = shaderText.substr(shaderText.rfind("/"));
+		shaderText = shaderText.substr(shaderText.rfind("/")+1);
 	}
-	gtk_label_set_markup(GTK_LABEL(_shaderLabel), shaderText.c_str());
+	gtk_label_set_text(GTK_LABEL(gtk_bin_get_child(GTK_BIN(_shaderLabel))), shaderText.c_str());
 	
 	gtk_menu_popup(GTK_MENU(_popupMenu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
 }
@@ -593,7 +593,7 @@ void TextureBrowser::onSeekInMediaBrowser(GtkMenuItem* item, TextureBrowser* sel
 			// Focus the MediaBrowser selection to the given shader
 			GroupDialog::Instance().setPage("mediabrowser");
 			MediaBrowser::getInstance().setSelection(shader->getName());
-		}	
+		}
 	}
 	
 	self->_popupX = -1;
