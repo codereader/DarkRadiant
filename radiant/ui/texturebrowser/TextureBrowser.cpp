@@ -540,12 +540,10 @@ void TextureBrowser::draw() {
       glRasterPos2i (x, y-getFontHeight()+5);
 
       // don't draw the directory name
-      const char* name = shader->getName();
-      name += strlen(name);
-      while(name != shader->getName() && *(name-1) != '/' && *(name-1) != '\\')
-        name--;
-
-      GlobalOpenGL().drawString(name);
+      std::string name = shader->getName();
+      name = name.substr(name.rfind("/")+1);
+      
+      GlobalOpenGL().drawString(name.c_str());
       glEnable (GL_TEXTURE_2D);
     }
 
@@ -573,11 +571,20 @@ void TextureBrowser::doMouseWheel(bool wheelUp) {
 void TextureBrowser::openContextMenu() {
 	
 	std::string shaderText = "No shader";
+	
 	if (_popupX > 0 && _popupY > 0) {
 		IShaderPtr shader = getShaderAtCoords(_popupX, _popupY);
-		shaderText = shader->getName();
-		shaderText = shaderText.substr(shaderText.rfind("/")+1);
+		
+		if (shader != NULL) {
+			shaderText = shader->getName();
+			shaderText = shaderText.substr(shaderText.rfind("/")+1);
+			gtk_widget_set_sensitive(_seekInMediaBrowser, TRUE);
+		}
+		else {
+			gtk_widget_set_sensitive(_seekInMediaBrowser, FALSE);
+		}
 	}
+	
 	gtk_label_set_text(GTK_LABEL(gtk_bin_get_child(GTK_BIN(_shaderLabel))), shaderText.c_str());
 	
 	gtk_menu_popup(GTK_MENU(_popupMenu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
