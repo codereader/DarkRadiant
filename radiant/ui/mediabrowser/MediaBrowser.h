@@ -56,6 +56,9 @@ private:
 	 */
 	void updateAvailableMenuItems();
 	
+	// Populates the treeview
+	void populate();
+	
 public:
 	
 	/** Return the singleton instance.

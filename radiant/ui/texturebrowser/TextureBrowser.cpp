@@ -8,11 +8,14 @@
 #include <gtk/gtk.h>
 #include "gtkutil/widget.h"
 #include "gtkutil/GLWidgetSentry.h"
+#include "gtkutil/IconTextMenuItem.h"
+#include "gtkutil/LeftAlignedLabel.h"
 
 #include "plugin.h"
 #include "shaderlib.h"
 #include "selection/algorithm/Shader.h"
 #include "ui/groupdialog/GroupDialog.h"
+#include "ui/mediabrowser/MediaBrowser.h"
 
 namespace ui {
 
@@ -23,9 +26,18 @@ namespace {
 	const std::string RKEY_TEXTURE_SHOW_SCROLLBAR = "user/ui/textures/browser/showScrollBar";
 	const std::string RKEY_TEXTURE_MOUSE_WHEEL_INCR = "user/ui/textures/browser/mouseWheelIncrement";
 	const std::string RKEY_TEXTURE_SHOW_FILTER = "user/ui/textures/browser/showFilter";
+	const std::string RKEY_TEXTURE_CONTEXTMENU_EPSILON = "user/ui/textures/browser/contextMenuMouseEpsilon";
+	
+	const std::string SEEK_IN_MEDIA_BROWSER_TEXT = "Seek in Media Browser";
+	const char* TEXTURE_ICON = "icon_texture.png";
 }
 
 TextureBrowser::TextureBrowser() :
+	_popupX(-1),
+	_popupY(-1),
+	_startOrigin(-1),
+	_epsilon(GlobalRegistry().getFloat(RKEY_TEXTURE_CONTEXTMENU_EPSILON)),
+	_popupMenu(gtk_menu_new()),
 	m_filter(0),
 	m_filterEntry(TextureBrowserQueueDrawCaller(*this), ClearFilterCaller(*this)),
 	m_texture_scroll(0),
@@ -50,6 +62,20 @@ TextureBrowser::TextureBrowser() :
 	shader = texdef_name_default();
 	
 	setScaleFromRegistry();
+	
+	// Construct the popup context menu
+	_seekInMediaBrowser = gtkutil::IconTextMenuItem(
+		GlobalRadiant().getLocalPixbuf(TEXTURE_ICON), 
+		SEEK_IN_MEDIA_BROWSER_TEXT
+	);
+	g_signal_connect(G_OBJECT(_seekInMediaBrowser), "activate", G_CALLBACK(onSeekInMediaBrowser), this);
+	
+	_shaderLabel = gtkutil::LeftAlignedLabel("No shader");
+	gtk_widget_set_sensitive(_shaderLabel, FALSE);
+	
+	gtk_menu_shell_append(GTK_MENU_SHELL(_popupMenu), _shaderLabel);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_popupMenu), _seekInMediaBrowser);
+	gtk_widget_show_all(_popupMenu);
 }
 
 void TextureBrowser::queueDraw() {
@@ -544,6 +570,36 @@ void TextureBrowser::doMouseWheel(bool wheelUp) {
 	setOriginY(originy);
 }
 
+void TextureBrowser::openContextMenu() {
+	
+	std::string shaderText = "No shader";
+	if (_popupX > 0 && _popupY > 0) {
+		IShaderPtr shader = getShaderAtCoords(_popupX, _popupY);
+		shaderText = shader->getName();
+		shaderText = shaderText.substr(shaderText.rfind("/"));
+	}
+	gtk_label_set_markup(GTK_LABEL(_shaderLabel), shaderText.c_str());
+	
+	gtk_menu_popup(GTK_MENU(_popupMenu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
+}
+
+// Static
+void TextureBrowser::onSeekInMediaBrowser(GtkMenuItem* item, TextureBrowser* self) {
+	
+	if (self->_popupX > 0 && self->_popupY > 0) {
+		IShaderPtr shader = self->getShaderAtCoords(self->_popupX, self->_popupY);
+	
+		if (shader != NULL) {
+			// Focus the MediaBrowser selection to the given shader
+			GroupDialog::Instance().setPage("mediabrowser");
+			MediaBrowser::getInstance().setSelection(shader->getName());
+		}	
+	}
+	
+	self->_popupX = -1;
+	self->_popupY = -1;
+}
+
 // GTK callback for toggling uniform texture sizing
 void TextureBrowser::onResizeToggle(GtkWidget* button, TextureBrowser* self) {
 	self->m_resizeTextures = 
@@ -557,6 +613,11 @@ gboolean TextureBrowser::onButtonPress(GtkWidget* widget, GdkEventButton* event,
 	if (event->type == GDK_BUTTON_PRESS) {
 		if (event->button == 3) {
 			self->m_freezePointer.freeze_pointer(self->m_parent, trackingDelta, self);
+			
+			// Store the coords of the mouse pointer for later reference
+			self->_popupX = static_cast<int>(event->x);
+			self->_popupY = self->height - 1 - static_cast<int>(event->y);
+			self->_startOrigin = self->originy;
 		}
 		else if (event->button == 1) {
 			self->selectTextureAt(
@@ -573,6 +634,15 @@ gboolean TextureBrowser::onButtonRelease(GtkWidget* widget, GdkEventButton* even
 	if (event->type == GDK_BUTTON_RELEASE) {
 		if (event->button == 3) {
 			self->m_freezePointer.unfreeze_pointer(self->m_parent);
+
+			// See how much we've been scrolling since mouseDown			
+			int delta = abs(self->originy - self->_startOrigin);
+			
+			if (delta <= self->_epsilon) {
+				 self->openContextMenu();
+			}
+			
+			self->_startOrigin = -1;
 		}
 	}
 

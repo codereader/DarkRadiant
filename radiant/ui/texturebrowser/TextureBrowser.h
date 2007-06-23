@@ -30,6 +30,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/DeferredAdjustment.h"
 #include "texturelib.h"
 
+typedef struct _GtkMenuItem GtkMenuItem;
+
 namespace ui {
 
 class TextureLayout {
@@ -53,6 +55,21 @@ class TextureBrowser :
 	int m_nTotalHeight;
 
 	std::string shader;
+	
+	// The coordinates of the point where the mouse button was pressed
+	// this is used to check whether the mouse button release is a mouse-drag 
+	// or a contextmenu open command.
+	int _popupX;
+	int _popupY;
+	int _startOrigin;
+	
+	// The maximum distance the mouse pointer may move and still let the context menu
+	// pop up on mouse button release
+	double _epsilon;
+	
+	GtkWidget* _popupMenu;
+	GtkWidget* _seekInMediaBrowser;
+	GtkWidget* _shaderLabel;
 
   GtkEntry* m_filter;
   NonModalEntry m_filterEntry;
@@ -144,6 +161,9 @@ public:
 	static void registerPreferencesPage();
 
 private:
+	// Displays the context menu
+	void openContextMenu();
+
 	// greebo: This gets called as soon as the texture mode gets changed
 	void textureModeChanged();
 
@@ -222,6 +242,8 @@ private:
 	static gboolean onButtonRelease(GtkWidget* widget, GdkEventButton* event, TextureBrowser* self);
 	static gboolean onMouseMotion(GtkWidget *widget, GdkEventMotion *event, TextureBrowser* self);
 	static gboolean onMouseScroll(GtkWidget* widget, GdkEventScroll* event, TextureBrowser* self);
+	
+	static void onSeekInMediaBrowser(GtkMenuItem* item, TextureBrowser* self);
 };
 
 } // namespace ui
