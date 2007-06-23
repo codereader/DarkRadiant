@@ -27,6 +27,7 @@ namespace {
 	const std::string RKEY_TEXTURE_MOUSE_WHEEL_INCR = "user/ui/textures/browser/mouseWheelIncrement";
 	const std::string RKEY_TEXTURE_SHOW_FILTER = "user/ui/textures/browser/showFilter";
 	const std::string RKEY_TEXTURE_CONTEXTMENU_EPSILON = "user/ui/textures/browser/contextMenuMouseEpsilon";
+	const std::string RKEY_TEXTURE_MAX_NAME_LENGTH = "user/ui/textures/browser/maxShadernameLength";
 	
 	const std::string SEEK_IN_MEDIA_BROWSER_TEXT = "Seek in Media Browser";
 	const char* TEXTURE_ICON = "icon_texture.png";
@@ -436,6 +437,8 @@ void TextureBrowser::draw() {
 
   int last_y = 0, last_height = 0;
 
+	unsigned int maxNameLength = GlobalRegistry().getInt(RKEY_TEXTURE_MAX_NAME_LENGTH);
+
   TextureLayout layout;
   for(QERApp_ActiveShaders_IteratorBegin(); !QERApp_ActiveShaders_IteratorAtEnd(); QERApp_ActiveShaders_IteratorIncrement())
   {
@@ -541,7 +544,14 @@ void TextureBrowser::draw() {
 
       // don't draw the directory name
       std::string name = shader->getName();
-      name = name.substr(name.rfind("/")+1);
+      name = name.substr(name.rfind("/") + 1);
+      
+      // Ellipsize the name if it's too long
+      if (name.size() > maxNameLength) {
+      	name = name.substr(0, maxNameLength/2) + 
+      		   "..." + 
+      		   name.substr(name.size() - maxNameLength/2);  
+      }
       
       GlobalOpenGL().drawString(name.c_str());
       glEnable (GL_TEXTURE_2D);
@@ -839,6 +849,7 @@ void TextureBrowser::registerPreferencesPage() {
 	page->appendEntry("Uniform texture thumbnail size (pixels)", RKEY_TEXTURE_UNIFORM_SIZE);
 	page->appendCheckBox("", "Texture scrollbar", RKEY_TEXTURE_SHOW_SCROLLBAR);
 	page->appendEntry("Mousewheel Increment", RKEY_TEXTURE_MOUSE_WHEEL_INCR);
+	page->appendSpinner("Max shadername length", RKEY_TEXTURE_MAX_NAME_LENGTH, 4, 100, 1);
 	
 	page->appendCheckBox("", "Show Texture Filter", RKEY_TEXTURE_SHOW_FILTER);
 }
