@@ -281,6 +281,10 @@ MediaBrowser& MediaBrowser::getInstance() {
 
 // Set the selection in the treeview
 void MediaBrowser::setSelection(const std::string& selection) {
+	if (!_isPopulated) {
+		populate();
+	}
+	
 	// If the selection string is empty, collapse the treeview and return with
 	// no selection
 	if (selection.empty()) {
@@ -314,15 +318,20 @@ void MediaBrowser::reloadMedia() {
 	gtk_widget_queue_draw(_widget);
 } 
 
+void MediaBrowser::populate() {
+	ShaderNameFunctor functor(_treeStore);
+	GlobalShaderSystem().foreachShaderName(makeCallback1(functor));
+
+	_isPopulated = true;	
+}
+
+
 /* GTK CALLBACKS */
 
 gboolean MediaBrowser::_onExpose(GtkWidget* widget, GdkEventExpose* ev, MediaBrowser* self) {
 	// Populate the tree view if it is not already populated
 	if (!self->_isPopulated) {
-		ShaderNameFunctor functor(self->_treeStore);
-		GlobalShaderSystem().foreachShaderName(makeCallback1(functor));
-
-		self->_isPopulated = true;	
+		self->populate();
 	}
 	return FALSE; // progapagate event
 }
