@@ -124,13 +124,13 @@ void GroupDialog::toggleWindow() {
 	if (GTK_WIDGET_VISIBLE(_dialog)) {
 		// Save the window position, to make sure
 		_windowPosition.readPosition();
-		gtk_widget_hide_all(_dialog);
+		gtk_widget_hide(_dialog);
 	}
 	else {
 		// Restore the position
 		_windowPosition.applyPosition();
 		// Now show the dialog window again
-		gtk_widget_show_all(_dialog);
+		gtk_widget_show(_dialog);
 		// Unset the focus widget for this window to avoid the cursor 
 		// from jumping into any entry fields
 		gtk_window_set_focus(GTK_WINDOW(_dialog), NULL);
@@ -157,6 +157,9 @@ GtkWidget* GroupDialog::addPage(const std::string& name,
 								const std::string& tabIcon, 
 								GtkWidget* page, const std::string& windowLabel) 
 {
+	// Make sure the notebook is visible before adding pages
+	gtk_widget_show(_notebook);
+	
 	// Create the icon GtkImage and tab label
 	GtkWidget* icon = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf(tabIcon));
 	GtkWidget* label = gtk_label_new(tabLabel.c_str());
