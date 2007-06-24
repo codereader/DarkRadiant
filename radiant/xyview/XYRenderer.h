@@ -6,12 +6,21 @@
 class XYRenderer : 
 	public Renderer
 {
+	// State type structure
 	struct state_type {
-		state_type() 
-		: m_highlight(0) {}
 		
-		unsigned int m_highlight;
-		ShaderPtr m_state;
+		unsigned int _highlight;
+		
+		// The actual shader. This is a raw pointer for performance, since we
+		// know that the Shader will exist for the lifetime of this render
+		// operation.
+		Shader* _state;
+
+		// Constructor
+		state_type() 
+		: _highlight(0), _state(NULL) 
+		{}
+		
 	};
 	
 	std::vector<state_type> m_state_stack;
@@ -21,15 +30,18 @@ class XYRenderer :
 public:
 	XYRenderer(RenderStateFlags globalstate, ShaderPtr selected) :
 			m_globalstate(globalstate),
-			m_state_selected(selected) {
-		ASSERT_NOTNULL(selected);
+			m_state_selected(selected) 
+	{
+		// Reserve space in the vector to avoid reallocation delays
+		m_state_stack.reserve(8);
+		
 		m_state_stack.push_back(state_type());
 	}
 
 	void SetState(ShaderPtr state, EStyle style) {
 		ASSERT_NOTNULL(state);
 		if (style == eWireframeOnly)
-			m_state_stack.back().m_state = state;
+			m_state_stack.back()._state = state.get();
 	}
 	
 	const EStyle getStyle() const {
@@ -37,26 +49,27 @@ public:
 	}
 	
 	void PushState() {
+		// Duplicate the most recent state
 		m_state_stack.push_back(m_state_stack.back());
 	}
 	
 	void PopState() {
-		ASSERT_MESSAGE(!m_state_stack.empty(), "popping empty stack");
 		m_state_stack.pop_back();
 	}
 	
 	void Highlight(EHighlightMode mode, bool bEnable = true) {
-		(bEnable)
-		? m_state_stack.back().m_highlight |= mode
-		                                      : m_state_stack.back().m_highlight &= ~mode;
+		(bEnable) ? m_state_stack.back()._highlight |= mode
+		          : m_state_stack.back()._highlight &= ~mode;
 	}
 	
-	void addRenderable(const OpenGLRenderable& renderable, const Matrix4& localToWorld) {
-		if (m_state_stack.back().m_highlight & ePrimitive) {
+	void addRenderable(const OpenGLRenderable& renderable, 
+					   const Matrix4& localToWorld) 
+	{
+		if (m_state_stack.back()._highlight & ePrimitive) {
 			m_state_selected->addRenderable(renderable, localToWorld);
 		}
 		else {
-			m_state_stack.back().m_state->addRenderable(renderable, localToWorld);
+			m_state_stack.back()._state->addRenderable(renderable, localToWorld);
 		}
 	}
 
