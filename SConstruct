@@ -173,12 +173,19 @@ else:
 	POSIXFLAGS = ''
 # POSIX macro: platform supports posix IEEE Std 1003.1:2001
 # XWINDOWS macro: platform supports X-Windows API
+
 CCFLAGS = POSIXFLAGS + warningFlags
 CXXFLAGS = '-pipe ' + POSIXFLAGS + warningFlags + warningFlagsCXX
+LINKFLAGS = ''
+
 CPPPATH = ['radiant', 'include', 'libs']
 if (BUILD == 'debug'):
 	CXXFLAGS += '-g -D_DEBUG -fPIC '
 	CCFLAGS += '-g -D_DEBUG -fPIC '
+elif (BUILD == 'profile'):
+    CXXFLAGS += '-g -pg -D_DEBUG -fPIC '
+    CCFLAGS += '-g -pg -D_DEBUG -fPIC '
+    LINKFLAGS += '-pg '
 elif (BUILD == 'release' or BUILD == 'final'):
 	CXXFLAGS += '-O2 -fPIC '
 	CCFLAGS += '-O2 -fPIC '
@@ -191,7 +198,6 @@ else:
 	print 'Unknown build configuration ' + BUILD
 	sys.exit( 0 )
 
-LINKFLAGS = ''
 if ( getOS() == 'posix' ):
   LINKFLAGS += '-Wl,-fini,fini_stub -L. -static-libgcc -Wl,--export-dynamic '
 
