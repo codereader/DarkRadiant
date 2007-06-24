@@ -123,10 +123,10 @@ public:
 };
 
 class ImageExpression : public IMapExpression {
-	std::string _path;
+	std::string _imgName;
 	ImageLoaderList _imageLoaders;
 public:
-	ImageExpression (std::string path);
+	ImageExpression(std::string imgName);
 	ImagePtr getImage();
 	std::string getIdentifier();
 };

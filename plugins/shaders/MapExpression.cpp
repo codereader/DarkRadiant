@@ -10,8 +10,29 @@
 #include "math/Vector3.h"
 
 #include "textures/DefaultConstructor.h"
+#include "textures/FileLoader.h"
 #include "textures/HeightmapCreator.h"
 #include "textures/TextureManipulator.h"
+
+/* CONSTANTS */
+namespace {
+	
+	// Default image maps for optional material stages
+	const std::string IMAGE_BLACK = "_black.bmp";
+	const std::string IMAGE_CUBICLIGHT = "_cubiclight.bmp";
+	const std::string IMAGE_CURRENTRENDER = "_currentrender.bmp";
+	const std::string IMAGE_DEFAULT = "_default.bmp";
+	const std::string IMAGE_FLAT = "_flat.bmp";
+	const std::string IMAGE_FOG = "_fog.bmp";
+	const std::string IMAGE_NOFALLOFF = "_nofalloff.bmp";
+	const std::string IMAGE_POINTLIGHT1 = "_pointlight1.bmp";
+	const std::string IMAGE_POINTLIGHT2 = "_pointlight2.bmp";
+	const std::string IMAGE_POINTLIGHT3 = "_pointlight3.bmp";
+	const std::string IMAGE_QUADRATIC = "_quadratic.bmp";
+	const std::string IMAGE_SCRATCH = "_scratch.bmp";
+	const std::string IMAGE_SPOTLIGHT = "_spotlight.bmp";
+	const std::string IMAGE_WHITE = "_white.bmp";
+}
 
 namespace shaders {
 
@@ -48,7 +69,7 @@ MapExpressionPtr IMapExpression::createForToken(DefTokeniser& token) {
 		return MapExpressionPtr(new MakeAlphaExpression (token));
 	}
 	else {
-		// since we already took away the path into the variable type, we need to pass type instead of token
+		// since we already took away the expression into the variable type, we need to pass type instead of token
 		return MapExpressionPtr(new ImageExpression (type));
 	}
 }
@@ -509,20 +530,80 @@ std::string MakeAlphaExpression::getIdentifier() {
 	return identifier;
 }
 
-ImageExpression::ImageExpression (std::string path) {
+ImageExpression::ImageExpression (std::string imgName) {
 	// Replace backslashes with forward slashes and strip of 
 	// the file extension of the provided token, and store 
 	// the result in the provided string.
-	_path = os::standardPath(path).substr(0, path.rfind("."));
+	_imgName = os::standardPath(imgName).substr(0, imgName.rfind("."));
 }
 
 ImagePtr ImageExpression::getImage() {
-	DefaultConstructor d(_path);
-	return d.construct();
+	// Check for some image keywords and load the correct file
+	if (_imgName == "_black") {
+		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_BLACK);
+		return d.construct();
+	}
+	else if (_imgName == "_cubicLight") {
+		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_CUBICLIGHT);
+		return d.construct();
+	}
+	else if (_imgName == "_currentRender") {
+		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_CURRENTRENDER);
+		return d.construct();
+	}
+	else if (_imgName == "_default") {
+		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_DEFAULT);
+		return d.construct();
+	}
+	else if (_imgName == "_flat") {
+		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_FLAT);
+		return d.construct();
+	}
+	else if (_imgName == "_fog") {
+		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_FOG);
+		return d.construct();
+	}
+	else if (_imgName == "_noFalloff") {
+		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_NOFALLOFF);
+		return d.construct();
+	}
+	else if (_imgName == "_pointLight1") {
+		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_POINTLIGHT1);
+		return d.construct();
+	}
+	else if (_imgName == "_pointLight2") {
+		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_POINTLIGHT2);
+		return d.construct();
+	}
+	else if (_imgName == "_pointLight3") {
+		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_POINTLIGHT3);
+		return d.construct();
+	}
+	else if (_imgName == "_quadratic") {
+		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_QUADRATIC);
+		return d.construct();
+	}
+	else if (_imgName == "_scratch") {
+		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_SCRATCH);
+		return d.construct();
+	}
+	else if (_imgName == "_spotlight") {
+		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_SPOTLIGHT);
+		return d.construct();
+	}
+	else if (_imgName == "_white") {
+		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_WHITE);
+		return d.construct();
+	}
+	// this is a normal material image, so we use the DefaultConstructor
+	else {
+		DefaultConstructor d(_imgName);
+		return d.construct();
+	}
 }
 
 std::string ImageExpression::getIdentifier() {
-	return _path;
+	return _imgName;
 }
 
 } // namespace shaders
