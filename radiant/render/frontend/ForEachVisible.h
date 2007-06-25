@@ -1,10 +1,6 @@
 #ifndef FOREACHVISIBLE_H_
 #define FOREACHVISIBLE_H_
 
-#include "ientity.h"
-#include "ifilter.h"
-#include "ieclass.h"
-
 /**
  * Scenegraph walker class which applies the given walker object to objects
  * in the scene graph depending on their intersection with the provided 
@@ -44,19 +40,13 @@ public:
 										   ? _visStack.back() 
 										   : c_volumeOutside;
 
-		// Examine the entity class for its filter status. If it is filtered, 
-		// use the c_volumeOutside state to ensure it is not rendered.
-		Entity* entity = Node_getEntity(path.top());
-		if (entity) {
-			IEntityClassConstPtr eclass = entity->getEntityClass();
-			std::string name = eclass->getName();
-			if (!GlobalFilterSystem().isVisible("entityclass", name)) {
-				visible = c_volumeOutside;
-			}
-		}
-	
+		// If the instance is filtered, use c_volumeOutside
+        if (instance.getFiltered()) {
+            visible = c_volumeOutside;
+        }
+
 		// Test for partial visibility
-	    if(visible == c_volumePartial) {
+	    if (visible == c_volumePartial) {
 			visible = m_volume.TestAABB(instance.worldAABB());
 	    }
 

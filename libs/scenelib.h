@@ -368,6 +368,10 @@ class Instance
 	Callback m_childSelectedChangedCallback;
 	Callback m_transformChangedCallback;
 
+	// Filtered status
+	bool _filtered;
+	
+private:
 
 	void evaluateTransform() const {
 		if(m_transformChanged) {
@@ -432,7 +436,8 @@ public:
 		m_childBoundsMutex(false),
 		m_isSelectedChanged(true),
 		m_childSelectedChanged(true),
-		m_parentSelectedChanged(true)
+		m_parentSelectedChanged(true),
+		_filtered(false)
 	{
 		ASSERT_MESSAGE((parent == 0) == (path.size() == 1), "instance has invalid parent");
 	}
@@ -531,6 +536,21 @@ public:
 			m_parentSelected = m_parent != 0 && (m_parent->isSelected() || m_parent->parentSelected());
 		}
 		return m_parentSelected;
+	}
+	
+	/**
+	 * Return the filtered status of this Instance.
+	 */
+	bool getFiltered() const {
+		return _filtered;
+	}
+	
+	/**
+	 * Set the filtered status of this Instance. Setting filtered to true will
+	 * prevent the instance from being rendered.
+	 */
+	void setFiltered(bool v) {
+		_filtered = v;
 	}
 };
 

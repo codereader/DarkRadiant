@@ -1,4 +1,5 @@
 #include "BasicFilterSystem.h"
+#include "InstanceUpdateWalker.h"
 
 #include "iscenegraph.h"
 #include "iregistry.h"
@@ -84,6 +85,7 @@ std::string BasicFilterSystem::getFilterEventName(const std::string& filter) {
 	}
 }
 
+// Change the state of a named filter
 void BasicFilterSystem::setFilterState(const std::string& filter, bool state) {
 
 	assert(!_availableFilters.empty());
@@ -103,6 +105,9 @@ void BasicFilterSystem::setFilterState(const std::string& filter, bool state) {
 	// loaded from the filters themselves
 	_visibilityCache.clear();
 			
+	// Update the scenegraph instances
+	updateInstances();
+	
 	// Trigger an immediate scene redraw
 	GlobalSceneGraph().sceneChanged();
 }
@@ -137,6 +142,15 @@ bool BasicFilterSystem::isVisible(const std::string& item,
 	// Cache the result and return to caller
 	_visibilityCache.insert(StringFlagCache::value_type(name, visFlag));
 	return visFlag;
+}
+
+// Update scenegraph instances with filtered status
+void BasicFilterSystem::updateInstances() {
+
+	// Construct an InstanceUpdateWalker and traverse the scenegraph to update
+	// all instances
+	InstanceUpdateWalker walker;
+	GlobalSceneGraph().traverse(walker);
 }
 
 }
