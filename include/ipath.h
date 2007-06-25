@@ -33,25 +33,21 @@ public:
 
 	// Accessor method to retrieve the last element inserted.
 	INodePtr& top() {
-		assert(std::vector<INodePtr>::size() > 0);
-		return *(std::vector<INodePtr>::end()-1);
+		return back();
 	}
 	
 	// Accessor method to retrieve the last element inserted.
 	const INodePtr& top() const {
-		assert(std::vector<INodePtr>::size() > 0);
-		return *(std::vector<INodePtr>::end()-1);
+		return back();
 	}
 	
 	// Accessor method to retrieve the element below the last inserted.
 	INodePtr& parent() {
-		assert(std::vector<INodePtr>::size() > 1);
 		return *(std::vector<INodePtr>::end()-2);
 	}
 	
 	// Accessor method to retrieve the element below the last inserted.
 	const INodePtr& parent() const {
-		assert(std::vector<INodePtr>::size() > 1);
 		return *(std::vector<INodePtr>::end()-2);
 	}
 	
@@ -62,8 +58,7 @@ public:
 	
 	// Remove the topmost element, the size of the stack is reduced by 1.
 	void pop() {
-		assert(std::vector<INodePtr>::size() > 0);
-		erase(std::vector<INodePtr>::end()-1);
+		pop_back();
 	}
 }; // class Path
 
