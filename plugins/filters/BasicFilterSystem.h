@@ -45,6 +45,12 @@ private:
 	typedef std::map<std::string, bool> StringFlagCache;
 	StringFlagCache _visibilityCache;
 
+private:
+	
+	// Perform a traversal of the scenegraph, setting or clearing the filtered
+	// flag on Instances depending on their entity class
+	void updateInstances();
+	
 public:
 	
 	// Constructor
