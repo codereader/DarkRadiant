@@ -44,6 +44,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "xyview/GlobalXYWnd.h"
 #include "ui/patch/PatchThickenDialog.h"
 #include "ui/patch/PatchCreateDialog.h"
+#include "ui/surfaceinspector/SurfaceInspector.h"
 #include "selection/algorithm/Primitives.h"
 
 PatchCreator* g_patchCreator = 0;
@@ -698,6 +699,10 @@ void stitchPatchTextures() {
 			gtkutil::errorDialog("Cannot stitch textures. \nCould not cast nodes to patches.",
 							 MainFrame_getWindow());
 		}
+		
+		SceneChangeNotify();
+		// Update the Texture Tools
+		ui::SurfaceInspector::Instance().update();
 	}
 	else {
 		gtkutil::errorDialog("Cannot stitch patch textures. \nExactly 2 patches must be selected.",
