@@ -56,7 +56,9 @@ class XYWnd :
 	Vector3 m_vOrigin;
 	
 	View m_view;
-	static ShaderPtr m_state_selected;
+	
+	// Shader to use for selected items
+	static ShaderPtr _selectedShader;
 	
 	int m_ptCursorX, m_ptCursorY;
 	
@@ -112,6 +114,7 @@ public:
 	void setParent(GtkWindow* parent);
 	GtkWindow* getParent() const;
 
+	// Capture and release the selected shader
 	static void captureStates();
 	static void releaseStates();
 	
