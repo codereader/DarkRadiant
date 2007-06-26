@@ -174,21 +174,25 @@ else:
 # POSIX macro: platform supports posix IEEE Std 1003.1:2001
 # XWINDOWS macro: platform supports X-Windows API
 
-CCFLAGS = POSIXFLAGS + warningFlags
-CXXFLAGS = '-pipe ' + POSIXFLAGS + warningFlags + warningFlagsCXX
+CCFLAGS = POSIXFLAGS + warningFlags + '-fPIC '
+CXXFLAGS = '-pipe ' + POSIXFLAGS + warningFlags + warningFlagsCXX + '-fPIC '
 LINKFLAGS = ''
 
 CPPPATH = ['radiant', 'include', 'libs']
 if (BUILD == 'debug'):
-	CXXFLAGS += '-g -D_DEBUG -fPIC '
-	CCFLAGS += '-g -D_DEBUG -fPIC '
+	CXXFLAGS += '-g -D_DEBUG '
+	CCFLAGS += '-g -D_DEBUG '
 elif (BUILD == 'profile'):
-    CXXFLAGS += '-g -pg -D_DEBUG -fPIC '
-    CCFLAGS += '-g -pg -D_DEBUG -fPIC '
+	# Settings for profiling. We want profile data (-pg) and debug data (-g)
+	# with basic optimisations to get a better picture of what is happening
+	# in "real life". Inlining will confuse the call information however, so
+	# this is turned off.
+    CXXFLAGS += '-g -pg -O1 -fno-inline '
+    CCFLAGS += '-g -pg -O1 -fno-inline '
     LINKFLAGS += '-pg '
 elif (BUILD == 'release' or BUILD == 'final'):
-	CXXFLAGS += '-O2 -fPIC '
-	CCFLAGS += '-O2 -fPIC '
+	CXXFLAGS += '-O2 '
+	CCFLAGS += '-O2 '
 	# TEMPORARY HACK: Disable inlining on Windows due to problems with NaNs and certain
 	# maths functions causing infinite loops
 	#if getOS() == 'win32':
