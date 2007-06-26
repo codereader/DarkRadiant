@@ -175,11 +175,11 @@ GtkWindow* XYWnd::getParent() const {
 }
 
 void XYWnd::captureStates() {
-	m_state_selected = GlobalShaderCache().capture("$XY_OVERLAY");
+	_selectedShader = GlobalShaderCache().capture("$XY_OVERLAY");
 }
 
 void XYWnd::releaseStates() {
-	m_state_selected = ShaderPtr();
+	_selectedShader = ShaderPtr();
 }
 
 const std::string XYWnd::getViewTypeTitle(EViewType viewtype) {
@@ -1332,13 +1332,14 @@ void XYWnd::draw() {
 	}
 
 	{
-		XYRenderer renderer(globalstate, m_state_selected);
+		// Construct the renderer and render the scene
+		XYRenderer renderer(globalstate, _selectedShader.get());
 
+		// First pass (scenegraph traversal)
 		Scene_Render(renderer, m_view);
-
-		GlobalOpenGL_debugAssertNoErrors();
+		
+		// Second pass (GL calls)
 		renderer.render(m_modelview, m_projection);
-		GlobalOpenGL_debugAssertNoErrors();
 	}
 
 	glDepthMask(GL_FALSE);
@@ -1671,6 +1672,5 @@ void XYWnd::callbackMoveDelta(int x, int y, unsigned int state, void* data) {
 	self->scroll(-x, y);
 }
 
-// =====================================================================
-
-ShaderPtr XYWnd::m_state_selected;
+/* STATICS */
+ShaderPtr XYWnd::_selectedShader;

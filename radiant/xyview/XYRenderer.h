@@ -25,12 +25,14 @@ class XYRenderer :
 	
 	std::vector<state_type> m_state_stack;
 	RenderStateFlags m_globalstate;
-	ShaderPtr m_state_selected;
+	
+	// Shader to use for highlighted objects
+	Shader* _selectedShader;
 
 public:
-	XYRenderer(RenderStateFlags globalstate, ShaderPtr selected) :
+	XYRenderer(RenderStateFlags globalstate, Shader* selected) :
 			m_globalstate(globalstate),
-			m_state_selected(selected) 
+			_selectedShader(selected) 
 	{
 		// Reserve space in the vector to avoid reallocation delays
 		m_state_stack.reserve(8);
@@ -66,7 +68,7 @@ public:
 					   const Matrix4& localToWorld) 
 	{
 		if (m_state_stack.back()._highlight & ePrimitive) {
-			m_state_selected->addRenderable(renderable, localToWorld);
+			_selectedShader->addRenderable(renderable, localToWorld);
 		}
 		else {
 			m_state_stack.back()._state->addRenderable(renderable, localToWorld);
