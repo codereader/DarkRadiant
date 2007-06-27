@@ -28,6 +28,7 @@ namespace shaders {
 Doom3ShaderSystem::Doom3ShaderSystem() :
 	_library(new ShaderLibrary()),
 	_textureManager(new GLTextureManager()),
+	_enableActiveUpdates(true),
 	_shadersUnrealised(1)
 {}
 
@@ -174,7 +175,8 @@ GLTextureManager& Doom3ShaderSystem::getTextureManager() {
 }
 
 void Doom3ShaderSystem::activeShadersChangedNotify() {
-	_activeShadersChangedNotify();
+	if (_enableActiveUpdates)
+		_activeShadersChangedNotify();
 }
 
 TexturePtr Doom3ShaderSystem::loadTextureFromFile(const std::string& filename,
