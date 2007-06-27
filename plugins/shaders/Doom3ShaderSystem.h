@@ -26,6 +26,9 @@ class Doom3ShaderSystem :
 	// greebo: Legacy callback (points to the TextureBrowser)
 	Callback _activeShadersChangedNotify;
 	
+	// Flag to indicate whether the active shaders callback should be invoked
+	bool _enableActiveUpdates;
+	
 	// greebo: Legacy "unrealised" counter, gets 0 as soon as the
 	// global filesystem calls the realise() method of this class,
 	// (This ShaderSystem acts as ModuleObserver)
@@ -36,6 +39,7 @@ class Doom3ShaderSystem :
 	ModuleObservers _observers;
 	
 public:
+
 	// Constructor, allocates the library
 	Doom3ShaderSystem();
 	
@@ -67,6 +71,11 @@ public:
 	void incrementActiveShadersIterator();
 	
 	void setActiveShadersChangedNotify(const Callback& notify);
+	
+	// Enable or disable the active shaders callback
+	void setActiveShaderUpdates(bool v) {
+		_enableActiveUpdates = v;
+	}
 	
 	void attach(ModuleObserver& observer);
 	void detach(ModuleObserver& observer);

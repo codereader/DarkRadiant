@@ -31,6 +31,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ieclass.h"
 #include "iscriplib.h"
 #include "iradiant.h"
+#include "ishaders.h"
+
 #include "scenelib.h"
 #include "traverselib.h"
 #include "stringio.h"
@@ -266,6 +268,9 @@ void Map_Read(scene::INodePtr root,
 	gtkutil::ModalProgressDialog dialog(GlobalRadiant().getMainWindow(),
 										"Loading map");
 
+	// Disable texture window updates for performance
+	GlobalShaderSystem().setActiveShaderUpdates(false);
+	
 	// Read each entity in the map, until EOF is reached
 	for (int entCount = 0; ; entCount++) {
 
@@ -303,4 +308,9 @@ void Map_Read(scene::INodePtr root,
 		}
 		
 	}
+	
+	// Re-enable texture window updates
+	GlobalShaderSystem().setActiveShaderUpdates(true);
+	
+	
 }
