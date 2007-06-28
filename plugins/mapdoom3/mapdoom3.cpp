@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ieclass.h"
 #include "iregistry.h"
 #include "iradiant.h"
+#include "ishaders.h"
 
 #include "scenelib.h"
 #include "string/string.h"
@@ -49,7 +50,8 @@ class MapDoom3Dependencies :
   public GlobalEntityClassManagerModuleRef,
   public GlobalSceneGraphModuleRef,
   public GlobalBrushModuleRef,
-  public GlobalRegistryModuleRef
+  public GlobalRegistryModuleRef,
+  public GlobalShadersModuleRef
 {
   PatchModuleRef m_patchDef2Doom3Module;
   PatchModuleRef m_patchDoom3Module;
@@ -57,6 +59,7 @@ public:
   MapDoom3Dependencies() :
     GlobalEntityClassManagerModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("entityclass")),
     GlobalBrushModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("brushtypes")),
+    GlobalShadersModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("shaders")),
     m_patchDef2Doom3Module("def2doom3"),
     m_patchDoom3Module("doom3")
   {
