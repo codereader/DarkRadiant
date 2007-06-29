@@ -24,7 +24,6 @@
 #include "LightShader.h"
 #include "RenderableVertices.h"
 #include "Doom3LightRadius.h"
-#include "../doom3group/Doom3GroupOrigin.h"
 
 /* greebo: This is the actual light class. It contains the information about the geometry
  * of the light and the actual render functions.

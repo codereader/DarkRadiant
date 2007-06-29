@@ -280,7 +280,6 @@ entity_src = [
 	'doom3group/Doom3Group.cpp',
 	'doom3group/Doom3GroupInstance.cpp',
 	'doom3group/Doom3GroupNode.cpp',
-	'doom3group/Doom3GroupOrigin.cpp',
 	'generic/GenericEntity.cpp',
 	'generic/GenericEntityInstance.cpp',
 	'generic/GenericEntityNode.cpp',
