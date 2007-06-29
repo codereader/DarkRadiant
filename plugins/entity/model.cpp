@@ -32,5 +32,4 @@ void Model::modelChanged(std::string value) {
     m_resource.detach(*this);
     m_resource.setName(value.c_str());
     m_resource.attach(*this);
-    m_modelChanged();
 }

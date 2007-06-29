@@ -34,11 +34,10 @@ class Model : public ModuleObserver
   ResourceReference m_resource;
   scene::Traversable& m_traverse;
   scene::INodePtr m_node;
-  Callback m_modelChanged;
 
 public:
-  Model(scene::Traversable& traversable, const Callback& modelChanged)
-    : m_resource(""), m_traverse(traversable), m_modelChanged(modelChanged)
+  Model(scene::Traversable& traversable)
+    : m_resource(""), m_traverse(traversable)
   {
     m_resource.attach(*this);
   }
@@ -85,7 +84,7 @@ class SingletonModel
   Model m_model;
 public:
   SingletonModel()
-    : m_model(m_traverse, Callback())
+    : m_model(m_traverse/*, Callback()*/)
   {
   }
 
