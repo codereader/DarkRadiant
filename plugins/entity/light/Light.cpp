@@ -242,13 +242,13 @@ void Light::construct() {
 	// set the colours to their default values
 	m_doom3Radius.setCenterColour(m_entity.getEntityClass()->getColour());
 
-	m_traverse.attach(&m_traverseObservers);
+	//m_traverse.attach(&m_traverseObservers);
 
 	m_entity.setIsContainer(true);
 }
 
 void Light::destroy() {
-	m_traverse.detach(&m_traverseObservers);
+	//m_traverse.detach(&m_traverseObservers);
 }
 
 void Light::updateOrigin() {
@@ -559,10 +559,10 @@ const TransformNode& Light::getTransformNode() const {
 }
 
 void Light::attach(scene::Traversable::Observer* observer) {
-	m_traverseObservers.attach(*observer);
+	m_traverse.attach(observer);
 }
 void Light::detach(scene::Traversable::Observer* observer) {
-	m_traverseObservers.detach(*observer);
+	m_traverse.detach(observer);
 }
 
 // Backend render function (GL calls)
