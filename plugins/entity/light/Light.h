@@ -95,7 +95,7 @@ class Light :
 
   NamedEntity m_named;
   NameKeys m_nameKeys;
-  TraversableObserverPairRelay m_traverseObservers;
+  //TraversableObserverPairRelay m_traverseObservers;
 
 	Doom3LightRadius m_doom3Radius;
 

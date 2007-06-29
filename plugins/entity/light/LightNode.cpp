@@ -30,6 +30,7 @@ LightNode::~LightNode() {
 }
 
 void LightNode::construct() {
+	// Attach this node as scene::Traversable::Observer to the contained Light class
 	m_contained.attach(this);
 }
 
