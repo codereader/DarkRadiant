@@ -41,7 +41,7 @@ class Doom3Group :
 
 	NamedEntity m_named;
 	NameKeys m_nameKeys;
-	TraversableObserverPairRelay m_traverseObservers;
+	scene::Traversable::Observer* _traverseObserver;
 	RenderablePivot m_renderOrigin;
 	RenderableNamedEntity m_renderName;
 	ModelSkinKey m_skin;
@@ -75,13 +75,17 @@ public:
 	 * 
 	 * These callbacks point to and InstanceSet::transformChangedCaller(), for example.  
 	 */
-	Doom3Group(IEntityClassPtr eclass, scene::Node& node, 
+	Doom3Group(IEntityClassPtr eclass, 
+			   scene::Node& node,
+			   scene::Traversable::Observer* traverseObserver, 
 			   const Callback& transformChanged, 
 			   const Callback& boundsChanged, 
 			   const Callback& evaluateTransform);
 	
 	// Copy constructor
-	Doom3Group(const Doom3Group& other, scene::Node& node, 
+	Doom3Group(const Doom3Group& other, 
+			   scene::Node& node,
+			   scene::Traversable::Observer* traverseObserver, 
 			   const Callback& transformChanged, 
 			   const Callback& boundsChanged, 
 			   const Callback& evaluateTransform);
@@ -109,11 +113,6 @@ public:
 	const TransformNode& getTransformNode() const;
 	ModelSkin& getModelSkin();
 	const ModelSkin& getModelSkin() const;
-
-	// This gets called by the Doom3GroupNode constructor and attaches the
-	// Node class as observer of this Doom3Group
-	void attach(scene::Traversable::Observer* observer);
-	void detach(scene::Traversable::Observer* observer);
 
 	const AABB& localAABB() const;
 	
