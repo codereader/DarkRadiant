@@ -139,10 +139,8 @@ class InstanceSet :
 {
 	typedef std::pair<scene::Instantiable::Observer*, PathConstReference> CachePath;
 
-	typedef CachePath key_type;
-
 	// The map of Instances, indexed by a CachePath structure as above
-	typedef std::map<key_type, scene::Instance*> InstanceMap;
+	typedef std::map<CachePath, scene::Instance*> InstanceMap;
 
 	// The actual map of the instances
 	InstanceMap m_instances;
@@ -162,34 +160,34 @@ public:
 	// The call arriving at Doom3GroupNode::insert() is passed here, for example.
 	void insertChild(scene::INodePtr child) {
 		for (iterator i = begin(); i != end(); ++i) {
-			Node_traverseSubgraph(child, InstanceSubgraphWalker((*i).first.first, (*i).first.second, (*i).second));
-			(*i).second->boundsChanged();
+			Node_traverseSubgraph(child, InstanceSubgraphWalker(i->first.first, i->first.second, i->second));
+			i->second->boundsChanged();
 		}
 	}
 	
 	void eraseChild(scene::INodePtr child) {
 		for (iterator i = begin(); i != end(); ++i) {
-			Node_traverseSubgraph(child, UninstanceSubgraphWalker((*i).first.first, (*i).first.second));
-			(*i).second->boundsChanged();
+			Node_traverseSubgraph(child, UninstanceSubgraphWalker(i->first.first, i->first.second));
+			i->second->boundsChanged();
 		}
 	}
 
 	// Cycle through all the instances with the given visitor class
 	void forEachInstance(const scene::Instantiable::Visitor& visitor) {
 		for (iterator i = begin(); i != end(); ++i) {
-			visitor.visit(*(*i).second);
+			visitor.visit(*i->second);
 		}
 	}
 
 	void insert(scene::Instantiable::Observer* observer, const scene::Path& path, scene::Instance* instance)
 	{
-		ASSERT_MESSAGE(m_instances.find(key_type(observer, PathConstReference(instance->path()))) == m_instances.end(), "InstanceSet::insert - element already exists");
-		m_instances.insert(InstanceMap::value_type(key_type(observer, PathConstReference(instance->path())), instance));
+		ASSERT_MESSAGE(m_instances.find(CachePath(observer, PathConstReference(instance->path()))) == m_instances.end(), "InstanceSet::insert - element already exists");
+		m_instances.insert(InstanceMap::value_type(CachePath(observer, PathConstReference(instance->path())), instance));
 	}
 	
 	scene::Instance* erase(scene::Instantiable::Observer* observer, const scene::Path& path) {
-		ASSERT_MESSAGE(m_instances.find(key_type(observer, PathConstReference(path))) != m_instances.end(), "InstanceSet::erase - failed to find element");
-		InstanceMap::iterator i = m_instances.find(key_type(observer, PathConstReference(path)));
+		ASSERT_MESSAGE(m_instances.find(CachePath(observer, PathConstReference(path))) != m_instances.end(), "InstanceSet::erase - failed to find element");
+		InstanceMap::iterator i = m_instances.find(CachePath(observer, PathConstReference(path)));
 		scene::Instance* instance = i->second;
 		m_instances.erase(i);
 		return instance;
@@ -219,7 +217,7 @@ inline void InstanceSet_forEach(InstanceSet& instances, const Functor& functor)
 {
   for(InstanceSet::iterator i = instances.begin(), end = instances.end(); i != end; ++i)
   {
-    functor(*(*i).second);
+    functor(*i->second);
   }
 }
 
