@@ -7,7 +7,6 @@
 #include "traverselib.h"
 #include "pivot.h"
 
-#include "Doom3GroupOrigin.h"
 #include "../keyobservers.h"
 #include "../model.h"
 #include "../origin.h"
@@ -43,7 +42,6 @@ class Doom3Group :
 	NamedEntity m_named;
 	NameKeys m_nameKeys;
 	TraversableObserverPairRelay m_traverseObservers;
-	Doom3GroupOrigin m_funcStaticOrigin;
 	RenderablePivot m_renderOrigin;
 	RenderableNamedEntity m_renderName;
 	ModelSkinKey m_skin;

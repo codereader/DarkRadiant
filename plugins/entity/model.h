@@ -84,7 +84,7 @@ class SingletonModel
   Model m_model;
 public:
   SingletonModel()
-    : m_model(m_traverse/*, Callback()*/)
+    : m_model(m_traverse)
   {
   }
 

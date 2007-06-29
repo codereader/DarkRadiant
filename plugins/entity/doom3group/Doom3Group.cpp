@@ -35,7 +35,6 @@ Doom3Group::Doom3Group(IEntityClassPtr eclass, scene::Node& node,
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_named(_entity),
 	m_nameKeys(_entity),
-	m_funcStaticOrigin(m_traverse, m_origin),
 	m_renderOrigin(m_nameOrigin),
 	m_renderName(m_named, m_nameOrigin),
 	m_skin(SkinChangedCaller(*this)),
@@ -59,7 +58,6 @@ Doom3Group::Doom3Group(const Doom3Group& other, scene::Node& node,
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_named(_entity),
 	m_nameKeys(_entity),
-	m_funcStaticOrigin(m_traverse, m_origin),
 	m_renderOrigin(m_nameOrigin),
 	m_renderName(m_named, m_nameOrigin),
 	m_skin(SkinChangedCaller(*this)),
@@ -156,11 +154,15 @@ const AABB& Doom3Group::localAABB() const {
 }
 
 void Doom3Group::addOriginToChildren() {
-	m_funcStaticOrigin.addOriginToChildren();
+	if (!m_isModel) {
+		m_traverse.traverse(Doom3BrushTranslator(m_origin));
+	}
 }
 
 void Doom3Group::removeOriginFromChildren() {
-	m_funcStaticOrigin.removeOriginFromChildren();
+	if (!m_isModel) {
+		m_traverse.traverse(Doom3BrushTranslator(-m_origin));
+	}
 }
 
 void Doom3Group::renderSolid(Renderer& renderer, const VolumeTest& volume, 
@@ -338,11 +340,10 @@ void Doom3Group::construct() {
 	m_keyObservers.insert(curve_CatmullRomSpline.c_str(), CurveCatmullRom::CurveChangedCaller(m_curveCatmullRom));
 	m_keyObservers.insert("skin", ModelSkinKey::SkinChangedCaller(m_skin));
 
-	m_traverseObservers.attach(m_funcStaticOrigin);
+	//m_traverseObservers.attach(m_funcStaticOrigin);
 	m_isModel = false;
 	m_nameKeys.setKeyIsName(keyIsNameDoom3Doom3Group);
 	attachTraverse();
-	m_funcStaticOrigin.enable();
 
 	_entity.attach(m_keyObservers);
 }
@@ -356,8 +357,6 @@ void Doom3Group::destroy() {
 	else {
 		detachTraverse();
 	}
-
-	m_traverseObservers.detach(m_funcStaticOrigin);
 }
 
 void Doom3Group::attachModel() {
@@ -389,7 +388,6 @@ bool Doom3Group::isModel() const {
 
 void Doom3Group::setIsModel(bool newValue) {
 	if (newValue && !m_isModel) {
-		m_funcStaticOrigin.disable();
 		detachTraverse();
 		attachModel();
 
@@ -401,7 +399,6 @@ void Doom3Group::setIsModel(bool newValue) {
 		// This is no longer a model, make it a TraversableNodeSet
 		detachModel();
 		attachTraverse();
-		m_funcStaticOrigin.enable();
 
 		// The model key should be recognised as "name" (important for "namespacing")
 		m_nameKeys.setKeyIsName(keyIsNameDoom3Doom3Group);
@@ -453,10 +450,6 @@ void Doom3Group::updateTransform() {
 	
 	// Notify the InstanceSet of the Doom3GroupNode about this transformation change	 
 	m_transformChanged();
-	
-	if (!isModel()) {
-		//m_funcStaticOrigin.originChanged();
-	}
 }
 
 void Doom3Group::translateChildren(const Vector3& childTranslation) {
