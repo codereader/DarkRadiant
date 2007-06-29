@@ -41,6 +41,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/ModalProgressDialog.h"
 #include "gtkutil/dialog.h"
 
+	namespace {
+		const std::string RKEY_MAP_LOAD_STATUS_INTERLEAVE = "user/ui/map/loadStatusInterleave";
+	}
+
 inline MapImporterPtr Node_getMapImporter(scene::INodePtr node) {
 	return boost::dynamic_pointer_cast<MapImporter>(node);
 }
@@ -66,8 +70,9 @@ scene::INodePtr Entity_parseTokens(
 	EntityCreator& entityTable, 
 	const PrimitiveParser& parser, 
 	int index,
+	int interleave,
 	gtkutil::ModalProgressDialog& dialog)
-{
+{	
   scene::INodePtr entity(g_nullNode);
   KeyValues keyValues;
 	std::string classname = "";
@@ -92,14 +97,16 @@ scene::INodePtr Entity_parseTokens(
     {
       if(entity == g_nullNode)
       {
-      	// Update the dialog text. This will throw an exception if the cancel
-		// button is clicked, which we must catch and handle.
-		try {
-			dialog.setText(dlgEntityText + dlgBrushText);
-		}
-		catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
-			throw std::runtime_error("Map loading cancelled.");
-		}
+      	if (index % interleave == 0) { 
+	      	// Update the dialog text. This will throw an exception if the cancel
+			// button is clicked, which we must catch and handle.
+			try {
+				dialog.setText(dlgEntityText + dlgBrushText);
+			}
+			catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
+				throw std::runtime_error("Map loading cancelled.");
+			}
+      	}
         // entity does not have brushes
         entity = Entity_create(entityTable, GlobalEntityClassManager().findOrInsert(classname, false), keyValues);
       }
@@ -107,14 +114,16 @@ scene::INodePtr Entity_parseTokens(
     }
     else if(token == "{") // begin primitive
     {
-    	// Update the dialog text. This will throw an exception if the cancel
-		// button is clicked, which we must catch and handle.
-		try {
-			dialog.setText(dlgEntityText + dlgBrushText);
-		}
-		catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
-			throw std::runtime_error("Map loading cancelled.");	
-		}
+    	if (count_primitives != 0 && count_primitives % interleave == 0) {
+	    	// Update the dialog text. This will throw an exception if the cancel
+			// button is clicked, which we must catch and handle.
+			try {
+				dialog.setText(dlgEntityText + dlgBrushText);
+			}
+			catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
+				throw std::runtime_error("Map loading cancelled.");	
+			}
+    	}
     	
       if(entity == g_nullNode)
       {
@@ -150,14 +159,16 @@ scene::INodePtr Entity_parseTokens(
 	        	globalErrorStream() << "[mapdoom3] Entity " << index << " failed to accept brush, discarding\n";
 	        }
 	        
-	        // Update the dialog text. This will throw an exception if the cancel
-			// button is clicked, which we must catch and handle.
-			try {
-				dialog.setText(dlgEntityText + dlgBrushText);
-			}
-			catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
-				throw std::runtime_error("Map loading cancelled.");
-			}
+	        if (count_primitives != 0 && count_primitives % interleave == 0) {
+	            // Update the dialog text. This will throw an exception if the cancel
+				// button is clicked, which we must catch and handle.
+				try {
+					dialog.setText(dlgEntityText + dlgBrushText);
+				}
+				catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
+					throw std::runtime_error("Map loading cancelled.");
+				}
+	        }
 		}
 		else {
 			globalErrorStream() << "entity " << index << ": type " << classname << ": discarding brush " << count_primitives << "\n";
@@ -264,6 +275,11 @@ void Map_Read(scene::INodePtr root,
 			  EntityCreator& entityTable, 
 			  const PrimitiveParser& parser)
 {
+	int interleave = GlobalRegistry().getInt(RKEY_MAP_LOAD_STATUS_INTERLEAVE);
+	if (interleave <= 0) {
+		interleave = 10;
+	} 
+	
 	// Create an info display panel to track load progress
 	gtkutil::ModalProgressDialog dialog(GlobalRadiant().getMainWindow(),
 										"Loading map");
@@ -276,13 +292,15 @@ void Map_Read(scene::INodePtr root,
 
 		// Update the dialog text. This will throw an exception if the cancel
 		// button is clicked, which we must catch and handle.
-		try {
-			dialog.setText("Loading entity " + intToStr(entCount));
-		}
-		catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
-			gtkutil::errorDialog("Map loading cancelled", 
-								 GlobalRadiant().getMainWindow());
-			return;			
+		if (entCount % interleave == 0) {
+			try {
+				dialog.setText("Loading entity " + intToStr(entCount));
+			}
+			catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
+				gtkutil::errorDialog("Map loading cancelled", 
+									 GlobalRadiant().getMainWindow());
+				return;			
+			}
 		}
 
 		// Check for end of file
@@ -298,6 +316,7 @@ void Map_Read(scene::INodePtr root,
 														 entityTable, 
 														 parser, 
 														 entCount,
+														 interleave,
 														 dialog));
 			// Insert the entity
 			checkInsert(entity, root, entCount);
