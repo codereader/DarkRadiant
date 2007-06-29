@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "renderable.h"
 #include "selectable.h"
 #include "modelskin.h"
+#include "nameable.h"
 
 #include "math/frustum.h"
 #include "string/string.h"
@@ -306,7 +307,8 @@ public:
 
 class ModelNode : 
 	public scene::Node, 
-	public scene::Instantiable
+	public scene::Instantiable,
+	public Nameable
 {
   InstanceSet m_instances;
   MD5Model m_model;
@@ -334,6 +336,10 @@ public:
   scene::Instance* erase(scene::Instantiable::Observer* observer, const scene::Path& path)
   {
     return m_instances.erase(observer, path);
+  }
+  
+  virtual std::string name() const {
+  	return "MD5Model";
   }
 };
 

@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "nameable.h"
 #include "iscenegraph.h"
+#include "debugging/ScenegraphUtils.h"
 
 #include "scenelib.h"
 #include "generic/reference.h"
@@ -181,8 +182,10 @@ public:
 
 	void insert(scene::Instantiable::Observer* observer, const scene::Path& path, scene::Instance* instance)
 	{
+		//std::cout << "InstanceSet::insert (this=" << this << "): " << path << ", Instance=" << instance->path().top() << ", Observer=" << observer << "\n";
 		ASSERT_MESSAGE(m_instances.find(CachePath(observer, PathConstReference(instance->path()))) == m_instances.end(), "InstanceSet::insert - element already exists");
 		m_instances.insert(InstanceMap::value_type(CachePath(observer, PathConstReference(instance->path())), instance));
+		//std::cout << "Size after insert: " << m_instances.size() << "\n";
 	}
 	
 	scene::Instance* erase(scene::Instantiable::Observer* observer, const scene::Path& path) {

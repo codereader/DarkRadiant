@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "model.h"
 
+#include "nameable.h"
 #include "picomodel.h"
 #include "RenderablePicoModel.h"
 #include "PicoModelInstance.h"
@@ -45,19 +46,23 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 class PicoModelNode : 
 	public scene::Node, 
-	public scene::Instantiable
+	public scene::Instantiable,
+	public Nameable
 {
   InstanceSet m_instances;
 
 	// The actual model
 	model::RenderablePicoModel _picoModel;
 
+	std::string _name;
+
 public:
   /** Construct a PicoModelNode with the parsed picoModel_t struct and the
    * provided file extension.
    */
   PicoModelNode(picoModel_t* model, const std::string& ext) :  
-	_picoModel(model, ext) // pass extension down to the PicoModel
+	_picoModel(model, ext), // pass extension down to the PicoModel
+	_name(model->fileName)
   {}
 
   scene::Instance* create(const scene::Path& path, scene::Instance* parent)
@@ -75,6 +80,10 @@ public:
   scene::Instance* erase(scene::Instantiable::Observer* observer, const scene::Path& path)
   {
     return m_instances.erase(observer, path);
+  }
+  
+  virtual std::string name() const {
+  	return _name;
   }
 };
 
