@@ -24,7 +24,9 @@ inline void PointVertexArray_testSelect(PointVertex* first, std::size_t count,
 	);
 }
 
-Doom3Group::Doom3Group(IEntityClassPtr eclass, scene::Node& node, 
+Doom3Group::Doom3Group(IEntityClassPtr eclass, 
+		scene::Node& node,
+		scene::Traversable::Observer* traverseObserver, 
 		const Callback& transformChanged, 
 		const Callback& boundsChanged, 
 		const Callback& evaluateTransform) :
@@ -35,6 +37,7 @@ Doom3Group::Doom3Group(IEntityClassPtr eclass, scene::Node& node,
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_named(_entity),
 	m_nameKeys(_entity),
+	_traverseObserver(traverseObserver),
 	m_renderOrigin(m_nameOrigin),
 	m_renderName(m_named, m_nameOrigin),
 	m_skin(SkinChangedCaller(*this)),
@@ -47,7 +50,9 @@ Doom3Group::Doom3Group(IEntityClassPtr eclass, scene::Node& node,
 	construct();
 }
 
-Doom3Group::Doom3Group(const Doom3Group& other, scene::Node& node, 
+Doom3Group::Doom3Group(const Doom3Group& other, 
+		scene::Node& node,
+		scene::Traversable::Observer* traverseObserver, 
 		const Callback& transformChanged, 
 		const Callback& boundsChanged, 
 		const Callback& evaluateTransform) :
@@ -58,6 +63,7 @@ Doom3Group::Doom3Group(const Doom3Group& other, scene::Node& node,
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_named(_entity),
 	m_nameKeys(_entity),
+	_traverseObserver(traverseObserver),
 	m_renderOrigin(m_nameOrigin),
 	m_renderName(m_named, m_nameOrigin),
 	m_skin(SkinChangedCaller(*this)),
@@ -133,14 +139,6 @@ ModelSkin& Doom3Group::getModelSkin() {
 
 const ModelSkin& Doom3Group::getModelSkin() const {
 	return m_skin.get();
-}
-
-void Doom3Group::attach(scene::Traversable::Observer* observer) {
-	m_traverseObservers.attach(*observer);
-}
-
-void Doom3Group::detach(scene::Traversable::Observer* observer) {
-	m_traverseObservers.detach(*observer);
 }
 
 const AABB& Doom3Group::localAABB() const {
@@ -361,11 +359,11 @@ void Doom3Group::destroy() {
 
 void Doom3Group::attachModel() {
 	m_traversable = &m_model.getTraversable();
-	m_model.attach(&m_traverseObservers);
+	m_model.attach(_traverseObserver);
 }
 void Doom3Group::detachModel() {
 	m_traversable = 0;
-	m_model.detach(&m_traverseObservers);
+	m_model.detach(_traverseObserver);
 }
 
 void Doom3Group::attachTraverse() {
@@ -374,12 +372,12 @@ void Doom3Group::attachTraverse() {
 	m_traversable = &m_traverse;
 	// Attach the TraverseObservers to the TraversableNodeSet, 
 	// so that they get notified
-	m_traverse.attach(&m_traverseObservers);
+	m_traverse.attach(_traverseObserver);
 }
 
 void Doom3Group::detachTraverse() {
 	m_traversable = 0;
-	m_traverse.detach(&m_traverseObservers);
+	m_traverse.detach(_traverseObserver);
 }
 
 bool Doom3Group::isModel() const {

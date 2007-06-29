@@ -33,8 +33,6 @@ class Doom3GroupNode :
 public:
 	Doom3GroupNode(IEntityClassPtr eclass);
 	Doom3GroupNode(const Doom3GroupNode& other);
-	
-	~Doom3GroupNode();
 
 	// ModelSkin implementation
 	virtual void attach(ModuleObserver& observer);	
@@ -83,11 +81,6 @@ public:
 	 */
 	void addOriginToChildren();
 	void removeOriginFromChildren();
-
-private:
-	void construct();
-	void destroy();
-
 }; // class Doom3GroupNode
 
 } // namespace entity

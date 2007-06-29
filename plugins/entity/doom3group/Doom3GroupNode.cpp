@@ -8,13 +8,12 @@ Doom3GroupNode::Doom3GroupNode(IEntityClassPtr eclass) :
 	m_contained(
 		eclass,
 		*this,
+		this, // Pass <this> as scene::Traversable::Observer* 
 		InstanceSet::TransformChangedCaller(m_instances),
 		InstanceSet::BoundsChangedCaller(m_instances),
 		InstanceSetEvaluateTransform<Doom3GroupInstance>::Caller(m_instances)
 	) 
-{
-	construct();
-}
+{}
 
 Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	scene::Node(other),
@@ -32,14 +31,12 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	m_contained(
 		other.m_contained,
 		*this,
+		this, // Pass <this> as scene::Traversable::Observer*
 		InstanceSet::TransformChangedCaller(m_instances),
 		InstanceSet::BoundsChangedCaller(m_instances),
 		InstanceSetEvaluateTransform<Doom3GroupInstance>::Caller(m_instances)
 	) 
-{
-	// Attach this node to the contained Doom3Group as observer
-	construct();
-}
+{}
 
 void Doom3GroupNode::addOriginToChildren() {
 	m_contained.addOriginToChildren();
@@ -59,21 +56,6 @@ void Doom3GroupNode::attach(const NameCallback& callback) {
 
 void Doom3GroupNode::detach(const NameCallback& callback) {
 	m_contained.getNameable().detach(callback);
-}
-
-void Doom3GroupNode::construct() {
-	// Attach this node to the contained Doom3Group as observer
-	m_contained.attach(this);
-}
-
-void Doom3GroupNode::destroy() {
-	// Detach this node to the contained Doom3Group as observer
-	m_contained.detach(this);
-}
-
-Doom3GroupNode::~Doom3GroupNode() {
-	// Detach this node to the contained Doom3Group as observer
-	destroy();
 }
 
 scene::INodePtr Doom3GroupNode::clone() const {
