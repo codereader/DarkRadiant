@@ -41,8 +41,7 @@ class Doom3Group :
 
 	NamedEntity m_named;
 	NameKeys m_nameKeys;
-	//TraversableObserverPairRelay m_traverseObservers;
-	scene::Traversable::Observer* _traverseObserver; // This is the "surrounding" Doom3GroupNode
+	TraversableObserverPairRelay m_traverseObservers;
 	RenderablePivot m_renderOrigin;
 	RenderableNamedEntity m_renderName;
 	ModelSkinKey m_skin;
