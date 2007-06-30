@@ -20,11 +20,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "model.h"
-
 #include <boost/algorithm/string/replace.hpp>
 
-SingletonModel::SingletonModel() : 
-	_resource(GlobalReferenceCache().capture(""))
+SingletonModel::SingletonModel(scene::Traversable& traversable) : 
+	_resource(GlobalReferenceCache().capture("")),
+	_traversable(traversable)
 {
 	// Attach this class as ModuleObserver to the Resource
 	_resource->attach(*this);
@@ -43,26 +43,27 @@ void SingletonModel::realise() {
 	_resource->load();
 	_node = _resource->getNode();
 	
-	if (_node != NULL) {
-		// Add the master model node to this Traversable
-		TraversableNode::insert(_node);
+	// Don't realise empty model paths
+	if (_node != NULL && !_modelPath.empty()) {
+		// Add the master model node to the attached Traversable
+		//TraversableNode::insert(_node);
+		_traversable.insert(_node);
 	}
 }
 
 void SingletonModel::unrealise() {
 	if (_node != NULL) {
-		// Remove the master model node from this Traversable
-		TraversableNode::erase(_node);
+		// Remove the master model node from the attached Traversable
+		_traversable.erase(_node);
 	}
 }
 
 // Update the contained model from the provided keyvalues
-
 void SingletonModel::modelChanged(const std::string& value) {
 	// Sanitise the keyvalue - must use forward slashes
-	std::string lowercaseValue = boost::algorithm::replace_all_copy(value, "\\", "/");
+	_modelPath = boost::algorithm::replace_all_copy(value, "\\", "/");
 	
-    _resource->detach(*this);
-    _resource = GlobalReferenceCache().capture(lowercaseValue);
+	_resource->detach(*this);
+    _resource = GlobalReferenceCache().capture(_modelPath);
     _resource->attach(*this);
 }

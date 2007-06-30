@@ -29,6 +29,7 @@ class EclassModelNode :
 {
 	InstanceSet m_instances;
 	EclassModel m_contained;
+	TraversableNodeSet _traverse;
 
 public:
 	// Constructor

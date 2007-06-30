@@ -4,7 +4,8 @@
 
 namespace entity {
 
-EclassModel::EclassModel(IEntityClassPtr eclass, 
+EclassModel::EclassModel(IEntityClassPtr eclass,
+						 scene::Traversable& traversable, 
 						 const Callback& transformChanged, 
 						 const Callback& evaluateTransform) :
 	m_entity(eclass),
@@ -14,6 +15,7 @@ EclassModel::EclassModel(IEntityClassPtr eclass,
 	m_angle(ANGLEKEY_IDENTITY),
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_named(m_entity),
+	m_model(traversable),
 	m_nameKeys(m_entity),
 	m_renderOrigin(m_origin),
 	m_renderName(m_named, g_vector3_identity),
@@ -25,6 +27,7 @@ EclassModel::EclassModel(IEntityClassPtr eclass,
 }
 
 EclassModel::EclassModel(const EclassModel& other, 
+						 scene::Traversable& traversable,
 						 const Callback& transformChanged, 
 						 const Callback& evaluateTransform) :
 	m_entity(other.m_entity),
@@ -34,6 +37,7 @@ EclassModel::EclassModel(const EclassModel& other,
 	m_angle(ANGLEKEY_IDENTITY),
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_named(m_entity),
+	m_model(traversable),
 	m_nameKeys(m_entity),
 	m_renderOrigin(m_origin),
 	m_renderName(m_named, g_vector3_identity),
@@ -108,14 +112,6 @@ const Doom3Entity& EclassModel::getEntity() const {
 	return m_entity;
 }
 
-scene::Traversable& EclassModel::getTraversable() {
-	return m_model;
-}
-
-const scene::Traversable& EclassModel::getTraversable() const {
-	return m_model;
-}
-
 Namespaced& EclassModel::getNamespaced() {
 	return m_nameKeys;
 }
@@ -142,14 +138,6 @@ ModelSkin& EclassModel::getModelSkin() {
 
 const ModelSkin& EclassModel::getModelSkin() const {
 	return m_skin.get();
-}
-
-void EclassModel::attach(scene::Traversable::Observer* observer) {
-	m_model.attach(observer);
-}
-
-void EclassModel::detach(scene::Traversable::Observer* observer) {
-	m_model.detach(observer);
 }
 
 void EclassModel::renderSolid(Renderer& renderer, 

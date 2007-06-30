@@ -6,6 +6,7 @@ namespace entity {
 
 EclassModelNode::EclassModelNode(IEntityClassPtr eclass) :
 	m_contained(eclass, 
+				_traverse,
 				InstanceSet::TransformChangedCaller(m_instances), 
 				InstanceSetEvaluateTransform<EclassModelInstance>::Caller(m_instances))
 {
@@ -25,6 +26,7 @@ EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	Namespaced(other),
 	ModelSkin(other),
 	m_contained(other.m_contained, 
+				_traverse,
 				InstanceSet::TransformChangedCaller(m_instances), 
 				InstanceSetEvaluateTransform<EclassModelInstance>::Caller(m_instances))
 {
@@ -36,28 +38,28 @@ EclassModelNode::~EclassModelNode() {
 }
 
 void EclassModelNode::construct() {
-	m_contained.attach(this);
+	_traverse.attach(this);
 }
 
 void EclassModelNode::destroy() {
-	m_contained.detach(this);
+	_traverse.detach(this);
 }
 
 // scene::Traversable Implementation
 void EclassModelNode::insert(scene::INodePtr node) {
-	m_contained.getTraversable().insert(node);
+	_traverse.insert(node);
 }
 
 void EclassModelNode::erase(scene::INodePtr node) {
-	m_contained.getTraversable().erase(node);
+	_traverse.erase(node);
 }
 
 void EclassModelNode::traverse(const Walker& walker) {
-	m_contained.getTraversable().traverse(walker);
+	_traverse.traverse(walker);
 }
 
 bool EclassModelNode::empty() const {
-	return m_contained.getTraversable().empty();
+	return _traverse.empty();
 }
 
 // Snappable implementation
