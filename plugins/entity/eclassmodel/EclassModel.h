@@ -47,13 +47,11 @@ class EclassModel :
 	InstanceCounter m_instanceCounter;
 public:
 	EclassModel(IEntityClassPtr eclass, 
-				scene::Node& node, 
 				const Callback& transformChanged, 
 				const Callback& evaluateTransform);
 	
 	// Copy Constructor
 	EclassModel(const EclassModel& other, 
-				scene::Node& node, 
 				const Callback& transformChanged, 
 				const Callback& evaluateTransform);
 

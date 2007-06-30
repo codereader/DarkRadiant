@@ -6,7 +6,6 @@ namespace entity {
 
 EclassModelNode::EclassModelNode(IEntityClassPtr eclass) :
 	m_contained(eclass, 
-				*this, 
 				InstanceSet::TransformChangedCaller(m_instances), 
 				InstanceSetEvaluateTransform<EclassModelInstance>::Caller(m_instances))
 {
@@ -26,7 +25,6 @@ EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	Namespaced(other),
 	ModelSkin(other),
 	m_contained(other.m_contained, 
-				*this, 
 				InstanceSet::TransformChangedCaller(m_instances), 
 				InstanceSetEvaluateTransform<EclassModelInstance>::Caller(m_instances))
 {
