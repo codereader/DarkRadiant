@@ -395,7 +395,7 @@ void Doom3Group::setIsModel(bool newValue) {
 
 		// The model key is not recognised as "name"
 		m_nameKeys.setKeyIsName(keyIsNameDoom3);
-		m_model.modelChanged(m_modelKey.c_str());
+		m_model.modelChanged(m_modelKey);
 	}
 	else if (!newValue && m_isModel) {
 		// This is no longer a model, make it a TraversableNodeSet
@@ -404,6 +404,9 @@ void Doom3Group::setIsModel(bool newValue) {
 
 		// The model key should be recognised as "name" (important for "namespacing")
 		m_nameKeys.setKeyIsName(keyIsNameDoom3Doom3Group);
+		// Clear the model path
+		m_model.modelChanged("");
+		m_nameOrigin = m_origin;
 	}
 	m_isModel = newValue;
 	updateTransform();
@@ -427,6 +430,7 @@ void Doom3Group::updateIsModel() {
 void Doom3Group::nameChanged(const std::string& value) {
 	m_name = value;
 	updateIsModel();
+	m_renderOrigin.updatePivot();
 }
 
 void Doom3Group::modelChanged(const std::string& value) {
