@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "model.h"
 #include <boost/algorithm/string/replace.hpp>
-#include <iostream>
 
 SingletonModel::SingletonModel(scene::Traversable& traversable) : 
 	_resource(GlobalReferenceCache().capture("")),
@@ -41,13 +40,15 @@ scene::INodePtr SingletonModel::getNode() const {
 }
 
 void SingletonModel::realise() {
-	_resource->load();
-	_node = _resource->getNode();
-	
-	// Don't realise empty model paths
-	if (_node != NULL && !_modelPath.empty()) {
-		// Add the master model node to the attached Traversable
-		_traversable.insert(_node);
+	if (_resource->load()) {
+		// The model could be loaded, insert into Traversable
+		_node = _resource->getNode();
+		
+		// Don't realise empty model paths
+		if (_node != NULL && !_modelPath.empty()) {
+			// Add the master model node to the attached Traversable
+			_traversable.insert(_node);
+		}
 	}
 }
 
@@ -55,6 +56,9 @@ void SingletonModel::unrealise() {
 	if (_node != NULL && !_modelPath.empty()) {
 		// Remove the master model node from the attached Traversable
 		_traversable.erase(_node);
+		
+		// Nullify the pointer
+		_node = scene::INodePtr();
 	}
 }
 
