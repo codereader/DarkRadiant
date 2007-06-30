@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "model.h"
 #include <boost/algorithm/string/replace.hpp>
+#include <iostream>
 
 SingletonModel::SingletonModel(scene::Traversable& traversable) : 
 	_resource(GlobalReferenceCache().capture("")),
@@ -46,7 +47,6 @@ void SingletonModel::realise() {
 	// Don't realise empty model paths
 	if (_node != NULL && !_modelPath.empty()) {
 		// Add the master model node to the attached Traversable
-		//TraversableNode::insert(_node);
 		_traversable.insert(_node);
 	}
 }
@@ -60,10 +60,13 @@ void SingletonModel::unrealise() {
 
 // Update the contained model from the provided keyvalues
 void SingletonModel::modelChanged(const std::string& value) {
-	// Sanitise the keyvalue - must use forward slashes
-	_modelPath = boost::algorithm::replace_all_copy(value, "\\", "/");
-	
+	// Release the old model
 	_resource->detach(*this);
+	
+	// Now store the new modelpath
+    // Sanitise the keyvalue - must use forward slashes
+	_modelPath = boost::algorithm::replace_all_copy(value, "\\", "/");
+    
     _resource = GlobalReferenceCache().capture(_modelPath);
-    _resource->attach(*this);
+    _resource->attach(*this);  
 }
