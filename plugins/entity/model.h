@@ -25,79 +25,28 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "entitylib.h"
 #include "traverselib.h"
 #include "generic/callback.h"
-#include "stream/stringstream.h"
-#include "os/path.h"
 #include "moduleobserver.h"
 
-class Model : public ModuleObserver
-{
-  ResourceReference m_resource;
-  scene::Traversable& m_traverse;
-  scene::INodePtr m_node;
-
-public:
-  Model(scene::Traversable& traversable)
-    : m_resource(""), m_traverse(traversable)
-  {
-    m_resource.attach(*this);
-  }
-  ~Model()
-  {
-    m_resource.detach(*this);
-  }
-
-  void realise()
-  {
-    m_resource.get()->load();
-    m_node = m_resource.get()->getNode();
-    if(m_node != 0)
-    {
-      m_traverse.insert(m_node);
-    }
-  }
-  void unrealise()
-  {
-    if(m_node != 0)
-    {
-      m_traverse.erase(m_node);
-    }
-  }
-  
-	// Update the model to the provided keyvalue
-	void modelChanged(std::string val);
-  
-  typedef MemberCaller1<Model, std::string, &Model::modelChanged> ModelChangedCaller;
-
-  const char* getName() const
-  {
-    return m_resource.getName();
-  }
-  scene::INodePtr getNode() const
-  {
-    return m_node;
-  }
-};
-
 class SingletonModel :
-	public TraversableNode // implements scene::Traversable
+	public TraversableNode, // implements scene::Traversable
+	public ModuleObserver
 {
-	Model _model;
+	ResourceReference _resource;	// greebo: Migrate this to ResourcePtr (?)
+	scene::INodePtr _node;
 public:
-	SingletonModel() : 
-		_model(*this)
-	{}
+	SingletonModel();
+	~SingletonModel();
+	
+	// ModuleObserver implementation
+	void realise();
+	void unrealise();
 
-  void modelChanged(const std::string& value)
-  {
-    _model.modelChanged(value);
-  }
-  typedef MemberCaller1<SingletonModel, const std::string&, &SingletonModel::modelChanged> ModelChangedCaller;
+	// Update the model to the provided keyvalue
+	void modelChanged(const std::string& value);
+	typedef MemberCaller1<SingletonModel, const std::string&, &SingletonModel::modelChanged> ModelChangedCaller;
 
-  scene::INodePtr getNode() const
-  {
-  	// Returns the reference to the "master" model node
-    return _model.getNode();
-  }
+	// Returns the reference to the "singleton" model node
+	scene::INodePtr getNode() const;
 };
 
 #endif
