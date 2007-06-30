@@ -65,8 +65,13 @@ bool ClosestTexturableFinder::pre(const scene::Path& path, scene::Instance& inst
 	// Check if this node is an entity	
 	bool isEntity = Node_isEntity(path.top());
 	
-	// Check if the node is filtered or an entity
-	if (path.top()->visible() && !isEntity) {
+	// Don't traverse filtered nodes and items
+	if (!path.top()->visible() || instance.getFiltered()) {
+		return false;
+	}
+	
+	// Check if the node is an entity
+	if (!isEntity) {
 		// Test the instance for a brush
 		BrushInstance* brush = Instance_getBrush(instance);
 		
@@ -127,9 +132,8 @@ bool ClosestTexturableFinder::pre(const scene::Path& path, scene::Instance& inst
 			}
 		}
 	}
-	
-	if (isEntity) {
-		// Don't traverse this entity, if it isn't a group node
+	else {
+		// Is an entity, don't traverse it, if it isn't a group node
 		return node_is_group(path.top());
 	}
 	

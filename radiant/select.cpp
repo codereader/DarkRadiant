@@ -96,86 +96,75 @@ public:
   The exact intersection-method is specified through TSelectionPolicy
 */
 template<class TSelectionPolicy>
-class SelectByBounds : public scene::Graph::Walker
+class SelectByBounds : 
+	public scene::Graph::Walker
 {
-  AABB* m_aabbs;           // selection aabbs
-  Unsigned m_count;        // number of aabbs in m_aabbs
+  AABB* _aabbs;           // selection aabbs
+  unsigned int _count;        // number of aabbs in m_aabbs
   TSelectionPolicy policy; // type that contains a custom intersection method aabb<->aabb
 
 public:
-  SelectByBounds(AABB* aabbs, Unsigned count)
-      : m_aabbs(aabbs),
-        m_count(count)
-  {
-  }
+	SelectByBounds(AABB* aabbs, unsigned int count) : 
+		_aabbs(aabbs),
+        _count(count)
+	{}
 
-  bool pre(const scene::Path& path, scene::Instance& instance) const
-  {
-    Selectable* selectable = Instance_getSelectable(instance);
+	bool pre(const scene::Path& path, scene::Instance& instance) const {
+		Selectable* selectable = Instance_getSelectable(instance);
 
-    // ignore worldspawn
-    Entity* entity = Node_getEntity(path.top());
-    if(entity)
-    {
-      if(entity->getKeyValue("classname") == "worldspawn")
-        return true;
-    }
+		// ignore worldspawn
+		Entity* entity = Node_getEntity(path.top());
+		if (entity != NULL) {
+			if (entity->getKeyValue("classname") == "worldspawn") {
+				return true;
+			}
+		}
     
-    if( (path.size() > 1) &&
-        (!path.top()->isRoot()) &&
-        (selectable != 0)
-       )
-    {
-      for(Unsigned i = 0; i < m_count; ++i)
-      {
-        if(policy.Evaluate(m_aabbs[i], instance))
-        {
-          selectable->setSelected(true);
-        }
-      }
-    }
-
-    return true;
-  }
+		if (path.size() > 1 && !path.top()->isRoot() && selectable != NULL) {
+				for (unsigned int i = 0; i < _count; ++i) {
+					if (policy.Evaluate(_aabbs[i], instance)) {
+						selectable->setSelected(true);
+				}
+			}
+		}
+	
+		return true;
+	}
 
   /**
     Performs selection operation on the global scenegraph.
     If delete_bounds_src is true, then the objects which were
     used as source for the selection aabbs will be deleted.
 */
-  static void DoSelection(bool delete_bounds_src = true)
-  {
-    if(GlobalSelectionSystem().Mode() == SelectionSystem::ePrimitive)
-    {
-      // we may not need all AABBs since not all selected objects have to be brushes
-      const Unsigned max = (Unsigned)GlobalSelectionSystem().countSelected();
-      AABB* aabbs = new AABB[max];
-            
-      Unsigned count;
-      CollectSelectedBrushesBounds collector(aabbs, max, count);
-      GlobalSelectionSystem().foreachSelected(collector);
-
-      // nothing usable in selection
-      if(!count)
-      {
-        delete[] aabbs;
-        return;
-      }
-      
-      // delete selected objects
-      if(delete_bounds_src)// see deleteSelection
-      {
-        UndoableCommand undo("deleteSelected");
-        Select_Delete();
-      }
-
-      // select objects with bounds
-      GlobalSceneGraph().traverse(SelectByBounds<TSelectionPolicy>(aabbs, count));
-      
-      SceneChangeNotify();
-      delete[] aabbs;
-    }
-  }
+	static void DoSelection(bool delete_bounds_src = true) {
+		if(GlobalSelectionSystem().Mode() == SelectionSystem::ePrimitive) {
+			// we may not need all AABBs since not all selected objects have to be brushes
+			const unsigned int max = static_cast<unsigned int>(GlobalSelectionSystem().countSelected());
+			AABB* aabbs = new AABB[max];
+	            
+			unsigned int count;
+			CollectSelectedBrushesBounds collector(aabbs, max, count);
+			GlobalSelectionSystem().foreachSelected(collector);
+	
+			// nothing usable in selection
+			if (!count) {
+				delete[] aabbs;
+				return;
+			}
+	      
+			// delete selected objects
+			if (delete_bounds_src) {// see deleteSelection
+				UndoableCommand undo("deleteSelected");
+				Select_Delete();
+			}
+	
+			// select objects with bounds
+			GlobalSceneGraph().traverse(SelectByBounds<TSelectionPolicy>(aabbs, count));
+	      
+			SceneChangeNotify();
+			delete[] aabbs;
+		}
+	}
 };
 
 /**
