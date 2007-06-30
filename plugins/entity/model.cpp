@@ -24,14 +24,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <boost/algorithm/string/replace.hpp>
 
 SingletonModel::SingletonModel() : 
-	_resource("")
+	_resource(GlobalReferenceCache().capture(""))
 {
 	// Attach this class as ModuleObserver to the Resource
-	_resource.attach(*this);
+	_resource->attach(*this);
 }
 
 SingletonModel::~SingletonModel() {
-	_resource.detach(*this);
+	_resource->detach(*this);
 }
 
 scene::INodePtr SingletonModel::getNode() const {
@@ -40,8 +40,8 @@ scene::INodePtr SingletonModel::getNode() const {
 }
 
 void SingletonModel::realise() {
-	_resource.get()->load();
-	_node = _resource.get()->getNode();
+	_resource->load();
+	_node = _resource->getNode();
 	
 	if (_node != NULL) {
 		// Add the master model node to this Traversable
@@ -62,7 +62,7 @@ void SingletonModel::modelChanged(const std::string& value) {
 	// Sanitise the keyvalue - must use forward slashes
 	std::string lowercaseValue = boost::algorithm::replace_all_copy(value, "\\", "/");
 	
-    _resource.detach(*this);
-    _resource.setName(lowercaseValue.c_str());
-    _resource.attach(*this);
+    _resource->detach(*this);
+    _resource = GlobalReferenceCache().capture(lowercaseValue);
+    _resource->attach(*this);
 }
