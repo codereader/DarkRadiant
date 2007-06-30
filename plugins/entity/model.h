@@ -23,18 +23,23 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_MODEL_H
 
 #include "ireference.h"
-#include "traverselib.h"
+#include "itraversable.h"
 #include "generic/callback.h"
 #include "moduleobserver.h"
 
 class SingletonModel :
-	public TraversableNode, // implements scene::Traversable
 	public ModuleObserver
 {
 	ReferenceCache::ResourcePtr _resource;
 	scene::INodePtr _node;
+	
+	// The traversable container, where the model node can be added to
+	scene::Traversable& _traversable;
+
+	std::string _modelPath;
+
 public:
-	SingletonModel();
+	SingletonModel(scene::Traversable& traversable);
 	~SingletonModel();
 	
 	// ModuleObserver implementation

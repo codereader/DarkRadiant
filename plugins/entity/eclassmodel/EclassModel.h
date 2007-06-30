@@ -46,12 +46,14 @@ class EclassModel :
 	
 	InstanceCounter m_instanceCounter;
 public:
-	EclassModel(IEntityClassPtr eclass, 
+	EclassModel(IEntityClassPtr eclass,
+				scene::Traversable& traversable,
 				const Callback& transformChanged, 
 				const Callback& evaluateTransform);
 	
 	// Copy Constructor
-	EclassModel(const EclassModel& other, 
+	EclassModel(const EclassModel& other,
+				scene::Traversable& traversable, 
 				const Callback& transformChanged, 
 				const Callback& evaluateTransform);
 
@@ -61,8 +63,6 @@ public:
 	Doom3Entity& getEntity();
 	const Doom3Entity& getEntity() const;
 
-	scene::Traversable& getTraversable();
-	const scene::Traversable& getTraversable() const;
 	Namespaced& getNamespaced();
 	NamedEntity& getNameable();
 	const NamedEntity& getNameable() const;
@@ -70,9 +70,6 @@ public:
 	const TransformNode& getTransformNode() const;
 	ModelSkin& getModelSkin();
 	const ModelSkin& getModelSkin() const;
-
-	void attach(scene::Traversable::Observer* observer);
-	void detach(scene::Traversable::Observer* observer);
 
 	void renderSolid(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
 	void renderWireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
