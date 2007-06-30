@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_MODEL_H)
 #define INCLUDED_MODEL_H
 
-#include "entitylib.h"
+#include "ireference.h"
 #include "traverselib.h"
 #include "generic/callback.h"
 #include "moduleobserver.h"
@@ -31,7 +31,7 @@ class SingletonModel :
 	public TraversableNode, // implements scene::Traversable
 	public ModuleObserver
 {
-	ResourceReference _resource;	// greebo: Migrate this to ResourcePtr (?)
+	ReferenceCache::ResourcePtr _resource;
 	scene::INodePtr _node;
 public:
 	SingletonModel();

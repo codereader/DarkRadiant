@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined (INCLUDED_ENTITYLIB_H)
 #define INCLUDED_ENTITYLIB_H
 
-#include "ireference.h"
 #include "debugging/debugging.h"
 
 #include "ientity.h"
@@ -345,85 +344,6 @@ public:
     aabb_draw_wire(m_aabb);
   }
 };
-
-/// \brief A Resource reference with a controlled lifetime.
-/// \brief The resource is released when the ResourceReference is destroyed.
-// TODO: Deprecated, use ResourcePtr instead
-class ResourceReference
-{
-  std::string m_name;
-  ReferenceCache::ResourcePtr m_resource;
-public:
-  ResourceReference(const char* name)
-    : m_name(name)
-  {
-    capture();
-  }
-  ResourceReference(const ResourceReference& other)
-    : m_name(other.m_name)
-  {
-    capture();
-  }
-  ResourceReference& operator=(const ResourceReference& other)
-  {
-    ResourceReference tmp(other);
-    tmp.swap(*this);
-    return *this;
-  }
-  ~ResourceReference()
-  {
-    release();
-  }
-
-  void capture()
-  {
-    m_resource = GlobalReferenceCache().capture(m_name);
-  }
-  void release()
-  {
-    GlobalReferenceCache().release(m_name);
-  }
-
-  const char* getName() const
-  {
-    return m_name.c_str();
-  }
-  void setName(const char* name)
-  {
-    ResourceReference tmp(name);
-    tmp.swap(*this);
-  }
-
-  void swap(ResourceReference& other)
-  {
-    std::swap(m_resource, other.m_resource);
-    std::swap(m_name, other.m_name);
-  }
-
-  void attach(ModuleObserver& observer)
-  {
-    m_resource->attach(observer);
-  }
-  void detach(ModuleObserver& observer)
-  {
-    m_resource->detach(observer);
-  }
-
-  ReferenceCache::ResourcePtr get()
-  {
-    return m_resource;
-  }
-};
-
-namespace std
-{
-  /// \brief Swaps the values of \p self and \p other.
-  /// Overloads std::swap.
-  inline void swap(ResourceReference& self, ResourceReference& other)
-  {
-    self.swap(other);
-  }
-}
 
 /**
  * Stream insertion for Entity objects.
