@@ -71,29 +71,21 @@ scene::INodePtr CompiledGraph::root() {
 }
   
 void CompiledGraph::insert_root(scene::INodePtr root) {
-    //globalOutputStream() << "insert_root\n";
-
 	ASSERT_MESSAGE(m_rootpath.empty(), "scenegraph root already exists");
 
-    //root.IncRef();
-
-    Node_traverseSubgraph(root, InstanceSubgraphWalker(this, scene::Path(), 0));
+    Node_traverseSubgraph(root, InstanceSubgraphWalker(scene::Path(), 0));
 
     m_rootpath.push(root);
 }
   
 void CompiledGraph::erase_root() {
-    //globalOutputStream() << "erase_root\n";
-
     ASSERT_MESSAGE(!m_rootpath.empty(), "scenegraph root does not exist");
 
     scene::INodePtr root = m_rootpath.top();
 
     m_rootpath.pop();
 
-    Node_traverseSubgraph(root, UninstanceSubgraphWalker(this, scene::Path()));
-
-    //root.DecRef();
+    Node_traverseSubgraph(root, UninstanceSubgraphWalker(scene::Path()));
 }
 
 void CompiledGraph::boundsChanged() {

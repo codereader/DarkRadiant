@@ -59,10 +59,10 @@ public:
 	void forEachInstance(const scene::Instantiable::Visitor& visitor);
 	
 	// Inserts a new instance
-	void insert(scene::Instantiable::Observer* observer, const scene::Path& path, scene::Instance* instance);
+	void insert(const scene::Path& path, scene::Instance* instance);
 	
 	// Removes an instance from the internal list
-	scene::Instance* erase(scene::Instantiable::Observer* observer, const scene::Path& path);
+	scene::Instance* erase(const scene::Path& path);
 };
 
 #endif /*PATCHNODE_H_*/

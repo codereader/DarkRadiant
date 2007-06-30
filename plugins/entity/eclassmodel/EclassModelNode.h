@@ -69,8 +69,8 @@ public:
 
 	scene::Instance* create(const scene::Path& path, scene::Instance* parent);
 	void forEachInstance(const scene::Instantiable::Visitor& visitor);
-	void insert(scene::Instantiable::Observer* observer, const scene::Path& path, scene::Instance* instance);
-	scene::Instance* erase(scene::Instantiable::Observer* observer, const scene::Path& path);
+	void insert(const scene::Path& path, scene::Instance* instance);
+	scene::Instance* erase(const scene::Path& path);
 
 	// Nameable implementation
 	virtual std::string name() const;

@@ -73,13 +73,13 @@ public:
   {
     m_instances.forEachInstance(visitor);
   }
-  void insert(scene::Instantiable::Observer* observer, const scene::Path& path, scene::Instance* instance)
+  void insert(const scene::Path& path, scene::Instance* instance)
   {
-    m_instances.insert(observer, path, instance);
+    m_instances.insert(path, instance);
   }
-  scene::Instance* erase(scene::Instantiable::Observer* observer, const scene::Path& path)
+  scene::Instance* erase(const scene::Path& path)
   {
-    return m_instances.erase(observer, path);
+    return m_instances.erase(path);
   }
   
   virtual std::string name() const {

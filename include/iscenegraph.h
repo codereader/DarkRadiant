@@ -93,6 +93,11 @@ namespace scene
     /// \brief Returns the instance at the location identified by 'path', or 0 if it does not exist.
     virtual scene::Instance* find(const Path& path) = 0;
 
+	// greebo: Adds an instance to the scenegraph
+	virtual void insert(scene::Instance* instance) = 0;
+	// Removes an instance from the scenegraph
+	virtual void erase(scene::Instance* instance) = 0;
+
     /// \brief Invokes all scene-changed callbacks. Called when any part of the scene changes the way it will appear when the scene is rendered.
     /// \todo Move to a separate class.
     virtual void sceneChanged() = 0;
