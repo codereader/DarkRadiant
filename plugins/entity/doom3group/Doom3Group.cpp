@@ -358,7 +358,7 @@ void Doom3Group::destroy() {
 }
 
 void Doom3Group::attachModel() {
-	m_traversable = &m_model.getTraversable();
+	m_traversable = &m_model;
 	m_model.attach(_traverseObserver);
 }
 void Doom3Group::detachModel() {

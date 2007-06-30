@@ -78,43 +78,25 @@ public:
   }
 };
 
-class SingletonModel
+class SingletonModel :
+	public TraversableNode // implements scene::Traversable
 {
-  TraversableNode m_traverse;
-  Model m_model;
+	Model _model;
 public:
-  SingletonModel()
-    : m_model(m_traverse)
-  {
-  }
-
-  void attach(scene::Traversable::Observer* observer)
-  {
-    m_traverse.attach(observer);
-  }
-  void detach(scene::Traversable::Observer* observer)
-  {
-    m_traverse.detach(observer);
-  }
-
-  scene::Traversable& getTraversable()
-  {
-    return m_traverse;
-  }
-  const scene::Traversable& getTraversable() const
-  {
-    return m_traverse;
-  }
+	SingletonModel() : 
+		_model(*this)
+	{}
 
   void modelChanged(const std::string& value)
   {
-    m_model.modelChanged(value);
+    _model.modelChanged(value);
   }
   typedef MemberCaller1<SingletonModel, const std::string&, &SingletonModel::modelChanged> ModelChangedCaller;
 
   scene::INodePtr getNode() const
   {
-    return m_model.getNode();
+  	// Returns the reference to the "master" model node
+    return _model.getNode();
   }
 };
 

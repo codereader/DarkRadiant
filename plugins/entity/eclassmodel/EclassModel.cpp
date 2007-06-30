@@ -111,11 +111,11 @@ const Doom3Entity& EclassModel::getEntity() const {
 }
 
 scene::Traversable& EclassModel::getTraversable() {
-	return m_model.getTraversable();
+	return m_model;
 }
 
 const scene::Traversable& EclassModel::getTraversable() const {
-	return m_model.getTraversable();
+	return m_model;
 }
 
 Namespaced& EclassModel::getNamespaced() {
