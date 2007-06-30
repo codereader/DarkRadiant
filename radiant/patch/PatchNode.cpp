@@ -75,11 +75,11 @@ void PatchNode::forEachInstance(const scene::Instantiable::Visitor& visitor) {
 }
 
 // Inserts a new instance
-void PatchNode::insert(scene::Instantiable::Observer* observer, const scene::Path& path, scene::Instance* instance) {
-	m_instances.insert(observer, path, instance);
+void PatchNode::insert(const scene::Path& path, scene::Instance* instance) {
+	m_instances.insert(path, instance);
 }
 
 // Removes an instance from the internal list
-scene::Instance* PatchNode::erase(scene::Instantiable::Observer* observer, const scene::Path& path) {
-	return m_instances.erase(observer, path);
+scene::Instance* PatchNode::erase(const scene::Path& path) {
+	return m_instances.erase(path);
 }

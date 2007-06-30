@@ -90,14 +90,14 @@ void RootNode::forEachInstance(const scene::Instantiable::Visitor& visitor) {
 	m_instances.forEachInstance(visitor);
 }
 
-void RootNode::insert(scene::Instantiable::Observer* observer, const scene::Path& path, scene::Instance* instance) {
-	m_instances.insert(observer, path, instance);
+void RootNode::insert(const scene::Path& path, scene::Instance* instance) {
+	m_instances.insert(path, instance);
 	instanceAttach(path);
 }
 
-scene::Instance* RootNode::erase(scene::Instantiable::Observer* observer, const scene::Path& path) {
+scene::Instance* RootNode::erase(const scene::Path& path) {
 	instanceDetach(path);
-	return m_instances.erase(observer, path);
+	return m_instances.erase(path);
 }
 
 } // namespace map

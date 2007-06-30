@@ -72,9 +72,9 @@ public:
 	
 	void forEachInstance(const scene::Instantiable::Visitor& visitor);
 	
-	void insert(scene::Instantiable::Observer* observer, const scene::Path& path, scene::Instance* instance);
+	void insert(const scene::Path& path, scene::Instance* instance);
 	
-	scene::Instance* erase(scene::Instantiable::Observer* observer, const scene::Path& path);
+	scene::Instance* erase(const scene::Path& path);
 
 	/** greebo: Call this right before map save to let the child
 	 * brushes have their origin recalculated. 

@@ -66,10 +66,10 @@ void BrushNode::forEachInstance(const scene::Instantiable::Visitor& visitor) {
 	m_instances.forEachInstance(visitor);
 }
 
-void BrushNode::insert(scene::Instantiable::Observer* observer, const scene::Path& path, scene::Instance* instance) {
-	m_instances.insert(observer, path, instance);
+void BrushNode::insert(const scene::Path& path, scene::Instance* instance) {
+	m_instances.insert(path, instance);
 }
 
-scene::Instance* BrushNode::erase(scene::Instantiable::Observer* observer, const scene::Path& path) {
-	return m_instances.erase(observer, path);
+scene::Instance* BrushNode::erase(const scene::Path& path) {
+	return m_instances.erase(path);
 }

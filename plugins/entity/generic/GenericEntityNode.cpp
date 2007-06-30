@@ -58,19 +58,12 @@ void GenericEntityNode::forEachInstance(const scene::Instantiable::Visitor& visi
 	m_instances.forEachInstance(visitor);
 }
 
-void GenericEntityNode::insert(
-	scene::Instantiable::Observer* observer, 
-	const scene::Path& path, 
-	scene::Instance* instance)
-{
-	m_instances.insert(observer, path, instance);
+void GenericEntityNode::insert(const scene::Path& path, scene::Instance* instance) {
+	m_instances.insert(path, instance);
 }
 
-scene::Instance* GenericEntityNode::erase(
-	scene::Instantiable::Observer* observer, 
-	const scene::Path& path)
-{
-	return m_instances.erase(observer, path);
+scene::Instance* GenericEntityNode::erase(const scene::Path& path) {
+	return m_instances.erase(path);
 }
 
 // Nameable implementation

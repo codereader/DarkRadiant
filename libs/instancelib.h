@@ -37,14 +37,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class InstanceSubgraphWalker : 
 	public scene::Traversable::Walker
 {
-	scene::Instantiable::Observer* m_observer;
 	mutable scene::Path m_path;
 	mutable std::stack<scene::Instance*> m_parent;
 public:
-	InstanceSubgraphWalker(scene::Instantiable::Observer* observer, 
-  						   const scene::Path& path, 
-  						   scene::Instance* parent) : 
-		m_observer(observer), 
+	InstanceSubgraphWalker(const scene::Path& path, scene::Instance* parent) :  
 		m_path(path)
 	{
 		// Initialise the stack with the first element
@@ -59,8 +55,11 @@ public:
 		if (instantiable != NULL) {
 			// Instantiate this node with the reference to the current parent instance
 			scene::Instance* instance = instantiable->create(m_path, m_parent.top());
-			m_observer->insert(instance);
-			instantiable->insert(m_observer, m_path, instance);
+			
+			// greebo: Register this instance with the scenegraph 
+			GlobalSceneGraph().insert(instance);
+			
+			instantiable->insert(m_path, instance);
 			
 			// Make this instance the new parent as long as we're 
 			// traversing this subgraph. The parent is removed from the stack
@@ -96,12 +95,9 @@ public:
 class UninstanceSubgraphWalker : 
 	public scene::Traversable::Walker
 {
-	scene::Instantiable::Observer* m_observer;
 	mutable scene::Path m_path;
 public:
-	UninstanceSubgraphWalker(scene::Instantiable::Observer* observer, 
-							 const scene::Path& parent) : 
-		m_observer(observer), 
+	UninstanceSubgraphWalker(const scene::Path& parent) : 
 		m_path(parent) // Initialise the path with the given parent path
 	{}
 	
@@ -113,9 +109,10 @@ public:
 	
 	void post(scene::INodePtr node) const {
 		// Call erase() on the Instantiable.
-		scene::Instance* instance = Node_getInstantiable(node)->erase(m_observer, m_path);
-		// Notify the observers
-		m_observer->erase(instance);
+		scene::Instance* instance = Node_getInstantiable(node)->erase(m_path);
+		
+		// Notify the Scenegraph about the upcoming deletion
+		GlobalSceneGraph().erase(instance);
 		
 		// Actually delete the instance
 		delete instance;
@@ -138,10 +135,8 @@ public:
 class InstanceSet : 
 	public scene::Traversable::Observer
 {
-	typedef std::pair<scene::Instantiable::Observer*, PathConstReference> CachePath;
-
-	// The map of Instances, indexed by a CachePath structure as above
-	typedef std::map<CachePath, scene::Instance*> InstanceMap;
+	// The map of Instances, indexed by the Path to the instance
+	typedef std::map<PathConstReference, scene::Instance*> InstanceMap;
 
 	// The actual map of the instances
 	InstanceMap m_instances;
@@ -159,16 +154,17 @@ public:
 	// traverse observer
 	// greebo: This inserts the given node as child of this instance set.
 	// The call arriving at Doom3GroupNode::insert() is passed here, for example.
+	// This ensures that every new child node of the observed Traversable is automatically instantiated 
 	void insertChild(scene::INodePtr child) {
 		for (iterator i = begin(); i != end(); ++i) {
-			Node_traverseSubgraph(child, InstanceSubgraphWalker(i->first.first, i->first.second, i->second));
+			Node_traverseSubgraph(child, InstanceSubgraphWalker(i->first, i->second));
 			i->second->boundsChanged();
 		}
 	}
 	
 	void eraseChild(scene::INodePtr child) {
 		for (iterator i = begin(); i != end(); ++i) {
-			Node_traverseSubgraph(child, UninstanceSubgraphWalker(i->first.first, i->first.second));
+			Node_traverseSubgraph(child, UninstanceSubgraphWalker(i->first));
 			i->second->boundsChanged();
 		}
 	}
@@ -180,17 +176,19 @@ public:
 		}
 	}
 
-	void insert(scene::Instantiable::Observer* observer, const scene::Path& path, scene::Instance* instance)
+	// The Instantiable node passes the call here, so this is the actual Instantiable implementation
+	void insert(const scene::Path& path, scene::Instance* instance)
 	{
-		//std::cout << "InstanceSet::insert (this=" << this << "): " << path << ", Instance=" << instance->path().top() << ", Observer=" << observer << "\n";
-		ASSERT_MESSAGE(m_instances.find(CachePath(observer, PathConstReference(instance->path()))) == m_instances.end(), "InstanceSet::insert - element already exists");
-		m_instances.insert(InstanceMap::value_type(CachePath(observer, PathConstReference(instance->path())), instance));
+		//std::cout << "InstanceSet::insert (this=" << this << "): " << path << ", Instance=" << instance->path().top() << "\n";
+		ASSERT_MESSAGE(m_instances.find(PathConstReference(instance->path())) == m_instances.end(), "InstanceSet::insert - element already exists");
+		m_instances.insert(InstanceMap::value_type(PathConstReference(instance->path()), instance));
 		//std::cout << "Size after insert: " << m_instances.size() << "\n";
 	}
 	
-	scene::Instance* erase(scene::Instantiable::Observer* observer, const scene::Path& path) {
-		ASSERT_MESSAGE(m_instances.find(CachePath(observer, PathConstReference(path))) != m_instances.end(), "InstanceSet::erase - failed to find element");
-		InstanceMap::iterator i = m_instances.find(CachePath(observer, PathConstReference(path)));
+	// The Instantiable node passes the call here, so this is the actual Instantiable implementation
+	scene::Instance* erase(const scene::Path& path) {
+		ASSERT_MESSAGE(m_instances.find(PathConstReference(path)) != m_instances.end(), "InstanceSet::erase - failed to find element");
+		InstanceMap::iterator i = m_instances.find(PathConstReference(path));
 		scene::Instance* instance = i->second;
 		m_instances.erase(i);
 		return instance;

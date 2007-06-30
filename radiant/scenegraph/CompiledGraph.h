@@ -35,8 +35,7 @@ struct GraphTreeModel;
  * 			the instances.
  */
 class CompiledGraph : 
-	public scene::Graph, 
-	public scene::Instantiable::Observer
+	public scene::Graph
 {
 	typedef std::map<PathConstReference, scene::Instance*> InstanceMap;
 	InstanceMap m_instances;

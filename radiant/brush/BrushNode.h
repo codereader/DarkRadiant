@@ -89,8 +89,8 @@ public:
 	// Creates a new instance on the heap
 	scene::Instance* create(const scene::Path& path, scene::Instance* parent);
 	// Inserts / erases an instance	
-	void insert(scene::Instantiable::Observer* observer, const scene::Path& path, scene::Instance* instance);
-	scene::Instance* erase(scene::Instantiable::Observer* observer, const scene::Path& path);
+	void insert(const scene::Path& path, scene::Instance* instance);
+	scene::Instance* erase(const scene::Path& path);
 	
 	// Loops through all instances with the given visitor class
 	void forEachInstance(const scene::Instantiable::Visitor& visitor);

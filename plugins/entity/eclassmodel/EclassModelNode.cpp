@@ -115,17 +115,12 @@ void EclassModelNode::forEachInstance(const scene::Instantiable::Visitor& visito
 	m_instances.forEachInstance(visitor);
 }
 
-void EclassModelNode::insert(scene::Instantiable::Observer* observer, 
-							 const scene::Path& path, 
-							 scene::Instance* instance)
-{
-	m_instances.insert(observer, path, instance);
+void EclassModelNode::insert(const scene::Path& path, scene::Instance* instance) {
+	m_instances.insert(path, instance);
 }
 
-scene::Instance* EclassModelNode::erase(scene::Instantiable::Observer* observer, 
-										const scene::Path& path)
-{
-	return m_instances.erase(observer, path);
+scene::Instance* EclassModelNode::erase(const scene::Path& path) {
+	return m_instances.erase(path);
 }
 
 // Nameable implementation

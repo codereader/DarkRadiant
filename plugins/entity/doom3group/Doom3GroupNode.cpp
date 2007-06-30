@@ -77,12 +77,12 @@ void Doom3GroupNode::forEachInstance(const scene::Instantiable::Visitor& visitor
 	m_instances.forEachInstance(visitor);
 }
 
-void Doom3GroupNode::insert(scene::Instantiable::Observer* observer, const scene::Path& path, scene::Instance* instance) {
-	m_instances.insert(observer, path, instance);
+void Doom3GroupNode::insert(const scene::Path& path, scene::Instance* instance) {
+	m_instances.insert(path, instance);
 }
 
-scene::Instance* Doom3GroupNode::erase(scene::Instantiable::Observer* observer, const scene::Path& path) {
-	return m_instances.erase(observer, path);
+scene::Instance* Doom3GroupNode::erase(const scene::Path& path) {
+	return m_instances.erase(path);
 }
 
 void Doom3GroupNode::insert(scene::INodePtr node) {

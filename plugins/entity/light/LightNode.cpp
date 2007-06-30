@@ -96,12 +96,12 @@ void LightNode::forEachInstance(const scene::Instantiable::Visitor& visitor) {
 	m_instances.forEachInstance(visitor);
 }
 
-void LightNode::insert(scene::Instantiable::Observer* observer, const scene::Path& path, scene::Instance* instance) {
-	m_instances.insert(observer, path, instance);
+void LightNode::insert(const scene::Path& path, scene::Instance* instance) {
+	m_instances.insert(path, instance);
 }
 
-scene::Instance* LightNode::erase(scene::Instantiable::Observer* observer, const scene::Path& path) {
-	return m_instances.erase(observer, path);
+scene::Instance* LightNode::erase(const scene::Path& path) {
+	return m_instances.erase(path);
 }
 
 // Nameable implementation
