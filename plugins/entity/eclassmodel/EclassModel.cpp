@@ -5,7 +5,6 @@
 namespace entity {
 
 EclassModel::EclassModel(IEntityClassPtr eclass, 
-						 scene::Node& node, 
 						 const Callback& transformChanged, 
 						 const Callback& evaluateTransform) :
 	m_entity(eclass),
@@ -26,7 +25,6 @@ EclassModel::EclassModel(IEntityClassPtr eclass,
 }
 
 EclassModel::EclassModel(const EclassModel& other, 
-						 scene::Node& node, 
 						 const Callback& transformChanged, 
 						 const Callback& evaluateTransform) :
 	m_entity(other.m_entity),
@@ -89,7 +87,7 @@ void EclassModel::instanceAttach(const scene::Path& path) {
 	if(++m_instanceCounter.m_count == 1) {
 		m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
 		m_entity.attach(m_keyObservers);
-		m_model.modelChanged(m_entity.getEntityClass()->getModelPath().c_str());
+		m_model.modelChanged(m_entity.getEntityClass()->getModelPath());
 		m_skin.skinChanged(m_entity.getEntityClass()->getSkin().c_str());
 	}
 }
