@@ -125,15 +125,22 @@ public:
 			}
 		}
     
+    	bool selected = false;
+    
 		if (path.size() > 1 && !path.top()->isRoot() && selectable != NULL) {
-				for (unsigned int i = 0; i < _count; ++i) {
-					if (policy.Evaluate(_aabbs[i], instance)) {
-						selectable->setSelected(true);
+			for (unsigned int i = 0; i < _count; ++i) {
+				// Check if the selectable passes the AABB test
+				if (policy.Evaluate(_aabbs[i], instance)) {
+					selectable->setSelected(true);
+					
+					selected = true;
+					break;
 				}
 			}
 		}
 	
-		return true;
+		// Only traverse the children of this node, if the node itself couldn't be selected
+		return !selected;
 	}
 
   /**
