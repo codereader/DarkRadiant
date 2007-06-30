@@ -97,13 +97,4 @@ public:
 	
 }; // class BrushNode
 
-// Casts the node onto a BrushNode and returns the Brush pointer
-inline Brush* Node_getBrush(scene::INodePtr node) {
-	IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(node);
-	if (brushNode != NULL) {
-		return &brushNode->getBrush();
-	}
-	return NULL;
-}
-
 #endif

@@ -4,6 +4,7 @@
 #include "iscenegraph.h"
 #include "ientity.h"
 #include "ieclass.h"
+#include "ipatch.h"
 
 #include "scenelib.h"
 
@@ -27,12 +28,23 @@ public:
 		if (entity) {
 			IEntityClassConstPtr eclass = entity->getEntityClass();
 			std::string name = eclass->getName();
-			if (!GlobalFilterSystem().isVisible("entityclass", name)) {
-				instance.setFiltered(true);
-			}
-			else {
-				instance.setFiltered(false);
-			}
+			instance.setFiltered(
+				!GlobalFilterSystem().isVisible("entityclass", name)
+			);
+		}
+		
+		// greebo: Update visibility of PatchInstances
+		if (Node_isPatch(path.top())) {
+			instance.setFiltered(
+				!GlobalFilterSystem().isVisible("object", "patch")
+			);
+		}
+		
+		// greebo: Update visibility of BrushInstances
+		if (Node_isBrush(path.top())) {
+			instance.setFiltered(
+				!GlobalFilterSystem().isVisible("object", "brush")
+			);
 		}
 		
 		// Continue the traversal

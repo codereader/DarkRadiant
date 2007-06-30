@@ -110,6 +110,11 @@ public:
 	{}
 
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
+		if (instance.getFiltered()) {
+			// Don't traverse filtered instances
+			return false;
+		}
+		
 		Selectable* selectable = Instance_getSelectable(instance);
 
 		// ignore worldspawn

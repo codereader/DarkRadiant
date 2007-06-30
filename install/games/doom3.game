@@ -89,6 +89,9 @@
 		<filter name="Patches">
 			<filterCriterion type="object" match="patch" action="hide" />
 		</filter>
+		<filter name="Brushes">
+			<filterCriterion type="object" match="brush" action="hide" />
+		</filter>
 	</filtersystem>
 	<filesystem>
 		<shaders>

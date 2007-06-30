@@ -105,6 +105,15 @@ inline bool Node_isBrush(scene::INodePtr node) {
 	return boost::dynamic_pointer_cast<IBrushNode>(node) != NULL;
 }
 
+// Casts the node onto a BrushNode and returns the Brush pointer
+inline Brush* Node_getBrush(scene::INodePtr node) {
+	IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(node);
+	if (brushNode != NULL) {
+		return &brushNode->getBrush();
+	}
+	return NULL;
+}
+
 #include "modulesystem.h"
 
 template<typename Type>

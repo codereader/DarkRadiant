@@ -211,12 +211,12 @@ void BrushInstance::renderComponents(Renderer& renderer, const VolumeTest& volum
 	renderer.SetState(m_brush.m_state_point, Renderer::eFullMaterials);
 
 	if (volume.fill() && GlobalSelectionSystem().ComponentMode() == SelectionSystem::eFace) {
-			evaluateViewDependent(volume, localToWorld);
-			renderer.addRenderable(m_render_faces_wireframe, localToWorld);
-		}
+		evaluateViewDependent(volume, localToWorld);
+		renderer.addRenderable(m_render_faces_wireframe, localToWorld);
+	}
 	else {
-			m_brush.renderComponents(GlobalSelectionSystem().ComponentMode(), renderer, volume, localToWorld);
-		}
+		m_brush.renderComponents(GlobalSelectionSystem().ComponentMode(), renderer, volume, localToWorld);
+	}
 }
 
 void BrushInstance::renderClipPlane(Renderer& renderer, const VolumeTest& volume) const {
@@ -229,15 +229,15 @@ void BrushInstance::renderCommon(Renderer& renderer, const VolumeTest& volume) c
 	bool componentMode = GlobalSelectionSystem().Mode() == SelectionSystem::eComponent;
 
 	if (componentMode && isSelected()) {
-			renderComponents(renderer, volume);
-		}
+		renderComponents(renderer, volume);
+	}
 
 	if (parentSelected()) {
-			if (!componentMode) {
-					renderer.Highlight(Renderer::eFace);
-				}
-			renderer.Highlight(Renderer::ePrimitive);
-		}
+		if (!componentMode) {
+				renderer.Highlight(Renderer::eFace);
+			}
+		renderer.Highlight(Renderer::ePrimitive);
+	}
 }
 
 void BrushInstance::renderSolid(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const {
@@ -266,6 +266,10 @@ void BrushInstance::renderWireframe(Renderer& renderer, const VolumeTest& volume
 }
 
 void BrushInstance::renderSolid(Renderer& renderer, const VolumeTest& volume) const {
+	if (Instance::getFiltered()) {
+		return;
+	}
+	
 	m_brush.evaluateBRep();
 
 	renderClipPlane(renderer, volume);
@@ -274,6 +278,10 @@ void BrushInstance::renderSolid(Renderer& renderer, const VolumeTest& volume) co
 }
 
 void BrushInstance::renderWireframe(Renderer& renderer, const VolumeTest& volume) const {
+	if (Instance::getFiltered()) {
+		return;
+	}
+	
 	m_brush.evaluateBRep();
 
 	renderClipPlane(renderer, volume);
@@ -286,6 +294,10 @@ void BrushInstance::viewChanged() const {
 }
 
 void BrushInstance::testSelect(Selector& selector, SelectionTest& test) {
+	if (Instance::getFiltered()) {
+		return;
+	}
+	
 	test.BeginMesh(localToWorld());
 
 	SelectionIntersection best;
@@ -315,6 +327,10 @@ void BrushInstance::setSelectedComponents(bool select, SelectionSystem::ECompone
 }
 
 void BrushInstance::testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) {
+	if (Instance::getFiltered()) {
+		return;
+	}
+	
 	test.BeginMesh(localToWorld());
 
 	switch (mode) {
@@ -349,6 +365,10 @@ void BrushInstance::testSelectComponents(Selector& selector, SelectionTest& test
 }
 
 void BrushInstance::selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback) {
+	if (Instance::getFiltered()) {
+		return;
+	}
+	
 	test.BeginMesh(localToWorld());
 
 	PlanePointer brushPlanes[c_brush_maxFaces];
@@ -364,6 +384,10 @@ void BrushInstance::selectPlanes(Selector& selector, SelectionTest& test, const 
 }
 
 void BrushInstance::selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes) {
+	if (Instance::getFiltered()) {
+		return;
+	}
+	
 	for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
 		(*i).selectReversedPlane(selector, selectedPlanes);
 	}

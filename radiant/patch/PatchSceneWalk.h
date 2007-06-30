@@ -6,15 +6,6 @@
 #include "iselection.h"
 #include "PatchInstance.h"
 
-// Casts a node onto a patch
-inline Patch* Node_getPatch(scene::INodePtr node) {
-	IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(node);
-	if (patchNode != NULL) {
-		return &patchNode->getPatch();;
-	}
-	return NULL;
-}
-
 // Cast an instance onto a patch
 inline PatchInstance* Instance_getPatch(scene::Instance& instance) {
 	return dynamic_cast<PatchInstance*>(&instance);

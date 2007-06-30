@@ -209,7 +209,7 @@ void PatchInstance::testSelect(Selector& selector, SelectionTest& test) {
 
 // Check the GlobalFilterSystem to ensure patches should be rendered.
 bool PatchInstance::isVisible() const {
-	return GlobalFilterSystem().isVisible("object", "patch");	
+	return !Instance::getFiltered();//GlobalFilterSystem().isVisible("object", "patch");	
 }
 
 void PatchInstance::selectCtrl(bool selected) {
