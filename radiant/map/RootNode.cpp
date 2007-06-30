@@ -9,7 +9,7 @@ RootNode::RootNode(const std::string& name) :
 	setIsRoot(true);
 	// Attach the InstanceSet as scene::Traversable::Observer 
 	// to the TraversableNodeset >> triggers instancing.
-	m_traverse.attach(&m_instances);
+	TraversableNodeSet::attach(&m_instances);
 
 	GlobalUndoSystem().trackerAttach(m_changeTracker);
 }
@@ -19,21 +19,7 @@ RootNode::~RootNode() {
 	GlobalUndoSystem().trackerDetach(m_changeTracker);
 	
 	// Remove the observer InstanceSet from the TraversableNodeSet
-	m_traverse.detach(&m_instances);
-}
-
-// scene::Traversable Implementation
-void RootNode::insert(scene::INodePtr node) {
-	m_traverse.insert(node);
-}
-void RootNode::erase(scene::INodePtr node) {
-	m_traverse.erase(node);	
-}
-void RootNode::traverse(const Walker& walker) {
-	m_traverse.traverse(walker);
-}
-bool RootNode::empty() const {
-	return m_traverse.empty();
+	TraversableNodeSet::detach(&m_instances);
 }
 
 // TransformNode implementation
@@ -68,13 +54,13 @@ std::string RootNode::name() const {
 
 void RootNode::instanceAttach(const scene::Path& path) {
 	if (++m_instanceCounter.m_count == 1) {
-		m_traverse.instanceAttach(path_find_mapfile(path.begin(), path.end()));
+		TraversableNodeSet::instanceAttach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
 
 void RootNode::instanceDetach(const scene::Path& path) {
 	if (--m_instanceCounter.m_count == 0) {
-		m_traverse.instanceDetach(path_find_mapfile(path.begin(), path.end()));
+		TraversableNodeSet::instanceDetach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
 

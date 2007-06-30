@@ -26,10 +26,9 @@ class RootNode :
 	public Nameable,
 	public TransformNode,
 	public MapFile,
-	public scene::Traversable
+	public TraversableNodeSet // implements scene::Traversable
 {
 	IdentityTransform m_transform;
-	TraversableNodeSet m_traverse;
 	InstanceSet m_instances;
 	
 	// The actual name of the map
@@ -41,12 +40,6 @@ public:
 	RootNode(const std::string& name);
 	
 	virtual ~RootNode();
-
-  	// scene::Traversable Implementation
-	virtual void insert(scene::INodePtr node);
-    virtual void erase(scene::INodePtr node);
-    virtual void traverse(const Walker& walker);
-    virtual bool empty() const;
 	
 	// TransformNode implementation
 	virtual const Matrix4& localToParent() const;
