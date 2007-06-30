@@ -3,56 +3,29 @@
 // --------- LightNode implementation ------------------------------------
 
 LightNode::LightNode(IEntityClassPtr eclass) :
-	m_contained(eclass, *this, InstanceSet::TransformChangedCaller(m_instances), InstanceSet::BoundsChangedCaller(m_instances), InstanceSetEvaluateTransform<LightInstance>::Caller(m_instances))
-{
-	construct();
-}
+	m_contained(eclass, 
+				*this, 
+				InstanceSet::TransformChangedCaller(m_instances), 
+				InstanceSet::BoundsChangedCaller(m_instances), 
+				InstanceSetEvaluateTransform<LightInstance>::Caller(m_instances))
+{}
 
 LightNode::LightNode(const LightNode& other) :
 	scene::Node(other),
 	scene::Instantiable(other),
 	scene::Cloneable(other),
-	scene::Traversable::Observer(other),
 	Nameable(other),
 	Snappable(other),
 	Editable(other),
 	TransformNode(other),
-	scene::Traversable(other),
 	EntityNode(other),
 	Namespaced(other),
-	m_contained(other.m_contained, *this, InstanceSet::TransformChangedCaller(m_instances), InstanceSet::BoundsChangedCaller(m_instances), InstanceSetEvaluateTransform<LightInstance>::Caller(m_instances))
-{
-	construct();
-}
-
-LightNode::~LightNode() {
-	destroy();
-}
-
-void LightNode::construct() {
-	// Attach this node as scene::Traversable::Observer to the contained Light class
-	m_contained.attach(this);
-}
-
-void LightNode::destroy() {
-	m_contained.detach(this);
-}
-
-void LightNode::insert(scene::INodePtr node) {
-	m_contained.getTraversable().insert(node);
-}
-
-void LightNode::erase(scene::INodePtr node) {
-	m_contained.getTraversable().erase(node);
-}
-
-void LightNode::traverse(const Walker& walker) {
-	m_contained.getTraversable().traverse(walker);
-}
-
-bool LightNode::empty() const {
-	return m_contained.getTraversable().empty();
-}
+	m_contained(other.m_contained, 
+				*this, 
+				InstanceSet::TransformChangedCaller(m_instances), 
+				InstanceSet::BoundsChangedCaller(m_instances), 
+				InstanceSetEvaluateTransform<LightInstance>::Caller(m_instances))
+{}
 
 const Matrix4& LightNode::getLocalPivot() const {
 	return m_contained.getLocalPivot();
@@ -78,14 +51,6 @@ void LightNode::setNamespace(INamespace& space) {
 
 scene::INodePtr LightNode::clone() const {
 	return scene::INodePtr(new LightNode(*this));
-}
-
-void LightNode::insertChild(scene::INodePtr child) {
-	m_instances.insertChild(child);
-}
-
-void LightNode::eraseChild(scene::INodePtr child) {
-	m_instances.eraseChild(child);
 }
 
 scene::Instance* LightNode::create(const scene::Path& path, scene::Instance* parent) {

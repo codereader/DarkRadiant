@@ -11,38 +11,25 @@ class LightNode :
 	public scene::Node,
 	public scene::Instantiable,
 	public scene::Cloneable,
-	public scene::Traversable::Observer,
 	public Nameable,
 	public Snappable,
 	public Editable,
 	public TransformNode,
-	public scene::Traversable,
 	public EntityNode,
 	public Namespaced
 {
 	InstanceSet m_instances;
 	Light m_contained;
-
-	void construct();	
-	void destroy();
 	
 public:
 	LightNode(IEntityClassPtr eclass);
 	LightNode(const LightNode& other);
 	
-	~LightNode();
-
 	// EntityNode implementation
 	virtual Entity& getEntity();
 	
 	// Namespaced implementation
 	virtual void setNamespace(INamespace& space);
-
-	// scene::Traversable Implementation
-	virtual void insert(scene::INodePtr node);
-    virtual void erase(scene::INodePtr node);
-    virtual void traverse(const Walker& walker);
-    virtual bool empty() const;
 
 	// TransformNode implementation
 	virtual const Matrix4& localToParent() const;
@@ -54,9 +41,6 @@ public:
 	virtual void snapto(float snap);
 
 	scene::INodePtr clone() const;
-
-	void insertChild(scene::INodePtr child);
-	void eraseChild(scene::INodePtr child);
 
 	scene::Instance* create(const scene::Path& path, scene::Instance* parent);
 	void forEachInstance(const scene::Instantiable::Visitor& visitor);

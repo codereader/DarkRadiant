@@ -8,7 +8,6 @@
 #include "editable.h"
 #include "render.h"
 #include "renderable.h"
-#include "traverselib.h"
 #include "math/frustum.h"
 
 #include "../keyobservers.h"
@@ -85,7 +84,6 @@ class Light :
 {
   entity::Doom3Entity m_entity;
   KeyObserverMap m_keyObservers;
-  TraversableNodeSet m_traverse;
   IdentityTransform m_transform;
 
   OriginKey m_originKey;
@@ -161,7 +159,6 @@ class Light :
   Callback m_evaluateTransform;
 
 	void construct();
-	void destroy();
 
 	void updateOrigin();
 	void originChanged();
@@ -198,9 +195,6 @@ public:
 	// Copy Constructor
 	Light(const Light& other, scene::Node& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform);
 	
-	// Destructor
-	~Light();
-
 	InstanceCounter m_instanceCounter;
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
@@ -208,16 +202,11 @@ public:
 	entity::Doom3Entity& getEntity();
 	const entity::Doom3Entity& getEntity() const;
 
-	scene::Traversable& getTraversable();
-	const scene::Traversable& getTraversable() const;
 	Namespaced& getNamespaced();
 	NamedEntity& getNameable();
 	const NamedEntity& getNameable() const;
 	TransformNode& getTransformNode();
 	const TransformNode& getTransformNode() const;
-
-	void attach(scene::Traversable::Observer* observer);
-	void detach(scene::Traversable::Observer* observer);
 
 	void render(RenderStateFlags state) const;
 

@@ -200,11 +200,6 @@ Light::Light(const Light& other, scene::Node& node, const Callback& transformCha
 	construct();
 }
 
-// Destructor
-Light::~Light() {
-	destroy();
-}
-
 /* greebo: This sets up the keyObservers so that the according classes get notified when any
  * of the key/values are changed. 
  * Note, that the entity key/values are still empty at the point where this method is called.
@@ -242,13 +237,7 @@ void Light::construct() {
 	// set the colours to their default values
 	m_doom3Radius.setCenterColour(m_entity.getEntityClass()->getColour());
 
-	//m_traverse.attach(&m_traverseObservers);
-
 	m_entity.setIsContainer(true);
-}
-
-void Light::destroy() {
-	//m_traverse.detach(&m_traverseObservers);
 }
 
 void Light::updateOrigin() {
@@ -406,7 +395,6 @@ void Light::updateLightRadiiBox() const {
 void Light::instanceAttach(const scene::Path& path) {
 	if(++m_instanceCounter.m_count == 1) {
 		m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
-		m_traverse.instanceAttach(path_find_mapfile(path.begin(), path.end()));
 		m_entity.attach(m_keyObservers);
 	}
 }
@@ -414,7 +402,6 @@ void Light::instanceAttach(const scene::Path& path) {
 void Light::instanceDetach(const scene::Path& path) {
 	if(--m_instanceCounter.m_count == 0) {
 		m_entity.detach(m_keyObservers);
-		m_traverse.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 		m_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
@@ -424,11 +411,6 @@ void Light::instanceDetach(const scene::Path& path) {
  * Note: This gets called when the light as a whole is selected, NOT in vertex editing mode
  */
 void Light::snapto(float snap) {
-	if(!m_useLightOrigin && !m_traverse.empty()) {
-		m_useLightOrigin = true;
-		m_lightOrigin = m_originKey.m_origin;
-	}
-
 	if (m_useLightOrigin) {
 		m_lightOrigin = origin_snapped(m_lightOrigin, snap);
 		writeLightOrigin();
@@ -463,10 +445,6 @@ void Light::revertTransform() {
 }
 
 void Light::freezeTransform() {
-	if (!m_useLightOrigin && !m_traverse.empty()) {
-		m_useLightOrigin = true;
-	}
-
 	if (m_useLightOrigin) {
 		m_lightOrigin = m_aabb_light.origin;
 		writeLightOrigin();
@@ -511,10 +489,6 @@ void Light::freezeTransform() {
 		m_entity.setKeyValue("light_center", m_doom3Radius.m_center);
     }
 	
-	if(!m_useLightRotation && !m_traverse.empty()) {
-		m_useLightRotation = true;
-	}
-
 	if(m_useLightRotation) {
 		rotation_assign(m_lightRotation, m_rotation);
 		write_rotation(m_lightRotation, &m_entity, "light_rotation");
@@ -536,12 +510,6 @@ const entity::Doom3Entity& Light::getEntity() const {
 	return m_entity;
 }
 
-scene::Traversable& Light::getTraversable() {
-	return m_traverse;
-}
-const scene::Traversable& Light::getTraversable() const {
-	return m_traverse;
-}
 Namespaced& Light::getNamespaced() {
 	return m_nameKeys;
 }
@@ -556,13 +524,6 @@ TransformNode& Light::getTransformNode() {
 }
 const TransformNode& Light::getTransformNode() const {
 	return m_transform;
-}
-
-void Light::attach(scene::Traversable::Observer* observer) {
-	m_traverse.attach(observer);
-}
-void Light::detach(scene::Traversable::Observer* observer) {
-	m_traverse.detach(observer);
 }
 
 // Backend render function (GL calls)
