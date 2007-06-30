@@ -52,7 +52,7 @@ void SingletonModel::realise() {
 }
 
 void SingletonModel::unrealise() {
-	if (_node != NULL) {
+	if (_node != NULL && !_modelPath.empty()) {
 		// Remove the master model node from the attached Traversable
 		_traversable.erase(_node);
 	}
