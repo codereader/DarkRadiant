@@ -45,9 +45,15 @@ void Doom3Entity::setKeyValueChangedFunc(EntityCreator::KeyValueChangedFunc func
 }
 
 void Doom3Entity::importState(const KeyValues& keyValues) {
+	// Remove the entity key values, one by one
+	while (_keyValues.size() > 0) {
+		erase(_keyValues.begin());
+	}
+	
+	/* greebo: This code somehow doesn't delete all the keys (only every second one)
 	for(KeyValues::iterator i = _keyValues.begin(); i != _keyValues.end();) {
 		erase(i++);
-	}
+	}*/
 
 	for (KeyValues::const_iterator i = keyValues.begin(); i != keyValues.end(); ++i) {
 		insert(i->first, i->second);
