@@ -37,7 +37,8 @@ public:
 		_keyObservers.insert(KeyObservers::value_type(key, observer));
 	}
 	
-	void insert(const std::string& key, EntityKeyValue& value) {
+	// Entity::Observer implementation, gets called on key insert
+	void onKeyInsert(const std::string& key, EntityKeyValue& value) {
 		for (KeyObservers::const_iterator i = _keyObservers.find(key); 
 			 i != _keyObservers.end() && i->first == key; 
 			 ++i)
@@ -46,7 +47,8 @@ public:
 		}
 	}
 	
-	void erase(const std::string& key, EntityKeyValue& value) {
+	// Entity::Observer implementation, gets called on Key erase	
+	void onKeyErase(const std::string& key, EntityKeyValue& value) {
 		for (KeyObservers::const_iterator i = _keyObservers.find(key); 
 			 i != _keyObservers.end() && i->first == key; 
 			 ++i)

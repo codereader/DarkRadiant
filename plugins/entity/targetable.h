@@ -197,7 +197,8 @@ public:
     m_targetsChanged();
   }
 
-  void insert(const std::string& key, EntityKeyValue& value) {
+	// Entity::Observer implementation, gets called on key insert
+  void onKeyInsert(const std::string& key, EntityKeyValue& value) {
     std::size_t index;
     if(readTargetKey(key.c_str(), index))
     {
@@ -206,7 +207,9 @@ public:
       targetsChanged();
     }
   }
-  void erase(const std::string& key, EntityKeyValue& value)
+
+	// Entity::Observer implementation, gets called on key erase
+  void onKeyErase(const std::string& key, EntityKeyValue& value)
   {
     std::size_t index;
     if(readTargetKey(key.c_str(), index))
@@ -326,13 +329,15 @@ public:
     m_targeting.targetsChanged();
   }
 
-	void insert(const std::string& key, EntityKeyValue& value) {
+	// Entity::Observer implementation, gets called on key insert
+	void onKeyInsert(const std::string& key, EntityKeyValue& value) {
 		if (key == "name") {
 			value.attach(TargetedEntity::TargetnameChangedCaller(m_targeted));
 		}
 	}
 	
-	void erase(const std::string& key, EntityKeyValue& value) {
+	// Entity::Observer implementation, gets called on key erase
+	void onKeyErase(const std::string& key, EntityKeyValue& value) {
 		if (key == "name") {
 			value.detach(TargetedEntity::TargetnameChangedCaller(m_targeted));
 		}

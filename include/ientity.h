@@ -38,23 +38,47 @@ typedef Callback1<const std::string&> KeyObserver;
 class EntityKeyValue
 {
 public:
-  virtual const char* c_str() const = 0;
-  virtual void assign(const std::string& other) = 0;
-  virtual void attach(const KeyObserver& observer) = 0;
-  virtual void detach(const KeyObserver& observer) = 0;
+	/** greebo: Retrieves the actual value of this key
+	 */
+	virtual std::string get() const = 0;
+	
+	/** greebo: Sets the value of this key
+	 */
+	virtual void assign(const std::string& other) = 0;
+	
+	/** greebo: Attaches/detaches a callback to get notified about
+	 * 			the key change.
+	 */
+	virtual void attach(const KeyObserver& observer) = 0;
+	virtual void detach(const KeyObserver& observer) = 0;
 };
 
 class Entity
 {
 public:
-  STRING_CONSTANT(Name, "Entity");
+	STRING_CONSTANT(Name, "Entity");
 
+	/** greebo: An Entity::Observer gets notified about key insertions and removals
+	 * 			as well as (optionally) about Entity destruction.
+	 */
 	class Observer
 	{
 	public:
-		virtual void insert(const std::string& key, EntityKeyValue& value) = 0;
-		virtual void erase(const std::string& key, EntityKeyValue& value) = 0;
-		virtual void clear() { };
+		/** greebo: This gets called when a new spawnarg is added to the entity
+		 * 			key/value list to give the Observer an opportunity to react.
+		 */
+		virtual void onKeyInsert(const std::string& key, EntityKeyValue& value) = 0;
+		
+		/** greebo: This is called when a spawnarg is removed from the observed entity.
+		 */
+		virtual void onKeyErase(const std::string& key, EntityKeyValue& value) = 0;
+		
+		/** greebo: Gets called when the entity is destroyed (i.e. all keyvalues are about
+		 * 			to be removed from the list). 
+		 */
+		virtual void onDestruct() {
+			// Empty default implementation
+		}
 	};
 
 	/**
