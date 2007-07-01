@@ -8,6 +8,7 @@ Doom3GroupNode::Doom3GroupNode(IEntityClassPtr eclass) :
 	m_contained(
 		eclass,
 		*this,
+		*this, // Pass <this> as scene::Traversable&
 		this, // Pass <this> as scene::Traversable::Observer* 
 		InstanceSet::TransformChangedCaller(m_instances),
 		InstanceSet::BoundsChangedCaller(m_instances),
@@ -24,13 +25,14 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	Nameable(other),
 	Snappable(other),
 	TransformNode(other),
-	scene::Traversable(other),
+	TraversableNodeSet(), // Don't copy the TraversableNodeSet from the other node
 	EntityNode(other),
 	Namespaced(other),
 	ModelSkin(other),
 	m_contained(
 		other.m_contained,
 		*this,
+		*this, // Pass <this> as scene::Traversable&
 		this, // Pass <this> as scene::Traversable::Observer*
 		InstanceSet::TransformChangedCaller(m_instances),
 		InstanceSet::BoundsChangedCaller(m_instances),
@@ -83,22 +85,6 @@ void Doom3GroupNode::insert(const scene::Path& path, scene::Instance* instance) 
 
 scene::Instance* Doom3GroupNode::erase(const scene::Path& path) {
 	return m_instances.erase(path);
-}
-
-void Doom3GroupNode::insert(scene::INodePtr node) {
-	m_contained.getTraversable().insert(node);
-}
-
-void Doom3GroupNode::erase(scene::INodePtr node) {
-	m_contained.getTraversable().erase(node);
-}
-
-void Doom3GroupNode::traverse(const Walker& walker) {
-	m_contained.getTraversable().traverse(walker);
-}
-
-bool Doom3GroupNode::empty() const {
-	return m_contained.getTraversable().empty();
 }
 
 // Snappable implementation

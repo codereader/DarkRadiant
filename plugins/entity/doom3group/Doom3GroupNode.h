@@ -19,7 +19,7 @@ class Doom3GroupNode :
 	public Nameable,
 	public Snappable,
 	public TransformNode,
-	public scene::Traversable,
+	public TraversableNodeSet, // implements scene::Traversable
 	public EntityNode,
 	public Namespaced,
 	public ModelSkin
@@ -44,12 +44,6 @@ public:
 
 	// Namespaced implementation
 	virtual void setNamespace(INamespace& space);
-
-	// scene::Traversable Implementation
-	virtual void insert(scene::INodePtr node);
-    virtual void erase(scene::INodePtr node);
-    virtual void traverse(const Walker& walker);
-    virtual bool empty() const;
 
 	// TransformNode implementation
 	virtual const Matrix4& localToParent() const;

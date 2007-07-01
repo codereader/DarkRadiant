@@ -26,7 +26,9 @@ class Doom3Group :
 {
 	Doom3Entity _entity;
 	KeyObserverMap m_keyObservers;
-	TraversableNodeSet m_traverse;
+	
+	// A reference to the Traversable container of the parent Doom3GroupNode 
+	TraversableNodeSet& _traversable;
 	MatrixTransform m_transform;
 
 	SingletonModel m_model;
@@ -75,6 +77,7 @@ public:
 	 */
 	Doom3Group(IEntityClassPtr eclass, 
 			   scene::Node& node,
+			   TraversableNodeSet& traversable,
 			   scene::Traversable::Observer* traverseObserver, 
 			   const Callback& transformChanged, 
 			   const Callback& boundsChanged, 
@@ -83,6 +86,7 @@ public:
 	// Copy constructor
 	Doom3Group(const Doom3Group& other, 
 			   scene::Node& node,
+			   TraversableNodeSet& traversable,
 			   scene::Traversable::Observer* traverseObserver, 
 			   const Callback& transformChanged, 
 			   const Callback& boundsChanged, 

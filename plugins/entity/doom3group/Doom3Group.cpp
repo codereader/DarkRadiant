@@ -26,12 +26,14 @@ inline void PointVertexArray_testSelect(PointVertex* first, std::size_t count,
 
 Doom3Group::Doom3Group(IEntityClassPtr eclass, 
 		scene::Node& node,
+		TraversableNodeSet& traversable,
 		scene::Traversable::Observer* traverseObserver, 
 		const Callback& transformChanged, 
 		const Callback& boundsChanged, 
 		const Callback& evaluateTransform) :
 	_entity(eclass),
-	m_model(m_traverse),
+	_traversable(traversable),
+	m_model(_traversable),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	m_nameOrigin(0,0,0),
@@ -52,12 +54,14 @@ Doom3Group::Doom3Group(IEntityClassPtr eclass,
 
 Doom3Group::Doom3Group(const Doom3Group& other, 
 		scene::Node& node,
+		TraversableNodeSet& traversable,
 		scene::Traversable::Observer* traverseObserver, 
 		const Callback& transformChanged, 
 		const Callback& boundsChanged, 
 		const Callback& evaluateTransform) :
 	_entity(other._entity),
-	m_model(m_traverse),
+	_traversable(traversable),
+	m_model(_traversable),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(other.m_origin),
 	m_nameOrigin(other.m_nameOrigin),
@@ -87,13 +91,13 @@ Vector3& Doom3Group::getOrigin() {
 void Doom3Group::instanceAttach(const scene::Path& path) {
 	if (++m_instanceCounter.m_count == 1) {
 		_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
-		m_traverse.instanceAttach(path_find_mapfile(path.begin(), path.end()));
+		_traversable.instanceAttach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
 
 void Doom3Group::instanceDetach(const scene::Path& path) {
 	if (--m_instanceCounter.m_count == 0) {
-		m_traverse.instanceDetach(path_find_mapfile(path.begin(), path.end()));
+		_traversable.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 		_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
@@ -103,14 +107,6 @@ Doom3Entity& Doom3Group::getEntity() {
 }
 const Doom3Entity& Doom3Group::getEntity() const {
 	return _entity;
-}
-
-scene::Traversable& Doom3Group::getTraversable() {
-	return m_traverse;
-}
-
-const scene::Traversable& Doom3Group::getTraversable() const {
-	return m_traverse;
 }
 
 Namespaced& Doom3Group::getNamespaced() {
@@ -153,13 +149,13 @@ const AABB& Doom3Group::localAABB() const {
 
 void Doom3Group::addOriginToChildren() {
 	if (!m_isModel) {
-		m_traverse.traverse(Doom3BrushTranslator(m_origin));
+		_traversable.traverse(Doom3BrushTranslator(m_origin));
 	}
 }
 
 void Doom3Group::removeOriginFromChildren() {
 	if (!m_isModel) {
-		m_traverse.traverse(Doom3BrushTranslator(-m_origin));
+		_traversable.traverse(Doom3BrushTranslator(-m_origin));
 	}
 }
 
@@ -233,7 +229,7 @@ void Doom3Group::translate(const Vector3& translation, bool rotation) {
 
 void Doom3Group::rotate(const Quaternion& rotation) {
 	if (!isModel()) {
-		m_traverse.traverse(ChildRotator(rotation));
+		_traversable.traverse(ChildRotator(rotation));
 	}
 	else {
 		rotation_rotate(m_rotation, rotation);
@@ -266,7 +262,7 @@ void Doom3Group::freezeTransform() {
 	m_originKey.write(&_entity);
 	
 	if (!isModel()) {
-		m_traverse.traverse(ChildTransformFreezer());
+		_traversable.traverse(ChildTransformFreezer());
 	}
 	else {
 		rotation_assign(m_rotationKey.m_rotation, m_rotation);
@@ -282,7 +278,7 @@ void Doom3Group::freezeTransform() {
 void Doom3Group::transformChanged() {
 	// If this is a container, pass the call to the children and leave the entity unharmed
 	if (!isModel()) {
-		m_traverse.traverse(ChildTransformReverter());
+		_traversable.traverse(ChildTransformReverter());
 		m_evaluateTransform();
 	}
 	else {
@@ -332,17 +328,16 @@ void Doom3Group::construct() {
 	m_keyObservers.insert(curve_CatmullRomSpline.c_str(), CurveCatmullRom::CurveChangedCaller(m_curveCatmullRom));
 	m_keyObservers.insert("skin", ModelSkinKey::SkinChangedCaller(m_skin));
 
-	//m_traverseObservers.attach(m_funcStaticOrigin);
 	m_isModel = false;
 	m_nameKeys.setKeyIsName(keyIsNameDoom3Doom3Group);
-	m_traverse.attach(_traverseObserver);
+	_traversable.attach(_traverseObserver);
 
 	_entity.attach(m_keyObservers);
 }
 
 void Doom3Group::destroy() {
 	_entity.detach(m_keyObservers);
-	m_traverse.detach(_traverseObserver);
+	_traversable.detach(_traverseObserver);
 }
 
 bool Doom3Group::isModel() const {
@@ -414,7 +409,7 @@ void Doom3Group::updateTransform() {
 
 void Doom3Group::translateChildren(const Vector3& childTranslation) {
 	if (m_instanceCounter.m_count > 0) {
-		m_traverse.traverse(ChildTranslator(childTranslation));
+		_traversable.traverse(ChildTranslator(childTranslation));
 	}
 }
 
