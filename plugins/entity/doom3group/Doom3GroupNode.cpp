@@ -9,18 +9,18 @@ Doom3GroupNode::Doom3GroupNode(IEntityClassPtr eclass) :
 		eclass,
 		*this,
 		*this, // Pass <this> as scene::Traversable&
-		this, // Pass <this> as scene::Traversable::Observer* 
 		InstanceSet::TransformChangedCaller(m_instances),
 		InstanceSet::BoundsChangedCaller(m_instances),
 		InstanceSetEvaluateTransform<Doom3GroupInstance>::Caller(m_instances)
 	) 
-{}
+{
+	TraversableNodeSet::attach(&m_instances);
+}
 
 Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	scene::Node(other),
 	scene::Instantiable(other),
 	scene::Cloneable(other),
-	scene::Traversable::Observer(other),
 	scene::GroupNode(other),
 	Nameable(other),
 	Snappable(other),
@@ -33,12 +33,17 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 		other.m_contained,
 		*this,
 		*this, // Pass <this> as scene::Traversable&
-		this, // Pass <this> as scene::Traversable::Observer*
 		InstanceSet::TransformChangedCaller(m_instances),
 		InstanceSet::BoundsChangedCaller(m_instances),
 		InstanceSetEvaluateTransform<Doom3GroupInstance>::Caller(m_instances)
 	) 
-{}
+{
+	TraversableNodeSet::attach(&m_instances);
+}
+
+Doom3GroupNode::~Doom3GroupNode() {
+	TraversableNodeSet::detach(&m_instances);
+}
 
 void Doom3GroupNode::addOriginToChildren() {
 	m_contained.addOriginToChildren();
@@ -62,13 +67,6 @@ void Doom3GroupNode::detach(const NameCallback& callback) {
 
 scene::INodePtr Doom3GroupNode::clone() const {
 	return scene::INodePtr(new Doom3GroupNode(*this));
-}
-
-void Doom3GroupNode::insertChild(scene::INodePtr child) {
-	m_instances.insertChild(child);
-}
-void Doom3GroupNode::eraseChild(scene::INodePtr child) {
-	m_instances.eraseChild(child);
 }
 
 scene::Instance* Doom3GroupNode::create(const scene::Path& path, scene::Instance* parent) {

@@ -14,7 +14,6 @@ class Doom3GroupNode :
 	public scene::Node,
 	public scene::Instantiable,
 	public scene::Cloneable,
-	public scene::Traversable::Observer,
 	public scene::GroupNode,
 	public Nameable,
 	public Snappable,
@@ -34,6 +33,8 @@ public:
 	Doom3GroupNode(IEntityClassPtr eclass);
 	Doom3GroupNode(const Doom3GroupNode& other);
 
+	~Doom3GroupNode();
+	
 	// ModelSkin implementation
 	virtual void attach(ModuleObserver& observer);	
 	virtual void detach(ModuleObserver& observer);
@@ -57,10 +58,6 @@ public:
 	virtual void snapto(float snap);
 
 	scene::INodePtr clone() const;
-
-	// scene::Traversable::Observer implementation
-	void insertChild(scene::INodePtr child);
-	void eraseChild(scene::INodePtr child);
 
 	scene::Instance* create(const scene::Path& path, scene::Instance* parent);
 	

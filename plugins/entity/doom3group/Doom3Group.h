@@ -43,7 +43,6 @@ class Doom3Group :
 
 	NamedEntity m_named;
 	NameKeys m_nameKeys;
-	scene::Traversable::Observer* _traverseObserver;
 	RenderablePivot m_renderOrigin;
 	RenderableNamedEntity m_renderName;
 	ModelSkinKey m_skin;
@@ -78,7 +77,6 @@ public:
 	Doom3Group(IEntityClassPtr eclass, 
 			   scene::Node& node,
 			   TraversableNodeSet& traversable,
-			   scene::Traversable::Observer* traverseObserver, 
 			   const Callback& transformChanged, 
 			   const Callback& boundsChanged, 
 			   const Callback& evaluateTransform);
@@ -87,7 +85,6 @@ public:
 	Doom3Group(const Doom3Group& other, 
 			   scene::Node& node,
 			   TraversableNodeSet& traversable,
-			   scene::Traversable::Observer* traverseObserver, 
 			   const Callback& transformChanged, 
 			   const Callback& boundsChanged, 
 			   const Callback& evaluateTransform);
