@@ -18,18 +18,16 @@ class EclassModelNode :
 	public scene::Node,
 	public scene::Instantiable,
 	public scene::Cloneable,
-	public scene::Traversable::Observer,
 	public Nameable,
 	public Snappable,
 	public TransformNode,
-	public scene::Traversable,
+	public TraversableNodeSet, // implements scene::Traversable
 	public EntityNode,
 	public Namespaced,
 	public ModelSkin
 {
 	InstanceSet m_instances;
 	EclassModel m_contained;
-	TraversableNodeSet _traverse;
 
 public:
 	// Constructor
@@ -38,12 +36,6 @@ public:
 	EclassModelNode(const EclassModelNode& other);
 
 	~EclassModelNode();
-
-	// scene::Traversable Implementation
-	virtual void insert(scene::INodePtr node);
-	virtual void erase(scene::INodePtr node);
-	virtual void traverse(const Walker& walker);
-	virtual bool empty() const;
 
 	// Snappable implementation
 	virtual void snapto(float snap);
@@ -61,10 +53,6 @@ public:
 	virtual void detach(ModuleObserver& observer);
 
 	virtual std::string getRemap(const std::string& name) const;
-
-	// scene::Traversable::Observer implementation
-	void insertChild(scene::INodePtr child);
-	void eraseChild(scene::INodePtr child);
 
 	scene::INodePtr clone() const;
 
