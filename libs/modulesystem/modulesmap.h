@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_MODULESYSTEM_MODULESMAP_H
 
 #include "modulesystem.h"
-#include "string/string.h"
+#include "parser/Tokeniser.h"
 #include <map>
 #include <set>
 #include <iostream>
@@ -36,9 +36,8 @@ class ModulesMap : public Modules<Type>
 public:
   ~ModulesMap()
   {
-    for(modules_t::iterator i = m_modules.begin(); i != m_modules.end(); ++i) 
-    {
-      (*i).second->release();
+    for(modules_t::iterator i = m_modules.begin(); i != m_modules.end(); ++i) {
+      i->second->release();
     }
   }
 
@@ -53,7 +52,7 @@ public:
     return m_modules.end();
   }
 
-  void insert(const char* name, Module& module)
+  void insert(const std::string& name, Module& module)
   {
     module.capture();
     if(globalModuleServer().getError())
@@ -110,51 +109,59 @@ public:
 
 // The ModulesRef class appears to be a container for a certain subset of Modules specified in
 // its constructor
-
 template<typename Type>
 class ModulesRef
 {
   ModulesMap<Type> m_modules;
 public:
-  ModulesRef(const char* names)
-  {
-    if(!globalModuleServer().getError())
-    {
-      if(string_equal(names, "*"))
-      {
-        InsertModules<Type> visitor(m_modules);
-        globalModuleServer().foreachModule(typename Type::Name(), typename Type::Version(), visitor);
-      }
-      else
-      {
-        StringTokeniser tokeniser(names);
-        for(;;)
-        {
-          const char* name = tokeniser.getToken();
-          if(string_empty(name))
-          {
-            break;
-          }
-//			std::cout << "ModulesRef searching for module: " << name << std::endl;
-          Module* module = globalModuleServer().findModule(typename Type::Name(), typename Type::Version(), name);
-          if(module == 0) // Module not found in the global module server
-          {
-            globalModuleServer().setError(true);
-            //globalErrorStream() << "ModulesRef::initialise: type=" << makeQuoted(typename Type::Name()) << " version=" << makeQuoted(typename Type::Version()) << " name=" << makeQuoted(name) << " - not found\n";
-            break;
-          }
-          else
-          {
-            m_modules.insert(name, *module);
-          }
-        }
-      }
-    }
-  }
-  ModulesMap<Type>& get()
-  {
-    return m_modules;
-  }
+
+	ModulesRef(const std::string& names) {
+		// Don't proceed, if the server is already in the "error" state
+		if (!globalModuleServer().getError()) {
+			// Check if the argument is "*" => load all modules into the map
+			if (names == "*") {
+				// Instantiate a list populator and load all the relevant modules
+				InsertModules<Type> visitor(m_modules);
+				globalModuleServer().foreachModule(typename Type::Name(), typename Type::Version(), visitor);
+			}
+			else if (!names.empty()) {
+				// Setup a tokeniser to decompose the argument string
+				parser::StringTokeniser tokeniser(names);
+				
+				while (tokeniser.hasMoreTokens()) {
+					// Retrieve the next token = the next name
+					std::string name = tokeniser.nextToken();
+					
+					// Try to find the module with this token
+					Module* module = globalModuleServer().findModule(
+						typename Type::Name(), 
+						typename Type::Version(), 
+						name.c_str()
+					);
+					
+					if (module != NULL) {
+						// Module was found 
+						m_modules.insert(name, *module);
+					}
+					else {
+						// Module not found in the global module server
+						globalModuleServer().setError(true);
+						//globalErrorStream() << "ModulesRef::initialise: type=" << makeQuoted(typename Type::Name()) << " version=" << makeQuoted(typename Type::Version()) << " name=" << makeQuoted(name) << " - not found\n";
+						break;
+					}
+	          	}
+			}
+			else {
+				// Empty names argument, don't continue
+				throw std::runtime_error("ModulesRef: empty names argument encountered.");
+			}
+		}
+	}
+	
+	// Return the internal ModulesMap
+	ModulesMap<Type>& get() {
+		return m_modules;
+	}
 };
 
 #endif
