@@ -2,62 +2,70 @@
 
 namespace entity {
 
-KeyValue::KeyValue(const std::string& string, const std::string& empty) : 
-	m_string(string), 
-	m_empty(empty),
-	m_undo(m_string, UndoImportCaller(*this))
+KeyValue::KeyValue(const std::string& value, const std::string& empty) : 
+	_value(value), 
+	_emptyValue(empty),
+	_undo(_value, UndoImportCaller(*this))
 {
 	notify();
 }
 
 KeyValue::~KeyValue() {
-	ASSERT_MESSAGE(m_observers.empty(), "KeyValue::~KeyValue: observers still attached");
+	ASSERT_MESSAGE(_observers.empty(), "KeyValue::~KeyValue: observers still attached");
 }
 
 void KeyValue::setKeyValueChangedFunc(EntityCreator::KeyValueChangedFunc func) {
-	m_entityKeyValueChanged = func;
+	_keyValueChangedNotify = func;
 }
 
 void KeyValue::instanceAttach(MapFile* map) {
-	m_undo.instanceAttach(map);
+	_undo.instanceAttach(map);
 }
 
 void KeyValue::instanceDetach(MapFile* map) {
-	m_undo.instanceDetach(map);
+	_undo.instanceDetach(map);
 }
 
 void KeyValue::attach(const KeyObserver& observer) {
-	(*m_observers.insert(observer))(get());
+	// Store the observer
+	_observers.push_back(observer);
+	
+	// Notify the newly inserted observer with the existing value
+	_observers.back()(get());
 }
 
 void KeyValue::detach(const KeyObserver& observer) {
-	observer(m_empty.c_str());
-	m_observers.erase(observer);
+	observer(_emptyValue);
+	
+	KeyObservers::iterator found = std::find(_observers.begin(), _observers.end(), observer);
+	if (found != _observers.end()) {
+		_observers.erase(found);
+	}
 }
 
 std::string KeyValue::get() const {
 	// Return the <empty> string if the actual value is ""
-	return (m_string.empty()) ? m_empty : m_string;
+	return (_value.empty()) ? _emptyValue : _value;
 }
 
 void KeyValue::assign(const std::string& other) {
-	if (m_string != other) {
-		m_undo.save();
-		m_string = other;
+	if (_value != other) {
+		_undo.save();
+		_value = other;
 		notify();
 	}
 }
 
 void KeyValue::notify() {
-	m_entityKeyValueChanged();
-	KeyObservers::reverse_iterator i = m_observers.rbegin();
-	while(i != m_observers.rend()) {
+	_keyValueChangedNotify();
+	KeyObservers::reverse_iterator i = _observers.rbegin();
+	while(i != _observers.rend()) {
 		(*i++)(get());
 	}
 }
 
 void KeyValue::importState(const std::string& string) {
-	m_string = string;
+	_value = string;
 	notify();
 }
 

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "KeyValue.h"
+#include "container/container.h"
 #include <boost/shared_ptr.hpp>
 
 /** greebo: This is the implementation of the class Entity.
