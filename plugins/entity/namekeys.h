@@ -28,19 +28,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "entitylib.h"
 #include "inamespace.h"
 #include "Doom3Entity.h"
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/classification.hpp>
 
-inline bool string_is_integer(const char* string)
-{
-  strtol(string, const_cast<char**>(&string), 10);
-  return *string == '\0';
-}
-
-inline bool keyIsNameDoom3(const std::string& key)
-{
-	const char* cStr = key.c_str(); 
-  return string_equal(cStr, "target")
-    || (string_equal_n(cStr, "target", 6) && string_is_integer(cStr + 6))
-    || string_equal(cStr, "name") || string_equal(cStr, "bind");
+/** greebo: This should return TRUE for "target", "targetNNN", "name" and "bind"
+ */
+inline bool keyIsNameDoom3(const std::string& key) {
+	return key == "target" || 
+			(key.substr(0,6) == "target" && 
+				boost::algorithm::all(key.substr(6), boost::algorithm::is_digit())) || 
+			key == "name" || key == "bind";
 }
 
 inline bool keyIsNameDoom3Doom3Group(const std::string& key) {
