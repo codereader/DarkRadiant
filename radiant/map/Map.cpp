@@ -66,15 +66,15 @@ namespace map {
 			public scene::Traversable::Walker
 		{
 		  scene::INodePtr m_root;
-		  UnsortedNodeSet& m_nodes;
+		  std::vector<scene::INodePtr>& m_nodes;
 		public:
-		  CollectAllWalker(scene::INodePtr root, UnsortedNodeSet& nodes) : 
+		  CollectAllWalker(scene::INodePtr root, std::vector<scene::INodePtr>& nodes) : 
 		  	m_root(root), 
 		  	m_nodes(nodes)
 		  {}
 		  
 		  bool pre(scene::INodePtr node) const {
-		    m_nodes.insert(node);
+		    m_nodes.push_back(node);
 		    Node_getTraversable(m_root)->erase(node);
 		    return false;
 		  }
@@ -82,11 +82,11 @@ namespace map {
 		
 		void Node_insertChildFirst(scene::INodePtr parent, scene::INodePtr child)
 		{
-		  UnsortedNodeSet nodes;
+		  std::vector<scene::INodePtr> nodes;
 		  Node_getTraversable(parent)->traverse(CollectAllWalker(parent, nodes));
 		  Node_getTraversable(parent)->insert(child);
 		
-		  for(UnsortedNodeSet::iterator i = nodes.begin(); i != nodes.end(); ++i)
+		  for(std::vector<scene::INodePtr>::iterator i = nodes.begin(); i != nodes.end(); ++i)
 		  {
 		    Node_getTraversable(parent)->insert((*i));
 		  }
