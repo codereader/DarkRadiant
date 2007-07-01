@@ -4,7 +4,7 @@
 #include "ientity.h"
 #include "undolib.h"
 #include "string/string.h"
-#include "container/container.h"
+#include <vector>
 
 namespace entity {
 
@@ -15,15 +15,15 @@ namespace entity {
 class KeyValue : 
 	public EntityKeyValue
 {
-	typedef UnsortedSet<KeyObserver> KeyObservers;
-
-	KeyObservers m_observers;
-	std::string m_string;
-	std::string m_empty;
-	ObservedUndoableObject<std::string> m_undo;
-	static EntityCreator::KeyValueChangedFunc m_entityKeyValueChanged;
+	typedef std::vector<KeyObserver> KeyObservers;
+	KeyObservers _observers;
+	
+	std::string _value;
+	std::string _emptyValue;
+	ObservedUndoableObject<std::string> _undo;
+	static EntityCreator::KeyValueChangedFunc _keyValueChangedNotify;
 public:
-	KeyValue(const std::string& string, const std::string& empty);
+	KeyValue(const std::string& value, const std::string& empty);
 	
 	~KeyValue();
 
