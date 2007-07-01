@@ -98,153 +98,181 @@ inline void nodeset_diff(const UnsortedNodeSet& self, const UnsortedNodeSet& oth
 }
 
 /// \brief A sequence of node references which notifies an observer of inserts and deletions, and uses the global undo system to provide undo for modifications.
+
+/** greebo: This is the standard implementation of scene::Traversable. All container nodes
+ * 			(this is Doom3GroupNode, EClassModelNode and RootNode at the time of writing) derive
+ * 			from this class.
+ * 
+ * 			This class supports one scene::Traversable::Observer to be attached, that gets notified
+ * 			upon insertions and deletions of any child nodes.
+ * 
+ * 			The TraversableNodeSet is also reporting any changes to the UndoSystem, that's what the
+ * 			instanceAttach() methods are for. The UndoableObject is submitted to the UndoSystem as soon
+ * 			as any child nodes are removed or inserted. When the user hits Undo, the contained UndoableObject
+ * 			uses the assignment operator to overwrite this class with the saved state.  
+ */
 class TraversableNodeSet : 
 	public scene::Traversable
 {
-  UnsortedNodeSet m_children;
-  UndoableObject<TraversableNodeSet> m_undo;
-  Observer* m_observer;
+	UnsortedNodeSet _children;
+	
+	// The undoable object, which overwrites the content of this class on demand
+	UndoableObject<TraversableNodeSet> _undo;
+	
+	// The observer which gets notified upon insertion/deletion of child nodes 
+	Observer* _observer;
 
-  void copy(const TraversableNodeSet& other)
-  {
-    m_children = other.m_children;
-  }
-  void notifyInsertAll()
-  {
-    if(m_observer)
-    {
-      for(UnsortedNodeSet::iterator i = m_children.begin(); i != m_children.end(); ++i)
-      {
-        m_observer->insertChild(*i);
-      }
-    }
-  }
-  void notifyEraseAll()
-  {
-    if(m_observer)
-    {
-      for(UnsortedNodeSet::iterator i = m_children.begin(); i != m_children.end(); ++i)
-      {
-        m_observer->eraseChild(*i);
-      }
-    }
-  }
+	void notifyInsertAll() {
+		if (_observer != NULL) {
+			for (UnsortedNodeSet::iterator i = _children.begin(); i != _children.end(); ++i) {
+				_observer->insertChild(*i);
+			}
+		}
+	}
+	
+	void notifyEraseAll() {
+		if (_observer != NULL) {
+			for (UnsortedNodeSet::iterator i = _children.begin(); i != _children.end(); ++i) {
+				_observer->eraseChild(*i);
+			}
+		}
+	}
+
 public:
-  TraversableNodeSet()
-    : m_undo(*this), m_observer(0)
-  {
-  }
-  TraversableNodeSet(const TraversableNodeSet& other)
-    : scene::Traversable(other), m_undo(*this), m_observer(0)
-  {
-    copy(other);
-    notifyInsertAll();
-  }
-  ~TraversableNodeSet()
-  {
-  	//std::cout << "TraversableNodeSet destructed.\n";
-    notifyEraseAll();
-  }
-  TraversableNodeSet& operator=(const TraversableNodeSet& other)
-  {
+	// Default constructor, creates an empty set
+	TraversableNodeSet() : 
+		_undo(*this), 
+		_observer(NULL)
+	{}
+	
+	// Copy Constructor, copies all the nodes from the other set, but not the Observer
+	TraversableNodeSet(const TraversableNodeSet& other) : 
+		scene::Traversable(other), 
+		_undo(*this), 
+		_observer(NULL)
+	{
+		_children = other._children;
+		notifyInsertAll();
+	}
+	
+	// Destructor
+	~TraversableNodeSet() {
+		notifyEraseAll();
+	}
+	
+	TraversableNodeSet& operator=(const TraversableNodeSet& other) {
 #if 1 // optimised change-tracking using diff algorithm
-    if(m_observer)
-    {
-      nodeset_diff(m_children, other.m_children, m_observer);
-    }
-    copy(other);
+		if (_observer != NULL) {
+			nodeset_diff(_children, other._children, _observer);
+		}
+		
+		// Copy the child nodes
+		_children = other._children;
 #else
-    TraversableNodeSet tmp(other);
-    tmp.swap(*this);
+		TraversableNodeSet tmp(other);
+		tmp.swap(*this);
 #endif
-    return *this;
-  }
-  void swap(TraversableNodeSet& other)
-  {
-    std::swap(m_children, other.m_children);
-    std::swap(m_observer, other.m_observer);
-  }
+		return *this;
+	}
+	
+	void swap(TraversableNodeSet& other) {
+		std::swap(_children, other._children);
+		std::swap(_observer, other._observer);
+	}
+	
+	/** greebo: Attaches an Observer to this set, which gets immediately notified
+	 * 			about all the existing child nodes.
+	 */
+	void attach(Observer* observer) {
+		ASSERT_MESSAGE(_observer == 0, "TraversableNodeSet::attach: observer cannot be attached");
+		_observer = observer;
+		notifyInsertAll();
+	}
+	
+	/** greebo: Detaches the Observer from this set. This also triggers an erase() call
+	 * 			for all the existing child nodes on the observer.
+	 */
+	void detach(Observer* observer) {
+		ASSERT_MESSAGE(_observer == observer, "TraversableNodeSet::detach: observer cannot be detached");
+		notifyEraseAll();
+		_observer = NULL;
+	}
+	
+	/** greebo: scene::Traversable implementation, this inserts a child node, saves the Undo state
+	 * 			and notifies the observer (if there is one)
+	 */ 
+	void insert(scene::INodePtr node) {
+		// Submit the UndoMemento to the UndoSystem
+		_undo.save();
 
-  void attach(Observer* observer)
-  {
-    ASSERT_MESSAGE(m_observer == 0, "TraversableNodeSet::attach: observer cannot be attached");
-    m_observer = observer;
-    notifyInsertAll();
-  }
-  void detach(Observer* observer)
-  {
-    ASSERT_MESSAGE(m_observer == observer, "TraversableNodeSet::detach: observer cannot be detached");
-    notifyEraseAll();
-    m_observer = 0;
-  }
-  /// \brief \copydoc scene::Traversable::insert()
-  void insert(scene::INodePtr node)
-  {
-  	//std::cout << "TraversableNodeSet: Inserting child: " << node.get() << "\n";
-    //ASSERT_MESSAGE(&node != 0, "TraversableNodeSet::insert: sanity check failed");
-    m_undo.save();
+		//ASSERT_MESSAGE(_children.find(node) == _children.end(), "TraversableNodeSet::insert - element already exists");
 
-    //ASSERT_MESSAGE(m_children.find(node) == m_children.end(), "TraversableNodeSet::insert - element already exists");
+		// Insert the child node
+		_children.insert(node);
 
-    m_children.insert(node);
+		// Notify the observer (note: this usually triggers instantiation of the node)
+		if (_observer != NULL) {
+			_observer->insertChild(node);
+		}
+	}
+	
+	/// \brief \copydoc scene::Traversable::erase()
+	/** greebo: scene::Traversable implementation. This removes the node from the local set,
+	 * 			saves the UndoMemento and notifies the observer.
+	 */
+	void erase(scene::INodePtr node) {
+		ASSERT_MESSAGE(&node != 0, "TraversableNodeSet::erase: sanity check failed");
+		_undo.save();
 
-    if(m_observer)
-    {
-      m_observer->insertChild(node);
-    }
-  }
-  /// \brief \copydoc scene::Traversable::erase()
-  void erase(scene::INodePtr node)
-  {
-  	//std::cout << "TraversableNodeSet: Erasing child: " << node.get() << "\n";
-    ASSERT_MESSAGE(&node != 0, "TraversableNodeSet::erase: sanity check failed");
-    m_undo.save();
+		//ASSERT_MESSAGE(_children.find(node) != _children.end(), "TraversableNodeSet::erase - failed to find element");
 
-    //ASSERT_MESSAGE(m_children.find(node) != m_children.end(), "TraversableNodeSet::erase - failed to find element");
+		// Notify the Observer before actually removing the node 
+		if (_observer != NULL) {
+			_observer->eraseChild(node);
+		}
 
-    if(m_observer)
-    {
-      m_observer->eraseChild(node);
-    }
+		// Now remove the node from the local set
+		_children.erase(node);
+	}
+	
+	/// \brief \copydoc scene::Traversable::traverse()
+	/** greebo: scene::Traversable implementation. This visits all the child nodes
+	 * 			using the given visitor scene::Traversable::Walker
+	 */
+	void traverse(const Walker& walker) {
+		UnsortedNodeSet::iterator i = _children.begin();
+		
+		while (i != _children.end()) {
+			// post-increment the iterator
+			Node_traverseSubgraph(*i++, walker);
+			
+			// Note: the Walker can safely remove the current node from
+			// this container without invalidating the iterator
+		}
+	}
+	
+	/** greebo: scene::Traversable implementation. Returns TRUE if this NodeSet is empty.
+	 */
+	bool empty() const {
+		return _children.empty();
+	}
 
-    m_children.erase(node);
-  }
-  /// \brief \copydoc scene::Traversable::traverse()
-  void traverse(const Walker& walker)
-  {
-    UnsortedNodeSet::iterator i = m_children.begin();
-    while(i != m_children.end())
-    {
-      // post-increment the iterator
-      Node_traverseSubgraph(*i++, walker);
-      // the Walker can safely remove the current node from
-      // this container without invalidating the iterator
-    }
-  }
-  /// \brief \copydoc scene::Traversable::empty()
-  bool empty() const
-  {
-    return m_children.empty();
-  }
-
-  void instanceAttach(MapFile* map)
-  {
-    m_undo.instanceAttach(map);
-  }
-  void instanceDetach(MapFile* map)
-  {
-    m_undo.instanceDetach(map);
-  }
+	void instanceAttach(MapFile* map) {
+		_undo.instanceAttach(map);
+	}
+	
+	void instanceDetach(MapFile* map) {
+		_undo.instanceDetach(map);
+	}
 };
 
-namespace std
-{
-  /// \brief Swaps the values of \p self and \p other.
-  /// Overloads std::swap.
-  inline void swap(TraversableNodeSet& self, TraversableNodeSet& other)
-  {
-    self.swap(other);
-  }
-}
+namespace std {
+	/// \brief Swaps the values of \p self and \p other.
+	/// Overloads std::swap.
+	inline void swap(TraversableNodeSet& self, TraversableNodeSet& other) {
+		self.swap(other);
+	}
+
+} // namespace std
 
 #endif
