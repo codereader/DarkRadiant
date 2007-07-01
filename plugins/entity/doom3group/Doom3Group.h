@@ -60,8 +60,6 @@ class Doom3Group :
 	// Flag to indicate this Doom3Group is a model (i.e. does not contain
 	// brushes).
 	bool m_isModel;
-
-	scene::Traversable* m_traversable;
 	
 public:
 	CurveNURBS m_curveNURBS;
@@ -152,12 +150,6 @@ public:
 private:
 	void construct();
 	void destroy();
-
-	void attachModel();
-	void detachModel();
-	
-	void attachTraverse();
-	void detachTraverse();
 
 	bool isModel() const;
 

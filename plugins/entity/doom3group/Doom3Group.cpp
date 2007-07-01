@@ -44,7 +44,6 @@ Doom3Group::Doom3Group(IEntityClassPtr eclass,
 	m_skin(SkinChangedCaller(*this)),
 	m_transformChanged(transformChanged),
 	m_evaluateTransform(evaluateTransform),
-	m_traversable(0),
 	m_curveNURBS(boundsChanged),
 	m_curveCatmullRom(boundsChanged)
 {
@@ -71,7 +70,6 @@ Doom3Group::Doom3Group(const Doom3Group& other,
 	m_skin(SkinChangedCaller(*this)),
 	m_transformChanged(transformChanged),
 	m_evaluateTransform(evaluateTransform),
-	m_traversable(0),
 	m_curveNURBS(boundsChanged),
 	m_curveCatmullRom(boundsChanged)
 {
@@ -108,11 +106,11 @@ const Doom3Entity& Doom3Group::getEntity() const {
 }
 
 scene::Traversable& Doom3Group::getTraversable() {
-	return *m_traversable;
+	return m_traverse;
 }
 
 const scene::Traversable& Doom3Group::getTraversable() const {
-	return *m_traversable;
+	return m_traverse;
 }
 
 Namespaced& Doom3Group::getNamespaced() {
@@ -235,9 +233,7 @@ void Doom3Group::translate(const Vector3& translation, bool rotation) {
 
 void Doom3Group::rotate(const Quaternion& rotation) {
 	if (!isModel()) {
-		if (m_traversable != NULL) {
-			m_traversable->traverse(ChildRotator(rotation));
-		}
+		m_traverse.traverse(ChildRotator(rotation));
 	}
 	else {
 		rotation_rotate(m_rotation, rotation);
@@ -270,9 +266,7 @@ void Doom3Group::freezeTransform() {
 	m_originKey.write(&_entity);
 	
 	if (!isModel()) {
-		if (m_traversable != NULL) {
-			m_traversable->traverse(ChildTransformFreezer());
-		}
+		m_traverse.traverse(ChildTransformFreezer());
 	}
 	else {
 		rotation_assign(m_rotationKey.m_rotation, m_rotation);
@@ -288,10 +282,8 @@ void Doom3Group::freezeTransform() {
 void Doom3Group::transformChanged() {
 	// If this is a container, pass the call to the children and leave the entity unharmed
 	if (!isModel()) {
-		if (m_traversable != NULL) {
-			m_traversable->traverse(ChildTransformReverter());
-			m_evaluateTransform();
-		}
+		m_traverse.traverse(ChildTransformReverter());
+		m_evaluateTransform();
 	}
 	else {
 		// It's a model
@@ -343,44 +335,13 @@ void Doom3Group::construct() {
 	//m_traverseObservers.attach(m_funcStaticOrigin);
 	m_isModel = false;
 	m_nameKeys.setKeyIsName(keyIsNameDoom3Doom3Group);
-	attachTraverse();
+	m_traverse.attach(_traverseObserver);
 
 	_entity.attach(m_keyObservers);
 }
 
 void Doom3Group::destroy() {
 	_entity.detach(m_keyObservers);
-
-	if (isModel()) {
-		detachModel();
-	}
-	else {
-		detachTraverse();
-	}
-}
-
-void Doom3Group::attachModel() {
-	m_traversable = &m_traverse;
-	m_traverse.attach(_traverseObserver);
-	//m_model.attach(_traverseObserver);
-}
-
-void Doom3Group::detachModel() {
-	m_traversable = 0;
-	m_traverse.detach(_traverseObserver);
-}
-
-void Doom3Group::attachTraverse() {
-	// greebo: Make this class a TraversableNodeSet, 
-	// the getTraversable() call now retrieves the NodeSet
-	m_traversable = &m_traverse;
-	// Attach the TraverseObservers to the TraversableNodeSet, 
-	// so that they get notified
-	m_traverse.attach(_traverseObserver);
-}
-
-void Doom3Group::detachTraverse() {
-	m_traversable = 0;
 	m_traverse.detach(_traverseObserver);
 }
 
@@ -390,18 +351,11 @@ bool Doom3Group::isModel() const {
 
 void Doom3Group::setIsModel(bool newValue) {
 	if (newValue && !m_isModel) {
-		detachTraverse();
-		attachModel();
-
 		// The model key is not recognised as "name"
 		m_nameKeys.setKeyIsName(keyIsNameDoom3);
 		m_model.modelChanged(m_modelKey);
 	}
 	else if (!newValue && m_isModel) {
-		// This is no longer a model, make it a TraversableNodeSet
-		detachModel();
-		attachTraverse();
-
 		// The model key should be recognised as "name" (important for "namespacing")
 		m_nameKeys.setKeyIsName(keyIsNameDoom3Doom3Group);
 		// Clear the model path
@@ -459,8 +413,8 @@ void Doom3Group::updateTransform() {
 }
 
 void Doom3Group::translateChildren(const Vector3& childTranslation) {
-	if (m_instanceCounter.m_count > 0 && m_traversable != NULL) {
-		m_traversable->traverse(ChildTranslator(childTranslation));
+	if (m_instanceCounter.m_count > 0) {
+		m_traverse.traverse(ChildTranslator(childTranslation));
 	}
 }
 
