@@ -40,7 +40,7 @@ Doom3Entity::~Doom3Entity() {
 
 // Static
 void Doom3Entity::setKeyValueChangedFunc(EntityCreator::KeyValueChangedFunc func) {
-	m_entityKeyValueChanged = func;
+	_keyValueChangedNotify = func;
 	KeyValue::setKeyValueChangedFunc(func);
 }
 
@@ -59,30 +59,33 @@ void Doom3Entity::importState(const KeyValues& keyValues) {
 		insert(i->first, i->second);
 	}
 
-	m_entityKeyValueChanged();
+	_keyValueChangedNotify();
 }
 
 void Doom3Entity::attach(Observer& observer) {
 	ASSERT_MESSAGE(!_observerMutex, "observer cannot be attached during iteration");
 	
 	// Add the observer to the internal list
-	_observers.insert(&observer);
+	_observers.push_back(&observer);
 	
 	// Now notify the observer about all the existing keys
 	for(KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i) {
-		observer.onKeyInsert(i->first.c_str(), *i->second);
+		observer.onKeyInsert(i->first, *i->second);
 	}
 }
 
 void Doom3Entity::detach(Observer& observer) {
 	ASSERT_MESSAGE(!_observerMutex, "observer cannot be detached during iteration");
 	
-	// Remove the observer from the list
-	_observers.erase(&observer);
+	// Remove the observer from the list, if it can be found
+	Observers::iterator found = std::find(_observers.begin(), _observers.end(), &observer);
+	if (found != _observers.end()) {
+		_observers.erase(found);
+	}
 	
 	// Now, call onKeyErase() for every spawnarg, so that the observer gets cleanly shut down 
 	for(KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i) {
-		observer.onKeyErase(i->first.c_str(), *i->second);
+		observer.onKeyErase(i->first, *i->second);
 	}
 }
 
@@ -138,7 +141,7 @@ void Doom3Entity::setKeyValue(const std::string& key, const std::string& value) 
 		insert(key, value);
 	}
 	// Notify the global observer (usually the EntityInspector)
-	m_entityKeyValueChanged();
+	_keyValueChangedNotify();
 }
 
 /** Retrieve a keyvalue from the entity.
@@ -172,7 +175,7 @@ void Doom3Entity::notifyInsert(const std::string& key, KeyValue& value) {
 	
 	// Notify all the Observers about the new keyvalue
 	for (Observers::iterator i = _observers.begin(); i != _observers.end(); ++i) {
-		(*i)->onKeyInsert(key.c_str(), value);
+		(*i)->onKeyInsert(key, value);
 	}
 	
 	_observerMutex = false;
@@ -183,7 +186,7 @@ void Doom3Entity::notifyErase(const std::string& key, KeyValue& value) {
 	_observerMutex = true;
 	
 	for(Observers::iterator i = _observers.begin(); i != _observers.end(); ++i) {
-		(*i)->onKeyErase(key.c_str(), value);
+		(*i)->onKeyErase(key, value);
 	}
 	
 	_observerMutex = false;

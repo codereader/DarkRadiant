@@ -41,7 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "curve/CurveEditInstance.h"
 
 // Initialise the static variables of the entitylibraries (we're in a module here)
-EntityCreator::KeyValueChangedFunc entity::Doom3Entity::m_entityKeyValueChanged = 0;
+EntityCreator::KeyValueChangedFunc entity::Doom3Entity::_keyValueChangedNotify = 0;
 EntityCreator::KeyValueChangedFunc entity::KeyValue::_keyValueChangedNotify = 0;
 
 namespace entity {
