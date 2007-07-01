@@ -7,7 +7,6 @@ namespace entity {
 Doom3GroupNode::Doom3GroupNode(IEntityClassPtr eclass) :
 	m_contained(
 		eclass,
-		*this,
 		*this, // Pass <this> as scene::Traversable&
 		InstanceSet::TransformChangedCaller(m_instances),
 		InstanceSet::BoundsChangedCaller(m_instances),
@@ -31,7 +30,6 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	ModelSkin(other),
 	m_contained(
 		other.m_contained,
-		*this,
 		*this, // Pass <this> as scene::Traversable&
 		InstanceSet::TransformChangedCaller(m_instances),
 		InstanceSet::BoundsChangedCaller(m_instances),

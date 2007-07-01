@@ -35,26 +35,27 @@ inline bool string_is_integer(const char* string)
   return *string == '\0';
 }
 
-inline bool keyIsNameDoom3(const char* key)
+inline bool keyIsNameDoom3(const std::string& key)
 {
-  return string_equal(key, "target")
-    || (string_equal_n(key, "target", 6) && string_is_integer(key + 6))
-    || string_equal(key, "name") || string_equal(key, "bind");
+	const char* cStr = key.c_str(); 
+  return string_equal(cStr, "target")
+    || (string_equal_n(cStr, "target", 6) && string_is_integer(cStr + 6))
+    || string_equal(cStr, "name") || string_equal(cStr, "bind");
 }
 
-inline bool keyIsNameDoom3Doom3Group(const char* key)
-{
-  return keyIsNameDoom3(key)
-    || string_equal(key, "model");
+inline bool keyIsNameDoom3Doom3Group(const std::string& key) {
+	return keyIsNameDoom3(key) || key == "model";
 }
 
-typedef bool (*KeyIsNameFunc)(const char* key);
+typedef bool (*KeyIsNameFunc)(const std::string& key);
 
 typedef MemberCaller1<EntityKeyValue, const std::string&, &EntityKeyValue::assign> KeyValueAssignCaller;
 typedef MemberCaller1<EntityKeyValue, const KeyObserver&, &EntityKeyValue::attach> KeyValueAttachCaller;
 typedef MemberCaller1<EntityKeyValue, const KeyObserver&, &EntityKeyValue::detach> KeyValueDetachCaller;
 
-class NameKeys : public Entity::Observer, public Namespaced
+class NameKeys : 
+	public Entity::Observer, 
+	public Namespaced
 {
   INamespace* m_namespace;
   entity::Doom3Entity& m_entity;
@@ -65,7 +66,7 @@ class NameKeys : public Entity::Observer, public Namespaced
   typedef std::map<std::string, EntityKeyValue*> KeyValues;
   KeyValues m_keyValues;
 
-  void insertName(const char* key, EntityKeyValue& value)
+  void insertName(const std::string& key, EntityKeyValue& value)
   {
     if(m_namespace != 0 && m_keyIsName(key))
     {
@@ -73,7 +74,7 @@ class NameKeys : public Entity::Observer, public Namespaced
       m_namespace->attach(KeyValueAssignCaller(value), KeyValueAttachCaller(value));
     }
   }
-  void eraseName(const char* key, EntityKeyValue& value)
+  void eraseName(const std::string& key, EntityKeyValue& value)
   {
     if(m_namespace != 0 && m_keyIsName(key))
     {
@@ -85,14 +86,14 @@ class NameKeys : public Entity::Observer, public Namespaced
   {
     for(KeyValues::iterator i = m_keyValues.begin(); i != m_keyValues.end(); ++i)
     {
-      insertName((*i).first.c_str(), *(*i).second);
+      insertName(i->first, *i->second);
     }
   }
   void eraseAll()
   {
     for(KeyValues::iterator i = m_keyValues.begin(); i != m_keyValues.end(); ++i)
     {
-      eraseName((*i).first.c_str(), *(*i).second);
+      eraseName(i->first, *i->second);
     }
   }
 public:
@@ -119,12 +120,12 @@ public:
     m_keyIsName = keyIsName;
     insertAll();
   }
-  void insert(const char* key, EntityKeyValue& value)
+  void insert(const std::string& key, EntityKeyValue& value)
   {
     m_keyValues.insert(KeyValues::value_type(key, &value));
     insertName(key, value);
   }
-  void erase(const char* key, EntityKeyValue& value)
+  void erase(const std::string& key, EntityKeyValue& value)
   {
     eraseName(key, value);
     m_keyValues.erase(key);

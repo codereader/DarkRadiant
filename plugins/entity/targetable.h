@@ -169,7 +169,8 @@ public:
   }
 };
 
-class TargetKeys : public Entity::Observer
+class TargetKeys : 
+	public Entity::Observer
 {
   TargetingEntities m_targetingEntities;
   Callback m_targetsChanged;
@@ -196,20 +197,19 @@ public:
     m_targetsChanged();
   }
 
-  void insert(const char* key, EntityKeyValue& value)
-  {
+  void insert(const std::string& key, EntityKeyValue& value) {
     std::size_t index;
-    if(readTargetKey(key, index))
+    if(readTargetKey(key.c_str(), index))
     {
       TargetingEntities::iterator i = m_targetingEntities.insert(TargetingEntities::value_type(index, TargetingEntity())).first;
       value.attach(TargetingEntity::TargetChangedCaller((*i).second));
       targetsChanged();
     }
   }
-  void erase(const char* key, EntityKeyValue& value)
+  void erase(const std::string& key, EntityKeyValue& value)
   {
     std::size_t index;
-    if(readTargetKey(key, index))
+    if(readTargetKey(key.c_str(), index))
     {
       TargetingEntities::iterator i = m_targetingEntities.find(index);
       value.detach(TargetingEntity::TargetChangedCaller((*i).second));
@@ -326,20 +326,17 @@ public:
     m_targeting.targetsChanged();
   }
 
-  void insert(const char* key, EntityKeyValue& value)
-  {
-    if(string_equal(key, "name"))
-    {
-      value.attach(TargetedEntity::TargetnameChangedCaller(m_targeted));
-    }
-  }
-  void erase(const char* key, EntityKeyValue& value)
-  {
-    if(string_equal(key, "name"))
-    {
-      value.detach(TargetedEntity::TargetnameChangedCaller(m_targeted));
-    }
-  }
+	void insert(const std::string& key, EntityKeyValue& value) {
+		if (key == "name") {
+			value.attach(TargetedEntity::TargetnameChangedCaller(m_targeted));
+		}
+	}
+	
+	void erase(const std::string& key, EntityKeyValue& value) {
+		if (key == "name") {
+			value.detach(TargetedEntity::TargetnameChangedCaller(m_targeted));
+		}
+	}
 
   const Vector3& world_position() const
   {
