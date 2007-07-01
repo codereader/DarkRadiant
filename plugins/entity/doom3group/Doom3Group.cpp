@@ -27,7 +27,6 @@ inline void PointVertexArray_testSelect(PointVertex* first, std::size_t count,
 Doom3Group::Doom3Group(IEntityClassPtr eclass, 
 		scene::Node& node,
 		TraversableNodeSet& traversable,
-		scene::Traversable::Observer* traverseObserver, 
 		const Callback& transformChanged, 
 		const Callback& boundsChanged, 
 		const Callback& evaluateTransform) :
@@ -40,7 +39,6 @@ Doom3Group::Doom3Group(IEntityClassPtr eclass,
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_named(_entity),
 	m_nameKeys(_entity),
-	_traverseObserver(traverseObserver),
 	m_renderOrigin(m_nameOrigin),
 	m_renderName(m_named, m_nameOrigin),
 	m_skin(SkinChangedCaller(*this)),
@@ -55,7 +53,6 @@ Doom3Group::Doom3Group(IEntityClassPtr eclass,
 Doom3Group::Doom3Group(const Doom3Group& other, 
 		scene::Node& node,
 		TraversableNodeSet& traversable,
-		scene::Traversable::Observer* traverseObserver, 
 		const Callback& transformChanged, 
 		const Callback& boundsChanged, 
 		const Callback& evaluateTransform) :
@@ -68,7 +65,6 @@ Doom3Group::Doom3Group(const Doom3Group& other,
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_named(_entity),
 	m_nameKeys(_entity),
-	_traverseObserver(traverseObserver),
 	m_renderOrigin(m_nameOrigin),
 	m_renderName(m_named, m_nameOrigin),
 	m_skin(SkinChangedCaller(*this)),
@@ -330,14 +326,12 @@ void Doom3Group::construct() {
 
 	m_isModel = false;
 	m_nameKeys.setKeyIsName(keyIsNameDoom3Doom3Group);
-	_traversable.attach(_traverseObserver);
 
 	_entity.attach(m_keyObservers);
 }
 
 void Doom3Group::destroy() {
 	_entity.detach(m_keyObservers);
-	_traversable.detach(_traverseObserver);
 }
 
 bool Doom3Group::isModel() const {
