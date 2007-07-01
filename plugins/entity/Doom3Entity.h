@@ -3,7 +3,6 @@
 
 #include <vector>
 #include "KeyValue.h"
-#include "container/container.h"
 #include <boost/shared_ptr.hpp>
 
 /** greebo: This is the implementation of the class Entity.
@@ -13,10 +12,8 @@
  * inheritance tree (EntityClasses) into account.
  * 
  * It's possible to attach observers to this entity to get
- * notified upon key/value changes. This is currently implemented
- * by an UnsortedSet of Callback<const char*> and should be refactored.
+ * notified upon key/value changes.
  */
-
 namespace entity {
 
 /// \brief An unsorted list of key/value pairs.
@@ -27,7 +24,7 @@ namespace entity {
 class Doom3Entity :
 	public Entity
 {
-	static EntityCreator::KeyValueChangedFunc m_entityKeyValueChanged;
+	static EntityCreator::KeyValueChangedFunc _keyValueChangedNotify;
 
 	IEntityClassConstPtr _eclass;
 
@@ -40,7 +37,7 @@ class Doom3Entity :
 	typedef std::vector<KeyValuePair> KeyValues;
 	KeyValues _keyValues;
 
-	typedef UnsortedSet<Observer*> Observers;
+	typedef std::vector<Observer*> Observers;
 	Observers _observers;
 
 	ObservedUndoableObject<KeyValues> _undo;
