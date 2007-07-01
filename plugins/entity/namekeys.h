@@ -149,8 +149,10 @@ public:
 	 * 
 	 * 			The routine saves all keyvalues and attaches the relevant
 	 * 			"name keys" to the Namespace.
+	 * 
+	 *  Note: Entity::Observer implementation
 	 */
-	void insert(const std::string& key, EntityKeyValue& value) {
+	void onKeyInsert(const std::string& key, EntityKeyValue& value) {
 		// Save the key/value pair locally
 		m_keyValues.insert(KeyValues::value_type(key, &value));
 		
@@ -160,8 +162,10 @@ public:
 	
 	/** greebo: Gets called by the observed Entity when a value is erased from
 	 * 			the list of spawnargs.
+	 * 
+	 *  Note: Entity::Observer implementation
 	 */
-	void erase(const std::string& key, EntityKeyValue& value) {
+	void onKeyErase(const std::string& key, EntityKeyValue& value) {
 		// Detach the relevant keys from the Namespace
 		detachKeyFromNamespace(key, value);
 		

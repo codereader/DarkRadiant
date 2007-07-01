@@ -27,7 +27,7 @@ void KeyValue::instanceDetach(MapFile* map) {
 }
 
 void KeyValue::attach(const KeyObserver& observer) {
-	(*m_observers.insert(observer))(c_str());
+	(*m_observers.insert(observer))(get());
 }
 
 void KeyValue::detach(const KeyObserver& observer) {
@@ -38,13 +38,6 @@ void KeyValue::detach(const KeyObserver& observer) {
 std::string KeyValue::get() const {
 	// Return the <empty> string if the actual value is ""
 	return (m_string.empty()) ? m_empty : m_string;
-}
-
-const char* KeyValue::c_str() const {
-	if (m_string.empty()) {
-		return m_empty.c_str();
-	}
-	return m_string.c_str();
 }
 
 void KeyValue::assign(const std::string& other) {
@@ -59,7 +52,7 @@ void KeyValue::notify() {
 	m_entityKeyValueChanged();
 	KeyObservers::reverse_iterator i = m_observers.rbegin();
 	while(i != m_observers.rend()) {
-		(*i++)(c_str());
+		(*i++)(get());
 	}
 }
 
