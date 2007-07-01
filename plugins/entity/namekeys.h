@@ -22,33 +22,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_NAMEKEYS_H)
 #define INCLUDED_NAMEKEYS_H
 
-#include <stdio.h>
-#include <map>
-#include "generic/static.h"
-#include "entitylib.h"
+#include "ientity.h"
 #include "inamespace.h"
+
+#include <map>
 #include "Doom3Entity.h"
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
-/** greebo: This should return TRUE for "target", "targetNNN", "name" and "bind"
- */
-inline bool keyIsNameDoom3(const std::string& key) {
-	return key == "target" || 
-			(key.substr(0,6) == "target" && 
-				boost::algorithm::all(key.substr(6), boost::algorithm::is_digit())) || 
-			key == "name" || key == "bind";
-}
-
-inline bool keyIsNameDoom3Doom3Group(const std::string& key) {
-	return keyIsNameDoom3(key) || key == "model";
-}
-
-typedef bool (*KeyIsNameFunc)(const std::string& key);
-
-typedef MemberCaller1<EntityKeyValue, const std::string&, &EntityKeyValue::assign> KeyValueAssignCaller;
-typedef MemberCaller1<EntityKeyValue, const KeyObserver&, &EntityKeyValue::attach> KeyValueAttachCaller;
-typedef MemberCaller1<EntityKeyValue, const KeyObserver&, &EntityKeyValue::detach> KeyValueDetachCaller;
+namespace entity {
 
 class NameKeys : 
 	public Entity::Observer, 
@@ -60,6 +42,7 @@ class NameKeys :
 	entity::Doom3Entity& m_entity;
 	
 	// The function pointer used to check the key for "name" keys
+	typedef bool (*KeyIsNameFunc)(const std::string& key);
 	KeyIsNameFunc m_keyIsName;
 	
 	// Not copy-constructible, not assignable
@@ -77,7 +60,7 @@ class NameKeys :
 		// Only attach the name
 		if (m_namespace != NULL && m_keyIsName(key)) {
 			//globalOutputStream() << "insert " << key << "\n";
-			m_namespace->attach(KeyValueAssignCaller(value), KeyValueAttachCaller(value));
+			m_namespace->attach(KeyValue::AssignCaller(value), KeyValue::AttachCaller(value));
 		}
 	}
 	
@@ -88,7 +71,7 @@ class NameKeys :
 		// Only detach "name keys"
 		if (m_namespace != NULL && m_keyIsName(key)) {
 			//globalOutputStream() << "erase " << key << "\n";
-			m_namespace->detach(KeyValueAssignCaller(value), KeyValueDetachCaller(value));
+			m_namespace->detach(KeyValue::AssignCaller(value), KeyValue::DetachCaller(value));
 		}
 	}
 	
@@ -172,6 +155,21 @@ public:
 		// Remove it from the local map
 		m_keyValues.erase(key);
 	}
+	
+	/** greebo: This should return TRUE for "target", "targetNNN", "name" and "bind"
+	 */
+	static bool keyIsNameDoom3(const std::string& key) {
+		return key == "target" || 
+				(key.substr(0,6) == "target" && 
+					boost::algorithm::all(key.substr(6), boost::algorithm::is_digit())) || 
+				key == "name" || key == "bind";
+	}
+	
+	static bool keyIsNameDoom3Doom3Group(const std::string& key) {
+		return keyIsNameDoom3(key) || key == "model";
+	}
 };
+
+} // namespace entity
 
 #endif

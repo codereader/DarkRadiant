@@ -323,7 +323,7 @@ void Doom3Group::construct() {
 	m_keyObservers.insert("skin", ModelSkinKey::SkinChangedCaller(m_skin));
 
 	m_isModel = false;
-	m_nameKeys.setKeyIsName(keyIsNameDoom3Doom3Group);
+	m_nameKeys.setKeyIsName(NameKeys::keyIsNameDoom3Doom3Group);
 
 	_entity.attach(m_keyObservers);
 }
@@ -339,12 +339,12 @@ bool Doom3Group::isModel() const {
 void Doom3Group::setIsModel(bool newValue) {
 	if (newValue && !m_isModel) {
 		// The model key is not recognised as "name"
-		m_nameKeys.setKeyIsName(keyIsNameDoom3);
+		m_nameKeys.setKeyIsName(NameKeys::keyIsNameDoom3);
 		m_model.modelChanged(m_modelKey);
 	}
 	else if (!newValue && m_isModel) {
 		// The model key should be recognised as "name" (important for "namespacing")
-		m_nameKeys.setKeyIsName(keyIsNameDoom3Doom3Group);
+		m_nameKeys.setKeyIsName(NameKeys::keyIsNameDoom3Doom3Group);
 		// Clear the model path
 		m_model.modelChanged("");
 		m_nameOrigin = m_origin;

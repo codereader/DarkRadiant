@@ -1,5 +1,7 @@
 #include "LightNode.h"
 
+namespace entity {
+
 // --------- LightNode implementation ------------------------------------
 
 LightNode::LightNode(IEntityClassPtr eclass) :
@@ -81,3 +83,5 @@ void LightNode::attach(const NameCallback& callback) {
 void LightNode::detach(const NameCallback& callback) {
 	m_contained.getNameable().detach(callback);
 }
+
+} // namespace entity

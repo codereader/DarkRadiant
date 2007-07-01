@@ -5,7 +5,7 @@
 #include "iregistry.h"
 #include "iradiant.h"
 
-#include <iostream>
+namespace entity {
 
 	namespace {
 		const std::string RKEY_SHOW_ALL_LIGHT_RADII = "user/ui/showAllLightRadii";
@@ -36,5 +36,7 @@ public:
 }; // class LightSettingsManager
 
 LightSettingsManager& LightSettings();
+
+} // namespace entity
 
 #endif /*LIGHTSETTINGS_H_*/

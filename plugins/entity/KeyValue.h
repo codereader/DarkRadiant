@@ -33,12 +33,16 @@ public:
 	void instanceDetach(MapFile* map);
 
 	void attach(const KeyObserver& observer);
+	typedef MemberCaller1<EntityKeyValue, const KeyObserver&, &EntityKeyValue::attach> AttachCaller;
+	
 	void detach(const KeyObserver& observer);
+	typedef MemberCaller1<EntityKeyValue, const KeyObserver&, &EntityKeyValue::detach> DetachCaller;
 	
 	// Accessor method, retrieve the actual value
 	std::string get() const;
 	
 	void assign(const std::string& other);
+	typedef MemberCaller1<EntityKeyValue, const std::string&, &EntityKeyValue::assign> AssignCaller;
 
 	void notify();
 
