@@ -6,7 +6,7 @@ namespace entity {
 
 EclassModelNode::EclassModelNode(IEntityClassPtr eclass) :
 	m_contained(eclass, 
-				_traverse,
+				*this, // pass <self> as scene::Traversable&
 				InstanceSet::TransformChangedCaller(m_instances), 
 				InstanceSetEvaluateTransform<EclassModelInstance>::Caller(m_instances))
 {
@@ -17,19 +17,19 @@ EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	scene::Node(other),
 	scene::Instantiable(other),
 	scene::Cloneable(other),
-	scene::Traversable::Observer(other),
 	Nameable(other),
 	Snappable(other),
 	TransformNode(other),
-	scene::Traversable(other),
+	TraversableNodeSet(), // don't copy the TraversableNodeSet from the other node
 	EntityNode(other),
 	Namespaced(other),
 	ModelSkin(other),
 	m_contained(other.m_contained, 
-				_traverse,
+				*this, // pass <self> as scene::Traversable&
 				InstanceSet::TransformChangedCaller(m_instances), 
 				InstanceSetEvaluateTransform<EclassModelInstance>::Caller(m_instances))
 {
+	
 	construct();
 }
 
@@ -38,28 +38,12 @@ EclassModelNode::~EclassModelNode() {
 }
 
 void EclassModelNode::construct() {
-	_traverse.attach(this);
+	// Attach the InstanceSet as Traversable::Observer to the nodeset
+	TraversableNodeSet::attach(&m_instances);
 }
 
 void EclassModelNode::destroy() {
-	_traverse.detach(this);
-}
-
-// scene::Traversable Implementation
-void EclassModelNode::insert(scene::INodePtr node) {
-	_traverse.insert(node);
-}
-
-void EclassModelNode::erase(scene::INodePtr node) {
-	_traverse.erase(node);
-}
-
-void EclassModelNode::traverse(const Walker& walker) {
-	_traverse.traverse(walker);
-}
-
-bool EclassModelNode::empty() const {
-	return _traverse.empty();
+	TraversableNodeSet::detach(&m_instances);
 }
 
 // Snappable implementation
@@ -92,15 +76,6 @@ void EclassModelNode::detach(ModuleObserver& observer) {
 
 std::string EclassModelNode::getRemap(const std::string& name) const {
 	return m_contained.getModelSkin().getRemap(name);
-}
-
-// scene::Traversable::Observer implementation
-void EclassModelNode::insertChild(scene::INodePtr child) {
-	m_instances.insertChild(child);
-}
-
-void EclassModelNode::eraseChild(scene::INodePtr child) {
-	m_instances.eraseChild(child);
 }
 
 scene::INodePtr EclassModelNode::clone() const {
