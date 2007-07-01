@@ -54,79 +54,120 @@ class NameKeys :
 	public Entity::Observer, 
 	public Namespaced
 {
-  INamespace* m_namespace;
-  entity::Doom3Entity& m_entity;
-  KeyIsNameFunc m_keyIsName;
-  NameKeys(const NameKeys& other);
-  NameKeys& operator=(const NameKeys& other);
+	INamespace* m_namespace;
+	
+	// The attached entity
+	entity::Doom3Entity& m_entity;
+	
+	// The function pointer used to check the key for "name" keys
+	KeyIsNameFunc m_keyIsName;
+	
+	// Not copy-constructible, not assignable
+	NameKeys(const NameKeys& other);
+	NameKeys& operator=(const NameKeys& other);
 
-  typedef std::map<std::string, EntityKeyValue*> KeyValues;
-  KeyValues m_keyValues;
+	// All the observed key values of the entity
+	typedef std::map<std::string, EntityKeyValue*> KeyValues;
+	KeyValues m_keyValues;
 
-  void insertName(const std::string& key, EntityKeyValue& value)
-  {
-    if(m_namespace != 0 && m_keyIsName(key))
-    {
-      //globalOutputStream() << "insert " << key << "\n";
-      m_namespace->attach(KeyValueAssignCaller(value), KeyValueAttachCaller(value));
-    }
-  }
-  void eraseName(const std::string& key, EntityKeyValue& value)
-  {
-    if(m_namespace != 0 && m_keyIsName(key))
-    {
-      //globalOutputStream() << "erase " << key << "\n";
-      m_namespace->detach(KeyValueAssignCaller(value), KeyValueDetachCaller(value));
-    }
-  }
-  void insertAll()
-  {
-    for(KeyValues::iterator i = m_keyValues.begin(); i != m_keyValues.end(); ++i)
-    {
-      insertName(i->first, *i->second);
-    }
-  }
-  void eraseAll()
-  {
-    for(KeyValues::iterator i = m_keyValues.begin(); i != m_keyValues.end(); ++i)
-    {
-      eraseName(i->first, *i->second);
-    }
-  }
+	/** greebo: This checks the key for known keynames and attaches
+	 * 			the matching keys to the known Namespace.
+	 */
+	void attachKeyToNamespace(const std::string& key, EntityKeyValue& value) {
+		// Only attach the name
+		if (m_namespace != NULL && m_keyIsName(key)) {
+			//globalOutputStream() << "insert " << key << "\n";
+			m_namespace->attach(KeyValueAssignCaller(value), KeyValueAttachCaller(value));
+		}
+	}
+	
+	/** greebo: Detaches the key from the namespace, if it matches
+	 * 			the "name key" convention ("name", "target", "bind")
+	 */
+	void detachKeyFromNamespace(const std::string& key, EntityKeyValue& value) {
+		// Only detach "name keys"
+		if (m_namespace != NULL && m_keyIsName(key)) {
+			//globalOutputStream() << "erase " << key << "\n";
+			m_namespace->detach(KeyValueAssignCaller(value), KeyValueDetachCaller(value));
+		}
+	}
+	
+	void attachAllKeys() {
+		for (KeyValues::iterator i = m_keyValues.begin(); i != m_keyValues.end(); ++i) {
+			attachKeyToNamespace(i->first, *i->second);
+		}
+	}
+	
+	void detachAllKeys() {
+		for (KeyValues::iterator i = m_keyValues.begin(); i != m_keyValues.end(); ++i) {
+			detachKeyFromNamespace(i->first, *i->second);
+		}
+	}
 public:
-  NameKeys(entity::Doom3Entity& entity) : 
-  	m_namespace(0), 
-  	m_entity(entity), 
-  	m_keyIsName(keyIsNameDoom3)
-  {
-    m_entity.attach(*this);
-  }
-  ~NameKeys()
-  {
-    m_entity.detach(*this);
-  }
-  void setNamespace(INamespace& space)
-  {
-    eraseAll();
-    m_namespace = &space;
-    insertAll();
-  }
-  void setKeyIsName(KeyIsNameFunc keyIsName)
-  {
-    eraseAll();
-    m_keyIsName = keyIsName;
-    insertAll();
-  }
-  void insert(const std::string& key, EntityKeyValue& value)
-  {
-    m_keyValues.insert(KeyValues::value_type(key, &value));
-    insertName(key, value);
-  }
-  void erase(const std::string& key, EntityKeyValue& value)
-  {
-    eraseName(key, value);
-    m_keyValues.erase(key);
-  }
+	NameKeys(entity::Doom3Entity& entity) :
+		m_namespace(NULL), 
+		m_entity(entity), 
+		m_keyIsName(keyIsNameDoom3)
+	{
+		// Attach <self> to the observed entity
+		m_entity.attach(*this);
+	}
+
+	~NameKeys() {
+		// Detach <self> from the observed Entity
+		m_entity.detach(*this);
+	}
+
+	/** greebo: Sets a new Namespace
+	 */
+	void setNamespace(INamespace& space) {
+		// Detach all keys from the old namespace first
+		detachAllKeys();
+		
+		// Set the new namespace
+		m_namespace = &space;
+		
+		// Now attach the relevant keys again
+		attachAllKeys();
+	}
+	
+	/** greebo: Sets a new key-classification function
+	 */
+	void setKeyIsName(KeyIsNameFunc keyIsName) {
+		// First, detach all relevant keys from the namespace
+		detachAllKeys();
+		
+		// Set the new rule
+		m_keyIsName = keyIsName;
+		
+		// Then re-attach all relevant keys matching the new convention
+		attachAllKeys();
+	}
+
+	/** greebo: This gets called as soon as a new entity key/value gets added
+	 * 			to the attached entity.
+	 * 
+	 * 			The routine saves all keyvalues and attaches the relevant
+	 * 			"name keys" to the Namespace.
+	 */
+	void insert(const std::string& key, EntityKeyValue& value) {
+		// Save the key/value pair locally
+		m_keyValues.insert(KeyValues::value_type(key, &value));
+		
+		// Check if this key is a "name key"
+		attachKeyToNamespace(key, value);
+	}
+	
+	/** greebo: Gets called by the observed Entity when a value is erased from
+	 * 			the list of spawnargs.
+	 */
+	void erase(const std::string& key, EntityKeyValue& value) {
+		// Detach the relevant keys from the Namespace
+		detachKeyFromNamespace(key, value);
+		
+		// Remove it from the local map
+		m_keyValues.erase(key);
+	}
 };
 
 #endif
