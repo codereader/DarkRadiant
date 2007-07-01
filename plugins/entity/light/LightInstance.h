@@ -11,6 +11,8 @@
 #include "../VertexInstance.h"
 #include "../targetable.h"
 
+namespace entity {
+
 /* greebo: The LightInstance class is some kind of manager for the Light class, and this is the
  * class the RadiantSelectionSystem is communicating with.
  * 
@@ -114,5 +116,7 @@ public:
 	bool isProjected() const;
 	const Matrix4& projection() const;
 }; // class LightInstance
+
+} // namespace entity
 
 #endif /*LIGHTINSTANCE_H_*/

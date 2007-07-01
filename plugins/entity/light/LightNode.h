@@ -7,6 +7,8 @@
 #include "Light.h"
 #include "LightInstance.h"
 
+namespace entity {
+
 class LightNode :
 	public scene::Node,
 	public scene::Instantiable,
@@ -52,5 +54,7 @@ public:
 	virtual void attach(const NameCallback& callback);
 	virtual void detach(const NameCallback& callback);
 }; // class LightNode
+
+} // namespace entity
 
 #endif /*LIGHTNODE_H_*/

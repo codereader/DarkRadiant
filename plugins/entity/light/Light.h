@@ -24,6 +24,8 @@
 #include "RenderableVertices.h"
 #include "Doom3LightRadius.h"
 
+namespace entity {
+
 /* greebo: This is the actual light class. It contains the information about the geometry
  * of the light and the actual render functions.
  * 
@@ -290,5 +292,7 @@ public:
 
 	ShaderPtr getShader() const;
 }; // class Light
+
+} // namespace entity
 
 #endif /*LIGHTCLASS_H_*/

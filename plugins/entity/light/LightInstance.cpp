@@ -1,7 +1,8 @@
 #include "LightInstance.h"
 #include "iradiant.h"
 #include "math/pi.h"
-#include "../../../radiant/ui/colourscheme/ColourSchemeManager.h"
+
+namespace entity {
 
 // ------ LightInstance class implementation ----------------------------------
 
@@ -384,3 +385,5 @@ bool LightInstance::isProjected() const {
 const Matrix4& LightInstance::projection() const {
 	return _light.projection();
 }
+
+} // namespace entity

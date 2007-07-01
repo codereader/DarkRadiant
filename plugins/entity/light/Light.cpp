@@ -6,6 +6,8 @@
 #include "LightShader.h"
 #include "LightSettings.h"
 
+namespace entity {
+
 // Initialise the static default shader string
 std::string LightShader::m_defaultShader = "";
 
@@ -947,3 +949,5 @@ const Matrix4& Light::projection() const {
 ShaderPtr Light::getShader() const {
 	return m_shader.get();
 }
+
+} // namespace entity 
