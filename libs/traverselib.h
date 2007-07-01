@@ -30,49 +30,42 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <vector>
 #include <algorithm>
 
-/** greebo: This iterator is used for the std::set_difference algorithm and is used to call
- * 			scene::Traversable::Observer::insertChild() as soon as the assignment operator is
- * 			used by the set_difference algorithm.
- * 
- * Note: The operator++ is apparently necessary, but is not doing anything, as this iterator
- * 		 is only "fake" and is only used to trigger the observer call. 
- */
-class TraversableObserverInsertOutputIterator 
-{
-protected:
-	scene::Traversable::Observer* _observer;
-public:
-	typedef std::output_iterator_tag iterator_category;
-	typedef void difference_type;
-	typedef void value_type;
-	typedef void pointer;
-	typedef void reference;
-
-	TraversableObserverInsertOutputIterator(scene::Traversable::Observer* observer) : 
-		_observer(observer)
-	{}
-	
-	TraversableObserverInsertOutputIterator& operator=(const scene::INodePtr node) { 
-		_observer->insertChild(node);
-		return *this;
-	}
-	
-	TraversableObserverInsertOutputIterator& operator*() { return *this; }
-	TraversableObserverInsertOutputIterator& operator++() { return *this; }
-	TraversableObserverInsertOutputIterator& operator++(int) { return *this; }
+// An ObserverFunctor does something with the given <observer> and the given <node> 
+struct ObserverFunctor {
+	virtual void operator() (scene::Traversable::Observer& observer, scene::INodePtr node) = 0;
 };
 
-/** greebo: This iterator is used for the std::set_difference algorithm and is used to call
- * 			scene::Traversable::Observer::eraseChild() as soon as the assignment operator is
- * 			used by the set_difference algorithm.
+// This calls eraseChild() on the given <observer>
+struct ObserverEraseFunctor :
+	public ObserverFunctor
+{
+	virtual void operator() (scene::Traversable::Observer& _observer, scene::INodePtr node) {
+		_observer.eraseChild(node);
+	}
+};
+
+// This calls insertChild() on the given <observer>
+struct ObserverInsertFunctor :
+	public ObserverFunctor
+{
+	virtual void operator() (scene::Traversable::Observer& _observer, scene::INodePtr node) {
+		_observer.insertChild(node);
+	}
+};
+
+/** greebo: This iterator is required by the std::set_difference algorithm and 
+ * 			is used to call	scene::Traversable::Observer::insertChild() or 
+ * 			eraseChild() as soon as	the assignment operator is invoked by 
+ * 			the set_difference algorithm.
  * 
  * Note: The operator++ is apparently necessary, but is not doing anything, as this iterator
  * 		 is only "fake" and is only used to trigger the observer call. 
  */
-class TraversableObserverEraseOutputIterator 
+class ObserverOutputIterator 
 {
 protected:
 	scene::Traversable::Observer* _observer;
+	ObserverFunctor& _functor;
 public:
 	typedef std::output_iterator_tag iterator_category;
 	typedef void difference_type;
@@ -80,18 +73,21 @@ public:
 	typedef void pointer;
 	typedef void reference;
 
-	TraversableObserverEraseOutputIterator(scene::Traversable::Observer* observer) : 
-		_observer(observer)
+	ObserverOutputIterator(scene::Traversable::Observer* observer, ObserverFunctor& functor) : 
+		_observer(observer),
+		_functor(functor)
 	{}
 	
-	TraversableObserverEraseOutputIterator& operator=(const scene::INodePtr node) { 
-		_observer->eraseChild(node);
+	// This function is invoked by the std::set_difference algorithm
+	ObserverOutputIterator& operator=(const scene::INodePtr node) {
+		// Pass the call to the functor
+		_functor(*_observer, node); 
 		return *this;
 	}
 	
-	TraversableObserverEraseOutputIterator& operator*() { return *this; }
-	TraversableObserverEraseOutputIterator& operator++() { return *this; }
-	TraversableObserverEraseOutputIterator& operator++(int) { return *this; }
+	ObserverOutputIterator& operator*() { return *this; }
+	ObserverOutputIterator& operator++() { return *this; }
+	ObserverOutputIterator& operator++(int) { return *this; }
 };
 
 /// \brief A sequence of node references which notifies an observer of inserts and deletions, and uses the global undo system to provide undo for modifications.
@@ -278,12 +274,15 @@ private:
 		std::sort(sorted.begin(), sorted.end());
 		std::sort(other_sorted.begin(), other_sorted.end());
 	
+		ObserverEraseFunctor eraseFunctor;
+		ObserverInsertFunctor insertFunctor;
+	
 		// greebo: Now find all the nodes that exist in <_children>, but not in <other> and 
-		// call the EraseIterator for each of them (the iterator calls eraseChild() on the given observer). 
+		// call the EraseFunctor for each of them (the iterator calls eraseChild() on the given observer). 
 		std::set_difference(
 			sorted.begin(), sorted.end(), 
 			other_sorted.begin(), other_sorted.end(), 
-			TraversableObserverEraseOutputIterator(_observer)
+			ObserverOutputIterator(_observer, eraseFunctor)
 		);
 		
 		// greebo: Next step is to find all nodes existing in <other>, but not in <_children>, 
@@ -291,7 +290,7 @@ private:
 		std::set_difference(
 			other_sorted.begin(), other_sorted.end(), 
 			sorted.begin(), sorted.end(), 
-			TraversableObserverInsertOutputIterator(_observer)
+			ObserverOutputIterator(_observer, insertFunctor)
 		);
 	}
 };
