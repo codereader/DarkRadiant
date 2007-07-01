@@ -25,7 +25,6 @@ inline void PointVertexArray_testSelect(PointVertex* first, std::size_t count,
 }
 
 Doom3Group::Doom3Group(IEntityClassPtr eclass, 
-		scene::Node& node,
 		TraversableNodeSet& traversable,
 		const Callback& transformChanged, 
 		const Callback& boundsChanged, 
@@ -51,7 +50,6 @@ Doom3Group::Doom3Group(IEntityClassPtr eclass,
 }
 
 Doom3Group::Doom3Group(const Doom3Group& other, 
-		scene::Node& node,
 		TraversableNodeSet& traversable,
 		const Callback& transformChanged, 
 		const Callback& boundsChanged, 
@@ -320,8 +318,8 @@ void Doom3Group::construct() {
 	m_keyObservers.insert("angle", RotationKey::AngleChangedCaller(m_rotationKey));
 	m_keyObservers.insert("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
 	m_keyObservers.insert("name", NameChangedCaller(*this));
-	m_keyObservers.insert(curve_Nurbs.c_str(), CurveNURBS::CurveChangedCaller(m_curveNURBS));
-	m_keyObservers.insert(curve_CatmullRomSpline.c_str(), CurveCatmullRom::CurveChangedCaller(m_curveCatmullRom));
+	m_keyObservers.insert(curve_Nurbs, CurveNURBS::CurveChangedCaller(m_curveNURBS));
+	m_keyObservers.insert(curve_CatmullRomSpline, CurveCatmullRom::CurveChangedCaller(m_curveCatmullRom));
 	m_keyObservers.insert("skin", ModelSkinKey::SkinChangedCaller(m_skin));
 
 	m_isModel = false;

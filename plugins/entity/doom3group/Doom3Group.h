@@ -75,7 +75,6 @@ public:
 	 * These callbacks point to and InstanceSet::transformChangedCaller(), for example.  
 	 */
 	Doom3Group(IEntityClassPtr eclass, 
-			   scene::Node& node,
 			   TraversableNodeSet& traversable,
 			   const Callback& transformChanged, 
 			   const Callback& boundsChanged, 
@@ -83,7 +82,6 @@ public:
 	
 	// Copy constructor
 	Doom3Group(const Doom3Group& other, 
-			   scene::Node& node,
 			   TraversableNodeSet& traversable,
 			   const Callback& transformChanged, 
 			   const Callback& boundsChanged, 

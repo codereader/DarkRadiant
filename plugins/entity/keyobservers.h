@@ -22,33 +22,38 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_KEYOBSERVERS_H)
 #define INCLUDED_KEYOBSERVERS_H
 
-#include "entitylib.h"
+#include "ientity.h"
 #include <map>
-#include "string/string.h"
+#include <string>
 
-class KeyObserverMap : public Entity::Observer
+class KeyObserverMap : 
+	public Entity::Observer
 {
-  typedef std::multimap<const char*, KeyObserver, RawStringLess> KeyObservers;
-  KeyObservers m_keyObservers;
+	typedef std::multimap<std::string, KeyObserver> KeyObservers;
+	KeyObservers _keyObservers;
+
 public:
-  void insert(const char* key, const KeyObserver& observer)
-  {
-    m_keyObservers.insert(KeyObservers::value_type(key, observer));
-  }
-  void insert(const char* key, EntityKeyValue& value)
-  {
-    for(KeyObservers::const_iterator i = m_keyObservers.find(key); i != m_keyObservers.end() && string_equal((*i).first, key); ++i)
-    {
-      value.attach((*i).second);
-    }
-  }
-  void erase(const char* key, EntityKeyValue& value)
-  {
-    for(KeyObservers::const_iterator i = m_keyObservers.find(key); i != m_keyObservers.end() && string_equal((*i).first, key); ++i)
-    {
-      value.detach((*i).second);
-    }
-  }
+	void insert(const std::string& key, const KeyObserver& observer) {
+		_keyObservers.insert(KeyObservers::value_type(key, observer));
+	}
+	
+	void insert(const std::string& key, EntityKeyValue& value) {
+		for (KeyObservers::const_iterator i = _keyObservers.find(key); 
+			 i != _keyObservers.end() && i->first == key; 
+			 ++i)
+		{
+			value.attach(i->second);
+		}
+	}
+	
+	void erase(const std::string& key, EntityKeyValue& value) {
+		for (KeyObservers::const_iterator i = _keyObservers.find(key); 
+			 i != _keyObservers.end() && i->first == key; 
+			 ++i)
+		{
+			value.detach(i->second);
+		}
+	}
 };
 
 #endif
