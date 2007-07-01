@@ -25,86 +25,101 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "modulesystem.h"
 #include "parser/Tokeniser.h"
 #include <map>
-#include <set>
 #include <iostream>
 
+/** greebo: A container for Modules, indexed by name.
+ * 
+ * 			Use the find() method to retrieve a named module.
+ */
 template<typename Type>
-class ModulesMap : public Modules<Type>
+class ModulesMap : 
+	public Modules<Type>
 {
-  typedef std::map<std::string, Module*> modules_t;
-  modules_t m_modules;
+	typedef std::map<std::string, Module*> modules_t;
+	modules_t _modules;
 public:
-  ~ModulesMap()
-  {
-    for(modules_t::iterator i = m_modules.begin(); i != m_modules.end(); ++i) {
-      i->second->release();
-    }
-  }
+	~ModulesMap() {
+		// Release all the captured modules upon destruction
+		for (modules_t::iterator i = _modules.begin(); i != _modules.end(); ++i) {
+			i->second->release();
+		}
+	}
 
-  typedef modules_t::const_iterator iterator;
+	typedef modules_t::const_iterator iterator;
 
-  iterator begin() const
-  {
-    return m_modules.begin();
-  }
-  iterator end() const
-  {
-    return m_modules.end();
-  }
+	iterator begin() const {
+		return _modules.begin();
+	}
+	
+	iterator end() const {
+		return _modules.end();
+	}
 
-  void insert(const std::string& name, Module& module)
-  {
-    module.capture();
-    if(globalModuleServer().getError())
-    {
-    	std::cerr << "[modulesystem] Warning: ModulesMap<" 
-    			  << typename Type::Name() << "> failed to instantiate module "
-    			  << "\"" << name << "\"" << std::endl;
-		module.release();
-		globalModuleServer().setError(false);
-    }
-    else
-    {
-      m_modules.insert(modules_t::value_type(name, &module));
-    }
-  }
+	/** greebo: Insert the module into the map. Tries to capture() the module 
+	 * 			before insertion and throws an error on failure.
+	 */
+	void insert(const std::string& name, Module& module) {
+		// Try to capture the requested module
+		module.capture();
+		
+		if (!globalModuleServer().getError()) {
+			_modules.insert(modules_t::value_type(name, &module));
+		}
+		else {
+			// Capture failed, throw an error.
+			std::cerr << "[modulesystem] Warning: ModulesMap<" 
+    				  << typename Type::Name() << "> failed to instantiate module "
+    				  << "\"" << name << "\"" << std::endl;
+    				  
+    		// Release the module again
+			module.release();
+			globalModuleServer().setError(false);
+		} 
+	}
 
-  Type* find(const std::string& name)
-  {
-    modules_t::iterator i = m_modules.find(name);
-    if(i != m_modules.end())
-    {
-      return static_cast<Type*>(Module_getTable(*(*i).second));
-    }
-    return 0;
-  }
+	Type* find(const std::string& name) {
+		// Try to lookup the named module
+		modules_t::iterator i = _modules.find(name);
+		
+		if (i != _modules.end()) {
+			return static_cast<Type*>(Module_getTable(*i->second));
+		}
+		// No module found
+		return NULL;
+	}
 
-  Type* findModule(const std::string& name)
-  {
-    return find(name);
-  }
-  void foreachModule(typename Modules<Type>::Visitor& visitor)
-  {
-    for(modules_t::iterator i = m_modules.begin(); i != m_modules.end(); ++i)
-    {
-      visitor.visit((*i).first.c_str(), *static_cast<const Type*>(Module_getTable(*(*i).second)));
-    }
-  }
+	// A tautology to the above method find()
+	Type* findModule(const std::string& name) {
+		return find(name);
+	}
+	
+	/** greebo: Traverse the contained modules with the given Module::Visitor
+	 */
+	void foreachModule(typename Modules<Type>::Visitor& visitor) {
+		for (modules_t::iterator i = _modules.begin(); i != _modules.end(); ++i) {
+			visitor.visit(
+				i->first.c_str(), 
+				*static_cast<const Type*>(Module_getTable(*i->second))
+			);
+		}
+	}
 };
 
+/** greebo: Visitor class, inserting all visited modules into the given map.
+ */
 template<typename Type>
-class InsertModules : public ModuleServer::Visitor
+class InsertModules : 
+	public ModuleServer::Visitor
 {
-  ModulesMap<Type>& m_modules;
+	ModulesMap<Type>& _modules;
 public:
-  InsertModules(ModulesMap<Type>& modules)
-    : m_modules(modules)
-  {
-  }
-  void visit(const char* name, Module& module)
-  {
-    m_modules.insert(name, module);
-  }
+	InsertModules(ModulesMap<Type>& modules) : 
+		_modules(modules)
+	{}
+	
+	void visit(const char* name, Module& module) {
+		_modules.insert(name, module);
+	}
 };
 
 // The ModulesRef class appears to be a container for a certain subset of Modules specified in
@@ -112,7 +127,7 @@ public:
 template<typename Type>
 class ModulesRef
 {
-  ModulesMap<Type> m_modules;
+	ModulesMap<Type> _modules;
 public:
 
 	ModulesRef(const std::string& names) {
@@ -121,7 +136,7 @@ public:
 			// Check if the argument is "*" => load all modules into the map
 			if (names == "*") {
 				// Instantiate a list populator and load all the relevant modules
-				InsertModules<Type> visitor(m_modules);
+				InsertModules<Type> visitor(_modules);
 				globalModuleServer().foreachModule(typename Type::Name(), typename Type::Version(), visitor);
 			}
 			else if (!names.empty()) {
@@ -141,7 +156,7 @@ public:
 					
 					if (module != NULL) {
 						// Module was found 
-						m_modules.insert(name, *module);
+						_modules.insert(name, *module);
 					}
 					else {
 						// Module not found in the global module server
@@ -160,7 +175,7 @@ public:
 	
 	// Return the internal ModulesMap
 	ModulesMap<Type>& get() {
-		return m_modules;
+		return _modules;
 	}
 };
 
