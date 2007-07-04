@@ -83,6 +83,8 @@ public:
 
 	bool isContainer() const;
 	void setIsContainer(bool isContainer);
+	
+	virtual bool isModel() const;
 
 private:
 	void notifyInsert(const std::string& key, KeyValue& value);
