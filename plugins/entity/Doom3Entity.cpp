@@ -44,6 +44,14 @@ void Doom3Entity::setKeyValueChangedFunc(EntityCreator::KeyValueChangedFunc func
 	KeyValue::setKeyValueChangedFunc(func);
 }
 
+bool Doom3Entity::isModel() const {
+	std::string name = getKeyValue("name");
+	std::string model = getKeyValue("model");
+	std::string classname = getKeyValue("classname");
+	
+	return (classname == "func_static" && !name.empty() && name != model); 
+}
+
 void Doom3Entity::importState(const KeyValues& keyValues) {
 	// Remove the entity key values, one by one
 	while (_keyValues.size() > 0) {

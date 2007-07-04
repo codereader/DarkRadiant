@@ -124,6 +124,12 @@ public:
 	 */
 	virtual std::string getKeyValue(const std::string& key) const = 0;
 	
+	/** greebo: Returns true if the entity is a model. For Doom3, this is 
+	 * 			usually true when the classname == "func_static" and
+	 * 			the non-empty spawnarg "model" != "name".
+	 */
+	virtual bool isModel() const;
+	
   virtual bool isContainer() const = 0;
   virtual void attach(Observer& observer) = 0;
   virtual void detach(Observer& observer) = 0;
