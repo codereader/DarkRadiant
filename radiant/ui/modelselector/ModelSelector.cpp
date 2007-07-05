@@ -86,7 +86,11 @@ ModelSelector::ModelSelector()
 	
 	// Pack widgets into main Vbox above the buttons
 	gtk_box_pack_start(GTK_BOX(vbx), hbx, TRUE, TRUE, 0);
+
+	// Create the buttons below everything
 	gtk_box_pack_end(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(vbx), createAdvancedButtons(), FALSE, FALSE, 0);
+
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
 	
 	// Populate the tree of models
@@ -95,10 +99,14 @@ ModelSelector::ModelSelector()
 
 // Show the dialog and enter recursive main loop
 
-ModelAndSkin ModelSelector::showAndBlock() {
+ModelSelectorResult ModelSelector::showAndBlock(bool showOptions) {
 
 	// Show the dialog
 	gtk_widget_show_all(_widget);
+
+	// conditionally hide the options
+	if (!showOptions)
+		gtk_widget_hide(GTK_WIDGET(_advancedOptions));
 
 	// Update the model preview widget, forcing an update of the selected model
 	// since the preview model is deleted on dialog hide
@@ -111,12 +119,12 @@ ModelAndSkin ModelSelector::showAndBlock() {
 	_modelPreview.setModel("");
 
 	// Construct the model/skin combo and return it
-	return ModelAndSkin(_lastModel, _lastSkin);
+	return ModelSelectorResult(_lastModel, _lastSkin, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_clipCheckButton)) );
 }
 
 // Static function to display the instance, and return the selected model to the 
 // calling function
-ModelAndSkin ModelSelector::chooseModel() {
+ModelSelectorResult ModelSelector::chooseModel(bool showOptions) {
 	
 	// Static instance pointer
 	typedef boost::shared_ptr<ModelSelector> ModelSelectorPtr;
@@ -132,12 +140,12 @@ ModelAndSkin ModelSelector::chooseModel() {
 		}
 		catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
 			// Return a blank model and skin
-			return ModelAndSkin("", "");
+			return ModelSelectorResult("", "", false);
 		}
 	}
 	
 	// Use the instance to select a model.
-	return _selector->showAndBlock();
+	return _selector->showAndBlock(showOptions);
 }
 
 
@@ -209,6 +217,14 @@ GtkWidget* ModelSelector::createButtons() {
 	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
 	
 	return gtkutil::RightAlignment(hbx);
+}
+
+// Create the advanced buttons panel
+GtkWidget* ModelSelector::createAdvancedButtons() {
+	_advancedOptions = GTK_EXPANDER(gtk_expander_new("advanced"));
+	_clipCheckButton = GTK_CHECK_BUTTON(gtk_check_button_new_with_label("create MonsterClip brush"));
+	gtk_container_add(GTK_CONTAINER(_advancedOptions), GTK_WIDGET(_clipCheckButton));
+	return GTK_WIDGET(_advancedOptions);
 }
 
 // Create the info panel treeview

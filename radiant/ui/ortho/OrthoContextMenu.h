@@ -2,8 +2,14 @@
 #define ORTHOCONTEXTMENU_H_
 
 #include <gtk/gtk.h>
-
+#include "ipath.h"
+#include "iselection.h"
 #include "math/Vector3.h"
+
+// Forward declaration to avoid including the entire scenelib
+namespace scene {
+	class Instance;
+}
 
 namespace ui
 {
@@ -22,15 +28,26 @@ class OrthoContextMenu
 	Vector3 _lastPoint;
 	
 	// GTK MENU ITEMS
-	GtkWidget* _addModel;
-	GtkWidget* _convertStatic;
-	GtkWidget* _revertWorldspawn;
 	GtkWidget* _addEntity;
 	GtkWidget* _addPlayerStart;
 	GtkWidget* _movePlayerStart;
+	GtkWidget* _addModel;
+	GtkWidget* _addMonsterClip;
 	GtkWidget* _addLight;
-	GtkWidget* _addSpkr;
 	GtkWidget* _addPrefab;
+	GtkWidget* _addSpkr;
+	GtkWidget* _convertStatic;
+	GtkWidget* _revertWorldspawn;
+
+	// a Visitor that checks for models
+	typedef std::vector<scene::Path> InstanceList;
+	class ModelFinder : public SelectionSystem::Visitor {
+		public:
+		mutable InstanceList modelList;
+		mutable bool onlyModels;
+		ModelFinder();
+		void visit(scene::Instance& instance) const;
+	};
 
 	// Enable or disable the "convert to static" option based on the number
 	// of selected brushes.
@@ -45,6 +62,9 @@ class OrthoContextMenu
 	 */
 	void checkAddOptions();
 
+	// Disables the "add MonsterClip" option according to the selection,
+	void checkMonsterClip();
+
 	// mohij: changes the "Add PlayerStart" entry if an info_player_start already exists
 	void checkPlayerStart();
 
@@ -53,11 +73,11 @@ class OrthoContextMenu
 	static void callbackAddEntity(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddPlayerStart(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackMovePlayerStart(GtkMenuItem* item, OrthoContextMenu* self);
-	static void callbackAddLight(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddModel(GtkMenuItem* item, OrthoContextMenu* self);
+	static void callbackAddMonsterClip(GtkMenuItem* item, OrthoContextMenu* self);
+	static void callbackAddLight(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddPrefab(GtkMenuItem* item, OrthoContextMenu* self);
-	static void callbackAddSpeaker(GtkMenuItem*, OrthoContextMenu*);
-	
+	static void callbackAddSpeaker(GtkMenuItem*, OrthoContextMenu* self);
 	static void callbackConvertToStatic(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackRevertToWorldspawn(GtkMenuItem* item, OrthoContextMenu* self);
 	

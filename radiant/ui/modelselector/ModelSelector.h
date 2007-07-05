@@ -32,17 +32,20 @@ namespace {
 }
 
 /** 
- * Data structure containing both a model and a skin name, to be returned from
+ * Data structure containing the model, the skin name and the options to be returned from
  * the Model Selector.
  */
-struct ModelAndSkin {
+struct ModelSelectorResult {
 	// Model and skin strings
 	std::string model;
 	std::string skin;
 
+	// options
+	bool createClip;
+
 	// Constructor
-	ModelAndSkin(const std::string& m, const std::string& s)
-	: model(m), skin(s) {}
+	ModelSelectorResult(const std::string& m, const std::string& s, const bool clip)
+	: model(m), skin(s), createClip(clip) {}
 };
 
 /** Singleton class encapsulating the Model Selector dialog and methods required to display the
@@ -68,6 +71,10 @@ private:
 	
 	// List store to contain attributes and values for the selected model
 	GtkListStore* _infoStore;
+
+	// options widgets
+	GtkExpander* _advancedOptions;
+	GtkCheckButton* _clipCheckButton;
 	
 	// Last selected model, which will be returned by showAndBlock() once the
 	// recursive main loop exits.
@@ -80,11 +87,12 @@ private:
 	ModelSelector();
 
 	// Show the dialog, called internally by chooseModel(). Return the selected model path
-	ModelAndSkin showAndBlock();
+	ModelSelectorResult showAndBlock(bool showOptions = false);
 	
 	// Helper functions to create GUI components
 	GtkWidget* createTreeView();
 	GtkWidget* createButtons();
+	GtkWidget* createAdvancedButtons();
 	GtkWidget* createInfoPanel();
 	
 	// Populate the tree view with models
@@ -114,8 +122,10 @@ public:
 	 * return the VFS path of the model selected by the user. When the 
 	 * ModelSelector is displayed it will enter a recursive gtk_main loop, 
 	 * blocking execution of the calling function until destroyed.
+	 *
+	 * @showOptions: whether to show the advanced options tab
 	 */
-	static ModelAndSkin chooseModel();
+	static ModelSelectorResult chooseModel(bool showOptions=true);
 	
 };
 
