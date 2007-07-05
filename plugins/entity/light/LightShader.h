@@ -4,6 +4,8 @@
 #include <string>
 #include "irender.h"
 
+namespace entity {
+
 class LightShader {
 	
 	ShaderPtr m_shader;
@@ -34,5 +36,7 @@ public:
 		return m_shader;
 	}
 };
+
+} // namespace entity
 
 #endif /*LIGHTSHADER_H_*/
