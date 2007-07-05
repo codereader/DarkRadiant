@@ -4,6 +4,7 @@
 
 #include "selectionlib.h"
 #include "scenelib.h"
+#include "ibrush.h"
 #include "entitylib.h" // EntityFindByClassnameWalker
 #include "entity.h" // Entity_createFromSelection()
 #include "ientity.h" // Node_getEntity()
@@ -14,6 +15,9 @@
 
 #include "selection/algorithm/Group.h"
 #include "ui/modelselector/ModelSelector.h"
+
+#include "math/aabb.h"
+#include "brushmanip.h"
 
 namespace ui
 {
@@ -27,24 +31,24 @@ namespace {
     const char* SPEAKER_CLASSNAME = "speaker";
     const char* PLAYERSTART_CLASSNAME = "info_player_start";
 
-    const char* ADD_MODEL_TEXT = "Create model...";
-    const char* ADD_MODEL_ICON = "cmenu_add_model.png";
-    const char* ADD_LIGHT_TEXT = "Create light...";
-    const char* ADD_LIGHT_ICON = "cmenu_add_light.png";
     const char* ADD_ENTITY_TEXT = "Create entity...";
     const char* ADD_ENTITY_ICON = "cmenu_add_entity.png";
+    const char* ADD_PLAYERSTART_TEXT = "Create player start...";
+    const char* ADD_PLAYERSTART_ICON = "cmenu_add_entity.png";
+    const char* MOVE_PLAYERSTART_TEXT = "Move player start here...";
+    const char* MOVE_PLAYERSTART_ICON = "cmenu_add_entity.png";
+    const char* ADD_MODEL_TEXT = "Create model...";
+    const char* ADD_MODEL_ICON = "cmenu_add_model.png";
+    const char* ADD_MONSTERCLIP_TEXT = "Add MonsterClip...";
+    const char* ADD_MONSTERCLIP_ICON = "cmenu_add_entity.png";
+    const char* ADD_LIGHT_TEXT = "Create light...";
+    const char* ADD_LIGHT_ICON = "cmenu_add_light.png";
     const char* ADD_PREFAB_TEXT = "Insert prefab...";
     const char* ADD_PREFAB_ICON = "cmenu_add_prefab.png";
     const char* ADD_SPEAKER_TEXT = "Create speaker...";
     const char* ADD_SPEAKER_ICON = "icon_sound.png";
-    const char* ADD_PLAYERSTART_TEXT = "Create player start...";
-    const char* MOVE_PLAYERSTART_TEXT = "Move player start here...";
-    const char* ADD_PLAYERSTART_ICON = "cmenu_add_entity.png";
-    const char* MOVE_PLAYERSTART_ICON = "cmenu_add_entity.png";
-    
     const char* CONVERT_TO_STATIC_TEXT = "Convert to func_static";
     const char* CONVERT_TO_STATIC_ICON = "cmenu_convert_static.png";
-    
     const char* REVERT_TO_WORLDSPAWN_TEXT = "Revert to worldspawn";
     const char* REVERT_TO_WORLDSPAWN_ICON = "cmenu_revert_worldspawn.png";
 }
@@ -61,11 +65,12 @@ void OrthoContextMenu::displayInstance(const Vector3& point) {
 OrthoContextMenu::OrthoContextMenu()
 : _widget(gtk_menu_new())
 {
-	_addModel = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_MODEL_ICON), ADD_MODEL_TEXT);
-	_addLight = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_LIGHT_ICON), ADD_LIGHT_TEXT);
 	_addEntity = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_ENTITY_ICON), ADD_ENTITY_TEXT);
 	_addPlayerStart = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_PLAYERSTART_ICON), ADD_PLAYERSTART_TEXT);
 	_movePlayerStart = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(MOVE_PLAYERSTART_ICON), MOVE_PLAYERSTART_TEXT);
+	_addModel = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_MODEL_ICON), ADD_MODEL_TEXT);
+	_addMonsterClip = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_MONSTERCLIP_ICON), ADD_MONSTERCLIP_TEXT);
+	_addLight = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_LIGHT_ICON), ADD_LIGHT_TEXT);
 	_addPrefab = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_PREFAB_ICON), ADD_PREFAB_TEXT);
 	_addSpkr = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_SPEAKER_ICON), ADD_SPEAKER_TEXT);
 	_convertStatic = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(CONVERT_TO_STATIC_ICON), CONVERT_TO_STATIC_TEXT);
@@ -74,8 +79,9 @@ OrthoContextMenu::OrthoContextMenu()
 	g_signal_connect(G_OBJECT(_addEntity), "activate", G_CALLBACK(callbackAddEntity), this);
 	g_signal_connect(G_OBJECT(_addPlayerStart), "activate", G_CALLBACK(callbackAddPlayerStart), this);
 	g_signal_connect(G_OBJECT(_movePlayerStart), "activate", G_CALLBACK(callbackMovePlayerStart), this);
-	g_signal_connect(G_OBJECT(_addLight), "activate", G_CALLBACK(callbackAddLight), this);
 	g_signal_connect(G_OBJECT(_addModel), "activate", G_CALLBACK(callbackAddModel), this);
+	g_signal_connect(G_OBJECT(_addMonsterClip), "activate", G_CALLBACK(callbackAddMonsterClip), this);
+	g_signal_connect(G_OBJECT(_addLight), "activate", G_CALLBACK(callbackAddLight), this);
 	g_signal_connect(G_OBJECT(_addPrefab), "activate", G_CALLBACK(callbackAddPrefab), this);
 	g_signal_connect(G_OBJECT(_addSpkr), "activate", G_CALLBACK(callbackAddSpeaker), this);
 	g_signal_connect(G_OBJECT(_convertStatic), "activate", G_CALLBACK(callbackConvertToStatic), this);
@@ -85,6 +91,7 @@ OrthoContextMenu::OrthoContextMenu()
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addPlayerStart);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _movePlayerStart);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addModel);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addMonsterClip);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addLight);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addSpkr);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addPrefab);
@@ -101,9 +108,24 @@ void OrthoContextMenu::show(const Vector3& point) {
 	_lastPoint = point;
 	checkConvertStatic(); // enable or disable the convert-to-static command
 	checkRevertToWorldspawn();
+	checkMonsterClip(); // enable the "Add MonsterClip" entry only if one or more model is selected
 	checkPlayerStart(); // change the "Add PlayerStart" entry if an info_player_start is already existant 
-	checkAddOptions(); // disable the "Add entity" command if an entity is already selected
+	checkAddOptions(); // disable the "Add *" command if an entity is already selected
 	gtk_menu_popup(GTK_MENU(_widget), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
+}
+
+OrthoContextMenu::ModelFinder::ModelFinder() :
+		onlyModels(true)
+{}
+
+void OrthoContextMenu::ModelFinder::visit(scene::Instance& instance) const {
+	Entity* entity = Node_getEntity(instance.path().top());
+	if (entity->isModel()) {
+		modelList.push_back(instance.path());
+	}
+	else {
+		onlyModels = false;
+	}
 }
 
 // Check if the convert to static command should be enabled
@@ -116,6 +138,21 @@ void OrthoContextMenu::checkConvertStatic() {
 		_convertStatic, 
 		(info.totalCount > 0 && info.entityCount == 0)
 	);
+}
+
+void OrthoContextMenu::checkMonsterClip() {
+
+	// create a ModelFinder and check whether only models were selected
+	ModelFinder visitor;
+	GlobalSelectionSystem().foreachSelected(visitor);
+
+	// enable the "Add MonsterClip" entry only if one or more model is selected
+	if (visitor.modelList.size() > 0 && visitor.onlyModels) {
+		gtk_widget_set_sensitive(_addMonsterClip, true);
+	}
+	else {
+		gtk_widget_set_sensitive(_addMonsterClip, false);
+	}
 }
 
 void OrthoContextMenu::checkAddOptions() {
@@ -196,6 +233,27 @@ void OrthoContextMenu::callbackMovePlayerStart(GtkMenuItem* item, OrthoContextMe
 	}
 }
 
+void OrthoContextMenu::callbackAddMonsterClip(GtkMenuItem* item, OrthoContextMenu* self) {
+	// create a ModelFinder and retrieve the modelList
+	ModelFinder visitor;
+	GlobalSelectionSystem().foreachSelected(visitor);
+
+	std::vector<scene::Path>::iterator iter;
+	for (iter = visitor.modelList.begin(); iter != visitor.modelList.end(); ++iter) {
+		// one of the models in the SelectionStack
+		scene::Instance& instance = findInstance(*iter);
+
+		// retrieve the AABB
+		AABB brushAABB(instance.childBounds());
+
+		// create the brush
+		scene::INodePtr brushNode(GlobalBrushCreator().createBrush());
+		Node_getTraversable(GlobalMap().findOrInsertWorldspawn())->insert(brushNode);
+		Brush* theBrush = Node_getBrush(brushNode);
+		Scene_BrushResize(*theBrush, brushAABB, "textures/common/monster_clip");
+	}
+}
+
 void OrthoContextMenu::callbackAddLight(GtkMenuItem* item, OrthoContextMenu* self) {
     try {
     	Entity_createFromSelection(LIGHT_CLASSNAME, self->_lastPoint);
@@ -227,15 +285,36 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
 	// To create a model we need EITHER nothing selected OR exactly one brush selected.
 	if (info.totalCount == 0 || info.brushCount == 1) {
 		// Display the model selector and block waiting for a selection (may be empty)
-		ModelAndSkin ms = ui::ModelSelector::chooseModel();
+		ModelSelectorResult ms = ui::ModelSelector::chooseModel();
 		
 		// If a model was selected, create the entity and set its model key
 		if (!ms.model.empty()) {
-            try { 
-			scene::INodePtr node = Entity_createFromSelection(MODEL_CLASSNAME, 
-                                                                 self->_lastPoint);
-			Node_getEntity(node)->setKeyValue("model", ms.model);
-			Node_getEntity(node)->setKeyValue("skin", ms.skin);
+			try {
+				scene::INodePtr modelNode = Entity_createFromSelection(
+					MODEL_CLASSNAME, 
+					self->_lastPoint
+				);
+			
+				//Node_getTraversable(GlobalSceneGraph().root())->insert(modelNode);
+				Node_getEntity(modelNode)->setKeyValue("model", ms.model);
+				Node_getEntity(modelNode)->setKeyValue("skin", ms.skin);
+
+				// If 'createClip' is ticked, create a clip brush
+				if (ms.createClip) {
+					// get the model
+					scene::Path modelPath(GlobalSceneGraph().root());
+					modelPath.push(modelNode);
+					scene::Instance& instance = findInstance(modelPath);
+	
+					// retrieve the AABB
+					AABB brushAABB(instance.childBounds());
+	
+					// create the brush
+					scene::INodePtr brushNode(GlobalBrushCreator().createBrush());
+					Node_getTraversable(GlobalMap().findOrInsertWorldspawn())->insert(brushNode);
+					Brush* theBrush = Node_getBrush(brushNode);
+					Scene_BrushResize(*theBrush, brushAABB, "textures/common/monster_clip");
+				}
             }
             catch (EntityCreationException e) {
                 gtkutil::errorDialog("Unable to create model, classname not found.",

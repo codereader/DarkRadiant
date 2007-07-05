@@ -449,6 +449,12 @@ void Scene_BrushResize_Selected(scene::Graph& graph, const AABB& bounds, const s
   }
 }
 
+void Scene_BrushResize(Brush& brush, const AABB& bounds, const std::string& shader)
+{
+      Brush_ConstructCuboid(brush, bounds, shader, TextureTransform_getDefault());
+      SceneChangeNotify();
+}
+
 bool Brush_hasShader(const Brush& brush, const std::string& name)
 {
   for(Brush::const_iterator i = brush.begin(); i != brush.end(); ++i)

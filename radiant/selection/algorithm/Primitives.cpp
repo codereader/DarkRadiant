@@ -181,7 +181,7 @@ void createCMFromSelection() {
 				cm->addBrush(*brushes[i]);
 			}
 			
-			ui::ModelAndSkin modelAndSkin = ui::ModelSelector::chooseModel(); 
+			ui::ModelSelectorResult modelAndSkin = ui::ModelSelector::chooseModel();
 			std::string basePath = game::Manager::Instance().getModPath();
 			
 			std::string modelPath = basePath + modelAndSkin.model;
