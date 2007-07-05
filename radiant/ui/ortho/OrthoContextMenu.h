@@ -2,14 +2,7 @@
 #define ORTHOCONTEXTMENU_H_
 
 #include <gtk/gtk.h>
-#include "ipath.h"
-#include "iselection.h"
 #include "math/Vector3.h"
-
-// Forward declaration to avoid including the entire scenelib
-namespace scene {
-	class Instance;
-}
 
 namespace ui
 {
@@ -38,16 +31,6 @@ class OrthoContextMenu
 	GtkWidget* _addSpkr;
 	GtkWidget* _convertStatic;
 	GtkWidget* _revertWorldspawn;
-
-	// a Visitor that checks for models
-	typedef std::vector<scene::Path> InstanceList;
-	class ModelFinder : public SelectionSystem::Visitor {
-		public:
-		mutable InstanceList modelList;
-		mutable bool onlyModels;
-		ModelFinder();
-		void visit(scene::Instance& instance) const;
-	};
 
 	// Enable or disable the "convert to static" option based on the number
 	// of selected brushes.

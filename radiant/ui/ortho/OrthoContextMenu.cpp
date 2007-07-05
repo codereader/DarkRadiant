@@ -14,6 +14,7 @@
 #include "gtkutil/dialog.h"
 
 #include "selection/algorithm/Group.h"
+#include "selection/algorithm/ModelFinder.h"
 #include "ui/modelselector/ModelSelector.h"
 
 #include "math/aabb.h"
@@ -114,20 +115,6 @@ void OrthoContextMenu::show(const Vector3& point) {
 	gtk_menu_popup(GTK_MENU(_widget), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
 }
 
-OrthoContextMenu::ModelFinder::ModelFinder() :
-		onlyModels(true)
-{}
-
-void OrthoContextMenu::ModelFinder::visit(scene::Instance& instance) const {
-	Entity* entity = Node_getEntity(instance.path().top());
-	if (entity->isModel()) {
-		modelList.push_back(instance.path());
-	}
-	else {
-		onlyModels = false;
-	}
-}
-
 // Check if the convert to static command should be enabled
 void OrthoContextMenu::checkConvertStatic() {
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
@@ -143,16 +130,14 @@ void OrthoContextMenu::checkConvertStatic() {
 void OrthoContextMenu::checkMonsterClip() {
 
 	// create a ModelFinder and check whether only models were selected
-	ModelFinder visitor;
+	selection::algorithm::ModelFinder visitor;
 	GlobalSelectionSystem().foreachSelected(visitor);
 
 	// enable the "Add MonsterClip" entry only if one or more model is selected
-	if (visitor.modelList.size() > 0 && visitor.onlyModels) {
-		gtk_widget_set_sensitive(_addMonsterClip, true);
-	}
-	else {
-		gtk_widget_set_sensitive(_addMonsterClip, false);
-	}
+	gtk_widget_set_sensitive(
+		_addMonsterClip, 
+		!visitor.empty() && visitor.onlyModels()
+	);
 }
 
 void OrthoContextMenu::checkAddOptions() {
@@ -235,11 +220,14 @@ void OrthoContextMenu::callbackMovePlayerStart(GtkMenuItem* item, OrthoContextMe
 
 void OrthoContextMenu::callbackAddMonsterClip(GtkMenuItem* item, OrthoContextMenu* self) {
 	// create a ModelFinder and retrieve the modelList
-	ModelFinder visitor;
+	selection::algorithm::ModelFinder visitor;
 	GlobalSelectionSystem().foreachSelected(visitor);
 
-	std::vector<scene::Path>::iterator iter;
-	for (iter = visitor.modelList.begin(); iter != visitor.modelList.end(); ++iter) {
+	// Retrieve the list with all the found models from the visitor
+	selection::algorithm::ModelFinder::ModelList list = visitor.getList();
+	
+	selection::algorithm::ModelFinder::ModelList::iterator iter;
+	for (iter = list.begin(); iter != list.end(); ++iter) {
 		// one of the models in the SelectionStack
 		scene::Instance& instance = findInstance(*iter);
 
