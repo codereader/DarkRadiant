@@ -128,7 +128,7 @@ public:
 	 * 			usually true when the classname == "func_static" and
 	 * 			the non-empty spawnarg "model" != "name".
 	 */
-	virtual bool isModel() const;
+	virtual bool isModel() const = 0;
 	
   virtual bool isContainer() const = 0;
   virtual void attach(Observer& observer) = 0;
