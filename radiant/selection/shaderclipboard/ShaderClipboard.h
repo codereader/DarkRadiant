@@ -10,6 +10,8 @@ class ShaderClipboard
 	// The source and target Texturables
 	Texturable _source;
 
+	bool _updatesDisabled;
+
 public:
 	ShaderClipboard();
 

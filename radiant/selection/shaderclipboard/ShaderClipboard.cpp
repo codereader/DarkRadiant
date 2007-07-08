@@ -8,14 +8,19 @@
 
 namespace selection {
 
-ShaderClipboard::ShaderClipboard()
+ShaderClipboard::ShaderClipboard() :
+	_updatesDisabled(false)
 {}
 
 void ShaderClipboard::clear() {
 	_source.clear();
 	
+	_updatesDisabled = true;
+	
 	// Update the status bar information
 	updateStatusText();
+	
+	_updatesDisabled = false;
 }
 
 Texturable ShaderClipboard::getTexturable(SelectionTest& test) {
@@ -30,10 +35,15 @@ Texturable ShaderClipboard::getTexturable(SelectionTest& test) {
 }
 
 void ShaderClipboard::updateMediaBrowsers() {
+	// Avoid nasty loopbacks
+	_updatesDisabled = true;
+	
 	// Set the active shader in the Texture window as well
 	GlobalTextureBrowser().setSelectedShader(_source.getShader());
 	std::string sourceShader = _source.getShader();
 	ui::MediaBrowser::getInstance().setSelection(sourceShader);
+	
+	_updatesDisabled = false;
 	
 	updateStatusText();
 }
@@ -61,12 +71,16 @@ void ShaderClipboard::updateStatusText() {
 }
 
 void ShaderClipboard::setSource(SelectionTest& test) {
+	if (_updatesDisabled) return; // loopback guard
+	
 	_source = getTexturable(test);
 	
 	updateMediaBrowsers();
 }
 
 void ShaderClipboard::setSource(std::string shader) {
+	if (_updatesDisabled) return; // loopback guard
+	
 	_source.clear();
 	_source.shader = shader;
 	
@@ -76,6 +90,8 @@ void ShaderClipboard::setSource(std::string shader) {
 }
 
 void ShaderClipboard::setSource(Patch& sourcePatch) {
+	if (_updatesDisabled) return; // loopback guard
+	
 	_source.clear();
 	_source.patch = &sourcePatch;
 	
@@ -83,6 +99,8 @@ void ShaderClipboard::setSource(Patch& sourcePatch) {
 }
 
 void ShaderClipboard::setSource(Face& sourceFace) {
+	if (_updatesDisabled) return; // loopback guard
+	
 	_source.clear();
 	_source.face = &sourceFace;
 	
