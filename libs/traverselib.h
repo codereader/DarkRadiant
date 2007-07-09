@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "scenelib.h"
 #include "undolib.h"
 
-#include <vector>
+#include <list>
 #include <algorithm>
 
 // An ObserverFunctor does something with the given <observer> and the given <node> 
@@ -107,7 +107,7 @@ public:
 class TraversableNodeSet : 
 	public scene::Traversable
 {
-	typedef std::vector<scene::INodePtr> NodeList;
+	typedef std::list<scene::INodePtr> NodeList;
 	NodeList _children;
 	
 	// The undoable object, which overwrites the content of this class on demand
