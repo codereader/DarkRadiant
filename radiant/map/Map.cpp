@@ -74,22 +74,32 @@ namespace map {
 		  {}
 		  
 		  bool pre(scene::INodePtr node) const {
-		    m_nodes.push_back(node);
+		  	m_nodes.push_back(node);
 		    Node_getTraversable(m_root)->erase(node);
 		    return false;
 		  }
 		};
 		
-		void Node_insertChildFirst(scene::INodePtr parent, scene::INodePtr child)
-		{
-		  std::vector<scene::INodePtr> nodes;
-		  Node_getTraversable(parent)->traverse(CollectAllWalker(parent, nodes));
-		  Node_getTraversable(parent)->insert(child);
+		void Node_insertChildFirst(scene::INodePtr parent, scene::INodePtr child) {
+			// Create a container to collect all the existing entities in the scenegraph
+			std::vector<scene::INodePtr> nodes;
+			
+			// The parent has to be a Traversable node
+			scene::TraversablePtr traversable = Node_getTraversable(parent);
+			assert(traversable);
+			
+			// Collect all the child nodes of <parent> and move them into the container
+			traversable->traverse(CollectAllWalker(parent, nodes));
+			// Now that the <parent> is empty, insert the worldspawn as first child
+			traversable->insert(child);
 		
-		  for(std::vector<scene::INodePtr>::iterator i = nodes.begin(); i != nodes.end(); ++i)
-		  {
-		    Node_getTraversable(parent)->insert((*i));
-		  }
+			// Insert all the nodes again
+			for (std::vector<scene::INodePtr>::iterator i = nodes.begin(); 
+				 i != nodes.end(); 
+				 ++i)
+			{
+				Node_getTraversable(parent)->insert(*i);
+			}
 		}
 		
 		scene::INodePtr createWorldspawn()

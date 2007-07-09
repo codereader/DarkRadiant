@@ -9,6 +9,10 @@
 inline std::string getNodeInfo(const scene::INodePtr& node) {
 	std::string returnValue;
 	
+	if (node == NULL) {
+		return "NULL";
+	}
+	
 	returnValue += (node->isRoot()) ? "root" : nodetype_get_name(node_get_nodetype(node));
 	
 	NameablePtr nameable = boost::dynamic_pointer_cast<Nameable>(node);
