@@ -110,6 +110,7 @@
 		<minWorldCoord value="-65536" />
 		<defaultTexture value="_default" />
 		<collisionTexture value="textures/common/collision" />
+		<monsterClipShader value="textures/common/monster_clip" />
 		<collisionModelExt value="cm" />
 		<defaultCurveEntity value="func_static" />
 		<curveNurbsKey value="curve_Nurbs" />

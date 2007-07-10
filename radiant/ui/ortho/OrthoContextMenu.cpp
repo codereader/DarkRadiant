@@ -8,6 +8,7 @@
 #include "entitylib.h" // EntityFindByClassnameWalker
 #include "entity.h" // Entity_createFromSelection()
 #include "ientity.h" // Node_getEntity()
+#include "iregistry.h"
 #include "mainframe.h"
 #include "map/Map.h"
 
@@ -31,6 +32,8 @@ namespace {
     const char* MODEL_CLASSNAME = "func_static";
     const char* SPEAKER_CLASSNAME = "speaker";
     const char* PLAYERSTART_CLASSNAME = "info_player_start";
+
+	const std::string RKEY_MONSTERCLIP_SHADER = "game/defaults/monsterClipShader";
 
     const char* ADD_ENTITY_TEXT = "Create entity...";
     const char* ADD_ENTITY_ICON = "cmenu_add_entity.png";
@@ -238,7 +241,8 @@ void OrthoContextMenu::callbackAddMonsterClip(GtkMenuItem* item, OrthoContextMen
 		scene::INodePtr brushNode(GlobalBrushCreator().createBrush());
 		Node_getTraversable(GlobalMap().findOrInsertWorldspawn())->insert(brushNode);
 		Brush* theBrush = Node_getBrush(brushNode);
-		Scene_BrushResize(*theBrush, brushAABB, "textures/common/monster_clip");
+		std::string clipShader = GlobalRegistry().get(RKEY_MONSTERCLIP_SHADER);
+		Scene_BrushResize(*theBrush, brushAABB, clipShader);
 	}
 }
 
@@ -301,7 +305,8 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
 					scene::INodePtr brushNode(GlobalBrushCreator().createBrush());
 					Node_getTraversable(GlobalMap().findOrInsertWorldspawn())->insert(brushNode);
 					Brush* theBrush = Node_getBrush(brushNode);
-					Scene_BrushResize(*theBrush, brushAABB, "textures/common/monster_clip");
+					std::string clipShader = GlobalRegistry().get(RKEY_MONSTERCLIP_SHADER);
+					Scene_BrushResize(*theBrush, brushAABB, clipShader);
 				}
             }
             catch (EntityCreationException e) {
