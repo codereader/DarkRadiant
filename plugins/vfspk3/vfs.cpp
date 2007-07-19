@@ -46,7 +46,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <glib/gslist.h>
 #include <glib/gdir.h>
 #include <glib/gstrfuncs.h>
 
@@ -143,62 +142,6 @@ static void InitPakFile (ArchiveModules& archiveModules, const char *filename)
     g_archives.push_back(entry);
     globalOutputStream() << "  pak file: " << filename << "\n";
   }
-}
-
-inline void pathlist_prepend_unique(GSList*& pathlist, char* path)
-{
-  if(g_slist_find_custom(pathlist, path, (GCompareFunc)path_compare) == 0)
-  {
-    pathlist = g_slist_prepend(pathlist, path);
-  }
-  else
-  {
-    g_free(path);
-  }
-}
-
-class DirectoryListVisitor : public Archive::Visitor
-{
-  GSList*& m_matches;
-  const char* m_directory;
-public:
-  DirectoryListVisitor(GSList*& matches, const char* directory)
-    : m_matches(matches), m_directory(directory)
-  {}
-  void visit(const char* name)
-  {
-    const char* subname = path_make_relative(name, m_directory);
-    if(subname != name)
-    {
-      if(subname[0] == '/')
-        ++subname;
-      char* dir = g_strdup(subname);
-      char* last_char = dir + strlen(dir);
-      if(last_char != dir && *(--last_char) == '/')
-        *last_char = '\0';
-      pathlist_prepend_unique(m_matches, dir);
-    }
-  }
-};
-
-static GSList* GetListInternal (const char *refdir, const char *ext, bool directories, std::size_t depth)
-{
-  GSList* files = 0;
-
-  ASSERT_MESSAGE(refdir[strlen(refdir) - 1] == '/', "search path does not end in '/'");
-
-  if(directories)
-  {
-    for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
-    {
-      DirectoryListVisitor visitor(files, refdir);
-      (*i).archive->forEachFile(Archive::VisitorFunc(visitor, Archive::eDirectories, depth), refdir);
-    }
-  }
-
-  files = g_slist_reverse(files);
-
-  return files;
 }
 
 inline int ascii_to_upper(int c)
@@ -451,20 +394,6 @@ void FreeFile (void *p)
   free(p);
 }
 
-GSList* GetDirList (const char *dir, std::size_t depth)
-{
-  return GetListInternal (dir, 0, true, depth);
-}
-
-void ClearFileDirList (GSList **lst)
-{
-  while (*lst)
-  {
-    g_free ((*lst)->data);
-    *lst = g_slist_remove (*lst, (*lst)->data);
-  }
-}
-    
 const char* FindFile(const char* relative)
 {
   for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
@@ -530,18 +459,6 @@ public:
   void freeFile(void *p)
   {
     FreeFile(p);
-  }
-
-  void forEachDirectory(const char* basedir, const FileNameCallback& callback, std::size_t depth)
-  {
-    GSList* list = GetDirList(basedir, depth);
-
-    for(GSList* i = list; i != 0; i = g_slist_next(i))
-    {
-      callback(reinterpret_cast<const char*>((*i).data));
-    }
-
-    ClearFileDirList(&list);
   }
 
     // Call the specified callback function for each file matching extension

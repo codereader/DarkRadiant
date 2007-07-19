@@ -7,6 +7,8 @@
 #include "os/path.h"
 #include "generic/callback.h"
 
+#include <iostream>
+
 class FileVisitor 
 : public Archive::Visitor
 {

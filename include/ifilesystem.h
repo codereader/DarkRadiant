@@ -72,8 +72,6 @@ public:
   /// \deprecated Deprecated.
   virtual void freeFile(void *p) = 0;
 
-  /// \brief Calls \p callback for each directory under \p basedir.
-  virtual void forEachDirectory(const char* basedir, const FileNameCallback& callback, std::size_t depth = 1) = 0;
   /// \brief Calls \p callback for each file under \p basedir matching \p extension.
   /// Use "*" as \p extension to match all file extensions.
   virtual void forEachFile(const char* basedir, const char* extension, const FileNameCallback& callback, std::size_t depth = 1) = 0;
