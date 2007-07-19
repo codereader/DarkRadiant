@@ -42,6 +42,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
 #include "vfs.h"
+#include "FileVisitor.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -60,7 +61,6 @@ ArchiveModules& FileSystemQ3API_getArchiveModules();
 #include "stream/stringstream.h"
 #include "os/path.h"
 #include "moduleobservers.h"
-
 
 #define VFS_MAXDIRS 8
 
@@ -181,28 +181,6 @@ public:
   }
 };
 
-class FileListVisitor : public Archive::Visitor
-{
-  GSList*& m_matches;
-  const char* m_directory;
-  const char* m_extension;
-public:
-  FileListVisitor(GSList*& matches, const char* directory, const char* extension)
-    : m_matches(matches), m_directory(directory), m_extension(extension)
-  {}
-  void visit(const char* name)
-  {
-    const char* subname = path_make_relative(name, m_directory);
-    if(subname != name)
-    {
-      if(subname[0] == '/')
-        ++subname;
-      if(m_extension[0] == '*' || extension_equal(path_get_extension(subname), m_extension))
-        pathlist_prepend_unique(m_matches, g_strdup (subname));
-    }
-  }
-};
-    
 static GSList* GetListInternal (const char *refdir, const char *ext, bool directories, std::size_t depth)
 {
   GSList* files = 0;
@@ -215,14 +193,6 @@ static GSList* GetListInternal (const char *refdir, const char *ext, bool direct
     {
       DirectoryListVisitor visitor(files, refdir);
       (*i).archive->forEachFile(Archive::VisitorFunc(visitor, Archive::eDirectories, depth), refdir);
-    }
-  }
-  else
-  {
-   for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
-    {
-      FileListVisitor visitor(files, refdir, ext);
-      (*i).archive->forEachFile(Archive::VisitorFunc(visitor, Archive::eFiles, depth), refdir);
     }
   }
 
@@ -578,22 +548,27 @@ public:
 
     ClearFileDirList(&list);
   }
-  void forEachFile(const char* basedir, const char* extension, const FileNameCallback& callback, std::size_t depth)
-  {
-    GSList* list = GetFileList(basedir, extension, depth);
 
-    for(GSList* i = list; i != 0; i = g_slist_next(i))
+    // Call the specified callback function for each file matching extension
+    // inside basedir.
+    void forEachFile(const char* basedir, 
+    				 const char* extension, 
+    				 const FileNameCallback& callback, 
+    				 std::size_t depth)
     {
-      const char* name = reinterpret_cast<const char*>((*i).data);
-      if(extension_equal(path_get_extension(name), extension) 
-         || extension_equal(extension, "*"))
-      {
-        callback(name);
-      }
+    	// Visit each Archive, applying the FileVisitor to each one (which in
+    	// turn calls the callback for each matching file.
+    	for (archives_t::iterator i = g_archives.begin(); 
+    		 i != g_archives.end(); 
+    		 ++i)
+	    {
+    		FileVisitor visitor(callback, basedir, extension);
+    		i->archive->forEachFile(
+    						Archive::VisitorFunc(
+    								visitor, Archive::eFiles, depth), basedir);
+	    }
     }
 
-    ClearFileDirList(&list);
-  }
   GSList* getDirList(const char *basedir)
   {
     return GetDirList(basedir, 1);

@@ -43,12 +43,19 @@ public:
 		ArchiveTextFile* file = 
 			GlobalFileSystem().openTextFile(SOUND_FOLDER 
 											+ std::string(fileName));
-		assert(file);
-		std::string contents = file->getInputStream().getAsString();
-		file->release();
+		
+		// Parse contents of file if it was opened successfully
+		if (file) {
+			std::string contents = file->getInputStream().getAsString();
+			file->release();
 	
-		// Pass the contents back to the SkinCache module for parsing
-		_manager.parseShadersFrom(contents);				
+			// Pass the contents back to the SkinCache module for parsing
+			_manager.parseShadersFrom(contents);
+		}
+		else {
+			std::cerr << "[sound] Warning: unable to open \"" 
+					  << fileName << "\"" << std::endl;
+		}
 	}
 };
 
