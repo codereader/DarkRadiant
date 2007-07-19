@@ -451,11 +451,6 @@ void FreeFile (void *p)
   free(p);
 }
 
-GSList* GetFileList (const char *dir, const char *ext, std::size_t depth)
-{
-  return GetListInternal (dir, ext, false, depth);
-}
-
 GSList* GetDirList (const char *dir, std::size_t depth)
 {
   return GetListInternal (dir, 0, true, depth);
@@ -568,19 +563,6 @@ public:
     								visitor, Archive::eFiles, depth), basedir);
 	    }
     }
-
-  GSList* getDirList(const char *basedir)
-  {
-    return GetDirList(basedir, 1);
-  }
-  GSList* getFileList(const char *basedir, const char *extension)
-  {
-    return GetFileList(basedir, extension, 1);
-  }
-  void clearFileDirList(GSList **lst)
-  {
-    ClearFileDirList(lst);
-  }
 
   const char* findFile(const char *name)
   {
