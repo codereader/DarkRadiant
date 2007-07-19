@@ -81,11 +81,14 @@ class Archive
 {
 public:
 
-  class Visitor
-  {
-  public:
-    virtual void visit(const char* name) = 0;
-  };
+	/**
+	 * Visitor class for traversing files within an Archive.
+	 */
+	class Visitor
+	{
+	public:
+		virtual void visit(const std::string& name) = 0;
+	};
 
   typedef CustomArchiveVisitor VisitorFunc;
 
