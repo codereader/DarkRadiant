@@ -231,9 +231,9 @@ void EntityClassDoom3_parse(const std::string& inStr)
 }
 
 
-void EntityClassDoom3_loadFile(const char* filename)
+void EntityClassDoom3_loadFile(const std::string& filename)
 {
-    const std::string fullname = "def/" + std::string(filename);
+    const std::string fullname = "def/" + filename;
 
 	ArchiveTextFile* file = GlobalFileSystem().openTextFile(fullname.c_str());
 	if(file != 0) {
@@ -315,7 +315,7 @@ class EntityClassDoom3:
             makeQuoted("def") << " for *.def\n";
         GlobalFileSystem().forEachFile(
         	"def/", "def",
-            FreeCaller1<const char *, EntityClassDoom3_loadFile>());
+            FreeCaller1<const std::string&, EntityClassDoom3_loadFile>());
     
         // Resolve inheritance on the model classes
         for (Models::iterator i = g_models.begin(); i != g_models.end(); ++i) {

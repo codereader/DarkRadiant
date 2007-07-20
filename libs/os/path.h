@@ -33,6 +33,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "string/string.h"
 
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/replace.hpp>
+
+
 #if defined(WIN32)
 #define OS_CASE_INSENSITIVE
 #endif
@@ -163,6 +167,7 @@ inline std::size_t path_get_filename_base_length(const char* path)
 
 /// \brief If \p path is a child of \p base, returns the subpath relative to \p base, else returns \p path.
 /// O(n)
+// DEPRECATED
 inline const char* path_make_relative(const char* path, const char* base)
 {
   const std::size_t length = string_length(base);
@@ -172,6 +177,39 @@ inline const char* path_make_relative(const char* path, const char* base)
   }
   return path;
 }
+
+namespace os {
+
+	/**
+	 * Return the path of fullPath relative to basePath, as long as fullPath
+	 * is contained within basePath. If not, fullPath is returned unchanged.
+	 */
+	inline std::string getRelativePath(const std::string& fullPath,
+									   const std::string& basePath)
+	{
+		if (boost::algorithm::starts_with(fullPath, basePath)) {
+			return fullPath.substr(basePath.length());
+		}
+		else {
+			return fullPath;
+		}
+	}
+	
+	/**
+	 * Get the extension of the given filename. If there is no extension, an
+	 * empty string is returned.
+	 */
+	inline std::string getExtension(const std::string& path) {
+		std::size_t dotPos = path.rfind('.');
+		if (dotPos == std::string::npos) {
+			return "";
+		}
+		else {
+			return path.substr(dotPos + 1);
+		}
+	}
+
+} // namespace os
 
 /// \brief Returns a pointer to the first character of the file extension of \p path, or "" if not found.
 /// O(n)
@@ -282,9 +320,6 @@ TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const Directo
 /** General utility functions for OS-related tasks
  */
  
-#include <boost/algorithm/string/replace.hpp>
-#include <boost/algorithm/string/predicate.hpp>
-
 namespace os {
  
     /** Convert the slashes in a Doom 3 path to forward-slashes. Doom 3 accepts either
@@ -310,16 +345,6 @@ namespace os {
 		return output;
 	}
 		    
-    
-    
-	/** Return the extension for the given path, which is equal to the characters
-	 * following the final period.
-	 */
-	 
-	inline std::string getExtension(const std::string& path) {
-		return path.substr(path.rfind(".") + 1);
-	}
-    
 }
 
 

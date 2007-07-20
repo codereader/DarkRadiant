@@ -468,13 +468,16 @@ public:
     				 const FileNameCallback& callback, 
     				 std::size_t depth)
     {
+    	// Set of visited files, to avoid name conflicts
+    	std::set<std::string> visitedFiles;
+    	
     	// Visit each Archive, applying the FileVisitor to each one (which in
     	// turn calls the callback for each matching file.
     	for (archives_t::iterator i = g_archives.begin(); 
     		 i != g_archives.end(); 
     		 ++i)
 	    {
-    		FileVisitor visitor(callback, basedir, extension);
+    		FileVisitor visitor(callback, basedir, extension, visitedFiles);
     		i->archive->forEachFile(
     						Archive::VisitorFunc(
     								visitor, Archive::eFiles, depth), basedir);

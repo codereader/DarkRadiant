@@ -142,7 +142,7 @@ void ShaderFileLoader::parseShaderTable(parser::DefTokeniser& tokeniser)
 }
 
 // Functor operator
-void ShaderFileLoader::operator() (const char* fileName)
+void ShaderFileLoader::operator() (const std::string& fileName)
 {
 	// Construct the full VFS path
 	std::string fullPath = _basePath + fileName;
