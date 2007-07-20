@@ -28,7 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/constant.h"
 #include "generic/callbackfwd.h"
 
-typedef Callback1<const char*> ArchiveNameCallback;
 typedef Callback1<const std::string&> FileNameCallback;
 
 class ArchiveFile;
@@ -87,8 +86,6 @@ public:
   /// \brief Detach an \p observer previously-attached by calling \c attach.
   virtual void detach(ModuleObserver& observer) = 0;
 
-  virtual Archive* getArchive(const char* archiveName) = 0;
-  virtual void forEachArchive(const ArchiveNameCallback& callback) = 0;
 };
 
 #include "modulesystem.h"

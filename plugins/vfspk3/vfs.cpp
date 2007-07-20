@@ -502,30 +502,6 @@ public:
     g_observers.detach(observer);
   }
 
-  Archive* getArchive(const char* archiveName)
-  {
-    for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
-    {
-      if((*i).is_pakfile)
-      {
-        if(path_equal((*i).name.c_str(), archiveName))
-        {
-          return (*i).archive;
-        }
-      }
-    }
-    return 0;
-  }
-  void forEachArchive(const ArchiveNameCallback& callback)
-  {
-    for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
-    {
-      if((*i).is_pakfile)
-      {
-        callback((*i).name.c_str());
-      }
-    }
-  }
 };
 
 Quake3FileSystem g_Quake3FileSystem;
