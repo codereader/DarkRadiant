@@ -31,7 +31,7 @@ class ModelFileFunctor
 	
 public:
 	
-	typedef const char* first_argument_type;
+	typedef const std::string& first_argument_type;
 
 	// Constructor sets the populator
 	ModelFileFunctor(gtkutil::VFSTreePopulator& pop)
@@ -43,14 +43,12 @@ public:
 	}
 
 	// Functor operator
-	void operator() (const char* file) {
-
-		std::string rawPath(file);			
+	void operator() (const std::string& file) {
 
 		// Test the extension. If it is not LWO or ASE (case-insensitive),
 		// not interested
-		if (!boost::algorithm::iends_with(rawPath, LWO_EXTENSION) 
-				&& !boost::algorithm::iends_with(rawPath, ASE_EXTENSION)) 
+		if (!boost::algorithm::iends_with(file, LWO_EXTENSION) 
+				&& !boost::algorithm::iends_with(file, ASE_EXTENSION)) 
 		{
 			return;
 		}
@@ -58,7 +56,7 @@ public:
 		{
 			_progress.setText(boost::lexical_cast<std::string>(++_count)
 							  + " models loaded");
-			_populator.addPath(rawPath);
+			_populator.addPath(file);
 		}
 	}
 };

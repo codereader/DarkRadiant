@@ -25,7 +25,7 @@ class SoundFileLoader
 public:
 
 	// Required type
-	typedef const char* first_argument_type;
+	typedef const std::string& first_argument_type;
 	
 	/**
 	 * Constructor. Set the sound manager reference.
@@ -37,12 +37,11 @@ public:
 	/**
 	 * Functor operator.
 	 */
-	void operator() (const char* fileName) {
+	void operator() (const std::string& fileName) {
 
 		// Open the .sndshd file and get its contents as a std::string
 		ArchiveTextFile* file = 
-			GlobalFileSystem().openTextFile(SOUND_FOLDER 
-											+ std::string(fileName));
+			GlobalFileSystem().openTextFile(SOUND_FOLDER + fileName);
 		
 		// Parse contents of file if it was opened successfully
 		if (file) {

@@ -7,7 +7,7 @@
 #include "os/path.h"
 #include "generic/callback.h"
 
-#include <iostream>
+#include <set>
 
 class FileVisitor 
 : public Archive::Visitor
@@ -15,29 +15,42 @@ class FileVisitor
 	// The FileNameCallback to call for each located file
 	const FileNameCallback& _callback;
 	
-	const char* m_directory;
-  const char* m_extension;
+	// Set of already-visited files
+	std::set<std::string>& _visitedFiles;
+	
+	// Directory to search within
+	std::string _directory;
+	
+	// Extension to match
+	std::string _extension;
+
 public:
 	
 	/* Constructor */
-	FileVisitor(const FileNameCallback& cb, const char* dir, const char* ext)
-    : _callback(cb), m_directory(dir), m_extension(ext)
+	FileVisitor(const FileNameCallback& cb, 
+				const char* dir, 
+				const char* ext,
+				std::set<std::string>& visitedFiles)
+    : _callback(cb), 
+      _visitedFiles(visitedFiles),
+      _directory(dir), 
+      _extension(ext)
     {}
 	
 	/* Required visit function */
 	void visit(const std::string& name)
 	{
-		const char* subname = path_make_relative(name.c_str(), m_directory);
-	    if(subname != name.c_str())
+		std::string subname = os::getRelativePath(name, _directory);
+	    if(subname != name)
 	    {
-	      if(subname[0] == '/')
-	        ++subname;
-	      if (m_extension[0] == '*' 
-	    	  || extension_equal(path_get_extension(subname), m_extension))
-	      {
-	    	  // Matching file, call the callback
-	    	  _callback(subname);
-	      }
+	    	if (_extension == "*" 
+	    		|| os::getExtension(subname) == _extension
+	    		&& _visitedFiles.find(subname) == _visitedFiles.end())
+	    	{
+	    		// Matching file, call the callback and add to visited file set
+	    		_callback(subname);
+	    		_visitedFiles.insert(subname);
+	    	}
 	    }
 	}
 };

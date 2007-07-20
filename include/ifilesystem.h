@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/callbackfwd.h"
 
 typedef Callback1<const char*> ArchiveNameCallback;
-typedef Callback1<const char*> FileNameCallback;
+typedef Callback1<const std::string&> FileNameCallback;
 
 class ArchiveFile;
 class ArchiveTextFile;

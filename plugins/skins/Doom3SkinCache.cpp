@@ -27,7 +27,7 @@ class SkinLoader
 public:
 
 	// Required typedef
-	typedef const char* first_argument_type;
+	typedef const std::string& first_argument_type;
 	
 	// Constructor
 	SkinLoader(Doom3SkinCache& c)
@@ -35,12 +35,11 @@ public:
 	{}
 	
 	// Functor operator
-	void operator() (const char* fileName) {
+	void operator() (const std::string& fileName) {
 
 		// Open the .skin file and get its contents as a std::string
 		ArchiveTextFile* file = 
-			GlobalFileSystem().openTextFile(SKINS_FOLDER 
-											+ std::string(fileName));
+			GlobalFileSystem().openTextFile(SKINS_FOLDER + fileName);
 		assert(file);
 		std::string contents = file->getInputStream().getAsString();
 		file->release();

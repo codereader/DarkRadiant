@@ -39,7 +39,7 @@ private:
 public:
 
 	// Required functor typedef
-	typedef const char* first_argument_type;
+	typedef const std::string& first_argument_type;
 	
 	// Constructor. Set the basepath to prepend onto shader filenames.
 	ShaderFileLoader(const std::string& path)
@@ -47,7 +47,7 @@ public:
 	{}
 	
 	// Functor operator
-	void operator() (const char* fileName);
+	void operator() (const std::string& fileName);
 };
 
 }
