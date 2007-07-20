@@ -506,14 +506,6 @@ public:
 
 Quake3FileSystem g_Quake3FileSystem;
 
-void FileSystem_Init()
-{
-}
-
-void FileSystem_Shutdown()
-{
-}
-
 VirtualFileSystem& GetFileSystem()
 {
   return g_Quake3FileSystem;
