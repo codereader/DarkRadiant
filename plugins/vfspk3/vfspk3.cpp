@@ -53,13 +53,9 @@ public:
 
   FileSystemQ3API()
   {
-    FileSystem_Init();
     m_filesystemq3 = &GetFileSystem();
   }
-  ~FileSystemQ3API()
-  {
-    FileSystem_Shutdown();
-  }
+
   VirtualFileSystem* getTable()
   {
     return m_filesystemq3;
