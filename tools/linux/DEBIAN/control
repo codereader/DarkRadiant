@@ -1,0 +1,11 @@
+Package: darkradiant
+Version: %04d%02d%02d
+Section: Games
+Priority: optional
+Architecture: all
+Maintainer: OrbWeaver [orbweaver3d@gmail.com]
+Essential: no
+Depends: 
+Provides: darkradiant
+Description: Level editor for Doom 3 and The Dark Mod.
+
