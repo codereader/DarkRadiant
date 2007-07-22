@@ -6,6 +6,12 @@
 namespace particles
 {
 
+/* CONSTANTS */
+namespace {
+	const char* PARTICLES_DIR = "particles/";
+	const char* PARTICLES_EXT = "prt";
+}
+
 class ParticlesManager
 : public IParticlesManager
 {
@@ -20,9 +26,20 @@ public:
 	}
 	
 	/*
+	 * Main constructor.
+	 */
+	ParticlesManager();
+	
+	/*
 	 * Visit each particles def.
 	 */
 	void forEachParticleDef(const ParticleDefVisitor& visitor) const;
+	
+	/**
+	 * Accept a string containing particle definitions to parse and add to the
+	 * list.
+	 */
+	void parseString(const std::string& s);
 	
 };
 
