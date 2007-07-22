@@ -1,10 +1,12 @@
 #ifndef PARTICLESMANAGER_H_
 #define PARTICLESMANAGER_H_
 
+#include "ParticleDef.h"
 #include "ParticleStage.h"
 
 #include "iparticles.h"
 
+#include <map>
 
 /* FORWARD DECLS */
 namespace parser { class DefTokeniser; }
@@ -21,6 +23,10 @@ namespace {
 class ParticlesManager
 : public IParticlesManager
 {
+	// Map of named particle defs
+	typedef std::map<std::string, ParticleDef> ParticleDefMap;
+	ParticleDefMap _particleDefs;
+	
 private:
 	
 	// Recursive-descent parse functions
