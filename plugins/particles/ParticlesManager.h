@@ -1,7 +1,13 @@
 #ifndef PARTICLESMANAGER_H_
 #define PARTICLESMANAGER_H_
 
+#include "ParticleStage.h"
+
 #include "iparticles.h"
+
+
+/* FORWARD DECLS */
+namespace parser { class DefTokeniser; }
 
 namespace particles
 {
@@ -15,6 +21,12 @@ namespace {
 class ParticlesManager
 : public IParticlesManager
 {
+private:
+	
+	// Recursive-descent parse functions
+	void parseParticleDef(parser::DefTokeniser& tok);
+	ParticleStage parseParticleStage(parser::DefTokeniser& tok);
+	
 public:
 	
 	/* Module stuff */
