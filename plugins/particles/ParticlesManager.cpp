@@ -29,9 +29,16 @@ ParticlesManager::ParticlesManager() {
 	
 }
 
+// Visit all of the particle defs
 void ParticlesManager::forEachParticleDef(const ParticleDefVisitor& v) const
 {
-	std::cout << "Particles visit" << std::endl;
+	// Invoke the visitor for each ParticleDef object
+	for (ParticleDefMap::const_iterator i = _particleDefs.begin();
+		 i != _particleDefs.end();
+		 ++i)
+	{
+		v(i->second);
+	}
 }
 
 // Parse particle defs from string
@@ -50,10 +57,11 @@ void ParticlesManager::parseParticleDef(parser::DefTokeniser& tok) {
 
 	// Standard DEF, starts with "particle <name> {"
 	tok.assertNextToken("particle");
-	
-	ParticleDef pdef(tok.nextToken());
+	std::string name = tok.nextToken();
 	tok.assertNextToken("{");
 	
+	ParticleDef pdef(name);
+
 	// Any global keywords will come first, after which we get a series of 
 	// brace-delimited stages.
 	std::string token = tok.nextToken();
@@ -73,6 +81,9 @@ void ParticlesManager::parseParticleDef(parser::DefTokeniser& tok) {
 		// Get next token
 		token = tok.nextToken();
 	}
+	
+	// Add the ParticleDef to the map
+	_particleDefs.insert(ParticleDefMap::value_type(name, pdef));
 }
 
 // Parse an individual particle stage
