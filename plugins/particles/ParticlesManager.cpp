@@ -7,7 +7,9 @@
 
 #include "generic/callback.h"
 #include "parser/DefTokeniser.h"
+#include "math/Vector4.h"
 
+#include <boost/lexical_cast.hpp>
 #include <iostream>
 
 namespace particles
@@ -60,8 +62,12 @@ void ParticlesManager::parseParticleDef(parser::DefTokeniser& tok) {
 			tok.skipTokens(1); // we don't care about depthHack
 		}
 		else if (token == "{") {
-			// Start of stage
+			
+			// Parse stage
 			ParticleStage stage(parseParticleStage(tok));
+			
+			// Append to the ParticleDef
+			pdef.appendStage(stage);
 		}
 		
 		// Get next token
@@ -71,8 +77,40 @@ void ParticlesManager::parseParticleDef(parser::DefTokeniser& tok) {
 
 // Parse an individual particle stage
 ParticleStage ParticlesManager::parseParticleStage(parser::DefTokeniser& tok) {
-	while (tok.hasMoreTokens() && tok.nextToken() != "}") { }
-	return ParticleStage();
+	
+	ParticleStage stage;
+	
+	// Read values. These are not a simple list of keyvalue pairs, but some
+	// values may consist of more than one token.
+	std::string token = tok.nextToken();
+	while (token != "}") {
+		
+		if (token == "count") {
+			try {
+				stage.setCount(boost::lexical_cast<int>(tok.nextToken()));
+			}
+			catch (boost::bad_lexical_cast e) {
+				std::cerr << "[particles] Bad count value '" << token 
+						  << "'" << std::endl;
+			}
+		}
+		else if (token == "color") {
+			
+			// Read 4 values and assemble as a vector4
+			Vector4 col;
+			col.x() = boost::lexical_cast<float>(tok.nextToken());
+			col.y() = boost::lexical_cast<float>(tok.nextToken());
+			col.z() = boost::lexical_cast<float>(tok.nextToken());
+			col.w() = boost::lexical_cast<float>(tok.nextToken());
+			
+			// Set the stage colour
+			stage.setColour(col);
+		}
+		
+		token = tok.nextToken();
+	}
+	
+	return stage;
 }
 
 }
