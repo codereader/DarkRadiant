@@ -203,6 +203,15 @@ image_env.Depends(image_lib, jpeg_lib)
 image_env.Depends(image_lib, ddslib_lib)
 image_env.Install(INSTALL + '/modules', image_lib)
 
+# Particles manager
+particlesEnv = module_env.Copy()
+particlesSrc = ['particles.cpp', 'ParticlesManager.cpp']
+particlesLib = particlesEnv.SharedLibrary(
+                target='particles',
+                source=['plugins/particles/' + f for f in particlesSrc])
+particlesEnv.Install(INSTALL + '/modules', particlesLib)
+
+# Map loading and saving module
 mapdoom3_env = module_env.Copy()
 mapdoom3_lst=build_list('plugins/mapdoom3', 'mapdoom3.cpp parse.cpp write.cpp')
 mapdoom3_env.Append(LIBS = ['xmlutil', 'gtkutil'])
