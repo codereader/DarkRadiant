@@ -2,6 +2,7 @@
 # http://scons.sourceforge.net
 
 import commands, re, sys, os, pickle, string, popen2
+import tempfile
 
 # to access some internal stuff
 import SCons
@@ -349,6 +350,25 @@ SourceSignatures('timestamp')
 Export('GLOBALS ' + GLOBALS)
 BuildDir(g_build, '.', duplicate = 0)
 SConscript(g_build + '/SConscript')
-#os.system('python ./install.py')
 
 # end targets ------------------------------------
+
+################################################################################
+# POST-PROCESSING
+#
+# Build Linux packages if required
+
+packageType = ARGUMENTS.get('build_package', None)
+if packageType == 'deb':
+    
+    print "Building Debian package..."
+
+    # Build a Debian package. We need a temporary directory into which the
+    # installation tree and DEBIAN/control will be copied.
+    tempDir = tempfile.mkdtemp()
+    os.system('mkdir -p %s/usr/local' % tempDir)
+    os.system('cp -R install %s/usr/local/darkradiant' % tempDir)
+    os.system('cp -R tools/linux/DEBIAN %s' % tempDir)
+    os.system('dpkg-deb -b %s darkradiant.deb' % tempDir)
+    os.system('rm -rf %s' % tempDir)
+

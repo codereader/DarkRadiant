@@ -1,5 +1,5 @@
 Package: darkradiant
-Version: %04d%02d%02d
+Version: 1.0SVN
 Section: Games
 Priority: optional
 Architecture: all
