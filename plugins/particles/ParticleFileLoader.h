@@ -5,6 +5,7 @@
 
 #include "ifilesystem.h"
 #include "iarchive.h"
+#include "parser/ParseException.h"
 
 #include <iostream>
 
@@ -39,9 +40,18 @@ public:
 			GlobalFileSystem().openTextFile(PARTICLES_DIR + filename);
 		
 		if (file) {
+			
 			// Pass the string contents to the manager
 			std::string contents = file->getInputStream().getAsString();
-			_manager.parseString(contents);
+			
+			try {
+				_manager.parseString(contents);
+			}
+			catch (parser::ParseException e) {
+				std::cerr << "[particles] Failed to parse " << filename
+						  << ": " << e.what() << std::endl;
+			}
+			
 			file->release();
 		}
 		else {
