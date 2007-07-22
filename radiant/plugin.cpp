@@ -52,6 +52,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iimage.h"
 #include "itoolbar.h"
 #include "imap.h"
+#include "iparticles.h"
 #include "inamespace.h"
 
 #include "gtkutil/messagebox.h"
@@ -180,7 +181,8 @@ class RadiantDependencies :
   public GlobalNamespaceModuleRef,
   public GlobalClipperModuleRef,
   public GlobalGridModuleRef,
-  public GlobalSoundManagerModuleRef
+  public GlobalSoundManagerModuleRef,
+  public GlobalParticlesManagerModuleRef
 {
   ImageModulesRef m_image_modules;
   MapModulesRef m_map_modules;
