@@ -1,7 +1,11 @@
 #ifndef PARTICLEDEF_H_
 #define PARTICLEDEF_H_
 
+#include "ParticleStage.h"
+
 #include "iparticles.h"
+
+#include <vector>
 
 namespace particles
 {
@@ -15,6 +19,10 @@ class ParticleDef
 {
 	// Name
 	std::string _name;
+	
+	// Vector of stages
+	typedef std::vector<ParticleStage> StageList;
+	StageList _stages;
 	
 public:
 	
@@ -30,6 +38,13 @@ public:
 	 */
 	std::string getName() const {
 		return _name;
+	}
+	
+	/**
+	 * Append a particle stage.
+	 */
+	void appendStage(const ParticleStage& stage) {
+		_stages.push_back(stage);
 	}
 };
 

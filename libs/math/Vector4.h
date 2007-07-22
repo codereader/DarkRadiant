@@ -51,6 +51,23 @@ public:
     	_v[3] = w_;
   	}
 
+  	/**
+  	 * Construct a BasicVector4 by parsing the space-separated string.
+  	 */
+  	BasicVector4(const std::string& str) {
+    	
+  		// Initialise the vector with 0, in case the string parse fails
+    	_v[0] = _v[1] = _v[2] = _v[3] = 0;
+    	
+    	// Use a stringstream to parse the string
+        std::stringstream strm(str);
+        strm << std::skipws;
+        strm >> _v[0];
+        strm >> _v[1];
+        strm >> _v[2];
+        strm >> _v[3];
+  	}
+  	
 	// Return non-constant references to the components
   	Element& x() {
     	return _v[0];
