@@ -22,7 +22,8 @@ class ModelPropertyEditor
 private:
 
 	/* GTK CALLBACKS */
-	static void _onBrowseButton(GtkWidget*, ModelPropertyEditor*);
+	static void _onModelButton(GtkWidget*, ModelPropertyEditor*);
+	static void _onParticleButton(GtkWidget*, ModelPropertyEditor*);
 	
 public:
 
