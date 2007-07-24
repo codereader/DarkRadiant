@@ -2,6 +2,7 @@
 #include "PropertyEditorFactory.h"
 
 #include "ui/modelselector/ModelSelector.h"
+#include "ui/particles/ParticlesChooser.h"
 
 #include "ientity.h"
 #include "iradiant.h"
@@ -33,7 +34,7 @@ ModelPropertyEditor::ModelPropertyEditor(Entity* entity,
 	);
 	g_signal_connect(G_OBJECT(browseButton), 
 					 "clicked", 
-					 G_CALLBACK(_onBrowseButton), 
+					 G_CALLBACK(_onModelButton), 
 					 this);
 	gtk_box_pack_start(GTK_BOX(hbx), browseButton, TRUE, FALSE, 0);
 	
@@ -46,6 +47,10 @@ ModelPropertyEditor::ModelPropertyEditor(Entity* entity,
 			GlobalRadiant().getLocalPixbuf("particle16.png")
 		)
 	);
+	g_signal_connect(G_OBJECT(particleButton), 
+					 "clicked", 
+					 G_CALLBACK(_onParticleButton), 
+					 this);
 	gtk_box_pack_start(GTK_BOX(hbx), particleButton, TRUE, FALSE, 0);
 	
 	// Pack hbox into vbox (to limit vertical size), then edit frame
@@ -56,13 +61,23 @@ ModelPropertyEditor::ModelPropertyEditor(Entity* entity,
 
 /* GTK CALLBACKS */
 
-void ModelPropertyEditor::_onBrowseButton(GtkWidget* w, 
+void ModelPropertyEditor::_onModelButton(GtkWidget* w, 
 										  ModelPropertyEditor* self)
 {
 	// Use the ModelSelector to choose a model
 	ModelSelectorResult result = ModelSelector::chooseModel();
 	if (!result.model.empty())
 		self->_entity->setKeyValue(self->_key, result.model);
+}
+
+void ModelPropertyEditor::_onParticleButton(GtkWidget* w,
+											ModelPropertyEditor* self)
+{
+	// Invoke ParticlesChooser
+	std::string particle = ParticlesChooser::chooseParticle();
+	if (!particle.empty()) {
+		self->_entity->setKeyValue(self->_key, particle);
+	}
 }
 
 

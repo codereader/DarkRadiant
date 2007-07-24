@@ -426,6 +426,7 @@ radiant_src = \
          'ui/colourscheme/ColourScheme.cpp',
          'ui/colourscheme/ColourSchemeManager.cpp',
          'ui/colourscheme/ColourSchemeEditor.cpp',
+         'ui/particles/ParticlesChooser.cpp',
          'ui/patch/PatchInspector.cpp',
          'ui/patch/PatchCreateDialog.cpp',
          'ui/patch/PatchThickenDialog.cpp',
