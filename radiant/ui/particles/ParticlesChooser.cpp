@@ -34,7 +34,10 @@ std::string ParticlesChooser::chooseParticle() {
 }
 
 /* GTK CALLBACKS */
-gboolean ParticlesChooser::_onDestroy(GtkWidget* w, ParticlesChooser* self) {
+gboolean ParticlesChooser::_onDestroy(GtkWidget* w, 
+									  GdkEvent* ev,
+									  ParticlesChooser* self) 
+{
 	self->_selectedParticle = "";
 	gtk_main_quit();
 	gtk_widget_hide(self->_widget);
