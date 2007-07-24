@@ -22,7 +22,7 @@ class ParticlesChooser
 private:
 	
 	/* GTK CALLBACKS */
-	static gboolean _onDestroy(GtkWidget*, ParticlesChooser*);
+	static gboolean _onDestroy(GtkWidget*, GdkEvent*, ParticlesChooser*);
 	
 	// Constructor creates GTK elements
 	ParticlesChooser();
