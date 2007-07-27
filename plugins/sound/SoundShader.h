@@ -18,6 +18,9 @@ class SoundShader
 	std::string _name;
 	
 	SoundFileList _soundFiles;
+
+	// min and max radii of the shader
+	SoundRadii _soundRadii;
 	
 public:
 
@@ -25,14 +28,29 @@ public:
 	 * Constructor.
 	 */
 	SoundShader(const std::string& name)
-	: _name(name) 
+	: _name(name), 
+	  _soundRadii()
 	{ }
+
+	/**
+	 * Return the min and max radii of the shader
+	 */
+	SoundRadii getRadii() const {
+		return _soundRadii;
+	}
 
 	/**
 	 * Return the name of the shader.
 	 */
 	std::string getName() const {
 		return _name;
+	}
+
+	/**
+	 * Set the min and max radii
+	 */
+	void setSoundRadii(const SoundRadii& soundRadii) {
+		_soundRadii = soundRadii;
 	}
 	
 	/** greebo: Adds a sound file (VFS path) to this shader

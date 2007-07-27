@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <boost/algorithm/string/predicate.hpp>
+#include <stdlib.h> // for atoi
 
 namespace sound
 {
@@ -116,15 +117,26 @@ void SoundManager::parseSoundShader(parser::DefTokeniser& tok) {
 	tok.assertNextToken("{");
 	
 	std::string nextToken = tok.nextToken();
+	int min = 0;
+	int max = 0;
 	while (nextToken != "}") {
-		// Watch out for sound file definitions
+		// Watch out for sound file definitions and min/max radii
 		if (boost::algorithm::starts_with(nextToken, "sound/")) {
 			// Add this to the list
 			_shaders[name]->addSoundFile(nextToken);
 		}
-		
+		if (nextToken == "minDistance") {
+			nextToken = tok.nextToken();
+
+			min = atoi(nextToken.data());
+		}
+		if (nextToken == "maxDistance") {
+			nextToken = tok.nextToken();
+			max = atoi(nextToken.data());
+		}
 		nextToken = tok.nextToken();
 	}
+	SoundRadii soundRadii(min, max);
+	_shaders[name]->setSoundRadii(soundRadii);
 }
-
-}
+} // namespace sound
