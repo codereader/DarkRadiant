@@ -11,6 +11,13 @@
 // A list of sound files associated to a shader
 typedef std::vector<std::string> SoundFileList;
 
+// The min and max radii of a sound shader
+class SoundRadii {
+	public:
+	int minRad, maxRad;
+	SoundRadii (int min = 0, int max = 0) : minRad(min), maxRad(max) {};
+};
+
 /**
  * Representation of a single sound or sound shader.
  */
@@ -20,6 +27,11 @@ struct ISoundShader {
 	 * Get the name of the shader.
 	 */
 	virtual std::string getName() const = 0;
+
+	/**
+	 * Get the min and max radii of the shader.
+	 */
+	virtual SoundRadii getRadii() const = 0;
 	
 	/** greebo: Get the list of sound files associated to 
 	 * 			this shader.

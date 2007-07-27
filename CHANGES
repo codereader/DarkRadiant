@@ -1,3 +1,8 @@
+10/07/2007
+mohij
+- Added "Add Monsterclip brush" option to ModelSelector and 
+  the context menu of the orthoviews.
+
 14/06/2007
 greebo
 - Added vertex editing support for curves (NURBS, CatmullRom).
