@@ -62,12 +62,18 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
     // Stream in the vertex data from the raw struct, expanding the local AABB 
     // to include each vertex.
     for (int vNum = 0; vNum < nVerts; ++vNum) {
+    	
+    	// Get the vertex position and colour
 		Vertex3f vertex(PicoGetSurfaceXYZ(surf, vNum));
+		
+		// Expand the AABB to include this new vertex
     	_localAABB.includePoint(vertex);
     	
     	_vertices[vNum].vertex = vertex;
     	_vertices[vNum].normal = Normal3f(PicoGetSurfaceNormal(surf, vNum));
     	_vertices[vNum].texcoord = TexCoord2f(PicoGetSurfaceST(surf, 0, vNum));
+    	_vertices[vNum].colour = 
+    		getColourVector(PicoGetSurfaceColor(surf, 0, vNum));
     }
     
     // Stream in the index data
@@ -86,6 +92,16 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 RenderablePicoSurface::~RenderablePicoSurface() {
 	glDeleteLists(_normalList, 1);
 	glDeleteLists(_lightingList, 1);	
+}
+
+// Convert byte pointers to colour vector
+Vector3 RenderablePicoSurface::getColourVector(unsigned char* array) {
+	if (array) {
+		return Vector3(array[0] / 255.0, array[1] / 255.0, array[2] / 255.0);
+	}
+	else {
+		return Vector3(1.0, 1.0, 1.0); // white
+	}
 }
 
 // Tangent calculation
