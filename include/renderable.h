@@ -66,8 +66,18 @@ public:
 		eFullMaterials
 	};
 
-  virtual void PushState() = 0;
-  virtual void PopState() = 0;
+	/**
+	 * Push a Shader onto the internal shader stack. This is an OpenGL-style
+	 * push, which does not accept an argument but duplicates the topmost
+	 * stack value. The new value should be set with SetState().
+	 */
+	virtual void PushState() = 0;
+	
+	/**
+	 * Pop the topmost Shader off the internal stack. This discards the value
+	 * without returning it.
+	 */
+	virtual void PopState() = 0;
   
 	/**
 	 * Set the Shader to be used when rendering any subsequently-submitted
@@ -99,11 +109,27 @@ public:
 	virtual void addRenderable(const OpenGLRenderable& renderable, 
 							   const Matrix4& world) = 0;
   
-  virtual const EStyle getStyle() const = 0;
-  virtual void Highlight(EHighlightMode mode, bool bEnable = true) = 0;
-  virtual void setLights(const LightList& lights)
-  {
-  }
+	
+	/**
+	 * Return the render style of this Renderer.
+	 * 
+	 * TODO: If a Renderer has a single style, why do we pass in an EStyle
+	 * parameter when setting the state with SetState()?
+	 */
+	virtual const EStyle getStyle() const = 0;
+	
+	/**
+	 * Set the highlighting (selection) mode.
+	 */
+	virtual void Highlight(EHighlightMode mode, bool bEnable = true) = 0;
+  
+  	/**
+  	 * Set the list of lights to be used for lighting-mode rendering. This
+  	 * method only makes sense for Renderers that support this rendering mode.
+  	 * 
+  	 * TODO: Use boost::shared_ptr<> here.
+  	 */
+    virtual void setLights(const LightList& lights) { }
 };
 
 class VolumeTest;
