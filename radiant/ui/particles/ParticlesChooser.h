@@ -39,6 +39,9 @@ private:
 	
 	// Show the widgets and enter recursive main loop
 	void showAndBlock();
+	
+	// Populate the list of particles
+	void populateParticleList();
 
 public:
 	
