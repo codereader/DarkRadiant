@@ -25,6 +25,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// \file
 /// \brief High-level constructs for efficient OpenGL rendering.
 
+#include "render/ArbitraryMeshVertex.h"
+#include "render/Vertex3f.h"
+#include "render/TexCoord2f.h"
+
 #include "irender.h"
 #include "igl.h"
 
@@ -297,98 +301,8 @@ struct Colour4b {
 	}
 };
 
-/// \brief A 3-float vertex.
-class Vertex3f : 
-	public Vector3
-{
-public:
-	/** Default constructor.
-	 */
-	Vertex3f()
-	{}
-
-	/** Construct a Vertex3f from 3 individual values
-	 */
-	Vertex3f(double _x, double _y, double _z) : 
-		Vector3(_x, _y, _z)
-	{}
-
-	/** Construct a Vertex3f from a 3-element array
-	 */
-	Vertex3f(const double* array) : 
-		Vector3(array)
-	{}
-	
-	// static Named constructor 
-	static Vertex3f Identity() {
-		return Vertex3f(0,0,0);
-	}
-
-	bool operator<(const Vertex3f& other) const {
-		if (x() != other.x()) {
-			return x() < other.x();
-		}
-		if (y() != other.y()) {
-			return y() < other.y();
-		}
-		if (z() != other.z()) {
-			return z() < other.z();
-		}
-		return false;
-	}
-};
-
 // A Normal3f is just another Vertex3f (Vector3)
 typedef Vertex3f Normal3f;
-
-/// \brief A 2-float texture-coordinate set.
-class TexCoord2f :
-	public Vector2
-{
-public:
-	// Default constructor
-	TexCoord2f() :
-		Vector2(0,0)
-	{}
-
-	// constructor
-	TexCoord2f(double s, double t) :
-		Vector2(s, t)
-	{}
-
-	// Copy constructor
-	TexCoord2f(const TexCoord2f& other) :
-		Vector2(other.s(), other.t())
-	{}
-	
-	// Copy constructor from Vector2
-	TexCoord2f(const Vector2& other) :
-		Vector2(other.x(), other.y())
-	{}
-
-	double& s() {
-		return x();
-	}
-	const double& s() const {
-		return x();
-	}
-	double& t() {
-		return y();
-	}
-	const double& t() const {
-		return y();
-	}
-	
-	bool operator< (const TexCoord2f& other) const {
-		if (s() != other.s()) {
-			return s() < other.s();
-		}
-		if (t() != other.t()) {
-			return t() < other.t();
-		}
-		return false;
-	}
-};
 
 /// \brief Returns \p normal rescaled to be unit-length.
 /*inline Normal3f normal3f_normalised(const Normal3f& normal) {
@@ -660,53 +574,6 @@ public:
 		return !(*this == other);
 	}
 };
-
-/// \brief Standard vertex type for lit/textured meshes.
-struct ArbitraryMeshVertex {
-	TexCoord2f texcoord;
-	Normal3f normal;
-	Vertex3f vertex;
-	Normal3f tangent;
-	Normal3f bitangent;
-
-	ArbitraryMeshVertex() : tangent(0, 0, 0), bitangent(0, 0, 0) {}
-	ArbitraryMeshVertex(Vertex3f _vertex, Normal3f _normal, TexCoord2f _texcoord)
-			: texcoord(_texcoord), normal(_normal), vertex(_vertex), tangent(0, 0, 0), bitangent(0, 0, 0) {}
-};
-
-/**
- * String output for ArbitraryMeshVertex.
- */
-inline std::ostream& operator<< (std::ostream& os, const ArbitraryMeshVertex& v)
-{
-	os << "ArbitraryMeshVertex { "
-	   << " vertex = " << v.vertex << ", normal = " << v.normal
-	   << ", texcoord = " << v.texcoord
-	   << " }";
-	
-	return os;
-}
-
-inline bool operator<(const ArbitraryMeshVertex& self, const ArbitraryMeshVertex& other) {
-	if(self.texcoord != other.texcoord) {
-		return self.texcoord < other.texcoord;
-	}
-	if(self.normal != other.normal) {
-		return self.normal < other.normal;
-	}
-	if(self.vertex != other.vertex) {
-		return self.vertex < other.vertex;
-	}
-	return false;
-}
-
-inline bool operator==(const ArbitraryMeshVertex& self, const ArbitraryMeshVertex& other) {
-	return self.texcoord == other.texcoord && self.normal == other.normal && self.vertex == other.vertex;
-}
-
-inline bool operator!=(const ArbitraryMeshVertex& self, const ArbitraryMeshVertex& other) {
-	return !operator==(self, other);
-}
 
 const float c_quantise_vertex = 1.f / static_cast<float>(1 << 3);
 
