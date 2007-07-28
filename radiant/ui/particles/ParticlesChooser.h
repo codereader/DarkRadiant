@@ -2,6 +2,7 @@
 #define PARTICLESCHOOSER_H_
 
 #include <gtk/gtkwidget.h>
+#include <gtk/gtkliststore.h>
 
 #include <string>
 
@@ -16,6 +17,9 @@ class ParticlesChooser
 	// Main dialog
 	GtkWidget* _widget;
 
+	// Liststore for the main particles list
+	GtkListStore* _particlesList;
+	
 	// Last selected particle
 	std::string _selectedParticle;
 	
@@ -26,6 +30,9 @@ private:
 	
 	// Constructor creates GTK elements
 	ParticlesChooser();
+	
+	/* WIDGET CONSTRUCTION */
+	GtkWidget* createTreeView();
 	
 	// Static instance owner
 	static ParticlesChooser& getInstance();
