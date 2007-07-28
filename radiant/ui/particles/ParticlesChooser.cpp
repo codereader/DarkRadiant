@@ -1,9 +1,11 @@
 #include "ParticlesChooser.h"
+#include "ParticlesVisitor.h"
+
+#include "iparticles.h"
 
 #include "mainframe.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/ScrolledFrame.h"
-
 
 #include <gtk/gtk.h>
 
@@ -50,9 +52,20 @@ GtkWidget* ParticlesChooser::createTreeView() {
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tv),
 								gtkutil::TextColumn("Particle", 0));
 	
+	// Populate with particle names
+	populateParticleList();
+	
 	// Pack into scrolled window and return
 	return gtkutil::ScrolledFrame(tv);
 	
+}
+
+// Populate the particles list
+void ParticlesChooser::populateParticleList() {
+	
+	// Create and use a ParticlesVisitor to populate the list
+	ParticlesVisitor visitor(_particlesList);
+	GlobalParticlesManager().forEachParticleDef(visitor);
 }
 
 // Static instance owner
