@@ -6,6 +6,7 @@
 #include "mainframe.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/RightAlignment.h"
 
 #include <gtk/gtk.h>
 
@@ -36,6 +37,7 @@ ParticlesChooser::ParticlesChooser()
 	// Main dialog vbox
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
 	gtk_box_pack_start(GTK_BOX(vbx), createTreeView(), TRUE, TRUE, 0);
+	gtk_box_pack_end(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
 	
 	// Add main vbox to dialog
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
@@ -58,6 +60,25 @@ GtkWidget* ParticlesChooser::createTreeView() {
 	// Pack into scrolled window and return
 	return gtkutil::ScrolledFrame(tv);
 	
+}
+
+// Create the buttons panel
+GtkWidget* ParticlesChooser::createButtons() {
+
+	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
+	
+	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
+	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+
+	g_signal_connect(G_OBJECT(okButton), "clicked", 
+					 G_CALLBACK(_onOK), this);
+	g_signal_connect(G_OBJECT(cancelButton), "clicked", 
+					 G_CALLBACK(_onCancel), this);
+	
+	gtk_box_pack_end(GTK_BOX(hbx), okButton, TRUE, TRUE, 0);	
+	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
+					   
+	return gtkutil::RightAlignment(hbx);	
 }
 
 // Populate the particles list
@@ -98,5 +119,8 @@ gboolean ParticlesChooser::_onDestroy(GtkWidget* w,
 	return TRUE;
 }
 
+void ParticlesChooser::_onOK(GtkWidget* w, ParticlesChooser* self) { }
+
+void ParticlesChooser::_onCancel(GtkWidget* w, ParticlesChooser* self) { }
 
 } // namespace ui

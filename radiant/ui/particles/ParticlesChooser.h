@@ -27,12 +27,15 @@ private:
 	
 	/* GTK CALLBACKS */
 	static gboolean _onDestroy(GtkWidget*, GdkEvent*, ParticlesChooser*);
+	static void _onOK(GtkWidget*, ParticlesChooser*);
+	static void _onCancel(GtkWidget*, ParticlesChooser*);
 	
 	// Constructor creates GTK elements
 	ParticlesChooser();
 	
 	/* WIDGET CONSTRUCTION */
 	GtkWidget* createTreeView();
+	GtkWidget* createButtons();
 	
 	// Static instance owner
 	static ParticlesChooser& getInstance();
