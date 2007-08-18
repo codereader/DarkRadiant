@@ -19,13 +19,22 @@ class BooleanPropertyEditor:
 	
 	// Entity to edit
 	Entity* _entity;
+	
+	// Key to edit
+	std::string _key;
+	
+private:
+	
+	/* GTK CALLBACKS */
+	static void _onToggle(GtkWidget*, BooleanPropertyEditor*);
 
 public:
 
 	// Construct a BooleanPropertyEditor with an entity and key to edit
 	BooleanPropertyEditor(Entity* entity, const std::string& name);
 	
-	// Construct a blank BooleanPropertyEditor for use in the PropertyEditorFactory
+	// Construct a blank BooleanPropertyEditor for use in the 
+	// PropertyEditorFactory
 	BooleanPropertyEditor();
 
 	// Create a new BooleanPropertyEditor
