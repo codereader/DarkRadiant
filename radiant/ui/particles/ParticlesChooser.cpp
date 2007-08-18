@@ -7,6 +7,7 @@
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/RightAlignment.h"
+#include "gtkutil/TreeModel.h"
 
 #include <gtk/gtk.h>
 
@@ -57,6 +58,12 @@ GtkWidget* ParticlesChooser::createTreeView() {
 	// Populate with particle names
 	populateParticleList();
 	
+	// Connect up the selection changed callback
+	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
+	g_signal_connect(
+		G_OBJECT(_selection), "changed", G_CALLBACK(_onSelChanged), this
+	);
+	
 	// Pack into scrolled window and return
 	return gtkutil::ScrolledFrame(tv);
 	
@@ -97,13 +104,14 @@ ParticlesChooser& ParticlesChooser::getInstance() {
 
 // Enter recursive main loop
 void ParticlesChooser::showAndBlock() {
+	_selectedParticle = "";
 	gtk_widget_show_all(_widget);
 	gtk_main();
 }
 
 // Choose a particle system
 std::string ParticlesChooser::chooseParticle() {
-	ParticlesChooser instance = getInstance();
+	ParticlesChooser& instance = getInstance();
 	instance.showAndBlock();
 	return instance._selectedParticle;
 }
@@ -119,8 +127,25 @@ gboolean ParticlesChooser::_onDestroy(GtkWidget* w,
 	return TRUE;
 }
 
-void ParticlesChooser::_onOK(GtkWidget* w, ParticlesChooser* self) { }
+void ParticlesChooser::_onOK(GtkWidget* w, ParticlesChooser* self) {
+	gtk_widget_hide(self->_widget);
+	gtk_main_quit();
+}
 
-void ParticlesChooser::_onCancel(GtkWidget* w, ParticlesChooser* self) { }
+void ParticlesChooser::_onCancel(GtkWidget* w, ParticlesChooser* self) { 
+	
+	// Clear the selection before returning
+	self->_selectedParticle = "";
+	
+	gtk_widget_hide(self->_widget);
+	gtk_main_quit();
+}
+
+void ParticlesChooser::_onSelChanged(GtkWidget* w, ParticlesChooser* self) {
+
+	// Get the selection and store it
+	self->_selectedParticle = 
+		gtkutil::TreeModel::getSelectedString(self->_selection, 0);
+}
 
 } // namespace ui

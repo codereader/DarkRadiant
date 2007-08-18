@@ -3,6 +3,7 @@
 
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkliststore.h>
+#include <gtk/gtktreeselection.h>
 
 #include <string>
 
@@ -17,8 +18,9 @@ class ParticlesChooser
 	// Main dialog
 	GtkWidget* _widget;
 
-	// Liststore for the main particles list
+	// Liststore for the main particles list, and its selection object
 	GtkListStore* _particlesList;
+	GtkTreeSelection* _selection;
 	
 	// Last selected particle
 	std::string _selectedParticle;
@@ -29,6 +31,7 @@ private:
 	static gboolean _onDestroy(GtkWidget*, GdkEvent*, ParticlesChooser*);
 	static void _onOK(GtkWidget*, ParticlesChooser*);
 	static void _onCancel(GtkWidget*, ParticlesChooser*);
+	static void _onSelChanged(GtkWidget*, ParticlesChooser*);
 	
 	// Constructor creates GTK elements
 	ParticlesChooser();
