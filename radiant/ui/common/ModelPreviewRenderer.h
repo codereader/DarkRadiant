@@ -17,7 +17,7 @@ class ModelPreviewRenderer
 : public Renderer
 {
 	// Internal class used for sorting shaders
-	class StateType {
+	struct StateType {
 		
 		// The Shader itself
 		ShaderPtr shader;
@@ -56,7 +56,7 @@ public:
 	 */
 	void SetState(ShaderPtr shader, EStyle style) {
 	    if(style == eFullMaterials) {
-	      _stateStack.back() = shader;
+	      _shaderStack.back().shader = shader;
 	    }
 	}
 	
@@ -71,14 +71,14 @@ public:
 	 * Push shader.
 	 */
 	void PushState() {
-		_stateStack.push_back(_stateStack.back());
+		_shaderStack.push_back(_shaderStack.back());
 	}
 	
 	/**
 	 * Pop shader.
 	 */
 	void PopState() {
-		_stateStack.pop_back();
+		_shaderStack.pop_back();
 	}
 	
 	/**
@@ -91,7 +91,7 @@ public:
 	 * Set the LightList to use for lighting mode rendering.
 	 */
 	void setLights(const LightList& lights) {
-		_stateStack.back().lights = &lights;
+		_shaderStack.back().lights = &lights;
 	}
 	
 	/**
@@ -100,9 +100,9 @@ public:
 	void addRenderable(const OpenGLRenderable& renderable, const Matrix4& world)
 	{
 		// Pass the Renderable to the current Shader
-		_stateStack.back().shader->addRenderable(renderable, 
-												 world,
-												 _stateStack.back().lights);
+		_shaderStack.back().shader->addRenderable(renderable, 
+												  world,
+												  _shaderStack.back().lights);
 	}
 	
 	/**
