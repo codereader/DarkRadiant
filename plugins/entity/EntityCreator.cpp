@@ -30,6 +30,17 @@ namespace entity {
 	}
 
 scene::INodePtr Doom3EntityCreator::getEntityForEClass(IEntityClassPtr eclass) {
+	
+	// Null entityclass check
+	if (!eclass) {
+		throw std::runtime_error(
+			"Doom3EntityCreator::getEntityForEClass(): "
+			"cannot create entity for NULL entityclass."
+		); 
+	}
+	
+	// Otherwise create the correct entity subclass based on the entity class
+	// parameters.
 	if (eclass->isLight()) {
 		return scene::INodePtr(new LightNode(eclass));
 	}
