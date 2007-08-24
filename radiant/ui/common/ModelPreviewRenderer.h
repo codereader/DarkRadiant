@@ -85,7 +85,7 @@ public:
 	 * Set highlighting mode. This Renderer does not support highlighting so 
 	 * this is a NOP.
 	 */
-	void HighLight(EHighlightMode mode, bool enable) { }
+	void Highlight(EHighlightMode mode, bool enable) { }
 	
 	/**
 	 * Set the LightList to use for lighting mode rendering.
