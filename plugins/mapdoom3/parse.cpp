@@ -322,7 +322,10 @@ void Map_Read(scene::INodePtr root,
 			checkInsert(entity, root, entCount);
 		}
 		catch (std::runtime_error e) {
-			gtkutil::errorDialog(e.what(), GlobalRadiant().getMainWindow());
+			gtkutil::errorDialog(
+				"Failed on entity " + intToStr(entCount) + "\n\n" + e.what(), 
+				GlobalRadiant().getMainWindow()
+			);
 			return;			
 		}
 		
