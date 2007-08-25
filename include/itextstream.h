@@ -27,15 +27,49 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <cstddef>
 #include <string>
+#include <streambuf>
+#include <istream>
+
 #include "generic/static.h"
 
 /// \brief A read-only character-stream.
+// OrbWeaver: merged functionality from TextStreambufAdaptor onto this class
+// directly.
 class TextInputStream
+: public std::streambuf
 {
+    // Buffer to use for reading
+    static const std::size_t BUFFER_SIZE = 8192;
+    char _buffer[BUFFER_SIZE];
+
+protected:
+	
+    /* Implementations of stream-specific virtual functions on std::streambuf */
+    
+    // Replenish the controlled buffer with characters from the underlying
+    // input sequence.
+    int underflow() {
+        
+        // Read next block of BUFFER_SIZE characters into the buffer from
+        // the underlying TextInputStream.
+        std::size_t charsRead = this->read(_buffer, BUFFER_SIZE);
+        
+        // Set up the internal pointers correctly
+        assert(charsRead <= BUFFER_SIZE);
+        std::streambuf::setg(_buffer, _buffer, _buffer + charsRead);
+        
+        // Return the next character, or EOF if there were no more characters
+        if (charsRead > 0)
+        	return static_cast<int>(_buffer[0]);
+        else
+        	return EOF;
+    }
+    
 public:
-  /// \brief Attempts to read the next \p length characters from the stream to \p buffer.
-  /// Returns the number of characters actually stored in \p buffer.
-  virtual std::size_t read(char* buffer, std::size_t length) = 0;
+
+	/// \brief Attempts to read the next \p length characters from the stream to \p buffer.
+	/// Returns the number of characters actually stored in \p buffer.
+	virtual std::size_t read(char* buffer, std::size_t length) = 0;
   
 	/**
 	 * Read the entire TextInputStream into a std::string and return the 
@@ -43,8 +77,6 @@ public:
 	 */
 	std::string getAsString() {
 
-		static const int BUFFER_SIZE = 65536;
-		
 		// Allocate return string and read buffer
 		std::string rv;
         char buf[BUFFER_SIZE];
@@ -56,8 +88,8 @@ public:
             
 		// Return the string
         return rv;
-		
 	}
+	
 };
 
 /// \brief A write-only character-stream.
