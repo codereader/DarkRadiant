@@ -27,7 +27,7 @@ private:
 					  const std::string& filename); 
 
 	// Parse a shader file with the given contents and filename
-	void parseShaderFile(const std::string& inStr, const std::string& filename);
+	void parseShaderFile(std::istream& inStr, const std::string& filename);
 
 	// Parse the name of a shader and return a ShaderTemplate ready to be
 	// filled in with parsed data

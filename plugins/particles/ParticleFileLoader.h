@@ -41,11 +41,10 @@ public:
 		
 		if (file) {
 			
-			// Pass the string contents to the manager
-			std::string contents = file->getInputStream().getAsString();
-			
+			// File is open, so parse the tokens
 			try {
-				_manager.parseString(contents);
+				std::istream is(&(file->getInputStream()));
+				_manager.parseStream(is);
 			}
 			catch (parser::ParseException e) {
 				std::cerr << "[particles] Failed to parse " << filename

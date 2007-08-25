@@ -42,10 +42,10 @@ void ParticlesManager::forEachParticleDef(const ParticleDefVisitor& v) const
 }
 
 // Parse particle defs from string
-void ParticlesManager::parseString(const std::string& contents) {
+void ParticlesManager::parseStream(std::istream& contents) {
 	
 	// Usual ritual, get a parser::DefTokeniser and start tokenising the DEFs
-	parser::BasicDefTokeniser<std::string> tok(contents);
+	parser::BasicDefTokeniser<std::istream> tok(contents);
 	
 	while (tok.hasMoreTokens()) {
 		parseParticleDef(tok);

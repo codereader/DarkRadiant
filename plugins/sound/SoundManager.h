@@ -71,7 +71,7 @@ public:
 	 * Parse the contents of the given string as a .sndshd file, adding all
 	 * contained shaders to the shader map.
 	 */
-	void parseShadersFrom(const std::string& contents);
+	void parseShadersFrom(std::istream& contents);
 };
 
 }

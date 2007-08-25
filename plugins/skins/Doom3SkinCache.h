@@ -93,12 +93,12 @@ public:
 		return _allSkins;
 	}
 	
-	/* Parse the provided string as a .skin file, and add all skins found within
+	/* Parse the provided istream as a .skin file, and add all skins found within
 	 * to the internal data structures.
 	 * 
 	 * @filename: This is for informational purposes only (error message display).
 	 */
-	void parseFile(const std::string& contents, const std::string& filename);	
+	void parseFile(std::istream& contents, const std::string& filename);	
   
 };
 

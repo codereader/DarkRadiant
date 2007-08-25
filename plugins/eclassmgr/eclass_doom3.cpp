@@ -208,12 +208,14 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
 	EntityClassDoom3_insertUnique(entityClass);
 }
 
-// Parse the provided string containing the contents of a single .def file.
+// Parse the provided stream containing the contents of a single .def file.
 // Extract all entitydefs and create objects accordingly.
 
-void EntityClassDoom3_parse(const std::string& inStr)
+void EntityClassDoom3_parse(TextInputStream& inStr)
 {
-    parser::BasicDefTokeniser<std::string> tokeniser(inStr);
+	// Construct a tokeniser for the stream
+	std::istream is(&inStr);
+    parser::BasicDefTokeniser<std::istream> tokeniser(is);
 
     while (tokeniser.hasMoreTokens()) {
 
@@ -238,7 +240,7 @@ void EntityClassDoom3_loadFile(const std::string& filename)
 	ArchiveTextFile* file = GlobalFileSystem().openTextFile(fullname.c_str());
 	if(file != 0) {
         try {
-            EntityClassDoom3_parse(file->getInputStream().getAsString());
+            EntityClassDoom3_parse(file->getInputStream());
         }
         catch (parser::ParseException e) {
             std::cerr << "[eclassmgr] failed to parse " << filename 
