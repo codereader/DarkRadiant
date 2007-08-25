@@ -230,17 +230,17 @@ public:
 };
 
 
-/** Tokenise a DEF file.
+/** 
+ * Tokenise a DEF file.
  * 
  * This class provides a similar interface to Java's StringTokenizer class. It accepts
  * and std::string and a list of separators, and provides a simple interface to return
  * the next token in the string. It also protects quoted content and ignores both C and
  * C++ style comments.
  */
-
-class DefTokeniser
+template<typename ContainerT>
+class BasicDefTokeniser
 {
-
     // Internal Boost tokenizer and its iterator
     typedef boost::tokenizer<DefTokeniserFunc> CharTokeniser;
     CharTokeniser _tok;
@@ -248,29 +248,32 @@ class DefTokeniser
 
 public:
 
-    /** Construct a DefTokeniser with the given input string, and optionally
+    /** 
+     * Construct a DefTokeniser with the given input type, and optionally
      * a list of separators.
      * 
      * @param str
-     * The string to tokenise.
+     * The container to tokenise.
      * 
-     * @param seps
+     * @param delims
      * The list of characters to use as delimiters.
+     * 
+     * @param keptDelims
+     * String of characters to treat as delimiters but return as tokens in their
+     * own right.
      */
-
-    DefTokeniser(const std::string& str, const char* delims = " \t\n\v\r", const char* keptDelims = "{}()")
+    BasicDefTokeniser(const ContainerT& str, 
+                      const char* delims = " \t\n\v\r", 
+                      const char* keptDelims = "{}()")
     : _tok(str, DefTokeniserFunc(delims, keptDelims)),
-      _tokIter(_tok.begin()) 
-    {
-    }
-        
+      _tokIter(_tok.begin())
+    { }
         
     /** Test if this StringTokeniser has more tokens to return.
      * 
      * @returns
      * true if there are further tokens, false otherwise
      */
-     
     bool hasMoreTokens() {
         return _tokIter != _tok.end();
     }
@@ -329,6 +332,11 @@ public:
     }
             
 };
+
+/**
+ * Standard tokeniser type for strings.
+ */
+typedef BasicDefTokeniser<std::string> DefTokeniser;
 
 } // namespace parser
 

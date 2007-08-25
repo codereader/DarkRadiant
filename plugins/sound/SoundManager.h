@@ -5,12 +5,10 @@
 #include "SoundPlayer.h"
 
 #include "isound.h"
+#include "parser/DefTokeniser.h"
 
 #include <map>
 #include <string>
-
-/* FORWARD DECLS */
-namespace parser { class DefTokeniser; }
 
 namespace sound
 {
