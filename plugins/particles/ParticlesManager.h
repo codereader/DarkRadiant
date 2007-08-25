@@ -5,11 +5,9 @@
 #include "ParticleStage.h"
 
 #include "iparticles.h"
+#include "parser/DefTokeniser.h"
 
 #include <map>
-
-/* FORWARD DECLS */
-namespace parser { class DefTokeniser; }
 
 namespace particles
 {

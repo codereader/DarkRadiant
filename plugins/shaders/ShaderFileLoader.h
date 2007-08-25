@@ -2,10 +2,10 @@
 #define SHADERFILELOADER_H_
 
 #include "ShaderTemplate.h"
-#include <string>
 
-// FORWARD DECLS
-namespace parser { class DefTokeniser; }
+#include "parser/DefTokeniser.h"
+
+#include <string>
 
 namespace shaders
 {
