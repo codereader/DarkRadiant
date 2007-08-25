@@ -373,6 +373,14 @@ class BasicDefTokeniser<std::istream>
     CharTokeniser _tok;
     CharTokeniser::iterator _tokIter;
 
+private:
+	
+	// Helper function to set noskipws on the input stream.
+	static std::istream& setNoskipws(std::istream& is) {
+		is >> std::noskipws;
+		return is;
+	}
+    
 public:
 
     /** 
@@ -393,7 +401,7 @@ public:
     BasicDefTokeniser(std::istream& str, 
                       const char* delims = " \t\n\v\r", 
                       const char* keptDelims = "{}()")
-    : _tok(CharStreamIterator(str), // start iterator
+    : _tok(CharStreamIterator(setNoskipws(str)), // start iterator
            CharStreamIterator(), // end (null) iterator
            DefTokeniserFunc(delims, keptDelims)),
       _tokIter(_tok.begin())
