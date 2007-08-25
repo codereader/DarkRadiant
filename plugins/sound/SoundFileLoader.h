@@ -1,6 +1,8 @@
 #ifndef SOUNDFILELOADER_H_
 #define SOUNDFILELOADER_H_
 
+#include "SoundManager.h"
+
 #include "ifilesystem.h"
 #include "iarchive.h"
 
@@ -45,11 +47,12 @@ public:
 		
 		// Parse contents of file if it was opened successfully
 		if (file) {
-			std::string contents = file->getInputStream().getAsString();
-			file->release();
+			std::istream is(&(file->getInputStream()));
 	
 			// Pass the contents back to the SkinCache module for parsing
-			_manager.parseShadersFrom(contents);
+			_manager.parseShadersFrom(is);
+
+			file->release();
 		}
 		else {
 			std::cerr << "[sound] Warning: unable to open \"" 

@@ -52,10 +52,10 @@ public:
 	void forEachParticleDef(const ParticleDefVisitor& visitor) const;
 	
 	/**
-	 * Accept a string containing particle definitions to parse and add to the
+	 * Accept a stream containing particle definitions to parse and add to the
 	 * list.
 	 */
-	void parseString(const std::string& s);
+	void parseStream(std::istream& s);
 	
 };
 

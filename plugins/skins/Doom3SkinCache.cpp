@@ -41,16 +41,17 @@ public:
 		ArchiveTextFile* file = 
 			GlobalFileSystem().openTextFile(SKINS_FOLDER + fileName);
 		assert(file);
-		std::string contents = file->getInputStream().getAsString();
-		file->release();
+		std::istream is(&(file->getInputStream()));
 	
 		try {
 			// Pass the contents back to the SkinCache module for parsing
-			_cache.parseFile(contents, fileName);
+			_cache.parseFile(is, fileName);
 		}
 		catch (parser::ParseException e) {
 			std::cout << "[skins]: in " << fileName << ": " << e.what() << "\n";
 		}
+
+		file->release();
 	}
 }; 
 
@@ -82,10 +83,10 @@ void Doom3SkinCache::realise() {
 }
 
 // Parse the contents of a .skin file
-void Doom3SkinCache::parseFile(const std::string& contents, const std::string& filename) {
+void Doom3SkinCache::parseFile(std::istream& contents, const std::string& filename) {
 	
 	// Construct a DefTokeniser to parse the file
-	parser::BasicDefTokeniser<std::string> tok(contents);
+	parser::BasicDefTokeniser<std::istream> tok(contents);
 	
 	// Call the parseSkin() function for each skin decl
 	while (tok.hasMoreTokens()) {

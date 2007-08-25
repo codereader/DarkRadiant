@@ -52,13 +52,13 @@ void ShaderFileLoader::parseShaderDecl(parser::DefTokeniser& tokeniser,
 /* Parses through the shader file and processes the tokens delivered by 
  * DefTokeniser. 
  */ 
-void ShaderFileLoader::parseShaderFile(const std::string& inStr, 
+void ShaderFileLoader::parseShaderFile(std::istream& inStr, 
 									   const std::string& filename)
 {
 	// Create the tokeniser
-	parser::BasicDefTokeniser<std::string> tokeniser(inStr, 
-													 " \t\n\v\r", 
-													 "{}(),");
+	parser::BasicDefTokeniser<std::istream> tokeniser(inStr, 
+													  " \t\n\v\r", 
+													  "{}(),");
 	
 	while (tokeniser.hasMoreTokens()) {
 		// Load the first token, it should be a name
@@ -153,7 +153,8 @@ void ShaderFileLoader::operator() (const std::string& fileName)
 	ArchiveTextFile* file = GlobalFileSystem().openTextFile(fullPath);
 
 	if (file != 0) {
-		parseShaderFile(file->getInputStream().getAsString(), fullPath);           
+		std::istream is(&(file->getInputStream()));
+		parseShaderFile(is, fullPath);           
 		file->release();
 	} 
 	else {
