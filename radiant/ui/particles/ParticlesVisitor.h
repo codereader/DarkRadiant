@@ -31,10 +31,13 @@ public:
 	 */
 	void operator() (const IParticleDef& def) {
 		
+		// Add the ".prt" extension to the name fo display in the list
+		std::string prtName = def.getName() + ".prt";
+		
 		// Add the Def name to the list store
 		GtkTreeIter iter;
 		gtk_list_store_append(_store, &iter);
-		gtk_list_store_set(_store, &iter, 0, def.getName().c_str(), -1);
+		gtk_list_store_set(_store, &iter, 0, prtName.c_str(), -1);
 	}
 };
 
