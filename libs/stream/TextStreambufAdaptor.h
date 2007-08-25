@@ -44,8 +44,11 @@ protected:
         assert(charsRead <= BUFFER_SIZE);
         std::streambuf::setg(_buffer, _buffer, _buffer + charsRead);
         
-        // Return the next character
-        return static_cast<int>(_buffer[0]);
+        // Return the next character, or EOF if there were no more characters
+        if (charsRead > 0)
+        	return static_cast<int>(_buffer[0]);
+        else
+        	return EOF;
     }
     
 public:
