@@ -246,6 +246,68 @@ public:
 };
 
 
+/**
+ * DefTokeniser abstract base class. This class provides a unified interface to
+ * DefTokeniser subclasses, so that calling code can retrieve a stream of tokens
+ * without needing knowledge of the underlying container type (std::string,
+ * std::istream etc).
+ * 
+ * Each subclass MUST implement hasMoreTokens() and nextToken() appropriately,
+ * while default implementations of assertNextToken() and skipTokens() are 
+ * provided that make use of the former two methods.
+ */
+class DefTokeniser {
+public:
+	
+    /** 
+     * Test if this DefTokeniser has more tokens to return.
+     * 
+     * @returns
+     * true if there are further tokens, false otherwise
+     */
+    virtual bool hasMoreTokens() = 0;
+
+    /** 
+     * Return the next token in the sequence. This function consumes
+     * the returned token and advances the internal state to the following
+     * token.
+     * 
+     * @returns
+     * std::string containing the next token in the sequence.
+     * 
+     * @pre
+     * hasMoreTokens() must be true, otherwise an exception will be thrown.
+     */
+     virtual std::string nextToken() = 0;
+    
+    /** 
+     * Assert that the next token in the sequence must be equal to the provided
+     * value. A ParseException is thrown if the assert fails.
+     * 
+     * @param val
+     * The expected value of the token.
+     */
+    virtual void assertNextToken(const std::string& val) {
+        const std::string tok = nextToken();
+        if (tok != val)
+            throw ParseException("DefTokeniser: Assertion failed: Required \"" 
+            					 + val + "\", found \"" + tok + "\"");
+    }   
+    
+    /** 
+     * Skip the next n tokens. This method provides a convenient way to dispose
+     * of a number of tokens without returning them.
+     * 
+     * @param n
+     * The number of tokens to consume.
+     */
+    virtual void skipTokens(unsigned int n) {
+        for (unsigned int i = 0; i < n; i++) {
+        	nextToken();
+        }
+    }
+};
+
 /** 
  * Tokenise a DEF file.
  * 
@@ -256,6 +318,7 @@ public:
  */
 template<typename ContainerT>
 class BasicDefTokeniser
+: public DefTokeniser
 {
     // Internal Boost tokenizer and its iterator
     typedef boost::tokenizer<DefTokeniserFunc> CharTokeniser;
@@ -294,7 +357,6 @@ public:
         return _tokIter != _tok.end();
     }
 
-
     /** Return the next token in the sequence. This function consumes
      * the returned token and advances the internal state to the following
      * token.
@@ -305,54 +367,13 @@ public:
      * @pre
      * hasMoreTokens() must be true, otherwise an exception will be thrown.
      */
-     
     std::string nextToken() {
         if (hasMoreTokens())
             return *(_tokIter++);
         else
             throw ParseException("DefTokeniser: no more tokens");
     }
-    
-    
-    /** Assert that the next token in the sequence must be equal to the provided
-     * value. A ParseException is thrown if the assert fails.
-     * 
-     * @param val
-     * The expected value of the token.
-     */
-     
-    void assertNextToken(const std::string& val) {
-        const std::string tok = nextToken();
-        if (tok != val)
-            throw ParseException("DefTokeniser: Assertion failed: Required \"" 
-            					 + val + "\", found \"" + tok + "\"");
-    }   
-    
-    
-    /** Skip the next n tokens. This method provides a convenient way to dispose
-     * of a number of tokens without returning them.
-     * 
-     * @param n
-     * The number of tokens to consume.
-     */
-     
-    void skipTokens(unsigned int n) {
-        for (unsigned int i = 0; i < n; i++) {
-            if (hasMoreTokens()) {
-                _tokIter++;
-            }
-            else {
-                throw ParseException("DefTokeniser: no more tokens");
-            }
-        }
-    }
-            
 };
-
-/**
- * Standard tokeniser type for strings.
- */
-typedef BasicDefTokeniser<std::string> DefTokeniser;
 
 /**
  * Specialisation of DefTokeniser to work with std::istream objects. This is
@@ -362,6 +383,7 @@ typedef BasicDefTokeniser<std::string> DefTokeniser;
  */
 template<>
 class BasicDefTokeniser<std::istream>
+: public DefTokeniser
 {
     // Istream iterator type
     typedef std::istream_iterator<char> CharStreamIterator;
@@ -407,7 +429,8 @@ public:
       _tokIter(_tok.begin())
     { }
         
-    /** Test if this StringTokeniser has more tokens to return.
+    /** 
+     * Test if this StringTokeniser has more tokens to return.
      * 
      * @returns
      * true if there are further tokens, false otherwise
@@ -416,8 +439,8 @@ public:
         return _tokIter != _tok.end();
     }
 
-
-    /** Return the next token in the sequence. This function consumes
+    /** 
+     * Return the next token in the sequence. This function consumes
      * the returned token and advances the internal state to the following
      * token.
      * 
@@ -427,7 +450,6 @@ public:
      * @pre
      * hasMoreTokens() must be true, otherwise an exception will be thrown.
      */
-     
     std::string nextToken() {
         if (hasMoreTokens())
             return *(_tokIter++);
@@ -435,40 +457,6 @@ public:
             throw ParseException("DefTokeniser: no more tokens");
     }
     
-    
-    /** Assert that the next token in the sequence must be equal to the provided
-     * value. A ParseException is thrown if the assert fails.
-     * 
-     * @param val
-     * The expected value of the token.
-     */
-     
-    void assertNextToken(const std::string& val) {
-        const std::string tok = nextToken();
-        if (tok != val)
-            throw ParseException("DefTokeniser: Assertion failed: Required \"" 
-                                 + val + "\", found \"" + tok + "\"");
-    }   
-    
-    
-    /** Skip the next n tokens. This method provides a convenient way to dispose
-     * of a number of tokens without returning them.
-     * 
-     * @param n
-     * The number of tokens to consume.
-     */
-     
-    void skipTokens(unsigned int n) {
-        for (unsigned int i = 0; i < n; i++) {
-            if (hasMoreTokens()) {
-                _tokIter++;
-            }
-            else {
-                throw ParseException("DefTokeniser: no more tokens");
-            }
-        }
-    }
-            
 };
 
 

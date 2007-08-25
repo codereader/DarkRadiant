@@ -75,7 +75,7 @@ MapExpressionPtr IMapExpression::createForToken(DefTokeniser& token) {
 }
 
 MapExpressionPtr IMapExpression::createForString(std::string str) {
-	parser::DefTokeniser token(str);
+	parser::BasicDefTokeniser<std::string> token(str);
 	return createForToken(token);
 }
 

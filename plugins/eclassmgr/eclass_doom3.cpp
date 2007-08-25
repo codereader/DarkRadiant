@@ -213,7 +213,7 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
 
 void EntityClassDoom3_parse(const std::string& inStr)
 {
-    parser::DefTokeniser tokeniser(inStr);
+    parser::BasicDefTokeniser<std::string> tokeniser(inStr);
 
     while (tokeniser.hasMoreTokens()) {
 

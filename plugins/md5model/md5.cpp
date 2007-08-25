@@ -454,7 +454,7 @@ void MD5Model_construct(MD5Model& model, TextInputStream& inputStream)
 	
 	// Construct a DefTokeniser and start parsing
 	try {
-		parser::DefTokeniser tok(md5mesh);
+		parser::BasicDefTokeniser<std::string> tok(md5mesh);
 		MD5Model_parse(model, tok);
 	}
 	catch (parser::ParseException e) {

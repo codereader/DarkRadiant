@@ -85,7 +85,7 @@ void Doom3SkinCache::realise() {
 void Doom3SkinCache::parseFile(const std::string& contents, const std::string& filename) {
 	
 	// Construct a DefTokeniser to parse the file
-	parser::DefTokeniser tok(contents);
+	parser::BasicDefTokeniser<std::string> tok(contents);
 	
 	// Call the parseSkin() function for each skin decl
 	while (tok.hasMoreTokens()) {
