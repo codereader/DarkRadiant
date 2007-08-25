@@ -56,7 +56,9 @@ void ShaderFileLoader::parseShaderFile(const std::string& inStr,
 									   const std::string& filename)
 {
 	// Create the tokeniser
-	parser::DefTokeniser tokeniser(inStr, " \t\n\v\r", "{}(),");
+	parser::BasicDefTokeniser<std::string> tokeniser(inStr, 
+													 " \t\n\v\r", 
+													 "{}(),");
 	
 	while (tokeniser.hasMoreTokens()) {
 		// Load the first token, it should be a name

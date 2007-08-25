@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "string/string.h"
 #include "stringio.h"
 #include "generic/constant.h"
+#include "parser/DefTokeniser.h"
 
 #include "modulesystem/singletonmodule.h"
 
@@ -139,6 +140,12 @@ public:
   }
   void readGraph(scene::INodePtr root, TextInputStream& inputStream, EntityCreator& entityTable) const
   {
+	  // TEST
+	  std::istream is(&inputStream);
+	  parser::BasicDefTokeniser<std::istream> tok(is);
+	  while (tok.hasMoreTokens())
+		  std::cout << "'" << tok.nextToken() << "',";
+	  
     Tokeniser& tokeniser = GlobalScripLibModule::getTable().m_pfnNewSimpleTokeniser(inputStream);
     tokeniser.nextLine();
     if(!Tokeniser_parseToken(tokeniser, "Version"))

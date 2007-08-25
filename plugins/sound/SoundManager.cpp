@@ -92,7 +92,7 @@ void SoundManager::stopSound() {
 void SoundManager::parseShadersFrom(const std::string& contents) {
 	
 	// Construct a DefTokeniser to tokenise the string into sound shader decls
-	parser::DefTokeniser tok(contents);
+	parser::BasicDefTokeniser<std::string> tok(contents);
 	while (tok.hasMoreTokens())
 		parseSoundShader(tok);
 }
