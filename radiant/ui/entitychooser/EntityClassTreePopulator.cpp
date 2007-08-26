@@ -49,15 +49,20 @@ EntityClassTreePopulator::addRecursive(const std::string& pathName)
     return dynIter;
 }
 
+// Add the display folder for the given entity class
 GtkTreeIter* EntityClassTreePopulator::addDisplayFolder(IEntityClassPtr e) {
-   // Get the parent folder from the entity class. If it is not
-   // present, return NULL
-   std::string parentFolder = e->getValueForKey(_folderKey);
-   if (parentFolder.size() == 0)
-       return NULL;
+
+    // Get the parent folder from the entity class (which may be blank). We
+    // prepend this with the entity class' mod name, to ensure that top-level
+    // directories are created for each mod
+    std::string folderPath = e->getValueForKey(_folderKey);
+    if (!folderPath.empty())
+        folderPath = "/" + folderPath;
+    
+    std::string parentFolder = e->getModName() + folderPath;
        
-   // Call the recursive function to add the folder
-   return addRecursive(parentFolder);
+    // Call the recursive function to add the folder
+    return addRecursive(parentFolder);
 }
 
 // Required visit function
