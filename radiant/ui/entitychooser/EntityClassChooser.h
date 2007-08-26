@@ -5,16 +5,29 @@
 
 #include "math/Vector3.h"
 
+namespace {
+
+    /* CONSTANTS */
+    
+    const char* ECLASS_CHOOSER_TITLE = "Create entity";
+    const char* FOLDER_ICON = "folder16.png";
+    const char* ENTITY_ICON = "cmenu_add_entity.png";
+    
+    // Registry XPath to lookup key that specifies the display folder
+    const char* FOLDER_KEY_PATH = "game/entityChooser/displayFolderKey";
+
+    // Tree column enum
+    enum {
+        NAME_COLUMN,
+        ICON_COLUMN,
+        DIR_FLAG_COLUMN,
+        N_COLUMNS
+    };
+
+}
+
 namespace ui
 {
-
-	namespace {
-		
-		/* CONSTANTS */
-		
-		const char* ECLASS_CHOOSER_TITLE = "Create entity";
-		
-	}
 
 /** Dialog window displaying a tree of Entity Classes, allowing the selection
  * of a class to create at the current location. This widget is displayed
