@@ -101,7 +101,7 @@ void GroupCycle::updateSelection() {
 }
 
 void GroupCycle::doCycleForward() {
-	if (_list.size() > 0) {
+	if (_list.size() > 1) {
 		// Increase the index and wrap around at the list end
 		_index = (_index+1) % _list.size();
 		
@@ -111,7 +111,7 @@ void GroupCycle::doCycleForward() {
 }
 
 void GroupCycle::doCycleBackward() {
-	if (_list.size() > 0) {
+	if (_list.size() > 1) {
 		// Decrease the index and wrap around, if necessary 
 		_index--;
 	
