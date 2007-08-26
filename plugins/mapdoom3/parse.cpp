@@ -34,7 +34,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "scenelib.h"
 #include "traverselib.h"
-#include "stringio.h"
 #include "string/string.h"
 #include "parser/DefTokeniser.h"
 
@@ -125,9 +124,12 @@ scene::INodePtr Entity_parseTokens(
 	            entity = Entity_create(entityTable, keyValues);
 	        
 	        // Update the dialog
-	        dialog.setText(
-                dlgEntityText + "\nPrimitive " + intToStr(numPrimitives++)
-            );
+	        if (numPrimitives % interleave == 0) {
+    	        dialog.setText(
+                    dlgEntityText + "\nPrimitive " + intToStr(numPrimitives)
+                );
+	        }
+	        ++numPrimitives;
 	        
 	        // Try to parse the primitive, throwing exception if failed
 	        scene::INodePtr primitive(parser.parsePrimitive(tokeniser));
