@@ -27,7 +27,7 @@ BrushNode::BrushNode(const BrushNode& other) :
 {}
 
 // MapImporter implementation
-bool BrushNode::importTokens(Tokeniser& tokeniser) {
+bool BrushNode::importTokens(parser::DefTokeniser& tokeniser) {
 	return m_mapImporter.importTokens(tokeniser);
 }
 

@@ -44,7 +44,7 @@ public:
 	virtual const Matrix4& localToParent() const;
   
   	// MapImporter implementation
-	virtual bool importTokens(Tokeniser& tokeniser);
+	virtual bool importTokens(parser::DefTokeniser& tokeniser);
 	
 	// MapExporter implementation
 	virtual void exportTokens(std::ostream& os) const;
