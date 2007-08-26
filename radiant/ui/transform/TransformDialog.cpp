@@ -176,6 +176,10 @@ TransformDialog::EntryRow TransformDialog::createEntryRow(
 	entryRow.isRotator = isRotator;
 	entryRow.axis = axis;
 	
+	// greebo: The rotation direction is reversed for X and Z rotations
+	// This has no mathematical meaning, it's just for looking right.
+	entryRow.direction = (isRotator && axis != 1) ? -1 : 1;
+	
 	// Create the label
 	entryRow.label = gtkutil::LeftAlignedLabel(label);
 	gtk_table_attach_defaults(table, entryRow.label, 0, 1, row, row+1);
@@ -282,7 +286,7 @@ void TransformDialog::onClickLarger(GtkWidget* button, EntryRow* row) {
 		Vector3 eulerXYZ;
 		
 		// Store the value into the right axis
-		eulerXYZ[row->axis] = step;
+		eulerXYZ[row->axis] = step * row->direction;
 		
 		// Pass the call to the algorithm functions
 		selection::algorithm::rotateSelected(eulerXYZ);
@@ -309,7 +313,7 @@ void TransformDialog::onClickSmaller(GtkWidget* button, EntryRow* row) {
 		Vector3 eulerXYZ;
 		
 		// Store the value into the right axis
-		eulerXYZ[row->axis] = -step;
+		eulerXYZ[row->axis] = -step * row->direction;
 		
 		// Pass the call to the algorithm functions
 		selection::algorithm::rotateSelected(eulerXYZ);
