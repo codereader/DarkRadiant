@@ -60,6 +60,14 @@ public:
   /// The stream remains valid for the lifetime of the file.
   virtual TextInputStream& getInputStream() = 0;
   
+    /**
+     * Return the mod directory that this file was found in (base, darkmod etc).
+     * 
+     * @returns
+     * String containing the mod directory for this file.
+     */
+    virtual std::string getModDirectory() const = 0;
+  
 };
 
 class ScopedArchiveFile

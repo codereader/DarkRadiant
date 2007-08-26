@@ -178,39 +178,6 @@ inline const char* path_make_relative(const char* path, const char* base)
   return path;
 }
 
-namespace os {
-
-	/**
-	 * Return the path of fullPath relative to basePath, as long as fullPath
-	 * is contained within basePath. If not, fullPath is returned unchanged.
-	 */
-	inline std::string getRelativePath(const std::string& fullPath,
-									   const std::string& basePath)
-	{
-		if (boost::algorithm::starts_with(fullPath, basePath)) {
-			return fullPath.substr(basePath.length());
-		}
-		else {
-			return fullPath;
-		}
-	}
-	
-	/**
-	 * Get the extension of the given filename. If there is no extension, an
-	 * empty string is returned.
-	 */
-	inline std::string getExtension(const std::string& path) {
-		std::size_t dotPos = path.rfind('.');
-		if (dotPos == std::string::npos) {
-			return "";
-		}
-		else {
-			return path.substr(dotPos + 1);
-		}
-	}
-
-} // namespace os
-
 /// \brief Returns a pointer to the first character of the file extension of \p path, or "" if not found.
 /// O(n)
 inline const char* path_get_extension(const char* path)
@@ -345,6 +312,56 @@ namespace os {
 		return output;
 	}
 		    
+    /**
+     * Return the path of fullPath relative to basePath, as long as fullPath
+     * is contained within basePath. If not, fullPath is returned unchanged.
+     */
+    inline std::string getRelativePath(const std::string& fullPath,
+                                       const std::string& basePath)
+    {
+        if (boost::algorithm::starts_with(fullPath, basePath)) {
+            return fullPath.substr(basePath.length());
+        }
+        else {
+            return fullPath;
+        }
+    }
+    
+    /**
+     * Get the extension of the given filename. If there is no extension, an
+     * empty string is returned.
+     */
+    inline std::string getExtension(const std::string& path) {
+        std::size_t dotPos = path.rfind('.');
+        if (dotPos == std::string::npos) {
+            return "";
+        }
+        else {
+            return path.substr(dotPos + 1);
+        }
+    }
+    
+    /**
+     * Get the containing folder of the specified object. This is calculated
+     * as the directory before the rightmost slash (which will be the object
+     * itself, if the pathname ends in a slash).
+     * 
+     * If the path does not contain a slash, the empty string will be returned.
+     * 
+     * E.g.
+     * blah/bleh/file   -> "bleh"
+     * blah/bloog/      -> "bloog"
+     */
+    inline std::string getContainingDir(const std::string& path) {
+        std::size_t lastSlash = path.rfind('/');
+        if (lastSlash == std::string::npos) {
+            return "";
+        }
+        std::string trimmed = path.substr(0, lastSlash);
+        lastSlash = trimmed.rfind('/');
+        return trimmed.substr(lastSlash + 1);
+    }
+    
 }
 
 
