@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stream/textfilestream.h"
 #include "memory/allocator.h"
 #include "string/string.h"
+#include "os/path.h"
 
 /// \brief A single-byte-reader wrapper around an InputStream.
 /// Optimised for reading one byte at a time.
@@ -148,23 +149,35 @@ class StoredArchiveTextFile : public ArchiveTextFile
   FileInputStream m_filestream;
   SubFileInputStream m_substream;
   BinaryToTextInputStream<SubFileInputStream> m_textStream;
+  
+    // Mod directory
+    std::string _modDir;
+    
 public:
   typedef FileInputStream::size_type size_type;
   typedef FileInputStream::position_type position_type;
 
-  StoredArchiveTextFile(const char* name, const char* archiveName, position_type position, size_type stream_size)
-    : m_name(name), m_filestream(archiveName), m_substream(m_filestream, position, stream_size), m_textStream(m_substream)
-  {
-  }
-
-  static StoredArchiveTextFile* create(const char* name, const char* archiveName, position_type position, size_type stream_size)
-  {
-    return New<StoredArchiveTextFile>().scalar(name, archiveName, position, stream_size);
-  }
+    /**
+     * Constructor.
+     * 
+     * @param modDir
+     * Name of the mod directory containing this file.
+     */
+    StoredArchiveTextFile(const char* name, 
+                          const char* archiveName,
+                          const std::string& modDir,
+                          position_type position, 
+                          size_type stream_size)
+    : m_name(name), 
+      m_filestream(archiveName), 
+      m_substream(m_filestream, position, stream_size), 
+      m_textStream(m_substream),
+      _modDir(os::getContainingDir(modDir))
+    { }
 
   void release()
   {
-    Delete<StoredArchiveTextFile>().scalar(this);
+    delete this;
   }
   const char* getName() const
   {
@@ -174,6 +187,13 @@ public:
   {
     return m_textStream;
   }
+  
+    /**
+     * Return mod directory.
+     */
+    std::string getModDirectory() const {
+        return _modDir;
+    }
 };
 
 /// \brief An ArchiveFile which is stored as a single file on disk.
@@ -227,12 +247,20 @@ class DirectoryArchiveTextFile : public ArchiveTextFile
 {
   std::string m_name;
   TextFileInputStream m_inputStream;
+  
+    // Mod directory
+    std::string _modDir;
+    
 public:
 
-  DirectoryArchiveTextFile(const char* name, const char* filename)
-    : m_name(name), m_inputStream(filename)
-  {
-  }
+    DirectoryArchiveTextFile(const char* name, 
+                             const std::string& modDir,
+                             const char* filename)
+    : m_name(name), 
+      m_inputStream(filename), 
+      _modDir(os::getContainingDir(modDir))
+    { }
+
   bool failed() const
   {
     return m_inputStream.failed();
@@ -250,6 +278,13 @@ public:
   {
     return m_inputStream;
   }
+  
+    /**
+     * Get mod directory.
+     */
+    std::string getModDirectory() const {
+        return _modDir;
+    }
 };
 
 

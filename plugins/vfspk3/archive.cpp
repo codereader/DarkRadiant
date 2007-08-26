@@ -68,7 +68,8 @@ public:
   {
     UnixPath path(m_root.c_str());
     path.push_filename(name);
-    DirectoryArchiveTextFile* file = new DirectoryArchiveTextFile(name, path.c_str());
+    DirectoryArchiveTextFile* file = 
+        new DirectoryArchiveTextFile(name, m_root, path.c_str());
     if(!file->failed())
     {
       return file;

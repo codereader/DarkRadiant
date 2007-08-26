@@ -32,6 +32,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "archivelib.h"
 #include "zlibstream.h"
 
+#include "os/path.h"
+
 class DeflatedArchiveFile : public ArchiveFile
 {
   std::string m_name;
@@ -66,21 +68,44 @@ public:
   }
 };
 
-class DeflatedArchiveTextFile : public ArchiveTextFile
+/**
+ * ArchiveFile stored in a ZIP in DEFLATE format.
+ */
+class DeflatedArchiveTextFile 
+: public ArchiveTextFile
 {
   std::string m_name;
   FileInputStream m_istream;
   SubFileInputStream m_substream;
   DeflatedInputStream m_zipstream;
   BinaryToTextInputStream<DeflatedInputStream> m_textStream;
+  
+    // Mod directory containing this file
+    const std::string _modDir;
+    
 public:
+    
   typedef FileInputStream::size_type size_type;
   typedef FileInputStream::position_type position_type;
 
-  DeflatedArchiveTextFile(const char* name, const char* archiveName, position_type position, size_type stream_size)
-    : m_name(name), m_istream(archiveName), m_substream(m_istream, position, stream_size), m_zipstream(m_substream), m_textStream(m_zipstream)
-  {
-  }
+    /**
+     * Constructor.
+     * 
+     * @param modDir
+     * The name of the mod directory this file's archive is located in.
+     */
+    DeflatedArchiveTextFile(const char* name, 
+                            const char* archiveName,
+                            const std::string& modDir,
+                            position_type position, 
+                            size_type stream_size)
+    : m_name(name), 
+      m_istream(archiveName), 
+      m_substream(m_istream, position, stream_size), 
+      m_zipstream(m_substream), 
+      m_textStream(m_zipstream),
+      _modDir(os::getContainingDir(modDir))
+    { }
 
   void release()
   {
@@ -90,6 +115,13 @@ public:
   {
     return m_textStream;
   }
+  
+    /**
+     * Return mod directory of this file.
+     */
+    std::string getModDirectory() const {
+        return _modDir;
+    }
 };
 
 #include "pkzip.h"
@@ -285,9 +317,17 @@ public:
       switch(file->m_mode)
       {
       case ZipRecord::eStored:
-        return StoredArchiveTextFile::create(name, m_name.c_str(), m_istream.tell(), file->m_stream_size);
+        return new StoredArchiveTextFile(name, 
+                                         m_name.c_str(),
+                                         m_name,
+                                         m_istream.tell(), 
+                                         file->m_stream_size);
       case ZipRecord::eDeflated:
-        return new DeflatedArchiveTextFile(name, m_name.c_str(), m_istream.tell(), file->m_stream_size);
+        return new DeflatedArchiveTextFile(name, 
+                                           m_name.c_str(), 
+                                           m_name,
+                                           m_istream.tell(), 
+                                           file->m_stream_size);
       }
     }
     return 0;
