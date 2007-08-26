@@ -27,16 +27,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <ostream>
 
-class Tokeniser;
+/* FORWARD DECLS */
 class TokenWriter;
+namespace parser { class DefTokeniser; }
 
 /// \brief A node whose state can be imported from a token stream.
 class MapImporter
 {
 public:
-  STRING_CONSTANT(Name, "MapImporter");
+    STRING_CONSTANT(Name, "MapImporter");
 
-  virtual bool importTokens(Tokeniser& tokeniser) = 0;
+    virtual bool importTokens(parser::DefTokeniser& tokeniser) = 0;
 };
 typedef boost::shared_ptr<MapImporter> MapImporterPtr;
 

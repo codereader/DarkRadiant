@@ -309,4 +309,13 @@ private:
 
 typedef std::vector<Brush*> BrushVector;
 
+/**
+ * Stream insertion for Brush objects.
+ */
+inline std::ostream& operator<< (std::ostream& os, const Brush& b) {
+    os << "Brush { size = " << b.size() << ", localAABB = " << b.localAABB()
+       << " }";
+    return os;
+}
+
 #endif /*BRUSH_BRUSH_H_*/

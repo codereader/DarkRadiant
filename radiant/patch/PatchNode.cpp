@@ -49,7 +49,7 @@ const Matrix4& PatchNode::localToParent() const {
 }	
   
   	// MapImporter implementation
-bool PatchNode::importTokens(Tokeniser& tokeniser) {
+bool PatchNode::importTokens(parser::DefTokeniser& tokeniser) {
 	return m_importMap.importTokens(tokeniser);
 }
 

@@ -28,14 +28,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "shaderlib.h"
 #include "brush/Face.h"
 #include "brush/Brush.h"
+#include "parser/DefTokeniser.h"
 
-inline bool FaceShader_importContentsFlagsValue(FaceShader& faceShader, Tokeniser& tokeniser)
+inline void FaceShader_importContentsFlagsValue(FaceShader& faceShader, 
+                                                parser::DefTokeniser& tok)
 {
-  // parse the optional contents/flags/value
-  RETURN_FALSE_IF_FAIL(Tokeniser_getInteger(tokeniser, faceShader.m_flags.m_contentFlags));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getInteger(tokeniser, faceShader.m_flags.m_surfaceFlags));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getInteger(tokeniser, faceShader.m_flags.m_value));
-  return true;
+    // parse the optional contents/flags/value
+    using boost::lexical_cast;
+  
+    faceShader.m_flags.m_contentFlags = lexical_cast<int>(tok.nextToken());
+    faceShader.m_flags.m_surfaceFlags = lexical_cast<int>(tok.nextToken());
+    faceShader.m_flags.m_value = lexical_cast<int>(tok.nextToken());
 }
 
 inline bool FaceTexdef_importTokens(FaceTexdef& texdef, Tokeniser& tokeniser)
@@ -51,26 +54,32 @@ inline bool FaceTexdef_importTokens(FaceTexdef& texdef, Tokeniser& tokeniser)
   return true;
 }
 
-inline bool FaceTexdef_BP_importTokens(FaceTexdef& texdef, Tokeniser& tokeniser)
+inline void FaceTexdef_BP_importTokens(FaceTexdef& texdef, 
+                                       parser::DefTokeniser& tokeniser)
 {
-  // parse alternate texdef
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
-  {
-    RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
-    RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_brushprimit_texdef.coords[0][0]));
-    RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_brushprimit_texdef.coords[0][1]));
-    RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_brushprimit_texdef.coords[0][2]));
-    RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
-  }
-  {
-    RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
-    RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_brushprimit_texdef.coords[1][0]));
-    RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_brushprimit_texdef.coords[1][1]));
-    RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_brushprimit_texdef.coords[1][2]));
-    RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
-  }
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
-  return true;
+    using boost::lexical_cast;
+    
+    tokeniser.assertNextToken("(");  
+
+    tokeniser.assertNextToken("(");
+    texdef.m_projection.m_brushprimit_texdef.coords[0][0] = 
+        lexical_cast<double>(tokeniser.nextToken());
+    texdef.m_projection.m_brushprimit_texdef.coords[0][1] = 
+        lexical_cast<double>(tokeniser.nextToken());
+    texdef.m_projection.m_brushprimit_texdef.coords[0][2] = 
+        lexical_cast<double>(tokeniser.nextToken());
+    tokeniser.assertNextToken(")");  
+
+    tokeniser.assertNextToken("(");  
+    texdef.m_projection.m_brushprimit_texdef.coords[1][0] = 
+        lexical_cast<double>(tokeniser.nextToken());
+    texdef.m_projection.m_brushprimit_texdef.coords[1][1] = 
+        lexical_cast<double>(tokeniser.nextToken());
+    texdef.m_projection.m_brushprimit_texdef.coords[1][2] = 
+        lexical_cast<double>(tokeniser.nextToken());
+    tokeniser.assertNextToken(")");  
+
+    tokeniser.assertNextToken(")");  
 }
 
 inline bool FacePlane_importTokens(FacePlane& facePlane, Tokeniser& tokeniser)
@@ -89,36 +98,39 @@ inline bool FacePlane_importTokens(FacePlane& facePlane, Tokeniser& tokeniser)
   return true;
 }
 
-inline bool FacePlane_Doom3_importTokens(FacePlane& facePlane, Tokeniser& tokeniser)
+inline void FacePlane_Doom3_importTokens(FacePlane& facePlane, 
+                                         parser::DefTokeniser& tokeniser)
 {
-  Plane3 plane;
-  // parse plane equation
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, plane.a));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, plane.b));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, plane.c));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, plane.d));
-  plane.d = -plane.d;
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
+    using boost::lexical_cast;
+    
+    // Note: Do not expect an initial "(" since this is already consumed by the
+    // while loop in BrushTokenImporter::importTokens().
+    
+    // Construct a plane and parse its values
+    Plane3 plane;
+    
+    plane.a = lexical_cast<double>(tokeniser.nextToken());
+    plane.b = lexical_cast<double>(tokeniser.nextToken());
+    plane.c = lexical_cast<double>(tokeniser.nextToken());
+    plane.d = lexical_cast<double>(tokeniser.nextToken());
+    
+    plane.d = -plane.d;
 
-  facePlane.setDoom3Plane(plane);
-  return true;
+    tokeniser.assertNextToken(")");  
+
+    facePlane.setDoom3Plane(plane);
 }
 
-inline bool FaceShader_Doom3_importTokens(FaceShader& faceShader, Tokeniser& tokeniser)
+inline void FaceShader_Doom3_importTokens(FaceShader& faceShader, 
+                                          parser::DefTokeniser& tokeniser)
 {
-  const char *shader = tokeniser.getToken();
-  if(shader == 0)
-  {
-    Tokeniser_unexpectedError(tokeniser, shader, "#shader-name");
-    return false;
-  }
-  if(string_equal(shader, "_default"))
-  {
-    shader = texdef_name_default().c_str();
-  }
-  faceShader.setShader(shader);
-  return true;
+    std::string shader = tokeniser.nextToken();
+
+    if (shader == "_default") {
+        shader = texdef_name_default();
+    }
+    
+    faceShader.setShader(shader);
 }
 
 inline bool FaceShader_importTokens(FaceShader& faceShader, Tokeniser& tokeniser)
@@ -152,12 +164,13 @@ public:
   Doom3FaceTokenImporter(Face& face) : m_face(face)
   {
   }
-  bool importTokens(Tokeniser& tokeniser)
+  
+  bool importTokens(parser::DefTokeniser& tokeniser)
   {
-    RETURN_FALSE_IF_FAIL(FacePlane_Doom3_importTokens(m_face.getPlane(), tokeniser));
-    RETURN_FALSE_IF_FAIL(FaceTexdef_BP_importTokens(m_face.getTexdef(), tokeniser));
-    RETURN_FALSE_IF_FAIL(FaceShader_Doom3_importTokens(m_face.getShader(), tokeniser));
-    RETURN_FALSE_IF_FAIL(FaceShader_importContentsFlagsValue(m_face.getShader(), tokeniser));
+    FacePlane_Doom3_importTokens(m_face.getPlane(), tokeniser);
+    FaceTexdef_BP_importTokens(m_face.getTexdef(), tokeniser);
+    FaceShader_Doom3_importTokens(m_face.getShader(), tokeniser);
+    FaceShader_importContentsFlagsValue(m_face.getShader(), tokeniser);
 
     m_face.getTexdef().m_projectionInitialised = true;
     m_face.getTexdef().m_scaleApplied = true;
@@ -254,42 +267,49 @@ public:
   BrushTokenImporter(Brush& brush) : m_brush(brush)
   {
   }
-  bool importTokens(Tokeniser& tokeniser)
-  {
-    tokeniser.nextLine();
-    RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "{"));
-    while(1)
+  
+    /**
+     * Required token import method.
+     */
+    bool importTokens(parser::DefTokeniser& tokeniser)
     {
-      // check for end of brush
-      tokeniser.nextLine();
-      const char* token = tokeniser.getToken();
-      if(string_equal(token, "}"))
-      {
-        break;
-      }
+        tokeniser.assertNextToken("{");
 
-      tokeniser.ungetToken();
+        while (1) {
 
-      m_brush.push_back(FacePtr(new Face(&m_brush)));
+            std::string token = tokeniser.nextToken();
+            
+            // Token should be either a "(" (start of face) or "}" (end of
+            // brush
+            if (token == "}") {
+                break;
+            }
+            else if (token == "(") { // FACE
 
-      //!todo BP support
-      tokeniser.nextLine();
+                // Add a new Face to the brush and get a reference to it
+                m_brush.push_back(FacePtr(new Face(&m_brush)));
+                Face& face = *m_brush.back();
 
-      Face& face = *m_brush.back();
+                Doom3FaceTokenImporter importer(face);
+                importer.importTokens(tokeniser);
 
-      Doom3FaceTokenImporter importer(face);
-      RETURN_FALSE_IF_FAIL(importer.importTokens(tokeniser));
-      face.planeChanged();
+                face.planeChanged();
+            }
+            else {
+                throw std::runtime_error(
+                        "BrushTokenImporter: invalid token '" + token + "'"
+                );
+            }
+        }
+
+        // Final outer "}"
+        tokeniser.assertNextToken("}");
+        
+        m_brush.planeChanged();
+        m_brush.shaderChanged();
+    
+        return true;
     }
-
-    tokeniser.nextLine();
-    RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "}"));
-
-    m_brush.planeChanged();
-    m_brush.shaderChanged();
-
-    return true;
-  }
 };
 
 /* Token exporter for Doom 3 brushes.

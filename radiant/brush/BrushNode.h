@@ -70,7 +70,8 @@ public:
 	}
 	
 	// MapImporter implementation
-	virtual bool importTokens(Tokeniser& tokeniser);
+	virtual bool importTokens(parser::DefTokeniser& tokeniser);
+
 	// MapExporter implementation
 	virtual void exportTokens(std::ostream& os) const;
 	

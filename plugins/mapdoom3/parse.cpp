@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ibrush.h"
 #include "ipatch.h"
 #include "ieclass.h"
-#include "iscriplib.h"
 #include "iradiant.h"
 #include "ishaders.h"
 
@@ -37,172 +36,153 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "traverselib.h"
 #include "stringio.h"
 #include "string/string.h"
+#include "parser/DefTokeniser.h"
 
 #include "gtkutil/ModalProgressDialog.h"
 #include "gtkutil/dialog.h"
 
-	namespace {
-		const std::string RKEY_MAP_LOAD_STATUS_INTERLEAVE = "user/ui/map/loadStatusInterleave";
-	}
+#include <map>
+#include <string>
+
+namespace {
+	const std::string RKEY_MAP_LOAD_STATUS_INTERLEAVE = "user/ui/map/loadStatusInterleave";
+}
+
+/**
+ * String map type.
+ */
+typedef std::map<std::string, std::string> StringMap;
 
 inline MapImporterPtr Node_getMapImporter(scene::INodePtr node) {
 	return boost::dynamic_pointer_cast<MapImporter>(node);
 }
 
-
-typedef std::list< std::pair<std::string, std::string> > KeyValues;
-
-scene::INodePtr g_nullNode(NewNullNode());
-
-
-scene::INodePtr Entity_create(EntityCreator& entityTable, IEntityClassPtr entityClass, const KeyValues& keyValues)
+/**
+ * Create an entity with the given properties.
+ */
+scene::INodePtr Entity_create(EntityCreator& entityTable, 
+                              const StringMap& keyValues)
 {
-  scene::INodePtr entity(entityTable.createEntity(entityClass));
-  for(KeyValues::const_iterator i = keyValues.begin(); i != keyValues.end(); ++i)
-  {
-    Node_getEntity(entity)->setKeyValue((*i).first.c_str(), (*i).second.c_str());
-  }
-  return entity;
+    // Get the classname from the StringMap
+    StringMap::const_iterator iter = keyValues.find("classname");
+    if (iter == keyValues.end()) {
+        throw std::runtime_error("Entity_create(): could not find classname.");
+    }
+    
+    // Otherwise create the entity and add all of the properties
+    std::string className = iter->second;
+    IEntityClassPtr classPtr = GlobalEntityClassManager().findClass(className);
+    
+    scene::INodePtr entity(entityTable.createEntity(classPtr));
+
+    for (StringMap::const_iterator i = keyValues.begin(); 
+         i != keyValues.end(); 
+         ++i)
+    {
+        Node_getEntity(entity)->setKeyValue(i->first, i->second);
+    }
+    return entity;
 }
 
 scene::INodePtr Entity_parseTokens(
-	Tokeniser& tokeniser, 
+	parser::DefTokeniser& tokeniser, 
 	EntityCreator& entityTable, 
 	const PrimitiveParser& parser, 
 	int index,
 	int interleave,
 	gtkutil::ModalProgressDialog& dialog)
-{	
-  scene::INodePtr entity(g_nullNode);
-  KeyValues keyValues;
-	std::string classname = "";
-	
-	std::string dlgEntityText = 
-		"Loading entity " + intToStr(index);
-	std::string dlgBrushText = "";
-
-  int count_primitives = 0;
-	while(1) {
-		
-		// Get the token and check for NULL
-		tokeniser.nextLine();
-		const char* szToken = tokeniser.getToken();
-		if (szToken == NULL) {
-			throw std::runtime_error("Invalid token.");
-		}
-		
-		std::string token = szToken;
-    
-    if (token == "}") // end entity
-    {
-      if(entity == g_nullNode)
-      {
-      	if (index % interleave == 0) { 
-	      	// Update the dialog text. This will throw an exception if the cancel
-			// button is clicked, which we must catch and handle.
-			try {
-				dialog.setText(dlgEntityText + dlgBrushText);
-			}
-			catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
-				throw std::runtime_error("Map loading cancelled.");
-			}
-      	}
-        // entity does not have brushes
-        entity = Entity_create(entityTable, GlobalEntityClassManager().findOrInsert(classname, false), keyValues);
-      }
-      return entity;
+{
+    // Set up the progress dialog
+	std::string dlgEntityText = "Loading entity " + intToStr(index);
+	if (index % interleave == 0) { 
+		dialog.setText(dlgEntityText);
     }
-    else if(token == "{") // begin primitive
-    {
-    	if (count_primitives != 0 && count_primitives % interleave == 0) {
-	    	// Update the dialog text. This will throw an exception if the cancel
-			// button is clicked, which we must catch and handle.
-			try {
-				dialog.setText(dlgEntityText + dlgBrushText);
-			}
-			catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
-				throw std::runtime_error("Map loading cancelled.");	
-			}
-    	}
-    	
-      if(entity == g_nullNode)
-      {
-        // entity has brushes
-        entity = Entity_create(entityTable, GlobalEntityClassManager().findOrInsert(classname, true), keyValues);
-      }
 
-      tokeniser.nextLine();
+    // Map of keyvalues for this entity
+    StringMap keyValues;
 
-		// Try to import the primitive, throwing exception if failed
-		scene::INodePtr primitive(parser.parsePrimitive(tokeniser));
-		if (primitive == g_nullNode 
-			|| !Node_getMapImporter(primitive)->importTokens(tokeniser))
-		{
-        	throw std::runtime_error("Primitive #" 
-				+ intToStr(count_primitives) 
-				+ ": parse error\n");
-		}
+    // The actual entity. This is initially null, and will be created when
+    // primitives start or the end of the entity is reached
+    scene::INodePtr entity;
+    
+    /* START PARSING */
+    
+	// First token must be an open brace
+	tokeniser.assertNextToken("{");
+	
+	std::string token = tokeniser.nextToken();
+	int numPrimitives = 0;
+	
+	while (true) {
+	    
+	    // Token must be either a key, a "{" to indicate the start of a 
+	    // primitive, or a "}" to indicate the end of the entity
 
-		dlgBrushText = "\nLoading Primitive " + intToStr(count_primitives); 
+	    if (token == "{") { // PRIMITIVE
 
-		scene::TraversablePtr traversable = Node_getTraversable(entity);
-		if(Node_getEntity(entity)->isContainer() 
-		   && traversable != 0) 
-		{
-			// Try to insert the primitive into the entity. This may throw an exception if
-			// the entity should not contain brushes (e.g. a func_static with a model key)
-	        try {
-	        	traversable->insert(primitive);
-	        }
-	        catch (std::runtime_error e) {
-	        	// Warn, but just ignore the brush
-	        	globalErrorStream() << "[mapdoom3] Entity " << index << " failed to accept brush, discarding\n";
+	        // Create the entity if necessary
+	        if (!entity)
+	            entity = Entity_create(entityTable, keyValues);
+	        
+	        // Update the dialog
+	        dialog.setText(
+                dlgEntityText + "\nPrimitive " + intToStr(numPrimitives++)
+            );
+	        
+	        // Try to parse the primitive, throwing exception if failed
+	        scene::INodePtr primitive(parser.parsePrimitive(tokeniser));
+	        if (!primitive 
+	            || !Node_getMapImporter(primitive)->importTokens(tokeniser))
+	        {
+	            throw std::runtime_error("Primitive #" + intToStr(numPrimitives) 
+	                                     + ": parse error\n");
 	        }
 	        
-	        if (count_primitives != 0 && count_primitives % interleave == 0) {
-	            // Update the dialog text. This will throw an exception if the cancel
-				// button is clicked, which we must catch and handle.
-				try {
-					dialog.setText(dlgEntityText + dlgBrushText);
-				}
-				catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
-					throw std::runtime_error("Map loading cancelled.");
-				}
+	        // Now add the primitive as a child of the entity
+	        scene::TraversablePtr traversable = Node_getTraversable(entity);
+	        if(Node_getEntity(entity)->isContainer() 
+	           && traversable != 0) 
+	        {
+	            // Try to insert the primitive into the entity. This may throw 
+	            // an exception if the entity should not contain brushes 
+	            // (e.g. a func_static with a model key)
+	            try {
+	                traversable->insert(primitive);
+	            }
+	            catch (std::runtime_error e) {
+	                // Warn, but just ignore the brush
+	                globalErrorStream() 
+	                    << "[mapdoom3] Entity " << index 
+	                    << " failed to accept brush, discarding\n";
+	            }
 	        }
-		}
-		else {
-			globalErrorStream() << "entity " << index << ": type " << classname << ": discarding brush " << count_primitives << "\n";
-		}
-		
-		++count_primitives;
-    }
-	else { 
-		
-		// Keyvalue pair. Get the value, and check that we haven't swallowed
-		// the { or } which will happen if the number of tokens is wrong.
-		
-		const char* szValue = tokeniser.getToken();
-		if (szValue == NULL) {
-			throw std::runtime_error("Parsing keyvalues: invalid token");
-		}
-		 
-      	std::string value = szValue;
-		if (value == "{" || value == "}") {
-			throw std::runtime_error(
-				"Parsed invalid value \"" + value + "\"");
-		}
-				 
-		// Push the pair, and set the classname if we have it
-		keyValues.push_back(KeyValues::value_type(token, value));
-		if(token == "classname") {
-			classname = value;
-			// Generate the new entity text
-			dlgEntityText = "Loading entity " 
-						+ intToStr(index)
-						+ " (" + classname + ")";
-		}
-    }
-  }
+	        
+	    }
+	    else if (token == "}") { // END OF ENTITY
+            // Create the entity if necessary and return it
+	        if (!entity)
+	            entity = Entity_create(entityTable, keyValues);
+	        return entity;
+	    }
+	    else { // KEY
+	        std::string value = tokeniser.nextToken();
+
+	        // Sanity check (invalid number of tokens will get us out of sync)
+	        if (value == "{" || value == "}") {
+	            throw std::runtime_error(
+	                "Parsed invalid value '" + value + "' for key '" 
+	                + token + "'"
+	            );
+	        }
+	        
+	        // Otherwise add the keyvalue pair to our map
+	        keyValues.insert(StringMap::value_type(token, value));
+	    }
+	    
+	    // Get the next token
+	    token = tokeniser.nextToken();
+	    
+	} // end of while
 }
 
 // Check if the given node is excluded based on entity class (debug code). 
@@ -271,7 +251,7 @@ void checkInsert(scene::INodePtr node, scene::INodePtr root, int count) {
 }
 		
 void Map_Read(scene::INodePtr root, 
-			  Tokeniser& tokeniser, 
+			  parser::DefTokeniser& tokeniser, 
 			  EntityCreator& entityTable, 
 			  const PrimitiveParser& parser)
 {
@@ -304,8 +284,7 @@ void Map_Read(scene::INodePtr root,
 		}
 
 		// Check for end of file
-		tokeniser.nextLine();
-		if (!tokeniser.getToken()) // { or 0
+		if (!tokeniser.hasMoreTokens())
 			break;
 
 		// Create an entity node by parsing from the stream. If there is an
@@ -313,11 +292,11 @@ void Map_Read(scene::INodePtr root,
 		try {
 			// Get a node reference to the new entity
 			scene::INodePtr entity(Entity_parseTokens(tokeniser, 
-														 entityTable, 
-														 parser, 
-														 entCount,
-														 interleave,
-														 dialog));
+			                                          entityTable, 
+			                                          parser, 
+			                                          entCount,
+			                                          interleave,
+			                                          dialog));
 			// Insert the entity
 			checkInsert(entity, root, entCount);
 		}

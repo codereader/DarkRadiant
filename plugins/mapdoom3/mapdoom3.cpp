@@ -116,50 +116,62 @@ public:
 		return this;
 	}
 
-  scene::INodePtr parsePrimitive(Tokeniser& tokeniser) const
-  {
-    const char* primitive = tokeniser.getToken();
-    if(primitive != 0)
+	/**
+	 * Parse a primitive from the given token stream.
+	 */
+	scene::INodePtr parsePrimitive(parser::DefTokeniser& tokeniser) const {
+	    std::string primitive = tokeniser.nextToken();
+	    if (primitive == "patchDef3")
+	        return m_dependencies.getPatchDoom3().createPatch();
+	    else if(primitive == "patchDef2")
+	        return m_dependencies.getPatchDef2Doom3().createPatch();
+	    else if(primitive == "brushDef3")
+	        return m_dependencies.getBrushDoom3().createBrush();
+	    else
+	        return scene::INodePtr();
+  }
+  
+    /**
+     * Read tokens from a map stream and create entities accordingly.
+     */
+    void readGraph(scene::INodePtr root, 
+                   TextInputStream& inputStream, 
+                   EntityCreator& entityTable) const
     {
-      if(string_equal(primitive, "patchDef3"))
-      {
-        return m_dependencies.getPatchDoom3().createPatch();
-      }
-      else if(string_equal(primitive, "patchDef2"))
-      {
-        return m_dependencies.getPatchDef2Doom3().createPatch();
-      }
-      else if(string_equal(primitive, "brushDef3"))
-      {
-        return m_dependencies.getBrushDoom3().createBrush();
-      }
-    }
+        // Construct a tokeniser
+        std::istream is(&inputStream);
+        parser::BasicDefTokeniser<std::istream> tok(is);
+        
+        // Parse the map version
+        int version = 0;
+        try {
+            tok.assertNextToken("Version");
+            version = boost::lexical_cast<int>(tok.nextToken());
+        }
+        catch (parser::ParseException e) {
+            globalErrorStream() 
+                << "[mapdoom3] Unable to parse map version: " 
+                << e.what() << "\n";
+            return;
+        }
+        catch (boost::bad_lexical_cast e) {
+            globalErrorStream() 
+                << "[mapdoom3] Unable to parse map version: " 
+                << e.what() << "\n";
+            return;
+        }
 
-    Tokeniser_unexpectedError(tokeniser, primitive, "#doom3-primitive");
-    return g_nullNode;
-  }
-  void readGraph(scene::INodePtr root, TextInputStream& inputStream, EntityCreator& entityTable) const
-  {
-    Tokeniser& tokeniser = GlobalScripLibModule::getTable().m_pfnNewSimpleTokeniser(inputStream);
-    tokeniser.nextLine();
-    if(!Tokeniser_parseToken(tokeniser, "Version"))
-    {
-      return;
+        // Check we have the correct version for this module
+        if (version != MapVersion()) {
+            globalErrorStream() 
+                << "Incorrect map version: required " << MapVersion() 
+                << ", found " << version << "\n";
+            return;
+        }
+        
+        // Now start parsing the map
+        Map_Read(root, tok, entityTable, *this);
     }
-    double version;
-    if(!Tokeniser_getDouble(tokeniser, version))
-    {
-      return;
-    }
-    if(static_cast<int>(version) != MapVersion())
-    {
-      globalErrorStream() << "Doom 3 map version " << MapVersion() << " supported, version is " << Unsigned(version) << "\n";
-      return;
-    }
-    tokeniser.nextLine();
-    Map_Read(root, tokeniser, entityTable, *this);
-    tokeniser.release();
-  }
 
 	// Write scene graph to an ostream
 	void writeGraph(scene::INodePtr root, GraphTraversalFunc traverse, std::ostream& os) const {

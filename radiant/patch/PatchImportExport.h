@@ -9,6 +9,7 @@
 #include "stringio.h"
 #include "string/string.h"
 #include "stream/stringstream.h"
+#include "parser/DefTokeniser.h"
 
 /* greebo: These are the import/export functions for Patches from and to map files. A PatchDoom3 for example
  * makes use of the PatchDoom3TokenImporter to load a patch from the map file.
@@ -16,122 +17,100 @@
  * This section looks like it could do with some reorganising.
  */
 
-inline bool Patch_importHeader(Patch& patch, Tokeniser& tokeniser) {
-  tokeniser.nextLine();
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "{"));
-  return true;
+inline void Patch_importShader(Patch& patch, parser::DefTokeniser& tokeniser) {
+
+    std::string texture = tokeniser.nextToken();
+    if (texture == "NULL") {
+        patch.SetShader(texdef_name_default());
+    }
+    else {
+        patch.SetShader(GlobalTexturePrefix_get() + texture);
+    }
 }
 
-inline bool Patch_importShader(Patch& patch, Tokeniser& tokeniser) {
-  // parse shader name
-  tokeniser.nextLine();
-  const char* texture = tokeniser.getToken();
-  if(texture == 0)
-  {
-    Tokeniser_unexpectedError(tokeniser, texture, "#texture-name");
-    return false;
-  }
-  if(string_equal(texture, "NULL"))
-  {
-    patch.SetShader(texdef_name_default());
-  }
-  else
-  {
-    StringOutputStream shader(string_length(GlobalTexturePrefix_get()) + string_length(texture));
-    shader << GlobalTexturePrefix_get() << texture;
-    patch.SetShader(shader.c_str());
-  }
-  return true;
-}
-
-inline bool PatchDoom3_importShader(Patch& patch, Tokeniser& tokeniser)
+inline void PatchDoom3_importShader(Patch& patch, 
+                                    parser::DefTokeniser& tokeniser)
 {
-  // parse shader name
-  tokeniser.nextLine();
-  const char *shader = tokeniser.getToken();
-  if(shader == 0)
-  {
-    Tokeniser_unexpectedError(tokeniser, shader, "#shader-name");
-    return false;
-  }
-  if(string_equal(shader, "_default"))
-  {
-    shader = texdef_name_default().c_str();
-  }
-  patch.SetShader(shader);
-  return true;
+    std::string texture = tokeniser.nextToken();
+    if (texture == "_default") {
+        patch.SetShader(texdef_name_default());
+    }
+    else {
+        patch.SetShader(texture);
+    }
 }
 
-inline bool Patch_importParams(Patch& patch, Tokeniser& tokeniser)
+inline void Patch_importParams(Patch& patch, parser::DefTokeniser& tok)
 {
-  tokeniser.nextLine();
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
+    using boost::lexical_cast;
+    
+    tok.assertNextToken("(");
 
   // parse matrix dimensions
   {
-    std::size_t c, r;
-    RETURN_FALSE_IF_FAIL(Tokeniser_getSize(tokeniser, c));
-    RETURN_FALSE_IF_FAIL(Tokeniser_getSize(tokeniser, r));
+    std::size_t c = lexical_cast<std::size_t>(tok.nextToken());
+    std::size_t r = lexical_cast<std::size_t>(tok.nextToken());
 
     patch.setDims(c, r);
   }
 
-  if(patch.m_patchDef3)
-  {
-    RETURN_FALSE_IF_FAIL(Tokeniser_getSize(tokeniser, patch.m_subdivisions_x));
-    RETURN_FALSE_IF_FAIL(Tokeniser_getSize(tokeniser, patch.m_subdivisions_y));
-  }
-
-  // ignore contents/flags/value
-  int tmp;
-  RETURN_FALSE_IF_FAIL(Tokeniser_getInteger(tokeniser, tmp));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getInteger(tokeniser, tmp));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getInteger(tokeniser, tmp));
-
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
-  return true;
-}
-
-inline bool Patch_importMatrix(Patch& patch, Tokeniser& tokeniser)
-{
-  // parse matrix
-  tokeniser.nextLine();
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
-  {
-    for(std::size_t c=0; c<patch.getWidth(); c++)
-    {
-      tokeniser.nextLine();
-      RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
-      for(std::size_t r=0; r<patch.getHeight(); r++)
-      {
-        RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
-    
-        RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, patch.ctrlAt(r,c).m_vertex[0]));
-        RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, patch.ctrlAt(r,c).m_vertex[1]));
-        RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, patch.ctrlAt(r,c).m_vertex[2]));
-        RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, patch.ctrlAt(r,c).m_texcoord[0]));
-        RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, patch.ctrlAt(r,c).m_texcoord[1]));
-
-        RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
-      }
-      RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
+    // Version 3 of the patchDef has variable subdivisions
+    if(patch.m_patchDef3) {
+        patch.m_subdivisions_x = lexical_cast<std::size_t>(tok.nextToken());
+        patch.m_subdivisions_y = lexical_cast<std::size_t>(tok.nextToken());
     }
-  }
-  tokeniser.nextLine();
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
-  return true;
+
+    // ignore contents/flags/value
+    tok.skipTokens(3);
+
+    tok.assertNextToken(")");
 }
 
-inline bool Patch_importFooter(Patch& patch, Tokeniser& tokeniser)
+inline void Patch_importMatrix(Patch& patch, parser::DefTokeniser& tok)
 {
-  patch.controlPointsChanged();
+    using boost::lexical_cast;
+    
+    tok.assertNextToken("(");
 
-  tokeniser.nextLine();
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "}"));
+    // For each row
+    for(std::size_t c=0; c < patch.getWidth(); c++)
+    {
+        tok.assertNextToken("(");
 
-  tokeniser.nextLine();
-  RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "}"));
-  return true;
+        // For each column
+        for(std::size_t r=0; r<patch.getHeight(); r++) 
+        {
+            tok.assertNextToken("(");
+    
+            // Parse vertex coordinates
+            patch.ctrlAt(r, c).m_vertex[0] = 
+                lexical_cast<double>(tok.nextToken());
+            patch.ctrlAt(r, c).m_vertex[1] = 
+                lexical_cast<double>(tok.nextToken());
+            patch.ctrlAt(r, c).m_vertex[2] = 
+                lexical_cast<double>(tok.nextToken());
+ 
+            // Parse texture coordinates
+            patch.ctrlAt(r, c).m_texcoord[0] = 
+                lexical_cast<double>(tok.nextToken());
+            patch.ctrlAt(r, c).m_texcoord[1] = 
+                lexical_cast<double>(tok.nextToken());
+ 
+            tok.assertNextToken(")");
+        }
+
+        tok.assertNextToken(")");
+    }
+
+    tok.assertNextToken(")");
+}
+
+inline void Patch_importFooter(Patch& patch, parser::DefTokeniser& tokeniser)
+{
+    patch.controlPointsChanged();
+
+    tokeniser.assertNextToken("}");  
+    tokeniser.assertNextToken("}");  
 }
 
 class PatchTokenImporter : 
@@ -142,32 +121,32 @@ public:
   PatchTokenImporter(Patch& patch) : m_patch(patch)
   {
   }
-  bool importTokens(Tokeniser& tokeniser)
+  bool importTokens(parser::DefTokeniser& tokeniser)
   {
-    RETURN_FALSE_IF_FAIL(Patch_importHeader(m_patch, tokeniser));
-    RETURN_FALSE_IF_FAIL(Patch_importShader(m_patch, tokeniser));
-    RETURN_FALSE_IF_FAIL(Patch_importParams(m_patch, tokeniser));
-    RETURN_FALSE_IF_FAIL(Patch_importMatrix(m_patch, tokeniser));
-    RETURN_FALSE_IF_FAIL(Patch_importFooter(m_patch, tokeniser));
+    Patch_importShader(m_patch, tokeniser);
+    Patch_importParams(m_patch, tokeniser);
+    Patch_importMatrix(m_patch, tokeniser);
+    Patch_importFooter(m_patch, tokeniser);
 
     return true;
   }
 };
 
 // Takes the given patch token and tries to fill the retrieved values into the passed reference 
-class PatchDoom3TokenImporter : public MapImporter {
+class PatchDoom3TokenImporter 
+: public MapImporter {
 	Patch& m_patch;
 public:
 	PatchDoom3TokenImporter(Patch& patch) : m_patch(patch)
 	{
 	}
 	
-	bool importTokens(Tokeniser& tokeniser) {
-		RETURN_FALSE_IF_FAIL(Patch_importHeader(m_patch, tokeniser));
-		RETURN_FALSE_IF_FAIL(PatchDoom3_importShader(m_patch, tokeniser));
-		RETURN_FALSE_IF_FAIL(Patch_importParams(m_patch, tokeniser));
-		RETURN_FALSE_IF_FAIL(Patch_importMatrix(m_patch, tokeniser));
-		RETURN_FALSE_IF_FAIL(Patch_importFooter(m_patch, tokeniser));
+	bool importTokens(parser::DefTokeniser& tokeniser) {
+		tokeniser.assertNextToken("{");
+		PatchDoom3_importShader(m_patch, tokeniser);
+		Patch_importParams(m_patch, tokeniser);
+		Patch_importMatrix(m_patch, tokeniser);
+		Patch_importFooter(m_patch, tokeniser);
 
 		return true;
 	}
