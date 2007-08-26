@@ -34,7 +34,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "os/path.h"
 
-class DeflatedArchiveFile : public ArchiveFile
+class DeflatedArchiveFile 
+: public ArchiveFile
 {
   std::string m_name;
   FileInputStream m_istream;
@@ -119,7 +120,7 @@ public:
     /**
      * Return mod directory of this file.
      */
-    std::string getModDirectory() const {
+    std::string getModName() const {
         return _modDir;
     }
 };

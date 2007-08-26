@@ -26,6 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_IECLASS_H)
 #define INCLUDED_IECLASS_H
 
+#include "ModResource.h"
+
 #include "generic/constant.h"
 #include "math/Vector3.h"
 #include "modulesystem.h"
@@ -89,9 +91,13 @@ typedef boost::shared_ptr<IEntityClass> IEntityClassPtr;
  * * Entity class interface. An entity class represents a single type
  * of entity that can be created by the EntityCreator.
  */
-struct IEntityClass {
-
-	/** Get this entity class' name.
+class IEntityClass 
+: public ModResource
+{
+public:
+    
+	/** 
+	 * Get this entity class' name.
 	 */
 	virtual const std::string& getName() const = 0;
 
