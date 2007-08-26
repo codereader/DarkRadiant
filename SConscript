@@ -409,6 +409,7 @@ radiant_src = \
          'ui/einspector/ModelPropertyEditor.cpp',
          'ui/einspector/PropertyEditor.cpp',
          'ui/entitychooser/EntityClassChooser.cpp',
+         'ui/entitychooser/EntityClassTreePopulator.cpp',
          'ui/lightinspector/LightInspector.cpp',
          'ui/modelselector/ModelSelector.cpp',
          'ui/ortho/OrthoContextMenu.cpp',
