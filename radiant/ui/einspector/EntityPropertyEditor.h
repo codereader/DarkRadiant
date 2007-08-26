@@ -3,6 +3,9 @@
 
 #include "PropertyEditor.h"
 
+// Forward Declaration
+typedef struct _GtkComboBox GtkComboBox;
+
 namespace ui
 {
 
@@ -17,10 +20,19 @@ class EntityPropertyEditor:
 	// The combo box
     GtkWidget* _comboBox;
     
+    // Entity to edit
+	Entity* _entity;
+	
+	// Name of keyval
+	std::string _key;
+    	
 private:
 
     // Populate the combo box by traversing the scenegraph for Entities
     void populateComboBox();
+    
+    // GTK Callback for combo box selection changes
+    static void onSelectionChange(GtkComboBox* widget, EntityPropertyEditor* self);
     
 public:
 
