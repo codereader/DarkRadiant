@@ -194,11 +194,11 @@
 			<toggletoolbutton name="togglerotationpivot" action="ToggleRotationPivot" tooltip="Rotate func_* Entities around origin" icon="rotation_pivot_origin.png" />
 	</toolbar>
 	<toolbar name="edit" align="vertical">
-			<toolbutton name="xflip" action="MirrorSelectionX" tooltip="x-axis Flip" icon="brush_flipx.png"/>
+			<toolbutton name="xflip" action="MirrorSelectionX" tooltip="x-axis Mirror" icon="brush_flipx.png"/>
 			<toolbutton name="xrotate" action="RotateSelectionX" tooltip="x-axis Rotate" icon="brush_rotatex.png"/>
-			<toolbutton name="yflip" action="MirrorSelectionY" tooltip="y-axis Flip" icon="brush_flipy.png"/>
+			<toolbutton name="yflip" action="MirrorSelectionY" tooltip="y-axis Mirror" icon="brush_flipy.png"/>
 			<toolbutton name="yrotate" action="RotateSelectionY" tooltip="y-axis Rotate" icon="brush_rotatey.png"/>
-			<toolbutton name="zflip" action="MirrorSelectionZ" tooltip="z-axis Flip" icon="brush_flipz.png"/>
+			<toolbutton name="zflip" action="MirrorSelectionZ" tooltip="z-axis Mirror" icon="brush_flipz.png"/>
 			<toolbutton name="zrotate" action="RotateSelectionZ" tooltip="z-axis Rotate" icon="brush_rotatez.png"/>
 		<separator/>
 			<toolbutton name="snaptogrid" action="SnapToGrid" tooltip="Snap selection to grid" icon="grid_snap.png"/>

@@ -150,10 +150,10 @@
 			<menuItem name="rotateZ" caption="Rotate Z" command="RotateSelectionZ" icon="brush_rotatez.png" />
 		</subMenu>
 
-		<subMenu name="flip" caption="Flip">
-			<menuItem name="flipX" caption="Flip _X" command="MirrorSelectionX" icon="brush_flipx.png" />
-			<menuItem name="flipY" caption="Flip _Y" command="MirrorSelectionY" icon="brush_flipy.png" />
-			<menuItem name="flipZ" caption="Flip _Z" command="MirrorSelectionZ" icon="brush_flipz.png" />
+		<subMenu name="mirror" caption="Mirror">
+			<menuItem name="flipX" caption="Mirror _X" command="MirrorSelectionX" icon="brush_flipx.png" />
+			<menuItem name="flipY" caption="Mirror _Y" command="MirrorSelectionY" icon="brush_flipy.png" />
+			<menuItem name="flipZ" caption="Mirror _Z" command="MirrorSelectionZ" icon="brush_flipz.png" />
 		</subMenu>
 
 		<menuSeparator />
