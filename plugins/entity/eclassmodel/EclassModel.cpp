@@ -180,7 +180,7 @@ void EclassModel::freezeTransform() {
 	m_originKey.m_origin = m_origin;
 	m_originKey.write(&m_entity);
 	rotation_assign(m_rotationKey.m_rotation, m_rotation);
-	m_rotationKey.write(&m_entity);
+	m_rotationKey.write(&m_entity, true);
 }
 
 void EclassModel::transformChanged() {
