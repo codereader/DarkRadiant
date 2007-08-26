@@ -380,7 +380,6 @@ radiant_src = \
          'mainframe.cpp',
          'map.cpp',
          'nullmodel.cpp',
-         'parse.cpp',
          'patchmanip.cpp',
          'plugin.cpp',
          'qgl.cpp',

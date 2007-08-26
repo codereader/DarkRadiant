@@ -30,7 +30,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ifilesystem.h"
 #include "iundo.h"
 #include "ifiletypes.h"
-#include "iscriplib.h"
 
 #include "modulesystem/singletonmodule.h"
 
@@ -61,9 +60,12 @@ public:
 	}
 };
 
-class ModelMD5Dependencies : public ModelDependencies, public GlobalScripLibModuleRef
-{
-};
+/**
+ * Dependencies class.
+ */
+class ModelMD5Dependencies 
+: public ModelDependencies
+{ };
 
 class ModelMD5API
 {
