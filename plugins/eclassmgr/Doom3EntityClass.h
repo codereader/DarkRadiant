@@ -55,6 +55,9 @@ class Doom3EntityClass
 	// inheritance by copying all values from the parent onto the child,
 	// after recursively instructing the parent to resolve its own inheritance.
 	bool _inheritanceResolved;
+	
+	// Name of the mod owning this class
+	std::string _modName;
 
 private:
 
@@ -261,7 +264,26 @@ public:
 	 */
 	typedef std::map<std::string, IEntityClassPtr> EntityClasses;
 	void resolveInheritance(EntityClasses& classmap);
+	
+	/**
+	 * Return the mod name.
+	 */
+	std::string getModName() const {
+	    return _modName;   
+	}
+	
+	/**
+	 * Set the mod name.
+	 */
+	void setModName(const std::string& mn) {
+	    _modName = mn;
+	}
 };
+
+/**
+ * Pointer typedef.
+ */
+typedef boost::shared_ptr<Doom3EntityClass> Doom3EntityClassPtr;
 
 }
 

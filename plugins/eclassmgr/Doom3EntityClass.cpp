@@ -21,7 +21,8 @@ Doom3EntityClass::Doom3EntityClass(const std::string& name,
   _fixedSize(fixedSize),
   _model(""),
   _skin(""),
-  _inheritanceResolved(false)
+  _inheritanceResolved(false),
+  _modName("base")
 {
 	// Set the entity colour to default, if none was specified
 	if (_colour == Vector3(-1, -1, -1)) {

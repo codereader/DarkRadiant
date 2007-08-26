@@ -141,12 +141,16 @@ void EntityClassDoom3_parseModel(parser::DefTokeniser& tokeniser)
     }
 }
 
-void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
+// Parse a single def and return a pointer to the new entity class
+eclass::Doom3EntityClassPtr 
+EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
 {
     // Get the (lowercase) entity name and create the entity class for it
     const std::string sName = 
     	boost::algorithm::to_lower_copy(tokeniser.nextToken());
-	IEntityClassPtr entityClass(new eclass::Doom3EntityClass(sName));
+    
+	eclass::Doom3EntityClassPtr entityClass(
+	                                new eclass::Doom3EntityClass(sName));
 
     // Required open brace
     tokeniser.assertNextToken("{");
@@ -204,14 +208,14 @@ void EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
             
     } // while true
     
-    // Insert into the EntityClassManager
-	EntityClassDoom3_insertUnique(entityClass);
+    // Return the entity class pointer
+    return entityClass;
 }
 
 // Parse the provided stream containing the contents of a single .def file.
 // Extract all entitydefs and create objects accordingly.
 
-void EntityClassDoom3_parse(TextInputStream& inStr)
+void EntityClassDoom3_parse(TextInputStream& inStr, const std::string& modDir)
 {
 	// Construct a tokeniser for the stream
 	std::istream is(&inStr);
@@ -223,7 +227,10 @@ void EntityClassDoom3_parse(TextInputStream& inStr)
         boost::algorithm::to_lower(blockType);
 
         if(blockType == "entitydef") {
-            EntityClassDoom3_parseEntityDef(tokeniser);
+            eclass::Doom3EntityClassPtr cls = 
+                EntityClassDoom3_parseEntityDef(tokeniser);
+            cls->setModName(modDir);
+            EntityClassDoom3_insertUnique(cls);
         }
         else if(blockType == "model") {
             EntityClassDoom3_parseModel(tokeniser);
@@ -240,7 +247,9 @@ void EntityClassDoom3_loadFile(const std::string& filename)
 	ArchiveTextFile* file = GlobalFileSystem().openTextFile(fullname.c_str());
 	if(file != 0) {
         try {
-            EntityClassDoom3_parse(file->getInputStream());
+            // Parse entity defs from the file
+            EntityClassDoom3_parse(file->getInputStream(), 
+                                   file->getModName());
         }
         catch (parser::ParseException e) {
             std::cerr << "[eclassmgr] failed to parse " << filename 

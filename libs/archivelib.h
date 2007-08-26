@@ -191,7 +191,7 @@ public:
     /**
      * Return mod directory.
      */
-    std::string getModDirectory() const {
+    std::string getModName() const {
         return _modDir;
     }
 };
@@ -282,7 +282,7 @@ public:
     /**
      * Get mod directory.
      */
-    std::string getModDirectory() const {
+    std::string getModName() const {
         return _modDir;
     }
 };

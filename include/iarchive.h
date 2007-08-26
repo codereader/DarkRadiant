@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_IARCHIVE_H)
 #define INCLUDED_IARCHIVE_H
 
+#include "ModResource.h"
+
 #include <cstddef>
 #include "generic/constant.h"
 
@@ -50,6 +52,7 @@ public:
 
 /// \brief A file opened in text mode.
 class ArchiveTextFile
+: public ModResource
 {
 public:
   /// \brief Destroys the file object.
@@ -59,15 +62,6 @@ public:
   /// The stream may be read forwards until it is exhausted.
   /// The stream remains valid for the lifetime of the file.
   virtual TextInputStream& getInputStream() = 0;
-  
-    /**
-     * Return the mod directory that this file was found in (base, darkmod etc).
-     * 
-     * @returns
-     * String containing the mod directory for this file.
-     */
-    virtual std::string getModDirectory() const = 0;
-  
 };
 
 class ScopedArchiveFile
