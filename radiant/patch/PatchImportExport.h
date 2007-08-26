@@ -5,7 +5,6 @@
 
 #include "imap.h"
 #include "shaderlib.h"
-#include "iscriplib.h"
 #include "stringio.h"
 #include "string/string.h"
 #include "stream/stringstream.h"
