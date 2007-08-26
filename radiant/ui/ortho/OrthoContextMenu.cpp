@@ -1,6 +1,4 @@
 #include "OrthoContextMenu.h"
-#include "EntityClassChooser.h"
-#include "gtkutil/IconTextMenuItem.h"
 
 #include "selectionlib.h"
 #include "scenelib.h"
@@ -13,10 +11,12 @@
 #include "map/Map.h"
 
 #include "gtkutil/dialog.h"
+#include "gtkutil/IconTextMenuItem.h"
 
 #include "selection/algorithm/Group.h"
 #include "selection/algorithm/ModelFinder.h"
 #include "ui/modelselector/ModelSelector.h"
+#include "ui/entitychooser/EntityClassChooser.h"
 
 #include "math/aabb.h"
 #include "brushmanip.h"
