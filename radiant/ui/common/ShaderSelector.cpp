@@ -305,20 +305,21 @@ void ShaderSelector::_onExpose(GtkWidget* widget,
 	IShaderPtr shader = self->getSelectedShader();
 	
 	bool drawQuad = false;
+	TexturePtr tex;
 	
 	// Check what part of the shader we should display in the preview 
 	if (self->_isLightTexture) {
 		// This is a light, take the first layer texture
 		const ShaderLayer* first = shader->firstLayer();
 		if (first != NULL) {
-			TexturePtr tex = shader->firstLayer()->texture();
+			tex = shader->firstLayer()->texture();
 			glBindTexture (GL_TEXTURE_2D, tex->texture_number);
 			drawQuad = true;
 		} 
 	}
 	else {
 		// This is an "ordinary" texture, take the editor image
-		TexturePtr tex = shader->getTexture();
+		tex = shader->getTexture();
 		if (tex != NULL) {
 			glBindTexture (GL_TEXTURE_2D, tex->texture_number);
 			drawQuad = true;
@@ -326,18 +327,30 @@ void ShaderSelector::_onExpose(GtkWidget* widget,
 	}
 	
 	if (drawQuad) {
+		// Calculate the correct aspect ratio for preview
+		float aspect = float(tex->width) / float(tex->height);
+		float hfWidth, hfHeight;
+		if (aspect > 1.0) {
+			hfWidth = 0.5*req.width;
+			hfHeight = 0.5*req.height / aspect;
+		}
+		else {
+			hfHeight = 0.5*req.width;
+			hfWidth = 0.5*req.height * aspect;
+		}
+		
 		// Draw a quad to put the texture on
 		glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 		glColor3f(1, 1, 1);
 		glBegin(GL_QUADS);
-		glTexCoord2i(0, 1);
-		glVertex2i(0, 0);
-		glTexCoord2i(1, 1);
-		glVertex2i(req.height, 0);
-		glTexCoord2i(1, 0);
-		glVertex2i(req.height, req.height);
-		glTexCoord2i(0, 0);
-		glVertex2i(0, req.height);
+		glTexCoord2i(0, 1); 
+		glVertex2f(0.5*req.width - hfWidth, 0.5*req.height - hfHeight);
+		glTexCoord2i(1, 1); 
+		glVertex2f(0.5*req.width + hfWidth, 0.5*req.height - hfHeight);
+		glTexCoord2i(1, 0); 
+		glVertex2f(0.5*req.width + hfWidth, 0.5*req.height + hfHeight);
+		glTexCoord2i(0, 0);	
+		glVertex2f(0.5*req.width - hfWidth, 0.5*req.height + hfHeight);
 		glEnd();
 	}
 }
