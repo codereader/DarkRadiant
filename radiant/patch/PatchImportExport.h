@@ -1,13 +1,11 @@
 #ifndef PATCHIMPORTEXPORT_H_
 #define PATCHIMPORTEXPORT_H_
 
-#include "Patch.h"	// The main Patch class
+#include "Patch.h"  // The main Patch class
 
 #include "imap.h"
 #include "shaderlib.h"
-#include "stringio.h"
 #include "string/string.h"
-#include "stream/stringstream.h"
 #include "parser/DefTokeniser.h"
 
 /* greebo: These are the import/export functions for Patches from and to map files. A PatchDoom3 for example
@@ -113,7 +111,7 @@ inline void Patch_importFooter(Patch& patch, parser::DefTokeniser& tokeniser)
 }
 
 class PatchTokenImporter : 
-	public MapImporter
+    public MapImporter
 {
   Patch& m_patch;
 public:
@@ -134,96 +132,96 @@ public:
 // Takes the given patch token and tries to fill the retrieved values into the passed reference 
 class PatchDoom3TokenImporter 
 : public MapImporter {
-	Patch& m_patch;
+    Patch& m_patch;
 public:
-	PatchDoom3TokenImporter(Patch& patch) : m_patch(patch)
-	{
-	}
-	
-	bool importTokens(parser::DefTokeniser& tokeniser) {
-		tokeniser.assertNextToken("{");
-		PatchDoom3_importShader(m_patch, tokeniser);
-		Patch_importParams(m_patch, tokeniser);
-		Patch_importMatrix(m_patch, tokeniser);
-		Patch_importFooter(m_patch, tokeniser);
+    PatchDoom3TokenImporter(Patch& patch) : m_patch(patch)
+    {
+    }
+    
+    bool importTokens(parser::DefTokeniser& tokeniser) {
+        tokeniser.assertNextToken("{");
+        PatchDoom3_importShader(m_patch, tokeniser);
+        Patch_importParams(m_patch, tokeniser);
+        Patch_importMatrix(m_patch, tokeniser);
+        Patch_importFooter(m_patch, tokeniser);
 
-		return true;
-	}
+        return true;
+    }
 };
 
 inline void Patch_exportHeader(const Patch& patch, std::ostream& os)
 {
-	os << "{\n";
-	os << (patch.m_patchDef3 ? "patchDef3\n" : "patchDef2\n");
-	
-	os << "{\n";
+    os << "{\n";
+    os << (patch.m_patchDef3 ? "patchDef3\n" : "patchDef2\n");
+    
+    os << "{\n";
 }
 
 inline void PatchDoom3_exportShader(const Patch& patch, std::ostream& os)
 {
-	if (*(shader_get_textureName(patch.GetShader().c_str())) == '\0') {
-    	os << "\"_default\"";
-	}
-	else  {
-    	os << "\"" << patch.GetShader() << "\"";
-	}
-	os << "\n";
+    if (*(shader_get_textureName(patch.GetShader().c_str())) == '\0') {
+        os << "\"_default\"";
+    }
+    else  {
+        os << "\"" << patch.GetShader() << "\"";
+    }
+    os << "\n";
 }
 
 inline void Patch_exportParams(const Patch& patch, std::ostream& os)
 {
-	os << "( ";
-	os << patch.getWidth() << " ";
-	os << patch.getHeight() << " ";
+    os << "( ";
+    os << patch.getWidth() << " ";
+    os << patch.getHeight() << " ";
 
-	if(patch.m_patchDef3) {
-		os << patch.m_subdivisions_x << " ";
-		os << patch.m_subdivisions_y << " ";
-	}
-	
-	os << "0 0 0 )\n";
+    if(patch.m_patchDef3) {
+        os << patch.m_subdivisions_x << " ";
+        os << patch.m_subdivisions_y << " ";
+    }
+    
+    os << "0 0 0 )\n";
 }
 
 inline void Patch_writeFloat(const float& f, std::ostream& os) {
-	// Check for NaN
-	if (f == f) {
-		os << f;
-	}
-	else {
-		// isNaN, write 0
-		os << "0";
-	}
+    // Check for NaN
+    if (f == f) {
+        os << f;
+    }
+    else {
+        // isNaN, write 0
+        os << "0";
+    }
 } 
 
 inline void Patch_exportMatrix(const Patch& patch, std::ostream& os)
 {
-	// Write matrix
-	os << "(\n";
+    // Write matrix
+    os << "(\n";
 
-	for(std::size_t c=0; c<patch.getWidth(); c++) {
-	    os << "( ";
-		for(std::size_t r=0; r<patch.getHeight(); r++) {
-		    os << "( ";
-      		Patch_writeFloat(patch.ctrlAt(r,c).m_vertex[0], os); 
-      		os << " ";
-      		Patch_writeFloat(patch.ctrlAt(r,c).m_vertex[1], os); 
-      		os << " ";
-      		Patch_writeFloat(patch.ctrlAt(r,c).m_vertex[2], os); 
-      		os << " ";
-      		Patch_writeFloat(patch.ctrlAt(r,c).m_texcoord[0], os); 
-      		os << " ";
-      		Patch_writeFloat(patch.ctrlAt(r,c).m_texcoord[1], os); 
-      		os << " ";
-      		os << ") ";
-		}
-	    os << ")\n";
-	}
+    for(std::size_t c=0; c<patch.getWidth(); c++) {
+        os << "( ";
+        for(std::size_t r=0; r<patch.getHeight(); r++) {
+            os << "( ";
+            Patch_writeFloat(patch.ctrlAt(r,c).m_vertex[0], os); 
+            os << " ";
+            Patch_writeFloat(patch.ctrlAt(r,c).m_vertex[1], os); 
+            os << " ";
+            Patch_writeFloat(patch.ctrlAt(r,c).m_vertex[2], os); 
+            os << " ";
+            Patch_writeFloat(patch.ctrlAt(r,c).m_texcoord[0], os); 
+            os << " ";
+            Patch_writeFloat(patch.ctrlAt(r,c).m_texcoord[1], os); 
+            os << " ";
+            os << ") ";
+        }
+        os << ")\n";
+    }
     os << ")\n";
 }
   
 inline void Patch_exportFooter(const Patch& patch, std::ostream& os)
 {
-	os << "}\n}\n";
+    os << "}\n}\n";
 }
 
 /** Map exporter for Doom 3 patches.
@@ -237,14 +235,14 @@ public:
   {
   }
 
-	// Required export function
-	void exportTokens(std::ostream& os) const {
-	    Patch_exportHeader(m_patch, os);
-	    PatchDoom3_exportShader(m_patch, os);
-	    Patch_exportParams(m_patch, os);
-	    Patch_exportMatrix(m_patch, os);
-	    Patch_exportFooter(m_patch, os);
-	}
+    // Required export function
+    void exportTokens(std::ostream& os) const {
+        Patch_exportHeader(m_patch, os);
+        PatchDoom3_exportShader(m_patch, os);
+        Patch_exportParams(m_patch, os);
+        Patch_exportMatrix(m_patch, os);
+        Patch_exportFooter(m_patch, os);
+    }
 };
 
 #endif /*PATCHIMPORTEXPORT_H_*/
