@@ -40,7 +40,8 @@ class TransformDialog :
 	// The entry fields
 	struct EntryRow {
 		bool isRotator;
-		int axis;
+		int axis; 
+		int direction; // Direction (rotation only), is 1 by default
 		GtkWidget* hbox;
 		GtkWidget* label;
 		GtkWidget* step;
