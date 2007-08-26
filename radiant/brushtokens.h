@@ -23,8 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_BRUSHTOKENS_H
 
 #include "imap.h"
-#include "stringio.h"
-#include "stream/stringstream.h"
 #include "shaderlib.h"
 #include "brush/Face.h"
 #include "brush/Brush.h"
@@ -39,19 +37,6 @@ inline void FaceShader_importContentsFlagsValue(FaceShader& faceShader,
     faceShader.m_flags.m_contentFlags = lexical_cast<int>(tok.nextToken());
     faceShader.m_flags.m_surfaceFlags = lexical_cast<int>(tok.nextToken());
     faceShader.m_flags.m_value = lexical_cast<int>(tok.nextToken());
-}
-
-inline bool FaceTexdef_importTokens(FaceTexdef& texdef, Tokeniser& tokeniser)
-{
-  // parse texdef
-  RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_texdef._shift[0]));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_texdef._shift[1]));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_texdef._rotate));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_texdef._scale[0]));
-  RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, texdef.m_projection.m_texdef._scale[1]));
-
-  ASSERT_MESSAGE(texdef.m_projection.m_texdef.isSane(), "FaceTexdef_importTokens: bad texdef");
-  return true;
 }
 
 inline void FaceTexdef_BP_importTokens(FaceTexdef& texdef, 
@@ -80,22 +65,6 @@ inline void FaceTexdef_BP_importTokens(FaceTexdef& texdef,
     tokeniser.assertNextToken(")");  
 
     tokeniser.assertNextToken(")");  
-}
-
-inline bool FacePlane_importTokens(FacePlane& facePlane, Tokeniser& tokeniser)
-{
-  // parse planepts
-  for(std::size_t i = 0; i<3; i++)
-  {
-    RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, "("));
-    for(std::size_t j = 0; j < 3; ++j)
-    {
-      RETURN_FALSE_IF_FAIL(Tokeniser_getDouble(tokeniser, facePlane.planePoints()[i][j]));
-    }
-    RETURN_FALSE_IF_FAIL(Tokeniser_parseToken(tokeniser, ")"));
-  }
-  facePlane.MakePlane();
-  return true;
 }
 
 inline void FacePlane_Doom3_importTokens(FacePlane& facePlane, 
@@ -132,30 +101,6 @@ inline void FaceShader_Doom3_importTokens(FaceShader& faceShader,
     
     faceShader.setShader(shader);
 }
-
-inline bool FaceShader_importTokens(FaceShader& faceShader, Tokeniser& tokeniser)
-{
-  const char* texture = tokeniser.getToken();
-  if(texture == 0)
-  {
-    Tokeniser_unexpectedError(tokeniser, texture, "#texture-name");
-    return false;
-  }
-  if(string_equal(texture, "NULL"))
-  {
-    faceShader.setShader(texdef_name_default());
-  }
-  else
-  {
-    StringOutputStream shader(string_length(GlobalTexturePrefix_get()) + string_length(texture));
-    shader << GlobalTexturePrefix_get() << texture;
-    faceShader.setShader(shader.c_str());
-  }
-  return true;
-}
-
-
-
 
 class Doom3FaceTokenImporter
 {

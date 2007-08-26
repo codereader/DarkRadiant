@@ -39,7 +39,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iscenegraph.h"
 #include "iselection.h"
 #include "ifilter.h"
-#include "iscriplib.h"
 #include "isound.h"
 #include "igl.h"
 #include "iundo.h"
@@ -177,7 +176,6 @@ class RadiantDependencies :
   public GlobalOpenGLModuleRef,
   public GlobalEntityClassManagerModuleRef,
   public GlobalUndoModuleRef,
-  public GlobalScripLibModuleRef,
   public GlobalNamespaceModuleRef,
   public GlobalClipperModuleRef,
   public GlobalGridModuleRef,

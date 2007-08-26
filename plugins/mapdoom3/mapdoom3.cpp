@@ -19,7 +19,6 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "iscriplib.h"
 #include "brush/TexDef.h"
 #include "ibrush.h"
 #include "ipatch.h"
@@ -30,8 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ishaders.h"
 
 #include "scenelib.h"
-#include "string/string.h"
-#include "stringio.h"
 #include "generic/constant.h"
 #include "parser/DefTokeniser.h"
 
@@ -40,14 +37,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "parse.h"
 #include "write.h"
 
-	namespace {
-		const std::string RKEY_PRECISION = "game/mapFormat/floatPrecision";
-	}
+#include <boost/lexical_cast.hpp>
+
+namespace {
+	const std::string RKEY_PRECISION = "game/mapFormat/floatPrecision";
+}
 
 class MapDoom3Dependencies :
   public GlobalRadiantModuleRef,
   public GlobalFiletypesModuleRef,
-  public GlobalScripLibModuleRef,
   public GlobalEntityClassManagerModuleRef,
   public GlobalSceneGraphModuleRef,
   public GlobalBrushModuleRef,
