@@ -16,7 +16,9 @@ EntityPropertyEditor::EntityPropertyEditor() {}
 // Constructor. Create the GTK widgets here
 
 EntityPropertyEditor::EntityPropertyEditor(Entity* entity, 
-										   const std::string& name)
+										   const std::string& name) :
+	_entity(entity),
+	_key(name)
 {
 	_widget = gtk_vbox_new(FALSE, 6);
 	
@@ -39,6 +41,8 @@ EntityPropertyEditor::EntityPropertyEditor(Entity* entity,
     gtk_entry_set_completion(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(_comboBox))), 
     						 completion);
 
+    g_signal_connect(G_OBJECT(_comboBox), "changed", G_CALLBACK(onSelectionChange), this);
+    
     std::string caption = name + ": ";
     gtk_box_pack_start(GTK_BOX(editBox), gtk_label_new(caption.c_str()), 
     				   FALSE, FALSE, 0);
@@ -92,8 +96,11 @@ void EntityPropertyEditor::populateComboBox() {
             
     } finder(_comboBox);
 
-    GlobalSceneGraph().traverse(finder);
-    
+    GlobalSceneGraph().traverse(finder);  
+}
+
+void EntityPropertyEditor::onSelectionChange(GtkComboBox *widget, EntityPropertyEditor* self) {
+	self->_entity->setKeyValue(self->_key, gtk_combo_box_get_active_text(widget));
 }
 
 } // namespace ui
