@@ -92,7 +92,7 @@ GtkWidget* ParticlesChooser::createButtons() {
 void ParticlesChooser::populateParticleList() {
 	
 	// Create and use a ParticlesVisitor to populate the list
-	ParticlesVisitor visitor(_particlesList);
+	ParticlesVisitor visitor(_particlesList, _iterMap);
 	GlobalParticlesManager().forEachParticleDef(visitor);
 }
 
@@ -103,16 +103,27 @@ ParticlesChooser& ParticlesChooser::getInstance() {
 }
 
 // Enter recursive main loop
-void ParticlesChooser::showAndBlock() {
-	_selectedParticle = "";
+void ParticlesChooser::showAndBlock(const std::string& current) {
+	
+    _selectedParticle = "";
+
+    // Highlight the current particle
+    IterMap::const_iterator i = _iterMap.find(current);
+    if (i != _iterMap.end()) {
+        _selectedParticle = current;
+        GtkTreeIter* selectionIter = i->second;
+        gtk_tree_selection_select_iter(_selection, selectionIter);
+    }
+    
+    // Show the widget
 	gtk_widget_show_all(_widget);
 	gtk_main();
 }
 
 // Choose a particle system
-std::string ParticlesChooser::chooseParticle() {
+std::string ParticlesChooser::chooseParticle(const std::string& current) {
 	ParticlesChooser& instance = getInstance();
-	instance.showAndBlock();
+	instance.showAndBlock(current);
 	return instance._selectedParticle;
 }
 

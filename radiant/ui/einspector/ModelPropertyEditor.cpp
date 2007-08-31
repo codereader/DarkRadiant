@@ -74,7 +74,9 @@ void ModelPropertyEditor::_onParticleButton(GtkWidget* w,
 											ModelPropertyEditor* self)
 {
 	// Invoke ParticlesChooser
-	std::string particle = ParticlesChooser::chooseParticle();
+    std::string currentSelection = self->_entity->getKeyValue(self->_key);
+	std::string particle = ParticlesChooser::chooseParticle(currentSelection);
+	
 	if (!particle.empty()) {
 		self->_entity->setKeyValue(self->_key, particle);
 	}
