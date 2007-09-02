@@ -93,8 +93,9 @@ scene::INodePtr Entity_parseTokens(
 {
     // Set up the progress dialog
 	std::string dlgEntityText = "Loading entity " + intToStr(index);
+	bool updateDialog = false;
 	if (index % interleave == 0) { 
-		dialog.setText(dlgEntityText);
+		updateDialog = true;
     }
 
     // Map of keyvalues for this entity
@@ -124,7 +125,7 @@ scene::INodePtr Entity_parseTokens(
 	            entity = Entity_create(entityTable, keyValues);
 	        
 	        // Update the dialog
-	        if (numPrimitives % interleave == 0) {
+	        if (updateDialog && (numPrimitives % interleave == 0)) {
     	        dialog.setText(
                     dlgEntityText + "\nPrimitive " + intToStr(numPrimitives)
                 );
