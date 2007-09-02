@@ -37,14 +37,14 @@ namespace {
 
     const char* ADD_ENTITY_TEXT = "Create entity...";
     const char* ADD_ENTITY_ICON = "cmenu_add_entity.png";
-    const char* ADD_PLAYERSTART_TEXT = "Create player start...";
-    const char* ADD_PLAYERSTART_ICON = "cmenu_add_entity.png";
-    const char* MOVE_PLAYERSTART_TEXT = "Move player start here...";
-    const char* MOVE_PLAYERSTART_ICON = "cmenu_add_entity.png";
+    const char* ADD_PLAYERSTART_TEXT = "Create player start here";
+    const char* ADD_PLAYERSTART_ICON = "player_start16.png";
+    const char* MOVE_PLAYERSTART_TEXT = "Move player start here";
+    const char* MOVE_PLAYERSTART_ICON = "player_start16.png";
     const char* ADD_MODEL_TEXT = "Create model...";
     const char* ADD_MODEL_ICON = "cmenu_add_model.png";
-    const char* ADD_MONSTERCLIP_TEXT = "Add MonsterClip...";
-    const char* ADD_MONSTERCLIP_ICON = "cmenu_add_entity.png";
+    const char* ADD_MONSTERCLIP_TEXT = "Surround with monsterclip";
+    const char* ADD_MONSTERCLIP_ICON = "monsterclip16.png";
     const char* ADD_LIGHT_TEXT = "Create light...";
     const char* ADD_LIGHT_ICON = "cmenu_add_light.png";
     const char* ADD_PREFAB_TEXT = "Insert prefab...";
@@ -92,14 +92,14 @@ OrthoContextMenu::OrthoContextMenu()
 	g_signal_connect(G_OBJECT(_revertWorldspawn), "activate", G_CALLBACK(callbackRevertToWorldspawn), this);
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addEntity);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addPlayerStart);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _movePlayerStart);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addModel);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addMonsterClip);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addLight);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addSpkr);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addPrefab);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new());
+    gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addMonsterClip);
+    gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addPlayerStart);
+    gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _movePlayerStart);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _convertStatic);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _revertWorldspawn);
 		
