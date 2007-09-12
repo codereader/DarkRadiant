@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <user>
-	<version value="0.9.2" />
+	<version value="0.9.3" />
 	<showBuildTime value="1" />
 	<!-- Load the debug.xml for debugging purposes -->
 	<debug value="0" />
