@@ -2,7 +2,7 @@
 
 #include <gtk/gtk.h>
 #include "gtkutil/TextColumn.h"
-#include "gtkutil/TransientWindow.h"
+#include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/VFSTreePopulator.h"

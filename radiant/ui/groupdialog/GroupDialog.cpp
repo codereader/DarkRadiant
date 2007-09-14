@@ -4,7 +4,7 @@
 #include "iregistry.h"
 #include "iradiant.h"
 #include "ieventmanager.h"
-#include "gtkutil/TransientWindow.h"
+#include "gtkutil/window/PersistentTransientWindow.h"
 #include <iostream>
 
 namespace ui {
@@ -22,8 +22,8 @@ GroupDialog::GroupDialog() :
 {}
 
 void GroupDialog::construct(GtkWindow* parent) {
-	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
-	_dialog = gtkutil::TransientWindow(WINDOW_TITLE, parent, false);
+	// Be sure to pass FALSE to the PersistentTransientWindow to prevent it from self-destruction
+	_dialog = gtkutil::PersistentTransientWindow(WINDOW_TITLE, parent, false);
 	
 	// Set the default border width in accordance to the HIG
 	//gtk_container_set_border_width(GTK_CONTAINER(_dialog), 12);

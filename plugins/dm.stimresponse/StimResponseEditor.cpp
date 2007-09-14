@@ -16,7 +16,7 @@
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/StockIconMenuItem.h"
 #include "gtkutil/TreeModel.h"
-#include "gtkutil/TransientWindow.h"
+#include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/dialog.h"
@@ -39,8 +39,8 @@ namespace {
 }
 
 StimResponseEditor::StimResponseEditor() :
-	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
-	_dialog(gtkutil::TransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow(), false)),
+	// Be sure to pass FALSE to the PersistentTransientWindow to prevent it from self-destruction
+	_dialog(gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow(), false)),
 	_entity(NULL),
 	_stimEditor(_stimTypes),
 	_responseEditor(_dialog, _stimTypes),

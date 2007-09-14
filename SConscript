@@ -74,7 +74,7 @@ gtkutil_src = '\
   TreeModel.cpp\
   VFSTreePopulator.cpp\
   RegistryConnector.cpp\
-  TransientWindow.cpp\
+  window/PersistentTransientWindow.cpp\
   PanedPosition.cpp\
   MenuItemAccelerator.cpp\
   Timer.cpp\

@@ -1,13 +1,13 @@
-#include "TransientWindow.h"
+#include "PersistentTransientWindow.h"
 
 #include "gtkutil/pointer.h" // for gpointer_to_int
 #include <iostream>
 
 namespace gtkutil {
 
-TransientWindow::TransientWindow(const std::string& title, 
-								 GtkWindow* parent, 
-								 bool deletable) 
+PersistentTransientWindow::PersistentTransientWindow(const std::string& title, 
+								 					 GtkWindow* parent, 
+								 					 bool deletable) 
 : _window(gtk_window_new(GTK_WINDOW_TOPLEVEL))
 {
 	gtk_window_set_transient_for(GTK_WINDOW(_window), parent);
@@ -59,11 +59,11 @@ TransientWindow::TransientWindow(const std::string& title,
 }
 
 // Operator cast to GtkWindow* (use this to create and retrieve the GtkWidget* pointer)
-TransientWindow::operator GtkWidget* () {
+PersistentTransientWindow::operator GtkWidget* () {
 	return _window;
 }
 
-gboolean TransientWindow::onParentResize(GtkWidget* widget, GdkEventWindowState* event, GtkWidget* child) {
+gboolean PersistentTransientWindow::onParentResize(GtkWidget* widget, GdkEventWindowState* event, GtkWidget* child) {
 	// Check, if the event is of interest
 	if ((event->changed_mask & (GDK_WINDOW_STATE_ICONIFIED|GDK_WINDOW_STATE_WITHDRAWN)) != 0) {
 		// Now let's see what the new state of the main window is
@@ -80,7 +80,7 @@ gboolean TransientWindow::onParentResize(GtkWidget* widget, GdkEventWindowState*
 	return false;
 }
 
-void TransientWindow::restore(GtkWidget* window) {
+void PersistentTransientWindow::restore(GtkWidget* window) {
 	if (GTK_IS_WIDGET(window)) {
 		if (gpointer_to_int(g_object_get_data(G_OBJECT(window), "was_mapped")) != 0) {
 			gint x = gpointer_to_int(g_object_get_data(G_OBJECT(window), "old_x_position"));
@@ -99,7 +99,7 @@ void TransientWindow::restore(GtkWidget* window) {
 	}
 }
 
-void TransientWindow::minimise(GtkWidget* window) {
+void PersistentTransientWindow::minimise(GtkWidget* window) {
 	if (GTK_IS_WINDOW(window)) {
 		if (GTK_WIDGET_VISIBLE(window)) {
 			// Set the "mapped" flag to mark this window as "to be restored again"
@@ -116,7 +116,7 @@ void TransientWindow::minimise(GtkWidget* window) {
 	}
 }
 
-gboolean TransientWindow::showParentOnDelete(GtkWidget* widget, GdkEvent* event, GtkWindow* parent) {
+gboolean PersistentTransientWindow::showParentOnDelete(GtkWidget* widget, GdkEvent* event, GtkWindow* parent) {
 
 	// Show the parent again, so that it doesn't disappear behind other 
 	// applications
@@ -127,7 +127,7 @@ gboolean TransientWindow::showParentOnDelete(GtkWidget* widget, GdkEvent* event,
 	return FALSE;
 }
 
-gboolean TransientWindow::onDelete(GtkWidget* widget, GdkEvent* event, GtkWindow* parent) {
+gboolean PersistentTransientWindow::onDelete(GtkWidget* widget, GdkEvent* event, GtkWindow* parent) {
 	// Retrieve the signal handler id from the child widget
 	gulong handlerID = gpointer_to_int(g_object_get_data(G_OBJECT(widget), "resizeHandler"));
 
@@ -137,7 +137,7 @@ gboolean TransientWindow::onDelete(GtkWidget* widget, GdkEvent* event, GtkWindow
 	return FALSE;
 }
 
-gboolean TransientWindow::toggleOnDelete(GtkWidget* widget, GdkEvent* event, GtkWindow* parent) {
+gboolean PersistentTransientWindow::toggleOnDelete(GtkWidget* widget, GdkEvent* event, GtkWindow* parent) {
 	// Toggle the visibility
 	if (GTK_WIDGET_VISIBLE(widget)) {
 		gtk_widget_hide(widget);

@@ -3,7 +3,7 @@
 #include "ieventmanager.h"
 #include "ipreferencesystem.h"
 
-#include "gtkutil/TransientWindow.h"
+#include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/FramedWidget.h"
 #include "stringio.h"
 
@@ -74,7 +74,7 @@ void XYWndManager::restoreState() {
 	
 		if (viewList.size() > 0) {
 			for (unsigned int i = 0; i < viewList.size(); i++) {
-				GtkWidget* window = gtkutil::TransientWindow("OrthoView", _globalParentWindow);
+				GtkWidget* window = gtkutil::PersistentTransientWindow("OrthoView", _globalParentWindow);
 				
 				// Create the view and restore the size
 				XYWnd* newWnd = createXY();
@@ -470,7 +470,7 @@ XYWnd* XYWndManager::createOrthoView(EViewType viewType) {
 	XYWnd* newWnd = createXY();
 	
 	// Add the new XYView GL widget to a framed window
-	GtkWidget* window = gtkutil::TransientWindow(
+	GtkWidget* window = gtkutil::PersistentTransientWindow(
 							XYWnd::getViewTypeTitle(viewType), 
 							_globalParentWindow);
 	

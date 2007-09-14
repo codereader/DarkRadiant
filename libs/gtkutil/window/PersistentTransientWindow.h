@@ -11,7 +11,7 @@ namespace gtkutil
 /** greebo: Encapsulation of a GtkWindow with title that is transient to the given parent
  */
 
-class TransientWindow
+class PersistentTransientWindow
 {
 protected:
 
@@ -21,7 +21,9 @@ protected:
 public:
 
 	// Constructor
-	TransientWindow(const std::string& title, GtkWindow* parent, bool deletable = true);
+	PersistentTransientWindow(const std::string& title, 
+							  GtkWindow* parent, 
+							  bool deletable = true);
 	
 	// Operator cast to GtkWindow* (use this to create and retrieve the GtkWidget* pointer)
 	virtual operator GtkWidget* ();
@@ -61,7 +63,7 @@ private:
 	 */	
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, GtkWindow* parent);
 
-}; // class TransientWindow
+}; // class PersistentTransientWindow
 
 } // namespace gtkutil
 

@@ -11,7 +11,7 @@
 
 #include "texturelib.h"
 #include "selectionlib.h"
-#include "gtkutil/TransientWindow.h"
+#include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/FramedWidget.h"
 #include "gtkutil/glwidget.h"
 #include "gtkutil/GLWidgetSentry.h"
@@ -57,8 +57,8 @@ TexTool::TexTool() :
 	_grid(GRID_DEFAULT),
 	_gridActive(GlobalRegistry().get(RKEY_GRID_STATE) == "1")
 {
-	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
-	_window = gtkutil::TransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
+	// Be sure to pass FALSE to the PersistentTransientWindow to prevent it from self-destruction
+	_window = gtkutil::PersistentTransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
 	
 	gtk_window_set_type_hint(GTK_WINDOW(_window), GDK_WINDOW_TYPE_HINT_DIALOG);
 	

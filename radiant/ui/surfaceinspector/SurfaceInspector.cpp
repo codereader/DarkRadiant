@@ -4,7 +4,7 @@
 #include <gdk/gdkkeysyms.h>
 #include "ieventmanager.h"
 
-#include "gtkutil/TransientWindow.h"
+#include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/IconTextButton.h"
 #include "gtkutil/ControlButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
@@ -77,8 +77,8 @@ SurfaceInspector::SurfaceInspector() :
 	_callbackActive(false),
 	_selectionInfo(GlobalSelectionSystem().getSelectionInfo())
 {
-	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
-	_dialog = gtkutil::TransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
+	// Be sure to pass FALSE to the PersistentTransientWindow to prevent it from self-destruction
+	_dialog = gtkutil::PersistentTransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
 	
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 12);
