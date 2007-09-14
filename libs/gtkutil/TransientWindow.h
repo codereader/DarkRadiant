@@ -13,20 +13,11 @@ namespace gtkutil
 
 class TransientWindow
 {
-	
 protected:
-	// The text label
-	const std::string _title;
-	
-	// The window that this window is transient for
-	GtkWindow* _parent;
-	
+
 	// The actual transient window
 	GtkWidget* _window;
 	
-	// True, if the onDelete event is connected to a self-destruct method
-	bool _deletable;
-
 public:
 
 	// Constructor
