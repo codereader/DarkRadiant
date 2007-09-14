@@ -4,7 +4,7 @@
 #include "iregistry.h"
 #include "nameable.h"
 #include <gtk/gtk.h>
-#include "gtkutil/TransientWindow.h"
+#include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TreeModel.h"
@@ -33,8 +33,8 @@ namespace ui {
 EntityList::EntityList() :
 	_callbackActive(false)
 {
-	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
-	_dialog = gtkutil::TransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
+	// Be sure to pass FALSE to the PersistentTransientWindow to prevent it from self-destruction
+	_dialog = gtkutil::PersistentTransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
 	
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 12);

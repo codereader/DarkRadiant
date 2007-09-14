@@ -9,7 +9,7 @@
 
 #include "scenelib.h"
 #include "mainframe.h"
-#include "gtkutil/TransientWindow.h"
+#include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/IconTextButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/RightAlignment.h"
@@ -64,8 +64,8 @@ namespace {
 
 // Private constructor creates GTK widgets
 LightInspector::LightInspector() : 
-	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
-	_widget(gtkutil::TransientWindow(LIGHTINSPECTOR_TITLE, MainFrame_getWindow(), false)),
+	// Be sure to pass FALSE to the PersistentTransientWindow to prevent it from self-destruction
+	_widget(gtkutil::PersistentTransientWindow(LIGHTINSPECTOR_TITLE, MainFrame_getWindow(), false)),
 	_isProjected(false),
 	_texSelector(this, getPrefixList(), true),
 	_entity(NULL),

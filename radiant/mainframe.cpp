@@ -1428,10 +1428,10 @@ void MainFrame::Create()
   else if (CurrentStyle() == eFloating)
   {
     {
-     	GtkWidget* camWindow = gtkutil::TransientWindow("Camera", m_window, false);
+     	GtkWidget* camWindow = gtkutil::PersistentTransientWindow("Camera", m_window, false);
      	// Catch the delete event
     	g_signal_connect(G_OBJECT(camWindow), "delete-event", 
-    					 G_CALLBACK(gtkutil::TransientWindow::toggleOnDelete), m_window);
+    					 G_CALLBACK(gtkutil::PersistentTransientWindow::toggleOnDelete), m_window);
 		
 		GtkWindow* window = GTK_WINDOW(camWindow);
 		GlobalEventManager().connectAccelGroup(window);

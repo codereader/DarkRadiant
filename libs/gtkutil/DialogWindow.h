@@ -1,7 +1,7 @@
 #ifndef DIALOGWINDOW_H_
 #define DIALOGWINDOW_H_
 
-#include "TransientWindow.h"
+#include "window/PersistentTransientWindow.h"
 
 /* greebo: This the prototype of a dialog window.
  * 
@@ -12,13 +12,13 @@
 namespace gtkutil {
 
 class DialogWindow :
-	public TransientWindow
+	public PersistentTransientWindow
 {
 	
 public:
 	// Constructors
 	DialogWindow(const std::string& title, GtkWindow* parent) :
-		TransientWindow(title, parent)
+		PersistentTransientWindow(title, parent)
 	{
 		gtk_window_set_modal(GTK_WINDOW(_window), TRUE);
 	    gtk_window_set_position(GTK_WINDOW(_window), GTK_WIN_POS_CENTER_ON_PARENT);

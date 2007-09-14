@@ -3,7 +3,7 @@
 #include "iregistry.h"
 #include "ishaders.h"
 #include "texturelib.h"
-#include "gtkutil/TransientWindow.h"
+#include "gtkutil/window/PersistentTransientWindow.h"
 #include "string/string.h"
 #include "gtk/gtk.h"
 #include "gdk/gdkkeysyms.h"
@@ -31,7 +31,7 @@ ShaderChooser::ShaderChooser(Client* client, GtkWidget* parent, GtkWidget* targe
 		_selector.setSelection(_initialShader);
 	}
 	
-	_dialog = gtkutil::TransientWindow(LABEL_TITLE, GTK_WINDOW(_parent), false);
+	_dialog = gtkutil::PersistentTransientWindow(LABEL_TITLE, GTK_WINDOW(_parent), false);
 	gtk_window_set_modal(GTK_WINDOW(_dialog), true);
     gtk_window_set_position(GTK_WINDOW(_dialog), GTK_WIN_POS_CENTER_ON_PARENT);
 	

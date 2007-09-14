@@ -6,7 +6,7 @@
 
 #include <gtk/gtk.h>
 
-#include "gtkutil/TransientWindow.h"
+#include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/ControlButton.h"
@@ -45,8 +45,8 @@ namespace ui {
 TransformDialog::TransformDialog() :
 	_selectionInfo(GlobalSelectionSystem().getSelectionInfo())
 {
-	// Be sure to pass FALSE to the TransientWindow to prevent it from self-destruction
-	_dialog = gtkutil::TransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
+	// Be sure to pass FALSE to the PersistentTransientWindow to prevent it from self-destruction
+	_dialog = gtkutil::PersistentTransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
 	
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 12);
