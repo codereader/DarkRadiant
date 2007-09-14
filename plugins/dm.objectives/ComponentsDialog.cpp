@@ -33,21 +33,10 @@ namespace {
 
 // Main constructor
 ComponentsDialog::ComponentsDialog(GtkWindow* parent, Objective& objective)
-: _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
+: gtkutil::BlockingTransientDialog(DIALOG_TITLE, parent),
   _objective(objective),
   _componentList(gtk_list_store_new(2, G_TYPE_INT, G_TYPE_STRING))
 {
-	// Set up window
-	gtk_window_set_transient_for(GTK_WINDOW(_widget), parent);
-	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
-	gtk_window_set_title(GTK_WINDOW(_widget), DIALOG_TITLE);
-    gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
-    gtk_window_set_type_hint(GTK_WINDOW(_widget), GDK_WINDOW_TYPE_HINT_DIALOG);
-
-	// Set up delete event
-	g_signal_connect(
-		G_OBJECT(_widget), "delete-event", G_CALLBACK(_onDelete), this);
-		
 	// Dialog contains list view, edit panel and buttons
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
 	gtk_box_pack_start(GTK_BOX(vbx), createListView(), TRUE, TRUE, 0);
@@ -58,8 +47,9 @@ ComponentsDialog::ComponentsDialog(GtkWindow* parent, Objective& objective)
 	// Populate the list of components
 	populateComponents();
 	
-	gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
-	gtk_container_add(GTK_CONTAINER(_widget), vbx);
+	// Add contents to main window
+	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
+	gtk_container_add(GTK_CONTAINER(getWindow()), vbx);
 }
 
 // Create list view
@@ -171,12 +161,6 @@ GtkWidget* ComponentsDialog::createButtons() {
 	return gtkutil::RightAlignment(hbx);
 }
 
-// Show dialog and block
-void ComponentsDialog::showAndBlock() {
-	gtk_widget_show_all(_widget);
-	gtk_main(); // recursive main loop	
-}
-
 // Populate the component list
 void ComponentsDialog::populateComponents() {
 	
@@ -286,20 +270,7 @@ int ComponentsDialog::getSelectedIndex() {
 
 // Close button
 void ComponentsDialog::_onClose(GtkWidget* w, ComponentsDialog* self) {
-
-	// Hide and the widgets
-	gtk_widget_hide(self->_widget);
-	gtk_widget_destroy(self->_widget);
-	
-	// Exit recursive main loop
-	gtk_main_quit();
-}
-
-// Window deletion
-void ComponentsDialog::_onDelete(GtkWidget* w, ComponentsDialog* self) {
-
-	// Exit main loop
-	gtk_main_quit();	
+	self->destroy();
 }
 
 // Selection changed
