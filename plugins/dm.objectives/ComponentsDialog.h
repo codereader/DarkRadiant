@@ -9,7 +9,7 @@
 #include <vector>
 #include <string>
 
-#include <gtkutil/window/BlockingTransientDialog.h>
+#include <gtkutil/window/BlockingTransientWindow.h>
 
 namespace objectives
 {
@@ -22,7 +22,7 @@ class Objective;
  * a particular objective.
  */
 class ComponentsDialog
-: public gtkutil::BlockingTransientDialog
+: public gtkutil::BlockingTransientWindow
 {
 	// Widgets map
 	std::map<int, GtkWidget*> _widgets;

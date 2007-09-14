@@ -33,7 +33,7 @@ namespace {
 
 // Main constructor
 ComponentsDialog::ComponentsDialog(GtkWindow* parent, Objective& objective)
-: gtkutil::BlockingTransientDialog(DIALOG_TITLE, parent),
+: gtkutil::BlockingTransientWindow(DIALOG_TITLE, parent),
   _objective(objective),
   _componentList(gtk_list_store_new(2, G_TYPE_INT, G_TYPE_STRING))
 {

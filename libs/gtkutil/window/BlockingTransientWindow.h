@@ -1,7 +1,7 @@
 #ifndef BLOCKINGTRANSIENTDIALOG_H_
 #define BLOCKINGTRANSIENTDIALOG_H_
 
-#include "TransientDialog.h"
+#include "TransientWindow.h"
 
 #include <gtk/gtkmain.h>
 
@@ -9,13 +9,13 @@ namespace gtkutil
 {
 
 /**
- * A blocking version of TransientDialog. This window will enter a recursive
+ * A blocking version of TransientWindow. This window will enter a recursive
  * gtk_main() loop when shown, which will be terminated once it is destroyed.
- * A function which creates and displays a BlockingTransientDialog will not
+ * A function which creates and displays a BlockingTransientWindow will not
  * continue executing until the user has closed the dialog.
  */
-class BlockingTransientDialog 
-: public TransientDialog
+class BlockingTransientWindow 
+: public TransientWindow
 {
 	// Is window shown? If so, we need to exit the main loop when destroyed
 	bool _isShown;
@@ -40,8 +40,8 @@ public:
 	/**
 	 * Construct a BlockingTransientDialog with the given title and parent.
 	 */
-	BlockingTransientDialog(const std::string& title, GtkWindow* parent)
-	: TransientDialog(title, parent),
+	BlockingTransientWindow(const std::string& title, GtkWindow* parent)
+	: TransientWindow(title, parent),
 	  _isShown(false)
 	{ }
 	

@@ -7,10 +7,9 @@ namespace gtkutil
 {
 
 /**
- * A transient dialog window without the complexity of Radiant's persistent
- * transient windows.
+ * A basic GtkWindow that is transient for the given parent window.
  */
-class TransientDialog
+class TransientWindow
 {
 	// The main window
 	GtkWidget* _window;
@@ -22,7 +21,7 @@ private:
 	virtual void _postDestroy() { }
 	
 	// GTK destroy callback
-	static gboolean _onDestroy(GtkWidget* w, GdkEvent* e, TransientDialog* self) 
+	static gboolean _onDestroy(GtkWidget* w, GdkEvent* e, TransientWindow* self) 
 	{
 		self->destroy();
 		return TRUE;
@@ -33,7 +32,7 @@ public:
 	/**
 	 * Construct a TransientDialog with the specified title and parent window.
 	 */
-	TransientDialog(const std::string& title, GtkWindow* parent)
+	TransientWindow(const std::string& title, GtkWindow* parent)
 	: _window(gtk_window_new(GTK_WINDOW_TOPLEVEL))
 	{
 		// Set up the window
