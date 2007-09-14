@@ -709,7 +709,7 @@ void ObjectivesEditor::_onEditComponents(GtkWidget* w, ObjectivesEditor* self) {
 	// Display the ComponentsDialog
 	ComponentsDialog compDialog(GTK_WINDOW(self->_widget),
 								self->getCurrentObjective());
-	compDialog.showAndBlock();
+	compDialog.show(); // show and block
 }
 
 }

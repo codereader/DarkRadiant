@@ -9,6 +9,8 @@
 #include <vector>
 #include <string>
 
+#include <gtkutil/window/BlockingTransientDialog.h>
+
 namespace objectives
 {
 
@@ -20,10 +22,8 @@ class Objective;
  * a particular objective.
  */
 class ComponentsDialog
+: public gtkutil::BlockingTransientDialog
 {
-	// Main dialog widget
-	GtkWidget* _widget;
-
 	// Widgets map
 	std::map<int, GtkWidget*> _widgets;
 
@@ -76,11 +76,6 @@ public:
 	 */
 	ComponentsDialog(GtkWindow* parent, Objective& objective);
 	
-	/**
-	 * Display the dialog and enter a recursive main loop, blocking until all
-	 * changes are made.
-	 */
-	void showAndBlock();
 };
 
 }
