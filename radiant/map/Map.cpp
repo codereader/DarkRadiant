@@ -46,6 +46,7 @@ namespace map {
 		const std::string RKEY_LAST_CAM_POSITION = "game/mapFormat/lastCameraPositionKey";
 		const std::string RKEY_LAST_CAM_ANGLE = "game/mapFormat/lastCameraAngleKey";
 		const std::string RKEY_PLAYER_START_ECLASS = "game/mapFormat/playerStartPoint";
+		const std::string RKEY_PLAYER_HEIGHT = "game/defaults/playerHeight";
 		
 		// Traverse all entities and store the first worldspawn into the map
 		class MapWorldspawnFinder : 
@@ -326,6 +327,9 @@ void Map::gotoStartPosition() {
 			if (playerStart != NULL) {
 				// Get the entity origin
 				origin = playerStart->getKeyValue("origin");
+				
+				// angua: move the camera upwards a bit
+				origin.z() += GlobalRegistry().getFloat(RKEY_PLAYER_HEIGHT);
 				
 				// Check for an angle key, and use it if present
 				try {
