@@ -42,14 +42,14 @@ void WindowPosition::setSize(const int& width, const int& height) {
 	_size[1] = height;
 }
 
-void WindowPosition::saveToNode(xml::Node node) {
+void WindowPosition::saveToNode(xml::Node& node) {
 	node.setAttributeValue("xPosition", intToStr(_position[0]));
 	node.setAttributeValue("yPosition", intToStr(_position[1]));
 	node.setAttributeValue("width", intToStr(_size[0]));
 	node.setAttributeValue("height", intToStr(_size[1]));
 }
 
-void WindowPosition::loadFromNode(xml::Node node) {
+void WindowPosition::loadFromNode(const xml::Node& node) {
 	_position[0] = strToInt(node.getAttributeValue("xPosition"));
 	_position[1] = strToInt(node.getAttributeValue("yPosition"));
 	_size[0] = strToInt(node.getAttributeValue("width"));

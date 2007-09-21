@@ -4,6 +4,7 @@
 #include <map>
 #include "iselection.h"
 #include "gtkutil/WindowPosition.h"
+#include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/RegistryConnector.h"
 
 typedef struct _GtkWidget GtkWidget;
@@ -15,12 +16,10 @@ class Patch;
 
 namespace ui {
 
-class PatchInspector :
-	public SelectionSystem::Observer
+class PatchInspector 
+: public gtkutil::PersistentTransientWindow,
+  public SelectionSystem::Observer
 {
-	// The actual dialog widget
-	GtkWidget* _dialog;
-	
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
 
@@ -77,33 +76,12 @@ class PatchInspector :
 	// The helper class that syncs the registry to/from widgets
 	gtkutil::RegistryConnector _connector;
 
-public:
-	PatchInspector();
-	
-	/** greebo: Contains the static instance of this dialog.
-	 * Constructs the instance and calls toggle() when invoked.
-	 */
-	static PatchInspector& Instance();
-
-	// The command target
-	static void toggle();
-
-	/** greebo: SelectionSystem::Observer implementation. Gets called by
-	 * the SelectionSystem upon selection change to allow updating of the
-	 * patch property widgets.
-	 */
-	void selectionChanged(scene::Instance& instance, bool isComponent);
-
-	// Updates the widgets
-	void update();
-
-	/** greebo: Safely disconnects this dialog from all systems 
-	 * 			(SelectionSystem, EventManager, ...)
-	 * 			Also saves the window state to the registry.
-	 */
-	void shutdown();
-
 private:
+
+	/* TransientWindow callbacks */
+	virtual void _preShow();
+	virtual void _preHide();
+	
 	/** greebo: This toggles the visibility of the patch inspector.
 	 * The dialog is constructed only once and never destructed 
 	 * during runtime.
@@ -140,9 +118,6 @@ private:
 	// Creates and packs the widgets into the dialog (called by constructor)
 	void populateWindow();
 
-	// The callback for the delete event (toggles the visibility)
-	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, PatchInspector* self);
-	
 	static void onComboBoxChange(GtkWidget* combo, PatchInspector* self);
 	
 	// Gets called if the spin buttons with the coordinates get changed
@@ -155,6 +130,33 @@ private:
 	// Gets called when the "Fixed Tesselation" settings are changed 
 	static void onFixedTessChange(GtkWidget* checkButton, PatchInspector* self);
 	static void onTessChange(GtkEditable* editable, PatchInspector* self);
+
+public:
+	PatchInspector();
+	
+	/** greebo: Contains the static instance of this dialog.
+	 * Constructs the instance and calls toggle() when invoked.
+	 */
+	static PatchInspector& Instance();
+
+	// The command target
+	static void toggle();
+
+	/** greebo: SelectionSystem::Observer implementation. Gets called by
+	 * the SelectionSystem upon selection change to allow updating of the
+	 * patch property widgets.
+	 */
+	void selectionChanged(scene::Instance& instance, bool isComponent);
+
+	// Updates the widgets
+	void update();
+
+	/** greebo: Safely disconnects this dialog from all systems 
+	 * 			(SelectionSystem, EventManager, ...)
+	 * 			Also saves the window state to the registry.
+	 */
+	void shutdown();
+
 }; // class PatchInspector
 
 } // namespace ui

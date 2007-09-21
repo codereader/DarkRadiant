@@ -42,27 +42,23 @@ namespace ui {
 		const std::string RKEY_T_STEP = RKEY_ROOT + "tCoordStep";
 	}
 
-PatchInspector::PatchInspector() :
-	_selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
-	_patchRows(0),
-	_patchCols(0),
-	_patch(NULL),
-	_updateActive(false)
+PatchInspector::PatchInspector() 
+: gtkutil::PersistentTransientWindow(WINDOW_TITLE, MainFrame_getWindow(), true),
+  _selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
+  _patchRows(0),
+  _patchCols(0),
+  _patch(NULL),
+  _updateActive(false)
 {
-	// Be sure to pass FALSE to the PersistentTransientWindow to prevent it from self-destruction
-	_dialog = gtkutil::PersistentTransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
-	
 	// Set the default border width in accordance to the HIG
-	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 12);
-	gtk_window_set_type_hint(GTK_WINDOW(_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
-	
-	g_signal_connect(G_OBJECT(_dialog), "delete-event", G_CALLBACK(onDelete), this);
+	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
+	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
 	
 	// Create all the widgets and pack them into the window
 	populateWindow();
 	
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connectDialogWindow(GTK_WINDOW(_dialog));
+	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
 	
 	// Register self to the SelSystem to get notified upon selection changes.
 	GlobalSelectionSystem().addObserver(this);
@@ -77,11 +73,15 @@ PatchInspector::PatchInspector() :
 		_windowPosition.loadFromNode(windowStateList[0]);
 	}
 	
-	_windowPosition.connect(GTK_WINDOW(_dialog));
+	_windowPosition.connect(GTK_WINDOW(getWindow()));
 	_windowPosition.applyPosition();
 }
 
 void PatchInspector::shutdown() {
+
+	// Destroy the transient window
+	destroy();
+	
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
 	
@@ -91,10 +91,8 @@ void PatchInspector::shutdown() {
 	// Tell the position tracker to save the information
 	_windowPosition.saveToNode(node);
 	
-	gtk_widget_hide(_dialog);
-	
 	GlobalSelectionSystem().removeObserver(this);
-	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(_dialog));
+	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
 }
 
 PatchInspector& PatchInspector::Instance() {
@@ -107,7 +105,7 @@ PatchInspector& PatchInspector::Instance() {
 void PatchInspector::populateWindow() {
 	// Create the overall vbox
 	GtkWidget* dialogVBox = gtk_vbox_new(false, 6);
-	gtk_container_add(GTK_CONTAINER(_dialog), dialogVBox);
+	gtk_container_add(GTK_CONTAINER(getWindow()), dialogVBox);
 	
 	// Create the title label (bold font)
 	_vertexChooser.title = gtkutil::LeftAlignedLabel(
@@ -337,20 +335,24 @@ void PatchInspector::loadControlVertex() {
 }
 
 void PatchInspector::toggleWindow() {
-	// Pass the call to the utility methods that save/restore the window position
-	if (GTK_WIDGET_VISIBLE(_dialog)) {
-		// Save the window position, to make sure
-		_windowPosition.readPosition();
-		gtk_widget_hide_all(_dialog);
-	}
-	else {
-		// Restore the position
-		_windowPosition.applyPosition();
-		// Update the widget values
-		update();
-		// Display the dialog
-		gtk_widget_show_all(_dialog);
-	}
+	if (isVisible())
+		hide();
+	else
+		show();
+}
+
+// Pre-hide callback
+void PatchInspector::_preHide() {
+	// Save the window position, to make sure
+	_windowPosition.readPosition();
+}
+
+// Pre-show callback
+void PatchInspector::_preShow() {
+	// Restore the position
+	_windowPosition.applyPosition();
+	// Update the widget values
+	update();
 }
 
 void PatchInspector::selectionChanged(scene::Instance& instance, bool isComponent) {
@@ -465,14 +467,6 @@ void PatchInspector::emitTesselation() {
 void PatchInspector::saveToRegistry() {
 	// Pass the call to the RegistryConnector
 	_connector.exportValues();
-}
-
-gboolean PatchInspector::onDelete(GtkWidget* widget, GdkEvent* event, PatchInspector* self) {
-	// Toggle the visibility of the inspector window
-	self->toggle();
-	
-	// Don't propagate the delete event
-	return true;
 }
 
 void PatchInspector::onCoordChange(GtkEditable* editable, PatchInspector* self) {

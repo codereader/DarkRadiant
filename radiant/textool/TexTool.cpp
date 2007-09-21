@@ -48,26 +48,23 @@ namespace ui {
 		const float GRID_MIN = 0.00390625f;
 	}
 
-TexTool::TexTool() :
-	_selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
-	_zoomFactor(DEFAULT_ZOOM_FACTOR),
-	_dragRectangle(false),
-	_manipulatorMode(false),
-	_viewOriginMove(false),
-	_grid(GRID_DEFAULT),
-	_gridActive(GlobalRegistry().get(RKEY_GRID_STATE) == "1")
+TexTool::TexTool() 
+: gtkutil::PersistentTransientWindow(WINDOW_TITLE, MainFrame_getWindow(), true),
+  _selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
+  _zoomFactor(DEFAULT_ZOOM_FACTOR),
+  _dragRectangle(false),
+  _manipulatorMode(false),
+  _viewOriginMove(false),
+  _grid(GRID_DEFAULT),
+  _gridActive(GlobalRegistry().get(RKEY_GRID_STATE) == "1")
 {
-	// Be sure to pass FALSE to the PersistentTransientWindow to prevent it from self-destruction
-	_window = gtkutil::PersistentTransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
+	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
 	
-	gtk_window_set_type_hint(GTK_WINDOW(_window), GDK_WINDOW_TYPE_HINT_DIALOG);
-	
-	g_signal_connect(G_OBJECT(_window), "delete-event", G_CALLBACK(onDelete), this);
-	g_signal_connect(G_OBJECT(_window), "focus-in-event", G_CALLBACK(triggerRedraw), this);
-	g_signal_connect(G_OBJECT(_window), "key_press_event", G_CALLBACK(onKeyPress), this);
+	g_signal_connect(G_OBJECT(getWindow()), "focus-in-event", G_CALLBACK(triggerRedraw), this);
+	g_signal_connect(G_OBJECT(getWindow()), "key_press_event", G_CALLBACK(onKeyPress), this);
 	
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connect(GTK_OBJECT(_window));
+	GlobalEventManager().connect(GTK_OBJECT(getWindow()));
 	
 	populateWindow();
 	
@@ -78,7 +75,7 @@ TexTool::TexTool() :
 		_windowPosition.loadFromNode(windowStateList[0]);
 	}
 	
-	_windowPosition.connect(GTK_WINDOW(_window));
+	_windowPosition.connect(GTK_WINDOW(getWindow()));
 	_windowPosition.applyPosition();
 	
 	// Register self to the SelSystem to get notified upon selection changes.
@@ -125,24 +122,28 @@ void TexTool::populateWindow() {
 	
 	gtk_box_pack_start(GTK_BOX(vbox), frame, true, true, 0);
 	
-	gtk_container_add(GTK_CONTAINER(_window), vbox);
+	gtk_container_add(GTK_CONTAINER(getWindow()), vbox);
 }
 
 void TexTool::toggleWindow() {
-	// Pass the call to the utility methods that save/restore the window position
-	if (GTK_WIDGET_VISIBLE(_window)) {
-		// Save the window position, to make sure
-		_windowPosition.readPosition();
-		gtk_widget_hide_all(_window);
-	}
-	else {
-		// Trigger an update of the current selection
-		rescanSelection();
-		// Restore the position
-		_windowPosition.applyPosition();
-		// Now show it
-		gtk_widget_show_all(_window);
-	}
+	if (isVisible())
+		hide();
+	else
+		show();
+}
+
+// Pre-hide callback
+void TexTool::_preHide() {
+	// Save the window position, to make sure
+	_windowPosition.readPosition();
+}
+
+// Pre-show callback
+void TexTool::_preShow() {
+	// Trigger an update of the current selection
+	rescanSelection();
+	// Restore the position
+	_windowPosition.applyPosition();
 }
 
 void TexTool::gridUp() {
@@ -160,6 +161,10 @@ void TexTool::gridDown() {
 }
 
 void TexTool::shutdown() {
+
+	// Destroy the window
+	destroy();
+	
 	// De-register this as selectionsystem observer
 	GlobalSelectionSystem().removeObserver(this);
 	
@@ -172,10 +177,8 @@ void TexTool::shutdown() {
 	// Tell the position tracker to save the information
 	_windowPosition.saveToNode(node);
 	
-	gtk_widget_hide(_window);
-	
 	GlobalEventManager().disconnect(GTK_OBJECT(_glWidget));
-	GlobalEventManager().disconnect(GTK_OBJECT(_window));
+	GlobalEventManager().disconnect(GTK_OBJECT(getWindow()));
 }
 
 TexTool& TexTool::Instance() {
@@ -794,14 +797,6 @@ gboolean TexTool::triggerRedraw(GtkWidget* widget, GdkEventFocus* event, TexTool
 	// Trigger a redraw
 	self->draw();
 	return false;
-}
-
-gboolean TexTool::onDelete(GtkWidget* widget, GdkEvent* event, TexTool* self) {
-	// Toggle the visibility of the textool window
-	self->toggle();
-	
-	// Don't propagate the delete event
-	return true;
 }
 
 gboolean TexTool::onMouseUp(GtkWidget* widget, GdkEventButton* event, TexTool* self) {

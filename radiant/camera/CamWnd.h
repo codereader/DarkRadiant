@@ -93,7 +93,11 @@ public:
 
 	GtkWidget* getWidget() const;
 	GtkWindow* getParent() const;
-	void setParent(GtkWindow* newParent);
+	
+	/**
+	 * Set the immediate GTK container of this CamWnd.
+	 */
+	void setContainer(GtkWindow* newParent);
 
 	void enableFreeMove();
 	void disableFreeMove();
@@ -119,6 +123,11 @@ public:
 private:
 	void Cam_Draw();
 };
+
+/**
+ * Shared pointer typedef.
+ */
+typedef boost::shared_ptr<CamWnd> CamWndPtr;
 
 typedef MemberCaller<CamWnd, &CamWnd::queueDraw> CamWndQueueDraw;
 typedef MemberCaller<CamWnd, &CamWnd::update> CamWndUpdate;

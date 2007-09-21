@@ -6,74 +6,73 @@
 namespace gtkutil {
 
 PersistentTransientWindow::PersistentTransientWindow(const std::string& title, 
-								 					 GtkWindow* parent, 
-								 					 bool deletable) 
-: _window(gtk_window_new(GTK_WINDOW_TOPLEVEL))
+								 					 GtkWindow* parent,
+								 					 bool hideOnDelete) 
+: TransientWindow(title, parent, hideOnDelete),
+  _parent(parent)
 {
-	gtk_window_set_transient_for(GTK_WINDOW(_window), parent);
-	gtk_window_set_title(GTK_WINDOW(_window), title.c_str());
-
-	if (deletable) {
-		// Connect the "destroy"-event, so that the handler can be disconnected 
-		// properly, be sure to pass _parent
-		g_signal_connect(
-			G_OBJECT(_window), "delete-event", G_CALLBACK(onDelete), parent
-		);
-	}
-	
-	// Connect the "resize"-event of the _parent window to the callback, so that 
-	// the child can be hidden as well
-	gulong resizeHandler = 
+	// Connect up a resize handler to the parent window, so that this window
+	// will be hidden and restored along with the parent
+	_parentResizeHandler = 
 		g_signal_connect(
 			G_OBJECT(parent), 
 			"window-state-event", 
-			G_CALLBACK(onParentResize), 
-			_window
+			G_CALLBACK(_onParentResize), 
+			this
 		);
 
-	// Pack the handler ID into the window, so that it can be disconnected upon 
-	// destroy
-	g_object_set_data(
-		G_OBJECT(_window), "resizeHandler", gint_to_pointer(resizeHandler)
-	);
-
-	// Set up the signal to show the parent window when this window is destroyed
-	g_signal_connect(
-		G_OBJECT(_window), 
-		"delete-event", 
-		G_CALLBACK(showParentOnDelete), 
-		parent
-	);
-
-
-	
 #ifdef POSIX
     
     // This stops the child windows from appearing in the task bar. Not used on
     // Windows because it possibly causes the windows not to have maximise
     // buttons, which is a user-requested feature
-    gtk_window_set_type_hint(GTK_WINDOW(_window), GDK_WINDOW_TYPE_HINT_UTILITY);
+    gtk_window_set_type_hint(
+    	GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_UTILITY
+    );
 
 #endif
     
 }
 
-// Operator cast to GtkWindow* (use this to create and retrieve the GtkWidget* pointer)
-PersistentTransientWindow::operator GtkWidget* () {
-	return _window;
+// Activate parent if necessary
+void PersistentTransientWindow::activateParent() {
+	// Only activate if this window is active already
+	if (gtk_window_is_active(GTK_WINDOW(getWindow()))) {
+		gtk_window_present(_parent);
+	}
 }
 
-gboolean PersistentTransientWindow::onParentResize(GtkWidget* widget, GdkEventWindowState* event, GtkWidget* child) {
+// Post-hide event from TransientWindow
+void PersistentTransientWindow::_postHide() {
+	activateParent();
+}
+
+// Virtual pre-destroy callback, called by TransientWindow before the window
+// itself has been destroyed
+void PersistentTransientWindow::_preDestroy() {
+
+	// If this window is active, make the parent active instead
+	activateParent();
+	
+	// Disconnect the resize handler callback from the parent widget
+	g_signal_handler_disconnect(G_OBJECT(_parent), _parentResizeHandler);
+}
+
+gboolean PersistentTransientWindow::_onParentResize(
+				GtkWidget* widget, 
+				GdkEventWindowState* event, 
+				PersistentTransientWindow* self) 
+{
 	// Check, if the event is of interest
 	if ((event->changed_mask & (GDK_WINDOW_STATE_ICONIFIED|GDK_WINDOW_STATE_WITHDRAWN)) != 0) {
 		// Now let's see what the new state of the main window is
 		if ((event->new_window_state & (GDK_WINDOW_STATE_ICONIFIED|GDK_WINDOW_STATE_WITHDRAWN)) != 0) {
 			// The parent got minimised, minimise the child as well
-			minimise(child);
+			minimise(self->getWindow());
 		}
 		else {
 			// Restore the child as the parent is now visible again
-			restore(child);
+			restore(self->getWindow());
 		}
 	}
 
@@ -114,45 +113,6 @@ void PersistentTransientWindow::minimise(GtkWidget* window) {
 			gtk_widget_hide(window);
 		}
 	}
-}
-
-gboolean PersistentTransientWindow::showParentOnDelete(GtkWidget* widget, GdkEvent* event, GtkWindow* parent) {
-
-	// Show the parent again, so that it doesn't disappear behind other 
-	// applications
-	if (gtk_window_is_active(GTK_WINDOW(widget))) {
-		gtk_window_present(parent);
-	}
-
-	return FALSE;
-}
-
-gboolean PersistentTransientWindow::onDelete(GtkWidget* widget, GdkEvent* event, GtkWindow* parent) {
-	// Retrieve the signal handler id from the child widget
-	gulong handlerID = gpointer_to_int(g_object_get_data(G_OBJECT(widget), "resizeHandler"));
-
-	// Disconnect the parent
-	g_signal_handler_disconnect(G_OBJECT(parent), handlerID);
-
-	return FALSE;
-}
-
-gboolean PersistentTransientWindow::toggleOnDelete(GtkWidget* widget, GdkEvent* event, GtkWindow* parent) {
-	// Toggle the visibility
-	if (GTK_WIDGET_VISIBLE(widget)) {
-		gtk_widget_hide(widget);
-		
-		// Show the parent again, so that it doesn't disappear behind other applications
-		if (gtk_window_is_active(GTK_WINDOW(widget))) {
-			gtk_window_present(parent);
-		}
-	}
-	else {
-		gtk_widget_show(widget);
-	}
-	
-	// Don't propagate the call
-	return TRUE;
 }
 
 } // namespace gtkutil

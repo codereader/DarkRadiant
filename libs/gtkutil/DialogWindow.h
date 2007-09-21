@@ -3,57 +3,39 @@
 
 #include "window/PersistentTransientWindow.h"
 
-/* greebo: This the prototype of a dialog window.
- * 
- * Instantiate the window using new DialogWindow() and call destroy()
- * to remove it from the heap.
- */
-
 namespace gtkutil {
 
+/**
+ * A heap-allocated subclass of PersistentTransientWindow which self-destructs
+ * when the underlying window is destroyed.
+ * 
+ * TODO: Deprecated, do not use in new code.
+ */
 class DialogWindow :
 	public PersistentTransientWindow
 {
-	
-public:
-	// Constructors
-	DialogWindow(const std::string& title, GtkWindow* parent) :
-		PersistentTransientWindow(title, parent)
-	{
-		gtk_window_set_modal(GTK_WINDOW(_window), TRUE);
-	    gtk_window_set_position(GTK_WINDOW(_window), GTK_WIN_POS_CENTER_ON_PARENT);
-	    gtk_window_set_title(GTK_WINDOW(_window), title.c_str());
-	    
-		// Be sure that everything is properly destroyed upon window closure
-		g_signal_connect(G_OBJECT(_window), "delete-event", G_CALLBACK(onDelete), this);
-	}
-	
-	virtual void populateWindow() = 0;
-	
-	virtual void setWindowSize(const unsigned int width, const unsigned int height) {
-		gtk_window_set_default_size(GTK_WINDOW(_window), width, height);
-		gtk_window_set_position(GTK_WINDOW(_window), GTK_WIN_POS_CENTER_ON_PARENT);
-	}
+private:
 
-	virtual void destroy() {
-		// Hide and destroy the window widget (and all its children)
-		if (GTK_IS_WIDGET(_window)) {
-			gtk_widget_hide(GTK_WIDGET(_window));
-			gtk_widget_destroy(GTK_WIDGET(_window));
-		}
-		
+	// Self-destroy object after window destruction
+	virtual void _postDestroy() {
 		delete this;
 	}
 
-private:
-	/* greebo: Call this to remove the dialog from the heap.
-	 */
-	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, DialogWindow* self) {
-		self->destroy();
-		
-		return false;
-	}
+public:
+
+	// Constructors
+	DialogWindow(const std::string& title, GtkWindow* parent) :
+		PersistentTransientWindow(title, parent)
+	{ }
 	
+	virtual void populateWindow() = 0;
+	
+	void setWindowSize(const unsigned int width, 
+							   const unsigned int height) 
+	{
+		gtk_window_set_default_size(GTK_WINDOW(getWindow()), width, height);
+	}
+
 }; // class DialogWindow 
 
 } // namespace ui

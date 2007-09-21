@@ -34,7 +34,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class IPlugin;
 class IToolbarButton;
 
+// Camera window
 class CamWnd;
+typedef boost::shared_ptr<CamWnd> CamWndPtr;
+
 class ZWnd;
 
 typedef struct _GtkWidget GtkWidget;
@@ -96,7 +99,10 @@ private:
 	
 	gtkutil::WindowPosition _windowPosition;
 
-  CamWnd* m_pCamWnd;
+	// Pointer to the active camera window
+	// TODO: Don't share ownership with GlobalCameraManager, there should only
+	// be one instance owner
+	CamWndPtr _camWnd;
 
   GtkWidget *m_pStatusLabel[c_count_status];
 
@@ -114,10 +120,9 @@ public:
   void SetGridStatus();
   typedef MemberCaller<MainFrame, &MainFrame::SetGridStatus> SetGridStatusCaller;
 
-  CamWnd* GetCamWnd()
-  {
-    return m_pCamWnd;
-  }
+  	CamWndPtr GetCamWnd() {
+  		return _camWnd;
+  	}
 
   EViewStyle CurrentStyle()
   {

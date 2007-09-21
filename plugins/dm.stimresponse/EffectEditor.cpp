@@ -43,9 +43,8 @@ EffectEditor::EffectEditor(GtkWindow* parent,
 	_editor(editor),
 	_stimTypes(stimTypes)
 {
-	gtk_window_set_modal(GTK_WINDOW(_window), TRUE);
-	gtk_container_set_border_width(GTK_CONTAINER(_window), 12);
-	gtk_window_set_type_hint(GTK_WINDOW(_window), GDK_WINDOW_TYPE_HINT_DIALOG);
+	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
+	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
 	
 	_effectStore = gtk_list_store_new(EFFECT_TYPE_NUM_COLS,
 									  G_TYPE_STRING,
@@ -106,13 +105,13 @@ EffectEditor::EffectEditor(GtkWindow* parent,
 	// Connect the signal to get notified of further changes
 	g_signal_connect(G_OBJECT(_effectTypeCombo), "changed", G_CALLBACK(onEffectTypeChange) , this);
 	
-	gtk_widget_show_all(_window);
+	show();
 }
 
 void EffectEditor::populateWindow() {
 	// Create the overall vbox
 	_dialogVBox = gtk_vbox_new(FALSE, 3);
-	gtk_container_add(GTK_CONTAINER(_window), _dialogVBox);
+	gtk_container_add(GTK_CONTAINER(getWindow()), _dialogVBox);
 	
 	GtkWidget* effectHBox = gtk_hbox_new(FALSE, 0);
 	

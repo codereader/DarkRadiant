@@ -41,8 +41,8 @@ public:
 	void setPosition(const int& x, const int& y);
 	void setSize(const int& width, const int& height);
 	
-	void saveToNode(xml::Node node);
-	void loadFromNode(xml::Node node);
+	void saveToNode(xml::Node& node);
+	void loadFromNode(const xml::Node& node);
 	
 	// Applies the internally stored size/position info to the GtkWindow
 	// The algorithm was adapted from original GtkRadiant code (window.h) 

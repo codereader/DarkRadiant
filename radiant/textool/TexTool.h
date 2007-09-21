@@ -3,6 +3,7 @@
 
 #include "gtk/gtkwidget.h"
 #include "gtkutil/WindowPosition.h"
+#include "gtkutil/window/PersistentTransientWindow.h"
 #include "math/Vector3.h"
 #include "math/aabb.h"
 #include "ishaders.h"
@@ -16,13 +17,11 @@ class Patch;
 
 namespace ui {
 
-class TexTool :
-	public RegistryKeyObserver,
-	public SelectionSystem::Observer
+class TexTool 
+: public gtkutil::PersistentTransientWindow,
+  public RegistryKeyObserver,
+  public SelectionSystem::Observer
 {
-	// The textool gtkwindow
-	GtkWidget* _window;
-
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
 
@@ -74,71 +73,12 @@ class TexTool :
 	// TRUE if the grid is active
 	bool _gridActive;
 	
-public:
-	TexTool();
-	
-	/** greebo: Some sort of "soft" destructor that de-registers
-	 * this class from the SelectionSystem, saves the window state, etc.
-	 */
-	void shutdown();
-	
-	/** greebo: This is the static accessor method containing
-	 * the static instance of the TexTool class. Use this to access
-	 * the public member methods like toggle() and shutdown().
-	 */
-	static TexTool& Instance();
-	
-	/** greebo: SelectionSystem::Observer implementation. Gets called by
-	 * the SelectionSystem upon selection change to allow updating.
-	 */
-	void selectionChanged(scene::Instance& instance, bool isComponent);
-	
-	/** greebo: Updates the GL window
-	 */
-	void draw();
-	
-	/** greebo: Increases/Decreases the grid size.
-	 */
-	void gridUp();
-	void gridDown();
-	
-	/** greebo: Snaps the current TexTool selection to the active grid.
-	 */
-	void snapToGrid();
-	
-	/** greebo: Merges the selected items in terms of their UV coordinates.
-	 * 			Mainly useful for stitching patch control vertices. 
-	 */
-	void mergeSelectedItems();
-	
-	/** greebo: This flips the selection in texture space. This is the equivalent
-	 * 			of the according buttons in the Surface Inspector, but it only affects
-	 * 			the items selected in the TexTool.
-	 * 			
-	 * @axis: 0 = s-Axis flip, 1 = t-axis flip  
-	 */
-	void flipSelected(int axis);
-	
-	/** greebo: RegistryKeyObserver implementation, gets called upon key change
-	 */
-	void keyChanged();
-	
-	/** greebo: Static command targets for use in FreeCaller<> constructions
-	 */
-	static void toggle();
-	static void texToolGridUp();
-	static void texToolGridDown();
-	static void texToolSnapToGrid();
-	static void texToolMergeItems();
-	static void texToolFlipS();
-	static void texToolFlipT();
-	static void selectRelated();
-	
-	/** greebo: Registers the commands in the EventManager
-	 */
-	static void registerCommands();
-	
 private:
+
+	/* TransientWindow callbacks */
+	virtual void _preHide();
+	virtual void _preShow();
+	
 	/** greebo: Selects all items that are related / connected
 	 * 			to the currently selected ones. E.g. if one patch
 	 * 			vertex is selected, all the vertices of the patch
@@ -247,6 +187,71 @@ private:
 	
 	// The static keyboard callback to catch the ESC key
 	static gboolean onKeyPress(GtkWindow* window, GdkEventKey* event, TexTool* self);
+
+public:
+	TexTool();
+	
+	/** greebo: Some sort of "soft" destructor that de-registers
+	 * this class from the SelectionSystem, saves the window state, etc.
+	 */
+	void shutdown();
+	
+	/** greebo: This is the static accessor method containing
+	 * the static instance of the TexTool class. Use this to access
+	 * the public member methods like toggle() and shutdown().
+	 */
+	static TexTool& Instance();
+	
+	/** greebo: SelectionSystem::Observer implementation. Gets called by
+	 * the SelectionSystem upon selection change to allow updating.
+	 */
+	void selectionChanged(scene::Instance& instance, bool isComponent);
+	
+	/** greebo: Updates the GL window
+	 */
+	void draw();
+	
+	/** greebo: Increases/Decreases the grid size.
+	 */
+	void gridUp();
+	void gridDown();
+	
+	/** greebo: Snaps the current TexTool selection to the active grid.
+	 */
+	void snapToGrid();
+	
+	/** greebo: Merges the selected items in terms of their UV coordinates.
+	 * 			Mainly useful for stitching patch control vertices. 
+	 */
+	void mergeSelectedItems();
+	
+	/** greebo: This flips the selection in texture space. This is the equivalent
+	 * 			of the according buttons in the Surface Inspector, but it only affects
+	 * 			the items selected in the TexTool.
+	 * 			
+	 * @axis: 0 = s-Axis flip, 1 = t-axis flip  
+	 */
+	void flipSelected(int axis);
+	
+	/** greebo: RegistryKeyObserver implementation, gets called upon key change
+	 */
+	void keyChanged();
+	
+	/** greebo: Static command targets for use in FreeCaller<> constructions
+	 */
+	static void toggle();
+	static void texToolGridUp();
+	static void texToolGridDown();
+	static void texToolSnapToGrid();
+	static void texToolMergeItems();
+	static void texToolFlipS();
+	static void texToolFlipT();
+	static void selectRelated();
+	
+	/** greebo: Registers the commands in the EventManager
+	 */
+	static void registerCommands();
+	
 }; // class TexTool
 
 } // namespace ui

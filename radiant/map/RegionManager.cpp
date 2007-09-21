@@ -160,7 +160,7 @@ void RegionManager::addRegionBrushes() {
 	// Create the info_player_start entity
 	_playerStart = GlobalEntityCreator().createEntity(playerStart);
 	
-	CamWnd* camWnd = GlobalCamera().getCamWnd();
+	CamWndPtr camWnd = GlobalCamera().getCamWnd();
 	if (camWnd != NULL) { 
 		// Obtain the camera origin = player start point
 		Vector3 camOrigin = camWnd->getCameraOrigin();
@@ -208,9 +208,9 @@ void RegionManager::disableRegion() {
 
 void RegionManager::setRegionXY() {
 	// Obtain the current XY orthoview, if there is one
-	XYWnd* xyWnd = GlobalXYWnd().getView(XY);
+	XYWndPtr xyWnd = GlobalXYWnd().getView(XY);
 	
-	if (xyWnd != NULL) {
+	if (xyWnd) {
 		Vector2 topLeft(
 			xyWnd->getOrigin()[0] - 0.5f * xyWnd->getWidth() / xyWnd->getScale(),
 			xyWnd->getOrigin()[1] - 0.5f * xyWnd->getHeight() / xyWnd->getScale()

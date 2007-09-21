@@ -8,10 +8,14 @@
 #include "Camera.h"
 #include "CameraSettings.h"
 
+#include "gtkutil/window/PersistentTransientWindow.h"
+#include "gtkutil/FramedWidget.h"
+
 // Constructor
-GlobalCameraManager::GlobalCameraManager() : 
-	_camWnd(NULL),
-	_cameraModel(NULL)
+GlobalCameraManager::GlobalCameraManager() 
+: _camWnd(),
+  _parent(NULL),
+  _cameraModel(NULL)
 {}
 
 void GlobalCameraManager::construct() {
@@ -71,28 +75,64 @@ void GlobalCameraManager::construct() {
 }
 
 void GlobalCameraManager::destroy() {
+	
+	// Release windows
+	_floatingCamWindow = gtkutil::PersistentTransientWindowPtr();
+	_camWnd = CamWndPtr();
+	
+	// Release shaders
 	CamWnd::releaseStates();
 }
 
-// Creates a new CamWnd class on the heap and returns the according pointer 
-CamWnd* GlobalCameraManager::newCamWnd() {
-	return new CamWnd;
-}
-
-// Frees the specified CamWnd class
-void GlobalCameraManager::deleteCamWnd(CamWnd* camWnd) {
-	if (camWnd != NULL) {
-		delete camWnd;
+// Construct and return the CamWnd instance
+CamWndPtr GlobalCameraManager::getCamWnd() {
+	if (!_camWnd) {
+		// Create and initialise the CamWnd
+		_camWnd = CamWndPtr(new CamWnd());
 	}
-}
-
-// Retrieves the pointer to the current CamWnd
-CamWnd* GlobalCameraManager::getCamWnd() {
 	return _camWnd;
 }
 
-void GlobalCameraManager::setCamWnd(CamWnd* camWnd) {
-	_camWnd = camWnd;
+// Construct/return a floating window containing the CamWnd widget
+gtkutil::PersistentTransientWindowPtr GlobalCameraManager::getFloatingWindow() {
+	if (!_floatingCamWindow) {
+		
+		// Create the floating window
+		_floatingCamWindow = 
+			gtkutil::PersistentTransientWindowPtr(
+				new gtkutil::PersistentTransientWindow("Camera", _parent, true)
+			);
+		
+		// Pack in the CamWnd widget
+		CamWndPtr camWnd = getCamWnd();
+		camWnd->setContainer(GTK_WINDOW(_floatingCamWindow->getWindow()));
+		gtk_container_add(
+			GTK_CONTAINER(_floatingCamWindow->getWindow()),
+			gtkutil::FramedWidget(_camWnd->getWidget())
+		);
+		
+		// Restore the window position from the registry if possible
+		xml::NodeList windowStateList = 
+			GlobalRegistry().findXPath(RKEY_CAMERA_WINDOW_STATE);
+		
+		if (!windowStateList.empty()) {
+			_windowPosition.loadFromNode(windowStateList[0]);
+			_windowPosition.connect(
+				GTK_WINDOW(_floatingCamWindow->getWindow())
+			);
+		}
+
+		// Connect up the toggle camera event
+		IEventPtr event = GlobalEventManager().findEvent("ToggleCamera");
+		if (!event->empty()) {
+			event->connectWidget(_floatingCamWindow->getWindow());
+			event->updateWidgets();
+		}
+		else {
+			globalErrorStream() << "Could not connect ToggleCamera event\n";
+		}
+	}
+	return _floatingCamWindow;
 }
 
 void GlobalCameraManager::resetCameraAngles() {
@@ -144,18 +184,9 @@ void GlobalCameraManager::update() {
 	_camWnd->update();
 }
 
-void GlobalCameraManager::setParent(CamWnd* camwnd, GtkWindow* parent) {
-	camwnd->setParent(parent);
-	
-	IEventPtr event = GlobalEventManager().findEvent("ToggleCamera");
-	
-	if (!event->empty()) {
-		event->connectWidget(GTK_WIDGET(camwnd->getParent()));
-		event->updateWidgets();
-	}
-	else {
-		globalErrorStream() << "Could not connect ToggleCamera event\n";
-	}
+// Set the global parent window
+void GlobalCameraManager::setParent(GtkWindow* parent) {
+	_parent = parent;
 }
 
 void GlobalCameraManager::changeFloorUp() {
@@ -216,22 +247,6 @@ void GlobalCameraManager::focusCamera(const Vector3& point, const Vector3& angle
 	if (_camWnd != NULL) {
 		_camWnd->setCameraOrigin(point);
 		_camWnd->setCameraAngles(angles);
-	}
-}
-
-void GlobalCameraManager::restoreCamWndState(GtkWindow* window) {
-	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_CAMERA_WINDOW_STATE);
-	
-	if (windowStateList.size() > 0) {
-		xml::Node windowState = windowStateList[0];
-	
-		if (window != NULL) {
-			_windowPosition.loadFromNode(windowState);
-			_windowPosition.connect(window);
-		}
-	}
-	else {
-		// Nothing found, nothing to do
 	}
 }
 

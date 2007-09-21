@@ -70,7 +70,7 @@ bool MapPosition::empty() const {
 
 void MapPosition::store() {
 	globalOutputStream() << "Storing map position #" << _index << "\n";
-	CamWnd* camwnd = GlobalCamera().getCamWnd();
+	CamWndPtr camwnd = GlobalCamera().getCamWnd();
 	
 	if (camwnd != NULL) {
 		_position = camwnd->getCameraOrigin();

@@ -399,11 +399,11 @@ void Restart() {
 }
 
 void Console_ToggleShow() {
-	ui::GroupDialog::Instance().setPage("console");  
+	ui::GroupDialog::getInstance().setPage("console");  
 }
 
 void EntityInspector_ToggleShow() {
-	ui::GroupDialog::Instance().setPage("entity");  
+	ui::GroupDialog::getInstance().setPage("entity");  
 }
 
 
@@ -1151,12 +1151,8 @@ GtkWindow* MainFrame_getWindow()
   return g_pParentWnd->m_window;
 }
 
-std::vector<GtkWidget*> g_floating_windows;
-
 MainFrame::MainFrame() : m_window(0), m_idleRedrawStatusText(RedrawStatusTextCaller(*this))
 {
-  m_pCamWnd = 0;
-
   for (int n = 0;n < c_count_status;n++)
   {
     m_pStatusLabel[n] = 0;
@@ -1172,11 +1168,6 @@ MainFrame::~MainFrame()
   gtk_widget_hide(GTK_WIDGET(m_window));
 
   Shutdown();
-
-  for(std::vector<GtkWidget*>::iterator i = g_floating_windows.begin(); i != g_floating_windows.end(); ++i)
-  {
-    gtk_widget_destroy(*i);
-  }  
 
   gtk_widget_destroy(GTK_WIDGET(m_window));
 }
@@ -1287,10 +1278,10 @@ void MainFrame::Create()
 	/* Construct the Group Dialog. This is the tabbed window that contains
      * a number of pages - usually Entities, Textures and possibly Console.
      */
-	ui::GroupDialog::Instance().construct(window);
+	ui::GroupDialog::construct(window);
 
     // Add entity inspector widget
-    ui::GroupDialog::Instance().addPage(
+    ui::GroupDialog::getInstance().addPage(
     	"entity",	// name
     	"Entity", // tab title
     	"cmenu_add_entity.png", // tab icon 
@@ -1299,7 +1290,7 @@ void MainFrame::Create()
     );
 
 	// Add the Media Browser page
-	ui::GroupDialog::Instance().addPage(
+	ui::GroupDialog::getInstance().addPage(
     	"mediabrowser",	// name
     	"Media", // tab title
     	"folder16.png", // tab icon 
@@ -1310,11 +1301,12 @@ void MainFrame::Create()
     // Add the console widget if using floating window mode, otherwise the
     // console is placed in the bottom-most split pane.
     if (FloatingGroupDialog()) {
-    	ui::GroupDialog::Instance().addPage(
+    	ui::GroupDialog::getInstance().addPage(
 	    	"console",	// name
 	    	"Console", // tab title
 	    	"iconConsole16.png", // tab icon 
-	    	Console_constructWindow(ui::GroupDialog::Instance().getWindow()), // page widget
+	    	Console_constructWindow(
+	    		GTK_WINDOW(ui::GroupDialog::getInstance().getWindow())), // page widget
 	    	"Console"
 	    );
     }
@@ -1351,18 +1343,19 @@ void MainFrame::Create()
 
 	gtk_widget_show(GTK_WIDGET(window));
 
+	// Create the camera instance
+	GlobalCamera().setParent(window);
+	_camWnd = GlobalCamera().getCamWnd();
+	
 	if (CurrentStyle() == eRegular || CurrentStyle() == eRegularLeft) {
     	// Allocate a new OrthoView and set its ViewType to XY
-		XYWnd* xyWnd = GlobalXYWnd().createXY();
+		XYWndPtr xyWnd = GlobalXYWnd().createEmbeddedOrthoView();
         xyWnd->setViewType(XY);
         // Create a framed window out of the view's internal widget
         GtkWidget* xyView = gtkutil::FramedWidget(xyWnd->getWidget());
-        
-		// Create a new camera
-		m_pCamWnd = GlobalCamera().newCamWnd();
-		GlobalCamera().setCamWnd(m_pCamWnd);
-		GlobalCamera().setParent(m_pCamWnd, window);
-		GtkWidget* camWindow = gtkutil::FramedWidget(m_pCamWnd->getWidget());
+
+        // Pack in the camera window
+		GtkWidget* camWindow = gtkutil::FramedWidget(_camWnd->getWidget());
 
         // Create the texture window
 		GtkWidget* texWindow = gtkutil::FramedWidget(
@@ -1428,34 +1421,23 @@ void MainFrame::Create()
   else if (CurrentStyle() == eFloating)
   {
     {
-     	GtkWidget* camWindow = gtkutil::PersistentTransientWindow("Camera", m_window, false);
-     	// Catch the delete event
-    	g_signal_connect(G_OBJECT(camWindow), "delete-event", 
-    					 G_CALLBACK(gtkutil::PersistentTransientWindow::toggleOnDelete), m_window);
-		
-		GtkWindow* window = GTK_WINDOW(camWindow);
-		GlobalEventManager().connectAccelGroup(window);
-		GlobalCamera().restoreCamWndState(window);
+     	// Get the floating window with the CamWnd packed into it
+		gtkutil::PersistentTransientWindowPtr floatingWindow =
+			GlobalCamera().getFloatingWindow();
+		GlobalEventManager().connectAccelGroup(
+			GTK_WINDOW(floatingWindow->getWindow()));
       
-		gtk_widget_show(GTK_WIDGET(window));
-
-		m_pCamWnd = GlobalCamera().newCamWnd();
-		GlobalCamera().setCamWnd(m_pCamWnd);
-
-		gtk_container_add(
-			GTK_CONTAINER(window), 
-			gtkutil::FramedWidget(m_pCamWnd->getWidget())
-		);
-		GlobalCamera().setParent(m_pCamWnd, window);
-		g_floating_windows.push_back(GTK_WIDGET(window));
+		floatingWindow->show();
     }
 
    	{
 		GtkFrame* frame = create_framed_widget(
-			GlobalTextureBrowser().constructWindow(ui::GroupDialog::Instance().getWindow())
+			GlobalTextureBrowser().constructWindow(
+				GTK_WINDOW(ui::GroupDialog::getInstance().getWindow())
+			)
 		);
 		// Add the Media Browser page
-		ui::GroupDialog::Instance().addPage(
+		ui::GroupDialog::getInstance().addPage(
 	    	"textures",	// name
 	    	"Textures", // tab title
 	    	"icon_texture.png", // tab icon 
@@ -1464,26 +1446,22 @@ void MainFrame::Create()
 	    );
     }
 
-    ui::GroupDialog::Instance().show();
+    ui::GroupDialog::getInstance().show();
   }
   else // 4 way (aka Splitplane view)
   {
-    m_pCamWnd = GlobalCamera().newCamWnd();
-    GlobalCamera().setCamWnd(m_pCamWnd);
-    GlobalCamera().setParent(m_pCamWnd, window);
-
-    GtkWidget* camera = m_pCamWnd->getWidget();
+    GtkWidget* camera = _camWnd->getWidget();
 
 	// Allocate the three ortho views
-    XYWnd* xyWnd = GlobalXYWnd().createXY();
+    XYWndPtr xyWnd = GlobalXYWnd().createEmbeddedOrthoView();
     xyWnd->setViewType(XY);
     GtkWidget* xy = xyWnd->getWidget();
     
-    XYWnd* yzWnd = GlobalXYWnd().createXY();
+    XYWndPtr yzWnd = GlobalXYWnd().createEmbeddedOrthoView();
     yzWnd->setViewType(YZ);
     GtkWidget* yz = yzWnd->getWidget();
 
-    XYWnd* xzWnd = GlobalXYWnd().createXY();
+    XYWndPtr xzWnd = GlobalXYWnd().createEmbeddedOrthoView();
     xzWnd->setViewType(XZ);
     GtkWidget* xz = xzWnd->getWidget();
 
@@ -1531,7 +1509,7 @@ void MainFrame::Create()
     {      
       GtkFrame* frame = create_framed_widget(GlobalTextureBrowser().constructWindow(window));
 		// Add the Media Browser page
-		ui::GroupDialog::Instance().addPage(
+		ui::GroupDialog::getInstance().addPage(
 	    	"textures",	// name
 	    	"Textures", // tab title
 	    	"icon_texture.png", // tab icon 
@@ -1611,12 +1589,15 @@ void MainFrame::SaveWindowInfo() {
 void MainFrame::Shutdown()
 {
 	// Tell the inspectors to safely shutdown (de-register callbacks, etc.)
+	// TODO: These actually cause dialogs to be instantiated on shutdown. Change
+	// to an event-based system using a RadiantEventListener interface and
+	// GlobalRadiant.
 	ui::SurfaceInspector::Instance().shutdown();
 	ui::PatchInspector::Instance().shutdown();
 	ui::LightInspector::Instance().shutdown();
 	ui::TexTool::Instance().shutdown();
 	ui::TransformDialog::Instance().shutdown();
-	ui::GroupDialog::Instance().shutdown();
+	ui::GroupDialog::getInstance().shutdown();
 	ui::PrefDialog::Instance().shutdown();
 	ui::EntityList::Instance().shutdown();
 	
@@ -1632,8 +1613,7 @@ void MainFrame::Shutdown()
 
 	GlobalTextureBrowser().destroyWindow();
 
-  GlobalCamera().deleteCamWnd(m_pCamWnd);
-  m_pCamWnd = 0;
+	_camWnd = CamWndPtr();
 }
 
 void MainFrame::RedrawStatusText()
@@ -1804,7 +1784,7 @@ void MainFrame_Construct()
 	
 	GlobalEventManager().addCommand("FindBrush", FreeCaller<DoFind>());
 	GlobalEventManager().addCommand("RevertToWorldspawn", FreeCaller<selection::algorithm::revertGroupToWorldSpawn>());
-	GlobalEventManager().addCommand("MapInfo", FreeCaller<ui::MapInfoDialog::show>());
+	GlobalEventManager().addCommand("MapInfo", FreeCaller<ui::MapInfoDialog::showDialog>());
 	
 	GlobalEventManager().addRegistryToggle("ToggleShowSizeInfo", RKEY_SHOW_SIZE_INFO);
 	GlobalEventManager().addRegistryToggle("ToggleShowAllLightRadii", "user/ui/showAllLightRadii");
@@ -1879,9 +1859,9 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("BrushExportOBJ", FreeCaller<CallBrushExportOBJ>());
 	GlobalEventManager().addCommand("BrushExportCM", FreeCaller<selection::algorithm::createCMFromSelection>());
 
-	GlobalEventManager().addCommand("FindReplaceTextures", FreeCaller<ui::FindAndReplaceShader::show>());
-	GlobalEventManager().addCommand("ShowCommandList", FreeCaller<ui::CommandList::show>());
-	GlobalEventManager().addCommand("About", FreeCaller<ui::AboutDialog::show>());
+	GlobalEventManager().addCommand("FindReplaceTextures", FreeCaller<ui::FindAndReplaceShader::showDialog>());
+	GlobalEventManager().addCommand("ShowCommandList", FreeCaller<ui::CommandList::showDialog>());
+	GlobalEventManager().addCommand("About", FreeCaller<ui::AboutDialog::showDialog>());
 
 	ui::TexTool::registerCommands();
 

@@ -30,23 +30,19 @@ namespace ui {
 		};
 	}
 
-EntityList::EntityList() :
-	_callbackActive(false)
+EntityList::EntityList() 
+: gtkutil::PersistentTransientWindow(WINDOW_TITLE, MainFrame_getWindow(), true),
+  _callbackActive(false)
 {
-	// Be sure to pass FALSE to the PersistentTransientWindow to prevent it from self-destruction
-	_dialog = gtkutil::PersistentTransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
-	
 	// Set the default border width in accordance to the HIG
-	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 12);
-	gtk_window_set_type_hint(GTK_WINDOW(_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
-	
-	g_signal_connect(G_OBJECT(_dialog), "delete-event", G_CALLBACK(onDelete), this);
+	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
+	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
 	
 	// Create all the widgets and pack them into the window
 	populateWindow();
 	
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connectDialogWindow(GTK_WINDOW(_dialog));
+	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
 	
 	// Register self to the SelSystem to get notified upon selection changes.
 	GlobalSelectionSystem().addObserver(this);
@@ -58,57 +54,59 @@ EntityList::EntityList() :
 		_windowPosition.loadFromNode(windowStateList[0]);
 	}
 	
-	_windowPosition.connect(GTK_WINDOW(_dialog));
+	_windowPosition.connect(GTK_WINDOW(getWindow()));
 	_windowPosition.applyPosition();
 }
 
-	namespace {
-		inline Nameable* Node_getNameable(scene::Node& node) {
-			return dynamic_cast<Nameable*>(&node);
+namespace {
+
+inline Nameable* Node_getNameable(scene::Node& node) {
+	return dynamic_cast<Nameable*>(&node);
+}
+
+std::string getNodeName(scene::Node& node) {
+	Nameable* nameable = Node_getNameable(node);
+	return (nameable != NULL) ? nameable->name() : "node";
+}
+
+void cellDataFunc(GtkTreeViewColumn* column, GtkCellRenderer* renderer, 
+				  GtkTreeModel* model, GtkTreeIter* iter, gpointer data)
+{
+	// Load the pointers from the columns
+	scene::Node* node = reinterpret_cast<scene::Node*>(
+		gtkutil::TreeModel::getPointer(model, iter, NODE_COL));
+	
+	scene::Instance* instance = reinterpret_cast<scene::Instance*>(
+		gtkutil::TreeModel::getPointer(model, iter, INSTANCE_COL));
+	
+	if (node != NULL) {
+		gtk_cell_renderer_set_fixed_size(renderer, -1, -1);
+		std::string name = getNodeName(*node);
+		g_object_set(G_OBJECT(renderer), 
+					 "text", name.c_str(), 
+					 "visible", TRUE, 
+					 NULL);
+
+		GtkWidget* treeView = reinterpret_cast<GtkWidget*>(data);
+
+		//globalOutputStream() << "rendering cell " << makeQuoted(name) << "\n";
+		GtkStyle* style = gtk_widget_get_style(treeView);
+		if (instance->childSelected()) {
+			g_object_set(G_OBJECT(renderer), 
+				"cell-background-gdk", &style->base[GTK_STATE_ACTIVE], NULL);
 		}
-		
-		std::string getNodeName(scene::Node& node) {
-			Nameable* nameable = Node_getNameable(node);
-			return (nameable != NULL) ? nameable->name() : "node";
-		}
-		
-		void cellDataFunc(GtkTreeViewColumn* column, GtkCellRenderer* renderer, 
-						  GtkTreeModel* model, GtkTreeIter* iter, gpointer data)
-		{
-			// Load the pointers from the columns
-			scene::Node* node = reinterpret_cast<scene::Node*>(
-				gtkutil::TreeModel::getPointer(model, iter, NODE_COL));
-			
-			scene::Instance* instance = reinterpret_cast<scene::Instance*>(
-				gtkutil::TreeModel::getPointer(model, iter, INSTANCE_COL));
-			
-			if (node != NULL) {
-				gtk_cell_renderer_set_fixed_size(renderer, -1, -1);
-				std::string name = getNodeName(*node);
-				g_object_set(G_OBJECT(renderer), 
-							 "text", name.c_str(), 
-							 "visible", TRUE, 
-							 NULL);
-		
-				GtkWidget* treeView = reinterpret_cast<GtkWidget*>(data);
-		
-				//globalOutputStream() << "rendering cell " << makeQuoted(name) << "\n";
-				GtkStyle* style = gtk_widget_get_style(treeView);
-				if (instance->childSelected()) {
-					g_object_set(G_OBJECT(renderer), 
-						"cell-background-gdk", &style->base[GTK_STATE_ACTIVE], NULL);
-				}
-				else {
-					g_object_set(G_OBJECT(renderer), 
-						"cell-background-gdk", &style->base[GTK_STATE_NORMAL], NULL);
-				}
-			}
-			else {
-				gtk_cell_renderer_set_fixed_size(renderer, -1, 0);
-				g_object_set(G_OBJECT(renderer), "text", "", "visible", FALSE, NULL);
-			}
+		else {
+			g_object_set(G_OBJECT(renderer), 
+				"cell-background-gdk", &style->base[GTK_STATE_NORMAL], NULL);
 		}
 	}
+	else {
+		gtk_cell_renderer_set_fixed_size(renderer, -1, 0);
+		g_object_set(G_OBJECT(renderer), "text", "", "visible", FALSE, NULL);
+	}
+}
+
+} // namespace
 
 void EntityList::populateWindow() {
 	_treeView = GTK_TREE_VIEW(gtk_tree_view_new());
@@ -131,7 +129,7 @@ void EntityList::populateWindow() {
 	gtk_tree_view_append_column (_treeView, column);
 	
 	gtk_container_add(
-		GTK_CONTAINER(_dialog), 
+		GTK_CONTAINER(getWindow()), 
 		gtkutil::ScrolledFrame(GTK_WIDGET(_treeView))
 	);
 }
@@ -175,20 +173,24 @@ void EntityList::selectionChanged(scene::Instance& instance, bool isComponent) {
 }
 
 void EntityList::toggleWindow() {
-	// Pass the call to the utility methods that save/restore the window position
-	if (GTK_WIDGET_VISIBLE(_dialog)) {
-		// Save the window position, to make sure
-		_windowPosition.readPosition();
-		gtk_widget_hide_all(_dialog);
-	}
-	else {
-		// Restore the position
-		_windowPosition.applyPosition();
-		// Update the widgets
-		update();
-		// Now show the dialog window again
-		gtk_widget_show_all(_dialog);
-	}
+	if (isVisible())
+		hide();
+	else
+		show();
+}
+
+// Pre-hide callback
+void EntityList::_preHide() {
+	// Save the window position, to make sure
+	_windowPosition.readPosition();
+}
+
+// Pre-show callback
+void EntityList::_preShow() {
+	// Restore the position
+	_windowPosition.applyPosition();
+	// Update the widgets
+	update();
 }
 
 void EntityList::toggle() {
@@ -196,6 +198,10 @@ void EntityList::toggle() {
 }
 
 void EntityList::shutdown() {
+
+	// Destroy the transient window
+	destroy();
+	
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
 	
@@ -205,10 +211,8 @@ void EntityList::shutdown() {
 	// Tell the position tracker to save the information
 	_windowPosition.saveToNode(node);
 	
-	gtk_widget_hide(_dialog);
-	
 	GlobalSelectionSystem().removeObserver(this);
-	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(_dialog));
+	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
 }
 
 EntityList& EntityList::Instance() {
@@ -290,14 +294,6 @@ gboolean EntityList::onSelection(GtkTreeSelection *selection,
 	}
 
 	return FALSE;
-}
-
-gboolean EntityList::onDelete(GtkWidget* widget, GdkEvent* event, EntityList* self) {
-	// Toggle the visibility of the inspector window
-	self->toggle();
-	
-	// Don't propagate the delete event
-	return true;
 }
 
 } // namespace ui

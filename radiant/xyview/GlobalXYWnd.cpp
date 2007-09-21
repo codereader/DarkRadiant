@@ -1,4 +1,5 @@
 #include "GlobalXYWnd.h"
+#include "FloatingOrthoView.h"
 
 #include "ieventmanager.h"
 #include "ipreferencesystem.h"
@@ -12,7 +13,6 @@
 
 // Constructor
 XYWndManager::XYWndManager() :
-	_activeXY(NULL),
 	_globalParentWindow(NULL)
 {
 	// Connect self to the according registry keys
@@ -40,17 +40,17 @@ XYWndManager::XYWndManager() :
 	registerCommands();
 }
 
-// Destructor
-XYWndManager::~XYWndManager() {
-	// The method destroy() is called from mainframe.cpp
-}
-
 void XYWndManager::construct() {
 	XYWnd::captureStates();
 }
 
-// Release the shader states
+// Release resources
 void XYWndManager::destroy() {
+	
+	// Release all owned XYWndPtrs
+	destroyViews();
+	_activeXY = XYWndPtr();
+	
 	XYWnd::releaseStates();
 }
 
@@ -72,35 +72,24 @@ void XYWndManager::restoreState() {
 		// Find all <view> tags under the first found <views> tag
 		xml::NodeList viewList = views[0].getNamedChildren("view");
 	
-		if (viewList.size() > 0) {
-			for (unsigned int i = 0; i < viewList.size(); i++) {
-				GtkWidget* window = gtkutil::PersistentTransientWindow("OrthoView", _globalParentWindow);
-				
-				// Create the view and restore the size
-				XYWnd* newWnd = createXY();
-				newWnd->readStateFromNode(viewList[i], GTK_WINDOW(window));
-				
-				// Connect the destroyed signal to the callback of this class 
-				g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(onDeleteOrthoView), newWnd);
-				
-				newWnd->setParent(GTK_WINDOW(window));
-				
-				const std::string typeStr = viewList[i].getAttributeValue("type");
-		
-				if (typeStr == "YZ") {
-					newWnd->setViewType(YZ);
-				}
-				else if (typeStr == "XZ") {
-					newWnd->setViewType(XZ);
-				}
-				else {
-					newWnd->setViewType(XY);
-				}
-				
-				GtkWidget* framedXYView = gtkutil::FramedWidget(newWnd->getWidget());
-				
-				gtk_container_add(GTK_CONTAINER(window), framedXYView);
-				gtk_widget_show_all(GTK_WIDGET(window));
+		for (xml::NodeList::const_iterator i = viewList.begin(); 
+			 i != viewList.end();
+			 ++i) 
+		{
+			// Create the view and restore the size
+			XYWndPtr newWnd = createFloatingOrthoView(XY);
+			newWnd->readStateFromNode(*i);
+			
+			const std::string typeStr = i->getAttributeValue("type");
+	
+			if (typeStr == "YZ") {
+				newWnd->setViewType(YZ);
+			}
+			else if (typeStr == "XZ") {
+				newWnd->setViewType(XZ);
+			}
+			else {
+				newWnd->setViewType(XY);
 			}
 		}
 	}
@@ -109,40 +98,42 @@ void XYWndManager::restoreState() {
 		globalOutputStream() << "XYWndManager: No xywindow information found in XMLRegistry, creating default view.\n";
 		
 		// Create a default OrthoView
-		/*XYWnd* newWnd = */createOrthoView(XY);
+		createFloatingOrthoView(XY);
 	}
 }
 
 void XYWndManager::saveState() {
+
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_XYVIEW_ROOT + "//views");
 	
 	// Create a new node
 	xml::Node rootNode(GlobalRegistry().createKey(RKEY_XYVIEW_ROOT + "/views"));
 	
-	for (XYWndList::iterator i = _XYViews.begin(); i != _XYViews.end(); i++) {
-		XYWnd* xyView = *i;
+	for (XYWndMap::iterator i = _xyWnds.begin(); i
+		 != _xyWnds.end(); 
+		 ++i) 
+	{
+		XYWndPtr xyView = i->second;
 		
 		xyView->saveStateToNode(rootNode);
-		gtk_widget_hide(GTK_WIDGET(xyView->getParent()));
+		// gtk_widget_hide(GTK_WIDGET(xyView->getParent())); TODO: What?
 	}
 }
 
 // Free the allocated XYViews from the heap
 void XYWndManager::destroyViews() {
-	
-	for (XYWndList::iterator i = _XYViews.begin(); i != _XYViews.end(); i++) {
-		// Free the view from the heap
-		XYWnd* xyView = *i;
-		
-		delete xyView;
-	}
 	// Discard the whole list
-	_XYViews.clear();
+	_xyWnds.clear();
 }
 
 void XYWndManager::registerCommands() {
-	GlobalEventManager().addCommand("NewOrthoView", MemberCaller<XYWndManager, &XYWndManager::createNewOrthoView>(*this));
+	GlobalEventManager().addCommand(
+		"NewOrthoView", 
+		MemberCaller<XYWndManager, &XYWndManager::createXYFloatingOrthoView>(
+			*this
+		)
+	);
 	GlobalEventManager().addCommand("NextView", MemberCaller<XYWndManager, &XYWndManager::toggleActiveView>(*this));
 	GlobalEventManager().addCommand("ZoomIn", MemberCaller<XYWndManager, &XYWndManager::zoomIn>(*this));
 	GlobalEventManager().addCommand("ZoomOut", MemberCaller<XYWndManager, &XYWndManager::zoomOut>(*this));
@@ -248,11 +239,11 @@ bool XYWndManager::showSizeInfo() const {
 }
 
 void XYWndManager::updateAllViews() {
-	for (XYWndList::iterator i = _XYViews.begin(); i != _XYViews.end(); i++) {
-		XYWnd* xyview = *i;
-		
-		// Pass the call
-		xyview->queueDraw();
+	for (XYWndMap::iterator i = _xyWnds.begin(); 
+		 i != _xyWnds.end(); 
+		 ++i) 
+	{
+		i->second->queueDraw();
 	}
 }
 
@@ -268,43 +259,35 @@ void XYWndManager::zoomOut() {
 	}
 }
 
-XYWnd* XYWndManager::getActiveXY() const {
+XYWndPtr XYWndManager::getActiveXY() const {
 	return _activeXY;
 }
 
 void XYWndManager::setOrigin(const Vector3& origin) {
 	// Cycle through the list of views and set the origin 
-	for (XYWndList::iterator i = _XYViews.begin(); i != _XYViews.end(); i++) {
-		XYWnd* xyView = *i;
-		
-		if (xyView != NULL) {
-			// Pass the call
-			xyView->setOrigin(origin);
-		}
+	for (XYWndMap::iterator i = _xyWnds.begin(); 
+		 i != _xyWnds.end(); 
+		 ++i) 
+	{
+		i->second->setOrigin(origin);
 	}
 }
 
 void XYWndManager::setScale(float scale) {
-	// Cycle through the list of views and set the origin 
-	for (XYWndList::iterator i = _XYViews.begin(); i != _XYViews.end(); i++) {
-		XYWnd* xyView = *i;
-		
-		if (xyView != NULL) {
-			// Pass the call
-			xyView->setScale(scale);
-		}
+	for (XYWndMap::iterator i = _xyWnds.begin(); 
+		 i != _xyWnds.end(); 
+		 ++i) 
+	{
+		i->second->setScale(scale);
 	}
 }
 
 void XYWndManager::positionAllViews(const Vector3& origin) {
-	// Cycle through the list of views and set the origin 
-	for (XYWndList::iterator i = _XYViews.begin(); i != _XYViews.end(); i++) {
-		XYWnd* xyView = *i;
-		
-		if (xyView != NULL) {
-			// Pass the call
-			xyView->positionView(origin);
-		}
+	for (XYWndMap::iterator i = _xyWnds.begin(); 
+		 i != _xyWnds.end(); 
+		 ++i) 
+	{
+		i->second->positionView(origin);
 	}
 }
 
@@ -371,30 +354,38 @@ void XYWndManager::focusActiveView() {
 	positionView(getFocusPosition());
 }
 
-XYWnd* XYWndManager::getView(EViewType viewType) {
+XYWndPtr XYWndManager::getView(EViewType viewType) {
 	// Cycle through the list of views and get the one matching the type 
-	for (XYWndList::iterator i = _XYViews.begin(); i != _XYViews.end(); i++) {
-		XYWnd* xyView = *i;
-		
-		if (xyView != NULL) {
-			// If the view matches, return the pointer
-			if (xyView->getViewType() == viewType) {
-				return xyView;
-			}
+	for (XYWndMap::iterator i = _xyWnds.begin(); 
+		 i != _xyWnds.end(); 
+		 ++i) 
+	{
+		// If the view matches, return the pointer
+		if (i->second->getViewType() == viewType) {
+			return i->second;
 		}
 	}
 
-	return NULL;
+	return XYWndPtr();
 }
 
-void XYWndManager::setActiveXY(XYWnd* wnd) {
+// Change the active XYWnd
+void XYWndManager::setActiveXY(int index) {
+
 	// Notify the currently active XYView that is has been deactivated
 	if (_activeXY != NULL) {
 		_activeXY->setActive(false);
 	}
 	
-	// Update the pointer
-	_activeXY = wnd;
+	// Find the ID in the map and update the active pointer
+	XYWndMap::const_iterator it = _xyWnds.find(index);
+	if (it != _xyWnds.end())
+		_activeXY = it->second;
+	else
+		throw std::logic_error(
+			"Cannot set XYWnd with ID " + intToStr(index) + " as active, "
+			+ " ID not found in map."
+		);
 	
 	// Notify the new active XYView about its activation
 	if (_activeXY != NULL) {
@@ -402,12 +393,34 @@ void XYWndManager::setActiveXY(XYWnd* wnd) {
 	}
 }
 
-XYWnd* XYWndManager::createXY() {
-	// Allocate a new window
-	XYWnd* newWnd = new XYWnd();
-	
-	// Add it to the internal list and return the pointer
-	_XYViews.push_back(newWnd);
+void XYWndManager::setGlobalParentWindow(GtkWindow* globalParentWindow) {
+	_globalParentWindow = globalParentWindow;
+}
+
+// Notification for a floating XYWnd destruction, so that it can be removed
+// from the map
+void XYWndManager::notifyXYWndDestroy(int index) {
+	_xyWnds.erase(index);
+}
+
+// Create a unique ID for the window map
+int XYWndManager::getUniqueID() const {
+	for (int i = 0; i < INT_MAX; ++i) {
+		if (_xyWnds.count(i) == 0)
+			return i;
+	}
+	throw std::runtime_error(
+		"Cannot create unique ID for ortho view: no more IDs."
+	);
+}
+
+// Create a standard (non-floating) ortho view
+XYWndPtr XYWndManager::createEmbeddedOrthoView() {
+
+	// Allocate a new window and add it to the map
+	int id = getUniqueID();
+	XYWndPtr newWnd = XYWndPtr(new XYWnd(id));
+	_xyWnds.insert(XYWndMap::value_type(id, newWnd));
 	
 	// Tag the new view as active, if there is no active view yet
 	if (_activeXY == NULL) {
@@ -417,82 +430,35 @@ XYWnd* XYWndManager::createXY() {
 	return newWnd;
 }
 
-void XYWndManager::setGlobalParentWindow(GtkWindow* globalParentWindow) {
-	_globalParentWindow = globalParentWindow;
-}
-
-void XYWndManager::destroyOrthoView(XYWnd* xyWnd) {
-	if (xyWnd != NULL) {		
-		
-		// Remove the pointer from the list
-		for (XYWndList::iterator i = _XYViews.begin(); i != _XYViews.end(); i++) {
-			XYWnd* listItem = (*i);
-		
-			// If the view is found, remove it from the list
-			if (listItem == xyWnd) {
-				// Retrieve the parent from the view (for later destruction)
-				GtkWindow* parent = xyWnd->getParent();
-				GtkWidget* glWidget = xyWnd->getWidget();
-				
-				if (_activeXY == xyWnd) {
-					_activeXY = NULL;
-				}
-				
-				// Destroy the window
-				delete xyWnd;
-				
-				// Remove it from the list
-				_XYViews.erase(i);
-				
-				// Destroy the parent window (and the contained frame) as well
-				if (parent != NULL) {
-					gtk_widget_destroy(GTK_WIDGET(glWidget));
-					gtk_widget_destroy(GTK_WIDGET(parent));
-				}
-				break;
-			}
-		}
-	}
-}
-
-gboolean XYWndManager::onDeleteOrthoView(GtkWidget *widget, GdkEvent *event, gpointer data) {
-	// Get the pointer to the deleted XY view from data
-	XYWnd* deletedView = reinterpret_cast<XYWnd*>(data);
-	
-	GlobalXYWnd().destroyOrthoView(deletedView);
-	
-	return false;
-}
-
-XYWnd* XYWndManager::createOrthoView(EViewType viewType) {
+// Create a new floating ortho view
+XYWndPtr XYWndManager::createFloatingOrthoView(EViewType viewType) {
 	
 	// Create a new XY view
-	XYWnd* newWnd = createXY();
+	int uniqueId = getUniqueID();
+	boost::shared_ptr<FloatingOrthoView> newWnd(
+		new FloatingOrthoView(
+			uniqueId, 
+			XYWnd::getViewTypeTitle(viewType), 
+			_globalParentWindow
+		)
+	);
+	_xyWnds.insert(XYWndMap::value_type(uniqueId, newWnd));
 	
-	// Add the new XYView GL widget to a framed window
-	GtkWidget* window = gtkutil::PersistentTransientWindow(
-							XYWnd::getViewTypeTitle(viewType), 
-							_globalParentWindow);
-	
-	// Connect the destroyed signal to the callback of this class 
-	g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(onDeleteOrthoView), newWnd);
-	
-	newWnd->setParent(GTK_WINDOW(window));
-	newWnd->connectWindowPosition();
-	
-	GtkWidget* framedXYView = gtkutil::FramedWidget(newWnd->getWidget());
-	gtk_container_add(GTK_CONTAINER(window), framedXYView);
-	gtk_widget_show_all(GTK_WIDGET(window));
-	
-	// Set the viewtype (and with it the window title)
+	// Tag the new view as active, if there is no active view yet
+	if (_activeXY == NULL) {
+		_activeXY = newWnd;
+	}
+
+	// Set the viewtype and show the window
 	newWnd->setViewType(viewType);
+	newWnd->show();
 	
 	return newWnd;
 }
 
 // Shortcut method for connecting to a GlobalEventManager command
-void XYWndManager::createNewOrthoView() {
-	createOrthoView(XY);
+void XYWndManager::createXYFloatingOrthoView() {
+	createFloatingOrthoView(XY);
 }
 
 /* greebo: This function determines the point currently being "looked" at, it is used for toggling the ortho views

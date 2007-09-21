@@ -737,7 +737,7 @@ GtkWindow* CamWnd::getParent() const {
 	return _parentWidget;
 }
 
-void CamWnd::setParent(GtkWindow* newParent) {
+void CamWnd::setContainer(GtkWindow* newParent) {
 	_parentWidget = newParent;
 	GlobalEventManager().connect(GTK_OBJECT(_parentWidget));
 }

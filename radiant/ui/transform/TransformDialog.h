@@ -5,6 +5,7 @@
 #include <map>
 #include "iselection.h"
 #include "gtkutil/WindowPosition.h"
+#include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/RegistryConnector.h"
 namespace gtkutil { class ControlButton; }
 #include <boost/shared_ptr.hpp>
@@ -26,12 +27,10 @@ typedef struct _GtkTable GtkTable;
  */
 namespace ui {
 
-class TransformDialog :
-	public SelectionSystem::Observer
+class TransformDialog 
+: public gtkutil::PersistentTransientWindow,
+  public SelectionSystem::Observer
 {
-	// The actual dialog widget
-	GtkWidget* _dialog;
-	
 	// The overall vbox (for global sensitivity toggle)
 	GtkWidget* _dialogVBox;
 	
@@ -66,6 +65,40 @@ class TransformDialog :
 	// The helper class that syncs the registry to/from widgets
 	gtkutil::RegistryConnector _connector;
 
+private:
+	
+	// TransientWindow callbacks
+	virtual void _preShow();
+	virtual void _preHide();
+	
+	/** greebo: Updates the sensitivity of the widgets according to 
+	 * 			the current selection.
+	 */
+	void update();
+
+	/** greebo: Saves the step values to the registry
+	 */
+	void saveToRegistry();
+
+	// This is called to initialise the dialog window / create the widgets
+	void populateWindow();
+
+	/** greebo: Helper method that creates a single row
+	 * 
+	 * @row: the row index of <table> where the widgets should be packed into.
+	 * @isRotator: set to true if a rotator row is to be created.
+	 * @axis: the axis this transformation is referring to.
+	 */
+	EntryRow createEntryRow(const std::string& label, GtkTable* table, 
+							int row, bool isRotator, int axis);
+	
+	// Callbacks to catch the scale/rotation button clicks
+	static void onClickSmaller(GtkWidget* button, EntryRow* row);
+	static void onClickLarger(GtkWidget* button, EntryRow* row);
+	
+	// The callback ensuring that the step changes are written to the registry
+	static void onStepChanged(GtkEditable* editable, TransformDialog* self);
+	
 public:
 	// Constructor
 	TransformDialog();
@@ -96,38 +129,6 @@ public:
 	 */
 	static void toggle();
 	
-private:
-	/** greebo: Updates the sensitivity of the widgets according to 
-	 * 			the current selection.
-	 */
-	void update();
-
-	/** greebo: Saves the step values to the registry
-	 */
-	void saveToRegistry();
-
-	// This is called to initialise the dialog window / create the widgets
-	void populateWindow();
-
-	/** greebo: Helper method that creates a single row
-	 * 
-	 * @row: the row index of <table> where the widgets should be packed into.
-	 * @isRotator: set to true if a rotator row is to be created.
-	 * @axis: the axis this transformation is referring to.
-	 */
-	EntryRow createEntryRow(const std::string& label, GtkTable* table, 
-							int row, bool isRotator, int axis);
-	
-	// Callbacks to catch the scale/rotation button clicks
-	static void onClickSmaller(GtkWidget* button, EntryRow* row);
-	static void onClickLarger(GtkWidget* button, EntryRow* row);
-	
-	// The callback ensuring that the step changes are written to the registry
-	static void onStepChanged(GtkEditable* editable, TransformDialog* self);
-	
-	// The callback for the delete event (toggles the visibility)
-	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, TransformDialog* self);
-
 }; // class TransformDialog
 
 } // namespace ui

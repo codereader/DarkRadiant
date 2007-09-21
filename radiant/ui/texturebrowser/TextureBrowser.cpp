@@ -299,7 +299,7 @@ void TextureBrowser::activeShadersChanged() {
 
 // Static command target
 void TextureBrowser::toggle() {
-	ui::GroupDialog::Instance().setPage("textures");
+	ui::GroupDialog::getInstance().setPage("textures");
 }
 
 //++timo NOTE: this is a mix of Shader module stuff and texture explorer
@@ -608,7 +608,7 @@ void TextureBrowser::onSeekInMediaBrowser(GtkMenuItem* item, TextureBrowser* sel
 	
 		if (shader != NULL) {
 			// Focus the MediaBrowser selection to the given shader
-			GroupDialog::Instance().setPage("mediabrowser");
+			GroupDialog::getInstance().setPage("mediabrowser");
 			MediaBrowser::getInstance().setSelection(shader->getName());
 		}
 	}

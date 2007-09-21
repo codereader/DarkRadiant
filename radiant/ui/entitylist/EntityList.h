@@ -3,6 +3,7 @@
 
 #include "iselection.h"
 #include "gtkutil/WindowPosition.h"
+#include "gtkutil/window/PersistentTransientWindow.h"
 
 typedef struct _GtkTreeView GtkTreeView;
 typedef struct _GtkTreeSelection GtkTreeSelection;
@@ -12,11 +13,11 @@ typedef struct _GtkTreeModel GtkTreeModel;
 
 namespace ui {
 
-class EntityList :
-	public SelectionSystem::Observer
+class EntityList
+: public gtkutil::PersistentTransientWindow,
+  public SelectionSystem::Observer
 {
-	// The main dialog window
-	GtkWidget* _dialog;
+	// The main tree view
 	GtkTreeView* _treeView;
 	GtkTreeSelection* _selection;
 	
@@ -26,6 +27,37 @@ class EntityList :
 	gtkutil::WindowPosition _windowPosition;
 
 	bool _callbackActive;
+
+private:
+
+	// TransientWindow callbacks
+	virtual void _preHide();
+	virtual void _preShow();
+	
+	/** greebo: Creates the widgets
+	 */
+	void populateWindow();
+
+	/** greebo: Updates the treeview contents
+	 */
+	void update();
+
+	/** greebo: SelectionSystem::Observer implementation.
+	 * 			Gets notified as soon as the selection is changed.
+	 */
+	void selectionChanged(scene::Instance& instance, bool isComponent);
+
+	/** greebo: Toggles the visibility of this dialog
+	 */
+	void toggleWindow();
+
+	static void onRowExpand(GtkTreeView* view, GtkTreeIter* iter, GtkTreePath* path, EntityList* self);
+	
+	static gboolean onSelection(GtkTreeSelection *selection, GtkTreeModel *model, 
+								GtkTreePath *path, gboolean path_currently_selected, gpointer data);
+
+	static gboolean modelUpdater(GtkTreeModel* model, GtkTreePath* path, 
+								 GtkTreeIter* iter, gpointer data);
 
 public:
 	// Constructor, creates all the widgets
@@ -46,33 +78,6 @@ public:
 	 */
 	static EntityList& Instance();
 	
-private:
-	/** greebo: Creates the widgets
-	 */
-	void populateWindow();
-
-	/** greebo: Updates the treeview contents
-	 */
-	void update();
-
-	/** greebo: SelectionSystem::Observer implementation.
-	 * 			Gets notified as soon as the selection is changed.
-	 */
-	void selectionChanged(scene::Instance& instance, bool isComponent);
-
-	/** greebo: Toggles the visibility of this dialog
-	 */
-	void toggleWindow();
-
-	// The callback to catch the delete event (toggles the window)
-	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, EntityList* self);
-	static void onRowExpand(GtkTreeView* view, GtkTreeIter* iter, GtkTreePath* path, EntityList* self);
-	
-	static gboolean onSelection(GtkTreeSelection *selection, GtkTreeModel *model, 
-								GtkTreePath *path, gboolean path_currently_selected, gpointer data);
-
-	static gboolean modelUpdater(GtkTreeModel* model, GtkTreePath* path, 
-								 GtkTreeIter* iter, gpointer data);
 };
 
 } // namespace ui
