@@ -76,9 +76,10 @@ void GlobalCameraManager::construct() {
 
 void GlobalCameraManager::destroy() {
 	
-	// Release windows
-	_floatingCamWindow = gtkutil::PersistentTransientWindowPtr();
+	// Release windows, destroy the CamWnd class before destroying the PersistentWindow
 	_camWnd = CamWndPtr();
+	// The TransientWindow destructor will destroy the window widget
+	_floatingCamWindow = gtkutil::PersistentTransientWindowPtr();
 	
 	// Release shaders
 	CamWnd::releaseStates();
