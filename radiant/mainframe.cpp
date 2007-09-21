@@ -1166,9 +1166,9 @@ MainFrame::~MainFrame()
   SaveWindowInfo();
 
   gtk_widget_hide(GTK_WIDGET(m_window));
-
+  
   Shutdown();
-
+  
   gtk_widget_destroy(GTK_WIDGET(m_window));
 }
 
@@ -1588,6 +1588,9 @@ void MainFrame::SaveWindowInfo() {
 
 void MainFrame::Shutdown()
 {
+	// Shutdown the texturebrowser (before the GroupDialog gets shut down).
+	GlobalTextureBrowser().destroyWindow();
+	
 	// Tell the inspectors to safely shutdown (de-register callbacks, etc.)
 	// TODO: These actually cause dialogs to be instantiated on shutdown. Change
 	// to an event-based system using a RadiantEventListener interface and
@@ -1610,9 +1613,7 @@ void MainFrame::Shutdown()
 	// Save the current XYViews to the registry
 	GlobalXYWnd().saveState();
 	GlobalXYWnd().destroyViews();
-
-	GlobalTextureBrowser().destroyWindow();
-
+	
 	_camWnd = CamWndPtr();
 }
 

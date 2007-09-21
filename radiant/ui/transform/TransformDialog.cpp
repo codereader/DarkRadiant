@@ -75,9 +75,6 @@ TransformDialog::TransformDialog()
 
 void TransformDialog::shutdown() {
 	
-	// Destroy the dialog
-	destroy();
-	
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
 	
@@ -89,6 +86,9 @@ void TransformDialog::shutdown() {
 	
 	GlobalSelectionSystem().removeObserver(this);
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
+	
+	// Destroy the dialog
+	destroy();
 }
 
 TransformDialog& TransformDialog::Instance() {

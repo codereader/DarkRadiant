@@ -79,9 +79,6 @@ PatchInspector::PatchInspector()
 
 void PatchInspector::shutdown() {
 
-	// Destroy the transient window
-	destroy();
-	
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
 	
@@ -93,6 +90,9 @@ void PatchInspector::shutdown() {
 	
 	GlobalSelectionSystem().removeObserver(this);
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
+	
+	// Destroy the transient window
+	destroy();
 }
 
 PatchInspector& PatchInspector::Instance() {

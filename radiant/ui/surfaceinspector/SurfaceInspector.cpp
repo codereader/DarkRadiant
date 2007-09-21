@@ -130,9 +130,6 @@ SurfaceInspector::SurfaceInspector()
 
 void SurfaceInspector::shutdown() {
 
-	// Destroy the window
-	destroy();
-	
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
 	
@@ -144,6 +141,9 @@ void SurfaceInspector::shutdown() {
 	
 	GlobalSelectionSystem().removeObserver(this);
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
+	
+	// Destroy the window (after it has been disconnected from the Eventmanager)
+	destroy();
 }
 
 void SurfaceInspector::connectEvents() {
