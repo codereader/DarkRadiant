@@ -149,9 +149,6 @@ LightInspector::LightInspector()
 
 void LightInspector::shutdown() {
 
-	// Destroy the window
-	destroy();
-	
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
 	
@@ -163,6 +160,9 @@ void LightInspector::shutdown() {
 	
 	GlobalSelectionSystem().removeObserver(this);
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
+	
+	// Destroy the window
+	destroy();
 }
 
 void LightInspector::shaderSelectionChanged(

@@ -162,9 +162,6 @@ void TexTool::gridDown() {
 
 void TexTool::shutdown() {
 
-	// Destroy the window
-	destroy();
-	
 	// De-register this as selectionsystem observer
 	GlobalSelectionSystem().removeObserver(this);
 	
@@ -179,6 +176,9 @@ void TexTool::shutdown() {
 	
 	GlobalEventManager().disconnect(GTK_OBJECT(_glWidget));
 	GlobalEventManager().disconnect(GTK_OBJECT(getWindow()));
+	
+	// Destroy the window
+	destroy();
 }
 
 TexTool& TexTool::Instance() {

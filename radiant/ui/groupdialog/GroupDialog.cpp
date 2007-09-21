@@ -128,9 +128,6 @@ void GroupDialog::_postShow() {
 
 void GroupDialog::shutdown() {
 
-	// Destroy the dialog
-	destroy();
-	
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
 	
@@ -141,6 +138,9 @@ void GroupDialog::shutdown() {
 	_windowPosition.saveToNode(node);
 	
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
+	
+	// Destroy the dialog
+	destroy();
 }
 
 GtkWidget* GroupDialog::addPage(const std::string& name,
