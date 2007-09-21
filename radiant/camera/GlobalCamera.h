@@ -7,6 +7,13 @@
 #include "CamWnd.h"
 #include "CameraObserver.h"
 
+/* FORWARD DECLS */
+namespace gtkutil {
+	class PersistentTransientWindow;
+	typedef boost::shared_ptr<PersistentTransientWindow> 
+			PersistentTransientWindowPtr;
+}
+
 /* greebo: This is the gateway class to access the currently active CamWindow
  * 
  * This class provides an interface for creating and deleting CamWnd instances
@@ -18,7 +25,15 @@
 class GlobalCameraManager {
 	
 	// The currently active camera window
-	CamWnd* _camWnd;
+	CamWndPtr _camWnd;
+	
+	// The PersistentTransientWindow containing the CamWnd's GTK widget. This
+	// may not be set, since the splitpane view styles do not have the camera
+	// in its own window
+	gtkutil::PersistentTransientWindowPtr _floatingCamWindow;
+	
+	// The parent widget for the camera window (this should be the main frame)
+	GtkWindow* _parent;
 	
 	CameraModel* _cameraModel;
 		
@@ -40,24 +55,25 @@ public:
 	// This releases the shader states of the CamWnd class
 	void destroy();
 	
-	// Creates a new CamWnd class and returns the according pointer 
-	CamWnd* newCamWnd();
-	
-	// Specifies the parent window of the given CamWnd
-	void setParent(CamWnd* camwnd, GtkWindow* parent);
-	
-	// Frees the created CamWnd class
-	void deleteCamWnd(CamWnd* camWnd);
-	
 	// Saves the current state of the camera window to the registry
 	void saveCamWndState();
 
-	// Restores the state of the given camera window according to the stored registry values 
-	void restoreCamWndState(GtkWindow* window);
+	/**
+	 * Specifies the parent window which should be used for the CamWnd.
+	 */
+	void setParent(GtkWindow* parent);
 	
-	// Retrieves/Sets the pointer to the current CamWnd
-	CamWnd* getCamWnd();
-	void setCamWnd(CamWnd* camWnd);
+	/**
+	 * Get the single CamWnd instance, creating it if necessary. A parent window 
+	 * must have been set with setParent() before the instance can be created. 
+	 */
+	CamWndPtr getCamWnd();
+	
+	/**
+	 * Get a PersistentFloatingWindow containing the CamWnd widget, creating
+	 * it if necessary.
+	 */
+	gtkutil::PersistentTransientWindowPtr getFloatingWindow();
 	
 	// Resets the camera angles of the currently active Camera
 	void resetCameraAngles();

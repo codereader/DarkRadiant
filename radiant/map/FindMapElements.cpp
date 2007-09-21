@@ -87,9 +87,9 @@ void SelectBrush (int entitynum, int brushnum)
     ASSERT_MESSAGE(selectable != 0, "SelectBrush: path not selectable");
     selectable->setSelected(true);
     
-    XYWnd* xyView = GlobalXYWnd().getActiveXY();
+    XYWndPtr xyView = GlobalXYWnd().getActiveXY();
     
-    if (xyView != NULL) {
+    if (xyView) {
     	xyView->positionView(instance->worldAABB().origin);
     }
   }

@@ -16,26 +16,15 @@ namespace ui {
 		const std::string WINDOW_TITLE = "Entity";
 	}
 
-GroupDialog::GroupDialog() :
-	_dialog(NULL),
-	_currentPage(0)
-{}
-
-void GroupDialog::construct(GtkWindow* parent) {
-	// Be sure to pass FALSE to the PersistentTransientWindow to prevent it from self-destruction
-	_dialog = gtkutil::PersistentTransientWindow(WINDOW_TITLE, parent, false);
-	
-	// Set the default border width in accordance to the HIG
-	//gtk_container_set_border_width(GTK_CONTAINER(_dialog), 12);
-	//gtk_window_set_type_hint(GTK_WINDOW(_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
-	
-	g_signal_connect(G_OBJECT(_dialog), "delete-event", G_CALLBACK(onDelete), this);
-	
+GroupDialog::GroupDialog(GtkWindow* parent) 
+: gtkutil::PersistentTransientWindow(WINDOW_TITLE, parent, true),
+  _currentPage(0)
+{
 	// Create all the widgets and pack them into the window
 	populateWindow();
 	
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connectDialogWindow(GTK_WINDOW(_dialog));
+	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
 	
 	// Connect the window position tracker
 	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
@@ -44,24 +33,18 @@ void GroupDialog::construct(GtkWindow* parent) {
 		_windowPosition.loadFromNode(windowStateList[0]);
 	}
 	
-	_windowPosition.connect(GTK_WINDOW(_dialog));
+	_windowPosition.connect(GTK_WINDOW(getWindow()));
 	_windowPosition.applyPosition();
 }
 
-void GroupDialog::show() {
-	// Pass the call to toggleWindow() if there is anything to do
-	if (!GTK_WIDGET_VISIBLE(_dialog)) {
-		toggleWindow();
-	}
-}
-
-GtkWindow* GroupDialog::getWindow() {
-	return GTK_WINDOW(_dialog);
+// Public static method to construct the instance
+void GroupDialog::construct(GtkWindow* parent) {
+	instance() = boost::shared_ptr<GroupDialog>(new GroupDialog(parent));
 }
 
 void GroupDialog::populateWindow() {
 	_notebook = gtk_notebook_new();
-	gtk_container_add(GTK_CONTAINER(_dialog), _notebook);
+	gtk_container_add(GTK_CONTAINER(getWindow()), _notebook);
 	gtk_notebook_set_tab_pos(GTK_NOTEBOOK(_notebook), GTK_POS_TOP);
 
 	g_signal_connect(G_OBJECT(_notebook), "switch-page", G_CALLBACK(onPageSwitch), this);
@@ -74,26 +57,19 @@ GtkWidget* GroupDialog::getPage() {
 	);
 }
 
-bool GroupDialog::visible() {
-	return (_dialog != NULL && GTK_WIDGET_VISIBLE(_dialog));
-}
-
+// Display the named page
 void GroupDialog::setPage(const std::string& name) {
 	for (unsigned int i = 0; i < _pages.size(); i++) {
 		if (_pages[i].name == name) {
-			// Check, if the page is already visible
-			if (getPage() == _pages[i].page && visible()) {
-				// Yes, toggle the whole group dialog
-				toggleWindow();
-			}
-			else {
-				// Make sure the dialog is shown as well
-				if (!visible()) {
-					toggleWindow();
-				}
-				// Name found in the list, activate the page
+
+			// Found page. Set it to active if it is not already active.
+			if (getPage() != _pages[i].page) {
 				setPage(_pages[i].page);
 			}
+
+			// Show the window
+			show();
+			
 			// Don't continue the loop, we've found the page
 			break;
 		}
@@ -105,39 +81,56 @@ void GroupDialog::setPage(GtkWidget* page) {
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(_notebook), gint(_currentPage));
 }
 
-GroupDialog& GroupDialog::Instance() {
-	static GroupDialog _instance;
+// Static instance owner
+boost::shared_ptr<GroupDialog>& GroupDialog::instance() {
+	static boost::shared_ptr<GroupDialog> _instance;
 	return _instance;
 }
 
-void GroupDialog::toggle() {
-	Instance().toggleWindow();
-}
-
-void GroupDialog::toggleWindow() {
-	// Do nothing, if the dialog is not yet constructed
-	if (_dialog == NULL) {
-		return;
-	}
-	
-	// Pass the call to the utility methods that save/restore the window position
-	if (GTK_WIDGET_VISIBLE(_dialog)) {
-		// Save the window position, to make sure
-		_windowPosition.readPosition();
-		gtk_widget_hide(_dialog);
+// Public method to retrieve the instance
+GroupDialog& GroupDialog::getInstance() {
+	if (GroupDialog::instance()) {
+		return *instance();
 	}
 	else {
-		// Restore the position
-		_windowPosition.applyPosition();
-		// Now show the dialog window again
-		gtk_widget_show(_dialog);
-		// Unset the focus widget for this window to avoid the cursor 
-		// from jumping into any entry fields
-		gtk_window_set_focus(GTK_WINDOW(_dialog), NULL);
+		throw std::logic_error(
+			"GroupDialog::getInstance() called before instance was initialised."
+		);
 	}
+}
+
+// Public static method to toggle the window visibility
+void GroupDialog::toggle() {
+	if (getInstance().isVisible())
+		getInstance().hide();
+	else
+		getInstance().show();
+}
+
+// Pre-hide callback from TransientWindow
+void GroupDialog::_preHide() {
+	// Save the window position, to make sure
+	_windowPosition.readPosition();
+}
+
+// Pre-show callback from TransientWindow
+void GroupDialog::_preShow() {
+	// Restore the position
+	_windowPosition.applyPosition();
+}
+
+// Post-show callback from TransientWindow
+void GroupDialog::_postShow() {
+	// Unset the focus widget for this window to avoid the cursor 
+	// from jumping into any entry fields
+	gtk_window_set_focus(GTK_WINDOW(getWindow()), NULL);
 }
 
 void GroupDialog::shutdown() {
+
+	// Destroy the dialog
+	destroy();
+	
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
 	
@@ -147,9 +140,7 @@ void GroupDialog::shutdown() {
 	// Tell the position tracker to save the information
 	_windowPosition.saveToNode(node);
 	
-	gtk_widget_hide(_dialog);
-	
-	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(_dialog));
+	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
 }
 
 GtkWidget* GroupDialog::addPage(const std::string& name,
@@ -192,7 +183,7 @@ GtkWidget* GroupDialog::addPage(const std::string& name,
 
 void GroupDialog::updatePageTitle(unsigned int pageNumber) {
 	if (pageNumber < _pages.size()) {
-		gtk_window_set_title(GTK_WINDOW(_dialog), _pages[pageNumber].title.c_str());
+		gtk_window_set_title(GTK_WINDOW(getWindow()), _pages[pageNumber].title.c_str());
 	}
 }
 

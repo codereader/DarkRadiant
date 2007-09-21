@@ -3,12 +3,11 @@
 
 #include <string>
 #include "gtkutil/WindowPosition.h"
+#include "gtkutil/window/PersistentTransientWindow.h"
 
 /** greebo: The GroupDialog class creates the Window and the Notebook widget
  * 			as soon as construct() is called. This method takes a parent GtkWindow*
- * 			as argument, to set the "transient for" property. As the GroupDialog
- * 			is constructed at a time when the MainFrame is still "under construction"
- * 			the window can't be created in the GroupDialog constructor.
+ * 			as argument, to set the "transient for" property. 
  * 
  * 			Use the Instance() method to access the static instance of this dialog and 
  * 			the addPage method to add new notebook tabs. 
@@ -29,9 +28,8 @@ typedef struct _GtkWindow GtkWindow;
 namespace ui {
 
 class GroupDialog 
+: public gtkutil::PersistentTransientWindow
 {
-	GtkWidget* _dialog;
-	
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
 
@@ -52,25 +50,27 @@ class GroupDialog
 	// The page number of the currently active page widget
 	int _currentPage;
 
+private:
+	
+	// Static instance owner. This returns the shared_ptr by reference, so that
+	// the pointed object can be initialised when construct() is called.
+	static boost::shared_ptr<GroupDialog>& instance();
+	
+	// Private constructor creates GTK widgets etc.
+	GroupDialog(GtkWindow* parent);
+
+	// TransientWindow events. These deal with window position tracking.
+	virtual void _preShow();
+	virtual void _postShow();
+	virtual void _preHide();
+	
 public:
-	GroupDialog();
-	
-	/** greebo: Use this to trigger
+
+	/** 
+	 * Static method called by the MainFrame to construct the GroupDialog
+	 * instance.
 	 */
-	void construct(GtkWindow* parent);
-	
-	/** greebo: Shows the instance (if it is invisible), does nothing otherwise
-	 */
-	void show();
-	
-	/** greebo: Returns true, if the window widget is not NULL and the
-	 * 			window is visible. 
-	 */
-	bool visible();
-	
-	/** greebo: Returns the window widget to set child windows "transient" 
-	 */
-	GtkWindow* getWindow();
+	static void construct(GtkWindow* parent);
 	
 	/** greebo: Adds a page to the group dialog.
 	 * 
@@ -108,19 +108,17 @@ public:
 	 */
 	void shutdown();
 	
-	/** greebo: The home of the static instance of this dialog
+	/** 
+	 * Retrieve the static GroupDialog instance.
 	 */
-	static GroupDialog& Instance();
+	static GroupDialog& getInstance();
 	
 	/** greebo: The command target to toggle the visibility
 	 */
 	static void toggle();
 
 private:
-	/** greebo: Gets invoked on toggle() and takes care of the details
-	 */
-	void toggleWindow();
-	
+
 	/** greebo: Adds the basic widgets to the groupdialog.
 	 */
 	void populateWindow();

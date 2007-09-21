@@ -40,7 +40,7 @@ namespace {
 
 StimResponseEditor::StimResponseEditor() :
 	// Be sure to pass FALSE to the PersistentTransientWindow to prevent it from self-destruction
-	_dialog(gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow(), false)),
+	_dialog(gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow())),
 	_entity(NULL),
 	_stimEditor(_stimTypes),
 	_responseEditor(_dialog, _stimTypes),

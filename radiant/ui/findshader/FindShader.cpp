@@ -30,27 +30,27 @@ FindAndReplaceShader::FindAndReplaceShader() :
 	DialogWindow(FINDDLG_WINDOW_TITLE, MainFrame_getWindow())
 {
 	setWindowSize(FINDDLG_DEFAULT_SIZE_X, FINDDLG_DEFAULT_SIZE_Y);
-	gtk_container_set_border_width(GTK_CONTAINER(_window), 12);
-	gtk_window_set_type_hint(GTK_WINDOW(_window), GDK_WINDOW_TYPE_HINT_DIALOG);
+	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
+	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
 	
 	// Create all the widgets
 	populateWindow();
 	
 	// Propagate shortcuts to the main window
-	GlobalEventManager().connectDialogWindow(GTK_WINDOW(_window));
+	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
 	
 	// Show the window and its children
-	gtk_widget_show_all(_window);
+	show();
 }
 
 FindAndReplaceShader::~FindAndReplaceShader() {
 	// Propagate shortcuts to the main window
-	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(_window));
+	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
 }
 
 void FindAndReplaceShader::populateWindow() {
 	GtkWidget* dialogVBox = gtk_vbox_new(false, 6);
-	gtk_container_add(GTK_CONTAINER(_window), dialogVBox);
+	gtk_container_add(GTK_CONTAINER(getWindow()), dialogVBox);
 	
 	GtkWidget* findHBox = gtk_hbox_new(false, 0);
     GtkWidget* replaceHBox = gtk_hbox_new(false, 0);
@@ -137,12 +137,12 @@ void FindAndReplaceShader::performReplace() {
 
 void FindAndReplaceShader::onChooseFind(GtkWidget* widget, FindAndReplaceShader* self) {
 	// Construct the modal dialog, self-destructs on close
-	new ShaderChooser(NULL, self->_window, self->_findEntry);
+	new ShaderChooser(NULL, GTK_WINDOW(self->getWindow()), self->_findEntry);
 }
 
 void FindAndReplaceShader::onChooseReplace(GtkWidget* widget, FindAndReplaceShader* self) {
 	// Construct the modal dialog, self-destructs on close
-	new ShaderChooser(NULL, self->_window, self->_replaceEntry);
+	new ShaderChooser(NULL, GTK_WINDOW(self->getWindow()), self->_replaceEntry);
 }
 
 void FindAndReplaceShader::onReplace(GtkWidget* widget, FindAndReplaceShader* self) {
@@ -162,7 +162,7 @@ void FindAndReplaceShader::onReplaceChanged(GtkEditable* editable, FindAndReplac
 	gtk_label_set_markup(GTK_LABEL(self->_counterLabel), "");
 }
 
-void FindAndReplaceShader::show() {
+void FindAndReplaceShader::showDialog() {
 	new FindAndReplaceShader(); // self-destructs in GTK callback
 }
 

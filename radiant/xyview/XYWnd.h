@@ -31,6 +31,9 @@ class XYWnd :
 	public CameraObserver,
 	public scene::Graph::Observer
 {
+	// Unique ID of this XYWnd
+	int _id;
+	
 	GtkWidget* m_gl_widget;
 	guint m_sizeHandler;
 	guint m_exposeHandler;
@@ -103,7 +106,7 @@ class XYWnd :
 	
 public:
 	// Constructor, this allocates the GL widget
-	XYWnd();
+	XYWnd(int uniqueId);
 	
 	// Destructor
 	~XYWnd();
@@ -210,11 +213,8 @@ public:
 	void sceneChanged();
 	
 	void saveStateToNode(xml::Node& rootNode);
-	void readStateFromNode(xml::Node& rootNode, GtkWindow* window);
+	void readStateFromNode(const xml::Node& rootNode);
 	
-	// Connects the internal windowposition with the parent window
-	void connectWindowPosition();
-
 private:
 	void onContextMenu();
 	void drawSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vMaxBounds);
@@ -233,5 +233,11 @@ private:
 	static void		callbackZoomDelta(int x, int y, unsigned int state, void* data);
 
 }; // class XYWnd
+
+/**
+ * Shared pointer typedefs.
+ */
+typedef boost::shared_ptr<XYWnd> XYWndPtr;
+typedef boost::weak_ptr<XYWnd> XYWndWeakPtr;
 
 #endif /*XYWND_H_*/

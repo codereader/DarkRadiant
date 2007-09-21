@@ -73,18 +73,16 @@ namespace ui {
 		const double MAX_FLOAT_RESOLUTION = 1.0E-5;
 	}
 
-SurfaceInspector::SurfaceInspector() :
-	_callbackActive(false),
-	_selectionInfo(GlobalSelectionSystem().getSelectionInfo())
+SurfaceInspector::SurfaceInspector() 
+: gtkutil::PersistentTransientWindow(WINDOW_TITLE, MainFrame_getWindow(), true),
+  _callbackActive(false),
+  _selectionInfo(GlobalSelectionSystem().getSelectionInfo())
 {
-	// Be sure to pass FALSE to the PersistentTransientWindow to prevent it from self-destruction
-	_dialog = gtkutil::PersistentTransientWindow(WINDOW_TITLE, MainFrame_getWindow(), false);
-	
 	// Set the default border width in accordance to the HIG
-	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 12);
-	gtk_window_set_type_hint(GTK_WINDOW(_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
-	
-	g_signal_connect(G_OBJECT(_dialog), "delete-event", G_CALLBACK(onDelete), this);
+	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
+	gtk_window_set_type_hint(
+		GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG
+	);
 	
 	// Create all the widgets and pack them into the window
 	populateWindow();
@@ -108,7 +106,7 @@ SurfaceInspector::SurfaceInspector() :
 	GlobalRegistry().addKeyObserver(this, RKEY_DEFAULT_TEXTURE_SCALE);
 	
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connectDialogWindow(GTK_WINDOW(_dialog));
+	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
 	
 	// Register self to the SelSystem to get notified upon selection changes.
 	GlobalSelectionSystem().addObserver(this);
@@ -126,11 +124,15 @@ SurfaceInspector::SurfaceInspector() :
 		_windowPosition.loadFromNode(windowStateList[0]);
 	}
 	
-	_windowPosition.connect(GTK_WINDOW(_dialog));
+	_windowPosition.connect(GTK_WINDOW(getWindow()));
 	_windowPosition.applyPosition();
 }
 
 void SurfaceInspector::shutdown() {
+
+	// Destroy the window
+	destroy();
+	
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
 	
@@ -140,10 +142,8 @@ void SurfaceInspector::shutdown() {
 	// Tell the position tracker to save the information
 	_windowPosition.saveToNode(node);
 	
-	gtk_widget_hide(_dialog);
-	
 	GlobalSelectionSystem().removeObserver(this);
-	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(_dialog));
+	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
 }
 
 void SurfaceInspector::connectEvents() {
@@ -184,23 +184,11 @@ void SurfaceInspector::connectEvents() {
 }
 
 void SurfaceInspector::toggleWindow() {
-	// Pass the call to the utility methods that save/restore the window position
-	if (GTK_WIDGET_VISIBLE(_dialog)) {
-		// Save the window position, to make sure
-		_windowPosition.readPosition();
-		gtk_widget_hide_all(_dialog);
-	}
-	else {
-		// Restore the position
-		_windowPosition.applyPosition();
-		// Import the registry keys 
-		_connector.importValues();
-		// Now show the dialog window again
-		gtk_widget_show_all(_dialog);
-		// Unset the focus widget for this window to avoid the cursor 
-		// from jumping into the shader entry field 
-		gtk_window_set_focus(GTK_WINDOW(_dialog), NULL);
-	}
+	// Toggle the dialog visibility
+	if (isVisible())
+		hide();
+	else
+		show();
 }
 
 void SurfaceInspector::keyChanged() {
@@ -227,7 +215,7 @@ void SurfaceInspector::keyChanged() {
 void SurfaceInspector::populateWindow() {
 	// Create the overall vbox
 	GtkWidget* dialogVBox = gtk_vbox_new(false, 6);
-	gtk_container_add(GTK_CONTAINER(_dialog), dialogVBox);
+	gtk_container_add(GTK_CONTAINER(getWindow()), dialogVBox);
 	
 	// Create the title label (bold font)
 	GtkWidget* topLabel = gtkutil::LeftAlignedLabel(
@@ -578,7 +566,9 @@ void SurfaceInspector::fitTexture() {
 	}
 	else {
 		// Invalid repeatX && repeatY values
-		gtkutil::errorDialog("Both fit values must be > 0.0.", GTK_WINDOW(_dialog));
+		gtkutil::errorDialog(
+			"Both fit values must be > 0.0.", GTK_WINDOW(getWindow())
+		);
 	}
 }
 
@@ -596,14 +586,6 @@ void SurfaceInspector::onStepChanged(GtkEditable* editable, SurfaceInspector* se
 	// Tell the class instance to save its contents into the registry
 	self->saveToRegistry();
 } 
-
-gboolean SurfaceInspector::onDelete(GtkWidget* widget, GdkEvent* event, SurfaceInspector* self) {
-	// Toggle the visibility of the inspector window
-	self->toggle();
-	
-	// Don't propagate the delete event
-	return true;
-}
 
 gboolean SurfaceInspector::onFit(GtkWidget* widget, SurfaceInspector* self) {
 	// Call the according member method
@@ -626,7 +608,7 @@ gboolean SurfaceInspector::onValueKeyPress(GtkWidget* entry, GdkEventKey* event,
 	if (event->keyval == GDK_Return) {
 		self->emitTexDef();
 		// Don't propage the keypress if the Enter could be processed
-		gtk_window_set_focus(GTK_WINDOW(self->_dialog), NULL);
+		gtk_window_set_focus(GTK_WINDOW(self->getWindow()), NULL);
 		return true;
 	}
 	
@@ -648,12 +630,31 @@ gboolean SurfaceInspector::onKeyPress(GtkWidget* entry, GdkEventKey* event, Surf
 
 void SurfaceInspector::onShaderSelect(GtkWidget* button, SurfaceInspector* self) {
 	// Construct the modal dialog, self-destructs on close
-	new ShaderChooser(self, self->_dialog, self->_shaderEntry);
+	new ShaderChooser(self, GTK_WINDOW(self->getWindow()), self->_shaderEntry);
 }
 
 // Static command target to toggle the window
 void SurfaceInspector::toggle() {
 	Instance().toggleWindow();
+}
+
+// TransientWindow callbacks
+void SurfaceInspector::_preShow() {
+	// Restore the position
+	_windowPosition.applyPosition();
+	// Import the registry keys 
+	_connector.importValues();
+}
+
+void SurfaceInspector::_postShow() {
+	// Unset the focus widget for this window to avoid the cursor 
+	// from jumping into the shader entry field 
+	gtk_window_set_focus(GTK_WINDOW(getWindow()), NULL);
+}
+
+void SurfaceInspector::_preHide() {
+	// Save the window position, to make sure
+	_windowPosition.readPosition();
 }
 
 } // namespace ui

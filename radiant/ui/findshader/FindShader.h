@@ -45,7 +45,7 @@ public:
 	
 	/** greebo: Shows the dialog (allocates on heap, dialog self-destructs)
 	 */
-	static void show();
+	static void showDialog();
 	
 private:
 

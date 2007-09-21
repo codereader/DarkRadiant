@@ -51,7 +51,8 @@ inline float normalised_to_world(float normalised, float world_origin, float nor
 }
 
 // Constructors
-XYWnd::XYWnd() :
+XYWnd::XYWnd(int id) :
+	_id(id),
 	m_gl_widget(glwidget_new(FALSE)),
 	m_deferredDraw(WidgetQueueDrawCaller(*m_gl_widget)),
 	m_deferred_motion(callbackMouseMotion, this),
@@ -546,10 +547,6 @@ void XYWnd::positionView(const Vector3& position) {
 void XYWnd::setViewType(EViewType viewType) {
 	m_viewType = viewType;
 	updateModelview();
-
-	if (_parent != 0) {
-		gtk_window_set_title(_parent, getViewTypeTitle(m_viewType).c_str());
-	}
 }
 
 EViewType XYWnd::getViewType() const {
@@ -1531,18 +1528,10 @@ void XYWnd::saveStateToNode(xml::Node& rootNode) {
 	}
 }
 
-void XYWnd::readStateFromNode(xml::Node& node, GtkWindow* window) {
-	if (window != NULL) {
-		// Load the sizes from the node
-		_windowPosition.loadFromNode(node);
-		_windowPosition.connect(window);
-	}
-}
-
-void XYWnd::connectWindowPosition() {
-	if (_parent != NULL) {
-		_windowPosition.connect(_parent);
-	}
+void XYWnd::readStateFromNode(const xml::Node& node) {
+	// Load the sizes from the node
+	_windowPosition.loadFromNode(node);
+	_windowPosition.applyPosition();
 }
 
 // ================ GTK CALLBACKS ======================================
@@ -1552,8 +1541,9 @@ void XYWnd::connectWindowPosition() {
  */
 gboolean XYWnd::callbackButtonPress(GtkWidget* widget, GdkEventButton* event, XYWnd* self) {
 	if (event->type == GDK_BUTTON_PRESS) {
+
 		// Put the focus on the xy view that has been clicked on
-		GlobalXYWnd().setActiveXY(self);
+		GlobalXYWnd().setActiveXY(self->_id);
 
 		//xywnd->ButtonState_onMouseDown(buttons_for_event_button(event));
 		self->setEvent(event);

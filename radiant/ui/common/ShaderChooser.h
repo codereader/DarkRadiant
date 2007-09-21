@@ -3,6 +3,7 @@
 
 #include "ui/common/ShaderSelector.h"
 #include "gtkutil/WindowPosition.h"
+#include "gtkutil/window/PersistentTransientWindow.h"
 #include <string>
 #include <gtk/gtkwidget.h>
 
@@ -18,8 +19,9 @@ namespace ui {
  * Use the LightShaderChooser class if you need an implementation to choose
  * light shaders only.
  */
-class ShaderChooser :
-	public ShaderSelector::Client
+class ShaderChooser 
+: public gtkutil::PersistentTransientWindow,
+  public ShaderSelector::Client
 {
 public:
 	// Derive from this class to get notified upon shader changes.
@@ -35,13 +37,10 @@ private:
 	Client* _client;
 
 	// The widget this dialog is transient for.
-	GtkWidget* _parent;
+	GtkWindow* _parent;
 	
 	// The text entry the chosen texture is written into (can be NULL)
 	GtkWidget* _targetEntry;
-	
-	// Main dialog widget
-	GtkWidget* _dialog;
 	
 	// The ShaderSelector widget, that contains the actual selection
 	// tools (treeview etc.)
@@ -58,7 +57,7 @@ public:
 	 * 
 	 * @parent: The widget this dialog is transient for.
 	 */
-	ShaderChooser(Client* client, GtkWidget* parent, GtkWidget* targetEntry = NULL);
+	ShaderChooser(Client* client, GtkWindow* parent, GtkWidget* targetEntry = NULL);
 	
 	/** greebo: Gets called upon shader selection change
 	 */

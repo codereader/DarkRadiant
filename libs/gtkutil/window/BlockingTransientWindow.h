@@ -43,7 +43,9 @@ public:
 	BlockingTransientWindow(const std::string& title, GtkWindow* parent)
 	: TransientWindow(title, parent),
 	  _isShown(false)
-	{ }
+	{ 
+		gtk_window_set_modal(GTK_WINDOW(getWindow()), TRUE);
+	}
 	
 };
 

@@ -19,14 +19,14 @@ namespace ui {
 AboutDialog::AboutDialog() :
 	DialogWindow(CMDLISTDLG_WINDOW_TITLE, MainFrame_getWindow())
 {
-	gtk_container_set_border_width(GTK_CONTAINER(_window), 12);
-	gtk_window_set_type_hint(GTK_WINDOW(_window), GDK_WINDOW_TYPE_HINT_DIALOG);
+	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
+	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
 	
 	// Create all the widgets
 	populateWindow();
 	
 	// Show the window and its children
-	gtk_widget_show_all(_window);
+	show();
 }
 
 void AboutDialog::populateWindow() {
@@ -113,7 +113,7 @@ void AboutDialog::populateWindow() {
 	
 	gtk_box_pack_start(GTK_BOX(dialogVBox), buttonHBox, FALSE, FALSE, 0);
 	
-	gtk_container_add(GTK_CONTAINER(_window), dialogVBox);
+	gtk_container_add(GTK_CONTAINER(getWindow()), dialogVBox);
 }
 
 void AboutDialog::callbackClose(GtkWidget* widget, AboutDialog* self) {
@@ -121,7 +121,7 @@ void AboutDialog::callbackClose(GtkWidget* widget, AboutDialog* self) {
 	self->destroy();
 }
 
-void AboutDialog::show() {
+void AboutDialog::showDialog() {
 	new AboutDialog(); // self-destructs in GTK callback
 }
 

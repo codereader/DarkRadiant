@@ -28,27 +28,27 @@ MapInfoDialog::MapInfoDialog() :
 	DialogWindow(MAPINFO_WINDOW_TITLE, GlobalRadiant().getMainWindow())
 {
 	setWindowSize(MAPINFO_DEFAULT_SIZE_X, MAPINFO_DEFAULT_SIZE_Y);
-	gtk_container_set_border_width(GTK_CONTAINER(_window), 12);
-	gtk_window_set_type_hint(GTK_WINDOW(_window), GDK_WINDOW_TYPE_HINT_DIALOG);
+	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
+	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
 	
 	// Create all the widgets
 	populateWindow();
 	
 	// Propagate shortcuts to the main window
-	GlobalEventManager().connectDialogWindow(GTK_WINDOW(_window));
+	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
 	
 	// Show the window and its children
-	gtk_widget_show_all(_window);
+	show();
 }
 
 MapInfoDialog::~MapInfoDialog() {
 	// Stop propagating shortcuts to the main window
-	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(_window));
+	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
 }
 
 void MapInfoDialog::populateWindow() {
 	GtkWidget* dialogVBox = gtk_vbox_new(FALSE, 6);
-	gtk_container_add(GTK_CONTAINER(_window), dialogVBox);
+	gtk_container_add(GTK_CONTAINER(getWindow()), dialogVBox);
 	
 	// Create the list store that contains the eclass => count map 
 	_listStore = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT);
@@ -138,7 +138,7 @@ void MapInfoDialog::onClose(GtkWidget* widget, MapInfoDialog* self) {
 	self->destroy();
 }
 
-void MapInfoDialog::show() {
+void MapInfoDialog::showDialog() {
 	new MapInfoDialog(); // self-destructs in GTK callback
 }
 

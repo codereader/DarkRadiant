@@ -39,16 +39,16 @@ LightTextureChooser::LightTextureChooser()
 :	_widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
 	_selector(this, getPrefixList(), true) // true >> render a light texture
 {
-	GtkWindow* gd = ui::GroupDialog::Instance().getWindow();
+	GtkWidget* gd = ui::GroupDialog::getInstance().getWindow();
 
-	gtk_window_set_transient_for(GTK_WINDOW(_widget), gd);
+	gtk_window_set_transient_for(GTK_WINDOW(_widget), GTK_WINDOW(gd));
     gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
 	gtk_window_set_title(GTK_WINDOW(_widget), "Choose texture");
 
 	// Set the default size of the window
 	gint w, h;
-	gtk_window_get_size(gd, &w, &h);
+	gtk_window_get_size(GTK_WINDOW(gd), &w, &h);
 	gtk_window_set_default_size(GTK_WINDOW(_widget), w, h);
 	
 	// Construct main VBox, and pack in ShaderSelector and buttons panel

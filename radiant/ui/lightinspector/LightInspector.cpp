@@ -9,7 +9,6 @@
 
 #include "scenelib.h"
 #include "mainframe.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/IconTextButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/RightAlignment.h"
@@ -63,27 +62,21 @@ namespace {
 }
 
 // Private constructor creates GTK widgets
-LightInspector::LightInspector() : 
-	// Be sure to pass FALSE to the PersistentTransientWindow to prevent it from self-destruction
-	_widget(gtkutil::PersistentTransientWindow(LIGHTINSPECTOR_TITLE, MainFrame_getWindow(), false)),
-	_isProjected(false),
-	_texSelector(this, getPrefixList(), true),
-	_entity(NULL),
-	_updateActive(false)
+LightInspector::LightInspector() 
+: gtkutil::PersistentTransientWindow(LIGHTINSPECTOR_TITLE, MainFrame_getWindow(), true),
+  _isProjected(false),
+  _texSelector(this, getPrefixList(), true),
+  _entity(NULL),
+  _updateActive(false)
 {
-	gtk_window_set_type_hint(GTK_WINDOW(_widget), GDK_WINDOW_TYPE_HINT_DIALOG);
+	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
 	
     // Window size
-	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
-	gtk_window_set_default_size(GTK_WINDOW(_widget), 
+	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(getWindow()));
+	gtk_window_set_default_size(GTK_WINDOW(getWindow()), 
 								gint(gdk_screen_get_width(scr) * 0.5), 
 								-1);
     
-    // Widget must hide not destroy when closed
-    g_signal_connect(G_OBJECT(_widget), "delete-event", G_CALLBACK(onDelete), this);
-
-	// Pack in widgets. 
-
 	// Left-hand panels (volume, colour, options)
 	GtkWidget* panels = gtk_vbox_new(FALSE, 12);
 
@@ -134,14 +127,14 @@ LightInspector::LightInspector() :
 		gtk_box_pack_end(GTK_BOX(_mainVBox), createButtons(), FALSE, FALSE, 0);
 	}
 
-	gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
-	gtk_container_add(GTK_CONTAINER(_widget), _mainVBox);
+	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
+	gtk_container_add(GTK_CONTAINER(getWindow()), _mainVBox);
 	
 	// Register to get notified upon selection change
 	GlobalSelectionSystem().addObserver(this);
 	
 	// Propagate shortcuts that are not processed by this window
-	GlobalEventManager().connectDialogWindow(GTK_WINDOW(_widget));
+	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
 	
 	// Connect the window position tracker
 	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
@@ -150,11 +143,15 @@ LightInspector::LightInspector() :
 		_windowPosition.loadFromNode(windowStateList[0]);
 	}
 	
-	_windowPosition.connect(GTK_WINDOW(_widget));
+	_windowPosition.connect(GTK_WINDOW(getWindow()));
 	_windowPosition.applyPosition();
 }
 
 void LightInspector::shutdown() {
+
+	// Destroy the window
+	destroy();
+	
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
 	
@@ -164,10 +161,8 @@ void LightInspector::shutdown() {
 	// Tell the position tracker to save the information
 	_windowPosition.saveToNode(node);
 	
-	gtk_widget_hide(_widget);
-	
 	GlobalSelectionSystem().removeObserver(this);
-	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(_widget));
+	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
 }
 
 void LightInspector::shaderSelectionChanged(
@@ -318,21 +313,24 @@ void LightInspector::update() {
 
 // Toggle this dialog
 void LightInspector::toggle() {
-	// Pass the call to the utility methods that save/restore the window position
-	if (GTK_WIDGET_VISIBLE(_widget)) {
-		// Save the window position, to make sure
-		_windowPosition.readPosition();
-		// Hide the dialog window
-		gtk_widget_hide_all(_widget);
-	}
-	else {
-		// Restore the position
-		_windowPosition.applyPosition();
-		// Update the widgets
-		update();
-		// Display the dialog
-		gtk_widget_show_all(_widget);
-	}
+	if (isVisible())
+		hide();
+	else
+		show();
+}
+
+// Pre-hide callback
+void LightInspector::_preHide() {
+	// Save the window position, to make sure
+	_windowPosition.readPosition();
+}
+
+// Pre-show callback
+void LightInspector::_preShow() {
+	// Restore the position
+	_windowPosition.applyPosition();
+	// Update the widgets
+	update();
 }
 
 void LightInspector::selectionChanged(scene::Instance& instance, bool isComponent) {
@@ -542,14 +540,6 @@ void LightInspector::_onColourChange(GtkColorButton* widget, LightInspector* sel
 	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1") {
 		self->setValuesOnEntity();
 	}
-}
-
-gboolean LightInspector::onDelete(GtkWidget* widget, GdkEvent* event, LightInspector* self) {
-	// Toggle the visibility of the inspector window
-	self->toggle();
-	
-	// Don't propagate the delete event
-	return true;
 }
 
 } // namespace ui

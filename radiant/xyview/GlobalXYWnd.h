@@ -27,16 +27,18 @@
 		const std::string RKEY_TRANSLATE_CONSTRAINED = "user/ui/xyview/translateConstrained";
 		const std::string RKEY_HIGHER_ENTITY_PRIORITY = "user/ui/xyview/higherEntitySelectionPriority";
 		
-		typedef std::list<XYWnd*> XYWndList;
 	}
 
 class XYWndManager : 
 	public RegistryKeyObserver
 {
-	// The list containing the pointers to all the allocated views
-	XYWndList _XYViews;
+	// Store an indexed map of XYWnds. When one is deleted, it will notify
+	// the XYWndManager of its index so that it can be removed from the map
+	typedef std::map<int, XYWndPtr> XYWndMap;
+	XYWndMap _xyWnds;
 
-	XYWnd* _activeXY;
+	// The active XYWnd
+	XYWndPtr _activeXY;
 	
 	// True, if the view is moved when the mouse cursor exceeds the view window borders
 	bool _chaseMouse;
@@ -57,13 +59,15 @@ class XYWndManager :
 	
 	GtkWindow* _globalParentWindow;
 	
+private:
+	
+	// Get a unique ID for the XYWnd map
+	int getUniqueID() const;
+	
 public:
 
 	// Constructor
 	XYWndManager();
-	
-	// Destructor, calls destroy to free all remaining views
-	~XYWndManager();
 	
 	// The callback that gets called on registry key changes
 	void keyChanged();
@@ -100,8 +104,15 @@ public:
 	// Restores the xy windows according to the state saved in the XMLRegistry 
 	void restoreState();
 	
-	XYWnd* getActiveXY() const;
-	void setActiveXY(XYWnd* wnd);
+	XYWndPtr getActiveXY() const;
+	
+	/**
+	 * Set the given XYWnd to active state.
+	 * 
+	 * @param id
+	 * Unique ID of the XYWnd to set as active.
+	 */
+	void setActiveXY(int id);
 	
 	// Shortcut commands for connect view the EventManager
 	void setActiveViewXY(); // top view
@@ -133,19 +144,32 @@ public:
 	
 	// Retrieves the pointer to the first view matching the given view type
 	// @returns: NULL if no matching window could be found, the according pointer otherwise 
-	XYWnd* getView(EViewType viewType);
+	XYWndPtr getView(EViewType viewType);
 
-	// Allocates a new XY view on the heap and returns its pointer (only used by paned views)
-	XYWnd* createXY();
+	/**
+	 * Create a non-floating (embedded) ortho view.
+	 */
+	XYWndPtr createEmbeddedOrthoView();
 	
-	// Creates a new floating XY View transient to the global parent window
-	XYWnd* createOrthoView(EViewType viewType);
+	/**
+	 * Create a new floating ortho view, as a child of the main window.
+	 */
+	XYWndPtr createFloatingOrthoView(EViewType viewType);
 	
-	// Creates a new orthoview
-	void createNewOrthoView();
+	/**
+	 * Parameter-less wrapper for createFloatingOrthoView(), for use by the
+	 * event manager. The default orientation of XY is used.
+	 */
+	void createXYFloatingOrthoView();
 	
-	// Deletes the specified view
-	void destroyOrthoView(XYWnd* xyWnd);
+	/**
+	 * Invoked by the PersistentTransientWindow when a floating XY window is
+	 * destroyed, so that the XYWnd can be removed from the map.
+	 * 
+	 * @param index
+	 * The unique ID of the destroyed window.
+	 */
+	void notifyXYWndDestroy(int index);
 	
 	// Determines the global parent the xyviews are children of
 	void setGlobalParentWindow(GtkWindow* globalParentWindow);
@@ -161,11 +185,6 @@ public:
 	// Registers all the XY commands in the EventManager 
 	void registerCommands();
 	
-private:
-
-	// The GTK callback to catch the delete-event of orthoviews
-	static gboolean onDeleteOrthoView(GtkWidget *widget, GdkEvent *event, gpointer data);
-
 }; // class XYWndManager
 
 // Use this method to access the global XYWnd manager class

@@ -4,6 +4,7 @@
 #include "iselection.h"
 #include "ui/common/ShaderSelector.h"
 #include "gtkutil/WindowPosition.h"
+#include "gtkutil/window/PersistentTransientWindow.h"
 
 #include <gtk/gtkwidget.h>
 #include <map>
@@ -24,13 +25,11 @@ namespace ui
  * between projected and point lights.
  */
 
-class LightInspector :
-	public SelectionSystem::Observer,
-	public ShaderSelector::Client
+class LightInspector 
+: public gtkutil::PersistentTransientWindow,
+  public SelectionSystem::Observer,
+  public ShaderSelector::Client
 {
-	// Main dialog widget
-	GtkWidget* _widget;
-	
 	// The overall vbox
 	GtkWidget* _mainVBox;
 	
@@ -74,6 +73,10 @@ private:
 	// Show this LightInspector dialog
 	void toggle();
 	
+	// TransientWindow callbacks
+	virtual void _preShow();
+	virtual void _preHide();
+	
 	// Widget construction functions
 	GtkWidget* createPointLightPanel();
 	GtkWidget* createProjectedPanel();
@@ -85,7 +88,6 @@ private:
 	static void _onProjToggle(GtkWidget*, LightInspector*);	
 	static void _onPointToggle(GtkWidget*, LightInspector*);	
 	static void _onOK(GtkWidget*, LightInspector*);
-	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, LightInspector* self);
 	static void _onColourChange(GtkColorButton* widget, LightInspector* self); 
 	static void _onOptionsToggle(GtkToggleButton* togglebutton, LightInspector *self);
 

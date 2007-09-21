@@ -19,11 +19,12 @@ namespace ui {
 	}
 
 // Construct the dialog
-ShaderChooser::ShaderChooser(Client* client, GtkWidget* parent, GtkWidget* targetEntry) :
-	_client(client),
-	_parent(parent), 
-	_targetEntry(targetEntry),
-	_selector(this, SHADER_PREFIXES)
+ShaderChooser::ShaderChooser(Client* client, GtkWindow* parent, GtkWidget* targetEntry) 
+: gtkutil::PersistentTransientWindow(LABEL_TITLE, parent),
+  _client(client),
+  _parent(parent), 
+  _targetEntry(targetEntry),
+  _selector(this, SHADER_PREFIXES)
 {
 	if (_targetEntry != NULL) {
 		_initialShader = gtk_entry_get_text(GTK_ENTRY(_targetEntry));
@@ -31,21 +32,20 @@ ShaderChooser::ShaderChooser(Client* client, GtkWidget* parent, GtkWidget* targe
 		_selector.setSelection(_initialShader);
 	}
 	
-	_dialog = gtkutil::PersistentTransientWindow(LABEL_TITLE, GTK_WINDOW(_parent), false);
-	gtk_window_set_modal(GTK_WINDOW(_dialog), true);
-    gtk_window_set_position(GTK_WINDOW(_dialog), GTK_WIN_POS_CENTER_ON_PARENT);
+	gtk_window_set_modal(GTK_WINDOW(getWindow()), true); // TODO: move into base class
+    gtk_window_set_position(GTK_WINDOW(getWindow()), GTK_WIN_POS_CENTER_ON_PARENT);
 	
 	// Set the default size of the window
-	gtk_window_set_default_size(GTK_WINDOW(_dialog), DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
+	gtk_window_set_default_size(GTK_WINDOW(getWindow()), DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
 	
 	// Connect the key handler to catch the ESC event
-	g_signal_connect(G_OBJECT(_dialog), "key-press-event", G_CALLBACK(onKeyPress), this);
+	g_signal_connect(G_OBJECT(getWindow()), "key-press-event", G_CALLBACK(onKeyPress), this);
 	
 	// Construct main VBox, and pack in the ShaderSelector and buttons panel
 	GtkWidget* vbx = gtk_vbox_new(false, 3);
 	gtk_box_pack_start(GTK_BOX(vbx), _selector, true, true, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), createButtons(), false, false, 0);
-	gtk_container_add(GTK_CONTAINER(_dialog), vbx);
+	gtk_container_add(GTK_CONTAINER(getWindow()), vbx);
 
 	// Connect the window position tracker
 	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
@@ -54,14 +54,15 @@ ShaderChooser::ShaderChooser(Client* client, GtkWidget* parent, GtkWidget* targe
 		_windowPosition.loadFromNode(windowStateList[0]);
 	}
 	
-	_windowPosition.connect(GTK_WINDOW(_dialog));
+	_windowPosition.connect(GTK_WINDOW(getWindow()));
 	_windowPosition.applyPosition();
 
 	// Show all widgets
-	gtk_widget_show_all(_dialog);
+	show();
 }
 
 ShaderChooser::~ShaderChooser() {
+	
 	// Delete all the current window states from the registry
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
 	
@@ -71,7 +72,9 @@ ShaderChooser::~ShaderChooser() {
 	// Tell the position tracker to save the information
 	_windowPosition.saveToNode(node);
 	
-	gtk_widget_destroy(_dialog);
+	// Destroy GTK widgets
+	destroy();
+	
 }
 
 // Construct the buttons

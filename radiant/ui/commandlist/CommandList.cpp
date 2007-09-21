@@ -33,7 +33,7 @@ CommandList::CommandList() :
 	populateWindow();
 	
 	// Show the window and its children
-	gtk_widget_show_all(_window);
+	show();
 }
 
 void CommandList::reloadList() {
@@ -49,7 +49,7 @@ void CommandList::reloadList() {
 void CommandList::populateWindow() {
 	GtkHBox* hbox = GTK_HBOX(gtk_hbox_new(FALSE, 4));
 	gtk_widget_show(GTK_WIDGET(hbox));
-	gtk_container_add(GTK_CONTAINER(_window), GTK_WIDGET(hbox));
+	gtk_container_add(GTK_CONTAINER(getWindow()), GTK_WIDGET(hbox));
 
 	{
 		// Create a new liststore item and define its columns
@@ -124,7 +124,7 @@ std::string CommandList::getSelectedCommand() {
 
 void CommandList::assignShortcut() {
 	// Instantiate the helper class
-	ShortcutChooser chooser(_window);
+	ShortcutChooser chooser(getWindow());
 	
 	if (chooser.retrieveShortcut(getSelectedCommand())) {
 		// The chooser returned TRUE, update the list
@@ -159,7 +159,7 @@ void CommandList::callbackClose(GtkWidget* widget, CommandList* self) {
 	self->destroy();
 }
 
-void CommandList::show() {
+void CommandList::showDialog() {
 	new CommandList(); // self-destructs in GTK callback
 }
 
