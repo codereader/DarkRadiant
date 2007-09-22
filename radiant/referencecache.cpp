@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "referencecache.h"
+#include "settings/GameManager.h"
 
 #include "debugging/debugging.h"
 
@@ -855,8 +856,8 @@ class ReferenceDependencies :
   MapModulesRef m_map_modules;
 public:
   ReferenceDependencies() :
-    m_model_modules(GlobalRadiant().getRequiredGameDescriptionKeyValue("modeltypes")),
-    m_map_modules(GlobalRadiant().getRequiredGameDescriptionKeyValue("maptypes"))
+    m_model_modules(game::Manager::Instance().currentGame()->getRequiredKeyValue("modeltypes")),
+    m_map_modules(game::Manager::Instance().currentGame()->getRequiredKeyValue("maptypes"))
   {
   }
   ModelModules& getModelModules()
