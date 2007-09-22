@@ -1,5 +1,6 @@
 
 #include "iclipper.h"		// The Abstract Base Class
+#include "iradiant.h"
 
 #include "iregistry.h"
 #include "ipreferencesystem.h"

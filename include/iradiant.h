@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define IRADIANT_H_
 
 #include "generic/constant.h"
-#include "iclipper.h"
 #include "math/Vector3.h"
 #include "math/Plane3.h"
 
