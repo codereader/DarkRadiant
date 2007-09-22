@@ -26,6 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "render/backend/OpenGLStateMap.h"
 #include "render/backend/GLProgramFactory.h"
 
+#include "settings/GameManager.h"
+
 #include "debugging/debugging.h"
 #include "warnings.h"
 
@@ -34,7 +36,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "igl.h"
 #include "iglrender.h"
 #include "renderable.h"
-#include "iradiant.h"
 
 #include <set>
 #include <vector>
@@ -733,11 +734,12 @@ typedef SingletonModule<OpenGLStateLibraryAPI> OpenGLStateLibraryModule;
 typedef Static<OpenGLStateLibraryModule> StaticOpenGLStateLibraryModule;
 StaticRegisterModule staticRegisterOpenGLStateLibrary(StaticOpenGLStateLibraryModule::instance());
 
-class ShaderCacheDependencies : public GlobalShadersModuleRef, public GlobalOpenGLStateLibraryModuleRef
+class ShaderCacheDependencies 
+: public GlobalShadersModuleRef, public GlobalOpenGLStateLibraryModuleRef
 {
 public:
   ShaderCacheDependencies() :
-    GlobalShadersModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("shaders"))
+    GlobalShadersModuleRef(game::Manager::Instance().currentGame()->getRequiredKeyValue("shaders"))
   {
   }
 };
