@@ -1,7 +1,7 @@
 #ifndef CLIPPOINT_H_
 #define CLIPPOINT_H_
 
-#include "iradiant.h"
+#include "iclipper.h"
 
 #include "math/Vector3.h"
 
