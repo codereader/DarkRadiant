@@ -134,15 +134,18 @@ public:
 		Sys_Status(statusText);
 	}
 	
+	virtual const char* getGameDescriptionKeyValue(const char* key) {
+		return game::Manager::Instance().currentGame()->getKeyValue(key);
+	}
+	
+	virtual const char* getRequiredGameDescriptionKeyValue(const char* key) {
+		return game::Manager::Instance().currentGame()->getRequiredKeyValue(key);
+	}
+	
 	virtual Vector3 getColour(const std::string& colourName) {
 		return ColourSchemes().getColourVector3(colourName);
 	}
   
-	// TODO: Remove this
-	virtual const char* getRequiredGameDescriptionKeyValue(const char* key) {
-		return game::Manager::Instance().currentGame()->getRequiredKeyValue(key);
-	}
-
 	virtual void updateAllWindows() {
 		UpdateAllWindows();
 	}
@@ -184,12 +187,12 @@ class RadiantDependencies :
 
 public:
   RadiantDependencies() :
-    GlobalEntityModuleRef(game::Manager::Instance().currentGame()->getRequiredKeyValue("entities")),
-    GlobalShadersModuleRef(game::Manager::Instance().currentGame()->getRequiredKeyValue("shaders")),
-    GlobalBrushModuleRef(game::Manager::Instance().currentGame()->getRequiredKeyValue("brushtypes")),
-    GlobalEntityClassManagerModuleRef(game::Manager::Instance().currentGame()->getRequiredKeyValue("entityclass")),
-    m_image_modules(game::Manager::Instance().currentGame()->getRequiredKeyValue("texturetypes")),
-    m_map_modules(game::Manager::Instance().currentGame()->getRequiredKeyValue("maptypes"))
+    GlobalEntityModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("entities")),
+    GlobalShadersModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("shaders")),
+    GlobalBrushModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("brushtypes")),
+    GlobalEntityClassManagerModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("entityclass")),
+    m_image_modules(GlobalRadiant().getRequiredGameDescriptionKeyValue("texturetypes")),
+    m_map_modules(GlobalRadiant().getRequiredGameDescriptionKeyValue("maptypes"))
   {
   }
 

@@ -100,8 +100,8 @@ public:
 	/** greebo: Set the status text of the main window
 	 */
 	virtual void setStatusText(const std::string& statusText) = 0;
-
-	// DEPRECATED. TODO: Remove this.
+	
+	virtual const char* getGameDescriptionKeyValue(const char* key) = 0;
 	virtual const char* getRequiredGameDescriptionKeyValue(const char* key) = 0;
 	
 	virtual Vector3 getColour(const std::string& colourName) = 0;
