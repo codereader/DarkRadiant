@@ -111,13 +111,10 @@ public:
 };
 
 // Define the static FileType module
-module::StaticModule<RadiantFileTypeRegistry> fileTypeRegistry;
+module::StaticModule<RadiantFileTypeRegistry> fileTypeRegistryModule;
 
-static RadiantFileTypeRegistry g_patterns;
-
-IFileTypeRegistry* GetFileTypeRegistry()
-{
-  return &g_patterns;
+IFileTypeRegistry* GetFileTypeRegistry() {
+	return fileTypeRegistryModule.getModule().get();
 }
 
 // Look for a module which loads the given extension, by searching under the
