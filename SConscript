@@ -118,6 +118,12 @@ xmlRegistryEnv.useBoostRegex()
 xmlRegistryLib = xmlRegistryEnv.SharedLibrary(target='xmlregistry', source=xmlRegistrySrc)
 xmlRegistryEnv.Install(INSTALL + '/modules', xmlRegistryLib)
 
+# FileTypes module
+fileTypesEnv = module_env.Copy()
+fileTypesSrc = build_list('plugins/filetypes', 'FileTypeRegistry.cpp')
+fileTypesLib = fileTypesEnv.SharedLibrary(target='filetypes', source=fileTypesSrc)
+fileTypesEnv.Install(INSTALL + '/modules', fileTypesLib)
+
 # Grid module
 gridEnv = module_env.Copy()
 gridSrc = build_list('plugins/grid', 'Grid.cpp')
@@ -373,7 +379,6 @@ radiant_src = \
 		 'csg.cpp',
 		 'entity.cpp',
 		 'error.cpp',
-		 'filetypes.cpp',
 		 'gtkdlgs.cpp',
 		 'gtkmisc.cpp',
 		 'main.cpp',
