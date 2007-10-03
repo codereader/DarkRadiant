@@ -66,10 +66,6 @@ void MapChanged()
 	GlobalMap().setModified(!References_Saved());
 }
 
-// TODO: greebo: Remove this, the MapDoom3 loader can acquire a reference
-// to the EntityCreator on its own, it doesn't need to be passed along.
-EntityCreator* g_entityCreator = 0;
-
 bool MapResource_loadFile(const MapFormat& format, scene::INodePtr root, const char* filename)
 {
   globalOutputStream() << "Open file " << filename << " for read...";
@@ -77,7 +73,6 @@ bool MapResource_loadFile(const MapFormat& format, scene::INodePtr root, const c
   if(!file.failed())
   {
     globalOutputStream() << "success\n";
-    ASSERT_NOTNULL(g_entityCreator);
     format.readGraph(root, file);
     return true;
   }
@@ -758,11 +753,6 @@ public:
 	void release(const std::string& path) {
 		// Does nothing. TODO: remove this or implement weak pointer references
 	}
-
-  void setEntityCreator(EntityCreator& entityCreator)
-  {
-    g_entityCreator = &entityCreator;
-  }
 
   bool realised() const
   {

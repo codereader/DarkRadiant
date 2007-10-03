@@ -151,7 +151,6 @@ const StringSet& Doom3EntityCreator::getDependencies() const {
 		_dependencies.insert(MODULE_RADIANT);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_SCENEGRAPH);
-		_dependencies.insert(MODULE_REFERENCECACHE);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		_dependencies.insert(MODULE_SHADERCACHE);
 		_dependencies.insert(MODULE_SELECTIONSYSTEM);
@@ -167,8 +166,6 @@ void Doom3EntityCreator::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "Doom3EntityCreator::initialiseModule called.\n";
 	
 	entity::constructStatic();
-
-	GlobalReferenceCache().setEntityCreator(*this);
 }
 
 void Doom3EntityCreator::shutdownModule() {

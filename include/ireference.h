@@ -42,8 +42,6 @@ public:
   virtual void unrealise() = 0;
 };
 
-class EntityCreator;
-
 const std::string MODULE_REFERENCECACHE("ReferenceCache");
 
 class ReferenceCache :
@@ -59,8 +57,6 @@ public:
 	virtual ResourcePtr capture(const std::string& path) = 0;
 	
   virtual void release(const std::string& path) = 0;
-
-  virtual void setEntityCreator(EntityCreator& entityCreator) = 0;
 };
 
 inline ReferenceCache& GlobalReferenceCache() {
