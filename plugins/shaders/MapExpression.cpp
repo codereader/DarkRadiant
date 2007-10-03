@@ -112,6 +112,8 @@ ImagePtr HeightMapExpression::getImage() {
 	// Get the heightmap from the contained expression
 	ImagePtr heightMap = heightMapExp->getImage();
 	
+	if (heightMap == NULL) return ImagePtr();
+	
 	// Convert the heightmap into a normalmap
 	ImagePtr normalMap = createNormalmapFromHeightmap(heightMap, scale);
 	return normalMap;
@@ -133,12 +135,16 @@ AddNormalsExpression::AddNormalsExpression (DefTokeniser& token) {
 
 ImagePtr AddNormalsExpression::getImage() {
     ImagePtr imgOne = mapExpOne->getImage();
+    
+    if (imgOne == NULL) return ImagePtr();
 
     unsigned int width = imgOne->getWidth();
     unsigned int height = imgOne->getHeight();
 
     ImagePtr imgTwo = mapExpTwo->getImage();
 
+    if (imgTwo == NULL) return ImagePtr();
+    
 	// The image must match the dimensions of the first 
 	imgTwo = getResampled(imgTwo, width, height);
 
@@ -194,6 +200,8 @@ SmoothNormalsExpression::SmoothNormalsExpression (DefTokeniser& token) {
 ImagePtr SmoothNormalsExpression::getImage() {
 
 	ImagePtr normalMap = mapExp->getImage();
+	
+	if (normalMap == NULL) return ImagePtr();
 	 
 	unsigned int width = normalMap->getWidth();
 	unsigned int height = normalMap->getHeight();
@@ -269,11 +277,15 @@ AddExpression::AddExpression (DefTokeniser& token) {
 
 ImagePtr AddExpression::getImage() {
     ImagePtr imgOne = mapExpOne->getImage();
+    
+    if (imgOne == NULL) return ImagePtr();
 
     unsigned int width = imgOne->getWidth();
     unsigned int height = imgOne->getHeight();
 
 	ImagePtr imgTwo = mapExpTwo->getImage();
+	
+	if (imgTwo == NULL) return ImagePtr();
 	
 	// Resize the image to match the dimensions of the first
     imgTwo = getResampled(imgTwo, width, height);
@@ -330,6 +342,8 @@ ScaleExpression::ScaleExpression (DefTokeniser& token) : scaleGreen(0),scaleBlue
 
 ImagePtr ScaleExpression::getImage() {
     ImagePtr img = mapExp->getImage();
+    
+    if (img == NULL) return ImagePtr();
 
     unsigned int width = img->getWidth();
     unsigned int height = img->getHeight();
@@ -382,6 +396,8 @@ InvertAlphaExpression::InvertAlphaExpression (DefTokeniser& token) {
 
 ImagePtr InvertAlphaExpression::getImage() {
 	ImagePtr img = mapExp->getImage();
+	
+	if (img == NULL) return ImagePtr();
 
 	unsigned int width = img->getWidth();
 	unsigned int height = img->getHeight();
@@ -421,6 +437,8 @@ InvertColorExpression::InvertColorExpression (DefTokeniser& token) {
 
 ImagePtr InvertColorExpression::getImage() {
 	ImagePtr img = mapExp->getImage();
+	
+	if (img == NULL) return ImagePtr();
 
 	unsigned int width = img->getWidth();
 	unsigned int height = img->getHeight();
@@ -460,6 +478,8 @@ MakeIntensityExpression::MakeIntensityExpression (DefTokeniser& token) {
 
 ImagePtr MakeIntensityExpression::getImage() {
 	ImagePtr img = mapExp->getImage();
+	
+	if (img == NULL) return ImagePtr();
 
 	unsigned int width = img->getWidth();
 	unsigned int height = img->getHeight();
@@ -499,6 +519,8 @@ MakeAlphaExpression::MakeAlphaExpression (DefTokeniser& token) {
 
 ImagePtr MakeAlphaExpression::getImage() {
 	ImagePtr img = mapExp->getImage();
+	
+	if (img == NULL) return ImagePtr();
 
 	unsigned int width = img->getWidth();
 	unsigned int height = img->getHeight();
