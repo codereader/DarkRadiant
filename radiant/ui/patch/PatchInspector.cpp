@@ -372,6 +372,8 @@ void PatchInspector::rescanSelection() {
 	gtk_widget_set_sensitive(_coordsLabel, sensitive);
 	gtk_widget_set_sensitive(GTK_WIDGET(_coordsTable), sensitive);
 
+	_updateActive = true;
+	
 	// Remove all the items from the combo boxes
 	for (std::size_t i = 0; i < _patchRows; i++) {
 		gtk_combo_box_remove_text(GTK_COMBO_BOX(_vertexChooser.rowCombo), 0);
@@ -380,6 +382,8 @@ void PatchInspector::rescanSelection() {
 	for (std::size_t i = 0; i < _patchCols; i++) {
 		gtk_combo_box_remove_text(GTK_COMBO_BOX(_vertexChooser.colCombo), 0);
 	}
+	
+	_updateActive = false;
 	
 	_patch = NULL;
 	_patchRows = 0;
@@ -448,6 +452,8 @@ void PatchInspector::emitCoords() {
 void PatchInspector::emitTesselation() {
 	// Save the setting into the patch
 	if (_patch != NULL) {
+		UndoableCommand setFixedTessCmd("patchSetFixedTesselation");
+		
 		BasicVector2<unsigned int> tess(
 			gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(_tesselation.horiz)),
 			gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(_tesselation.vert))

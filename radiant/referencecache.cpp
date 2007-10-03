@@ -863,24 +863,8 @@ void RefreshReferences()
   g_referenceCache.refresh();
 }
 
-
 void FlushReferences()
 {
   g_modelCache.clear();
-
   g_referenceCache.clear();
 }
-
-ReferenceCache& GetReferenceCache()
-{
-  return g_referenceCache;
-}
-
-/*ModelModules& ReferenceAPI_getModelModules()
-{
-  return StaticReferenceModule::instance().getDependencies().getModelModules();
-}
-MapModules& ReferenceAPI_getMapModules()
-{
-  return StaticReferenceModule::instance().getDependencies().getMapModules();
-}*/
