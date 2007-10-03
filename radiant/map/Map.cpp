@@ -5,6 +5,7 @@
 #include "ieventmanager.h"
 #include "iundo.h"
 #include "ifilesystem.h"
+#include "ifiletypes.h"
 #include "icounter.h"
 #include "iradiant.h"
 #include "inamespace.h"
@@ -212,7 +213,7 @@ scene::INodePtr Map::getWorldspawn() {
 
 const MapFormat& Map::getFormatForFile(const std::string& filename) {
 	// Look up the module name which loads the given extension
-	std::string moduleName = findModuleName("map", 
+	std::string moduleName = GlobalFiletypes().findModuleName("map", 
 											path_get_extension(filename.c_str()));
 											
 	// Acquire the module from the ModuleRegistry

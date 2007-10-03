@@ -94,6 +94,31 @@ public:
 		}		
 	}
 	
+	// Look for a module which loads the given extension, by searching under the
+	// given type category
+	virtual std::string findModuleName(const std::string& moduleType, const std::string& extension) {
+		// Convert the file extension to lowercase
+		std::string ext = boost::algorithm::to_lower_copy(extension);
+		
+		// Get the list of types for the type category
+		ModuleTypeListPtr list = GlobalFiletypes().getTypesFor(moduleType);
+		
+		// Search in the list for the given extension
+		for (ModuleTypeList::const_iterator i = list->begin();
+			 i != list->end();
+			 i++)
+		{
+			std::string patternExt = os::getExtension(i->filePattern.pattern);
+			if (patternExt == ext) {
+				// Match
+				return i->moduleName;	
+			}
+		}
+		
+		// Not found, return empty string
+		return "";
+	}
+	
 	// RegisterableModule implementation
 	virtual const std::string& getName() const {
 		static std::string _name(MODULE_FILETYPES);
@@ -112,30 +137,3 @@ public:
 
 // Define the static FileType module
 module::StaticModule<RadiantFileTypeRegistry> fileTypeRegistryModule;
-
-// Look for a module which loads the given extension, by searching under the
-// given type category
-std::string findModuleName(const std::string& moduleType, 
-						   const std::string& extension)
-{
-	// Convert the file extension to lowercase
-	std::string ext = boost::algorithm::to_lower_copy(extension);
-	
-	// Get the list of types for the type category
-	ModuleTypeListPtr list = GlobalFiletypes().getTypesFor(moduleType);
-	
-	// Search in the list for the given extension
-	for (ModuleTypeList::const_iterator i = list->begin();
-		 i != list->end();
-		 i++)
-	{
-		std::string patternExt = os::getExtension(i->filePattern.pattern);
-		if (patternExt == ext) {
-			// Match
-			return i->moduleName;	
-		}
-	}
-	
-	// Not found, return empty string
-	return "";
-}

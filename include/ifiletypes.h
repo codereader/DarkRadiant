@@ -100,6 +100,11 @@ public:
 	 * The module category for which a list of types should be retrieved.
 	 */
 	virtual ModuleTypeListPtr getTypesFor(const std::string& moduleType) = 0;
+	
+	/**
+	 * Find the name of the module which loads the given extension.
+	 */
+	virtual std::string findModuleName(const std::string& moduleType, const std::string& extension) = 0;
 };
 
 inline IFileTypeRegistry& GlobalFiletypes() {
