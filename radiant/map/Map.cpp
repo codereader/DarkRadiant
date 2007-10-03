@@ -212,8 +212,7 @@ scene::INodePtr Map::getWorldspawn() {
 
 const MapFormat& Map::getFormatForFile(const std::string& filename) {
 	// Look up the module name which loads the given extension
-	std::string moduleName = findModuleName(GetFileTypeRegistry(), 
-											"map", 
+	std::string moduleName = findModuleName("map", 
 											path_get_extension(filename.c_str()));
 											
 	// Acquire the module from the ModuleRegistry
