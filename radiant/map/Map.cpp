@@ -18,7 +18,6 @@
 #include "os/path.h"
 #include "gtkutil/messagebox.h"
 
-#include "filetypes.h"
 #include "mainframe.h"
 #include "referencecache.h"
 #include "plugin.h"

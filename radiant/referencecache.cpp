@@ -54,7 +54,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "map/RootNode.h"
 #include "mainframe.h"
 #include "map/Map.h"
-#include "filetypes.h"
 #include "map/algorithm/Traverse.h"
 
 #include <boost/utility.hpp>
