@@ -830,7 +830,11 @@ module::StaticModule<HashtableReferenceCache> referenceCacheModule;
 
 namespace
 {
-  HashtableReferenceCache g_referenceCache;
+  // greebo: Replaced the old g_referenceCache instance with a reference to the static module
+  // TODO: Remove this crap.
+  HashtableReferenceCache& g_referenceCache = static_cast<HashtableReferenceCache&>(
+	  *referenceCacheModule.getModule()
+  );
 }
 
 #if 0
