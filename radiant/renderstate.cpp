@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 #include "warnings.h"
 
+#include "imodule.h"
 #include "ishaders.h"
 #include "irender.h"
 #include "igl.h"
@@ -54,6 +55,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stream/stringstream.h"
 #include "os/file.h"
 #include "plugin.h"
+#include "modulesystem/StaticModule.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/weak_ptr.hpp>
@@ -319,7 +321,9 @@ public:
 
 #define DEBUG_SHADERS 0
 
-class OpenGLShaderCache : public ShaderCache, public ModuleObserver
+class OpenGLShaderCache : 
+	public ShaderCache, 
+	public ModuleObserver
 {
 	// Map of named Shader objects
 	typedef boost::shared_ptr<OpenGLShader> OpenGLShaderPtr;
@@ -346,8 +350,8 @@ public:
 	  m_lightingSupported(false),
 	  m_lightsChanged(true),
 	  m_traverseRenderablesMutex(false)
-	{ }
-
+	{}
+	
 	/* Capture the given shader.
 	 */
 	ShaderPtr capture(const std::string& name) {
@@ -667,106 +671,40 @@ public:
     }
     m_traverseRenderablesMutex = false;
   }
+  
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name(MODULE_SHADERCACHE);
+		return _name;
+	}
+
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies;
+
+		if (_dependencies.empty()) {
+			_dependencies.insert(MODULE_SHADERSYSTEM);
+			_dependencies.insert(MODULE_OPENGL_STATE_LIBRARY);
+		}
+
+		return _dependencies;
+	}
+
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "ShaderCache::initialiseModule called.\n";
+		
+		GlobalShaderSystem().attach(*this);
+		
+		capture("$OVERBRIGHT");
+	}
+	
+	virtual void shutdownModule() {
+		GlobalShaderSystem().detach(*this);
+	}
 };
 
-static OpenGLShaderCache* g_ShaderCache;
+// Define the static ShaderCache module
+module::StaticModule<OpenGLShaderCache> openGLShaderCacheModule;
 
-void ShaderCache_extensionsInitialised()
-{
-  g_ShaderCache->extensionsInitialised();
-}
-
-void ShaderCache_setBumpEnabled(bool enabled)
-{
-  g_ShaderCache->setLightingEnabled(enabled);
-}
-
-
-Vector3 g_DebugShaderColours[256];
-
-void ShaderCache_Construct()
-{
-  g_ShaderCache = new OpenGLShaderCache;
-  GlobalShaderSystem().attach(*g_ShaderCache);
-
-	g_ShaderCache->capture("$OVERBRIGHT");
-}
-
-void ShaderCache_Destroy()
-{
-	GlobalShaderSystem().detach(*g_ShaderCache);
-	delete g_ShaderCache;
-}
-
-ShaderCache* GetShaderCache()
-{
-  return g_ShaderCache;
-}
-
-OpenGLStateMap* g_openglStates = 0;
-
-#include "modulesystem/singletonmodule.h"
-#include "modulesystem/moduleregistry.h"
-
-class OpenGLStateLibraryAPI
-{
-  OpenGLStateMap m_stateMap;
-public:
-  typedef OpenGLStateLibrary Type;
-  STRING_CONSTANT(Name, "*");
-
-  OpenGLStateLibraryAPI()
-  {
-    g_openglStates = &m_stateMap;
-  }
-  ~OpenGLStateLibraryAPI()
-  {
-    g_openglStates = 0;
-  }
-  OpenGLStateLibrary* getTable()
-  {
-    return &m_stateMap;
-  }
-};
-
-typedef SingletonModule<OpenGLStateLibraryAPI> OpenGLStateLibraryModule;
-typedef Static<OpenGLStateLibraryModule> StaticOpenGLStateLibraryModule;
-StaticRegisterModule staticRegisterOpenGLStateLibrary(StaticOpenGLStateLibraryModule::instance());
-
-class ShaderCacheDependencies : public GlobalShadersModuleRef, public GlobalOpenGLStateLibraryModuleRef
-{
-public:
-  ShaderCacheDependencies() :
-    GlobalShadersModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("shaders"))
-  {
-  }
-};
-
-class ShaderCacheAPI
-{
-  ShaderCache* m_shaderCache;
-public:
-  typedef ShaderCache Type;
-  STRING_CONSTANT(Name, "*");
-
-  ShaderCacheAPI()
-  {
-    ShaderCache_Construct();
-
-    m_shaderCache = GetShaderCache();
-  }
-  ~ShaderCacheAPI()
-  {
-    ShaderCache_Destroy();
-  }
-  ShaderCache* getTable()
-  {
-    return m_shaderCache;
-  }
-};
-
-typedef SingletonModule<ShaderCacheAPI, ShaderCacheDependencies> ShaderCacheModule;
-typedef Static<ShaderCacheModule> StaticShaderCacheModule;
-StaticRegisterModule staticRegisterShaderCache(StaticShaderCacheModule::instance());
-
+// Define the static OpenGLStateLibrary registerable module
+module::StaticModule<OpenGLStateMap> openGLStateLibraryModule;
 

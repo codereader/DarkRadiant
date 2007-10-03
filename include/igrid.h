@@ -6,7 +6,7 @@
  * Use these methods to set/get the grid size of the xyviews
  */
 
-#include "generic/constant.h"
+#include "imodule.h"
 #include "signal/signalfwd.h"
 
 enum GridSize {
@@ -24,12 +24,12 @@ enum GridSize {
 	GRID_256 = 8,
 };
 
-class IGridManager
+const std::string MODULE_GRID("Grid");
+
+class IGridManager :
+	public RegisterableModule
 {
 public:
-	INTEGER_CONSTANT(Version, 1);
-	STRING_CONSTANT(Name, "grid");
-
 	virtual void setGridSize(GridSize gridSize) = 0;
 	virtual float getGridSize() const = 0;
 	
@@ -43,21 +43,14 @@ public:
 	virtual void gridChangeNotify() = 0;
 }; // class IGridManager
 
-// Module definitions
-
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<IGridManager> GlobalGridModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<IGridManager> GlobalGridModuleRef;
-
 // This is the accessor for the grid module
 inline IGridManager& GlobalGrid() {
-	return GlobalGridModule::getTable();
+	boost::shared_ptr<IGridManager> _grid(
+		boost::static_pointer_cast<IGridManager>(
+			module::GlobalModuleRegistry().getModule(MODULE_GRID)
+		)
+	);
+	return *_grid;
 }
 
 #endif /*IGRID_H_*/

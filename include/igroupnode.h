@@ -2,7 +2,6 @@
 #define IGROUPNODE_H_
 
 #include "inode.h"
-#include "generic/constant.h"
 
 namespace scene {
 
@@ -14,8 +13,6 @@ namespace scene {
  */
 class GroupNode {
 public:
-	STRING_CONSTANT(Name, "GroupNode");
-
 	/** greebo: This is called right before saving
 	 * to move the child brushes of the Doom3Group
 	 * according to its origin.

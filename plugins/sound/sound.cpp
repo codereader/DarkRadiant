@@ -1,27 +1,17 @@
 #include "SoundManager.h"
 
 #include "ifilesystem.h"
-#include "modulesystem/singletonmodule.h"
+#include "itextstream.h"
 
-/*
- * Dependencies class.
- */
-class SoundManagerDependencies
-: public GlobalFileSystemModuleRef
-{ };
-
-
-/* Register with module server */
-
-typedef SingletonModule<sound::SoundManager, 
-						SoundManagerDependencies> SoundManagerModule;
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
-{
-	// Static module instance
-	static SoundManagerModule _instance;
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+	static sound::SoundManagerPtr _module(new sound::SoundManager);
+	registry.registerModule(_module);
 	
-	// Initialise and register the module	
-	initialiseModule(server);
-	_instance.selfRegister();
+	// Initialise the streams
+	const ApplicationContext& ctx = registry.getApplicationContext();
+	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
+	GlobalErrorStream::instance().setOutputStream(ctx.getOutputStream());
+	
+	// Remember the reference to the ModuleRegistry
+	module::RegistryReference::Instance().setRegistry(registry);
 }

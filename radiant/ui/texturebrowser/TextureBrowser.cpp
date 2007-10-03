@@ -697,14 +697,16 @@ void TextureBrowser::updateScroll() {
 
     GtkAdjustment *vadjustment = gtk_range_get_adjustment(GTK_RANGE(m_texture_scroll));
 
-    vadjustment->value = -getOriginY();
-    vadjustment->page_size = height;
-    vadjustment->page_increment = height/2;
-    vadjustment->step_increment = 20;
-    vadjustment->lower = 0;
-    vadjustment->upper = totalHeight;
-
-    g_signal_emit_by_name(G_OBJECT(vadjustment), "changed");
+    if (vadjustment != NULL) {
+	    vadjustment->value = -getOriginY();
+	    vadjustment->page_size = height;
+	    vadjustment->page_increment = height/2;
+	    vadjustment->step_increment = 20;
+	    vadjustment->lower = 0;
+	    vadjustment->upper = totalHeight;
+	
+	    g_signal_emit_by_name(G_OBJECT(vadjustment), "changed");
+    }
   }
 }
 

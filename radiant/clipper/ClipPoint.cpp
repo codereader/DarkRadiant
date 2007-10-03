@@ -4,6 +4,7 @@
 
 #include "math/Vector2.h"
 #include "stream/stringstream.h"
+#include "stream/textstream.h"
 #include "iradiant.h"
 
 ClipPoint::ClipPoint() {

@@ -21,77 +21,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "plugin.h"
 
-#include "debugging/debugging.h"
-
-#include "iscenegraph.h"
-#include "irender.h"
-#include "iselection.h"
-#include "ientity.h"
-#include "iundo.h"
-#include "igrid.h"
-#include "ieclass.h"
-#include "igl.h"
-#include "ireference.h"
-#include "iregistry.h"
-#include "ifilter.h"
-#include "ipreferencesystem.h"
-#include "iradiant.h"
-#include "inamespace.h"
-#include "modelskin.h"
-
-#include "entity.h"
 #include "EntityCreator.h"
+#include "itextstream.h"
 
-#include "modulesystem/singletonmodule.h"
-
-class EntityDependencies :
-	public GlobalRadiantModuleRef,
-	public GlobalOpenGLModuleRef,
-	public GlobalUndoModuleRef,
-	public GlobalSceneGraphModuleRef,
-	public GlobalShaderCacheModuleRef,
-	public GlobalSelectionModuleRef,
-	public GlobalReferenceModuleRef,
-	public GlobalFilterModuleRef,
-	public GlobalPreferenceSystemModuleRef,
-	public GlobalNamespaceModuleRef,
-	public GlobalModelSkinCacheModuleRef,
-	public GlobalRegistryModuleRef,
-	public GlobalGridModuleRef 
-{};
-
-class EntityDoom3API
-{
-	typedef boost::shared_ptr<entity::Doom3EntityCreator> EntityCreatorPtr;
-	EntityCreatorPtr _entitydoom3;
-public:
-	typedef EntityCreator Type;
-	STRING_CONSTANT(Name, "doom3");
-
-	EntityDoom3API() {
-		entity::constructStatic();
-
-		// Allocate a new entitycreator
-		_entitydoom3 = EntityCreatorPtr(new entity::Doom3EntityCreator());
-
-		GlobalReferenceCache().setEntityCreator(*_entitydoom3);
-	}
-
-	~EntityDoom3API() {
-		entity::destroyStatic();
-	}
-
-	EntityCreator* getTable() {
-		// Returned the contained pointer of the shared_ptr object
-		return _entitydoom3.get();
-	}
-};
-
-typedef SingletonModule<EntityDoom3API, EntityDependencies> EntityDoom3Module;
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server) {
-	static EntityDoom3Module _entityDoom3Module;
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+	static entity::Doom3EntityCreatorPtr _entityCreator(new entity::Doom3EntityCreator);
+	registry.registerModule(_entityCreator);
 	
-	initialiseModule(server);
-	_entityDoom3Module.selfRegister();
+	// Initialise the streams
+	const ApplicationContext& ctx = registry.getApplicationContext();
+	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
+	GlobalErrorStream::instance().setOutputStream(ctx.getOutputStream());
+	
+	// Remember the reference to the ModuleRegistry
+	module::RegistryReference::Instance().setRegistry(registry);
 }

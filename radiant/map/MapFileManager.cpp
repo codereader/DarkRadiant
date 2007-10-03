@@ -2,7 +2,7 @@
 
 #include "iregistry.h"
 #include "ifiletypes.h"
-#include "environment.h"
+#include "modulesystem/ApplicationContextImpl.h"
 #include "mainframe.h"
 #include "gtkutil/filechooser.h"
 #include "os/path.h"

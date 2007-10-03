@@ -7,6 +7,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include "stream/textstream.h"
 
 namespace ui {
 
@@ -19,10 +20,7 @@ namespace ui {
 
 MenuManager::MenuManager() :
 	_root(new MenuItem(MenuItemPtr())) // Allocate the root item (type is set automatically)
-{
-	loadFromRegistry();
-	globalOutputStream() << "MenuManager: Finished loading default menu from registry.\n";
-}
+{}
 
 void MenuManager::loadFromRegistry() {
 	xml::NodeList menuNodes = GlobalRegistry().findXPath(RKEY_MENU_ROOT);
@@ -166,6 +164,10 @@ GtkWidget* MenuManager::insert(const std::string& insertPath,
 		globalErrorStream() << "MenuManager: Could not find insertPath: " << insertPath.c_str() << "\n";
 		return NULL; 
 	}
+}
+
+void MenuManager::updateAccelerators() {
+	_root->updateAcceleratorRecursive();
 }
 
 } // namespace ui

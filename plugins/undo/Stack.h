@@ -1,6 +1,8 @@
 #ifndef UNDOSTACK_H_
 #define UNDOSTACK_H_
 
+#include "debugging/debugging.h"
+
 namespace undo {
 
 /* greebo: This is some kind of Stack implementation that keeps track

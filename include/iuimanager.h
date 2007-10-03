@@ -1,8 +1,7 @@
 #ifndef INCLUDE_UIMANAGER_H_
 #define INCLUDE_UIMANAGER_H_
 
-#include <string>
-#include "generic/constant.h"
+#include "imodule.h"
 
 // Forward declarations
 typedef struct _GtkWidget GtkWidget;
@@ -74,6 +73,11 @@ public:
 							  const std::string& caption,
 							  const std::string& icon,
 							  const std::string& eventName) = 0;
+	
+	/** Recursively iterates over the menu items and updates
+	 *  the accelerator strings by requesting them from the EventManager.
+	 */
+	virtual void updateAccelerators() = 0;
 };
 
 class IToolbarManager
@@ -82,32 +86,29 @@ public:
 	virtual GtkToolbar* getToolbar(const std::string& toolbarName) = 0;
 };
 
+const std::string MODULE_UIMANAGER("UIManager");
+
 /** greebo: The UI Manager abstract base class.
  * 
  * The UIManager provides an interface to add UI items like menu commands
  * toolbar icons, update status bar texts and such. 
  */
-class IUIManager
+class IUIManager :
+	public RegisterableModule
 {
 public:
-	INTEGER_CONSTANT(Version, 1);
-	STRING_CONSTANT(Name, "UIManager");
-
 	virtual IMenuManager& getMenuManager() = 0;
 	virtual IToolbarManager& getToolbarManager() = 0;
 };
 
-// Module definitions
-
-#include "modulesystem.h"
-
-typedef GlobalModule<IUIManager> GlobalUIManagerModule;
-
-typedef GlobalModuleRef<IUIManager> GlobalUIManagerModuleRef;
-
 // This is the accessor for the UI manager
 inline IUIManager& GlobalUIManager() {
-	return GlobalUIManagerModule::getTable();
+	boost::shared_ptr<IUIManager> _uiManager(
+		boost::static_pointer_cast<IUIManager>(
+			module::GlobalModuleRegistry().getModule(MODULE_UIMANAGER)
+		)
+	);
+	return *_uiManager;
 }
 
 #endif /*INCLUDE_UIMANAGER_H_*/

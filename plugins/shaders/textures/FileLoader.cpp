@@ -3,13 +3,12 @@
 #include "ifilesystem.h"
 #include "iarchive.h"
 #include "archivelib.h"
-#include "modulesystem/modulesmap.h"
 
 namespace shaders {
 
 // The default constructor uses the GDK file loader (which covers a wide range of formats)
 FileLoader::FileLoader(const std::string& filename, const std::string moduleNames) :
-	_imageLoaders(ImageLoaderManager::Instance().getLoaders(moduleNames.c_str())),
+	_imageLoaders(ImageLoaderManager::getLoaders(moduleNames.c_str())),
 	_filename(filename)
 {}
 

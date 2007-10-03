@@ -2,7 +2,9 @@
 #define SREDITOR_H_
 
 #include "ientity.h"
+#include "iradiant.h"
 #include "gtkutil/WindowPosition.h"
+#include "gtkutil/window/PersistentTransientWindow.h"
 
 #include "StimTypes.h"
 #include "SREntity.h"
@@ -15,11 +17,13 @@ typedef struct _GtkNotebook GtkNotebook;
 
 namespace ui {
 
-class StimResponseEditor
+class StimResponseEditor;
+typedef boost::shared_ptr<StimResponseEditor> StimResponseEditorPtr;
+
+class StimResponseEditor :
+	public gtkutil::PersistentTransientWindow,
+	public RadiantEventListener
 {
-	// The window widget
-	GtkWidget* _dialog;
-	
 	// The overall dialog vbox (used to quickly disable the whole dialog)
 	GtkWidget* _dialogVBox;
 	
@@ -56,7 +60,7 @@ public:
 	
 	/** greebo: Contains the static instance of this dialog.
 	 */
-	static StimResponseEditor& Instance();
+	static StimResponseEditorPtr& Instance();
 	
 	// Command target to toggle the dialog
 	static void toggle();
@@ -64,9 +68,12 @@ public:
 	/** greebo: Some sort of "soft" destructor that de-registers
 	 * this class from the SelectionSystem, saves the window state, etc.
 	 */
-	void shutdown();
+	virtual void onRadiantShutdown();
 	
 private:
+	virtual void _preHide();
+	virtual void _preShow();
+	
 	/** greebo: Saves the current working set to the entity
 	 */
 	void save();
@@ -85,9 +92,6 @@ private:
 	 */
 	void toggleWindow();
 	
-	// The callback for the delete event (toggles the visibility)
-	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, StimResponseEditor* self);
-
 	// Button callbacks
 	static void onSave(GtkWidget* button, StimResponseEditor* self);
 	static void onClose(GtkWidget* button, StimResponseEditor* self);

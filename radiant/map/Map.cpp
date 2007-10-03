@@ -37,6 +37,7 @@
 #include "ui/mru/MRU.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
+#include "modulesystem/ModuleRegistry.h"
 
 namespace map {
 	
@@ -212,12 +213,14 @@ scene::INodePtr Map::getWorldspawn() {
 const MapFormat& Map::getFormatForFile(const std::string& filename) {
 	// Look up the module name which loads the given extension
 	std::string moduleName = findModuleName(GetFileTypeRegistry(), 
-											std::string(MapFormat::Name()), 
+											"map", 
 											path_get_extension(filename.c_str()));
 											
-	MapFormat* format = Radiant_getMapModules().findModule(moduleName.c_str());
-	ASSERT_MESSAGE(format != 0, "map format not found for file " << makeQuoted(filename.c_str()));
-	return *format;
+	// Acquire the module from the ModuleRegistry
+	RegisterableModulePtr mapLoader = module::GlobalModuleRegistry().getModule(moduleName);
+	
+	ASSERT_MESSAGE(mapLoader != NULL, "map format not found for file " << makeQuoted(filename.c_str()));
+	return *static_cast<MapFormat*>(mapLoader.get());
 }
 
 const MapFormat& Map::getFormat() {

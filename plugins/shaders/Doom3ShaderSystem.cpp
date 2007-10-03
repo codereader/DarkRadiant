@@ -1,7 +1,9 @@
 #include "Doom3ShaderSystem.h"
 
+#include "iradiant.h"
 #include "iregistry.h"
 #include "ifilesystem.h"
+#include "ipreferencesystem.h"
 
 #include "xmlutil/Node.h"
 
@@ -26,13 +28,15 @@ namespace shaders {
 
 // Constructor
 Doom3ShaderSystem::Doom3ShaderSystem() :
-	_library(new ShaderLibrary()),
-	_textureManager(new GLTextureManager()),
 	_enableActiveUpdates(true),
-	_shadersUnrealised(1)
+	_shadersUnrealised(1),
+	_observers(getName())
 {}
 
 void Doom3ShaderSystem::construct() {
+	_library = ShaderLibraryPtr(new ShaderLibrary());
+	_textureManager = GLTextureManagerPtr(new GLTextureManager());
+	
 	// Register this class as moduleobserver 
 	GlobalFileSystem().attach(*this);
 }
@@ -45,6 +49,9 @@ void Doom3ShaderSystem::destroy() {
 	if (_shadersUnrealised == 0) {
 		freeShaders();
 	}
+	
+	// Don't destroy the GLTextureManager, it's called from
+	// the CShader destructors.
 }
 
 void Doom3ShaderSystem::loadMaterialFiles() {
@@ -189,18 +196,51 @@ TexturePtr Doom3ShaderSystem::loadTextureFromFile(const std::string& filename,
 	return _library->loadTextureFromFile(filename, moduleNames);
 }
 
+const std::string& Doom3ShaderSystem::getName() const {
+	static std::string _name(MODULE_SHADERSYSTEM);
+	return _name;
+}
+
+const StringSet& Doom3ShaderSystem::getDependencies() const {
+	static StringSet _dependencies;
+
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
+		_dependencies.insert(MODULE_RADIANT);
+		_dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_PREFERENCESYSTEM);
+	}
+
+	return _dependencies;
+}
+
+void Doom3ShaderSystem::initialiseModule(const ApplicationContext& ctx) {
+	globalOutputStream() << "Doom3ShaderSystem::initialiseModule called\n";
+	
+	construct();
+}
+
+void Doom3ShaderSystem::shutdownModule() {
+	globalOutputStream() << "Doom3ShaderSystem::shutdownModule called\n";
+	
+	destroy();
+}
+
 } // namespace shaders
 
 // Accessor function encapsulating the static shadersystem instance
-shaders::Doom3ShaderSystem& GetShaderSystem() {
-	static shaders::Doom3ShaderSystem _shaderSystem;
+shaders::Doom3ShaderSystemPtr GetShaderSystem() {
+	static shaders::Doom3ShaderSystemPtr _shaderSystem(
+		new shaders::Doom3ShaderSystem()
+	);
+	
 	return _shaderSystem;
 }
 
 shaders::ShaderLibrary& GetShaderLibrary() {
-	return GetShaderSystem().getLibrary();
+	return GetShaderSystem()->getLibrary();
 }
 
 shaders::GLTextureManager& GetTextureManager() {
-	return GetShaderSystem().getTextureManager();
+	return GetShaderSystem()->getTextureManager();
 }

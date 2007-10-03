@@ -22,13 +22,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_ISHADERS_H)
 #define INCLUDED_ISHADERS_H
 
-#include "generic/constant.h"
 #include "generic/callbackfwd.h"
 #include "iimage.h"
+#include "imodule.h"
 
-#include <string>
 #include <ostream>
-#include <boost/shared_ptr.hpp>
 
 class Texture; 	// defined in texturelib.h
 typedef boost::shared_ptr<Texture> TexturePtr;
@@ -225,11 +223,12 @@ typedef Callback1<const char*> ShaderNameCallback;
 
 class ModuleObserver;
 
-class ShaderSystem
+const std::string MODULE_SHADERSYSTEM("ShaderSystem");
+
+class ShaderSystem :
+	public RegisterableModule
 {
 public:
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "shaders");
   // NOTE: shader and texture names used must be full path.
   // Shaders usable as textures have prefix equal to getTexturePrefix()
 
@@ -297,19 +296,13 @@ public:
 			const std::string& moduleNames = "GDK") = 0;
 };
 
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<ShaderSystem> GlobalShadersModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<ShaderSystem> GlobalShadersModuleRef;
-
-inline ShaderSystem& GlobalShaderSystem()
-{
-  return GlobalShadersModule::getTable();
+inline ShaderSystem& GlobalShaderSystem() {
+	boost::shared_ptr<ShaderSystem> _shaderSystem(
+		boost::static_pointer_cast<ShaderSystem>(
+			module::GlobalModuleRegistry().getModule(MODULE_SHADERSYSTEM)
+		)
+	);
+	return *_shaderSystem;
 }
 
 

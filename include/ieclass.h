@@ -28,11 +28,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ModResource.h"
 
-#include "generic/constant.h"
+#include "imodule.h"
 #include "math/Vector3.h"
-#include "modulesystem.h"
-
-#include <boost/shared_ptr.hpp>
 
 /* FORWARD DECLS */
 
@@ -228,17 +225,17 @@ public:
 
 class ModuleObserver;
 
+const std::string MODULE_ECLASSMANAGER("EntityClassManager");
 
 /**
  * EntityClassManager interface. The entity class manager is responsible for 
  * maintaining a list of available entity classes which the EntityCreator can 
  * insert into a map.
  */
-struct IEntityClassManager
+class IEntityClassManager :
+	public RegisterableModule
 {
-	INTEGER_CONSTANT(Version, 1);
-	STRING_CONSTANT(Name, "eclassmanager");
-
+public:
 	/**
 	 * Return the IEntityClass corresponding to the given name, creating it if
 	 * necessary. If it is created, the has_brushes parameter will be used to
@@ -263,17 +260,13 @@ struct IEntityClassManager
 	virtual void unrealise() = 0;
 };
 
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<IEntityClassManager> GlobalEntityClassManagerModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<IEntityClassManager> GlobalEntityClassManagerModuleRef;
-
-inline IEntityClassManager& GlobalEntityClassManager()
-{
-  return GlobalEntityClassManagerModule::getTable();
+inline IEntityClassManager& GlobalEntityClassManager() {
+	boost::shared_ptr<IEntityClassManager> _eclassMgr(
+		boost::static_pointer_cast<IEntityClassManager>(
+			module::GlobalModuleRegistry().getModule(MODULE_ECLASSMANAGER)
+		)
+	);
+	return *_eclassMgr;
 }
 
 #endif

@@ -1,6 +1,8 @@
 #include "igrid.h"
 
+#include <iostream>
 #include <map>
+#include "imodule.h"
 #include "iradiant.h"
 #include "ieventmanager.h"
 #include "iregistry.h"
@@ -18,13 +20,36 @@ class GridManager :
 	public RegistryKeyObserver
 {
 public:
-	// Radiant Module stuff
-	typedef IGridManager Type;
-	STRING_CONSTANT(Name, "*");
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name(MODULE_GRID);
+		return _name;
+	}
+	
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies;
 
-	// Return the static instance
-	IGridManager* getTable() {
-		return this;
+		if (_dependencies.empty()) {
+			_dependencies.insert(MODULE_RADIANT);
+			_dependencies.insert(MODULE_XMLREGISTRY);
+			_dependencies.insert(MODULE_EVENTMANAGER);
+			_dependencies.insert(MODULE_PREFERENCESYSTEM);
+		}
+
+		return _dependencies;
+	}
+	
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "GridManager::initialiseModule called.\n";
+		
+		populateGridItems();
+		registerCommands();
+		
+		// Connect self to the according registry keys
+		GlobalRegistry().addKeyObserver(this, RKEY_DEFAULT_GRID_SIZE);
+		
+		// Load the default value from the registry
+		keyChanged();
 	}
 
 private:
@@ -40,16 +65,7 @@ private:
 public:
 	GridManager() :
 		_activeGridSize(GRID_8) 
-	{
-		populateGridItems();
-		registerCommands();
-		
-		// Connect self to the according registry keys
-		GlobalRegistry().addKeyObserver(this, RKEY_DEFAULT_GRID_SIZE);
-		
-		// Load the default value from the registry
-		keyChanged();
-	}
+	{}
 	
 	void keyChanged() {
 		// Get the registry value
@@ -167,29 +183,17 @@ public:
 	}
 
 }; // class GridManager
+typedef boost::shared_ptr<GridManager> GridManagerPtr;
 
-/* GridManager dependencies class. 
- */
-class GridManagerDependencies :
-	public GlobalRadiantModuleRef,
-	public GlobalRegistryModuleRef,
-	public GlobalEventManagerModuleRef,
-	public GlobalPreferenceSystemModuleRef
-{
-};
-
-/* Required code to register the module with the ModuleServer.
- */
-
-#include "modulesystem/singletonmodule.h"
-
-typedef SingletonModule<GridManager, GridManagerDependencies> GridManagerModule;
-
-// Static instance of the GridManagerModule
-GridManagerModule _theGridManagerModule;
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
-{
-  initialiseModule(server);
-  _theGridManagerModule.selfRegister();
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+	static GridManagerPtr _module(new GridManager);
+	registry.registerModule(_module);
+	
+	// Initialise the streams
+	const ApplicationContext& ctx = registry.getApplicationContext();
+	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
+	GlobalErrorStream::instance().setOutputStream(ctx.getOutputStream());
+	
+	// Remember the reference to the ModuleRegistry
+	module::RegistryReference::Instance().setRegistry(registry);
 }

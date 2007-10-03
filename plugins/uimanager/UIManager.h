@@ -1,10 +1,12 @@
 #ifndef UIMANAGER_H_
 #define UIMANAGER_H_
 
+#include "imodule.h"
 #include "iuimanager.h"
 
 #include "MenuManager.h"
 #include "ToolbarManager.h"
+#include <iostream>
 
 namespace ui {
 
@@ -24,7 +26,12 @@ public:
 	
 	IToolbarManager& getToolbarManager();
 
+	// RegisterableModule implementation
+	virtual const std::string& getName() const;
+	virtual const StringSet& getDependencies() const;
+	virtual void initialiseModule(const ApplicationContext& ctx);
 }; // class UIManager
+typedef boost::shared_ptr<ui::UIManager> UIManagerPtr;
 
 } // namespace ui
 

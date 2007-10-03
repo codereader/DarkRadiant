@@ -28,8 +28,6 @@ class Doom3GroupInstance :
 	VertexInstance _originInstance;
 
 public:
-	STRING_CONSTANT(Name, "Doom3GroupInstance");
-
 	Doom3GroupInstance(const scene::Path& path, scene::Instance* parent, Doom3Group& contained);
 	~Doom3GroupInstance();
 

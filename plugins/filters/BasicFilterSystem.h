@@ -2,11 +2,13 @@
 #define BASICFILTERSYSTEM_H_
 
 #include "XMLFilter.h"
+#include "imodule.h"
 #include "ifilter.h"
 
 #include <map>
 #include <vector>
 #include <string>
+#include <iostream>
 
 namespace filters
 {
@@ -17,19 +19,6 @@ namespace filters
 class BasicFilterSystem 
 : public FilterSystem
 {
-public:
-
-	// Radiant Module stuff
-	typedef FilterSystem Type;
-	STRING_CONSTANT(Name, "*");
-
-	// Return the static instance
-	FilterSystem* getTable() {
-		return this;
-	}
-
-private:
-
 	// Flag to indicate initialisation status
 	bool _initialised;
 
@@ -74,9 +63,14 @@ public:
 
 	// Query whether an item is visible or filtered out
 	bool isVisible(const std::string& item, const std::string& name);
+	
+	// RegisterableModule implementation
+	virtual const std::string& getName() const;
+	virtual const StringSet& getDependencies() const;
+	virtual void initialiseModule(const ApplicationContext& ctx);
 };
+typedef boost::shared_ptr<BasicFilterSystem> BasicFilterSystemPtr;
 
-
-}
+} // namespace filters
 
 #endif /*BASICFILTERSYSTEM_H_*/

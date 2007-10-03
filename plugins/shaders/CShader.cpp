@@ -170,7 +170,7 @@ TexturePtr CShader::lightFalloffImage() {
 			// Find the default light shader in the ShaderSystem and query its
 			// falloff texture name.
 			std::string defLight = GlobalRegistry().get(DEFAULT_LIGHT_PATH);
-			IShaderPtr defLightShader = GetShaderSystem().getShaderForName(defLight);
+			IShaderPtr defLightShader = GetShaderSystem()->getShaderForName(defLight);
 
 			// Cast to a CShader so we can call getFalloffName().
 			boost::shared_ptr<CShader> cshaderPtr = boost::static_pointer_cast<CShader>(defLightShader);
@@ -199,7 +199,7 @@ bool CShader::IsInUse() const {
 
 void CShader::SetInUse(bool bInUse) {
 	m_bInUse = bInUse;
-	GetShaderSystem().activeShadersChangedNotify();
+	GetShaderSystem()->activeShadersChangedNotify();
 }
 
 // get the shader flags

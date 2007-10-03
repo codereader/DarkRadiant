@@ -3,6 +3,7 @@
 
 #include "Doom3ModelSkin.h"
 
+#include "imodule.h"
 #include "modelskin.h"
 #include "parser/DefTokeniser.h"
 
@@ -16,8 +17,8 @@ namespace skins
 /**
  * Implementation of ModelSkinCache interface for Doom 3 skin management.
  */
-class Doom3SkinCache 
-: public ModelSkinCache
+class Doom3SkinCache : 
+	public ModelSkinCache
 {
 	// Table of named skin objects
 	typedef std::map<std::string, Doom3ModelSkinPtr> NamedSkinMap;
@@ -50,22 +51,12 @@ private:
 	Doom3ModelSkinPtr parseSkin(parser::DefTokeniser& tokeniser);
 
 public:
-
-	typedef ModelSkinCache Type;
-	STRING_CONSTANT(Name, "*");
-
 	/* Constructor.
 	 */
 	Doom3SkinCache() : 
 		_realised(false),
 		_nullSkin("")
 	{}
-
-	/* Return pointer to implementation (this).
-	 */
-	ModelSkinCache* getTable() {
-		return this;
-	}
 
 	/* Return a specific named skin. If the named skin cannot be found, return
 	 * the empty (null) skin with no remaps.
@@ -99,10 +90,14 @@ public:
 	 * @filename: This is for informational purposes only (error message display).
 	 */
 	void parseFile(std::istream& contents, const std::string& filename);	
-  
+
+	// RegisterableModule implementation
+	virtual const std::string& getName() const;
+	virtual const StringSet& getDependencies() const;
+	virtual void initialiseModule(const ApplicationContext& ctx);
 };
+typedef boost::shared_ptr<Doom3SkinCache> Doom3SkinCachePtr; 
 
-
-}
+} // namespace skins
 
 #endif /*DOOM3SKINCACHE_H_*/

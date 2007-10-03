@@ -1,10 +1,7 @@
 #ifndef ISOUND_H_
 #define ISOUND_H_
 
-#include "generic/constant.h"
-#include "modulesystem.h"
-
-#include <string>
+#include "imodule.h"
 #include <vector>
 #include <boost/function.hpp>
 
@@ -44,15 +41,15 @@ struct ISoundShader {
  */
 typedef boost::function< void (const ISoundShader&) > SoundShaderVisitor;
 
+const std::string MODULE_SOUNDMANAGER("SoundManager");
+
 /**
  * Sound manager interface.
  */
-struct ISoundManager {
-	
-	/* Radiant module stuff */
-	INTEGER_CONSTANT(Version, 1);
-	STRING_CONSTANT(Name, "soundmanager");
-	
+class ISoundManager :
+	public RegisterableModule
+{
+public:	
 	/**
 	 * Enumerate each of the sound shaders.
 	 */
@@ -75,13 +72,14 @@ struct ISoundManager {
 	virtual void stopSound() = 0;
 };
 
-/* Module types */
-
-typedef GlobalModule<ISoundManager> GlobalSoundManagerModule;
-typedef GlobalModuleRef<ISoundManager> GlobalSoundManagerModuleRef;
-
+// Accessor method
 inline ISoundManager& GlobalSoundManager() {
-	return GlobalSoundManagerModule::getTable();	
+	boost::shared_ptr<ISoundManager> _soundManager(
+		boost::static_pointer_cast<ISoundManager>(
+			module::GlobalModuleRegistry().getModule(MODULE_SOUNDMANAGER)
+		)
+	);
+	return *_soundManager;	
 }
 
 #endif /*ISOUND_H_*/

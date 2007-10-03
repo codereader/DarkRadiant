@@ -94,6 +94,8 @@ private:
 
 	void Scene_TestSelect(SelectablesList& targetList, SelectionTest& test, const View& view, SelectionSystem::EMode mode, SelectionSystem::EComponentMode componentMode);
 	bool nothingSelected() const;
+	
+	SignalHandlerId _boundsChangedHandler;
 
 public:
 
@@ -182,6 +184,12 @@ public:
 	
 	static void constructStatic();
 	static void destroyStatic();
+	
+	// RegisterableModule implementation
+	virtual const std::string& getName() const;
+	virtual const StringSet& getDependencies() const;
+	virtual void initialiseModule(const ApplicationContext& ctx);
+	virtual void shutdownModule();
 	
 private:
 	void notifyObservers(scene::Instance& instance, bool isComponent);

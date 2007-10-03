@@ -12,7 +12,7 @@
 #include "cmdlib.h"
 #include "map/Map.h"
 #include "mainframe.h"
-#include "environment.h"
+#include "modulesystem/ApplicationContextImpl.h"
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/convenience.hpp>

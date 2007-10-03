@@ -65,8 +65,10 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "debugging/debugging.h"
 
 #include "iundo.h"
+#include "iuimanager.h"
 #include "ifilesystem.h"
 #include "iregistry.h"
+#include "ieventmanager.h"
 
 #include <gtk/gtkmain.h>
 
@@ -81,13 +83,13 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "map/Map.h"
 #include "mainframe.h"
 #include "settings/PreferenceSystem.h"
-#include "environment.h"
 #include "referencecache.h"
 #include "stacktrace.h"
-#include "server.h"
 #include "ui/mru/MRU.h"
 #include "settings/GameManager.h"
 #include "ui/splash/Splash.h"
+#include "modulesystem/ModuleLoader.h"
+#include "modulesystem/ModuleRegistry.h"
 
 #include <iostream>
 
@@ -264,74 +266,72 @@ void removePIDFile(const std::string& name) {
 /**
  * Main entry point for the application.
  */
-int main (int argc, char* argv[])
-{
-  crt_init();
+int main (int argc, char* argv[]) {
+	
+	// Initialise the debug flags
+	crt_init();
 
-  streams_init();
+	// Set the stream references for globalOutputStream() etc.
+	streams_init();
 
-  gtk_disable_setlocale();
-  gtk_init(&argc, &argv);
+	// Initialse the context (application path / settings path, is OS-specific)
+	module::ModuleRegistry::Instance().initialiseContext(argc, argv);
+	
+	// Initialise GTK
+	gtk_disable_setlocale();
+	gtk_init(&argc, &argv);
 
-  GlobalDebugMessageHandler::instance().setHandler(GlobalPopupDebugMessageHandler::instance());
-
-	// Retrieve the application path and such
-	Environment::Instance().init(argc, argv);
+	GlobalDebugMessageHandler::instance().setHandler(GlobalPopupDebugMessageHandler::instance());
 
 	ui::Splash::Instance().show();
 	
+	// Initialise the Reference in the GlobalModuleRegistry() accessor. 
+	module::RegistryReference::Instance().setRegistry(module::getRegistry());
+	
 	ui::Splash::Instance().setProgressAndText("Searching for Modules", 0.0f);
 	
-	// Load the Radiant modules from the modules/ and plugins/ dir.
-	ModuleLoader::loadModules(Environment::Instance().getAppPath());
+	// Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
+	const ApplicationContext& ctx = module::getRegistry().getApplicationContext();
+	module::Loader::loadModules(ctx.getApplicationPath());
 	
-	ui::Splash::Instance().setProgressAndText("Instantiating Registry", 0.1f);
-
-	// Initialise and instantiate the XMLRegistry
-	GlobalModuleServer::instance().set(GlobalModuleServer_get());
-	GlobalRegistryModuleRef registryRef;
+	ui::Splash::Instance().setProgressAndText("Initialising Modules", 0.1f);
+	module::getRegistry().initialiseModules();
+	
+	ui::Splash::Instance().setProgressAndText("Modules initialised", 0.15f);
 
 	// Tell the Environment class to store the paths into the Registry
-	Environment::Instance().savePathsToRegistry();
+	module::ModuleRegistry::Instance().savePathsToRegistry();
+	
+	// Create the radiant.pid file in the settings folder 
+	// (emits a warning if the file already exists (due to a previous startup failure)) 
+	createPIDFile("radiant.pid");
 	
 	ui::Splash::Instance().setProgressAndText("Creating Logfile", 0.2f);
 
 	// The settings path is set, start logging now
 	Sys_LogFile(true);
 	
-	// Create the radiant.pid file in the settings folder 
-	// (emits a warning if the file already exists (due to a previous startup failure)) 
-	createPIDFile("radiant.pid");
-	
-	ui::Splash::Instance().setProgressAndText("Populating Registry", 0.3f);
-	
-	// Load the XML files into the Registry, we need the information asap
-	populateRegistry();
-	
-	// Save the paths *once again* into the registry, to overwrite bogus stuff in there
-	Environment::Instance().savePathsToRegistry();
-
-	ui::Splash::Instance().setProgressAndText("Initialising GameManager", 0.4f);
-
-	// Load the game files from the <application>/games folder and 
-	// let the user choose the game, if nothing is found in the Registry
-	game::Manager::Instance().initialise();
-
-	ui::Splash::Instance().setProgressAndText("Instantiating Virtual File System", 0.5f);
-
-	// Setup the engine path, we need it for the FileSystem
-	// this triggers a VFS initialisation that searches
-	// the game paths for suitable archive files
-	GlobalFileSystemModuleRef fsRef;
-	game::Manager::Instance().initEnginePath();
+	ui::Splash::Instance().setProgressAndText("Initialising Radiant", 0.3f);
 
 	// The VFS is setup at this point, we can load the modules
 	Radiant_Initialise();
+	
+	ui::Splash::Instance().setProgressAndText("Starting Virtual File System", 0.8f);
 
-	ui::Splash::Instance().setProgressAndText("Starting MainFrame", 0.9f);
-
-  g_pParentWnd = 0;
+	// Call the initalise methods to trigger the realisation avalanche
+    // FileSystem > ShadersModule >> Renderstate etc.
+    GlobalFileSystem().initialise();
+    
+    ui::Splash::Instance().setProgressAndText("Starting MainFrame", 0.9f);
+	
+	g_pParentWnd = 0;
   g_pParentWnd = new MainFrame();
+  
+  // Load the shortcuts from the registry
+   	GlobalEventManager().loadAccelerators();
+   	
+   	// Update all accelerators, at this point all commands should be setup
+   	GlobalUIManager().getMenuManager().updateAccelerators();
   
 	ui::Splash::Instance().setProgressAndText("Complete", 1.0f);  
 
@@ -358,6 +358,9 @@ int main (int argc, char* argv[])
   delete g_pParentWnd;
 
   Radiant_Shutdown();
+
+  	// Issue a shutdown() call to all the modules
+  	module::GlobalModuleRegistry().shutdownModules();
 
   // close the log file if any
   Sys_LogFile(false);

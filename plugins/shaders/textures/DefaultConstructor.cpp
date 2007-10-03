@@ -8,7 +8,7 @@ namespace shaders {
 // The default case uses the file extensions specified in the .game file
 DefaultConstructor::DefaultConstructor(const std::string& filename) :
 	_imageLoaders(
-		ImageLoaderManager::Instance().getLoaders(
+		ImageLoaderManager::getLoaders(
 			GlobalRadiant().getRequiredGameDescriptionKeyValue("texturetypes")
 		)
 	),

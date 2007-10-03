@@ -133,8 +133,6 @@ public:
 	// The patch type
 	static EPatchType m_type;
 
-	STRING_CONSTANT(Name, "Patch");
-
 	// Constructor
 	Patch(scene::Node& node, const Callback& evaluateTransform, const Callback& boundsChanged);
 	

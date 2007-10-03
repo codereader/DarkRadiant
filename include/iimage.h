@@ -22,10 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_IIMAGE_H)
 #define INCLUDED_IIMAGE_H
 
-#include "generic/constant.h"
-
-#include <string>
-#include <boost/shared_ptr.hpp>
+#include "imodule.h"
 
 typedef unsigned char byte;
 
@@ -52,12 +49,11 @@ public:
 typedef boost::shared_ptr<Image> ImagePtr;
 
 class ArchiveFile;
-class ImageLoader
+
+class ImageLoader :
+	public RegisterableModule
 {
 public:
-	INTEGER_CONSTANT(Version, 1);
-	STRING_CONSTANT(Name, "imageloader");
-  
 	/* greebo: Loads an image from the given ArchiveFile class
 	 * 
 	 * @returns: NULL, if the load failed, the pointer to the image otherwise
@@ -78,46 +74,18 @@ public:
 	virtual std::string getPrefix() const {
 		return "";
 	}
-
 }; // class ImageLoader
 
-template<typename Type>
-class ModuleRef;
-typedef ModuleRef<ImageLoader> ImageLoaderModuleRef;
+const std::string MODULE_IMAGELOADER("ImageLoader");
 
-template<typename Type>
-class Modules;
-typedef Modules<ImageLoader> ImageLoaderModules;
-
-template<typename Type>
-class ModulesRef;
-typedef ModulesRef<ImageLoader> ImageLoaderModulesRef;
-
-class ArchiveFile;
-
-struct _QERPlugImageTable
-{
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "image");
-
-  /// Read an image from the file.
-  /// Returns 0 if the image could not be read.
-  ImagePtr (*loadImage)(ArchiveFile& file);
-  
-  /// The prefix to use for locating images of this type (e.g. "dds/" for DDS images)
-	std::string prefix;
-};
-
-template<typename Type>
-class ModuleRef;
-typedef ModuleRef<_QERPlugImageTable> ImageModuleRef;
-
-template<typename Type>
-class Modules;
-typedef Modules<_QERPlugImageTable> ImageModules;
-
-template<typename Type>
-class ModulesRef;
-typedef ModulesRef<_QERPlugImageTable> ImageModulesRef;
+// Acquires the PatchCreator of the given type ("TGA", "JPG", "DDS", "BMP", etc.)
+inline ImageLoader& GlobalImageLoader(const std::string& fileType) {
+	boost::shared_ptr<ImageLoader> _imageLoader(
+		boost::static_pointer_cast<ImageLoader>(
+			module::GlobalModuleRegistry().getModule(MODULE_IMAGELOADER + fileType) // e.g. "ImageLoaderTGA"
+		)
+	);
+	return *_imageLoader;
+}
 
 #endif // _IIMAGE_H

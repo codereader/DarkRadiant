@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_ISELECTION_H
 
 #include <cstddef>
-#include "generic/constant.h"
+#include "imodule.h"
 #include "generic/callbackfwd.h"
 #include "signal/signalfwd.h"
 
@@ -33,8 +33,6 @@ class View;
 class Selectable
 {
 public:
-  STRING_CONSTANT(Name, "Selectable");
-
   virtual void setSelected(bool select) = 0;
   virtual bool isSelected() const = 0;
   virtual void invertSelected() = 0;
@@ -63,12 +61,12 @@ typedef SignalHandler1<const Selectable&> SelectionChangeHandler;
 
 class SelectionInfo;
 
-class SelectionSystem
+const std::string MODULE_SELECTIONSYSTEM("SelectionSystem");
+
+class SelectionSystem :
+	public RegisterableModule
 {
 public:
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "selection");
-
   enum EModifier {
 	eManipulator,	// greebo: This is the standard case (drag, click without modifiers) 
 	eToggle,	// This is for Shift-Clicks to toggle the selection of an instance
@@ -162,20 +160,13 @@ public:
   virtual void cancelMove() = 0;
 };
 
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<SelectionSystem> GlobalSelectionModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<SelectionSystem> GlobalSelectionModuleRef;
-
-inline SelectionSystem& GlobalSelectionSystem()
-{
-  return GlobalSelectionModule::getTable();
+inline SelectionSystem& GlobalSelectionSystem() {
+	boost::shared_ptr<SelectionSystem> _selectionSystem(
+		boost::static_pointer_cast<SelectionSystem>(
+			module::GlobalModuleRegistry().getModule(MODULE_SELECTIONSYSTEM)
+		)
+	);
+	return *_selectionSystem;
 }
-
 
 #endif

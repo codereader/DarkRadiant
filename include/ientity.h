@@ -24,10 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "inode.h"
 #include "ipath.h"
-#include "generic/constant.h"
+#include "imodule.h"
 #include "generic/callbackfwd.h"
-#include <string>
-#include <boost/shared_ptr.hpp>
 
 class IEntityClass;
 typedef boost::shared_ptr<IEntityClass> IEntityClassPtr;
@@ -56,8 +54,6 @@ public:
 class Entity
 {
 public:
-	STRING_CONSTANT(Name, "Entity");
-
 	/** greebo: An Entity::Observer gets notified about key insertions and removals
 	 * 			as well as (optionally) about Entity destruction.
 	 */
@@ -176,12 +172,12 @@ public:
 	}
 };
 
-class EntityCreator
+const std::string MODULE_ENTITYCREATOR("Doom3EntityCreator");
+
+class EntityCreator :
+	public RegisterableModule
 {
 public:
-  INTEGER_CONSTANT(Version, 2);
-  STRING_CONSTANT(Name, "entity");
-
   virtual scene::INodePtr createEntity(IEntityClassPtr eclass) = 0;
 
   typedef void (*KeyValueChangedFunc)();
@@ -190,19 +186,13 @@ public:
   virtual void connectEntities(const scene::Path& e1, const scene::Path& e2) = 0;
 };
 
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<EntityCreator> GlobalEntityModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<EntityCreator> GlobalEntityModuleRef;
-
-inline EntityCreator& GlobalEntityCreator()
-{
-  return GlobalEntityModule::getTable();
+inline EntityCreator& GlobalEntityCreator() {
+	boost::shared_ptr<EntityCreator> _entityCreator(
+		boost::static_pointer_cast<EntityCreator>(
+			module::GlobalModuleRegistry().getModule(MODULE_ENTITYCREATOR)
+		)
+	);
+	return *_entityCreator;
 }
 
 #endif

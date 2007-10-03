@@ -22,19 +22,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_MODELSKIN_H)
 #define INCLUDED_MODELSKIN_H
 
-#include "generic/constant.h"
-
 #include <vector>
-#include <string>
-#include <boost/shared_ptr.hpp>
+#include "imodule.h"
 
 class ModuleObserver;
 
 class ModelSkin
 {
 public:
-	STRING_CONSTANT(Name, "ModelSkin");
-
 	/// \brief Attach an \p observer whose realise() and unrealise() methods will be called when the skin is loaded or unloaded.
 	virtual void attach(ModuleObserver& observer) = 0;
 	
@@ -53,7 +48,6 @@ typedef boost::shared_ptr<ModelSkin> ModelSkinPtr;
 class SkinnedModel
 {
 public:
-  STRING_CONSTANT(Name, "SkinnedModel");
   /// \brief Instructs the skinned model to update its skin.
   virtual void skinChanged() = 0;
 };
@@ -61,14 +55,15 @@ public:
 // Model skinlist typedef
 typedef std::vector<std::string> StringList;
 
+const std::string MODULE_MODELSKINCACHE("ModelSkinCache");
+
 /**
  * Interface class for the skin manager.
  */
-struct ModelSkinCache
+class ModelSkinCache :
+	public RegisterableModule
 {
-	INTEGER_CONSTANT(Version, 1);
-	STRING_CONSTANT(Name, "modelskin");
-
+public:
 	/**
 	 * Lookup a specific named skin and return the corresponding ModelSkin
 	 * object.
@@ -95,20 +90,13 @@ struct ModelSkinCache
 	virtual const StringList& getAllSkins() = 0;
 };
 
-
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<ModelSkinCache> GlobalModelSkinCacheModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<ModelSkinCache> GlobalModelSkinCacheModuleRef;
-
-inline ModelSkinCache& GlobalModelSkinCache()
-{
-  return GlobalModelSkinCacheModule::getTable();
+inline ModelSkinCache& GlobalModelSkinCache() {
+	boost::shared_ptr<ModelSkinCache> _skinCache(
+		boost::static_pointer_cast<ModelSkinCache>(
+			module::GlobalModuleRegistry().getModule(MODULE_MODELSKINCACHE)
+		)
+	);
+	return *_skinCache;
 }
 
 #endif

@@ -1,8 +1,7 @@
 #ifndef GAME_H_
 #define GAME_H_
 
-#include <string>
-#include <boost/shared_ptr.hpp>
+#include "igame.h"
 
 namespace game {
 	
@@ -14,7 +13,8 @@ namespace game {
  * 			Offers methods to get the key/values from the game
  * 			description (which is wrapped into the XMLRegistry).
  */
-class Game
+class Game :
+	public IGame
 {
 	std::string _enginePath;
 	

@@ -4,6 +4,8 @@
 #include "iradiant.h"
 #include "iselection.h"
 
+#include "stream/textstream.h"
+
 #include "gdk/gdkkeys.h"
 
 #include <iostream>
@@ -24,9 +26,11 @@ MouseEventManager::MouseEventManager(Modifiers& modifiers) :
 	_modifiers(modifiers),
 	_selectionSystem(NULL),
 	_activeFlags(0)
-{
+{}
+
+void MouseEventManager::initialise() {
 	loadButtonDefinitions();
-	
+		
 	loadXYViewEventDefinitions();
 	loadObserverEventDefinitions();
 	

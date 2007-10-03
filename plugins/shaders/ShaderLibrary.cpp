@@ -13,9 +13,6 @@ ShaderLibrary::ShaderLibrary()
 {
 	_publicIterator = _shaders.begin();
 }
-
-ShaderLibrary::~ShaderLibrary() 
-{}
 	
 // Insert into the definitions map, if not already present
 bool ShaderLibrary::addDefinition(const std::string& name, 

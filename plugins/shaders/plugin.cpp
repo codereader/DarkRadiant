@@ -21,53 +21,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "plugin.h"
 
-#include "ishaders.h"
-#include "ifilesystem.h"
-#include "iregistry.h"
-#include "iradiant.h"
-#include "ipreferencesystem.h"
-
-#include "modulesystem/singletonmodule.h"
-
-#include "ShaderTemplate.h"
 #include "Doom3ShaderSystem.h"
 
-class ShadersDependencies :
-	public GlobalFileSystemModuleRef,
-	public GlobalRadiantModuleRef,
-	public GlobalRegistryModuleRef,
-	public GlobalPreferenceSystemModuleRef 
-{};
-
-class ShadersDoom3API
-{
-	// The pointer to the shadersystem instance
-	shaders::Doom3ShaderSystem* _shaderSystem;
-
-public:
-	typedef ShaderSystem Type;
-	STRING_CONSTANT(Name, "doom3");
-
-	ShadersDoom3API(ShadersDependencies& dependencies) {
-		_shaderSystem = &GetShaderSystem();
-		_shaderSystem->construct();
-	}
-
-	~ShadersDoom3API() {
-		_shaderSystem->destroy();
-	}
-
-	ShaderSystem* getTable() {
-		return dynamic_cast<ShaderSystem*>(_shaderSystem);
-	}
-};
-
-typedef SingletonModule<ShadersDoom3API, ShadersDependencies, DependenciesAPIConstructor<ShadersDoom3API, ShadersDependencies> > ShadersDoom3Module;
-
-ShadersDoom3Module g_ShadersDoom3Module;
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server) {
-	initialiseModule(server);
-
-	g_ShadersDoom3Module.selfRegister();
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+	registry.registerModule(GetShaderSystem());
+	
+	// Initialise the streams
+	const ApplicationContext& ctx = registry.getApplicationContext();
+	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
+	GlobalErrorStream::instance().setOutputStream(ctx.getOutputStream());
+	
+	// Remember the reference to the ModuleRegistry
+	module::RegistryReference::Instance().setRegistry(registry);
 }

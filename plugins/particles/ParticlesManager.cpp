@@ -4,6 +4,7 @@
 #include "ParticleStage.h"
 
 #include "ifilesystem.h"
+#include "stream/textstream.h"
 
 #include "generic/callback.h"
 #include "parser/DefTokeniser.h"
@@ -12,22 +13,7 @@
 #include <boost/lexical_cast.hpp>
 #include <iostream>
 
-namespace particles
-{
-
-// Main constructor reads the .prt files
-ParticlesManager::ParticlesManager() {
-	
-	// Use a ParticleFileLoader to load each file
-	ParticleFileLoader loader(*this);
-	GlobalFileSystem().forEachFile(
-		PARTICLES_DIR, 
-		PARTICLES_EXT,
-		makeCallback1(loader),
-		1
-	);
-	
-}
+namespace particles {
 
 // Visit all of the particle defs
 void ParticlesManager::forEachParticleDef(const ParticleDefVisitor& v) const
@@ -124,4 +110,32 @@ ParticleStage ParticlesManager::parseParticleStage(parser::DefTokeniser& tok) {
 	return stage;
 }
 
+const std::string& ParticlesManager::getName() const {
+	static std::string _name(MODULE_PARTICLESMANAGER);
+	return _name;
 }
+
+const StringSet& ParticlesManager::getDependencies() const {
+	static StringSet _dependencies;
+
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
+	}
+
+	return _dependencies;
+}
+
+void ParticlesManager::initialiseModule(const ApplicationContext& ctx) {
+	globalOutputStream() << "ParticlesManager::initialiseModule called\n";
+	
+	// Use a ParticleFileLoader to load each file
+	ParticleFileLoader loader(*this);
+	GlobalFileSystem().forEachFile(
+		PARTICLES_DIR, 
+		PARTICLES_EXT,
+		makeCallback1(loader),
+		1
+	);
+}
+
+} // namespace particles

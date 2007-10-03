@@ -2,15 +2,16 @@
 #include "iclipper.h"		// The Abstract Base Class
 #include "iradiant.h"
 
+#include "imodule.h"
 #include "iregistry.h"
 #include "ipreferencesystem.h"
 #include "iscenegraph.h"
 #include "iselection.h"
 #include "itexdef.h"
 
-#include "debugging/debugging.h"
 #include "math/aabb.h"
 
+#include "modulesystem/StaticModule.h"
 #include "ClipPoint.h"
 #include "csg.h"
 #include "ui/texturebrowser/TextureBrowser.h"
@@ -24,18 +25,6 @@ class BrushClipper :
 	public Clipper,
 	public RegistryKeyObserver
 {
-public:
-	// Radiant Module stuff
-	typedef Clipper Type;
-	STRING_CONSTANT(Name, "*");
-
-	// Return the static instance
-	Clipper* getTable() {
-		return this;
-	}
-
-private:
-
 	// Hold the currently active xy view type
 	EViewType _viewType;
 	
@@ -58,15 +47,8 @@ public:
 	// Constructor
 	BrushClipper() :
 		_movingClip(NULL),
-		_switch(true),
-		_useCaulk(GlobalRegistry().get(RKEY_CLIPPER_USE_CAULK) == "1"),
-		_caulkShader(GlobalRegistry().get(RKEY_CLIPPER_CAULK_SHADER))
-	{
-		GlobalRegistry().addKeyObserver(this, RKEY_CLIPPER_USE_CAULK);
-		GlobalRegistry().addKeyObserver(this, RKEY_CLIPPER_CAULK_SHADER);
-		
-		constructPreferences();
-	}
+		_switch(true)
+	{}
 
 	// Update the internally stored variables on registry key change
 	void keyChanged() {
@@ -281,26 +263,37 @@ public:
 		GlobalRadiant().updateAllWindows();
 	}
 
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name(MODULE_CLIPPER);
+		return _name;
+	}
+
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies;
+
+		if (_dependencies.empty()) {
+			_dependencies.insert(MODULE_XMLREGISTRY);
+			_dependencies.insert(MODULE_PREFERENCESYSTEM);
+			_dependencies.insert(MODULE_RADIANT);
+			_dependencies.insert(MODULE_SELECTIONSYSTEM);
+			_dependencies.insert(MODULE_SCENEGRAPH);
+		}
+
+		return _dependencies;
+	}
+
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "Clipper::initialiseModule called\n";
+		
+		_useCaulk = (GlobalRegistry().get(RKEY_CLIPPER_USE_CAULK) == "1");
+		_caulkShader = GlobalRegistry().get(RKEY_CLIPPER_CAULK_SHADER);
+		GlobalRegistry().addKeyObserver(this, RKEY_CLIPPER_USE_CAULK);
+		GlobalRegistry().addKeyObserver(this, RKEY_CLIPPER_CAULK_SHADER);
+		
+		constructPreferences();	
+	}
 }; // class BrushClipper
 
-
-/* BrushClipper dependencies class. 
- */
- 
-class BrushClipperDependencies :
-	public GlobalRegistryModuleRef,
-	public GlobalRadiantModuleRef,
-	public GlobalPreferenceSystemModuleRef,
-	public GlobalSelectionModuleRef,
-	public GlobalSceneGraphModuleRef
-{
-};
-
-/* Required code to register the module with the ModuleServer.
- */
-
-#include "modulesystem/singletonmodule.h"
-
-typedef SingletonModule<BrushClipper, BrushClipperDependencies> BrushClipperModule;
-typedef Static<BrushClipperModule> StaticBrushClipperModule;
-StaticRegisterModule staticRegisterDefaultClipper(StaticBrushClipperModule::instance());
+// Define the static Clipper module
+module::StaticModule<BrushClipper> clipperModule;

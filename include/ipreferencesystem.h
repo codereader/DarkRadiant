@@ -22,11 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_PREFERENCESYSTEM_H)
 #define INCLUDED_PREFERENCESYSTEM_H
 
-#include <string>
 #include <list>
 #include <vector>
-#include <boost/shared_ptr.hpp>
-#include "generic/constant.h"
+#include "imodule.h"
 
 // Forward declaration
 typedef struct _GtkWidget GtkWidget;
@@ -87,12 +85,12 @@ public:
 };
 typedef boost::shared_ptr<PreferencesPage> PreferencesPagePtr;
 
-class IPreferenceSystem
+const std::string MODULE_PREFERENCESYSTEM("PreferenceSystem");
+
+class IPreferenceSystem :
+	public RegisterableModule
 {
 public:
-	INTEGER_CONSTANT(Version, 1);
-	STRING_CONSTANT(Name, "preferences");
-
 	/** greebo: Retrieves the page for the given path, for example:
 	 * 
 	 * 			"Settings/Patch Settings" 
@@ -108,18 +106,13 @@ public:
 	virtual PreferencesPagePtr getPage(const std::string& path) = 0; 
 };
 
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<IPreferenceSystem> GlobalPreferenceSystemModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<IPreferenceSystem> GlobalPreferenceSystemModuleRef;
-
 inline IPreferenceSystem& GlobalPreferenceSystem() {
-	return GlobalPreferenceSystemModule::getTable();
+	boost::shared_ptr<IPreferenceSystem> _prefSystem(
+		boost::static_pointer_cast<IPreferenceSystem>(
+			module::GlobalModuleRegistry().getModule(MODULE_PREFERENCESYSTEM)
+		)
+	);
+	return *_prefSystem;
 }
 
 #endif

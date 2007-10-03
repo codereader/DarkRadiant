@@ -1,11 +1,9 @@
 #ifndef IREGISTRY_H_
 #define IREGISTRY_H_
 
+#include "imodule.h"
 #include "xmlutil/Document.h"
 #include "xmlutil/Node.h"
-#include "generic/constant.h"
-
-#include <string>
 
 // Abstract base class for a registry key observer, gets called by the registry
 // when a certain key changes.
@@ -15,15 +13,16 @@ public:
 	virtual void keyChanged() = 0;
 };
 
+// String identifier for the registry module
+const std::string MODULE_XMLREGISTRY("XMLRegistry");
+
 /**
  * Abstract base class for a registry system
  */
-class Registry {
-	
+class Registry :
+	public RegisterableModule
+{
 public:
-	INTEGER_CONSTANT(Version, 1);
-	STRING_CONSTANT(Name, "registry");
-	
 	enum Tree {
 		treeStandard,
 		treeUser
@@ -85,22 +84,16 @@ public:
 	// Remove the specified observer from the list
 	virtual void removeKeyObserver(RegistryKeyObserver* observer) = 0;
 };
-
-// Module definitions
-
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<Registry> GlobalRegistryModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<Registry> GlobalRegistryModuleRef;
+typedef boost::shared_ptr<Registry> RegistryPtr;
 
 // This is the accessor for the registry
 inline Registry& GlobalRegistry() {
-	return GlobalRegistryModule::getTable();
+	RegistryPtr _registry(
+		boost::static_pointer_cast<Registry>(
+			module::GlobalModuleRegistry().getModule(MODULE_XMLREGISTRY)
+		)
+	);
+	return *_registry;
 }
 
 #endif /*IREGISTRY_H_*/

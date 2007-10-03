@@ -1,9 +1,7 @@
 #ifndef IPARTICLES_H_
 #define IPARTICLES_H_
 
-#include "generic/constant.h"
-#include "modulesystem.h"
-
+#include "imodule.h"
 #include <boost/function.hpp>
 
 /**
@@ -24,28 +22,29 @@ public:
  */
 typedef boost::function< void (const IParticleDef&) > ParticleDefVisitor;
 
+const std::string MODULE_PARTICLESMANAGER("ParticlesManager"); 
+
 /**
  * Abstract interface for the ParticlesManager module.
  */
-struct IParticlesManager {
-	
-	/* Radiant module stuff */
-	INTEGER_CONSTANT(Version, 1);
-	STRING_CONSTANT(Name, "particlesmanager");
-
+class IParticlesManager :
+	public RegisterableModule
+{
+public:
 	/**
 	 * Enumerate each particle def.
 	 */
 	virtual void forEachParticleDef(const ParticleDefVisitor&) const = 0;
-	
 };
 
-/* Module types */
-typedef GlobalModule<IParticlesManager> GlobalParticlesManagerModule;
-typedef GlobalModuleRef<IParticlesManager> GlobalParticlesManagerModuleRef;
-
+// Accessor
 inline IParticlesManager& GlobalParticlesManager() {
-	return GlobalParticlesManagerModule::getTable();	
+	boost::shared_ptr<IParticlesManager> _particlesManager(
+		boost::static_pointer_cast<IParticlesManager>(
+			module::GlobalModuleRegistry().getModule(MODULE_PARTICLESMANAGER)
+		)
+	);
+	return *_particlesManager;
 }
 
 #endif /*IPARTICLES_H_*/

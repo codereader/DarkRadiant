@@ -47,13 +47,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/surfaceinspector/SurfaceInspector.h"
 #include "selection/algorithm/Primitives.h"
 
-PatchCreator* g_patchCreator = 0;
-
 void Scene_PatchConstructPrefab(scene::Graph& graph, const AABB& aabb, const std::string& shader, EPatchPrefab eType, int axis, std::size_t width = 3, std::size_t height = 3)
 {
   GlobalSelectionSystem().setSelectedAll(false);
 
-  scene::INodePtr node(g_patchCreator->createPatch());
+  scene::INodePtr node(GlobalPatchCreator(DEF2).createPatch());
   Node_getTraversable(GlobalMap().findOrInsertWorldspawn())->insert(node);
 
   Patch* patch = Node_getPatch(node);
@@ -93,7 +91,7 @@ void Patch_makeCaps(Patch& patch, scene::Instance& instance, EPatchCap type, con
   }
 
   {
-    scene::INodePtr cap(g_patchCreator->createPatch());
+    scene::INodePtr cap(GlobalPatchCreator(DEF2).createPatch());
     Node_getTraversable(instance.path().parent())->insert(cap);
 
     patch.MakeCap(Node_getPatch(cap), type, ROW, true);
@@ -106,7 +104,7 @@ void Patch_makeCaps(Patch& patch, scene::Instance& instance, EPatchCap type, con
   }
 
   {
-    scene::INodePtr cap(g_patchCreator->createPatch());
+    scene::INodePtr cap(GlobalPatchCreator(DEF2).createPatch());
     Node_getTraversable(instance.path().parent())->insert(cap);
 
     patch.MakeCap(Node_getPatch(cap), type, ROW, false);
@@ -556,7 +554,7 @@ void thickenPatches(PatchPtrVector patchList,
 		Patch& sourcePatch = *patchList[i]; 
 		
 		// Create a new patch node
-		scene::INodePtr node(g_patchCreator->createPatch());
+		scene::INodePtr node(GlobalPatchCreator(DEF2).createPatch());
 		// Insert the node into worldspawn
 		Node_getTraversable(GlobalMap().findOrInsertWorldspawn())->insert(node);
 	
@@ -575,12 +573,13 @@ void thickenPatches(PatchPtrVector patchList,
 		}
 		
 		if (createSeams && thickness > 0.0f) {
+			PatchCreator& patchCreator = GlobalPatchCreator(DEF2);
 			// Allocate four new patches
 			scene::INodePtr nodes[4] = {
-				scene::INodePtr(g_patchCreator->createPatch()),
-				scene::INodePtr(g_patchCreator->createPatch()),
-				scene::INodePtr(g_patchCreator->createPatch()),
-				scene::INodePtr(g_patchCreator->createPatch())
+				scene::INodePtr(patchCreator.createPatch()),
+				scene::INodePtr(patchCreator.createPatch()),
+				scene::INodePtr(patchCreator.createPatch()),
+				scene::INodePtr(patchCreator.createPatch())
 			};
 			
 			// Now create the four walls

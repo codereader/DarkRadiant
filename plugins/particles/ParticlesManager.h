@@ -18,8 +18,8 @@ namespace {
 	const char* PARTICLES_EXT = "prt";
 }
 
-class ParticlesManager
-: public IParticlesManager
+class ParticlesManager : 
+	public IParticlesManager
 {
 	// Map of named particle defs
 	typedef std::map<std::string, ParticleDef> ParticleDefMap;
@@ -32,20 +32,6 @@ private:
 	ParticleStage parseParticleStage(parser::DefTokeniser& tok);
 	
 public:
-	
-	/* Module stuff */
-	typedef IParticlesManager Type;
-	STRING_CONSTANT(Name, "*");
-	
-	IParticlesManager* getTable() { 
-		return this;
-	}
-	
-	/*
-	 * Main constructor.
-	 */
-	ParticlesManager();
-	
 	/*
 	 * Visit each particles def.
 	 */
@@ -56,8 +42,13 @@ public:
 	 * list.
 	 */
 	void parseStream(std::istream& s);
-	
+
+	// RegisterableModule implementation
+	virtual const std::string& getName() const;
+	virtual const StringSet& getDependencies() const;
+	virtual void initialiseModule(const ApplicationContext& ctx);
 };
+typedef boost::shared_ptr<ParticlesManager> ParticlesManagerPtr;
 
 }
 

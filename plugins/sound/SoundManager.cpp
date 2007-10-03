@@ -16,16 +16,7 @@ namespace sound
 // Constructor
 SoundManager::SoundManager() :
 	_emptyShader("")
-{
-	// Pass a SoundFileLoader to the filesystem
-	SoundFileLoader loader(*this);
-	GlobalFileSystem().forEachFile(
-		SOUND_FOLDER,			// directory 
-		"sndshd", 				// required extension
-		makeCallback1(loader),	// loader callback
-		99						// max depth
-	);  
-}
+{}
 
 // Enumerate shaders
 void SoundManager::forEachShader(SoundShaderVisitor visitor) const {
@@ -139,4 +130,32 @@ void SoundManager::parseSoundShader(parser::DefTokeniser& tok) {
 	SoundRadii soundRadii(min, max);
 	_shaders[name]->setSoundRadii(soundRadii);
 }
+
+const std::string& SoundManager::getName() const {
+	static std::string _name(MODULE_SOUNDMANAGER);
+	return _name;
+}
+
+const StringSet& SoundManager::getDependencies() const {
+	static StringSet _dependencies;
+
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
+	}
+
+	return _dependencies;
+}
+
+void SoundManager::initialiseModule(const ApplicationContext& ctx) {
+	globalOutputStream() << "SoundManager::initialiseModule called\n";
+	// Pass a SoundFileLoader to the filesystem
+	SoundFileLoader loader(*this);
+	GlobalFileSystem().forEachFile(
+		SOUND_FOLDER,			// directory 
+		"sndshd", 				// required extension
+		makeCallback1(loader),	// loader callback
+		99						// max depth
+	);
+}
+
 } // namespace sound

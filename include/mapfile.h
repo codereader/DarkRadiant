@@ -32,8 +32,6 @@ const std::size_t MAPFILE_MAX_CHANGES = std::numeric_limits<std::size_t>::max();
 class MapFile
 {
 public:
-  STRING_CONSTANT(Name, "MapFile");
-
   virtual void save() = 0;
   virtual bool saved() const = 0;
   virtual void changed() = 0;

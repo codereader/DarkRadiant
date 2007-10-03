@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_IPLUGTOOLBAR_H
 
 #include <cstddef>
-#include "generic/constant.h"
 
 class IToolbarButton
 {
@@ -48,19 +47,8 @@ typedef const IToolbarButton* (* PFN_GETTOOLBARBUTTON)(std::size_t index);
 
 struct _QERPlugToolbarTable
 {
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "toolbar");
-
   PFN_TOOLBARBUTTONCOUNT m_pfnToolbarButtonCount;
   PFN_GETTOOLBARBUTTON   m_pfnGetToolbarButton;
 };
-
-template<typename Type>
-class Modules;
-typedef Modules<_QERPlugToolbarTable> ToolbarModules;
-
-template<typename Type>
-class ModulesRef;
-typedef ModulesRef<_QERPlugToolbarTable> ToolbarModulesRef;
 
 #endif

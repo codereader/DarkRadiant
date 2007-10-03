@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "cmdlib.h"
 #include "bytestreamutils.h"
 
-#include "modulesystem.h"
 #include "iarchive.h"
 
 #include <algorithm>

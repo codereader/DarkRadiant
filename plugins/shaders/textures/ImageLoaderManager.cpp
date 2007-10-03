@@ -1,8 +1,11 @@
 #include "ImageLoaderManager.h"
 
+#include "iimage.h"
+
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
 
 #include <iostream>
 
@@ -13,14 +16,7 @@ namespace shaders {
 		typedef std::vector<std::string> StringParts;
 	}
 
-ImageLoaderManager::ImageLoaderManager() :
-	_imageLoaders("*")
-{}
-
 ImageLoaderList ImageLoaderManager::getLoaders(const std::string& moduleNames) {
-	// Get the reference to the map of allocated imageloader modules 
-	ModulesMap<ImageLoader>& modulesMap = _imageLoaders.get();
-	
 	// The map that is to be filled
 	ImageLoaderList list;
 	
@@ -28,18 +24,17 @@ ImageLoaderList ImageLoaderManager::getLoaders(const std::string& moduleNames) {
 	boost::algorithm::split(parts, moduleNames, boost::algorithm::is_any_of(" "));
 	
 	for (unsigned int i = 0; i < parts.size(); i++) {
-		ImageLoader* loader = modulesMap.find(parts[i]);
-		if (loader != NULL) {
-			list.push_back(loader);
+		std::string fileExt = boost::to_upper_copy(parts[i]);
+		
+		// Acquire the module using the given fileExt
+		ImageLoader& loader = GlobalImageLoader(fileExt);
+		
+		if (&loader != NULL) {
+			list.push_back(&loader);
 		}
 	}
 	
 	return list;
 }
 
-ImageLoaderManager& ImageLoaderManager::Instance() {
-	static ImageLoaderManager _instance;
-	return _instance;
-}
-	
 } // namespace shaders

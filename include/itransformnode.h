@@ -2,7 +2,6 @@
 #define ITRANSFORMNODE_H_
 
 #include "inode.h"
-#include "generic/constant.h"
 
 class Matrix4;
 
@@ -10,8 +9,6 @@ class Matrix4;
 class TransformNode
 {
 public:
-	STRING_CONSTANT(Name, "TransformNode");
-
 	/// \brief Returns the transform which maps the node's local-space into the local-space of its parent node.
 	virtual const Matrix4& localToParent() const  = 0;
 };

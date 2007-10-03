@@ -1,5 +1,7 @@
 #include "CommandList.h"
 
+#include "iuimanager.h"
+
 #include "gtk/gtkliststore.h"
 #include "gtk/gtktreeview.h"
 #include "gtk/gtkhbox.h"
@@ -157,6 +159,8 @@ void CommandList::callbackClear(GtkWidget* widget, CommandList* self) {
 void CommandList::callbackClose(GtkWidget* widget, CommandList* self) {
 	// Call the DialogWindow::destroy method and remove self from heap
 	self->destroy();
+	// Reload all the accelerators
+	GlobalUIManager().getMenuManager().updateAccelerators();
 }
 
 void CommandList::showDialog() {

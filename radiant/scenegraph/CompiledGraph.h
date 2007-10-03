@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <list>
 #include "signal/signal.h"
 #include "scenelib.h"
+#include "imodule.h"
 
 // Forward declaration
 struct GraphTreeModel;
@@ -53,8 +54,11 @@ public:
 	// Constructor
 	CompiledGraph();
 	
-	// Destructor
-	~CompiledGraph();
+	// RegisterableModule implementation
+	virtual const std::string& getName() const;
+	virtual const StringSet& getDependencies() const;
+	virtual void initialiseModule(const ApplicationContext& ctx);
+	virtual void shutdownModule();
 	
 	GraphTreeModel* getTreeModel();
   

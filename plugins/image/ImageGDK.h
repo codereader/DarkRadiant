@@ -4,7 +4,7 @@
 #include "ifilesystem.h"
 #include "iimage.h"
 #include "imagelib.h" // for RGBAImagePtr
-#include "modulesystem/singletonmodule.h"
+#include <iostream>
 
 ImagePtr LoadImageGDK(ArchiveFile& file);
 
@@ -22,19 +22,6 @@ class GDKLoader :
 	public ImageLoader
 {
 public:
-	// Definitions to enable the lookup by the radiant modulesystem
-	typedef ImageLoader Type;
-	STRING_CONSTANT(Name, "GDK");
-
-	// Return the instance pointer
-	ImageLoader* getTable() {
-		return this;
-	}
-
-public:
-	// Constructor
-	GDKLoader() {}
-	
 	/* greebo: This loads the file and returns the pointer to 
 	 * the allocated Image object (or NULL, if the load failed). 
 	 */
@@ -50,14 +37,25 @@ public:
 		return "";
 	}
 
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name("ImageLoaderGDK");
+		return _name;
+	}
+  	
+  	virtual const StringSet& getDependencies() const {
+  		static StringSet _dependencies;
+
+  		if (_dependencies.empty()) {
+  			_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
+  		}
+
+  		return _dependencies;
+  	}
+  	
+  	virtual void initialiseModule(const ApplicationContext& ctx) {
+  		globalOutputStream() << "ImageLoaderGDK::initialiseModule called.\n";
+  	}
 };
-
-// The dependency class
-class GDKLoaderDependencies :
-	public GlobalFileSystemModuleRef
-{};
-
-// Define the GDK module with the GDKLoader class and its dependencies
-typedef SingletonModule<GDKLoader, GDKLoaderDependencies> GDKLoaderModule;
 
 #endif /*IMAGEGDK_H_*/

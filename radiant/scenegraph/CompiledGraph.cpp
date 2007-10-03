@@ -26,14 +26,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "instancelib.h"
 #include "treemodel.h"
 #include "SceneGraphModule.h"
+#include "modulesystem/StaticModule.h"
 
 CompiledGraph::CompiledGraph() :
-	_treeModel(graph_tree_model_new())
+	_treeModel(NULL)
 {}
-
-CompiledGraph::~CompiledGraph() {
-	graph_tree_model_delete(_treeModel);
-}
 
 GraphTreeModel* CompiledGraph::getTreeModel() {
 	return _treeModel;
@@ -105,9 +102,9 @@ void CompiledGraph::traverse_subgraph(const Walker& walker, const scene::Path& s
 scene::Instance* CompiledGraph::find(const scene::Path& path) {
     InstanceMap::iterator i = m_instances.find(PathConstReference(path));
     if(i == m_instances.end()) {
-      return 0;
+      return NULL;
     }
-    return (*i).second;
+    return i->second;
 }
 
 void CompiledGraph::insert(scene::Instance* instance) {
@@ -115,7 +112,7 @@ void CompiledGraph::insert(scene::Instance* instance) {
 
 	// Notify the graph tree model about the change
 	sceneChanged();
-	graph_tree_model_insert(scene_graph_get_tree_model(), *instance);
+	graph_tree_model_insert(getTreeModel(), *instance);
 }
 
 void CompiledGraph::erase(scene::Instance* instance) {
@@ -170,3 +167,27 @@ void CompiledGraph::traverse_subgraph(const Walker& walker, InstanceMap::iterato
 		} while (!stack.empty());
 	}
 }
+
+// RegisterableModule implementation
+const std::string& CompiledGraph::getName() const {
+	static std::string _name("SceneGraph");
+	return _name;
+}
+
+const StringSet& CompiledGraph::getDependencies() const {
+	static StringSet _dependencies; // no dependencies
+	return _dependencies;
+}
+
+void CompiledGraph::initialiseModule(const ApplicationContext& ctx) {
+	globalOutputStream() << "CompiledGraph::initialiseModule called\n";
+	
+	_treeModel = graph_tree_model_new();
+}
+
+void CompiledGraph::shutdownModule() {
+	graph_tree_model_delete(_treeModel);
+}
+
+// Define the static SceneGraph module
+module::StaticModule<CompiledGraph> sceneGraphModule;

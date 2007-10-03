@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "Doom3EntityClass.h"
 
+#include "imodule.h"
 #include "ifilesystem.h"
 #include "iarchive.h"
 #include "iregistry.h"
@@ -32,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "os/dir.h"
 #include "moduleobservers.h"
 
+#include <iostream>
 #include <map>
 
 #include <boost/algorithm/string/case_conv.hpp>
@@ -300,19 +302,26 @@ IEntityClassPtr EntityClassDoom3_findOrInsert(const std::string& name,
  */
 
 class EntityClassDoom3:
-    public ModuleObserver {
-
+    public IEntityClassManager,
+    public ModuleObserver
+{
     // Whether the entity classes have been realised
     std::size_t m_unrealised;
 
     // Set of ModuleObservers to notify on realise/unrealise
     ModuleObservers m_observers;
 
-  public:
-    
+public:
     // Constructor
     EntityClassDoom3():
         m_unrealised(2) {} 
+    
+    // Get a named entity class, creating if necessary
+    virtual IEntityClassPtr findOrInsert(const std::string& name,
+    									 bool has_brushes)
+	{
+		return EntityClassDoom3_findOrInsert(name, has_brushes);
+	}
     
     void realise() {
         // Count the number of times this function is called, it is activated
@@ -367,11 +376,23 @@ class EntityClassDoom3:
     // Find an entity class
     IEntityClassPtr findClass(const std::string& className) const {
         EntityClasses::const_iterator i = _entityClasses.find(className);
-        if (i != _entityClasses.end())
+        if (i != _entityClasses.end()) {
             return i->second;
-        else
+        }
+        else {
             return IEntityClassPtr();
+        }
     }
+    
+    // Visit each entity class
+	virtual void forEach(EntityClassVisitor& visitor) {
+		for(EntityClasses::iterator i = _entityClasses.begin(); 
+			i != _entityClasses.end(); 
+			++i)
+		{
+			visitor.visit(i->second);
+		}
+	}
     
     void unrealise()
     {
@@ -390,106 +411,50 @@ class EntityClassDoom3:
     {
         m_observers.detach(observer);
     }
-};
-
-EntityClassDoom3 g_EntityClassDoom3;
-
-class EntityClassDoom3Dependencies : 
-	public GlobalFileSystemModuleRef, 
-	public GlobalShaderCacheModuleRef,
-	public GlobalRegistryModuleRef,
-	public GlobalRadiantModuleRef
-{
-};
-
-/**
- * API wrapper class, implements the IEntityClassManager interface.
- * TODO: Merge this with EntityClassDoom3, rather than dispatching calls to a
- * global object.
- */
-class EntityClassDoom3API
-: public IEntityClassManager
-{
-public:
-    typedef IEntityClassManager Type;
-    STRING_CONSTANT(Name, "doom3");
-
-    // Constructor, attach and realise
-    EntityClassDoom3API() {
-    	GlobalFileSystem().attach(g_EntityClassDoom3);
-		realise();
-    }
     
-    // Destructor. Destroy the entity class manager.
-    ~EntityClassDoom3API() {
-		unrealise();
-		GlobalFileSystem().detach(g_EntityClassDoom3);
-    }
-    
-    // Return the EntityClassManager object.
-    IEntityClassManager* getTable() {
-        return this;
-    }
-    
-    /* PUBLIC INTERFACE */
-    
-    // Get a named entity class, creating if necessary
-    virtual IEntityClassPtr findOrInsert(const std::string& name,
-    									 bool has_brushes)
-	{
-		return EntityClassDoom3_findOrInsert(name, has_brushes);
+    // RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name(MODULE_ECLASSMANAGER);
+		return _name;
 	}
 	
-    // Look up an existing entity class
-    virtual IEntityClassPtr findClass(const std::string& className) const {
-        return g_EntityClassDoom3.findClass(className);
-    }
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies;
 
-	// Visit each entity class
-	virtual void forEach(EntityClassVisitor& visitor) {
-		for(EntityClasses::iterator i = _entityClasses.begin(); 
-			i != _entityClasses.end(); 
-			++i)
-		{
-			visitor.visit(i->second);
+		if (_dependencies.empty()) {
+			_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
+			_dependencies.insert(MODULE_XMLREGISTRY);
+			_dependencies.insert(MODULE_SHADERCACHE);
+			_dependencies.insert(MODULE_RADIANT);
 		}
+
+		return _dependencies;
 	}
 	
-	// Attach a module observer
-	virtual void attach(ModuleObserver& observer) {
-		g_EntityClassDoom3.attach(observer);
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "EntityClassDoom3::initialiseModule called.\n";
+		
+		GlobalFileSystem().attach(*this);
+		realise();
 	}
 	
-	// Detach a module observer
-	virtual void detach(ModuleObserver& observer) {
-		g_EntityClassDoom3.detach(observer);
-	}
-	
-	// Realise the module
-	virtual void realise() {
-		g_EntityClassDoom3.realise();
-	}
-	
-	// Unrealise the module
-	virtual void unrealise() {
-		g_EntityClassDoom3.unrealise();
+	virtual void shutdownModule() {
+		globalOutputStream() << "EntityClassDoom3::shutdownModule called.\n";
+		unrealise();
+		GlobalFileSystem().detach(*this);
 	}
 };
+typedef boost::shared_ptr<EntityClassDoom3> EntityClassDoom3Ptr;
 
-/* Required code to register the module with the ModuleServer.
- */
-
-#include "modulesystem/singletonmodule.h"
-
-typedef SingletonModule<EntityClassDoom3API, 
-						EntityClassDoom3Dependencies> EntityClassDoom3Module;
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
-{
-	// Static module instance
-	static EntityClassDoom3Module _theEclassModule;
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+	static EntityClassDoom3Ptr _module(new EntityClassDoom3);
+	registry.registerModule(_module);
 	
-	// Initialise and register the module	
-	initialiseModule(server);
-	_theEclassModule.selfRegister();
+	// Initialise the streams
+	const ApplicationContext& ctx = registry.getApplicationContext();
+	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
+	GlobalErrorStream::instance().setOutputStream(ctx.getOutputStream());
+	
+	// Remember the reference to the ModuleRegistry
+	module::RegistryReference::Instance().setRegistry(registry);
 }

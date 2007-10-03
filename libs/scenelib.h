@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <cstddef>
 #include <string.h>
 
+#include "debugging/debugging.h"
 #include "math/aabb.h"
 #include "transformlib.h"
 #include "generic/callback.h"
@@ -58,8 +59,6 @@ class AABB;
  */
 class BrushDoom3 {
 public:
-	STRING_CONSTANT(Name, "BrushDoom3");
-
 	/** greebo: Translates the brush about the given <translation> vector.
 	 */
 	virtual void translateDoom3Brush(const Vector3& translation) = 0;
@@ -558,8 +557,6 @@ public:
 // cast an instance onto a light and identify it as such.
 class LightInstance {
 public:
-	STRING_CONSTANT(Name, "SceneLightInstance");
-
 	/** greebo: Get the AABB of the Light "Diamand" representation.
 	 */
 	virtual AABB getSelectAABB() = 0;

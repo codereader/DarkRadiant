@@ -25,9 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// \file
 /// \brief The undo-system interface. Uses the 'memento' pattern.
 
-#include <string>
+#include "imodule.h"
 #include <cstddef>
-#include "generic/constant.h"
 #include "generic/callbackfwd.h"
 
 /* greebo: An UndoMemento has to be allocated on the heap
@@ -75,12 +74,12 @@ public:
 	virtual void redo() = 0;
 };
 
-class UndoSystem
+const std::string MODULE_UNDOSYSTEM("UndoSystem");
+
+class UndoSystem :
+	public RegisterableModule
 {
 public:
-	INTEGER_CONSTANT(Version, 1);
-	STRING_CONSTANT(Name, "undo");
-
 	virtual UndoObserver* observer(Undoable* undoable) = 0;
 	virtual void release(Undoable* undoable) = 0;
 
@@ -99,21 +98,14 @@ public:
 	virtual void trackerDetach(UndoTracker& tracker) = 0;
 };
 
-// Module Definitions 
-
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<UndoSystem> GlobalUndoModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<UndoSystem> GlobalUndoModuleRef;
-
 // The accessor function
 inline UndoSystem& GlobalUndoSystem() {
-	return GlobalUndoModule::getTable();
+	boost::shared_ptr<UndoSystem> _undoSystem(
+		boost::static_pointer_cast<UndoSystem>(
+			module::GlobalModuleRegistry().getModule(MODULE_UNDOSYSTEM)
+		)
+	);
+	return *_undoSystem;
 }
 
 class UndoableCommand

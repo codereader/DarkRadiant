@@ -56,7 +56,7 @@ void TextureManipulator::keyChanged() {
 	if (_gamma != newGamma) {
 		_gamma = newGamma;
 		calculateGammaTable();
-		GetShaderSystem().refresh();
+		GetShaderSystem()->refresh();
 	}
 }
 

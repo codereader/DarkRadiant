@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_TRANSFORMLIB_H
 
 #include "itransformnode.h"
-#include "generic/constant.h"
 #include "math/matrix.h"
 #include "math/quaternion.h"
 
@@ -93,8 +92,6 @@ const TransformModifierType TRANSFORM_COMPONENT = true;
 class Transformable
 {
 public:
-  STRING_CONSTANT(Name, "Transformable");
-
   virtual void setType(TransformModifierType type) = 0;
   virtual void setTranslation(const Translation& value) = 0;
   virtual void setRotation(const Rotation& value) = 0;

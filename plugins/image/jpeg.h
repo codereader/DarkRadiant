@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "ifilesystem.h"
 #include "iimage.h"
 #include "imagelib.h" // for RGBAImagePtr
-#include "modulesystem/singletonmodule.h"
+#include <iostream>
 
 ImagePtr LoadJPG(ArchiveFile& file);
 
@@ -51,19 +51,6 @@ class JPGLoader :
 	public ImageLoader
 {
 public:
-	// Definitions to enable the lookup by the radiant modulesystem
-	typedef ImageLoader Type;
-	STRING_CONSTANT(Name, "jpg");
-
-	// Return the instance pointer
-	ImageLoader* getTable() {
-		return this;
-	}
-
-public:
-	// Constructor
-	JPGLoader() {}
-	
 	/* greebo: This loads the file and returns the pointer to 
 	 * the allocated Image object (or NULL, if the load failed). 
 	 */
@@ -78,15 +65,26 @@ public:
 		return "jpg";
 	}
 
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name("ImageLoaderJPG");
+		return _name;
+	}
+	
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies;
+
+		if (_dependencies.empty()) {
+			_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
+		}
+
+		return _dependencies;
+	}
+	
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "ImageLoaderJPG::initialiseModule called.\n";
+	}
 };
-
-// The dependency class
-class JPGLoaderDependencies :
-	public GlobalFileSystemModuleRef
-{};
-
-// Define the JPG module with the JPGLoader class and its dependencies
-typedef SingletonModule<JPGLoader, JPGLoaderDependencies> JPGLoaderModule;
 
 #endif
 

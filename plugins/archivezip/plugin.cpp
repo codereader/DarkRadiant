@@ -21,38 +21,53 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "plugin.h"
 
+#include "imodule.h"
 #include "iarchive.h"
-
-#include "debugging/debugging.h"
-#include "modulesystem/singletonmodule.h"
+#include "stream/textstream.h"
 
 #include "archive.h"
+#include <iostream>
 
-
-class ArchivePK4API
+class ArchivePK4API :
+	public _QERArchiveTable
 {
-  _QERArchiveTable m_archivepk4;
 public:
-  typedef _QERArchiveTable Type;
-  STRING_CONSTANT(Name, "pk4");
+	ArchivePK4API() {
+		// Initialise the function pointer
+		_QERArchiveTable::m_pfnOpenArchive = &OpenArchive;
+	}
+	
+	virtual const std::string& getExtension() {
+		static std::string _ext("PK4");
+		return _ext;
+	}
+  
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name("ArchivePK4");
+		return _name;
+	}
 
-  ArchivePK4API()
-  {
-    m_archivepk4.m_pfnOpenArchive = &OpenArchive;
-  }
-  _QERArchiveTable* getTable()
-  {
-    return &m_archivepk4;
-  }
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies; // no dependencies
+		return _dependencies;
+	}
+
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "ArchivePK4::initialiseModule called\n";
+	}
 };
+typedef boost::shared_ptr<ArchivePK4API> ArchivePK4APIPtr;
 
-typedef SingletonModule<ArchivePK4API> ArchivePK4Module;
-ArchivePK4Module g_ArchivePK4Module;
-
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
-{
-  initialiseModule(server);
-
-  g_ArchivePK4Module.selfRegister();
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+	static ArchivePK4APIPtr _module(new ArchivePK4API);
+	registry.registerModule(_module);
+	
+	// Initialise the streams
+	const ApplicationContext& ctx = registry.getApplicationContext();
+	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
+	GlobalErrorStream::instance().setOutputStream(ctx.getOutputStream());
+	
+	// Remember the reference to the ModuleRegistry
+	module::RegistryReference::Instance().setRegistry(registry);
 }

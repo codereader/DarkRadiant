@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <cstddef>
 #include <string>
 
-#include "generic/constant.h"
+#include "imodule.h"
 #include "generic/callbackfwd.h"
 
 typedef Callback1<const std::string&> FileNameCallback;
@@ -38,13 +38,13 @@ class ModuleObserver;
 
 typedef struct _GSList GSList;
 
+const std::string MODULE_VIRTUALFILESYSTEM("VirtualFileSystem");
+
 /// The Virtual File System.
-class VirtualFileSystem
+class VirtualFileSystem :
+	public RegisterableModule
 {
 public:
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "VFS");
-
   /// \brief Adds a root search \p path.
   /// Called before \c initialise.
   virtual void initDirectory(const std::string& path) = 0;
@@ -88,19 +88,13 @@ public:
 
 };
 
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<VirtualFileSystem> GlobalFileSystemModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<VirtualFileSystem> GlobalFileSystemModuleRef;
-
-inline VirtualFileSystem& GlobalFileSystem()
-{
-  return GlobalFileSystemModule::getTable();
+inline VirtualFileSystem& GlobalFileSystem() {
+	boost::shared_ptr<VirtualFileSystem> _vfs(
+		boost::static_pointer_cast<VirtualFileSystem>(
+			module::GlobalModuleRegistry().getModule(MODULE_VIRTUALFILESYSTEM)
+		)
+	);
+	return *_vfs;
 }
 
 

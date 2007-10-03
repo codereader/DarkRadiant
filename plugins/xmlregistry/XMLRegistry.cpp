@@ -27,25 +27,18 @@
 
 #include <boost/lexical_cast.hpp>
 
+#include "os/file.h"
+#include "imodule.h"
 #include "iradiant.h"
 #include "RegistryTree.h"
 
-// The map of RegistryKeyObservers. The same observer can observe several keys, and
-// the same key can be observed by several observers, hence the multimap. 
-typedef std::multimap<const std::string, RegistryKeyObserver*> KeyObserverMap;
 
 class XMLRegistry : 
-	public Registry 
+	public Registry
 {
-public:
-	// Radiant Module stuff
-	typedef Registry Type;
-	STRING_CONSTANT(Name, "*");
-
-	// Return the static instance
-	Registry* getTable() {
-		return this;
-	}
+	// The map of RegistryKeyObservers. The same observer can observe several keys, and
+	// the same key can be observed by several observers, hence the multimap. 
+	typedef std::multimap<const std::string, RegistryKeyObserver*> KeyObserverMap;
 
 private:
 	
@@ -299,29 +292,74 @@ private:
 			}
 		}
 	}
+
+public:
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name(MODULE_XMLREGISTRY);
+		return _name;
+	}
 	
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies; // no dependencies
+		return _dependencies;
+	}
+	
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "XMLRegistry::initialiseModule called\n";
+		
+		// Load the XML files from the installation directory
+		std::string base = ctx.getApplicationPath();
+
+		try {
+			// Load all of the required XML files
+			import(base + "user.xml", "", Registry::treeStandard);
+			//GlobalRegistry().import(base + "upgradepaths.xml", "user", Registry::treeStandard);
+			import(base + "colours.xml", "user/ui", Registry::treeStandard);
+			import(base + "input.xml", "user/ui", Registry::treeStandard);
+			import(base + "menu.xml", "user/ui", Registry::treeStandard);
+			
+			// Load the debug.xml file only if the relevant key is set in user.xml
+			if (get("user/debug") == "1") {
+				import(base + "debug.xml", "", Registry::treeStandard);
+			}
+		}
+		catch (std::runtime_error e) {
+			std::cerr << "XML registry population failed:\n\n" << e.what() << "\n";
+			/*gtkutil::fatalErrorDialog("XML registry population failed:\n\n"
+									  + std::string(e.what()),
+									  MainFrame_getWindow());*/
+		}
+		
+		// Load user preferences, these overwrite any values that have defined before
+		// The called method also checks for any upgrades that have to be performed
+		const std::string userSettingsFile = ctx.getSettingsPath() + "user.xml";
+		if (file_exists(userSettingsFile.c_str())) {
+			import(userSettingsFile, "", Registry::treeUser);
+		}
+		
+		const std::string userColoursFile = ctx.getSettingsPath() + "colours.xml";
+		if (file_exists(userColoursFile.c_str())) {
+			import(userColoursFile, "user/ui", Registry::treeUser);
+		}
+		
+		const std::string userInputFile = ctx.getSettingsPath() + "input.xml";
+		if (file_exists(userInputFile.c_str())) {
+			import(userInputFile, "user/ui", Registry::treeUser);
+		}
+	}
+
 }; // class XMLRegistry
 
-
-/* XMLRegistry dependencies class. 
- */
- 
-class XMLRegistryDependencies
-{
-};
-
-/* Required code to register the module with the ModuleServer.
- */
-
-#include "modulesystem/singletonmodule.h"
-
-typedef SingletonModule<XMLRegistry, XMLRegistryDependencies> XMLRegistryModule;
-
-// Static instance of the XMLRegistryModule
-XMLRegistryModule _theXMLRegistryModule;
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
-{
-  initialiseModule(server);
-  _theXMLRegistryModule.selfRegister();
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+	static boost::shared_ptr<XMLRegistry> _module(new XMLRegistry);
+	registry.registerModule(_module);
+	
+	// Initialise the streams
+	const ApplicationContext& ctx = registry.getApplicationContext();
+	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
+	GlobalErrorStream::instance().setOutputStream(ctx.getOutputStream());
+	
+	// Remember the reference to the ModuleRegistry
+	module::RegistryReference::Instance().setRegistry(registry);
 }

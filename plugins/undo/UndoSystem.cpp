@@ -10,8 +10,11 @@
 #include "iregistry.h"
 #include "ipreferencesystem.h"
 
+#include <iostream>
 #include <map>
 #include <set>
+
+#include "imodule.h"
 
 #include "SnapShot.h"
 #include "Operation.h"
@@ -29,17 +32,36 @@ class RadiantUndoSystem :
 	public RegistryKeyObserver
 {
 public:
-	// Radiant Module stuff
-	typedef UndoSystem Type;
-	STRING_CONSTANT(Name, "*");
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name(MODULE_UNDOSYSTEM);
+		return _name;
+	}
 
-	// Return the static instance
-	UndoSystem* getTable() {
-		return this;
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies;
+
+		if (_dependencies.empty()) {
+			_dependencies.insert(MODULE_XMLREGISTRY);
+			_dependencies.insert(MODULE_PREFERENCESYSTEM);
+		}
+
+		return _dependencies;
+	}
+
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "UndoSystem::initialiseModule called\n";
+		_undoLevels = GlobalRegistry().getInt(RKEY_UNDO_QUEUE_SIZE);
+		
+		// Add self to the key observers to get notified on change
+		GlobalRegistry().addKeyObserver(this, RKEY_UNDO_QUEUE_SIZE);
+		
+		// add the preference settings
+		constructPreferences();
 	}
 
 private:
-	INTEGER_CONSTANT(MAX_UNDO_LEVELS, 1024);
+	static const std::size_t MAX_UNDO_LEVELS = 1024;
 
 	// The undo and redo stacks
 	UndoStack _undoStack;
@@ -57,14 +79,8 @@ public:
 
 	// Constructor
 	RadiantUndoSystem()
-		: _undoLevels(GlobalRegistry().getInt(RKEY_UNDO_QUEUE_SIZE)) 
-	{
-		// Add self to the key observers to get notified on change
-		GlobalRegistry().addKeyObserver(this, RKEY_UNDO_QUEUE_SIZE);
-		
-		// add the preference settings
-		constructPreferences();
-	}
+		: _undoLevels(64) 
+	{}
 
 	~RadiantUndoSystem() {
 		clear();
@@ -89,8 +105,8 @@ public:
 
 	// Sets the size of the undoStack
 	void setLevels(std::size_t levels) {
-		if (static_cast<int>(levels) > MAX_UNDO_LEVELS()) {
-			levels = MAX_UNDO_LEVELS();
+		if (levels > MAX_UNDO_LEVELS) {
+			levels = MAX_UNDO_LEVELS;
 		}
 
 		while (_undoStack.size() > levels) {
@@ -243,27 +259,19 @@ private:
 	}
 
 }; // class RadiantUndoSystem
+typedef boost::shared_ptr<RadiantUndoSystem> RadiantUndoSystemPtr;
 
 } // namespace undo
 
-// The dependencies class
-class RadiantUndoSystemDependencies : 
-	public GlobalRegistryModuleRef,
-	public GlobalPreferenceSystemModuleRef 
-{};
-
-/* Required code to register the module with the ModuleServer.
- */
-
-#include "modulesystem/singletonmodule.h"
-
-typedef SingletonModule<undo::RadiantUndoSystem, RadiantUndoSystemDependencies> RadiantUndoSystemModule;
-
-// Static instance of the RadiantUndoSystemModule
-RadiantUndoSystemModule _theRadiantUndoSystemModule;
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
-{
-  initialiseModule(server);
-  _theRadiantUndoSystemModule.selfRegister();
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+	static undo::RadiantUndoSystemPtr _module(new undo::RadiantUndoSystem);
+	registry.registerModule(_module);
+	
+	// Initialise the streams
+	const ApplicationContext& ctx = registry.getApplicationContext();
+	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
+	GlobalErrorStream::instance().setOutputStream(ctx.getOutputStream());
+	
+	// Remember the reference to the ModuleRegistry
+	module::RegistryReference::Instance().setRegistry(registry);
 }

@@ -90,7 +90,7 @@ void CameraSettings::importDrawMode(const int mode) {
 	}
 
 	// Notify the shadercache that the lighting mode is enabled/disabled
-	ShaderCache_setBumpEnabled(_cameraDrawMode == drawLighting);
+	GlobalShaderCache().setLightingEnabled(_cameraDrawMode == drawLighting);
 }
 
 void CameraSettings::keyChanged() {

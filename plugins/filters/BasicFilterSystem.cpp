@@ -1,6 +1,7 @@
 #include "BasicFilterSystem.h"
 #include "InstanceUpdateWalker.h"
 
+#include "iradiant.h"
 #include "iscenegraph.h"
 #include "iregistry.h"
 #include "ieventmanager.h"
@@ -151,6 +152,29 @@ void BasicFilterSystem::updateInstances() {
 	// all instances
 	InstanceUpdateWalker walker;
 	GlobalSceneGraph().traverse(walker);
+}
+
+// RegisterableModule implementation
+const std::string& BasicFilterSystem::getName() const {
+	static std::string _name(MODULE_FILTERSYSTEM);
+	return _name;
+}
+
+const StringSet& BasicFilterSystem::getDependencies() const {
+	static StringSet _dependencies;
+
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_RADIANT);
+		_dependencies.insert(MODULE_SCENEGRAPH);
+		_dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_EVENTMANAGER);
+	}
+
+	return _dependencies;
+}
+
+void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx) {
+	globalOutputStream() << "BasicFilterSystem::initialiseModule called.\n";
 }
 
 }

@@ -23,17 +23,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_NAMESPACE_H
 
 #include "inode.h"
-#include "generic/constant.h"
+#include "imodule.h"
 #include "generic/callbackfwd.h"
 
 typedef Callback1<const std::string&> NameCallback;
 typedef Callback1<const NameCallback&> NameCallbackCallback;
 
-class INamespace
+const std::string MODULE_NAMESPACE("Namespace");
+
+class INamespace :
+	public RegisterableModule
 {
 public:
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "namespace");
   virtual void attach(const NameCallback& setName, const NameCallbackCallback& attachObserver) = 0;
   virtual void detach(const NameCallback& setName, const NameCallbackCallback& detachObserver) = 0;
   virtual void makeUnique(const char* name, const NameCallback& setName) const = 0;
@@ -56,24 +57,16 @@ public:
 class Namespaced
 {
 public:
-  STRING_CONSTANT(Name, "Namespaced");
-
-  virtual void setNamespace(INamespace& space) = 0;
+	virtual void setNamespace(INamespace& space) = 0;
 };
 typedef boost::shared_ptr<Namespaced> NamespacedPtr;
 
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<INamespace> GlobalNamespaceModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<INamespace> GlobalNamespaceModuleRef;
-
-inline INamespace& GlobalNamespace()
-{
-  return GlobalNamespaceModule::getTable();
+inline INamespace& GlobalNamespace() {
+	boost::shared_ptr<INamespace> _namespace(
+		boost::static_pointer_cast<INamespace>(
+			module::GlobalModuleRegistry().getModule(MODULE_NAMESPACE)
+		)
+	);
+	return *_namespace;
 }
 #endif

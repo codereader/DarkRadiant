@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "debugging/debugging.h"
 #include "version.h"
-#include "environment.h"
 #include "settings/PreferenceSystem.h"
 
 #include "map/FindMapElements.h"
@@ -72,7 +71,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ishaders.h"
 #include "igl.h"
 #include "moduleobserver.h"
-#include "server.h"
 #include "os/dir.h"
 
 #include <ctime>
@@ -122,7 +120,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "plugin.h"
 #include "qgl.h"
 #include "select.h"
-#include "server.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "windowobservers.h"
 #include "renderstate.h"
@@ -137,6 +134,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/splash/Splash.h"
 #include "brush/FaceInstance.h"
 #include "settings/GameManager.h"
+#include "modulesystem/ModuleRegistry.h"
 
 extern FaceInstanceSet g_SelectedFaceInstances;
 
@@ -186,53 +184,13 @@ public:
 
 WorldspawnColourEntityClassObserver g_WorldspawnColourEntityClassObserver;
 
-/*
- * Load XML config files into the XML registry.
- */
-void populateRegistry() {
-	
-	// Load the XML files from the installation directory
-	std::string base = GlobalRegistry().get(RKEY_APP_PATH);
-
-	try {
-		// Load all of the required XML files
-		GlobalRegistry().import(base + "user.xml", "", Registry::treeStandard);
-		//GlobalRegistry().import(base + "upgradepaths.xml", "user", Registry::treeStandard);
-		GlobalRegistry().import(base + "colours.xml", "user/ui", Registry::treeStandard);
-		GlobalRegistry().import(base + "input.xml", "user/ui", Registry::treeStandard);
-		GlobalRegistry().import(base + "menu.xml", "user/ui", Registry::treeStandard);
-		
-		// Load the debug.xml file only if the relevant key is set in user.xml
-		if (GlobalRegistry().get("user/debug") == "1")
-			GlobalRegistry().import(base + "debug.xml", "", Registry::treeStandard);
-	}
-	catch (std::runtime_error e) {
-		gtkutil::fatalErrorDialog("XML registry population failed:\n\n"
-								  + std::string(e.what()),
-								  MainFrame_getWindow());
-	}
-	
-	// Load user preferences, these overwrite any values that have defined before
-	// The called method also checks for any upgrades that have to be performed
-	const std::string userSettingsFile = GlobalRegistry().get(RKEY_SETTINGS_PATH) + "user.xml";
-	if (file_exists(userSettingsFile.c_str())) {
-		GlobalRegistry().import(userSettingsFile, "", Registry::treeUser);
-	}
-	
-	const std::string userColoursFile = GlobalRegistry().get(RKEY_SETTINGS_PATH) + "colours.xml";
-	if (file_exists(userColoursFile.c_str())) {
-		GlobalRegistry().import(userColoursFile, "user/ui", Registry::treeUser);
-	}
-	
-	const std::string userInputFile = GlobalRegistry().get(RKEY_SETTINGS_PATH) + "input.xml";
-	if (file_exists(userInputFile.c_str())) {
-		GlobalRegistry().import(userInputFile, "user/ui", Registry::treeUser);
-	}
-}
-
 // This is called from main() to start up the Radiant stuff.
 void Radiant_Initialise() 
 {
+	// greebo: Set gtkutil's GLWidget callbacks (TODO, this must be solved in another way).
+	GLWidget_sharedContextCreated = GlobalGL_sharedContextCreated;
+	GLWidget_sharedContextDestroyed = GlobalGL_sharedContextDestroyed;
+	
 	// Create the empty Settings node and set the title to empty.
 	ui::PrefDialog::Instance().createOrFindPage("Game");
 	ui::PrefDialog::Instance().createOrFindPage("Interface");
@@ -244,10 +202,7 @@ void Radiant_Initialise()
 	// Load the ColourSchemes from the registry
 	ColourSchemes().loadColourSchemes();
 	
-	ui::Splash::Instance().setProgressAndText("Loading Modules", 0.7f);
-
-	// Load the other modules
-	Radiant_Construct(GlobalModuleServer_get());
+	ui::Splash::Instance().setProgressAndText("Constructing Menu", 0.7f);
 	
 	// Construct the MRU commands and menu structure
 	GlobalMRU().constructMenu();
@@ -258,13 +213,9 @@ void Radiant_Initialise()
 
 void Radiant_Shutdown() {
 	
-	// Broadcast the shutdown command to all the plugins 
-	// to let them save their stuff into the Registry
-	Radiant_shutDownPlugins();
-	
 	// Remove the paths, but extract the settings path beforehand
 	std::string settingsPath = GlobalRegistry().get(RKEY_SETTINGS_PATH);
-	Environment::Instance().deletePathsFromRegistry();
+	module::ModuleRegistry::Instance().deletePathsFromRegistry();
 	
 	GlobalMRU().saveRecentFiles();
 	
@@ -295,8 +246,6 @@ void Radiant_Shutdown() {
 		// Save the remaining /darkradiant/user tree to user.xml so that the current settings are preserved
 		GlobalRegistry().exportToFile("user", settingsPath + "user.xml");
 	}
-
-	Radiant_Destroy();
 }
 
 void Exit() {
@@ -1159,6 +1108,8 @@ MainFrame::MainFrame() : m_window(0), m_idleRedrawStatusText(RedrawStatusTextCal
   }
 
   Create();
+  
+  GlobalRadiant().broadcastStartupEvent();
 }
 
 MainFrame::~MainFrame()
@@ -1588,6 +1539,8 @@ void MainFrame::SaveWindowInfo() {
 
 void MainFrame::Shutdown()
 {
+	GlobalRadiant().broadcastShutdownEvent();
+	
 	// Shutdown the texturebrowser (before the GroupDialog gets shut down).
 	GlobalTextureBrowser().destroyWindow();
 	
@@ -1681,7 +1634,7 @@ void GlobalGL_sharedContextCreated()
 
   QGL_sharedContextCreated(GlobalOpenGL());
 
-  ShaderCache_extensionsInitialised();
+  GlobalShaderCache().extensionsInitialised();
 
   GlobalShaderCache().realise();
 
@@ -1873,8 +1826,9 @@ void MainFrame_Construct()
 
   Layout_registerPreferencesPage();
 
+  /*
   GLWidget_sharedContextCreated = GlobalGL_sharedContextCreated;
-  GLWidget_sharedContextDestroyed = GlobalGL_sharedContextDestroyed;
+  GLWidget_sharedContextDestroyed = GlobalGL_sharedContextDestroyed;*/
 
   GlobalEntityClassManager().attach(g_WorldspawnColourEntityClassObserver);
 }

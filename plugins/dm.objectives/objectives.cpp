@@ -1,13 +1,15 @@
 #include "ObjectivesEditor.h"
 
-#include "iplugin.h"
+#include "imodule.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
 #include "iradiant.h"
 #include "iscenegraph.h"
 #include "ieclass.h"
 #include "ientity.h"
+#include "itextstream.h"
 
+#include "stream/textstream.h"
 #include "generic/callback.h"
 
 #include <iostream>
@@ -15,18 +17,33 @@
 /**
  * API module to register the menu commands for the ObjectivesEditor class.
  */
-class ObjectivesEditorAPI
-: public IPlugin
+class ObjectivesEditorModule : 
+	public RegisterableModule
 {
 public:
-	STRING_CONSTANT(Name, "ObjectivesEditor");
-	typedef IPlugin Type;
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name("ObjectivesEditor");
+		return _name;
+	}
+	
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies;
 
-	/**
-	 * API constructor, registers the commands in the Event manager and UI
-	 * manager.
-	 */
-	ObjectivesEditorAPI() {
+		if (_dependencies.empty()) {
+		  	_dependencies.insert(MODULE_ECLASSMANAGER);
+			_dependencies.insert(MODULE_ENTITYCREATOR);
+			_dependencies.insert(MODULE_SCENEGRAPH);
+			_dependencies.insert(MODULE_EVENTMANAGER);
+			_dependencies.insert(MODULE_RADIANT);
+			_dependencies.insert(MODULE_UIMANAGER);
+		}
+
+		return _dependencies;
+	}
+	
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "ObjectivesEditorModule::initialiseModule called.\n";
 		
 		// Add the callback event
 		GlobalEventManager().addCommand(
@@ -43,49 +60,18 @@ public:
 				"objectives16.png",
 				"ObjectivesEditor");
 	}
-	
-	/**
-	 * This has to be implemented so that the ModulesMap can find and deliver 
-	 * this module on request.
-	 */
-	IPlugin* getTable() {
-		return this;
-	}	
 };
+typedef boost::shared_ptr<ObjectivesEditorModule> ObjectivesEditorModulePtr;
 
-/**
- * Dependencies class.
- */
-struct ObjectivesEditorDependencies
-: public GlobalEntityClassManagerModuleRef,
-  public GlobalEntityModuleRef,
-  public GlobalSceneGraphModuleRef,
-  public GlobalEventManagerModuleRef,
-  public GlobalRadiantModuleRef,
-  public GlobalUIManagerModuleRef
-{ 
-	// Constructor. We must specify a game type for the eclassmanager and
-	// entity creator, since these do not match "*" lookups
-	ObjectivesEditorDependencies()
-	: GlobalEntityClassManagerModuleRef("doom3"),
-	  GlobalEntityModuleRef("doom3")
-	{ }
-};
-
-/* Required code to register the module with the ModuleServer.
- */
-
-#include "modulesystem/singletonmodule.h"
-
-typedef SingletonModule<ObjectivesEditorAPI,
-						ObjectivesEditorDependencies> ObjectivesEditorModule;
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
-{
-	// Static module instance
-	static ObjectivesEditorModule _instance;
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+	static ObjectivesEditorModulePtr _module(new ObjectivesEditorModule);
+	registry.registerModule(_module);
 	
-	// Initialise and register the module	
-	initialiseModule(server);
-	_instance.selfRegister();
+	// Initialise the streams
+	const ApplicationContext& ctx = registry.getApplicationContext();
+	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
+	GlobalErrorStream::instance().setOutputStream(ctx.getOutputStream());
+	
+	// Remember the reference to the ModuleRegistry
+	module::RegistryReference::Instance().setRegistry(registry);
 }

@@ -38,7 +38,4 @@ void Scene_PatchCapTexture_Selected(scene::Graph& graph);
 
 void PatchFilters_construct();
 
-class PatchCreator;
-extern PatchCreator* g_patchCreator;
-
 #endif

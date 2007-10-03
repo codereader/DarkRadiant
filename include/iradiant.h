@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef IRADIANT_H_
 #define IRADIANT_H_
 
-#include "generic/constant.h"
+#include "imodule.h"
 #include "math/Vector3.h"
 #include "math/Plane3.h"
 
@@ -74,17 +74,39 @@ enum CounterType {
 	counterEntities
 };
 
+/** greebo: An EventListener gets notified by the Radiant module
+ *          on global events like shutdown, startup and such.
+ * 
+ *          EventListener classes must register themselves using
+ *          the GlobalRadiant().addEventListener() method in order
+ *          to get notified about the events.
+ * 
+ * Note: Default implementations are empty, deriving classes are
+ *       supposed to pick the events they want to listen to.
+ */
+class RadiantEventListener {
+public:
+	/** This gets called AFTER the MainFrame window has been constructed.
+	 */
+	virtual void onRadiantStartup() {}
+	
+	/** Gets called when BEFORE the MainFrame window is destroyed.
+	 */
+	virtual void onRadiantShutdown() {}
+};
+typedef boost::shared_ptr<RadiantEventListener> RadiantEventListenerPtr;
+
 class ICounter;
+
+const std::string MODULE_RADIANT("Radiant");
 
 /** greebo: This abstract class defines the interface to the core application.
  * 			Use this to access methods from the main codebase in radiant/
  */
-class IRadiant
+class IRadiant :
+	public RegisterableModule
 {
 public:
-	INTEGER_CONSTANT(Version, 1);
-	STRING_CONSTANT(Name, "radiant");
-
 	/** Return the main application GtkWindow.
 	 */
 	virtual GtkWindow* getMainWindow() = 0;
@@ -107,21 +129,23 @@ public:
 	virtual Vector3 getColour(const std::string& colourName) = 0;
   
 	virtual void updateAllWindows() = 0;
+	
+	// Registers/de-registers an event listener class
+	virtual void addEventListener(RadiantEventListenerPtr listener) = 0;
+	virtual void removeEventListener(RadiantEventListenerPtr listener) = 0;
+	
+	// Broadcasts the startup/shutdown event to all registered listeners.
+	virtual void broadcastStartupEvent() = 0;
+	virtual void broadcastShutdownEvent() = 0;
 };
 
-// RadiantCoreAPI Module Definitions
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<IRadiant> GlobalRadiantModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<IRadiant> GlobalRadiantModuleRef;
-
 inline IRadiant& GlobalRadiant() {
-  return GlobalRadiantModule::getTable();
+	boost::shared_ptr<IRadiant> _radiant(
+		boost::static_pointer_cast<IRadiant>(
+			module::GlobalModuleRegistry().getModule(MODULE_RADIANT)
+		)
+	);
+	return *_radiant;
 }
 
 #endif

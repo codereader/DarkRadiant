@@ -52,7 +52,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "iradiant.h"
 #include "idatastream.h"
 #include "iarchive.h"
-ArchiveModules& FileSystemQ3API_getArchiveModules();
 #include "ifilesystem.h"
 
 #include "generic/callback.h"
@@ -60,6 +59,8 @@ ArchiveModules& FileSystemQ3API_getArchiveModules();
 #include "stream/stringstream.h"
 #include "os/path.h"
 #include "moduleobservers.h"
+
+#include <boost/algorithm/string/case_conv.hpp>
 
 #define VFS_MAXDIRS 8
 
@@ -87,8 +88,6 @@ static archives_t g_archives;
 static char    g_strDirs[VFS_MAXDIRS][PATH_MAX+1];
 static int     g_numDirs;
 static bool    g_bUsePak = true;
-
-ModuleObservers g_observers;
 
 // =============================================================================
 // Static functions
@@ -121,27 +120,20 @@ static void FixDOSName (char *src)
   }
 }
 
-
-
-const _QERArchiveTable* GetArchiveTable(ArchiveModules& archiveModules, const char* ext)
+static void InitPakFile (_QERArchiveTable& archiveModule, const char *filename)
 {
-  StringOutputStream tmp(16);
-  tmp << LowerCase(ext);
-  return archiveModules.findModule(tmp.c_str());
-}
-static void InitPakFile (ArchiveModules& archiveModules, const char *filename)
-{
-  const _QERArchiveTable* table = GetArchiveTable(archiveModules, path_get_extension(filename));
-
-  if(table != 0)
-  {
-    archive_entry_t entry;
-    entry.name = filename;
-    entry.archive = table->m_pfnOpenArchive(filename);
-    entry.is_pakfile = true;
-    g_archives.push_back(entry);
-    globalOutputStream() << "  pak file: " << filename << "\n";
-  }
+	std::string fileExt(path_get_extension(filename));
+	boost::to_upper(fileExt);
+	
+	// matching extension?
+	if (fileExt == archiveModule.getExtension()) {
+		archive_entry_t entry;
+		entry.name = filename;
+		entry.archive = archiveModule.m_pfnOpenArchive(filename);
+		entry.is_pakfile = true;
+		g_archives.push_back(entry);
+		globalOutputStream() << "  pak file: " << filename << "\n";
+	}
 }
 
 inline int ascii_to_upper(int c)
@@ -203,7 +195,7 @@ typedef std::set<std::string, PakLess> Archives;
 // Global functions
 
 // reads all pak files from a dir
-void InitDirectory(const char* directory, ArchiveModules& archiveModules)
+void InitDirectory(const char* directory, _QERArchiveTable& archiveModule)
 {
   if (g_numDirs == (VFS_MAXDIRS-1))
     return;
@@ -250,7 +242,7 @@ void InitDirectory(const char* directory, ArchiveModules& archiveModules)
           break;
 
         const char *ext = strrchr (name, '.');
-        if ((ext == 0) || *(++ext) == '\0' || GetArchiveTable(archiveModules, ext) == 0)
+        if ((ext == 0) || *(++ext) == '\0' /*|| GetArchiveTable(archiveModule, ext) == 0*/)
           continue;
 
         // using the same kludge as in engine to ensure consistency
@@ -275,14 +267,14 @@ void InitDirectory(const char* directory, ArchiveModules& archiveModules)
         char filename[PATH_MAX];
         strcpy(filename, path);
         strcat(filename, (*i).c_str());
-        InitPakFile(archiveModules, filename);
+        InitPakFile(archiveModule, filename);
 			}
       for(Archives::iterator i = archives.begin(); i != archives.end(); ++i)
 			{
         char filename[PATH_MAX];
         strcpy(filename, path);
         strcat(filename, (*i).c_str());
-        InitPakFile(archiveModules, filename);
+        InitPakFile(archiveModule, filename);
 			}
     }
     else
@@ -420,50 +412,50 @@ const char* FindPath(const char* absolute)
   return "";
 }
 
+Quake3FileSystem::Quake3FileSystem() :
+	_moduleObservers(getName())
+{}
 
-class Quake3FileSystem : public VirtualFileSystem
-{
-public:
-  void initDirectory(const std::string& path)
-  {
-    InitDirectory(path.c_str(), FileSystemQ3API_getArchiveModules());
-  }
-  void initialise()
-  {
+void Quake3FileSystem::initDirectory(const std::string& path) {
+    InitDirectory(path.c_str(), GlobalArchive("PK4"));
+}
+
+void Quake3FileSystem::initialise() {
     globalOutputStream() << "filesystem initialised\n";
-    g_observers.realise();
-  }
-  void shutdown()
+    _moduleObservers.realise();
+}
+
+void Quake3FileSystem::shutdown()
   {
-    g_observers.unrealise();
+	_moduleObservers.unrealise();
     globalOutputStream() << "filesystem shutdown\n";
     Shutdown();
   }
 
-  int getFileCount(const char *filename, int flags)
+  int Quake3FileSystem::getFileCount(const char *filename, int flags)
   {
     return GetFileCount(filename, flags);
   }
-  ArchiveFile* openFile(const char* filename)
+  ArchiveFile* Quake3FileSystem::openFile(const char* filename)
   {
     return OpenFile(filename);
   }
-  ArchiveTextFile* openTextFile(const std::string& filename)
+  ArchiveTextFile* Quake3FileSystem::openTextFile(const std::string& filename)
   {
     return OpenTextFile(filename);
   }
-  std::size_t loadFile(const char *filename, void **buffer)
+  std::size_t Quake3FileSystem::loadFile(const char *filename, void **buffer)
   {
     return LoadFile(filename, buffer, 0);
   }
-  void freeFile(void *p)
+  void Quake3FileSystem::freeFile(void *p)
   {
     FreeFile(p);
   }
 
     // Call the specified callback function for each file matching extension
     // inside basedir.
-    void forEachFile(const char* basedir, 
+    void Quake3FileSystem::forEachFile(const char* basedir, 
     				 const char* extension, 
     				 const FileNameCallback& callback, 
     				 std::size_t depth)
@@ -484,29 +476,44 @@ public:
 	    }
     }
 
-  const char* findFile(const char *name)
-  {
-    return FindFile(name);
-  }
-  const char* findRoot(const char *name)
-  {
-    return FindPath(name);
-  }
+const char* Quake3FileSystem::findFile(const char *name) {
+	return FindFile(name);
+}
 
-  void attach(ModuleObserver& observer)
-  {
-    g_observers.attach(observer);
-  }
-  void detach(ModuleObserver& observer)
-  {
-    g_observers.detach(observer);
-  }
+const char* Quake3FileSystem::findRoot(const char *name) {
+	return FindPath(name);
+}
 
-};
+void Quake3FileSystem::attach(ModuleObserver& observer) {
+	_moduleObservers.attach(observer);
+}
 
-Quake3FileSystem g_Quake3FileSystem;
+void Quake3FileSystem::detach(ModuleObserver& observer) {
+	_moduleObservers.detach(observer);
+}
+  
+// RegisterableModule implementation
+const std::string& Quake3FileSystem::getName() const {
+	static std::string _name(MODULE_VIRTUALFILESYSTEM);
+	return _name;
+}
 
-VirtualFileSystem& GetFileSystem()
-{
-  return g_Quake3FileSystem;
+const StringSet& Quake3FileSystem::getDependencies() const {
+	static StringSet _dependencies;
+
+	if (_dependencies.empty()) {
+		_dependencies.insert("ArchivePK4");
+	}
+
+	return _dependencies;
+}
+
+void Quake3FileSystem::initialiseModule(const ApplicationContext& ctx) {
+	globalOutputStream() << "VFS::initialiseModule called\n";
+}
+
+// Contains the static instance of the Q3FileSystem
+Quake3FileSystemPtr GetFileSystem() {
+	static Quake3FileSystemPtr _fileSystem(new Quake3FileSystem);
+	return _fileSystem;
 }

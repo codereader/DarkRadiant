@@ -6,23 +6,20 @@
 #include "ieventmanager.h"
 #include "iregistry.h"
 #include "iradiant.h"
+#include "stream/textstream.h"
 
 namespace ui {
 
-/* Constructor: Load the definitions from the XMLRegistry
+/* Load the definitions from the XMLRegistry
  */
-ToolbarManager::ToolbarManager() {
-	globalOutputStream() << "ToolbarManager: Loading toolbar information from registry.\n";
-	
+void ToolbarManager::initialise() {
 	try {
 		// Query the registry
 		loadToolbars();
 	}
 	catch (std::runtime_error e) {
-		globalOutputStream() << "ToolbarManager: Warning: " << e.what() << "\n";
+		std::cout << "ToolbarManager: Warning: " << e.what() << "\n";
 	}
-	
-	globalOutputStream() << "ToolbarManager: Finished loading toolbar information.\n";
 }
 
 /*	Returns the toolbar that is named toolbarName
