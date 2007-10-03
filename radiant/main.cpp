@@ -40,7 +40,6 @@ StringOutputStream - similar to std::stringstream \n
 \link os/file.h os/file.h \endlink - OS file-system access. \n
 
 Array - automatic array memory management \n
-HashTable - generic hashtable, similar to std::hash_map \n
 
 \link math/matrix.h math/matrix.h \endlink - Matrices \n
 \link math/quaternion.h math/quaternion.h \endlink - Quaternions \n
