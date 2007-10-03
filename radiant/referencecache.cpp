@@ -66,10 +66,10 @@ void MapChanged()
 	GlobalMap().setModified(!References_Saved());
 }
 
-bool MapResource_loadFile(const MapFormat& format, scene::INodePtr root, const char* filename)
+bool MapResource_loadFile(const MapFormat& format, scene::INodePtr root, const std::string& filename)
 {
-  globalOutputStream() << "Open file " << filename << " for read...";
-  TextFileInputStream file(filename);
+  globalOutputStream() << "Open file " << filename.c_str() << " for read...";
+  TextFileInputStream file(filename.c_str());
   if(!file.failed())
   {
     globalOutputStream() << "success\n";
@@ -83,16 +83,15 @@ bool MapResource_loadFile(const MapFormat& format, scene::INodePtr root, const c
   }
 }
 
-scene::INodePtr MapResource_load(const MapFormat& format, const char* path, const char* name)
+scene::INodePtr MapResource_load(const MapFormat& format, const std::string& path, const std::string& name)
 {
   scene::INodePtr root(NewMapRoot(name));
 
-  StringOutputStream fullpath(256);
-  fullpath << path << name;
-
+  	std::string fullpath = path + name;
+  	
   if(path_is_absolute(fullpath.c_str()))
   {
-    MapResource_loadFile(format, root, fullpath.c_str());
+    MapResource_loadFile(format, root, fullpath);
   }
   else
   {
@@ -241,22 +240,22 @@ ModelLoader* ModelLoader_forType(const char* type)
   return 0;
 }
 
-scene::INodePtr ModelResource_load(ModelLoader* loader, const char* name)
+scene::INodePtr ModelResource_load(ModelLoader* loader, const std::string& name)
 {
   scene::INodePtr model(g_nullModel);
 
   {
-    ArchiveFile* file = GlobalFileSystem().openFile(name);
+    ArchiveFile* file = GlobalFileSystem().openFile(name.c_str());
 
     if(file != 0)
     {
-      globalOutputStream() << "Loaded Model: \"" << name << "\"\n";
+      globalOutputStream() << "Loaded Model: \"" << name.c_str() << "\"\n";
       model = loader->loadModel(*file);
       file->release();
     }
     else
     {
-      globalErrorStream() << "Model load failed: \"" << name << "\"\n";
+      globalErrorStream() << "Model load failed: \"" << name.c_str() << "\"\n";
     }
   }
 
@@ -266,7 +265,7 @@ scene::INodePtr ModelResource_load(ModelLoader* loader, const char* name)
 }
 
 
-inline hash_t path_hash(const char* path, hash_t previous = 0)
+/*inline hash_t path_hash(const char* path, hash_t previous = 0)
 {
 #if defined(WIN32)
   return string_hash_nocase(path, previous);
@@ -290,9 +289,87 @@ struct PathHash
   {
     return path_hash(path.c_str());
   }
+};*/
+
+class ModelCache
+{
+	// The left-hand value of the ModelCache map
+	typedef std::pair<std::string, std::string> ModelKey;
+	
+	// The ModelNodeCache maps path/name string-pairs to scene::Nodes
+	typedef std::map<ModelKey, scene::INodePtr> ModelNodeCache;
+	ModelNodeCache _cache;
+	
+	// True, if lookups in the modelcache should succeed
+	// When this is set to FALSE, the lookups return the end() iterator
+	bool _enabled;
+	
+public:
+	ModelCache() :
+		_enabled(true)
+	{}
+	
+	// Define the public iterator (FIXME: is this necessary?)
+	typedef ModelNodeCache::iterator iterator;
+	
+	iterator find(const std::string& path, const std::string& name) {
+		if (_enabled) {
+			return _cache.find(ModelKey(path, name));
+		}
+
+		// Not enabled, return the end() iterator in this case
+		return _cache.end();
+	}
+	
+	iterator insert(const std::string& path, const std::string& name, 
+		scene::INodePtr node)
+	{
+		if (_enabled) {
+			// Insert into map and save the iterator
+			std::pair<ModelNodeCache::iterator, bool> i = _cache.insert(
+				ModelNodeCache::value_type(ModelKey(path, name), node)
+			);
+			// Return the iterator to the inserted element
+			return i.first; 
+		}
+		
+		// Not enabled, return a Nullmodel entry iterator
+		std::pair<ModelNodeCache::iterator, bool> i = _cache.insert(
+			ModelNodeCache::value_type(ModelKey("", ""), g_nullModel)
+		);
+		return i.first;
+	}
+	
+	void flush(const std::string& path, const std::string& name) {
+		ModelNodeCache::iterator i = _cache.find(ModelKey(path, name));
+		
+		if (i != _cache.end()) {
+			_cache.erase(i);
+		}
+	}
+	
+	void clear() {
+		_enabled = false;
+		_cache.clear();
+		_enabled = true;
+	}
+	
+	bool enabled() const {
+		return _enabled;
+	}
+	
+	iterator begin() {
+		return _cache.begin();
+	}
+	
+	iterator end() {
+		return _cache.end();
+	}
 };
 
-typedef std::pair<std::string, std::string> ModelKey;
+ModelCache g_modelCache;
+
+/*typedef std::pair<std::string, std::string> ModelKey;
 
 struct ModelKeyEqual
 {
@@ -348,9 +425,9 @@ void ModelCache_clear()
   g_modelCache_enabled = false;
   g_modelCache.clear();
   g_modelCache_enabled = true;
-}
+}*/
 
-scene::INodePtr Model_load(ModelLoader* loader, const char* path, const char* name, const char* type)
+scene::INodePtr Model_load(ModelLoader* loader, const std::string& path, const std::string& name, const std::string& type)
 {
 	// Model types should have a loader, so use this to load. Map types do not
 	// have a loader		  
@@ -387,9 +464,9 @@ scene::INodePtr Model_load(ModelLoader* loader, const char* path, const char* na
 	    }
 	    else
 	    {
-	      if(string_not_empty(type))
+	      if (!type.empty())
 	      {
-	        globalErrorStream() << "Model type not supported: \"" << name << "\"\n";
+	        globalErrorStream() << "Model type not supported: \"" << name.c_str() << "\"\n";
 	      }
 	      return g_nullModel;
 	    }
@@ -472,20 +549,21 @@ struct ModelResource
 
   void loadCached()
   {
-    if(g_modelCache_enabled)
+    if(g_modelCache.enabled())
     {
       // cache lookup
-      ModelCache::iterator i = ModelCache_find(m_path.c_str(), m_name.c_str());
-      if(i == g_modelCache.end())
+      ModelCache::iterator i = g_modelCache.find(m_path, m_name);
+      
+      if (i == g_modelCache.end())
       {
-        i = ModelCache_insert(
-          m_path.c_str(),
-          m_name.c_str(),
-          Model_load(m_loader, m_path.c_str(), m_name.c_str(), _type.c_str())
-        );
+    	  // Model was not found yet
+    	  scene::INodePtr loaded = Model_load(m_loader, m_path, m_name, _type);
+    	  
+    	  // Update the iterator, it holds the newly loaded model entry now
+    	  i = g_modelCache.insert(m_path, m_name, loaded);
       }
 
-      setModel(i->value);
+      setModel(i->second);
     }
     else
     {
@@ -538,7 +616,7 @@ struct ModelResource
   {
     if(realised())
     {
-      ModelCache_flush(m_path.c_str(), m_name.c_str());
+      g_modelCache.flush(m_path, m_name);
     }
   }
   scene::INodePtr getNode()
@@ -551,10 +629,10 @@ struct ModelResource
   }
   void setNode(scene::INodePtr node)
   {
-    ModelCache::iterator i = ModelCache_find(m_path.c_str(), m_name.c_str());
+    ModelCache::iterator i = g_modelCache.find(m_path, m_name);
     if(i != g_modelCache.end())
     {
-      i->value = node;
+      i->second = node;
     }
     setModel(node);
 
@@ -792,7 +870,7 @@ public:
 				res->unrealise();
 		}
 
-      ModelCache_clear();
+      g_modelCache.clear();
     }
   }
   void refresh()
@@ -875,7 +953,7 @@ void RefreshReferences()
 
 void FlushReferences()
 {
-  ModelCache_clear();
+  g_modelCache.clear();
 
   g_referenceCache.clear();
 }
