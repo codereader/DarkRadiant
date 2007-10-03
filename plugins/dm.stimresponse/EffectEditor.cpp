@@ -33,7 +33,7 @@ EffectEditor::EffectEditor(GtkWindow* parent,
 						   const unsigned int effectIndex,
 						   StimTypes& stimTypes,
 						   ui::ResponseEditor& editor) :
-	DialogWindow(WINDOW_TITLE, parent),
+	gtkutil::BlockingTransientWindow(WINDOW_TITLE, parent),
 	_argTable(NULL),
 	_tooltips(NULL),
 	_entityStore(gtk_list_store_new(1, G_TYPE_STRING)),
