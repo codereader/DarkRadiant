@@ -1,7 +1,7 @@
 #ifndef EFFECTEDITOR_H_
 #define EFFECTEDITOR_H_
 
-#include "gtkutil/DialogWindow.h"
+#include "gtkutil/window/BlockingTransientWindow.h"
 
 #include "StimResponse.h"
 #include "ResponseEffectTypes.h"
@@ -20,7 +20,7 @@ namespace ui {
 class ResponseEditor;
 
 class EffectEditor :
-	public gtkutil::DialogWindow
+	public gtkutil::BlockingTransientWindow
 {
 	// The overall vbox
 	GtkWidget* _dialogVBox;
