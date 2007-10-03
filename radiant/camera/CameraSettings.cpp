@@ -46,7 +46,7 @@ void CameraSettings::constructPreferencePage() {
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Camera");
 	
 	// Add the sliders for the movement and angle speed and connect them to the observer   
-    page->appendSlider("Movement Speed (game units)", RKEY_MOVEMENT_SPEED, TRUE, 100, 1, 300, 1, 1, 1);
+    page->appendSlider("Movement Speed (game units)", RKEY_MOVEMENT_SPEED, TRUE, 100, 1, MAX_CAMERA_SPEED, 1, 1, 1);
     page->appendSlider("Rotation Speed", RKEY_ROTATION_SPEED, TRUE, 3, 1, 180, 1, 10, 10);
     
 	// Add the checkboxes and connect them with the registry key and the according observer 

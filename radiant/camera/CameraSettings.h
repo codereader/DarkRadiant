@@ -10,6 +10,7 @@
 
 namespace {
 	const int MAX_CUBIC_SCALE = 23;
+	const int MAX_CAMERA_SPEED = 300;
 	
 	const std::string RKEY_CAMERA_ROOT = "user/ui/camera"; 
 	const std::string RKEY_MOVEMENT_SPEED = RKEY_CAMERA_ROOT + "/movementSpeed";

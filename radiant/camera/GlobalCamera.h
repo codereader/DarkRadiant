@@ -100,6 +100,10 @@ public:
 	void lookThroughSelected();
 	void lookThroughCamera();
 	
+	// angua: increases and decreases the movement speed of the camera
+	void increaseCameraSpeed();
+	void decreaseCameraSpeed();
+	
 	// greebo: This measures the rendering time for a full 360 degrees turn of the camera
 	// Note: unused at the moment
 	void benchmark();

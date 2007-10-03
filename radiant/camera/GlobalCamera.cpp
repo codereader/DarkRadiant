@@ -37,6 +37,10 @@ void GlobalCameraManager::construct() {
 	GlobalEventManager().addCommand("LookThroughSelected", MemberCaller<GlobalCameraManager, &GlobalCameraManager::lookThroughSelected>(*this));
 	GlobalEventManager().addCommand("LookThroughCamera", MemberCaller<GlobalCameraManager, &GlobalCameraManager::lookThroughCamera>(*this));
 
+	// angua: increases and decreases the movement speed of the camera
+	GlobalEventManager().addCommand("CamIncreaseMoveSpeed", MemberCaller<GlobalCameraManager, &GlobalCameraManager::increaseCameraSpeed>(*this));
+	GlobalEventManager().addCommand("CamDecreaseMoveSpeed", MemberCaller<GlobalCameraManager, &GlobalCameraManager::decreaseCameraSpeed>(*this));
+	
 	GlobalEventManager().addCommand("TogglePreview", MemberCaller<GlobalCameraManager, &GlobalCameraManager::toggleLightingMode>(*this));
 	
 	// Insert movement commands
@@ -175,6 +179,30 @@ void GlobalCameraManager::lookThroughSelected() {
 			_cameraModel->setCameraView(_camWnd->getCameraView(), MemberCaller<GlobalCameraManager, &GlobalCameraManager::lookThroughCamera>(*this));
 		}
 	}
+}
+
+void GlobalCameraManager::increaseCameraSpeed() {
+
+	int movementSpeed = GlobalRegistry().getInt(RKEY_MOVEMENT_SPEED);
+	movementSpeed *= 2;
+	
+	if (movementSpeed > MAX_CAMERA_SPEED){
+		movementSpeed = MAX_CAMERA_SPEED;
+	}
+	
+	GlobalRegistry().setInt(RKEY_MOVEMENT_SPEED, movementSpeed);
+}
+
+void GlobalCameraManager::decreaseCameraSpeed() {
+
+	int movementSpeed = GlobalRegistry().getInt(RKEY_MOVEMENT_SPEED);
+	movementSpeed /= 2;
+	
+	if (movementSpeed < 1){
+		movementSpeed = 1;
+	}
+	
+	GlobalRegistry().setInt(RKEY_MOVEMENT_SPEED, movementSpeed);
 }
 
 void GlobalCameraManager::benchmark() {
