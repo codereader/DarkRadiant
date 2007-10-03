@@ -21,8 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "image.h"
 
-#include "ifilesystem.h"
-#include "iimage.h"
+#include "imodule.h"
+#include "stream/textstream.h"
 
 #include "jpeg.h"
 #include "tga.h"
@@ -31,168 +31,33 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "dds.h"
 #include "ImageGDK.h"
 
-#include "modulesystem/singletonmodule.h"
+typedef boost::shared_ptr<TGALoader> TGALoaderPtr;
+typedef boost::shared_ptr<JPGLoader> JPGLoaderPtr;
+typedef boost::shared_ptr<PCXLoader> PCXLoaderPtr;
+typedef boost::shared_ptr<BMPLoader> BMPLoaderPtr;
+typedef boost::shared_ptr<DDSLoader> DDSLoaderPtr;
+typedef boost::shared_ptr<GDKLoader> GDKLoaderPtr;
 
-class ImageDependencies : public GlobalFileSystemModuleRef
-{
-};
-
-class ImageTGAAPI
-{
-  _QERPlugImageTable m_imagetga;
-public:
-  typedef _QERPlugImageTable Type;
-  STRING_CONSTANT(Name, "tga");
-
-  ImageTGAAPI()
-  {
-    m_imagetga.loadImage = LoadTGA;
-    m_imagetga.prefix = "";
-  }
-  _QERPlugImageTable* getTable()
-  {
-    return &m_imagetga;
-  }
-};
-
-typedef SingletonModule<ImageTGAAPI> ImageTGAModule;
-
-ImageTGAModule g_ImageTGAModule;
-
-class ImageJPGAPI
-{
-  _QERPlugImageTable m_imagejpg;
-public:
-  typedef _QERPlugImageTable Type;
-  STRING_CONSTANT(Name, "jpg");
-
-  ImageJPGAPI()
-  {
-    m_imagejpg.loadImage = LoadJPG;
-  }
-  _QERPlugImageTable* getTable()
-  {
-    return &m_imagejpg;
-  }
-};
-
-typedef SingletonModule<ImageJPGAPI, ImageDependencies> ImageJPGModule;
-
-ImageJPGModule g_ImageJPGModule;
-
-
-class ImageBMPAPI
-{
-  _QERPlugImageTable m_imagebmp;
-public:
-  typedef _QERPlugImageTable Type;
-  STRING_CONSTANT(Name, "bmp");
-
-  ImageBMPAPI()
-  {
-    m_imagebmp.loadImage = LoadBMP;
-  }
-  _QERPlugImageTable* getTable()
-  {
-    return &m_imagebmp;
-  }
-};
-
-typedef SingletonModule<ImageBMPAPI, ImageDependencies> ImageBMPModule;
-
-ImageBMPModule g_ImageBMPModule;
-
-
-class ImagePCXAPI
-{
-  _QERPlugImageTable m_imagepcx;
-public:
-  typedef _QERPlugImageTable Type;
-  STRING_CONSTANT(Name, "pcx");
-
-  ImagePCXAPI()
-  {
-    m_imagepcx.loadImage = LoadPCX32;
-  }
-  _QERPlugImageTable* getTable()
-  {
-    return &m_imagepcx;
-  }
-};
-
-typedef SingletonModule<ImagePCXAPI, ImageDependencies> ImagePCXModule;
-
-ImagePCXModule g_ImagePCXModule;
-
-
-class ImageDDSAPI
-{
-  _QERPlugImageTable m_imagedds;
-public:
-  typedef _QERPlugImageTable Type;
-  STRING_CONSTANT(Name, "dds");
-
-  ImageDDSAPI()
-  {
-    m_imagedds.loadImage = LoadDDS;
-    m_imagedds.prefix = "dds/";
-  }
-  _QERPlugImageTable* getTable()
-  {
-    return &m_imagedds;
-  }
-};
-
-typedef SingletonModule<ImageDDSAPI, ImageDependencies> ImageDDSModule;
-
-ImageDDSModule g_ImageDDSModule;
-
-
-/* greebo: A loader that makes use of GdkPixBuf* to load the images from the disk
- */
-class ImageGDKAPI
-{
-	_QERPlugImageTable _imageGDK;
-public:
-	typedef _QERPlugImageTable Type;
-	STRING_CONSTANT(Name, "GDK");
-
-	ImageGDKAPI() {
-		_imageGDK.loadImage = LoadImageGDK;
-		_imageGDK.prefix = "";
-	}
-	_QERPlugImageTable* getTable() {
-		return &_imageGDK;
-	}
-};
-
-typedef SingletonModule<ImageGDKAPI> ImageGDKModule;
-
-// A global instance of the GDK module
-ImageGDKModule g_ImageGDKModule;
-
-// Create a global instance for each of the imageloader modules
-TGALoaderModule _tgaLoader;
-JPGLoaderModule _jpgLoader;
-DDSLoaderModule _ddsLoader;
-BMPLoaderModule _bmpLoader;
-PCXLoaderModule _pcxLoader;
-GDKLoaderModule _gdkLoader;
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
-{
-  initialiseModule(server);
-
-  g_ImageTGAModule.selfRegister();
-  g_ImageJPGModule.selfRegister();
-  g_ImageBMPModule.selfRegister();
-  g_ImagePCXModule.selfRegister();
-  g_ImageDDSModule.selfRegister();
-  g_ImageGDKModule.selfRegister();
-  _tgaLoader.selfRegister();
-  _jpgLoader.selfRegister();
-  _ddsLoader.selfRegister();
-  _bmpLoader.selfRegister();
-  _pcxLoader.selfRegister();
-  _gdkLoader.selfRegister();
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+	static TGALoaderPtr _tgaModule(new TGALoader);
+	static JPGLoaderPtr _jpgModule(new JPGLoader);
+	static PCXLoaderPtr _pcxModule(new PCXLoader);
+	static BMPLoaderPtr _bmpModule(new BMPLoader);
+	static DDSLoaderPtr _ddsModule(new DDSLoader);
+	static GDKLoaderPtr _gdkModule(new GDKLoader);
+	
+	registry.registerModule(_tgaModule);
+	registry.registerModule(_jpgModule);
+	registry.registerModule(_pcxModule);
+	registry.registerModule(_bmpModule);
+	registry.registerModule(_ddsModule);
+	registry.registerModule(_gdkModule);
+	
+	// Initialise the streams
+	const ApplicationContext& ctx = registry.getApplicationContext();
+	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
+	GlobalErrorStream::instance().setOutputStream(ctx.getOutputStream());
+	
+	// Remember the reference to the ModuleRegistry
+	module::RegistryReference::Instance().setRegistry(registry);
 }

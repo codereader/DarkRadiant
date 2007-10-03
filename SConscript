@@ -89,6 +89,7 @@ gtkutil_lib = gtkutil_env.StaticLibrary(target='libs/gtkutil', source=build_list
 
 module_env = g_env.Copy()
 module_env.Dir('libs/string')
+module_env.Dir('libs/memory')
 module_env['CPPPATH'].append('include')
 if (module_env['PLATFORM'] == 'posix'):
     module_env['LINKFLAGS'] += '-ldl ' # do we need this library?
@@ -371,7 +372,6 @@ radiant_src = \
 		 'console.cpp',
 		 'csg.cpp',
 		 'entity.cpp',
-		 'environment.cpp',
 		 'error.cpp',
 		 'filetypes.cpp',
 		 'gtkdlgs.cpp',
@@ -386,7 +386,6 @@ radiant_src = \
          'referencecache.cpp',
          'renderstate.cpp',
          'select.cpp',
-         'server.cpp',
          'timer.cpp',
          'treemodel.cpp',
          'view.cpp',
@@ -458,7 +457,6 @@ radiant_src = \
          'selection/Planes.cpp',
          'selection/RadiantWindowObserver.cpp',
          'selection/RadiantSelectionSystem.cpp',
-         'selection/SelectionSystemModule.cpp',
          'selection/algorithm/Primitives.cpp',
          'selection/algorithm/Curves.cpp',
          'selection/algorithm/ModelFinder.cpp',
@@ -509,7 +507,6 @@ radiant_src = \
          'map/algorithm/Traverse.cpp',
          'namespace/Namespace.cpp',
          'namespace/NameObserver.cpp',
-         'namespace/NamespaceModule.cpp',
          'render/backend/OpenGLStateBucket.cpp',
          'render/backend/OpenGLShader.cpp',
          'render/backend/GLProgramFactory.cpp',
@@ -521,7 +518,12 @@ radiant_src = \
          'scenegraph/CompiledGraph.cpp',
          'scenegraph/SceneGraphModule.cpp',
          'clipper/Clipper.cpp',
-         'clipper/ClipPoint.cpp'
+         'clipper/ClipPoint.cpp',
+         'modulesystem/ApplicationContextImpl.cpp',
+         'modulesystem/ModuleLoader.cpp',
+         'modulesystem/DynamicLibrary.cpp',
+         'modulesystem/DynamicLibraryLoader.cpp',
+         'modulesystem/ModuleRegistry.cpp'
          ]
     ]
 

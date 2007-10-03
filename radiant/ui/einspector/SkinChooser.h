@@ -18,8 +18,7 @@ namespace ui
  * into two toplevel categories - matching skins which are associated with the
  * model, and all skins available.
  */
-class SkinChooser :
-	private GlobalModelSkinCacheModuleRef
+class SkinChooser
 {
 	// Main dialog widget
 	GtkWidget* _widget;

@@ -2,6 +2,7 @@
 
 #include "scenelib.h"
 #include <list>
+#include "modulesystem/StaticModule.h"
 
 namespace {
 	inline NamespacedPtr Node_getNamespaced(scene::INodePtr node) {
@@ -107,3 +108,21 @@ void Namespace::mergeClonedNames() {
 	// Remove the items from the list, we're done.
 	_cloned.clear();
 }
+
+// RegisterableModule implementation
+const std::string& Namespace::getName() const {
+	static std::string _name(MODULE_NAMESPACE);
+	return _name;
+}
+
+const StringSet& Namespace::getDependencies() const {
+	static StringSet _dependencies; // no dependencies
+	return _dependencies;
+}
+
+void Namespace::initialiseModule(const ApplicationContext& ctx) {
+	globalOutputStream() << "Namespace::initialiseModule called.\n";
+}
+
+// Define the static NamespaceModule
+module::StaticModule<Namespace> namespaceModule;

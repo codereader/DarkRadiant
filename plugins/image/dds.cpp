@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ifilesystem.h"
 #include "iarchive.h"
 #include "idatastream.h"
+#include "stream/textstream.h"
 
 #include "ddslib.h"
 #include "imagelib.h"

@@ -39,21 +39,18 @@ namespace {
 }
 
 StimResponseEditor::StimResponseEditor() :
-	// Be sure to pass FALSE to the PersistentTransientWindow to prevent it from self-destruction
-	_dialog(gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow())),
+	gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow(), true),
 	_entity(NULL),
 	_stimEditor(_stimTypes),
-	_responseEditor(_dialog, _stimTypes),
-	_customStimEditor(_dialog, _stimTypes)
+	_responseEditor(getWindow(), _stimTypes),
+	_customStimEditor(getWindow(), _stimTypes)
 {
 	// Set the default border width in accordance to the HIG
-	gtk_container_set_border_width(GTK_CONTAINER(_dialog), 12);
-	gtk_window_set_type_hint(GTK_WINDOW(_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
-	gtk_window_set_modal(GTK_WINDOW(_dialog), TRUE);
+	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
+	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
+	gtk_window_set_modal(GTK_WINDOW(getWindow()), TRUE);
 	
-	g_signal_connect(G_OBJECT(_dialog), "delete-event", 
-					 G_CALLBACK(onDelete), this);
-	g_signal_connect(G_OBJECT(_dialog), "key-press-event", 
+	g_signal_connect(G_OBJECT(getWindow()), "key-press-event", 
 					 G_CALLBACK(onWindowKeyPress), this);
 	
 	// Create the widgets
@@ -66,13 +63,13 @@ StimResponseEditor::StimResponseEditor() :
 		_windowPosition.loadFromNode(windowStateList[0]);
 	}
 	
-	_windowPosition.connect(GTK_WINDOW(_dialog));
+	_windowPosition.connect(GTK_WINDOW(getWindow()));
 	_windowPosition.applyPosition();
 	
 	instantiated = true;
 }
 
-void StimResponseEditor::shutdown() {
+void StimResponseEditor::onRadiantShutdown() {
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
 	
@@ -82,44 +79,54 @@ void StimResponseEditor::shutdown() {
 	// Tell the position tracker to save the information
 	_windowPosition.saveToNode(node);
 	
-	gtk_widget_hide(_dialog);
+	// Invoke the destroy chain of the TransientWindow hierarchy
+	destroy();
+	
+	// Disconnect self from Radiant after we've shut down
+	GlobalRadiant().removeEventListener(Instance());
+}
+
+void StimResponseEditor::_preHide() {
+	_lastShownPage = gtk_notebook_get_current_page(_notebook);
+	// Save the window position, to make sure
+	_windowPosition.readPosition();
+}
+
+void StimResponseEditor::_preShow() {
+	// Restore the position
+	_windowPosition.applyPosition();
+	// Reload all the stim types, the map might have changed 
+	_stimTypes.reload();
+	// Scan the selection for entities
+	rescanSelection();
+		
+	// Has the rescan found an entity (the pointer is non-NULL then)
+	if (_entity != NULL) {
+		// Now show the dialog window again
+		gtk_widget_show_all(getWindow());
+		// Show the last shown page
+		gtk_notebook_set_current_page(_notebook, _lastShownPage);
+	}
+	else {
+		gtkutil::errorDialog(NO_ENTITY_ERROR, 
+							 GlobalRadiant().getMainWindow());
+		gtk_widget_hide_all(getWindow());
+	}
 }
 
 void StimResponseEditor::toggleWindow() {
-	// Pass the call to the utility methods that save/restore the window position
-	if (GTK_WIDGET_VISIBLE(_dialog)) {
-		_lastShownPage = gtk_notebook_get_current_page(_notebook);
-		// Save the window position, to make sure
-		_windowPosition.readPosition();
-		gtk_widget_hide_all(_dialog);
+	if (isVisible()) {
+		hide();
 	}
 	else {
-		// Restore the position
-		_windowPosition.applyPosition();
-		// Reload all the stim types, the map might have changed 
-		_stimTypes.reload();
-		// Scan the selection for entities
-		rescanSelection();
-			
-		// Has the rescan found an entity (the pointer is non-NULL then)
-		if (_entity != NULL) {
-			// Now show the dialog window again
-			gtk_widget_show_all(_dialog);
-			// Show the last shown page
-			gtk_notebook_set_current_page(_notebook, _lastShownPage);
-		}
-		else {
-			gtkutil::errorDialog(NO_ENTITY_ERROR, 
-								 GlobalRadiant().getMainWindow());
-			gtk_widget_hide_all(_dialog);
-		}
+		show();
 	}
 }
 
 void StimResponseEditor::populateWindow() {
 	// Create the overall vbox
 	_dialogVBox = gtk_vbox_new(FALSE, 12);
-	gtk_container_add(GTK_CONTAINER(_dialog), _dialogVBox);
+	gtk_container_add(GTK_CONTAINER(getWindow()), _dialogVBox);
 	
 	// Create the notebook and add it to the vbox
 	_notebook = GTK_NOTEBOOK(gtk_notebook_new());
@@ -208,10 +215,10 @@ void StimResponseEditor::rescanSelection() {
 	
 	if (_entity != NULL) {
 		std::string title = WINDOW_TITLE + " (" + _entity->getKeyValue("name") + ")";
-		gtk_window_set_title(GTK_WINDOW(_dialog), title.c_str()); 
+		gtk_window_set_title(GTK_WINDOW(getWindow()), title.c_str()); 
 	}
 	else {
-		gtk_window_set_title(GTK_WINDOW(_dialog), WINDOW_TITLE.c_str());
+		gtk_window_set_title(GTK_WINDOW(getWindow()), WINDOW_TITLE.c_str());
 	}
 	
 	gtk_widget_set_sensitive(_dialogVBox, _entity != NULL);
@@ -229,15 +236,6 @@ void StimResponseEditor::save() {
 	
 	// Save the custom stim types to the storage entity
 	_stimTypes.save();
-}
-
-// Static GTK Callbacks
-gboolean StimResponseEditor::onDelete(GtkWidget* widget, GdkEvent* event, StimResponseEditor* self) {
-	// Toggle the visibility of the window
-	self->toggle();
-	
-	// Don't propagate the delete event
-	return TRUE;
 }
 
 void StimResponseEditor::onSave(GtkWidget* button, StimResponseEditor* self) {
@@ -264,11 +262,21 @@ gboolean StimResponseEditor::onWindowKeyPress(
 
 // Static command target
 void StimResponseEditor::toggle() {
-	Instance().toggleWindow();
+	Instance()->toggleWindow();
 }
 
-StimResponseEditor& StimResponseEditor::Instance() {
-	static StimResponseEditor _instance;
+StimResponseEditorPtr& StimResponseEditor::Instance() {
+	// Check if this is the first startup
+	bool firstStart = !instantiated;
+	
+	static StimResponseEditorPtr _instance(
+		new StimResponseEditor
+	);
+	
+	if (firstStart) {
+		GlobalRadiant().addEventListener(_instance);
+	}
+	
 	return _instance;
 }
 

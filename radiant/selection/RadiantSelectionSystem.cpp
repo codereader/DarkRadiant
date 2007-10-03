@@ -15,6 +15,7 @@
 #include "patch/PatchSceneWalk.h"
 #include "brush/BrushInstance.h"
 #include "xyview/GlobalXYWnd.h"
+#include "modulesystem/StaticModule.h"
 
 // Initialise the shader pointer
 ShaderPtr RadiantSelectionSystem::_state;
@@ -61,17 +62,7 @@ RadiantSelectionSystem::RadiantSelectionSystem() :
 	_scaleManipulator(*this, 0, 64),
 	_pivotChanged(false),
 	_pivotMoving(false)
-{
-	SetManipulatorMode(eTranslate);
-	pivotChanged();
-	addSelectionChangeCallback(PivotChangedSelectionCaller(*this));
-	GlobalGrid().addGridChangeCallback(PivotChangedCaller(*this));
-	
-	GlobalRegistry().addKeyObserver(this, RKEY_ROTATION_PIVOT);
-	
-	// Pass a reference to self to the global event manager 
-	GlobalEventManager().connectSelectionSystem(this);
-}
+{}
 
 const SelectionInfo& RadiantSelectionSystem::getSelectionInfo() {
 	return _selectionInfo;
@@ -921,3 +912,54 @@ void RadiantSelectionSystem::renderSolid(Renderer& renderer, const VolumeTest& v
 #endif
 }
 
+// RegisterableModule implementation
+const std::string& RadiantSelectionSystem::getName() const {
+	static std::string _name(MODULE_SELECTIONSYSTEM);
+	return _name;
+}
+
+const StringSet& RadiantSelectionSystem::getDependencies() const {
+	static StringSet _dependencies;
+	
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_SCENEGRAPH);
+		_dependencies.insert(MODULE_SHADERCACHE);
+		_dependencies.insert(MODULE_OPENGL);
+		_dependencies.insert(MODULE_GRID);
+	}
+	
+	return _dependencies;
+}
+
+void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx) {
+	globalOutputStream() << "RadiantSelectionSystem::initialiseModule called.\n";
+	
+	constructStatic();
+	
+	SetManipulatorMode(eTranslate);
+	pivotChanged();
+	addSelectionChangeCallback(PivotChangedSelectionCaller(*this));
+	GlobalGrid().addGridChangeCallback(PivotChangedCaller(*this));
+	
+	GlobalRegistry().addKeyObserver(this, RKEY_ROTATION_PIVOT);
+	
+	// Pass a reference to self to the global event manager 
+	GlobalEventManager().connectSelectionSystem(this);
+	
+	// Connect the bounds changed caller 
+	_boundsChangedHandler =	GlobalSceneGraph().addBoundsChangedCallback(
+		PivotChangedCaller(*this)
+	);
+
+	GlobalShaderCache().attachRenderable(*this);
+}
+
+void RadiantSelectionSystem::shutdownModule() {
+	GlobalShaderCache().detachRenderable(*this);
+	GlobalSceneGraph().removeBoundsChangedCallback(_boundsChangedHandler);
+	
+	destroyStatic();
+}
+
+// Define the static SelectionSystem module
+module::StaticModule<RadiantSelectionSystem> radiantSelectionSystemModule;

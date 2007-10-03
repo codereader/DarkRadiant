@@ -17,8 +17,6 @@ class EclassModelInstance :
 {
 	EclassModel& m_contained;
 public:
-	STRING_CONSTANT(Name, "EclassModelInstance");
-
 	EclassModelInstance(const scene::Path& path, scene::Instance* parent, EclassModel& contained);
 	
 	~EclassModelInstance();

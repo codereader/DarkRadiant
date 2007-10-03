@@ -22,8 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_IFILTER_H)
 #define INCLUDED_IFILTER_H
 
-#include "generic/constant.h"
-#include <string>
+#include "imodule.h"
 
 /** Visitor interface for evaluating the available filters in the 
  * FilterSystem.
@@ -34,15 +33,14 @@ struct IFilterVisitor {
 	virtual void visit(const std::string& filterName) = 0;
 };
 
+const std::string MODULE_FILTERSYSTEM("FilterSystem");
+
 /** Interface for the FilterSystem.
  */
-
-class FilterSystem
+class FilterSystem :
+	public RegisterableModule
 {
 public:
-	INTEGER_CONSTANT(Version, 1);
-	STRING_CONSTANT(Name, "filters");
-
 	/** greebo: Loads the filter settings from the registry
 	 * 			and adds the commands to the EventManager.
 	 */
@@ -93,19 +91,13 @@ public:
 
 };
 
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<FilterSystem> GlobalFilterModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<FilterSystem> GlobalFilterModuleRef;
-
-inline FilterSystem& GlobalFilterSystem()
-{
-  return GlobalFilterModule::getTable();
+inline FilterSystem& GlobalFilterSystem() {
+	boost::shared_ptr<FilterSystem> _filterSystem(
+		boost::static_pointer_cast<FilterSystem>(
+			module::GlobalModuleRegistry().getModule(MODULE_FILTERSYSTEM)
+		)
+	);
+	return *_filterSystem;
 }
 
 #endif

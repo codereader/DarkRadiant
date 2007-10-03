@@ -103,13 +103,19 @@ public:
 	
 	// greebo: Legacy method, don't know what this is exactly used for
 	void activeShadersChangedNotify();
-	
+
+	// RegisterableModule implementation
+	virtual const std::string& getName() const;
+	virtual const StringSet& getDependencies() const;
+	virtual void initialiseModule(const ApplicationContext& ctx);
+	virtual void shutdownModule();
 }; // class Doom3ShaderSystem
+
+typedef boost::shared_ptr<Doom3ShaderSystem> Doom3ShaderSystemPtr;
 
 } // namespace shaders
 
-// Accessor function for the shader system
-shaders::Doom3ShaderSystem& GetShaderSystem();
+shaders::Doom3ShaderSystemPtr GetShaderSystem();
 
 shaders::ShaderLibrary& GetShaderLibrary();
 

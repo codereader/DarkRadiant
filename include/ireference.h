@@ -23,10 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_IREFERENCE_H
 
 #include "inode.h"
-#include "generic/constant.h"
-
-#include <string>
-#include <boost/shared_ptr.hpp>
+#include "imodule.h"
 
 class ModuleObserver;
 
@@ -47,12 +44,12 @@ public:
 
 class EntityCreator;
 
-class ReferenceCache
+const std::string MODULE_REFERENCECACHE("ReferenceCache");
+
+class ReferenceCache :
+	public RegisterableModule
 {
 public:
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "reference");
-
 	/* Resource pointer type */
 	typedef boost::shared_ptr<Resource> ResourcePtr;
 	
@@ -66,19 +63,13 @@ public:
   virtual void setEntityCreator(EntityCreator& entityCreator) = 0;
 };
 
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<ReferenceCache> GlobalReferenceModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<ReferenceCache> GlobalReferenceModuleRef;
-
-inline ReferenceCache& GlobalReferenceCache()
-{
-  return GlobalReferenceModule::getTable();
+inline ReferenceCache& GlobalReferenceCache() {
+	boost::shared_ptr<ReferenceCache> _refCache(
+		boost::static_pointer_cast<ReferenceCache>(
+			module::GlobalModuleRegistry().getModule(MODULE_REFERENCECACHE)
+		)
+	);
+	return *_refCache;
 }
 
 #endif

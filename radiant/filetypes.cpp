@@ -23,11 +23,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ifiletypes.h"
 #include "os/path.h"
+#include "stream/textstream.h"
 
 #include <map>
 #include <iostream>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
+
+#include "modulesystem/StaticModule.h"
 
 /**
  * Implementation of the file type registry.
@@ -90,8 +93,25 @@ public:
 			return ModuleTypeListPtr(new ModuleTypeList());
 		}		
 	}
-  
+	
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name(MODULE_FILETYPES);
+		return _name;
+	}
+	
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies; // no dependencies
+		return _dependencies;
+	}
+	
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "FileTypeRegistry::initialiseModule called.\n";
+	}
 };
+
+// Define the static FileType module
+module::StaticModule<RadiantFileTypeRegistry> fileTypeRegistry;
 
 static RadiantFileTypeRegistry g_patterns;
 
@@ -127,30 +147,3 @@ std::string findModuleName(IFileTypeRegistry* registry,
 	// Not found, return empty string
 	return "";
 }
-
-
-#include "modulesystem/singletonmodule.h"
-#include "modulesystem/moduleregistry.h"
-
-class FiletypesAPI
-{
-  IFileTypeRegistry* m_filetypes;
-public:
-  typedef IFileTypeRegistry Type;
-  STRING_CONSTANT(Name, "*");
-
-  FiletypesAPI()
-  {
-    m_filetypes = GetFileTypeRegistry();
-  }
-  IFileTypeRegistry* getTable()
-  {
-    return m_filetypes;
-  }
-};
-
-typedef SingletonModule<FiletypesAPI> FiletypesModule;
-typedef Static<FiletypesModule> StaticFiletypesModule;
-StaticRegisterModule staticRegisterFiletypes(StaticFiletypesModule::instance());
-
-

@@ -2,11 +2,11 @@
 
 #include "iradiant.h"
 #include "ieventmanager.h"
+#include "stream/textstream.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 
-#include "gtkutil/MenuItemAccelerator.h"
 #include <gtk/gtkmenushell.h>
 #include <gtk/gtkmenuitem.h>
 #include <gtk/gtkmenubar.h>
@@ -273,17 +273,23 @@ void MenuItem::construct() {
 					GlobalEventManager().getAcceleratorStr(event, true);
 			 
 				// Create a new menuitem
-				_widget = gtkutil::TextMenuItemAccelerator(_caption,
-															accelText, 
-															GlobalRadiant().getLocalPixbuf(_icon),
-															event->isToggle());
-
+				_menuItem = gtkutil::MenuItemAcceleratorPtr(
+					new gtkutil::TextMenuItemAccelerator(
+						_caption,
+						accelText,
+						GlobalRadiant().getLocalPixbuf(_icon),
+						event->isToggle()
+					)
+				);
+				// Cast this item onto a widget
+				_widget = *_menuItem;
+				
 				gtk_widget_show_all(_widget);
 				// Connect the widget to the event
 				event->connectWidget(_widget);
 			}
 			else {
-				globalErrorStream() << "MenuItem: Cannot find associated event: " << _event.c_str() << "\n"; 
+				std::cout << "MenuItem: Cannot find associated event: " << _event.c_str() << "\n"; 
 			}
 		}
 		else {
@@ -301,6 +307,31 @@ void MenuItem::construct() {
 	}
 	
 	_constructed = true;
+}
+
+void MenuItem::updateAcceleratorRecursive() {
+	if (!_constructed) {
+		construct();
+	}
+	
+	if (_type == menuItem) {
+		// Try to lookup the event name
+		IEventPtr event = GlobalEventManager().findEvent(_event);
+					
+		if (!_event.empty() && event != NULL) {
+			// Retrieve an accelerator string formatted for a menu
+			const std::string accelText = 
+				GlobalEventManager().getAcceleratorStr(event, true);
+			
+			// Update the accelerator text on the existing menuitem
+			_menuItem->setAccelerator(accelText);
+		}
+	}
+	
+	// Iterate over all the children and pass the call
+	for (unsigned int i = 0; i < _children.size(); i++) {
+		_children[i]->updateAcceleratorRecursive();
+	}
 }
 
 } // namespace ui

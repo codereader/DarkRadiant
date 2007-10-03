@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ifilesystem.h"
 #include "iimage.h"
 #include "imagelib.h" // for RGBAImagePtr
-#include "modulesystem/singletonmodule.h"
+#include <iostream>
 
 ImagePtr LoadBMP(ArchiveFile& file);
 
@@ -42,19 +42,6 @@ class BMPLoader :
 	public ImageLoader
 {
 public:
-	// Definitions to enable the lookup by the radiant modulesystem
-	typedef ImageLoader Type;
-	STRING_CONSTANT(Name, "bmp");
-
-	// Return the instance pointer
-	ImageLoader* getTable() {
-		return this;
-	}
-
-public:
-	// Constructor
-	BMPLoader() {}
-	
 	/* greebo: This loads the file and returns the pointer to 
 	 * the allocated Image object (or an empty pointer, if the load failed). 
 	 */
@@ -68,16 +55,27 @@ public:
 	std::string getExtension() const {
 		return "bmp";
 	}
+	
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name("ImageLoaderBMP");
+		return _name;
+	}
+	
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies;
 
+		if (_dependencies.empty()) {
+			_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
+		}
+
+		return _dependencies;
+	}
+	
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "ImageLoaderBMP::initialiseModule called.\n";
+	}
 };
-
-// The dependency class
-class BMPLoaderDependencies :
-	public GlobalFileSystemModuleRef
-{};
-
-// Define the BMP module with the BMPLoader class and its dependencies
-typedef SingletonModule<BMPLoader, BMPLoaderDependencies> BMPLoaderModule;
 
 #endif
 

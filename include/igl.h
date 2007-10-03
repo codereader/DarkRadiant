@@ -25,14 +25,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <string.h>
 #include <GL/glew.h>
 
-#include "generic/constant.h"
+#include "imodule.h"
 #include "qgl.h"
 
-struct OpenGLBinding
-{
-  INTEGER_CONSTANT(Version, 2);
-  STRING_CONSTANT(Name, "qgl");
+const std::string MODULE_OPENGL("OpenGL");
 
+class OpenGLBinding :
+	public RegisterableModule
+{
+public:
   /// \brief OpenGL version, extracted from the GL_VERSION string.
   int major_version, minor_version;
 
@@ -64,19 +65,13 @@ struct OpenGLBinding
   }
 };
 
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<OpenGLBinding> GlobalOpenGLModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<OpenGLBinding> GlobalOpenGLModuleRef;
-
-inline OpenGLBinding& GlobalOpenGL()
-{
-  return GlobalOpenGLModule::getTable();
+inline OpenGLBinding& GlobalOpenGL() {
+	boost::shared_ptr<OpenGLBinding> _openGL(
+		boost::static_pointer_cast<OpenGLBinding>(
+			module::GlobalModuleRegistry().getModule(MODULE_OPENGL)
+		)
+	);
+	return *_openGL;
 }
 
 #if defined(_DEBUG)

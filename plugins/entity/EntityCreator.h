@@ -24,11 +24,18 @@ public:
 	 */
 	void connectEntities(const scene::Path& path, const scene::Path& targetPath);
 
+	// RegisterableModule implementation
+	virtual const std::string& getName() const;
+	virtual const StringSet& getDependencies() const;
+	virtual void initialiseModule(const ApplicationContext& ctx);
+	virtual void shutdownModule();
+	
 private:
 	/** greebo: Creates the right entity for the entityclass.
 	 */
 	scene::INodePtr getEntityForEClass(IEntityClassPtr eclass);
 };
+typedef boost::shared_ptr<Doom3EntityCreator> Doom3EntityCreatorPtr;
 
 } // namespace entity
 

@@ -26,19 +26,4 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 ui::ColourSchemeManager& ColourSchemes();
 
-class ModuleServer;
-bool Radiant_Construct(ModuleServer& server);
-void Radiant_Destroy();
-void Radiant_shutDownPlugins();
-
-template<typename Type>
-class Modules;
-
-struct _QERPlugImageTable;
-typedef Modules<_QERPlugImageTable> ImageModules;
-ImageModules& Radiant_getImageModules();
-class MapFormat;
-typedef Modules<MapFormat> MapModules;
-MapModules& Radiant_getMapModules();
-
 #endif

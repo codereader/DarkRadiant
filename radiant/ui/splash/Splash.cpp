@@ -3,7 +3,7 @@
 #include <gtk/gtk.h>
 #include "gtkutil/LeftAlignedLabel.h"
 
-#include "environment.h"
+#include "modulesystem/ModuleRegistry.h"
 #include "gtkmisc.h" // for process_gui()
 
 namespace ui {
@@ -23,7 +23,8 @@ Splash::Splash() :
 	gtk_window_set_position(_window, GTK_WIN_POS_CENTER);
 	gtk_container_set_border_width(GTK_CONTAINER(_window), 0);
 	
-	std::string fullFileName(Environment().Instance().getBitmapsPath() + SPLASH_FILENAME);
+	const ApplicationContext& ctx = module::getRegistry().getApplicationContext();
+	std::string fullFileName(ctx.getBitmapsPath() + SPLASH_FILENAME);
 	GtkWidget* image = gtk_image_new_from_pixbuf(
 		gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL)
 	);

@@ -22,12 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_IFILETYPES_H)
 #define INCLUDED_IFILETYPES_H
 
-#include "generic/constant.h"
-
 #include <list>
-#include <string>
-
-#include <boost/shared_ptr.hpp>
+#include "imodule.h"
 
 /**
  * Simple structure to store a file pattern (e.g. "*.map") along with its name
@@ -70,16 +66,16 @@ struct ModuleFileType
 typedef std::list<ModuleFileType> ModuleTypeList;
 typedef boost::shared_ptr<ModuleTypeList> ModuleTypeListPtr;
 
+const std::string MODULE_FILETYPES("FileTypes");
+
 /**
  * Interface for the FileType registry module. This module retains a list of
  * FileTypePattern objects along with their associated module names.
  */
-class IFileTypeRegistry
+class IFileTypeRegistry :
+	public RegisterableModule
 {
 public:
-	INTEGER_CONSTANT(Version, 1);
-	STRING_CONSTANT(Name, "filetypes");
-
 	/**
 	 * Add a type to the registry.
 	 * 
@@ -104,24 +100,15 @@ public:
 	 * The module category for which a list of types should be retrieved.
 	 */
 	virtual ModuleTypeListPtr getTypesFor(const std::string& moduleType) = 0;
-	
 };
 
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<IFileTypeRegistry> GlobalFiletypesModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<IFileTypeRegistry> GlobalFiletypesModuleRef;
-
-inline IFileTypeRegistry& GlobalFiletypes()
-{
-  return GlobalFiletypesModule::getTable();
+inline IFileTypeRegistry& GlobalFiletypes() {
+	boost::shared_ptr<IFileTypeRegistry> _fileTypes(
+		boost::static_pointer_cast<IFileTypeRegistry>(
+			module::GlobalModuleRegistry().getModule(MODULE_FILETYPES)
+		)
+	);
+	return *_fileTypes;
 }
-
-
 
 #endif

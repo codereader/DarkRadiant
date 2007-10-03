@@ -21,11 +21,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <GL/glew.h>
 
+#include "imodule.h"
 #include "qgl.h"
 
 #include "debugging/debugging.h"
 
+#include "modulesystem/StaticModule.h"
 #include "igl.h"
+#include <iostream>
 
 //****************************** Error handling ********************************
 
@@ -105,32 +108,36 @@ void QGL_Shutdown(OpenGLBinding& table) {
 
 //************************************ Module ***************************************
 
-class QglAPI
+class QglAPI :
+	public OpenGLBinding
 {
-  OpenGLBinding m_qgl;
 public:
-  typedef OpenGLBinding Type;
-  STRING_CONSTANT(Name, "*");
+	typedef OpenGLBinding Type;
 
-  QglAPI()
+	QglAPI() {
+		assertNoErrors = &QGL_assertNoErrors;
+	}
+	
+	OpenGLBinding* getTable()
   {
-    QGL_Init(m_qgl);
+    return this;
+  }
+  
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name(MODULE_OPENGL);
+		return _name;
+	}
 
-    m_qgl.assertNoErrors = &QGL_assertNoErrors;
-  }
-  ~QglAPI()
-  {
-    QGL_Shutdown(m_qgl);
-  }
-  OpenGLBinding* getTable()
-  {
-    return &m_qgl;
-  }
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies; // no dependencies
+		return _dependencies;
+	}
+
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "OpenGL::initialiseModule called.\n";
+	}
 };
 
-#include "modulesystem/singletonmodule.h"
-#include "modulesystem/moduleregistry.h"
-
-typedef SingletonModule<QglAPI> QglModule;
-typedef Static<QglModule> StaticQglModule;
-StaticRegisterModule staticRegisterQgl(StaticQglModule::instance());
+// Define the static Radiant module
+module::StaticModule<QglAPI> openGLModule;

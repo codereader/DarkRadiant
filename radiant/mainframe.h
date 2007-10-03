@@ -31,7 +31,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "iradiant.h"
 
-class IPlugin;
 class IToolbarButton;
 
 // Camera window
@@ -186,7 +185,8 @@ void VFS_Destroy();
 void MainFrame_Construct();
 void MainFrame_Destroy();
 
-void populateRegistry();
+void GlobalGL_sharedContextCreated();
+void GlobalGL_sharedContextDestroyed();
 
 extern float (*GridStatus_getGridSize)();
 extern int (*GridStatus_getFarClipDistance)();

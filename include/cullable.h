@@ -22,8 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_CULLABLE_H)
 #define INCLUDED_CULLABLE_H
 
-#include "generic/constant.h"
-
 template<typename Element> class BasicVector3;
 typedef BasicVector3<double> Vector3;
 class Plane3;
@@ -62,10 +60,7 @@ public:
 class Cullable
 {
 public:
-  STRING_CONSTANT(Name, "Cullable");
-
-  virtual VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const = 0;
+	virtual VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const = 0;
 };
-
 
 #endif

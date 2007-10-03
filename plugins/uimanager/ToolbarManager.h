@@ -29,11 +29,11 @@ class ToolbarManager :
 	GtkTooltips* _tooltips;
 
 public:
-	// Constructor
-	ToolbarManager();
-	
 	// Public methods
 	GtkToolbar* getToolbar(const std::string& toolbarName);
+	
+	// Load toolbars from registry
+	void initialise();
 	
 private:
 	/** greebo: Loads the toolbars from the registry

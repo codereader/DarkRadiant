@@ -20,36 +20,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "BasicFilterSystem.h"
+#include "itextstream.h"
 
-#include "iradiant.h"
-#include "iscenegraph.h"
-#include "iregistry.h"
-#include "ieventmanager.h"
-
-/* FilterSystem dependencies class. 
- */
- 
-class FilterSystemDependencies
-: public GlobalRadiantModuleRef,
-  public GlobalSceneGraphModuleRef,
-  public GlobalRegistryModuleRef,
-  public GlobalEventManagerModuleRef
-{
-};
-
-/* Required code to register the module with the ModuleServer.
- */
-
-#include "modulesystem/singletonmodule.h"
-
-typedef SingletonModule<filters::BasicFilterSystem, 
-						FilterSystemDependencies> FilterModule;
-
-// Static instance of the FilterModule
-FilterModule _theFilterModule;
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
-{
-  initialiseModule(server);
-  _theFilterModule.selfRegister();
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+	static filters::BasicFilterSystemPtr _module(new filters::BasicFilterSystem);
+	registry.registerModule(_module);
+	
+	// Initialise the streams
+	const ApplicationContext& ctx = registry.getApplicationContext();
+	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
+	GlobalErrorStream::instance().setOutputStream(ctx.getOutputStream());
+	
+	// Remember the reference to the ModuleRegistry
+	module::RegistryReference::Instance().setRegistry(registry);
 }

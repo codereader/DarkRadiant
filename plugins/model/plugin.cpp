@@ -25,9 +25,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "picomodel.h"
 typedef unsigned char byte;
 #include <stdlib.h>
+#include <iostream>
 #include <algorithm>
 #include <list>
+#include "stream/textstream.h"
 
+#include "imodule.h"
 #include "iarchive.h"
 #include "iscenegraph.h"
 #include "irender.h"
@@ -40,12 +43,8 @@ typedef unsigned char byte;
 #include "ifiletypes.h"
 #include "ifilter.h"
 
-#include "modulesystem/singletonmodule.h"
-#include "stream/textstream.h"
-#include "string/string.h"
-#include "stream/stringstream.h"
-
 #include "model.h"
+#include <boost/algorithm/string/case_conv.hpp>
 
 void PicoPrintFunc( int level, const char *str )
 {
@@ -131,84 +130,89 @@ public:
   
 };
 
-class ModelPicoDependencies :
-  public GlobalFileSystemModuleRef,
-  public GlobalOpenGLModuleRef,
-  public GlobalUndoModuleRef,
-  public GlobalSceneGraphModuleRef,
-  public GlobalShaderCacheModuleRef,
-  public GlobalSelectionModuleRef,
-  public GlobalFiletypesModuleRef,
-  public GlobalFilterModuleRef
-{
-};
-
-class ModelPicoAPI
-{
-  PicoModelLoader m_modelLoader;
-public:
-  typedef ModelLoader Type;
-
-  ModelPicoAPI(const char* extension, const picoModule_t* module) :
-    m_modelLoader(module)
-  {
-    StringOutputStream filter(128);
-    filter << "*." << extension;
-    GlobalFiletypesModule::getTable().addType("model", extension, 
-    	FileTypePattern(module->displayName, filter.c_str()));
-  }
-  ModelLoader* getTable()
-  {
-    return &m_modelLoader;
-  }
-};
-
-class PicoModelAPIConstructor
+class PicoModelAPIConstructor :
+	public PicoModelLoader
 {
   std::string m_extension;
   const picoModule_t* m_module;
+  
+  std::string _moduleName;
 public:
-  PicoModelAPIConstructor(const char* extension, const picoModule_t* module) :
-    m_extension(extension), m_module(module)
-  {
-  }
-  const char* getName()
-  {
-    return m_extension.c_str();
-  }
-  ModelPicoAPI* constructAPI(ModelPicoDependencies& dependencies)
-  {
-    return new ModelPicoAPI(m_extension.c_str(), m_module);
-  }
-  void destroyAPI(ModelPicoAPI* api)
-  {
-    delete api;
-  }
+	PicoModelAPIConstructor(const char* extension, const picoModule_t* module) :
+		PicoModelLoader(module),
+		m_extension(extension), 
+		m_module(module), 
+		_moduleName("ModelLoader")
+	{
+		_moduleName += extension; // e.g. ModuleLoaderASE
+	}
+	
+  	// RegisterableModule implementation
+  	virtual const std::string& getName() const {
+  		return _moduleName; // e.g. ModelLoaderASE
+  	}
+  	
+  	virtual const StringSet& getDependencies() const {
+  		static StringSet _dependencies;
+
+		if (_dependencies.empty()) {
+			_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
+			_dependencies.insert(MODULE_OPENGL);
+			_dependencies.insert(MODULE_UNDOSYSTEM);
+			_dependencies.insert(MODULE_SCENEGRAPH);
+			_dependencies.insert(MODULE_SHADERCACHE);
+			_dependencies.insert(MODULE_SELECTIONSYSTEM);
+			_dependencies.insert(MODULE_FILETYPES);
+			_dependencies.insert(MODULE_FILTERSYSTEM);
+		}
+
+		return _dependencies;
+  	}
+  	
+  	virtual void initialiseModule(const ApplicationContext& ctx) {
+  		globalOutputStream() << "PicoModelLoader: " << getName().c_str() << " initialised.\n"; 
+  		std::string filter("*." + boost::to_lower_copy(m_extension));
+  		
+  		GlobalFiletypes().addType(
+  			"model", getName(), 
+	    	FileTypePattern(m_module->displayName, filter.c_str())
+	    );
+  	}
 };
+typedef boost::shared_ptr<PicoModelAPIConstructor> PicoModelAPIConstructorPtr;
 
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+	
+	static std::vector<PicoModelAPIConstructorPtr> _modulesList;
+	
+	pico_initialise();
 
-typedef SingletonModule<ModelPicoAPI, ModelPicoDependencies, PicoModelAPIConstructor> PicoModelModule;
-typedef std::list<PicoModelModule> PicoModelModules;
-PicoModelModules g_PicoModelModules;
-
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
-{
-  initialiseModule(server);
-
-  pico_initialise();
-
-  const picoModule_t** modules = PicoModuleList( 0 );
-  while(*modules != 0)
-  {
-    const picoModule_t* module = *modules++;
-    if(module->canload && module->load)
-    {
-      for(char*const* ext = module->defaultExts; *ext != 0; ++ext)
-      {
-        g_PicoModelModules.push_back(PicoModelModule(PicoModelAPIConstructor(*ext, module)));
-        g_PicoModelModules.back().selfRegister();
-      }
-    }
-  }
+	const picoModule_t** modules = PicoModuleList( 0 );
+	
+	while (*modules != 0) {
+		const picoModule_t* module = *modules++;
+		
+		if (module->canload && module->load)	{
+			for (char*const* ext = module->defaultExts; *ext != 0; ++ext) {
+				std::string extension(*ext);
+				boost::algorithm::to_upper(extension);
+				
+				PicoModelAPIConstructorPtr picoModule(
+					new PicoModelAPIConstructor(extension.c_str(), module)
+				);
+				
+				_modulesList.push_back(picoModule);
+				
+				registry.registerModule(_modulesList.back());
+			}
+		}
+	}
+	
+	// Initialise the streams
+	const ApplicationContext& ctx = registry.getApplicationContext();
+	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
+	GlobalErrorStream::instance().setOutputStream(ctx.getOutputStream());
+	
+	// Remember the reference to the ModuleRegistry
+	module::RegistryReference::Instance().setRegistry(registry);
 }

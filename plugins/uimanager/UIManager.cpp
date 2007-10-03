@@ -3,7 +3,7 @@
 #include "iregistry.h"
 #include "iradiant.h"
 #include "ieventmanager.h"
-#include <boost/shared_ptr.hpp>
+#include "stream/textstream.h"
 
 namespace ui {
 
@@ -15,49 +15,41 @@ IToolbarManager& UIManager::getToolbarManager() {
 	return _toolbarManager;
 }
 
+const std::string& UIManager::getName() const {
+	static std::string _name(MODULE_UIMANAGER);
+	return _name;
+}
+
+const StringSet& UIManager::getDependencies() const {
+	static StringSet _dependencies;
+
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_RADIANT);
+	}
+
+	return _dependencies;
+}
+
+void UIManager::initialiseModule(const ApplicationContext& ctx) {
+	globalOutputStream() << "UIManager::initialiseModule called\n";
+	_menuManager.loadFromRegistry();
+	_toolbarManager.initialise();
+	globalOutputStream() << "MenuManager: Finished loading default menu from registry.\n";
+}
+
 } // namespace ui
 
-// Module stuff
-
-#include "modulesystem/singletonmodule.h"
-#include "modulesystem/moduleregistry.h"
-
-class UIManagerDependencies :
-	public GlobalEventManagerModuleRef,
-	public GlobalRegistryModuleRef,
-	public GlobalRadiantModuleRef
-{};
-
-class UIManagerAPI
-{
-	typedef boost::shared_ptr<ui::UIManager> UIManagerPtr;
-	UIManagerPtr _uiManager;
-
-public:
-	typedef IUIManager Type;
-	STRING_CONSTANT(Name, "*");
-
-	// Constructor
-	UIManagerAPI() {
-		// allocate a new UIManager instance on the heap (shared_ptr) 
-		_uiManager = UIManagerPtr(new ui::UIManager);
-	}
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+	static ui::UIManagerPtr _module(new ui::UIManager);
+	registry.registerModule(_module);
 	
-	IUIManager* getTable() {
-		return _uiManager.get();
-	}
-};
-
-/* Required code to register the module with the ModuleServer.
- */
-
-#include "modulesystem/singletonmodule.h"
-
-typedef SingletonModule<UIManagerAPI, UIManagerDependencies> UIManagerModule;
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server) {
-	// Static instance of the UIManagerModule
-	static UIManagerModule _instance;
-	initialiseModule(server);
-	_instance.selfRegister();
+	// Initialise the streams
+	const ApplicationContext& ctx = registry.getApplicationContext();
+	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
+	GlobalErrorStream::instance().setOutputStream(ctx.getOutputStream());
+	
+	// Remember the reference to the ModuleRegistry
+	module::RegistryReference::Instance().setRegistry(registry);
 }

@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_IGLRENDER_H
 
 #include "igl.h"
+#include "imodule.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 class AABB;
@@ -156,15 +157,15 @@ public:
 	{ }
 };
 
+const std::string MODULE_OPENGL_STATE_LIBRARY("OpenGLStateLibrary");
+
 /**
  * Library of named OpenGLState objects.
  */
-class OpenGLStateLibrary
+class OpenGLStateLibrary :
+	public RegisterableModule
 {
 public:
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "openglshaderlibrary");
-
 	virtual void getDefaultState(OpenGLState& state) const = 0;
 
 	/** 
@@ -185,19 +186,13 @@ public:
 	
 };
 
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<OpenGLStateLibrary> GlobalOpenGLStateLibraryModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<OpenGLStateLibrary> GlobalOpenGLStateLibraryModuleRef;
-
-inline OpenGLStateLibrary& GlobalOpenGLStateLibrary()
-{
-  return GlobalOpenGLStateLibraryModule::getTable();
+inline OpenGLStateLibrary& GlobalOpenGLStateLibrary() {
+	boost::shared_ptr<OpenGLStateLibrary> _openGLStateLib(
+		boost::static_pointer_cast<OpenGLStateLibrary>(
+			module::GlobalModuleRegistry().getModule(MODULE_OPENGL_STATE_LIBRARY)
+		)
+	);
+	return *_openGLStateLib;
 }
 
 #endif

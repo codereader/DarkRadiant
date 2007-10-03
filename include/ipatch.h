@@ -22,10 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_IPATCH_H)
 #define INCLUDED_IPATCH_H
 
-#include <string>
+#include "imodule.h"
 
 #include "inode.h"
-#include "generic/constant.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 
@@ -254,11 +253,10 @@ typedef Matrix<PatchControl> PatchControlMatrix;
 /* greebo: the abstract base class for a patch-creating class.
  * At the moment, the CommonPatchCreator, Doom3PatchCreator and Doom3PatchDef2Creator derive from this base class.   
  */
-class PatchCreator {
+class PatchCreator :
+	public RegisterableModule
+{
 public:
-	INTEGER_CONSTANT(Version, 1);
-	STRING_CONSTANT(Name, "patch");
-	
 	// Create a patch and return the sceneNode 
 	virtual scene::INodePtr createPatch() = 0;
 	
@@ -302,25 +300,18 @@ inline Patch* Node_getPatch(scene::INodePtr node) {
 	return NULL;
 }
 
-// Module-related stuff
+const std::string MODULE_PATCH("PatchModule");
+const std::string DEF2("Def2");
+const std::string DEF3("Def3");
 
-#include "modulesystem.h"
-
-template<typename Type>
-class ModuleRef;
-typedef ModuleRef<PatchCreator> PatchModuleRef;
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<PatchCreator> GlobalPatchModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<PatchCreator> GlobalPatchModuleRef;
-
-// Returns the PatchCreator instance, providing a way for other modules to access patch functions
-inline PatchCreator& GlobalPatchCreator() {
-  return GlobalPatchModule::getTable();
+// Acquires the PatchCreator of the given type ("Def2", "Def3")
+inline PatchCreator& GlobalPatchCreator(const std::string& defType) {
+	boost::shared_ptr<PatchCreator> _patchCreator(
+		boost::static_pointer_cast<PatchCreator>(
+			module::GlobalModuleRegistry().getModule(MODULE_PATCH + defType) // e.g. "PatchModuleDef2"
+		)
+	);
+	return *_patchCreator;
 }
 
 #endif

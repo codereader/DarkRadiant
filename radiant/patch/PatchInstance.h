@@ -56,8 +56,6 @@ class PatchInstance :
 
 	const LightList* m_lightList;
 public:
-	STRING_CONSTANT(Name, "PatchInstance");
-
 	// Constructor and Destructor
 	PatchInstance(const scene::Path& path, scene::Instance* parent, Patch& patch);
 	~PatchInstance();

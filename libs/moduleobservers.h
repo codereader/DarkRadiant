@@ -30,11 +30,26 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <iostream>
 #endif
 
+#include <stdexcept>
+
 class ModuleObservers
 {
-  typedef std::set<ModuleObserver*> Observers;
-  Observers m_observers;
+	typedef std::set<ModuleObserver*> Observers;
+	Observers m_observers;
+	
+	// greebo: Added this to make debugging easier, so that
+	// the warning in the destructor provides more information.
+	std::string _ownerName;
+
 public:
+	// Default constructor, for backwards compatibility
+	ModuleObservers() :
+		_ownerName("Owner unknown.")
+	{}
+	
+	ModuleObservers(const std::string& ownerName) :
+		_ownerName(ownerName)
+	{}
 
 #ifdef _DEBUG
 	// Warning if observers still attached in destructor (may not be necessary,
@@ -42,7 +57,9 @@ public:
 	~ModuleObservers() {
 		if (!m_observers.empty()) {
 			std::cout << "Warning: destroying ModuleObservers with " 
-				<< m_observers.size() << " observers attached." << std::endl;
+				<< m_observers.size() << " observers attached." 
+				<< " (Owner: " << _ownerName << ")"
+				<< std::endl;
 		}
 	}
 #endif

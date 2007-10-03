@@ -21,28 +21,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "Doom3SkinCache.h"
 
-#include "ifilesystem.h"
-#include "modulesystem/singletonmodule.h"
-
-/* Module dependencies and registration */
-
-class Doom3ModelSkinCacheDependencies : 
-public GlobalFileSystemModuleRef 
-{
-};
-
-typedef SingletonModule<skins::Doom3SkinCache, 
-						Doom3ModelSkinCacheDependencies> 
-Doom3ModelSkinCacheModule;
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
-{
-	// Static skins module instance
-	static Doom3ModelSkinCacheModule _module;
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+	static skins::Doom3SkinCachePtr _module(new skins::Doom3SkinCache);
+	registry.registerModule(_module);
 	
-	// Register the module with the module server
-	initialiseModule(server);
-	_module.selfRegister();
+	// Initialise the streams
+	const ApplicationContext& ctx = registry.getApplicationContext();
+	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
+	GlobalErrorStream::instance().setOutputStream(ctx.getOutputStream());
+	
+	// Remember the reference to the ModuleRegistry
+	module::RegistryReference::Instance().setRegistry(registry);
 }
-
-

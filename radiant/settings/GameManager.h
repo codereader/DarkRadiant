@@ -4,6 +4,8 @@
 #include <string>
 #include <map>
 
+#include "igame.h"
+#include "imodule.h"
 #include "iregistry.h"
 #include "Game.h"
 
@@ -13,6 +15,7 @@ namespace game {
  * 			of the possible games and the current game.
  */
 class Manager :
+	public IGameManager,
 	public RegistryKeyObserver // Observes the engine path
 {
 public:
@@ -75,7 +78,7 @@ public:
 	
 	/** greebo: Returns the current Game (shared_ptr).
 	 */
-	GamePtr currentGame();
+	virtual IGamePtr currentGame();
 	
 	/** greebo: Returns the type of the currently active game.
 	 * 			This is a convenience method to be used when loading
@@ -87,14 +90,16 @@ public:
 	 * 			If no saved game setting is found, the user
 	 * 			is asked to enter the relevant information in a Dialog. 
 	 */
-	void initialise();
+	void initialise(const std::string& appPath);
 	
 	/** greebo: Scans the "games/" subfolder for .game description foles.
 	 */
-	void loadGameFiles();
+	void loadGameFiles(const std::string& appPath);
 	
-	// Accessor method containing the static instance
-	static Manager& Instance();
+	// RegisterableModule implementation
+	virtual const std::string& getName() const;
+	virtual const StringSet& getDependencies() const;
+	virtual void initialiseModule(const ApplicationContext& ctx);
 
 private:
 	/** greebo: Get the user engine path (is OS-specific)

@@ -2,7 +2,7 @@
 #include "gtkutil/filechooser.h"
 #include "gtkutil/dialog.h"
 #include "iregistry.h"
-#include "environment.h"
+#include "modulesystem/ApplicationContextImpl.h"
 
 /*	This exports the current selection into a WaveFrontOBJ file
  */

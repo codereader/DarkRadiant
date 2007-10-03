@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "plugin.h"
 
+#include "imodule.h"
 #include "iscenegraph.h"
 #include "irender.h"
 #include "iselection.h"
@@ -30,69 +31,67 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ifilesystem.h"
 #include "iundo.h"
 #include "ifiletypes.h"
+#include "stream/textstream.h"
 
-#include "modulesystem/singletonmodule.h"
+#include <iostream>
 
 #include "md5.h"
 
-class ModelDependencies :
-  public GlobalFileSystemModuleRef,
-  public GlobalOpenGLModuleRef,
-  public GlobalUndoModuleRef,
-  public GlobalSceneGraphModuleRef,
-  public GlobalShaderCacheModuleRef,
-  public GlobalSelectionModuleRef,
-  public GlobalFiletypesModuleRef
-{
-};
-
-class MD5ModelLoader : public ModelLoader
+class MD5ModelLoader : 
+	public ModelLoader
 {
 public:
-  scene::INodePtr loadModel(ArchiveFile& file)
-  {
-    return loadMD5Model(file);
-  }
+	scene::INodePtr loadModel(ArchiveFile& file) {
+		return loadMD5Model(file);
+	}
   
 	// Not implemented
 	model::IModelPtr loadModelFromPath(const std::string& name) {
 		return model::IModelPtr();
 	}
+	
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name("ModelLoaderMD5MESH");
+		return _name;
+	}
+	
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies;
+
+		if (_dependencies.empty()) {
+			_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
+			_dependencies.insert(MODULE_OPENGL);
+			_dependencies.insert(MODULE_UNDOSYSTEM);
+			_dependencies.insert(MODULE_SCENEGRAPH);
+			_dependencies.insert(MODULE_SHADERCACHE);
+			_dependencies.insert(MODULE_SELECTIONSYSTEM);
+			_dependencies.insert(MODULE_FILETYPES);
+		}
+
+		return _dependencies;
+	}
+	
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "MD5Model::initialiseModule called.\n";
+		
+		GlobalFiletypes().addType(
+			"model", getName(),
+			FileTypePattern("md5 meshes", "*.md5mesh")
+		);
+	}
 };
+typedef boost::shared_ptr<MD5ModelLoader> MD5ModelLoaderPtr;
 
-/**
- * Dependencies class.
- */
-class ModelMD5Dependencies 
-: public ModelDependencies
-{ };
-
-class ModelMD5API
-{
-  MD5ModelLoader m_modelmd5;
-public:
-  typedef ModelLoader Type;
-  STRING_CONSTANT(Name, "md5mesh");
-
-  ModelMD5API()
-  {
-    GlobalFiletypesModule::getTable().addType("model", "md5mesh", 
-    	FileTypePattern("md5 meshes", "*.md5mesh"));
-  }
-  ModelLoader* getTable()
-  {
-    return &m_modelmd5;
-  }
-};
-
-typedef SingletonModule<ModelMD5API, ModelMD5Dependencies> ModelMD5Module;
-
-ModelMD5Module g_ModelMD5Module;
-
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
-{
-  initialiseModule(server);
-
-  g_ModelMD5Module.selfRegister();
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+	static MD5ModelLoaderPtr _module(new MD5ModelLoader);
+	registry.registerModule(_module);
+	
+	// Initialise the streams
+	const ApplicationContext& ctx = registry.getApplicationContext();
+	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
+	GlobalErrorStream::instance().setOutputStream(ctx.getOutputStream());
+	
+	// Remember the reference to the ModuleRegistry
+	module::RegistryReference::Instance().setRegistry(registry);
 }

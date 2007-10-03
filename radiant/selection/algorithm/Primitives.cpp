@@ -182,7 +182,7 @@ void createCMFromSelection() {
 			}
 			
 			ui::ModelSelectorResult modelAndSkin = ui::ModelSelector::chooseModel();
-			std::string basePath = game::Manager::Instance().getModPath();
+			std::string basePath = GlobalGameManager().getModPath();
 			
 			std::string modelPath = basePath + modelAndSkin.model;
 			

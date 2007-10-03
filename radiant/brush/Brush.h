@@ -129,8 +129,6 @@ private:
 	// ----
 
 public:  
-	STRING_CONSTANT(Name, "Brush");
-
 	/// \brief The undo memento for a brush stores only the list of face references - the faces are not copied.
 	class BrushUndoMemento : public UndoMemento {
 	public:

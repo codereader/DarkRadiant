@@ -16,6 +16,11 @@ namespace scene {
  * 			The parent() method is a convenience method helping to insert 
  * 			scenegraph elements at the right place without complicated
  * 			popping() and pushing().
+ * 
+ * Note: Normally, deriving from STL containers is not a good idea, due to
+ *       the non-virtual destructors (all data members in the subclasses
+ *       wouldn't get destroyed). In this case it is ok to derive from
+ *       std::vector, because no additional data members are introduced. 
  */
 class Path :
 	public std::vector<INodePtr>

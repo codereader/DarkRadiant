@@ -22,12 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_IMODEL_H)
 #define INCLUDED_IMODEL_H
 
-#include "generic/constant.h"
 #include "Bounded.h"
 #include "irender.h"
 #include "inode.h"
-
-#include <boost/shared_ptr.hpp>
+#include "imodule.h"
 
 /* Forward decls */
 class ArchiveFile;
@@ -84,35 +82,33 @@ namespace model {
 
 } // namespace model
 
+const std::string MODULE_MODELLOADER("ModelLoader"); // fileType is appended ("ModeLoaderASE")
 
 /** Model loader module API interface.
  */
-
-class ModelLoader
+class ModelLoader :
+	public RegisterableModule
 {
 public:
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "model");
-
 	/** Load a model from the VFS and return a scene::Node that contains
 	 * it.
-	 */
-	
+	 */	
 	virtual scene::INodePtr loadModel(ArchiveFile& file) = 0;
 	
 	/** Load a model from the VFS, and return the IModel
 	 * subclass for it.
-	 */
-	 
+	 */	 
 	virtual model::IModelPtr loadModelFromPath(const std::string& path) = 0;
 };
 
-template<typename Type>
-class Modules;
-typedef Modules<ModelLoader> ModelModules;
-
-template<typename Type>
-class ModulesRef;
-typedef ModulesRef<ModelLoader> ModelModulesRef;
+// Acquires the PatchCreator of the given type ("ASE", "NULL", "3DS", etc.)
+inline ModelLoader& GlobalModelLoader(const std::string& fileType) {
+	boost::shared_ptr<ModelLoader> _modelLoader(
+		boost::static_pointer_cast<ModelLoader>(
+			module::GlobalModuleRegistry().getModule(MODULE_MODELLOADER + fileType) // e.g. "ModuleLoaderTGA"
+		)
+	);
+	return *_modelLoader;
+}
 
 #endif /* _IMODEL_H_ */

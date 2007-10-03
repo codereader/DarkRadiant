@@ -24,8 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ModResource.h"
 
+#include "imodule.h"
 #include <cstddef>
-#include "generic/constant.h"
 
 #include "itextstream.h"
 
@@ -150,21 +150,26 @@ public:
 
 typedef Archive* (*PFN_OPENARCHIVE) (const char* name);
 
-class _QERArchiveTable
+const std::string MODULE_ARCHIVE("Archive");
+
+// greebo: TODO! Anything starting with _QER can't be good enough.
+class _QERArchiveTable :
+	public RegisterableModule
 {
 public:
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "archive");
+	PFN_OPENARCHIVE              m_pfnOpenArchive;
 
-  PFN_OPENARCHIVE              m_pfnOpenArchive;
+    // get the supported file extension
+    virtual const std::string& getExtension() = 0;
 };
 
-template<typename Type>
-class Modules;
-typedef Modules<_QERArchiveTable> ArchiveModules;
-
-template<typename Type>
-class ModulesRef;
-typedef ModulesRef<_QERArchiveTable> ArchiveModulesRef;
+inline _QERArchiveTable& GlobalArchive(const std::string& fileType) {
+	boost::shared_ptr<_QERArchiveTable> _archive(
+		boost::static_pointer_cast<_QERArchiveTable>(
+			module::GlobalModuleRegistry().getModule(MODULE_ARCHIVE + fileType) // e.g. ArchivePK4
+		)
+	);
+	return *_archive;
+}
 
 #endif

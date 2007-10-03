@@ -28,7 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <list>
 
-void ShaderCache_setBumpEnabled(bool enabled);
 void ShaderCache_extensionsInitialised();
 
 class OpenGLState;

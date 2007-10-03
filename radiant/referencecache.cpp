@@ -27,15 +27,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iselection.h"
 #include "iundo.h"
 #include "imap.h"
-MapModules& ReferenceAPI_getMapModules();
 #include "imodel.h"
-ModelModules& ReferenceAPI_getModelModules();
 #include "ifilesystem.h"
 #include "iarchive.h"
 #include "ifiletypes.h"
 #include "ireference.h"
 #include "ientity.h"
 #include "iradiant.h"
+#include "imodule.h"
 
 #include <list>
 #include <fstream>
@@ -49,6 +48,8 @@ ModelModules& ReferenceAPI_getModelModules();
 #include "os/file.h"
 #include "moduleobserver.h"
 #include "moduleobservers.h"
+#include "modulesystem/StaticModule.h"
+#include "modulesystem/ModuleRegistry.h"
 
 #include "map/RootNode.h"
 #include "mainframe.h"
@@ -186,19 +187,33 @@ namespace
   scene::INodePtr g_nullModel(g_nullNode);
 }
 
-class NullModelLoader : public ModelLoader
+class NullModelLoader : 
+	public ModelLoader
 {
 public:
-  scene::INodePtr loadModel(ArchiveFile& file)
-  {
-    return g_nullModel;
-  }
+	scene::INodePtr loadModel(ArchiveFile& file) {
+		return g_nullModel;
+	}
   
   	// Required function, not implemented.
 	model::IModelPtr loadModelFromPath(const std::string& name) {
 		return model::IModelPtr();
 	}
   
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name(MODULE_MODELLOADER + "NULL");
+		return _name;
+	}
+	
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies; // no dependencies
+		return _dependencies;
+	}
+	
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << getName().c_str() << "::initialiseModule called.\n";
+	}
 };
 
 namespace
@@ -211,11 +226,14 @@ namespace
 ModelLoader* ModelLoader_forType(const char* type)
 {
   std::string moduleName = findModuleName(&GlobalFiletypes(), 
-  										  std::string(ModelLoader::Name()),
+  										  "model",
   										  type);
   if(!moduleName.empty())
   {
-    ModelLoader* table = ReferenceAPI_getModelModules().findModule(moduleName.c_str());
+    ModelLoader* table = boost::static_pointer_cast<ModelLoader>(
+    	module::GlobalModuleRegistry().getModule(moduleName)
+    ).get();
+    
     if(table != 0)
     {
       return table;
@@ -351,23 +369,22 @@ scene::INodePtr Model_load(ModelLoader* loader, const char* path, const char* na
 		// found, try again with the "map" type, since we might be loading a 
 		// map with a different extension
 	    std::string moduleName = findModuleName(&GlobalFiletypes(), 
-	    										std::string(MapFormat::Name()), 
+	    										"map", 
 	    										type);
 		// Empty, try again with "map" type
 		if (moduleName.empty()) {
-			moduleName = findModuleName(&GlobalFiletypes(), 
-										std::string(MapFormat::Name()),
-										"map"); 
+			moduleName = findModuleName(&GlobalFiletypes(),	"map", "map"); 
 		}
 	
 		// If we have a module, use it to load the map if possible, otherwise 
 		// return an error
 	    if (!moduleName.empty()) {
 	      
-			const MapFormat* format = ReferenceAPI_getMapModules().findModule(
-										moduleName.c_str());
+			const MapFormat* format = boost::static_pointer_cast<MapFormat>(
+				module::GlobalModuleRegistry().getModule(moduleName)
+			).get();
 										
-	      if(format != 0)
+	      if(format != NULL)
 	      {
 	        return MapResource_load(*format, path, name);
 	      }
@@ -511,15 +528,15 @@ struct ModelResource
 	 */
 	bool save() {
 		std::string moduleName = findModuleName(GetFileTypeRegistry(), 
-												std::string(MapFormat::Name()),
+												"map",
   												_type);
   									
 		if(!moduleName.empty()) {
-			const MapFormat* format = 
-				ReferenceAPI_getMapModules().findModule(moduleName.c_str());
-    
-    		if (format != 0 && MapResource_save(*format, m_model, m_path, m_name))
-			{
+			const MapFormat* format = boost::static_pointer_cast<MapFormat>(
+				module::GlobalModuleRegistry().getModule(moduleName)
+			).get();
+			
+			if (format != NULL && MapResource_save(*format, m_model, m_path, m_name)) {
       			mapSave();
       			return true;
     		}
@@ -658,6 +675,42 @@ class HashtableReferenceCache
 
 public:
 
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name(MODULE_REFERENCECACHE);
+		return _name;
+	}
+	
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies;
+		
+		// greebo: TODO: This list can probably be made smaller,
+		// not all modules are necessary during initialisation
+		if (_dependencies.empty()) {
+			_dependencies.insert(MODULE_RADIANT);
+			_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
+			_dependencies.insert(MODULE_FILETYPES);
+			_dependencies.insert("Doom3MapLoader");
+			// Model Loaders?
+		}
+		
+		return _dependencies;
+	}
+	
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "ReferenceCache::initialiseModule called.\n";
+		
+		g_nullModel = NewNullModel();
+
+		GlobalFileSystem().attach(*this);
+	}
+	
+	virtual void shutdownModule() {
+		GlobalFileSystem().detach(*this);
+
+		g_nullModel = g_nullNode;
+	}
+	
   typedef ModelReferences::iterator iterator;
 
   HashtableReferenceCache() : m_unrealised(1)
@@ -772,6 +825,9 @@ public:
   }
 };
 
+// Define the ReferenceCache registerable module
+module::StaticModule<HashtableReferenceCache> referenceCacheModule;
+
 namespace
 {
   HashtableReferenceCache g_referenceCache;
@@ -841,70 +897,11 @@ ReferenceCache& GetReferenceCache()
   return g_referenceCache;
 }
 
-
-#include "modulesystem/modulesmap.h"
-#include "modulesystem/singletonmodule.h"
-#include "modulesystem/moduleregistry.h"
-
-class ReferenceDependencies :
-  public GlobalRadiantModuleRef,
-  public GlobalFileSystemModuleRef,
-  public GlobalFiletypesModuleRef
-{
-  ModelModulesRef m_model_modules;
-  MapModulesRef m_map_modules;
-public:
-  ReferenceDependencies() :
-    m_model_modules(GlobalRadiant().getRequiredGameDescriptionKeyValue("modeltypes")),
-    m_map_modules(GlobalRadiant().getRequiredGameDescriptionKeyValue("maptypes"))
-  {
-  }
-  ModelModules& getModelModules()
-  {
-    return m_model_modules.get();
-  }
-  MapModules& getMapModules()
-  {
-    return m_map_modules.get();
-  }
-};
-
-class ReferenceAPI
-{
-  ReferenceCache* m_reference;
-public:
-  typedef ReferenceCache Type;
-  STRING_CONSTANT(Name, "*");
-
-  ReferenceAPI()
-  {
-    g_nullModel = NewNullModel();
-
-    GlobalFileSystem().attach(g_referenceCache);
-
-    m_reference = &GetReferenceCache();
-  }
-  ~ReferenceAPI()
-  {
-    GlobalFileSystem().detach(g_referenceCache);
-
-    g_nullModel = g_nullNode;
-  }
-  ReferenceCache* getTable()
-  {
-    return m_reference;
-  }
-};
-
-typedef SingletonModule<ReferenceAPI, ReferenceDependencies> ReferenceModule;
-typedef Static<ReferenceModule> StaticReferenceModule;
-StaticRegisterModule staticRegisterReference(StaticReferenceModule::instance());
-
-ModelModules& ReferenceAPI_getModelModules()
+/*ModelModules& ReferenceAPI_getModelModules()
 {
   return StaticReferenceModule::instance().getDependencies().getModelModules();
 }
 MapModules& ReferenceAPI_getMapModules()
 {
   return StaticReferenceModule::instance().getDependencies().getMapModules();
-}
+}*/

@@ -1,4 +1,5 @@
-#include "iplugin.h"
+#include "imodule.h"
+
 #include "ieventmanager.h"
 #include "ieclass.h"
 #include "iscenegraph.h"
@@ -13,20 +14,38 @@
 #include "StimResponseEditor.h" 
 
 /**
- * API module to register the menu commands for the ObjectivesEditor class.
+ * Module to register the menu commands for the ObjectivesEditor class.
  */
-class StimResponseAPI
-: public IPlugin
+class StimResponseModule : 
+	public RegisterableModule
 {
 public:
-	STRING_CONSTANT(Name, "StimResponse");
-	typedef IPlugin Type;
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name("StimResponseEditor");
+		return _name;
+	}
+	
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies;
 
-	/**
-	 * API constructor, registers the commands in the Event manager and UI
-	 * manager.
-	 */
-	StimResponseAPI() {
+		if (_dependencies.empty()) {
+			_dependencies.insert(MODULE_XMLREGISTRY);
+			_dependencies.insert(MODULE_EVENTMANAGER);
+			_dependencies.insert(MODULE_UIMANAGER);
+			_dependencies.insert(MODULE_RADIANT);
+			_dependencies.insert(MODULE_SELECTIONSYSTEM);
+			_dependencies.insert(MODULE_SCENEGRAPH);
+			_dependencies.insert(MODULE_ECLASSMANAGER);
+			_dependencies.insert(MODULE_UNDOSYSTEM);
+		}
+
+		return _dependencies;
+	}
+	
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "StimResponseModule::initialiseModule called.\n";
+		
 		// Add the callback event
 		GlobalEventManager().addCommand(
 			"StimResponseEditor", 
@@ -42,56 +61,18 @@ public:
 				"stimresponse.png",	// icon
 				"StimResponseEditor"); // event name
 	}
-	
-	virtual void shutdown() {
-		if (ui::StimResponseEditor::instantiated) {
-			// Pass the call to the SR editor instance
-			ui::StimResponseEditor::Instance().shutdown();
-		}
-	}
-	
-	/**
-	 * This has to be implemented so that the ModulesMap can find and deliver 
-	 * this module on request.
-	 */
-	IPlugin* getTable() {
-		return this;
-	}
 };
+typedef boost::shared_ptr<StimResponseModule> StimResponseModulePtr;
 
-/**
- * Dependencies class.
- */
-class StimResponseDependencies : 
-	public GlobalRegistryModuleRef,
-	public GlobalEventManagerModuleRef,
-	public GlobalUIManagerModuleRef,
-	public GlobalRadiantModuleRef,
-	public GlobalSelectionModuleRef,
-	public GlobalSceneGraphModuleRef,
-	public GlobalEntityClassManagerModuleRef,
-	public GlobalUndoModuleRef
-{ 
-public:
-	StimResponseDependencies() :
-		GlobalEntityClassManagerModuleRef("doom3")
-	{}
-};
-
-/* Required code to register the module with the ModuleServer.
- */
-
-#include "modulesystem/singletonmodule.h"
-
-typedef SingletonModule<StimResponseAPI,
-						StimResponseDependencies> StimResponseModule;
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
-{
-	// Static module instance
-	static StimResponseModule _instance;
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+	static StimResponseModulePtr _module(new StimResponseModule);
+	registry.registerModule(_module);
 	
-	// Initialise and register the module	
-	initialiseModule(server);
-	_instance.selfRegister();
+	// Initialise the streams
+	const ApplicationContext& ctx = registry.getApplicationContext();
+	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
+	GlobalErrorStream::instance().setOutputStream(ctx.getOutputStream());
+	
+	// Remember the reference to the ModuleRegistry
+	module::RegistryReference::Instance().setRegistry(registry);
 }

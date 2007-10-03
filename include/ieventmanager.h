@@ -7,8 +7,8 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include "imodule.h"
 #include "iselection.h"
-#include "generic/constant.h"
 #include "generic/callbackfwd.h"
 
 // GTK forward declaration
@@ -140,12 +140,12 @@ public:
 	virtual bool strafeForwardActive(unsigned int& state) = 0;
 };
 
-class IEventManager
+const std::string MODULE_EVENTMANAGER("EventManager");
+
+class IEventManager :
+	public RegisterableModule
 {
 public:
-	INTEGER_CONSTANT(Version, 1);
-	STRING_CONSTANT(Name, "EventManager");
-
 	/* greebo: This is to avoid cyclic dependencies, because the eventmanager depends
 	 * on the selectionsystem, the selectionsystem on the gridmodule, the gridmodule on 
 	 * the eventmanager, and there we have our cycle. Call this before any mouse events 
@@ -239,22 +239,16 @@ public:
 	 */
 	virtual unsigned int getModifierState() = 0;
 };
-
-// Module definitions
-
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<IEventManager> GlobalEventManagerModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<IEventManager> GlobalEventManagerModuleRef;
+typedef boost::shared_ptr<IEventManager> IEventManagerPtr;
 
 // This is the accessor for the event manager
 inline IEventManager& GlobalEventManager() {
-	return GlobalEventManagerModule::getTable();
+	IEventManagerPtr _eventManager(
+		boost::static_pointer_cast<IEventManager>(
+			module::GlobalModuleRegistry().getModule(MODULE_EVENTMANAGER)
+		)
+	);
+	return *_eventManager;
 } 
 
 #endif /*IEVENTMANAGER_H_*/

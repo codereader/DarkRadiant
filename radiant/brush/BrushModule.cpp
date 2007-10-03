@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iradiant.h"
 
 #include "ifilter.h"
+#include "igame.h"
+#include "ieventmanager.h"
 #include "brush/BrushNode.h"
 #include "brush/BrushInstance.h"
 #include "brush/BrushClipPlane.h"
@@ -32,20 +34,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ipreferencesystem.h"
 #include "stringio.h"
+#include "modulesystem/StaticModule.h"
 
 #include "mainframe.h"
 
 // ---------------------------------------------------------------------------------------
-
-// Constructor, connect self to the observed registryKey
-BrushModuleClass::BrushModuleClass() :
-	_textureLockEnabled(GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1")
-{
-	GlobalRegistry().addKeyObserver(this, RKEY_ENABLE_TEXTURE_LOCK);
-	
-	// add the preference settings
-	constructPreferences();
-}
 
 void BrushModuleClass::constructPreferences() {
 	// Add a page to the given group
@@ -134,53 +127,57 @@ bool BrushModuleClass::Brush_addFace(scene::INodePtr brush, const _QERFaceData& 
 	return Node_getBrush(brush)->addPlane(faceData.m_p0, faceData.m_p1, faceData.m_p2, faceData.m_shader, TextureProjection(faceData.m_texdef, BrushPrimitTexDef(), Vector3(0, 0, 0), Vector3(0, 0, 0))) != 0;
 }
 
-// -------------------------------------------------------------------------------------
-
-// greebo: The accessor function for the brush module containing the static instance
-BrushModuleClass* GlobalBrush() {
-	static BrushModuleClass _brushModule;
-	return &_brushModule;
+// RegisterableModule implementation
+const std::string& BrushModuleClass::getName() const {
+	static std::string _name(MODULE_BRUSHCREATOR);
+	return _name;
 }
 
-// ---------------------------------------------------------------------------------------
+const StringSet& BrushModuleClass::getDependencies() const {
+	static StringSet _dependencies;
 
-#include "modulesystem/singletonmodule.h"
-#include "modulesystem/moduleregistry.h"
-
-class BrushDependencies :
-	public GlobalRadiantModuleRef,
-	public GlobalRegistryModuleRef,
-	public GlobalPreferenceSystemModuleRef,
-	public GlobalSceneGraphModuleRef,
-	public GlobalShaderCacheModuleRef,
-	public GlobalSelectionModuleRef,
-	public GlobalOpenGLModuleRef,
-	public GlobalUndoModuleRef,
-	public GlobalFilterModuleRef 
-{};
-
-class BrushDoom3API
-{
-	BrushCreator* m_brushdoom3;
-public:
-	typedef BrushCreator Type;
-	STRING_CONSTANT(Name, "doom3");
-
-	BrushDoom3API() {
-		GlobalBrush()->construct();
-
-		m_brushdoom3 = GlobalBrush();
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_GAMEMANAGER);
+		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_RADIANT);
+		_dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_SCENEGRAPH);
+		_dependencies.insert(MODULE_PREFERENCESYSTEM);
+		_dependencies.insert(MODULE_SHADERCACHE);
+		_dependencies.insert(MODULE_SELECTIONSYSTEM);
+		_dependencies.insert(MODULE_OPENGL);
+		_dependencies.insert(MODULE_UNDOSYSTEM);
+		_dependencies.insert(MODULE_FILTERSYSTEM);
 	}
+
+	return _dependencies;
+}
+
+void BrushModuleClass::initialiseModule(const ApplicationContext& ctx) {
+	globalOutputStream() << "BrushModuleClass::initialiseModule called.\n";
 	
-	~BrushDoom3API() {
-		GlobalBrush()->destroy();
-	}
+	construct();
 	
-	BrushCreator* getTable() {
-		return m_brushdoom3;
-	}
-};
+	_textureLockEnabled = (GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1");
+	
+	GlobalRegistry().addKeyObserver(this, RKEY_ENABLE_TEXTURE_LOCK);
+	
+	// add the preference settings
+	constructPreferences();
+}
 
-typedef SingletonModule<BrushDoom3API, BrushDependencies> BrushDoom3Module;
-typedef Static<BrushDoom3Module> StaticBrushDoom3Module;
-StaticRegisterModule staticRegisterBrushDoom3(StaticBrushDoom3Module::instance());
+void BrushModuleClass::shutdownModule() {
+	globalOutputStream() << "BrushModuleClass::shutdownModule called.\n";
+	destroy();
+}
+
+// -------------------------------------------------------------------------------------
+
+// Define a static BrushModule 
+module::StaticModule<BrushModuleClass> staticBrushModule;
+
+// greebo: The accessor function for the brush module containing the static instance
+// TODO: Change this to return a reference instead of a raw pointer
+BrushModuleClass* GlobalBrush() {
+	return staticBrushModule.getModule().get();
+}

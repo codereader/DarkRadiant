@@ -54,8 +54,6 @@ class LightInstance :
 	mutable AABB m_aabb_component;
 	
 public:
-	STRING_CONSTANT(Name, "LightInstance");
-	
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
 

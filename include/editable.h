@@ -34,9 +34,7 @@ typedef Vector4 Quaternion;
 class Editable
 {
 public:
-  STRING_CONSTANT(Name, "Editable");
-
-  virtual const Matrix4& getLocalPivot() const = 0;
+	virtual const Matrix4& getLocalPivot() const = 0;
 };
 typedef boost::shared_ptr<Editable> EditablePtr;
 
@@ -47,9 +45,7 @@ inline EditablePtr Node_getEditable(scene::INodePtr node) {
 class Snappable
 {
 public:
-  STRING_CONSTANT(Name, "Snappable");
-
-  virtual void snapto(float snap) = 0;
+	virtual void snapto(float snap) = 0;
 };
 typedef boost::shared_ptr<Snappable> SnappablePtr;
 
@@ -59,8 +55,6 @@ inline SnappablePtr Node_getSnappable(scene::INodePtr node) {
 
 class ComponentEditable {
 public:
-	STRING_CONSTANT(Name, "ComponentEditable");
-
 	virtual const AABB& getSelectedComponentsBounds() const = 0;
 };
 typedef boost::shared_ptr<ComponentEditable> ComponentEditablePtr;
@@ -71,8 +65,6 @@ inline ComponentEditable* Instance_getComponentEditable(scene::Instance& instanc
 
 class ComponentSnappable {
 public:
-	STRING_CONSTANT(Name, "ComponentSnappable");
-
 	virtual void snapComponents(float snap) = 0;
 };
 typedef boost::shared_ptr<ComponentSnappable> ComponentSnappablePtr;
@@ -80,6 +72,5 @@ typedef boost::shared_ptr<ComponentSnappable> ComponentSnappablePtr;
 inline ComponentSnappable* Instance_getComponentSnappable(scene::Instance& instance) {
 	return dynamic_cast<ComponentSnappable*>(&instance);
 }
-
 
 #endif

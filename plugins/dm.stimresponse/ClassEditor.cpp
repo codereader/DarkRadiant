@@ -152,7 +152,6 @@ ClassEditor::TypeSelectorWidgets ClassEditor::createStimTypeSelector() {
 	GtkListStore* stimListStore = _stimTypes;
 	widgets.list = gtk_combo_box_new_with_model(GTK_TREE_MODEL(stimListStore));
 	gtk_widget_set_size_request(widgets.list, -1, -1);
-	g_object_unref(stimListStore); // tree view owns the reference now
 	
 	// Add the cellrenderer for the name
 	GtkCellRenderer* nameRenderer = gtk_cell_renderer_text_new();

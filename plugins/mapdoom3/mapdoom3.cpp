@@ -28,11 +28,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iradiant.h"
 #include "ishaders.h"
 
+#include "imodule.h"
 #include "scenelib.h"
-#include "generic/constant.h"
 #include "parser/DefTokeniser.h"
-
-#include "modulesystem/singletonmodule.h"
 
 #include "parse.h"
 #include "write.h"
@@ -41,92 +39,75 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 namespace {
 	const std::string RKEY_PRECISION = "game/mapFormat/floatPrecision";
+	const int MAPVERSION = 2;
 }
 
-class MapDoom3Dependencies :
-  public GlobalRadiantModuleRef,
-  public GlobalFiletypesModuleRef,
-  public GlobalEntityClassManagerModuleRef,
-  public GlobalSceneGraphModuleRef,
-  public GlobalBrushModuleRef,
-  public GlobalRegistryModuleRef,
-  public GlobalShadersModuleRef
+class MapDoom3API : 
+	public MapFormat,
+	public PrimitiveParser
 {
-  PatchModuleRef m_patchDef2Doom3Module;
-  PatchModuleRef m_patchDoom3Module;
 public:
-  MapDoom3Dependencies() :
-    GlobalEntityClassManagerModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("entityclass")),
-    GlobalBrushModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("brushtypes")),
-    GlobalShadersModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("shaders")),
-    m_patchDef2Doom3Module("def2doom3"),
-    m_patchDoom3Module("doom3")
-  {
-  }
-  BrushCreator& getBrushDoom3()
-  {
-    return GlobalBrushModule::getTable();
-  }
-  PatchCreator& getPatchDoom3()
-  {
-    return *m_patchDoom3Module.getTable();
-  }
-  PatchCreator& getPatchDef2Doom3()
-  {
-    return *m_patchDef2Doom3Module.getTable();
-  }
-};
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name("Doom3MapLoader");
+		return _name;
+	}
+	
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies;
 
-class MapDoom3API 
-: public MapFormat, 
-  public PrimitiveParser
-{
-  	MapDoom3Dependencies& m_dependencies;
-public:
+		if (_dependencies.empty()) {
+			_dependencies.insert(MODULE_RADIANT);
+			_dependencies.insert(MODULE_FILETYPES);
+			_dependencies.insert(MODULE_ECLASSMANAGER);
+			_dependencies.insert(MODULE_SCENEGRAPH);
+			_dependencies.insert(MODULE_BRUSHCREATOR);
+			_dependencies.insert(MODULE_PATCH + DEF2);
+			_dependencies.insert(MODULE_PATCH + DEF3);
+			_dependencies.insert(MODULE_XMLREGISTRY);
+			_dependencies.insert(MODULE_SHADERSYSTEM);
+		}
 
-	typedef MapFormat Type;
-	STRING_CONSTANT(Name, "mapdoom3");
-	INTEGER_CONSTANT(MapVersion, 2);
-
-	/**
-	 * Constructor. Register the map filetypes in the GlobalFiletypes module.
-	 */
-	MapDoom3API(MapDoom3Dependencies& dependencies) 
-	: m_dependencies(dependencies)
-	{
+		return _dependencies;
+	}
+	
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "MapDoom3API::initialiseModule called.\n";
+		
+		GlobalFiletypes().addType(
+    		"map", getName(), FileTypePattern("Doom 3 map", "*.map"));
     	GlobalFiletypes().addType(
-    		"map", "mapdoom3", FileTypePattern("Doom 3 map", "*.map"));
+    		"map", getName(), FileTypePattern("Doom 3 region", "*.reg"));
     	GlobalFiletypes().addType(
-    		"map", "mapdoom3", FileTypePattern("Doom 3 region", "*.reg"));
-    	GlobalFiletypes().addType(
-    		"map", "mapdoom3", FileTypePattern("Doom 3 prefab", "*.pfb"));
+    		"map", getName(), FileTypePattern("Doom 3 prefab", "*.pfb"));
     	
     	// Add the filepatterns for the prefab (different order)
     	GlobalFiletypes().addType(
-    		"prefab", "mapdoom3", FileTypePattern("Doom 3 prefab", "*.pfb"));
+    		"prefab", getName(), FileTypePattern("Doom 3 prefab", "*.pfb"));
     	GlobalFiletypes().addType(
-    		"prefab", "mapdoom3", FileTypePattern("Doom 3 map", "*.map"));
+    		"prefab", getName(), FileTypePattern("Doom 3 map", "*.map"));
     	GlobalFiletypes().addType(
-    		"prefab", "mapdoom3", FileTypePattern("Doom 3 region", "*.reg"));
+    		"prefab", getName(), FileTypePattern("Doom 3 region", "*.reg"));
 	}
 	
-	MapFormat* getTable() {
-		return this;
-	}
-
 	/**
 	 * Parse a primitive from the given token stream.
 	 */
 	scene::INodePtr parsePrimitive(parser::DefTokeniser& tokeniser) const {
 	    std::string primitive = tokeniser.nextToken();
-	    if (primitive == "patchDef3")
-	        return m_dependencies.getPatchDoom3().createPatch();
-	    else if(primitive == "patchDef2")
-	        return m_dependencies.getPatchDef2Doom3().createPatch();
-	    else if(primitive == "brushDef3")
-	        return m_dependencies.getBrushDoom3().createBrush();
-	    else
+	    
+	    if (primitive == "patchDef3") {
+	        return GlobalPatchCreator(DEF3).createPatch();
+	    }
+	    else if (primitive == "patchDef2") {
+	        return GlobalPatchCreator(DEF2).createPatch();
+	    }
+	    else if(primitive == "brushDef3") {
+	    	return GlobalBrushCreator().createBrush();
+	    }
+	    else {
 	        return scene::INodePtr();
+	    }
   }
   
     /**
@@ -141,10 +122,10 @@ public:
         parser::BasicDefTokeniser<std::istream> tok(is);
         
         // Parse the map version
-        int version = 0;
+        float version = 0;
         try {
             tok.assertNextToken("Version");
-            version = boost::lexical_cast<int>(tok.nextToken());
+            version = boost::lexical_cast<float>(tok.nextToken());
         }
         catch (parser::ParseException e) {
             globalErrorStream() 
@@ -160,9 +141,9 @@ public:
         }
 
         // Check we have the correct version for this module
-        if (version != MapVersion()) {
+        if (version != MAPVERSION) {
             globalErrorStream() 
-                << "Incorrect map version: required " << MapVersion() 
+                << "Incorrect map version: required " << MAPVERSION 
                 << ", found " << version << "\n";
             return;
         }
@@ -175,24 +156,21 @@ public:
 	void writeGraph(scene::INodePtr root, GraphTraversalFunc traverse, std::ostream& os) const {
 		int precision = GlobalRegistry().getInt(RKEY_PRECISION);  
 		os.precision(precision);
-	    os << "Version " << MapVersion() << std::endl;
+	    os << "Version " << MAPVERSION << std::endl;
 		Map_Write(root, traverse, os);
 	}
 };
+typedef boost::shared_ptr<MapDoom3API> MapDoom3APIPtr;
 
-typedef SingletonModule<
-  MapDoom3API,
-  MapDoom3Dependencies,
-  DependenciesAPIConstructor<MapDoom3API, MapDoom3Dependencies>
->
-MapDoom3Module;
-
-MapDoom3Module g_MapDoom3Module;
-
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
-{
-  initialiseModule(server);
-
-  g_MapDoom3Module.selfRegister();
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+	static MapDoom3APIPtr _module(new MapDoom3API);
+	registry.registerModule(_module);
+	
+	// Initialise the streams
+	const ApplicationContext& ctx = registry.getApplicationContext();
+	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
+	GlobalErrorStream::instance().setOutputStream(ctx.getOutputStream());
+	
+	// Remember the reference to the ModuleRegistry
+	module::RegistryReference::Instance().setRegistry(registry);
 }

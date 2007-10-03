@@ -1,13 +1,19 @@
 #include "PreferenceSystem.h"
 
 #include "ipreferencesystem.h"
-#include <time.h>
-
+#include "imodule.h"
 #include "iregistry.h"
-#include "environment.h"
+
+#include <time.h>
+#include <iostream>
+
 #include "os/file.h"
 #include "string/string.h"
+
+#include "modulesystem/StaticModule.h"
+#include "modulesystem/ApplicationContextImpl.h"
 #include "ui/prefdialog/PrefDialog.h"
+
 #include <boost/algorithm/string/replace.hpp>
 
 void resetPreferences() {
@@ -44,31 +50,26 @@ public:
 	PreferencesPagePtr getPage(const std::string& path) {
 		return ui::PrefDialog::Instance().createOrFindPage(path);
 	}
+	
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name(MODULE_PREFERENCESYSTEM);
+		return _name;
+	}
+
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies; // no dependencies
+		return _dependencies;
+	}
+
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "PreferenceSystem::initialiseModule called\n";
+	}
 };
+
+// Define the static PreferenceSystem module
+module::StaticModule<PreferenceSystem> preferenceSystemModule;
 
 IPreferenceSystem& GetPreferenceSystem() {
-	static PreferenceSystem _preferenceSystem;
-	return _preferenceSystem;
+	return *preferenceSystemModule.getModule();
 }
-
-class PreferenceSystemAPI
-{
-	IPreferenceSystem* m_preferencesystem;
-public:
-	typedef IPreferenceSystem Type;
-	STRING_CONSTANT(Name, "*");
-
-	PreferenceSystemAPI() {
-		m_preferencesystem = &GetPreferenceSystem();
-	}
-	IPreferenceSystem* getTable() {
-		return m_preferencesystem;
-	}
-};
-
-#include "modulesystem/singletonmodule.h"
-#include "modulesystem/moduleregistry.h"
-
-typedef SingletonModule<PreferenceSystemAPI> PreferenceSystemModule;
-typedef Static<PreferenceSystemModule> StaticPreferenceSystemModule;
-StaticRegisterModule staticRegisterPreferenceSystem(StaticPreferenceSystemModule::instance());

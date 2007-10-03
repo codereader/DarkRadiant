@@ -2,6 +2,8 @@
 
 #include "iregistry.h"
 
+#include "stream/textstream.h"
+
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -10,9 +12,7 @@
 // Constructor, loads the modifier nodes from the registry
 Modifiers::Modifiers() :
 	_modifierState(0)
-{
-	loadModifierDefinitions();
-}
+{}
 
 void Modifiers::loadModifierDefinitions() {
 	

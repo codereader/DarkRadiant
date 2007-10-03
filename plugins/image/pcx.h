@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ifilesystem.h"
 #include "iimage.h"
 #include "imagelib.h" // for RGBAImagePtr
-#include "modulesystem/singletonmodule.h"
+#include <iostream>
 
 ImagePtr LoadPCX32(ArchiveFile& file);
 
@@ -42,19 +42,6 @@ class PCXLoader :
 	public ImageLoader
 {
 public:
-	// Definitions to enable the lookup by the radiant modulesystem
-	typedef ImageLoader Type;
-	STRING_CONSTANT(Name, "pcx");
-
-	// Return the instance pointer
-	ImageLoader* getTable() {
-		return this;
-	}
-
-public:
-	// Constructor
-	PCXLoader() {}
-	
 	/* greebo: This loads the file and returns the pointer to 
 	 * the allocated Image object (or NULL, if the load failed). 
 	 */
@@ -69,14 +56,25 @@ public:
 		return "pcx";
 	}
 
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name("ImageLoaderPCX");
+		return _name;
+	}
+	
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies;
+
+		if (_dependencies.empty()) {
+			_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
+		}
+
+		return _dependencies;
+	}
+	
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "ImageLoaderPCX::initialiseModule called.\n";
+	}
 };
-
-// The dependency class
-class PCXLoaderDependencies :
-	public GlobalFileSystemModuleRef
-{};
-
-// Define the PCX module with the PCXLoader class and its dependencies
-typedef SingletonModule<PCXLoader, PCXLoaderDependencies> PCXLoaderModule;
 
 #endif

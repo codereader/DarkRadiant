@@ -4,7 +4,6 @@
 #include "ifilesystem.h"
 #include "settings/PreferenceSystem.h"
 #include "ui/prefdialog/PrefDialog.h"
-#include "environment.h"
 #include "os/file.h"
 #include "os/dir.h"
 #include "os/path.h"
@@ -14,6 +13,8 @@
 #include "gtkutil/messagebox.h"
 #include "mainframe.h"
 #include "Win32Registry.h"
+#include "modulesystem/StaticModule.h"
+#include "modulesystem/ApplicationContextImpl.h"
 #include <gtk/gtkmain.h>
 
 namespace game {
@@ -31,6 +32,29 @@ Manager::Manager() :
 	_enginePathInitialised(false)
 {}
 
+const std::string& Manager::getName() const {
+	static std::string _name(MODULE_GAMEMANAGER);
+	return _name;
+}
+
+const StringSet& Manager::getDependencies() const {
+	static StringSet _dependencies;
+
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
+	}
+
+	return _dependencies;
+}
+
+void Manager::initialiseModule(const ApplicationContext& ctx) {
+	globalOutputStream() << "GameManager::initialiseModule called.\n";
+	
+	initialise(ctx.getApplicationPath());
+	initEnginePath();
+}
+
 std::string Manager::getFSGame() const {
 	return _fsGame;
 }
@@ -41,7 +65,7 @@ std::string Manager::getModPath() const {
 
 /** greebo: Returns the current Game.
  */
-GamePtr Manager::currentGame() {
+IGamePtr Manager::currentGame() {
 	if (_currentGameType.empty()) {
 		// No game type selected, bail out, the program will crash anyway on module load
 		gtkutil::fatalErrorDialog("GameManager: No game type selected, can't continue.\n", NULL);
@@ -67,9 +91,9 @@ void Manager::constructPreferences() {
  * 			If no saved game setting is found, the user
  * 			is asked to enter the relevant information in a Dialog. 
  */
-void Manager::initialise() {
+void Manager::initialise(const std::string& appPath) {
 	// Scan the <applicationpath>/games folder for .game files
-	loadGameFiles();
+	loadGameFiles(appPath);
 	
 	// Add the settings widgets to the Preference Dialog, we might need it
 	constructPreferences();
@@ -249,7 +273,7 @@ void Manager::updateEnginePath(bool forced) {
 	if (newPath != _enginePath || newFSGame != _fsGame || forced) {
 		if (_enginePathInitialised) {
 			GlobalFileSystem().shutdown();
-			Environment::Instance().setMapsPath("");
+			GlobalRegistry().set(RKEY_MAP_PATH, "");
 			_enginePathInitialised = false;
 		}
 		
@@ -304,8 +328,8 @@ void Manager::updateEnginePath(bool forced) {
 			}
 			globalOutputStream() << "GameManager: Map path set to " << mapPath.c_str() << "\n";
 			Q_mkdir(mapPath.c_str());
-			// Save the map path (is stored to the registry as well)
-			Environment::Instance().setMapsPath(mapPath);
+			// Save the map path to the registry
+			GlobalRegistry().set(RKEY_MAP_PATH, mapPath);
 
 			// Setup the prefab path
 			std::string prefabPath = mapPath;
@@ -332,8 +356,8 @@ const char* Manager::getCurrentGameType() {
 
 /** greebo: Scans the "games/" subfolder for .game description foles.
  */
-void Manager::loadGameFiles() {
-	std::string gamePath = GlobalRegistry().get(RKEY_APP_PATH) + "games/";
+void Manager::loadGameFiles(const std::string& appPath) {
+	std::string gamePath = appPath + "games/";
 	globalOutputStream() << "GameManager: Scanning for game description files: " << gamePath.c_str() << '\n';
 
 	// Invoke a GameFileLoader functor on every file in the games/ dir.
@@ -346,10 +370,7 @@ void Manager::loadGameFiles() {
 	globalOutputStream() << "\n";
 }
 
-// Accessor method containing the static instance
-Manager& Manager::Instance() {
-	static Manager _instance;
-	return _instance;
-}
-
 } // namespace game
+
+// The static module definition (self-registers)
+module::StaticModule<game::Manager> gameManagerModule;

@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stream/stringstream.h"
 #include "convert.h"
 
-#include "environment.h"
+#include "modulesystem/ApplicationContextImpl.h"
 #include "version.h"
 #include "gtkmisc.h"
 #include "mainframe.h"

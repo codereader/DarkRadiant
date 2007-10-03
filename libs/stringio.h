@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "math/Vector3.h"
 #include "string/string.h"
+#include "stream/textstream.h"
 #include "generic/callback.h"
 
 inline float string_read_float(const char* string)

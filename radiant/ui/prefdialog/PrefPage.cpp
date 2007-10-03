@@ -1,5 +1,8 @@
 #include "PrefPage.h"
 
+#include "itextstream.h"
+#include "stream/textfilestream.h"
+#include "stream/textstream.h"
 #include <gtk/gtk.h>
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
@@ -8,7 +11,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include "gtkmisc.h"
-#include "environment.h"
+#include "modulesystem/ApplicationContextImpl.h"
 
 namespace ui {
 

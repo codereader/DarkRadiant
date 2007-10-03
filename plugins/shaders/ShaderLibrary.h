@@ -29,9 +29,6 @@ public:
 	// Constructor
 	ShaderLibrary();
 	
-	// Destructor
-	~ShaderLibrary();
-	
 	/* greebo: Add a shader definition to the internal list 
 	 * @returns: FALSE, if such a name already exists, TRUE otherwise
 	 */

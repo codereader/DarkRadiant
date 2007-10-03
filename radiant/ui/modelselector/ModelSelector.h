@@ -53,10 +53,8 @@ struct ModelSelectorResult {
  */
 
 class ModelSelector
-: private GlobalModelSkinCacheModuleRef // instantiate the model skin cache first
 {
 private:
-
 	// Main dialog widget
 	GtkWidget* _widget;
 
@@ -126,7 +124,6 @@ public:
 	 * @showOptions: whether to show the advanced options tab
 	 */
 	static ModelSelectorResult chooseModel(bool showOptions=true);
-	
 };
 
 }

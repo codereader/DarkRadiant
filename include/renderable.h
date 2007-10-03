@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_RENDERABLE_H)
 #define INCLUDED_RENDERABLE_H
 
-#include "generic/constant.h"
 #include <boost/shared_ptr.hpp>
 
 class Shader;
@@ -143,8 +142,6 @@ class VolumeTest;
 class Renderable
 {
 public:
-  STRING_CONSTANT(Name, "Renderable");
-
 	/** Submit renderable geometry when rendering takes place in Solid mode.
 	 */
 	virtual void renderSolid(Renderer& renderer, 

@@ -52,6 +52,9 @@ public:
 	
 	// Destructor
 	~MouseEventManager() {}
+	
+	// Loads all the definitions
+	void initialise();
 
 	void connectSelectionSystem(SelectionSystem* selectionSystem);
 

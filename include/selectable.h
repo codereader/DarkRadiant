@@ -271,8 +271,6 @@ class VolumeTest;
 class SelectionTestable
 {
 public:
-  STRING_CONSTANT(Name, "SelectionTestable");
-
   virtual void testSelect(Selector& selector, SelectionTest& test) = 0;
 };
 
@@ -282,8 +280,6 @@ inline SelectionTestable* Instance_getSelectionTestable(scene::Instance& instanc
 
 class ComponentSelectionTestable {
 public:
-	STRING_CONSTANT(Name, "ComponentSelectionTestable");
-
 	virtual bool isSelectedComponents() const = 0;
 	virtual void setSelectedComponents(bool select, SelectionSystem::EComponentMode mode) = 0;
 	virtual void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) = 0;
@@ -306,8 +302,6 @@ public:
 class PlaneSelectable
 {
 public:
-  STRING_CONSTANT(Name, "PlaneSelectable");
-
   virtual void selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback) = 0;
   virtual void selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes) = 0;
 };

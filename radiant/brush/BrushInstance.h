@@ -62,8 +62,6 @@ public:
 	void lightsChanged();
 	typedef MemberCaller<BrushInstance, &BrushInstance::lightsChanged> LightsChangedCaller;
 
-	STRING_CONSTANT(Name, "BrushInstance");
-
 	BrushInstance(const scene::Path& path, scene::Instance* parent, Brush& brush);
 	~BrushInstance();
 

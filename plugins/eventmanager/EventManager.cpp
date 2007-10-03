@@ -1,7 +1,9 @@
 #include "ieventmanager.h"
 
+#include "imodule.h"
 #include "iregistry.h"
 #include "iradiant.h"
+#include "itextstream.h"
 #include "iselection.h"
 #include <iostream>
 #include <typeinfo>
@@ -12,6 +14,7 @@
 #include "gtk/gtkaccelgroup.h"
 
 #include "xmlutil/Node.h"
+#include "stream/textstream.h"
 
 #include "MouseEvents.h"
 #include "Modifiers.h"
@@ -22,6 +25,8 @@
 #include "KeyEvent.h"
 #include "Accelerator.h"
 #include "SaveEventVisitor.h"
+
+#include <iostream>
 
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -34,7 +39,7 @@
 	}
 
 class EventManager : 
-	public IEventManager 
+	public IEventManager
 {
 	// The handler ID of the connected keyboard handler
 	typedef std::map<gulong, GtkObject*> HandlerMap;
@@ -76,13 +81,43 @@ class EventManager :
 	GdkEventKey _eventKey;
 
 public:
-	// Radiant Module stuff
-	typedef IEventManager Type;
-	STRING_CONSTANT(Name, "*");
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name(MODULE_EVENTMANAGER);
+		return _name;
+	}
+	
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies;
 
-	// Return the static instance
-	IEventManager* getTable() {
-		return this;
+		if (_dependencies.empty()) {
+			_dependencies.insert(MODULE_RADIANT);
+			_dependencies.insert(MODULE_XMLREGISTRY);
+		}
+
+		return _dependencies;
+	}
+	
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "EventManager::initialiseModule called.\n";
+		
+		_modifiers.loadModifierDefinitions();
+		_mouseEvents.initialise();
+		
+		_debugMode = (GlobalRegistry().get(RKEY_DEBUG) == "1");
+		
+		// Deactivate the empty event, so it's safe to return it as NullEvent
+		_emptyEvent->setEnabled(false);
+		
+		// Create an empty GClosure
+		_accelGroup = gtk_accel_group_new();
+		
+		if (_debugMode) {
+			globalOutputStream() << "EventManager intitialised in debug mode.\n";
+		}
+		else {
+			globalOutputStream() << "EventManager successfully initialised.\n";
+		}
 	}
 	
 	// Constructor
@@ -91,21 +126,8 @@ public:
 		_emptyAccelerator(0, 0, _emptyEvent),
 		_modifiers(),
 		_mouseEvents(_modifiers),
-		_debugMode(GlobalRegistry().get(RKEY_DEBUG) == "1")
-	{
-		// Deactivate the empty event, so it's safe to return it as NullEvent
-		_emptyEvent->setEnabled(false);
-		
-		// Create an empty GClosure
-		_accelGroup = gtk_accel_group_new();
-		
-		if (_debugMode) {
-			globalOutputStream() << "EventManager started in debug mode.\n";
-		}
-		else {
-			globalOutputStream() << "EventManager successfully started.\n";
-		}
-	}
+		_debugMode(false)
+	{}
 	
 	// Destructor, un-reference the GTK accelerator group
 	~EventManager() {
@@ -690,29 +712,19 @@ private:
 		
 		return returnValue;
 	}
-
 }; // class EventManager
 
+typedef boost::shared_ptr<EventManager> EventManagerPtr;
 
-/* EventManager dependencies class. 
- */ 
-class EventManagerDependencies :
-	public GlobalRegistryModuleRef,
-	public GlobalRadiantModuleRef
-{
-};
-
-/* Required code to register the module with the ModuleServer.
- */
-
-#include "modulesystem/singletonmodule.h"
-
-typedef SingletonModule<EventManager, EventManagerDependencies> EventManagerModule;
-
-// Static instance of the EventManagerModule
-EventManagerModule _theEventManagerModule;
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server) {
-	initialiseModule(server);
-	_theEventManagerModule.selfRegister();
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+	static EventManagerPtr _module(new EventManager);
+	registry.registerModule(_module);
+	
+	// Initialise the streams
+	const ApplicationContext& ctx = registry.getApplicationContext();
+	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
+	GlobalErrorStream::instance().setOutputStream(ctx.getOutputStream());
+	
+	// Remember the reference to the ModuleRegistry
+	module::RegistryReference::Instance().setRegistry(registry);
 }

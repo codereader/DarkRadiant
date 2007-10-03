@@ -1,8 +1,7 @@
 #ifndef ICLIPPER_H_
 #define ICLIPPER_H_
 
-#include <string>
-#include "generic/constant.h"
+#include "imodule.h"
 #include "math/Vector3.h"
 
 /** Abstract base class for the clipper module
@@ -46,14 +45,14 @@ enum EViewType {
     XY = 2
 };
 
+const std::string MODULE_CLIPPER("Clipper");
+
 /* greebo: This is the interface the clipper module has to provide.
  */
-class Clipper
+class Clipper :
+	public RegisterableModule
 {
 public:
-	INTEGER_CONSTANT(Version, 1);
-	STRING_CONSTANT(Name, "clipper");
-
 	// Gets called if the clip mode is toggled on/off
 	virtual void onClipMode(bool enabled) = 0;
 	
@@ -90,21 +89,14 @@ public:
 	virtual void update() = 0; 
 };
 
-// Module definitions
-
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<Clipper> GlobalClipperModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<Clipper> GlobalClipperModuleRef;
-
 // This is the accessor for the registry
 inline Clipper& GlobalClipper() {
-	return GlobalClipperModule::getTable();
+	boost::shared_ptr<Clipper> _clipper(
+		boost::static_pointer_cast<Clipper>(
+			module::GlobalModuleRegistry().getModule(MODULE_CLIPPER)
+		)
+	);
+	return *_clipper;
 }
 
 #endif /*ICLIPPER_H_*/

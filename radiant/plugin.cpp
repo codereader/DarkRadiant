@@ -27,7 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "brush/TexDef.h"
 #include "iradiant.h"
-#include "iplugin.h"
 #include "ifilesystem.h"
 #include "ishaders.h"
 #include "iclipper.h"
@@ -35,6 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ieventmanager.h"
 #include "ientity.h"
 #include "ieclass.h"
+#include "igame.h"
 #include "irender.h"
 #include "iscenegraph.h"
 #include "iselection.h"
@@ -59,7 +59,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "error.h"
 #include "map.h"
-#include "environment.h"
+#include "modulesystem/ApplicationContextImpl.h"
 #include "gtkmisc.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "mainframe.h"
@@ -73,10 +73,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "map/PointFile.h"
 #include "map/CounterManager.h"
 
-#include "modulesystem/modulesmap.h"
-#include "modulesystem/singletonmodule.h"
+#include "modulesystem/StaticModule.h"
 
-#include "generic/callback.h"
 #include "settings/GameManager.h"
 
 #include <boost/shared_ptr.hpp>
@@ -91,10 +89,10 @@ class RadiantCoreAPI :
 	public IRadiant
 {
 	map::CounterManager _counters;
-public:
-	typedef IRadiant Type;
-	STRING_CONSTANT(Name, "*");
 	
+	typedef std::set<RadiantEventListenerPtr> EventListenerList;
+	EventListenerList _eventListeners;
+public:
 	RadiantCoreAPI() {
 		globalOutputStream() << "RadiantCore initialised.\n";
 	}
@@ -135,11 +133,11 @@ public:
 	}
 	
 	virtual const char* getGameDescriptionKeyValue(const char* key) {
-		return game::Manager::Instance().currentGame()->getKeyValue(key);
+		return GlobalGameManager().currentGame()->getKeyValue(key);
 	}
 	
 	virtual const char* getRequiredGameDescriptionKeyValue(const char* key) {
-		return game::Manager::Instance().currentGame()->getRequiredKeyValue(key);
+		return GlobalGameManager().currentGame()->getRequiredKeyValue(key);
 	}
 	
 	virtual Vector3 getColour(const std::string& colourName) {
@@ -150,178 +148,112 @@ public:
 		UpdateAllWindows();
 	}
 	
-	IRadiant* getTable() {
-		return this;
-	}
-};
-
-typedef SingletonModule<RadiantCoreAPI> RadiantCoreModule;
-typedef Static<RadiantCoreModule> StaticRadiantCoreModule;
-StaticRegisterModule staticRegisterRadiantCore(StaticRadiantCoreModule::instance());
-
-
-class RadiantDependencies :
-  public GlobalRadiantModuleRef,
-  public GlobalEventManagerModuleRef,
-  public GlobalUIManagerModuleRef,
-  public GlobalFileSystemModuleRef,
-  public GlobalEntityModuleRef,
-  public GlobalShadersModuleRef,
-  public GlobalBrushModuleRef,
-  public GlobalSceneGraphModuleRef,
-  public GlobalShaderCacheModuleRef,
-  public GlobalFiletypesModuleRef,
-  public GlobalSelectionModuleRef,
-  public GlobalReferenceModuleRef,
-  public GlobalOpenGLModuleRef,
-  public GlobalEntityClassManagerModuleRef,
-  public GlobalUndoModuleRef,
-  public GlobalNamespaceModuleRef,
-  public GlobalClipperModuleRef,
-  public GlobalGridModuleRef,
-  public GlobalSoundManagerModuleRef,
-  public GlobalParticlesManagerModuleRef
-{
-  ImageModulesRef m_image_modules;
-  MapModulesRef m_map_modules;
-
-public:
-  RadiantDependencies() :
-    GlobalEntityModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("entities")),
-    GlobalShadersModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("shaders")),
-    GlobalBrushModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("brushtypes")),
-    GlobalEntityClassManagerModuleRef(GlobalRadiant().getRequiredGameDescriptionKeyValue("entityclass")),
-    m_image_modules(GlobalRadiant().getRequiredGameDescriptionKeyValue("texturetypes")),
-    m_map_modules(GlobalRadiant().getRequiredGameDescriptionKeyValue("maptypes"))
-  {
-  }
-
-  ImageModules& getImageModules()
-  {
-    return m_image_modules.get();
-  }
-  MapModules& getMapModules()
-  {
-    return m_map_modules.get();
-  }
-};
-
-class Radiant
-{
-	typedef boost::shared_ptr<PluginModulesRef> PluginModulesRefPtr;
-	PluginModulesRefPtr _plugins; 
-public:
-  Radiant()
-  {
-  	// Reset the node id count
-  	scene::Node::resetIds();
-  	
-    GlobalFiletypes().addType(
-    	"sound", "wav", FileTypePattern("PCM sound files", "*.wav"));
-
-    Selection_construct();
-    MultiMon_Construct();
-    map::PointFile::Instance().registerCommands();
-    Map_Construct();
-    MainFrame_Construct();
-    GlobalCamera().construct();
-    GlobalXYWnd().construct();
-    GlobalTextureBrowser().construct();
-    Entity_Construct();
-    map::AutoSaver().init();
-    
-    // Instantiate the plugin modules.
-	_plugins = PluginModulesRefPtr(new PluginModulesRef("*"));
-    
-    // Call the initalise methods to trigger the realisation avalanche
-    // FileSystem > ShadersModule >> Renderstate etc.
-    GlobalFileSystem().initialise();
-    
-    // Load the shortcuts from the registry
- 	GlobalEventManager().loadAccelerators();
-  }
-  
-	void shutDownPlugins() {
-		// Broadcast the "shutdown" command to the plugins
-		ModulesMap<IPlugin> pluginMap = _plugins->get();
-		
-		for (ModulesMap<IPlugin>::iterator i = pluginMap.begin(); 
-			 i != pluginMap.end(); i++)
-		{
-			globalOutputStream() << "Shutting down plugin: " << i->first.c_str() << "\n";
-			
-			// Get the plugin pointer
-			IPlugin* plugin = pluginMap.find(i->first);
-			// Issue the command
-			plugin->shutdown();
-		}
-	}
-  
-  ~Radiant()
-  {
-    GlobalFileSystem().shutdown();
-
-	map::PointFile::Instance().destroy();
-    Entity_Destroy();
-    GlobalXYWnd().destroy();
-    GlobalCamera().destroy();
-    MainFrame_Destroy();
-    Map_Destroy();
-    MultiMon_Destroy();
-    Selection_destroy();
-  }
-};
-
-namespace
-{
-  bool g_RadiantInitialised = false;
-  RadiantDependencies* g_RadiantDependencies;
-  Radiant* g_Radiant;
-}
-
-/**
- * Construct the Radiant module.
- */
-bool Radiant_Construct(ModuleServer& server)
-{
-	GlobalModuleServer::instance().set(server);
-	StaticModuleRegistryList().instance().registerModules();
-
-	g_RadiantDependencies = new RadiantDependencies();
-
-	// If the module server has been set up correctly, create the Radiant
-	// module
-	g_RadiantInitialised = !server.getError();
-	if(g_RadiantInitialised) {
-		// greebo: Allocate a new Radiant object on the heap 
-		// (this instantiates the plugins as well)
-		g_Radiant = new Radiant;
+	virtual void addEventListener(RadiantEventListenerPtr listener) {
+		_eventListeners.insert(listener);
 	}
 	
-	// Return the status
-	return g_RadiantInitialised;
-}
-
-void Radiant_shutDownPlugins() {
-	if (g_RadiantInitialised) {
-		g_Radiant->shutDownPlugins();
+	virtual void removeEventListener(RadiantEventListenerPtr listener) {
+		EventListenerList::iterator found = _eventListeners.find(listener);
+		if (found != _eventListeners.end()) {
+			_eventListeners.erase(found);
+		}
 	}
-}
-
-void Radiant_Destroy()
-{
-	if (g_RadiantInitialised) {
-		delete g_Radiant;
+	
+	// Broadcasts a "shutdown" event to all the listeners
+	void broadcastShutdownEvent() {
+		for (EventListenerList::iterator i = _eventListeners.begin();
+		     i != _eventListeners.end(); i++)
+		{
+			(*i)->onRadiantShutdown();
+		}
 	}
+	
+	// Broadcasts a "startup" event to all the listeners
+	void broadcastStartupEvent() {
+		for (EventListenerList::iterator i = _eventListeners.begin();
+		     i != _eventListeners.end(); i++)
+		{
+			(*i)->onRadiantStartup();
+		}
+	}
+	
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name(MODULE_RADIANT);
+		return _name;
+	}
+	
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies;
+		
+		// greebo: TODO: This list can probably be made smaller,
+		// not all modules are necessary during initialisation
+		if (_dependencies.empty()) {
+			_dependencies.insert(MODULE_EVENTMANAGER);
+			_dependencies.insert(MODULE_UIMANAGER);
+			_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
+			_dependencies.insert(MODULE_ENTITYCREATOR);
+			_dependencies.insert(MODULE_SHADERSYSTEM);
+			_dependencies.insert(MODULE_BRUSHCREATOR);
+			_dependencies.insert(MODULE_SCENEGRAPH);
+			_dependencies.insert(MODULE_SHADERCACHE);
+			_dependencies.insert(MODULE_FILETYPES);
+			_dependencies.insert(MODULE_SELECTIONSYSTEM);
+			_dependencies.insert(MODULE_REFERENCECACHE);
+			_dependencies.insert(MODULE_OPENGL);
+			_dependencies.insert(MODULE_ECLASSMANAGER);
+			_dependencies.insert(MODULE_UNDOSYSTEM);
+			_dependencies.insert(MODULE_NAMESPACE);
+			_dependencies.insert(MODULE_CLIPPER);
+			_dependencies.insert(MODULE_GRID);
+			_dependencies.insert(MODULE_SOUNDMANAGER);
+			_dependencies.insert(MODULE_PARTICLESMANAGER);
+			_dependencies.insert(MODULE_GAMEMANAGER);
+			_dependencies.insert("Doom3MapLoader");
+			_dependencies.insert("ImageLoaderTGA");
+			_dependencies.insert("ImageLoaderJPG");
+			_dependencies.insert("ImageLoaderDDS");
+		}
+		
+		return _dependencies;
+	}
+	
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "RadiantAPI::initialiseModule called.\n";
+		
+		// Reset the node id count
+	  	scene::Node::resetIds();
+	  	
+	    GlobalFiletypes().addType(
+	    	"sound", "wav", FileTypePattern("PCM sound files", "*.wav"));
 
-  delete g_RadiantDependencies;
-}
+	    Selection_construct();
+	    MultiMon_Construct();
+	    map::PointFile::Instance().registerCommands();
+	    Map_Construct();
+	    MainFrame_Construct();
+	    GlobalCamera().construct();
+	    GlobalXYWnd().construct();
+	    GlobalTextureBrowser().construct();
+	    Entity_Construct();
+	    map::AutoSaver().init();
+	}
+	
+	virtual void shutdownModule() {
+		globalOutputStream() << "RadiantCoreAPI::shutdownModule called.\n";
+		
+		GlobalFileSystem().shutdown();
 
-ImageModules& Radiant_getImageModules()
-{
-  return g_RadiantDependencies->getImageModules();
-}
-MapModules& Radiant_getMapModules()
-{
-  return g_RadiantDependencies->getMapModules();
-}
+		map::PointFile::Instance().destroy();
+	    Entity_Destroy();
+	    GlobalXYWnd().destroy();
+	    GlobalCamera().destroy();
+	    MainFrame_Destroy();
+	    Map_Destroy();
+	    MultiMon_Destroy();
+	    Selection_destroy();
+	}
+};
+
+// Define the static Radiant module
+module::StaticModule<RadiantCoreAPI> radiantCoreModule;

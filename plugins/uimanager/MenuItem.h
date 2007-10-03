@@ -3,6 +3,7 @@
 
 #include "xmlutil/Node.h"
 #include "iuimanager.h"
+#include "gtkutil/MenuItemAccelerator.h"
 #include <vector>
 #include <boost/shared_ptr.hpp>
 
@@ -16,6 +17,9 @@ typedef struct _GtkWidget GtkWidget;
  * 
  * Use the MenuManager class to access these menuitems. 
  */
+namespace gtkutil {
+	typedef boost::shared_ptr<TextMenuItemAccelerator> MenuItemAcceleratorPtr;
+}
 
 namespace ui {
 
@@ -41,6 +45,8 @@ class MenuItem
 	std::string _event;
 	
 	// The associated GtkWidget
+	gtkutil::MenuItemAcceleratorPtr _menuItem;
+	
 	GtkWidget* _widget;
 	
 	// The children of this MenuItem
@@ -109,6 +115,11 @@ public:
 	 * 			create a "self" shared_ptr from itself.
 	 */
 	void parseNode(xml::Node& node, MenuItemPtr thisItem);
+	
+	/** Updates the accelerator string of this item and all its children,
+	 *  if applicable.
+	 */
+	void updateAcceleratorRecursive();
 	
 private:
 

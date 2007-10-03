@@ -21,61 +21,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "vfspk3.h"
 
-#include "iradiant.h"
 #include "iarchive.h"
 #include "ifilesystem.h"
 
-#include "modulesystem/singletonmodule.h"
-#include "modulesystem/modulesmap.h"
-
 #include "vfs.h"
 
-class FileSystemDependencies /*: public GlobalRadiantModuleRef*/ // greebo: disabled this
-{
-  ArchiveModulesRef m_archive_modules;
-public:
-  FileSystemDependencies() :
-    m_archive_modules("pk4")
-  {
-  }
-  ArchiveModules& getArchiveModules()
-  {
-    return m_archive_modules.get();
-  }
-};
-
-class FileSystemQ3API
-{
-  VirtualFileSystem* m_filesystemq3;
-public:
-  typedef VirtualFileSystem Type;
-  STRING_CONSTANT(Name, "*");
-
-  FileSystemQ3API()
-  {
-    m_filesystemq3 = &GetFileSystem();
-  }
-
-  VirtualFileSystem* getTable()
-  {
-    return m_filesystemq3;
-  }
-};
-
-typedef SingletonModule<FileSystemQ3API, FileSystemDependencies> FileSystemQ3Module;
-
-FileSystemQ3Module g_FileSystemQ3Module;
-
-ArchiveModules& FileSystemQ3API_getArchiveModules()
-{
-  return g_FileSystemQ3Module.getDependencies().getArchiveModules();
-}
-
-
-
-extern "C" void RADIANT_DLLEXPORT Radiant_RegisterModules(ModuleServer& server)
-{
-  initialiseModule(server);
-
-  g_FileSystemQ3Module.selfRegister();
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+	registry.registerModule(GetFileSystem());
+	
+	// Initialise the streams
+	const ApplicationContext& ctx = registry.getApplicationContext();
+	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
+	GlobalErrorStream::instance().setOutputStream(ctx.getOutputStream());
+	
+	// Remember the reference to the ModuleRegistry
+	module::RegistryReference::Instance().setRegistry(registry);
 }

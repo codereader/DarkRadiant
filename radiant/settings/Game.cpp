@@ -4,6 +4,7 @@
 #include "iregistry.h"
 #include "xmlutil/Document.h"
 #include <iostream>
+#include "stream/textstream.h"
 #include "error.h"
 
 namespace game {
@@ -92,7 +93,8 @@ const char* Game::getRequiredKeyValue(const std::string& key) {
 		return returnValue.c_str();
 	}
 	else {
-		ERROR_MESSAGE("game attribute " << makeQuoted(key.c_str()) << " not found for game type " << makeQuoted(_type.c_str()));
+		std::cout << "Game: Required Keyvalue '" << key 
+				  << "' not found for game type '" << _type << "'";
 		return "";
 	}
 }

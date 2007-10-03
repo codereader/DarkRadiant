@@ -28,7 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_ICAMERA_H)
 #define INCLUDED_ICAMERA_H
 
-#include "generic/constant.h"
 #include "generic/callbackfwd.h"
 #include "scenelib.h"
 
@@ -44,8 +43,7 @@ public:
 class CameraModel
 {
 public:
-  STRING_CONSTANT(Name, "CameraModel");
-  virtual void setCameraView(CameraView* view, const Callback& disconnect) = 0;
+	virtual void setCameraView(CameraView* view, const Callback& disconnect) = 0;
 };
 
 inline CameraModel* Instance_getCameraModel(scene::Instance& instance) {

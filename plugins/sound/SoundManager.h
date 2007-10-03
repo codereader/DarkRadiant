@@ -8,16 +8,14 @@
 #include "parser/DefTokeniser.h"
 
 #include <map>
-#include <string>
 
-namespace sound
-{
+namespace sound {
 
 /**
  * SoundManager implementing class.
  */
-class SoundManager
-: public ISoundManager
+class SoundManager : 
+	public ISoundManager
 {
 	// Map of named sound shaders
 	typedef std::map<std::string, ShaderPtr> ShaderMap;
@@ -32,22 +30,10 @@ class SoundManager
 	SoundPlayer _soundPlayer;
 	
 public:
-
-	/* Module typedefs */
-	typedef ISoundManager Type;
-	STRING_CONSTANT(Name, "*");
-	
 	/**
 	 * Main constructor.
 	 */
 	SoundManager();
-	
-	/**
-	 * Required getTable() function for SingletonModule<>
-	 */
-	SoundManager* getTable() {
-		return this;
-	}
 	
 	/**
 	 * Enumerate sound shaders.
@@ -72,7 +58,13 @@ public:
 	 * contained shaders to the shader map.
 	 */
 	void parseShadersFrom(std::istream& contents);
+	
+	// RegisterableModule implementation
+	virtual const std::string& getName() const;
+	virtual const StringSet& getDependencies() const;
+	virtual void initialiseModule(const ApplicationContext& ctx);
 };
+typedef boost::shared_ptr<SoundManager> SoundManagerPtr;
 
 }
 

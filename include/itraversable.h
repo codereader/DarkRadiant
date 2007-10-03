@@ -1,7 +1,6 @@
 #ifndef ITRAVERSABLE_H_
 #define ITRAVERSABLE_H_
 
-#include "generic/constant.h"
 #include "inode.h"
 
 namespace scene {
@@ -16,8 +15,6 @@ namespace scene {
 class Traversable
 {
 public:
-    STRING_CONSTANT(Name, "scene::Traversable");
-
 	class Observer
 	{
 	public:

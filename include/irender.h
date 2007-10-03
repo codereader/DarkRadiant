@@ -22,9 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_IRENDER_H)
 #define INCLUDED_IRENDER_H
 
-#include "generic/constant.h"
+#include "imodule.h"
 #include "generic/callbackfwd.h"
-#include <boost/shared_ptr.hpp>
 
 // Rendering states to sort by.
 // Higher bits have the most effect - slowest state changes should be highest.
@@ -174,12 +173,12 @@ public:
  */
 typedef boost::shared_ptr<Shader> ShaderPtr;
 
-class ShaderCache
+const std::string MODULE_SHADERCACHE("ShaderCache");
+
+class ShaderCache :
+	public RegisterableModule
 {
 public:
-	INTEGER_CONSTANT(Version, 1);
-	STRING_CONSTANT(Name, "renderstate");
-
 	/** Capture the given shader, increasing its reference count and
 	 * returning a pointer to the Shader object. The object must be freed
 	 * after use by calling release().
@@ -208,6 +207,9 @@ public:
 	 * Test if lighting mode is ENABLED.
 	 */
 	virtual bool lightingEnabled() const = 0;
+	
+	// Enable/disable lighting mode
+	virtual void setLightingEnabled(bool enabled) = 0;
 
   virtual const LightList& attach(LightCullable& cullable) = 0;
   virtual void detach(LightCullable& cullable) = 0;
@@ -219,21 +221,18 @@ public:
   virtual void attachRenderable(const Renderable& renderable) = 0;
   virtual void detachRenderable(const Renderable& renderable) = 0;
   virtual void forEachRenderable(const RenderableCallback& callback) const = 0;
+  
+  	// Initialises the OpenGL extensions 
+    virtual void extensionsInitialised() = 0;
 };
 
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<ShaderCache> GlobalShaderCacheModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<ShaderCache> GlobalShaderCacheModuleRef;
-
-inline ShaderCache& GlobalShaderCache()
-{
-  return GlobalShaderCacheModule::getTable();
+inline ShaderCache& GlobalShaderCache() {
+	boost::shared_ptr<ShaderCache> _shaderCache(
+		boost::static_pointer_cast<ShaderCache>(
+			module::GlobalModuleRegistry().getModule(MODULE_SHADERCACHE)
+		)
+	);
+	return *_shaderCache;
 }
 
 #endif

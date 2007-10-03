@@ -165,5 +165,24 @@ Doom3ModelSkinPtr Doom3SkinCache::parseSkin(parser::DefTokeniser& tok) {
 	
 	return skin;
 }
-	
+
+const std::string& Doom3SkinCache::getName() const {
+	static std::string _name(MODULE_MODELSKINCACHE);
+	return _name;
+}
+
+const StringSet& Doom3SkinCache::getDependencies() const {
+	static StringSet _dependencies;
+
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
+	}
+
+	return _dependencies;
+}
+
+void Doom3SkinCache::initialiseModule(const ApplicationContext& ctx) {
+	globalOutputStream() << "Doom3SkinCache::initialiseModule called\n";
+}
+
 } // namespace skins

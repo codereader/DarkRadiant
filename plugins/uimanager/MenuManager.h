@@ -82,10 +82,14 @@ public:
 					  const std::string& icon,
 					  const std::string& eventName);
 	
-private:
-	/** greebo: Loads all the menu items from the registry, called upon construction.
+	/** greebo: Loads all the menu items from the registry, called upon initialisation.
 	 */		 
 	void loadFromRegistry();
+	
+	/** greebo: Recursively go through the menus and update all the accelerator 
+	 *          strings of all the menu items.
+	 */
+	void updateAccelerators();
 };
 
 } // namespace ui

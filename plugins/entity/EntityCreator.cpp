@@ -4,6 +4,8 @@
 #include "iundo.h"
 #include "iscenegraph.h"
 #include "inamespace.h"
+#include "ifilter.h"
+#include "ipreferencesystem.h"
 
 #include "entitylib.h"
 
@@ -134,6 +136,45 @@ void Doom3EntityCreator::connectEntities(const scene::Path& path,
 
 	// Redraw the scene
 	SceneChangeNotify();
+}
+
+// RegisterableModule implementation
+const std::string& Doom3EntityCreator::getName() const {
+	static std::string _name(MODULE_ENTITYCREATOR);
+	return _name;
+}
+
+const StringSet& Doom3EntityCreator::getDependencies() const {
+	static StringSet _dependencies;
+
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_RADIANT);
+		_dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_SCENEGRAPH);
+		_dependencies.insert(MODULE_REFERENCECACHE);
+		_dependencies.insert(MODULE_PREFERENCESYSTEM);
+		_dependencies.insert(MODULE_SHADERCACHE);
+		_dependencies.insert(MODULE_SELECTIONSYSTEM);
+		_dependencies.insert(MODULE_OPENGL);
+		_dependencies.insert(MODULE_UNDOSYSTEM);
+		_dependencies.insert(MODULE_FILTERSYSTEM);
+	}
+
+	return _dependencies;
+}
+
+void Doom3EntityCreator::initialiseModule(const ApplicationContext& ctx) {
+	globalOutputStream() << "Doom3EntityCreator::initialiseModule called.\n";
+	
+	entity::constructStatic();
+
+	GlobalReferenceCache().setEntityCreator(*this);
+}
+
+void Doom3EntityCreator::shutdownModule() {
+	globalOutputStream() << "Doom3EntityCreator::shutdownModule called.\n";
+	
+	entity::destroyStatic();
 }
 
 } // namespace entity

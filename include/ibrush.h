@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_IBRUSH_H
 
 #include "inode.h"
-#include "generic/constant.h"
+#include "imodule.h"
 #include "generic/callback.h"
 #include "math/Vector3.h"
 //#include "itexdef.h"
@@ -81,14 +81,15 @@ class TexDef;
 class _QERFaceData;
 typedef Callback1<const _QERFaceData&> BrushFaceDataCallback;
 
-class BrushCreator
+const std::string MODULE_BRUSHCREATOR("Doom3BrushCreator");
+
+class BrushCreator :
+	public RegisterableModule
 {
 public:
-  INTEGER_CONSTANT(Version, 1);
-  STRING_CONSTANT(Name, "brush");
-  virtual scene::INodePtr createBrush() = 0;
-  virtual void Brush_forEachFace(scene::INodePtr brush, const BrushFaceDataCallback& callback) = 0;
-  virtual bool Brush_addFace(scene::INodePtr brush, const _QERFaceData& faceData) = 0;
+	virtual scene::INodePtr createBrush() = 0;
+	virtual void Brush_forEachFace(scene::INodePtr brush, const BrushFaceDataCallback& callback) = 0;
+	virtual bool Brush_addFace(scene::INodePtr brush, const _QERFaceData& faceData) = 0;
 };
 
 class Brush;
@@ -114,19 +115,13 @@ inline Brush* Node_getBrush(scene::INodePtr node) {
 	return NULL;
 }
 
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<BrushCreator> GlobalBrushModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<BrushCreator> GlobalBrushModuleRef;
-
-inline BrushCreator& GlobalBrushCreator()
-{
-  return GlobalBrushModule::getTable();
+inline BrushCreator& GlobalBrushCreator() {
+	boost::shared_ptr<BrushCreator> _brushCreator(
+		boost::static_pointer_cast<BrushCreator>(
+			module::GlobalModuleRegistry().getModule(MODULE_BRUSHCREATOR)
+		)
+	);
+	return *_brushCreator;
 }
 
 #endif

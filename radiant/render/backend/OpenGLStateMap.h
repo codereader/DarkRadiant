@@ -47,6 +47,21 @@ public:
 		else
 			throw std::runtime_error("OpenGLStateMap: " + name + " not found.");
 	}
+	
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name(MODULE_OPENGL_STATE_LIBRARY);
+		return _name;
+	}
+
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies; // no dependencies
+		return _dependencies;
+	}
+
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "OpenGLStateLibrary::initialiseModule called.\n";
+	}
 };
 
 #endif /*OPENGLSTATEMAP_H_*/

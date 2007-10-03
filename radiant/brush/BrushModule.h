@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_BRUSHMODULE_H
 
 #include "iregistry.h"
+#include "imodule.h"
 
 #include "brush/TexDef.h"
 #include "ibrush.h"
@@ -56,9 +57,6 @@ class BrushModuleClass :
 	bool _textureLockEnabled;
 	
 public:
-	// Constructor
-	BrushModuleClass();
-	
 	// This constructs the brush preferences, initialises static variables, etc.
 	void construct();
 	
@@ -92,6 +90,12 @@ public:
 	
 	// The callback for registry key changes
 	void keyChanged();
+	
+	// RegisterableModule implementation
+	virtual const std::string& getName() const;
+	virtual const StringSet& getDependencies() const;
+	virtual void initialiseModule(const ApplicationContext& ctx);
+	virtual void shutdownModule();
 	
 }; // class BrushModuleClass
 

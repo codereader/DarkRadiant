@@ -23,11 +23,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_ISCENEGRAPH_H
 
 #include <cstddef>
+#include "imodule.h"
 #include "inode.h"
 #include "ipath.h"
 #include "itraversable.h"
 #include "iinstantiable.h"
-#include "generic/constant.h"
 #include "signal/signalfwd.h"
 
 namespace scene
@@ -47,6 +47,9 @@ namespace scene
   }
 }
 
+// String identifier for the registry module
+const std::string MODULE_SCENEGRAPH("SceneGraph");
+
 namespace scene
 {
   /// \brief A scene-graph - a Directed Acyclic Graph (DAG).
@@ -55,12 +58,10 @@ namespace scene
   /// - A node may never have itself as one of its ancestors (acyclic).
   /// - Each node may have more than one 'parent', thus having more than one 'instance' in the graph.
   /// - Each instance is uniquely identified by the list of its ancestors plus itself, known as a 'path'.
-  class Graph
+  class Graph :
+	public RegisterableModule
   {
   public:
-    INTEGER_CONSTANT(Version, 1);
-    STRING_CONSTANT(Name, "scenegraph");
-
     class Walker
     {
     public:
@@ -119,34 +120,24 @@ namespace scene
   class Cloneable
   {
   public:
-    STRING_CONSTANT(Name, "scene::Cloneable");
-
     /// \brief Returns a copy of itself.
     virtual scene::INodePtr clone() const = 0;
   };
   typedef boost::shared_ptr<Cloneable> CloneablePtr;
 }
 
-#include "modulesystem.h"
-
-template<typename Type>
-class GlobalModule;
-typedef GlobalModule<scene::Graph> GlobalSceneGraphModule;
-
-template<typename Type>
-class GlobalModuleRef;
-typedef GlobalModuleRef<scene::Graph> GlobalSceneGraphModuleRef;
-
-inline scene::Graph& GlobalSceneGraph()
-{
-  return GlobalSceneGraphModule::getTable();
+inline scene::Graph& GlobalSceneGraph() {
+	boost::shared_ptr<scene::Graph> _sceneGraph(
+		boost::static_pointer_cast<scene::Graph>(
+			module::GlobalModuleRegistry().getModule(MODULE_SCENEGRAPH)
+		)
+	);
+	return *_sceneGraph;
 }
 
 inline void SceneChangeNotify()
 {
   GlobalSceneGraph().sceneChanged();
 }
-
-
 
 #endif

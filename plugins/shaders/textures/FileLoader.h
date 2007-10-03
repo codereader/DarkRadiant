@@ -4,7 +4,6 @@
 #include "iradiant.h"
 #include "iimage.h"
 #include "ishaders.h"
-#include "modulesystem/modulesmap.h"
 
 #include "ImageLoaderManager.h"
 

@@ -11,8 +11,6 @@ class Instance;
 class Instantiable
 {
 public:
-	STRING_CONSTANT(Name, "scene::Instantiable");
-
 	class Visitor
 	{
 	public:

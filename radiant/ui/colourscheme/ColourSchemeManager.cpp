@@ -3,6 +3,7 @@
 
 #include "stringio.h"
 #include "stream/stringstream.h"
+#include "stream/textstream.h"
 #include "stream/textfilestream.h"
 
 namespace ui {
