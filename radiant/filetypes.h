@@ -24,14 +24,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <string>
 
-class IFileTypeRegistry;
-IFileTypeRegistry* GetFileTypeRegistry();
-
 /**
  * Find the name of the module which loads the given extension.
  */
-std::string findModuleName(IFileTypeRegistry* registry, 
-						   const std::string& moduleType, 
+std::string findModuleName(const std::string& moduleType, 
 						   const std::string& extension);
 
 #endif

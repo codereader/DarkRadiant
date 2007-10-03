@@ -225,9 +225,7 @@ namespace
 /// \brief Returns the model loader for the model \p type or 0 if the model \p type has no loader module
 ModelLoader* ModelLoader_forType(const char* type)
 {
-  std::string moduleName = findModuleName(&GlobalFiletypes(), 
-  										  "model",
-  										  type);
+  std::string moduleName = findModuleName("model", type);
   if(!moduleName.empty())
   {
     ModelLoader* table = boost::static_pointer_cast<ModelLoader>(
@@ -368,12 +366,10 @@ scene::INodePtr Model_load(ModelLoader* loader, const char* path, const char* na
 		// Get a loader module name for this type, if possible. If none is 
 		// found, try again with the "map" type, since we might be loading a 
 		// map with a different extension
-	    std::string moduleName = findModuleName(&GlobalFiletypes(), 
-	    										"map", 
-	    										type);
+	    std::string moduleName = findModuleName("map", type);
 		// Empty, try again with "map" type
 		if (moduleName.empty()) {
-			moduleName = findModuleName(&GlobalFiletypes(),	"map", "map"); 
+			moduleName = findModuleName("map", "map"); 
 		}
 	
 		// If we have a module, use it to load the map if possible, otherwise 
@@ -527,9 +523,7 @@ struct ModelResource
 	 * true if the resource was saved, false otherwise.
 	 */
 	bool save() {
-		std::string moduleName = findModuleName(GetFileTypeRegistry(), 
-												"map",
-  												_type);
+		std::string moduleName = findModuleName("map", _type);
   									
 		if(!moduleName.empty()) {
 			const MapFormat* format = boost::static_pointer_cast<MapFormat>(

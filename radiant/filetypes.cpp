@@ -113,21 +113,16 @@ public:
 // Define the static FileType module
 module::StaticModule<RadiantFileTypeRegistry> fileTypeRegistryModule;
 
-IFileTypeRegistry* GetFileTypeRegistry() {
-	return fileTypeRegistryModule.getModule().get();
-}
-
 // Look for a module which loads the given extension, by searching under the
 // given type category
-std::string findModuleName(IFileTypeRegistry* registry, 
-						   const std::string& moduleType, 
+std::string findModuleName(const std::string& moduleType, 
 						   const std::string& extension)
 {
 	// Convert the file extension to lowercase
 	std::string ext = boost::algorithm::to_lower_copy(extension);
 	
 	// Get the list of types for the type category
-	ModuleTypeListPtr list = registry->getTypesFor(moduleType);
+	ModuleTypeListPtr list = GlobalFiletypes().getTypesFor(moduleType);
 	
 	// Search in the list for the given extension
 	for (ModuleTypeList::const_iterator i = list->begin();
