@@ -211,6 +211,8 @@ void OrthoContextMenu::callbackAddPlayerStart(GtkMenuItem* item, OrthoContextMen
 }
 
 void OrthoContextMenu::callbackMovePlayerStart(GtkMenuItem* item, OrthoContextMenu* self) {
+	UndoableCommand _cmd("movePlayerStart");
+	
 	EntityFindByClassnameWalker walker(PLAYERSTART_CLASSNAME);
 	GlobalSceneGraph().traverse(walker);
 	
