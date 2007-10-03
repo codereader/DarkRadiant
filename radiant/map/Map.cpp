@@ -722,7 +722,7 @@ void Map::importSelected(TextInputStream& in) {
 	scene::INodePtr node(new BasicContainer);
 	
 	const MapFormat& format = getFormat();
-	format.readGraph(node, in, GlobalEntityCreator());
+	format.readGraph(node, in);
 	
 	GlobalNamespace().gatherNamespaced(node);
 	GlobalNamespace().mergeClonedNames();

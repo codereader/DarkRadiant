@@ -113,10 +113,7 @@ public:
     /**
      * Read tokens from a map stream and create entities accordingly.
      */
-    void readGraph(scene::INodePtr root, 
-                   TextInputStream& inputStream, 
-                   EntityCreator& entityTable) const
-    {
+    void readGraph(scene::INodePtr root, TextInputStream& inputStream) const {
         // Construct a tokeniser
         std::istream is(&inputStream);
         parser::BasicDefTokeniser<std::istream> tok(is);
@@ -149,7 +146,7 @@ public:
         }
         
         // Now start parsing the map
-        Map_Read(root, tok, entityTable, *this);
+        Map_Read(root, tok, *this);
     }
 
 	// Write scene graph to an ostream

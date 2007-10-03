@@ -66,7 +66,8 @@ void MapChanged()
 	GlobalMap().setModified(!References_Saved());
 }
 
-
+// TODO: greebo: Remove this, the MapDoom3 loader can acquire a reference
+// to the EntityCreator on its own, it doesn't need to be passed along.
 EntityCreator* g_entityCreator = 0;
 
 bool MapResource_loadFile(const MapFormat& format, scene::INodePtr root, const char* filename)
@@ -77,7 +78,7 @@ bool MapResource_loadFile(const MapFormat& format, scene::INodePtr root, const c
   {
     globalOutputStream() << "success\n";
     ASSERT_NOTNULL(g_entityCreator);
-    format.readGraph(root, file, *g_entityCreator);
+    format.readGraph(root, file);
     return true;
   }
   else

@@ -52,8 +52,6 @@ typedef boost::shared_ptr<MapExporter> MapExporterPtr;
 
 #include "iscenegraph.h"
 
-class EntityCreator;
-
 class TextInputStream;
 
 /** Callback function to control how the Walker traverses the scene graph. This function
@@ -69,7 +67,7 @@ class MapFormat :
 {
 public:
 	/// \brief Read a map graph into \p root from \p outputStream, using \p entityTable to create entities.
-	virtual void readGraph(scene::INodePtr root, TextInputStream& inputStream, EntityCreator& entityTable) const = 0;
+	virtual void readGraph(scene::INodePtr root, TextInputStream& inputStream) const = 0;
 
 	/** Traverse the scene graph and write contents into the provided output stream.
 	 * 

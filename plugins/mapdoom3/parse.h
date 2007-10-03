@@ -40,7 +40,6 @@ public:
  */
 void Map_Read(scene::INodePtr root, 
               parser::DefTokeniser& tokeniser, 
-              EntityCreator& entityTable, 
               const PrimitiveParser& parser);
 
 extern scene::INodePtr g_nullNode;
