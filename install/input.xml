@@ -67,6 +67,8 @@
 		<shortcut command="MapInfo" key="M" />
 		<shortcut command="CSGSubtract" key="U" modifiers="SHIFT" />
 		<shortcut command="CSGMerge" key="U" modifiers="CONTROL" />
+		<shortcut command="CamDecreaseMoveSpeed" key="KP_Subtract" modifiers=""/>
+		<shortcut command="CamIncreaseMoveSpeed" key="KP_Add" modifiers=""/>
 		<shortcut command="SnapToGrid" key="G" modifiers="CONTROL" />
 		<shortcut command="SelectAllOfType" key="A" modifiers="SHIFT" />
 		<shortcut command="TexRotateClock" key="Next" modifiers="SHIFT" />
