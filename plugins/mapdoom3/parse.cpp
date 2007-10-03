@@ -59,9 +59,7 @@ inline MapImporterPtr Node_getMapImporter(scene::INodePtr node) {
 /**
  * Create an entity with the given properties.
  */
-scene::INodePtr Entity_create(EntityCreator& entityTable, 
-                              const StringMap& keyValues)
-{
+scene::INodePtr Entity_create(const StringMap& keyValues) {
     // Get the classname from the StringMap
     StringMap::const_iterator iter = keyValues.find("classname");
     if (iter == keyValues.end()) {
@@ -72,7 +70,7 @@ scene::INodePtr Entity_create(EntityCreator& entityTable,
     std::string className = iter->second;
     IEntityClassPtr classPtr = GlobalEntityClassManager().findClass(className);
     
-    scene::INodePtr entity(entityTable.createEntity(classPtr));
+    scene::INodePtr entity(GlobalEntityCreator().createEntity(classPtr));
 
     for (StringMap::const_iterator i = keyValues.begin(); 
          i != keyValues.end(); 
@@ -85,7 +83,6 @@ scene::INodePtr Entity_create(EntityCreator& entityTable,
 
 scene::INodePtr Entity_parseTokens(
 	parser::DefTokeniser& tokeniser, 
-	EntityCreator& entityTable, 
 	const PrimitiveParser& parser, 
 	int index,
 	int interleave,
@@ -121,8 +118,9 @@ scene::INodePtr Entity_parseTokens(
 	    if (token == "{") { // PRIMITIVE
 
 	        // Create the entity if necessary
-	        if (!entity)
-	            entity = Entity_create(entityTable, keyValues);
+	        if (!entity) {
+	            entity = Entity_create(keyValues);
+	        }
 	        
 	        // Update the dialog
 	        if (updateDialog && (numPrimitives % interleave == 0)) {
@@ -163,8 +161,9 @@ scene::INodePtr Entity_parseTokens(
 	    }
 	    else if (token == "}") { // END OF ENTITY
             // Create the entity if necessary and return it
-	        if (!entity)
-	            entity = Entity_create(entityTable, keyValues);
+	        if (!entity) {
+	            entity = Entity_create(keyValues);
+	        }
 	        return entity;
 	    }
 	    else { // KEY
@@ -217,8 +216,6 @@ bool checkEntityClass(scene::INodePtr node) {
 // Check if the entity with the given number should be inserted (debug)
 bool checkEntityNum(int num) {
 	
-	using boost::lexical_cast;
-
 	// Entity range XPath
 	static xml::NodeList entityRange = 
 					GlobalRegistry().findXPath("debug/mapdoom3/entityRange");
@@ -226,8 +223,8 @@ bool checkEntityNum(int num) {
 	
 	// Test the entity number is in the range
 	if (i != entityRange.end()) {
-		static int lower = lexical_cast<int>(i->getAttributeValue("start"));
-		static int upper = lexical_cast<int>(i->getAttributeValue("end"));
+		static int lower = strToInt(i->getAttributeValue("start"));
+		static int upper = strToInt(i->getAttributeValue("end"));
 	
 		if (num < lower || num > upper) {
 			std::cout << "DEBUG: Discarding entity " << num << ", out of range"
@@ -255,7 +252,6 @@ void checkInsert(scene::INodePtr node, scene::INodePtr root, int count) {
 		
 void Map_Read(scene::INodePtr root, 
 			  parser::DefTokeniser& tokeniser, 
-			  EntityCreator& entityTable, 
 			  const PrimitiveParser& parser)
 {
 	int interleave = GlobalRegistry().getInt(RKEY_MAP_LOAD_STATUS_INTERLEAVE);
@@ -294,12 +290,9 @@ void Map_Read(scene::INodePtr root,
 		// exception, display it and return
 		try {
 			// Get a node reference to the new entity
-			scene::INodePtr entity(Entity_parseTokens(tokeniser, 
-			                                          entityTable, 
-			                                          parser, 
-			                                          entCount,
-			                                          interleave,
-			                                          dialog));
+			scene::INodePtr entity(
+				Entity_parseTokens(tokeniser, parser, entCount, interleave, dialog)
+			);
 			// Insert the entity
 			checkInsert(entity, root, entCount);
 		}

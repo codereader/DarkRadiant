@@ -30,10 +30,7 @@ void FlushReferences();
 void RefreshReferences();
 
 #include "iscenegraph.h"
-namespace scene
-{
-  class Node;
-}
+
 class MapFormat;
 typedef void(*GraphTraversalFunc)(scene::INodePtr root, const scene::Traversable::Walker& walker);
 
