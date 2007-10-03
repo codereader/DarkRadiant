@@ -39,8 +39,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <list>
 #include <fstream>
 
-#include "container/hashfunc.h"
-#include "container/hashtable.h"
 #include "os/path.h"
 #include "stream/textfilestream.h"
 #include "nullmodel.h"
@@ -264,33 +262,6 @@ scene::INodePtr ModelResource_load(ModelLoader* loader, const std::string& name)
   return model;
 }
 
-
-/*inline hash_t path_hash(const char* path, hash_t previous = 0)
-{
-#if defined(WIN32)
-  return string_hash_nocase(path, previous);
-#else // UNIX
-  return string_hash(path, previous);
-#endif
-}
-
-struct PathEqual
-{
-  bool operator()(const std::string& path, const std::string& other) const
-  {
-    return path_equal(path.c_str(), other.c_str());
-  }
-};
-
-struct PathHash
-{
-  typedef hash_t hash_type;
-  hash_type operator()(const std::string& path) const
-  {
-    return path_hash(path.c_str());
-  }
-};*/
-
 class ModelCache
 {
 	// The left-hand value of the ModelCache map
@@ -368,64 +339,6 @@ public:
 };
 
 ModelCache g_modelCache;
-
-/*typedef std::pair<std::string, std::string> ModelKey;
-
-struct ModelKeyEqual
-{
-  bool operator()(const ModelKey& key, const ModelKey& other) const
-  {
-    return path_equal(key.first.c_str(), other.first.c_str()) && path_equal(key.second.c_str(), other.second.c_str());
-  }
-};
-
-struct ModelKeyHash
-{
-  typedef hash_t hash_type;
-  hash_type operator()(const ModelKey& key) const
-  {
-    return hash_combine(path_hash(key.first.c_str()), path_hash(key.second.c_str()));
-  }
-};
-
-typedef HashTable<ModelKey, scene::INodePtr, ModelKeyHash, ModelKeyEqual> ModelCache;
-ModelCache g_modelCache;
-bool g_modelCache_enabled = true;
-
-ModelCache::iterator ModelCache_find(const char* path, const char* name)
-{
-  if(g_modelCache_enabled)
-  {
-    return g_modelCache.find(ModelKey(path, name));
-  }
-  return g_modelCache.end();
-}
-
-ModelCache::iterator ModelCache_insert(const char* path, const char* name, scene::INodePtr node)
-{
-  if(g_modelCache_enabled)
-  {
-    return g_modelCache.insert(ModelKey(path, name), node);
-  }
-  return g_modelCache.insert(ModelKey("", ""), g_nullModel);
-}
-
-void ModelCache_flush(const char* path, const char* name)
-{
-  ModelCache::iterator i = g_modelCache.find(ModelKey(path, name));
-  if(i != g_modelCache.end())
-  {
-    //ASSERT_MESSAGE((*i).value.getCount() == 0, "resource flushed while still in use: " << (*i).key.first.c_str() << (*i).key.second.c_str());
-    g_modelCache.erase(i);
-  }
-}
-
-void ModelCache_clear()
-{
-  g_modelCache_enabled = false;
-  g_modelCache.clear();
-  g_modelCache_enabled = true;
-}*/
 
 scene::INodePtr Model_load(ModelLoader* loader, const std::string& path, const std::string& name, const std::string& type)
 {
