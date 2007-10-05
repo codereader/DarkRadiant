@@ -1,0 +1,7 @@
+; undo.def : Declares the module parameters for the DLL.
+
+LIBRARY      "UNDO"
+
+EXPORTS
+    ; Explicit exports can go here
+	RegisterModule @1

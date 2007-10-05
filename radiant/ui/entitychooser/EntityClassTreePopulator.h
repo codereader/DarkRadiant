@@ -5,7 +5,7 @@
 
 #include <gtk/gtktreestore.h>
 
-#include <ext/hash_map>
+#include <map>
 #include <string>
 
 #include <boost/functional/hash/hash.hpp>
@@ -21,7 +21,7 @@ class EntityClassTreePopulator
 : public EntityClassVisitor 
 {
     // Map between string directory names and their corresponding Iters
-    typedef __gnu_cxx::hash_map<std::string, GtkTreeIter*, boost::hash<std::string> > DirIterMap;
+	typedef std::map<std::string, GtkTreeIter*> DirIterMap;
     DirIterMap _dirIterMap;
 
     // TreeStore to populate

@@ -162,6 +162,7 @@ class Light :
 
 	void construct();
 
+public:
 	void updateOrigin();
 	void originChanged();
 	typedef MemberCaller<Light, &Light::originChanged> OriginChangedCaller;

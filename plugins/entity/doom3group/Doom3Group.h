@@ -162,6 +162,7 @@ private:
 	 */
 	void updateIsModel();
 
+public:
 	void nameChanged(const std::string& value);
 	typedef MemberCaller1<Doom3Group, const std::string&, &Doom3Group::nameChanged> NameChangedCaller;
 

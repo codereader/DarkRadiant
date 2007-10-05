@@ -18,7 +18,7 @@
 #include <gtk/gtktreeselection.h>
 
 #include <iostream>
-#include <ext/hash_map>
+#include <map>
 
 #include "selection/algorithm/Shader.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
@@ -149,7 +149,7 @@ namespace {
 		}
 		
 		// Map between string directory names and their corresponding Iters
-		typedef __gnu_cxx::hash_map<std::string, GtkTreeIter*, boost::hash<std::string> > DirIterMap;
+		typedef std::map<std::string, GtkTreeIter*> DirIterMap;
 		DirIterMap _dirIterMap;
 
 		// Recursive function to add a folder (e.g. "textures/common/something") to the

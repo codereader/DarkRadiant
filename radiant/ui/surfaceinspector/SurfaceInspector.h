@@ -183,7 +183,7 @@ public:
 	
 	/** greebo: Gets called upon shader selection change (during ShaderChooser display)
 	 */
-	void shaderSelectionChanged(const std::string& shaderName);
+	void shaderSelectionChanged(const std::string& shader);
 	
 	// Command target to toggle the dialog
 	static void toggle();

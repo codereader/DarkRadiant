@@ -64,7 +64,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define VFS_MAXDIRS 8
 
-#if defined(WIN32)
+#if defined(WIN32) && !defined(PATH_MAX)
 #define PATH_MAX 260
 #endif
 

@@ -129,7 +129,7 @@ public:
 	void pitchUpDiscrete();
 	void pitchDownDiscrete();
 	
-private:
+public:
 	void freelookMoveForwardKeyUp();
 	void freelookMoveForwardKeyDown();
 	

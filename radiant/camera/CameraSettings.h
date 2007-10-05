@@ -23,14 +23,14 @@ namespace {
 	const std::string RKEY_SOLID_SELECTION_BOXES = "user/ui/xyview/solidSelectionBoxes";
 	const std::string RKEY_TOGGLE_FREE_MOVE = RKEY_CAMERA_ROOT + "/toggleFreeMove";
 	const std::string RKEY_CAMERA_WINDOW_STATE = RKEY_CAMERA_ROOT + "/window";
-	
-	enum CameraDrawMode {
-		drawWire,
-		drawSolid,
-		drawTexture,
-		drawLighting,
-	};
 }
+
+enum CameraDrawMode {
+	drawWire,
+	drawSolid,
+	drawTexture,
+	drawLighting,
+};
 
 class CameraSettings : 
 	public RegistryKeyObserver 

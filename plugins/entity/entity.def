@@ -1,0 +1,7 @@
+; entity.def : Declares the module parameters for the DLL.
+
+LIBRARY      "ENTITY"
+
+EXPORTS
+    ; Explicit exports can go here
+	RegisterModule @1

@@ -92,7 +92,7 @@ public:
 	void transformChanged();
 	typedef MemberCaller<GenericEntity, &GenericEntity::transformChanged> TransformChangedCaller;
 
-private:
+public:
 
 	void construct();
 

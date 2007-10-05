@@ -44,7 +44,7 @@ public:
   		return _shader;
   	}
   
-	void setSelected(const bool select) {
+	void setSelected(bool select) {
 		_selectable.setSelected(select);
 		// Change the colour according to the selection
 		_colour = (select) ? 

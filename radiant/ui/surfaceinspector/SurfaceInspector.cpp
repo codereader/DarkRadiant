@@ -572,7 +572,7 @@ void SurfaceInspector::fitTexture() {
 	}
 }
 
-void SurfaceInspector::shaderSelectionChanged(const std::string& shaderName) {
+void SurfaceInspector::shaderSelectionChanged(const std::string& shader) {
 	emitShader();
 }
 
@@ -630,7 +630,7 @@ gboolean SurfaceInspector::onKeyPress(GtkWidget* entry, GdkEventKey* event, Surf
 
 void SurfaceInspector::onShaderSelect(GtkWidget* button, SurfaceInspector* self) {
 	// Construct the modal dialog, self-destructs on close
-	new ShaderChooser(self, GTK_WINDOW(self->getWindow()), self->_shaderEntry);
+	new ShaderChooser(reinterpret_cast<ShaderChooser::Client*>(self), GTK_WINDOW(self->getWindow()), self->_shaderEntry);
 }
 
 // Static command target to toggle the window

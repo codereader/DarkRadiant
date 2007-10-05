@@ -5,10 +5,11 @@
  */
  
  #include <iostream>
+#include "lrint.h"
 
 #if defined (_MSC_VER)
 
-inline int lrint (double flt) {
+/*inline int lrint (double flt) {
   int i;
 
 	_asm
@@ -18,7 +19,7 @@ inline int lrint (double flt) {
   	};
 			
 	return i;
-} 
+} */
 
 #elif defined(__FreeBSD__)
 

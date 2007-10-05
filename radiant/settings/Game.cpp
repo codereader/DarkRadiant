@@ -62,6 +62,7 @@ Game::Game(const std::string& path, const std::string& filename) {
 }
 
 Game::Game(const Game& other) :
+	IGame(other),
 	_enginePath(other._enginePath),
 	_type(other._type)
 {}
