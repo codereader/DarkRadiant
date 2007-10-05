@@ -3,7 +3,7 @@
 
 #include "Geometry.h"
 
-struct Winding;
+class Winding;
 class Brush;
 class Face;
 

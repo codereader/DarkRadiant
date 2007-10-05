@@ -83,7 +83,7 @@ public:
 	void transformChanged();
 	typedef MemberCaller<EclassModel, &EclassModel::transformChanged> TransformChangedCaller;	
 
-private:
+public:
 	void construct();
 
 	void updateTransform();

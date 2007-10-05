@@ -44,8 +44,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /* dependencies */
 #include "ddslib.h"
-#include <stdint.h>
 
+#if !defined(_MSC_VER)
+#include <stdint.h> // greebo: This isn't needed in VC++ 2005
+#endif
 
 /* endian tomfoolery */
 typedef union

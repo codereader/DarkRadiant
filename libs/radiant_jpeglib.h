@@ -21,7 +21,11 @@ extern "C"
 
 #ifndef boolean
 #ifdef __cplusplus
-#define	boolean	bool
+	
+#if !defined(_MSC_VER)
+	#define	boolean	bool // This throws errors in VC++ 2005
+#endif
+
 #else
 typedef int boolean;
 #endif

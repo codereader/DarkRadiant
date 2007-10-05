@@ -28,9 +28,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if defined( WIN32 )
 #define S_ISDIR(mode) (mode & _S_IFDIR)
 #include <io.h> // _access()
-//#define F_OK 0x00
-//#define W_OK 0x02
-//#define R_OK 0x04
+
+#if defined(_MSC_VER)
+// greebo: These are needed in VC++ 2005 Express + Platform SDK
+#define F_OK 0x00
+#define W_OK 0x02
+#define R_OK 0x04
+#endif
+
 #define access(path, mode) _access(path, mode)
 #else
 #include <unistd.h> // access()

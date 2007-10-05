@@ -3,7 +3,7 @@
 
 #include <gtk/gtktreestore.h>
 
-#include <ext/hash_map>
+#include <map>
 #include <string>
 #include <set>
 
@@ -40,9 +40,7 @@ class VFSTreePopulator
 	
 	// Maps of names to corresponding GtkTreeIter* nodes, for both intermediate
 	// paths and explicitly presented paths
-	typedef __gnu_cxx::hash_map<std::string, 
-								GtkTreeIter*, 
-								boost::hash<std::string> > NamedIterMap;
+	typedef std::map<std::string, GtkTreeIter*> NamedIterMap;
 	NamedIterMap _iters;
 	
 	// Set of paths that are passed in through addPath(), to distinguish them

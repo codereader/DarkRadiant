@@ -16,7 +16,7 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
-#include <ext/hash_map>
+#include <map>
 #include <sstream>
 #include <GL/glew.h>
 

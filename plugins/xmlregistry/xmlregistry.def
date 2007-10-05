@@ -1,0 +1,7 @@
+; xmlregistry.def : Declares the module parameters for the DLL.
+
+LIBRARY      "XMLREGISTRY"
+
+EXPORTS
+    ; Explicit exports can go here
+	RegisterModule @1

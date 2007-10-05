@@ -73,8 +73,9 @@ public:
 
 
 
-struct Winding
+class Winding
 {
+public:
   typedef Array<WindingVertex> container_type;
 
   std::size_t numpoints;

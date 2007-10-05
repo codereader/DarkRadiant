@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_QGL_H)
 #define INCLUDED_QGL_H
 
-struct OpenGLBinding;
+class OpenGLBinding;
 void QGL_sharedContextCreated(OpenGLBinding& table);
 void QGL_sharedContextDestroyed(OpenGLBinding& table);
 

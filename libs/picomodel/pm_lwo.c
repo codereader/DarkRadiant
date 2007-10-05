@@ -124,6 +124,8 @@ static picoModel_t *_lwo_load( PM_PARAMS_LOAD )
 	picoVertexCombinationHash_t **hashTable;
 	picoVertexCombinationHash_t	*vertexCombinationHash;
 
+	int surfacePolyCount;
+
 #ifdef DEBUG_PM_LWO
 	clock_t load_start, load_finish, convert_start, convert_finish;
 	double load_elapsed, convert_elapsed;
@@ -271,7 +273,7 @@ static picoModel_t *_lwo_load( PM_PARAMS_LOAD )
 
 		/* Local polygon index for this surface. We don't want to use i in the loop
 		 * since that is the global poly index for the entire layer */
-		int surfacePolyCount = 0;
+		surfacePolyCount = 0;
 
 		for( i = 0, pol = layer->polygon.pol; i < layer->polygon.count; i++, pol++ )
 		{
