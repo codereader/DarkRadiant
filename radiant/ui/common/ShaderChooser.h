@@ -25,7 +25,7 @@ class ShaderChooser
 {
 public:
 	// Derive from this class to get notified upon shader changes.
-	class Client
+	class ChooserClient
 	{
 	public:
 		// greebo: This gets invoked upon selection changed to allow the client to react.
@@ -34,7 +34,7 @@ public:
 	
 private:
 	// The "parent" class that gets notified upon shaderchange
-	Client* _client;
+	ChooserClient* _client;
 
 	// The widget this dialog is transient for.
 	GtkWindow* _parent;
@@ -57,7 +57,7 @@ public:
 	 * 
 	 * @parent: The widget this dialog is transient for.
 	 */
-	ShaderChooser(Client* client, GtkWindow* parent, GtkWidget* targetEntry = NULL);
+	ShaderChooser(ChooserClient* client, GtkWindow* parent, GtkWidget* targetEntry = NULL);
 	
 	/** greebo: Gets called upon shader selection change
 	 */

@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/callback.h"
 #include "scenelib.h"
 #include <stdlib.h>
+#include <list>
 
 /** greebo: A structure containing information about the current 
  * Selection. An instance of this is maintained by the 
@@ -119,6 +120,31 @@ public:
   }
 };
 
+#include "../include/selectable.h"
+
+class OccludeSelector : public Selector
+{
+	SelectionIntersection& _bestIntersection;
+	bool& _occluded;
+public:
+	OccludeSelector(SelectionIntersection& bestIntersection, bool& occluded) : 
+		_bestIntersection(bestIntersection), 
+		_occluded(occluded) 
+	{
+		_occluded = false;
+	}
+	
+	void pushSelectable(Selectable& selectable) {}
+	void popSelectable() {}
+	
+	void addIntersection(const SelectionIntersection& intersection) {
+		if (SelectionIntersection_closer(intersection, _bestIntersection)) {
+			_bestIntersection = intersection;
+			_occluded = true;
+		}
+	}
+}; // class OccludeSelector
+
 class SelectableInstance : 
 	public scene::Instance,
 	public Selectable
@@ -176,8 +202,6 @@ inline bool range_check(Iterator start, Iterator finish, Iterator iter)
   return false;
 }
 
-#include <list>
-
 template<typename Selected>
 class SelectionList
 {
@@ -231,28 +255,5 @@ public:
     m_selection.erase(--i.base());
   }
 };
-
-class OccludeSelector : public Selector
-{
-	SelectionIntersection& _bestIntersection;
-	bool& _occluded;
-public:
-	OccludeSelector(SelectionIntersection& bestIntersection, bool& occluded) : 
-		_bestIntersection(bestIntersection), 
-		_occluded(occluded) 
-	{
-		_occluded = false;
-	}
-	
-	void pushSelectable(Selectable& selectable) {}
-	void popSelectable() {}
-	
-	void addIntersection(const SelectionIntersection& intersection) {
-		if (SelectionIntersection_closer(intersection, _bestIntersection)) {
-			_bestIntersection = intersection;
-			_occluded = true;
-		}
-	}
-}; // class OccludeSelector
 
 #endif
