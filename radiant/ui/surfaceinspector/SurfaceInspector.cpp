@@ -629,8 +629,13 @@ gboolean SurfaceInspector::onKeyPress(GtkWidget* entry, GdkEventKey* event, Surf
 }
 
 void SurfaceInspector::onShaderSelect(GtkWidget* button, SurfaceInspector* self) {
+	ShaderChooser::ChooserClient* client = self;
 	// Construct the modal dialog, self-destructs on close
-	new ShaderChooser(reinterpret_cast<ShaderChooser::Client*>(self), GTK_WINDOW(self->getWindow()), self->_shaderEntry);
+	new ShaderChooser(
+		client, 
+		GTK_WINDOW(self->getWindow()), 
+		self->_shaderEntry
+	);
 }
 
 // Static command target to toggle the window

@@ -19,7 +19,7 @@ namespace ui {
 	}
 
 // Construct the dialog
-ShaderChooser::ShaderChooser(Client* client, GtkWindow* parent, GtkWidget* targetEntry) 
+ShaderChooser::ShaderChooser(ChooserClient* client, GtkWindow* parent, GtkWidget* targetEntry) 
 : gtkutil::PersistentTransientWindow(LABEL_TITLE, parent),
   _client(client),
   _parent(parent), 

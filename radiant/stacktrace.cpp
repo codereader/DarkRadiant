@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "windows.h"
 #include "winnt.h"
 #include "dbghelp.h"
+#include "imodule.h"
 
 class Address
 {
@@ -166,8 +167,10 @@ void write_stack_trace(PCONTEXT pContext, TextOutputStream& outputStream)
 
   CONTEXT context = *pContext;
 
+  const ApplicationContext& ctx = module::getRegistry().getApplicationContext();
+
   // Could use SymSetOptions here to add the SYMOPT_DEFERRED_LOADS flag
-  if ( !SymInitialize( m_hProcess, (PSTR)environment_get_app_path(), TRUE ) )
+  if ( !SymInitialize( m_hProcess, (PSTR)ctx.getApplicationPath().c_str(), TRUE ) )
   {
     return;
   }

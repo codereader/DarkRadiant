@@ -24,7 +24,7 @@ class SurfaceInspector
 : public gtkutil::PersistentTransientWindow,
   public RegistryKeyObserver,
   public SelectionSystem::Observer,
-  public ShaderChooser::Client
+  public ShaderChooser::ChooserClient
 {
 	typedef boost::shared_ptr<gtkutil::ControlButton> ControlButtonPtr;
 
@@ -183,8 +183,8 @@ public:
 	
 	/** greebo: Gets called upon shader selection change (during ShaderChooser display)
 	 */
-	void shaderSelectionChanged(const std::string& shader);
-	
+	virtual void shaderSelectionChanged(const std::string& shader);
+
 	// Command target to toggle the dialog
 	static void toggle();
 	

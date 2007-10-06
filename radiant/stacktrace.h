@@ -26,7 +26,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * Visual C++ not MinGW. Hence we define this to null to avoid mainline updates
  * breaking the build (rather than just removing calls).
  */
-
-#define write_stack_trace(x)
+#if defined(_MSC_VER)
+	class TextOutputStream;
+	void write_stack_trace(TextOutputStream& outputStream);
+#elif
+	#define write_stack_trace(x)
+#endif
 
 #endif
