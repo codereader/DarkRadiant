@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if defined(_MSC_VER)
 	class TextOutputStream;
 	void write_stack_trace(TextOutputStream& outputStream);
-#elif
+#else
 	#define write_stack_trace(x)
 #endif
 
