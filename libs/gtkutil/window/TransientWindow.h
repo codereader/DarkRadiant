@@ -4,6 +4,7 @@
 #include <gtk/gtkwindow.h>
 
 #include <string>
+#include <iostream>
 
 namespace gtkutil
 {
@@ -42,6 +43,24 @@ private:
 		return TRUE;
 	}
 	
+	/** greebo: This (hopefully) is to prevent the parent window from staying hidden 
+	 *          (rarely) when Alt-TABbing from other applications. Often only one 
+	 *          of the many top-level windows gets shown which is very annoying.
+	 *          If this doesn't help, this callback can be removed, of course, the 
+	 *          bug is hard to reproduce.  
+	 */ 
+	static gboolean _onExpose(GtkWidget* self, GdkEventExpose* event, GtkWindow* parent) {
+		// Make sure the parent window is shown as well
+		if (!GTK_WIDGET_VISIBLE(parent)) {
+			gtk_widget_show(GTK_WIDGET(parent));
+			
+			// Refocus on the self window
+			gtk_widget_show(self);
+		}
+		
+		return FALSE;
+	}
+	
 public:
 	
 	/**
@@ -78,6 +97,10 @@ public:
 	    // Connect up the destroy signal (close box)
 	    g_signal_connect(
 	    	G_OBJECT(_window), "delete-event", G_CALLBACK(_onDelete), this
+	    );
+	    
+	    g_signal_connect(
+	    	G_OBJECT(_window), "expose-event", G_CALLBACK(_onExpose), parent
 	    );
 	}
 	
