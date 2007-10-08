@@ -447,8 +447,7 @@ public:
 typedef boost::shared_ptr<EntityClassDoom3> EntityClassDoom3Ptr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	static EntityClassDoom3Ptr _module(new EntityClassDoom3);
-	registry.registerModule(_module);
+	registry.registerModule(EntityClassDoom3Ptr(new EntityClassDoom3));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();

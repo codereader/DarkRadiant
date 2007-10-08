@@ -31,7 +31,15 @@ PersistentTransientWindow::PersistentTransientWindow(const std::string& title,
     );
 
 #endif
-    
+}
+
+PersistentTransientWindow::~PersistentTransientWindow() {
+	// greebo: Call the destroy method of the subclass, before
+	// this class gets destructed, otherwise the virtual overridden
+	// methods won't get called anymore.
+	if (GTK_IS_WIDGET(getWindow())) {
+		destroy();
+	}
 }
 
 // Activate parent if necessary
@@ -50,7 +58,6 @@ void PersistentTransientWindow::_postHide() {
 // Virtual pre-destroy callback, called by TransientWindow before the window
 // itself has been destroyed
 void PersistentTransientWindow::_preDestroy() {
-
 	// If this window is active, make the parent active instead
 	activateParent();
 	

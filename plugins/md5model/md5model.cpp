@@ -82,8 +82,7 @@ public:
 typedef boost::shared_ptr<MD5ModelLoader> MD5ModelLoaderPtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	static MD5ModelLoaderPtr _module(new MD5ModelLoader);
-	registry.registerModule(_module);
+	registry.registerModule(MD5ModelLoaderPtr(new MD5ModelLoader));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();

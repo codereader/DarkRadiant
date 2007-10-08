@@ -64,6 +64,12 @@ public:
 	static ModuleRegistry& Instance();
 	
 private:
+
+	// greebo: Frees all the allocated RegisterableModules. This MUST happen before
+	// the main() routine has reached the end of scope, because on some
+	// systems (Win32) the DLLs get unloaded before the static ModuleRegistry
+	// is destructed - the shared_ptrs don't work anymore and are causing double-deletes.
+	void unloadModules();
 	
 	// Initialises the module (including dependencies, recursively).
 	void initialiseModuleRecursive(const std::string& name);

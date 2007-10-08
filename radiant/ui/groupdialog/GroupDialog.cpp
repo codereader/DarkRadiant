@@ -37,9 +37,19 @@ GroupDialog::GroupDialog(GtkWindow* parent)
 	_windowPosition.applyPosition();
 }
 
+GroupDialog::~GroupDialog() {
+	if (GTK_IS_WIDGET(getWindow())) {
+		destroy(); // call PersistentTransientWindow
+	}
+}
+
 // Public static method to construct the instance
 void GroupDialog::construct(GtkWindow* parent) {
 	instance() = boost::shared_ptr<GroupDialog>(new GroupDialog(parent));
+}
+
+void GroupDialog::destroy() {
+	instance() = boost::shared_ptr<GroupDialog>();
 }
 
 void GroupDialog::populateWindow() {

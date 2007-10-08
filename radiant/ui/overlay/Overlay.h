@@ -51,19 +51,25 @@ private:
 
 	/* Main constructor */
 	Overlay();
-
+	
 	// Capture the texture	
 	void captureTexture();
 
 	// Toggle image visibility
 	void show(bool shown);
 	
-public:
+	static boost::shared_ptr<Overlay>& instance();
 	
+public:
 	/**
 	 * Static method to retrieve the singleton Overlay instance.
 	 */
 	static Overlay& getInstance();
+	
+	/** greebo: Deletes the singleton instance. Calls to getInstance()
+	 *          are invalid after this call.
+	 */
+	static void destroy();
 	
 	// Sets the name of the image that should be loaded
 	void setImage(const std::string& imageName);

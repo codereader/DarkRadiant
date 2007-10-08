@@ -54,6 +54,10 @@ void Loader::loadModules(const std::string& root) {
 	Directory_forEach(root + PLUGINS_DIR, Loader(root + PLUGINS_DIR));
 }
 
+void Loader::unloadModules() {
+	_dynamicLibraryList.clear();
+}
+
 // Initialise the static DLL list 
 DynamicLibraryList Loader::_dynamicLibraryList;
 

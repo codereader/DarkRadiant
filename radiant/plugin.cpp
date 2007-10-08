@@ -246,8 +246,6 @@ public:
 
 		map::PointFile::Instance().destroy();
 	    Entity_Destroy();
-	    GlobalXYWnd().destroy();
-	    GlobalCamera().destroy();
 	    MainFrame_Destroy();
 	    Map_Destroy();
 	    MultiMon_Destroy();

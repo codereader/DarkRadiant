@@ -39,19 +39,12 @@ typedef boost::shared_ptr<DDSLoader> DDSLoaderPtr;
 typedef boost::shared_ptr<GDKLoader> GDKLoaderPtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	static TGALoaderPtr _tgaModule(new TGALoader);
-	static JPGLoaderPtr _jpgModule(new JPGLoader);
-	static PCXLoaderPtr _pcxModule(new PCXLoader);
-	static BMPLoaderPtr _bmpModule(new BMPLoader);
-	static DDSLoaderPtr _ddsModule(new DDSLoader);
-	static GDKLoaderPtr _gdkModule(new GDKLoader);
-	
-	registry.registerModule(_tgaModule);
-	registry.registerModule(_jpgModule);
-	registry.registerModule(_pcxModule);
-	registry.registerModule(_bmpModule);
-	registry.registerModule(_ddsModule);
-	registry.registerModule(_gdkModule);
+	registry.registerModule(TGALoaderPtr(new TGALoader));
+	registry.registerModule(JPGLoaderPtr(new JPGLoader));
+	registry.registerModule(PCXLoaderPtr(new PCXLoader));
+	registry.registerModule(BMPLoaderPtr(new BMPLoader));
+	registry.registerModule(DDSLoaderPtr(new DDSLoader));
+	registry.registerModule(GDKLoaderPtr(new GDKLoader));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();

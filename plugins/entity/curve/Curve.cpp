@@ -54,12 +54,14 @@ void Curve::disconnect(SignalHandlerId id) {
 }
 
 void Curve::testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best) {
-	PointVertexArray_testSelect(
-		&_renderCurve.m_vertices[0], 
-		_renderCurve.m_vertices.size(), 
-		test, 
-		best
-	);
+	if (_renderCurve.m_vertices.size() > 0) {
+		PointVertexArray_testSelect(
+			&_renderCurve.m_vertices[0], 
+			_renderCurve.m_vertices.size(), 
+			test, 
+			best
+		);
+	}
 }
 
 void Curve::revertTransform() {

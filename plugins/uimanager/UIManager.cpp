@@ -42,8 +42,7 @@ void UIManager::initialiseModule(const ApplicationContext& ctx) {
 } // namespace ui
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	static ui::UIManagerPtr _module(new ui::UIManager);
-	registry.registerModule(_module);
+	registry.registerModule(ui::UIManagerPtr(new ui::UIManager));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();

@@ -3,6 +3,8 @@
 
 #include "XYWnd.h"
 
+#include <iostream>
+
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/FramedWidget.h"
 
@@ -17,7 +19,13 @@ class FloatingOrthoView
 	// The numeric ID of this window
 	int _id;
 	
-private:
+protected:
+	
+	// Pre-destroy callback, disconnect the XYview from all other systems
+	virtual void _preDestroy() {
+		XYWnd::destroyXYView();
+		PersistentTransientWindow::_preDestroy();
+	}
 	
 	// Post-destroy callback. Inform the XYWndManager of our destruction
 	virtual void _postDestroy() {
@@ -52,6 +60,15 @@ public:
 		
 		// Set the parent window for XYWnd
 		XYWnd::setParent(GTK_WINDOW(getWindow()));
+	}
+	
+	virtual ~FloatingOrthoView() {
+		// greebo: Call the destroy method of the subclass, before
+		// this class gets destructed, otherwise the virtual overridden
+		// methods won't get called anymore.
+		if (GTK_IS_WIDGET(getWindow())) {
+			destroy();
+		}
 	}
 };
 

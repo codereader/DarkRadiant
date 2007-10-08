@@ -352,8 +352,7 @@ public:
 }; // class XMLRegistry
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	static boost::shared_ptr<XMLRegistry> _module(new XMLRegistry);
-	registry.registerModule(_module);
+	registry.registerModule(boost::shared_ptr<XMLRegistry>(new XMLRegistry));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();

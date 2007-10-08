@@ -22,8 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "Doom3SkinCache.h"
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	static skins::Doom3SkinCachePtr _module(new skins::Doom3SkinCache);
-	registry.registerModule(_module);
+	registry.registerModule(skins::Doom3SkinCachePtr(new skins::Doom3SkinCache));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();

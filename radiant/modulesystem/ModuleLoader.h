@@ -34,6 +34,9 @@ public:
 	
 	// Static loader algorithm, searches plugins/ and modules/ for .dll/.so files
 	static void loadModules(const std::string& root);
+	
+	// Frees the list of DLLs
+	static void unloadModules();
 };
 
 } // namespace module

@@ -805,11 +805,11 @@ module::StaticModule<HashtableReferenceCache> referenceCacheModule;
 
 namespace
 {
-  // greebo: Replaced the old g_referenceCache instance with a reference to the static module
-  // TODO: Remove this crap.
-  HashtableReferenceCache& g_referenceCache = static_cast<HashtableReferenceCache&>(
-	  *referenceCacheModule.getModule()
-  );
+	HashtableReferenceCache& GetReferenceCache() {
+		return static_cast<HashtableReferenceCache&>(
+			  *referenceCacheModule.getModule()
+		);
+	}
 }
 
 #if 0
@@ -824,8 +824,8 @@ void SaveReferences()
 {
   ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Saving Map");
 
-	for (HashtableReferenceCache::iterator i = g_referenceCache.begin(); 
-		 i != g_referenceCache.end(); 
+	for (HashtableReferenceCache::iterator i = GetReferenceCache().begin(); 
+		 i != GetReferenceCache().end(); 
 		 ++i)
 	{
     	boost::shared_ptr<ModelResource> res = i->second.lock();
@@ -838,7 +838,7 @@ void SaveReferences()
 
 bool References_Saved()
 {
-  for(HashtableReferenceCache::iterator i = g_referenceCache.begin(); i != g_referenceCache.end(); ++i)
+  for(HashtableReferenceCache::iterator i = GetReferenceCache().begin(); i != GetReferenceCache().end(); ++i)
   {
     scene::INodePtr node;
     
@@ -860,11 +860,11 @@ bool References_Saved()
 void RefreshReferences()
 {
   ScopeDisableScreenUpdates disableScreenUpdates("Refreshing models");
-  g_referenceCache.refresh();
+  GetReferenceCache().refresh();
 }
 
 void FlushReferences()
 {
   g_modelCache.clear();
-  g_referenceCache.clear();
+  GetReferenceCache().clear();
 }

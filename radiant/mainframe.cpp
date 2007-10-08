@@ -47,6 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/colourscheme/ColourSchemeEditor.h"
 #include "ui/menu/FiltersMenu.h"
 #include "ui/transform/TransformDialog.h"
+#include "ui/overlay/Overlay.h"
 #include "ui/overlay/OverlayDialog.h"
 #include "selection/algorithm/Shader.h"
 #include "selection/algorithm/Group.h"
@@ -1557,6 +1558,9 @@ void MainFrame::Shutdown()
 	ui::PrefDialog::Instance().shutdown();
 	ui::EntityList::Instance().shutdown();
 	
+	// Destroy the Overlay class instance (TODO: Let this use the RadiantEventListener interface)
+	ui::Overlay::destroy();
+	
 	// Stop the AutoSaver class from being called
 	map::AutoSaver().stopTimer();
 
@@ -1567,7 +1571,14 @@ void MainFrame::Shutdown()
 	GlobalXYWnd().saveState();
 	GlobalXYWnd().destroyViews();
 	
+	// greebpo: Release the camera window now and advise the
+	// camera manager to do so as well.
 	_camWnd = CamWndPtr();
+	GlobalCamera().destroy();
+	
+	ui::GroupDialog::destroy();
+	
+	GlobalXYWnd().destroy();
 }
 
 void MainFrame::RedrawStatusText()

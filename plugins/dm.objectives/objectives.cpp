@@ -64,8 +64,7 @@ public:
 typedef boost::shared_ptr<ObjectivesEditorModule> ObjectivesEditorModulePtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	static ObjectivesEditorModulePtr _module(new ObjectivesEditorModule);
-	registry.registerModule(_module);
+	registry.registerModule(ObjectivesEditorModulePtr(new ObjectivesEditorModule));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();

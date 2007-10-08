@@ -511,9 +511,3 @@ const StringSet& Quake3FileSystem::getDependencies() const {
 void Quake3FileSystem::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "VFS::initialiseModule called\n";
 }
-
-// Contains the static instance of the Q3FileSystem
-Quake3FileSystemPtr GetFileSystem() {
-	static Quake3FileSystemPtr _fileSystem(new Quake3FileSystem);
-	return _fileSystem;
-}

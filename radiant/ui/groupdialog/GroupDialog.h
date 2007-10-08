@@ -65,12 +65,16 @@ private:
 	virtual void _preHide();
 	
 public:
+	~GroupDialog();
 
 	/** 
 	 * Static method called by the MainFrame to construct the GroupDialog
 	 * instance.
 	 */
 	static void construct(GtkWindow* parent);
+	
+	// Destructs the group dialog instance, further calls to getInstance are invalid.
+	static void destroy();
 	
 	/** greebo: Adds a page to the group dialog.
 	 * 

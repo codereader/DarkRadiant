@@ -39,6 +39,7 @@ private:
 									GdkEventWindowState* e, 
 									PersistentTransientWindow* self);
 
+protected:
 	/* TransientWindow events */
 	
 	// Virtual pre-destroy callback
@@ -47,8 +48,7 @@ private:
 	// Post-hide event
 	virtual void _postHide();
 	
-	/* */
-	
+private:	
 	// Activate the parent window when this window is hidden
 	void activateParent();
 	
@@ -69,6 +69,8 @@ public:
 	PersistentTransientWindow(const std::string& title, 
 							  GtkWindow* parent,
 							  bool hideOnDelete = false);
+	
+	virtual ~PersistentTransientWindow();
 	
 	/**
 	 * Operator cast to GtkWindow*.

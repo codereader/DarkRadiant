@@ -22,6 +22,8 @@ public:
 	Event() :
 		_enabled(true)
 	{}
+
+	virtual ~Event() {}
 	
 	// Enables/disables this command according to the passed bool <enabled>
 	virtual void setEnabled(const bool enabled) {

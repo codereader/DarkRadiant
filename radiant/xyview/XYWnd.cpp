@@ -118,24 +118,36 @@ XYWnd::XYWnd(int id) :
 
 // Destructor
 XYWnd::~XYWnd() {
+	destroyXYView();
+}
+
+void XYWnd::destroyXYView() {
 	// Remove <self> from the scene change callback list
 	GlobalSceneGraph().removeSceneObserver(this);
 	
 	// greebo: Remove <self> as CameraObserver to the CamWindow.
 	GlobalCamera().removeCameraObserver(this);
 	
-	GlobalEventManager().disconnect(GTK_OBJECT(m_gl_widget));
+	if (m_gl_widget != NULL) {
+		GlobalEventManager().disconnect(GTK_OBJECT(m_gl_widget));
+		
+		g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_sizeHandler);
+		g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_exposeHandler);
 	
-	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_sizeHandler);
-	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_exposeHandler);
-
-	gtk_widget_hide(m_gl_widget);
-
-	// greebo: Unregister the allocated window observer from the global list, before destroying it
-	GlobalWindowObservers_remove(m_window_observer);
+		if (GTK_IS_WIDGET(m_gl_widget)) {
+			gtk_widget_destroy(m_gl_widget);
+			m_gl_widget = NULL;
+		}
+	}
 
 	// This deletes the RadiantWindowObserver from the heap
-	m_window_observer->release();
+	if (m_window_observer != NULL) {
+		// greebo: Unregister the allocated window observer from the global list, before destroying it
+		GlobalWindowObservers_remove(m_window_observer);
+			
+		m_window_observer->release();
+		m_window_observer = NULL;
+	}
 }
 
 void XYWnd::setEvent(GdkEventButton* event) {

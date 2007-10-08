@@ -264,8 +264,7 @@ typedef boost::shared_ptr<RadiantUndoSystem> RadiantUndoSystemPtr;
 } // namespace undo
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	static undo::RadiantUndoSystemPtr _module(new undo::RadiantUndoSystem);
-	registry.registerModule(_module);
+	registry.registerModule(undo::RadiantUndoSystemPtr(new undo::RadiantUndoSystem));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();

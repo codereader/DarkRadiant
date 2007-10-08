@@ -183,8 +183,6 @@ typedef boost::shared_ptr<PicoModelAPIConstructor> PicoModelAPIConstructorPtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
 	
-	static std::vector<PicoModelAPIConstructorPtr> _modulesList;
-	
 	pico_initialise();
 
 	const picoModule_t** modules = PicoModuleList( 0 );
@@ -201,9 +199,7 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
 					new PicoModelAPIConstructor(extension.c_str(), module)
 				);
 				
-				_modulesList.push_back(picoModule);
-				
-				registry.registerModule(_modulesList.back());
+				registry.registerModule(picoModule);
 			}
 		}
 	}

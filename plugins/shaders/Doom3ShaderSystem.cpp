@@ -230,11 +230,11 @@ void Doom3ShaderSystem::shutdownModule() {
 
 // Accessor function encapsulating the static shadersystem instance
 shaders::Doom3ShaderSystemPtr GetShaderSystem() {
-	static shaders::Doom3ShaderSystemPtr _shaderSystem(
-		new shaders::Doom3ShaderSystem()
-	);
+	// Acquire the moduleptr from the module registry
+	RegisterableModulePtr modulePtr(module::GlobalModuleRegistry().getModule(MODULE_SHADERSYSTEM));
 	
-	return _shaderSystem;
+	// static_cast it onto our shadersystem type
+	return boost::static_pointer_cast<shaders::Doom3ShaderSystem>(modulePtr);
 }
 
 shaders::ShaderLibrary& GetShaderLibrary() {

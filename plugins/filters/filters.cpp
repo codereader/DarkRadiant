@@ -23,8 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "itextstream.h"
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	static filters::BasicFilterSystemPtr _module(new filters::BasicFilterSystem);
-	registry.registerModule(_module);
+	registry.registerModule(filters::BasicFilterSystemPtr(new filters::BasicFilterSystem));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();

@@ -159,8 +159,7 @@ public:
 typedef boost::shared_ptr<MapDoom3API> MapDoom3APIPtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	static MapDoom3APIPtr _module(new MapDoom3API);
-	registry.registerModule(_module);
+	registry.registerModule(MapDoom3APIPtr(new MapDoom3API));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();

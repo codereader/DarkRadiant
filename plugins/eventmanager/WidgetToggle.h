@@ -28,6 +28,8 @@ class WidgetToggle :
 public:
 	// Constructor
 	WidgetToggle();
+
+	virtual ~WidgetToggle() {}
 	
 	// Dummy callback for the Toggle base class, we don't need any callbacks...
 	void doNothing();

@@ -5,8 +5,7 @@
 #include "itextstream.h"
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	static particles::ParticlesManagerPtr _module(new particles::ParticlesManager);
-	registry.registerModule(_module);
+	registry.registerModule(particles::ParticlesManagerPtr(new particles::ParticlesManager));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();
