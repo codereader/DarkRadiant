@@ -47,6 +47,15 @@ public:
 		gtk_window_set_modal(GTK_WINDOW(getWindow()), TRUE);
 	}
 	
+	~BlockingTransientWindow() {
+		// greebo: Call the destroy method of the subclass, before
+		// this class gets destructed, otherwise the virtual overridden
+		// methods won't get called anymore.
+		if (GTK_IS_WIDGET(getWindow())) {
+			destroy();
+		}
+	}
+	
 };
 
 }

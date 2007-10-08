@@ -107,7 +107,7 @@ public:
 	/**
 	 * Destructor. Invokes the destroy() event if necessary.
 	 */
-	~TransientWindow() {
+	virtual ~TransientWindow() {
 		if (GTK_IS_WIDGET(_window))
 			destroy();
 	}
@@ -155,12 +155,17 @@ public:
 	 */
 	void destroy() {
 		// Trigger a hide sequence if necessary
-		if (isVisible())
+		if (isVisible()) {
 			hide();
+		}
 		
 		// Invoke destroy callbacks and destroy the Gtk widget
 		_preDestroy();
+
 		gtk_widget_destroy(_window);
+		// Set the pointer to NULL to make life easier for the GTK macros
+		_window = NULL;
+
 		_postDestroy();
 	}
 };

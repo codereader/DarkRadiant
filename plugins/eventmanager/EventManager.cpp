@@ -717,8 +717,7 @@ private:
 typedef boost::shared_ptr<EventManager> EventManagerPtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	static EventManagerPtr _module(new EventManager);
-	registry.registerModule(_module);
+	registry.registerModule(EventManagerPtr(new EventManager));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();

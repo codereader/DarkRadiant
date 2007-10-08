@@ -186,8 +186,7 @@ public:
 typedef boost::shared_ptr<GridManager> GridManagerPtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	static GridManagerPtr _module(new GridManager);
-	registry.registerModule(_module);
+	registry.registerModule(GridManagerPtr(new GridManager));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();

@@ -14,6 +14,8 @@
  *         could add the incoming modules to a static std::list
  *         and another static routine would add the modules on demand.
  * 
+ * 		   Note: does NOT hold actual shared_ptrs of the RegisterableModule.
+ * 
  * Usage: StaticModule<RegisterableModule> myStaticModule;
  */
 namespace module {
@@ -23,18 +25,20 @@ class StaticModule
 {
 	// Define a boost::shared_ptr for the given class type
 	typedef boost::shared_ptr<ModuleType> ModuleTypePtr;
-	ModuleTypePtr _module;
+	std::string _moduleName;
 	
 public:
 	// The constructor
-	StaticModule() :
-		_module(new ModuleType())
-	{
-		getRegistry().registerModule(_module);
+	StaticModule() {
+		ModuleTypePtr module(new ModuleType());
+		_moduleName = module->getName();
+		getRegistry().registerModule(module);
 	}
 	
 	inline ModuleTypePtr getModule() {
-		return _module;
+		return boost::static_pointer_cast<ModuleType>(
+			GlobalModuleRegistry().getModule(_moduleName)
+		);
 	}
 };
 

@@ -60,8 +60,7 @@ public:
 typedef boost::shared_ptr<ArchivePK4API> ArchivePK4APIPtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	static ArchivePK4APIPtr _module(new ArchivePK4API);
-	registry.registerModule(_module);
+	registry.registerModule(ArchivePK4APIPtr(new ArchivePK4API));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();

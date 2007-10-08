@@ -4,6 +4,7 @@
 #include <iostream>
 #include "stream/textstream.h"
 #include "ApplicationContextImpl.h"
+#include "ModuleLoader.h"
 
 namespace module {
 
@@ -33,6 +34,13 @@ ModuleRegistry::ModuleRegistry() :
 	_modulesShutdown(false)
 {
 	globalOutputStream() << "ModuleRegistry instantiated.\n";
+}
+
+void ModuleRegistry::unloadModules() {
+	_uninitialisedModules.clear();
+	_initialisedModules.clear();
+	
+	Loader::unloadModules();
 }
 
 void ModuleRegistry::registerModule(RegisterableModulePtr module) {
@@ -127,9 +135,13 @@ void ModuleRegistry::shutdownModules() {
 	for (ModulesMap::iterator i = _initialisedModules.begin();
 		 i != _initialisedModules.end(); i++)
 	{
+		//std::cout << "Shutting down module: " << i->first << "\n";
 		i->second->shutdownModule();
 	}
 	
+	// Free all the shared ptrs
+	unloadModules();
+
 	_modulesShutdown = true;
 }
 

@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "Doom3ShaderSystem.h"
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	registry.registerModule(GetShaderSystem());
+	registry.registerModule(shaders::Doom3ShaderSystemPtr(new shaders::Doom3ShaderSystem));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();

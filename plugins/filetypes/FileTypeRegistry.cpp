@@ -90,8 +90,7 @@ void RadiantFileTypeRegistry::initialiseModule(const ApplicationContext& ctx) {
 
 // This will be called by the DarkRadiant main binary's ModuleRegistry
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	static RadiantFileTypeRegistryPtr _fileTypeRegistry(new RadiantFileTypeRegistry);
-	registry.registerModule(_fileTypeRegistry);
+	registry.registerModule(RadiantFileTypeRegistryPtr(new RadiantFileTypeRegistry));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();

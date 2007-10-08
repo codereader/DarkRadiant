@@ -70,6 +70,4 @@ public:
 };
 typedef boost::shared_ptr<Quake3FileSystem> Quake3FileSystemPtr;
 
-Quake3FileSystemPtr GetFileSystem();
-
 #endif

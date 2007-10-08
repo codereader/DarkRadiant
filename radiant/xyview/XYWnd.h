@@ -109,7 +109,7 @@ public:
 	XYWnd(int uniqueId);
 	
 	// Destructor
-	~XYWnd();
+	virtual ~XYWnd();
 	
 	void queueDraw();	
 	GtkWidget* getWidget();
@@ -214,6 +214,10 @@ public:
 	
 	void saveStateToNode(xml::Node& rootNode);
 	void readStateFromNode(const xml::Node& rootNode);
+	
+protected:
+	// Disconnects all widgets and unsubscribes as observer
+	void destroyXYView();
 	
 private:
 	void onContextMenu();

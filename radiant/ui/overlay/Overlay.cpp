@@ -41,10 +41,23 @@ Overlay::Overlay()
 	GlobalRegistry().addKeyObserver(this, RKEY_OVERLAY_PAN_WITH_XY);
 }
 
+void Overlay::destroy() {
+	// Release the shared ptr
+	instance() = boost::shared_ptr<Overlay>();
+}
+
+boost::shared_ptr<Overlay>& Overlay::instance() {
+	static boost::shared_ptr<Overlay> _instancePtr(new Overlay);
+	return _instancePtr;
+}
+
 // Static instance owner
 Overlay& Overlay::getInstance() {
-	static Overlay _instance;
-	return _instance;		
+	if (instance() == NULL) {
+		throw std::logic_error("Overlay instance called after destroy.");
+	}
+	
+	return *instance();	
 }
 
 void Overlay::show(bool shown) {

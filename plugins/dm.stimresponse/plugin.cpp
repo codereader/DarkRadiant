@@ -65,8 +65,7 @@ public:
 typedef boost::shared_ptr<StimResponseModule> StimResponseModulePtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	static StimResponseModulePtr _module(new StimResponseModule);
-	registry.registerModule(_module);
+	registry.registerModule(StimResponseModulePtr(new StimResponseModule));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();

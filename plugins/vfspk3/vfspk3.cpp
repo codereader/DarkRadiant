@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "vfs.h"
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	registry.registerModule(GetFileSystem());
+	registry.registerModule(Quake3FileSystemPtr(new Quake3FileSystem));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();

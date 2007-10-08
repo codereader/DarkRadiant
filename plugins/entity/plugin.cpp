@@ -25,8 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "itextstream.h"
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	static entity::Doom3EntityCreatorPtr _entityCreator(new entity::Doom3EntityCreator);
-	registry.registerModule(_entityCreator);
+	registry.registerModule(entity::Doom3EntityCreatorPtr(
+			new entity::Doom3EntityCreator
+	));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();

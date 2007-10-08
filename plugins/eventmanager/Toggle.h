@@ -36,6 +36,8 @@ protected:
 	
 public:
 	Toggle(const Callback& callback);
+
+	virtual ~Toggle() {}
 	
 	// Returns usually false, because a Toggle is never empty 
 	virtual bool empty() const;

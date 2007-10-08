@@ -4,8 +4,7 @@
 #include "itextstream.h"
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	static sound::SoundManagerPtr _module(new sound::SoundManager);
-	registry.registerModule(_module);
+	registry.registerModule(sound::SoundManagerPtr(new sound::SoundManager));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();

@@ -125,6 +125,7 @@ void XYWndManager::saveState() {
 void XYWndManager::destroyViews() {
 	// Discard the whole list
 	_xyWnds.clear();
+	_activeXY = XYWndPtr();
 }
 
 void XYWndManager::registerCommands() {
