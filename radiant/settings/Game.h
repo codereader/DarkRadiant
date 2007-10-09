@@ -34,11 +34,11 @@ public:
 	
 	/** greebo: Looks up the specified key
 	 */
-	const char* getKeyValue(const std::string& key);
+	std::string getKeyValue(const std::string& key);
 	
 	/** greebo: Emits an error if the keyvalue is empty
 	 */
-	const char* getRequiredKeyValue(const std::string& key);
+	std::string getRequiredKeyValue(const std::string& key);
 };
 
 typedef boost::shared_ptr<Game> GamePtr;

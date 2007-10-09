@@ -13,11 +13,11 @@ class IGame
 public:
 	/** greebo: Looks up the specified key
 	 */
-	virtual const char* getKeyValue(const std::string& key) = 0;
+	virtual std::string getKeyValue(const std::string& key) = 0;
 	
 	/** greebo: Emits an error if the keyvalue is empty
 	 */
-	virtual const char* getRequiredKeyValue(const std::string& key) = 0;
+	virtual std::string getRequiredKeyValue(const std::string& key) = 0;
 };
 typedef boost::shared_ptr<IGame> IGamePtr;
 

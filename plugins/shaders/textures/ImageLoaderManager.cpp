@@ -27,10 +27,10 @@ ImageLoaderList ImageLoaderManager::getLoaders(const std::string& moduleNames) {
 		std::string fileExt = boost::to_upper_copy(parts[i]);
 		
 		// Acquire the module using the given fileExt
-		ImageLoader& loader = GlobalImageLoader(fileExt);
+		ImageLoaderPtr loader = GlobalImageLoader(fileExt);
 		
-		if (&loader != NULL) {
-			list.push_back(&loader);
+		if (loader != NULL) {
+			list.push_back(loader);
 		}
 	}
 	

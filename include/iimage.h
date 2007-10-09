@@ -75,17 +75,18 @@ public:
 		return "";
 	}
 }; // class ImageLoader
+typedef boost::shared_ptr<ImageLoader> ImageLoaderPtr;
 
 const std::string MODULE_IMAGELOADER("ImageLoader");
 
-// Acquires the PatchCreator of the given type ("TGA", "JPG", "DDS", "BMP", etc.)
-inline ImageLoader& GlobalImageLoader(const std::string& fileType) {
-	boost::shared_ptr<ImageLoader> _imageLoader(
+// Acquires the ImageLoader of the given type ("TGA", "JPG", "DDS", "BMP", etc.)
+inline ImageLoaderPtr GlobalImageLoader(const std::string& fileType) {
+	ImageLoaderPtr _imageLoader(
 		boost::static_pointer_cast<ImageLoader>(
 			module::GlobalModuleRegistry().getModule(MODULE_IMAGELOADER + fileType) // e.g. "ImageLoaderTGA"
 		)
 	);
-	return *_imageLoader;
+	return _imageLoader;
 }
 
 #endif // _IIMAGE_H

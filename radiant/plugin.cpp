@@ -132,11 +132,11 @@ public:
 		Sys_Status(statusText);
 	}
 	
-	virtual const char* getGameDescriptionKeyValue(const char* key) {
+	virtual std::string getGameDescriptionKeyValue(const char* key) {
 		return GlobalGameManager().currentGame()->getKeyValue(key);
 	}
 	
-	virtual const char* getRequiredGameDescriptionKeyValue(const char* key) {
+	virtual std::string getRequiredGameDescriptionKeyValue(const char* key) {
 		return GlobalGameManager().currentGame()->getRequiredKeyValue(key);
 	}
 	
