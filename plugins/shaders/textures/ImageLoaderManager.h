@@ -6,7 +6,7 @@
 
 namespace shaders {
 
-typedef std::vector<ImageLoader*> ImageLoaderList;
+typedef std::vector<ImageLoaderPtr> ImageLoaderList;
 
 class ImageLoaderManager
 {

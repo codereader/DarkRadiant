@@ -73,13 +73,13 @@ std::string Game::getType() const {
 
 /** greebo: Looks up the specified key
  */
-const char* Game::getKeyValue(const std::string& key) {
+std::string Game::getKeyValue(const std::string& key) {
 	std::string gameXPath = std::string("//game[@type='") + _type + "']";
 	
 	xml::NodeList found = GlobalRegistry().findXPath(gameXPath);
 	
 	if (found.size() > 0) {
-		return found[0].getAttributeValue(key).c_str();
+		return found[0].getAttributeValue(key);
 	}
 	else {
 		return "";
@@ -88,10 +88,10 @@ const char* Game::getKeyValue(const std::string& key) {
 
 /** greebo: Emits an error if the keyvalue is empty
  */
-const char* Game::getRequiredKeyValue(const std::string& key) {
+std::string Game::getRequiredKeyValue(const std::string& key) {
 	std::string returnValue = getKeyValue(key);
 	if (!returnValue.empty()) {
-		return returnValue.c_str();
+		return returnValue;
 	}
 	else {
 		std::cout << "Game: Required Keyvalue '" << key 
