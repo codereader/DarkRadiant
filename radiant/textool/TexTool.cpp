@@ -161,6 +161,8 @@ void TexTool::gridDown() {
 }
 
 void TexTool::shutdown() {
+	// Release the shader
+	_shader = IShaderPtr();
 
 	// De-register this as selectionsystem observer
 	GlobalSelectionSystem().removeObserver(this);
@@ -199,7 +201,7 @@ void TexTool::rescanSelection() {
 	_items.clear();
 	
 	// Does the selection use one single shader?
-	if (_shader->getName() != "") {
+	if (std::string(_shader->getName()) != "") {
 		if (_selectionInfo.patchCount > 0) {
 			// One single named shader, get the selection list
 			PatchPtrVector patchList = selection::algorithm::getSelectedPatches();
