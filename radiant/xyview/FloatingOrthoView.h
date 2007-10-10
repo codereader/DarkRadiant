@@ -23,10 +23,11 @@ protected:
 	
 	// Pre-destroy callback, disconnect the XYview from all other systems
 	virtual void _preDestroy() {
+		// Call destroyXYView before the actual window container is destroyed
 		XYWnd::destroyXYView();
 		PersistentTransientWindow::_preDestroy();
 	}
-	
+
 	// Post-destroy callback. Inform the XYWndManager of our destruction
 	virtual void _postDestroy() {
 		GlobalXYWnd().notifyXYWndDestroy(_id);
