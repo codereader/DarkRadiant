@@ -1571,7 +1571,7 @@ void MainFrame::Shutdown()
 	GlobalXYWnd().saveState();
 	GlobalXYWnd().destroyViews();
 	
-	// greebpo: Release the camera window now and advise the
+	// greebo: Release the camera window now and advise the
 	// camera manager to do so as well.
 	_camWnd = CamWndPtr();
 	GlobalCamera().destroy();

@@ -46,11 +46,9 @@ void XYWndManager::construct() {
 
 // Release resources
 void XYWndManager::destroy() {
-	
 	// Release all owned XYWndPtrs
 	destroyViews();
-	_activeXY = XYWndPtr();
-	
+
 	XYWnd::releaseStates();
 }
 
@@ -124,7 +122,20 @@ void XYWndManager::saveState() {
 // Free the allocated XYViews from the heap
 void XYWndManager::destroyViews() {
 	// Discard the whole list
-	_xyWnds.clear();
+	for (XYWndMap::iterator i = _xyWnds.begin(); i != _xyWnds.end(); /* in-loop incr.*/)
+	{
+		// Extract the pointer to prevent the destructor from firing
+		XYWndPtr candidate = i->second;
+
+		// Now remove the item from the map, increase the iterator
+		_xyWnds.erase(i++);
+
+		// greebo: Release the shared_ptr, this fires the destructor chain
+		// which eventually reaches notifyXYWndDestroy(). This is safe at this
+		// point, because the id is not found in the map anymore, thus
+		// double-deletions are prevented.
+		candidate = XYWndPtr();
+	}
 	_activeXY = XYWndPtr();
 }
 
@@ -401,7 +412,11 @@ void XYWndManager::setGlobalParentWindow(GtkWindow* globalParentWindow) {
 // Notification for a floating XYWnd destruction, so that it can be removed
 // from the map
 void XYWndManager::notifyXYWndDestroy(int index) {
-	_xyWnds.erase(index);
+	XYWndMap::iterator found = _xyWnds.find(index);
+
+	if (found != _xyWnds.end()) {
+		_xyWnds.erase(found);
+	}
 }
 
 // Create a unique ID for the window map

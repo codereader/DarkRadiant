@@ -118,6 +118,9 @@ XYWnd::XYWnd(int id) :
 
 // Destructor
 XYWnd::~XYWnd() {
+	// Destroy the widgets now, not all XYWnds are FloatingOrthoViews,
+	// which calls destroyXYView() in their _preDestroy event.
+	// Double-calls don't harm, so this is safe to do.
 	destroyXYView();
 }
 
