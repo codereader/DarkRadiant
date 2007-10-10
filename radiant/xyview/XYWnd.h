@@ -182,7 +182,7 @@ public:
 	
 	void onEntityCreate(const std::string& item);
 	
-	void setViewType(EViewType n);
+	virtual void setViewType(EViewType n);
 	EViewType getViewType() const;
 	
 	void setScale(float f);

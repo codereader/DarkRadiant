@@ -63,6 +63,18 @@ public:
 		XYWnd::setParent(GTK_WINDOW(getWindow()));
 	}
 	
+	/** Overrides the setViewType method of the XYWnd base class.
+	 *  Extends the functionality by setting the window title.
+	 */
+	virtual void setViewType(EViewType viewType) {
+		// Invoke the base class method first
+		XYWnd::setViewType(viewType);
+		
+		// Get the title string and emit it to the GtkWindow
+		std::string title(getViewTypeTitle(viewType));
+		gtk_window_set_title(GTK_WINDOW(getWindow()), title.c_str());
+	}
+	
 	virtual ~FloatingOrthoView() {
 		// greebo: Call the destroy method of the subclass, before
 		// this class gets destructed, otherwise the virtual overridden
