@@ -53,12 +53,6 @@ public:
 	 * Sets up the paths and stores them into the registry.
 	 */
 	virtual void savePathsToRegistry() const = 0;
-
-	/**
-	 * greebo: This is the counter-part of the above method.
-	 *         It removes the paths from the registry.
-	 */
-	virtual void deletePathsFromRegistry() const = 0;
 };
 
 /**

@@ -199,11 +199,4 @@ void ApplicationContextImpl::savePathsToRegistry() const {
 	GlobalRegistry().set(RKEY_BITMAPS_PATH, _bitmapsPath);
 }
 
-void ApplicationContextImpl::deletePathsFromRegistry() const {
-	GlobalRegistry().deleteXPath(RKEY_APP_PATH);
-	GlobalRegistry().deleteXPath(RKEY_HOME_PATH);
-	GlobalRegistry().deleteXPath(RKEY_SETTINGS_PATH);
-	GlobalRegistry().deleteXPath(RKEY_BITMAPS_PATH);
-}
-
 } // namespace module

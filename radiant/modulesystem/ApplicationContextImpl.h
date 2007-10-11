@@ -44,7 +44,6 @@ public:
 
 	// Exports/deletes the paths to/from the registry
 	virtual void savePathsToRegistry() const;
-	virtual void deletePathsFromRegistry() const;
 	
 private:
 	// Sets up the bitmap path and settings path
