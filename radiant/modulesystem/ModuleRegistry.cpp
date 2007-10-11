@@ -179,14 +179,6 @@ void ModuleRegistry::initialiseContext(int argc, char* argv[]) {
 	_context.initialise(argc, argv);
 }
 
-void ModuleRegistry::savePathsToRegistry() {
-	_context.savePathsToRegistry();
-}
-
-void ModuleRegistry::deletePathsFromRegistry() {
-	_context.deletePathsFromRegistry();
-}
-
 ModuleRegistry& ModuleRegistry::Instance() {
 	static ModuleRegistry _registry;
 	return _registry;

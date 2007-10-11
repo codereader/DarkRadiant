@@ -55,11 +55,6 @@ public:
 	// Called by main() to initialise the application/settings paths
 	void initialiseContext(int argc, char* argv[]);
 	
-	// Stores the bitmaps path, settings path, etc. into the XMLRegistry
-	void savePathsToRegistry();
-	// Deletes the registry keys storing the paths from the registry 
-	void deletePathsFromRegistry();
-	
 	// Contains the singleton instance
 	static ModuleRegistry& Instance();
 	

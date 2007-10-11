@@ -64,6 +64,7 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "debugging/debugging.h"
 
 #include "iundo.h"
+#include "imodule.h"
 #include "iuimanager.h"
 #include "ifilesystem.h"
 #include "iregistry.h"
@@ -299,7 +300,8 @@ int main (int argc, char* argv[]) {
 	ui::Splash::Instance().setProgressAndText("Modules initialised", 0.15f);
 
 	// Tell the Environment class to store the paths into the Registry
-	module::ModuleRegistry::Instance().savePathsToRegistry();
+	// This must happen after module initialisation to avoid crashes.
+	module::GlobalModuleRegistry().getApplicationContext().savePathsToRegistry();
 	
 	// Create the radiant.pid file in the settings folder 
 	// (emits a warning if the file already exists (due to a previous startup failure)) 
