@@ -105,6 +105,9 @@ void PatchInspector::onRadiantShutdown() {
 	
 	GlobalSelectionSystem().removeObserver(this);
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
+
+	// De-register from the RadiantEventSystem
+	GlobalRadiant().removeEventListener(InstancePtr());
 	
 	// Destroy the transient window
 	destroy();

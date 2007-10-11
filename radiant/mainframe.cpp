@@ -307,11 +307,11 @@ void updateTextureBrowser() {
 }
 
 void Console_ToggleShow() {
-	ui::GroupDialog::getInstance().setPage("console");  
+	ui::GroupDialog::Instance().setPage("console");  
 }
 
 void EntityInspector_ToggleShow() {
-	ui::GroupDialog::getInstance().setPage("entity");  
+	ui::GroupDialog::Instance().setPage("entity");  
 }
 
 
@@ -1191,7 +1191,7 @@ void MainFrame::Create()
 	ui::GroupDialog::construct(window);
 
     // Add entity inspector widget
-    ui::GroupDialog::getInstance().addPage(
+    ui::GroupDialog::Instance().addPage(
     	"entity",	// name
     	"Entity", // tab title
     	"cmenu_add_entity.png", // tab icon 
@@ -1200,7 +1200,7 @@ void MainFrame::Create()
     );
 
 	// Add the Media Browser page
-	ui::GroupDialog::getInstance().addPage(
+	ui::GroupDialog::Instance().addPage(
     	"mediabrowser",	// name
     	"Media", // tab title
     	"folder16.png", // tab icon 
@@ -1211,12 +1211,12 @@ void MainFrame::Create()
     // Add the console widget if using floating window mode, otherwise the
     // console is placed in the bottom-most split pane.
     if (FloatingGroupDialog()) {
-    	ui::GroupDialog::getInstance().addPage(
+    	ui::GroupDialog::Instance().addPage(
 	    	"console",	// name
 	    	"Console", // tab title
 	    	"iconConsole16.png", // tab icon 
 	    	Console_constructWindow(
-	    		GTK_WINDOW(ui::GroupDialog::getInstance().getWindow())), // page widget
+	    		GTK_WINDOW(ui::GroupDialog::Instance().getWindow())), // page widget
 	    	"Console"
 	    );
     }
@@ -1343,11 +1343,11 @@ void MainFrame::Create()
    	{
 		GtkFrame* frame = create_framed_widget(
 			GlobalTextureBrowser().constructWindow(
-				GTK_WINDOW(ui::GroupDialog::getInstance().getWindow())
+				GTK_WINDOW(ui::GroupDialog::Instance().getWindow())
 			)
 		);
 		// Add the Media Browser page
-		ui::GroupDialog::getInstance().addPage(
+		ui::GroupDialog::Instance().addPage(
 	    	"textures",	// name
 	    	"Textures", // tab title
 	    	"icon_texture.png", // tab icon 
@@ -1356,7 +1356,7 @@ void MainFrame::Create()
 	    );
     }
 
-    ui::GroupDialog::getInstance().show();
+    ui::GroupDialog::Instance().show();
   }
   else // 4 way (aka Splitplane view)
   {
@@ -1419,7 +1419,7 @@ void MainFrame::Create()
     {      
       GtkFrame* frame = create_framed_widget(GlobalTextureBrowser().constructWindow(window));
 		// Add the Media Browser page
-		ui::GroupDialog::getInstance().addPage(
+		ui::GroupDialog::Instance().addPage(
 	    	"textures",	// name
 	    	"Textures", // tab title
 	    	"icon_texture.png", // tab icon 
@@ -1498,16 +1498,10 @@ void MainFrame::SaveWindowInfo() {
 
 void MainFrame::Shutdown()
 {
-	GlobalRadiant().broadcastShutdownEvent();
-	
 	// Shutdown the texturebrowser (before the GroupDialog gets shut down).
 	GlobalTextureBrowser().destroyWindow();
-	
-	// Tell the inspectors to safely shutdown (de-register callbacks, etc.)
-	// TODO: These actually cause dialogs to be instantiated on shutdown. Change
-	// to an event-based system using a RadiantEventListener interface and
-	// GlobalRadiant.
-	ui::GroupDialog::getInstance().shutdown();
+
+	GlobalRadiant().broadcastShutdownEvent();
 	
 	// Destroy the Overlay class instance (TODO: Let this use the RadiantEventListener interface)
 	ui::Overlay::destroy();
@@ -1526,8 +1520,6 @@ void MainFrame::Shutdown()
 	// camera manager to do so as well.
 	_camWnd = CamWndPtr();
 	GlobalCamera().destroy();
-	
-	ui::GroupDialog::destroy();
 	
 	GlobalXYWnd().destroy();
 }

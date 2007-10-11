@@ -162,9 +162,11 @@ public:
 	// Broadcasts a "shutdown" event to all the listeners
 	void broadcastShutdownEvent() {
 		for (EventListenerList::iterator i = _eventListeners.begin();
-		     i != _eventListeners.end(); i++)
+		     i != _eventListeners.end(); /* in-loop increment */)
 		{
-			(*i)->onRadiantShutdown();
+			// greebo: Post-increment the iterator, so that listeners can
+			// disconnect themselves without invalidating our iterator
+			(*i++)->onRadiantShutdown();
 		}
 	}
 	
@@ -173,7 +175,9 @@ public:
 		for (EventListenerList::iterator i = _eventListeners.begin();
 		     i != _eventListeners.end(); i++)
 		{
-			(*i)->onRadiantStartup();
+			// greebo: Post-increment the iterator, so that listeners can
+			// disconnect themselves without invalidating our iterator
+			(*i++)->onRadiantStartup();
 		}
 	}
 	

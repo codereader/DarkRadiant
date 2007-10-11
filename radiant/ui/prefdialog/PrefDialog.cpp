@@ -109,6 +109,9 @@ void PrefDialog::initDialog() {
 }
 
 void PrefDialog::onRadiantShutdown() {
+	// De-register from the RadiantEventSystem
+	GlobalRadiant().removeEventListener(InstancePtr());
+
 	if (_dialog != NULL) {
 		gtk_widget_hide(_dialog);
 	}
