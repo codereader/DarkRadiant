@@ -4,11 +4,11 @@
 #include <string>
 #include <map>
 #include "iselection.h"
+#include "iradiant.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/RegistryConnector.h"
 namespace gtkutil { class ControlButton; }
-#include <boost/shared_ptr.hpp>
 
 // Forward Declarations
 typedef struct _GtkWidget GtkWidget;
@@ -27,9 +27,13 @@ typedef struct _GtkTable GtkTable;
  */
 namespace ui {
 
+class TransformDialog;
+typedef boost::shared_ptr<TransformDialog> TransformDialogPtr;
+
 class TransformDialog 
 : public gtkutil::PersistentTransientWindow,
-  public SelectionSystem::Observer
+  public SelectionSystem::Observer,
+  public RadiantEventListener
 {
 	// The overall vbox (for global sensitivity toggle)
 	GtkWidget* _dialogVBox;
@@ -122,12 +126,15 @@ public:
 	/** greebo: Safely disconnects this dialog from all systems 
 	 * 			(EventManager) also saves the window state to the registry.
 	 */
-	void shutdown();
+	virtual void onRadiantShutdown();
 	
 	/** greebo: The command target compatible with FreeCaller<> to connect
 	 * 			this method to the EventManager.
 	 */
 	static void toggle();
+
+private:
+	static TransformDialogPtr& InstancePtr();
 	
 }; // class TransformDialog
 

@@ -73,7 +73,7 @@ TransformDialog::TransformDialog()
 	_windowPosition.applyPosition();
 }
 
-void TransformDialog::shutdown() {
+void TransformDialog::onRadiantShutdown() {
 	
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
@@ -91,11 +91,22 @@ void TransformDialog::shutdown() {
 	destroy();
 }
 
-TransformDialog& TransformDialog::Instance() {
-	// The static instance
-	static TransformDialog _instance;
+TransformDialogPtr& TransformDialog::InstancePtr() {
+	static TransformDialogPtr _instancePtr;
 	
-	return _instance;
+	if (_instancePtr == NULL) {
+		// Not yet instantiated, do it now
+		_instancePtr = TransformDialogPtr(new TransformDialog);
+		
+		// Register this instance with GlobalRadiant() at once
+		GlobalRadiant().addEventListener(_instancePtr);
+	}
+	
+	return _instancePtr;
+}
+
+TransformDialog& TransformDialog::Instance() {
+	return *InstancePtr();
 }
 
 // The command target
