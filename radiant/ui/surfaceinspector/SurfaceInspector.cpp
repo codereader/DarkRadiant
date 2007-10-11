@@ -128,7 +128,22 @@ SurfaceInspector::SurfaceInspector()
 	_windowPosition.applyPosition();
 }
 
-void SurfaceInspector::shutdown() {
+SurfaceInspectorPtr& SurfaceInspector::InstancePtr() {
+	static SurfaceInspectorPtr _instancePtr;
+	
+	if (_instancePtr == NULL) {
+		// Not yet instantiated, do it now
+		_instancePtr = SurfaceInspectorPtr(new SurfaceInspector);
+		
+		// Register this instance with GlobalRadiant() at once
+		GlobalRadiant().addEventListener(_instancePtr);
+	}
+	
+	return _instancePtr;
+}
+
+void SurfaceInspector::onRadiantShutdown() {
+	globalOutputStream() << "SurfaceInspector shutting down.\n";
 
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
@@ -432,10 +447,7 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 }
 
 SurfaceInspector& SurfaceInspector::Instance() {
-	// The static instance
-	static SurfaceInspector _inspector;
-	
-	return _inspector;
+	return *InstancePtr();
 }
 
 void SurfaceInspector::emitShader() {
