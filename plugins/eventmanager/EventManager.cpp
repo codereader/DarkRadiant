@@ -119,6 +119,11 @@ public:
 			globalOutputStream() << "EventManager successfully initialised.\n";
 		}
 	}
+
+	virtual void shutdownModule() {
+		globalOutputStream() << "EventManager: shutting down.\n";
+		saveEventListToRegistry();
+	}
 	
 	// Constructor
 	EventManager() :
@@ -491,16 +496,6 @@ public:
 		}
 	}
 	
-	void saveEventListToRegistry() {
-		const std::string rootKey = "user/ui/input";
-		
-		// The visitor class to save each event definition into the registry
-		// Note: the SaveEventVisitor automatically wipes all the existing shortcuts from the registry
-		SaveEventVisitor visitor(rootKey, this);
-		 
-		foreachEvent(visitor);
-	}
-	
 	void foreachEvent(IEventVisitor& eventVisitor) {
 		// Cycle through the event and pass them to the visitor class
 		for (EventMap::iterator i = _events.begin(); i != _events.end(); i++) {
@@ -536,6 +531,16 @@ public:
 	}
 
 private:
+
+	void saveEventListToRegistry() {
+		const std::string rootKey = "user/ui/input";
+		
+		// The visitor class to save each event definition into the registry
+		// Note: the SaveEventVisitor automatically wipes all the existing shortcuts from the registry
+		SaveEventVisitor visitor(rootKey, this);
+		 
+		foreachEvent(visitor);
+	}
 
 	AcceleratorList findAccelerator(const std::string& key, const std::string& modifierStr) {
 		guint keyVal = getGDKCode(key);
