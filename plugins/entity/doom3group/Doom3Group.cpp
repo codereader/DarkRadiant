@@ -135,8 +135,13 @@ const AABB& Doom3Group::localAABB() const {
 	m_curveBounds = m_curveNURBS.getBounds();
 	m_curveBounds.includeAABB(m_curveCatmullRom.getBounds());
 	
-	// Include the origin as well, it might be offset
-	m_curveBounds.includePoint(m_origin);
+	if (m_curveBounds.isValid()) {
+		// Include the origin as well, it might be offset
+		// Only do this, if the curve has valid bounds, otherwise
+		// we include the origin and this AABB gets added to the children's
+		// AABB in Instance::evaluateBounds(), which is wrong.
+		m_curveBounds.includePoint(m_origin);
+	}
 	
 	return m_curveBounds;
 }
