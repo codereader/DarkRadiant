@@ -212,9 +212,6 @@ public:
 	// Loads the shortcut->command associations from the XMLRegistry
 	virtual void loadAccelerators() = 0;
 	
-	// Saves the current event/accelerator state to the XMLRegistry (call this before exporting the registry)
-	virtual void saveEventListToRegistry() = 0;
-	
 	// Enables/Disables the specified command
 	virtual void enableEvent(const std::string& eventName) = 0;
 	virtual void disableEvent(const std::string& eventName) = 0;

@@ -217,9 +217,6 @@ void Radiant_Shutdown() {
 	module::GlobalModuleRegistry().getApplicationContext().deletePathsFromRegistry();
 	
 	GlobalMRU().saveRecentFiles();
-
-	// Save the current event set to the Registry and export it 
-	GlobalEventManager().saveEventListToRegistry();
 }
 
 void Exit() {
