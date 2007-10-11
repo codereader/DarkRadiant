@@ -77,7 +77,22 @@ PatchInspector::PatchInspector()
 	_windowPosition.applyPosition();
 }
 
-void PatchInspector::shutdown() {
+PatchInspectorPtr& PatchInspector::InstancePtr() {
+	static PatchInspectorPtr _instancePtr;
+	
+	if (_instancePtr == NULL) {
+		// Not yet instantiated, do it now
+		_instancePtr = PatchInspectorPtr(new PatchInspector);
+		
+		// Register this instance with GlobalRadiant() at once
+		GlobalRadiant().addEventListener(_instancePtr);
+	}
+	
+	return _instancePtr;
+}
+
+void PatchInspector::onRadiantShutdown() {
+	globalOutputStream() << "PatchInspector shutting down.\n";
 
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
@@ -96,10 +111,7 @@ void PatchInspector::shutdown() {
 }
 
 PatchInspector& PatchInspector::Instance() {
-	// The static instance
-	static PatchInspector _inspector;
-	
-	return _inspector;
+	return *InstancePtr();
 }
 
 void PatchInspector::populateWindow() {
