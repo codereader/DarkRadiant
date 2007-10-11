@@ -358,7 +358,7 @@ int main (int argc, char* argv[]) {
 
   delete g_pParentWnd;
 
-  Radiant_Shutdown();
+	GlobalMRU().saveRecentFiles();
 
   	// Issue a shutdown() call to all the modules
   	module::GlobalModuleRegistry().shutdownModules();

@@ -166,7 +166,6 @@ public:
 };
 
 void Radiant_Initialise();
-void Radiant_Shutdown();
 
 void SaveMapAs();
 
