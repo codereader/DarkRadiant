@@ -213,9 +213,6 @@ void Radiant_Initialise()
 }
 
 void Radiant_Shutdown() {
-	// Remove the paths to prevent them from being saved to the registry
-	module::GlobalModuleRegistry().getApplicationContext().deletePathsFromRegistry();
-	
 	GlobalMRU().saveRecentFiles();
 }
 

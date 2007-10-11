@@ -278,6 +278,9 @@ public:
 	~XMLRegistry() {
 		globalOutputStream() << "XMLRegistry Shutdown: " << _queryCounter << " queries processed.\n";
 
+		// Remove the paths to prevent them from being saved to the registry
+		module::GlobalModuleRegistry().getApplicationContext().deletePathsFromRegistry();
+
 		std::string settingsPath = 
 			module::GlobalModuleRegistry().getApplicationContext().getSettingsPath();
 
