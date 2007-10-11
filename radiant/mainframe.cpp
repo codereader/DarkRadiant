@@ -1507,7 +1507,6 @@ void MainFrame::Shutdown()
 	// TODO: These actually cause dialogs to be instantiated on shutdown. Change
 	// to an event-based system using a RadiantEventListener interface and
 	// GlobalRadiant.
-	ui::TransformDialog::Instance().shutdown();
 	ui::GroupDialog::getInstance().shutdown();
 	ui::PrefDialog::Instance().shutdown();
 	ui::EntityList::Instance().shutdown();
