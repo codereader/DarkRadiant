@@ -213,40 +213,10 @@ void Radiant_Initialise()
 }
 
 void Radiant_Shutdown() {
-	
-	// Remove the paths, but extract the settings path beforehand
-	std::string settingsPath = GlobalRegistry().get(RKEY_SETTINGS_PATH);
+	// Remove the paths to prevent them from being saved to the registry
 	module::GlobalModuleRegistry().getApplicationContext().deletePathsFromRegistry();
 	
 	GlobalMRU().saveRecentFiles();
-	
-	if (GlobalRegistry().get(RKEY_SKIP_REGISTRY_SAVE).empty()) {
-		// Replace the version tag and set it to the current DarkRadiant version
-		GlobalRegistry().deleteXPath("user//version");
-		GlobalRegistry().set("user/version", RADIANT_VERSION);
-		
-		// Export the colour schemes and remove them from the registry
-		GlobalRegistry().exportToFile("user/ui/colourschemes", settingsPath + "colours.xml");
-		GlobalRegistry().deleteXPath("user/ui/colourschemes");
-		
-		// Save the current event set to the Registry and export it 
-		GlobalEventManager().saveEventListToRegistry();
-		
-		// Export the input definitions into the user's settings folder and remove them as well
-		GlobalRegistry().exportToFile("user/ui/input", settingsPath + "input.xml");
-		GlobalRegistry().deleteXPath("user/ui/input");
-		
-		// Delete all nodes marked as "transient", they are NOT exported into the user's xml file
-		GlobalRegistry().deleteXPath("user/*[@transient='1']");
-		
-		// Remove any remaining upgradePaths (from older registry files)
-		GlobalRegistry().deleteXPath("user/upgradePaths");
-		// Remove legacy <interface> node
-		GlobalRegistry().deleteXPath("user/ui/interface");
-		
-		// Save the remaining /darkradiant/user tree to user.xml so that the current settings are preserved
-		GlobalRegistry().exportToFile("user", settingsPath + "user.xml");
-	}
 }
 
 void Exit() {
