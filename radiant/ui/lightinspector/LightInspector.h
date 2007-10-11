@@ -128,7 +128,7 @@ public:
 	
 	// Safely disconnects this dialog from all the systems
 	// and saves the window size/position to the registry
-	void onRadiantShutdown(); 
+	virtual void onRadiantShutdown(); 
 };
 
 }

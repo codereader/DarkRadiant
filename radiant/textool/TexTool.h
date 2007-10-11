@@ -7,6 +7,7 @@
 #include "math/Vector3.h"
 #include "math/aabb.h"
 #include "ishaders.h"
+#include "iradiant.h"
 #include "iselection.h"
 #include "iregistry.h"
 
@@ -17,10 +18,14 @@ class Patch;
 
 namespace ui {
 
+class TexTool;
+typedef boost::shared_ptr<TexTool> TexToolPtr;
+
 class TexTool 
 : public gtkutil::PersistentTransientWindow,
   public RegistryKeyObserver,
-  public SelectionSystem::Observer
+  public SelectionSystem::Observer,
+  public RadiantEventListener
 {
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
@@ -74,6 +79,8 @@ class TexTool
 	bool _gridActive;
 	
 private:
+	// This is where the static shared_ptr of the singleton instance is held.
+	static TexToolPtr& InstancePtr();
 
 	/* TransientWindow callbacks */
 	virtual void _preHide();
@@ -194,7 +201,7 @@ public:
 	/** greebo: Some sort of "soft" destructor that de-registers
 	 * this class from the SelectionSystem, saves the window state, etc.
 	 */
-	void shutdown();
+	virtual void onRadiantShutdown();
 	
 	/** greebo: This is the static accessor method containing
 	 * the static instance of the TexTool class. Use this to access
