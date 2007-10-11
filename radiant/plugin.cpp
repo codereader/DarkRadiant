@@ -250,6 +250,10 @@ public:
 	    Map_Destroy();
 	    MultiMon_Destroy();
 	    Selection_destroy();
+	    
+	    // Remove all the event listeners, otherwise the shared_ptrs 
+	    // lock the instances.
+	    _eventListeners.clear();
 	}
 };
 

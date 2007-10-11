@@ -4,6 +4,7 @@
 #include <map>
 #include "iselection.h"
 #include "iregistry.h"
+#include "iradiant.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/RegistryConnector.h"
 #include "ui/common/ShaderChooser.h"
@@ -20,11 +21,15 @@ namespace gtkutil { class ControlButton; }
 
 namespace ui {
 
+class SurfaceInspector;
+typedef boost::shared_ptr<SurfaceInspector> SurfaceInspectorPtr;
+
 class SurfaceInspector 
 : public gtkutil::PersistentTransientWindow,
   public RegistryKeyObserver,
   public SelectionSystem::Observer,
-  public ShaderChooser::ChooserClient
+  public ShaderChooser::ChooserClient,
+  public RadiantEventListener
 {
 	typedef boost::shared_ptr<gtkutil::ControlButton> ControlButtonPtr;
 
@@ -87,7 +92,44 @@ class SurfaceInspector
 	// A reference to the SelectionInfo structure (with the counters)
 	const SelectionInfo& _selectionInfo;
 
+public:
+
+	// Constructor
+	SurfaceInspector();
+	
+	/** greebo: Delivers a reference to the singleton instance using InstancePtr()
+	 */
+	static SurfaceInspector& Instance();
+
+	/** greebo: Gets called when the default texscale registry key changes
+	 */
+	void keyChanged();
+
+	/** greebo: SelectionSystem::Observer implementation. Gets called by
+	 * the SelectionSystem upon selection change to allow updating of the
+	 * texture properties.
+	 */
+	void selectionChanged(scene::Instance& instance, bool isComponent);
+	
+	// Updates the widgets
+	void update();
+	
+	/** greebo: Gets called upon shader selection change (during ShaderChooser display)
+	 */
+	virtual void shaderSelectionChanged(const std::string& shader);
+
+	// Command target to toggle the dialog
+	static void toggle();
+	
+	/** greebo: RadiantEventListener implementation: Some sort of 
+	 *          "soft" destructor that de-registers this class from the 
+	 *          SelectionSystem, saves the window state, etc.
+	 */
+	virtual void onRadiantShutdown();
+
 private:
+	// This is where the static shared_ptr of the singleton instance is held.
+	static SurfaceInspectorPtr& InstancePtr();
 	
 	// TransientWindow events
 	virtual void _preShow();
@@ -153,41 +195,6 @@ private:
 	// The keypress handler for catching the Enter key when in the value entry fields
 	static gboolean onValueKeyPress(GtkWidget* entry, GdkEventKey* event, SurfaceInspector* self);
 
-public:
-
-	// Constructor
-	SurfaceInspector();
-	
-	/** greebo: Some sort of "soft" destructor that de-registers
-	 * this class from the SelectionSystem, saves the window state, etc.
-	 */
-	void shutdown();
-	
-	/** greebo: Contains the static instance of this dialog.
-	 * Constructs the instance and calls toggle() when invoked.
-	 */
-	static SurfaceInspector& Instance();
-
-	/** greebo: Gets called when the default texscale registry key changes
-	 */
-	void keyChanged();
-
-	/** greebo: SelectionSystem::Observer implementation. Gets called by
-	 * the SelectionSystem upon selection change to allow updating of the
-	 * texture properties.
-	 */
-	void selectionChanged(scene::Instance& instance, bool isComponent);
-	
-	// Updates the widgets
-	void update();
-	
-	/** greebo: Gets called upon shader selection change (during ShaderChooser display)
-	 */
-	virtual void shaderSelectionChanged(const std::string& shader);
-
-	// Command target to toggle the dialog
-	static void toggle();
-	
 }; // class SurfaceInspector
 
 } // namespace ui
