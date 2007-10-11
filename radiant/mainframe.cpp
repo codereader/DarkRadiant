@@ -212,10 +212,6 @@ void Radiant_Initialise()
 	GlobalMRU().loadRecentFiles();
 }
 
-void Radiant_Shutdown() {
-	GlobalMRU().saveRecentFiles();
-}
-
 void Exit() {
 	if (GlobalMap().askForSave("Exit Radiant")) {
 		gtk_main_quit();
@@ -308,11 +304,6 @@ void PasteToCamera()
 
 void updateTextureBrowser() {
 	GlobalTextureBrowser().queueDraw();
-}
-
-void Restart() {
-	Radiant_Shutdown();
-	Radiant_Initialise();
 }
 
 void Console_ToggleShow() {
