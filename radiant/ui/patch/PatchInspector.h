@@ -3,6 +3,7 @@
 
 #include <map>
 #include "iselection.h"
+#include "iradiant.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/RegistryConnector.h"
@@ -16,9 +17,14 @@ class Patch;
 
 namespace ui {
 
+// Forward declaration
+class PatchInspector;
+typedef boost::shared_ptr<PatchInspector> PatchInspectorPtr;
+
 class PatchInspector 
 : public gtkutil::PersistentTransientWindow,
-  public SelectionSystem::Observer
+  public SelectionSystem::Observer,
+  public RadiantEventListener
 {
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
@@ -155,7 +161,11 @@ public:
 	 * 			(SelectionSystem, EventManager, ...)
 	 * 			Also saves the window state to the registry.
 	 */
-	void shutdown();
+	virtual void onRadiantShutdown();
+
+private:
+	// This is where the static shared_ptr of the singleton instance is held.
+	static PatchInspectorPtr& InstancePtr();
 
 }; // class PatchInspector
 
