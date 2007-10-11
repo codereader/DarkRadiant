@@ -47,7 +47,7 @@ AddPropertyDialog::AddPropertyDialog(IEntityClassConstPtr eclass)
   _eclass(eclass)
 {
 	// Window properties
-	GtkWidget* groupdialog = ui::GroupDialog::getInstance().getWindow();
+	GtkWidget* groupdialog = ui::GroupDialog::Instance().getWindow();
 	
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), GTK_WINDOW(groupdialog));
 	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);

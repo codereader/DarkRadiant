@@ -37,19 +37,10 @@ GroupDialog::GroupDialog(GtkWindow* parent)
 	_windowPosition.applyPosition();
 }
 
-GroupDialog::~GroupDialog() {
-	if (GTK_IS_WIDGET(getWindow())) {
-		destroy(); // call PersistentTransientWindow
-	}
-}
-
 // Public static method to construct the instance
 void GroupDialog::construct(GtkWindow* parent) {
-	instance() = boost::shared_ptr<GroupDialog>(new GroupDialog(parent));
-}
-
-void GroupDialog::destroy() {
-	instance() = boost::shared_ptr<GroupDialog>();
+	InstancePtr() = GroupDialogPtr(new GroupDialog(parent));
+	GlobalRadiant().addEventListener(InstancePtr());
 }
 
 void GroupDialog::populateWindow() {
@@ -91,30 +82,23 @@ void GroupDialog::setPage(GtkWidget* page) {
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(_notebook), gint(_currentPage));
 }
 
-// Static instance owner
-boost::shared_ptr<GroupDialog>& GroupDialog::instance() {
-	static boost::shared_ptr<GroupDialog> _instance;
-	return _instance;
+GroupDialogPtr& GroupDialog::InstancePtr() {
+	static GroupDialogPtr _instancePtr;
+	return _instancePtr;
 }
 
 // Public method to retrieve the instance
-GroupDialog& GroupDialog::getInstance() {
-	if (GroupDialog::instance()) {
-		return *instance();
-	}
-	else {
-		throw std::logic_error(
-			"GroupDialog::getInstance() called before instance was initialised."
-		);
-	}
+GroupDialog& GroupDialog::Instance() {
+	assert(InstancePtr() != NULL);
+	return *InstancePtr();
 }
 
 // Public static method to toggle the window visibility
 void GroupDialog::toggle() {
-	if (getInstance().isVisible())
-		getInstance().hide();
+	if (Instance().isVisible())
+		Instance().hide();
 	else
-		getInstance().show();
+		Instance().show();
 }
 
 // Pre-hide callback from TransientWindow
@@ -136,8 +120,7 @@ void GroupDialog::_postShow() {
 	gtk_window_set_focus(GTK_WINDOW(getWindow()), NULL);
 }
 
-void GroupDialog::shutdown() {
-
+void GroupDialog::onRadiantShutdown() {
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
 	
@@ -148,8 +131,11 @@ void GroupDialog::shutdown() {
 	_windowPosition.saveToNode(node);
 	
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
-	
-	// Destroy the dialog
+
+	// De-register from the RadiantEventSystem
+	GlobalRadiant().removeEventListener(InstancePtr());
+
+	// Call the PersistentTransientWindow::destroy chain
 	destroy();
 }
 

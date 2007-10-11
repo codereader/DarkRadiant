@@ -1,7 +1,7 @@
 #ifndef GROUPDIALOG_H_
 #define GROUPDIALOG_H_
 
-#include <string>
+#include "iradiant.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 
@@ -27,8 +27,12 @@ typedef struct _GtkWindow GtkWindow;
 
 namespace ui {
 
+class GroupDialog;
+typedef boost::shared_ptr<GroupDialog> GroupDialogPtr;
+
 class GroupDialog 
-: public gtkutil::PersistentTransientWindow
+: public gtkutil::PersistentTransientWindow,
+	public RadiantEventListener
 {
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
@@ -51,11 +55,6 @@ class GroupDialog
 	int _currentPage;
 
 private:
-	
-	// Static instance owner. This returns the shared_ptr by reference, so that
-	// the pointed object can be initialised when construct() is called.
-	static boost::shared_ptr<GroupDialog>& instance();
-	
 	// Private constructor creates GTK widgets etc.
 	GroupDialog(GtkWindow* parent);
 
@@ -65,16 +64,11 @@ private:
 	virtual void _preHide();
 	
 public:
-	~GroupDialog();
-
 	/** 
 	 * Static method called by the MainFrame to construct the GroupDialog
 	 * instance.
 	 */
 	static void construct(GtkWindow* parent);
-	
-	// Destructs the group dialog instance, further calls to getInstance are invalid.
-	static void destroy();
 	
 	/** greebo: Adds a page to the group dialog.
 	 * 
@@ -110,18 +104,20 @@ public:
 	/** greebo: Safely disconnects this window from
 	 * 			the eventmanager and saves the window position.
 	 */
-	void shutdown();
+	virtual void onRadiantShutdown();
 	
 	/** 
 	 * Retrieve the static GroupDialog instance.
 	 */
-	static GroupDialog& getInstance();
+	static GroupDialog& Instance();
 	
 	/** greebo: The command target to toggle the visibility
 	 */
 	static void toggle();
 
 private:
+	// This is where the static shared_ptr of the singleton instance is held.
+	static GroupDialogPtr& InstancePtr();
 
 	/** greebo: Adds the basic widgets to the groupdialog.
 	 */
