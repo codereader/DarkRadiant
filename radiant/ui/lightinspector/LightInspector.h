@@ -2,6 +2,7 @@
 #define LIGHTINSPECTOR_H_
 
 #include "iselection.h"
+#include "iradiant.h"
 #include "ui/common/ShaderSelector.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
@@ -24,11 +25,14 @@ namespace ui
 /** Dialog to allow adjustment of properties on lights, including the conversion
  * between projected and point lights.
  */
+class LightInspector;
+typedef boost::shared_ptr<LightInspector> LightInspectorPtr;
 
 class LightInspector 
 : public gtkutil::PersistentTransientWindow,
   public SelectionSystem::Observer,
-  public ShaderSelector::Client
+  public ShaderSelector::Client,
+  public RadiantEventListener
 {
 	// The overall vbox
 	GtkWidget* _mainVBox;
@@ -66,6 +70,8 @@ class LightInspector
 	bool _updateActive;
 	
 private:
+	// This is where the static shared_ptr of the singleton instance is held.
+	static LightInspectorPtr& InstancePtr();
 
 	// Constructor creates GTK widgets
 	LightInspector();
@@ -122,7 +128,7 @@ public:
 	
 	// Safely disconnects this dialog from all the systems
 	// and saves the window size/position to the registry
-	void shutdown(); 
+	void onRadiantShutdown(); 
 };
 
 }

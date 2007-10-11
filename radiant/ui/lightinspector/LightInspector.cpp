@@ -147,7 +147,21 @@ LightInspector::LightInspector()
 	_windowPosition.applyPosition();
 }
 
-void LightInspector::shutdown() {
+LightInspectorPtr& LightInspector::InstancePtr() {
+	static LightInspectorPtr _instancePtr;
+	
+	if (_instancePtr == NULL) {
+		// Not yet instantiated, do it now
+		_instancePtr = LightInspectorPtr(new LightInspector);
+		
+		// Register this instance with GlobalRadiant() at once
+		GlobalRadiant().addEventListener(_instancePtr);
+	}
+	
+	return _instancePtr;
+}
+
+void LightInspector::onRadiantShutdown() {
 
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
@@ -344,8 +358,7 @@ void LightInspector::toggleInspector() {
 }
 
 LightInspector& LightInspector::Instance() {
-	static LightInspector _instance;
-	return _instance;
+	return *InstancePtr();
 }
 
 /* GTK CALLBACKS */
