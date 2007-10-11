@@ -5,6 +5,10 @@
 #include "xmlutil/Document.h"
 #include "xmlutil/Node.h"
 
+namespace {
+	const std::string RKEY_SKIP_REGISTRY_SAVE = "user/skipRegistrySaveOnShutdown";
+}
+
 // Abstract base class for a registry key observer, gets called by the registry
 // when a certain key changes.
 class RegistryKeyObserver {

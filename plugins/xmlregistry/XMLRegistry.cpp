@@ -28,7 +28,9 @@
 #include <boost/lexical_cast.hpp>
 
 #include "os/file.h"
+#include "version.h"
 #include "imodule.h"
+#include "ieventmanager.h"
 #include "iradiant.h"
 #include "RegistryTree.h"
 
@@ -346,6 +348,41 @@ public:
 		const std::string userInputFile = ctx.getSettingsPath() + "input.xml";
 		if (file_exists(userInputFile.c_str())) {
 			import(userInputFile, "user/ui", Registry::treeUser);
+		}
+	}
+
+	virtual void shutdownModule() {
+		std::string settingsPath = 
+			module::GlobalModuleRegistry().getApplicationContext().getSettingsPath();
+
+		// Save the user tree to the settings path, this contains all
+		// settings that have been modified during runtime
+		if (get(RKEY_SKIP_REGISTRY_SAVE).empty()) {
+			// Replace the version tag and set it to the current DarkRadiant version
+			deleteXPath("user//version");
+			set("user/version", RADIANT_VERSION);
+			
+			// Export the colour schemes and remove them from the registry
+			exportToFile("user/ui/colourschemes", settingsPath + "colours.xml");
+			deleteXPath("user/ui/colourschemes");
+			
+			// Save the current event set to the Registry and export it 
+			GlobalEventManager().saveEventListToRegistry();
+			
+			// Export the input definitions into the user's settings folder and remove them as well
+			exportToFile("user/ui/input", settingsPath + "input.xml");
+			deleteXPath("user/ui/input");
+			
+			// Delete all nodes marked as "transient", they are NOT exported into the user's xml file
+			deleteXPath("user/*[@transient='1']");
+			
+			// Remove any remaining upgradePaths (from older registry files)
+			deleteXPath("user/upgradePaths");
+			// Remove legacy <interface> node
+			deleteXPath("user/ui/interface");
+			
+			// Save the remaining /darkradiant/user tree to user.xml so that the current settings are preserved
+			exportToFile("user", settingsPath + "user.xml");
 		}
 	}
 
