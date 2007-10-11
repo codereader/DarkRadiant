@@ -1503,9 +1503,6 @@ void MainFrame::Shutdown()
 
 	GlobalRadiant().broadcastShutdownEvent();
 	
-	// Destroy the Overlay class instance (TODO: Let this use the RadiantEventListener interface)
-	ui::Overlay::destroy();
-	
 	// Stop the AutoSaver class from being called
 	map::AutoSaver().stopTimer();
 

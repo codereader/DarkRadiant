@@ -1318,7 +1318,7 @@ void XYWnd::draw() {
 
 	// Call the image overlay draw method with the window coordinates
 	Vector4 windowCoords = getWindowCoordinates();
-	ui::Overlay::getInstance().draw(
+	ui::Overlay::Instance().draw(
 		windowCoords[0], windowCoords[1], windowCoords[2], windowCoords[3], 
 		m_fScale);
 	

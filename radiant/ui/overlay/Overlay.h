@@ -4,10 +4,12 @@
 #include "iimage.h"
 #include "iregistry.h"
 #include "ishaders.h"
-
-#include <string>
+#include "iradiant.h"
 
 namespace ui {
+
+class Overlay;
+typedef boost::shared_ptr<Overlay> OverlayPtr;
 
 /**
  * The Overlay class allows a background image to be drawn in the XY window.
@@ -15,7 +17,8 @@ namespace ui {
  * the XYWnd class to insert the image into the window.
  */
 class Overlay : 
-	public RegistryKeyObserver
+	public RegistryKeyObserver,
+	public RadiantEventListener
 {
 private:
 	
@@ -58,18 +61,16 @@ private:
 	// Toggle image visibility
 	void show(bool shown);
 	
-	static boost::shared_ptr<Overlay>& instance();
+	static OverlayPtr& InstancePtr();
 	
 public:
 	/**
 	 * Static method to retrieve the singleton Overlay instance.
 	 */
-	static Overlay& getInstance();
-	
-	/** greebo: Deletes the singleton instance. Calls to getInstance()
-	 *          are invalid after this call.
-	 */
-	static void destroy();
+	static Overlay& Instance();
+
+	// RadiantEventListener implementation
+	virtual void onRadiantShutdown();
 	
 	// Sets the name of the image that should be loaded
 	void setImage(const std::string& imageName);
