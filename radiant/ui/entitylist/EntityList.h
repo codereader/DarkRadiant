@@ -2,6 +2,7 @@
 #define ENTITYLIST_H_
 
 #include "iselection.h"
+#include "iradiant.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 
@@ -13,9 +14,13 @@ typedef struct _GtkTreeModel GtkTreeModel;
 
 namespace ui {
 
+class EntityList;
+typedef boost::shared_ptr<EntityList> EntityListPtr;
+
 class EntityList
 : public gtkutil::PersistentTransientWindow,
-  public SelectionSystem::Observer
+  public SelectionSystem::Observer,
+  public RadiantEventListener
 {
 	// The main tree view
 	GtkTreeView* _treeView;
@@ -29,6 +34,8 @@ class EntityList
 	bool _callbackActive;
 
 private:
+	// This is where the static shared_ptr of the singleton instance is held.
+	static EntityListPtr& InstancePtr();
 
 	// TransientWindow callbacks
 	virtual void _preHide();
@@ -67,7 +74,7 @@ public:
 	 * 			from the EventManager and the SelectionSystem.
 	 * 			Saves the window information to the Registry.
 	 */
-	void shutdown();
+	virtual void onRadiantShutdown();
 	
 	/** greebo: Toggles the window (command target).
 	 */

@@ -197,7 +197,7 @@ void EntityList::toggle() {
 	Instance().toggleWindow();
 }
 
-void EntityList::shutdown() {
+void EntityList::onRadiantShutdown() {
 
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
@@ -215,9 +215,22 @@ void EntityList::shutdown() {
 	destroy();
 }
 
+EntityListPtr& EntityList::InstancePtr() {
+	static EntityListPtr _instancePtr;
+	
+	if (_instancePtr == NULL) {
+		// Not yet instantiated, do it now
+		_instancePtr = EntityListPtr(new EntityList);
+		
+		// Register this instance with GlobalRadiant() at once
+		GlobalRadiant().addEventListener(_instancePtr);
+	}
+	
+	return _instancePtr;
+}
+
 EntityList& EntityList::Instance() {
-	static EntityList _instance;
-	return _instance;
+	return *InstancePtr();
 }
 
 void EntityList::onRowExpand(GtkTreeView* view, GtkTreeIter* iter, GtkTreePath* path, EntityList* self) {
