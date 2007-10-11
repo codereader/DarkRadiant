@@ -1,6 +1,7 @@
 #ifndef PREFDIALOG_H_
 #define PREFDIALOG_H_
 
+#include "iradiant.h"
 #include "gtkutil/RegistryConnector.h"
 #include "gtkutil/WindowPosition.h"
 #include "PrefPage.h"
@@ -11,7 +12,11 @@ typedef struct _GtkTreeSelection GtkTreeSelection;
 
 namespace ui {
 
-class PrefDialog 
+class PrefDialog;
+typedef boost::shared_ptr<PrefDialog> PrefDialogPtr;
+
+class PrefDialog :
+	public RadiantEventListener
 {
 	// The dialo window
 	GtkWidget* _dialog;
@@ -63,9 +68,9 @@ public:
 	PrefPagePtr createOrFindPage(const std::string& path);
 	
 	/** greebo: A safe shutdown request that saves the window information
-	 * 			to the registry.
+	 * 			to the registry. (RadiantEventListener implementation)
 	 */
-	void shutdown();
+	virtual void onRadiantShutdown();
 	
 	/** greebo: Returns TRUE if the dialog is visible.
 	 */
@@ -78,6 +83,9 @@ public:
 	void showPage(const std::string& path);
 	
 private:
+	// This is where the static shared_ptr of the singleton instance is held.
+	static PrefDialogPtr& InstancePtr();
+
 	/** greebo: This creates the actual window widget (all the other
 	 * 			are created by populateWindow() during construction).
 	 */

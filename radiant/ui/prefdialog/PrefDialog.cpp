@@ -108,7 +108,7 @@ void PrefDialog::initDialog() {
 	gtk_container_add(GTK_CONTAINER(_dialog), _overallVBox);
 }
 
-void PrefDialog::shutdown() {
+void PrefDialog::onRadiantShutdown() {
 	if (_dialog != NULL) {
 		gtk_widget_hide(_dialog);
 	}
@@ -158,9 +158,22 @@ void PrefDialog::toggle() {
 	Instance().toggleWindow();
 }
 
+PrefDialogPtr& PrefDialog::InstancePtr() {
+	static PrefDialogPtr _instancePtr;
+	
+	if (_instancePtr == NULL) {
+		// Not yet instantiated, do it now
+		_instancePtr = PrefDialogPtr(new PrefDialog);
+		
+		// Register this instance with GlobalRadiant() at once
+		GlobalRadiant().addEventListener(_instancePtr);
+	}
+	
+	return _instancePtr;
+}
+
 PrefDialog& PrefDialog::Instance() {
-	static PrefDialog _instance;
-	return _instance;
+	return *InstancePtr();
 }
 
 void PrefDialog::selectPage() {

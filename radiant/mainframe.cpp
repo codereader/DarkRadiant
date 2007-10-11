@@ -1508,7 +1508,6 @@ void MainFrame::Shutdown()
 	// to an event-based system using a RadiantEventListener interface and
 	// GlobalRadiant.
 	ui::GroupDialog::getInstance().shutdown();
-	ui::PrefDialog::Instance().shutdown();
 	ui::EntityList::Instance().shutdown();
 	
 	// Destroy the Overlay class instance (TODO: Let this use the RadiantEventListener interface)
