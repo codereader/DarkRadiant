@@ -110,8 +110,8 @@ public:
 	{}
 
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		if (instance.getFiltered()) {
-			// Don't traverse filtered instances
+		if (instance.getFiltered() || !path.top()->visible()) {
+			// Don't traverse filtered or hidden instances
 			return false;
 		}
 		
