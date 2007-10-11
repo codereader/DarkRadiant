@@ -192,14 +192,14 @@ void ApplicationContextImpl::initPaths() {
 	_bitmapsPath = _appPath + "bitmaps/";
 }
 
-void ApplicationContextImpl::savePathsToRegistry() {
+void ApplicationContextImpl::savePathsToRegistry() const {
 	GlobalRegistry().set(RKEY_APP_PATH, _appPath);
 	GlobalRegistry().set(RKEY_HOME_PATH, _homePath);
 	GlobalRegistry().set(RKEY_SETTINGS_PATH, _settingsPath);
 	GlobalRegistry().set(RKEY_BITMAPS_PATH, _bitmapsPath);
 }
 
-void ApplicationContextImpl::deletePathsFromRegistry() {
+void ApplicationContextImpl::deletePathsFromRegistry() const {
 	GlobalRegistry().deleteXPath(RKEY_APP_PATH);
 	GlobalRegistry().deleteXPath(RKEY_HOME_PATH);
 	GlobalRegistry().deleteXPath(RKEY_SETTINGS_PATH);

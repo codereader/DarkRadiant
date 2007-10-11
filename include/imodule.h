@@ -8,6 +8,19 @@
 
 class TextOutputStream;
 
+/** greebo: These registry keys can be used application-wide during runtime
+ *          to retrieve the various paths.
+ */
+namespace {
+	const std::string RKEY_APP_PATH = "user/paths/appPath";
+	const std::string RKEY_HOME_PATH = "user/paths/homePath";
+	const std::string RKEY_SETTINGS_PATH = "user/paths/settingsPath";
+	const std::string RKEY_BITMAPS_PATH = "user/paths/bitmapsPath";
+	const std::string RKEY_ENGINE_PATH = "user/paths/enginePath";
+	const std::string RKEY_MAP_PATH = "user/paths/mapPath";
+	const std::string RKEY_PREFAB_PATH = "user/paths/prefabPath";
+}
+
 /**
  * Provider for various information that may be required by modules during
  * initialisation.
@@ -35,6 +48,17 @@ public:
 	 */
 	virtual TextOutputStream& getOutputStream() const = 0;
 	virtual TextOutputStream& getErrorStream() const = 0;
+
+	/**
+	 * Sets up the paths and stores them into the registry.
+	 */
+	virtual void savePathsToRegistry() const = 0;
+
+	/**
+	 * greebo: This is the counter-part of the above method.
+	 *         It removes the paths from the registry.
+	 */
+	virtual void deletePathsFromRegistry() const = 0;
 };
 
 /**

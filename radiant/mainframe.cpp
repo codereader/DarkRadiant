@@ -216,7 +216,7 @@ void Radiant_Shutdown() {
 	
 	// Remove the paths, but extract the settings path beforehand
 	std::string settingsPath = GlobalRegistry().get(RKEY_SETTINGS_PATH);
-	module::ModuleRegistry::Instance().deletePathsFromRegistry();
+	module::GlobalModuleRegistry().getApplicationContext().deletePathsFromRegistry();
 	
 	GlobalMRU().saveRecentFiles();
 	
