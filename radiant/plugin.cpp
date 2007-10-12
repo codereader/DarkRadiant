@@ -173,7 +173,7 @@ public:
 	// Broadcasts a "startup" event to all the listeners
 	void broadcastStartupEvent() {
 		for (EventListenerList::iterator i = _eventListeners.begin();
-		     i != _eventListeners.end(); i++)
+		     i != _eventListeners.end(); /* in-loop increment */)
 		{
 			// greebo: Post-increment the iterator, so that listeners can
 			// disconnect themselves without invalidating our iterator
