@@ -67,8 +67,16 @@ scene::INodePtr Entity_create(const StringMap& keyValues) {
     
     // Otherwise create the entity and add all of the properties
     std::string className = iter->second;
-    IEntityClassPtr classPtr = GlobalEntityClassManager().findClass(className);
+	IEntityClassPtr classPtr = GlobalEntityClassManager().findClass(className);
+
+	if (classPtr == NULL) {
+		globalErrorStream() << "[mapdoom3]: Could not find entity class: " 
+			                << className.c_str() << "\n";
+		// greebo: EntityClass not found, insert a brush-based one
+		classPtr = GlobalEntityClassManager().findOrInsert(className, true);
+	}
     
+	// Create the actual entity node
     scene::INodePtr entity(GlobalEntityCreator().createEntity(classPtr));
 
     for (StringMap::const_iterator i = keyValues.begin(); 
