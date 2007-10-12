@@ -103,10 +103,9 @@ gtkutil::PersistentTransientWindowPtr GlobalCameraManager::getFloatingWindow() {
 	if (!_floatingCamWindow) {
 		
 		// Create the floating window
-		_floatingCamWindow = 
-			gtkutil::PersistentTransientWindowPtr(
-				new gtkutil::PersistentTransientWindow("Camera", _parent, true)
-			);
+		_floatingCamWindow = gtkutil::PersistentTransientWindowPtr(
+			new gtkutil::PersistentTransientWindow("Camera", _parent, true)
+		);
 		
 		// Pack in the CamWnd widget
 		CamWndPtr camWnd = getCamWnd();
@@ -115,6 +114,10 @@ gtkutil::PersistentTransientWindowPtr GlobalCameraManager::getFloatingWindow() {
 			GTK_CONTAINER(_floatingCamWindow->getWindow()),
 			gtkutil::FramedWidget(_camWnd->getWidget())
 		);
+		
+		gtk_window_set_type_hint(
+			GTK_WINDOW(_floatingCamWindow->getWindow()), GDK_WINDOW_TYPE_HINT_NORMAL
+	    );
 		
 		// Restore the window position from the registry if possible
 		xml::NodeList windowStateList = 

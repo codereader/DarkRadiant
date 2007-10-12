@@ -61,6 +61,10 @@ public:
 		
 		// Set the parent window for XYWnd
 		XYWnd::setParent(GTK_WINDOW(getWindow()));
+		
+		gtk_window_set_type_hint(
+	    	GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_NORMAL
+	    );
 	}
 	
 	/** Overrides the setViewType method of the XYWnd base class.
