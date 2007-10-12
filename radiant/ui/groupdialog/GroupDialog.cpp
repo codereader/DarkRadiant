@@ -20,6 +20,10 @@ GroupDialog::GroupDialog(GtkWindow* parent)
 : gtkutil::PersistentTransientWindow(WINDOW_TITLE, parent, true),
   _currentPage(0)
 {
+	gtk_window_set_type_hint(
+    	GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_NORMAL
+    );
+	
 	// Create all the widgets and pack them into the window
 	populateWindow();
 	
