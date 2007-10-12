@@ -40,15 +40,14 @@ scene::INodePtr SingletonModel::getNode() const {
 }
 
 void SingletonModel::realise() {
-	if (_resource->load()) {
-		// The model could be loaded, insert into Traversable
-		_node = _resource->getNode();
+	_resource->load();
+	
+	_node = _resource->getNode();
 		
-		// Don't realise empty model paths
-		if (_node != NULL && !_modelPath.empty()) {
-			// Add the master model node to the attached Traversable
-			_traversable.insert(_node);
-		}
+	// Don't realise empty model paths
+	if (_node != NULL && !_modelPath.empty()) {
+		// Add the master model node to the attached Traversable
+		_traversable.insert(_node);
 	}
 }
 
