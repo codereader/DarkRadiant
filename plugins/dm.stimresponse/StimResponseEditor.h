@@ -58,9 +58,9 @@ public:
 
 	StimResponseEditor();
 	
-	/** greebo: Contains the static instance of this dialog.
+	/** greebo: Accessor method for the singleton instance
 	 */
-	static StimResponseEditorPtr& Instance();
+	static StimResponseEditor& Instance();
 	
 	// Command target to toggle the dialog
 	static void toggle();
@@ -71,6 +71,9 @@ public:
 	virtual void onRadiantShutdown();
 	
 private:
+	// This is where the singleton instance shared_ptr is held 
+	static StimResponseEditorPtr& InstancePtr();
+	
 	virtual void _preHide();
 	virtual void _preShow();
 	

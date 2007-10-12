@@ -83,7 +83,7 @@ void StimResponseEditor::onRadiantShutdown() {
 	destroy();
 	
 	// Disconnect self from Radiant after we've shut down
-	GlobalRadiant().removeEventListener(Instance());
+	GlobalRadiant().removeEventListener(InstancePtr());
 }
 
 void StimResponseEditor::_preHide() {
@@ -262,22 +262,25 @@ gboolean StimResponseEditor::onWindowKeyPress(
 
 // Static command target
 void StimResponseEditor::toggle() {
-	Instance()->toggleWindow();
+	Instance().toggleWindow();
 }
 
-StimResponseEditorPtr& StimResponseEditor::Instance() {
-	// Check if this is the first startup
-	bool firstStart = !instantiated;
-	
-	static StimResponseEditorPtr _instance(
-		new StimResponseEditor
-	);
-	
-	if (firstStart) {
-		GlobalRadiant().addEventListener(_instance);
+StimResponseEditorPtr& StimResponseEditor::InstancePtr() {
+	static StimResponseEditorPtr _instancePtr;
+		
+	if (_instancePtr == NULL) {
+		// Not yet instantiated, do it now
+		_instancePtr = StimResponseEditorPtr(new StimResponseEditor);
+		
+		// Register this instance with GlobalRadiant() at once
+		GlobalRadiant().addEventListener(_instancePtr);
 	}
 	
-	return _instance;
+	return _instancePtr;
+}
+
+StimResponseEditor& StimResponseEditor::Instance() {
+	return *InstancePtr();
 }
 
 // Initialise the static boolean
