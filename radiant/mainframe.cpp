@@ -1500,6 +1500,9 @@ void MainFrame::Shutdown()
 {
 	// Shutdown the texturebrowser (before the GroupDialog gets shut down).
 	GlobalTextureBrowser().destroyWindow();
+	
+	// Destroy the Overlay instance
+	ui::Overlay::destroyInstance();
 
 	GlobalRadiant().broadcastShutdownEvent();
 	

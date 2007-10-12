@@ -64,6 +64,9 @@ private:
 	static OverlayPtr& InstancePtr();
 	
 public:
+	// Frees the static shared_ptr of the singleton instance
+	static void destroyInstance();
+	
 	/**
 	 * Static method to retrieve the singleton Overlay instance.
 	 */
