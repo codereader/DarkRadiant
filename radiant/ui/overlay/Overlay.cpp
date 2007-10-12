@@ -46,6 +46,10 @@ void Overlay::onRadiantShutdown() {
 	GlobalRegistry().removeKeyObserver(this);
 }
 
+void Overlay::destroyInstance() {
+	InstancePtr() = OverlayPtr();
+}
+
 OverlayPtr& Overlay::InstancePtr() {
 	static OverlayPtr _instancePtr;
 	
