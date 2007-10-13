@@ -95,6 +95,9 @@
 		<filter name="Brushes">
 			<filterCriterion type="object" match="brush" action="hide" />
 		</filter>
+		<filter name="Weather Textures">
+			<filterCriterion type="texture" match="textures/darkmod/weather/.*"	action="hide" />
+		</filter>
 	</filtersystem>
 	<filesystem>
 		<shaders>
