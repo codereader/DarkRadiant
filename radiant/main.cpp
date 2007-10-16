@@ -299,10 +299,6 @@ int main (int argc, char* argv[]) {
 	
 	ui::Splash::Instance().setProgressAndText("Modules initialised", 0.15f);
 
-	// Tell the Environment class to store the paths into the Registry
-	// This must happen after module initialisation to avoid crashes.
-	module::GlobalModuleRegistry().getApplicationContext().savePathsToRegistry();
-	
 	// Create the radiant.pid file in the settings folder 
 	// (emits a warning if the file already exists (due to a previous startup failure)) 
 	createPIDFile("radiant.pid");
