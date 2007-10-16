@@ -236,7 +236,8 @@ CamWnd::CamWnd() :
 	m_selection_button_release_handler(0),
 	m_selection_motion_handler(0),
 	m_freelook_button_press_handler(0),
-	m_freelook_button_release_handler(0)
+	m_freelook_button_release_handler(0),
+	_parentWidget(NULL)
 {
 	GlobalWindowObservers_add(m_window_observer);
 	GlobalWindowObservers_connectWidget(m_gl_widget);
@@ -338,9 +339,15 @@ void CamWnd::enableFreeMove() {
 
 	enableFreeMoveEvents();
 
-	gtk_window_set_focus(_parentWidget, m_gl_widget);
+	if (_parentWidget != NULL) {
+		gtk_window_set_focus(_parentWidget, m_gl_widget);
+	}
+	
 	m_freemove_handle_focusout = g_signal_connect(G_OBJECT(m_gl_widget), "focus_out_event", G_CALLBACK(camwindow_freemove_focusout), this);
-	m_freezePointer.freeze_pointer(_parentWidget, Camera_motionDelta, &m_Camera);
+	
+	if (_parentWidget != NULL) {
+		m_freezePointer.freeze_pointer(_parentWidget, Camera_motionDelta, &m_Camera);
+	}
 
 	update();
 }
@@ -365,7 +372,10 @@ void CamWnd::disableFreeMove() {
 
 	addHandlersMove();
 
-	m_freezePointer.unfreeze_pointer(_parentWidget);
+	if (_parentWidget != NULL) {
+		m_freezePointer.unfreeze_pointer(_parentWidget);
+	}
+	
 	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_freemove_handle_focusout);
 
 	update();
@@ -607,7 +617,9 @@ CamWnd::~CamWnd() {
 	
 	// Disconnect self from EventManager
 	GlobalEventManager().disconnect(GTK_OBJECT(m_gl_widget));
-	GlobalEventManager().disconnect(GTK_OBJECT(_parentWidget));
+	if (_parentWidget != NULL) {
+		GlobalEventManager().disconnect(GTK_OBJECT(_parentWidget));
+	}
 	
 	if (m_bFreeMove) {
 		disableFreeMove();
