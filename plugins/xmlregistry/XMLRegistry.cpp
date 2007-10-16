@@ -384,6 +384,10 @@ public:
 		if (file_exists(userInputFile.c_str())) {
 			import(userInputFile, "user/ui", Registry::treeUser);
 		}
+
+		// Now the registry is up and running, tell the context to emit
+		// the the relevant paths to the XMLRegistry
+		ctx.savePathsToRegistry();
 	}
 
 }; // class XMLRegistry
