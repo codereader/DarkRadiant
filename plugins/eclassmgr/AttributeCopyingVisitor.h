@@ -8,7 +8,8 @@ namespace eclass
 
 /**
  * Visitor class which copies all of the class attributes from one entity onto
- * another. Used for inheritance resolution.
+ * another. Used for inheritance resolution, this also sets the "inherited" flag
+ * on the EntityClassAttribute.
  */
 class AttributeCopyingVisitor
 : public EntityClassAttributeVisitor
@@ -25,7 +26,8 @@ public:
 
 	// Required visit function
 	void visit(const EntityClassAttribute& attr) {
-		_target.addAttribute(attr);
+		// greebo: Add the attribute with "inherited" set to true
+		_target.addAttribute(attr, true);
 	}
 };
 
