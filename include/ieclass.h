@@ -54,15 +54,24 @@ struct EntityClassAttribute
 	// The help text associated with the key (in the DEF file)
 	std::string description;
 
+	// Is TRUE for inherited keyvalues.
+	bool inherited;
+
 	// Default constructor
-	EntityClassAttribute() {}
+	EntityClassAttribute() :
+		inherited(false)
+	{}
 
 	// Main constructor
 	EntityClassAttribute(const std::string& t, 
 						 const std::string& n, 
 						 const std::string& v = "", 
 						 const std::string& d = "") 
-	: type(t), name(n), value(v), description(d)
+	: type(t), 
+	  name(n), 
+	  value(v), 
+	  description(d), 
+	  inherited(false)
 	{}
 };
 
@@ -153,8 +162,10 @@ public:
 
 	/** 
 	 * Insert an EntityClassAttribute.
+	 *
+	 * @inherited: Indicates whether this attribute has been inherited or not.
 	 */
-	virtual void addAttribute(const EntityClassAttribute& attribute) = 0;
+	virtual void addAttribute(const EntityClassAttribute& attribute, bool inherited) = 0;
 
 	/**
 	 * Find a named EntityClassAttribute. Throws an exception if the named
