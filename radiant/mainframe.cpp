@@ -1266,6 +1266,8 @@ void MainFrame::Create()
 
         // Pack in the camera window
 		GtkWidget* camWindow = gtkutil::FramedWidget(_camWnd->getWidget());
+		// greebo: The mainframe window acts as parent for the camwindow
+	    _camWnd->setContainer(window);
 
         // Create the texture window
 		GtkWidget* texWindow = gtkutil::FramedWidget(
@@ -1361,6 +1363,8 @@ void MainFrame::Create()
   else // 4 way (aka Splitplane view)
   {
     GtkWidget* camera = _camWnd->getWidget();
+    // greebo: The mainframe window acts as parent for the camwindow
+    _camWnd->setContainer(window);
 
 	// Allocate the three ortho views
     XYWndPtr xyWnd = GlobalXYWnd().createEmbeddedOrthoView();
