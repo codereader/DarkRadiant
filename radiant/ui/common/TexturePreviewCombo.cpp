@@ -103,6 +103,13 @@ void TexturePreviewCombo::refreshInfoTable() {
 					   0, "Defined in",
 					   1, shader->getShaderFileName(),
 					   -1);
+
+	// Description
+	gtk_list_store_append(_infoStore, &iter);
+	gtk_list_store_set(_infoStore, &iter, 
+					   0, "Description",
+					   1, shader->getDescription().c_str(),
+					   -1);
 }
 
 

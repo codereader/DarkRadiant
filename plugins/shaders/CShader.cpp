@@ -193,6 +193,10 @@ const char* CShader::getName() const {
 	return _name.c_str();
 }
 
+std::string CShader::getDescription() const {
+	return _template.description;
+}
+
 bool CShader::IsInUse() const {
 	return m_bInUse;
 }

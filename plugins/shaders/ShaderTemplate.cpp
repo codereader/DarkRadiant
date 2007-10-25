@@ -46,6 +46,10 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser, const std
 			|| token == "ikclip" || token == "moveableclip") {
 		m_nFlags |= QER_CLIP;
 	}
+	else if (token == "description") {
+		// greebo: Parse description token, this should be the next one
+		description = tokeniser.nextToken();
+	}
 	else {
 		// We haven't found anything of interest >> return false
 		return false;

@@ -89,6 +89,9 @@ public:
 	
 	// get shader file name (ie the file where this one is defined)
 	const char* getShaderFileName() const;
+
+	// Returns the description string of this material
+	virtual std::string getDescription() const;
 	
 	// -----------------------------------------
 

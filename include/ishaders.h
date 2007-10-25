@@ -202,6 +202,9 @@ public:
   virtual void forEachLayer(const ShaderLayerCallback& layer) const = 0;
 
   virtual TexturePtr lightFalloffImage() = 0;
+
+	// greebo: Returns the description as defined in the material
+	virtual std::string getDescription() const = 0;
 };
 
 typedef boost::shared_ptr<IShader> IShaderPtr;
