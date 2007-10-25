@@ -193,8 +193,10 @@ public:
 	/** Insert an EntityClassAttribute.
 	 */
 	void addAttribute(const EntityClassAttribute& attribute, bool inherited = false) {
-		_attributes[attribute.name] = attribute;
-		_attributes[attribute.name].inherited = inherited;
+		std::pair<EntityAttributeMap::iterator, bool> result = 
+			_attributes.insert(EntityAttributeMap::value_type(attribute.name, 
+														  	  attribute));
+		result.first->second.inherited = inherited;
 	}
 	
 	/**
