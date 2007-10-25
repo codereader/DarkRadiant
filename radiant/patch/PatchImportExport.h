@@ -39,22 +39,20 @@ inline void PatchDoom3_importShader(Patch& patch,
 
 inline void Patch_importParams(Patch& patch, parser::DefTokeniser& tok)
 {
-    using boost::lexical_cast;
-    
     tok.assertNextToken("(");
 
   // parse matrix dimensions
   {
-    std::size_t c = lexical_cast<std::size_t>(tok.nextToken());
-    std::size_t r = lexical_cast<std::size_t>(tok.nextToken());
+    std::size_t c = strToSizet(tok.nextToken());
+    std::size_t r = strToSizet(tok.nextToken());
 
     patch.setDims(c, r);
   }
 
     // Version 3 of the patchDef has variable subdivisions
     if(patch.m_patchDef3) {
-        patch.m_subdivisions_x = lexical_cast<std::size_t>(tok.nextToken());
-        patch.m_subdivisions_y = lexical_cast<std::size_t>(tok.nextToken());
+        patch.m_subdivisions_x = strToSizet(tok.nextToken());
+        patch.m_subdivisions_y = strToSizet(tok.nextToken());
     }
 
     // ignore contents/flags/value
@@ -65,8 +63,6 @@ inline void Patch_importParams(Patch& patch, parser::DefTokeniser& tok)
 
 inline void Patch_importMatrix(Patch& patch, parser::DefTokeniser& tok)
 {
-    using boost::lexical_cast;
-    
     tok.assertNextToken("(");
 
     // For each row
@@ -80,18 +76,13 @@ inline void Patch_importMatrix(Patch& patch, parser::DefTokeniser& tok)
             tok.assertNextToken("(");
     
             // Parse vertex coordinates
-            patch.ctrlAt(r, c).m_vertex[0] = 
-                lexical_cast<double>(tok.nextToken());
-            patch.ctrlAt(r, c).m_vertex[1] = 
-                lexical_cast<double>(tok.nextToken());
-            patch.ctrlAt(r, c).m_vertex[2] = 
-                lexical_cast<double>(tok.nextToken());
+            patch.ctrlAt(r, c).m_vertex[0] = strToDouble(tok.nextToken());
+            patch.ctrlAt(r, c).m_vertex[1] = strToDouble(tok.nextToken());
+            patch.ctrlAt(r, c).m_vertex[2] = strToDouble(tok.nextToken());
  
             // Parse texture coordinates
-            patch.ctrlAt(r, c).m_texcoord[0] = 
-                lexical_cast<double>(tok.nextToken());
-            patch.ctrlAt(r, c).m_texcoord[1] = 
-                lexical_cast<double>(tok.nextToken());
+            patch.ctrlAt(r, c).m_texcoord[0] = strToDouble(tok.nextToken());
+            patch.ctrlAt(r, c).m_texcoord[1] = strToDouble(tok.nextToken());
  
             tok.assertNextToken(")");
         }
