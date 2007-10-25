@@ -137,9 +137,10 @@ std::string SoundChooser::chooseSound() {
 /* GTK CALLBACKS */
 
 // Delete dialog
-void SoundChooser::_onDelete(GtkWidget* w, SoundChooser* self) {
+gboolean SoundChooser::_onDelete(GtkWidget* w, GdkEvent* e, SoundChooser* self) {
 	self->_selectedShader = "";
-	gtk_main_quit();	
+	gtk_main_quit();
+	return false; // propagate event
 }
 
 // OK button

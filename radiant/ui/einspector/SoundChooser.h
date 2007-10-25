@@ -36,7 +36,7 @@ private:
 	GtkWidget* createButtons();
 
 	/* GTK CALLBACKS */
-	static void _onDelete(GtkWidget*, SoundChooser*);
+	static gboolean _onDelete(GtkWidget* w, GdkEvent* e, SoundChooser* self);
 	static void _onOK(GtkWidget*, SoundChooser*);
 	static void _onCancel(GtkWidget*, SoundChooser*);
 	static void _onSelectionChange(GtkTreeSelection*, SoundChooser*);
