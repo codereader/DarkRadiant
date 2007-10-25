@@ -78,6 +78,9 @@ public:
 	bool ambientLight;
 	bool blendLight;
 
+	// The description tag of the material
+	std::string description;
+
   int m_nFlags;
   float m_fTrans;
 

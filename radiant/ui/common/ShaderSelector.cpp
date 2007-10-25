@@ -380,6 +380,13 @@ void ShaderSelector::displayShaderInfo(IShaderPtr shader, GtkListStore* listStor
 					   0, "<b>Defined in</b>",
 					   1, shader->getShaderFileName(),
 					   -1);
+
+	// Description	
+	gtk_list_store_append(listStore, &iter);
+	gtk_list_store_set(listStore, &iter, 
+					   0, "<b>Description</b>",
+					   1, shader->getDescription(),
+					   -1);
 }
 
 void ShaderSelector::displayLightShaderInfo(IShaderPtr shader, GtkListStore* listStore) {
