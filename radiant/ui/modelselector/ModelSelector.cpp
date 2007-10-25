@@ -155,13 +155,14 @@ GtkWidget* ModelSelector::createTreeView() {
 	// Create the treeview
 	GtkWidget* treeView = 
 		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeView), FALSE);
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeView), TRUE);
 
 	// Single visible column, containing the directory/model name and the icon
-	gtk_tree_view_append_column(GTK_TREE_VIEW(treeView),
-								gtkutil::IconTextColumn("Value",
-														NAME_COLUMN,
-														IMAGE_COLUMN));				
+	GtkTreeViewColumn* col = gtkutil::IconTextColumn(
+		"Model Path", NAME_COLUMN, IMAGE_COLUMN
+	);
+	gtk_tree_view_column_set_sort_column_id(col, NAME_COLUMN);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(treeView), col);				
 
 	// Get the selection object and connect to its changed signal
 
