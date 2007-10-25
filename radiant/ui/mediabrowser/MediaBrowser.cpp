@@ -198,7 +198,11 @@ namespace {
 			std::string rawName(name);
 			
 			// If the name starts with "textures/", add it to the treestore.
-			if (boost::algorithm::istarts_with(rawName, "textures/")) {
+			if (!boost::algorithm::istarts_with(rawName, "textures/")) {
+				rawName = "Other Materials/" + rawName;
+			}
+			
+			{
 				// Separate path into the directory path and texture name
 				std::size_t slashPos = rawName.rfind("/");
 				const std::string dirPath = rawName.substr(0, slashPos);
@@ -228,7 +232,8 @@ bool MediaBrowser::isDirectorySelected() {
 	// Get the selected value
 	GtkTreeIter iter;
 	if (gtk_tree_selection_get_selected(_selection, NULL, &iter)) {
-		GValue dirFlagVal = {0, 0};
+		GValue dirFlagVal;
+		memset(&dirFlagVal, 0, sizeof(GValue));
 		gtk_tree_model_get_value(GTK_TREE_MODEL(_treeStore), &iter, DIR_FLAG_COLUMN, &dirFlagVal);
 		// Return boolean value
 		return g_value_get_boolean(&dirFlagVal);
@@ -243,7 +248,8 @@ std::string MediaBrowser::getSelectedName() {
 	// Get the selected value
 	GtkTreeIter iter;
 	if (gtk_tree_selection_get_selected(_selection, NULL, &iter)) {
-		GValue nameVal = {0, 0};
+		GValue nameVal;
+		memset(&nameVal, 0, sizeof(GValue));
 		gtk_tree_model_get_value(GTK_TREE_MODEL(_treeStore), &iter, FULLNAME_COLUMN, &nameVal);
 		// Return boolean value
 		return g_value_get_string(&nameVal);
@@ -320,6 +326,10 @@ void MediaBrowser::reloadMedia() {
 
 void MediaBrowser::populate() {
 	ShaderNameFunctor functor(_treeStore);
+	
+	// greebo: Add the textures folder first, so that it gets displayed before
+	// the "Other Materials" folder.
+	functor.addFolder("textures");
 	GlobalShaderSystem().foreachShaderName(makeCallback1(functor));
 
 	_isPopulated = true;	
