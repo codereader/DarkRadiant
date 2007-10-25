@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_BRUSHTOKENS_H
 
 #include "imap.h"
+#include "string/string.h"
 #include "shaderlib.h"
 #include "brush/Face.h"
 #include "brush/Brush.h"
@@ -32,36 +33,32 @@ inline void FaceShader_importContentsFlagsValue(FaceShader& faceShader,
                                                 parser::DefTokeniser& tok)
 {
     // parse the optional contents/flags/value
-    using boost::lexical_cast;
-  
-    faceShader.m_flags.m_contentFlags = lexical_cast<int>(tok.nextToken());
-    faceShader.m_flags.m_surfaceFlags = lexical_cast<int>(tok.nextToken());
-    faceShader.m_flags.m_value = lexical_cast<int>(tok.nextToken());
+    faceShader.m_flags.m_contentFlags = strToInt(tok.nextToken());
+    faceShader.m_flags.m_surfaceFlags = strToInt(tok.nextToken());
+    faceShader.m_flags.m_value = strToInt(tok.nextToken());
 }
 
 inline void FaceTexdef_BP_importTokens(FaceTexdef& texdef, 
                                        parser::DefTokeniser& tokeniser)
 {
-    using boost::lexical_cast;
-    
     tokeniser.assertNextToken("(");  
 
     tokeniser.assertNextToken("(");
     texdef.m_projection.m_brushprimit_texdef.coords[0][0] = 
-        lexical_cast<double>(tokeniser.nextToken());
+        strToDouble(tokeniser.nextToken());
     texdef.m_projection.m_brushprimit_texdef.coords[0][1] = 
-        lexical_cast<double>(tokeniser.nextToken());
+        strToDouble(tokeniser.nextToken());
     texdef.m_projection.m_brushprimit_texdef.coords[0][2] = 
-        lexical_cast<double>(tokeniser.nextToken());
+        strToDouble(tokeniser.nextToken());
     tokeniser.assertNextToken(")");  
 
     tokeniser.assertNextToken("(");  
     texdef.m_projection.m_brushprimit_texdef.coords[1][0] = 
-        lexical_cast<double>(tokeniser.nextToken());
+        strToDouble(tokeniser.nextToken());
     texdef.m_projection.m_brushprimit_texdef.coords[1][1] = 
-        lexical_cast<double>(tokeniser.nextToken());
+        strToDouble(tokeniser.nextToken());
     texdef.m_projection.m_brushprimit_texdef.coords[1][2] = 
-        lexical_cast<double>(tokeniser.nextToken());
+        strToDouble(tokeniser.nextToken());
     tokeniser.assertNextToken(")");  
 
     tokeniser.assertNextToken(")");  
@@ -70,18 +67,16 @@ inline void FaceTexdef_BP_importTokens(FaceTexdef& texdef,
 inline void FacePlane_Doom3_importTokens(FacePlane& facePlane, 
                                          parser::DefTokeniser& tokeniser)
 {
-    using boost::lexical_cast;
-    
     // Note: Do not expect an initial "(" since this is already consumed by the
     // while loop in BrushTokenImporter::importTokens().
     
     // Construct a plane and parse its values
     Plane3 plane;
     
-    plane.a = lexical_cast<double>(tokeniser.nextToken());
-    plane.b = lexical_cast<double>(tokeniser.nextToken());
-    plane.c = lexical_cast<double>(tokeniser.nextToken());
-    plane.d = lexical_cast<double>(tokeniser.nextToken());
+    plane.a = strToDouble(tokeniser.nextToken());
+    plane.b = strToDouble(tokeniser.nextToken());
+    plane.c = strToDouble(tokeniser.nextToken());
+    plane.d = strToDouble(tokeniser.nextToken());
     
     plane.d = -plane.d;
 
