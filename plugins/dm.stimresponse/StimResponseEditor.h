@@ -89,7 +89,7 @@ private:
 	 */
 	void rescanSelection();
 
-	/** greebo: This toggles the visibility of the surface dialog.
+	/** greebo: This toggles the visibility of the S/R Editor.
 	 * The dialog is constructed only once and never destructed 
 	 * during runtime.
 	 */

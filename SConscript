@@ -357,6 +357,20 @@ srLib = srEnv.SharedLibrary(target='dm_stimresponse',
 							no_import_lib=1)
 srEnv.Install(INSTALL + '/plugins', srLib)
 
+# Entity Class Tree Plugin
+ectEnv = module_env.Copy()
+ectEnv.Append(LIBS = ['gtkutil', 'xmlutil'])
+ectEnv.useGtk2()
+ectEnv.useGlib2()
+ectEnv.useBoostRegex()
+ectList = build_list('plugins/eclasstree', 
+					'plugin.cpp \
+					 EClassTree.cpp')
+ectLib = ectEnv.SharedLibrary(target='eclasstree',
+							source=ectList,
+							no_import_lib=1)
+ectEnv.Install(INSTALL + '/plugins', ectLib)
+
 # Main Radiant binary
 
 radiant_env = g_env.Copy()
