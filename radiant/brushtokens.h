@@ -119,15 +119,30 @@ public:
   }
 };
 
+inline void Brush_writeDouble(const double& d, std::ostream& os) {
+	
+	if (isValid(d)) {
+		os << d;
+	}
+	else {
+		// Is infinity or NaN, write 0
+		os << "0";
+	}
+} 
+
 /* Export the plane specification for a Doom 3 brushface.
  */
 inline void FacePlane_Doom3_exportTokens(const FacePlane& facePlane, std::ostream& os)
 {
 	os << "( ";
-	os << facePlane.getDoom3Plane().a << " ";
-	os << facePlane.getDoom3Plane().b << " ";
-	os << facePlane.getDoom3Plane().c << " ";
-	os << -facePlane.getDoom3Plane().d << " ";
+	Brush_writeDouble(facePlane.getDoom3Plane().a, os);
+	os << " ";
+	Brush_writeDouble(facePlane.getDoom3Plane().b, os);
+	os << " ";
+	Brush_writeDouble(facePlane.getDoom3Plane().c, os);
+	os << " ";
+	Brush_writeDouble(-facePlane.getDoom3Plane().d, os);
+	os << " ";
 	os << ") ";
 }
 
@@ -140,14 +155,16 @@ inline void FaceTexdef_BP_exportTokens(const FaceTexdef& faceTexdef, std::ostrea
 	os << "( ";
     for(int i = 0; i < 3; i++)
     {
-      os << faceTexdef.m_projection.m_brushprimit_texdef.coords[0][i] << " ";
+      Brush_writeDouble(faceTexdef.m_projection.m_brushprimit_texdef.coords[0][i], os); 
+      os << " ";
     }
 	os << ") ";
 
 	os << "( ";
     for(int i = 0; i < 3; i++)
     {
-      os << faceTexdef.m_projection.m_brushprimit_texdef.coords[1][i] << " ";
+      Brush_writeDouble(faceTexdef.m_projection.m_brushprimit_texdef.coords[1][i], os);
+      os << " ";
     }
 	os << ") ";
 
