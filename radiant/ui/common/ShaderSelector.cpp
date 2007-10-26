@@ -385,7 +385,7 @@ void ShaderSelector::displayShaderInfo(IShaderPtr shader, GtkListStore* listStor
 	gtk_list_store_append(listStore, &iter);
 	gtk_list_store_set(listStore, &iter, 
 					   0, "<b>Description</b>",
-					   1, shader->getDescription(),
+					   1, shader->getDescription().c_str(),
 					   -1);
 }
 
