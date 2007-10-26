@@ -31,12 +31,12 @@ class EClassTree :
 	public gtkutil::BlockingTransientWindow
 {
 	// The EClass treeview widget and underlying liststore
-	GtkTreeView* _eclassTreeView;
+	GtkTreeView* _eclassView;
 	GtkTreeStore* _eclassStore;
 	GtkTreeSelection* _eclassSelection;
 	
 	// The treeview and liststore for the property pane
-	GtkTreeView* _propertyTreeView;
+	GtkTreeView* _propertyView;
 	GtkListStore* _propertyStore;
 	
 	GtkWidget* _dialogVBox;
@@ -54,9 +54,14 @@ private:
 	
 	GtkWidget* createButtons(); 	// Dialog buttons
 	GtkWidget* createEClassTreeView(); // EClass Tree
+	GtkWidget* createPropertyTreeView(); // Property Tree
+	
+	// Loads the spawnargs into the right treeview
+	void updatePropertyView(const std::string& eclassName);
 	
 	// Static GTK callbacks
 	static void onClose(GtkWidget* button, EClassTree* self);
+	static void onSelectionChanged(GtkWidget* widget, EClassTree* self);
 };
 
 } // namespace ui
