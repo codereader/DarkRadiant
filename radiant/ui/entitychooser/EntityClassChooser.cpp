@@ -133,31 +133,22 @@ void EntityClassChooser::updateUsageInfo(const std::string& eclass) {
 	// Set the usage panel to the IEntityClass' usage information string
 	GtkTextBuffer* buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(_usageTextView));
 	
-	// Read in the strings
-	std::string usage;
-	try {
-		const EntityClassAttribute& attr = e->findAttribute("editor_usage");
-		// angua: inherited descriptions should not be displayed
-		if (!attr.inherited) {
-			usage = attr.value;
+	// Create the concatenated usage string
+	std::string usage = "";
+	EntityClassAttributeList usageAttrs = e->getAttributeList("editor_usage");
+	for (EntityClassAttributeList::const_iterator i = usageAttrs.begin();
+		 i != usageAttrs.end();
+		 ++i)
+	{
+		// Add only explicit (non-inherited) usage strings
+		if (!i->inherited) {
+			if (!usage.empty())
+				usage += std::string("\n") + i->value;
+			else
+				usage += i->value;
 		}
 	}
-	catch (std::runtime_error e) {}
 	
-	// angua: this is used for displaying multi-line descriptions (à la "editor_usage1", "editor_usage2"...)
-	for (int i = 1; i <= 20; i++) {
-		std::string usageNumber = intToStr(i);
-		try {
-			const EntityClassAttribute& attr = e->findAttribute("editor_usage" + usageNumber);
-			if (!attr.inherited) {
-				std::string usageAppend = attr.value;
-				std::string prefix = (!usage.empty() && !usageAppend.empty()) ? "\n" : "";
-				usage += prefix + usageAppend;
-			}
-		}
-		catch (std::runtime_error e) {}
-	}
-		
 	gtk_text_buffer_set_text(buf, usage.c_str(), -1);
 }
 

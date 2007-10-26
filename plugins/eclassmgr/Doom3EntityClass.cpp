@@ -1,5 +1,6 @@
 #include "Doom3EntityClass.h"
 #include "AttributeCopyingVisitor.h"
+#include "AttributeSuffixComparator.h"
 
 #include "iradiant.h"
 
@@ -88,7 +89,7 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 	// Lookup the parent name and return if it is not set. Also return if the
 	// parent name is the same as our own classname, to avoid infinite
 	// recursion.
-	std::string parName = getValueForKey("inherit");
+	std::string parName = getAttribute("inherit").value;
 	if (parName.empty() || parName == _name)
 		return;
 
@@ -115,6 +116,41 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 
 	// Set the resolved flag
 	_inheritanceResolved = true;
+}
+
+// Find a single attribute
+EntityClassAttribute 
+Doom3EntityClass::getAttribute(const std::string& name) const {
+	EntityAttributeMap::const_iterator f = _attributes.find(name);
+	if (f != _attributes.end()) {
+		return f->second;
+	}
+	else {
+		return EntityClassAttribute();
+	}
+}
+
+// Find all matching attributes
+EntityClassAttributeList 
+Doom3EntityClass::getAttributeList(const std::string& name) const {
+	
+	// Build the list of matching attributes
+	EntityClassAttributeList matches;
+	for (EntityAttributeMap::const_iterator i = _attributes.begin();
+		 i != _attributes.end();
+		 ++i)
+	{
+		// Prefix matches, add to list
+		if (boost::algorithm::istarts_with(i->first, name))
+			matches.push_back(i->second);
+	}
+	
+	// Sort the list based on the numerical order of suffices
+	AttributeSuffixComparator comp(name.length());
+	std::sort(matches.begin(), matches.end(), comp);
+	
+	// Return the list of matches
+	return matches;
 }
 
 } // namespace eclass

@@ -59,7 +59,7 @@ EffectEditor::EffectEditor(GtkWindow* parent,
 	for (ResponseEffectTypeMap::iterator i = effectTypes.begin(); 
 		  i != effectTypes.end(); i++)
 	{
-		std::string caption = i->second->getValueForKey("editor_caption");
+		std::string caption = i->second->getAttribute("editor_caption").value;
 		
 		GtkTreeIter iter;
 		

@@ -31,6 +31,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "imodule.h"
 #include "math/Vector3.h"
 
+#include <vector>
+
 /* FORWARD DECLS */
 
 class Shader;
@@ -57,14 +59,9 @@ struct EntityClassAttribute
 	// Is TRUE for inherited keyvalues.
 	bool inherited;
 
-	// Default constructor
-	EntityClassAttribute() :
-		inherited(false)
-	{}
-
 	// Main constructor
-	EntityClassAttribute(const std::string& t, 
-						 const std::string& n, 
+	EntityClassAttribute(const std::string& t = "", 
+						 const std::string& n = "", 
 						 const std::string& v = "", 
 						 const std::string& d = "") 
 	: type(t), 
@@ -74,6 +71,11 @@ struct EntityClassAttribute
 	  inherited(false)
 	{}
 };
+
+/**
+ * List of EntityClassAttributes.
+ */
+typedef std::vector<EntityClassAttribute> EntityClassAttributeList;
 
 /** Visitor class for EntityClassAttributes.
  */
@@ -85,19 +87,6 @@ struct EntityClassAttributeVisitor {
 	 * The current EntityClassAttribute to visit.
 	 */
 	virtual void visit(const EntityClassAttribute&) = 0;
-};
-
-/**
- * Exception thrown when trying to retrieve an EntityClassAttribute which does
- * not exist on the entity class.
- */
-class AttributeNotFoundException
-: public std::runtime_error
-{
-public:
-	AttributeNotFoundException(const std::string& what) 
-	: std::runtime_error(what) 
-	{ }
 };
 
 /**
@@ -180,30 +169,23 @@ public:
 	virtual void addAttribute(const EntityClassAttribute& attribute) = 0;
 
 	/**
-	 * Find a named EntityClassAttribute. Throws an exception if the named
-	 * attribute does not exist.
-	 * 
-	 * @param name
-	 * The name of the EntityClassAttribute to retrieve.
-	 * 
-	 * @throws AttributeNotFoundException
-	 * The named attribute is not present on this entityclass.
-	 * 
+	 * Return a single named EntityClassAttribute from this EntityClass. If the
+	 * named attribute is not found, an empty EntityClassAttribute is returned.
 	 */
-	virtual const EntityClassAttribute&	findAttribute(const std::string& name) 
+	virtual EntityClassAttribute getAttribute(const std::string& name) 
 	const = 0;
-
-	/** Return the value associated with a given entity class attribute.
-	 * Any key may be looked up, including "editor_" keys.
+	
+	/**
+	 * Return the list of EntityClassAttributes matching the given name,
+	 * including numbered suffixes (e.g. "target", "target1", "target2" etc).
+	 * This list will be empty if no matching attributes were found.
 	 * 
-	 * @param key
-	 * The key to lookup
-	 * 
-	 * @returns
-	 * The string value of the key, or an empty string if the key is not
-	 * found.
+	 * This operation may not have high performance, due to the need to scan
+	 * for matching names, therefore should not be used in performance-critical
+	 * code.
 	 */
-	virtual std::string getValueForKey(const std::string& key) const = 0;
+	virtual EntityClassAttributeList getAttributeList(const std::string& name) 
+	const = 0;
 
 	/** 
 	 * Enumerate the EntityClassAttibutes in turn.
