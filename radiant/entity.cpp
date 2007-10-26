@@ -263,7 +263,7 @@ scene::INodePtr Entity_createFromSelection(const char* name,
         // If there is an "editor_material" class attribute, apply this shader
         // to all of the selected primitives before parenting them
         std::string material =
-            entity->getEntityClass()->getValueForKey("editor_material");
+            entity->getEntityClass()->getAttribute("editor_material").value;
         if (!material.empty()) {
             selection::algorithm::applyShaderToSelection(material);
         }

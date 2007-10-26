@@ -69,7 +69,7 @@ std::string EClassTreeBuilder::getInheritancePathRecursive(const IEntityClassPtr
 	std::string returnValue;
 	
 	try {
-		const EntityClassAttribute& attribute = eclass->findAttribute(INHERIT_KEY);
+		EntityClassAttribute attribute = eclass->getAttribute(INHERIT_KEY);
 		
 		// Don't use empty or derived "inherit" keys
 		if (!attribute.value.empty() && !attribute.inherited) {

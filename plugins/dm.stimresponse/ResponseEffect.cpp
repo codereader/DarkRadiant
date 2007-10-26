@@ -135,7 +135,9 @@ void ResponseEffect::setArgument(unsigned int index, const std::string& value, b
 }
 
 std::string ResponseEffect::getCaption() const {
-	return (_eclass != NULL) ? _eclass->getValueForKey("editor_caption") : ""; 
+	return (_eclass != NULL) 
+		   ? _eclass->getAttribute("editor_caption").value 
+		   : ""; 
 }
 
 IEntityClassPtr ResponseEffect::getEClass() const {
@@ -150,10 +152,10 @@ void ResponseEffect::buildArgumentList() {
 	if (_eclass == NULL) return;
 	
 	for (int i = 1; i < 1000; i++) {
-		std::string argType = _eclass->getValueForKey("editor_argType" + intToStr(i));
-		std::string argDesc = _eclass->getValueForKey("editor_argDesc" + intToStr(i));
-		std::string argTitle = _eclass->getValueForKey("editor_argTitle" + intToStr(i));
-		std::string optional = _eclass->getValueForKey("editor_argOptional" + intToStr(i));
+		std::string argType = _eclass->getAttribute("editor_argType" + intToStr(i)).value;
+		std::string argDesc = _eclass->getAttribute("editor_argDesc" + intToStr(i)).value;
+		std::string argTitle = _eclass->getAttribute("editor_argTitle" + intToStr(i)).value;
+		std::string optional = _eclass->getAttribute("editor_argOptional" + intToStr(i)).value;
 		
 		if (argType != "") {
 			// Check if the argument exists
@@ -183,7 +185,7 @@ void ResponseEffect::clearArgumentList() {
 std::string ResponseEffect::getArgumentStr() {
 	if (_eclass == NULL) return "Error: eclass pointer invalid.";
 	
-	std::string returnValue = _eclass->getValueForKey("editor_argString");
+	std::string returnValue = _eclass->getAttribute("editor_argString").value;
 	
 	for (ArgumentList::iterator i = _args.begin(); i != _args.end(); i++) {
 		std::string needle = "[arg" + intToStr(i->first) + "]";

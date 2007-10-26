@@ -449,12 +449,7 @@ void EntityInspector::treeSelectionChanged() {
     // If the type was not found, also try looking on the entity class
     if (type.empty()) {
     	IEntityClassConstPtr eclass = _selectedEntity->getEntityClass();
-		try {
-			type = eclass->findAttribute(key).type;
-		}
-		catch (std::runtime_error e) {
-			type = "";
-		}
+		type = eclass->getAttribute(key).type;
     }
 
 	// Remove the existing PropertyEditor widget, if there is one
@@ -535,13 +530,8 @@ void EntityInspector::refreshTreeModel() {
 				type = typeIter->second.type;
 			}
 			else {
-				// Check the entityclass, or return blank of not found
-				try {
-					type = _eclass->findAttribute(key).type;
-				}
-				catch (std::runtime_error e) {
-					type = "";
-				}
+				// Check the entityclass (which will return blank if not found)
+				type = _eclass->getAttribute(key).type;
 			}
 
 			// Append the details to the treestore

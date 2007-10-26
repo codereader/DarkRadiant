@@ -165,7 +165,7 @@ std::string Doom3Entity::getKeyValue(const std::string& key) const {
 		return i->second->get();
 	}
 	else {
-		return _eclass->getValueForKey(key);
+		return _eclass->getAttribute(key).value;
 	}
 }
 
@@ -238,7 +238,10 @@ void Doom3Entity::insert(const std::string& key, const std::string& value) {
 		// No key with that name found, create a new one
 		_undo.save();
 		// Allocate a new KeyValue object and insert it into the map
-		insert(key, KeyValuePtr(new KeyValue(value, _eclass->getValueForKey(key))));
+		insert(
+			key, 
+			KeyValuePtr(new KeyValue(value, _eclass->getAttribute(key).value))
+		);
 	}
 }
 

@@ -115,8 +115,8 @@ public:
         else {
             // Check for the existence of editor_mins/maxs attributes, and that
             // they do not contain only a question mark
-    		return (getValueForKey("editor_mins").size() > 1
-                    && getValueForKey("editor_maxs").size() > 1);
+    		return (getAttribute("editor_mins").value.size() > 1
+                    && getAttribute("editor_maxs").value.size() > 1);
         }
 	}
     
@@ -124,8 +124,10 @@ public:
 	 */
 	AABB getBounds() const {
         if (isFixedSize()) {
-            return AABB::createFromMinMax(getValueForKey("editor_mins"), 
-                                          getValueForKey("editor_maxs"));
+            return AABB::createFromMinMax(
+            	getAttribute("editor_mins").value, 
+            	getAttribute("editor_maxs").value
+            );
         }
         else {
             return AABB(); // null AABB
@@ -199,32 +201,15 @@ public:
 		);
 	}
 	
-	/**
-	 * Find an EntityClassAttribute.
+	/*
+	 * Find a single attribute.
 	 */
-	const EntityClassAttribute& findAttribute(const std::string& name) const {
-		EntityAttributeMap::const_iterator i = _attributes.find(name);
-		if (i != _attributes.end())
-			return i->second;
-		else
-			throw AttributeNotFoundException(
-				"Doom3EntityClass: attribute " + name 
-				+ " not found in class " + _name
-			);
-	}
-
-	/** Look up the given key in the list of attributes and return
-	 * the value.
+	EntityClassAttribute getAttribute(const std::string& name) const;
+	
+	/*
+	 * Return a list of all attributes matching the given name prefix.
 	 */
-	std::string getValueForKey(const std::string& key) const {
-		EntityAttributeMap::const_iterator i = _attributes.find(key);
-		if (i != _attributes.end()) {
-			return i->second.value;
-		}
-		else {
-			return "";
-		}	
-	}
+	EntityClassAttributeList getAttributeList(const std::string& name) const;
 
 	/** Enumerate the EntityClassAttributes.
 	 */
