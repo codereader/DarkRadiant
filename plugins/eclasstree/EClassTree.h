@@ -13,6 +13,17 @@ typedef struct _GtkTreeSelection GtkTreeSelection;
 
 namespace ui {
 
+	namespace {
+		const std::string ECLASSTREE_TITLE = "Entity Class Tree";
+	    
+	    // Tree column enum
+	    enum {
+	        NAME_COLUMN,
+	        ICON_COLUMN,
+	        N_COLUMNS
+	    };
+	}
+
 class EClassTree;
 typedef boost::shared_ptr<EClassTree> EClassTreePtr;
 

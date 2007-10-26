@@ -196,7 +196,10 @@ public:
 		std::pair<EntityAttributeMap::iterator, bool> result = 
 			_attributes.insert(EntityAttributeMap::value_type(attribute.name, 
 														  	  attribute));
-		result.first->second.inherited = inherited;
+		// Only set the inheritance flag, if the attribute could be inserted.
+		if (result.second) {
+			result.first->second.inherited = inherited;
+		}
 	}
 	
 	/**

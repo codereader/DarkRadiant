@@ -2,7 +2,9 @@
 #define ECLASSTREEBUILDER_H_
 
 #include "ieclass.h"
-typedef struct _GtkTreeStore GtkTreeStore; 
+#include "gtkutil/VFSTreePopulator.h"
+
+namespace ui {
 
 /**
  * greebo: This traverses all the entity classes loaded so far and
@@ -11,13 +13,23 @@ typedef struct _GtkTreeStore GtkTreeStore;
 class EClassTreeBuilder :
 	public EntityClassVisitor
 {
+	// The target treestore (FIXME: needed?)
 	GtkTreeStore* _treeStore;
+	
+	// The helper class, doing the tedious treeview insertion for us.
+	gtkutil::VFSTreePopulator _treePopulator;
 	
 public:
 	EClassTreeBuilder(GtkTreeStore* targetStore);
 	
 	// Visitor implementation
 	virtual void visit(IEntityClassPtr eclass);
+
+private:
+	// Returns an inheritance path, like this: "moveables/swords/"
+	std::string getInheritancePathRecursive(const IEntityClassPtr& eclass);
 };
+
+} // namespace ui
 
 #endif /*ECLASSTREEBUILDER_H_*/
