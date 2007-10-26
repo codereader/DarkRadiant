@@ -45,7 +45,7 @@ public:
 		// Add the callback event
 		GlobalEventManager().addCommand(
 			"EntityClassTree", 
-			FreeCaller<ui::EClassTree::toggle>()
+			FreeCaller<ui::EClassTree::showWindow>()
 		);
 	
 		// Add the menu item
