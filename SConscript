@@ -365,7 +365,8 @@ ectEnv.useGlib2()
 ectEnv.useBoostRegex()
 ectList = build_list('plugins/eclasstree', 
 					'plugin.cpp \
-					 EClassTree.cpp')
+					 EClassTree.cpp \
+					 EClassTreeBuilder.cpp')
 ectLib = ectEnv.SharedLibrary(target='eclasstree',
 							source=ectList,
 							no_import_lib=1)

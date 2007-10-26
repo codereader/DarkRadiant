@@ -9,6 +9,7 @@ typedef struct _GtkListStore GtkListStore;
 typedef struct _GtkTreeView GtkTreeView;
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkTreeStore GtkTreeStore;
+typedef struct _GtkTreeSelection GtkTreeSelection;
 
 namespace ui {
 
@@ -21,6 +22,7 @@ class EClassTree :
 	// The EClass treeview widget and underlying liststore
 	GtkTreeView* _eclassTreeView;
 	GtkTreeStore* _eclassStore;
+	GtkTreeSelection* _eclassSelection;
 	
 	// The treeview and liststore for the property pane
 	GtkTreeView* _propertyTreeView;
