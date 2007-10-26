@@ -88,6 +88,19 @@ struct EntityClassAttributeVisitor {
 };
 
 /**
+ * Exception thrown when trying to retrieve an EntityClassAttribute which does
+ * not exist on the entity class.
+ */
+class AttributeNotFoundException
+: public std::runtime_error
+{
+public:
+	AttributeNotFoundException(const std::string& what) 
+	: std::runtime_error(what) 
+	{ }
+};
+
+/**
  * IEntityClass shared pointer.
  */
 class IEntityClass;
@@ -161,18 +174,24 @@ public:
 	/* ENTITY CLASS ATTRIBUTES */		
 
 	/** 
-	 * Insert an EntityClassAttribute.
-	 *
-	 * @inherited: Indicates whether this attribute has been inherited or not.
+	 * Insert an EntityClassAttribute. If the attribute already exists, this
+	 * has no effect.
 	 */
-	virtual void addAttribute(const EntityClassAttribute& attribute, bool inherited) = 0;
+	virtual void addAttribute(const EntityClassAttribute& attribute) = 0;
 
 	/**
 	 * Find a named EntityClassAttribute. Throws an exception if the named
 	 * attribute does not exist.
+	 * 
+	 * @param name
+	 * The name of the EntityClassAttribute to retrieve.
+	 * 
+	 * @throws AttributeNotFoundException
+	 * The named attribute is not present on this entityclass.
+	 * 
 	 */
-	virtual const EntityClassAttribute& 
-		findAttribute(const std::string& name) const = 0;
+	virtual const EntityClassAttribute&	findAttribute(const std::string& name) 
+	const = 0;
 
 	/** Return the value associated with a given entity class attribute.
 	 * Any key may be looked up, including "editor_" keys.
