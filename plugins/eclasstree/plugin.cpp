@@ -1,28 +1,27 @@
 #include "imodule.h"
 
-#include "ieventmanager.h"
-#include "ieclass.h"
-#include "iscenegraph.h"
-#include "iuimanager.h"
 #include "iregistry.h"
-#include "iselection.h"
+#include "ieventmanager.h"
+#include "iuimanager.h"
 #include "iradiant.h"
-#include "iundo.h"
+#include "ieclass.h"
 
-#include "scenelib.h"
+#include "stream/stringstream.h"
+#include "stream/textstream.h"
 #include "generic/callback.h"
-#include "StimResponseEditor.h" 
+
+#include "EClassTree.h"
 
 /**
- * Module to register the menu commands for the Stim/Response Editor class.
+ * Module to register the menu commands for the EntityClassTree class.
  */
-class StimResponseModule : 
+class EClassTreeModule : 
 	public RegisterableModule
 {
 public:
 	// RegisterableModule implementation
 	virtual const std::string& getName() const {
-		static std::string _name("StimResponseEditor");
+		static std::string _name("EClassTree");
 		return _name;
 	}
 	
@@ -34,38 +33,35 @@ public:
 			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_UIMANAGER);
 			_dependencies.insert(MODULE_RADIANT);
-			_dependencies.insert(MODULE_SELECTIONSYSTEM);
-			_dependencies.insert(MODULE_SCENEGRAPH);
 			_dependencies.insert(MODULE_ECLASSMANAGER);
-			_dependencies.insert(MODULE_UNDOSYSTEM);
 		}
 
 		return _dependencies;
 	}
 	
 	virtual void initialiseModule(const ApplicationContext& ctx) {
-		globalOutputStream() << "StimResponseModule::initialiseModule called.\n";
+		globalOutputStream() << getName().c_str() << "::initialiseModule called.\n";
 		
 		// Add the callback event
 		GlobalEventManager().addCommand(
-			"StimResponseEditor", 
-			FreeCaller<ui::StimResponseEditor::toggle>()
+			"EntityClassTree", 
+			FreeCaller<ui::EClassTree::toggle>()
 		);
 	
 		// Add the menu item
 		IMenuManager& mm = GlobalUIManager().getMenuManager();
 		mm.add("main/entity", 	// menu location path
-				"StimResponse", // name
+				"EntityClassTree", // name
 				ui::menuItem,	// type
-				"Stim/Response...",	// caption
-				"stimresponse.png",	// icon
-				"StimResponseEditor"); // event name
+				"Entity Class Tree...",	// caption
+				"icon_classname.png",	// icon
+				"EntityClassTree"); // event name
 	}
 };
-typedef boost::shared_ptr<StimResponseModule> StimResponseModulePtr;
+typedef boost::shared_ptr<EClassTreeModule> EClassTreeModulePtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	registry.registerModule(StimResponseModulePtr(new StimResponseModule));
+	registry.registerModule(EClassTreeModulePtr(new EClassTreeModule));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();
