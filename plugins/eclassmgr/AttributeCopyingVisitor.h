@@ -26,8 +26,12 @@ public:
 
 	// Required visit function
 	void visit(const EntityClassAttribute& attr) {
+
 		// greebo: Add the attribute with "inherited" set to true
-		_target.addAttribute(attr, true);
+		EntityClassAttribute copiedAttr(attr);
+		copiedAttr.inherited = true;
+		
+		_target.addAttribute(copiedAttr);
 	}
 };
 

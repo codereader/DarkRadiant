@@ -190,16 +190,13 @@ public:
 	
 	/* ATTRIBUTES */
 	
-	/** Insert an EntityClassAttribute.
+	/** 
+	 * Insert an EntityClassAttribute, without overwriting previous values.
 	 */
-	void addAttribute(const EntityClassAttribute& attribute, bool inherited = false) {
-		std::pair<EntityAttributeMap::iterator, bool> result = 
-			_attributes.insert(EntityAttributeMap::value_type(attribute.name, 
-														  	  attribute));
-		// Only set the inheritance flag, if the attribute could be inserted.
-		if (result.second) {
-			result.first->second.inherited = inherited;
-		}
+	void addAttribute(const EntityClassAttribute& attribute) {
+		_attributes.insert(
+			EntityAttributeMap::value_type(attribute.name, attribute)
+		);
 	}
 	
 	/**
@@ -210,8 +207,10 @@ public:
 		if (i != _attributes.end())
 			return i->second;
 		else
-			throw std::runtime_error("Doom3EntityClass: attribute " + name
-									 + " not found in class " + _name);
+			throw AttributeNotFoundException(
+				"Doom3EntityClass: attribute " + name 
+				+ " not found in class " + _name
+			);
 	}
 
 	/** Look up the given key in the list of attributes and return
