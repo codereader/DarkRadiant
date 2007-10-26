@@ -17,6 +17,13 @@ EClassTree::EClassTree() :
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
+	
+	// Set the default size of the window
+	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(getWindow()));
+	gint w = gdk_screen_get_width(scr);
+	gint h = gdk_screen_get_height(scr);
+
+	gtk_window_set_default_size(GTK_WINDOW(getWindow()), w/2, 2*h/3);
 		
 	// Create a new tree store for the entityclasses
 	_eclassStore = gtk_tree_store_new(
