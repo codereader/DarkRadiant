@@ -849,6 +849,9 @@ Patch* Patch::MakeCap(Patch* patch, EPatchCap eType, EMatrixMajor mt, bool bFirs
   }
 
   patch->ConstructSeam(eType, p.data(), width);
+  
+  // greebo: Apply natural texture to that patch, to fix the texcoord==1.#INF bug.
+  patch->NaturalTexture();
   return patch;
 }
 
