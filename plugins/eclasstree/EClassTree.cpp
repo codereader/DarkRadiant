@@ -11,20 +11,6 @@
 
 namespace ui {
 
-	namespace {
-		const std::string ECLASSTREE_TITLE = "Entity Class Tree";
-	    const char* FOLDER_ICON = "folder16.png";
-	    const char* ENTITY_ICON = "cmenu_add_entity.png";
-	    
-	    // Tree column enum
-	    enum {
-	        NAME_COLUMN,
-	        ICON_COLUMN,
-	        DIR_FLAG_COLUMN,
-	        N_COLUMNS
-	    };
-	}
-
 EClassTree::EClassTree() :
 	gtkutil::BlockingTransientWindow(ECLASSTREE_TITLE, GlobalRadiant().getMainWindow())
 {
@@ -36,13 +22,11 @@ EClassTree::EClassTree() :
 	_eclassStore = gtk_tree_store_new(
 		N_COLUMNS, 
 		G_TYPE_STRING,		// name
-		GDK_TYPE_PIXBUF,	// icon
-		G_TYPE_BOOLEAN		// directory flag
+		GDK_TYPE_PIXBUF		// icon
 	);
 	
 	// Construct an eclass visitor and traverse the 
 	EClassTreeBuilder builder(_eclassStore);
-	GlobalEntityClassManager().forEach(builder);
 	
 	// Construct the window's widgets
 	populateWindow();
