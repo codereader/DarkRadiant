@@ -18,7 +18,6 @@ namespace ui {
 	        PROPERTY_NAME_COLUMN,
 	        PROPERTY_VALUE_COLUMN,
 	        PROPERTY_TEXT_COLOUR_COLUMN,
-	        PROPERTY_ICON_COLUMN,
 	        PROPERTY_INHERITED_FLAG_COLUMN,
 	        NUM_PROPERTY_COLUMNS
 	    };
@@ -70,8 +69,7 @@ void EClassTree::populateWindow() {
 	gint w = gdk_screen_get_width(scr);
 	gint h = gdk_screen_get_height(scr);
 
-	gtk_window_set_default_size(GTK_WINDOW(getWindow()), w/2, 2*h/3);
-	
+	gtk_window_set_default_size(GTK_WINDOW(getWindow()), 2*w/3, 2*h/3);
 	gtk_paned_set_position(GTK_PANED(paned), w/4);
 }
 
@@ -104,7 +102,6 @@ GtkWidget* EClassTree::createPropertyTreeView() {
     							    G_TYPE_STRING, // property
     							    G_TYPE_STRING, // value
                                     G_TYPE_STRING, // text colour
-    							    GDK_TYPE_PIXBUF, // value icon
     							    G_TYPE_STRING); // inherited flag
     
     // Create the TreeView widget and link it to the model
@@ -117,10 +114,6 @@ GtkWidget* EClassTree::createPropertyTreeView() {
     gtk_tree_view_column_set_title(nameCol, "Property");
 	gtk_tree_view_column_set_sizing(nameCol, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
     gtk_tree_view_column_set_spacing(nameCol, 3);
-
-	GtkCellRenderer* pixRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_column_pack_start(nameCol, pixRenderer, FALSE);
-    gtk_tree_view_column_set_attributes(nameCol, pixRenderer, "pixbuf", PROPERTY_ICON_COLUMN, NULL);
 
     GtkCellRenderer* textRenderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(nameCol, textRenderer, FALSE);
@@ -164,7 +157,40 @@ GtkWidget* EClassTree::createButtons() {
 }
 
 void EClassTree::updatePropertyView(const std::string& eclassName) {
+	// Clear the existing list
+	gtk_list_store_clear(_propertyStore);
 	
+	IEntityClassPtr eclass = GlobalEntityClassManager().findClass(eclassName);
+	if (eclass == NULL) {
+		return;
+	}
+	
+	class ListStorePopulator :
+		public EntityClassAttributeVisitor
+	{
+		GtkListStore* _listStore;
+	public:
+		ListStorePopulator(GtkListStore* targetStore) :
+			_listStore(targetStore)
+		{}
+		
+		virtual void visit(const EntityClassAttribute& attr) {
+			// Append the details to the treestore
+			GtkTreeIter iter;
+			gtk_list_store_append(_listStore, &iter);
+			gtk_list_store_set(
+				_listStore, &iter,
+				PROPERTY_NAME_COLUMN, attr.name.c_str(),
+				PROPERTY_VALUE_COLUMN, attr.value.c_str(),
+				PROPERTY_TEXT_COLOUR_COLUMN, attr.inherited ? "#666666" : "black",
+				PROPERTY_INHERITED_FLAG_COLUMN, attr.inherited ? "1" : "0",
+				-1
+			);
+		}
+	};
+	
+	ListStorePopulator populator(_propertyStore);
+	eclass->forEachClassAttribute(populator, true);
 }
 
 // Static command target
