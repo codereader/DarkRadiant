@@ -1,15 +1,48 @@
 #include "EClassTree.h"
 
 #include <gtk/gtk.h>
+
+#include "ieclass.h"
 #include "gtkutil/RightAlignment.h"
+#include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/IconTextColumn.h"
+
+#include "EClassTreeBuilder.h"
 
 namespace ui {
 
+	namespace {
+		const std::string ECLASSTREE_TITLE = "Entity Class Tree";
+	    const char* FOLDER_ICON = "folder16.png";
+	    const char* ENTITY_ICON = "cmenu_add_entity.png";
+	    
+	    // Tree column enum
+	    enum {
+	        NAME_COLUMN,
+	        ICON_COLUMN,
+	        DIR_FLAG_COLUMN,
+	        N_COLUMNS
+	    };
+	}
+
 EClassTree::EClassTree() :
-	gtkutil::BlockingTransientWindow("Entity Class Tree", GlobalRadiant().getMainWindow())
+	gtkutil::BlockingTransientWindow(ECLASSTREE_TITLE, GlobalRadiant().getMainWindow())
 {
-	// Travese the entity defs and build the tree store
-	_eclassStore = NULL;
+	// Set the default border width in accordance to the HIG
+	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
+	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
+		
+	// Create a new tree store for the entityclasses
+	_eclassStore = gtk_tree_store_new(
+		N_COLUMNS, 
+		G_TYPE_STRING,		// name
+		GDK_TYPE_PIXBUF,	// icon
+		G_TYPE_BOOLEAN		// directory flag
+	);
+	
+	// Construct an eclass visitor and traverse the 
+	EClassTreeBuilder builder(_eclassStore);
+	GlobalEntityClassManager().forEach(builder);
 	
 	// Construct the window's widgets
 	populateWindow();
@@ -24,7 +57,7 @@ void EClassTree::populateWindow() {
 	gtk_container_add(GTK_CONTAINER(getWindow()), _dialogVBox);
 	
 	GtkWidget* panes = gtk_hpaned_new();
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), panes, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), panes, TRUE, TRUE, 0);
 	
 	// Pack tree view
 	gtk_paned_add1(GTK_PANED(panes), createEClassTreeView());
@@ -40,7 +73,23 @@ GtkWidget* EClassTree::createEClassTreeView() {
 	_eclassTreeView = GTK_TREE_VIEW(
 		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_eclassStore))
 	);
-	return GTK_WIDGET(_eclassTreeView);
+	
+	// Tree selection
+	_eclassSelection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_eclassTreeView));
+	gtk_tree_selection_set_mode(_eclassSelection, GTK_SELECTION_BROWSE);
+	//g_signal_connect(G_OBJECT(_eclassSelection), "changed", G_CALLBACK(callbackSelectionChanged), this);
+	
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_eclassTreeView), TRUE);
+
+	// Pack the columns
+	// Single column with icon and name
+	GtkTreeViewColumn* col = 
+		gtkutil::IconTextColumn("Classname", NAME_COLUMN, ICON_COLUMN);
+	gtk_tree_view_column_set_sort_column_id(col, NAME_COLUMN);
+	
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_eclassTreeView), col);
+	
+	return gtkutil::ScrolledFrame(GTK_WIDGET(_eclassTreeView));
 }
 
 // Lower dialog buttons
