@@ -101,4 +101,13 @@ inline bool isNaN(Element x) {
 	return x != x;
 }
 
+// greebo: This checks the given element for NaN and infinity
+// returns TRUE if the number is safe
+template <typename Element>
+inline bool isValid(Element x) {
+	// Check for infinity and NaN
+	return !isNaN(x) && !(std::numeric_limits<Element>::has_infinity && 
+			  			   fabs(x) == std::numeric_limits<Element>::infinity());
+}
+
 #endif /*FLOATTOOLS_H_*/
