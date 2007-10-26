@@ -5,35 +5,45 @@
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include <boost/shared_ptr.hpp>
 
+typedef struct _GtkListStore GtkListStore;
+typedef struct _GtkTreeView GtkTreeView;
+typedef struct _GtkWidget GtkWidget;
+typedef struct _GtkTreeStore GtkTreeStore;
+
 namespace ui {
 
 class EClassTree;
 typedef boost::shared_ptr<EClassTree> EClassTreePtr;
 
 class EClassTree :
-	public RadiantEventListener,
 	public gtkutil::BlockingTransientWindow
 {
-
-	// Constructor, traverses the entity classes
+	// The EClass treeview widget and underlying liststore
+	GtkTreeView* _eclassTreeView;
+	GtkTreeStore* _eclassStore;
+	
+	// The treeview and liststore for the property pane
+	GtkTreeView* _propertyTreeView;
+	GtkListStore* _propertyStore;
+	
+	GtkWidget* _dialogVBox;
+	
+	// Private constructor, traverses the entity classes
 	EClassTree();
 
-	/** greebo: Accessor method for the singleton instance
-	 */
-	static EClassTree& Instance();
-	
-	// This is where the singleton instance shared_ptr is held 
-	static EClassTreePtr& InstancePtr();
-
 public:
-	// Toggles the visibility of the singleton class (static command target)
-	static void toggle();
+	// Shows the singleton class (static command target)
+	static void showWindow();
 	
-	/** greebo: This toggles the visibility of the EClassTree dialog.
-	 * The dialog is constructed only once and never destructed 
-	 * during runtime.
-	 */
-	void toggleWindow();
+private:
+	// Constructs and adds all the dialog widgets
+	void populateWindow();
+	
+	GtkWidget* createButtons(); 	// Dialog buttons
+	GtkWidget* createEClassTreeView(); // EClass Tree
+	
+	// Static GTK callbacks
+	static void onClose(GtkWidget* button, EClassTree* self);
 };
 
 } // namespace ui
