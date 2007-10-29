@@ -63,6 +63,7 @@ private:
 	
 	// Tree store containing model names
 	GtkTreeStore* _treeStore;
+	GtkTreeViewColumn* _modelCol;
 	
 	// Currently-selected row in the tree store
 	GtkTreeSelection* _selection;

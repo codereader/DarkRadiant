@@ -158,11 +158,10 @@ GtkWidget* ModelSelector::createTreeView() {
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeView), TRUE);
 
 	// Single visible column, containing the directory/model name and the icon
-	GtkTreeViewColumn* col = gtkutil::IconTextColumn(
+	_modelCol = gtkutil::IconTextColumn(
 		"Model Path", NAME_COLUMN, IMAGE_COLUMN
 	);
-	gtk_tree_view_column_set_sort_column_id(col, NAME_COLUMN);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(treeView), col);				
+	gtk_tree_view_append_column(GTK_TREE_VIEW(treeView), _modelCol);				
 
 	// Get the selection object and connect to its changed signal
 
@@ -200,6 +199,10 @@ void ModelSelector::populateModels() {
 	// Fill in the column data
 	ModelDataInserter inserter;
 	pop.forEachNode(inserter);
+	
+	gtk_tree_view_column_set_sort_column_id(_modelCol, NAME_COLUMN);
+	gtk_tree_view_column_clicked(_modelCol);
+	
 }
 
 // Create the buttons panel at bottom of dialog
