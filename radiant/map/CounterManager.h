@@ -62,13 +62,13 @@ public:
 	
 	// ICounter::Observer implementation
 	void countChanged() {
-		int brushCount(_counters[counterBrushes]->get());
-		int patchCount(_counters[counterPatches]->get());
-		int entityCount(_counters[counterEntities]->get());
+		std::size_t brushCount(_counters[counterBrushes]->get());
+		std::size_t patchCount(_counters[counterPatches]->get());
+		std::size_t entityCount(_counters[counterEntities]->get());
 		
-		std::string text = "Brushes: " + intToStr(brushCount);
-		text += " Patches: " + intToStr(patchCount);
-		text += " Entities: " + intToStr(entityCount);
+		std::string text = "Brushes: " + intToStr(static_cast<int>(brushCount));
+		text += " Patches: " + intToStr(static_cast<int>(patchCount));
+		text += " Entities: " + intToStr(static_cast<int>(entityCount));
 		
 		g_pParentWnd->SetStatusText(g_pParentWnd->m_brushcount_status, text);
 	}

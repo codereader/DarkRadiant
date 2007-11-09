@@ -259,7 +259,8 @@ public:
 	    Selection_destroy();
 	    
 	    // Remove all the event listeners, otherwise the shared_ptrs 
-	    // lock the instances.
+	    // lock the instances. This is just for safety, usually all
+		// EventListeners get cleared upon OnRadiantShutdown anyway.
 	    _eventListeners.clear();
 	}
 };
