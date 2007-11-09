@@ -193,9 +193,6 @@ void TexTool::onRadiantShutdown() {
 	GlobalEventManager().disconnect(GTK_OBJECT(_glWidget));
 	GlobalEventManager().disconnect(GTK_OBJECT(getWindow()));
 
-	// De-register from the RadiantEventSystem
-	GlobalRadiant().removeEventListener(InstancePtr());
-	
 	// Destroy the window
 	destroy();
 }

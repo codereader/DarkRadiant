@@ -136,9 +136,6 @@ void GroupDialog::onRadiantShutdown() {
 	
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
 
-	// De-register from the RadiantEventSystem
-	GlobalRadiant().removeEventListener(InstancePtr());
-
 	// Call the PersistentTransientWindow::destroy chain
 	destroy();
 }

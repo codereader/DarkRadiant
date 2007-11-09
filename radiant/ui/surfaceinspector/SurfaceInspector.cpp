@@ -157,9 +157,6 @@ void SurfaceInspector::onRadiantShutdown() {
 	GlobalSelectionSystem().removeObserver(this);
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
 
-	// De-register from the RadiantEventSystem
-	GlobalRadiant().removeEventListener(InstancePtr());
-	
 	// Destroy the window (after it has been disconnected from the Eventmanager)
 	destroy();
 }
