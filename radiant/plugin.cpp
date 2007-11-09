@@ -159,7 +159,7 @@ public:
 		}
 	}
 	
-	// Broadcasts a "shutdown" event to all the listeners
+	// Broadcasts a "shutdown" event to all the listeners, this also clears all listeners!
 	void broadcastShutdownEvent() {
 		for (EventListenerList::iterator i = _eventListeners.begin();
 		     i != _eventListeners.end(); /* in-loop increment */)
@@ -168,6 +168,9 @@ public:
 			// disconnect themselves without invalidating our iterator
 			(*i++)->onRadiantShutdown();
 		}
+
+		// This was the final radiant event, don't hold any shared_ptr's after this point
+		_eventListeners.clear();
 	}
 	
 	// Broadcasts a "startup" event to all the listeners

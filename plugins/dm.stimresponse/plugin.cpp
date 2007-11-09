@@ -61,6 +61,11 @@ public:
 				"stimresponse.png",	// icon
 				"StimResponseEditor"); // event name
 	}
+
+	virtual void shutdownModule() {
+		// Clear the shared_ptr, in case it holds an instance
+		ui::StimResponseEditor::destroyInstance();
+	}
 };
 typedef boost::shared_ptr<StimResponseModule> StimResponseModulePtr;
 
