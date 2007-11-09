@@ -12,6 +12,15 @@
 #include "imagelib.h" // for ScopedArchiveBuffer
 #include <boost/shared_ptr.hpp>
 
+// We need the usleep() command. Be sure to include the windows.h
+// header after the local textfilestream.h because there are definition conflicts otherwise.
+#ifdef WIN32
+#include <windows.h>
+#define usleep(x) Sleep((x)/1000)
+#else
+#include <unistd.h>
+#endif
+
 #include "OggFileStream.h"
 
 namespace sound {
@@ -188,6 +197,11 @@ void SoundPlayer::play(ArchiveFile& file) {
 		alGenSources(1, &_source);
 		// Assign the buffer to the source and play it
 		alSourcei(_source, AL_BUFFER, _buffer);
+
+		// greebo: Wait 10 msec. to fix a problem with buffers not being played
+		// maybe the AL needs time to push the data?
+		usleep(10000);
+
 		alSourcePlay(_source);
 		
 		// Enable the periodic buffer check, this destructs the buffer
