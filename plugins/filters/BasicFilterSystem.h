@@ -49,6 +49,9 @@ public:
 	// Radiant module, hence cannot be done in the constructor.
 	void initialise();
 
+	// Invoke the InstanceUpateWalker to update the filtered status.
+	void update();
+
 	// Filter system visit function
 	void forEachFilter(IFilterVisitor& visitor);
 	

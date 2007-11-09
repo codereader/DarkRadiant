@@ -36,7 +36,6 @@ public:
     }
     
     m_path.push(node_clone(node));
-    //m_path.top().get().IncRef();
 
     return true;
   }
@@ -48,7 +47,6 @@ public:
 
     Node_getTraversable(m_path.parent())->insert(m_path.top());
 
-    //m_path.top().get().DecRef();
     m_path.pop();
   }
 };
