@@ -29,6 +29,8 @@ class Map :
 
 	scene::INodePtr m_world_node; // "classname" "worldspawn" !
 
+	bool _saveInProgress;
+
 public:
 	Map();
 	
