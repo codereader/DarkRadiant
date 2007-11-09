@@ -6,6 +6,8 @@
 #include "ApplicationContextImpl.h"
 #include "ModuleLoader.h"
 
+#include "ui/splash/Splash.h"
+
 namespace module {
 
 namespace {
@@ -102,7 +104,11 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name) {
 	{
 		initialiseModuleRecursive(*i);
 	}
+
+	_progress = 0.1f + (static_cast<float>(_initialisedModules.size())/_uninitialisedModules.size())*0.65f;
 	
+	ui::Splash::Instance().setProgressAndText("Initialising Module: " + name, _progress);
+
 	// Initialise the module itself, now that the dependencies are ready
 	module->initialiseModule(_context);
 	
@@ -114,7 +120,10 @@ void ModuleRegistry::initialiseModules() {
 	if (_modulesInitialised) {
 		throw std::runtime_error("ModuleRegistry::initialiseModule called twice.\n");
 	}
-	
+
+	_progress = 0.1f;
+	ui::Splash::Instance().setProgressAndText("Initialising Modules", _progress);
+
 	for (ModulesMap::iterator i = _uninitialisedModules.begin();
 		 i != _uninitialisedModules.end(); i++)
 	{

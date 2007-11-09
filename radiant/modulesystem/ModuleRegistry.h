@@ -31,6 +31,9 @@ class ModuleRegistry :
 	
 	// Application context
 	ApplicationContextImpl _context;
+
+	// For progress meter in the splash screen
+	float _progress;
 	
 	// Private constructor
 	ModuleRegistry();

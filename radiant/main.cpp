@@ -294,21 +294,20 @@ int main (int argc, char* argv[]) {
 	const ApplicationContext& ctx = module::getRegistry().getApplicationContext();
 	module::Loader::loadModules(ctx.getApplicationPath());
 	
-	ui::Splash::Instance().setProgressAndText("Initialising Modules", 0.1f);
 	module::getRegistry().initialiseModules();
 	
-	ui::Splash::Instance().setProgressAndText("Modules initialised", 0.15f);
+	//ui::Splash::Instance().setProgressAndText("Modules initialised", 0.15f);
 
 	// Create the radiant.pid file in the settings folder 
 	// (emits a warning if the file already exists (due to a previous startup failure)) 
 	createPIDFile("radiant.pid");
 	
-	ui::Splash::Instance().setProgressAndText("Creating Logfile", 0.2f);
+	ui::Splash::Instance().setProgressAndText("Creating Logfile", 0.77f);
 
 	// The settings path is set, start logging now
 	Sys_LogFile(true);
 	
-	ui::Splash::Instance().setProgressAndText("Initialising Radiant", 0.3f);
+	ui::Splash::Instance().setProgressAndText("Creating PrefDialog", 0.79f);
 
 	// The VFS is setup at this point, we can load the modules
 	Radiant_Initialise();
