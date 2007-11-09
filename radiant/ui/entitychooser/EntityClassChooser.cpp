@@ -50,7 +50,7 @@ EntityClassChooser::EntityClassChooser()
 	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
 	gint w = gdk_screen_get_width(scr);
 	gint h = gdk_screen_get_height(scr);
-	gtk_window_set_default_size(GTK_WINDOW(_widget), w / 3, h / 2);
+	gtk_window_set_default_size(GTK_WINDOW(_widget), w*0.4f, h*0.6f);
 
 	// Create GUI elements and pack into main VBox
 	
@@ -91,8 +91,11 @@ GtkWidget* EntityClassChooser::createTreeView() {
 	GtkTreeViewColumn* col = 
 		gtkutil::IconTextColumn("Classname", NAME_COLUMN, ICON_COLUMN);
 	gtk_tree_view_column_set_sort_column_id(col, NAME_COLUMN);
-	
+
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), col);				
+
+	// greebo: Trigger a sort operation by simulating a mouseclick on the column
+	gtk_tree_view_column_clicked(col);
 
 	// Pack treeview into a scrolled frame and return
 	return gtkutil::ScrolledFrame(_treeView);
