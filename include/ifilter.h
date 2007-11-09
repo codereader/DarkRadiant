@@ -46,6 +46,12 @@ public:
 	 */
 	virtual void initialise() = 0;
 
+	/**
+	 * greebo: Updates all the "Filtered" status of all Instances 
+	 *         in the scenegraph based on the current filter settings.         
+	 */ 
+	virtual void update() = 0;
+
 	/** Visit the available filters, passing each filter's text
 	 * name to the visitor.
 	 * 

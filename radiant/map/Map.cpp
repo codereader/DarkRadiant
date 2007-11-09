@@ -6,6 +6,7 @@
 #include "iundo.h"
 #include "ifilesystem.h"
 #include "ifiletypes.h"
+#include "ifilter.h"
 #include "icounter.h"
 #include "iradiant.h"
 #include "inamespace.h"
@@ -703,6 +704,9 @@ void Map::renameAbsolute(const std::string& absolute) {
 	setName(absolute);
 
 	m_resource->attach(*this);
+
+	// greebo: Somehow the filter settings get lost after a rename, trigger an update.
+	GlobalFilterSystem().update();
 }
 
 void Map::rename(const std::string& filename) {

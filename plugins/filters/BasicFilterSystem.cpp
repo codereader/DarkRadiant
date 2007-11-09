@@ -60,6 +60,10 @@ void BasicFilterSystem::initialise() {
 	_initialised = true;
 }
 
+void BasicFilterSystem::update() {
+	updateInstances();
+}
+
 void BasicFilterSystem::forEachFilter(IFilterVisitor& visitor) {
 
 	// Initialise the filter system if not already
