@@ -29,7 +29,7 @@ void MenuManager::loadFromRegistry() {
 		for (unsigned int i = 0; i < menuNodes.size(); i++) {
 			std::string name = menuNodes[i].getAttributeValue("name");
 		
-			// Allocate a new MenuItem with a NULL parent (i.e. root MenuItem)
+			// Allocate a new MenuItem with root as parent
 			MenuItemPtr menubar = MenuItemPtr(new MenuItem(_root));
 			menubar->setName(name);
 		
@@ -71,7 +71,7 @@ GtkWidget* MenuManager::get(const std::string& path) {
 		return *foundMenu;
 	}
 	else {
-		globalErrorStream() << "MenuManager: Warning: Menu " << path.c_str() << " not found!\n";
+		//globalErrorStream() << "MenuManager: Warning: Menu " << path.c_str() << " not found!\n";
 		return NULL;
 	}
 }
@@ -84,7 +84,7 @@ GtkWidget* MenuManager::add(const std::string& insertPath,
 					  		const std::string& eventName)
 {
 	MenuItemPtr found = _root->find(insertPath);
-	
+
 	if (found != NULL) {
 		// Allocate a new MenuItem
 		MenuItemPtr newItem = MenuItemPtr(new MenuItem(found));
@@ -97,8 +97,18 @@ GtkWidget* MenuManager::add(const std::string& insertPath,
 		
 		// Cast the parent onto a GtkWidget* (a menu item)
 		GtkWidget* parentItem = *found;
-		// Retrieve the submenu widget from the item
-		GtkWidget* parent = gtk_menu_item_get_submenu(GTK_MENU_ITEM(parentItem));
+		GtkWidget* parent(NULL);
+
+		if (type == menuFolder)
+		{
+			parent = parentItem;
+		}
+		else 
+		{
+			// Retrieve the submenu widget from the item
+			parent = gtk_menu_item_get_submenu(GTK_MENU_ITEM(parentItem));
+		}
+
 		//GtkMenu* menu = GTK_MENU(gtk_menu_item_get_submenu(_menu));
 		gtk_menu_shell_append(GTK_MENU_SHELL(parent), *newItem);
 		
@@ -109,9 +119,25 @@ GtkWidget* MenuManager::add(const std::string& insertPath,
 		
 		return *newItem;
 	}
-	else {
-		globalErrorStream() << "MenuItem: " << insertPath.c_str() << " already exists.\n"; 
+	else if (insertPath.empty()) {
+		// We have a new top-level menu item, create it as child of root
+		MenuItemPtr newItem = MenuItemPtr(new MenuItem(_root));
+
+		newItem->setName(name);
+		newItem->setCaption(caption);
+		newItem->setType(type);
+		newItem->setIcon(icon);
+		newItem->setEvent(eventName);
+
+		// Insert into root
+		_root->addChild(newItem);
+
+		return *newItem;
 	}
+	else {
+		// not found and not a top-level item either.
+	}
+
 	return NULL;
 }
 
