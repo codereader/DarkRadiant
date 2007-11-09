@@ -623,8 +623,11 @@ public:
 			: m_mode(mode) {}
 
 	void render(RenderStateFlags state) const {
-		pointvertex_gl_array(&m_vector.front());
-		glDrawArrays(m_mode, 0, GLsizei(m_vector.size()));
+		if (m_vector.size() > 0)
+		{
+			pointvertex_gl_array(&m_vector.front());
+			glDrawArrays(m_mode, 0, GLsizei(m_vector.size()));
+		}
 	}
 
 	std::size_t size() const {
