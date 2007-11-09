@@ -115,7 +115,8 @@ namespace map {
 
 Map::Map() : 
 	m_resource(ReferenceCache::ResourcePtr()),
-	m_valid(false)
+	m_valid(false),
+	_saveInProgress(false)
 {}
 
 void Map::realiseResource() {
@@ -418,6 +419,10 @@ void Map::load(const std::string& filename) {
 }
 
 void Map::save() {
+	if (_saveInProgress) return; // safeguard
+
+	_saveInProgress = true;
+	
 	// Store the camview position into worldspawn
 	saveCameraPosition();
 	
@@ -446,6 +451,8 @@ void Map::save() {
 	
 	// Clear the modified flag
 	setModified(false);
+
+	_saveInProgress = false;
 }
 
 void Map::createNew() {
@@ -503,6 +510,10 @@ bool Map::import(const std::string& filename) {
 }
 
 void Map::saveDirect(const std::string& filename) {
+	if (_saveInProgress) return; // safeguard
+
+	_saveInProgress = true;
+
 	// Substract the origin from child primitives (of entities like func_static)
 	selection::algorithm::removeOriginFromChildPrimitives();
 	
@@ -514,10 +525,16 @@ void Map::saveDirect(const std::string& filename) {
 	);
 	
 	// Re-add the origins to the child primitives (of entities like func_static)
-	selection::algorithm::addOriginToChildPrimitives(); 
+	selection::algorithm::addOriginToChildPrimitives();
+
+	_saveInProgress = false;
 }
 
 bool Map::saveSelected(const std::string& filename) {
+	if (_saveInProgress) return false; // safeguard
+
+	_saveInProgress = true;
+
 	// Substract the origin from child primitives (of entities like func_static)
 	selection::algorithm::removeOriginFromChildPrimitives();
 	
@@ -528,6 +545,8 @@ bool Map::saveSelected(const std::string& filename) {
 
 	// Add the origin to all the children of func_static, etc.
 	selection::algorithm::addOriginToChildPrimitives();
+
+	_saveInProgress = false;
 
 	return success;
 }
@@ -569,6 +588,8 @@ bool Map::askForSave(const std::string& title) {
 }
 
 bool Map::saveAs() {
+	if (_saveInProgress) return false; // safeguard
+
 	std::string filename = map::MapFileManager::getMapFilename(false, "Save Map");
   
 	if (!filename.empty()) {
