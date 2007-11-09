@@ -53,8 +53,9 @@ ModelSelector::ModelSelector()
 	gint h = gdk_screen_get_height(scr);
 	
 	// Size the model preview widget
-	float previewHeightFactor = boost::lexical_cast<float>(
-		GlobalRegistry().get("user/ui/ModelSelector/previewSizeFactor"));
+	float previewHeightFactor = GlobalRegistry().getFloat(
+		"user/ui/ModelSelector/previewSizeFactor"
+	);
 	gint glSize = gint(h * previewHeightFactor);
 	_modelPreview.setSize(glSize);
 

@@ -8,6 +8,8 @@
 #include <GL/glew.h>
 #include <string>
 
+#include "ui/menu/FiltersMenu.h"
+
 namespace ui
 {
 	
@@ -41,6 +43,9 @@ class ModelPreview
 	
 	// Current rotation matrix
 	Matrix4 _rotation;
+
+	// Constructs the filters menu (provides a GtkWidget* operator)
+	FiltersMenu _filtersMenu;
 	
 private:
 

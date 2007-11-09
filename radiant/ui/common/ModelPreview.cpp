@@ -42,10 +42,14 @@ ModelPreview::ModelPreview()
 	g_signal_connect(G_OBJECT(_glWidget), "motion-notify-event", G_CALLBACK(callbackGLMotion), this);
 	g_signal_connect(G_OBJECT(_glWidget), "scroll-event", G_CALLBACK(callbackGLScroll), this);
 	
+	// The HBox containing the toolbar and the menubar
+	GtkWidget* toolHBox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(vbx), toolHBox, FALSE, FALSE, 0);
+
 	// Create the toolbar
 	GtkWidget* toolbar = gtk_toolbar_new();
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
-	gtk_box_pack_end(GTK_BOX(vbx), toolbar, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(toolHBox), toolbar, TRUE, TRUE, 0);
 		
 	// Draw bounding box toolbar button
 	_drawBBox = gtk_toggle_tool_button_new();
@@ -55,7 +59,10 @@ ModelPreview::ModelPreview()
 		gtk_image_new_from_pixbuf(
 			GlobalRadiant().getLocalPixbuf("iconDrawBBox.png")));
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), _drawBBox, 0);
-		
+	
+	// Create the menu
+	gtk_box_pack_end(GTK_BOX(toolHBox), _filtersMenu, FALSE, FALSE, 0);
+
 	// Pack into a frame and return
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
 }
@@ -92,9 +99,9 @@ void ModelPreview::initialisePreview() {
 	glEnable(GL_LIGHTING);
 
 	glEnable(GL_LIGHT0);
-	GLfloat l0Amb[] = { 0.3, 0.3, 0.3, 1.0 };
-	GLfloat l0Dif[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat l0Pos[] = { 1.0, 1.0, 1.0, 0.0 };
+	GLfloat l0Amb[] = { 0.3f, 0.3f, 0.3f, 1.0f };
+	GLfloat l0Dif[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	GLfloat l0Pos[] = { 1.0f, 1.0f, 1.0f, 0.0f };
 	glLightfv(GL_LIGHT0, GL_AMBIENT, l0Amb);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, l0Dif);
 	glLightfv(GL_LIGHT0, GL_POSITION, l0Pos);
@@ -171,7 +178,7 @@ void ModelPreview::callbackGLDraw(GtkWidget* widget,
 	gtkutil::GLWidgetSentry sentry(self->_glWidget);
 
 	// Set up the render
-	glClearColor(0.2, 0.2, 0.2, 0.0);
+	glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Get the current model if it exists, and if so get its AABB and proceed
