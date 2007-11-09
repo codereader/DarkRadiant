@@ -656,7 +656,8 @@ void Map::saveMap() {
 	if (GlobalMap().isUnnamed()) {
 		GlobalMap().saveAs();
 	}
-	else if(GlobalMap().isModified()) {
+	// greebo: Always let the map be saved, regardless of the modified status.
+	else /*if(GlobalMap().isModified())*/ {
 		GlobalMap().save();
 	}
 }
