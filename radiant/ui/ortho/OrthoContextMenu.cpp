@@ -151,9 +151,10 @@ void OrthoContextMenu::checkAddOptions() {
 	gtk_widget_set_sensitive(_addPlayerStart, info.entityCount == 0 ? TRUE : FALSE);
 	gtk_widget_set_sensitive(_movePlayerStart, info.entityCount == 0 ? TRUE : FALSE);
 	gtk_widget_set_sensitive(_addLight, info.entityCount == 0 ? TRUE : FALSE);
-	
-	// Add speaker is disabled if anything is selected
+		
+	// Add speaker/model is disabled if anything is selected
 	gtk_widget_set_sensitive(_addSpkr, info.totalCount == 0 ? TRUE : FALSE);
+	gtk_widget_set_sensitive(_addModel, info.totalCount == 0 ? TRUE : FALSE);
 }
 
 void OrthoContextMenu::checkPlayerStart() {
