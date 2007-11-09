@@ -54,8 +54,6 @@ class StimResponseEditor :
 	CustomStimEditor _customStimEditor;
 
 public:
-	static bool instantiated;
-
 	StimResponseEditor();
 	
 	/** greebo: Accessor method for the singleton instance
@@ -64,6 +62,9 @@ public:
 	
 	// Command target to toggle the dialog
 	static void toggle();
+
+	// Destroys the locally held instance (if there is one) 
+	static void destroyInstance();
 	
 	/** greebo: Some sort of "soft" destructor that de-registers
 	 * this class from the SelectionSystem, saves the window state, etc.

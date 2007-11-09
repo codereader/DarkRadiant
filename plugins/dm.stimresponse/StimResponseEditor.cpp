@@ -65,8 +65,6 @@ StimResponseEditor::StimResponseEditor() :
 	
 	_windowPosition.connect(GTK_WINDOW(getWindow()));
 	_windowPosition.applyPosition();
-	
-	instantiated = true;
 }
 
 void StimResponseEditor::onRadiantShutdown() {
@@ -81,9 +79,6 @@ void StimResponseEditor::onRadiantShutdown() {
 	
 	// Invoke the destroy chain of the TransientWindow hierarchy
 	destroy();
-	
-	// Disconnect self from Radiant after we've shut down
-	GlobalRadiant().removeEventListener(InstancePtr());
 }
 
 void StimResponseEditor::_preHide() {
@@ -265,25 +260,25 @@ void StimResponseEditor::toggle() {
 	Instance().toggleWindow();
 }
 
+void StimResponseEditor::destroyInstance() {
+	InstancePtr() = StimResponseEditorPtr();
+}
+
 StimResponseEditorPtr& StimResponseEditor::InstancePtr() {
 	static StimResponseEditorPtr _instancePtr;
-		
-	if (_instancePtr == NULL) {
-		// Not yet instantiated, do it now
-		_instancePtr = StimResponseEditorPtr(new StimResponseEditor);
-		
-		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().addEventListener(_instancePtr);
-	}
-	
 	return _instancePtr;
 }
 
 StimResponseEditor& StimResponseEditor::Instance() {
+	// Check if the instanceptr is still NULL (= not instantiated yet)
+	if (InstancePtr() == NULL) {
+		// Not yet instantiated, do it now
+		InstancePtr() = StimResponseEditorPtr(new StimResponseEditor);
+		// Register this instance with GlobalRadiant() at once
+		GlobalRadiant().addEventListener(InstancePtr());
+	}
+
 	return *InstancePtr();
 }
-
-// Initialise the static boolean
-bool ui::StimResponseEditor::instantiated = false;
 
 } // namespace ui

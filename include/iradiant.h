@@ -91,6 +91,8 @@ public:
 	virtual void onRadiantStartup() {}
 	
 	/** Gets called when BEFORE the MainFrame window is destroyed.
+	 *  Note: After this call, the EventListeners are deregistered from the
+	 *        Radiant module, all the internally held shared_ptrs are cleared.
 	 */
 	virtual void onRadiantShutdown() {}
 };
