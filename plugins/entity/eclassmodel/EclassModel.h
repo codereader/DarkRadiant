@@ -15,7 +15,7 @@
 #include "../model.h"
 #include "../namedentity.h"
 #include "../namekeys.h"
-#include "../modelskinkey.h"
+#include "../SkinChangedWalker.h"
 #include "../Doom3Entity.h"
 
 namespace entity {

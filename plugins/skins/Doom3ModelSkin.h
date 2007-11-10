@@ -23,9 +23,6 @@ class Doom3ModelSkin
 	typedef std::map<std::string, std::string> StringMap;
 	StringMap _remaps;
 	
-	// List of observers
-	ModuleObservers _observers;
-	
 	std::string _name;
 	std::string _skinFileName;
 	
@@ -46,22 +43,6 @@ public:
 		return _skinFileName;
 	}
 
-	/**
-	 * Attach a ModuleObserver.
-	 */
-	void attach(ModuleObserver& observer) {
-		_observers.attach(observer);
-		observer.realise();
-	}
-	
-	/**
-	 * Detach a ModuleObserver.
-	 */
-	void detach(ModuleObserver& observer) {
-		observer.unrealise();
-		_observers.detach(observer);
-	}
-	
 	// Get this skin's remap for the provided material name (if any).
 	std::string getRemap(const std::string& name) const {
 		StringMap::const_iterator i = _remaps.find(name);

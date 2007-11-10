@@ -292,14 +292,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\entity\modelskinkey.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\entity\modelskinkey.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\plugins\entity\namedentity.cpp"
 				>
 			</File>
@@ -345,6 +337,10 @@
 			</File>
 			<File
 				RelativePath="..\..\plugins\entity\scale.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\entity\SkinChangedWalker.h"
 				>
 			</File>
 			<File
