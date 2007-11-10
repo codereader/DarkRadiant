@@ -281,7 +281,6 @@ entity_src = [
 	'scale.cpp',
 	'targetable.cpp',
 	'rotation.cpp',
-	'modelskinkey.cpp',
 	'Doom3Entity.cpp',
 	'KeyValue.cpp',
 	'curve/Curve.cpp',

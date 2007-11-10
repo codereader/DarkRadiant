@@ -13,7 +13,7 @@
 #include "../rotation.h"
 #include "../namedentity.h"
 #include "../namekeys.h"
-#include "../modelskinkey.h"
+#include "../SkinChangedWalker.h"
 #include "../Doom3Entity.h"
 #include "../curve/CurveCatmullRom.h"
 #include "../curve/CurveNURBS.h"

@@ -30,12 +30,6 @@ class ModuleObserver;
 class ModelSkin
 {
 public:
-	/// \brief Attach an \p observer whose realise() and unrealise() methods will be called when the skin is loaded or unloaded.
-	virtual void attach(ModuleObserver& observer) = 0;
-	
-	/// \brief Detach an \p observer previously-attached by calling \c attach.
-	virtual void detach(ModuleObserver& observer) = 0;
-
 	/**
 	 * Get the mapped texture for the given query texture, using the mappings
 	 * in this skin. If there is no mapping for the given texture, return an
