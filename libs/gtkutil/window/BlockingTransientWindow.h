@@ -32,6 +32,7 @@ private:
 	virtual void _postDestroy() {
 		if (_isShown) {
 			gtk_main_quit();
+			_isShown = false;
 		}
 	}
 	

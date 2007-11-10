@@ -188,7 +188,10 @@ void EffectEditor::createArgumentWidgets(ResponseEffect& effect) {
 	// Remove the old table if there exists one
 	if (_argTable != NULL) {
 		// This removes the old table from the alignment container
-		gtk_widget_destroy(_argTable);
+		// greebo: Increase the refCount of the table to prevent destruction.
+		// Destruction would cause weird shutdown crashes.
+		g_object_ref(G_OBJECT(_argTable));
+		gtk_container_remove(GTK_CONTAINER(_argAlignment), _argTable);
 	}
 	
 	// Create the tooltips group for the help mouseover texts
