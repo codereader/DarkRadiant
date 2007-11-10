@@ -189,7 +189,7 @@ public:
     if(euler[0] == 0 && euler[1] == 0 && !isModel)
     {
       entity->setKeyValue("rotation", "");
-      write_angle(euler[2], entity);
+      write_angle(static_cast<float>(euler[2]), entity);
     }
     else
     {
