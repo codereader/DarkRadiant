@@ -4,7 +4,7 @@
 #include "ientity.h"
 #include "iradiant.h"
 #include "gtkutil/WindowPosition.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
+#include "gtkutil/window/BlockingTransientWindow.h"
 
 #include "StimTypes.h"
 #include "SREntity.h"
@@ -21,8 +21,7 @@ class StimResponseEditor;
 typedef boost::shared_ptr<StimResponseEditor> StimResponseEditorPtr;
 
 class StimResponseEditor :
-	public gtkutil::PersistentTransientWindow,
-	public RadiantEventListener
+	public gtkutil::BlockingTransientWindow
 {
 	// The overall dialog vbox (used to quickly disable the whole dialog)
 	GtkWidget* _dialogVBox;
@@ -31,7 +30,7 @@ class StimResponseEditor :
 	int _stimPageNum;
 	int _responsePageNum;
 	int _customStimPageNum;
-	int _lastShownPage;
+	static int _lastShownPage;
 	
 	// The close button to toggle the view
 	GtkWidget* _closeButton;
@@ -56,25 +55,10 @@ class StimResponseEditor :
 public:
 	StimResponseEditor();
 	
-	/** greebo: Accessor method for the singleton instance
-	 */
-	static StimResponseEditor& Instance();
-	
 	// Command target to toggle the dialog
-	static void toggle();
+	static void showDialog();
 
-	// Destroys the locally held instance (if there is one) 
-	static void destroyInstance();
-	
-	/** greebo: Some sort of "soft" destructor that de-registers
-	 * this class from the SelectionSystem, saves the window state, etc.
-	 */
-	virtual void onRadiantShutdown();
-	
 private:
-	// This is where the singleton instance shared_ptr is held 
-	static StimResponseEditorPtr& InstancePtr();
-	
 	virtual void _preHide();
 	virtual void _preShow();
 	
@@ -90,12 +74,6 @@ private:
 	 */
 	void rescanSelection();
 
-	/** greebo: This toggles the visibility of the S/R Editor.
-	 * The dialog is constructed only once and never destructed 
-	 * during runtime.
-	 */
-	void toggleWindow();
-	
 	// Button callbacks
 	static void onSave(GtkWidget* button, StimResponseEditor* self);
 	static void onClose(GtkWidget* button, StimResponseEditor* self);

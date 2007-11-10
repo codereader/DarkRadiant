@@ -49,7 +49,7 @@ public:
 		// Add the callback event
 		GlobalEventManager().addCommand(
 			"StimResponseEditor", 
-			FreeCaller<ui::StimResponseEditor::toggle>()
+			FreeCaller<ui::StimResponseEditor::showDialog>()
 		);
 	
 		// Add the menu item
@@ -60,11 +60,6 @@ public:
 				"Stim/Response...",	// caption
 				"stimresponse.png",	// icon
 				"StimResponseEditor"); // event name
-	}
-
-	virtual void shutdownModule() {
-		// Clear the shared_ptr, in case it holds an instance
-		ui::StimResponseEditor::destroyInstance();
 	}
 };
 typedef boost::shared_ptr<StimResponseModule> StimResponseModulePtr;

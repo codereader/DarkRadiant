@@ -39,7 +39,7 @@ namespace {
 }
 
 StimResponseEditor::StimResponseEditor() :
-	gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow(), true),
+	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow()),
 	_entity(NULL),
 	_stimEditor(_stimTypes),
 	_responseEditor(getWindow(), _stimTypes),
@@ -65,9 +65,14 @@ StimResponseEditor::StimResponseEditor() :
 	
 	_windowPosition.connect(GTK_WINDOW(getWindow()));
 	_windowPosition.applyPosition();
+
+	// Show the dialog, this enters the gtk main loop
+	show();
 }
 
-void StimResponseEditor::onRadiantShutdown() {
+void StimResponseEditor::_preHide() {
+	_lastShownPage = gtk_notebook_get_current_page(_notebook);
+	
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
 	
@@ -76,15 +81,6 @@ void StimResponseEditor::onRadiantShutdown() {
 	
 	// Tell the position tracker to save the information
 	_windowPosition.saveToNode(node);
-	
-	// Invoke the destroy chain of the TransientWindow hierarchy
-	destroy();
-}
-
-void StimResponseEditor::_preHide() {
-	_lastShownPage = gtk_notebook_get_current_page(_notebook);
-	// Save the window position, to make sure
-	_windowPosition.readPosition();
 }
 
 void StimResponseEditor::_preShow() {
@@ -101,20 +97,6 @@ void StimResponseEditor::_preShow() {
 		gtk_widget_show_all(getWindow());
 		// Show the last shown page
 		gtk_notebook_set_current_page(_notebook, _lastShownPage);
-	}
-	else {
-		gtkutil::errorDialog(NO_ENTITY_ERROR, 
-							 GlobalRadiant().getMainWindow());
-		gtk_widget_hide_all(getWindow());
-	}
-}
-
-void StimResponseEditor::toggleWindow() {
-	if (isVisible()) {
-		hide();
-	}
-	else {
-		show();
 	}
 }
 
@@ -161,7 +143,10 @@ void StimResponseEditor::populateWindow() {
 	_stimPageNum = gtk_notebook_append_page(_notebook, _stimEditor, stimLabelHBox);
 	_responsePageNum = gtk_notebook_append_page(_notebook, _responseEditor, responseLabelHBox);
 	_customStimPageNum = gtk_notebook_append_page(_notebook, _customStimEditor, customLabelHBox);
-	_lastShownPage = _stimPageNum;
+
+	if (_lastShownPage == -1) {
+		_lastShownPage = _stimPageNum;
+	}
 	
 	// Pack in dialog buttons
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), createButtons(), FALSE, FALSE, 0);
@@ -235,18 +220,18 @@ void StimResponseEditor::save() {
 
 void StimResponseEditor::onSave(GtkWidget* button, StimResponseEditor* self) {
 	self->save();
-	self->toggleWindow();
+	self->destroy();
 }
 
 void StimResponseEditor::onClose(GtkWidget* button, StimResponseEditor* self) {
-	self->toggleWindow();
+	self->destroy();
 }
 
 gboolean StimResponseEditor::onWindowKeyPress(
 	GtkWidget* dialog, GdkEventKey* event, StimResponseEditor* self)
 {
 	if (event->keyval == GDK_Escape) {
-		self->toggleWindow();
+		self->destroy();
 		// Catch this keyevent, don't propagate
 		return TRUE;
 	}
@@ -256,29 +241,19 @@ gboolean StimResponseEditor::onWindowKeyPress(
 }
 
 // Static command target
-void StimResponseEditor::toggle() {
-	Instance().toggleWindow();
-}
+void StimResponseEditor::showDialog() {
+	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
-void StimResponseEditor::destroyInstance() {
-	InstancePtr() = StimResponseEditorPtr();
-}
-
-StimResponseEditorPtr& StimResponseEditor::InstancePtr() {
-	static StimResponseEditorPtr _instancePtr;
-	return _instancePtr;
-}
-
-StimResponseEditor& StimResponseEditor::Instance() {
-	// Check if the instanceptr is still NULL (= not instantiated yet)
-	if (InstancePtr() == NULL) {
-		// Not yet instantiated, do it now
-		InstancePtr() = StimResponseEditorPtr(new StimResponseEditor);
-		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().addEventListener(InstancePtr());
+	if (info.entityCount == 1 && info.totalCount == 1) {
+		// Construct a new instance, this enters the main loop
+		StimResponseEditor _editor;
 	}
-
-	return *InstancePtr();
+	else {
+		// Exactly one entity must be selected.
+		gtkutil::errorDialog(NO_ENTITY_ERROR, GlobalRadiant().getMainWindow());
+	}
 }
+
+int StimResponseEditor::_lastShownPage = -1;
 
 } // namespace ui
