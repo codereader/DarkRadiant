@@ -15,6 +15,7 @@
 		<menuItem name="saveRegion" caption="Save _Region..." command="SaveRegion" />
 		<menuSeparator />
 		<menuItem name="refreshModels" caption="_Refresh Models" command="RefreshReferences" />
+		<menuItem name="reloadSkins" caption="Reload S_kins" command="ReloadSkins" />
 		<menuSeparator />
 		<menuItem name="gameSelector" caption="Select _Game..." command="ProjectSettings" />
 		<menuSeparator />
