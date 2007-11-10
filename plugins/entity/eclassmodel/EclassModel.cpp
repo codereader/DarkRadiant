@@ -53,7 +53,6 @@ void EclassModel::construct() {
 	m_keyObservers.insert("angle", RotationKey::AngleChangedCaller(m_rotationKey));
 	m_keyObservers.insert("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
 	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
-	m_keyObservers.insert("skin", SkinChangedCaller(*this));
 }
 
 void EclassModel::updateTransform() {
@@ -79,27 +78,16 @@ void EclassModel::rotationChanged() {
 	updateTransform();
 }
 
-void EclassModel::skinChanged(const std::string& value) {
-	scene::INodePtr node = m_model.getNode();
-
-	if (node != NULL) {
-		// Update all child instances with the new skin value
-		Node_modelSkinChanged(node, value);
-	}
-}
-
 void EclassModel::instanceAttach(const scene::Path& path) {
 	if(++m_instanceCounter.m_count == 1) {
 		m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
 		m_entity.attach(m_keyObservers);
 		m_model.modelChanged(m_entity.getEntityClass()->getModelPath());
-		skinChanged(m_entity.getEntityClass()->getSkin());
 	}
 }
 	
 void EclassModel::instanceDetach(const scene::Path& path) {
 	if (--m_instanceCounter.m_count == 0) {
-		skinChanged("");
 		m_model.modelChanged("");
 		m_entity.detach(m_keyObservers);
 		m_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
