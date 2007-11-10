@@ -81,6 +81,8 @@ public:
 
 	// Skin changed notify (SkinnedModel implementation)
 	void skinChanged(const std::string& newSkinName);
+	// Returns the name of the currently active skin
+	std::string getSkin() const;
 	
 	/* Instance render function */
 	void submitRenderables(Renderer& renderer, 

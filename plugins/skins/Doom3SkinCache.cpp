@@ -181,6 +181,14 @@ const StringSet& Doom3SkinCache::getDependencies() const {
 	return _dependencies;
 }
 
+void Doom3SkinCache::refresh() {
+	_modelSkins.clear();
+	_namedSkins.clear();
+	_allSkins.clear();
+
+	_realised = false;
+}
+
 void Doom3SkinCache::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "Doom3SkinCache::initialiseModule called\n";
 	

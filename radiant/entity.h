@@ -70,4 +70,7 @@ const char* misc_model_dialog(GtkWidget* parent);
 void Entity_Construct();
 void Entity_Destroy();
 
+// Triggers a SkinCache refresh
+void ReloadSkins();
+
 #endif

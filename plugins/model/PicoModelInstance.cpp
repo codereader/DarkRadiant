@@ -67,6 +67,11 @@ void PicoModelInstance::skinChanged(const std::string& newSkinName) {
 	GlobalSceneGraph().sceneChanged();
 }
 
+// Returns the name of the currently active skin
+std::string PicoModelInstance::getSkin() const {
+	return _skin;
+}
+
 // Renderable submission
 void PicoModelInstance::submitRenderables(Renderer& renderer, 
 										  const VolumeTest& volume, 

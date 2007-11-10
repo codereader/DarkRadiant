@@ -228,6 +228,12 @@ public:
       }
     }
   }
+
+  // Returns the name of the currently active skin
+  virtual std::string getSkin() const {
+	  return _skin;
+  }
+
   void skinChanged(const std::string& newSkinName)
   {
     ASSERT_MESSAGE(_surfaceRemaps.size() == m_model.size(), "ERROR");

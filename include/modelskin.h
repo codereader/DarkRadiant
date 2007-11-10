@@ -44,6 +44,9 @@ class SkinnedModel
 public:
 	// greebo: Updates the model's surface remaps. Pass the new skin name (can be empty).
 	virtual void skinChanged(const std::string& newSkinName) = 0;
+
+	// Returns the name of the currently active skin
+	virtual std::string getSkin() const = 0;
 };
 
 // Model skinlist typedef
@@ -82,6 +85,11 @@ public:
 	 * Return the complete list of available skins.
 	 */
 	virtual const StringList& getAllSkins() = 0;
+
+	/**
+	 * greebo: Reloads all skins from the definition files.
+	 */
+	virtual void refresh() = 0;
 };
 
 inline ModelSkinCache& GlobalModelSkinCache() {
