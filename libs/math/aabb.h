@@ -80,7 +80,7 @@ public:
 	/** Get the radius of the smallest sphere which encloses this
 	 * bounding box.
 	 */
-	float getRadius() const {
+	double getRadius() const {
 		return extents.getLength(); // Pythagorean length of extents vector	
 	}
 

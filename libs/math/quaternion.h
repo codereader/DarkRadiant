@@ -198,7 +198,7 @@ inline Matrix4 matrix4_rotation_for_quaternion(const Quaternion& quaternion)
 const double c_half_sqrt2 = 0.70710678118654752440084436210485;
 const float c_half_sqrt2f = static_cast<float>(c_half_sqrt2);
 
-inline bool quaternion_component_is_90(float component)
+inline bool quaternion_component_is_90(double component)
 {
   return (fabs(component) - c_half_sqrt2) < 0.001;
 }

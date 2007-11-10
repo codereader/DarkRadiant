@@ -31,7 +31,7 @@ class PicoModelInstance :
   public Cullable
 {
 	// Reference to the actual model
-	model::RenderablePicoModel& _picoModel;
+	RenderablePicoModel& _picoModel;
 
 	// The light list from the shader cache when we attach
 	const LightList& _lightList;
