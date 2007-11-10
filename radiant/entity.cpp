@@ -56,7 +56,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		const std::string RKEY_CURVE_CATMULLROM_KEY = "game/defaults/curveCatmullRomKey";
 	}
 
-class SkinChangedWalker :
+class RefreshSkinWalker :
 	public scene::Graph::Walker
 {
 public:
@@ -76,7 +76,7 @@ public:
 
 void ReloadSkins() {
 	GlobalModelSkinCache().refresh();
-	GlobalSceneGraph().traverse(SkinChangedWalker());
+	GlobalSceneGraph().traverse(RefreshSkinWalker());
 }
 
 class EntitySetKeyValueSelected : public scene::Graph::Walker
