@@ -83,6 +83,11 @@ public:
 		realise();
 		return _allSkins;
 	}
+
+	/**
+	 * greebo: Clears and reloads all skins.
+	 */
+	void refresh();
 	
 	/* Parse the provided istream as a .skin file, and add all skins found within
 	 * to the internal data structures.

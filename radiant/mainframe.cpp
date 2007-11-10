@@ -1635,6 +1635,7 @@ void MainFrame_Construct()
 	GlobalFilterSystem().initialise();
 	
 	GlobalEventManager().addCommand("RefreshReferences", FreeCaller<RefreshReferences>());
+	GlobalEventManager().addCommand("ReloadSkins", FreeCaller<ReloadSkins>());
 	GlobalEventManager().addCommand("ProjectSettings", FreeCaller<ui::PrefDialog::showProjectSettings>());
 	GlobalEventManager().addCommand("Exit", FreeCaller<Exit>());
 	

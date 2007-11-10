@@ -56,6 +56,29 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		const std::string RKEY_CURVE_CATMULLROM_KEY = "game/defaults/curveCatmullRomKey";
 	}
 
+class SkinChangedWalker :
+	public scene::Graph::Walker
+{
+public:
+
+	virtual bool pre(const scene::Path& path, scene::Instance& instance) const {
+		// Check if we have a skinnable model
+		SkinnedModel* skinned = dynamic_cast<SkinnedModel*>(&instance);
+
+		if (skinned != NULL) {
+			// Let the skinned model reload its current skin.
+			skinned->skinChanged(skinned->getSkin());
+		}
+
+		return true; // traverse children
+	}
+};
+
+void ReloadSkins() {
+	GlobalModelSkinCache().refresh();
+	GlobalSceneGraph().traverse(SkinChangedWalker());
+}
+
 class EntitySetKeyValueSelected : public scene::Graph::Walker
 {
   const char* m_key;
