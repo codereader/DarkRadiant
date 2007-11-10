@@ -19,7 +19,6 @@ EclassModel::EclassModel(IEntityClassPtr eclass,
 	m_nameKeys(m_entity),
 	m_renderOrigin(m_origin),
 	m_renderName(m_named, g_vector3_identity),
-	m_skin(SkinChangedCaller(*this)),
 	m_transformChanged(transformChanged),
 	m_evaluateTransform(evaluateTransform)
 {
@@ -41,7 +40,6 @@ EclassModel::EclassModel(const EclassModel& other,
 	m_nameKeys(m_entity),
 	m_renderOrigin(m_origin),
 	m_renderName(m_named, g_vector3_identity),
-	m_skin(SkinChangedCaller(*this)),
 	m_transformChanged(transformChanged),
 	m_evaluateTransform(evaluateTransform)
 {
@@ -55,6 +53,7 @@ void EclassModel::construct() {
 	m_keyObservers.insert("angle", RotationKey::AngleChangedCaller(m_rotationKey));
 	m_keyObservers.insert("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
 	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
+	m_keyObservers.insert("skin", SkinChangedCaller(*this));
 }
 
 void EclassModel::updateTransform() {
@@ -80,10 +79,12 @@ void EclassModel::rotationChanged() {
 	updateTransform();
 }
 
-void EclassModel::skinChanged() {
+void EclassModel::skinChanged(const std::string& value) {
 	scene::INodePtr node = m_model.getNode();
-	if(node != NULL) {
-		Node_modelSkinChanged(node);
+
+	if (node != NULL) {
+		// Update all child instances with the new skin value
+		Node_modelSkinChanged(node, value);
 	}
 }
 
@@ -92,17 +93,29 @@ void EclassModel::instanceAttach(const scene::Path& path) {
 		m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
 		m_entity.attach(m_keyObservers);
 		m_model.modelChanged(m_entity.getEntityClass()->getModelPath());
-		m_skin.skinChanged(m_entity.getEntityClass()->getSkin().c_str());
+		skinChanged(m_entity.getEntityClass()->getSkin());
 	}
 }
 	
 void EclassModel::instanceDetach(const scene::Path& path) {
 	if (--m_instanceCounter.m_count == 0) {
-		m_skin.skinChanged("");
+		skinChanged("");
 		m_model.modelChanged("");
 		m_entity.detach(m_keyObservers);
 		m_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 	}
+}
+
+void EclassModel::addKeyObserver(const std::string& key, const KeyObserver& observer) {
+	m_entity.detach(m_keyObservers); // detach first
+
+	m_keyObservers.insert(key, observer);
+
+	m_entity.attach(m_keyObservers); // attach again
+}
+
+void EclassModel::removeKeyObserver(const std::string& key, const KeyObserver& observer) {
+	m_keyObservers.erase(key, observer);
 }
 
 Doom3Entity& EclassModel::getEntity() {
@@ -130,14 +143,6 @@ TransformNode& EclassModel::getTransformNode() {
 
 const TransformNode& EclassModel::getTransformNode() const {
 	return m_transform;
-}
-
-ModelSkin& EclassModel::getModelSkin() {
-	return m_skin.get();
-}
-
-const ModelSkin& EclassModel::getModelSkin() const {
-	return m_skin.get();
 }
 
 void EclassModel::renderSolid(Renderer& renderer, 

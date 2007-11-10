@@ -23,7 +23,6 @@ EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	TraversableNodeSet(), // don't copy the TraversableNodeSet from the other node
 	EntityNode(other),
 	Namespaced(other),
-	ModelSkin(other),
 	m_contained(other.m_contained, 
 				*this, // pass <self> as scene::Traversable&
 				InstanceSet::TransformChangedCaller(m_instances), 
@@ -64,18 +63,6 @@ Entity& EclassModelNode::getEntity() {
 // Namespaced implementation
 void EclassModelNode::setNamespace(INamespace& space) {
 	m_contained.getNamespaced().setNamespace(space);
-}
-
-void EclassModelNode::attach(ModuleObserver& observer) {
-	m_contained.getModelSkin().attach(observer);
-}
-
-void EclassModelNode::detach(ModuleObserver& observer) {
-	m_contained.getModelSkin().detach(observer);
-}
-
-std::string EclassModelNode::getRemap(const std::string& name) const {
-	return m_contained.getModelSkin().getRemap(name);
 }
 
 scene::INodePtr EclassModelNode::clone() const {

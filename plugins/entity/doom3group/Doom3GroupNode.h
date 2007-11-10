@@ -20,8 +20,7 @@ class Doom3GroupNode :
 	public TransformNode,
 	public TraversableNodeSet, // implements scene::Traversable
 	public EntityNode,
-	public Namespaced,
-	public ModelSkin
+	public Namespaced
 {
 	// The Child instances of this node
 	InstanceSet m_instances;
@@ -35,11 +34,6 @@ public:
 
 	~Doom3GroupNode();
 	
-	// ModelSkin implementation
-	virtual void attach(ModuleObserver& observer);	
-	virtual void detach(ModuleObserver& observer);
-	virtual std::string getRemap(const std::string& name) const;
-
 	// EntityNode implementation
 	virtual Entity& getEntity();
 

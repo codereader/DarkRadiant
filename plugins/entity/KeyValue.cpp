@@ -11,7 +11,7 @@ KeyValue::KeyValue(const std::string& value, const std::string& empty) :
 }
 
 KeyValue::~KeyValue() {
-	ASSERT_MESSAGE(_observers.empty(), "KeyValue::~KeyValue: observers still attached");
+	//ASSERT_MESSAGE(_observers.empty(), "KeyValue::~KeyValue: observers still attached");
 }
 
 void KeyValue::setKeyValueChangedFunc(EntityCreator::KeyValueChangedFunc func) {

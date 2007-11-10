@@ -45,7 +45,7 @@ std::string parseTextureName(const std::string& token)
 
 } // local namespace
 
-class ModelSkinKey : public ModuleObserver
+/*class ModelSkinKey : public ModuleObserver
 {
   std::string m_name;
   ModelSkin* m_skin;
@@ -92,27 +92,53 @@ public:
   void unrealise()
   {
   }
-};
+};*/
 
-class InstanceSkinChanged : public scene::Instantiable::Visitor
+class InstanceSkinChanged : 
+	public scene::Instantiable::Visitor
 {
+	std::string _newSkinName;
 public:
-  void visit(scene::Instance& instance) const
-  {
-    //\todo don't do this for instances that are not children of the entity setting the skin
-    SkinnedModel* skinned = dynamic_cast<SkinnedModel*>(&instance);
-    if(skinned != 0)
-    {
-      skinned->skinChanged();
-    }
-  }
+	InstanceSkinChanged(const std::string& newSkinName) :
+	  _newSkinName(newSkinName)
+	{}
+
+	void visit(scene::Instance& instance) const {
+		//\todo don't do this for instances that are not children of the entity setting the skin
+		SkinnedModel* skinned = dynamic_cast<SkinnedModel*>(&instance);
+
+		if (skinned != NULL) {
+			skinned->skinChanged(_newSkinName);
+		}
+	}
 };
 
-inline void Node_modelSkinChanged(scene::INodePtr node)
+class SkinChangedWalker :
+	public scene::Graph::Walker
+{
+	std::string _newSkinName;
+public:
+	SkinChangedWalker(const std::string& newSkinName) :
+		_newSkinName(newSkinName)
+	{}
+
+	virtual bool pre(const scene::Path& path, scene::Instance& instance) const {
+		// Check if we have a skinnable model
+		SkinnedModel* skinned = dynamic_cast<SkinnedModel*>(&instance);
+
+		if (skinned != NULL) {
+			skinned->skinChanged(_newSkinName);
+		}
+
+		return true; // traverse children
+	}
+};
+
+inline void Node_modelSkinChanged(scene::INodePtr node, const std::string& newSkinName)
 {
   scene::InstantiablePtr instantiable = Node_getInstantiable(node);
   ASSERT_NOTNULL(instantiable);
-  instantiable->forEachInstance(InstanceSkinChanged());
+  instantiable->forEachInstance(InstanceSkinChanged(newSkinName));
 }
 
 #endif

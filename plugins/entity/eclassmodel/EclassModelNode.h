@@ -23,8 +23,7 @@ class EclassModelNode :
 	public TransformNode,
 	public TraversableNodeSet, // implements scene::Traversable
 	public EntityNode,
-	public Namespaced,
-	public ModelSkin
+	public Namespaced
 {
 	InstanceSet m_instances;
 	EclassModel m_contained;
@@ -48,11 +47,6 @@ public:
 
 	// Namespaced implementation
 	virtual void setNamespace(INamespace& space);
-
-	virtual void attach(ModuleObserver& observer);
-	virtual void detach(ModuleObserver& observer);
-
-	virtual std::string getRemap(const std::string& name) const;
 
 	scene::INodePtr clone() const;
 

@@ -106,15 +106,15 @@ inline Matrix4 rotation_toMatrix(const Float9 rotation)
 
 inline void rotation_fromMatrix(Float9 rotation, const Matrix4& matrix)
 {
-  rotation[0] = matrix.xx();
-  rotation[1] = matrix.xy();
-  rotation[2] = matrix.xz();
-  rotation[3] = matrix.yx();
-  rotation[4] = matrix.yy();
-  rotation[5] = matrix.yz();
-  rotation[6] = matrix.zx();
-  rotation[7] = matrix.zy();
-  rotation[8] = matrix.zz();
+  rotation[0] = static_cast<float>(matrix.xx());
+  rotation[1] = static_cast<float>(matrix.xy());
+  rotation[2] = static_cast<float>(matrix.xz());
+  rotation[3] = static_cast<float>(matrix.yx());
+  rotation[4] = static_cast<float>(matrix.yy());
+  rotation[5] = static_cast<float>(matrix.yz());
+  rotation[6] = static_cast<float>(matrix.zx());
+  rotation[7] = static_cast<float>(matrix.zy());
+  rotation[8] = static_cast<float>(matrix.zz());
 }
 
 inline void rotation_assign(Float9 rotation, const Float9 other)

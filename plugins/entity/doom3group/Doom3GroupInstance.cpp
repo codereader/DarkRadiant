@@ -15,7 +15,8 @@ Doom3GroupInstance::Doom3GroupInstance(const scene::Path& path,
 				 SelectionChangedComponentCaller(*this)),
 	m_curveCatmullRom(m_contained.m_curveCatmullRom, 
 					  SelectionChangedComponentCaller(*this)),
-	_originInstance(VertexInstance(m_contained.getOrigin(), SelectionChangedComponentCaller(*this)))
+	_originInstance(VertexInstance(m_contained.getOrigin(), SelectionChangedComponentCaller(*this))),
+	_updateSkin(true)
 {
 	m_contained.instanceAttach(Instance::path());
 	m_contained.m_curveNURBSChanged = m_contained.m_curveNURBS.connect(
@@ -26,9 +27,14 @@ Doom3GroupInstance::Doom3GroupInstance(const scene::Path& path,
 	);
 
 	StaticRenderableConnectionLines::instance().attach(*this);
+
+	// Attach the callback as keyobserver for the skin key
+	m_contained.addKeyObserver("skin", SkinChangedCaller(*this));
 }
 
 Doom3GroupInstance::~Doom3GroupInstance() {
+	m_contained.removeKeyObserver("skin", SkinChangedCaller(*this));
+
 	StaticRenderableConnectionLines::instance().detach(*this);
 
 	m_contained.m_curveCatmullRom.disconnect(m_contained.m_curveCatmullRomChanged);
@@ -72,6 +78,18 @@ void Doom3GroupInstance::convertCurveType() {
 }
 
 void Doom3GroupInstance::renderSolid(Renderer& renderer, const VolumeTest& volume) const {
+	// greebo: Check if the skin needs updating before rendering.
+	if (_updateSkin) {
+		if (m_contained.isModel()) {
+			// Instantiate a walker class equipped with the new value
+			SkinChangedWalker walker(m_contained.getEntity().getKeyValue("skin"));
+			// Update all children
+			GlobalSceneGraph().traverse_subgraph(walker, path());
+		}
+
+		_updateSkin = false;
+	}
+
 	m_contained.renderSolid(renderer, volume, Instance::localToWorld(), getSelectable().isSelected());
 
 	m_curveNURBS.renderComponentsSelected(renderer, volume, localToWorld());
@@ -203,6 +221,15 @@ void Doom3GroupInstance::selectionChangedComponent(const Selectable& selectable)
 
 const AABB& Doom3GroupInstance::localAABB() const {
 	return m_contained.localAABB();
+}
+
+void Doom3GroupInstance::skinChanged(const std::string& value) {
+	if (m_contained.isModel()) {
+		// Instantiate a walker class equipped with the new value
+		SkinChangedWalker walker(value);
+		// Update all children
+		GlobalSceneGraph().traverse_subgraph(walker, path());
+	}
 }
 
 } // namespace entity

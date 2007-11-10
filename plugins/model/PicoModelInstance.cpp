@@ -19,7 +19,7 @@ PicoModelInstance::PicoModelInstance(const scene::Path& path,
 	Instance::setTransformChangedCallback(LightsChangedCaller(*this));
 	
 	// Update the skin
-	skinChanged();
+	skinChanged("");
 }
 
 // Destructor
@@ -29,17 +29,18 @@ PicoModelInstance::~PicoModelInstance() {
 }
 
 // Skin changed notify
-void PicoModelInstance::skinChanged() {
+void PicoModelInstance::skinChanged(const std::string& newSkinName) {
 
-	// Get the model skin object from the parent entity and clear out our list
-	// of mapped surfaces
-	ModelSkinPtr skin = boost::dynamic_pointer_cast<ModelSkin>(path().parent());
+	// Clear all the surface mappings before doing anything
 	_mappedSurfs.clear();
-	
-	// If skin is null, return
-	if (skin == NULL)
-		return;
-		
+
+	// The new skin name is stored locally
+	_skin = newSkinName;
+
+	// greebo: Acquire the ModelSkin reference from the SkinCache
+	// Note: This always returns a valid reference
+	ModelSkin& skin = GlobalModelSkinCache().capture(_skin);
+
 	// Otherwise get the list of RenderablePicoSurfaces from the model and
 	// determine a texture remapping for each one
 	SurfaceList surfs = _picoModel.getSurfaces();
@@ -49,7 +50,7 @@ void PicoModelInstance::skinChanged() {
 	{
 		// Get the surface's material and test the skin for a remap
 		std::string material = (*i)->getActiveMaterial();
-		std::string mapped = skin->getRemap(material);
+		std::string mapped = skin.getRemap(material);
 		if (mapped.empty())
 			mapped = material; // use original material for remap
 		

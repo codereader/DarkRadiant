@@ -46,6 +46,9 @@ class PicoModelInstance :
 					   ShaderPtr> MappedSurface;
 	typedef std::vector<MappedSurface> MappedSurfaces;
 	MappedSurfaces _mappedSurfs;
+
+	// The name of this model's skin
+	std::string _skin;
 	
 public:
 	/* Main constructor */
@@ -54,7 +57,7 @@ public:
 					  model::RenderablePicoModel& picomodel); 
 
 	/* Destructor */	
-	~PicoModelInstance();
+	virtual ~PicoModelInstance();
 
 	// Bounded implementation
 	virtual const AABB& localAABB() const {
@@ -76,8 +79,8 @@ public:
   	typedef MemberCaller<PicoModelInstance, &PicoModelInstance::lightsChanged> 
   	LightsChangedCaller;
 
-	// Skin changed notify (from SkinnedModel)
-	void skinChanged();
+	// Skin changed notify (SkinnedModel implementation)
+	void skinChanged(const std::string& newSkinName);
 	
 	/* Instance render function */
 	void submitRenderables(Renderer& renderer, 

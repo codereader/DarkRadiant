@@ -40,7 +40,6 @@ Doom3Group::Doom3Group(IEntityClassPtr eclass,
 	m_nameKeys(_entity),
 	m_renderOrigin(m_nameOrigin),
 	m_renderName(m_named, m_nameOrigin),
-	m_skin(SkinChangedCaller(*this)),
 	m_transformChanged(transformChanged),
 	m_evaluateTransform(evaluateTransform),
 	m_curveNURBS(boundsChanged),
@@ -65,7 +64,6 @@ Doom3Group::Doom3Group(const Doom3Group& other,
 	m_nameKeys(_entity),
 	m_renderOrigin(m_nameOrigin),
 	m_renderName(m_named, m_nameOrigin),
-	m_skin(SkinChangedCaller(*this)),
 	m_transformChanged(transformChanged),
 	m_evaluateTransform(evaluateTransform),
 	m_curveNURBS(boundsChanged),
@@ -121,14 +119,6 @@ TransformNode& Doom3Group::getTransformNode() {
 
 const TransformNode& Doom3Group::getTransformNode() const {
 	return m_transform;
-}
-
-ModelSkin& Doom3Group::getModelSkin() {
-	return m_skin.get();
-}
-
-const ModelSkin& Doom3Group::getModelSkin() const {
-	return m_skin.get();
 }
 
 const AABB& Doom3Group::localAABB() const {
@@ -326,7 +316,6 @@ void Doom3Group::construct() {
 	m_keyObservers.insert("name", NameChangedCaller(*this));
 	m_keyObservers.insert(curve_Nurbs, CurveNURBS::CurveChangedCaller(m_curveNURBS));
 	m_keyObservers.insert(curve_CatmullRomSpline, CurveCatmullRom::CurveChangedCaller(m_curveCatmullRom));
-	m_keyObservers.insert("skin", ModelSkinKey::SkinChangedCaller(m_skin));
 
 	m_isModel = false;
 	m_nameKeys.setKeyIsName(NameKeys::keyIsNameDoom3Doom3Group);
@@ -336,6 +325,18 @@ void Doom3Group::construct() {
 
 void Doom3Group::destroy() {
 	_entity.detach(m_keyObservers);
+}
+
+void Doom3Group::addKeyObserver(const std::string& key, const KeyObserver& observer) {
+	_entity.detach(m_keyObservers); // detach first
+
+	m_keyObservers.insert(key, observer);
+
+	_entity.attach(m_keyObservers); // attach again
+}
+
+void Doom3Group::removeKeyObserver(const std::string& key, const KeyObserver& observer) {
+	m_keyObservers.erase(key, observer);
 }
 
 bool Doom3Group::isModel() const {
@@ -424,15 +425,6 @@ void Doom3Group::originChanged() {
 void Doom3Group::rotationChanged() {
 	rotation_assign(m_rotation, m_rotationKey.m_rotation);
 	updateTransform();
-}
-
-void Doom3Group::skinChanged() {
-	if (isModel()) {
-		scene::INodePtr node = m_model.getNode();
-		if (node != NULL) {
-			Node_modelSkinChanged(node);
-		}
-	}
 }
 
 } // namespace entity
