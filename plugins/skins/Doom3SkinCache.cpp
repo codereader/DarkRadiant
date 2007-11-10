@@ -183,6 +183,8 @@ const StringSet& Doom3SkinCache::getDependencies() const {
 
 void Doom3SkinCache::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "Doom3SkinCache::initialiseModule called\n";
+	
+	realise();
 }
 
 } // namespace skins
