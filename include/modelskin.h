@@ -48,8 +48,8 @@ typedef boost::shared_ptr<ModelSkin> ModelSkinPtr;
 class SkinnedModel
 {
 public:
-  /// \brief Instructs the skinned model to update its skin.
-  virtual void skinChanged() = 0;
+	// greebo: Updates the model's surface remaps. Pass the new skin name (can be empty).
+	virtual void skinChanged(const std::string& newSkinName) = 0;
 };
 
 // Model skinlist typedef

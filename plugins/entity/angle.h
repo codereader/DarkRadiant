@@ -90,12 +90,12 @@ public:
 
 inline float angle_rotated(float angle, const Quaternion& rotation)
 {
-  return matrix4_get_rotation_euler_xyz_degrees(
+  return static_cast<float>(matrix4_get_rotation_euler_xyz_degrees(
     matrix4_multiplied_by_matrix4(
       matrix4_rotation_for_z_degrees(angle),
       matrix4_rotation_for_quaternion_quantised(rotation)
     )
-  ).z();
+  ).z());
 }
 
 #endif

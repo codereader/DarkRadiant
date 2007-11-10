@@ -27,6 +27,9 @@ class Doom3GroupInstance :
 	
 	VertexInstance _originInstance;
 
+	// TRUE if the skin needs updating
+	mutable bool _updateSkin;
+
 public:
 	Doom3GroupInstance(const scene::Path& path, scene::Instance* parent, Doom3Group& contained);
 	~Doom3GroupInstance();
@@ -67,6 +70,9 @@ public:
 
 	void selectionChangedComponent(const Selectable& selectable);
 	typedef MemberCaller1<Doom3GroupInstance, const Selectable&, &Doom3GroupInstance::selectionChangedComponent> SelectionChangedComponentCaller;
+
+	void skinChanged(const std::string& value);
+	typedef MemberCaller1<Doom3GroupInstance, const std::string&, &Doom3GroupInstance::skinChanged> SkinChangedCaller;
 
 }; // class Doom3GroupInstance
 

@@ -171,7 +171,11 @@ class ModelInstance :
   };
   
   typedef Array<Remap> SurfaceRemaps;
-  SurfaceRemaps m_skins;
+  SurfaceRemaps _surfaceRemaps;
+
+  // The name of this model's skin
+  std::string _skin;
+
 public:
 	// Bounded implementation
 	virtual const AABB& localAABB() const {
@@ -193,29 +197,30 @@ public:
 
   void constructRemaps()
   {
-    ModelSkinPtr skin = boost::dynamic_pointer_cast<ModelSkin>(path().parent());
-    if(skin != NULL)
+	// greebo: Acquire the ModelSkin reference from the SkinCache
+	// Note: This always returns a valid reference
+	ModelSkin& skin = GlobalModelSkinCache().capture(_skin);
+
+    SurfaceRemaps::iterator j = _surfaceRemaps.begin();
+    for(MD5Model::const_iterator i = m_model.begin(); i != m_model.end(); ++i, ++j)
     {
-      SurfaceRemaps::iterator j = m_skins.begin();
-      for(MD5Model::const_iterator i = m_model.begin(); i != m_model.end(); ++i, ++j)
+      std::string remap = skin.getRemap((*i)->getShader());
+      if(!remap.empty())
       {
-        std::string remap = skin->getRemap((*i)->getShader());
-        if(!remap.empty())
-        {
-          (*j).first = remap;
-          (*j).second = GlobalShaderCache().capture(remap);
-        }
-        else
-        {
-          (*j).second = ShaderPtr();
-        }
+        j->first = remap;
+        j->second = GlobalShaderCache().capture(remap);
       }
-      SceneChangeNotify();
+      else
+      {
+        j->second = ShaderPtr();
+      }
     }
+    SceneChangeNotify();
   }
+
   void destroyRemaps()
   {
-    for(SurfaceRemaps::iterator i = m_skins.begin(); i != m_skins.end(); ++i)
+    for(SurfaceRemaps::iterator i = _surfaceRemaps.begin(); i != _surfaceRemaps.end(); ++i)
     {
       if(i->second)
       {
@@ -223,10 +228,14 @@ public:
       }
     }
   }
-  void skinChanged()
+  void skinChanged(const std::string& newSkinName)
   {
-    ASSERT_MESSAGE(m_skins.size() == m_model.size(), "ERROR");
+    ASSERT_MESSAGE(_surfaceRemaps.size() == m_model.size(), "ERROR");
     destroyRemaps();
+
+	// greebo: Store the new skin name locally
+	_skin = newSkinName;
+
     constructRemaps();
   }
 
@@ -234,7 +243,7 @@ public:
     Instance(path, parent), 
     m_model(model),
     m_surfaceLightLists(m_model.size()),
-    m_skins(m_model.size())
+    _surfaceRemaps(m_model.size())
   {
     m_lightList = &GlobalShaderCache().attach(*this);
     m_model.m_lightsChanged = LightsChangedCaller(*this);
@@ -256,7 +265,7 @@ public:
   void render(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const
   {
     SurfaceLightLists::const_iterator j = m_surfaceLightLists.begin();
-    SurfaceRemaps::const_iterator k = m_skins.begin();
+    SurfaceRemaps::const_iterator k = _surfaceRemaps.begin();
     for(MD5Model::const_iterator i = m_model.begin(); i != m_model.end(); ++i, ++j, ++k)
     {
       if((*i)->intersectVolume(volume, localToWorld) != c_volumeOutside)

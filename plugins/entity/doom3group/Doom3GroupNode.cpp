@@ -27,7 +27,6 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	TraversableNodeSet(), // Don't copy the TraversableNodeSet from the other node
 	EntityNode(other),
 	Namespaced(other),
-	ModelSkin(other),
 	m_contained(
 		other.m_contained,
 		*this, // Pass <this> as scene::Traversable&
@@ -99,18 +98,6 @@ Entity& Doom3GroupNode::getEntity() {
 
 void Doom3GroupNode::setNamespace(INamespace& space) {
 	m_contained.getNamespaced().setNamespace(space);
-}
-
-void Doom3GroupNode::attach(ModuleObserver& observer) {
-	m_contained.getModelSkin().attach(observer);
-}
-
-void Doom3GroupNode::detach(ModuleObserver& observer) {
-	m_contained.getModelSkin().detach(observer);
-}
-
-std::string Doom3GroupNode::getRemap(const std::string& name) const {
-	return m_contained.getModelSkin().getRemap(name);
 }
 
 } // namespace entity

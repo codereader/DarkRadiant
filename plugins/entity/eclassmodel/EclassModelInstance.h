@@ -16,6 +16,8 @@ class EclassModelInstance :
 	public Renderable
 {
 	EclassModel& m_contained;
+
+	mutable bool _updateSkin;
 public:
 	EclassModelInstance(const scene::Path& path, scene::Instance* parent, EclassModel& contained);
 	
@@ -27,6 +29,9 @@ public:
 	void evaluateTransform();
 	void applyTransform();
 	typedef MemberCaller<EclassModelInstance, &EclassModelInstance::applyTransform> ApplyTransformCaller;
+
+	void skinChanged(const std::string& value);
+	typedef MemberCaller1<EclassModelInstance, const std::string&, &EclassModelInstance::skinChanged> SkinChangedCaller;
 };
 
 } // namespace entity

@@ -45,7 +45,6 @@ class Doom3Group :
 	NameKeys m_nameKeys;
 	RenderablePivot m_renderOrigin;
 	RenderableNamedEntity m_renderName;
-	ModelSkinKey m_skin;
 
 	mutable AABB m_curveBounds;
 
@@ -98,6 +97,10 @@ public:
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
 
+	// Adds/removes the keyobserver to/from the KeyObserverMap
+	void addKeyObserver(const std::string& key, const KeyObserver& observer);
+	void removeKeyObserver(const std::string& key, const KeyObserver& observer);
+
 	Doom3Entity& getEntity();
 	const Doom3Entity& getEntity() const;
 
@@ -108,8 +111,6 @@ public:
 	const NamedEntity& getNameable() const;
 	TransformNode& getTransformNode();
 	const TransformNode& getTransformNode() const;
-	ModelSkin& getModelSkin();
-	const ModelSkin& getModelSkin() const;
 
 	const AABB& localAABB() const;
 	
@@ -146,11 +147,12 @@ public:
 	
 	void translateChildren(const Vector3& childTranslation);
 	
+	// Returns TRUE if this D3Group is a model
+	bool isModel() const;
+
 private:
 	void construct();
 	void destroy();
-
-	bool isModel() const;
 
 	void setIsModel(bool newValue);
 
@@ -177,9 +179,6 @@ public:
 
 	void rotationChanged();
 	typedef MemberCaller<Doom3Group, &Doom3Group::rotationChanged> RotationChangedCaller;
-
-	void skinChanged();
-	typedef MemberCaller<Doom3Group, &Doom3Group::skinChanged> SkinChangedCaller;
 };
 
 } // namespace entity

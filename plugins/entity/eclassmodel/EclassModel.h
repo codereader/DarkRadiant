@@ -39,7 +39,6 @@ class EclassModel :
 	NameKeys m_nameKeys;
 	RenderablePivot m_renderOrigin;
 	RenderableNamedEntity m_renderName;
-	ModelSkinKey m_skin;
 
 	Callback m_transformChanged;
 	Callback m_evaluateTransform;
@@ -60,6 +59,10 @@ public:
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
 
+	// Adds the keyobserver to the KeyObserverMap
+	void addKeyObserver(const std::string& key, const KeyObserver& observer);
+	void removeKeyObserver(const std::string& key, const KeyObserver& observer);
+
 	Doom3Entity& getEntity();
 	const Doom3Entity& getEntity() const;
 
@@ -68,8 +71,6 @@ public:
 	const NamedEntity& getNameable() const;
 	TransformNode& getTransformNode();
 	const TransformNode& getTransformNode() const;
-	ModelSkin& getModelSkin();
-	const ModelSkin& getModelSkin() const;
 
 	void renderSolid(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
 	void renderWireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
@@ -98,8 +99,8 @@ public:
 	void rotationChanged();
 	typedef MemberCaller<EclassModel, &EclassModel::rotationChanged> RotationChangedCaller;
 
-	void skinChanged();
-	typedef MemberCaller<EclassModel, &EclassModel::skinChanged> SkinChangedCaller;
+	void skinChanged(const std::string& value);
+	typedef MemberCaller1<EclassModel, const std::string&, &EclassModel::skinChanged> SkinChangedCaller;
 };
 
 } // namespace entity
