@@ -590,7 +590,7 @@ bool Map::askForSave(const std::string& title) {
 bool Map::saveAs() {
 	if (_saveInProgress) return false; // safeguard
 
-	std::string filename = map::MapFileManager::getMapFilename(false, "Save Map");
+	std::string filename = map::MapFileManager::getMapFilename(false, "Save Map", "map", getName());
   
 	if (!filename.empty()) {
 	    GlobalMRU().insert(filename);

@@ -30,7 +30,7 @@ private:
 	static MapFileManager& getInstance();
 
 	// Utility function to display a file chooser and return the selected path
-	std::string selectFile(bool open, const std::string& title, const std::string& type);
+	std::string selectFile(bool open, const std::string& title, const std::string& type, const std::string& defaultFile);
 
 public:
 	// Constructor, loads the default map and prefab paths
@@ -57,7 +57,8 @@ public:
 	 */
 	 static std::string getMapFilename(bool open, 
 	 								   const std::string& title,
-	 								   const std::string& type = "map");
+	 								   const std::string& type = "map",
+                                       const std::string& defaultFile = "");
 };
 
 }
