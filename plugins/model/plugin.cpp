@@ -95,17 +95,26 @@ void pico_initialise()
 }
 
 
-class PicoModelLoader : public ModelLoader
+class PicoModelLoader : 
+	public ModelLoader
 {
-  const picoModule_t* m_module;
+	const picoModule_t* _module;
+	
+	// Supported file extension in UPPERCASE (ASE, LWO, whatever)
+	std::string _extension;
+	
+	// The resulting name of the module (ModelLoaderASE, for instance)
+	std::string _moduleName;
 public:
-  PicoModelLoader(const picoModule_t* module) : m_module(module)
-  {
-  }
-  scene::INodePtr loadModel(ArchiveFile& file)
-  {
-    return loadPicoModel(m_module, file);
-  }
+	PicoModelLoader(const picoModule_t* module, const std::string& extension) : 
+		_module(module),
+		_extension(extension),
+		_moduleName("ModelLoader" + extension) // e.g. ModelLoaderASE
+	{}
+
+	scene::INodePtr loadModel(ArchiveFile& file) {
+		  return loadPicoModel(_module, file);
+	}
   
   	// Load the given model from the VFS path
 	model::IModelPtr loadModelFromPath(const std::string& name) {
@@ -113,41 +122,23 @@ public:
 		// Open an ArchiveFile to load
 		ArchiveFile* file = GlobalFileSystem().openFile(name.c_str());
 
-		model::IModelPtr rv;
+		model::IModelPtr model;
 		if (file != NULL) {
-			rv = loadIModel(m_module, *file);
+			model = loadIModel(_module, *file);
 		}
 		else {
 			globalErrorStream() << "Failed to load model " << name.c_str() 
 								<< "\n";
-			rv = model::IModelPtr();
+			model = model::IModelPtr();
 		}
 		
 		// Release the ArchiveFile and return the IModelPtr
 		file->release();
-		return rv;
+		
+		return model;
 	}
-  
-};
 
-class PicoModelAPIConstructor :
-	public PicoModelLoader
-{
-  std::string m_extension;
-  const picoModule_t* m_module;
-  
-  std::string _moduleName;
-public:
-	PicoModelAPIConstructor(const char* extension, const picoModule_t* module) :
-		PicoModelLoader(module),
-		m_extension(extension), 
-		m_module(module), 
-		_moduleName("ModelLoader")
-	{
-		_moduleName += extension; // e.g. ModuleLoaderASE
-	}
-	
-  	// RegisterableModule implementation
+	// RegisterableModule implementation
   	virtual const std::string& getName() const {
   		return _moduleName; // e.g. ModelLoaderASE
   	}
@@ -171,16 +162,18 @@ public:
   	
   	virtual void initialiseModule(const ApplicationContext& ctx) {
   		globalOutputStream() << "PicoModelLoader: " << getName().c_str() << " initialised.\n"; 
-  		std::string filter("*." + boost::to_lower_copy(m_extension));
+  		std::string filter("*." + boost::to_lower_copy(_extension));
   		
+  		// Register the model file extension in the FileTypRegistry
   		GlobalFiletypes().addType(
   			"model", getName(), 
-	    	FileTypePattern(m_module->displayName, filter.c_str())
+	    	FileTypePattern(_module->displayName, filter.c_str())
 	    );
   	}
 };
-typedef boost::shared_ptr<PicoModelAPIConstructor> PicoModelAPIConstructorPtr;
+typedef boost::shared_ptr<PicoModelLoader> PicoModelLoaderPtr;
 
+// DarkRadiant module entry point
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
 	
 	pico_initialise();
@@ -192,14 +185,13 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
 		
 		if (module->canload && module->load)	{
 			for (char*const* ext = module->defaultExts; *ext != 0; ++ext) {
+				// greebo: File extension is expected to be UPPERCASE
 				std::string extension(*ext);
 				boost::algorithm::to_upper(extension);
 				
-				PicoModelAPIConstructorPtr picoModule(
-					new PicoModelAPIConstructor(extension.c_str(), module)
+				registry.registerModule(
+					PicoModelLoaderPtr(new PicoModelLoader(module, extension))
 				);
-				
-				registry.registerModule(picoModule);
 			}
 		}
 	}
