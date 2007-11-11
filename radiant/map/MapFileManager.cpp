@@ -27,7 +27,7 @@ MapFileManager& MapFileManager::getInstance() {
 
 // Utility method to select a map file
 std::string MapFileManager::selectFile(bool open, 
-	const std::string& title, const std::string& type) 
+	const std::string& title, const std::string& type, const std::string& defaultFile) 
 {
 	// Check, if the lastdir contains at least anything and load
 	// the default map path if it's empty
@@ -49,7 +49,8 @@ std::string MapFileManager::selectFile(bool open,
 					 title, 
 					 _lastDirs[type], 
 					 type,
-					 defaultExt);
+					 defaultExt,
+                     defaultFile);
 
 	// If a filename was chosen, update the last path
 	if (!filePath.empty()) {
@@ -64,9 +65,10 @@ std::string MapFileManager::selectFile(bool open,
 // Static method to get a load filename
 std::string MapFileManager::getMapFilename(bool open, 
 										   const std::string& title, 
-										   const std::string& type) 
+										   const std::string& type,
+                                           const std::string& defaultFile) 
 {
-	return getInstance().selectFile(open, title, type);
+	return getInstance().selectFile(open, title, type, defaultFile);
 }
 
 } // namespace map

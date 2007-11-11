@@ -39,7 +39,8 @@ std::string file_dialog_show(GtkWidget* parent,
                              bool open,
                              std::string title,
                              const std::string& path,
-                             std::string pattern) {
+                             std::string pattern,
+                             const std::string& defaultFile) {
 	if (pattern.empty()) {
 		pattern = "*";
 	}
@@ -64,8 +65,9 @@ std::string file_dialog_show(GtkWidget* parent,
 		                                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		                                     GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
 		                                     NULL);
-		gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "unnamed");
+		//gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "unnamed");
 	}
+    gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), defaultFile.c_str());
 
 	// Set the Enter key to activate the default response
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
@@ -149,10 +151,11 @@ std::string file_dialog(GtkWidget* parent,
                         const std::string& title,
                         const std::string& path,
                         const std::string& pattern,
-                        const std::string& defaultExt)
+                        const std::string& defaultExt,
+                        const std::string& defaultFile)
 {
 	while (1) {
-		std::string file = file_dialog_show(parent, open, title, path, pattern);
+		std::string file = file_dialog_show(parent, open, title, path, pattern, defaultFile);
 
 		// Convert the backslashes to forward slashes
 		file = os::standardPath(file);
