@@ -42,7 +42,7 @@ public:
 	scene::INodePtr loadModel(ArchiveFile& file) {
 		return loadMD5Model(file);
 	}
-  
+
 	// Not implemented
 	model::IModelPtr loadModelFromPath(const std::string& name) {
 		return model::IModelPtr();
