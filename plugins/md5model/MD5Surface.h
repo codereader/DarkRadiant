@@ -118,8 +118,8 @@ public:
 					SelectionTest& test, 
 					const Matrix4& localToWorld);
 };
+typedef boost::shared_ptr<MD5Surface> MD5SurfacePtr;
 
-
-}
+} // namespace md5
 
 #endif /*MD5SURFACE_H_*/

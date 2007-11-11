@@ -74,71 +74,55 @@ class MD5Model :
 public Cullable,
 public Bounded
 {
-  typedef std::vector<md5::MD5Surface*> surfaces_t;
-  surfaces_t m_surfaces;
+	typedef std::vector<md5::MD5SurfacePtr> SurfaceList;
+	SurfaceList m_surfaces;
 
-  AABB m_aabb_local;
+	AABB m_aabb_local;
 public:
-  Callback m_lightsChanged;
+	Callback m_lightsChanged;
 
-  ~MD5Model()
-  {
-    for(surfaces_t::iterator i = m_surfaces.begin(); i != m_surfaces.end(); ++i)
-    {
-      delete *i;
-    }
-  }
+	typedef SurfaceList::const_iterator const_iterator;
 
-  typedef surfaces_t::const_iterator const_iterator;
+	const_iterator begin() const {
+		return m_surfaces.begin();
+	}
 
-  const_iterator begin() const
-  {
-    return m_surfaces.begin();
-  }
-  const_iterator end() const
-  {
-    return m_surfaces.end();
-  }
-  std::size_t size() const
-  {
-    return m_surfaces.size();
-  }
+	const_iterator end() const {
+		return m_surfaces.end();
+	}
 
-  md5::MD5Surface& newSurface()
-  {
-    m_surfaces.push_back(new md5::MD5Surface);
-    return *m_surfaces.back();
-  }
-  void updateAABB()
-  {
-    m_aabb_local = AABB();
-    for(surfaces_t::iterator i = m_surfaces.begin(); i != m_surfaces.end(); ++i)
-    {
-      m_aabb_local.includeAABB((*i)->localAABB());
-    }
-  }
+	std::size_t size() const {
+		return m_surfaces.size();
+	}
 
-  VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const
-  {
-    return test.TestAABB(m_aabb_local, localToWorld);
-  }
+	md5::MD5Surface& newSurface() {
+		m_surfaces.push_back(md5::MD5SurfacePtr(new md5::MD5Surface));
+		return *m_surfaces.back();
+	}
 
-  virtual const AABB& localAABB() const
-  {
-    return m_aabb_local;
-  }
+	void updateAABB() {
+		m_aabb_local = AABB();
+		for(SurfaceList::iterator i = m_surfaces.begin(); i != m_surfaces.end(); ++i) {
+			m_aabb_local.includeAABB((*i)->localAABB());
+		}
+	}
 
-  void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld)
-  {
-    for(surfaces_t::iterator i = m_surfaces.begin(); i != m_surfaces.end(); ++i)
-    {
-      if((*i)->intersectVolume(test.getVolume(), localToWorld) != c_volumeOutside)
-      {
-        (*i)->testSelect(selector, test, localToWorld);
-      }
-    }
-  }
-};
+	VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const {
+		return test.TestAABB(m_aabb_local, localToWorld);
+	}
+
+	virtual const AABB& localAABB() const {
+		return m_aabb_local;
+	}
+
+	void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld) {
+		for (SurfaceList::iterator i = m_surfaces.begin(); i != m_surfaces.end(); ++i) {
+			if ((*i)->intersectVolume(test.getVolume(), localToWorld) != c_volumeOutside) {
+				(*i)->testSelect(selector, test, localToWorld);
+			}
+		}
+	}
+}; // class MD5Model
 
 inline void Surface_addLight(const md5::MD5Surface& surface, VectorLightList& lights, const Matrix4& localToWorld, const RendererLight& light)
 {
