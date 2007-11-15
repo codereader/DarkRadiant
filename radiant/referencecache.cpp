@@ -110,8 +110,7 @@ bool MapResource_saveFile(const MapFormat& format, scene::INodePtr root, GraphTr
 
 	if(outfile.is_open()) {
 	    globalOutputStream() << "success\n";
-	    ScopeDisableScreenUpdates disableScreenUpdates(path_get_filename_start(filename));
-
+	    
 		// Use the MapFormat module and traversal function to dump the scenegraph
 		// to the file stream.
 	    format.writeGraph(root, traverse, outfile);
@@ -822,8 +821,6 @@ public:
 
 void SaveReferences()
 {
-  ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Saving Map");
-
 	for (HashtableReferenceCache::iterator i = GetReferenceCache().begin(); 
 		 i != GetReferenceCache().end(); 
 		 ++i)

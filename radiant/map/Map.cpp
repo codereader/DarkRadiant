@@ -420,8 +420,10 @@ void Map::load(const std::string& filename) {
 
 void Map::save() {
 	if (_saveInProgress) return; // safeguard
-
+	
 	_saveInProgress = true;
+	
+	ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Saving Map");
 	
 	// Store the camview position into worldspawn
 	saveCameraPosition();
@@ -512,6 +514,8 @@ bool Map::import(const std::string& filename) {
 void Map::saveDirect(const std::string& filename) {
 	if (_saveInProgress) return; // safeguard
 
+	ScopeDisableScreenUpdates disableScreenUpdates(path_get_filename_start(filename.c_str()));
+	
 	_saveInProgress = true;
 
 	// Substract the origin from child primitives (of entities like func_static)
@@ -533,6 +537,8 @@ void Map::saveDirect(const std::string& filename) {
 bool Map::saveSelected(const std::string& filename) {
 	if (_saveInProgress) return false; // safeguard
 
+	ScopeDisableScreenUpdates disableScreenUpdates(path_get_filename_start(filename.c_str()));
+	
 	_saveInProgress = true;
 
 	// Substract the origin from child primitives (of entities like func_static)
