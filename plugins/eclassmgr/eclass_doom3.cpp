@@ -202,11 +202,33 @@ EntityClassDoom3_parseEntityDef(parser::DefTokeniser& tokeniser)
         			EntityClassAttribute("boolean", attName, "", value));
         	}
         }
+		else if (boost::algorithm::istarts_with(key, "editor_float ")) {
+			// Same as editor_var, but with float rather than text type
+        	std::string attName = key.substr(key.find(" ") + 1);
+        	if (!attName.empty()) {
+        		entityClass->addAttribute(
+        			EntityClassAttribute("float", attName, "", value));
+        	}
+        }
+
 
 		// Following key-specific processing, add the keyvalue to the entity
 		// class
 		EntityClassAttribute attribute("text", key, value, "");
-		entityClass->addAttribute(attribute);
+		if (entityClass->getAttribute(key).type.empty()) {
+			// Type is empty, attribute does not exist, add it.
+			entityClass->addAttribute(attribute);
+		}
+		else if (entityClass->getAttribute(key).value.empty() ) {
+			// Attribute type is set, but value is empty, set the value.
+			entityClass->getAttribute(key).value = value;
+		}
+		else {
+			// Both type and value are not empty, emit a warning
+			std::cerr << "[eclassmgr] attribute " << key << " already set on entityclass " 
+            		  << sName << std::endl;
+
+		}
             
     } // while true
     
