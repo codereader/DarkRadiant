@@ -172,8 +172,8 @@ public:
 	 * Return a single named EntityClassAttribute from this EntityClass. If the
 	 * named attribute is not found, an empty EntityClassAttribute is returned.
 	 */
-	virtual EntityClassAttribute getAttribute(const std::string& name) 
-	const = 0;
+	virtual EntityClassAttribute& getAttribute(const std::string& name) = 0;
+	virtual const EntityClassAttribute& getAttribute(const std::string& name) const = 0;
 	
 	/**
 	 * Return the list of EntityClassAttributes matching the given name,

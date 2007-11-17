@@ -59,6 +59,9 @@ class Doom3EntityClass
 	// Name of the mod owning this class
 	std::string _modName;
 
+	// The empty attribute
+	EntityClassAttribute _emptyAttribute;
+
 private:
 
 	// Capture the shaders corresponding to the current colour
@@ -204,7 +207,8 @@ public:
 	/*
 	 * Find a single attribute.
 	 */
-	EntityClassAttribute getAttribute(const std::string& name) const;
+	EntityClassAttribute& getAttribute(const std::string& name);
+	const EntityClassAttribute& getAttribute(const std::string& name) const;
 	
 	/*
 	 * Return a list of all attributes matching the given name prefix.

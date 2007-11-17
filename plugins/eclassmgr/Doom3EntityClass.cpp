@@ -119,14 +119,26 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 }
 
 // Find a single attribute
-EntityClassAttribute 
+EntityClassAttribute& 
+Doom3EntityClass::getAttribute(const std::string& name) {
+	EntityAttributeMap::iterator f = _attributes.find(name);
+	if (f != _attributes.end()) {
+		return f->second;
+	}
+	else {
+		return _emptyAttribute;
+	}
+}
+
+// Find a single attribute
+const EntityClassAttribute& 
 Doom3EntityClass::getAttribute(const std::string& name) const {
 	EntityAttributeMap::const_iterator f = _attributes.find(name);
 	if (f != _attributes.end()) {
 		return f->second;
 	}
 	else {
-		return EntityClassAttribute();
+		return _emptyAttribute;
 	}
 }
 
