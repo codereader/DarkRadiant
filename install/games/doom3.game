@@ -98,6 +98,9 @@
 		<filter name="Weather Textures">
 			<filterCriterion type="texture" match="textures/darkmod/weather/.*"	action="hide" />
 		</filter>
+		<filter name="Paths">
+			<filterCriterion type="entityclass" match="path_.*" action="hide" />
+		</filter>
 	</filtersystem>
 	<filesystem>
 		<shaders>
