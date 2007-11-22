@@ -1,0 +1,7 @@
+; dm.d3hook.def : Declares the module parameters for the DLL.
+
+LIBRARY      "dm.d3hook"
+
+EXPORTS
+    ; Explicit exports can go here
+	RegisterModule @1
