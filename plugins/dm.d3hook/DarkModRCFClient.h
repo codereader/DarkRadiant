@@ -20,6 +20,9 @@ public:
 	 * Automatically handles the buffer redirect and wait loops.
 	 */
 	void executeCommand(const std::string& command);
+	
+	// Writes to the DarkMod console.
+	void writeToConsole(const std::string& text);
 };
 
 #endif /*DARKMODRCFCLIENT_H_*/

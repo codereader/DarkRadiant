@@ -98,3 +98,15 @@ void DarkModRCFClient::executeCommand(const std::string& command) {
 	// Clear the server to allow re-entering this function
 	_server = DarkRadiantRCFServerPtr();
 }
+
+void DarkModRCFClient::writeToConsole(const std::string& text) {
+	try {
+		// Issue command
+		_client.writeToConsole(text);
+	}
+	catch (const std::exception &e)	{
+		globalErrorStream() << "Caught exception:\n";
+		globalErrorStream() << "Type: " << typeid(e).name() << "\n";
+		globalErrorStream() << "What: " << e.what() << "\n";
+	}
+}
