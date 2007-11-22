@@ -79,6 +79,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.objectives", "dm.objecti
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "eclasstree", "eclasstree.vcproj", "{3B1A6CA3-D76E-4020-860D-1BED3DF7A3BE}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.d3hook", "dm.d3hook.vcproj", "{916F8AE5-D7FC-44E1-908D-B54100C6F4AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -201,6 +203,10 @@ Global
 		{3B1A6CA3-D76E-4020-860D-1BED3DF7A3BE}.Debug|Win32.Build.0 = Debug|Win32
 		{3B1A6CA3-D76E-4020-860D-1BED3DF7A3BE}.Release|Win32.ActiveCfg = Release|Win32
 		{3B1A6CA3-D76E-4020-860D-1BED3DF7A3BE}.Release|Win32.Build.0 = Release|Win32
+		{916F8AE5-D7FC-44E1-908D-B54100C6F4AD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{916F8AE5-D7FC-44E1-908D-B54100C6F4AD}.Debug|Win32.Build.0 = Debug|Win32
+		{916F8AE5-D7FC-44E1-908D-B54100C6F4AD}.Release|Win32.ActiveCfg = Release|Win32
+		{916F8AE5-D7FC-44E1-908D-B54100C6F4AD}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
