@@ -11,6 +11,7 @@
 #include "stream/textstream.h"
 #include "generic/callback.h"
 
+#include "gtkutil/dialog.h"
 #include "os/path.h"
 
 #include "DarkModRCFClient.h"
@@ -47,10 +48,16 @@ void CompileMap() {
 		if (boost::algorithm::istarts_with(fullName, "maps/")) {
 			fullName = fullName.substr(5, fullName.size());
 		}
+		
+		IEventPtr toggleConsoleEvent = GlobalEventManager().findEvent("ToggleConsole");
+		toggleConsoleEvent->keyDown();
 
 		// Instantiate a client and issue the command
 		DarkModRCFClient client;
 		client.executeCommand("dmap " + fullName);
+	}
+	else {
+		gtkutil::errorDialog("Cannot compile empty map.", GlobalRadiant().getMainWindow());
 	}
 	
 	mutex = false;
