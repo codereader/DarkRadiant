@@ -1,5 +1,7 @@
 #include "D3ProcessChecker.h"
 
+bool D3ProcessChecker::processFound = false;
+
 #ifdef WIN32
 
 #include <string>
@@ -7,6 +9,9 @@
 #include "Psapi.h"
 
 bool D3ProcessChecker::D3IsRunning() {
+	// Clear the flag
+	processFound = false;
+	
 	DWORD processes[1024];
 	DWORD num;
 
@@ -48,6 +53,7 @@ bool D3ProcessChecker::D3IsRunning() {
 									//globalOutputStream() << "Module found: " << szModName << "\n";
 
 									CloseHandle(hProcess); // close the handle, we're terminating
+									processFound = true;
 									return true;
 								}
 							}
@@ -64,11 +70,58 @@ bool D3ProcessChecker::D3IsRunning() {
 }
 
 #else
+// Linux implementation
 
-// Linux implementation (TODO)
+#include <iostream>
+#include <fstream>
+#include "os/dir.h"
+#include <boost/lexical_cast.hpp>
+
+namespace {
+	const std::string PROC_FOLDER("/proc/");
+	const std::string DOOM_PROCESS_NAME("doom.x86"); 
+}
+
+void ForeachFileFunctor(const char* name) {
+	// Try to cast the filename to an integer number (=PID)
+	try {
+		unsigned long pid = boost::lexical_cast<unsigned long>(name);
+	
+		// Was the PID read correctly?
+		if (pid == 0) {
+			return;
+		}
+		
+		const std::string cmdLineFileName = PROC_FOLDER + name + "/cmdline";
+		
+		std::ifstream cmdLineFile(cmdLineFileName.c_str());
+		if (cmdLineFile.is_open()) {
+			// Read the command line from the process file
+			std::string cmdLine("");
+			getline(cmdLineFile, cmdLine);
+			
+			if (cmdLine.find(DOOM_PROCESS_NAME) != std::string::npos) {
+				// Process found, return success
+				D3ProcessChecker::processFound = true;
+			}
+		}
+		
+		// Close the file
+		cmdLineFile.close();
+	}
+	catch (const boost::bad_lexical_cast&) {
+		// Cast to int failed, no PID
+	}
+}
 
 bool D3ProcessChecker::D3IsRunning() {
-	return true;
+	// Clear the flag before searching
+	processFound = false;
+	
+	// Traverse the /proc folder, this sets the flag to TRUE if the process was found
+	Directory_forEach(PROC_FOLDER, ForeachFileFunctor);
+	
+	return processFound;
 }
 
 #endif

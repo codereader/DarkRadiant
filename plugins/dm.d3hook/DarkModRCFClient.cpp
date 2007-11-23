@@ -1,6 +1,7 @@
 #include "DarkModRCFClient.h"
 
 #include <gtk/gtkmain.h>
+#include "gtkutil/dialog.h"
 #include "DarkRadiantRCFServer.h"
 #include "D3ProcessChecker.h"
 
@@ -28,7 +29,9 @@ DarkModRCFClient::DarkModRCFClient() :
 void DarkModRCFClient::executeCommand(const std::string& command) {
 	
 	if (!D3ProcessChecker::D3IsRunning()) {
-		globalErrorStream() << "Doom 3/gamex86.dll not running.\n";
+		gtkutil::errorDialog(
+			"Doom 3/DarkMod process not running.", GlobalRadiant().getMainWindow()
+		);
 		return;
 	}
 	
