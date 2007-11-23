@@ -14,7 +14,6 @@
   basegamename="Doom 3"
   unknowngamename="Custom Doom 3 modification"
   archivetypes="pk4"
-  texturetypes="tga jpg dds"
   modeltypes="lwo ase md5mesh"
   maptypes="mapdoom3"
   shaders="doom3"
@@ -25,6 +24,16 @@
   registryKey="SOFTWARE\id\Doom 3"
   registryValue="InstallPath"
 >
+	<!-- Types of resource files which are used by this game -->
+	<filetypes>
+		<texture>
+			<extension>tga</extension>
+			<extension>jpg</extension>
+			<extension>dds</extension>
+		</texture>
+	</filetypes>
+	
+	<!-- Filters to use for the filter system -->
 	<filtersystem>
 		<filter name="World geometry">
 			<filterCriterion 
