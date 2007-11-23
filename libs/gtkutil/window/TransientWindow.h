@@ -90,7 +90,9 @@ public:
 	    gtk_window_set_position(
 	    	GTK_WINDOW(_window), GTK_WIN_POS_CENTER_ON_PARENT
 	    );
+#ifdef POSIX 
 	    gtk_window_set_skip_taskbar_hint(GTK_WINDOW(_window), TRUE);
+#endif
 	    gtk_window_set_skip_pager_hint(GTK_WINDOW(_window), TRUE);
 	    
 	    // Connect up the destroy signal (close box)
