@@ -1,3 +1,9 @@
+23/11/2007
+greebo
+- Added plugin for communication with the Doom3/DarkMod engine.
+  DarkRadiant can now send dmap/runaas commands to the engine
+  and display the dmapping output in its own console.
+
 03/10/2007
 greebo
 - Revamped the entire module system based on OrbWeaver's design.
