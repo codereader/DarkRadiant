@@ -252,26 +252,26 @@ namespace RCF {
         bool server) :
             mPackageName(packageName),
             mPackageList(packageList),
+            mTarget(),
             mQop(None),
             mContextRequirements(RCF_DEFAULT_INIT),
-            mServer(server),
-            mPreState(Ready),
-            mBytesRequestedOrig(RCF_DEFAULT_INIT),
-            mWriteBuffer(RCF_DEFAULT_INIT),
-            mWriteBufferPos(RCF_DEFAULT_INIT),
-            mWriteBufferLen(RCF_DEFAULT_INIT),
-            mReadBuffer(RCF_DEFAULT_INIT),
-            mReadBufferPos(RCF_DEFAULT_INIT),
-            mReadBufferLen(RCF_DEFAULT_INIT),
-            mPostState(Ready),
             mHaveContext(RCF_DEFAULT_INIT),
             mHaveCredentials(RCF_DEFAULT_INIT),
             mImplicitCredentials(true),
             mContext(),
             mCredentials(),
-            mTarget(),
             mContextState(AuthContinue),
+            mPreState(Ready),
+            mPostState(Ready),
             mEvent(ReadIssued),
+            mServer(server),
+            mBytesRequestedOrig(RCF_DEFAULT_INIT),
+            mReadBuffer(RCF_DEFAULT_INIT),
+            mReadBufferPos(RCF_DEFAULT_INIT),
+            mReadBufferLen(RCF_DEFAULT_INIT),
+            mWriteBuffer(RCF_DEFAULT_INIT),
+            mWriteBufferPos(RCF_DEFAULT_INIT),
+            mWriteBufferLen(RCF_DEFAULT_INIT),
             mLimitRecursion(!server)
     {
 
@@ -295,26 +295,26 @@ namespace RCF {
         bool server) :
             mPackageName(packageName),
             mPackageList(packageList),
+            mTarget(target),
             mQop(qop),
             mContextRequirements(contextRequirements),
-            mServer(server),
-            mPreState(Ready),
-            mBytesRequestedOrig(RCF_DEFAULT_INIT),
-            mWriteBuffer(RCF_DEFAULT_INIT),
-            mWriteBufferPos(RCF_DEFAULT_INIT),
-            mWriteBufferLen(RCF_DEFAULT_INIT),
-            mReadBuffer(RCF_DEFAULT_INIT),
-            mReadBufferPos(RCF_DEFAULT_INIT),
-            mReadBufferLen(RCF_DEFAULT_INIT),
-            mPostState(Ready),
             mHaveContext(RCF_DEFAULT_INIT),
             mHaveCredentials(RCF_DEFAULT_INIT),
             mImplicitCredentials(true),
             mContext(),
             mCredentials(),
-            mTarget(target),
             mContextState(AuthContinue),
+            mPreState(Ready),
+            mPostState(Ready),
             mEvent(ReadIssued),
+            mServer(server),
+            mBytesRequestedOrig(RCF_DEFAULT_INIT),
+            mReadBuffer(RCF_DEFAULT_INIT),
+            mReadBufferPos(RCF_DEFAULT_INIT),
+            mReadBufferLen(RCF_DEFAULT_INIT),
+            mWriteBuffer(RCF_DEFAULT_INIT),
+            mWriteBufferPos(RCF_DEFAULT_INIT),
+            mWriteBufferLen(RCF_DEFAULT_INIT),
             mLimitRecursion(!server)
     {
 
@@ -342,26 +342,26 @@ namespace RCF {
         bool server) :
             mPackageName(packageName),
             mPackageList(packageList),
+            mTarget(target),
             mQop(qop),
             mContextRequirements(contextRequirements),
-            mServer(server),
-            mPreState(Ready),
-            mBytesRequestedOrig(RCF_DEFAULT_INIT),
-            mWriteBuffer(RCF_DEFAULT_INIT),
-            mWriteBufferPos(RCF_DEFAULT_INIT),
-            mWriteBufferLen(RCF_DEFAULT_INIT),
-            mReadBuffer(RCF_DEFAULT_INIT),
-            mReadBufferPos(RCF_DEFAULT_INIT),
-            mReadBufferLen(RCF_DEFAULT_INIT),
-            mPostState(Ready),
             mHaveContext(RCF_DEFAULT_INIT),
             mHaveCredentials(RCF_DEFAULT_INIT),
             mImplicitCredentials(RCF_DEFAULT_INIT),
             mContext(),
             mCredentials(),
-            mTarget(target),
             mContextState(AuthContinue),
+            mPreState(Ready),
+            mPostState(Ready),
             mEvent(ReadIssued),
+            mServer(server),
+            mBytesRequestedOrig(RCF_DEFAULT_INIT),
+            mReadBuffer(RCF_DEFAULT_INIT),
+            mReadBufferPos(RCF_DEFAULT_INIT),
+            mReadBufferLen(RCF_DEFAULT_INIT),
+            mWriteBuffer(RCF_DEFAULT_INIT),
+            mWriteBufferPos(RCF_DEFAULT_INIT),
+            mWriteBufferLen(RCF_DEFAULT_INIT),
             mLimitRecursion(!server)
     {
 
@@ -910,7 +910,7 @@ namespace RCF {
         {
             RCF_ASSERT(mQop == None)(mQop);
             RCF_ASSERT(
-                mWriteByteBufferOrig.getLength() < (1<<31))
+                mWriteByteBufferOrig.getLength() < static_cast<size_t>(1<<31))
                 (mWriteByteBufferOrig.getLength());
 
             resizeWriteBuffer(mWriteByteBufferOrig.getLength()+4);

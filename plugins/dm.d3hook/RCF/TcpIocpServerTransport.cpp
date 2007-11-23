@@ -295,17 +295,17 @@ namespace RCF {
     SessionState::SessionState(
         ServerTransport &transport,
         Fd fd) :
-            mState(Accepting),
+        	mError(RCF_DEFAULT_INIT),
+        	mState(Accepting),
             mPostState(Reading),
             mReadBufferRemaining(RCF_DEFAULT_INIT),
             mWriteBufferRemaining(RCF_DEFAULT_INIT),
             mFd(fd),
-            mError(RCF_DEFAULT_INIT),
-            mOwnFd(true),
-            mCloseAfterWrite(RCF_DEFAULT_INIT),
             mTransport(transport),
+            mCloseAfterWrite(RCF_DEFAULT_INIT),
             mReflected(RCF_DEFAULT_INIT),
             mSynchronized(RCF_DEFAULT_INIT),
+            mOwnFd(true),
             mHasBeenClosed(RCF_DEFAULT_INIT),
             mMutexPtr()
     {
@@ -569,8 +569,8 @@ namespace RCF {
     Proactor::Proactor(
         ServerTransport &transport,
         const SessionStatePtr &sessionStatePtr) :
-            transport(transport),
-            sessionStatePtr(sessionStatePtr)
+        	sessionStatePtr(sessionStatePtr),
+        	transport(transport)
     {}
 
     void Proactor::postRead()
@@ -626,39 +626,39 @@ namespace RCF {
     }
 
     ServerTransport::ServerTransport(int port) :
-        mpSessionManager(RCF_DEFAULT_INIT),
+    	mOpen(RCF_DEFAULT_INIT),
+    	mpSessionManager(RCF_DEFAULT_INIT),
+        mAcceptorPort(RCF_DEFAULT_INIT),
+        mAcceptorFd(-1),
+        mPort(port),
         mMaxPendingConnectionCount(100),
         mMaxSendRecvSize(1024*1024*10),
-        mAcceptorPort(RCF_DEFAULT_INIT),
-        mPort(port),
-        mStopFlag(RCF_DEFAULT_INIT),
-        mOpen(RCF_DEFAULT_INIT),
-        mAcceptorFd(-1),
         mIocpAutoPtr(RCF_DEFAULT_INIT),
         mQueuedAccepts(0),
         mQueuedAcceptsThreshold(10),
         mQueuedAcceptsAugment(10),
         mlpfnAcceptEx(RCF_DEFAULT_INIT),
-        mlpfnGetAcceptExSockAddrs(RCF_DEFAULT_INIT)
+        mlpfnGetAcceptExSockAddrs(RCF_DEFAULT_INIT),
+        mStopFlag(RCF_DEFAULT_INIT)
     {
         setNetworkInterface("127.0.0.1");
     }
 
     ServerTransport::ServerTransport(const std::string &networkInterface, int port) :
-        mpSessionManager(RCF_DEFAULT_INIT),
-        mMaxPendingConnectionCount(100),
+    	mOpen(RCF_DEFAULT_INIT),
+    	mpSessionManager(RCF_DEFAULT_INIT),
+    	mAcceptorPort(RCF_DEFAULT_INIT),
+    	mAcceptorFd(-1),
+    	mPort(port),
+    	mMaxPendingConnectionCount(100),
         mMaxSendRecvSize(1024*1024*10),
-        mAcceptorPort(RCF_DEFAULT_INIT),
-        mPort(port),
-        mStopFlag(RCF_DEFAULT_INIT),
-        mOpen(RCF_DEFAULT_INIT),
-        mAcceptorFd(-1),
         mIocpAutoPtr(),
         mQueuedAccepts(0),
         mQueuedAcceptsThreshold(10),
         mQueuedAcceptsAugment(10),
         mlpfnAcceptEx(RCF_DEFAULT_INIT),
-        mlpfnGetAcceptExSockAddrs(RCF_DEFAULT_INIT)
+        mlpfnGetAcceptExSockAddrs(RCF_DEFAULT_INIT),
+        mStopFlag(RCF_DEFAULT_INIT)
     {
         setNetworkInterface(networkInterface);
     }
