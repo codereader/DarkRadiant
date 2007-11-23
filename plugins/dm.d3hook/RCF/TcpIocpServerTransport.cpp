@@ -950,7 +950,7 @@ namespace RCF {
                 std::size_t readBufferRemaining = sessionStatePtr->mReadBufferRemaining;
 
                 RCF_ASSERT(
-                    0 <= readBufferRemaining && readBufferRemaining <= 4)
+                    /*0 <= readBufferRemaining && */readBufferRemaining <= 4)
                     (readBufferRemaining);
 
                 if (readBufferRemaining == 0)
@@ -1418,6 +1418,7 @@ namespace RCF {
     {
 
         RCF_UNUSED_VARIABLE(stopFlag);
+        (void)(stopFlag == stopFlag);
 
         if (mQueuedAccepts < mQueuedAcceptsThreshold)
         {

@@ -26,7 +26,7 @@ namespace SF {
         DynamicArray(const DynamicArray &rhs) : pt_(rhs.pt_), n_(rhs.n_) {}
         T *&get() { return pt_; }
         N &length() { return n_; }
-        T &operator[](unsigned int idx) { RCF_ASSERT( get() != NULL && 0 <= idx && idx < length() )(get())(idx)(length()); return *(get() + idx); }
+        T &operator[](unsigned int idx) { RCF_ASSERT( get() != NULL && /*0 <= idx &&*/ idx < length() )(get())(idx)(length()); return *(get() + idx); }
     private:
         DynamicArray &operator=(const DynamicArray &rhs);    // Can't reassign reference members
         T *&pt_;

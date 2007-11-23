@@ -644,7 +644,7 @@ namespace RCF {
     void SspiFilterBase::readBuffer()
     {
         RCF_ASSERT(
-            0 <= mReadBufferPos && mReadBufferPos <= mReadBufferLen)
+            /*0 <= mReadBufferPos &&*/ mReadBufferPos <= mReadBufferLen)
             (mReadBufferPos)(mReadBufferLen);
 
         mPostState = Reading;
@@ -655,7 +655,7 @@ namespace RCF {
     void SspiFilterBase::writeBuffer()
     {
         RCF_ASSERT(
-            0 <= mWriteBufferPos && mWriteBufferPos <= mWriteBufferLen)
+            /*0 <= mWriteBufferPos && */mWriteBufferPos <= mWriteBufferLen)
             (mWriteBufferPos)(mWriteBufferLen);
 
         mPostState = Writing;
@@ -668,7 +668,7 @@ namespace RCF {
     bool SspiFilterBase::completeReadBlock()
     {
         RCF_ASSERT(
-            0 <= mReadBufferPos && mReadBufferPos <= mReadBufferLen )
+            /*0 <= mReadBufferPos && */mReadBufferPos <= mReadBufferLen )
             (mReadBufferPos)(mReadBufferLen);
 
         if (mReadBufferPos == mReadBufferLen && mReadBufferLen == 4)
@@ -718,7 +718,7 @@ namespace RCF {
     bool SspiFilterBase::completeWriteBlock()
     {
         RCF_ASSERT(
-            0 <= mWriteBufferPos && mWriteBufferPos <= mWriteBufferLen )
+            /*0 <= mWriteBufferPos && */mWriteBufferPos <= mWriteBufferLen )
             (mWriteBufferPos)(mWriteBufferLen);
 
         return (mWriteBufferPos < mWriteBufferLen) ?
@@ -1251,7 +1251,7 @@ namespace RCF {
             {
                 DWORD rcfErr = *(DWORD*) &mReadBuffer[4];
                 DWORD osErr = *(DWORD*) &mReadBuffer[8];
-                if (rcfErr == RcfError_Ok)
+                if (rcfErr == static_cast<DWORD>(RcfError_Ok))
                 {
                     mContextState = AuthOkAck;
                     resumeUserIo();
@@ -1312,7 +1312,7 @@ namespace RCF {
         SECURITY_STATUS status  = getSecurityFunctionTable()->InitializeSecurityContext(
             &mCredentials,
             mHaveContext ? &mContext : NULL,
-            (TCHAR *) target,
+            const_cast<TCHAR*>(target),
             CtxtReq,
             0,
             SECURITY_NATIVE_DREP,
@@ -1426,7 +1426,7 @@ namespace RCF {
         SecPkgInfo *pPackage = NULL;
        
         SECURITY_STATUS status = getSecurityFunctionTable()->QuerySecurityPackageInfo(
-            (TCHAR*) mPackageName.c_str(),
+            const_cast<TCHAR*>(mPackageName.c_str()),
             &pPackage);
 
         if ( status != SEC_E_OK )

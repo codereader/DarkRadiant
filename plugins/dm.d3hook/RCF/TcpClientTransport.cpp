@@ -87,7 +87,7 @@ namespace RCF {
 
         unsigned int pollingIntervalMs = bTimer ?
             clientProgressPtr->mTimerIntervalMs :
-            -1;
+        	UINT_MAX;
 
         int uiMessageFilter = clientProgressPtr->mUiMessageFilter;
         HANDLE readEvent = WSACreateEvent();

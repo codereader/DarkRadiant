@@ -48,7 +48,7 @@ namespace RCF {
         bool bRead)
     {
         bool bTimer = ClientProgressPtr->mTriggerMask & ClientProgress::Timer ? true : false;
-        unsigned int pollingIntervalMs = bTimer ? ClientProgressPtr->mTimerIntervalMs : -1;
+        unsigned int pollingIntervalMs = bTimer ? ClientProgressPtr->mTimerIntervalMs : UINT_MAX;
         while (true)
         {
             fd_set fdSet;
@@ -239,7 +239,7 @@ namespace RCF {
                     NULL, 
                     NULL);
 
-                count = (ret == 0) ? cbSent : -1;
+                count = (ret == 0) ? static_cast<int>(cbSent) : -1;
                 myErr = Platform::OS::BsdSockets::GetLastError();
             }            
 #else
