@@ -4,17 +4,12 @@
 #include "ieventmanager.h"
 #include "iuimanager.h"
 #include "iradiant.h"
-#include "iscenegraph.h"
-#include "nameable.h"
 
 #include "stream/stringstream.h"
 #include "stream/textstream.h"
 #include "generic/callback.h"
 
-#include "gtkutil/dialog.h"
-#include "os/path.h"
-
-#include "DarkModRCFClient.h"
+#include "DarkModCommands.h"
 
 void CompileMap() {
 	// Prevent re-entering this method
@@ -26,39 +21,24 @@ void CompileMap() {
 	
 	mutex = true;
 	
-	// Add the menu item
-	IMenuManager& mm = GlobalUIManager().getMenuManager();
-	// TODO: Set sensitivity of menu item during compilation to FALSE
-	/*mm.add("main/map", 	// menu location path
-			"compilemap", // name
-			ui::menuItem,	// type
-			"Compile Map (dmap)",	// caption
-			"icon_classname.png",	// icon
-			"CompileMap"); // event name*/
+	// Compile including AAS
+	darkmodcommands::CompileMap(false);
+	
+	mutex = false;
+}
 
-	// Get the map name
-	// Note: this is a temporary way to retrieve the map name 
-	// until a proper IMap interface is in place
-	NameablePtr rootNameable = 
-		boost::dynamic_pointer_cast<Nameable>(GlobalSceneGraph().root());
-
-	if (rootNameable != NULL && rootNameable->name().size() > 0) {
-		std::string fullName(rootNameable->name());
-
-		if (boost::algorithm::istarts_with(fullName, "maps/")) {
-			fullName = fullName.substr(5, fullName.size());
-		}
-		
-		IEventPtr toggleConsoleEvent = GlobalEventManager().findEvent("ToggleConsole");
-		toggleConsoleEvent->keyDown();
-
-		// Instantiate a client and issue the command
-		DarkModRCFClient client;
-		client.executeCommand("dmap " + fullName);
+void CompileMapNoAAS() {
+	// Prevent re-entering this method
+	static bool mutex(false);
+	
+	if (mutex) {
+		return;
 	}
-	else {
-		gtkutil::errorDialog("Cannot compile empty map.", GlobalRadiant().getMainWindow());
-	}
+	
+	mutex = true;
+	
+	// Compile excluding AAS
+	darkmodcommands::CompileMap(true);
 	
 	mutex = false;
 }
@@ -93,19 +73,24 @@ public:
 		globalOutputStream() << getName().c_str() << "::initialiseModule called.\n";
 		
 		// Add the callback event
-		GlobalEventManager().addCommand(
-			"CompileMap", 
-			FreeCaller<CompileMap>()
-		);
+		GlobalEventManager().addCommand("CompileMap", FreeCaller<CompileMap>());
+		GlobalEventManager().addCommand("CompileMapNoAAS", FreeCaller<CompileMapNoAAS>());
 	
 		// Add the menu item
 		IMenuManager& mm = GlobalUIManager().getMenuManager();
 		mm.add("main/map", 	// menu location path
 				"compilemap", // name
 				ui::menuItem,	// type
-				"Compile Map (dmap)",	// caption
+				"Compile Map",	// caption
 				"icon_classname.png",	// icon
 				"CompileMap"); // event name
+		
+		mm.add("main/map", 	// menu location path
+				"compilemapnoaas", // name
+				ui::menuItem,	// type
+				"Compile Map (no AAS)",	// caption
+				"icon_classname.png",	// icon
+				"CompileMapNoAAS"); // event name
 	}
 };
 typedef boost::shared_ptr<D3HookModule> D3HookModulePtr;
