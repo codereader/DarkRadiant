@@ -11,38 +11,6 @@
 
 #include "DarkModCommands.h"
 
-void CompileMap() {
-	// Prevent re-entering this method
-	static bool mutex(false);
-	
-	if (mutex) {
-		return;
-	}
-	
-	mutex = true;
-	
-	// Compile including AAS
-	darkmodcommands::CompileMap(false);
-	
-	mutex = false;
-}
-
-void CompileMapNoAAS() {
-	// Prevent re-entering this method
-	static bool mutex(false);
-	
-	if (mutex) {
-		return;
-	}
-	
-	mutex = true;
-	
-	// Compile excluding AAS
-	darkmodcommands::CompileMap(true);
-	
-	mutex = false;
-}
-
 /**
  * Module to register the menu commands for the D3Hook class.
  */
@@ -73,8 +41,15 @@ public:
 		globalOutputStream() << getName().c_str() << "::initialiseModule called.\n";
 		
 		// Add the callback event
-		GlobalEventManager().addCommand("CompileMap", FreeCaller<CompileMap>());
-		GlobalEventManager().addCommand("CompileMapNoAAS", FreeCaller<CompileMapNoAAS>());
+		GlobalEventManager().addCommand(
+			"MapCompile", FreeCaller<DarkModCommands::compileMap>()
+		);
+		GlobalEventManager().addCommand(
+			"MapCompileNoAAS", FreeCaller<DarkModCommands::compileMapNoAAS>()
+		);
+		GlobalEventManager().addCommand(
+			"MapRunAAS", FreeCaller<DarkModCommands::runAAS>()
+		);
 	
 		// Add the menu item
 		IMenuManager& mm = GlobalUIManager().getMenuManager();
@@ -83,14 +58,21 @@ public:
 				ui::menuItem,	// type
 				"Compile Map",	// caption
 				"icon_classname.png",	// icon
-				"CompileMap"); // event name
+				"MapCompile"); // event name
 		
 		mm.add("main/map", 	// menu location path
 				"compilemapnoaas", // name
 				ui::menuItem,	// type
 				"Compile Map (no AAS)",	// caption
 				"icon_classname.png",	// icon
-				"CompileMapNoAAS"); // event name
+				"MapCompileNoAAS"); // event name
+		
+		mm.add("main/map", 	// menu location path
+				"runaas", // name
+				ui::menuItem,	// type
+				"Compile AAS only",	// caption
+				"icon_classname.png",	// icon
+				"MapRunAAS"); // event name
 	}
 };
 typedef boost::shared_ptr<D3HookModule> D3HookModulePtr;

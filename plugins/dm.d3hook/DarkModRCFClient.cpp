@@ -53,7 +53,7 @@ void DarkModRCFClient::executeCommand(const std::string& command) {
 		// Send the command to the DarkMod RCF Server
 		_client.executeConsoleCommand(RCF::Oneway, message);
 	
-		globalOutputStream() << "Command sent to DarkMod...";
+		globalOutputStream() << "Command sent to DarkMod...\n";
 	
 		int d3CheckTime(0);
 		
