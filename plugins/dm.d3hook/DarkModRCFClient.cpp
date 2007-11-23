@@ -1,9 +1,9 @@
+#include "gtkutil/dialog.h"
 #include "DarkModRCFClient.h"
 
-#include <gtk/gtkmain.h>
-#include "gtkutil/dialog.h"
 #include "DarkRadiantRCFServer.h"
 #include "D3ProcessChecker.h"
+#include <gtk/gtkmain.h>
 
 #include "stream/stringstream.h"
 #include "stream/textstream.h"
