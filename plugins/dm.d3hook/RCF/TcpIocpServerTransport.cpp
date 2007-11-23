@@ -1417,7 +1417,7 @@ namespace RCF {
         const volatile bool &stopFlag)
     {
 
-        RCF_UNUSED_VARIABLE(stopFlag);
+        //RCF_UNUSED_VARIABLE(stopFlag);
         (void)(stopFlag == stopFlag);
 
         if (mQueuedAccepts < mQueuedAcceptsThreshold)
