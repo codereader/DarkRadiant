@@ -228,6 +228,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\dm.d3hook\DarkModCommands.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.d3hook\DarkModCommands.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\dm.d3hook\DarkModRCFClient.cpp"
 				>
 			</File>
