@@ -364,6 +364,7 @@ d3hookEnv.useBoost()
 d3hookEnv.Append(CPPPATH = ['#/plugins/dm.d3hook'])
 if (d3hookEnv['PLATFORM'] == 'win32'):
 	d3hookEnv.Append(LIBS = ['ws2_32', 'Psapi'])
+	d3hookEnv.Append(CXXFLAGS = ' -Wno-deprecated ')
 if (d3hookEnv['PLATFORM'] == 'posix'):
 	d3hookEnv.Append(CXXFLAGS = ' -DRCF_USE_BOOST_ASIO -Wno-deprecated -Wno-unused ')
 d3hookList = build_list('plugins/dm.d3hook',

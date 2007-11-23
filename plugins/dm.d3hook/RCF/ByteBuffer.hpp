@@ -78,7 +78,7 @@ namespace RCF {
         ByteBuffer(
             const ByteBuffer &byteBuffer,
             std::size_t offset = 0,
-            std::size_t len = -1);
+            std::size_t len = std::string::npos);
 
         char *getPtr() const;
         std::size_t getLength() const;
@@ -126,7 +126,7 @@ namespace RCF {
         const Functor &functor,
         const std::vector<ByteBuffer> &byteBuffers,
         std::size_t offset,
-        std::size_t length = -1)
+        std::size_t length = std::string::npos)
     {
         std::size_t pos0        = 0;
         std::size_t pos1        = 0;
@@ -173,7 +173,7 @@ namespace RCF {
         std::vector<ByteBuffer> &slicedBuffers,
         const std::vector<ByteBuffer> &byteBuffers,
         std::size_t offset,
-        std::size_t length = -1);
+        std::size_t length = std::string::npos);
 
     void copyByteBuffers(
         const std::vector<ByteBuffer> &byteBuffers,
