@@ -1,7 +1,6 @@
 #ifndef DEFAULTCONSTRUCTOR_H_
 #define DEFAULTCONSTRUCTOR_H_
 
-#include "iradiant.h"
 #include "iimage.h"
 #include "ishaders.h"
 
@@ -18,12 +17,15 @@ namespace shaders {
 class DefaultConstructor : 
 	public TextureConstructor
 {
-	// The ImageLoader references 
-	ImageLoaderList _imageLoaders;
-	
 	// The filename of the image to load
 	std::string _filename;
 
+private:
+	
+	// Get the list of ImageLoaders associated with the .game file formats. This
+	// will be the same for all DefaultConstructors so we cache it statically.
+	static const ImageLoaderList& getImageLoaders();
+	
 public:
 	// Constructor
 	DefaultConstructor(const std::string& filename);
