@@ -371,6 +371,7 @@ d3hookList = build_list('plugins/dm.d3hook',
 						 DarkRadiantRCFServer.cpp \
 						 D3ProcessChecker.cpp \
 						 DarkModRCFClient.cpp \
+						 DarkModCommands.cpp \
 						 RCF/RCF.cpp')
 d3hookLib = d3hookEnv.SharedLibrary(target='dm_d3hook',
 							source=d3hookList,

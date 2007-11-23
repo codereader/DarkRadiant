@@ -57,21 +57,21 @@ public:
 				"compilemap", // name
 				ui::menuItem,	// type
 				"Compile Map",	// caption
-				"icon_classname.png",	// icon
+				"compile.png",	// icon
 				"MapCompile"); // event name
 		
 		mm.add("main/map", 	// menu location path
 				"compilemapnoaas", // name
 				ui::menuItem,	// type
 				"Compile Map (no AAS)",	// caption
-				"icon_classname.png",	// icon
+				"compile.png",	// icon
 				"MapCompileNoAAS"); // event name
 		
 		mm.add("main/map", 	// menu location path
 				"runaas", // name
 				ui::menuItem,	// type
 				"Compile AAS only",	// caption
-				"icon_classname.png",	// icon
+				"compile.png",	// icon
 				"MapRunAAS"); // event name
 	}
 };
