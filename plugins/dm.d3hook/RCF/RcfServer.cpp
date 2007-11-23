@@ -851,7 +851,7 @@ namespace RCF {
         RCF_UNUSED_VARIABLE(timeoutMs);
         //RCF_UNUSED_VARIABLE(stopFlag);
         
-        stopFlag == stopFlag;
+        (void)(stopFlag == stopFlag);
 
         //RCF_TRACE("")(timeoutMs);
 
