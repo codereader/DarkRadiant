@@ -41,10 +41,6 @@ class FilterSystem :
 	public RegisterableModule
 {
 public:
-	/** greebo: Loads the filter settings from the registry
-	 * 			and adds the commands to the EventManager.
-	 */
-	virtual void initialise() = 0;
 
 	/**
 	 * greebo: Updates all the "Filtered" status of all Instances 

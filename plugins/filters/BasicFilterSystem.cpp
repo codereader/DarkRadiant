@@ -5,22 +5,20 @@
 #include "iscenegraph.h"
 #include "iregistry.h"
 #include "ieventmanager.h"
+#include "igame.h"
 
 #include "generic/callback.h"
 
 namespace filters
 {
 
-// Constructor
-BasicFilterSystem::BasicFilterSystem()
-: _initialised(false)
-{ }
-
 // Initialise the filter system
-void BasicFilterSystem::initialise() {
+void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx) {
 
 	// Ask the XML Registry for the filter nodes
 	xml::NodeList filters = GlobalRegistry().findXPath("game/filtersystem//filter");
+	std::cout << "[filters] Loaded " << filters.size() 
+			  << " filters from registry." << std::endl;
 
 	// Iterate over the list of nodes, adding filter objects onto the list
 	for (xml::NodeList::iterator iter = filters.begin();
@@ -56,8 +54,6 @@ void BasicFilterSystem::initialise() {
 			MemberCaller<filters::XMLFilter, &filters::XMLFilter::toggle>(inserted) 
 		);
 	}
-	
-	_initialised = true;
 }
 
 void BasicFilterSystem::update() {
@@ -66,10 +62,6 @@ void BasicFilterSystem::update() {
 
 void BasicFilterSystem::forEachFilter(IFilterVisitor& visitor) {
 
-	// Initialise the filter system if not already
-	if (!_initialised)
-		initialise();
-		
 	// Visit each filter on the list, passing the name to the visitor
 	for (FilterTable::iterator iter = _availableFilters.begin();
 		 iter != _availableFilters.end();
@@ -172,13 +164,10 @@ const StringSet& BasicFilterSystem::getDependencies() const {
 		_dependencies.insert(MODULE_SCENEGRAPH);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_GAMEMANAGER);
 	}
 
 	return _dependencies;
-}
-
-void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "BasicFilterSystem::initialiseModule called.\n";
 }
 
 }

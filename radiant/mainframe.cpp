@@ -1631,9 +1631,6 @@ void EditColourScheme() {
 
 void MainFrame_Construct()
 {
-	// Tell the FilterSystem to register its commands
-	GlobalFilterSystem().initialise();
-	
 	GlobalEventManager().addCommand("RefreshReferences", FreeCaller<RefreshReferences>());
 	GlobalEventManager().addCommand("ReloadSkins", FreeCaller<ReloadSkins>());
 	GlobalEventManager().addCommand("ProjectSettings", FreeCaller<ui::PrefDialog::showProjectSettings>());

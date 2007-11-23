@@ -19,9 +19,6 @@ namespace filters
 class BasicFilterSystem 
 : public FilterSystem
 {
-	// Flag to indicate initialisation status
-	bool _initialised;
-
 	// Hashtable of available filters, indexed by name
 	typedef std::map<std::string, filters::XMLFilter> FilterTable;
 	FilterTable _availableFilters;
@@ -42,13 +39,6 @@ private:
 	
 public:
 	
-	// Constructor
-	BasicFilterSystem();
-
-	// Initialise the filter system. This must be done after the main
-	// Radiant module, hence cannot be done in the constructor.
-	void initialise();
-
 	// Invoke the InstanceUpateWalker to update the filtered status.
 	void update();
 
