@@ -85,177 +85,178 @@ ui::ColourSchemeManager& ColourSchemes() {
 	return _manager;
 }
 
-class RadiantCoreAPI :
-	public IRadiant
-{
-	map::CounterManager _counters;
+RadiantCoreAPI::RadiantCoreAPI() {
+	globalOutputStream() << "RadiantCore initialised.\n";
+}
 	
-	typedef std::set<RadiantEventListenerPtr> EventListenerList;
-	EventListenerList _eventListeners;
-public:
-	RadiantCoreAPI() {
-		globalOutputStream() << "RadiantCore initialised.\n";
-	}
+GtkWindow* RadiantCoreAPI::getMainWindow() {
+	return MainFrame_getWindow();
+}
 	
-	virtual GtkWindow* getMainWindow() {
-		return MainFrame_getWindow();
-	}
+GdkPixbuf* RadiantCoreAPI::getLocalPixbuf(const std::string& fileName) {
+	// Construct the full filename using the Bitmaps path
+	std::string fullFileName(GlobalRegistry().get(RKEY_BITMAPS_PATH) + fileName);
+	return gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL);
+}
+
+GdkPixbuf* RadiantCoreAPI::getLocalPixbufWithMask(const std::string& fileName) {
+	std::string fullFileName(GlobalRegistry().get(RKEY_BITMAPS_PATH) + fileName);
 	
-	virtual GdkPixbuf* getLocalPixbuf(const std::string& fileName) {
-		// Construct the full filename using the Bitmaps path
-		std::string fullFileName(GlobalRegistry().get(RKEY_BITMAPS_PATH) + fileName);
-		return gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL);
+	GdkPixbuf* rgb = gdk_pixbuf_new_from_file(fullFileName.c_str(), 0);
+	if (rgb != NULL) {
+		// File load successful, add alpha channel
+		GdkPixbuf* rgba = gdk_pixbuf_add_alpha(rgb, TRUE, 255, 0, 255);
+		gdk_pixbuf_unref(rgb);
+		return rgba;
 	}
+	else {
+		// File load failed
+		return NULL;
+	}
+}
+
+ICounter& RadiantCoreAPI::getCounter(CounterType counter) {
+	// Pass the call to the helper class
+	return _counters.get(counter);
+}
 	
-	virtual GdkPixbuf* getLocalPixbufWithMask(const std::string& fileName) {
-		std::string fullFileName(GlobalRegistry().get(RKEY_BITMAPS_PATH) + fileName);
-		
-		GdkPixbuf* rgb = gdk_pixbuf_new_from_file(fullFileName.c_str(), 0);
-		if (rgb != NULL) {
-			// File load successful, add alpha channel
-			GdkPixbuf* rgba = gdk_pixbuf_add_alpha(rgb, TRUE, 255, 0, 255);
-			gdk_pixbuf_unref(rgb);
-			return rgba;
-		}
-		else {
-			// File load failed
-			return NULL;
-		}
-	}
+void RadiantCoreAPI::setStatusText(const std::string& statusText) {
+	Sys_Status(statusText);
+}
 	
-	virtual ICounter& getCounter(CounterType counter) {
-		// Pass the call to the helper class
-		return _counters.get(counter);
-	}
-	
-	virtual void setStatusText(const std::string& statusText) {
-		Sys_Status(statusText);
-	}
-	
-	virtual Vector3 getColour(const std::string& colourName) {
-		return ColourSchemes().getColourVector3(colourName);
-	}
+Vector3 RadiantCoreAPI::getColour(const std::string& colourName) {
+	return ColourSchemes().getColourVector3(colourName);
+}
   
-	virtual void updateAllWindows() {
-		UpdateAllWindows();
-	}
+void RadiantCoreAPI::updateAllWindows() {
+	UpdateAllWindows();
+}
 	
-	virtual void addEventListener(RadiantEventListenerPtr listener) {
-		_eventListeners.insert(listener);
-	}
+void RadiantCoreAPI::addEventListener(RadiantEventListenerPtr listener) {
+	_eventListeners.insert(listener);
+}
 	
-	virtual void removeEventListener(RadiantEventListenerPtr listener) {
-		EventListenerList::iterator found = _eventListeners.find(listener);
-		if (found != _eventListeners.end()) {
-			_eventListeners.erase(found);
-		}
+void RadiantCoreAPI::removeEventListener(RadiantEventListenerPtr listener) {
+	EventListenerList::iterator found = _eventListeners.find(listener);
+	if (found != _eventListeners.end()) {
+		_eventListeners.erase(found);
 	}
+}
 	
-	// Broadcasts a "shutdown" event to all the listeners, this also clears all listeners!
-	void broadcastShutdownEvent() {
-		for (EventListenerList::iterator i = _eventListeners.begin();
-		     i != _eventListeners.end(); /* in-loop increment */)
-		{
-			// greebo: Post-increment the iterator, so that listeners can
-			// disconnect themselves without invalidating our iterator
-			(*i++)->onRadiantShutdown();
-		}
+// Broadcasts a "shutdown" event to all the listeners, this also clears all listeners!
+void RadiantCoreAPI::broadcastShutdownEvent() {
+	for (EventListenerList::iterator i = _eventListeners.begin();
+	     i != _eventListeners.end(); /* in-loop increment */)
+	{
+		// greebo: Post-increment the iterator, so that listeners can
+		// disconnect themselves without invalidating our iterator
+		(*i++)->onRadiantShutdown();
+	}
 
-		// This was the final radiant event, don't hold any shared_ptr's after this point
-		_eventListeners.clear();
-	}
-	
-	// Broadcasts a "startup" event to all the listeners
-	void broadcastStartupEvent() {
-		for (EventListenerList::iterator i = _eventListeners.begin();
-		     i != _eventListeners.end(); /* in-loop increment */)
-		{
-			// greebo: Post-increment the iterator, so that listeners can
-			// disconnect themselves without invalidating our iterator
-			(*i++)->onRadiantStartup();
-		}
-	}
-	
-	// RegisterableModule implementation
-	virtual const std::string& getName() const {
-		static std::string _name(MODULE_RADIANT);
-		return _name;
-	}
-	
-	virtual const StringSet& getDependencies() const {
-		static StringSet _dependencies;
-		
-		// greebo: TODO: This list can probably be made smaller,
-		// not all modules are necessary during initialisation
-		if (_dependencies.empty()) {
-			_dependencies.insert(MODULE_EVENTMANAGER);
-			_dependencies.insert(MODULE_UIMANAGER);
-			_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
-			_dependencies.insert(MODULE_ENTITYCREATOR);
-			_dependencies.insert(MODULE_SHADERSYSTEM);
-			_dependencies.insert(MODULE_BRUSHCREATOR);
-			_dependencies.insert(MODULE_SCENEGRAPH);
-			_dependencies.insert(MODULE_SHADERCACHE);
-			_dependencies.insert(MODULE_FILETYPES);
-			_dependencies.insert(MODULE_SELECTIONSYSTEM);
-			_dependencies.insert(MODULE_REFERENCECACHE);
-			_dependencies.insert(MODULE_OPENGL);
-			_dependencies.insert(MODULE_ECLASSMANAGER);
-			_dependencies.insert(MODULE_UNDOSYSTEM);
-			_dependencies.insert(MODULE_NAMESPACE);
-			_dependencies.insert(MODULE_CLIPPER);
-			_dependencies.insert(MODULE_GRID);
-			_dependencies.insert(MODULE_SOUNDMANAGER);
-			_dependencies.insert(MODULE_PARTICLESMANAGER);
-			_dependencies.insert(MODULE_GAMEMANAGER);
-			_dependencies.insert("Doom3MapLoader");
-			_dependencies.insert("ImageLoaderTGA");
-			_dependencies.insert("ImageLoaderJPG");
-			_dependencies.insert("ImageLoaderDDS");
-		}
-		
-		return _dependencies;
-	}
-	
-	virtual void initialiseModule(const ApplicationContext& ctx) {
-		globalOutputStream() << "RadiantAPI::initialiseModule called.\n";
-		
-		// Reset the node id count
-	  	scene::Node::resetIds();
-	  	
-	    GlobalFiletypes().addType(
-	    	"sound", "wav", FileTypePattern("PCM sound files", "*.wav"));
+	// This was the final radiant event, don't hold any shared_ptr's after this point
+	_eventListeners.clear();
+}
 
-	    Selection_construct();
-	    MultiMon_Construct();
-	    map::PointFile::Instance().registerCommands();
-	    Map_Construct();
-	    MainFrame_Construct();
-	    GlobalCamera().construct();
-	    GlobalXYWnd().construct();
-	    GlobalTextureBrowser().construct();
-	    Entity_Construct();
-	    map::AutoSaver().init();
+// Broadcasts a "startup" event to all the listeners
+void RadiantCoreAPI::broadcastStartupEvent() {
+	for (EventListenerList::iterator i = _eventListeners.begin();
+	     i != _eventListeners.end(); /* in-loop increment */)
+	{
+		// greebo: Post-increment the iterator, so that listeners can
+		// disconnect themselves without invalidating our iterator
+		(*i++)->onRadiantStartup();
+	}
+}
+
+// RegisterableModule implementation
+const std::string& RadiantCoreAPI::getName() const {
+	static std::string _name(MODULE_RADIANT);
+	return _name;
+}
+
+const StringSet& RadiantCoreAPI::getDependencies() const {
+	static StringSet _dependencies;
+	
+	// greebo: TODO: This list can probably be made smaller,
+	// not all modules are necessary during initialisation
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_UIMANAGER);
+		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
+		_dependencies.insert(MODULE_ENTITYCREATOR);
+		_dependencies.insert(MODULE_SHADERSYSTEM);
+		_dependencies.insert(MODULE_BRUSHCREATOR);
+		_dependencies.insert(MODULE_SCENEGRAPH);
+		_dependencies.insert(MODULE_SHADERCACHE);
+		_dependencies.insert(MODULE_FILETYPES);
+		_dependencies.insert(MODULE_SELECTIONSYSTEM);
+		_dependencies.insert(MODULE_REFERENCECACHE);
+		_dependencies.insert(MODULE_OPENGL);
+		_dependencies.insert(MODULE_ECLASSMANAGER);
+		_dependencies.insert(MODULE_UNDOSYSTEM);
+		_dependencies.insert(MODULE_NAMESPACE);
+		_dependencies.insert(MODULE_CLIPPER);
+		_dependencies.insert(MODULE_GRID);
+		_dependencies.insert(MODULE_SOUNDMANAGER);
+		_dependencies.insert(MODULE_PARTICLESMANAGER);
+		_dependencies.insert(MODULE_GAMEMANAGER);
+		_dependencies.insert("Doom3MapLoader");
+		_dependencies.insert("ImageLoaderTGA");
+		_dependencies.insert("ImageLoaderJPG");
+		_dependencies.insert("ImageLoaderDDS");
 	}
 	
-	virtual void shutdownModule() {
-		globalOutputStream() << "RadiantCoreAPI::shutdownModule called.\n";
-		
-		GlobalFileSystem().shutdown();
+	return _dependencies;
+}
 
-		map::PointFile::Instance().destroy();
-	    Entity_Destroy();
-	    MainFrame_Destroy();
-	    Map_Destroy();
-	    MultiMon_Destroy();
-	    Selection_destroy();
-	    
-	    // Remove all the event listeners, otherwise the shared_ptrs 
-	    // lock the instances. This is just for safety, usually all
-		// EventListeners get cleared upon OnRadiantShutdown anyway.
-	    _eventListeners.clear();
-	}
-};
+void RadiantCoreAPI::initialiseModule(const ApplicationContext& ctx) {
+	globalOutputStream() << "RadiantAPI::initialiseModule called.\n";
+	
+	// Reset the node id count
+  	scene::Node::resetIds();
+  	
+    GlobalFiletypes().addType(
+    	"sound", "wav", FileTypePattern("PCM sound files", "*.wav"));
+
+    Selection_construct();
+    MultiMon_Construct();
+    map::PointFile::Instance().registerCommands();
+    Map_Construct();
+    MainFrame_Construct();
+    GlobalCamera().construct();
+    GlobalXYWnd().construct();
+    GlobalTextureBrowser().construct();
+    Entity_Construct();
+    map::AutoSaver().init();
+}
+
+void RadiantCoreAPI::shutdownModule() {
+	globalOutputStream() << "RadiantCoreAPI::shutdownModule called.\n";
+	
+	GlobalFileSystem().shutdown();
+
+	map::PointFile::Instance().destroy();
+    Entity_Destroy();
+    MainFrame_Destroy();
+    Map_Destroy();
+    MultiMon_Destroy();
+    Selection_destroy();
+    
+    // Remove all the event listeners, otherwise the shared_ptrs 
+    // lock the instances. This is just for safety, usually all
+	// EventListeners get cleared upon OnRadiantShutdown anyway.
+    _eventListeners.clear();
+}
 
 // Define the static Radiant module
 module::StaticModule<RadiantCoreAPI> radiantCoreModule;
+
+namespace radiant {
+	
+	// Return the static Radiant module to other code within the main binary
+	boost::shared_ptr<RadiantCoreAPI> getGlobalRadiant() {
+		return radiantCoreModule.getModule();
+	}
+
+}
+

@@ -132,10 +132,6 @@ public:
 	// Registers/de-registers an event listener class
 	virtual void addEventListener(RadiantEventListenerPtr listener) = 0;
 	virtual void removeEventListener(RadiantEventListenerPtr listener) = 0;
-	
-	// Broadcasts the startup/shutdown event to all registered listeners.
-	virtual void broadcastStartupEvent() = 0;
-	virtual void broadcastShutdownEvent() = 0;
 };
 
 inline IRadiant& GlobalRadiant() {
