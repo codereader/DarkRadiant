@@ -10,6 +10,7 @@
 #include "generic/callback.h"
 
 #include "DarkModCommands.h"
+#include "DarkRadiantRCFServer.h"
 
 /**
  * Module to register the menu commands for the D3Hook class.
@@ -40,6 +41,11 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx) {
 		globalOutputStream() << getName().c_str() << "::initialiseModule called.\n";
 		
+		if (GlobalRegistry().findXPath(RKEY_D3HOOK_CONSOLE_ENABLED).size() == 0) {
+			// Write the default setting to the Registry
+			GlobalRegistry().set(RKEY_D3HOOK_CONSOLE_ENABLED, "1");
+		}
+		
 		// Add the callback event
 		GlobalEventManager().addCommand(
 			"MapCompile", FreeCaller<DarkModCommands::compileMap>()
@@ -50,7 +56,10 @@ public:
 		GlobalEventManager().addCommand(
 			"MapRunAAS", FreeCaller<DarkModCommands::runAAS>()
 		);
-	
+		GlobalEventManager().addRegistryToggle(
+			"D3HookEnableConsole", RKEY_D3HOOK_CONSOLE_ENABLED
+		);
+		
 		// Add the menu item
 		IMenuManager& mm = GlobalUIManager().getMenuManager();
 		mm.add("main/map", 	// menu location path
@@ -73,6 +82,13 @@ public:
 				"Compile AAS only",	// caption
 				"compile.png",	// icon
 				"MapRunAAS"); // event name
+	
+		mm.add("main/map", 	// menu location path
+				"enableconsoleoutput", // name
+				ui::menuItem,	// type
+				"Enable Console Output",	// caption
+				"",	// icon
+				"D3HookEnableConsole"); // event name
 	}
 };
 typedef boost::shared_ptr<D3HookModule> D3HookModulePtr;

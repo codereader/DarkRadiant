@@ -19,7 +19,7 @@ namespace {
 #else
 	// Linux doesn't know Sleep(), add a substitute def
 	#include <unistd.h>
-	#define Sleep(x) usleep(1000 * (x))
+	#define Sleep(x) usleep(static_cast<int>(1000 * (x)))
 #endif 
 
 DarkModRCFClient::DarkModRCFClient() :
@@ -63,17 +63,17 @@ void DarkModRCFClient::executeCommand(const std::string& command) {
 		while (!_server->commandIsDone()) {
 			_server->cycle();
 	
-			Sleep(1);
+			Sleep(0.1);
 			
 			// Process GUI events
 			while (gtk_events_pending()) {
 				gtk_main_iteration();
 			}
 	
-			d3CheckTime += 10;
+			d3CheckTime++;
 	
-			// Check for a running D3 instance all 10 seconds
-			if (d3CheckTime > 10000 && !D3ProcessChecker::D3IsRunning()) {
+			// Check for a running D3 instance each 10 seconds
+			if (d3CheckTime > 100000 && !D3ProcessChecker::D3IsRunning()) {
 				d3CheckTime = 0;
 				break;
 			}
