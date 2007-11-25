@@ -125,9 +125,6 @@ public:
 	 */
 	virtual void setStatusText(const std::string& statusText) = 0;
 	
-	virtual std::string getGameDescriptionKeyValue(const char* key) = 0;
-	virtual std::string getRequiredGameDescriptionKeyValue(const char* key) = 0;
-	
 	virtual Vector3 getColour(const std::string& colourName) = 0;
   
 	virtual void updateAllWindows() = 0;

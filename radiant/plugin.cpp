@@ -132,14 +132,6 @@ public:
 		Sys_Status(statusText);
 	}
 	
-	virtual std::string getGameDescriptionKeyValue(const char* key) {
-		return GlobalGameManager().currentGame()->getKeyValue(key);
-	}
-	
-	virtual std::string getRequiredGameDescriptionKeyValue(const char* key) {
-		return GlobalGameManager().currentGame()->getRequiredKeyValue(key);
-	}
-	
 	virtual Vector3 getColour(const std::string& colourName) {
 		return ColourSchemes().getColourVector3(colourName);
 	}
