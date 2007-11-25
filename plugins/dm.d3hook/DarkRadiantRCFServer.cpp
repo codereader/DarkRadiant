@@ -4,9 +4,12 @@
 #include "stream/stringstream.h"
 #include "stream/textstream.h"
 
+#include "iregistry.h"
+
 DarkRadiantRCFServer::DarkRadiantRCFServer() :
 	_server(RCF::TcpEndpoint(PORT_NUMBER)),
-	_commandIsDone(false)
+	_commandIsDone(false),
+	_consoleEnabled(GlobalRegistry().get(RKEY_D3HOOK_CONSOLE_ENABLED) == "1")
 {
 	_server.bind<DarkRadiantRCFService>(*this);
 	globalOutputStream() << "Starting DarkRadiant RCF Server.\n";
@@ -24,7 +27,9 @@ void DarkRadiantRCFServer::cycle() {
 }
 
 void DarkRadiantRCFServer::writeToConsole(const std::string& text) {
-	globalOutputStream() << text.c_str();
+	if (_consoleEnabled) {
+		globalOutputStream() << text.c_str();
+	}
 }
 
 bool DarkRadiantRCFServer::commandIsDone() const {

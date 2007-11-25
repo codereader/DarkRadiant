@@ -5,6 +5,10 @@
 #include <RCF/RcfServer.hpp>
 #include "RCFInterface.h"
 
+namespace {
+	const std::string RKEY_D3HOOK_CONSOLE_ENABLED("user/plugins/d3hook/consoleEnabled");
+}
+
 /**
  * greebo: This class encapsulates an RCF Server instance listening
  *         for incoming requests on localhost, port 50002.
@@ -21,6 +25,9 @@ class DarkRadiantRCFServer
 
 	// TRUE as soon as D3 emits the COMMAND DONE signal
 	bool _commandIsDone;
+	
+	// TRUE if the D3 output is redirected to DarkRadiant's console 
+	bool _consoleEnabled;
 
 public:
 	static const int PORT_NUMBER = 50002; 
