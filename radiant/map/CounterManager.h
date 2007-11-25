@@ -3,6 +3,9 @@
 
 #include "icounter.h"
 #include "iradiant.h"
+#include "mainframe.h"
+#include "string/string.h"
+
 #include <boost/shared_ptr.hpp>
 
 namespace map {
@@ -70,6 +73,7 @@ public:
 		text += " Patches: " + intToStr(static_cast<int>(patchCount));
 		text += " Entities: " + intToStr(static_cast<int>(entityCount));
 		
+		// TODO: Using global g_pParentWnd here is evil
 		g_pParentWnd->SetStatusText(g_pParentWnd->m_brushcount_status, text);
 	}
 };

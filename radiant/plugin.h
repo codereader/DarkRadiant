@@ -23,7 +23,70 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_PLUGIN_H
 
 #include "ui/colourscheme/ColourSchemeManager.h"
+#include "map/CounterManager.h"
+
+#include "iradiant.h"
 
 ui::ColourSchemeManager& ColourSchemes();
+
+/**
+ * IRadiant implementation class.
+ */
+class RadiantCoreAPI :
+	public IRadiant
+{
+	map::CounterManager _counters;
+	
+	typedef std::set<RadiantEventListenerPtr> EventListenerList;
+	EventListenerList _eventListeners;
+
+public:
+	
+	
+	RadiantCoreAPI();
+	
+	virtual GtkWindow* getMainWindow();
+	
+	virtual GdkPixbuf* getLocalPixbuf(const std::string& fileName);
+	
+	virtual GdkPixbuf* getLocalPixbufWithMask(const std::string& fileName);
+	
+	virtual ICounter& getCounter(CounterType counter);
+	
+	virtual void setStatusText(const std::string& statusText);
+	
+	virtual Vector3 getColour(const std::string& colourName);
+  
+	virtual void updateAllWindows();
+	
+	virtual void addEventListener(RadiantEventListenerPtr listener);
+	
+	virtual void removeEventListener(RadiantEventListenerPtr listener);
+	
+	// Broadcasts a "shutdown" event to all the listeners, this also clears all listeners!
+	void broadcastShutdownEvent();
+	
+	// Broadcasts a "startup" event to all the listeners
+	void broadcastStartupEvent();
+	
+	// RegisterableModule implementation
+	virtual const std::string& getName() const;
+	
+	virtual const StringSet& getDependencies() const;
+	
+	virtual void initialiseModule(const ApplicationContext& ctx);
+	
+	virtual void shutdownModule();
+};
+
+namespace radiant {
+	
+	/**
+	 * Return the global Radiant module (for use internally, not by other 
+	 * modules).
+	 */
+	boost::shared_ptr<RadiantCoreAPI> getGlobalRadiant();
+
+}
 
 #endif

@@ -1068,7 +1068,8 @@ MainFrame::MainFrame() : m_window(0), m_idleRedrawStatusText(RedrawStatusTextCal
 
   Create();
   
-  GlobalRadiant().broadcastStartupEvent();
+  	// Broadcast the startup event
+    radiant::getGlobalRadiant()->broadcastStartupEvent();
 }
 
 MainFrame::~MainFrame()
@@ -1514,7 +1515,8 @@ void MainFrame::Shutdown()
 	// Shutdown the texturebrowser (before the GroupDialog gets shut down).
 	GlobalTextureBrowser().destroyWindow();
 	
-	GlobalRadiant().broadcastShutdownEvent();
+	// Broadcast shutdown event to RadiantListeners
+	radiant::getGlobalRadiant()->broadcastShutdownEvent();
 
 	// Destroy the Overlay instance
 	ui::Overlay::destroyInstance();
