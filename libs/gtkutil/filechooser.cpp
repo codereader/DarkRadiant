@@ -48,7 +48,7 @@ std::string file_dialog_show(GtkWidget* parent,
 	if (title.empty()) {
 		title = open ? "Open File" : "Save File";
 	}
-
+	
 	GtkWidget* dialog;
 	if (open) {
 		dialog = gtk_file_chooser_dialog_new(title.c_str(),
@@ -65,9 +65,11 @@ std::string file_dialog_show(GtkWidget* parent,
 		                                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		                                     GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
 		                                     NULL);
-		//gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "unnamed");
 	}
-    gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), defaultFile.c_str());
+	
+	if (!open) {
+		gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), defaultFile.c_str());
+	}
 
 	// Set the Enter key to activate the default response
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
