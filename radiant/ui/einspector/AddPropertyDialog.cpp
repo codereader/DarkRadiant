@@ -261,14 +261,16 @@ void AddPropertyDialog::populateTreeView() {
 			gtk_tree_store_append(_treeStore, &t, NULL);
 		}
 		
+		// Obtain information from the XML node and add it to the treeview
 		std::string name = iter->getAttributeValue("name");
 		std::string type = iter->getAttributeValue("type");
+		std::string description = iter->getContent();
 		
 		gtk_tree_store_set(_treeStore, &t,
 			DISPLAY_NAME_COLUMN, name.c_str(),
 			PROPERTY_NAME_COLUMN, name.c_str(),
 			ICON_COLUMN, PropertyEditorFactory::getPixbufFor(type),
-			DESCRIPTION_COLUMN, "",
+			DESCRIPTION_COLUMN, description.c_str(),
 			-1);
 	}
 }
