@@ -16,10 +16,12 @@ namespace {
 // Platform-specific Sleep(int msec) definition
 #ifdef WIN32
 	#include <windows.h>
+	#define INTERVAL 1 // ms
 #else
 	// Linux doesn't know Sleep(), add a substitute def
 	#include <unistd.h>
 	#define Sleep(x) usleep(static_cast<int>(1000 * (x)))
+	#define INTERVAL 0.1 // ms
 #endif 
 
 DarkModRCFClient::DarkModRCFClient() :
@@ -51,30 +53,31 @@ void DarkModRCFClient::executeCommand(const std::string& command) {
 	
 		// Be sure to append the SIGNAL_DONE_CMD string, this notifies us
 		// when the command has been executed.
-		std::string message = command + "\n" + SIGNAL_DONE_CMD + "\n";;
+		std::string message = command + "\n" + SIGNAL_DONE_CMD + "\n";
 		
 		// Send the command to the DarkMod RCF Server
 		_client.executeConsoleCommand(RCF::Oneway, message);
 	
 		globalOutputStream() << "Command sent to DarkMod...\n";
 	
-		int d3CheckTime(0);
+		int d3CheckTicker(0);
+		int d3CheckInterval(static_cast<int>(10000/INTERVAL)); // every 10 seconds
 		
 		while (!_server->commandIsDone()) {
 			_server->cycle();
 	
-			Sleep(0.1);
+			Sleep(INTERVAL);
 			
 			// Process GUI events
 			while (gtk_events_pending()) {
 				gtk_main_iteration();
 			}
 	
-			d3CheckTime++;
+			d3CheckTicker++;
 	
-			// Check for a running D3 instance each 10 seconds
-			if (d3CheckTime > 100000 && !D3ProcessChecker::D3IsRunning()) {
-				d3CheckTime = 0;
+			// Check for a running D3 instance every 10 seconds
+			if (d3CheckTicker > d3CheckInterval && !D3ProcessChecker::D3IsRunning()) {
+				d3CheckTicker = 0;
 				break;
 			}
 		}
