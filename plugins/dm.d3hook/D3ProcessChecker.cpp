@@ -76,6 +76,8 @@ bool D3ProcessChecker::D3IsRunning() {
 #include <fstream>
 #include "os/dir.h"
 #include <boost/lexical_cast.hpp>
+#include "stream/stringstream.h"
+#include "stream/textstream.h" 
 
 namespace {
 	const std::string PROC_FOLDER("/proc/");
