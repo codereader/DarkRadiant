@@ -87,6 +87,8 @@ void ForeachFileFunctor(const char* name) {
 	try {
 		unsigned long pid = boost::lexical_cast<unsigned long>(name);
 	
+		globalOutputStream() << "PID file found: " << name << " - ";
+		
 		// Was the PID read correctly?
 		if (pid == 0) {
 			return;
@@ -94,20 +96,33 @@ void ForeachFileFunctor(const char* name) {
 		
 		const std::string cmdLineFileName = PROC_FOLDER + name + "/cmdline";
 		
+		globalOutputStream() << "reading commandline file " << cmdLineFileName.c_str() << " - ";
+		
 		std::ifstream cmdLineFile(cmdLineFileName.c_str());
 		if (cmdLineFile.is_open()) {
 			// Read the command line from the process file
 			std::string cmdLine("");
 			getline(cmdLineFile, cmdLine);
 			
+			globalOutputStream() << "'" << cmdLine.c_str() << "' - ";
+			
 			if (cmdLine.find(DOOM_PROCESS_NAME) != std::string::npos) {
 				// Process found, return success
 				D3ProcessChecker::processFound = true;
+				globalOutputStream() << "GOTCHA!";
 			}
+			else {
+				globalOutputStream() << "negative";
+			}
+		}
+		else {
+			globalOutputStream() << "could not open cmdline file";
 		}
 		
 		// Close the file
 		cmdLineFile.close();
+		
+		globalOutputStream() << "\n";
 	}
 	catch (const boost::bad_lexical_cast&) {
 		// Cast to int failed, no PID
