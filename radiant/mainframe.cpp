@@ -1095,6 +1095,8 @@ static gint mainframe_delete (GtkWidget *widget, GdkEvent *event, gpointer data)
 
 void MainFrame::Create()
 {
+	GtkWindowGroup* windowGroup = gtk_window_group_new();
+	
   GtkWindow* window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
   m_window = window;
   
@@ -1332,6 +1334,9 @@ void MainFrame::Create()
 	} // end if (regular)
   else if (CurrentStyle() == eFloating)
   {
+	  
+	  gtk_window_group_add_window(windowGroup, window);
+	  
     {
      	// Get the floating window with the CamWnd packed into it
 		gtkutil::PersistentTransientWindowPtr floatingWindow =
@@ -1340,6 +1345,8 @@ void MainFrame::Create()
 			GTK_WINDOW(floatingWindow->getWindow()));
       
 		floatingWindow->show();
+		
+		gtk_window_group_add_window(windowGroup, GTK_WINDOW(floatingWindow->getWindow()));
     }
 
    	{
@@ -1356,6 +1363,8 @@ void MainFrame::Create()
 	    	GTK_WIDGET(frame), // page widget
 	    	"Texture Browser"
 	    );
+		
+		gtk_window_group_add_window(windowGroup, GTK_WINDOW(ui::GroupDialog::Instance().getWindow()));
     }
 
     ui::GroupDialog::Instance().show();

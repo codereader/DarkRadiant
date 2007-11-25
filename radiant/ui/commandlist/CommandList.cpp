@@ -2,10 +2,7 @@
 
 #include "iuimanager.h"
 
-#include "gtk/gtkliststore.h"
-#include "gtk/gtktreeview.h"
-#include "gtk/gtkhbox.h"
-#include "gtk/gtkvbox.h"
+#include "gtk/gtk.h"
 
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextButton.h"
@@ -27,9 +24,13 @@ namespace ui {
 	}
 
 CommandList::CommandList() :
-	DialogWindow(CMDLISTDLG_WINDOW_TITLE, MainFrame_getWindow())
+	gtkutil::BlockingTransientWindow(CMDLISTDLG_WINDOW_TITLE, MainFrame_getWindow())
 {
-	setWindowSize(CMDLISTDLG_DEFAULT_SIZE_X, CMDLISTDLG_DEFAULT_SIZE_Y);
+	// Set the default border width in accordance to the HIG
+	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
+	
+	gtk_window_set_default_size(GTK_WINDOW(getWindow()), 
+		CMDLISTDLG_DEFAULT_SIZE_X, CMDLISTDLG_DEFAULT_SIZE_Y);
 	
 	// Create all the widgets
 	populateWindow();
@@ -49,7 +50,7 @@ void CommandList::reloadList() {
 }
 
 void CommandList::populateWindow() {
-	GtkHBox* hbox = GTK_HBOX(gtk_hbox_new(FALSE, 4));
+	GtkHBox* hbox = GTK_HBOX(gtk_hbox_new(FALSE, 12));
 	gtk_widget_show(GTK_WIDGET(hbox));
 	gtk_container_add(GTK_CONTAINER(getWindow()), GTK_WIDGET(hbox));
 
@@ -59,7 +60,8 @@ void CommandList::populateWindow() {
 
 		_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore));
 		
-		gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), gtkutil::TextColumn("Command", 0));
+		GtkTreeViewColumn* cmdCol = gtkutil::TextColumn("Command", 0);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), cmdCol);
 		gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), gtkutil::TextColumn("Key", 1));
 		
 		// Connect the mouseclick event to catch the double clicks
@@ -76,32 +78,33 @@ void CommandList::populateWindow() {
 		GtkWidget* scrolled = gtkutil::ScrolledFrame(_treeView);
 		gtk_widget_show_all(scrolled);
 		
+		// Set the sorting column
+		gtk_tree_view_column_set_sort_column_id(cmdCol, 0);
+		
 		// Pack the scrolled window into the hbox
 		gtk_box_pack_start(GTK_BOX(hbox), scrolled, TRUE, TRUE, 0);
 	}
 
-	GtkVBox* vbox = GTK_VBOX(gtk_vbox_new(FALSE, 4));
+	GtkVBox* vbox = GTK_VBOX(gtk_vbox_new(FALSE, 6));
 	gtk_widget_show(GTK_WIDGET(vbox));
 	gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(vbox), FALSE, FALSE, 0);
 	
 	// Create the close button 
-	{
-		GtkWidget* closeButton = gtkutil::TextButton("Close");
-		gtk_box_pack_end(GTK_BOX(vbox), closeButton, FALSE, FALSE, 4);
-		g_signal_connect(G_OBJECT(closeButton), "clicked", G_CALLBACK(callbackClose), this);
-	}
+	GtkWidget* closeButton = gtk_button_new_from_stock(GTK_STOCK_OK);
+	gtk_box_pack_end(GTK_BOX(vbox), closeButton, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(closeButton), "clicked", G_CALLBACK(callbackClose), this);
+	
+	gtk_widget_set_size_request(closeButton, 80, -1);
+	
 	// Create the assign shortcut button 
-	{
-		GtkWidget* assignButton = gtkutil::TextButton("Assign Shortcut");
-		gtk_box_pack_end(GTK_BOX(vbox), assignButton, FALSE, FALSE, 4);
-		g_signal_connect(G_OBJECT(assignButton), "clicked", G_CALLBACK(callbackAssign), this);
-	}
+	GtkWidget* assignButton = gtk_button_new_from_stock(GTK_STOCK_EDIT);
+	gtk_box_pack_end(GTK_BOX(vbox), assignButton, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(assignButton), "clicked", G_CALLBACK(callbackAssign), this);
+	
 	// Create the clear shortcut button 
-	{
-		GtkWidget* assignButton = gtkutil::TextButton("Clear Shortcut");
-		gtk_box_pack_end(GTK_BOX(vbox), assignButton, FALSE, FALSE, 4);
-		g_signal_connect(G_OBJECT(assignButton), "clicked", G_CALLBACK(callbackClear), this);
-	}
+	GtkWidget* clearButton = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
+	gtk_box_pack_end(GTK_BOX(vbox), clearButton, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(clearButton), "clicked", G_CALLBACK(callbackClear), this);
 }
 
 std::string CommandList::getSelectedCommand() {
