@@ -162,11 +162,9 @@
 			options="lights,fogs" 
 		/>
 		<property name="extinguished" category="Light" type="boolean" />
-		<property 
-			name="model" 
-			category="Model" 
-			type="model" 
-		/>
+		<property name="model" category="Model" type="model">The displayed model or particle system for this entity. For a func_static or other entity type which can have brushes as children, this key must be set to the same value as "name" if brushes are used</property>
+		<property name="model_lit" category="Model" type="model">The model or particle system to be used when this entity is lit (i.e. for torches).</property>
+		<property name="model_extinguished" category="Model" type="model">The model or particle system to be used when this torch entity is extinguished.</property>
 		<property name="skin" category="Model" type="skin" />
 		<property name="noshadows" category="Model" type="boolean" />
 		<property name="solid" category="Model" type="boolean" />
