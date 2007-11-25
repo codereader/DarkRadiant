@@ -4,21 +4,20 @@
 #include <string>
 #include "gtk/gtkwidget.h"
 #include "gtk/gtkliststore.h"
-#include "gtkutil/DialogWindow.h"
+#include "gtkutil/window/BlockingTransientWindow.h"
 
 /* greebo: The CommandListDialog class displays a list of all available
  * DarkRadiant commands and provides methods to clear and assign the shortcuts.
  * 
  * The actual re-assignment is taken care of by the ShortcutChooser helper class.
  * 
- * Note: Show the dialog by instantiating this class with NEW on the heap, 
- * as it's deriving from gtkutil::DialogWindow. It destroys itself upon dialog closure 
- * and frees the allocated memory. 
+ * Note: Show the dialog by instantiating this class. It blocks the GUI and
+ * destroys itself upon dialog closure and returns control to the calling function.  
  */
 namespace ui {
 
 class CommandList :
-	public gtkutil::DialogWindow
+	public gtkutil::BlockingTransientWindow
 {
 	// The list store containing the list of ColourSchemes		
 	GtkListStore* _listStore;
