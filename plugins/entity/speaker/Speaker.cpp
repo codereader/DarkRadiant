@@ -20,7 +20,6 @@ Speaker::Speaker(IEntityClassPtr eclass,
 	m_angle(ANGLEKEY_IDENTITY),
 	m_named(m_entity),
 	m_nameKeys(m_entity),
-	//m_arrow(m_ray),
 	m_speakerRadii(m_aabb_local.origin),
 	m_useSpeakerRadii(true),
 	m_minIsSet(false),
@@ -48,7 +47,6 @@ Speaker::Speaker(const Speaker& other,
 	m_angle(ANGLEKEY_IDENTITY),
 	m_named(m_entity),
 	m_nameKeys(m_entity),
-	//m_arrow(m_ray),
 	m_speakerRadii(m_origin),
 	m_useSpeakerRadii(true),
 	m_minIsSet(false),
@@ -115,14 +113,6 @@ VolumeIntersectionValue Speaker::intersectVolume(
 	return volume.TestAABB(localAABB(), localToWorld);
 }
 
-/*void Speaker::renderArrow(Renderer& renderer, 
-	const VolumeTest& volume, const Matrix4& localToWorld) const
-{
-	if (GlobalRegistry().get("user/ui/xyview/showEntityAngles") == "1") {
-		renderer.addRenderable(m_arrow, localToWorld);
-	}
-} */
-
 void Speaker::renderSolid(Renderer& renderer, 
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
@@ -130,7 +120,6 @@ void Speaker::renderSolid(Renderer& renderer,
 	renderer.addRenderable(m_aabb_solid, localToWorld);
 	if (SpeakerSettings().showAllSpeakerRadii())
 		renderer.addRenderable(m_speakerRadii, localToWorld);
-//	renderArrow(renderer, volume, localToWorld);
 }
 
 void Speaker::renderWireframe(Renderer& renderer, 
@@ -140,7 +129,6 @@ void Speaker::renderWireframe(Renderer& renderer,
 	renderer.addRenderable(m_aabb_wire, localToWorld);
 	if (SpeakerSettings().showAllSpeakerRadii())
 		renderer.addRenderable(m_speakerRadii, localToWorld);
-//	renderArrow(renderer, volume, localToWorld);
 	
 	if(GlobalRegistry().get("user/ui/xyview/showEntityNames") == "1") {
 		renderer.addRenderable(m_renderName, localToWorld);

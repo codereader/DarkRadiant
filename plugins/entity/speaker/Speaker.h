@@ -48,7 +48,6 @@ class Speaker :
 	AABB m_aabb_border;
 	Ray m_ray;
 
-	//RenderableArrow m_arrow;
 	RenderableSolidAABB m_aabb_solid;
 	RenderableWireframeAABB m_aabb_wire;
 	RenderableNamedEntity m_renderName;
@@ -88,7 +87,6 @@ public:
 
 	VolumeIntersectionValue intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
 
-//	void renderArrow(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
 	void renderSolid(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
 	void renderWireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
