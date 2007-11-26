@@ -1709,6 +1709,7 @@ void MainFrame_Construct()
 	
 	GlobalEventManager().addRegistryToggle("ToggleShowSizeInfo", RKEY_SHOW_SIZE_INFO);
 	GlobalEventManager().addRegistryToggle("ToggleShowAllLightRadii", "user/ui/showAllLightRadii");
+	GlobalEventManager().addRegistryToggle("ToggleShowAllSpeakerRadii", "user/ui/showAllSpeakerRadii");
 
 	GlobalEventManager().addToggle("ToggleClipper", FreeCaller<ClipperMode>());
 	
