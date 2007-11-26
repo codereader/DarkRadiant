@@ -10,9 +10,30 @@ typedef std::vector<std::string> SoundFileList;
 
 // The min and max radii of a sound shader
 class SoundRadii {
+	float minRad, maxRad;
 	public:
-	int minRad, maxRad;
-	SoundRadii (int min = 0, int max = 0) : minRad(min), maxRad(max) {};
+	//set sound radii either in metres or in inch on initialization might cause a conversion
+	SoundRadii (float min = 0, float max = 0, bool inMetres = false) {
+		if (inMetres) {
+			minRad = min/0.0254;
+			maxRad = max/0.0254;
+		}
+		else {
+			minRad = min;
+			maxRad = max;
+		}
+	}
+	// set the sound radii in metres or in inch, might cause a conversion
+	inline void setMin (float min, bool inMetres = false) {
+		if (inMetres) minRad = min/0.0254;
+		else minRad = min;
+	}
+	inline void setMax (float max, bool inMetres = false) {
+		if (inMetres) maxRad = max/0.0254;
+		else maxRad = max;
+	}
+	inline float getMin () const { return minRad; }
+	inline float getMax () const { return maxRad; }
 };
 
 /**

@@ -188,6 +188,7 @@
 			<toggletoolbutton name="dragentities" action="DragEntities" tooltip="Select Entities" icon="select_entities.png"/>
 		<separator/>
 			<toggletoolbutton name="showlightradii" action="ToggleShowAllLightRadii" tooltip="Show/hide all light volumes" icon="view_show_lightradii.png"/>
+			<toggletoolbutton name="showspeakerradii" action="ToggleShowAllSpeakerRadii" tooltip="Show/hide all speaker volumes" icon="view_show_speakerradii.png"/>
 		<separator/>
 			<toggletoolbutton name="texturelock" action="TogTexLock" tooltip="Texture Lock" icon="texture_lock.png"/>
 			<toggletoolbutton name="freemodelrotation" action="ToggleFreeModelRotation" tooltip="Rotate Models independently" icon="free_model_rotation.png" />

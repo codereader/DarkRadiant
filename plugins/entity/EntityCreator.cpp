@@ -14,6 +14,7 @@
 
 #include "light/LightNode.h"
 #include "doom3group/Doom3GroupNode.h"
+#include "speaker/SpeakerNode.h"
 #include "generic/GenericEntityNode.h"
 #include "eclassmodel/EclassModelNode.h"
 #include "Doom3Entity.h"
@@ -53,6 +54,9 @@ scene::INodePtr Doom3EntityCreator::getEntityForEClass(IEntityClassPtr eclass) {
 	else if (eclass->getModelPath().size() > 0) {
 		// Fixed size, has model path
 		return scene::INodePtr(new EclassModelNode(eclass));
+	}
+	else if (eclass->getName() == "speaker") {
+		return scene::INodePtr(new SpeakerNode(eclass));
 	}
 	else {
 		// Fixed size, no model path

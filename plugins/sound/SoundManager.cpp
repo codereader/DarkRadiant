@@ -108,8 +108,8 @@ void SoundManager::parseSoundShader(parser::DefTokeniser& tok) {
 	tok.assertNextToken("{");
 	
 	std::string nextToken = tok.nextToken();
-	int min = 0;
-	int max = 0;
+	float min = 0;
+	float max = 0;
 	while (nextToken != "}") {
 		// Watch out for sound file definitions and min/max radii
 		if (boost::algorithm::starts_with(nextToken, "sound/")) {
@@ -127,7 +127,8 @@ void SoundManager::parseSoundShader(parser::DefTokeniser& tok) {
 		}
 		nextToken = tok.nextToken();
 	}
-	SoundRadii soundRadii(min, max);
+	// we need to parse in metres
+	SoundRadii soundRadii(min, max, true);
 	_shaders[name]->setSoundRadii(soundRadii);
 }
 
