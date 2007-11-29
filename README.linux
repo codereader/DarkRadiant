@@ -1,0 +1,38 @@
+Prerequisites
+=============
+
+To compile DarkRadiant, you need the following libraries and
+their -dev variants:
+
+        libboost-regexp
+        libboost-date-time
+        libboost-filesystem
+        libboost-thread
+        libboost-serialization
+
+You also need:
+
+        g++-4.1
+        libg++
+        scons
+        python
+
+Build
+=====
+
+To build DarkRadiant, issue:
+
+        scons BUILD=release
+
+A debug build is also available:
+
+        scons BUILD=debug
+
+To cleanup all built files:
+
+        scons -c
+
+Run
+===
+
+The executable will be created inside the ./install/ directory.
