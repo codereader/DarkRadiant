@@ -682,6 +682,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\clipper\Clipper.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\clipper\ClipPoint.cpp"
 					>
 				</File>
