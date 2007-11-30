@@ -1780,6 +1780,11 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("EditColourScheme", FreeCaller<EditColourScheme>());
 	GlobalEventManager().addCommand("BrushExportOBJ", FreeCaller<CallBrushExportOBJ>());
 	GlobalEventManager().addCommand("BrushExportCM", FreeCaller<selection::algorithm::createCMFromSelection>());
+	
+	GlobalEventManager().addCommand(
+		"CreateDecalsForFaces",
+		FreeCaller<selection::algorithm::createDecalsForSelectedFaces>()
+	);
 
 	GlobalEventManager().addCommand("FindReplaceTextures", FreeCaller<ui::FindAndReplaceShader::showDialog>());
 	GlobalEventManager().addCommand("ShowCommandList", FreeCaller<ui::CommandList::showDialog>());

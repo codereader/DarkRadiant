@@ -561,6 +561,50 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="speaker"
+				>
+				<File
+					RelativePath="..\..\plugins\entity\speaker\Speaker.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\entity\speaker\Speaker.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\entity\speaker\SpeakerInstance.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\entity\speaker\SpeakerInstance.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\entity\speaker\SpeakerNode.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\entity\speaker\SpeakerNode.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\entity\speaker\SpeakerRenderables.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\entity\speaker\SpeakerRenderables.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\entity\speaker\SpeakerSettings.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\entity\speaker\SpeakerSettings.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath="..\..\plugins\entity\entity.def"
