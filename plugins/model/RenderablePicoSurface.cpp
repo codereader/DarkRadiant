@@ -168,10 +168,12 @@ void RenderablePicoSurface::createDisplayLists() {
 		ArbitraryMeshVertex& v = _vertices[*i];
 
 		// Submit the vertex attributes and coordinate
-		glVertexAttrib2dvARB(ATTR_TEXCOORD, v.texcoord);
-		glVertexAttrib3dvARB(ATTR_TANGENT, v.tangent);
-		glVertexAttrib3dvARB(ATTR_BITANGENT, v.bitangent);
-		glVertexAttrib3dvARB(ATTR_NORMAL, v.normal);		
+		if (GLEW_ARB_vertex_program) {
+			glVertexAttrib2dvARB(ATTR_TEXCOORD, v.texcoord);
+			glVertexAttrib3dvARB(ATTR_TANGENT, v.tangent);
+			glVertexAttrib3dvARB(ATTR_BITANGENT, v.bitangent);
+			glVertexAttrib3dvARB(ATTR_NORMAL, v.normal);
+		}
 		glVertex3dv(v.vertex);	
 	}
 	glEnd();
