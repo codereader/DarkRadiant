@@ -49,7 +49,7 @@ const std::string MODULE_CLIPPER("Clipper");
 
 /* greebo: This is the interface the clipper module has to provide.
  */
-class Clipper :
+class IClipper :
 	public RegisterableModule
 {
 public:
@@ -90,9 +90,9 @@ public:
 };
 
 // This is the accessor for the registry
-inline Clipper& GlobalClipper() {
-	boost::shared_ptr<Clipper> _clipper(
-		boost::static_pointer_cast<Clipper>(
+inline IClipper& GlobalClipper() {
+	boost::shared_ptr<IClipper> _clipper(
+		boost::static_pointer_cast<IClipper>(
 			module::GlobalModuleRegistry().getModule(MODULE_CLIPPER)
 		)
 	);
