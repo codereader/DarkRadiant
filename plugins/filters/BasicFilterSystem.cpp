@@ -12,11 +12,21 @@
 namespace filters
 {
 
+namespace {
+	
+	// Registry key for .game-defined filters
+	const char* RKEY_GAME_FILTERS = "game/filtersystem//filter";
+	
+	// Registry key for user-defined persistent filters
+	const char* RKEY_USER_FILTERS = "user/ui/filtersystem//activeFilter";
+
+}
+
 // Initialise the filter system
 void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx) {
 
 	// Ask the XML Registry for the filter nodes
-	xml::NodeList filters = GlobalRegistry().findXPath("game/filtersystem//filter");
+	xml::NodeList filters = GlobalRegistry().findXPath(RKEY_GAME_FILTERS);
 	std::cout << "[filters] Loaded " << filters.size() 
 			  << " filters from registry." << std::endl;
 
@@ -52,6 +62,37 @@ void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx) {
 		GlobalEventManager().addToggle(
 			filter.getEventName(),
 			MemberCaller<filters::XMLFilter, &filters::XMLFilter::toggle>(inserted) 
+		);
+	}
+	
+	// Add the currently-active filters from the user tree
+	xml::NodeList activeFilters = GlobalRegistry().findXPath(RKEY_USER_FILTERS);
+	for (xml::NodeList::const_iterator i = activeFilters.begin();
+		 i != activeFilters.end();
+		 ++i)
+	{
+		// Find the real XMLFilter corresponding to this filter name
+		FilterTable::const_iterator j = 
+			_availableFilters.find(i->getAttributeValue("name"));
+		if (j != _availableFilters.end()) {
+			std::cout << "TODO: Active filter " << j->first << std::endl;
+		}
+	}
+}
+
+// Shut down the Filters module, saving active filters to registry
+void BasicFilterSystem::shutdownModule() {
+	
+	// Remove the existing set of active filter nodes
+	GlobalRegistry().deleteXPath("user/ui/filtersystem");
+	
+	// Add a node for each active filter
+	for (FilterTable::const_iterator i = _activeFilters.begin();
+		 i != _activeFilters.end();
+		 ++i)
+	{
+		GlobalRegistry().createKeyWithName(
+			"user/ui/filtersystem", "activeFilter", i->first
 		);
 	}
 }
