@@ -25,7 +25,19 @@ namespace {
 // Initialise the filter system
 void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx) {
 
-	// Ask the XML Registry for the filter nodes
+	// Load the list of active filter names from the user tree. There is no
+	// guarantee that these are actually valid filters in the .game file
+	std::set<std::string> activeFilterNames;
+	xml::NodeList activeFilters = GlobalRegistry().findXPath(RKEY_USER_FILTERS);
+	for (xml::NodeList::const_iterator i = activeFilters.begin();
+		 i != activeFilters.end();
+		 ++i)
+	{
+		// Add the name of this filter to the set
+		activeFilterNames.insert(i->getAttributeValue("name"));
+	}
+	
+	// Ask the XML Registry for the game filter nodes
 	xml::NodeList filters = GlobalRegistry().findXPath(RKEY_GAME_FILTERS);
 	std::cout << "[filters] Loaded " << filters.size() 
 			  << " filters from registry." << std::endl;
@@ -53,29 +65,22 @@ void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx) {
 		}
 		
 		// Add this XMLFilter to the list of available filters
-		_availableFilters.insert(FilterTable::value_type(filterName, filter));
-		
-		// Get a reference 
-		filters::XMLFilter& inserted = _availableFilters.find(filterName)->second;
+		XMLFilter& inserted = _availableFilters.insert(
+			FilterTable::value_type(filterName, filter)
+		).first->second;
 		
 		// Add the according toggle command to the eventmanager
-		GlobalEventManager().addToggle(
+		IEventPtr fEvent = GlobalEventManager().addToggle(
 			filter.getEventName(),
 			MemberCaller<filters::XMLFilter, &filters::XMLFilter::toggle>(inserted) 
 		);
-	}
-	
-	// Add the currently-active filters from the user tree
-	xml::NodeList activeFilters = GlobalRegistry().findXPath(RKEY_USER_FILTERS);
-	for (xml::NodeList::const_iterator i = activeFilters.begin();
-		 i != activeFilters.end();
-		 ++i)
-	{
-		// Find the real XMLFilter corresponding to this filter name
-		FilterTable::const_iterator j = 
-			_availableFilters.find(i->getAttributeValue("name"));
-		if (j != _availableFilters.end()) {
-			std::cout << "TODO: Active filter " << j->first << std::endl;
+		
+		// If this filter is in our active set, enable it
+		if (activeFilterNames.find(filterName) != activeFilterNames.end()) {
+			fEvent->setToggled(true);
+			_activeFilters.insert(
+				FilterTable::value_type(filterName, inserted)
+			);
 		}
 	}
 }
