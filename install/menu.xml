@@ -217,6 +217,8 @@
 		<menuItem name="makeDetail" caption="Make detail" command="MakeDetail" />
 		<menuItem name="makeStructural" caption="Make structural" command="MakeStructural" />
 		<menuItem name="texturelock" caption="Texture lock" command="TogTexLock" />
+		<menuSeparator />
+		<menuItem name="createdecals" caption="Create Decal Patches" command="CreateDecalsForFaces" />
 	</subMenu>
 
 	<subMenu name="patch" caption="_Patch">
