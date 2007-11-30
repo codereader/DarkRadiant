@@ -464,87 +464,111 @@ void CSG_Subtract()
   }
 }
 
-class BrushSplitByPlaneSelected : public scene::Graph::Walker
+class BrushSplitByPlaneSelected : 
+	public scene::Graph::Walker
 {
-  const Vector3& m_p0;
-  const Vector3& m_p1;
-  const Vector3& m_p2;
-  const std::string& m_shader;
-  const TextureProjection& m_projection;
-  EBrushSplit m_split;
+	const Vector3& m_p0;
+	const Vector3& m_p1;
+	const Vector3& m_p2;
+	const std::string& m_shader;
+	const TextureProjection& m_projection;
+	EBrushSplit m_split;
+
 public:
-  BrushSplitByPlaneSelected(const Vector3& p0, const Vector3& p1, const Vector3& p2, const std::string& shader, const TextureProjection& projection, EBrushSplit split)
-    : m_p0(p0), m_p1(p1), m_p2(p2), m_shader(shader), m_projection(projection), m_split(split)
-  {
-  }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
-  {
-    return true; 
-  }
-  void post(const scene::Path& path, scene::Instance& instance) const
-  {
-    if(path.top()->visible())
-    {
-      Brush* brush = Node_getBrush(path.top());
-      if(brush != 0
-        && Instance_getSelectable(instance)->isSelected())
-      {
-        Plane3 plane(m_p0, m_p1, m_p2);
-        if(plane.isValid())
-        {
-          BrushSplitType split = Brush_classifyPlane(*brush, m_split == eFront ? -plane : plane);
-          if(split.counts[ePlaneBack] && split.counts[ePlaneFront])
-          {
-            // the plane intersects this brush
-            if(m_split == eFrontAndBack)
-            {
-              scene::INodePtr node(new BrushNode());
-              Brush* fragment = Node_getBrush(node);
-              fragment->copy(*brush);
-              FacePtr newFace = fragment->addPlane(m_p0, m_p1, m_p2, m_shader, m_projection);
-              if(newFace != 0 && m_split != eFront)
-              {
-                newFace->flipWinding();
-              }
-              fragment->removeEmptyFaces();
-              ASSERT_MESSAGE(!fragment->empty(), "brush left with no faces after split");
+	BrushSplitByPlaneSelected(const Vector3& p0, const Vector3& p1, const Vector3& p2, 
+							  const std::string& shader, 
+							  const TextureProjection& projection, EBrushSplit split) : 
+		m_p0(p0), 
+		m_p1(p1), 
+		m_p2(p2), 
+		m_shader(shader), 
+		m_projection(projection), 
+		m_split(split)
+	{}
 
-              Node_getTraversable(path.parent())->insert(node);
-              {
-                scene::Path fragmentPath = path;
-                fragmentPath.top() = node;
-                selectPath(fragmentPath, true);
-              }
-            }
+	bool pre(const scene::Path& path, scene::Instance& instance) const {
+		return true;
+	}
 
-            FacePtr newFace = brush->addPlane(m_p0, m_p1, m_p2, m_shader, m_projection);
-            if(newFace != 0 && m_split == eFront)
-            {
-              newFace->flipWinding();
-            }
-            brush->removeEmptyFaces();
-            ASSERT_MESSAGE(!brush->empty(), "brush left with no faces after split");
-          }
-          else
-            // the plane does not intersect this brush
-          if(m_split != eFrontAndBack && split.counts[ePlaneBack] != 0)
-          {
-            // the brush is "behind" the plane
-            Path_deleteTop(path);
-          }
-        }
-      }
-    }
-  }
+	void post(const scene::Path& path, scene::Instance& instance) const {
+		// Don't clip invisible nodes or filtered instances
+		if (!path.top()->visible() || instance.getFiltered()) {
+			return;
+		}
+
+		// Try to cast the instance onto a brush
+		Brush* brush = Node_getBrush(path.top());
+
+		// Return if not brush or not selected
+		if (brush == NULL || !Instance_getSelectable(instance)->isSelected()) {
+			return;
+		}
+
+		Plane3 plane(m_p0, m_p1, m_p2);
+		if (!plane.isValid()) {
+			return;
+		}
+
+		BrushSplitType split = Brush_classifyPlane(*brush, m_split == eFront ? -plane : plane);
+
+		if (split.counts[ePlaneBack] && split.counts[ePlaneFront]) {
+			// the plane intersects this brush
+			if (m_split == eFrontAndBack) {
+				scene::INodePtr node(new BrushNode());
+
+				Brush* fragment = Node_getBrush(node);
+				fragment->copy(*brush);
+
+				FacePtr newFace = fragment->addPlane(m_p0, m_p1, m_p2, m_shader, m_projection);
+
+				if (newFace != NULL && m_split != eFront) {
+					newFace->flipWinding();
+				}
+
+				fragment->removeEmptyFaces();
+				ASSERT_MESSAGE(!fragment->empty(), "brush left with no faces after split");
+
+				Node_getTraversable(path.parent())->insert(node);
+				{
+					scene::Path fragmentPath = path;
+					fragmentPath.top() = node;
+					selectPath(fragmentPath, true);
+				}
+			}
+
+			FacePtr newFace = brush->addPlane(m_p0, m_p1, m_p2, m_shader, m_projection);
+
+			if (newFace != NULL && m_split == eFront) {
+				newFace->flipWinding();
+			}
+
+			brush->removeEmptyFaces();
+			ASSERT_MESSAGE(!brush->empty(), "brush left with no faces after split");
+		}
+		// the plane does not intersect this brush
+		else if (m_split != eFrontAndBack && split.counts[ePlaneBack] != 0) {
+			// the brush is "behind" the plane
+			Path_deleteTop(path);
+		}
+	}
 };
 
-void Scene_BrushSplitByPlane(const Vector3 planePoints[3], const std::string& shader, EBrushSplit split) { 
-  TextureProjection projection;
-  projection.constructDefault();
-  GlobalSceneGraph().traverse(BrushSplitByPlaneSelected(planePoints[0], planePoints[1], planePoints[2], shader, projection, split));
-  SceneChangeNotify();
-}
+void Scene_BrushSplitByPlane(const Vector3 planePoints[3], 
+							 const std::string& shader, 
+							 EBrushSplit split)
+{ 
+	TextureProjection projection;
+	projection.constructDefault();
 
+	GlobalSceneGraph().traverse(
+		BrushSplitByPlaneSelected(planePoints[0], 
+								  planePoints[1], 
+								  planePoints[2], 
+								  shader, projection, split)
+	);
+
+	SceneChangeNotify();
+}
 
 class BrushInstanceSetClipPlane : public scene::Graph::Walker
 {

@@ -251,8 +251,6 @@ const StringSet& Clipper::getDependencies() const {
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		_dependencies.insert(MODULE_RADIANT);
-		_dependencies.insert(MODULE_SELECTIONSYSTEM);
-		_dependencies.insert(MODULE_SCENEGRAPH);
 	}
 
 	return _dependencies;
