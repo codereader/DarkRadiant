@@ -4,14 +4,18 @@
 
 #include "igroupnode.h"
 #include "ientity.h"
+#include "iundo.h"
+#include "itraversable.h"
 #include "brush/BrushModule.h"
 #include "brush/BrushInstance.h"
 #include "brush/BrushVisit.h"
 #include "patch/PatchSceneWalk.h"
+#include "patch/Patch.h"
 #include "string/string.h"
 #include "brush/export/CollisionModel.h"
 #include "gtkutil/dialog.h"
 #include "mainframe.h"
+#include "map/Map.h"
 #include "ui/modelselector/ModelSelector.h"
 #include "settings/GameManager.h" 
 
@@ -400,6 +404,73 @@ void addOriginToChildPrimitives() {
 	GlobalBrush()->setTextureLock(false);
 	GlobalSceneGraph().traverse(OriginAdder());
 	GlobalBrush()->setTextureLock(textureLockStatus);
+}
+
+void createDecalsForSelectedFaces() {
+	FacePtrVector faces = getSelectedFaces();
+	
+	if (faces.size() <= 0) {
+		gtkutil::errorDialog("No faces selected.", GlobalRadiant().getMainWindow());
+		return;
+	}
+	
+	// Create a scoped undocmd object
+	UndoableCommand cmd("createDecalsForSelectedFaces");
+	
+	int unsuitableWindings(0);
+	
+	// greebo: For each face, create a patch with fixed tesselation
+	for (std::size_t i = 0; i < faces.size(); i++) {
+		const Winding& winding = faces[i]->getWinding();
+		
+		// For now, only windings with four edges are supported
+		if (winding.numpoints == 4) {
+			scene::INodePtr patchNode = GlobalPatchCreator(DEF3).createPatch();
+			
+			if (patchNode == NULL) {
+				gtkutil::errorDialog("Could not create patch.", GlobalRadiant().getMainWindow());
+				return;
+			}
+			
+			Patch* patch = Node_getPatch(patchNode);
+			assert(patch != NULL); // must not fail
+			
+			// Set the tesselation of that 3x3 patch
+			patch->setDims(3,3);
+			patch->setFixedSubdivisions(true, BasicVector2<unsigned int>(1,1));
+			
+			// Set the coordinates
+			patch->ctrlAt(0,0).m_vertex = winding[0].vertex;
+			patch->ctrlAt(2,0).m_vertex = winding[1].vertex;
+			patch->ctrlAt(1,0).m_vertex = (patch->ctrlAt(0,0).m_vertex + patch->ctrlAt(2,0).m_vertex)/2;
+			
+			patch->ctrlAt(0,1).m_vertex = (winding[0].vertex + winding[3].vertex)/2;
+			patch->ctrlAt(2,1).m_vertex = (winding[1].vertex + winding[2].vertex)/2;
+			
+			patch->ctrlAt(1,1).m_vertex = (patch->ctrlAt(0,1).m_vertex + patch->ctrlAt(2,1).m_vertex)/2;
+			
+			patch->ctrlAt(2,2).m_vertex = winding[2].vertex;
+			patch->ctrlAt(0,2).m_vertex = winding[3].vertex;
+			patch->ctrlAt(1,2).m_vertex = (patch->ctrlAt(2,2).m_vertex + patch->ctrlAt(0,2).m_vertex)/2;
+			
+			// Set the texture coordinates to something useful
+			patch->NaturalTexture();
+			
+			// Insert the patch into worldspawn
+			scene::INodePtr worldSpawnNode = GlobalMap().getWorldspawn();
+			assert(worldSpawnNode != NULL); // This must be non-NULL, otherwise we won't have faces
+			
+			scene::TraversablePtr traversable = Node_getTraversable(worldSpawnNode);
+			traversable->insert(patchNode);
+		}
+	}
+	
+	if (unsuitableWindings > 0) {
+		gtkutil::errorDialog(
+			intToStr(unsuitableWindings) + " faces were not suitable (had more than 4 edges).", 
+			GlobalRadiant().getMainWindow()
+		);
+	}
 }
 
 	} // namespace algorithm

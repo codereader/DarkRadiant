@@ -115,6 +115,10 @@ namespace selection {
 	 */
 	void removeOriginFromChildPrimitives();
 	void addOriginToChildPrimitives();
+	
+	/** greebo: Creates a coplanar patch for each selected face instance.
+	 */
+	void createDecalsForSelectedFaces();
 
 	} // namespace algorithm
 } // namespace selection
