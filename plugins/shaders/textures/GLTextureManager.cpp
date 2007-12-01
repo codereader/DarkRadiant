@@ -63,7 +63,7 @@ TexturePtr GLTextureManager::getBinding(MapExpressionPtr mapExp) {
 		return _textures[identifier];
 	}
 	// We got an empty MapExpression, so we'll return the "image missing texture"
-	globalErrorStream() << "[shaders] Unable to load shader texture.\n";
+	// globalErrorStream() << "[shaders] Unable to load shader texture.\n";
 	return getShaderNotFound();
 }
 
