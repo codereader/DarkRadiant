@@ -351,6 +351,10 @@ scene::INodePtr Model_load(ModelLoader* loader, const std::string& path, const s
 	if (loader != 0) {
 		return ModelResource_load(loader, name);
 	}
+	else if (name.empty() && type.empty()) {
+		// Loader is NULL (map) and no valid name and type, return NULLmodel
+		return g_nullModel;
+	}
 	else {
 		// Get a loader module name for this type, if possible. If none is 
 		// found, try again with the "map" type, since we might be loading a 
