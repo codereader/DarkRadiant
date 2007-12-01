@@ -413,6 +413,9 @@ void Map::load(const std::string& filename) {
 	
 	// Clear the shaderclipboard, the references are most probably invalid now
 	GlobalShaderClipboard().clear();
+
+	// Let the filtersystem update the filtered status of all instances
+	GlobalFilterSystem().update();
 	
 	// Clear the modified flag
 	setModified(false);
