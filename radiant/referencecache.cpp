@@ -341,9 +341,14 @@ ModelCache g_modelCache;
 
 scene::INodePtr Model_load(ModelLoader* loader, const std::string& path, const std::string& name, const std::string& type)
 {
+	// greebo: Check if we have a NULL model loader and an empty path ("func_static_637")
+	if (loader == NULL && path.empty()) {
+		return g_nullModel;
+	}
+
 	// Model types should have a loader, so use this to load. Map types do not
 	// have a loader		  
-	if(loader != 0) {
+	if (loader != 0) {
 		return ModelResource_load(loader, name);
 	}
 	else {
