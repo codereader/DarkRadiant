@@ -14,6 +14,7 @@ namespace ui
 namespace {
 	const char* ASE_EXTENSION = ".ase";
 	const char* LWO_EXTENSION = ".lwo";
+	const char* MD5MESH_EXTENSION = ".md5mesh";
 }
 
 /**
@@ -45,14 +46,11 @@ public:
 	// Functor operator
 	void operator() (const std::string& file) {
 
-		// Test the extension. If it is not LWO or ASE (case-insensitive),
+		// Test the extension. If it is not matching any of the known extensions,
 		// not interested
-		if (!boost::algorithm::iends_with(file, LWO_EXTENSION) 
-				&& !boost::algorithm::iends_with(file, ASE_EXTENSION)) 
-		{
-			return;
-		}
-		else 
+		if (boost::algorithm::iends_with(file, LWO_EXTENSION) ||
+			boost::algorithm::iends_with(file, ASE_EXTENSION) || 
+			boost::algorithm::iends_with(file, MD5MESH_EXTENSION)) 
 		{
 			_progress.setText(boost::lexical_cast<std::string>(++_count)
 							  + " models loaded");
