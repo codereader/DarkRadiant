@@ -21,7 +21,6 @@ public:
 	// Constructor
 	TextureProjection() {}
 	
-	// Copy Constructor
 	TextureProjection(
 		const TexDef& texdef,
 		const BrushPrimitTexDef& brushprimit_texdef,
@@ -32,6 +31,15 @@ public:
 		m_brushprimit_texdef(brushprimit_texdef),
 		m_basis_s(basis_s),
 		m_basis_t(basis_t)
+	{}
+
+	// Copy Constructor
+	TextureProjection(const TextureProjection& other) :
+		m_texdef(other.m_texdef),
+		m_brushprimit_texdef(other.m_brushprimit_texdef),
+		m_basis_s(other.m_basis_s),
+		m_basis_t(other.m_basis_t),
+		_defaultTextureScale(other._defaultTextureScale)
 	{}
 	
 	void assign(const TextureProjection& other);

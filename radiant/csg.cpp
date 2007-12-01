@@ -471,7 +471,7 @@ class BrushSplitByPlaneSelected :
 	const Vector3& m_p1;
 	const Vector3& m_p2;
 	std::string m_shader;
-	const TextureProjection& m_projection;
+	TextureProjection m_projection;
 	EBrushSplit m_split;
 
 public:
@@ -512,6 +512,8 @@ public:
 		std::map<std::string, int> shaderCount;
 		std::string mostUsedShader("");
 		int mostUsedShaderCount(0);
+		TextureProjection mostUsedTextureProjection;
+
 		// greebo: Get the most used shader of this brush
 		for (Brush::const_iterator i = brush->begin(); i != brush->end(); i++) {
 			// Get the shadername
@@ -528,12 +530,16 @@ public:
 			if (shaderCount[shader] > mostUsedShaderCount) {
 				mostUsedShader = shader;
 				mostUsedShaderCount = shaderCount[shader];
+
+				// Copy the TexDef from the face into the local member
+				(*i)->GetTexdef(mostUsedTextureProjection);
 			}
 		}
 
 		// Fall back to the default shader, if nothing found
 		if (mostUsedShader.empty() || mostUsedShaderCount == 1) {
 			mostUsedShader = m_shader;
+			mostUsedTextureProjection = m_projection;
 		}
 
 		BrushSplitType split = Brush_classifyPlane(*brush, m_split == eFront ? -plane : plane);
@@ -546,7 +552,7 @@ public:
 				Brush* fragment = Node_getBrush(node);
 				fragment->copy(*brush);
 
-				FacePtr newFace = fragment->addPlane(m_p0, m_p1, m_p2, mostUsedShader, m_projection);
+				FacePtr newFace = fragment->addPlane(m_p0, m_p1, m_p2, mostUsedShader, mostUsedTextureProjection);
 
 				if (newFace != NULL && m_split != eFront) {
 					newFace->flipWinding();
@@ -563,7 +569,7 @@ public:
 				}
 			}
 
-			FacePtr newFace = brush->addPlane(m_p0, m_p1, m_p2, mostUsedShader, m_projection);
+			FacePtr newFace = brush->addPlane(m_p0, m_p1, m_p2, mostUsedShader, mostUsedTextureProjection);
 
 			if (newFace != NULL && m_split == eFront) {
 				newFace->flipWinding();
