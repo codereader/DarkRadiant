@@ -297,7 +297,7 @@ void MenuItem::construct() {
 		}
 	}
 	else if (_type == menuRoot) {
-		globalErrorStream() << "MenuItem: Cannot instantiate root MenuItem.\n"; 
+		// Cannot instantiate root MenuItem, ignore
 	}
 	
 	if (_widget != NULL) {
