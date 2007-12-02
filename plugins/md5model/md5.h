@@ -25,6 +25,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "inode.h"
 
 class ArchiveFile;
+
+namespace md5 {
+
+/** greebo: Attempts to load the MD5 data from the given file. 
+ *          Constructs an MD5ModelNode and returns.
+ */
 scene::INodePtr loadMD5Model(ArchiveFile& file);
+
+} // namespace md5
 
 #endif

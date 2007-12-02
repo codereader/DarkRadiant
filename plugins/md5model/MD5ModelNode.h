@@ -28,6 +28,7 @@ public:
 	// Nameable implementation
 	virtual std::string name() const;
 };
+typedef boost::shared_ptr<MD5ModelNode> MD5ModelNodePtr;
 
 } // namespace md5
 
