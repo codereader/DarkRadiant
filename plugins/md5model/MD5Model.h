@@ -26,6 +26,9 @@ class MD5Model :
 	std::size_t _polyCount;
 	std::size_t _vertexCount;
 
+	// The list of shader names for this model (for ModelSelector)
+	std::vector<std::string> _surfaceNames;
+
 public:
 	MD5Model();
 
@@ -86,6 +89,9 @@ private:
 
 	// Creates a new MD5Surface, adds it to the local list and returns the reference  
 	MD5Surface& newSurface();
+
+	// Re-populates the list of active shader names
+	void updateMaterialList();
 
 }; // class MD5Model
 typedef boost::shared_ptr<MD5Model> MD5ModelPtr;
