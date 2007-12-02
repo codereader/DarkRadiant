@@ -463,8 +463,8 @@ void MD5Model_construct(md5::MD5Model& model, TextInputStream& inputStream)
 
 scene::INodePtr MD5Model_new(TextInputStream& inputStream)
 {
-	scene::INodePtr node(new ModelNode());
-	ModelNode* modelNode = static_cast<ModelNode*>(node.get());
+	scene::INodePtr node(new md5::MD5ModelNode());
+	md5::MD5ModelNode* modelNode = static_cast<md5::MD5ModelNode*>(node.get());
 	MD5Model_construct(modelNode->model(), inputStream);
 	return node;
 }
