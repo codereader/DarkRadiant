@@ -40,7 +40,7 @@ class MD5ModelLoader :
 {
 public:
 	scene::INodePtr loadModel(ArchiveFile& file) {
-		return loadMD5Model(file);
+		return md5::loadMD5Model(file);
 	}
 
 	// Not implemented

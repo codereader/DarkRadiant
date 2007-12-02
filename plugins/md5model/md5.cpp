@@ -447,30 +447,34 @@ bool MD5Model_parse(md5::MD5Model& model, parser::DefTokeniser& tok)
 	return true;
 }
 
-void MD5Model_construct(md5::MD5Model& model, TextInputStream& inputStream)
-{
+namespace md5 {
+
+scene::INodePtr MD5Model_new(TextInputStream& inputStream) {
+	
+	// Construct a new Node
+	MD5ModelNodePtr modelNode(new MD5ModelNode);
+	
 	// Construct a DefTokeniser and start parsing
 	try {
 		std::istream is(&inputStream);
 		parser::BasicDefTokeniser<std::istream> tok(is);
-		MD5Model_parse(model, tok);
+		MD5Model_parse(modelNode->model(), tok);
 	}
 	catch (parser::ParseException e) {
 		globalErrorStream() << "[md5model] Parse failure. Exception was:\n"
 							<< e.what() << "\n";		
 	}
+	
+	// Upcast the MD5ModelNode to scene::INode and return
+	return modelNode;
 }
 
-scene::INodePtr MD5Model_new(TextInputStream& inputStream)
-{
-	scene::INodePtr node(new md5::MD5ModelNode());
-	md5::MD5ModelNode* modelNode = static_cast<md5::MD5ModelNode*>(node.get());
-	MD5Model_construct(modelNode->model(), inputStream);
-	return node;
+scene::INodePtr loadMD5Model(ArchiveFile& file) {
+	// greebo: Get the Inputstream from the given file
+	BinaryToTextInputStream<InputStream> inputStream(file.getInputStream());
+	
+	// Pass the inputstream to the helper method
+	return MD5Model_new(inputStream);
 }
 
-scene::INodePtr loadMD5Model(ArchiveFile& file)
-{
-  BinaryToTextInputStream<InputStream> inputStream(file.getInputStream());
-  return MD5Model_new(inputStream);
-}
+} // namespace md5
