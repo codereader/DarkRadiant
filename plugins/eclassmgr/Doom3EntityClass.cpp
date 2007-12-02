@@ -3,7 +3,9 @@
 #include "AttributeSuffixComparator.h"
 
 #include "iradiant.h"
+#include "os/path.h"
 
+#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace eclass
@@ -163,6 +165,90 @@ Doom3EntityClass::getAttributeList(const std::string& name) const {
 	
 	// Return the list of matches
 	return matches;
+}
+
+void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser) {
+	// Get the (lowercase) entity name and create the entity class for it
+    const std::string sName = 
+    	boost::algorithm::to_lower_copy(tokeniser.nextToken());
+    
+    // Store the name
+    _name = sName;
+	
+	// Required open brace (the name has already been parsed by the EClassManager)
+    tokeniser.assertNextToken("{");
+
+    // Loop over all of the keys in this entitydef
+    while (true) {
+        const std::string key = tokeniser.nextToken();
+        
+        if (key == "}") {
+        	break; // end of def
+        }
+
+        const std::string value = tokeniser.nextToken();
+    
+        // Otherwise, switch on the key name
+        
+        if (key == "model") {
+        	setModelPath(os::standardPath(value));
+        }
+        else if (key == "editor_color") {
+            setColour(value);
+        }
+        else if (key == "editor_light") {
+            if (value == "1") {
+                setIsLight(true);
+            }
+        }
+        else if (key == "spawnclass") {
+            if (value == "idLight") {
+                setIsLight(true);
+            }
+        }
+        else if (boost::algorithm::istarts_with(key, "editor_var ")) {
+        	// "editor_var" represents an attribute that may be set on this
+        	// entity. Construct a value-less EntityClassAttribute to add to
+        	// the class, so that it will show in the entity inspector.
+        	std::string attName = key.substr(key.find(" ") + 1);
+        	if (!attName.empty()) {
+        		addAttribute(EntityClassAttribute("text", attName, "", value));
+        	}
+        }
+        else if (boost::algorithm::istarts_with(key, "editor_bool ")) {
+			// Same as editor_var, but with boolean rather than text type
+        	std::string attName = key.substr(key.find(" ") + 1);
+        	if (!attName.empty()) {
+        		addAttribute(EntityClassAttribute("boolean", attName, "", value));
+        	}
+        }
+		else if (boost::algorithm::istarts_with(key, "editor_float ")) {
+			// Same as editor_var, but with float rather than text type
+        	std::string attName = key.substr(key.find(" ") + 1);
+        	if (!attName.empty()) {
+        		addAttribute(EntityClassAttribute("float", attName, "", value));
+        	}
+        }
+
+		// Following key-specific processing, add the keyvalue to the entity
+		// class
+		EntityClassAttribute attribute("text", key, value, "");
+		if (getAttribute(key).type.empty()) {
+			// Type is empty, attribute does not exist, add it.
+			addAttribute(attribute);
+		}
+		else if (getAttribute(key).value.empty() ) {
+			// Attribute type is set, but value is empty, set the value.
+			getAttribute(key).value = value;
+		}
+		else {
+			// Both type and value are not empty, emit a warning
+			std::cerr << "[eclassmgr] attribute " << key << " already set on entityclass " 
+            		  << sName << std::endl;
+
+		}
+            
+    } // while true
 }
 
 } // namespace eclass

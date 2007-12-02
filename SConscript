@@ -137,7 +137,10 @@ undoLib = undoEnv.SharedLibrary(target='undo', source=undoSrc)
 undoEnv.Install(INSTALL + '/modules', undoLib)
 
 # Eclassmgr module
-eclassSrc = build_list('plugins/eclassmgr', 'eclass_doom3.cpp Doom3EntityClass.cpp')
+eclassSrc = build_list('plugins/eclassmgr', 
+					   'eclass_doom3.cpp \
+					    EClassManager.cpp \
+					    Doom3EntityClass.cpp')
 eclassEnv = module_env.Copy()
 eclassEnv.Append(LIBS = 'math')
 eclassEnv.useGlib2()
