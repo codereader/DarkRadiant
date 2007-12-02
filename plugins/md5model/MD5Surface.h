@@ -16,11 +16,11 @@ class MD5Surface :
 public OpenGLRenderable
 {
 public:
-  typedef VertexBuffer<ArbitraryMeshVertex> vertices_t;
-  typedef IndexBuffer indices_t;
+	typedef VertexBuffer<ArbitraryMeshVertex> vertices_t;
+	typedef IndexBuffer indices_t;
+  
 private:
-
-  AABB m_aabb_local;
+	AABB _aabb_local;
   
 	// Shader name
 	std::string _shaderName;
@@ -38,9 +38,7 @@ private:
 private:
 
 	// Capture the named shader
-	void captureShader() {
-		_shader = GlobalShaderCache().capture(_shaderName);
-	}
+	void captureShader();
 	
 	// Create the display lists
 	void createDisplayLists();
@@ -57,33 +55,17 @@ public:
 	 */
 	~MD5Surface();
 	
-	vertices_t& vertices() {
-		return _vertices;
-	}
-	
-	indices_t& indices() {
-		return _indices;
-	}
+	vertices_t& vertices();
+	indices_t& indices();
 
-	// Set the shader name
-	void setShader(const std::string& name) {
-		_shaderName = name;
-		captureShader();
-	}
-
-	/**
-	 * Get the shader name.
-	 */
-	std::string getShader() const {
-		return _shaderName;
-	}
+	// Set/get the shader name
+	void setShader(const std::string& name);
+	std::string getShader() const;
 	
 	/**
 	 * Get the Shader object.
 	 */
-	ShaderPtr getState() const {
-		return _shader;
-	}
+	ShaderPtr getState() const;
 	
 	/**
 	 * Calculate the AABB and build the display lists for rendering.
@@ -93,25 +75,12 @@ public:
     // Back-end render function
     void render(RenderStateFlags state) const;
 
-  VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const
-  {
-    return test.TestAABB(m_aabb_local, localToWorld);
-  }
+	VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const;
 
-  const AABB& localAABB() const
-  {
-    return m_aabb_local;
-  }
+	const AABB& localAABB() const;
 
-  void render(Renderer& renderer, const Matrix4& localToWorld, ShaderPtr state) const
-  {
-    renderer.SetState(state, Renderer::eFullMaterials);
-    renderer.addRenderable(*this, localToWorld);
-  }
-
-	void render(Renderer& renderer, const Matrix4& localToWorld) const {
-		render(renderer, localToWorld, _shader);
-	}
+	void render(Renderer& renderer, const Matrix4& localToWorld, ShaderPtr state) const;
+	void render(Renderer& renderer, const Matrix4& localToWorld) const;
 
 	// Test for selection
 	void testSelect(Selector& selector, 

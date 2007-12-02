@@ -27,11 +27,11 @@ MD5Surface::~MD5Surface() {
 
 // Update geometry
 void MD5Surface::updateGeometry() {
-	m_aabb_local = AABB();
+	_aabb_local = AABB();
 	for (vertices_t::iterator i = _vertices.begin(); 
 		 i != _vertices.end(); 
 		 ++i)
-	  m_aabb_local.includePoint(reinterpret_cast<const Vector3&>(i->vertex));
+	  _aabb_local.includePoint(reinterpret_cast<const Vector3&>(i->vertex));
 	
 	for (MD5Surface::indices_t::iterator i = _indices.begin(); 
 		 i != _indices.end(); 
@@ -131,6 +131,50 @@ void MD5Surface::testSelect(Selector& selector,
 	if(best.valid()) {
 		selector.addIntersection(best);
 	}
+}
+
+void MD5Surface::captureShader() {
+	_shader = GlobalShaderCache().capture(_shaderName);
+}
+
+MD5Surface::vertices_t& MD5Surface::vertices() {
+	return _vertices;
+}
+
+MD5Surface::indices_t& MD5Surface::indices() {
+	return _indices;
+}
+
+void MD5Surface::setShader(const std::string& name) {
+	_shaderName = name;
+	captureShader();
+}
+
+std::string MD5Surface::getShader() const {
+	return _shaderName;
+}
+
+ShaderPtr MD5Surface::getState() const {
+	return _shader;
+}
+
+VolumeIntersectionValue MD5Surface::intersectVolume(
+		const VolumeTest& test, const Matrix4& localToWorld) const
+{
+	return test.TestAABB(_aabb_local, localToWorld);
+}
+
+const AABB& MD5Surface::localAABB() const {
+	return _aabb_local;
+}
+
+void MD5Surface::render(Renderer& renderer, const Matrix4& localToWorld, ShaderPtr state) const {
+	renderer.SetState(state, Renderer::eFullMaterials);
+	renderer.addRenderable(*this, localToWorld);
+}
+
+void MD5Surface::render(Renderer& renderer, const Matrix4& localToWorld) const {
+	render(renderer, localToWorld, _shader);
 }
 
 } // namespace md5
