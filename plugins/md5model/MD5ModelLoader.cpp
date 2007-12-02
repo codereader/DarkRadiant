@@ -6,6 +6,7 @@
 #include "archivelib.h"
 #include "stream/textstream.h"
 
+#include "MD5ModelNode.h"
 #include "MD5Parser.h"
 
 namespace md5 {

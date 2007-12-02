@@ -243,7 +243,6 @@ model_env.Install(INSTALL + '/modules', model_lib)
 md5model_env = module_env.Copy()
 md5model_lst=build_list('plugins/md5model', 
 						'plugin.cpp \
-						 md5.cpp \
 						 MD5Model.cpp \
 						 MD5ModelInstance.cpp \
 						 MD5ModelNode.cpp \
