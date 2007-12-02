@@ -10,33 +10,52 @@
 
 namespace md5 {
 
-scene::INodePtr MD5ModelLoader::loadModel(ArchiveFile& file) {
+void MD5ModelLoader::loadModelFromFile(MD5Model& model, ArchiveFile& file) {
 	// greebo: Get the Inputstream from the given file
 	BinaryToTextInputStream<InputStream> inputStream(file.getInputStream());
-	
-	// Construct a new Node
-	MD5ModelNodePtr modelNode(new MD5ModelNode);
-	
+
 	// Construct a Tokeniser object and start reading the file
 	try {
 		std::istream is(&inputStream);
 		parser::BasicDefTokeniser<std::istream> tokeniser(is);
 				
 		// Invoke the parser routine (might throw)
-		MD5Model& md5model(modelNode->model());
-		md5model.parseFromTokens(tokeniser);
+		model.parseFromTokens(tokeniser);
 	}
 	catch (parser::ParseException e) {
 		globalErrorStream() << "[md5model] Parse failure. Exception was:\n"
 							<< e.what() << "\n";		
 	}
+}
+
+scene::INodePtr MD5ModelLoader::loadModel(ArchiveFile& file) {
+	// Construct a new Node
+	MD5ModelNodePtr modelNode(new MD5ModelNode);
 	
+	loadModelFromFile(modelNode->model(), file);
+
 	// Upcast the MD5ModelNode to scene::INode and return
 	return modelNode;
 }
 
 model::IModelPtr MD5ModelLoader::loadModelFromPath(const std::string& name) {
-	return model::IModelPtr();
+	MD5ModelPtr model(new MD5Model);
+
+	// Open an ArchiveFile to load
+	ArchiveFile* file = GlobalFileSystem().openFile(name.c_str());
+
+	if (file != NULL) {
+		loadModelFromFile(*model, *file);
+	}
+	else {
+		globalErrorStream() << "Failed to load model " << name.c_str() << "\n";
+		model = MD5ModelPtr(); // delete the model
+	}
+	
+	// Release the ArchiveFile and return the IModelPtr
+	file->release();
+
+	return model;
 }
 
 // RegisterableModule implementation
