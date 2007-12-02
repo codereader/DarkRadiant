@@ -30,8 +30,8 @@ class MD5ModelInstance :
 	SurfaceLightLists _surfaceLightLists;
 
 	struct Remap {
-		std::string first;
-		ShaderPtr second;
+		std::string name;
+		ShaderPtr shader;
 	};
   
 	typedef Array<Remap> SurfaceRemaps;

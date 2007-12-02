@@ -55,25 +55,30 @@ void MD5ModelInstance::constructRemaps() {
 	// Note: This always returns a valid reference
 	ModelSkin& skin = GlobalModelSkinCache().capture(_skin);
 
+	// Iterate over all surfaces and remaps
 	SurfaceRemaps::iterator j = _surfaceRemaps.begin();
-	for (MD5Model::const_iterator i = _model.begin(); i != _model.end(); ++i,
-			++j) {
+	for (MD5Model::const_iterator i = _model.begin(); i != _model.end(); ++i,++j) {
+		// Get the replacement shadername
 		std::string remap = skin.getRemap((*i)->getShader());
+
 		if (!remap.empty()) {
-			j->first = remap;
-			j->second = GlobalShaderCache().capture(remap);
+			// We have a valid remap, store it
+			j->name = remap;
+			j->shader = GlobalShaderCache().capture(remap);
 		} else {
-			j->second = ShaderPtr();
+			// No remap, leave the name as it is
+			j->shader = ShaderPtr();
 		}
 	}
 	SceneChangeNotify();
 }
 
 void MD5ModelInstance::destroyRemaps() {
+	// Iterate over all remaps and NULLify the shader pointers
 	for (SurfaceRemaps::iterator i = _surfaceRemaps.begin(); i
 			!= _surfaceRemaps.end(); ++i) {
-		if (i->second) {
-			i->second = ShaderPtr();
+		if (i->shader) {
+			i->shader = ShaderPtr();
 		}
 	}
 }
@@ -97,11 +102,15 @@ void MD5ModelInstance::render(Renderer& renderer, const VolumeTest& volume,
 		const Matrix4& localToWorld) const {
 	SurfaceLightLists::const_iterator j = _surfaceLightLists.begin();
 	SurfaceRemaps::const_iterator k = _surfaceRemaps.begin();
-	for (MD5Model::const_iterator i = _model.begin(); i != _model.end(); ++i,
-			++j, ++k) {
+
+	// greebo: Iterate over all MD5 surfaces and render them
+	for (MD5Model::const_iterator i = _model.begin(); 
+		 i != _model.end(); 
+		 ++i, ++j, ++k)
+	{
 		if ((*i)->intersectVolume(volume, localToWorld) != c_volumeOutside) {
 			renderer.setLights(*j);
-			(*i)->render(renderer, localToWorld, (*k).second != 0 ? (*k).second : (*i)->getState());
+			(*i)->render(renderer, localToWorld, k->shader != NULL ? k->shader : (*i)->getState());
 		}
 	}
 }
