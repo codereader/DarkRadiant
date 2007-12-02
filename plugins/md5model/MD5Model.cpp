@@ -5,6 +5,11 @@
 
 namespace md5 {
 
+MD5Model::MD5Model() :
+	_polyCount(0),
+	_vertexCount(0)
+{}
+
 MD5Model::const_iterator MD5Model::begin() const {
 	return _surfaces.begin();
 }
@@ -52,18 +57,15 @@ void MD5Model::applySkin(const ModelSkin& skin) {
 }
 
 int MD5Model::getSurfaceCount() const {
-	// TODO
-	return 0;
+	return size();
 }
 
 int MD5Model::getVertexCount() const {
-	// TODO
-	return 0;
+	return _vertexCount;
 }
 
 int MD5Model::getPolyCount() const {
-	// TODO
-	return 0;
+	return _polyCount;
 }
 
 const std::vector<std::string>& MD5Model::getActiveMaterials() const {
@@ -155,6 +157,9 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 		// Initialise the vertex vector
 		MD5Verts verts(numVerts);
 
+		// Update the vertexcount
+		_vertexCount = numVerts;
+
 		// Populate each vertex struct with parsed values
 		for (MD5Verts::iterator vt = verts.begin(); vt != verts.end(); ++vt) {
 			
@@ -180,6 +185,9 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 		// Read the number of triangles
 		tok.assertNextToken("numtris");
 		std::size_t numTris = strToSizet(tok.nextToken());
+
+		// Update the polycount
+		_polyCount = numTris;
 
 		// Initialise the triangle vector
 		MD5Tris tris(numTris);
