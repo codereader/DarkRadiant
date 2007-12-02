@@ -60,12 +60,14 @@ private:
 	static void _onSelChanged(GtkWidget*, SkinChooser*);
 	static bool _onCloseButton(GtkWidget*, SkinChooser*);
 	
+	// Contains the static instance
+	static SkinChooser& Instance();
+
 public:
 
 	/** Display the dialog and return the skin chosen by the user, or an empty
-	 * string if no selection was made. This static method maintains a singleton
-	 * instance of the dialog, and enters are recursive GTK main loop during
-	 * skin selection.
+	 * string if no selection was made. This static method enters are recursive 
+	 * GTK main loop during skin selection.
 	 * 
 	 * @param model
 	 * The full VFS path of the model for which matching skins should be found.
