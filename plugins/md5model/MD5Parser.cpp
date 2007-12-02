@@ -218,3 +218,114 @@ Vector3 MD5Parser::parseVector3() {
 }
 
 } // namespace md5
+
+/** greebo: The commented out stuff below are remnants from an MD5Anim parser,
+ *          left for later reference.
+ */
+
+//bool MD5Anim_parse(Tokeniser& tokeniser)
+//{
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseVersion(tokeniser));
+//  tokeniser.nextLine();
+//
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "commandline"));
+//  const char* commandline;
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseString(tokeniser, commandline));
+//  tokeniser.nextLine();
+//
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "numFrames"));
+//  std::size_t numFrames;
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, numFrames));
+//  tokeniser.nextLine();
+//
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "numJoints"));
+//  std::size_t numJoints;
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, numJoints));
+//  tokeniser.nextLine();
+//
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "frameRate"));
+//  std::size_t frameRate;
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, frameRate));
+//  tokeniser.nextLine();
+//
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "numAnimatedComponents"));
+//  std::size_t numAnimatedComponents;
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, numAnimatedComponents));
+//  tokeniser.nextLine();
+//
+//  // parse heirarchy
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "hierarchy"));
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "{"));
+//  tokeniser.nextLine();
+//
+//  for(std::size_t i = 0; i < numJoints; ++i)
+//  {
+//    const char* name;
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseString(tokeniser, name));
+//    int parent;
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseInteger(tokeniser, parent));
+//    std::size_t flags;
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, flags));
+//    std::size_t index;
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, index));
+//    tokeniser.nextLine();
+//  }
+//
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "}"));
+//  tokeniser.nextLine();
+//
+//  // parse bounds
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "bounds"));
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "{"));
+//  tokeniser.nextLine();
+//
+//  for(std::size_t i = 0; i < numFrames; ++i)
+//  {
+//    Vector3 mins;
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, mins));
+//    Vector3 maxs;
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, maxs));
+//    tokeniser.nextLine();
+//  }
+//
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "}"));
+//  tokeniser.nextLine();
+//
+//  // parse baseframe
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "baseframe"));
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "{"));
+//  tokeniser.nextLine();
+//
+//  for(std::size_t i = 0; i < numJoints; ++i)
+//  {
+//    Vector3 position;
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, position));
+//    Vector3 rotation;
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, rotation));
+//    tokeniser.nextLine();
+//  }
+//
+//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "}"));
+//  tokeniser.nextLine();
+//
+//  // parse frames
+//  for(std::size_t i = 0; i < numFrames; ++i)
+//  {
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "frame"));
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "{"));
+//    tokeniser.nextLine();
+//
+//    for(std::size_t i = 0; i < numAnimatedComponents; ++i)
+//    {
+//      float component;
+//      MD5_RETURN_FALSE_IF_FAIL(MD5_parseFloat(tokeniser, component));
+//      tokeniser.nextLine();
+//    }
+//
+//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "}"));
+//    tokeniser.nextLine();
+//  }
+//
+//  return true;
+//}
+
