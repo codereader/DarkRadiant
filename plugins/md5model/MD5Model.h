@@ -21,7 +21,14 @@ class MD5Model :
 	SurfaceList _surfaces;
 
 	AABB _aabb_local;
+
+	// Gets initialised during parsing
+	int _polyCount;
+	int _vertexCount;
+
 public:
+	MD5Model();
+
 	Callback _lightsChanged;
 
 	typedef SurfaceList::const_iterator const_iterator;
@@ -30,9 +37,6 @@ public:
 	const_iterator begin() const;
 	const_iterator end() const;
 	std::size_t size() const;
-
-	// Creates a new MD5Surface, adds it to the local list and returns the reference  
-	MD5Surface& newSurface();
 
 	/** greebo: Reads the model data from the given tokeniser.
 	 */
@@ -79,6 +83,9 @@ private:
 	 * enclosed with parentheses.
 	 */
 	Vector3 parseVector3(parser::DefTokeniser& tok);
+
+	// Creates a new MD5Surface, adds it to the local list and returns the reference  
+	MD5Surface& newSurface();
 
 }; // class MD5Model
 
