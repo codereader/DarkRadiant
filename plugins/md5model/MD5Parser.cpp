@@ -52,7 +52,7 @@ void MD5Parser::parseToModel(MD5Model& model) {
 	    // Calculate the W value. If it is NaN (due to underflow in the sqrt),
 	    // set it to 0.
 	    double lSq = rawRotation.getLengthSquared();
-	    float w = -sqrt(1.0 - lSq);
+	    double w = -sqrt(1.0 - lSq);
 	    if (isNaN(w)) {
 	    	w = 0;
 	    }
